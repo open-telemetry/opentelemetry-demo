@@ -23,7 +23,7 @@ jobs:
     - name: check out code
       uses: actions/checkout@v3
 
-    - uses: actions/setup-python@v2
+    - uses: actions/setup-python@v3
 
     - name: install yamllint
       run: make install-yamllint
