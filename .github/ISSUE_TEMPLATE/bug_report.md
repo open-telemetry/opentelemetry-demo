@@ -9,7 +9,8 @@ labels: bug
 Which version of the demo you are using? (please provide either a specific
 [commit
 hash](https://github.com/open-telemetry/opentelemetry-demo-webstore/commits/main)
-or a specific release).
+or a specific
+[release](https://github.com/open-telemetry/opentelemetry-demo-webstore/releases)).
 
 ## Symptom
 
@@ -17,7 +18,7 @@ A clear and concise description of what the bug is.
 
 **What is the expected behavior?**
 
-What did you expect to see?
+What do you expect to see?
 
 **What is the actual behavior?**
 
