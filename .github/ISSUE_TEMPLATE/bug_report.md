@@ -6,16 +6,10 @@ labels: bug
 
 # Bug Report
 
-List of [all OpenTelemetry NuGet
-packages](https://www.nuget.org/profiles/OpenTelemetry) and version that you are
-using (e.g. `OpenTelemetry 1.0.2`):
-
-* TBD
-
-Runtime version (e.g. `net462`, `net48`, `netcoreapp3.1`, `net6.0` etc. You can
-find this information from the `*.csproj` file):
-
-* TBD
+Which version of the demo you are using? (please provide either a specific
+[commit
+hash](https://github.com/open-telemetry/opentelemetry-demo-webstore/commits/main)
+or a specific release).
 
 ## Symptom
 
@@ -31,13 +25,11 @@ What did you see instead?
 
 ## Reproduce
 
-Create a self-contained project using the template of your choice, apply the
-minimum required code to result in the issue you're observing.
+Provide the minimum required steps to result in the issue you're observing.
 
 We will close this issue if:
 
-* The repro project you share with us is complex. We can't investigate custom
-  projects, so don't point us to such, please.
+* The steps you provided are complex.
 * If we can not reproduce the behavior you're reporting.
 
 ## Additional Context
