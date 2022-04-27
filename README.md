@@ -31,4 +31,4 @@ For edit access, get in touch on
 
 ### Thanks to all the people who have contributed
 
-[![contributors](https://contributors-img.web.app/image?repo=open-telemetry/opentelemetry-cpp)](https://github.com/open-telemetry/opentelemetry-demo-webstore/graphs/contributors)
+[![contributors](https://contributors-img.web.app/image?repo=open-telemetry/opentelemetry-demo-webstore)](https://github.com/open-telemetry/opentelemetry-demo-webstore/graphs/contributors)
