@@ -19,7 +19,7 @@ For edit access, get in touch on
 
 * [Austin Parker](https://github.com/austinlparker), Lightstep
 * [Carter Socha](https://github.com/cartersocha), Microsoft
-* [Morgan McClean](https://github.com/mwtwo), Splunk
+* [Morgan McLean](https://github.com/mtwo), Splunk
 
 [Approvers](https://github.com/open-telemetry/community/blob/main/community-membership.md#approver)
 ([@open-telemetry/demo-webstore-approvers](https://github.com/orgs/open-telemetry/teams/demo-webstore-approvers)):
