@@ -7,7 +7,7 @@ following system requirements:
    or you should use your preferred Cloud Service.
 
 2. The demo must be able to work on the following Operating Systems (OS):
-   Windows, Linux, and Mac with documentation provided for each OS.
+   Linux, macOS and Windows with documentation provided for each OS.
 
 ## Docker Requirements
 
