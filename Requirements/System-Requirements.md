@@ -8,13 +8,3 @@ following system requirements:
 
 2. The demo must be able to work on the following Operating Systems (OS):
    Linux, macOS and Windows with documentation provided for each OS.
-
-## Docker Requirements
-
-Docker requirements for each operating system can be found below:
-
-1. [Linux](https://docs.docker.com/desktop/linux/install/)
-
-2. [Mac](https://docs.docker.com/desktop/mac/install/)
-
-3. [Windows](https://docs.docker.com/desktop/windows/install/)
