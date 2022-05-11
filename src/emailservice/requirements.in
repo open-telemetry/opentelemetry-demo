@@ -1,0 +1,12 @@
+google-api-core==2.4.0
+grpcio-health-checking==1.43.0
+grpcio==1.43.0
+jinja2==3.0.3
+opentelemetry-api==1.9.1
+opentelemetry-exporter-otlp-proto-grpc==1.9.1
+opentelemetry-instrumentation==0.28b1
+opentelemetry-instrumentation-grpc==0.28b1
+opentelemetry-instrumentation-jinja2==0.28b1
+opentelemetry-sdk==1.9.1
+python-json-logger==2.0.2
+requests==2.27.1
