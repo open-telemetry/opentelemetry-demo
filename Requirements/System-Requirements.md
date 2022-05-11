@@ -11,7 +11,7 @@ following system requirements:
 
 ## Docker Requirements
 
-Docker requirements for each Operating System can be found below:
+Docker requirements for each operating system can be found below:
 
 1. [Linux](https://docs.docker.com/desktop/linux/install/)
 
