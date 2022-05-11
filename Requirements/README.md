@@ -1,6 +1,6 @@
 # OpenTelemetry Community Demo Requirements
 
-The following documents capture the Application, OpenTelemetry, and System
+The following documents capture the Application, OpenTelemetry (OTel), and System
 requirements for our shared demo application. These were decided upon in the
 ongoing SIG meeting.
 
@@ -9,3 +9,15 @@ ongoing SIG meeting.
 2. [OpenTelemetry Requirements](./OpenTelemetry-Requirements.md)
 
 3. [System Requirements](./System-Requirements.md)
+
+## Target Personas
+
+We're building the demo application with several different target personas in mind:
+
+1. **Enthusaists** at a company that can use the demo app as an individual to advocate for OTel within their organization.
+
+2. **Developers** with specific language skills who want to see a larger picture view.
+
+3. **APM Vendors** who can evaluate OTel in general or need to produce a demo of their OTel capabilities for customers
+
+4. **Enterprises** considering adopting OTel and interested in understanding what a production-lite experience would be. 
