@@ -1,0 +1,60 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: otelcollector
+spec:
+  selector:
+    matchLabels:
+      app: otelcollector
+  template:
+    metadata:
+      labels:
+        app: otelcollector
+    spec:
+      serviceAccountName: default
+      terminationGracePeriodSeconds: 5
+      containers:
+      - name: otelcollector
+        image: otelcollector
+        ports:
+        - containerPort: 1888
+        - containerPort: 8888
+        - containerPort: 8889
+        - containerPort: 13133
+        - containerPort: 4317
+        - containerPort: 55670
+        resources:
+          requests:
+            cpu: 200m
+            memory: 180Mi
+          limits:
+            cpu: 300m
+            memory: 300Mi
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: otelcollector
+spec:
+  type: ClusterIP
+  selector:
+    app: otelcollector
+  ports:
+  - name: "1888"
+    port: 1888
+    targetPort: 1888
+  - name: "8888"
+    port: 8888
+    targetPort: 8888
+  - name: "8889"
+    port: 8889
+    targetPort: 8889
+  - name: "13133"
+    port: 13133
+    targetPort: 13133
+  - name: "4317"
+    port: 4317
+    targetPort: 4317
+  - name: "55670"
+    port: 55670
+    targetPort: 55670

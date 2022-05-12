@@ -1,0 +1,88 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: jaeger
+spec:
+  selector:
+    matchLabels:
+      app: jaeger
+  template:
+    metadata:
+      labels:
+        app: jaeger
+    spec:
+      serviceAccountName: default
+      terminationGracePeriodSeconds: 5
+      containers:
+      - name: jaeger
+        image: jaegertracing/all-in-one:1.31
+        env:
+        - name: COLLECTOR_ZIPKIN_HOST_PORT
+          value: ":9411"
+        ports:
+        - containerPort: 5775
+        - containerPort: 6831
+        - containerPort: 6832
+        - containerPort: 5778
+        - containerPort: 14250
+        - containerPort: 14268
+        - containerPort: 14269
+        - containerPort: 16686
+        - containerPort: 9411
+        resources:
+          requests:
+            cpu: 200m
+            memory: 180Mi
+          limits:
+            cpu: 300m
+            memory: 300Mi
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: jaeger
+spec:
+  type: ClusterIP
+  selector:
+    app: jaeger
+  ports:
+  - name: "5775"
+    port: 5775
+    targetPort: 5775
+    protocol: UDP
+  - name: "6831"
+    port: 6831
+    targetPort: 6831
+    protocol: UDP
+  - name: "6832"
+    port: 6832
+    targetPort: 6832
+    protocol: UDP
+  - name: "5778"
+    port: 5778
+    targetPort: 5778
+  - name: "14250"
+    port: 14250
+    targetPort: 14250
+  - name: "14268"
+    port: 14268
+    targetPort: 14268
+  - name: "14269"
+    port: 14269
+    targetPort: 14269
+  - name: "9411"
+    port: 9411
+    targetPort: 9411
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: jaeger-frontend
+spec:
+  type: NodePort
+  selector:
+    app: jaeger
+  ports:
+  - name: "16686"
+    port: 16686
+    targetPort: 16686
