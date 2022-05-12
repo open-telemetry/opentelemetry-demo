@@ -1,15 +1,19 @@
 # Memorystore (redis) + OnlineBoutique
 
-This guide contains instructions for overriding the default in-cluster `redis` database for `cartservice` with Memorystore (redis).
+This guide contains instructions for overriding the default in-cluster `redis`
+database for `cartservice` with Memorystore (redis).
 
 Important notes:
-- You can connect to a Memorystore (redis) instance from GKE clusters that are in the same region and use the same network as your instance.
-- You cannot connect to a Memorystore (redis) instance from a GKE cluster without VPC-native/IP aliasing enabled.
+
+- You can connect to a Memorystore (redis) instance from GKE clusters that are
+  in the same region and use the same network as your instance.
+- You cannot connect to a Memorystore (redis) instance from a GKE cluster
+  without VPC-native/IP aliasing enabled.
 
 ![Architecture diagram with Memorystore](./img/memorystore.png)
 
 ## Steps
- 
+
 1. Create a GKE cluster with VPC-native/IP aliasing enabled.
 
 ```sh
@@ -24,25 +28,26 @@ gcloud container clusters create onlineboutique \
     --enable-ip-alias
 ```
 
-2. Enable the Memorystore (redis) service on your project.
+1. Enable the Memorystore (redis) service on your project.
 
 ```sh
 gcloud services enable redis.googleapis.com --project=${PROJECT_ID}
 ```
 
-3. Create the Memorystore (redis) instance. 
+1. Create the Memorystore (redis) instance.
 
 ```sh
 gcloud redis instances create redis-cart --size=1 --region=${REGION} --zone=${ZONE} --redis-version=redis_6_x --project=${PROJECT_ID}
 ```
 
-After a few minutes, you will see the `STATUS` as `READY` when your Memorystore instance will be successfully provisioned:
+After a few minutes, you will see the `STATUS` as `READY` when your Memorystore
+instance will be successfully provisioned:
 
 ```sh
 gcloud redis instances list --region ${REGION}
 ```
 
-4. Update current manifests to target this Memorystore (redis) instance.
+1. Update current manifests to target this Memorystore (redis) instance.
 
 ```sh
 cp ./release/kubernetes-manifests.yaml ./release/updated-manifests.yaml
@@ -50,23 +55,25 @@ REDIS_IP=$(gcloud redis instances describe redis-cart --region=${REGION} --forma
 sed -i "s/value: \"redis-cart:6379\"/value: \"${REDIS_IP}\"/g" ./release/updated-manifests.yaml
 ```
 
-In addition, in the `./release/updated-manifests.yaml` file you need also to manually remove the `Deployment` and `Service` sections of the `redis-cart` which are not needed anymore.
+In addition, in the `./release/updated-manifests.yaml` file you need also to
+manually remove the `Deployment` and `Service` sections of the `redis-cart`
+which are not needed anymore.
 
-5. Apply all the updated manifests. 
+1. Apply all the updated manifests.
 
 ```sh
 kubectl apply -f ./release/updated-manifests.yaml
 ```
 
-6. **Wait for the Pods to be ready.**
+1. **Wait for the Pods to be ready.**
 
-```
+```sh
 kubectl get pods
 ```
 
 After a few minutes, you should see:
 
-```
+```sh
 NAME                                     READY   STATUS    RESTARTS   AGE
 adservice-76bdd69666-ckc5j               1/1     Running   0          2m58s
 cartservice-66d497c6b7-dp5jr             1/1     Running   0          2m59s
@@ -81,14 +88,16 @@ recommendationservice-69c56b74d4-7z8r5   1/1     Running   0          3m1s
 shippingservice-6ccc89f8fd-v686r         1/1     Running   0          2m58s
 ```
 
-7. **Access the web frontend in a browser** using the frontend's `EXTERNAL_IP`.
+1. **Access the web frontend in a browser** using the frontend's `EXTERNAL_IP`.
 
-```
+```sh
 kubectl get service frontend-external | awk '{print $4}'
 ```
 
-**Note**- you may see `<pending>` while GCP provisions the load balancer. If this happens, wait a few minutes and re-run the command.
+**Note**- you may see `<pending>` while GCP provisions the load balancer. If
+this happens, wait a few minutes and re-run the command.
 
 ## Resources
 
-- [Connecting to a Redis instance from a Google Kubernetes Engine cluster](https://cloud.google.com/memorystore/docs/redis/connect-redis-instance-gke)
+- [Connecting to a Redis instance from a Google Kubernetes Engine
+  cluster](https://cloud.google.com/memorystore/docs/redis/connect-redis-instance-gke)
