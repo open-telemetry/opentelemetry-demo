@@ -1,11 +1,5 @@
 # Webstore Demo
 
-<p align="center">
-<img src="src/frontend/static/icons/Hipster_HeroLogoCyan.svg" width="300" alt="Online Boutique" />
-</p>
-
----
-
 ## Under Construction
 
 This repo is a work in progress
@@ -57,7 +51,7 @@ Find **Protocol Buffers Descriptions** at the [`./pb` directory](./pb).
   Microservices use a high volume of gRPC calls to communicate to each other.
 - **[OpenTelemetry Traces](https://opentelemetry.io):**  
   All services are instrumented using OpenTelemetry available instrumentation libraries.
-- **[OpenTelemetry Collector](https://opentelemetry.io/docs/collector/getting-started):**  
+- **[OpenTelemetry Collector](https://opentelemetry.io/docs/collector/getting-started):**
   All services are instrumented and sending the generated traces to the
   OpenTelemetry Collector via gRPC. The received traces are then exported to the
   logs and to Jaeger.

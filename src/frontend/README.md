@@ -2,4 +2,6 @@
 
 Run the following command to restore dependencies to `vendor/` directory:
 
-    dep ensure --vendor-only
+```sh
+dep ensure --vendor-only
+```
