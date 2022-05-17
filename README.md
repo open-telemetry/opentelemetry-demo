@@ -6,26 +6,9 @@
 
 ---
 
-## This repo was modified and it is used to demonstrate OpenTelemetry capabilities
+## Under Construction
 
-All the services had their OpenCensus, Cloud Operations (Stackdriver) removed.
-Only OpenTelemetry Traces were added.
-
----
-
-**Online Boutique** is a cloud-native microservices demo application. Online
-Boutique consists of a 10-tier microservices application + 1 Load Generator. The
-application is a web-based e-commerce app where users can browse items, add them
-to the cart, and purchase them.
-
-**Google uses the original application to demonstrate use of technologies like
-Kubernetes/GKE, Istio, Stackdriver, gRPC and OpenCensus**. This application
-works on any Kubernetes cluster, as well as Google Kubernetes Engine. It’s
-**easy to deploy with little to no configuration**. You can find the one used by
-Google here: <https://github.com/GoogleCloudPlatform/microservices-demo>
-
-If you’re using this demo, please **★Star** this repository to show your
-interest!
+This repo is a work in progress
 
 ## Screenshots from the Online Boutique
 
@@ -38,78 +21,6 @@ interest!
 | Jaeger UI                                                                                                         | Trace View                                                                                                    |
 | ----------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------ |
 | [![Screenshot of Jaeger UI](./docs/img/jaeger-ui.png)](./docs/img/jaeger-ui.png) | [![Screenshot of Trace View](./docs/img/jaeger-trace-view.png)](./docs/img/jaeger-trace-view.png) |
-
-## Quickstart (GKE)
-
-If you'd like to follow Google's quickstart to deploy the sample in GKE,  please refer to [the original repository](https://github.com/GoogleCloudPlatform/microservices-demo#quickstart-gke).
-This repository will work with skaffold in the same way.  
-
-## Quickstart (Local with Docker)
-
-**Docker is required.**  
-If you want to test it locally without a kubernetes cluster, you can follow the steps below.
-
-1. **Clone this repository.**
-
-```
-git clone https://github.com/julianocosta89/opentelemetry-microservices-demo.git
-cd opentelemetry-microservices-demo
-```
-
-1. **Build and run the containers.**  
-
-We can simply use the script [hack/build-and-run.sh.](hack/build-and-run.sh) for this.  
-The script requires a TAG as parameter to build all container images and run them in a docker network called `online-boutique`.  
-
-```
-TAG=1.0.0 ./hack/build-and-run.sh
-```
-
-1. **Wait for the containers to be ready.**  
-The first time you run the previous command it takes some minutes to build everything.  
-Once it finishes, you can check the running containers:
-
-```
-docker ps
-```
-
-You should see:
-
-```
-CONTAINER ID   IMAGE                           COMMAND                  CREATED          STATUS          PORTS                                                                                                                                                                                                                                                                                                                                                                 NAMES
-610e1ffb8f3e   loadgenerator:1.0.0             "/bin/sh -c 'locust …"   35 seconds ago   Up 33 seconds                                                                                                                                                                                                                                                                                                                                                                         loadgenerator
-430b8b64f1f4   shippingservice:1.0.0           "/src/shippingservice"   35 seconds ago   Up 34 seconds   0.0.0.0:49162->50051/tcp, :::49162->50051/tcp                                                                                                                                                                                                                                                                                                                         shippingservice
-76d72b930915   recommendationservice:1.0.0     "opentelemetry-instr…"   36 seconds ago   Up 35 seconds   0.0.0.0:49161->8080/tcp, :::49161->8080/tcp                                                                                                                                                                                                                                                                                                                           recommendationservice
-70f5946dddff   productcatalogservice:1.0.0     "/src/server"            37 seconds ago   Up 35 seconds   0.0.0.0:49160->3550/tcp, :::49160->3550/tcp                                                                                                                                                                                                                                                                                                                           productcatalogservice
-261d476b1e11   paymentservice:1.0.0            "node --require ./tr…"   37 seconds ago   Up 36 seconds   0.0.0.0:49159->50051/tcp, :::49159->50051/tcp                                                                                                                                                                                                                                                                                                                         paymentservice
-a74930edbb96   frontend:1.0.0                  "/src/server"            38 seconds ago   Up 37 seconds   0.0.0.0:8080->8080/tcp, :::8080->8080/tcp                                                                                                                                                                                                                                                                                                                             frontend
-b223ca330de7   emailservice:1.0.0              "opentelemetry-instr…"   39 seconds ago   Up 38 seconds   0.0.0.0:49158->8080/tcp, :::49158->8080/tcp                                                                                                                                                                                                                                                                                                                           emailservice
-eb3729c0f2d3   currencyservice:1.0.0           "node --require ./tr…"   40 seconds ago   Up 38 seconds   0.0.0.0:49157->7000/tcp, :::49157->7000/tcp                                                                                                                                                                                                                                                                                                                           currencyservice
-6178957b18df   checkoutservice:1.0.0           "/src/checkoutservice"   40 seconds ago   Up 39 seconds   0.0.0.0:49156->5050/tcp, :::49156->5050/tcp                                                                                                                                                                                                                                                                                                                           checkoutservice
-4fb5500e3f01   cartservice:1.0.0               "/app/cartservice"       41 seconds ago   Up 40 seconds   0.0.0.0:49155->7070/tcp, :::49155->7070/tcp                                                                                                                                                                                                                                                                                                                           cartservice
-a0f1de606609   adservice:1.0.0                 "/app/build/install/…"   41 seconds ago   Up 40 seconds   0.0.0.0:49154->9555/tcp, :::49154->9555/tcp                                                                                                                                                                                                                                                                                                                           adservice
-ad06d33dea6d   redis:alpine                    "docker-entrypoint.s…"   42 seconds ago   Up 40 seconds   0.0.0.0:49153->6379/tcp, :::49153->6379/tcp                                                                                                                                                                                                                                                                                                                           redis-cart
-0baec02fc020   otelcollector:1.0.0             "/otelcol --config=c…"   42 seconds ago   Up 41 seconds   1888/tcp, 4317/tcp, 8888-8889/tcp, 13133/tcp, 55670/tcp, 55678-55679/tcp                                                                                                                                                                                                                                                                                              otelcollector
-eb39e7c3ff04   jaegertracing/all-in-one:1.30   "/go/bin/all-in-one-…"   43 seconds ago   Up 41 seconds   0.0.0.0:5775->5775/udp, :::5775->5775/udp, 0.0.0.0:5778->5778/tcp, :::5778->5778/tcp, 0.0.0.0:9411->9411/tcp, :::9411->9411/tcp, 0.0.0.0:14250->14250/tcp, :::14250->14250/tcp, 0.0.0.0:14268-14269->14268-14269/tcp, :::14268-14269->14268-14269/tcp, 0.0.0.0:6831-6832->6831-6832/udp, :::6831-6832->6831-6832/udp, 0.0.0.0:16686->16686/tcp, :::16686->16686/tcp   jaeger
-```
-
-1. **Access the web frontend in a browser**:  
- The frontend will be available at: `http://localhost:8080/`.
-
-1. **Access Jaeger in a browser to view your traces**:  
- The Jaeger UI will be available at: `http://localhost:16686/`.
-
-1. [Optional] **Clean up**:  
-To kill all containers, simply run [hack/kill-containers.sh.](hack/kill-containers.sh)
-
-```
-./kill-containers.sh
-```
-
-## Other Deployment Options
-
-If you'd like to check other deployment options,  please refer to [the original
-repository](https://github.com/GoogleCloudPlatform/microservices-demo#other-deployment-options).
 
 ## Architecture
 
@@ -144,8 +55,6 @@ Find **Protocol Buffers Descriptions** at the [`./pb` directory](./pb).
   This forked sample can also be executed only with Docker.
 - **[gRPC](https://grpc.io):**  
   Microservices use a high volume of gRPC calls to communicate to each other.
-- **[Istio](https://istio.io):**  
-  Application works on Istio service mesh.
 - **[OpenTelemetry Traces](https://opentelemetry.io):**  
   All services are instrumented using OpenTelemetry available instrumentation libraries.
 - **[OpenTelemetry Collector](https://opentelemetry.io/docs/collector/getting-started):**  
@@ -154,26 +63,17 @@ Find **Protocol Buffers Descriptions** at the [`./pb` directory](./pb).
   logs and to Jaeger.
 - **[Jager](https://www.jaegertracing.io):**  
   All generated traces are being sent to Jaeger.
-- **[Skaffold](https://skaffold.dev):**  
-  Application is deployed to Kubernetes with a single command using Skaffold.
 - **Synthetic Load Generation:**  
   The application demo comes with a background job that creates realistic usage
   patterns on the website using [Locust](https://locust.io/) load generator.
 
 ## Local Development
 
-If you would like to contribute features or fixes to this app, see the
-[Development Guide](/docs/development-guide.md) on how to build this demo
-locally.
+TBD
 
 ## Demos featuring Online Boutique
 
-Check out Google's [Demos featuring Online
-Boutique](https://github.com/GoogleCloudPlatform/microservices-demo#demos-featuring-online-boutique)
-
----
-
-This is not an official Google project.
+TBD
 
 ## Contributing
 
