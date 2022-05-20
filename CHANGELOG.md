@@ -13,3 +13,5 @@ release.
   demo](https://github.com/GoogleCloudPlatform/microservices-demo) with express
   knowledge of the owners. The pre-existing copyrights will remain. Any
   future significant modifications will be credited to OpenTelemetry Authors.
+* Added feature flag service protos
+  ([#26](https://github.com/open-telemetry/opentelemetry-demo-webstore/pull/26))
