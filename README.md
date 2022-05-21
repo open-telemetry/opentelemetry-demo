@@ -23,7 +23,41 @@ languages that talk to each other over gRPC. Plus one Load Generator which uses
 Locust to fake user traffic.
 See the [Development Principles](/docs/development-principles.md) doc for more information.
 
-[![Architecture of microservices](./docs/img/architecture-diagram.png)](./docs/img/architecture-diagram.png)
+```mermaid
+
+graph TD
+
+adservice(Ad Service<br/>&#40Java&#41):::java
+cache[(Cache<br/>&#40redis&#41)]
+cartservice(Cart Service<br/>&#40.NET&#41):::dotnet
+checkoutservice(Checkout Service<br/>&#40Go&#41):::golang
+currencyservice(Currency Service<br/>&#40Node.js&#41):::nodejs
+emailservice(Email Service<br/>&#40Python&#41):::python
+frontend(Frontend<br/>&#40Go&#41):::golang
+loadgenerator([Load Generator<br/>&#40Python&#41]):::python
+paymentservice(Payment Service<br/>&#40Node.js&#41):::nodejs
+productcatalogservice(ProductCatalog Service<br/>&#40Go&#41):::golang
+recommendationservice(Recommendation Service<br/>&#40Python&#41):::python
+shippingservice(Shipping Service<br/>&#40Go&#41):::golang
+
+Internet -->|HTTP| frontend
+loadgenerator -->|HTTP| frontend
+
+checkoutservice --> cartservice --> cache
+checkoutservice --> productcatalogservice
+checkoutservice --> currencyservice
+checkoutservice --> emailservice
+checkoutservice --> paymentservice
+checkoutservice --> shippingservice
+
+frontend --> adservice
+frontend --> cartservice
+frontend --> productcatalogservice
+frontend --> checkoutservice
+frontend --> currencyservice
+frontend --> recommendationservice --> productcatalogservice
+frontend --> shippingservice
+```
 
 Find **Protocol Buffers Descriptions** at the [`./pb` directory](./pb/README.md).
 
