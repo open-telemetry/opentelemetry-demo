@@ -22,7 +22,6 @@ This repo is a work in progress
 languages that talk to each other over gRPC. Plus one Load Generator which uses
 Locust to fake user traffic.
 See the [Development Principles](/docs/development-principles.md) doc for more information.
-Just trying to give folks some initial feel/taste - I'll add color in the next few days:
 
 ```mermaid
 graph TD
