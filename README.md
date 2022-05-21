@@ -24,20 +24,28 @@ Locust to fake user traffic.
 See the [Development Principles](/docs/development-principles.md) doc for more information.
 
 ```mermaid
+
 graph TD
 
-adservice(Ad Service)
+classDef dotnet fill:#7F007F
+classDef golang fill:#3F3FCF
+classDef java   fill:#FF0000
+classDef nodejs fill:#007F00
+classDef python fill:#7F7F00
+
+
+adservice(Ad Service):::java
 cache[(Cache<br/>&#40redis&#41)]
-cartservice(Cart Service)
-checkoutservice(Checkout Service)
-currencyservice(Currency Service)
-emailservice(Email Service)
-frontend(Frontend)
-loadgenerator([Load Generator])
-paymentservice(Payment Service)
-productcatalogservice(ProductCatalog Service)
-recommendationservice(Recommendation Service)
-shippingservice(Shipping Service)
+cartservice(Cart Service):::dotnet
+checkoutservice(Checkout Service):::golang
+currencyservice(Currency Service):::nodejs
+emailservice(Email Service):::python
+frontend(Frontend):::golang
+loadgenerator([Load Generator]):::python
+paymentservice(Payment Service):::nodejs
+productcatalogservice(ProductCatalog Service):::golang
+recommendationservice(Recommendation Service):::python
+shippingservice(Shipping Service):::golang
 
 Internet -->|HTTP| frontend
 loadgenerator -->|HTTP| frontend
