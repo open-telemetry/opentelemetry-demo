@@ -22,8 +22,31 @@ This repo is a work in progress
 languages that talk to each other over gRPC. Plus one Load Generator which uses
 Locust to fake user traffic.
 See the [Development Principles](/docs/development-principles.md) doc for more information.
+Just trying to give folks some initial feel/taste - I'll add color in the next few days:
 
-[![Architecture of microservices](./docs/img/architecture-diagram.png)](./docs/img/architecture-diagram.png)
+```mermaid
+graph TD
+
+Internet(Internet) -->|HTTP| Frontend(Frontend)
+Load([Load Generator]) -->|HTTP| Frontend
+
+Checkout --> Cart --> Cache[(Cache<br/>&#40redis&#41)]
+Checkout --> Catalog
+Checkout --> Currency
+Checkout --> Email(Email Service)
+Checkout --> Payment(Payment Service)
+Checkout --> Shipping
+
+Frontend --> Ad(Ad Service)
+Frontend --> Cart(Cart Service)
+Frontend --> Catalog(ProductCatalog Service)
+Frontend --> Checkout(Checkout Service)
+Frontend --> Currency(Currency Service)
+Frontend --> Recommendation(Recommendation Service)
+Frontend --> Shipping(Shipping Service)
+
+Recommendation --> Catalog
+```
 
 Find **Protocol Buffers Descriptions** at the [`./pb` directory](./pb/README.md).
 
