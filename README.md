@@ -27,25 +27,18 @@ See the [Development Principles](/docs/development-principles.md) doc for more i
 
 graph TD
 
-classDef dotnet fill:#7F007F
-classDef golang fill:#3F3FCF
-classDef java   fill:#FF0000
-classDef nodejs fill:#007F00
-classDef python fill:#7F7F00
-
-
-adservice(Ad Service):::java
+adservice(Ad Service<br/>&#40Java&#41):::java
 cache[(Cache<br/>&#40redis&#41)]
-cartservice(Cart Service):::dotnet
-checkoutservice(Checkout Service):::golang
-currencyservice(Currency Service):::nodejs
-emailservice(Email Service):::python
-frontend(Frontend):::golang
-loadgenerator([Load Generator]):::python
-paymentservice(Payment Service):::nodejs
-productcatalogservice(ProductCatalog Service):::golang
-recommendationservice(Recommendation Service):::python
-shippingservice(Shipping Service):::golang
+cartservice(Cart Service<br/>&#40.NET&#41):::dotnet
+checkoutservice(Checkout Service<br/>&#40Go&#41):::golang
+currencyservice(Currency Service<br/>&#40Node.js&#41):::nodejs
+emailservice(Email Service<br/>&#40Python&#41):::python
+frontend(Frontend<br/>&#40Go&#41):::golang
+loadgenerator([Load Generator<br/>&#40Python&#41]):::python
+paymentservice(Payment Service<br/>&#40Node.js&#41):::nodejs
+productcatalogservice(ProductCatalog Service<br/>&#40Go&#41):::golang
+recommendationservice(Recommendation Service<br/>&#40Python&#41):::python
+shippingservice(Shipping Service<br/>&#40Go&#41):::golang
 
 Internet -->|HTTP| frontend
 loadgenerator -->|HTTP| frontend
