@@ -26,25 +26,36 @@ See the [Development Principles](/docs/development-principles.md) doc for more i
 ```mermaid
 graph TD
 
-Internet(Internet) -->|HTTP| Frontend(Frontend)
-Load([Load Generator]) -->|HTTP| Frontend
+adservice(Ad Service)
+cache[(Cache<br/>&#40redis&#41)]
+cartservice(Cart Service)
+checkoutservice(Checkout Service)
+currencyservice(Currency Service)
+emailservice(Email Service)
+frontend(Frontend)
+loadgenerator([Load Generator])
+paymentservice(Payment Service)
+productcatalogservice(ProductCatalog Service)
+recommendationservice(Recommendation Service)
+shippingservice(Shipping Service)
 
-Checkout --> Cart --> Cache[(Cache<br/>&#40redis&#41)]
-Checkout --> Catalog
-Checkout --> Currency
-Checkout --> Email(Email Service)
-Checkout --> Payment(Payment Service)
-Checkout --> Shipping
+Internet -->|HTTP| frontend
+loadgenerator -->|HTTP| frontend
 
-Frontend --> Ad(Ad Service)
-Frontend --> Cart(Cart Service)
-Frontend --> Catalog(ProductCatalog Service)
-Frontend --> Checkout(Checkout Service)
-Frontend --> Currency(Currency Service)
-Frontend --> Recommendation(Recommendation Service)
-Frontend --> Shipping(Shipping Service)
+checkoutservice --> cartservice --> cache
+checkoutservice --> productcatalogservice
+checkoutservice --> currencyservice
+checkoutservice --> emailservice
+checkoutservice --> paymentservice
+checkoutservice --> shippingservice
 
-Recommendation --> Catalog
+frontend --> adservice
+frontend --> cartservice
+frontend --> productcatalogservice
+frontend --> checkoutservice
+frontend --> currencyservice
+frontend --> recommendationservice --> productcatalogservice
+frontend --> shippingservice
 ```
 
 Find **Protocol Buffers Descriptions** at the [`./pb` directory](./pb/README.md).
