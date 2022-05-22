@@ -89,7 +89,7 @@ Find **Protocol Buffers Descriptions** at the [`./pb` directory](./pb/README.md)
   All services are instrumented and sending the generated traces to the
   OpenTelemetry Collector via gRPC. The received traces are then exported to the
   logs and to Jaeger.
-- **[Jager](https://www.jaegertracing.io):**  
+- **[Jaeger](https://www.jaegertracing.io):**  
   All generated traces are being sent to Jaeger.
 - **Synthetic Load Generation:**  
   The application demo comes with a background job that creates realistic usage
