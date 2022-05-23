@@ -24,7 +24,7 @@ services:
   redis:
     image: redis:alpine
     ports:
-      - "${REDIS_PORT}":"${REDIS_PORT}"
+      - "${REDIS_PORT}:${REDIS_PORT}"
 
   # Load Generator
   loadgenerator:
@@ -55,14 +55,14 @@ services:
       - RECOMMENDATION_SERVICE_ADDR
       - SHIPPING_SERVICE_ADDR
     depends_on:
-    - adservice
-    - cartservice
-    - checkoutservice
-    - currencyservice
-    - otelcol
-    - productcatalogservice
-    - recommendationservice
-    - shippingservice
+      - adservice
+      - cartservice
+      - checkoutservice
+      - currencyservice
+      - otelcol
+      - productcatalogservice
+      - recommendationservice
+      - shippingservice
 
   # Services
   adservice:
@@ -107,13 +107,13 @@ services:
       - PRODUCT_CATALOG_SERVICE_ADDR
       - SHIPPING_SERVICE_ADDR
     depends_on:
-    - cartservice
-    - currencyservice
-    - emailservice
-    - otelcol
-    - paymentservice
-    - productcatalogservice
-    - shippingservice
+      - cartservice
+      - currencyservice
+      - emailservice
+      - otelcol
+      - paymentservice
+      - productcatalogservice
+      - shippingservice
 
   currencyservice:
     build:
