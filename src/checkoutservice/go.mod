@@ -1,4 +1,4 @@
-module github.com/GoogleCloudPlatform/microservices-demo/src/checkoutservice
+module github.com/opentelemetry/opentelemetry-demo-webstore/src/checkoutservice
 
 go 1.17
 

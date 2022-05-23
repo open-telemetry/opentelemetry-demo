@@ -1,4 +1,4 @@
-module github.com/GoogleCloudPlatform/microservices-demo/src/shippingservice
+module github.com/opentelemetry/opentelemetry-demo-webstore/src/shippingservice
 
 go 1.17
 
