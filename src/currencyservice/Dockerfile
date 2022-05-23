@@ -12,35 +12,28 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-FROM node:16-alpine as base
+FROM node:16-alpine AS base
 
-FROM base as builder
+FROM base AS builder
 
-# Some packages (e.g. @google-cloud/profiler) require additional
-# deps for post-install scripts
-RUN apk add --update --no-cache \
-    python3 \
-    make \
-    g++
+WORKDIR /usr/src/app/
 
-WORKDIR /usr/src/app
+COPY ./src/currencyservice/package.json ./
 
-COPY package*.json ./
+ENV NODE_ENV=${NODE_ENV}
+RUN npm install
 
-RUN npm install --only=production
+# -----------------------------------------------------------------------------
 
 FROM base
 
-RUN GRPC_HEALTH_PROBE_VERSION=v0.4.7 && \
-    wget -qO/bin/grpc_health_probe https://github.com/grpc-ecosystem/grpc-health-probe/releases/download/${GRPC_HEALTH_PROBE_VERSION}/grpc_health_probe-linux-amd64 && \
-    chmod +x /bin/grpc_health_probe
+WORKDIR /usr/src/app/
 
-WORKDIR /usr/src/app
+COPY --from=builder /usr/src/app/node_modules/ ./node_modules/
+COPY ./src/currencyservice/ ./
+COPY ./src/tracing.js ./
+COPY ./pb/ ./proto/
 
-COPY --from=builder /usr/src/app/node_modules ./node_modules
+EXPOSE ${CURRENCY_SERVICE_PORT}
 
-COPY . .
-
-EXPOSE 7000
-
-ENTRYPOINT [ "node", "--require", "./tracing.js", "server.js" ]
+ENTRYPOINT [ "node", "--require", "./tracing.js", "./server.js" ]

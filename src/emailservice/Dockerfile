@@ -14,26 +14,15 @@
 
 FROM python:3.10-slim
 
-# get packages
-COPY requirements.txt .
-RUN pip install -r requirements.txt
+WORKDIR /usr/src/app/
 
-# Enable unbuffered logging
-ENV PYTHONUNBUFFERED=1
-
-RUN apt-get -qq update \
-    && apt-get install -y --no-install-recommends \
-    wget
-
-# Download the grpc health probe
-RUN GRPC_HEALTH_PROBE_VERSION=v0.4.7 && \
-    wget -qO/bin/grpc_health_probe https://github.com/grpc-ecosystem/grpc-health-probe/releases/download/${GRPC_HEALTH_PROBE_VERSION}/grpc_health_probe-linux-amd64 && \
-    chmod +x /bin/grpc_health_probe
-
-WORKDIR /email_server
+COPY ./src/emailservice/ ./
+COPY ./pb ./proto/
+RUN pip install -r ./requirements.txt
 
 # Add the application
-COPY . .
+RUN python -m pip install grpcio-tools
+RUN python -m grpc_tools.protoc -I=./proto/ --python_out=./ --grpc_python_out=./ ./proto/demo.proto
 
-EXPOSE 8080
+EXPOSE ${EMAIL_SERVICE_PORT}
 ENTRYPOINT [ "opentelemetry-instrument", "python", "email_server.py" ]
