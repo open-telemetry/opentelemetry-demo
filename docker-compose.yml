@@ -1,0 +1,192 @@
+version: '3.9'
+services:
+
+  # Jaeger
+  jaeger-all-in-one:
+    image: jaegertracing/all-in-one
+    ports:
+      - "16686:16686"
+      - "14268"
+      - "14250"
+
+  # Collector
+  otelcol:
+    image: otel/opentelemetry-collector
+    command: [ "--config=/etc/otelcol-config.yml" ]
+    volumes:
+      - ./otelcol-config.yml:/etc/otelcol-config.yml
+    ports:
+      - "4317"
+    depends_on:
+      - jaeger-all-in-one
+
+  # Redis
+  redis:
+    image: redis:alpine
+    ports:
+      - "${REDIS_PORT}":"${REDIS_PORT}"
+
+  # Load Generator
+  loadgenerator:
+    build:
+      context: ./
+      dockerfile: ./src/loadgenerator/Dockerfile
+    environment:
+      - FRONTEND_ADDR
+      - OTEL_EXPORTER_OTLP_ENDPOINT
+    depends_on:
+      - frontend
+
+  # Frontend
+  frontend:
+    build:
+      context: ./
+      dockerfile: ./src/frontend/Dockerfile
+    ports:
+      - "${FRONTEND_PORT}:${FRONTEND_PORT}"
+    environment:
+      - AD_SERVICE_ADDR
+      - CART_SERVICE_ADDR
+      - CHECKOUT_SERVICE_ADDR
+      - CURRENCY_SERVICE_ADDR
+      - FRONTEND_PORT
+      - OTEL_EXPORTER_OTLP_ENDPOINT
+      - PRODUCT_CATALOG_SERVICE_ADDR
+      - RECOMMENDATION_SERVICE_ADDR
+      - SHIPPING_SERVICE_ADDR
+    depends_on:
+    - adservice
+    - cartservice
+    - checkoutservice
+    - currencyservice
+    - otelcol
+    - productcatalogservice
+    - recommendationservice
+    - shippingservice
+
+  # Services
+  adservice:
+    build:
+      context: ./
+      dockerfile: ./src/adservice/Dockerfile
+    ports:
+      - "${AD_SERVICE_PORT}:${AD_SERVICE_PORT}"
+    environment:
+      - AD_SERVICE_PORT
+      - OTEL_EXPORTER_OTLP_ENDPOINT
+    depends_on:
+      - otelcol
+
+  cartservice:
+    build:
+      context: ./
+      dockerfile: ./src/cartservice/src/Dockerfile
+    ports:
+      - "${CART_SERVICE_PORT}:${CART_SERVICE_PORT}"
+    environment:
+      - CART_SERVICE_PORT
+      - OTEL_EXPORTER_OTLP_ENDPOINT
+      - REDIS_ADDR
+    depends_on:
+      - otelcol
+      - redis
+
+  checkoutservice:
+    build:
+      context: ./
+      dockerfile: ./src/checkoutservice/Dockerfile
+    ports:
+      - "${CHECKOUT_SERVICE_PORT}:${CHECKOUT_SERVICE_PORT}"
+    environment:
+      - CART_SERVICE_ADDR
+      - CHECKOUT_SERVICE_PORT
+      - CURRENCY_SERVICE_ADDR
+      - EMAIL_SERVICE_ADDR
+      - OTEL_EXPORTER_OTLP_ENDPOINT
+      - PAYMENT_SERVICE_ADDR
+      - PRODUCT_CATALOG_SERVICE_ADDR
+      - SHIPPING_SERVICE_ADDR
+    depends_on:
+    - cartservice
+    - currencyservice
+    - emailservice
+    - otelcol
+    - paymentservice
+    - productcatalogservice
+    - shippingservice
+
+  currencyservice:
+    build:
+      context: ./
+      dockerfile: ./src/currencyservice/Dockerfile
+    ports:
+      - "${CURRENCY_SERVICE_PORT}:${CURRENCY_SERVICE_PORT}"
+    environment:
+      - CURRENCY_SERVICE_PORT
+      - NODE_ENV
+      - OTEL_EXPORTER_OTLP_ENDPOINT
+    depends_on:
+      - otelcol
+
+  emailservice:
+    build:
+      context: ./
+      dockerfile: ./src/emailservice/Dockerfile
+    ports:
+      - "${EMAIL_SERVICE_PORT}:${EMAIL_SERVICE_PORT}"
+    environment:
+      - EMAIL_SERVICE_PORT
+      - OTEL_EXPORTER_OTLP_ENDPOINT
+    depends_on:
+      - otelcol
+
+  paymentservice:
+    build:
+      context: ./
+      dockerfile: ./src/paymentservice/Dockerfile
+    ports:
+      - "${PAYMENT_SERVICE_PORT}:${PAYMENT_SERVICE_PORT}"
+    environment:
+      - NODE_ENV
+      - OTEL_EXPORTER_OTLP_ENDPOINT
+      - PAYMENT_SERVICE_PORT
+    depends_on:
+      - otelcol
+
+  productcatalogservice:
+    build:
+      context: ./
+      dockerfile: ./src/productcatalogservice/Dockerfile
+    ports:
+      - "${PRODUCT_CATALOG_SERVICE_PORT}:${PRODUCT_CATALOG_SERVICE_PORT}"
+    environment:
+      - OTEL_EXPORTER_OTLP_ENDPOINT
+      - PRODUCT_CATALOG_SERVICE_PORT
+    depends_on:
+      - otelcol
+
+  recommendationservice:
+    build:
+      context: ./
+      dockerfile: ./src/recommendationservice/Dockerfile
+    ports:
+      - "${RECOMMENDATION_SERVICE_PORT}:${RECOMMENDATION_SERVICE_PORT}"
+    environment:
+      - OTEL_EXPORTER_OTLP_ENDPOINT
+      - PRODUCT_CATALOG_SERVICE_ADDR
+      - RECOMMENDATION_SERVICE_PORT
+    depends_on:
+      - otelcol
+      - productcatalogservice
+
+  shippingservice:
+    build:
+      context: ./
+      dockerfile: ./src/shippingservice/Dockerfile
+    ports:
+      - "${SHIPPING_SERVICE_PORT}:${SHIPPING_SERVICE_PORT}"
+    environment:
+      - OTEL_EXPORTER_OTLP_ENDPOINT
+      - SHIPPING_SERVICE_PORT
+    depends_on:
+      - otelcol
