@@ -125,7 +125,7 @@ def start(dummy_mode):
   demo_pb2_grpc.add_EmailServiceServicer_to_server(service, server)
   health_pb2_grpc.add_HealthServicer_to_server(service, server)
 
-  port = os.environ.get('PORT', "8080")
+  port = os.environ.get('EMAIL_SERVICE_PORT', "8080")
   logger.info("listening on port: "+port)
   server.add_insecure_port('[::]:'+port)
   server.start()
@@ -138,5 +138,5 @@ def start(dummy_mode):
 
 if __name__ == '__main__':
   logger.info('starting the email service in dummy mode.')
-  
+
   start(dummy_mode = True)

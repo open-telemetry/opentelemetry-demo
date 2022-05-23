@@ -19,7 +19,7 @@ import (
 
 	"golang.org/x/net/context"
 
-	pb "github.com/GoogleCloudPlatform/microservices-demo/src/shippingservice/genproto/hipstershop"
+	pb "github.com/opentelemetry/opentelemetry-demo-webstore/src/shippingservice/genproto/hipstershop"
 )
 
 // TestGetQuote is a basic check on the GetQuote RPC service.

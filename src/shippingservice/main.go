@@ -33,12 +33,12 @@ import (
 	"go.opentelemetry.io/otel/propagation"
 	sdktrace "go.opentelemetry.io/otel/sdk/trace"
 
-	pb "github.com/GoogleCloudPlatform/microservices-demo/src/shippingservice/genproto/hipstershop"
+	pb "github.com/opentelemetry/opentelemetry-demo-webstore/src/shippingservice/genproto/hipstershop"
 	healthpb "google.golang.org/grpc/health/grpc_health_v1"
 )
 
 const (
-	defaultPort = "50051"
+	defaultPort = "51234"
 )
 
 var log *logrus.Logger
@@ -82,7 +82,7 @@ func main() {
 	}()
 
 	port := defaultPort
-	if value, ok := os.LookupEnv("PORT"); ok {
+	if value, ok := os.LookupEnv("SHIPPING_SERVICE_PORT"); ok {
 		port = value
 	}
 	port = fmt.Sprintf(":%s", port)

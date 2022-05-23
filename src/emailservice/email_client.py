@@ -24,7 +24,7 @@ logger = getJSONLogger('emailservice-client')
 
 
 def send_confirmation_email(email, order):
-  channel = grpc.insecure_channel('0.0.0.0:8080')
+  channel = grpc.insecure_channel('localhost:8080')
 
   stub = demo_pb2_grpc.EmailServiceStub(channel)
   try:
@@ -39,3 +39,34 @@ def send_confirmation_email(email, order):
 
 if __name__ == '__main__':
   logger.info('Client for email service.')
+  order = demo_pb2.OrderResult(
+    order_id = '123',
+    shipping_tracking_id = 'deadbeef',
+    shipping_cost = demo_pb2.Money(
+      currency_code = 'USD',
+      units = 2,
+      nanos = 0
+    ),
+    shipping_address = demo_pb2.Address(
+      street_address = 'One Microsoft Way',
+      city = 'Redmond',
+      state = 'WA',
+      country = 'USA',
+      zip_code = 98052
+    ),
+    items = [
+      demo_pb2.OrderItem(
+        item = demo_pb2.CartItem(
+          product_id = 'Space Pen',
+          quantity = 1
+        ),
+        cost = demo_pb2.Money(
+          currency_code = 'USD',
+          units = 14,
+          nanos = 990000000
+        )
+      )
+    ]
+  )
+
+  send_confirmation_email('hello@example.com', order)

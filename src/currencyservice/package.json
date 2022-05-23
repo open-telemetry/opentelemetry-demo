@@ -2,7 +2,7 @@
   "name": "grpc-currency-service",
   "version": "0.1.0",
   "description": "A gRPC currency conversion microservice",
-  "repository": "https://github.com/GoogleCloudPlatform/microservices-demo",
+  "repository": "https://github.com/opentelemetry/opentelemetry-demo-webstore",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "lint": "semistandard *.js"

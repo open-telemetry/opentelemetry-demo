@@ -36,7 +36,7 @@ import (
 )
 
 const (
-	port            = "8080"
+	port            = "3000"
 	defaultCurrency = "USD"
 	cookieMaxAge    = 60 * 60 * 48
 
@@ -106,11 +106,7 @@ func main() {
 
 	ctx := context.Background()
 
-	srvPort := port
-	if os.Getenv("PORT") != "" {
-		srvPort = os.Getenv("PORT")
-	}
-	addr := os.Getenv("LISTEN_ADDR")
+	addr := os.Getenv("FRONTEND_ADDR")
 	svc := new(frontendServer)
 	mustMapEnv(&svc.productCatalogSvcAddr, "PRODUCT_CATALOG_SERVICE_ADDR")
 	mustMapEnv(&svc.currencySvcAddr, "CURRENCY_SERVICE_ADDR")
@@ -146,8 +142,8 @@ func main() {
 	handler = &logHandler{log: log, next: handler} // add logging
 	handler = ensureSessionID(handler)             // add session ID
 
-	log.Infof("starting server on " + addr + ":" + srvPort)
-	log.Fatal(http.ListenAndServe(addr+":"+srvPort, handler))
+	log.Infof("starting server on " + addr)
+	log.Fatal(http.ListenAndServe(addr, handler))
 }
 
 func mustMapEnv(target *string, envKey string) {

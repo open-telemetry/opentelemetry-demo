@@ -34,14 +34,9 @@ import (
 	"go.opentelemetry.io/otel/propagation"
 	sdktrace "go.opentelemetry.io/otel/sdk/trace"
 
-	pb "github.com/GoogleCloudPlatform/microservices-demo/src/checkoutservice/genproto/hipstershop"
-	money "github.com/GoogleCloudPlatform/microservices-demo/src/checkoutservice/money"
+	pb "github.com/opentelemetry/opentelemetry-demo-webstore/src/checkoutservice/genproto/hipstershop"
+	money "github.com/opentelemetry/opentelemetry-demo-webstore/src/checkoutservice/money"
 	healthpb "google.golang.org/grpc/health/grpc_health_v1"
-)
-
-const (
-	listenPort  = "5050"
-	usdCurrency = "USD"
 )
 
 var log *logrus.Logger
@@ -87,11 +82,6 @@ type checkoutService struct {
 }
 
 func main() {
-	port := listenPort
-	if os.Getenv("PORT") != "" {
-		port = os.Getenv("PORT")
-	}
-
 	tp := InitTracerProvider()
 	defer func() {
 		if err := tp.Shutdown(context.Background()); err != nil {
@@ -109,7 +99,7 @@ func main() {
 
 	log.Infof("service config: %+v", svc)
 
-	lis, err := net.Listen("tcp", fmt.Sprintf(":%s", port))
+	lis, err := net.Listen("tcp", fmt.Sprintf(":%s", os.Getenv("CHECKOUT_SERVICE_PORT")))
 	if err != nil {
 		log.Fatal(err)
 	}

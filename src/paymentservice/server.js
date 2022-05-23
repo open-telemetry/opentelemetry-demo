@@ -107,6 +107,6 @@ class HipsterShopServer {
   }
 }
 
-HipsterShopServer.PORT = process.env.PORT;
+HipsterShopServer.PORT = process.env['PAYMENT_SERVICE_PORT'];
 
 module.exports = HipsterShopServer;

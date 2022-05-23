@@ -22,10 +22,10 @@ const protoLoader = require('@grpc/proto-loader');
 const MAIN_PROTO_PATH = path.join(__dirname, './proto/demo.proto');
 const HEALTH_PROTO_PATH = path.join(__dirname, './proto/grpc/health/v1/health.proto');
 
-const PORT = process.env.PORT;
+const PORT = process.env.CURRENCY_SERVICE_PORT;
 
-const shopProto = _loadProto(MAIN_PROTO_PATH).hipstershop;
-const healthProto = _loadProto(HEALTH_PROTO_PATH).grpc.health.v1;
+const hipsterShop = _loadProto(MAIN_PROTO_PATH).hipstershop;
+const health = _loadProto(HEALTH_PROTO_PATH).grpc.health.v1;
 
 const logger = pino({
   name: 'currencyservice-server',
@@ -131,17 +131,13 @@ function check (call, callback) {
 function main () {
   logger.info(`Starting gRPC server on port ${PORT}...`);
   const server = new grpc.Server();
-  server.addService(shopProto.CurrencyService.service, {getSupportedCurrencies, convert});
-  server.addService(healthProto.Health.service, {check});
+  server.addService(hipsterShop.CurrencyService.service, {getSupportedCurrencies, convert});
+  server.addService(health.Health.service, {check});
 
-  server.bindAsync(
-    `0.0.0.0:${PORT}`,
-    grpc.ServerCredentials.createInsecure(),
-    function() {
-      logger.info(`CurrencyService gRPC server started on port ${PORT}`);
-      server.start();
-    },
-   );
+  server.bindAsync(`0.0.0.0:${PORT}`, grpc.ServerCredentials.createInsecure(), () => {
+    logger.info(`CurrencyService gRPC server - Port ${PORT}`);
+    server.start();
+  });
 }
 
 main();

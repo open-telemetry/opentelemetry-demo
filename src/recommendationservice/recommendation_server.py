@@ -70,7 +70,7 @@ class RecommendationService(demo_pb2_grpc.RecommendationServiceServicer):
 if __name__ == "__main__":
     logger.info("initializing recommendationservice")
 
-    port = os.environ.get('PORT', "8080")
+    port = os.environ.get('RECOMMENDATION_SERVICE_PORT', "8080")
     catalog_addr = os.environ.get('PRODUCT_CATALOG_SERVICE_ADDR', '')
     if catalog_addr == "":
         raise Exception('PRODUCT_CATALOG_SERVICE_ADDR environment variable not set')

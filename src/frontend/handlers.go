@@ -30,8 +30,8 @@ import (
 	"github.com/pkg/errors"
 	"github.com/sirupsen/logrus"
 
-	pb "github.com/GoogleCloudPlatform/microservices-demo/src/frontend/genproto/hipstershop"
-	"github.com/GoogleCloudPlatform/microservices-demo/src/frontend/money"
+	pb "github.com/opentelemetry/opentelemetry-demo-webstore/src/frontend/genproto/hipstershop"
+	"github.com/opentelemetry/opentelemetry-demo-webstore/src/frontend/money"
 )
 
 type platformDetails struct {
