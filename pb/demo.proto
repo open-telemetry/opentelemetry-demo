@@ -309,7 +309,7 @@ message UpdateFlagResponse {}
 message ListFlagsRequest {}
 
 message ListFlagsResponse {
-  repated Flag flag = 1;
+  repeated Flag flag = 1;
 }
 
 message DeleteFlagRequest {
