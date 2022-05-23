@@ -1,30 +1,24 @@
-# IntelliJ IDEA
-.idea
+*~
 *.iml
+*.ipr
+*.iws
+*.pyc
+.nb-gradle
+.nb-gradle-properties
+.swp
+.DS_Store
+package-lock.json
+\#*\#
 
 # Eclipse
 .classpath
 .project
 .settings
-bin
 
-# NetBeans
-/.nb-gradle
-/.nb-gradle-properties
-
-# OS X
-.DS_Store
-
-# Emacs
-*~
-\#*\#
-
-# Vim
-.swp
-
-# Misspell binary
-internal/tools/bin
-
-# Node.js files for tools (e.g. markdown-toc)
+bin/
+obj/
+.vs/
+.gradle/
+.idea/
+build/
 node_modules/
-package-lock.json
