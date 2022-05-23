@@ -17,14 +17,15 @@
  */
 
 const path = require('path');
-const grpc = require('grpc');
-const leftPad = require('left-pad');
+const grpc = require('@grpc/grpc-js');
 const pino = require('pino');
+const protoLoader = require('@grpc/proto-loader');
 
-const PROTO_PATH = path.join(__dirname, './proto/demo.proto');
+const PROTO_PATH = path.join(__dirname, '../../pb/demo.proto');
 const PORT = 7000;
 
-const shopProto = grpc.load(PROTO_PATH).hipstershop;
+const shopProto = _loadProto(PROTO_PATH).hipstershop;
+
 const client = new shopProto.CurrencyService(`localhost:${PORT}`,
   grpc.credentials.createInsecure());
 
@@ -44,6 +45,20 @@ const request = {
   to_code: 'EUR'
 };
 
+function _loadProto (path) {
+  const packageDefinition = protoLoader.loadSync(
+    path,
+    {
+      keepCase: true,
+      longs: String,
+      enums: String,
+      defaults: true,
+      oneofs: true
+    }
+  );
+  return grpc.loadPackageDefinition(packageDefinition);
+}
+
 function _moneyToString (m) {
   return `${m.units}.${m.nanos.toString().padStart(9,'0')} ${m.currency_code}`;
 }
@@ -60,6 +75,6 @@ client.convert(request, (err, response) => {
   if (err) {
     logger.error(`Error in convert: ${err}`);
   } else {
-    logger.log(`Convert: ${_moneyToString(request.from)} to ${_moneyToString(response)}`);
+    logger.info(`Convert: ${_moneyToString(request.from)} to ${_moneyToString(response)}`);
   }
 });
