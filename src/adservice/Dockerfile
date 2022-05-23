@@ -17,9 +17,9 @@ FROM openjdk:18-slim AS builder
 WORKDIR /usr/src/app/
 
 COPY ./src/adservice/ ./
-COPY ./pb/ ./src/main/java/proto/
+COPY ./pb/ ./src/main/proto/
 RUN chmod +x ./gradlew
-RUN bash ./gradlew downloadRepos
+RUN ./gradlew downloadRepos
 RUN ./gradlew installDist
 
 # -----------------------------------------------------------------------------
