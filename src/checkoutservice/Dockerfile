@@ -25,8 +25,6 @@ RUN go get google.golang.org/protobuf/cmd/protoc-gen-go
 RUN go get google.golang.org/grpc/cmd/protoc-gen-go-grpc
 
 # Build executable
-# TODO have a single dockerfile (container) that compiles demo.proto into every language and puts in a folder
-#      then all Dockerfiles just need to copy it? is this possible?
 RUN protoc -I ./proto/ ./proto/demo.proto --go_out=./ --go-grpc_out=./
 RUN go build -o /go/bin/checkoutservice/ ./
 
