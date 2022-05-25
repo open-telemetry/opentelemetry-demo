@@ -53,16 +53,16 @@ featureflagstore[(Flag Store<br/>&#40Blob/DB&#41)]
 featureflagfeservice --> featureflagbeservice --> featureflagstore  
 
 end
-classDef java fill:#b07219;
-classDef dotnet fill:#178600;
-classDef golang fill:#00add8;
-classDef cpp fill:#f34b7d;
-classDef ruby fill:#701516;
-classDef python fill:#3572A5;
-classDef nodejs fill:#f1e05a;
-classDef rust fill:#dea584;
-classDef erlang fill:#b83998;
-classDef php fill:#4f5d95;
+classDef java fill:#b07219,color:white;
+classDef dotnet fill:#178600,color:white;
+classDef golang fill:#00add8,color:black;
+classDef cpp fill:#f34b7d,color:white;
+classDef ruby fill:#701516,color:white;
+classDef python fill:#3572A5,color:white;
+classDef nodejs fill:#f1e05a,color:black;
+classDef rust fill:#dea584,color:black;
+classDef erlang fill:#b83998,color:white;
+classDef php fill:#4f5d95,color:white;
 ```
 
 ```mermaid
@@ -80,14 +80,14 @@ subgraph Service Legend
   phpsvc(PHP):::php
 end
 
-classDef java fill:#b07219;
-classDef dotnet fill:#178600;
-classDef golang fill:#00add8;
-classDef cpp fill:#f34b7d;
-classDef ruby fill:#701516;
-classDef python fill:#3572A5;
-classDef nodejs fill:#f1e05a;
-classDef rust fill:#dea584;
-classDef erlang fill:#b83998;
-classDef php fill:#4f5d95;
+classDef java fill:#b07219,color:white;
+classDef dotnet fill:#178600,color:white;
+classDef golang fill:#00add8,color:black;
+classDef cpp fill:#f34b7d,color:white;
+classDef ruby fill:#701516,color:white;
+classDef python fill:#3572A5,color:white;
+classDef nodejs fill:#f1e05a,color:black;
+classDef rust fill:#dea584,color:black;
+classDef erlang fill:#b83998,color:white;
+classDef php fill:#4f5d95,color:white;
 ```
