@@ -2,7 +2,7 @@ version: '3.9'
 services:
 
   # Jaeger
-  jaeger-all-in-one:
+  jaeger:
     image: jaegertracing/all-in-one
     ports:
       - "16686:16686"
@@ -18,7 +18,7 @@ services:
     ports:
       - "4317"
     depends_on:
-      - jaeger-all-in-one
+      - jaeger
 
   # Redis
   redis:
@@ -33,7 +33,7 @@ services:
       dockerfile: ./src/loadgenerator/Dockerfile
     environment:
       - FRONTEND_ADDR
-      - OTEL_EXPORTER_OTLP_ENDPOINT
+      - USERS
     depends_on:
       - frontend
 
@@ -49,7 +49,7 @@ services:
       - CART_SERVICE_ADDR
       - CHECKOUT_SERVICE_ADDR
       - CURRENCY_SERVICE_ADDR
-      - FRONTEND_PORT
+      - FRONTEND_ADDR
       - OTEL_EXPORTER_OTLP_ENDPOINT
       - PRODUCT_CATALOG_SERVICE_ADDR
       - RECOMMENDATION_SERVICE_ADDR

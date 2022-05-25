@@ -29,7 +29,7 @@ FROM openjdk:18-slim
 WORKDIR /usr/src/app/
 
 COPY --from=builder /usr/src/app/ ./
-COPY ./src/adservice/agent/opentelemetry-javaagent.jar ./
+COPY ./src/adservice/agent/opentelemetry-javaagent.jar /app/
 
 EXPOSE ${AD_SERVICE_PORT}
 ENTRYPOINT [ "./build/install/hipstershop/bin/AdService" ]

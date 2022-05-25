@@ -19,6 +19,7 @@ WORKDIR /usr/src/app/
 
 COPY ./src/cartservice/ ./
 COPY ./pb/ ./src/protos/
+RUN rm ./src/protos/google/protobuf/timestamp.proto
 
 RUN dotnet restore ./src/cartservice.csproj -r linux-musl-x64
 RUN dotnet publish ./src/cartservice.csproj -p:PublishSingleFile=true -r linux-musl-x64 --self-contained true -p:PublishTrimmed=True -p:TrimMode=Link -c Release -o /cartservice --no-restore

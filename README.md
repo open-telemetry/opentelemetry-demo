@@ -99,6 +99,10 @@ Find **Protocol Buffers Descriptions** at the [`./pb` directory](./pb/README.md)
 
 TBD
 
+```shell
+docker compose up --build
+```
+
 ## Demos featuring Online Boutique
 
 TBD
