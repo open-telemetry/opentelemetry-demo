@@ -59,6 +59,8 @@ frontend --> recommendationservice --> productcatalogservice
 frontend --> shippingservice
 ```
 
+_To view a graph of the desired state of this application [click here](./docs/v1Graph.md)_
+
 Find **Protocol Buffers Descriptions** at the [`./pb` directory](./pb/README.md).
 
 | Service                                              | Language      | Description                                                                                                                       |
