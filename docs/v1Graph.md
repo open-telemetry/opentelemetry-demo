@@ -3,7 +3,6 @@
 This diagram illustrates the desired relationships between services for the v1 work.
 
 ```mermaid
-
 graph TD
 
 subgraph Service Diagram
