@@ -4,6 +4,32 @@
 
 This repo is a work in progress
 
+## Quickstart
+### Pre-requisites
+- Docker
+- [Docker Compose](https://docs.docker.com/compose/install/#install-compose) v2.0.0+
+
+### Steps
+1. Clone the Webstore Demo repository:
+```shell
+git clone https://github.com/open-telemetry/opentelemetry-demo-webstore.git
+```
+
+2. Navigate to the cloned folder:
+```shell
+cd opentelemetry-demo-webstore/
+```
+
+3. Start the demo:
+```shell
+docker compose up
+```
+  - It can take ~20min the first time the command is executed as all the images will be build.
+
+4. Once the images are build you can access the Webstrore at: `http://localhost:8080`
+  
+5. And the Jaeger UI at: `http://localhost:16686`
+
 ## Screenshots from the Online Boutique
 
 | Home Page                                                                                                         | Checkout Screen                                                                                                    |
