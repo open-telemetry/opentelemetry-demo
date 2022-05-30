@@ -7,14 +7,15 @@ receivers:
 exporters:
   jaeger:
     endpoint: "jaeger:14250"
-    tls:
-      insecure: true
+    insecure: true
   logging:
-    loglevel: debug
+
+processors:
+  batch:
 
 service:
   pipelines:
     traces:
       receivers: [otlp]
-      processors: []
+      processors: [batch]
       exporters: [logging, jaeger]
