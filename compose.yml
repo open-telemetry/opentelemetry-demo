@@ -57,7 +57,6 @@ services:
       - OTEL_RESOURCE_ATTRIBUTES=service.name=cartservice
     depends_on:
       - redis-cart
-    
 
   # CheckoutService
   checkoutservice:
