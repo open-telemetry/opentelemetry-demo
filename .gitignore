@@ -18,6 +18,7 @@ package-lock.json
 bin/
 obj/
 .vs/
+.vscode
 .gradle/
 .idea/
 build/
