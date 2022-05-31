@@ -2,7 +2,8 @@
 
 ## Under Construction
 
-This repo is a work in progress. If you'd like to help, check out our [contributing guidance](#contributing).
+This repo is a work in progress. If you'd like to help, check out our
+[contributing guidance](#contributing).
 
 ## Local Quickstart
 
@@ -19,7 +20,7 @@ This repo is a work in progress. If you'd like to help, check out our [contribut
 git clone https://github.com/open-telemetry/opentelemetry-demo-webstore.git
 ```
 
-### Step 2 
+### Step 2
 
 - Navigate to the cloned folder:
 
