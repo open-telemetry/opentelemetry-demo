@@ -2,16 +2,16 @@
 
 ## Under Construction
 
-This repo is a work in progress
+This repo is a work in progress. If you'd like to help, check out our [contributing guidance](#contributing).
 
-## Quickstart
+## Local Quickstart
 
 ### Pre-requisites
 
 - Docker
 - [Docker Compose](https://docs.docker.com/compose/install/#install-compose) v2.0.0+
 
-### Steps
+### Step 1
 
 - Clone the Webstore Demo repository:
 
@@ -19,11 +19,15 @@ This repo is a work in progress
 git clone https://github.com/open-telemetry/opentelemetry-demo-webstore.git
 ```
 
+### Step 2 
+
 - Navigate to the cloned folder:
 
 ```shell
 cd opentelemetry-demo-webstore/
 ```
+
+### Step 3
 
 - Start the demo (It can take ~20min the first time the command is executed as
 all the images will be build):
@@ -32,7 +36,9 @@ all the images will be build):
 docker compose up
 ```
 
-- Once the images are build you can access the Webstrore at: <http://localhost:8080>
+### Step 4
+
+- Once the images are build you can access the Webstore at: <http://localhost:8080>
 
 - And the Jaeger UI at: <http://localhost:16686>
 
@@ -128,10 +134,6 @@ Find **Protocol Buffers Descriptions** at the [`./pb` directory](./pb/README.md)
 - **Synthetic Load Generation:**  
   The application demo comes with a background job that creates realistic usage
   patterns on the website using [Locust](https://locust.io/) load generator.
-
-## Local Development
-
-TBD
 
 ## Demos featuring Online Boutique
 
