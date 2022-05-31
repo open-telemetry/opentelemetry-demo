@@ -1,0 +1,175 @@
+version: '3.9'
+services:
+
+  # Jaeger
+  jaeger:
+    image: jaegertracing/all-in-one
+    ports:
+      - "5775:5775"
+      - "5778:5778"
+      - "6831:6831"
+      - "6832:6832"
+      - "9411:9411"
+      - "16686:16686"
+      - "14250:14250"
+      - "14268:14268"
+      - "14269:14269"
+    environment:
+      - COLLECTOR_ZIPKIN_HOST_PORT
+
+  # Collector
+  otelcol:
+    image: otel/opentelemetry-collector
+    command: [ "--config=/etc/otelcol-config.yml" ]
+    volumes:
+      - ./src/otelcollector/otelcol-config.yml:/etc/otelcol-config.yml
+    ports:
+      - "4317"
+    depends_on:
+      - jaeger
+
+  # Redis
+  redis-cart:
+    image: redis:alpine
+    ports:
+      - "${REDIS_PORT}"
+
+  # AdService
+  adservice:
+    build:
+      context: ./src/adservice
+    ports:
+      - "${AD_SERVICE_PORT}"
+    environment:
+      - PORT=${AD_SERVICE_PORT}
+      - OTEL_EXPORTER_OTLP_TRACES_ENDPOINT
+      - OTEL_RESOURCE_ATTRIBUTES=service.name=adservice
+
+  # CartService
+  cartservice:
+    build:
+      context: ./src/cartservice/src
+    ports:
+      - "${CART_SERVICE_PORT}"
+    environment:
+      - REDIS_ADDR
+      - OTEL_EXPORTER_OTLP_ENDPOINT
+      - OTEL_RESOURCE_ATTRIBUTES=service.name=cartservice
+    depends_on:
+      - redis-cart
+
+  # CheckoutService
+  checkoutservice:
+    build:
+      context: ./src/checkoutservice
+    ports:
+      - "${CHECKOUT_SERVICE_PORT}"
+    environment:
+      - PORT=${CHECKOUT_SERVICE_PORT}
+      - CART_SERVICE_ADDR
+      - CURRENCY_SERVICE_ADDR
+      - EMAIL_SERVICE_ADDR
+      - PAYMENT_SERVICE_ADDR
+      - PRODUCT_CATALOG_SERVICE_ADDR
+      - SHIPPING_SERVICE_ADDR
+      - OTEL_EXPORTER_OTLP_TRACES_ENDPOINT
+      - OTEL_RESOURCE_ATTRIBUTES=service.name=checkoutservice
+
+  # CurrencyService
+  currencyservice:
+    build:
+      context: ./src/currencyservice
+    ports:
+      - "${CURRENCY_SERVICE_PORT}"
+    environment:
+      - PORT=${CURRENCY_SERVICE_PORT}
+      - OTEL_EXPORTER_OTLP_TRACES_ENDPOINT
+      - OTEL_RESOURCE_ATTRIBUTES=service.name=currencyservice
+
+  # EmailService
+  emailservice:
+    build:
+      context: ./src/emailservice
+    ports:
+      - "${EMAIL_SERVICE_PORT}"
+    environment:
+      - PORT=${EMAIL_SERVICE_PORT}
+      - OTEL_PYTHON_LOG_CORRELATION=true
+      - OTEL_EXPORTER_OTLP_TRACES_ENDPOINT
+      - OTEL_RESOURCE_ATTRIBUTES=service.name=emailservice
+
+  # Frontend
+  frontend:
+    build:
+      context: ./src/frontend
+    ports:
+      - "${FRONTEND_PORT}:${FRONTEND_PORT}"
+    environment:
+      - PORT=${FRONTEND_PORT}
+      - AD_SERVICE_ADDR
+      - CART_SERVICE_ADDR
+      - CHECKOUT_SERVICE_ADDR
+      - CURRENCY_SERVICE_ADDR
+      - PRODUCT_CATALOG_SERVICE_ADDR
+      - RECOMMENDATION_SERVICE_ADDR
+      - SHIPPING_SERVICE_ADDR
+      - OTEL_EXPORTER_OTLP_TRACES_ENDPOINT
+      - OTEL_RESOURCE_ATTRIBUTES=service.name=frontend
+
+  # PaymentService
+  paymentservice:
+    build:
+      context: ./src/paymentservice
+    ports:
+      - "${PAYMENT_SERVICE_PORT}"
+    environment:
+      - PORT=${PAYMENT_SERVICE_PORT}
+      - OTEL_EXPORTER_OTLP_TRACES_ENDPOINT
+      - OTEL_RESOURCE_ATTRIBUTES=service.name=paymentservice
+
+  # ProductCatalogService
+  productcatalogservice:
+    build:
+      context: ./src/productcatalogservice
+    ports:
+      - "${PRODUCT_CATALOG_SERVICE_PORT}"
+    environment:
+      - PORT=${PRODUCT_CATALOG_SERVICE_PORT}
+      - OTEL_EXPORTER_OTLP_TRACES_ENDPOINT
+      - OTEL_RESOURCE_ATTRIBUTES=service.name=productcatalogservice
+
+  # RecommendationService
+  recommendationservice:
+    build:
+      context: ./src/recommendationservice
+    ports:
+      - "${RECOMMENDATION_SERVICE_PORT}"
+    environment:
+      - PORT=${RECOMMENDATION_SERVICE_PORT}
+      - PRODUCT_CATALOG_SERVICE_ADDR
+      - OTEL_PYTHON_LOG_CORRELATION=true
+      - OTEL_EXPORTER_OTLP_TRACES_ENDPOINT
+      - OTEL_RESOURCE_ATTRIBUTES=service.name=recommendationservice
+
+  # ShippingService
+  shippingservice:
+    build:
+      context: ./src/shippingservice
+    ports:
+      - "${SHIPPING_SERVICE_PORT}"
+    environment:
+      - PORT=${SHIPPING_SERVICE_PORT}
+      - OTEL_EXPORTER_OTLP_TRACES_ENDPOINT
+      - OTEL_RESOURCE_ATTRIBUTES=service.name=shippingservice
+
+  # LoadGenerator
+  loadgenerator:
+    build:
+      context: ./src/loadgenerator
+    environment:
+      - FRONTEND_ADDR
+      - USERS
+      - OTEL_EXPORTER_OTLP_TRACES_ENDPOINT
+      - OTEL_RESOURCE_ATTRIBUTES=service.name=loadgenerator
+    depends_on:
+      - frontend
