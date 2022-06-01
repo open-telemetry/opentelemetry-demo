@@ -2,16 +2,17 @@
 
 ## Under Construction
 
-This repo is a work in progress
+This repo is a work in progress. If you'd like to help, check out our
+[contributing guidance](#contributing).
 
-## Quickstart
+## Local Quickstart
 
 ### Pre-requisites
 
 - Docker
 - [Docker Compose](https://docs.docker.com/compose/install/#install-compose) v2.0.0+
 
-### Steps
+### Clone Repo
 
 - Clone the Webstore Demo repository:
 
@@ -19,11 +20,15 @@ This repo is a work in progress
 git clone https://github.com/open-telemetry/opentelemetry-demo-webstore.git
 ```
 
+### Open Folder
+
 - Navigate to the cloned folder:
 
 ```shell
 cd opentelemetry-demo-webstore/
 ```
+
+### Run Docker Compose
 
 - Start the demo (It can take ~20min the first time the command is executed as
 all the images will be build):
@@ -32,7 +37,9 @@ all the images will be build):
 docker compose up
 ```
 
-- Once the images are build you can access the Webstrore at: <http://localhost:8080>
+### Verify the Webstore & the Telemetry
+
+- Once the images are built you can access the Webstore at: <http://localhost:8080>
 
 - And the Jaeger UI at: <http://localhost:16686>
 
@@ -129,10 +136,6 @@ Find **Protocol Buffers Descriptions** at the [`./pb` directory](./pb/README.md)
   The application demo comes with a background job that creates realistic usage
   patterns on the website using [Locust](https://locust.io/) load generator.
 
-## Local Development
-
-TBD
-
 ## Demos featuring Online Boutique
 
 TBD
@@ -141,8 +144,8 @@ TBD
 
 See [CONTRIBUTING.md](CONTRIBUTING.md)
 
-We meet weekly Monday's at 8:15 PT. The meeting is subject to change depending on
-contributors' availability. Check the [OpenTelemetry community
+We meet weekly Monday's at 8:15 AM PT. The meeting is subject to change
+depending on contributors' availability. Check the [OpenTelemetry community
 calendar](https://calendar.google.com/calendar/embed?src=google.com_b79e3e90j7bbsa2n2p5an5lf60%40group.calendar.google.com)
 for specific dates and Zoom meeting links.
 
