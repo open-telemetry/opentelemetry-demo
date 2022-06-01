@@ -33,9 +33,9 @@ cd opentelemetry-demo-webstore/
 - Navigate to the Java Ad Service folder to install and update Gradle:
 
 ```shell
-cd src/adservice/
-./gradlew installDist
-./gradlew wrapper --gradle-version 7.4.2
+cd .\src\adservice\
+.\gradlew installDist
+.\gradlew wrapper --gradle-version 7.4.2
 ```
 
 ### Run Docker Compose
