@@ -32,7 +32,7 @@ all the images will be build):
 docker compose up
 ```
 
-- Once the images are build you can access the Webstore at: <http://localhost:8080>
+- Once the images are built you can access the Webstore at: <http://localhost:8080>
 
 - And the Jaeger UI at: <http://localhost:16686>
 
