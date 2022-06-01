@@ -12,7 +12,7 @@ This repo is a work in progress. If you'd like to help, check out our
 - Docker
 - [Docker Compose](https://docs.docker.com/compose/install/#install-compose) v2.0.0+
 
-### Step 1
+### Clone Repo
 
 - Clone the Webstore Demo repository:
 
@@ -20,7 +20,7 @@ This repo is a work in progress. If you'd like to help, check out our
 git clone https://github.com/open-telemetry/opentelemetry-demo-webstore.git
 ```
 
-### Step 2
+### Open Folder
 
 - Navigate to the cloned folder:
 
@@ -28,7 +28,7 @@ git clone https://github.com/open-telemetry/opentelemetry-demo-webstore.git
 cd opentelemetry-demo-webstore/
 ```
 
-### Step 3
+### Run Docker Compose
 
 - Start the demo (It can take ~20min the first time the command is executed as
 all the images will be build):
@@ -37,9 +37,9 @@ all the images will be build):
 docker compose up
 ```
 
-### Step 4
+### Verify Telemetry
 
-- Once the images are build you can access the Webstore at: <http://localhost:8080>
+- Once the images are built you can access the Webstore at: <http://localhost:8080>
 
 - And the Jaeger UI at: <http://localhost:16686>
 
@@ -144,8 +144,8 @@ TBD
 
 See [CONTRIBUTING.md](CONTRIBUTING.md)
 
-We meet weekly Monday's at 8:15 PT. The meeting is subject to change depending on
-contributors' availability. Check the [OpenTelemetry community
+We meet weekly Monday's at 8:15 AM PT. The meeting is subject to change
+depending on contributors' availability. Check the [OpenTelemetry community
 calendar](https://calendar.google.com/calendar/embed?src=google.com_b79e3e90j7bbsa2n2p5an5lf60%40group.calendar.google.com)
 for specific dates and Zoom meeting links.
 
