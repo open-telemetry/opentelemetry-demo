@@ -32,7 +32,7 @@ all the images will be build):
 docker compose up
 ```
 
-- Once the images are build you can access the Webstrore at: <http://localhost:8080>
+- Once the images are build you can access the Webstore at: <http://localhost:8080>
 
 - And the Jaeger UI at: <http://localhost:16686>
 
@@ -141,7 +141,7 @@ TBD
 
 See [CONTRIBUTING.md](CONTRIBUTING.md)
 
-We meet weekly Monday's at 8:15 PT. The meeting is subject to change depending on
+We meet weekly Monday's at 8:15 AM PT. The meeting is subject to change depending on
 contributors' availability. Check the [OpenTelemetry community
 calendar](https://calendar.google.com/calendar/embed?src=google.com_b79e3e90j7bbsa2n2p5an5lf60%40group.calendar.google.com)
 for specific dates and Zoom meeting links.
