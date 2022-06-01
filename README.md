@@ -37,7 +37,7 @@ all the images will be build):
 docker compose up
 ```
 
-### Verify Telemetry
+### Verify the Webstore & the Telemetry
 
 - Once the images are built you can access the Webstore at: <http://localhost:8080>
 
