@@ -17,6 +17,10 @@ package main
 import (
 	"context"
 	"fmt"
+	"github.com/GoogleCloudPlatform/microservices-demo/src/frontend/instr"
+	"go.opentelemetry.io/otel/attribute"
+	"go.opentelemetry.io/otel/codes"
+	"go.opentelemetry.io/otel/trace"
 	"html/template"
 	"math/rand"
 	"net"
@@ -102,6 +106,12 @@ func (fe *frontendServer) homeHandler(w http.ResponseWriter, r *http.Request) {
 	plat = platformDetails{}
 	plat.setPlatformDetails(strings.ToLower(env))
 
+	span := trace.SpanFromContext(r.Context())
+	span.SetAttributes(
+		attribute.Int(instr.AppPrefix+"products.count", len(products)),
+		attribute.Int(instr.AppPrefix+"cart.size", cartSize(cart)),
+	)
+
 	if err := templates.ExecuteTemplate(w, "home", map[string]interface{}{
 		"session_id":        sessionID(r),
 		"request_id":        r.Context().Value(ctxKeyRequestID{}),
@@ -117,6 +127,7 @@ func (fe *frontendServer) homeHandler(w http.ResponseWriter, r *http.Request) {
 		"is_cymbal_brand":   isCymbalBrand,
 		"deploymentDetails": deploymentDetailsMap,
 	}); err != nil {
+		span.SetStatus(codes.Error, err.Error())
 		log.Error(err)
 	}
 }
@@ -187,6 +198,12 @@ func (fe *frontendServer) productHandler(w http.ResponseWriter, r *http.Request)
 		Price *pb.Money
 	}{p, price}
 
+	span := trace.SpanFromContext(r.Context())
+	span.SetAttributes(
+		attribute.String(instr.AppPrefix+"product.id", id),
+		attribute.Int(instr.AppPrefix+"cart.size", cartSize(cart)),
+	)
+
 	if err := templates.ExecuteTemplate(w, "product", map[string]interface{}{
 		"session_id":        sessionID(r),
 		"request_id":        r.Context().Value(ctxKeyRequestID{}),
@@ -202,6 +219,7 @@ func (fe *frontendServer) productHandler(w http.ResponseWriter, r *http.Request)
 		"is_cymbal_brand":   isCymbalBrand,
 		"deploymentDetails": deploymentDetailsMap,
 	}); err != nil {
+		span.SetStatus(codes.Error, err.Error())
 		log.Println(err)
 	}
 }
@@ -221,6 +239,12 @@ func (fe *frontendServer) addToCartHandler(w http.ResponseWriter, r *http.Reques
 		renderHTTPError(log, r, w, errors.Wrap(err, "could not retrieve product"), http.StatusInternalServerError)
 		return
 	}
+
+	span := trace.SpanFromContext(r.Context())
+	span.SetAttributes(
+		attribute.String(instr.AppPrefix+"product.id", productID),
+		attribute.Int(instr.AppPrefix+"product.quantity", int(quantity)),
+	)
 
 	if err := fe.insertCart(r.Context(), sessionID(r), p.GetId(), int32(quantity)); err != nil {
 		renderHTTPError(log, r, w, errors.Wrap(err, "failed to add to cart"), http.StatusInternalServerError)
@@ -297,6 +321,17 @@ func (fe *frontendServer) viewCartHandler(w http.ResponseWriter, r *http.Request
 	totalPrice = money.Must(money.Sum(totalPrice, shippingCost))
 	year := time.Now().Year()
 
+	// add cart details to span as a manually created attributes
+	shippingCostFloat, _ := strconv.ParseFloat(fmt.Sprintf("%d.%02d", shippingCost.GetUnits(), shippingCost.GetNanos()/10000000), 64)
+	totalPriceFloat, _ := strconv.ParseFloat(fmt.Sprintf("%d.%02d", totalPrice.GetUnits(), totalPrice.GetNanos()/10000000), 64)
+	span := trace.SpanFromContext(r.Context())
+	span.SetAttributes(
+		attribute.Int(instr.AppPrefix+"cart.size", cartSize(cart)),
+		attribute.Int(instr.AppPrefix+"cart.items.count", len(items)),
+		attribute.Float64(instr.AppPrefix+"cart.shipping.cost", shippingCostFloat),
+		attribute.Float64(instr.AppPrefix+"cart.total.price", totalPriceFloat),
+	)
+
 	if err := templates.ExecuteTemplate(w, "cart", map[string]interface{}{
 		"session_id":        sessionID(r),
 		"request_id":        r.Context().Value(ctxKeyRequestID{}),
@@ -314,6 +349,7 @@ func (fe *frontendServer) viewCartHandler(w http.ResponseWriter, r *http.Request
 		"is_cymbal_brand":   isCymbalBrand,
 		"deploymentDetails": deploymentDetailsMap,
 	}); err != nil {
+		span.SetStatus(codes.Error, err.Error())
 		log.Println(err)
 	}
 }
@@ -367,6 +403,11 @@ func (fe *frontendServer) placeOrderHandler(w http.ResponseWriter, r *http.Reque
 		totalPaid = money.Must(money.Sum(totalPaid, multPrice))
 	}
 
+	// add Order total paid to span as a manually created attribute
+	totalPaidFloat, _ := strconv.ParseFloat(fmt.Sprintf("%d.%02d", totalPaid.GetUnits(), totalPaid.GetNanos()/10000000), 64)
+	span := trace.SpanFromContext(r.Context())
+	span.SetAttributes(attribute.Float64(instr.AppPrefix+"order.total", totalPaidFloat))
+
 	currencies, err := fe.getCurrencies(r.Context())
 	if err != nil {
 		renderHTTPError(log, r, w, errors.Wrap(err, "could not retrieve currencies"), http.StatusInternalServerError)
@@ -387,6 +428,7 @@ func (fe *frontendServer) placeOrderHandler(w http.ResponseWriter, r *http.Reque
 		"is_cymbal_brand":   isCymbalBrand,
 		"deploymentDetails": deploymentDetailsMap,
 	}); err != nil {
+		span.SetStatus(codes.Error, err.Error())
 		log.Println(err)
 	}
 }
@@ -410,6 +452,8 @@ func (fe *frontendServer) setCurrencyHandler(w http.ResponseWriter, r *http.Requ
 		Debug("setting currency")
 
 	if cur != "" {
+		span := trace.SpanFromContext(r.Context())
+		span.SetAttributes(attribute.String(instr.AppPrefix+"currency.new", cur))
 		http.SetCookie(w, &http.Cookie{
 			Name:   cookieCurrency,
 			Value:  cur,
@@ -438,6 +482,10 @@ func (fe *frontendServer) chooseAd(ctx context.Context, ctxKeys []string, log lo
 func renderHTTPError(log logrus.FieldLogger, r *http.Request, w http.ResponseWriter, err error, code int) {
 	log.WithField("error", err).Error("request error")
 	errMsg := fmt.Sprintf("%+v", err)
+
+	// set span status on error
+	span := trace.SpanFromContext(r.Context())
+	span.SetStatus(codes.Error, errMsg)
 
 	w.WriteHeader(code)
 
