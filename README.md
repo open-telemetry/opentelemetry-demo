@@ -57,7 +57,7 @@ exporters:
     endpoint: <your-endpoint-url>
 ```
 
-Vendor backends might require you to add  additional parameters for authentication, please check their documentation. Some backends require different exporters, you will find them and their documentation available at [opentelemetry-collector-contrib/exporter](https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/main/exporter).  
+Vendor backends might require you to add  additional parameters for authentication, please check their documentation. Some backends require different exporters, you may find them and their documentation available at [opentelemetry-collector-contrib/exporter](https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/main/exporter).  
 
 After updating the `otelcol-config.yml` start the demo by running `docker compose up`. After a while you should see the traces flowing into your backend as well.
 
