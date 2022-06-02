@@ -130,11 +130,12 @@ services:
   # ProductCatalogService
   productcatalogservice:
     build:
-      context: ./src/productcatalogservice
+      context: ./
+      dockerfile: ./src/productcatalogservice/Dockerfile
     ports:
       - "${PRODUCT_CATALOG_SERVICE_PORT}"
     environment:
-      - PORT=${PRODUCT_CATALOG_SERVICE_PORT}
+      - PRODUCT_CATALOG_SERVICE_PORT
       - OTEL_EXPORTER_OTLP_TRACES_ENDPOINT
       - OTEL_RESOURCE_ATTRIBUTES=service.name=productcatalogservice
 
