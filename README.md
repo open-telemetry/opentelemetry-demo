@@ -43,6 +43,23 @@ docker compose up
 
 - And the Jaeger UI at: <http://localhost:16686>
 
+### Bring your own backend
+
+Likely you want to use the Webstore as a demo application for an observability backend you already have (e.g. an existing instance of jaeger, zipkin or one of the [vendor of your choice](https://opentelemetry.io/vendors/). Adding this backend is easy: Before running docker compose, open the [otelccol-config.yml](./src/otelcollector/otelcol-config.yml) with an editor and add an trace exporter for your backend, e.g.:
+
+```yaml
+exporters:
+  jaeger:
+    endpoint: "jaeger:14250"
+    insecure: true
+  logging:
+  otlp:
+    endpoint: <your-endpoint-url>
+```
+
+When you now start the dem by running `docker compose up` you should see the traces flowing into your backend as well.
+
+
 ## Screenshots from the Online Boutique
 
 | Home Page                                                                                                         | Checkout Screen                                                                                                    |
