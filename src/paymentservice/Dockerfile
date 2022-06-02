@@ -25,22 +25,22 @@ RUN apk add --update --no-cache \
 
 WORKDIR /usr/src/app
 
-COPY package*.json ./
+COPY ./src/paymentservice/package.json ./
 
 RUN npm install --only=production
 
 FROM base
 
-RUN GRPC_HEALTH_PROBE_VERSION=v0.4.7 && \
-    wget -qO/bin/grpc_health_probe https://github.com/grpc-ecosystem/grpc-health-probe/releases/download/${GRPC_HEALTH_PROBE_VERSION}/grpc_health_probe-linux-amd64 && \
-    chmod +x /bin/grpc_health_probe
-
 WORKDIR /usr/src/app
 
 COPY --from=builder /usr/src/app/node_modules ./node_modules
 
-COPY . .
+COPY ./src/paymentservice/ ./
+
+COPY --chmod=0755 ./grpc_health_probe /bin/
+
+HEALTHCHECK CMD [ "/bin/grpc_health_probe", "-addr=:50051" ]
 
 EXPOSE 50051
 
-ENTRYPOINT [ "node", "--require", "./tracing.js", "index.js" ]
+ENTRYPOINT [ "node", "--require", "./tracing.js", "./index.js" ]

@@ -119,7 +119,8 @@ services:
   # PaymentService
   paymentservice:
     build:
-      context: ./src/paymentservice
+      context: ./
+      dockerfile: ./src/paymentservice/Dockerfile
     ports:
       - "${PAYMENT_SERVICE_PORT}"
     environment:
