@@ -46,7 +46,7 @@ docker compose up
 ### Bring your own backend
 
 Likely you want to use the Webstore as a demo application for an observability
-backend you already have (e.g. an existing instance of jaeger, zipkin or one of
+backend you already have (e.g. an existing instance of Jaeger, Zipkin or one of
 the [vendor of your choice](https://opentelemetry.io/vendors/).
 
 To add your backend open the file
