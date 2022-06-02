@@ -45,7 +45,7 @@ docker compose up
 
 ### Bring your own backend
 
-Likely you want to use the Webstore as a demo application for an observability backend you already have (e.g. an existing instance of jaeger, zipkin or one of the [vendor of your choice](https://opentelemetry.io/vendors/). Adding this backend is easy: Before running docker compose, open the [otelccol-config.yml](./src/otelcollector/otelcol-config.yml) with an editor and add an trace exporter for your backend, e.g.:
+Likely you want to use the Webstore as a demo application for an observability backend you already have (e.g. an existing instance of jaeger, zipkin or one of the [vendor of your choice](https://opentelemetry.io/vendors/). Adding this backend is easy: Before running docker compose, open the [otelccol-config.yml](./src/otelcollector/otelcol-config.yml) with an editor and add an trace exporter for your backend. For example, if your backend supports otlp extend the `exporters` section by the last 2 lines:
 
 ```yaml
 exporters:
@@ -57,7 +57,9 @@ exporters:
     endpoint: <your-endpoint-url>
 ```
 
-When you now start the demo by running `docker compose up` you should see the traces flowing into your backend as well.
+Vendor backends might require you to add  additional parameters for authentication, please check their documentation. Some backends require different exporters, you will find them and their documentation available at [opentelemetry-collector-contrib/exporter](https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/main/exporter).  
+
+After updating the `otelcol-config.yml` start the demo by running `docker compose up`. After a while you should see the traces flowing into your backend as well.
 
 
 ## Screenshots from the Online Boutique
