@@ -66,14 +66,18 @@ class RecommendationService(demo_pb2_grpc.RecommendationServiceServicer):
         return health_pb2.HealthCheckResponse(
             status=health_pb2.HealthCheckResponse.UNIMPLEMENTED)
 
+def must_map_env(key: str):
+    value = os.environ.get(key)
+    if value is None:
+        raise Exception(f'{key} environment variable must be set')
+    return value
 
 if __name__ == "__main__":
     logger.info("initializing recommendationservice")
 
-    port = os.environ.get('PORT', "8080")
-    catalog_addr = os.environ.get('PRODUCT_CATALOG_SERVICE_ADDR', '')
-    if catalog_addr == "":
-        raise Exception('PRODUCT_CATALOG_SERVICE_ADDR environment variable not set')
+    port = must_map_env('RECOMMENDATION_SERVICE_PORT')
+    catalog_addr = must_map_env('PRODUCT_CATALOG_SERVICE_ADDR')
+
     logger.info("product catalog address: " + catalog_addr)
     channel = grpc.insecure_channel(catalog_addr)
     product_catalog_stub = demo_pb2_grpc.ProductCatalogServiceStub(channel)
