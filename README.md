@@ -103,7 +103,6 @@ your backend as well.
 **Online Boutique** is composed of 10 microservices written in different
 languages that talk to each other over gRPC. Plus one Load Generator which uses
 Locust to fake user traffic.
-See the [Development Principles](/docs/development-principles.md) doc for more information.
 
 ```mermaid
 
