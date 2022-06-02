@@ -57,7 +57,7 @@ exporters:
     endpoint: <your-endpoint-url>
 ```
 
-When you now start the dem by running `docker compose up` you should see the traces flowing into your backend as well.
+When you now start the demo by running `docker compose up` you should see the traces flowing into your backend as well.
 
 
 ## Screenshots from the Online Boutique
