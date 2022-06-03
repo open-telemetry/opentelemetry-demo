@@ -14,9 +14,9 @@
 
 using System;
 using System.Collections.Concurrent;
-using System.Threading.Tasks;
-using System.Linq;
 using System.Diagnostics;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace cartservice.cartstore
 {
