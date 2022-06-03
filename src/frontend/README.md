@@ -6,21 +6,11 @@ appropriate backend service.
 The application uses Server Side Rendering (SSR) to generate HTML consumed by
 the browser.
 
-The following routes are defined by the frontend:
+## OpenTelemetry features
 
-| Path              | Method | Use                               |
-|-------------------|--------|-----------------------------------|
-| `/`               | GET    | Main index page                   |
-| `/cart`           | GET    | View Cart                         |
-| `/cart`           | POST   | Add to Cart                       |
-| `/cart/checktout` | POST   | Place Order                       |
-| `/cart/empty`     | POST   | Empty Cart                        |
-| `/logout`         | GET    | Logout                            |
-| `/product/{id}`   | GET    | View Product                      |
-| `/setCurrency`    | POST   | Set Currency                      |
-| `/static/`        | *      | Static resources                  |
-| `/robots.txt`     | *      | Search engine response (disallow) |
-| `/_healthz`       | *      | Health check (ok)                 |
+| Auto-Instrumented tracing | Custom spans | Custom span attributes | Metrics | Logs |
+|---------------------------|--------------|------------------------|---------|------|
+| X                         |              | X                      |         |      |
 
 ## OpenTelemetry instrumentation
 
@@ -63,6 +53,22 @@ This service makes that call as part of a deferred function in `main`.
 ### HTTP instrumentation
 
 This service receives HTTP requests, controlled by the gorilla/mux Router.
+The following routes are defined by the frontend:
+
+| Path              | Method | Use                               |
+|-------------------|--------|-----------------------------------|
+| `/`               | GET    | Main index page                   |
+| `/cart`           | GET    | View Cart                         |
+| `/cart`           | POST   | Add to Cart                       |
+| `/cart/checktout` | POST   | Place Order                       |
+| `/cart/empty`     | POST   | Empty Cart                        |
+| `/logout`         | GET    | Logout                            |
+| `/product/{id}`   | GET    | View Product                      |
+| `/setCurrency`    | POST   | Set Currency                      |
+| `/static/`        | *      | Static resources                  |
+| `/robots.txt`     | *      | Search engine response (disallow) |
+| `/_healthz`       | *      | Health check (ok)                 |
+
 These requests are instrumented in the main function as part of the router's definition.
 
 ```go
