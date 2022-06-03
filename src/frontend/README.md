@@ -1,9 +1,9 @@
 # frontend service
 
 The **frontend** service is responsible for rendering the UI for the store's website.
-It serves as the main entry point for the application routing requests to their 
+It serves as the main entry point for the application routing requests to their
 appropriate backend service.
-The application uses Server Side Rendering (SSR) to generate HTML consumed by 
+The application uses Server Side Rendering (SSR) to generate HTML consumed by
 the browser.
 
 The following routes are defined by the frontend:
@@ -46,7 +46,7 @@ func InitTracerProvider() *sdktrace.TracerProvider {
 }
 ```
 
-Services should call `TraceProvider.shutdown()` when the service is shutdown to 
+Services should call `TraceProvider.shutdown()` when the service is shutdown to
 ensure all spans are exported.
 This service makes that call as part of a deferred function in `main`.
 
@@ -72,7 +72,7 @@ These requests are instrumented in the main function as part of the router's def
 
 ### gRPC instrumentation
 
-This service will issue several outgoing gRPC calls, which have instrumentation 
+This service will issue several outgoing gRPC calls, which have instrumentation
 hooks added in the `mustConnGRPC` function.
 
 ```go
@@ -88,17 +88,18 @@ hooks added in the `mustConnGRPC` function.
 ### Service specific instrumentation attributes
 
 All requests incoming to the frontend service will receive the following attributes:
+
 - `app.session.id`
 - `app.request.id`
 - `app.currency`
 - `app.user.id` (when the user is present)
 
-These attributes are added in the `instrumentHandler` function which wraps all 
+These attributes are added in the `instrumentHandler` function which wraps all
 HTTP routes specified within the gorilla/mux router.
-Additional attributes are added within each handler's function as appropriate 
+Additional attributes are added within each handler's function as appropriate
 (ie: `app.cart.size`, `app.cart.total.price`).
 
-Adding attributes to existing auto-instrumented spans can be accomplished by 
+Adding attributes to existing auto-instrumented spans can be accomplished by
 getting the current span from context, then adding attributes to it.
 
 ```go
@@ -111,7 +112,7 @@ getting the current span from context, then adding attributes to it.
     )
 ```
 
-When an error is encountered, the current span's status code and error message 
+When an error is encountered, the current span's status code and error message
 are set.
 
 ```go
