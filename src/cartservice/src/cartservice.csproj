@@ -6,7 +6,7 @@
 
   <ItemGroup>
     <PackageReference Include="Grpc.AspNetCore" Version="2.44.0" />
-    <PackageReference Include="Grpc.HealthCheck" Version="2.45.0" />
+    <PackageReference Include="Grpc.AspNetCore.HealthChecks" Version="2.46.0" />
     <PackageReference Include="StackExchange.Redis" Version="2.5.43" />
     <PackageReference Include="OpenTelemetry" Version="1.2.0" />
     <PackageReference Include="OpenTelemetry.Exporter.OpenTelemetryProtocol" Version="1.2.0" />
@@ -18,6 +18,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Protobuf Include="protos\Cart.proto" GrpcServices="Both" />
+    <Protobuf Include="**\*.proto" GrpcServices="Both" />
   </ItemGroup>
 </Project>
