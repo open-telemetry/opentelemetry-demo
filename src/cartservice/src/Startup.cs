@@ -25,11 +25,11 @@ public class Startup
     // For more information on how to configure your application, visit https://go.microsoft.com/fwlink/?LinkID=398940
     public void ConfigureServices(IServiceCollection services)
     {
-        string redisAddress = Configuration["REDIS_CART_ADDR"];
+        string redisAddress = Configuration["REDIS_ADDR"];
         RedisCartStore cartStore = null;
         if (string.IsNullOrEmpty(redisAddress))
         {
-            Console.WriteLine("REDIS_CART_ADDR environment variable is required.");
+            Console.WriteLine("REDIS_ADDR environment variable is required.");
             System.Environment.Exit(1);
         }
         cartStore = new RedisCartStore(redisAddress);

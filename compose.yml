@@ -32,7 +32,7 @@ services:
   redis-cart:
     image: redis:alpine
     ports:
-      - "${REDIS_CART_PORT}"
+      - "${REDIS_PORT}"
 
   # AdService
   adservice:
@@ -54,7 +54,7 @@ services:
       - "${CART_SERVICE_PORT}"
     environment:
       - CART_SERVICE_PORT
-      - REDIS_CART_ADDR
+      - REDIS_ADDR
       - OTEL_EXPORTER_OTLP_ENDPOINT
       - OTEL_RESOURCE_ATTRIBUTES=service.name=cartservice
     depends_on:
