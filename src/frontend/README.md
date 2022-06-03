@@ -1,7 +1,103 @@
-# frontend
+# frontend service
 
-Run the following command to restore dependencies to `vendor/` directory:
+The **frontend** service is responsible for rendering the UI for the store's website.
+It serves as the main entry point for the application routing requests to their appropriate backend service.
+The application uses Server Side Rendering (SSR) to generate HTML consumed by the browser.
 
-```sh
-dep ensure --vendor-only
+The following routes are defined by the frontend:
+
+| Path              | Method | Use                               |
+|-------------------|--------|-----------------------------------|
+| `/`               | GET    | Main index page                   |
+| `/cart`           | GET    | View Cart                         |
+| `/cart`           | POST   | Add to Cart                       |
+| `/cart/checktout` | POST   | Place Order                       |
+| `/cart/empty`     | POST   | Empty Cart                        |
+| `/logout`         | GET    | Logout                            |
+| `/product/{id}`   | GET    | View Product                      |
+| `/setCurrency`    | POST   | Set Currency                      |
+| `/static/`        | *      | Static resources                  |
+| `/robots.txt`     | *      | Search engine response (disallow) |
+| `/_healthz`       | *      | Health check (ok)                 |
+
+## OpenTelemetry instrumentation
+
+### Initialization
+The OpenTelemetry SDK is initialized in `main` using the `InitTraceProvider` function.
+```go
+func InitTracerProvider() *sdktrace.TracerProvider {
+    ctx := context.Background()
+
+    exporter, err := otlptracegrpc.New(ctx)
+    if err != nil {
+        log.Fatal(err)
+    }
+    tp := sdktrace.NewTracerProvider(
+        sdktrace.WithSampler(sdktrace.AlwaysSample()),
+        sdktrace.WithBatcher(exporter),
+    )
+    otel.SetTracerProvider(tp)
+    otel.SetTextMapPropagator(propagation.NewCompositeTextMapPropagator(propagation.TraceContext{}, propagation.Baggage{}))
+    return tp
+}
+```
+
+Services should call `TraceProvider.shutdown()` when the service is shutdown to ensure all spans are exported.
+This service makes that call as part of a deferred function in `main`.
+```go
+    // Initialize OpenTelemetry Tracing
+    tp := InitTracerProvider()
+    defer func() {
+        if err := tp.Shutdown(context.Background()); err != nil {
+            log.Printf("Error shutting down tracer provider: %v", err)
+        }
+    }()
+```
+
+### HTTP instrumentation
+This service receives HTTP requests, controlled by the gorilla/mux Router.
+These requests are instrumented in the main function as part of the router's definition.
+```go
+    // Add OpenTelemetry instrumentation to incoming HTTP requests controlled by the gorilla/mux Router.
+    r.Use(otelmux.Middleware("server"))
+```
+
+### gRPC instrumentation
+This service will issue several outgoing gRPC calls, which have instrumentation hooks added in the `mustConnGRPC` function.
+```go
+    // add OpenTelemetry instrumentation to outgoing gRPC requests
+    var err error
+    *conn, err = grpc.DialContext(ctx, addr,
+        grpc.WithTransportCredentials(insecure.NewCredentials()),
+        grpc.WithUnaryInterceptor(otelgrpc.UnaryClientInterceptor(otelgrpc.WithTracerProvider(otel.GetTracerProvider()))),
+        grpc.WithStreamInterceptor(otelgrpc.StreamClientInterceptor(otelgrpc.WithTracerProvider(otel.GetTracerProvider()))),
+    )
+```
+
+### Service specific instrumentation attributes
+All requests incoming to the frontend service will receive the following attributes:
+- `app.session.id`
+- `app.request.id`
+- `app.currency`
+- `app.user.id` (when the user is present)
+
+These attributes are added in the `instrumentHandler` function which wraps all HTTP routes specified within the gorilla/mux router.
+Additional attributes are added within each handler's function as appropriate (ie: `app.cart.size`, `app.cart.total.price`).
+
+Adding attributes to existing auto-instrumented spans can be accomplished by getting the current span from context, then adding attributes to it.
+```go
+    span := trace.SpanFromContext(r.Context())
+    span.SetAttributes(
+        attribute.Int(instr.AppPrefix+"cart.size", cartSize(cart)),
+        attribute.Int(instr.AppPrefix+"cart.items.count", len(items)),
+        attribute.Float64(instr.AppPrefix+"cart.shipping.cost", shippingCostFloat),
+        attribute.Float64(instr.AppPrefix+"cart.total.price", totalPriceFloat),
+    )
+```
+
+When an error is encountered, the current span's status code and error message are set.
+```go
+    // set span status on error
+    span := trace.SpanFromContext(r.Context())
+    span.SetStatus(codes.Error, errMsg)
 ```
