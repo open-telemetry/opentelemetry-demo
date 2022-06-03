@@ -50,7 +50,7 @@ backend you already have (e.g. an existing instance of Jaeger, Zipkin or one of
 the [vendor of your choice](https://opentelemetry.io/vendors/).
 
 To add your backend open the file
-[src/otelcollector/otelccol-config.yml](./src/otelcollector/otelcol-config.yml)
+[src/otelcollector/otelcol-config.yml](./src/otelcollector/otelcol-config.yml)
 with an editor:
 
 - add a trace exporter for your backend. For example, if your backend supports
