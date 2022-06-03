@@ -4,7 +4,7 @@ The **frontend** service is responsible for rendering the UI for the store's web
 It serves as the main entry point for the application routing requests to their
 appropriate backend services.
 The application uses Server Side Rendering (SSR) to generate HTML consumed by
-the browser.
+the clients, which could be web browsers, web crawlers, mobile clients or something else.
 
 ## OpenTelemetry features
 
