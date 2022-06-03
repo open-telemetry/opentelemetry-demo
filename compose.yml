@@ -36,7 +36,7 @@ services:
 
   # AdService
   adservice:
-    image: ghcr.io/open-telemetry/demo:${RELEASE_NAME}-adservice
+    image: ${IMAGE_NAME}:${IMAGE_VERSION}-adservice
     build:
       context: ./src/adservice
     ports:
@@ -48,7 +48,7 @@ services:
 
   # CartService
   cartservice:
-    image: ghcr.io/open-telemetry/demo:${RELEASE_NAME}-cartservice
+    image: ${IMAGE_NAME}:${IMAGE_VERSION}-cartservice
     build:
       context: ./src/cartservice/src
     ports:
@@ -62,7 +62,7 @@ services:
 
   # CheckoutService
   checkoutservice:
-    image: ghcr.io/open-telemetry/demo:${RELEASE_NAME}-checkoutservice
+    image: ${IMAGE_NAME}:${IMAGE_VERSION}-checkoutservice
     build:
       context: ./src/checkoutservice
     ports:
@@ -80,7 +80,7 @@ services:
 
   # CurrencyService
   currencyservice:
-    image: ghcr.io/open-telemetry/demo:${RELEASE_NAME}-currencyservice
+    image: ${IMAGE_NAME}:${IMAGE_VERSION}-currencyservice
     build:
       context: ./src/currencyservice
     ports:
@@ -92,7 +92,7 @@ services:
 
   # EmailService
   emailservice:
-    image: ghcr.io/open-telemetry/demo:${RELEASE_NAME}-emailservice
+    image: ${IMAGE_NAME}:${IMAGE_VERSION}-emailservice
     build:
       context: ./src/emailservice
     ports:
@@ -105,7 +105,7 @@ services:
 
   # Frontend
   frontend:
-    image: ghcr.io/open-telemetry/demo:${RELEASE_NAME}-frontend
+    image: ${IMAGE_NAME}:${IMAGE_VERSION}-frontend
     build:
       context: ./src/frontend
     ports:
@@ -124,7 +124,7 @@ services:
 
   # PaymentService
   paymentservice:
-    image: ghcr.io/open-telemetry/demo:${RELEASE_NAME}-paymentservice
+    image: ${IMAGE_NAME}:${IMAGE_VERSION}-paymentservice
     build:
       context: ./src/paymentservice
     ports:
@@ -136,7 +136,7 @@ services:
 
   # ProductCatalogService
   productcatalogservice:
-    image: ghcr.io/open-telemetry/demo:${RELEASE_NAME}-productcatalogservice
+    image: ${IMAGE_NAME}:${IMAGE_VERSION}-productcatalogservice
     build:
       context: ./src/productcatalogservice
     ports:
@@ -148,7 +148,7 @@ services:
 
   # RecommendationService
   recommendationservice:
-    image: ghcr.io/open-telemetry/demo:${RELEASE_NAME}-recommendationservice
+    image: ${IMAGE_NAME}:${IMAGE_VERSION}-recommendationservice
     build:
       context: ./src/recommendationservice
     ports:
@@ -162,7 +162,7 @@ services:
 
   # ShippingService
   shippingservice:
-    image: ghcr.io/open-telemetry/demo:${RELEASE_NAME}-shippingservice
+    image: ${IMAGE_NAME}:${IMAGE_VERSION}-shippingservice
     build:
       context: ./src/shippingservice
     ports:
@@ -174,7 +174,7 @@ services:
 
   # LoadGenerator
   loadgenerator:
-    image: ghcr.io/open-telemetry/demo:${RELEASE_NAME}-loadgenerator
+    image: ${IMAGE_NAME}:${IMAGE_VERSION}-loadgenerator
     build:
       context: ./src/loadgenerator
     environment:
