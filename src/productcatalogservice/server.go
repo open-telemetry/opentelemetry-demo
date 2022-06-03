@@ -83,7 +83,6 @@ func InitTracerProvider() *sdktrace.TracerProvider {
 		log.Fatal(err)
 	}
 	tp := sdktrace.NewTracerProvider(
-		sdktrace.WithSampler(sdktrace.AlwaysSample()),
 		sdktrace.WithBatcher(exporter),
 	)
 	otel.SetTracerProvider(tp)
