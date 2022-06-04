@@ -7,8 +7,10 @@ receivers:
 exporters:
   jaeger:
     endpoint: "jaeger:14250"
-    insecure: true
+    tls:
+      insecure: true
   logging:
+    loglevel: debug
 
 processors:
   batch:

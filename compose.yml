@@ -19,7 +19,7 @@ services:
 
   # Collector
   otelcol:
-    image: otel/opentelemetry-collector
+    image: otel/opentelemetry-collector:0.52.0
     command: [ "--config=/etc/otelcol-config.yml" ]
     volumes:
       - ./src/otelcollector/otelcol-config.yml:/etc/otelcol-config.yml
@@ -93,9 +93,9 @@ services:
     ports:
       - "${EMAIL_SERVICE_PORT}"
     environment:
+      - APP_ENV=production
       - PORT=${EMAIL_SERVICE_PORT}
-      - OTEL_PYTHON_LOG_CORRELATION=true
-      - OTEL_EXPORTER_OTLP_TRACES_ENDPOINT
+      - OTEL_EXPORTER_OTLP_TRACES_ENDPOINT=http://otelcol:4318/v1/traces
       - OTEL_RESOURCE_ATTRIBUTES=service.name=emailservice
 
   # Frontend
