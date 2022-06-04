@@ -1,6 +1,7 @@
 # Email Service
 
-The Email service "sends" an email to the customer with their order details by rendering it as a log message. It expects a JSON payload like:
+The Email service "sends" an email to the customer with their order details by
+rendering it as a log message. It expects a JSON payload like:
 
 ```json
 {
