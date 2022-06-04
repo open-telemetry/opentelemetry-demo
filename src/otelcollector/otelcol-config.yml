@@ -10,7 +10,6 @@ exporters:
     tls:
       insecure: true
   logging:
-    loglevel: debug
 
 processors:
   batch:
