@@ -33,22 +33,22 @@ docker build ./
 ## Run the client sample locally
 
 ### Build a image for Ad Service,for example:
-```shell
+```sh
 cd  /${project}/opentelemetry-demo-webstore/src/adservice
 docker build -t  adservice:v1  . 
 ```
 ### Run a instance for Ad Service by Docker,for example:
-```shell
+```sh
 docker run -d -p 9555:9555 adservice:v1 
 ```
 ### Enter into the docker instance and start a client demo,for example:
 You can use `docker exec -it ${CONTAINER_ID} /bin/sh`
-```shell
+```sh
 docker exec -it 3d6a8db7322a /bin/sh
 sh /app/build/install/hipstershop/bin/AdServiceClient
 ```
 ### Check if Ad Service is successful to start by logs of this client, for example :   
-```shell
+```sh
 2022-06-03 17:57:11 - hipstershop.AdServiceClient - Get Ads with context camera ... trace_id= span_id= trace_flags= 
 2022-06-03 17:57:12 - hipstershop.AdServiceClient - Ads: Hairdryer for sale. 50% off. trace_id= span_id= trace_flags= 
 2022-06-03 17:57:12 - hipstershop.AdServiceClient - Ads: Bamboo glass jar for sale. 10% off. trace_id= span_id= trace_flags= 
