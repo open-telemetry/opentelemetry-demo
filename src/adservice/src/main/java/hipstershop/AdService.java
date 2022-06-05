@@ -40,6 +40,9 @@ public final class AdService {
 
   private static final Logger logger = LogManager.getLogger(AdService.class);
 
+  /** Ads Server Default Port */
+  final static int AD_SERVER_PORT = 9555;
+
   @SuppressWarnings("FieldCanBeLocal")
   private static int MAX_ADS_TO_SERVE = 2;
 
@@ -49,7 +52,7 @@ public final class AdService {
   private static final AdService service = new AdService();
 
   private void start() throws IOException {
-    int port = Integer.parseInt(System.getenv().getOrDefault("PORT", "9555"));
+    int port = Integer.parseInt(System.getenv().getOrDefault("PORT", AD_SERVER_PORT+""));
     healthMgr = new HealthStatusManager();
 
     server =

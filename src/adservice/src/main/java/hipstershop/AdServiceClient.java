@@ -74,12 +74,12 @@ public class AdServiceClient {
   }
 
   private static int getPortOrDefaultFromArgs(String[] args) {
-    int portNumber = 9555;
+    int portNumber = AdService.AD_SERVER_PORT;
     if (2 < args.length) {
       try {
         portNumber = Integer.parseInt(args[2]);
       } catch (NumberFormatException e) {
-        logger.warn(String.format("Port %s is invalid, use default port %d.", args[2], 9555));
+        logger.warn(String.format("Port %s is invalid, use default port %d.", args[2], AdService.AD_SERVER_PORT));
       }
     }
     return portNumber;
