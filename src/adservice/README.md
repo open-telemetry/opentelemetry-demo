@@ -34,8 +34,9 @@ docker build ./
 
 ### Build a image for Ad Service
 
+From `src/adservice/`, run:
+
 ```sh
-cd  /${project}/opentelemetry-demo-webstore/src/adservice
 docker build -t  adservice:v1  . 
 ```
 
