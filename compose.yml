@@ -22,7 +22,7 @@ services:
     image: otel/opentelemetry-collector
     command: [ "--config=/etc/otelcol-config.yml" ]
     volumes:
-      - ./src/otelcollector/otelcol-config.yml:/etc/otelcol-config.yml
+      - ./otelcol-config.yml:/etc/otelcol-config.yml
     ports:
       - "4317"
     depends_on:
