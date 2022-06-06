@@ -12,28 +12,14 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-FROM python:3.10-slim
+FROM ruby:3.1.2
 
-# get packages
-COPY requirements.txt .
-RUN pip install -r requirements.txt
-
-# Enable unbuffered logging
-ENV PYTHONUNBUFFERED=1
-
-RUN apt-get -qq update \
-    && apt-get install -y --no-install-recommends \
-    wget
-
-# Download the grpc health probe
-RUN GRPC_HEALTH_PROBE_VERSION=v0.4.7 && \
-    wget -qO/bin/grpc_health_probe https://github.com/grpc-ecosystem/grpc-health-probe/releases/download/${GRPC_HEALTH_PROBE_VERSION}/grpc_health_probe-linux-amd64 && \
-    chmod +x /bin/grpc_health_probe
+COPY Gemfile* .
+RUN bundle install
 
 WORKDIR /email_server
 
-# Add the application
 COPY . .
 
 EXPOSE 8080
-ENTRYPOINT [ "opentelemetry-instrument", "python", "email_server.py" ]
+ENTRYPOINT ["bundle", "exec", "ruby", "email_server.rb"]

@@ -113,7 +113,7 @@ cache[(Cache<br/>&#40redis&#41)]
 cartservice(Cart Service<br/>&#40.NET&#41):::dotnet
 checkoutservice(Checkout Service<br/>&#40Go&#41):::golang
 currencyservice(Currency Service<br/>&#40Node.js&#41):::nodejs
-emailservice(Email Service<br/>&#40Python&#41):::python
+emailservice(Email Service<br/>&#40Ruby&#41):::ruby
 frontend(Frontend<br/>&#40Go&#41):::golang
 loadgenerator([Load Generator<br/>&#40Python&#41]):::python
 paymentservice(Payment Service<br/>&#40Node.js&#41):::nodejs
@@ -152,7 +152,7 @@ Find **Protocol Buffers Descriptions** at the [`./pb` directory](./pb/README.md)
 | [currencyservice](./src/currencyservice/README.md)             | Node.js       | Converts one money amount to another currency. Uses real values fetched from European Central Bank. It's the highest QPS service. |
 | [paymentservice](./src/paymentservice/README.md)               | Node.js       | Charges the given credit card info (mock) with the given amount and returns a transaction ID.                                     |
 | [shippingservice](./src/shippingservice/README.md)             | Go            | Gives shipping cost estimates based on the shopping cart. Ships items to the given address (mock)                                 |
-| [emailservice](./src/emailservice/README.md)                   | Python        | Sends users an order confirmation email (mock).                                                                                   |
+| [emailservice](./src/emailservice/README.md)                   | Ruby        | Sends users an order confirmation email (mock).                                                                                   |
 | [checkoutservice](./src/checkoutservice/README.md)             | Go            | Retrieves user cart, prepares order and orchestrates the payment, shipping and the email notification.                            |
 | [recommendationservice](./src/recommendationservice/README.md) | Python        | Recommends other products based on what's given in the cart.                                                                      |
 | [adservice](./src/adservice/README.md)                         | Java          | Provides text ads based on given context words.                                                                                   |
