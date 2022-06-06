@@ -12,7 +12,9 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-FROM ruby:3.1.2
+FROM ruby:3.1.2-slim
+
+RUN apt-get update -y && apt-get install -y build-essential
 
 COPY Gemfile* .
 RUN bundle install
