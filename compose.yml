@@ -37,11 +37,12 @@ services:
   # AdService
   adservice:
     build:
-      context: ./src/adservice
+      context: ./
+      dockerfile: ./src/adservice/Dockerfile
     ports:
       - "${AD_SERVICE_PORT}"
     environment:
-      - PORT=${AD_SERVICE_PORT}
+      - AD_SERVICE_PORT
       - OTEL_EXPORTER_OTLP_TRACES_ENDPOINT
       - OTEL_RESOURCE_ATTRIBUTES=service.name=adservice
 
