@@ -12,32 +12,33 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-FROM golang:1.17.7-alpine as builder
-RUN apk add --no-cache ca-certificates git
-RUN apk add build-base
-WORKDIR /src
+FROM golang:1.17.7-alpine AS builder
 
-# restore dependencies
-COPY go.mod go.sum ./
+RUN apk add build-base protoc
+
+WORKDIR /usr/src/app/
+
+# Restore dependencies
+COPY ./src/frontend/ ./
+COPY ./pb/ ./proto/
 RUN go mod download
-COPY . .
+RUN go get google.golang.org/protobuf/cmd/protoc-gen-go
+RUN go get google.golang.org/grpc/cmd/protoc-gen-go-grpc
 
-# Skaffold passes in debug-oriented compiler flags
-ARG SKAFFOLD_GO_GCFLAGS
-RUN go build -gcflags="${SKAFFOLD_GO_GCFLAGS}" -o /go/bin/frontend .
+# Build executable
+RUN protoc -I ./proto/ ./proto/demo.proto --go_out=./ --go-grpc_out=./
+RUN go build -o /go/bin/frontend/ ./
 
-FROM alpine as release
-RUN apk add --no-cache ca-certificates \
-    busybox-extras net-tools bind-tools
-WORKDIR /src
-COPY --from=builder /go/bin/frontend /src/server
-COPY ./templates ./templates
-COPY ./static ./static
+# -----------------------------------------------------------------------------
 
-# Definition of this variable is used by 'skaffold debug' to identify a golang binary.
-# Default behavior - a failure prints a stack trace for the current goroutine.
-# See https://golang.org/pkg/runtime/
-ENV GOTRACEBACK=single
+FROM alpine
 
-EXPOSE 8080
-ENTRYPOINT ["/src/server"]
+RUN apk add busybox-extras net-tools bind-tools
+WORKDIR /usr/src/app/
+
+COPY --from=builder /go/bin/frontend/ ./
+COPY ./src/frontend/templates/ ./templates/
+COPY ./src/frontend/static/ ./static/
+
+EXPOSE ${FRONTEND_PORT}
+ENTRYPOINT [ "./frontend" ]
