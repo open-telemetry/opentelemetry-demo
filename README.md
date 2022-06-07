@@ -159,7 +159,6 @@ subgraph Service Legend
   javasvc(Java):::java
   dotnetsvc(.NET):::dotnet
   golangsvc(Go):::golang
-  cppsvc(C++):::cpp
   rubysvc(Ruby):::ruby
   pythonsvc(Python):::python
   nodesvc(Node.JS):::nodejs
