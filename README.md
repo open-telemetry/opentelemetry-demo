@@ -161,7 +161,7 @@ subgraph Service Legend
   golangsvc(Go):::golang
   rubysvc(Ruby):::ruby
   pythonsvc(Python):::python
-  nodesvc(Node.JS):::nodejs
+  nodesvc(Node.js):::nodejs
 end
 
 classDef java fill:#b07219,color:white;
