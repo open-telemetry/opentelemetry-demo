@@ -9,7 +9,7 @@ docker compose ps
 Check the health of the service using a similar command to the following
 
 ```shell
-docker inspect --format "{{json .State.Health }}" opentelemetry-demo-webstore-paymentservice-1
+docker inspect --format "{{json .State.Health }}" paymentservice
 ```
 
 You should see output similar to the following when starting
