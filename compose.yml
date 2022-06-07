@@ -142,11 +142,14 @@ services:
   # RecommendationService
   recommendationservice:
     build:
-      context: ./src/recommendationservice
+      context: ./
+      dockerfile: ./src/recommendationservice/Dockerfile
     ports:
       - "${RECOMMENDATION_SERVICE_PORT}"
+    depends_on:
+      - productcatalogservice
     environment:
-      - PORT=${RECOMMENDATION_SERVICE_PORT}
+      - RECOMMENDATION_SERVICE_PORT
       - PRODUCT_CATALOG_SERVICE_ADDR
       - OTEL_PYTHON_LOG_CORRELATION=true
       - OTEL_EXPORTER_OTLP_TRACES_ENDPOINT
