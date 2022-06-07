@@ -105,7 +105,6 @@ languages that talk to each other over gRPC. Plus one Load Generator which uses
 Locust to fake user traffic.
 
 ```mermaid
-
 graph TD
 
 adservice(Ad Service<br/>&#40Java&#41):::java
@@ -138,6 +137,42 @@ frontend --> checkoutservice
 frontend --> currencyservice
 frontend --> recommendationservice --> productcatalogservice
 frontend --> shippingservice
+
+end
+classDef java fill:#b07219,color:white;
+classDef dotnet fill:#178600,color:white;
+classDef golang fill:#00add8,color:black;
+classDef cpp fill:#f34b7d,color:white;
+classDef ruby fill:#701516,color:white;
+classDef python fill:#3572A5,color:white;
+classDef nodejs fill:#f1e05a,color:black;
+classDef rust fill:#dea584,color:black;
+classDef erlang fill:#b83998,color:white;
+classDef php fill:#4f5d95,color:white;
+```
+
+```mermaid
+graph TD
+subgraph Service Legend
+  javasvc(Java):::java
+  dotnetsvc(.NET):::dotnet
+  golangsvc(Go):::golang
+  cppsvc(C++):::cpp
+  rubysvc(Ruby):::ruby
+  pythonsvc(Python):::python
+  nodesvc(Node.JS):::nodejs
+end
+
+classDef java fill:#b07219,color:white;
+classDef dotnet fill:#178600,color:white;
+classDef golang fill:#00add8,color:black;
+classDef cpp fill:#f34b7d,color:white;
+classDef ruby fill:#701516,color:white;
+classDef python fill:#3572A5,color:white;
+classDef nodejs fill:#f1e05a,color:black;
+classDef rust fill:#dea584,color:black;
+classDef erlang fill:#b83998,color:white;
+classDef php fill:#4f5d95,color:white;
 ```
 
 _To view a graph of the desired state of this application [click here](./docs/v1Graph.md)_
