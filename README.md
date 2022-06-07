@@ -105,21 +105,21 @@ languages that talk to each other over gRPC. Plus one Load Generator which uses
 Locust to fake user traffic.
 
 ```mermaid
-
 graph TD
 
-adservice(Ad Service<br/>&#40Java&#41):::java
+subgraph Service Diagram
+adservice(Ad Service):::java
 cache[(Cache<br/>&#40redis&#41)]
-cartservice(Cart Service<br/>&#40.NET&#41):::dotnet
-checkoutservice(Checkout Service<br/>&#40Go&#41):::golang
-currencyservice(Currency Service<br/>&#40Node.js&#41):::nodejs
-emailservice(Email Service<br/>&#40Ruby&#41):::ruby
-frontend(Frontend<br/>&#40Go&#41):::golang
-loadgenerator([Load Generator<br/>&#40Python&#41]):::python
-paymentservice(Payment Service<br/>&#40Node.js&#41):::nodejs
-productcatalogservice(ProductCatalog Service<br/>&#40Go&#41):::golang
-recommendationservice(Recommendation Service<br/>&#40Python&#41):::python
-shippingservice(Shipping Service<br/>&#40Go&#41):::golang
+cartservice(Cart Service):::dotnet
+checkoutservice(Checkout Service):::golang
+currencyservice(Currency Service):::nodejs
+emailservice(Email Service):::ruby
+frontend(Frontend):::golang
+loadgenerator([Load Generator]):::python
+paymentservice(Payment Service):::nodejs
+productcatalogservice(ProductCatalog Service):::golang
+recommendationservice(Recommendation Service):::python
+shippingservice(Shipping Service):::golang
 
 Internet -->|HTTP| frontend
 loadgenerator -->|HTTP| frontend
@@ -138,8 +138,9 @@ frontend --> checkoutservice
 frontend --> currencyservice
 frontend --> recommendationservice --> productcatalogservice
 frontend --> shippingservice
-end
 
+
+end
 classDef java fill:#b07219,color:white;
 classDef dotnet fill:#178600,color:white;
 classDef golang fill:#00add8,color:black;
