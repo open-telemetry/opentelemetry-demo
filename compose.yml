@@ -179,7 +179,8 @@ services:
   # LoadGenerator
   loadgenerator:
     build:
-      context: ./src/loadgenerator
+      context: ./
+      dockerfile: ./src/loadgenerator/Dockerfile
     environment:
       - FRONTEND_ADDR
       - USERS
