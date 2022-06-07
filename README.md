@@ -105,21 +105,21 @@ languages that talk to each other over gRPC. Plus one Load Generator which uses
 Locust to fake user traffic.
 
 ```mermaid
-
 graph TD
 
-adservice(Ad Service<br/>&#40Java&#41):::java
+subgraph Service Diagram
+adservice(Ad Service):::java
 cache[(Cache<br/>&#40redis&#41)]
-cartservice(Cart Service<br/>&#40.NET&#41):::dotnet
-checkoutservice(Checkout Service<br/>&#40Go&#41):::golang
-currencyservice(Currency Service<br/>&#40Node.js&#41):::nodejs
-emailservice(Email Service<br/>&#40Ruby&#41):::ruby
-frontend(Frontend<br/>&#40Go&#41):::golang
-loadgenerator([Load Generator<br/>&#40Python&#41]):::python
-paymentservice(Payment Service<br/>&#40Node.js&#41):::nodejs
-productcatalogservice(ProductCatalog Service<br/>&#40Go&#41):::golang
-recommendationservice(Recommendation Service<br/>&#40Python&#41):::python
-shippingservice(Shipping Service<br/>&#40Go&#41):::golang
+cartservice(Cart Service):::dotnet
+checkoutservice(Checkout Service):::golang
+currencyservice(Currency Service):::nodejs
+emailservice(Email Service):::ruby
+frontend(Frontend):::golang
+loadgenerator([Load Generator]):::python
+paymentservice(Payment Service):::nodejs
+productcatalogservice(ProductCatalog Service):::golang
+recommendationservice(Recommendation Service):::python
+shippingservice(Shipping Service):::golang
 
 Internet -->|HTTP| frontend
 loadgenerator -->|HTTP| frontend
@@ -138,6 +138,42 @@ frontend --> checkoutservice
 frontend --> currencyservice
 frontend --> recommendationservice --> productcatalogservice
 frontend --> shippingservice
+
+
+end
+classDef java fill:#b07219,color:white;
+classDef dotnet fill:#178600,color:white;
+classDef golang fill:#00add8,color:black;
+classDef cpp fill:#f34b7d,color:white;
+classDef ruby fill:#701516,color:white;
+classDef python fill:#3572A5,color:white;
+classDef nodejs fill:#f1e05a,color:black;
+classDef rust fill:#dea584,color:black;
+classDef erlang fill:#b83998,color:white;
+classDef php fill:#4f5d95,color:white;
+```
+
+```mermaid
+graph TD
+subgraph Service Legend
+  javasvc(Java):::java
+  dotnetsvc(.NET):::dotnet
+  golangsvc(Go):::golang
+  rubysvc(Ruby):::ruby
+  pythonsvc(Python):::python
+  nodesvc(Node.js):::nodejs
+end
+
+classDef java fill:#b07219,color:white;
+classDef dotnet fill:#178600,color:white;
+classDef golang fill:#00add8,color:black;
+classDef cpp fill:#f34b7d,color:white;
+classDef ruby fill:#701516,color:white;
+classDef python fill:#3572A5,color:white;
+classDef nodejs fill:#f1e05a,color:black;
+classDef rust fill:#dea584,color:black;
+classDef erlang fill:#b83998,color:white;
+classDef php fill:#4f5d95,color:white;
 ```
 
 _To view a graph of the desired state of this application [click here](./docs/v1Graph.md)_
