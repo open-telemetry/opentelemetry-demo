@@ -105,6 +105,7 @@ languages that talk to each other over gRPC. Plus one Load Generator which uses
 Locust to fake user traffic.
 
 ```mermaid
+
 graph TD
 
 adservice(Ad Service<br/>&#40Java&#41):::java
