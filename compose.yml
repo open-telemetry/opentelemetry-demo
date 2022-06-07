@@ -144,7 +144,7 @@ services:
       context: ./
       dockerfile: ./src/recommendationservice/Dockerfile
     ports:
-      - "${RECOMMENDATION_SERVICE_PORT}:${RECOMMENDATION_SERVICE_PORT}"
+      - "${RECOMMENDATION_SERVICE_PORT}"
     depends_on:
       - productcatalogservice
     environment:

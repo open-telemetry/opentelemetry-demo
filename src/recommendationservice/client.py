@@ -14,17 +14,26 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+# Python
+import os
+
+# Pip
+import dotenv
 import grpc
+
+# Local
 import demo_pb2
 import demo_pb2_grpc
-
-
 from logger import getJSONLogger
+
 logger = getJSONLogger('recommendationservice-server')
 
 if __name__ == "__main__":
+    dotenv.load_dotenv()
+
     # set up server stub
-    channel = grpc.insecure_channel('localhost:8080')
+    port = os.getenv('RECOMMENDATION_SERVICE_PORT')
+    channel = grpc.insecure_channel(f'localhost:{port}')
     stub = demo_pb2_grpc.RecommendationServiceStub(channel)
 
     # form request
