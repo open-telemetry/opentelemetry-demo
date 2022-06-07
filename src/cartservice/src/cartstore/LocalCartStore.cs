@@ -14,8 +14,9 @@
 
 using System;
 using System.Collections.Concurrent;
-using System.Threading.Tasks;
+using System.Diagnostics;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace cartservice.cartstore
 {
@@ -62,9 +63,11 @@ namespace cartservice.cartstore
 
         public Task EmptyCartAsync(string userId)
         {
-            Console.WriteLine($"EmptyCartAsync called with userId={userId}");
+            var eventTags = new ActivityTagsCollection();
+            eventTags.Add("userId", userId);
+            Activity.Current?.AddEvent(new ActivityEvent("EmptyCartAsync called.", default, eventTags));
+            
             userCartItems[userId] = new Hipstershop.Cart();
-
             return Task.CompletedTask;
         }
 

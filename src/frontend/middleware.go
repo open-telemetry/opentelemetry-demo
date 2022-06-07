@@ -16,6 +16,8 @@ package main
 
 import (
 	"context"
+	"github.com/GoogleCloudPlatform/microservices-demo/src/frontend/instr"
+	"go.opentelemetry.io/otel/trace"
 	"net/http"
 	"time"
 
@@ -25,6 +27,8 @@ import (
 
 type ctxKeyLog struct{}
 type ctxKeyRequestID struct{}
+
+type httpHandler func(w http.ResponseWriter, r *http.Request)
 
 type logHandler struct {
 	log  *logrus.Logger
@@ -79,6 +83,32 @@ func (lh *logHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	ctx = context.WithValue(ctx, ctxKeyLog{}, log)
 	r = r.WithContext(ctx)
 	lh.next.ServeHTTP(rr, r)
+}
+
+func instrumentHandler(fn httpHandler) httpHandler {
+	// Add common attributes to the span for each handler
+	// session, request, currency, and user
+
+	return func(w http.ResponseWriter, r *http.Request) {
+		rid := r.Context().Value(ctxKeyRequestID{})
+		requestID := ""
+		if rid != nil {
+			requestID = rid.(string)
+		}
+		span := trace.SpanFromContext(r.Context())
+		span.SetAttributes(
+			instr.SessionId.String(sessionID(r)),
+			instr.RequestId.String(requestID),
+			instr.Currency.String(currentCurrency(r)),
+		)
+
+		email := r.FormValue("email")
+		if email != "" {
+			span.SetAttributes(instr.UserId.String(email))
+		}
+
+		fn(w, r)
+	}
 }
 
 func ensureSessionID(next http.Handler) http.HandlerFunc {
