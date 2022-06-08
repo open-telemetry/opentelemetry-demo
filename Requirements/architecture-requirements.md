@@ -23,7 +23,8 @@ Each service should communicate with a feature flag service in order to
 enable/disable ‘faults’ that can be used to illustrate how telemetry helps solve
 problems in distributed applications.
 
-A PHP service should be added to the main application as an ‘admin service’.
+A PHP service should be added to the main application as an ‘admin service’. A
+Database should be added to enable CRUD functionality on the Product Catalog.
 
 The ‘shippingservice’ should be reimplemented in Rust
 
@@ -45,7 +46,7 @@ provide a catalog of feature flags that main application services can register
 with and interrogate for their current status and targeting rules.
 
 The feature flag component should be implemented as an Erlang+Elixir/Phoenix
-service.
+service. The catalog of feature flags should be stored in a Database.
 
 ## Orchestration and Deployment
 
