@@ -24,7 +24,8 @@ demonstrates the features and capabilities of OTel APIs, SDKs, and tools.
 Provide OpenTelemetry maintainers and WGs a platform to demonstrate new
 features/concepts ‘in the wild’
 
-Following is a general description of the logical components of the demo application.
+The following is a general description of the logical components of the demo
+application. The future architecture is visualized [here](../docs/v1Graph.md).
 
 ## Main Application
 
