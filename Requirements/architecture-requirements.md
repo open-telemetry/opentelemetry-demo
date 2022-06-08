@@ -1,5 +1,29 @@
 # Demo Architecture
 
+## Summary
+
+The OpenTelemetry Community Demo application is intended to be a ‘showcase’ for
+OpenTelemetry API, SDK, and tools in a “production-ish” cloud native
+application. The overall goal of this application is not only to provide a
+canonical ‘demo’ of OpenTelemetry components, but also to act as a framework for
+further customization by end-users, vendors, and other stakeholders.
+
+### Requirements
+
+* [Application Requirements](./application-requirements.md)
+* [OpenTelemetry Requirements](./openTelemetry-requirements.md)
+* [System Requirements](./system-requirements.md)
+
+### Application Goals
+
+Provide developers with a robust sample application they can use in learning
+OpenTelemetry instrumentation. Provide observability vendors with a single,
+well-supported, demo platform that they can further customize (or simply use
+OOB). Provide the OpenTelemetry community with a living artifact that
+demonstrates the features and capabilities of OTel APIs, SDKs, and tools.
+Provide OpenTelemetry maintainers and WGs a platform to demonstrate new
+features/concepts ‘in the wild’
+
 Following is a general description of the logical components of the demo application.
 
 ## Main Application
