@@ -10,9 +10,9 @@ further customization by end-users, vendors, and other stakeholders.
 
 ### Requirements
 
-* [Application Requirements](./application-requirements.md)
-* [OpenTelemetry Requirements](./openTelemetry-requirements.md)
-* [System Requirements](./system-requirements.md)
+* [Application Requirements](./Application-Requirements.md)
+* [OpenTelemetry Requirements](./OpenTelemetry-Requirements.md)
+* [System Requirements](./System-Requirements.md)
 
 ### Application Goals
 
