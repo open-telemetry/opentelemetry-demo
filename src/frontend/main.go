@@ -97,6 +97,7 @@ func InitTracerProvider() *sdktrace.TracerProvider {
 }
 
 func main() {
+	// Initialize OpenTelemetry Tracing
 	tp := InitTracerProvider()
 	defer func() {
 		if err := tp.Shutdown(context.Background()); err != nil {
@@ -124,6 +125,7 @@ func main() {
 	mustConnGRPC(ctx, &svc.adSvcConn, svc.adSvcAddr)
 
 	r := mux.NewRouter()
+	// Add OpenTelemetry instrumentation to incoming HTTP requests controlled by the gorilla/mux Router.
 	r.Use(otelmux.Middleware("server"))
 	r.HandleFunc("/", instrumentHandler(svc.homeHandler)).Methods(http.MethodGet, http.MethodHead)
 	r.HandleFunc("/product/{id}", instrumentHandler(svc.productHandler)).Methods(http.MethodGet, http.MethodHead)
@@ -157,6 +159,7 @@ func mustMapEnv(target *string, envKey string) {
 }
 
 func mustConnGRPC(ctx context.Context, conn **grpc.ClientConn, addr string) {
+	// Add OpenTelemetry instrumentation to outgoing gRPC requests
 	var err error
 	ctx, cancel := context.WithTimeout(ctx, time.Second*3)
 	defer cancel()
