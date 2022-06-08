@@ -1,16 +1,19 @@
-# frontend service
+# Frontend service
 
 The **frontend** service is responsible for rendering the UI for the store's website.
 It serves as the main entry point for the application routing requests to their
 appropriate backend services.
 The application uses Server Side Rendering (SSR) to generate HTML consumed by
-the clients, which could be web browsers, web crawlers, mobile clients or something else.
+the clients, which could be web browsers, web crawlers, mobile clients or something
+else.
 
 ## OpenTelemetry features
 
-| Auto-Instrumented tracing | Custom spans | Custom span attributes | Metrics | Logs |
-|---------------------------|--------------|------------------------|---------|------|
-| X                         |              | X                      |         |      |
+| Signal  | Instrumentation library | Custom spans | Custom span attributes |
+|---------|-------------------------|--------------|------------------------|
+| Traces  | X                       | O            | X                      |
+| Metrics | O                       | na           | na                     |
+| Logs    | O                       | na           | na                     |
 
 ## OpenTelemetry instrumentation
 
@@ -36,7 +39,7 @@ func InitTracerProvider() *sdktrace.TracerProvider {
 }
 ```
 
-Services should call `TraceProvider.shutdown()` when the service is shutdown to
+Services should call `TraceProvider.Shutdown()` when the service is shutdown to
 ensure all spans are exported.
 This service makes that call as part of a deferred function in `main`.
 
@@ -60,7 +63,7 @@ The following routes are defined by the frontend:
 | `/`               | GET    | Main index page                   |
 | `/cart`           | GET    | View Cart                         |
 | `/cart`           | POST   | Add to Cart                       |
-| `/cart/checktout` | POST   | Place Order                       |
+| `/cart/checkout`  | POST   | Place Order                       |
 | `/cart/empty`     | POST   | Empty Cart                        |
 | `/logout`         | GET    | Logout                            |
 | `/product/{id}`   | GET    | View Product                      |
@@ -82,13 +85,20 @@ This service will issue several outgoing gRPC calls, which have instrumentation
 hooks added in the `mustConnGRPC` function.
 
 ```go
-    // add OpenTelemetry instrumentation to outgoing gRPC requests
+func mustConnGRPC(ctx context.Context, conn **grpc.ClientConn, addr string) {
+    // Add OpenTelemetry instrumentation to outgoing gRPC requests
     var err error
+    ctx, cancel := context.WithTimeout(ctx, time.Second*3)
+    defer cancel()
     *conn, err = grpc.DialContext(ctx, addr,
         grpc.WithTransportCredentials(insecure.NewCredentials()),
-        grpc.WithUnaryInterceptor(otelgrpc.UnaryClientInterceptor(otelgrpc.WithTracerProvider(otel.GetTracerProvider()))),
-        grpc.WithStreamInterceptor(otelgrpc.StreamClientInterceptor(otelgrpc.WithTracerProvider(otel.GetTracerProvider()))),
+        grpc.WithUnaryInterceptor(otelgrpc.UnaryClientInterceptor()),
+        grpc.WithStreamInterceptor(otelgrpc.StreamClientInterceptor()),
     )
+    if err != nil {
+        panic(errors.Wrapf(err, "grpc: failed to connect %s", addr))
+    }
+}
 ```
 
 ### Service specific instrumentation attributes
@@ -100,8 +110,9 @@ All requests incoming to the frontend service will receive the following attribu
 - `app.currency`
 - `app.user.id` (when the user is present)
 
-These attributes are added in the `instrumentHandler` function which wraps all
-HTTP routes specified within the gorilla/mux router.
+These attributes are added in the `instrumentHandler` function (defined in the
+middleware.go file) which wraps all HTTP routes specified within the
+gorilla/mux router.
 Additional attributes are added within each handler's function as appropriate
 (ie: `app.cart.size`, `app.cart.total.price`).
 

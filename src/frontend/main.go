@@ -161,7 +161,7 @@ func mustMapEnv(target *string, envKey string) {
 }
 
 func mustConnGRPC(ctx context.Context, conn **grpc.ClientConn, addr string) {
-	// add OpenTelemetry instrumentation to outgoing gRPC requests
+	// Add OpenTelemetry instrumentation to outgoing gRPC requests
 	var err error
 	ctx, cancel := context.WithTimeout(ctx, time.Second*3)
 	defer cancel()
