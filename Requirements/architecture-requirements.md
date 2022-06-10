@@ -53,7 +53,7 @@ Database should be added to enable CRUD functionality on the Product Catalog.
 
 The ‘shippingservice’ should be reimplemented in Rust.
 
-The ‘currencyservice’ should be reimplemented in C++..
+The ‘currencyservice’ should be reimplemented in C++.
 
 The ‘emailservice’ should be reimplemented in Ruby.
 
