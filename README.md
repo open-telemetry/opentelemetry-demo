@@ -216,7 +216,7 @@ Find **Protocol Buffers Descriptions** at the [`./pb` directory](./pb/README.md)
 
 ## Demos featuring Online Boutique
 
-TBD
+- [Lightstep](https://github.com/lightstep/opentelemetry-demo-webstore)
 
 ## Contributing
 

@@ -3,26 +3,28 @@
 ## Summary
 
 The OpenTelemetry Community Demo application is intended to be a ‘showcase’ for
-OpenTelemetry API, SDK, and tools in a “production-ish” cloud native
+OpenTelemetry API, SDK, and tools in a production-lite cloud native
 application. The overall goal of this application is not only to provide a
 canonical ‘demo’ of OpenTelemetry components, but also to act as a framework for
 further customization by end-users, vendors, and other stakeholders.
 
 ### Requirements
 
-* [Application Requirements](./Application-Requirements.md)
-* [OpenTelemetry Requirements](./OpenTelemetry-Requirements.md)
-* [System Requirements](./System-Requirements.md)
+- [Application Requirements](./Application-Requirements.md)
+- [OpenTelemetry Requirements](./OpenTelemetry-Requirements.md)
+- [System Requirements](./System-Requirements.md)
 
 ### Application Goals
 
-Provide developers with a robust sample application they can use in learning
-OpenTelemetry instrumentation. Provide observability vendors with a single,
+- Provide developers with a robust sample application they can use in learning
+OpenTelemetry instrumentation.
+- Provide observability vendors with a single,
 well-supported, demo platform that they can further customize (or simply use
-OOB). Provide the OpenTelemetry community with a living artifact that
-demonstrates the features and capabilities of OTel APIs, SDKs, and tools.
-Provide OpenTelemetry maintainers and WGs a platform to demonstrate new
-features/concepts ‘in the wild’
+OOB).
+- Provide the OpenTelemetry community with a living artifact that demonstrates
+the features and capabilities of OTel APIs, SDKs, and tools.
+- Provide OpenTelemetry maintainers and working groups a platform to demonstrate
+new features/concepts ‘in the wild’
 
 The following is a general description of the logical components of the demo
 application. The future architecture is visualized [here](../docs/v1Graph.md).
@@ -41,8 +43,9 @@ logs (as applicable/available).
 Each service should be ‘swappable’ with a service that performs the same
 business logic, implementing the same gRPC endpoints, but written in a different
 language/implementation. For the initial implementation of the demo, we should
-cover as many languages as possible by swapping out existing services with
-implementations in un-represented languages.
+focus on adding as many missing languages as possible by swapping out existing
+services with implementations in un-represented languages. For future versions
+we will look to add more distinct language options per service.
 
 Each service should communicate with a feature flag service in order to
 enable/disable ‘faults’ that can be used to illustrate how telemetry helps solve
