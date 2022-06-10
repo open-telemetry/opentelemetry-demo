@@ -23,3 +23,4 @@ obj/
 .idea/
 build/
 node_modules/
+src/shippingservice/target/
