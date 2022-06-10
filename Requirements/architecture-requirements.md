@@ -51,7 +51,7 @@ problems in distributed applications.
 A PHP service should be added to the main application as an ‘admin service’. A
 Database should be added to enable CRUD functionality on the Product Catalog.
 
-The ‘shippingservice’ should be reimplemented in Rust
+The ‘shippingservice’ should be reimplemented in Rust.
 
 The ‘currencyservice’ should be reimplemented in C++..
 
