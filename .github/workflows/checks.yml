@@ -58,10 +58,10 @@ jobs:
     name: Broken Links
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
-      - name: Run link check
-        uses: gaurav-nelson/github-action-markdown-link-check@v1
-        with:
-          use-quiet-mode: 'no'
-          use-verbose-mode: 'yes'
-          config-file: '.github/.mlc_config.json'
+    - uses: actions/checkout@v3
+    - name: Run link check
+      uses: gaurav-nelson/github-action-markdown-link-check@v1
+      with:
+        use-quiet-mode: 'no'
+        use-verbose-mode: 'yes'
+        config-file: '.github/.mlc_config.json'
