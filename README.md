@@ -43,6 +43,49 @@ docker compose up
 
 - And the Jaeger UI at: <http://localhost:16686>
 
+### Bring your own backend
+
+Likely you want to use the Webstore as a demo application for an observability
+backend you already have (e.g. an existing instance of Jaeger, Zipkin or one of
+the [vendor of your choice](https://opentelemetry.io/vendors/).
+
+To add your backend open the file
+[src/otelcollector/otelcol-config.yml](./src/otelcollector/otelcol-config.yml)
+with an editor:
+
+- add a trace exporter for your backend. For example, if your backend supports
+  otlp, extend the `exporters` section like the following:
+
+```yaml
+exporters:
+  jaeger:
+    endpoint: "jaeger:14250"
+    insecure: true
+  logging:
+  otlp:
+    endpoint: <your-endpoint-url>
+```
+
+- add the `otlp` exporter to the `pipelines` section as well:
+
+```yaml
+service:
+  pipelines:
+    traces:
+      receivers: [otlp]
+      processors: [batch]
+      exporters: [logging, jaeger, otlp]
+```
+
+Vendor backends might require you to add additional parameters for
+authentication, please check their documentation. Some backends require
+different exporters, you may find them and their documentation available at
+[opentelemetry-collector-contrib/exporter](https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/main/exporter).
+
+After updating the `otelcol-config.yml` start the demo by running
+`docker compose up`. After a while you should see the traces flowing into
+your backend as well.
+
 ## Screenshots from the Online Boutique
 
 | Home Page                                                                                                         | Checkout Screen                                                                                                    |
@@ -60,24 +103,23 @@ docker compose up
 **Online Boutique** is composed of 10 microservices written in different
 languages that talk to each other over gRPC. Plus one Load Generator which uses
 Locust to fake user traffic.
-See the [Development Principles](/docs/development-principles.md) doc for more information.
 
 ```mermaid
-
 graph TD
 
-adservice(Ad Service<br/>&#40Java&#41):::java
+subgraph Service Diagram
+adservice(Ad Service):::java
 cache[(Cache<br/>&#40redis&#41)]
-cartservice(Cart Service<br/>&#40.NET&#41):::dotnet
-checkoutservice(Checkout Service<br/>&#40Go&#41):::golang
-currencyservice(Currency Service<br/>&#40Node.js&#41):::nodejs
-emailservice(Email Service<br/>&#40Python&#41):::python
-frontend(Frontend<br/>&#40Go&#41):::golang
-loadgenerator([Load Generator<br/>&#40Python&#41]):::python
-paymentservice(Payment Service<br/>&#40Node.js&#41):::nodejs
-productcatalogservice(ProductCatalog Service<br/>&#40Go&#41):::golang
-recommendationservice(Recommendation Service<br/>&#40Python&#41):::python
-shippingservice(Shipping Service<br/>&#40Go&#41):::golang
+cartservice(Cart Service):::dotnet
+checkoutservice(Checkout Service):::golang
+currencyservice(Currency Service):::nodejs
+emailservice(Email Service):::ruby
+frontend(Frontend):::golang
+loadgenerator([Load Generator]):::python
+paymentservice(Payment Service):::nodejs
+productcatalogservice(ProductCatalog Service):::golang
+recommendationservice(Recommendation Service):::python
+shippingservice(Shipping Service):::golang
 
 Internet -->|HTTP| frontend
 loadgenerator -->|HTTP| frontend
@@ -96,6 +138,42 @@ frontend --> checkoutservice
 frontend --> currencyservice
 frontend --> recommendationservice --> productcatalogservice
 frontend --> shippingservice
+
+
+end
+classDef java fill:#b07219,color:white;
+classDef dotnet fill:#178600,color:white;
+classDef golang fill:#00add8,color:black;
+classDef cpp fill:#f34b7d,color:white;
+classDef ruby fill:#701516,color:white;
+classDef python fill:#3572A5,color:white;
+classDef nodejs fill:#f1e05a,color:black;
+classDef rust fill:#dea584,color:black;
+classDef erlang fill:#b83998,color:white;
+classDef php fill:#4f5d95,color:white;
+```
+
+```mermaid
+graph TD
+subgraph Service Legend
+  javasvc(Java):::java
+  dotnetsvc(.NET):::dotnet
+  golangsvc(Go):::golang
+  rubysvc(Ruby):::ruby
+  pythonsvc(Python):::python
+  nodesvc(Node.js):::nodejs
+end
+
+classDef java fill:#b07219,color:white;
+classDef dotnet fill:#178600,color:white;
+classDef golang fill:#00add8,color:black;
+classDef cpp fill:#f34b7d,color:white;
+classDef ruby fill:#701516,color:white;
+classDef python fill:#3572A5,color:white;
+classDef nodejs fill:#f1e05a,color:black;
+classDef rust fill:#dea584,color:black;
+classDef erlang fill:#b83998,color:white;
+classDef php fill:#4f5d95,color:white;
 ```
 
 _To view a graph of the desired state of this application [click here](./docs/v1Graph.md)_
@@ -110,7 +188,7 @@ Find **Protocol Buffers Descriptions** at the [`./pb` directory](./pb/README.md)
 | [currencyservice](./src/currencyservice/README.md)             | Node.js       | Converts one money amount to another currency. Uses real values fetched from European Central Bank. It's the highest QPS service. |
 | [paymentservice](./src/paymentservice/README.md)               | Node.js       | Charges the given credit card info (mock) with the given amount and returns a transaction ID.                                     |
 | [shippingservice](./src/shippingservice/README.md)             | Go            | Gives shipping cost estimates based on the shopping cart. Ships items to the given address (mock)                                 |
-| [emailservice](./src/emailservice/README.md)                   | Python        | Sends users an order confirmation email (mock).                                                                                   |
+| [emailservice](./src/emailservice/README.md)                   | Ruby        | Sends users an order confirmation email (mock).                                                                                   |
 | [checkoutservice](./src/checkoutservice/README.md)             | Go            | Retrieves user cart, prepares order and orchestrates the payment, shipping and the email notification.                            |
 | [recommendationservice](./src/recommendationservice/README.md) | Python        | Recommends other products based on what's given in the cart.                                                                      |
 | [adservice](./src/adservice/README.md)                         | Java          | Provides text ads based on given context words.                                                                                   |
@@ -138,7 +216,7 @@ Find **Protocol Buffers Descriptions** at the [`./pb` directory](./pb/README.md)
 
 ## Demos featuring Online Boutique
 
-TBD
+- [Lightstep](https://github.com/lightstep/opentelemetry-demo-webstore)
 
 ## Contributing
 

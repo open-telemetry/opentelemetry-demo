@@ -19,7 +19,7 @@ services:
 
   # Collector
   otelcol:
-    image: otel/opentelemetry-collector
+    image: otel/opentelemetry-collector:0.52.0
     command: [ "--config=/etc/otelcol-config.yml" ]
     volumes:
       - ./src/otelcollector/otelcol-config.yml:/etc/otelcol-config.yml
@@ -98,20 +98,21 @@ services:
     ports:
       - "${EMAIL_SERVICE_PORT}"
     environment:
+      - APP_ENV=production
       - PORT=${EMAIL_SERVICE_PORT}
-      - OTEL_PYTHON_LOG_CORRELATION=true
-      - OTEL_EXPORTER_OTLP_TRACES_ENDPOINT
+      - OTEL_EXPORTER_OTLP_TRACES_ENDPOINT=http://otelcol:4318/v1/traces
       - OTEL_RESOURCE_ATTRIBUTES=service.name=emailservice
 
   # Frontend
   frontend:
     image: ${IMAGE_NAME}:${IMAGE_VERSION}-frontend
     build:
-      context: ./src/frontend
+      context: ./
+      dockerfile: ./src/frontend/Dockerfile
     ports:
       - "${FRONTEND_PORT}:${FRONTEND_PORT}"
     environment:
-      - PORT=${FRONTEND_PORT}
+      - FRONTEND_ADDR
       - AD_SERVICE_ADDR
       - CART_SERVICE_ADDR
       - CHECKOUT_SERVICE_ADDR
@@ -121,6 +122,15 @@ services:
       - SHIPPING_SERVICE_ADDR
       - OTEL_EXPORTER_OTLP_TRACES_ENDPOINT
       - OTEL_RESOURCE_ATTRIBUTES=service.name=frontend
+    depends_on:
+      - adservice
+      - cartservice
+      - checkoutservice
+      - currencyservice
+      - otelcol
+      - productcatalogservice
+      - recommendationservice
+      - shippingservice
 
   # PaymentService
   paymentservice:
@@ -138,11 +148,12 @@ services:
   productcatalogservice:
     image: ${IMAGE_NAME}:${IMAGE_VERSION}-productcatalogservice
     build:
-      context: ./src/productcatalogservice
+      context: ./
+      dockerfile: ./src/productcatalogservice/Dockerfile
     ports:
       - "${PRODUCT_CATALOG_SERVICE_PORT}"
     environment:
-      - PORT=${PRODUCT_CATALOG_SERVICE_PORT}
+      - PRODUCT_CATALOG_SERVICE_PORT
       - OTEL_EXPORTER_OTLP_TRACES_ENDPOINT
       - OTEL_RESOURCE_ATTRIBUTES=service.name=productcatalogservice
 
@@ -150,11 +161,14 @@ services:
   recommendationservice:
     image: ${IMAGE_NAME}:${IMAGE_VERSION}-recommendationservice
     build:
-      context: ./src/recommendationservice
+      context: ./
+      dockerfile: ./src/recommendationservice/Dockerfile
     ports:
       - "${RECOMMENDATION_SERVICE_PORT}"
+    depends_on:
+      - productcatalogservice
     environment:
-      - PORT=${RECOMMENDATION_SERVICE_PORT}
+      - RECOMMENDATION_SERVICE_PORT
       - PRODUCT_CATALOG_SERVICE_ADDR
       - OTEL_PYTHON_LOG_CORRELATION=true
       - OTEL_EXPORTER_OTLP_TRACES_ENDPOINT
@@ -176,7 +190,8 @@ services:
   loadgenerator:
     image: ${IMAGE_NAME}:${IMAGE_VERSION}-loadgenerator
     build:
-      context: ./src/loadgenerator
+      context: ./
+      dockerfile: ./src/loadgenerator/Dockerfile
     environment:
       - FRONTEND_ADDR
       - USERS
