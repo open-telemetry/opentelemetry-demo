@@ -54,7 +54,7 @@ jobs:
     - name: run docfx
       run: docfx build --dry-run
 
-  markdown-link-check:
+  markdownlinkcheck:
     name: Broken Links
     runs-on: ubuntu-latest
     steps:
