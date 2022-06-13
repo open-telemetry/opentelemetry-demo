@@ -245,7 +245,7 @@ For edit access, get in touch on
 
 - [Juliano Costa](https://github.com/julianocosta89), Dynatrace
 - [Michael Maxwell](https://github.com/mic-max), Microsoft
-- [Mikko Viitanen](https://github.com/mviitane), Microsoft
+- [Mikko Viitanen](https://github.com/mviitane), Dynatrace
 - [Reiley Yang](https://github.com/reyang), Microsoft
 
 ### Thanks to all the people who have contributed
