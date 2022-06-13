@@ -36,6 +36,7 @@ services:
 
   # AdService
   adservice:
+    image: ${IMAGE_NAME}:${IMAGE_VERSION}-adservice
     build:
       context: ./src/adservice
     ports:
@@ -47,6 +48,7 @@ services:
 
   # CartService
   cartservice:
+    image: ${IMAGE_NAME}:${IMAGE_VERSION}-cartservice
     build:
       context: ./src/cartservice/src
     ports:
@@ -60,6 +62,7 @@ services:
 
   # CheckoutService
   checkoutservice:
+    image: ${IMAGE_NAME}:${IMAGE_VERSION}-checkoutservice
     build:
       context: ./src/checkoutservice
     ports:
@@ -77,6 +80,7 @@ services:
 
   # CurrencyService
   currencyservice:
+    image: ${IMAGE_NAME}:${IMAGE_VERSION}-currencyservice
     build:
       context: ./src/currencyservice
     ports:
@@ -88,6 +92,7 @@ services:
 
   # EmailService
   emailservice:
+    image: ${IMAGE_NAME}:${IMAGE_VERSION}-emailservice
     build:
       context: ./src/emailservice
     ports:
@@ -100,6 +105,7 @@ services:
 
   # Frontend
   frontend:
+    image: ${IMAGE_NAME}:${IMAGE_VERSION}-frontend
     build:
       context: ./
       dockerfile: ./src/frontend/Dockerfile
@@ -128,6 +134,7 @@ services:
 
   # PaymentService
   paymentservice:
+    image: ${IMAGE_NAME}:${IMAGE_VERSION}-paymentservice
     build:
       context: ./src/paymentservice
     ports:
@@ -139,6 +146,7 @@ services:
 
   # ProductCatalogService
   productcatalogservice:
+    image: ${IMAGE_NAME}:${IMAGE_VERSION}-productcatalogservice
     build:
       context: ./
       dockerfile: ./src/productcatalogservice/Dockerfile
@@ -151,6 +159,7 @@ services:
 
   # RecommendationService
   recommendationservice:
+    image: ${IMAGE_NAME}:${IMAGE_VERSION}-recommendationservice
     build:
       context: ./
       dockerfile: ./src/recommendationservice/Dockerfile
@@ -167,6 +176,7 @@ services:
 
   # ShippingService
   shippingservice:
+    image: ${IMAGE_NAME}:${IMAGE_VERSION}-shippingservice
     build:
       context: ./src/shippingservice
     ports:
@@ -178,6 +188,7 @@ services:
 
   # LoadGenerator
   loadgenerator:
+    image: ${IMAGE_NAME}:${IMAGE_VERSION}-loadgenerator
     build:
       context: ./
       dockerfile: ./src/loadgenerator/Dockerfile
