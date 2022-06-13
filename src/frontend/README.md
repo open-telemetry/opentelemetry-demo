@@ -9,11 +9,17 @@ else.
 
 ## OpenTelemetry features
 
-| Signal  | Instrumentation library | Custom spans | Custom span attributes |
-|---------|-------------------------|--------------|------------------------|
-| Traces  | X                       | O            | X                      |
-| Metrics | O                       | na           | na                     |
-| Logs    | O                       | na           | na                     |
+| Traces                                    | Implemented | Metrics                                   | Implemented | Logs | Implemented |
+|-------------------------------------------|-------------|-------------------------------------------|-------------|------|-------------|
+| Automatic Instrumentation (Agent)         | n/a         | Automatic Instrumentation (Agent)         | n/a         |      |             |
+| Automatic Instrumentation (OTel Operator) | No          | Automatic Instrumentation (OTel Operator) | No          |      |             |
+| Instrumentation Libraries                 | Yes         | Instrumentation Libraries                 | No          |      |             |
+| Manual Span Creation                      | No          | Manual Metric Creation                    | No          |      |             |
+| Span Data Enrichment                      | Yes         | Collector Metric Transformation           | No          |      |             |
+| Interprocess Context Propagation          | Yes         | Push Metrics                              | No          |      |             |
+| Intra-service Context Propagation         | No          | SLO Metrics                               | No          |      |             |
+| Trace Links                               | No          | Multiple Business Metrics                 | No          |      |             |
+| Baggage                                   | No          |                                           |             |      |             |
 
 ## OpenTelemetry instrumentation
 
