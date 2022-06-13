@@ -29,9 +29,9 @@ RUN go build -gcflags="${SKAFFOLD_GO_GCFLAGS}" -o /checkoutservice .
 
 FROM alpine as release
 RUN apk add --no-cache ca-certificates
-RUN GRPC_HEALTH_PROBE_VERSION=v0.4.7 && \
-    wget -qO/bin/grpc_health_probe https://github.com/grpc-ecosystem/grpc-health-probe/releases/download/${GRPC_HEALTH_PROBE_VERSION}/grpc_health_probe-linux-amd64 && \
-    chmod +x /bin/grpc_health_probe
+COPY --chmod=0755 ./include/grpc_health_probe /include/
+
+HEALTHCHECK CMD [ "/include/grpc_health_probe", "-addr", ":${CHECKOUT_SERVICE_PORT}" ]
 WORKDIR /src
 COPY --from=builder /checkoutservice /src/checkoutservice
 

@@ -37,9 +37,9 @@ COPY --from=builder /usr/src/app/node_modules ./node_modules
 
 COPY ./src/paymentservice/ ./
 
-COPY --chmod=0755 ./grpc_health_probe /bin/
+COPY --chmod=0755 ./include/grpc_health_probe /include/
 
-HEALTHCHECK CMD [ "/include/grpc_health_probe", "-addr=:50051" ]
+HEALTHCHECK CMD [ "/include/grpc_health_probe", "-addr", ":${PAYMENT_SERVICE_PORT}" ]
 
 EXPOSE 50051
 
