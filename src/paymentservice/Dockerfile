@@ -39,7 +39,7 @@ COPY ./src/paymentservice/ ./
 
 COPY --chmod=0755 ./grpc_health_probe /bin/
 
-HEALTHCHECK CMD [ "/bin/grpc_health_probe", "-addr=:50051" ]
+HEALTHCHECK CMD [ "/include/grpc_health_probe", "-addr=:50051" ]
 
 EXPOSE 50051
 
