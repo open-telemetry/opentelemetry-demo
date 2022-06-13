@@ -238,13 +238,14 @@ For edit access, get in touch on
 - [Austin Parker](https://github.com/austinlparker), Lightstep
 - [Carter Socha](https://github.com/cartersocha), Microsoft
 - [Morgan McLean](https://github.com/mtwo), Splunk
+- [Pierre Tessier](https://github.com/puckpuck), Honeycomb
 
 [Approvers](https://github.com/open-telemetry/community/blob/main/community-membership.md#approver)
 ([@open-telemetry/demo-webstore-approvers](https://github.com/orgs/open-telemetry/teams/demo-webstore-approvers)):
 
-- [Joe Sirianni](https://github.com/jsirianni), ObservIQ
 - [Juliano Costa](https://github.com/julianocosta89), Dynatrace
 - [Michael Maxwell](https://github.com/mic-max), Microsoft
+- [Mikko Viitanen](https://github.com/mviitane), Dynatrace
 - [Reiley Yang](https://github.com/reyang), Microsoft
 
 ### Thanks to all the people who have contributed
