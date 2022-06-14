@@ -9,11 +9,49 @@ else.
 
 ## OpenTelemetry features
 
-| Signal  | Instrumentation library | Custom spans | Custom span attributes |
-|---------|-------------------------|--------------|------------------------|
-| Traces  | X                       | O            | X                      |
-| Metrics | O                       | na           | na                     |
-| Logs    | O                       | na           | na                     |
+### Emoji Legend
+
+- Completed: :100:
+- Not Applicable: :large_blue_diamond:
+- Not Present (Yet): :red_circle:
+
+### Traces
+
+- [Automatic Instrumentation (Language
+  Agent)](https://github.com/open-telemetry/opentelemetry-java-instrumentation#about):
+  :large_blue_diamond:
+- [Automatic Instrumentation (OTel
+  Operator)](https://github.com/open-telemetry/opentelemetry-operator):
+  :red_circle:
+- [Instrumentation
+  Libraries](https://opentelemetry.io/docs/concepts/instrumenting-library/):
+  :100:
+- [Manual Span
+  Creation](https://github.com/open-telemetry/opentelemetry-dotnet/tree/main/docs/trace/getting-started):
+  :red_circle:
+- [Span Data
+  Enrichment](https://opentelemetry.io/docs/instrumentation/net/manual/#add-tags-to-an-activity):
+  :100:
+- Interprocess Context Propagation: :100:
+- [Intra-service Context
+  Propagation](https://opentelemetry.io/docs/instrumentation/java/manual/#context-propagation):
+  :red_circle:
+- [Trace
+  Links](https://github.com/open-telemetry/opentelemetry-specification/blob/main/specification/overview.md#links-between-spans):
+  :red_circle:
+- [Baggage](https://github.com/open-telemetry/opentelemetry-specification/blob/main/specification/baggage/api.md#overview):
+  :red_circle:
+
+### Metrics
+
+- Automatic Instrumentation (Agent): :large_blue_diamond:
+- Automatic Instrumentation (OTel Operator): :red_circle:
+- Instrumentation Libraries  : :red_circle:
+- Manual Metric Creation:  :red_circle:
+- Collector Metric Transformation::red_circle:
+- Push Metrics: :red_circle:
+- SLO Metrics: :red_circle:
+- Multiple Metric Instruments: :red_circle:
 
 ## OpenTelemetry instrumentation
 
