@@ -221,4 +221,3 @@ services:
       - OTEL_RESOURCE_ATTRIBUTES=service.name=loadgenerator
     depends_on:
       - frontend
-      - otelcol
