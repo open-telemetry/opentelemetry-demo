@@ -178,7 +178,7 @@ classDef php fill:#4f5d95,color:white;
 
 _To view a graph of the desired state of this application [click here](./docs/v1Graph.md)_
 
-Find **Protocol Buffers Descriptions** at the [`./pb` directory](./pb/README.md).
+Find the **Protocol Buffer Definitions** in the `/pb/` directory.
 
 | Service                                              | Language      | Description                                                                                                                       |
 | ---------------------------------------------------- | ------------- | --------------------------------------------------------------------------------------------------------------------------------- |

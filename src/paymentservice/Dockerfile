@@ -12,35 +12,25 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-FROM node:16-alpine as base
+FROM node:16-alpine AS base
 
-FROM base as builder
+FROM base AS builder
 
-# Some packages (e.g. @google-cloud/profiler) require additional
-# deps for post-install scripts
-RUN apk add --update --no-cache \
-    python3 \
-    make \
-    g++
+WORKDIR /usr/src/app/
 
-WORKDIR /usr/src/app
-
-COPY package*.json ./
+COPY ./src/paymentservice/package.json ./
 
 RUN npm install --only=production
 
+# -----------------------------------------------------------------------------
+
 FROM base
 
-RUN GRPC_HEALTH_PROBE_VERSION=v0.4.7 && \
-    wget -qO/bin/grpc_health_probe https://github.com/grpc-ecosystem/grpc-health-probe/releases/download/${GRPC_HEALTH_PROBE_VERSION}/grpc_health_probe-linux-amd64 && \
-    chmod +x /bin/grpc_health_probe
+WORKDIR /usr/src/app/
 
-WORKDIR /usr/src/app
+COPY --from=builder /usr/src/app/node_modules/ ./node_modules/
+COPY ./src/paymentservice/ ./
+COPY ./pb/ ./proto/
 
-COPY --from=builder /usr/src/app/node_modules ./node_modules
-
-COPY . .
-
-EXPOSE 50051
-
-ENTRYPOINT [ "node", "--require", "./tracing.js", "index.js" ]
+EXPOSE ${PAYMENT_SERVICE_PORT}
+ENTRYPOINT [ "node", "--require", "./tracing.js", "./index.js" ]
