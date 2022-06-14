@@ -23,7 +23,9 @@ jobs:
     - name: check out code
       uses: actions/checkout@v3
 
-    - uses: actions/setup-python@v3
+    - uses: actions/setup-python@v4
+      with:
+        python-version: '3.x'
 
     - name: install yamllint
       run: make install-yamllint
@@ -65,3 +67,12 @@ jobs:
         use-quiet-mode: 'no'
         use-verbose-mode: 'yes'
         config-file: '.github/.mlc_config.json'
+
+  sanity:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v3
+
+    - name: run sanitycheck.py
+      run: python3 ./internal/tools/sanitycheck.py
