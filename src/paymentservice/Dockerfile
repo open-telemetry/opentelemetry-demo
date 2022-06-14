@@ -21,7 +21,7 @@ FROM base as builder
 RUN apk add --update --no-cache \
     python3 \
     make \
-    g++ 
+    g++
 
 WORKDIR /usr/src/app
 
