@@ -57,3 +57,11 @@ fix: misspell-correction
 install-tools: $(MISSPELL)
 	npm install
 	@echo "All tools installed"
+
+.PHONY: build-docker-images
+build-docker-images:
+	docker compose -f docker-compose.yml build
+
+.PHONY: push-docker-images
+push-docker-images:
+	docker compose -f docker-compose.yml push

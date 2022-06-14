@@ -25,7 +25,7 @@ namespace cartservice.services
     {
         private ICartStore _dependency { get; }
 
-        public HealthCheckService (ICartStore dependency) 
+        public HealthCheckService (ICartStore dependency)
         {
             _dependency = dependency;
         }
