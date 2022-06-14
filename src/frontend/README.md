@@ -12,14 +12,14 @@ else.
 ### Emoji Legend
 
 - Completed: :100:
-- Not Applicable: :large_blue_circle:
+- Not Applicable: :large_blue_diamond:
 - Not Present (Yet): :red_circle:
 
 ### Traces
 
 - [Automatic Instrumentation (Language
   Agent)](https://github.com/open-telemetry/opentelemetry-java-instrumentation#about):
-  :large_blue_circle:
+  :large_blue_diamond:
 - [Automatic Instrumentation (OTel
   Operator)](https://github.com/open-telemetry/opentelemetry-operator):
   :red_circle:
@@ -44,7 +44,7 @@ else.
 
 ### Metrics
 
-- Automatic Instrumentation (Agent): :large_blue_circle:
+- Automatic Instrumentation (Agent): :large_blue_diamond:
 - Automatic Instrumentation (OTel Operator): :red_circle:
 - Instrumentation Libraries  : :red_circle:
 - Manual Metric Creation:  :red_circle:
