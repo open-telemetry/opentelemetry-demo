@@ -18,7 +18,7 @@ FROM mcr.microsoft.com/dotnet/sdk:6.0.300 AS builder
 WORKDIR /usr/src/app/
 
 COPY ./src/cartservice/ ./
-COPY ./pb/demo.proto ./src/protos/
+COPY ./pb/ ./src/protos/
 
 RUN dotnet restore ./src/cartservice.csproj -r linux-musl-x64
 RUN dotnet publish ./src/cartservice.csproj -p:PublishSingleFile=true -r linux-musl-x64 --self-contained true -p:PublishTrimmed=True -p:TrimMode=Link -c Release -o /cartservice --no-restore
