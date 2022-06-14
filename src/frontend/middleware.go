@@ -16,7 +16,7 @@ package main
 
 import (
 	"context"
-	"github.com/GoogleCloudPlatform/microservices-demo/src/frontend/instr"
+	"github.com/opentelemetry/opentelemetry-demo-webstore/src/frontend/instr"
 	"go.opentelemetry.io/otel/trace"
 	"net/http"
 	"time"

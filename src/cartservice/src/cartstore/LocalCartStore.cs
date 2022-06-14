@@ -66,7 +66,7 @@ namespace cartservice.cartstore
             var eventTags = new ActivityTagsCollection();
             eventTags.Add("userId", userId);
             Activity.Current?.AddEvent(new ActivityEvent("EmptyCartAsync called.", default, eventTags));
-            
+
             userCartItems[userId] = new Hipstershop.Cart();
             return Task.CompletedTask;
         }
