@@ -17,7 +17,7 @@ package main
 import (
 	"context"
 	"fmt"
-	"github.com/GoogleCloudPlatform/microservices-demo/src/frontend/instr"
+	"github.com/opentelemetry/opentelemetry-demo-webstore/src/frontend/instr"
 	"go.opentelemetry.io/otel/attribute"
 	"go.opentelemetry.io/otel/codes"
 	"go.opentelemetry.io/otel/trace"
@@ -34,8 +34,8 @@ import (
 	"github.com/pkg/errors"
 	"github.com/sirupsen/logrus"
 
-	pb "github.com/GoogleCloudPlatform/microservices-demo/src/frontend/genproto/hipstershop"
-	"github.com/GoogleCloudPlatform/microservices-demo/src/frontend/money"
+	pb "github.com/opentelemetry/opentelemetry-demo-webstore/src/frontend/genproto/hipstershop"
+	"github.com/opentelemetry/opentelemetry-demo-webstore/src/frontend/money"
 )
 
 type platformDetails struct {
