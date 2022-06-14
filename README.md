@@ -211,7 +211,7 @@ Find **Protocol Buffers Descriptions** at the [`./pb` directory](./pb/README.md)
   logs and to Jaeger.
 - **[Jaeger](https://www.jaegertracing.io)**: all generated traces are being
   sent to Jaeger.
-- **Synthetic Load Generation:** the application demo comes with a background
+- **Synthetic Load Generation**: the application demo comes with a background
   job that creates realistic usage patterns on the website using
   [Locust](https://locust.io/) load generator.
 
