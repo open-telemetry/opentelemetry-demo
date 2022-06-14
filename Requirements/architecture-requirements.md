@@ -2,10 +2,10 @@
 
 ## Summary
 
-The OpenTelemetry Community Demo application is intended to be a ‘showcase’ for
+The OpenTelemetry Community Demo application is intended to be a 'showcase' for
 OpenTelemetry API, SDK, and tools in a production-lite cloud native
 application. The overall goal of this application is not only to provide a
-canonical ‘demo’ of OpenTelemetry components, but also to act as a framework for
+canonical 'demo' of OpenTelemetry components, but also to act as a framework for
 further customization by end-users, vendors, and other stakeholders.
 
 ### Requirements
@@ -24,7 +24,7 @@ OOB).
 - Provide the OpenTelemetry community with a living artifact that
 demonstrates the features and capabilities of OTel APIs, SDKs, and tools.
 - Provide OpenTelemetry maintainers and WGs a platform to demonstrate new
-features/concepts ‘in the wild’.
+features/concepts 'in the wild'.
 
 The following is a general description of the logical components of the demo
 application. The future architecture is visualized [here](../docs/v1Graph.md).
@@ -32,7 +32,7 @@ application. The future architecture is visualized [here](../docs/v1Graph.md).
 ## Main Application
 
 The bulk of the demo app is a self-contained
-microservice-based application that does some useful ‘real-world’ work, such as
+microservice-based application that does some useful 'real-world' work, such as
 an eCommerce site. This application is composed of multiple services that
 communicate with each other over gRPC and HTTP and runs on Kubernetes (or
 Docker, locally).
@@ -40,7 +40,7 @@ Docker, locally).
 Each service shall be instrumented with OpenTelemetry for traces, metrics, and
 logs (as applicable/available).
 
-Each service should be ‘swappable’ with a service that performs the same
+Each service should be 'swappable' with a service that performs the same
 business logic, implementing the same gRPC endpoints, but written in a different
 language/implementation. For the initial implementation of the demo, we should
 focus on adding as many missing languages as possible by swapping out existing
@@ -48,19 +48,19 @@ services with implementations in un-represented languages. For future versions
 we will look to add more distinct language options per service.
 
 Each service should communicate with a feature flag service in order to
-enable/disable ‘faults’ that can be used to illustrate how telemetry helps solve
+enable/disable 'faults' that can be used to illustrate how telemetry helps solve
 problems in distributed applications.
 
-A PHP service should be added to the main application as an ‘admin service’. A
+A PHP service should be added to the main application as an 'admin service'. A
 Database should be added to enable CRUD functionality on the Product Catalog.
 
-The ‘shippingservice’ should be reimplemented in Rust.
+The 'shippingservice' should be reimplemented in Rust.
 
-The ‘currencyservice’ should be reimplemented in C++.
+The 'currencyservice' should be reimplemented in C++.
 
-The ‘emailservice’ should be reimplemented in Ruby.
+The 'emailservice' should be reimplemented in Ruby.
 
-For future iterations, the ‘frontend’ service can be extended with a mobile
+For future iterations, the 'frontend' service can be extended with a mobile
 application written in Swift.
 
 ## Feature Flag Component

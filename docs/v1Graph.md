@@ -49,7 +49,7 @@ featureflagbeservice(Flag Server):::erlang
 featureflagfeservice(Flag UI/API):::erlang
 featureflagstore[(Flag Store<br/>&#40Blob/DB&#41)]
 
-featureflagfeservice --> featureflagbeservice --> featureflagstore  
+featureflagfeservice --> featureflagbeservice --> featureflagstore
 
 end
 classDef java fill:#b07219,color:white;
