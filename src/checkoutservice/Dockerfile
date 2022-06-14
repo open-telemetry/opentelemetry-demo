@@ -12,33 +12,28 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-FROM golang:1.17.7-alpine as builder
-RUN apk add --no-cache ca-certificates git
-RUN apk add build-base
-WORKDIR /src
+FROM golang:1.17.7-alpine AS builder
+RUN apk add build-base protoc
+WORKDIR /usr/src/app/
 
-# restore dependencies
-COPY go.mod go.sum ./
+# Restore dependencies
+COPY ./src/checkoutservice/ ./
+COPY ./pb/ ./proto/
 RUN go mod download
+RUN go get google.golang.org/protobuf/cmd/protoc-gen-go
+RUN go get google.golang.org/grpc/cmd/protoc-gen-go-grpc
 
-COPY . .
+# Build executable
+RUN protoc -I ./proto/ ./proto/demo.proto --go_out=./ --go-grpc_out=./
+RUN go build -o /go/bin/checkoutservice/ ./
 
-# Skaffold passes in debug-oriented compiler flags
-ARG SKAFFOLD_GO_GCFLAGS
-RUN go build -gcflags="${SKAFFOLD_GO_GCFLAGS}" -o /checkoutservice .
+# -----------------------------------------------------------------------------
 
-FROM alpine as release
-RUN apk add --no-cache ca-certificates
-RUN GRPC_HEALTH_PROBE_VERSION=v0.4.7 && \
-    wget -qO/bin/grpc_health_probe https://github.com/grpc-ecosystem/grpc-health-probe/releases/download/${GRPC_HEALTH_PROBE_VERSION}/grpc_health_probe-linux-amd64 && \
-    chmod +x /bin/grpc_health_probe
-WORKDIR /src
-COPY --from=builder /checkoutservice /src/checkoutservice
+FROM alpine
 
-# Definition of this variable is used by 'skaffold debug' to identify a golang binary.
-# Default behavior - a failure prints a stack trace for the current goroutine.
-# See https://golang.org/pkg/runtime/
-ENV GOTRACEBACK=single
+WORKDIR /usr/src/app/
 
-EXPOSE 5050
-ENTRYPOINT ["/src/checkoutservice"]
+COPY --from=builder /go/bin/checkoutservice/ ./
+
+EXPOSE ${CHECKOUT_SERVICE_PORT}
+ENTRYPOINT [ "./checkoutservice" ]

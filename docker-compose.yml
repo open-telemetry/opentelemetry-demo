@@ -67,11 +67,12 @@ services:
   checkoutservice:
     image: ${IMAGE_NAME}:${IMAGE_VERSION}-checkoutservice
     build:
-      context: ./src/checkoutservice
+      context: ./
+      dockerfile: ./src/checkoutservice/Dockerfile
     ports:
       - "${CHECKOUT_SERVICE_PORT}"
     environment:
-      - PORT=${CHECKOUT_SERVICE_PORT}
+      - CHECKOUT_SERVICE_PORT
       - CART_SERVICE_ADDR
       - CURRENCY_SERVICE_ADDR
       - EMAIL_SERVICE_ADDR
@@ -80,6 +81,13 @@ services:
       - SHIPPING_SERVICE_ADDR
       - OTEL_EXPORTER_OTLP_TRACES_ENDPOINT
       - OTEL_RESOURCE_ATTRIBUTES=service.name=checkoutservice
+    depends_on:
+      - cartservice
+      - currencyservice
+      - emailservice
+      - paymentservice
+      - productcatalogservice
+      - shippingservice
 
   # CurrencyService
   currencyservice:
