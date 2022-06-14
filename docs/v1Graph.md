@@ -49,7 +49,7 @@ featureflagbeservice(Flag Server):::erlang
 featureflagfeservice(Flag UI/API):::erlang
 featureflagstore[(Flag Store<br/>&#40Blob/DB&#41)]
 
-featureflagfeservice --> featureflagbeservice --> featureflagstore  
+featureflagfeservice --> featureflagbeservice --> featureflagstore
 
 end
 classDef java fill:#b07219,color:white;
@@ -73,7 +73,7 @@ subgraph Service Legend
   cppsvc(C++):::cpp
   rubysvc(Ruby):::ruby
   pythonsvc(Python):::python
-  nodesvc(Node.JS):::nodejs
+  nodesvc(Node.js):::nodejs
   rustsvc(Rust):::rust
   erlangsvc(Erlang/Elixir):::erlang
   phpsvc(PHP):::php
