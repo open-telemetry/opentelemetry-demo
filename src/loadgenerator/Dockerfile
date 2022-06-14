@@ -12,23 +12,12 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-FROM python:3.10-slim as base
+FROM python:3.10-slim AS base
 
-RUN apt-get -qq update \
-    && apt-get install -y --no-install-recommends \
-        g++ \
-        python3-dev
+WORKDIR /usr/src/app/
 
-COPY requirements.txt .
+COPY ./src/loadgenerator/ ./
 
-RUN pip install --prefix="/usr/local" -r requirements.txt
+RUN pip install --prefix="/usr/local/" -r ./requirements.txt
 
-WORKDIR /loadgen
-
-# Add application code.
-COPY locustfile.py .
-
-# enable gevent support in debugger
-ENV GEVENT_SUPPORT=True
-
-ENTRYPOINT locust --host="http://${FRONTEND_ADDR}" --headless -u "${USERS:-10}" 2>&1
+ENTRYPOINT locust --host="http://${FRONTEND_ADDR}" --headless -u "${USERS}"

@@ -27,7 +27,7 @@ import (
 	"syscall"
 	"time"
 
-	pb "github.com/GoogleCloudPlatform/microservices-demo/src/productcatalogservice/genproto/hipstershop"
+	pb "github.com/opentelemetry/opentelemetry-demo-webstore/src/productcatalogservice/genproto/hipstershop"
 	healthpb "google.golang.org/grpc/health/grpc_health_v1"
 
 	"github.com/sirupsen/logrus"
@@ -128,9 +128,9 @@ func main() {
 		}
 	}()
 
-	if os.Getenv("PORT") != "" {
-		port = os.Getenv("PORT")
-	}
+	var port string
+	mustMapEnv(&port, "PRODUCT_CATALOG_SERVICE_PORT")
+
 	log.Infof("starting grpc server at :%s", port)
 	run(port)
 	select {}
@@ -182,6 +182,14 @@ func parseCatalog() []*pb.Product {
 		}
 	}
 	return cat.Products
+}
+
+func mustMapEnv(target *string, envKey string) {
+	v := os.Getenv(envKey)
+	if v == "" {
+		panic(fmt.Sprintf("environment variable %q not set", envKey))
+	}
+	*target = v
 }
 
 func (p *productCatalog) Check(ctx context.Context, req *healthpb.HealthCheckRequest) (*healthpb.HealthCheckResponse, error) {

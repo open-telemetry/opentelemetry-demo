@@ -15,9 +15,12 @@
 package main
 
 import (
+	"bytes"
 	"context"
+	"encoding/json"
 	"fmt"
 	"net"
+	"net/http"
 	"os"
 	"time"
 
@@ -29,6 +32,7 @@ import (
 	"google.golang.org/grpc/status"
 
 	"go.opentelemetry.io/contrib/instrumentation/google.golang.org/grpc/otelgrpc"
+	"go.opentelemetry.io/contrib/instrumentation/net/http/otelhttp"
 	"go.opentelemetry.io/otel"
 	"go.opentelemetry.io/otel/exporters/otlp/otlptrace/otlptracegrpc"
 	"go.opentelemetry.io/otel/propagation"
@@ -333,14 +337,24 @@ func (cs *checkoutService) chargeCard(ctx context.Context, amount *pb.Money, pay
 }
 
 func (cs *checkoutService) sendOrderConfirmation(ctx context.Context, email string, order *pb.OrderResult) error {
-	conn, err := createClient(ctx, cs.emailSvcAddr)
+	emailServicePayload, err := json.Marshal(map[string]interface{}{
+		"email": email,
+		"order": order,
+	})
 	if err != nil {
-		return fmt.Errorf("failed to connect email service: %+v", err)
+		return fmt.Errorf("failed to marshal order to JSON: %+v", err)
 	}
-	defer conn.Close()
-	_, err = pb.NewEmailServiceClient(conn).SendOrderConfirmation(ctx, &pb.SendOrderConfirmationRequest{
-		Email: email,
-		Order: order})
+
+	resp, err := otelhttp.Post(ctx, cs.emailSvcAddr+"/send_order_confirmation", "application/json", bytes.NewBuffer(emailServicePayload))
+	if err != nil {
+		return fmt.Errorf("failed POST to email service: %+v", err)
+	}
+	defer resp.Body.Close()
+
+	if resp.StatusCode != http.StatusOK {
+		return fmt.Errorf("failed POST to email service: expected 200, got %d", resp.StatusCode)
+	}
+
 	return err
 }
 
