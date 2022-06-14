@@ -137,11 +137,12 @@ services:
   paymentservice:
     image: ${IMAGE_NAME}:${IMAGE_VERSION}-paymentservice
     build:
-      context: ./src/paymentservice
+      context: ./
+      dockerfile: ./src/paymentservice/Dockerfile
     ports:
       - "${PAYMENT_SERVICE_PORT}"
     environment:
-      - PORT=${PAYMENT_SERVICE_PORT}
+      - PAYMENT_SERVICE_PORT
       - OTEL_EXPORTER_OTLP_TRACES_ENDPOINT
       - OTEL_RESOURCE_ATTRIBUTES=service.name=paymentservice
 
