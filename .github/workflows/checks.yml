@@ -65,3 +65,12 @@ jobs:
         use-quiet-mode: 'no'
         use-verbose-mode: 'yes'
         config-file: '.github/.mlc_config.json'
+
+  sanity:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v3
+
+    - name: run sanitycheck.py
+      run: python3 ./internal/tools/sanitycheck.py
