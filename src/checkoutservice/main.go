@@ -38,13 +38,12 @@ import (
 	"go.opentelemetry.io/otel/propagation"
 	sdktrace "go.opentelemetry.io/otel/sdk/trace"
 
-	pb "github.com/GoogleCloudPlatform/microservices-demo/src/checkoutservice/genproto/hipstershop"
-	money "github.com/GoogleCloudPlatform/microservices-demo/src/checkoutservice/money"
+	pb "github.com/open-telemetry/opentelemetry-demo-webstore/src/checkoutservice/genproto/hipstershop"
+	money "github.com/open-telemetry/opentelemetry-demo-webstore/src/checkoutservice/money"
 	healthpb "google.golang.org/grpc/health/grpc_health_v1"
 )
 
 const (
-	listenPort  = "5050"
 	usdCurrency = "USD"
 )
 
@@ -90,10 +89,8 @@ type checkoutService struct {
 }
 
 func main() {
-	port := listenPort
-	if os.Getenv("PORT") != "" {
-		port = os.Getenv("PORT")
-	}
+	var port string
+	mustMapEnv(&port, "CHECKOUT_SERVICE_PORT")
 
 	tp := InitTracerProvider()
 	defer func() {
