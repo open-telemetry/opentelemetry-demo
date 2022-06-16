@@ -16,9 +16,6 @@ else.
 
 ### Traces
 
-- [Automatic Instrumentation (OTel
-  Operator)](https://github.com/open-telemetry/opentelemetry-operator):
-  :red_circle:
 - [Instrumentation
   Libraries](https://opentelemetry.io/docs/concepts/instrumenting-library/):
   :100:
@@ -40,9 +37,6 @@ else.
 
 ### Metrics
 
-- [Automatic Instrumentation (OTel
-  Operator)](https://github.com/open-telemetry/opentelemetry-operator):
-  :red_circle:
 - [Instrumentation
   Libraries](https://opentelemetry.io/docs/concepts/instrumenting-library/):
   :red_circle:
@@ -55,7 +49,7 @@ else.
   Metrics](https://opentelemetry.io/docs/reference/specification/metrics/sdk/#push-metric-exporter):
   :red_circle:
 - [SLO Metrics](https://github.com/openslo/openslo#slo): :red_circle:
-- [Multiple Metric
+- [Multiple Manual Metric
   Instruments](https://opentelemetry.io/docs/reference/specification/metrics/api/#synchronous-and-asynchronous-instruments):
   :red_circle:
 
