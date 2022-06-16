@@ -46,6 +46,8 @@ services:
       - AD_SERVICE_PORT
       - OTEL_EXPORTER_OTLP_TRACES_ENDPOINT
       - OTEL_RESOURCE_ATTRIBUTES=service.name=adservice
+    depends_on:
+      - otelcol
 
   # CartService
   cartservice:
@@ -62,6 +64,7 @@ services:
       - OTEL_RESOURCE_ATTRIBUTES=service.name=cartservice
     depends_on:
       - redis-cart
+      - otelcol
 
   # CheckoutService
   checkoutservice:
@@ -88,6 +91,7 @@ services:
       - paymentservice
       - productcatalogservice
       - shippingservice
+      - otelcol
 
   # CurrencyService
   currencyservice:
@@ -100,6 +104,8 @@ services:
       - PORT=${CURRENCY_SERVICE_PORT}
       - OTEL_EXPORTER_OTLP_TRACES_ENDPOINT
       - OTEL_RESOURCE_ATTRIBUTES=service.name=currencyservice
+    depends_on:
+      - otelcol
 
   # EmailService
   emailservice:
@@ -113,6 +119,8 @@ services:
       - PORT=${EMAIL_SERVICE_PORT}
       - OTEL_EXPORTER_OTLP_TRACES_ENDPOINT=http://otelcol:4318/v1/traces
       - OTEL_RESOURCE_ATTRIBUTES=service.name=emailservice
+    depends_on:
+      - otelcol
 
   # Frontend
   frontend:
@@ -155,6 +163,8 @@ services:
       - PAYMENT_SERVICE_PORT
       - OTEL_EXPORTER_OTLP_TRACES_ENDPOINT
       - OTEL_RESOURCE_ATTRIBUTES=service.name=paymentservice
+    depends_on:
+      - otelcol
 
   # ProductCatalogService
   productcatalogservice:
@@ -168,6 +178,8 @@ services:
       - PRODUCT_CATALOG_SERVICE_PORT
       - OTEL_EXPORTER_OTLP_TRACES_ENDPOINT
       - OTEL_RESOURCE_ATTRIBUTES=service.name=productcatalogservice
+    depends_on:
+      - otelcol
 
   # RecommendationService
   recommendationservice:
@@ -179,6 +191,7 @@ services:
       - "${RECOMMENDATION_SERVICE_PORT}"
     depends_on:
       - productcatalogservice
+      - otelcol
     environment:
       - RECOMMENDATION_SERVICE_PORT
       - PRODUCT_CATALOG_SERVICE_ADDR
@@ -197,6 +210,8 @@ services:
       - PORT=${SHIPPING_SERVICE_PORT}
       - OTEL_EXPORTER_OTLP_TRACES_ENDPOINT
       - OTEL_RESOURCE_ATTRIBUTES=service.name=shippingservice
+    depends_on:
+      - otelcol
 
   # LoadGenerator
   loadgenerator:
