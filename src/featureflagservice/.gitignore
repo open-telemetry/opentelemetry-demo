@@ -32,6 +32,6 @@ featureflagservice-*.tar
 npm-debug.log
 /assets/node_modules/
 
-/assets/vendor/
+!/assets/vendor/
 
 !rel/overlays/bin
