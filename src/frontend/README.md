@@ -23,7 +23,7 @@ else.
   Libraries](https://opentelemetry.io/docs/concepts/instrumenting-library/):
   :100:
 - [Manual Span
-  Creation](https://opentelemetry.io/docs/concepts/instrumenting/#manual-instrumentation):
+  Creation](https://github.com/open-telemetry/opentelemetry-specification/blob/main/specification/glossary.md#manual-instrumentation)):
   :red_circle:
 - [Span Data
   Enrichment](https://opentelemetry.io/docs/instrumentation/net/manual/#add-tags-to-an-activity):
@@ -44,11 +44,13 @@ else.
   Operator)](https://github.com/open-telemetry/opentelemetry-operator):
   :red_circle:
 - [Instrumentation
-  Libraries](https://opentelemetry.io/docs/concepts/instrumenting-library/): :red_circle:
-- [Manual Metric
-  Creation](https://opentelemetry.io/docs/concepts/instrumenting/#manual-instrumentation):
+  Libraries](https://opentelemetry.io/docs/concepts/instrumenting-library/):
   :red_circle:
-- [Collector Agent Metric Transformation](https://opentelemetry.io/docs/collector/deployment/#agent)::red_circle:
+- [Manual Metric
+  Creation](https://github.com/open-telemetry/opentelemetry-specification/blob/main/specification/glossary.md#manual-instrumentation)):
+  :red_circle:
+- [Collector Agent Metric
+  Transformation](https://opentelemetry.io/docs/collector/deployment/#agent)::red_circle:
 - [Push
   Metrics](https://opentelemetry.io/docs/reference/specification/metrics/sdk/#push-metric-exporter):
   :red_circle:
