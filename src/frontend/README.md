@@ -12,22 +12,15 @@ else.
 ### Emoji Legend
 
 - Completed: :100:
-- Not Applicable: :large_blue_diamond:
 - Not Present (Yet): :red_circle:
 
 ### Traces
 
-- [Automatic Instrumentation (Language
-  Agent)](https://github.com/open-telemetry/opentelemetry-java-instrumentation#about):
-  :large_blue_diamond:
-- [Automatic Instrumentation (OTel
-  Operator)](https://github.com/open-telemetry/opentelemetry-operator):
-  :red_circle:
 - [Instrumentation
   Libraries](https://opentelemetry.io/docs/concepts/instrumenting-library/):
   :100:
 - [Manual Span
-  Creation](https://github.com/open-telemetry/opentelemetry-dotnet/tree/main/docs/trace/getting-started):
+  Creation](https://github.com/open-telemetry/opentelemetry-specification/blob/main/specification/glossary.md#manual-instrumentation)):
   :red_circle:
 - [Span Data
   Enrichment](https://opentelemetry.io/docs/instrumentation/net/manual/#add-tags-to-an-activity):
@@ -44,14 +37,21 @@ else.
 
 ### Metrics
 
-- Automatic Instrumentation (Agent): :large_blue_diamond:
-- Automatic Instrumentation (OTel Operator): :red_circle:
-- Instrumentation Libraries  : :red_circle:
-- Manual Metric Creation:  :red_circle:
-- Collector Metric Transformation::red_circle:
-- Push Metrics: :red_circle:
-- SLO Metrics: :red_circle:
-- Multiple Metric Instruments: :red_circle:
+- [Instrumentation
+  Libraries](https://opentelemetry.io/docs/concepts/instrumenting-library/):
+  :red_circle:
+- [Manual Metric
+  Creation](https://github.com/open-telemetry/opentelemetry-specification/blob/main/specification/glossary.md#manual-instrumentation)):
+  :red_circle:
+- [Collector Agent Metric
+  Transformation](https://opentelemetry.io/docs/collector/deployment/#agent)::red_circle:
+- [Push
+  Metrics](https://opentelemetry.io/docs/reference/specification/metrics/sdk/#push-metric-exporter):
+  :red_circle:
+- [SLO Metrics](https://github.com/openslo/openslo#slo): :red_circle:
+- [Multiple Manual Metric
+  Instruments](https://opentelemetry.io/docs/reference/specification/metrics/api/#synchronous-and-asynchronous-instruments):
+  :red_circle:
 
 ## OpenTelemetry instrumentation
 
