@@ -12,14 +12,10 @@ else.
 ### Emoji Legend
 
 - Completed: :100:
-- Not Applicable: :large_blue_diamond:
 - Not Present (Yet): :red_circle:
 
 ### Traces
 
-- [Automatic Instrumentation (Language
-  Agent)](https://github.com/open-telemetry/opentelemetry-java-instrumentation#about):
-  :large_blue_diamond:
 - [Automatic Instrumentation (OTel
   Operator)](https://github.com/open-telemetry/opentelemetry-operator):
   :red_circle:
@@ -27,7 +23,7 @@ else.
   Libraries](https://opentelemetry.io/docs/concepts/instrumenting-library/):
   :100:
 - [Manual Span
-  Creation](https://github.com/open-telemetry/opentelemetry-dotnet/tree/main/docs/trace/getting-started):
+  Creation](https://opentelemetry.io/docs/concepts/instrumenting/#manual-instrumentation):
   :red_circle:
 - [Span Data
   Enrichment](https://opentelemetry.io/docs/instrumentation/net/manual/#add-tags-to-an-activity):
@@ -44,16 +40,13 @@ else.
 
 ### Metrics
 
-- [Automatic Instrumentation (Language
-  Agent)](https://github.com/open-telemetry/opentelemetry-java-instrumentation#about):
-  :large_blue_diamond:
 - [Automatic Instrumentation (OTel
   Operator)](https://github.com/open-telemetry/opentelemetry-operator):
   :red_circle:
 - [Instrumentation
   Libraries](https://opentelemetry.io/docs/concepts/instrumenting-library/): :red_circle:
 - [Manual Metric
-  Creation](https://github.com/open-telemetry/opentelemetry-dotnet/tree/main/docs/metrics/getting-started#getting-started-with-opentelemetry-net-in-5-minutes):
+  Creation](https://opentelemetry.io/docs/concepts/instrumenting/#manual-instrumentation):
   :red_circle:
 - [Collector Agent Metric Transformation](https://opentelemetry.io/docs/collector/deployment/#agent)::red_circle:
 - [Push
