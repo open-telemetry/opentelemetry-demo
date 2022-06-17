@@ -11,7 +11,7 @@ further customization by end-users, vendors, and other stakeholders.
 ### Requirements
 
 - [Application Requirements](./application-requirements.md)
-- [OpenTelemetry Requirements](./openTelemetry-requirements.md)
+- [OpenTelemetry Requirements](./opentelemetry-requirements.md)
 - [System Requirements](./system-requirements.md)
 
 ### Application Goals
@@ -27,7 +27,7 @@ demonstrates the features and capabilities of OTel APIs, SDKs, and tools.
 features/concepts 'in the wild'.
 
 The following is a general description of the logical components of the demo
-application. The future architecture is visualized [here](./v1Graph.md).
+application. The future architecture is visualized [here](../v1Graph.md).
 
 ## Main Application
 
