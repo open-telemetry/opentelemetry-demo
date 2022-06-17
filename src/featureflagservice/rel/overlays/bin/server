@@ -1,0 +1,6 @@
+#!/bin/sh
+cd -P -- "$(dirname -- "$0")"
+
+./featureflagservice eval Featureflagservice.Release.migrate
+
+PHX_SERVER=true exec ./featureflagservice start

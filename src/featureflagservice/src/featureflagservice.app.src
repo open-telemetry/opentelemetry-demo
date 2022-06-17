@@ -1,0 +1,14 @@
+{application, featureflagservice,
+ [{description, "this is here just so rebar3 will build the necessary grpc code"},
+  {vsn, "notused"},
+  {registered, []},
+  {applications,
+   [kernel,
+    stdlib
+   ]},
+  {env,[]},
+  {modules, []},
+
+  {licenses, ["Apache 2.0"]},
+  {links, []}
+ ]}.

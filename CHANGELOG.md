@@ -17,3 +17,5 @@ release.
   ([#26](https://github.com/open-telemetry/opentelemetry-demo-webstore/pull/26))
 * Added span attributes to frontend service
   ([#82](https://github.com/open-telemetry/opentelemetry-demo-webstore/pull/82))
+* Added feature flag service implementation
+  ([#141](https://github.com/open-telemetry/opentelemetry-demo-webstore/pull/141))

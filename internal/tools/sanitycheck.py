@@ -55,7 +55,7 @@ def sanitycheck(pattern, allow_utf8 = False, allow_eol = (CRLF, LF), indent = 1)
                         if c != 32:
                             break
                         spc_count += 1
-                    if not indent or spc_count % indent:
+                    if not indent or (spc_count % indent and os.path.basename(filename) != 'rebar.config'):
                         error.append('  {} SPC found at Ln:{} {}'.format(spc_count, lineno, line))
                 if line[-1:] == b' ' or line[-1:] == b'\t':
                     error.append('  Trailing space found at Ln:{} {}'.format(lineno, line))
