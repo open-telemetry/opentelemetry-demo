@@ -7,7 +7,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
 using Microsoft.Extensions.Hosting;
 using cartservice.cartstore;
-using Hipstershop;
+using cartservice.services;
 using OpenTelemetry.Trace;
 
 namespace cartservice;
@@ -66,7 +66,7 @@ public class Startup
 
         app.UseEndpoints(endpoints =>
         {
-            endpoints.MapGrpcService<Hipstershop.Cart>();
+            endpoints.MapGrpcService<CartService>();
             endpoints.MapGrpcHealthChecksService();
 
             endpoints.MapGet("/", async context =>
