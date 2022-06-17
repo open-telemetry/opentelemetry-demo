@@ -62,6 +62,7 @@ services:
       - REDIS_ADDR
       - OTEL_EXPORTER_OTLP_ENDPOINT
       - OTEL_RESOURCE_ATTRIBUTES=service.name=cartservice
+      - ASPNETCORE_URLS=http://*:${CART_SERVICE_PORT}
     depends_on:
       - redis-cart
       - otelcol

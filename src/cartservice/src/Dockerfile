@@ -31,7 +31,6 @@ FROM mcr.microsoft.com/dotnet/runtime-deps:6.0.5-alpine3.15-amd64
 WORKDIR /usr/src/app/
 COPY --from=builder /cartservice/ ./
 
-ENV ASPNETCORE_URLS http://*:${CART_SERVICE_PORT}
 EXPOSE ${CART_SERVICE_PORT}
 
 ENTRYPOINT [ "./cartservice" ]
