@@ -28,6 +28,8 @@ import io.grpc.health.v1.HealthCheckResponse.ServingStatus;
 import io.grpc.protobuf.services.*;
 import io.grpc.stub.StreamObserver;
 import io.opentelemetry.api.GlobalOpenTelemetry;
+import io.opentelemetry.api.common.AttributeKey;
+import io.opentelemetry.api.common.Attributes;
 import io.opentelemetry.api.trace.Span;
 import io.opentelemetry.api.trace.StatusCode;
 import io.opentelemetry.api.trace.Tracer;
@@ -124,6 +126,7 @@ public final class AdService {
         responseObserver.onNext(reply);
         responseObserver.onCompleted();
       } catch (StatusRuntimeException e) {
+        span.addEvent("Error", Attributes.of(AttributeKey.stringKey("exception.message"), e.getMessage()));
         span.setStatus(StatusCode.ERROR);
         logger.log(Level.WARN, "GetAds Failed with status {}", e.getStatus());
         responseObserver.onError(e);
