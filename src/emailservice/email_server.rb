@@ -16,10 +16,10 @@ post "/send_order_confirmation" do
   # get the current auto-instrumented span
   current_span = OpenTelemetry::Trace.current_span
   current_span.add_attributes({
-    "app.email.order_id" => data.order.order_id,
-    "app.email.shipping_tracking_id" => data.order.shipping_tracking_id,
-    "app.email.shipping_cost.currency" => data.order.shipping_cost.currency_code,
-    "app.email.shipping_cost" => data.order.shipping_cost.units.to_s + "." + 
+    "app.order.id" => data.order.order_id,
+    "app.shipping.tracking.id" => data.order.shipping_tracking_id,
+    "app.shipping.cost.currency" => data.order.shipping_cost.currency_code,
+    "app.shipping.cost" => data.order.shipping_cost.units.to_s + "." + 
       data.order.shipping_cost.nanos.to_s
   })
 
