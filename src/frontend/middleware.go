@@ -16,10 +16,13 @@ package main
 
 import (
 	"context"
-	"github.com/opentelemetry/opentelemetry-demo-webstore/src/frontend/instr"
-	"go.opentelemetry.io/otel/trace"
 	"net/http"
 	"time"
+
+	"github.com/opentelemetry/opentelemetry-demo-webstore/src/frontend/instr"
+	"go.opentelemetry.io/otel/metric/global"
+	semconv "go.opentelemetry.io/otel/semconv/v1.10.0"
+	"go.opentelemetry.io/otel/trace"
 
 	"github.com/google/uuid"
 	"github.com/sirupsen/logrus"
@@ -34,6 +37,11 @@ type logHandler struct {
 	log  *logrus.Logger
 	next http.Handler
 }
+
+var (
+	meter                 = global.MeterProvider().Meter("frontend")
+	httpRequestCounter, _ = meter.SyncInt64().Counter("http.server.request_count")
+)
 
 type responseRecorder struct {
 	b      int
@@ -101,6 +109,9 @@ func instrumentHandler(fn httpHandler) httpHandler {
 			instr.RequestId.String(requestID),
 			instr.Currency.String(currentCurrency(r)),
 		)
+
+		attributes := semconv.HTTPServerMetricAttributesFromHTTPRequest("frontend", r)
+		httpRequestCounter.Add(r.Context(), 1, attributes...)
 
 		email := r.FormValue("email")
 		if email != "" {

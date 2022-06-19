@@ -9,6 +9,9 @@ exporters:
     tls:
       insecure: true
   logging:
+  prometheus:
+    endpoint: 0.0.0.0:8889
+    
 
 processors:
   batch:
@@ -19,3 +22,7 @@ service:
       receivers: [otlp]
       processors: [batch]
       exporters: [logging, jaeger]
+    metrics:
+      receivers: [otlp]
+      processors: []
+      exporters: [prometheus, logging]
