@@ -3,6 +3,7 @@ receivers:
     protocols:
       grpc:
       http:
+
 exporters:
   jaeger:
     endpoint: "jaeger:14250"
@@ -11,7 +12,6 @@ exporters:
   logging:
   prometheus:
     endpoint: 0.0.0.0:8889
-    
 
 processors:
   batch:

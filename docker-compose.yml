@@ -254,16 +254,16 @@ services:
       - frontend
 
   # Prometheus
-  prometheus: 
+  prometheus:
     image: quay.io/prometheus/prometheus:v2.34.0
-    command: 
-    - --web.console.templates=/etc/prometheus/consoles
-    - --web.console.libraries=/etc/prometheus/console_libraries
-    - --storage.tsdb.retention.time=1h
-    - --config.file=/etc/prometheus/prometheus-config.yaml
-    - --storage.tsdb.path=/prometheus
-    - --web.enable-lifecycle
-    - --web.route-prefix=/
+    command:
+      - --web.console.templates=/etc/prometheus/consoles
+      - --web.console.libraries=/etc/prometheus/console_libraries
+      - --storage.tsdb.retention.time=1h
+      - --config.file=/etc/prometheus/prometheus-config.yaml
+      - --storage.tsdb.path=/prometheus
+      - --web.enable-lifecycle
+      - --web.route-prefix=/
     volumes:
       - ./src/prometheus/prometheus-config.yaml:/etc/prometheus/prometheus-config.yaml
     ports:
