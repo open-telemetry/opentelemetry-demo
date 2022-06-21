@@ -144,7 +144,7 @@ services:
       - SHIPPING_SERVICE_ADDR
       - OTEL_EXPORTER_OTLP_TRACES_ENDPOINT
       - OTEL_RESOURCE_ATTRIBUTES=service.name=frontend
-      - OTEL_EXPORTER_OTLP_ENDPOINT 
+      - OTEL_EXPORTER_OTLP_ENDPOINT
     depends_on:
       - adservice
       - cartservice
