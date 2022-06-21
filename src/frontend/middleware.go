@@ -41,6 +41,7 @@ type logHandler struct {
 var (
 	meter                 = global.MeterProvider().Meter("frontend")
 	httpRequestCounter, _ = meter.SyncInt64().Counter("http.server.request_count")
+	httpServerLatency, _  = meter.SyncFloat64().Histogram("http.server.duration")
 )
 
 type responseRecorder struct {
@@ -98,6 +99,7 @@ func instrumentHandler(fn httpHandler) httpHandler {
 	// session, request, currency, and user
 
 	return func(w http.ResponseWriter, r *http.Request) {
+		requestStartTime := time.Now()
 		rid := r.Context().Value(ctxKeyRequestID{})
 		requestID := ""
 		if rid != nil {
@@ -110,15 +112,17 @@ func instrumentHandler(fn httpHandler) httpHandler {
 			instr.Currency.String(currentCurrency(r)),
 		)
 
-		attributes := semconv.HTTPServerMetricAttributesFromHTTPRequest("frontend", r)
-		httpRequestCounter.Add(r.Context(), 1, attributes...)
-
 		email := r.FormValue("email")
 		if email != "" {
 			span.SetAttributes(instr.UserId.String(email))
 		}
 
 		fn(w, r)
+
+		attributes := semconv.HTTPServerMetricAttributesFromHTTPRequest("frontend", r)
+		elapsedTime := float64(time.Since(requestStartTime)) / float64(time.Millisecond)
+		httpRequestCounter.Add(r.Context(), 1, attributes...)
+		httpServerLatency.Record(r.Context(), elapsedTime, attributes...)
 	}
 }
 
