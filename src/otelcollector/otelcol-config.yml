@@ -11,7 +11,8 @@ exporters:
       insecure: true
   logging:
   prometheus:
-    endpoint: 0.0.0.0:8889
+    endpoint: 0.0.0.0:9464
+
 
 processors:
   batch:

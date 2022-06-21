@@ -26,7 +26,7 @@ services:
     ports:
       - "4317"
       - "4318"
-      - "8889"
+      - "9464"
     depends_on:
       - jaeger
 
@@ -144,6 +144,7 @@ services:
       - SHIPPING_SERVICE_ADDR
       - OTEL_EXPORTER_OTLP_TRACES_ENDPOINT
       - OTEL_RESOURCE_ATTRIBUTES=service.name=frontend
+      - OTEL_EXPORTER_OTLP_ENDPOINT 
     depends_on:
       - adservice
       - cartservice

@@ -107,8 +107,7 @@ func InitMeterProvider() (metric.MeterProvider, error) {
 	ctx := context.Background()
 
 	client := otlpmetricgrpc.NewClient(
-		otlpmetricgrpc.WithInsecure(),
-		otlpmetricgrpc.WithEndpoint("otelcol:4317"))
+		otlpmetricgrpc.WithInsecure())
 
 	metricExporter, err := otlpmetric.New(ctx, client)
 	if err != nil {
