@@ -2,4 +2,4 @@
 
 <%= render "form.html", Map.put(assigns, :action, Routes.feature_flag_path(@conn, :create)) %>
 
-<span><%= link "Back", to: Routes.feature_flag_path(@conn, :index) %></span>
+<span><%= link "Back", class: "button button-outline", to: Routes.feature_flag_path(@conn, :index) %></span>
