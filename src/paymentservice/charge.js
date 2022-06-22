@@ -16,7 +16,7 @@ const cardValidator = require('simple-card-validator');
 const { v4: uuidv4 } = require('uuid');
 const pino = require('pino');
 const opentelemetry = require('@opentelemetry/api');
-const tracer = opentelemetry.trace.getTracer("");
+const tracer = opentelemetry.trace.getTracer("paymentservice");
 
 const logger = pino({
   name: 'paymentservice-charge',
