@@ -25,6 +25,7 @@ services:
       - ./src/otelcollector/otelcol-config.yml:/etc/otelcol-config.yml
     ports:
       - "4317"
+      - "4318"
     depends_on:
       - jaeger
 
@@ -46,6 +47,8 @@ services:
       - AD_SERVICE_PORT
       - OTEL_EXPORTER_OTLP_TRACES_ENDPOINT
       - OTEL_RESOURCE_ATTRIBUTES=service.name=adservice
+    depends_on:
+      - otelcol
 
   # CartService
   cartservice:
@@ -60,8 +63,10 @@ services:
       - REDIS_ADDR
       - OTEL_EXPORTER_OTLP_ENDPOINT
       - OTEL_RESOURCE_ATTRIBUTES=service.name=cartservice
+      - ASPNETCORE_URLS=http://*:${CART_SERVICE_PORT}
     depends_on:
       - redis-cart
+      - otelcol
 
   # CheckoutService
   checkoutservice:
@@ -88,6 +93,7 @@ services:
       - paymentservice
       - productcatalogservice
       - shippingservice
+      - otelcol
 
   # CurrencyService
   currencyservice:
@@ -100,6 +106,8 @@ services:
       - PORT=${CURRENCY_SERVICE_PORT}
       - OTEL_EXPORTER_OTLP_TRACES_ENDPOINT
       - OTEL_RESOURCE_ATTRIBUTES=service.name=currencyservice
+    depends_on:
+      - otelcol
 
   # EmailService
   emailservice:
@@ -113,6 +121,8 @@ services:
       - PORT=${EMAIL_SERVICE_PORT}
       - OTEL_EXPORTER_OTLP_TRACES_ENDPOINT=http://otelcol:4318/v1/traces
       - OTEL_RESOURCE_ATTRIBUTES=service.name=emailservice
+    depends_on:
+      - otelcol
 
   # Frontend
   frontend:
@@ -155,6 +165,8 @@ services:
       - PAYMENT_SERVICE_PORT
       - OTEL_EXPORTER_OTLP_TRACES_ENDPOINT
       - OTEL_RESOURCE_ATTRIBUTES=service.name=paymentservice
+    depends_on:
+      - otelcol
 
   # ProductCatalogService
   productcatalogservice:
@@ -168,6 +180,8 @@ services:
       - PRODUCT_CATALOG_SERVICE_PORT
       - OTEL_EXPORTER_OTLP_TRACES_ENDPOINT
       - OTEL_RESOURCE_ATTRIBUTES=service.name=productcatalogservice
+    depends_on:
+      - otelcol
 
   # RecommendationService
   recommendationservice:
@@ -179,6 +193,7 @@ services:
       - "${RECOMMENDATION_SERVICE_PORT}"
     depends_on:
       - productcatalogservice
+      - otelcol
     environment:
       - RECOMMENDATION_SERVICE_PORT
       - PRODUCT_CATALOG_SERVICE_ADDR
@@ -197,6 +212,31 @@ services:
       - PORT=${SHIPPING_SERVICE_PORT}
       - OTEL_EXPORTER_OTLP_TRACES_ENDPOINT
       - OTEL_RESOURCE_ATTRIBUTES=service.name=shippingservice
+    depends_on:
+      - otelcol
+
+  # FeatureFlagService
+  featureflagservice:
+    build:
+      context: ./src/featureflagservice
+    ports:
+      - "${FEATURE_FLAG_SERVICE_PORT}:${FEATURE_FLAG_SERVICE_PORT}"
+      - "${FEATURE_FLAG_GRPC_SERVICE_PORT}"
+    environment:
+      - PORT=${FEATURE_FLAG_SERVICE_PORT}
+      - GRPC_PORT=${FEATURE_FLAG_GRPC_SERVICE_PORT}
+      - OTEL_EXPORTER_OTLP_TRACES_ENDPOINT
+      - OTEL_RESOURCE_ATTRIBUTES=service.name=featureflagservice
+      - DATABASE_URL=ecto://ffs:ffs@ffs_postgres:5432/ffs
+    depends_on:
+      - ffs_postgres
+
+  ffs_postgres:
+    image: cimg/postgres:14.2
+    environment:
+      - POSTGRES_USER=ffs
+      - POSTGRES_DB=ffs
+      - POSTGRES_PASSWORD=ffs
 
   # LoadGenerator
   loadgenerator:

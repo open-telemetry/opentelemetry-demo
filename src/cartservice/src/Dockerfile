@@ -35,7 +35,6 @@ COPY --chmod=0755 ./include/grpc_health_probe /include/
 
 HEALTHCHECK CMD [ "/include/grpc_health_probe", "-addr", ":${CART_SERVICE_PORT}" ]
 
-ENV ASPNETCORE_URLS http://*:${CART_SERVICE_PORT}
 EXPOSE ${CART_SERVICE_PORT}
 
 ENTRYPOINT [ "./cartservice" ]
