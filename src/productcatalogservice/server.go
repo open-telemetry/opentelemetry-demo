@@ -35,9 +35,12 @@ import (
 	"go.opentelemetry.io/contrib/instrumentation/google.golang.org/grpc/otelgrpc"
 
 	"go.opentelemetry.io/otel"
+	"go.opentelemetry.io/otel/attribute"
+	otelcodes "go.opentelemetry.io/otel/codes"
 	"go.opentelemetry.io/otel/exporters/otlp/otlptrace/otlptracegrpc"
 	"go.opentelemetry.io/otel/propagation"
 	sdktrace "go.opentelemetry.io/otel/sdk/trace"
+	"go.opentelemetry.io/otel/trace"
 
 	"google.golang.org/protobuf/encoding/protojson"
 
@@ -200,12 +203,25 @@ func (p *productCatalog) Watch(req *healthpb.HealthCheckRequest, ws healthpb.Hea
 	return status.Errorf(codes.Unimplemented, "health check via Watch not implemented")
 }
 
-func (p *productCatalog) ListProducts(context.Context, *pb.Empty) (*pb.ListProductsResponse, error) {
+func (p *productCatalog) ListProducts(ctx context.Context, req *pb.Empty) (*pb.ListProductsResponse, error) {
+	span := trace.SpanFromContext(ctx)
+
 	time.Sleep(extraLatency)
-	return &pb.ListProductsResponse{Products: parseCatalog()}, nil
+	var ps []*pb.Product
+	ps = parseCatalog()
+
+	span.SetAttributes(
+		attribute.Int("app.products.count", len(ps)),
+	)
+	return &pb.ListProductsResponse{Products: ps}, nil
 }
 
 func (p *productCatalog) GetProduct(ctx context.Context, req *pb.GetProductRequest) (*pb.Product, error) {
+	span := trace.SpanFromContext(ctx)
+	span.SetAttributes(
+		attribute.String("app.product.id", req.Id),
+	)
+
 	time.Sleep(extraLatency)
 	var found *pb.Product
 	for i := 0; i < len(parseCatalog()); i++ {
@@ -213,13 +229,24 @@ func (p *productCatalog) GetProduct(ctx context.Context, req *pb.GetProductReque
 			found = parseCatalog()[i]
 		}
 	}
+
 	if found == nil {
-		return nil, status.Errorf(codes.NotFound, "no product with ID %s", req.Id)
+		msg := fmt.Sprintf("no product with ID %s", req.Id)
+		span.SetStatus(otelcodes.Error, msg)
+		span.AddEvent(msg)
+		return nil, status.Errorf(codes.NotFound, msg)
+	} else {
+		msg := fmt.Sprintf("found product with ID %s, name %s", req.Id, found.Name)
+		span.AddEvent(msg)
+		span.SetAttributes(
+			attribute.String("app.product.name", found.Name),
+		)
 	}
 	return found, nil
 }
 
 func (p *productCatalog) SearchProducts(ctx context.Context, req *pb.SearchProductsRequest) (*pb.SearchProductsResponse, error) {
+	span := trace.SpanFromContext(ctx)
 	time.Sleep(extraLatency)
 	// Intepret query as a substring match in name or description.
 	var ps []*pb.Product
@@ -229,5 +256,8 @@ func (p *productCatalog) SearchProducts(ctx context.Context, req *pb.SearchProdu
 			ps = append(ps, p)
 		}
 	}
+	span.SetAttributes(
+		attribute.Int("app.products.count", len(ps)),
+	)
 	return &pb.SearchProductsResponse{Results: ps}, nil
 }
