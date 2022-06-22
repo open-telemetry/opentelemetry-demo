@@ -19,21 +19,20 @@ post "/send_order_confirmation" do
     "app.order.id" => data.order.order_id,
     "app.shipping.tracking.id" => data.order.shipping_tracking_id,
     "app.shipping.cost.currency" => data.order.shipping_cost.currency_code,
-    "app.shipping.cost" => data.order.shipping_cost.units.to_s + "." + 
-      data.order.shipping_cost.nanos.to_s
+    "app.shipping.cost.total" => "#{data.order.shipping_cost.units}.#{data.order.shipping_cost.nanos}",
   })
 
   send_email(data)
 
-  rescue Exception => e
-    # record exception in span (will create a span event)
-    current_span.record_exception(e)
-    raise e
+end
+
+error do
+  OpenTelemetry::Trace.current_span.record_exception(env['sinatra.error'])
 end
 
 def send_email(data)
   # create and start a manual span
-  tracer = OpenTelemetry.tracer_provider.tracer('')
+  tracer = OpenTelemetry.tracer_provider.tracer('emailservice')
   tracer.in_span("send_email") do |span|
     Pony.mail(
       to:       data.email,
