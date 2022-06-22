@@ -1,0 +1,17 @@
+{
+    "ignorePatterns": [
+        {"pattern": "^http://localhost:8080"},
+        {"pattern": "^http://localhost:16686"},
+        {"pattern": "^https://calendar.google.com/calendar"}
+    ],
+    "replacementPatterns": [
+        {
+            "pattern": "^/",
+            "replacement": "/github/workspace/"
+        }
+    ],
+    "aliveStatusCodes": [
+        200,
+        429
+    ]
+}

@@ -12,35 +12,28 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-FROM node:16-alpine as base
+FROM node:16-alpine AS base
 
-FROM base as builder
+FROM base AS builder
 
-# Some packages (e.g. @google-cloud/profiler) require additional
-# deps for post-install scripts
-RUN apk add --update --no-cache \
-    python3 \
-    make \
-    g++ 
-
-WORKDIR /usr/src/app
+WORKDIR /usr/src/app/
 
 COPY ./src/paymentservice/package.json ./
 
 RUN npm install --only=production
 
+# -----------------------------------------------------------------------------
+
 FROM base
 
-WORKDIR /usr/src/app
+WORKDIR /usr/src/app/
 
-COPY --from=builder /usr/src/app/node_modules ./node_modules
-
+COPY --from=builder /usr/src/app/node_modules/ ./node_modules/
 COPY ./src/paymentservice/ ./
+COPY ./pb/ ./proto/
+COPY --chmod=0755 ./include/grpc_health_probe /include/
 
-COPY --chmod=0755 ./grpc_health_probe /bin/
+HEALTHCHECK CMD [ "/include/grpc_health_probe", "-addr", ":${PAYMENT_SERVICE_PORT}" ]
 
-HEALTHCHECK CMD [ "/bin/grpc_health_probe", "-addr=:50051" ]
-
-EXPOSE 50051
-
+EXPOSE ${PAYMENT_SERVICE_PORT}
 ENTRYPOINT [ "node", "--require", "./tracing.js", "./index.js" ]
