@@ -217,6 +217,7 @@ services:
 
   # FeatureFlagService
   featureflagservice:
+    image: ${IMAGE_NAME}:${IMAGE_VERSION}-featureflagservice
     build:
       context: ./src/featureflagservice
     ports:
