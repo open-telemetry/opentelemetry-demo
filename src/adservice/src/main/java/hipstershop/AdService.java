@@ -150,7 +150,7 @@ public final class AdService {
     List<Ad> ads = new ArrayList<>(MAX_ADS_TO_SERVE);
 
     // create and start a new span manually
-    Tracer tracer = GlobalOpenTelemetry.getTracer("");
+    Tracer tracer = GlobalOpenTelemetry.getTracer("adservice");
     Span span = tracer.spanBuilder("getRandomAds").startSpan();
 
     // put the span into context, so if any child span is started the parent will be set properly
