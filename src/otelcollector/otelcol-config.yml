@@ -25,5 +25,5 @@ service:
       exporters: [logging, jaeger]
     metrics:
       receivers: [otlp]
-      processors: []
+      processors: [batch]
       exporters: [prometheus, logging]
