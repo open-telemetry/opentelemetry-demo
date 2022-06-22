@@ -26,6 +26,7 @@ services:
     ports:
       - "4317"
       - "4318"
+      - "9464"
     depends_on:
       - jaeger
 
@@ -143,6 +144,7 @@ services:
       - SHIPPING_SERVICE_ADDR
       - OTEL_EXPORTER_OTLP_TRACES_ENDPOINT
       - OTEL_RESOURCE_ATTRIBUTES=service.name=frontend
+      - OTEL_EXPORTER_OTLP_ENDPOINT
     depends_on:
       - adservice
       - cartservice
@@ -252,3 +254,19 @@ services:
       - OTEL_RESOURCE_ATTRIBUTES=service.name=loadgenerator
     depends_on:
       - frontend
+
+  # Prometheus
+  prometheus:
+    image: quay.io/prometheus/prometheus:v2.34.0
+    command:
+      - --web.console.templates=/etc/prometheus/consoles
+      - --web.console.libraries=/etc/prometheus/console_libraries
+      - --storage.tsdb.retention.time=1h
+      - --config.file=/etc/prometheus/prometheus-config.yaml
+      - --storage.tsdb.path=/prometheus
+      - --web.enable-lifecycle
+      - --web.route-prefix=/
+    volumes:
+      - ./src/prometheus/prometheus-config.yaml:/etc/prometheus/prometheus-config.yaml
+    ports:
+      - "${PROMETHEUS_SERVICE_PORT}:${PROMETHEUS_SERVICE_PORT}"
