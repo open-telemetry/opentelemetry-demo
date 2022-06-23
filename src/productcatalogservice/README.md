@@ -12,7 +12,7 @@ When this service is run the output should be similar to the following
 ### Emoji Legend
 
 - Completed: :100:
-- Not Present (Yet): :red_circle:
+- Not Present (Yet): :construction:
 
 ### Traces
 
@@ -21,34 +21,34 @@ When this service is run the output should be similar to the following
   :100:
 - [Manual Span
   Creation](https://github.com/open-telemetry/opentelemetry-specification/blob/main/specification/glossary.md#manual-instrumentation):
-  :red_circle:
+  :construction:
 - [Span Data
   Enrichment](https://opentelemetry.io/docs/instrumentation/net/manual/#add-tags-to-an-activity):
   :100:
-- Interprocess Context Propagation: :red_circle:
+- Interprocess Context Propagation: :construction:
 - [Intra-service Context
   Propagation](https://opentelemetry.io/docs/instrumentation/java/manual/#context-propagation):
-  :red_circle:
+  :construction:
 - [Trace
   Links](https://github.com/open-telemetry/opentelemetry-specification/blob/main/specification/overview.md#links-between-spans):
-  :red_circle:
+  :construction:
 - [Baggage](https://github.com/open-telemetry/opentelemetry-specification/blob/main/specification/baggage/api.md#overview):
-  :red_circle:
+  :construction:
 
 ### Metrics
 
 - [Instrumentation
   Libraries](https://opentelemetry.io/docs/concepts/instrumenting-library/):
-  :red_circle:
+  :construction:
 - [Manual Metric
   Creation](https://github.com/open-telemetry/opentelemetry-specification/blob/main/specification/glossary.md#manual-instrumentation):
-  :red_circle:
+  :construction:
 - [Collector Agent Metric
-  Transformation](https://opentelemetry.io/docs/collector/deployment/#agent)::red_circle:
+  Transformation](https://opentelemetry.io/docs/collector/deployment/#agent)::construction:
 - [Push
   Metrics](https://opentelemetry.io/docs/reference/specification/metrics/sdk/#push-metric-exporter):
-  :red_circle:
-- [SLO Metrics](https://github.com/openslo/openslo#slo): :red_circle:
+  :construction:
+- [SLO Metrics](https://github.com/openslo/openslo#slo): :construction:
 - [Multiple Manual Metric
   Instruments](https://opentelemetry.io/docs/reference/specification/metrics/api/#synchronous-and-asynchronous-instruments):
-  :red_circle:
+  :construction:
