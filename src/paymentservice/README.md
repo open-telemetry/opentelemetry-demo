@@ -36,4 +36,3 @@
 - :construction:[SLO Metrics](https://github.com/openslo/openslo#slo): :construction:
 - :construction: [Multiple Manual Metric
   Instruments](https://opentelemetry.io/docs/reference/specification/metrics/api/#synchronous-and-asynchronous-instruments)
-  
