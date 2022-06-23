@@ -25,6 +25,8 @@ services:
       - ./src/otelcollector/otelcol-config.yml:/etc/otelcol-config.yml
     ports:
       - "4317"
+      - "4318"
+      - "9464"
     depends_on:
       - jaeger
 
@@ -62,6 +64,7 @@ services:
       - REDIS_ADDR
       - OTEL_EXPORTER_OTLP_ENDPOINT
       - OTEL_RESOURCE_ATTRIBUTES=service.name=cartservice
+      - ASPNETCORE_URLS=http://*:${CART_SERVICE_PORT}
     depends_on:
       - redis-cart
       - otelcol
@@ -141,6 +144,7 @@ services:
       - SHIPPING_SERVICE_ADDR
       - OTEL_EXPORTER_OTLP_TRACES_ENDPOINT
       - OTEL_RESOURCE_ATTRIBUTES=service.name=frontend
+      - OTEL_EXPORTER_OTLP_ENDPOINT
     depends_on:
       - adservice
       - cartservice
@@ -213,6 +217,30 @@ services:
     depends_on:
       - otelcol
 
+  # FeatureFlagService
+  featureflagservice:
+    image: ${IMAGE_NAME}:${IMAGE_VERSION}-featureflagservice
+    build:
+      context: ./src/featureflagservice
+    ports:
+      - "${FEATURE_FLAG_SERVICE_PORT}:${FEATURE_FLAG_SERVICE_PORT}"
+      - "${FEATURE_FLAG_GRPC_SERVICE_PORT}"
+    environment:
+      - PORT=${FEATURE_FLAG_SERVICE_PORT}
+      - GRPC_PORT=${FEATURE_FLAG_GRPC_SERVICE_PORT}
+      - OTEL_EXPORTER_OTLP_TRACES_ENDPOINT
+      - OTEL_RESOURCE_ATTRIBUTES=service.name=featureflagservice
+      - DATABASE_URL=ecto://ffs:ffs@ffs_postgres:5432/ffs
+    depends_on:
+      - ffs_postgres
+
+  ffs_postgres:
+    image: cimg/postgres:14.2
+    environment:
+      - POSTGRES_USER=ffs
+      - POSTGRES_DB=ffs
+      - POSTGRES_PASSWORD=ffs
+
   # LoadGenerator
   loadgenerator:
     image: ${IMAGE_NAME}:${IMAGE_VERSION}-loadgenerator
@@ -226,3 +254,19 @@ services:
       - OTEL_RESOURCE_ATTRIBUTES=service.name=loadgenerator
     depends_on:
       - frontend
+
+  # Prometheus
+  prometheus:
+    image: quay.io/prometheus/prometheus:v2.34.0
+    command:
+      - --web.console.templates=/etc/prometheus/consoles
+      - --web.console.libraries=/etc/prometheus/console_libraries
+      - --storage.tsdb.retention.time=1h
+      - --config.file=/etc/prometheus/prometheus-config.yaml
+      - --storage.tsdb.path=/prometheus
+      - --web.enable-lifecycle
+      - --web.route-prefix=/
+    volumes:
+      - ./src/prometheus/prometheus-config.yaml:/etc/prometheus/prometheus-config.yaml
+    ports:
+      - "${PROMETHEUS_SERVICE_PORT}:${PROMETHEUS_SERVICE_PORT}"

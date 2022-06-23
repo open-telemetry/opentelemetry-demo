@@ -17,10 +17,6 @@ package main
 import (
 	"context"
 	"fmt"
-	"github.com/opentelemetry/opentelemetry-demo-webstore/src/frontend/instr"
-	"go.opentelemetry.io/otel/attribute"
-	"go.opentelemetry.io/otel/codes"
-	"go.opentelemetry.io/otel/trace"
 	"html/template"
 	"math/rand"
 	"net"
@@ -29,6 +25,11 @@ import (
 	"strconv"
 	"strings"
 	"time"
+
+	"github.com/opentelemetry/opentelemetry-demo-webstore/src/frontend/instr"
+	"go.opentelemetry.io/otel/attribute"
+	"go.opentelemetry.io/otel/codes"
+	"go.opentelemetry.io/otel/trace"
 
 	"github.com/gorilla/mux"
 	"github.com/pkg/errors"
