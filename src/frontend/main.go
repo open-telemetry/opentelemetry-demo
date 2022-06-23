@@ -30,8 +30,15 @@ import (
 	"go.opentelemetry.io/contrib/instrumentation/google.golang.org/grpc/otelgrpc"
 
 	"go.opentelemetry.io/otel"
+	"go.opentelemetry.io/otel/exporters/otlp/otlpmetric"
+	"go.opentelemetry.io/otel/exporters/otlp/otlpmetric/otlpmetricgrpc"
 	"go.opentelemetry.io/otel/exporters/otlp/otlptrace/otlptracegrpc"
+	"go.opentelemetry.io/otel/metric"
+	"go.opentelemetry.io/otel/metric/global"
 	"go.opentelemetry.io/otel/propagation"
+	controller "go.opentelemetry.io/otel/sdk/metric/controller/basic"
+	processor "go.opentelemetry.io/otel/sdk/metric/processor/basic"
+	"go.opentelemetry.io/otel/sdk/metric/selector/simple"
 	sdktrace "go.opentelemetry.io/otel/sdk/trace"
 )
 
@@ -96,6 +103,36 @@ func InitTracerProvider() *sdktrace.TracerProvider {
 	return tp
 }
 
+func InitMeterProvider() (metric.MeterProvider, error) {
+	ctx := context.Background()
+
+	client := otlpmetricgrpc.NewClient(
+		otlpmetricgrpc.WithInsecure())
+
+	metricExporter, err := otlpmetric.New(ctx, client)
+	if err != nil {
+		log.Errorf("failed to create the metric collector exporter, %v", err)
+		return nil, err
+	}
+
+	controller := controller.New(
+		processor.NewFactory(
+			simple.NewWithHistogramDistribution(),
+			metricExporter,
+		),
+		controller.WithExporter(metricExporter),
+		controller.WithCollectPeriod(2*time.Second),
+	)
+
+	err = controller.Start(ctx)
+	if err != nil {
+		log.Errorf("failed to start metric controller, %v", err)
+	}
+	global.SetMeterProvider(controller)
+
+	return controller, nil
+}
+
 func main() {
 	// Initialize OpenTelemetry Tracing
 	tp := InitTracerProvider()
@@ -104,9 +141,15 @@ func main() {
 			log.Printf("Error shutting down tracer provider: %v", err)
 		}
 	}()
+	log.Printf("initialize trace provider done")
+
+	_, err := InitMeterProvider()
+	if err != nil {
+		log.Errorf("Error init meter provider: %v", err)
+	}
+	log.Printf("initialize meter provider done")
 
 	ctx := context.Background()
-
 	svc := new(frontendServer)
 	mustMapEnv(&svc.productCatalogSvcAddr, "PRODUCT_CATALOG_SERVICE_ADDR")
 	mustMapEnv(&svc.currencySvcAddr, "CURRENCY_SERVICE_ADDR")
