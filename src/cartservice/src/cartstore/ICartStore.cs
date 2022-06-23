@@ -19,7 +19,7 @@ namespace cartservice.cartstore
     public interface ICartStore
     {
         Task InitializeAsync();
-        
+
         Task AddItemAsync(string userId, string productId, int quantity);
         Task EmptyCartAsync(string userId);
 

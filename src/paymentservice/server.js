@@ -16,6 +16,7 @@ const path = require('path');
 const grpc = require('@grpc/grpc-js');
 const pino = require('pino');
 const protoLoader = require('@grpc/proto-loader');
+const opentelemetry = require('@opentelemetry/api');
 
 const charge = require('./charge');
 
@@ -27,7 +28,7 @@ const logger = pino({
 });
 
 class HipsterShopServer {
-  constructor(protoRoot, port = HipsterShopServer.PORT) {
+  constructor(protoRoot, port) {
     this.port = port;
 
     this.packages = {
@@ -45,11 +46,23 @@ class HipsterShopServer {
    * @param {*} callback  fn(err, ChargeResponse)
    */
   static ChargeServiceHandler(call, callback) {
+    // get the current auto-instrumented span in context
+    const span = opentelemetry.trace.getSpan(opentelemetry.context.active())
     try {
+      const amount = call.request.amount;
+      span.setAttributes({
+        "app.payment.currency": amount.currency_code,
+        "app.payment.cost": parseFloat(amount.units + "." + amount.nanos)
+      });
       logger.info(`PaymentService#Charge invoked with request ${JSON.stringify(call.request)}`);
+
       const response = charge(call.request);
       callback(null, response);
+
     } catch (err) {
+      // record exception in span (will create a span event)
+      span.recordException(err);
+      span.setStatus({code: opentelemetry.SpanStatusCode.ERROR})
       console.warn(err);
       callback(err);
     }
@@ -106,7 +119,5 @@ class HipsterShopServer {
     );
   }
 }
-
-HipsterShopServer.PORT = process.env.PORT;
 
 module.exports = HipsterShopServer;
