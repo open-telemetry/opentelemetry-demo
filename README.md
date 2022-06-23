@@ -86,6 +86,16 @@ After updating the `otelcol-config.yml` start the demo by running
 `docker compose up`. After a while you should see the traces flowing into
 your backend as well.
 
+### Check Service Health
+
+Check the health of the service the following command
+
+```shell
+docker compose ps
+```
+
+The status column will indicate whether the service is healthy with `running` or unhealthy with `running (unhealthy)`
+
 ## Screenshots from the Online Boutique
 
 | Home Page                                                                                                         | Checkout Screen                                                                                                    |

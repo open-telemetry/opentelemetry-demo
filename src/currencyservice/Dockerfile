@@ -25,7 +25,7 @@ RUN apk add --update --no-cache \
 
 WORKDIR /usr/src/app
 
-COPY package*.json ./
+COPY ./src/currencyservice/package*.json ./
 
 RUN npm install --only=production
 
@@ -39,7 +39,7 @@ WORKDIR /usr/src/app
 
 COPY --from=builder /usr/src/app/node_modules ./node_modules
 
-COPY . .
+COPY ./src/currencyservice/ ./
 
 EXPOSE 7000
 

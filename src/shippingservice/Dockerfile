@@ -18,9 +18,9 @@ RUN apk add build-base
 WORKDIR /src
 
 # restore dependencies
-COPY go.mod go.sum ./
+COPY ./src/shippingservice/go.mod ./src/shippingservice/go.sum ./
 RUN go mod download
-COPY . .
+COPY ./src/shippingservice ./
 
 # Skaffold passes in debug-oriented compiler flags
 ARG SKAFFOLD_GO_GCFLAGS
