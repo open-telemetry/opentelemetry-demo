@@ -40,7 +40,6 @@ When this service is run the output should be similar to the following
   Transformation](https://opentelemetry.io/docs/collector/deployment/#agent)
 - :construction: [Push
   Metrics](https://opentelemetry.io/docs/reference/specification/metrics/sdk/#push-metric-exporter)
-- :construction:[SLO Metrics](https://github.com/openslo/openslo#slo):
-  :construction:
+- :construction: [SLO Metrics](https://github.com/openslo/openslo#slo)
 - :construction: [Multiple Manual Metric
   Instruments](https://opentelemetry.io/docs/reference/specification/metrics/api/#synchronous-and-asynchronous-instruments)
