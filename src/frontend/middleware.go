@@ -16,10 +16,13 @@ package main
 
 import (
 	"context"
-	"github.com/opentelemetry/opentelemetry-demo-webstore/src/frontend/instr"
-	"go.opentelemetry.io/otel/trace"
 	"net/http"
 	"time"
+
+	"github.com/opentelemetry/opentelemetry-demo-webstore/src/frontend/instr"
+	"go.opentelemetry.io/otel/metric/global"
+	semconv "go.opentelemetry.io/otel/semconv/v1.10.0"
+	"go.opentelemetry.io/otel/trace"
 
 	"github.com/google/uuid"
 	"github.com/sirupsen/logrus"
@@ -34,6 +37,12 @@ type logHandler struct {
 	log  *logrus.Logger
 	next http.Handler
 }
+
+var (
+	meter                 = global.MeterProvider().Meter("frontend")
+	httpRequestCounter, _ = meter.SyncInt64().Counter("http.server.request_count")
+	httpServerLatency, _  = meter.SyncFloat64().Histogram("http.server.duration")
+)
 
 type responseRecorder struct {
 	b      int
@@ -90,6 +99,7 @@ func instrumentHandler(fn httpHandler) httpHandler {
 	// session, request, currency, and user
 
 	return func(w http.ResponseWriter, r *http.Request) {
+		requestStartTime := time.Now()
 		rid := r.Context().Value(ctxKeyRequestID{})
 		requestID := ""
 		if rid != nil {
@@ -108,6 +118,11 @@ func instrumentHandler(fn httpHandler) httpHandler {
 		}
 
 		fn(w, r)
+
+		attributes := semconv.HTTPServerMetricAttributesFromHTTPRequest("frontend", r)
+		elapsedTime := float64(time.Since(requestStartTime)) / float64(time.Millisecond)
+		httpRequestCounter.Add(r.Context(), 1, attributes...)
+		httpServerLatency.Record(r.Context(), elapsedTime, attributes...)
 	}
 }
 
