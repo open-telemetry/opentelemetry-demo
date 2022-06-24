@@ -39,9 +39,13 @@ docker compose up
 
 ### Verify the Webstore & the Telemetry
 
-- Once the images are built you can access the Webstore at: <http://localhost:8080>
+Once the images are built and containers are started you can access:
 
-- And the Jaeger UI at: <http://localhost:16686>
+- Webstore: <http://localhost:8080/>
+
+- Jaeger: <http://localhost:16686/>
+
+- Prometheus: <http://localhost:9090/>
 
 ### Bring your own backend
 
