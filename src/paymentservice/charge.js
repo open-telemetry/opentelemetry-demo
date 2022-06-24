@@ -22,32 +22,6 @@ const { v4: uuidv4 } = require('uuid')
 const logger = pino()
 const tracer = opentelemetry.trace.getTracer('paymentservice')
 
-// Error Classes
-class CreditCardError extends Error {
-  constructor (message) {
-    super(message)
-    this.code = 400
-  }
-}
-
-class InvalidCreditCard extends CreditCardError {
-  constructor () {
-    super(`Credit card info is invalid.`)
-  }
-}
-
-class UnacceptedCreditCard extends CreditCardError {
-  constructor (cardType) {
-    super(`Sorry, we cannot process ${cardType} credit cards. Only VISA or MasterCard is accepted.`)
-  }
-}
-
-class ExpiredCreditCard extends CreditCardError {
-  constructor (lastFourDigits, month, year) {
-    super(`The credit card (ending ${lastFourDigits}) expired on ${month}/${year}.`)
-  }
-}
-
 // Functions
 module.exports.charge = request => {
   const span = tracer.startSpan('charge')
@@ -62,17 +36,17 @@ module.exports.charge = request => {
   })
 
   if (!valid)
-    throw new InvalidCreditCard()
+    throw new Error('Credit card info is invalid.')
 
   if (!['visa', 'mastercard'].includes(cardType))
-    throw new UnacceptedCreditCard(cardType)
+    throw new Error(`Sorry, we cannot process ${cardType} credit cards. Only VISA or MasterCard is accepted.`)
 
   const currentMonth = new Date().getMonth() + 1
   const currentYear = new Date().getFullYear()
   const { credit_card_expiration_year: year, credit_card_expiration_month: month } = creditCard
   const lastFourDigits = cardNumber.substr(-4)
   if ((currentYear * 12 + currentMonth) > (year * 12 + month))
-    throw new ExpiredCreditCard(lastFourDigits, month, year)
+    throw new Error(`The credit card (ending ${lastFourDigits}) expired on ${month}/${year}.`)
 
   span.setAttribute('app.payment.charged', true)
   span.end()
