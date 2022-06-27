@@ -6,6 +6,7 @@ pub mod health {
     tonic::include_proto!("grpc.health.v1");
 }
 
+#[derive(Debug, Default)]
 pub struct HealthCheckServer;
 
 #[tonic::async_trait]
