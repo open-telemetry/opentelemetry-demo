@@ -28,6 +28,16 @@ git clone https://github.com/open-telemetry/opentelemetry-demo-webstore.git
 cd opentelemetry-demo-webstore/
 ```
 
+### Gradle Update [Windows Only]
+
+- Navigate to the Java Ad Service folder to install and update Gradle:
+
+```shell
+cd .\src\adservice\
+.\gradlew installDist
+.\gradlew wrapper --gradle-version 7.4.2
+```
+
 ### Run Docker Compose
 
 - Start the demo (It can take ~20min the first time the command is executed as
