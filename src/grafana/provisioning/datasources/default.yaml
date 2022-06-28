@@ -1,0 +1,7 @@
+apiVersion: 1
+
+datasources:
+  - name: webstore
+    type: prometheus
+    url: http://prometheus:9090
+    editable: true
