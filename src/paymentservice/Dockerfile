@@ -33,7 +33,7 @@ COPY ./src/paymentservice/ ./
 COPY ./pb/ ./proto/
 COPY --chmod=0755 ./include/grpc_health_probe /include/
 
-HEALTHCHECK CMD [ "/include/grpc_health_probe", "-addr", ":${PAYMENT_SERVICE_PORT}" ]
+HEALTHCHECK CMD /include/grpc_health_probe -addr :${PAYMENT_SERVICE_PORT}
 
 EXPOSE ${PAYMENT_SERVICE_PORT}
 ENTRYPOINT [ "node", "--require", "./tracing.js", "./index.js" ]

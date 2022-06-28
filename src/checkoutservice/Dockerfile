@@ -36,7 +36,7 @@ WORKDIR /usr/src/app/
 COPY --from=builder /go/bin/checkoutservice/ ./
 COPY --chmod=0755 ./include/grpc_health_probe /include/
 
-HEALTHCHECK CMD [ "/include/grpc_health_probe", "-addr", ":${CHECKOUT_SERVICE_PORT}" ]
+HEALTHCHECK CMD /include/grpc_health_probe -addr :${CHECKOUT_SERVICE_PORT}
 
 EXPOSE ${CHECKOUT_SERVICE_PORT}
 ENTRYPOINT [ "./checkoutservice" ]

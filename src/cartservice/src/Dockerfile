@@ -33,7 +33,7 @@ WORKDIR /usr/src/app/
 COPY --from=builder /cartservice/ ./
 COPY --chmod=0755 ./include/grpc_health_probe /include/
 
-HEALTHCHECK CMD [ "/include/grpc_health_probe", "-addr", ":${CART_SERVICE_PORT}" ]
+HEALTHCHECK CMD /include/grpc_health_probe -addr :${CART_SERVICE_PORT}
 
 EXPOSE ${CART_SERVICE_PORT}
 

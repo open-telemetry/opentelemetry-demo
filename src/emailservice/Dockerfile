@@ -25,7 +25,7 @@ COPY ./src/emailservice ./
 
 COPY --chmod=0755 ./include/grpc_health_probe /include/
 
-HEALTHCHECK CMD [ "/include/grpc_health_probe", "-addr", ":${EMAIL_SERVICE_PORT}" ]
+HEALTHCHECK CMD /include/grpc_health_probe -addr :${EMAIL_SERVICE_PORT}
 
 EXPOSE 8080
 ENTRYPOINT ["bundle", "exec", "ruby", "email_server.rb"]

@@ -33,7 +33,7 @@ FROM base
 
 COPY --chmod=0755 ./include/grpc_health_probe /include/
 
-HEALTHCHECK CMD [ "/include/grpc_health_probe", "-addr", ":${CURRENCY_SERVICE_PORT}" ]
+HEALTHCHECK CMD /include/grpc_health_probe -addr :${CURRENCY_SERVICE_PORT}
 
 WORKDIR /usr/src/app
 

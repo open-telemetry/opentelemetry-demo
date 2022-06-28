@@ -30,7 +30,7 @@ FROM alpine as release
 RUN apk add --no-cache ca-certificates
 COPY --chmod=0755 ./include/grpc_health_probe /include/
 
-HEALTHCHECK CMD [ "/include/grpc_health_probe", "-addr", ":${SHIPPING_SERVICE_PORT}" ]
+HEALTHCHECK CMD /include/grpc_health_probe -addr :${SHIPPING_SERVICE_PORT}
 WORKDIR /src
 COPY --from=builder /go/bin/shippingservice /src/shippingservice
 ENV APP_PORT=50051
