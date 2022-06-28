@@ -40,12 +40,17 @@ function chargeServiceHandler(call, callback) {
   } catch (err) {
     logger.warn(err)
 
-    // Record exception in span (will create a span event)
     span.recordException(err)
     span.setStatus({ code: opentelemetry.SpanStatusCode.ERROR })
 
     callback(err)
   }
+}
+
+// Functions
+async function closeGracefully(signal) {
+  server.forceShutdown()
+  process.kill(process.pid, signal)
 }
 
 // Main
@@ -65,11 +70,6 @@ server.bindAsync(`0.0.0.0:${port}`, grpc.ServerCredentials.createInsecure(), () 
     server.start()
   }
 )
-
-async function closeGracefully(signal) {
-  server.forceShutdown()
-  process.kill(process.pid, signal)
-}
 
 process.once('SIGINT', closeGracefully)
 process.once('SIGTERM', closeGracefully)
