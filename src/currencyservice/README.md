@@ -1,3 +1,3 @@
 # Read Me
 
-This is a placeholder
+This service will be rewritten in C++! Don't bother improving the current implementation 🙂
