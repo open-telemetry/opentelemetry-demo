@@ -4,13 +4,17 @@ defmodule FeatureflagserviceWeb.FeatureFlagControllerTest do
   import Featureflagservice.FeatureFlagsFixtures
 
   @create_attrs %{description: "some description", enabled: true, name: "some name"}
-  @update_attrs %{description: "some updated description", enabled: false, name: "some updated name"}
+  @update_attrs %{
+    description: "some updated description",
+    enabled: false,
+    name: "some updated name"
+  }
   @invalid_attrs %{description: nil, enabled: nil, name: nil}
 
   describe "index" do
     test "lists all featureflags", %{conn: conn} do
       conn = get(conn, Routes.feature_flag_path(conn, :index))
-      assert html_response(conn, 200) =~ "Listing Featureflags"
+      assert html_response(conn, 200) =~ "Listing feature flags"
     end
   end
 
@@ -29,12 +33,12 @@ defmodule FeatureflagserviceWeb.FeatureFlagControllerTest do
       assert redirected_to(conn) == Routes.feature_flag_path(conn, :show, id)
 
       conn = get(conn, Routes.feature_flag_path(conn, :show, id))
-      assert html_response(conn, 200) =~ "Show Feature flag"
+      assert html_response(conn, 200) =~ "Show feature flag"
     end
 
     test "renders errors when data is invalid", %{conn: conn} do
       conn = post(conn, Routes.feature_flag_path(conn, :create), feature_flag: @invalid_attrs)
-      assert html_response(conn, 200) =~ "New Feature flag"
+      assert html_response(conn, 200) =~ "New feature flag"
     end
   end
 
@@ -43,7 +47,7 @@ defmodule FeatureflagserviceWeb.FeatureFlagControllerTest do
 
     test "renders form for editing chosen feature_flag", %{conn: conn, feature_flag: feature_flag} do
       conn = get(conn, Routes.feature_flag_path(conn, :edit, feature_flag))
-      assert html_response(conn, 200) =~ "Edit Feature flag"
+      assert html_response(conn, 200) =~ "Edit feature flag"
     end
   end
 
@@ -51,7 +55,11 @@ defmodule FeatureflagserviceWeb.FeatureFlagControllerTest do
     setup [:create_feature_flag]
 
     test "redirects when data is valid", %{conn: conn, feature_flag: feature_flag} do
-      conn = put(conn, Routes.feature_flag_path(conn, :update, feature_flag), feature_flag: @update_attrs)
+      conn =
+        put(conn, Routes.feature_flag_path(conn, :update, feature_flag),
+          feature_flag: @update_attrs
+        )
+
       assert redirected_to(conn) == Routes.feature_flag_path(conn, :show, feature_flag)
 
       conn = get(conn, Routes.feature_flag_path(conn, :show, feature_flag))
@@ -59,8 +67,12 @@ defmodule FeatureflagserviceWeb.FeatureFlagControllerTest do
     end
 
     test "renders errors when data is invalid", %{conn: conn, feature_flag: feature_flag} do
-      conn = put(conn, Routes.feature_flag_path(conn, :update, feature_flag), feature_flag: @invalid_attrs)
-      assert html_response(conn, 200) =~ "Edit Feature flag"
+      conn =
+        put(conn, Routes.feature_flag_path(conn, :update, feature_flag),
+          feature_flag: @invalid_attrs
+        )
+
+      assert html_response(conn, 200) =~ "Edit feature flag"
     end
   end
 
