@@ -55,8 +55,7 @@ const hipsterShopPackage = grpc.loadPackageDefinition(protoLoader.loadSync('demo
 const server = new grpc.Server()
 
 server.addService(health.service, new health.Implementation({
-  'PaymentService': proto.grpc.health.v1.HealthCheckResponse.ServingStatus.SERVING,
-  '': proto.grpc.health.v1.HealthCheckResponse.ServingStatus.NOT_SERVING
+  '': proto.grpc.health.v1.HealthCheckResponse.ServingStatus.SERVING
 }))
 
 server.addService(hipsterShopPackage.hipstershop.PaymentService.service, { charge: chargeServiceHandler })
