@@ -281,4 +281,3 @@ services:
       - ./src/grafana/provisioning:/etc/grafana/provisioning
     ports:
       - "${GRAFANA_SERVICE_PORT}:${GRAFANA_SERVICE_PORT}"
-  
