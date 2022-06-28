@@ -5,7 +5,7 @@ edition = "2021"
 
 [[bin]]
 name = "shippingservice"
-path = "src/server.rs"
+path = "src/main.rs"
 
 [dependencies]
 tonic = "0.7"
