@@ -28,6 +28,16 @@ git clone https://github.com/open-telemetry/opentelemetry-demo-webstore.git
 cd opentelemetry-demo-webstore/
 ```
 
+### Gradle Update [Windows Only]
+
+- Navigate to the Java Ad Service folder to install and update Gradle:
+
+```shell
+cd .\src\adservice\
+.\gradlew installDist
+.\gradlew wrapper --gradle-version 7.4.2
+```
+
 ### Run Docker Compose
 
 - Start the demo (It can take ~20min the first time the command is executed as
@@ -39,9 +49,13 @@ docker compose up
 
 ### Verify the Webstore & the Telemetry
 
-- Once the images are built you can access the Webstore at: <http://localhost:8080>
+Once the images are built and containers are started you can access:
 
-- And the Jaeger UI at: <http://localhost:16686>
+- Webstore: <http://localhost:8080/>
+
+- Jaeger: <http://localhost:16686/>
+
+- Prometheus: <http://localhost:9090/>
 
 ### Bring your own backend
 
