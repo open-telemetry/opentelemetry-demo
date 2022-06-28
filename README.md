@@ -94,7 +94,7 @@ Check the health of the service the following command
 docker compose ps
 ```
 
-The status column will indicate whether the service is healthy with `running (health)`
+The status column will indicate whether the service is healthy with `running (healthy)`
 , unhealthy with `running (unhealthy)`, or simply `running` if health checks are not enabled.
 
 ## Screenshots from the Online Boutique
