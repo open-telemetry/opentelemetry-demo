@@ -20,9 +20,6 @@ config :featureflagservice, FeatureflagserviceWeb.Endpoint,
   secret_key_base: "HcCBiW6WwFO9llsQig9V6rxpIwlHoKC722YEs/ANSl+w6uJG1aAbeSZOcR/3sA57",
   server: false
 
-# In test we don't send emails.
-config :featureflagservice, Featureflagservice.Mailer, adapter: Swoosh.Adapters.Test
-
 # Print only warnings and errors during test
 config :logger, level: :warn
 
