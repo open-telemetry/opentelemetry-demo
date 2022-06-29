@@ -57,6 +57,8 @@ Once the images are built and containers are started you can access:
 
 - Prometheus: <http://localhost:9090/>
 
+- Grafana: <http://localhost:3000>
+
 ### Bring your own backend
 
 Likely you want to use the Webstore as a demo application for an observability
