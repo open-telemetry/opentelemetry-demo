@@ -28,6 +28,12 @@ git clone https://github.com/open-telemetry/opentelemetry-demo-webstore.git
 cd opentelemetry-demo-webstore/
 ```
 
+### Download gRPC Health Probe
+
+Download `v0.4.11` of `grpc_health_probe-linux-amd64` from
+[here](https://github.com/grpc-ecosystem/grpc-health-probe/releases/tag/v0.4.11)
+to the following path: `/include/grpc_health_probe`.
+
 ### Run Docker Compose
 
 - Start the demo (It can take ~20min the first time the command is executed as
@@ -95,7 +101,15 @@ docker compose ps
 ```
 
 The status column will indicate whether the service is healthy with `running (healthy)`
-, unhealthy with `running (unhealthy)`, or simply `running` if health checks are not enabled.
+, unhealthy with `running (unhealthy)`, or simply `running` if health checks are not enabled TODO .
+
+Get additional health information with the following command
+
+```shell
+docker inspect --format "{{json .State.Health }}" <container name> | python -m json.tool
+```
+
+Note: the ` | python -m json.tool` part is optional and simply makes the JSON pretty.
 
 ## Screenshots from the Online Boutique
 
