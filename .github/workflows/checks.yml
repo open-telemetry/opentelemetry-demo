@@ -125,6 +125,5 @@ jobs:
         docker tag "$source" "ghcr.io/observiq/demo-${{ matrix.service }}:latest"
         docker tag "$source" "ghcr.io/observiq/demo-${{ matrix.service }}:${commit_short}"
 
-        docker push \
-          "ghcr.io/observiq/demo-${{ matrix.service }}:latest" \
-          "ghcr.io/observiq/demo-${{ matrix.service }}:${commit_short}"
+        docker push "ghcr.io/observiq/demo-${{ matrix.service }}:latest"
+        docker push "ghcr.io/observiq/demo-${{ matrix.service }}:${commit_short}"
