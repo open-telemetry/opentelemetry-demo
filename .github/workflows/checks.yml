@@ -3,6 +3,8 @@ name: Checks
 on:
   pull_request:
     branches: [ main ]
+  push:
+    branches: [ main ]
 
 concurrency:
   group: ${{ github.head_ref || github.ref_name }}
