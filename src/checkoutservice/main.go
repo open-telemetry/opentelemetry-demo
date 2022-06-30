@@ -251,7 +251,7 @@ func (cs *checkoutService) prepareOrderItemsAndShippingQuoteFromCart(ctx context
 	out.cartItems = cartItems
 	out.orderItems = orderItems
 
-	shippingCostFloat, _ := strconv.ParseFloat(fmt.Sprintf("%d.%02d", shippingPrice.GetUnits(), shippingPrice.GetNanos()/10000000), 64)
+	shippingCostFloat, _ := strconv.ParseFloat(fmt.Sprintf("%d.%02d", shippingPrice.GetUnits(), shippingPrice.GetNanos()/1000000000), 64)
 
 	span.SetAttributes(
 		attribute.Float64("app.order.shipping.cost", shippingCostFloat),
