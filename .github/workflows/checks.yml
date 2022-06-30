@@ -4,6 +4,10 @@ on:
   pull_request:
     branches: [ main ]
 
+concurrency:
+  group: ${{ github.head_ref || github.ref_name }}
+  cancel-in-progress: false
+
 jobs:
   markdownlint:
     runs-on: ubuntu-latest
@@ -117,6 +121,7 @@ jobs:
       run: docker compose build ${{ matrix.service }}
 
     - name: Push ${{ matrix.service }} Image
+      if: github.ref == 'refs/heads/main'
       run: |
         source="$(docker images --format "{{.Repository}}:{{.Tag}}" | grep ${{ matrix.service }})"
         commit_short=$(git rev-parse --short HEAD)
