@@ -17,3 +17,5 @@ release.
   ([#26](https://github.com/open-telemetry/opentelemetry-demo-webstore/pull/26))
 * Added span attributes to frontend service
   ([#82](https://github.com/open-telemetry/opentelemetry-demo-webstore/pull/82))
+* Rewrote shipping service in Rust
+  ([#35](https://github.com/open-telemetry/opentelemetry-demo-webstore/issues/35))
