@@ -155,6 +155,13 @@ func (cs *checkoutService) PlaceOrder(ctx context.Context, req *pb.PlaceOrderReq
 	)
 	log.Infof("[PlaceOrder] user_id=%q user_currency=%q", req.UserId, req.UserCurrency)
 
+	var err error
+	defer func() {
+		if err != nil {
+			span.AddEvent("error", trace.WithAttributes(attribute.String("exception.message", err.Error())))
+		}
+	}()
+
 	orderID, err := uuid.NewUUID()
 	if err != nil {
 		return nil, status.Errorf(codes.Internal, "failed to generate order uuid")
