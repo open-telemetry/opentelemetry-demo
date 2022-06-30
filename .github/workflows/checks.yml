@@ -91,7 +91,7 @@ jobs:
       matrix:
         service:
         - adservice
-        - cartservice/src
+        - cartservice
         - checkoutservice
         - currencyservice
         - emailservice
