@@ -12,6 +12,10 @@ tonic = "0.7"
 prost = "0.10"
 prost-types = "0.10"
 tokio = { version = "1.0", features = ["macros", "rt-multi-thread"] }
+opentelemetry = { version = "0.17", features = ["rt-tokio"] }
+opentelemetry-otlp = "0.10"
+log = "0.4.17"
+simplelog = "0.12"
 
 [dependencies.uuid]
 version = "1.1.2"
