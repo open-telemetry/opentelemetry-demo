@@ -115,10 +115,16 @@ jobs:
 
     - name: Build ${{ matrix.service }} Image
       working-directory: src/${{ matrix.service }}
-      run: |
-        docker build . \
-          -t ghcr.io/observiq/${{ matrix.service }}:latest
+      run: docker-compose build ${{ matrix.service }}
 
     - name: Push ${{ matrix.service }} Image
       run: |
-        docker push ghcr.io/observiq/${{ matrix.service }}:latest
+        source="$(docker images --format "{{.Repository}}:{{.Tag}}" | grep ${{ matrix.service }})"
+        commit_short=$(git rev-parse --short HEAD)
+
+        docker tag "$source" "ghcr.io/observiq/demo-${{ matrix.service }}:latest"
+        docker tag "$source" "ghcr.io/observiq/demo-${{ matrix.service }}:${commit_short}"
+
+        docker push \
+          "ghcr.io/observiq/demo-${{ matrix.service }}:latest"
+          "ghcr.io/observiq/demo-${{ matrix.service }}:${commit_short}"
