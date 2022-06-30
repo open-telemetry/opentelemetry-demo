@@ -16,7 +16,8 @@ FROM ruby:3.1.2-slim
 
 RUN apt-get update -y && apt-get install -y build-essential
 
-COPY Gemfile* .
+COPY Gemfile* ./
+
 RUN bundle install
 
 WORKDIR /email_server
