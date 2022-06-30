@@ -121,9 +121,7 @@ jobs:
       run: |
         source="$(docker images --format "{{.Repository}}:{{.Tag}}" | grep ${{ matrix.service }})"
         commit_short=$(git rev-parse --short HEAD)
-
         docker tag "$source" "ghcr.io/observiq/demo-${{ matrix.service }}:latest"
         docker tag "$source" "ghcr.io/observiq/demo-${{ matrix.service }}:${commit_short}"
-
         docker push "ghcr.io/observiq/demo-${{ matrix.service }}:latest"
         docker push "ghcr.io/observiq/demo-${{ matrix.service }}:${commit_short}"
