@@ -27,6 +27,15 @@ import io.grpc.StatusRuntimeException;
 import io.grpc.health.v1.HealthCheckResponse.ServingStatus;
 import io.grpc.protobuf.services.*;
 import io.grpc.stub.StreamObserver;
+import io.opentelemetry.api.GlobalOpenTelemetry;
+import io.opentelemetry.api.common.AttributeKey;
+import io.opentelemetry.api.common.Attributes;
+import io.opentelemetry.api.trace.Span;
+import io.opentelemetry.api.trace.StatusCode;
+import io.opentelemetry.api.trace.Tracer;
+import io.opentelemetry.context.Scope;
+import io.opentelemetry.extension.annotations.SpanAttribute;
+import io.opentelemetry.extension.annotations.WithSpan;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -41,7 +50,7 @@ public final class AdService {
   private static final Logger logger = LogManager.getLogger(AdService.class);
 
   @SuppressWarnings("FieldCanBeLocal")
-  private static int MAX_ADS_TO_SERVE = 2;
+  private static final int MAX_ADS_TO_SERVE = 2;
 
   private Server server;
   private HealthStatusManager healthMgr;
@@ -91,8 +100,14 @@ public final class AdService {
     @Override
     public void getAds(AdRequest req, StreamObserver<AdResponse> responseObserver) {
       AdService service = AdService.getInstance();
+
+      // get the current span in context
+      Span span = Span.current();
       try {
         List<Ad> allAds = new ArrayList<>();
+
+        span.setAttribute("app.ads.contextKeys", req.getContextKeysList().toString());
+        span.setAttribute("app.ads.contextKeys.count", req.getContextKeysCount());
         logger.info("received ad request (context_words=" + req.getContextKeysList() + ")");
         if (req.getContextKeysCount() > 0) {
           for (int i = 0; i < req.getContextKeysCount(); i++) {
@@ -106,10 +121,13 @@ public final class AdService {
           // Serve random ads.
           allAds = service.getRandomAds();
         }
+        span.setAttribute("app.ads.count", allAds.size());
         AdResponse reply = AdResponse.newBuilder().addAllAds(allAds).build();
         responseObserver.onNext(reply);
         responseObserver.onCompleted();
       } catch (StatusRuntimeException e) {
+        span.addEvent("Error", Attributes.of(AttributeKey.stringKey("exception.message"), e.getMessage()));
+        span.setStatus(StatusCode.ERROR);
         logger.log(Level.WARN, "GetAds Failed with status {}", e.getStatus());
         responseObserver.onError(e);
       }
@@ -118,18 +136,36 @@ public final class AdService {
 
   private static final ImmutableListMultimap<String, Ad> adsMap = createAdsMap();
 
-  private Collection<Ad> getAdsByCategory(String category) {
-    return adsMap.get(category);
+  @WithSpan("getAdsByCategory")
+  private Collection<Ad> getAdsByCategory(@SpanAttribute("app.ads.category") String category) {
+    Collection<Ad> ads = adsMap.get(category);
+    Span.current().setAttribute("app.ads.count", ads.size());
+    return ads;
   }
 
   private static final Random random = new Random();
 
   private List<Ad> getRandomAds() {
+
     List<Ad> ads = new ArrayList<>(MAX_ADS_TO_SERVE);
-    Collection<Ad> allAds = adsMap.values();
-    for (int i = 0; i < MAX_ADS_TO_SERVE; i++) {
-      ads.add(Iterables.get(allAds, random.nextInt(allAds.size())));
+
+    // create and start a new span manually
+    Tracer tracer = GlobalOpenTelemetry.getTracer("adservice");
+    Span span = tracer.spanBuilder("getRandomAds").startSpan();
+
+    // put the span into context, so if any child span is started the parent will be set properly
+    try (Scope ignored = span.makeCurrent()) {
+
+      Collection<Ad> allAds = adsMap.values();
+      for (int i = 0; i < MAX_ADS_TO_SERVE; i++) {
+        ads.add(Iterables.get(allAds, random.nextInt(allAds.size())));
+      }
+      span.setAttribute("app.ads.count", ads.size());
+
+    } finally {
+      span.end();
     }
+
     return ads;
   }
 
