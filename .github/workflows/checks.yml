@@ -113,12 +113,12 @@ jobs:
         username: ${{ github.actor }}
         password: ${{ secrets.GITHUB_TOKEN }}
 
-    - name: Build ${{ matrix.service }} Image 
+    - name: Build ${{ matrix.service }} Image
       working-directory: src/${{ matrix.service }}
       run: |
         docker build . \
           -t ghcr.io/observiq/${{ matrix.service }}:latest
 
-    - name: Push ${{ matrix.service }} Image 
+    - name: Push ${{ matrix.service }} Image
       run: |
         docker push ghcr.io/observiq/${{ matrix.service }}:latest
