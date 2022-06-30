@@ -1,0 +1,128 @@
+name: Checks
+
+on:
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  markdownlint:
+    runs-on: ubuntu-latest
+    steps:
+    - name: check out code
+      uses: actions/checkout@v3
+
+    - name: install dependencies
+      run: npm install
+
+    - name: run markdownlint
+      run: make markdownlint
+
+  yamllint:
+    runs-on: ubuntu-latest
+    steps:
+    - name: check out code
+      uses: actions/checkout@v3
+
+    - uses: actions/setup-python@v4
+      with:
+        python-version: '3.x'
+
+    - name: install yamllint
+      run: make install-yamllint
+
+    - name: run yamllint
+      run: yamllint . -f github
+
+  misspell:
+    runs-on: ubuntu-latest
+    steps:
+    - name: check out code
+      uses: actions/checkout@v3
+
+    - name: run misspell
+      run: make misspell
+
+  docfx:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v3
+    - uses: actions/setup-dotnet@v1
+      with:
+        dotnet-version: 6.0.x
+
+    - name: install docfx
+      run: dotnet tool update -g docfx --version "3.0.0-*" --add-source https://docfx.pkgs.visualstudio.com/docfx/_packaging/docs-public-packages/nuget/v3/index.json
+
+    - name: run docfx
+      run: docfx build --dry-run
+
+  markdownlinkcheck:
+    name: markdownlinkcheck
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v3
+    - name: Run link check
+      uses: gaurav-nelson/github-action-markdown-link-check@v1
+      with:
+        use-quiet-mode: 'no'
+        use-verbose-mode: 'yes'
+        config-file: '.github/.mlc_config.json'
+
+  sanity:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v3
+
+    - name: run sanitycheck.py
+      run: python3 ./internal/tools/sanitycheck.py
+
+  build-container-image:
+    runs-on: ubuntu-latest
+    needs:
+      - markdownlint
+      - yamllint
+      - misspell
+      - docfx
+      - markdownlinkcheck
+      - sanity
+    strategy:
+      fail-fast: false
+      matrix:
+        service:
+        - adservice
+        - cartservice/src
+        - checkoutservice
+        - currencyservice
+        - emailservice
+        - featureflagservice
+        - frontend
+        - loadgenerator
+        - paymentservice
+        - productcatalogservice
+        - recommendationservice
+        - shippingservice
+
+    steps:
+    - uses: actions/checkout@v3
+
+    - name: Log in to the Container registry
+      uses: docker/login-action@f054a8b539a109f9f41c372932f1ae047eff08c9
+      with:
+        registry: ${{ env.REGISTRY }}
+        username: ${{ github.actor }}
+        password: ${{ secrets.GITHUB_TOKEN }}
+
+    - name: Extract metadata (tags, labels) for Docker
+      id: meta
+      uses: docker/metadata-action@98669ae865ea3cffbcbaa878cf57c20bbf1c6c38
+      with:
+        images: ${{ env.REGISTRY }}/${{ matrix.service }}
+
+    - name: Build and push Docker image
+      uses: docker/build-push-action@ad44023a93711e3deb337508980b4b5e9bcdc5dc
+      with:
+        context: src/${{ matrix.service }}
+        push: true
+        tags: ${{ steps.meta.outputs.tags }}
+        labels: ${{ steps.meta.outputs.labels }}
