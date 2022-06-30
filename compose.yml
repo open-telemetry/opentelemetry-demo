@@ -74,6 +74,14 @@ services:
       - SHIPPING_SERVICE_ADDR
       - OTEL_EXPORTER_OTLP_TRACES_ENDPOINT
       - OTEL_RESOURCE_ATTRIBUTES=service.name=checkoutservice
+    depends_on:
+      - cartservice
+      - currencyservice
+      - emailservice
+      - paymentservice
+      - productcatalogservice
+      - shippingservice
+      - otelcol
 
   # CurrencyService
   currencyservice:
@@ -85,7 +93,9 @@ services:
       - PORT=${CURRENCY_SERVICE_PORT}
       - OTEL_EXPORTER_OTLP_TRACES_ENDPOINT
       - OTEL_RESOURCE_ATTRIBUTES=service.name=currencyservice
-
+    depends_on:
+      - otelcol
+      
   # EmailService
   emailservice:
     build:
@@ -97,6 +107,8 @@ services:
       - OTEL_PYTHON_LOG_CORRELATION=true
       - OTEL_EXPORTER_OTLP_TRACES_ENDPOINT
       - OTEL_RESOURCE_ATTRIBUTES=service.name=emailservice
+    depends_on:
+      - otelcol
 
   # Frontend
   frontend:
@@ -115,6 +127,14 @@ services:
       - SHIPPING_SERVICE_ADDR
       - OTEL_EXPORTER_OTLP_TRACES_ENDPOINT
       - OTEL_RESOURCE_ATTRIBUTES=service.name=frontend
+    depends_on:
+      - cartservice
+      - checkoutservice
+      - currencyservice
+      - productcatalogservice
+      - recommendationservice
+      - shippingservice
+      - otelcol
 
   # PaymentService
   paymentservice:
@@ -126,6 +146,8 @@ services:
       - PORT=${PAYMENT_SERVICE_PORT}
       - OTEL_EXPORTER_OTLP_TRACES_ENDPOINT
       - OTEL_RESOURCE_ATTRIBUTES=service.name=paymentservice
+    depends_on:
+      - otelcol
 
   # ProductCatalogService
   productcatalogservice:
@@ -137,6 +159,8 @@ services:
       - PORT=${PRODUCT_CATALOG_SERVICE_PORT}
       - OTEL_EXPORTER_OTLP_TRACES_ENDPOINT
       - OTEL_RESOURCE_ATTRIBUTES=service.name=productcatalogservice
+    depends_on:
+      - otelcol
 
   # RecommendationService
   recommendationservice:
@@ -150,6 +174,8 @@ services:
       - OTEL_PYTHON_LOG_CORRELATION=true
       - OTEL_EXPORTER_OTLP_TRACES_ENDPOINT
       - OTEL_RESOURCE_ATTRIBUTES=service.name=recommendationservice
+    depends_on:
+      - otelcol
 
   # ShippingService
   shippingservice:
@@ -161,6 +187,8 @@ services:
       - PORT=${SHIPPING_SERVICE_PORT}
       - OTEL_EXPORTER_OTLP_TRACES_ENDPOINT
       - OTEL_RESOURCE_ATTRIBUTES=service.name=shippingservice
+    depends_on:
+      - otelcol
 
   # LoadGenerator
   loadgenerator:
