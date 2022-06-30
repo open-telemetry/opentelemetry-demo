@@ -15,6 +15,8 @@
 const cardValidator = require('simple-card-validator');
 const { v4: uuidv4 } = require('uuid');
 const pino = require('pino');
+const opentelemetry = require('@opentelemetry/api');
+const tracer = opentelemetry.trace.getTracer("paymentservice");
 
 const logger = pino({
   name: 'paymentservice-charge',
@@ -56,6 +58,9 @@ class ExpiredCreditCard extends CreditCardError {
  * @return transaction_id - a random uuid v4.
  */
 module.exports = function charge (request) {
+  // create and start span
+  const span = tracer.startSpan("charge")
+
   const { amount, credit_card: creditCard } = request;
   const cardNumber = creditCard.credit_card_number;
   const cardInfo = cardValidator(cardNumber);
@@ -63,6 +68,10 @@ module.exports = function charge (request) {
     card_type: cardType,
     valid
   } = cardInfo.getCardDetails();
+  span.setAttributes({
+    "app.payment.charge.cardType": cardType,
+    "app.payment.charge.valid": valid
+  })
 
   if (!valid) { throw new InvalidCreditCard(); }
 
@@ -78,6 +87,10 @@ module.exports = function charge (request) {
 
   logger.info(`Transaction processed: ${cardType} ending ${cardNumber.substr(-4)} \
     Amount: ${amount.currency_code}${amount.units}.${amount.nanos}`);
+
+  span.setAttribute("app.payment.charged", true);
+  // a manually created span needs to be ended
+  span.end();
 
   return { transaction_id: uuidv4() };
 };
