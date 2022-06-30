@@ -68,7 +68,7 @@ def get_product_list(request_product_ids):
         product_ids = [x.id for x in cat_response.products]
         span.set_attribute("app.products.count", len(product_ids))
 
-        filtered_products = list(set(product_ids)-set(request_product_ids))
+        filtered_products = list(set(product_ids) - set(request_product_ids))
         num_products = len(filtered_products)
         span.set_attribute("app.filtered_products.count", num_products)
 
