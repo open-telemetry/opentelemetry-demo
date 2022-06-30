@@ -115,7 +115,7 @@ jobs:
 
     - name: Build ${{ matrix.service }} Image
       working-directory: src/${{ matrix.service }}
-      run: docker-compose build ${{ matrix.service }}
+      run: docker compose build ${{ matrix.service }}
 
     - name: Push ${{ matrix.service }} Image
       run: |
