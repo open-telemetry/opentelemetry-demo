@@ -19,3 +19,5 @@ release.
   ([#82](https://github.com/open-telemetry/opentelemetry-demo-webstore/pull/82))
 * Rewrote shipping service in Rust
   ([#35](https://github.com/open-telemetry/opentelemetry-demo-webstore/issues/35))
+* Added feature flag service implementation
+  ([#141](https://github.com/open-telemetry/opentelemetry-demo-webstore/pull/141))

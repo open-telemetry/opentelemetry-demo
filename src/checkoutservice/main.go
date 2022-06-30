@@ -15,9 +15,12 @@
 package main
 
 import (
+	"bytes"
 	"context"
+	"encoding/json"
 	"fmt"
 	"net"
+	"net/http"
 	"os"
 	"time"
 
@@ -29,18 +32,18 @@ import (
 	"google.golang.org/grpc/status"
 
 	"go.opentelemetry.io/contrib/instrumentation/google.golang.org/grpc/otelgrpc"
+	"go.opentelemetry.io/contrib/instrumentation/net/http/otelhttp"
 	"go.opentelemetry.io/otel"
 	"go.opentelemetry.io/otel/exporters/otlp/otlptrace/otlptracegrpc"
 	"go.opentelemetry.io/otel/propagation"
 	sdktrace "go.opentelemetry.io/otel/sdk/trace"
 
-	pb "github.com/GoogleCloudPlatform/microservices-demo/src/checkoutservice/genproto/hipstershop"
-	money "github.com/GoogleCloudPlatform/microservices-demo/src/checkoutservice/money"
+	pb "github.com/open-telemetry/opentelemetry-demo-webstore/src/checkoutservice/genproto/hipstershop"
+	money "github.com/open-telemetry/opentelemetry-demo-webstore/src/checkoutservice/money"
 	healthpb "google.golang.org/grpc/health/grpc_health_v1"
 )
 
 const (
-	listenPort  = "5050"
 	usdCurrency = "USD"
 )
 
@@ -68,7 +71,6 @@ func InitTracerProvider() *sdktrace.TracerProvider {
 		log.Fatal(err)
 	}
 	tp := sdktrace.NewTracerProvider(
-		sdktrace.WithSampler(sdktrace.AlwaysSample()),
 		sdktrace.WithBatcher(exporter),
 	)
 	otel.SetTracerProvider(tp)
@@ -87,10 +89,8 @@ type checkoutService struct {
 }
 
 func main() {
-	port := listenPort
-	if os.Getenv("PORT") != "" {
-		port = os.Getenv("PORT")
-	}
+	var port string
+	mustMapEnv(&port, "CHECKOUT_SERVICE_PORT")
 
 	tp := InitTracerProvider()
 	defer func() {
@@ -334,14 +334,24 @@ func (cs *checkoutService) chargeCard(ctx context.Context, amount *pb.Money, pay
 }
 
 func (cs *checkoutService) sendOrderConfirmation(ctx context.Context, email string, order *pb.OrderResult) error {
-	conn, err := createClient(ctx, cs.emailSvcAddr)
+	emailServicePayload, err := json.Marshal(map[string]interface{}{
+		"email": email,
+		"order": order,
+	})
 	if err != nil {
-		return fmt.Errorf("failed to connect email service: %+v", err)
+		return fmt.Errorf("failed to marshal order to JSON: %+v", err)
 	}
-	defer conn.Close()
-	_, err = pb.NewEmailServiceClient(conn).SendOrderConfirmation(ctx, &pb.SendOrderConfirmationRequest{
-		Email: email,
-		Order: order})
+
+	resp, err := otelhttp.Post(ctx, cs.emailSvcAddr+"/send_order_confirmation", "application/json", bytes.NewBuffer(emailServicePayload))
+	if err != nil {
+		return fmt.Errorf("failed POST to email service: %+v", err)
+	}
+	defer resp.Body.Close()
+
+	if resp.StatusCode != http.StatusOK {
+		return fmt.Errorf("failed POST to email service: expected 200, got %d", resp.StatusCode)
+	}
+
 	return err
 }
 

@@ -13,33 +13,31 @@
 # limitations under the License.
 
 FROM golang:1.17.7-alpine AS builder
-RUN apk add --no-cache ca-certificates git
-RUN apk add build-base
 
-WORKDIR /src
-# restore dependencies
-COPY go.mod go.sum ./
+WORKDIR /usr/src/app/
+
+RUN apk add build-base protoc
+
+# Restore dependencies
+COPY ./src/productcatalogservice/ ./
+COPY ./pb/ ./proto/
+
 RUN go mod download
-COPY . .
+RUN go get google.golang.org/protobuf/cmd/protoc-gen-go
+RUN go get google.golang.org/grpc/cmd/protoc-gen-go-grpc
 
-# Skaffold passes in debug-oriented compiler flags
-ARG SKAFFOLD_GO_GCFLAGS
-RUN go build -gcflags="${SKAFFOLD_GO_GCFLAGS}" -o /productcatalogservice .
+# Build executable
+RUN protoc -I ./proto/ ./proto/demo.proto --go_out=./ --go-grpc_out=./
+RUN go build -o /go/bin/productcatalogservice/ ./
+
+# -----------------------------------------------------------------------------
 
 FROM alpine AS release
-RUN apk add --no-cache ca-certificates
-RUN GRPC_HEALTH_PROBE_VERSION=v0.4.7 && \
-    wget -qO/bin/grpc_health_probe https://github.com/grpc-ecosystem/grpc-health-probe/releases/download/${GRPC_HEALTH_PROBE_VERSION}/grpc_health_probe-linux-amd64 && \
-    chmod +x /bin/grpc_health_probe
-WORKDIR /src
-COPY --from=builder /productcatalogservice ./server
-COPY products.json .
 
-# Definition of this variable is used by 'skaffold debug' to identify a golang binary.
-# Default behavior - a failure prints a stack trace for the current goroutine.
-# See https://golang.org/pkg/runtime/
-ENV GOTRACEBACK=single
+WORKDIR /usr/src/app/
 
-EXPOSE 3550
-ENTRYPOINT ["/src/server"]
+COPY ./src/productcatalogservice/products.json ./
+COPY --from=builder /go/bin/productcatalogservice/ ./
 
+EXPOSE ${PRODUCT_SERVICE_PORT}
+ENTRYPOINT [ "./productcatalogservice" ]

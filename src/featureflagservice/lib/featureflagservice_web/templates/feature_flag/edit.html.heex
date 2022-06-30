@@ -1,0 +1,5 @@
+<h1>Edit feature flag</h1>
+
+<%= render "form.html", Map.put(assigns, :action, Routes.feature_flag_path(@conn, :update, @feature_flag)) %>
+
+<span><%= link "Back", class: "button button-outline", to: Routes.feature_flag_path(@conn, :index) %></span>

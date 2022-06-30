@@ -1,0 +1,23 @@
+<h1>Show feature flag</h1>
+
+<ul>
+
+  <li>
+    <strong>Name:</strong>
+    <%= @feature_flag.name %>
+  </li>
+
+  <li>
+    <strong>Description:</strong>
+    <%= @feature_flag.description %>
+  </li>
+
+  <li>
+    <strong>Enabled:</strong>
+    <%= @feature_flag.enabled %>
+  </li>
+
+</ul>
+
+<span><%= link "Edit", to: Routes.feature_flag_path(@conn, :edit, @feature_flag) %></span> |
+<span><%= link "Back", to: Routes.feature_flag_path(@conn, :index) %></span>
