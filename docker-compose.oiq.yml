@@ -1,0 +1,359 @@
+version: '3.9'
+services:
+
+  # Jaeger
+  jaeger:
+    image: jaegertracing/all-in-one
+    restart: always
+    ports:
+      - "5775:5775"
+      - "5778:5778"
+      - "6831:6831"
+      - "6832:6832"
+      - "9411:9411"
+      - "16686:16686"
+      - "14250:14250"
+      - "14268:14268"
+      - "14269:14269"
+    environment:
+      - COLLECTOR_ZIPKIN_HOST_PORT
+    deploy:
+      resources:
+        limits:
+          cpus: 0.50
+          memory: 256M
+
+  # Collector
+  otelcol:
+    image: otel/opentelemetry-collector:0.52.0
+    restart: always
+    command: [ "--config=/etc/otelcol-config.yml" ]
+    volumes:
+      - ./src/otelcollector/otelcol-config.yml:/etc/otelcol-config.yml
+    ports:
+      - "4317"
+      - "4318"
+      - "9464"
+      - "8888:8888"
+    deploy:
+      resources:
+        limits:
+          cpus: 0.25
+          memory: 64M
+    depends_on:
+      - jaeger
+
+  # Redis
+  redis-cart:
+    image: redis:alpine
+    restart: always
+    ports:
+      - "${REDIS_PORT}"
+    deploy:
+      resources:
+        limits:
+          cpus: 0.25
+          memory: 64M
+
+  # AdService
+  adservice:
+    image: ghcr.io/observiq/demo-adservice:latest
+    restart: always
+    ports:
+      - "${AD_SERVICE_PORT}"
+    environment:
+      - AD_SERVICE_PORT
+      - OTEL_EXPORTER_OTLP_TRACES_ENDPOINT
+      - OTEL_RESOURCE_ATTRIBUTES=service.name=adservice
+    depends_on:
+      - otelcol
+    deploy:
+      resources:
+        limits:
+          cpus: 0.25
+          memory: 512M
+
+  # CartService
+  cartservice:
+    image: ghcr.io/observiq/demo-cartservice:latest
+    restart: always
+    ports:
+      - "${CART_SERVICE_PORT}"
+    environment:
+      - CART_SERVICE_PORT
+      - REDIS_ADDR
+      - OTEL_EXPORTER_OTLP_ENDPOINT
+      - OTEL_RESOURCE_ATTRIBUTES=service.name=cartservice
+      - ASPNETCORE_URLS=http://*:${CART_SERVICE_PORT}
+    depends_on:
+      - redis-cart
+      - otelcol
+    deploy:
+      resources:
+        limits:
+          cpus: 0.25
+          memory: 64M
+
+  # CheckoutService
+  checkoutservice:
+    image: ghcr.io/observiq/demo-checkoutservice:latest
+    restart: always
+    ports:
+      - "${CHECKOUT_SERVICE_PORT}"
+    environment:
+      - CHECKOUT_SERVICE_PORT
+      - CART_SERVICE_ADDR
+      - CURRENCY_SERVICE_ADDR
+      - EMAIL_SERVICE_ADDR
+      - PAYMENT_SERVICE_ADDR
+      - PRODUCT_CATALOG_SERVICE_ADDR
+      - SHIPPING_SERVICE_ADDR
+      - OTEL_EXPORTER_OTLP_TRACES_ENDPOINT
+      - OTEL_RESOURCE_ATTRIBUTES=service.name=checkoutservice
+    depends_on:
+      - cartservice
+      - currencyservice
+      - emailservice
+      - paymentservice
+      - productcatalogservice
+      - shippingservice
+      - otelcol
+    deploy:
+      resources:
+        limits:
+          cpus: 0.25
+          memory: 64M
+
+  # CurrencyService
+  currencyservice:
+    image: ghcr.io/observiq/demo-currencyservice:latest
+    restart: always
+    ports:
+      - "${CURRENCY_SERVICE_PORT}"
+    environment:
+      - PORT=${CURRENCY_SERVICE_PORT}
+      - OTEL_EXPORTER_OTLP_TRACES_ENDPOINT
+      - OTEL_RESOURCE_ATTRIBUTES=service.name=currencyservice
+    depends_on:
+      - otelcol
+    deploy:
+      resources:
+        limits:
+          cpus: 0.25
+          memory: 64M
+
+  # EmailService
+  emailservice:
+    image: ghcr.io/observiq/demo-emailservice:latest
+    restart: always
+    ports:
+      - "${EMAIL_SERVICE_PORT}"
+    environment:
+      - APP_ENV=production
+      - PORT=${EMAIL_SERVICE_PORT}
+      - OTEL_EXPORTER_OTLP_TRACES_ENDPOINT=http://otelcol:4318/v1/traces
+      - OTEL_RESOURCE_ATTRIBUTES=service.name=emailservice
+    depends_on:
+      - otelcol
+    deploy:
+      resources:
+        limits:
+          cpus: 0.25
+          memory: 128M
+
+  # Frontend
+  frontend:
+    image: ghcr.io/observiq/demo-frontend:latest
+    restart: always
+    ports:
+      - "${FRONTEND_PORT}:${FRONTEND_PORT}"
+    environment:
+      - FRONTEND_ADDR
+      - AD_SERVICE_ADDR
+      - CART_SERVICE_ADDR
+      - CHECKOUT_SERVICE_ADDR
+      - CURRENCY_SERVICE_ADDR
+      - PRODUCT_CATALOG_SERVICE_ADDR
+      - RECOMMENDATION_SERVICE_ADDR
+      - SHIPPING_SERVICE_ADDR
+      - OTEL_EXPORTER_OTLP_TRACES_ENDPOINT
+      - OTEL_RESOURCE_ATTRIBUTES=service.name=frontend
+      - OTEL_EXPORTER_OTLP_ENDPOINT
+    depends_on:
+      - adservice
+      - cartservice
+      - checkoutservice
+      - currencyservice
+      - otelcol
+      - productcatalogservice
+      - recommendationservice
+      - shippingservice
+    deploy:
+      resources:
+        limits:
+          cpus: 0.25
+          memory: 64M
+
+  # PaymentService
+  paymentservice:
+    image: ghcr.io/observiq/demo-paymentservice:latest
+    restart: always
+    ports:
+      - "${PAYMENT_SERVICE_PORT}"
+    environment:
+      - PAYMENT_SERVICE_PORT
+      - OTEL_EXPORTER_OTLP_TRACES_ENDPOINT
+      - OTEL_RESOURCE_ATTRIBUTES=service.name=paymentservice
+    depends_on:
+      - otelcol
+    deploy:
+      resources:
+        limits:
+          cpus: 0.25
+          memory: 64M
+
+  # ProductCatalogService
+  productcatalogservice:
+    image: ghcr.io/observiq/demo-productcatalogservice:latest
+    restart: always
+    ports:
+      - "${PRODUCT_CATALOG_SERVICE_PORT}"
+    environment:
+      - PRODUCT_CATALOG_SERVICE_PORT
+      - OTEL_EXPORTER_OTLP_TRACES_ENDPOINT
+      - OTEL_RESOURCE_ATTRIBUTES=service.name=productcatalogservice
+    depends_on:
+      - otelcol
+    deploy:
+      resources:
+        limits:
+          cpus: 0.25
+          memory: 64M
+
+  # RecommendationService
+  recommendationservice:
+    image: ghcr.io/observiq/demo-recommendationservice:latest
+    restart: always
+    ports:
+      - "${RECOMMENDATION_SERVICE_PORT}"
+    depends_on:
+      - productcatalogservice
+      - otelcol
+    environment:
+      - RECOMMENDATION_SERVICE_PORT
+      - PRODUCT_CATALOG_SERVICE_ADDR
+      - OTEL_PYTHON_LOG_CORRELATION=true
+      - OTEL_EXPORTER_OTLP_TRACES_ENDPOINT
+      - OTEL_RESOURCE_ATTRIBUTES=service.name=recommendationservice
+    deploy:
+      resources:
+        limits:
+          cpus: 0.25
+          memory: 64M
+
+  # ShippingService
+  shippingservice:
+    image: ghcr.io/observiq/demo-shippingservice:latest
+    restart: always
+    ports:
+      - "${SHIPPING_SERVICE_PORT}"
+    environment:
+      - PORT=${SHIPPING_SERVICE_PORT}
+      - OTEL_EXPORTER_OTLP_TRACES_ENDPOINT
+      - OTEL_RESOURCE_ATTRIBUTES=service.name=shippingservice
+    depends_on:
+      - otelcol
+    deploy:
+      resources:
+        limits:
+          cpus: 0.25
+          memory: 64M
+
+  # FeatureFlagService
+  featureflagservice:
+    image: ghcr.io/observiq/demo-featureflagservice:latest
+    restart: always
+    ports:
+      - "${FEATURE_FLAG_SERVICE_PORT}:${FEATURE_FLAG_SERVICE_PORT}"
+      - "${FEATURE_FLAG_GRPC_SERVICE_PORT}"
+    environment:
+      - PORT=${FEATURE_FLAG_SERVICE_PORT}
+      - GRPC_PORT=${FEATURE_FLAG_GRPC_SERVICE_PORT}
+      - OTEL_EXPORTER_OTLP_TRACES_ENDPOINT
+      - OTEL_RESOURCE_ATTRIBUTES=service.name=featureflagservice
+      - DATABASE_URL=ecto://ffs:ffs@ffs_postgres:5432/ffs
+    depends_on:
+      - ffs_postgres
+    deploy:
+      resources:
+        limits:
+          cpus: 0.25
+          memory: 2048M
+
+  ffs_postgres:
+    image: cimg/postgres:14.2
+    restart: always
+    environment:
+      - POSTGRES_USER=ffs
+      - POSTGRES_DB=ffs
+      - POSTGRES_PASSWORD=ffs
+    deploy:
+      resources:
+        limits:
+          cpus: 0.25
+          memory: 64M
+
+  # LoadGenerator
+  loadgenerator:
+    image: ghcr.io/observiq/demo-loadgenerator:latest
+    restart: always
+    environment:
+      - FRONTEND_ADDR
+      - USERS
+      - OTEL_EXPORTER_OTLP_TRACES_ENDPOINT
+      - OTEL_RESOURCE_ATTRIBUTES=service.name=loadgenerator
+      - PROTOCOL_BUFFERS_PYTHON_IMPLEMENTATION=python
+    depends_on:
+      - frontend
+    deploy:
+      resources:
+        limits:
+          cpus: 0.25
+          memory: 64M
+
+  # Prometheus
+  prometheus:
+    image: quay.io/prometheus/prometheus:v2.34.0
+    restart: always
+    command:
+      - --web.console.templates=/etc/prometheus/consoles
+      - --web.console.libraries=/etc/prometheus/console_libraries
+      - --storage.tsdb.retention.time=1h
+      - --config.file=/etc/prometheus/prometheus-config.yaml
+      - --storage.tsdb.path=/prometheus
+      - --web.enable-lifecycle
+      - --web.route-prefix=/
+    volumes:
+      - ./src/prometheus/prometheus-config.yaml:/etc/prometheus/prometheus-config.yaml
+    ports:
+      - "${PROMETHEUS_SERVICE_PORT}:${PROMETHEUS_SERVICE_PORT}"
+    deploy:
+      resources:
+        limits:
+          cpus: 0.50
+          memory: 256M
+
+  # Grafana
+  grafana:
+    image: grafana/grafana:9.0.1
+    restart: always
+    volumes:
+      - ./src/grafana/grafana.ini:/etc/grafana/grafana.ini
+      - ./src/grafana/provisioning/:/etc/grafana/provisioning/
+    ports:
+      - "${GRAFANA_SERVICE_PORT}:${GRAFANA_SERVICE_PORT}"
+    deploy:
+      resources:
+        limits:
+          cpus: 0.50
+          memory: 256M
