@@ -13,8 +13,6 @@ defmodule Featureflagservice.Application do
     children = [
       # Start the Ecto repository
       Featureflagservice.Repo,
-      # Start the Telemetry supervisor
-      FeatureflagserviceWeb.Telemetry,
       # Start the PubSub system
       {Phoenix.PubSub, name: Featureflagservice.PubSub},
       # Start the Endpoint (http/https)
