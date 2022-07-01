@@ -29,7 +29,7 @@ services:
     restart: always
     command: [ "--config=/etc/otelcol-config.yml" ]
     volumes:
-      - ./src/otelcollector/otelcol-config.yml:/etc/otelcol-config.yml
+      - ./otelcol-config.oiq.yml:/etc/otelcol-config.yml
     ports:
       - "4317"
       - "4318"
