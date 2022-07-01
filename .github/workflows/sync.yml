@@ -11,5 +11,6 @@ jobs:
     steps:
     - uses: tgymnich/fork-sync@v1.4
       with:
+        owner: open-telemetry
         base: main
         head: main
