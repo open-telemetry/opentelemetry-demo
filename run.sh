@@ -2,7 +2,7 @@
 
 source .env
 
-docker-compose \
+docker compose \
     -f ./docker-compose.oiq.yml \
     up \
     --remove-orphans \
