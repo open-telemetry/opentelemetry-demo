@@ -8,11 +8,11 @@ This document contains the list of manual Span Attributes used throughout the de
 * `app.ads.contextKeys`
 * `app.ads.contextKeys.count`
 * `app.ads.count`
-  
+
 ## CartService
 
 * None yet
-  
+
 ## CheckoutService
 
 * `app.cart.items.count`
