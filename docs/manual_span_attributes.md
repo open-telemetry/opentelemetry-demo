@@ -11,7 +11,9 @@ This document contains the list of manual Span Attributes used throughout the de
 
 ## CartService
 
-* None yet
+* `app.product.id`
+* `app.product.quantity`
+* `app.user.id`
 
 ## CheckoutService
 
