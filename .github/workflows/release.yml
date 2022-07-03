@@ -56,4 +56,3 @@ jobs:
         run: make push-docker-images
         env:
           IMAGE_NAME: "otelbot/demo"
-
