@@ -43,6 +43,24 @@ public:
     }
 
   }
+
+  void Convert()
+  {
+    CurrencyConversionRequest request;
+    Money *money = request.mutable_from();
+    money->set_currency_code("EUR");
+    money->set_units(10);
+    money->set_nanos(90);
+    request.set_to_code("EUR");
+
+    Money response;
+    ClientContext context;
+    Status status = stub_->Convert(&context, request, &response);
+
+    std::cout << response.units() << " " << response.nanos() <<
+      " " << response.currency_code() << std::endl;
+
+  }
 private:
   std::unique_ptr<CurrencyService::Stub> stub_;
 };
@@ -53,6 +71,7 @@ void RunClient(uint16_t port)
       grpc::CreateChannel
       ("0.0.0.0:" + std::to_string(port), grpc::InsecureChannelCredentials()));
   client.GetSupportedCurrencies();
+  client.Convert();
 }
 }
 
