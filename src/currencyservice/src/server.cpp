@@ -1,6 +1,7 @@
 #include <iostream>
 #include <math.h>
 #include <demo.grpc.pb.h>
+#include <grpc/health/v1/health.grpc.pb.h>
 
 #include <grpcpp/grpcpp.h>
 #include <grpcpp/server.h>
@@ -58,7 +59,23 @@ namespace
     {"ZAR", 16.0583},
 };
 
+class HealthServer final : public grpc::health::v1::Health::Service
+{
 
+  Status Check(
+    ServerContext* context,
+    const grpc::health::v1::HealthCheckRequest* request,
+    grpc::health::v1::HealthCheckResponse* response) override
+  {
+    std::string svc = request->service();
+    if (strcasecmp(svc.c_str(),  "CurrencyService") == 0) {
+      response->set_status(grpc::health::v1::HealthCheckResponse::SERVING);
+    } else {
+      response->set_status(grpc::health::v1::HealthCheckResponse::UNKNOWN);
+    }
+    return Status::OK;
+  }
+};
 
 class CurrencyServer final : public CurrencyService::Service
 {
@@ -119,9 +136,11 @@ void RunServer(uint16_t port)
 {
   std::string address("0.0.0.0:" + std::to_string(port));
   CurrencyServer service;
+  HealthServer healthService;
   ServerBuilder builder;
 
   builder.RegisterService(&service);
+  builder.RegisterService(&healthService);
   builder.AddListeningPort(address, grpc::InsecureServerCredentials());
 
   std::unique_ptr<Server> server(builder.BuildAndStart());
@@ -130,8 +149,6 @@ void RunServer(uint16_t port)
   server->Shutdown();
 }
 }
-
-
 
 int main(int argc, char **argv) {
 

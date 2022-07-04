@@ -1,5 +1,6 @@
 #include <iostream>
 #include <demo.grpc.pb.h>
+#include <grpc/health/v1/health.grpc.pb.h>
 
 #include <grpcpp/grpcpp.h>
 #include <grpcpp/server.h>
@@ -48,10 +49,10 @@ public:
   {
     CurrencyConversionRequest request;
     Money *money = request.mutable_from();
-    money->set_currency_code("EUR");
+    money->set_currency_code("USD");
     money->set_units(10);
     money->set_nanos(90);
-    request.set_to_code("EUR");
+    request.set_to_code("IDR");
 
     Money response;
     ClientContext context;
@@ -61,6 +62,21 @@ public:
       " " << response.currency_code() << std::endl;
 
   }
+
+  /*void CheckHealthStatus() {
+    grpc::health::v1::HealthCheckRequest request;
+    request.set_service("CurrencyService");
+    grpc::health::v1::HealthCheckResponse response;
+    ClientContext context;
+
+    Status status = stub_->Check(&context, request, &response);
+    if (status == Status::OK) {
+      std::cout << "Server returned: " << response.status << std::endl;
+    } else {
+      std::cout << "Server unresponding " << std::endl;
+    }
+
+  }*/
 private:
   std::unique_ptr<CurrencyService::Stub> stub_;
 };
@@ -70,8 +86,10 @@ void RunClient(uint16_t port)
   CurrencyClient client(
       grpc::CreateChannel
       ("0.0.0.0:" + std::to_string(port), grpc::InsecureChannelCredentials()));
+  //client.CheckHealthStatus();
   client.GetSupportedCurrencies();
   client.Convert();
+  //client.CheckHealthStatus();
 }
 }
 
