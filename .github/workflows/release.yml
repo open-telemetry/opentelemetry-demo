@@ -50,9 +50,9 @@ jobs:
       - name: build dockerhub docker image
         run: make build-docker-images
         env:
-          IMAGE_NAME: "otelbot/demo"
+          IMAGE_NAME: "otel/demo"
 
       - name: push dockerhub image
         run: make push-docker-images
         env:
-          IMAGE_NAME: "otelbot/demo"
+          IMAGE_NAME: "otel/demo"
