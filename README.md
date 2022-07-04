@@ -57,7 +57,7 @@ Once the images are built and containers are started you can access:
 
 - Prometheus: <http://localhost:9090/>
 
-- Grafana: <http://localhost:3000>
+- Grafana: <http://localhost:3000/>
 
 ### Bring your own backend
 
@@ -230,6 +230,10 @@ Find the **Protocol Buffer Definitions** in the `/pb/` directory.
 - **Synthetic Load Generation**: the application demo comes with a background
   job that creates realistic usage patterns on the website using
   [Locust](https://locust.io/) load generator.
+- **[Prometheus](https://prometheus.io/)**: all generated metrics are being
+  sent to Prometheus.
+- **[Grafana](https://grafana.com/oss/grafana/)**: all dashboards to check the healthy of the whole system will be stored in grafana.
+
 
 ## Demos featuring Online Boutique
 
