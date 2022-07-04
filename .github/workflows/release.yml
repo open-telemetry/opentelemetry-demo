@@ -40,12 +40,12 @@ jobs:
       - name: build ghcr docker image
         run: make build-docker-images
         env:
-          IMAGE_NAME: "ghcr.io/wph95/demo"
+          IMAGE_NAME: "ghcr.io/open-telemetry/demo"
 
       - name: push ghcr image
         run: make push-docker-images
         env:
-          IMAGE_NAME: "ghcr.io/wph95/demo"
+          IMAGE_NAME: "ghcr.io/open-telemetry/demo"
 
       - name: build dockerhub docker image
         run: make build-docker-images
