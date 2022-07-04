@@ -232,7 +232,7 @@ Find the **Protocol Buffer Definitions** in the `/pb/` directory.
   [Locust](https://locust.io/) load generator.
 - **[Prometheus](https://prometheus.io/)**: all generated metrics are being
   sent to Prometheus.
-- **[Grafana](https://grafana.com/oss/grafana/)**: all metric dashboards will be stored in Grafana.
+- **[Grafana](https://grafana.com/)**: all metric dashboards are stored in Grafana.
 
 ## Demos featuring Online Boutique
 
