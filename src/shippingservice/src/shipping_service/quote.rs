@@ -10,7 +10,11 @@ pub struct Quote {
 
 // TODO: Check product catalog for price on each item (will likley need item ID)
 pub fn create_quote_from_count(count: u32) -> Quote {
-    let f = if count == 0 { 0.0 } else { 8.99*(count as f64) };
+    let f = if count == 0 {
+        0.0
+    } else {
+        8.99 * (count as f64)
+    };
     get_active_span(|span| {
         let q = create_quote_from_float(f);
         span.add_event("Quote Issued", vec![KeyValue::new(format!("{}", q), true)]);
