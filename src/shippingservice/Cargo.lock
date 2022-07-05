@@ -879,6 +879,7 @@ dependencies = [
  "tokio",
  "tonic 0.7.2",
  "tonic-build 0.7.2",
+ "tonic-health",
  "uuid",
 ]
 
@@ -1168,6 +1169,21 @@ dependencies = [
  "prost-build 0.10.4",
  "quote",
  "syn",
+]
+
+[[package]]
+name = "tonic-health"
+version = "0.6.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "9da1806c3ff2f02fb6d9b62fc72a2f3b6429c7f2f5d87861f548156708afcd71"
+dependencies = [
+ "async-stream",
+ "bytes",
+ "prost 0.10.4",
+ "tokio",
+ "tokio-stream",
+ "tonic 0.7.2",
+ "tonic-build 0.7.2",
 ]
 
 [[package]]

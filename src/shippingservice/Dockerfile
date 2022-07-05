@@ -1,11 +1,13 @@
+# build context will only work from ../../docker-compose.yml
 FROM rust:1.61-alpine as builder
 RUN apk update
 RUN apk add --no-cache ca-certificates git protoc cmake clang clang-dev make gcc g++ libc-dev linux-headers
 WORKDIR /app/
 
 # build app
-COPY . /app/
-RUN cargo build -r
+COPY ./src/shippingservice/ /app/
+COPY ./pb/ /app/proto/
+RUN cargo build -r --features="dockerproto"
 
 FROM alpine as release
 RUN apk add --no-cache ca-certificates

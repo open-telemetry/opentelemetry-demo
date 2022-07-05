@@ -7,8 +7,12 @@ edition = "2021"
 name = "shippingservice"
 path = "src/main.rs"
 
+[features]
+dockerproto = [] # compile in docker or not
+
 [dependencies]
 tonic = "0.7"
+tonic-health = "0.6.0"
 prost = "0.10"
 prost-types = "0.10"
 tokio = { version = "1.0", features = ["macros", "rt-multi-thread"] }

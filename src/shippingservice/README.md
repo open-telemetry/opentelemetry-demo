@@ -10,11 +10,10 @@ rust [here](https://www.rust-lang.org/tools/install).
 
 ## Build
 
-From `src/shippingservice`, run:
+From `../../`, run:
 
 ```sh
-./genproto.sh # ensures up-to-date protos are used
-docker build ./
+docker-compose build shippingservice
 ```
 
 ## Test
