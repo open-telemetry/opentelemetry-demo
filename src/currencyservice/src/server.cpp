@@ -3,6 +3,11 @@
 #include <demo.grpc.pb.h>
 #include <grpc/health/v1/health.grpc.pb.h>
 
+#include "opentelemetry/trace/context.h"
+#include "opentelemetry/trace/experimental_semantic_conventions.h"
+#include "opentelemetry/trace/span_context_kv_iterable_view.h"
+#include "tracer_common.h"
+
 #include <grpcpp/grpcpp.h>
 #include <grpcpp/server.h>
 #include <grpcpp/server_builder.h>
@@ -10,7 +15,6 @@
 
 using namespace std;
 
-using hipstershop::CurrencyService;
 using hipstershop::Empty;
 using hipstershop::GetSupportedCurrenciesResponse;
 using hipstershop::CurrencyConversionRequest;
@@ -20,6 +24,12 @@ using grpc::Status;
 using grpc::ServerContext;
 using grpc::ServerBuilder;
 using grpc::Server;
+
+using Span        = opentelemetry::trace::Span;
+using SpanContext = opentelemetry::trace::SpanContext;
+using namespace opentelemetry::trace;
+
+namespace context = opentelemetry::context;
 
 namespace
 {
@@ -77,70 +87,122 @@ class HealthServer final : public grpc::health::v1::Health::Service
   }
 };
 
-class CurrencyServer final : public CurrencyService::Service
+class CurrencyService final : public hipstershop::CurrencyService::Service
 {
-    Status GetSupportedCurrencies(ServerContext* context,
-    	const Empty* request,
-    	GetSupportedCurrenciesResponse* response) override
-    {
-      for (auto &code : currency_conversion) {
-        response->add_currency_codes(code.first);
-      }
-    	return Status::OK;
+  Status GetSupportedCurrencies(ServerContext* context,
+  	const Empty* request,
+  	GetSupportedCurrenciesResponse* response) override
+  {
+    std::cout << "Currency Service received GetSupportedCurrencies request"<< std::endl;
+    StartSpanOptions options;
+    options.kind = SpanKind::kServer;
+    GrpcServerCarrier carrier(context);
+
+    auto prop        = context::propagation::GlobalTextMapPropagator::GetGlobalPropagator();
+    auto current_ctx = context::RuntimeContext::GetCurrent();
+    auto new_context = prop->Extract(carrier, current_ctx);
+    options.parent   = GetSpan(new_context)->GetContext();
+
+    std::string span_name = "CurrencyService/GetSupportedCurrencies";
+    auto span =
+        get_tracer("opentelemetry-cpp")->StartSpan(span_name,
+                                      {{OTEL_GET_TRACE_ATTR(AttrRpcSystem), "grpc"},
+                                       {OTEL_GET_TRACE_ATTR(AttrRpcService), "CurrencyService"},
+                                       {OTEL_GET_TRACE_ATTR(AttrRpcMethod), "GetSupportedCurrencies"},
+                                       {OTEL_GET_TRACE_ATTR(AttrRpcGrpcStatusCode), 0}},
+                                      options);
+    auto scope = get_tracer("opentelemetry-cpp")->WithActiveSpan(span);
+    // Fetch and parse whatever HTTP headers we can from the gRPC request.
+    span->AddEvent("Processing client attributes");
+
+    for (auto &code : currency_conversion) {
+      response->add_currency_codes(code.first);
     }
 
-    double getDouble(Money& money) {
-      auto units = money.units();
-      auto nanos = money.nanos();
+    span->AddEvent("Response sent to client");
+    span->SetStatus(StatusCode::kOk);
+    // Make sure to end your spans!
+    span->End();
 
-      double decimal = 0.0;
-      while (nanos != 0) {
-        double t = (double)(nanos%10)/10;
-        nanos = nanos/10;
-        decimal = decimal/10 + t;
-      }
+  	return Status::OK;
+  }
 
-      return double(units) + decimal;
+  double getDouble(Money& money) {
+    auto units = money.units();
+    auto nanos = money.nanos();
+
+    double decimal = 0.0;
+    while (nanos != 0) {
+      double t = (double)(nanos%10)/10;
+      nanos = nanos/10;
+      decimal = decimal/10 + t;
     }
 
-    void getUnitsAndNanos(Money& money, double value) {
-      long unit = (long)value;
-      double rem = value - unit;
-      long nano = rem * pow(10, 9);
-      money.set_units(unit);
-      money.set_nanos(nano);
-    }
+    return double(units) + decimal;
+  }
 
-    Status Convert(ServerContext* context,
-    	const CurrencyConversionRequest* request,
-    	Money* response) override
-    {
-      Money from = request->from();
-      string from_code = from.currency_code();
-      double rate = currency_conversion[from_code];
-      double one_euro = getDouble(from) / rate ;
+  void getUnitsAndNanos(Money& money, double value) {
+    long unit = (long)value;
+    double rem = value - unit;
+    long nano = rem * pow(10, 9);
+    money.set_units(unit);
+    money.set_nanos(nano);
+  }
 
-      string to_code = request->to_code();
-      double to_rate = currency_conversion[to_code];
+  Status Convert(ServerContext* context,
+  	const CurrencyConversionRequest* request,
+  	Money* response) override
+  {
+    std::cout << "Currency Service received convert request"<< std::endl;
+    StartSpanOptions options;
+    options.kind = SpanKind::kServer;
+    GrpcServerCarrier carrier(context);
 
-      double final = one_euro * to_rate;
-      getUnitsAndNanos(*response, final);
-      response->set_currency_code(to_code);
+    auto prop        = context::propagation::GlobalTextMapPropagator::GetGlobalPropagator();
+    auto current_ctx = context::RuntimeContext::GetCurrent();
+    auto new_context = prop->Extract(carrier, current_ctx);
+    options.parent   = GetSpan(new_context)->GetContext();
 
+    std::string span_name = "CurrencyService/Convert";
+    auto span =
+        get_tracer("opentelemetry-cpp")->StartSpan(span_name,
+                                      {{OTEL_GET_TRACE_ATTR(AttrRpcSystem), "grpc"},
+                                       {OTEL_GET_TRACE_ATTR(AttrRpcService), "CurrencyService"},
+                                       {OTEL_GET_TRACE_ATTR(AttrRpcMethod), "Convert"},
+                                       {OTEL_GET_TRACE_ATTR(AttrRpcGrpcStatusCode), 0}},
+                                      options);
+    auto scope = get_tracer("opentelemetry-cpp")->WithActiveSpan(span);
+    // Fetch and parse whatever HTTP headers we can from the gRPC request.
+    span->AddEvent("Processing client attributes");
 
-    	return Status::OK;
-    }
+    Money from = request->from();
+    string from_code = from.currency_code();
+    double rate = currency_conversion[from_code];
+    double one_euro = getDouble(from) / rate ;
+
+    string to_code = request->to_code();
+    double to_rate = currency_conversion[to_code];
+
+    double final = one_euro * to_rate;
+    getUnitsAndNanos(*response, final);
+    response->set_currency_code(to_code);
+
+    span->AddEvent("Response sent to client");
+    span->SetStatus(StatusCode::kOk);
+    // Make sure to end your spans!
+    span->End();
+
+  	return Status::OK;
+  }
 };
 
 void RunServer(uint16_t port)
 {
   std::string address("0.0.0.0:" + std::to_string(port));
-  CurrencyServer service;
-  HealthServer healthService;
+  CurrencyService currencyService;
   ServerBuilder builder;
 
-  builder.RegisterService(&service);
-  builder.RegisterService(&healthService);
+  builder.RegisterService(&currencyService);
   builder.AddListeningPort(address, grpc::InsecureServerCredentials());
 
   std::unique_ptr<Server> server(builder.BuildAndStart());
@@ -152,18 +214,21 @@ void RunServer(uint16_t port)
 
 int main(int argc, char **argv) {
 
-  std::cout << "Helloworld" << std::endl;
-  constexpr uint16_t default_port = 8800;
-  uint16_t port;
-  if (argc > 1)
-  {
-    port = atoi(argv[1]);
-  }
-  else
-  {
-    port = default_port;
+  if (argc < 4) {
+    std::cout << "Usage: currencyservice <port> <otlp_endpoint> <resourceAttr>";
+    return 0;
   }
 
+  uint16_t port = atoi(argv[1]);
+  std::string endpoint = argv[2];
+  std::string resourceAttr = argv[3];
+
+  std::cout << "Port: " << port
+    << "\n Collector Endpoint: " << endpoint
+    << "\n Resource Attributes: " << resourceAttr;
+
+  initTracer();
   RunServer(port);
+
   return 0;
 }

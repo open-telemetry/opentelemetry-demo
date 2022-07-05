@@ -24,9 +24,9 @@ services:
     volumes:
       - ./src/otelcollector/otelcol-config.yml:/etc/otelcol-config.yml
     ports:
-      - "4317"
-      - "4318"
-      - "9464"
+      - "4317:4317"
+      - "4318:4318"
+      - "9464:9464"
     depends_on:
       - jaeger
 
@@ -102,7 +102,7 @@ services:
     build:
       context: ./src/currencyservice
     ports:
-      - "${CURRENCY_SERVICE_PORT}"
+      - "${CURRENCY_SERVICE_PORT}:${CURRENCY_SERVICE_PORT}"
     environment:
       - PORT=${CURRENCY_SERVICE_PORT}
       - OTEL_EXPORTER_OTLP_TRACES_ENDPOINT
