@@ -1,6 +1,6 @@
 use opentelemetry::trace::TraceContextExt;
 use opentelemetry::trace::Tracer;
-use opentelemetry::{global, KeyValue};
+use opentelemetry::{global, propagation::Extractor, KeyValue};
 use shop::shipping_service_server::ShippingService;
 use shop::{GetQuoteRequest, GetQuoteResponse, Money, ShipOrderRequest, ShipOrderResponse};
 use tonic::{Request, Response, Status};
@@ -22,6 +22,26 @@ pub mod shop {
 #[derive(Debug, Default)]
 pub struct ShippingServer {}
 
+struct MetadataMap<'a>(&'a tonic::metadata::MetadataMap);
+
+impl<'a> Extractor for MetadataMap<'a> {
+    /// Get a value for a key from the MetadataMap.  If the value can't be converted to &str, returns None
+    fn get(&self, key: &str) -> Option<&str> {
+        self.0.get(key).and_then(|metadata| metadata.to_str().ok())
+    }
+
+    /// Collect all the keys from the MetadataMap.
+    fn keys(&self) -> Vec<&str> {
+        self.0
+            .keys()
+            .map(|key| match key {
+                tonic::metadata::KeyRef::Ascii(v) => v.as_str(),
+                tonic::metadata::KeyRef::Binary(v) => v.as_str(),
+            })
+            .collect::<Vec<_>>()
+    }
+}
+
 #[tonic::async_trait]
 impl ShippingService for ShippingServer {
     async fn get_quote(
@@ -29,6 +49,8 @@ impl ShippingService for ShippingServer {
         request: Request<GetQuoteRequest>,
     ) -> Result<Response<GetQuoteResponse>, Status> {
         info!("GetQuoteRequest: {:?}", request);
+        let parent_cx =
+            global::get_text_map_propagator(|prop| prop.extract(&MetadataMap(request.metadata())));
 
         let itemct: u32 = request
             .into_inner()
@@ -39,8 +61,9 @@ impl ShippingService for ShippingServer {
         // We may want to ask another service for product pricing / info
         // (although now everything is assumed to be the same price)
         // check out the create_quote_from_count method to see how we use the span created here
-        let q = global::tracer("shippingservice/get-quote")
-            .in_span("get-quote", |_cx| create_quote_from_count(itemct));
+        global::tracer("shippingservice/get-quote").start_with_context("get-quote", &parent_cx);
+
+        let q = create_quote_from_count(itemct);
         let reply = GetQuoteResponse {
             cost_usd: Some(Money {
                 currency_code: "USD".into(),
@@ -58,17 +81,19 @@ impl ShippingService for ShippingServer {
     ) -> Result<Response<ShipOrderResponse>, Status> {
         info!("ShipOrderRequest: {:?}", request);
 
+        let parent_cx =
+            global::get_text_map_propagator(|prop| prop.extract(&MetadataMap(request.metadata())));
         // in this case, generating a tracking ID is trivial
         // we'll create a span and associated events all in this function.
-        let reply = global::tracer("shippingservice/ship-order").in_span("ship-order", |cx| {
-            let tid = create_tracking_id();
-            cx.span()
-                .add_event("Tracking ID issued", vec![KeyValue::new(tid.clone(), true)]);
-            info!("Tracking ID Created: {}", tid);
-            ShipOrderResponse { tracking_id: tid }
-        });
+        global::tracer("shippingservice/ship-order").start_with_context("ship-order", &parent_cx);
 
-        Ok(Response::new(reply))
+        let tid = create_tracking_id();
+        parent_cx
+            .span()
+            .add_event("Tracking ID issued", vec![KeyValue::new(tid.clone(), true)]);
+        info!("Tracking ID Created: {}", tid);
+
+        Ok(Response::new(ShipOrderResponse { tracking_id: tid }))
     }
 }
 
