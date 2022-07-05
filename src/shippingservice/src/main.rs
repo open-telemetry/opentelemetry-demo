@@ -26,13 +26,15 @@ fn init_tracer() -> Result<sdktrace::Tracer, TraceError> {
     opentelemetry_otlp::new_pipeline()
         .tracing()
         .with_exporter(
-            opentelemetry_otlp::new_exporter().tonic().with_endpoint(
-                format!("{}{}", env::var("OTEL_EXPORTER_OTLP_TRACES_ENDPOINT")
-                    .unwrap_or_else(|_| "http://otelcol:4317".to_string()),
+            opentelemetry_otlp::new_exporter()
+                .tonic()
+                .with_endpoint(format!(
+                    "{}{}",
+                    env::var("OTEL_EXPORTER_OTLP_TRACES_ENDPOINT")
+                        .unwrap_or_else(|_| "http://otelcol:4317".to_string()),
                     "/v1/traces"
-            ),
-            ), // TODO: assume this ^ is true from config when opentelemetry crate > v0.17.0
-               // https://github.com/open-telemetry/opentelemetry-rust/pull/806 includes the environment variable.
+                )), // TODO: assume this ^ is true from config when opentelemetry crate > v0.17.0
+                    // https://github.com/open-telemetry/opentelemetry-rust/pull/806 includes the environment variable.
         )
         .install_batch(opentelemetry::runtime::Tokio)
 }
