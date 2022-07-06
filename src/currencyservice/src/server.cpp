@@ -227,7 +227,7 @@ int main(int argc, char **argv) {
     << "\n Collector Endpoint: " << endpoint
     << "\n Resource Attributes: " << resourceAttr;
 
-  initTracer();
+  initTracer(endpoint);
   RunServer(port);
 
   return 0;

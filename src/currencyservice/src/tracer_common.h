@@ -69,10 +69,10 @@ public:
   ServerContext *context_;
 };
 
-void initTracer()
+void initTracer(std::string endpoint)
 {
   opentelemetry::exporter::otlp::OtlpGrpcExporterOptions opts;
-  opts.endpoint = "docker.for.mac.localhost:4317";
+  opts.endpoint = endpoint;
 
   auto exporter = std::unique_ptr<opentelemetry::sdk::trace::SpanExporter>(
       new opentelemetry::exporter::otlp::OtlpGrpcExporter(opts));
