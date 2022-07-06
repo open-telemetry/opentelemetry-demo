@@ -1,5 +1,5 @@
 use opentelemetry::trace::TraceContextExt;
-use opentelemetry::trace::Tracer;
+use opentelemetry::trace::{Span, Tracer};
 use opentelemetry::{global, propagation::Extractor, KeyValue};
 use shop::shipping_service_server::ShippingService;
 use shop::{GetQuoteRequest, GetQuoteResponse, Money, ShipOrderRequest, ShipOrderResponse};
@@ -85,12 +85,10 @@ impl ShippingService for ShippingServer {
             global::get_text_map_propagator(|prop| prop.extract(&MetadataMap(request.metadata())));
         // in this case, generating a tracking ID is trivial
         // we'll create a span and associated events all in this function.
-        global::tracer("shippingservice/ship-order").start_with_context("ship-order", &parent_cx);
+        let mut span = global::tracer("shippingservice/ship-order").start_with_context("ship-order", &parent_cx);
 
         let tid = create_tracking_id();
-        parent_cx
-            .span()
-            .add_event("Tracking ID issued", vec![KeyValue::new(tid.clone(), true)]);
+        span.add_event("Tracking ID issued", vec![KeyValue::new(tid.clone(), true)]);
         info!("Tracking ID Created: {}", tid);
 
         Ok(Response::new(ShipOrderResponse { tracking_id: tid }))
