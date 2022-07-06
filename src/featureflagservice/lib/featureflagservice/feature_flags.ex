@@ -13,11 +13,11 @@ defmodule Featureflagservice.FeatureFlags do
 
   ## Examples
 
-      iex> list_featureflags()
+      iex> list_feature_flags()
       [%FeatureFlag{}, ...]
 
   """
-  def list_featureflags do
+  def list_feature_flags do
     Repo.all(FeatureFlag)
   end
 

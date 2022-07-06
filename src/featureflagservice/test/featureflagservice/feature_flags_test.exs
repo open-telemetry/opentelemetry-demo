@@ -10,9 +10,9 @@ defmodule Featureflagservice.FeatureFlagsTest do
 
     @invalid_attrs %{description: nil, enabled: nil, name: nil}
 
-    test "list_featureflags/0 returns all featureflags" do
+    test "list_feature_flags/0 returns all featureflags" do
       feature_flag = feature_flag_fixture()
-      assert FeatureFlags.list_featureflags() == [feature_flag]
+      assert FeatureFlags.list_feature_flags() == [feature_flag]
     end
 
     test "get_feature_flag!/1 returns the feature_flag with given id" do
@@ -35,9 +35,16 @@ defmodule Featureflagservice.FeatureFlagsTest do
 
     test "update_feature_flag/2 with valid data updates the feature_flag" do
       feature_flag = feature_flag_fixture()
-      update_attrs = %{description: "some updated description", enabled: false, name: "some updated name"}
 
-      assert {:ok, %FeatureFlag{} = feature_flag} = FeatureFlags.update_feature_flag(feature_flag, update_attrs)
+      update_attrs = %{
+        description: "some updated description",
+        enabled: false,
+        name: "some updated name"
+      }
+
+      assert {:ok, %FeatureFlag{} = feature_flag} =
+               FeatureFlags.update_feature_flag(feature_flag, update_attrs)
+
       assert feature_flag.description == "some updated description"
       assert feature_flag.enabled == false
       assert feature_flag.name == "some updated name"
@@ -45,7 +52,10 @@ defmodule Featureflagservice.FeatureFlagsTest do
 
     test "update_feature_flag/2 with invalid data returns error changeset" do
       feature_flag = feature_flag_fixture()
-      assert {:error, %Ecto.Changeset{}} = FeatureFlags.update_feature_flag(feature_flag, @invalid_attrs)
+
+      assert {:error, %Ecto.Changeset{}} =
+               FeatureFlags.update_feature_flag(feature_flag, @invalid_attrs)
+
       assert feature_flag == FeatureFlags.get_feature_flag!(feature_flag.id)
     end
 
