@@ -1,8 +1,8 @@
+use opentelemetry::trace::TraceError;
 use opentelemetry::{
     global,
     sdk::{propagation::TraceContextPropagator, trace as sdktrace},
 };
-use opentelemetry::trace::TraceError;
 use opentelemetry_otlp::{self, WithExportConfig};
 
 use tonic::transport::Server;
@@ -26,7 +26,6 @@ fn init_logger() -> Result<(), log::SetLoggerError> {
 }
 
 fn init_tracer() -> Result<sdktrace::Tracer, TraceError> {
-    global::set_text_map_propagator(TraceContextPropagator::new());
     global::set_text_map_propagator(TraceContextPropagator::new());
     opentelemetry_otlp::new_pipeline()
         .tracing()
