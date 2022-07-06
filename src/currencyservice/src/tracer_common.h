@@ -5,6 +5,7 @@
 #include "opentelemetry/exporters/ostream/span_exporter.h"
 #include "opentelemetry/sdk/trace/simple_processor.h"
 #include "opentelemetry/sdk/trace/tracer_provider.h"
+#include "opentelemetry/sdk/resource/resource.h"
 #include "opentelemetry/trace/provider.h"
 #include "opentelemetry/exporters/otlp/otlp_grpc_exporter.h"
 
@@ -69,7 +70,9 @@ public:
   ServerContext *context_;
 };
 
-void initTracer(std::string endpoint)
+void initTracer(std::string endpoint,
+  std::string resourcekey = "service.name",
+  std::string resourceval = "currencyservice")
 {
   opentelemetry::exporter::otlp::OtlpGrpcExporterOptions opts;
   opts.endpoint = endpoint;
@@ -81,7 +84,11 @@ void initTracer(std::string endpoint)
   std::vector<std::unique_ptr<opentelemetry::sdk::trace::SpanProcessor>> processors;
   processors.push_back(std::move(processor));
   // Default is an always-on sampler.
-  auto context  = std::make_shared<opentelemetry::sdk::trace::TracerContext>(std::move(processors));
+  opentelemetry::sdk::resource::ResourceAttributes attributes;
+  attributes[resourcekey] = resourceval;
+
+  auto context  = std::make_shared<opentelemetry::sdk::trace::TracerContext>
+    (std::move(processors), opentelemetry::sdk::resource::Resource::Create(attributes));
   auto provider = opentelemetry::nostd::shared_ptr<opentelemetry::trace::TracerProvider>(
       new opentelemetry::sdk::trace::TracerProvider(context));
   // Set the global trace provider

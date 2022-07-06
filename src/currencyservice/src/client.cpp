@@ -63,20 +63,6 @@ public:
 
   }
 
-  /*void CheckHealthStatus() {
-    grpc::health::v1::HealthCheckRequest request;
-    request.set_service("CurrencyService");
-    grpc::health::v1::HealthCheckResponse response;
-    ClientContext context;
-
-    Status status = stub_->Check(&context, request, &response);
-    if (status == Status::OK) {
-      std::cout << "Server returned: " << response.status << std::endl;
-    } else {
-      std::cout << "Server unresponding " << std::endl;
-    }
-
-  }*/
 private:
   std::unique_ptr<CurrencyService::Stub> stub_;
 };
@@ -86,14 +72,11 @@ void RunClient(uint16_t port)
   CurrencyClient client(
       grpc::CreateChannel
       ("0.0.0.0:" + std::to_string(port), grpc::InsecureChannelCredentials()));
-  //client.CheckHealthStatus();
+
   client.GetSupportedCurrencies();
   client.Convert();
-  //client.CheckHealthStatus();
 }
 }
-
-
 
 int main(int argc, char **argv) {
 
@@ -110,6 +93,5 @@ int main(int argc, char **argv) {
   }
 
   RunClient(port);
-
   return 0;
 }

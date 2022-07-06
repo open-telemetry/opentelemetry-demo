@@ -1,7 +1,6 @@
 #include <iostream>
 #include <math.h>
 #include <demo.grpc.pb.h>
-#include <grpc/health/v1/health.grpc.pb.h>
 
 #include "opentelemetry/trace/context.h"
 #include "opentelemetry/trace/experimental_semantic_conventions.h"
@@ -69,31 +68,12 @@ namespace
     {"ZAR", 16.0583},
 };
 
-class HealthServer final : public grpc::health::v1::Health::Service
-{
-
-  Status Check(
-    ServerContext* context,
-    const grpc::health::v1::HealthCheckRequest* request,
-    grpc::health::v1::HealthCheckResponse* response) override
-  {
-    std::string svc = request->service();
-    if (strcasecmp(svc.c_str(),  "CurrencyService") == 0) {
-      response->set_status(grpc::health::v1::HealthCheckResponse::SERVING);
-    } else {
-      response->set_status(grpc::health::v1::HealthCheckResponse::UNKNOWN);
-    }
-    return Status::OK;
-  }
-};
-
 class CurrencyService final : public hipstershop::CurrencyService::Service
 {
   Status GetSupportedCurrencies(ServerContext* context,
   	const Empty* request,
   	GetSupportedCurrenciesResponse* response) override
   {
-    std::cout << "Currency Service received GetSupportedCurrencies request"<< std::endl;
     StartSpanOptions options;
     options.kind = SpanKind::kServer;
     GrpcServerCarrier carrier(context);
@@ -113,7 +93,7 @@ class CurrencyService final : public hipstershop::CurrencyService::Service
                                       options);
     auto scope = get_tracer("opentelemetry-cpp")->WithActiveSpan(span);
     // Fetch and parse whatever HTTP headers we can from the gRPC request.
-    span->AddEvent("Processing client attributes");
+    span->AddEvent("Processing client request");
 
     for (auto &code : currency_conversion) {
       response->add_currency_codes(code.first);
@@ -124,6 +104,7 @@ class CurrencyService final : public hipstershop::CurrencyService::Service
     // Make sure to end your spans!
     span->End();
 
+    std::cout << __func__ << " successful" << std::endl;
   	return Status::OK;
   }
 
@@ -153,7 +134,6 @@ class CurrencyService final : public hipstershop::CurrencyService::Service
   	const CurrencyConversionRequest* request,
   	Money* response) override
   {
-    std::cout << "Currency Service received convert request"<< std::endl;
     StartSpanOptions options;
     options.kind = SpanKind::kServer;
     GrpcServerCarrier carrier(context);
@@ -173,26 +153,38 @@ class CurrencyService final : public hipstershop::CurrencyService::Service
                                       options);
     auto scope = get_tracer("opentelemetry-cpp")->WithActiveSpan(span);
     // Fetch and parse whatever HTTP headers we can from the gRPC request.
-    span->AddEvent("Processing client attributes");
+    span->AddEvent("Processing client request");
 
-    Money from = request->from();
-    string from_code = from.currency_code();
-    double rate = currency_conversion[from_code];
-    double one_euro = getDouble(from) / rate ;
+    try {
+      // Do the conversion work
+      Money from = request->from();
+      string from_code = from.currency_code();
+      double rate = currency_conversion[from_code];
+      double one_euro = getDouble(from) / rate ;
 
-    string to_code = request->to_code();
-    double to_rate = currency_conversion[to_code];
+      string to_code = request->to_code();
+      double to_rate = currency_conversion[to_code];
 
-    double final = one_euro * to_rate;
-    getUnitsAndNanos(*response, final);
-    response->set_currency_code(to_code);
+      double final = one_euro * to_rate;
+      getUnitsAndNanos(*response, final);
+      response->set_currency_code(to_code);
 
-    span->AddEvent("Response sent to client");
-    span->SetStatus(StatusCode::kOk);
-    // Make sure to end your spans!
-    span->End();
+      // End the span
+      span->AddEvent("Response sent to client");
+      span->SetStatus(StatusCode::kOk);
+      std::cout << __func__ << " conversion successful" << std::endl;
+      span->End();
+      return Status::OK;
 
-  	return Status::OK;
+    } catch(...) {
+
+      span->AddEvent("Conversion failed ");
+      span->SetStatus(StatusCode::kError);
+      std::cout << __func__ << " conversion failure" << std::endl;
+      span->End();
+      return Status::CANCELLED;
+    }
+    return Status::OK;
   }
 };
 
@@ -206,7 +198,7 @@ void RunServer(uint16_t port)
   builder.AddListeningPort(address, grpc::InsecureServerCredentials());
 
   std::unique_ptr<Server> server(builder.BuildAndStart());
-  std::cout << "Server listening on port: " << address << std::endl;
+  std::cout << "Currency Server listening on port: " << address << std::endl;
   server->Wait();
   server->Shutdown();
 }
@@ -225,9 +217,18 @@ int main(int argc, char **argv) {
 
   std::cout << "Port: " << port
     << "\n Collector Endpoint: " << endpoint
-    << "\n Resource Attributes: " << resourceAttr;
+    << "\n Resource Attributes: " << resourceAttr << "\n";
 
-  initTracer(endpoint);
+  std::string resourceKey, resourceValue;
+  std::string delimiter{"="};
+  size_t pos = 0;
+  while ((pos = resourceAttr.find(delimiter)) != std::string::npos) {
+    resourceKey = resourceAttr.substr(0, pos);
+    resourceAttr.erase(0, pos + delimiter.length());
+  }
+
+  std::cout << resourceKey << ": " << resourceAttr << std::endl;
+  initTracer(endpoint, resourceKey, resourceAttr);
   RunServer(port);
 
   return 0;
