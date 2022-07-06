@@ -16,10 +16,12 @@ services:
       - "14269:14269"
     environment:
       - COLLECTOR_ZIPKIN_HOST_PORT
+      - METRICS_STORAGE_TYPE=prometheus
+      - PROMETHEUS_SERVER_URL=http://prometheus:9090
 
   # Collector
   otelcol:
-    image: otel/opentelemetry-collector:0.52.0
+    image: otel/opentelemetry-collector-contrib:0.54.0
     command: [ "--config=/etc/otelcol-config.yml" ]
     volumes:
       - ./src/otelcollector/otelcol-config.yml:/etc/otelcol-config.yml

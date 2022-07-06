@@ -16,12 +16,15 @@ exporters:
 
 processors:
   batch:
+  spanmetrics:
+    metrics_exporter: prometheus
+    latency_histogram_buckets: [1ms, 10ms, 100ms, 500ms, 1s, 10s]
 
 service:
   pipelines:
     traces:
       receivers: [otlp]
-      processors: [batch]
+      processors: [spanmetrics, batch]
       exporters: [logging, jaeger]
     metrics:
       receivers: [otlp]
