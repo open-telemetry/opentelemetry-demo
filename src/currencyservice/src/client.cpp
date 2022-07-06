@@ -22,6 +22,9 @@ using grpc::Server;
 using grpc::Channel;
 using grpc::StubOptions;
 using grpc::ClientContext;
+using grpc::health::v1::Health;
+using grpc::health::v1::HealthCheckRequest;
+using grpc::health::v1::HealthCheckResponse;
 
 namespace
 {
@@ -29,7 +32,8 @@ class CurrencyClient
 {
 public:
   CurrencyClient(std::shared_ptr<Channel> channel)
-  : stub_(CurrencyService::NewStub(channel, StubOptions{})) {}
+  : stub_(CurrencyService::NewStub(channel, StubOptions{}))
+  , hc_stub_(grpc::health::v1::Health::NewStub(channel)) {}
 
   void GetSupportedCurrencies()
   {
@@ -39,10 +43,11 @@ public:
 
     Status status = stub_->GetSupportedCurrencies(&context, request, &response);
 
+    std::cout << "[ ";
     for (int i = 0; i < response.currency_codes_size(); i++) {
-      std::cout << response.currency_codes(i) << std::endl;
+      std::cout << response.currency_codes(i) << " ";
     }
-
+    std::cout << "]" << std::endl;
   }
 
   void Convert()
@@ -63,8 +68,26 @@ public:
 
   }
 
+  bool CheckHealthStatus()
+  {
+    HealthCheckRequest request;
+    request.set_service("CurrencyService");
+    HealthCheckResponse response;
+    ClientContext context;
+    Status s = hc_stub_->Check(&context, request, &response);
+    if (s.ok()) {
+      if (response.status() == grpc::health::v1::HealthCheckResponse::SERVING) {
+        std::cout << "Health status serving" << std::endl;
+        return true;
+      }
+    }
+    std::cout << "CurrencyService unreachable" << std::endl;
+    return false;
+  }
+
 private:
   std::unique_ptr<CurrencyService::Stub> stub_;
+  std::unique_ptr<Health::Stub> hc_stub_;
 };
 
 void RunClient(uint16_t port)
@@ -73,15 +96,17 @@ void RunClient(uint16_t port)
       grpc::CreateChannel
       ("0.0.0.0:" + std::to_string(port), grpc::InsecureChannelCredentials()));
 
-  client.GetSupportedCurrencies();
-  client.Convert();
+  if (client.CheckHealthStatus()) {
+    client.GetSupportedCurrencies();
+    client.Convert();
+  }
+
 }
 }
 
 int main(int argc, char **argv) {
 
-  std::cout << "Helloworld" << std::endl;
-   constexpr uint16_t default_port = 8800;
+  constexpr uint16_t default_port = 8800;
   uint16_t port;
   if (argc > 1)
   {

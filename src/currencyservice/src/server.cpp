@@ -1,6 +1,7 @@
 #include <iostream>
 #include <math.h>
 #include <demo.grpc.pb.h>
+#include <grpc/health/v1/health.grpc.pb.h>
 
 #include "opentelemetry/trace/context.h"
 #include "opentelemetry/trace/experimental_semantic_conventions.h"
@@ -66,6 +67,18 @@ namespace
     {"SGD", 1.5349},
     {"THB", 36.012},
     {"ZAR", 16.0583},
+};
+
+class HealthServer final : public grpc::health::v1::Health::Service
+{
+  Status Check(
+    ServerContext* context,
+    const grpc::health::v1::HealthCheckRequest* request,
+    grpc::health::v1::HealthCheckResponse* response) override
+  {
+    response->set_status(grpc::health::v1::HealthCheckResponse::SERVING);
+    return Status::OK;
+  }
 };
 
 class CurrencyService final : public hipstershop::CurrencyService::Service
@@ -192,9 +205,11 @@ void RunServer(uint16_t port)
 {
   std::string address("0.0.0.0:" + std::to_string(port));
   CurrencyService currencyService;
+  HealthServer healthService;
   ServerBuilder builder;
 
   builder.RegisterService(&currencyService);
+  builder.RegisterService(&healthService);
   builder.AddListeningPort(address, grpc::InsecureServerCredentials());
 
   std::unique_ptr<Server> server(builder.BuildAndStart());
