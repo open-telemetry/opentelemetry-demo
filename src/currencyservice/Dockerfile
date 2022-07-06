@@ -1,4 +1,4 @@
-  FROM ubuntu:20.04
+FROM ubuntu:20.04
 ENV DEBIAN_FRONTEND noninteractive
 
 RUN apt-get -y update 
@@ -15,7 +15,7 @@ RUN apt-get install -qq -y --ignore-missing \
   cmake
 
 # The following arguments would be passed from docker-compose.yml
-ARG GRPC_VERSION="1.36.4"
+ARG GRPC_VERSION="1.46.0"
 ARG OPENTELEMETRY_VERSION="1.4.0"
 
 # Install GRPC
@@ -37,7 +37,8 @@ RUN git clone --shallow-submodules --depth 1 --recurse-submodules -b v${GRPC_VER
     ../.. \
   && make -j2 \
   && make install \
-  && cd ../../..
+  && cd ../../.. \
+  && rm -rf grpc
 
 # install opentelemetry
 RUN git clone https://github.com/open-telemetry/opentelemetry-cpp \
@@ -47,9 +48,8 @@ RUN git clone https://github.com/open-telemetry/opentelemetry-cpp \
     && mkdir build \
     && cd build \
     && cmake .. -DCMAKE_POSITION_INDEPENDENT_CODE=ON -DCMAKE_BUILD_TYPE=Release -DBUILD_TESTING=OFF -DWITH_OTLP=ON \
-    && make -j install
+    && make -j install && cd ../.. && rm -rf opentelemetry-cpp
 
-RUN cd ../..
 COPY . /currencyservice
 
 RUN cd /currencyservice \
