@@ -1,10 +1,12 @@
 # Currency Service
 
-The Currency Service does the conversion from one currency to another. It is a C++ based service.
+The Currency Service does the conversion from one currency to another.
+It is a C++ based service.
 
 ## Building docker image
 
-To build the currency service, run the following from root directory of opentelemetry-demo-webstore
+To build the currency service, run the following from root directory
+of opentelemetry-demo-webstore
 
 ```sh
 docker-compose build currencyservice
@@ -20,7 +22,8 @@ docker-compose up currencyservice
 
 ## Run the client
 
-currencyclient is a sample client which sends some request to currency service. To run the client, execute the below command.
+currencyclient is a sample client which sends some request to currency
+service. To run the client, execute the below command.
 
 ```sh
 docker exec -it <container_name> currencyclient 7000
