@@ -34,7 +34,7 @@ function chargeServiceHandler(call, callback) {
     })
     logger.info(`PaymentService#Charge invoked by: ${JSON.stringify(call.request)}`)
 
-    const response = charge(call.request)
+    const response = charge.charge(call.request)
     callback(null, response)
 
   } catch (err) {

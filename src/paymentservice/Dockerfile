@@ -34,4 +34,4 @@ COPY ./pb/demo.proto ./
 
 EXPOSE ${PAYMENT_SERVICE_PORT}
 
-ENTRYPOINT [ "node", "./index.js", "--require", "./tracing.js" ]
+ENTRYPOINT [ "node", "--require", "./tracing.js", "./index.js" ]
