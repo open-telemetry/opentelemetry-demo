@@ -1,3 +1,6 @@
+// Copyright The OpenTelemetry Authors
+// SPDX-License-Identifier: Apache-2.0
+
 #include <iostream>
 #include <math.h>
 #include <demo.grpc.pb.h>
@@ -98,21 +101,21 @@ class CurrencyService final : public hipstershop::CurrencyService::Service
 
     std::string span_name = "CurrencyService/GetSupportedCurrencies";
     auto span =
-        get_tracer("opentelemetry-cpp")->StartSpan(span_name,
+        get_tracer("currencyservice")->StartSpan(span_name,
                                       {{OTEL_GET_TRACE_ATTR(AttrRpcSystem), "grpc"},
                                        {OTEL_GET_TRACE_ATTR(AttrRpcService), "CurrencyService"},
                                        {OTEL_GET_TRACE_ATTR(AttrRpcMethod), "GetSupportedCurrencies"},
                                        {OTEL_GET_TRACE_ATTR(AttrRpcGrpcStatusCode), 0}},
                                       options);
-    auto scope = get_tracer("opentelemetry-cpp")->WithActiveSpan(span);
+    auto scope = get_tracer("currencyservice")->WithActiveSpan(span);
     // Fetch and parse whatever HTTP headers we can from the gRPC request.
-    span->AddEvent("Processing client request");
+    span->AddEvent("Processing supported currencies request");
 
     for (auto &code : currency_conversion) {
       response->add_currency_codes(code.first);
     }
 
-    span->AddEvent("Response sent to client");
+    span->AddEvent("Currencies fetched, response sent back");
     span->SetStatus(StatusCode::kOk);
     // Make sure to end your spans!
     span->End();
@@ -158,15 +161,15 @@ class CurrencyService final : public hipstershop::CurrencyService::Service
 
     std::string span_name = "CurrencyService/Convert";
     auto span =
-        get_tracer("opentelemetry-cpp")->StartSpan(span_name,
+        get_tracer("currencyservice")->StartSpan(span_name,
                                       {{OTEL_GET_TRACE_ATTR(AttrRpcSystem), "grpc"},
                                        {OTEL_GET_TRACE_ATTR(AttrRpcService), "CurrencyService"},
                                        {OTEL_GET_TRACE_ATTR(AttrRpcMethod), "Convert"},
                                        {OTEL_GET_TRACE_ATTR(AttrRpcGrpcStatusCode), 0}},
                                       options);
-    auto scope = get_tracer("opentelemetry-cpp")->WithActiveSpan(span);
+    auto scope = get_tracer("currencyservice")->WithActiveSpan(span);
     // Fetch and parse whatever HTTP headers we can from the gRPC request.
-    span->AddEvent("Processing client request");
+    span->AddEvent("Processing currency conversion request");
 
     try {
       // Do the conversion work
@@ -183,15 +186,14 @@ class CurrencyService final : public hipstershop::CurrencyService::Service
       response->set_currency_code(to_code);
 
       // End the span
-      span->AddEvent("Response sent to client");
+      span->AddEvent("Conversion successful, response sent back");
       span->SetStatus(StatusCode::kOk);
       std::cout << __func__ << " conversion successful" << std::endl;
       span->End();
       return Status::OK;
 
     } catch(...) {
-
-      span->AddEvent("Conversion failed ");
+      span->AddEvent("Conversion failed");
       span->SetStatus(StatusCode::kError);
       std::cout << __func__ << " conversion failure" << std::endl;
       span->End();

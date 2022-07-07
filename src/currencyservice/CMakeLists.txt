@@ -70,3 +70,4 @@ target_link_libraries(
     currencyclient demo-proto protobuf::libprotobuf gRPC::grpc++)
 
 install(TARGETS currencyservice DESTINATION bin)
+install(TARGETS currencyclient DESTINATION bin)

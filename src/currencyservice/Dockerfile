@@ -4,19 +4,17 @@ ENV DEBIAN_FRONTEND noninteractive
 RUN apt-get -y update
 RUN apt-get -y upgrade && apt-get -y dist-upgrade
 RUN apt-get install -qq -y --ignore-missing \
-	build-essential		                    \
-	git			                            \
-	make			                        \
-	pkg-config		                        \
-	protobuf-compiler	                    \
-	libprotobuf-dev                         \
-	sudo			                        \
-	wget			                        \
-    cmake
+  build-essential                           \
+  git                                       \
+  make                                      \
+  pkg-config                                \
+  protobuf-compiler                         \
+  libprotobuf-dev                           \
+  cmake
 
 # The following arguments would be passed from docker-compose.yml
-ARG GRPC_VERSION="1.46.0"
-ARG OPENTELEMETRY_VERSION="1.4.0"
+ARG GRPC_VERSION
+ARG OPENTELEMETRY_VERSION
 
 # Install GRPC
 RUN git clone --shallow-submodules --depth 1 --recurse-submodules -b v${GRPC_VERSION} \
