@@ -27,6 +27,7 @@ services:
       - "4317"
       - "4318"
       - "9464"
+      - "8888:8888"
     depends_on:
       - jaeger
 
@@ -271,3 +272,12 @@ services:
       - ./src/prometheus/prometheus-config.yaml:/etc/prometheus/prometheus-config.yaml
     ports:
       - "${PROMETHEUS_SERVICE_PORT}:${PROMETHEUS_SERVICE_PORT}"
+
+  # Grafana
+  grafana:
+    image: grafana/grafana:9.0.1
+    volumes:
+      - ./src/grafana/grafana.ini:/etc/grafana/grafana.ini
+      - ./src/grafana/provisioning/:/etc/grafana/provisioning/
+    ports:
+      - "${GRAFANA_SERVICE_PORT}:${GRAFANA_SERVICE_PORT}"
