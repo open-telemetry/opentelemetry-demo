@@ -26,8 +26,8 @@ const tracer = opentelemetry.trace.getTracer('paymentservice')
 module.exports.charge = request => {
   const span = tracer.startSpan('charge')
 
-  const { amount, credit_card: creditCard } = request
-  const cardNumber = creditCard.credit_card_number
+  const { amount, creditCard } = request
+  const cardNumber = creditCard.creditCardNumber
   const card = cardValidator(cardNumber)
   const {card_type: cardType, valid } = card.getCardDetails()
   span.setAttributes({
@@ -51,7 +51,7 @@ module.exports.charge = request => {
   span.setAttribute('app.payment.charged', true)
   span.end()
 
-  logger.info(`Transaction processed: ${cardType} ending ${lastFourDigits} | Amount: ${amount.currency_code}${amount.units}.${amount.nanos}`)
+  logger.info(`Transaction processed: ${cardType} ending ${lastFourDigits} | Amount: ${amount.units}.${amount.nanos} ${amount.currencyCode}`)
 
   return { transaction_id: uuidv4() }
 }
