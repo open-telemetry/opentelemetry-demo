@@ -2,7 +2,7 @@
 
 ## TOC
 
-- [Ad Service](#ad-servicesrcadservicereadmemd)
+- [Ad Service](#ad-service)
 - [Cart Service](#cart-servicesrccartservicereadmemd)
 - [Checkout Service](#checkout-servicesrccheckoutservicereadmemd)
 - [Currency Service](#currency-servicesrccurrencyservicereadmemd)
@@ -57,7 +57,7 @@ tba
 
 tba
 
-### [Frontend Service](../src/frontendservice/README.md)
+### [Frontend Service](../src/frontend/README.md)
 
 - :100: [Instrumentation
   Libraries](https://opentelemetry.io/docs/concepts/instrumenting-library/)
