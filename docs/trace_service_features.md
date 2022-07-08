@@ -3,16 +3,16 @@
 ## TOC
 
 - [Ad Service](#ad-service)
-- [Cart Service](#cart-servicesrccartservicereadmemd)
-- [Checkout Service](#checkout-servicesrccheckoutservicereadmemd)
-- [Currency Service](#currency-servicesrccurrencyservicereadmemd)
-- [Email Service](#email-servicesrcemailservicereadmemd)
-- [Feature Flag Service](#feature-flag-servicesrcfeatureflagservicereadmemd)
-- [Frontend Service](#frontend-servicesrcfrontendservicereadmemd)
-- [Payment Service](#payment-servicesrcpaymentservicereadmemd)
-- [Product Catalog Service](#product-catalog-servicesrcproductcatalogservicereadmemd)
-- [Recommendation Service](#recommendation-servicesrcrecommendationservicereadmemd)
-- [Shipping Service](#shipping-servicesrcshippingservicereadmemd)
+- [Cart Service](#cart-service)
+- [Checkout Service](#checkout-service)
+- [Currency Service](#currency-service)
+- [Email Service](#email-service)
+- [Feature Flag Service](#feature-flag-service)
+- [Frontend Service](#frontend-service)
+- [Payment Service](#payment-service)
+- [Product Catalog Service](#product-catalog-service)
+- [Recommendation Service](#recommendation-service)
+- [Shipping Service](#shipping-service)
 
 ## OpenTelemetry Feature Set by Services
 
