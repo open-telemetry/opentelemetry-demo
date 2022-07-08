@@ -2,17 +2,17 @@
 
 ## TOC
 
-- [Ad Service](./trace_service_features.md#ad-servicesrcadservicereadmemd)
-- [Cart Service](./trace_service_features.md#cart-servicesrccartservicereadmemd)
-- [Checkout Service](./trace_service_features.md#checkout-servicesrccheckoutservicereadmemd)
-- [Currency Service](./trace_service_features.md#currency-servicesrccurrencyservicereadmemd)
-- [Email Service](./trace_service_features.md#email-servicesrcemailservicereadmemd)
-- [Feature Flag Service](./trace_service_features.md#feature-flag-servicesrcfeatureflagservicereadmemd)
-- [Frontend Service](./trace_service_features.md#frontend-servicesrcfrontendservicereadmemd)
-- [Payment Service](./trace_service_features.md#payment-servicesrcpaymentservicereadmemd)
-- [Product Catalog Service](./trace_service_features.md#product-catalog-servicesrcproductcatalogservicereadmemd)
-- [Recommendation Service](./trace_service_features.md#recommendation-servicesrcrecommendationservicereadmemd)
-- [Shipping Service](./trace_service_features.md#shipping-servicesrcshippingservicereadmemd)
+- [Ad Service](#ad-servicesrcadservicereadmemd)
+- [Cart Service](#cart-servicesrccartservicereadmemd)
+- [Checkout Service](#checkout-servicesrccheckoutservicereadmemd)
+- [Currency Service](#currency-servicesrccurrencyservicereadmemd)
+- [Email Service](#email-servicesrcemailservicereadmemd)
+- [Feature Flag Service](#feature-flag-servicesrcfeatureflagservicereadmemd)
+- [Frontend Service](#frontend-servicesrcfrontendservicereadmemd)
+- [Payment Service](#payment-servicesrcpaymentservicereadmemd)
+- [Product Catalog Service](#product-catalog-servicesrcproductcatalogservicereadmemd)
+- [Recommendation Service](#recommendation-servicesrcrecommendationservicereadmemd)
+- [Shipping Service](#shipping-servicesrcshippingservicereadmemd)
 
 ## OpenTelemetry Feature Set by Services
 
