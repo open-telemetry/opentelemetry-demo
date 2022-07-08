@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk.Web">
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
 
   <PropertyGroup>
     <TargetFramework>net6.0</TargetFramework>
@@ -17,6 +17,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Protobuf Include="**\*.proto" GrpcServices="Both" />
+    <Protobuf Include="..\..\..\pb\demo.proto" GrpcServices="Both" />
   </ItemGroup>
 </Project>
