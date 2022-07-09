@@ -12,85 +12,46 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-const cardValidator = require('simple-card-validator');
-const { v4: uuidv4 } = require('uuid');
-const pino = require('pino');
-const opentelemetry = require('@opentelemetry/api');
-const tracer = opentelemetry.trace.getTracer("paymentservice");
+// Npm
+const opentelemetry = require('@opentelemetry/api')
+const cardValidator = require('simple-card-validator')
+const pino = require('pino')
+const { v4: uuidv4 } = require('uuid')
 
-const logger = pino({
-  name: 'paymentservice-charge',
-  messageKey: 'message',
-  levelKey: 'severity',
-  useLevelLabels: true
-});
+// Setup
+const logger = pino()
+const tracer = opentelemetry.trace.getTracer('paymentservice')
 
+// Functions
+module.exports.charge = request => {
+  const span = tracer.startSpan('charge')
 
-class CreditCardError extends Error {
-  constructor (message) {
-    super(message);
-    this.code = 400; // Invalid argument error
-  }
-}
-
-class InvalidCreditCard extends CreditCardError {
-  constructor (cardType) {
-    super(`Credit card info is invalid`);
-  }
-}
-
-class UnacceptedCreditCard extends CreditCardError {
-  constructor (cardType) {
-    super(`Sorry, we cannot process ${cardType} credit cards. Only VISA or MasterCard is accepted.`);
-  }
-}
-
-class ExpiredCreditCard extends CreditCardError {
-  constructor (number, month, year) {
-    super(`Your credit card (ending ${number.substr(-4)}) expired on ${month}/${year}`);
-  }
-}
-
-/**
- * Verifies the credit card number and (pretend) charges the card.
- *
- * @param {*} request
- * @return transaction_id - a random uuid v4.
- */
-module.exports = function charge (request) {
-  // create and start span
-  const span = tracer.startSpan("charge")
-
-  const { amount, credit_card: creditCard } = request;
-  const cardNumber = creditCard.credit_card_number;
-  const cardInfo = cardValidator(cardNumber);
-  const {
-    card_type: cardType,
-    valid
-  } = cardInfo.getCardDetails();
+  const { amount, creditCard } = request
+  const cardNumber = creditCard.creditCardNumber
+  const card = cardValidator(cardNumber)
+  const {card_type: cardType, valid } = card.getCardDetails()
   span.setAttributes({
-    "app.payment.charge.cardType": cardType,
-    "app.payment.charge.valid": valid
+    'app.payment.charge.cardType': cardType,
+    'app.payment.charge.valid': valid
   })
 
-  if (!valid) { throw new InvalidCreditCard(); }
+  if (!valid)
+    throw new Error('Credit card info is invalid.')
 
-  // Only VISA and mastercard is accepted, other card types (AMEX, dinersclub) will
-  // throw UnacceptedCreditCard error.
-  if (!(cardType === 'visa' || cardType === 'mastercard')) { throw new UnacceptedCreditCard(cardType); }
+  if (!['visa', 'mastercard'].includes(cardType))
+    throw new Error(`Sorry, we cannot process ${cardType} credit cards. Only VISA or MasterCard is accepted.`)
 
-  // Also validate expiration is > today.
-  const currentMonth = new Date().getMonth() + 1;
-  const currentYear = new Date().getFullYear();
-  const { credit_card_expiration_year: year, credit_card_expiration_month: month } = creditCard;
-  if ((currentYear * 12 + currentMonth) > (year * 12 + month)) { throw new ExpiredCreditCard(cardNumber.replace('-', ''), month, year); }
+  const currentMonth = new Date().getMonth() + 1
+  const currentYear = new Date().getFullYear()
+  const { credit_card_expiration_year: year, credit_card_expiration_month: month } = creditCard
+  const lastFourDigits = cardNumber.substr(-4)
+  if ((currentYear * 12 + currentMonth) > (year * 12 + month))
+    throw new Error(`The credit card (ending ${lastFourDigits}) expired on ${month}/${year}.`)
 
-  logger.info(`Transaction processed: ${cardType} ending ${cardNumber.substr(-4)} \
-    Amount: ${amount.currency_code}${amount.units}.${amount.nanos}`);
+  span.setAttribute('app.payment.charged', true)
+  span.end()
 
-  span.setAttribute("app.payment.charged", true);
-  // a manually created span needs to be ended
-  span.end();
+  logger.info(`Transaction processed: ${cardType} ending ${lastFourDigits} | Amount: ${amount.units}.${amount.nanos} ${amount.currencyCode}`)
 
-  return { transaction_id: uuidv4() };
-};
+  return { transaction_id: uuidv4() }
+}
