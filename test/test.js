@@ -21,14 +21,14 @@ test.before(() => {
 
   const hipstershop = grpc.loadPackageDefinition(protoLoader.loadSync('../pb/demo.proto')).hipstershop
 
-  const client = new hipstershop.PaymentService(`0.0.0.0:${process.env.PAYMENT_SERVICE_PORT}`, grpc.credentials.createInsecure())
-  charge = promisify(client.charge).bind(client)
+  const paymentClient = new hipstershop.PaymentService(`0.0.0.0:${process.env.PAYMENT_SERVICE_PORT}`, grpc.credentials.createInsecure())
+  charge = promisify(paymentClient.charge).bind(paymentClient)
 })
 
-// ------------------------------ Payment Service -----------------------------
+// --------------- Payment Service ---------------
 
 test('payment: valid credit card', t => {
-  const request = deepCopy(data.charge)
+  const request = data.charge
 
   return charge(request).then(res => {
     t.truthy(res.transactionId)
