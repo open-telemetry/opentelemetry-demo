@@ -27,6 +27,7 @@ services:
       - "4317"
       - "4318"
       - "9464"
+      - "8888:8888"
     depends_on:
       - jaeger
 
@@ -102,6 +103,9 @@ services:
     build:
       context: ./
       dockerfile: ./src/currencyservice/Dockerfile
+      args:
+        - GRPC_VERSION=1.46.0
+        - OPENTELEMETRY_VERSION=1.4.0
     ports:
       - "${CURRENCY_SERVICE_PORT}"
     environment:
@@ -255,6 +259,7 @@ services:
       - USERS
       - OTEL_EXPORTER_OTLP_TRACES_ENDPOINT
       - OTEL_RESOURCE_ATTRIBUTES=service.name=loadgenerator
+      - PROTOCOL_BUFFERS_PYTHON_IMPLEMENTATION=python
     depends_on:
       - frontend
 
@@ -273,3 +278,12 @@ services:
       - ./src/prometheus/prometheus-config.yaml:/etc/prometheus/prometheus-config.yaml
     ports:
       - "${PROMETHEUS_SERVICE_PORT}:${PROMETHEUS_SERVICE_PORT}"
+
+  # Grafana
+  grafana:
+    image: grafana/grafana:9.0.1
+    volumes:
+      - ./src/grafana/grafana.ini:/etc/grafana/grafana.ini
+      - ./src/grafana/provisioning/:/etc/grafana/provisioning/
+    ports:
+      - "${GRAFANA_SERVICE_PORT}:${GRAFANA_SERVICE_PORT}"

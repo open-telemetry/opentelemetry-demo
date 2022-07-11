@@ -12,28 +12,29 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-FROM node:16-alpine AS base
-
-FROM base AS builder
+FROM node:16-alpine AS build
 
 WORKDIR /usr/src/app/
 
-COPY ./src/paymentservice/package.json ./
+COPY ./src/paymentservice/package*.json ./
 
-RUN npm install --only=production
+RUN npm ci --omit=dev
 
 # -----------------------------------------------------------------------------
 
-FROM base
+FROM node:16-alpine
 
+USER node
 WORKDIR /usr/src/app/
+ENV NODE_ENV production
 
-COPY --from=builder /usr/src/app/node_modules/ ./node_modules/
+COPY --chown=node:node --from=build /usr/src/app/node_modules/ ./node_modules/
 COPY ./src/paymentservice/ ./
-COPY ./pb/ ./proto/
+COPY ./pb/demo.proto ./
 COPY --chmod=0755 ./include/grpc_health_probe /include/
 
 HEALTHCHECK CMD /include/grpc_health_probe -addr :${PAYMENT_SERVICE_PORT}
 
 EXPOSE ${PAYMENT_SERVICE_PORT}
+
 ENTRYPOINT [ "node", "--require", "./tracing.js", "./index.js" ]

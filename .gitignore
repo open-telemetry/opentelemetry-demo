@@ -7,7 +7,6 @@
 .nb-gradle-properties
 .swp
 .DS_Store
-package-lock.json
 \#*\#
 
 # Eclipse

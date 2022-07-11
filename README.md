@@ -33,6 +33,15 @@ cd opentelemetry-demo-webstore/
 Download `v0.4.11` of `grpc_health_probe-linux-amd64` from
 [here](https://github.com/grpc-ecosystem/grpc-health-probe/releases/tag/v0.4.11)
 to the following path: `/include/grpc_health_probe`.
+### Gradle Update [Windows Only]
+
+- Navigate to the Java Ad Service folder to install and update Gradle:
+
+```shell
+cd .\src\adservice\
+.\gradlew installDist
+.\gradlew wrapper --gradle-version 7.4.2
+```
 
 ### Run Docker Compose
 
@@ -45,9 +54,15 @@ docker compose up
 
 ### Verify the Webstore & the Telemetry
 
-- Once the images are built you can access the Webstore at: <http://localhost:8080>
+Once the images are built and containers are started you can access:
 
-- And the Jaeger UI at: <http://localhost:16686>
+- Webstore: <http://localhost:8080/>
+
+- Jaeger: <http://localhost:16686/>
+
+- Prometheus: <http://localhost:9090/>
+
+- Grafana: <http://localhost:3000/>
 
 ### Bring your own backend
 
@@ -239,6 +254,9 @@ Find the **Protocol Buffer Definitions** in the `/pb/` directory.
 - **Synthetic Load Generation**: the application demo comes with a background
   job that creates realistic usage patterns on the website using
   [Locust](https://locust.io/) load generator.
+- **[Prometheus](https://prometheus.io/)**: all generated metrics are being
+  sent to Prometheus.
+- **[Grafana](https://grafana.com/)**: all metric dashboards are stored in Grafana.
 
 ## Demos featuring Online Boutique
 
