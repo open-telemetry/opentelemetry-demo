@@ -128,7 +128,7 @@ adservice(Ad Service):::java
 cache[(Cache<br/>&#40redis&#41)]
 cartservice(Cart Service):::dotnet
 checkoutservice(Checkout Service):::golang
-currencyservice(Currency Service):::nodejs
+currencyservice(Currency Service):::cpp
 emailservice(Email Service):::ruby
 frontend(Frontend):::golang
 loadgenerator([Load Generator]):::python
@@ -136,6 +136,7 @@ paymentservice(Payment Service):::nodejs
 productcatalogservice(ProductCatalog Service):::golang
 recommendationservice(Recommendation Service):::python
 shippingservice(Shipping Service):::golang
+productstore[(Product Store)]:::db
 
 Internet -->|HTTP| frontend
 loadgenerator -->|HTTP| frontend
@@ -146,6 +147,7 @@ checkoutservice --> currencyservice
 checkoutservice --> emailservice
 checkoutservice --> paymentservice
 checkoutservice --> shippingservice
+checkoutservice --> |evalFlag| featureflagfeservice
 
 frontend --> adservice
 frontend --> cartservice
@@ -154,7 +156,16 @@ frontend --> checkoutservice
 frontend --> currencyservice
 frontend --> recommendationservice --> productcatalogservice
 frontend --> shippingservice
+frontend --> |evalFlag| featureflagfeservice
 
+productcatalogservice --> |evalFlag| featureflagfeservice
+productcatalogservice --> productstore
+
+featureflagbeservice(Flag Server):::erlang
+featureflagfeservice(Flag UI/API):::erlang
+featureflagstore[(Flag Store<br/>&#40Blob/DB&#41)]
+
+featureflagfeservice --> featureflagbeservice --> featureflagstore
 
 end
 classDef java fill:#b07219,color:white;
@@ -175,9 +186,13 @@ subgraph Service Legend
   javasvc(Java):::java
   dotnetsvc(.NET):::dotnet
   golangsvc(Go):::golang
+  cppsvc(C++):::cpp
   rubysvc(Ruby):::ruby
   pythonsvc(Python):::python
   nodesvc(Node.js):::nodejs
+  rustsvc(Rust):::rust
+  erlangsvc(Erlang/Elixir):::erlang
+  phpsvc(PHP):::php
 end
 
 classDef java fill:#b07219,color:white;
