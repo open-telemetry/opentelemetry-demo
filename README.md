@@ -120,7 +120,6 @@ your backend as well.
 languages that talk to each other over gRPC. Plus one Load Generator which uses
 Locust to fake user traffic.
 
-
 ```mermaid
 graph TD
 
