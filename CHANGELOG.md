@@ -21,6 +21,10 @@ significant modifications will be credited to OpenTelemetry Authors.
 ([#109](https://github.com/open-telemetry/opentelemetry-demo-webstore/pull/109))
 * Added feature flag service implementation
 ([#141](https://github.com/open-telemetry/opentelemetry-demo-webstore/pull/141))
+* Added additional attributes to productcatalog service
+([#143](https://github.com/open-telemetry/opentelemetry-demo-webstore/pull/143))
+* Added manual instrumentation to Java ad service
+([#150](https://github.com/open-telemetry/opentelemetry-demo-webstore/pull/150))
 * Added manual instrumentation to Ruby email service
 ([#158](https://github.com/open-telemetry/opentelemetry-demo-webstore/pull/158))
 * Added basic metric support and Promethesus storage
