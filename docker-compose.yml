@@ -4,6 +4,7 @@ services:
   # Jaeger
   jaeger:
     image: jaegertracing/all-in-one
+    container_name: jaeger
     ports:
       - "5775:5775"
       - "5778:5778"
@@ -20,6 +21,7 @@ services:
   # Collector
   otelcol:
     image: otel/opentelemetry-collector:0.52.0
+    container_name: otel-col
     command: [ "--config=/etc/otelcol-config.yml" ]
     volumes:
       - ./src/otelcollector/otelcol-config.yml:/etc/otelcol-config.yml
@@ -34,12 +36,14 @@ services:
   # Redis
   redis-cart:
     image: redis:alpine
+    container_name: redis-cart
     ports:
       - "${REDIS_PORT}"
 
   # AdService
   adservice:
     image: ${IMAGE_NAME}:${IMAGE_VERSION}-adservice
+    container_name: ad-service
     build:
       context: ./
       dockerfile: ./src/adservice/Dockerfile
@@ -55,6 +59,7 @@ services:
   # CartService
   cartservice:
     image: ${IMAGE_NAME}:${IMAGE_VERSION}-cartservice
+    container_name: cart-service
     build:
       context: ./
       dockerfile: ./src/cartservice/src/Dockerfile
@@ -73,6 +78,7 @@ services:
   # CheckoutService
   checkoutservice:
     image: ${IMAGE_NAME}:${IMAGE_VERSION}-checkoutservice
+    container_name: checkout-service
     build:
       context: ./
       dockerfile: ./src/checkoutservice/Dockerfile
@@ -100,6 +106,7 @@ services:
   # CurrencyService
   currencyservice:
     image: ${IMAGE_NAME}:${IMAGE_VERSION}-currencyservice
+    container_name: currency-service
     build:
       context: ./src/currencyservice
       args:
@@ -117,6 +124,7 @@ services:
   # EmailService
   emailservice:
     image: ${IMAGE_NAME}:${IMAGE_VERSION}-emailservice
+    container_name: email-service
     build:
       context: ./src/emailservice
     ports:
@@ -132,6 +140,7 @@ services:
   # Frontend
   frontend:
     image: ${IMAGE_NAME}:${IMAGE_VERSION}-frontend
+    container_name: frontend
     build:
       context: ./
       dockerfile: ./src/frontend/Dockerfile
@@ -162,6 +171,7 @@ services:
   # PaymentService
   paymentservice:
     image: ${IMAGE_NAME}:${IMAGE_VERSION}-paymentservice
+    container_name: payment-service
     build:
       context: ./
       dockerfile: ./src/paymentservice/Dockerfile
@@ -177,6 +187,7 @@ services:
   # ProductCatalogService
   productcatalogservice:
     image: ${IMAGE_NAME}:${IMAGE_VERSION}-productcatalogservice
+    container_name: product-catalog-service
     build:
       context: ./
       dockerfile: ./src/productcatalogservice/Dockerfile
@@ -192,6 +203,7 @@ services:
   # RecommendationService
   recommendationservice:
     image: ${IMAGE_NAME}:${IMAGE_VERSION}-recommendationservice
+    container_name: recommendation-service
     build:
       context: ./
       dockerfile: ./src/recommendationservice/Dockerfile
@@ -210,6 +222,7 @@ services:
   # ShippingService
   shippingservice:
     image: ${IMAGE_NAME}:${IMAGE_VERSION}-shippingservice
+    container_name: shipping-service
     build:
       context: ./src/shippingservice
     ports:
@@ -224,6 +237,7 @@ services:
   # FeatureFlagService
   featureflagservice:
     image: ${IMAGE_NAME}:${IMAGE_VERSION}-featureflagservice
+    container_name: feature-flag-service
     build:
       context: ./src/featureflagservice
     ports:
@@ -240,6 +254,7 @@ services:
 
   ffs_postgres:
     image: cimg/postgres:14.2
+    container_name: postgres
     environment:
       - POSTGRES_USER=ffs
       - POSTGRES_DB=ffs
@@ -248,6 +263,7 @@ services:
   # LoadGenerator
   loadgenerator:
     image: ${IMAGE_NAME}:${IMAGE_VERSION}-loadgenerator
+    container_name: load-generator
     build:
       context: ./
       dockerfile: ./src/loadgenerator/Dockerfile
@@ -263,6 +279,7 @@ services:
   # Prometheus
   prometheus:
     image: quay.io/prometheus/prometheus:v2.34.0
+    container_name: prometheus
     command:
       - --web.console.templates=/etc/prometheus/consoles
       - --web.console.libraries=/etc/prometheus/console_libraries
@@ -279,6 +296,7 @@ services:
   # Grafana
   grafana:
     image: grafana/grafana:9.0.1
+    container_name: grafana
     volumes:
       - ./src/grafana/grafana.ini:/etc/grafana/grafana.ini
       - ./src/grafana/provisioning/:/etc/grafana/provisioning/
