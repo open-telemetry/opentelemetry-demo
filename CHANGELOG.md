@@ -19,3 +19,5 @@ release.
   ([#82](https://github.com/open-telemetry/opentelemetry-demo-webstore/pull/82))
 * Added feature flag service implementation
   ([#141](https://github.com/open-telemetry/opentelemetry-demo-webstore/pull/141))
+* Re-implemented currency service using C++
+  ([#189](https://github.com/open-telemetry/opentelemetry-demo-webstore/pull/189))
