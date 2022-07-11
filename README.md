@@ -161,7 +161,7 @@ productcatalogservice --> |evalFlag| featureflagfeservice
 
 featureflagbeservice(Flag Server):::erlang
 featureflagfeservice(Flag UI/API):::erlang
-featureflagstore[(Flag Store<br/>&#40PostgreSQL/DB&#41)]
+featureflagstore[(Flag Store<br/>&#40PostgreSQL DB&#41)]
 
 featureflagfeservice --> featureflagbeservice --> featureflagstore
 
