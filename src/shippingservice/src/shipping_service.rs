@@ -1,4 +1,4 @@
-use opentelemetry::trace::{Span, Tracer};
+use opentelemetry::trace::{mark_span_as_active, Span, Tracer};
 use opentelemetry::{global, propagation::Extractor, KeyValue};
 use shop::shipping_service_server::ShippingService;
 use shop::{GetQuoteRequest, GetQuoteResponse, Money, ShipOrderRequest, ShipOrderResponse};
@@ -60,7 +60,9 @@ impl ShippingService for ShippingServer {
         // We may want to ask another service for product pricing / info
         // (although now everything is assumed to be the same price)
         // check out the create_quote_from_count method to see how we use the span created here
-        global::tracer("shippingservice/get-quote").start_with_context("get-quote", &parent_cx);
+        let tracer = global::tracer("shippingservice/get-quote");
+        let span = tracer.start_with_context("get-quote", &parent_cx);
+        let _guard = mark_span_as_active(span);
 
         let q = create_quote_from_count(itemct);
         let reply = GetQuoteResponse {
