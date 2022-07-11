@@ -33,7 +33,6 @@ services:
   # Redis
   redis-cart:
     image: redis:alpine
-    container_name: redis-cart
     ports:
       - "${REDIS_PORT}"
 
