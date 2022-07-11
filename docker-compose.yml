@@ -4,7 +4,6 @@ services:
   # Jaeger
   jaeger:
     image: jaegertracing/all-in-one
-    container_name: jaeger
     ports:
       - "5775:5775"
       - "5778:5778"
@@ -21,7 +20,6 @@ services:
   # Collector
   otelcol:
     image: otel/opentelemetry-collector:0.52.0
-    container_name: otelcol
     command: [ "--config=/etc/otelcol-config.yml" ]
     volumes:
       - ./src/otelcollector/otelcol-config.yml:/etc/otelcol-config.yml
@@ -42,7 +40,6 @@ services:
   # AdService
   adservice:
     image: ${IMAGE_NAME}:${IMAGE_VERSION}-adservice
-    container_name: adservice
     build:
       context: ./
       dockerfile: ./src/adservice/Dockerfile
@@ -58,7 +55,6 @@ services:
   # CartService
   cartservice:
     image: ${IMAGE_NAME}:${IMAGE_VERSION}-cartservice
-    container_name: cartservice
     build:
       context: ./
       dockerfile: ./src/cartservice/src/Dockerfile
@@ -77,7 +73,6 @@ services:
   # CheckoutService
   checkoutservice:
     image: ${IMAGE_NAME}:${IMAGE_VERSION}-checkoutservice
-    container_name: checkoutservice
     build:
       context: ./
       dockerfile: ./src/checkoutservice/Dockerfile
@@ -105,7 +100,6 @@ services:
   # CurrencyService
   currencyservice:
     image: ${IMAGE_NAME}:${IMAGE_VERSION}-currencyservice
-    container_name: currencyservice
     build:
       context: ./
       dockerfile: ./src/currencyservice/Dockerfile
@@ -121,7 +115,6 @@ services:
   # EmailService
   emailservice:
     image: ${IMAGE_NAME}:${IMAGE_VERSION}-emailservice
-    container_name: emailservice
     build:
       context: ./
       dockerfile: ./src/emailservice/Dockerfile
@@ -138,7 +131,6 @@ services:
   # Frontend
   frontend:
     image: ${IMAGE_NAME}:${IMAGE_VERSION}-frontend
-    container_name: frontend
     build:
       context: ./
       dockerfile: ./src/frontend/Dockerfile
@@ -169,7 +161,6 @@ services:
   # PaymentService
   paymentservice:
     image: ${IMAGE_NAME}:${IMAGE_VERSION}-paymentservice
-    container_name: paymentservice
     build:
       context: ./
       dockerfile: ./src/paymentservice/Dockerfile
@@ -185,7 +176,6 @@ services:
   # ProductCatalogService
   productcatalogservice:
     image: ${IMAGE_NAME}:${IMAGE_VERSION}-productcatalogservice
-    container_name: productcatalogservice
     build:
       context: ./
       dockerfile: ./src/productcatalogservice/Dockerfile
@@ -201,7 +191,6 @@ services:
   # RecommendationService
   recommendationservice:
     image: ${IMAGE_NAME}:${IMAGE_VERSION}-recommendationservice
-    container_name: recommendationserice
     build:
       context: ./
       dockerfile: ./src/recommendationservice/Dockerfile
@@ -220,7 +209,6 @@ services:
   # ShippingService
   shippingservice:
     image: ${IMAGE_NAME}:${IMAGE_VERSION}-shippingservice
-    container_name: shippingservice
     build:
       context: ./
       dockerfile: ./src/shippingservice/Dockerfile
@@ -236,7 +224,6 @@ services:
   # FeatureFlagService
   featureflagservice:
     image: ${IMAGE_NAME}:${IMAGE_VERSION}-featureflagservice
-    container_name: featureflagservice
     build:
       context: ./src/featureflagservice
     ports:
@@ -253,7 +240,6 @@ services:
 
   ffs_postgres:
     image: cimg/postgres:14.2
-    container_name: ffs-postgres
     environment:
       - POSTGRES_USER=ffs
       - POSTGRES_DB=ffs
@@ -262,7 +248,6 @@ services:
   # LoadGenerator
   loadgenerator:
     image: ${IMAGE_NAME}:${IMAGE_VERSION}-loadgenerator
-    container_name: loadgenerator
     build:
       context: ./
       dockerfile: ./src/loadgenerator/Dockerfile
