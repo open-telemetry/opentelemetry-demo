@@ -135,7 +135,7 @@ loadgenerator([Load Generator]):::python
 paymentservice(Payment Service):::nodejs
 productcatalogservice(ProductCatalog Service):::golang
 recommendationservice(Recommendation Service):::python
-shippingservice(Shipping Service):::golang
+shippingservice(Shipping Service):::rust
 
 Internet -->|HTTP| frontend
 loadgenerator -->|HTTP| frontend
@@ -215,7 +215,7 @@ Find the **Protocol Buffer Definitions** in the `/pb/` directory.
 | [productcatalogservice](./src/productcatalogservice/README.md) | Go            | Provides the list of products from a JSON file and ability to search products and get individual products.                        |
 | [currencyservice](./src/currencyservice/README.md)             | C++      | Converts one money amount to another currency. Uses real values fetched from European Central Bank. It's the highest QPS service. |
 | [paymentservice](./src/paymentservice/README.md)               | Node.js       | Charges the given credit card info (mock) with the given amount and returns a transaction ID.                                     |
-| [shippingservice](./src/shippingservice/README.md)             | Go            | Gives shipping cost estimates based on the shopping cart. Ships items to the given address (mock)                                 |
+| [shippingservice](./src/shippingservice/README.md)             | Rust            | Gives shipping cost estimates based on the shopping cart. Ships items to the given address (mock)                                 |
 | [emailservice](./src/emailservice/README.md)                   | Ruby        | Sends users an order confirmation email (mock).                                                                                   |
 | [checkoutservice](./src/checkoutservice/README.md)             | Go            | Retrieves user cart, prepares order and orchestrates the payment, shipping and the email notification.                            |
 | [recommendationservice](./src/recommendationservice/README.md) | Python        | Recommends other products based on what's given in the cart.                                                                      |
