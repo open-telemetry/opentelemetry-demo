@@ -220,7 +220,7 @@ Find the **Protocol Buffer Definitions** in the `/pb/` directory.
 | [checkoutservice](./src/checkoutservice/README.md)             | Go            | Retrieves user cart, prepares order and orchestrates the payment, shipping and the email notification.                            |
 | [recommendationservice](./src/recommendationservice/README.md) | Python        | Recommends other products based on what's given in the cart.                                                                      |
 | [adservice](./src/adservice/README.md)                         | Java          | Provides text ads based on given context words.                                                                                   |
-| [featureflagservice](./src/featureflagservice/README.md)                 | Erlang/Elixir | CRUD feature flag service to demonstrate various scenarios like fault injection & how to emit telemetry from a feature flag reliant service.                                             |
+| [featureflagservice](./src/featureflagservice/README.md)         | Erlang/Elixir | CRUD feature flag service to demonstrate various scenarios like fault injection & how to emit telemetry from a feature flag reliant service.                                             |
 | [loadgenerator](./src/loadgenerator/README.md)                 | Python/Locust | Continuously sends requests imitating realistic user shopping flows to the frontend.                                              |
 
 ## Features
