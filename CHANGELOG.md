@@ -27,7 +27,7 @@ significant modifications will be credited to OpenTelemetry Authors.
 ([#150](https://github.com/open-telemetry/opentelemetry-demo-webstore/pull/150))
 * Added manual instrumentation to Ruby email service
 ([#158](https://github.com/open-telemetry/opentelemetry-demo-webstore/pull/158))
-* Added basic metric support and Promethesus storage
+* Added basic metric support and Prometheus storage
 ([#160](https://github.com/open-telemetry/opentelemetry-demo-webstore/pull/160))
 * Added Grafana service and enhanced metric experience
 ([#175](https://github.com/open-telemetry/opentelemetry-demo-webstore/pull/175))
