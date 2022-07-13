@@ -80,11 +80,8 @@ docker compose up
 Once the images are built and containers are started you can access:
 
 - Webstore: <http://localhost:8080/>
-
 - Jaeger: <http://localhost:16686/>
-
 - Prometheus: <http://localhost:9090/>
-
 - Grafana: <http://localhost:3000/>
 
 ## Create Your First Pull Request
@@ -148,7 +145,6 @@ A PR is considered to be **ready to merge** when:
 - It has been open for review for at least one working day. This gives people
   reasonable time to review.
 - Trivial change (typo, cosmetic, doc, etc.) doesn't have to wait for one day.
-- Urgent fix can take exception as long as it has been actively communicated.
 
 Any Maintainer can merge the PR once it is **ready to merge**. Note, that some
 PRs may not be merged immediately if the repo is in the process of a release and
