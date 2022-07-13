@@ -91,8 +91,8 @@ Once the images are built and containers are started you can access:
 
 ### How to Send Pull Requests
 
-Everyone is welcome to contribute code to `opentelemetry-dotnet` via GitHub pull
-requests (PRs).
+Everyone is welcome to contribute code to `opentelemetry-demo-webstore` via
+GitHub pull requests (PRs).
 
 To create a new PR, fork the project in GitHub and clone the upstream repo:
 
@@ -103,7 +103,7 @@ git clone https://github.com/open-telemetry/opentelemetry-demo-webstore.git
 Navigate to the repo root:
 
 ```sh
-cd opentelemetry-dotnet
+cd opentelemetry--demo-webstore
 ```
 
 Add your fork as an origin:
