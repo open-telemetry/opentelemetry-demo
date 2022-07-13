@@ -224,7 +224,8 @@ services:
     image: ${IMAGE_NAME}:${IMAGE_VERSION}-shippingservice
     container_name: shipping-service
     build:
-      context: ./src/shippingservice
+      context: ./
+      dockerfile: ./src/shippingservice/Dockerfile
     ports:
       - "${SHIPPING_SERVICE_PORT}"
     environment:
