@@ -17,8 +17,8 @@ significant modifications will be credited to OpenTelemetry Authors.
 ([#26](https://github.com/open-telemetry/opentelemetry-demo-webstore/pull/26))
 * Added span attributes to frontend service
 ([#82](https://github.com/open-telemetry/opentelemetry-demo-webstore/pull/82))
-* Re-implemented email service using Ruby
-([#109](https://github.com/open-telemetry/opentelemetry-demo-webstore/pull/109))
+* Rewrote shipping service in Rust
+([#35](https://github.com/open-telemetry/opentelemetry-demo-webstore/issues/35))
 * Added feature flag service implementation
 ([#141](https://github.com/open-telemetry/opentelemetry-demo-webstore/pull/141))
 * Added additional attributes to productcatalog service
