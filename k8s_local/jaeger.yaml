@@ -1,0 +1,86 @@
+
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: jaeger
+  labels:
+    app: jaeger
+    component: otel-demo-jaeger
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: jaeger
+      component: otel-demo-jaeger
+  template:
+    metadata:
+      labels:
+        app: jaeger
+        component: otel-demo-jaeger
+        team: team-opentelemetry
+        service: jaeger
+    spec:
+      containers:
+      - name: jaeger
+        image:  jaegertracing/all-in-one
+        imagePullPolicy: IfNotPresent
+        resources:
+          limits:
+            memory: 200Mi
+            cpu: 200m
+          requests:
+            memory: 200Mi
+            cpu: 200m
+        env:
+        - name: HOST_IP
+          valueFrom:
+            fieldRef:
+              fieldPath: status.hostIP
+        - name: COLLECTOR_ZIPKIN_HOST_PORT
+          value: ":9411"
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: jaeger
+  labels:
+    app: jaeger
+    component: otel-demo-jaeger
+spec:
+  clusterIP: None
+  type: ClusterIP
+  ports:
+    - port: 5775
+      protocol: TCP
+      name: port1
+    - port: 5778
+      protocol: TCP
+      name: port2
+    - port: 6831
+      protocol: TCP
+      name: port3
+    - port: 6832
+      protocol: TCP
+      name: port4
+    - port: 9411
+      protocol: TCP
+      name: port5
+    - port: 16686
+      protocol: TCP
+      name: port6
+    - port: 14250
+      protocol: TCP
+      name: port7
+    - port: 14268
+      protocol: TCP
+      name: port8
+    - port: 14269
+      protocol: TCP
+      name: port9
+  selector:
+    app: jaeger
+    component: otel-demo-jaeger
+---

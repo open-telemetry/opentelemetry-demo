@@ -1,0 +1,105 @@
+
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: checkoutservice
+  labels:
+    app: checkoutservice
+    component: otel-demo-checkoutservice
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: checkoutservice
+      component: otel-demo-checkoutservice
+  template:
+    metadata:
+      labels:
+        team: team-opentelemetry
+        service: checkoutservice
+        app: checkoutservice
+        component: otel-demo-checkoutservice
+    spec:
+      containers:
+      - name: checkoutservice
+        image:  otel/demo:v0.2.0-alpha-checkoutservice
+        imagePullPolicy: Always
+        resources:
+          limits:
+            memory: 200Mi
+            cpu: 200m
+          requests:
+            memory: 200Mi
+            cpu: 200m
+        env:
+        - name: MY_POD_IP
+          valueFrom:
+            fieldRef:
+               apiVersion: v1
+               fieldPath: status.podIP
+        - name: OTEL_RESOURCE
+          value: k8s.pod.ip=$(MY_POD_IP)
+        - name: HOST_IP
+          valueFrom:
+            fieldRef:
+              fieldPath: status.hostIP
+        - name: OTEL_AGENT_ENDPOINT
+          value: "$(HOST_IP)"
+        - name: OTEL_EXPORTER_OTLP_ENDPOINT
+          value: "http://$(OTEL_AGENT_ENDPOINT):4318"
+        - name: OTEL_EXPORTER_OTLP_TRACES_ENDPOINT
+          value: "http://$(OTEL_AGENT_ENDPOINT):4317"
+        - name: OTEL_RESOURCE_ATTRIBUTES
+          value: "service.name=checkoutservice,deployment.environment=staging"
+        - name: APP_ENV
+          value: staging
+        - name: CHECKOUT_SERVICE_PORT
+          value: "5050"
+        - name: CART_SERVICE_PORT
+          value: "7070"
+        - name: CART_SERVICE_ADDR
+          value: "cartservice:$(CART_SERVICE_PORT)"
+        - name: CURRENCY_SERVICE_PORT
+          value: "7000"
+        - name: CURRENCY_SERVICE_ADDR
+          value: "currencyservice:$(CURRENCY_SERVICE_PORT)"
+        - name: EMAIL_SERVICE_PORT
+          value: "8080"
+        - name: EMAIL_SERVICE_ADDR
+          value: "http://emailservice:$(EMAIL_SERVICE_PORT)"
+        - name: PAYMENT_SERVICE_PORT
+          value: "50051"
+        - name: PAYMENT_SERVICE_ADDR
+          value: "paymentservice:$(PAYMENT_SERVICE_PORT)"
+        - name: PRODUCT_CATALOG_SERVICE_PORT
+          value: "3550"
+        - name: PRODUCT_CATALOG_SERVICE_ADDR
+          value: "productcatalogservice:$(PRODUCT_CATALOG_SERVICE_PORT)"
+        - name: SHIPPING_SERVICE_PORT
+          value: "50051"
+        - name: SHIPPING_SERVICE_ADDR
+          value: "shippingservice:$(SHIPPING_SERVICE_PORT)"
+
+
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: checkoutservice
+  labels:
+    app: checkoutservice
+    component: otel-demo-checkoutservice
+spec:
+  clusterIP: None
+  type: ClusterIP
+  ports:
+    - port: 5050
+      protocol: TCP
+      name: http
+  selector:
+    app: checkoutservice
+    component: otel-demo-checkoutservice
+---

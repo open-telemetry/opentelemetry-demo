@@ -1,0 +1,99 @@
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: prometheus-config
+  labels:
+    team: team-opentelemetry
+    service: prometheus
+    app: prometheus
+    component: prometheus-config
+data:
+  prometheus-config.yaml: |
+    global:
+      evaluation_interval: 30s
+      scrape_interval: 5s
+    scrape_configs:
+    - job_name: otel
+      static_configs:
+      - targets:
+        - ':9464'
+    - job_name: otel-collector
+      static_configs:
+      - targets:
+        - ':8888'
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: prometheus
+  labels:
+    app: prometheus
+    component: otel-demo-prometheus
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: prometheus
+      component: otel-demo-prometheus
+  template:
+    metadata:
+      labels:
+        app: prometheus
+        component: otel-demo-prometheus
+        team: team-opentelemetry
+        service: prometheus
+    spec:
+      containers:
+      - name: prometheus
+        image:  quay.io/prometheus/prometheus:v2.34.0
+        imagePullPolicy: IfNotPresent
+        command:
+          - /bin/prometheus
+          - --web.console.templates=/etc/prometheus/consoles
+          - --web.console.libraries=/etc/prometheus/console_libraries
+          - --storage.tsdb.retention.time=1h
+          - --config.file=/etc/config/prometheus-config.yaml
+          - --storage.tsdb.path=/prometheus
+          - --web.enable-lifecycle
+          - --web.route-prefix=/
+        resources:
+          limits:
+            memory: 200Mi
+            cpu: 200m
+          requests:
+            memory: 200Mi
+            cpu: 200m
+        env:
+        - name: HOST_IP
+          valueFrom:
+            fieldRef:
+              fieldPath: status.hostIP
+        volumeMounts:
+        - name: config
+          mountPath: /etc/config
+      volumes:
+        - name: config
+          configMap:
+            name: prometheus-config
+          
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: prometheus
+  labels:
+    app: prometheus
+    component: otel-demo-prometheus
+spec:
+  clusterIP: None
+  type: ClusterIP
+  ports:
+    - port: 9464
+      protocol: TCP
+      name: http
+  selector:
+    app: prometheus
+    component: otel-demo-prometheus
+---

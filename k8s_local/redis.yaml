@@ -1,0 +1,60 @@
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: redis
+  labels:
+    app: redis
+    component: otel-demo-redis
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: redis
+      component: otel-demo-redis
+  template:
+    metadata:
+      labels:
+        app: redis
+        component: otel-demo-redis
+        team: team-opentelemetry
+        service: redis
+    spec:
+      containers:
+      - name: redis
+        image:  redis:alpine
+        imagePullPolicy: IfNotPresent
+        resources:
+          limits:
+            memory: 200Mi
+            cpu: 200m
+          requests:
+            memory: 200Mi
+            cpu: 200m
+        env:
+        - name: HOST_IP
+          valueFrom:
+            fieldRef:
+              fieldPath: status.hostIP
+          
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: redis
+  labels:
+    app: redis
+    component: otel-demo-redis
+spec:
+  clusterIP: None
+  type: ClusterIP
+  ports:
+    - port: 6379
+      protocol: TCP
+      name: http
+  selector:
+    app: redis
+    component: otel-demo-redis
+---

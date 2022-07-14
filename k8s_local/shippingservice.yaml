@@ -1,0 +1,77 @@
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: shippingservice
+  labels:
+    app: shippingservice
+    component: otel-demo-shippingservice
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: shippingservice
+      component: otel-demo-shippingservice
+  template:
+    metadata:
+      labels:
+        team: team-opentelemetry
+        service: shippingservice
+        app: shippingservice
+        component: otel-demo-shippingservice
+    spec:
+      containers:
+      - name: shippingservice
+        image:  otel/demo:v0.2.0-alpha-shippingservice
+        imagePullPolicy: Always
+        resources:
+          limits:
+            memory: 200Mi
+            cpu: 200m
+          requests:
+            memory: 200Mi
+            cpu: 200m
+        env:
+        - name: MY_POD_IP
+          valueFrom:
+            fieldRef:
+               apiVersion: v1
+               fieldPath: status.podIP
+        - name: OTEL_RESOURCE
+          value: k8s.pod.ip=$(MY_POD_IP)
+        - name: HOST_IP
+          valueFrom:
+            fieldRef:
+              fieldPath: status.hostIP
+          
+        - name: OTEL_AGENT_ENDPOINT
+          value: "$(HOST_IP)"
+        - name: OTEL_EXPORTER_OTLP_ENDPOINT
+          value: "http://$(OTEL_AGENT_ENDPOINT):4318"
+        - name: OTEL_EXPORTER_OTLP_TRACES_ENDPOINT
+          value: "http://$(OTEL_AGENT_ENDPOINT):4317"
+        - name: OTEL_RESOURCE_ATTRIBUTES
+          value: "service.name=shippingservice,deployment.environment=staging"
+        - name: SHIPPING_SERVICE_PORT
+          value: "50051"
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: shippingservice
+  labels:
+    app: shippingservice
+    component: otel-demo-shippingservice
+spec:
+  clusterIP: None
+  type: ClusterIP
+  ports:
+    - port: 50051
+      protocol: TCP
+      name: http
+  selector:
+    app: shippingservice
+    component: otel-demo-shippingservice
+---

@@ -1,0 +1,222 @@
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: otel-collector
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: otel-collector-role
+rules:
+- apiGroups:
+  - ""
+  resources:
+  - events
+  - namespaces
+  - namespaces/status
+  - nodes
+  - nodes/spec
+  - pods
+  - pods/status
+  - replicationcontrollers
+  - replicationcontrollers/status
+  - resourcequotas
+  - services
+  verbs:
+  - get
+  - list
+  - watch
+- apiGroups:
+  - apps
+  resources:
+  - daemonsets
+  - deployments
+  - replicasets
+  - statefulsets
+  verbs:
+  - get
+  - list
+  - watch
+- apiGroups:
+  - extensions
+  resources:
+  - daemonsets
+  - deployments
+  - replicasets
+  verbs:
+  - get
+  - list
+  - watch
+- apiGroups:
+  - batch
+  resources:
+  - jobs
+  - cronjobs
+  verbs:
+  - get
+  - list
+  - watch
+- apiGroups:
+    - autoscaling
+  resources:
+    - horizontalpodautoscalers
+  verbs:
+    - get
+    - list
+    - watch
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: otel-collector
+subjects:
+- kind: ServiceAccount
+  name: otel-collector
+  namespace: otel
+roleRef:
+  kind: ClusterRole
+  name: otel-collector-role
+  apiGroup: rbac.authorization.k8s.io
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: otel-agent-config
+  labels:
+    team: team-opentelemetry
+    service: otel-agent
+    app: otel-agent
+    component: otel-agent-config
+data:
+  otel-agent-config.yaml: |
+    receivers:
+      k8s_cluster:
+        collection_interval: 10s
+      hostmetrics:
+        scrapers:
+          cpu:
+          disk:
+          filesystem:
+          load:
+          memory:
+          network:
+          processes:
+      otlp:
+        protocols:
+          grpc:
+          http:
+    exporters:
+      jaeger:
+        endpoint: "jaeger:14250"
+        tls:
+          insecure: true
+      logging:
+      prometheus:
+        endpoint: "prometheus:9464"
+
+    processors:
+      resourcedetection:
+        # ensures host.name and other important resource tags 
+        # get picked up
+        detectors: [system, env ]
+        timeout: 5s
+        override: false
+      # adds various tags related to k8s
+      k8sattributes:
+      batch:
+        timeout: 10s
+    service:
+      pipelines:
+        metrics:
+          receivers: [otlp, k8s_cluster,hostmetrics]
+          processors: [batch, k8sattributes, resourcedetection]
+          exporters: [logging,prometheus ]
+
+        traces:
+          receivers: [otlp]
+          processors: [resourcedetection, k8sattributes, batch]
+          exporters: [ logging, jaeger ]
+---
+apiVersion: apps/v1
+kind: DaemonSet
+metadata:
+  name: otel-agent
+  labels:
+    app: otel-agent
+    component: otel-demo-otel-agent
+spec:
+  selector:
+    matchLabels:
+      app: otel-agent
+      component: otel-demo-otel-agent
+  template:
+    metadata:
+      labels:
+        team: team-opentelemetry
+        service: otel-agent
+        app: otel-agent
+        component: otel-demo-otel-agent
+    spec:
+      serviceAccountName: otel-collector
+      containers:
+      - name: collector
+        command:
+          - "/otelcol-contrib"
+          - "--config=/etc/config/otel-agent-config.yaml"
+        image: otel/opentelemetry-collector-contrib:0.55.0
+        imagePullPolicy: IfNotPresent
+        resources:
+          limits:
+            cpu: 1
+            memory: 2Gi
+          requests:
+            cpu: 200m
+            memory: 400Mi
+        env:
+        - name: HOST_IP
+          valueFrom:
+            fieldRef:
+              fieldPath: status.hostIP
+        - name: POD_IP
+          valueFrom:
+            fieldRef:
+              fieldPath: status.podIP
+        - name: OTEL_RESOURCE_ATTRIBUTES
+          value: "k8s.pod.ip=$(POD_IP)"
+        ports:
+        - containerPort: 4318 # default port for OpenTelemetry HTTP receiver.
+          hostPort: 4318
+        - containerPort: 4317 # default port for OpenTelemetry gRPC receiver.
+          hostPort: 4317
+        - containerPort: 8888  # Default endpoint for querying metrics.
+        volumeMounts:
+        - name: config
+          mountPath: /etc/config
+      volumes:
+        - name: config
+          configMap:
+            name: otel-agent-config
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: otel-agent
+  labels:
+    app: otel-agent
+    component: otel-demo-otel-agent
+spec:
+  clusterIP: None
+  type: ClusterIP
+  ports:
+    - port: 4318
+      protocol: TCP
+      name: http
+    - port: 4317
+      name: grpc
+    - port: 8888
+      name: http-metrics
+  selector:
+    app: otel-agent
+    component: otel-demo-otel-agent
+---

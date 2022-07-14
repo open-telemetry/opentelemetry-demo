@@ -1,0 +1,78 @@
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: adservice
+  labels:
+    app: adservice
+    component: otel-demo-adservice
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: adservice
+      component: otel-demo-adservice
+  template:
+    metadata:
+      labels:
+        team: team-opentelemetry
+        service: adservice
+        app: adservice
+        component: otel-demo-adservice
+    spec:
+      containers:
+      - name: adservice
+        image:  otel/demo:v0.2.0-alpha-adservice
+        imagePullPolicy: Always
+        resources:
+          limits:
+            memory: 200Mi
+            cpu: 200m
+          requests:
+            memory: 200Mi
+            cpu: 200m
+        env:
+        - name: MY_POD_IP
+          valueFrom:
+            fieldRef:
+               apiVersion: v1
+               fieldPath: status.podIP
+        - name: OTEL_RESOURCE
+          value: k8s.pod.ip=$(MY_POD_IP)
+        - name: HOST_IP
+          valueFrom:
+            fieldRef:
+              fieldPath: status.hostIP
+        - name: OTEL_AGENT_ENDPOINT
+          value: "$(HOST_IP)"
+        - name: OTEL_EXPORTER_OTLP_ENDPOINT
+          value: "http://$(OTEL_AGENT_ENDPOINT):4318"
+        - name: OTEL_EXPORTER_OTLP_TRACES_ENDPOINT
+          value: "http://$(OTEL_AGENT_ENDPOINT):4317"
+        - name: OTEL_RESOURCE_ATTRIBUTES
+          value: "service.name=adservice,deployment.environment=staging"
+        - name: APP_ENV
+          value: staging
+        - name: AD_SERVICE_PORT
+          value: "9555"
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: adservice
+  labels:
+    app: adservice
+    component: otel-demo-adservice
+spec:
+  clusterIP: None
+  type: ClusterIP
+  ports:
+    - port: 9555
+      protocol: TCP
+      name: http
+  selector:
+    app: adservice
+    component: otel-demo-adservice
+---

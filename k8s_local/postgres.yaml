@@ -1,0 +1,66 @@
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: postgres
+  labels:
+    app: postgres
+    component: otel-demo-postgres
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: postgres
+      component: otel-demo-postgres
+  template:
+    metadata:
+      labels:
+        app: postgres
+        component: otel-demo-postgres
+        team: team-opentelemetry
+        service: postgres
+    spec:
+      containers:
+      - name: postgres
+        image:  cimg/postgres:14.2
+        imagePullPolicy: IfNotPresent
+        resources:
+          limits:
+            memory: 200Mi
+            cpu: 200m
+          requests:
+            memory: 200Mi
+            cpu: 200m
+        env:
+        - name: HOST_IP
+          valueFrom:
+            fieldRef:
+              fieldPath: status.hostIP
+          
+        - name: POSTGRES_USER
+          value: ffs
+        - name: POSTGRES_DB
+          value: ffs
+        - name: POSTGRES_PASSWORD
+          value: ffs
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: postgres
+  labels:
+    app: postgres
+    component: otel-demo-postgres
+spec:
+  clusterIP: None
+  type: ClusterIP
+  ports:
+    - port: 5432
+      protocol: TCP
+      name: http
+  selector:
+    app: postgres
+    component: otel-demo-postgres
+---
