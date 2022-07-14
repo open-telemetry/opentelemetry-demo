@@ -138,7 +138,7 @@ Open a pull request against the main `opentelemetry-demo-webstore` repo.
 A PR is considered to be **ready to merge** when:
 
 - It has received approval from
-  [Approvers](https://github.com/open-telemetry/community/blob/main/community-membership.md#approver).
+  [Approvers](https://github.com/open-telemetry/community/blob/main/community-membership.md#approver)
   /
   [Maintainers](https://github.com/open-telemetry/community/blob/main/community-membership.md#maintainer).
 - Major feedbacks are resolved.
