@@ -1,0 +1,110 @@
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: grafana-config
+  labels:
+    team: team-opentelemetry
+    service: grafana
+    app: grafana
+    component: grafana-config
+data:
+  grafana.ini: |
+    [paths]
+    provisioning = /etc/grafana/provisioning
+    [auth]
+    disable_login_form = true
+    [auth.anonymous]
+    enabled  = true
+    org_name = Main Org.
+    org_role = Admin
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: grafana-provisioning
+  labels:
+    team: team-opentelemetry
+    service: grafana
+    app: grafana
+    component: grafana-provisioning
+data:
+  default.yaml: |
+    apiVersion: 1
+
+    datasources:
+      - name: webstore
+        type: prometheus
+        url: http://prometheus:9090
+        editable: true
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: grafana
+  labels:
+    app: grafana
+    component: otel-demo-grafana
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: grafana
+      component: otel-demo-grafana
+  template:
+    metadata:
+      labels:
+        app: grafana
+        component: otel-demo-grafana
+        team: team-opentelemetry
+        service: grafana
+    spec:
+      containers:
+      - name: grafana
+        image:  grafana/grafana:9.0.1
+        imagePullPolicy: IfNotPresent
+        resources:
+          limits:
+            memory: 200Mi
+            cpu: 100m
+          requests:
+            memory: 200Mi
+            cpu: 100m
+        env:
+        - name: HOST_IP
+          valueFrom:
+            fieldRef:
+              fieldPath: status.hostIP
+        volumeMounts:
+        - name: config
+          mountPath: /etc/grafana
+        - name: provisioning
+          mountPath: /etc/grafana/provisioning/datasources
+      volumes:
+        - name: config
+          configMap:
+            name: grafana-config
+        - name: provisioning
+          configMap:
+            name: grafana-provisioning
+          
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: grafana
+  labels:
+    app: grafana
+    component: otel-demo-grafana
+spec:
+  clusterIP: None
+  type: ClusterIP
+  ports:
+    - port: 3000
+      protocol: TCP
+      name: http
+  selector:
+    app: grafana
+    component: otel-demo-grafana
+---

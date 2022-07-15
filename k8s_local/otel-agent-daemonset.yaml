@@ -113,7 +113,7 @@ data:
           insecure: true
       logging:
       prometheus:
-        endpoint: "prometheus:9464"
+        endpoint: ":9464"
 
     processors:
       resourcedetection:
@@ -171,7 +171,7 @@ spec:
             cpu: 1
             memory: 2Gi
           requests:
-            cpu: 200m
+            cpu: 100m
             memory: 400Mi
         env:
         - name: HOST_IP
@@ -216,6 +216,8 @@ spec:
       name: grpc
     - port: 8888
       name: http-metrics
+    - port: 9464
+      name: prometheus
   selector:
     app: otel-agent
     component: otel-demo-otel-agent

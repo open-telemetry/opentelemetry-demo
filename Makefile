@@ -65,3 +65,81 @@ build-docker-images:
 .PHONY: push-docker-images
 push-docker-images:
 	docker compose -f docker-compose.yml push
+
+
+.PHONY: k8s_local_apply_db
+k8s_local_apply_db:
+	kubectl apply -f k8s_local/redis.yaml
+	kubectl apply -f k8s_local/postgres.yaml
+	kubectl apply -f k8s_local/jaeger.yaml
+	kubectl apply -f k8s_local/prometheus.yaml
+	kubectl apply -f k8s_local/grafana.yaml
+	kubectl apply -f k8s_local/otel-agent-daemonset.yaml
+
+.PHONY: k8s_local_clean_db
+k8s_local_clean_db:
+	kubectl delete deployment redis
+	kubectl delete deployment postgres
+	kubectl delete deployment jaeger
+	kubectl delete deployment prometheus
+	kubectl delete deployment grafana
+	kubectl delete daemonset otel-agent
+	kubectl delete configmaps otel-agent-config
+	kubectl delete configmaps prometheus-config
+	kubectl delete configmaps grafana-config
+	kubectl delete configmaps grafana-provisioning
+	kubectl delete svc redis
+	kubectl delete svc postgres
+	kubectl delete svc jaeger
+	kubectl delete svc prometheus
+	kubectl delete svc grafana
+	kubectl delete svc otel-agent
+
+
+.PHONY: k8s_local_apply_services
+k8s_local_apply_services:
+	kubectl apply -f k8s_local/adservice.yaml
+	kubectl apply -f k8s_local/cartservice.yaml
+	kubectl apply -f k8s_local/checkoutservice.yaml
+	kubectl apply -f k8s_local/currencyservice.yaml
+	kubectl apply -f k8s_local/emailservice.yaml
+	kubectl apply -f k8s_local/featureflagservice.yaml
+	kubectl apply -f k8s_local/frontend.yaml
+	kubectl apply -f k8s_local/paymentservice.yaml
+	kubectl apply -f k8s_local/productcatalogservice.yaml
+	kubectl apply -f k8s_local/recommendationservice.yaml
+	kubectl apply -f k8s_local/shippingservice.yaml
+	kubectl apply -f k8s_local/loadgenerator.yaml
+
+.PHONY: k8s_local_clean_services
+k8s_local_clean_services:
+	kubectl delete deployment loadgenerator
+	kubectl delete deployment adservice
+	kubectl delete deployment cartservice
+	kubectl delete deployment checkoutservice
+	kubectl delete deployment currencyservice
+	kubectl delete deployment emailservice
+	kubectl delete deployment featureflagservice
+	kubectl delete deployment frontend
+	kubectl delete deployment paymentservice
+	kubectl delete deployment productcatalogservice
+	kubectl delete deployment recommendationservice
+	kubectl delete deployment shippingservice
+	kubectl delete svc adservice
+	kubectl delete svc cartservice
+	kubectl delete svc checkoutservice
+	kubectl delete svc currencyservice
+	kubectl delete svc emailservice
+	kubectl delete svc featureflagservice
+	kubectl delete svc frontend
+	kubectl delete svc paymentservice
+	kubectl delete svc productcatalogservice
+	kubectl delete svc recommendationservice
+	kubectl delete svc shippingservice
+
+
+.PHONY: k8s_local_apply
+k8s_local_apply: k8s_local_apply_db k8s_local_apply_services
+
+.PHONY: k8s_local_clean
+k8s_local_clean: k8s_local_clean_services k8s_local_clean_db

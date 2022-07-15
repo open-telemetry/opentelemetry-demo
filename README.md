@@ -223,6 +223,27 @@ Find the **Protocol Buffer Definitions** in the `/pb/` directory.
 | [featureflagservice](./src/featureflagservice/README.md)         | Erlang/Elixir | CRUD feature flag service to demonstrate various scenarios like fault injection & how to emit telemetry from a feature flag reliant service.                                             |
 | [loadgenerator](./src/loadgenerator/README.md)                 | Python/Locust | Continuously sends requests imitating realistic user shopping flows to the frontend.                                              |
 
+## Running on Kubernetes
+To Run the demo on kubernetes cluseter locally like minikube or docker kubernetes , we can apply the config present in `k8s_local` directory . Please be aware that this will deploy the application to the context kubectl is set to. 
+
+```
+make k8s_local_apply
+```
+We can port-forward to view ui, prometheus , jaeger & grafana . We can do port-forward to the services using the script `k8s_local/port_forward.sh`. Once the port-forward is successful we can view 
+
+- Webstore: <http://localhost:8080/>
+
+- Jaeger: <http://localhost:16686/>
+
+- Prometheus: <http://localhost:9090/>
+
+- Grafana: <http://localhost:3000/>
+
+To clean up the setup from kubernetes cluster run the command (please make sure you are using right kubernetes context ) 
+```
+make k8s_local_clean
+```
+
 ## Features
 
 - **[Kubernetes](https://kubernetes.io)**: the app is designed to run on

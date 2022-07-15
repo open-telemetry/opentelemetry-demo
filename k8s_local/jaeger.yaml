@@ -28,11 +28,11 @@ spec:
         imagePullPolicy: IfNotPresent
         resources:
           limits:
-            memory: 200Mi
-            cpu: 200m
+            memory: 500Mi
+            cpu: 100m
           requests:
             memory: 200Mi
-            cpu: 200m
+            cpu: 100m
         env:
         - name: HOST_IP
           valueFrom:
