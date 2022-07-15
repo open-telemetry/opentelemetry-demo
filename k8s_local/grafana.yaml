@@ -4,7 +4,6 @@ kind: ConfigMap
 metadata:
   name: grafana-config
   labels:
-    team: team-opentelemetry
     service: grafana
     app: grafana
     component: grafana-config
@@ -24,7 +23,6 @@ kind: ConfigMap
 metadata:
   name: grafana-provisioning
   labels:
-    team: team-opentelemetry
     service: grafana
     app: grafana
     component: grafana-provisioning
@@ -56,30 +54,29 @@ spec:
       labels:
         app: grafana
         component: otel-demo-grafana
-        team: team-opentelemetry
         service: grafana
     spec:
       containers:
-      - name: grafana
-        image:  grafana/grafana:9.0.1
-        imagePullPolicy: IfNotPresent
-        resources:
-          limits:
-            memory: 200Mi
-            cpu: 100m
-          requests:
-            memory: 200Mi
-            cpu: 100m
-        env:
-        - name: HOST_IP
-          valueFrom:
-            fieldRef:
-              fieldPath: status.hostIP
-        volumeMounts:
-        - name: config
-          mountPath: /etc/grafana
-        - name: provisioning
-          mountPath: /etc/grafana/provisioning/datasources
+        - name: grafana
+          image: grafana/grafana:9.0.1
+          imagePullPolicy: IfNotPresent
+          resources:
+            limits:
+              memory: 200Mi
+              cpu: 100m
+            requests:
+              memory: 200Mi
+              cpu: 100m
+          env:
+            - name: HOST_IP
+              valueFrom:
+                fieldRef:
+                  fieldPath: status.hostIP
+          volumeMounts:
+            - name: config
+              mountPath: /etc/grafana
+            - name: provisioning
+              mountPath: /etc/grafana/provisioning/datasources
       volumes:
         - name: config
           configMap:
@@ -87,8 +84,6 @@ spec:
         - name: provisioning
           configMap:
             name: grafana-provisioning
-          
-
 ---
 apiVersion: v1
 kind: Service

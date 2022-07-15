@@ -1,4 +1,3 @@
-
 ---
 apiVersion: apps/v1
 kind: Deployment
@@ -16,83 +15,81 @@ spec:
   template:
     metadata:
       labels:
-        team: team-opentelemetry
         service: frontend
         app: frontend
         component: otel-demo-frontend
     spec:
       containers:
-      - name: frontend
-        image:  otel/demo:v0.2.0-alpha-frontend
-        imagePullPolicy: Always
-        resources:
-          limits:
-            memory: 200Mi
-            cpu: 100m
-          requests:
-            memory: 200Mi
-            cpu: 100m
-        env:
-        - name: MY_POD_IP
-          valueFrom:
-            fieldRef:
-               apiVersion: v1
-               fieldPath: status.podIP
-        - name: OTEL_RESOURCE
-          value: k8s.pod.ip=$(MY_POD_IP)
-        - name: HOST_IP
-          valueFrom:
-            fieldRef:
-              fieldPath: status.hostIP
-        - name: OTEL_AGENT_ENDPOINT
-          value: "$(HOST_IP)"
-        - name: OTEL_EXPORTER_OTLP_ENDPOINT
-          value: "http://$(OTEL_AGENT_ENDPOINT):4318"
-        - name: OTEL_EXPORTER_OTLP_TRACES_ENDPOINT
-          value: "http://$(OTEL_AGENT_ENDPOINT):4317"
-        - name: OTEL_RESOURCE_ATTRIBUTES
-          value: "service.name=frontend,,deployment.environment=staging"
-        - name: AD_SERVICE_PORT
-          value: "9555"
-        - name: AD_SERVICE_ADDR
-          value: "adservice:$(AD_SERVICE_PORT)"
-        - name: CART_SERVICE_PORT
-          value: "7070"
-        - name: CART_SERVICE_ADDR
-          value: "cartservice:$(CART_SERVICE_PORT)"
-        - name: CHECKOUT_SERVICE_PORT
-          value: "5050"
-        - name: CHECKOUT_SERVICE_ADDR
-          value: "checkoutservice:$(CHECKOUT_SERVICE_PORT)"
-        - name: CURRENCY_SERVICE_PORT
-          value: "7000"
-        - name: CURRENCY_SERVICE_ADDR
-          value: "currencyservice:$(CURRENCY_SERVICE_PORT)"
-        - name: EMAIL_SERVICE_PORT
-          value: "8080"
-        - name: EMAIL_SERVICE_ADDR
-          value: "http://emailservice:$(EMAIL_SERVICE_PORT)"
-        - name: FRONTEND_PORT
-          value: "8080"
-        - name: FRONTEND_ADDR
-          value: ":$(FRONTEND_PORT)"
-        - name: PAYMENT_SERVICE_PORT
-          value: "50051"
-        - name: PAYMENT_SERVICE_ADDR
-          value: "paymentservice:$(PAYMENT_SERVICE_PORT)"
-        - name: PRODUCT_CATALOG_SERVICE_PORT
-          value: "3550"
-        - name: PRODUCT_CATALOG_SERVICE_ADDR
-          value: "productcatalogservice:$(PRODUCT_CATALOG_SERVICE_PORT)"
-        - name: RECOMMENDATION_SERVICE_PORT
-          value: "9001"
-        - name: RECOMMENDATION_SERVICE_ADDR
-          value: "recommendationservice:$(RECOMMENDATION_SERVICE_PORT)"
-        - name: SHIPPING_SERVICE_PORT
-          value: "50051"
-        - name: SHIPPING_SERVICE_ADDR
-          value: "shippingservice:$(SHIPPING_SERVICE_PORT)"
-
+        - name: frontend
+          image: otel/demo:${DOCKER_IMAGE_VERSION}-frontend
+          imagePullPolicy: Always
+          resources:
+            limits:
+              memory: 200Mi
+              cpu: 100m
+            requests:
+              memory: 200Mi
+              cpu: 100m
+          env:
+            - name: MY_POD_IP
+              valueFrom:
+                fieldRef:
+                  apiVersion: v1
+                  fieldPath: status.podIP
+            - name: OTEL_RESOURCE
+              value: k8s.pod.ip=$(MY_POD_IP)
+            - name: HOST_IP
+              valueFrom:
+                fieldRef:
+                  fieldPath: status.hostIP
+            - name: OTEL_AGENT_ENDPOINT
+              value: "$(HOST_IP)"
+            - name: OTEL_EXPORTER_OTLP_ENDPOINT
+              value: "http://$(OTEL_AGENT_ENDPOINT):4318"
+            - name: OTEL_EXPORTER_OTLP_TRACES_ENDPOINT
+              value: "http://$(OTEL_AGENT_ENDPOINT):4317"
+            - name: OTEL_RESOURCE_ATTRIBUTES
+              value: "service.name=frontend,,deployment.environment=staging"
+            - name: AD_SERVICE_PORT
+              value: "9555"
+            - name: AD_SERVICE_ADDR
+              value: "adservice:$(AD_SERVICE_PORT)"
+            - name: CART_SERVICE_PORT
+              value: "7070"
+            - name: CART_SERVICE_ADDR
+              value: "cartservice:$(CART_SERVICE_PORT)"
+            - name: CHECKOUT_SERVICE_PORT
+              value: "5050"
+            - name: CHECKOUT_SERVICE_ADDR
+              value: "checkoutservice:$(CHECKOUT_SERVICE_PORT)"
+            - name: CURRENCY_SERVICE_PORT
+              value: "7000"
+            - name: CURRENCY_SERVICE_ADDR
+              value: "currencyservice:$(CURRENCY_SERVICE_PORT)"
+            - name: EMAIL_SERVICE_PORT
+              value: "8080"
+            - name: EMAIL_SERVICE_ADDR
+              value: "http://emailservice:$(EMAIL_SERVICE_PORT)"
+            - name: FRONTEND_PORT
+              value: "8080"
+            - name: FRONTEND_ADDR
+              value: ":$(FRONTEND_PORT)"
+            - name: PAYMENT_SERVICE_PORT
+              value: "50051"
+            - name: PAYMENT_SERVICE_ADDR
+              value: "paymentservice:$(PAYMENT_SERVICE_PORT)"
+            - name: PRODUCT_CATALOG_SERVICE_PORT
+              value: "3550"
+            - name: PRODUCT_CATALOG_SERVICE_ADDR
+              value: "productcatalogservice:$(PRODUCT_CATALOG_SERVICE_PORT)"
+            - name: RECOMMENDATION_SERVICE_PORT
+              value: "9001"
+            - name: RECOMMENDATION_SERVICE_ADDR
+              value: "recommendationservice:$(RECOMMENDATION_SERVICE_PORT)"
+            - name: SHIPPING_SERVICE_PORT
+              value: "50051"
+            - name: SHIPPING_SERVICE_ADDR
+              value: "shippingservice:$(SHIPPING_SERVICE_PORT)"
 ---
 apiVersion: v1
 kind: Service

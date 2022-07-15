@@ -15,46 +15,44 @@ spec:
   template:
     metadata:
       labels:
-        team: team-opentelemetry
         service: productcatalogservice
         app: productcatalogservice
         component: otel-demo-productcatalogservice
     spec:
       containers:
-      - name: productcatalogservice
-        image:  otel/demo:v0.2.0-alpha-productcatalogservice
-        imagePullPolicy: Always
-        resources:
-          limits:
-            memory: 200Mi
-            cpu: 100m
-          requests:
-            memory: 200Mi
-            cpu: 100m
-        env:
-        - name: MY_POD_IP
-          valueFrom:
-            fieldRef:
-               apiVersion: v1
-               fieldPath: status.podIP
-        - name: OTEL_RESOURCE
-          value: k8s.pod.ip=$(MY_POD_IP)
-        - name: HOST_IP
-          valueFrom:
-            fieldRef:
-              fieldPath: status.hostIP
-          
-        - name: OTEL_AGENT_ENDPOINT
-          value: "$(HOST_IP)"
-        - name: OTEL_EXPORTER_OTLP_ENDPOINT
-          value: "http://$(OTEL_AGENT_ENDPOINT):4318"
-        - name: OTEL_EXPORTER_OTLP_TRACES_ENDPOINT
-          value: "http://$(OTEL_AGENT_ENDPOINT):4317"
-        - name: OTEL_RESOURCE_ATTRIBUTES
-          value: "service.name=productcatalogservice,deployment.environment=staging"
-        - name: PRODUCT_CATALOG_SERVICE_PORT
-          value: "3550"
-
+        - name: productcatalogservice
+          image: otel/demo:${DOCKER_IMAGE_VERSION}-productcatalogservice
+          imagePullPolicy: Always
+          resources:
+            limits:
+              memory: 200Mi
+              cpu: 100m
+            requests:
+              memory: 200Mi
+              cpu: 100m
+          env:
+            - name: MY_POD_IP
+              valueFrom:
+                fieldRef:
+                  apiVersion: v1
+                  fieldPath: status.podIP
+            - name: OTEL_RESOURCE
+              value: k8s.pod.ip=$(MY_POD_IP)
+            - name: HOST_IP
+              valueFrom:
+                fieldRef:
+                  fieldPath: status.hostIP
+            - name: OTEL_AGENT_ENDPOINT
+              value: "$(HOST_IP)"
+            - name: OTEL_EXPORTER_OTLP_ENDPOINT
+              value: "http://$(OTEL_AGENT_ENDPOINT):4318"
+            - name: OTEL_EXPORTER_OTLP_TRACES_ENDPOINT
+              value: "http://$(OTEL_AGENT_ENDPOINT):4317"
+            - name: OTEL_RESOURCE_ATTRIBUTES
+              value: "service.name=productcatalogservice,
+              deployment.environment=staging"
+            - name: PRODUCT_CATALOG_SERVICE_PORT
+              value: "3550"
 ---
 apiVersion: v1
 kind: Service

@@ -224,12 +224,24 @@ Find the **Protocol Buffer Definitions** in the `/pb/` directory.
 | [loadgenerator](./src/loadgenerator/README.md)                 | Python/Locust | Continuously sends requests imitating realistic user shopping flows to the frontend.                                              |
 
 ## Running on Kubernetes
-To Run the demo on kubernetes cluseter locally like minikube or docker kubernetes , we can apply the config present in `k8s_local` directory . Please be aware that this will deploy the application to the context kubectl is set to. 
 
-```
+To Run the demo on kubernetes cluseter locally like minikube or docker
+kubernetes, we can apply the config present in `k8s_local` directory.
+Please be aware that this will deploy the application to the context.
+`kubectl` is set to.
+
+```shell
 make k8s_local_apply
 ```
-We can port-forward to view ui, prometheus , jaeger & grafana . We can do port-forward to the services using the script `k8s_local/port_forward.sh`. Once the port-forward is successful we can view 
+
+We can port-forward to view ui, prometheus , jaeger & grafana .
+We can do port-forward to the services using the script.
+
+```shell
+k8s_local/port_forward.sh
+```
+
+Once the port-forward is successful we can view
 
 - Webstore: <http://localhost:8080/>
 
@@ -239,8 +251,11 @@ We can port-forward to view ui, prometheus , jaeger & grafana . We can do port-f
 
 - Grafana: <http://localhost:3000/>
 
-To clean up the setup from kubernetes cluster run the command (please make sure you are using right kubernetes context ) 
-```
+To clean up the setup from kubernetes cluster run the command.
+Please make sure you are using right kubernetes context.
+The command will fail at first error
+
+```shell
 make k8s_local_clean
 ```
 

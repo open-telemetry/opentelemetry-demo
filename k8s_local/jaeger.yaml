@@ -1,5 +1,3 @@
-
-
 ---
 apiVersion: apps/v1
 kind: Deployment
@@ -19,28 +17,26 @@ spec:
       labels:
         app: jaeger
         component: otel-demo-jaeger
-        team: team-opentelemetry
         service: jaeger
     spec:
       containers:
-      - name: jaeger
-        image:  jaegertracing/all-in-one
-        imagePullPolicy: IfNotPresent
-        resources:
-          limits:
-            memory: 500Mi
-            cpu: 100m
-          requests:
-            memory: 200Mi
-            cpu: 100m
-        env:
-        - name: HOST_IP
-          valueFrom:
-            fieldRef:
-              fieldPath: status.hostIP
-        - name: COLLECTOR_ZIPKIN_HOST_PORT
-          value: ":9411"
-
+        - name: jaeger
+          image: jaegertracing/all-in-one
+          imagePullPolicy: IfNotPresent
+          resources:
+            limits:
+              memory: 500Mi
+              cpu: 100m
+            requests:
+              memory: 200Mi
+              cpu: 100m
+          env:
+            - name: HOST_IP
+              valueFrom:
+                fieldRef:
+                  fieldPath: status.hostIP
+            - name: COLLECTOR_ZIPKIN_HOST_PORT
+              value: ":9411"
 ---
 apiVersion: v1
 kind: Service

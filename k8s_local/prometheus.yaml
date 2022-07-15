@@ -4,7 +4,6 @@ kind: ConfigMap
 metadata:
   name: prometheus-config
   labels:
-    team: team-opentelemetry
     service: prometheus
     app: prometheus
     component: prometheus-config
@@ -41,43 +40,40 @@ spec:
       labels:
         app: prometheus
         component: otel-demo-prometheus
-        team: team-opentelemetry
         service: prometheus
     spec:
       containers:
-      - name: prometheus
-        image:  quay.io/prometheus/prometheus:v2.34.0
-        imagePullPolicy: IfNotPresent
-        command:
-          - /bin/prometheus
-          - --web.console.templates=/etc/prometheus/consoles
-          - --web.console.libraries=/etc/prometheus/console_libraries
-          - --storage.tsdb.retention.time=1h
-          - --config.file=/etc/config/prometheus-config.yaml
-          - --storage.tsdb.path=/prometheus
-          - --web.enable-lifecycle
-          - --web.route-prefix=/
-        resources:
-          limits:
-            memory: 200Mi
-            cpu: 100m
-          requests:
-            memory: 200Mi
-            cpu: 100m
-        env:
-        - name: HOST_IP
-          valueFrom:
-            fieldRef:
-              fieldPath: status.hostIP
-        volumeMounts:
-        - name: config
-          mountPath: /etc/config
+        - name: prometheus
+          image: quay.io/prometheus/prometheus:v2.34.0
+          imagePullPolicy: IfNotPresent
+          command:
+            - /bin/prometheus
+            - --web.console.templates=/etc/prometheus/consoles
+            - --web.console.libraries=/etc/prometheus/console_libraries
+            - --storage.tsdb.retention.time=1h
+            - --config.file=/etc/config/prometheus-config.yaml
+            - --storage.tsdb.path=/prometheus
+            - --web.enable-lifecycle
+            - --web.route-prefix=/
+          resources:
+            limits:
+              memory: 200Mi
+              cpu: 100m
+            requests:
+              memory: 200Mi
+              cpu: 100m
+          env:
+            - name: HOST_IP
+              valueFrom:
+                fieldRef:
+                  fieldPath: status.hostIP
+          volumeMounts:
+            - name: config
+              mountPath: /etc/config
       volumes:
         - name: config
           configMap:
             name: prometheus-config
-          
-
 ---
 apiVersion: v1
 kind: Service

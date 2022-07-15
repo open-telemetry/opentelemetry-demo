@@ -15,47 +15,45 @@ spec:
   template:
     metadata:
       labels:
-        team: team-opentelemetry
         service: emailservice
         app: emailservice
         component: otel-demo-emailservice
     spec:
       containers:
-      - name: emailservice
-        image:  otel/demo:v0.2.0-alpha-emailservice
-        imagePullPolicy: Always
-        resources:
-          limits:
-            memory: 200Mi
-            cpu: 100m
-          requests:
-            memory: 200Mi
-            cpu: 100m
-        env:
-        - name: MY_POD_IP
-          valueFrom:
-            fieldRef:
-               apiVersion: v1
-               fieldPath: status.podIP
-        - name: OTEL_RESOURCE
-          value: k8s.pod.ip=$(MY_POD_IP)
-        - name: HOST_IP
-          valueFrom:
-            fieldRef:
-              fieldPath: status.hostIP
-        - name: OTEL_AGENT_ENDPOINT
-          value: "$(HOST_IP)"
-        - name: OTEL_EXPORTER_OTLP_ENDPOINT
-          value: "http://$(OTEL_AGENT_ENDPOINT):4318"
-        - name: OTEL_EXPORTER_OTLP_TRACES_ENDPOINT
-          value: "http://$(OTEL_AGENT_ENDPOINT):4317"
-        - name: OTEL_RESOURCE_ATTRIBUTES
-          value: "service.name=emailservice,deployment.environment=staging"
-        - name: PORT
-          value: "8080"
-        - name: APP_ENV
-          value: staging
-
+        - name: emailservice
+          image: otel/demo:${DOCKER_IMAGE_VERSION}-emailservice
+          imagePullPolicy: Always
+          resources:
+            limits:
+              memory: 200Mi
+              cpu: 100m
+            requests:
+              memory: 200Mi
+              cpu: 100m
+          env:
+            - name: MY_POD_IP
+              valueFrom:
+                fieldRef:
+                  apiVersion: v1
+                  fieldPath: status.podIP
+            - name: OTEL_RESOURCE
+              value: k8s.pod.ip=$(MY_POD_IP)
+            - name: HOST_IP
+              valueFrom:
+                fieldRef:
+                  fieldPath: status.hostIP
+            - name: OTEL_AGENT_ENDPOINT
+              value: "$(HOST_IP)"
+            - name: OTEL_EXPORTER_OTLP_ENDPOINT
+              value: "http://$(OTEL_AGENT_ENDPOINT):4318"
+            - name: OTEL_EXPORTER_OTLP_TRACES_ENDPOINT
+              value: "http://$(OTEL_AGENT_ENDPOINT):4317"
+            - name: OTEL_RESOURCE_ATTRIBUTES
+              value: "service.name=emailservice,deployment.environment=staging"
+            - name: PORT
+              value: "8080"
+            - name: APP_ENV
+              value: staging
 ---
 apiVersion: v1
 kind: Service
