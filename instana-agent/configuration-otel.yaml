@@ -1,0 +1,25 @@
+com.instana.plugin.opentelemetry:
+  enabled: true
+
+com.instana.ignore:
+  arguments:
+    - '-javaagent:/opt/otel/opentelemetry-javaagent-all.jar'
+
+com.instana.tracing:
+  extra-http-headers:
+    - traceparent
+    - tracestate
+
+# otel-demo configurations
+com.instana.plugin.postgresql:
+  user: 'ffs'
+  password: 'ffs'
+  database: 'ffs'
+
+com.instana.plugin.python:
+  autotrace:
+    enabled: false
+
+com.instana.plugin.php:
+  tracing:
+    enabled: false

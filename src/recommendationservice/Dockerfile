@@ -21,6 +21,7 @@ COPY ./pb/ ./proto/
 
 RUN pip install --upgrade pip
 RUN pip install -r ./requirements.txt
+RUN pip install instana
 
 RUN opentelemetry-bootstrap -a install
 

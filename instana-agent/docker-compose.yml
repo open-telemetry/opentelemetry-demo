@@ -1,0 +1,39 @@
+version: "3"
+services:
+  instana-agent:
+    image: icr.io/instana/agent:latest
+    container_name: instana-agent
+    pid: "host"
+    privileged: true
+    # network_mode: host
+    networks: 
+      - opentelemetry-demo
+    expose:
+      - "42699"
+      - "4317"
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - /dev:/dev
+      - /sys:/sys
+      - /var/log:/var/log
+      - ./configuration-otel.yaml:/opt/instana/agent/etc/instana/configuration-otel.yaml
+      #- ./com.instana.agent.main.sender.File.cfg:/opt/instana/agent/etc/instana/com.instana.agent.main.sender.File.cfg
+    environment:
+      - INSTANA_AGENT_ENDPOINT=${INSTANA_AGENT_ENDPOINT:?No agent endpoint provided}
+      - INSTANA_AGENT_ENDPOINT_PORT=${INSTANA_AGENT_ENDPOINT_PORT:-443}
+      - INSTANA_AGENT_KEY=${INSTANA_AGENT_KEY:?No agent key provided}
+      - INSTANA_DOWNLOAD_KEY=${INSTANA_DOWNLOAD_KEY}
+      - INSTANA_AGENT_ZONE=${INSTANA_AGENT_ZONE:-otel-demo-webstore}
+      # - INSTANA_MVN_REPOSITORY_FEATURES_PATH=artifactory/features-internal@id=features@snapshots@snapshotsUpdate=always
+      # - INSTANA_MVN_REPOSITORY_SHARED_PATH=artifactory/shared@id=shared@snapshots@snapshotsUpdate=always
+      - INSTANA_AGENT_PROXY_HOST=${INSTANA_AGENT_PROXY_HOST}
+      - INSTANA_AGENT_PROXY_PORT=${INSTANA_AGENT_PROXY_PORT}
+      - INSTANA_REPOSITORY_PROXY_ENABLED=true
+      - INSTANA_REPOSITORY_PROXY_HOST=${INSTANA_REPOSITORY_PROXY_HOST}
+      - INSTANA_REPOSITORY_PROXY_PORT=${INSTANA_REPOSITORY_PROXY_PORT}
+      - HTTP_PROXY=${http_proxy}
+      - HTTPS_PROXY=${https_proxy}
+      - NO_PROXY=${no_proxy}
+networks:
+  opentelemetry-demo:
+    external: true

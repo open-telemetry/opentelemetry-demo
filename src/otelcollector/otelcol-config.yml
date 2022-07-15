@@ -9,10 +9,18 @@ receivers:
             - "https://*"
 
 exporters:
-  otlp:
+  otlp/jaeger:
     endpoint: "jaeger:4317"
     tls:
       insecure: true
+  otlp/instana:
+    endpoint: "192.168.26.80:4317"
+    tls:
+      insecure: true
+  instana:
+    # loglevel: debug
+    endpoint: https://serverless-orange-saas.instana.io
+    agent_key: <insert your agent key>
   logging:
   prometheus:
     endpoint: "otelcol:9464"
@@ -27,8 +35,8 @@ service:
     traces:
       receivers: [otlp]
       processors: [spanmetrics, batch]
-      exporters: [logging, otlp]
+      exporters: [logging, otlp/jaeger, otlp/instana, instana]
     metrics:
       receivers: [otlp]
       processors: [batch]
-      exporters: [prometheus, logging]
+      exporters: [prometheus, logging, otlp/instana]

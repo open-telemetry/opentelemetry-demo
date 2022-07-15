@@ -46,6 +46,7 @@ import (
 	sdkmetric "go.opentelemetry.io/otel/sdk/metric"
 	sdktrace "go.opentelemetry.io/otel/sdk/trace"
 
+	instana "github.com/instana/go-sensor"
 	pb "github.com/open-telemetry/opentelemetry-demo/src/checkoutservice/genproto/hipstershop"
 	"github.com/open-telemetry/opentelemetry-demo/src/checkoutservice/money"
 	healthpb "google.golang.org/grpc/health/grpc_health_v1"
@@ -107,6 +108,7 @@ type checkoutService struct {
 }
 
 func main() {
+	instana.InitSensor(instana.DefaultOptions())
 	var port string
 	mustMapEnv(&port, "CHECKOUT_SERVICE_PORT")
 

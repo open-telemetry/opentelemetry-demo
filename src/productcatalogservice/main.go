@@ -39,6 +39,7 @@ import (
 
 	"google.golang.org/protobuf/encoding/protojson"
 
+	instana "github.com/instana/go-sensor"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/credentials/insecure"
@@ -69,6 +70,7 @@ func initTracerProvider() *sdktrace.TracerProvider {
 }
 
 func main() {
+	instana.InitSensor(instana.DefaultOptions())
 	tp := initTracerProvider()
 	defer func() {
 		if err := tp.Shutdown(context.Background()); err != nil {

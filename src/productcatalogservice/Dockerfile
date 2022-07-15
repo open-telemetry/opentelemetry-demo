@@ -25,6 +25,7 @@ COPY ./pb/ ./proto/
 RUN go mod download
 RUN go get google.golang.org/protobuf/cmd/protoc-gen-go
 RUN go get google.golang.org/grpc/cmd/protoc-gen-go-grpc
+RUN go get github.com/instana/go-sensor
 
 # Build executable
 RUN protoc -I ./proto/ ./proto/demo.proto --go_out=./ --go-grpc_out=./

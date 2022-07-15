@@ -5,6 +5,7 @@ WORKDIR /app
 
 COPY ./src/frontend/package*.json ./
 RUN npm ci
+RUN npm install --save @instana/collector
 
 FROM node:16-alpine AS builder
 RUN apk add --no-cache libc6-compat protobuf-dev protoc
@@ -38,5 +39,6 @@ USER nextjs
 
 ENV PORT 8080
 EXPOSE ${PORT}
+ENV NODE_OPTIONS="--require ./node_modules/@instana/collector/src/immediate"
 
 ENTRYPOINT npm start
