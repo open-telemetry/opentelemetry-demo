@@ -98,19 +98,18 @@ k8s_local_clean_db:
 
 .PHONY: k8s_local_apply_services
 k8s_local_apply_services:
-	export DOCKER_IMAGE_VERSION=v0.2.0-alpha
-	envsubst < k8s_local/adservice.yaml | kubectl apply -f -
-	envsubst < k8s_local/cartservice.yaml | kubectl apply -f -
-	envsubst < k8s_local/checkoutservice.yaml | kubectl apply -f -
-	envsubst < k8s_local/currencyservice.yaml | kubectl apply -f -
-	envsubst < k8s_local/emailservice.yaml | kubectl apply -f -
-	envsubst < k8s_local/featureflagservice.yaml | kubectl apply -f -
-	envsubst < k8s_local/frontend.yaml | kubectl apply -f -
-	envsubst < k8s_local/paymentservice.yaml | kubectl apply -f -
-	envsubst < k8s_local/productcatalogservice.yaml | kubectl apply -f -
-	envsubst < k8s_local/recommendationservice.yaml | kubectl apply -f -
-	envsubst < k8s_local/shippingservice.yaml | kubectl apply -f -
-	envsubst < k8s_local/loadgenerator.yaml | kubectl apply -f -
+	DOCKER_IMAGE_VERSION=v0.2.0-alpha envsubst < k8s_local/adservice.yaml | kubectl apply -f -
+	DOCKER_IMAGE_VERSION=v0.2.0-alpha envsubst < k8s_local/cartservice.yaml | kubectl apply -f -
+	DOCKER_IMAGE_VERSION=v0.2.0-alpha envsubst < k8s_local/checkoutservice.yaml | kubectl apply -f -
+	DOCKER_IMAGE_VERSION=v0.2.0-alpha envsubst < k8s_local/currencyservice.yaml | kubectl apply -f -
+	DOCKER_IMAGE_VERSION=v0.2.0-alpha envsubst < k8s_local/emailservice.yaml | kubectl apply -f -
+	DOCKER_IMAGE_VERSION=v0.2.0-alpha envsubst < k8s_local/featureflagservice.yaml | kubectl apply -f -
+	DOCKER_IMAGE_VERSION=v0.2.0-alpha envsubst < k8s_local/frontend.yaml | kubectl apply -f -
+	DOCKER_IMAGE_VERSION=v0.2.0-alpha envsubst < k8s_local/paymentservice.yaml | kubectl apply -f -
+	DOCKER_IMAGE_VERSION=v0.2.0-alpha envsubst < k8s_local/productcatalogservice.yaml | kubectl apply -f -
+	DOCKER_IMAGE_VERSION=v0.2.0-alpha envsubst < k8s_local/recommendationservice.yaml | kubectl apply -f -
+	DOCKER_IMAGE_VERSION=v0.2.0-alpha envsubst < k8s_local/shippingservice.yaml | kubectl apply -f -
+	DOCKER_IMAGE_VERSION=v0.2.0-alpha envsubst < k8s_local/loadgenerator.yaml | kubectl apply -f -
 
 .PHONY: k8s_local_clean_services
 k8s_local_clean_services:
