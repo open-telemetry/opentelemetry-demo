@@ -212,7 +212,7 @@ func (cs *checkoutService) PlaceOrder(ctx context.Context, req *pb.PlaceOrderReq
 	span.SetAttributes(
 		attribute.String("app.order.id", orderID.String()),
 		shippingTrackingAttribute,
-		attribute.Float64("app.order.shipping.cost", shippingCostFloat),
+		attribute.Float64("app.shipping.cost.total", shippingCostFloat),
 		attribute.Float64("app.order.total.cost", totalPriceFloat),
 		attribute.Int("app.order.items.count", len(prep.orderItems)),
 	)
@@ -262,7 +262,7 @@ func (cs *checkoutService) prepareOrderItemsAndShippingQuoteFromCart(ctx context
 	shippingCostFloat, _ := strconv.ParseFloat(fmt.Sprintf("%d.%02d", shippingPrice.GetUnits(), shippingPrice.GetNanos()/1000000000), 64)
 
 	span.SetAttributes(
-		attribute.Float64("app.order.shipping.cost", shippingCostFloat),
+		attribute.Float64("app.shipping.cost.total", shippingCostFloat),
 		attribute.Int("app.cart.items.count", len(cartItems)),
 		attribute.Int("app.order.items.count", len(orderItems)),
 	)
