@@ -33,7 +33,6 @@ import (
 	"go.opentelemetry.io/otel/exporters/otlp/otlpmetric"
 	"go.opentelemetry.io/otel/exporters/otlp/otlpmetric/otlpmetricgrpc"
 	"go.opentelemetry.io/otel/exporters/otlp/otlptrace/otlptracegrpc"
-	"go.opentelemetry.io/otel/metric"
 	"go.opentelemetry.io/otel/metric/global"
 	"go.opentelemetry.io/otel/propagation"
 	controller "go.opentelemetry.io/otel/sdk/metric/controller/basic"
@@ -103,7 +102,7 @@ func InitTracerProvider() *sdktrace.TracerProvider {
 	return tp
 }
 
-func InitMeterProvider() (metric.MeterProvider, error) {
+func InitMeterProvider() (*controller.Controller, error) {
 	ctx := context.Background()
 
 	client := otlpmetricgrpc.NewClient(
@@ -143,10 +142,15 @@ func main() {
 	}()
 	log.Printf("initialize trace provider done")
 
-	_, err := InitMeterProvider()
+	mp, err := InitMeterProvider()
 	if err != nil {
 		log.Errorf("Error init meter provider: %v", err)
 	}
+	defer func() {
+		if err := mp.Stop(context.Background()); err != nil {
+			log.Printf("Error shutting down meter provider: %v", err)
+		}
+	}()
 	log.Printf("initialize meter provider done")
 
 	ctx := context.Background()

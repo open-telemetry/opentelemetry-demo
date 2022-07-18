@@ -1,0 +1,38 @@
+.github
+docs
+internal
+
+###################################
+# shippingservice
+./src/shippingservice/target
+###################################
+
+###################################
+# currencyservice
+./src/currencyservice/client.js
+./src/currencyservice/node_modules/
+###################################
+
+###################################
+# featureflagservice
+# Common development/test artifacts
+./src/featureflagservice/cover/
+./src/featureflagservice/doc/
+./src/featureflagservice/test/
+./src/featureflagservice/tmp/
+./src/featureflagservice/.elixir_ls
+
+# Mix artifacts
+./src/featureflagservice/_build/
+./src/featureflagservice/deps/
+./src/featureflagservice/*.ez
+
+# Generated on crash by the VM
+./src/featureflagservice/erl_crash.dump
+
+# Static artifacts - These should be fetched and built inside the Docker image
+./src/featureflagservice/assets/node_modules/
+./src/featureflagservice/priv/static/assets/
+./src/featureflagservice/priv/static/cache_manifest.json
+###################################
+

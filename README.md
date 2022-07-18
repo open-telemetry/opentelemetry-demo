@@ -57,7 +57,7 @@ Once the images are built and containers are started you can access:
 
 - Prometheus: <http://localhost:9090/>
 
-- Grafana: <http://localhost:3000>
+- Grafana: <http://localhost:3000/>
 
 ### Bring your own backend
 
@@ -128,14 +128,14 @@ adservice(Ad Service):::java
 cache[(Cache<br/>&#40redis&#41)]
 cartservice(Cart Service):::dotnet
 checkoutservice(Checkout Service):::golang
-currencyservice(Currency Service):::nodejs
+currencyservice(Currency Service):::cpp
 emailservice(Email Service):::ruby
 frontend(Frontend):::golang
 loadgenerator([Load Generator]):::python
 paymentservice(Payment Service):::nodejs
 productcatalogservice(ProductCatalog Service):::golang
 recommendationservice(Recommendation Service):::python
-shippingservice(Shipping Service):::golang
+shippingservice(Shipping Service):::rust
 
 Internet -->|HTTP| frontend
 loadgenerator -->|HTTP| frontend
@@ -146,6 +146,7 @@ checkoutservice --> currencyservice
 checkoutservice --> emailservice
 checkoutservice --> paymentservice
 checkoutservice --> shippingservice
+checkoutservice --> |evalFlag| featureflagfeservice
 
 frontend --> adservice
 frontend --> cartservice
@@ -154,7 +155,15 @@ frontend --> checkoutservice
 frontend --> currencyservice
 frontend --> recommendationservice --> productcatalogservice
 frontend --> shippingservice
+frontend --> |evalFlag| featureflagfeservice
 
+productcatalogservice --> |evalFlag| featureflagfeservice
+
+featureflagbeservice(Flag Server):::erlang
+featureflagfeservice(Flag UI/API):::erlang
+featureflagstore[(Flag Store<br/>&#40PostgreSQL DB&#41)]
+
+featureflagfeservice --> featureflagbeservice --> featureflagstore
 
 end
 classDef java fill:#b07219,color:white;
@@ -175,9 +184,12 @@ subgraph Service Legend
   javasvc(Java):::java
   dotnetsvc(.NET):::dotnet
   golangsvc(Go):::golang
+  cppsvc(C++):::cpp
   rubysvc(Ruby):::ruby
   pythonsvc(Python):::python
   nodesvc(Node.js):::nodejs
+  rustsvc(Rust):::rust
+  erlangsvc(Erlang/Elixir):::erlang
 end
 
 classDef java fill:#b07219,color:white;
@@ -201,13 +213,14 @@ Find the **Protocol Buffer Definitions** in the `/pb/` directory.
 | [frontend](./src/frontend/README.md)                           | Go            | Exposes an HTTP server to serve the website. Does not require signup/login and generates session IDs for all users automatically. |
 | [cartservice](./src/cartservice/README.md)                     | C#            | Stores the items in the user's shopping cart in Redis and retrieves it.                                                           |
 | [productcatalogservice](./src/productcatalogservice/README.md) | Go            | Provides the list of products from a JSON file and ability to search products and get individual products.                        |
-| [currencyservice](./src/currencyservice/README.md)             | Node.js       | Converts one money amount to another currency. Uses real values fetched from European Central Bank. It's the highest QPS service. |
+| [currencyservice](./src/currencyservice/README.md)             | C++      | Converts one money amount to another currency. Uses real values fetched from European Central Bank. It's the highest QPS service. |
 | [paymentservice](./src/paymentservice/README.md)               | Node.js       | Charges the given credit card info (mock) with the given amount and returns a transaction ID.                                     |
-| [shippingservice](./src/shippingservice/README.md)             | Go            | Gives shipping cost estimates based on the shopping cart. Ships items to the given address (mock)                                 |
+| [shippingservice](./src/shippingservice/README.md)             | Rust            | Gives shipping cost estimates based on the shopping cart. Ships items to the given address (mock)                                 |
 | [emailservice](./src/emailservice/README.md)                   | Ruby        | Sends users an order confirmation email (mock).                                                                                   |
 | [checkoutservice](./src/checkoutservice/README.md)             | Go            | Retrieves user cart, prepares order and orchestrates the payment, shipping and the email notification.                            |
 | [recommendationservice](./src/recommendationservice/README.md) | Python        | Recommends other products based on what's given in the cart.                                                                      |
 | [adservice](./src/adservice/README.md)                         | Java          | Provides text ads based on given context words.                                                                                   |
+| [featureflagservice](./src/featureflagservice/README.md)         | Erlang/Elixir | CRUD feature flag service to demonstrate various scenarios like fault injection & how to emit telemetry from a feature flag reliant service.                                             |
 | [loadgenerator](./src/loadgenerator/README.md)                 | Python/Locust | Continuously sends requests imitating realistic user shopping flows to the frontend.                                              |
 
 ## Features
@@ -230,6 +243,9 @@ Find the **Protocol Buffer Definitions** in the `/pb/` directory.
 - **Synthetic Load Generation**: the application demo comes with a background
   job that creates realistic usage patterns on the website using
   [Locust](https://locust.io/) load generator.
+- **[Prometheus](https://prometheus.io/)**: all generated metrics are being
+  sent to Prometheus.
+- **[Grafana](https://grafana.com/)**: all metric dashboards are stored in Grafana.
 
 ## Demos featuring Online Boutique
 
