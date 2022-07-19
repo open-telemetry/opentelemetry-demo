@@ -282,6 +282,7 @@ For edit access, get in touch on
 - [Mikko Viitanen](https://github.com/mviitane), Dynatrace
 - [Penghan Wang](https://github.com/wph95), AppDynamics
 - [Reiley Yang](https://github.com/reyang), Microsoft
+- [Ziqi Zhao](https://github.com/fatsheep9146), Alibaba
 
 ### Thanks to all the people who have contributed
 
