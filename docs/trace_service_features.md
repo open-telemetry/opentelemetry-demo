@@ -45,7 +45,7 @@ tba
 - :construction: [Trace
   Links](https://github.com/open-telemetry/opentelemetry-specification/blob/main/specification/overview.md#links-between-spans)
 - :construction: [Baggage](https://github.com/open-telemetry/opentelemetry-specification/blob/main/specification/baggage/api.md#overview)
-  
+
 ### [Currency Service](../src/currencyservice/README.md)
 
 tba
