@@ -39,10 +39,9 @@ tba
   Creation](https://github.com/open-telemetry/opentelemetry-specification/blob/main/specification/glossary.md#manual-instrumentation)
 - :construction: [Span Data
   Enrichment](https://opentelemetry.io/docs/concepts/glossary/#metadata)
-- :construction: Interprocess Context Propagation
-- :construction: [Intra-service Context
+- :construction: [RPC Context
   Propagation](https://github.com/open-telemetry/opentelemetry-specification/blob/main/specification/context/README.md#context)
-- :construction: [Trace
+- :construction: [Span
   Links](https://github.com/open-telemetry/opentelemetry-specification/blob/main/specification/overview.md#links-between-spans)
 - :construction: [Baggage](https://github.com/open-telemetry/opentelemetry-specification/blob/main/specification/baggage/api.md#overview)
 
@@ -58,10 +57,9 @@ tba
   Creation](https://github.com/open-telemetry/opentelemetry-specification/blob/main/specification/glossary.md#manual-instrumentation)
 - :100: [Span Data
   Enrichment](https://opentelemetry.io/docs/concepts/glossary/#metadata)
-- :100: Interprocess Context Propagation
-- :construction: [Intra-service Context
+- :construction: [RPC Context
   Propagation](https://github.com/open-telemetry/opentelemetry-specification/blob/main/specification/context/README.md#context)
-- :construction: [Trace
+- :construction: [Span
   Links](https://github.com/open-telemetry/opentelemetry-specification/blob/main/specification/overview.md#links-between-spans)
 - :construction: [Baggage](https://github.com/open-telemetry/opentelemetry-specification/blob/main/specification/baggage/api.md#overview)
 
@@ -77,10 +75,9 @@ tba
   Creation](https://github.com/open-telemetry/opentelemetry-specification/blob/main/specification/glossary.md#manual-instrumentation)
 - :100: [Span Data
   Enrichment](https://opentelemetry.io/docs/concepts/glossary/#metadata)
-- :100: Interprocess Context Propagation
-- :construction: [Intra-service Context
+- :construction: [RPC Context
   Propagation](https://github.com/open-telemetry/opentelemetry-specification/blob/main/specification/context/README.md#context)
-- :construction: [Trace
+- :construction: [Span
   Links](https://github.com/open-telemetry/opentelemetry-specification/blob/main/specification/overview.md#links-between-spans)
 - :construction: [Baggage](https://github.com/open-telemetry/opentelemetry-specification/blob/main/specification/baggage/api.md#overview)
 
@@ -92,10 +89,9 @@ tba
   Creation](https://github.com/open-telemetry/opentelemetry-specification/blob/main/specification/glossary.md#manual-instrumentation)
 - :100: [Span Data
   Enrichment](https://opentelemetry.io/docs/concepts/glossary/#metadata)
-- :100: Interprocess Context Propagation
-- :construction: [Intra-service Context
+- :construction: [RPC Context
   Propagation](https://github.com/open-telemetry/opentelemetry-specification/blob/main/specification/context/README.md#context)
-- :construction: [Trace
+- :construction: [Span
   Links](https://github.com/open-telemetry/opentelemetry-specification/blob/main/specification/overview.md#links-between-spans)
 - :construction: [Baggage](https://github.com/open-telemetry/opentelemetry-specification/blob/main/specification/baggage/api.md#overview)
 
@@ -107,10 +103,9 @@ tba
   Creation](https://github.com/open-telemetry/opentelemetry-specification/blob/main/specification/glossary.md#manual-instrumentation)
 - :100: [Span Data
   Enrichment](https://opentelemetry.io/docs/concepts/glossary/#metadata)
-- :construction: Interprocess Context Propagation
-- :construction: [Intra-service Context
+- :construction: [RPC Context
   Propagation](https://github.com/open-telemetry/opentelemetry-specification/blob/main/specification/context/README.md#context)
-- :construction: [Trace
+- :construction: [Span
   Links](https://github.com/open-telemetry/opentelemetry-specification/blob/main/specification/overview.md#links-between-spans)
 - :construction: [Baggage](https://github.com/open-telemetry/opentelemetry-specification/blob/main/specification/baggage/api.md#overview)
 
