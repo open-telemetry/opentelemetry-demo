@@ -44,8 +44,7 @@ tba
   Propagation](https://github.com/open-telemetry/opentelemetry-specification/blob/main/specification/context/README.md#context)
 - :construction: [Trace
   Links](https://github.com/open-telemetry/opentelemetry-specification/blob/main/specification/overview.md#links-between-spans)
-- :construction:
-  [Baggage](https://github.com/open-telemetry/opentelemetry-specification/blob/main/specification/baggage/api.md#overview)
+- :construction: [Baggage](https://github.com/open-telemetry/opentelemetry-specification/blob/main/specification/baggage/api.md#overview)
   
 ### [Currency Service](../src/currencyservice/README.md)
 
@@ -64,8 +63,7 @@ tba
   Propagation](https://github.com/open-telemetry/opentelemetry-specification/blob/main/specification/context/README.md#context)
 - :construction: [Trace
   Links](https://github.com/open-telemetry/opentelemetry-specification/blob/main/specification/overview.md#links-between-spans)
-- :construction:
-  [Baggage](https://github.com/open-telemetry/opentelemetry-specification/blob/main/specification/baggage/api.md#overview)
+- :construction: [Baggage](https://github.com/open-telemetry/opentelemetry-specification/blob/main/specification/baggage/api.md#overview)
 
 ### [Feature Flag Service](../src/featureflagservice/README.md)
 
@@ -84,8 +82,7 @@ tba
   Propagation](https://github.com/open-telemetry/opentelemetry-specification/blob/main/specification/context/README.md#context)
 - :construction: [Trace
   Links](https://github.com/open-telemetry/opentelemetry-specification/blob/main/specification/overview.md#links-between-spans)
-- :construction:
-  [Baggage](https://github.com/open-telemetry/opentelemetry-specification/blob/main/specification/baggage/api.md#overview)
+- :construction: [Baggage](https://github.com/open-telemetry/opentelemetry-specification/blob/main/specification/baggage/api.md#overview)
 
 ### [Payment Service](../src/paymentservice/README.md)
 
@@ -100,8 +97,7 @@ tba
   Propagation](https://github.com/open-telemetry/opentelemetry-specification/blob/main/specification/context/README.md#context)
 - :construction: [Trace
   Links](https://github.com/open-telemetry/opentelemetry-specification/blob/main/specification/overview.md#links-between-spans)
-- :construction:
-  [Baggage](https://github.com/open-telemetry/opentelemetry-specification/blob/main/specification/baggage/api.md#overview)
+- :construction: [Baggage](https://github.com/open-telemetry/opentelemetry-specification/blob/main/specification/baggage/api.md#overview)
 
 ### [Product Catalog Service](../src/productcatalogservice/README.md)
 
@@ -116,8 +112,7 @@ tba
   Propagation](https://github.com/open-telemetry/opentelemetry-specification/blob/main/specification/context/README.md#context)
 - :construction: [Trace
   Links](https://github.com/open-telemetry/opentelemetry-specification/blob/main/specification/overview.md#links-between-spans)
-- :construction:
-  [Baggage](https://github.com/open-telemetry/opentelemetry-specification/blob/main/specification/baggage/api.md#overview)
+- :construction: [Baggage](https://github.com/open-telemetry/opentelemetry-specification/blob/main/specification/baggage/api.md#overview)
 
 ### [Recommendation Service](../src/recommendationservice/README.md)
 
