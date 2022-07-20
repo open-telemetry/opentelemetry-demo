@@ -13,22 +13,6 @@ dep ensure --vendor-only
 - Completed: :100:
 - Not Present (Yet): :construction:
 
-### Traces
-
-- :100: [Instrumentation
-  Libraries](https://opentelemetry.io/docs/concepts/instrumenting-library/)
-- :construction: [Manual Span
-  Creation](https://github.com/open-telemetry/opentelemetry-specification/blob/main/specification/glossary.md#manual-instrumentation)
-- :construction: [Span Data
-  Enrichment](https://opentelemetry.io/docs/instrumentation/net/manual/#add-tags-to-an-activity)
-- :construction: Interprocess Context Propagation
-- :construction: [Intra-service Context
-  Propagation](https://opentelemetry.io/docs/instrumentation/java/manual/#context-propagation)
-- :construction: [Trace
-  Links](https://github.com/open-telemetry/opentelemetry-specification/blob/main/specification/overview.md#links-between-spans)
-- :construction:
-  [Baggage](https://github.com/open-telemetry/opentelemetry-specification/blob/main/specification/baggage/api.md#overview)
-
 ### Metrics
 
 - :construction: [Instrumentation
