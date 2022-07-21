@@ -23,13 +23,19 @@ significant modifications will be credited to OpenTelemetry Authors.
 ([#141](https://github.com/open-telemetry/opentelemetry-demo-webstore/pull/141))
 * Added additional attributes to productcatalog service
 ([#143](https://github.com/open-telemetry/opentelemetry-demo-webstore/pull/143))
-* Added manual instrumentation to Java ad service
+* Added manual instrumentation to ad service
 ([#150](https://github.com/open-telemetry/opentelemetry-demo-webstore/pull/150))
 * Added manual instrumentation to Ruby email service
 ([#158](https://github.com/open-telemetry/opentelemetry-demo-webstore/pull/158))
 * Added basic metric support and Prometheus storage
 ([#160](https://github.com/open-telemetry/opentelemetry-demo-webstore/pull/160))
+* Added manual instrumentation to recommendation service
+([#163](https://github.com/open-telemetry/opentelemetry-demo-webstore/pull/163))
+* Added manual instrumentation to checkout service
+([#164](https://github.com/open-telemetry/opentelemetry-demo-webstore/pull/164))
 * Added Grafana service and enhanced metric experience
 ([#175](https://github.com/open-telemetry/opentelemetry-demo-webstore/pull/175))
+* Enhanced cart service attributes
+([#183](https://github.com/open-telemetry/opentelemetry-demo-webstore/pull/183))
 * Re-implemented currency service using C++
 ([#189](https://github.com/open-telemetry/opentelemetry-demo-webstore/pull/189))

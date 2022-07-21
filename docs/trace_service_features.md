@@ -31,8 +31,6 @@ tba
 
 ### [Checkout Service](../src/checkoutservice/README.md)
 
-### Traces
-
 - :100: [Instrumentation
   Libraries](https://opentelemetry.io/docs/concepts/instrumenting-library/)
 - :construction: [Manual Span
