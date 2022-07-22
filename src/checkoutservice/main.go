@@ -41,8 +41,8 @@ import (
 	"go.opentelemetry.io/otel/propagation"
 	sdktrace "go.opentelemetry.io/otel/sdk/trace"
 
-	pb "github.com/open-telemetry/opentelemetry-demo-webstore/src/checkoutservice/genproto/hipstershop"
-	money "github.com/open-telemetry/opentelemetry-demo-webstore/src/checkoutservice/money"
+	pb "github.com/open-telemetry/opentelemetry-demo/src/checkoutservice/genproto/hipstershop"
+	money "github.com/open-telemetry/opentelemetry-demo/src/checkoutservice/money"
 	healthpb "google.golang.org/grpc/health/grpc_health_v1"
 )
 
