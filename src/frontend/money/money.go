@@ -17,7 +17,7 @@ package money
 import (
 	"errors"
 
-	pb "github.com/opentelemetry/opentelemetry-demo-webstore/src/frontend/genproto/hipstershop"
+	pb "github.com/opentelemetry/opentelemetry-demo/src/frontend/genproto/hipstershop"
 )
 
 const (

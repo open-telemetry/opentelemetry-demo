@@ -19,7 +19,7 @@ import (
 	"net/http"
 	"time"
 
-	"github.com/opentelemetry/opentelemetry-demo-webstore/src/frontend/instr"
+	"github.com/opentelemetry/opentelemetry-demo/src/frontend/instr"
 	"go.opentelemetry.io/otel/metric/global"
 	semconv "go.opentelemetry.io/otel/semconv/v1.10.0"
 	"go.opentelemetry.io/otel/trace"

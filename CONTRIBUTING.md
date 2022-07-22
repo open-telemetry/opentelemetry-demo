@@ -20,7 +20,7 @@ resource for your first contribution, join our Slack channel and find a buddy!
    [otel-community-demo](https://app.slack.com/client/T08PSQ7BQ/C03B4CWV4DA) channel.
 2. Post in the room with an introduction to yourself, what area you are
    interested in (check issues marked with [help
-   wanted](https://github.com/open-telemetry/opentelemetry-demo-webstore/labels/help%20wanted)),
+   wanted](https://github.com/open-telemetry/opentelemetry-demo/labels/help%20wanted)),
    and say you are looking for a buddy. We will match you with someone who has
    experience in that area.
 
@@ -45,7 +45,7 @@ On all platforms, the minimum requirements are:
 - Clone the Webstore Demo repository:
 
 ```shell
-git clone https://github.com/open-telemetry/opentelemetry-demo-webstore.git
+git clone https://github.com/open-telemetry/opentelemetry-demo.git
 ```
 
 ### Open Folder
@@ -53,7 +53,7 @@ git clone https://github.com/open-telemetry/opentelemetry-demo-webstore.git
 - Navigate to the cloned folder:
 
 ```shell
-cd opentelemetry-demo-webstore/
+cd opentelemetry-demo/
 ```
 
 ### Gradle Update [Windows Only]
@@ -88,25 +88,25 @@ Once the images are built and containers are started you can access:
 
 ### How to Send Pull Requests
 
-Everyone is welcome to contribute code to `opentelemetry-demo-webstore` via
+Everyone is welcome to contribute code to `opentelemetry-demo` via
 GitHub pull requests (PRs).
 
 To create a new PR, fork the project in GitHub and clone the upstream repo:
 
 ```sh
-git clone https://github.com/open-telemetry/opentelemetry-demo-webstore.git
+git clone https://github.com/open-telemetry/opentelemetry-demo.git
 ```
 
 Navigate to the repo root:
 
 ```sh
-cd opentelemetry--demo-webstore
+cd opentelemetry--demo
 ```
 
 Add your fork as an origin:
 
 ```sh
-git remote add fork https://github.com/open-telemetry/opentelemetry-demo-webstore.git
+git remote add fork https://github.com/open-telemetry/opentelemetry-demo.git
 ```
 
 Check out a new branch, make modifications and push the branch to your fork:
@@ -118,7 +118,7 @@ $ git commit
 $ git push fork feature
 ```
 
-Open a pull request against the main `opentelemetry-demo-webstore` repo.
+Open a pull request against the main `opentelemetry-demo` repo.
 
 ### How to Receive Comments
 

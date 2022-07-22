@@ -1,4 +1,4 @@
-# Webstore Demo
+# OpenTelemetry Demo
 
 ## Under Construction
 
@@ -17,7 +17,7 @@ This repo is a work in progress. If you'd like to help, check out our
 - Clone the Webstore Demo repository:
 
 ```shell
-git clone https://github.com/open-telemetry/opentelemetry-demo-webstore.git
+git clone https://github.com/open-telemetry/opentelemetry-demo.git
 ```
 
 ### Open Folder
@@ -25,7 +25,7 @@ git clone https://github.com/open-telemetry/opentelemetry-demo-webstore.git
 - Navigate to the cloned folder:
 
 ```shell
-cd opentelemetry-demo-webstore/
+cd opentelemetry-demo/
 ```
 
 ### Gradle Update [Windows Only]
@@ -249,6 +249,7 @@ Find the **Protocol Buffer Definitions** in the `/pb/` directory.
 
 ## Demos featuring Online Boutique
 
+- [Datadog](https://github.com/DataDog/opentelemetry-demo-webstore)
 - [Honeycomb.io](https://github.com/honeycombio/opentelemetry-demo-webstore)
 - [Lightstep](https://github.com/lightstep/opentelemetry-demo-webstore)
 
@@ -267,7 +268,7 @@ For edit access, get in touch on
 [Slack](https://cloud-native.slack.com/archives/C03B4CWV4DA).
 
 [Maintainers](https://github.com/open-telemetry/community/blob/main/community-membership.md#maintainer)
-([@open-telemetry/demo-webstore-maintainers](https://github.com/orgs/open-telemetry/teams/demo-webstore-maintainers)):
+([@open-telemetry/demo-maintainers](https://github.com/orgs/open-telemetry/teams/demo-maintainers)):
 
 - [Austin Parker](https://github.com/austinlparker), Lightstep
 - [Carter Socha](https://github.com/cartersocha), Microsoft
@@ -275,7 +276,7 @@ For edit access, get in touch on
 - [Pierre Tessier](https://github.com/puckpuck), Honeycomb
 
 [Approvers](https://github.com/open-telemetry/community/blob/main/community-membership.md#approver)
-([@open-telemetry/demo-webstore-approvers](https://github.com/orgs/open-telemetry/teams/demo-webstore-approvers)):
+([@open-telemetry/demo-approvers](https://github.com/orgs/open-telemetry/teams/demo-approvers)):
 
 - [Juliano Costa](https://github.com/julianocosta89), Dynatrace
 - [Michael Maxwell](https://github.com/mic-max), Microsoft
@@ -286,4 +287,4 @@ For edit access, get in touch on
 
 ### Thanks to all the people who have contributed
 
-[![contributors](https://contributors-img.web.app/image?repo=open-telemetry/opentelemetry-demo-webstore)](https://github.com/open-telemetry/opentelemetry-demo-webstore/graphs/contributors)
+[![contributors](https://contributors-img.web.app/image?repo=open-telemetry/opentelemetry-demo)](https://github.com/open-telemetry/opentelemetry-demo/graphs/contributors)

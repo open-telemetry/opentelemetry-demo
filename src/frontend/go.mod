@@ -1,4 +1,4 @@
-module github.com/opentelemetry/opentelemetry-demo-webstore/src/frontend
+module github.com/opentelemetry/opentelemetry-demo/src/frontend
 
 go 1.17
 
