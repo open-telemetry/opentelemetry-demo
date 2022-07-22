@@ -561,11 +561,6 @@ similar to that of the hot-products-row.
   border-radius: 20% 0 20% 20%;
 }
 
-select {
-  -webkit-appearance: none;
-  -webkit-border-radius: 0px;
-}
-
 /* Cymbal */
 
 /*

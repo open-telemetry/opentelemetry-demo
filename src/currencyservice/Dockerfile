@@ -10,7 +10,9 @@ RUN apt-get install -qq -y --ignore-missing \
   pkg-config                                \
   protobuf-compiler                         \
   libprotobuf-dev                           \
-  cmake
+  libcurl4-openssl-dev                      \
+  nlohmann-json3-dev                        \
+  cmake                                     
 
 # The following arguments would be passed from docker-compose.yml
 ARG GRPC_VERSION

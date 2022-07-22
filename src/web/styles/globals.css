@@ -1,0 +1,9 @@
+body {
+  background: #f9f9f9;
+  margin: 0px;
+}
+
+select {
+  -webkit-appearance: none;
+  -webkit-border-radius: 0px;
+}

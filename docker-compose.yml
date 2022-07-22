@@ -48,6 +48,7 @@ services:
       context: ./
       dockerfile: ./src/adservice/Dockerfile
     ports:
+      - "${AD_SERVICE_PORT}:${AD_SERVICE_PORT}"
       - "${AD_SERVICE_PORT}"
     environment:
       - AD_SERVICE_PORT
@@ -64,6 +65,7 @@ services:
       context: ./
       dockerfile: ./src/cartservice/src/Dockerfile
     ports:
+      - "${CART_SERVICE_PORT}:${CART_SERVICE_PORT}"
       - "${CART_SERVICE_PORT}"
     environment:
       - CART_SERVICE_PORT
@@ -83,6 +85,7 @@ services:
       context: ./
       dockerfile: ./src/checkoutservice/Dockerfile
     ports:
+      - "${CHECKOUT_SERVICE_PORT}:${CHECKOUT_SERVICE_PORT}"
       - "${CHECKOUT_SERVICE_PORT}"
     environment:
       - CHECKOUT_SERVICE_PORT
@@ -113,6 +116,7 @@ services:
         - GRPC_VERSION=1.46.0
         - OPENTELEMETRY_VERSION=1.4.0
     ports:
+      - "${CURRENCY_SERVICE_PORT}:${CURRENCY_SERVICE_PORT}"
       - "${CURRENCY_SERVICE_PORT}"
     environment:
       - PORT=${CURRENCY_SERVICE_PORT}
@@ -128,6 +132,7 @@ services:
     build:
       context: ./src/emailservice
     ports:
+      - "${EMAIL_SERVICE_PORT}:${EMAIL_SERVICE_PORT}"
       - "${EMAIL_SERVICE_PORT}"
     environment:
       - APP_ENV=production
@@ -176,6 +181,7 @@ services:
       context: ./
       dockerfile: ./src/paymentservice/Dockerfile
     ports:
+      - "${PAYMENT_SERVICE_PORT}:${PAYMENT_SERVICE_PORT}"
       - "${PAYMENT_SERVICE_PORT}"
     environment:
       - PAYMENT_SERVICE_PORT
@@ -192,6 +198,7 @@ services:
       context: ./
       dockerfile: ./src/productcatalogservice/Dockerfile
     ports:
+      - "${PRODUCT_CATALOG_SERVICE_PORT}:${PRODUCT_CATALOG_SERVICE_PORT}"
       - "${PRODUCT_CATALOG_SERVICE_PORT}"
     environment:
       - PRODUCT_CATALOG_SERVICE_PORT
@@ -208,6 +215,7 @@ services:
       context: ./
       dockerfile: ./src/recommendationservice/Dockerfile
     ports:
+      - "${RECOMMENDATION_SERVICE_PORT}:${RECOMMENDATION_SERVICE_PORT}"
       - "${RECOMMENDATION_SERVICE_PORT}"
     depends_on:
       - productcatalogservice
@@ -227,6 +235,7 @@ services:
       context: ./
       dockerfile: ./src/shippingservice/Dockerfile
     ports:
+      - "${SHIPPING_SERVICE_PORT}:${SHIPPING_SERVICE_PORT}"
       - "${SHIPPING_SERVICE_PORT}"
     environment:
       - PORT=${SHIPPING_SERVICE_PORT}
