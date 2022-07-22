@@ -39,5 +39,5 @@ significant modifications will be credited to OpenTelemetry Authors.
 ([#183](https://github.com/open-telemetry/opentelemetry-demo/pull/183))
 * Re-implemented currency service using C++
 ([#189](https://github.com/open-telemetry/opentelemetry-demo/pull/189))
-* Simplified repo name and dropped the  suffix in every place
+* Simplified repo name and dropped the '-webstore' suffix in every place
 ([#225](https://github.com/open-telemetry/opentelemetry-demo/pull/225))
