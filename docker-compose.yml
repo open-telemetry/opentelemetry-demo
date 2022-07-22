@@ -47,8 +47,11 @@ services:
 
   # AdService
   adservice:
-    image: ghcr.io/open-telemetry/demo:v0.2.0-alpha-adservice
+    image: ${IMAGE_NAME}:${IMAGE_VERSION}-adservice
     container_name: ad-service
+    build:
+      context: ./
+      dockerfile: ./src/adservice/Dockerfile
     ports:
       - "${AD_SERVICE_PORT}"
     environment:
@@ -60,8 +63,11 @@ services:
 
   # CartService
   cartservice:
-    image: ghcr.io/open-telemetry/demo:v0.2.0-alpha-cartservice
+    image: ${IMAGE_NAME}:${IMAGE_VERSION}-cartservice
     container_name: cart-service
+    build:
+      context: ./
+      dockerfile: ./src/cartservice/src/Dockerfile
     ports:
       - "${CART_SERVICE_PORT}"
     environment:
@@ -76,8 +82,11 @@ services:
 
   # CheckoutService
   checkoutservice:
-    image: ghcr.io/open-telemetry/demo:v0.2.0-alpha-checkoutservice
+    image: ${IMAGE_NAME}:${IMAGE_VERSION}-checkoutservice
     container_name: checkout-service
+    build:
+      context: ./
+      dockerfile: ./src/checkoutservice/Dockerfile
     ports:
       - "${CHECKOUT_SERVICE_PORT}"
     environment:
@@ -101,8 +110,13 @@ services:
 
   # CurrencyService
   currencyservice:
-    image: ghcr.io/open-telemetry/demo:v0.2.0-alpha-currencyservice
+    image: ${IMAGE_NAME}:${IMAGE_VERSION}-currencyservice
     container_name: currency-service
+    build:
+      context: ./src/currencyservice
+      args:
+        - GRPC_VERSION=1.46.0
+        - OPENTELEMETRY_VERSION=1.4.0
     ports:
       - "${CURRENCY_SERVICE_PORT}"
     environment:
@@ -114,8 +128,10 @@ services:
 
   # EmailService
   emailservice:
-    image: ghcr.io/open-telemetry/demo:v0.2.0-alpha-emailservice
+    image: ${IMAGE_NAME}:${IMAGE_VERSION}-emailservice
     container_name: email-service
+    build:
+      context: ./src/emailservice
     ports:
       - "${EMAIL_SERVICE_PORT}"
     environment:
@@ -128,8 +144,11 @@ services:
 
   # Frontend
   frontend:
-    image: ghcr.io/open-telemetry/demo:v0.2.0-alpha-frontend
+    image: ${IMAGE_NAME}:${IMAGE_VERSION}-frontend
     container_name: frontend
+    build:
+      context: ./
+      dockerfile: ./src/frontend/Dockerfile
     ports:
       - "${FRONTEND_PORT}:${FRONTEND_PORT}"
     environment:
@@ -156,8 +175,11 @@ services:
 
   # PaymentService
   paymentservice:
-    image: ghcr.io/open-telemetry/demo:v0.2.0-alpha-paymentservice
+    image: ${IMAGE_NAME}:${IMAGE_VERSION}-paymentservice
     container_name: payment-service
+    build:
+      context: ./
+      dockerfile: ./src/paymentservice/Dockerfile
     ports:
       - "${PAYMENT_SERVICE_PORT}"
     environment:
@@ -169,8 +191,11 @@ services:
 
   # ProductCatalogService
   productcatalogservice:
-    image: ghcr.io/open-telemetry/demo:v0.2.0-alpha-productcatalogservice
+    image: ${IMAGE_NAME}:${IMAGE_VERSION}-productcatalogservice
     container_name: product-catalog-service
+    build:
+      context: ./
+      dockerfile: ./src/productcatalogservice/Dockerfile
     ports:
       - "${PRODUCT_CATALOG_SERVICE_PORT}"
     environment:
@@ -182,8 +207,11 @@ services:
 
   # RecommendationService
   recommendationservice:
-    image: ghcr.io/open-telemetry/demo:v0.2.0-alpha-recommendationservice
+    image: ${IMAGE_NAME}:${IMAGE_VERSION}-recommendationservice
     container_name: recommendation-service
+    build:
+      context: ./
+      dockerfile: ./src/recommendationservice/Dockerfile
     ports:
       - "${RECOMMENDATION_SERVICE_PORT}"
     depends_on:
@@ -198,8 +226,11 @@ services:
 
   # ShippingService
   shippingservice:
-    image: ghcr.io/open-telemetry/demo:v0.2.0-alpha-shippingservice
+    image: ${IMAGE_NAME}:${IMAGE_VERSION}-shippingservice
     container_name: shipping-service
+    build:
+      context: ./
+      dockerfile: ./src/shippingservice/Dockerfile
     ports:
       - "${SHIPPING_SERVICE_PORT}"
     environment:
@@ -211,8 +242,10 @@ services:
 
   # FeatureFlagService
   featureflagservice:
-    image: ghcr.io/open-telemetry/demo:v0.2.0-alpha-featureflagservice
+    image: ${IMAGE_NAME}:${IMAGE_VERSION}-featureflagservice
     container_name: feature-flag-service
+    build:
+      context: ./src/featureflagservice
     ports:
       - "${FEATURE_FLAG_SERVICE_PORT}:${FEATURE_FLAG_SERVICE_PORT}"
       - "${FEATURE_FLAG_GRPC_SERVICE_PORT}"
@@ -235,8 +268,11 @@ services:
 
   # LoadGenerator
   loadgenerator:
-    image: ghcr.io/open-telemetry/demo:v0.2.0-alpha-loadgenerator
+    image: ${IMAGE_NAME}:${IMAGE_VERSION}-loadgenerator
     container_name: load-generator
+    build:
+      context: ./
+      dockerfile: ./src/loadgenerator/Dockerfile
     environment:
       - FRONTEND_ADDR
       - USERS
