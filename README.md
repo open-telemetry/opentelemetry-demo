@@ -1,5 +1,8 @@
 # OpenTelemetry Demo
 
+[![Slack](https://img.shields.io/badge/slack-@cncf/otel/demo-brightgreen.svg?logo=slack)](https://cloud-native.slack.com/archives/C03B4CWV4DA)
+[![Downloads](https://img.shields.io/docker/pulls/otel/demo)](https://hub.docker.com/r/otel/demo)
+
 ## Under Construction
 
 This repo is a work in progress. If you'd like to help, check out our
