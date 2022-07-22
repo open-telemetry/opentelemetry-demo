@@ -249,6 +249,7 @@ Find the **Protocol Buffer Definitions** in the `/pb/` directory.
 
 ## Demos featuring Online Boutique
 
+- [Datadog](https://github.com/DataDog/opentelemetry-demo-webstore)
 - [Honeycomb.io](https://github.com/honeycombio/opentelemetry-demo-webstore)
 - [Lightstep](https://github.com/lightstep/opentelemetry-demo-webstore)
 
