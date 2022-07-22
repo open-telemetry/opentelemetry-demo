@@ -23,15 +23,13 @@
 
 ### [Ad Service](../src/adservice/README.md)
 
-tba
+TBD
 
 ### [Cart Service](../src/cartservice/README.md)
 
-tba
+TBD
 
 ### [Checkout Service](../src/checkoutservice/README.md)
-
-### Traces
 
 - :100: [Instrumentation
   Libraries](https://opentelemetry.io/docs/concepts/instrumenting-library/)
@@ -47,7 +45,7 @@ tba
 
 ### [Currency Service](../src/currencyservice/README.md)
 
-tba
+TBD
 
 ### [Email Service](../src/emailservice/README.md)
 
@@ -65,7 +63,7 @@ tba
 
 ### [Feature Flag Service](../src/featureflagservice/README.md)
 
-tba
+TBD
 
 ### [Frontend Service](../src/frontend/README.md)
 
@@ -111,8 +109,8 @@ tba
 
 ### [Recommendation Service](../src/recommendationservice/README.md)
 
-tba
+TBD
 
 ### [Shipping Service](../src/shippingservice/README.md)
 
-tba
+TBD
