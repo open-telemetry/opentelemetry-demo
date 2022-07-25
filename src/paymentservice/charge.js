@@ -26,10 +26,19 @@ const tracer = opentelemetry.trace.getTracer('paymentservice')
 module.exports.charge = request => {
   const span = tracer.startSpan('charge')
 
-  const { amount, creditCard } = request
-  const cardNumber = creditCard.creditCardNumber
-  const card = cardValidator(cardNumber)
+  const { creditCardNumber: number,
+    creditCardExpirationYear: year,
+    creditCardExpirationMonth: month
+  } = request.creditCard
+  const { units, nanos, currencyCode } = request.amount
+  const currentMonth = new Date().getMonth() + 1
+  const currentYear = new Date().getFullYear()
+  const lastFourDigits = number.substr(-4)
+  const transactionId = uuidv4()
+
+  const card = cardValidator(number)
   const {card_type: cardType, valid } = card.getCardDetails()
+
   span.setAttributes({
     'app.payment.charge.cardType': cardType,
     'app.payment.charge.valid': valid
@@ -40,18 +49,14 @@ module.exports.charge = request => {
 
   if (!['visa', 'mastercard'].includes(cardType))
     throw new Error(`Sorry, we cannot process ${cardType} credit cards. Only VISA or MasterCard is accepted.`)
-
-  const currentMonth = new Date().getMonth() + 1
-  const currentYear = new Date().getFullYear()
-  const { credit_card_expiration_year: year, credit_card_expiration_month: month } = creditCard
-  const lastFourDigits = cardNumber.substr(-4)
+  
   if ((currentYear * 12 + currentMonth) > (year * 12 + month))
     throw new Error(`The credit card (ending ${lastFourDigits}) expired on ${month}/${year}.`)
 
   span.setAttribute('app.payment.charged', true)
   span.end()
 
-  logger.info(`Transaction processed: ${cardType} ending ${lastFourDigits} | Amount: ${amount.units}.${amount.nanos} ${amount.currencyCode}`)
+  logger.info(`Transaction ${transactionId}: ${cardType} ending ${lastFourDigits} | Amount: ${units}.${nanos} ${currencyCode}`)
 
-  return { transaction_id: uuidv4() }
+  return { transactionId }
 }
