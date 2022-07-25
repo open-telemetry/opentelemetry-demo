@@ -13,7 +13,7 @@ const data = require('./data.json')
 // Functions
 const deepCopy = obj => JSON.parse(JSON.stringify(obj))
 
-const arrayIntersection = (a, b) => a.filter(x => b.indexOf(x) !== -1);
+const arrayIntersection = (a, b) => a.filter(x => b.indexOf(x) !== -1)
 
 // Main
 let charge = null

@@ -19,7 +19,7 @@ import (
 	"reflect"
 	"testing"
 
-	pb "github.com/opentelemetry/opentelemetry-demo-webstore/src/frontend/genproto/hipstershop"
+	pb "github.com/opentelemetry/opentelemetry-demo/src/frontend/genproto/hipstershop"
 )
 
 func mmc(u int64, n int32, c string) *pb.Money { return &pb.Money{Units: u, Nanos: n, CurrencyCode: c} }
