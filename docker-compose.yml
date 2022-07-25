@@ -176,7 +176,7 @@ services:
       context: ./
       dockerfile: ./src/paymentservice/Dockerfile
     ports:
-      - "${PAYMENT_SERVICE_PORT}"
+      - "${PAYMENT_SERVICE_PORT}:${PAYMENT_SERVICE_PORT}"
     environment:
       - PAYMENT_SERVICE_PORT
       - OTEL_EXPORTER_OTLP_TRACES_ENDPOINT

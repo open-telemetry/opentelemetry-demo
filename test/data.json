@@ -1,0 +1,15 @@
+{
+  "charge": {
+    "amount": {
+      "currencyCode": "USD",
+      "units": 43,
+      "nanos": 130000000
+    },
+    "creditCard": {
+      "creditCardNumber": "4432-8015-6152-0454",
+      "creditCardCvv": 672,
+      "creditCardExpirationYear": 2039,
+      "creditCardExpirationMonth": 1
+    }
+  }
+}
