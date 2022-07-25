@@ -27,7 +27,7 @@ import (
 	"syscall"
 	"time"
 
-	pb "github.com/opentelemetry/opentelemetry-demo-webstore/src/productcatalogservice/genproto/hipstershop"
+	pb "github.com/opentelemetry/opentelemetry-demo/src/productcatalogservice/genproto/hipstershop"
 	healthpb "google.golang.org/grpc/health/grpc_health_v1"
 
 	"github.com/sirupsen/logrus"

@@ -19,7 +19,7 @@ import (
 	"net/http"
 	"time"
 
-	"github.com/opentelemetry/opentelemetry-demo-webstore/src/frontend/instr"
+	"github.com/opentelemetry/opentelemetry-demo/src/frontend/instr"
 	"go.opentelemetry.io/otel/metric"
 	"go.opentelemetry.io/otel/metric/instrument/syncfloat64"
 	"go.opentelemetry.io/otel/metric/instrument/syncint64"

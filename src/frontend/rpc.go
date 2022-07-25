@@ -18,7 +18,7 @@ import (
 	"context"
 	"time"
 
-	pb "github.com/opentelemetry/opentelemetry-demo-webstore/src/frontend/genproto/hipstershop"
+	pb "github.com/opentelemetry/opentelemetry-demo/src/frontend/genproto/hipstershop"
 
 	"github.com/pkg/errors"
 )
