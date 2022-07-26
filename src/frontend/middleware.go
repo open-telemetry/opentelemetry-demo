@@ -20,9 +20,6 @@ import (
 	"time"
 
 	"github.com/opentelemetry/opentelemetry-demo/src/frontend/instr"
-	"go.opentelemetry.io/otel/metric"
-	"go.opentelemetry.io/otel/metric/instrument/syncfloat64"
-	"go.opentelemetry.io/otel/metric/instrument/syncint64"
 	semconv "go.opentelemetry.io/otel/semconv/v1.10.0"
 	"go.opentelemetry.io/otel/trace"
 
@@ -39,12 +36,6 @@ type logHandler struct {
 	log  *logrus.Logger
 	next http.Handler
 }
-
-var (
-	meter              metric.Meter
-	httpRequestCounter syncint64.Counter
-	httpServerLatency  syncfloat64.Histogram
-)
 
 type responseRecorder struct {
 	b      int
@@ -119,12 +110,29 @@ func instrumentHandler(fn httpHandler) httpHandler {
 			span.SetAttributes(instr.UserId.String(email))
 		}
 
-		fn(w, r)
+		// wrap request and response writer with instrument
+		var ib instrumentedBody
+		if r.Body != nil {
+			ib.ReadCloser = r.Body
+			r.Body = &ib
+		}
+
+		var irw = &instrumentedResponseWriter{}
+		irw.ResponseWriter = w
 
 		attributes := semconv.HTTPServerMetricAttributesFromHTTPRequest("frontend", r)
+		httpServerActiveRequests.Add(r.Context(), 1, attributes...)
+		defer func() {
+			httpServerActiveRequests.Add(r.Context(), -1, attributes...)
+		}()
+
+		fn(irw, r)
+
 		elapsedTime := float64(time.Since(requestStartTime)) / float64(time.Millisecond)
 		httpRequestCounter.Add(r.Context(), 1, attributes...)
 		httpServerLatency.Record(r.Context(), elapsedTime, attributes...)
+		httpServerRequestSize.Record(r.Context(), ib.read, attributes...)
+		httpServerResponseSize.Record(r.Context(), irw.written, attributes...)
 	}
 }
 

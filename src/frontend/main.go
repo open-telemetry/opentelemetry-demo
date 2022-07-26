@@ -140,6 +140,21 @@ func InitMeterProvider() (*controller.Controller, error) {
 		log.Errorf("failed to create the httpServerLatency, %v", err)
 		return nil, err
 	}
+	httpServerActiveRequests, err = meter.SyncInt64().UpDownCounter("http.server.active_requests")
+	if err != nil {
+		log.Errorf("failed to create the httpServerActiveRequests, %v", err)
+		return nil, err
+	}
+	httpServerRequestSize, err = meter.SyncInt64().Histogram("http.server.request.size")
+	if err != nil {
+		log.Errorf("failed to create the httpServerRequestSize, %v", err)
+		return nil, err
+	}
+	httpServerResponseSize, err = meter.SyncInt64().Histogram("http.server.response.size")
+	if err != nil {
+		log.Errorf("failed to create the httpServerResponseSize, %v", err)
+		return nil, err
+	}
 	return pusher, nil
 }
 
