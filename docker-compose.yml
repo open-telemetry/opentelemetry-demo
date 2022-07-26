@@ -147,11 +147,11 @@ services:
     image: ${IMAGE_NAME}:${IMAGE_VERSION}-frontend
     container_name: frontend
     build:
-      context: ./
-      dockerfile: ./src/frontend/Dockerfile
+      context: ./src/frontend
     ports:
       - "${FRONTEND_PORT}:${FRONTEND_PORT}"
     environment:
+      - PORT=${FRONTEND_PORT}
       - FRONTEND_ADDR
       - AD_SERVICE_ADDR
       - CART_SERVICE_ADDR
