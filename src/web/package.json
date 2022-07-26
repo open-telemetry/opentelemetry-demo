@@ -13,6 +13,7 @@
   "dependencies": {
     "@grpc/grpc-js": "^1.6.7",
     "@types/styled-components": "5.1.25",
+    "currency-symbol-map": "^5.1.0",
     "next": "12.2.2",
     "react": "18.2.0",
     "react-dom": "18.2.0",

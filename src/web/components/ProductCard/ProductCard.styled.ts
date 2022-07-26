@@ -1,36 +1,31 @@
 import styled from 'styled-components';
 import RouterLink from 'next/link';
 
-export const Link = styled(RouterLink).attrs({
-  as: 'a',
-})`
-  position: relative;
-  display: block;
-`;
+export const Link = styled(RouterLink)``;
 
-export const Image = styled.img`
+export const Image = styled.div<{ $src: string }>`
   width: 100%;
-  height: auto;
-  border-radius: 20% 0 20% 20%;
-`;
+  height: 150px;
+  background: url(${({ $src }) => $src}) no-repeat center;
+  background-size: 100% auto;
 
-export const Overlay = styled.img`
-  position: absolute;
-  height: 100%;
-  width: 100%;
-  top: 0;
-  left: 0;
-  border-radius: 20% 0 20% 20%;
-  background-color: transparent;
-`;
-
-export const ProductCard = styled.div`
-  &:hover ${Overlay} {
-    background-color: rgba(71, 0, 29, 0.2);
+  ${({ theme }) => theme.breakpoints.desktop} {
+    height: 300px;
   }
 `;
 
-export const ProductName = styled.h5`
+export const ProductCard = styled.div`
+  cursor: pointer;
+`;
+
+export const ProductName = styled.p`
   margin: 0;
-  margin-top: 18px;
+  margin-top: 10px;
+  font-size: ${({ theme }) => theme.sizes.dSmall};
+`;
+
+export const ProductPrice = styled.p`
+  margin: 0;
+  font-size: ${({ theme }) => theme.sizes.dMedium};
+  font-weight: ${({ theme }) => theme.fonts.bold};
 `;

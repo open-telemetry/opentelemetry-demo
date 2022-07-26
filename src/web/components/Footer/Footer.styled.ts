@@ -2,13 +2,11 @@ import styled from 'styled-components';
 
 export const Footer = styled.footer`
   padding: 65px 9%;
-  background-color: #570d2e;
-`;
+  background-color: ${({ theme }) => theme.colors.otelGray};
 
-export const FooterTop = styled.div`
-  color: white;
-  a {
-    color: white;
-    text-decoration: underline;
+  * {
+    color: ${({ theme }) => theme.colors.white};
+    font-size: ${({ theme }) => theme.sizes.dSmall};
+    font-weight: ${({ theme }) => theme.fonts.regular};
   }
 `;

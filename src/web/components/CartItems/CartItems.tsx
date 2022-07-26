@@ -9,9 +9,10 @@ import * as S from './CartItems.styled';
 
 interface IProps {
   productList: IProductCartItem[];
+  shouldShowPrice?: boolean;
 }
 
-const CartItems = ({ productList }: IProps) => {
+const CartItems = ({ productList, shouldShowPrice = true }: IProps) => {
   const { data: shippingConst = { units: 0, currencyCode: 'USD', nanos: 0 } } = useQuery('shipping', () =>
     ApiGateway.getShippingCost(productList)
   );
@@ -29,19 +30,28 @@ const CartItems = ({ productList }: IProps) => {
 
   return (
     <S.CartItems>
+      <S.CardItemsHeader>
+        <label>Product</label>
+        <label>Quantity</label>
+        <label>Price</label>
+      </S.CardItemsHeader>
       {productList.map(({ productId, product, quantity }) => (
         <CartItem key={productId} product={product} quantity={quantity} />
       ))}
-      <S.DataRow>
-        <span>Shipping</span>
-        <ProductPrice price={shippingConst} />
-      </S.DataRow>
-      <S.DataRow>
-        <S.TotalText>Total</S.TotalText>
-        <S.TotalText>
-          <ProductPrice price={total} />
-        </S.TotalText>
-      </S.DataRow>
+      {shouldShowPrice && (
+        <>
+          <S.DataRow>
+            <span>Shipping</span>
+            <ProductPrice price={shippingConst} />
+          </S.DataRow>
+          <S.DataRow>
+            <S.TotalText>Total</S.TotalText>
+            <S.TotalText>
+              <ProductPrice price={total} />
+            </S.TotalText>
+          </S.DataRow>
+        </>
+      )}
     </S.CartItems>
   );
 };

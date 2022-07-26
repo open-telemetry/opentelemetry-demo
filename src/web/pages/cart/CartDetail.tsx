@@ -1,7 +1,5 @@
-import Link from 'next/link';
 import { useRouter } from 'next/router';
 import { useCallback } from 'react';
-import Button from '../../components/Button';
 import CartItems from '../../components/CartItems';
 import CheckoutForm from '../../components/CheckoutForm';
 import { IFormData } from '../../components/CheckoutForm/CheckoutForm';
@@ -55,35 +53,21 @@ const CartDetail = () => {
         query: { order: JSON.stringify(order) },
       });
     },
-    []
+    [placeOrder, push, selectedCurrency]
   );
 
   return (
     <S.Container>
       <div>
         <S.Header>
-          <S.CarTitle>Cart ({items.length})</S.CarTitle>
-          <div>
-            <Button
-              onClick={async () => {
-                await emptyCart();
-                push('/');
-              }}
-              $type="secondary"
-              style={{ marginRight: '10px' }}
-            >
-              Empty Cart
-            </Button>
-            <Link href="/">
-              <Button $type="primary">Continue Shopping</Button>
-            </Link>
-          </div>
+          <S.CarTitle>Shopping Cart</S.CarTitle>
+          <S.EmptyCartButton onClick={emptyCart} $type="link">
+            Empty Cart
+          </S.EmptyCartButton>
         </S.Header>
         <CartItems productList={items} />
       </div>
-      <div>
-        <CheckoutForm onSubmit={onPlaceOrder} />
-      </div>
+      <CheckoutForm onSubmit={onPlaceOrder} />
     </S.Container>
   );
 };

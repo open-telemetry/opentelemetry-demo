@@ -1,5 +1,5 @@
+import Link from 'next/link';
 import { useCallback, useState } from 'react';
-import Button from '../Button';
 import Input from '../Input';
 import * as S from './CheckoutForm.styled';
 
@@ -179,7 +179,10 @@ const CheckoutForm = ({ onSubmit }: IProps) => {
       </S.CardRow>
 
       <S.SubmitContainer>
-        <Button type="submit">Place Order</Button>
+        <Link href="/">
+          <S.CartButton $type="secondary">Continue Shopping</S.CartButton>
+        </Link>
+        <S.CartButton type="submit">Place Order</S.CartButton>
       </S.SubmitContainer>
     </S.CheckoutForm>
   );

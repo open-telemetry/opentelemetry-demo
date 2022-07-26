@@ -5,30 +5,32 @@ export const Header = styled.header`
   color: white;
 `;
 
+
 export const NavBar = styled.nav`
-  padding-top: 5px;
-  padding-bottom: 5px;
-
-  display: flex;
-  justify-content: center;
-  font-size: 14px;
-`;
-
-export const SubNavBar = styled(NavBar)`
-  height: 60px;
+  height: 80px;
   background-color: white;
   font-size: 15px;
   color: #b4b2bb;
-  box-shadow: 0px 0px 4px rgba(0, 0, 0, 0.25);
+  border-bottom: 1px solid ${({ theme }) => theme.colors.textGray};
   z-index: 1;
   padding: 0;
+  
+  ${({ theme }) => theme.breakpoints.desktop} {
+    height: 100px;
+  }
 `;
 
 export const Container = styled.div`
   display: flex;
   justify-content: space-between;
-  padding: 0 26px;
+  align-items: center;
   width: 100%;
+  height: 100%;
+  padding: 0 20px;
+
+  ${({ theme }) => theme.breakpoints.desktop} {
+    padding: 25px 100px;
+  }
 `;
 
 export const NavBarBrand = styled.a`

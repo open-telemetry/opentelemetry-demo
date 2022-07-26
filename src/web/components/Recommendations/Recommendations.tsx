@@ -8,7 +8,7 @@ const Recommendations = () => {
   return (
     <S.Recommendations>
       <S.TitleContainer>
-        <h1>You May Also Like</h1>
+        <S.Title>You May Also Like</S.Title>
       </S.TitleContainer>
       <S.ProductList>
         {recommendedProductList.map(product => (

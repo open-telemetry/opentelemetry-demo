@@ -15,15 +15,16 @@ const CartItem = ({
   return (
     <S.CartItem>
       <Link href={`/product/${id}`}>
-        <S.CartItemImage alt={name} src={picture} />
+        <S.NameContainer>
+          <S.CartItemImage alt={name} src={picture} />
+          <p>{name}</p>
+        </S.NameContainer>
       </Link>
       <S.CartItemDetails>
-        <div>
-          <h5>{name}</h5>
-          <p>SKU #{id}</p>
-        </div>
+        <p>{quantity}</p>
+      </S.CartItemDetails>
+      <S.CartItemDetails>
         <S.PriceContainer>
-          <p>Quantity: {quantity}</p>
           <p>
             <ProductPrice price={priceUsd} />
           </p>

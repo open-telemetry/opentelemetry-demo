@@ -8,7 +8,9 @@ const Ad = () => {
 
   return (
     <S.Ad>
-      <S.Link href={redirectUrl}>{text}</S.Link>
+      <S.Link href={redirectUrl}>
+        <p>{text}</p>
+      </S.Link>
     </S.Ad>
   );
 };

@@ -3,38 +3,40 @@ import styled from 'styled-components';
 export const Input = styled.input`
   width: -webkit-fill-available;
   border: none;
-  border-bottom: 1px solid #9aa0a6;
-  padding: 0 16px 8px 16px;
+  padding: 16px;
   outline: none;
-  color: #1e2021;
+
+  font-weight: ${({ theme }) => theme.fonts.regular};
+  font-size: ${({ theme }) => theme.sizes.dMedium};
+
+  border-radius: 10px;
+  background: #f9f9f9;
+  border: 1px solid #cacaca;
 `;
 
-export const InputLabel = styled.label`
-  width: -webkit-fill-available;
+export const InputLabel = styled.p`
+  font-size: ${({ theme }) => theme.sizes.dMedium};
+  font-weight: ${({ theme }) => theme.fonts.semiBold};
   margin: 0;
-  padding: 8px 16px 0 16px;
-  font-size: 12px;
-  line-height: 1.8em;
-  font-weight: normal;
-  border-radius: 4px 4px 0px 0px;
-  color: #5c6063;
-  background-color: white;
-  display: inline-block;
+  margin-bottom: 15px;
 `;
 
 export const Select = styled.select`
   width: 100%;
   border: none;
-  border-bottom: 1px solid #9aa0a6;
-  padding: 0 16px 8px 16px;
-  outline: none;
-  color: #1e2021;
+
+  padding: 16px;
+  font-weight: ${({ theme }) => theme.fonts.regular};
+  font-size: ${({ theme }) => theme.sizes.dMedium};
+
+  border-radius: 10px;
+  background: #f9f9f9;
+  border: 1px solid #cacaca;
 `;
 
 export const InputRow = styled.div`
   position: relative;
   margin-bottom: 24px;
-  background: white;
 `;
 
 export const Arrow = styled.img.attrs({
@@ -42,7 +44,8 @@ export const Arrow = styled.img.attrs({
   alt: 'arrow',
 })`
   position: absolute;
-  right: 25px;
+  right: 20px;
   width: 10px;
   height: 5px;
+  top: 64px;
 `;

@@ -19,18 +19,17 @@ const ProductCard = ({
   },
 }: IProps) => {
   return (
-    <S.ProductCard>
-      <S.Link href={`/product/${id}`}>
-        <>
-          <S.Image alt={name} src={picture} />
-          <S.Overlay />
-        </>
-      </S.Link>
-      <div>
-        <S.ProductName>{name}</S.ProductName>
-        <ProductPrice price={priceUsd} />
-      </div>
-    </S.ProductCard>
+    <S.Link href={`/product/${id}`}>
+      <S.ProductCard>
+        <S.Image $src={picture} />
+        <div>
+          <S.ProductName>{name}</S.ProductName>
+          <S.ProductPrice>
+            <ProductPrice price={priceUsd} />
+          </S.ProductPrice>
+        </div>
+      </S.ProductCard>
+    </S.Link>
   );
 };
 

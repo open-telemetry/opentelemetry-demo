@@ -3,11 +3,12 @@ import styled from 'styled-components';
 export const Select = styled.select`
   width: 100%;
   height: 45px;
-  border: 1px solid #acacac;
+  border: 1px solid ${({ theme }) => theme.colors.borderGray};
   padding: 10px 16px;
   border-radius: 8px;
   position: relative;
   width: 100px;
+  cursor: pointer;
 `;
 
 export const SelectContainer = styled.div`

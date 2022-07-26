@@ -1,4 +1,5 @@
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
+import getSymbolFromCurrency from 'currency-symbol-map';
 import { Money } from '../../protos/demo';
 import { useCurrency } from '../../providers/Currency.provider';
 
@@ -16,14 +17,18 @@ const ProductPrice = ({ price }: IProps) => {
     setParsedPrice(result);
   }, [convert, price]);
 
+  const currencySymbol = useMemo(
+    () => getSymbolFromCurrency(currencyCode) || selectedCurrency,
+    [currencyCode, selectedCurrency]
+  );
+
   useEffect(() => {
     convertPrice();
   }, [selectedCurrency, price]);
 
   return (
     <span>
-      {currencyCode}
-      {units}
+      {currencySymbol}{units}
     </span>
   );
 };

@@ -5,6 +5,7 @@ import ProductList from '../components/ProductList';
 import * as S from '../styles/Home.styled';
 import { useQuery } from 'react-query';
 import ApiGateway from '../gateways/Api.gateway';
+import Banner from '../components/Banner';
 
 const Home: NextPage = () => {
   const { data: productList = [] } = useQuery('products', ApiGateway.listProducts);
@@ -12,19 +13,18 @@ const Home: NextPage = () => {
   return (
     <Layout>
       <S.Home>
-        <S.MobileHeroBanner />
+        <Banner />
         <S.Container>
           <S.Row>
-            <S.DesktopHeroBanner />
             <S.Content>
               <S.HotProducts>
-                <h1>Hot Products</h1>
+                <S.HotProductsTitle>Hot Products</S.HotProductsTitle>
                 <ProductList productList={productList} />
               </S.HotProducts>
-              <Footer />
             </S.Content>
           </S.Row>
         </S.Container>
+        <Footer />
       </S.Home>
     </Layout>
   );

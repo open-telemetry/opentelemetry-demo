@@ -1,5 +1,5 @@
-import { Ad, Cart, CartItem, Money, OrderResult, PlaceOrderRequest, Product } from '../protos/demo';
-import { IProductCart, IProductCartItem } from '../types/Cart';
+import { Ad, Cart, CartItem, Money, PlaceOrderRequest, Product } from '../protos/demo';
+import { IProductCart, IProductCartItem, IProductCheckout } from '../types/Cart';
 import request from '../utils/Request';
 
 const basePath = '/api';
@@ -48,7 +48,7 @@ const ApiGateway = () => ({
   },
 
   placeOrder(order: PlaceOrderRequest) {
-    return request<OrderResult>({
+    return request<IProductCheckout>({
       url: `${basePath}/checkout`,
       method: 'POST',
       body: order,

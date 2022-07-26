@@ -2,8 +2,8 @@ import * as S from './PlatformFlag.styled';
 
 const PlatformFlag = () => {
   return (
-    <S.PlatformFlag $platform="local">
-      <S.Block $platform="local">local</S.Block>
+    <S.PlatformFlag $platform={S.Platform.LOCAL}>
+      <S.Block $platform={S.Platform.LOCAL}>local</S.Block>
     </S.PlatformFlag>
   );
 };

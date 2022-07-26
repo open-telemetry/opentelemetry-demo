@@ -1,9 +1,7 @@
-import Link from 'next/link';
+import Image from 'next/image';
 import styled from 'styled-components';
 
-export const CartIcon = styled(Link).attrs({
-  as: 'a',
-})`
+export const CartIcon = styled.a`
   position: relative;
   display: block;
   margin-left: 25px;
@@ -11,11 +9,13 @@ export const CartIcon = styled(Link).attrs({
   flex-flow: column;
   align-items: center;
   justify-content: center;
+  cursor: pointer;
 `;
 
-export const Icon = styled.img`
-  width: 20px;
-  height: 20px;
+export const Icon = styled(Image).attrs({
+  width: '24px',
+  height: '24px',
+})`
   margin-bottom: 3px;
 `;
 
@@ -24,12 +24,13 @@ export const ItemsCount = styled.span`
   align-items: center;
   justify-content: center;
   position: absolute;
-  top: 24px;
-  left: 11px;
-  width: 16px;
-  height: 16px;
-  font-size: 11px;
-  border-radius: 4px 4px 0 4px;
-  color: white;
-  background-color: #853b5c;
+  top: 9px;
+  left: 15px;
+  width: 15px;
+  height: 15px;
+  font-size: ${({ theme }) => theme.sizes.nano};
+  border-radius: 50%;
+  border: 1px solid ${({ theme }) => theme.colors.white};
+  color: ${({ theme }) => theme.colors.white};
+  background: ${({ theme }) => theme.colors.otelRed};
 `;

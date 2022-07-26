@@ -21,9 +21,15 @@ interface IProps {
 export const useAd = () => useContext(Context);
 
 const AdProvider = ({ children, productIds }: IProps) => {
-  const { data: adList = [] } = useQuery(['ads', productIds], () => ApiGateway.listAds(productIds));
-  const { data: recommendedProductList = [] } = useQuery(['recommendations', productIds], () =>
-    ApiGateway.listRecommendations(productIds)
+  const { data: adList = [] } = useQuery(['ads', productIds], () => ApiGateway.listAds(productIds), {
+    refetchOnWindowFocus: false,
+  });
+  const { data: recommendedProductList = [] } = useQuery(
+    ['recommendations', productIds],
+    () => ApiGateway.listRecommendations(productIds),
+    {
+      refetchOnWindowFocus: false,
+    }
   );
 
   const value = useMemo(

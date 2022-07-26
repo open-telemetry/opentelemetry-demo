@@ -4,7 +4,7 @@ import { Empty } from '../../protos/demo';
 
 type TResponse = string[] | Empty;
 
-const handler = async ({ method, body }: NextApiRequest, res: NextApiResponse<TResponse>) => {
+const handler = async ({ method }: NextApiRequest, res: NextApiResponse<TResponse>) => {
   switch (method) {
     case 'GET': {
       const { currencyCodes = [] } = await CurrencyGateway.getSupportedCurrencies();
