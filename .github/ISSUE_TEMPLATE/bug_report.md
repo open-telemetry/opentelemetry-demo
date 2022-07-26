@@ -8,9 +8,9 @@ labels: bug
 
 Which version of the demo you are using? (please provide either a specific
 [commit
-hash](https://github.com/open-telemetry/opentelemetry-demo-webstore/commits/main)
+hash](https://github.com/open-telemetry/opentelemetry-demo/commits/main)
 or a specific
-[release](https://github.com/open-telemetry/opentelemetry-demo-webstore/releases)).
+[release](https://github.com/open-telemetry/opentelemetry-demo/releases)).
 
 ## Symptom
 

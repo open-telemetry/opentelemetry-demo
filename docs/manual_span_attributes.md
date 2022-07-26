@@ -1,6 +1,6 @@
 # List of manual span attributes
 
-This document contains the list of manual Span Attributes used throughout the demo-webstore:
+This document contains the list of manual Span Attributes used throughout the demo:
 
 ## AdService
 

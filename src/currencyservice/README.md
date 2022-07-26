@@ -6,7 +6,7 @@ It is a C++ based service.
 ## Building docker image
 
 To build the currency service, run the following from root directory
-of opentelemetry-demo-webstore
+of opentelemetry-demo
 
 ```sh
 docker-compose build currencyservice
