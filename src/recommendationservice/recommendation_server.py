@@ -14,30 +14,25 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+# Python
 import os
 import random
 import time
 from concurrent import futures
 
+# Pip
 import grpc
-
-import demo_pb2
-import demo_pb2_grpc
-from grpc_health.v1 import health_pb2
-from grpc_health.v1 import health_pb2_grpc
-
 from opentelemetry import trace
 from opentelemetry.sdk.trace import TracerProvider
 from opentelemetry.sdk.trace.export import (BatchSpanProcessor)
 from opentelemetry.exporter.otlp.proto.grpc.trace_exporter import OTLPSpanExporter
 
+# Local
+import demo_pb2
+import demo_pb2_grpc
+from grpc_health.v1 import health_pb2
+from grpc_health.v1 import health_pb2_grpc
 from logger import getJSONLogger
-logger = getJSONLogger('recommendationservice-server')
-
-tracer_provider = TracerProvider()
-trace.set_tracer_provider(tracer_provider)
-tracer_provider.add_span_processor(BatchSpanProcessor(OTLPSpanExporter()))
-tracer = trace.get_tracer("recommendationservice")
 
 
 class RecommendationService(demo_pb2_grpc.RecommendationServiceServicer):
@@ -86,19 +81,21 @@ def must_map_env(key: str):
         raise Exception(f'{key} environment variable must be set')
     return value
 
-
 if __name__ == "__main__":
-    logger.info("initializing recommendationservice")
+    logger = getJSONLogger('recommendationservice-server')
+    tracer_provider = TracerProvider()
+    trace.set_tracer_provider(tracer_provider)
+    tracer_provider.add_span_processor(BatchSpanProcessor(OTLPSpanExporter()))
+    tracer = trace.get_tracer("recommendationservice")
 
     port = must_map_env('RECOMMENDATION_SERVICE_PORT')
     catalog_addr = must_map_env('PRODUCT_CATALOG_SERVICE_ADDR')
 
-    logger.info("product catalog address: " + catalog_addr)
     channel = grpc.insecure_channel(catalog_addr)
     product_catalog_stub = demo_pb2_grpc.ProductCatalogServiceStub(channel)
 
     # create gRPC server
-    server = grpc.server(futures.ThreadPoolExecutor(max_workers=10),)
+    server = grpc.server(futures.ThreadPoolExecutor(max_workers=10))
 
     # add class to gRPC server
     service = RecommendationService()
@@ -106,13 +103,7 @@ if __name__ == "__main__":
     health_pb2_grpc.add_HealthServicer_to_server(service, server)
 
     # start server
-    logger.info("listening on port: " + port)
-    server.add_insecure_port('[::]:'+port)
+    logger.info("RecommendationService listening on port: " + port)
+    server.add_insecure_port('[::]:' + port)
     server.start()
-
-    # keep alive
-    try:
-        while True:
-            time.sleep(10000)
-    except KeyboardInterrupt:
-        server.stop(0)
+    server.wait_for_termination()
