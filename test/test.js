@@ -21,6 +21,7 @@ const isEmpty = obj => Object.keys(obj).length === 0
 let cartAdd = null, cartGet = null, cartEmpty = null
 let charge = null
 let recommend = null
+let productList = null, productGet = null, productSearch = null
 
 test.before(() => {
   dotenv.config({ path: '../.env' })
@@ -35,6 +36,11 @@ test.before(() => {
   const paymentClient = new hipstershop.PaymentService(`0.0.0.0:${process.env.PAYMENT_SERVICE_PORT}`, grpc.credentials.createInsecure())
   charge = promisify(paymentClient.charge).bind(paymentClient)
 
+  const productCatalogClient = new hipstershop.ProductCatalogService(`0.0.0.0:${process.env.PRODUCT_CATALOG_SERVICE_PORT}`, grpc.credentials.createInsecure())
+  productList = promisify(productCatalogClient.listProducts).bind(productCatalogClient)
+  productGet = promisify(productCatalogClient.getProduct).bind(productCatalogClient)
+  productSearch = promisify(productCatalogClient.searchProducts).bind(productCatalogClient)
+
   const recommendationClient = new hipstershop.RecommendationService(`0.0.0.0:${process.env.RECOMMENDATION_SERVICE_PORT}`, grpc.credentials.createInsecure())
   recommend = promisify(recommendationClient.listRecommendations).bind(recommendationClient)
 })
@@ -42,12 +48,11 @@ test.before(() => {
 // --------------- Cart Service ---------------
 
 test('cart: all', async t => {
-  let res = null
   const request = data.cart
   const userIdRequest = { userId: request.userId }
 
   // Empty Cart
-  res = await cartEmpty(userIdRequest)
+  let res = await cartEmpty(userIdRequest)
   t.truthy(isEmpty(res))
 
   // Add to Cart
@@ -104,6 +109,29 @@ test('payment: expired credit card', t => {
   return charge(request).catch(err => {
     t.is(err.details, 'The credit card (ending 0454) expired on 1/2021.')
   })
+})
+
+// --------------- Product Catalog Service ---------------
+
+test('product: list', async t => {
+  const res = await productList({})
+  t.is(res.products.length, 9)
+})
+
+test('product: get', async t => {
+  const res = await productGet({ id: 'OLJCESPC7Z' })
+  t.is(res.name, 'Sunglasses')
+  t.truthy(res.description)
+  t.truthy(res.picture)
+  t.truthy(res.priceUsd)
+  t.truthy(res.categories)
+})
+
+test('product: search', async t => {
+  const res = await productSearch({ query: 'hold' })
+  t.is(res.results.length, 2)
+  t.is(res.results[0].name, 'Candle Holder')
+  t.is(res.results[1].name, 'Bamboo Glass Jar')
 })
 
 // --------------- Recommendation Service ---------------

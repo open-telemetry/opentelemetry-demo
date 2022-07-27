@@ -192,7 +192,7 @@ services:
       context: ./
       dockerfile: ./src/productcatalogservice/Dockerfile
     ports:
-      - "${PRODUCT_CATALOG_SERVICE_PORT}"
+      - "${PRODUCT_CATALOG_SERVICE_PORT}:${PRODUCT_CATALOG_SERVICE_PORT}"
     environment:
       - PRODUCT_CATALOG_SERVICE_PORT
       - OTEL_EXPORTER_OTLP_TRACES_ENDPOINT
