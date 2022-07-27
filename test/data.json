@@ -6,6 +6,14 @@
       "quantity": 1
     }
   },
+  "currency": {
+    "from": {
+      "currencyCode": "USD",
+      "units": 330,
+      "nanos": 750000000
+    },
+    "toCode": "CAD"
+  },
   "charge": {
     "amount": {
       "currencyCode": "USD",
@@ -25,7 +33,7 @@
   },
   "shipping": {
     "address": {
-      "steetAddress": "One Microsoft Way",
+      "streetAddress": "One Microsoft Way",
       "city": "Redmond",
       "state": "Washington",
       "country": "United States",

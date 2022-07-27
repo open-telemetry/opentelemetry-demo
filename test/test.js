@@ -19,6 +19,7 @@ const isEmpty = obj => Object.keys(obj).length === 0
 
 // Main
 let cartAdd = null, cartGet = null, cartEmpty = null
+let currencySupported = null, currencyConvert = null
 let charge = null
 let recommend = null
 let productList = null, productGet = null, productSearch = null
@@ -33,6 +34,10 @@ test.before(() => {
   cartAdd = promisify(cartClient.addItem).bind(cartClient)
   cartGet = promisify(cartClient.getCart).bind(cartClient)
   cartEmpty = promisify(cartClient.emptyCart).bind(cartClient)
+
+  const currencyClient = new hipstershop.CurrencyService(`0.0.0.0:${process.env.CURRENCY_SERVICE_PORT}`, grpc.credentials.createInsecure())
+  currencySupported = promisify(currencyClient.getSupportedCurrencies).bind(currencyClient)
+  currencyConvert = promisify(currencyClient.convert).bind(currencyClient)
 
   const paymentClient = new hipstershop.PaymentService(`0.0.0.0:${process.env.PAYMENT_SERVICE_PORT}`, grpc.credentials.createInsecure())
   charge = promisify(paymentClient.charge).bind(paymentClient)
@@ -77,6 +82,22 @@ test('cart: all', async t => {
   // Check Cart Content
   res = await cartGet(userIdRequest)
   t.truthy(isEmpty(res))
+})
+
+// --------------- Currency Service ---------------
+
+test('currency: supported', async t => {
+  const res = await currencySupported({})
+  t.is(res.currencyCodes.length, 33)
+})
+
+test('currency: convert', async t => {
+  const request = data.currency
+
+  const res = await currencyConvert(request)
+  t.is(res.currencyCode, "CAD")
+  t.is(res.units, 442)
+  t.is(res.nanos, 599380805)
 })
 
 // --------------- Payment Service ---------------
@@ -141,13 +162,12 @@ test('product: search', async t => {
 
 // --------------- Recommendation Service ---------------
 
-test('recommendation: list products', t => {
+test('recommendation: list products', async t => {
   const request = deepCopy(data.recommend)
 
-  return recommend(request).then(res => {
-    t.is(res.productIds.length, 4)
-    t.is(arrayIntersection(res.productIds, request.productIds).length, 0)
-  })
+  const res = await recommend(request)
+  t.is(res.productIds.length, 4)
+  t.is(arrayIntersection(res.productIds, request.productIds).length, 0)
 })
 
 // --------------- Shipping Service ---------------
