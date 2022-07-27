@@ -42,30 +42,31 @@ test.before(() => {
 // --------------- Cart Service ---------------
 
 test('cart: all', async t => {
+  let res = null
   const request = data.cart
   const userIdRequest = { userId: request.userId }
 
   // Empty Cart
-  const emptyRes1 = await cartEmpty(userIdRequest)
-  t.truthy(isEmpty(emptyRes1))
+  res = await cartEmpty(userIdRequest)
+  t.truthy(isEmpty(res))
 
   // Add to Cart
-  const addRes = await cartAdd(request)
-  t.truthy(isEmpty(addRes))
+  res = await cartAdd(request)
+  t.truthy(isEmpty(res))
 
   // Check Cart Content
-  const getRes1 = await cartGet(userIdRequest)
-  t.is(getRes1.items.length, 1)
-  t.is(getRes1.items[0].productId, request.item.productId)
-  t.is(getRes1.items[0].quantity, request.item.quantity)
+  res = await cartGet(userIdRequest)
+  t.is(res.items.length, 1)
+  t.is(res.items[0].productId, request.item.productId)
+  t.is(res.items[0].quantity, request.item.quantity)
 
   // Empty Cart
-  const emptyRes2 = await cartEmpty(userIdRequest)
-  t.truthy(isEmpty(emptyRes2))
+  res = await cartEmpty(userIdRequest)
+  t.truthy(isEmpty(res))
 
   // Check Cart Content
-  const getRes2 = await cartGet(userIdRequest)
-  t.truthy(isEmpty(getRes2))
+  res = await cartGet(userIdRequest)
+  t.truthy(isEmpty(res))
 })
 
 // --------------- Payment Service ---------------
