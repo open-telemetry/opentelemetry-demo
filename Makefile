@@ -61,7 +61,9 @@ install-tools: $(MISSPELL)
 .PHONY: build-docker-images
 build-docker-images:
 	docker compose -f docker-compose.yml build
+	docker compose -f docker-compose.lgtm.yml build
 
 .PHONY: push-docker-images
 push-docker-images:
 	docker compose -f docker-compose.yml push
+	docker compose -f docker-compose.lgtm.yml push

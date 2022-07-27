@@ -46,11 +46,24 @@ cd .\src\adservice\
 
 ### Run Docker Compose
 
+This demo contains 2 scenarios to demonstrate portability with OpenTelemetry.
+
+#### Use Jaeger and Prometheus as datastores
+
 - Start the demo (It can take ~20min the first time the command is executed as
 all the images will be build):
 
 ```shell
 docker compose up
+```
+
+#### Use the Grafana LGTM stack for storing your signals
+
+To start the relevant components and use the LGTM-relevant config with the OTel collector,
+you need to include the `docker-compose.lgtm.yml` file in your `docker-compose` commands:
+
+```shell
+docker-compose -f docker-compose.yml -f docker-compose.lgtm.yml up
 ```
 
 ### Verify the Webstore & the Telemetry
