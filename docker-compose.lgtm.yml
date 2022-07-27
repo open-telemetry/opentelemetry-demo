@@ -11,7 +11,7 @@ services:
     container_name: otel-col
     command: [ "--config=/etc/otelcol-config.yml" ]
     volumes:
-      - ./src/otelcollector/otelcol-config-grafana.yml:/etc/otelcol-config.yml
+      - ./src/otelcollector/otelcol-config-lgtm.yml:/etc/otelcol-config.yml
     ports:
       - "4317"
       - "4318"
