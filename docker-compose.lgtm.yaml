@@ -40,6 +40,7 @@ services:
 
   # Grafana Mimir stores metrics
   mimir:
+    image: ${IMAGE_NAME}:${IMAGE_VERSION}-mimir
     build:
       context: src/mimir
     restart: unless-stopped
