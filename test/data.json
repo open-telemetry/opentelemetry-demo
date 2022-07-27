@@ -11,5 +11,9 @@
       "creditCardExpirationYear": 2039,
       "creditCardExpirationMonth": 1
     }
+  },
+  "recommend": {
+    "userId": "1234",
+    "productIds": [ "OLJCESPC7Z", "66VCHSJNUP", "1YMWWN1N4O", "L9ECAV7KIM", "2ZYFJ3GM2N" ]
   }
 }

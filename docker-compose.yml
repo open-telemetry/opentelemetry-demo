@@ -20,7 +20,7 @@ services:
 
   # Collector
   otelcol:
-    image: otel/opentelemetry-collector:0.52.0
+    image: otel/opentelemetry-collector:0.56.0
     container_name: otel-col
     command: [ "--config=/etc/otelcol-config.yml" ]
     volumes:
