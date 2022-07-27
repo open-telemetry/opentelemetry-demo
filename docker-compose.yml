@@ -227,7 +227,7 @@ services:
       context: ./
       dockerfile: ./src/shippingservice/Dockerfile
     ports:
-      - "${SHIPPING_SERVICE_PORT}"
+      - "${SHIPPING_SERVICE_PORT}:${SHIPPING_SERVICE_PORT}"
     environment:
       - PORT=${SHIPPING_SERVICE_PORT}
       - OTEL_EXPORTER_OTLP_TRACES_ENDPOINT

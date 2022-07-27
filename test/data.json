@@ -22,5 +22,20 @@
   "recommend": {
     "userId": "1234",
     "productIds": [ "OLJCESPC7Z", "66VCHSJNUP", "1YMWWN1N4O", "L9ECAV7KIM", "2ZYFJ3GM2N" ]
+  },
+  "shipping": {
+    "address": {
+      "steetAddress": "One Microsoft Way",
+      "city": "Redmond",
+      "state": "Washington",
+      "country": "United States",
+      "zipCode": 98052
+    },
+    "items": [
+      {
+        "productId": "66VCHSJNUP",
+        "quantity": 2
+      }
+    ]
   }
 }

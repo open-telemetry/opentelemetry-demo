@@ -22,6 +22,7 @@ let cartAdd = null, cartGet = null, cartEmpty = null
 let charge = null
 let recommend = null
 let productList = null, productGet = null, productSearch = null
+let shippingQuote = null, shippingOrder = null
 
 test.before(() => {
   dotenv.config({ path: '../.env' })
@@ -43,6 +44,10 @@ test.before(() => {
 
   const recommendationClient = new hipstershop.RecommendationService(`0.0.0.0:${process.env.RECOMMENDATION_SERVICE_PORT}`, grpc.credentials.createInsecure())
   recommend = promisify(recommendationClient.listRecommendations).bind(recommendationClient)
+
+  const shippingClient = new hipstershop.ShippingService(`0.0.0.0:${process.env.SHIPPING_SERVICE_PORT}`, grpc.credentials.createInsecure())
+  shippingQuote = promisify(shippingClient.getQuote).bind(shippingClient)
+  shippingOrder = promisify(shippingClient.shipOrder).bind(shippingClient)
 })
 
 // --------------- Cart Service ---------------
@@ -143,4 +148,30 @@ test('recommendation: list products', t => {
     t.is(res.productIds.length, 4)
     t.is(arrayIntersection(res.productIds, request.productIds).length, 0)
   })
+})
+
+// --------------- Shipping Service ---------------
+
+test('shipping: quote', async t => {
+  const request = data.shipping
+
+  const res = await shippingQuote(request)
+  t.is(res.costUsd.units, 17)
+  t.is(res.costUsd.nanos, 980000000)
+})
+
+test('shipping: empty quote', async t => {
+  const request = deepCopy(data.shipping)
+  request.items = []
+
+  const res = await shippingQuote(request)
+  t.falsy(res.costUsd.units)
+  t.falsy(res.costUsd.nanos)
+})
+
+test('shipping: order', async t => {
+  const request = data.shipping
+
+  const res = await shippingOrder(request)
+  t.truthy(res.trackingId)
 })
