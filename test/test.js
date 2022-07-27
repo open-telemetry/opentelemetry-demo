@@ -15,7 +15,10 @@ const deepCopy = obj => JSON.parse(JSON.stringify(obj))
 
 const arrayIntersection = (a, b) => a.filter(x => b.indexOf(x) !== -1)
 
+const isEmpty = obj => Object.keys(obj).length === 0
+
 // Main
+let cartAdd = null, cartGet = null, cartEmpty = null
 let charge = null
 let recommend = null
 
@@ -24,11 +27,45 @@ test.before(() => {
 
   const hipstershop = grpc.loadPackageDefinition(protoLoader.loadSync('../pb/demo.proto')).hipstershop
 
+  const cartClient = new hipstershop.CartService(`0.0.0.0:${process.env.CART_SERVICE_PORT}`, grpc.credentials.createInsecure())
+  cartAdd = promisify(cartClient.addItem).bind(cartClient)
+  cartGet = promisify(cartClient.getCart).bind(cartClient)
+  cartEmpty = promisify(cartClient.emptyCart).bind(cartClient)
+
   const paymentClient = new hipstershop.PaymentService(`0.0.0.0:${process.env.PAYMENT_SERVICE_PORT}`, grpc.credentials.createInsecure())
   charge = promisify(paymentClient.charge).bind(paymentClient)
 
   const recommendationClient = new hipstershop.RecommendationService(`0.0.0.0:${process.env.RECOMMENDATION_SERVICE_PORT}`, grpc.credentials.createInsecure())
   recommend = promisify(recommendationClient.listRecommendations).bind(recommendationClient)
+})
+
+// --------------- Cart Service ---------------
+
+test('cart: all', async t => {
+  const request = data.cart
+  const userIdRequest = { userId: request.userId }
+
+  // Empty Cart
+  const emptyRes1 = await cartEmpty(userIdRequest)
+  t.truthy(isEmpty(emptyRes1))
+
+  // Add to Cart
+  const addRes = await cartAdd(request)
+  t.truthy(isEmpty(addRes))
+
+  // Check Cart Content
+  const getRes1 = await cartGet(userIdRequest)
+  t.is(getRes1.items.length, 1)
+  t.is(getRes1.items[0].productId, request.item.productId)
+  t.is(getRes1.items[0].quantity, request.item.quantity)
+
+  // Empty Cart
+  const emptyRes2 = await cartEmpty(userIdRequest)
+  t.truthy(isEmpty(emptyRes2))
+
+  // Check Cart Content
+  const getRes2 = await cartGet(userIdRequest)
+  t.truthy(isEmpty(getRes2))
 })
 
 // --------------- Payment Service ---------------
