@@ -318,11 +318,13 @@ services:
 
   # Grafana
   grafana:
-    image: grafana/grafana:9.0.1
+    image: grafana/grafana:9.0.4
     container_name: grafana
     volumes:
       - ./src/grafana/grafana.ini:/etc/grafana/grafana.ini
       - ./src/grafana/provisioning/:/etc/grafana/provisioning/
+    environment:
+      - GF_FEATURE_TOGGLES_ENABLE=tempoBackendSearch,tempoSearch,tempoServiceGraph
     ports:
       - "${GRAFANA_SERVICE_PORT}:${GRAFANA_SERVICE_PORT}"
     logging: *logging

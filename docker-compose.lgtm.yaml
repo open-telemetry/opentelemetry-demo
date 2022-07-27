@@ -1,0 +1,37 @@
+version: '3.9'
+services:
+  # The OTel Collector, preconfigured for LGTM
+  otelcol:
+    image: otel/opentelemetry-collector-contrib:0.56.0
+    container_name: otel-col
+    command: [ "--config=/etc/otelcol-config.yml" ]
+    volumes:
+      - ./src/otelcollector/otelcol-config-grafana.yml:/etc/otelcol-config.yml
+    ports:
+      - "4317"
+      - "4318"
+      - "9464"
+      - "8888:8888"
+    depends_on:
+      - tempo
+      - loki
+      - mimir
+  # Grafana Loki stores logs
+  loki:
+    image: grafana/loki:2.6.1
+    command: -config.file=/etc/loki/local-config.yaml
+  # Grafana Tempo stores traces
+  tempo:
+    image: grafana/tempo:1.4.1
+    restart: unless-stopped
+    command: [ "-config.file=/etc/tempo.yaml" ]
+    volumes:
+      - ./src/tempo/tempo.yaml:/etc/tempo.yaml
+  # Grafana Mimir stores metrics
+  mimir:
+    build:
+      context: src/mimir
+    restart: unless-stopped
+    command: --config.file=/etc/mimir/demo.yaml
+    volumes:
+      - ./src/mimir/mimir.yaml:/etc/mimir/demo.yaml
