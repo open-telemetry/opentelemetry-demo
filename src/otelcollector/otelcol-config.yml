@@ -35,4 +35,4 @@ service:
       exporters: [prometheus, logging]
     metrics/spanmetrics:
       receivers: [ otlp/spanmetrics ]
-      exporters: [ prometheus ]
+      exporters: [ prometheus, logging ]
