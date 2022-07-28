@@ -27,7 +27,7 @@ service:
   pipelines:
     traces:
       receivers: [otlp]
-      processors: [spanmetrics,batch]
+      processors: [spanmetrics, batch]
       exporters: [logging, jaeger]
     metrics:
       receivers: [otlp]
