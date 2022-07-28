@@ -83,7 +83,7 @@ services:
       context: ./
       dockerfile: ./src/checkoutservice/Dockerfile
     ports:
-      - "${CHECKOUT_SERVICE_PORT}"
+      - "${CHECKOUT_SERVICE_PORT}:${CHECKOUT_SERVICE_PORT}"
     environment:
       - CHECKOUT_SERVICE_PORT
       - CART_SERVICE_ADDR
@@ -128,7 +128,7 @@ services:
     build:
       context: ./src/emailservice
     ports:
-      - "${EMAIL_SERVICE_PORT}"
+      - "${EMAIL_SERVICE_PORT}:${EMAIL_SERVICE_PORT}"
     environment:
       - APP_ENV=production
       - PORT=${EMAIL_SERVICE_PORT}
