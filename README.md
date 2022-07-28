@@ -122,7 +122,7 @@ your backend as well.
 
 ## Architecture
 
-**Online Boutique** is composed of 11 microservices written in different
+**Online Boutique** is composed of microservices written in different programming
 languages that talk to each other over gRPC. Plus one Load Generator which uses
 [Locust](https://locust.io/) to fake user traffic.
 
