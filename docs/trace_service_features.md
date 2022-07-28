@@ -3,11 +3,11 @@
 ## TOC
 
 - [C++](#c)
+- [DotNet](#dotnet)
 - [Erlang/Elxir](#erlangelixir)
 - [Go](#go)
 - [Java](#java)
-- [.NET](#net)
-- [Node.js](#nodejs)
+- [JavaScript](#javascript)
 - [Python](#python)
 - [Ruby](#ruby)
 - [Rust](#rust)
@@ -22,6 +22,12 @@
 ### C++
 
 #### [Currency Service](../src/currencyservice/README.md)
+
+TBD
+
+### DotNet
+
+#### [Cart Service](../src/cartservice/README.md)
 
 TBD
 
@@ -81,13 +87,7 @@ TBD
 
 TBD
 
-### .NET
-
-#### [Cart Service](../src/cartservice/README.md)
-
-TBD
-
-### Node.js
+### JavaScript
 
 #### [Payment Service](../src/paymentservice/README.md)
 
