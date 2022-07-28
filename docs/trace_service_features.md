@@ -3,11 +3,11 @@
 ## TOC
 
 - [C++](#c++)
-- [Erlang/Elxir](#erlang/elixir)
+- [Erlang/Elxir](#erlangelixir)
 - [Go](#go)
 - [Java](#java)
-- [.NET](#.net)
-- [Node.js](#node.js)
+- [.NET](#net)
+- [Node.js](#nodejs)
 - [Python](#python)
 - [Ruby](#ruby)
 - [Rust](#rust)
