@@ -2,7 +2,7 @@
 
 ## TOC
 
-- [C++](#c++)
+- [C++](#c)
 - [Erlang/Elxir](#erlangelixir)
 - [Go](#go)
 - [Java](#java)
