@@ -17,6 +17,7 @@ const arrayIntersection = (a, b) => a.filter(x => b.indexOf(x) !== -1)
 const isEmpty = obj => Object.keys(obj).length === 0
 
 // Main
+let adsGet = null
 let cartAdd = null, cartGet = null, cartEmpty = null
 let checkoutOrder = null
 let currencySupported = null, currencyConvert = null
@@ -29,6 +30,9 @@ test.before(() => {
   dotenv.config({ path: '../.env' })
 
   const hipstershop = grpc.loadPackageDefinition(protoLoader.loadSync('../pb/demo.proto')).hipstershop
+
+  const adClient = new hipstershop.AdService(`0.0.0.0:${process.env.AD_SERVICE_PORT}`, grpc.credentials.createInsecure())
+  adsGet = promisify(adClient.getAds).bind(adClient)
 
   const cartClient = new hipstershop.CartService(`0.0.0.0:${process.env.CART_SERVICE_PORT}`, grpc.credentials.createInsecure())
   cartAdd = promisify(cartClient.addItem).bind(cartClient)
@@ -56,6 +60,19 @@ test.before(() => {
   const shippingClient = new hipstershop.ShippingService(`0.0.0.0:${process.env.SHIPPING_SERVICE_PORT}`, grpc.credentials.createInsecure())
   shippingQuote = promisify(shippingClient.getQuote).bind(shippingClient)
   shippingOrder = promisify(shippingClient.shipOrder).bind(shippingClient)
+})
+
+// --------------- Ad Service ---------------
+
+test('ad: get', async t => {
+  const req = data.ad
+  const res = await adsGet(req)
+
+  t.is(res.ads.length, 2)
+  t.truthy(res.ads[0].redirectUrl)
+  t.truthy(res.ads[1].redirectUrl)
+  t.truthy(res.ads[0].text)
+  t.truthy(res.ads[1].text)
 })
 
 // --------------- Cart Service ---------------

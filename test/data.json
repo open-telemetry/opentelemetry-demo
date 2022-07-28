@@ -1,4 +1,7 @@
 {
+  "ad": {
+    "contextKeys": [ "galaxy", "telescope" ]
+  },
   "cart": {
     "userId": "1234",
     "item": {

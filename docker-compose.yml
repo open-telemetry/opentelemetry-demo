@@ -48,7 +48,7 @@ services:
       context: ./
       dockerfile: ./src/adservice/Dockerfile
     ports:
-      - "${AD_SERVICE_PORT}"
+      - "${AD_SERVICE_PORT}:${AD_SERVICE_PORT}"
     environment:
       - AD_SERVICE_PORT
       - OTEL_EXPORTER_OTLP_TRACES_ENDPOINT
