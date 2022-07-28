@@ -124,7 +124,7 @@ your backend as well.
 
 **Online Boutique** is composed of 11 microservices written in different
 languages that talk to each other over gRPC. Plus one Load Generator which uses
-Locust to fake user traffic.
+[Locust](https://locust.io/) to fake user traffic.
 
 ```mermaid
 graph TD
