@@ -3,17 +3,18 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "next dev",
+    "dev": "npm run grpc:generate && next dev",
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "grpc:generate": "protoc -I ../../pb  --plugin=./node_modules/.bin/protoc-gen-ts_proto --ts_proto_opt=esModuleInterop=true --ts_proto_out=./protos --ts_proto_opt=outputServices=grpc-js demo.proto",
-    "types:generate": "openapi-typescript ./openapi.yaml --output ./types/generated.ts"
+    "grpc:generate": "mkdir ./protos && protoc -I ./pb  --plugin=./node_modules/.bin/protoc-gen-ts_proto --ts_proto_opt=esModuleInterop=true --ts_proto_out=./protos --ts_proto_opt=outputServices=grpc-js demo.proto"
   },
   "dependencies": {
     "@grpc/grpc-js": "^1.6.7",
     "@types/styled-components": "5.1.25",
     "currency-symbol-map": "^5.1.0",
+    "dotenv": "^16.0.1",
+    "dotenv-expand": "^8.0.3",
     "next": "12.2.2",
     "react": "18.2.0",
     "react-dom": "18.2.0",

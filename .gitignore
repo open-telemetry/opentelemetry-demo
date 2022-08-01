@@ -23,3 +23,9 @@ obj/
 build/
 node_modules/
 src/shippingservice/target/
+
+coverage
+.next/
+out/
+build
+src/frontend/protos
