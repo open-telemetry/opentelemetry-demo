@@ -5,9 +5,6 @@ services:
   jaeger:
     image: jaegertracing/all-in-one
     container_name: jaeger
-    volumes:
-      - ./src/jaeger/jaeger-ui.json:/etc/jaeger/jaeger-ui.json
-    command: --query.ui-config /etc/jaeger/jaeger-ui.json
     ports:
       - "5775:5775"
       - "5778:5778"
@@ -20,8 +17,6 @@ services:
       - "14269:14269"
     environment:
       - COLLECTOR_ZIPKIN_HOST_PORT
-      - METRICS_STORAGE_TYPE=prometheus
-      - PROMETHEUS_SERVER_URL=http://prometheus:9090
 
   # Collector
   otelcol:
