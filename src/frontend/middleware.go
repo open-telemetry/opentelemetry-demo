@@ -20,7 +20,9 @@ import (
 	"time"
 
 	"github.com/opentelemetry/opentelemetry-demo/src/frontend/instr"
-	"go.opentelemetry.io/otel/metric/global"
+	"go.opentelemetry.io/otel/metric"
+	"go.opentelemetry.io/otel/metric/instrument/syncfloat64"
+	"go.opentelemetry.io/otel/metric/instrument/syncint64"
 	semconv "go.opentelemetry.io/otel/semconv/v1.10.0"
 	"go.opentelemetry.io/otel/trace"
 
@@ -39,9 +41,9 @@ type logHandler struct {
 }
 
 var (
-	meter                 = global.MeterProvider().Meter("frontend")
-	httpRequestCounter, _ = meter.SyncInt64().Counter("http.server.request_count")
-	httpServerLatency, _  = meter.SyncFloat64().Histogram("http.server.duration")
+	meter              metric.Meter
+	httpRequestCounter syncint64.Counter
+	httpServerLatency  syncfloat64.Histogram
 )
 
 type responseRecorder struct {

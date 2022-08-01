@@ -114,7 +114,7 @@ func InitMeterProvider() (*controller.Controller, error) {
 		return nil, err
 	}
 
-	controller := controller.New(
+	pusher := controller.New(
 		processor.NewFactory(
 			simple.NewWithHistogramDistribution(),
 			metricExporter,
@@ -123,13 +123,24 @@ func InitMeterProvider() (*controller.Controller, error) {
 		controller.WithCollectPeriod(2*time.Second),
 	)
 
-	err = controller.Start(ctx)
+	err = pusher.Start(ctx)
 	if err != nil {
 		log.Errorf("failed to start metric controller, %v", err)
 	}
-	global.SetMeterProvider(controller)
+	global.SetMeterProvider(pusher)
 
-	return controller, nil
+	meter = global.MeterProvider().Meter("frontend")
+	httpRequestCounter, err = meter.SyncInt64().Counter("http.server.request_count")
+	if err != nil {
+		log.Errorf("failed to create the httpRequestCounter, %v", err)
+		return nil, err
+	}
+	httpServerLatency, err = meter.SyncFloat64().Histogram("http.server.duration")
+	if err != nil {
+		log.Errorf("failed to create the httpServerLatency, %v", err)
+		return nil, err
+	}
+	return pusher, nil
 }
 
 func main() {
