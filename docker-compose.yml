@@ -1,4 +1,9 @@
 version: '3.9'
+x-default-logging: &logging
+  driver: "json-file"
+  options:
+    max-size: "5m"
+    max-file: "2"
 services:
 
   # Jaeger
@@ -17,6 +22,7 @@ services:
       - "14269:14269"
     environment:
       - COLLECTOR_ZIPKIN_HOST_PORT
+    logging: *logging
 
   # Collector
   otelcol:
@@ -32,6 +38,7 @@ services:
       - "8888:8888"
     depends_on:
       - jaeger
+    logging: *logging
 
   # Redis
   redis-cart:
@@ -39,6 +46,7 @@ services:
     container_name: redis-cart
     ports:
       - "${REDIS_PORT}"
+    logging: *logging
 
   # AdService
   adservice:
@@ -55,6 +63,7 @@ services:
       - OTEL_RESOURCE_ATTRIBUTES=service.name=adservice
     depends_on:
       - otelcol
+    logging: *logging
 
   # CartService
   cartservice:
@@ -74,6 +83,7 @@ services:
     depends_on:
       - redis-cart
       - otelcol
+    logging: *logging
 
   # CheckoutService
   checkoutservice:
@@ -102,6 +112,7 @@ services:
       - productcatalogservice
       - shippingservice
       - otelcol
+    logging: *logging
 
   # CurrencyService
   currencyservice:
@@ -120,6 +131,7 @@ services:
       - OTEL_RESOURCE_ATTRIBUTES=service.name=currencyservice
     depends_on:
       - otelcol
+    logging: *logging
 
   # EmailService
   emailservice:
@@ -136,6 +148,7 @@ services:
       - OTEL_RESOURCE_ATTRIBUTES=service.name=emailservice
     depends_on:
       - otelcol
+    logging: *logging
 
   # Frontend
   frontend:
@@ -167,6 +180,7 @@ services:
       - productcatalogservice
       - recommendationservice
       - shippingservice
+    logging: *logging
 
   # PaymentService
   paymentservice:
@@ -183,6 +197,7 @@ services:
       - OTEL_RESOURCE_ATTRIBUTES=service.name=paymentservice
     depends_on:
       - otelcol
+    logging: *logging
 
   # ProductCatalogService
   productcatalogservice:
@@ -199,6 +214,7 @@ services:
       - OTEL_RESOURCE_ATTRIBUTES=service.name=productcatalogservice
     depends_on:
       - otelcol
+    logging: *logging
 
   # RecommendationService
   recommendationservice:
@@ -218,6 +234,7 @@ services:
       - OTEL_PYTHON_LOG_CORRELATION=true
       - OTEL_EXPORTER_OTLP_TRACES_ENDPOINT
       - OTEL_RESOURCE_ATTRIBUTES=service.name=recommendationservice
+    logging: *logging
 
   # ShippingService
   shippingservice:
@@ -234,6 +251,7 @@ services:
       - OTEL_RESOURCE_ATTRIBUTES=service.name=shippingservice
     depends_on:
       - otelcol
+    logging: *logging
 
   # FeatureFlagService
   featureflagservice:
@@ -252,6 +270,7 @@ services:
       - DATABASE_URL=ecto://ffs:ffs@ffs_postgres:5432/ffs
     depends_on:
       - ffs_postgres
+    logging: *logging
 
   ffs_postgres:
     image: cimg/postgres:14.2
@@ -260,6 +279,7 @@ services:
       - POSTGRES_USER=ffs
       - POSTGRES_DB=ffs
       - POSTGRES_PASSWORD=ffs
+    logging: *logging
 
   # LoadGenerator
   loadgenerator:
@@ -276,6 +296,7 @@ services:
       - PROTOCOL_BUFFERS_PYTHON_IMPLEMENTATION=python
     depends_on:
       - frontend
+    logging: *logging
 
   # Prometheus
   prometheus:
@@ -293,6 +314,7 @@ services:
       - ./src/prometheus/prometheus-config.yaml:/etc/prometheus/prometheus-config.yaml
     ports:
       - "${PROMETHEUS_SERVICE_PORT}:${PROMETHEUS_SERVICE_PORT}"
+    logging: *logging
 
   # Grafana
   grafana:
@@ -303,3 +325,4 @@ services:
       - ./src/grafana/provisioning/:/etc/grafana/provisioning/
     ports:
       - "${GRAFANA_SERVICE_PORT}:${GRAFANA_SERVICE_PORT}"
+    logging: *logging
