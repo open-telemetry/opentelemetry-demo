@@ -143,7 +143,7 @@ services:
       - "${EMAIL_SERVICE_PORT}"
     environment:
       - APP_ENV=production
-      - EMAIL_SERVICE_PORT
+      - PORT=${EMAIL_SERVICE_PORT}
       - OTEL_EXPORTER_OTLP_TRACES_ENDPOINT=http://otelcol:4318/v1/traces
       - OTEL_RESOURCE_ATTRIBUTES=service.name=emailservice
     depends_on:
