@@ -4,7 +4,7 @@ if System.get_env("PHX_SERVER") do
   config :featureflagservice, FeatureflagserviceWeb.Endpoint, server: true
 end
 
-grpc_port = String.to_integer(System.get_env("GRPC_PORT") || "4001")
+grpc_port = String.to_integer(System.get_env("FEATURE_FLAG_GRPC_SERVICE_PORT"))
 
 config :grpcbox,
   servers: [
@@ -51,7 +51,7 @@ if config_env() == :prod do
       """
 
   host = System.get_env("PHX_HOST") || "localhost"
-  port = String.to_integer(System.get_env("PORT") || "4000")
+  port = String.to_integer(System.get_env("FEATURE_FLAG_SERVICE_PORT"))
 
   config :featureflagservice, FeatureflagserviceWeb.Endpoint,
     url: [host: host, port: 443, scheme: "https"],
