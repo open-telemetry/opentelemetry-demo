@@ -153,38 +153,10 @@ func run(port string) string {
 	svc := &productCatalog{}
 	mustMapEnv(&svc.featureFlagSvcAddr, "FEATURE_FLAG_GRPC_SERVICE_ADDR")
 
-	createFeatureFlag(svc.featureFlagSvcAddr)
-
 	pb.RegisterProductCatalogServiceServer(srv, svc)
 	healthpb.RegisterHealthServer(srv, svc)
 	go srv.Serve(l)
 	return l.Addr().String()
-}
-
-func createFeatureFlag(svcAddr string) {
-	ctx := context.Background()
-	tracer := otel.Tracer("productcatalogservice")
-	ctx, span := tracer.Start(ctx, "createFeatureFlag")
-	defer span.End()
-
-	conn, err := createClient(ctx, svcAddr)
-	if err != nil {
-		span := trace.SpanFromContext(ctx)
-		span.AddEvent("error", trace.WithAttributes(attribute.String("message", "failed to connect to feature flag service")))
-		return
-	}
-	defer conn.Close()
-
-	_, err = pb.NewFeatureFlagServiceClient(conn).CreateFlag(ctx, &pb.CreateFlagRequest{
-		Name:        "productCatalogFailure",
-		Description: "Failure mode for product catalog service",
-		Enabled:     true,
-	})
-	if err != nil {
-		span := trace.SpanFromContext(ctx)
-		span.AddEvent("error", trace.WithAttributes(attribute.String("message", "failed to create product catalog feature flag")))
-		return
-	}
 }
 
 type productCatalog struct {
@@ -304,26 +276,29 @@ func (p *productCatalog) SearchProducts(ctx context.Context, req *pb.SearchProdu
 
 func (p *productCatalog) checkProductFailure(ctx context.Context, id string) bool {
 
-	conn, err := createClient(ctx, p.featureFlagSvcAddr)
-	if err != nil {
-		//report the error but don't fail
-		span := trace.SpanFromContext(ctx)
-		span.AddEvent("error", trace.WithAttributes(attribute.String("message", "failed to connect to feature flag service")))
-		return false
-	}
-	defer conn.Close()
+	if id == "OLJCESPC7Z" {
+		conn, err := createClient(ctx, p.featureFlagSvcAddr)
+		if err != nil {
+			//report the error but don't fail
+			span := trace.SpanFromContext(ctx)
+			span.AddEvent("error", trace.WithAttributes(attribute.String("message", "failed to connect to feature flag service")))
+			return false
+		}
+		defer conn.Close()
 
-	ffResponse, err := pb.NewFeatureFlagServiceClient(conn).GetFlag(ctx, &pb.GetFlagRequest{
-		Name: "productCatalogFailure",
-	})
-	if err != nil {
-		span := trace.SpanFromContext(ctx)
-		span.AddEvent("error", trace.WithAttributes(attribute.String("message", "failed to retrieve product catalog feature flag")))
-		return false
-	}
+		ffResponse, err := pb.NewFeatureFlagServiceClient(conn).GetFlag(ctx, &pb.GetFlagRequest{
+			Name: "productCatalogFailure",
+		})
+		if err != nil {
+			span := trace.SpanFromContext(ctx)
+			span.AddEvent("error", trace.WithAttributes(attribute.String("message", "failed to retrieve product catalog feature flag")))
+			return false
+		}
 
-	if ffResponse.GetFlag().Enabled && id == "OLJCESPC7Z" {
-		return true
+		if ffResponse.GetFlag().Enabled {
+			return true
+		}
+
 	}
 	return false
 }
