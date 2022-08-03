@@ -13,12 +13,17 @@ This repo is a work in progress. If you'd like to help, check out our
 
 ## Local Quickstart
 
-### Pre-requisites
+- [Docker](#docker)
+- [Kubernetes](#kubernetes)
+
+### Docker
+
+#### Pre-requisites
 
 - Docker
 - [Docker Compose](https://docs.docker.com/compose/install/#install-compose) v2.0.0+
 
-### Clone Repo
+#### Clone Repo
 
 - Clone the Webstore Demo repository:
 
@@ -26,7 +31,7 @@ This repo is a work in progress. If you'd like to help, check out our
 git clone https://github.com/open-telemetry/opentelemetry-demo.git
 ```
 
-### Open Folder
+#### Open Folder
 
 - Navigate to the cloned folder:
 
@@ -34,7 +39,7 @@ git clone https://github.com/open-telemetry/opentelemetry-demo.git
 cd opentelemetry-demo/
 ```
 
-### Gradle Update [Windows Only]
+#### Gradle Update [Windows Only]
 
 - Navigate to the Java Ad Service folder to install and update Gradle:
 
@@ -44,7 +49,7 @@ cd .\src\adservice\
 .\gradlew wrapper --gradle-version 7.4.2
 ```
 
-### Run Docker Compose
+#### Run Docker Compose
 
 - Start the demo (It can take ~20min the first time the command is executed as
 all the images will be build):
@@ -53,7 +58,7 @@ all the images will be build):
 docker compose up
 ```
 
-### Verify the Webstore & the Telemetry
+#### Verify the Webstore & the Telemetry
 
 Once the images are built and containers are started you can access:
 
@@ -65,7 +70,7 @@ Once the images are built and containers are started you can access:
 
 - Grafana: <http://localhost:3000/>
 
-### Bring your own backend
+#### Bring your own backend
 
 Likely you want to use the Webstore as a demo application for an observability
 backend you already have (e.g. an existing instance of Jaeger, Zipkin or one of
@@ -107,6 +112,34 @@ different exporters, you may find them and their documentation available at
 After updating the `otelcol-config.yml` start the demo by running
 `docker compose up`. After a while you should see the traces flowing into
 your backend as well.
+
+### Kubernetes
+
+We provide a [OpenTelemetry Demo Helm
+chart](https://github.com/open-telemetry/opentelemetry-helm-charts/tree/main/charts/opentelemetry-demo)
+to help deploy the demo to an existing Kubernetes cluster.
+
+[Helm](https://helm.sh) must be installed to use the charts.
+Please refer to Helm's [documentation](https://helm.sh/docs/) to get started.
+
+#### Prerequisites
+
+- Pre-existing Kubernetes Cluster
+- Helm 3.0+
+
+#### Install the Chart
+
+Add OpenTelemetry Helm repository:
+
+```console
+helm repo add open-telemetry https://open-telemetry.github.io/opentelemetry-helm-charts
+```
+
+To install the chart with the release name my-otel-demo, run the following command:
+
+```console
+helm install my-otel-demo open-telemetry/opentelemetry-demo
+```
 
 ## Screenshots from the Online Boutique
 

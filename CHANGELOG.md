@@ -51,3 +51,5 @@ significant modifications will be credited to OpenTelemetry Authors.
 ([#244](https://github.com/open-telemetry/opentelemetry-demo/pull/244))
 * Pulling java agent from the Java instrumentation releases instead.
 ([#253](https://github.com/open-telemetry/opentelemetry-demo/pull/253))
+* Added explicit support for Kubernetes.
+([#255](https://github.com/open-telemetry/opentelemetry-demo/pull/255))
