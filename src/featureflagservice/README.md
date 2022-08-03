@@ -22,7 +22,7 @@ docker compose up
 And run the Release:
 
 ``` shell
-PHX_SERVER=1 PORT=4000 GRPC_PORT=4001 _build/prod/rel/featureflagservice/bin/featureflagservice start_iex
+PHX_SERVER=1 FEATURE_FLAG_SERVICE_PORT=4000 FEATURE_FLAG_GRPC_SERVICE_PORT=4001 _build/prod/rel/featureflagservice/bin/featureflagservice start_iex
 ```
 
 ## Instrumentation
