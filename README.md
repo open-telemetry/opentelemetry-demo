@@ -124,9 +124,10 @@ Please refer to Helm's [documentation](https://helm.sh/docs/) to get started.
 
 #### Prerequisites
 
+- Pre-existing Kubernetes Cluster
 - Helm 3.0+
 
-#### Installing the Chart
+#### Install the Chart
 
 Add OpenTelemetry Helm repository:
 
