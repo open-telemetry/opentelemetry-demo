@@ -56,4 +56,4 @@ RUN cd /currencyservice \
     && mkdir -p build && cd build \
     && cmake .. && make -j install
 
-ENTRYPOINT currencyservice ${PORT} ${OTEL_EXPORTER_OTLP_TRACES_ENDPOINT} ${OTEL_RESOURCE_ATTRIBUTES}
+ENTRYPOINT currencyservice ${CURRENCY_SERVICE_PORT} ${OTEL_EXPORTER_OTLP_TRACES_ENDPOINT} ${OTEL_RESOURCE_ATTRIBUTES}
