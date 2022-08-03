@@ -263,7 +263,7 @@ services:
       context: ./src/featureflagservice
     ports:
       - "${FEATURE_FLAG_SERVICE_PORT}:${FEATURE_FLAG_SERVICE_PORT}"
-      - "${FEATURE_FLAG_GRPC_SERVICE_PORT}"
+      - "${FEATURE_FLAG_GRPC_SERVICE_PORT}:${FEATURE_FLAG_GRPC_SERVICE_PORT}"
     environment:
       - FEATURE_FLAG_SERVICE_PORT
       - FEATURE_FLAG_GRPC_SERVICE_PORT
