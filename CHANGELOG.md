@@ -47,3 +47,5 @@ significant modifications will be credited to OpenTelemetry Authors.
 ([#237](https://github.com/open-telemetry/opentelemetry-demo/pull/237))
 * Support override java agent jar
 ([#244](https://github.com/open-telemetry/opentelemetry-demo/pull/244))
+* Pulling java agent from the Java instrumentation releases instead.
+([#](https://github.com/open-telemetry/opentelemetry-demo/pull/))
