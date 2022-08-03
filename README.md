@@ -115,9 +115,9 @@ your backend as well.
 
 ### Kubernetes
 
-We provide a [OpenTelemetry
-Demo](https://github.com/open-telemetry/opentelemetry-demo) helm chart to
-quickly get a kubernetes cluster running.
+We provide a [OpenTelemetry Demo Helm
+chart](https://github.com/open-telemetry/opentelemetry-helm-charts/tree/main/charts/opentelemetry-demo)
+to quickly deploy the demo to an existing Kubernetes cluster.
 
 [Helm](https://helm.sh) must be installed to use the charts.
 Please refer to Helm's [documentation](https://helm.sh/docs/) to get started.
