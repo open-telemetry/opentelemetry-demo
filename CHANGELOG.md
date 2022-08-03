@@ -41,5 +41,7 @@ significant modifications will be credited to OpenTelemetry Authors.
 ([#189](https://github.com/open-telemetry/opentelemetry-demo/pull/189))
 * Simplified repo name and dropped the '-webstore' suffix in every place
 ([#225](https://github.com/open-telemetry/opentelemetry-demo/pull/225))
+* Add metrics endpoint in adservice to send metrics from java agent
+([#237](https://github.com/open-telemetry/opentelemetry-demo/pull/237))
 * Support override java agent jar
 ([#244](https://github.com/open-telemetry/opentelemetry-demo/pull/244))
