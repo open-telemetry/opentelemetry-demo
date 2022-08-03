@@ -28,9 +28,10 @@ services:
   otelcol:
     image: otel/opentelemetry-collector:0.56.0
     container_name: otel-col
-    command: [ "--config=/etc/otelcol-config.yml" ]
+    command: [ "--config=/etc/otelcol-config.yml", "--config=/etc/otelcol-config-extras.yml" ]
     volumes:
       - ./src/otelcollector/otelcol-config.yml:/etc/otelcol-config.yml
+      - ./src/otelcollector/otelcol-config-extras.yml:/etc/otelcol-config-extras.yml
     ports:
       - "4317"
       - "4318"
