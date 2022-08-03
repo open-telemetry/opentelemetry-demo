@@ -128,7 +128,7 @@ services:
     ports:
       - "${CURRENCY_SERVICE_PORT}:${CURRENCY_SERVICE_PORT}"
     environment:
-      - PORT=${CURRENCY_SERVICE_PORT}
+      - CURRENCY_SERVICE_PORT
       - OTEL_EXPORTER_OTLP_TRACES_ENDPOINT
       - OTEL_RESOURCE_ATTRIBUTES=service.name=currencyservice
     depends_on:
@@ -248,7 +248,7 @@ services:
     ports:
       - "${SHIPPING_SERVICE_PORT}:${SHIPPING_SERVICE_PORT}"
     environment:
-      - PORT=${SHIPPING_SERVICE_PORT}
+      - SHIPPING_SERVICE_PORT
       - OTEL_EXPORTER_OTLP_TRACES_ENDPOINT
       - OTEL_RESOURCE_ATTRIBUTES=service.name=shippingservice
     depends_on:
@@ -265,8 +265,8 @@ services:
       - "${FEATURE_FLAG_SERVICE_PORT}:${FEATURE_FLAG_SERVICE_PORT}"
       - "${FEATURE_FLAG_GRPC_SERVICE_PORT}"
     environment:
-      - PORT=${FEATURE_FLAG_SERVICE_PORT}
-      - GRPC_PORT=${FEATURE_FLAG_GRPC_SERVICE_PORT}
+      - FEATURE_FLAG_SERVICE_PORT
+      - FEATURE_FLAG_GRPC_SERVICE_PORT
       - OTEL_EXPORTER_OTLP_TRACES_ENDPOINT
       - OTEL_RESOURCE_ATTRIBUTES=service.name=featureflagservice
       - DATABASE_URL=ecto://ffs:ffs@ffs_postgres:5432/ffs
