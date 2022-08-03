@@ -99,8 +99,6 @@ task adService(type: CreateStartScripts) {
     applicationName = 'AdService'
     outputDir = new File(project.buildDir, 'tmp')
     classpath = startScripts.classpath
-    defaultJvmOpts =
-        ["-javaagent:/app/opentelemetry-javaagent.jar"]
 }
 
 task adServiceClient(type: CreateStartScripts) {
@@ -108,8 +106,6 @@ task adServiceClient(type: CreateStartScripts) {
     applicationName = 'AdServiceClient'
     outputDir = new File(project.buildDir, 'tmp')
     classpath = startScripts.classpath
-    defaultJvmOpts =
-        ["-javaagent:/app/opentelemetry-javaagent.jar"]
 }
 
 applicationDistribution.into('bin') {
