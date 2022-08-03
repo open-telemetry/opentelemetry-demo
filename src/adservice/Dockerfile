@@ -30,6 +30,7 @@ WORKDIR /usr/src/app/
 
 COPY --from=builder /usr/src/app/ ./
 COPY ./src/adservice/agent/opentelemetry-javaagent.jar /app/
+ENV JAVA_TOOL_OPTIONS=-javaagent:/app/opentelemetry-javaagent.jar
 
 EXPOSE ${AD_SERVICE_PORT}
 ENTRYPOINT [ "./build/install/hipstershop/bin/AdService" ]

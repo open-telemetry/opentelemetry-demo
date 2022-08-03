@@ -61,6 +61,7 @@ services:
     environment:
       - AD_SERVICE_PORT
       - OTEL_EXPORTER_OTLP_TRACES_ENDPOINT
+      - OTEL_EXPORTER_OTLP_METRICS_ENDPOINT
       - OTEL_RESOURCE_ATTRIBUTES=service.name=adservice
     depends_on:
       - otelcol

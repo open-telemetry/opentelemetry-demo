@@ -43,3 +43,7 @@ significant modifications will be credited to OpenTelemetry Authors.
 ([#225](https://github.com/open-telemetry/opentelemetry-demo/pull/225))
 * Added ability for repo forks to specify additional collector settings
 ([#246](https://github.com/open-telemetry/opentelemetry-demo/pull/246))
+* Add metrics endpoint in adservice to send metrics from java agent
+([#237](https://github.com/open-telemetry/opentelemetry-demo/pull/237))
+* Support override java agent jar
+([#244](https://github.com/open-telemetry/opentelemetry-demo/pull/244))
