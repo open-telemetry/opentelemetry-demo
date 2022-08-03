@@ -214,6 +214,7 @@ services:
       - PRODUCT_CATALOG_SERVICE_PORT
       - OTEL_EXPORTER_OTLP_TRACES_ENDPOINT
       - OTEL_RESOURCE_ATTRIBUTES=service.name=productcatalogservice
+      - FEATURE_FLAG_GRPC_SERVICE_ADDR
     depends_on:
       - otelcol
     logging: *logging
