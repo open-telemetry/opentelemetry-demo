@@ -54,4 +54,4 @@ significant modifications will be credited to OpenTelemetry Authors.
 * Added explicit support for Kubernetes.
 ([#255](https://github.com/open-telemetry/opentelemetry-demo/pull/255))
 * Added spanmetrics processor to otelcol
-([#212]((https://github.com/open-telemetry/opentelemetry-demo/pull/212)))
+([#212](https://github.com/open-telemetry/opentelemetry-demo/pull/212))
