@@ -79,7 +79,7 @@ docker compose up
 
 Once the images are built and containers are started you can access:
 
-- Webstore: <http://localhost:8080/>
+- Webstore: <http://localhost:8081/>
 - Jaeger: <http://localhost:16686/>
 - Prometheus: <http://localhost:9090/>
 - Grafana: <http://localhost:3000/>

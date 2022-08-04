@@ -13,7 +13,6 @@ COPY --from=deps /app/node_modules ./node_modules
 COPY ./pb ./pb
 COPY ./src/frontend .
 
-RUN mkdir protos
 RUN npm run grpc:generate
 RUN npm run build
 
