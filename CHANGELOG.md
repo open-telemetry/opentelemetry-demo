@@ -55,4 +55,3 @@ significant modifications will be credited to OpenTelemetry Authors.
 ([#255](https://github.com/open-telemetry/opentelemetry-demo/pull/255))
 * Added spanmetrics processor to otelcol
 ([#212]((https://github.com/open-telemetry/opentelemetry-demo/pull/212)))
-
