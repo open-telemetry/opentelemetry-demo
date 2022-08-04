@@ -4,7 +4,7 @@ const Footer = () => {
   return (
     <S.Footer>
       <div>
-        <p>This website is hosted for demo purpose only. It is not an actual shop. This is not a Google product</p>
+        <p>This website is hosted for demo purpose only. It is not an actual shop.</p>
         <p>
           <span>session-id: 123</span>
         </p>

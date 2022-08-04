@@ -44,7 +44,7 @@ const CheckoutForm = ({ onSubmit }: IProps) => {
     zipCode: 94043,
     creditCardNumber: '4432-8015-6152-0454',
     creditCardCvv: 672,
-    creditCardExpirationYear: 2022,
+    creditCardExpirationYear: 2030,
     creditCardExpirationMonth: 1,
   });
 

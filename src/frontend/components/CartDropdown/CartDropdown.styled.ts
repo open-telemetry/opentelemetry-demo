@@ -89,3 +89,10 @@ export const Header = styled.div`
     }
   }
 `;
+
+export const EmptyCart = styled.h3`
+  margin: 0;
+  margin-top: 25px;
+  font-size: ${({ theme }) => theme.sizes.mLarge};
+  color: ${({ theme }) => theme.colors.textLightGray};
+`;

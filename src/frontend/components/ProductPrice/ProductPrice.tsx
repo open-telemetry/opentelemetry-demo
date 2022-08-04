@@ -8,7 +8,7 @@ interface IProps {
 }
 
 const ProductPrice = ({ price }: IProps) => {
-  const [{ units, currencyCode }, setParsedPrice] = useState<Money>(price);
+  const [{ units, currencyCode, nanos }, setParsedPrice] = useState<Money>(price);
   const { convert, selectedCurrency } = useCurrency();
 
   const convertPrice = useCallback(async () => {
@@ -24,11 +24,11 @@ const ProductPrice = ({ price }: IProps) => {
 
   useEffect(() => {
     convertPrice();
-  }, [selectedCurrency, price]);
+  }, [selectedCurrency]);
 
   return (
     <span>
-      {currencySymbol}{units}
+      {currencySymbol} {units}.{nanos}
     </span>
   );
 };

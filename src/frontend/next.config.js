@@ -17,6 +17,7 @@ const {
   PRODUCT_CATALOG_SERVICE_ADDR = '',
   RECOMMENDATION_SERVICE_ADDR = '',
   SHIPPING_SERVICE_ADDR = '',
+  ENV_PLATFORM = '',
 } = process.env;
 
 const nextConfig = {
@@ -44,6 +45,7 @@ const nextConfig = {
     PRODUCT_CATALOG_SERVICE_ADDR,
     RECOMMENDATION_SERVICE_ADDR,
     SHIPPING_SERVICE_ADDR,
+    NEXT_PUBLIC_PLATFORM: ENV_PLATFORM,
   },
 };
 

@@ -18,7 +18,7 @@ const Home: NextPage = () => {
           <S.Row>
             <S.Content>
               <S.HotProducts>
-                <S.HotProductsTitle>Hot Products</S.HotProductsTitle>
+                <S.HotProductsTitle id="hot-products">Hot Products</S.HotProductsTitle>
                 <ProductList productList={productList} />
               </S.HotProducts>
             </S.Content>

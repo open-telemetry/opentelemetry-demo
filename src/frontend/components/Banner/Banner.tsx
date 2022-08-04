@@ -1,3 +1,4 @@
+import Link from 'next/link';
 import * as S from './Banner.styled';
 
 const Banner = () => {
@@ -8,7 +9,7 @@ const Banner = () => {
       </S.ImageContainer>
       <S.TextContainer>
         <S.Title>The best telescopes to see the world closer</S.Title>
-        <S.GoShoppingButton>Go Shopping</S.GoShoppingButton>
+        <Link href="#hot-products"><S.GoShoppingButton>Go Shopping</S.GoShoppingButton></Link>
       </S.TextContainer>
     </S.Banner>
   );

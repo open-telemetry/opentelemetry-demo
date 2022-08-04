@@ -3,6 +3,8 @@ import { CartItem, GetQuoteResponse, ShippingServiceClient } from '../../protos/
 
 const { SHIPPING_SERVICE_ADDR = '' } = process.env;
 
+console.log('@@@ SHIPPING_SERVICE_ADDR', SHIPPING_SERVICE_ADDR);
+
 const client = new ShippingServiceClient(SHIPPING_SERVICE_ADDR, ChannelCredentials.createInsecure());
 
 const AdGateway = () => ({

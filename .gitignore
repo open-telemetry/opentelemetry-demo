@@ -29,3 +29,4 @@ coverage
 out/
 build
 src/frontend/protos
+next-env.d.ts

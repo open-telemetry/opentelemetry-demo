@@ -36,6 +36,9 @@ const CartDropdown = ({ productList, isOpen, onClose }: IProps) => {
           <span onClick={onClose}>Close</span>
         </S.Header>
         <S.ItemList>
+          {!productList.length && (
+            <S.EmptyCart>Your shopping cart is empty</S.EmptyCart>
+          )}
           {productList.map(
             ({ quantity, product: { name, picture, id, priceUsd = { nanos: 0, currencyCode: 'USD', units: 0 } } }) => (
               <S.Item key={id}>
@@ -51,7 +54,7 @@ const CartDropdown = ({ productList, isOpen, onClose }: IProps) => {
         </S.ItemList>
       </div>
       <Link href="/cart">
-        <S.CartButton>Go to Shipping Data</S.CartButton>
+        <S.CartButton>Go to Shipping Cart</S.CartButton>
       </Link>
     </S.CartDropdown>
   ) : null;

@@ -19,7 +19,7 @@ const getPlatformMap = (platform: Platform, theme: DefaultTheme) => {
     [Platform.LOCAL]: theme.colors.otelYellow,
   };
 
-  return map[platform];
+  return map[platform] || map[Platform.LOCAL];
 };
 
 export const PlatformFlag = styled.div<{ $platform: Platform }>`
