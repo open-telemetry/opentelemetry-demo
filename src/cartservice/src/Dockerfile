@@ -32,5 +32,4 @@ WORKDIR /usr/src/app/
 COPY --from=builder /cartservice/ ./
 
 EXPOSE ${CART_SERVICE_PORT}
-
 ENTRYPOINT [ "./cartservice" ]

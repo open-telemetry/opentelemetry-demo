@@ -16,7 +16,6 @@ RUN GRPC_HEALTH_PROBE_VERSION=v0.4.7 && \
     chmod +x /bin/grpc_health_probe
 WORKDIR /app
 COPY --from=builder /app/target/release/shippingservice /shippingservice
-ENV PORT=50051
 
-EXPOSE 50051
+EXPOSE ${SHIPPING_SERVICE_PORT}
 ENTRYPOINT ["/shippingservice"]
