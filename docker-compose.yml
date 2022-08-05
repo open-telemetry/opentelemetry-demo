@@ -20,8 +20,6 @@ services:
       - "14250:14250"
       - "14268:14268"
       - "14269:14269"
-    environment:
-      - COLLECTOR_ZIPKIN_HOST_PORT
     logging: *logging
 
   # Collector
@@ -62,7 +60,7 @@ services:
       - AD_SERVICE_PORT
       - OTEL_EXPORTER_OTLP_TRACES_ENDPOINT
       - OTEL_EXPORTER_OTLP_METRICS_ENDPOINT
-      - OTEL_RESOURCE_ATTRIBUTES=service.name=adservice
+      - OTEL_SERVICE_NAME=adservice
     depends_on:
       - otelcol
     logging: *logging
@@ -80,7 +78,7 @@ services:
       - CART_SERVICE_PORT
       - REDIS_ADDR
       - OTEL_EXPORTER_OTLP_ENDPOINT
-      - OTEL_RESOURCE_ATTRIBUTES=service.name=cartservice
+      - OTEL_SERVICE_NAME=cartservice
       - ASPNETCORE_URLS=http://*:${CART_SERVICE_PORT}
     depends_on:
       - redis-cart
@@ -105,7 +103,7 @@ services:
       - PRODUCT_CATALOG_SERVICE_ADDR
       - SHIPPING_SERVICE_ADDR
       - OTEL_EXPORTER_OTLP_TRACES_ENDPOINT
-      - OTEL_RESOURCE_ATTRIBUTES=service.name=checkoutservice
+      - OTEL_SERVICE_NAME=checkoutservice
     depends_on:
       - cartservice
       - currencyservice
@@ -130,7 +128,7 @@ services:
     environment:
       - CURRENCY_SERVICE_PORT
       - OTEL_EXPORTER_OTLP_TRACES_ENDPOINT
-      - OTEL_RESOURCE_ATTRIBUTES=service.name=currencyservice
+      - OTEL_RESOURCE_ATTRIBUTES=service.name=currencyservice   # The C++ SDK does not support OTEL_SERVICE_NAME
     depends_on:
       - otelcol
     logging: *logging
@@ -147,7 +145,7 @@ services:
       - APP_ENV=production
       - EMAIL_SERVICE_PORT
       - OTEL_EXPORTER_OTLP_TRACES_ENDPOINT=http://otelcol:4318/v1/traces
-      - OTEL_RESOURCE_ATTRIBUTES=service.name=emailservice
+      - OTEL_SERVICE_NAME=emailservice
     depends_on:
       - otelcol
     logging: *logging
@@ -171,8 +169,7 @@ services:
       - RECOMMENDATION_SERVICE_ADDR
       - SHIPPING_SERVICE_ADDR
       - OTEL_EXPORTER_OTLP_TRACES_ENDPOINT
-      - OTEL_RESOURCE_ATTRIBUTES=service.name=frontend
-      - OTEL_EXPORTER_OTLP_ENDPOINT
+      - OTEL_SERVICE_NAME=frontend
     depends_on:
       - adservice
       - cartservice
@@ -196,7 +193,7 @@ services:
     environment:
       - PAYMENT_SERVICE_PORT
       - OTEL_EXPORTER_OTLP_TRACES_ENDPOINT
-      - OTEL_RESOURCE_ATTRIBUTES=service.name=paymentservice
+      - OTEL_SERVICE_NAME=paymentservice
     depends_on:
       - otelcol
     logging: *logging
@@ -213,7 +210,7 @@ services:
     environment:
       - PRODUCT_CATALOG_SERVICE_PORT
       - OTEL_EXPORTER_OTLP_TRACES_ENDPOINT
-      - OTEL_RESOURCE_ATTRIBUTES=service.name=productcatalogservice
+      - OTEL_SERVICE_NAME=productcatalogservice
     depends_on:
       - otelcol
     logging: *logging
@@ -235,7 +232,7 @@ services:
       - PRODUCT_CATALOG_SERVICE_ADDR
       - OTEL_PYTHON_LOG_CORRELATION=true
       - OTEL_EXPORTER_OTLP_TRACES_ENDPOINT
-      - OTEL_RESOURCE_ATTRIBUTES=service.name=recommendationservice
+      - OTEL_SERVICE_NAME=recommendationservice
     logging: *logging
 
   # ShippingService
@@ -250,7 +247,7 @@ services:
     environment:
       - SHIPPING_SERVICE_PORT
       - OTEL_EXPORTER_OTLP_TRACES_ENDPOINT
-      - OTEL_RESOURCE_ATTRIBUTES=service.name=shippingservice
+      - OTEL_SERVICE_NAME=shippingservice
     depends_on:
       - otelcol
     logging: *logging
@@ -268,7 +265,7 @@ services:
       - FEATURE_FLAG_SERVICE_PORT
       - FEATURE_FLAG_GRPC_SERVICE_PORT
       - OTEL_EXPORTER_OTLP_TRACES_ENDPOINT
-      - OTEL_RESOURCE_ATTRIBUTES=service.name=featureflagservice
+      - OTEL_SERVICE_NAME=featureflagservice
       - DATABASE_URL=ecto://ffs:ffs@ffs_postgres:5432/ffs
     depends_on:
       - ffs_postgres
@@ -294,7 +291,7 @@ services:
       - FRONTEND_ADDR
       - USERS
       - OTEL_EXPORTER_OTLP_TRACES_ENDPOINT
-      - OTEL_RESOURCE_ATTRIBUTES=service.name=loadgenerator
+      - OTEL_SERVICE_NAME=loadgenerator
       - PROTOCOL_BUFFERS_PYTHON_IMPLEMENTATION=python
     depends_on:
       - frontend
