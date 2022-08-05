@@ -1,6 +1,7 @@
 # Desired Service Map
 
 This diagram illustrates the desired relationships between services for the v1 work.
+See service roles [here](./service_table.md).
 
 ```mermaid
 graph TD
@@ -31,7 +32,6 @@ checkoutservice --> currencyservice
 checkoutservice --> emailservice
 checkoutservice --> paymentservice
 checkoutservice --> shippingservice
-checkoutservice --> |evalFlag| featureflagfeservice
 
 frontend --> adservice
 frontend --> cartservice
@@ -40,10 +40,11 @@ frontend --> checkoutservice
 frontend --> currencyservice
 frontend --> recommendationservice --> productcatalogservice
 frontend --> shippingservice
-frontend --> |evalFlag| featureflagfeservice
 
 productcatalogservice --> |evalFlag| featureflagfeservice
 productcatalogservice --> productstore
+
+shippingservice --> |evalFlag| featureflagfeservice
 
 featureflagbeservice(Flag Server):::erlang
 featureflagfeservice(Flag UI/API):::erlang

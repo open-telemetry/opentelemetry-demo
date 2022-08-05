@@ -17,7 +17,8 @@ pub fn create_quote_from_count(count: u32) -> Quote {
     };
     get_active_span(|span| {
         let q = create_quote_from_float(f);
-        span.add_event("Quote Issued", vec![KeyValue::new(format!("{}", q), true)]);
+        span.set_attribute(KeyValue::new("app.shipping.items.count", count as i64));
+        span.set_attribute(KeyValue::new("app.shipping.cost.total", format!("{}", q)));
         q
     })
 }

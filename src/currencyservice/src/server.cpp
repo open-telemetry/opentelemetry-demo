@@ -185,6 +185,9 @@ class CurrencyService final : public hipstershop::CurrencyService::Service
       getUnitsAndNanos(*response, final);
       response->set_currency_code(to_code);
 
+      span->SetAttribute("app.currency.conversion.from", from_code);
+      span->SetAttribute("app.currency.conversion.to", to_code);
+
       // End the span
       span->AddEvent("Conversion successful, response sent back");
       span->SetStatus(StatusCode::kOk);
