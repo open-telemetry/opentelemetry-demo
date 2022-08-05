@@ -15,6 +15,6 @@
 | Feature Flag    | Erlang / Elixir | :construction:            | :construction:       | :construction:       | :construction:          | :construction: | :construction: |
 | Frontend        | JavaScript      | :construction:            | :construction:       | :construction:       | :construction:          | :construction: | :construction: |
 | Payment         | JavaScript      | :100:                     | :100:                | :100:                | :construction:          | :construction: | :construction: |
-| Product Catalog | Go              | :100:                     | :construction:       | :100:                | :construction:          | :construction: | :construction: | 
+| Product Catalog | Go              | :100:                     | :construction:       | :100:                | :construction:          | :construction: | :construction: |
 | Recommendation  | Python          | :100:                     | :100:                | :100:                | :construction:          | :construction: | :construction: |
 | Shipping        | Rust            | :construction:            | :construction:       | :construction:       | :construction:          | :construction: | :construction: |
