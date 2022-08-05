@@ -1,5 +1,7 @@
 # Service Roles
 
+View [Service Graph](./v1Graph.md) to visualize request flow.
+
 | Service                                                         | Language        | Description                                                                                                                                  |
 |-----------------------------------------------------------------|-----------------|----------------------------------------------------------------------------------------------------------------------------------------------|
 | [adservice](../src/adservice/README.md)                         | Java            | Provides text ads based on given context words.                                                                                              |
@@ -14,5 +16,3 @@
 | [productcatalogservice](../src/productcatalogservice/README.md) | Go              | Provides the list of products from a JSON file and ability to search products and get individual products.                                   |
 | [recommendationservice](../src/recommendationservice/README.md) | Python          | Recommends other products based on what's given in the cart.                                                                                 |
 | [shippingservice](../src/shippingservice/README.md)             | Rust            | Gives shipping cost estimates based on the shopping cart. Ships items to the given address (mock).                                           |
-
-View [Service Graph](./v1Graph.md) to visualize request flow.
