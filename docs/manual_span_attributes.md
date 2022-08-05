@@ -82,4 +82,6 @@ This document contains the list of manual Span Attributes used throughout the de
 
 ## ShippingService
 
-* None yet
+* `app.shipipng.cost.total`
+* `app.shipping.items.count`
+* `app.shipping.tracking.id`
