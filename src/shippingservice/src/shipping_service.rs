@@ -90,7 +90,7 @@ impl ShippingService for ShippingServer {
             .start_with_context("ship-order", &parent_cx);
 
         let tid = create_tracking_id();
-        span.add_event("Tracking ID issued", vec![KeyValue::new(tid.clone(), true)]);
+        span.set_attribute(KeyValue::new("app.shipping.tracking.id", tid.clone()));
         info!("Tracking ID Created: {}", tid);
 
         Ok(Response::new(ShipOrderResponse { tracking_id: tid }))
