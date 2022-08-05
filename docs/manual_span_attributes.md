@@ -28,7 +28,8 @@ This document contains the list of manual Span Attributes used throughout the de
 
 ## CurrencyService
 
-* None yet
+* `app.currency.conversion.from`
+* `app.currency.conversion.to`
 
 ## EmailService
 
