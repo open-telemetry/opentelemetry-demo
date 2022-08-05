@@ -1,7 +1,7 @@
 # Desired Service Map
 
 This diagram illustrates the desired relationships between services for the v1 work.
-See service roles [here](./service_table.md)
+See service roles [here](./service_table.md).
 
 ```mermaid
 graph TD
