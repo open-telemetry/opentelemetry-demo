@@ -18,4 +18,4 @@ Emoji Legend
 | Payment         | JavaScript      | :100:                     | :100:                | :100:                | :construction:          | :construction: | :construction: |
 | Product Catalog | Go              | :100:                     | :construction:       | :100:                | :construction:          | :construction: | :construction: |
 | Recommendation  | Python          | :100:                     | :100:                | :100:                | :construction:          | :construction: | :construction: |
-| Shipping        | Rust            | :construction:            | :construction:       | :construction:       | :100:                   | :construction: | :construction: |
+| Shipping        | Rust            | :construction:            | :100:                | :construction:       | :100:                   | :construction: | :construction: |
