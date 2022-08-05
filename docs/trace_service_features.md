@@ -13,7 +13,7 @@ Emoji Legend
 | Checkout        | Go              | :100:                     | :100:                | :100:                | :construction:          | :construction: | :construction: |
 | Currency        | C++             | :no_bell:                 | :100:                | :100:                | :100:                   | :construction: | :construction: |
 | Email           | Ruby            | :100:                     | :100:                | :100:                | :construction:          | :construction: | :construction: |
-| Feature Flag    | Erlang / Elixir | :construction:            | :construction:       | :construction:       | :construction:          | :construction: | :construction: |
+| Feature Flag    | Erlang / Elixir | :100:                     | :construction:       | :construction:       | :construction:          | :construction: | :construction: |
 | Frontend        | JavaScript      | :construction:            | :construction:       | :construction:       | :construction:          | :construction: | :construction: |
 | Payment         | JavaScript      | :100:                     | :100:                | :100:                | :construction:          | :construction: | :construction: |
 | Product Catalog | Go              | :100:                     | :construction:       | :100:                | :construction:          | :construction: | :construction: |
