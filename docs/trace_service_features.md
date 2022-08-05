@@ -1,6 +1,6 @@
 # Trace Feature Coverage by Service
 
-**Emoji Legend**
+Emoji Legend
 - Completed: :100:
 - Not Present (Yet): :construction:
 
