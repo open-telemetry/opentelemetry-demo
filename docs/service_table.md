@@ -15,4 +15,4 @@
 | [recommendationservice](../src/recommendationservice/README.md) | Python          | Recommends other products based on what's given in the cart.                                                                                 |
 | [shippingservice](../src/shippingservice/README.md)             | Rust            | Gives shipping cost estimates based on the shopping cart. Ships items to the given address (mock).                                           |
 
-[Service Graph](./v1Graph.md)
+View [Service Graph](./v1Graph.md) to visualize request flow.
