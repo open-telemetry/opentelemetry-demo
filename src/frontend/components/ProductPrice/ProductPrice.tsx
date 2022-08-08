@@ -24,7 +24,7 @@ const ProductPrice = ({ price }: IProps) => {
 
   useEffect(() => {
     convertPrice();
-  }, [selectedCurrency]);
+  }, [selectedCurrency, price]);
 
   return (
     <span>
