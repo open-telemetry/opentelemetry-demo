@@ -70,25 +70,16 @@ public:
   ServerContext *context_;
 };
 
-void initTracer(std::string endpoint,
-  std::string resourcekey = "service.name",
-  std::string resourceval = "currencyservice")
+void initTracer()
 {
-  opentelemetry::exporter::otlp::OtlpGrpcExporterOptions opts;
-  opts.endpoint = endpoint;
-
   auto exporter = std::unique_ptr<opentelemetry::sdk::trace::SpanExporter>(
-      new opentelemetry::exporter::otlp::OtlpGrpcExporter(opts));
+      new opentelemetry::exporter::otlp::OtlpGrpcExporter());
   auto processor = std::unique_ptr<opentelemetry::sdk::trace::SpanProcessor>(
       new opentelemetry::sdk::trace::SimpleSpanProcessor(std::move(exporter)));
   std::vector<std::unique_ptr<opentelemetry::sdk::trace::SpanProcessor>> processors;
   processors.push_back(std::move(processor));
-  // Default is an always-on sampler.
-  opentelemetry::sdk::resource::ResourceAttributes attributes;
-  attributes[resourcekey] = resourceval;
 
-  auto context  = std::make_shared<opentelemetry::sdk::trace::TracerContext>
-    (std::move(processors), opentelemetry::sdk::resource::Resource::Create(attributes));
+  auto context  = std::make_shared<opentelemetry::sdk::trace::TracerContext>(std::move(processors));
   auto provider = opentelemetry::nostd::shared_ptr<opentelemetry::trace::TracerProvider>(
       new opentelemetry::sdk::trace::TracerProvider(context));
   // Set the global trace provider
