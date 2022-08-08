@@ -1,6 +1,7 @@
 # Frontend service
 
 The frontend is a Next.js application that is composed by two layers.
+
 1. Client side application. Which renders the components for the OTEL webstore.
 2. API layer. Connects the client to the gRPC services by exposing REST endpoints.
 
@@ -12,10 +13,12 @@ frontend client by going to <localhost:8081>.
 ## Local development
 
 Currently, the easiest way to run the frontend for local development is to execute
+
 ```shell
   docker-compose run --service-ports -e NODE_ENV=development
   --volume $(pwd)/src/frontend:/app --volume $(pwd)/pb:/app/pb frontend sh
 ```
+
 from the root folder.
 
 It will start all of the required backend services
