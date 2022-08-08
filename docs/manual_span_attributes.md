@@ -110,4 +110,3 @@ This document contains the list of manual Span Attributes used throughout the de
 | `app.shipping.cost.total`  | number | ...         |
 | `app.shipping.items.count` | number | ...         |
 | `app.shipping.tracing.id`  | string | ...         |
-
