@@ -1,10 +1,10 @@
-import { createContext, useCallback, useContext, useMemo, useState } from 'react';
+import { createContext, useCallback, useContext, useMemo, useState, useEffect } from 'react';
 import { useMutation, useQuery } from 'react-query';
 import ApiGateway from '../gateways/Api.gateway';
 import SessionGateway from '../gateways/Session.gateway';
 import { Money } from '../protos/demo';
 
-const { currencyCode = 'USD' } = SessionGateway.getSession();
+const { currencyCode } = SessionGateway.getSession();
 
 interface IContext {
   currencyCodeList: string[];
@@ -28,8 +28,12 @@ export const useCurrency = () => useContext(Context);
 
 const CurrencyProvider = ({ children }: IProps) => {
   const { data: currencyCodeList = [] } = useQuery('currency', ApiGateway.getSupportedCurrencyList);
-  const [selectedCurrency, setSelectedCurrency] = useState<string>(currencyCode);
+  const [selectedCurrency, setSelectedCurrency] = useState<string>('');
   const convertMutation = useMutation(ApiGateway.convertToCurrency);
+
+  useEffect(() => {
+    setSelectedCurrency(currencyCode);
+  }, []);
 
   const convert = useCallback(
     (from: Money) => convertMutation.mutateAsync({ from, toCode: selectedCurrency }),
