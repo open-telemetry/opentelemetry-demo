@@ -59,5 +59,5 @@ significant modifications will be credited to OpenTelemetry Authors.
 ([#260](https://github.com/open-telemetry/opentelemetry-demo/pull/260))
 * Added span attributes to currency service
 ([#265](https://github.com/open-telemetry/opentelemetry-demo/pull/265))
-* 39 Moving the Front end application from Go to Next.js 
+* 39 Moving the Front end application from Go to Next.js
 ([#236](https://github.com/open-telemetry/opentelemetry-demo/pull/236))
