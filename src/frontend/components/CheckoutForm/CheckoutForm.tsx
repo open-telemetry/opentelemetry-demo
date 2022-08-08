@@ -3,6 +3,9 @@ import { useCallback, useState } from 'react';
 import Input from '../Input';
 import * as S from './CheckoutForm.styled';
 
+const currentYear = new Date().getFullYear();
+const yearList = Array.from(new Array(20), (v, i) => i + currentYear);
+
 export interface IFormData {
   email: string;
   streetAddress: string;
@@ -164,7 +167,11 @@ const CheckoutForm = ({ onSubmit }: IProps) => {
           onChange={handleChange}
           type="select"
         >
-          <option value="2022">2022</option>
+          {yearList.map(year => (
+            <option value={year} key={year}>
+              {year}
+            </option>
+          ))}
         </Input>
         <Input
           label="CVV"

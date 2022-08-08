@@ -10,7 +10,7 @@ const Footer = () => {
         </p>
       </div>
       <p>
-        @ 2022 OpenTelemetry (<a href="https://github.com/open-telemetry/opentelemetry-demo-webstore">Source Code</a>)
+        @ 2022 OpenTelemetry (<a href="https://github.com/open-telemetry/opentelemetry-demo">Source Code</a>)
       </p>
     </S.Footer>
   );

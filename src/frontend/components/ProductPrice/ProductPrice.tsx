@@ -28,7 +28,7 @@ const ProductPrice = ({ price }: IProps) => {
 
   return (
     <span>
-      {currencySymbol} {units}.{nanos.toString().slice(2)}
+      {currencySymbol} {units}.{nanos.toString().slice(0, 2)}
     </span>
   );
 };
