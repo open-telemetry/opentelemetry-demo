@@ -12,11 +12,15 @@ frontend client by going to <localhost:8081>.
 ## Local development
 
 Currently, the easiest way to run the frontend for local development is to execute
-`docker-compose run --service-ports -e NODE_ENV=development --volume $(pwd)/src/frontend:/app --volume $(pwd)/pb:/app/pb frontend sh`
+```shell
+  docker-compose run --service-ports -e NODE_ENV=development
+  --volume $(pwd)/src/frontend:/app --volume $(pwd)/pb:/app/pb frontend sh
+```
 from the root folder.
 
-It will start all of the required backend services and within the container simply run
-`npm run dev` after that the app should be available at <localhost:8081>
+It will start all of the required backend services
+and within the container simply run `npm run dev`.
+After that the app should be available at <localhost:8081>
 
 ## Building the Docker image
 
