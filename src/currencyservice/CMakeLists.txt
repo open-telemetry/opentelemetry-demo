@@ -62,7 +62,7 @@ add_executable(currencyservice src/server.cpp)
 add_dependencies(currencyservice demo-proto)
 target_link_libraries(
     currencyservice demo-proto protobuf::libprotobuf
-    opentelemetry_resources opentelemetry_trace opentelemetry_common  opentelemetry_exporter_otlp_grpc opentelemetry_proto opentelemetry_otlp_recordable gRPC::grpc++)
+     opentelemetry_trace opentelemetry_common  opentelemetry_exporter_otlp_grpc opentelemetry_proto opentelemetry_otlp_recordable opentelemetry_resources gRPC::grpc++)
 
 add_executable(currencyclient src/client.cpp)
 add_dependencies(currencyclient demo-proto)

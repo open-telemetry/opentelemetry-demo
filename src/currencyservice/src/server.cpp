@@ -7,7 +7,7 @@
 #include <grpc/health/v1/health.grpc.pb.h>
 
 #include "opentelemetry/trace/context.h"
-#include "opentelemetry/trace/experimental_semantic_conventions.h"
+#include "opentelemetry/trace/semantic_conventions.h"
 #include "opentelemetry/trace/span_context_kv_iterable_view.h"
 #include "tracer_common.h"
 
@@ -102,10 +102,10 @@ class CurrencyService final : public hipstershop::CurrencyService::Service
     std::string span_name = "CurrencyService/GetSupportedCurrencies";
     auto span =
         get_tracer("currencyservice")->StartSpan(span_name,
-                                      {{OTEL_GET_TRACE_ATTR(AttrRpcSystem), "grpc"},
-                                       {OTEL_GET_TRACE_ATTR(AttrRpcService), "CurrencyService"},
-                                       {OTEL_GET_TRACE_ATTR(AttrRpcMethod), "GetSupportedCurrencies"},
-                                       {OTEL_GET_TRACE_ATTR(AttrRpcGrpcStatusCode), 0}},
+                                      {{SemanticConventions::RPC_SYSTEM, "grpc"},
+                                       {SemanticConventions::RPC_SERVICE, "CurrencyService"},
+                                       {SemanticConventions::RPC_METHOD, "GetSupportedCurrencies"},
+                                       {SemanticConventions::RPC_GRPC_STATUS_CODE, 0}},
                                       options);
     auto scope = get_tracer("currencyservice")->WithActiveSpan(span);
     // Fetch and parse whatever HTTP headers we can from the gRPC request.
@@ -162,10 +162,10 @@ class CurrencyService final : public hipstershop::CurrencyService::Service
     std::string span_name = "CurrencyService/Convert";
     auto span =
         get_tracer("currencyservice")->StartSpan(span_name,
-                                      {{OTEL_GET_TRACE_ATTR(AttrRpcSystem), "grpc"},
-                                       {OTEL_GET_TRACE_ATTR(AttrRpcService), "CurrencyService"},
-                                       {OTEL_GET_TRACE_ATTR(AttrRpcMethod), "Convert"},
-                                       {OTEL_GET_TRACE_ATTR(AttrRpcGrpcStatusCode), 0}},
+                                      {{SemanticConventions::RPC_SYSTEM, "grpc"},
+                                       {SemanticConventions::RPC_SERVICE, "CurrencyService"},
+                                       {SemanticConventions::RPC_METHOD, "Convert"},
+                                       {SemanticConventions::RPC_GRPC_STATUS_CODE, 0}},
                                       options);
     auto scope = get_tracer("currencyservice")->WithActiveSpan(span);
     // Fetch and parse whatever HTTP headers we can from the gRPC request.
