@@ -4,51 +4,50 @@ This document contains the list of manual Span Attributes used throughout the de
 
 ## AdService
 
-| Name                        | Type    | Description              |
-|-----------------------------|---------|--------------------------|
-| `app.ads.category`          | string  | Category for returned ad |
-| `app.ads.category`          | string  | ...                      |
-| `app.ads.contextKeys`       | string  | ...                      |
-| `app.ads.contextKeys.count` | number  | ...                      |
-| `app.ads.count`             | number  | ...                      |
+| Name                        | Type    | Description                           |
+|-----------------------------|---------|---------------------------------------|
+| `app.ads.category`          | string  | Category for returned ad              |
+| `app.ads.contextKeys`       | string  | Context keys used to find related ads |
+| `app.ads.contextKeys.count` | number  | Count of unique context keys used     |
+| `app.ads.count`             | number  | Count of ads returned to user         |
 
 ## CartService
 
-| Name                   | Type   | Description |
-|------------------------|--------|-------------|
-| `app.product.id`       | string | ...         |
-| `app.product.quantity` | string | ...         |
-| `app.user.id`          | string | ...         |
+| Name                   | Type   | Description              |
+|------------------------|--------|--------------------------|
+| `app.product.id`       | string | Product Id for cart item |
+| `app.product.quantity` | string | Quantity for cart item   |
+| `app.user.id`          | string | User Id                  |
 
 ## CheckoutService
 
-| Name                      | Type   | Description |
-|---------------------------|--------|-------------|
-| `app.cart.items.count`    | number | ...         |
-| `app.order.id`            | string | ...         |
-| `app.order.shipping.cost` | number | ...         |
-| `app.order.total.cost`    | number | ...         |
-| `app.order.tracking.id`   | string | ...         |
-| `app.order.items.count`   | number | ...         |
-| `app.user.currency`       | string | ...         |
-| `app.user.id`             | string | ...         |
+| Name                      | Type   | Description                     |
+|---------------------------|--------|---------------------------------|
+| `app.cart.items.count`    | number | Number of unique items in cart  |
+| `app.order.id`            | string | Order Id                        |
+| `app.order.shipping.cost` | number | Order shipping cost             |
+| `app.order.total.cost`    | number | Order total cost                |
+| `app.order.tracking.id`   | string | Order shipping tracking Id      |
+| `app.order.items.count`   | number | Number of unique items in order |
+| `app.user.currency`       | string | User currency                   |
+| `app.user.id`             | string | User Id                         |
 
 ## CurrencyService
 
-| Name                           | Type   | Description |
-|--------------------------------|--------|-------------|
-| `app.currency.conversion.from` | string | ...         |
-| `app.currency.conversion.to`   | string | ...         |
+| Name                           | Type   | Description                   |
+|--------------------------------|--------|-------------------------------|
+| `app.currency.conversion.from` | string | Currency code to convert from |
+| `app.currency.conversion.to`   | string | Currency code to convert to   |
 
 ## EmailService
 
-| Name                         | Type   | Description |
-|------------------------------|--------|-------------|
-| `app.email.sent`             | string | ...         |
-| `app.order.id`               | string | ...         |
-| `app.shipping.cost.currency` | string | ...         |
-| `app.shipping.cost.total`    | string | ...         |
-| `app.shipping.tracking.id`   | string | ...         |
+| Name                         | Type   | Description                       |
+|------------------------------|--------|-----------------------------------|
+| `app.email.sent`             | string | Email used for order confirmation |
+| `app.order.id`               | string | Order Id                          |
+| `app.shipping.cost.currency` | string | Order currency                    |
+| `app.shipping.cost.total`    | string | Order cost total                  |
+| `app.shipping.tracking.id`   | string | Order shipping tracking Id        |
 
 ## FeatureFlagService
 
@@ -58,21 +57,21 @@ This document contains the list of manual Span Attributes used throughout the de
 
 ## Frontend
 
-| Name                     | Type   | Description |
-|--------------------------|--------|-------------|
-| `app.cart.size`          | number | ...         |
-| `app.cart.items.count`   | number | ...         |
-| `app.cart.shipping.cost` | number | ...         |
-| `app.cart.total.price`   | number | ...         |
-| `app.currency`           | string | ...         |
-| `app.currency.new`       | string | ...         |
-| `app.order.total`        | number | ...         |
-| `app.product.id`         | string | ...         |
-| `app.product.quantity`   | number | ...         |
-| `app.products.count`     | number | ...         |
-| `app.request.id`         | string | ...         |
-| `app.session.id`         | string | ...         |
-| `app.user.id`            | string | ...         |
+| Name                     | Type   | Description                   |
+|--------------------------|--------|-------------------------------|
+| `app.cart.size`          | number | Total number of items in cart |
+| `app.cart.items.count`   | number | Count of unique items in cart |
+| `app.cart.shipping.cost` | number | Cart shipping cost            |
+| `app.cart.total.price`   | number | Cart total price              |
+| `app.currency`           | string | User currency                |
+| `app.currency.new`       | string | New currency to set           |
+| `app.order.total`        | number | Order total cost              |
+| `app.product.id`         | string | Product Id                    |
+| `app.product.quantity`   | number | Product quantity              |
+| `app.products.count`     | number | Total products displayed      |
+| `app.request.id`         | string | Request Id                    |
+| `app.session.id`         | string | Session Id                    |
+| `app.user.id`            | string | User Id                       |
 
 ## LoadGenerator
 
@@ -82,31 +81,31 @@ This document contains the list of manual Span Attributes used throughout the de
 
 ## PaymentService
 
-| Name                   | Type   | Description |
-|------------------------|--------|-------------|
-| `app.payment.cost`     | number | ...         |
-| `app.payment.currency` | string | ...         |
+| Name                   | Type   | Description        |
+|------------------------|--------|--------------------|
+| `app.payment.cost`     | number | Total payment cost |
+| `app.payment.currency` | string | Payment currency   |
 
 ## ProductCatalogService
 
-| Name                 | Type   | Description |
-|----------------------|--------|-------------|
-| `app.product.id`     | string | ...         |
-| `app.product.name`   | string | ...         |
-| `app.products.count` | number | ...         |
+| Name                 | Type   | Description                 |
+|----------------------|--------|-----------------------------|
+| `app.product.id`     | string | Product Id                  |
+| `app.product.name`   | string | Product name                |
+| `app.products.count` | number | Number of products returned |
 
 ## RecommendationService
 
-| Name                             | Type   | Description |
-|----------------------------------|--------|-------------|
-| `app.filtered_products.count`    | number | ...         |
-| `app.products.count`             | number | ...         |
-| `app.products_recommended.count` | number | ...         |
+| Name                             | Type   | Description                             |
+|----------------------------------|--------|-----------------------------------------|
+| `app.filtered_products.count`    | number | Number of filtered products returned    |
+| `app.products.count`             | number | Number of products returned             |
+| `app.products_recommended.count` | number | Number of recommended products returned |
 
 ## ShippingService
 
-| Name                       | Type   | Description |
-|----------------------------|--------|-------------|
-| `app.shipping.cost.total`  | number | ...         |
-| `app.shipping.items.count` | number | ...         |
-| `app.shipping.tracing.id`  | string | ...         |
+| Name                       | Type   | Description          |
+|----------------------------|--------|----------------------|
+| `app.shipping.cost.total`  | number | Total shipping cost  |
+| `app.shipping.items.count` | number | Total items to ship  |
+| `app.shipping.tracing.id`  | string | Shipping tracking Id |
