@@ -46,6 +46,7 @@ public:
     Empty request;
     GetSupportedCurrenciesResponse response;
     ClientContext context;
+    context.AddMetadata("baggage", "k1=V1,K2=v2;metadata,k3=v3");
 
     supported_currencies.clear();
     Status status = stub_->GetSupportedCurrencies(&context, request, &response);
