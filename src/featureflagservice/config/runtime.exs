@@ -20,7 +20,6 @@ config :grpcbox,
 
 if config_env() == :prod do
   config :opentelemetry_exporter,
-    otlp_endpoint: "http://otelcol:4317",
     otlp_protocol: :grpc
 
   database_url =
