@@ -10,9 +10,9 @@ config :grpcbox,
   servers: [
     %{
       :grpc_opts => %{
-        :service_protos => [:ffs_featureflag_pb],
+        :service_protos => [:ffs_demo_pb],
         :unary_interceptor => {:otel_grpcbox_interceptor, :unary},
-        :services => %{:FeatureFlagService => :ffs_service}
+        :services => %{:"hipstershop.FeatureFlagService" => :ffs_service}
       },
       :listen_opts => %{:port => grpc_port}
     }
