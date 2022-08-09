@@ -226,29 +226,16 @@ void RunServer(uint16_t port)
 
 int main(int argc, char **argv) {
 
-  if (argc < 4) {
-    std::cout << "Usage: currencyservice <port> <otlp_endpoint> <resourceAttr>";
+  if (argc < 2) {
+    std::cout << "Usage: currencyservice <port>";
     return 0;
   }
 
   uint16_t port = atoi(argv[1]);
-  std::string endpoint = argv[2];
-  std::string resourceAttr = argv[3];
 
-  std::cout << "Port: " << port
-    << "\n Collector Endpoint: " << endpoint
-    << "\n Resource Attributes: " << resourceAttr << "\n";
+  std::cout << "Port: " << port << "\n";
 
-  std::string resourceKey, resourceValue;
-  std::string delimiter{"="};
-  size_t pos = 0;
-  while ((pos = resourceAttr.find(delimiter)) != std::string::npos) {
-    resourceKey = resourceAttr.substr(0, pos);
-    resourceAttr.erase(0, pos + delimiter.length());
-  }
-
-  std::cout << resourceKey << ": " << resourceAttr << std::endl;
-  initTracer(endpoint, resourceKey, resourceAttr);
+  initTracer();
   RunServer(port);
 
   return 0;
