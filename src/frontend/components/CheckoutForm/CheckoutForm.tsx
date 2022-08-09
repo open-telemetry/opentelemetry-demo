@@ -93,6 +93,7 @@ const CheckoutForm = ({ onSubmit }: IProps) => {
         name="streetAddress"
         id="street_address"
         value={streetAddress}
+        onChange={handleChange}
         required
       />
       <Input

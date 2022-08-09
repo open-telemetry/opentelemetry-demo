@@ -1,16 +1,28 @@
+import { useEffect, useState } from 'react';
 import * as S from './Footer.styled';
+import SessionGateway from '../../gateways/Session.gateway';
+
+const currentYear = new Date().getFullYear();
+
+const { userId } = SessionGateway.getSession();
 
 const Footer = () => {
+  const [sessionId, setSessionId] = useState('');
+
+  useEffect(() => {
+    setSessionId(userId);
+  }, []);
+
   return (
     <S.Footer>
       <div>
         <p>This website is hosted for demo purpose only. It is not an actual shop.</p>
         <p>
-          <span>session-id: 123</span>
+          <span>session-id: {sessionId}</span>
         </p>
       </div>
       <p>
-        @ 2022 OpenTelemetry (<a href="https://github.com/open-telemetry/opentelemetry-demo">Source Code</a>)
+        @ {currentYear} OpenTelemetry (<a href="https://github.com/open-telemetry/opentelemetry-demo">Source Code</a>)
       </p>
     </S.Footer>
   );
