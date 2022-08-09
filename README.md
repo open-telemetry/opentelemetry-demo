@@ -62,7 +62,7 @@ docker compose up
 
 Once the images are built and containers are started you can access:
 
-- Webstore: <http://localhost:8081/>
+- Webstore: <http://localhost:8080/>
 
 - Jaeger: <http://localhost:16686/>
 

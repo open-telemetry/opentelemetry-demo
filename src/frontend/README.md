@@ -8,7 +8,7 @@ The frontend is a Next.js application that is composed by two layers.
 ## Build Locally
 
 By running `docker compose up` at the root of the project you'll have access to the
-frontend client by going to <localhost:8081>.
+frontend client by going to <localhost:8080>.
 
 ## Local development
 
@@ -23,7 +23,7 @@ from the root folder.
 
 It will start all of the required backend services
 and within the container simply run `npm run dev`.
-After that the app should be available at <localhost:8081>
+After that the app should be available at <localhost:8080>
 
 ## Building the Docker image
 
