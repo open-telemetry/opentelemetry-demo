@@ -104,7 +104,6 @@ public:
     request.set_service("CurrencyService");
     HealthCheckResponse response;
     ClientContext context;
-
     Status s = hc_stub_->Check(&context, request, &response);
     if (s.ok()) {
       if (response.status() == grpc::health::v1::HealthCheckResponse::SERVING) {
