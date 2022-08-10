@@ -158,6 +158,7 @@ services:
     ports:
       - "${FRONTEND_PORT}:${FRONTEND_PORT}"
     environment:
+      - PORT=${FRONTEND_PORT}
       - FRONTEND_ADDR
       - AD_SERVICE_ADDR
       - CART_SERVICE_ADDR
@@ -167,6 +168,9 @@ services:
       - RECOMMENDATION_SERVICE_ADDR
       - SHIPPING_SERVICE_ADDR
       - OTEL_EXPORTER_OTLP_TRACES_ENDPOINT
+      - OTEL_RESOURCE_ATTRIBUTES=service.name=frontend
+      - OTEL_EXPORTER_OTLP_ENDPOINT
+      - ENV_PLATFORM
       - OTEL_SERVICE_NAME=frontend
     depends_on:
       - adservice

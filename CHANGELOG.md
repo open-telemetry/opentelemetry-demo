@@ -61,3 +61,5 @@ significant modifications will be credited to OpenTelemetry Authors.
 ([#265](https://github.com/open-telemetry/opentelemetry-demo/pull/265))
 * Restricted network and port bindings
 ([#272](https://github.com/open-telemetry/opentelemetry-demo/pull/272))
+* Reimplemented Frontend app using [Next.js](https://nextjs.org/) Browser client
+([#236](https://github.com/open-telemetry/opentelemetry-demo/pull/236))
