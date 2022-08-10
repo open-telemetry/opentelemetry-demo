@@ -23,3 +23,10 @@ obj/
 build/
 node_modules/
 src/shippingservice/target/
+
+coverage
+.next/
+out/
+build
+src/frontend/protos
+next-env.d.ts
