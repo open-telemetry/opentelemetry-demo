@@ -4,22 +4,20 @@ x-default-logging: &logging
   options:
     max-size: "5m"
     max-file: "2"
-services:
 
+networks:
+  default:
+    name: opentelemetry-demo
+    driver: bridge
+
+services:
   # Jaeger
   jaeger:
     image: jaegertracing/all-in-one
     container_name: jaeger
     ports:
-      - "5775:5775"
-      - "5778:5778"
-      - "6831:6831"
-      - "6832:6832"
-      - "9411:9411"
-      - "16686:16686"
-      - "14250:14250"
-      - "14268:14268"
-      - "14269:14269"
+      - "16686:16686"                    # Jaeger UI
+      - "14250"                          # Jaeger model.proto endpoint
     logging: *logging
 
   # Collector
@@ -31,10 +29,10 @@ services:
       - ./src/otelcollector/otelcol-config.yml:/etc/otelcol-config.yml
       - ./src/otelcollector/otelcol-config-extras.yml:/etc/otelcol-config-extras.yml
     ports:
-      - "4317"
-      - "4318"
-      - "9464"
-      - "8888:8888"
+      - "4317"          # OTLP over gRPC receiver
+      - "4318"          # OTLP over HTTP receiver
+      - "9464"          # Prometheus exporter
+      - "8888"          # metrics endpoint
     depends_on:
       - jaeger
     logging: *logging
@@ -55,7 +53,7 @@ services:
       context: ./
       dockerfile: ./src/adservice/Dockerfile
     ports:
-      - "${AD_SERVICE_PORT}:${AD_SERVICE_PORT}"
+      - "${AD_SERVICE_PORT}"
     environment:
       - AD_SERVICE_PORT
       - OTEL_EXPORTER_OTLP_TRACES_ENDPOINT
@@ -73,7 +71,7 @@ services:
       context: ./
       dockerfile: ./src/cartservice/src/Dockerfile
     ports:
-      - "${CART_SERVICE_PORT}:${CART_SERVICE_PORT}"
+      - "${CART_SERVICE_PORT}"
     environment:
       - CART_SERVICE_PORT
       - REDIS_ADDR
@@ -93,7 +91,7 @@ services:
       context: ./
       dockerfile: ./src/checkoutservice/Dockerfile
     ports:
-      - "${CHECKOUT_SERVICE_PORT}:${CHECKOUT_SERVICE_PORT}"
+      - "${CHECKOUT_SERVICE_PORT}"
     environment:
       - CHECKOUT_SERVICE_PORT
       - CART_SERVICE_ADDR
@@ -124,7 +122,7 @@ services:
         - GRPC_VERSION=1.46.0
         - OPENTELEMETRY_VERSION=1.4.0
     ports:
-      - "${CURRENCY_SERVICE_PORT}:${CURRENCY_SERVICE_PORT}"
+      - "${CURRENCY_SERVICE_PORT}"
     environment:
       - CURRENCY_SERVICE_PORT
       - OTEL_EXPORTER_OTLP_TRACES_ENDPOINT
@@ -140,7 +138,7 @@ services:
     build:
       context: ./src/emailservice
     ports:
-      - "${EMAIL_SERVICE_PORT}:${EMAIL_SERVICE_PORT}"
+      - "${EMAIL_SERVICE_PORT}"
     environment:
       - APP_ENV=production
       - EMAIL_SERVICE_PORT
@@ -193,7 +191,7 @@ services:
       context: ./
       dockerfile: ./src/paymentservice/Dockerfile
     ports:
-      - "${PAYMENT_SERVICE_PORT}:${PAYMENT_SERVICE_PORT}"
+      - "${PAYMENT_SERVICE_PORT}"
     environment:
       - PAYMENT_SERVICE_PORT
       - OTEL_EXPORTER_OTLP_TRACES_ENDPOINT
@@ -210,7 +208,7 @@ services:
       context: ./
       dockerfile: ./src/productcatalogservice/Dockerfile
     ports:
-      - "${PRODUCT_CATALOG_SERVICE_PORT}:${PRODUCT_CATALOG_SERVICE_PORT}"
+      - "${PRODUCT_CATALOG_SERVICE_PORT}"
     environment:
       - PRODUCT_CATALOG_SERVICE_PORT
       - OTEL_EXPORTER_OTLP_TRACES_ENDPOINT
@@ -227,7 +225,7 @@ services:
       context: ./
       dockerfile: ./src/recommendationservice/Dockerfile
     ports:
-      - "${RECOMMENDATION_SERVICE_PORT}:${RECOMMENDATION_SERVICE_PORT}"
+      - "${RECOMMENDATION_SERVICE_PORT}"
     depends_on:
       - productcatalogservice
       - otelcol
@@ -247,7 +245,7 @@ services:
       context: ./
       dockerfile: ./src/shippingservice/Dockerfile
     ports:
-      - "${SHIPPING_SERVICE_PORT}:${SHIPPING_SERVICE_PORT}"
+      - "${SHIPPING_SERVICE_PORT}"
     environment:
       - SHIPPING_SERVICE_PORT
       - OTEL_EXPORTER_OTLP_TRACES_ENDPOINT
@@ -263,8 +261,8 @@ services:
     build:
       context: ./src/featureflagservice
     ports:
-      - "${FEATURE_FLAG_SERVICE_PORT}:${FEATURE_FLAG_SERVICE_PORT}"
-      - "${FEATURE_FLAG_GRPC_SERVICE_PORT}:${FEATURE_FLAG_GRPC_SERVICE_PORT}"
+      - "${FEATURE_FLAG_SERVICE_PORT}:${FEATURE_FLAG_SERVICE_PORT}"     # Feature Flag Service UI
+      - "${FEATURE_FLAG_GRPC_SERVICE_PORT}"                             # Feature Flag Service gRPC API
     environment:
       - FEATURE_FLAG_SERVICE_PORT
       - FEATURE_FLAG_GRPC_SERVICE_PORT

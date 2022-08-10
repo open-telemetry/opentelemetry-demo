@@ -59,6 +59,8 @@ significant modifications will be credited to OpenTelemetry Authors.
 ([#260](https://github.com/open-telemetry/opentelemetry-demo/pull/260))
 * Added span attributes to currency service
 ([#265](https://github.com/open-telemetry/opentelemetry-demo/pull/265))
+* Restricted network and port bindings
+([#272](https://github.com/open-telemetry/opentelemetry-demo/pull/272))
 * Feature Flag Service UI exposed on port 8081
 ([#273](https://github.com/open-telemetry/opentelemetry-demo/pull/273))
 * Reimplemented Frontend app using [Next.js](https://nextjs.org/) Browser client
