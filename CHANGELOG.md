@@ -61,3 +61,5 @@ significant modifications will be credited to OpenTelemetry Authors.
 ([#265](https://github.com/open-telemetry/opentelemetry-demo/pull/265))
 * Feature Flag Service UI exposed on port 8081
 ([#273](https://github.com/open-telemetry/opentelemetry-demo/pull/273))
+* Reimplemented Frontend app using [Next.js](https://nextjs.org/) Browser client
+([#236](https://github.com/open-telemetry/opentelemetry-demo/pull/236))
