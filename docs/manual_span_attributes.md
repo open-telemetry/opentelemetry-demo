@@ -63,7 +63,7 @@ This document contains the list of manual Span Attributes used throughout the de
 | `app.cart.items.count`   | number | Count of unique items in cart |
 | `app.cart.shipping.cost` | number | Cart shipping cost            |
 | `app.cart.total.price`   | number | Cart total price              |
-| `app.currency`           | string | User currency                |
+| `app.currency`           | string | User currency                 |
 | `app.currency.new`       | string | New currency to set           |
 | `app.order.total`        | number | Order total cost              |
 | `app.product.id`         | string | Product Id                    |
@@ -88,18 +88,18 @@ This document contains the list of manual Span Attributes used throughout the de
 
 ## ProductCatalogService
 
-| Name                 | Type   | Description                 |
-|----------------------|--------|-----------------------------|
-| `app.product.id`     | string | Product Id                  |
-| `app.product.name`   | string | Product name                |
-| `app.products.count` | number | Number of products returned |
+| Name                 | Type   | Description                           |
+|----------------------|--------|---------------------------------------|
+| `app.product.id`     | string | Product Id                            |
+| `app.product.name`   | string | Product name                          |
+| `app.products.count` | number | Number of products returned in search |
 
 ## RecommendationService
 
 | Name                             | Type   | Description                             |
 |----------------------------------|--------|-----------------------------------------|
 | `app.filtered_products.count`    | number | Number of filtered products returned    |
-| `app.products.count`             | number | Number of products returned             |
+| `app.products.count`             | number | Total number of products                |
 | `app.products_recommended.count` | number | Number of recommended products returned |
 
 ## ShippingService
