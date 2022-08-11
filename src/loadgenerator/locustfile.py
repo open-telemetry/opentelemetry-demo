@@ -234,8 +234,19 @@ class WebsiteUser(HttpUser):
 
     @task(1)
     def checkout(self):
+        # checkout call with an item added to cart
         user = str(uuid.uuid1())
         self.add_to_cart(user=user)
+        checkout_person = random.choice(people)
+        checkout_person["userId"] = user
+        self.client.post("/api/checkout", json=checkout_person)
+
+    @task(1)
+    def checkout_multi(self):
+        # checkout call which adds 2-4 different items to cart before checkout
+        user = str(uuid.uuid1())
+        for i in range(random.choice([2, 3, 4])):
+            self.add_to_cart(user=user)
         checkout_person = random.choice(people)
         checkout_person["userId"] = user
         self.client.post("/api/checkout", json=checkout_person)
