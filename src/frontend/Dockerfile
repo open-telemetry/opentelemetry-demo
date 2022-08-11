@@ -16,6 +16,8 @@ COPY ./src/frontend .
 RUN npm run grpc:generate
 RUN npm run build
 
+FROM ghcr.io/open-telemetry/opentelemetry-operator/autoinstrumentation-nodejs:0.31.0 as instrumentation
+
 FROM node:16-alpine AS runner
 WORKDIR /app
 RUN apk add --no-cache protoc
@@ -31,6 +33,12 @@ COPY --from=builder /app/package.json ./package.json
 
 COPY --from=builder --chown=nextjs:nodejs /app/.next/standalone ./
 COPY --from=builder --chown=nextjs:nodejs /app/.next/static ./.next/static
+
+# Use deps from AutoInstrumentation
+COPY --from=instrumentation --chown=nextjs:nodejs /autoinstrumentation/. /otel-auto-instrumentation
+# Customize instrumentation
+COPY --from=builder --chown=nextjs:nodejs /app/utils/opentelemetry.js /otel-auto-instrumentation/autoinstrumentation.js
+ENV NODE_OPTIONS=" --require /otel-auto-instrumentation/autoinstrumentation.js"
 
 USER nextjs
 
