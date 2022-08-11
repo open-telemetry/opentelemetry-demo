@@ -18,6 +18,9 @@ const {
   RECOMMENDATION_SERVICE_ADDR = '',
   SHIPPING_SERVICE_ADDR = '',
   ENV_PLATFORM = '',
+  OTEL_EXPORTER_OTLP_TRACES_PUBLIC_ENDPOINT = '',
+  OTEL_EXPORTER_OTLP_TRACES_ENDPOINT = '',
+  OTEL_SERVICE_NAME = 'frontend',
 } = process.env;
 
 const nextConfig = {
@@ -34,6 +37,7 @@ const nextConfig = {
       config.resolve.fallback.net = false;
       config.resolve.fallback.dns = false;
       config.resolve.fallback.fs = false;
+      config.resolve.fallback.async_hooks = false;
     }
     return config;
   },
@@ -45,7 +49,10 @@ const nextConfig = {
     PRODUCT_CATALOG_SERVICE_ADDR,
     RECOMMENDATION_SERVICE_ADDR,
     SHIPPING_SERVICE_ADDR,
+    OTEL_EXPORTER_OTLP_TRACES_ENDPOINT,
+    NEXT_PUBLIC_OTEL_EXPORTER_OTLP_TRACES_PUBLIC_ENDPOINT: OTEL_EXPORTER_OTLP_TRACES_PUBLIC_ENDPOINT,
     NEXT_PUBLIC_PLATFORM: ENV_PLATFORM,
+    NEXT_PUBLIC_OTEL_SERVICE_NAME: OTEL_SERVICE_NAME,
   },
 };
 
