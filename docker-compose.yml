@@ -192,6 +192,7 @@ services:
       - tests
     environment:
       - CYPRESS_baseUrl=http://${FRONTEND_ADDR}
+      - NODE_ENV=production
     working_dir: /cypress
     volumes:
     - ./src/frontend:/cypress

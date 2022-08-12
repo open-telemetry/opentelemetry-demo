@@ -8,11 +8,11 @@ const myEnv = dotEnv.config({
 });
 dotenvExpand.expand(myEnv);
 
-const { FRONTEND_ADDR = '' } = process.env;
+const { FRONTEND_ADDR = '', NODE_ENV, FRONTEND_PORT = '8080' } = process.env;
 
 export default defineConfig({
   env: {
-    baseUrl: FRONTEND_ADDR,
+    baseUrl: NODE_ENV === 'production' ? FRONTEND_ADDR : `http://localhost:${FRONTEND_PORT}`,
   },
 
   e2e: {

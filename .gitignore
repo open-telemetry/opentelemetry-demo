@@ -31,3 +31,4 @@ build
 src/frontend/protos
 next-env.d.ts
 src/frontend/cypress/videos
+src/frontend/cypress/screenshots
