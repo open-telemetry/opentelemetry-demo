@@ -195,7 +195,7 @@ services:
       - NODE_ENV=production
     working_dir: /cypress
     volumes:
-    - ./src/frontend:/cypress
+      - ./src/frontend:/cypress
 
   # Integration Tests
   integrationTests:
