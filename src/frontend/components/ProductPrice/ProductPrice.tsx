@@ -27,7 +27,7 @@ const ProductPrice = ({ price }: IProps) => {
   }, [selectedCurrency, price]);
 
   return (
-    <span>
+    <span data-cy="product-price">
       {currencySymbol} {units}.{nanos.toString().slice(0, 2)}
     </span>
   );

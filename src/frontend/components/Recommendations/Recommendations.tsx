@@ -6,7 +6,7 @@ const Recommendations = () => {
   const { recommendedProductList } = useAd();
 
   return (
-    <S.Recommendations>
+    <S.Recommendations data-cy="recommendation-list">
       <S.TitleContainer>
         <S.Title>You May Also Like</S.Title>
       </S.TitleContainer>

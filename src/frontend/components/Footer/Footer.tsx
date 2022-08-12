@@ -18,7 +18,7 @@ const Footer = () => {
       <div>
         <p>This website is hosted for demo purpose only. It is not an actual shop.</p>
         <p>
-          <span>session-id: {sessionId}</span>
+          <span data-cy="session-id">session-id: {sessionId}</span>
         </p>
       </div>
       <p>

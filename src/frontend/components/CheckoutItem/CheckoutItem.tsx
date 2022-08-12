@@ -23,7 +23,7 @@ const CheckoutItem = ({
   const [isCollapsed, setIsCollapsed] = useState(false);
 
   return (
-    <S.CheckoutItem>
+    <S.CheckoutItem data-cy="checkout-item">
       <S.ItemDetails>
         <S.ItemImage src={picture} alt={name} />
         <S.Details>

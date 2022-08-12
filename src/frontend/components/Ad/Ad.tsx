@@ -7,7 +7,7 @@ const Ad = () => {
   } = useAd();
 
   return (
-    <S.Ad>
+    <S.Ad data-cy="ad">
       <S.Link href={redirectUrl}>
         <p>{text}</p>
       </S.Link>

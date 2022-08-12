@@ -11,9 +11,9 @@ const CartIcon = () => {
 
   return (
     <>
-      <S.CartIcon onClick={() => setIsOpen(true)}>
+      <S.CartIcon data-cy="cart-icon" onClick={() => setIsOpen(true)}>
         <S.Icon src="/icons/Hipster_CartIcon.svg" alt="Cart icon" title="Cart" />
-        {!!items.length && <S.ItemsCount>{items.length}</S.ItemsCount>}
+        {!!items.length && <S.ItemsCount data-cy="cart-item-count">{items.length}</S.ItemsCount>}
       </S.CartIcon>
       <CartDropdown productList={items} isOpen={isOpen} onClose={() => setIsOpen(false)} />
     </>

@@ -8,7 +8,7 @@ interface IProps {
 
 const ProductList = ({ productList }: IProps) => {
   return (
-    <S.ProductList>
+    <S.ProductList data-cy="product-list">
       {productList.map(product => (
         <ProductCard key={product.id} product={product} />
       ))}

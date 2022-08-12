@@ -20,7 +20,7 @@ const ProductCard = ({
 }: IProps) => {
   return (
     <S.Link href={`/product/${id}`}>
-      <S.ProductCard>
+      <S.ProductCard data-cy="product-card">
         <S.Image $src={picture} />
         <div>
           <S.ProductName>{name}</S.ProductName>

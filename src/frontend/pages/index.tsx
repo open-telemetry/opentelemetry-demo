@@ -12,13 +12,13 @@ const Home: NextPage = () => {
 
   return (
     <Layout>
-      <S.Home>
+      <S.Home data-cy="home-page">
         <Banner />
         <S.Container>
           <S.Row>
             <S.Content>
               <S.HotProducts>
-                <S.HotProductsTitle id="hot-products">Hot Products</S.HotProductsTitle>
+                <S.HotProductsTitle data-cy="hot-products" id="hot-products">Hot Products</S.HotProductsTitle>
                 <ProductList productList={productList} />
               </S.HotProducts>
             </S.Content>

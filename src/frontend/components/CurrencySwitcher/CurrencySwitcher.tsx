@@ -16,6 +16,7 @@ const CurrencySwitcher = () => {
           name="currency_code"
           onChange={event => setSelectedCurrency(event.target.value)}
           value={selectedCurrency}
+          data-cy="currency-switcher"
         >
           {currencyCodeList.map(currencyCode => (
             <option key={currencyCode} value={currencyCode}>

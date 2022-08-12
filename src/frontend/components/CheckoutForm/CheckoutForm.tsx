@@ -190,7 +190,7 @@ const CheckoutForm = ({ onSubmit }: IProps) => {
         <Link href="/">
           <S.CartButton $type="secondary">Continue Shopping</S.CartButton>
         </Link>
-        <S.CartButton type="submit">Place Order</S.CartButton>
+        <S.CartButton data-cy="checkout-place-order" type="submit">Place Order</S.CartButton>
       </S.SubmitContainer>
     </S.CheckoutForm>
   );
