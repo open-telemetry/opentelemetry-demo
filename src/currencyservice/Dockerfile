@@ -56,4 +56,4 @@ RUN cd /currencyservice \
     && mkdir -p build && cd build \
     && cmake .. && make -j install
 
-ENTRYPOINT currencyservice ${CURRENCY_SERVICE_PORT}
+ENTRYPOINT ["/usr/local/bin/currencyservice", "${CURRENCY_SERVICE_PORT}"]
