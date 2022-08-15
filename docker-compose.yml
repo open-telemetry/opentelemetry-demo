@@ -147,6 +147,8 @@ services:
     depends_on:
       - otelcol
     logging: *logging
+    healthcheck:
+      test: curl -s --fail ${EMAIL_SERVICE_ADDR}/_healthz || exit 1
 
   # Frontend
   frontend:
@@ -182,6 +184,8 @@ services:
       - recommendationservice
       - shippingservice
     logging: *logging
+    healthcheck:
+      test: curl -s --fail ${FRONTEND_ADDR}/_healthz || exit 1
 
   # PaymentService
   paymentservice:

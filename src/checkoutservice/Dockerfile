@@ -34,6 +34,8 @@ FROM alpine
 WORKDIR /usr/src/app/
 
 COPY --from=builder /go/bin/checkoutservice/ ./
+COPY --from=includer --chmod=755 /grpc_health_probe /include/
 
+HEALTHCHECK CMD /include/grpc_health_probe -addr :${CHECKOUT_SERVICE_PORT}
 EXPOSE ${CHECKOUT_SERVICE_PORT}
 ENTRYPOINT [ "./checkoutservice" ]

@@ -28,7 +28,8 @@ import (
 	"time"
 
 	pb "github.com/opentelemetry/opentelemetry-demo/src/productcatalogservice/genproto/hipstershop"
-	healthpb "google.golang.org/grpc/health/grpc_health_v1"
+	"google.golang.org/grpc/health"
+	"google.golang.org/grpc/health/grpc_health_v1"
 
 	"github.com/sirupsen/logrus"
 
@@ -152,7 +153,7 @@ func run(port string) string {
 	svc := &productCatalog{}
 
 	pb.RegisterProductCatalogServiceServer(srv, svc)
-	healthpb.RegisterHealthServer(srv, svc)
+	grpc_health_v1.RegisterHealthServer(srv, health.NewServer())
 	go srv.Serve(l)
 	return l.Addr().String()
 }
@@ -193,14 +194,6 @@ func mustMapEnv(target *string, envKey string) {
 		panic(fmt.Sprintf("environment variable %q not set", envKey))
 	}
 	*target = v
-}
-
-func (p *productCatalog) Check(ctx context.Context, req *healthpb.HealthCheckRequest) (*healthpb.HealthCheckResponse, error) {
-	return &healthpb.HealthCheckResponse{Status: healthpb.HealthCheckResponse_SERVING}, nil
-}
-
-func (p *productCatalog) Watch(req *healthpb.HealthCheckRequest, ws healthpb.Health_WatchServer) error {
-	return status.Errorf(codes.Unimplemented, "health check via Watch not implemented")
 }
 
 func (p *productCatalog) ListProducts(ctx context.Context, req *pb.Empty) (*pb.ListProductsResponse, error) {

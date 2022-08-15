@@ -43,7 +43,8 @@ import (
 
 	pb "github.com/open-telemetry/opentelemetry-demo/src/checkoutservice/genproto/hipstershop"
 	money "github.com/open-telemetry/opentelemetry-demo/src/checkoutservice/money"
-	healthpb "google.golang.org/grpc/health/grpc_health_v1"
+	"google.golang.org/grpc/health"
+	"google.golang.org/grpc/health/grpc_health_v1"
 )
 
 const (
@@ -125,7 +126,7 @@ func main() {
 		grpc.StreamInterceptor(otelgrpc.StreamServerInterceptor()),
 	)
 	pb.RegisterCheckoutServiceServer(srv, svc)
-	healthpb.RegisterHealthServer(srv, svc)
+	grpc_health_v1.RegisterHealthServer(srv, health.NewServer())
 	log.Infof("starting to listen on tcp: %q", lis.Addr().String())
 	err = srv.Serve(lis)
 	log.Fatal(err)
@@ -137,14 +138,6 @@ func mustMapEnv(target *string, envKey string) {
 		panic(fmt.Sprintf("environment variable %q not set", envKey))
 	}
 	*target = v
-}
-
-func (cs *checkoutService) Check(ctx context.Context, req *healthpb.HealthCheckRequest) (*healthpb.HealthCheckResponse, error) {
-	return &healthpb.HealthCheckResponse{Status: healthpb.HealthCheckResponse_SERVING}, nil
-}
-
-func (cs *checkoutService) Watch(req *healthpb.HealthCheckRequest, ws healthpb.Health_WatchServer) error {
-	return status.Errorf(codes.Unimplemented, "health check via Watch not implemented")
 }
 
 func (cs *checkoutService) PlaceOrder(ctx context.Context, req *pb.PlaceOrderRequest) (*pb.PlaceOrderResponse, error) {

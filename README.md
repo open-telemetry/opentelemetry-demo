@@ -1,4 +1,4 @@
-# OpenTelemetry Demo
+# ![otel-photo](./docs/img/opentelemetry-logo-nav.png) OpenTelemetry Demo
 
 [![Slack](https://img.shields.io/badge/slack-@cncf/otel/demo-brightgreen.svg?logo=slack)](https://cloud-native.slack.com/archives/C03B4CWV4DA)
 [![Version](https://img.shields.io/github/v/release/open-telemetry/opentelemetry-demo?color=blueviolet)](https://github.com/open-telemetry/opentelemetry-demo/releases)
@@ -50,6 +50,12 @@ cd .\src\adservice\
 ```
 
 #### Run Docker Compose
+
+- Build an image that downloads required files
+
+```shell
+docker build src/includer/ -t includer
+```
 
 - Start the demo (It can take ~20min the first time the command is executed as
 all the images will be build):

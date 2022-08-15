@@ -28,9 +28,11 @@ USER node
 WORKDIR /usr/src/app/
 ENV NODE_ENV production
 
+COPY --from=includer --chmod=755 /grpc_health_probe /include/
 COPY --chown=node:node --from=build /usr/src/app/node_modules/ ./node_modules/
 COPY ./src/paymentservice/ ./
 COPY ./pb/demo.proto ./
 
+HEALTHCHECK CMD /include/grpc_health_probe -addr :${PAYMENT_SERVICE_PORT}
 EXPOSE ${PAYMENT_SERVICE_PORT}
 ENTRYPOINT [ "node", "--require", "./tracing.js", "./index.js" ]

@@ -32,12 +32,14 @@ RUN go build -o /go/bin/productcatalogservice/ ./
 
 # -----------------------------------------------------------------------------
 
-FROM alpine AS release
+FROM alpine
 
 WORKDIR /usr/src/app/
 
+COPY --from=includer --chmod=755 /grpc_health_probe /include/
 COPY ./src/productcatalogservice/products.json ./
 COPY --from=builder /go/bin/productcatalogservice/ ./
 
-EXPOSE ${PRODUCT_SERVICE_PORT}
+HEALTHCHECK CMD /include/grpc_health_probe -addr :${PRODUCT_CATALOG_SERVICE_PORT}
+EXPOSE ${PRODUCT_CATALOG_SERVICE_PORT}
 ENTRYPOINT [ "./productcatalogservice" ]

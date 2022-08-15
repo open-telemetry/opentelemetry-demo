@@ -12,6 +12,10 @@ OpenTelemetry::SDK.configure do |c|
   c.use "OpenTelemetry::Instrumentation::Sinatra"
 end
 
+get "/_healthz" do
+  "ok"
+end
+
 post "/send_order_confirmation" do
   data = JSON.parse(request.body.read, object_class: OpenStruct)
 

@@ -9,13 +9,15 @@ COPY ./src/shippingservice/ /app/
 COPY ./pb/ /app/proto/
 RUN cargo build -r --features="dockerproto"
 
-FROM alpine as release
+# -----------------------------------------------------------------------------
+
+FROM alpine
 RUN apk add --no-cache ca-certificates
-RUN GRPC_HEALTH_PROBE_VERSION=v0.4.7 && \
-    wget -qO/bin/grpc_health_probe https://github.com/grpc-ecosystem/grpc-health-probe/releases/download/${GRPC_HEALTH_PROBE_VERSION}/grpc_health_probe-linux-amd64 && \
-    chmod +x /bin/grpc_health_probe
+
 WORKDIR /app
+COPY --from=includer --chmod=0755 /grpc_health_probe /include/
 COPY --from=builder /app/target/release/shippingservice /shippingservice
 
+HEALTHCHECK CMD /include/grpc_health_probe -addr :${SHIPPING_SERVICE_PORT}
 EXPOSE ${SHIPPING_SERVICE_PORT}
 ENTRYPOINT ["/shippingservice"]

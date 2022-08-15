@@ -29,9 +29,11 @@ FROM openjdk:18-slim
 ARG version=1.16.0
 WORKDIR /usr/src/app/
 
+COPY --from=includer --chmod=755 /grpc_health_probe /include/
 COPY --from=builder /usr/src/app/ ./
 ADD https://github.com/open-telemetry/opentelemetry-java-instrumentation/releases/download/v$version/opentelemetry-javaagent.jar /app/opentelemetry-javaagent.jar
 ENV JAVA_TOOL_OPTIONS=-javaagent:/app/opentelemetry-javaagent.jar
 
+HEALTHCHECK CMD /include/grpc_health_probe -addr :${AD_SERVICE_PORT}
 EXPOSE ${AD_SERVICE_PORT}
 ENTRYPOINT [ "./build/install/hipstershop/bin/AdService" ]

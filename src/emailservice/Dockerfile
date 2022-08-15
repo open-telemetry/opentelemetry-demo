@@ -14,7 +14,7 @@
 
 FROM ruby:3.1.2-slim
 
-RUN apt-get update -y && apt-get install -y build-essential
+RUN apt-get update -y && apt-get install -y build-essential curl
 
 COPY Gemfile* ./
 

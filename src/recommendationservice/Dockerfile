@@ -16,15 +16,15 @@ FROM python:3.10-slim
 
 WORKDIR /usr/src/app/
 
+COPY --from=includer --chmod=0755 /grpc_health_probe /include/
 COPY ./src/recommendationservice/ ./
 COPY ./pb/ ./proto/
 
 RUN pip install --upgrade pip
 RUN pip install -r ./requirements.txt
-
-# add files into working directory
 RUN python -m pip install grpcio-tools
 RUN python -m grpc_tools.protoc -I=./proto/ --python_out=./ --grpc_python_out=./ ./proto/demo.proto
 
+HEALTHCHECK CMD /include/grpc_health_probe -addr :${RECOMMENDATION_SERVICE_PORT}
 EXPOSE ${RECOMMENDATION_SERVICE_PORT}
 ENTRYPOINT [ "opentelemetry-instrument", "python", "recommendation_server.py" ]

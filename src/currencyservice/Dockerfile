@@ -50,10 +50,13 @@ RUN git clone https://github.com/open-telemetry/opentelemetry-cpp \
     && cmake .. -DCMAKE_POSITION_INDEPENDENT_CODE=ON -DCMAKE_BUILD_TYPE=Release -DBUILD_TESTING=OFF -DWITH_OTLP=ON \
     && make -j install && cd ../.. && rm -rf opentelemetry-cpp
 
+COPY --from=includer --chmod=755 /grpc_health_probe /include/
 COPY . /currencyservice
 
 RUN cd /currencyservice \
     && mkdir -p build && cd build \
     && cmake .. && make -j install
 
-ENTRYPOINT currencyservice ${CURRENCY_SERVICE_PORT}
+HEALTHCHECK CMD /include/grpc_health_probe -addr :${CURRENCY_SERVICE_PORT}
+EXPOSE ${CURRENCY_SERVICE_PORT}
+ENTRYPOINT [ "/usr/local/bin/currencyservice" ]

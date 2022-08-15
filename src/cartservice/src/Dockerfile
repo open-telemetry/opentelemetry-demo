@@ -29,7 +29,10 @@ RUN dotnet publish ./src/cartservice.csproj -p:PublishSingleFile=true -r linux-m
 FROM mcr.microsoft.com/dotnet/runtime-deps:6.0.5-alpine3.15-amd64
 
 WORKDIR /usr/src/app/
+
+COPY --from=includer --chmod=755 /grpc_health_probe /include/
 COPY --from=builder /cartservice/ ./
 
+HEALTHCHECK CMD /include/grpc_health_probe -addr :${CART_SERVICE_PORT}
 EXPOSE ${CART_SERVICE_PORT}
 ENTRYPOINT [ "./cartservice" ]
