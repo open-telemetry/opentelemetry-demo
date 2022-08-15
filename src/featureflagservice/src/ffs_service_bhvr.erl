@@ -1,5 +1,5 @@
 %%%-------------------------------------------------------------------
-%% @doc Behaviour to implement for grpc service FeatureFlagService.
+%% @doc Behaviour to implement for grpc service hipstershop.FeatureFlagService.
 %% @end
 %%%-------------------------------------------------------------------
 
@@ -8,22 +8,22 @@
 -module(ffs_service_bhvr).
 
 %% Unary RPC
--callback get_flag(ctx:t(), ffs_featureflag_pb:get_flag_request()) ->
-    {ok, ffs_featureflag_pb:get_flag_response(), ctx:t()} | grpcbox_stream:grpc_error_response().
+-callback get_flag(ctx:t(), ffs_demo_pb:get_flag_request()) ->
+    {ok, ffs_demo_pb:get_flag_response(), ctx:t()} | grpcbox_stream:grpc_error_response().
 
 %% Unary RPC
--callback create_flag(ctx:t(), ffs_featureflag_pb:create_flag_request()) ->
-    {ok, ffs_featureflag_pb:create_flag_response(), ctx:t()} | grpcbox_stream:grpc_error_response().
+-callback create_flag(ctx:t(), ffs_demo_pb:create_flag_request()) ->
+    {ok, ffs_demo_pb:create_flag_response(), ctx:t()} | grpcbox_stream:grpc_error_response().
 
 %% Unary RPC
--callback update_flag(ctx:t(), ffs_featureflag_pb:update_flag_request()) ->
-    {ok, ffs_featureflag_pb:update_flag_response(), ctx:t()} | grpcbox_stream:grpc_error_response().
+-callback update_flag(ctx:t(), ffs_demo_pb:update_flag_request()) ->
+    {ok, ffs_demo_pb:update_flag_response(), ctx:t()} | grpcbox_stream:grpc_error_response().
 
 %% Unary RPC
--callback list_flags(ctx:t(), ffs_featureflag_pb:list_flags_request()) ->
-    {ok, ffs_featureflag_pb:list_flags_response(), ctx:t()} | grpcbox_stream:grpc_error_response().
+-callback list_flags(ctx:t(), ffs_demo_pb:list_flags_request()) ->
+    {ok, ffs_demo_pb:list_flags_response(), ctx:t()} | grpcbox_stream:grpc_error_response().
 
 %% Unary RPC
--callback delete_flag(ctx:t(), ffs_featureflag_pb:delete_flag_request()) ->
-    {ok, ffs_featureflag_pb:delete_flag_response(), ctx:t()} | grpcbox_stream:grpc_error_response().
+-callback delete_flag(ctx:t(), ffs_demo_pb:delete_flag_request()) ->
+    {ok, ffs_demo_pb:delete_flag_response(), ctx:t()} | grpcbox_stream:grpc_error_response().
 

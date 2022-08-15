@@ -10,8 +10,8 @@
 
 -include_lib("grpcbox/include/grpcbox.hrl").
 
--spec get_flag(ctx:t(), ffs_featureflag_pb:get_flag_request()) ->
-    {ok, ffs_featureflag_pb:get_flag_response(), ctx:t()} | grpcbox_stream:grpc_error_response().
+-spec get_flag(ctx:t(), ffs_demo_pb:get_flag_request()) ->
+    {ok, ffs_demo_pb:get_flag_response(), ctx:t()} | grpcbox_stream:grpc_error_response().
 get_flag(Ctx, #{name := Name}) ->
     case 'Elixir.Featureflagservice.FeatureFlags':get_feature_flag_by_name(Name) of
         nil ->
@@ -33,22 +33,22 @@ get_flag(Ctx, #{name := Name}) ->
             {ok, #{flag => Flag}, Ctx}
     end.
 
--spec create_flag(ctx:t(), ffs_featureflag_pb:create_flag_request()) ->
-    {ok, ffs_featureflag_pb:create_flag_response(), ctx:t()} | grpcbox_stream:grpc_error_response().
+-spec create_flag(ctx:t(), ffs_demo_pb:create_flag_request()) ->
+    {ok, ffs_demo_pb:create_flag_response(), ctx:t()} | grpcbox_stream:grpc_error_response().
 create_flag(_Ctx, _) ->
     {grpc_error, {?GRPC_STATUS_UNIMPLEMENTED, <<"use the web interface to create flags.">>}}.
 
--spec update_flag(ctx:t(), ffs_featureflag_pb:update_flag_request()) ->
-    {ok, ffs_featureflag_pb:update_flag_response(), ctx:t()} | grpcbox_stream:grpc_error_response().
+-spec update_flag(ctx:t(), ffs_demo_pb:update_flag_request()) ->
+    {ok, ffs_demo_pb:update_flag_response(), ctx:t()} | grpcbox_stream:grpc_error_response().
 update_flag(_Ctx, _) ->
     {grpc_error, {?GRPC_STATUS_UNIMPLEMENTED, <<"use the web interface to update flags.">>}}.
 
--spec list_flags(ctx:t(), ffs_featureflag_pb:list_flags_request()) ->
-    {ok, ffs_featureflag_pb:list_flags_response(), ctx:t()} | grpcbox_stream:grpc_error_response().
+-spec list_flags(ctx:t(), ffs_demo_pb:list_flags_request()) ->
+    {ok, ffs_demo_pb:list_flags_response(), ctx:t()} | grpcbox_stream:grpc_error_response().
 list_flags(_Ctx, _) ->
     {grpc_error, {?GRPC_STATUS_UNIMPLEMENTED, <<"use the web interface to view all flags.">>}}.
 
--spec delete_flag(ctx:t(), ffs_featureflag_pb:delete_flag_request()) ->
-    {ok, ffs_featureflag_pb:delete_flag_response(), ctx:t()} | grpcbox_stream:grpc_error_response().
+-spec delete_flag(ctx:t(), ffs_demo_pb:delete_flag_request()) ->
+    {ok, ffs_demo_pb:delete_flag_response(), ctx:t()} | grpcbox_stream:grpc_error_response().
 delete_flag(_Ctx, _) ->
     {grpc_error, {?GRPC_STATUS_UNIMPLEMENTED, <<"use the web interface to delete flags.">>}}.
