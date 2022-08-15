@@ -40,6 +40,6 @@ for instrumentation.
 
 ## Building Protos
 
-A copy of the `FeatureFlagService` protos from `demo.proto` are kept in
-`proto/featureflag.proto` and `rebar3 grpc gen` will update the corresponding
-Erlang module `src/ffs_featureflag_pb.erl`.
+A copy of the protos from `pb/demo.proto` are kept in
+`proto/demo.proto` and `rebar3 grpc gen` will update the corresponding
+Erlang module `src/ffs_demo_pb.erl`.
