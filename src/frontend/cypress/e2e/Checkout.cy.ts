@@ -1,31 +1,33 @@
+import { CypressFields, getElementByField } from '../../utils/Cypress';
+
 describe('Checkout Flow', () => {
   beforeEach(() => {
-    cy.visit(Cypress.env('baseUrl'));
+    cy.visit('/');
   });
 
   it('should create an order with two items', () => {
-    cy.get('[data-cy="product-card"]').first().click();
-    cy.get('[data-cy="add-to-cart"]').click();
+    getElementByField(CypressFields.ProductCard).first().click();
+    getElementByField(CypressFields.ProductAddToCart).click();
 
-    cy.get('[data-cy="cart-item-count"]').should('contain', '1');
+    getElementByField(CypressFields.CartItemCount).should('contain', '1');
 
-    cy.visit(Cypress.env('baseUrl'));
+    cy.visit('/');
 
-    cy.get('[data-cy="product-card"]').last().click();
-    cy.get('[data-cy="add-to-cart"]').click();
+    getElementByField(CypressFields.ProductCard).last().click();
+    getElementByField(CypressFields.ProductAddToCart).click();
 
-    cy.get('[data-cy="cart-item-count"]').should('contain', '2');
+    getElementByField(CypressFields.CartItemCount).should('contain', '2');
 
-    cy.get('[data-cy="cart-icon"]').click();
-    cy.get('[data-cy="cart-go-to-shopping"]').click();
+    getElementByField(CypressFields.CartIcon).click();
+    getElementByField(CypressFields.CartGoToShopping).click();
 
     cy.location('href').should('match', /\/cart$/);
 
-    cy.get('[data-cy="checkout-place-order"]').click();
+    getElementByField(CypressFields.CheckoutPlaceOrder).click();
 
     cy.wait(5000);
     cy.location('href').should('match', /\/checkout/);
-    cy.get('[data-cy="checkout-item"]').should('have.length', 2);
+    getElementByField(CypressFields.CheckoutItem).should('have.length', 2);
   });
 });
 

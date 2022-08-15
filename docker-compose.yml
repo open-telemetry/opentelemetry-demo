@@ -183,8 +183,8 @@ services:
       - shippingservice
     logging: *logging
 
-  # Frotend Tests
-  frontendtests:
+  # Frontend Tests
+  frontendTests:
     image: cypress/included:10.3.1-typescript
     depends_on:
       - frontend
@@ -211,21 +211,21 @@ services:
       - CART_SERVICE_ADDR
       - CHECKOUT_SERVICE_ADDR
       - CURRENCY_SERVICE_ADDR
+      - EMAIL_SERVICE_ADDR
       - PAYMENT_SERVICE_ADDR
       - PRODUCT_CATALOG_SERVICE_ADDR
       - RECOMMENDATION_SERVICE_ADDR
       - SHIPPING_SERVICE_ADDR
-      - EMAIL_SERVICE_ADDR
     depends_on:
       - adservice
       - cartservice
       - checkoutservice
       - currencyservice
+      - emailservice
       - paymentservice
       - productcatalogservice
       - recommendationservice
       - shippingservice
-      - emailservice
 
   # PaymentService
   paymentservice:

@@ -1,29 +1,34 @@
+import { CypressFields, getElementByField } from '../../utils/Cypress';
+
 describe('Product Detail Page', () => {
   beforeEach(() => {
-    cy.visit(Cypress.env('baseUrl'));
+    cy.visit('/');
   });
 
   it('should validate the product detail page', () => {
-    cy.get('[data-cy="product-card"]').first().click();
+    getElementByField(CypressFields.ProductCard).first().click();
 
-    cy.get('[data-cy="product-detail"]').should('exist');
-    cy.get('[data-cy="product-picture"]').should('exist');
-    cy.get('[data-cy="product-name"]').should('exist');
-    cy.get('[data-cy="product-description"]').should('exist');
-    cy.get('[data-cy="add-to-cart"]').should('exist');
+    getElementByField(CypressFields.ProductDetail).should('exist');
+    getElementByField(CypressFields.ProductPicture).should('exist');
+    getElementByField(CypressFields.ProductName).should('exist');
+    getElementByField(CypressFields.ProductDescription).should('exist');
+    getElementByField(CypressFields.ProductAddToCart).should('exist');
 
-    cy.get('[data-cy="recommendation-list"] [data-cy="product-card"]').should('have.length', 4);
-    cy.get('[data-cy="ad"]').should('exist');
+    getElementByField(CypressFields.ProductCard, getElementByField(CypressFields.RecommendationList)).should(
+      'have.length',
+      4
+    );
+    getElementByField(CypressFields.Ad).should('exist');
   });
 
   it('should add item to cart', () => {
-    cy.get('[data-cy="product-card"]').first().click();
-    cy.get('[data-cy="add-to-cart"]').click();
+    getElementByField(CypressFields.ProductCard).first().click();
+    getElementByField(CypressFields.ProductAddToCart).click();
 
-    cy.get('[data-cy="cart-item-count"]').should('contain', '1');
-    cy.get('[data-cy="cart-icon"]').click();
+    getElementByField(CypressFields.CartItemCount).should('contain', '1');
+    getElementByField(CypressFields.CartIcon).click();
 
-    cy.get('[data-cy="cart-dropdown-item"]').should('have.length', 1);
+    getElementByField(CypressFields.CartDropdownItem).should('have.length', 1);
   });
 });
 

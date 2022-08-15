@@ -18,7 +18,7 @@ WORKDIR /app
 
 COPY ./test/package*.json ./
 
-RUN apk add --no-cache python3 make g++ && npm ci
+RUN npm ci --omit=dev
 
 # -----------------------------------------------------------------------------
 
@@ -32,4 +32,4 @@ COPY --chown=node:node --from=build /app/node_modules/ ./node_modules/
 COPY ./test ./
 COPY ./pb/demo.proto ./
 
-ENTRYPOINT [ "sh", "-c", "npm test" ]
+ENTRYPOINT ["npm", "test"]

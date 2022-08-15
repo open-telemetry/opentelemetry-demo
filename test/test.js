@@ -176,7 +176,7 @@ test("currency: convert", async (t) => {
   const res = await currencyConvert(req);
   t.is(res.currencyCode, "CAD");
   t.is(res.units, 442);
-  t.is(res.nanos, 599380804);
+  t.true(res.nanos >= 599380800);
 });
 
 // --------------- Checkout Service ---------------
