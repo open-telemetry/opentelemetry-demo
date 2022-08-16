@@ -70,4 +70,3 @@ significant modifications will be credited to OpenTelemetry Authors.
 * Added Frontend [Cypress](https://www.cypress.io/) E2E tests
 ([#298](https://github.com/open-telemetry/opentelemetry-demo/pull/298))
 * Added baggage support in CurrencyService [#281](https://github.com/open-telemetry/opentelemetry-demo/pull/281)
-
