@@ -9,6 +9,7 @@ import Layout from '../../../components/Layout';
 import ProductPrice from '../../../components/ProductPrice';
 import Recommendations from '../../../components/Recommendations';
 import Select from '../../../components/Select';
+import { CypressFields } from '../../../utils/Cypress';
 import ApiGateway from '../../../gateways/Api.gateway';
 import { Product } from '../../../protos/demo';
 import AdProvider from '../../../providers/Ad.provider';
@@ -41,24 +42,28 @@ const ProductDetail: NextPage = () => {
   return (
     <AdProvider productIds={[productId, ...items.map(({ productId }) => productId)]}>
       <Layout>
-        <S.ProductDetail>
+        <S.ProductDetail data-cy={CypressFields.ProductDetail}>
           <S.Container>
-            <S.Image $src={picture} />
+            <S.Image $src={picture} data-cy={CypressFields.ProductPicture} />
             <S.Details>
-              <S.Name>{name}</S.Name>
-              <S.Description>{description}</S.Description>
+              <S.Name data-cy={CypressFields.ProductName}>{name}</S.Name>
+              <S.Description data-cy={CypressFields.ProductDescription}>{description}</S.Description>
               <S.ProductPrice>
                 <ProductPrice price={priceUsd} />
               </S.ProductPrice>
               <S.Text>Quantity</S.Text>
-              <Select onChange={event => setQuantity(+event.target.value)} value={quantity}>
+              <Select
+                data-cy={CypressFields.ProductQuantity}
+                onChange={event => setQuantity(+event.target.value)}
+                value={quantity}
+              >
                 {quantityOptions.map(option => (
                   <option key={option} value={option}>
                     {option}
                   </option>
                 ))}
               </Select>
-              <S.AddToCart onClick={onAddItem}>
+              <S.AddToCart data-cy={CypressFields.ProductAddToCart} onClick={onAddItem}>
                 <Image src="/icons/Cart.svg" height="15px" width="15px" alt="cart" /> Add To Cart
               </S.AddToCart>
             </S.Details>
