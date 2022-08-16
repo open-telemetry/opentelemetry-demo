@@ -65,3 +65,5 @@ significant modifications will be credited to OpenTelemetry Authors.
 ([#273](https://github.com/open-telemetry/opentelemetry-demo/pull/273))
 * Reimplemented Frontend app using [Next.js](https://nextjs.org/) Browser client
 ([#236](https://github.com/open-telemetry/opentelemetry-demo/pull/236))
+* Add HEALTHCHECK to all services
+([#296](https://github.com/open-telemetry/opentelemetry-demo/pull/296))
