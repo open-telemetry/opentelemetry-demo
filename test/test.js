@@ -193,7 +193,7 @@ test("checkout: place order", async (t) => {
 
 // --------------- Email Service ---------------
 
-// TODO
+// TODO TODO
 test("email: confirmation", async (t) => {
   const req = data.email;
 
