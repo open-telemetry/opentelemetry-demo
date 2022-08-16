@@ -183,6 +183,50 @@ services:
       - shippingservice
     logging: *logging
 
+  # Frontend Tests
+  frontendTests:
+    image: cypress/included:10.3.1-typescript
+    depends_on:
+      - frontend
+    profiles:
+      - tests
+    environment:
+      - CYPRESS_baseUrl=http://${FRONTEND_ADDR}
+      - NODE_ENV=production
+    working_dir: /cypress
+    volumes:
+      - ./src/frontend:/cypress
+
+  # Integration Tests
+  integrationTests:
+    image: ${IMAGE_NAME}:${IMAGE_VERSION}-integrationTests
+    container_name: integrationTests
+    profiles:
+      - tests
+    build:
+      context: ./
+      dockerfile: ./test/Dockerfile
+    environment:
+      - AD_SERVICE_ADDR
+      - CART_SERVICE_ADDR
+      - CHECKOUT_SERVICE_ADDR
+      - CURRENCY_SERVICE_ADDR
+      - EMAIL_SERVICE_ADDR
+      - PAYMENT_SERVICE_ADDR
+      - PRODUCT_CATALOG_SERVICE_ADDR
+      - RECOMMENDATION_SERVICE_ADDR
+      - SHIPPING_SERVICE_ADDR
+    depends_on:
+      - adservice
+      - cartservice
+      - checkoutservice
+      - currencyservice
+      - emailservice
+      - paymentservice
+      - productcatalogservice
+      - recommendationservice
+      - shippingservice
+
   # PaymentService
   paymentservice:
     image: ${IMAGE_NAME}:${IMAGE_VERSION}-paymentservice
