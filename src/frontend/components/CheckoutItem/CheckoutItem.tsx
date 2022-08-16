@@ -1,5 +1,6 @@
 import Image from 'next/image';
 import { useState } from 'react';
+import { CypressFields } from '../../utils/Cypress';
 import { Address } from '../../protos/demo';
 import { IProductCheckoutItem } from '../../types/Cart';
 import ProductPrice from '../ProductPrice';
@@ -23,7 +24,7 @@ const CheckoutItem = ({
   const [isCollapsed, setIsCollapsed] = useState(false);
 
   return (
-    <S.CheckoutItem>
+    <S.CheckoutItem data-cy={CypressFields.CheckoutItem}>
       <S.ItemDetails>
         <S.ItemImage src={picture} alt={name} />
         <S.Details>
