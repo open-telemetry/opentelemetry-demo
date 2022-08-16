@@ -120,7 +120,7 @@ services:
       context: ./src/currencyservice
       args:
         - GRPC_VERSION=1.46.0
-        - OPENTELEMETRY_VERSION=1.4.0
+        - OPENTELEMETRY_VERSION=1.5.0
     ports:
       - "${CURRENCY_SERVICE_PORT}"
     environment:

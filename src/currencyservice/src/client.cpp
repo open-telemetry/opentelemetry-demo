@@ -46,6 +46,7 @@ public:
     Empty request;
     GetSupportedCurrenciesResponse response;
     ClientContext context;
+    context.AddMetadata("baggage", "ServiceName=CurrencyService,Method=GetSupportedCurrencies");
 
     supported_currencies.clear();
     Status status = stub_->GetSupportedCurrencies(&context, request, &response);
@@ -81,6 +82,8 @@ public:
 
     Money response;
     ClientContext context;
+    context.AddMetadata("baggage", "ServiceName=CurrencyService,Method=Convert");
+
     Status status = stub_->Convert(&context, request, &response);
 
     if (status.ok()) {
