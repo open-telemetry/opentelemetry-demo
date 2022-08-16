@@ -148,15 +148,11 @@ test("cart: all", async (t) => {
   res = await cartAdd(req);
   t.truthy(isEmpty(res));
 
-  // Add Duplicates
-  res = await cartAdd(req);
-  t.truthy(isEmpty(res));
-
   // Check Cart Content
   res = await cartGet(userIdReq);
   t.is(res.items.length, 1);
   t.is(res.items[0].productId, req.item.productId);
-  t.is(res.items[0].quantity, req.item.quantity * 2);
+  t.is(res.items[0].quantity, req.item.quantity);
 
   // Empty Cart
   res = await cartEmpty(userIdReq);
