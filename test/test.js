@@ -44,11 +44,12 @@ const {
   CART_SERVICE_ADDR = "",
   CHECKOUT_SERVICE_ADDR = "",
   CURRENCY_SERVICE_ADDR = "",
+  EMAIL_SERVICE_ADDR = "",
+  FRONTEND_ADDR = "",
   PAYMENT_SERVICE_ADDR = "",
   PRODUCT_CATALOG_SERVICE_ADDR = "",
   RECOMMENDATION_SERVICE_ADDR = "",
   SHIPPING_SERVICE_ADDR = "",
-  EMAIL_SERVICE_ADDR = "",
 } = process.env;
 
 test.before(() => {
@@ -120,6 +121,16 @@ test.before(() => {
   shippingQuote = promisify(shippingClient.getQuote).bind(shippingClient);
   shippingOrder = promisify(shippingClient.shipOrder).bind(shippingClient);
 });
+
+// --------------- Frontend ---------------
+
+test('frontend: health', async (t) => {
+  const res = await fetch(`${FRONTEND_ADDR}/health`);
+  const text = await response.text();
+
+  t.is(res.status, 200);
+  t.is(text, "ok");
+})
 
 // --------------- Ad Service ---------------
 
@@ -205,6 +216,14 @@ test("email: confirmation", async (t) => {
 
   t.truthy(true);
 });
+
+test('email: health', async (t) => {
+  const res = await fetch(`${EMAIL_SERVICE_ADDR}/_healthz`)
+  const text = await response.text();
+
+  t.is(res.status, 200);
+  t.is(text, "ok");
+})
 
 // --------------- Payment Service ---------------
 
