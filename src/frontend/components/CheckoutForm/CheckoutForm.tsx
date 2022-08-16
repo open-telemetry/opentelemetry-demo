@@ -1,5 +1,6 @@
 import Link from 'next/link';
 import { useCallback, useState } from 'react';
+import { CypressFields } from '../../utils/Cypress';
 import Input from '../Input';
 import * as S from './CheckoutForm.styled';
 
@@ -190,7 +191,7 @@ const CheckoutForm = ({ onSubmit }: IProps) => {
         <Link href="/">
           <S.CartButton $type="secondary">Continue Shopping</S.CartButton>
         </Link>
-        <S.CartButton type="submit">Place Order</S.CartButton>
+        <S.CartButton data-cy={CypressFields.CheckoutPlaceOrder} type="submit">Place Order</S.CartButton>
       </S.SubmitContainer>
     </S.CheckoutForm>
   );

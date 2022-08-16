@@ -1,3 +1,4 @@
+import { CypressFields } from '../../utils/Cypress';
 import { Product } from '../../protos/demo';
 import ProductCard from '../ProductCard';
 import * as S from './ProductList.styled';
@@ -8,7 +9,7 @@ interface IProps {
 
 const ProductList = ({ productList }: IProps) => {
   return (
-    <S.ProductList>
+    <S.ProductList data-cy={CypressFields.ProductList}>
       {productList.map(product => (
         <ProductCard key={product.id} product={product} />
       ))}

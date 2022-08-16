@@ -67,3 +67,5 @@ significant modifications will be credited to OpenTelemetry Authors.
 ([#236](https://github.com/open-telemetry/opentelemetry-demo/pull/236))
 * Remove set_currency from load generator
 ([#290](https://github.com/open-telemetry/opentelemetry-demo/pull/290))
+* Added Frontend [Cypress](https://www.cypress.io/) E2E tests
+([#298](https://github.com/open-telemetry/opentelemetry-demo/pull/298))
