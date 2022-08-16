@@ -1,3 +1,4 @@
+import { CypressFields } from '../../utils/Cypress';
 import { useAd } from '../../providers/Ad.provider';
 import * as S from './Ad.styled';
 
@@ -7,7 +8,7 @@ const Ad = () => {
   } = useAd();
 
   return (
-    <S.Ad>
+    <S.Ad data-cy={CypressFields.Ad}>
       <S.Link href={redirectUrl}>
         <p>{text}</p>
       </S.Link>
