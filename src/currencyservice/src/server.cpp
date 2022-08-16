@@ -226,12 +226,7 @@ void RunServer(uint16_t port)
 
 int main(int argc, char **argv) {
 
-  if (argc < 2) {
-    std::cout << "Usage: currencyservice <port>";
-    return 0;
-  }
-
-  uint16_t port = atoi(argv[1]);
+  uint16_t port = atoi(std::getenv("CURRENCY_SERVICE_PORT"));
 
   std::cout << "Port: " << port << "\n";
 

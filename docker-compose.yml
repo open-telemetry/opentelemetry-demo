@@ -185,7 +185,7 @@ services:
       - shippingservice
     logging: *logging
     healthcheck:
-      test: curl -s --fail ${FRONTEND_ADDR}/_healthz || exit 1
+      test: curl -s --fail ${FRONTEND_ADDR}/api/health || exit 1
 
   # PaymentService
   paymentservice:
