@@ -173,7 +173,7 @@ checkoutservice --> currencyservice
 checkoutservice --> emailservice
 checkoutservice --> paymentservice
 checkoutservice --> shippingservice
-checkoutservice --> |evalFlag| featureflagfeservice
+checkoutservice --> |evalFlag| featureflagbeservice
 
 frontend --> adservice
 frontend --> cartservice
@@ -182,9 +182,9 @@ frontend --> checkoutservice
 frontend --> currencyservice
 frontend --> recommendationservice --> productcatalogservice
 frontend --> shippingservice
-frontend --> |evalFlag| featureflagfeservice
+frontend --> |evalFlag| featureflagbeservice
 
-productcatalogservice --> |evalFlag| featureflagfeservice
+productcatalogservice --> |evalFlag| featureflagbeservice
 
 featureflagbeservice(Flag Server):::erlang
 featureflagfeservice(Flag UI/API):::erlang
