@@ -1,7 +1,6 @@
 const { CompositePropagator, W3CBaggagePropagator, W3CTraceContextPropagator } = require('@opentelemetry/core');
 const { OTLPTraceExporter } = require('@opentelemetry/exporter-trace-otlp-grpc');
 const { getNodeAutoInstrumentations } = require('@opentelemetry/auto-instrumentations-node');
-const { registerInstrumentations } = require('@opentelemetry/instrumentation');
 const { NodeSDK, api } = require('@opentelemetry/sdk-node');
 
 api.propagation.setGlobalPropagator(
@@ -12,11 +11,11 @@ api.propagation.setGlobalPropagator(
 
 const sdk = new NodeSDK({
   traceExporter: new OTLPTraceExporter(),
-  instrumentations: [getNodeAutoInstrumentations()],
+  instrumentations: getNodeAutoInstrumentations({
+    '@opentelemetry/instrumentation-http': {
+      enabled: false,
+    },
+  }),
 });
 
 sdk.start();
-
-registerInstrumentations({
-  instrumentations: [getNodeAutoInstrumentations()],
-});

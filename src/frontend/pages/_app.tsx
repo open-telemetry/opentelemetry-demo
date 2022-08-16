@@ -7,7 +7,7 @@ import { ThemeProvider } from 'styled-components';
 import Theme from '../styles/Theme';
 import FrontendTracer from '../utils/telemetry/FrontendTracer';
 
-FrontendTracer.getTracer();
+if (typeof window !== 'undefined') FrontendTracer();
 
 const queryClient = new QueryClient();
 
