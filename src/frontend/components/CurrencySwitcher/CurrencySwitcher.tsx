@@ -2,6 +2,7 @@ import { useMemo } from 'react';
 import getSymbolFromCurrency from 'currency-symbol-map';
 import { useCurrency } from '../../providers/Currency.provider';
 import * as S from './CurrencySwitcher.styled';
+import { CypressFields } from '../../utils/Cypress';
 
 const CurrencySwitcher = () => {
   const { currencyCodeList, setSelectedCurrency, selectedCurrency } = useCurrency();
@@ -16,6 +17,7 @@ const CurrencySwitcher = () => {
           name="currency_code"
           onChange={event => setSelectedCurrency(event.target.value)}
           value={selectedCurrency}
+          data-cy={CypressFields.CurrencySwitcher}
         >
           {currencyCodeList.map(currencyCode => (
             <option key={currencyCode} value={currencyCode}>

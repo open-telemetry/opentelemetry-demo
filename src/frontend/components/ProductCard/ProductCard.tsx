@@ -1,3 +1,4 @@
+import { CypressFields } from '../../utils/Cypress';
 import { Product } from '../../protos/demo';
 import ProductPrice from '../ProductPrice';
 import * as S from './ProductCard.styled';
@@ -20,7 +21,7 @@ const ProductCard = ({
 }: IProps) => {
   return (
     <S.Link href={`/product/${id}`}>
-      <S.ProductCard>
+      <S.ProductCard data-cy={CypressFields.ProductCard}>
         <S.Image $src={picture} />
         <div>
           <S.ProductName>{name}</S.ProductName>

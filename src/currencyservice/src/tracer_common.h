@@ -2,17 +2,16 @@
 // SPDX-License-Identifier: Apache-2.0
 
 #pragma once
-#include "opentelemetry/exporters/ostream/span_exporter.h"
-#include "opentelemetry/sdk/trace/simple_processor.h"
-#include "opentelemetry/sdk/trace/tracer_provider.h"
-#include "opentelemetry/sdk/resource/resource.h"
-#include "opentelemetry/trace/provider.h"
-#include "opentelemetry/exporters/otlp/otlp_grpc_exporter.h"
-
+#include "opentelemetry/exporters/otlp/otlp_grpc_exporter_factory.h"
 #include "opentelemetry/context/propagation/global_propagator.h"
 #include "opentelemetry/context/propagation/text_map_propagator.h"
+#include "opentelemetry/exporters/ostream/span_exporter_factory.h"
 #include "opentelemetry/nostd/shared_ptr.h"
+#include "opentelemetry/sdk/trace/simple_processor_factory.h"
+#include "opentelemetry/sdk/trace/tracer_context_factory.h"
+#include "opentelemetry/sdk/trace/tracer_provider_factory.h"
 #include "opentelemetry/trace/propagation/http_trace_context.h"
+#include "opentelemetry/trace/provider.h"
 
 #include <grpcpp/grpcpp.h>
 #include <cstring>
@@ -72,16 +71,15 @@ public:
 
 void initTracer()
 {
-  auto exporter = std::unique_ptr<opentelemetry::sdk::trace::SpanExporter>(
-      new opentelemetry::exporter::otlp::OtlpGrpcExporter());
-  auto processor = std::unique_ptr<opentelemetry::sdk::trace::SpanProcessor>(
-      new opentelemetry::sdk::trace::SimpleSpanProcessor(std::move(exporter)));
+  auto exporter = opentelemetry::exporter::otlp::OtlpGrpcExporterFactory::Create();
+  auto processor =
+      opentelemetry::sdk::trace::SimpleSpanProcessorFactory::Create(std::move(exporter));
   std::vector<std::unique_ptr<opentelemetry::sdk::trace::SpanProcessor>> processors;
   processors.push_back(std::move(processor));
-
-  auto context  = std::make_shared<opentelemetry::sdk::trace::TracerContext>(std::move(processors));
-  auto provider = opentelemetry::nostd::shared_ptr<opentelemetry::trace::TracerProvider>(
-      new opentelemetry::sdk::trace::TracerProvider(context));
+  std::shared_ptr<opentelemetry::sdk::trace::TracerContext> context =
+      opentelemetry::sdk::trace::TracerContextFactory::Create(std::move(processors));
+  std::shared_ptr<opentelemetry::trace::TracerProvider> provider =
+      opentelemetry::sdk::trace::TracerProviderFactory::Create(context);
   // Set the global trace provider
   opentelemetry::trace::Provider::SetTracerProvider(provider);
 

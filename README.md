@@ -1,4 +1,4 @@
-# OpenTelemetry Demo
+# ![otel-photo](./docs/img/opentelemetry-logo-nav.png) OpenTelemetry Demo
 
 [![Slack](https://img.shields.io/badge/slack-@cncf/otel/demo-brightgreen.svg?logo=slack)](https://cloud-native.slack.com/archives/C03B4CWV4DA)
 [![Version](https://img.shields.io/github/v/release/open-telemetry/opentelemetry-demo?color=blueviolet)](https://github.com/open-telemetry/opentelemetry-demo/releases)
@@ -37,16 +37,6 @@ git clone https://github.com/open-telemetry/opentelemetry-demo.git
 
 ```shell
 cd opentelemetry-demo/
-```
-
-#### Gradle Update [Windows Only]
-
-- Navigate to the Java Ad Service folder to install and update Gradle:
-
-```shell
-cd .\src\adservice\
-.\gradlew installDist
-.\gradlew wrapper --gradle-version 7.4.2
 ```
 
 #### Run Docker Compose
@@ -183,7 +173,7 @@ checkoutservice --> currencyservice
 checkoutservice --> emailservice
 checkoutservice --> paymentservice
 checkoutservice --> shippingservice
-checkoutservice --> |evalFlag| featureflagfeservice
+checkoutservice --> |evalFlag| featureflagbeservice
 
 frontend --> adservice
 frontend --> cartservice
@@ -192,9 +182,9 @@ frontend --> checkoutservice
 frontend --> currencyservice
 frontend --> recommendationservice --> productcatalogservice
 frontend --> shippingservice
-frontend --> |evalFlag| featureflagfeservice
+frontend --> |evalFlag| featureflagbeservice
 
-productcatalogservice --> |evalFlag| featureflagfeservice
+productcatalogservice --> |evalFlag| featureflagbeservice
 
 featureflagbeservice(Flag Server):::erlang
 featureflagfeservice(Flag UI/API):::erlang
