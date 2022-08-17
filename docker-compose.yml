@@ -255,6 +255,7 @@ services:
       - "${PRODUCT_CATALOG_SERVICE_PORT}"
     environment:
       - PRODUCT_CATALOG_SERVICE_PORT
+      - FEATURE_FLAG_GRPC_SERVICE_ADDR
       - OTEL_EXPORTER_OTLP_TRACES_ENDPOINT
       - OTEL_SERVICE_NAME=productcatalogservice
     depends_on:
