@@ -116,7 +116,7 @@ classDef erlang fill:#b83998,color:white;
 classDef php fill:#4f5d95,color:white;
 ```
 
-_To view a graph of the desired state of this application [click here](./docs/v1-graph.md)_
+_To view a graph of the desired state of this application [click here](./docs/v1_graph.md)_
 
 Find the **Protocol Buffer Definitions** in the `/pb/` directory.
 
