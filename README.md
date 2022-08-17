@@ -13,15 +13,15 @@ This repo is a work in progress. If you'd like to help, check out our
 
 ## Local Quickstart
 
-- [Docker](./docs/docker-deployment.md)
-- [Kubernetes](./docs/kubernetes-deployment.md)
+- [Docker](./docs/docker_deployment.md)
+- [Kubernetes](./docs/kubernetes_deployment.md)
 
 ## Documentation
 
 - [Demo Screenshots](./docs/demo_screenshots.md)
 - [Manual Span Attributes](./docs/manual_span_attributes.md)
 - [Metric Feature Coverage by Service](./docs/metric_service_features.md)
-- [Requirements](./docs/requirements/)
+- [Requirements](./docs/requirements/README.md)
 - [Service Roles](./docs/service_table.md)
 - [Trace Feature Coverage by Service](./docs/trace_service_features.md)
 - [v1 Architecture](./docs/v1_graph.md)
@@ -116,7 +116,7 @@ classDef erlang fill:#b83998,color:white;
 classDef php fill:#4f5d95,color:white;
 ```
 
-_To view a graph of the desired state of this application [click here](./docs/v1Graph.md)_
+_To view a graph of the desired state of this application [click here](./docs/v1-graph.md)_
 
 Find the **Protocol Buffer Definitions** in the `/pb/` directory.
 
