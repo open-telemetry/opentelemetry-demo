@@ -21,8 +21,10 @@ This repo is a work in progress. If you'd like to help, check out our
 - [Demo Screenshots](./docs/demo_screenshots.md)
 - [Manual Span Attributes](./docs/manual_span_attributes.md)
 - [Metric Feature Coverage by Service](./docs/metric_service_features.md)
+- [Requirements](./docs/requirements/)
 - [Service Roles](./docs/service_table.md)
 - [Trace Feature Coverage by Service](./docs/trace_service_features.md)
+- [v1 Architecture](./docs/v1_graph.md)
 
 ## Architecture
 
