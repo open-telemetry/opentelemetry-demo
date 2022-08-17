@@ -5,6 +5,9 @@ import CurrencyProvider from '../providers/Currency.provider';
 import CartProvider from '../providers/Cart.provider';
 import { ThemeProvider } from 'styled-components';
 import Theme from '../styles/Theme';
+import FrontendTracer from '../utils/telemetry/FrontendTracer';
+
+if (typeof window !== 'undefined') FrontendTracer();
 
 const queryClient = new QueryClient();
 
