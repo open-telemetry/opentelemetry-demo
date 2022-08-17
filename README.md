@@ -157,9 +157,9 @@ cartservice(Cart Service):::dotnet
 checkoutservice(Checkout Service):::golang
 currencyservice(Currency Service):::cpp
 emailservice(Email Service):::ruby
-frontend(Frontend):::golang
+frontend(Frontend):::javascript
 loadgenerator([Load Generator]):::python
-paymentservice(Payment Service):::nodejs
+paymentservice(Payment Service):::javascript
 productcatalogservice(ProductCatalog Service):::golang
 recommendationservice(Recommendation Service):::python
 shippingservice(Shipping Service):::rust
@@ -199,7 +199,7 @@ classDef golang fill:#00add8,color:black;
 classDef cpp fill:#f34b7d,color:white;
 classDef ruby fill:#701516,color:white;
 classDef python fill:#3572A5,color:white;
-classDef nodejs fill:#f1e05a,color:black;
+classDef javascript fill:#f1e05a,color:black;
 classDef rust fill:#dea584,color:black;
 classDef erlang fill:#b83998,color:white;
 classDef php fill:#4f5d95,color:white;
@@ -214,7 +214,7 @@ subgraph Service Legend
   cppsvc(C++):::cpp
   rubysvc(Ruby):::ruby
   pythonsvc(Python):::python
-  nodesvc(Node.js):::nodejs
+  javascriptsvc(JavaScript):::javascript
   rustsvc(Rust):::rust
   erlangsvc(Erlang/Elixir):::erlang
 end
@@ -225,7 +225,7 @@ classDef golang fill:#00add8,color:black;
 classDef cpp fill:#f34b7d,color:white;
 classDef ruby fill:#701516,color:white;
 classDef python fill:#3572A5,color:white;
-classDef nodejs fill:#f1e05a,color:black;
+classDef javascript fill:#f1e05a,color:black;
 classDef rust fill:#dea584,color:black;
 classDef erlang fill:#b83998,color:white;
 classDef php fill:#4f5d95,color:white;
