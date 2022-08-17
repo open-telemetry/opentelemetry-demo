@@ -1,4 +1,5 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
+import InstrumentationMiddleware from '../../../../utils/telemetry/InstrumentationMiddleware';
 import ProductCatalogGateway from '../../../../gateways/rpc/ProductCatalog.gateway';
 import { Empty, Product } from '../../../../protos/demo';
 
@@ -18,4 +19,4 @@ const handler = async ({ method, query }: NextApiRequest, res: NextApiResponse<T
   }
 };
 
-export default handler;
+export default InstrumentationMiddleware(handler);

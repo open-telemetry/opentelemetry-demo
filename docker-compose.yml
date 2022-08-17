@@ -30,7 +30,7 @@ services:
       - ./src/otelcollector/otelcol-config-extras.yml:/etc/otelcol-config-extras.yml
     ports:
       - "4317"          # OTLP over gRPC receiver
-      - "4318"          # OTLP over HTTP receiver
+      - "4318:4318"     # OTLP over HTTP receiver
       - "9464"          # Prometheus exporter
       - "8888"          # metrics endpoint
     depends_on:
