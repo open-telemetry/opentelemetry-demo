@@ -11,135 +11,20 @@
 This repo is a work in progress. If you'd like to help, check out our
 [contributing guidance](#contributing).
 
-## Local Quickstart
+## Getting Started
 
-- [Docker](#docker)
-- [Kubernetes](#kubernetes)
+- [Docker](./docs/docker_deployment.md)
+- [Kubernetes](./docs/kubernetes_deployment.md)
 
-### Docker
+## Documentation
 
-#### Pre-requisites
-
-- Docker
-- [Docker Compose](https://docs.docker.com/compose/install/#install-compose) v2.0.0+
-
-#### Clone Repo
-
-- Clone the Webstore Demo repository:
-
-```shell
-git clone https://github.com/open-telemetry/opentelemetry-demo.git
-```
-
-#### Open Folder
-
-- Navigate to the cloned folder:
-
-```shell
-cd opentelemetry-demo/
-```
-
-#### Run Docker Compose
-
-- Start the demo (It can take ~20min the first time the command is executed as
-all the images will be build):
-
-```shell
-docker compose up
-```
-
-#### Verify the Webstore & the Telemetry
-
-Once the images are built and containers are started you can access:
-
-- Webstore: <http://localhost:8080/>
-- Jaeger: <http://localhost:16686/>
-- Prometheus: <http://localhost:9090/>
-- Grafana: <http://localhost:3000/>
-- Feature Flags UI: <http://localhost:8081/>
-
-#### Bring your own backend
-
-Likely you want to use the Webstore as a demo application for an observability
-backend you already have (e.g. an existing instance of Jaeger, Zipkin or one of
-the [vendor of your choice](https://opentelemetry.io/vendors/).
-
-To add your backend open the file
-[src/otelcollector/otelcol-config.yml](./src/otelcollector/otelcol-config.yml)
-with an editor:
-
-- add a trace exporter for your backend. For example, if your backend supports
-  otlp, extend the `exporters` section like the following:
-
-```yaml
-exporters:
-  jaeger:
-    endpoint: "jaeger:14250"
-    insecure: true
-  logging:
-  otlp:
-    endpoint: <your-endpoint-url>
-```
-
-- add the `otlp` exporter to the `pipelines` section as well:
-
-```yaml
-service:
-  pipelines:
-    traces:
-      receivers: [otlp]
-      processors: [batch]
-      exporters: [logging, jaeger, otlp]
-```
-
-Vendor backends might require you to add additional parameters for
-authentication, please check their documentation. Some backends require
-different exporters, you may find them and their documentation available at
-[opentelemetry-collector-contrib/exporter](https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/main/exporter).
-
-After updating the `otelcol-config.yml` start the demo by running
-`docker compose up`. After a while you should see the traces flowing into
-your backend as well.
-
-### Kubernetes
-
-We provide a [OpenTelemetry Demo Helm
-chart](https://github.com/open-telemetry/opentelemetry-helm-charts/tree/main/charts/opentelemetry-demo)
-to help deploy the demo to an existing Kubernetes cluster.
-
-[Helm](https://helm.sh) must be installed to use the charts.
-Please refer to Helm's [documentation](https://helm.sh/docs/) to get started.
-
-#### Prerequisites
-
-- Pre-existing Kubernetes Cluster
-- Helm 3.0+
-
-#### Install the Chart
-
-Add OpenTelemetry Helm repository:
-
-```console
-helm repo add open-telemetry https://open-telemetry.github.io/opentelemetry-helm-charts
-```
-
-To install the chart with the release name my-otel-demo, run the following command:
-
-```console
-helm install my-otel-demo open-telemetry/opentelemetry-demo
-```
-
-## Screenshots from the Online Boutique
-
-| Home Page                                                                                                         | Checkout Screen                                                                                                    |
-| ----------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------ |
-| [![Screenshot of store homepage](./docs/img/online-boutique-frontend-1.png)](./docs/img/online-boutique-frontend-1.png) | [![Screenshot of checkout screen](./docs/img/online-boutique-frontend-2.png)](./docs/img/online-boutique-frontend-2.png) |
-
-## Screenshots from Jaeger
-
-| Jaeger UI                                                                                                         | Trace View                                                                                                    |
-| ----------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------ |
-| [![Screenshot of Jaeger UI](./docs/img/jaeger-ui.png)](./docs/img/jaeger-ui.png) | [![Screenshot of Trace View](./docs/img/jaeger-trace-view.png)](./docs/img/jaeger-trace-view.png) |
+- [Demo Screenshots](./docs/demo_screenshots.md)
+- [Manual Span Attributes](./docs/manual_span_attributes.md)
+- [Metric Feature Coverage by Service](./docs/metric_service_features.md)
+- [Requirements](./docs/requirements/README.md)
+- [Service Roles](./docs/service_table.md)
+- [Trace Feature Coverage by Service](./docs/trace_service_features.md)
+- [v1 Architecture](./docs/v1_graph.md)
 
 ## Architecture
 
@@ -231,7 +116,7 @@ classDef erlang fill:#b83998,color:white;
 classDef php fill:#4f5d95,color:white;
 ```
 
-_To view a graph of the desired state of this application [click here](./docs/v1Graph.md)_
+_To view a graph of the desired state of this application [click here](./docs/v1_graph.md)_
 
 Find the **Protocol Buffer Definitions** in the `/pb/` directory.
 
