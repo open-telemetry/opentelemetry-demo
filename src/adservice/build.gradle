@@ -101,15 +101,7 @@ task adService(type: CreateStartScripts) {
     classpath = startScripts.classpath
 }
 
-task adServiceClient(type: CreateStartScripts) {
-    mainClass.set('hipstershop.AdServiceClient')
-    applicationName = 'AdServiceClient'
-    outputDir = new File(project.buildDir, 'tmp')
-    classpath = startScripts.classpath
-}
-
 applicationDistribution.into('bin') {
     from(adService)
-    from(adServiceClient)
     fileMode = 0755
 }

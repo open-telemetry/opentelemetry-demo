@@ -18,6 +18,7 @@ import (
 	"context"
 	"flag"
 	"fmt"
+	"google.golang.org/grpc/credentials/insecure"
 	"io/ioutil"
 	"net"
 	"os"
@@ -150,6 +151,7 @@ func run(port string) string {
 	)
 
 	svc := &productCatalog{}
+	mustMapEnv(&svc.featureFlagSvcAddr, "FEATURE_FLAG_GRPC_SERVICE_ADDR")
 
 	pb.RegisterProductCatalogServiceServer(srv, svc)
 	healthpb.RegisterHealthServer(srv, svc)
@@ -158,6 +160,7 @@ func run(port string) string {
 }
 
 type productCatalog struct {
+	featureFlagSvcAddr string
 	pb.UnimplementedProductCatalogServiceServer
 }
 
@@ -223,6 +226,15 @@ func (p *productCatalog) GetProduct(ctx context.Context, req *pb.GetProductReque
 	)
 
 	time.Sleep(extraLatency)
+
+	// conditional break if feature flag is enabled on a specific product
+	if p.checkProductFailure(ctx, req.Id) {
+		msg := fmt.Sprintf("interal error: product catalog feature flag for failure is enabled")
+		span.SetStatus(otelcodes.Error, msg)
+		span.AddEvent(msg)
+		return nil, status.Errorf(codes.Internal, msg)
+	}
+
 	var found *pb.Product
 	for i := 0; i < len(parseCatalog()); i++ {
 		if req.Id == parseCatalog()[i].Id {
@@ -260,4 +272,41 @@ func (p *productCatalog) SearchProducts(ctx context.Context, req *pb.SearchProdu
 		attribute.Int("app.products.count", len(ps)),
 	)
 	return &pb.SearchProductsResponse{Results: ps}, nil
+}
+
+func (p *productCatalog) checkProductFailure(ctx context.Context, id string) bool {
+
+	if id == "OLJCESPC7Z" {
+		conn, err := createClient(ctx, p.featureFlagSvcAddr)
+		if err != nil {
+			//report the error but don't fail
+			span := trace.SpanFromContext(ctx)
+			span.AddEvent("error", trace.WithAttributes(attribute.String("message", "failed to connect to feature flag service")))
+			return false
+		}
+		defer conn.Close()
+
+		ffResponse, err := pb.NewFeatureFlagServiceClient(conn).GetFlag(ctx, &pb.GetFlagRequest{
+			Name: "productCatalogFailure",
+		})
+		if err != nil {
+			span := trace.SpanFromContext(ctx)
+			span.AddEvent("error", trace.WithAttributes(attribute.String("message", "failed to retrieve product catalog feature flag")))
+			return false
+		}
+
+		if ffResponse.GetFlag().Enabled {
+			return true
+		}
+
+	}
+	return false
+}
+
+func createClient(ctx context.Context, svcAddr string) (*grpc.ClientConn, error) {
+	return grpc.DialContext(ctx, svcAddr,
+		grpc.WithTransportCredentials(insecure.NewCredentials()),
+		grpc.WithUnaryInterceptor(otelgrpc.UnaryClientInterceptor()),
+		grpc.WithStreamInterceptor(otelgrpc.StreamClientInterceptor()),
+	)
 }

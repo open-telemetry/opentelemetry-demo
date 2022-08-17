@@ -1,10 +1,10 @@
+import Link from 'next/link';
 import styled from 'styled-components';
 
 export const Header = styled.header`
   background-color: #853b5c;
   color: white;
 `;
-
 
 export const NavBar = styled.nav`
   height: 80px;
@@ -14,7 +14,7 @@ export const NavBar = styled.nav`
   border-bottom: 1px solid ${({ theme }) => theme.colors.textGray};
   z-index: 1;
   padding: 0;
-  
+
   ${({ theme }) => theme.breakpoints.desktop} {
     height: 100px;
   }
@@ -33,7 +33,7 @@ export const Container = styled.div`
   }
 `;
 
-export const NavBarBrand = styled.a`
+export const NavBarBrand = styled(Link)`
   display: flex;
   align-items: center;
   padding: 0;

@@ -1,4 +1,5 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
+import InstrumentationMiddleware from '../../../utils/telemetry/InstrumentationMiddleware';
 import CurrencyGateway from '../../../gateways/rpc/Currency.gateway';
 import { CurrencyConversionRequest, Money } from '../../../protos/demo';
 
@@ -20,4 +21,4 @@ const handler = async ({ method, body }: NextApiRequest, res: NextApiResponse<TR
   }
 };
 
-export default handler;
+export default InstrumentationMiddleware(handler);
