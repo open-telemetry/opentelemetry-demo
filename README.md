@@ -11,7 +11,7 @@
 This repo is a work in progress. If you'd like to help, check out our
 [contributing guidance](#contributing).
 
-## Local Quickstart
+## Getting Started
 
 - [Docker](./docs/docker_deployment.md)
 - [Kubernetes](./docs/kubernetes_deployment.md)
