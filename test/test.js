@@ -202,7 +202,7 @@ test('health: shipping grpc', async (t) => {
 })
 
 test('health: frontend http', async (t) => {
-  const res = await fetch(`${FRONTEND_ADDR}/api/health`);
+  const res = await fetch(`http://${FRONTEND_ADDR}/api/health`);
   const text = await res.text();
 
   t.is(res.status, 200);
