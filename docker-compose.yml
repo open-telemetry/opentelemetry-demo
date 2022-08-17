@@ -213,6 +213,7 @@ services:
       - CHECKOUT_SERVICE_ADDR
       - CURRENCY_SERVICE_ADDR
       - EMAIL_SERVICE_ADDR
+      - FRONTEND_ADDR
       - PAYMENT_SERVICE_ADDR
       - PRODUCT_CATALOG_SERVICE_ADDR
       - RECOMMENDATION_SERVICE_ADDR
@@ -223,6 +224,7 @@ services:
       - checkoutservice
       - currencyservice
       - emailservice
+      - frontend
       - paymentservice
       - productcatalogservice
       - recommendationservice

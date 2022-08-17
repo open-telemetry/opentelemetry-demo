@@ -24,6 +24,7 @@ const arrayIntersection = (a, b) => a.filter((x) => b.indexOf(x) !== -1);
 const isEmpty = (obj) => Object.keys(obj).length === 0;
 
 // Main
+let health = null;
 let adsGet = null;
 let cartAdd = null,
   cartGet = null,
@@ -54,8 +55,12 @@ const {
 
 test.before(() => {
   const hipstershop = grpc.loadPackageDefinition(
-    protoLoader.loadSync("./demo.proto")
+    protoLoader.loadSync("./proto/demo.proto")
   ).hipstershop;
+
+  health = grpc.loadPackageDefinition(
+    protoLoader.loadSync("./proto/grpc/health/v1/health.proto")
+  ).grpc.health.v1;
 
   const adClient = new hipstershop.AdService(
     AD_SERVICE_ADDR,
@@ -122,11 +127,91 @@ test.before(() => {
   shippingOrder = promisify(shippingClient.shipOrder).bind(shippingClient);
 });
 
-// --------------- Frontend ---------------
+// --------------- Health Check ---------------
 
-test('frontend: health', async (t) => {
-  const res = await fetch(`${FRONTEND_ADDR}/health`);
-  const text = await response.text();
+test('health: ad grpc', async (t) => {
+  const address = AD_SERVICE_ADDR;
+  const healthClient = new health.Health(address, grpc.credentials.createInsecure());
+  const healthCheck = promisify(healthClient.check).bind(healthClient);
+  const res = await healthCheck({ service: "" });
+
+  t.is(res.status, 1);
+})
+
+test('health: cart grpc', async (t) => {
+  const address = CART_SERVICE_ADDR;
+  const healthClient = new health.Health(address, grpc.credentials.createInsecure());
+  const healthCheck = promisify(healthClient.check).bind(healthClient);
+  const res = await healthCheck({ service: "" });
+
+  t.is(res.status, 1);
+})
+
+test('health: checkout grpc', async (t) => {
+  const address = CHECKOUT_SERVICE_ADDR;
+  const healthClient = new health.Health(address, grpc.credentials.createInsecure());
+  const healthCheck = promisify(healthClient.check).bind(healthClient);
+  const res = await healthCheck({ service: "" });
+
+  t.is(res.status, 1);
+})
+
+test('health: currency grpc', async (t) => {
+  const address = CURRENCY_SERVICE_ADDR;
+  const healthClient = new health.Health(address, grpc.credentials.createInsecure());
+  const healthCheck = promisify(healthClient.check).bind(healthClient);
+  const res = await healthCheck({ service: "" });
+
+  t.is(res.status, 1);
+})
+
+test('health: payment grpc', async (t) => {
+  const address = PAYMENT_SERVICE_ADDR;
+  const healthClient = new health.Health(address, grpc.credentials.createInsecure());
+  const healthCheck = promisify(healthClient.check).bind(healthClient);
+  const res = await healthCheck({ service: "" });
+
+  t.is(res.status, 1);
+})
+
+test('health: product grpc', async (t) => {
+  const address = PRODUCT_CATALOG_SERVICE_ADDR;
+  const healthClient = new health.Health(address, grpc.credentials.createInsecure());
+  const healthCheck = promisify(healthClient.check).bind(healthClient);
+  const res = await healthCheck({ service: "" });
+
+  t.is(res.status, 1);
+})
+
+test('health: recommendation grpc', async (t) => {
+  const address = RECOMMENDATION_SERVICE_ADDR;
+  const healthClient = new health.Health(address, grpc.credentials.createInsecure());
+  const healthCheck = promisify(healthClient.check).bind(healthClient);
+  const res = await healthCheck({ service: "" });
+
+  t.is(res.status, 1);
+})
+
+test('health: shipping grpc', async (t) => {
+  const address = SHIPPING_SERVICE_ADDR;
+  const healthClient = new health.Health(address, grpc.credentials.createInsecure());
+  const healthCheck = promisify(healthClient.check).bind(healthClient);
+  const res = await healthCheck({ service: "" });
+
+  t.is(res.status, 1);
+})
+
+test('health: frontend http', async (t) => {
+  const res = await fetch(`${FRONTEND_ADDR}/api/health`);
+  const text = await res.text();
+
+  t.is(res.status, 200);
+  t.is(text, "ok");
+})
+
+test('health: email http', async (t) => {
+  const res = await fetch(`${EMAIL_SERVICE_ADDR}/_healthz`);
+  const text = await res.text();
 
   t.is(res.status, 200);
   t.is(text, "ok");
@@ -186,7 +271,7 @@ test("currency: convert", async (t) => {
 
   const res = await currencyConvert(req);
   t.is(res.currencyCode, "CAD");
-  t.is(res.units, 442);
+  t.is(res.units.low, 442);
   t.true(res.nanos >= 599380800);
 });
 
@@ -216,14 +301,6 @@ test("email: confirmation", async (t) => {
 
   t.truthy(true);
 });
-
-test('email: health', async (t) => {
-  const res = await fetch(`${EMAIL_SERVICE_ADDR}/_healthz`)
-  const text = await response.text();
-
-  t.is(res.status, 200);
-  t.is(text, "ok");
-})
 
 // --------------- Payment Service ---------------
 
@@ -304,7 +381,7 @@ test("shipping: quote", async (t) => {
   const req = data.shipping;
 
   const res = await shippingQuote(req);
-  t.is(res.costUsd.units, 17);
+  t.is(res.costUsd.units.low, 17);
   t.is(res.costUsd.nanos, 980000000);
 });
 

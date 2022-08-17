@@ -2,6 +2,4 @@
 
 Testing gRPC services as black boxes.
 
-1. Start the services you want to test with `docker compose up --build integrationtests`
-1. Run `npm install`
-1. Run `npm test` or `npx ava --match='<pattern>'` to match test names
+1. `docker compose up --build integrationtests`
