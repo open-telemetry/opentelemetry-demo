@@ -11,5 +11,24 @@ defmodule Featureflagservice.Repo.Migrations.CreateFeatureflags do
     end
 
     create unique_index(:featureflags, [:name])
+
+    execute(&execute_up/0, &execute_down/0)
+  end
+
+  defp execute_up do
+    repo().insert(%Featureflagservice.FeatureFlags.FeatureFlag{
+      name: "productCatalogFailure",
+      description: "Fail product catalog service on a specific product",
+      enabled: false})
+
+    repo().insert(%Featureflagservice.FeatureFlags.FeatureFlag{
+      name: "shippingFailure",
+      description: "Fail shipping service when shipping a product to a non-USA address",
+      enabled: false})
+  end
+
+  defp execute_down do
+    repo().delete(%Featureflagservice.FeatureFlags.FeatureFlag{name: "productCatalogFailure"})
+    repo().delete(%Featureflagservice.FeatureFlags.FeatureFlag{name: "shippingFailure"})
   end
 end
