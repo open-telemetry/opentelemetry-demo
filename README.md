@@ -58,6 +58,18 @@ Once the images are built and containers are started you can access:
 - Grafana: <http://localhost:3000/>
 - Feature Flags UI: <http://localhost:8081/>
 
+#### Enable Feature Flags
+
+This demo comes with 2 feature flags which control failure conditions in the
+Product Catalog and Shipping services. By default the flags are disabled. Using
+the Feature Flags UI <http://localhost:8081> you will be able to control the
+status of these feature flags.
+
+| Feature Flag            | Description                                                               |
+|-------------------------|---------------------------------------------------------------------------|
+| `productCatalogFailure` | Generate an error for `GetProduct` requests with product id: `OLJCESPC7Z` |
+| `shippingFailure`       | Induce very long latency when shipping outside of USA                     |                                                                      
+
 #### Bring your own backend
 
 Likely you want to use the Webstore as a demo application for an observability
