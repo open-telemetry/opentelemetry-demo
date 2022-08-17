@@ -1,15 +1,16 @@
-import type { NextApiRequest, NextApiResponse } from 'next';
+import type { NextApiHandler } from 'next';
 import CartGateway from '../../gateways/rpc/Cart.gateway';
 import ProductCatalogGateway from '../../gateways/rpc/ProductCatalog.gateway';
 import { AddItemRequest, Empty } from '../../protos/demo';
 import { IProductCart, IProductCartItem } from '../../types/Cart';
+import InstrumentationMiddleware from '../../utils/telemetry/InstrumentationMiddleware';
 
 type TResponse = IProductCart | Empty;
 
-const handler = async ({ method, body, query }: NextApiRequest, res: NextApiResponse<TResponse>) => {
+const handler: NextApiHandler<TResponse> = async ({ method, body, query }, res) => {
   switch (method) {
     case 'GET': {
-      const {sessionId = ''} = query;
+      const { sessionId = '' } = query;
       const { userId, items } = await CartGateway.getCart(sessionId as string);
 
       const productList: IProductCartItem[] = await Promise.all(
@@ -49,4 +50,4 @@ const handler = async ({ method, body, query }: NextApiRequest, res: NextApiResp
   }
 };
 
-export default handler;
+export default InstrumentationMiddleware(handler);
