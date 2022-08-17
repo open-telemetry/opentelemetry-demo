@@ -8,11 +8,6 @@ defmodule Featureflagservice.Release do
   def migrate do
     load_app()
 
-    # Migrations don't always run on startup because the Postgres database may not be completely ready
-    # TODO: check for database connection instead of 5 second sleep
-    IO.puts "Waiting 5 seconds for database to start..."
-    Process.sleep(5000)
-
     for repo <- repos() do
       {:ok, _, _} = Ecto.Migrator.with_repo(repo, &Ecto.Migrator.run(&1, :up, all: true))
     end
