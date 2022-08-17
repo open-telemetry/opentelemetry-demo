@@ -34,7 +34,7 @@ cd opentelemetry-demo/
 
 ## Run Docker Compose
 
-- Start the demo (It can take ~20min the first time the command is executed as
+- Start the demo (it can take ~20min the first time the command is executed as
 all the images will be build):
 
 ```shell
