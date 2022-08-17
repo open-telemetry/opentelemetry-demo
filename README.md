@@ -16,17 +16,13 @@ This repo is a work in progress. If you'd like to help, check out our
 - [Docker](./docs/docker-deployment.md)
 - [Kubernetes](./docs/kubernetes-deployment.md)
 
-## Screenshots from the Online Boutique
+## Documentation
 
-| Home Page                                                                                                         | Checkout Screen                                                                                                    |
-| ----------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------ |
-| [![Screenshot of store homepage](./docs/img/online-boutique-frontend-1.png)](./docs/img/online-boutique-frontend-1.png) | [![Screenshot of checkout screen](./docs/img/online-boutique-frontend-2.png)](./docs/img/online-boutique-frontend-2.png) |
-
-## Screenshots from Jaeger
-
-| Jaeger UI                                                                                                         | Trace View                                                                                                    |
-| ----------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------ |
-| [![Screenshot of Jaeger UI](./docs/img/jaeger-ui.png)](./docs/img/jaeger-ui.png) | [![Screenshot of Trace View](./docs/img/jaeger-trace-view.png)](./docs/img/jaeger-trace-view.png) |
+- [Demo Screenshots](./docs/demo_screenshots.md)
+- [Manual Span Attributes](./docs/manual_span_attributes.md)
+- [Metric Feature Coverage by Service](./docs/metric_service_features.md)
+- [Service Roles](./docs/service_table.md)
+- [Trace Feature Coverage by Service](./docs/trace_service_features.md)
 
 ## Architecture
 
