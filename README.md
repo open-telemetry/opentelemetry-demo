@@ -19,6 +19,7 @@ This repo is a work in progress. If you'd like to help, check out our
 ## Documentation
 
 - [Demo Screenshots](./docs/demo_screenshots.md)
+- [Feature Flags](./docs/feature_flags.md)
 - [Manual Span Attributes](./docs/manual_span_attributes.md)
 - [Metric Feature Coverage by Service](./docs/metric_service_features.md)
 - [Requirements](./docs/requirements/README.md)
