@@ -6,7 +6,15 @@ describe('Product Detail Page', () => {
   });
 
   it('should validate the product detail page', () => {
+    cy.intercept('GET', '/api/products/*').as('getProduct');
+    cy.intercept('GET', '/api/data*').as('getAd');
+    cy.intercept('GET', '/api/recommendations*').as('getRecommendations');
+
     getElementByField(CypressFields.ProductCard).first().click();
+
+    cy.wait('@getProduct');
+    cy.wait('@getAd');
+    cy.wait('@getRecommendations');
 
     getElementByField(CypressFields.ProductDetail).should('exist');
     getElementByField(CypressFields.ProductPicture).should('exist');
@@ -22,8 +30,11 @@ describe('Product Detail Page', () => {
   });
 
   it('should add item to cart', () => {
+    cy.intercept('POST', '/api/cart*').as('addToCart');
     getElementByField(CypressFields.ProductCard).first().click();
     getElementByField(CypressFields.ProductAddToCart).click();
+
+    cy.wait('@addToCart');
 
     getElementByField(CypressFields.CartItemCount).should('contain', '1');
     getElementByField(CypressFields.CartIcon).click();

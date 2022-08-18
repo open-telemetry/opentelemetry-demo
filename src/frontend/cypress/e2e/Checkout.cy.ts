@@ -1,6 +1,10 @@
 import { CypressFields, getElementByField } from '../../utils/Cypress';
-
 describe('Checkout Flow', () => {
+  before(() => {
+    cy.intercept('POST', '/api/cart*').as('addToCart');
+    cy.intercept('POST', '/api/checkout*').as('placeOrder');
+  });
+
   beforeEach(() => {
     cy.visit('/');
   });
@@ -16,6 +20,8 @@ describe('Checkout Flow', () => {
     getElementByField(CypressFields.ProductCard).last().click();
     getElementByField(CypressFields.ProductAddToCart).click();
 
+    cy.wait('@addToCart');
+
     getElementByField(CypressFields.CartItemCount).should('contain', '2');
 
     getElementByField(CypressFields.CartIcon).click();
@@ -25,7 +31,8 @@ describe('Checkout Flow', () => {
 
     getElementByField(CypressFields.CheckoutPlaceOrder).click();
 
-    cy.wait(5000);
+    cy.wait('@placeOrder');
+
     cy.location('href').should('match', /\/checkout/);
     getElementByField(CypressFields.CheckoutItem).should('have.length', 2);
   });

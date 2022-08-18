@@ -198,6 +198,9 @@ services:
       - CYPRESS_baseUrl=http://${FRONTEND_ADDR}
       - FRONTEND_ADDR
       - NODE_ENV=production
+    volumes:
+      - ./src/frontend/cypress/videos:/app/cypress/videos
+      - ./src/frontend/cypress/screenshots:/app/cypress/screenshots
 
   # Integration Tests
   integrationTests:

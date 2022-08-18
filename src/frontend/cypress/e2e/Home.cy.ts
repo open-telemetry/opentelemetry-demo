@@ -15,10 +15,14 @@ describe('Home Page', () => {
   });
 
   it('should change currency', () => {
+    cy.intercept('POST', '/api/currency/convert*').as('convertCurrency');
+
     getElementByField(CypressFields.CurrencySwitcher).select('EUR');
     getElementByField(CypressFields.ProductCard, getElementByField(CypressFields.ProductList)).should('have.length', 9);
 
     getElementByField(CypressFields.CurrencySwitcher).should('have.value', 'EUR');
+
+    cy.wait('@convertCurrency');
 
     getElementByField(CypressFields.ProductCard).should('contain', getSymbolFromCurrency('EUR'));
   });
