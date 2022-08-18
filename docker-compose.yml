@@ -316,7 +316,8 @@ services:
       - OTEL_SERVICE_NAME=featureflagservice
       - DATABASE_URL=ecto://ffs:ffs@ffs_postgres:5432/ffs
     depends_on:
-      - ffs_postgres
+      ffs_postgres:
+        condition: service_healthy
     logging: *logging
 
   ffs_postgres:
@@ -327,6 +328,11 @@ services:
       - POSTGRES_DB=ffs
       - POSTGRES_PASSWORD=ffs
     logging: *logging
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
 
   # LoadGenerator
   loadgenerator:

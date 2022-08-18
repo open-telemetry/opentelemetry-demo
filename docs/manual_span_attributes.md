@@ -1,4 +1,4 @@
-# List of manual span attributes
+# Manual Span Attributes
 
 This document contains the list of manual Span Attributes used throughout the demo:
 
