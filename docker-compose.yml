@@ -341,9 +341,14 @@ services:
     build:
       context: ./
       dockerfile: ./src/loadgenerator/Dockerfile
+    ports:
+      - "${LOCUST_WEB_PORT}:${LOCUST_WEB_PORT}"
     environment:
-      - FRONTEND_ADDR
-      - USERS
+      - LOCUST_WEB_PORT
+      - LOCUST_USERS
+      - LOCUST_HOST
+      - LOCUST_HEADLESS
+      - LOCUST_AUTOSTART
       - OTEL_EXPORTER_OTLP_TRACES_ENDPOINT
       - OTEL_SERVICE_NAME=loadgenerator
       - PROTOCOL_BUFFERS_PYTHON_IMPLEMENTATION=python
@@ -371,7 +376,7 @@ services:
 
   # Grafana
   grafana:
-    image: grafana/grafana:9.0.1
+    image: grafana/grafana:9.1.0
     container_name: grafana
     volumes:
       - ./src/grafana/grafana.ini:/etc/grafana/grafana.ini
