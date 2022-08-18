@@ -376,7 +376,7 @@ services:
 
   # Grafana
   grafana:
-    image: grafana/grafana:9.0.1
+    image: grafana/grafana:9.1.0
     container_name: grafana
     volumes:
       - ./src/grafana/grafana.ini:/etc/grafana/grafana.ini
