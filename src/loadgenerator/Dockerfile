@@ -20,4 +20,4 @@ COPY ./src/loadgenerator/ ./
 
 RUN pip install --prefix="/usr/local/" -r ./requirements.txt
 
-ENTRYPOINT locust --host="http://${FRONTEND_ADDR}" --headless -u "${USERS}"
+ENTRYPOINT locust

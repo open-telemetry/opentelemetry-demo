@@ -50,6 +50,7 @@ Once the images are built and containers are started you can access:
 - Prometheus: <http://localhost:9090/>
 - Grafana: <http://localhost:3000/>
 - Feature Flags UI: <http://localhost:8081/>
+- Load Generator UI: <http://localhost:8089/>
 
 ## Bring your own backend
 
