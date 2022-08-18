@@ -77,3 +77,5 @@ significant modifications will be credited to OpenTelemetry Authors.
 ([#293](https://github.com/open-telemetry/opentelemetry-demo/pull/293))
 * Enable Locust loadgen environment variable config options
 ([#316](https://github.com/open-telemetry/opentelemetry-demo/pull/316))
+* Simplified and cleaned up ProductCatalogService
+([#317](https://github.com/open-telemetry/opentelemetry-demo/pull/317))
