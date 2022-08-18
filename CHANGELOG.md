@@ -72,3 +72,9 @@ significant modifications will be credited to OpenTelemetry Authors.
 * Add HEALTHCHECK to all services
 ([#296](https://github.com/open-telemetry/opentelemetry-demo/pull/296))
 * Added baggage support in CurrencyService [#281](https://github.com/open-telemetry/opentelemetry-demo/pull/281)
+* Added baggage support in CurrencyService
+([#281](https://github.com/open-telemetry/opentelemetry-demo/pull/281))
+* Added error for a specific product based on a feature flag
+([#245](https://github.com/open-telemetry/opentelemetry-demo/pull/245))
+* Added Frontend Instrumentation
+([#293](https://github.com/open-telemetry/opentelemetry-demo/pull/293))

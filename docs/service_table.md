@@ -1,6 +1,6 @@
 # Service Roles
 
-View [Service Graph](./v1Graph.md) to visualize request flow.
+View [Service Graph](./v1_graph.md) to visualize request flow.
 
 | Service                                                         | Language        | Description                                                                                                                                  |
 |-----------------------------------------------------------------|-----------------|----------------------------------------------------------------------------------------------------------------------------------------------|
