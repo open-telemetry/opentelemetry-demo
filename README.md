@@ -25,7 +25,6 @@ This repo is a work in progress. If you'd like to help, check out our
 - [Requirements](./docs/requirements/README.md)
 - [Service Roles](./docs/service_table.md)
 - [Trace Feature Coverage by Service](./docs/trace_service_features.md)
-- [v1 Architecture](./docs/v1_graph.md)
 
 ## Architecture
 
@@ -49,6 +48,8 @@ paymentservice(Payment Service):::javascript
 productcatalogservice(ProductCatalog Service):::golang
 recommendationservice(Recommendation Service):::python
 shippingservice(Shipping Service):::rust
+featureflagservice(Feature Flag Service):::erlang
+featureflagstore[(Feature Flag Store<br/>&#40PostgreSQL DB&#41)]
 
 Internet -->|HTTP| frontend
 loadgenerator -->|HTTP| frontend
@@ -59,7 +60,6 @@ checkoutservice --> currencyservice
 checkoutservice --> emailservice
 checkoutservice --> paymentservice
 checkoutservice --> shippingservice
-checkoutservice --> |evalFlag| featureflagbeservice
 
 frontend --> adservice
 frontend --> cartservice
@@ -68,15 +68,12 @@ frontend --> checkoutservice
 frontend --> currencyservice
 frontend --> recommendationservice --> productcatalogservice
 frontend --> shippingservice
-frontend --> |evalFlag| featureflagbeservice
 
-productcatalogservice --> |evalFlag| featureflagbeservice
+productcatalogservice --> |evalFlag| featureflagservice
 
-featureflagbeservice(Flag Server):::erlang
-featureflagfeservice(Flag UI/API):::erlang
-featureflagstore[(Flag Store<br/>&#40PostgreSQL DB&#41)]
+shippingservice --> |evalFlag| featureflagservice
 
-featureflagfeservice --> featureflagbeservice --> featureflagstore
+featureflagservice --> featureflagstore
 
 end
 classDef java fill:#b07219,color:white;
@@ -116,8 +113,6 @@ classDef rust fill:#dea584,color:black;
 classDef erlang fill:#b83998,color:white;
 classDef php fill:#4f5d95,color:white;
 ```
-
-_To view a graph of the desired state of this application [click here](./docs/v1_graph.md)_
 
 Find the **Protocol Buffer Definitions** in the `/pb/` directory.
 
