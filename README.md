@@ -48,6 +48,8 @@ paymentservice(Payment Service):::javascript
 productcatalogservice(ProductCatalog Service):::golang
 recommendationservice(Recommendation Service):::python
 shippingservice(Shipping Service):::rust
+featureflagservice(Feature Flag Service):::erlang
+featureflagstore[(Feature Flag Store<br/>&#40PostgreSQL DB&#41)]
 
 Internet -->|HTTP| frontend
 loadgenerator -->|HTTP| frontend
@@ -67,15 +69,11 @@ frontend --> currencyservice
 frontend --> recommendationservice --> productcatalogservice
 frontend --> shippingservice
 
-productcatalogservice --> |evalFlag| featureflagbeservice
+productcatalogservice --> |evalFlag| featureflagservice
 
-shippingservice --> |evalFlag| featureflagbeservice
+shippingservice --> |evalFlag| featureflagservice
 
-featureflagbeservice(Flag Server):::erlang
-featureflagfeservice(Flag UI/API):::erlang
-featureflagstore[(Flag Store<br/>&#40PostgreSQL DB&#41)]
-
-featureflagfeservice --> featureflagbeservice --> featureflagstore
+featureflagservice --> featureflagstore
 
 end
 classDef java fill:#b07219,color:white;
