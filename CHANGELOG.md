@@ -53,3 +53,33 @@ significant modifications will be credited to OpenTelemetry Authors.
 ([#253](https://github.com/open-telemetry/opentelemetry-demo/pull/253))
 * Added explicit support for Kubernetes.
 ([#255](https://github.com/open-telemetry/opentelemetry-demo/pull/255))
+* Added spanmetrics processor to otelcol
+([#212](https://github.com/open-telemetry/opentelemetry-demo/pull/212))
+* Added span attributes to shipping service
+([#260](https://github.com/open-telemetry/opentelemetry-demo/pull/260))
+* Added span attributes to currency service
+([#265](https://github.com/open-telemetry/opentelemetry-demo/pull/265))
+* Restricted network and port bindings
+([#272](https://github.com/open-telemetry/opentelemetry-demo/pull/272))
+* Feature Flag Service UI exposed on port 8081
+([#273](https://github.com/open-telemetry/opentelemetry-demo/pull/273))
+* Reimplemented Frontend app using [Next.js](https://nextjs.org/) Browser client
+([#236](https://github.com/open-telemetry/opentelemetry-demo/pull/236))
+* Remove set_currency from load generator
+([#290](https://github.com/open-telemetry/opentelemetry-demo/pull/290))
+* Added Frontend [Cypress](https://www.cypress.io/) E2E tests
+([#298](https://github.com/open-telemetry/opentelemetry-demo/pull/298))
+* Added baggage support in CurrencyService
+([#281](https://github.com/open-telemetry/opentelemetry-demo/pull/281))
+* Added error for a specific product based on a feature flag
+([#245](https://github.com/open-telemetry/opentelemetry-demo/pull/245))
+* Added Frontend Instrumentation
+([#293](https://github.com/open-telemetry/opentelemetry-demo/pull/293))
+* Add Feature Flags definitions
+([#314](https://github.com/open-telemetry/opentelemetry-demo/pull/314))
+* Enable Locust loadgen environment variable config options
+([#316](https://github.com/open-telemetry/opentelemetry-demo/pull/316))
+* Simplified and cleaned up ProductCatalogService
+([#317](https://github.com/open-telemetry/opentelemetry-demo/pull/317))
+* Updated Product Catalog to Match Astronomy Webstore
+([#285](https://github.com/open-telemetry/opentelemetry-demo/pull/285))
