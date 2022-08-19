@@ -81,3 +81,5 @@ significant modifications will be credited to OpenTelemetry Authors.
 ([#316](https://github.com/open-telemetry/opentelemetry-demo/pull/316))
 * Simplified and cleaned up ProductCatalogService
 ([#317](https://github.com/open-telemetry/opentelemetry-demo/pull/317))
+* Updated Product Catalog to Match Astronomy Webstore
+([#285](https://github.com/open-telemetry/opentelemetry-demo/pull/285))
