@@ -75,5 +75,11 @@ significant modifications will be credited to OpenTelemetry Authors.
 ([#245](https://github.com/open-telemetry/opentelemetry-demo/pull/245))
 * Added Frontend Instrumentation
 ([#293](https://github.com/open-telemetry/opentelemetry-demo/pull/293))
+* Add Feature Flags definitions
+([#314](https://github.com/open-telemetry/opentelemetry-demo/pull/314))
+* Enable Locust loadgen environment variable config options
+([#316](https://github.com/open-telemetry/opentelemetry-demo/pull/316))
+* Simplified and cleaned up ProductCatalogService
+([#317](https://github.com/open-telemetry/opentelemetry-demo/pull/317))
 * Updated Product Catalog to Match Astronomy Webstore
 ([#285](https://github.com/open-telemetry/opentelemetry-demo/pull/285))
