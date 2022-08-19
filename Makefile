@@ -61,7 +61,7 @@ install-tools: $(MISSPELL)
 .PHONY: build-and-push-dockerhub
 build-and-push-dockerhub:
 	docker compose --env-file .dockerhub.env -f docker-compose.yml build
-	docker compose --env-file .dockerhub.env -f docker-compose.yml pusd
+	docker compose --env-file .dockerhub.env -f docker-compose.yml push
 
 .PHONY: build-and-push-ghcr
 build-and-push-ghcr:
@@ -72,7 +72,7 @@ build-and-push-ghcr:
 build-env-file:
 	cp .env .dockerhub.env
 	sed -i '/IMAGE_VERSION=.*/c\IMAGE_VERSION=${RELEASE_VERSION}' .dockerhub.env
-	sed -i '/IMAGE_NAME=.*/c\IMAGE_NAME=otel/demo' .dockerhub.env
+	sed -i '/IMAGE_NAME=.*/c\IMAGE_NAME=${DOCKERHUB_REPO}' .dockerhub.env
 	cp .env .ghcr.env
 	sed -i '/IMAGE_VERSION=.*/c\IMAGE_VERSION=${RELEASE_VERSION}' .ghcr.env
-	sed -i '/IMAGE_NAME=.*/c\IMAGE_NAME=ghcr.io/open-telemetry/demo' .ghcr.env
+	sed -i '/IMAGE_NAME=.*/c\IMAGE_NAME=${GHCR_REPO}' .ghcr.env
