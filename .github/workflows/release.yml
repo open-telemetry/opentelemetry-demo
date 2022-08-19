@@ -39,14 +39,11 @@ jobs:
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_PASSWORD }}
 
-      - name: build ghcr docker image
-        run: make build-docker-images
+      - name: prepare build env
+        run: make build-env-file
 
-      - name: push ghcr image
-        run: make push-docker-images
+      - name: build and push ghcr docker image
+        run: make build-and-push-ghcr
 
-      - name: build dockerhub docker image
-        run: make build-docker-images
-
-      - name: push dockerhub image
-        run: make push-docker-images
+      - name: build and push dockerhub image
+        run: make build-and-push-dockerhub
