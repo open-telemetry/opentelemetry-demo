@@ -58,10 +58,21 @@ install-tools: $(MISSPELL)
 	npm install
 	@echo "All tools installed"
 
-.PHONY: build-docker-images
-build-docker-images:
-	docker compose -f docker-compose.yml build
+.PHONY: build-and-push-dockerhub
+build-and-push-dockerhub:
+	docker compose --env-file .dockerhub.env -f docker-compose.yml build
+	docker compose --env-file .dockerhub.env -f docker-compose.yml pusd
 
-.PHONY: push-docker-images
-push-docker-images:
-	docker compose -f docker-compose.yml push
+.PHONY: build-and-push-ghcr
+build-and-push-ghcr:
+	docker compose --env-file .ghcr.env -f docker-compose.yml build
+	docker compose --env-file .ghcr.env -f docker-compose.yml push
+
+.PHONY: build-env-file
+build-env-file:
+	cp .env .dockerhub.env
+	sed -i '/IMAGE_VERSION=.*/c\IMAGE_VERSION=${RELEASE_VERSION}' .dockerhub.env
+	sed -i '/IMAGE_NAME=.*/c\IMAGE_NAME=otel/demo' .dockerhub.env
+	cp .env .ghcr.env
+	sed -i '/IMAGE_VERSION=.*/c\IMAGE_VERSION=${RELEASE_VERSION}' .ghcr.env
+	sed -i '/IMAGE_NAME=.*/c\IMAGE_NAME=ghcr.io/open-telemetry/demo' .ghcr.env
