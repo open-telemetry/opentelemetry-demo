@@ -7,14 +7,17 @@
 #include <grpc/health/v1/health.grpc.pb.h>
 
 #include "opentelemetry/trace/context.h"
-#include "opentelemetry/trace/experimental_semantic_conventions.h"
+#include "opentelemetry/trace/semantic_conventions.h"
 #include "opentelemetry/trace/span_context_kv_iterable_view.h"
+#include "opentelemetry/baggage/baggage.h"
+#include "opentelemetry/nostd/string_view.h"
 #include "tracer_common.h"
 
 #include <grpcpp/grpcpp.h>
 #include <grpcpp/server.h>
 #include <grpcpp/server_builder.h>
 #include <grpcpp/server_context.h>
+#include <grpcpp/impl/codegen/string_ref.h>
 
 using namespace std;
 
@@ -31,7 +34,7 @@ using grpc::Server;
 using Span        = opentelemetry::trace::Span;
 using SpanContext = opentelemetry::trace::SpanContext;
 using namespace opentelemetry::trace;
-
+using namespace opentelemetry::baggage;
 namespace context = opentelemetry::context;
 
 namespace
@@ -90,6 +93,20 @@ class CurrencyService final : public hipstershop::CurrencyService::Service
   	const Empty* request,
   	GetSupportedCurrenciesResponse* response) override
   {
+    // Read baggage from client context
+    auto clientContext = context->client_metadata();
+    auto range = clientContext.equal_range("baggage");
+    std::vector<std::string> baggageLists;
+    for (auto i = range.first; i != range.second; ++i)
+    {
+      baggageLists.emplace_back(std::string(i->second.data()));
+    }
+    std::vector<opentelemetry::nostd::shared_ptr<Baggage>> baggages(baggageLists.size());
+    for (int i = 0; i < baggageLists.size(); i++) {
+      auto baggage = Baggage::FromHeader(baggageLists[i]);
+      baggages[i] = baggage;
+    }
+
     StartSpanOptions options;
     options.kind = SpanKind::kServer;
     GrpcServerCarrier carrier(context);
@@ -102,12 +119,22 @@ class CurrencyService final : public hipstershop::CurrencyService::Service
     std::string span_name = "CurrencyService/GetSupportedCurrencies";
     auto span =
         get_tracer("currencyservice")->StartSpan(span_name,
-                                      {{OTEL_GET_TRACE_ATTR(AttrRpcSystem), "grpc"},
-                                       {OTEL_GET_TRACE_ATTR(AttrRpcService), "CurrencyService"},
-                                       {OTEL_GET_TRACE_ATTR(AttrRpcMethod), "GetSupportedCurrencies"},
-                                       {OTEL_GET_TRACE_ATTR(AttrRpcGrpcStatusCode), 0}},
+                                      {{SemanticConventions::RPC_SYSTEM, "grpc"},
+                                       {SemanticConventions::RPC_SERVICE, "CurrencyService"},
+                                       {SemanticConventions::RPC_METHOD, "GetSupportedCurrencies"},
+                                       {SemanticConventions::RPC_GRPC_STATUS_CODE, 0}},
                                       options);
     auto scope = get_tracer("currencyservice")->WithActiveSpan(span);
+
+    for (auto& baggage : baggages) {
+      // Set the key value pairs from baggage to Span Attributes
+      baggage->GetAllEntries([&span](opentelemetry::nostd::string_view key,
+          opentelemetry::nostd::string_view value) {
+        span->SetAttribute(key, value);
+        return true;
+      });
+    }
+
     // Fetch and parse whatever HTTP headers we can from the gRPC request.
     span->AddEvent("Processing supported currencies request");
 
@@ -150,6 +177,20 @@ class CurrencyService final : public hipstershop::CurrencyService::Service
   	const CurrencyConversionRequest* request,
   	Money* response) override
   {
+    // Read baggage from client context
+    auto clientContext = context->client_metadata();
+    auto range = clientContext.equal_range("baggage");
+    std::vector<std::string> baggageLists;
+    for (auto i = range.first; i != range.second; ++i)
+    {
+      baggageLists.emplace_back(std::string(i->second.data()));
+    }
+    std::vector<opentelemetry::nostd::shared_ptr<Baggage>> baggages(baggageLists.size());
+    for (int i = 0; i < baggageLists.size(); i++) {
+      auto baggage = Baggage::FromHeader(baggageLists[i]);
+      baggages[i] = baggage;
+    }
+
     StartSpanOptions options;
     options.kind = SpanKind::kServer;
     GrpcServerCarrier carrier(context);
@@ -162,12 +203,21 @@ class CurrencyService final : public hipstershop::CurrencyService::Service
     std::string span_name = "CurrencyService/Convert";
     auto span =
         get_tracer("currencyservice")->StartSpan(span_name,
-                                      {{OTEL_GET_TRACE_ATTR(AttrRpcSystem), "grpc"},
-                                       {OTEL_GET_TRACE_ATTR(AttrRpcService), "CurrencyService"},
-                                       {OTEL_GET_TRACE_ATTR(AttrRpcMethod), "Convert"},
-                                       {OTEL_GET_TRACE_ATTR(AttrRpcGrpcStatusCode), 0}},
+                                      {{SemanticConventions::RPC_SYSTEM, "grpc"},
+                                       {SemanticConventions::RPC_SERVICE, "CurrencyService"},
+                                       {SemanticConventions::RPC_METHOD, "Convert"},
+                                       {SemanticConventions::RPC_GRPC_STATUS_CODE, 0}},
                                       options);
     auto scope = get_tracer("currencyservice")->WithActiveSpan(span);
+
+    for (auto& baggage : baggages) {
+      // Set the key value pairs from baggage to Span Attributes
+      baggage->GetAllEntries([&span](opentelemetry::nostd::string_view key,
+          opentelemetry::nostd::string_view value) {
+        span->SetAttribute(key, value);
+        return true;
+      });
+    }
     // Fetch and parse whatever HTTP headers we can from the gRPC request.
     span->AddEvent("Processing currency conversion request");
 

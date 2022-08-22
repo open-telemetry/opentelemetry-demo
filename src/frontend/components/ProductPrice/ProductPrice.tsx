@@ -2,6 +2,7 @@ import { useCallback, useEffect, useMemo, useState } from 'react';
 import getSymbolFromCurrency from 'currency-symbol-map';
 import { Money } from '../../protos/demo';
 import { useCurrency } from '../../providers/Currency.provider';
+import { CypressFields } from '../../utils/Cypress';
 
 interface IProps {
   price: Money;
@@ -27,7 +28,7 @@ const ProductPrice = ({ price }: IProps) => {
   }, [selectedCurrency, price]);
 
   return (
-    <span>
+    <span data-cy={CypressFields.ProductPrice}>
       {currencySymbol} {units}.{nanos.toString().slice(0, 2)}
     </span>
   );

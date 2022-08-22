@@ -4,11 +4,11 @@ The following documents capture the Application, OpenTelemetry (OTel), and Syste
 requirements for our shared demo application. These were decided upon in the
 ongoing SIG meeting.
 
-1. [Application Requirements](./application-requirements.md)
+1. [Application Requirements](./application_requirements.md)
 
-2. [OpenTelemetry Requirements](./opentelemetry-requirements.md)
+2. [OpenTelemetry Requirements](./opentelemetry_requirements.md)
 
-3. [System Requirements](./system-requirements.md)
+3. [System Requirements](./system_requirements.md)
 
 ## Target Personas
 

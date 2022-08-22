@@ -30,7 +30,7 @@ services:
       - ./src/otelcollector/otelcol-config-extras.yml:/etc/otelcol-config-extras.yml
     ports:
       - "4317"          # OTLP over gRPC receiver
-      - "4318"          # OTLP over HTTP receiver
+      - "4318:4318"     # OTLP over HTTP receiver
       - "9464"          # Prometheus exporter
       - "8888"          # metrics endpoint
     depends_on:
@@ -130,13 +130,13 @@ services:
     container_name: currency-service
     build:
       context: ./src/currencyservice
-      args:
-        - GRPC_VERSION=1.46.0
-        - OPENTELEMETRY_VERSION=1.4.0
       # cache_from:
       #   - ${IMAGE_NAME}:${IMAGE_VERSION}-currencyservice
       # cache_to:
       #   - inline # see https://github.com/moby/buildkit#export-cache
+      args:
+        - GRPC_VERSION=1.46.0
+        - OPENTELEMETRY_VERSION=1.5.0
     ports:
       - "${CURRENCY_SERVICE_PORT}"
     environment:
@@ -207,6 +207,50 @@ services:
       - shippingservice
     logging: *logging
 
+  # Frontend Tests
+  frontendTests:
+    image: cypress/included:10.3.1-typescript
+    depends_on:
+      - frontend
+    profiles:
+      - tests
+    environment:
+      - CYPRESS_baseUrl=http://${FRONTEND_ADDR}
+      - NODE_ENV=production
+    working_dir: /cypress
+    volumes:
+      - ./src/frontend:/cypress
+
+  # Integration Tests
+  integrationTests:
+    image: ${IMAGE_NAME}:${IMAGE_VERSION}-integrationTests
+    container_name: integrationTests
+    profiles:
+      - tests
+    build:
+      context: ./
+      dockerfile: ./test/Dockerfile
+    environment:
+      - AD_SERVICE_ADDR
+      - CART_SERVICE_ADDR
+      - CHECKOUT_SERVICE_ADDR
+      - CURRENCY_SERVICE_ADDR
+      - EMAIL_SERVICE_ADDR
+      - PAYMENT_SERVICE_ADDR
+      - PRODUCT_CATALOG_SERVICE_ADDR
+      - RECOMMENDATION_SERVICE_ADDR
+      - SHIPPING_SERVICE_ADDR
+    depends_on:
+      - adservice
+      - cartservice
+      - checkoutservice
+      - currencyservice
+      - emailservice
+      - paymentservice
+      - productcatalogservice
+      - recommendationservice
+      - shippingservice
+
   # PaymentService
   paymentservice:
     image: ${IMAGE_NAME}:${IMAGE_VERSION}-paymentservice
@@ -243,6 +287,7 @@ services:
       - "${PRODUCT_CATALOG_SERVICE_PORT}"
     environment:
       - PRODUCT_CATALOG_SERVICE_PORT
+      - FEATURE_FLAG_GRPC_SERVICE_ADDR
       - OTEL_EXPORTER_OTLP_TRACES_ENDPOINT
       - OTEL_SERVICE_NAME=productcatalogservice
     depends_on:
@@ -315,7 +360,8 @@ services:
       - OTEL_SERVICE_NAME=featureflagservice
       - DATABASE_URL=ecto://ffs:ffs@ffs_postgres:5432/ffs
     depends_on:
-      - ffs_postgres
+      ffs_postgres:
+        condition: service_healthy
     logging: *logging
 
   ffs_postgres:
@@ -326,6 +372,11 @@ services:
       - POSTGRES_DB=ffs
       - POSTGRES_PASSWORD=ffs
     logging: *logging
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
 
   # LoadGenerator
   loadgenerator:
@@ -338,9 +389,14 @@ services:
       #   - ${IMAGE_NAME}:${IMAGE_VERSION}-loadgenerator
       # cache_to:
       #   - inline # see https://github.com/moby/buildkit#export-cache
+    ports:
+      - "${LOCUST_WEB_PORT}:${LOCUST_WEB_PORT}"
     environment:
-      - FRONTEND_ADDR
-      - USERS
+      - LOCUST_WEB_PORT
+      - LOCUST_USERS
+      - LOCUST_HOST
+      - LOCUST_HEADLESS
+      - LOCUST_AUTOSTART
       - OTEL_EXPORTER_OTLP_TRACES_ENDPOINT
       - OTEL_SERVICE_NAME=loadgenerator
       - PROTOCOL_BUFFERS_PYTHON_IMPLEMENTATION=python
@@ -368,7 +424,7 @@ services:
 
   # Grafana
   grafana:
-    image: grafana/grafana:9.0.1
+    image: grafana/grafana:9.1.0
     container_name: grafana
     volumes:
       - ./src/grafana/grafana.ini:/etc/grafana/grafana.ini

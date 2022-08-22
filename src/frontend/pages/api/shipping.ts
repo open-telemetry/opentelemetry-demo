@@ -1,4 +1,5 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
+import InstrumentationMiddleware from '../../utils/telemetry/InstrumentationMiddleware';
 import ShippingGateway from '../../gateways/rpc/Shipping.gateway';
 import { CartItem, Empty, Money } from '../../protos/demo';
 
@@ -19,4 +20,4 @@ const handler = async ({ method, query }: NextApiRequest, res: NextApiResponse<T
   }
 };
 
-export default handler;
+export default InstrumentationMiddleware(handler);
