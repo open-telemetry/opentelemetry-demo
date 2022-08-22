@@ -20,7 +20,6 @@ import (
 	"fmt"
 	"io/ioutil"
 	"net"
-	"net/http"
 	"os"
 	"os/signal"
 	"strings"
@@ -29,28 +28,27 @@ import (
 	"time"
 
 	pb "github.com/opentelemetry/opentelemetry-demo/src/productcatalogservice/genproto/hipstershop"
-	healthpb "google.golang.org/grpc/health/grpc_health_v1"
-
-	"github.com/prometheus/client_golang/prometheus"
-	"github.com/prometheus/client_golang/prometheus/collectors"
-	"github.com/prometheus/client_golang/prometheus/promhttp"
 	"github.com/sirupsen/logrus"
-
 	"go.opentelemetry.io/contrib/instrumentation/google.golang.org/grpc/otelgrpc"
-
+	"go.opentelemetry.io/contrib/instrumentation/runtime"
 	"go.opentelemetry.io/otel"
 	"go.opentelemetry.io/otel/attribute"
 	otelcodes "go.opentelemetry.io/otel/codes"
+	"go.opentelemetry.io/otel/exporters/otlp/otlpmetric"
+	"go.opentelemetry.io/otel/exporters/otlp/otlpmetric/otlpmetricgrpc"
 	"go.opentelemetry.io/otel/exporters/otlp/otlptrace/otlptracegrpc"
+	"go.opentelemetry.io/otel/metric/global"
 	"go.opentelemetry.io/otel/propagation"
+	controller "go.opentelemetry.io/otel/sdk/metric/controller/basic"
+	processor "go.opentelemetry.io/otel/sdk/metric/processor/basic"
+	"go.opentelemetry.io/otel/sdk/metric/selector/simple"
 	sdktrace "go.opentelemetry.io/otel/sdk/trace"
 	"go.opentelemetry.io/otel/trace"
-
-	"google.golang.org/protobuf/encoding/protojson"
-
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/codes"
+	healthpb "google.golang.org/grpc/health/grpc_health_v1"
 	"google.golang.org/grpc/status"
+	"google.golang.org/protobuf/encoding/protojson"
 )
 
 var (
@@ -63,6 +61,52 @@ var (
 
 	reloadCatalog bool
 )
+
+func initMeter() {
+	ctx := context.Background()
+	client := otlpmetricgrpc.NewClient(otlpmetricgrpc.WithInsecure())
+	exp, err := otlpmetric.New(ctx, client)
+	if err != nil {
+		log.Fatalf("Failed to create the collector exporter: %v", err)
+	}
+	defer func() {
+		ctx, cancel := context.WithTimeout(ctx, time.Second)
+		defer cancel()
+		if err := exp.Shutdown(ctx); err != nil {
+			otel.Handle(err)
+		}
+	}()
+
+	pusher := controller.New(
+		processor.NewFactory(
+			simple.NewWithHistogramDistribution(),
+			exp,
+		),
+		controller.WithExporter(exp),
+		controller.WithCollectPeriod(2*time.Second),
+	)
+
+	global.SetMeterProvider(pusher)
+
+	if err := pusher.Start(ctx); err != nil {
+		log.Fatalf("could not start metric controller: %v", err)
+	}
+	defer func() {
+		ctx, cancel := context.WithTimeout(ctx, time.Second)
+		defer cancel()
+		// pushes any last exports to the receiver
+		if err := pusher.Stop(ctx); err != nil {
+			otel.Handle(err)
+		}
+	}()
+	global.Meter("opentelemetry-demo-webstore/catalogservice")
+
+	if err := runtime.Start(
+		runtime.WithMinimumReadMemStatsInterval(time.Second),
+	); err != nil {
+		log.Fatalln("failed to start runtime instrumentation:", err)
+	}
+}
 
 func init() {
 	log = logrus.New()
@@ -82,28 +126,7 @@ func init() {
 	}
 
 	//init runtime metrics
-	go func() {
-		// Create a new registry
-		reg := prometheus.NewRegistry()
-		addr := ":2112"
-
-		// Add Go module build info.
-		reg.MustRegister(collectors.NewBuildInfoCollector())
-		reg.MustRegister(collectors.NewGoCollector(
-			collectors.WithGoCollections(collectors.GoRuntimeMetricsCollection),
-		))
-
-		// Expose the registered metrics via HTTP.
-		http.Handle("/metrics", promhttp.HandlerFor(
-			reg,
-			promhttp.HandlerOpts{
-				// Opt into OpenMetrics to support exemplars.
-				EnableOpenMetrics: true,
-			},
-		))
-		fmt.Println("go runtime metrics expose on", addr)
-		log.Fatal(http.ListenAndServe(addr, nil))
-	}()
+	initMeter()
 }
 
 func InitTracerProvider() *sdktrace.TracerProvider {
