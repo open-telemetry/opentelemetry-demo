@@ -58,7 +58,7 @@ public final class AdService {
   private static final AdService service = new AdService();
 
   private void start() throws IOException {
-    int port = Integer.parseInt(System.getenv().getOrDefault("AD_SERVICE_PORT", "9555"));
+    int port = Integer.parseInt(System.getenv("AD_SERVICE_PORT"));
     healthMgr = new HealthStatusManager();
 
     server =
@@ -181,48 +181,47 @@ public final class AdService {
   }
 
   private static ImmutableListMultimap<String, Ad> createAdsMap() {
-    Ad hairdryer =
+    Ad binoculars =
         Ad.newBuilder()
             .setRedirectUrl("/product/2ZYFJ3GM2N")
-            .setText("Hairdryer for sale. 50% off.")
+            .setText("Roof Binoculars for sale. 50% off.")
             .build();
-    Ad tankTop =
+    Ad explorerTelescope =
         Ad.newBuilder()
             .setRedirectUrl("/product/66VCHSJNUP")
-            .setText("Tank top for sale. 20% off.")
+            .setText("Starsense Explorer Refractor Telescope for sale. 20% off.")
             .build();
-    Ad candleHolder =
+    Ad colorImager =
         Ad.newBuilder()
             .setRedirectUrl("/product/0PUK6V6EV0")
-            .setText("Candle holder for sale. 30% off.")
+            .setText("Solar System Color Imager for sale. 30% off.")
             .build();
-    Ad bambooGlassJar =
+    Ad opticalTube =
         Ad.newBuilder()
             .setRedirectUrl("/product/9SIQT8TOJO")
-            .setText("Bamboo glass jar for sale. 10% off.")
+            .setText("Optical Tube Assembly for sale. 10% off.")
             .build();
-    Ad watch =
+    Ad travelTelescope =
         Ad.newBuilder()
             .setRedirectUrl("/product/1YMWWN1N4O")
-            .setText("Watch for sale. Buy one, get second kit for free")
+            .setText("Eclipsmart Travel Refractor Telescope for sale. Buy one, get second kit for free")
             .build();
-    Ad mug =
+    Ad solarFilter =
         Ad.newBuilder()
             .setRedirectUrl("/product/6E92ZMYYFZ")
-            .setText("Mug for sale. Buy two, get third one for free")
+            .setText("Solar Filter for sale. Buy two, get third one for free")
             .build();
-    Ad loafers =
+    Ad cleaningKit =
         Ad.newBuilder()
             .setRedirectUrl("/product/L9ECAV7KIM")
-            .setText("Loafers for sale. Buy one, get second one for free")
+            .setText("Lens Cleaning Kit for sale. Buy one, get second one for free")
             .build();
     return ImmutableListMultimap.<String, Ad>builder()
-        .putAll("clothing", tankTop)
-        .putAll("accessories", watch)
-        .putAll("footwear", loafers)
-        .putAll("hair", hairdryer)
-        .putAll("decor", candleHolder)
-        .putAll("kitchen", bambooGlassJar, mug)
+        .putAll("binoculars", binoculars)
+        .putAll("telescopes", explorerTelescope)
+        .putAll("accessories", colorImager, solarFilter, cleaningKit)
+        .putAll("assembly", opticalTube)
+        .putAll("travel", travelTelescope)
         .build();
   }
 

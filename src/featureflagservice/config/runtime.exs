@@ -4,25 +4,21 @@ if System.get_env("PHX_SERVER") do
   config :featureflagservice, FeatureflagserviceWeb.Endpoint, server: true
 end
 
-grpc_port = String.to_integer(System.get_env("GRPC_PORT") || "4001")
+grpc_port = String.to_integer(System.get_env("FEATURE_FLAG_GRPC_SERVICE_PORT"))
 
 config :grpcbox,
   servers: [
     %{
       :grpc_opts => %{
-        :service_protos => [:ffs_featureflag_pb],
+        :service_protos => [:ffs_demo_pb],
         :unary_interceptor => {:otel_grpcbox_interceptor, :unary},
-        :services => %{:FeatureFlagService => :ffs_service}
+        :services => %{:"hipstershop.FeatureFlagService" => :ffs_service}
       },
       :listen_opts => %{:port => grpc_port}
     }
   ]
 
 if config_env() == :prod do
-  config :opentelemetry_exporter,
-    otlp_endpoint: "http://otelcol:4317",
-    otlp_protocol: :grpc
-
   database_url =
     System.get_env("DATABASE_URL") ||
       raise """
@@ -51,7 +47,7 @@ if config_env() == :prod do
       """
 
   host = System.get_env("PHX_HOST") || "localhost"
-  port = String.to_integer(System.get_env("PORT") || "4000")
+  port = String.to_integer(System.get_env("FEATURE_FLAG_SERVICE_PORT"))
 
   config :featureflagservice, FeatureflagserviceWeb.Endpoint,
     url: [host: host, port: 443, scheme: "https"],

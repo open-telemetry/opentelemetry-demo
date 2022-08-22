@@ -1,116 +1,21 @@
 # Trace Feature Coverage by Service
 
-## TOC
-
-- [Ad Service](#ad-service)
-- [Cart Service](#cart-service)
-- [Checkout Service](#checkout-service)
-- [Currency Service](#currency-service)
-- [Email Service](#email-service)
-- [Feature Flag Service](#feature-flag-service)
-- [Frontend Service](#frontend-service)
-- [Payment Service](#payment-service)
-- [Product Catalog Service](#product-catalog-service)
-- [Recommendation Service](#recommendation-service)
-- [Shipping Service](#shipping-service)
-
-## OpenTelemetry Feature Set by Services
-
-### Emoji Legend
+Emoji Legend
 
 - Completed: :100:
+- Not Applicable: :no_bell:
 - Not Present (Yet): :construction:
 
-### [Ad Service](../src/adservice/README.md)
-
-TBD
-
-### [Cart Service](../src/cartservice/README.md)
-
-TBD
-
-### [Checkout Service](../src/checkoutservice/README.md)
-
-- :100: [Instrumentation
-  Libraries](https://opentelemetry.io/docs/concepts/instrumenting-library/)
-- :construction: [Manual Span
-  Creation](https://github.com/open-telemetry/opentelemetry-specification/blob/main/specification/glossary.md#manual-instrumentation)
-- :construction: [Span Data
-  Enrichment](https://opentelemetry.io/docs/concepts/glossary/#metadata)
-- :construction: [RPC Context
-  Propagation](https://github.com/open-telemetry/opentelemetry-specification/blob/main/specification/context/README.md#context)
-- :construction: [Span
-  Links](https://github.com/open-telemetry/opentelemetry-specification/blob/main/specification/overview.md#links-between-spans)
-- :construction: [Baggage](https://github.com/open-telemetry/opentelemetry-specification/blob/main/specification/baggage/api.md#overview)
-
-### [Currency Service](../src/currencyservice/README.md)
-
-TBD
-
-### [Email Service](../src/emailservice/README.md)
-
-- :100: [Instrumentation
-  Libraries](https://opentelemetry.io/docs/concepts/instrumenting-library/)
-- :100: [Manual Span
-  Creation](https://github.com/open-telemetry/opentelemetry-specification/blob/main/specification/glossary.md#manual-instrumentation)
-- :100: [Span Data
-  Enrichment](https://opentelemetry.io/docs/concepts/glossary/#metadata)
-- :construction: [RPC Context
-  Propagation](https://github.com/open-telemetry/opentelemetry-specification/blob/main/specification/context/README.md#context)
-- :construction: [Span
-  Links](https://github.com/open-telemetry/opentelemetry-specification/blob/main/specification/overview.md#links-between-spans)
-- :construction: [Baggage](https://github.com/open-telemetry/opentelemetry-specification/blob/main/specification/baggage/api.md#overview)
-
-### [Feature Flag Service](../src/featureflagservice/README.md)
-
-TBD
-
-### [Frontend Service](../src/frontend/README.md)
-
-- :100: [Instrumentation
-  Libraries](https://opentelemetry.io/docs/concepts/instrumenting-library/)
-- :construction: [Manual Span
-  Creation](https://github.com/open-telemetry/opentelemetry-specification/blob/main/specification/glossary.md#manual-instrumentation)
-- :100: [Span Data
-  Enrichment](https://opentelemetry.io/docs/concepts/glossary/#metadata)
-- :construction: [RPC Context
-  Propagation](https://github.com/open-telemetry/opentelemetry-specification/blob/main/specification/context/README.md#context)
-- :construction: [Span
-  Links](https://github.com/open-telemetry/opentelemetry-specification/blob/main/specification/overview.md#links-between-spans)
-- :construction: [Baggage](https://github.com/open-telemetry/opentelemetry-specification/blob/main/specification/baggage/api.md#overview)
-
-### [Payment Service](../src/paymentservice/README.md)
-
-- :100: [Instrumentation
-  Libraries](https://opentelemetry.io/docs/concepts/instrumenting-library/)
-- :100: [Manual Span
-  Creation](https://github.com/open-telemetry/opentelemetry-specification/blob/main/specification/glossary.md#manual-instrumentation)
-- :100: [Span Data
-  Enrichment](https://opentelemetry.io/docs/concepts/glossary/#metadata)
-- :construction: [RPC Context
-  Propagation](https://github.com/open-telemetry/opentelemetry-specification/blob/main/specification/context/README.md#context)
-- :construction: [Span
-  Links](https://github.com/open-telemetry/opentelemetry-specification/blob/main/specification/overview.md#links-between-spans)
-- :construction: [Baggage](https://github.com/open-telemetry/opentelemetry-specification/blob/main/specification/baggage/api.md#overview)
-
-### [Product Catalog Service](../src/productcatalogservice/README.md)
-
-- :100: [Instrumentation
-  Libraries](https://opentelemetry.io/docs/concepts/instrumenting-library/)
-- :construction: [Manual Span
-  Creation](https://github.com/open-telemetry/opentelemetry-specification/blob/main/specification/glossary.md#manual-instrumentation)
-- :100: [Span Data
-  Enrichment](https://opentelemetry.io/docs/concepts/glossary/#metadata)
-- :construction: [RPC Context
-  Propagation](https://github.com/open-telemetry/opentelemetry-specification/blob/main/specification/context/README.md#context)
-- :construction: [Span
-  Links](https://github.com/open-telemetry/opentelemetry-specification/blob/main/specification/overview.md#links-between-spans)
-- :construction: [Baggage](https://github.com/open-telemetry/opentelemetry-specification/blob/main/specification/baggage/api.md#overview)
-
-### [Recommendation Service](../src/recommendationservice/README.md)
-
-TBD
-
-### [Shipping Service](../src/shippingservice/README.md)
-
-TBD
+| Service         | Language        | Instrumentation Libraries | Manual Span Creation | Span Data Enrichment | RPC Context Propagation | Span Links     | Baggage        |
+|-----------------|-----------------|---------------------------|----------------------|----------------------|-------------------------|----------------|----------------|
+| Ad              | Java            | :100:                     | :100:                | :100:                | :construction:          | :construction: | :construction: |
+| Cart            | .NET            | :100:                     | :construction:       | :100:                | :construction:          | :construction: | :construction: |
+| Checkout        | Go              | :100:                     | :100:                | :100:                | :construction:          | :construction: | :construction: |
+| Currency        | C++             | :no_bell:                 | :100:                | :100:                | :100:                   | :construction: | :100: |
+| Email           | Ruby            | :100:                     | :100:                | :100:                | :construction:          | :construction: | :construction: |
+| Feature Flag    | Erlang / Elixir | :100:                     | :construction:       | :construction:       | :construction:          | :construction: | :construction: |
+| Frontend        | JavaScript      | :construction:            | :construction:       | :construction:       | :construction:          | :construction: | :construction: |
+| Payment         | JavaScript      | :100:                     | :100:                | :100:                | :construction:          | :construction: | :construction: |
+| Product Catalog | Go              | :100:                     | :construction:       | :100:                | :construction:          | :construction: | :construction: |
+| Recommendation  | Python          | :100:                     | :100:                | :100:                | :construction:          | :construction: | :construction: |
+| Shipping        | Rust            | :construction:            | :100:                | :100:                | :100:                   | :construction: | :construction: |

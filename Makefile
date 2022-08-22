@@ -1,5 +1,5 @@
 # All documents to be used in spell check.
-ALL_DOCS := $(shell find . -type f -name '*.md' -not -path './.github/*' -not -path './node_modules/*' | sort)
+ALL_DOCS := $(shell find . -type f -name '*.md' -not -path './.github/*' -not -path '*/node_modules/*' -not -path '*/_build/*' -not -path '*/deps/*' | sort)
 PWD := $(shell pwd)
 
 TOOLS_DIR := ./internal/tools
@@ -58,10 +58,21 @@ install-tools: $(MISSPELL)
 	npm install
 	@echo "All tools installed"
 
-.PHONY: build-docker-images
-build-docker-images:
-	docker compose -f docker-compose.yml build
+.PHONY: build-and-push-dockerhub
+build-and-push-dockerhub:
+	docker compose --env-file .dockerhub.env -f docker-compose.yml build
+	docker compose --env-file .dockerhub.env -f docker-compose.yml push
 
-.PHONY: push-docker-images
-push-docker-images:
-	docker compose -f docker-compose.yml push
+.PHONY: build-and-push-ghcr
+build-and-push-ghcr:
+	docker compose --env-file .ghcr.env -f docker-compose.yml build
+	docker compose --env-file .ghcr.env -f docker-compose.yml push
+
+.PHONY: build-env-file
+build-env-file:
+	cp .env .dockerhub.env
+	sed -i '/IMAGE_VERSION=.*/c\IMAGE_VERSION=${RELEASE_VERSION}' .dockerhub.env
+	sed -i '/IMAGE_NAME=.*/c\IMAGE_NAME=${DOCKERHUB_REPO}' .dockerhub.env
+	cp .env .ghcr.env
+	sed -i '/IMAGE_VERSION=.*/c\IMAGE_VERSION=${RELEASE_VERSION}' .ghcr.env
+	sed -i '/IMAGE_NAME=.*/c\IMAGE_NAME=${GHCR_REPO}' .ghcr.env

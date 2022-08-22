@@ -50,6 +50,8 @@ COPY priv priv
 
 COPY lib lib
 
+COPY src src
+
 COPY assets assets
 
 # compile assets

@@ -6,6 +6,8 @@ require "opentelemetry/sdk"
 require "opentelemetry/exporter/otlp"
 require "opentelemetry/instrumentation/sinatra"
 
+set :port, ENV["EMAIL_SERVICE_PORT"]
+
 OpenTelemetry::SDK.configure do |c|
   c.use "OpenTelemetry::Instrumentation::Sinatra"
 end
