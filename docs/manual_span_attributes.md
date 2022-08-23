@@ -21,16 +21,17 @@ This document contains the list of manual Span Attributes used throughout the de
 
 ## CheckoutService
 
-| Name                      | Type   | Description                     |
-|---------------------------|--------|---------------------------------|
-| `app.cart.items.count`    | number | Number of unique items in cart  |
-| `app.order.id`            | string | Order Id                        |
-| `app.order.shipping.cost` | number | Order shipping cost             |
-| `app.order.total.cost`    | number | Order total cost                |
-| `app.order.tracking.id`   | string | Order shipping tracking Id      |
-| `app.order.items.count`   | number | Number of unique items in order |
-| `app.user.currency`       | string | User currency                   |
-| `app.user.id`             | string | User Id                         |
+| Name                         | Type   | Description                     |
+|------------------------------|--------|---------------------------------|
+| `app.cart.items.count`       | number | Total number of items in cart   |
+| `app.order.amount`           | number | Order amount                    |
+| `app.order.id`               | string | Order Id                        |
+| `app.order.items.count`      | number | Number of unique items in order |
+| `app.payment.transaction.id` | string | Payment transaction Id          |
+| `app.shipping.amount`        | number | Shipping amount                 |
+| `app.shipping.tracking.id`   | string | Shipping tracking Id            |
+| `app.user.currency`          | string | User currency                   |
+| `app.user.id`                | string | User Id                         |
 
 ## CurrencyService
 
