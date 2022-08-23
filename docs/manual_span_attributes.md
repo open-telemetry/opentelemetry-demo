@@ -89,18 +89,19 @@ This document contains the list of manual Span Attributes used throughout the de
 
 ## ProductCatalogService
 
-| Name                 | Type   | Description                           |
-|----------------------|--------|---------------------------------------|
-| `app.product.id`     | string | Product Id                            |
-| `app.product.name`   | string | Product name                          |
-| `app.products.count` | number | Number of products returned in search |
+| Name                        | Type   | Description                           |
+|-----------------------------|--------|---------------------------------------|
+| `app.product.id`            | string | Product Id                            |
+| `app.product.name`          | string | Product name                          |
+| `app.products.count`        | number | Number of products in catalog         |
+| `app.products_search.count` | number | Number of products returned in search |
 
 ## RecommendationService
 
 | Name                             | Type   | Description                             |
 |----------------------------------|--------|-----------------------------------------|
 | `app.filtered_products.count`    | number | Number of filtered products returned    |
-| `app.products.count`             | number | Total number of products                |
+| `app.products.count`             | number | Number of products in catalog           |
 | `app.products_recommended.count` | number | Number of recommended products returned |
 
 ## ShippingService
@@ -109,4 +110,4 @@ This document contains the list of manual Span Attributes used throughout the de
 |----------------------------|--------|----------------------|
 | `app.shipping.cost.total`  | number | Total shipping cost  |
 | `app.shipping.items.count` | number | Total items to ship  |
-| `app.shipping.tracing.id`  | string | Shipping tracking Id |
+| `app.shipping.tracking.id` | string | Shipping tracking Id |
