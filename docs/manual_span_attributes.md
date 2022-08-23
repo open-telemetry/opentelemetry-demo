@@ -23,7 +23,7 @@ This document contains the list of manual Span Attributes used throughout the de
 
 | Name                         | Type   | Description                     |
 |------------------------------|--------|---------------------------------|
-| `app.cart.items.count`       | number | Number of unique items in cart  |
+| `app.cart.items.count`       | number | Total number of items in cart   |
 | `app.order.amount`           | number | Order amount                    |
 | `app.order.id`               | string | Order Id                        |
 | `app.order.items.count`      | number | Number of unique items in order |

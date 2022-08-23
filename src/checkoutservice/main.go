@@ -259,11 +259,15 @@ func (cs *checkoutService) prepareOrderItemsAndShippingQuoteFromCart(ctx context
 	out.cartItems = cartItems
 	out.orderItems = orderItems
 
+	var totalCart int32
+	for _, ci := range cartItems {
+		totalCart += ci.Quantity
+	}
 	shippingCostFloat, _ := strconv.ParseFloat(fmt.Sprintf("%d.%02d", shippingPrice.GetUnits(), shippingPrice.GetNanos()/1000000000), 64)
 
 	span.SetAttributes(
 		attribute.Float64("app.shipping.amount", shippingCostFloat),
-		attribute.Int("app.cart.items.count", len(cartItems)),
+		attribute.Int("app.cart.items.count", int(totalCart)),
 		attribute.Int("app.order.items.count", len(orderItems)),
 	)
 	return out, nil
