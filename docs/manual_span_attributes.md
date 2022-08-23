@@ -79,10 +79,12 @@ This document contains the list of manual Span Attributes used throughout the de
 
 ## PaymentService
 
-| Name                   | Type   | Description        |
-|------------------------|--------|--------------------|
-| `app.payment.cost`     | number | Total payment cost |
-| `app.payment.currency` | string | Payment currency   |
+| Name                     | Type     | Description                                          |
+|--------------------------|----------|------------------------------------------------------|
+| `app.payment.amount`     | number   | Total payment amount                                 |
+| `app.payment.card_type`  | string   | Type of card used for payment                        |
+| `app.payment.card_valid` | boolean  | Was the card used valid                              |
+| `app.payment.charged`    | boolean  | Was the charge successful (false with loadgenerator) |
 
 ## ProductCatalogService
 
