@@ -42,13 +42,10 @@ This document contains the list of manual Span Attributes used throughout the de
 
 ## EmailService
 
-| Name                         | Type   | Description                       |
-|------------------------------|--------|-----------------------------------|
-| `app.email.sent`             | string | Email used for order confirmation |
-| `app.order.id`               | string | Order Id                          |
-| `app.shipping.cost.currency` | string | Order currency                    |
-| `app.shipping.cost.total`    | string | Order cost total                  |
-| `app.shipping.tracking.id`   | string | Order shipping tracking Id        |
+| Name                  | Type   | Description                       |
+|-----------------------|--------|-----------------------------------|
+| `app.email.recipient` | string | Email used for order confirmation |
+| `app.order.id`        | string | Order Id                          |
 
 ## FeatureFlagService
 
