@@ -88,11 +88,12 @@ This document contains the list of manual Span Attributes used throughout the de
 
 ## ProductCatalogService
 
-| Name                 | Type   | Description                           |
-|----------------------|--------|---------------------------------------|
-| `app.product.id`     | string | Product Id                            |
-| `app.product.name`   | string | Product name                          |
-| `app.products.count` | number | Number of products returned in search |
+| Name                        | Type   | Description                           |
+|-----------------------------|--------|---------------------------------------|
+| `app.product.id`            | string | Product Id                            |
+| `app.product.name`          | string | Product name                          |
+| `app.products.count`        | number | Number of products in catalog         |
+| `app.products_search.count` | number | Number of products returned in search |
 
 ## RecommendationService
 
