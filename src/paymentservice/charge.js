@@ -40,8 +40,8 @@ module.exports.charge = request => {
   const {card_type: cardType, valid } = card.getCardDetails()
 
   span.setAttributes({
-    'app.payment.charge.cardType': cardType,
-    'app.payment.charge.valid': valid
+    'app.payment.card_type': cardType,
+    'app.payment.card_valid': valid
   })
 
   if (!valid)
