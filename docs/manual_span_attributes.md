@@ -13,11 +13,12 @@ This document contains the list of manual Span Attributes used throughout the de
 
 ## CartService
 
-| Name                   | Type   | Description              |
-|------------------------|--------|--------------------------|
-| `app.product.id`       | string | Product Id for cart item |
-| `app.product.quantity` | string | Quantity for cart item   |
-| `app.user.id`          | string | User Id                  |
+| Name                   | Type   | Description                    |
+|------------------------|--------|--------------------------------|
+| `app.cart.items.count` | number | Number of unique items in cart |
+| `app.product.id`       | string | Product Id for cart item       |
+| `app.product.quantity` | string | Quantity for cart item         |
+| `app.user.id`          | string | User Id                        |
 
 ## CheckoutService
 
