@@ -21,16 +21,17 @@ This document contains the list of manual Span Attributes used throughout the de
 
 ## CheckoutService
 
-| Name                      | Type   | Description                     |
-|---------------------------|--------|---------------------------------|
-| `app.cart.items.count`    | number | Number of unique items in cart  |
-| `app.order.id`            | string | Order Id                        |
-| `app.order.shipping.cost` | number | Order shipping cost             |
-| `app.order.total.cost`    | number | Order total cost                |
-| `app.order.tracking.id`   | string | Order shipping tracking Id      |
-| `app.order.items.count`   | number | Number of unique items in order |
-| `app.user.currency`       | string | User currency                   |
-| `app.user.id`             | string | User Id                         |
+| Name                         | Type   | Description                     |
+|------------------------------|--------|---------------------------------|
+| `app.cart.items.count`       | number | Total number of items in cart   |
+| `app.order.amount`           | number | Order amount                    |
+| `app.order.id`               | string | Order Id                        |
+| `app.order.items.count`      | number | Number of unique items in order |
+| `app.payment.transaction.id` | string | Payment transaction Id          |
+| `app.shipping.amount`        | number | Shipping amount                 |
+| `app.shipping.tracking.id`   | string | Shipping tracking Id            |
+| `app.user.currency`          | string | User currency                   |
+| `app.user.id`                | string | User Id                         |
 
 ## CurrencyService
 
@@ -41,13 +42,10 @@ This document contains the list of manual Span Attributes used throughout the de
 
 ## EmailService
 
-| Name                         | Type   | Description                       |
-|------------------------------|--------|-----------------------------------|
-| `app.email.sent`             | string | Email used for order confirmation |
-| `app.order.id`               | string | Order Id                          |
-| `app.shipping.cost.currency` | string | Order currency                    |
-| `app.shipping.cost.total`    | string | Order cost total                  |
-| `app.shipping.tracking.id`   | string | Order shipping tracking Id        |
+| Name                  | Type   | Description                       |
+|-----------------------|--------|-----------------------------------|
+| `app.email.recipient` | string | Email used for order confirmation |
+| `app.order.id`        | string | Order Id                          |
 
 ## FeatureFlagService
 
@@ -90,18 +88,19 @@ This document contains the list of manual Span Attributes used throughout the de
 
 ## ProductCatalogService
 
-| Name                 | Type   | Description                           |
-|----------------------|--------|---------------------------------------|
-| `app.product.id`     | string | Product Id                            |
-| `app.product.name`   | string | Product name                          |
-| `app.products.count` | number | Number of products returned in search |
+| Name                        | Type   | Description                           |
+|-----------------------------|--------|---------------------------------------|
+| `app.product.id`            | string | Product Id                            |
+| `app.product.name`          | string | Product name                          |
+| `app.products.count`        | number | Number of products in catalog         |
+| `app.products_search.count` | number | Number of products returned in search |
 
 ## RecommendationService
 
 | Name                             | Type   | Description                             |
 |----------------------------------|--------|-----------------------------------------|
 | `app.filtered_products.count`    | number | Number of filtered products returned    |
-| `app.products.count`             | number | Total number of products                |
+| `app.products.count`             | number | Number of products in catalog           |
 | `app.products_recommended.count` | number | Number of recommended products returned |
 
 ## ShippingService
@@ -110,4 +109,4 @@ This document contains the list of manual Span Attributes used throughout the de
 |----------------------------|--------|----------------------|
 | `app.shipping.cost.total`  | number | Total shipping cost  |
 | `app.shipping.items.count` | number | Total items to ship  |
-| `app.shipping.tracing.id`  | string | Shipping tracking Id |
+| `app.shipping.tracking.id` | string | Shipping tracking Id |
