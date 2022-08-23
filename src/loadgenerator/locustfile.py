@@ -252,6 +252,6 @@ class WebsiteUser(HttpUser):
         self.client.post("/api/checkout", json=checkout_person)
 
     def on_start(self):
-        ctx = baggage.set_baggage("synthetic", "true")
+        ctx = baggage.set_baggage("synthetic_request", "true")
         context.attach(ctx)
         self.index()
