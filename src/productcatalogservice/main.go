@@ -41,8 +41,8 @@ import (
 
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/codes"
-	"google.golang.org/grpc/status"
 	"google.golang.org/grpc/credentials/insecure"
+	"google.golang.org/grpc/status"
 )
 
 var (
@@ -113,7 +113,7 @@ func readCatalogFile() []*pb.Product {
 	if err := protojson.Unmarshal(catalogJSON, &res); err != nil {
 		log.Fatalf("Parsing Catalog JSON: %v", err)
 	}
-	
+
 	return res.Products
 }
 
@@ -186,11 +186,11 @@ func (p *productCatalog) SearchProducts(ctx context.Context, req *pb.SearchProdu
 	for _, product := range catalog {
 		if strings.Contains(strings.ToLower(product.Name), strings.ToLower(req.Query)) ||
 			strings.Contains(strings.ToLower(product.Description), strings.ToLower(req.Query)) {
-				result = append(result, product)
+			result = append(result, product)
 		}
 	}
 	span.SetAttributes(
-		attribute.Int("app.products.count", len(result)),
+		attribute.Int("app.products_search.count", len(result)),
 	)
 	return &pb.SearchProductsResponse{Results: result}, nil
 }
