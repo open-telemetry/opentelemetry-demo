@@ -1,0 +1,32 @@
+postgresConnString: "host=postgres user=postgres password=postgres port=5432 sslmode=disable"
+
+poolingConfig:
+  maxWaitTimeForTrace: 2m
+  retryDelay: 10s
+
+googleAnalytics:
+  enabled: false
+
+telemetry:
+  dataStores:
+    jaeger:
+      type: jaeger
+      jaeger:
+        endpoint: jaeger:16685
+        tls:
+          insecure: true
+
+  exporters:
+    collector:
+      serviceName: tracetest
+      sampling: 100 # 100%
+      exporter:
+        type: collector
+        collector:
+          endpoint: otelcol:4317
+
+server:
+  telemetry:
+    exporter: collector
+    dataStore: jaeger
+    applicationExporter: collector

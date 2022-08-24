@@ -20,7 +20,6 @@ exporters:
   prometheus:
     endpoint: "otelcol:9464"
 
-
 processors:
   batch:
   spanmetrics:

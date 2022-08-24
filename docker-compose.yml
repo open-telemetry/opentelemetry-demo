@@ -14,16 +14,20 @@ services:
   # Jaeger
   jaeger:
     image: jaegertracing/all-in-one
-    container_name: jaeger
     ports:
       - "16686:16686"                    # Jaeger UI
       - "14250"                          # Jaeger model.proto endpoint
+      - "16685:16685"
     logging: *logging
+    healthcheck:
+      test: ["CMD", "wget", "--spider", "localhost:16686"]
+      interval: 1s
+      timeout: 3s
+      retries: 60
 
   # Collector
   otelcol:
     image: otel/opentelemetry-collector-contrib:0.56.0
-    container_name: otel-col
     command: [ "--config=/etc/otelcol-config.yml", "--config=/etc/otelcol-config-extras.yml" ]
     volumes:
       - ./src/otelcollector/otelcol-config.yml:/etc/otelcol-config.yml
@@ -40,7 +44,6 @@ services:
   # Redis
   redis-cart:
     image: redis:alpine
-    container_name: redis-cart
     ports:
       - "${REDIS_PORT}"
     logging: *logging
@@ -48,7 +51,6 @@ services:
   # AdService
   adservice:
     image: ${IMAGE_NAME}:${IMAGE_VERSION}-adservice
-    container_name: ad-service
     build:
       context: ./
       dockerfile: ./src/adservice/Dockerfile
@@ -66,7 +68,6 @@ services:
   # CartService
   cartservice:
     image: ${IMAGE_NAME}:${IMAGE_VERSION}-cartservice
-    container_name: cart-service
     build:
       context: ./
       dockerfile: ./src/cartservice/src/Dockerfile
@@ -86,7 +87,6 @@ services:
   # CheckoutService
   checkoutservice:
     image: ${IMAGE_NAME}:${IMAGE_VERSION}-checkoutservice
-    container_name: checkout-service
     build:
       context: ./
       dockerfile: ./src/checkoutservice/Dockerfile
@@ -115,7 +115,6 @@ services:
   # CurrencyService
   currencyservice:
     image: ${IMAGE_NAME}:${IMAGE_VERSION}-currencyservice
-    container_name: currency-service
     build:
       context: ./src/currencyservice
       args:
@@ -134,7 +133,6 @@ services:
   # EmailService
   emailservice:
     image: ${IMAGE_NAME}:${IMAGE_VERSION}-emailservice
-    container_name: email-service
     build:
       context: ./src/emailservice
     ports:
@@ -151,7 +149,6 @@ services:
   # Frontend
   frontend:
     image: ${IMAGE_NAME}:${IMAGE_VERSION}-frontend
-    container_name: frontend
     build:
       context: ./
       dockerfile: ./src/frontend/Dockerfile
@@ -200,7 +197,6 @@ services:
   # Integration Tests
   integrationTests:
     image: ${IMAGE_NAME}:${IMAGE_VERSION}-integrationTests
-    container_name: integrationTests
     profiles:
       - tests
     build:
@@ -230,7 +226,6 @@ services:
   # PaymentService
   paymentservice:
     image: ${IMAGE_NAME}:${IMAGE_VERSION}-paymentservice
-    container_name: payment-service
     build:
       context: ./
       dockerfile: ./src/paymentservice/Dockerfile
@@ -247,7 +242,6 @@ services:
   # ProductCatalogService
   productcatalogservice:
     image: ${IMAGE_NAME}:${IMAGE_VERSION}-productcatalogservice
-    container_name: product-catalog-service
     build:
       context: ./
       dockerfile: ./src/productcatalogservice/Dockerfile
@@ -265,7 +259,6 @@ services:
   # RecommendationService
   recommendationservice:
     image: ${IMAGE_NAME}:${IMAGE_VERSION}-recommendationservice
-    container_name: recommendation-service
     build:
       context: ./
       dockerfile: ./src/recommendationservice/Dockerfile
@@ -285,7 +278,6 @@ services:
   # ShippingService
   shippingservice:
     image: ${IMAGE_NAME}:${IMAGE_VERSION}-shippingservice
-    container_name: shipping-service
     build:
       context: ./
       dockerfile: ./src/shippingservice/Dockerfile
@@ -302,7 +294,6 @@ services:
   # FeatureFlagService
   featureflagservice:
     image: ${IMAGE_NAME}:${IMAGE_VERSION}-featureflagservice
-    container_name: feature-flag-service
     build:
       context: ./src/featureflagservice
     ports:
@@ -322,7 +313,6 @@ services:
 
   ffs_postgres:
     image: cimg/postgres:14.2
-    container_name: postgres
     environment:
       - POSTGRES_USER=ffs
       - POSTGRES_DB=ffs
@@ -337,7 +327,6 @@ services:
   # LoadGenerator
   loadgenerator:
     image: ${IMAGE_NAME}:${IMAGE_VERSION}-loadgenerator
-    container_name: load-generator
     build:
       context: ./
       dockerfile: ./src/loadgenerator/Dockerfile
@@ -359,7 +348,6 @@ services:
   # Prometheus
   prometheus:
     image: quay.io/prometheus/prometheus:v2.34.0
-    container_name: prometheus
     command:
       - --web.console.templates=/etc/prometheus/consoles
       - --web.console.libraries=/etc/prometheus/console_libraries
@@ -377,10 +365,43 @@ services:
   # Grafana
   grafana:
     image: grafana/grafana:9.1.0
-    container_name: grafana
     volumes:
       - ./src/grafana/grafana.ini:/etc/grafana/grafana.ini
       - ./src/grafana/provisioning/:/etc/grafana/provisioning/
     ports:
       - "${GRAFANA_SERVICE_PORT}:${GRAFANA_SERVICE_PORT}"
     logging: *logging
+
+  # Tracetest
+  tracetest:
+    image: kubeshop/tracetest:latest
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    volumes:
+      - type: bind
+        source: ./src/tracetest/tracetest.config.yaml
+        target: /app/config.yaml
+    ports:
+      - 8082:8080
+    depends_on:
+      postgres:
+        condition: service_healthy
+      jaeger:
+        condition: service_healthy
+      otelcol:
+        condition: service_started
+      frontend:
+        condition: service_started
+
+  postgres:
+    image: postgres
+    environment:
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_USER:  postgres
+    ports:
+      - 5432:5432
+    healthcheck:
+      test: pg_isready -U "$$POSTGRES_USER" -d "$$POSTGRES_DB"
+      interval: 1s
+      timeout: 5s
+      retries: 60
