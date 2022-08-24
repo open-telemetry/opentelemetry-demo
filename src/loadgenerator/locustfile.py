@@ -18,7 +18,7 @@ import random
 import uuid
 from locust import HttpUser, task, between
 
-from opentelemetry import trace
+from opentelemetry import context, baggage, trace
 from opentelemetry.sdk.trace import TracerProvider
 from opentelemetry.sdk.trace.export import (BatchSpanProcessor)
 from opentelemetry.exporter.otlp.proto.grpc.trace_exporter import OTLPSpanExporter
@@ -211,18 +211,18 @@ class WebsiteUser(HttpUser):
 
     @task(10)
     def browse_product(self):
-        self.client.get("/product/" + random.choice(products))
+        self.client.get("/api/products/" + random.choice(products))
 
     @task(3)
     def view_cart(self):
-        self.client.get("/cart")
+        self.client.get("/api/cart")
 
     @task(2)
     def add_to_cart(self, user=""):
         if user == "":
             user = str(uuid.uuid1())
         product = random.choice(products)
-        self.client.get("/product/" + product)
+        self.client.get("/api/products/" + product)
         cart_item = {
             "item": {
                 "productId": product,
@@ -252,4 +252,6 @@ class WebsiteUser(HttpUser):
         self.client.post("/api/checkout", json=checkout_person)
 
     def on_start(self):
+        ctx = baggage.set_baggage("synthetic_request", "true")
+        context.attach(ctx)
         self.index()
