@@ -19,9 +19,6 @@ post "/send_order_confirmation" do
   current_span = OpenTelemetry::Trace.current_span
   current_span.add_attributes({
     "app.order.id" => data.order.order_id,
-    "app.shipping.tracking.id" => data.order.shipping_tracking_id,
-    "app.shipping.cost.currency" => data.order.shipping_cost.currency_code,
-    "app.shipping.cost.total" => "#{data.order.shipping_cost.units}.#{data.order.shipping_cost.nanos}",
   })
 
   send_email(data)
@@ -41,9 +38,10 @@ def send_email(data)
       from:     "noreply@example.com",
       subject:  "Your confirmation email",
       body:     erb(:confirmation, locals: { order: data.order }),
-      via:      :logger
+      via:      :test
     )
-    span.set_attribute("app.email.sent", true)
+    span.set_attribute("app.email.recipient", data.email)
+    puts "Order confirmation email sent to: #{data.email}"
   end
   # manually created spans need to be ended
   # in Ruby, the method `in_span` ends it automatically

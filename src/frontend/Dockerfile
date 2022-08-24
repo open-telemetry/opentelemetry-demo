@@ -39,4 +39,4 @@ USER nextjs
 ENV PORT 8080
 EXPOSE ${PORT}
 
-CMD ["npm", "start"]
+ENTRYPOINT ["npm", "start"]
