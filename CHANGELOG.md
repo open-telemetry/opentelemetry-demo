@@ -83,5 +83,7 @@ significant modifications will be credited to OpenTelemetry Authors.
 ([#317](https://github.com/open-telemetry/opentelemetry-demo/pull/317))
 * Updated Product Catalog to Match Astronomy Webstore
 ([#285](https://github.com/open-telemetry/opentelemetry-demo/pull/285))
+* Add Span link for synthetic requests (from load generator)
+([#332](https://github.com/open-telemetry/opentelemetry-demo/pull/332))
 * Add `synthetic_request=true` baggage to load generator requests
 ([#331](https://github.com/open-telemetry/opentelemetry-demo/pull/331))
