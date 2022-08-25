@@ -31,13 +31,16 @@ describe('Product Detail Page', () => {
 
   it('should add item to cart', () => {
     cy.intercept('POST', '/api/cart*').as('addToCart');
+    cy.intercept('GET', '/api/cart*').as('getCart');
     getElementByField(CypressFields.ProductCard).first().click();
     getElementByField(CypressFields.ProductAddToCart).click();
 
     cy.wait('@addToCart');
+    cy.wait('@getCart', { timeout: 10000 });
+    cy.wait(2000);
 
     getElementByField(CypressFields.CartItemCount).should('contain', '1');
-    getElementByField(CypressFields.CartIcon).click();
+    getElementByField(CypressFields.CartIcon).click({ force: true });
 
     getElementByField(CypressFields.CartDropdownItem).should('have.length', 1);
   });
