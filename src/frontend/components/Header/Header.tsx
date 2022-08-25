@@ -7,7 +7,9 @@ const Header = () => {
     <S.Header>
       <S.NavBar>
         <S.Container>
-          <S.NavBarBrand href="/">LOGO</S.NavBarBrand>
+          <S.NavBarBrand href="/">
+            <a><S.BrandImg /></a>
+          </S.NavBarBrand>
           <S.Controls>
             <CurrencySwitcher />
             <CartIcon />

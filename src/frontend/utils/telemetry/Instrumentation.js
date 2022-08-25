@@ -11,11 +11,7 @@ api.propagation.setGlobalPropagator(
 
 const sdk = new NodeSDK({
   traceExporter: new OTLPTraceExporter(),
-  instrumentations: getNodeAutoInstrumentations({
-    '@opentelemetry/instrumentation-http': {
-      enabled: false,
-    },
-  }),
+  instrumentations: getNodeAutoInstrumentations(),
 });
 
 sdk.start();

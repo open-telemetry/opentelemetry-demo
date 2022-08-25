@@ -27,7 +27,7 @@ demonstrates the features and capabilities of OTel APIs, SDKs, and tools.
 features/concepts 'in the wild'.
 
 The following is a general description of the logical components of the demo
-application. The future architecture is visualized [here](../v1_graph.md).
+application.
 
 ## Main Application
 
