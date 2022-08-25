@@ -1,4 +1,4 @@
-use opentelemetry::trace::{mark_span_as_active, Span, Tracer};
+use opentelemetry::trace::{get_active_span, mark_span_as_active, Span, Tracer};
 use opentelemetry::{global, propagation::Extractor, KeyValue};
 use shop::shipping_service_server::ShippingService;
 use shop::{GetQuoteRequest, GetQuoteResponse, Money, ShipOrderRequest, ShipOrderResponse};
@@ -64,6 +64,10 @@ impl ShippingService for ShippingServer {
         let span = tracer.start_with_context("get-quote", &parent_cx);
         let _guard = mark_span_as_active(span);
 
+        get_active_span(|span| {
+            span.add_event("Processing get quote request".to_string(), vec![]);
+        });
+
         let q = create_quote_from_count(itemct);
         let reply = GetQuoteResponse {
             cost_usd: Some(Money {
@@ -73,6 +77,13 @@ impl ShippingService for ShippingServer {
             }),
         };
         info!("Sending Quote: {}", q);
+
+        get_active_span(|span| {
+            span.add_event(
+                "Get quote request completed, response sent back".to_string(),
+                vec![],
+            );
+        });
 
         Ok(Response::new(reply))
     }
@@ -89,9 +100,16 @@ impl ShippingService for ShippingServer {
         let mut span = global::tracer("shippingservice/ship-order")
             .start_with_context("ship-order", &parent_cx);
 
+        span.add_event("Processing shipping order request".to_string(), vec![]);
+
         let tid = create_tracking_id();
         span.set_attribute(KeyValue::new("app.shipping.tracking.id", tid.clone()));
         info!("Tracking ID Created: {}", tid);
+
+        span.add_event(
+            "Shipping tracking id created, response sent back".to_string(),
+            vec![],
+        );
 
         Ok(Response::new(ShipOrderResponse { tracking_id: tid }))
     }
