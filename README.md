@@ -145,7 +145,7 @@ Find the **Protocol Buffer Definitions** in the `/pb/` directory.
 Currently, the repository includes E2E tests for both the frontend and backend services.
 For the Frontend we are using [Cypress](https://www.cypress.io/) execute the
 different flows in the webstore.
-While the backend services use [AVA](avajs.dev) as the main testing framework.
+While the backend services use [AVA](https://avajs.dev) as the main testing framework.
 
 To run the test you can simple run `make run-tests` at the root directory.
 
