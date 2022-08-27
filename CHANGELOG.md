@@ -87,3 +87,5 @@ significant modifications will be credited to OpenTelemetry Authors.
 ([#332](https://github.com/open-telemetry/opentelemetry-demo/pull/332))
 * Add `synthetic_request=true` baggage to load generator requests
 ([#331](https://github.com/open-telemetry/opentelemetry-demo/pull/331))
+* Add span events to shipping service
+([#344](https://github.com/open-telemetry/opentelemetry-demo/pull/344))
