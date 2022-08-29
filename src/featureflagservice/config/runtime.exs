@@ -4,7 +4,7 @@ if System.get_env("PHX_SERVER") do
   config :featureflagservice, FeatureflagserviceWeb.Endpoint, server: true
 end
 
-grpc_port = String.to_integer(System.get_env("FEATURE_FLAG_GRPC_SERVICE_PORT"))
+grpc_port = String.to_integer(System.get_env("FEATURE_FLAG_GRPC_SERVICE_PORT") || "50053")
 
 config :grpcbox,
   servers: [
@@ -39,15 +39,14 @@ if config_env() == :prod do
   # want to use a different value for prod and you most likely don't want
   # to check this value into version control, so we use an environment
   # variable instead.
+  #
+  # A default value is provided to simplify the creation of new demos, but
+  # this practice should not be used in actual user-facing applications.
   secret_key_base =
-    System.get_env("SECRET_KEY_BASE") ||
-      raise """
-      environment variable SECRET_KEY_BASE is missing.
-      You can generate one by calling: mix phx.gen.secret
-      """
+    System.get_env("SECRET_KEY_BASE") || "GH1AJrEOJEVmzyUE+5kgz2cfBEOg5qPBlTYVive++6s/QS0BE3xjNoRCd7xI3zSv" 
 
   host = System.get_env("PHX_HOST") || "localhost"
-  port = String.to_integer(System.get_env("FEATURE_FLAG_SERVICE_PORT"))
+  port = String.to_integer(System.get_env("FEATURE_FLAG_SERVICE_PORT") || "8081")
 
   config :featureflagservice, FeatureflagserviceWeb.Endpoint,
     url: [host: host, port: 443, scheme: "https"],
