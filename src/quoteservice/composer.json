@@ -14,13 +14,6 @@
         "slim/psr7": "^1.5",
         "slim/slim": "^4.9"
     },
-    "config": {
-        "process-timeout": 0,
-        "sort-packages": true,
-        "allow-plugins": {
-            "phpstan/extension-installer": true
-        }
-    },
     "autoload": {
         "psr-4": {
             "App\\": "src/"

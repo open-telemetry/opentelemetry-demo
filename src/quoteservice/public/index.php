@@ -35,52 +35,12 @@ $dependencies = require __DIR__ . '/../app/dependencies.php';
 $dependencies($containerBuilder);
 
 // Add OTel
-$tracerProvider = (new TracerProviderFactory('example'))->create();
+$tracerProvider = (new TracerProviderFactory('quoteservice'))->create();
 ShutdownHandler::register([$tracerProvider, 'shutdown']);
 $tracer = $tracerProvider->getTracer('io.opentelemetry.contrib.php');
 
 $containerBuilder->addDefinitions([
-    Tracer::class => $tracer,
-    Client::class => function () use ($tracer) {
-        $stack = HandlerStack::create();
-        //a guzzle middleware to wrap http calls in a span, and inject trace headers
-        $stack->push(function (callable $handler) use ($tracer) {
-            return function (RequestInterface $request, array $options) use ($handler, $tracer): PromiseInterface {
-                $span = $tracer
-                    ->spanBuilder(sprintf('%s %s', $request->getMethod(), $request->getUri()))
-                    ->setSpanKind(SpanKind::KIND_CLIENT)
-                    ->setAttribute('http.method', $request->getMethod())
-                    ->setAttribute('http.url', $request->getUri())
-                    ->startSpan();
-
-                $ctx = $span->storeInContext(Context::getCurrent());
-                $carrier = [];
-                TraceContextPropagator::getInstance()->inject($carrier, null, $ctx);
-                //inject traceparent and tracestate headers
-                foreach ($carrier as $name => $value) {
-                    $request = $request->withAddedHeader($name, $value);
-                }
-
-                $promise = $handler($request, $options);
-                $promise->then(function (Response $response) use ($span) {
-                    $span->setAttribute('http.status_code', $response->getStatusCode())
-                        ->setAttribute('http.response_content_length', $response->getHeaderLine('Content-Length') ?: $response->getBody()->getSize())
-                        ->setStatus($response->getStatusCode() < 500 ? StatusCode::STATUS_OK : StatusCode::STATUS_ERROR)
-                        ->end();
-
-                    return $response;
-                }, function (\Throwable $t) use ($span) {
-                    $span->recordException($t)->setStatus(StatusCode::STATUS_ERROR)->end();
-
-                    throw $t;
-                });
-
-                return $promise;
-            };
-        });
-
-        return new Client(['handler' => $stack, 'http_errors' => false]);
-    },
+    Tracer::class => $tracer
 ]);
 
 // Build PHP-DI Container instance
