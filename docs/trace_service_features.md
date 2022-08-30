@@ -6,16 +6,16 @@ Emoji Legend
 - Not Applicable: :no_bell:
 - Not Present (Yet): :construction:
 
-| Service         | Language        | Instrumentation Libraries | Manual Span Creation | Span Data Enrichment | RPC Context Propagation | Span Links     | Baggage        |
-|-----------------|-----------------|---------------------------|----------------------|----------------------|-------------------------|----------------|----------------|
-| Ad              | Java            | :100:                     | :100:                | :100:                | :construction:          | :construction: | :construction: |
-| Cart            | .NET            | :100:                     | :construction:       | :100:                | :construction:          | :construction: | :construction: |
-| Checkout        | Go              | :100:                     | :100:                | :100:                | :construction:          | :construction: | :construction: |
-| Currency        | C++             | :no_bell:                 | :100:                | :100:                | :100:                   | :construction: | :100:          |
-| Email           | Ruby            | :100:                     | :100:                | :100:                | :construction:          | :construction: | :construction: |
-| Feature Flag    | Erlang / Elixir | :100:                     | :construction:       | :construction:       | :construction:          | :construction: | :construction: |
-| Frontend        | JavaScript      | :100:                     | :100:                | :100:                | :construction:          | :100:          | :100:          |
-| Payment         | JavaScript      | :100:                     | :100:                | :100:                | :construction:          | :construction: | :construction: |
-| Product Catalog | Go              | :100:                     | :construction:       | :100:                | :construction:          | :construction: | :construction: |
-| Recommendation  | Python          | :100:                     | :100:                | :100:                | :construction:          | :construction: | :construction: |
-| Shipping        | Rust            | :construction:            | :100:                | :100:                | :100:                   | :construction: | :construction: |
+| Service         | Language        | Instrumentation Libraries | Manual Span Creation | Span Data Enrichment | RPC Context Propagation | Span Links | Baggage   |
+|-----------------|-----------------|---------------------------|----------------------|----------------------|-------------------------|------------|-----------|
+| Ad              | Java            | :100:                     | :100:                | :100:                | :no_bell:               | :no_bell:  | :no_bell: |
+| Cart            | .NET            | :100:                     | :construction:       | :100:                | :no_bell:               | :no_bell:  | :no_bell: |
+| Checkout        | Go              | :100:                     | :100:                | :100:                | :no_bell:               | :no_bell:  | :no_bell: |
+| Currency        | C++             | :no_bell:                 | :100:                | :100:                | :100:                   | :no_bell:  | :no_bell: |
+| Email           | Ruby            | :100:                     | :100:                | :100:                | :no_bell:               | :no_bell:  | :no_bell: |
+| Feature Flag    | Erlang / Elixir | :100:                     | :construction:       | :construction:       | :no_bell:               | :no_bell:  | :no_bell: |
+| Frontend        | JavaScript      | :100:                     | :100:                | :100:                | :no_bell:               | :100:      | :100:     |
+| Payment         | JavaScript      | :100:                     | :100:                | :100:                | :no_bell:               | :no_bell:  | :100:     |
+| Product Catalog | Go              | :100:                     | :construction:       | :100:                | :no_bell:               | :no_bell:  | :no_bell: |
+| Recommendation  | Python          | :100:                     | :100:                | :100:                | :no_bell:               | :no_bell:  | :no_bell: |
+| Shipping        | Rust            | :no_bell:                 | :100:                | :100:                | :100:                   | :no_bell:  | :no_bell: |
