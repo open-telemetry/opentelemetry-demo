@@ -8,16 +8,17 @@ const { userId } = SessionGateway.getSession();
 const basePath = '/api';
 
 const ApiGateway = () => ({
-  getCart() {
+  getCart(currencyCode: string) {
     return request<IProductCart>({
       url: `${basePath}/cart`,
-      queryParams: { sessionId: userId },
+      queryParams: { sessionId: userId, currencyCode },
     });
   },
-  addCartItem(item: CartItem) {
+  addCartItem({ currencyCode, ...item }: CartItem & { currencyCode: string }) {
     return request<Cart>({
       url: `${basePath}/cart`,
       body: { item, userId },
+      queryParams: { currencyCode },
       method: 'POST',
     });
   },
@@ -34,13 +35,6 @@ const ApiGateway = () => ({
       url: `${basePath}/currency`,
     });
   },
-  convertToCurrency({ from, toCode }: { from: Money; toCode: string }) {
-    return request<Money>({
-      url: `${basePath}/currency/convert`,
-      method: 'POST',
-      body: { from, toCode },
-    });
-  },
 
   getShippingCost(itemList: IProductCartItem[]) {
     return request<Money>({
@@ -51,30 +45,34 @@ const ApiGateway = () => ({
     });
   },
 
-  placeOrder(order: PlaceOrderRequest) {
+  placeOrder({ currencyCode, ...order }: PlaceOrderRequest & { currencyCode: string }) {
     return request<IProductCheckout>({
       url: `${basePath}/checkout`,
       method: 'POST',
+      queryParams: { currencyCode },
       body: order,
     });
   },
 
-  listProducts() {
+  listProducts(currencyCode: string) {
     return request<Product[]>({
       url: `${basePath}/products`,
+      queryParams: { currencyCode },
     });
   },
-  getProduct(productId: string) {
+  getProduct(productId: string, currencyCode: string) {
     return request<Product>({
       url: `${basePath}/products/${productId}`,
+      queryParams: { currencyCode },
     });
   },
-  listRecommendations(productIds: string[]) {
+  listRecommendations(productIds: string[], currencyCode: string) {
     return request<Product[]>({
       url: `${basePath}/recommendations`,
       queryParams: {
         productIds,
         sessionId: userId,
+        currencyCode
       },
     });
   },

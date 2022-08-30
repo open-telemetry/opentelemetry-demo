@@ -38,6 +38,7 @@ describe('Product Detail Page', () => {
     cy.wait('@addToCart');
     cy.wait('@getCart', { timeout: 10000 });
     cy.wait(2000);
+    cy.location('href').should('match', /\/cart$/);
 
     getElementByField(CypressFields.CartItemCount).should('contain', '1');
     getElementByField(CypressFields.CartIcon).click({ force: true });
