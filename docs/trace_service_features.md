@@ -9,7 +9,7 @@ Emoji Legend
 | Service         | Language        | Instrumentation Libraries | Manual Span Creation | Span Data Enrichment | RPC Context Propagation | Span Links | Baggage   |
 |-----------------|-----------------|---------------------------|----------------------|----------------------|-------------------------|------------|-----------|
 | Ad              | Java            | :100:                     | :100:                | :100:                | :no_bell:               | :no_bell:  | :no_bell: |
-| Cart            | .NET            | :100:                     | :construction:       | :100:                | :no_bell:               | :no_bell:  | :no_bell: |
+| Cart            | .NET            | :100:                     | :100:                | :100:                | :no_bell:               | :no_bell:  | :no_bell: |
 | Checkout        | Go              | :100:                     | :100:                | :100:                | :no_bell:               | :no_bell:  | :no_bell: |
 | Currency        | C++             | :no_bell:                 | :100:                | :100:                | :100:                   | :no_bell:  | :no_bell: |
 | Email           | Ruby            | :100:                     | :100:                | :100:                | :no_bell:               | :no_bell:  | :no_bell: |
