@@ -131,12 +131,12 @@ func main() {
 	log.Fatal(err)
 }
 
-func mustMapEnv(target *string, envKey string) {
-	v := os.Getenv(envKey)
-	if v == "" {
-		panic(fmt.Sprintf("environment variable %q not set", envKey))
+func mustMapEnv(target *string, key string) {
+	value, present := os.LookupEnv(key)
+	if !present {
+		log.Fatalf("Environment Variable Not Set: %q", key)
 	}
-	*target = v
+	*target = value
 }
 
 func (cs *checkoutService) Check(ctx context.Context, req *healthpb.HealthCheckRequest) (*healthpb.HealthCheckResponse, error) {
