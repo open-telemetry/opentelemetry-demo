@@ -17,5 +17,6 @@ Emoji Legend
 | Frontend        | JavaScript      | :100:                     | :100:                | :100:                | :no_bell:               | :100:      | :100:     |
 | Payment         | JavaScript      | :100:                     | :100:                | :100:                | :no_bell:               | :no_bell:  | :100:     |
 | Product Catalog | Go              | :100:                     | :construction:       | :100:                | :no_bell:               | :no_bell:  | :no_bell: |
+| Quote Service   | PHP             | :100:                     | :100:                | :100:                | :no_bell:               | :no_bell:  | :no_bell: |
 | Recommendation  | Python          | :100:                     | :100:                | :100:                | :no_bell:               | :no_bell:  | :no_bell: |
 | Shipping        | Rust            | :no_bell:                 | :100:                | :100:                | :100:                   | :no_bell:  | :no_bell: |

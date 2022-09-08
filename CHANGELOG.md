@@ -89,3 +89,5 @@ significant modifications will be credited to OpenTelemetry Authors.
 ([#331](https://github.com/open-telemetry/opentelemetry-demo/pull/331))
 * Add span events to shipping service
 ([#344](https://github.com/open-telemetry/opentelemetry-demo/pull/344))
+* Add PHP quote service
+([#345](https://github.com/open-telemetry/opentelemetry-demo/pull/345))

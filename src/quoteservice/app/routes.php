@@ -2,19 +2,48 @@
 declare(strict_types=1);
 
 use OpenTelemetry\API\Trace\AbstractSpan;
+use OpenTelemetry\API\Trace\SpanKind;
+use OpenTelemetry\SDK\Trace\Tracer;
 use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
 use Slim\App;
 
+function calculateQuote($jsonObject, Tracer $tracer): float
+{
+    $quote = 0.0;
+    $childSpan = $tracer
+        ->spanBuilder('calculate-quote')
+        ->setSpanKind(SpanKind::KIND_INTERNAL)
+        ->startSpan();
+    $childSpanScope = $childSpan->activate();
+    $childSpan->addEvent('Calculating quote.');
+
+    try {
+        $numberOfItems = intval($jsonObject['numberOfItems']);
+        $quote = 8.90 * $numberOfItems;
+
+        $childSpan->setAttribute('app.quote.items.count', $numberOfItems);
+        $childSpan->setAttribute('app.quote.cost.total', $quote);
+    } catch (Exception $exception) {
+        $childSpan->recordException($exception);
+    } finally {
+        $childSpan->addEvent('Quote calculated, returning its value.');
+        $childSpan->end();
+        $childSpanScope->detach();
+
+        return $quote;
+    }
+}
+
 return function (App $app) {
-    $app->get('/getquote', function (Request $request, Response $response) {
+    $app->post('/getquote', function (Request $request, Response $response, Tracer $tracer) {
         $span = AbstractSpan::getCurrent();
-
-        # do the math here
-        $data = ['quote' => 32.50];
-
         $span->addEvent('Received get quote request, processing it.');
-        $span->setAttribute('app.quote.cost.total', $data['quote']);
+
+        $body = file_get_contents("php://input");
+        $jsonObject = json_decode($body, true);
+
+        $data = calculateQuote($jsonObject, $tracer);
 
         $payload = json_encode($data);
         $response->getBody()->write($payload);
