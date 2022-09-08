@@ -29,8 +29,8 @@ This repo is a work in progress. If you'd like to help, check out our
 ## Architecture
 
 **Online Boutique** is composed of microservices written in different programming
-languages that talk to each other over gRPC. Plus one Load Generator which uses
-[Locust](https://locust.io/) to fake user traffic.
+languages that talk to each other over gRPC and HTTP; and a load generator which
+uses [Locust](https://locust.io/) to fake user traffic.
 
 ```mermaid
 graph TD
@@ -57,7 +57,7 @@ loadgenerator -->|HTTP| frontend
 checkoutservice --> cartservice --> cache
 checkoutservice --> productcatalogservice
 checkoutservice --> currencyservice
-checkoutservice --> emailservice
+checkoutservice -->|HTTP| emailservice
 checkoutservice --> paymentservice
 checkoutservice --> shippingservice
 
