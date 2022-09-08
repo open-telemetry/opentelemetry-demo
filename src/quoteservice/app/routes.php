@@ -15,8 +15,7 @@ function calculateQuote($jsonObject, Tracer $tracer): float
         ->spanBuilder('calculate-quote')
         ->setSpanKind(SpanKind::KIND_INTERNAL)
         ->startSpan();
-    $childSpanScope = $childSpan->activate();
-    $childSpan->addEvent('Calculating quote.');
+    $childSpan->addEvent('Calculating quote');
 
     try {
         $numberOfItems = intval($jsonObject['numberOfItems']);
@@ -27,9 +26,8 @@ function calculateQuote($jsonObject, Tracer $tracer): float
     } catch (Exception $exception) {
         $childSpan->recordException($exception);
     } finally {
-        $childSpan->addEvent('Quote calculated, returning its value.');
+        $childSpan->addEvent('Quote calculated, returning its value');
         $childSpan->end();
-        $childSpanScope->detach();
 
         return $quote;
     }
@@ -38,7 +36,7 @@ function calculateQuote($jsonObject, Tracer $tracer): float
 return function (App $app) {
     $app->post('/getquote', function (Request $request, Response $response, Tracer $tracer) {
         $span = AbstractSpan::getCurrent();
-        $span->addEvent('Received get quote request, processing it.');
+        $span->addEvent('Received get quote request, processing it');
 
         $body = file_get_contents("php://input");
         $jsonObject = json_decode($body, true);
