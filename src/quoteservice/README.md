@@ -1,7 +1,8 @@
 # Quote Service
 
 The Quote Service calculates the shipping costs,
-based on the number of items to be shipped.  
+based on the number of items to be shipped.
+
 It is a PHP based service.
 
 ## Build the service
@@ -21,6 +22,7 @@ Execute the below command to run the service.
 docker compose up quoteservice
 ```
 
-In order to get traffic into the service you have to deploy 
-the whole opentelemetry-demo.  
+In order to get traffic into the service you have to deploy
+the whole opentelemetry-demo.
+
 Please follow the root README to do so.
