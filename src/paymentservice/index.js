@@ -29,8 +29,7 @@ function chargeServiceHandler(call, callback) {
   try {
     const amount = call.request.amount
     span.setAttributes({
-      'app.payment.currency': amount.currency_code,
-      'app.payment.cost': parseFloat(`${amount.units}.${amount.nanos}`)
+      'app.payment.amount': parseFloat(`${amount.units}.${amount.nanos}`)
     })
     logger.info(`PaymentService#Charge invoked by: ${JSON.stringify(call.request)}`)
 

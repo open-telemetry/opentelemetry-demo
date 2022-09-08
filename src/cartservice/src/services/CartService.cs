@@ -47,7 +47,14 @@ namespace cartservice.services
             activity?.SetTag("app.user.id", request.UserId);
             activity?.AddEvent(new("Fetch cart"));
 
-            return _cartStore.GetCartAsync(request.UserId);
+            var cart = _cartStore.GetCartAsync(request.UserId);
+            var totalCart = 0;
+            foreach (CartItem item in cart.Result.Items) {
+                totalCart += item.Quantity;
+            }
+            activity?.SetTag("app.cart.items.count", totalCart);
+
+            return cart;
         }
 
         public async override Task<Empty> EmptyCart(EmptyCartRequest request, ServerCallContext context)

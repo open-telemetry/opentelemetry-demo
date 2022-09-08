@@ -187,13 +187,13 @@ func (cs *checkoutService) PlaceOrder(ctx context.Context, req *pb.PlaceOrderReq
 		return nil, status.Errorf(codes.Internal, "failed to charge card: %+v", err)
 	}
 	log.Infof("payment went through (transaction_id: %s)", txID)
-	span.AddEvent("charged", trace.WithAttributes(attribute.String("app.order.transaction.id", txID)))
+	span.AddEvent("charged", trace.WithAttributes(attribute.String("app.payment.transaction.id", txID)))
 
 	shippingTrackingID, err := cs.shipOrder(ctx, req.Address, prep.cartItems)
 	if err != nil {
 		return nil, status.Errorf(codes.Unavailable, "shipping error: %+v", err)
 	}
-	shippingTrackingAttribute := attribute.String("app.order.tracking.id", shippingTrackingID)
+	shippingTrackingAttribute := attribute.String("app.shipping.tracking.id", shippingTrackingID)
 	span.AddEvent("shipped", trace.WithAttributes(shippingTrackingAttribute))
 
 	_ = cs.emptyUserCart(ctx, req.UserId)
@@ -212,8 +212,8 @@ func (cs *checkoutService) PlaceOrder(ctx context.Context, req *pb.PlaceOrderReq
 	span.SetAttributes(
 		attribute.String("app.order.id", orderID.String()),
 		shippingTrackingAttribute,
-		attribute.Float64("app.shipping.cost.total", shippingCostFloat),
-		attribute.Float64("app.order.total.cost", totalPriceFloat),
+		attribute.Float64("app.shipping.amount", shippingCostFloat),
+		attribute.Float64("app.order.amount", totalPriceFloat),
 		attribute.Int("app.order.items.count", len(prep.orderItems)),
 	)
 
@@ -259,11 +259,15 @@ func (cs *checkoutService) prepareOrderItemsAndShippingQuoteFromCart(ctx context
 	out.cartItems = cartItems
 	out.orderItems = orderItems
 
+	var totalCart int32
+	for _, ci := range cartItems {
+		totalCart += ci.Quantity
+	}
 	shippingCostFloat, _ := strconv.ParseFloat(fmt.Sprintf("%d.%02d", shippingPrice.GetUnits(), shippingPrice.GetNanos()/1000000000), 64)
 
 	span.SetAttributes(
-		attribute.Float64("app.shipping.cost.total", shippingCostFloat),
-		attribute.Int("app.cart.items.count", len(cartItems)),
+		attribute.Float64("app.shipping.amount", shippingCostFloat),
+		attribute.Int("app.cart.items.count", int(totalCart)),
 		attribute.Int("app.order.items.count", len(orderItems)),
 	)
 	return out, nil
