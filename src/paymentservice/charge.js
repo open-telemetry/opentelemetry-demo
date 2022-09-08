@@ -12,85 +12,61 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+// Npm
+const {context, propagation, trace} = require('@opentelemetry/api');
 const cardValidator = require('simple-card-validator');
-const { v4: uuidv4 } = require('uuid');
 const pino = require('pino');
-const opentelemetry = require('@opentelemetry/api');
-const tracer = opentelemetry.trace.getTracer("paymentservice");
+const { v4: uuidv4 } = require('uuid');
 
-const logger = pino({
-  name: 'paymentservice-charge',
-  messageKey: 'message',
-  levelKey: 'severity',
-  useLevelLabels: true
-});
+// Setup
+const logger = pino();
+const tracer = trace.getTracer('paymentservice');
 
+// Functions
+module.exports.charge = request => {
+  const span = tracer.startSpan('charge');
 
-class CreditCardError extends Error {
-  constructor (message) {
-    super(message);
-    this.code = 400; // Invalid argument error
-  }
-}
-
-class InvalidCreditCard extends CreditCardError {
-  constructor (cardType) {
-    super(`Credit card info is invalid`);
-  }
-}
-
-class UnacceptedCreditCard extends CreditCardError {
-  constructor (cardType) {
-    super(`Sorry, we cannot process ${cardType} credit cards. Only VISA or MasterCard is accepted.`);
-  }
-}
-
-class ExpiredCreditCard extends CreditCardError {
-  constructor (number, month, year) {
-    super(`Your credit card (ending ${number.substr(-4)}) expired on ${month}/${year}`);
-  }
-}
-
-/**
- * Verifies the credit card number and (pretend) charges the card.
- *
- * @param {*} request
- * @return transaction_id - a random uuid v4.
- */
-module.exports = function charge (request) {
-  // create and start span
-  const span = tracer.startSpan("charge")
-
-  const { amount, credit_card: creditCard } = request;
-  const cardNumber = creditCard.credit_card_number;
-  const cardInfo = cardValidator(cardNumber);
-  const {
-    card_type: cardType,
-    valid
-  } = cardInfo.getCardDetails();
-  span.setAttributes({
-    "app.payment.charge.cardType": cardType,
-    "app.payment.charge.valid": valid
-  })
-
-  if (!valid) { throw new InvalidCreditCard(); }
-
-  // Only VISA and mastercard is accepted, other card types (AMEX, dinersclub) will
-  // throw UnacceptedCreditCard error.
-  if (!(cardType === 'visa' || cardType === 'mastercard')) { throw new UnacceptedCreditCard(cardType); }
-
-  // Also validate expiration is > today.
+  const { creditCardNumber: number,
+    creditCardExpirationYear: year,
+    creditCardExpirationMonth: month
+  } = request.creditCard;
+  const { units, nanos, currencyCode } = request.amount;
   const currentMonth = new Date().getMonth() + 1;
   const currentYear = new Date().getFullYear();
-  const { credit_card_expiration_year: year, credit_card_expiration_month: month } = creditCard;
-  if ((currentYear * 12 + currentMonth) > (year * 12 + month)) { throw new ExpiredCreditCard(cardNumber.replace('-', ''), month, year); }
+  const lastFourDigits = number.substr(-4);
+  const transactionId = uuidv4();
 
-  logger.info(`Transaction processed: ${cardType} ending ${cardNumber.substr(-4)} \
-    Amount: ${amount.currency_code}${amount.units}.${amount.nanos}`);
+  const card = cardValidator(number);
+  const {card_type: cardType, valid } = card.getCardDetails();
 
-  span.setAttribute("app.payment.charged", true);
-  // a manually created span needs to be ended
+  span.setAttributes({
+    'app.payment.card_type': cardType,
+    'app.payment.card_valid': valid
+  });
+
+  if (!valid) {
+    throw new Error('Credit card info is invalid.');
+  }
+
+  if (!['visa', 'mastercard'].includes(cardType)) {
+    throw new Error(`Sorry, we cannot process ${cardType} credit cards. Only VISA or MasterCard is accepted.`);
+  }
+  
+  if ((currentYear * 12 + currentMonth) > (year * 12 + month)) {
+    throw new Error(`The credit card (ending ${lastFourDigits}) expired on ${month}/${year}.`);
+  }
+
+  // check baggage for synthetic_request=true, and add charged attribute accordingly
+  const baggage = propagation.getBaggage(context.active());
+  if (baggage && baggage.getEntry("synthetic_request") && baggage.getEntry("synthetic_request").value == "true") {
+    span.setAttribute('app.payment.charged', false);
+  } else {
+    span.setAttribute('app.payment.charged', true);
+  }
+
   span.end();
 
-  return { transaction_id: uuidv4() };
-};
+  logger.info(`Transaction ${transactionId}: ${cardType} ending ${lastFourDigits} | Amount: ${units}.${nanos} ${currencyCode}`);
+
+  return { transactionId }
+}

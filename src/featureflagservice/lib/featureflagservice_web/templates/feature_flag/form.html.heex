@@ -13,11 +13,11 @@
   <%= text_input f, :description %>
   <%= error_tag f, :description %>
 
-  <%= label f, :enabled %>
-  <%= checkbox f, :enabled %>
+  <div class="float-right">
+    <%= checkbox f, :enabled %>
+    <%= label f, :enabled, class: "label-inline" %>
+  </div>
   <%= error_tag f, :enabled %>
 
-  <div>
-    <%= submit "Save" %>
-  </div>
+  <%= submit "Save" %>
 </.form>

@@ -2,10 +2,9 @@ defmodule FeatureflagserviceWeb.PageController do
   use FeatureflagserviceWeb, :controller
 
   alias Featureflagservice.FeatureFlags
-  alias Featureflagservice.FeatureFlags.FeatureFlag
 
   def index(conn, _params) do
-    featureflags = FeatureFlags.list_featureflags()
+    featureflags = FeatureFlags.list_feature_flags()
     render(conn, "index.html", featureflags: featureflags)
   end
 end

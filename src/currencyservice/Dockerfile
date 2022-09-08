@@ -1,46 +1,59 @@
-# Copyright 2020 Google LLC
-#
-# Licensed under the Apache License, Version 2.0 (the "License");
-# you may not use this file except in compliance with the License.
-# You may obtain a copy of the License at
-#
-#      http://www.apache.org/licenses/LICENSE-2.0
-#
-# Unless required by applicable law or agreed to in writing, software
-# distributed under the License is distributed on an "AS IS" BASIS,
-# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-# See the License for the specific language governing permissions and
-# limitations under the License.
+FROM ubuntu:20.04
+ENV DEBIAN_FRONTEND noninteractive
 
-FROM node:16-alpine as base
+RUN apt-get -y update
+RUN apt-get -y upgrade && apt-get -y dist-upgrade
+RUN apt-get install -qq -y --ignore-missing \
+  build-essential                           \
+  git                                       \
+  make                                      \
+  pkg-config                                \
+  protobuf-compiler                         \
+  libprotobuf-dev                           \
+  libcurl4-openssl-dev                      \
+  nlohmann-json3-dev                        \
+  cmake
 
-FROM base as builder
+# The following arguments would be passed from docker-compose.yml
+ARG GRPC_VERSION
+ARG OPENTELEMETRY_VERSION
 
-# Some packages (e.g. @google-cloud/profiler) require additional
-# deps for post-install scripts
-RUN apk add --update --no-cache \
-    python3 \
-    make \
-    g++
+# Install GRPC
+RUN git clone --shallow-submodules --depth 1 --recurse-submodules -b v${GRPC_VERSION} \
+  https://github.com/grpc/grpc \
+  && cd grpc \
+  && mkdir -p cmake/build \
+  && cd cmake/build \
+  && cmake \
+    -DgRPC_INSTALL=ON \
+    -DgRPC_BUILD_TESTS=OFF \
+    -DCMAKE_BUILD_TYPE=Release \
+    -DgRPC_BUILD_GRPC_NODE_PLUGIN=OFF \
+    -DgRPC_BUILD_GRPC_OBJECTIVE_C_PLUGIN=OFF \
+    -DgRPC_BUILD_GRPC_PHP_PLUGIN=OFF \
+    -DgRPC_BUILD_GRPC_PHP_PLUGIN=OFF \
+    -DgRPC_BUILD_GRPC_PYTHON_PLUGIN=OFF \
+    -DgRPC_BUILD_GRPC_RUBY_PLUGIN=OFF \
+    ../.. \
+  && make -j2 \
+  && make install \
+  && cd ../../.. \
+  && rm -rf grpc
 
-WORKDIR /usr/src/app
+# install opentelemetry
+RUN git clone https://github.com/open-telemetry/opentelemetry-cpp \
+    && cd opentelemetry-cpp/ \
+    && git checkout tags/v${OPENTELEMETRY_VERSION} -b v${OPENTELEMETRY_VERSION} \
+    && git submodule update --init --recursive \
+    && mkdir build \
+    && cd build \
+    && cmake .. -DCMAKE_POSITION_INDEPENDENT_CODE=ON -DCMAKE_BUILD_TYPE=Release -DBUILD_TESTING=OFF -DWITH_OTLP=ON \
+    && make -j install && cd ../.. && rm -rf opentelemetry-cpp
 
-COPY package*.json ./
+COPY . /currencyservice
 
-RUN npm install --only=production
+RUN cd /currencyservice \
+    && mkdir -p build && cd build \
+    && cmake .. && make -j install
 
-FROM base
-
-RUN GRPC_HEALTH_PROBE_VERSION=v0.4.7 && \
-    wget -qO/bin/grpc_health_probe https://github.com/grpc-ecosystem/grpc-health-probe/releases/download/${GRPC_HEALTH_PROBE_VERSION}/grpc_health_probe-linux-amd64 && \
-    chmod +x /bin/grpc_health_probe
-
-WORKDIR /usr/src/app
-
-COPY --from=builder /usr/src/app/node_modules ./node_modules
-
-COPY . .
-
-EXPOSE 7000
-
-ENTRYPOINT [ "node", "--require", "./tracing.js", "server.js" ]
+ENTRYPOINT /usr/local/bin/currencyservice ${CURRENCY_SERVICE_PORT}

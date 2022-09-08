@@ -19,9 +19,12 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	"go.opentelemetry.io/otel/attribute"
+	"go.opentelemetry.io/otel/trace"
 	"net"
 	"net/http"
 	"os"
+	"strconv"
 	"time"
 
 	"github.com/google/uuid"
@@ -38,8 +41,8 @@ import (
 	"go.opentelemetry.io/otel/propagation"
 	sdktrace "go.opentelemetry.io/otel/sdk/trace"
 
-	pb "github.com/open-telemetry/opentelemetry-demo-webstore/src/checkoutservice/genproto/hipstershop"
-	money "github.com/open-telemetry/opentelemetry-demo-webstore/src/checkoutservice/money"
+	pb "github.com/open-telemetry/opentelemetry-demo/src/checkoutservice/genproto/hipstershop"
+	money "github.com/open-telemetry/opentelemetry-demo/src/checkoutservice/money"
 	healthpb "google.golang.org/grpc/health/grpc_health_v1"
 )
 
@@ -48,6 +51,7 @@ const (
 )
 
 var log *logrus.Logger
+var tracer trace.Tracer
 
 func init() {
 	log = logrus.New()
@@ -99,6 +103,8 @@ func main() {
 		}
 	}()
 
+	tracer = tp.Tracer("checkoutservice")
+
 	svc := new(checkoutService)
 	mustMapEnv(&svc.shippingSvcAddr, "SHIPPING_SERVICE_ADDR")
 	mustMapEnv(&svc.productCatalogSvcAddr, "PRODUCT_CATALOG_SERVICE_ADDR")
@@ -142,7 +148,19 @@ func (cs *checkoutService) Watch(req *healthpb.HealthCheckRequest, ws healthpb.H
 }
 
 func (cs *checkoutService) PlaceOrder(ctx context.Context, req *pb.PlaceOrderRequest) (*pb.PlaceOrderResponse, error) {
+	span := trace.SpanFromContext(ctx)
+	span.SetAttributes(
+		attribute.String("app.user.id", req.UserId),
+		attribute.String("app.user.currency", req.UserCurrency),
+	)
 	log.Infof("[PlaceOrder] user_id=%q user_currency=%q", req.UserId, req.UserCurrency)
+
+	var err error
+	defer func() {
+		if err != nil {
+			span.AddEvent("error", trace.WithAttributes(attribute.String("exception.message", err.Error())))
+		}
+	}()
 
 	orderID, err := uuid.NewUUID()
 	if err != nil {
@@ -153,6 +171,7 @@ func (cs *checkoutService) PlaceOrder(ctx context.Context, req *pb.PlaceOrderReq
 	if err != nil {
 		return nil, status.Errorf(codes.Internal, err.Error())
 	}
+	span.AddEvent("prepared")
 
 	total := &pb.Money{CurrencyCode: req.UserCurrency,
 		Units: 0,
@@ -168,11 +187,14 @@ func (cs *checkoutService) PlaceOrder(ctx context.Context, req *pb.PlaceOrderReq
 		return nil, status.Errorf(codes.Internal, "failed to charge card: %+v", err)
 	}
 	log.Infof("payment went through (transaction_id: %s)", txID)
+	span.AddEvent("charged", trace.WithAttributes(attribute.String("app.payment.transaction.id", txID)))
 
 	shippingTrackingID, err := cs.shipOrder(ctx, req.Address, prep.cartItems)
 	if err != nil {
 		return nil, status.Errorf(codes.Unavailable, "shipping error: %+v", err)
 	}
+	shippingTrackingAttribute := attribute.String("app.shipping.tracking.id", shippingTrackingID)
+	span.AddEvent("shipped", trace.WithAttributes(shippingTrackingAttribute))
 
 	_ = cs.emptyUserCart(ctx, req.UserId)
 
@@ -183,6 +205,17 @@ func (cs *checkoutService) PlaceOrder(ctx context.Context, req *pb.PlaceOrderReq
 		ShippingAddress:    req.Address,
 		Items:              prep.orderItems,
 	}
+
+	shippingCostFloat, _ := strconv.ParseFloat(fmt.Sprintf("%d.%02d", prep.shippingCostLocalized.GetUnits(), prep.shippingCostLocalized.GetNanos()/1000000000), 64)
+	totalPriceFloat, _ := strconv.ParseFloat(fmt.Sprintf("%d.%02d", total.GetUnits(), total.GetNanos()/1000000000), 64)
+
+	span.SetAttributes(
+		attribute.String("app.order.id", orderID.String()),
+		shippingTrackingAttribute,
+		attribute.Float64("app.shipping.amount", shippingCostFloat),
+		attribute.Float64("app.order.amount", totalPriceFloat),
+		attribute.Int("app.order.items.count", len(prep.orderItems)),
+	)
 
 	if err := cs.sendOrderConfirmation(ctx, req.Email, orderResult); err != nil {
 		log.Warnf("failed to send order confirmation to %q: %+v", req.Email, err)
@@ -200,6 +233,10 @@ type orderPrep struct {
 }
 
 func (cs *checkoutService) prepareOrderItemsAndShippingQuoteFromCart(ctx context.Context, userID, userCurrency string, address *pb.Address) (orderPrep, error) {
+
+	ctx, span := tracer.Start(ctx, "prepareOrderItemsAndShippingQuoteFromCart")
+	defer span.End()
+
 	var out orderPrep
 	cartItems, err := cs.getUserCart(ctx, userID)
 	if err != nil {
@@ -221,6 +258,18 @@ func (cs *checkoutService) prepareOrderItemsAndShippingQuoteFromCart(ctx context
 	out.shippingCostLocalized = shippingPrice
 	out.cartItems = cartItems
 	out.orderItems = orderItems
+
+	var totalCart int32
+	for _, ci := range cartItems {
+		totalCart += ci.Quantity
+	}
+	shippingCostFloat, _ := strconv.ParseFloat(fmt.Sprintf("%d.%02d", shippingPrice.GetUnits(), shippingPrice.GetNanos()/1000000000), 64)
+
+	span.SetAttributes(
+		attribute.Float64("app.shipping.amount", shippingCostFloat),
+		attribute.Int("app.cart.items.count", int(totalCart)),
+		attribute.Int("app.order.items.count", len(orderItems)),
+	)
 	return out, nil
 }
 
@@ -308,7 +357,7 @@ func (cs *checkoutService) convertCurrency(ctx context.Context, from *pb.Money, 
 		return nil, fmt.Errorf("could not connect currency service: %+v", err)
 	}
 	defer conn.Close()
-	result, err := pb.NewCurrencyServiceClient(conn).Convert(context.TODO(), &pb.CurrencyConversionRequest{
+	result, err := pb.NewCurrencyServiceClient(conn).Convert(ctx, &pb.CurrencyConversionRequest{
 		From:   from,
 		ToCode: toCurrency})
 	if err != nil {

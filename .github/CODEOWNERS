@@ -2,4 +2,4 @@
 # This file controls who is tagged for review for any given pull request.
 
 # For anything not explicitly taken by someone else:
-* @open-telemetry/demo-webstore-approvers
+* @open-telemetry/demo-approvers

@@ -27,6 +27,15 @@ import io.grpc.StatusRuntimeException;
 import io.grpc.health.v1.HealthCheckResponse.ServingStatus;
 import io.grpc.protobuf.services.*;
 import io.grpc.stub.StreamObserver;
+import io.opentelemetry.api.GlobalOpenTelemetry;
+import io.opentelemetry.api.common.AttributeKey;
+import io.opentelemetry.api.common.Attributes;
+import io.opentelemetry.api.trace.Span;
+import io.opentelemetry.api.trace.StatusCode;
+import io.opentelemetry.api.trace.Tracer;
+import io.opentelemetry.context.Scope;
+import io.opentelemetry.extension.annotations.SpanAttribute;
+import io.opentelemetry.extension.annotations.WithSpan;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -41,7 +50,7 @@ public final class AdService {
   private static final Logger logger = LogManager.getLogger(AdService.class);
 
   @SuppressWarnings("FieldCanBeLocal")
-  private static int MAX_ADS_TO_SERVE = 2;
+  private static final int MAX_ADS_TO_SERVE = 2;
 
   private Server server;
   private HealthStatusManager healthMgr;
@@ -49,7 +58,7 @@ public final class AdService {
   private static final AdService service = new AdService();
 
   private void start() throws IOException {
-    int port = Integer.parseInt(System.getenv().getOrDefault("AD_SERVICE_PORT", "9555"));
+    int port = Integer.parseInt(System.getenv("AD_SERVICE_PORT"));
     healthMgr = new HealthStatusManager();
 
     server =
@@ -91,8 +100,14 @@ public final class AdService {
     @Override
     public void getAds(AdRequest req, StreamObserver<AdResponse> responseObserver) {
       AdService service = AdService.getInstance();
+
+      // get the current span in context
+      Span span = Span.current();
       try {
         List<Ad> allAds = new ArrayList<>();
+
+        span.setAttribute("app.ads.contextKeys", req.getContextKeysList().toString());
+        span.setAttribute("app.ads.contextKeys.count", req.getContextKeysCount());
         logger.info("received ad request (context_words=" + req.getContextKeysList() + ")");
         if (req.getContextKeysCount() > 0) {
           for (int i = 0; i < req.getContextKeysCount(); i++) {
@@ -106,10 +121,13 @@ public final class AdService {
           // Serve random ads.
           allAds = service.getRandomAds();
         }
+        span.setAttribute("app.ads.count", allAds.size());
         AdResponse reply = AdResponse.newBuilder().addAllAds(allAds).build();
         responseObserver.onNext(reply);
         responseObserver.onCompleted();
       } catch (StatusRuntimeException e) {
+        span.addEvent("Error", Attributes.of(AttributeKey.stringKey("exception.message"), e.getMessage()));
+        span.setStatus(StatusCode.ERROR);
         logger.log(Level.WARN, "GetAds Failed with status {}", e.getStatus());
         responseObserver.onError(e);
       }
@@ -118,18 +136,36 @@ public final class AdService {
 
   private static final ImmutableListMultimap<String, Ad> adsMap = createAdsMap();
 
-  private Collection<Ad> getAdsByCategory(String category) {
-    return adsMap.get(category);
+  @WithSpan("getAdsByCategory")
+  private Collection<Ad> getAdsByCategory(@SpanAttribute("app.ads.category") String category) {
+    Collection<Ad> ads = adsMap.get(category);
+    Span.current().setAttribute("app.ads.count", ads.size());
+    return ads;
   }
 
   private static final Random random = new Random();
 
   private List<Ad> getRandomAds() {
+
     List<Ad> ads = new ArrayList<>(MAX_ADS_TO_SERVE);
-    Collection<Ad> allAds = adsMap.values();
-    for (int i = 0; i < MAX_ADS_TO_SERVE; i++) {
-      ads.add(Iterables.get(allAds, random.nextInt(allAds.size())));
+
+    // create and start a new span manually
+    Tracer tracer = GlobalOpenTelemetry.getTracer("adservice");
+    Span span = tracer.spanBuilder("getRandomAds").startSpan();
+
+    // put the span into context, so if any child span is started the parent will be set properly
+    try (Scope ignored = span.makeCurrent()) {
+
+      Collection<Ad> allAds = adsMap.values();
+      for (int i = 0; i < MAX_ADS_TO_SERVE; i++) {
+        ads.add(Iterables.get(allAds, random.nextInt(allAds.size())));
+      }
+      span.setAttribute("app.ads.count", ads.size());
+
+    } finally {
+      span.end();
     }
+
     return ads;
   }
 
@@ -145,48 +181,47 @@ public final class AdService {
   }
 
   private static ImmutableListMultimap<String, Ad> createAdsMap() {
-    Ad hairdryer =
+    Ad binoculars =
         Ad.newBuilder()
             .setRedirectUrl("/product/2ZYFJ3GM2N")
-            .setText("Hairdryer for sale. 50% off.")
+            .setText("Roof Binoculars for sale. 50% off.")
             .build();
-    Ad tankTop =
+    Ad explorerTelescope =
         Ad.newBuilder()
             .setRedirectUrl("/product/66VCHSJNUP")
-            .setText("Tank top for sale. 20% off.")
+            .setText("Starsense Explorer Refractor Telescope for sale. 20% off.")
             .build();
-    Ad candleHolder =
+    Ad colorImager =
         Ad.newBuilder()
             .setRedirectUrl("/product/0PUK6V6EV0")
-            .setText("Candle holder for sale. 30% off.")
+            .setText("Solar System Color Imager for sale. 30% off.")
             .build();
-    Ad bambooGlassJar =
+    Ad opticalTube =
         Ad.newBuilder()
             .setRedirectUrl("/product/9SIQT8TOJO")
-            .setText("Bamboo glass jar for sale. 10% off.")
+            .setText("Optical Tube Assembly for sale. 10% off.")
             .build();
-    Ad watch =
+    Ad travelTelescope =
         Ad.newBuilder()
             .setRedirectUrl("/product/1YMWWN1N4O")
-            .setText("Watch for sale. Buy one, get second kit for free")
+            .setText("Eclipsmart Travel Refractor Telescope for sale. Buy one, get second kit for free")
             .build();
-    Ad mug =
+    Ad solarFilter =
         Ad.newBuilder()
             .setRedirectUrl("/product/6E92ZMYYFZ")
-            .setText("Mug for sale. Buy two, get third one for free")
+            .setText("Solar Filter for sale. Buy two, get third one for free")
             .build();
-    Ad loafers =
+    Ad cleaningKit =
         Ad.newBuilder()
             .setRedirectUrl("/product/L9ECAV7KIM")
-            .setText("Loafers for sale. Buy one, get second one for free")
+            .setText("Lens Cleaning Kit for sale. Buy one, get second one for free")
             .build();
     return ImmutableListMultimap.<String, Ad>builder()
-        .putAll("clothing", tankTop)
-        .putAll("accessories", watch)
-        .putAll("footwear", loafers)
-        .putAll("hair", hairdryer)
-        .putAll("decor", candleHolder)
-        .putAll("kitchen", bambooGlassJar, mug)
+        .putAll("binoculars", binoculars)
+        .putAll("telescopes", explorerTelescope)
+        .putAll("accessories", colorImager, solarFilter, cleaningKit)
+        .putAll("assembly", opticalTube)
+        .putAll("travel", travelTelescope)
         .build();
   }
 

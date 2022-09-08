@@ -1,0 +1,33 @@
+[package]
+name = "shippingservice"
+version = "0.1.0"
+edition = "2021"
+
+[[bin]]
+name = "shippingservice"
+path = "src/main.rs"
+
+[features]
+dockerproto = [] # compile in docker or not
+
+[dependencies]
+tonic = "0.7"
+tonic-health = "0.6.0"
+prost = "0.10"
+prost-types = "0.10"
+tokio = { version = "1.0", features = ["macros", "rt-multi-thread"] }
+opentelemetry = { version = "0.17", features = ["rt-tokio"] }
+opentelemetry-otlp = "0.10"
+log = "0.4.17"
+simplelog = "0.12"
+
+[dependencies.uuid]
+version = "1.1.2"
+features = [
+    "v4",                # Lets you generate random UUIDs
+    "fast-rng",          # Use a faster (but still sufficiently random) RNG
+    "macro-diagnostics", # Enable better diagnostics for compile-time UUIDs
+]
+
+[build-dependencies]
+tonic-build = "0.7"

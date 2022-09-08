@@ -4,19 +4,21 @@ if System.get_env("PHX_SERVER") do
   config :featureflagservice, FeatureflagserviceWeb.Endpoint, server: true
 end
 
-grpc_port = String.to_integer(System.get_env("GRPC_PORT") || "4001")
+grpc_port = String.to_integer(System.get_env("FEATURE_FLAG_GRPC_SERVICE_PORT"))
 
 config :grpcbox,
-  servers: [%{:grpc_opts => %{:service_protos => [:ffs_featureflag_pb],
-                              :unary_interceptor => {:otel_grpcbox_interceptor, :unary},
-                              :services => %{:FeatureFlagService => :ffs_service}},
-              :listen_opts => %{:port => grpc_port}}]
+  servers: [
+    %{
+      :grpc_opts => %{
+        :service_protos => [:ffs_demo_pb],
+        :unary_interceptor => {:otel_grpcbox_interceptor, :unary},
+        :services => %{:"hipstershop.FeatureFlagService" => :ffs_service}
+      },
+      :listen_opts => %{:port => grpc_port}
+    }
+  ]
 
 if config_env() == :prod do
-  config :opentelemetry_exporter,
-    otlp_endpoint: "http://otelcol:4317",
-    otlp_protocol: :grpc
-
   database_url =
     System.get_env("DATABASE_URL") ||
       raise """
@@ -45,16 +47,12 @@ if config_env() == :prod do
       """
 
   host = System.get_env("PHX_HOST") || "localhost"
-  port = String.to_integer(System.get_env("PORT") || "4000")
+  port = String.to_integer(System.get_env("FEATURE_FLAG_SERVICE_PORT"))
 
   config :featureflagservice, FeatureflagserviceWeb.Endpoint,
     url: [host: host, port: 443, scheme: "https"],
     http: [
-      # Enable IPv6 and bind on all interfaces.
-      # Set it to  {0, 0, 0, 0, 0, 0, 0, 1} for local network only access.
-      # See the documentation on https://hexdocs.pm/plug_cowboy/Plug.Cowboy.html
-      # for details about using IPv6 vs IPv4 and loopback vs public addresses.
-      ip: {0, 0, 0, 0, 0, 0, 0, 0},
+      ip: {0, 0, 0, 0},
       port: port
     ],
     secret_key_base: secret_key_base

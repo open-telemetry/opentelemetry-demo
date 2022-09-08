@@ -50,6 +50,8 @@ COPY priv priv
 
 COPY lib lib
 
+COPY src src
+
 COPY assets assets
 
 # compile assets
@@ -90,4 +92,4 @@ COPY --from=builder --chown=nobody:root /app/_build/${MIX_ENV}/rel/featureflagse
 
 USER nobody
 
-CMD ["/app/bin/server"]
+ENTRYPOINT ["/app/bin/server"]

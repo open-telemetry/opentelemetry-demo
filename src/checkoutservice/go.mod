@@ -1,4 +1,4 @@
-module github.com/open-telemetry/opentelemetry-demo-webstore/src/checkoutservice
+module github.com/open-telemetry/opentelemetry-demo/src/checkoutservice
 
 go 1.17
 

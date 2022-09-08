@@ -7,7 +7,6 @@
 .nb-gradle-properties
 .swp
 .DS_Store
-package-lock.json
 \#*\#
 
 # Eclipse
@@ -23,3 +22,13 @@ obj/
 .idea/
 build/
 node_modules/
+src/shippingservice/target/
+
+coverage
+.next/
+out/
+build
+src/frontend/protos
+next-env.d.ts
+src/frontend/cypress/videos
+src/frontend/cypress/screenshots
