@@ -98,9 +98,9 @@ services:
     build:
       context: ./
       dockerfile: ./src/checkoutservice/Dockerfile
-      #cache_from:
+      # cache_from:
       #  - ${IMAGE_NAME}:${IMAGE_VERSION}-checkoutservice
-      #cache_to:
+      # cache_to:
       #  - inline # see https://github.com/moby/buildkit#export-cache
     ports:
       - "${CHECKOUT_SERVICE_PORT}"
@@ -325,9 +325,9 @@ services:
     build:
       context: ./
       dockerfile: ./src/shippingservice/Dockerfile
-      #cache_from:
+      # cache_from:
       #  - ${IMAGE_NAME}:${IMAGE_VERSION}-shippingservice
-      #cache_to:
+      # cache_to:
       #  - inline # see https://github.com/moby/buildkit#export-cache
     ports:
       - "${SHIPPING_SERVICE_PORT}"
