@@ -3,16 +3,16 @@
     "description": "Quote Service part of OpenTelemetry Demo",
     "license": "Apache-2.0",
     "require": {
-        "php": "^7.4 || ^8.1",
-        "ext-json": "*",
-        "monolog/monolog": "^2.3",
+        "php": "7.4 || 8.1",
+        "ext-json": "dev-main",
+        "monolog/monolog": "2.8.0",
         "open-telemetry/opentelemetry": "dev-main",
-        "guzzlehttp/guzzle": "*",
-        "php-di/php-di": "^6.3",
-        "php-di/slim-bridge": "^3.2",
-        "php-http/guzzle7-adapter": "*",
-        "slim/psr7": "^1.5",
-        "slim/slim": "^4.9"
+        "guzzlehttp/guzzle": "7.4.5",
+        "php-di/php-di": "6.4.0",
+        "php-di/slim-bridge": "3.2.0",
+        "php-http/guzzle7-adapter": "1.0.0",
+        "slim/psr7": "1.5",
+        "slim/slim": "4.10.0"
     },
     "autoload": {
         "psr-4": {
@@ -20,7 +20,7 @@
         }
     },
     "scripts": {
-        "start": "php -S localhost:8080 -t public",
+        "start": "php -S 0.0.0.0:8090 -t public",
         "test": "phpunit"
     }
 }

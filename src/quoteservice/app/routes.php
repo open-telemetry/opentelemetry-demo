@@ -38,7 +38,7 @@ return function (App $app) {
         $span = AbstractSpan::getCurrent();
         $span->addEvent('Received get quote request, processing it');
 
-        $body = file_get_contents("php://input");
+        $body = $request->getBody()->getContents();
         $jsonObject = json_decode($body, true);
 
         $data = calculateQuote($jsonObject, $tracer);

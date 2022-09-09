@@ -301,8 +301,7 @@ services:
       context: ./
       dockerfile: ./src/quoteservice/Dockerfile
     ports:
-      # remove localhost port b4 merging
-      - "${QUOTE_SERVICE_PORT}:${QUOTE_SERVICE_PORT}"
+      - "${QUOTE_SERVICE_PORT}"
     environment:
       # OTEL_EXPORTER_OTLP_TRACES_ENDPOINT # Not working for PHP
       - QUOTE_SERVICE_PORT
