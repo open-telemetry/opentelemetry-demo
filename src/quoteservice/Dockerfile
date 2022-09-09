@@ -21,6 +21,6 @@ WORKDIR /var/www
 COPY --from=build /tmp/vendor/ /var/www/vendor/
 COPY ./src/quoteservice/ /var/www
 
-EXPOSE 8090
+EXPOSE ${QUOTE_SERVICE_PORT}
 
 ENTRYPOINT ["php", "-S", "0.0.0.0:8090", "-t", "public"]
