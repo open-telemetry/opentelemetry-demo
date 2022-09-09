@@ -10,7 +10,7 @@ RUN composer install \
     --no-scripts \
     --prefer-dist
 
-FROM php:8.1-apache-buster
+FROM php:8.1-cli
 
 # install GRPC (required for the OTel exporter)
 RUN apt-get -y update && apt install -y --no-install-recommends zlib1g-dev && \
