@@ -2,9 +2,9 @@
   "products": [
     {
       "id": "OLJCESPC7Z",
-      "name": "Natiolal Park Foundation Explorascope",
+      "name": "National Park Foundation Explorascope",
       "description": "The National Park Foundation’s (NPF) Explorascope 60AZ is a manual alt-azimuth, refractor telescope perfect for celestial viewing on the go. The NPF Explorascope 60 can view the planets, moon, star clusters and brighter deep sky objects like the Orion Nebula and Andromeda Galaxy.",
-      "picture": "/images/products/NatiolalParkFoundationExplorascope.jpg",
+      "picture": "/images/products/NationalParkFoundationExplorascope.jpg",
       "priceUsd": {
         "currencyCode": "USD",
         "units": 101,
