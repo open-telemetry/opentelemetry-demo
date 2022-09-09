@@ -23,7 +23,7 @@ function calculateQuote($jsonObject, Tracer $tracer): float
 
         $childSpan->setAttribute('app.quote.items.count', $numberOfItems);
         $childSpan->setAttribute('app.quote.cost.total', $quote);
-    } catch (Exception $exception) {
+    } catch (\Exception $exception) {
         $childSpan->recordException($exception);
     } finally {
         $childSpan->addEvent('Quote calculated, returning its value');
