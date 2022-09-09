@@ -24,7 +24,7 @@ const charge = require('./charge')
 
 // Functions
 function chargeServiceHandler(call, callback) {
-  const span = opentelemetry.trace.getSpan(opentelemetry.context.active())
+  const span = opentelemetry.trace.getActiveSpan();
 
   try {
     const amount = call.request.amount
