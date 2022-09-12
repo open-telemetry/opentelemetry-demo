@@ -23,4 +23,4 @@ COPY ./src/quoteservice/ /var/www
 
 EXPOSE ${QUOTE_SERVICE_PORT}
 
-ENTRYPOINT ["php", "-S", "0.0.0.0:8090", "-t", "public"]
+ENTRYPOINT php -S 0.0.0.0:${QUOTE_SERVICE_PORT} -t public

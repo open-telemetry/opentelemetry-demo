@@ -20,7 +20,7 @@
         }
     },
     "scripts": {
-        "start": "php -S 0.0.0.0:8090 -t public",
+        "start": "php -S 0.0.0.0:${QUOTE_SERVICE_PORT} -t public",
         "test": "phpunit"
     }
 }
