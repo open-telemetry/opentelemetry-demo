@@ -89,3 +89,5 @@ significant modifications will be credited to OpenTelemetry Authors.
 ([#331](https://github.com/open-telemetry/opentelemetry-demo/pull/331))
 * Add span events to shipping service
 ([#344](https://github.com/open-telemetry/opentelemetry-demo/pull/344))
+* Improve initial run time, without a build
+([#362](https://github.com/open-telemetry/opentelemetry-demo/pull/362))
