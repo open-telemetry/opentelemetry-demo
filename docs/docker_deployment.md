@@ -34,12 +34,14 @@ cd opentelemetry-demo/
 
 ## Run Docker Compose
 
-- Start the demo (it can take ~20min the first time the command is executed as
-all the container images will be built):
+- Start the demo:
 
 ```shell
-docker compose up
+docker compose up --no-build
 ```
+
+**Note:** removing the `--no-build` command line option will re-build from main.
+It may take more than 20 minutes to build if used in this mode.
 
 ## Verify the Webstore & the Telemetry
 
