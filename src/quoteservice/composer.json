@@ -6,7 +6,7 @@
         "php": "7.4 || 8.1",
         "ext-json": "dev-main",
         "monolog/monolog": "2.8.0",
-        "open-telemetry/opentelemetry": "dev-main",
+        "open-telemetry/opentelemetry": "0.0.15",
         "guzzlehttp/guzzle": "7.4.5",
         "php-di/php-di": "6.4.0",
         "php-di/slim-bridge": "3.2.0",
@@ -22,5 +22,10 @@
     "scripts": {
         "start": "php -S 0.0.0.0:${QUOTE_SERVICE_PORT} -t public",
         "test": "phpunit"
+    },
+    "config": {
+        "allow-plugins": {
+            "phpstan/extension-installer": true
+        }
     }
 }

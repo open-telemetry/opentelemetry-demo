@@ -14,8 +14,8 @@ FROM php:8.1-cli
 
 # install GRPC (required for the OTel exporter)
 RUN apt-get -y update && apt install -y --no-install-recommends zlib1g-dev && \
-    pecl install grpc && \
-    docker-php-ext-enable grpc
+    pecl install grpc protobuf && \
+    docker-php-ext-enable grpc protobuf
 
 WORKDIR /var/www
 COPY --from=build /tmp/vendor/ /var/www/vendor/

@@ -43,7 +43,6 @@ $container = $containerBuilder->build();
 // Instantiate the app
 AppFactory::setContainer($container);
 $app = Bridge::create($container);
-$callableResolver = $app->getCallableResolver();
 
 // Register middleware
 //middleware starts root span based on route pattern, sets status from http code
@@ -77,9 +76,6 @@ $routes($app);
 // Create Request object from globals
 $serverRequestCreator = ServerRequestCreatorFactory::create();
 $request = $serverRequestCreator->createServerRequestFromGlobals();
-
-// Create Error Handler
-$responseFactory = $app->getResponseFactory();
 
 // Add Body Parsing Middleware
 $app->addBodyParsingMiddleware();
