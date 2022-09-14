@@ -5,17 +5,6 @@
 - Docker
 - [Docker Compose](https://docs.docker.com/compose/install/#install-compose) v2.0.0+
 
-### Windows Pre-requisites
-
-Run the following shell command to correctly configure file endings:
-
-```shell
-git config --global core.autocrlf input
-```
-
-If you already cloned the repo and are experiencing build issues then delete and
-re-clone the repo after running the command.
-
 ## Clone Repo
 
 - Clone the Webstore Demo repository:
