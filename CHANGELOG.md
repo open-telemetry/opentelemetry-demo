@@ -91,3 +91,5 @@ significant modifications will be credited to OpenTelemetry Authors.
 ([#344](https://github.com/open-telemetry/opentelemetry-demo/pull/344))
 * Add PHP quote service
 ([#345](https://github.com/open-telemetry/opentelemetry-demo/pull/345))
+* Improve initial run time, without a build
+([#362](https://github.com/open-telemetry/opentelemetry-demo/pull/362))
