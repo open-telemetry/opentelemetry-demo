@@ -40,8 +40,10 @@ cd opentelemetry-demo/
 docker compose up --no-build
 ```
 
-**Note:** removing the `--no-build` command line option will re-build from main.
-It may take more than 20 minutes to build if used in this mode.
+**Note:** The `--no-build` flag is used to fetch released docker images from
+[ghcr](http://ghcr.io/open-telemetry/demo) instead of building from source.
+Removing the `--no-build` command line option will rebuild all images from
+source. It may take more than 20 minutes to build if the flag is omitted.
 
 ## Verify the Webstore & the Telemetry
 
