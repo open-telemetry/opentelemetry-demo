@@ -52,10 +52,8 @@ services:
     build:
       context: ./
       dockerfile: ./src/adservice/Dockerfile
-      # cache_from:
-      #   - ${IMAGE_NAME}:${IMAGE_VERSION}-adservice
-      # cache_to:
-      #   - inline # see https://github.com/moby/buildkit#export-cache
+      cache_from:
+        - ${IMAGE_NAME}:${IMAGE_VERSION}-adservice
     ports:
       - "${AD_SERVICE_PORT}"
     environment:
@@ -74,10 +72,8 @@ services:
     build:
       context: ./
       dockerfile: ./src/cartservice/src/Dockerfile
-      # cache_from:
-      #   - ${IMAGE_NAME}:${IMAGE_VERSION}-cartservice
-      # cache_to:
-      #   - inline # see https://github.com/moby/buildkit#export-cache
+      cache_from:
+        - ${IMAGE_NAME}:${IMAGE_VERSION}-cartservice
     ports:
       - "${CART_SERVICE_PORT}"
     environment:
@@ -98,10 +94,8 @@ services:
     build:
       context: ./
       dockerfile: ./src/checkoutservice/Dockerfile
-      #cache_from:
-      #  - ${IMAGE_NAME}:${IMAGE_VERSION}-checkoutservice
-      #cache_to:
-      #  - inline # see https://github.com/moby/buildkit#export-cache
+      cache_from:
+        - ${IMAGE_NAME}:${IMAGE_VERSION}-checkoutservice
     ports:
       - "${CHECKOUT_SERVICE_PORT}"
     environment:
@@ -130,10 +124,8 @@ services:
     container_name: currency-service
     build:
       context: ./src/currencyservice
-      # cache_from:
-      #   - ${IMAGE_NAME}:${IMAGE_VERSION}-currencyservice
-      # cache_to:
-      #   - inline # see https://github.com/moby/buildkit#export-cache
+      cache_from:
+        - ${IMAGE_NAME}:${IMAGE_VERSION}-currencyservice
       args:
         - GRPC_VERSION=1.46.0
         - OPENTELEMETRY_VERSION=1.5.0
@@ -153,10 +145,8 @@ services:
     container_name: email-service
     build:
       context: ./src/emailservice
-      # cache_from:
-      #   - ${IMAGE_NAME}:${IMAGE_VERSION}-emailservice
-      # cache_to:
-      #   - inline # see https://github.com/moby/buildkit#export-cache
+      cache_from:
+        - ${IMAGE_NAME}:${IMAGE_VERSION}-emailservice
     ports:
       - "${EMAIL_SERVICE_PORT}"
     environment:
@@ -175,10 +165,8 @@ services:
     build:
       context: ./
       dockerfile: ./src/frontend/Dockerfile
-      # cache_from:
-      #   - ${IMAGE_NAME}:${IMAGE_VERSION}-frontend
-      # cache_to:
-      #   - inline # see https://github.com/moby/buildkit#export-cache
+      cache_from:
+        - ${IMAGE_NAME}:${IMAGE_VERSION}-frontend
     ports:
       - "${FRONTEND_PORT}:${FRONTEND_PORT}"
     environment:
@@ -258,10 +246,8 @@ services:
     build:
       context: ./
       dockerfile: ./src/paymentservice/Dockerfile
-      # cache_from:
-      #   - ${IMAGE_NAME}:${IMAGE_VERSION}-paymentservice
-      # cache_to:
-      #   - inline # see https://github.com/moby/buildkit#export-cache
+      cache_from:
+        - ${IMAGE_NAME}:${IMAGE_VERSION}-paymentservice
     ports:
       - "${PAYMENT_SERVICE_PORT}"
     environment:
@@ -279,10 +265,8 @@ services:
     build:
       context: ./
       dockerfile: ./src/productcatalogservice/Dockerfile
-      # cache_from:
-      #   - ${IMAGE_NAME}:${IMAGE_VERSION}-productcatalogservice
-      # cache_to:
-      #   - inline # see https://github.com/moby/buildkit#export-cache
+      cache_from:
+        - ${IMAGE_NAME}:${IMAGE_VERSION}-productcatalogservice
     ports:
       - "${PRODUCT_CATALOG_SERVICE_PORT}"
     environment:
@@ -301,10 +285,8 @@ services:
     build:
       context: ./
       dockerfile: ./src/recommendationservice/Dockerfile
-      # cache_from:
-      #   - ${IMAGE_NAME}:${IMAGE_VERSION}-recommendationservice
-      # cache_to:
-      #   - inline # see https://github.com/moby/buildkit#export-cache
+      cache_from:
+        - ${IMAGE_NAME}:${IMAGE_VERSION}-recommendationservice
     ports:
       - "${RECOMMENDATION_SERVICE_PORT}"
     depends_on:
@@ -325,10 +307,8 @@ services:
     build:
       context: ./
       dockerfile: ./src/shippingservice/Dockerfile
-      #cache_from:
-      #  - ${IMAGE_NAME}:${IMAGE_VERSION}-shippingservice
-      #cache_to:
-      #  - inline # see https://github.com/moby/buildkit#export-cache
+      cache_from:
+        - ${IMAGE_NAME}:${IMAGE_VERSION}-shippingservice
     ports:
       - "${SHIPPING_SERVICE_PORT}"
     environment:
@@ -345,10 +325,8 @@ services:
     container_name: feature-flag-service
     build:
       context: ./src/featureflagservice
-      # cache_from:
-      #   - ${IMAGE_NAME}:${IMAGE_VERSION}-featureflagservice
-      # cache_to:
-      #   - inline # see https://github.com/moby/buildkit#export-cache
+      cache_from:
+        - ${IMAGE_NAME}:${IMAGE_VERSION}-featureflagservice
     ports:
       - "${FEATURE_FLAG_SERVICE_PORT}:${FEATURE_FLAG_SERVICE_PORT}"     # Feature Flag Service UI
       - "${FEATURE_FLAG_GRPC_SERVICE_PORT}"                             # Feature Flag Service gRPC API
@@ -385,10 +363,8 @@ services:
     build:
       context: ./
       dockerfile: ./src/loadgenerator/Dockerfile
-      # cache_from:
-      #   - ${IMAGE_NAME}:${IMAGE_VERSION}-loadgenerator
-      # cache_to:
-      #   - inline # see https://github.com/moby/buildkit#export-cache
+      cache_from:
+        - ${IMAGE_NAME}:${IMAGE_VERSION}-loadgenerator
     ports:
       - "${LOCUST_WEB_PORT}:${LOCUST_WEB_PORT}"
     environment:
