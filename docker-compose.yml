@@ -278,6 +278,27 @@ services:
       - otelcol
     logging: *logging
 
+  quoteservice:
+    image: ${IMAGE_NAME}:${IMAGE_VERSION}-quoteservice
+    container_name: quoteservice
+    build:
+      context: ./
+      dockerfile: ./src/quoteservice/Dockerfile
+    ports:
+      - "${QUOTE_SERVICE_PORT}"
+    environment:
+      # OTEL_EXPORTER_OTLP_TRACES_ENDPOINT # Not working for PHP
+      - QUOTE_SERVICE_PORT
+      - OTEL_SERVICE_NAME=quoteservice
+      - OTEL_EXPORTER_OTLP_ENDPOINT=otelcol:4317
+      - OTEL_TRACES_SAMPLER=parentbased_always_on
+      - OTEL_TRACES_EXPORTER=otlp
+      - OTEL_EXPORTER_OTLP_TRACES_PROTOCOL=grpc
+      - OTEL_PHP_TRACES_PROCESSOR=simple
+    depends_on:
+      - otelcol
+    logging: *logging
+
   # RecommendationService
   recommendationservice:
     image: ${IMAGE_NAME}:${IMAGE_VERSION}-recommendationservice
@@ -313,6 +334,7 @@ services:
       - "${SHIPPING_SERVICE_PORT}"
     environment:
       - SHIPPING_SERVICE_PORT
+      - QUOTE_SERVICE_ADDR
       - OTEL_EXPORTER_OTLP_TRACES_ENDPOINT
       - OTEL_SERVICE_NAME=shippingservice
     depends_on:
