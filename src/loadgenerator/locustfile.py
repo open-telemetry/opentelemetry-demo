@@ -20,7 +20,7 @@ from locust import HttpUser, task, between
 
 from opentelemetry import context, baggage, trace
 from opentelemetry.sdk.trace import TracerProvider
-from opentelemetry.sdk.trace.export import (BatchSpanProcessor)
+from opentelemetry.sdk.trace.export import BatchSpanProcessor
 from opentelemetry.exporter.otlp.proto.grpc.trace_exporter import OTLPSpanExporter
 from opentelemetry.instrumentation.requests import RequestsInstrumentor
 from opentelemetry.instrumentation.urllib3 import URLLib3Instrumentor
@@ -42,7 +42,7 @@ products = [
     "9SIQT8TOJO",
     "L9ECAV7KIM",
     "LS4PSXUNUM",
-    "OLJCESPC7Z"
+    "OLJCESPC7Z",
 ]
 
 people = [
@@ -53,15 +53,15 @@ people = [
             "zipCode": 94043,
             "city": "Mountain View",
             "state": "CA",
-            "country": "United States"
+            "country": "United States",
         },
         "userCurrency": "USD",
         "creditCard": {
             "creditCardNumber": "4432-8015-6152-0454",
             "creditCardExpirationMonth": 1,
             "creditCardExpirationYear": 2039,
-            "creditCardCvv": 672
-        }
+            "creditCardCvv": 672,
+        },
     },
     {
         "email": "bill@example.com",
@@ -70,15 +70,15 @@ people = [
             "zipCode": 98052,
             "city": "Redmond",
             "state": "WA",
-            "country": "United States"
+            "country": "United States",
         },
         "userCurrency": "USD",
         "creditCard": {
             "creditCardNumber": "4532-4211-7434-1278",
             "creditCardExpirationMonth": 2,
             "creditCardExpirationYear": 2039,
-            "creditCardCvv": 114
-        }
+            "creditCardCvv": 114,
+        },
     },
     {
         "email": "steve@example.com",
@@ -87,15 +87,15 @@ people = [
             "zipCode": 95014,
             "city": "Cupertino",
             "state": "CA",
-            "country": "United States"
+            "country": "United States",
         },
         "userCurrency": "USD",
         "creditCard": {
             "creditCardNumber": "4532-6178-2799-1951",
             "creditCardExpirationMonth": 3,
             "creditCardExpirationYear": 2039,
-            "creditCardCvv": 239
-        }
+            "creditCardCvv": 239,
+        },
     },
     {
         "email": "mark@example.com",
@@ -104,15 +104,15 @@ people = [
             "zipCode": 94025,
             "city": "Menlo Park",
             "state": "CA",
-            "country": "United States"
+            "country": "United States",
         },
         "userCurrency": "USD",
         "creditCard": {
             "creditCardNumber": "4539-1103-5661-7083",
             "creditCardExpirationMonth": 4,
             "creditCardExpirationYear": 2039,
-            "creditCardCvv": 784
-        }
+            "creditCardCvv": 784,
+        },
     },
     {
         "email": "jeff@example.com",
@@ -121,15 +121,15 @@ people = [
             "zipCode": 98109,
             "city": "Seattle",
             "state": "WA",
-            "country": "United States"
+            "country": "United States",
         },
         "userCurrency": "USD",
         "creditCard": {
             "creditCardNumber": "4916-0816-6217-7968",
             "creditCardExpirationMonth": 5,
             "creditCardExpirationYear": 2039,
-            "creditCardCvv": 397
-        }
+            "creditCardCvv": 397,
+        },
     },
     {
         "email": "reed@example.com",
@@ -138,15 +138,15 @@ people = [
             "zipCode": 95032,
             "city": "Los Gatos",
             "state": "CA",
-            "country": "United States"
+            "country": "United States",
         },
         "userCurrency": "USD",
         "creditCard": {
             "creditCardNumber": "4929-5431-0337-5647",
             "creditCardExpirationMonth": 6,
             "creditCardExpirationYear": 2039,
-            "creditCardCvv": 793
-        }
+            "creditCardCvv": 793,
+        },
     },
     {
         "email": "tobias@example.com",
@@ -155,15 +155,15 @@ people = [
             "zipCode": 214,
             "city": "Ottawa",
             "state": "ON",
-            "country": "Canada"
+            "country": "Canada",
         },
         "userCurrency": "CAD",
         "creditCard": {
             "creditCardNumber": "4763-1844-9699-8031",
             "creditCardExpirationMonth": 7,
             "creditCardExpirationYear": 2039,
-            "creditCardCvv": 488
-        }
+            "creditCardCvv": 488,
+        },
     },
     {
         "email": "jack@example.com",
@@ -172,15 +172,15 @@ people = [
             "zipCode": 94103,
             "city": "San Francisco",
             "state": "CA",
-            "country": "United States"
+            "country": "United States",
         },
         "userCurrency": "USD",
         "creditCard": {
             "creditCardNumber": "4929-6495-8333-3657",
             "creditCardExpirationMonth": 8,
             "creditCardExpirationYear": 2039,
-            "creditCardCvv": 159
-        }
+            "creditCardCvv": 159,
+        },
     },
     {
         "email": "moore@example.com",
@@ -189,16 +189,16 @@ people = [
             "zipCode": 95054,
             "city": "Santa Clara",
             "state": "CA",
-            "country": "United States"
+            "country": "United States",
         },
         "userCurrency": "USD",
         "creditCard": {
             "creditCardNumber": "4485-4803-8707-3547",
             "creditCardExpirationMonth": 9,
             "creditCardExpirationYear": 2039,
-            "creditCardCvv": 682
-        }
-    }
+            "creditCardCvv": 682,
+        },
+    },
 ]
 
 
@@ -214,6 +214,22 @@ class WebsiteUser(HttpUser):
         self.client.get("/api/products/" + random.choice(products))
 
     @task(3)
+    def get_recommendations(self):
+        user = str(uuid.uuid1())
+        params = {
+            "productIds": [random.choice(products)],
+            "sessionId": user,
+        }
+        self.client.get("/api/recommendations/", params=params)
+
+    @task(3)
+    def get_ads(self):
+        params = {
+            "productIds": [random.choice(products)],
+        }
+        self.client.get("/api/data/", params=params)
+
+    @task(3)
     def view_cart(self):
         self.client.get("/api/cart")
 
@@ -226,9 +242,9 @@ class WebsiteUser(HttpUser):
         cart_item = {
             "item": {
                 "productId": product,
-                "quantity": random.choice([1, 2, 3, 4, 5, 10])
+                "quantity": random.choice([1, 2, 3, 4, 5, 10]),
             },
-            "userId": user
+            "userId": user,
         }
         self.client.post("/api/cart", json=cart_item)
 
