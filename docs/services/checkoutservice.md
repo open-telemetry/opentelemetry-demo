@@ -3,7 +3,7 @@
 This service is responsible to process a checkout order from the user. The
 checkout service will call many other services in order to process an order.
 
-[Checkout service source](../../src/checkoutservice/)
+[Checkout service source](../../src/checkoutservice/README.md)
 
 ## Traces
 
