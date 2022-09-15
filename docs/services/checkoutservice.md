@@ -55,7 +55,7 @@ as part of the gRPC server creation.
 ```
 
 This service will issue several outgoing gRPC calls, which are all instrumented
-by wrapping the gRPC client with instrumentation  
+by wrapping the gRPC client with instrumentation
 
 ```go
 func createClient(ctx context.Context, svcAddr string) (*grpc.ClientConn, error) {
@@ -103,7 +103,7 @@ Adding a span event without attributes:
 Adding a span event with additional attributes:
 
 ```go
-    span.AddEvent("charged", 
+    span.AddEvent("charged",
         trace.WithAttributes(attribute.String("app.payment.transaction.id", txID)))
 ```
 
