@@ -96,6 +96,13 @@ This document contains the list of manual Span Attributes used throughout the de
 | `app.products.count`        | number | Number of products in catalog         |
 | `app.products_search.count` | number | Number of products returned in search |
 
+## QuoteService
+
+| Name                        | Type   | Description          |
+|-----------------------------|--------|----------------------|
+| `app.quote.items.count`     | number | Total items to ship  |
+| `app.quote.cost.total`      | number | Total shipping quote |
+
 ## RecommendationService
 
 | Name                             | Type   | Description                             |
