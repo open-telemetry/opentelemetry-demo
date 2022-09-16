@@ -302,7 +302,7 @@ services:
   # RecommendationService
   recommendationservice:
     image: ${IMAGE_NAME}:${IMAGE_VERSION}-recommendationservice
-    container_name: recommendationservice
+    container_name: recommendation-service
     build:
       context: ./
       dockerfile: ./src/recommendationservice/Dockerfile
