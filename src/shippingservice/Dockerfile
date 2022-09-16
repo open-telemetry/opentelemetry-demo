@@ -15,7 +15,7 @@ RUN GRPC_HEALTH_PROBE_VERSION=v0.4.7 && \
     wget -qO/bin/grpc_health_probe https://github.com/grpc-ecosystem/grpc-health-probe/releases/download/${GRPC_HEALTH_PROBE_VERSION}/grpc_health_probe-linux-amd64 && \
     chmod +x /bin/grpc_health_probe
 WORKDIR /app
-COPY --from=builder /app/target/release/shippingservice /shippingservice
+COPY --from=builder /app/target/release/shippingservice /app/shippingservice
 
 EXPOSE ${SHIPPING_SERVICE_PORT}
-ENTRYPOINT ["/shippingservice"]
+ENTRYPOINT ["/app/shippingservice"]
