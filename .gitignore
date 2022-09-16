@@ -34,3 +34,4 @@ src/frontend/cypress/videos
 src/frontend/cypress/screenshots
 vendor/
 composer.lock
+.venv
