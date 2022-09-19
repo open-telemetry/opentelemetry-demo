@@ -9,8 +9,6 @@ use reqwest::header::HeaderMap;
 
 use reqwest::Method;
 
-use opentelemetry::{trace::get_active_span, KeyValue};
-
 #[derive(Debug, Default)]
 pub struct Quote {
     pub dollars: i64,
