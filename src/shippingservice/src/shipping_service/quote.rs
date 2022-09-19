@@ -2,7 +2,12 @@ use core::fmt;
 use std::{collections::HashMap, env};
 
 use log::debug;
-use reqwest;
+use opentelemetry::global;
+use opentelemetry::{trace::get_active_span, Context, KeyValue};
+use opentelemetry_http::HeaderInjector;
+use reqwest::header::HeaderMap;
+
+use reqwest::Method;
 
 use opentelemetry::{trace::get_active_span, KeyValue};
 
@@ -47,9 +52,18 @@ async fn request_quote(count: u32) -> Result<f64, Box<dyn std::error::Error>> {
 
     let client = reqwest::Client::new();
 
-    let resp = client
-        .post(quote_service_addr)
+    let req = client.request(Method::POST, quote_service_addr);
+
+    let mut headers = HeaderMap::new();
+
+    let cx = Context::current();
+    global::get_text_map_propagator(|propagator| {
+        propagator.inject_context(&cx, &mut HeaderInjector(&mut headers))
+    });
+
+    let resp = req
         .json(&reqbody)
+        .headers(headers)
         .send()
         .await?
         .text_with_charset("utf-8")
