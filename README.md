@@ -68,7 +68,7 @@ frontend --> productcatalogservice
 frontend --> checkoutservice
 frontend --> currencyservice
 frontend --> recommendationservice --> productcatalogservice
-frontend --> shippingservice --> quoteservice
+frontend --> shippingservice -->|HTTP| quoteservice
 
 productcatalogservice --> |evalFlag| featureflagservice
 
