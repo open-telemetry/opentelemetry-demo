@@ -5,17 +5,6 @@
 - Docker
 - [Docker Compose](https://docs.docker.com/compose/install/#install-compose) v2.0.0+
 
-### Windows Pre-requisites
-
-Run the following shell command to correctly configure file endings:
-
-```shell
-git config --global core.autocrlf input
-```
-
-If you already cloned the repo and are experiencing build issues then delete and
-re-clone the repo after running the command.
-
 ## Clone Repo
 
 - Clone the Webstore Demo repository:
@@ -34,12 +23,16 @@ cd opentelemetry-demo/
 
 ## Run Docker Compose
 
-- Start the demo (it can take ~20min the first time the command is executed as
-all the container images will be built):
+- Start the demo:
 
 ```shell
-docker compose up
+docker compose up --no-build
 ```
+
+**Note:** The `--no-build` flag is used to fetch released docker images from
+[ghcr](http://ghcr.io/open-telemetry/demo) instead of building from source.
+Removing the `--no-build` command line option will rebuild all images from
+source. It may take more than 20 minutes to build if the flag is omitted.
 
 ## Verify the Webstore & the Telemetry
 

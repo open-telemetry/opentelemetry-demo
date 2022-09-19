@@ -29,8 +29,8 @@ This repo is a work in progress. If you'd like to help, check out our
 ## Architecture
 
 **Online Boutique** is composed of microservices written in different programming
-languages that talk to each other over gRPC. Plus one Load Generator which uses
-[Locust](https://locust.io/) to fake user traffic.
+languages that talk to each other over gRPC and HTTP; and a load generator which
+uses [Locust](https://locust.io/) to fake user traffic.
 
 ```mermaid
 graph TD
@@ -57,7 +57,7 @@ loadgenerator -->|HTTP| frontend
 checkoutservice --> cartservice --> cache
 checkoutservice --> productcatalogservice
 checkoutservice --> currencyservice
-checkoutservice --> emailservice
+checkoutservice -->|HTTP| emailservice
 checkoutservice --> paymentservice
 checkoutservice --> shippingservice
 
@@ -158,6 +158,7 @@ In case you need to run a specific suite of tests you can execute
 - [Datadog](https://github.com/DataDog/opentelemetry-demo-webstore)
 - [Honeycomb.io](https://github.com/honeycombio/opentelemetry-demo-webstore)
 - [Lightstep](https://github.com/lightstep/opentelemetry-demo-webstore)
+- [New Relic](https://github.com/newrelic-forks/opentelemetry-demo)
 
 ## Contributing
 
