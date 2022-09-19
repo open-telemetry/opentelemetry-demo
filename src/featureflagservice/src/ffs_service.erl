@@ -10,6 +10,8 @@
 
 -include_lib("grpcbox/include/grpcbox.hrl").
 
+-include_lib("opentelemetry_api/include/otel_tracer.hrl").
+
 -spec get_flag(ctx:t(), ffs_demo_pb:get_flag_request()) ->
     {ok, ffs_demo_pb:get_flag_response(), ctx:t()} | grpcbox_stream:grpc_error_response().
 get_flag(Ctx, #{name := Name}) ->
@@ -22,6 +24,8 @@ get_flag(Ctx, #{name := Name}) ->
           inserted_at := CreatedAt,
           updated_at := UpdatedAt
          } ->
+            ?set_attribute('app.featureflag.name', Name),
+            ?set_attribute('app.featureflag.enabled', Enabled),
             {ok, Epoch} = 'Elixir.NaiveDateTime':from_erl({{1970, 1, 1}, {0, 0, 0}}),
             CreatedAtSeconds = 'Elixir.NaiveDateTime':diff(CreatedAt, Epoch),
             UpdatedAtSeconds = 'Elixir.NaiveDateTime':diff(UpdatedAt, Epoch),
