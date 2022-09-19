@@ -375,7 +375,7 @@ services:
       - POSTGRES_PASSWORD=ffs
     logging: *logging
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready"]
+      test: ["CMD-SHELL", "pg_isready -d ffs -U ffs"]
       interval: 10s
       timeout: 5s
       retries: 5
