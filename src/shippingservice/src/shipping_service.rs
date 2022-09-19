@@ -1,5 +1,7 @@
-use opentelemetry::trace::{get_active_span, mark_span_as_active, Span, Tracer};
-use opentelemetry::{global, propagation::Extractor, KeyValue};
+use opentelemetry::{global, trace::{Span}, propagation::Extractor, Context, KeyValue};
+use opentelemetry_api::{
+    trace::{FutureExt, TraceContextExt, Tracer}
+};
 use shop::shipping_service_server::ShippingService;
 use shop::{GetQuoteRequest, GetQuoteResponse, Money, ShipOrderRequest, ShipOrderResponse};
 use tonic::{Request, Response, Status};
@@ -61,14 +63,18 @@ impl ShippingService for ShippingServer {
         // (although now everything is assumed to be the same price)
         // check out the create_quote_from_count method to see how we use the span created here
         let tracer = global::tracer("shippingservice/get-quote");
-        let span = tracer.start_with_context("get-quote", &parent_cx);
-        let _guard = mark_span_as_active(span);
+        let mut span = tracer.start_with_context("get-quote", &parent_cx);
 
-        get_active_span(|span| {
-            span.add_event("Processing get quote request".to_string(), vec![]);
-        });
+        span.add_event("Processing get quote request".to_string(), vec![]);
 
-        let q = create_quote_from_count(itemct);
+        let q = match create_quote_from_count(itemct)
+            .with_context(Context::current_with_span(span))
+            .await
+        {
+            Ok(quote) => quote,
+            Err(status) => return Err(status),
+        };
+
         let reply = GetQuoteResponse {
             cost_usd: Some(Money {
                 currency_code: "USD".into(),
@@ -77,13 +83,6 @@ impl ShippingService for ShippingServer {
             }),
         };
         info!("Sending Quote: {}", q);
-
-        get_active_span(|span| {
-            span.add_event(
-                "Get quote request completed, response sent back".to_string(),
-                vec![],
-            );
-        });
 
         Ok(Response::new(reply))
     }
