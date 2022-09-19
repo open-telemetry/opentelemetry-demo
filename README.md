@@ -46,6 +46,7 @@ frontend(Frontend):::javascript
 loadgenerator([Load Generator]):::python
 paymentservice(Payment Service):::javascript
 productcatalogservice(ProductCatalog Service):::golang
+quoteservice(Quote Service):::php
 recommendationservice(Recommendation Service):::python
 shippingservice(Shipping Service):::rust
 featureflagservice(Feature Flag Service):::erlang
@@ -67,7 +68,7 @@ frontend --> productcatalogservice
 frontend --> checkoutservice
 frontend --> currencyservice
 frontend --> recommendationservice --> productcatalogservice
-frontend --> shippingservice
+frontend --> shippingservice -->|HTTP| quoteservice
 
 productcatalogservice --> |evalFlag| featureflagservice
 
@@ -100,6 +101,7 @@ subgraph Service Legend
   javascriptsvc(JavaScript):::javascript
   rustsvc(Rust):::rust
   erlangsvc(Erlang/Elixir):::erlang
+  phpsvc(PHP):::php
 end
 
 classDef java fill:#b07219,color:white;
