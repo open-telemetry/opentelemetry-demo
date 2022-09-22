@@ -1,6 +1,13 @@
 use core::fmt;
+use std::{collections::HashMap, env};
 
-use opentelemetry::{trace::get_active_span, KeyValue};
+use log::debug;
+use opentelemetry::global;
+use opentelemetry::{trace::get_active_span, Context, KeyValue};
+use opentelemetry_http::HeaderInjector;
+use reqwest::header::HeaderMap;
+
+use reqwest::Method;
 
 #[derive(Debug, Default)]
 pub struct Quote {
@@ -9,18 +16,63 @@ pub struct Quote {
 }
 
 // TODO: Check product catalog for price on each item (will likley need item ID)
-pub fn create_quote_from_count(count: u32) -> Quote {
-    let f = if count == 0 {
-        0.0
-    } else {
-        8.99 * (count as f64)
+pub async fn create_quote_from_count(count: u32) -> Result<Quote, tonic::Status> {
+    let f = match request_quote(count).await {
+        Ok(float) => float,
+        Err(err) => {
+            let msg = format!("{}", err);
+            return Err(tonic::Status::unknown(msg));
+        }
     };
-    get_active_span(|span| {
+    
+    Ok(get_active_span(|span| {
         let q = create_quote_from_float(f);
+        span.add_event(
+            "Received Quote".to_string(),
+            vec![KeyValue::new("app.shipping.cost.total", format!("{}", q))],
+        );
         span.set_attribute(KeyValue::new("app.shipping.items.count", count as i64));
         span.set_attribute(KeyValue::new("app.shipping.cost.total", format!("{}", q)));
         q
-    })
+    }))
+}
+
+async fn request_quote(count: u32) -> Result<f64, Box<dyn std::error::Error>> {
+    // TODO: better testing here and default quote_service_addr
+    let quote_service_addr: String = format!(
+        "{}{}",
+        env::var("QUOTE_SERVICE_ADDR").expect("$QUOTE_SERVICE_ADDR is not set"),
+        "/getquote"
+    );
+
+    let mut reqbody = HashMap::new();
+    reqbody.insert("numberOfItems", count);
+
+    let client = reqwest::Client::new();
+
+    let req = client.request(Method::POST, quote_service_addr);
+
+    let mut headers = HeaderMap::new();
+
+    let cx = Context::current();
+    global::get_text_map_propagator(|propagator| {
+        propagator.inject_context(&cx, &mut HeaderInjector(&mut headers))
+    });
+
+    let resp = req
+        .json(&reqbody)
+        .headers(headers)
+        .send()
+        .await?
+        .text_with_charset("utf-8")
+        .await?;
+
+    debug!("{:?}", resp);
+
+    match resp.parse::<f64>() {
+        Ok(f) => Ok(f),
+        Err(error) => Err(Box::new(error)),
+    }
 }
 
 pub fn create_quote_from_float(value: f64) -> Quote {
