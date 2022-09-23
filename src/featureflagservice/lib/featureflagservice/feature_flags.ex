@@ -4,6 +4,9 @@ defmodule Featureflagservice.FeatureFlags do
   """
 
   import Ecto.Query, warn: false
+
+  require OpenTelemetry.Tracer
+
   alias Featureflagservice.Repo
 
   alias Featureflagservice.FeatureFlags.FeatureFlag
@@ -64,9 +67,17 @@ defmodule Featureflagservice.FeatureFlags do
 
   """
   def create_feature_flag(attrs \\ %{}) do
-    %FeatureFlag{}
-    |> FeatureFlag.changeset(attrs)
-    |> Repo.insert()
+    {function_name, arity} = __ENV__.function
+    OpenTelemetry.Tracer.with_span "featureflagservice.featureflags.#{function_name}/#{arity}" do
+      OpenTelemetry.Tracer.set_attributes(%{
+        "app.featureflag.name" => attrs["name"],
+        "app.featureflag.description" => attrs["description"],
+        "app.featureflag.enabled" => attrs["enabled"]
+      })
+      %FeatureFlag{}
+      |> FeatureFlag.changeset(attrs)
+      |> Repo.insert()
+    end
   end
 
   @doc """
