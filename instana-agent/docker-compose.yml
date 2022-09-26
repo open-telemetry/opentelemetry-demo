@@ -5,12 +5,7 @@ services:
     container_name: instana-agent
     pid: "host"
     privileged: true
-    # network_mode: host
-    networks: 
-      - opentelemetry-demo
-    expose:
-      - "42699"
-      - "4317"
+    network_mode: host
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
       - /dev:/dev
@@ -34,6 +29,3 @@ services:
       - HTTP_PROXY=${http_proxy}
       - HTTPS_PROXY=${https_proxy}
       - NO_PROXY=${no_proxy}
-networks:
-  opentelemetry-demo:
-    external: true

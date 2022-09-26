@@ -41,6 +41,8 @@ services:
       - "16686:16686"                    # Jaeger UI
       - "4317"                           # OTLP gRPC default port
     logging: *logging
+    environment:
+      - INSTANA_SERVICE_NAME=jaeger
 
   # Collector
   otelcol:
@@ -64,6 +66,7 @@ services:
       - HTTP_PROXY=${http_proxy}
       - HTTPS_PROXY=${https_proxy}
       - NO_PROXY=jaeger,${no_proxy}
+      - INSTANA_SERVICE_NAME=otelcol
     depends_on:
       - jaeger
     logging: *logging
@@ -80,6 +83,8 @@ services:
     ports:
       - "${REDIS_PORT}"
     logging: *logging
+    environment:
+      - INSTANA_SERVICE_NAME=redis-cart
 
   # AdService
   adservice:
@@ -744,6 +749,7 @@ services:
       - QUOTE_SERVICE_PORT
       - OTEL_SERVICE_NAME=quoteservice
       - INSTANA_SERVICE_NAME=quoteservice
+      - INSTANA_PROCESS_NAME=php
       # - OTEL_EXPORTER_OTLP_ENDPOINT=otelcol:4317
       - OTEL_EXPORTER_OTLP_ENDPOINT=${INSTANA_AGENT_HOST}:4317
       - OTEL_TRACES_SAMPLER=parentbased_always_on
