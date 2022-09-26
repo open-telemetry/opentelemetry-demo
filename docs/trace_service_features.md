@@ -13,10 +13,10 @@ Emoji Legend
 | Checkout        | Go              | :100:                     | :100:                | :100:                | :no_bell:               | :no_bell:  | :no_bell: |
 | Currency        | C++             | :no_bell:                 | :100:                | :100:                | :100:                   | :no_bell:  | :no_bell: |
 | Email           | Ruby            | :100:                     | :100:                | :100:                | :no_bell:               | :no_bell:  | :no_bell: |
-| Feature Flag    | Erlang / Elixir | :100:                     | :construction:       | :construction:       | :no_bell:               | :no_bell:  | :no_bell: |
+| Feature Flag    | Erlang / Elixir | :100:                     | :100:                | :100:                | :no_bell:               | :no_bell:  | :no_bell: |
 | Frontend        | JavaScript      | :100:                     | :100:                | :100:                | :no_bell:               | :100:      | :100:     |
 | Payment         | JavaScript      | :100:                     | :100:                | :100:                | :no_bell:               | :no_bell:  | :100:     |
-| Product Catalog | Go              | :100:                     | :construction:       | :100:                | :no_bell:               | :no_bell:  | :no_bell: |
+| Product Catalog | Go              | :100:                     | :no_bell:            | :100:                | :no_bell:               | :no_bell:  | :no_bell: |
 | Quote Service   | PHP             | :100:                     | :100:                | :100:                | :no_bell:               | :no_bell:  | :no_bell: |
 | Recommendation  | Python          | :100:                     | :100:                | :100:                | :no_bell:               | :no_bell:  | :no_bell: |
 | Shipping        | Rust            | :no_bell:                 | :100:                | :100:                | :100:                   | :no_bell:  | :no_bell: |

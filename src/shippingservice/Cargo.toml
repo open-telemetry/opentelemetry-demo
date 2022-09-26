@@ -11,13 +11,16 @@ path = "src/main.rs"
 dockerproto = [] # compile in docker or not
 
 [dependencies]
-tonic = "0.7"
-tonic-health = "0.6.0"
-prost = "0.10"
-prost-types = "0.10"
+tonic = "0.8"
+tonic-health = "0.7.1"
+reqwest = { version = "0.11", default-features = false, features = ["json"] }
+prost = "0.11"
+prost-types = "0.11"
 tokio = { version = "1.0", features = ["macros", "rt-multi-thread"] }
-opentelemetry = { version = "0.17", features = ["rt-tokio"] }
-opentelemetry-otlp = "0.10"
+opentelemetry = { version = "0.18", features = ["rt-tokio", "trace"] }
+opentelemetry_api = { version = "0.18" }
+opentelemetry-http = "0.7.0"
+opentelemetry-otlp = "0.11.0"
 log = "0.4.17"
 simplelog = "0.12"
 
@@ -30,4 +33,4 @@ features = [
 ]
 
 [build-dependencies]
-tonic-build = "0.7"
+tonic-build = "0.8"
