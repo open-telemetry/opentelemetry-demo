@@ -67,7 +67,7 @@ be sure to the span's status accordingly. You can see this in the
 
 ```javascript
     span.recordException(err)
-    span.setStatus({ code: opentelemetry.SpanStatusCode.ERROR })    
+    span.setStatus({ code: opentelemetry.SpanStatusCode.ERROR })
 ```
 
 ## Metrics
