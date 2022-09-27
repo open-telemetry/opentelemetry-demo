@@ -14,7 +14,7 @@ The OpenTelemetry SDK is initialized from `main` using the `initTracerProvider`
 function.
 
 ```go
-func InitTracerProvider() *sdktrace.TracerProvider {
+func initTracerProvider() *sdktrace.TracerProvider {
     ctx := context.Background()
 
     exporter, err := otlptracegrpc.New(ctx)
@@ -28,7 +28,7 @@ func InitTracerProvider() *sdktrace.TracerProvider {
 }
 ```
 
-You should call `TraceProvider.shutdown()` when your service is shutdown to
+You should call `TraceProvider.Shutdown()` when your service is shutdown to
 ensure all spans are exported. This service makes that call as part of a
 deferred function in main
 
