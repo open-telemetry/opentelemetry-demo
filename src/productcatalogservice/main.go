@@ -88,7 +88,7 @@ func main() {
 		log.Fatalf("TCP Listen: %v", err)
 	}
 
-	var srv *grpc.Server = grpc.NewServer(
+	srv := grpc.NewServer(
 		grpc.UnaryInterceptor(otelgrpc.UnaryServerInterceptor()),
 		grpc.StreamInterceptor(otelgrpc.StreamServerInterceptor()),
 	)
