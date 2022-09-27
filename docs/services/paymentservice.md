@@ -13,7 +13,7 @@ application to initialize the SDK and auto-instrumentation. When initializing
 the OpenTelemetry NodeJS SDK, you optionally specify which auto-instrumentation
 libraries to leverage, or make use of the `getNodeAutoInstrumentations()`
 function which includes most popular frameworks. The `tracing.js` contains all
-code required to initalize the SDK and auto-instrumentation based on standard
+code required to initialize the SDK and auto-instrumentation based on standard
 OpenTelemetry environment variables for OTLP export, resource attributes, and
 service name.
 
@@ -62,7 +62,7 @@ the span as an anonymous object (map) for the attribute key/values pair.
 
 You can use the span object's `recordExcpetion` function to create a span event
 with the full stack trace of a handled error. When recording an exception also
-be sure to the the span's status accordingly. You can see this in the
+be sure to the span's status accordingly. You can see this in the
 `chargeServiceHandler` function
 
 ```javascript
@@ -81,7 +81,7 @@ TBD
 ## Baggage
 
 OpenTelemetry Baggage is leveraged in this service to check if the request is
-synthetic (from the loadgenerator). Synthetic requests will not be charged,
+synthetic (from the load generator). Synthetic requests will not be charged,
 which is indicated with a span attribute. The `charge.js` file which does the
 actual payment processing, has logic to check the baggage.
 
