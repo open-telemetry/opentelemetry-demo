@@ -18,10 +18,10 @@ ENTRYPOINT [ "opentelemetry-instrument", "python", "recommendation_server.py" ]
 
 ## Traces
 
-### Initialize trace provider
+### Initialize tracer provider
 
 The OpenTelemetry SDK is initialized in the `__main__` code block. This code
-will create a Trace Provider, and establish a Span Processor to use. Export
+will create a tracer provider, and establish a Span Processor to use. Export
 endpoints, resource attributes, and service name are automatically set by the
 OpenTelemetry auto instrumentor based on environment variables.
 
