@@ -7,7 +7,7 @@ checkout service will call many other services in order to process an order.
 
 ## Traces
 
-### Initialize trace provider
+### Initialize tracer provider
 
 The OpenTelemetry SDK is initialized from `main` using the `initTracerProvider`
 function.
@@ -29,7 +29,7 @@ func initTracerProvider() *sdktrace.TracerProvider {
 }
 ```
 
-You should call `TraceProvider.shutdown()` when your service is shutdown to
+You should call `TracerProvider.Shutdown()` when your service is shutdown to
 ensure all spans are exported. This service makes that call as part of a
 deferred function in main
 
