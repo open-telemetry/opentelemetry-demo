@@ -93,3 +93,5 @@ significant modifications will be credited to OpenTelemetry Authors.
 ([#345](https://github.com/open-telemetry/opentelemetry-demo/pull/345))
 * Improve initial run time, without a build
 ([#362](https://github.com/open-telemetry/opentelemetry-demo/pull/362))
+* Add custom span and custom span attributes for Feature Flag Service
+([#371](https://github.com/open-telemetry/opentelemetry-demo/pull/371))

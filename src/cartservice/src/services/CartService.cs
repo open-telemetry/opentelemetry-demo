@@ -41,15 +41,16 @@ namespace cartservice.services
             return Empty;
         }
 
-        public override Task<Cart> GetCart(GetCartRequest request, ServerCallContext context)
+        public async override Task<Cart> GetCart(GetCartRequest request, ServerCallContext context)
         {
             var activity = Activity.Current;
             activity?.SetTag("app.user.id", request.UserId);
             activity?.AddEvent(new("Fetch cart"));
 
-            var cart = _cartStore.GetCartAsync(request.UserId);
+            var cart = await _cartStore.GetCartAsync(request.UserId);
             var totalCart = 0;
-            foreach (CartItem item in cart.Result.Items) {
+            foreach (var item in cart.Items)
+            {
                 totalCart += item.Quantity;
             }
             activity?.SetTag("app.cart.items.count", totalCart);
