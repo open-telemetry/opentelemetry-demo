@@ -6,10 +6,20 @@ This service will send a confirmation email to the user when an order is placed.
 
 ## Initialize SDK
 
+You will need to require the core OpenTelemetry SDK and exporter Ruby gems, as
+well as any gem that will be needed for auto-instrumentation libraries
+(ie: Sinatra)
+
+```ruby
+require "opentelemetry/sdk"
+require "opentelemetry/exporter/otlp"
+require "opentelemetry/instrumentation/sinatra"
+```
+
 The Ruby SDK uses OpenTelemetry standard environment variables to configure
 OTLP export, resource attributes, and service name automatically. When
-initializing the OpenTelemetry SDK you can specify which auto-instrumentation
-libraries to leverage.
+initializing the OpenTelemetry SDK, you will also specify which
+auto-instrumentation libraries to leverage (ie: Sinatra)
 
 ```ruby
 OpenTelemetry::SDK.configure do |c|
