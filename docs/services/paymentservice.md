@@ -60,9 +60,9 @@ the span as an anonymous object (map) for the attribute key/values pair.
 
 ### Span Exceptions and status
 
-You can use the span object's `recordExcpetion` function to create a span event
+You can use the span object's `recordException` function to create a span event
 with the full stack trace of a handled error. When recording an exception also
-be sure to the span's status accordingly. You can see this in the
+be sure to set the span's status accordingly. You can see this in the
 `chargeServiceHandler` function
 
 ```javascript
