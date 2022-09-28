@@ -1,5 +1,6 @@
 import { CypressFields, getElementByField } from '../../utils/Cypress';
-describe('Checkout Flow', () => {
+
+describe.skip('Checkout Flow', () => {
   before(() => {
     cy.intercept('POST', '/api/cart*').as('addToCart');
     cy.intercept('GET', '/api/cart*').as('getCart');

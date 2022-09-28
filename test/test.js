@@ -291,7 +291,7 @@ test("shipping: quote", async (t) => {
 
   const res = await shippingQuote(req);
   t.is(res.costUsd.units, 17);
-  t.is(res.costUsd.nanos, 980000000);
+  t.is(res.costUsd.nanos, 800000000);
 });
 
 test("shipping: empty quote", async (t) => {
