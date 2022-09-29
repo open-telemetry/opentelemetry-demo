@@ -46,7 +46,9 @@ return function (App $app) {
         $payload = json_encode($data);
         $response->getBody()->write($payload);
 
-        $span->addEvent('Quote processed, response sent back');
+        $span->addEvent('Quote processed, response sent back', [
+            'app.quote.cost.total' => $data
+        ]);
 
         return $response
             ->withHeader('Content-Type', 'application/json');
