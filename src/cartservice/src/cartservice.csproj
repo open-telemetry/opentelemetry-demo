@@ -14,6 +14,7 @@
     <PackageReference Include="OpenTelemetry.Instrumentation.GrpcNetClient" Version="1.0.0-rc9.4" />
     <PackageReference Include="OpenTelemetry.Instrumentation.Http" Version="1.0.0-rc9.4" />
     <PackageReference Include="OpenTelemetry.Instrumentation.StackExchangeRedis" Version="1.0.0-rc9.6" />
+    <PackageReference Include="OpenTelemetry.Instrumentation.Runtime" Version="1.0.0" />
   </ItemGroup>
 
   <ItemGroup>

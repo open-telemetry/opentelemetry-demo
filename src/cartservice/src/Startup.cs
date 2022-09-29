@@ -8,6 +8,7 @@ using Microsoft.Extensions.Diagnostics.HealthChecks;
 using Microsoft.Extensions.Hosting;
 using cartservice.cartstore;
 using cartservice.services;
+using OpenTelemetry.Metrics;
 using OpenTelemetry.Trace;
 
 namespace cartservice;
@@ -48,6 +49,10 @@ public class Startup
             .AddGrpcClientInstrumentation()
             .AddHttpClientInstrumentation()
             .AddOtlpExporter());
+
+            services.AddOpenTelemetryMetrics(builder =>
+                builder.AddRuntimeInstrumentation()
+                       .AddOtlpExporter());
 
         services.AddGrpc();
         services.AddGrpcHealthChecks()
