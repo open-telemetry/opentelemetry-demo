@@ -50,10 +50,10 @@ public class Startup
             .AddHttpClientInstrumentation()
             .AddOtlpExporter());
 
-            services.AddOpenTelemetryMetrics(builder =>
-                builder.AddRuntimeInstrumentation()
-                       .AddAspNetCoreInstrumentation()
-                       .AddOtlpExporter());
+        services.AddOpenTelemetryMetrics(builder =>
+            builder.AddRuntimeInstrumentation()
+                    .AddAspNetCoreInstrumentation()
+                    .AddOtlpExporter());
 
         services.AddGrpc();
         services.AddGrpcHealthChecks()
