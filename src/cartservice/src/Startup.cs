@@ -53,7 +53,7 @@ public class Startup
         services.AddOpenTelemetryMetrics(builder =>
             builder.AddRuntimeInstrumentation()
                    .AddAspNetCoreInstrumentation()
-                    .AddOtlpExporter());
+                   .AddOtlpExporter());
 
         services.AddGrpc();
         services.AddGrpcHealthChecks()
