@@ -19,13 +19,14 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
-	"go.opentelemetry.io/otel/attribute"
-	"go.opentelemetry.io/otel/trace"
 	"net"
 	"net/http"
 	"os"
 	"strconv"
 	"time"
+
+	"go.opentelemetry.io/otel/attribute"
+	"go.opentelemetry.io/otel/trace"
 
 	"github.com/google/uuid"
 	"github.com/sirupsen/logrus"
@@ -36,9 +37,13 @@ import (
 
 	"go.opentelemetry.io/contrib/instrumentation/google.golang.org/grpc/otelgrpc"
 	"go.opentelemetry.io/contrib/instrumentation/net/http/otelhttp"
+	"go.opentelemetry.io/contrib/instrumentation/runtime"
 	"go.opentelemetry.io/otel"
+	"go.opentelemetry.io/otel/exporters/otlp/otlpmetric/otlpmetricgrpc"
 	"go.opentelemetry.io/otel/exporters/otlp/otlptrace/otlptracegrpc"
+	"go.opentelemetry.io/otel/metric/global"
 	"go.opentelemetry.io/otel/propagation"
+	sdkmetric "go.opentelemetry.io/otel/sdk/metric"
 	sdktrace "go.opentelemetry.io/otel/sdk/trace"
 
 	pb "github.com/open-telemetry/opentelemetry-demo/src/checkoutservice/genproto/hipstershop"
@@ -68,7 +73,7 @@ func initTracerProvider() *sdktrace.TracerProvider {
 
 	exporter, err := otlptracegrpc.New(ctx)
 	if err != nil {
-		log.Fatal(err)
+		log.Fatalf("new otlp trace grpc exporter failed: %v", err)
 	}
 	tp := sdktrace.NewTracerProvider(
 		sdktrace.WithBatcher(exporter),
@@ -76,6 +81,19 @@ func initTracerProvider() *sdktrace.TracerProvider {
 	otel.SetTracerProvider(tp)
 	otel.SetTextMapPropagator(propagation.NewCompositeTextMapPropagator(propagation.TraceContext{}, propagation.Baggage{}))
 	return tp
+}
+
+func initMeterProvider() *sdkmetric.MeterProvider {
+	ctx := context.Background()
+
+	exporter, err := otlpmetricgrpc.New(ctx)
+	if err != nil {
+		log.Fatalf("new otlp metric grpc exporter failed: %v", err)
+	}
+
+	mp := sdkmetric.NewMeterProvider(sdkmetric.WithReader(sdkmetric.NewPeriodicReader(exporter)))
+	global.SetMeterProvider(mp)
+	return mp
 }
 
 type checkoutService struct {
@@ -98,6 +116,18 @@ func main() {
 			log.Printf("Error shutting down tracer provider: %v", err)
 		}
 	}()
+
+	mp := initMeterProvider()
+	defer func() {
+		if err := mp.Shutdown(context.Background()); err != nil {
+			log.Printf("Error shutting down meter provider: %v", err)
+		}
+	}()
+
+	err := runtime.Start(runtime.WithMinimumReadMemStatsInterval(time.Second))
+	if err != nil {
+		log.Fatal(err)
+	}
 
 	tracer = tp.Tracer("checkoutservice")
 
