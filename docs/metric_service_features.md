@@ -9,7 +9,7 @@ Emoji Legend
 | Service         | Language        | Instrumentation Libraries | Manual Metric Creation | Collector Agent Metric Transformation | Push Metrics   | SLO Metrics    | Multiple Manual Metric Instruments |
 |-----------------|-----------------|---------------------------|------------------------|---------------------------------------|----------------|----------------|------------------------------------|
 | Ad              | Java            | :construction:            | :construction:         | :construction:                        | :construction: | :construction: | :construction:                     |
-| Cart            | .NET            | :construction:            | :construction:         | :construction:                        | :construction: | :construction: | :construction:                     |
+| Cart            | .NET            | :100:                     | :construction:         | :construction:                        | :construction: | :construction: | :construction:                     |
 | Checkout        | Go              | :construction:            | :construction:         | :construction:                        | :construction: | :construction: | :construction:                     |
 | Currency        | C++             | :construction:            | :construction:         | :construction:                        | :construction: | :construction: | :construction:                     |
 | Email           | Ruby            | :construction:            | :construction:         | :construction:                        | :construction: | :construction: | :construction:                     |
