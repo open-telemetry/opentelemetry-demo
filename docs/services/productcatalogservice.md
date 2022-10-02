@@ -1,9 +1,10 @@
-# checkout service
+# productcatalog service
 
-This service is responsible to process a checkout order from the user. The
-checkout service will call many other services in order to process an order.
+This service is responsible to return information about products. The service
+can be used to get all products, search for specific products, or return details
+about any single product.
 
-[Checkout service source](../../src/checkoutservice/)
+[Productcatalog service source](../../src/productcatalogservice/)
 
 ## Traces
 
@@ -18,11 +19,9 @@ func initTracerProvider() *sdktrace.TracerProvider {
 
     exporter, err := otlptracegrpc.New(ctx)
     if err != nil {
-        log.Fatal(err)
+        log.Fatalf("OTLP Trace gRPC Creation: %v", err)
     }
-    tp := sdktrace.NewTracerProvider(
-        sdktrace.WithBatcher(exporter),
-    )
+    tp := sdktrace.NewTracerProvider(sdktrace.WithBatcher(exporter))
     otel.SetTracerProvider(tp)
     otel.SetTextMapPropagator(propagation.NewCompositeTextMapPropagator(propagation.TraceContext{}, propagation.Baggage{}))
     return tp
@@ -34,10 +33,10 @@ ensure all spans are exported. This service makes that call as part of a
 deferred function in main
 
 ```go
-    tp := initTracerProvider()
+    tp := InitTracerProvider()
     defer func() {
         if err := tp.Shutdown(context.Background()); err != nil {
-            log.Printf("Error shutting down tracer provider: %v", err)
+            log.Fatalf("Tracer Provider Shutdown: %v", err)
         }
     }()
 ```
@@ -48,14 +47,14 @@ This service receives gRPC requests, which are instrumented in the main function
 as part of the gRPC server creation.
 
 ```go
-    var srv = grpc.NewServer(
+    srv := grpc.NewServer(
         grpc.UnaryInterceptor(otelgrpc.UnaryServerInterceptor()),
         grpc.StreamInterceptor(otelgrpc.StreamServerInterceptor()),
     )
 ```
 
-This service will issue several outgoing gRPC calls, which are all instrumented
-by wrapping the gRPC client with instrumentation
+This service will issue outgoing gRPC calls, which are all instrumented by
+wrapping the gRPC client with instrumentation
 
 ```go
 func createClient(ctx context.Context, svcAddr string) (*grpc.ClientConn, error) {
@@ -77,34 +76,34 @@ context.
 ```
 
 Adding attributes to a span is accomplished using `SetAttributes` on the span
-object. In the `PlaceOrder` function several attributes are added to the span.
+object. In the `GetProduct` function an attribute for the product id is added
+to the span.
 
 ```go
     span.SetAttributes(
-        attribute.String("app.order.id", orderID.String()), shippingTrackingAttribute,
-        attribute.Float64("app.shipping.amount", shippingCostFloat),
-        attribute.Float64("app.order.amount", totalPriceFloat),
-        attribute.Int("app.order.items.count", len(prep.orderItems)),
+        attribute.String("app.product.id", req.Id),
     )
+```
+
+### Setting span status
+
+This service can catch and handle an error condition based on a feature flag.
+In an error condition, the span status is set accordingly using `SetStatus` on
+the span object. You can see this in the `GetProduct` function.
+
+```go
+    msg := fmt.Sprintf("Error: ProductCatalogService Fail Feature Flag Enabled")
+    span.SetStatus(otelcodes.Error, msg)
 ```
 
 ### Add span events
 
 Adding span events is accomplished using `AddEvent` on the span object. In the
-`PlaceOrder` function several span events are added. Some events have
-additional attributes, others do not.
-
-Adding a span event without attributes:
+`GetProduct` function a span event is added when an error condition is handled,
+or when a product is successfully found.
 
 ```go
-    span.AddEvent("prepared")
-```
-
-Adding a span event with additional attributes:
-
-```go
-    span.AddEvent("charged",
-        trace.WithAttributes(attribute.String("app.payment.transaction.id", txID)))
+    span.AddEvent(msg)
 ```
 
 ## Metrics

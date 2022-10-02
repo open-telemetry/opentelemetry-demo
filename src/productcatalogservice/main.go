@@ -55,7 +55,7 @@ func init() {
 	catalog = readCatalogFile()
 }
 
-func InitTracerProvider() *sdktrace.TracerProvider {
+func initTracerProvider() *sdktrace.TracerProvider {
 	ctx := context.Background()
 
 	exporter, err := otlptracegrpc.New(ctx)
@@ -69,7 +69,7 @@ func InitTracerProvider() *sdktrace.TracerProvider {
 }
 
 func main() {
-	tp := InitTracerProvider()
+	tp := initTracerProvider()
 	defer func() {
 		if err := tp.Shutdown(context.Background()); err != nil {
 			log.Fatalf("Tracer Provider Shutdown: %v", err)
@@ -88,7 +88,7 @@ func main() {
 		log.Fatalf("TCP Listen: %v", err)
 	}
 
-	var srv *grpc.Server = grpc.NewServer(
+	srv := grpc.NewServer(
 		grpc.UnaryInterceptor(otelgrpc.UnaryServerInterceptor()),
 		grpc.StreamInterceptor(otelgrpc.StreamServerInterceptor()),
 	)
