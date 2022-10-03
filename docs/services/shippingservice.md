@@ -72,7 +72,7 @@ to another closure where we call `quoteservice`.
             return Err(tonic::Status::unknown(msg));
         }
     };
-    
+
     Ok(get_active_span(|span| {
         let q = create_quote_from_float(f);
         span.add_event(
@@ -99,7 +99,7 @@ Provided you are on the same thread, or in a context passed from a
 span-owning thread, or a `ContextGuard` is in scope, you can get
 an active span with `get_active_span`. You can find examples of all of these
 in the demo, with context available in `shipping_service` for sync/async runtime.
-You should consult `quote.rs` and/or the exmaple above to see
+You should consult `quote.rs` and/or the example above to see
 context-passed-to-async runtime.
 
 See below for a snippet from `shiporder` that holds context and a span in scope.
