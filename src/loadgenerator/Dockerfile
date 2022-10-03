@@ -19,5 +19,5 @@ WORKDIR /usr/src/app/
 COPY ./src/loadgenerator/ ./
 
 RUN pip install --prefix="/usr/local/" -r ./requirements.txt
-
+RUN pip install --prefix="/usr/local" instana
 ENTRYPOINT locust

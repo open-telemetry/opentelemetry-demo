@@ -897,6 +897,9 @@ services:
       - OTEL_EXPORTER_OTLP_TRACES_ENDPOINT
       - OTEL_SERVICE_NAME=loadgenerator
       - INSTANA_SERVICE_NAME=loadgenerator
+      - INSTANA_DISABLE_AUTO_INSTR=true
+      - INSTANA_AGENT_HOST=${INSTANA_AGENT_HOST}
+      - INSTANA_AGENT_PORT=${INSTANA_AGENT_PORT}
       - PROTOCOL_BUFFERS_PYTHON_IMPLEMENTATION=python
     depends_on:
       - frontend

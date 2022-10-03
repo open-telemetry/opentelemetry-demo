@@ -6,6 +6,7 @@ services:
     pid: "host"
     privileged: true
     network_mode: host
+    ipc: host
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
       - /dev:/dev
