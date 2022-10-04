@@ -52,7 +52,7 @@ when replicating from these samples.
 
 This service receives HTTP requests, which are instrumented in the middleware.
 
-The middleware starts root span, and can pass reference in the same thread down
+The root span is started and passed down as reference in the same thread
 to another closure where we call `quoteservice`.
 
 ```rust
