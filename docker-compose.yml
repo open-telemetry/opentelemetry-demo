@@ -244,6 +244,7 @@ services:
       - productcatalogservice
       - recommendationservice
       - shippingservice
+      - quoteservice
 
   # PaymentService
   paymentservice:
