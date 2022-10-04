@@ -3,8 +3,8 @@
 This service is responsible for providing shipping information including pricing
 and tracking information, when requested from Checkout Service.
 
-Shipping service is built primarily with Tonic, Reqwest, and opentelemtry. Other
-sub-dependencies are included in `Cargo.toml`.
+Shipping service is built primarily with Tonic, Reqwest, and OpenTelemetry
+Libraries/Components. Other sub-dependencies are included in `Cargo.toml`.
 
 Depending on your framework and runtime, you may consider consulting
 [rust docs](https://opentelemetry.io/docs/instrumentation/rust/) to supplement.
@@ -89,8 +89,8 @@ Note that the span cannot be used after calling an async method in the
 originating function.
 
 You may also notice the `attributes` set on the span in this example, and
-`events` propogated similarly. With any valid `span` pointer (attatched to
-context) the [opentelemetry api](https://docs.rs/opentelemetry/0.17.0/opentelemetry/trace/struct.SpanRef.html)
+`events` propogated similarly. With any valid `span` pointer (attached to
+context) the [OpenTelemetry API](https://docs.rs/opentelemetry/0.17.0/opentelemetry/trace/struct.SpanRef.html)
 will work.
 
 ### Add span attributes
