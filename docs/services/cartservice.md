@@ -7,28 +7,28 @@ with a Redis caching service for fast access to shopping cart data.
 
 ## SDK Initialization
 
-he OpenTelemetry dotnet SDK should be initialized in your application's
+The OpenTelemetry .NET SDK should be initialized in your application's
 `Startup.cs` as part of the `ConfigureServices` function. When initializing,
-optionally specify which auto-instrumentation libraries to leverage. The SDK is
-initialized using a builder pattern, where you add each auto-instrumentation
+optionally specify which instrumentation libraries to leverage. The SDK is
+initialized using a builder pattern, where you add each instrumentation library
 (with options), and the OTLP Exporter to be used. The SDK will make use of
 OpenTelemetry standard environment variables to configure the export endpoints,
 resource attributes, and service name.
 
 ```cs
-        services.AddOpenTelemetryTracing((builder) => builder
-            .AddRedisInstrumentation(
-                cartStore.GetConnection(),
-                options => options.SetVerboseDatabaseStatements = true)
-            .AddAspNetCoreInstrumentation()
-            .AddGrpcClientInstrumentation()
-            .AddHttpClientInstrumentation()
-            .AddOtlpExporter());
+    services.AddOpenTelemetryTracing((builder) => builder
+        .AddRedisInstrumentation(
+            cartStore.GetConnection(),
+            options => options.SetVerboseDatabaseStatements = true)
+        .AddAspNetCoreInstrumentation()
+        .AddGrpcClientInstrumentation()
+        .AddHttpClientInstrumentation()
+        .AddOtlpExporter());
 ```
 
 ## Traces
 
-OpenTelemetry Tracing in dotnet, leverages the existing `Activity` classes as
+OpenTelemetry Tracing in .NET, leverages the existing `Activity` classes as
 part of the core runtime.
 
 ### Add attributes to auto-instrumented spans
