@@ -48,9 +48,9 @@ Be mindful of async runtime, [context guards](https://docs.rs/opentelemetry/late
 and inability to [move and clone `spans`](https://stackoverflow.com/questions/25649423/sending-trait-objects-between-threads-in-rust)
 when replicating from these samples.
 
-### Adding GRPC/HTTP instrumentation
+### Adding gRPC/HTTP instrumentation
 
-This service receives HTTP requests, which are instrumented in the middleware.
+This service receives gRPC requests, which are instrumented in the middleware.
 
 The root span is started and passed down as reference in the same thread
 to another closure where we call `quoteservice`.
