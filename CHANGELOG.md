@@ -95,3 +95,5 @@ significant modifications will be credited to OpenTelemetry Authors.
 ([#362](https://github.com/open-telemetry/opentelemetry-demo/pull/362))
 * Add custom span and custom span attributes for Feature Flag Service
 ([#371](https://github.com/open-telemetry/opentelemetry-demo/pull/371))
+* Update Checkout Service Go version to 1.19 once OTel Go Metrics require 1.18+
+([#406](https://github.com/open-telemetry/opentelemetry-demo/pull/406))
