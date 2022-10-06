@@ -55,11 +55,11 @@ featureflagstore[(Feature Flag Store<br/>&#40PostgreSQL DB&#41)]
 Internet -->|HTTP| frontend
 loadgenerator -->|HTTP| frontend
 
-checkoutservice -->|gRPC| cartservice --> cache
-checkoutservice -->|gRPC| productcatalogservice
-checkoutservice -->|gRPC| currencyservice
-checkoutservice -->|HTTP| emailservice
-checkoutservice -->|gRPC| paymentservice
+checkoutservice --->|gRPC| cartservice --> cache
+checkoutservice --->|gRPC| productcatalogservice
+checkoutservice --->|gRPC| currencyservice
+checkoutservice --->|HTTP| emailservice
+checkoutservice --->|gRPC| paymentservice
 checkoutservice -->|gRPC| shippingservice
 
 frontend -->|gRPC| adservice
@@ -70,9 +70,9 @@ frontend -->|gRPC| currencyservice
 frontend -->|gRPC| recommendationservice -->|gRPC| productcatalogservice
 frontend -->|gRPC| shippingservice -->|HTTP| quoteservice
 
-productcatalogservice -->|gRPC| featureflagservice (evalFlag)
+productcatalogservice -->|gRPC| featureflagservice
 
-shippingservice -->|gRPC| featureflagservice (evalFlag)
+shippingservice -->|gRPC| featureflagservice
 
 featureflagservice --> featureflagstore
 
