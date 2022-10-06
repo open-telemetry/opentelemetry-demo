@@ -1,13 +1,14 @@
 # Demo Screenshots
 
-- [Webstore](#webstore)
-- [Kubernetes](#jaeger)
+- [Demo Screenshots](#demo-screenshots)
+  - [Webstore](#webstore)
+  - [Jaeger](#jaeger)
 
 ## Webstore
 
 | Home Page                                                                                                         | Checkout Screen                                                                                                    |
 | ----------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------ |
-| [![Screenshot of store homepage](../docs/img/online-boutique-frontend-1.png)](../docs/img/online-boutique-frontend-1.png) | [![Screenshot of checkout screen](../docs/img/online-boutique-frontend-2.png)](../docs/img/online-boutique-frontend-2.png) |
+| [![Screenshot of store homepage](../docs/img/frontend-1.png)](../docs/img/frontend-1.png) | [![Screenshot of checkout screen](../docs/img/frontend-2.png)](../docs/img/frontend-2.png) |
 
 ## Jaeger
 
