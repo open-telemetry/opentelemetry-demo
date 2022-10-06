@@ -1,8 +1,7 @@
 # Demo Screenshots
 
-- [Demo Screenshots](#demo-screenshots)
-  - [Webstore](#webstore)
-  - [Jaeger](#jaeger)
+- [Webstore](#webstore)
+- [Jaeger](#jaeger)
 
 ## Webstore
 
