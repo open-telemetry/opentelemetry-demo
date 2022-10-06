@@ -70,9 +70,9 @@ frontend -->|gRPC| currencyservice
 frontend -->|gRPC| recommendationservice -->|gRPC| productcatalogservice
 frontend -->|gRPC| shippingservice -->|HTTP| quoteservice
 
-productcatalogservice -->|gRPC| |evalFlag| featureflagservice
+productcatalogservice -->|gRPC| featureflagservice (evalFlag)
 
-shippingservice -->|gRPC| |evalFlag| featureflagservice
+shippingservice -->|gRPC| featureflagservice (evalFlag)
 
 featureflagservice --> featureflagstore
 
