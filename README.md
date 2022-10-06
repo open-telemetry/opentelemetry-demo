@@ -45,7 +45,7 @@ emailservice(Email Service):::ruby
 frontend(Frontend):::javascript
 loadgenerator([Load Generator]):::python
 paymentservice(Payment Service):::javascript
-productcatalogservice(ProductCatalog Service):::golang
+productcatalogservice(Product Catalog Service):::golang
 quoteservice(Quote Service):::php
 recommendationservice(Recommendation Service):::python
 shippingservice(Shipping Service):::rust
