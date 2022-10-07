@@ -95,3 +95,17 @@ significant modifications will be credited to OpenTelemetry Authors.
 ([#362](https://github.com/open-telemetry/opentelemetry-demo/pull/362))
 * Add custom span and custom span attributes for Feature Flag Service
 ([#371](https://github.com/open-telemetry/opentelemetry-demo/pull/371))
+* Change Cart Service to be async
+([#372](https://github.com/open-telemetry/opentelemetry-demo/pull/372))
+* Removed Postgres error on startup
+([#378](https://github.com/open-telemetry/opentelemetry-demo/pull/378))
+* Fixed traffic to Ad and Recommendation Service
+([#379](https://github.com/open-telemetry/opentelemetry-demo/pull/379))
+* Add dotnet runtime metrics to the Cart Service
+([#393](https://github.com/open-telemetry/opentelemetry-demo/pull/393))
+* Add dotnet instrumentation libraries to the Cart Service
+([#394](https://github.com/open-telemetry/opentelemetry-demo/pull/394))
+* Fixed Feature Flag Service error on start up
+([#402](https://github.com/open-telemetry/opentelemetry-demo/pull/402))
+* Update Checkout Service Go version to 1.19 once OTel Go Metrics require 1.18+
+([#406](https://github.com/open-telemetry/opentelemetry-demo/pull/406))
