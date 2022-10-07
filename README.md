@@ -157,10 +157,10 @@ In case you need to run a specific suite of tests you can execute
 
 ## Demos featuring Online Boutique
 
-- [Datadog](https://github.com/DataDog/opentelemetry-demo-webstore)
-- [Honeycomb.io](https://github.com/honeycombio/opentelemetry-demo-webstore)
-- [Lightstep](https://github.com/lightstep/opentelemetry-demo-webstore)
-- [New Relic](https://github.com/newrelic-forks/opentelemetry-demo)
+- [Datadog](https://github.com/DataDog/opentelemetry-demo)
+- [Honeycomb.io](https://github.com/honeycombio/opentelemetry-demo)
+- [Lightstep](https://github.com/lightstep/opentelemetry-demo)
+- [New Relic](https://github.com/newrelic/opentelemetry-demo)
 
 ## Contributing
 
