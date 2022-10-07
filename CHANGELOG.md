@@ -108,4 +108,4 @@ significant modifications will be credited to OpenTelemetry Authors.
 * Fixed Feature Flag Service error on start up
 ([#402](https://github.com/open-telemetry/opentelemetry-demo/pull/402))
 * Update Checkout Service Go version to 1.19 once OTel Go Metrics require 1.18+
-([#406](https://github.com/open-telemetry/opentelemetry-demo/pull/406))
+([#409](https://github.com/open-telemetry/opentelemetry-demo/pull/409))
