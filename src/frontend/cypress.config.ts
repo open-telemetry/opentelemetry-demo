@@ -10,7 +10,7 @@ dotenvExpand.expand(myEnv);
 
 const { FRONTEND_ADDR = '', NODE_ENV, FRONTEND_PORT = '8080' } = process.env;
 
-const baseUrl =  NODE_ENV === 'production' ? FRONTEND_ADDR : `http://localhost:${FRONTEND_PORT}`;
+const baseUrl = NODE_ENV === 'production' ? `http://${FRONTEND_ADDR}` : `http://localhost:${FRONTEND_PORT}`;
 
 export default defineConfig({
   env: {

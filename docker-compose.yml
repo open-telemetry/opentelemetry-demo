@@ -200,17 +200,22 @@ services:
 
   # Frontend Tests
   frontendTests:
-    image: cypress/included:10.3.1-typescript
+    image: ${IMAGE_NAME}:${IMAGE_VERSION}-frontend-tests
+    container_name: frontend-tests
+    build:
+      context: ./
+      dockerfile: ./src/frontend/Dockerfile.cypress
     depends_on:
       - frontend
     profiles:
       - tests
     environment:
       - CYPRESS_baseUrl=http://${FRONTEND_ADDR}
+      - FRONTEND_ADDR
       - NODE_ENV=production
-    working_dir: /cypress
     volumes:
-      - ./src/frontend:/cypress
+      - ./src/frontend/cypress/videos:/app/cypress/videos
+      - ./src/frontend/cypress/screenshots:/app/cypress/screenshots
 
   # Integration Tests
   integrationTests:
@@ -241,6 +246,7 @@ services:
       - productcatalogservice
       - recommendationservice
       - shippingservice
+      - quoteservice
 
   # PaymentService
   paymentservice:

@@ -7,9 +7,13 @@ import { useQuery } from 'react-query';
 import ApiGateway from '../gateways/Api.gateway';
 import Banner from '../components/Banner';
 import { CypressFields } from '../utils/Cypress';
+import { useCurrency } from '../providers/Currency.provider';
 
 const Home: NextPage = () => {
-  const { data: productList = [] } = useQuery('products', ApiGateway.listProducts);
+  const { selectedCurrency } = useCurrency();
+  const { data: productList = [] } = useQuery(['products', selectedCurrency], () =>
+    ApiGateway.listProducts(selectedCurrency)
+  );
 
   return (
     <Layout>
