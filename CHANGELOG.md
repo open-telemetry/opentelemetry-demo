@@ -109,3 +109,5 @@ significant modifications will be credited to OpenTelemetry Authors.
 ([#402](https://github.com/open-telemetry/opentelemetry-demo/pull/402))
 * Update Checkout Service Go version to 1.19 once OTel Go Metrics require 1.18+
 ([#409](https://github.com/open-telemetry/opentelemetry-demo/pull/409))
+* Added hero scenario metric to Checkout Service on cache leak
+([#339](https://github.com/open-telemetry/opentelemetry-demo/pull/339))
