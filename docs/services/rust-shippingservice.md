@@ -1,4 +1,4 @@
-# Shipping Service
+# Shipping Service (Rust)
 
 This service is responsible for providing shipping information including pricing
 and tracking information, when requested from Checkout Service.

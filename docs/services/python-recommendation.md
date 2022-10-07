@@ -1,4 +1,4 @@
-# recommendation service
+# Recommendation Service (Python)
 
 This service is responsible to get a list of recommended products for the user
 based on existing product ids the user is browsing.
