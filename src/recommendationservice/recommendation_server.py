@@ -58,19 +58,25 @@ class RecommendationService(demo_pb2_grpc.RecommendationServiceServicer):
 def get_product_list(request_product_ids):
     with tracer.start_as_current_span("get_product_list") as span:
         max_responses = 5
-        # fetch list of products from product catalog stub
+
+        # Formulate the list of characters to list of strings
+        request_product_ids_str = ''.join(request_product_ids)
+        request_product_ids = request_product_ids_str.split(',')
+
+        # Fetch list of products from product catalog stub
         cat_response = product_catalog_stub.ListProducts(demo_pb2.Empty())
         product_ids = [x.id for x in cat_response.products]
         span.set_attribute("app.products.count", len(product_ids))
 
+        # Create a filtered list of products excluding the products received as input
         filtered_products = list(set(product_ids) - set(request_product_ids))
         num_products = len(filtered_products)
         span.set_attribute("app.filtered_products.count", num_products)
-
         num_return = min(max_responses, num_products)
-        # sample list of indicies to return
+
+        # Sample list of indicies to return
         indices = random.sample(range(num_products), num_return)
-        # fetch product ids from indices
+        # Fetch product ids from indices
         prod_list = [filtered_products[i] for i in indices]
         return prod_list
 
