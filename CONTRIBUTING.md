@@ -72,9 +72,8 @@ cd .\src\adservice\
 all the images will be build):
 
 ```shell
-docker compose up
+docker compose up -d
 ```
-
 ### Verify the Webstore & the Telemetry
 
 Once the images are built and containers are started you can access:
@@ -83,6 +82,8 @@ Once the images are built and containers are started you can access:
 - Jaeger: <http://localhost:16686/>
 - Prometheus: <http://localhost:9090/>
 - Grafana: <http://localhost:3000/>
+- Feature Flags UI: <http://localhost:8081/>
+- Load Generator UI: <http://localhost:8089/>
 
 ## Create Your First Pull Request
 
@@ -100,7 +101,7 @@ git clone https://github.com/open-telemetry/opentelemetry-demo.git
 Navigate to the repo root:
 
 ```sh
-cd opentelemetry--demo
+cd opentelemetry-demo
 ```
 
 Add your fork as an origin:
@@ -113,7 +114,11 @@ Check out a new branch, make modifications and push the branch to your fork:
 
 ```sh
 $ git checkout -b feature
-# edit files
+# change files
+# Test your changes locally 
+$ docker compose up -d --build 
+# Go to Webstore, Jaeger or docker container logs etc. as appropriate to make sure your changes are working correctly. 
+$ git add my/changed/files
 $ git commit
 $ git push fork feature
 ```
