@@ -111,3 +111,5 @@ significant modifications will be credited to OpenTelemetry Authors.
 ([#409](https://github.com/open-telemetry/opentelemetry-demo/pull/409))
 * Added hero scenario metric to Checkout Service on cache leak
 ([#339](https://github.com/open-telemetry/opentelemetry-demo/pull/339))
+* Added basic metrics support for recommendation service (Python)
+([#416](https://github.com/open-telemetry/opentelemetry-demo/pull/416))
