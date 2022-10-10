@@ -10,7 +10,7 @@ Emoji Legend
 |-----------------|-----------------|----------------------|------------------------|---------------------------------------|----------------|----------------|------------------------------------|
 | Ad              | Java            | :100:                | :construction:         | :construction:                        | :construction: | :construction: | :construction:                     |
 | Cart            | .NET            | :100:                | :construction:         | :construction:                        | :construction: | :construction: | :construction:                     |
-| Checkout        | Go              | :100:                | :100:                  | :construction:                        | :construction: | :construction: | :construction:                     |
+| Checkout        | Go              | :100:                | :construction:         | :construction:                        | :construction: | :construction: | :construction:                     |
 | Currency        | C++             | :construction:       | :construction:         | :construction:                        | :construction: | :construction: | :construction:                     |
 | Email           | Ruby            | :construction:       | :construction:         | :construction:                        | :construction: | :construction: | :construction:                     |
 | Feature Flag    | Erlang / Elixir | :construction:       | :construction:         | :construction:                        | :construction: | :construction: | :construction:                     |
