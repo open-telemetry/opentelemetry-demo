@@ -1,10 +1,10 @@
-# featute flag service
+# Feature Flag Service
 
 This service is written in Erlang/Elixir and it is responsible for creating,
 reading, updating and deleting feature flags in a PostgreSQL DB.
 It is called by Product Catalog and Shipping services.
 
-[featute flag service source](../../src/featureflagservice/)
+[Feature Flag Service Source](../../src/featureflagservice/)
 
 ## Traces
 
@@ -16,7 +16,7 @@ instrumentation](https://github.com/open-telemetry/opentelemetry-erlang-contrib/
 with Spans for database queries added through the [Ecto
 instrumentation](https://github.com/open-telemetry/opentelemetry-erlang-contrib/tree/main/instrumentation/opentelemetry_ecto).
 
-This is done in the `application.ex` as it follows:
+This is done in the `application.ex` as follows:
 
 ```elixir
 @impl true
@@ -49,7 +49,7 @@ the [grpcbox
 interceptor](https://github.com/open-telemetry/opentelemetry-erlang-contrib/tree/main/instrumentation/opentelemetry_grpcbox)
 for instrumentation.
 
-This is configured in the `runtime.exs` file, as it follows:
+This is configured in the `runtime.exs` file, as follows:
 
 ```elixir
 config :grpcbox,
