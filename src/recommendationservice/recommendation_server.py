@@ -49,7 +49,7 @@ class RecommendationService(demo_pb2_grpc.RecommendationServiceServicer):
         span = trace.get_current_span()
         span.set_attribute("app.products_recommended.count", len(prod_list))
         logger.info("[Recv ListRecommendations] product_ids={}".format(prod_list))
-        recommendations_counter.add(len(prod_list), {'recommendation.type': 'catalog'})
+        app_recommendations_counter.add(len(prod_list), {'recommendation.type': 'catalog'})
 
         # build and return response
         response = demo_pb2.ListRecommendationsResponse()
@@ -105,8 +105,8 @@ if __name__ == "__main__":
     meter = metrics.get_meter(__name__)
 
     # Create counters
-    recommendations_counter = meter.create_counter(
-        'recommendations.counter', unit='recommendations', description="Counts the total number of given recommendations"
+    app_recommendations_counter = meter.create_counter(
+        'app.recommendations.counter', unit='recommendations', description="Counts the total number of given recommendations"
     )
 
     port = must_map_env('RECOMMENDATION_SERVICE_PORT')
