@@ -67,7 +67,7 @@ config :grpcbox,
 
 ### Add attributes to auto-instrumented spans
 
-Adding attributes to a span is accomplished using `?set_attribute` on the span
+Adding attributes to a span is accomplished by using `?set_attribute` on the span
 object. In the `get_flag` function two attributes are added to the span.
 
 ```elixir
