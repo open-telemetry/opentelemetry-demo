@@ -74,6 +74,7 @@ all the images will be build):
 ```shell
 docker compose up -d
 ```
+
 ### Verify the Webstore & the Telemetry
 
 Once the images are built and containers are started you can access:
@@ -115,11 +116,11 @@ Check out a new branch, make modifications and push the branch to your fork:
 ```sh
 $ git checkout -b feature
 # change files
-# Test your changes locally 
-$ docker compose up -d --build 
-# Go to Webstore, Jaeger or docker container logs etc. as appropriate to make sure your changes are working correctly. 
+# Test your changes locally.
+$ docker compose up -d --build
+# Go to Webstore, Jaeger or docker container logs etc. as appropriate to make sure your changes are working correctly.
 $ git add my/changed/files
-$ git commit
+$ git commit -m "short discription of the change"
 $ git push fork feature
 ```
 
