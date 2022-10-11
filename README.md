@@ -158,6 +158,7 @@ In case you need to run a specific suite of tests you can execute
 ## Demos featuring Online Boutique
 
 - [Datadog](https://github.com/DataDog/opentelemetry-demo)
+- [Dynatrace](https://www.dynatrace.com/news/blog/opentelemetry-demo-application-with-dynatrace/)
 - [Honeycomb.io](https://github.com/honeycombio/opentelemetry-demo)
 - [Lightstep](https://github.com/lightstep/opentelemetry-demo)
 - [New Relic](https://github.com/newrelic/opentelemetry-demo)
