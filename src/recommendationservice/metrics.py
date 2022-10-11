@@ -40,7 +40,6 @@ def cpu_usage_callback(options: CallbackOptions) -> Iterable[Observation]:
         print(f"cpu_number: {number}, cpu_percent: {percent}")
         labels = {"cpu_number": str(number)}
         observations.append(Observation(percent, labels))
-        # observer.observe(percent, labels)
         
     return observations
         
@@ -62,47 +61,21 @@ def init_metrics(meter):
 
     # Requests counter
     list_recommendations_request_counter = meter.create_counter(
-        name="app.products_recommended.request.count",
+        name="app.recommendations.request.counter",
         description="number of requests to RecommendationService.ListRecommendations",
-        unit="1"
+        unit="requests"
     )
 
-    # Create counters
+    # Recommendations counter
     app_recommendations_counter = meter.create_counter(
         'app.recommendations.counter', unit='recommendations', description="Counts the total number of given recommendations"
     )
-
-    # Async Counter
-    # observable_counter = meter.create_observable_counter(
-    #     "observable_counter",
-    #     [observable_counter_callback],
-    # )
-
-    # UpDownCounter
-    # updown_counter = meter.create_up_down_counter("updown_counter")
-    # updown_counter.add(1)
-    # updown_counter.add(-5)
-
-    # Async UpDownCounter
-    # observable_updown_counter = meter.create_observable_up_down_counter(
-    #     "observable_updown_counter", [observable_up_down_counter_callback]
-    # )
-
-    # Histogram
-    # histogram = meter.create_histogram(
-    #     name="request_size_bytes",
-    #     description="size of requests",
-    #     unit="byte"
-    # )    
-
-    # Async Gauge
-    # gauge = meter.create_observable_gauge("gauge", [observable_gauge_callback])
 
     # CPU usage
     cpu_usage = meter.create_observable_counter(
         "cpu_usage",
         callbacks=[cpu_usage_callback],
-        unit="s",
+        unit="%",
         description="CPU usage"
     )
 
@@ -118,11 +91,6 @@ def init_metrics(meter):
     
     rec_svc_metrics = {
         "list_recommendations_request_counter": list_recommendations_request_counter,
-        # "observable_counter": observable_counter,
-        # "updown_counter": updown_counter,
-        # "observable_updown_counter": observable_updown_counter,
-        # "histogram": histogram,
-        # "gauge": gauge,
         "attributes": attributes,
         "app_recommendations_counter": app_recommendations_counter,
         "cpu_usage": cpu_usage,
