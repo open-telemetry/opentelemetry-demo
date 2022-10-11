@@ -15,6 +15,9 @@ services:
   jaeger:
     image: jaegertracing/all-in-one
     container_name: jaeger
+    command:
+      - "--memory.max-traces"
+      - "10000"
     ports:
       - "16686:16686"                    # Jaeger UI
       - "14250"                          # Jaeger model.proto endpoint
