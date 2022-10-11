@@ -60,7 +60,7 @@ span status is set when an exception is caught.
 ### Create new spans
 
 New spans can be created and started using
-`Tracer.spanBuilder("spanName").startSpan()`. Newly create spans should be set
+`Tracer.spanBuilder("spanName").startSpan()`. Newly created spans should be set
 into context using `Span.makeCurrent()`. The `getRandomAds` function will
 create a new span, set it into context, perform an operation, and finally end
 the span.
