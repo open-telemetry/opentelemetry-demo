@@ -5,4 +5,4 @@ opentelemetry-distro==0.34b0
 opentelemetry-exporter-otlp==1.13.0
 python-dotenv==0.21.0
 python-json-logger==2.0.4
-psutil==5.9.2
+psutil==5.9.2 # Importing this will also import opentelemetry-instrumentation-system-metrics when running opentelemetry-bootstrap

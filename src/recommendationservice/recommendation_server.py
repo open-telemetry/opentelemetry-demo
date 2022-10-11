@@ -83,6 +83,9 @@ def get_product_list(request_product_ids):
         indices = random.sample(range(num_products), num_return)
         # Fetch product ids from indices
         prod_list = [filtered_products[i] for i in indices]
+        
+        span.set_attribute("app.filtered_products.list", prod_list)
+        
         return prod_list
 
 
