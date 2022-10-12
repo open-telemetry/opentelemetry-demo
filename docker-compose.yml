@@ -334,7 +334,6 @@ services:
       - OTEL_METRICS_EXPORTER=console,otlp
       - OTEL_EXPORTER_OTLP_ENDPOINT
       - OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE
-      - OTEL_EXPORTER_OTLP_INSECURE=true
       - OTEL_SERVICE_NAME=recommendationservice
       - PROTOCOL_BUFFERS_PYTHON_IMPLEMENTATION=python
     logging: *logging
