@@ -114,5 +114,5 @@ significant modifications will be credited to OpenTelemetry Authors.
 * Added basic metrics support for recommendation service (Python)
 ([#416](https://github.com/open-telemetry/opentelemetry-demo/pull/416))
 * Added metrics auto-instrumentation + minor metrics refactor for recommendation
- service (Python) 
+ service (Python)
  [#432](https://github.com/open-telemetry/opentelemetry-demo/pull/432)
