@@ -1,4 +1,4 @@
-# Dotnet Instrumentation
+# DotNet Instrumentation
 
 The [Cart service](../../src/cartservice/) contains all of the Dotnet
 instrumentation examples in the demo.
