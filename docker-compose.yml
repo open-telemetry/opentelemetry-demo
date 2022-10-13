@@ -23,7 +23,6 @@ services:
     ports:
       - "16686:16686"                    # Jaeger UI
       - "4317"                           # OTLP gRPC default port
-      - "4318"                           # OTLP HTTP default port
     logging: *logging
 
   # Collector
