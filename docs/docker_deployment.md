@@ -52,18 +52,14 @@ backend you already have (e.g. an existing instance of Jaeger, Zipkin or one of
 the [vendor of your choice](https://opentelemetry.io/vendors/).
 
 To add your backend open the file
-[src/otelcollector/otelcol-config.yml](../src/otelcollector/otelcol-config.yml)
+[src/otelcollector/otelcol-config-extras.yml](../src/otelcollector/otelcol-config-extras.yml)
 with an editor:
 
 - add a trace exporter for your backend. For example, if your backend supports
-  otlp, extend the `exporters` section like the following:
+  otlp, add an `exporters` section like the following:
 
 ```yaml
 exporters:
-  jaeger:
-    endpoint: "jaeger:14250"
-    insecure: true
-  logging:
   otlp:
     endpoint: <your-endpoint-url>
 ```
@@ -79,11 +75,13 @@ service:
       exporters: [logging, jaeger, otlp]
 ```
 
+Configuration values entered will be merged with the main [otelcol-config.yml](../src/otelcollector/otelcol-config.yml] file.
+
 Vendor backends might require you to add additional parameters for
 authentication, please check their documentation. Some backends require
 different exporters, you may find them and their documentation available at
 [opentelemetry-collector-contrib/exporter](https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/main/exporter).
 
-After updating the `otelcol-config.yml` start the demo by running
+After updating the `otelcol-config-extras.yml` start the demo by running
 `docker compose up`. After a while you should see the traces flowing into
 your backend as well.
