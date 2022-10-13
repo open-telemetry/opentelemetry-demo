@@ -12,8 +12,8 @@ receivers:
         endpoint: "localhost:65535"
 
 exporters:
-  jaeger:
-    endpoint: "jaeger:14250"
+  otlp:
+    endpoint: "jaeger:4317"
     tls:
       insecure: true
   logging:
@@ -31,7 +31,7 @@ service:
     traces:
       receivers: [otlp]
       processors: [spanmetrics, batch]
-      exporters: [logging, jaeger]
+      exporters: [logging, otlp]
     metrics:
       receivers: [otlp]
       processors: [batch]

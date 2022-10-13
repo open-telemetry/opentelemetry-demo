@@ -116,3 +116,5 @@ significant modifications will be credited to OpenTelemetry Authors.
 * Added metrics auto-instrumentation + minor metrics refactor for recommendation
  service (Python)
  [#432](https://github.com/open-telemetry/opentelemetry-demo/pull/432)
+* Replaced the Jaeger exporter to the OTLP exporter in the OTel Collector
+([#435](https://github.com/open-telemetry/opentelemetry-demo/pull/435))
