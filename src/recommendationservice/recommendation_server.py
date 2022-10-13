@@ -45,8 +45,7 @@ class RecommendationService(demo_pb2_grpc.RecommendationServiceServicer):
         response = demo_pb2.ListRecommendationsResponse()
         response.product_ids.extend(prod_list)
 
-        # Collect metrics on # requests to this service
-        rec_svc_metrics["list_recommendations_request_counter"].add(1, rec_svc_metrics["attributes"])
+        # Collect metrics for this service
         rec_svc_metrics["app_recommendations_counter"].add(len(prod_list), {'recommendation.type': 'catalog'})
 
         return response
