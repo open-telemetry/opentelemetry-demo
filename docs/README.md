@@ -12,7 +12,7 @@ Want to deploy the demo and see it in action? Start here.
 - [Docker](./docker_deployment.md)
 - [Kubernetes](./kubernetes_deployment.md)
 
-*Service Documentation*
+### Service Documentation
 Specific information about how OpenTelemetry is deployed in each service can be
 found here.
 
