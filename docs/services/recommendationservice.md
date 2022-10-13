@@ -73,7 +73,8 @@ OpenTelemetry auto instrumentor based on environment variables.
 
 The following custom metrics are currently available:
 
-* `app_recommendations_counter`: Cumulative count of # recommended products per service call
+* `app_recommendations_counter`: Cumulative count of # recommended
+ products per service call
 
 ### Auto-instrumented metrics
 
