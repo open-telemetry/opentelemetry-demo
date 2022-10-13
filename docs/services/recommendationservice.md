@@ -79,7 +79,6 @@ of `opentelemetry-bootstrap` on building the recommendationservice Docker image:
 * runtime.cpython.memory
 * runtime.cpython.gc_count
 
-
 ## Logs
 
 TBD
