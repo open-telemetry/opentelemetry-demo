@@ -18,14 +18,16 @@ services:
     command:
       - "--memory.max-traces"
       - "10000"
+    environment:
+      - COLLECTOR_OTLP_ENABLED=true
     ports:
       - "16686:16686"                    # Jaeger UI
-      - "14250"                          # Jaeger model.proto endpoint
+      - "4317"                           # OTLP gRPC default port
     logging: *logging
 
   # Collector
   otelcol:
-    image: otel/opentelemetry-collector-contrib:0.56.0
+    image: otel/opentelemetry-collector-contrib:0.61.0
     container_name: otel-col
     command: [ "--config=/etc/otelcol-config.yml", "--config=/etc/otelcol-config-extras.yml" ]
     volumes:
