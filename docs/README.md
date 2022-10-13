@@ -14,7 +14,7 @@ Want to deploy the demo and see it in action? Start here.
 
 ### Service Documentation
 Specific information about how OpenTelemetry is deployed in each service can be
-found here.
+found here:
 
 - [Ad Service](./services/adservice.md)
 - [Cart Service](./services/cartservice.md)
