@@ -27,7 +27,7 @@ found here.
 - [Quote Service](./services/quoteservice.md)
 - [Shipping Service](./services/shippingservice.md)
 
-*Scenarios*
+### Scenarios
 How can you solve problems with OpenTelemetry? These scenarios walk you through
 some pre-configured problems and show you how to interpret OpenTelemetry data to
 solve them.
