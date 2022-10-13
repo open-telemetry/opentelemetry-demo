@@ -69,15 +69,21 @@ OpenTelemetry auto instrumentor based on environment variables.
     meter = metrics.get_meter_provider().get_meter("recommendationservice")
 ```
 
+### Custom metrics
+
+The following custom metrics are currently available:
+
+* `app_recommendations_counter`: Cumulative count of # recommended products per service call
+
 ### Auto-instrumented metrics
 
 The following metrics are available through auto-instrumentation, courtesy of
 the `opentelemetry-instrumentation-system-metrics`, which is installed as part
 of `opentelemetry-bootstrap` on building the recommendationservice Docker image:
 
-* runtime.cpython.cpu_time
-* runtime.cpython.memory
-* runtime.cpython.gc_count
+* `runtime.cpython.cpu_time`
+* `runtime.cpython.memory`
+* `runtime.cpython.gc_count`
 
 ## Logs
 
