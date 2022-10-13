@@ -71,7 +71,9 @@ OpenTelemetry auto instrumentor based on environment variables.
 
 ### Auto-instrumented metrics
 
-The following metrics are available through auto-instrumentation, courtesy of the `opentelemetry-instrumentation-system-metrics`, which is installed as part of `opentelemetry-bootstrap` on building the recommendationservice Docker image:
+The following metrics are available through auto-instrumentation, courtesy of
+the `opentelemetry-instrumentation-system-metrics`, which is installed as part
+of `opentelemetry-bootstrap` on building the recommendationservice Docker image:
 
 * runtime.cpython.cpu_time
 * runtime.cpython.memory
