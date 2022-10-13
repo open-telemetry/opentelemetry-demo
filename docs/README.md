@@ -34,7 +34,7 @@ solve them.
 
 - [NYI](./README.md)
 
-*Reference*
+### Reference
 Project reference documentation, like requirements and feature matrices.
 
 - [Requirements](./requirements/)
