@@ -24,7 +24,7 @@ interface IProps {
 export const useCurrency = () => useContext(Context);
 
 const CurrencyProvider = ({ children }: IProps) => {
-  const { data: currencyCodeList = [] } = useQuery('currency', ApiGateway.getSupportedCurrencyList);
+  const { data: currencyCodeListUnsorted = [] } = useQuery('currency', ApiGateway.getSupportedCurrencyList);
   const [selectedCurrency, setSelectedCurrency] = useState<string>('');
 
   useEffect(() => {
@@ -36,13 +36,15 @@ const CurrencyProvider = ({ children }: IProps) => {
     SessionGateway.setSessionValue('currencyCode', currencyCode);
   }, []);
 
+  const currencyCodeList = currencyCodeListUnsorted.sort();
+
   const value = useMemo(
-    () => ({
-      currencyCodeList,
-      selectedCurrency,
-      setSelectedCurrency: onSelectCurrency,
-    }),
-    [currencyCodeList, selectedCurrency, onSelectCurrency]
+      () => ({
+        currencyCodeList,
+        selectedCurrency,
+        setSelectedCurrency: onSelectCurrency,
+      }),
+      [currencyCodeList, selectedCurrency, onSelectCurrency]
   );
 
   return <Context.Provider value={value}>{children}</Context.Provider>;

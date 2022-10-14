@@ -26,10 +26,7 @@ endpoints, resource attributes, and service name are automatically set by the
 OpenTelemetry auto instrumentor based on environment variables.
 
 ```python
-    tracer_provider = TracerProvider()
-    trace.set_tracer_provider(tracer_provider)
-    tracer_provider.add_span_processor(BatchSpanProcessor(OTLPSpanExporter()))
-    tracer = trace.get_tracer("recommendationservice")
+    tracer = trace.get_tracer_provider().get_tracer("recommendationservice")
 ```
 
 ### Add attributes to auto-instrumented spans
@@ -61,7 +58,33 @@ block ends execution. This is done in the `get_product_list` function.
 
 ## Metrics
 
-TBD
+### Initialize meter provider
+
+The OpenTelemetry SDK is initialized in the `__main__` code block. This code
+will create a meter provider. Export
+endpoints, resource attributes, and service name are automatically set by the
+OpenTelemetry auto instrumentor based on environment variables.
+
+```python
+    meter = metrics.get_meter_provider().get_meter("recommendationservice")
+```
+
+### Custom metrics
+
+The following custom metrics are currently available:
+
+* `app_recommendations_counter`: Cumulative count of # recommended
+ products per service call
+
+### Auto-instrumented metrics
+
+The following metrics are available through auto-instrumentation, courtesy of
+the `opentelemetry-instrumentation-system-metrics`, which is installed as part
+of `opentelemetry-bootstrap` on building the recommendationservice Docker image:
+
+* `runtime.cpython.cpu_time`
+* `runtime.cpython.memory`
+* `runtime.cpython.gc_count`
 
 ## Logs
 
