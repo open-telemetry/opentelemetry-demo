@@ -7,6 +7,7 @@ view OpenTelemetry in action.
 ## Table of Contents
 
 ### Running the Demo
+
 Want to deploy the demo and see it in action? Start here.
 
 - [Docker](./docker_deployment.md)
