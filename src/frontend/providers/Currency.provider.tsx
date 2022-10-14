@@ -36,15 +36,7 @@ const CurrencyProvider = ({ children }: IProps) => {
     SessionGateway.setSessionValue('currencyCode', currencyCode);
   }, []);
 
-  const currencyCodeList = currencyCodeListUnsorted.sort((n1, n2) => {
-    if (n1 > n2) {
-      return 1;
-    }
-    if (n1 < n2) {
-      return -1;
-    }
-    return 0;
-  });
+  const currencyCodeList = currencyCodeListUnsorted.sort();
 
   const value = useMemo(
       () => ({
