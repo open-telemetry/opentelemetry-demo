@@ -30,6 +30,7 @@ found here:
 - [Shipping Service](./services/shippingservice.md)
 
 ### Scenarios
+
 How can you solve problems with OpenTelemetry? These scenarios walk you through
 some pre-configured problems and show you how to interpret OpenTelemetry data to
 solve them.
