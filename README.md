@@ -163,6 +163,8 @@ In case you need to run a specific suite of tests you can execute
 - [Lightstep](https://github.com/lightstep/opentelemetry-demo)
 - [New Relic](https://github.com/newrelic/opentelemetry-demo)
 
+See [Forking](./docs/forking.md) for more information about creating your own fork.
+
 ## Contributing
 
 See [CONTRIBUTING.md](CONTRIBUTING.md)
