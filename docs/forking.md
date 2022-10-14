@@ -51,8 +51,12 @@ opentelemetry-collector:
             - jaeger
 ```
 
-Save this file and pass it into helm:``helm install opentelemetry-demo
-open-telemetry/opentelemetry-demo --values opentelemetry-demo-values.yaml`
+Save this file and pass it into helm:
+
+```shell
+helm install opentelemetry-demo
+open-telemetry/opentelemetry-demo --values opentelemetry-demo-values.yaml
+```
 
 Values provided in this way will be merged with the default values.
 
