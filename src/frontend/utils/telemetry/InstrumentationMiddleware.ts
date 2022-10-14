@@ -1,8 +1,6 @@
 import {NextApiHandler} from 'next';
-import Tracer from './BackendTracer';
-import {context, Exception, propagation, SpanKind, SpanStatusCode, trace} from '@opentelemetry/api';
+import {context, Exception, propagation, Span, SpanKind, SpanStatusCode, trace} from '@opentelemetry/api';
 import {SemanticAttributes} from '@opentelemetry/semantic-conventions';
-import {Span} from '@opentelemetry/sdk-trace-base';
 
 const InstrumentationMiddleware = (handler: NextApiHandler): NextApiHandler => {
     return async (request, response) => {
@@ -15,7 +13,8 @@ const InstrumentationMiddleware = (handler: NextApiHandler): NextApiHandler => {
             // if synthetic_request baggage is set, create a new trace linked to the span in context
             // this span will look similar to the auto-instrumented HTTP span
             const syntheticSpan = trace.getSpan(context.active()) as Span;
-            span = Tracer.getTracer().startSpan(`HTTP ${method}`, {
+            const tracer = trace.getTracer(process.env.OTEL_SERVICE_NAME as string);
+            span = tracer.startSpan(`HTTP ${method}`, {
                 root: true,
                 kind: SpanKind.SERVER,
                 links: [{context: syntheticSpan.spanContext()}],
@@ -37,7 +36,7 @@ const InstrumentationMiddleware = (handler: NextApiHandler): NextApiHandler => {
         }
 
         try {
-            await Tracer.runWithSpan(span, async () => handler(request, response));
+            await runWithSpan(span, async () => handler(request, response));
         } catch (error) {
             span.recordException(error as Exception);
             span.setStatus({code: SpanStatusCode.ERROR});
@@ -47,5 +46,18 @@ const InstrumentationMiddleware = (handler: NextApiHandler): NextApiHandler => {
         }
     };
 };
+
+async function runWithSpan(parentSpan: Span, fn: () => Promise<unknown>) {
+    const ctx = trace.setSpan(context.active(), parentSpan);
+
+    try {
+        return await context.with(ctx, fn);
+    } catch (error) {
+        parentSpan.recordException(error as Exception);
+        parentSpan.setStatus({ code: SpanStatusCode.ERROR });
+
+        throw error;
+    }
+}
 
 export default InstrumentationMiddleware;
