@@ -1,17 +1,10 @@
-const { CompositePropagator, W3CBaggagePropagator, W3CTraceContextPropagator } = require('@opentelemetry/core');
-const { OTLPTraceExporter } = require('@opentelemetry/exporter-trace-otlp-grpc');
-const { getNodeAutoInstrumentations } = require('@opentelemetry/auto-instrumentations-node');
-const { NodeSDK, api } = require('@opentelemetry/sdk-node');
+const opentelemetry = require("@opentelemetry/sdk-node")
+const { getNodeAutoInstrumentations } = require("@opentelemetry/auto-instrumentations-node")
+const { OTLPTraceExporter } =  require('@opentelemetry/exporter-trace-otlp-grpc')
 
-api.propagation.setGlobalPropagator(
-  new CompositePropagator({
-    propagators: [new W3CBaggagePropagator(), new W3CTraceContextPropagator()],
-  })
-);
-
-const sdk = new NodeSDK({
+const sdk = new opentelemetry.NodeSDK({
   traceExporter: new OTLPTraceExporter(),
-  instrumentations: getNodeAutoInstrumentations(),
-});
+  instrumentations: [ getNodeAutoInstrumentations() ]
+})
 
-sdk.start();
+sdk.start()

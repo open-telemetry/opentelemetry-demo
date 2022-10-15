@@ -17,23 +17,12 @@
 # Python
 import os
 import random
-import time
 from concurrent import futures
 
 # Pip
 import grpc
+from opentelemetry import trace, metrics
 
-# Traces
-from opentelemetry import trace
-from opentelemetry.sdk.trace import TracerProvider
-from opentelemetry.sdk.trace.export import (BatchSpanProcessor)
-from opentelemetry.exporter.otlp.proto.grpc.trace_exporter import OTLPSpanExporter
-
-# Metrics
-from opentelemetry import metrics
-from opentelemetry.sdk.metrics import MeterProvider
-from opentelemetry.sdk.metrics.export import (PeriodicExportingMetricReader)
-from opentelemetry.exporter.otlp.proto.grpc.metric_exporter import OTLPMetricExporter
 
 # Local
 import demo_pb2
@@ -42,18 +31,23 @@ from grpc_health.v1 import health_pb2
 from grpc_health.v1 import health_pb2_grpc
 from logger import getJSONLogger
 
+from metrics import (
+    init_metrics
+)
 
 class RecommendationService(demo_pb2_grpc.RecommendationServiceServicer):
     def ListRecommendations(self, request, context):
         prod_list = get_product_list(request.product_ids)
         span = trace.get_current_span()
         span.set_attribute("app.products_recommended.count", len(prod_list))
-        logger.info("[Recv ListRecommendations] product_ids={}".format(prod_list))
-        app_recommendations_counter.add(len(prod_list), {'recommendation.type': 'catalog'})
-
+        logger.info(f"[Recv ListRecommendations] product_ids={prod_list}")
         # build and return response
         response = demo_pb2.ListRecommendationsResponse()
         response.product_ids.extend(prod_list)
+
+        # Collect metrics for this service
+        rec_svc_metrics["app_recommendations_counter"].add(len(prod_list), {'recommendation.type': 'catalog'})
+
         return response
 
     def Check(self, request, context):
@@ -88,6 +82,9 @@ def get_product_list(request_product_ids):
         indices = random.sample(range(num_products), num_return)
         # Fetch product ids from indices
         prod_list = [filtered_products[i] for i in indices]
+
+        span.set_attribute("app.filtered_products.list", prod_list)
+
         return prod_list
 
 
@@ -98,22 +95,10 @@ def must_map_env(key: str):
     return value
 
 if __name__ == "__main__":
-    # Initialize tracer provider
-    tracer_provider = TracerProvider()
-    trace.set_tracer_provider(tracer_provider)
-    tracer_provider.add_span_processor(BatchSpanProcessor(OTLPSpanExporter()))
-    tracer = trace.get_tracer("recommendationservice")
-
-    # Initialize meter provider
-    metric_reader = PeriodicExportingMetricReader(OTLPMetricExporter())
-    provider = MeterProvider(metric_readers=[metric_reader])
-    metrics.set_meter_provider(provider)
-    meter = metrics.get_meter(__name__)
-
-    # Create counters
-    app_recommendations_counter = meter.create_counter(
-        'app.recommendations.counter', unit='recommendations', description="Counts the total number of given recommendations"
-    )
+    # Initialize Traces and Metrics
+    tracer = trace.get_tracer_provider().get_tracer("recommendationservice")
+    meter = metrics.get_meter_provider().get_meter("recommendationservice")
+    rec_svc_metrics = init_metrics(meter)
 
     port = must_map_env('RECOMMENDATION_SERVICE_PORT')
     catalog_addr = must_map_env('PRODUCT_CATALOG_SERVICE_ADDR')
@@ -131,9 +116,9 @@ if __name__ == "__main__":
 
     # Start logger
     logger = getJSONLogger('recommendationservice-server')
-    logger.info("RecommendationService listening on port: " + port)
+    logger.info(f"RecommendationService listening on port: {port}")
 
     # Start server
-    server.add_insecure_port('[::]:' + port)
+    server.add_insecure_port(f'[::]:{port}')
     server.start()
     server.wait_for_termination()

@@ -17,5 +17,5 @@ Emoji Legend
 | Frontend        | JavaScript      | :construction:       | :construction:         | :construction:                        | :construction: | :construction: | :construction:                     |
 | Payment         | JavaScript      | :construction:       | :construction:         | :construction:                        | :construction: | :construction: | :construction:                     |
 | Product Catalog | Go              | :construction:       | :construction:         | :construction:                        | :construction: | :construction: | :construction:                     |
-| Recommendation  | Python          | :construction:       | :100:                  | :construction:                        | :construction: | :construction: | :construction:                     |
+| Recommendation  | Python          | :100:       | :100:                  | :construction:                        | :construction: | :construction: | :construction:                     |
 | Shipping        | Rust            | :construction:       | :construction:         | :construction:                        | :construction: | :construction: | :construction:                     |
