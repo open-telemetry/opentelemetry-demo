@@ -25,7 +25,7 @@ here.
 | Erlang/Elixir | [Feature Flag Service](./services/featureflagservice.md)                                                            | [Feature Flag Service](./services/featureflagservice.md)                                                            |
 | Go            | [Checkout Service](./services/checkoutservice.md), [Product Catalog Service]( ./services/productcatalogservice.md ) | [Checkout Service](./services/checkoutservice.md), [Product Catalog Service]( ./services/productcatalogservice.md ) |
 | Java          | [Ad Service](./services/adservice.md)                                                                               | [Ad Service](./services/adservice.md)                                                                               |
-| JavaScript    | [Front End]( ./services/frontend.md )                                                                               | [Front End](./services/frontend.md), [Payment Service](./services/paymentservice.md)                                |
+| JavaScript    | [Frontend]( ./services/frontend.md )                                                                                | [Frontend](./services/frontend.md), [Payment Service](./services/paymentservice.md)                                 |
 | PHP           | [Quote Service](./services/quoteservice.md)                                                                         | [Quote Service](./services/quoteservice.md)                                                                         |
 | Python        | [Recommendation Service](./services/recommendationservice.md)                                                       | [Recommendation Service](./services/recommendationservice.md)                                                       |
 | Ruby          | [Email Service](./services/emailservice.md)                                                                         | [Email Service](./services/emailservice.md)                                                                         |
@@ -41,7 +41,7 @@ found here:
 - [Checkout Service](./services/checkoutservice.md)
 - [Email Service](./services/emailservice.md)
 - [Feature Flag Service](./services/featureflagservice.md)
-- [Front End](./services/frontend.md)
+- [Frontend](./services/frontend.md)
 - [Load Generator](./services/loadgenerator.md)
 - [Payment Service](./services/paymentservice.md)
 - [Product Catalog Service](./services/productcatalogservice.md)

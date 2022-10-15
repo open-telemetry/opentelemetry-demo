@@ -1,4 +1,4 @@
-# Front End
+# Frontend
 
 The frontend is responsible to provide a UI for users, as well
 as an API leveraged by the UI or other clients. The application is based on
