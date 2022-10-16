@@ -1,4 +1,4 @@
-# load generator
+# Load Generator
 
 The load generator is based on the Python load testing framework [Locust](https://locust.io).
 By default it will simulate users requesting several different routes from the

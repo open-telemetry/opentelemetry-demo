@@ -1,4 +1,4 @@
-# checkout service
+# Checkout Service
 
 This service is responsible to process a checkout order from the user. The
 checkout service will call many other services in order to process an order.
