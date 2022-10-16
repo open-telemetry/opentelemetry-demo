@@ -74,14 +74,14 @@ def get_product_list(request_product_ids):
 
         # Feature flag scenario - Cache Leak
         if check_feature_flag("recommendationCache"):
-            if random.random() < 0.219 or first_run:
+            if random.random() < 0.5 or first_run:
                 first_run = False
                 span.set_attribute("app.cache_hit", False)
                 logger.info("cache miss")
                 cat_response = product_catalog_stub.ListProducts(demo_pb2.Empty())
                 response_ids = [x.id for x in cat_response.products]
                 cached_ids = cached_ids + response_ids
-                cached_ids = cached_ids + cached_ids
+                cached_ids = cached_ids + cached_ids[:len(cached_ids) // 4]
                 span.set_attribute("app.cache_size", len(cached_ids))
                 product_ids = cached_ids
             else:
