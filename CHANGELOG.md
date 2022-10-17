@@ -118,3 +118,5 @@ significant modifications will be credited to OpenTelemetry Authors.
  [#432](https://github.com/open-telemetry/opentelemetry-demo/pull/432)
 * Replaced the Jaeger exporter to the OTLP exporter in the OTel Collector
 ([#435](https://github.com/open-telemetry/opentelemetry-demo/pull/435))
+* Set resource memory limits for all services
+([#460](https://github.com/open-telemetry/opentelemetry-demo/pull/460))
