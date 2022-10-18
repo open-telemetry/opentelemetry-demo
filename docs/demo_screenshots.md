@@ -22,22 +22,22 @@
 
 | System Architecture|
 | --- |
-|![jaeger-system-architecture](./img/JaegerUISystemArchitecture.png)|
+|![jaeger-system-architecture](https://user-images.githubusercontent.com/47896520/196496223-6d6ea729-5bea-4a8c-a2c6-cd51cce386ae.png)|
 
 ## Prometheus
 
-![prometheus](./img/Prometheus.png)
+![prometheus](https://user-images.githubusercontent.com/47896520/196496292-5c8bda8a-3a6a-4043-b892-7e208e0bd415.png)
 
 ## Grafana
 
 | Prometheus Data Source |Jaeger Data Source |
 | --- | --- |
-| ![grafana-prometheus](./img/GrafanaDataSourceIsPrometheus.png) | ![gragana-jaeger](./img/GrafanaDataSourceIsJaeger.png) |
+| ![grafana-prometheus](https://user-images.githubusercontent.com/47896520/196495466-86d3ce33-def4-4808-a6d9-3e32934bbf03.png) | ![gragana-jaeger](https://user-images.githubusercontent.com/47896520/196495509-c233d0d9-5e4c-4607-b609-dbf7869298d9.png) |
 
 ## Feature Flag UI
 
-![feature-flag-ui](./img/FeatureFlagUI.png)
+![feature-flag-ui](https://user-images.githubusercontent.com/47896520/196496050-22fbbb56-9e62-46dd-a23c-c34c5566f7d2.png)
 
 ## Load Generator UI
 
-![load-generator-ui](./img/LoadGeneratorUI.png)
+![load-generator-ui](https://user-images.githubusercontent.com/47896520/196496589-bda802fc-aada-4e72-a184-93bb4711abca.png)
