@@ -242,6 +242,7 @@ services:
       - currencyservice
       - otelcol
       - productcatalogservice
+      - quoteservice
       - recommendationservice
       - shippingservice
     logging: *logging
