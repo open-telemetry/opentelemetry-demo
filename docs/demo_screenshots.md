@@ -26,7 +26,7 @@
 
 ## Prometheus
 
-![prometheus](https://user-images.githubusercontent.com/47896520/196496292-5c8bda8a-3a6a-4043-b892-7e208e0bd415.png)
+![prometheus](https://user-images.githubusercontent.com/47896520/196564627-ba9f5e91-a0fa-4bf0-beb1-f3a79ca309b5.png)
 
 ## Grafana
 
