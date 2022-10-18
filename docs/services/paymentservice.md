@@ -1,5 +1,7 @@
 # Payment Service
 
+v1 Review Status: Incomplete
+
 This service is responsible to process credit card payments for orders. It will
 return an error if the credit card is invalid or the payment can not be
 processed.
