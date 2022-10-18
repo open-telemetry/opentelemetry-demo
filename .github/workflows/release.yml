@@ -22,9 +22,7 @@ jobs:
           fetch-depth: 0
 
       - name: Update .env
-        run: |
-          sed -i "s/IMAGE_VERSION=.*/IMAGE_VERSION=${RELEASE_VERSION}/" .env
-          cat .env
+        run: sed -i "s/IMAGE_VERSION=.*/IMAGE_VERSION=${RELEASE_VERSION}/" .env
 
       - name: Commit updated .env file
         uses: test-room-7/action-update-file@v1
