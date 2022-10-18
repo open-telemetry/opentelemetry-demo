@@ -1,5 +1,7 @@
 # Contributing
 
+v1 Review Status: Incomplete
+
 Welcome to OpenTelemetry Demo Webstore repository!
 
 Before you start - see OpenTelemetry general
