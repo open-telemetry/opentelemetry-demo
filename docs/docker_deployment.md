@@ -49,18 +49,19 @@ Once the images are built and containers are started you can access:
 ## Bring your own backend
 
 Likely you want to use the Webstore as a demo application for an observability
-backend you already have (e.g. an existing instance of Jaeger, Zipkin, or one of
-the [vendor of your choice](https://opentelemetry.io/vendors/).
+backend you already have (e.g. an existing instance of Jaeger, Zipkin, or one
+of the [vendor of your choice](https://opentelemetry.io/vendors/).
 
-OpenTelemetry Collector can be used to export telemetry data to multiple backends. 
-By default, the collector in the demo application will merge the configuration 
-from two files:
+OpenTelemetry Collector can be used to export telemetry data to multiple
+backends. By default, the collector in the demo application will merge the
+configuration from two files:
+
 - otelcol-config.yml
 - otelcol-config-extras.yml
 
 To add your backend, open the file
 [src/otelcollector/otelcol-config-extras.yml](../src/otelcollector/otelcol-config-extras.yml)
-with an editor. 
+with an editor.
 
 - Start by adding a new exporter. For example, if your backend supports
   OTLP over HTTP, add the following:
