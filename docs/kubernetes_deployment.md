@@ -1,5 +1,7 @@
 # Kubernetes
 
+v1 Review Status: Incomplete
+
 We provide a [OpenTelemetry Demo Helm
 chart](https://github.com/open-telemetry/opentelemetry-helm-charts/tree/main/charts/opentelemetry-demo)
 to help deploy the demo to an existing Kubernetes cluster.
