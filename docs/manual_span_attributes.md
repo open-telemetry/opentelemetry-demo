@@ -1,5 +1,7 @@
 # Manual Span Attributes
 
+v1 Review Status: Incomplete
+
 This document contains the list of manual Span Attributes used throughout the demo:
 
 ## AdService
