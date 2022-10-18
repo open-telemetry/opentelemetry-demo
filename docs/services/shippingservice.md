@@ -1,5 +1,7 @@
 # Shipping Service
 
+v1 Review Status: Incomplete
+
 This service is responsible for providing shipping information including pricing
 and tracking information, when requested from Checkout Service.
 
