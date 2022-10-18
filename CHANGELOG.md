@@ -120,3 +120,5 @@ significant modifications will be credited to OpenTelemetry Authors.
 ([#435](https://github.com/open-telemetry/opentelemetry-demo/pull/435))
 * Set resource memory limits for all services
 ([#460](https://github.com/open-telemetry/opentelemetry-demo/pull/460))
+* Update cartservice Dockerfile to support ARM64
+([#439](https://github.com/open-telemetry/opentelemetry-demo/pull/439))
