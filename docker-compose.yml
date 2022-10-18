@@ -406,11 +406,6 @@ services:
       - OTEL_SERVICE_NAME=recommendationservice
       - PROTOCOL_BUFFERS_PYTHON_IMPLEMENTATION=python
     logging: *logging
-    restart: on-failure
-    deploy:
-      resources:
-        limits:
-          memory: 512M
 
   # ShippingService
   shippingservice:
