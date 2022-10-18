@@ -21,6 +21,17 @@ jobs:
         with:
           fetch-depth: 0
 
+      - name: Update .env
+        run: sed -i "s/IMAGE_VERSION=.*/IMAGE_VERSION=${RELEASE_VERSION}/" .env
+
+      - name: Commit updated .env file
+        uses: test-room-7/action-update-file@v1
+        with:
+          file: .env
+          commit-message: "Update .env file with release version"
+          branch: main
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+
       # limit docker push image concurrency to 1
       # to avoid github package return 429 ratelimit error
       - name: Set docker upload concurrent
