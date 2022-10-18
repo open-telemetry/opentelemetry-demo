@@ -330,9 +330,11 @@ services:
     depends_on:
       - productcatalogservice
       - otelcol
+      - featureflagservice
     environment:
       - RECOMMENDATION_SERVICE_PORT
       - PRODUCT_CATALOG_SERVICE_ADDR
+      - FEATURE_FLAG_GRPC_SERVICE_ADDR
       - OTEL_PYTHON_LOG_CORRELATION=true
       - OTEL_TRACES_EXPORTER=otlp
       - OTEL_METRICS_EXPORTER=otlp
@@ -341,6 +343,11 @@ services:
       - OTEL_SERVICE_NAME=recommendationservice
       - PROTOCOL_BUFFERS_PYTHON_IMPLEMENTATION=python
     logging: *logging
+    restart: on-failure
+    deploy:
+      resources:
+        limits:
+          memory: 512M
 
   # ShippingService
   shippingservice:
