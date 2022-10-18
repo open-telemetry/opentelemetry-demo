@@ -1,5 +1,7 @@
 # Forking this Repository
 
+v1 Review Status: Incomplete
+
 This repository is designed to be forked and used as a tool to show off what you
 are doing with OpenTelemetry.
 
