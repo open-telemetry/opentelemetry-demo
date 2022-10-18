@@ -1,5 +1,7 @@
 # Feature Flag Service
 
+v1 Review Status: Incomplete
+
 This service is written in Erlang/Elixir and it is responsible for creating,
 reading, updating and deleting feature flags in a PostgreSQL DB.
 It is called by Product Catalog and Shipping services.
