@@ -1,5 +1,7 @@
 # Quote Service
 
+v1 Review Status: Incomplete
+
 This service is responsible for calculating shipping costs, based on
 the number of items to be shipped. The quote service is called from
 Shipping Service via HTTP.
