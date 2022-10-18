@@ -1,5 +1,7 @@
 # Email Service
 
+v1 Review Status: Incomplete
+
 This service will send a confirmation email to the user when an order is placed.
 
 [Email service source](../../src/emailservice/)
