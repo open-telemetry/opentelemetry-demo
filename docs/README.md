@@ -1,5 +1,7 @@
 # OpenTelemetry Demo Documentation
 
+v1 Review Status: Incomplete
+
 Welcome to the OpenTelemetry Demo! This folder contains overall documentation
 for the project, how to install and run it, and some scenarios you can use to
 view OpenTelemetry in action.
