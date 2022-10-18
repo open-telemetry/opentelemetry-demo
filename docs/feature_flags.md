@@ -1,5 +1,7 @@
 # Feature Flags
 
+v1 Review Status: Incomplete
+
 This demo comes with several feature flags which can control failure conditions
 in specific services. By default the flags are disabled. Using the Feature Flags
 UI <http://localhost:8081> you will be able to control the status of these
