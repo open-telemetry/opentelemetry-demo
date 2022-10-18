@@ -1,5 +1,7 @@
 # Cart Service
 
+v1 Review Status: Incomplete
+
 This service maintains items placed in the shopping cart by users. It interacts
 with a Redis caching service for fast access to shopping cart data.
 
