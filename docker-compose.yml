@@ -15,11 +15,14 @@ services:
   jaeger:
     image: jaegertracing/all-in-one
     container_name: jaeger
-    command:
-      - "--memory.max-traces"
-      - "10000"
+    command: ["--memory.max-traces", "10000"]
     environment:
       - COLLECTOR_OTLP_ENABLED=true
+    deploy:
+      resources:
+        limits:
+          memory: 275M
+    restart: always
     ports:
       - "16686:16686"                    # Jaeger UI
       - "4317"                           # OTLP gRPC default port
@@ -29,6 +32,11 @@ services:
   otelcol:
     image: otel/opentelemetry-collector-contrib:0.61.0
     container_name: otel-col
+    deploy:
+      resources:
+        limits:
+          memory: 100M
+    restart: always
     command: [ "--config=/etc/otelcol-config.yml", "--config=/etc/otelcol-config-extras.yml" ]
     volumes:
       - ./src/otelcollector/otelcol-config.yml:/etc/otelcol-config.yml
@@ -46,6 +54,11 @@ services:
   redis-cart:
     image: redis:alpine
     container_name: redis-cart
+    deploy:
+      resources:
+        limits:
+          memory: 20M
+    restart: always
     ports:
       - "${REDIS_PORT}"
     logging: *logging
@@ -59,6 +72,11 @@ services:
       dockerfile: ./src/adservice/Dockerfile
       cache_from:
         - ${IMAGE_NAME}:${IMAGE_VERSION}-adservice
+    deploy:
+      resources:
+        limits:
+          memory: 300M
+    restart: always
     ports:
       - "${AD_SERVICE_PORT}"
     environment:
@@ -80,6 +98,11 @@ services:
       dockerfile: ./src/cartservice/src/Dockerfile
       cache_from:
         - ${IMAGE_NAME}:${IMAGE_VERSION}-cartservice
+    deploy:
+      resources:
+        limits:
+          memory: 160M
+    restart: always
     ports:
       - "${CART_SERVICE_PORT}"
     environment:
@@ -102,6 +125,11 @@ services:
       dockerfile: ./src/checkoutservice/Dockerfile
       cache_from:
         - ${IMAGE_NAME}:${IMAGE_VERSION}-checkoutservice
+    deploy:
+      resources:
+        limits:
+          memory: 20M
+    restart: always
     ports:
       - "${CHECKOUT_SERVICE_PORT}"
     environment:
@@ -137,6 +165,11 @@ services:
       args:
         - GRPC_VERSION=1.46.0
         - OPENTELEMETRY_VERSION=1.5.0
+    deploy:
+      resources:
+        limits:
+          memory: 20M
+    restart: always
     ports:
       - "${CURRENCY_SERVICE_PORT}"
     environment:
@@ -155,6 +188,11 @@ services:
       context: ./src/emailservice
       cache_from:
         - ${IMAGE_NAME}:${IMAGE_VERSION}-emailservice
+    deploy:
+      resources:
+        limits:
+          memory: 100M
+    restart: always
     ports:
       - "${EMAIL_SERVICE_PORT}"
     environment:
@@ -175,6 +213,11 @@ services:
       dockerfile: ./src/frontend/Dockerfile
       cache_from:
         - ${IMAGE_NAME}:${IMAGE_VERSION}-frontend
+    deploy:
+      resources:
+        limits:
+          memory: 200M
+    restart: always
     ports:
       - "${FRONTEND_PORT}:${FRONTEND_PORT}"
     environment:
@@ -263,6 +306,11 @@ services:
       dockerfile: ./src/paymentservice/Dockerfile
       cache_from:
         - ${IMAGE_NAME}:${IMAGE_VERSION}-paymentservice
+    deploy:
+      resources:
+        limits:
+          memory: 70M
+    restart: always
     ports:
       - "${PAYMENT_SERVICE_PORT}"
     environment:
@@ -282,6 +330,11 @@ services:
       dockerfile: ./src/productcatalogservice/Dockerfile
       cache_from:
         - ${IMAGE_NAME}:${IMAGE_VERSION}-productcatalogservice
+    deploy:
+      resources:
+        limits:
+          memory: 20M
+    restart: always
     ports:
       - "${PRODUCT_CATALOG_SERVICE_PORT}"
     environment:
@@ -301,6 +354,11 @@ services:
       dockerfile: ./src/quoteservice/Dockerfile
       cache_from:
         - ${IMAGE_NAME}:${IMAGE_VERSION}-quoteservice
+    deploy:
+      resources:
+        limits:
+          memory: 30M
+    restart: always
     ports:
       - "${QUOTE_SERVICE_PORT}"
     environment:
@@ -325,6 +383,11 @@ services:
       dockerfile: ./src/recommendationservice/Dockerfile
       cache_from:
         - ${IMAGE_NAME}:${IMAGE_VERSION}-recommendationservice
+    deploy:
+      resources:
+        limits:
+          memory: 500M                # This is high to enable supporting the recommendationCache feature flag use case
+    restart: always
     ports:
       - "${RECOMMENDATION_SERVICE_PORT}"
     depends_on:
@@ -343,11 +406,6 @@ services:
       - OTEL_SERVICE_NAME=recommendationservice
       - PROTOCOL_BUFFERS_PYTHON_IMPLEMENTATION=python
     logging: *logging
-    restart: on-failure
-    deploy:
-      resources:
-        limits:
-          memory: 512M
 
   # ShippingService
   shippingservice:
@@ -358,6 +416,11 @@ services:
       dockerfile: ./src/shippingservice/Dockerfile
       cache_from:
         - ${IMAGE_NAME}:${IMAGE_VERSION}-shippingservice
+    deploy:
+      resources:
+        limits:
+          memory: 20M
+    restart: always
     ports:
       - "${SHIPPING_SERVICE_PORT}"
     environment:
@@ -377,6 +440,11 @@ services:
       context: ./src/featureflagservice
       cache_from:
         - ${IMAGE_NAME}:${IMAGE_VERSION}-featureflagservice
+    deploy:
+      resources:
+        limits:
+          memory: 160M
+    restart: always
     ports:
       - "${FEATURE_FLAG_SERVICE_PORT}:${FEATURE_FLAG_SERVICE_PORT}"     # Feature Flag Service UI
       - "${FEATURE_FLAG_GRPC_SERVICE_PORT}"                             # Feature Flag Service gRPC API
@@ -395,6 +463,11 @@ services:
   ffs_postgres:
     image: cimg/postgres:14.2
     container_name: postgres
+    deploy:
+      resources:
+        limits:
+          memory: 120M
+    restart: always
     environment:
       - POSTGRES_USER=ffs
       - POSTGRES_DB=ffs
@@ -415,6 +488,11 @@ services:
       dockerfile: ./src/loadgenerator/Dockerfile
       cache_from:
         - ${IMAGE_NAME}:${IMAGE_VERSION}-loadgenerator
+    deploy:
+      resources:
+        limits:
+          memory: 120M
+    restart: always
     ports:
       - "${LOCUST_WEB_PORT}:${LOCUST_WEB_PORT}"
     environment:
