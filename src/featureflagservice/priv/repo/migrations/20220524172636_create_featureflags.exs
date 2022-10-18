@@ -21,9 +21,14 @@ defmodule Featureflagservice.Repo.Migrations.CreateFeatureflags do
       description: "Fail product catalog service on a specific product",
       enabled: false})
 
+    repo().insert(%Featureflagservice.FeatureFlags.FeatureFlag{
+      name: "recommendationCache",
+      description: "Cache recommendations",
+      enabled: false})
   end
 
   defp execute_down do
     repo().delete(%Featureflagservice.FeatureFlags.FeatureFlag{name: "productCatalogFailure"})
+    repo().delete(%Featureflagservice.FeatureFlags.FeatureFlag{name: "recommendationCache"})
   end
 end
