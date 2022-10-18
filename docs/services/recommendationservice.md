@@ -1,5 +1,7 @@
 # Recommendation Service
 
+v1 Review Status: Incomplete
+
 This service is responsible to get a list of recommended products for the user
 based on existing product ids the user is browsing.
 
