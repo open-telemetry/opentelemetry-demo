@@ -5,15 +5,14 @@ with a Redis caching service for fast access to shopping cart data.
 
 [Cart service source](../../src/cartservice/)
 
-## SDK Initialization
+## Traces
 
-The OpenTelemetry .NET SDK should be initialized in your application's
-`Startup.cs` as part of the `ConfigureServices` function. When initializing,
-optionally specify which instrumentation libraries to leverage. The SDK is
-initialized using a builder pattern, where you add each instrumentation library
-(with options), and the OTLP Exporter to be used. The SDK will make use of
-OpenTelemetry standard environment variables to configure the export endpoints,
-resource attributes, and service name.
+### Initialize TracerProvider
+
+`TracerProvider` is initialized in the application startup. The required
+instrumentation libraries, the exporter to use (OTLP), etc. are enabled as part
+of this initialization. Resource attributes and exporter endpoint are
+automatically read from OpenTelemetry standard environment variables.
 
 ```cs
     services.AddOpenTelemetryTracing((builder) => builder
@@ -26,10 +25,9 @@ resource attributes, and service name.
         .AddOtlpExporter());
 ```
 
-## Traces
-
-OpenTelemetry Tracing in .NET, leverages the existing `Activity` classes as
-part of the core runtime.
+Note:
+OpenTelemetry Tracing in .NET leverages the existing `Activity` class to
+represent OpenTelemetry Span.
 
 ### Add attributes to auto-instrumented spans
 
@@ -40,9 +38,10 @@ Within the execution of auto-instrumented code you can get current span
     var activity = Activity.Current;
 ```
 
-Adding attributes to a span (activity) is accomplished using `SetTag` on the
-activity object. In the `AddItem` function from `services/CartService.cs`
-several attributes are added to the auto-instrumented span.
+Adding attributes (tags in .NET) to a span (activity) is accomplished using
+`SetTag` on the activity object. In the `AddItem` function from
+`services/CartService.cs` several attributes are added to the auto-instrumented
+span.
 
 ```cs
     activity?.SetTag("app.user.id", request.UserId);
@@ -62,7 +61,19 @@ added.
 
 ## Metrics
 
-TBD
+### Initialize MeterProvider
+
+`MeterProvider` is initialized in the application startup. The required
+instrumentation libraries, the exporter to use (OTLP), etc. are enabled as part
+of this initialization. Resource attributes and exporter endpoint are
+automatically read from OpenTelemetry standard environment variables.
+
+```cs
+    services.AddOpenTelemetryMetrics(builder =>
+            builder.AddRuntimeInstrumentation()
+                   .AddAspNetCoreInstrumentation()
+                   .AddOtlpExporter());;
+```
 
 ## Logs
 
