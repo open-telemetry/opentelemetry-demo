@@ -11,35 +11,20 @@ jobs:
       matrix:
         file_tag:
           - file: ./src/adservice/Dockerfile
-            tag: adservice
           - file: ./src/cartservice/src/Dockerfile
-            tag: cartservice
           - file: ./src/checkoutservice/Dockerfile
-            tag: checkoutservice
           - file: ./src/currencyservice/Dockerfile
-            tag: currencyservice
           - file: ./src/emailservice/Dockerfile
-            tag: emailservice
           - file: ./src/frontend/Dockerfile
-            tag: frontend
           - file: ./src/paymentservice/Dockerfile
-            tag: paymentservice
           - file: ./src/productcatalogservice/Dockerfile
-            tag: productcatalogservice
           - file: ./src/quoteservice/Dockerfile
-            tag: quoteservice
           - file: ./src/shippingservice/Dockerfile
-            tag: shippingservice
           - file: ./src/featureflagservice/Dockerfile
-            tag: featureflagservice
           - file: ./src/loadgenerator/Dockerfile
-            tag: loadgenerator
           - file: ./src/recommendationservice/Dockerfile
-            tag: recommendationservice
           - file: ./src/frontend/Dockerfile.cypress
-            tag:  frontend-tests
           - file: ./test/Dockerfile
-            tag: integrationTests
   build_and_push_images:
     runs-on: ubuntu-latest
     permissions:
