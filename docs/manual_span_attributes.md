@@ -4,12 +4,12 @@ This document contains the list of manual Span Attributes used throughout the de
 
 ## AdService
 
-| Name                        | Type    | Description                           |
-|-----------------------------|---------|---------------------------------------|
-| `app.ads.category`          | string  | Category for returned ad              |
-| `app.ads.contextKeys`       | string  | Context keys used to find related ads |
-| `app.ads.contextKeys.count` | number  | Count of unique context keys used     |
-| `app.ads.count`             | number  | Count of ads returned to user         |
+| Name                        | Type   | Description                           |
+|-----------------------------|--------|---------------------------------------|
+| `app.ads.category`          | string | Category for returned ad              |
+| `app.ads.contextKeys`       | string | Context keys used to find related ads |
+| `app.ads.contextKeys.count` | number | Count of unique context keys used     |
+| `app.ads.count`             | number | Count of ads returned to user         |
 
 ## CartService
 
@@ -50,10 +50,10 @@ This document contains the list of manual Span Attributes used throughout the de
 
 ## FeatureFlagService
 
-| Name      | Type | Description |
-|-------------------------------|---------|--------------------------|
-| `app.featureflag.name`        | string  | Name of the feature flag |
-| `app.featureflag.description` | string  | Admin description        |
+| Name                          | Type   | Description              |
+|-------------------------------|--------|--------------------------|
+| `app.featureflag.name`        | string | Name of the feature flag |
+| `app.featureflag.description` | string | Admin description        |
 | `app.featureflag.enabled`     | boolean | The feature flag status  |             |
 
 ## Frontend
@@ -76,18 +76,18 @@ This document contains the list of manual Span Attributes used throughout the de
 
 ## LoadGenerator
 
-| Name      | Type | Description |
-|-----------|------|-------------|
-| None yet  |      |             |
+| Name     | Type | Description |
+|----------|------|-------------|
+| None yet |      |             |
 
 ## PaymentService
 
-| Name                     | Type     | Description                                          |
-|--------------------------|----------|------------------------------------------------------|
-| `app.payment.amount`     | number   | Total payment amount                                 |
-| `app.payment.card_type`  | string   | Type of card used for payment                        |
-| `app.payment.card_valid` | boolean  | Was the card used valid                              |
-| `app.payment.charged`    | boolean  | Was the charge successful (false with loadgenerator) |
+| Name                     | Type    | Description                                          |
+|--------------------------|---------|------------------------------------------------------|
+| `app.payment.amount`     | number  | Total payment amount                                 |
+| `app.payment.card_type`  | string  | Type of card used for payment                        |
+| `app.payment.card_valid` | boolean | Was the card used valid                              |
+| `app.payment.charged`    | boolean | Was the charge successful (false with loadgenerator) |
 
 ## ProductCatalogService
 
@@ -100,18 +100,19 @@ This document contains the list of manual Span Attributes used throughout the de
 
 ## QuoteService
 
-| Name                        | Type   | Description          |
-|-----------------------------|--------|----------------------|
-| `app.quote.items.count`     | number | Total items to ship  |
-| `app.quote.cost.total`      | number | Total shipping quote |
+| Name                    | Type   | Description          |
+|-------------------------|--------|----------------------|
+| `app.quote.items.count` | number | Total items to ship  |
+| `app.quote.cost.total`  | number | Total shipping quote |
 
 ## RecommendationService
 
-| Name                             | Type   | Description                             |
-|----------------------------------|--------|-----------------------------------------|
-| `app.filtered_products.count`    | number | Number of filtered products returned    |
-| `app.products.count`             | number | Number of products in catalog           |
-| `app.products_recommended.count` | number | Number of recommended products returned |
+| Name                             | Type    | Description                             |
+|----------------------------------|---------|-----------------------------------------|
+| `app.filtered_products.count`    | number  | Number of filtered products returned    |
+| `app.products.count`             | number  | Number of products in catalog           |
+| `app.products_recommended.count` | number  | Number of recommended products returned |
+| `app.cache_hit`                  | boolean | If cache was accessed or not            |
 
 ## ShippingService
 

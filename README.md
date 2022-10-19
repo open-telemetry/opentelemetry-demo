@@ -45,7 +45,7 @@ emailservice(Email Service):::ruby
 frontend(Frontend):::javascript
 loadgenerator([Load Generator]):::python
 paymentservice(Payment Service):::javascript
-productcatalogservice(ProductCatalog Service):::golang
+productcatalogservice(Product Catalog Service):::golang
 quoteservice(Quote Service):::php
 recommendationservice(Recommendation Service):::python
 shippingservice(Shipping Service):::rust
@@ -55,24 +55,24 @@ featureflagstore[(Feature Flag Store<br/>&#40PostgreSQL DB&#41)]
 Internet -->|HTTP| frontend
 loadgenerator -->|HTTP| frontend
 
-checkoutservice --> cartservice --> cache
-checkoutservice --> productcatalogservice
-checkoutservice --> currencyservice
-checkoutservice -->|HTTP| emailservice
-checkoutservice --> paymentservice
-checkoutservice --> shippingservice
+checkoutservice --->|gRPC| cartservice --> cache
+checkoutservice --->|gRPC| productcatalogservice
+checkoutservice --->|gRPC| currencyservice
+checkoutservice --->|HTTP| emailservice
+checkoutservice --->|gRPC| paymentservice
+checkoutservice -->|gRPC| shippingservice
 
-frontend --> adservice
-frontend --> cartservice
-frontend --> productcatalogservice
-frontend --> checkoutservice
-frontend --> currencyservice
-frontend --> recommendationservice --> productcatalogservice
-frontend --> shippingservice -->|HTTP| quoteservice
+frontend -->|gRPC| adservice
+frontend -->|gRPC| cartservice
+frontend -->|gRPC| productcatalogservice
+frontend -->|gRPC| checkoutservice
+frontend -->|gRPC| currencyservice
+frontend -->|gRPC| recommendationservice -->|gRPC| productcatalogservice
+frontend -->|gRPC| shippingservice -->|HTTP| quoteservice
 
-productcatalogservice --> |evalFlag| featureflagservice
+productcatalogservice -->|gRPC| featureflagservice
 
-shippingservice --> |evalFlag| featureflagservice
+shippingservice -->|gRPC| featureflagservice
 
 featureflagservice --> featureflagstore
 
@@ -142,12 +142,28 @@ Find the **Protocol Buffer Definitions** in the `/pb/` directory.
   sent to Prometheus.
 - **[Grafana](https://grafana.com/)**: all metric dashboards are stored in Grafana.
 
+## Tests
+
+Currently, the repository includes E2E tests for both the frontend and backend services.
+For the Frontend we are using [Cypress](https://www.cypress.io/) execute the
+different flows in the webstore.
+While the backend services use [AVA](https://avajs.dev) as the main testing framework.
+
+To run the test you can simple run `make run-tests` at the root directory.
+
+In case you need to run a specific suite of tests you can execute
+`docker compose run frontendTests` for the frontend tests or
+`docker compose run integrationTests` for the backend tests.
+
 ## Demos featuring Online Boutique
 
-- [Datadog](https://github.com/DataDog/opentelemetry-demo-webstore)
-- [Honeycomb.io](https://github.com/honeycombio/opentelemetry-demo-webstore)
-- [Lightstep](https://github.com/lightstep/opentelemetry-demo-webstore)
-- [New Relic](https://github.com/newrelic-forks/opentelemetry-demo)
+- [Datadog](https://github.com/DataDog/opentelemetry-demo)
+- [Dynatrace](https://www.dynatrace.com/news/blog/opentelemetry-demo-application-with-dynatrace/)
+- [Honeycomb.io](https://github.com/honeycombio/opentelemetry-demo)
+- [Lightstep](https://github.com/lightstep/opentelemetry-demo)
+- [New Relic](https://github.com/newrelic/opentelemetry-demo)
+
+See [Forking](./docs/forking.md) for more information about creating your own fork.
 
 ## Contributing
 

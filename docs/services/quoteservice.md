@@ -1,4 +1,4 @@
-# quote service
+# Quote Service
 
 This service is responsible for calculating shipping costs, based on
 the number of items to be shipped. The quote service is called from

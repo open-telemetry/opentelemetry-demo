@@ -95,3 +95,32 @@ significant modifications will be credited to OpenTelemetry Authors.
 ([#362](https://github.com/open-telemetry/opentelemetry-demo/pull/362))
 * Add custom span and custom span attributes for Feature Flag Service
 ([#371](https://github.com/open-telemetry/opentelemetry-demo/pull/371))
+* Change Cart Service to be async
+([#372](https://github.com/open-telemetry/opentelemetry-demo/pull/372))
+* Removed Postgres error on startup
+([#378](https://github.com/open-telemetry/opentelemetry-demo/pull/378))
+* Fixed traffic to Ad and Recommendation Service
+([#379](https://github.com/open-telemetry/opentelemetry-demo/pull/379))
+* Add dotnet runtime metrics to the Cart Service
+([#393](https://github.com/open-telemetry/opentelemetry-demo/pull/393))
+* Add dotnet instrumentation libraries to the Cart Service
+([#394](https://github.com/open-telemetry/opentelemetry-demo/pull/394))
+* Fixed Feature Flag Service error on start up
+([#402](https://github.com/open-telemetry/opentelemetry-demo/pull/402))
+* Update Checkout Service Go version to 1.19 once OTel Go Metrics require 1.18+
+([#409](https://github.com/open-telemetry/opentelemetry-demo/pull/409))
+* Added hero scenario metric to Checkout Service on cache leak
+([#339](https://github.com/open-telemetry/opentelemetry-demo/pull/339))
+* Added basic metrics support for recommendation service (Python)
+([#416](https://github.com/open-telemetry/opentelemetry-demo/pull/416))
+* Added metrics auto-instrumentation + minor metrics refactor for recommendation
+ service (Python)
+ [#432](https://github.com/open-telemetry/opentelemetry-demo/pull/432)
+* Replaced the Jaeger exporter to the OTLP exporter in the OTel Collector
+([#435](https://github.com/open-telemetry/opentelemetry-demo/pull/435))
+* Set resource memory limits for all services
+([#460](https://github.com/open-telemetry/opentelemetry-demo/pull/460))
+* Added cache scenario to recommendation service
+([#455](https://github.com/open-telemetry/opentelemetry-demo/pull/455))
+* Update cartservice Dockerfile to support ARM64
+([#439](https://github.com/open-telemetry/opentelemetry-demo/pull/439))
