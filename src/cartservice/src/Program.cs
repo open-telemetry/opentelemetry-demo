@@ -14,13 +14,68 @@
 
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Hosting;
-using cartservice;
+using Microsoft.AspNetCore.Builder;
+using cartservice.cartstore;
+using System;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Diagnostics.HealthChecks;
+using OpenTelemetry.Metrics;
+using OpenTelemetry.Trace;
+using cartservice.services;
+using Microsoft.AspNetCore.Http;
 
-CreateHostBuilder(args).Build().Run();
+var builder = WebApplication.CreateBuilder(args);
+string redisAddress = builder.Configuration["REDIS_ADDR"];
+RedisCartStore cartStore = null;
+if (string.IsNullOrEmpty(redisAddress))
+{
+    Console.WriteLine("REDIS_ADDR environment variable is required.");
+    System.Environment.Exit(1);
+}
+cartStore = new RedisCartStore(redisAddress);
 
-static IHostBuilder CreateHostBuilder(string[] args) =>
-    Host.CreateDefaultBuilder(args)
-        .ConfigureWebHostDefaults(webBuilder =>
+// Initialize the redis store
+cartStore.InitializeAsync().GetAwaiter().GetResult();
+Console.WriteLine("Initialization completed");
+
+builder.Services.AddSingleton<ICartStore>(cartStore);
+
+builder.Services.AddOpenTelemetryTracing((builder) => builder
+    .AddRedisInstrumentation(
+        cartStore.GetConnection(),
+        options => options.SetVerboseDatabaseStatements = true)
+    .AddAspNetCoreInstrumentation()
+    .AddGrpcClientInstrumentation()
+    .AddHttpClientInstrumentation()
+    .AddOtlpExporter());
+
+builder.Services.AddOpenTelemetryMetrics(builder =>
+    builder.AddRuntimeInstrumentation()
+            .AddAspNetCoreInstrumentation()
+            .AddOtlpExporter());
+
+builder.Services.AddGrpc();
+builder.Services.AddGrpcHealthChecks()
+    .AddCheck("Sample", () => HealthCheckResult.Healthy());
+
+var app = builder.Build();
+
+if (app.Environment.IsDevelopment())
         {
-            webBuilder.UseStartup<Startup>();
-        });
+            app.UseDeveloperExceptionPage();
+        }
+
+app.UseRouting();
+
+app.UseEndpoints(endpoints =>
+{
+    endpoints.MapGrpcService<CartService>();
+    endpoints.MapGrpcHealthChecksService();
+
+    endpoints.MapGet("/", async context =>
+    {
+        await context.Response.WriteAsync("Communication with gRPC endpoints must be made through a gRPC client. To learn how to create a client, visit: https://go.microsoft.com/fwlink/?linkid=2086909");
+    });
+});
+
+app.Run();
