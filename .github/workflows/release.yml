@@ -6,7 +6,17 @@ on:
     branches: [ main ]
 
 jobs:
-  docker_build_matrix:
+  build_and_push_images:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+
+    env:
+      RELEASE_VERSION: "${{ github.event.release.tag_name }}"
+      DOCKERHUB_REPO: "otel/demo"
+      GHCR_REPO: "ghcr.io/open-telemetry/demo"
+
     strategy:
       matrix:
         file_tag:
@@ -25,17 +35,6 @@ jobs:
           - file: ./src/recommendationservice/Dockerfile
           - file: ./src/frontend/Dockerfile.cypress
           - file: ./test/Dockerfile
-  build_and_push_images:
-    runs-on: ubuntu-latest
-    permissions:
-      contents: read
-      packages: write
-
-    env:
-      RELEASE_VERSION: "${{ github.event.release.tag_name }}"
-      DOCKERHUB_REPO: "otel/demo"
-      GHCR_REPO: "ghcr.io/open-telemetry/demo"
-
     steps:
       - uses: actions/checkout@v3
         with:
