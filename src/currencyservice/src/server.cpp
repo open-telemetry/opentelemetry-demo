@@ -1,16 +1,16 @@
- // Copyright The OpenTelemetry Authors
+// Copyright The OpenTelemetry Authors
 //
- // Licensed under the Apache License, Version 2.0 (the "License");
- // you may not use this file except in compliance with the License.
- // You may obtain a copy of the License at
- //
- //     http://www.apache.org/licenses/LICENSE-2.0
- //
- // Unless required by applicable law or agreed to in writing, software
- // distributed under the License is distributed on an "AS IS" BASIS,
- // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- // See the License for the specific language governing permissions and
- // limitations under the License.
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//     http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
 
 #include <iostream>
 #include <math.h>
@@ -131,7 +131,7 @@ class CurrencyService final : public hipstershop::CurrencyService::Service
 
     span->AddEvent("Currencies fetched, response sent back");
     span->SetStatus(StatusCode::kOk);
-    // Make sure to end your spans!
+   // Make sure to end your spans!
     span->End();
 
     std::cout << __func__ << " successful" << std::endl;
@@ -186,7 +186,7 @@ class CurrencyService final : public hipstershop::CurrencyService::Service
     span->AddEvent("Processing currency conversion request");
 
     try {
-      // Do the conversion work
+     // Do the conversion work
       Money from = request->from();
       string from_code = from.currency_code();
       double rate = currency_conversion[from_code];
@@ -202,7 +202,7 @@ class CurrencyService final : public hipstershop::CurrencyService::Service
       span->SetAttribute("app.currency.conversion.from", from_code);
       span->SetAttribute("app.currency.conversion.to", to_code);
 
-      // End the span
+     // End the span
       span->AddEvent("Conversion successful, response sent back");
       span->SetStatus(StatusCode::kOk);
       std::cout << __func__ << " conversion successful" << std::endl;
