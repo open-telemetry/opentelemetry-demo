@@ -6,6 +6,12 @@ view OpenTelemetry in action.
 
 ## Table of Contents
 
+- [Guided Scenarios](#scenarios)
+- [Language Instrumentation Examples](#language-feature-reference)
+- [Quick Start](#running-the-demo)
+- [References](#reference)
+- [Service Documentation](#service-documentation)
+
 ### Running the Demo
 
 Want to deploy the demo and see it in action? Start here.
@@ -61,9 +67,11 @@ solve them.
 
 Project reference documentation, like requirements and feature matrices.
 
-- [Requirements](./requirements/)
-- [Span Attributes Reference](./manual_span_attributes.md)
+- [Architecture](./current_architecture.md)
 - [Feature Flags Reference](./feature_flags.md)
-- [Trace Feature Matrix](./trace_service_features.md)
 - [Metric Feature Matrix](./metric_service_features.md)
+- [Requirements](./requirements/)
 - [Service Roles Table](./service_table.md)
+- [Span Attributes Reference](./manual_span_attributes.md)
+- [Tests](./tests.md)
+- [Trace Feature Matrix](./trace_service_features.md)
