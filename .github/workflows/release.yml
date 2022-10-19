@@ -1,8 +1,6 @@
 name: "Release"
 
 on:
-  release:
-    types: [published]
   pull_request:
     branches: [ main ] # for debug, pls remove this
 
