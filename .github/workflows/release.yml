@@ -1,8 +1,9 @@
 name: "Release"
 
 on:
+  # for debug, pls remove this
   pull_request:
-    branches: [ main ] # for debug, pls remove this
+    branches: [ main ]
 
 jobs:
   docker_build_matrix:
