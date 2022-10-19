@@ -20,20 +20,35 @@ jobs:
       matrix:
         file_tag:
           - file: ./src/adservice/Dockerfile
+            tag_suffix: adservice
           - file: ./src/cartservice/src/Dockerfile
+            tag_suffix: cartservice
           - file: ./src/checkoutservice/Dockerfile
+            tag_suffix: checkoutservice
           - file: ./src/currencyservice/Dockerfile
+            tag_suffix: currencyservice
           - file: ./src/emailservice/Dockerfile
+            tag_suffix: emailservice
           - file: ./src/frontend/Dockerfile
+            tag_suffix: frontend
           - file: ./src/paymentservice/Dockerfile
+            tag_suffix: paymentservice
           - file: ./src/productcatalogservice/Dockerfile
+            tag_suffix: productcatalogservice
           - file: ./src/quoteservice/Dockerfile
+            tag_suffix: quoteservice
           - file: ./src/shippingservice/Dockerfile
+            tag_suffix: shippingservice
           - file: ./src/featureflagservice/Dockerfile
+            tag_suffix: featureflagservice
           - file: ./src/loadgenerator/Dockerfile
+            tag_suffix: loadgenerator
           - file: ./src/recommendationservice/Dockerfile
+            tag_suffix: recommendationservice
           - file: ./src/frontend/Dockerfile.cypress
+            tag_suffix; frontend-tests
           - file: ./test/Dockerfile
+            tag_suffix: integrationTests
     steps:
       - uses: actions/checkout@v3
         with:
@@ -80,6 +95,6 @@ jobs:
           file: ${{ matrix.file_tag.file }}
           platforms: linux/amd64,linux/arm64
           push: ${{ github.event_name != 'pull_request' }}
-          tags: ${{ env.DOCKERHUB_REPO }}:${{ env.RELEASE_VERSION }},${{ env.GHCR_REPO }}:${{ env.RELEASE_VERSION }},
+          tags: ${{ env.DOCKERHUB_REPO }}:${{ env.RELEASE_VERSION }}-${{ matrix.file_tag.tag_suffix }},${{ env.GHCR_REPO }}:${{ env.RELEASE_VERSION }}-${{ matrix.file_tag.tag_suffix }}
           cache-from: type=local,src=/tmp/.buildx-cache
           cache-to: type=local,dest=/tmp/.buildx-cache
