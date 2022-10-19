@@ -22,13 +22,13 @@ defmodule Featureflagservice.Repo.Migrations.CreateFeatureflags do
       enabled: false})
 
     repo().insert(%Featureflagservice.FeatureFlags.FeatureFlag{
-      name: "shippingFailure",
-      description: "Fail shipping service when shipping a product to a non-USA address",
+      name: "recommendationCache",
+      description: "Cache recommendations",
       enabled: false})
   end
 
   defp execute_down do
     repo().delete(%Featureflagservice.FeatureFlags.FeatureFlag{name: "productCatalogFailure"})
-    repo().delete(%Featureflagservice.FeatureFlags.FeatureFlag{name: "shippingFailure"})
+    repo().delete(%Featureflagservice.FeatureFlags.FeatureFlag{name: "recommendationCache"})
   end
 end
