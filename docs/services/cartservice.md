@@ -63,7 +63,7 @@ added.
 
 ### Initialize MeterProvider
 
-`MeterProvider` is be initialized in the application startup. The required
+`MeterProvider` is initialized in the application startup. The required
 instrumentation libraries, the exporter to use (OTLP), etc. are enabled as part
 of this initialization. Resource attributes and exporter endpoint are
 automatically read from OpenTelemetry standard environment variables.
