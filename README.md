@@ -14,7 +14,7 @@ set OpenTelemetry offers.
 
 We've already made [huge
 progress](https://github.com/open-telemetry/opentelemetry-demo/blob/main/CHANGELOG.md)
-since we've started the project in May 2022 but we're not stopping here. The
+since we've started the project in May 2022 but we're not stopping there. The
 demo is intended to be a living artifact that will be kept up to date and we
 have exciting new features planned as we mature.
 
