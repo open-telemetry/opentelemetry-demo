@@ -25,7 +25,7 @@ jobs:
       - name: Commit updated .env file
         uses: test-room-7/action-update-file@v1
         with:
-          file-path: ./.env
+          file-path: .env
           commit-msg: "Update .env file with release version"
           branch: main
           github-token: ${{ secrets.GITHUB_TOKEN }}
