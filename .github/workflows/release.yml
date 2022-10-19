@@ -1,11 +1,8 @@
 name: "Release"
 
 on:
-  # release:
-  #   types: [published]
-  # for debug, remember remove this
-  pull_request:
-    branches: [ main ]
+  release:
+    types: [published]
 
 jobs:
   build_and_push_images:
@@ -15,9 +12,7 @@ jobs:
       packages: write
 
     env:
-      # for debug, remember remove this
-      #RELEASE_VERSION: "${{ github.event.release.tag_name }}"
-      RELEASE_VERSION: "dev"
+      RELEASE_VERSION: "${{ github.event.release.tag_name }}"
       DOCKERHUB_REPO: "otel/demo"
       GHCR_REPO: "ghcr.io/open-telemetry/demo"
 
@@ -84,9 +79,7 @@ jobs:
           context: ./
           file: ${{ matrix.file_tag.file }}
           platforms: linux/amd64,linux/arm64
-          # for debug, remember remove this
-          #push: ${{ github.event_name != 'pull_request' }}
-          push: true
+          push: ${{ github.event_name != 'pull_request' }}
           tags: ${{ env.DOCKERHUB_REPO }}:${{ env.RELEASE_VERSION }},${{ env.GHCR_REPO }}:${{ env.RELEASE_VERSION }},
           cache-from: type=local,src=/tmp/.buildx-cache
           cache-to: type=local,dest=/tmp/.buildx-cache
