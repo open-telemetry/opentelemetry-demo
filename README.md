@@ -60,7 +60,7 @@ documentation. Our [SIG Calls](CONTRIBUTING.md#join-a-sig-call) are Mondays at
 ([@open-telemetry/demo-maintainers](https://github.com/orgs/open-telemetry/teams/demo-maintainers)):
 
 - [Austin Parker](https://github.com/austinlparker), Lightstep
-- [Carter Socha](https://github.com/cartersocha), Microsoft
+- [Carter Socha](https://github.com/cartersocha), Lightstep
 - [Morgan McLean](https://github.com/mtwo), Splunk
 - [Pierre Tessier](https://github.com/puckpuck), Honeycomb
 
