@@ -71,6 +71,7 @@ Project reference documentation, like requirements and feature matrices.
 - [Feature Flags Reference](./feature_flags.md)
 - [Metric Feature Matrix](./metric_service_features.md)
 - [Requirements](./requirements/)
+- [Screenshots](./demo_screenshots.md)
 - [Service Roles Table](./service_table.md)
 - [Span Attributes Reference](./manual_span_attributes.md)
 - [Tests](./tests.md)
