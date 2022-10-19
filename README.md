@@ -36,7 +36,7 @@ you in the right direction.
 
 ## Demos featuring the Astronomy Shop
 
-We welcome any vendor forking the project to demonstrate their services and
+We welcome any vendor to fork the project to demonstrate their services and
 adding a link below. The community is committed to maintaining the project and
 keeping it up to date for you.
 
