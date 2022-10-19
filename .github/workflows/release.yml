@@ -46,7 +46,7 @@ jobs:
           - file: ./src/recommendationservice/Dockerfile
             tag_suffix: recommendationservice
           - file: ./src/frontend/Dockerfile.cypress
-            tag_suffix; frontend-tests
+            tag_suffix: frontend-tests
           - file: ./test/Dockerfile
             tag_suffix: integrationTests
     steps:
