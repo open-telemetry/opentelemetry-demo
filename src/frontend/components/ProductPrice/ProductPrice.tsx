@@ -8,10 +8,8 @@ interface IProps {
   price: Money;
 }
 
-const ProductPrice = ({ price: { units, currencyCode, nanos }, price }: IProps) => {
+const ProductPrice = ({ price: { units, currencyCode, nanos } }: IProps) => {
   const { selectedCurrency } = useCurrency();
-
-  console.log('@@@price', price);
 
   const currencySymbol = useMemo(
     () => getSymbolFromCurrency(currencyCode) || selectedCurrency,
