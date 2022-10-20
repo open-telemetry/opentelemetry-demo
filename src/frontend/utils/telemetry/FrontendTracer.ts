@@ -16,7 +16,13 @@ const FrontendTracer = async () => {
     }),
   });
 
-  provider.addSpanProcessor(new SimpleSpanProcessor(new OTLPTraceExporter()));
+  provider.addSpanProcessor(
+    new SimpleSpanProcessor(
+      new OTLPTraceExporter({
+        url: process.env.NEXT_PUBLIC_OTEL_EXPORTER_OTLP_TRACES_ENDPOINT || 'http://localhost:4318/v1/traces',
+      })
+    )
+  );
 
   const contextManager = new ZoneContextManager();
 
