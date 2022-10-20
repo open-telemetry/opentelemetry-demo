@@ -5,33 +5,7 @@ on:
     types: [published]
 
 jobs:
-  update_env:
-    runs-on: ubuntu-latest
-    permissions:
-      contents: write
-      packages: write
-
-    env:
-      RELEASE_VERSION: "${{ github.event.release.tag_name }}"
-
-    steps:
-      - uses: actions/checkout@v3
-        with:
-          fetch-depth: 0
-
-      - name: Update .env
-        run: sed -i "s/IMAGE_VERSION=.*/IMAGE_VERSION=${RELEASE_VERSION}/" .env
-
-      - name: Commit updated .env file
-        uses: test-room-7/action-update-file@v1
-        with:
-          file-path: .env
-          commit-msg: "Update .env file with release version"
-          branch: main
-          github-token: ${{ secrets.GITHUB_TOKEN }}
-
   build_and_push_images:
-    needs: update_env
     runs-on: ubuntu-latest
     permissions:
       contents: read
