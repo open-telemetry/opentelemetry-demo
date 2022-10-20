@@ -15,7 +15,7 @@ instrumented using OpenTelemetry available instrumentation libraries. More will
 be added as the relevant SDKs are released.
 - **[OpenTelemetry
   Collector](https://opentelemetry.io/docs/collector/getting-started)**: all
-  services are instrumented and sending the generated traces to the
+  services are instrumented and sending the generated traces and metrics to the
   OpenTelemetry Collector via gRPC. The received traces are then exported to the
   logs and to Jaeger.
 - **[Jaeger](https://www.jaegertracing.io)**: all generated traces are being
