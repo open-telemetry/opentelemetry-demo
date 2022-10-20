@@ -9,7 +9,7 @@
 ## Welcome to the OpenTelemetry Community Demo
 
 We started this project to provide developers, vendors, and OpenTelemetry
-SIG teams with a robust sample application that demonstrates the full feature
+SIG teams with a robust demo application that demonstrates the full feature
 set OpenTelemetry offers.
 
 We've already made [huge
