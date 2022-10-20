@@ -49,7 +49,6 @@ builder.Services.AddOpenTelemetryTracing((builder) => builder
     .AddAspNetCoreInstrumentation()
     .AddGrpcClientInstrumentation()
     .AddHttpClientInstrumentation()
-    .AddConsoleExporter()
     .AddOtlpExporter());
 
 builder.Services.AddOpenTelemetryMetrics(builder => builder
