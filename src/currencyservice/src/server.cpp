@@ -131,7 +131,7 @@ class CurrencyService final : public hipstershop::CurrencyService::Service
 
     span->AddEvent("Currencies fetched, response sent back");
     span->SetStatus(StatusCode::kOk);
-   // Make sure to end your spans!
+    // Make sure to end your spans!
     span->End();
 
     std::cout << __func__ << " successful" << std::endl;
@@ -186,7 +186,7 @@ class CurrencyService final : public hipstershop::CurrencyService::Service
     span->AddEvent("Processing currency conversion request");
 
     try {
-     // Do the conversion work
+      // Do the conversion work
       Money from = request->from();
       string from_code = from.currency_code();
       double rate = currency_conversion[from_code];
@@ -202,7 +202,7 @@ class CurrencyService final : public hipstershop::CurrencyService::Service
       span->SetAttribute("app.currency.conversion.from", from_code);
       span->SetAttribute("app.currency.conversion.to", to_code);
 
-     // End the span
+      // End the span
       span->AddEvent("Conversion successful, response sent back");
       span->SetStatus(StatusCode::kOk);
       std::cout << __func__ << " conversion successful" << std::endl;
