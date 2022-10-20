@@ -6,7 +6,7 @@
 [![Downloads](https://img.shields.io/docker/pulls/otel/demo)](https://hub.docker.com/r/otel/demo)
 [![License](https://img.shields.io/badge/License-Apache_2.0-blue.svg?color=red)](https://github.com/open-telemetry/opentelemetry-demo/blob/main/LICENSE)
 
-## Welcome to the OpenTelemetry Community Demo
+## Welcome to the OpenTelemetry Astronomy Shop Demo
 
 We started this project to provide developers, vendors, and OpenTelemetry
 SIG teams with a robust demo application that demonstrates the full feature
@@ -30,7 +30,7 @@ If you want to just dive in start here.
 
 ## Documentation
 
-We have robust documentation available in the [docs](./docs/) folder. If you're
+We have detailed documentation available in the [docs](./docs/) folder. If you're
 curious about a specific feature the docs [README](./docs/README.md) can point
 you in the right direction.
 
