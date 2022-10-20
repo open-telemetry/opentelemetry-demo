@@ -15,14 +15,15 @@ of this initialization. Resource attributes and exporter endpoint are
 automatically read from OpenTelemetry standard environment variables.
 
 ```cs
-    services.AddOpenTelemetryTracing((builder) => builder
-        .AddRedisInstrumentation(
-            cartStore.GetConnection(),
-            options => options.SetVerboseDatabaseStatements = true)
-        .AddAspNetCoreInstrumentation()
-        .AddGrpcClientInstrumentation()
-        .AddHttpClientInstrumentation()
-        .AddOtlpExporter());
+services.AddOpenTelemetryTracing((builder) => builder
+    .ConfigureResource(r => r.AddTelemetrySdk())
+    .AddRedisInstrumentation(
+        cartStore.GetConnection(),
+        options => options.SetVerboseDatabaseStatements = true)
+    .AddAspNetCoreInstrumentation()
+    .AddGrpcClientInstrumentation()
+    .AddHttpClientInstrumentation()
+    .AddOtlpExporter());
 ```
 
 Note:
@@ -69,10 +70,11 @@ of this initialization. Resource attributes and exporter endpoint are
 automatically read from OpenTelemetry standard environment variables.
 
 ```cs
-    services.AddOpenTelemetryMetrics(builder =>
-            builder.AddRuntimeInstrumentation()
-                   .AddAspNetCoreInstrumentation()
-                   .AddOtlpExporter());;
+services.AddOpenTelemetryMetrics(builder => builder
+    .ConfigureResource(r => r.AddTelemetrySdk())
+    .AddRuntimeInstrumentation()
+    .AddAspNetCoreInstrumentation()
+    .AddOtlpExporter());
 ```
 
 ## Logs

@@ -20,6 +20,7 @@ using System;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
 using OpenTelemetry.Metrics;
+using OpenTelemetry.Resources;
 using OpenTelemetry.Trace;
 using cartservice.services;
 using Microsoft.AspNetCore.Http;
@@ -41,6 +42,7 @@ Console.WriteLine("Initialization completed");
 builder.Services.AddSingleton<ICartStore>(cartStore);
 
 builder.Services.AddOpenTelemetryTracing((builder) => builder
+    .ConfigureResource(r => r.AddTelemetrySdk())
     .AddRedisInstrumentation(
         cartStore.GetConnection(),
         options => options.SetVerboseDatabaseStatements = true)
@@ -49,10 +51,11 @@ builder.Services.AddOpenTelemetryTracing((builder) => builder
     .AddHttpClientInstrumentation()
     .AddOtlpExporter());
 
-builder.Services.AddOpenTelemetryMetrics(builder =>
-    builder.AddRuntimeInstrumentation()
-            .AddAspNetCoreInstrumentation()
-            .AddOtlpExporter());
+builder.Services.AddOpenTelemetryMetrics(builder => builder
+    .ConfigureResource(r => r.AddTelemetrySdk())
+    .AddRuntimeInstrumentation()
+    .AddAspNetCoreInstrumentation()
+    .AddOtlpExporter());
 
 builder.Services.AddGrpc();
 builder.Services.AddGrpcHealthChecks()
