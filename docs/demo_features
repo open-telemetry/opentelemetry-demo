@@ -1,7 +1,7 @@
 # Features
 
 - **[Kubernetes](https://kubernetes.io)**: the app is designed to run on
-  Kubernetes (both locally , as well as on the cloud) using a Helm chart.
+  Kubernetes (both locally, as well as on the cloud) using a Helm chart.
 - **[Docker](https://docs.docker.com)**: this forked sample can also be executed
   only with Docker.
 - **[gRPC](https://grpc.io)**: microservices use a high volume of gRPC calls to
