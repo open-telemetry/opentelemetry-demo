@@ -91,3 +91,27 @@ different exporters, you may find them and their documentation available at
 After updating the `otelcol-config-extras.yml`, start the demo by running
 `docker compose up`. After a while, you should see the traces flowing into
 your backend as well.
+
+## Vendor Forking
+
+Setting up a fork or a demo usually only requires overriding some environment
+variables and possibly replacing some container images.
+
+Live demos can be added to the [README](https://github.com/open-telemetry/opentelemetry-demo/blob/main/README.md?plain=1#L186)
+
+### Configuring the Collector
+
+The collector is configured to export traces to jaeger and metrics to prometheus
+in
+[otelcol-config.yml](https://github.com/open-telemetry/opentelemetry-demo/blob/main/src/otelcollector/otelcol-config.yml)
+
+You may wish to make a copy of
+[otelcol-config-extras.yml](https://github.com/open-telemetry/opentelemetry-demo/blob/main/src/otelcollector/otelcol-config-extras.yml)
+for your fork and to modify the relevant volume mounts for the collector in
+[docker-compose.yaml](https://github.com/open-telemetry/opentelemetry-demo/blob/main/docker-compose.yml)
+
+### Building Custom Images
+
+Docker Compose uses  `IMAGE_VERSION`  and `IMAGE_NAME` from `.env`  to tag all
+images. Modify these values in order to push or pull custom images from your
+container registry of choice.
