@@ -61,7 +61,10 @@ How can you solve problems with OpenTelemetry? These scenarios walk you through
 some pre-configured problems and show you how to interpret OpenTelemetry data to
 solve them.
 
-- [NYI](./README.md)
+We'll be adding more scenarios over time.
+
+- Generate a [Product Catalog error](feature_flags.md) for `GetProduct` requests
+  with product id: `OLJCESPC7Z` using the Feature Flag service
 
 ### Reference
 

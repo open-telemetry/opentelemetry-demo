@@ -23,6 +23,6 @@ be added as the relevant SDKs are released.
 - **Synthetic Load Generation**: the application demo comes with a background
   job that creates realistic usage patterns on the website using
   [Locust](https://locust.io/) load generator.
-- **[Prometheus](https://prometheus.io/)**: all generated metrics are scraped by Prometheus
-  sent to Prometheus.
+- **[Prometheus](https://prometheus.io/)**: all generated metrics are scraped by
+  Prometheus.
 - **[Grafana](https://grafana.com/)**: all metric dashboards are stored in Grafana.
