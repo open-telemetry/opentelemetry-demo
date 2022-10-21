@@ -35,11 +35,10 @@ optional ingress routes.
 
 ### Using kubectl port-forward to expose services
 
-You will need to expose each service individually using the 
+You will need to expose each service individually using the
 - Frontend UI: http://localhost:8080
   by running these commands:
   kubectl port-forward svc/{{ include "otel-demo.name" . }}-frontend 8080:8080
-
 
 {{- if $.Values.observability.jaeger.enabled }}
 
