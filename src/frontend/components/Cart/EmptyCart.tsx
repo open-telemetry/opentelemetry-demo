@@ -1,5 +1,5 @@
 import Link from 'next/link';
-import Button from '../../components/Button';
+import Button from '../Button';
 import * as S from '../../styles/Cart.styled';
 
 const EmptyCart = () => {

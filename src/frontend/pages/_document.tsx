@@ -1,7 +1,18 @@
 import Document, { DocumentContext, Html, Head, Main, NextScript } from 'next/document';
 import { ServerStyleSheet } from 'styled-components';
 
-export default class MyDocument extends Document {
+const { NEXT_PUBLIC_PLATFORM, NEXT_PUBLIC_OTEL_SERVICE_NAME, NEXT_PUBLIC_OTEL_EXPORTER_OTLP_TRACES_ENDPOINT } =
+  process.env;
+
+const envString = `
+window.ENV = {
+  NEXT_PUBLIC_PLATFORM: '${NEXT_PUBLIC_PLATFORM}',
+  NEXT_PUBLIC_OTEL_SERVICE_NAME: '${NEXT_PUBLIC_OTEL_SERVICE_NAME}',
+  NEXT_PUBLIC_OTEL_EXPORTER_OTLP_TRACES_ENDPOINT: '${NEXT_PUBLIC_OTEL_EXPORTER_OTLP_TRACES_ENDPOINT}',
+};
+`;
+
+export default class MyDocument extends Document<{ envString: string }> {
   static async getInitialProps(ctx: DocumentContext) {
     const sheet = new ServerStyleSheet();
     const originalRenderPage = ctx.renderPage;
@@ -13,9 +24,11 @@ export default class MyDocument extends Document {
         });
 
       const initialProps = await Document.getInitialProps(ctx);
+
       return {
         ...initialProps,
         styles: [initialProps.styles, sheet.getStyleElement()],
+        envString,
       };
     } finally {
       sheet.seal();
@@ -35,6 +48,7 @@ export default class MyDocument extends Document {
         </Head>
         <body>
           <Main />
+          <script dangerouslySetInnerHTML={{ __html: this.props.envString }}></script>
           <NextScript />
         </body>
       </Html>
