@@ -6,6 +6,12 @@ view OpenTelemetry in action.
 
 ## Table of Contents
 
+- [Guided Scenarios](#scenarios)
+- [Language Instrumentation Examples](#language-feature-reference)
+- [Quick Start](#running-the-demo)
+- [References](#reference)
+- [Service Documentation](#service-documentation)
+
 ### Running the Demo
 
 Want to deploy the demo and see it in action? Start here.
@@ -55,15 +61,21 @@ How can you solve problems with OpenTelemetry? These scenarios walk you through
 some pre-configured problems and show you how to interpret OpenTelemetry data to
 solve them.
 
-- [NYI](./README.md)
+We'll be adding more scenarios over time.
+
+- Generate a [Product Catalog error](feature_flags.md) for `GetProduct` requests
+  with product id: `OLJCESPC7Z` using the Feature Flag service
 
 ### Reference
 
 Project reference documentation, like requirements and feature matrices.
 
-- [Requirements](./requirements/)
-- [Span Attributes Reference](./manual_span_attributes.md)
+- [Architecture](./current_architecture.md)
 - [Feature Flags Reference](./feature_flags.md)
-- [Trace Feature Matrix](./trace_service_features.md)
 - [Metric Feature Matrix](./metric_service_features.md)
+- [Requirements](./requirements/)
+- [Screenshots](./demo_screenshots.md)
 - [Service Roles Table](./service_table.md)
+- [Span Attributes Reference](./manual_span_attributes.md)
+- [Tests](./tests.md)
+- [Trace Feature Matrix](./trace_service_features.md)

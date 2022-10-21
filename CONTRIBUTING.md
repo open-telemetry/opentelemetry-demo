@@ -6,6 +6,18 @@ Before you start - see OpenTelemetry general
 [contributing](https://github.com/open-telemetry/community/blob/main/CONTRIBUTING.md)
 requirements and recommendations.
 
+## Join a SIG Call
+
+We meet weekly Monday's at 8:15 AM PT. The meeting is subject to change
+depending on contributors' availability. Check the [OpenTelemetry community
+calendar](https://calendar.google.com/calendar/embed?src=google.com_b79e3e90j7bbsa2n2p5an5lf60%40group.calendar.google.com)
+for specific dates and Zoom meeting links.
+
+Meeting notes are available as a public [Google
+doc](https://docs.google.com/document/d/16f-JOjKzLgWxULRxY8TmpM_FjlI1sthvKurnqFz9x98/edit).
+For edit access, get in touch on
+[Slack](https://cloud-native.slack.com/archives/C03B4CWV4DA).
+
 ## Sign the CLA
 
 Before you can contribute, you will need to sign the [Contributor License
