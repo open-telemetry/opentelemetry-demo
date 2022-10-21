@@ -1,5 +1,16 @@
 // Copyright The OpenTelemetry Authors
-// SPDX-License-Identifier: Apache-2.0
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//     http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
 
 #include <iostream>
 #include <math.h>
@@ -93,20 +104,6 @@ class CurrencyService final : public hipstershop::CurrencyService::Service
   	const Empty* request,
   	GetSupportedCurrenciesResponse* response) override
   {
-    // Read baggage from client context
-    auto clientContext = context->client_metadata();
-    auto range = clientContext.equal_range("baggage");
-    std::vector<std::string> baggageLists;
-    for (auto i = range.first; i != range.second; ++i)
-    {
-      baggageLists.emplace_back(std::string(i->second.data()));
-    }
-    std::vector<opentelemetry::nostd::shared_ptr<Baggage>> baggages(baggageLists.size());
-    for (int i = 0; i < baggageLists.size(); i++) {
-      auto baggage = Baggage::FromHeader(baggageLists[i]);
-      baggages[i] = baggage;
-    }
-
     StartSpanOptions options;
     options.kind = SpanKind::kServer;
     GrpcServerCarrier carrier(context);
@@ -126,16 +123,6 @@ class CurrencyService final : public hipstershop::CurrencyService::Service
                                       options);
     auto scope = get_tracer("currencyservice")->WithActiveSpan(span);
 
-    for (auto& baggage : baggages) {
-      // Set the key value pairs from baggage to Span Attributes
-      baggage->GetAllEntries([&span](opentelemetry::nostd::string_view key,
-          opentelemetry::nostd::string_view value) {
-        span->SetAttribute(key, value);
-        return true;
-      });
-    }
-
-    // Fetch and parse whatever HTTP headers we can from the gRPC request.
     span->AddEvent("Processing supported currencies request");
 
     for (auto &code : currency_conversion) {
@@ -177,20 +164,6 @@ class CurrencyService final : public hipstershop::CurrencyService::Service
   	const CurrencyConversionRequest* request,
   	Money* response) override
   {
-    // Read baggage from client context
-    auto clientContext = context->client_metadata();
-    auto range = clientContext.equal_range("baggage");
-    std::vector<std::string> baggageLists;
-    for (auto i = range.first; i != range.second; ++i)
-    {
-      baggageLists.emplace_back(std::string(i->second.data()));
-    }
-    std::vector<opentelemetry::nostd::shared_ptr<Baggage>> baggages(baggageLists.size());
-    for (int i = 0; i < baggageLists.size(); i++) {
-      auto baggage = Baggage::FromHeader(baggageLists[i]);
-      baggages[i] = baggage;
-    }
-
     StartSpanOptions options;
     options.kind = SpanKind::kServer;
     GrpcServerCarrier carrier(context);
@@ -210,15 +183,6 @@ class CurrencyService final : public hipstershop::CurrencyService::Service
                                       options);
     auto scope = get_tracer("currencyservice")->WithActiveSpan(span);
 
-    for (auto& baggage : baggages) {
-      // Set the key value pairs from baggage to Span Attributes
-      baggage->GetAllEntries([&span](opentelemetry::nostd::string_view key,
-          opentelemetry::nostd::string_view value) {
-        span->SetAttribute(key, value);
-        return true;
-      });
-    }
-    // Fetch and parse whatever HTTP headers we can from the gRPC request.
     span->AddEvent("Processing currency conversion request");
 
     try {
