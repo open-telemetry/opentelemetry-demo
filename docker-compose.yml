@@ -261,21 +261,27 @@ services:
       - recommendationservice
       - shippingservice
     logging: *logging
-  
-  frontendProxy:
-    image: nginx
-    container_name: frontend-proxy
+
+  frontendEnvoy:
+    image: ${IMAGE_NAME}:${IMAGE_VERSION}-frontend-envoy
+    build:
+      context: ./
+      dockerfile: ./src/frontendProxy/Dockerfile
+    container_name: frontend-envoy
     volumes:
-      - ./src/frontendProxy/frontend.tmpl:/etc/nginx/conf.d/frontend.conf.template
+      - ./src/frontendProxy/envoy.yaml.tmpl:/etc/envoy/envoy.yaml.tmpl
     ports:
-      - "${PROXY_PORT}:${PROXY_PORT}"
+      - "${ENVOY_PORT}:${ENVOY_PORT}"
+      - 10000:10000
     environment:
       - PUBLIC_OTEL_EXPORTER_OTLP_TRACES_ENDPOINT
       - FRONTEND_PORT
-      - PROXY_PORT
-    depends_on: 
+      - FRONTEND_ADDR
+      - ENVOY_PORT
+      - ENVOY_UID=0
+    depends_on:
       - frontend
-    command: /bin/bash -c "envsubst < /etc/nginx/conf.d/frontend.conf.template > /etc/nginx/conf.d/default.conf && nginx -g 'daemon off;'"
+    command: /bin/sh -c "envsubst < /etc/envoy/envoy.yaml.tmpl > /etc/envoy/envoy.yaml && envoy -c /etc/envoy/envoy.yaml;"
 
   # Frontend Tests
   frontendTests:
