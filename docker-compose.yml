@@ -210,14 +210,14 @@ services:
       - shippingservice
     logging: *logging
 
-  frontendEnvoy:
+  frontendproxy:
     image: ${IMAGE_NAME}:${IMAGE_VERSION}-frontend-envoy
     build:
       context: ./
       dockerfile: ./src/frontendProxy/Dockerfile
-    container_name: frontend-envoy
+    container_name: frontend-proxy
     volumes:
-      - ./src/frontendProxy/envoy.yaml.tmpl:/etc/envoy/envoy.yaml.tmpl
+      - ./src/frontendproxy/envoy.yaml.tmpl:/etc/envoy/envoy.yaml.tmpl
     ports:
       - "${ENVOY_PORT}:${ENVOY_PORT}"
     environment:
