@@ -124,5 +124,3 @@ significant modifications will be credited to OpenTelemetry Authors.
 ([#455](https://github.com/open-telemetry/opentelemetry-demo/pull/455))
 * Update cartservice Dockerfile to support ARM64
 ([#439](https://github.com/open-telemetry/opentelemetry-demo/pull/439))
-* Build multi-arch/platform images as part of release
-([#488](https://github.com/open-telemetry/opentelemetry-demo/pull/488))

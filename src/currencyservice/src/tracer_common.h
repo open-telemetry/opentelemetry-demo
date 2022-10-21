@@ -1,5 +1,16 @@
 // Copyright The OpenTelemetry Authors
-// SPDX-License-Identifier: Apache-2.0
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//     http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
 
 #pragma once
 #include "opentelemetry/exporters/otlp/otlp_grpc_exporter_factory.h"
@@ -63,7 +74,7 @@ public:
   virtual void Set(opentelemetry::nostd::string_view key,
                    opentelemetry::nostd::string_view value) noexcept override
   {
-    // Not required for server
+   // Not required for server
   }
 
   ServerContext *context_;
@@ -80,10 +91,10 @@ void initTracer()
       opentelemetry::sdk::trace::TracerContextFactory::Create(std::move(processors));
   std::shared_ptr<opentelemetry::trace::TracerProvider> provider =
       opentelemetry::sdk::trace::TracerProviderFactory::Create(context);
-  // Set the global trace provider
+ // Set the global trace provider
   opentelemetry::trace::Provider::SetTracerProvider(provider);
 
-  // set global propagator
+ // set global propagator
   opentelemetry::context::propagation::GlobalTextMapPropagator::SetGlobalPropagator(
       opentelemetry::nostd::shared_ptr<opentelemetry::context::propagation::TextMapPropagator>(
           new opentelemetry::trace::propagation::HttpTraceContext()));
@@ -95,4 +106,4 @@ opentelemetry::nostd::shared_ptr<opentelemetry::trace::Tracer> get_tracer(std::s
   return provider->GetTracer(tracer_name);
 }
 
-}  // namespace
+} // namespace
