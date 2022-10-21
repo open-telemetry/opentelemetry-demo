@@ -5,7 +5,8 @@ receivers:
       http:
         cors:
           allowed_origins:
-            - "http://localhost:8080"
+            - "http://*"
+            - "https://*"
   otlp/spanmetrics:
     protocols:
       grpc:

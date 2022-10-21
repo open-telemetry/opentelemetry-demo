@@ -25,6 +25,7 @@
     "@opentelemetry/sdk-trace-node": "1.7.0",
     "@opentelemetry/sdk-trace-web": "1.7.0",
     "@types/styled-components": "5.1.25",
+    "cookies-next": "^2.1.1",
     "currency-symbol-map": "5.1.0",
     "dotenv": "16.0.1",
     "dotenv-expand": "8.0.3",
