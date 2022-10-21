@@ -1,4 +1,4 @@
-# ad service
+# Ad Service
 
 This service determines appropriate ads to serve to users based on context
 keys. The ads will be for products available in the store.
