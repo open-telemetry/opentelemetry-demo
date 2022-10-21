@@ -249,6 +249,7 @@ services:
       - OTEL_EXPORTER_OTLP_ENDPOINT
       - ENV_PLATFORM
       - OTEL_SERVICE_NAME=frontend
+      - PUBLIC_OTEL_EXPORTER_OTLP_TRACES_ENDPOINT=http://localhost:4318/v1/traces
     depends_on:
       - adservice
       - cartservice
@@ -400,7 +401,7 @@ services:
     deploy:
       resources:
         limits:
-          memory: 500M                # This is high to enable supporting the recommendationCache feature flag use case
+          memory: 500M               # This is high to enable supporting the recommendationCache feature flag use case
     restart: always
     ports:
       - "${RECOMMENDATION_SERVICE_PORT}"
