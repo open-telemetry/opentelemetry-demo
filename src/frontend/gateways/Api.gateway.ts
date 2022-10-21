@@ -72,7 +72,7 @@ const ApiGateway = () => ({
       queryParams: {
         productIds,
         sessionId: userId,
-        currencyCode
+        currencyCode,
       },
     });
   },
@@ -82,6 +82,11 @@ const ApiGateway = () => ({
       queryParams: {
         productIds,
       },
+    });
+  },
+  getConfig() {
+    return request<Record<string, string>>({
+      url: `${basePath}/config`,
     });
   },
 });

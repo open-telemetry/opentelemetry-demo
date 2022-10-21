@@ -6,20 +6,22 @@ import { getWebAutoInstrumentations } from '@opentelemetry/auto-instrumentations
 import { Resource } from '@opentelemetry/resources';
 import { SemanticResourceAttributes } from '@opentelemetry/semantic-conventions';
 import { OTLPTraceExporter } from '@opentelemetry/exporter-trace-otlp-http';
+import ApiGateway from '../../gateways/Api.gateway';
 
 const FrontendTracer = async () => {
+  const { OTEL_SERVICE_NAME = '', PUBLIC_OTEL_EXPORTER_OTLP_TRACES_ENDPOINT = '' } = await ApiGateway.getConfig();
   const { ZoneContextManager } = await import('@opentelemetry/context-zone');
 
   const provider = new WebTracerProvider({
     resource: new Resource({
-      [SemanticResourceAttributes.SERVICE_NAME]: process.env.NEXT_PUBLIC_OTEL_SERVICE_NAME,
+      [SemanticResourceAttributes.SERVICE_NAME]: OTEL_SERVICE_NAME,
     }),
   });
 
   provider.addSpanProcessor(
     new SimpleSpanProcessor(
       new OTLPTraceExporter({
-        url: process.env.NEXT_PUBLIC_OTEL_EXPORTER_OTLP_TRACES_ENDPOINT || 'http://localhost:4318/v1/traces',
+        url: PUBLIC_OTEL_EXPORTER_OTLP_TRACES_ENDPOINT || 'http://localhost:4318/v1/traces',
       })
     )
   );
