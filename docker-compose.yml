@@ -229,9 +229,8 @@ services:
     depends_on:
       - frontend
     command: /bin/sh -c "envsubst < /etc/envoy/envoy.yaml.tmpl > /etc/envoy/envoy.yaml && envoy -c /etc/envoy/envoy.yaml;"
-  # Load generator
- 
- loadgenerator:
+
+  loadgenerator:
     image: ${IMAGE_NAME}:${IMAGE_VERSION}-loadgenerator
     container_name: load-generator
     build:
