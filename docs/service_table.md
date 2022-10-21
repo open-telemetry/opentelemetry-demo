@@ -1,6 +1,6 @@
 # Service Roles
 
-View [Service Graph](../README.md#architecture) to visualize request flows.
+View [Service Graph](./current_architecture.md) to visualize request flows.
 
 | Service                                                      | Language      | Description                                                                                                                                  |
 |--------------------------------------------------------------|---------------|----------------------------------------------------------------------------------------------------------------------------------------------|
