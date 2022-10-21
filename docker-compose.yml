@@ -233,7 +233,7 @@ services:
           memory: 200M
     restart: always
     ports:
-      - "${FRONTEND_PORT}:${FRONTEND_PORT}"
+      - "${FRONTEND_PORT}"
     environment:
       - PORT=${FRONTEND_PORT}
       - FRONTEND_ADDR
@@ -261,6 +261,21 @@ services:
       - recommendationservice
       - shippingservice
     logging: *logging
+  
+  frontendProxy:
+    image: nginx
+    container_name: proxy
+    volumes:
+      - ./src/frontendProxy/frontend.tmpl:/etc/nginx/conf.d/frontend.conf.template
+    ports:
+      - "${PROXY_PORT}:${PROXY_PORT}"
+    environment:
+      - PUBLIC_OTEL_EXPORTER_OTLP_TRACES_ENDPOINT
+      - FRONTEND_PORT
+      - PROXY_PORT
+    depends_on: 
+      - frontend
+    command: /bin/bash -c "envsubst < /etc/nginx/conf.d/frontend.conf.template > /etc/nginx/conf.d/default.conf && nginx -g 'daemon off;'"
 
   # Frontend Tests
   frontendTests:

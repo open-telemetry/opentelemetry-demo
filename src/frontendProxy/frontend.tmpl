@@ -1,0 +1,13 @@
+upstream frontend {
+    server  frontend:${FRONTEND_PORT};
+}
+
+server {
+    listen ${PROXY_PORT};
+    server_name _;
+
+    location / {
+        proxy_pass http://frontend;
+        add_header Set-Cookie otelCollectorUrl=${PUBLIC_OTEL_EXPORTER_OTLP_TRACES_ENDPOINT};
+    }
+}

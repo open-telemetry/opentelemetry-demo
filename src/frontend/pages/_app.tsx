@@ -6,8 +6,12 @@ import CartProvider from '../providers/Cart.provider';
 import { ThemeProvider } from 'styled-components';
 import Theme from '../styles/Theme';
 import FrontendTracer from '../utils/telemetry/FrontendTracer';
+import { getCookie } from 'cookies-next';
 
-if (typeof window !== 'undefined') FrontendTracer();
+if (typeof window !== 'undefined') {
+  const collector = getCookie('otelCollectorUrl')?.toString() || '';
+  FrontendTracer(collector);
+}
 
 const queryClient = new QueryClient();
 
