@@ -22,10 +22,11 @@ static_resources:
                   prefix: "/"
                 route: 
                   cluster: frontend
-            response_headers_to_add:
+              response_headers_to_add:
               - header:
                   key: "Set-Cookie"
-                  value: "otelCollectorUrl=${PUBLIC_OTEL_EXPORTER_OTLP_TRACES_ENDPOINT};"
+                  value:
+                  "otelCollectorUrl=${PUBLIC_OTEL_EXPORTER_OTLP_TRACES_ENDPOINT};"
           http_filters:
           - name: envoy.filters.http.router
             typed_config:
@@ -42,7 +43,7 @@ static_resources:
         - endpoint:
             address:
               socket_address:
-                address: frontend
+                address: ${FRONTEND_HOST}
                 port_value: ${FRONTEND_PORT}
 
 admin:

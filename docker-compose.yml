@@ -272,11 +272,10 @@ services:
       - ./src/frontendProxy/envoy.yaml.tmpl:/etc/envoy/envoy.yaml.tmpl
     ports:
       - "${ENVOY_PORT}:${ENVOY_PORT}"
-      - 10000:10000
     environment:
       - PUBLIC_OTEL_EXPORTER_OTLP_TRACES_ENDPOINT
       - FRONTEND_PORT
-      - FRONTEND_ADDR
+      - FRONTEND_HOST
       - ENVOY_PORT
       - ENVOY_UID=0
     depends_on:
@@ -482,7 +481,7 @@ services:
           memory: 160M
     restart: always
     ports:
-      - "${FEATURE_FLAG_SERVICE_PORT}:${FEATURE_FLAG_SERVICE_PORT}"     # Feature Flag Service UI
+      - "${FEATURE_FLAG_SERVICE_PORT}"     # Feature Flag Service UI
       - "${FEATURE_FLAG_GRPC_SERVICE_PORT}"                             # Feature Flag Service gRPC API
     environment:
       - FEATURE_FLAG_SERVICE_PORT
