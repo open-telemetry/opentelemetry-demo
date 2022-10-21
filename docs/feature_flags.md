@@ -8,4 +8,3 @@ feature flags.
 | Feature Flag            | Service(s)      | Description                                                               |
 |-------------------------|-----------------|---------------------------------------------------------------------------|
 | `productCatalogFailure` | Product Catalog | Generate an error for `GetProduct` requests with product id: `OLJCESPC7Z` |
-| `shippingFailure`       | Shipping        | Induce very long latency when shipping outside of USA                     |

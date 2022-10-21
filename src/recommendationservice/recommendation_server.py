@@ -35,6 +35,9 @@ from metrics import (
     init_metrics
 )
 
+cached_ids = []
+first_run = True
+
 class RecommendationService(demo_pb2_grpc.RecommendationServiceServicer):
     def ListRecommendations(self, request, context):
         prod_list = get_product_list(request.product_ids)
@@ -60,6 +63,8 @@ class RecommendationService(demo_pb2_grpc.RecommendationServiceServicer):
 
 
 def get_product_list(request_product_ids):
+    global first_run
+    global cached_ids
     with tracer.start_as_current_span("get_product_list") as span:
         max_responses = 5
 
@@ -67,9 +72,27 @@ def get_product_list(request_product_ids):
         request_product_ids_str = ''.join(request_product_ids)
         request_product_ids = request_product_ids_str.split(',')
 
-        # Fetch list of products from product catalog stub
-        cat_response = product_catalog_stub.ListProducts(demo_pb2.Empty())
-        product_ids = [x.id for x in cat_response.products]
+        # Feature flag scenario - Cache Leak
+        if check_feature_flag("recommendationCache"):
+            span.set_attribute("app.recommendation.cache_enabled", True)
+            if random.random() < 0.5 or first_run:
+                first_run = False
+                span.set_attribute("app.cache_hit", False)
+                logger.info("cache miss")
+                cat_response = product_catalog_stub.ListProducts(demo_pb2.Empty())
+                response_ids = [x.id for x in cat_response.products]
+                cached_ids = cached_ids + response_ids
+                cached_ids = cached_ids + cached_ids[:len(cached_ids) // 4]
+                product_ids = cached_ids
+            else:
+                span.set_attribute("app.cache_hit", True)
+                logger.info("cache hit")
+                product_ids = cached_ids
+        else:
+            span.set_attribute("app.recommendation.cache_enabled", False)
+            cat_response = product_catalog_stub.ListProducts(demo_pb2.Empty())
+            product_ids = [x.id for x in cat_response.products]
+
         span.set_attribute("app.products.count", len(product_ids))
 
         # Create a filtered list of products excluding the products received as input
@@ -94,6 +117,11 @@ def must_map_env(key: str):
         raise Exception(f'{key} environment variable must be set')
     return value
 
+def check_feature_flag(flag_name: str):
+    flag = feature_flag_stub.GetFlag(demo_pb2.GetFlagRequest(name=flag_name)).flag
+    logger.info(flag)
+    return flag.enabled
+
 if __name__ == "__main__":
     # Initialize Traces and Metrics
     tracer = trace.get_tracer_provider().get_tracer("recommendationservice")
@@ -102,9 +130,12 @@ if __name__ == "__main__":
 
     port = must_map_env('RECOMMENDATION_SERVICE_PORT')
     catalog_addr = must_map_env('PRODUCT_CATALOG_SERVICE_ADDR')
+    ff_addr = must_map_env('FEATURE_FLAG_GRPC_SERVICE_ADDR')
 
-    channel = grpc.insecure_channel(catalog_addr)
-    product_catalog_stub = demo_pb2_grpc.ProductCatalogServiceStub(channel)
+    pc_channel = grpc.insecure_channel(catalog_addr)
+    ff_channel = grpc.insecure_channel(ff_addr)
+    product_catalog_stub = demo_pb2_grpc.ProductCatalogServiceStub(pc_channel)
+    feature_flag_stub = demo_pb2_grpc.FeatureFlagServiceStub(ff_channel)
 
     # Create gRPC server
     server = grpc.server(futures.ThreadPoolExecutor(max_workers=10))
