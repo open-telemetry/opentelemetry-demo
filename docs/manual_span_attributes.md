@@ -107,11 +107,12 @@ This document contains the list of manual Span Attributes used throughout the de
 
 ## RecommendationService
 
-| Name                             | Type   | Description                             |
-|----------------------------------|--------|-----------------------------------------|
-| `app.filtered_products.count`    | number | Number of filtered products returned    |
-| `app.products.count`             | number | Number of products in catalog           |
-| `app.products_recommended.count` | number | Number of recommended products returned |
+| Name                             | Type    | Description                             |
+|----------------------------------|---------|-----------------------------------------|
+| `app.filtered_products.count`    | number  | Number of filtered products returned    |
+| `app.products.count`             | number  | Number of products in catalog           |
+| `app.products_recommended.count` | number  | Number of recommended products returned |
+| `app.cache_hit`                  | boolean | If cache was accessed or not            |
 
 ## ShippingService
 
