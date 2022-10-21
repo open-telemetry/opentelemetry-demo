@@ -224,6 +224,8 @@ services:
       - PUBLIC_OTEL_EXPORTER_OTLP_TRACES_ENDPOINT
       - FRONTEND_PORT
       - FRONTEND_HOST
+      - FEATURE_FLAG_SERVICE_PORT
+      - FEATURE_FLAG_SERVICE_HOST
       - ENVOY_PORT
       - ENVOY_UID=0
     depends_on:
@@ -417,6 +419,7 @@ services:
       - OTEL_EXPORTER_OTLP_TRACES_PROTOCOL=grpc
       - OTEL_SERVICE_NAME=featureflagservice
       - DATABASE_URL=ecto://ffs:ffs@ffs_postgres:5432/ffs
+      - FEATURE_FLAG_SERVICE_PATH_ROOT="/feature"
     depends_on:
       ffs_postgres:
         condition: service_healthy

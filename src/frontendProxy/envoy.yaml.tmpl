@@ -18,10 +18,10 @@ static_resources:
               domains:
               - "*"
               routes:
-              - match:
-                  prefix: "/"
-                route: 
-                  cluster: frontend
+              - match: { prefix: "/feature" }
+                route: { cluster: featureflag, prefix_rewrite: "/" }
+              - match: { prefix: "/" }
+                route: { cluster: frontend }
               response_headers_to_add:
               - header:
                   key: "Set-Cookie"
@@ -45,6 +45,18 @@ static_resources:
               socket_address:
                 address: ${FRONTEND_HOST}
                 port_value: ${FRONTEND_PORT}
+  - name: featureflag
+    type: STRICT_DNS
+    lb_policy: ROUND_ROBIN
+    load_assignment:
+      cluster_name: featureflag
+      endpoints:
+      - lb_endpoints:
+        - endpoint:
+            address:
+              socket_address:
+                address: ${FEATURE_FLAG_SERVICE_HOST}
+                port_value: ${FEATURE_FLAG_SERVICE_PORT}
 
 admin:
   address:
