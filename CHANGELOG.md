@@ -126,3 +126,5 @@ significant modifications will be credited to OpenTelemetry Authors.
 ([#439](https://github.com/open-telemetry/opentelemetry-demo/pull/439))
 * Add Envoy as reverse proxy for all user-facing services
 ([#508](https://github.com/open-telemetry/opentelemetry-demo/pull/508))
+* Envoy: Grafana, Load Generator exposed.
+([#513](https://github.com/open-telemetry/opentelemetry-demo/pull/513))
