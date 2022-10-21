@@ -1,6 +1,6 @@
 import * as S from './PlatformFlag.styled';
 
-const { NEXT_PUBLIC_PLATFORM = 'local' } = window.ENV;
+const { NEXT_PUBLIC_PLATFORM = 'local' } = typeof window !== 'undefined' ? window.ENV : {};
 
 const platform = NEXT_PUBLIC_PLATFORM as S.Platform;
 
