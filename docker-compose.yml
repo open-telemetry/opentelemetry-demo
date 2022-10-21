@@ -25,59 +25,7 @@ networks:
     driver: bridge
 
 services:
-  # Jaeger
-  jaeger:
-    image: jaegertracing/all-in-one
-    container_name: jaeger
-    command: ["--memory.max-traces", "10000"]
-    environment:
-      - COLLECTOR_OTLP_ENABLED=true
-    deploy:
-      resources:
-        limits:
-          memory: 275M
-    restart: always
-    ports:
-      - "16686:16686"                    # Jaeger UI
-      - "4317"                           # OTLP gRPC default port
-    logging: *logging
-
-  # Collector
-  otelcol:
-    image: otel/opentelemetry-collector-contrib:0.61.0
-    container_name: otel-col
-    deploy:
-      resources:
-        limits:
-          memory: 100M
-    restart: always
-    command: [ "--config=/etc/otelcol-config.yml", "--config=/etc/otelcol-config-extras.yml" ]
-    volumes:
-      - ./src/otelcollector/otelcol-config.yml:/etc/otelcol-config.yml
-      - ./src/otelcollector/otelcol-config-extras.yml:/etc/otelcol-config-extras.yml
-    ports:
-      - "4317"          # OTLP over gRPC receiver
-      - "4318:4318"     # OTLP over HTTP receiver
-      - "9464"          # Prometheus exporter
-      - "8888"          # metrics endpoint
-    depends_on:
-      - jaeger
-    logging: *logging
-
-  # Redis
-  redis-cart:
-    image: redis:alpine
-    container_name: redis-cart
-    deploy:
-      resources:
-        limits:
-          memory: 20M
-    restart: always
-    ports:
-      - "${REDIS_PORT}"
-    logging: *logging
-
-  # AdService
+  # Ad service
   adservice:
     image: ${IMAGE_NAME}:${IMAGE_VERSION}-adservice
     container_name: ad-service
@@ -103,7 +51,7 @@ services:
       - otelcol
     logging: *logging
 
-  # CartService
+  # Cart service
   cartservice:
     image: ${IMAGE_NAME}:${IMAGE_VERSION}-cartservice
     container_name: cart-service
@@ -130,7 +78,7 @@ services:
       - otelcol
     logging: *logging
 
-  # CheckoutService
+  # Checkout service
   checkoutservice:
     image: ${IMAGE_NAME}:${IMAGE_VERSION}-checkoutservice
     container_name: checkout-service
@@ -168,7 +116,7 @@ services:
       - otelcol
     logging: *logging
 
-  # CurrencyService
+  # Currency service
   currencyservice:
     image: ${IMAGE_NAME}:${IMAGE_VERSION}-currencyservice
     container_name: currency-service
@@ -194,7 +142,7 @@ services:
       - otelcol
     logging: *logging
 
-  # EmailService
+  # Email service
   emailservice:
     image: ${IMAGE_NAME}:${IMAGE_VERSION}-emailservice
     container_name: email-service
@@ -262,6 +210,302 @@ services:
       - shippingservice
     logging: *logging
 
+  # Load generator
+  loadgenerator:
+    image: ${IMAGE_NAME}:${IMAGE_VERSION}-loadgenerator
+    container_name: load-generator
+    build:
+      context: ./
+      dockerfile: ./src/loadgenerator/Dockerfile
+      cache_from:
+        - ${IMAGE_NAME}:${IMAGE_VERSION}-loadgenerator
+    deploy:
+      resources:
+        limits:
+          memory: 120M
+    restart: always
+    ports:
+      - "${LOCUST_WEB_PORT}:${LOCUST_WEB_PORT}"
+    environment:
+      - LOCUST_WEB_PORT
+      - LOCUST_USERS
+      - LOCUST_HOST
+      - LOCUST_HEADLESS
+      - LOCUST_AUTOSTART
+      - OTEL_EXPORTER_OTLP_TRACES_ENDPOINT
+      - OTEL_SERVICE_NAME=loadgenerator
+      - PROTOCOL_BUFFERS_PYTHON_IMPLEMENTATION=python
+    depends_on:
+      - frontend
+    logging: *logging
+
+  # Payment service
+  paymentservice:
+    image: ${IMAGE_NAME}:${IMAGE_VERSION}-paymentservice
+    container_name: payment-service
+    build:
+      context: ./
+      dockerfile: ./src/paymentservice/Dockerfile
+      cache_from:
+        - ${IMAGE_NAME}:${IMAGE_VERSION}-paymentservice
+    deploy:
+      resources:
+        limits:
+          memory: 70M
+    restart: always
+    ports:
+      - "${PAYMENT_SERVICE_PORT}"
+    environment:
+      - PAYMENT_SERVICE_PORT
+      - OTEL_EXPORTER_OTLP_TRACES_ENDPOINT
+      - OTEL_SERVICE_NAME=paymentservice
+    depends_on:
+      - otelcol
+    logging: *logging
+
+  # Product Catalog service
+  productcatalogservice:
+    image: ${IMAGE_NAME}:${IMAGE_VERSION}-productcatalogservice
+    container_name: product-catalog-service
+    build:
+      context: ./
+      dockerfile: ./src/productcatalogservice/Dockerfile
+      cache_from:
+        - ${IMAGE_NAME}:${IMAGE_VERSION}-productcatalogservice
+    deploy:
+      resources:
+        limits:
+          memory: 20M
+    restart: always
+    ports:
+      - "${PRODUCT_CATALOG_SERVICE_PORT}"
+    environment:
+      - PRODUCT_CATALOG_SERVICE_PORT
+      - FEATURE_FLAG_GRPC_SERVICE_ADDR
+      - OTEL_EXPORTER_OTLP_TRACES_ENDPOINT
+      - OTEL_SERVICE_NAME=productcatalogservice
+    depends_on:
+      - otelcol
+    logging: *logging
+
+  # Quote service
+  quoteservice:
+    image: ${IMAGE_NAME}:${IMAGE_VERSION}-quoteservice
+    container_name: quoteservice
+    build:
+      context: ./
+      dockerfile: ./src/quoteservice/Dockerfile
+      cache_from:
+        - ${IMAGE_NAME}:${IMAGE_VERSION}-quoteservice
+    deploy:
+      resources:
+        limits:
+          memory: 30M
+    restart: always
+    ports:
+      - "${QUOTE_SERVICE_PORT}"
+    environment:
+      # OTEL_EXPORTER_OTLP_TRACES_ENDPOINT # Not working for PHP
+      - QUOTE_SERVICE_PORT
+      - OTEL_SERVICE_NAME=quoteservice
+      - OTEL_EXPORTER_OTLP_ENDPOINT=otelcol:4317
+      - OTEL_TRACES_SAMPLER=parentbased_always_on
+      - OTEL_TRACES_EXPORTER=otlp
+      - OTEL_EXPORTER_OTLP_TRACES_PROTOCOL=grpc
+      - OTEL_PHP_TRACES_PROCESSOR=simple
+    depends_on:
+      - otelcol
+    logging: *logging
+
+  # Recommendation service
+  recommendationservice:
+    image: ${IMAGE_NAME}:${IMAGE_VERSION}-recommendationservice
+    container_name: recommendation-service
+    build:
+      context: ./
+      dockerfile: ./src/recommendationservice/Dockerfile
+      cache_from:
+        - ${IMAGE_NAME}:${IMAGE_VERSION}-recommendationservice
+    deploy:
+      resources:
+        limits:
+          memory: 500M               # This is high to enable supporting the recommendationCache feature flag use case
+    restart: always
+    ports:
+      - "${RECOMMENDATION_SERVICE_PORT}"
+    environment:
+      - RECOMMENDATION_SERVICE_PORT
+      - PRODUCT_CATALOG_SERVICE_ADDR
+      - FEATURE_FLAG_GRPC_SERVICE_ADDR
+      - OTEL_PYTHON_LOG_CORRELATION=true
+      - OTEL_TRACES_EXPORTER=otlp
+      - OTEL_METRICS_EXPORTER=otlp
+      - OTEL_EXPORTER_OTLP_ENDPOINT
+      - OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE
+      - OTEL_SERVICE_NAME=recommendationservice
+      - PROTOCOL_BUFFERS_PYTHON_IMPLEMENTATION=python
+    depends_on:
+      - productcatalogservice
+      - otelcol
+      - featureflagservice
+    logging: *logging
+
+  # Shipping service
+  shippingservice:
+    image: ${IMAGE_NAME}:${IMAGE_VERSION}-shippingservice
+    container_name: shipping-service
+    build:
+      context: ./
+      dockerfile: ./src/shippingservice/Dockerfile
+      cache_from:
+        - ${IMAGE_NAME}:${IMAGE_VERSION}-shippingservice
+    deploy:
+      resources:
+        limits:
+          memory: 20M
+    restart: always
+    ports:
+      - "${SHIPPING_SERVICE_PORT}"
+    environment:
+      - SHIPPING_SERVICE_PORT
+      - QUOTE_SERVICE_ADDR
+      - OTEL_EXPORTER_OTLP_TRACES_ENDPOINT
+      - OTEL_SERVICE_NAME=shippingservice
+    depends_on:
+      - otelcol
+    logging: *logging
+
+  # Feature Flag service
+  featureflagservice:
+    image: ${IMAGE_NAME}:${IMAGE_VERSION}-featureflagservice
+    container_name: feature-flag-service
+    build:
+      context: ./src/featureflagservice
+      cache_from:
+        - ${IMAGE_NAME}:${IMAGE_VERSION}-featureflagservice
+    deploy:
+      resources:
+        limits:
+          memory: 160M
+    restart: always
+    ports:
+      - "${FEATURE_FLAG_SERVICE_PORT}:${FEATURE_FLAG_SERVICE_PORT}"     # Feature Flag Service UI
+      - "${FEATURE_FLAG_GRPC_SERVICE_PORT}"                             # Feature Flag Service gRPC API
+    environment:
+      - FEATURE_FLAG_SERVICE_PORT
+      - FEATURE_FLAG_GRPC_SERVICE_PORT
+      - OTEL_EXPORTER_OTLP_TRACES_ENDPOINT
+      - OTEL_EXPORTER_OTLP_TRACES_PROTOCOL=grpc
+      - OTEL_SERVICE_NAME=featureflagservice
+      - DATABASE_URL=ecto://ffs:ffs@ffs_postgres:5432/ffs
+    depends_on:
+      ffs_postgres:
+        condition: service_healthy
+    logging: *logging
+
+
+  # Postgres used by Feature Flag service
+  ffs_postgres:
+    image: cimg/postgres:14.2
+    container_name: postgres
+    deploy:
+      resources:
+        limits:
+          memory: 120M
+    restart: always
+    environment:
+      - POSTGRES_USER=ffs
+      - POSTGRES_DB=ffs
+      - POSTGRES_PASSWORD=ffs
+    logging: *logging
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -d ffs -U ffs"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # Jaeger
+  jaeger:
+    image: jaegertracing/all-in-one
+    container_name: jaeger
+    command: ["--memory.max-traces", "10000"]
+    deploy:
+      resources:
+        limits:
+          memory: 275M
+    restart: always
+    ports:
+      - "16686:16686"                    # Jaeger UI
+      - "4317"                           # OTLP gRPC default port
+    environment:
+      - COLLECTOR_OTLP_ENABLED=true
+    logging: *logging
+
+  # Grafana
+  grafana:
+    image: grafana/grafana:9.1.0
+    container_name: grafana
+    volumes:
+      - ./src/grafana/grafana.ini:/etc/grafana/grafana.ini
+      - ./src/grafana/provisioning/:/etc/grafana/provisioning/
+    ports:
+      - "${GRAFANA_SERVICE_PORT}:${GRAFANA_SERVICE_PORT}"
+    logging: *logging
+
+  # OpenTelemetry Collector
+  otelcol:
+    image: otel/opentelemetry-collector-contrib:0.61.0
+    container_name: otel-col
+    deploy:
+      resources:
+        limits:
+          memory: 100M
+    restart: always
+    command: [ "--config=/etc/otelcol-config.yml", "--config=/etc/otelcol-config-extras.yml" ]
+    volumes:
+      - ./src/otelcollector/otelcol-config.yml:/etc/otelcol-config.yml
+      - ./src/otelcollector/otelcol-config-extras.yml:/etc/otelcol-config-extras.yml
+    ports:
+      - "4317"          # OTLP over gRPC receiver
+      - "4318:4318"     # OTLP over HTTP receiver
+      - "9464"          # Prometheus exporter
+      - "8888"          # metrics endpoint
+    depends_on:
+      - jaeger
+    logging: *logging
+
+  # Prometheus
+  prometheus:
+    image: quay.io/prometheus/prometheus:v2.34.0
+    container_name: prometheus
+    command:
+      - --web.console.templates=/etc/prometheus/consoles
+      - --web.console.libraries=/etc/prometheus/console_libraries
+      - --storage.tsdb.retention.time=1h
+      - --config.file=/etc/prometheus/prometheus-config.yaml
+      - --storage.tsdb.path=/prometheus
+      - --web.enable-lifecycle
+      - --web.route-prefix=/
+    volumes:
+      - ./src/prometheus/prometheus-config.yaml:/etc/prometheus/prometheus-config.yaml
+    ports:
+      - "${PROMETHEUS_SERVICE_PORT}:${PROMETHEUS_SERVICE_PORT}"
+    logging: *logging
+
+  # Redis used by Cart service
+  redis-cart:
+    image: redis:alpine
+    container_name: redis-cart
+    deploy:
+      resources:
+        limits:
+          memory: 20M
+    restart: always
+    ports:
+      - "${REDIS_PORT}"
+    logging: *logging
+
+
   # Frontend Tests
   frontendTests:
     image: ${IMAGE_NAME}:${IMAGE_VERSION}-frontend-tests
@@ -269,17 +513,17 @@ services:
     build:
       context: ./
       dockerfile: ./src/frontend/Dockerfile.cypress
-    depends_on:
-      - frontend
     profiles:
       - tests
+    volumes:
+      - ./src/frontend/cypress/videos:/app/cypress/videos
+      - ./src/frontend/cypress/screenshots:/app/cypress/screenshots
     environment:
       - CYPRESS_baseUrl=http://${FRONTEND_ADDR}
       - FRONTEND_ADDR
       - NODE_ENV=production
-    volumes:
-      - ./src/frontend/cypress/videos:/app/cypress/videos
-      - ./src/frontend/cypress/screenshots:/app/cypress/screenshots
+    depends_on:
+      - frontend
 
   # Integration Tests
   integrationTests:
@@ -311,243 +555,3 @@ services:
       - recommendationservice
       - shippingservice
       - quoteservice
-
-  # PaymentService
-  paymentservice:
-    image: ${IMAGE_NAME}:${IMAGE_VERSION}-paymentservice
-    container_name: payment-service
-    build:
-      context: ./
-      dockerfile: ./src/paymentservice/Dockerfile
-      cache_from:
-        - ${IMAGE_NAME}:${IMAGE_VERSION}-paymentservice
-    deploy:
-      resources:
-        limits:
-          memory: 70M
-    restart: always
-    ports:
-      - "${PAYMENT_SERVICE_PORT}"
-    environment:
-      - PAYMENT_SERVICE_PORT
-      - OTEL_EXPORTER_OTLP_TRACES_ENDPOINT
-      - OTEL_SERVICE_NAME=paymentservice
-    depends_on:
-      - otelcol
-    logging: *logging
-
-  # ProductCatalogService
-  productcatalogservice:
-    image: ${IMAGE_NAME}:${IMAGE_VERSION}-productcatalogservice
-    container_name: product-catalog-service
-    build:
-      context: ./
-      dockerfile: ./src/productcatalogservice/Dockerfile
-      cache_from:
-        - ${IMAGE_NAME}:${IMAGE_VERSION}-productcatalogservice
-    deploy:
-      resources:
-        limits:
-          memory: 20M
-    restart: always
-    ports:
-      - "${PRODUCT_CATALOG_SERVICE_PORT}"
-    environment:
-      - PRODUCT_CATALOG_SERVICE_PORT
-      - FEATURE_FLAG_GRPC_SERVICE_ADDR
-      - OTEL_EXPORTER_OTLP_TRACES_ENDPOINT
-      - OTEL_SERVICE_NAME=productcatalogservice
-    depends_on:
-      - otelcol
-    logging: *logging
-
-  quoteservice:
-    image: ${IMAGE_NAME}:${IMAGE_VERSION}-quoteservice
-    container_name: quoteservice
-    build:
-      context: ./
-      dockerfile: ./src/quoteservice/Dockerfile
-      cache_from:
-        - ${IMAGE_NAME}:${IMAGE_VERSION}-quoteservice
-    deploy:
-      resources:
-        limits:
-          memory: 30M
-    restart: always
-    ports:
-      - "${QUOTE_SERVICE_PORT}"
-    environment:
-      # OTEL_EXPORTER_OTLP_TRACES_ENDPOINT # Not working for PHP
-      - QUOTE_SERVICE_PORT
-      - OTEL_SERVICE_NAME=quoteservice
-      - OTEL_EXPORTER_OTLP_ENDPOINT=otelcol:4317
-      - OTEL_TRACES_SAMPLER=parentbased_always_on
-      - OTEL_TRACES_EXPORTER=otlp
-      - OTEL_EXPORTER_OTLP_TRACES_PROTOCOL=grpc
-      - OTEL_PHP_TRACES_PROCESSOR=simple
-    depends_on:
-      - otelcol
-    logging: *logging
-
-  # RecommendationService
-  recommendationservice:
-    image: ${IMAGE_NAME}:${IMAGE_VERSION}-recommendationservice
-    container_name: recommendation-service
-    build:
-      context: ./
-      dockerfile: ./src/recommendationservice/Dockerfile
-      cache_from:
-        - ${IMAGE_NAME}:${IMAGE_VERSION}-recommendationservice
-    deploy:
-      resources:
-        limits:
-          memory: 500M               # This is high to enable supporting the recommendationCache feature flag use case
-    restart: always
-    ports:
-      - "${RECOMMENDATION_SERVICE_PORT}"
-    depends_on:
-      - productcatalogservice
-      - otelcol
-      - featureflagservice
-    environment:
-      - RECOMMENDATION_SERVICE_PORT
-      - PRODUCT_CATALOG_SERVICE_ADDR
-      - FEATURE_FLAG_GRPC_SERVICE_ADDR
-      - OTEL_PYTHON_LOG_CORRELATION=true
-      - OTEL_TRACES_EXPORTER=otlp
-      - OTEL_METRICS_EXPORTER=otlp
-      - OTEL_EXPORTER_OTLP_ENDPOINT
-      - OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE
-      - OTEL_SERVICE_NAME=recommendationservice
-      - PROTOCOL_BUFFERS_PYTHON_IMPLEMENTATION=python
-    logging: *logging
-
-  # ShippingService
-  shippingservice:
-    image: ${IMAGE_NAME}:${IMAGE_VERSION}-shippingservice
-    container_name: shipping-service
-    build:
-      context: ./
-      dockerfile: ./src/shippingservice/Dockerfile
-      cache_from:
-        - ${IMAGE_NAME}:${IMAGE_VERSION}-shippingservice
-    deploy:
-      resources:
-        limits:
-          memory: 20M
-    restart: always
-    ports:
-      - "${SHIPPING_SERVICE_PORT}"
-    environment:
-      - SHIPPING_SERVICE_PORT
-      - QUOTE_SERVICE_ADDR
-      - OTEL_EXPORTER_OTLP_TRACES_ENDPOINT
-      - OTEL_SERVICE_NAME=shippingservice
-    depends_on:
-      - otelcol
-    logging: *logging
-
-  # FeatureFlagService
-  featureflagservice:
-    image: ${IMAGE_NAME}:${IMAGE_VERSION}-featureflagservice
-    container_name: feature-flag-service
-    build:
-      context: ./src/featureflagservice
-      cache_from:
-        - ${IMAGE_NAME}:${IMAGE_VERSION}-featureflagservice
-    deploy:
-      resources:
-        limits:
-          memory: 160M
-    restart: always
-    ports:
-      - "${FEATURE_FLAG_SERVICE_PORT}:${FEATURE_FLAG_SERVICE_PORT}"     # Feature Flag Service UI
-      - "${FEATURE_FLAG_GRPC_SERVICE_PORT}"                             # Feature Flag Service gRPC API
-    environment:
-      - FEATURE_FLAG_SERVICE_PORT
-      - FEATURE_FLAG_GRPC_SERVICE_PORT
-      - OTEL_EXPORTER_OTLP_TRACES_ENDPOINT
-      - OTEL_EXPORTER_OTLP_TRACES_PROTOCOL=grpc
-      - OTEL_SERVICE_NAME=featureflagservice
-      - DATABASE_URL=ecto://ffs:ffs@ffs_postgres:5432/ffs
-    depends_on:
-      ffs_postgres:
-        condition: service_healthy
-    logging: *logging
-
-  ffs_postgres:
-    image: cimg/postgres:14.2
-    container_name: postgres
-    deploy:
-      resources:
-        limits:
-          memory: 120M
-    restart: always
-    environment:
-      - POSTGRES_USER=ffs
-      - POSTGRES_DB=ffs
-      - POSTGRES_PASSWORD=ffs
-    logging: *logging
-    healthcheck:
-      test: ["CMD-SHELL", "pg_isready -d ffs -U ffs"]
-      interval: 10s
-      timeout: 5s
-      retries: 5
-
-  # LoadGenerator
-  loadgenerator:
-    image: ${IMAGE_NAME}:${IMAGE_VERSION}-loadgenerator
-    container_name: load-generator
-    build:
-      context: ./
-      dockerfile: ./src/loadgenerator/Dockerfile
-      cache_from:
-        - ${IMAGE_NAME}:${IMAGE_VERSION}-loadgenerator
-    deploy:
-      resources:
-        limits:
-          memory: 120M
-    restart: always
-    ports:
-      - "${LOCUST_WEB_PORT}:${LOCUST_WEB_PORT}"
-    environment:
-      - LOCUST_WEB_PORT
-      - LOCUST_USERS
-      - LOCUST_HOST
-      - LOCUST_HEADLESS
-      - LOCUST_AUTOSTART
-      - OTEL_EXPORTER_OTLP_TRACES_ENDPOINT
-      - OTEL_SERVICE_NAME=loadgenerator
-      - PROTOCOL_BUFFERS_PYTHON_IMPLEMENTATION=python
-    depends_on:
-      - frontend
-    logging: *logging
-
-  # Prometheus
-  prometheus:
-    image: quay.io/prometheus/prometheus:v2.34.0
-    container_name: prometheus
-    command:
-      - --web.console.templates=/etc/prometheus/consoles
-      - --web.console.libraries=/etc/prometheus/console_libraries
-      - --storage.tsdb.retention.time=1h
-      - --config.file=/etc/prometheus/prometheus-config.yaml
-      - --storage.tsdb.path=/prometheus
-      - --web.enable-lifecycle
-      - --web.route-prefix=/
-    volumes:
-      - ./src/prometheus/prometheus-config.yaml:/etc/prometheus/prometheus-config.yaml
-    ports:
-      - "${PROMETHEUS_SERVICE_PORT}:${PROMETHEUS_SERVICE_PORT}"
-    logging: *logging
-
-  # Grafana
-  grafana:
-    image: grafana/grafana:9.1.0
-    container_name: grafana
-    volumes:
-      - ./src/grafana/grafana.ini:/etc/grafana/grafana.ini
-      - ./src/grafana/provisioning/:/etc/grafana/provisioning/
-    ports:
-      - "${GRAFANA_SERVICE_PORT}:${GRAFANA_SERVICE_PORT}"
-    logging: *logging
