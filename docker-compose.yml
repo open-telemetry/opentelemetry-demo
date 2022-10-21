@@ -264,7 +264,7 @@ services:
   
   frontendProxy:
     image: nginx
-    container_name: proxy
+    container_name: frontend-proxy
     volumes:
       - ./src/frontendProxy/frontend.tmpl:/etc/nginx/conf.d/frontend.conf.template
     ports:
