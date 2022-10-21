@@ -181,7 +181,7 @@ services:
           memory: 200M
     restart: always
     ports:
-      - "${FRONTEND_PORT}:${FRONTEND_PORT}"
+      - "${FRONTEND_PORT}"
     environment:
       - PORT=${FRONTEND_PORT}
       - FRONTEND_ADDR
@@ -210,7 +210,28 @@ services:
       - shippingservice
     logging: *logging
 
-  # Load generator
+  frontendproxy:
+    image: ${IMAGE_NAME}:${IMAGE_VERSION}-frontend-envoy
+    build:
+      context: ./
+      dockerfile: ./src/frontendProxy/Dockerfile
+    container_name: frontend-proxy
+    volumes:
+      - ./src/frontendproxy/envoy.yaml.tmpl:/etc/envoy/envoy.yaml.tmpl
+    ports:
+      - "${ENVOY_PORT}:${ENVOY_PORT}"
+    environment:
+      - PUBLIC_OTEL_EXPORTER_OTLP_TRACES_ENDPOINT
+      - FRONTEND_PORT
+      - FRONTEND_HOST
+      - FEATURE_FLAG_SERVICE_PORT
+      - FEATURE_FLAG_SERVICE_HOST
+      - ENVOY_PORT
+      - ENVOY_UID=0
+    depends_on:
+      - frontend
+    command: /bin/sh -c "envsubst < /etc/envoy/envoy.yaml.tmpl > /etc/envoy/envoy.yaml && envoy -c /etc/envoy/envoy.yaml;"
+
   loadgenerator:
     image: ${IMAGE_NAME}:${IMAGE_VERSION}-loadgenerator
     container_name: load-generator
@@ -389,7 +410,7 @@ services:
           memory: 160M
     restart: always
     ports:
-      - "${FEATURE_FLAG_SERVICE_PORT}:${FEATURE_FLAG_SERVICE_PORT}"     # Feature Flag Service UI
+      - "${FEATURE_FLAG_SERVICE_PORT}"     # Feature Flag Service UI
       - "${FEATURE_FLAG_GRPC_SERVICE_PORT}"                             # Feature Flag Service gRPC API
     environment:
       - FEATURE_FLAG_SERVICE_PORT
@@ -398,6 +419,7 @@ services:
       - OTEL_EXPORTER_OTLP_TRACES_PROTOCOL=grpc
       - OTEL_SERVICE_NAME=featureflagservice
       - DATABASE_URL=ecto://ffs:ffs@ffs_postgres:5432/ffs
+      - FEATURE_FLAG_SERVICE_PATH_ROOT="/feature"
     depends_on:
       ffs_postgres:
         condition: service_healthy
