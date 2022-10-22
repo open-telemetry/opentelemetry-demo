@@ -211,13 +211,11 @@ services:
     logging: *logging
 
   frontendproxy:
-    image: ${IMAGE_NAME}:${IMAGE_VERSION}-frontend-envoy
+    image: ${IMAGE_NAME}:${IMAGE_VERSION}-frontendproxy
     build:
       context: ./
-      dockerfile: ./src/frontendProxy/Dockerfile
+      dockerfile: src/frontendproxy/Dockerfile
     container_name: frontend-proxy
-    volumes:
-      - ./src/frontendproxy/envoy.yaml.tmpl:/etc/envoy/envoy.yaml.tmpl
     ports:
       - "${ENVOY_PORT}:${ENVOY_PORT}"
     environment:
@@ -230,7 +228,6 @@ services:
       - ENVOY_UID=0
     depends_on:
       - frontend
-    command: /bin/sh -c "envsubst < /etc/envoy/envoy.yaml.tmpl > /etc/envoy/envoy.yaml && envoy -c /etc/envoy/envoy.yaml;"
 
   loadgenerator:
     image: ${IMAGE_NAME}:${IMAGE_VERSION}-loadgenerator
