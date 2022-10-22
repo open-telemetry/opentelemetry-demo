@@ -43,6 +43,7 @@ Once the images are built and containers are started you can access:
 - Grafana: <http://localhost/grafana/>
 - Feature Flags UI: <http://localhost/feature/>
 - Load Generator UI: <http://localhost/loadgen/>
+- Jaeger UI: <http://localhost/jaeger/ui/>
 
 ## Bring your own backend
 
