@@ -197,7 +197,7 @@ services:
       - OTEL_EXPORTER_OTLP_ENDPOINT
       - ENV_PLATFORM
       - OTEL_SERVICE_NAME=frontend
-      - PUBLIC_OTEL_EXPORTER_OTLP_TRACES_ENDPOINT=http://localhost:4318/v1/traces
+      - PUBLIC_OTEL_EXPORTER_OTLP_TRACES_ENDPOINT
     depends_on:
       - adservice
       - cartservice
