@@ -217,20 +217,30 @@ services:
       dockerfile: ./src/frontendProxy/Dockerfile
     container_name: frontend-proxy
     volumes:
-      - ./src/frontendproxy/envoy.yaml.tmpl:/etc/envoy/envoy.yaml.tmpl
+      - ./src/frontendproxy/envoy.tmpl.yaml:/etc/envoy/envoy.tmpl.yaml
     ports:
       - "${ENVOY_PORT}:${ENVOY_PORT}"
+      - 10000:10000
     environment:
       - PUBLIC_OTEL_EXPORTER_OTLP_TRACES_ENDPOINT
       - FRONTEND_PORT
       - FRONTEND_HOST
       - FEATURE_FLAG_SERVICE_PORT
       - FEATURE_FLAG_SERVICE_HOST
+      - LOCUST_WEB_HOST
+      - LOCUST_WEB_PORT
+      - GRAFANA_SERVICE_PORT
+      - GRAFANA_SERVICE_HOST
+      - JAEGER_SERVICE_PORT
+      - JAEGER_SERVICE_HOST
       - ENVOY_PORT
       - ENVOY_UID=0
     depends_on:
       - frontend
-    command: /bin/sh -c "envsubst < /etc/envoy/envoy.yaml.tmpl > /etc/envoy/envoy.yaml && envoy -c /etc/envoy/envoy.yaml;"
+      - featureflagservice
+      - loadgenerator
+      - grafana
+    command: /bin/sh -c "envsubst < /etc/envoy/envoy.tmpl.yaml > /etc/envoy/envoy.yaml && envoy -c /etc/envoy/envoy.yaml;"
 
   loadgenerator:
     image: ${IMAGE_NAME}:${IMAGE_VERSION}-loadgenerator
@@ -246,7 +256,7 @@ services:
           memory: 120M
     restart: always
     ports:
-      - "${LOCUST_WEB_PORT}:${LOCUST_WEB_PORT}"
+      - "${LOCUST_WEB_PORT}"
     environment:
       - LOCUST_WEB_PORT
       - LOCUST_USERS
@@ -450,14 +460,14 @@ services:
   jaeger:
     image: jaegertracing/all-in-one
     container_name: jaeger
-    command: ["--memory.max-traces", "10000"]
+    command: ["--memory.max-traces", "10000", "--query.base-path", "/jaeger/ui"]
     deploy:
       resources:
         limits:
           memory: 275M
     restart: always
     ports:
-      - "16686:16686"                    # Jaeger UI
+      - "${JAEGER_SERVICE_PORT}"                    # Jaeger UI
       - "4317"                           # OTLP gRPC default port
     environment:
       - COLLECTOR_OTLP_ENABLED=true
@@ -471,7 +481,7 @@ services:
       - ./src/grafana/grafana.ini:/etc/grafana/grafana.ini
       - ./src/grafana/provisioning/:/etc/grafana/provisioning/
     ports:
-      - "${GRAFANA_SERVICE_PORT}:${GRAFANA_SERVICE_PORT}"
+      - "${GRAFANA_SERVICE_PORT}"
     logging: *logging
 
   # OpenTelemetry Collector
