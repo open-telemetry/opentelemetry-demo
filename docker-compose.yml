@@ -238,7 +238,6 @@ services:
       - featureflagservice
       - loadgenerator
       - grafana
-    command: /bin/sh -c "envsubst < /etc/envoy/envoy.tmpl.yaml > /etc/envoy/envoy.yaml && envoy -c /etc/envoy/envoy.yaml;"
 
   loadgenerator:
     image: ${IMAGE_NAME}:${IMAGE_VERSION}-loadgenerator
