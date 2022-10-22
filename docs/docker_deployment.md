@@ -40,11 +40,10 @@ source. It may take more than 20 minutes to build if the flag is omitted.
 Once the images are built and containers are started you can access:
 
 - Webstore: <http://localhost/>
-- Jaeger: <http://localhost:16686/>
-- Prometheus: <http://localhost:9090/>
-- Grafana: <http://localhost:3000/>
+- Grafana: <http://localhost/grafana/>
 - Feature Flags UI: <http://localhost/feature/>
-- Load Generator UI: <http://localhost:8089/>
+- Load Generator UI: <http://localhost/loadgen/>
+- Jaeger UI: <http://localhost/jaeger/ui/>
 
 ## Bring your own backend
 
