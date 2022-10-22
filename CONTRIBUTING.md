@@ -91,12 +91,11 @@ docker compose up -d
 
 Once the images are built and containers are started you can access:
 
-- Webstore: <http://localhost/>
-- Jaeger: <http://localhost:16686/>
-- Prometheus: <http://localhost:9090/>
-- Grafana: <http://localhost:3000/>
-- Feature Flags UI: <http://localhost/feature/>
-- Load Generator UI: <http://localhost:8089/>
+- Webstore: <http://localhost:8080/>
+- Jaeger: <http://localhost:8080/jaeger/ui/>
+- Grafana: <http://localhost:8080/grafana/>
+- Feature Flags UI: <http://localhost:8080/feature/>
+- Load Generator UI: <http://localhost:8080/loadgen//>
 
 ## Create Your First Pull Request
 
