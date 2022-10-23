@@ -12,7 +12,7 @@ jobs:
       packages: write
 
     env:
-      RELEASE_VERSION: "${{ github.event.release.tag_name }}"
+      RELEASE_VERSION: "v1.0.0"
       DOCKERHUB_REPO: "otel/demo"
       GHCR_REPO: "ghcr.io/open-telemetry/demo"
     strategy:
@@ -55,7 +55,7 @@ jobs:
         uses: docker/setup-qemu-action@v2.0.0
 
       - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v2.0.0
+        uses: docker/setup-buildx-action@v3.2.0
 
       - name: Cache Docker layers
         uses: actions/cache@v3
@@ -72,6 +72,8 @@ jobs:
           file: ${{ matrix.file_tag.file }}
           platforms: linux/amd64,linux/arm64
           push: ${{ github.event_name != 'pull_request' }}
-          tags: ${{ env.DOCKERHUB_REPO }}:${{ env.RELEASE_VERSION }}-${{ matrix.file_tag.tag_suffix }},${{ env.GHCR_REPO }}:${{ env.RELEASE_VERSION }}-${{ matrix.file_tag.tag_suffix }}
+          tags: |
+            ${{ env.DOCKERHUB_REPO }}:${{ env.RELEASE_VERSION }}-${{matrix.file_tag.tag_suffix }}
+            ${{ env.GHCR_REPO }}:${{ env.RELEASE_VERSION }}-${{ matrix.file_tag.tag_suffix }}
           cache-from: type=local,src=/tmp/.buildx-cache
           cache-to: type=local,dest=/tmp/.buildx-cache
