@@ -2,7 +2,7 @@ name: "Build"
 
 on:
   pull_request:
-    types: [opened]
+    branches: [ main ]
 
 jobs:
   build_images:
@@ -20,36 +20,52 @@ jobs:
         file_tag:
           - file: ./src/adservice/Dockerfile
             tag_suffix: adservice
+            context: ./
           - file: ./src/cartservice/src/Dockerfile
             tag_suffix: cartservice
+            context: ./
           - file: ./src/checkoutservice/Dockerfile
             tag_suffix: checkoutservice
+            context: ./
           - file: ./src/currencyservice/Dockerfile
             tag_suffix: currencyservice
+            context: ./src/currencyservice
           - file: ./src/emailservice/Dockerfile
             tag_suffix: emailservice
+            context: ./src/emailservice
           - file: ./src/frontend/Dockerfile
             tag_suffix: frontend
+            context: ./
           - file: ./src/frontendproxy/Dockerfile
             tag_suffix: frontendproxy
+            context: ./
           - file: ./src/paymentservice/Dockerfile
             tag_suffix: paymentservice
+            context: ./
           - file: ./src/productcatalogservice/Dockerfile
             tag_suffix: productcatalogservice
+            context: ./
           - file: ./src/quoteservice/Dockerfile
             tag_suffix: quoteservice
+            context: ./
           - file: ./src/shippingservice/Dockerfile
             tag_suffix: shippingservice
+            context: ./
           - file: ./src/featureflagservice/Dockerfile
             tag_suffix: featureflagservice
+            context: ./src/featureflagservice
           - file: ./src/loadgenerator/Dockerfile
             tag_suffix: loadgenerator
+            context: ./
           - file: ./src/recommendationservice/Dockerfile
             tag_suffix: recommendationservice
+            context: ./
           - file: ./src/frontend/Dockerfile.cypress
             tag_suffix: frontend-tests
+            context: ./
           - file: ./test/Dockerfile
             tag_suffix: integrationTests
+            context: ./
     steps:
       - uses: actions/checkout@v3
         with:
@@ -72,7 +88,7 @@ jobs:
       - name: Matrix Build and push demo images
         uses: docker/build-push-action@v3.1.1
         with:
-          context: .
+          context: ${{ matrix.file_tag.context }}
           file: ${{ matrix.file_tag.file }}
           platforms: linux/amd64,linux/arm64
           push: ${{ github.event_name != 'pull_request' }}
