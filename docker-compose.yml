@@ -12,7 +12,6 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-version: '3.9'
 x-default-logging: &logging
   driver: "json-file"
   options:
@@ -542,6 +541,7 @@ services:
     build:
       context: ./
       dockerfile: ./src/frontend/Dockerfile.cypress
+
     profiles:
       - tests
     volumes:
