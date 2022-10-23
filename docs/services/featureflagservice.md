@@ -11,9 +11,9 @@ It is called by Product Catalog and Shipping services.
 ### Initializing Tracing
 
 In order to set up OpenTelemetry instrumentation for
-[Phoenix]((https://github.com/open-telemetry/opentelemetry-erlang-contrib/tree/main/instrumentation/opentelemetry_phoenix/README.md)),
+[Phoenix](https://github.com/open-telemetry/opentelemetry-erlang-contrib/tree/main/instrumentation/opentelemetry_phoenix/),
 and
-[Ecto]((https://github.com/open-telemetry/opentelemetry-erlang-contrib/tree/main/instrumentation/opentelemetry_ecto/README.md)),
+[Ecto](https://github.com/open-telemetry/opentelemetry-erlang-contrib/tree/main/instrumentation/opentelemetry_ecto/),
 , we need to call the setup methods of their instrumentation packages before
 starting the Supervisor.
 
