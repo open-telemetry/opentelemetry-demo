@@ -6,7 +6,7 @@ as an API leveraged by the UI or other clients. The application is based on
 
 [Front End source](../../src/frontend/)
 
-## SDK initialization
+## Server Instrumentation
 
 It is recommended to use a Node required module when starting your NodeJS
 application to initialize the SDK and auto-instrumentation. When initializing
