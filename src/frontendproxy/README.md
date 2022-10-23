@@ -1,10 +1,8 @@
-# Frontend Proxy
+# Frontend Proxy Service
 
-The frontend proxy is Envoy, configured to route traffic to public-facing
-services including the frontend, Grafana, Jaeger, and the Feature Flag service.
+This service acts as a reverse proxy for the various user-facing web interfaces.
 
-## Modifying the Envoy configuration
+## Modifying the Envoy Configuration
 
-The Envoy configuration is located at `envoy.tmpl.yaml`. This configuration file
-can accept environment variables, which are then replaced at deploy time via the
-Dockerfile and `envsubst`.
+The envoy configuration is generated from the `envoy.tmpl.yaml` file in this
+directory. Environment variables are substituted at deploy-time.
