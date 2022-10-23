@@ -2,6 +2,7 @@ import { useMemo } from 'react';
 import { useQuery } from 'react-query';
 import ApiGateway from '../../gateways/Api.gateway';
 import { Money } from '../../protos/demo';
+import { useCurrency } from '../../providers/Currency.provider';
 import { IProductCartItem } from '../../types/Cart';
 import ProductPrice from '../ProductPrice';
 import CartItem from './CartItem';
@@ -13,8 +14,9 @@ interface IProps {
 }
 
 const CartItems = ({ productList, shouldShowPrice = true }: IProps) => {
+  const { selectedCurrency } = useCurrency();
   const { data: shippingConst = { units: 0, currencyCode: 'USD', nanos: 0 } } = useQuery('shipping', () =>
-    ApiGateway.getShippingCost(productList)
+    ApiGateway.getShippingCost(productList, selectedCurrency)
   );
 
   const total = useMemo<Money>(
@@ -22,10 +24,10 @@ const CartItems = ({ productList, shouldShowPrice = true }: IProps) => {
       units:
         productList.reduce((acc, item) => acc + (item.product.priceUsd?.units || 0) * item.quantity, 0) +
         (shippingConst?.units || 0),
-      currencyCode: 'USD',
+      currencyCode: selectedCurrency,
       nanos: 0,
     }),
-    [shippingConst, productList]
+    [productList, shippingConst?.units, selectedCurrency]
   );
 
   return (
