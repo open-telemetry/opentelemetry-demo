@@ -1,8 +1,10 @@
-name: "Release"
+name: "Build and Publish"
 
 on:
   release:
     types: [published]
+  pull_request:
+    branches: [main]
 
 jobs:
   build_and_push_images:
