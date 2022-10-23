@@ -10,13 +10,13 @@ Live demos can be added to the [README](https://github.com/open-telemetry/opente
 
 ## Building Custom Images
 
-Docker Compose uses  `IMAGE_VERSION`  and `IMAGE_NAME` from `.env`  to tag all
+Docker Compose uses `IMAGE_VERSION` and `IMAGE_NAME` from `.env` to tag all
 images. Modify these values in order to push or pull custom images from your
 container registry of choice.
 
 ## Configuring the Collector
 
-The collector is configured to export traces to jaeger and metrics to prometheus
+The collector is configured to export traces to Jaeger and metrics to Prometheus
 in
 [otelcol-config.yml](https://github.com/open-telemetry/opentelemetry-demo/blob/main/src/otelcollector/otelcol-config.yml)
 
@@ -59,6 +59,10 @@ open-telemetry/opentelemetry-demo --values opentelemetry-demo-values.yaml
 ```
 
 Values provided in this way will be merged with the default values.
+
+Please see the
+[values.yaml](https://github.com/open-telemetry/opentelemetry-helm-charts/blob/main/charts/opentelemetry-demo/values.yaml)
+file for a complete list of configuration options.
 
 ## Image Overrides [Helm/Kubernetes]
 
