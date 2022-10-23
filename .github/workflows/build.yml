@@ -18,39 +18,43 @@ jobs:
     strategy:
       matrix:
         file_tag:
-          - file: ./src/adservice/Dockerfile
+          - file: /src/adservice/Dockerfile
             tag_suffix: adservice
-          - file: ./src/cartservice/src/Dockerfile
+          - file: /src/cartservice/src/Dockerfile
             tag_suffix: cartservice
-          - file: ./src/checkoutservice/Dockerfile
+          - file: /src/checkoutservice/Dockerfile
             tag_suffix: checkoutservice
-          - file: ./src/currencyservice/Dockerfile
+          - file: /src/currencyservice/Dockerfile
             tag_suffix: currencyservice
-          - file: ./src/emailservice/Dockerfile
+          - file: /src/emailservice/Dockerfile
             tag_suffix: emailservice
-          - file: ./src/frontend/Dockerfile
+          - file: /src/frontend/Dockerfile
             tag_suffix: frontend
-          - file: ./src/frontendproxy/Dockerfile
+          - file: /src/frontendproxy/Dockerfile
             tag_suffix: frontendproxy
-          - file: ./src/paymentservice/Dockerfile
+          - file: /src/paymentservice/Dockerfile
             tag_suffix: paymentservice
-          - file: ./src/productcatalogservice/Dockerfile
+          - file: /src/productcatalogservice/Dockerfile
             tag_suffix: productcatalogservice
-          - file: ./src/quoteservice/Dockerfile
+          - file: /src/quoteservice/Dockerfile
             tag_suffix: quoteservice
-          - file: ./src/shippingservice/Dockerfile
+          - file: /src/shippingservice/Dockerfile
             tag_suffix: shippingservice
-          - file: ./src/featureflagservice/Dockerfile
+          - file: /src/featureflagservice/Dockerfile
             tag_suffix: featureflagservice
-          - file: ./src/loadgenerator/Dockerfile
+          - file: /src/loadgenerator/Dockerfile
             tag_suffix: loadgenerator
-          - file: ./src/recommendationservice/Dockerfile
+          - file: /src/recommendationservice/Dockerfile
             tag_suffix: recommendationservice
-          - file: ./src/frontend/Dockerfile.cypress
+          - file: /src/frontend/Dockerfile.cypress
             tag_suffix: frontend-tests
-          - file: ./test/Dockerfile
+          - file: /test/Dockerfile
             tag_suffix: integrationTests
     steps:
+      - uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v2
 
@@ -68,7 +72,7 @@ jobs:
       - name: Matrix Build and push demo images
         uses: docker/build-push-action@v3.1.1
         with:
-          context: ./
+          context: .
           file: ${{ matrix.file_tag.file }}
           platforms: linux/amd64,linux/arm64
           push: ${{ github.event_name != 'pull_request' }}
