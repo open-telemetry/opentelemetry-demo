@@ -63,14 +63,13 @@ With the frontendproxy and Collector port-forward set up, you can access:
 - Load Generator UI: <http://localhost:8080/loadgen/>
 - Jaeger UI: <http://localhost:8080/jaeger/ui/>
 
-
 ### Expose services using service type configurations
 
 > **Note**
 > Kubernetes clusters may not have the proper infrastructure components to
 > enable LoadBalancer service types or ingress resources. Verify your cluster
 > has the proper support before using these configuration options.
- 
+
 Each demo service (ie: frontendproxy) offers a way to have its Kubernetes
 service type configured. By default these will be `ClusterIP` but you can change
 each one using the `serviceType` property for each service.
@@ -87,7 +86,7 @@ components:
 > **Note**
 > It is recommended to use a values file when installing the Helm chart in order
 > to specify additional configuration options.
- 
+
 The Helm chart does not provide facilities to create ingress resources. If
 required these would need to be created manually after installing the Helm chart.
 Some Kubernetes providers require specific service types in order to be used by
@@ -140,7 +139,7 @@ opentelemetry-collector:
     exporters:
       otlphttp/example:
         endpoint: <your-endpoint-url>
-    
+
     service:
       pipelines:
         traces:
