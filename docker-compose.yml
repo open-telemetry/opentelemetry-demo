@@ -211,13 +211,11 @@ services:
     logging: *logging
 
   frontendproxy:
-    image: ${IMAGE_NAME}:${IMAGE_VERSION}-frontend-envoy
+    image: ${IMAGE_NAME}:${IMAGE_VERSION}-frontendproxy
     build:
       context: ./
-      dockerfile: ./src/frontendProxy/Dockerfile
+      dockerfile: src/frontendproxy/Dockerfile
     container_name: frontend-proxy
-    volumes:
-      - ./src/frontendproxy/envoy.tmpl.yaml:/etc/envoy/envoy.tmpl.yaml
     ports:
       - "${ENVOY_PORT}:${ENVOY_PORT}"
       - 10000:10000
@@ -240,7 +238,6 @@ services:
       - featureflagservice
       - loadgenerator
       - grafana
-    command: /bin/sh -c "envsubst < /etc/envoy/envoy.tmpl.yaml > /etc/envoy/envoy.yaml && envoy -c /etc/envoy/envoy.yaml;"
 
   loadgenerator:
     image: ${IMAGE_NAME}:${IMAGE_VERSION}-loadgenerator

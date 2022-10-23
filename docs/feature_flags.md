@@ -2,7 +2,7 @@
 
 This demo comes with several feature flags which can control failure conditions
 in specific services. By default the flags are disabled. Using the Feature Flags
-UI <http://localhost:8081> you will be able to control the status of these
+UI <http://localhost:8080/feature> you will be able to control the status of these
 feature flags.
 
 | Feature Flag            | Service(s)      | Description                                                               |
