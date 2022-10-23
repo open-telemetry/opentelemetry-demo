@@ -111,7 +111,7 @@ jobs:
           platforms: linux/amd64,linux/arm64
           push: ${{ github.event_name != 'pull_request' }}
           tags: |
-            ${{ env.DOCKERHUB_REPO }}:${{ env.RELEASE_VERSION }}-${{matrix.file_tag.tag_suffix }}
-            ${{ env.GHCR_REPO }}:${{ env.RELEASE_VERSION }}-${{ matrix.file_tag.tag_suffix }}
+            ${{ env.DOCKERHUB_REPO }}:${{ env.RELEASE_VERSION || 'pr' }}-${{matrix.file_tag.tag_suffix }}
+            ${{ env.GHCR_REPO }}:${{ env.RELEASE_VERSION || 'pr' }}-${{ matrix.file_tag.tag_suffix }}
           cache-from: type=local,src=/tmp/.buildx-cache
           cache-to: type=local,dest=/tmp/.buildx-cache
