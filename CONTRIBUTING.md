@@ -110,8 +110,6 @@ To create a new PR, fork the project in GitHub and clone the upstream repo:
 > Please fork to a personal GitHub account rather than a corporate/enterprise
 > one so maintainers can push commits to your branch.
 
-```shell
-
 ```sh
 git clone https://github.com/open-telemetry/opentelemetry-demo.git
 ```
