@@ -1,4 +1,4 @@
-# Using Metrics and Traces to diagnose a memory leak.
+# Using Metrics and Traces to diagnose a memory leak
 
 Application telemetry, such as the kind that OpenTelemetry can provide, is very
 useful for diagnosing issues in a distributed system. In this scenario, we will
