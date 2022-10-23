@@ -33,9 +33,6 @@ services:
       dockerfile: ./src/adservice/Dockerfile
       cache_from:
         - ${IMAGE_NAME}:${IMAGE_VERSION}-adservice
-      platforms:
-        - "linux/amd64"
-        - "linux/arm64"
     deploy:
       resources:
         limits:
@@ -62,9 +59,6 @@ services:
       dockerfile: ./src/cartservice/src/Dockerfile
       cache_from:
         - ${IMAGE_NAME}:${IMAGE_VERSION}-cartservice
-      platforms:
-        - "linux/amd64"
-        - "linux/arm64"
     deploy:
       resources:
         limits:
@@ -92,9 +86,6 @@ services:
       dockerfile: ./src/checkoutservice/Dockerfile
       cache_from:
         - ${IMAGE_NAME}:${IMAGE_VERSION}-checkoutservice
-      platforms:
-        - "linux/amd64"
-        - "linux/arm64"
     deploy:
       resources:
         limits:
@@ -135,9 +126,6 @@ services:
       args:
         - GRPC_VERSION=1.46.0
         - OPENTELEMETRY_VERSION=1.5.0
-      platforms:
-        - "linux/amd64"
-        - "linux/arm64"
     deploy:
       resources:
         limits:
@@ -161,9 +149,6 @@ services:
       context: ./src/emailservice
       cache_from:
         - ${IMAGE_NAME}:${IMAGE_VERSION}-emailservice
-      platforms:
-        - "linux/amd64"
-        - "linux/arm64"
     deploy:
       resources:
         limits:
@@ -189,9 +174,6 @@ services:
       dockerfile: ./src/frontend/Dockerfile
       cache_from:
         - ${IMAGE_NAME}:${IMAGE_VERSION}-frontend
-      platforms:
-        - "linux/amd64"
-        - "linux/arm64"
     deploy:
       resources:
         limits:
@@ -232,9 +214,6 @@ services:
     build:
       context: ./
       dockerfile: src/frontendproxy/Dockerfile
-      platforms:
-        - "linux/amd64"
-        - "linux/arm64"
     container_name: frontend-proxy
     ports:
       - "${ENVOY_PORT}:${ENVOY_PORT}"
@@ -267,9 +246,6 @@ services:
       dockerfile: ./src/loadgenerator/Dockerfile
       cache_from:
         - ${IMAGE_NAME}:${IMAGE_VERSION}-loadgenerator
-      platforms:
-        - "linux/amd64"
-        - "linux/arm64"
     deploy:
       resources:
         limits:
@@ -299,9 +275,6 @@ services:
       dockerfile: ./src/paymentservice/Dockerfile
       cache_from:
         - ${IMAGE_NAME}:${IMAGE_VERSION}-paymentservice
-      platforms:
-        - "linux/amd64"
-        - "linux/arm64"
     deploy:
       resources:
         limits:
@@ -326,9 +299,6 @@ services:
       dockerfile: ./src/productcatalogservice/Dockerfile
       cache_from:
         - ${IMAGE_NAME}:${IMAGE_VERSION}-productcatalogservice
-      platforms:
-        - "linux/amd64"
-        - "linux/arm64"
     deploy:
       resources:
         limits:
@@ -354,9 +324,6 @@ services:
       dockerfile: ./src/quoteservice/Dockerfile
       cache_from:
         - ${IMAGE_NAME}:${IMAGE_VERSION}-quoteservice
-      platforms:
-        - "linux/amd64"
-        - "linux/arm64"
     deploy:
       resources:
         limits:
@@ -386,9 +353,6 @@ services:
       dockerfile: ./src/recommendationservice/Dockerfile
       cache_from:
         - ${IMAGE_NAME}:${IMAGE_VERSION}-recommendationservice
-      platforms:
-        - "linux/amd64"
-        - "linux/arm64"
     deploy:
       resources:
         limits:
@@ -422,9 +386,6 @@ services:
       dockerfile: ./src/shippingservice/Dockerfile
       cache_from:
         - ${IMAGE_NAME}:${IMAGE_VERSION}-shippingservice
-      platforms:
-        - "linux/amd64"
-        - "linux/arm64"
     deploy:
       resources:
         limits:
@@ -449,9 +410,6 @@ services:
       context: ./src/featureflagservice
       cache_from:
         - ${IMAGE_NAME}:${IMAGE_VERSION}-featureflagservice
-      platforms:
-        - "linux/amd64"
-        - "linux/arm64"
     deploy:
       resources:
         limits:
@@ -583,9 +541,7 @@ services:
     build:
       context: ./
       dockerfile: ./src/frontend/Dockerfile.cypress
-      platforms:
-        - "linux/amd64"
-        - "linux/arm64"
+
     profiles:
       - tests
     volumes:
@@ -607,9 +563,6 @@ services:
     build:
       context: ./
       dockerfile: ./test/Dockerfile
-      platforms:
-        - "linux/amd64"
-        - "linux/arm64"
     environment:
       - AD_SERVICE_ADDR
       - CART_SERVICE_ADDR
