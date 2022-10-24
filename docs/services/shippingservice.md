@@ -18,7 +18,7 @@ Otherwise, consider building with `docker compose` to edit / assess changes as n
 
 ## Traces
 
-### Initialize tracer provider
+### Initializing Tracing
 
 The OpenTelemetry SDK is initialized from `main`.
 

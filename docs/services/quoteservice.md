@@ -13,7 +13,7 @@ The PHP instrumentation may vary when using a different framework.
 
 ## Traces
 
-### Initialize tracer provider
+### Initializing Tracing
 
 The OpenTelemetry SDK is initialized from `index`.
 
