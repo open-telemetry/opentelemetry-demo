@@ -94,7 +94,7 @@ protobuf {
 
 afterEvaluate {
     // Ensure protos are copy before classes are generated
-    tasks.getByName('processResources').dependsOn('copyProtos')
+    tasks.getByName('processResources').dependsOn 'copyProtos'
     tasks.getByName('generateProto').dependsOn 'copyProtos'
 }
 
