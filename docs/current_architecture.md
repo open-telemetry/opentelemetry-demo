@@ -15,6 +15,7 @@ checkoutservice(Checkout Service):::golang
 currencyservice(Currency Service):::cpp
 emailservice(Email Service):::ruby
 frontend(Frontend):::javascript
+frontendproxy(Frontend Proxy <br/>&#40Envoy&#41):::cpp
 loadgenerator([Load Generator]):::python
 paymentservice(Payment Service):::javascript
 productcatalogservice(Product Catalog Service):::golang
@@ -24,7 +25,9 @@ shippingservice(Shipping Service):::rust
 featureflagservice(Feature Flag Service):::erlang
 featureflagstore[(Feature Flag Store<br/>&#40PostgreSQL DB&#41)]
 
-Internet -->|HTTP| frontend
+Internet -->|HTTP| frontendproxy
+frontendproxy -->|HTTP| frontend
+frontendproxy -->|HTTP| featureflagservice
 loadgenerator -->|HTTP| frontend
 
 checkoutservice --->|gRPC| cartservice --> cache

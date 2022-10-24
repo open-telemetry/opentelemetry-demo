@@ -3,8 +3,8 @@ import Footer from '../../components/Footer';
 import Layout from '../../components/Layout';
 import Recommendations from '../../components/Recommendations';
 import * as S from '../../styles/Cart.styled';
-import CartDetail from './CartDetail';
-import EmptyCart from './EmptyCart';
+import CartDetail from '../../components/Cart/CartDetail';
+import EmptyCart from '../../components/Cart/EmptyCart';
 import { useCart } from '../../providers/Cart.provider';
 import AdProvider from '../../providers/Ad.provider';
 

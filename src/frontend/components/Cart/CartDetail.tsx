@@ -1,8 +1,8 @@
 import { useRouter } from 'next/router';
 import { useCallback } from 'react';
-import CartItems from '../../components/CartItems';
-import CheckoutForm from '../../components/CheckoutForm';
-import { IFormData } from '../../components/CheckoutForm/CheckoutForm';
+import CartItems from '../CartItems';
+import CheckoutForm from '../CheckoutForm';
+import { IFormData } from '../CheckoutForm/CheckoutForm';
 import SessionGateway from '../../gateways/Session.gateway';
 import { useCart } from '../../providers/Cart.provider';
 import { useCurrency } from '../../providers/Currency.provider';
