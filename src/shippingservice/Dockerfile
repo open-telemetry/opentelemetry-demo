@@ -5,9 +5,10 @@ RUN apk add --no-cache ca-certificates git protoc cmake clang clang-dev make gcc
 WORKDIR /app/
 
 # build app
-COPY ./src/shippingservice/ /app/
-COPY ./pb/ /app/proto/
-RUN cargo build --verbose -r --features="dockerproto"
+COPY /src/shippingservice/ /app/
+COPY /pb/ /app/proto/
+
+RUN cargo build -r --features="dockerproto"
 
 FROM alpine as release
 RUN apk add --no-cache ca-certificates
