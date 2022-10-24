@@ -37,9 +37,6 @@ If you'd like to extend this demo or maintain a fork of it, please read our
 You can be up and running with the demo in a few minutes. Check out the docs for
 your preferred deployment method:
 
-> **Note:** If you're running on Apple Silicon, please run `docker compose
-> build` in order to create local images vs. pulling them from the repository.
-
 - [Docker](./docs/docker_deployment.md)
 - [Kubernetes](./docs/kubernetes_deployment.md)
 
