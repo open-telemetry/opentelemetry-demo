@@ -4,7 +4,7 @@ The frontend is responsible to provide a UI for users, as well
 as an API leveraged by the UI or other clients. The application is based on
 [Next.JS](https://nextjs.org/) to provide a React web-based UI and API routes.
 
-[Front End source](../../src/frontend/)
+[Frontend source](../../src/frontend/)
 
 ## Server Instrumentation
 
