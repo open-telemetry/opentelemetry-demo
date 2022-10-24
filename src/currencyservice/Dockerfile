@@ -15,8 +15,8 @@ RUN apt-get install -qq -y --ignore-missing \
   cmake
 
 # The following arguments would be passed from docker-compose.yml
-ARG GRPC_VERSION
-ARG OPENTELEMETRY_VERSION
+ARG GRPC_VERSION=1.46.0
+ARG OPENTELEMETRY_VERSION=1.5.0
 
 # Install GRPC
 RUN git clone --shallow-submodules --depth 1 --recurse-submodules -b v${GRPC_VERSION} \
