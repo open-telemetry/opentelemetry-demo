@@ -4,6 +4,6 @@ datasources:
   - name: Jaeger
     uid: webstore-traces
     type: jaeger
-    url: http://jaeger:16686
+    url: http://jaeger/jaeger/ui:16686
     editable: true
     isDefault: false

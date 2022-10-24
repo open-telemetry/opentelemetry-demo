@@ -8,7 +8,7 @@ frontend.
 
 ## Traces
 
-### Initialize tracer provider
+### Initializing Tracing
 
 Since this service is a [locustfile](https://docs.locust.io/en/stable/writing-a-locustfile.html),
 the The OpenTelemetry SDK is initialized after the import statements. This code

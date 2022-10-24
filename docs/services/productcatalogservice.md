@@ -8,7 +8,7 @@ about any single product.
 
 ## Traces
 
-### Initialize tracer provider
+### Initializing Tracing
 
 The OpenTelemetry SDK is initialized from `main` using the `initTracerProvider`
 function.

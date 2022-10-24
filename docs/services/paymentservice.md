@@ -6,7 +6,7 @@ processed.
 
 [Payment service source](../../src/paymentservice/)
 
-## SDK initialization
+## Initializing OpenTelemetry
 
 It is recommended to use a Node required module when starting your NodeJS
 application to initialize the SDK and auto-instrumentation. When initializing
