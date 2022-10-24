@@ -8,13 +8,14 @@ It is called by Product Catalog and Shipping services.
 
 ## Traces
 
-### Initialize OpenTelemetry Phoenix instrumentation
+### Initializing Tracing
 
-Traces of interaction with the web interface are provided by the OpenTelemetry
-[Phoenix
-instrumentation](https://github.com/open-telemetry/opentelemetry-erlang-contrib/tree/main/instrumentation/opentelemetry_phoenix)
-with Spans for database queries added through the [Ecto
-instrumentation](https://github.com/open-telemetry/opentelemetry-erlang-contrib/tree/main/instrumentation/opentelemetry_ecto).
+In order to set up OpenTelemetry instrumentation for
+[Phoenix](https://github.com/open-telemetry/opentelemetry-erlang-contrib/tree/main/instrumentation/opentelemetry_phoenix/),
+and
+[Ecto](https://github.com/open-telemetry/opentelemetry-erlang-contrib/tree/main/instrumentation/opentelemetry_ecto/),
+, we need to call the setup methods of their instrumentation packages before
+starting the Supervisor.
 
 This is done in the `application.ex` as follows:
 
@@ -42,12 +43,9 @@ This is done in the `application.ex` as follows:
   end
 ```
 
-### Add gRPC instrumentation
-
-The GRPC service uses [grpcbox](https://github.com/tsloughter/grpcbox) and uses
-the [grpcbox
-interceptor](https://github.com/open-telemetry/opentelemetry-erlang-contrib/tree/main/instrumentation/opentelemetry_grpcbox)
-for instrumentation.
+To add tracing to [grpcbox](https://github.com/tsloughter/grpcbox), we need to
+add the appropriate
+[interceptor](https://github.com/open-telemetry/opentelemetry-erlang-contrib/tree/main/instrumentation/opentelemetry_grpcbox).
 
 This is configured in the `runtime.exs` file, as follows:
 
