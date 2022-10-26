@@ -4,7 +4,7 @@
 exporters:
   datadog:
     api:
-      key: <DATADOG_API_KEY> # Replace with your Datadog API key
+      key: DD_API_KEY # Set/Replace with your Datadog API key
     host_metadata:
       tags:
         - otel:true
