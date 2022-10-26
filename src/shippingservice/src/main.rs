@@ -1,3 +1,17 @@
+// Copyright The OpenTelemetry Authors
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//     http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+ 
 use opentelemetry::trace::TraceError;
 use opentelemetry::{
     global,
@@ -37,8 +51,8 @@ fn init_tracer() -> Result<sdktrace::Tracer, TraceError> {
                     env::var("OTEL_EXPORTER_OTLP_TRACES_ENDPOINT")
                         .unwrap_or_else(|_| "http://otelcol:4317".to_string()),
                     "/v1/traces"
-                )), // TODO: assume this ^ is true from config when opentelemetry crate > v0.17.0
-                    // https://github.com/open-telemetry/opentelemetry-rust/pull/806 includes the environment variable.
+                )),// TODO: assume this ^ is true from config when opentelemetry crate > v0.17.0
+                   // https://github.com/open-telemetry/opentelemetry-rust/pull/806 includes the environment variable.
         )
         .install_batch(opentelemetry::runtime::Tokio)
 }

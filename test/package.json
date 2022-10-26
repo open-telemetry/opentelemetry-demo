@@ -8,13 +8,11 @@
   },
   "author": "",
   "license": "ISC",
-  "devDependencies": {
-    "ava": "4.3.0"
-  },
   "dependencies": {
     "@grpc/grpc-js": "1.6.7",
     "dotenv": "16.0.1",
     "dotenv-expand": "^8.0.3",
-    "node-fetch": "2.6.7"
+    "node-fetch": "2.6.7",
+    "ava": "4.3.0"
   }
 }

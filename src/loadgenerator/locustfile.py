@@ -215,10 +215,8 @@ class WebsiteUser(HttpUser):
 
     @task(3)
     def get_recommendations(self):
-        user = str(uuid.uuid1())
         params = {
             "productIds": [random.choice(products)],
-            "sessionId": user,
         }
         self.client.get("/api/recommendations/", params=params)
 

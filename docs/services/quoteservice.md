@@ -1,4 +1,4 @@
-# quote service
+# Quote Service
 
 This service is responsible for calculating shipping costs, based on
 the number of items to be shipped. The quote service is called from
@@ -13,7 +13,7 @@ The PHP instrumentation may vary when using a different framework.
 
 ## Traces
 
-### Initialize tracer provider
+### Initializing Tracing
 
 The OpenTelemetry SDK is initialized from `index`.
 

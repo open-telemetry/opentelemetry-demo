@@ -1,4 +1,4 @@
-# checkout service
+# Checkout Service
 
 This service is responsible to process a checkout order from the user. The
 checkout service will call many other services in order to process an order.
@@ -7,7 +7,7 @@ checkout service will call many other services in order to process an order.
 
 ## Traces
 
-### Initialize tracer provider
+### Initializing Tracing
 
 The OpenTelemetry SDK is initialized from `main` using the `initTracerProvider`
 function.
@@ -109,7 +109,49 @@ Adding a span event with additional attributes:
 
 ## Metrics
 
-TBD
+### Initializing Metrics
+
+The OpenTelemetry SDK is initialized from `main` using the `initMeterProvider`
+function.
+
+```go
+func initMeterProvider() *sdkmetric.MeterProvider {
+    ctx := context.Background()
+
+    exporter, err := otlpmetricgrpc.New(ctx)
+    if err != nil {
+        log.Fatalf("new otlp metric grpc exporter failed: %v", err)
+    }
+
+    mp := sdkmetric.NewMeterProvider(sdkmetric.WithReader(sdkmetric.NewPeriodicReader(exporter)))
+    global.SetMeterProvider(mp)
+    return mp
+}
+```
+
+You should call `MeterProvider.Shutdown()` when your service is shutdown to
+ensure all records are exported. This service makes that call as part of a
+deferred function in main
+
+```go
+    mp := initMeterProvider()
+    defer func() {
+        if err := mp.Shutdown(context.Background()); err != nil {
+            log.Printf("Error shutting down meter provider: %v", err)
+        }
+    }()
+```
+
+### Adding golang runtime auto-instrumentation
+
+Golang runtime are instrumented in the main function
+
+```go
+    err := runtime.Start(runtime.WithMinimumReadMemStatsInterval(time.Second))
+    if err != nil {
+        log.Fatal(err)
+    }
+```
 
 ## Logs
 
