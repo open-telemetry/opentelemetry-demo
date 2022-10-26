@@ -4,7 +4,7 @@
 exporters:
   datadog:
     api:
-      key: DD_API_KEY # Set/Replace with your Datadog API key
+      key: DD_API_KEY   # Set/Replace with your Datadog API key
     host_metadata:
       tags:
         - otel:true
@@ -12,9 +12,9 @@ exporters:
 processors:
   resource:
     attributes:
-    - key: deployment.environment # Set env tag for Datadog
-      value: "otel"
-      action: upsert
+      - key: deployment.environment   # Set env tag for Datadog
+        value: "otel"
+        action: upsert
 
 service:
   pipelines:
