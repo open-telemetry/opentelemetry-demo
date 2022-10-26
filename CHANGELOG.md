@@ -113,3 +113,20 @@ significant modifications will be credited to OpenTelemetry Authors.
 ([#339](https://github.com/open-telemetry/opentelemetry-demo/pull/339))
 * Added basic metrics support for recommendation service (Python)
 ([#416](https://github.com/open-telemetry/opentelemetry-demo/pull/416))
+* Added metrics auto-instrumentation + minor metrics refactor for recommendation
+ service (Python)
+ [#432](https://github.com/open-telemetry/opentelemetry-demo/pull/432)
+* Replaced the Jaeger exporter to the OTLP exporter in the OTel Collector
+([#435](https://github.com/open-telemetry/opentelemetry-demo/pull/435))
+* Set resource memory limits for all services
+([#460](https://github.com/open-telemetry/opentelemetry-demo/pull/460))
+* Added cache scenario to recommendation service
+([#455](https://github.com/open-telemetry/opentelemetry-demo/pull/455))
+* Update cartservice Dockerfile to support ARM64
+([#439](https://github.com/open-telemetry/opentelemetry-demo/pull/439))
+* Add Envoy as reverse proxy for all user-facing services
+([#508](https://github.com/open-telemetry/opentelemetry-demo/pull/508))
+* Envoy: Grafana, Load Generator, Jaeger exposed.
+([#513](https://github.com/open-telemetry/opentelemetry-demo/pull/513))
+* Added frontend instrumentation exporter custom url
+([#512](https://github.com/open-telemetry/opentelemetry-demo/pull/512))

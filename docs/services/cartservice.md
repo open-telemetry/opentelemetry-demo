@@ -1,35 +1,34 @@
-# cart service
+# Cart Service
 
 This service maintains items placed in the shopping cart by users. It interacts
 with a Redis caching service for fast access to shopping cart data.
 
 [Cart service source](../../src/cartservice/)
 
-## SDK Initialization
-
-The OpenTelemetry .NET SDK should be initialized in your application's
-`Startup.cs` as part of the `ConfigureServices` function. When initializing,
-optionally specify which instrumentation libraries to leverage. The SDK is
-initialized using a builder pattern, where you add each instrumentation library
-(with options), and the OTLP Exporter to be used. The SDK will make use of
-OpenTelemetry standard environment variables to configure the export endpoints,
-resource attributes, and service name.
-
-```cs
-    services.AddOpenTelemetryTracing((builder) => builder
-        .AddRedisInstrumentation(
-            cartStore.GetConnection(),
-            options => options.SetVerboseDatabaseStatements = true)
-        .AddAspNetCoreInstrumentation()
-        .AddGrpcClientInstrumentation()
-        .AddHttpClientInstrumentation()
-        .AddOtlpExporter());
-```
+> **Note**
+> OpenTelemetry for .NET uses the `System.Diagnostic` library as its API
+> in lieu of the standard OpenTelemetry API.
 
 ## Traces
 
-OpenTelemetry Tracing in .NET, leverages the existing `Activity` classes as
-part of the core runtime.
+### Initializing Tracing
+
+OpenTelemetry is configured in the .NET DI container. The
+`AddOpenTelemetryTracing()` builder method is used to configure desired
+instrumentation libraries, add exporters, and set other options. Configuration
+of the exporter and resource attributes is performed through environment variables.
+
+```cs
+services.AddOpenTelemetryTracing((builder) => builder
+    .ConfigureResource(r => r.AddTelemetrySdk())
+    .AddRedisInstrumentation(
+        cartStore.GetConnection(),
+        options => options.SetVerboseDatabaseStatements = true)
+    .AddAspNetCoreInstrumentation()
+    .AddGrpcClientInstrumentation()
+    .AddHttpClientInstrumentation()
+    .AddOtlpExporter());
+```
 
 ### Add attributes to auto-instrumented spans
 
@@ -40,9 +39,10 @@ Within the execution of auto-instrumented code you can get current span
     var activity = Activity.Current;
 ```
 
-Adding attributes to a span (activity) is accomplished using `SetTag` on the
-activity object. In the `AddItem` function from `services/CartService.cs`
-several attributes are added to the auto-instrumented span.
+Adding attributes (tags in .NET) to a span (activity) is accomplished using
+`SetTag` on the activity object. In the `AddItem` function from
+`services/CartService.cs` several attributes are added to the auto-instrumented
+span.
 
 ```cs
     activity?.SetTag("app.user.id", request.UserId);
@@ -62,7 +62,19 @@ added.
 
 ## Metrics
 
-TBD
+### Initializing Metrics
+
+Similar to configuring OpenTelemetry Traces, the .NET DI container requires a
+call to `AddOpenTelemetryMetrics()`. This builder configures desired
+instrumentation libraries, exporters, etc.
+
+```cs
+services.AddOpenTelemetryMetrics(builder => builder
+    .ConfigureResource(r => r.AddTelemetrySdk())
+    .AddRuntimeInstrumentation()
+    .AddAspNetCoreInstrumentation()
+    .AddOtlpExporter());
+```
 
 ## Logs
 
