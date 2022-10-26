@@ -25,7 +25,6 @@ func StartConsumerGroup(ctx context.Context, brokers []string, log *logrus.Logge
 		return err
 	}
 
-	// Wrap instrumentation
 	handler := groupHandler{
 		log: log,
 	}
