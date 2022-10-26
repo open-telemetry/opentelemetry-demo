@@ -186,6 +186,25 @@ services:
       - otelcol
     logging: *logging
 
+  frauddetection:
+    image: ${IMAGE_NAME}:${IMAGE_VERSION}-frauddetectionservice
+    container_name: frauddetection-service
+    build:
+      context: ./
+      dockerfile: ./src/frauddetectionservice/Dockerfile
+      cache_from:
+        - ${IMAGE_NAME}:${IMAGE_VERSION}-frauddetectionservice
+    environment:
+      - KAFKA_SERVICE_ADDR
+      - OTEL_EXPORTER_OTLP_TRACES_ENDPOINT
+      - OTEL_EXPORTER_OTLP_METRICS_ENDPOINT
+      - OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE
+      - OTEL_SERVICE_NAME=frauddetectionservice
+    depends_on:
+      - otelcol
+      - broker
+    logging: *logging
+
   # Frontend
   frontend:
     image: ${IMAGE_NAME}:${IMAGE_VERSION}-frontend

@@ -40,7 +40,7 @@ adservice(Ad Service):::java
 accounting(Accounting):::golang
 cache[(Cache<br/>&#40redis&#41)]
 queue[(queue<br/>&#40Kafka&#41)]
-frauddetection(Fraud Detection):::java
+frauddetectionservice(Fraud Detection):::java
 cartservice(Cart Service):::dotnet
 checkoutservice(Checkout Service):::golang
 currencyservice(Currency Service):::cpp
@@ -81,7 +81,7 @@ shippingservice -->|gRPC| featureflagservice
 featureflagservice --> featureflagstore
 
 accounting -->|TCP| queue
-frauddetection -->|TCP| queue
+frauddetectionservice -->|TCP| queue
 
 end
 classDef java fill:#b07219,color:white;
