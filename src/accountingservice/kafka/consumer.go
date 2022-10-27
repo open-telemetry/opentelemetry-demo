@@ -2,10 +2,14 @@ package kafka
 
 import (
 	"context"
+	"log"
+
+	"github.com/open-telemetry/opentelemetry-demo/src/accountingservice/genproto/hipstershop"
+
 	"github.com/Shopify/sarama"
 	"github.com/sirupsen/logrus"
 	"go.opentelemetry.io/contrib/instrumentation/github.com/Shopify/sarama/otelsarama"
-	"log"
+	"google.golang.org/protobuf/proto"
 )
 
 var (
@@ -53,6 +57,11 @@ func (g *groupHandler) ConsumeClaim(session sarama.ConsumerGroupSession, claim s
 	for {
 		select {
 		case message := <-claim.Messages():
+			orderResult := hipstershop.OrderResult{}
+			err := proto.Unmarshal(message.Value, &orderResult)
+			if err != nil {
+				return err
+			}
 			log.Printf("Message claimed: value = %s, timestamp = %v, topic = %s", string(message.Value), message.Timestamp, message.Topic)
 			session.MarkMessage(message, "")
 

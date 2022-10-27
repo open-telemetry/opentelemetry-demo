@@ -47,6 +47,7 @@ import (
 	"google.golang.org/grpc/credentials/insecure"
 	healthpb "google.golang.org/grpc/health/grpc_health_v1"
 	"google.golang.org/grpc/status"
+	"google.golang.org/protobuf/proto"
 
 	pb "github.com/open-telemetry/opentelemetry-demo/src/checkoutservice/genproto/hipstershop"
 	"github.com/open-telemetry/opentelemetry-demo/src/checkoutservice/kafka"
@@ -460,10 +461,16 @@ func (cs *checkoutService) shipOrder(ctx context.Context, address *pb.Address, i
 }
 
 func (cs *checkoutService) sendToPostProcessor(ctx context.Context, result *pb.OrderResult) {
+	message, err := proto.Marshal(result)
+	if err != nil {
+		log.Errorf("Failed to marshal message to protobuf: %+v", err)
+		return
+	}
+
 	// Inject tracing info into message
 	msg := sarama.ProducerMessage{
 		Topic: kafka.Topic,
-		Value: sarama.StringEncoder(result.String()),
+		Value: sarama.ByteEncoder(message),
 	}
 
 	otel.GetTextMapPropagator().Inject(ctx, otelsarama.NewProducerMessageCarrier(&msg))
