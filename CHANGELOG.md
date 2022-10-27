@@ -130,3 +130,5 @@ significant modifications will be credited to OpenTelemetry Authors.
 ([#513](https://github.com/open-telemetry/opentelemetry-demo/pull/513))
 * Added frontend instrumentation exporter custom url
 ([#512](https://github.com/open-telemetry/opentelemetry-demo/pull/512))
+* Added Kafka, accountingservice and frauddetectionservice for async workflows
+([#512](https://github.com/open-telemetry/opentelemetry-demo/pull/457))
