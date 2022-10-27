@@ -7,7 +7,7 @@ This service consumes new orders from a Kafka topic.
 To build the protos and the service binary, run:
 
 ```sh
-protoc -I ../../pb/ ../../pb/demo.proto --go_out=./ --go-grpc_out=./  
+protoc -I ../../pb/ ../../pb/demo.proto --go_out=./ --go-grpc_out=./
 go build -o /go/bin/checkoutservice/ ./
 ```
 
