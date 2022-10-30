@@ -14,7 +14,7 @@ com.instana.tracing:
 com.instana.plugin.postgresql:
   user: 'ffs'
   password: 'ffs'
-  database: 'ffs'
+  database: 'postgres'
 
 com.instana.plugin.python:
   autotrace:
