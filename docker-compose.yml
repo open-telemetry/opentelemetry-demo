@@ -25,7 +25,7 @@ networks:
     driver: bridge
 
 services:
-  # Ad service
+  # Accounting service
   accountingservice:
     image: ${IMAGE_NAME}:${IMAGE_VERSION}-accountingservice
     container_name: accounting-service
@@ -611,7 +611,6 @@ services:
       KAFKA_TRANSACTION_STATE_LOG_MIN_ISR: 1
       KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR: 1
       KAFKA_AUTO_CREATE_TOPICS_ENABLE: true
-
       KAFKA_LOG4J_ROOT_LOGLEVEL: DEBUG
 
   # Frontend Tests

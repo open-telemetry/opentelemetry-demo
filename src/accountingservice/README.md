@@ -8,7 +8,7 @@ To build the protos and the service binary, run:
 
 ```sh
 protoc -I ../../pb/ ../../pb/demo.proto --go_out=./ --go-grpc_out=./
-go build -o /go/bin/checkoutservice/ ./
+go build -o /go/bin/accountingservice/ ./
 ```
 
 ## Docker Build
@@ -16,5 +16,5 @@ go build -o /go/bin/checkoutservice/ ./
 From the root directory, run:
 
 ```sh
-docker compose build checkoutservice
+docker compose build accountingservice
 ```

@@ -1,6 +1,6 @@
 # Fraud Detection Service
 
-This services analyses incoming orders and detects malicious customers.
+This service analyses incoming orders and detects malicious customers.
 This is only mocked and received orders are printed out.
 
 ## Auto-instrumentation
