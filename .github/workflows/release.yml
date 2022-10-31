@@ -89,11 +89,6 @@ jobs:
           password: ${{ secrets.DOCKER_PASSWORD }}
         if: github.event_name != 'pull_request'
 
-      - name: Set Swap Space
-        uses: pierotofy/set-swap-space@master
-        with:
-          swap-size-gb: 10
-
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v2
 
