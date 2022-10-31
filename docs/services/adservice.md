@@ -7,12 +7,11 @@ keys. The ads will be for products available in the store.
 
 ## Auto-instrumentation
 
-This Java based service, makes use of the OpenTelemetry Java agent to accomplish
-auto-instrumention, by leveraging the `-javaagent` command line argument when
-starting the service. This service adds the command line option as part of the
-`JAVA_TOOL_OPTIONS` environment variable definition in the service's
-`Dockerfile`. This environment variable is leveraged as part of the service's
-gradle generated startup script.
+This service relies on the OpenTelemetry Java Agent to automatically instrument
+libraries such as gRPC, and to configure the OpenTelemetry SDK. The agent is
+passed into the process using the `-javaagent` command line argument. Command
+line arguments are added through the `JAVA_TOOL_OPTIONS` in the `Dockerfile`,
+and leveraged during the automatically generated Gradle startup script.
 
 ```dockerfile
 ENV JAVA_TOOL_OPTIONS=-javaagent:/app/opentelemetry-javaagent.jar
