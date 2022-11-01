@@ -504,6 +504,8 @@ services:
       - POSTGRES_USER=ffs
       - POSTGRES_DB=ffs
       - POSTGRES_PASSWORD=ffs
+      - INSTANA_SERVICE_NAME=ffs_postgres
+    command: ['postgres', '-c', 'track_activities=on', '-c', 'track_counts=on', '-c', 'track_io_timing=on']
     logging: *logging
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -d ffs -U ffs"]
