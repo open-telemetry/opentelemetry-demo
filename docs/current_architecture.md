@@ -110,4 +110,48 @@ classDef erlang fill:#b83998,color:white;
 classDef php fill:#4f5d95,color:white;
 ```
 
+```mermaid
+graph TD
+subgraph OpenTelemetry
+
+adservice(Ad Service):::java
+cartservice(Cart Service):::dotnet
+checkoutservice(Checkout Service):::golang
+currencyservice(Currency Service):::cpp
+emailservice(Email Service):::ruby
+frontend(Frontend):::javascript
+paymentservice(Payment Service):::javascript
+productcatalogservice(Product Catalog Service):::golang
+quoteservice(Quote Service):::php
+recommendationservice(Recommendation Service):::python
+shippingservice(Shipping Service):::rust
+featureflagservice(Feature Flag Service):::erlang
+otelcol(OpenTelemetry Collector):::golang
+prom(Prometheus):::golang
+jaeger(Jaeger):::golang
+grafana(Grafana):::golang
+
+
+adservice & cartservice & checkoutservice -.->|Metric, Trace| otelcol
+
+currencyservice & emailservice & featureflagservice & frontend & paymentservice & productcatalogservice & recommendationservice & shippingservice & quoteservice -.->|Trace| otelcol
+
+otelcol -->|HTTP Push| jaeger
+otelcol -->|HTTP Scrape| prom
+jaeger -->|HTTP Pull| grafana
+prom -->|HTTP Pull| grafana
+end
+
+classDef java fill:#b07219,color:white;
+classDef dotnet fill:#178600,color:white;
+classDef golang fill:#00add8,color:black;
+classDef cpp fill:#f34b7d,color:white;
+classDef ruby fill:#701516,color:white;
+classDef python fill:#3572A5,color:white;
+classDef javascript fill:#f1e05a,color:black;
+classDef rust fill:#dea584,color:black;
+classDef erlang fill:#b83998,color:white;
+classDef php fill:#4f5d95,color:white;
+```
+
 Find the **Protocol Buffer Definitions** in the `/pb/` directory.
