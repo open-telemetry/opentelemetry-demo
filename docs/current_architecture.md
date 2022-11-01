@@ -7,6 +7,9 @@ uses [Locust](https://locust.io/) to fake user traffic.
 ```mermaid
 graph TD
 
+adservice & cartservice & checkoutservice -.->|Metric, Trace| otelcol
+currencyservice & emailservice & featureflagservice & frontend & paymentservice & productcatalogservice & recommendationservice & shippingservice & quoteservice -.->|Trace| otelcol
+
 subgraph Service Diagram
 adservice(Ad Service):::java
 cache[(Cache<br/>&#40redis&#41)]
@@ -51,7 +54,23 @@ shippingservice -->|gRPC| featureflagservice
 
 featureflagservice --> featureflagstore
 
+end 
+
+subgraph Observability
+
+otelcol(OpenTelemetry Collector):::golang
+prom(Prometheus):::golang
+jaeger(Jaeger):::golang
+grafana(Grafana):::golang
+
+
+otelcol -->|HTTP Push| jaeger
+otelcol -->|HTTP Scrape| prom
+jaeger -->|HTTP Pull| grafana
+prom -->|HTTP Pull| grafana
+
 end
+
 classDef java fill:#b07219,color:white;
 classDef dotnet fill:#178600,color:white;
 classDef golang fill:#00add8,color:black;
