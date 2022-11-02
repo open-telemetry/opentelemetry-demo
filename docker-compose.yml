@@ -601,7 +601,7 @@ services:
     ports:
       # To learn about configuring Kafka for access across networks see
       # https://www.confluent.io/blog/kafka-client-cannot-connect-to-broker-on-aws-on-docker-etc/
-      - "9092:9092"
+      - "${KAFKA_SERVICE_PORT}:${KAFKA_SERVICE_PORT}"
     environment:
       KAFKA_BROKER_ID: 1
       KAFKA_ZOOKEEPER_CONNECT: 'zookeeper:${ZOOKEEPER_SERVICE_PORT}'
