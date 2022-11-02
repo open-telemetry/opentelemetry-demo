@@ -6,10 +6,6 @@ uses [Locust](https://locust.io/) to fake user traffic.
 
 ```mermaid
 graph TD
-
-adservice & cartservice & checkoutservice -.->|Metric, Trace| otelcol
-currencyservice & emailservice & featureflagservice & frontend & paymentservice & productcatalogservice & recommendationservice & shippingservice & quoteservice -.->|Trace| otelcol
-
 subgraph Service Diagram
 adservice(Ad Service):::java
 cache[(Cache<br/>&#40redis&#41)]
@@ -56,48 +52,6 @@ featureflagservice --> featureflagstore
 
 end 
 
-subgraph Observability
-
-otelcol(OpenTelemetry Collector):::golang
-prom(Prometheus):::golang
-jaeger(Jaeger):::golang
-grafana(Grafana):::golang
-
-
-otelcol -->|HTTP Push| jaeger
-otelcol -->|HTTP Scrape| prom
-jaeger -->|HTTP Pull| grafana
-prom -->|HTTP Pull| grafana
-
-end
-
-classDef java fill:#b07219,color:white;
-classDef dotnet fill:#178600,color:white;
-classDef golang fill:#00add8,color:black;
-classDef cpp fill:#f34b7d,color:white;
-classDef ruby fill:#701516,color:white;
-classDef python fill:#3572A5,color:white;
-classDef javascript fill:#f1e05a,color:black;
-classDef rust fill:#dea584,color:black;
-classDef erlang fill:#b83998,color:white;
-classDef php fill:#4f5d95,color:white;
-```
-
-```mermaid
-graph TD
-subgraph Service Legend
-  javasvc(Java):::java
-  dotnetsvc(.NET):::dotnet
-  golangsvc(Go):::golang
-  cppsvc(C++):::cpp
-  rubysvc(Ruby):::ruby
-  pythonsvc(Python):::python
-  javascriptsvc(JavaScript):::javascript
-  rustsvc(Rust):::rust
-  erlangsvc(Erlang/Elixir):::erlang
-  phpsvc(PHP):::php
-end
-
 classDef java fill:#b07219,color:white;
 classDef dotnet fill:#178600,color:white;
 classDef golang fill:#00add8,color:black;
@@ -140,6 +94,33 @@ otelcol -->|HTTP Push| jaeger
 otelcol -->|HTTP Scrape| prom
 jaeger -->|HTTP Pull| grafana
 prom -->|HTTP Pull| grafana
+end
+
+classDef java fill:#b07219,color:white;
+classDef dotnet fill:#178600,color:white;
+classDef golang fill:#00add8,color:black;
+classDef cpp fill:#f34b7d,color:white;
+classDef ruby fill:#701516,color:white;
+classDef python fill:#3572A5,color:white;
+classDef javascript fill:#f1e05a,color:black;
+classDef rust fill:#dea584,color:black;
+classDef erlang fill:#b83998,color:white;
+classDef php fill:#4f5d95,color:white;
+```
+
+```mermaid
+graph TD
+subgraph Service Legend
+  javasvc(Java):::java
+  dotnetsvc(.NET):::dotnet
+  golangsvc(Go):::golang
+  cppsvc(C++):::cpp
+  rubysvc(Ruby):::ruby
+  pythonsvc(Python):::python
+  javascriptsvc(JavaScript):::javascript
+  rustsvc(Rust):::rust
+  erlangsvc(Erlang/Elixir):::erlang
+  phpsvc(PHP):::php
 end
 
 classDef java fill:#b07219,color:white;
