@@ -39,6 +39,7 @@ dependencies {
     implementation("io.opentelemetry:opentelemetry-sdk:1.19.0")
     implementation("io.opentelemetry:opentelemetry-extension-annotations:1.18.0")
     implementation("org.apache.logging.log4j:log4j-core:2.19.0")
+    implementation("org.slf4j:slf4j-api:2.0.3")
     implementation("com.google.protobuf:protobuf-kotlin:3.21.8")
 
     if (JavaVersion.current().isJava9Compatible) {
