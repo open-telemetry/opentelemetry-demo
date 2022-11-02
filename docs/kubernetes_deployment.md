@@ -39,11 +39,32 @@ using the `kubectl port-forward` command or by configuring service types
 
 ### Expose services using kubectl port-forward
 
-To expose the frontendproxy service use the following command (replace
+To expose the frontend service use the following command (replace
 `my-otel-demo` with your Helm chart release name accordingly):
 
 ```shell
-kubectl port-forward svc/my-otel-demo-frontendproxy 8080:8080
+kubectl port-forward svc/my-otel-demo-frontend 8080:8080
+```
+
+To expose the Jaeger UI service use the following command (replace
+`my-otel-demo` with your Helm chart release name accordingly):
+
+```shell
+kubectl port-forward svc/my-otel-demo-jaeger 16686:16686
+```
+
+To expose the Locust (load generator) UI service use the following command (replace
+`my-otel-demo` with your Helm chart release name accordingly):
+
+```shell
+kubectl port-forward svc/my-otel-demo-loadgenerator 8089:8089
+```
+
+To expose the Feature Flag UI service use the following command (replace
+`my-otel-demo` with your Helm chart release name accordingly):
+
+```shell
+kubectl port-forward svc/my-otel-demo-featureflagservice 8081:8081
 ```
 
 In order for spans from the browser to be properly collected, you will also
@@ -59,13 +80,12 @@ kubectl port-forward svc/my-otel-demo-otelcol 4318:4318
 > may need to create separate terminal sessions for each use of
 > `kubectl port-forward`, and use CTRL-C to terminate the process when done.
 
-With the frontendproxy and Collector port-forward set up, you can access:
+With the frontend and Collector port-forward set up, you can access:
 
 - Webstore: <http://localhost:8080/>
-- Grafana: <http://localhost:8080/grafana/>
-- Feature Flags UI: <http://localhost:8080/feature/>
-- Load Generator UI: <http://localhost:8080/loadgen/>
-- Jaeger UI: <http://localhost:8080/jaeger/ui/>
+- Jaeger UI: <http://localhost:16686>
+- Load Generator UI: <http://localhost:8089>
+- Feature Flags UI: <http://localhost:8081>
 
 ### Expose services using service type configurations
 
@@ -74,16 +94,16 @@ With the frontendproxy and Collector port-forward set up, you can access:
 > enable LoadBalancer service types or ingress resources. Verify your cluster
 > has the proper support before using these configuration options.
 
-Each demo service (ie: frontendproxy) offers a way to have its Kubernetes
+Each demo service (ie: frontend) offers a way to have its Kubernetes
 service type configured. By default these will be `ClusterIP` but you can change
 each one using the `serviceType` property for each service.
 
-To configure the frontendproxy service to use a LoadBalancer service type you
+To configure the frontend service to use a LoadBalancer service type you
 would specify the following in your values file:
 
 ```yaml
 components:
-  frontendProxy:
+  frontend:
     serviceType: LoadBalancer
 ```
 
@@ -117,8 +137,8 @@ To install the Helm chart with a custom `my-values-file.yaml` values file use:
 helm install my-otel-demo open-telemetry/opentelemetry-demo --values my-values-file.yaml
 ```
 
-With the frontendproxy and Collector exposed, you can access the demo UI at the
-base path for the frontendproxy. Other demo components can be accessed at the
+With the frontend and Collector exposed, you can access the demo UI at the
+base path for the frontend. Other demo components can be accessed at the
 following sub-paths:
 
 - Webstore: `/` (base)
