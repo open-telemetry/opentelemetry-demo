@@ -29,7 +29,7 @@ const ProductCatalogService = () => ({
 
     return {
       ...product,
-      price: await this.getProductPrice(product.priceUsd!, currencyCode),
+      priceUsd: await this.getProductPrice(product.priceUsd!, currencyCode),
     };
   },
 });

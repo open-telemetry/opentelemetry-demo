@@ -5,14 +5,18 @@ with a Redis caching service for fast access to shopping cart data.
 
 [Cart service source](../../src/cartservice/)
 
+> **Note**
+> OpenTelemetry for .NET uses the `System.Diagnostic` library as its API
+> in lieu of the standard OpenTelemetry API.
+
 ## Traces
 
-### Initialize TracerProvider
+### Initializing Tracing
 
-`TracerProvider` is initialized in the application startup. The required
-instrumentation libraries, the exporter to use (OTLP), etc. are enabled as part
-of this initialization. Resource attributes and exporter endpoint are
-automatically read from OpenTelemetry standard environment variables.
+OpenTelemetry is configured in the .NET DI container. The
+`AddOpenTelemetryTracing()` builder method is used to configure desired
+instrumentation libraries, add exporters, and set other options. Configuration
+of the exporter and resource attributes is performed through environment variables.
 
 ```cs
 services.AddOpenTelemetryTracing((builder) => builder
@@ -25,10 +29,6 @@ services.AddOpenTelemetryTracing((builder) => builder
     .AddHttpClientInstrumentation()
     .AddOtlpExporter());
 ```
-
-Note:
-OpenTelemetry Tracing in .NET leverages the existing `Activity` class to
-represent OpenTelemetry Span.
 
 ### Add attributes to auto-instrumented spans
 
@@ -62,12 +62,11 @@ added.
 
 ## Metrics
 
-### Initialize MeterProvider
+### Initializing Metrics
 
-`MeterProvider` is initialized in the application startup. The required
-instrumentation libraries, the exporter to use (OTLP), etc. are enabled as part
-of this initialization. Resource attributes and exporter endpoint are
-automatically read from OpenTelemetry standard environment variables.
+Similar to configuring OpenTelemetry Traces, the .NET DI container requires a
+call to `AddOpenTelemetryMetrics()`. This builder configures desired
+instrumentation libraries, exporters, etc.
 
 ```cs
 services.AddOpenTelemetryMetrics(builder => builder

@@ -7,7 +7,7 @@ checkout service will call many other services in order to process an order.
 
 ## Traces
 
-### Initialize tracer provider
+### Initializing Tracing
 
 The OpenTelemetry SDK is initialized from `main` using the `initTracerProvider`
 function.
@@ -109,7 +109,7 @@ Adding a span event with additional attributes:
 
 ## Metrics
 
-### Initialize meter provider
+### Initializing Metrics
 
 The OpenTelemetry SDK is initialized from `main` using the `initMeterProvider`
 function.

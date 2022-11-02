@@ -15,7 +15,7 @@
 // Npm
 const grpc = require('@grpc/grpc-js')
 const protoLoader = require('@grpc/proto-loader')
-const health = require('grpc-health-check')
+const health = require('grpc-js-health-check')
 const opentelemetry = require('@opentelemetry/api')
 const pino = require('pino')
 
@@ -58,7 +58,7 @@ const hipsterShopPackage = grpc.loadPackageDefinition(protoLoader.loadSync('demo
 const server = new grpc.Server()
 
 server.addService(health.service, new health.Implementation({
-  '': proto.grpc.health.v1.HealthCheckResponse.ServingStatus.SERVING
+  '': health.servingStatus.SERVING
 }))
 
 server.addService(hipsterShopPackage.hipstershop.PaymentService.service, { charge: chargeServiceHandler })

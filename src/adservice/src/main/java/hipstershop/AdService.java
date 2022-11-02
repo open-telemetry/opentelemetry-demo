@@ -34,8 +34,8 @@ import io.opentelemetry.api.trace.Span;
 import io.opentelemetry.api.trace.StatusCode;
 import io.opentelemetry.api.trace.Tracer;
 import io.opentelemetry.context.Scope;
-import io.opentelemetry.extension.annotations.SpanAttribute;
-import io.opentelemetry.extension.annotations.WithSpan;
+import io.opentelemetry.instrumentation.annotations.SpanAttribute;
+import io.opentelemetry.instrumentation.annotations.WithSpan;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -126,7 +126,8 @@ public final class AdService {
         responseObserver.onNext(reply);
         responseObserver.onCompleted();
       } catch (StatusRuntimeException e) {
-        span.addEvent("Error", Attributes.of(AttributeKey.stringKey("exception.message"), e.getMessage()));
+        span.addEvent(
+            "Error", Attributes.of(AttributeKey.stringKey("exception.message"), e.getMessage()));
         span.setStatus(StatusCode.ERROR);
         logger.log(Level.WARN, "GetAds Failed with status {}", e.getStatus());
         responseObserver.onError(e);
@@ -204,7 +205,8 @@ public final class AdService {
     Ad travelTelescope =
         Ad.newBuilder()
             .setRedirectUrl("/product/1YMWWN1N4O")
-            .setText("Eclipsmart Travel Refractor Telescope for sale. Buy one, get second kit for free")
+            .setText(
+                "Eclipsmart Travel Refractor Telescope for sale. Buy one, get second kit for free")
             .build();
     Ad solarFilter =
         Ad.newBuilder()
