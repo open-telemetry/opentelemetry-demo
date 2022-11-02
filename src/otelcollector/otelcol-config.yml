@@ -38,5 +38,5 @@ service:
       processors: [batch]
       exporters: [prometheus, logging]
     metrics/spanmetrics:
-      receivers: [ otlp/spanmetrics ]
-      exporters: [ prometheus, logging ]
+      receivers: [otlp/spanmetrics]
+      exporters: [prometheus, logging]
