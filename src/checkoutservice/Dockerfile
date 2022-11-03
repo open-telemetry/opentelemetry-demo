@@ -12,16 +12,16 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-FROM golang:1.17.7-alpine AS builder
-RUN apk add build-base protoc
+FROM golang:1.19.2-alpine AS builder
+RUN apk add build-base protobuf-dev protoc
 WORKDIR /usr/src/app/
 
 # Restore dependencies
 COPY ./src/checkoutservice/ ./
 COPY ./pb/ ./proto/
 RUN go mod download
-RUN go get google.golang.org/protobuf/cmd/protoc-gen-go
-RUN go get google.golang.org/grpc/cmd/protoc-gen-go-grpc
+RUN go install google.golang.org/protobuf/cmd/protoc-gen-go@v1.28
+RUN go install google.golang.org/grpc/cmd/protoc-gen-go-grpc@v1.2
 
 # Build executable
 RUN protoc -I ./proto/ ./proto/demo.proto --go_out=./ --go-grpc_out=./

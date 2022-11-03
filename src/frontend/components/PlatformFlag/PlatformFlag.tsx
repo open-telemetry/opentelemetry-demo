@@ -1,6 +1,8 @@
 import * as S from './PlatformFlag.styled';
 
-const platform = (process.env.NEXT_PUBLIC_ANALYTICS_ID || 'local') as S.Platform;
+const { NEXT_PUBLIC_PLATFORM = 'local' } = typeof window !== 'undefined' ? window.ENV : {};
+
+const platform = NEXT_PUBLIC_PLATFORM as S.Platform;
 
 const PlatformFlag = () => {
   return (

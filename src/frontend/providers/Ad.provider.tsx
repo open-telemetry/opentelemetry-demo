@@ -2,6 +2,7 @@ import { createContext, useContext, useMemo } from 'react';
 import { useQuery } from 'react-query';
 import ApiGateway from '../gateways/Api.gateway';
 import { Ad, Money, Product } from '../protos/demo';
+import { useCurrency } from './Currency.provider';
 
 interface IContext {
   recommendedProductList: Product[];
@@ -21,12 +22,13 @@ interface IProps {
 export const useAd = () => useContext(Context);
 
 const AdProvider = ({ children, productIds }: IProps) => {
+  const { selectedCurrency } = useCurrency();
   const { data: adList = [] } = useQuery(['ads', productIds], () => ApiGateway.listAds(productIds), {
     refetchOnWindowFocus: false,
   });
   const { data: recommendedProductList = [] } = useQuery(
-    ['recommendations', productIds],
-    () => ApiGateway.listRecommendations(productIds),
+    ['recommendations', productIds, 'selectedCurrency', selectedCurrency],
+    () => ApiGateway.listRecommendations(productIds, selectedCurrency),
     {
       refetchOnWindowFocus: false,
     }

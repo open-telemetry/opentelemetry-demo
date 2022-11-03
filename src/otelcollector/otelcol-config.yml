@@ -5,21 +5,17 @@ receivers:
       http:
         cors:
           allowed_origins:
-            - "http://localhost:8080"
-  otlp/spanmetrics:
-    protocols:
-      grpc:
-        endpoint: "localhost:65535"
+            - "http://*"
+            - "https://*"
 
 exporters:
-  jaeger:
-    endpoint: "jaeger:14250"
+  otlp:
+    endpoint: "jaeger:4317"
     tls:
       insecure: true
   logging:
   prometheus:
     endpoint: "otelcol:9464"
-
 
 processors:
   batch:
@@ -31,11 +27,8 @@ service:
     traces:
       receivers: [otlp]
       processors: [spanmetrics, batch]
-      exporters: [logging, jaeger]
+      exporters: [logging, otlp]
     metrics:
       receivers: [otlp]
       processors: [batch]
       exporters: [prometheus, logging]
-    metrics/spanmetrics:
-      receivers: [ otlp/spanmetrics ]
-      exporters: [ prometheus, logging ]

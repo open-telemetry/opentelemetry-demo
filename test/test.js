@@ -1,3 +1,17 @@
+// Copyright The OpenTelemetry Authors
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//     http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+
 // Node
 const { promisify } = require("util");
 
@@ -9,6 +23,7 @@ const protoLoader = require("@grpc/proto-loader");
 const fetch = require("node-fetch");
 const dotenvExpand = require("dotenv-expand");
 const { resolve } = require("path");
+const productData = require("../src/productcatalogservice/products.json");
 
 const myEnv = dotEnv.config({
   path: resolve(__dirname, "../.env"),
@@ -254,8 +269,9 @@ test("product: list", async (t) => {
 });
 
 test("product: get", async (t) => {
-  const res = await productGet({ id: "OLJCESPC7Z" });
-  t.is(res.name, "Sunglasses");
+  const productId = "OLJCESPC7Z";
+  const res = await productGet({ id: productId });
+  t.is(res.name, productData.products.find(({ id }) => id === productId).name);
   t.truthy(res.description);
   t.truthy(res.picture);
   t.truthy(res.priceUsd);
@@ -263,10 +279,13 @@ test("product: get", async (t) => {
 });
 
 test("product: search", async (t) => {
-  const res = await productSearch({ query: "hold" });
-  t.is(res.results.length, 2);
-  t.is(res.results[0].name, "Candle Holder");
-  t.is(res.results[1].name, "Bamboo Glass Jar");
+  const res = await productSearch({ query: "Roof Binoculars" });
+  t.is(res.results.length, 1);
+  const [result] = res.results;
+  t.is(
+    result.name,
+    productData.products.find(({ name }) => name.includes("Binoculars")).name
+  );
 });
 
 // --------------- Recommendation Service ---------------
@@ -286,7 +305,7 @@ test("shipping: quote", async (t) => {
 
   const res = await shippingQuote(req);
   t.is(res.costUsd.units, 17);
-  t.is(res.costUsd.nanos, 980000000);
+  t.is(res.costUsd.nanos, 800000000);
 });
 
 test("shipping: empty quote", async (t) => {

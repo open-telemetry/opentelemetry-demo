@@ -1,10 +1,10 @@
-# email service
+# Email Service
 
 This service will send a confirmation email to the user when an order is placed.
 
 [Email service source](../../src/emailservice/)
 
-## Initialize SDK
+## Initializing Tracing
 
 You will need to require the core OpenTelemetry SDK and exporter Ruby gems, as
 well as any gem that will be needed for auto-instrumentation libraries

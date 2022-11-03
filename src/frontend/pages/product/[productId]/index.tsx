@@ -15,6 +15,7 @@ import { Product } from '../../../protos/demo';
 import AdProvider from '../../../providers/Ad.provider';
 import { useCart } from '../../../providers/Cart.provider';
 import * as S from '../../../styles/ProductDetail.styled';
+import { useCurrency } from '../../../providers/Currency.provider';
 
 const quantityOptions = new Array(10).fill(0).map((_, i) => i + 1);
 
@@ -25,11 +26,18 @@ const ProductDetail: NextPage = () => {
     addItem,
     cart: { items },
   } = useCart();
+  const { selectedCurrency } = useCurrency();
   const productId = query.productId as string;
 
   const {
     data: { name, picture, description, priceUsd = { units: 0, currencyCode: 'USD', nanos: 0 } } = {} as Product,
-  } = useQuery(['product', productId], () => ApiGateway.getProduct(productId), { enabled: !!productId });
+  } = useQuery(
+    ['product', productId, 'selectedCurrency', selectedCurrency],
+    () => ApiGateway.getProduct(productId, selectedCurrency),
+    {
+      enabled: !!productId,
+    }
+  );
 
   const onAddItem = useCallback(async () => {
     await addItem({

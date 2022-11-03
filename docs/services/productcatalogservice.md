@@ -1,14 +1,14 @@
-# productcatalog service
+# Product Catalog Service
 
 This service is responsible to return information about products. The service
 can be used to get all products, search for specific products, or return details
 about any single product.
 
-[Productcatalog service source](../../src/productcatalogservice/)
+[Product Catalog service source](../../src/productcatalogservice/)
 
 ## Traces
 
-### Initialize tracer provider
+### Initializing Tracing
 
 The OpenTelemetry SDK is initialized from `main` using the `initTracerProvider`
 function.
