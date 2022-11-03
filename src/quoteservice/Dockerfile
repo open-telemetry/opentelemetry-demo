@@ -13,6 +13,13 @@ RUN composer install \
 
 FROM php:8.1-apache
 
+# install GRPC (required for the OTel exporter)
+RUN apt-get -y update && apt install -y --no-install-recommends zlib1g-dev && \
+   pear config-set http_proxy ${http_proxy} && \
+   MAKEFLAGS="-j $(nproc)" pecl install grpc protobuf-3.21.5 && \
+   strip -s $(find /usr -name grpc.so) && \
+   docker-php-ext-enable grpc protobuf
+
 RUN docker-php-ext-install opcache
 
 WORKDIR /var/www
