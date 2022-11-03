@@ -336,7 +336,7 @@ services:
       # OTEL_EXPORTER_OTLP_TRACES_ENDPOINT # Not working for PHP
       - QUOTE_SERVICE_PORT
       - OTEL_SERVICE_NAME=quoteservice
-      - OTEL_EXPORTER_OTLP_ENDPOINT=otelcol:4317
+      - OTEL_EXPORTER_OTLP_ENDPOINT=http://otelcol:4318
       - OTEL_TRACES_SAMPLER=parentbased_always_on
       - OTEL_TRACES_EXPORTER=otlp
       - OTEL_EXPORTER_OTLP_TRACES_PROTOCOL=http/protobuf
