@@ -12,17 +12,13 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-// Npm
 const {context, propagation, trace} = require('@opentelemetry/api');
 const cardValidator = require('simple-card-validator');
-const pino = require('pino');
 const { v4: uuidv4 } = require('uuid');
 
-// Setup
-const logger = pino();
+const logger = require('./logger');
 const tracer = trace.getTracer('paymentservice');
 
-// Functions
 module.exports.charge = request => {
   const span = tracer.startSpan('charge');
 
@@ -30,7 +26,6 @@ module.exports.charge = request => {
     creditCardExpirationYear: year,
     creditCardExpirationMonth: month
   } = request.creditCard;
-  const { units, nanos, currencyCode } = request.amount;
   const currentMonth = new Date().getMonth() + 1;
   const currentYear = new Date().getFullYear();
   const lastFourDigits = number.substr(-4);
@@ -51,7 +46,7 @@ module.exports.charge = request => {
   if (!['visa', 'mastercard'].includes(cardType)) {
     throw new Error(`Sorry, we cannot process ${cardType} credit cards. Only VISA or MasterCard is accepted.`);
   }
-  
+
   if ((currentYear * 12 + currentMonth) > (year * 12 + month)) {
     throw new Error(`The credit card (ending ${lastFourDigits}) expired on ${month}/${year}.`);
   }
@@ -66,7 +61,8 @@ module.exports.charge = request => {
 
   span.end();
 
-  logger.info(`Transaction ${transactionId}: ${cardType} ending ${lastFourDigits} | Amount: ${units}.${nanos} ${currencyCode}`);
+  const { units, nanos, currencyCode } = request.amount;
+  logger.info({transactionId, cardType, lastFourDigits, amount: { units, nanos, currencyCode }}, "Transaction complete.");
 
   return { transactionId }
 }
