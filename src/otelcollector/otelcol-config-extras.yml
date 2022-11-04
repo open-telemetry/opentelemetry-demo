@@ -2,15 +2,20 @@
 # do not delete this file
 
 exporters:
-  otlp:
+  otlp/honeycomb:
     endpoint: "api.honeycomb.io:443"
     headers:
       "x-honeycomb-team": "<HONEYCOMB_API_KEY>"
       "x-honeycomb-dataset": "webstore-metrics"
-
 service:
   pipelines:
-    traces:
-      exporters: [otlp, jaeger]
     metrics:
-      exporters: [otlp, prometheus]
+      exporters:
+        - prometheus
+        - logging
+        - otlp/honeycomb
+    traces:
+      exporters:
+        - otlp
+        - logging
+        - otlp/honeycomb
