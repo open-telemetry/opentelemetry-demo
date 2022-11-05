@@ -12,13 +12,17 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-use opentelemetry::sdk::resource::{
-    OsResourceDetector, ProcessResourceDetector, SdkProvidedResourceDetector,
-};
 use opentelemetry::trace::TraceError;
 use opentelemetry::{
     global,
-    sdk::{propagation::TraceContextPropagator, resource::ResourceDetector, trace as sdktrace},
+    sdk::{
+        propagation::TraceContextPropagator,
+        resource::{
+            OsResourceDetector, ProcessResourceDetector, ResourceDetector,
+            SdkProvidedResourceDetector,
+        },
+        trace as sdktrace,
+    },
 };
 use opentelemetry_otlp::{self, WithExportConfig};
 
