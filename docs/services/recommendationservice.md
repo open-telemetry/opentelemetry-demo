@@ -18,7 +18,7 @@ ENTRYPOINT [ "opentelemetry-instrument", "python", "recommendation_server.py" ]
 
 ## Traces
 
-### Initialize tracer provider
+### Initializing Tracing
 
 The OpenTelemetry SDK is initialized in the `__main__` code block. This code
 will create a tracer provider, and establish a Span Processor to use. Export
@@ -58,7 +58,7 @@ block ends execution. This is done in the `get_product_list` function.
 
 ## Metrics
 
-### Initialize meter provider
+### Initializing Metrics
 
 The OpenTelemetry SDK is initialized in the `__main__` code block. This code
 will create a meter provider. Export

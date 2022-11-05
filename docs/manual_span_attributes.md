@@ -54,7 +54,7 @@ This document contains the list of manual Span Attributes used throughout the de
 |-------------------------------|--------|--------------------------|
 | `app.featureflag.name`        | string | Name of the feature flag |
 | `app.featureflag.description` | string | Admin description        |
-| `app.featureflag.enabled`     | boolean | The feature flag status  |             |
+| `app.featureflag.enabled`     | boolean | The feature flag status |
 
 ## Frontend
 

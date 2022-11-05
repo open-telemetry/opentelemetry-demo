@@ -10,7 +10,7 @@ rendering it as a log message. It expects a JSON payload like:
 }
 ```
 
-## Building locally
+## Local Build
 
 We use `bundler` to manage dependencies. To get started, simply `bundle install`.
 
@@ -18,6 +18,6 @@ We use `bundler` to manage dependencies. To get started, simply `bundle install`
 
 You may run this service locally with `bundle exec ruby email_server.rb`.
 
-## Building docker image
+## Docker Build
 
 From `src/emailservice`, run `docker build .`

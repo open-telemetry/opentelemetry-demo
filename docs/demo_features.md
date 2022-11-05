@@ -25,4 +25,8 @@ be added as the relevant SDKs are released.
   [Locust](https://locust.io/) load generator.
 - **[Prometheus](https://prometheus.io/)**: all generated metrics are scraped by
   Prometheus.
-- **[Grafana](https://grafana.com/)**: all metric dashboards are stored in Grafana.
+- **[Grafana](https://grafana.com/)**: all metric dashboards are stored in
+  Grafana.
+- **[Envoy](https://www.envoyproxy.io/)**: Envoy is used as a reverse proxy for
+  user-facing web interfaces such as the frontend, load generator, and feature
+  flag service.
