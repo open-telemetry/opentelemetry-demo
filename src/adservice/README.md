@@ -15,6 +15,13 @@ already part of the source code. To build Ad Service, run:
 It will create an executable script
 `src/adservice/build/install/hipstershop/bin/AdService`.
 
+To run the Ad Service:
+
+```sh
+export AD_SERVICE_PORT=8080
+./build/install/hipstershop/bin/AdService
+```
+
 ### Upgrading Gradle
 
 If you need to upgrade the version of gradle then run
@@ -25,8 +32,8 @@ If you need to upgrade the version of gradle then run
 
 ## Building Docker
 
-From `src/adservice/`, run:
+From the root of `opentelemetry-demo`, run:
 
 ```sh
-docker build ./
+docker build --file ./src/adservice/Dockerfile ./
 ```

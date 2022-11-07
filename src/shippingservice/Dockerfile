@@ -1,7 +1,7 @@
 # build context will only work from ../../docker-compose.yml
 FROM rust:1.61-alpine as builder
 RUN apk update
-RUN apk add --no-cache ca-certificates git protoc cmake clang clang-dev make gcc g++ libc-dev linux-headers
+RUN apk add --no-cache ca-certificates git protobuf-dev protoc cmake clang clang-dev make gcc g++ libc-dev linux-headers
 WORKDIR /app/
 
 # build app
