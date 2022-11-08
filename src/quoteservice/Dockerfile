@@ -24,4 +24,4 @@ RUN a2enmod rewrite
 EXPOSE ${QUOTE_SERVICE_PORT}
 
 ENTRYPOINT sed -i "s/80/${QUOTE_SERVICE_PORT}/g" /etc/apache2/sites-available/000-default.conf /etc/apache2/ports.conf \
-           && apache2-foreground
+&& apache2-foreground
