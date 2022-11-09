@@ -1,7 +1,5 @@
-use opentelemetry::{global, trace::{Span}, propagation::Extractor, Context, KeyValue};
-use opentelemetry_api::{
-    trace::{FutureExt, TraceContextExt, Tracer}
-};
+use opentelemetry::{global, propagation::Extractor, trace::Span, Context, KeyValue};
+use opentelemetry_api::trace::{FutureExt, TraceContextExt, Tracer};
 use shop::shipping_service_server::ShippingService;
 use shop::{GetQuoteRequest, GetQuoteResponse, Money, ShipOrderRequest, ShipOrderResponse};
 use tonic::{Request, Response, Status};

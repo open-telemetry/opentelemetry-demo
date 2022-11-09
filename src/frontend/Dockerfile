@@ -7,7 +7,7 @@ COPY ./src/frontend/package*.json ./
 RUN npm ci
 
 FROM node:16-alpine AS builder
-RUN apk add --no-cache libc6-compat protoc
+RUN apk add --no-cache libc6-compat protobuf-dev protoc
 WORKDIR /app
 COPY --from=deps /app/node_modules ./node_modules
 COPY ./pb ./pb

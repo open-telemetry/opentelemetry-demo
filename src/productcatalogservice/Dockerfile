@@ -16,7 +16,7 @@ FROM golang:1.17.7-alpine AS builder
 
 WORKDIR /usr/src/app/
 
-RUN apk add build-base protoc
+RUN apk add build-base protobuf-dev protoc
 
 # Restore dependencies
 COPY ./src/productcatalogservice/ ./
