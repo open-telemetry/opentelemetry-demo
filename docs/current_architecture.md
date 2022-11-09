@@ -122,12 +122,12 @@ subgraph tdf[Telemetry Data Flow]
             oc-proc --> oc-jag
         end
 
-        oc-prom -->|HTTP GET| pr-sc
+        oc-prom -->|"http://localhost:9464/metrics"| pr-sc
         oc-jag -->|gRPC| ja-col
 
         subgraph pr[Prometheus]
             style pr fill:#e75128;
-            pr-sc[/"Prometheus Scrapper<br/>polling every 5 seconds<br/>http://localhost:9464/metrics"/]
+            pr-sc[/"Prometheus Scrapper<br/>polling every 5 seconds"/]
             pr-tsdb[(Prometheus TSDB)]
             pr-http[/"Prometheus HTTP<br/>listening on<br/>http://localhost:9090"/]
 
