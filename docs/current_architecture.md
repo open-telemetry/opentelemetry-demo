@@ -50,50 +50,6 @@ shippingservice -->|gRPC| featureflagservice
 
 featureflagservice --> featureflagstore
 
-end 
-
-classDef java fill:#b07219,color:white;
-classDef dotnet fill:#178600,color:white;
-classDef golang fill:#00add8,color:black;
-classDef cpp fill:#f34b7d,color:white;
-classDef ruby fill:#701516,color:white;
-classDef python fill:#3572A5,color:white;
-classDef javascript fill:#f1e05a,color:black;
-classDef rust fill:#dea584,color:black;
-classDef erlang fill:#b83998,color:white;
-classDef php fill:#4f5d95,color:white;
-```
-
-```mermaid
-graph TD
-subgraph OpenTelemetry
-
-adservice(Ad Service):::java
-cartservice(Cart Service):::dotnet
-checkoutservice(Checkout Service):::golang
-currencyservice(Currency Service):::cpp
-emailservice(Email Service):::ruby
-frontend(Frontend):::javascript
-paymentservice(Payment Service):::javascript
-productcatalogservice(Product Catalog Service):::golang
-quoteservice(Quote Service):::php
-recommendationservice(Recommendation Service):::python
-shippingservice(Shipping Service):::rust
-featureflagservice(Feature Flag Service):::erlang
-otelcol(OpenTelemetry Collector):::golang
-prom(Prometheus):::golang
-jaeger(Jaeger):::golang
-grafana(Grafana):::golang
-
-
-adservice & cartservice & checkoutservice -.->|Metric, Trace| otelcol
-
-currencyservice & emailservice & featureflagservice & frontend & paymentservice & productcatalogservice & recommendationservice & shippingservice & quoteservice -.->|Trace| otelcol
-
-otelcol -->|HTTP Push| jaeger
-otelcol -->|HTTP Scrape| prom
-jaeger -->|HTTP Pull| grafana
-prom -->|HTTP Pull| grafana
 end
 
 classDef java fill:#b07219,color:white;
@@ -134,5 +90,80 @@ classDef rust fill:#dea584,color:black;
 classDef erlang fill:#b83998,color:white;
 classDef php fill:#4f5d95,color:white;
 ```
+Follow these links for the current state of [metric](https://github.com/open-telemetry/opentelemetry-demo/blob/main/docs/metric_service_features.md) and [trace](https://github.com/open-telemetry/opentelemetry-demo/blob/main/docs/trace_service_features.md) instrumentation of the demo applications.
+The collector is configured in [otelcol-config.yml](https://github.com/open-telemetry/opentelemetry-demo/blob/main/src/otelcollector/otelcol-config.yml).
 
+```mermaid
+graph TB
+subgraph tdf[Telemetry Data Flow]
+    subgraph subgraph_padding [ ]
+        style subgraph_padding fill:none,stroke:none;
+        %% padding to stop the titles clashing
+        subgraph od[Open Telemetry Demo]
+        ms(Microservice)
+        end
+
+        ms -.->|"OTLP\ngRPC"| oc-grpc
+        ms -.->|"OTLP\nHTTP POST"| oc-http
+
+        subgraph oc[OTel Collector]
+            style oc fill:#97aef3; 
+            oc-grpc[/"OTLP Receiver\nlistening on\ngrpc://localhost:4317/"/]
+            oc-http[/"OTLP Receiver\nlistening on \nhttp://localhost:4318/\nhttps://localhost:4318/"/]
+            oc-proc(Processors)
+            oc-prom[/"Prometheus Exporter\nlistening on\nhttp://localhost:9464/"/]
+            oc-jag[/"Jaeger Exporter"/]
+
+            oc-grpc --> oc-proc
+            oc-http --> oc-proc
+
+            oc-proc --> oc-prom
+            oc-proc --> oc-jag
+        end
+
+        oc-prom -->|HTTP GET| pr-sc
+        oc-jag -->|gRPC| ja-col
+
+        subgraph pr[Prometheus]
+            style pr fill:#e75128;
+            pr-sc[/"Prometheus Scrapper\npolling every 5 seconds\nhttp://localhost:9464/metrics"/]
+            pr-tsdb[(Prometheus TSDB)]
+            pr-http[/"Prometheus HTTP\nlistening on\nhttp://localhost:9090"/]
+
+            pr-sc --> pr-tsdb
+            pr-tsdb --> pr-http
+        end
+
+        pr-b{{"Browser\nPrometheus UI"}}
+        pr-http ---->|"http://localhost:9090/graph"| pr-b
+    
+        subgraph ja[Jaeger]
+            style ja fill:#60d0e4;
+            ja-col[/"Jaeger Collector\nlistening on\ngrpc://jaeger:4317/"/]
+            ja-tsdb[(Jaeger TSDB)]
+            ja-http[/"Jaeger HTTP\nlistening on\nhttp://localhost:16686"/]
+            
+            ja-col --> ja-tsdb
+            ja-tsdb --> ja-http
+        end
+
+        subgraph gr[Grafana]
+            style gr fill:#f8b91e;
+            gr-srv["Grafana Server"]
+            gr-http[/"Grafana HTTP\nlistening on\nhttp://localhost:3000"/]
+
+            gr-srv --> gr-http
+        end
+        
+        pr-http --> |"http://localhost:9090/api"| gr-srv
+        ja-http --> |"http://localhost:16686/api"| gr-srv
+
+        ja-b{{"Browser\nJaeger UI"}}
+        ja-http ---->|"http://localhost:16686/search"| ja-b
+
+        gr-b{{"Browser\nGrafana UI"}}
+        gr-http -->|"http://localhost:3000/dashboard"| gr-b
+    end
+end
+```
 Find the **Protocol Buffer Definitions** in the `/pb/` directory.
