@@ -8,7 +8,7 @@ on:
 
 jobs:
   build_and_push_images:
-    runs-on: [large-demo-runner]
+    runs-on: [ large-demo-runner ]
     permissions:
       contents: read
       packages: write
