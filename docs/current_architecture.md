@@ -127,7 +127,7 @@ subgraph tdf[Telemetry Data Flow]
 
         subgraph pr[Prometheus]
             style pr fill:#e75128;
-            pr-sc[/"Prometheus Scrapper<br/>polling every 5 seconds"/]
+            pr-sc[/"Prometheus Scraper<br/>polling every 5 seconds"/]
             pr-tsdb[(Prometheus TSDB)]
             pr-http[/"Prometheus HTTP<br/>listening on<br/>http://localhost:9090"/]
 
