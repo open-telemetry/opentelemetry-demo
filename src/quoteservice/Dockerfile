@@ -13,6 +13,8 @@ RUN composer install \
 
 FROM php:8.1-apache
 
+RUN docker-php-ext-install opcache
+
 WORKDIR /var/www
 COPY --from=build /tmp/vendor/ ./vendor/
 COPY ./src/quoteservice/ /var/www
