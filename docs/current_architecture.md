@@ -104,15 +104,15 @@ subgraph tdf[Telemetry Data Flow]
         ms(Microservice)
         end
 
-        ms -.->|"OTLP\ngRPC"| oc-grpc
-        ms -.->|"OTLP\nHTTP POST"| oc-http
+        ms -.->|"OTLP<br/>gRPC"| oc-grpc
+        ms -.->|"OTLP<br/>HTTP POST"| oc-http
 
         subgraph oc[OTel Collector]
             style oc fill:#97aef3; 
-            oc-grpc[/"OTLP Receiver\nlistening on\ngrpc://localhost:4317/"/]
-            oc-http[/"OTLP Receiver\nlistening on \nhttp://localhost:4318/\nhttps://localhost:4318/"/]
+            oc-grpc[/"OTLP Receiver<br/>listening on<br/>grpc://localhost:4317/"/]
+            oc-http[/"OTLP Receiver<br/>listening on <br/>http://localhost:4318/<br/>https://localhost:4318/"/]
             oc-proc(Processors)
-            oc-prom[/"Prometheus Exporter\nlistening on\nhttp://localhost:9464/"/]
+            oc-prom[/"Prometheus Exporter<br/>listening on<br/>http://localhost:9464/"/]
             oc-jag[/"Jaeger Exporter"/]
 
             oc-grpc --> oc-proc
@@ -127,22 +127,22 @@ subgraph tdf[Telemetry Data Flow]
 
         subgraph pr[Prometheus]
             style pr fill:#e75128;
-            pr-sc[/"Prometheus Scrapper\npolling every 5 seconds\nhttp://localhost:9464/metrics"/]
+            pr-sc[/"Prometheus Scrapper<br/>polling every 5 seconds<br/>http://localhost:9464/metrics"/]
             pr-tsdb[(Prometheus TSDB)]
-            pr-http[/"Prometheus HTTP\nlistening on\nhttp://localhost:9090"/]
+            pr-http[/"Prometheus HTTP<br/>listening on<br/>http://localhost:9090"/]
 
             pr-sc --> pr-tsdb
             pr-tsdb --> pr-http
         end
 
-        pr-b{{"Browser\nPrometheus UI"}}
+        pr-b{{"Browser<br/>Prometheus UI"}}
         pr-http ---->|"http://localhost:9090/graph"| pr-b
     
         subgraph ja[Jaeger]
             style ja fill:#60d0e4;
-            ja-col[/"Jaeger Collector\nlistening on\ngrpc://jaeger:4317/"/]
+            ja-col[/"Jaeger Collector<br/>listening on<br/>grpc://jaeger:4317/"/]
             ja-tsdb[(Jaeger TSDB)]
-            ja-http[/"Jaeger HTTP\nlistening on\nhttp://localhost:16686"/]
+            ja-http[/"Jaeger HTTP<br/>listening on<br/>http://localhost:16686"/]
             
             ja-col --> ja-tsdb
             ja-tsdb --> ja-http
@@ -151,7 +151,7 @@ subgraph tdf[Telemetry Data Flow]
         subgraph gr[Grafana]
             style gr fill:#f8b91e;
             gr-srv["Grafana Server"]
-            gr-http[/"Grafana HTTP\nlistening on\nhttp://localhost:3000"/]
+            gr-http[/"Grafana HTTP<br/>listening on<br/>http://localhost:3000"/]
 
             gr-srv --> gr-http
         end
@@ -159,10 +159,10 @@ subgraph tdf[Telemetry Data Flow]
         pr-http --> |"http://localhost:9090/api"| gr-srv
         ja-http --> |"http://localhost:16686/api"| gr-srv
 
-        ja-b{{"Browser\nJaeger UI"}}
+        ja-b{{"Browser<br/>Jaeger UI"}}
         ja-http ---->|"http://localhost:16686/search"| ja-b
 
-        gr-b{{"Browser\nGrafana UI"}}
+        gr-b{{"Browser<br/>Grafana UI"}}
         gr-http -->|"http://localhost:3000/dashboard"| gr-b
     end
 end
