@@ -90,8 +90,9 @@ classDef rust fill:#dea584,color:black;
 classDef erlang fill:#b83998,color:white;
 classDef php fill:#4f5d95,color:white;
 ```
-Follow these links for the current state of [metric](https://github.com/open-telemetry/opentelemetry-demo/blob/main/docs/metric_service_features.md) and [trace](https://github.com/open-telemetry/opentelemetry-demo/blob/main/docs/trace_service_features.md) instrumentation of the demo applications.
-The collector is configured in [otelcol-config.yml](https://github.com/open-telemetry/opentelemetry-demo/blob/main/src/otelcollector/otelcol-config.yml).
+
+Follow these links for the current state of [metric](https://github.com/open-telemetry/opentelemetry-demo/blob/main/docs/metric_service_features.md) and [trace](https://github.com/open-telemetry/opentelemetry-demo/blob/main/docs/trace_service_features.md) instrumentation of the demo applications.\
+The collector is configured in [otelcol-config.yml](https://github.com/open-telemetry/opentelemetry-demo/blob/main/src/otelcollector/otelcol-config.yml), alternative exporters can be configured here.
 
 ```mermaid
 graph TB
