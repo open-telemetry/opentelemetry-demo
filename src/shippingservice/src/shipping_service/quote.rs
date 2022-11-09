@@ -24,7 +24,7 @@ pub async fn create_quote_from_count(count: u32) -> Result<Quote, tonic::Status>
             return Err(tonic::Status::unknown(msg));
         }
     };
-    
+
     Ok(get_active_span(|span| {
         let q = create_quote_from_float(f);
         span.add_event(
