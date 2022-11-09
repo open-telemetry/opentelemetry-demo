@@ -12,21 +12,20 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-FROM openjdk:18-slim AS builder
+FROM eclipse-temurin:17-jdk AS builder
 
 WORKDIR /usr/src/app/
 
 COPY ./src/adservice/ ./
-COPY ./pb/ ./src/main/proto/
-RUN chmod +x ./gradlew
+COPY ./pb/ ./proto
 RUN ./gradlew downloadRepos
-RUN ./gradlew installDist
+RUN ./gradlew installDist -PprotoSourceDir=./proto
 
 # -----------------------------------------------------------------------------
 
-FROM openjdk:18-slim
+FROM eclipse-temurin:17-jdk
 
-ARG version=1.16.0
+ARG version=1.19.1
 WORKDIR /usr/src/app/
 
 COPY --from=builder /usr/src/app/ ./

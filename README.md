@@ -54,6 +54,7 @@ keeping it up to date for you.
 
 - [Datadog](https://github.com/DataDog/opentelemetry-demo)
 - [Dynatrace](https://www.dynatrace.com/news/blog/opentelemetry-demo-application-with-dynatrace/)
+- [Helios](https://otelsandbox.gethelios.dev)
 - [Honeycomb.io](https://github.com/honeycombio/opentelemetry-demo)
 - [Lightstep](https://github.com/lightstep/opentelemetry-demo)
 - [New Relic](https://github.com/newrelic/opentelemetry-demo)
