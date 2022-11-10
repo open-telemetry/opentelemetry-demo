@@ -91,8 +91,15 @@ classDef erlang fill:#b83998,color:white;
 classDef php fill:#4f5d95,color:white;
 ```
 
-Follow these links for the current state of [metric](https://github.com/open-telemetry/opentelemetry-demo/blob/main/docs/metric_service_features.md) and [trace](https://github.com/open-telemetry/opentelemetry-demo/blob/main/docs/trace_service_features.md) instrumentation of the demo applications.\
-The collector is configured in [otelcol-config.yml](https://github.com/open-telemetry/opentelemetry-demo/blob/main/src/otelcollector/otelcol-config.yml), alternative exporters can be configured here.
+Follow these links for the current state of
+ [metric](https://github.com/open-telemetry/opentelemetry-demo/blob/main/docs/metric_service_features.md)
+ and
+ [trace](https://github.com/open-telemetry/opentelemetry-demo/blob/main/docs/trace_service_features.md)
+ instrumentation of the demo applications.\
+
+The collector is configured in
+ [otelcol-config.yml](https://github.com/open-telemetry/opentelemetry-demo/blob/main/src/otelcollector/otelcol-config.yml),
+ alternative exporters can be configured here.
 
 ```mermaid
 graph TB
@@ -108,7 +115,7 @@ subgraph tdf[Telemetry Data Flow]
         ms -.->|"OTLP<br/>HTTP POST"| oc-http
 
         subgraph oc[OTel Collector]
-            style oc fill:#97aef3; 
+            style oc fill:#97aef3,color:black;
             oc-grpc[/"OTLP Receiver<br/>listening on<br/>grpc://localhost:4317/"/]
             oc-http[/"OTLP Receiver<br/>listening on <br/>http://localhost:4318/<br/>https://localhost:4318/"/]
             oc-proc(Processors)
@@ -126,7 +133,7 @@ subgraph tdf[Telemetry Data Flow]
         oc-jag -->|gRPC| ja-col
 
         subgraph pr[Prometheus]
-            style pr fill:#e75128;
+            style pr fill:#e75128,color:black;
             pr-sc[/"Prometheus Scraper<br/>polling every 5 seconds"/]
             pr-tsdb[(Prometheus TSDB)]
             pr-http[/"Prometheus HTTP<br/>listening on<br/>http://localhost:9090"/]
@@ -137,25 +144,25 @@ subgraph tdf[Telemetry Data Flow]
 
         pr-b{{"Browser<br/>Prometheus UI"}}
         pr-http ---->|"http://localhost:9090/graph"| pr-b
-    
+
         subgraph ja[Jaeger]
-            style ja fill:#60d0e4;
+            style ja fill:#60d0e4,color:black;
             ja-col[/"Jaeger Collector<br/>listening on<br/>grpc://jaeger:4317/"/]
-            ja-tsdb[(Jaeger TSDB)]
+            ja-db[(Jaeger DB)]
             ja-http[/"Jaeger HTTP<br/>listening on<br/>http://localhost:16686"/]
-            
-            ja-col --> ja-tsdb
-            ja-tsdb --> ja-http
+
+            ja-col --> ja-db
+            ja-db --> ja-http
         end
 
         subgraph gr[Grafana]
-            style gr fill:#f8b91e;
+            style gr fill:#f8b91e,color:black;
             gr-srv["Grafana Server"]
             gr-http[/"Grafana HTTP<br/>listening on<br/>http://localhost:3000"/]
 
             gr-srv --> gr-http
         end
-        
+
         pr-http --> |"http://localhost:9090/api"| gr-srv
         ja-http --> |"http://localhost:16686/api"| gr-srv
 
@@ -167,4 +174,5 @@ subgraph tdf[Telemetry Data Flow]
     end
 end
 ```
+
 Find the **Protocol Buffer Definitions** in the `/pb/` directory.
