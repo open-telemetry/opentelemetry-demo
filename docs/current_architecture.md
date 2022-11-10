@@ -1,6 +1,6 @@
 # Demo Architecture
 
-**Online Boutique** is composed of microservices written in different programming
+**OpenTelemetry Demo** is composed of microservices written in different programming
 languages that talk to each other over gRPC and HTTP; and a load generator which
 uses [Locust](https://locust.io/) to fake user traffic.
 
