@@ -25,6 +25,9 @@ The OpenTelemetry SDK is initialized from `main`.
 ```rust
 fn init_tracer() -> Result<sdktrace::Tracer, TraceError> {
     global::set_text_map_propagator(TraceContextPropagator::new());
+    let os_resource = OsResourceDetector.detect(Duration::from_secs(0));
+    let process_resource = ProcessResourceDetector.detect(Duration::from_secs(0));
+    let sdk_resource = SdkProvidedResourceDetector.detect(Duration::from_secs(0));
     opentelemetry_otlp::new_pipeline()
         .tracing()
         .with_exporter(
@@ -37,6 +40,10 @@ fn init_tracer() -> Result<sdktrace::Tracer, TraceError> {
                     "/v1/traces"
                 )), // TODO: assume this ^ is true from config when opentelemetry crate > v0.17.0
                     // https://github.com/open-telemetry/opentelemetry-rust/pull/806 includes the environment variable.
+        )
+        .with_trace_config(
+            sdktrace::config()
+                .with_resource(os_resource.merge(&process_resource).merge(&sdk_resource)),
         )
         .install_batch(opentelemetry::runtime::Tokio)
 }
