@@ -35,12 +35,12 @@ RUN git clone --shallow-submodules --depth 1 --recurse-submodules -b v${GRPC_VER
     -DgRPC_BUILD_GRPC_PYTHON_PLUGIN=OFF \
     -DgRPC_BUILD_GRPC_RUBY_PLUGIN=OFF \
     ../.. \
-  && make -j2 \
+  && make -j$(nproc || sysctl -n hw.ncpu || echo 1) \
   && make install \
   && cd ../../.. \
   && rm -rf grpc
 
-# install opentelemetry
+# Install OpenTelemetry
 RUN git clone https://github.com/open-telemetry/opentelemetry-cpp \
     && cd opentelemetry-cpp/ \
     && git checkout tags/v${OPENTELEMETRY_VERSION} -b v${OPENTELEMETRY_VERSION} \
