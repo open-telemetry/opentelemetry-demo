@@ -491,7 +491,7 @@ services:
     deploy:
       resources:
         limits:
-          memory: 120M
+          memory: 200M
     restart: always
     environment:
       - POSTGRES_USER=ffs
@@ -585,33 +585,29 @@ services:
       - "${REDIS_PORT}"
     logging: *logging
 
-  # Kafka
-  zookeeper:
-    image: confluentinc/cp-zookeeper:7.2.2
-    container_name: zookeeper
-    environment:
-      ZOOKEEPER_CLIENT_PORT: ${ZOOKEEPER_SERVICE_PORT}
-      ZOOKEEPER_TICK_TIME: 2000
-
   broker:
-    image: confluentinc/cp-kafka:7.2.2
+    image: confluentinc/cp-kafka:7.2.2-1-ubi8
+    hostname: broker
     container_name: broker
-    depends_on:
-      - zookeeper
-    ports:
-      # To learn about configuring Kafka for access across networks see
-      # https://www.confluent.io/blog/kafka-client-cannot-connect-to-broker-on-aws-on-docker-etc/
-      - "${KAFKA_SERVICE_PORT}:${KAFKA_SERVICE_PORT}"
     environment:
-      KAFKA_BROKER_ID: 1
-      KAFKA_ZOOKEEPER_CONNECT: 'zookeeper:${ZOOKEEPER_SERVICE_PORT}'
-      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,PLAINTEXT_INTERNAL:PLAINTEXT
-      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://:${KAFKA_SERVICE_PORT},PLAINTEXT_INTERNAL://:29092
-      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
-      KAFKA_TRANSACTION_STATE_LOG_MIN_ISR: 1
-      KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR: 1
+      KAFKA_LISTENERS: PLAINTEXT://broker:9092,CONTROLLER://broker:9093
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://broker:9092
+      KAFKA_CONTROLLER_LISTENER_NAMES: CONTROLLER
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: CONTROLLER:PLAINTEXT,PLAINTEXT:PLAINTEXT
+      KAFKA_GROUP_INITIAL_REBALANCE_DELAY_MS: 0
+      KAFKA_PROCESS_ROLES: 'controller,broker'
+      KAFKA_NODE_ID: 1
+      KAFKA_CONTROLLER_QUORUM_VOTERS: '1@broker:9093'
+      KAFKA_METADATA_LOG_SEGMENT_MS: 15000
+      KAFKA_METADATA_MAX_RETENTION_MS: 1200000
+      KAFKA_METADATA_LOG_MAX_RECORD_BYTES_BETWEEN_SNAPSHOTS: 2800
       KAFKA_AUTO_CREATE_TOPICS_ENABLE: true
-      KAFKA_LOG4J_ROOT_LOGLEVEL: DEBUG
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+      KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR: 1
+    volumes:
+      - ./src/kafka/update_run.sh:/tmp/update_run.sh
+      - ./src/kafka/clusterID:/tmp/clusterID
+    command: "bash -c 'ls -lh /tmp && /tmp/update_run.sh && /etc/confluent/docker/run'"
 
   # Frontend Tests
   frontendTests:
