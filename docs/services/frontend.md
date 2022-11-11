@@ -75,7 +75,6 @@ application context.
             "app.synthetic_request": true,
             [SemanticAttributes.HTTP_TARGET]: target,
             [SemanticAttributes.HTTP_STATUS_CODE]: response.statusCode,
-            [SemanticAttributes.HTTP_ROUTE]: url,
             [SemanticAttributes.HTTP_METHOD]: method,
             [SemanticAttributes.HTTP_USER_AGENT]: headers['user-agent'] || '',
             [SemanticAttributes.HTTP_URL]: `${headers.host}${url}`,
