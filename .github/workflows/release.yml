@@ -8,7 +8,7 @@ on:
 
 jobs:
   build_and_push_images:
-    runs-on: [ large-demo-runner ]
+    runs-on: ubuntu-latest
     permissions:
       contents: read
       packages: write
@@ -97,7 +97,7 @@ jobs:
         with:
           config-inline: |
             [worker.oci]
-              max-parallelism = 8
+              max-parallelism = 2
 
       - name: Cache Docker layers
         uses: actions/cache@v3
