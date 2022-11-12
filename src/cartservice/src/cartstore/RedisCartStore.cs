@@ -18,6 +18,7 @@ using System.Threading.Tasks;
 using Grpc.Core;
 using StackExchange.Redis;
 using Google.Protobuf;
+using Microsoft.Extensions.Logging;
 
 namespace cartservice.cartstore
 {
@@ -35,7 +36,9 @@ namespace cartservice.cartstore
 
         private readonly ConfigurationOptions redisConnectionOptions;
 
-        public RedisCartStore(string redisAddress)
+        private readonly ILogger _logger;
+
+        public RedisCartStore(string redisAddress, ILogger<RedisCartStore> logger)
         {
             // Serialize empty cart into byte array.
             var cart = new Hipstershop.Cart();
@@ -49,6 +52,8 @@ namespace cartservice.cartstore
             redisConnectionOptions.ReconnectRetryPolicy = new ExponentialRetry(1000);
 
             redisConnectionOptions.KeepAlive = 180;
+
+             _logger = logger;
         }
 
         public ConnectionMultiplexer GetConnection()
@@ -78,34 +83,34 @@ namespace cartservice.cartstore
                     return;
                 }
 
-                Console.WriteLine("Connecting to Redis: " + connectionString);
+                _logger.LogInformation("Connecting to Redis: " + connectionString);
                 redis = ConnectionMultiplexer.Connect(redisConnectionOptions);
 
                 if (redis == null || !redis.IsConnected)
                 {
-                    Console.WriteLine("Wasn't able to connect to redis");
+                    _logger.LogError("Wasn't able to connect to redis");
 
                     // We weren't able to connect to Redis despite some retries with exponential backoff.
                     throw new ApplicationException("Wasn't able to connect to redis");
                 }
 
-                Console.WriteLine("Successfully connected to Redis");
+                _logger.LogInformation("Successfully connected to Redis");
                 var cache = redis.GetDatabase();
 
-                Console.WriteLine("Performing small test");
+                _logger.LogInformation("Performing small test");
                 cache.StringSet("cart", "OK" );
                 object res = cache.StringGet("cart");
-                Console.WriteLine($"Small test result: {res}");
+                _logger.LogInformation($"Small test result: {res}");
 
                 redis.InternalError += (o, e) => { Console.WriteLine(e.Exception); };
                 redis.ConnectionRestored += (o, e) =>
                 {
                     isRedisConnectionOpened = true;
-                    Console.WriteLine("Connection to redis was restored successfully.");
+                    _logger.LogInformation("Connection to redis was restored successfully.");
                 };
                 redis.ConnectionFailed += (o, e) =>
                 {
-                    Console.WriteLine("Connection failed. Disposing the object");
+                    _logger.LogError("Connection failed. Disposing the object");
                     isRedisConnectionOpened = false;
                 };
 
@@ -115,7 +120,7 @@ namespace cartservice.cartstore
 
         public async Task AddItemAsync(string userId, string productId, int quantity)
         {
-            Console.WriteLine($"AddItemAsync called with userId={userId}, productId={productId}, quantity={quantity}");
+            _logger.LogInformation("AddItemAsync called with userId={userId}, productId={productId}, quantity={quantity}", userId, productId, quantity);
 
             try
             {
@@ -157,7 +162,7 @@ namespace cartservice.cartstore
 
         public async Task EmptyCartAsync(string userId)
         {
-            Console.WriteLine($"EmptyCartAsync called with userId={userId}");
+            _logger.LogInformation("EmptyCartAsync called with userId={userId}", userId);
 
             try
             {
@@ -175,7 +180,7 @@ namespace cartservice.cartstore
 
         public async Task<Hipstershop.Cart> GetCartAsync(string userId)
         {
-            Console.WriteLine($"GetCartAsync called with userId={userId}");
+            _logger.LogInformation("GetCartAsync called with userId={userId}", userId);
 
             try
             {

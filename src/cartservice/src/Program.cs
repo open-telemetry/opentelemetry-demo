@@ -24,23 +24,43 @@ using OpenTelemetry.Resources;
 using OpenTelemetry.Trace;
 using cartservice.services;
 using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
+using OpenTelemetry.Exporter;
+using OpenTelemetry.Instrumentation.AspNetCore;
+using OpenTelemetry.Logs;
 
 var builder = WebApplication.CreateBuilder(args);
+
+// log
+using var loggerFactory = LoggerFactory.Create(builder =>
+{
+    builder.AddOpenTelemetry((opt) =>
+    {
+        opt.IncludeFormattedMessage = true;
+        opt.IncludeScopes = true;
+        opt.AddConsoleExporter();
+    });
+});
+
+var logger = loggerFactory.CreateLogger<RedisCartStore>();
+
 string redisAddress = builder.Configuration["REDIS_ADDR"];
 RedisCartStore cartStore = null;
 if (string.IsNullOrEmpty(redisAddress))
 {
-    Console.WriteLine("REDIS_ADDR environment variable is required.");
+    logger.LogError("REDIS_ADDR environment variable is required.");
     System.Environment.Exit(1);
 }
-cartStore = new RedisCartStore(redisAddress);
+cartStore = new RedisCartStore(redisAddress,logger);
 
 // Initialize the redis store
 cartStore.InitializeAsync().GetAwaiter().GetResult();
-Console.WriteLine("Initialization completed");
+logger.LogInformation("Initialization completed");
 
 builder.Services.AddSingleton<ICartStore>(cartStore);
 
+// tracing
 builder.Services.AddOpenTelemetryTracing((builder) => builder
     .ConfigureResource(r => r.AddTelemetrySdk())
     .AddRedisInstrumentation(
@@ -51,11 +71,15 @@ builder.Services.AddOpenTelemetryTracing((builder) => builder
     .AddHttpClientInstrumentation()
     .AddOtlpExporter());
 
+// metric
 builder.Services.AddOpenTelemetryMetrics(builder => builder
     .ConfigureResource(r => r.AddTelemetrySdk())
     .AddRuntimeInstrumentation()
     .AddAspNetCoreInstrumentation()
     .AddOtlpExporter());
+
+// For options which can be bound from IConfiguration.
+builder.Services.Configure<AspNetCoreInstrumentationOptions>(builder.Configuration.GetSection("AspNetCoreInstrumentation"));
 
 builder.Services.AddGrpc();
 builder.Services.AddGrpcHealthChecks()
