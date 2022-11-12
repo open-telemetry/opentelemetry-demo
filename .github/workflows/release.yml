@@ -97,7 +97,7 @@ jobs:
         with:
           config-inline: |
             [worker.oci]
-              max-parallelism = 2
+              max-parallelism = 1
 
       - name: Cache Docker layers
         uses: actions/cache@v3
