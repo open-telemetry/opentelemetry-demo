@@ -136,3 +136,5 @@ significant modifications will be credited to OpenTelemetry Authors.
 ([#563](https://github.com/open-telemetry/opentelemetry-demo/pull/563))
 * Optimize currencyservice build time with parallel build jobs
 ([#569](https://github.com/open-telemetry/opentelemetry-demo/pull/569))
+* Replaced console log statement as opentelemetry API log statement for cartservice
+([#570])(https://github.com/open-telemetry/opentelemetry-demo/pull/570))
