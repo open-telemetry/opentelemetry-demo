@@ -11,11 +11,18 @@
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License.
- 
+
 use opentelemetry::trace::TraceError;
 use opentelemetry::{
     global,
-    sdk::{propagation::TraceContextPropagator, trace as sdktrace},
+    sdk::{
+        propagation::TraceContextPropagator,
+        resource::{
+            OsResourceDetector, ProcessResourceDetector, ResourceDetector,
+            SdkProvidedResourceDetector,
+        },
+        trace as sdktrace,
+    },
 };
 use opentelemetry_otlp::{self, WithExportConfig};
 
@@ -25,6 +32,7 @@ use log::*;
 use simplelog::*;
 
 use std::env;
+use std::time::Duration;
 
 mod shipping_service;
 use shipping_service::shop::shipping_service_server::ShippingServiceServer;
@@ -41,6 +49,9 @@ fn init_logger() -> Result<(), log::SetLoggerError> {
 
 fn init_tracer() -> Result<sdktrace::Tracer, TraceError> {
     global::set_text_map_propagator(TraceContextPropagator::new());
+    let os_resource = OsResourceDetector.detect(Duration::from_secs(0));
+    let process_resource = ProcessResourceDetector.detect(Duration::from_secs(0));
+    let sdk_resource = SdkProvidedResourceDetector.detect(Duration::from_secs(0));
     opentelemetry_otlp::new_pipeline()
         .tracing()
         .with_exporter(
@@ -51,8 +62,12 @@ fn init_tracer() -> Result<sdktrace::Tracer, TraceError> {
                     env::var("OTEL_EXPORTER_OTLP_TRACES_ENDPOINT")
                         .unwrap_or_else(|_| "http://otelcol:4317".to_string()),
                     "/v1/traces"
-                )),// TODO: assume this ^ is true from config when opentelemetry crate > v0.17.0
-                   // https://github.com/open-telemetry/opentelemetry-rust/pull/806 includes the environment variable.
+                )), // TODO: assume this ^ is true from config when opentelemetry crate > v0.17.0
+                    // https://github.com/open-telemetry/opentelemetry-rust/pull/806 includes the environment variable.
+        )
+        .with_trace_config(
+            sdktrace::config()
+                .with_resource(os_resource.merge(&process_resource).merge(&sdk_resource)),
         )
         .install_batch(opentelemetry::runtime::Tokio)
 }

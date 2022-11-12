@@ -32,7 +32,7 @@
     <p><%= order.order_id %></p>
     <h3>Shipping</h3>
     <p><%= order.shipping_tracking_id %></p>
-    <p><%= order.shipping_cost.units %>.<%= order.shipping_cost %> <%= order.shipping_cost.currency_code %></p>
+    <p><%= order.shipping_cost.units %>.<%= order.shipping_cost.nanos %> <%= order.shipping_cost.currency_code %></p>
     <p><%= order.shipping_address.street_address_1 %>, <%= order.shipping_address.street_address_2 %>, <%= order.shipping_address.city %>, <%= order.shipping_address.country %> <%= order.shipping_address.zip_code %></p>
     <h3>Items</h3>
     <table style="width:100%">
