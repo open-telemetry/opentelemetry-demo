@@ -13,7 +13,7 @@
 # limitations under the License.
 
 FROM golang:1.19.2-alpine AS builder
-RUN apk add build-base protoc
+RUN apk add build-base protobuf-dev protoc
 WORKDIR /usr/src/app/
 
 # Restore dependencies
