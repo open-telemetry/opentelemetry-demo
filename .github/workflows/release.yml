@@ -1,4 +1,4 @@
-name: "Release"
+name: "Build and Publish"
 
 on:
   release:
@@ -16,17 +16,61 @@ jobs:
       DOCKERHUB_REPO: "otel/demo"
       GHCR_REPO: "ghcr.io/open-telemetry/demo"
 
+    strategy:
+      matrix:
+        file_tag:
+          - file: ./src/adservice/Dockerfile
+            tag_suffix: adservice
+            context: ./
+          - file: ./src/cartservice/src/Dockerfile
+            tag_suffix: cartservice
+            context: ./
+          - file: ./src/checkoutservice/Dockerfile
+            tag_suffix: checkoutservice
+            context: ./
+          - file: ./src/currencyservice/Dockerfile
+            tag_suffix: currencyservice
+            context: ./src/currencyservice
+          - file: ./src/emailservice/Dockerfile
+            tag_suffix: emailservice
+            context: ./src/emailservice
+          - file: ./src/frontend/Dockerfile
+            tag_suffix: frontend
+            context: ./
+          - file: ./src/frontendproxy/Dockerfile
+            tag_suffix: frontendproxy
+            context: ./
+          - file: ./src/paymentservice/Dockerfile
+            tag_suffix: paymentservice
+            context: ./
+          - file: ./src/productcatalogservice/Dockerfile
+            tag_suffix: productcatalogservice
+            context: ./
+          - file: ./src/quoteservice/Dockerfile
+            tag_suffix: quoteservice
+            context: ./
+          - file: ./src/shippingservice/Dockerfile
+            tag_suffix: shippingservice
+            context: ./
+          - file: ./src/featureflagservice/Dockerfile
+            tag_suffix: featureflagservice
+            context: ./src/featureflagservice
+          - file: ./src/loadgenerator/Dockerfile
+            tag_suffix: loadgenerator
+            context: ./
+          - file: ./src/recommendationservice/Dockerfile
+            tag_suffix: recommendationservice
+            context: ./
+          - file: ./src/frontend/Dockerfile.cypress
+            tag_suffix: frontend-tests
+            context: ./
+          - file: ./test/Dockerfile
+            tag_suffix: integrationTests
+            context: ./
     steps:
       - uses: actions/checkout@v3
         with:
           fetch-depth: 0
-
-      # limit docker push image concurrency to 1
-      # to avoid github package return 429 ratelimit error
-      - name: Set docker upload concurrent
-        run: |
-          echo $'{"max-concurrent-uploads": 1}' | sudo dd status=none of=/etc/docker/daemon.json
-          sudo service docker restart
 
       - name: Log in to the Container registry
         uses: docker/login-action@v2
@@ -34,18 +78,34 @@ jobs:
           registry: ghcr.io
           username: ${{ github.repository_owner }}
           password: ${{ secrets.GITHUB_TOKEN }}
+        if: github.event_name != 'pull_request'
 
       - name: Log in to Docker Hub
         uses: docker/login-action@v2
         with:
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_PASSWORD }}
+        if: github.event_name != 'pull_request'
 
-      - name: prepare build env
-        run: make build-env-file
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v2
 
-      - name: build and push ghcr docker image
-        run: make build-and-push-ghcr
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v2
+        with:
+          config-inline: |
+            [worker.oci]
+              max-parallelism = 2
 
-      - name: build and push dockerhub image
-        run: make build-and-push-dockerhub
+      - name: Matrix Build and push demo images
+        uses: docker/build-push-action@v3.2.0
+        with:
+          context: ${{ matrix.file_tag.context }}
+          file: ${{ matrix.file_tag.file }}
+          platforms: linux/amd64
+          push: ${{ github.event_name != 'pull_request' }}
+          tags: |
+            ${{ env.DOCKERHUB_REPO }}:${{ env.RELEASE_VERSION || 'pr' }}-${{matrix.file_tag.tag_suffix }}
+            ${{ env.GHCR_REPO }}:${{ env.RELEASE_VERSION || 'pr' }}-${{ matrix.file_tag.tag_suffix }}
+          cache-from: type=gha
+          cache-to: type=gha
