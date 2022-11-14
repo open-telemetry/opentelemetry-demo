@@ -99,14 +99,6 @@ jobs:
             [worker.oci]
               max-parallelism = 2
 
-      - name: Cache Docker layers
-        uses: actions/cache@v2
-        with:
-          path: /tmp/.buildx-cache
-          key: ${{ runner.os }}-multi-buildx-${{ github.sha }}
-          restore-keys: |
-            ${{ runner.os }}-multi-buildx
-
       - name: Matrix Build and push demo images
         uses: docker/build-push-action@v3.2.0
         with:
@@ -117,11 +109,6 @@ jobs:
           tags: |
             ${{ env.DOCKERHUB_REPO }}:${{ env.RELEASE_VERSION || 'pr' }}-${{matrix.file_tag.tag_suffix }}
             ${{ env.GHCR_REPO }}:${{ env.RELEASE_VERSION || 'pr' }}-${{ matrix.file_tag.tag_suffix }}
-          cache-from: type=local,src=/tmp/.buildx-cache
-          cache-to: type=local,mode=max,dest=/tmp/.buildx-cache
+          cache-from: type=gha
+          cache-to: type=gha
           build-args: BUILDKIT_INLINE_CACHE=1
-
-      - name: Move cache
-        run: |
-          rm -rf /tmp/.buildx-cache
-          mv /tmp/.buildx-cache-new /tmp/.buildx-cache
