@@ -12,7 +12,7 @@ RUN apt-get install -qq -y --ignore-missing \
   libprotobuf-dev                           \
   libcurl4-openssl-dev                      \
   nlohmann-json3-dev                        \
-  cmake 
+  cmake
 RUN apt-get install -qq -y gcc-10 g++-10 cpp-10
 RUN update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-10 100 --slave /usr/bin/g++ g++ /usr/bin/g++-10 --slave /usr/bin/gcov gcov /usr/bin/gcov-10
 
