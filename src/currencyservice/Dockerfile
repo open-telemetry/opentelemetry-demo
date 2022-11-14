@@ -66,8 +66,6 @@ RUN git clone https://github.com/open-telemetry/opentelemetry-cpp \
 
 COPY . /currencyservice
 
-RUN echo "hello world"
-
 RUN cd /currencyservice \
     && mkdir -p build && cd build \
     && cmake .. && make -j install
