@@ -12,11 +12,24 @@ RUN apt-get install -qq -y --ignore-missing \
   libprotobuf-dev                           \
   libcurl4-openssl-dev                      \
   nlohmann-json3-dev                        \
-  cmake
+  cmake 
+RUN apt-get install -qq -y gcc-10 g++-10 cpp-10
+RUN update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-10 100 --slave /usr/bin/g++ g++ /usr/bin/g++-10 --slave /usr/bin/gcov gcov /usr/bin/gcov-10
 
 # The following arguments would be passed from docker-compose.yml
 ARG GRPC_VERSION=1.46.0
 ARG OPENTELEMETRY_VERSION=1.5.0
+ARG MOLD_VERSION=1.7.0
+
+# Install mold
+RUN git clone -b v${MOLD_VERSION} \
+  https://github.com/rui314/mold.git \
+  && mkdir mold/build \
+  && cd mold/build \
+  && ../install-build-deps.sh \
+  && cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_CXX_COMPILER=g++-10 .. \
+  && cmake --build . -j $(nproc) \
+  && cmake --install .
 
 # Install GRPC
 RUN git clone --shallow-submodules --depth 1 --recurse-submodules -b v${GRPC_VERSION} \
@@ -25,6 +38,7 @@ RUN git clone --shallow-submodules --depth 1 --recurse-submodules -b v${GRPC_VER
   && mkdir -p cmake/build \
   && cd cmake/build \
   && cmake \
+    -DCMAKE_CXX_FLAGS="-B/usr/libexec/mold" \
     -DgRPC_INSTALL=ON \
     -DgRPC_BUILD_TESTS=OFF \
     -DCMAKE_BUILD_TYPE=Release \
@@ -47,7 +61,7 @@ RUN git clone https://github.com/open-telemetry/opentelemetry-cpp \
     && git submodule update --init --recursive \
     && mkdir build \
     && cd build \
-    && cmake .. -DCMAKE_POSITION_INDEPENDENT_CODE=ON -DCMAKE_BUILD_TYPE=Release -DBUILD_TESTING=OFF -DWITH_OTLP=ON \
+    && cmake .. -DCMAKE_CXX_FLAGS="-B/usr/libexec/mold" -DCMAKE_POSITION_INDEPENDENT_CODE=ON -DCMAKE_BUILD_TYPE=Release -DBUILD_TESTING=OFF -DWITH_OTLP=ON \
     && make -j install && cd ../.. && rm -rf opentelemetry-cpp
 
 COPY . /currencyservice
