@@ -110,4 +110,4 @@ jobs:
             ${{ env.DOCKERHUB_REPO }}:${{ env.RELEASE_VERSION || 'pr' }}-${{matrix.file_tag.tag_suffix }}
             ${{ env.GHCR_REPO }}:${{ env.RELEASE_VERSION || 'pr' }}-${{ matrix.file_tag.tag_suffix }}
           cache-from: type=gha
-          cache-to: type=gha
+          cache-to: type=gha,mode=max
