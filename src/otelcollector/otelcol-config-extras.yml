@@ -1,2 +1,13 @@
 # extra settings to be merged into OpenTelemetry Collector configuration
 # do not delete this file
+
+exporters:
+  otlp/aspecto:
+    endpoint: otelcol.aspecto.io:4317
+    headers:
+      Authorization: <your_aspecto_token>
+
+service:
+  pipelines:
+    traces:
+      exporters: [otlp/aspecto]
