@@ -13,7 +13,7 @@ export interface IFormData {
   city: string;
   state: string;
   country: string;
-  zipCode: number;
+  zipCode: string;
   creditCardNumber: string;
   creditCardCvv: number;
   creditCardExpirationYear: number;
@@ -45,7 +45,7 @@ const CheckoutForm = ({ onSubmit }: IProps) => {
     city: 'Mountain View',
     state: 'CA',
     country: 'United States',
-    zipCode: 94043,
+    zipCode: "94043",
     creditCardNumber: '4432-8015-6152-0454',
     creditCardCvv: 672,
     creditCardExpirationYear: 2030,
@@ -99,13 +99,12 @@ const CheckoutForm = ({ onSubmit }: IProps) => {
       />
       <Input
         label="Zip Code"
-        type="number"
+        type="text"
         name="zipCode"
         id="zip_code"
         value={zipCode}
         onChange={handleChange}
         required
-        pattern="\d{4,5}"
       />
       <Input label="City" type="text" name="city" id="city" value={city} required onChange={handleChange} />
 
