@@ -286,6 +286,8 @@ services:
     environment:
       - PAYMENT_SERVICE_PORT
       - OTEL_EXPORTER_OTLP_TRACES_ENDPOINT
+      - OTEL_EXPORTER_OTLP_METRICS_ENDPOINT
+      - OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE
       - OTEL_SERVICE_NAME=paymentservice
     depends_on:
       - otelcol
