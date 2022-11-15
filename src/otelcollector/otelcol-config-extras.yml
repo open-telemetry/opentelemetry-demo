@@ -1,2 +1,21 @@
 # extra settings to be merged into OpenTelemetry Collector configuration
 # do not delete this file
+
+exporters:
+  otlp/honeycomb:
+    endpoint: "api.honeycomb.io:443"
+    headers:
+      "x-honeycomb-team": "S6GHHIAPnSTeee9Vxxyev5"    # puckpuck / otel-demo
+      "x-honeycomb-dataset": "webstore-metrics"
+service:
+  pipelines:
+    metrics:
+      exporters:
+        - prometheus
+        - logging
+        - otlp/honeycomb
+    traces:
+      exporters:
+        - otlp
+        - logging
+        - otlp/honeycomb
