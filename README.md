@@ -52,11 +52,14 @@ We welcome any vendor to fork the project to demonstrate their services and
 adding a link below. The community is committed to maintaining the project and
 keeping it up to date for you.
 
+- [Aspecto](https://github.com/aspecto-io/opentelemetry-demo)
 - [Datadog](https://github.com/DataDog/opentelemetry-demo)
 - [Dynatrace](https://www.dynatrace.com/news/blog/opentelemetry-demo-application-with-dynatrace/)
+- [Helios](https://otelsandbox.gethelios.dev)
 - [Honeycomb.io](https://github.com/honeycombio/opentelemetry-demo)
 - [Lightstep](https://github.com/lightstep/opentelemetry-demo)
 - [New Relic](https://github.com/newrelic/opentelemetry-demo)
+- [Uptrace](https://github.com/uptrace/uptrace/tree/master/example/opentelemetry-demo)
 
 ## Contributing
 
@@ -71,18 +74,21 @@ documentation. Our [SIG Calls](CONTRIBUTING.md#join-a-sig-call) are Mondays at
 
 - [Austin Parker](https://github.com/austinlparker), Lightstep
 - [Carter Socha](https://github.com/cartersocha), Lightstep
-- [Morgan McLean](https://github.com/mtwo), Splunk
+- [Juliano Costa](https://github.com/julianocosta89), Dynatrace
 - [Pierre Tessier](https://github.com/puckpuck), Honeycomb
 
 [Approvers](https://github.com/open-telemetry/community/blob/main/community-membership.md#approver)
 ([@open-telemetry/demo-approvers](https://github.com/orgs/open-telemetry/teams/demo-approvers)):
 
-- [Juliano Costa](https://github.com/julianocosta89), Dynatrace
 - [Michael Maxwell](https://github.com/mic-max), Microsoft
 - [Mikko Viitanen](https://github.com/mviitane), Dynatrace
 - [Penghan Wang](https://github.com/wph95), AppDynamics
 - [Reiley Yang](https://github.com/reyang), Microsoft
 - [Ziqi Zhao](https://github.com/fatsheep9146), Alibaba
+
+Emeritus Maintainers
+
+- [Morgan McLean](https://github.com/mtwo), Splunk
 
 ### Thanks to all the people who have contributed
 

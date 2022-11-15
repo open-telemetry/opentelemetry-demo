@@ -5,8 +5,9 @@ RUN apk add --no-cache ca-certificates git protobuf-dev protoc cmake clang clang
 WORKDIR /app/
 
 # build app
-COPY ./src/shippingservice/ /app/
-COPY ./pb/ /app/proto/
+COPY /src/shippingservice/ /app/
+COPY /pb/ /app/proto/
+
 RUN cargo build -r --features="dockerproto"
 
 FROM alpine as release
