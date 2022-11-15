@@ -152,7 +152,7 @@ people = [
         "email": "tobias@example.com",
         "address": {
             "streetAddress": "150 Elgin St",
-            "zipCode": ""N9J3"Z6",
+            "zipCode": "N9J3Z6",
             "city": "Ottawa",
             "state": "ON",
             "country": "Canada",
