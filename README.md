@@ -86,7 +86,7 @@ documentation. Our [SIG Calls](CONTRIBUTING.md#join-a-sig-call) are Mondays at
 - [Reiley Yang](https://github.com/reyang), Microsoft
 - [Ziqi Zhao](https://github.com/fatsheep9146), Alibaba
 
-Emeritus Maintainers:
+Emeritus Maintainers
 
 - [Morgan McLean](https://github.com/mtwo), Splunk
 
