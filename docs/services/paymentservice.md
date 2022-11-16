@@ -8,10 +8,10 @@ processed.
 
 ## Initializing OpenTelemetry
 
-It is recommended to use an OpenTelemetry initialization wrapper when starting 
-your NodeJS application to initialize the SDK and auto-instrumentation. 
-When initializing the OpenTelemetry NodeJS SDK, you optionally specify which 
-auto-instrumentation libraries to leverage, or make use of the 
+It is recommended to use an OpenTelemetry initialization wrapper when starting
+your NodeJS application to initialize the SDK and auto-instrumentation.
+When initializing the OpenTelemetry NodeJS SDK, you optionally specify which
+auto-instrumentation libraries to leverage, or make use of the
 `getNodeAutoInstrumentations()` function which includes most popular frameworks.
 The `opentelemetry.js` file contains all code required to initialize the SDK and
 auto-instrumentation based on standard OpenTelemetry environment variables for
