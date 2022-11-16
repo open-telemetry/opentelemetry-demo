@@ -8,33 +8,39 @@ processed.
 
 ## Initializing OpenTelemetry
 
-It is recommended to use a Node required module when starting your NodeJS
-application to initialize the SDK and auto-instrumentation. When initializing
-the OpenTelemetry NodeJS SDK, you optionally specify which auto-instrumentation
-libraries to leverage, or make use of the `getNodeAutoInstrumentations()`
-function which includes most popular frameworks. The `tracing.js` contains all
-code required to initialize the SDK and auto-instrumentation based on standard
-OpenTelemetry environment variables for OTLP export, resource attributes, and
-service name.
+It is recommended to use wrap your app using an OpenTelemetry initialization
+wrapper when starting your NodeJS application to initialize the SDK and auto-
+instrumentation. When initializing the OpenTelemetry NodeJS SDK, you optionally
+specify which auto-instrumentation libraries to leverage, or make use of the
+`getNodeAutoInstrumentations()` function which includes most popular frameworks.
+The `opentelemetry.js` file contains all code required to initialize the SDK and
+auto-instrumentation based on standard OpenTelemetry environment variables for
+OTLP export, resource attributes, and service name. It then `require`s your app
+to start it up once the SDK is initialized.
 
 ```javascript
 const opentelemetry = require("@opentelemetry/sdk-node")
 const { getNodeAutoInstrumentations } = require("@opentelemetry/auto-instrumentations-node")
-const { OTLPTraceExporter } =  require('@opentelemetry/exporter-trace-otlp-grpc')
+const { OTLPTraceExporter } = require('@opentelemetry/exporter-trace-otlp-grpc')
+const { OTLPMetricExporter } = require('@opentelemetry/exporter-metrics-otlp-grpc')
+const { PeriodicExportingMetricReader } = require('@opentelemetry/sdk-metrics');
 
 const sdk = new opentelemetry.NodeSDK({
   traceExporter: new OTLPTraceExporter(),
-  instrumentations: [ getNodeAutoInstrumentations() ]
+  instrumentations: [ getNodeAutoInstrumentations() ],
+  metricReader: new PeriodicExportingMetricReader({
+    exporter: new OTLPMetricExporter()
+  }),
 })
 
-sdk.start()
+sdk.start().then(() => require("./index"));
 ```
 
-Node required modules are loaded using the `--require` command line argument.
+You can then use `opentelemetry.js` to start your app.
 This can be done in the `ENTRYPOINT` command for the service's `Dockerfile`.
 
 ```dockerfile
-ENTRYPOINT [ "node", "--require", "./tracing.js", "./index.js" ]
+ENTRYPOINT [ "node", "./opentelemetry.js" ]
 ```
 
 ## Traces
@@ -72,7 +78,21 @@ be sure to set the span's status accordingly. You can see this in the
 
 ## Metrics
 
-TBD
+### Creating Meters and Instruments
+
+Meters can be created using the `@opentelemetry/api-metrics` package. You can
+create meters as seen below, and then use the created meter to create
+instruments.
+
+```javascript
+const { metrics } = require('@opentelemetry/api-metrics');
+
+const meter = metrics.getMeter('paymentservice');
+const transactionsCounter = meter.createCounter('app.payment.transactions')
+```
+
+Meters and Instruments are supposed to stick around. This means you should
+get a Meter or an Instrument once, and then re-use it as needed.
 
 ## Logs
 
