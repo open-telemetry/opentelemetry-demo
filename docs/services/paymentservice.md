@@ -8,15 +8,15 @@ processed.
 
 ## Initializing OpenTelemetry
 
-It is recommended to use wrap your app using an OpenTelemetry initialization
-wrapper when starting your NodeJS application to initialize the SDK and auto-
-instrumentation. When initializing the OpenTelemetry NodeJS SDK, you optionally
-specify which auto-instrumentation libraries to leverage, or make use of the
+It is recommended to use an OpenTelemetry initialization wrapper when starting 
+your NodeJS application to initialize the SDK and auto-instrumentation. 
+When initializing the OpenTelemetry NodeJS SDK, you optionally specify which 
+auto-instrumentation libraries to leverage, or make use of the 
 `getNodeAutoInstrumentations()` function which includes most popular frameworks.
 The `opentelemetry.js` file contains all code required to initialize the SDK and
 auto-instrumentation based on standard OpenTelemetry environment variables for
 OTLP export, resource attributes, and service name. It then `require`s your app
-to start it up once the SDK is initialized.
+at `./index.js` to start it up once the SDK is initialized.
 
 ```javascript
 const opentelemetry = require("@opentelemetry/sdk-node")
@@ -92,7 +92,7 @@ const transactionsCounter = meter.createCounter('app.payment.transactions')
 ```
 
 Meters and Instruments are supposed to stick around. This means you should
-get a Meter or an Instrument once, and then re-use it as needed.
+get a Meter or an Instrument once , and then re-use it as needed, if possible.
 
 ## Logs
 
