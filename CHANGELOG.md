@@ -136,5 +136,7 @@ significant modifications will be credited to OpenTelemetry Authors.
 ([#563](https://github.com/open-telemetry/opentelemetry-demo/pull/563))
 * Optimize currencyservice build time with parallel build jobs
 ([#569](https://github.com/open-telemetry/opentelemetry-demo/pull/569))
+* Optimize GitHub Builds and fix broken emulation of featureflag
+([#536](https://github.com/open-telemetry/opentelemetry-demo/pull/536))
 * Added Kafka, accountingservice and frauddetectionservice for async workflows
 ([#512](https://github.com/open-telemetry/opentelemetry-demo/pull/457))
