@@ -392,7 +392,6 @@ services:
       - OTEL_EXPORTER_OTLP_TRACES_PROTOCOL=grpc
       - OTEL_PHP_TRACES_PROCESSOR=simple
       - INSTANA_SERVICE_NAME=quoteservice
-      - INSTANA_PROCESS_NAME=php
     depends_on:
       - otelcol
     logging: *logging
