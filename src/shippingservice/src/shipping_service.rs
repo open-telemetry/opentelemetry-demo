@@ -1,5 +1,6 @@
 use opentelemetry::{global, propagation::Extractor, trace::Span, Context, KeyValue};
-use opentelemetry_api::trace::{FutureExt, TraceContextExt, Tracer};
+use opentelemetry_api::trace::{FutureExt, TraceContextExt, SpanKind, Tracer};
+use opentelemetry_semantic_conventions as semcov;
 use shop::shipping_service_server::ShippingService;
 use shop::{GetQuoteRequest, GetQuoteResponse, Money, ShipOrderRequest, ShipOrderResponse};
 use tonic::{Request, Response, Status};
@@ -13,6 +14,10 @@ mod tracking;
 use tracking::create_tracking_id;
 
 const NANOS_MULTIPLE: i32 = 10000000i32;
+
+const RPC_SYSTEM_GRPC: &'static str = "grpc";
+const RPC_GRPC_STATUS_CODE_OK: i64 = 0;
+const RPC_GRPC_STATUS_CODE_UNKNOWN: i64 = 2;
 
 pub mod shop {
     tonic::include_proto!("hipstershop"); // The string specified here must match the proto package name
@@ -61,17 +66,20 @@ impl ShippingService for ShippingServer {
         // We may want to ask another service for product pricing / info
         // (although now everything is assumed to be the same price)
         // check out the create_quote_from_count method to see how we use the span created here
-        let tracer = global::tracer("shippingservice/get-quote");
-        let mut span = tracer.start_with_context("get-quote", &parent_cx);
+        let tracer = global::tracer("shippingservice");
+        let mut span = tracer.span_builder("hipstershop.ShippingService/GetQuote").with_kind(SpanKind::Server).start_with_context(&tracer, &parent_cx);
+        span.set_attribute(semcov::trace::RPC_SYSTEM.string(RPC_SYSTEM_GRPC));
+
         span.add_event("Processing get quote request".to_string(), vec![]);
         span.set_attribute(KeyValue::new("app.shipping.zip_code", request_message.address.unwrap().zip_code));
 
+        let cx = Context::current_with_span(span);
         let q = match create_quote_from_count(itemct)
-            .with_context(Context::current_with_span(span))
+            .with_context(cx.clone())
             .await
         {
             Ok(quote) => quote,
-            Err(status) => return Err(status),
+            Err(status) => {cx.span().set_attribute(semcov::trace::RPC_GRPC_STATUS_CODE.i64(RPC_GRPC_STATUS_CODE_UNKNOWN)); return Err(status)},
         };
 
         let reply = GetQuoteResponse {
@@ -83,6 +91,7 @@ impl ShippingService for ShippingServer {
         };
         info!("Sending Quote: {}", q);
 
+        cx.span().set_attribute(semcov::trace::RPC_GRPC_STATUS_CODE.i64(RPC_GRPC_STATUS_CODE_OK));
         Ok(Response::new(reply))
     }
     async fn ship_order(
@@ -95,8 +104,10 @@ impl ShippingService for ShippingServer {
             global::get_text_map_propagator(|prop| prop.extract(&MetadataMap(request.metadata())));
         // in this case, generating a tracking ID is trivial
         // we'll create a span and associated events all in this function.
-        let mut span = global::tracer("shippingservice/ship-order")
-            .start_with_context("ship-order", &parent_cx);
+        let tracer = global::tracer("shippingservice");
+        let mut span = tracer
+            .span_builder("hipstershop.ShippingService/ShipOrder").with_kind(SpanKind::Server).start_with_context(&tracer, &parent_cx);
+        span.set_attribute(semcov::trace::RPC_SYSTEM.string(RPC_SYSTEM_GRPC));
 
         span.add_event("Processing shipping order request".to_string(), vec![]);
 
@@ -109,6 +120,7 @@ impl ShippingService for ShippingServer {
             vec![],
         );
 
+        span.set_attribute(semcov::trace::RPC_GRPC_STATUS_CODE.i64(RPC_GRPC_STATUS_CODE_OK));
         Ok(Response::new(ShipOrderResponse { tracking_id: tid }))
     }
 }
