@@ -34,4 +34,5 @@ RUN echo "ServerName quoteservice" >> /etc/apache2/apache2.conf
 EXPOSE ${QUOTE_SERVICE_PORT}
 
 ENTRYPOINT sed -i "s/80/${QUOTE_SERVICE_PORT}/g" /etc/apache2/sites-available/000-default.conf /etc/apache2/ports.conf \
+&& sed -i -e "s|#Require.*|Require all granted|" /etc/apache2/mods-enabled/status.conf \
 && apache2-foreground
