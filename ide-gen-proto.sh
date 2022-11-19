@@ -38,7 +38,7 @@ gen_proto_rust() {
   cd "$base_dir"/src/"$1" || return
   mkdir -p proto
   cp "$base_dir"/pb/demo.proto proto/demo.proto
-  cargo build -r --features="dockerproto"
+  cargo build
   cd "$base_dir" || return
 }
 
