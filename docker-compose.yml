@@ -166,6 +166,36 @@ services:
       - otelcol
     logging: *logging
 
+  # Feature Flag service
+  featureflagservice:
+    image: ${IMAGE_NAME}:${IMAGE_VERSION}-featureflagservice
+    container_name: feature-flag-service
+    build:
+      context: ./
+      dockerfile: ./src/featureflagservice/Dockerfile
+      cache_from:
+        - ${IMAGE_NAME}:${IMAGE_VERSION}-featureflagservice
+    deploy:
+      resources:
+        limits:
+          memory: 200M
+    restart: always
+    ports:
+      - "${FEATURE_FLAG_SERVICE_PORT}"                                  # Feature Flag Service UI
+      - "${FEATURE_FLAG_GRPC_SERVICE_PORT}"                             # Feature Flag Service gRPC API
+    environment:
+      - FEATURE_FLAG_SERVICE_PORT
+      - FEATURE_FLAG_GRPC_SERVICE_PORT
+      - OTEL_EXPORTER_OTLP_TRACES_ENDPOINT
+      - OTEL_EXPORTER_OTLP_TRACES_PROTOCOL=grpc
+      - OTEL_SERVICE_NAME=featureflagservice
+      - DATABASE_URL=ecto://ffs:ffs@ffs_postgres:5432/ffs
+      - FEATURE_FLAG_SERVICE_PATH_ROOT="/feature"
+    depends_on:
+      ffs_postgres:
+        condition: service_healthy
+    logging: *logging
+
   # Frontend
   frontend:
     image: ${IMAGE_NAME}:${IMAGE_VERSION}-frontend
@@ -210,6 +240,7 @@ services:
       - shippingservice
     logging: *logging
 
+  # Frontend
   frontendproxy:
     image: ${IMAGE_NAME}:${IMAGE_VERSION}-frontendproxy
     build:
@@ -239,6 +270,7 @@ services:
       - loadgenerator
       - grafana
 
+  # Load Generator
   loadgenerator:
     image: ${IMAGE_NAME}:${IMAGE_VERSION}-loadgenerator
     container_name: load-generator
@@ -404,36 +436,6 @@ services:
     depends_on:
       - otelcol
     logging: *logging
-
-  # Feature Flag service
-  featureflagservice:
-    image: ${IMAGE_NAME}:${IMAGE_VERSION}-featureflagservice
-    container_name: feature-flag-service
-    build:
-      context: ./src/featureflagservice
-      cache_from:
-        - ${IMAGE_NAME}:${IMAGE_VERSION}-featureflagservice
-    deploy:
-      resources:
-        limits:
-          memory: 200M
-    restart: always
-    ports:
-      - "${FEATURE_FLAG_SERVICE_PORT}"     # Feature Flag Service UI
-      - "${FEATURE_FLAG_GRPC_SERVICE_PORT}"                             # Feature Flag Service gRPC API
-    environment:
-      - FEATURE_FLAG_SERVICE_PORT
-      - FEATURE_FLAG_GRPC_SERVICE_PORT
-      - OTEL_EXPORTER_OTLP_TRACES_ENDPOINT
-      - OTEL_EXPORTER_OTLP_TRACES_PROTOCOL=grpc
-      - OTEL_SERVICE_NAME=featureflagservice
-      - DATABASE_URL=ecto://ffs:ffs@ffs_postgres:5432/ffs
-      - FEATURE_FLAG_SERVICE_PATH_ROOT="/feature"
-    depends_on:
-      ffs_postgres:
-        condition: service_healthy
-    logging: *logging
-
 
   # Postgres used by Feature Flag service
   ffs_postgres:
