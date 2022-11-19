@@ -13,16 +13,20 @@
 // limitations under the License.
 
 const {context, propagation, trace} = require('@opentelemetry/api');
+const { metrics } = require('@opentelemetry/api-metrics');
 const cardValidator = require('simple-card-validator');
 const { v4: uuidv4 } = require('uuid');
 
 const logger = require('./logger');
 const tracer = trace.getTracer('paymentservice');
+const meter = metrics.getMeter('paymentservice');
+const transactionsCounter = meter.createCounter('app.payment.transactions')
 
 module.exports.charge = request => {
   const span = tracer.startSpan('charge');
 
-  const { creditCardNumber: number,
+  const {
+    creditCardNumber: number,
     creditCardExpirationYear: year,
     creditCardExpirationMonth: month
   } = request.creditCard;
@@ -32,7 +36,7 @@ module.exports.charge = request => {
   const transactionId = uuidv4();
 
   const card = cardValidator(number);
-  const {card_type: cardType, valid } = card.getCardDetails();
+  const { card_type: cardType, valid } = card.getCardDetails();
 
   span.setAttributes({
     'app.payment.card_type': cardType,
@@ -53,7 +57,7 @@ module.exports.charge = request => {
 
   // check baggage for synthetic_request=true, and add charged attribute accordingly
   const baggage = propagation.getBaggage(context.active());
-  if (baggage && baggage.getEntry("synthetic_request") && baggage.getEntry("synthetic_request").value == "true") {
+  if (baggage && baggage.getEntry("synthetic_request") && baggage.getEntry("synthetic_request").value === "true") {
     span.setAttribute('app.payment.charged', false);
   } else {
     span.setAttribute('app.payment.charged', true);
@@ -63,6 +67,6 @@ module.exports.charge = request => {
 
   const { units, nanos, currencyCode } = request.amount;
   logger.info({transactionId, cardType, lastFourDigits, amount: { units, nanos, currencyCode }}, "Transaction complete.");
-
+  transactionsCounter.add(1, {"app.payment.currency": currencyCode})
   return { transactionId }
 }
