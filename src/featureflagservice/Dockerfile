@@ -62,8 +62,7 @@ COPY ./pb/demo.proto proto/
 COPY ./src/featureflagservice/rebar.config ./src/featureflagservice/rebar.lock ./
 
 # generate protobuf files with rebar
-RUN mkdir -p _build/default/lib/featureflagservice/ebin
-RUN ~/.mix/rebar3 grpc gen
+RUN ~/.mix/rebar3 grpc_regen
 
 # compile assets
 RUN mix assets.deploy
