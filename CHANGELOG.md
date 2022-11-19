@@ -132,3 +132,11 @@ significant modifications will be credited to OpenTelemetry Authors.
 ([#513](https://github.com/open-telemetry/opentelemetry-demo/pull/513))
 * Added frontend instrumentation exporter custom url
 ([#512](https://github.com/open-telemetry/opentelemetry-demo/pull/512))
+* Replaced PHP-CLI to PHP-Apache for a more realistic service
+([#563](https://github.com/open-telemetry/opentelemetry-demo/pull/563))
+* Optimize currencyservice build time with parallel build jobs
+([#569](https://github.com/open-telemetry/opentelemetry-demo/pull/569))
+* Optimize GitHub Builds and fix broken emulation of featureflag
+([#536](https://github.com/open-telemetry/opentelemetry-demo/pull/536))
+* Add basic metrics support for payment service
+([#583](https://github.com/open-telemetry/opentelemetry-demo/pull/583))
