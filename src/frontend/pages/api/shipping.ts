@@ -9,8 +9,8 @@ type TResponse = Money | Empty;
 const handler = async ({ method, query }: NextApiRequest, res: NextApiResponse<TResponse>) => {
   switch (method) {
     case 'GET': {
-      const { itemList = '', currencyCode = 'USD' } = query;
-      const { costUsd } = await ShippingGateway.getShippingCost(JSON.parse(itemList as string) as CartItem[]);
+      const { itemList = '', currencyCode = 'USD', address = '' } = query;
+      const { costUsd } = await ShippingGateway.getShippingCost(JSON.parse(itemList as string, JSON.parse(address as string)) as CartItem[]);
       const cost = await CurrencyGateway.convert(costUsd!, currencyCode as string);
 
       return res.status(200).json(cost!);

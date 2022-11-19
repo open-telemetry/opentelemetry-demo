@@ -36,12 +36,13 @@ const ApiGateway = () => ({
     });
   },
 
-  getShippingCost(itemList: IProductCartItem[], currencyCode: string) {
+  getShippingCost(itemList: IProductCartItem[], currencyCode: string, address: {}) {
     return request<Money>({
       url: `${basePath}/shipping`,
       queryParams: {
         itemList: JSON.stringify(itemList.map(({ productId, quantity }) => ({ productId, quantity }))),
         currencyCode,
+        address,
       },
     });
   },
