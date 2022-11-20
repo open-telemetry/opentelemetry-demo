@@ -30,7 +30,13 @@ const ProductDetail: NextPage = () => {
   const productId = query.productId as string;
 
   const {
-    data: { name, picture, description, priceUsd = { units: 0, currencyCode: 'USD', nanos: 0 } } = {} as Product,
+    data: {
+      name,
+      picture,
+      description,
+      priceUsd = { units: 0, currencyCode: 'USD', nanos: 0 },
+      categories,
+    } = {} as Product,
   } = useQuery(
     ['product', productId, 'selectedCurrency', selectedCurrency],
     () => ApiGateway.getProduct(productId, selectedCurrency),
@@ -48,7 +54,10 @@ const ProductDetail: NextPage = () => {
   }, [addItem, productId, quantity, push]);
 
   return (
-    <AdProvider productIds={[productId, ...items.map(({ productId }) => productId)]}>
+    <AdProvider
+      productIds={[productId, ...items.map(({ productId }) => productId)]}
+      contextKeys={[...new Set(categories)]}
+    >
       <Layout>
         <S.ProductDetail data-cy={CypressFields.ProductDetail}>
           <S.Container>
