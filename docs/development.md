@@ -3,7 +3,7 @@
 Development for this demo requires tooling in several programming languages.
 Minimum required versions will be noted where possible, but it is recommended
 to update to the latest version for all tooling. The OpenTelemetry demo team
-will attempt the services in this repository upto date with the latest version
+will attempt the services in this repository up to date with the latest version
 for dependencies and tooling when possible.
 
 ## Generate Protobuf files
