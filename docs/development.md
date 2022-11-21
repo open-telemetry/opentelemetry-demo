@@ -1,6 +1,6 @@
 # Development
 
-Development for this demo requires tooling in several different languages.
+Development for this demo requires tooling in several programming languages.
 Minimum required versions will be noted where possible, but it is recommended
 to update to the latest version for all tooling. The OpenTelemetry demo team
 will attempt the services in this repository upto date with the latest version
