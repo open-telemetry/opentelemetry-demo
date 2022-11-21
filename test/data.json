@@ -17,7 +17,7 @@
       "city": "Seattle",
       "state": "Washington",
       "country": "United States",
-      "zipCode": 98109
+      "zipCode": "98109"
     },
     "email": "amazon@example.com",
     "creditCard": {
@@ -50,7 +50,7 @@
         "city": "Mountain View",
         "state": "California",
         "country": "United States",
-        "zipCode": 94043
+        "zipCode": "94043"
       },
       "items": [
         {
@@ -90,7 +90,7 @@
       "city": "Redmond",
       "state": "Washington",
       "country": "United States",
-      "zipCode": 98052
+      "zipCode": "98052"
     },
     "items": [
       {
