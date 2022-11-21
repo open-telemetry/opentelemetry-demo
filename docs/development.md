@@ -21,12 +21,12 @@ receive hints from IDEs such as IntelliJ or VS Code.
 ### C++
 
 - build-essential
+- cmake
+- libcurl4-openssl-dev
+- libprotobuf-dev
+- nlohmann-json3-dev
 - pkg-config
 - protobuf-compiler
-- libprotobuf-dev
-- libcurl4-openssl-dev
-- nlohmann-json3-dev
-- cmake
 
 ### Elixir
 
