@@ -1,4 +1,4 @@
-import { Ad, Cart, CartItem, Money, PlaceOrderRequest, Product } from '../protos/demo';
+import { Ad, Address, Cart, CartItem, Money, PlaceOrderRequest, Product } from '../protos/demo';
 import { IProductCart, IProductCartItem, IProductCheckout } from '../types/Cart';
 import request from '../utils/Request';
 import SessionGateway from './Session.gateway';
@@ -36,12 +36,13 @@ const ApiGateway = () => ({
     });
   },
 
-  getShippingCost(itemList: IProductCartItem[], currencyCode: string) {
+  getShippingCost(itemList: IProductCartItem[], currencyCode: string, address: Address) {
     return request<Money>({
       url: `${basePath}/shipping`,
       queryParams: {
         itemList: JSON.stringify(itemList.map(({ productId, quantity }) => ({ productId, quantity }))),
         currencyCode,
+        address: JSON.stringify(address),
       },
     });
   },

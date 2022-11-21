@@ -140,3 +140,5 @@ significant modifications will be credited to OpenTelemetry Authors.
 ([#536](https://github.com/open-telemetry/opentelemetry-demo/pull/536))
 * Add basic metrics support for payment service
 ([#583](https://github.com/open-telemetry/opentelemetry-demo/pull/583))
+* Change ZipCode data type from int to string
+([#587](https://github.com/open-telemetry/opentelemetry-demo/pull/587))

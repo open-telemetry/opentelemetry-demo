@@ -51,8 +51,9 @@ impl ShippingService for ShippingServer {
         let parent_cx =
             global::get_text_map_propagator(|prop| prop.extract(&MetadataMap(request.metadata())));
 
-        let itemct: u32 = request
-            .into_inner()
+        let request_message = request.into_inner();
+
+        let itemct: u32 = request_message
             .items
             .into_iter()
             .fold(0, |accum, cart_item| accum + (cart_item.quantity as u32));
@@ -62,8 +63,8 @@ impl ShippingService for ShippingServer {
         // check out the create_quote_from_count method to see how we use the span created here
         let tracer = global::tracer("shippingservice/get-quote");
         let mut span = tracer.start_with_context("get-quote", &parent_cx);
-
         span.add_event("Processing get quote request".to_string(), vec![]);
+        span.set_attribute(KeyValue::new("app.shipping.zip_code", request_message.address.unwrap().zip_code));
 
         let q = match create_quote_from_count(itemct)
             .with_context(Context::current_with_span(span))
