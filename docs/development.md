@@ -9,7 +9,7 @@ for dependencies and tooling when possible.
 ## Generate Protobuf files
 
 The `make generate-protobuf` command is provided to generate protobuf files for
-all services. This can be used to compile code locally (without docker) and
+all services. This can be used to compile code locally (without Docker) and
 receive hints from IDEs such as IntelliJ or VS Code.
 
 ## Development tooling requirements
