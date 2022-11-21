@@ -138,5 +138,9 @@ significant modifications will be credited to OpenTelemetry Authors.
 ([#569](https://github.com/open-telemetry/opentelemetry-demo/pull/569))
 * Optimize GitHub Builds and fix broken emulation of featureflag
 ([#536](https://github.com/open-telemetry/opentelemetry-demo/pull/536))
+* Add basic metrics support for payment service
+([#583](https://github.com/open-telemetry/opentelemetry-demo/pull/583))
+* Change ZipCode data type from int to string
+([#587](https://github.com/open-telemetry/opentelemetry-demo/pull/587))
 * Added Kafka, accountingservice and frauddetectionservice for async workflows
-([#512](https://github.com/open-telemetry/opentelemetry-demo/pull/457))
+  ([#512](https://github.com/open-telemetry/opentelemetry-demo/pull/457))

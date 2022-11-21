@@ -19,6 +19,7 @@ use opentelemetry::{
         propagation::TraceContextPropagator,
         resource::{
             OsResourceDetector, ProcessResourceDetector, ResourceDetector,
+            EnvResourceDetector,
             SdkProvidedResourceDetector,
         },
         trace as sdktrace,
@@ -52,6 +53,7 @@ fn init_tracer() -> Result<sdktrace::Tracer, TraceError> {
     let os_resource = OsResourceDetector.detect(Duration::from_secs(0));
     let process_resource = ProcessResourceDetector.detect(Duration::from_secs(0));
     let sdk_resource = SdkProvidedResourceDetector.detect(Duration::from_secs(0));
+    let env_resource = EnvResourceDetector::new().detect(Duration::from_secs(0));
     opentelemetry_otlp::new_pipeline()
         .tracing()
         .with_exporter(
@@ -67,7 +69,7 @@ fn init_tracer() -> Result<sdktrace::Tracer, TraceError> {
         )
         .with_trace_config(
             sdktrace::config()
-                .with_resource(os_resource.merge(&process_resource).merge(&sdk_resource)),
+                .with_resource(os_resource.merge(&process_resource).merge(&sdk_resource).merge(&env_resource)),
         )
         .install_batch(opentelemetry::runtime::Tokio)
 }
