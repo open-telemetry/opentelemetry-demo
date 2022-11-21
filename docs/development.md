@@ -16,7 +16,7 @@ receive hints from IDEs such as IntelliJ or VS Code.
 
 ### .NET
 
-- .NET Core runtime 6+
+- .NET 6.0+
 
 ### C++
 
