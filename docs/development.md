@@ -37,7 +37,8 @@ receive hints from IDEs such as IntelliJ or VS Code.
 ### Go
 
 - Go 1.19+
-- protoc 3.21+
+- protoc-gen-go
+- protoc-gen-go-grpc
 
 ### Java
 
