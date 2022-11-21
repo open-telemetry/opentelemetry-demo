@@ -18,6 +18,7 @@ prost = "0.11"
 prost-types = "0.11"
 tokio = { version = "1.0", features = ["macros", "rt-multi-thread"] }
 opentelemetry = { version = "0.18", features = ["rt-tokio", "trace"] }
+opentelemetry-semantic-conventions = "0.10.0"
 opentelemetry_api = { version = "0.18" }
 opentelemetry-http = "0.7.0"
 opentelemetry-otlp = "0.11.0"

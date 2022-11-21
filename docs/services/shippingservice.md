@@ -65,15 +65,17 @@ The root span is started and passed down as reference in the same thread
 to another closure where we call `quoteservice`.
 
 ```rust
-    let tracer = global::tracer("shippingservice/get-quote");
-    let mut span = tracer.start_with_context("get-quote", &parent_cx);
+    let tracer = global::tracer("shippingservice");
+    let mut span = tracer.span_builder("hipstershop.ShippingService/GetQuote").with_kind(SpanKind::Server).start_with_context(&tracer, &parent_cx);
+    span.set_attribute(semcov::trace::RPC_SYSTEM.string(RPC_SYSTEM_GRPC));
 
     span.add_event("Processing get quote request".to_string(), vec![]);
 
+    let cx = Context::current_with_span(span);
     let q = match create_quote_from_count(itemct)
-        .with_context(Context::current_with_span(span))
+        .with_context(cx.clone())
         .await
-//...create_quote_from_count...
+//-> create_quote_from_count()...
     let f = match request_quote(count).await {
         Ok(float) => float,
         Err(err) => {
@@ -92,10 +94,13 @@ to another closure where we call `quoteservice`.
         span.set_attribute(KeyValue::new("app.shipping.cost.total", format!("{}", q)));
         q
     }))
+//<- create_quote_from_count()...
+    cx.span().set_attribute(semcov::trace::RPC_GRPC_STATUS_CODE.i64(RPC_GRPC_STATUS_CODE_OK));
 ```
 
-Note that the span cannot be used after calling an async method in the
-originating function.
+Note that we create a context around the root span and send a clone to the
+async function create_quote_from_count(). After create_quote_from_count()
+completes, we can add additional attributes to the root span as appropriate.
 
 You may also notice the `attributes` set on the span in this example, and
 `events` propogated similarly. With any valid `span` pointer (attached to
@@ -119,8 +124,9 @@ This is appropriate in our case of a sync runtime.
     global::get_text_map_propagator(|prop| prop.extract(&MetadataMap(request.metadata())));
     // in this case, generating a tracking ID is trivial
     // we'll create a span and associated events all in this function.
-    let mut span = global::tracer("shippingservice/ship-order")
-        .start_with_context("ship-order", &parent_cx);
+    let tracer = global::tracer("shippingservice");
+    let mut span = tracer
+        .span_builder("hipstershop.ShippingService/ShipOrder").with_kind(SpanKind::Server).start_with_context(&tracer, &parent_cx);
 ```
 
 You must add attributes to a span in context with `set_attribute`, followed by a
