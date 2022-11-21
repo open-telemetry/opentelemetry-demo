@@ -19,7 +19,7 @@ const CheckoutItem = ({
     },
     cost = { currencyCode: 'USD', units: 0, nanos: 0 },
   },
-  address: { streetAddress = '', city = '', state = '', zipCode = 0, country = '' },
+  address: { streetAddress = '', city = '', state = '', zipCode = '', country = '' },
 }: IProps) => {
   const [isCollapsed, setIsCollapsed] = useState(false);
 

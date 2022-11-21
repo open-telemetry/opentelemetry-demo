@@ -72,6 +72,7 @@ We'll be adding more scenarios over time.
 Project reference documentation, like requirements and feature matrices.
 
 - [Architecture](./current_architecture.md)
+- [Development](./development.md)
 - [Feature Flags Reference](./feature_flags.md)
 - [Metric Feature Matrix](./metric_service_features.md)
 - [Requirements](./requirements/)
