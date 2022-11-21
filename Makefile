@@ -80,3 +80,7 @@ build-env-file:
 run-tests:
 	docker compose run frontendTests
 	docker compose run integrationTests
+
+.PHONY: generate-protobuf
+generate-protobuf:
+	./ide-gen-proto.sh
