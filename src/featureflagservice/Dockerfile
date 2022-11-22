@@ -12,9 +12,9 @@
 #   - https://pkgs.org/ - resource for finding needed packages
 #   - Ex: hexpm/elixir:1.13.3-erlang-25.0-debian-bullseye-20210902-slim
 #
-ARG ELIXIR_VERSION=1.13.3
-ARG OTP_VERSION=23.0
-ARG DEBIAN_VERSION=bullseye-20210902-slim
+ARG ELIXIR_VERSION=1.14.2
+ARG OTP_VERSION=25.1.2
+ARG DEBIAN_VERSION=bullseye-20221004-slim
 
 ARG BUILDER_IMAGE="hexpm/elixir:${ELIXIR_VERSION}-erlang-${OTP_VERSION}-debian-${DEBIAN_VERSION}"
 ARG RUNNER_IMAGE="debian:${DEBIAN_VERSION}"
@@ -22,7 +22,7 @@ ARG RUNNER_IMAGE="debian:${DEBIAN_VERSION}"
 FROM ${BUILDER_IMAGE} as builder
 
 # install build dependencies
-RUN apt-get update -y && apt-get install -y build-essential git \
+RUN apt-get update -y && apt-get install -y build-essential git wget \
     && apt-get clean && rm -f /var/lib/apt/lists/*_*
 
 # prepare build dir
@@ -31,28 +31,38 @@ WORKDIR /app
 # install hex + rebar
 RUN mix local.hex --force --verbose
 RUN mix local.rebar --force --verbose
+RUN wget https://s3.amazonaws.com/rebar3/rebar3 && chmod +x rebar3 && mv rebar3 ~/.mix
+RUN wget https://github.com/rebar/rebar/wiki/rebar && chmod +x rebar && mv rebar ~/.mix
+RUN mix archive.install github hexpm/hex branch latest --force
 
 # set build ENV
 ENV MIX_ENV="prod"
 
 # install mix dependencies
-COPY mix.exs mix.lock ./
+COPY ./src/featureflagservice/mix.exs ./src/featureflagservice/mix.lock ./
 RUN mix deps.get --only $MIX_ENV
 RUN mkdir config
 
 # copy compile-time config files before we compile dependencies
 # to ensure any relevant config change will trigger the dependencies
 # to be re-compiled.
-COPY config/config.exs config/${MIX_ENV}.exs config/
+COPY ./src/featureflagservice/config/config.exs ./src/featureflagservice/config/${MIX_ENV}.exs config/
 RUN mix deps.compile
 
-COPY priv priv
+COPY ./src/featureflagservice/priv priv
 
-COPY lib lib
+COPY ./src/featureflagservice/lib lib
 
-COPY src src
+COPY ./src/featureflagservice/src src
 
-COPY assets assets
+COPY ./src/featureflagservice/assets assets
+
+COPY ./pb/demo.proto proto/
+
+COPY ./src/featureflagservice/rebar.config ./src/featureflagservice/rebar.lock ./
+
+# generate protobuf files with rebar
+RUN ~/.mix/rebar3 grpc_regen
 
 # compile assets
 RUN mix assets.deploy
@@ -61,9 +71,9 @@ RUN mix assets.deploy
 RUN mix compile
 
 # Changes to config/runtime.exs don't require recompiling the code
-COPY config/runtime.exs config/
+COPY ./src/featureflagservice/config/runtime.exs config/
 
-COPY rel rel
+COPY ./src/featureflagservice/rel rel
 RUN mix release
 
 # start a new build stage so that the final image will only contain

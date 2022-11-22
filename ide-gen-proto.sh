@@ -17,8 +17,9 @@ gen_proto_dotnet() {
 gen_proto_elixir() {
   echo "Generating Elixir protobuf files for $1"
   cd "$base_dir"/src/"$1" || return
+  mkdir -p proto
   cp "$base_dir"/pb/demo.proto ./proto/demo.proto
-  rebar3 grpc gen
+  rebar3 grpc_regen
   cd "$base_dir" || return
 }
 
@@ -64,7 +65,7 @@ gen_proto_dotnet cartservice
 gen_proto_go checkoutservice
 # gen_proto_cpp currencyservice
 # gen_proto_ruby emailservice
-# gen_proto_elixir featureflagservice
+gen_proto_elixir featureflagservice
 gen_proto_ts frontend
 gen_proto_js paymentservice
 gen_proto_go productcatalogservice

@@ -41,5 +41,5 @@ for instrumentation.
 ## Building Protos
 
 A copy of the protos from `pb/demo.proto` are kept in
-`proto/demo.proto` and `rebar3 grpc gen` will update the corresponding
+`proto/demo.proto` and `rebar3 grpc_regen` will update the corresponding
 Erlang module `src/ffs_demo_pb.erl`.
