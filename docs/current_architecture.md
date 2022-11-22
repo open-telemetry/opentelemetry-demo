@@ -8,13 +8,13 @@ uses [Locust](https://locust.io/) to fake user traffic.
 graph TD
 subgraph Service Diagram
 adservice(Ad Service):::java
-accounting(Accounting):::golang
+accountingservice(Accounting Service):::golang
 cache[(Cache<br/>&#40redis&#41)]
 cartservice(Cart Service):::dotnet
 checkoutservice(Checkout Service):::golang
 currencyservice(Currency Service):::cpp
 emailservice(Email Service):::ruby
-frauddetectionservice(Fraud Detection):::kotlin
+frauddetectionservice(Fraud Detection Service):::kotlin
 frontend(Frontend):::javascript
 frontendproxy(Frontend Proxy <br/>&#40Envoy&#41):::cpp
 loadgenerator([Load Generator]):::python
@@ -32,7 +32,7 @@ frontendproxy -->|HTTP| frontend
 frontendproxy -->|HTTP| featureflagservice
 loadgenerator -->|HTTP| frontend
 
-accounting -->|TCP| queue
+accountingservice -->|TCP| queue
 
 checkoutservice --->|gRPC| cartservice --> cache
 checkoutservice --->|gRPC| productcatalogservice
