@@ -38,6 +38,10 @@ src/shippingservice/target/
 # Ignore copied/generated protobuf files
 /src/cartservice/src/protos/
 /src/checkoutservice/genproto/
+/src/featureflagservice/proto/
+/src/featureflagservice/src/ffs_demo_pb.erl
+/src/featureflagservice/src/ffs_service_*.erl
+/src/featureflagservice/src/hipstershop_*.erl
 /src/frontend/pb/
 /src/frontend/protos/
 /src/paymentservice/demo.proto
