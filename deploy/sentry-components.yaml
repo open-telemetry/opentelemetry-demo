@@ -23,7 +23,12 @@ components:
 
   # featureflagService: {}
 
-  # frontend: {}
+  frontend:
+    envOverrides:
+      - name: SENTRY_DSN_SERVER
+        value: "https://a4b60308529c4ce8b54068e220f6d167@o447951.ingest.sentry.io/4504078691663872"
+      - name: SENTRY_DSN_CLIENT
+        value: "https://936fd33064ad4faa8333758bbc4c91a1@o447951.ingest.sentry.io/4504094581063680"
 
   paymentService:
     envOverrides:
