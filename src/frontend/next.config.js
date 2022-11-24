@@ -23,6 +23,7 @@ const {
   OTEL_EXPORTER_OTLP_TRACES_ENDPOINT = '',
   OTEL_SERVICE_NAME = 'frontend',
   PUBLIC_OTEL_EXPORTER_OTLP_TRACES_ENDPOINT = '',
+  NEXT_PUBLIC_SENTRY_DSN_CLIENT = '',
 } = process.env;
 
 const nextConfig = {
@@ -55,6 +56,7 @@ const nextConfig = {
     NEXT_PUBLIC_PLATFORM: ENV_PLATFORM,
     NEXT_PUBLIC_OTEL_SERVICE_NAME: OTEL_SERVICE_NAME,
     NEXT_PUBLIC_OTEL_EXPORTER_OTLP_TRACES_ENDPOINT: PUBLIC_OTEL_EXPORTER_OTLP_TRACES_ENDPOINT,
+    NEXT_PUBLIC_SENTRY_DSN_CLIENT,
   },
   sentry: {
     // Use `hidden-source-map` rather than `source-map` as the Webpack `devtool`
