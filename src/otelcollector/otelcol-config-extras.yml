@@ -1,2 +1,25 @@
 # extra settings to be merged into OpenTelemetry Collector configuration
 # do not delete this file
+extensions:
+  basicauth/grafanacloud:
+    client_auth:
+      username: ${GRAFANA_INSTANCE_ID}
+      password: ${GRAFANA_CLOUD_APIKEY}
+
+exporters:
+  otlphttp/grafanacloud:
+    auth:
+      authenticator: basicauth/grafanacloud
+    endpoint: ${GRAFANA_OTLP_ENDPOINT}
+
+service:
+  extensions: [basicauth/grafanacloud]
+  pipelines:
+    traces:
+      receivers: [otlp]
+      processors: [spanmetrics, batch]
+      exporters: [logging, otlphttp/grafanacloud]
+    metrics:
+      receivers: [otlp]
+      processors: [batch]
+      exporters: [prometheus, logging, otlphttp/grafanacloud]

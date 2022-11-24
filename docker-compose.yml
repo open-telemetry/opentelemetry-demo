@@ -307,6 +307,7 @@ services:
       - OTEL_EXPORTER_OTLP_METRICS_ENDPOINT
       - OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE
       - WEB_OTEL_SERVICE_NAME=frontend-web
+      - GRAFANA_FARO_ENDPOINT
     depends_on:
       - adservice
       - cartservice
@@ -647,6 +648,10 @@ services:
     depends_on:
       - jaeger
     logging: *logging
+    environment:
+      - GRAFANA_OTLP_ENDPOINT
+      - GRAFANA_INSTANCE_ID
+      - GRAFANA_CLOUD_APIKEY
 
   # Prometheus
   prometheus:

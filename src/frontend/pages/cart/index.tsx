@@ -7,11 +7,19 @@ import CartDetail from '../../components/Cart/CartDetail';
 import EmptyCart from '../../components/Cart/EmptyCart';
 import { useCart } from '../../providers/Cart.provider';
 import AdProvider from '../../providers/Ad.provider';
+import { faro } from '@grafana/faro-web-sdk';
+import { useEffect } from 'react';
 
 const Cart: NextPage = () => {
   const {
     cart: { items },
   } = useCart();
+
+  useEffect(() => {
+    faro.api.pushEvent('page', {
+      'name': 'Cart',
+    });
+  });
 
   return (
     <AdProvider

@@ -1,6 +1,8 @@
+import { faro } from '@grafana/faro-web-sdk';
 import { NextPage } from 'next';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
+import { useEffect } from 'react';
 import Ad from '../../../../components/Ad';
 import Button from '../../../../components/Button';
 import CheckoutItem from '../../../../components/CheckoutItem';
@@ -14,6 +16,13 @@ import { IProductCheckout } from '../../../../types/Cart';
 const Checkout: NextPage = () => {
   const { query } = useRouter();
   const { items = [], shippingAddress } = JSON.parse((query.order || '{}') as string) as IProductCheckout;
+
+  useEffect(() => {
+    faro.api.pushEvent('page', {
+      'name': 'checkout/[orderId]',
+      'orderId': query.orderId as string,
+    });
+  });
 
   return (
     <AdProvider
