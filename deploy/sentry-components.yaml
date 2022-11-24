@@ -1,0 +1,37 @@
+# A set of components, additionally instrumented by Sentry.
+#
+# To enable Sentry instrumentation for the component, uncomment the corresponding
+# section below.
+# You can also add additional environment variables (e.g. SENTRY_DSN).
+#
+# NOTE: if you don't override anything for the service, the value of the corresponding
+# dictionary key should be "{}" (e.g. "adService: {}"), and NOT empty/null.
+---
+components:
+  {}
+  # adService:
+  #   envOverrides:
+  #     - name: SENTRY_DSN
+  #       value: "test"
+
+  # cartService: {}
+
+  # checkoutService: {}
+
+  # currencyService: {}
+
+  # emailService: {}
+
+  # featureflagService: {}
+
+  # frontend: {}
+
+  # paymentService: {}
+
+  # productCatalogService: {}
+
+  # quoteService: {}
+
+  # recommendationService: {}
+
+  # shippingService: {}

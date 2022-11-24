@@ -1,0 +1,105 @@
+# Overrides for opentelemetry-demo Helm chart (https://github.com/open-telemetry/opentelemetry-helm-charts/tree/main/charts/opentelemetry-demo)
+---
+observability:
+  otelcol:
+    enabled: true
+  prometheus:
+    enabled: true
+  grafana:
+    enabled: true
+  jaeger:
+    enabled: true
+    resources:
+      requests:
+        cpu: 50m
+      limits:
+        memory: 350Mi
+
+prometheus:
+  rbac:
+    create: false
+  serverFiles:
+    prometheus.yml:
+      scrape_configs:
+        - job_name: otel
+          static_configs:
+            - targets:
+                - "otel-demo-otelcol:9464"
+        - job_name: otel-collector
+          static_configs:
+            - targets:
+                - "otel-demo-otelcol:8888"
+grafana:
+  rbac:
+    create: false
+    pspEnabled: false
+
+# TODO: add resource requests/limits and tolerations for all components here
+components:
+  adService:
+    resources:
+      requests:
+        cpu: 50m
+  cartService:
+    resources:
+      requests:
+        cpu: 50m
+  checkoutService:
+    resources:
+      requests:
+        cpu: 50m
+  currencyService:
+    resources:
+      requests:
+        cpu: 50m
+  emailService:
+    resources:
+      requests:
+        cpu: 50m
+  featureflagService:
+    resources:
+      requests:
+        cpu: 50m
+  ffsPostgres:
+    resources:
+      requests:
+        cpu: 50m
+  frontend:
+    resources:
+      requests:
+        cpu: 50m
+  frontendProxy:
+    resources:
+      requests:
+        cpu: 50m
+        memory: 100Mi
+      limits:
+        memory: 100Mi
+  loadgenerator:
+    resources:
+      requests:
+        cpu: 50m
+  paymentService:
+    resources:
+      requests:
+        cpu: 50m
+  productCatalogService:
+    resources:
+      requests:
+        cpu: 50m
+  quoteService:
+    resources:
+      requests:
+        cpu: 50m
+  recommendationService:
+    resources:
+      requests:
+        cpu: 50m
+  redis:
+    resources:
+      requests:
+        cpu: 50m
+  shippingService:
+    resources:
+      requests:
+        cpu: 50m
