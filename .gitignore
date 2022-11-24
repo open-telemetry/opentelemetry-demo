@@ -51,3 +51,6 @@ src/shippingservice/target/
 /src/paymentservice/demo.proto
 /src/recommendationservice/demo_pb2*.py
 /src/shippingservice/proto/
+
+.env.grafana
+.env.grafana.*

@@ -3,6 +3,33 @@
 
 # extra settings to be merged into OpenTelemetry Collector configuration
 # do not delete this file
+extensions:
+  basicauth/grafanacloud:
+    client_auth:
+      username: ${GRAFANA_INSTANCE_ID}
+      password: ${GRAFANA_CLOUD_APIKEY}
+
+exporters:
+  otlphttp/grafanacloud:
+    auth:
+      authenticator: basicauth/grafanacloud
+    endpoint: ${GRAFANA_OTLP_ENDPOINT}
+
+service:
+  extensions: [basicauth/grafanacloud]
+  pipelines:
+    traces:
+      receivers: [otlp]
+      processors: [batch]
+      exporters: [logging, otlphttp/grafanacloud, spanmetrics]
+    metrics:
+      receivers: [otlp, spanmetrics]
+      processors: [batch]
+      exporters: [prometheus, logging, otlphttp/grafanacloud]
+    logs:
+      receivers: [otlp]
+      processors: [batch]
+      exporters: [logging]
 
 ## Example configuration for sending data to your own OTLP HTTP backend
 ## Note: the spanmetrics exporter must be included in the exporters array

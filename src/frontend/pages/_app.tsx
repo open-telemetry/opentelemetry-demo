@@ -9,7 +9,7 @@ import CurrencyProvider from '../providers/Currency.provider';
 import CartProvider from '../providers/Cart.provider';
 import { ThemeProvider } from 'styled-components';
 import Theme from '../styles/Theme';
-import FrontendTracer from '../utils/telemetry/FrontendTracer';
+import Faro from '../utils/telemetry/FaroTracer';
 
 declare global {
   interface Window {
@@ -17,13 +17,14 @@ declare global {
       NEXT_PUBLIC_PLATFORM?: string;
       NEXT_PUBLIC_OTEL_SERVICE_NAME?: string;
       NEXT_PUBLIC_OTEL_EXPORTER_OTLP_TRACES_ENDPOINT?: string;
+      NEXT_GRAFANA_FARO_ENDPOINT?: string;
     };
   }
 }
 
 if (typeof window !== 'undefined') {
-  const collector = getCookie('otelCollectorUrl')?.toString() || '';
-  FrontendTracer(collector);
+  const collector = getCookie('faroCollectorUrl')?.toString() || '';
+  Faro(collector);
 }
 
 const queryClient = new QueryClient();

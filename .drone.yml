@@ -1,0 +1,72 @@
+---
+kind: pipeline
+type: docker
+name: docker-push
+
+trigger:
+  branch:
+    - grafana
+  event:
+    exclude:
+      - pull_request
+      - tag
+    include:
+      - push
+
+steps:
+- name: checkoutservice-docker
+  image: plugins/gcr
+  settings:
+    dockerfile: ./src/checkoutservice/Dockerfile
+    registry: us.gcr.io
+    repo: kubernetes-dev/opentelemetry-demo-checkoutservice
+    tags:
+      - latest
+      - ${DRONE_COMMIT_SHA:0:7}
+    json_key:
+      from_secret: gcr_credentials
+- name: frontend-docker
+  image: plugins/gcr
+  settings:
+    dockerfile: ./src/frontend/Dockerfile.ci
+    registry: us.gcr.io
+    repo: kubernetes-dev/opentelemetry-demo-frontend
+    tags:
+      - latest
+      - ${DRONE_COMMIT_SHA:0:7}
+    context: ./src/frontend/
+    json_key:
+      from_secret: gcr_credentials
+---
+kind: secret
+name: gcp_key
+
+get:
+    name: gcp_key
+    path: infra/data/ci/drone-plugins
+---
+kind: secret
+name: gh_token
+
+get:
+  name: pat
+  path: infra/data/ci/github/grafanabot
+---
+get:
+  name: service-account
+  path: infra/data/ci/gcr-admin
+kind: secret
+name: gcr_credentials
+---
+kind: secret
+name: dockerconfigjson
+
+get:
+  path: secret/data/common/gcr
+  name: .dockerconfigjson
+
+---
+kind: signature
+hmac: a67f736e4552c4f323c4a273f0729d38411439fb30e5ed785e3e73f9bd41a8f1
+
+...

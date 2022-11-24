@@ -6,6 +6,7 @@ import { useCallback, useState } from 'react';
 import { CypressFields } from '../../utils/Cypress';
 import Input from '../Input';
 import * as S from './CheckoutForm.styled';
+import { faro } from '@grafana/faro-web-sdk';
 
 const currentYear = new Date().getFullYear();
 const yearList = Array.from(new Array(20), (v, i) => i + currentYear);
@@ -48,7 +49,7 @@ const CheckoutForm = ({ onSubmit }: IProps) => {
     city: 'Mountain View',
     state: 'CA',
     country: 'United States',
-    zipCode: "94043",
+    zipCode: '94043',
     creditCardNumber: '4432-8015-6152-0454',
     creditCardCvv: 672,
     creditCardExpirationYear: 2030,
@@ -193,7 +194,13 @@ const CheckoutForm = ({ onSubmit }: IProps) => {
         <Link href="/">
           <S.CartButton $type="secondary">Continue Shopping</S.CartButton>
         </Link>
-        <S.CartButton data-cy={CypressFields.CheckoutPlaceOrder} type="submit">Place Order</S.CartButton>
+        <S.CartButton
+          data-cy={CypressFields.CheckoutPlaceOrder}
+          type="submit"
+          onClick={() => faro.api.pushError(new Error('Order not visible enough'))}
+        >
+          Place Order
+        </S.CartButton>
       </S.SubmitContainer>
     </S.CheckoutForm>
   );

@@ -11,12 +11,20 @@ import ApiGateway from '../gateways/Api.gateway';
 import Banner from '../components/Banner';
 import { CypressFields } from '../utils/Cypress';
 import { useCurrency } from '../providers/Currency.provider';
+import { faro } from '@grafana/faro-web-sdk';
+import { useEffect } from 'react';
 
 const Home: NextPage = () => {
   const { selectedCurrency } = useCurrency();
   const { data: productList = [] } = useQuery(['products', selectedCurrency], () =>
     ApiGateway.listProducts(selectedCurrency)
   );
+
+  useEffect(() => {
+    faro.api?.pushEvent('page', {
+      name: 'Home'
+    });
+  });
 
   return (
     <Layout>

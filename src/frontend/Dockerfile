@@ -1,7 +1,3 @@
-# Copyright The OpenTelemetry Authors
-# SPDX-License-Identifier: Apache-2.0
-
-
 FROM node:18-alpine AS deps
 RUN apk add --no-cache libc6-compat
 

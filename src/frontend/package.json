@@ -8,10 +8,14 @@
     "start": "node --require ./Instrumentation.js server.js",
     "lint": "next lint",
     "cy:open": "cypress open",
-    "grpc:generate": "mkdir -p ./protos && protoc -I ./pb  --plugin=./node_modules/.bin/protoc-gen-ts_proto --ts_proto_opt=esModuleInterop=true --ts_proto_out=./protos --ts_proto_opt=outputServices=grpc-js demo.proto"
+    "grpc:generate": "mkdir -p ./protos && protoc -I ./pb  --plugin=./node_modules/.bin/protoc-gen-ts_proto --ts_proto_opt=esModuleInterop=true --ts_proto_out=./protos --ts_proto_opt=outputServices=grpc-js demo.proto",
+    "drone:sign": "drone --server https://drone.grafana.net sign --save grafana/opentelemetry-demo .drone/drone.yml"
   },
   "dependencies": {
     "@grpc/grpc-js": "1.9.13",
+    "@grafana/faro-instrumentation-performance-timeline": "^1.0.5",
+    "@grafana/faro-web-sdk": "^1.0.5",
+    "@grafana/faro-web-tracing": "^1.0.5",
     "@opentelemetry/api": "1.7.0",
     "@opentelemetry/auto-instrumentations-node": "0.40.2",
     "@opentelemetry/auto-instrumentations-web": "0.34.0",

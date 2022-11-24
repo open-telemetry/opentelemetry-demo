@@ -1,6 +1,7 @@
 // Copyright The OpenTelemetry Authors
 // SPDX-License-Identifier: Apache-2.0
 
+import { faro } from '@grafana/faro-web-sdk';
 import { createContext, useCallback, useContext, useMemo, useState, useEffect } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import ApiGateway from '../gateways/Api.gateway';
@@ -40,6 +41,12 @@ const CurrencyProvider = ({ children }: IProps) => {
   const onSelectCurrency = useCallback((currencyCode: string) => {
     setSelectedCurrency(currencyCode);
     SessionGateway.setSessionValue('currencyCode', currencyCode);
+
+    faro.api?.pushEvent('currency_select', {
+      currency: currencyCode,
+    });
+
+    faro.api?.pushLog([`Currency ${currencyCode} was selected`]);
   }, []);
 
   const currencyCodeList = currencyCodeListUnsorted.sort();
