@@ -8,7 +8,6 @@
 # dictionary key should be "{}" (e.g. "adService: {}"), and NOT empty/null.
 ---
 components:
-  {}
   # adService:
   #   envOverrides:
   #     - name: SENTRY_DSN
@@ -26,7 +25,10 @@ components:
 
   # frontend: {}
 
-  # paymentService: {}
+  paymentService:
+    envOverrides:
+      - name: SENTRY_DSN
+        value: "https://9607bc2ca3514d57a8c41b3336498c20@o447951.ingest.sentry.io/4504078555545600"
 
   # productCatalogService: {}
 
