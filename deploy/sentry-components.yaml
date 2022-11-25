@@ -2,16 +2,16 @@
 #
 # To enable Sentry instrumentation for the component, uncomment the corresponding
 # section below.
-# You can also add additional environment variables (e.g. SENTRY_DSN).
+# You can also provide additional overrides for every enabled services. Check available properties that you
+# can override here: https://github.com/open-telemetry/opentelemetry-helm-charts/blob/main/charts/opentelemetry-demo/values.yaml
 #
-# NOTE: if you don't override anything for the service, the value of the corresponding
+# NOTE 1: If you don't override anything for the service, the value of the corresponding
 # dictionary key should be "{}" (e.g. "adService: {}"), and NOT empty/null.
+# NOTE 2: "envOverrides" attributes provided in this file will be OVERRIDDEN, and therefore, ignored.
+#
 ---
 components:
-  # adService:
-  #   envOverrides:
-  #     - name: SENTRY_DSN
-  #       value: "test"
+  # adService: {}
 
   # cartService: {}
 
@@ -23,17 +23,9 @@ components:
 
   # featureflagService: {}
 
-  frontend:
-    envOverrides:
-      - name: SENTRY_DSN_SERVER
-        value: "https://a4b60308529c4ce8b54068e220f6d167@o447951.ingest.sentry.io/4504078691663872"
-      - name: NEXT_PUBLIC_SENTRY_DSN_CLIENT
-        value: "https://936fd33064ad4faa8333758bbc4c91a1@o447951.ingest.sentry.io/4504094581063680"
+  frontend: {}
 
-  paymentService:
-    envOverrides:
-      - name: SENTRY_DSN
-        value: "https://9607bc2ca3514d57a8c41b3336498c20@o447951.ingest.sentry.io/4504078555545600"
+  paymentService: {}
 
   # productCatalogService: {}
 
