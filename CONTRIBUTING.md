@@ -97,6 +97,13 @@ Once the images are built and containers are started you can access:
 - Feature Flags UI: <http://localhost:8080/feature/>
 - Load Generator UI: <http://localhost:8080/loadgen//>
 
+### Review the Documentation
+
+The Demo team is committed to keeping the demo up to date. That means the
+documentation as well as the code. When making changes to any service or feature
+remember to find the related docs and update those as well. Most (but not all)
+documentation can be found the [docs](./docs/) folder.
+
 ## Create Your First Pull Request
 
 ### How to Send Pull Requests
@@ -165,7 +172,9 @@ A PR is considered to be **ready to merge** when:
 - Major feedbacks are resolved.
 - It has been open for review for at least one working day. This gives people
   reasonable time to review.
-- Trivial change (typo, cosmetic, doc, etc.) doesn't have to wait for one day.
+- The [documentation](./docs/) and [Changelog](./CHANGELOG.md) have been updated
+  to reflect the new changes.
+- Trivial changes (typo, cosmetic, doc, etc.) don't have to wait for one day.
 
 Any Maintainer can merge the PR once it is **ready to merge**. Note, that some
 PRs may not be merged immediately if the repo is in the process of a release and
