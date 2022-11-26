@@ -33,6 +33,14 @@ tracer_provider.add_span_processor(BatchSpanProcessor(OTLPSpanExporter()))
 RequestsInstrumentor().instrument()
 URLLib3Instrumentor().instrument()
 
+categories = [
+    "binoculars",
+    "telescopes",
+    "accessories",
+    "assembly",
+    "travel",
+]
+
 products = [
     "0PUK6V6EV0",
     "1YMWWN1N4O",
@@ -223,7 +231,7 @@ class WebsiteUser(HttpUser):
     @task(3)
     def get_ads(self):
         params = {
-            "productIds": [random.choice(products)],
+            "contextKeys": [random.choice(categories)],
         }
         self.client.get("/api/data/", params=params)
 
