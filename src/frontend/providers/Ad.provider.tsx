@@ -17,15 +17,26 @@ export const Context = createContext<IContext>({
 interface IProps {
   children: React.ReactNode;
   productIds: string[];
+  contextKeys: string[];
 }
 
 export const useAd = () => useContext(Context);
 
-const AdProvider = ({ children, productIds }: IProps) => {
+const AdProvider = ({ children, productIds, contextKeys }: IProps) => {
   const { selectedCurrency } = useCurrency();
-  const { data: adList = [] } = useQuery(['ads', productIds], () => ApiGateway.listAds(productIds), {
-    refetchOnWindowFocus: false,
-  });
+  const { data: adList = [] } = useQuery(
+    ['ads', contextKeys],
+    () => {
+      if (contextKeys.length === 0) {
+        return Promise.resolve([]);
+      } else {
+        return ApiGateway.listAds(contextKeys);
+      }
+    },
+    {
+      refetchOnWindowFocus: false,
+    }
+  );
   const { data: recommendedProductList = [] } = useQuery(
     ['recommendations', productIds, 'selectedCurrency', selectedCurrency],
     () => ApiGateway.listRecommendations(productIds, selectedCurrency),

@@ -6,7 +6,8 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "lint": "semistandard *.js"
+    "lint": "semistandard *.js",
+    "start": "node opentelemetry.js"
   },
   "author": "Jonathan Lui",
   "license": "ISC",
@@ -15,7 +16,11 @@
     "@grpc/proto-loader": "^0.7.3",
     "@opentelemetry/auto-instrumentations-node": "0.33.1",
     "@opentelemetry/core": "1.7.0",
+    "@opentelemetry/api": "^1.2.0",
+    "@opentelemetry/api-metrics": "0.33.0",
+    "@opentelemetry/sdk-metrics": "0.33.0",
     "@opentelemetry/exporter-trace-otlp-grpc": "0.33.0",
+    "@opentelemetry/exporter-metrics-otlp-grpc": "0.33.0",
     "@opentelemetry/sdk-node": "0.33.0",
     "grpc-js-health-check": "^1.0.2",
     "pino": "8.7.0",

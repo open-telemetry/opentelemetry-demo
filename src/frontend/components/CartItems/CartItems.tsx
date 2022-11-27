@@ -1,7 +1,7 @@
 import { useMemo } from 'react';
 import { useQuery } from 'react-query';
 import ApiGateway from '../../gateways/Api.gateway';
-import { Money } from '../../protos/demo';
+import { Address, Money } from '../../protos/demo';
 import { useCurrency } from '../../providers/Currency.provider';
 import { IProductCartItem } from '../../types/Cart';
 import ProductPrice from '../ProductPrice';
@@ -15,8 +15,15 @@ interface IProps {
 
 const CartItems = ({ productList, shouldShowPrice = true }: IProps) => {
   const { selectedCurrency } = useCurrency();
+  const address: Address = {
+      streetAddress: '1600 Amphitheatre Parkway',
+      city: 'Mountain View',
+      state: 'CA',
+      country: 'United States',
+      zipCode: "94043",
+  };
   const { data: shippingConst = { units: 0, currencyCode: 'USD', nanos: 0 } } = useQuery('shipping', () =>
-    ApiGateway.getShippingCost(productList, selectedCurrency)
+    ApiGateway.getShippingCost(productList, selectedCurrency, address)
   );
 
   const total = useMemo<Money>(

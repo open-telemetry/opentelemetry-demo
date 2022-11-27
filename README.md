@@ -52,6 +52,7 @@ We welcome any vendor to fork the project to demonstrate their services and
 adding a link below. The community is committed to maintaining the project and
 keeping it up to date for you.
 
+- [AppDynamics](https://www.appdynamics.com/blog/cloud/how-to-observe-opentelemetry-demo-app-in-appdynamics-cloud/)
 - [Aspecto](https://github.com/aspecto-io/opentelemetry-demo)
 - [Datadog](https://github.com/DataDog/opentelemetry-demo)
 - [Dynatrace](https://www.dynatrace.com/news/blog/opentelemetry-demo-application-with-dynatrace/)
@@ -86,9 +87,9 @@ documentation. Our [SIG Calls](CONTRIBUTING.md#join-a-sig-call) are Mondays at
 - [Reiley Yang](https://github.com/reyang), Microsoft
 - [Ziqi Zhao](https://github.com/fatsheep9146), Alibaba
 
-Emeritus Maintainers
+Emeritus:
 
-- [Morgan McLean](https://github.com/mtwo), Splunk
+- [Morgan McLean](https://github.com/mtwo)
 
 ### Thanks to all the people who have contributed
 

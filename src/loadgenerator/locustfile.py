@@ -33,6 +33,14 @@ tracer_provider.add_span_processor(BatchSpanProcessor(OTLPSpanExporter()))
 RequestsInstrumentor().instrument()
 URLLib3Instrumentor().instrument()
 
+categories = [
+    "binoculars",
+    "telescopes",
+    "accessories",
+    "assembly",
+    "travel",
+]
+
 products = [
     "0PUK6V6EV0",
     "1YMWWN1N4O",
@@ -50,7 +58,7 @@ people = [
         "email": "larry_sergei@example.com",
         "address": {
             "streetAddress": "1600 Amphitheatre Parkway",
-            "zipCode": 94043,
+            "zipCode": "94043",
             "city": "Mountain View",
             "state": "CA",
             "country": "United States",
@@ -67,7 +75,7 @@ people = [
         "email": "bill@example.com",
         "address": {
             "streetAddress": "One Microsoft Way",
-            "zipCode": 98052,
+            "zipCode": "98052",
             "city": "Redmond",
             "state": "WA",
             "country": "United States",
@@ -84,7 +92,7 @@ people = [
         "email": "steve@example.com",
         "address": {
             "streetAddress": "One Apple Park Way",
-            "zipCode": 95014,
+            "zipCode": "95014",
             "city": "Cupertino",
             "state": "CA",
             "country": "United States",
@@ -101,7 +109,7 @@ people = [
         "email": "mark@example.com",
         "address": {
             "streetAddress": "1 Hacker Way",
-            "zipCode": 94025,
+            "zipCode": "94025",
             "city": "Menlo Park",
             "state": "CA",
             "country": "United States",
@@ -118,7 +126,7 @@ people = [
         "email": "jeff@example.com",
         "address": {
             "streetAddress": "410 Terry Ave N",
-            "zipCode": 98109,
+            "zipCode": "98109",
             "city": "Seattle",
             "state": "WA",
             "country": "United States",
@@ -135,7 +143,7 @@ people = [
         "email": "reed@example.com",
         "address": {
             "streetAddress": "100 Winchester Circle",
-            "zipCode": 95032,
+            "zipCode": "95032",
             "city": "Los Gatos",
             "state": "CA",
             "country": "United States",
@@ -152,7 +160,7 @@ people = [
         "email": "tobias@example.com",
         "address": {
             "streetAddress": "150 Elgin St",
-            "zipCode": 214,
+            "zipCode": "K2P1L4",
             "city": "Ottawa",
             "state": "ON",
             "country": "Canada",
@@ -169,7 +177,7 @@ people = [
         "email": "jack@example.com",
         "address": {
             "streetAddress": "1355 Market St",
-            "zipCode": 94103,
+            "zipCode": "94103",
             "city": "San Francisco",
             "state": "CA",
             "country": "United States",
@@ -186,7 +194,7 @@ people = [
         "email": "moore@example.com",
         "address": {
             "streetAddress": "2200 Mission College Blvd",
-            "zipCode": 95054,
+            "zipCode": "95054",
             "city": "Santa Clara",
             "state": "CA",
             "country": "United States",
@@ -223,7 +231,7 @@ class WebsiteUser(HttpUser):
     @task(3)
     def get_ads(self):
         params = {
-            "productIds": [random.choice(products)],
+            "contextKeys": [random.choice(categories)],
         }
         self.client.get("/api/data/", params=params)
 
