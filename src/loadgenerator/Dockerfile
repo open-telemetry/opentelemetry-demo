@@ -12,7 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-FROM python:3.10 AS base
+FROM registry.ddbuild.io/images/mirror/python:3.9.13 AS base
 
 WORKDIR /usr/src/app/
 

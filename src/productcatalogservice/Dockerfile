@@ -12,7 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-FROM golang:1.17.7-alpine AS builder
+FROM registry.ddbuild.io/images/mirror/golang:1.19-alpine AS builder
 
 WORKDIR /usr/src/app/
 

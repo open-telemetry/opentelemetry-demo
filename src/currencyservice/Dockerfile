@@ -1,4 +1,4 @@
-FROM ubuntu:20.04
+FROM registry.ddbuild.io/images/base:focal
 ENV DEBIAN_FRONTEND noninteractive
 
 RUN apt-get -y update

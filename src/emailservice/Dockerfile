@@ -1,4 +1,4 @@
-FROM ruby:3.1.2-slim
+FROM registry.ddbuild.io/images/mirror/ruby:3.1.2-slim
 
 RUN apt-get update -y && apt-get install -y build-essential
 
