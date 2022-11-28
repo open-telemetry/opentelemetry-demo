@@ -13,6 +13,9 @@ COPY --from=deps /app/node_modules ./node_modules
 COPY ./pb ./pb
 COPY ./src/frontend .
 
+ARG NEXT_PUBLIC_SENTRY_DSN_CLIENT ''
+ENV NEXT_PUBLIC_SENTRY_DSN_CLIENT=${NEXT_PUBLIC_SENTRY_DSN_CLIENT}
+
 RUN npm run grpc:generate
 RUN npm run build
 
