@@ -1,4 +1,4 @@
-FROM openjdk:18-slim AS builder
+FROM eclipse-temurin:17 AS builder
 
 WORKDIR /usr/src/app/
 
@@ -9,7 +9,7 @@ RUN ./gradlew shadowJar
 
 # -----------------------------------------------------------------------------
 
-FROM openjdk:18-slim
+FROM eclipse-temurin:17
 
 ARG version=1.16.0
 WORKDIR /usr/src/app/
