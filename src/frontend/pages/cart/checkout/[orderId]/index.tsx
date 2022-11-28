@@ -16,7 +16,10 @@ const Checkout: NextPage = () => {
   const { items = [], shippingAddress } = JSON.parse((query.order || '{}') as string) as IProductCheckout;
 
   return (
-    <AdProvider productIds={items.map(({ item }) => item?.productId || '')}>
+    <AdProvider
+      productIds={items.map(({ item }) => item?.productId || '')}
+      contextKeys={[...new Set(items.flatMap(({ item }) => item.product.categories))]}
+    >
       <Layout>
         <S.Checkout>
           <S.Container>
@@ -25,7 +28,11 @@ const Checkout: NextPage = () => {
 
             <S.ItemList>
               {items.map(checkoutItem => (
-                <CheckoutItem key={checkoutItem.item.productId} checkoutItem={checkoutItem} address={shippingAddress!} />
+                <CheckoutItem
+                  key={checkoutItem.item.productId}
+                  checkoutItem={checkoutItem}
+                  address={shippingAddress!}
+                />
               ))}
             </S.ItemList>
 

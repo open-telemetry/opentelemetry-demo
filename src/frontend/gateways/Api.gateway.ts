@@ -78,11 +78,11 @@ const ApiGateway = () => ({
       },
     });
   },
-  listAds(productIds: string[]) {
+  listAds(contextKeys: string[]) {
     return request<Ad[]>({
       url: `${basePath}/data`,
       queryParams: {
-        productIds,
+        contextKeys,
       },
     });
   },
