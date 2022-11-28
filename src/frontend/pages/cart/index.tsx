@@ -14,7 +14,10 @@ const Cart: NextPage = () => {
   } = useCart();
 
   return (
-    <AdProvider productIds={items.map(({ productId }) => productId)}>
+    <AdProvider
+      productIds={items.map(({ productId }) => productId)}
+      contextKeys={[...new Set(items.flatMap(({ product }) => product.categories))]}
+    >
       <Layout>
         <S.Cart>
           {(!!items.length && <CartDetail />) || <EmptyCart />}

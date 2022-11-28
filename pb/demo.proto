@@ -134,7 +134,7 @@ message Address {
     string city = 2;
     string state = 3;
     string country = 4;
-    int32 zip_code = 5;
+    string zip_code = 5;
 }
 
 // -----------------Currency service-----------------
