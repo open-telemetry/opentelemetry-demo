@@ -142,5 +142,7 @@ significant modifications will be credited to OpenTelemetry Authors.
 ([#583](https://github.com/open-telemetry/opentelemetry-demo/pull/583))
 * Change ZipCode data type from int to string
 ([#587](https://github.com/open-telemetry/opentelemetry-demo/pull/587))
+* Pass product's `categories` as an input for the Ad service
+([#600](https://github.com/open-telemetry/opentelemetry-demo/pull/600))
 * Added Kafka, accountingservice and frauddetectionservice for async workflows
   ([#512](https://github.com/open-telemetry/opentelemetry-demo/pull/457))
