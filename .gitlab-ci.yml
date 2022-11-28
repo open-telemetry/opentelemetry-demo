@@ -16,8 +16,10 @@ stages:
   image: $CI_IMAGE
   script:
     - TAG="v$CI_COMMIT_SHORT_SHA-$IMAGE_TAG_SUFFIX"
-    - docker build --file $DOCKERFILE --tag registry.ddbuild.io/ci/opentelemetry-demo:$TAG --label target=staging .
+    - docker build --file $DOCKERFILE --tag registry.ddbuild.io/ci/opentelemetry-demo:$TAG --label target=staging $CONTEXT
     - docker push registry.ddbuild.io/ci/opentelemetry-demo:$TAG
+  variables:
+    CONTEXT: .
 
 build-ci-image-adservice:
   <<: *build-ci-image
@@ -36,6 +38,7 @@ build-ci-image-checkoutservice:
   variables:
     DOCKERFILE: src/checkoutservice/Dockerfile
     IMAGE_TAG_SUFFIX: checkoutservice
+    CONTEXT: .
 
 build-ci-image-currencyservice:
   <<: *build-ci-image
@@ -49,6 +52,7 @@ build-ci-image-emailservice:
   variables:
     DOCKERFILE: src/emailservice/Dockerfile
     IMAGE_TAG_SUFFIX: emailservice
+    CONTEXT: src/emailservice
 
 build-ci-image-featureflagservice:
   <<: *build-ci-image

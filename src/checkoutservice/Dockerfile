@@ -29,7 +29,7 @@ RUN go build -o /go/bin/checkoutservice/ ./
 
 # -----------------------------------------------------------------------------
 
-FROM alpine
+FROM registry.ddbuild.io/images/mirror/alpine:latest AS release
 
 WORKDIR /usr/src/app/
 
