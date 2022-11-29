@@ -18,20 +18,20 @@ stages:
     - TAG="v$CI_COMMIT_SHORT_SHA-$IMAGE_TAG_SUFFIX"
     - docker build --file $DOCKERFILE --tag registry.ddbuild.io/ci/opentelemetry-demo:$TAG --label target=staging $CONTEXT
     - docker push registry.ddbuild.io/ci/opentelemetry-demo:$TAG
-  variables:
-    CONTEXT: .
 
 build-ci-image-adservice:
   <<: *build-ci-image
   variables:
     DOCKERFILE: src/adservice/Dockerfile
     IMAGE_TAG_SUFFIX: adservice
+    CONTEXT: .
 
 build-ci-image-cartservice:
   <<: *build-ci-image
   variables:
     DOCKERFILE: src/cartservice/src/Dockerfile
     IMAGE_TAG_SUFFIX: cartservice
+    CONTEXT: .
 
 build-ci-image-checkoutservice:
   <<: *build-ci-image
@@ -45,6 +45,7 @@ build-ci-image-currencyservice:
   variables:
     DOCKERFILE: src/currencyservice/Dockerfile
     IMAGE_TAG_SUFFIX: currencyservice
+    CONTEXT: .
 
 
 build-ci-image-emailservice:
@@ -59,51 +60,60 @@ build-ci-image-featureflagservice:
   variables:
     DOCKERFILE: src/featureflagservice/Dockerfile
     IMAGE_TAG_SUFFIX: featureflagservice
+    CONTEXT: .
 
 build-ci-image-frontend:
   <<: *build-ci-image
   variables:
     DOCKERFILE: src/frontend/Dockerfile
     IMAGE_TAG_SUFFIX: frontend
+    CONTEXT: .
 
 build-ci-image-frontendproxy:
   <<: *build-ci-image
   variables:
     DOCKERFILE: src/frontendproxy/Dockerfile
     IMAGE_TAG_SUFFIX: frontendproxy
+    CONTEXT: .
 
 build-ci-image-loadgenerator:
   <<: *build-ci-image
   variables:
     DOCKERFILE: src/loadgenerator/Dockerfile
     IMAGE_TAG_SUFFIX: loadgenerator
+    CONTEXT: .
 
 build-ci-image-paymentservice:
   <<: *build-ci-image
   variables:
     DOCKERFILE: src/paymentservice/Dockerfile
     IMAGE_TAG_SUFFIX: paymentservice
+    CONTEXT: .
 
 build-ci-image-productcatalogservice:
   <<: *build-ci-image
   variables:
     DOCKERFILE: src/productcatalogservice/Dockerfile
     IMAGE_TAG_SUFFIX: productcatalogservice
+    CONTEXT: .
 
 build-ci-image-quoteservice:
   <<: *build-ci-image
   variables:
     DOCKERFILE: src/quoteservice/Dockerfile
     IMAGE_TAG_SUFFIX: quoteservice
+    CONTEXT: .
 
 build-ci-image-recommendationservice:
   <<: *build-ci-image
   variables:
     DOCKERFILE: src/recommendationservice/Dockerfile
     IMAGE_TAG_SUFFIX: recommendationservice
+    CONTEXT: .
 
 build-ci-image-shippingservice:
   <<: *build-ci-image
   variables:
     DOCKERFILE: src/shippingservice/Dockerfile
     IMAGE_TAG_SUFFIX: shippingservice
+    CONTEXT: .
