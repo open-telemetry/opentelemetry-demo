@@ -45,7 +45,7 @@ build-ci-image-currencyservice:
   variables:
     DOCKERFILE: src/currencyservice/Dockerfile
     IMAGE_TAG_SUFFIX: currencyservice
-    CONTEXT: .
+    CONTEXT: src/currencyservice
 
 
 build-ci-image-emailservice:
