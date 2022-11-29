@@ -60,6 +60,7 @@ keeping it up to date for you.
 - [Honeycomb.io](https://github.com/honeycombio/opentelemetry-demo)
 - [Lightstep](https://github.com/lightstep/opentelemetry-demo)
 - [New Relic](https://github.com/newrelic/opentelemetry-demo)
+- [Sumo Logic](https://github.com/SumoLogic/opentelemetry-demo)
 - [Uptrace](https://github.com/uptrace/uptrace/tree/master/example/opentelemetry-demo)
 
 ## Contributing
