@@ -60,11 +60,11 @@ static_resources:
         cluster_name: opentelemetry_collector
         endpoints:
           - lb_endpoints:
-            - endpoint:
-                address:
-                  socket_address:
-                    address: ${OTEL_COLLECTOR_HOST}
-                    port_value: ${OTEL_COLLECTOR_PORT}
+              - endpoint:
+                  address:
+                    socket_address:
+                      address: ${OTEL_COLLECTOR_HOST}
+                      port_value: ${OTEL_COLLECTOR_PORT}
     - name: frontend
       type: STRICT_DNS
       lb_policy: ROUND_ROBIN
