@@ -152,6 +152,21 @@ Adding a span event:
     info!("Tracking ID Created: {}", tid);
 ```
 
+### Reqwest HTTP client instrumentation
+
+A child *client* span is also produced for the outoing HTTP call to
+`quoteservice` via the `reqwest` client. This span pairs up with the
+corresponding `quoteservice` *server* span. The tracing instrumentation is
+implemented in the client middleware making use of the available
+`reqwest-middleware`, `reqwest-tracing` and `tracing-opentelementry` libraries:
+
+```rust
+    let reqwest_client = reqwest::Client::new();
+    let client = ClientBuilder::new(reqwest_client)
+        .with(TracingMiddleware::<SpanBackendWithUrl>::new())
+        .build();
+```
+
 ## Metrics
 
 TBD
