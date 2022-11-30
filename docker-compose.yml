@@ -262,6 +262,8 @@ services:
       - GRAFANA_SERVICE_HOST
       - JAEGER_SERVICE_PORT
       - JAEGER_SERVICE_HOST
+      - OTEL_COLLECTOR_HOST
+      - OTEL_COLLECTOR_PORT
       - ENVOY_PORT
       - ENVOY_UID=0
     depends_on:
