@@ -32,6 +32,11 @@ COPY --from=builder /usr/src/app/ ./
 ADD https://search.maven.org/remotecontent?filepath=io/sentry/sentry-opentelemetry-agent/6.9.1/sentry-opentelemetry-agent-6.9.1.jar /app/opentelemetry-javaagent.jar
 
 ENV JAVA_TOOL_OPTIONS=-javaagent:/app/opentelemetry-javaagent.jar
+ENV OTEL_TRACES_EXPORTER=otlp
+ENV OTEL_METRICS_EXPORTER=otlp
+ENV SENTRY_DSN=${SENTRY_ADSERVICE_DSN}
+ENV SENTRY_TRACES_SAMPLE_RATE=1.0
+ENV SENTRY_DEBUG=true
 
 EXPOSE ${AD_SERVICE_PORT}
 ENTRYPOINT [ "./build/install/hipstershop/bin/AdService" ]

@@ -47,11 +47,6 @@ services:
       - OTEL_EXPORTER_OTLP_METRICS_ENDPOINT
       - OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE
       - OTEL_SERVICE_NAME=adservice
-      - OTEL_TRACES_EXPORTER=otlp
-      - OTEL_METRICS_EXPORTER=otlp
-      - SENTRY_DSN=${SENTRY_OTEL_DEMO_DSN}
-      - SENTRY_TRACES_SAMPLE_RATE=1.0
-      - SENTRY_DEBUG=true
     depends_on:
       - otelcol
     logging: *logging
