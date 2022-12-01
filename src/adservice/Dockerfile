@@ -34,7 +34,6 @@ ADD https://search.maven.org/remotecontent?filepath=io/sentry/sentry-opentelemet
 ENV JAVA_TOOL_OPTIONS=-javaagent:/app/opentelemetry-javaagent.jar
 ENV OTEL_TRACES_EXPORTER=otlp
 ENV OTEL_METRICS_EXPORTER=otlp
-ENV SENTRY_DSN=${SENTRY_ADSERVICE_DSN}
 ENV SENTRY_TRACES_SAMPLE_RATE=1.0
 ENV SENTRY_DEBUG=true
 
