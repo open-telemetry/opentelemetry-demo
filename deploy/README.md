@@ -17,7 +17,7 @@ A list of all resources available as part of the demo:
 You can edit the following files in this directory:
 
 * [`sentry-components.yaml`](./sentry-components.yaml) -- a list of components that have Sentry instrumentation. If some service there is commented out, that means that the vanilla version of the service (meaning, a prebuilt Docker image) will be started.
-* [`global.yaml`](./global.yaml) -- overrides for the Helm chart that is used to deploy the demo (https://github.com/open-telemetry/opentelemetry-helm-charts/tree/main/charts/opentelemetry-demo). Here you can configure things like allocated CPU/memory for each service.
+* [`global.yaml`](./global.yaml) -- overrides for the [Helm chart that is used to deploy the demo](https://github.com/open-telemetry/opentelemetry-helm-charts/tree/main/charts/opentelemetry-demo). Here you can configure things like allocated CPU/memory for each service.
 
 
 ### Enable Sentry Instrumentation
@@ -25,7 +25,7 @@ You can edit the following files in this directory:
 To enable Sentry instrumentation for the component, do the following:
 
 1. Uncomment the service section in [`sentry-components.yaml`](./sentry-components.yaml) and provide attribute overrides, if necessasry.
-2. Configure additional non-public parameters (e.g. SENTRY_DSN environment variable) [in this file](https://github.com/getsentry/test-factory/blob/main/k8s/services/workflows/templates/otel-demo/services-secrets.yaml) (private repository).
+2. Configure additional non-public parameters (e.g. SENTRY_DSN environment variable) [in this file](https://github.com/getsentry/test-factory/blob/main/k8s/services/workflows-otel-demo/templates/otel-demo/services-secrets.yaml) (private repository).
 
 ## (Re)Deploying Changes
 
