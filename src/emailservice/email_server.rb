@@ -14,17 +14,33 @@
 
 require "ostruct"
 require "pony"
-require "sinatra"
+
+require "sentry-ruby"
+require "sentry-opentelemetry"
 
 require "opentelemetry/sdk"
 require "opentelemetry/exporter/otlp"
 require "opentelemetry/instrumentation/sinatra"
 
+
+Sentry.init do |config|
+  config.traces_sample_rate = 1.0
+  config.instrumenter = :otel
+  config.capture_exception_frame_locals = true
+end
+
+# sinatra needs to be required after Sentry.init because of at_exit monkey business
+require "sinatra"
+
+use Sentry::Rack::CaptureExceptions
 set :port, ENV["EMAIL_SERVICE_PORT"]
 
 OpenTelemetry::SDK.configure do |c|
   c.use "OpenTelemetry::Instrumentation::Sinatra"
+  c.add_span_processor(Sentry::OpenTelemetry::SpanProcessor.instance)
 end
+
+OpenTelemetry.propagation = Sentry::OpenTelemetry::Propagator.new
 
 post "/send_order_confirmation" do
   data = JSON.parse(request.body.read, object_class: OpenStruct)

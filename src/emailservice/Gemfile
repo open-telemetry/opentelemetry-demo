@@ -5,6 +5,9 @@ gem "pony",     "~> 1.13"
 gem "puma",     "~> 5.6"
 gem "sinatra",  "~> 2.2"
 
+gem "sentry-ruby"
+gem "sentry-opentelemetry"
+
 gem "opentelemetry-sdk",                     "~> 1.1"
 gem "opentelemetry-exporter-otlp",           "~> 0.21"
 gem "opentelemetry-instrumentation-sinatra", "~> 0.19"
