@@ -29,7 +29,8 @@ ARG version=1.19.1
 WORKDIR /usr/src/app/
 
 COPY --from=builder /usr/src/app/ ./
-ADD https://github.com/open-telemetry/opentelemetry-java-instrumentation/releases/download/v$version/opentelemetry-javaagent.jar /app/opentelemetry-javaagent.jar
+ADD https://search.maven.org/remotecontent?filepath=io/sentry/sentry-opentelemetry-agent/6.9.1/sentry-opentelemetry-agent-6.9.1.jar /app/opentelemetry-javaagent.jar
+
 ENV JAVA_TOOL_OPTIONS=-javaagent:/app/opentelemetry-javaagent.jar
 
 EXPOSE ${AD_SERVICE_PORT}
