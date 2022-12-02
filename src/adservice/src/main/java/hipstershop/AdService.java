@@ -41,6 +41,9 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Random;
+
+import io.sentry.Instrumenter;
+import io.sentry.Sentry;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -131,6 +134,14 @@ public final class AdService {
         span.setStatus(StatusCode.ERROR);
         logger.log(Level.WARN, "GetAds Failed with status {}", e.getStatus());
         responseObserver.onError(e);
+        Sentry.captureException(e);
+      } catch (IllegalArgumentException e) {
+        span.addEvent(
+                "Error", Attributes.of(AttributeKey.stringKey("exception.message"), e.getMessage()));
+        span.setStatus(StatusCode.ERROR);
+        logger.log(Level.WARN, "GetAds Failed with message {}", e.getMessage());
+        Sentry.captureException(e);
+        responseObserver.onError(e);
       }
     }
   }
@@ -139,6 +150,9 @@ public final class AdService {
 
   @WithSpan("getAdsByCategory")
   private Collection<Ad> getAdsByCategory(@SpanAttribute("app.ads.category") String category) {
+    if ("telescopes".equals(category)) {
+      throw new IllegalArgumentException("Thrown on purpose for category " + category);
+    }
     Collection<Ad> ads = adsMap.get(category);
     Span.current().setAttribute("app.ads.count", ads.size());
     return ads;
@@ -229,6 +243,21 @@ public final class AdService {
 
   /** Main launches the server from the command line. */
   public static void main(String[] args) throws IOException, InterruptedException {
+    logger.info("Initializing Sentry");
+    Sentry.init(options -> {
+      // NOTE: SENTRY_DSN is injected as environment variable and this config setting picks it up
+      options.setEnableExternalConfiguration(true);
+
+      // This is required for the Sentry Java Agent to actually perform instrumentation
+      options.setInstrumenter(Instrumenter.OTEL);
+
+      // Send all transactions to Sentry
+      options.setTracesSampleRate(1.0);
+
+      // Enable this to see more logs
+//      options.setDebug(true);
+    });
+
     // Start the RPC server. You shouldn't see any output from gRPC before this.
     logger.info("AdService starting.");
     final AdService service = AdService.getInstance();
