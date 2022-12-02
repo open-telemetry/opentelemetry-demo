@@ -24,7 +24,7 @@
     "@opentelemetry/sdk-trace-base": "1.7.0",
     "@opentelemetry/sdk-trace-node": "1.7.0",
     "@opentelemetry/sdk-trace-web": "1.7.0",
-    "@sentry/nextjs": "7.23.1",
+    "@sentry/nextjs": "7.23.0",
     "@sentry/opentelemetry-node": "7.23.0",
     "@types/styled-components": "5.1.25",
     "cookies-next": "^2.1.1",
