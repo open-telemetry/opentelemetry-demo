@@ -22,6 +22,9 @@ from concurrent import futures
 # Pip
 import grpc
 from opentelemetry import trace, metrics
+from opentelemetry.propagate import set_global_textmap
+import sentry_sdk
+from sentry_sdk.integrations.opentelemetry import SentrySpanProcessor, SentryPropagator
 
 
 # Local
@@ -127,6 +130,19 @@ if __name__ == "__main__":
     tracer = trace.get_tracer_provider().get_tracer("recommendationservice")
     meter = metrics.get_meter_provider().get_meter("recommendationservice")
     rec_svc_metrics = init_metrics(meter)
+
+    # Initialize Sentry Tracing
+    sentry_sdk.init(
+        dsn=must_map_env("SENTRY_DSN"),
+        traces_sample_rate=1.0,
+        instrumenter="otel",
+        debug=True,
+    )
+
+    # Tell OTel to send data also to Sentry
+    provider = trace.get_tracer_provider()
+    provider.add_span_processor(SentrySpanProcessor())
+    set_global_textmap(SentryPropagator())
 
     port = must_map_env('RECOMMENDATION_SERVICE_PORT')
     catalog_addr = must_map_env('PRODUCT_CATALOG_SERVICE_ADDR')
