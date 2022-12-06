@@ -144,5 +144,7 @@ significant modifications will be credited to OpenTelemetry Authors.
 ([#587](https://github.com/open-telemetry/opentelemetry-demo/pull/587))
 * Pass product's `categories` as an input for the Ad service
 ([#600](https://github.com/open-telemetry/opentelemetry-demo/pull/600))
+* Add HTTP client instrumentation to shippingservice
+([#610](https://github.com/open-telemetry/opentelemetry-demo/pull/610))
 * Added Kafka, accountingservice and frauddetectionservice for async workflows
   ([#512](https://github.com/open-telemetry/opentelemetry-demo/pull/457))
