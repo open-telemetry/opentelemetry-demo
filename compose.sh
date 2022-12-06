@@ -16,5 +16,20 @@ fi
 
 # Merge env files
 cat "${ENV_GLOBAL}" "${ENV_SENTRY}" > "${ENV_MERGED}"
+ENV_FILE_ARGS=(--env-file "${ENV_MERGED}")
 
-docker-compose --env-file "${ENV_MERGED}" "$@"
+# Organize compose override files
+OVERRIDE_ARGS=(
+    --file
+    docker-compose.yml
+    --file
+    docker-compose.sentry.yml
+)
+if [[ -f "docker-compose.override.yml" ]]; then
+    OVERRIDE_ARGS+=(
+        --file
+        docker-compose.override.yml
+    )
+fi
+
+docker-compose "${ENV_FILE_ARGS[@]}" "${OVERRIDE_ARGS[@]}" "$@"
