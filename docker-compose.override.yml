@@ -1,0 +1,56 @@
+services:
+  # Ad service
+  adservice:
+    environment:
+      - SENTRY_DSN=${SENTRY_DSN_ADSERVICE}
+
+  # Cart service
+  cartservice:
+    environment:
+      - SENTRY_DSN=${SENTRY_DSN_CARTSERVICE}
+
+  # Currency service
+  currencyservice:
+    environment:
+      - SENTRY_DSN=${SENTRY_DSN_CURRENCYSERVICE}
+
+  # Email service
+  emailservice:
+    environment:
+      - SENTRY_DSN=${SENTRY_DSN_EMAILSERVICE}
+
+  # Feature Flag service
+  featureflagservice:
+    environment:
+      - SENTRY_DSN=${SENTRY_DSN_FEATUREFLAGSERVICE}
+
+  # Frontend
+  frontend:
+    environment:
+      - SENTRY_DSN_SERVER=${SENTRY_DSN_FRONTENDSERVICE_BACKEND}
+      - NEXT_PUBLIC_SENTRY_DSN_CLIENT=${SENTRY_DSN_FRONTENDSERVICE_FRONTEND}
+
+  # Payment service
+  paymentservice:
+    environment:
+      - SENTRY_DSN=${SENTRY_DSN_PAYMENTSERVICE}
+
+  # Product Catalog service
+  productcatalogservice:
+    environment:
+      - SENTRY_DSN=${SENTRY_DSN_PRODUCTCATALOGSERVICE}
+
+  # Quote service
+  quoteservice:
+    environment:
+      - SENTRY_DSN=${SENTRY_DSN_QUOTESERVICE}
+
+  # Recommendation service
+  recommendationservice:
+    environment:
+      - SENTRY_DSN=${SENTRY_DSN_RECOMMENDATINOSERVICE}
+
+  # Shipping service
+  shippingservice:
+    environment:
+      - SENTRY_DSN=${SENTRY_DSN_SHIPPINGSERVICE}
