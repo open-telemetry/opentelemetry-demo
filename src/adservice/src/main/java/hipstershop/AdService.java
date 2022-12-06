@@ -43,6 +43,7 @@ import java.util.List;
 import java.util.Random;
 
 import io.sentry.Instrumenter;
+import io.sentry.opentelemetry.OpenTelemetryLinkErrorEventProcessor;
 import io.sentry.Sentry;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
@@ -251,11 +252,13 @@ public final class AdService {
       // This is required for the Sentry Java Agent to actually perform instrumentation
       options.setInstrumenter(Instrumenter.OTEL);
 
+      options.addEventProcessor(new OpenTelemetryLinkErrorEventProcessor());
+
       // Send all transactions to Sentry
       options.setTracesSampleRate(1.0);
 
       // Enable this to see more logs
-//      options.setDebug(true);
+      // options.setDebug(true);
     });
 
     // Start the RPC server. You shouldn't see any output from gRPC before this.
