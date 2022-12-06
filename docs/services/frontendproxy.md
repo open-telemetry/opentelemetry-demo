@@ -6,6 +6,8 @@ and feature flag service.
 
 ## Enabling OpenTelemetry
 
+**NOTE: Only non-synthetic requests will trigger the envoy tracing.**
+
 In order to enable Envoy to produce spans whenever receiving a request,
 the following configuration is required:
 
