@@ -48,3 +48,7 @@ src/shippingservice/target/
 /src/productcatalogservice/genproto/
 /src/recommendationservice/demo_pb2*.py
 /src/shippingservice/proto/
+
+.env.sentry
+.env.merged
+docker-compose.override.yml
