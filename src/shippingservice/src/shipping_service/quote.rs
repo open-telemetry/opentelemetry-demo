@@ -6,6 +6,8 @@ use opentelemetry::global;
 use opentelemetry::{trace::get_active_span, Context, KeyValue};
 use opentelemetry_http::HeaderInjector;
 use reqwest::header::HeaderMap;
+use reqwest_middleware::ClientBuilder;
+use reqwest_tracing::{TracingMiddleware, SpanBackendWithUrl};
 
 use reqwest::Method;
 
@@ -48,7 +50,9 @@ async fn request_quote(count: u32) -> Result<f64, Box<dyn std::error::Error>> {
     let mut reqbody = HashMap::new();
     reqbody.insert("numberOfItems", count);
 
-    let client = reqwest::Client::new();
+    let client = ClientBuilder::new(reqwest::Client::new())
+        .with(TracingMiddleware::<SpanBackendWithUrl>::new())
+        .build();
 
     let req = client.request(Method::POST, quote_service_addr);
 
