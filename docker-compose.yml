@@ -327,7 +327,6 @@ services:
       - JAEGER_SERVICE_PORT
       - JAEGER_SERVICE_HOST
       - ENVOY_PORT
-      - ENVOY_UID=0
     depends_on:
       - frontend
       - featureflagservice
@@ -505,6 +504,7 @@ services:
   ffs_postgres:
     image: postgres:14
     container_name: postgres
+    user: postgres
     deploy:
       resources:
         limits:
@@ -625,6 +625,7 @@ services:
   redis-cart:
     image: redis:alpine
     container_name: redis-cart
+    user: redis
     deploy:
       resources:
         limits:
