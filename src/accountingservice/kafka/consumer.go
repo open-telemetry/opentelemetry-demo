@@ -62,7 +62,8 @@ func (g *groupHandler) ConsumeClaim(session sarama.ConsumerGroupSession, claim s
 			if err != nil {
 				return err
 			}
-			log.Printf("Message claimed: value = %s, timestamp = %v, topic = %s", string(message.Value), message.Timestamp, message.Topic)
+
+			log.Printf("Message claimed: orderId = %s, timestamp = %v, topic = %s", orderResult.OrderId, message.Timestamp, message.Topic)
 			session.MarkMessage(message, "")
 
 		case <-session.Context().Done():

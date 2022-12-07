@@ -36,7 +36,7 @@ fun main(args: Array<String>) {
                 .fold(totalCount) { accumulator, record ->
                     val newCount = accumulator + 1
                     val orders = OrderResult.parseFrom(record.value())
-                    println("Consumed record with key ${record.key()} and value $orders, and updated total count to $newCount")
+                    println("Consumed record with orderId: ${orders.orderId}, and updated total count to: $newCount")
                     newCount
                 }
         }
