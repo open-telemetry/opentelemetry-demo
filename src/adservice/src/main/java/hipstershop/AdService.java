@@ -40,6 +40,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.Optional;
 import java.util.Random;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
@@ -58,7 +59,10 @@ public final class AdService {
   private static final AdService service = new AdService();
 
   private void start() throws IOException {
-    int port = Integer.parseInt(System.getenv("AD_SERVICE_PORT"));
+    int port = Integer.parseInt(Optional.ofNullable(System.getenv("AD_SERVICE_PORT")).orElseThrow(
+        () -> new IOException(
+            "environment vars: AD_SERVICE_PORT must not be null")
+    ));
     healthMgr = new HealthStatusManager();
 
     server =
