@@ -14,8 +14,8 @@ description = 'Ad Service'
 group = "adservice"
 version = "0.1.0-SNAPSHOT"
 
-def opentelemetryVersion = "1.19.0"
-def opentelemetryInstrumentationAlphaVersion = "1.19.1-alpha"
+def opentelemetryVersion = "1.20.1"
+def opentelemetryInstrumentationAlphaVersion = "1.20.2-alpha"
 def grpcVersion = "1.45.1"
 def jacksonVersion = "2.13.2"
 def protocVersion = "3.20.0"
@@ -46,7 +46,9 @@ dependencies {
                 "io.opentelemetry:opentelemetry-api",
                 "io.opentelemetry:opentelemetry-sdk",
                 "io.opentelemetry.instrumentation:opentelemetry-instrumentation-annotations",
-                "org.apache.logging.log4j:log4j-core:2.17.2"
+                "org.apache.logging.log4j:log4j-core:2.17.2",
+                "io.sentry:sentry:6.9.2",
+                "io.sentry:sentry-opentelemetry-core:6.9.2"
 
         runtimeOnly "com.fasterxml.jackson.core:jackson-core:${jacksonVersion}",
                 "com.fasterxml.jackson.core:jackson-databind:${jacksonVersion}",
