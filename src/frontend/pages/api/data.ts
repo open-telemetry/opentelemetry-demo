@@ -8,8 +8,8 @@ type TResponse = Ad[] | Empty;
 const handler = async ({ method, query }: NextApiRequest, res: NextApiResponse<TResponse>) => {
   switch (method) {
     case 'GET': {
-      const { productIds = [] } = query;
-      const { ads: adList } = await AdGateway.listAds(productIds as string[]);
+      const { contextKeys = [] } = query;
+      const { ads: adList } = await AdGateway.listAds(Array.isArray(contextKeys) ? contextKeys : contextKeys.split(','));
 
       return res.status(200).json(adList);
     }

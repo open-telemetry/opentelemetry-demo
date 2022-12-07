@@ -34,11 +34,17 @@ jobs:
           - file: ./src/emailservice/Dockerfile
             tag_suffix: emailservice
             context: ./src/emailservice
+          - file: ./src/featureflagservice/Dockerfile
+            tag_suffix: featureflagservice
+            context: ./
           - file: ./src/frontend/Dockerfile
             tag_suffix: frontend
             context: ./
           - file: ./src/frontendproxy/Dockerfile
             tag_suffix: frontendproxy
+            context: ./
+          - file: ./src/loadgenerator/Dockerfile
+            tag_suffix: loadgenerator
             context: ./
           - file: ./src/paymentservice/Dockerfile
             tag_suffix: paymentservice
@@ -51,12 +57,6 @@ jobs:
             context: ./
           - file: ./src/shippingservice/Dockerfile
             tag_suffix: shippingservice
-            context: ./
-          - file: ./src/featureflagservice/Dockerfile
-            tag_suffix: featureflagservice
-            context: ./src/featureflagservice
-          - file: ./src/loadgenerator/Dockerfile
-            tag_suffix: loadgenerator
             context: ./
           - file: ./src/recommendationservice/Dockerfile
             tag_suffix: recommendationservice
