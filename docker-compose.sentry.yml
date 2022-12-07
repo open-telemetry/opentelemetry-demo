@@ -29,6 +29,9 @@ services:
     environment:
       - SENTRY_DSN_SERVER=${SENTRY_DSN_FRONTENDSERVICE_BACKEND}
       - NEXT_PUBLIC_SENTRY_DSN_CLIENT=${SENTRY_DSN_FRONTENDSERVICE_FRONTEND}
+    build:
+      args:
+        NEXT_PUBLIC_SENTRY_DSN_CLIENT: ${SENTRY_DSN_FRONTENDSERVICE_FRONTEND}
 
   # Payment service
   paymentservice:
