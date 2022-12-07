@@ -60,6 +60,7 @@ gen_proto_ts() {
   cd "$base_dir" || return
 }
 
+gen_proto_go accountingservice
 # gen_proto_java adservice
 gen_proto_dotnet cartservice
 gen_proto_go checkoutservice
