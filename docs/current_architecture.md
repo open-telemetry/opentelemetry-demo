@@ -8,11 +8,13 @@ uses [Locust](https://locust.io/) to fake user traffic.
 graph TD
 subgraph Service Diagram
 adservice(Ad Service):::java
+accountingservice(Accounting Service):::golang
 cache[(Cache<br/>&#40redis&#41)]
 cartservice(Cart Service):::dotnet
 checkoutservice(Checkout Service):::golang
 currencyservice(Currency Service):::cpp
 emailservice(Email Service):::ruby
+frauddetectionservice(Fraud Detection Service):::kotlin
 frontend(Frontend):::javascript
 frontendproxy(Frontend Proxy <br/>&#40Envoy&#41):::cpp
 loadgenerator([Load Generator]):::python
@@ -23,11 +25,14 @@ recommendationservice(Recommendation Service):::python
 shippingservice(Shipping Service):::rust
 featureflagservice(Feature Flag Service):::erlang
 featureflagstore[(Feature Flag Store<br/>&#40PostgreSQL DB&#41)]
+queue[(queue<br/>&#40Kafka&#41)]
 
 Internet -->|HTTP| frontendproxy
 frontendproxy -->|HTTP| frontend
 frontendproxy -->|HTTP| featureflagservice
 loadgenerator -->|HTTP| frontend
+
+accountingservice -->|TCP| queue
 
 checkoutservice --->|gRPC| cartservice --> cache
 checkoutservice --->|gRPC| productcatalogservice
@@ -35,6 +40,7 @@ checkoutservice --->|gRPC| currencyservice
 checkoutservice --->|HTTP| emailservice
 checkoutservice --->|gRPC| paymentservice
 checkoutservice -->|gRPC| shippingservice
+checkoutservice -->|TCP| queue
 
 frontend -->|gRPC| adservice
 frontend -->|gRPC| cartservice
@@ -43,6 +49,8 @@ frontend -->|gRPC| checkoutservice
 frontend -->|gRPC| currencyservice
 frontend -->|gRPC| recommendationservice -->|gRPC| productcatalogservice
 frontend -->|gRPC| shippingservice -->|HTTP| quoteservice
+
+frauddetectionservice -->|TCP| queue
 
 productcatalogservice -->|gRPC| featureflagservice
 
@@ -53,6 +61,7 @@ featureflagservice --> featureflagstore
 end
 
 classDef java fill:#b07219,color:white;
+classDef kotlin fill:#560ba1,color:white;
 classDef dotnet fill:#178600,color:white;
 classDef golang fill:#00add8,color:black;
 classDef cpp fill:#f34b7d,color:white;
@@ -77,9 +86,11 @@ subgraph Service Legend
   rustsvc(Rust):::rust
   erlangsvc(Erlang/Elixir):::erlang
   phpsvc(PHP):::php
+  kotlinsvc(Kotlin):::kotlin
 end
 
 classDef java fill:#b07219,color:white;
+classDef kotlin fill:#560ba1,color:white;
 classDef dotnet fill:#178600,color:white;
 classDef golang fill:#00add8,color:black;
 classDef cpp fill:#f34b7d,color:white;
