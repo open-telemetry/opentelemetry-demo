@@ -37,7 +37,7 @@ services:
     deploy:
       resources:
         limits:
-          memory: 300M
+          memory: 20M
     restart: always
     environment:
       - KAFKA_SERVICE_ADDR
@@ -525,28 +525,20 @@ services:
 
   # Kafka used by Checkout, Accounting, and Fraud Detection services
   kafka:
-    image: confluentinc/cp-kafka:7.2.2-1-ubi8
-    hostname: kafka
+    image: ${IMAGE_NAME}:${IMAGE_VERSION}-kafka
     container_name: kafka
+    build:
+      context: ./
+      dockerfile: ./src/kafka/Dockerfile
+      cache_from:
+        - ${IMAGE_NAME}:${IMAGE_VERSION}-kafka
+    deploy:
+      resources:
+        limits:
+          memory: 600M
+    restart: always
     environment:
-      KAFKA_LISTENERS: PLAINTEXT://kafka:9092,CONTROLLER://kafka:9093
       KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:9092
-      KAFKA_CONTROLLER_LISTENER_NAMES: CONTROLLER
-      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: CONTROLLER:PLAINTEXT,PLAINTEXT:PLAINTEXT
-      KAFKA_GROUP_INITIAL_REBALANCE_DELAY_MS: 0
-      KAFKA_PROCESS_ROLES: 'controller,broker'
-      KAFKA_NODE_ID: 1
-      KAFKA_CONTROLLER_QUORUM_VOTERS: '1@kafka:9093'
-      KAFKA_METADATA_LOG_SEGMENT_MS: 15000
-      KAFKA_METADATA_MAX_RETENTION_MS: 1200000
-      KAFKA_METADATA_LOG_MAX_RECORD_BYTES_BETWEEN_SNAPSHOTS: 2800
-      KAFKA_AUTO_CREATE_TOPICS_ENABLE: true
-      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
-      KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR: 1
-    volumes:
-      - ./src/kafka/update_run.sh:/tmp/update_run.sh
-      - ./src/kafka/clusterID:/tmp/clusterID
-    command: "bash -c 'ls -lh /tmp && /tmp/update_run.sh && /etc/confluent/docker/run'"
     logging: *logging
     healthcheck:
       test: nc -z kafka 9092
