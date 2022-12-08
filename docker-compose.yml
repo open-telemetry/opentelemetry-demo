@@ -538,9 +538,7 @@ services:
           memory: 600M
     restart: always
     environment:
-      KAFKA_LISTENERS: PLAINTEXT://kafka:9092,CONTROLLER://kafka:9093
       KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:9092
-      KAFKA_CONTROLLER_QUORUM_VOTERS: '1@kafka:9093'
     logging: *logging
     healthcheck:
       test: nc -z kafka 9092
