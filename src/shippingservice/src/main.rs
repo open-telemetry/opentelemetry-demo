@@ -29,9 +29,6 @@ use opentelemetry_otlp::{self, WithExportConfig};
 
 use tonic::transport::Server;
 
-// use tracing_subscriber::Registry;
-// use tracing_subscriber::layer::SubscriberExt;
-
 use log::*;
 use simplelog::*;
 
@@ -77,12 +74,6 @@ fn init_tracer() -> Result<sdktrace::Tracer, TraceError> {
         .install_batch(opentelemetry::runtime::Tokio)
 }
 
-//fn init_reqwest_tracing(tracer: sdktrace::Tracer) -> Result<(), tracing::subscriber::SetGlobalDefaultError> {
-//    let telemetry = tracing_opentelemetry::layer().with_tracer(tracer);
-//    let subscriber = Registry::default().with(telemetry);
-//    tracing::subscriber::set_global_default(subscriber)
-//}
-
 #[tokio::main]
 async fn main() -> Result<(), Box<dyn std::error::Error>> {
     let (mut health_reporter, health_service) = tonic_health::server::health_reporter();
@@ -92,7 +83,6 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
 
     init_logger()?;
     init_tracer()?;
-    //init_reqwest_tracing(init_tracer()?)?;
     info!("OTel pipeline created");
     let port = env::var("SHIPPING_SERVICE_PORT").expect("$SHIPPING_SERVICE_PORT is not set");
     let addr = format!("0.0.0.0:{}", port).parse()?;
