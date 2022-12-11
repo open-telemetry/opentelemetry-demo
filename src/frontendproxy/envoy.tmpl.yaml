@@ -38,10 +38,6 @@ static_resources:
                           route: { cluster: grafana }
                         - match: { prefix: "/" }
                           route: { cluster: frontend }
-                      response_headers_to_add:
-                        - header:
-                            key: "Set-Cookie"
-                            value: "otelCollectorUrl=${PUBLIC_OTEL_EXPORTER_OTLP_TRACES_ENDPOINT};"
                 http_filters:
                   - name: envoy.filters.http.router
                     typed_config:
