@@ -33,5 +33,4 @@ service:
         - memory_limiter
         - attributes
         - spanmetrics
-        - batch      
-            
+        - batch
