@@ -25,6 +25,9 @@ networks:
     driver: bridge
 
 services:
+  # ******************
+  # Core Demo Services
+  # ******************
   # Accounting service
   accountingservice:
     image: ${IMAGE_NAME}:${IMAGE_VERSION}-accountingservice
@@ -502,6 +505,9 @@ services:
       - otelcol
     logging: *logging
 
+  # ******************
+  # Dependent Services
+  # ******************
   # Postgres used by Feature Flag service
   ffs_postgres:
     image: postgres:14
@@ -547,6 +553,24 @@ services:
       timeout: 10s
       retries: 10
 
+  # Redis used by Cart service
+  redis-cart:
+    image: redis:alpine
+    container_name: redis-cart
+    user: redis
+    deploy:
+      resources:
+        limits:
+          memory: 20M
+    restart: always
+    ports:
+      - "${REDIS_PORT}"
+    logging: *logging
+
+
+  # ********************
+  # Telemetry Components
+  # ********************
   # Jaeger
   jaeger:
     image: jaegertracing/all-in-one
@@ -615,20 +639,9 @@ services:
       - "${PROMETHEUS_SERVICE_PORT}:${PROMETHEUS_SERVICE_PORT}"
     logging: *logging
 
-  # Redis used by Cart service
-  redis-cart:
-    image: redis:alpine
-    container_name: redis-cart
-    user: redis
-    deploy:
-      resources:
-        limits:
-          memory: 20M
-    restart: always
-    ports:
-      - "${REDIS_PORT}"
-    logging: *logging
-
+  # *****
+  # Tests
+  # *****
   # Frontend Tests
   frontendTests:
     image: ${IMAGE_NAME}:${IMAGE_VERSION}-frontend-tests
