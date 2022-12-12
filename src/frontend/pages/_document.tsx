@@ -1,12 +1,12 @@
 import Document, { DocumentContext, Html, Head, Main, NextScript } from 'next/document';
 import { ServerStyleSheet } from 'styled-components';
 
-const { ENV_PLATFORM, OTEL_SERVICE_NAME, PUBLIC_OTEL_EXPORTER_OTLP_TRACES_ENDPOINT } = process.env;
+const { ENV_PLATFORM, WEB_OTEL_SERVICE_NAME, PUBLIC_OTEL_EXPORTER_OTLP_TRACES_ENDPOINT } = process.env;
 
 const envString = `
 window.ENV = {
   NEXT_PUBLIC_PLATFORM: '${ENV_PLATFORM}',
-  NEXT_PUBLIC_OTEL_SERVICE_NAME: '${OTEL_SERVICE_NAME}',
+  NEXT_PUBLIC_OTEL_SERVICE_NAME: '${WEB_OTEL_SERVICE_NAME}',
   NEXT_PUBLIC_OTEL_EXPORTER_OTLP_TRACES_ENDPOINT: '${PUBLIC_OTEL_EXPORTER_OTLP_TRACES_ENDPOINT}',
 };
 `;
