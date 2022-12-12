@@ -7,15 +7,15 @@ uses [Locust](https://locust.io/) to fake user traffic.
 ```mermaid
 graph TD
 subgraph Service Diagram
-adservice(Ad Service):::java
 accountingservice(Accounting Service):::golang
+adservice(Ad Service):::java
 cache[(Cache<br/>&#40redis&#41)]
 cartservice(Cart Service):::dotnet
 checkoutservice(Checkout Service):::golang
 currencyservice(Currency Service):::cpp
 emailservice(Email Service):::ruby
 frauddetectionservice(Fraud Detection Service):::kotlin
-frontend(Frontend):::javascript
+frontend(Frontend):::typescript
 frontendproxy(Frontend Proxy <br/>&#40Envoy&#41):::cpp
 loadgenerator([Load Generator]):::python
 paymentservice(Payment Service):::javascript
@@ -60,46 +60,49 @@ featureflagservice --> featureflagstore
 
 end
 
-classDef java fill:#b07219,color:white;
-classDef kotlin fill:#560ba1,color:white;
 classDef dotnet fill:#178600,color:white;
-classDef golang fill:#00add8,color:black;
 classDef cpp fill:#f34b7d,color:white;
-classDef ruby fill:#701516,color:white;
-classDef python fill:#3572A5,color:white;
-classDef javascript fill:#f1e05a,color:black;
-classDef rust fill:#dea584,color:black;
 classDef erlang fill:#b83998,color:white;
+classDef golang fill:#00add8,color:black;
+classDef java fill:#b07219,color:white;
+classDef javascript fill:#f1e05a,color:black;
+classDef kotlin fill:#560ba1,color:white;
 classDef php fill:#4f5d95,color:white;
+classDef python fill:#3572A5,color:white;
+classDef ruby fill:#701516,color:white;
+classDef rust fill:#dea584,color:black;
+classDef typescript fill:#e98516,color:black;
 ```
 
 ```mermaid
 graph TD
 subgraph Service Legend
-  javasvc(Java):::java
   dotnetsvc(.NET):::dotnet
-  golangsvc(Go):::golang
   cppsvc(C++):::cpp
-  rubysvc(Ruby):::ruby
-  pythonsvc(Python):::python
-  javascriptsvc(JavaScript):::javascript
-  rustsvc(Rust):::rust
   erlangsvc(Erlang/Elixir):::erlang
-  phpsvc(PHP):::php
+  golangsvc(Go):::golang
+  javasvc(Java):::java
+  javascriptsvc(JavaScript):::javascript
   kotlinsvc(Kotlin):::kotlin
+  phpsvc(PHP):::php
+  pythonsvc(Python):::python
+  rubysvc(Ruby):::ruby
+  rustsvc(Rust):::rust
+  typescriptsvc(TypeScript):::typescript
 end
 
-classDef java fill:#b07219,color:white;
-classDef kotlin fill:#560ba1,color:white;
 classDef dotnet fill:#178600,color:white;
-classDef golang fill:#00add8,color:black;
 classDef cpp fill:#f34b7d,color:white;
-classDef ruby fill:#701516,color:white;
-classDef python fill:#3572A5,color:white;
-classDef javascript fill:#f1e05a,color:black;
-classDef rust fill:#dea584,color:black;
 classDef erlang fill:#b83998,color:white;
+classDef golang fill:#00add8,color:black;
+classDef java fill:#b07219,color:white;
+classDef javascript fill:#f1e05a,color:black;
+classDef kotlin fill:#560ba1,color:white;
 classDef php fill:#4f5d95,color:white;
+classDef python fill:#3572A5,color:white;
+classDef ruby fill:#701516,color:white;
+classDef rust fill:#dea584,color:black;
+classDef typescript fill:#e98516,color:black;
 ```
 
 Follow these links for the current state of
