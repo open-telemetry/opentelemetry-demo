@@ -43,6 +43,9 @@ const FrontendTracer = async (collectorString: string) => {
         '@opentelemetry/instrumentation-fetch': {
           propagateTraceHeaderCorsUrls: /.*/,
           clearTimingResources: true,
+          applyCustomAttributesOnSpan(span) {
+            span.setAttribute('app.synthetic_request', 'false');
+          },
         },
       }),
     ],
