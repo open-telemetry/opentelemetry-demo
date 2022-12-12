@@ -269,13 +269,13 @@ services:
       dockerfile: ./src/frontend/Dockerfile
       cache_from:
         - ${IMAGE_NAME}:${IMAGE_VERSION}-frontend
-    deploy:
-      resources:
-        limits:
-          memory: 200M
+    # deploy:
+    #   resources:
+    #     limits:
+    #       memory: 200M
     restart: always
     ports:
-      - "${FRONTEND_PORT}"
+      - "${FRONTEND_PORT}:${FRONTEND_PORT}"
     environment:
       - PORT=${FRONTEND_PORT}
       - FRONTEND_ADDR
@@ -292,6 +292,7 @@ services:
       - ENV_PLATFORM
       - OTEL_SERVICE_NAME=frontend
       - PUBLIC_OTEL_EXPORTER_OTLP_TRACES_ENDPOINT
+      - OTEL_EXPORTER_OTLP_METRICS_ENDPOINT
     depends_on:
       - adservice
       - cartservice
