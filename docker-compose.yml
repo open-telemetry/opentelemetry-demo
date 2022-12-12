@@ -295,6 +295,7 @@ services:
       - ENV_PLATFORM
       - OTEL_SERVICE_NAME=frontend
       - PUBLIC_OTEL_EXPORTER_OTLP_TRACES_ENDPOINT
+      - WEB_OTEL_SERVICE_NAME=frontend-web
     depends_on:
       - adservice
       - cartservice
