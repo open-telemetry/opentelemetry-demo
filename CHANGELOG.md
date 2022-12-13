@@ -150,3 +150,9 @@ significant modifications will be credited to OpenTelemetry Authors.
 ([#512](https://github.com/open-telemetry/opentelemetry-demo/pull/457))
 * Added support for non-root containers
 ([#615](https://github.com/open-telemetry/opentelemetry-demo/pull/615))
+* Add tracing to Envoy (frontend-proxy)
+([#613](https://github.com/open-telemetry/opentelemetry-demo/pull/613))
+* Build Kafka image
+([#617](https://github.com/open-telemetry/opentelemetry-demo/pull/617))
+* Use `frontend-web` as service name for browser/web requests
+([#628](https://github.com/open-telemetry/opentelemetry-demo/pull/628))
