@@ -319,7 +319,6 @@ services:
       - "${ENVOY_PORT}:${ENVOY_PORT}"
       - 10000:10000
     environment:
-      - PUBLIC_OTEL_EXPORTER_OTLP_TRACES_ENDPOINT
       - FRONTEND_PORT
       - FRONTEND_HOST
       - FEATURE_FLAG_SERVICE_PORT
