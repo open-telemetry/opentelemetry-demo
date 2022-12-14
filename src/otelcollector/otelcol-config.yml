@@ -7,15 +7,22 @@ receivers:
           allowed_origins:
             - "http://*"
             - "https://*"
+  otlp/spanmetrics:
+    protocols:
+      grpc:
+        endpoint: "localhost:12345"
 
 exporters:
-  otlp:
-    endpoint: "jaeger:4317"
-    tls:
-      insecure: true
-  logging:
   prometheus:
-    endpoint: "otelcol:9464"
+    endpoint: "0.0.0.0:8889"
+
+  logging:
+
+  kafka:
+    brokers:
+      - kafka:9092
+    encoding: jaeger_json
+    protocol_version: 2.0.0
 
 processors:
   batch:
@@ -27,8 +34,11 @@ service:
     traces:
       receivers: [otlp]
       processors: [spanmetrics, batch]
-      exporters: [logging, otlp]
+      exporters: [logging, kafka]
     metrics:
       receivers: [otlp]
       processors: [batch]
-      exporters: [prometheus, logging]
+      exporters: [logging]
+    metrics/spanmetrics:
+      receivers: [otlp/spanmetrics]
+      exporters: [prometheus]

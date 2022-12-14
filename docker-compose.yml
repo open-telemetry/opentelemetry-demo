@@ -19,12 +19,92 @@ x-default-logging: &logging
     max-size: "5m"
     max-file: "2"
 
+volumes:
+  data01:
+    driver: local
+  data02:
+    driver: local
+  data03:
+    driver: local
 networks:
   default:
     name: opentelemetry-demo
     driver: bridge
 
 services:
+  es01:
+    image: docker.elastic.co/elasticsearch/elasticsearch:7.16.3
+    container_name: es01
+    environment:
+      - node.name=es01
+      - cluster.name=es-docker-cluster
+      - discovery.seed_hosts=es02,es03
+      - cluster.initial_master_nodes=es01,es02,es03
+      - bootstrap.memory_lock=true
+      - "ES_JAVA_OPTS=-Xms2g -Xmx2g"
+    ulimits:
+      memlock:
+        hard: -1
+        soft: -1
+    volumes:
+      - data01:/usr/share/elasticsearch/data
+    ports:
+      - 9200:9200
+    healthcheck:
+      interval: 20s
+      retries: 10
+      test: curl -s http://localhost:9200/_cluster/health | grep -vq '"status":"red"'
+
+  es02:
+    image: docker.elastic.co/elasticsearch/elasticsearch:7.16.3
+    container_name: es02
+    environment:
+      - node.name=es02
+      - cluster.name=es-docker-cluster
+      - discovery.seed_hosts=es01,es03
+      - cluster.initial_master_nodes=es01,es02,es03
+      - bootstrap.memory_lock=true
+      - "ES_JAVA_OPTS=-Xms2g -Xmx2g"
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+    volumes:
+      - data02:/usr/share/elasticsearch/data
+
+  es03:
+    image: docker.elastic.co/elasticsearch/elasticsearch:7.16.3
+    container_name: es03
+    environment:
+      - node.name=es03
+      - cluster.name=es-docker-cluster
+      - discovery.seed_hosts=es01,es02
+      - cluster.initial_master_nodes=es01,es02,es03
+      - bootstrap.memory_lock=true
+      - "ES_JAVA_OPTS=-Xms2g -Xmx2g"
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+    volumes:
+      - data03:/usr/share/elasticsearch/data
+
+  kibana:
+    image: docker.elastic.co/kibana/kibana:7.16.3
+    container_name: kibana
+    depends_on:
+      es01:
+        condition: service_healthy
+    environment:
+      ELASTICSEARCH_URL: http://es01:9200
+      ELASTICSEARCH_HOSTS: '["http://es01:9200","http://es02:9200","http://es03:9200"]'
+    ports:
+      - 5601:5601
+    healthcheck:
+      interval: 2s
+      retries: 2000
+      test: curl --write-out 'HTTP %{http_code}' --fail --silent --output /dev/null http://localhost:5601/api/status
+
   # ******************
   # Core Demo Services
   # ******************
@@ -552,7 +632,7 @@ services:
       start_period: 10s
       interval: 5s
       timeout: 10s
-      retries: 10
+      retries: 100
 
   # Redis used by Cart service
   redis-cart:
@@ -573,21 +653,70 @@ services:
   # Telemetry Components
   # ********************
   # Jaeger
-  jaeger:
-    image: jaegertracing/all-in-one
-    container_name: jaeger
-    command: ["--memory.max-traces", "10000", "--query.base-path", "/jaeger/ui"]
-    deploy:
-      resources:
-        limits:
-          memory: 275M
-    restart: always
-    ports:
-      - "${JAEGER_SERVICE_PORT}"                    # Jaeger UI
-      - "4317"                           # OTLP gRPC default port
+  jaeger-query:
+    image: jaegertracing/jaeger-query:1.33
+    container_name: jaeger-query
+    command:
+      - "--es.index-prefix=jaeger"
+      - "--es.server-urls=http://es01:9200,http://es02:9200,http://es03:9200"
+      - "--prometheus.server-url=http://prometheus:9090"
     environment:
-      - COLLECTOR_OTLP_ENABLED=true
-    logging: *logging
+      - SPAN_STORAGE_TYPE=elasticsearch
+      - METRICS_STORAGE_TYPE=prometheus
+    ports:
+      - "16685:16685"
+      - "16686:16686"
+      - "16687:16687"
+    restart: on-failure
+    depends_on:
+      es01:
+        condition: service_healthy
+
+  jaeger-ingester:
+    image: jaegertracing/jaeger-ingester:1.33
+    container_name: jaeger-ingester
+    command:
+      - "--es.tags-as-fields.all=true"
+      - "--es.index-prefix=jaeger"
+      - "--es.num-shards=1"
+      - "--es.server-urls=http://es01:9200,http://es02:9200,http://es03:9200"
+      - "--kafka.consumer.brokers=kafka:9092"
+      - "--kafka.consumer.encoding=json"
+      - "--kafka.consumer.topic=otlp_spans"
+    environment:
+      - SPAN_STORAGE_TYPE=elasticsearch
+    ports:
+      - "14270:14270"
+    restart: on-failure
+    depends_on:
+      es01:
+        condition: service_healthy
+  spark-dependencies:
+    image: jaegertracing/spark-dependencies:latest
+    container_name: jaeger-spark-dependencies
+    environment:
+      - STORAGE=elasticsearch
+      - ES_NODES=http://es01:9200
+      - ES_NODES_WAN_ONLY=yes
+      - ES_INDEX_PREFIX=jaeger
+      - ES_TIME_RANGE=1m
+    restart: always
+    depends_on:
+      es01:
+        condition: service_healthy
+
+  kafka-ui:
+    image: provectuslabs/kafka-ui
+    container_name: kafka-ui
+    ports:
+      - 8081:8081
+    restart: always
+    environment:
+      - SERVER_PORT=8081
+      - KAFKA_CLUSTERS_0_BOOTSTRAPSERVERS=kafka:9092
+    depends_on:
+      kafka:
+        condition: service_healthy
 
   # Grafana
   grafana:
@@ -619,7 +748,8 @@ services:
       - "9464"          # Prometheus exporter
       - "8888"          # metrics endpoint
     depends_on:
-      - jaeger
+      kafka:
+        condition: service_healthy
     logging: *logging
 
   # Prometheus
