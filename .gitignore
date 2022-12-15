@@ -52,3 +52,7 @@ src/shippingservice/target/
 .env.sentry
 .env.merged
 docker-compose.override.yml
+
+# Ignore local development files
+Dockerfile.local.dev
+requirements.local.dev.txt
