@@ -12,7 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-FROM node:16-alpine AS build
+FROM registry.ddbuild.io/images/mirror/node:18-alpine AS build
 
 WORKDIR /usr/src/app/
 

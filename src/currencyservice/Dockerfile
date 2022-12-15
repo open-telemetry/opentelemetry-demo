@@ -1,6 +1,6 @@
-FROM ubuntu:20.04
+FROM registry.ddbuild.io/images/base:focal
 ENV DEBIAN_FRONTEND noninteractive
-
+USER root
 RUN apt-get -y update
 RUN apt-get -y upgrade && apt-get -y dist-upgrade
 RUN apt-get install -qq -y --ignore-missing \
@@ -55,5 +55,5 @@ COPY . /currencyservice
 RUN cd /currencyservice \
     && mkdir -p build && cd build \
     && cmake .. && make -j install
-
+USER 1001
 ENTRYPOINT /usr/local/bin/currencyservice ${CURRENCY_SERVICE_PORT}

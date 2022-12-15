@@ -1,4 +1,4 @@
-FROM composer:2.4 AS build
+FROM registry.ddbuild.io/images/mirror/composer:2.4 AS build
 
 WORKDIR /tmp/
 COPY ./src/quoteservice/composer.json .

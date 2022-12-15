@@ -1,5 +1,5 @@
 # build context will only work from ../../docker-compose.yml
-FROM rust:1.61-alpine as builder
+FROM registry.ddbuild.io/images/mirror/rust:1.61-alpine as builder
 RUN apk update
 RUN apk add --no-cache ca-certificates git protobuf-dev protoc cmake clang clang-dev make gcc g++ libc-dev linux-headers
 WORKDIR /app/
