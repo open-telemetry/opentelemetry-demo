@@ -1,0 +1,18 @@
+opentelemetry-collector:
+  config:
+    exporters:
+      googlecloud:
+    processors:
+      resourcedetection/gcp:
+        detectors: [env, gcp]
+        timeout: 2s
+        override: false
+    service:
+      pipelines:
+        traces:
+          exporters:
+            - googlecloud
+          processors:
+            - memory_limiter
+            - batch
+            - resourcedetection/gcp
