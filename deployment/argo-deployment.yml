@@ -1,0 +1,16 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: opentelemetry-demo
+  namespace: argocd
+spec:
+  project: opentelemetry-demo
+  source:
+    chart: opentelemetry-demo
+    repoURL: https://open-telemetry.github.io/opentelemetry-helm-charts
+    targetRevision: 1.16.1
+    helm:
+      releaseName: opentelemetry-demo
+  destination:
+    server: "https://kubernetes.default.svc"
+    namespace: opentelemetry-demo
