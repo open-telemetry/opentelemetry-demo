@@ -2,7 +2,7 @@ name: "Build and Publish"
 
 on:
   release:
-    types: [created]
+    types: [published]
 
 jobs:
   build_and_push_images:
