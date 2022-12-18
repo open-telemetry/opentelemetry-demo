@@ -10,6 +10,7 @@ spec:
     repoURL: https://open-telemetry.github.io/opentelemetry-helm-charts
     helm:
       releaseName: opentelemetry-demo
+      targetRevision: 0.15.2
   destination:
     server: "https://kubernetes.default.svc"
     namespace: opentelemetry-demo
