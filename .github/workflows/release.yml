@@ -2,7 +2,7 @@ name: "Build and Publish"
 
 on:
   release:
-    types: [published]
+    types: [created]
 
 jobs:
   build_and_push_images:
@@ -13,8 +13,8 @@ jobs:
 
     env:
       RELEASE_VERSION: "${{ github.event.release.tag_name }}"
-      DOCKERHUB_REPO: "otel/demo"
-      GHCR_REPO: "ghcr.io/open-telemetry/demo"
+      DOCKERHUB_REPO: "deviantpoint/opentelemetry-demo"
+      GHCR_REPO: "ghcr.io/deviantpoint/opentelemetry-demo"
 
     strategy:
       matrix:
