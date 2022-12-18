@@ -11,6 +11,9 @@ spec:
     targetRevision: 0.15.2
     helm:
       releaseName: opentelemetry-demo
+      parameters:
+        - name: default.image.repository
+          value: ghcr.io/deviantpoint/opentelemetry-demo
   destination:
     server: "https://kubernetes.default.svc"
     namespace: opentelemetry-demo
