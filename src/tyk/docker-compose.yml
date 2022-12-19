@@ -1,0 +1,38 @@
+version: '3.9'
+
+
+networks:
+  default:
+    name: opentelemetry-demo
+    driver: bridge
+    
+services:
+  tyk-dashboard:
+    image: tykio/tyk-dashboard:v4.2.0
+    ports:
+      - 3000:3000
+    volumes:
+      - ./confs/tyk_analytics.conf:/opt/tyk-dashboard/tyk_analytics.conf
+      - ./certs:/opt/tyk-dashboard/certs
+    depends_on:
+      - tyk-redis
+      - tyk-mongo
+  tyk-gateway:
+    image: tykio/tyk-gateway:v4.2.0
+    ports:
+      - 8081:8081
+    volumes:
+      - ./confs/tyk_pro.conf:/opt/tyk-gateway/tyk.conf
+      - ./certs:/opt/tyk-gateway/certs
+    depends_on:
+      - tyk-redis
+  tyk-redis:
+    image: redis:6.0.4
+    ports:
+      - "6380:6379"
+  tyk-mongo:
+    image: mongo:4.0
+    command: ["mongod", "--smallfiles"]
+    ports:
+      - 27017:27017
+
