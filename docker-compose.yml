@@ -29,7 +29,7 @@ services:
   # Tyk Services
   # ******************
   tyk-dashboard:
-    image: tykio/tyk-dashboard:v4.3.0
+    image: tykio/tyk-dashboard:v4.2.0
     ports:
       - 3000:3000
     volumes:
@@ -37,7 +37,7 @@ services:
       - ./src/tyk/certs:/opt/tyk-dashboard/certs
     environment:
       - TYK_DB_LICENSEKEY=${TYK_DASHBOARD_LICENSE:?Dashboard licence missing from Docker environment file .env.}
-      - TYK_DB_TYKAPI_HOST=${TYK_GW_HOST}
+      - TYK_DB_TYKAPI_HOST=${TYK_GW_URL}
       - TYK_DB_TYKAPI_PORT=${TYK_GW_PORT}
     depends_on:
       - tyk-redis
@@ -60,6 +60,7 @@ services:
     depends_on:
       - tyk-redis
       - otelcol
+      - tyk-dashboard
   tyk-redis:
     image: redis:6.0.4
     ports:
@@ -482,7 +483,7 @@ services:
           memory: 30M
     restart: always
     ports:
-      - "${QUOTE_SERVICE_PORT}"
+      - "${QUOTE_SERVICE_PORT}:${QUOTE_SERVICE_PORT}"
     environment:
       # OTEL_EXPORTER_OTLP_TRACES_ENDPOINT # Not working for PHP
       - QUOTE_SERVICE_PORT
