@@ -5,11 +5,7 @@ const { OTLPTraceExporter } = require('@opentelemetry/exporter-trace-otlp-grpc')
 const sdk = new opentelemetry.NodeSDK({
   traceExporter: new OTLPTraceExporter(),
   instrumentations: [
-    getNodeAutoInstrumentations({
-      '@opentelemetry/instrumentation-fs': {
-        enabled: false,
-      },
-    }),
+    getNodeAutoInstrumentations(),
   ],
 });
 
