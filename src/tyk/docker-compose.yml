@@ -14,25 +14,40 @@ services:
     volumes:
       - ./confs/tyk_analytics.conf:/opt/tyk-dashboard/tyk_analytics.conf
       - ./certs:/opt/tyk-dashboard/certs
+    environment:
+      - TYK_DB_LICENSEKEY=${TYK_DASHBOARD_LICENSE:?Dashboard licence missing from Docker environment file .env.}
+      - TYK_DB_TYKAPI_HOST=${TYK_GW_HOST}
+      - TYK_DB_TYKAPI_PORT=${TYK_GW_PORT}
     depends_on:
       - tyk-redis
       - tyk-mongo
   tyk-gateway:
-    image: tykio/tyk-gateway:v4.2.0
+    image: tykio/tyk-gateway:v1.7.0-rc2
     ports:
       - 8081:8081
     volumes:
       - ./confs/tyk_pro.conf:/opt/tyk-gateway/tyk.conf
       - ./certs:/opt/tyk-gateway/certs
+    environment:
+      - TYK_GW_POLICIES_POLICYCONNECTIONSTRING=${TYK_DASHBOARD_HOST}:${TYK_DASHBOARD_PORT}
+      - TYK_GW_DBAPPCONFOPTIONS_CONNECTIONSTRING=${TYK_DASHBOARD_HOST}:${TYK_DASHBOARD_PORT}
+      - TYK_GW_TRACER_ENABLED
+      - TYK_GW_TRACER_NAME
+      - TYK_GW_TRACER_OPTIONS_URL
+      - TYK_GW_TRACER_OPTIONS_TIMEOUT
     depends_on:
       - tyk-redis
   tyk-redis:
     image: redis:6.0.4
     ports:
       - "6380:6379"
+    volumes:
+    - ./volumes/redis:/data
   tyk-mongo:
     image: mongo:4.0
     command: ["mongod", "--smallfiles"]
     ports:
       - 27017:27017
+    volumes:
+      - ./volumes/mongo:/data/db
 

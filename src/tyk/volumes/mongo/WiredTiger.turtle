@@ -1,0 +1,6 @@
+WiredTiger version string
+WiredTiger 3.1.1: (July 12, 2018)
+WiredTiger version
+major=3,minor=1,patch=1
+file:WiredTiger.wt
+access_pattern_hint=none,allocation_size=4KB,app_metadata=,assert=(commit_timestamp=none,read_timestamp=none),block_allocation=best,block_compressor=,cache_resident=false,checksum=uncompressed,collator=,columns=,dictionary=0,encryption=(keyid=,name=),format=btree,huffman_key=,huffman_value=,id=0,ignore_in_memory_cache_size=false,internal_item_max=0,internal_key_max=0,internal_key_truncate=true,internal_page_max=4KB,key_format=S,key_gap=10,leaf_item_max=0,leaf_key_max=0,leaf_page_max=32KB,leaf_value_max=0,log=(enabled=true),memory_page_image_max=0,memory_page_max=5MB,os_cache_dirty_max=0,os_cache_max=0,prefix_compression=false,prefix_compression_min=4,split_deepen_min_child=0,split_deepen_per_child=0,split_pct=90,value_format=S,version=(major=1,minor=1),checkpoint=(WiredTigerCheckpoint.47=(addr="018081e4581eab438181e48c8656b78281e4cec466d7808080e2afc0e23fc0",order=47,time=1671465150,size=28672,write_gen=71)),checkpoint_lsn=(12,6016)
