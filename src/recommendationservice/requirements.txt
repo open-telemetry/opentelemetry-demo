@@ -6,4 +6,4 @@ opentelemetry-exporter-otlp-proto-grpc==1.13.0
 python-dotenv==0.21.0
 python-json-logger==2.0.4
 psutil==5.9.2 # Importing this will also import opentelemetry-instrumentation-system-metrics when running opentelemetry-bootstrap
-git+https://github.com/getsentry/sentry-python.git@antonpirker/1687-basic-otel
+sentry-sdk==1.12.1
