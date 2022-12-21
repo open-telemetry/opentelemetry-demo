@@ -64,6 +64,7 @@ keeping it up to date for you.
 - [Sumo Logic](https://github.com/SumoLogic/opentelemetry-demo)
 - [TelemetryHub](https://github.com/TelemetryHub/opentelemetry-demo/tree/telemetryhub-backend)
 - [Uptrace](https://github.com/uptrace/uptrace/tree/master/example/opentelemetry-demo)
+- [AlibabaCloud LogService](https://github.com/aliyun-sls/opentelemetry-demo)
 
 ## Contributing
 
