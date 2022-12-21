@@ -157,3 +157,4 @@ significant modifications will be credited to OpenTelemetry Authors.
 * Use `frontend-web` as service name for browser/web requests
 ([#628](https://github.com/open-telemetry/opentelemetry-demo/pull/628))
 * Add resource detectors to payment service
+([#651](https://github.com/open-telemetry/opentelemetry-demo/pull/651))
