@@ -200,7 +200,7 @@ services:
     environment:
       - APP_ENV=production
       - EMAIL_SERVICE_PORT
-      - OTEL_EXPORTER_OTLP_TRACES_ENDPOINT=http://otelcol:4318/v1/traces
+      - OTEL_EXPORTER_OTLP_TRACES_ENDPOINT=http://${OTEL_COLLECTOR_HOST}:4318/v1/traces
       - OTEL_SERVICE_NAME=emailservice
     depends_on:
       - otelcol
@@ -438,7 +438,7 @@ services:
       # OTEL_EXPORTER_OTLP_TRACES_ENDPOINT # Not working for PHP
       - QUOTE_SERVICE_PORT
       - OTEL_SERVICE_NAME=quoteservice
-      - OTEL_EXPORTER_OTLP_ENDPOINT=http://otelcol:4318
+      - OTEL_EXPORTER_OTLP_ENDPOINT=http://${OTEL_COLLECTOR_HOST}:4318
       - OTEL_TRACES_SAMPLER=parentbased_always_on
       - OTEL_TRACES_EXPORTER=otlp
       - OTEL_EXPORTER_OTLP_TRACES_PROTOCOL=http/protobuf
