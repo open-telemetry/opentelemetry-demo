@@ -156,3 +156,5 @@ significant modifications will be credited to OpenTelemetry Authors.
 ([#617](https://github.com/open-telemetry/opentelemetry-demo/pull/617))
 * Use `frontend-web` as service name for browser/web requests
 ([#628](https://github.com/open-telemetry/opentelemetry-demo/pull/628))
+* Add OTel java agent with JMX Metric Insights to kafka
+([#654](https://github.com/open-telemetry/opentelemetry-demo/pull/654))
