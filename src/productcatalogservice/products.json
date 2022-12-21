@@ -107,6 +107,18 @@
         "nanos": 950000000
       },
       "categories": ["accessories", "telescopes"]
+    },
+    {
+      "id": "HQTGWGPNH4",
+      "name": "National Geographic Backyard Guide to the Night Sky, 2nd Edition",
+      "description": "Explore the star-studded cosmos with this fully updated, user-friendly skywatcher's guide, filled with charts, graphics, photographs, and expert tips for viewing -- and understanding -- the wonders of space.",
+      "picture": "/images/products/BackyardGuideBook.jpg",
+      "priceUsd": {
+        "currencyCode": "USD",
+        "units": 20,
+        "nanos": 950000000
+      },
+      "categories": ["books", "telescopes"]
     }
   ]
 }
