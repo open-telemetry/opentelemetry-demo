@@ -435,14 +435,10 @@ services:
     ports:
       - "${QUOTE_SERVICE_PORT}"
     environment:
-      # OTEL_EXPORTER_OTLP_TRACES_ENDPOINT # Not working for PHP
+      - OTEL_EXPORTER_OTLP_TRACES_ENDPOINT=http://otelcol:4318/v1/traces
+      - OTEL_PHP_AUTOLOAD_ENABLED=true
       - QUOTE_SERVICE_PORT
       - OTEL_SERVICE_NAME=quoteservice
-      - OTEL_EXPORTER_OTLP_ENDPOINT=http://otelcol:4318
-      - OTEL_TRACES_SAMPLER=parentbased_always_on
-      - OTEL_TRACES_EXPORTER=otlp
-      - OTEL_EXPORTER_OTLP_TRACES_PROTOCOL=http/protobuf
-      - OTEL_PHP_TRACES_PROCESSOR=simple
     depends_on:
       - otelcol
     logging: *logging
