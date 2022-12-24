@@ -158,6 +158,8 @@ significant modifications will be credited to OpenTelemetry Authors.
 ([#628](https://github.com/open-telemetry/opentelemetry-demo/pull/628))
 * Update `quoteservice` to use opentelemetry-php beta release
 ([#644](https://github.com/open-telemetry/opentelemetry-demo/pull/644))
+* Add OTel java agent with JMX Metric Insights to kafka
+([#654](https://github.com/open-telemetry/opentelemetry-demo/pull/654))
 * Add resource detectors to payment service
 ([#651](https://github.com/open-telemetry/opentelemetry-demo/pull/651))
 * Add resource detectors to frontend service
