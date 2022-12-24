@@ -160,3 +160,5 @@ significant modifications will be credited to OpenTelemetry Authors.
 ([#644](https://github.com/open-telemetry/opentelemetry-demo/pull/644))
 * Add resource detectors to payment service
 ([#651](https://github.com/open-telemetry/opentelemetry-demo/pull/651))
+* Add resource detectors to frontend service
+([#648](https://github.com/open-telemetry/opentelemetry-demo/pull/648))
