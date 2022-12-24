@@ -575,7 +575,7 @@ services:
   jaeger:
     image: jaegertracing/all-in-one
     container_name: jaeger
-    command: 
+    command:
       - "--memory.max-traces"
       - "10000"
       - "--query.base-path"
