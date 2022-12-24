@@ -30,7 +30,6 @@ service:
         - logging
         - otlp/honeycomb
       processors:
-        - memory_limiter
         - attributes
         - spanmetrics
         - batch
