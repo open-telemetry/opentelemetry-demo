@@ -575,7 +575,13 @@ services:
   jaeger:
     image: jaegertracing/all-in-one
     container_name: jaeger
-    command: ["--prometheus.server-url","http://${PROMETHEUS_ADDR}","--memory.max-traces", "10000", "--query.base-path", "/jaeger/ui"]
+    command: 
+      - "--memory.max-traces"
+      - "10000"
+      - "--query.base-path"
+      - "/jaeger/ui"
+      - "--prometheus.server-url"
+      - "http://${PROMETHEUS_ADDR}"
     deploy:
       resources:
         limits:
