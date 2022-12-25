@@ -575,7 +575,13 @@ services:
   jaeger:
     image: jaegertracing/all-in-one
     container_name: jaeger
-    command: ["--memory.max-traces", "10000", "--query.base-path", "/jaeger/ui"]
+    command:
+      - "--memory.max-traces"
+      - "10000"
+      - "--query.base-path"
+      - "/jaeger/ui"
+      - "--prometheus.server-url"
+      - "http://${PROMETHEUS_ADDR}"
     deploy:
       resources:
         limits:
@@ -586,6 +592,7 @@ services:
       - "4317"                           # OTLP gRPC default port
     environment:
       - COLLECTOR_OTLP_ENABLED=true
+      - METRICS_STORAGE_TYPE=prometheus
     logging: *logging
 
   # Grafana
