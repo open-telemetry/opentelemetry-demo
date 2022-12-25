@@ -164,3 +164,5 @@ significant modifications will be credited to OpenTelemetry Authors.
 ([#651](https://github.com/open-telemetry/opentelemetry-demo/pull/651))
 * Add resource detectors to frontend service
 ([#648](https://github.com/open-telemetry/opentelemetry-demo/pull/648))
+* Add Jaeger-SPM-Config
+([#655](https://github.com/open-telemetry/opentelemetry-demo/pull/655))
