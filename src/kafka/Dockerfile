@@ -1,5 +1,10 @@
 FROM confluentinc/cp-kafka:latest-ubi8
 
+USER root
+ARG version=1.21.0
+ADD https://github.com/open-telemetry/opentelemetry-java-instrumentation/releases/download/v$version/opentelemetry-javaagent.jar /tmp/opentelemetry-javaagent.jar
+RUN chmod go+r /tmp/opentelemetry-javaagent.jar
+
 USER appuser
 WORKDIR /tmp
 COPY ./src/kafka/clusterID clusterID
@@ -18,5 +23,6 @@ ENV KAFKA_METADATA_LOG_MAX_RECORD_BYTES_BETWEEN_SNAPSHOTS=2800
 ENV KAFKA_AUTO_CREATE_TOPICS_ENABLE=true
 ENV KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR=1
 ENV KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR=1
+ENV KAFKA_OPTS="-javaagent:/tmp/opentelemetry-javaagent.jar -Dotel.jmx.target.system=kafka-broker"
 
 ENTRYPOINT ["/bin/sh", "-c", "ls -lh /tmp && /tmp/update_run.sh && /etc/confluent/docker/run"]
