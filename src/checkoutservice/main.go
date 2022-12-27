@@ -41,6 +41,7 @@ import (
 	"go.opentelemetry.io/otel/metric/global"
 	"go.opentelemetry.io/otel/propagation"
 	sdkmetric "go.opentelemetry.io/otel/sdk/metric"
+	"go.opentelemetry.io/otel/sdk/resource"
 	sdktrace "go.opentelemetry.io/otel/sdk/trace"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/codes"
@@ -71,6 +72,21 @@ func init() {
 	log.Out = os.Stdout
 }
 
+func initResource() *resource.Resource {
+	extraResources, _ := resource.New(
+		context.Background(),
+		resource.WithOS(),
+		resource.WithProcess(),
+		resource.WithContainer(),
+		resource.WithHost(),
+	)
+	result, _ := resource.Merge(
+		resource.Default(),
+		extraResources,
+	)
+	return result
+}
+
 func initTracerProvider() *sdktrace.TracerProvider {
 	ctx := context.Background()
 
@@ -80,6 +96,7 @@ func initTracerProvider() *sdktrace.TracerProvider {
 	}
 	tp := sdktrace.NewTracerProvider(
 		sdktrace.WithBatcher(exporter),
+		sdktrace.WithResource(initResource()),
 	)
 	otel.SetTracerProvider(tp)
 	otel.SetTextMapPropagator(propagation.NewCompositeTextMapPropagator(propagation.TraceContext{}, propagation.Baggage{}))
