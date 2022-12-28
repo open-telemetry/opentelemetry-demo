@@ -168,4 +168,3 @@ significant modifications will be credited to OpenTelemetry Authors.
 ([#655](https://github.com/open-telemetry/opentelemetry-demo/pull/655))
 * Add `OTEL_RESOURCE_ATTRIBUTES` to docker compose setup
 ([#664](https://github.com/open-telemetry/opentelemetry-demo/pull/664))
-
