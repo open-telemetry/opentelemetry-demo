@@ -23,6 +23,7 @@ import (
 	"net/http"
 	"os"
 	"strconv"
+	"sync"
 	"time"
 
 	"go.opentelemetry.io/otel/attribute"
@@ -41,7 +42,7 @@ import (
 	"go.opentelemetry.io/otel/metric/global"
 	"go.opentelemetry.io/otel/propagation"
 	sdkmetric "go.opentelemetry.io/otel/sdk/metric"
-	"go.opentelemetry.io/otel/sdk/resource"
+	sdkresource "go.opentelemetry.io/otel/sdk/resource"
 	sdktrace "go.opentelemetry.io/otel/sdk/trace"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/codes"
@@ -57,6 +58,8 @@ import (
 
 var log *logrus.Logger
 var tracer trace.Tracer
+var resource *sdkresource.Resource
+var initResourcesOnce sync.Once
 
 func init() {
 	log = logrus.New()
@@ -72,19 +75,21 @@ func init() {
 	log.Out = os.Stdout
 }
 
-func initResource() *resource.Resource {
-	extraResources, _ := resource.New(
-		context.Background(),
-		resource.WithOS(),
-		resource.WithProcess(),
-		resource.WithContainer(),
-		resource.WithHost(),
-	)
-	result, _ := resource.Merge(
-		resource.Default(),
-		extraResources,
-	)
-	return result
+func initResource() *sdkresource.Resource {
+	initResourcesOnce.Do(func() {
+		extraResources, _ := sdkresource.New(
+			context.Background(),
+			sdkresource.WithOS(),
+			sdkresource.WithProcess(),
+			sdkresource.WithContainer(),
+			sdkresource.WithHost(),
+		)
+		resource, _ = sdkresource.Merge(
+			sdkresource.Default(),
+			extraResources,
+		)
+	})
+	return resource
 }
 
 func initTracerProvider() *sdktrace.TracerProvider {
@@ -111,7 +116,10 @@ func initMeterProvider() *sdkmetric.MeterProvider {
 		log.Fatalf("new otlp metric grpc exporter failed: %v", err)
 	}
 
-	mp := sdkmetric.NewMeterProvider(sdkmetric.WithReader(sdkmetric.NewPeriodicReader(exporter)))
+	mp := sdkmetric.NewMeterProvider(
+		sdkmetric.WithReader(sdkmetric.NewPeriodicReader(exporter)),
+		sdkmetric.WithResource(initResource()),
+	)
 	global.SetMeterProvider(mp)
 	return mp
 }
