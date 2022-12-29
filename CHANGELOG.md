@@ -167,3 +167,4 @@ significant modifications will be credited to OpenTelemetry Authors.
 * Add Jaeger-SPM-Config
 ([#655](https://github.com/open-telemetry/opentelemetry-demo/pull/655))
 * Add resource detectors to cart service
+([#663](https://github.com/open-telemetry/opentelemetry-demo/pull/663))
