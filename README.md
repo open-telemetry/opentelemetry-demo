@@ -55,6 +55,7 @@ keeping it up to date for you.
 - [AlibabaCloud LogService](https://github.com/aliyun-sls/opentelemetry-demo)
 - [AppDynamics](https://www.appdynamics.com/blog/cloud/how-to-observe-opentelemetry-demo-app-in-appdynamics-cloud/)
 - [Aspecto](https://github.com/aspecto-io/opentelemetry-demo)
+- [Coralogix](https://coralogix.com/blog/configure-otel-demo-send-telemetry-data-coralogix)
 - [Datadog](https://github.com/DataDog/opentelemetry-demo)
 - [Dynatrace](https://www.dynatrace.com/news/blog/opentelemetry-demo-application-with-dynatrace/)
 - [Helios](https://otelsandbox.gethelios.dev)
