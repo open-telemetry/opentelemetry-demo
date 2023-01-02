@@ -118,6 +118,11 @@ and register web specific auto-instrumentation libraries. Since the browser
 will send data to an OpenTelemetry collector that will likely be on a separate
 domain, CORS headers are also setup accordingly.
 
+As part of the changes to carry over the `synthetic_request` attribute flag for
+the backend services, the `applyCustomAttributesOnSpan` configuration function
+has been added to the `instrumentation-fetch` library custom span attributes logic
+that way every browser-side span will include it.
+
 ```typescript
 import { CompositePropagator, W3CBaggagePropagator, W3CTraceContextPropagator } from '@opentelemetry/core';
 import { WebTracerProvider } from '@opentelemetry/sdk-trace-web';
@@ -155,6 +160,9 @@ const FrontendTracer = async () => {
         '@opentelemetry/instrumentation-fetch': {
           propagateTraceHeaderCorsUrls: /.*/,
           clearTimingResources: true,
+          applyCustomAttributesOnSpan(span) {
+             span.setAttribute('app.synthetic_request', 'false');
+          },
         },
       }),
     ],
