@@ -1,4 +1,4 @@
-# Copyright 2020 Google LLC
+# Copyright The OpenTelemetry Authors
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -12,12 +12,16 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-FROM python:3.10 AS base
+FROM python:3.11-alpine3.17 as base
 
+FROM base as builder
+RUN apk add gcc linux-headers musl-dev
+COPY ./src/loadgenerator/requirements.txt .
+RUN pip install --prefix="/reqs" -r requirements.txt
+
+FROM base
 WORKDIR /usr/src/app/
-
-COPY ./src/loadgenerator/ ./
-
-RUN pip install --prefix="/usr/local/" -r ./requirements.txt
-
+COPY --from=builder /reqs /usr/local
+COPY ./src/loadgenerator/locustfile.py .
+COPY ./src/loadgenerator/people.json .
 ENTRYPOINT locust

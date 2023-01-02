@@ -1,6 +1,6 @@
 #!/usr/bin/python
 #
-# Copyright 2018 Google LLC
+# Copyright The OpenTelemetry Authors
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -14,6 +14,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+import json
 import random
 import uuid
 from locust import HttpUser, task, between
@@ -53,161 +54,8 @@ products = [
     "OLJCESPC7Z",
 ]
 
-people = [
-    {
-        "email": "larry_sergei@example.com",
-        "address": {
-            "streetAddress": "1600 Amphitheatre Parkway",
-            "zipCode": "94043",
-            "city": "Mountain View",
-            "state": "CA",
-            "country": "United States",
-        },
-        "userCurrency": "USD",
-        "creditCard": {
-            "creditCardNumber": "4432-8015-6152-0454",
-            "creditCardExpirationMonth": 1,
-            "creditCardExpirationYear": 2039,
-            "creditCardCvv": 672,
-        },
-    },
-    {
-        "email": "bill@example.com",
-        "address": {
-            "streetAddress": "One Microsoft Way",
-            "zipCode": "98052",
-            "city": "Redmond",
-            "state": "WA",
-            "country": "United States",
-        },
-        "userCurrency": "USD",
-        "creditCard": {
-            "creditCardNumber": "4532-4211-7434-1278",
-            "creditCardExpirationMonth": 2,
-            "creditCardExpirationYear": 2039,
-            "creditCardCvv": 114,
-        },
-    },
-    {
-        "email": "steve@example.com",
-        "address": {
-            "streetAddress": "One Apple Park Way",
-            "zipCode": "95014",
-            "city": "Cupertino",
-            "state": "CA",
-            "country": "United States",
-        },
-        "userCurrency": "USD",
-        "creditCard": {
-            "creditCardNumber": "4532-6178-2799-1951",
-            "creditCardExpirationMonth": 3,
-            "creditCardExpirationYear": 2039,
-            "creditCardCvv": 239,
-        },
-    },
-    {
-        "email": "mark@example.com",
-        "address": {
-            "streetAddress": "1 Hacker Way",
-            "zipCode": "94025",
-            "city": "Menlo Park",
-            "state": "CA",
-            "country": "United States",
-        },
-        "userCurrency": "USD",
-        "creditCard": {
-            "creditCardNumber": "4539-1103-5661-7083",
-            "creditCardExpirationMonth": 4,
-            "creditCardExpirationYear": 2039,
-            "creditCardCvv": 784,
-        },
-    },
-    {
-        "email": "jeff@example.com",
-        "address": {
-            "streetAddress": "410 Terry Ave N",
-            "zipCode": "98109",
-            "city": "Seattle",
-            "state": "WA",
-            "country": "United States",
-        },
-        "userCurrency": "USD",
-        "creditCard": {
-            "creditCardNumber": "4916-0816-6217-7968",
-            "creditCardExpirationMonth": 5,
-            "creditCardExpirationYear": 2039,
-            "creditCardCvv": 397,
-        },
-    },
-    {
-        "email": "reed@example.com",
-        "address": {
-            "streetAddress": "100 Winchester Circle",
-            "zipCode": "95032",
-            "city": "Los Gatos",
-            "state": "CA",
-            "country": "United States",
-        },
-        "userCurrency": "USD",
-        "creditCard": {
-            "creditCardNumber": "4929-5431-0337-5647",
-            "creditCardExpirationMonth": 6,
-            "creditCardExpirationYear": 2039,
-            "creditCardCvv": 793,
-        },
-    },
-    {
-        "email": "tobias@example.com",
-        "address": {
-            "streetAddress": "150 Elgin St",
-            "zipCode": "K2P1L4",
-            "city": "Ottawa",
-            "state": "ON",
-            "country": "Canada",
-        },
-        "userCurrency": "CAD",
-        "creditCard": {
-            "creditCardNumber": "4763-1844-9699-8031",
-            "creditCardExpirationMonth": 7,
-            "creditCardExpirationYear": 2039,
-            "creditCardCvv": 488,
-        },
-    },
-    {
-        "email": "jack@example.com",
-        "address": {
-            "streetAddress": "1355 Market St",
-            "zipCode": "94103",
-            "city": "San Francisco",
-            "state": "CA",
-            "country": "United States",
-        },
-        "userCurrency": "USD",
-        "creditCard": {
-            "creditCardNumber": "4929-6495-8333-3657",
-            "creditCardExpirationMonth": 8,
-            "creditCardExpirationYear": 2039,
-            "creditCardCvv": 159,
-        },
-    },
-    {
-        "email": "moore@example.com",
-        "address": {
-            "streetAddress": "2200 Mission College Blvd",
-            "zipCode": "95054",
-            "city": "Santa Clara",
-            "state": "CA",
-            "country": "United States",
-        },
-        "userCurrency": "USD",
-        "creditCard": {
-            "creditCardNumber": "4485-4803-8707-3547",
-            "creditCardExpirationMonth": 9,
-            "creditCardExpirationYear": 2039,
-            "creditCardCvv": 682,
-        },
-    },
-]
+people_file = open('people.json')
+people = json.load(people_file)
 
 
 class WebsiteUser(HttpUser):
