@@ -15,64 +15,44 @@ The PHP instrumentation may vary when using a different framework.
 
 ### Initializing Tracing
 
-The OpenTelemetry SDK is initialized from `index`.
+In this demo, the OpenTelemetry SDK has been automatically created as part
+of SDK autoloading, which happens as part of composer autoloading.
+
+This is enabled by setting the environment variable `OTEL_PHP_AUTOLOAD_ENABLED=true`.
 
 ```php
-    $tracerProvider = (new TracerProviderFactory('quoteservice'))->create();
-    ShutdownHandler::register([$tracerProvider, 'shutdown']);
-    $tracer = $tracerProvider->getTracer('io.opentelemetry.contrib.php');
-
-    $containerBuilder->addDefinitions([
-        Tracer::class => $tracer
-    ]);
+    require __DIR__ . '/../vendor/autoload.php';
 ```
 
-You should call `$tracerProvider->shutdown()` when your service is shutdown to
-ensure all spans are exported.
-
-### Adding HTTP instrumentation
-
-This service receives HTTP requests, which are instrumented in the middleware.
-
-The middleware starts root span based on route pattern, sets span status
-from http code.
+There are multiple ways to create or obtain a `Tracer`, in this example we
+obtain one from the global tracer provider which was initialized above, as
+part of SDK autoloading:
 
 ```php
-    $app->add(function (Request $request, RequestHandler $handler) use ($tracer) {
-        $parent = TraceContextPropagator::getInstance()->extract($request->getHeaders());
-        $routeContext = RouteContext::fromRequest($request);
-        $route = $routeContext->getRoute();
-        $root = $tracer->spanBuilder($route->getPattern())
-            ->setStartTimestamp((int) ($request->getServerParams()['REQUEST_TIME_FLOAT'] * 1e9))
-            ->setParent($parent)
-            ->setSpanKind(SpanKind::KIND_SERVER)
-            ->startSpan();
-        $scope = $root->activate();
-
-        try {
-            $response = $handler->handle($request);
-            $root->setStatus($response->getStatusCode() < 500 ? StatusCode::STATUS_OK : StatusCode::STATUS_ERROR);
-        } finally {
-            $root->end();
-            $scope->detach();
-        }
-
-        return $response;
-    });
+    $tracer = Globals::tracerProvider()->getTracer('manual-instrumentation');
 ```
 
-This is enough to get a new span every time a new request is received by the service.
+### Manually creating spans
 
-Note that the `root` span is created with `setParent($parent)` which is coming from
-the request headers. This is required to ensure Context Propagation.
+Creating a span manually can be done via a `Tracer`. The span will be default
+be a child of the active span in the current execution context:
+
+```php
+    $span = Globals::tracerProvider()
+        ->getTracer('manual-instrumentation')
+        ->spanBuilder('calculate-quote')
+        ->setSpanKind(SpanKind::KIND_INTERNAL)
+        ->startSpan();
+    /* calculate quote */
+    $span->end();
+```
 
 ### Add span attributes
 
-Within the definition of routes, you can get current span using
-`OpenTelemetry\API\Trace\AbstractSpan`.
+You can obtain the current span using `OpenTelemetry\API\Trace\Span`.
 
 ```php
-    $span = AbstractSpan::getCurrent();
+    $span = Span::getCurrent();
 ```
 
 Adding attributes to a span is accomplished using `setAttribute` on the span
