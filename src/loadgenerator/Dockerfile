@@ -20,6 +20,7 @@ RUN apk add --virtual build-deps \
         g++                      \
         gcc                      \
         libffi-dev               \
+        libstdc++                \
         linux-headers            \
         make                     \
         musl-dev
