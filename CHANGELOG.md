@@ -166,3 +166,5 @@ significant modifications will be credited to OpenTelemetry Authors.
 ([#648](https://github.com/open-telemetry/opentelemetry-demo/pull/648))
 * Add Jaeger-SPM-Config
 ([#655](https://github.com/open-telemetry/opentelemetry-demo/pull/655))
+* Update loadgenerator python base image and dependencies
+([#669](https://github.com/open-telemetry/opentelemetry-demo/pull/669))
