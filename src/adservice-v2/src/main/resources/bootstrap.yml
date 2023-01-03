@@ -1,0 +1,131 @@
+spring:
+application:
+  name: adservice-springcloud
+server:
+  port: 8443
+  ssl:
+    enabled: ${SSL_ENABLED:false}
+    key-store-type: JKS
+    key-store: classpath:server.jks
+    key-alias: server
+    #    key-password: changeit
+
+    client-auth: ${SSL_CLIENT_AUTH:need}
+    key-store-password: changeit
+    trust-store: classpath:server.jks
+    trust-store-password: changeit
+    trust-store-type: JKS
+http:
+  port: 8081
+  redirect: ${HTTP_TO_HTTPS:false}
+management:
+  endpoint:
+    info:
+      enabled: true
+    health:
+      enabled: true
+      show-details: always
+  server:
+    port: 8999
+  endpoints:
+    web:
+      base-path: /
+      exposure:
+        include:
+          - health
+          - info
+          - ping
+
+---
+spring:
+  cloud:
+    nacos:
+      config:
+        enabled: false
+      discovery:
+        enabled: false
+        # 注册中心地址
+        server-addr: 10.6.222.21:30903
+        # 注册中心用户名（如果注册中心不开启鉴权，留空）
+        username:
+        # 注册中心密码（如果注册中心不开启鉴权，留空）
+        password:
+        # 修改服务注册到Nacos的命名空间ID，默认留空（空为public）
+        namespace:
+        # 修改服务注册到Nacos的分组名称，默认是：DEFAULT_GROUP
+        group: DEFAULT_GROUP
+        # 修改实例注册到Nacos的实例分组（Nacos中实例集群概念），默认是：DEFAULT
+        cluster-name: DEFAULT
+        metadata:
+          k8s_cluster_id:
+          k8s_cluster_name:
+          k8s_namespace_name:
+          k8s_workload_type:
+          k8s_workload_name:
+          k8s_service_name:
+
+---
+spring:
+  cloud:
+    sentinel:
+      enabled: false
+      # 是否开启预加载, 设置为true时实例启动后自动在sentinel dashboard中展示, 设置为false, 需要实例有流量后该实例才会出现在sentinel dashboard中
+      eager: true
+      transport:
+        # 配置sentinel dashboard地址
+        dashboard: 10.6.222.24:43009
+      # 以下配置为规则存放在nacos配置中心的相关参数
+      datasource:
+        flow:
+          nacos:
+            server-addr: ${spring.cloud.nacos.config.server-addr}
+            dataId: ${spring.application.name}-flow-rules
+            groupId: ${spring.cloud.nacos.discovery.group}
+            namespace: ${spring.cloud.nacos.discovery.namespace}
+            ruleType: flow
+        degrade:
+          nacos:
+            server-addr: ${spring.cloud.nacos.config.server-addr}
+            dataId: ${spring.application.name}-degrade-rules
+            groupId: ${spring.cloud.nacos.discovery.group}
+            namespace: ${spring.cloud.nacos.discovery.namespace}
+            rule-type: degrade
+        system:
+          nacos:
+            server-addr: ${spring.cloud.nacos.config.server-addr}
+            dataId: ${spring.application.name}-system-rules
+            groupId: ${spring.cloud.nacos.discovery.group}
+            namespace: ${spring.cloud.nacos.discovery.namespace}
+            rule-type: system
+        authority:
+          nacos:
+            server-addr: ${spring.cloud.nacos.config.server-addr}
+            dataId: ${spring.application.name}-authority-rules
+            groupId: ${spring.cloud.nacos.discovery.group}
+            namespace: ${spring.cloud.nacos.discovery.namespace}
+            rule-type: authority
+        param-flow:
+          nacos:
+            server-addr: ${spring.cloud.nacos.config.server-addr}
+            dataId: ${spring.application.name}-param-flow-rules
+            groupId: ${spring.cloud.nacos.discovery.group}
+            namespace: ${spring.cloud.nacos.discovery.namespace}
+            rule-type: param-flow
+
+---
+project:
+  # 服务注册在sentinel中的名称, 建议与nacos注册服务名相同
+  name: ${spring.cloud.nacos.discovery.namespace}@@${spring.cloud.nacos.discovery.group}@@${spring.application.name}
+
+---
+grpc:
+  server:
+    port: 8080
+---
+meter:
+  port: 8888
+---
+spring:
+  extraAdLabel: Daocloud
+  randomError: true
+  matrixRow: 200
