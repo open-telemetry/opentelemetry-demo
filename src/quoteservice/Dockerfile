@@ -11,9 +11,14 @@ RUN composer install \
     --no-dev \
     --prefer-dist
 
-FROM php:8.1-apache
+FROM php:8.2-apache
 
-RUN docker-php-ext-install opcache
+ADD https://github.com/mlocati/docker-php-extension-installer/releases/latest/download/install-php-extensions /usr/local/bin/
+RUN chmod +x /usr/local/bin/install-php-extensions \
+  && install-php-extensions \
+    opcache \
+    protobuf \
+    open-telemetry/opentelemetry-php-instrumentation@1.0.0beta1
 
 WORKDIR /var/www
 COPY --from=build /tmp/vendor/ ./vendor/

@@ -2,11 +2,15 @@
     "name": "openteletry-demo/quoteservice",
     "description": "Quote Service part of OpenTelemetry Demo",
     "license": "Apache-2.0",
+    "minimum-stability": "beta",
     "require": {
-        "php": "7.4 || 8.1",
-        "ext-json": "dev-main",
+        "php": ">= 8.2",
+        "ext-json": "*",
         "monolog/monolog": "2.8.0",
-        "open-telemetry/opentelemetry": "0.0.15",
+        "open-telemetry/sdk": "1.0.0beta1",
+        "open-telemetry/exporter-otlp": "1.0.0beta1",
+        "open-telemetry/opentelemetry-auto-slim": "1.0.0beta3",
+        "open-telemetry/opentelemetry-auto-psr15": "1.0.0beta2",
         "guzzlehttp/guzzle": "7.4.5",
         "php-di/php-di": "6.4.0",
         "php-di/slim-bridge": "3.2.0",
@@ -18,10 +22,6 @@
         "psr-4": {
             "App\\": "src/"
         }
-    },
-    "scripts": {
-        "start": "php -S 0.0.0.0:${QUOTE_SERVICE_PORT} -t public",
-        "test": "phpunit"
     },
     "config": {
         "allow-plugins": {
