@@ -52,7 +52,7 @@ We welcome any vendor to fork the project to demonstrate their services and
 adding a link below. The community is committed to maintaining the project and
 keeping it up to date for you.
 
-|                                                                                                            |                                                                                                 |                                                                                              |
+|                                                                                                                   |                                                                                                 |                                                                                              |
 |-------------------------------------------------------------------------------------------------------------------|-------------------------------------------------------------------------------------------------|----------------------------------------------------------------------------------------------|
 | [AlibabaCloud LogService](https://github.com/aliyun-sls/opentelemetry-demo)                                       | [Dynatrace](https://www.dynatrace.com/news/blog/opentelemetry-demo-application-with-dynatrace/) | [New Relic](https://github.com/newrelic/opentelemetry-demo)                                  |
 | [AppDynamics](https://www.appdynamics.com/blog/cloud/how-to-observe-opentelemetry-demo-app-in-appdynamics-cloud/) | [Grafana Labs](https://github.com/grafana/opentelemetry-demo)                                   | [Splunk](https://github.com/signalfx/opentelemetry-demo)                                     |
