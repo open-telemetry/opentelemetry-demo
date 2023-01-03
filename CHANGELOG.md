@@ -144,3 +144,25 @@ significant modifications will be credited to OpenTelemetry Authors.
 ([#587](https://github.com/open-telemetry/opentelemetry-demo/pull/587))
 * Pass product's `categories` as an input for the Ad service
 ([#600](https://github.com/open-telemetry/opentelemetry-demo/pull/600))
+* Add HTTP client instrumentation to shippingservice
+([#610](https://github.com/open-telemetry/opentelemetry-demo/pull/610))
+* Added Kafka, accountingservice and frauddetectionservice for async workflows
+([#512](https://github.com/open-telemetry/opentelemetry-demo/pull/457))
+* Added support for non-root containers
+([#615](https://github.com/open-telemetry/opentelemetry-demo/pull/615))
+* Add tracing to Envoy (frontend-proxy)
+([#613](https://github.com/open-telemetry/opentelemetry-demo/pull/613))
+* Build Kafka image
+([#617](https://github.com/open-telemetry/opentelemetry-demo/pull/617))
+* Use `frontend-web` as service name for browser/web requests
+([#628](https://github.com/open-telemetry/opentelemetry-demo/pull/628))
+* Update `quoteservice` to use opentelemetry-php beta release
+([#644](https://github.com/open-telemetry/opentelemetry-demo/pull/644))
+* Add OTel java agent with JMX Metric Insights to kafka
+([#654](https://github.com/open-telemetry/opentelemetry-demo/pull/654))
+* Add resource detectors to payment service
+([#651](https://github.com/open-telemetry/opentelemetry-demo/pull/651))
+* Add resource detectors to frontend service
+([#648](https://github.com/open-telemetry/opentelemetry-demo/pull/648))
+* Add Jaeger-SPM-Config
+([#655](https://github.com/open-telemetry/opentelemetry-demo/pull/655))
