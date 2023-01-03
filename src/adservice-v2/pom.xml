@@ -9,8 +9,8 @@
     <version>2.7.1</version>
     <relativePath/>
   </parent>
-  <groupId>org.daocloud</groupId>
-  <artifactId>adservice-springcloud</artifactId>
+  <groupId>io.daocloud</groupId>
+  <artifactId>adservice-v2</artifactId>
   <version>1.0-SNAPSHOT</version>
 
   <name>adservice-springcloud</name>
