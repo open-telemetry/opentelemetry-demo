@@ -15,7 +15,14 @@
 FROM python:3.11-alpine3.17 as base
 
 FROM base as builder
-RUN apk add gcc g++ linux-headers musl-dev libffi-dev
+RUN apk add --virtual build-deps \
+        file                     \
+        g++                      \
+        gcc                      \
+        libffi-dev               \
+        linux-headers            \
+        make                     \
+        musl-dev
 COPY ./src/loadgenerator/requirements.txt .
 RUN pip install --prefix="/reqs" -r requirements.txt
 
