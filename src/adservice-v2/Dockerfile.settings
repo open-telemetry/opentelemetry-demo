@@ -1,0 +1,29 @@
+FROM release.daocloud.io/webstore/adservice:v0.0.1 AS builder
+
+WORKDIR /app/
+
+COPY ./ ./
+RUN chmod +x ./mvnw
+RUN ./mvnw package -DskipTests --settings settings.xml
+
+# -----------------------------------------------------------------------------
+
+FROM docker.m.daocloud.io/library/openjdk:11.0.15-jre
+
+WORKDIR /app/
+
+COPY --from=builder /app/target/adservice-springcloud-1.0-SNAPSHOT.jar ./
+COPY --from=builder /app/jmx_prometheus_javaagent-0.17.0.jar ./
+COPY --from=builder /app/prometheus-jmx-config.yaml ./
+COPY --from=builder /app/opentelemetry-javaagent.jar ./
+
+ENV OTEL_EXPORTER_OTLP_ENDPOINT=http://localhost:4317 \
+    AD_SERVICE_PORT=8080 \
+    OTEL_RESOURCE_ATTRIBUTES=service.name=adservice-springcloud \
+    JAVA_TOOL_OPTIONS=-javaagent:opentelemetry-javaagent.jar \
+    JAVA_OPTS='-Dspring.cloud.nacos.config.enabled=false -Dspring.randomError=false' \
+    AD_SERVICE_PORT=8080
+
+EXPOSE 8081 8999 8080 8888
+
+ENTRYPOINT java $JAVA_OPTS -jar adservice-springcloud-1.0-SNAPSHOT.jar

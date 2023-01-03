@@ -42,7 +42,9 @@ checkoutservice --->|gRPC| paymentservice
 checkoutservice -->|gRPC| shippingservice
 checkoutservice -->|TCP| queue
 
+Internet -->|HTTP| adservice-v2
 frontend -->|gRPC| adservice
+frontend -->|gRPC| adservice-v2
 frontend -->|gRPC| cartservice
 frontend -->|gRPC| productcatalogservice
 frontend -->|gRPC| checkoutservice
