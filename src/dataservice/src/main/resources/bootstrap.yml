@@ -1,23 +1,9 @@
 spring:
-application:
-  name: adservice-springcloud
+  application:
+    name: dataservice
 server:
-  port: 8443
-  ssl:
-    enabled: ${SSL_ENABLED:false}
-    key-store-type: JKS
-    key-store: classpath:server.jks
-    key-alias: server
-    #    key-password: changeit
+  port: 8080
 
-    client-auth: ${SSL_CLIENT_AUTH:need}
-    key-store-password: changeit
-    trust-store: classpath:server.jks
-    trust-store-password: changeit
-    trust-store-type: JKS
-http:
-  port: 8081
-  redirect: ${HTTP_TO_HTTPS:false}
 management:
   endpoint:
     info:
@@ -43,9 +29,9 @@ spring:
       config:
         enabled: false
       discovery:
-        enabled: false
+        enabled: true
         # 注册中心地址
-        server-addr: 10.6.222.21:30903
+        server-addr: 10.6.222.24:30903
         # 注册中心用户名（如果注册中心不开启鉴权，留空）
         username:
         # 注册中心密码（如果注册中心不开启鉴权，留空）
@@ -116,11 +102,6 @@ spring:
 project:
   # 服务注册在sentinel中的名称, 建议与nacos注册服务名相同
   name: ${spring.cloud.nacos.discovery.namespace}@@${spring.cloud.nacos.discovery.group}@@${spring.application.name}
-
----
-grpc:
-  server:
-    port: 8080
 ---
 meter:
   port: 8888
