@@ -4,7 +4,7 @@
 
 - Docker
 - [Docker Compose](https://docs.docker.com/compose/install/#install-compose) v2.0.0+
-- 4 GB of RAM
+- 5 GB of RAM
 
 ## Clone Repo
 

@@ -57,7 +57,7 @@ Be mindful of async runtime, [context
 guards](https://docs.rs/opentelemetry/latest/opentelemetry/struct.ContextGuard.html),
 and inability to move and clone `spans` when replicating from these samples.
 
-### Adding gRPC/HTTP instrumentation
+### Adding gRPC instrumentation
 
 This service receives gRPC requests, which are instrumented in the middleware.
 
@@ -106,6 +106,21 @@ You may also notice the `attributes` set on the span in this example, and
 `events` propogated similarly. With any valid `span` pointer (attached to
 context) the [OpenTelemetry API](https://docs.rs/opentelemetry/0.17.0/opentelemetry/trace/struct.SpanRef.html)
 will work.
+
+### Adding HTTP instrumentation
+
+A child *client* span is also produced for the outoing HTTP call to
+`quoteservice` via the `reqwest` client. This span pairs up with the
+corresponding `quoteservice` *server* span. The tracing instrumentation is
+implemented in the client middleware making use of the available
+`reqwest-middleware`, `reqwest-tracing` and `tracing-opentelementry` libraries:
+
+```rust
+    let reqwest_client = reqwest::Client::new();
+    let client = ClientBuilder::new(reqwest_client)
+        .with(TracingMiddleware::<SpanBackendWithUrl>::new())
+        .build();
+```
 
 ### Add span attributes
 

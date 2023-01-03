@@ -18,7 +18,7 @@ RUN npm run build
 
 FROM node:18-alpine AS runner
 WORKDIR /app
-RUN apk add --no-cache protoc
+RUN apk add --no-cache protobuf-dev protoc
 
 ENV NODE_ENV=production
 

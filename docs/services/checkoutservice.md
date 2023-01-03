@@ -67,6 +67,21 @@ func createClient(ctx context.Context, svcAddr string) (*grpc.ClientConn, error)
 }
 ```
 
+### Adding Kafka ( Sarama ) auto-instrumentation
+
+This service will write the processed results onto a Kafka topic which will then
+be in turn be processed by other microservices.
+To instrument the Kafka client the Producer has to be wrapped after it has been created.
+
+```go
+    saramaConfig := sarama.NewConfig()
+    producer, err := sarama.NewAsyncProducer(brokers, saramaConfig)
+    if err != nil {
+        return nil, err
+    }
+    producer = otelsarama.WrapAsyncProducer(saramaConfig, producer)
+```
+
 ### Add attributes to auto-instrumented spans
 
 Within the execution of auto-instrumented code you can get current span from

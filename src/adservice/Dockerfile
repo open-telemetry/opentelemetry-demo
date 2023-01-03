@@ -30,6 +30,7 @@ WORKDIR /usr/src/app/
 
 COPY --from=builder /usr/src/app/ ./
 ADD https://github.com/open-telemetry/opentelemetry-java-instrumentation/releases/download/v$version/opentelemetry-javaagent.jar /app/opentelemetry-javaagent.jar
+RUN chmod 644 /app/opentelemetry-javaagent.jar
 ENV JAVA_TOOL_OPTIONS=-javaagent:/app/opentelemetry-javaagent.jar
 
 EXPOSE ${AD_SERVICE_PORT}
