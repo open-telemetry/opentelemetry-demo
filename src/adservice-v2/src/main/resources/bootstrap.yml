@@ -1,3 +1,4 @@
+data_service_name: dataservice
 spring:
   application:
     name: adservice-v2
@@ -43,9 +44,9 @@ spring:
       config:
         enabled: false
       discovery:
-        enabled: true
+        enabled: false
         # 注册中心地址
-        server-addr: 10.6.222.24:30903
+        server-addr: 10.6.222.24:31255
         # 注册中心用户名（如果注册中心不开启鉴权，留空）
         username:
         # 注册中心密码（如果注册中心不开启鉴权，留空）
@@ -73,7 +74,7 @@ spring:
       eager: true
       transport:
         # 配置sentinel dashboard地址
-        dashboard: 10.6.222.24:43009
+        dashboard: 10.6.222.24:31165
       # 以下配置为规则存放在nacos配置中心的相关参数
       datasource:
         flow:

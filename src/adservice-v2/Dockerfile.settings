@@ -1,4 +1,4 @@
-FROM release.daocloud.io/webstore/adservice:v0.0.1 AS builder
+FROM docker.m.daocloud.io/library/openjdk:11.0.15 AS builder
 
 WORKDIR /app/
 

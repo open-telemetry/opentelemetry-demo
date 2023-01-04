@@ -13,14 +13,20 @@ jobs:
 
     env:
       RELEASE_VERSION: "${{ github.event.release.tag_name }}"
-      DOCKERHUB_REPO: "otel/demo"
-      GHCR_REPO: "ghcr.io/open-telemetry/demo"
+      DOCKERHUB_REPO: "openinsight-proj/demo"
+      GHCR_REPO: "ghcr.io/openinsight-proj/demo"
 
     strategy:
       matrix:
         file_tag:
           - file: ./src/adservice/Dockerfile
             tag_suffix: adservice
+            context: ./
+          - file: ./src/adservice-v2/Dockerfile
+            tag_suffix: adservice-v2
+            context: ./
+          - file: ./src/dataservice/Dockerfile
+            tag_suffix: dataservice
             context: ./
           - file: ./src/cartservice/src/Dockerfile
             tag_suffix: cartservice
@@ -87,7 +93,7 @@ jobs:
         with:
           registry: ghcr.io
           username: ${{ github.repository_owner }}
-          password: ${{ secrets.GITHUB_TOKEN }}
+          password: ${{ secrets.ACTIONS_TOKEN }}
         if: github.event_name != 'pull_request'
 
       - name: Log in to Docker Hub
