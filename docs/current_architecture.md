@@ -10,7 +10,7 @@ subgraph Service Diagram
 accountingservice(Accounting Service):::golang
 adservice(Ad Service):::java
 adservice-v2(Ad Service v2):::java
-dataservice(Data Service)::java
+dataservice(Data Service):::java
 cache[(Cache<br/>&#40redis&#41)]
 cartservice(Cart Service):::dotnet
 checkoutservice(Checkout Service):::golang
