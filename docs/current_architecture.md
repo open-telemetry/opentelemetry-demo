@@ -10,6 +10,7 @@ subgraph Service Diagram
 accountingservice(Accounting Service):::golang
 adservice(Ad Service):::java
 adservice-v2(Ad Service v2):::java
+dataservice(Data Service)::java
 cache[(Cache<br/>&#40redis&#41)]
 cartservice(Cart Service):::dotnet
 checkoutservice(Checkout Service):::golang
@@ -29,6 +30,7 @@ featureflagstore[(Feature Flag Store<br/>&#40PostgreSQL DB&#41)]
 queue[(queue<br/>&#40Kafka&#41)]
 
 Internet -->|HTTP| frontendproxy
+Internet -->|HTTP| adservice-v2
 frontendproxy -->|HTTP| frontend
 frontendproxy -->|HTTP| featureflagservice
 loadgenerator -->|HTTP| frontend
@@ -43,7 +45,6 @@ checkoutservice --->|gRPC| paymentservice
 checkoutservice -->|gRPC| shippingservice
 checkoutservice -->|TCP| queue
 
-Internet -->|HTTP| adservice-v2
 frontend -->|gRPC| adservice
 frontend -->|gRPC| adservice-v2
 frontend -->|gRPC| cartservice
@@ -52,6 +53,8 @@ frontend -->|gRPC| checkoutservice
 frontend -->|gRPC| currencyservice
 frontend -->|gRPC| recommendationservice -->|gRPC| productcatalogservice
 frontend -->|gRPC| shippingservice -->|HTTP| quoteservice
+
+adservice-v2 -->|HTTP| dataservice
 
 frauddetectionservice -->|TCP| queue
 
