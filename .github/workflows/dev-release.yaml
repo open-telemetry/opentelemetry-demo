@@ -100,12 +100,12 @@ jobs:
           password: ${{ secrets.ACTIONS_TOKEN }}
         if: github.event_name != 'pull_request'
 
-      - name: Log in to Docker Hub
-        uses: docker/login-action@v2
-        with:
-          username: ${{ secrets.DOCKER_USERNAME }}
-          password: ${{ secrets.DOCKER_PASSWORD }}
-        if: github.event_name != 'pull_request'
+      # - name: Log in to Docker Hub
+      #   uses: docker/login-action@v2
+      #   with:
+      #     username: ${{ secrets.DOCKER_USERNAME }}
+      #     password: ${{ secrets.DOCKER_PASSWORD }}
+      #   if: github.event_name != 'pull_request'
 
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v2
@@ -125,7 +125,6 @@ jobs:
           platforms: linux/amd64
           push: ${{ github.event_name != 'pull_request' }}
           tags: |
-            ${{ env.DOCKERHUB_REPO }}:${{ env.RELEASE_VERSION || 'pr' }}-${{matrix.file_tag.tag_suffix }}
             ${{ env.GHCR_REPO }}:${{ env.RELEASE_VERSION || 'pr' }}-${{ matrix.file_tag.tag_suffix }}
           cache-from: type=gha
           cache-to: type=gha
