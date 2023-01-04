@@ -36,6 +36,8 @@ composer.lock
 src/frontend/cypress/videos
 src/frontend/cypress/screenshots
 src/shippingservice/target/
+src/adservice-v2/target/
+src/dataservice/target/
 
 # Ignore copied/generated protobuf files
 /src/cartservice/src/protos/
