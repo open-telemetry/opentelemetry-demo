@@ -4,6 +4,7 @@ on:
   push:
     branches:
       - 'openinsight/**'
+      - 'daocloud'
   pull_request:
     branches: [ main ]
 
