@@ -11,7 +11,7 @@ FROM docker.m.daocloud.io/library/openjdk:11.0.15-jre
 
 WORKDIR /app/
 
-COPY --from=builder /app/target/adservice-springcloud-1.0-SNAPSHOT.jar ./
+COPY --from=builder /app/target/adservice-v2-1.0-SNAPSHOT.jar ./
 COPY --from=builder /app/jmx_prometheus_javaagent-0.17.0.jar ./
 COPY --from=builder /app/prometheus-jmx-config.yaml ./
 
@@ -26,4 +26,4 @@ ENV OTEL_EXPORTER_OTLP_ENDPOINT=http://localhost:4317 \
 
 EXPOSE 8081 8999 8080 8888
 
-ENTRYPOINT java $JAVA_OPTS -jar adservice-springcloud-1.0-SNAPSHOT.jar
+ENTRYPOINT java $JAVA_OPTS -jar adservice-v2-1.0-SNAPSHOT.jar
