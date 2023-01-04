@@ -1,10 +1,9 @@
-FROM docker.m.daocloud.io/library/openjdk:11.0.15 AS builder
+FROM eclipse-temurin:17-jdk AS builder
 
 WORKDIR /app/
 
-COPY ./ ./
-RUN chmod +x ./mvnw
-RUN ./mvnw clean package -DskipTests
+COPY ./src/dataservice/  ./
+RUN ./mvnw --batch-mode clean package -DskipTests
 
 # -----------------------------------------------------------------------------
 
