@@ -58,6 +58,7 @@ keeping it up to date for you.
 - [Coralogix](https://coralogix.com/blog/configure-otel-demo-send-telemetry-data-coralogix)
 - [Datadog](https://github.com/DataDog/opentelemetry-demo)
 - [Dynatrace](https://www.dynatrace.com/news/blog/opentelemetry-demo-application-with-dynatrace/)
+- [Grafana Labs](https://github.com/grafana/opentelemetry-demo)
 - [Helios](https://otelsandbox.gethelios.dev)
 - [Honeycomb.io](https://github.com/honeycombio/opentelemetry-demo)
 - [Lightstep](https://github.com/lightstep/opentelemetry-demo)
