@@ -26,6 +26,7 @@ quoteservice(Quote Service):::php
 recommendationservice(Recommendation Service):::python
 shippingservice(Shipping Service):::rust
 featureflagservice(Feature Flag Service):::erlang
+adstore[(DataService Store<br/>&#40Mysql DB&#41)]
 featureflagstore[(Feature Flag Store<br/>&#40PostgreSQL DB&#41)]
 queue[(queue<br/>&#40Kafka&#41)]
 
@@ -55,6 +56,7 @@ frontend -->|gRPC| recommendationservice -->|gRPC| productcatalogservice
 frontend -->|gRPC| shippingservice -->|HTTP| quoteservice
 
 adservice-v2 -->|HTTP| dataservice
+dataservice ---> |TCP| adstore
 
 frauddetectionservice -->|TCP| queue
 
