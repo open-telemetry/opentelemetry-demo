@@ -1,2 +1,19 @@
 # extra settings to be merged into OpenTelemetry Collector configuration
 # do not delete this file
+
+exporters:
+  otlp/newrelic:
+    endpoint: ${NEWRELIC_OTLP_ENDPOINT}
+    headers:
+      api-key: ${NEWRELIC_LICENSE_KEY}
+
+service:
+  pipelines:
+    traces:
+      receivers: [otlp]
+      processors: [batch]
+      exporters: [otlp/newrelic]
+    metrics:
+      receivers: [otlp]
+      processors: [batch]
+      exporters: [otlp/newrelic]

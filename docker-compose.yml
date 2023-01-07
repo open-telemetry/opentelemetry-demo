@@ -624,6 +624,9 @@ services:
       - "4318:4318"     # OTLP over HTTP receiver
       - "9464"          # Prometheus exporter
       - "8888"          # metrics endpoint
+    environment:
+      - NEWRELIC_OTLP_ENDPOINT=${NEWRELIC_OTLP_ENDPOINT}
+      - NEWRELIC_LICENSE_KEY=${NEWRELIC_LICENSE_KEY}
     depends_on:
       - jaeger
     logging: *logging
