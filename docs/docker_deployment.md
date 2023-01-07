@@ -8,10 +8,10 @@
 
 ## Clone Repo
 
-- Clone the Webstore Demo repository:
+- Clone the Webstore Demo repository (New Relic):
 
 ```shell
-git clone https://github.com/open-telemetry/opentelemetry-demo.git
+git clone https://github.com/newrelic/opentelemetry-demo.git
 ```
 
 ## Open Folder
@@ -48,11 +48,11 @@ Once the images are built and containers are started you can access:
 - Load Generator UI: <http://localhost:8080/loadgen/>
 - Jaeger UI: <http://localhost:8080/jaeger/ui/>
 
-## Bring your own backend
+## Bring your New Relic account
 
 Likely you want to use the Webstore as a demo application for an observability
-backend you already have (e.g. an existing instance of Jaeger, Zipkin, or one
-of the [vendor of your choice](https://opentelemetry.io/vendors/).
+backend you already have (e.g. an existing instance of Jaeger, Zipkin or
+New Relic).
 
 OpenTelemetry Collector can be used to export telemetry data to multiple
 backends. By default, the collector in the demo application will merge the
@@ -65,31 +65,48 @@ To add your backend, open the file
 [src/otelcollector/otelcol-config-extras.yml](../src/otelcollector/otelcol-config-extras.yml)
 with an editor.
 
-- Start by adding a new exporter. For example, if your backend supports
-  OTLP over HTTP, add the following:
+- A new OTLP exporter for New Relic is already added for you where the
+New Relic endpoint and your license key are configured as environment
+variables.
 
 ```yaml
 exporters:
-  otlphttp/example:
-    endpoint: <your-endpoint-url>
+  otlp/newrelic:
+    endpoint: ${NEWRELIC_OTLP_ENDPOINT}
+    headers:
+      api-key: ${NEWRELIC_LICENSE_KEY}
 ```
 
-- Then add a new pipeline with your new exporter:
+- Your New Relic exporter above is also already added into your pipeline:
 
 ```yaml
 service:
   pipelines:
     traces:
-      receivers: [otlp]
-      processors: [batch]
-      exporters: [otlphttp/example]
+      exporters: [otlp/newrelic]
+    metrics:
+      exporters: [otlp/newrelic]
 ```
 
-Vendor backends might require you to add additional parameters for
-authentication, please check their documentation. Some backends require
-different exporters, you may find them and their documentation available at
-[opentelemetry-collector-contrib/exporter](https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/main/exporter).
+To define your endpoint and your license key, open the file [.env](../.env).
 
-After updating the `otelcol-config-extras.yml`, start the demo by running
-`docker compose up`. After a while, you should see the traces flowing into
-your backend as well.
+- Down below the file you will see the New Relic specific variables. Configure
+them according to the region which your account is in.
+
+- You can directly copy/paste your license key to `NEWRELIC_LICENSE_KEY` or
+define it in your terminal.
+
+```yaml
+### New Relic
+# Select corresponding OTLP endpoint depending where your account is.
+NEWRELIC_OTLP_ENDPOINT_US=https://otlp.nr-data.net:4317
+NEWRELIC_OTLP_ENDPOINT_EU=https://otlp.eu01.nr-data.net:4317
+NEWRELIC_OTLP_ENDPOINT=${NEWRELIC_OTLP_ENDPOINT_US}
+
+# Define license key as environment variable
+NEWRELIC_LICENSE_KEY=${NEWRELIC_LICENSE_KEY}
+```
+
+After updating the `otelcol-config-extras.yml` and `env` files, start the demo
+by running `docker compose up`. After a while, you should see the telemetry
+data flowing into your New Relic account as well.
