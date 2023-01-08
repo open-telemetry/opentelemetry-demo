@@ -34,10 +34,16 @@ RUN go build -o /go/bin/productcatalogservice/ ./
 
 FROM alpine AS release
 
+RUN addgroup --system mygroup
+RUN adduser --system --shell /sbin/nologin --ingroup mygroup myuser
+
 WORKDIR /usr/src/app/
 
 COPY ./src/productcatalogservice/products.json ./
 COPY --from=builder /go/bin/productcatalogservice/ ./
+
+RUN chown myuser:mygroup -R /usr/src/app/
+USER myuser
 
 EXPOSE ${PRODUCT_SERVICE_PORT}
 ENTRYPOINT [ "./productcatalogservice" ]

@@ -25,13 +25,19 @@ RUN ./gradlew installDist -PprotoSourceDir=./proto
 
 FROM eclipse-temurin:17-jdk
 
+RUN addgroup --system mygroup
+RUN adduser --system --shell /sbin/nologin --ingroup mygroup myuser
+
 ARG version=1.19.1
 WORKDIR /usr/src/app/
+RUN chown myuser:mygroup /usr/src/app/
 
 COPY --from=builder /usr/src/app/ ./
 ADD https://github.com/open-telemetry/opentelemetry-java-instrumentation/releases/download/v$version/opentelemetry-javaagent.jar /app/opentelemetry-javaagent.jar
 RUN chmod 644 /app/opentelemetry-javaagent.jar
+RUN chown myuser:mygroup /app/opentelemetry-javaagent.jar
 ENV JAVA_TOOL_OPTIONS=-javaagent:/app/opentelemetry-javaagent.jar
 
+USER myuser
 EXPOSE ${AD_SERVICE_PORT}
 ENTRYPOINT [ "./build/install/hipstershop/bin/AdService" ]

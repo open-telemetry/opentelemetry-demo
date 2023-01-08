@@ -1,4 +1,8 @@
 FROM ubuntu:20.04
+
+RUN addgroup --system mygroup
+RUN adduser --system --shell /sbin/nologin --ingroup mygroup myuser
+
 ENV DEBIAN_FRONTEND noninteractive
 
 RUN apt-get -y update
@@ -55,5 +59,9 @@ COPY . /currencyservice
 RUN cd /currencyservice \
     && mkdir -p build && cd build \
     && cmake .. && make -j install
+
+RUN chown myuser:mygroup -R /currencyservice
+RUN chown myuser:mygroup /usr/local/bin/currencyservice
+USER myuser
 
 ENTRYPOINT /usr/local/bin/currencyservice ${CURRENCY_SERVICE_PORT}
