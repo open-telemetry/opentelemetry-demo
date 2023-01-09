@@ -177,4 +177,5 @@ significant modifications will be credited to OpenTelemetry Authors.
 * Add `OTEL_RESOURCE_ATTRIBUTES` to docker compose setup
 ([#664](https://github.com/open-telemetry/opentelemetry-demo/pull/664))
 * Add resource detectors to product catalog service
+([#677](https://github.com/open-telemetry/opentelemetry-demo/pull/677))
 
