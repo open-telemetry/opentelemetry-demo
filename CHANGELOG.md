@@ -174,3 +174,4 @@ significant modifications will be credited to OpenTelemetry Authors.
 ([#662](https://github.com/open-telemetry/opentelemetry-demo/pull/662))
 * Add resource detectors to cart service
 ([#663](https://github.com/open-telemetry/opentelemetry-demo/pull/663))
+* Add resource detectors to accounting service
