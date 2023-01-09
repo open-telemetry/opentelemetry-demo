@@ -3,11 +3,6 @@ docs
 internal
 
 ###################################
-# shippingservice
-./src/shippingservice/target
-###################################
-
-###################################
 # currencyservice
 ./src/currencyservice/client.js
 ./src/currencyservice/node_modules/
@@ -21,6 +16,15 @@ internal
 ./src/featureflagservice/test/
 ./src/featureflagservice/tmp/
 ./src/featureflagservice/.elixir_ls
+
+###################################
+# frontend
+./src/frontend/node_modules/
+
+###################################
+# shippingservice
+./src/shippingservice/target
+###################################
 
 # Mix artifacts
 ./src/featureflagservice/_build/

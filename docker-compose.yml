@@ -200,7 +200,7 @@ services:
     environment:
       - APP_ENV=production
       - EMAIL_SERVICE_PORT
-      - OTEL_EXPORTER_OTLP_TRACES_ENDPOINT=http://otelcol:4318/v1/traces
+      - OTEL_EXPORTER_OTLP_TRACES_ENDPOINT=http://${OTEL_COLLECTOR_HOST}:4318/v1/traces
       - OTEL_SERVICE_NAME=emailservice
     depends_on:
       - otelcol
@@ -435,7 +435,7 @@ services:
     ports:
       - "${QUOTE_SERVICE_PORT}"
     environment:
-      - OTEL_EXPORTER_OTLP_TRACES_ENDPOINT=http://otelcol:4318/v1/traces
+      - OTEL_EXPORTER_OTLP_TRACES_ENDPOINT=http://${OTEL_COLLECTOR_HOST}:4318/v1/traces
       - OTEL_PHP_AUTOLOAD_ENABLED=true
       - QUOTE_SERVICE_PORT
       - OTEL_SERVICE_NAME=quoteservice
@@ -537,10 +537,14 @@ services:
     deploy:
       resources:
         limits:
-          memory: 600M
+          memory: 800M
     restart: always
     environment:
-      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:9092
+      - KAFKA_ADVERTISED_LISTENERS=PLAINTEXT://kafka:9092
+      - OTEL_EXPORTER_OTLP_TRACES_ENDPOINT
+      - OTEL_EXPORTER_OTLP_METRICS_ENDPOINT
+      - OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE
+      - OTEL_SERVICE_NAME=kafka
     logging: *logging
     healthcheck:
       test: nc -z kafka 9092
@@ -571,7 +575,13 @@ services:
   jaeger:
     image: jaegertracing/all-in-one
     container_name: jaeger
-    command: ["--memory.max-traces", "10000", "--query.base-path", "/jaeger/ui"]
+    command:
+      - "--memory.max-traces"
+      - "10000"
+      - "--query.base-path"
+      - "/jaeger/ui"
+      - "--prometheus.server-url"
+      - "http://${PROMETHEUS_ADDR}"
     deploy:
       resources:
         limits:
@@ -582,6 +592,7 @@ services:
       - "4317"                           # OTLP gRPC default port
     environment:
       - COLLECTOR_OTLP_ENABLED=true
+      - METRICS_STORAGE_TYPE=prometheus
     logging: *logging
 
   # Grafana

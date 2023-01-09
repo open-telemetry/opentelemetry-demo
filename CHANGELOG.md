@@ -160,3 +160,19 @@ significant modifications will be credited to OpenTelemetry Authors.
 ([#644](https://github.com/open-telemetry/opentelemetry-demo/pull/644))
 * Add build for arm64 arch
 ([#644](https://github.com/open-telemetry/opentelemetry-demo/pull/657))
+* Add synthetic attribute flag to front end instrumentation
+([#631](https://github.com/open-telemetry/opentelemetry-demo/pull/631))
+* Fix the total sum on the cart page
+([#633](https://github.com/open-telemetry/opentelemetry-demo/pull/633))
+* Add OTel java agent with JMX Metric Insights to kafka
+([#654](https://github.com/open-telemetry/opentelemetry-demo/pull/654))
+* Add resource detectors to payment service
+([#651](https://github.com/open-telemetry/opentelemetry-demo/pull/651))
+* Add resource detectors to frontend service
+([#648](https://github.com/open-telemetry/opentelemetry-demo/pull/648))
+* Add Jaeger-SPM-Config
+([#655](https://github.com/open-telemetry/opentelemetry-demo/pull/655))
+* Add resource detectors to checkout service
+([#662](https://github.com/open-telemetry/opentelemetry-demo/pull/662))
+* Add resource detectors to cart service
+([#663](https://github.com/open-telemetry/opentelemetry-demo/pull/663))
