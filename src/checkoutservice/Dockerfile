@@ -31,9 +31,15 @@ RUN go build -o /go/bin/checkoutservice/ ./
 
 FROM alpine
 
+RUN addgroup --system mygroup
+RUN adduser --system --shell /sbin/nologin --ingroup mygroup myuser
+
 WORKDIR /usr/src/app/
 
 COPY --from=builder /go/bin/checkoutservice/ ./
+
+RUN chown myuser:mygroup -R /usr/src/app/
+USER myuser
 
 EXPOSE ${CHECKOUT_SERVICE_PORT}
 ENTRYPOINT [ "./checkoutservice" ]

@@ -17,8 +17,14 @@ RUN go build -o /go/bin/accountingservice/ ./
 
 FROM alpine
 
+RUN addgroup --system mygroup
+RUN adduser --system --shell /sbin/nologin --ingroup mygroup myuser
+
 WORKDIR /usr/src/app/
 
 COPY --from=builder /go/bin/accountingservice/ ./
+
+RUN chown myuser:mygroup -R /usr/src/app/
+USER myuser
 
 ENTRYPOINT [ "./accountingservice" ]

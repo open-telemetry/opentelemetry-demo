@@ -14,10 +14,16 @@
 
 FROM python:3.10 AS base
 
+RUN addgroup --system mygroup
+RUN adduser --system --shell /sbin/nologin --ingroup mygroup myuser
+
 WORKDIR /usr/src/app/
 
 COPY ./src/loadgenerator/ ./
 
 RUN pip install --prefix="/usr/local/" -r ./requirements.txt
+
+RUN chown myuser:mygroup -R /usr/src/app/
+USER myuser
 
 ENTRYPOINT locust

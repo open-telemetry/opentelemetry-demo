@@ -31,8 +31,14 @@ RUN \
 # https://mcr.microsoft.com/v2/dotnet/runtime-deps/tags/list
 FROM mcr.microsoft.com/dotnet/runtime-deps:6.0.5-alpine3.15
 
+RUN addgroup --system mygroup
+RUN adduser --system --shell /sbin/nologin --ingroup mygroup myuser
+
 WORKDIR /usr/src/app/
 COPY --from=builder /cartservice/ ./
+
+RUN chown myuser:mygroup -R /usr/src/app/
+USER myuser
 
 EXPOSE ${CART_SERVICE_PORT}
 ENTRYPOINT [ "./cartservice" ]
