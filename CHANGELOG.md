@@ -176,3 +176,7 @@ significant modifications will be credited to OpenTelemetry Authors.
 ([#662](https://github.com/open-telemetry/opentelemetry-demo/pull/662))
 * Add resource detectors to cart service
 ([#663](https://github.com/open-telemetry/opentelemetry-demo/pull/663))
+* Add `OTEL_RESOURCE_ATTRIBUTES` to docker compose setup
+([#664](https://github.com/open-telemetry/opentelemetry-demo/pull/664))
+* Update loadgenerator python base image and dependencies
+([#669](https://github.com/open-telemetry/opentelemetry-demo/pull/669))
