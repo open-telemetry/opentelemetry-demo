@@ -47,6 +47,7 @@ services:
       - OTEL_EXPORTER_OTLP_TRACES_ENDPOINT
       - OTEL_EXPORTER_OTLP_METRICS_ENDPOINT
       - OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE
+      - OTEL_RESOURCE_ATTRIBUTES
       - OTEL_SERVICE_NAME=accountingservice
     depends_on:
       otelcol:
@@ -76,6 +77,7 @@ services:
       - OTEL_EXPORTER_OTLP_TRACES_ENDPOINT
       - OTEL_EXPORTER_OTLP_METRICS_ENDPOINT
       - OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE
+      - OTEL_RESOURCE_ATTRIBUTES
       - OTEL_SERVICE_NAME=adservice
     depends_on:
       - otelcol
@@ -101,6 +103,7 @@ services:
       - CART_SERVICE_PORT
       - REDIS_ADDR
       - OTEL_EXPORTER_OTLP_ENDPOINT
+      - OTEL_RESOURCE_ATTRIBUTES
       - OTEL_SERVICE_NAME=cartservice
       - ASPNETCORE_URLS=http://*:${CART_SERVICE_PORT}
     depends_on:
@@ -136,6 +139,7 @@ services:
       - OTEL_EXPORTER_OTLP_TRACES_ENDPOINT
       - OTEL_EXPORTER_OTLP_METRICS_ENDPOINT
       - OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE
+      - OTEL_RESOURCE_ATTRIBUTES
       - OTEL_SERVICE_NAME=checkoutservice
     depends_on:
       cartservice:
@@ -177,7 +181,7 @@ services:
     environment:
       - CURRENCY_SERVICE_PORT
       - OTEL_EXPORTER_OTLP_TRACES_ENDPOINT
-      - OTEL_RESOURCE_ATTRIBUTES=service.name=currencyservice   # The C++ SDK does not support OTEL_SERVICE_NAME
+      - OTEL_RESOURCE_ATTRIBUTES=${OTEL_RESOURCE_ATTRIBUTES},service.name=currencyservice   # The C++ SDK does not support OTEL_SERVICE_NAME
     depends_on:
       - otelcol
     logging: *logging
@@ -201,6 +205,7 @@ services:
       - APP_ENV=production
       - EMAIL_SERVICE_PORT
       - OTEL_EXPORTER_OTLP_TRACES_ENDPOINT=http://${OTEL_COLLECTOR_HOST}:4318/v1/traces
+      - OTEL_RESOURCE_ATTRIBUTES
       - OTEL_SERVICE_NAME=emailservice
     depends_on:
       - otelcol
@@ -255,6 +260,7 @@ services:
       - OTEL_EXPORTER_OTLP_TRACES_ENDPOINT
       - OTEL_EXPORTER_OTLP_METRICS_ENDPOINT
       - OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE
+      - OTEL_RESOURCE_ATTRIBUTES
       - OTEL_SERVICE_NAME=frauddetectionservice
     depends_on:
       otelcol:
@@ -290,7 +296,7 @@ services:
       - RECOMMENDATION_SERVICE_ADDR
       - SHIPPING_SERVICE_ADDR
       - OTEL_EXPORTER_OTLP_TRACES_ENDPOINT
-      - OTEL_RESOURCE_ATTRIBUTES=service.name=frontend
+      - OTEL_RESOURCE_ATTRIBUTES=${OTEL_RESOURCE_ATTRIBUTES}
       - OTEL_EXPORTER_OTLP_ENDPOINT
       - ENV_PLATFORM
       - OTEL_SERVICE_NAME=frontend
@@ -361,6 +367,7 @@ services:
       - LOCUST_HEADLESS
       - LOCUST_AUTOSTART
       - OTEL_EXPORTER_OTLP_TRACES_ENDPOINT
+      - OTEL_RESOURCE_ATTRIBUTES
       - OTEL_SERVICE_NAME=loadgenerator
       - PROTOCOL_BUFFERS_PYTHON_IMPLEMENTATION=python
     depends_on:
@@ -388,6 +395,7 @@ services:
       - OTEL_EXPORTER_OTLP_TRACES_ENDPOINT
       - OTEL_EXPORTER_OTLP_METRICS_ENDPOINT
       - OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE
+      - OTEL_RESOURCE_ATTRIBUTES
       - OTEL_SERVICE_NAME=paymentservice
     depends_on:
       - otelcol
@@ -413,6 +421,7 @@ services:
       - PRODUCT_CATALOG_SERVICE_PORT
       - FEATURE_FLAG_GRPC_SERVICE_ADDR
       - OTEL_EXPORTER_OTLP_TRACES_ENDPOINT
+      - OTEL_RESOURCE_ATTRIBUTES
       - OTEL_SERVICE_NAME=productcatalogservice
     depends_on:
       - otelcol
@@ -438,6 +447,7 @@ services:
       - OTEL_EXPORTER_OTLP_TRACES_ENDPOINT=http://${OTEL_COLLECTOR_HOST}:4318/v1/traces
       - OTEL_PHP_AUTOLOAD_ENABLED=true
       - QUOTE_SERVICE_PORT
+      - OTEL_RESOURCE_ATTRIBUTES
       - OTEL_SERVICE_NAME=quoteservice
     depends_on:
       - otelcol
@@ -468,6 +478,7 @@ services:
       - OTEL_METRICS_EXPORTER=otlp
       - OTEL_EXPORTER_OTLP_ENDPOINT
       - OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE
+      - OTEL_RESOURCE_ATTRIBUTES
       - OTEL_SERVICE_NAME=recommendationservice
       - PROTOCOL_BUFFERS_PYTHON_IMPLEMENTATION=python
     depends_on:
@@ -496,6 +507,7 @@ services:
       - SHIPPING_SERVICE_PORT
       - QUOTE_SERVICE_ADDR
       - OTEL_EXPORTER_OTLP_TRACES_ENDPOINT
+      - OTEL_RESOURCE_ATTRIBUTES
       - OTEL_SERVICE_NAME=shippingservice
     depends_on:
       - otelcol
@@ -544,6 +556,7 @@ services:
       - OTEL_EXPORTER_OTLP_TRACES_ENDPOINT
       - OTEL_EXPORTER_OTLP_METRICS_ENDPOINT
       - OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE
+      - OTEL_RESOURCE_ATTRIBUTES
       - OTEL_SERVICE_NAME=kafka
     logging: *logging
     healthcheck:
