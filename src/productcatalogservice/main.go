@@ -21,17 +21,20 @@ import (
 	"net"
 	"os"
 	"strings"
+	"time"
 
 	pb "github.com/opentelemetry/opentelemetry-demo/src/productcatalogservice/genproto/hipstershop"
-	healthpb "google.golang.org/grpc/health/grpc_health_v1"
-
 	"github.com/sirupsen/logrus"
-
 	"go.opentelemetry.io/contrib/instrumentation/google.golang.org/grpc/otelgrpc"
+	"go.opentelemetry.io/contrib/instrumentation/runtime"
+	"go.opentelemetry.io/otel/metric/global"
+	sdkmetric "go.opentelemetry.io/otel/sdk/metric"
+	healthpb "google.golang.org/grpc/health/grpc_health_v1"
 
 	"go.opentelemetry.io/otel"
 	"go.opentelemetry.io/otel/attribute"
 	otelcodes "go.opentelemetry.io/otel/codes"
+	"go.opentelemetry.io/otel/exporters/otlp/otlpmetric/otlpmetricgrpc"
 	"go.opentelemetry.io/otel/exporters/otlp/otlptrace/otlptracegrpc"
 	"go.opentelemetry.io/otel/propagation"
 	sdktrace "go.opentelemetry.io/otel/sdk/trace"
@@ -68,6 +71,19 @@ func initTracerProvider() *sdktrace.TracerProvider {
 	return tp
 }
 
+func initMeterProvider() *sdkmetric.MeterProvider {
+	ctx := context.Background()
+
+	exporter, err := otlpmetricgrpc.New(ctx)
+	if err != nil {
+		log.Fatalf("new otlp metric grpc exporter failed: %v", err)
+	}
+
+	mp := sdkmetric.NewMeterProvider(sdkmetric.WithReader(sdkmetric.NewPeriodicReader(exporter)))
+	global.SetMeterProvider(mp)
+	return mp
+}
+
 func main() {
 	tp := initTracerProvider()
 	defer func() {
@@ -75,6 +91,18 @@ func main() {
 			log.Fatalf("Tracer Provider Shutdown: %v", err)
 		}
 	}()
+
+	mp := initMeterProvider()
+	defer func() {
+		if err := mp.Shutdown(context.Background()); err != nil {
+			log.Fatalf("Error shutting down meter provider: %v", err)
+		}
+	}()
+
+	err := runtime.Start(runtime.WithMinimumReadMemStatsInterval(time.Second))
+	if err != nil {
+		log.Fatal(err)
+	}
 
 	svc := &productCatalog{}
 	var port string

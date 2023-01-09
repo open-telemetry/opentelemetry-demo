@@ -176,3 +176,5 @@ significant modifications will be credited to OpenTelemetry Authors.
 ([#663](https://github.com/open-telemetry/opentelemetry-demo/pull/663))
 * Add `OTEL_RESOURCE_ATTRIBUTES` to docker compose setup
 ([#664](https://github.com/open-telemetry/opentelemetry-demo/pull/664))
+* Add basic metric support to productcatalog service
+([#674](https://github.com/open-telemetry/opentelemetry-demo/pull/674))
