@@ -21,6 +21,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
 using OpenTelemetry.Metrics;
 using OpenTelemetry.Resources;
+using OpenTelemetry.Extensions.Docker.Resources;
 using OpenTelemetry.Trace;
 using cartservice.services;
 using Microsoft.AspNetCore.Http;
@@ -42,7 +43,11 @@ Console.WriteLine("Initialization completed");
 builder.Services.AddSingleton<ICartStore>(cartStore);
 
 builder.Services.AddOpenTelemetryTracing((builder) => builder
-    .ConfigureResource(r => r.AddTelemetrySdk())
+    .ConfigureResource(r => r
+        .AddTelemetrySdk()
+        .AddEnvironmentVariableDetector()
+        .AddDetector(new DockerResourceDetector())
+    )
     .AddRedisInstrumentation(
         cartStore.GetConnection(),
         options => options.SetVerboseDatabaseStatements = true)
@@ -52,7 +57,11 @@ builder.Services.AddOpenTelemetryTracing((builder) => builder
     .AddOtlpExporter());
 
 builder.Services.AddOpenTelemetryMetrics(builder => builder
-    .ConfigureResource(r => r.AddTelemetrySdk())
+    .ConfigureResource(r => r
+        .AddTelemetrySdk()
+        .AddEnvironmentVariableDetector()
+        .AddDetector(new DockerResourceDetector())
+    )
     .AddRuntimeInstrumentation()
     .AddAspNetCoreInstrumentation()
     .AddOtlpExporter());
