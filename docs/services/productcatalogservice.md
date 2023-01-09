@@ -54,7 +54,7 @@ as part of the gRPC server creation.
 ```
 
 This service will issue outgoing gRPC calls, which are all instrumented by
-wrapping the gRPC client with instrumentation
+wrapping the gRPC client with instrumentation.
 
 ```go
 func createClient(ctx context.Context, svcAddr string) (*grpc.ClientConn, error) {
@@ -130,7 +130,7 @@ func initMeterProvider() *sdkmetric.MeterProvider {
 
 You should call `initMeterProvider.Shutdown()` when your service is shutdown to
 ensure all records are exported. This service makes that call as part of a
-deferred function in main
+deferred function in main.
 
 ```go
     mp := initMeterProvider()
@@ -143,7 +143,7 @@ deferred function in main
 
 ### Adding golang runtime auto-instrumentation
 
-Golang runtime are instrumented in the main function
+Golang runtime is instrumented in the main function
 
 ```go
     err := runtime.Start(runtime.WithMinimumReadMemStatsInterval(time.Second))
