@@ -1,2 +1,65 @@
 # extra settings to be merged into OpenTelemetry Collector configuration
 # do not delete this file
+receivers:
+  # The hostmetrics receiver is required to get correct infrastructure metrics in Datadog.
+  hostmetrics:
+    collection_interval: 10s
+    scrapers:
+      paging:
+        metrics:
+          system.paging.utilization:
+            enabled: true
+      cpu:
+        metrics:
+          system.cpu.utilization:
+            enabled: true
+      disk:
+      filesystem:
+        metrics:
+          system.filesystem.utilization:
+            enabled: true
+      load:
+      memory:
+      network:
+      processes:
+  # The prometheus receiver scrapes metrics needed for the OpenTelemetry Collector Dashboard.
+  prometheus:
+    config:
+      scrape_configs:
+      - job_name: 'otelcol'
+        scrape_interval: 10s
+        static_configs:
+        - targets: ['0.0.0.0:8888']
+
+processors:
+  batch:
+    # Datadog APM Intake limit is 3.2MB. Let's make sure the batches do not
+    # go over that.
+    send_batch_max_size: 1000
+    send_batch_size: 100
+    timeout: 10s
+  resource:
+    attributes:
+      - key: deployment.environment   # Set env tag for Datadog
+        value: "otel"
+        action: upsert
+
+exporters:
+  datadog:
+    api:
+      key: ${DD_API_KEY}
+    host_metadata:
+      tags:
+        - otel:true
+
+service:
+  pipelines:
+    metrics:
+      receivers: [hostmetrics]
+      processors: [batch, resource]
+      exporters: [prometheus, datadog]
+    traces:
+      processors: [batch, resource]
+      exporters: [datadog]
+
+
