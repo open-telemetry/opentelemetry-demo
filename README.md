@@ -52,21 +52,13 @@ We welcome any vendor to fork the project to demonstrate their services and
 adding a link below. The community is committed to maintaining the project and
 keeping it up to date for you.
 
-- [AlibabaCloud LogService](https://github.com/aliyun-sls/opentelemetry-demo)
-- [AppDynamics](https://www.appdynamics.com/blog/cloud/how-to-observe-opentelemetry-demo-app-in-appdynamics-cloud/)
-- [Aspecto](https://github.com/aspecto-io/opentelemetry-demo)
-- [Coralogix](https://coralogix.com/blog/configure-otel-demo-send-telemetry-data-coralogix)
-- [Datadog](https://github.com/DataDog/opentelemetry-demo)
-- [Dynatrace](https://www.dynatrace.com/news/blog/opentelemetry-demo-application-with-dynatrace/)
-- [Grafana Labs](https://github.com/grafana/opentelemetry-demo)
-- [Helios](https://otelsandbox.gethelios.dev)
-- [Honeycomb.io](https://github.com/honeycombio/opentelemetry-demo)
-- [Lightstep](https://github.com/lightstep/opentelemetry-demo)
-- [New Relic](https://github.com/newrelic/opentelemetry-demo)
-- [Splunk](https://github.com/signalfx/opentelemetry-demo)
-- [Sumo Logic](https://github.com/SumoLogic/opentelemetry-demo)
-- [TelemetryHub](https://github.com/TelemetryHub/opentelemetry-demo/tree/telemetryhub-backend)
-- [Uptrace](https://github.com/uptrace/uptrace/tree/master/example/opentelemetry-demo)
+|                                                                                                                   |                                                                                                 |                                                                                              |
+|-------------------------------------------------------------------------------------------------------------------|-------------------------------------------------------------------------------------------------|----------------------------------------------------------------------------------------------|
+| [AlibabaCloud LogService](https://github.com/aliyun-sls/opentelemetry-demo)                                       | [Dynatrace](https://www.dynatrace.com/news/blog/opentelemetry-demo-application-with-dynatrace/) | [New Relic](https://github.com/newrelic/opentelemetry-demo)                                  |
+| [AppDynamics](https://www.appdynamics.com/blog/cloud/how-to-observe-opentelemetry-demo-app-in-appdynamics-cloud/) | [Grafana Labs](https://github.com/grafana/opentelemetry-demo)                                   | [Splunk](https://github.com/signalfx/opentelemetry-demo)                                     |
+| [Aspecto](https://github.com/aspecto-io/opentelemetry-demo)                                                       | [Helios](https://otelsandbox.gethelios.dev)                                                     | [Sumo Logic](https://github.com/SumoLogic/opentelemetry-demo)                                |
+| [Coralogix](https://coralogix.com/blog/configure-otel-demo-send-telemetry-data-coralogix)                         | [Honeycomb.io](https://github.com/honeycombio/opentelemetry-demo)                               | [TelemetryHub](https://github.com/TelemetryHub/opentelemetry-demo/tree/telemetryhub-backend) |
+| [Datadog](https://github.com/DataDog/opentelemetry-demo)                                                          | [Lightstep](https://github.com/lightstep/opentelemetry-demo)                                    | [Uptrace](https://github.com/uptrace/uptrace/tree/master/example/opentelemetry-demo)         |
 
 ## Contributing
 
