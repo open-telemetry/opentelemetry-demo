@@ -21,7 +21,10 @@ func initTracerProvider() *sdktrace.TracerProvider {
     if err != nil {
         log.Fatalf("OTLP Trace gRPC Creation: %v", err)
     }
-    tp := sdktrace.NewTracerProvider(sdktrace.WithBatcher(exporter))
+    tp := sdktrace.NewTracerProvider(
+        sdktrace.WithBatcher(exporter),
+        sdktrace.WithResource(initResource()),
+    )
     otel.SetTracerProvider(tp)
     otel.SetTextMapPropagator(propagation.NewCompositeTextMapPropagator(propagation.TraceContext{}, propagation.Baggage{}))
     return tp
