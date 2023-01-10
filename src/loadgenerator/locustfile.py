@@ -40,6 +40,8 @@ categories = [
     "accessories",
     "assembly",
     "travel",
+    "books",
+    None,
 ]
 
 products = [
@@ -52,6 +54,7 @@ products = [
     "L9ECAV7KIM",
     "LS4PSXUNUM",
     "OLJCESPC7Z",
+    "HQTGWGPNH4",
 ]
 
 people_file = open('people.json')
