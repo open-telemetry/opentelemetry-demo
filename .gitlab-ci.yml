@@ -19,6 +19,13 @@ stages:
     - docker build --file $DOCKERFILE --tag registry.ddbuild.io/ci/opentelemetry-demo:$TAG --label target=staging $CONTEXT
     - docker push registry.ddbuild.io/ci/opentelemetry-demo:$TAG
 
+build-ci-image-accountingservice:
+  <<: *build-ci-image
+  variables:
+    DOCKERFILE: src/accountingservice/Dockerfile
+    IMAGE_TAG_SUFFIX: accountingservice
+    CONTEXT: .
+
 build-ci-image-adservice:
   <<: *build-ci-image
   variables:
@@ -60,6 +67,13 @@ build-ci-image-featureflagservice:
   variables:
     DOCKERFILE: src/featureflagservice/Dockerfile
     IMAGE_TAG_SUFFIX: featureflagservice
+    CONTEXT: .
+
+build-ci-image-frauddetectionservice:
+  <<: *build-ci-image
+  variables:
+    DOCKERFILE: src/frauddetectionservice/Dockerfile
+    IMAGE_TAG_SUFFIX: frauddetectionservice
     CONTEXT: .
 
 build-ci-image-frontend:
