@@ -180,3 +180,5 @@ significant modifications will be credited to OpenTelemetry Authors.
 ([#669](https://github.com/open-telemetry/opentelemetry-demo/pull/669))
 * Add basic metric support to productcatalog service
 ([#674](https://github.com/open-telemetry/opentelemetry-demo/pull/674))
+* Add resource detectors to accounting service
+([#676](https://github.com/open-telemetry/opentelemetry-demo/pull/676))
