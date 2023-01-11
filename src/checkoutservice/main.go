@@ -138,7 +138,9 @@ type checkoutService struct {
 }
 
 func main() {
+	// Instana instrumentation
 	instana.InitSensor(instana.DefaultOptions())
+
 	var port string
 	mustMapEnv(&port, "CHECKOUT_SERVICE_PORT")
 

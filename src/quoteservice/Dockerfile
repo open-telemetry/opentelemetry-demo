@@ -11,7 +11,7 @@ RUN composer install \
     --no-dev \
     --prefer-dist
 
-FROM php:8.2-apache
+FROM php:8.1-apache
 
 ADD https://github.com/mlocati/docker-php-extension-installer/releases/latest/download/install-php-extensions /usr/local/bin/
 RUN chmod +x /usr/local/bin/install-php-extensions \
@@ -26,6 +26,7 @@ COPY ./src/quoteservice/ /var/www
 
 ENV APACHE_DOCUMENT_ROOT /var/www/public
 RUN sed -ri -e 's|/var/www/html|${APACHE_DOCUMENT_ROOT}|g' /etc/apache2/sites-available/*.conf \
+    && sed -i -e "s|#Require.*|Require all granted|" /etc/apache2/mods-enabled/status.conf \
     && a2enmod rewrite \
     && echo "ServerName quoteservice" >> /etc/apache2/apache2.conf \
     && sed -i "s/80/\$\{QUOTE_SERVICE_PORT\}/g" /etc/apache2/sites-available/000-default.conf /etc/apache2/ports.conf

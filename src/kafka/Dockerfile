@@ -1,4 +1,4 @@
-FROM confluentinc/cp-kafka:latest-ubi8
+FROM confluentinc/cp-kafka:latest
 
 USER root
 ARG version=1.21.0

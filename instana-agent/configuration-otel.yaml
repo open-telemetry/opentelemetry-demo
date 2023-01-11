@@ -1,5 +1,9 @@
 com.instana.plugin.opentelemetry:
-  enabled: true
+  # enabled: false       # legacy setting, will only enable grpc, defaults to false
+  grpc:
+    enabled: true    # takes precedence over legacy settings above, defaults to true iff "grpc:" is present
+  http:
+    enabled: true     # allows to enable http endpoints, defaults to true iff "http:" is present
 
 com.instana.ignore:
   arguments:
@@ -10,11 +14,18 @@ com.instana.tracing:
     - traceparent
     - tracestate
 
+com.instana.plugin.generic.hardware:
+  enabled: true
+
 # otel-demo configurations
 com.instana.plugin.postgresql:
   user: 'ffs'
   password: 'ffs'
   database: 'postgres'
+
+com.instana.plugin.javatrace:
+  instrumentation:
+    enabled: false
 
 com.instana.plugin.python:
   autotrace:

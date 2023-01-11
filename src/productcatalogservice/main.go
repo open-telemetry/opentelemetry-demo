@@ -86,6 +86,7 @@ func initMeterProvider() *sdkmetric.MeterProvider {
 }
 
 func main() {
+	// Instana instrumentation
 	instana.InitSensor(instana.DefaultOptions())
 	tp := initTracerProvider()
 	defer func() {

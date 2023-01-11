@@ -30,6 +30,7 @@ import (
 	sdkresource "go.opentelemetry.io/otel/sdk/resource"
 	sdktrace "go.opentelemetry.io/otel/sdk/trace"
 
+	instana "github.com/instana/go-sensor"
 	"github.com/open-telemetry/opentelemetry-demo/src/accountingservice/kafka"
 )
 
@@ -85,6 +86,9 @@ func initTracerProvider() (*sdktrace.TracerProvider, error) {
 }
 
 func main() {
+	// Instana instrumentation
+	instana.InitSensor(instana.DefaultOptions())
+
 	tp, err := initTracerProvider()
 	if err != nil {
 		log.Fatal(err)

@@ -27,11 +27,12 @@ services:
       - INSTANA_AGENT_ZONE=${INSTANA_AGENT_ZONE:-otel-demo-webstore}
       # - INSTANA_MVN_REPOSITORY_FEATURES_PATH=artifactory/features-internal@id=features@snapshots@snapshotsUpdate=always
       # - INSTANA_MVN_REPOSITORY_SHARED_PATH=artifactory/shared@id=shared@snapshots@snapshotsUpdate=always
-      - INSTANA_AGENT_PROXY_HOST=${INSTANA_AGENT_PROXY_HOST}
-      - INSTANA_AGENT_PROXY_PORT=${INSTANA_AGENT_PROXY_PORT}
+      - INSTANA_AGENT_PROXY_HOST
+      - INSTANA_AGENT_PROXY_PORT
       - INSTANA_REPOSITORY_PROXY_ENABLED=true
-      - INSTANA_REPOSITORY_PROXY_HOST=${INSTANA_REPOSITORY_PROXY_HOST}
-      - INSTANA_REPOSITORY_PROXY_PORT=${INSTANA_REPOSITORY_PROXY_PORT}
+      - INSTANA_REPOSITORY_PROXY_HOST
+      - INSTANA_REPOSITORY_PROXY_PORT
+      - INSTANA_LOG_LEVEL
       - HTTP_PROXY=${http_proxy}
       - HTTPS_PROXY=${https_proxy}
       - NO_PROXY=${no_proxy}

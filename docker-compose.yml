@@ -50,6 +50,8 @@ services:
       - OTEL_RESOURCE_ATTRIBUTES
       - OTEL_SERVICE_NAME=accountingservice
       - INSTANA_SERVICE_NAME=accountingservice
+      - INSTANA_AGENT_HOST=${INSTANA_AGENT_HOST}
+      - INSTANA_AGENT_PORT=${INSTANA_AGENT_PORT}
     depends_on:
       otelcol:
         condition: service_started
@@ -236,10 +238,10 @@ services:
       dockerfile: ./src/featureflagservice/Dockerfile
       cache_from:
         - ${IMAGE_NAME}:${IMAGE_VERSION}-featureflagservice
-    deploy:
-      resources:
-        limits:
-          memory: 200M
+    # deploy:
+    #   resources:
+    #     limits:
+    #       memory: 200M
     restart: always
     ports:
       - "${FEATURE_FLAG_SERVICE_PORT}"                                  # Feature Flag Service UI
@@ -574,7 +576,8 @@ services:
       - POSTGRES_DB=ffs
       - POSTGRES_PASSWORD=ffs
       - INSTANA_SERVICE_NAME=ffs_postgres
-    command: ['postgres', '-c', 'track_activities=on', '-c', 'track_counts=on', '-c', 'track_io_timing=on']
+    # command: ["-c", "track_activities=on", "-c", "track_counts=on", "-c", "track_io_timing=on"]
+    # The above way of passing paramaeters ins't picked up by Instana. Must use config file :(
     logging: *logging
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -d ffs -U ffs"]
@@ -603,6 +606,7 @@ services:
       - OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE
       - OTEL_RESOURCE_ATTRIBUTES
       - OTEL_SERVICE_NAME=kafka
+      - INSTANA_SERVICE_NAME=kafka
     logging: *logging
     healthcheck:
       test: nc -z kafka 9092
@@ -680,8 +684,11 @@ services:
       - ./src/otelcollector/otelcol-config.yml:/etc/otelcol-config.yml
       - ./src/otelcollector/otelcol-config-extras.yml:/etc/otelcol-config-extras.yml
     ports:
-      - "4317"          # OTLP over gRPC receiver
-      - "4318:4318"     # OTLP over HTTP receiver
+      # - "4317"          # OTLP over gRPC receiver
+      - "44317:4317"          # OTLP over gRPC receiver
+      # - "4318:4318"     # OTLP over HTTP receiver
+      # Do not export port 4318 as it would collide with Instana's http/grpc port
+      - "4318"     # OTLP over HTTP receiver
       - "9464"          # Prometheus exporter
       - "8888"          # metrics endpoint
     environment:
