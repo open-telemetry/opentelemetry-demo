@@ -228,6 +228,7 @@ public final class AdService {
         .putAll("accessories", colorImager, solarFilter, cleaningKit)
         .putAll("assembly", opticalTube)
         .putAll("travel", travelTelescope)
+            // Keep the books category free of ads to ensure the random code branch is tested
         .build();
   }
 
