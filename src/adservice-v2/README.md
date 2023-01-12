@@ -52,21 +52,30 @@ to disable this feature.
   $JAVA_OPTS -jar /bin/xxx.jar
   ```
 
-* Update the `-D` parms as you want, example like below:
+* Update the `-D` parms as you want, example like below, for more details please see in `bootstrap.yml`:
 
   ```
   # Export Sentinel Prometheus metrics
   -javaagent:./jmx_prometheus_javaagent-0.17.0.jar=12345:./prometheus-jmx-config.yaml \
-  # Enable Nacos integration
+  # Enable Nacos registry integration
   -Dspring.cloud.nacos.discovery.enabled=true \
-  # Nacos configuration server address
-  -Dspring.cloud.nacos.config.server-addr=nacos-test.skoala-test:8848 \
-  # Nacos service name
-  -Dspring.application.name=adservice-springcloud \
   # Nacos registry server address
   -Dspring.cloud.nacos.discovery.server-addr=nacos-test.skoala-test:8848 \
+  # Nacos registry server username
+  -Dspring.cloud.nacos.discovery.username=nacos \
+  # Nacos registry server password
+  -Dspring.cloud.nacos.discovery.password=nacos \
+  # Enable Nacos configuration integration
+  -Dspring.cloud.nacos.config.enabled=true \
+  # Nacos configuration server address
+  -Dspring.cloud.nacos.config.server-addr=nacos-test.skoala-test:8848 \
+  # Nacos configuration server username
+  -Dspring.cloud.nacos.config.username=nacos \
+  # Nacos configuration server password
+  -Dspring.cloud.nacos.config.password=nacos \
+  # Nacos service name
+  -Dspring.application.name=adservice-springcloud \
   # For DCE 5.0 need below Kubernetes metadata
-  -Dspring.cloud.nacos.discovery.metadata.k8s_cluster_id=xxx \
   -Dspring.cloud.nacos.discovery.metadata.k8s_cluster_name=xxx \
   -Dspring.cloud.nacos.discovery.metadata.k8s_namespace_name=xxx \
   -Dspring.cloud.nacos.discovery.metadata.k8s_workload_type=deployment \
