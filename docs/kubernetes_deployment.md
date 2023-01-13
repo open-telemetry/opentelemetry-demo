@@ -1,7 +1,7 @@
 
 # Kubernetes
 
-We provide an [OpenTelemetry Demo Helm chart](https://github.com/open-telemetry/opentelemetry-helm-charts/tree/main/charts/opentelemetry-demo) to help deploy the demo to an existing Kubernetes cluster. We also provide a [values.yaml](https://github.com/newrelic/opentelemetry-demo/helm/values.hayml) template to customize the deployment for New Relic. More details on this are included below. 
+We provide an [OpenTelemetry Demo Helm chart](https://github.com/open-telemetry/opentelemetry-helm-charts/tree/main/charts/opentelemetry-demo) to help deploy the demo to an existing Kubernetes cluster. We also provide a [values.yaml](https://github.com/newrelic/opentelemetry-demo/helm/values.yaml) template to customize the deployment for New Relic. More details on this are included below. 
 
 [Helm](https://helm.sh) must be installed to use the charts. Please refer to Helm's [documentation](https://helm.sh/docs/) to get started.
 
