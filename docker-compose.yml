@@ -12,7 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-version: '3.9'
+version: "3.9"
 x-default-logging: &logging
   driver: "json-file"
   options:
@@ -31,6 +31,7 @@ services:
   # Accounting service
   accountingservice:
     image: ${IMAGE_NAME}:${IMAGE_VERSION}-accountingservice
+    platform: linux/arm64/v8
     container_name: accounting-service
     build:
       context: ./
@@ -59,6 +60,7 @@ services:
   # AdService
   adservice:
     image: ${IMAGE_NAME}:${IMAGE_VERSION}-adservice
+    platform: linux/arm64/v8
     container_name: ad-service
     build:
       context: ./
@@ -86,6 +88,7 @@ services:
   # Cart service
   cartservice:
     image: ${IMAGE_NAME}:${IMAGE_VERSION}-cartservice
+    platform: linux/arm64/v8
     container_name: cart-service
     build:
       context: ./
@@ -114,6 +117,7 @@ services:
   # Checkout service
   checkoutservice:
     image: ${IMAGE_NAME}:${IMAGE_VERSION}-checkoutservice
+    platform: linux/arm64/v8
     container_name: checkout-service
     build:
       context: ./
@@ -163,6 +167,7 @@ services:
   # Currency service
   currencyservice:
     image: ${IMAGE_NAME}:${IMAGE_VERSION}-currencyservice
+    platform: linux/arm64/v8
     container_name: currency-service
     build:
       context: ./src/currencyservice
@@ -181,7 +186,7 @@ services:
     environment:
       - CURRENCY_SERVICE_PORT
       - OTEL_EXPORTER_OTLP_TRACES_ENDPOINT
-      - OTEL_RESOURCE_ATTRIBUTES=${OTEL_RESOURCE_ATTRIBUTES},service.name=currencyservice   # The C++ SDK does not support OTEL_SERVICE_NAME
+      - OTEL_RESOURCE_ATTRIBUTES=${OTEL_RESOURCE_ATTRIBUTES},service.name=currencyservice # The C++ SDK does not support OTEL_SERVICE_NAME
     depends_on:
       - otelcol
     logging: *logging
@@ -189,6 +194,7 @@ services:
   # Email service
   emailservice:
     image: ${IMAGE_NAME}:${IMAGE_VERSION}-emailservice
+    platform: linux/arm64/v8
     container_name: email-service
     build:
       context: ./src/emailservice
@@ -214,6 +220,7 @@ services:
   # Feature Flag service
   featureflagservice:
     image: ${IMAGE_NAME}:${IMAGE_VERSION}-featureflagservice
+    platform: linux/arm64/v8
     container_name: feature-flag-service
     build:
       context: ./
@@ -226,8 +233,8 @@ services:
           memory: 200M
     restart: always
     ports:
-      - "${FEATURE_FLAG_SERVICE_PORT}"                                  # Feature Flag Service UI
-      - "${FEATURE_FLAG_GRPC_SERVICE_PORT}"                             # Feature Flag Service gRPC API
+      - "${FEATURE_FLAG_SERVICE_PORT}" # Feature Flag Service UI
+      - "${FEATURE_FLAG_GRPC_SERVICE_PORT}" # Feature Flag Service gRPC API
     environment:
       - FEATURE_FLAG_SERVICE_PORT
       - FEATURE_FLAG_GRPC_SERVICE_PORT
@@ -244,6 +251,7 @@ services:
   # Fraud Detection service
   frauddetectionservice:
     image: ${IMAGE_NAME}:${IMAGE_VERSION}-frauddetectionservice
+    platform: linux/arm64/v8
     container_name: frauddetection-service
     build:
       context: ./
@@ -272,6 +280,7 @@ services:
   # Frontend
   frontend:
     image: ${IMAGE_NAME}:${IMAGE_VERSION}-frontend
+    platform: linux/arm64/v8
     container_name: frontend
     build:
       context: ./
@@ -317,6 +326,7 @@ services:
   # Frontend Proxy (Envoy)
   frontendproxy:
     image: ${IMAGE_NAME}:${IMAGE_VERSION}-frontendproxy
+    platform: linux/arm64/v8
     build:
       context: ./
       dockerfile: src/frontendproxy/Dockerfile
@@ -347,6 +357,7 @@ services:
   # Load Generator
   loadgenerator:
     image: ${IMAGE_NAME}:${IMAGE_VERSION}-loadgenerator
+    platform: linux/arm64/v8
     container_name: load-generator
     build:
       context: ./
@@ -377,6 +388,7 @@ services:
   # Payment service
   paymentservice:
     image: ${IMAGE_NAME}:${IMAGE_VERSION}-paymentservice
+    platform: linux/arm64/v8
     container_name: payment-service
     build:
       context: ./
@@ -404,6 +416,7 @@ services:
   # Product Catalog service
   productcatalogservice:
     image: ${IMAGE_NAME}:${IMAGE_VERSION}-productcatalogservice
+    platform: linux/arm64/v8
     container_name: product-catalog-service
     build:
       context: ./
@@ -432,6 +445,7 @@ services:
   # Quote service
   quoteservice:
     image: ${IMAGE_NAME}:${IMAGE_VERSION}-quoteservice
+    platform: linux/arm64/v8
     container_name: quoteservice
     build:
       context: ./
@@ -458,6 +472,7 @@ services:
   # Recommendation service
   recommendationservice:
     image: ${IMAGE_NAME}:${IMAGE_VERSION}-recommendationservice
+    platform: linux/arm64/v8
     container_name: recommendation-service
     build:
       context: ./
@@ -467,7 +482,7 @@ services:
     deploy:
       resources:
         limits:
-          memory: 500M               # This is high to enable supporting the recommendationCache feature flag use case
+          memory: 500M # This is high to enable supporting the recommendationCache feature flag use case
     restart: always
     ports:
       - "${RECOMMENDATION_SERVICE_PORT}"
@@ -492,6 +507,7 @@ services:
   # Shipping service
   shippingservice:
     image: ${IMAGE_NAME}:${IMAGE_VERSION}-shippingservice
+    platform: linux/arm64/v8
     container_name: shipping-service
     build:
       context: ./
@@ -521,6 +537,7 @@ services:
   # Postgres used by Feature Flag service
   ffs_postgres:
     image: postgres:14
+    platform: linux/arm64/v8
     container_name: postgres
     user: postgres
     deploy:
@@ -542,6 +559,7 @@ services:
   # Kafka used by Checkout, Accounting, and Fraud Detection services
   kafka:
     image: ${IMAGE_NAME}:${IMAGE_VERSION}-kafka
+    platform: linux/arm64/v8
     container_name: kafka
     build:
       context: ./
@@ -571,6 +589,7 @@ services:
   # Redis used by Cart service
   redis-cart:
     image: redis:alpine
+    platform: linux/arm64/v8
     container_name: redis-cart
     user: redis
     deploy:
@@ -582,13 +601,13 @@ services:
       - "${REDIS_PORT}"
     logging: *logging
 
-
   # ********************
   # Telemetry Components
   # ********************
   # Jaeger
   jaeger:
     image: jaegertracing/all-in-one
+    platform: linux/arm64/v8
     container_name: jaeger
     command:
       - "--memory.max-traces"
@@ -603,8 +622,8 @@ services:
           memory: 275M
     restart: always
     ports:
-      - "${JAEGER_SERVICE_PORT}"                    # Jaeger UI
-      - "4317"                           # OTLP gRPC default port
+      - "${JAEGER_SERVICE_PORT}" # Jaeger UI
+      - "4317" # OTLP gRPC default port
     environment:
       - COLLECTOR_OTLP_ENABLED=true
       - METRICS_STORAGE_TYPE=prometheus
@@ -613,6 +632,7 @@ services:
   # Grafana
   grafana:
     image: grafana/grafana:9.1.0
+    platform: linux/arm64/v8
     container_name: grafana
     volumes:
       - ./src/grafana/grafana.ini:/etc/grafana/grafana.ini
@@ -624,21 +644,26 @@ services:
   # OpenTelemetry Collector
   otelcol:
     image: otel/opentelemetry-collector-contrib:0.61.0
+    platform: linux/arm64/v8
     container_name: otel-col
     deploy:
       resources:
         limits:
           memory: 100M
     restart: always
-    command: [ "--config=/etc/otelcol-config.yml", "--config=/etc/otelcol-config-extras.yml" ]
+    command:
+      [
+        "--config=/etc/otelcol-config.yml",
+        "--config=/etc/otelcol-config-extras.yml",
+      ]
     volumes:
       - ./src/otelcollector/otelcol-config.yml:/etc/otelcol-config.yml
       - ./src/otelcollector/otelcol-config-extras.yml:/etc/otelcol-config-extras.yml
     ports:
-      - "4317"          # OTLP over gRPC receiver
-      - "4318:4318"     # OTLP over HTTP receiver
-      - "9464"          # Prometheus exporter
-      - "8888"          # metrics endpoint
+      - "4317" # OTLP over gRPC receiver
+      - "4318:4318" # OTLP over HTTP receiver
+      - "9464" # Prometheus exporter
+      - "8888" # metrics endpoint
     depends_on:
       - jaeger
     logging: *logging
@@ -646,6 +671,7 @@ services:
   # Prometheus
   prometheus:
     image: quay.io/prometheus/prometheus:v2.34.0
+    platform: linux/arm64/v8
     container_name: prometheus
     command:
       - --web.console.templates=/etc/prometheus/consoles
@@ -667,6 +693,7 @@ services:
   # Frontend Tests
   frontendTests:
     image: ${IMAGE_NAME}:${IMAGE_VERSION}-frontend-tests
+    platform: linux/arm64/v8
     container_name: frontend-tests
     build:
       context: ./
@@ -686,6 +713,7 @@ services:
   # Integration Tests
   integrationTests:
     image: ${IMAGE_NAME}:${IMAGE_VERSION}-integrationTests
+    platform: linux/arm64/v8
     container_name: integrationTests
     profiles:
       - tests
