@@ -68,6 +68,9 @@ build-and-push-ghcr:
 	docker compose --env-file .ghcr.env -f docker-compose.yml build
 	docker compose --env-file .ghcr.env -f docker-compose.yml push
 
+.PHONY: push
+	docker compose --env-file .env -f docker-compose.yml push
+
 .PHONY: build-env-file
 build-env-file:
 	cp .env .dockerhub.env

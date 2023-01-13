@@ -1,13 +1,22 @@
-# OpenTelemetry Demo with Instana Backend
+# OpenTelemetry Demo with Instana Agent and OTEL Collector
 
 This repo is a fork of the original [OpenTelemetry Demo](https://github.com/open-telemetry/opentelemetry-demo) with added integration to Instana host-agent OTLP endpoint and application infrastructure monitoring configuration.
 
-## Build and run the demo webstore app
+## Build and run the demo webstore app locally
 
 Follow the main [README](README.md). This is basically:
 ```sh
-docker compose up
+docker compose build
+docker compose up -d
 ```
+
+**Note**, if you plan to push the built images to a remote container registry, such as for deploying the demo in Kubernetes, you should modify the `IMAGE_NAME` variable in `.env` and use your own registry domain. 
+
+To push the images to remote container registry, login to the remote registry (use `oc registry login` in case of OpenShift registry) and run:
+```sh
+make push
+```
+
 
 ### In case you are behind an HTTP proxy ...
 Configure the proxy behavior for the Docker daemon systemd service according to the [guide](https://docs.docker.com/config/daemon/systemd/#httphttps-proxy).
@@ -40,17 +49,14 @@ docker compose build \
     --build-arg 'http_proxy=http://192.168.31.253:3128' 
 ```
 
-## Build and run Instana host agent
+## Run Instana agent locally
 
-Create an environment file for `docker-compose` with your Instana endpoint connection configuration and keys. Use the template:
+Create an environment file for `docker-compose` with your Instana connection configuration using the template:
 ```sh
 cd instana-agent
 cp instana-agent.env.template .env
 ```
-
-Edit the OTEL Collector configuration file [`src/otelcollector/otelcol-config.yml`](src/otelcollector/otelcol-config.yml) and replace the Instana endpoint with your host IP or DNS-resolvable hostname. Use the actual host interface IP; don't use `localhost` or `127.0.0.1` as the collector must be able to reach the IP from inside a container.
-
-Launch the agent (inside the `instana-agent` directory):
+Launch the agent (still inside the `instana-agent` directory):
 ```sh
 docker compose up -d
 ```
@@ -65,25 +71,31 @@ docker compose up -d
 The [patched](https://github.com/styblope/opentelemetry_ecto/commit/0bc71d465621e6f76d71bc8d6d336011661eb754) OpenTelemetryEcto library is available at https://github.com/styblope/opentelemetry_ecto. The rest of the solution involved changing the FeatureFlag service Elixir code dependencies and building a new custom image.
 
 ### Adding W3C context propagation to Envoy the enable cross-tracer trace continuity
-**Problem:** 
+To demosntrate the context propagation across Instana and OTel tracing implementations, we chose to instrument the `frontendproxy` service with the Instana native tracer. The Instana sensor supports W3C propagatiopn headers, which is the default propagation header format used by OpenTelemetry. We use a custom build of the Instana envoy sensor which supports W3C context propagation (public release of the W3C enabled sensor is due soon).
 
-## Deploy on OpenShift
+## Deploy in Kubernetes
 
+Create a new project
+```sh
+kubectl create namespace otel-demo
+# or equivalently in OpenShift:
+oc new-project otel-demo
+```
 
-TODO: ... using the official helm chart in namespace `otel-demo`
-
-Make sure you have sufficient privileges to run the pods:
+In OpenShift, make sure you have sufficient privileges to run the pods in the namespace (this step my be no longer need as the demo containers can now run as non-root):
 ```sh
 oc adm policy -n otel-demo add-scc-to-user anyuid -z default
 ```
+Deploy Instana agent via Helm or using an operator. Use the agent configuration as defined in `instana-agent/configuration-otel.yaml`
 
-You should have a Kubernetes service configured for the Instana host-agent in order to receive OTLP traffic from the OTel collector. You can also use the following simplified service configuration:
+The demo assumes that an Instana agent Kubernetes service is already created in the `instana-agent` namespace and the service name is `instana-agent`. The agent service, besides exposing the standard Instana agent API endpoint, also exposes the common OTLP endpoint for both gRPC (port 4317) and HTTP (port 4318) protocols across all nodes. Be aware that at the time of writing, the HTTP endpoint definition wasn't yet included in the public Instana agent Helm chart (and likely neither in the Operator). It is thus advised that you create the service manually using the following manifest that is tested to work well with the demo.
+
 ```sh
 cat <<EOF | oc create -f-
 apiVersion: v1
 kind: Service
 metadata:
-  name: instana-otlp
+  name: instana-agent
   namespace: instana-agent
   labels:
     app.kubernetes.io/name: instana-agent
@@ -91,41 +103,30 @@ spec:
   selector:
     app.kubernetes.io/name: instana-agent
   ports:
-    - name: otlp
+    - name: otlp-grpc
       protocol: TCP
       port: 4317
       targetPort: 4317
+    - name: otlp-http
+      protocol: TCP
+      port: 4318
+      targetPort: 4318
+    - name: agent-apis
+      protocol: TCP
+      port: 42699
+      targetPort: 42699
   internalTrafficPolicy: Local
+  topologyKeys:
+    - "kubernetes.io/hostname"
 EOF
 ```
 
-Add an OTLP exporter endpoint for Instana by editing the otelcol configmap. 
+Deploy the demo using the published Helm chart
+
+We use custom values file with additional settings for the Instana agent to act as the default OTel traces and metrics receiver, to suppress native Instana tracing so it doesn't clash with the OTel instrumentaion, and to enable Instana to perform full component infrastructure monitoring including the databases.
 ```sh
-oc edit cm my-otel-demo-otelcol
+helm repo add open-telemetry https://open-telemetry.github.io/opentelemetry-helm-charts
+helm install my-otel-demo open-telemetry/opentelemetry-demo -f values-instana-agent.yaml
 ```
 
-and make the following modifications. We'll keep the existing Jaeger export active so we can compare the tracing outcomes.
-```yaml
-exporters:
-  otlp/jaeger:
-    endpoint: 'my-otel-demo-jaeger:4317'
-    tls:
-      insecure: true
-  otlp/instana:
-    endpoint: instana-otlp.instana-agent:4317    # <service_name>.<namespace>:4317
-    tls:
-      insecure: true
-...
-
-service:
-  pipelines:
-    traces:
-      exporters:
-      - otlp/jaeger
-      - otlp/instana
-```
-
-Apply the changes by restarting the collector pod:
-```sh
-oc delete pod -l app.kubernetes.io/name=otelcol
-```
+In OpenShift, you'll want to create a route for the `frontendproxy` service for easy access to the demo frontpage and featureflags services rather than the `kubectl port-forward` way that the Helm chart prompts you after installation.
