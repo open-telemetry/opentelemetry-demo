@@ -23,6 +23,7 @@ import hipstershop.Demo.AdRequest;
 import hipstershop.Demo.AdResponse;
 import io.grpc.Server;
 import io.grpc.ServerBuilder;
+import io.grpc.Status;
 import io.grpc.StatusRuntimeException;
 import io.grpc.health.v1.HealthCheckResponse.ServingStatus;
 import io.grpc.protobuf.services.*;
@@ -126,6 +127,9 @@ public final class AdService {
           allAds = service.getRandomAds();
         }
         span.setAttribute("app.ads.count", allAds.size());
+        if (random.nextInt(100) == 1) {
+          throw new StatusRuntimeException(Status.RESOURCE_EXHAUSTED);
+        }
         AdResponse reply = AdResponse.newBuilder().addAllAds(allAds).build();
         responseObserver.onNext(reply);
         responseObserver.onCompleted();
