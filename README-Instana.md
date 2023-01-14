@@ -12,7 +12,8 @@ docker compose up -d
 
 **Note**, if you plan to push the built images to a remote container registry, such as for deploying the demo in Kubernetes, you should modify the `IMAGE_NAME` variable in `.env` and use your own registry domain. 
 
-To push the images to remote container registry, login to the remote registry (use `oc registry login` in case of OpenShift registry) and run:
+
+To push the images to a remote container registry, login to the registry (`oc registry login` in case of OpenShift internal registry) and run:
 ```sh
 make push
 ```
@@ -36,13 +37,13 @@ Optionally (not needed for building and running `docker compose`), you may [conf
 }
 ```
 
-Create a new gradle properties file `src/adservice/gradle.properties` with your proxy settings:
+Create or edit a gradle properties file for adservice (`src/adservice/gradele.properties`) and frauddetectionservice (`src/frauddetectionservice/gradle.properties`) and fill in your proxy settings:
 ```
 systemProp.https.proxyHost=192.168.31.253
 systemProp.https.proxyPort=3128
 ```
 
-Build the Webstore app with `http_proxy` and `https_proxy` environment variables passed to `docker-compose`:
+Build the app with `http_proxy` and `https_proxy` build agruments passed to `docker-compose`:
 ```sh
 docker compose build \ 
     --build-arg 'https_proxy=http://192.168.31.253:3128' \
@@ -51,7 +52,7 @@ docker compose build \
 
 ## Run Instana agent locally
 
-Create an environment file for `docker-compose` with your Instana connection configuration using the template:
+Create an environment file for `docker-compose` with your Instana connection configuration. Use the template:
 ```sh
 cd instana-agent
 cp instana-agent.env.template .env
@@ -75,21 +76,25 @@ To demosntrate the context propagation across Instana and OTel tracing implement
 
 ## Deploy in Kubernetes
 
-Create a new project
+Create new namespace/project:
 ```sh
 kubectl create namespace otel-demo
+
 # or equivalently in OpenShift:
 oc new-project otel-demo
 ```
 
-In OpenShift, make sure you have sufficient privileges to run the pods in the namespace (this step my be no longer need as the demo containers can now run as non-root):
+In OpenShift, make sure you have sufficient privileges to run the pods in the namespace (this step my be no longer necessary as the demo containers can now run as non-root):
 ```sh
 oc adm policy -n otel-demo add-scc-to-user anyuid -z default
 ```
-Deploy Instana agent via Helm or using an operator. Use the agent configuration as defined in `instana-agent/configuration-otel.yaml`
 
-The demo assumes that an Instana agent Kubernetes service is already created in the `instana-agent` namespace and the service name is `instana-agent`. The agent service, besides exposing the standard Instana agent API endpoint, also exposes the common OTLP endpoint for both gRPC (port 4317) and HTTP (port 4318) protocols across all nodes. Be aware that at the time of writing, the HTTP endpoint definition wasn't yet included in the public Instana agent Helm chart (and likely neither in the Operator). It is thus advised that you create the service manually using the following manifest that is tested to work well with the demo.
+Deploy the Instana agent via Helm or using an operator:
 
+Use a standard installation according to Instana documentation. Apply the agent configuration as in `instana-agent/configuration-otel.yaml`
+
+
+The demo assumes that an Instana [agent Kubernetes service](https://www.ibm.com/docs/en/instana-observability/current?topic=requirements-installing-host-agent-kubernetes#instana-agent-service) `instana-agent` exists in the agent namesapce `instana-agent`. The agent service, besides exposing the standard Instana agent API endpoint, also provides the common OTLP endpoint for both gRPC (port 4317) and HTTP (port 4318) protocols across all nodes. Be aware that at the time of writing, the HTTP endpoint definition wasn't yet included in the public Instana agent Helm chart (and likely neither in the Operator). You can thus create the service manually using the following manifest that is tested to work well with the demo.
 ```sh
 cat <<EOF | oc create -f-
 apiVersion: v1
@@ -121,7 +126,7 @@ spec:
 EOF
 ```
 
-Deploy the demo using the published Helm chart
+Deploy the demo using the published Helm chart:
 
 We use custom values file with additional settings for the Instana agent to act as the default OTel traces and metrics receiver, to suppress native Instana tracing so it doesn't clash with the OTel instrumentaion, and to enable Instana to perform full component infrastructure monitoring including the databases.
 ```sh
@@ -129,4 +134,4 @@ helm repo add open-telemetry https://open-telemetry.github.io/opentelemetry-helm
 helm install my-otel-demo open-telemetry/opentelemetry-demo -f values-instana-agent.yaml
 ```
 
-In OpenShift, you'll want to create a route for the `frontendproxy` service for easy access to the demo frontpage and featureflags services rather than the `kubectl port-forward` way that the Helm chart prompts you after installation.
+In OpenShift, you'll want to create a route for the `frontendproxy` service for easy access to the demo frontpage and featureflags services instead of the `kubectl port-forward` way that Helm prompts you after installation.
