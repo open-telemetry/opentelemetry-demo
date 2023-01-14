@@ -12,9 +12,11 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+using System;
 using System.Diagnostics;
 using System.Threading.Tasks;
 using Grpc.Core;
+using OpenTelemetry.Trace;
 using cartservice.cartstore;
 using Hipstershop;
 
@@ -23,7 +25,8 @@ namespace cartservice.services
     public class CartService : Hipstershop.CartService.CartServiceBase
     {
         private readonly static Empty Empty = new Empty();
-        private readonly ICartStore _cartStore;
+        private readonly static Random _random = new Random();
+        private ICartStore _cartStore;
 
         public CartService(ICartStore cartStore)
         {
@@ -60,11 +63,29 @@ namespace cartservice.services
 
         public async override Task<Empty> EmptyCart(EmptyCartRequest request, ServerCallContext context)
         {
+            this._cartStore = _random.Next() % 5 != 0 
+                ? this._cartStore
+                : new RedisCartStore("badhost:4567");
+
             var activity = Activity.Current;
             activity?.SetTag("app.user.id", request.UserId);
             activity?.AddEvent(new("Empty cart"));
 
-            await _cartStore.EmptyCartAsync(request.UserId);
+            try
+            {
+                await _cartStore.EmptyCartAsync(request.UserId);
+            }
+            catch (Exception e)
+            {
+                // Recording the original exception to preserve the stack trace on the activity event
+                activity?.RecordException(e);
+
+                // Throw a new exception and use its message for the status description
+                var ex = new Exception("Can't access cart storage.");
+                Activity.Current?.SetStatus(ActivityStatusCode.Error, ex.Message);
+                throw ex;
+            }
+
             return Empty;
         }
     }
