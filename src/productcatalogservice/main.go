@@ -103,7 +103,10 @@ func initMeterProvider() *sdkmetric.MeterProvider {
 		log.Fatalf("new otlp metric grpc exporter failed: %v", err)
 	}
 
-	mp := sdkmetric.NewMeterProvider(sdkmetric.WithReader(sdkmetric.NewPeriodicReader(exporter)))
+	mp := sdkmetric.NewMeterProvider(
+		sdkmetric.WithReader(sdkmetric.NewPeriodicReader(exporter)),
+		sdkmetric.WithResource(initResource()),
+	)
 	global.SetMeterProvider(mp)
 	return mp
 }
