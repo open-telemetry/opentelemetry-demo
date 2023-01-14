@@ -182,3 +182,5 @@ significant modifications will be credited to OpenTelemetry Authors.
 ([#674](https://github.com/open-telemetry/opentelemetry-demo/pull/674))
 * Add resource detectors to accounting service
 ([#676](https://github.com/open-telemetry/opentelemetry-demo/pull/676))
+* Add resource detectors to product catalog service
+([#677](https://github.com/open-telemetry/opentelemetry-demo/pull/677))
