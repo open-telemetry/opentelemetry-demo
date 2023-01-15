@@ -16,7 +16,8 @@ exporters:
   logging:
   prometheus:
     endpoint: "otelcol:9464"
-
+    resource_to_telemetry_conversion:
+      enabled: true
 processors:
   batch:
   spanmetrics:
