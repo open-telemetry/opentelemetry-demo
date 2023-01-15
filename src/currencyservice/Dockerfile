@@ -12,15 +12,10 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-FROM alpine
+FROM alpine as builder
 
 RUN apk update
 RUN apk add git cmake make g++ grpc-dev re2-dev protobuf-dev c-ares-dev
-
-# RUN apk add --update alpine-sdk \
-#    && apk add cmake openssl openssl-dev g++ \
-#    curl-dev git autoconf libtool linux-headers \
-#    boost-dev libevent-dev openssl-dev
 
 ARG OPENTELEMETRY_CPP_VERSION=1.8.1
 
@@ -39,5 +34,14 @@ RUN cd /currencyservice \
     && cmake .. \
     && make -j$(nproc || sysctl -n hw.ncpu || echo 1) install
 
+FROM alpine
+
+WORKDIR /usr/src/app/
+
+RUN apk update
+RUN apk add grpc-dev re2-dev protobuf-dev c-ares-dev
+
+COPY --from=builder /usr/local/bin/currencyservice ./
+
 EXPOSE ${CURRENCY_SERVICE_PORT}
-ENTRYPOINT /usr/local/bin/currencyservice ${CURRENCY_SERVICE_PORT}
+ENTRYPOINT ./currencyservice ${CURRENCY_SERVICE_PORT}
