@@ -184,3 +184,5 @@ significant modifications will be credited to OpenTelemetry Authors.
 ([#676](https://github.com/open-telemetry/opentelemetry-demo/pull/676))
 * Add resource detectors to product catalog service
 ([#677](https://github.com/open-telemetry/opentelemetry-demo/pull/677))
+* Remove grpc from loadgenerator 
+([#688](https://github.com/open-telemetry/opentelemetry-demo/pull/688))
