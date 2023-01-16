@@ -31,7 +31,7 @@ const Checkout: NextPage = () => {
                 <CheckoutItem
                   key={checkoutItem.item.productId}
                   checkoutItem={checkoutItem}
-                  address={shippingAddress!}
+                  address={shippingAddress}
                 />
               ))}
             </S.ItemList>

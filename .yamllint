@@ -1,5 +1,7 @@
 extends: default
 
+ignore-from-file: .gitignore
+
 rules:
   document-start: disable
   octal-values: enable

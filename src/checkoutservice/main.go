@@ -23,18 +23,16 @@ import (
 	"net/http"
 	"os"
 	"strconv"
+	"sync"
 	"time"
 
 	"go.opentelemetry.io/otel/attribute"
 	"go.opentelemetry.io/otel/trace"
 
+	"github.com/Shopify/sarama"
 	"github.com/google/uuid"
 	"github.com/sirupsen/logrus"
-	"google.golang.org/grpc"
-	"google.golang.org/grpc/codes"
-	"google.golang.org/grpc/credentials/insecure"
-	"google.golang.org/grpc/status"
-
+	"go.opentelemetry.io/contrib/instrumentation/github.com/Shopify/sarama/otelsarama"
 	"go.opentelemetry.io/contrib/instrumentation/google.golang.org/grpc/otelgrpc"
 	"go.opentelemetry.io/contrib/instrumentation/net/http/otelhttp"
 	"go.opentelemetry.io/contrib/instrumentation/runtime"
@@ -44,15 +42,24 @@ import (
 	"go.opentelemetry.io/otel/metric/global"
 	"go.opentelemetry.io/otel/propagation"
 	sdkmetric "go.opentelemetry.io/otel/sdk/metric"
+	sdkresource "go.opentelemetry.io/otel/sdk/resource"
 	sdktrace "go.opentelemetry.io/otel/sdk/trace"
+	"google.golang.org/grpc"
+	"google.golang.org/grpc/codes"
+	"google.golang.org/grpc/credentials/insecure"
+	healthpb "google.golang.org/grpc/health/grpc_health_v1"
+	"google.golang.org/grpc/status"
+	"google.golang.org/protobuf/proto"
 
 	pb "github.com/open-telemetry/opentelemetry-demo/src/checkoutservice/genproto/hipstershop"
+	"github.com/open-telemetry/opentelemetry-demo/src/checkoutservice/kafka"
 	"github.com/open-telemetry/opentelemetry-demo/src/checkoutservice/money"
-	healthpb "google.golang.org/grpc/health/grpc_health_v1"
 )
 
 var log *logrus.Logger
 var tracer trace.Tracer
+var resource *sdkresource.Resource
+var initResourcesOnce sync.Once
 
 func init() {
 	log = logrus.New()
@@ -68,6 +75,23 @@ func init() {
 	log.Out = os.Stdout
 }
 
+func initResource() *sdkresource.Resource {
+	initResourcesOnce.Do(func() {
+		extraResources, _ := sdkresource.New(
+			context.Background(),
+			sdkresource.WithOS(),
+			sdkresource.WithProcess(),
+			sdkresource.WithContainer(),
+			sdkresource.WithHost(),
+		)
+		resource, _ = sdkresource.Merge(
+			sdkresource.Default(),
+			extraResources,
+		)
+	})
+	return resource
+}
+
 func initTracerProvider() *sdktrace.TracerProvider {
 	ctx := context.Background()
 
@@ -77,6 +101,7 @@ func initTracerProvider() *sdktrace.TracerProvider {
 	}
 	tp := sdktrace.NewTracerProvider(
 		sdktrace.WithBatcher(exporter),
+		sdktrace.WithResource(initResource()),
 	)
 	otel.SetTracerProvider(tp)
 	otel.SetTextMapPropagator(propagation.NewCompositeTextMapPropagator(propagation.TraceContext{}, propagation.Baggage{}))
@@ -91,7 +116,10 @@ func initMeterProvider() *sdkmetric.MeterProvider {
 		log.Fatalf("new otlp metric grpc exporter failed: %v", err)
 	}
 
-	mp := sdkmetric.NewMeterProvider(sdkmetric.WithReader(sdkmetric.NewPeriodicReader(exporter)))
+	mp := sdkmetric.NewMeterProvider(
+		sdkmetric.WithReader(sdkmetric.NewPeriodicReader(exporter)),
+		sdkmetric.WithResource(initResource()),
+	)
 	global.SetMeterProvider(mp)
 	return mp
 }
@@ -103,7 +131,9 @@ type checkoutService struct {
 	shippingSvcAddr       string
 	emailSvcAddr          string
 	paymentSvcAddr        string
+	kafkaBrokerSvcAddr    string
 	pb.UnimplementedCheckoutServiceServer
+	KafkaProducerClient sarama.AsyncProducer
 }
 
 func main() {
@@ -138,6 +168,12 @@ func main() {
 	mustMapEnv(&svc.currencySvcAddr, "CURRENCY_SERVICE_ADDR")
 	mustMapEnv(&svc.emailSvcAddr, "EMAIL_SERVICE_ADDR")
 	mustMapEnv(&svc.paymentSvcAddr, "PAYMENT_SERVICE_ADDR")
+	mustMapEnv(&svc.kafkaBrokerSvcAddr, "KAFKA_SERVICE_ADDR")
+
+	svc.KafkaProducerClient, err = kafka.CreateKafkaProducer([]string{svc.kafkaBrokerSvcAddr}, log)
+	if err != nil {
+		log.Fatal(err)
+	}
 
 	log.Infof("service config: %+v", svc)
 
@@ -249,6 +285,9 @@ func (cs *checkoutService) PlaceOrder(ctx context.Context, req *pb.PlaceOrderReq
 	} else {
 		log.Infof("order confirmation email sent to %q", req.Email)
 	}
+
+	cs.sendToPostProcessor(ctx, orderResult)
+
 	resp := &pb.PlaceOrderResponse{Order: orderResult}
 	return resp, nil
 }
@@ -444,4 +483,24 @@ func (cs *checkoutService) shipOrder(ctx context.Context, address *pb.Address, i
 		return "", fmt.Errorf("shipment failed: %+v", err)
 	}
 	return resp.GetTrackingId(), nil
+}
+
+func (cs *checkoutService) sendToPostProcessor(ctx context.Context, result *pb.OrderResult) {
+	message, err := proto.Marshal(result)
+	if err != nil {
+		log.Errorf("Failed to marshal message to protobuf: %+v", err)
+		return
+	}
+
+	// Inject tracing info into message
+	msg := sarama.ProducerMessage{
+		Topic: kafka.Topic,
+		Value: sarama.ByteEncoder(message),
+	}
+
+	otel.GetTextMapPropagator().Inject(ctx, otelsarama.NewProducerMessageCarrier(&msg))
+
+	cs.KafkaProducerClient.Input() <- &msg
+	successMsg := <-cs.KafkaProducerClient.Successes()
+	log.Infof("Successful to write message. offset: %v", successMsg.Offset)
 }

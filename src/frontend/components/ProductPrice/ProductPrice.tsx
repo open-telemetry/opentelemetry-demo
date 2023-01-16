@@ -16,9 +16,11 @@ const ProductPrice = ({ price: { units, currencyCode, nanos } }: IProps) => {
     [currencyCode, selectedCurrency]
   );
 
+  const total = units + nanos / 1000000000;
+
   return (
     <span data-cy={CypressFields.ProductPrice}>
-      {currencySymbol} {units}.{nanos.toString().slice(0, 2)}
+      {currencySymbol} {total.toFixed(2)}
     </span>
   );
 };
