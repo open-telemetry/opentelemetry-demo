@@ -186,3 +186,5 @@ significant modifications will be credited to OpenTelemetry Authors.
 ([#677](https://github.com/open-telemetry/opentelemetry-demo/pull/677))
 * Add custom metrics to ads service
 ([#678](https://github.com/open-telemetry/opentelemetry-demo/pull/678))
+* Rebuild currency service Dockerfile with alpine
+([#687](https://github.com/open-telemetry/opentelemetry-demo/pull/687))
