@@ -12,7 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-FROM golang:1.17.7-alpine AS builder
+FROM golang:1.19.4-alpine AS builder
 
 WORKDIR /usr/src/app/
 
@@ -23,8 +23,8 @@ COPY ./src/productcatalogservice/ ./
 COPY ./pb/ ./proto/
 
 RUN go mod download
-RUN go get google.golang.org/protobuf/cmd/protoc-gen-go
-RUN go get google.golang.org/grpc/cmd/protoc-gen-go-grpc
+RUN go install google.golang.org/protobuf/cmd/protoc-gen-go@v1.28
+RUN go install google.golang.org/grpc/cmd/protoc-gen-go-grpc@v1.2
 
 # Build executable
 RUN protoc -I ./proto/ ./proto/demo.proto --go_out=./ --go-grpc_out=./
