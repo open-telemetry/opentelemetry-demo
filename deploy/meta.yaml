@@ -1,0 +1,5 @@
+# This configuration file contains meta information for the Sentry-specific opentelemetry-demo deployments.
+
+# Version of the Helm chart to use.
+# Chart: https://github.com/open-telemetry/opentelemetry-helm-charts/tree/main/charts/opentelemetry-demo
+helm_chart_version: "0.15.4"

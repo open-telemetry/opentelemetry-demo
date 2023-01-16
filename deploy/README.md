@@ -35,6 +35,8 @@ This environment can be used for demos, and should be considered "stable".
 
 You can edit the following files in this directory:
 
+- [`meta.yaml`](./meta.yaml) -- contains various meta configuration about the
+  deployment, e.g. the currently used version of the Helm chart.
 - [`sentry-components.yaml`](./sentry-components.yaml) -- a list of components
   that have Sentry instrumentation. If some service there is commented out, that
   means that the vanilla version of the service (meaning, a prebuilt Docker image)
