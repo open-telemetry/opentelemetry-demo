@@ -9,11 +9,6 @@ observability:
     enabled: true
   jaeger:
     enabled: true
-    resources:
-      requests:
-        cpu: 50m
-      limits:
-        memory: 350Mi
 
 prometheus:
   rbac:
@@ -34,40 +29,77 @@ grafana:
     create: false
     pspEnabled: false
 
-# TODO: add resource requests/limits and tolerations for all components here
+jaeger:
+  allInOne:
+    resources:
+      requests:
+        cpu: 50m
+      limits:
+        memory: 350Mi
+
+default:
+  # Run all demo components on a separate node pool
+  schedulingRules:
+    nodeSelector:
+      nodepool.sentry.io/name: otel-demo
+    tolerations:
+      - key: "nodepool-dedicated"
+        operator: "Equal"
+        value: "otel-demo"
+        effect: "NoSchedule"
+
+# Demo components
 components:
   adService:
     resources:
       requests:
         cpu: 50m
+    schedulingRules:
+      # Here and below: this is a workaround for an existing issue in the Helm chart (to be fixed).
+      # The final values for nodeSelector and tolerations will still be takend from "default".
+      nodeSelector: {}
   cartService:
     resources:
       requests:
         cpu: 50m
+    schedulingRules:
+      nodeSelector: {}
   checkoutService:
     resources:
       requests:
         cpu: 50m
+    schedulingRules:
+      nodeSelector: {}
   currencyService:
     resources:
       requests:
         cpu: 50m
+    schedulingRules:
+      nodeSelector: {}
   emailService:
     resources:
       requests:
         cpu: 50m
+    schedulingRules:
+      nodeSelector: {}
   featureflagService:
     resources:
       requests:
         cpu: 50m
+    schedulingRules:
+      nodeSelector: {}
   ffsPostgres:
     resources:
       requests:
         cpu: 50m
+    schedulingRules:
+      nodeSelector: {}
   frontend:
     resources:
       requests:
         cpu: 50m
+    schedulingRules:
+      nodeSelector: {}
   frontendProxy:
     resources:
       requests:
@@ -75,31 +107,47 @@ components:
         memory: 100Mi
       limits:
         memory: 100Mi
+    schedulingRules:
+      nodeSelector: {}
   loadgenerator:
     resources:
       requests:
         cpu: 50m
+    schedulingRules:
+      nodeSelector: {}
   paymentService:
     resources:
       requests:
         cpu: 50m
+    schedulingRules:
+      nodeSelector: {}
   productCatalogService:
     resources:
       requests:
         cpu: 50m
+    schedulingRules:
+      nodeSelector: {}
   quoteService:
     resources:
       requests:
         cpu: 50m
+    schedulingRules:
+      nodeSelector: {}
   recommendationService:
     resources:
       requests:
         cpu: 50m
+    schedulingRules:
+      nodeSelector: {}
   redis:
     resources:
       requests:
         cpu: 50m
+    schedulingRules:
+      nodeSelector: {}
   shippingService:
     resources:
       requests:
         cpu: 50m
+    schedulingRules:
+      nodeSelector: {}
