@@ -50,6 +50,7 @@ To enable Sentry instrumentation for the component, do the following:
 1. Uncomment the service section in [`sentry-components.yaml`](./sentry-components.yaml)
    and provide attribute overrides, if necessasry.
 2. Configure additional non-public parameters (e.g. SENTRY_DSN environment variable)
+    <!-- markdown-link-check-disable-next-line -->
    [in this file](https://github.com/getsentry/test-factory/blob/main/k8s/services/workflows-otel-demo/templates/otel-demo/services-secrets.yaml)
    (private repository).
 
