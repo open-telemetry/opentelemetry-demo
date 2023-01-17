@@ -107,6 +107,18 @@
         "nanos": 950000000
       },
       "categories": ["accessories", "telescopes"]
+    },
+    {
+      "id": "HQTGWGPNH4",
+      "name": "The Comet Book",
+      "description": "A 16th-century treatise on comets, created anonymously in Flanders (now northern France) and now held at the Universitätsbibliothek Kassel. Commonly known as The Comet Book (or Kometenbuch in German), its full title translates as “Comets and their General and Particular Meanings, According to Ptolomeé, Albumasar, Haly, Aliquind and other Astrologers”. The image is from https://publicdomainreview.org/collection/the-comet-book, made available by the Universitätsbibliothek Kassel under a CC-BY SA 4.0 license (https://creativecommons.org/licenses/by-sa/4.0/)",
+      "picture": "/images/products/TheCometBook.jpg",
+      "priceUsd": {
+        "currencyCode": "USD",
+        "units": 0,
+        "nanos": 990000000
+      },
+      "categories": ["books"]
     }
   ]
 }

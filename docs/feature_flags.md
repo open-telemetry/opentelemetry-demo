@@ -8,4 +8,4 @@ feature flags.
 | Feature Flag            | Service(s)      | Description |
 |-------------------------|-----------------|---------------------------------------------------------------------------------------------------------|
 | `productCatalogFailure` | Product Catalog | Generate an error for `GetProduct` requests with product id: `OLJCESPC7Z`                               |
-| `recommendationCache`   | Recommendation  | Create a memory leak due to an exponentially growing cache. 1.4x growth, 50% of requests trigger growth |
+| `recommendationCache`   | Recommendation  | Create a memory leak due to an exponentially growing cache. 1.4x growth, 50% of requests trigger growth. |
