@@ -1,4 +1,9 @@
 services:
+  # Accounting service
+  accountingservice:
+    environment:
+      - SENTRY_DSN=${SENTRY_DSN_ACCOUNTINGSERVICE}
+
   # Ad service
   adservice:
     environment:
@@ -23,6 +28,11 @@ services:
   featureflagservice:
     environment:
       - SENTRY_DSN=${SENTRY_DSN_FEATUREFLAGSERVICE}
+
+  # Fraud Detection service
+  frauddetectionservice:
+    environment:
+      - SENTRY_DSN=${SENTRY_DSN_FRAUDDETECTIONSERVICE}
 
   # Frontend
   frontend:
@@ -51,7 +61,7 @@ services:
   # Recommendation service
   recommendationservice:
     environment:
-      - SENTRY_DSN=${SENTRY_DSN_RECOMMENDATINOSERVICE}
+      - SENTRY_DSN=${SENTRY_DSN_RECOMMENDATIONSERVICE}
 
   # Shipping service
   shippingservice:
