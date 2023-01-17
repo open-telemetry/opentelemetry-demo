@@ -190,3 +190,5 @@ significant modifications will be credited to OpenTelemetry Authors.
 ([#687](https://github.com/open-telemetry/opentelemetry-demo/pull/687))
 * Remove grpc from loadgenerator
 ([#688](https://github.com/open-telemetry/opentelemetry-demo/pull/688))
+* Update docker-compose services to restart unless stopped
+([#690](https://github.com/open-telemetry/opentelemetry-demo/pull/690))
