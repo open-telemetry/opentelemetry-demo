@@ -7,9 +7,13 @@ const { containerDetector } = require('@opentelemetry/resource-detector-containe
 const { gcpDetector } = require('@opentelemetry/resource-detector-gcp');
 const { envDetector, hostDetector, osDetector, processDetector } = require('@opentelemetry/resources');
 
+const { SentrySpanProcessor, SentryPropagator } = require('@sentry/opentelemetry-node');
+
 const sdk = new opentelemetry.NodeSDK({
   traceExporter: new OTLPTraceExporter(),
   instrumentations: [getNodeAutoInstrumentations()],
+  spanProcessor: new SentrySpanProcessor(),
+  textMapPropagator: new SentryPropagator(),
   resourceDetectors: [
     containerDetector,
     envDetector,
