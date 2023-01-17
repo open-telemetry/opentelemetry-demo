@@ -188,3 +188,5 @@ significant modifications will be credited to OpenTelemetry Authors.
 ([#678](https://github.com/open-telemetry/opentelemetry-demo/pull/678))
 * Rebuild currency service Dockerfile with alpine
 ([#687](https://github.com/open-telemetry/opentelemetry-demo/pull/687))
+* Update docker-compose services to restart unless stopped
+([#690](https://github.com/open-telemetry/opentelemetry-demo/pull/690))
