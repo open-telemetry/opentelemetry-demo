@@ -109,7 +109,7 @@ Follow these links for the current state of
  [metric](https://github.com/open-telemetry/opentelemetry-demo/blob/main/docs/metric_service_features.md)
  and
  [trace](https://github.com/open-telemetry/opentelemetry-demo/blob/main/docs/trace_service_features.md)
- instrumentation of the demo applications.\
+ instrumentation of the demo applications.
 
 The collector is configured in
  [otelcol-config.yml](https://github.com/open-telemetry/opentelemetry-demo/blob/main/src/otelcollector/otelcol-config.yml),
