@@ -12,6 +12,7 @@
   },
   "dependencies": {
     "@grpc/grpc-js": "1.6.7",
+    "@opentelemetry/api": "^1.2.0",
     "@opentelemetry/auto-instrumentations-node": "0.33.1",
     "@opentelemetry/auto-instrumentations-web": "0.30.0",
     "@opentelemetry/context-zone": "1.7.0",
@@ -28,8 +29,8 @@
     "@opentelemetry/sdk-trace-base": "1.7.0",
     "@opentelemetry/sdk-trace-node": "1.7.0",
     "@opentelemetry/sdk-trace-web": "1.7.0",
-    "@sentry/nextjs": "7.31.0",
-    "@sentry/opentelemetry-node": "7.31.0",
+    "@sentry/nextjs": "7.31.1",
+    "@sentry/opentelemetry-node": "7.31.1",
     "@types/styled-components": "5.1.25",
     "cookies-next": "^2.1.1",
     "currency-symbol-map": "5.1.0",
