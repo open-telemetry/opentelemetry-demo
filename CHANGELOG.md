@@ -189,4 +189,4 @@ significant modifications will be credited to OpenTelemetry Authors.
 * Rebuild currency service Dockerfile with alpine
 ([#687](https://github.com/open-telemetry/opentelemetry-demo/pull/687))
 * Use different docker base images for frauddetection service
-([]())
+([#691](https://github.com/open-telemetry/opentelemetry-demo/pull/691))
