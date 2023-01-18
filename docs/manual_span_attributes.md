@@ -10,6 +10,8 @@ This document contains the list of manual Span Attributes used throughout the de
 | `app.ads.contextKeys`       | string | Context keys used to find related ads |
 | `app.ads.contextKeys.count` | number | Count of unique context keys used     |
 | `app.ads.count`             | number | Count of ads returned to user         |
+| `app.ads.ad_request_type`   | string | Either `targeted` or `not_targeted`   |
+| `app.ads.ad_response_type`  | string | Either `targeted` or `random`         |
 
 ## CartService
 

@@ -182,3 +182,13 @@ significant modifications will be credited to OpenTelemetry Authors.
 ([#674](https://github.com/open-telemetry/opentelemetry-demo/pull/674))
 * Add resource detectors to accounting service
 ([#676](https://github.com/open-telemetry/opentelemetry-demo/pull/676))
+* Add resource detectors to product catalog service
+([#677](https://github.com/open-telemetry/opentelemetry-demo/pull/677))
+* Add custom metrics to ads service
+([#678](https://github.com/open-telemetry/opentelemetry-demo/pull/678))
+* Rebuild currency service Dockerfile with alpine
+([#687](https://github.com/open-telemetry/opentelemetry-demo/pull/687))
+* Remove grpc from loadgenerator
+([#688](https://github.com/open-telemetry/opentelemetry-demo/pull/688))
+* Update docker-compose services to restart unless stopped
+([#690](https://github.com/open-telemetry/opentelemetry-demo/pull/690))
