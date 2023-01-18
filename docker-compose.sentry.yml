@@ -3,67 +3,88 @@ services:
   accountingservice:
     environment:
       - SENTRY_DSN=${SENTRY_DSN_ACCOUNTINGSERVICE}
+      - SENTRY_ENVIRONMENT=${SENTRY_ENVIRONMENT}
 
   # Ad service
   adservice:
     environment:
       - SENTRY_DSN=${SENTRY_DSN_ADSERVICE}
+      - SENTRY_ENVIRONMENT=${SENTRY_ENVIRONMENT}
 
   # Cart service
   cartservice:
     environment:
       - SENTRY_DSN=${SENTRY_DSN_CARTSERVICE}
+      - SENTRY_ENVIRONMENT=${SENTRY_ENVIRONMENT}
+
+  # Checkout service
+  checkoutservice:
+    environment:
+      - SENTRY_DSN=${SENTRY_DSN_CHECKOUTSERVICE}
+      - SENTRY_ENVIRONMENT=${SENTRY_ENVIRONMENT}
 
   # Currency service
   currencyservice:
     environment:
       - SENTRY_DSN=${SENTRY_DSN_CURRENCYSERVICE}
+      - SENTRY_ENVIRONMENT=${SENTRY_ENVIRONMENT}
 
   # Email service
   emailservice:
     environment:
       - SENTRY_DSN=${SENTRY_DSN_EMAILSERVICE}
+      - SENTRY_ENVIRONMENT=${SENTRY_ENVIRONMENT}
 
   # Feature Flag service
   featureflagservice:
     environment:
       - SENTRY_DSN=${SENTRY_DSN_FEATUREFLAGSERVICE}
+      - SENTRY_ENVIRONMENT=${SENTRY_ENVIRONMENT}
 
   # Fraud Detection service
   frauddetectionservice:
     environment:
       - SENTRY_DSN=${SENTRY_DSN_FRAUDDETECTIONSERVICE}
+      - SENTRY_ENVIRONMENT=${SENTRY_ENVIRONMENT}
 
   # Frontend
   frontend:
     environment:
       - SENTRY_DSN_SERVER=${SENTRY_DSN_FRONTENDSERVICE_BACKEND}
+      - SENTRY_ENVIRONMENT=${SENTRY_ENVIRONMENT}
       - NEXT_PUBLIC_SENTRY_DSN_CLIENT=${SENTRY_DSN_FRONTENDSERVICE_FRONTEND}
+      - NEXT_PUBLIC_SENTRY_ENVIRONMENT=${SENTRY_ENVIRONMENT}
     build:
       args:
         NEXT_PUBLIC_SENTRY_DSN_CLIENT: ${SENTRY_DSN_FRONTENDSERVICE_FRONTEND}
+        NEXT_PUBLIC_SENTRY_ENVIRONMENT: ${SENTRY_ENVIRONMENT}
 
   # Payment service
   paymentservice:
     environment:
       - SENTRY_DSN=${SENTRY_DSN_PAYMENTSERVICE}
+      - SENTRY_ENVIRONMENT=${SENTRY_ENVIRONMENT}
 
   # Product Catalog service
   productcatalogservice:
     environment:
       - SENTRY_DSN=${SENTRY_DSN_PRODUCTCATALOGSERVICE}
+      - SENTRY_ENVIRONMENT=${SENTRY_ENVIRONMENT}
 
   # Quote service
   quoteservice:
     environment:
       - SENTRY_DSN=${SENTRY_DSN_QUOTESERVICE}
+      - SENTRY_ENVIRONMENT=${SENTRY_ENVIRONMENT}
 
   # Recommendation service
   recommendationservice:
     environment:
       - SENTRY_DSN=${SENTRY_DSN_RECOMMENDATIONSERVICE}
+      - SENTRY_ENVIRONMENT=${SENTRY_ENVIRONMENT}
 
   # Shipping service
   shippingservice:
     environment:
       - SENTRY_DSN=${SENTRY_DSN_SHIPPINGSERVICE}
+      - SENTRY_ENVIRONMENT=${SENTRY_ENVIRONMENT}
