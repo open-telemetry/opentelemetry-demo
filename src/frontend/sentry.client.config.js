@@ -8,6 +8,13 @@ Sentry.init({
   dsn: process.env.NEXT_PUBLIC_SENTRY_DSN_CLIENT,
   // Adjust this value in production, or use tracesSampler for greater control
   tracesSampleRate: 1.0,
+  integrations: [
+    new Sentry.BrowserTracing({
+      _experiments: {
+        enableInteractions: true,
+      },
+    }),
+  ],
   // ...
   // Note: if you want to override the automatic release value, do not set a
   // `release` value here - use the environment variable `SENTRY_RELEASE`, so
