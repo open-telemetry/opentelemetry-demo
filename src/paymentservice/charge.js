@@ -12,8 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-const {context, propagation, trace} = require('@opentelemetry/api');
-const { metrics } = require('@opentelemetry/api-metrics');
+const {context, propagation, trace, metrics} = require('@opentelemetry/api');
 const cardValidator = require('simple-card-validator');
 const { v4: uuidv4 } = require('uuid');
 
