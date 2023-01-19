@@ -20,6 +20,7 @@ To run the Ad Service:
 
 ```sh
 export AD_SERVICE_PORT=8080
+export FEATURE_FLAG_GRPC_SERVICE_ADDR=featureflagservice:50053
 ./build/install/hipstershop/bin/AdService
 ```
 
