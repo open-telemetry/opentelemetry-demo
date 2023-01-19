@@ -170,6 +170,8 @@ significant modifications will be credited to OpenTelemetry Authors.
 ([#648](https://github.com/open-telemetry/opentelemetry-demo/pull/648))
 * Add Jaeger-SPM-Config
 ([#655](https://github.com/open-telemetry/opentelemetry-demo/pull/655))
+* Add healthcheck to featureflagservice
+([#661](https://github.com/open-telemetry/opentelemetry-demo/pull/661)
 * Add resource detectors to checkout service
 ([#662](https://github.com/open-telemetry/opentelemetry-demo/pull/662))
 * Add resource detectors to cart service
