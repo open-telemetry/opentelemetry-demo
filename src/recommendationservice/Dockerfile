@@ -1,4 +1,4 @@
-# Copyright 2020 Google LLC
+# Copyright The OpenTelemetry Authors
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -12,7 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-FROM python:3.10
+FROM python:3.10-slim-bullseye
 
 WORKDIR /usr/src/app/
 
