@@ -17,7 +17,7 @@ components:
 
   # cartService: {}
 
-  # checkoutService: {}
+  checkoutService: {}
 
   # currencyService: {}
 

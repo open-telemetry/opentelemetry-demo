@@ -40,7 +40,6 @@ import (
 	"go.opentelemetry.io/otel/exporters/otlp/otlpmetric/otlpmetricgrpc"
 	"go.opentelemetry.io/otel/exporters/otlp/otlptrace/otlptracegrpc"
 	"go.opentelemetry.io/otel/metric/global"
-	"go.opentelemetry.io/otel/propagation"
 	sdkmetric "go.opentelemetry.io/otel/sdk/metric"
 	sdkresource "go.opentelemetry.io/otel/sdk/resource"
 	sdktrace "go.opentelemetry.io/otel/sdk/trace"
@@ -54,6 +53,9 @@ import (
 	pb "github.com/open-telemetry/opentelemetry-demo/src/checkoutservice/genproto/hipstershop"
 	"github.com/open-telemetry/opentelemetry-demo/src/checkoutservice/kafka"
 	"github.com/open-telemetry/opentelemetry-demo/src/checkoutservice/money"
+
+	"github.com/getsentry/sentry-go"
+	"github.com/getsentry/sentry-go/otel"
 )
 
 var log *logrus.Logger
@@ -101,10 +103,11 @@ func initTracerProvider() *sdktrace.TracerProvider {
 	}
 	tp := sdktrace.NewTracerProvider(
 		sdktrace.WithBatcher(exporter),
+		sdktrace.WithSpanProcessor(sentryotel.NewSentrySpanProcessor()),
 		sdktrace.WithResource(initResource()),
 	)
 	otel.SetTracerProvider(tp)
-	otel.SetTextMapPropagator(propagation.NewCompositeTextMapPropagator(propagation.TraceContext{}, propagation.Baggage{}))
+	otel.SetTextMapPropagator(sentryotel.NewSentryPropagator())
 	return tp
 }
 
@@ -137,6 +140,13 @@ type checkoutService struct {
 }
 
 func main() {
+	sentry.Init(sentry.ClientOptions{
+		Dsn:              "",
+		EnableTracing:    true,
+		TracesSampleRate: 1.0,
+		Debug:            true,
+	})
+
 	var port string
 	mustMapEnv(&port, "CHECKOUT_SERVICE_PORT")
 
