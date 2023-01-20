@@ -1,4 +1,4 @@
-FROM ruby:3.1.2-slim as base
+FROM ruby:3.1.2-alpine as base
 
 FROM base as builder
 
@@ -6,9 +6,7 @@ WORKDIR /tmp
 
 COPY Gemfile Gemfile.lock .
 
-# RUN apt-get update -y && apt-get install --no-install-recommends -y build-base && rm -rf /var/lib/apt/lists/* 
-RUN apt-get update -y && apt-get install --no-install-recommends -y make gcc && bundle install
-
+RUN apk update && apk add make gcc musl-dev && bundle install
 
 FROM base as release
 
