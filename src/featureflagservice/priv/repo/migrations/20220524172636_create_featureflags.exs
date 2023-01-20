@@ -35,5 +35,6 @@ defmodule Featureflagservice.Repo.Migrations.CreateFeatureflags do
   defp execute_down do
     repo().delete(%Featureflagservice.FeatureFlags.FeatureFlag{name: "productCatalogFailure"})
     repo().delete(%Featureflagservice.FeatureFlags.FeatureFlag{name: "recommendationCache"})
+    repo().delete(%Featureflagservice.FeatureFlags.FeatureFlag{name: "adServiceFailure"})
   end
 end

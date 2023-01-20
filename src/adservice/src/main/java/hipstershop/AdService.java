@@ -132,7 +132,7 @@ public final class AdService {
 
   private static class AdServiceImpl extends hipstershop.AdServiceGrpc.AdServiceImplBase {
 
-    private static final String ADSERVICE_FAIL_FEATURE_FALG = "adServiceFailure";
+    private static final String ADSERVICE_FAIL_FEATURE_FLAG = "adServiceFailure";
 
     private final FeatureFlagServiceBlockingStub featureFlagServiceStub;
 
@@ -188,7 +188,7 @@ public final class AdService {
                 adRequestTypeKey, adRequestType.name(), adResponseTypeKey, adResponseType.name()));
 
         if (checkAdFailure()) {
-          logger.warn(ADSERVICE_FAIL_FEATURE_FALG + " fail feature flag enabled");
+          logger.warn(ADSERVICE_FAIL_FEATURE_FLAG + " fail feature flag enabled");
           throw new StatusRuntimeException(Status.RESOURCE_EXHAUSTED);
         }
 
@@ -213,7 +213,7 @@ public final class AdService {
       GetFlagResponse response =
           featureFlagServiceStub.getFlag(
               hipstershop.Demo.GetFlagRequest.newBuilder()
-                  .setName(ADSERVICE_FAIL_FEATURE_FALG)
+                  .setName(ADSERVICE_FAIL_FEATURE_FLAG)
                   .build());
       return response.getFlag().getEnabled();
     }

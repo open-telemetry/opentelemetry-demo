@@ -34,4 +34,4 @@ RUN chmod 644 /app/opentelemetry-javaagent.jar
 ENV JAVA_TOOL_OPTIONS=-javaagent:/app/opentelemetry-javaagent.jar
 
 EXPOSE ${AD_SERVICE_PORT}
-ENTRYPOINT [ "./build/install/hipstershop/bin/AdService" ]
+ENTRYPOINT [ "./build/install/opentelemetry-demo-ad-service/bin/AdService" ]
