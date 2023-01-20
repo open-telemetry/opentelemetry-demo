@@ -170,6 +170,8 @@ significant modifications will be credited to OpenTelemetry Authors.
 ([#648](https://github.com/open-telemetry/opentelemetry-demo/pull/648))
 * Add Jaeger-SPM-Config
 ([#655](https://github.com/open-telemetry/opentelemetry-demo/pull/655))
+* Add healthcheck to featureflagservice
+([#661](https://github.com/open-telemetry/opentelemetry-demo/pull/661)
 * Add resource detectors to checkout service
 ([#662](https://github.com/open-telemetry/opentelemetry-demo/pull/662))
 * Add resource detectors to cart service
@@ -194,5 +196,7 @@ significant modifications will be credited to OpenTelemetry Authors.
 ([#690](https://github.com/open-telemetry/opentelemetry-demo/pull/690))
 * Use different docker base images for frauddetection service
 ([#691](https://github.com/open-telemetry/opentelemetry-demo/pull/691))
-* Add logic to exercise error handling in AdService
+* Fix payment service version to support temporality environment variable
+([#693](https://github.com/open-telemetry/opentelemetry-demo/pull/693))
+* Add adServiceFailure feature flag triggering Ad Service errors
 ([#694](https://github.com/open-telemetry/opentelemetry-demo/pull/694))
