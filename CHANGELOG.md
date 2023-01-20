@@ -198,3 +198,5 @@ significant modifications will be credited to OpenTelemetry Authors.
 ([#691](https://github.com/open-telemetry/opentelemetry-demo/pull/691))
 * Fix payment service version to support temporality environment variable
 ([#693](https://github.com/open-telemetry/opentelemetry-demo/pull/693))
+* Reduce spans generated from quote service
+([#702](https://github.com/open-telemetry/opentelemetry-demo/pull/702))
