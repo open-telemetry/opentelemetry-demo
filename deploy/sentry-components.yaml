@@ -11,7 +11,7 @@
 #
 ---
 components:
-  # accountingService: {}
+  accountingService: {}
 
   adService: {}
 

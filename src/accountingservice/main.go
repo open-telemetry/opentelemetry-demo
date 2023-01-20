@@ -26,11 +26,13 @@ import (
 	"github.com/sirupsen/logrus"
 	"go.opentelemetry.io/otel"
 	"go.opentelemetry.io/otel/exporters/otlp/otlptrace/otlptracegrpc"
-	"go.opentelemetry.io/otel/propagation"
 	sdkresource "go.opentelemetry.io/otel/sdk/resource"
 	sdktrace "go.opentelemetry.io/otel/sdk/trace"
 
 	"github.com/open-telemetry/opentelemetry-demo/src/accountingservice/kafka"
+
+	"github.com/getsentry/sentry-go"
+	"github.com/getsentry/sentry-go/otel"
 )
 
 var log *logrus.Logger
@@ -77,14 +79,22 @@ func initTracerProvider() (*sdktrace.TracerProvider, error) {
 	}
 	tp := sdktrace.NewTracerProvider(
 		sdktrace.WithBatcher(exporter),
+		sdktrace.WithSpanProcessor(sentryotel.NewSentrySpanProcessor()),
 		sdktrace.WithResource(initResource()),
 	)
 	otel.SetTracerProvider(tp)
-	otel.SetTextMapPropagator(propagation.NewCompositeTextMapPropagator(propagation.TraceContext{}, propagation.Baggage{}))
+	otel.SetTextMapPropagator(sentryotel.NewSentryPropagator())
 	return tp, nil
 }
 
 func main() {
+	sentry.Init(sentry.ClientOptions{
+		Dsn:              "",
+		EnableTracing:    true,
+		TracesSampleRate: 1.0,
+		Debug:            true,
+	})
+
 	tp, err := initTracerProvider()
 	if err != nil {
 		log.Fatal(err)
