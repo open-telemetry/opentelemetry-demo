@@ -37,7 +37,6 @@ import (
 	otelcodes "go.opentelemetry.io/otel/codes"
 	"go.opentelemetry.io/otel/exporters/otlp/otlpmetric/otlpmetricgrpc"
 	"go.opentelemetry.io/otel/exporters/otlp/otlptrace/otlptracegrpc"
-	"go.opentelemetry.io/otel/propagation"
 	sdkresource "go.opentelemetry.io/otel/sdk/resource"
 	sdktrace "go.opentelemetry.io/otel/sdk/trace"
 	"go.opentelemetry.io/otel/trace"
@@ -48,6 +47,9 @@ import (
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/credentials/insecure"
 	"google.golang.org/grpc/status"
+
+	"github.com/getsentry/sentry-go"
+	"github.com/getsentry/sentry-go/otel"
 )
 
 var (
@@ -88,10 +90,11 @@ func initTracerProvider() *sdktrace.TracerProvider {
 	}
 	tp := sdktrace.NewTracerProvider(
 		sdktrace.WithBatcher(exporter),
+		sdktrace.WithSpanProcessor(sentryotel.NewSentrySpanProcessor()),
 		sdktrace.WithResource(initResource()),
 	)
 	otel.SetTracerProvider(tp)
-	otel.SetTextMapPropagator(propagation.NewCompositeTextMapPropagator(propagation.TraceContext{}, propagation.Baggage{}))
+	otel.SetTextMapPropagator(sentryotel.NewSentryPropagator())
 	return tp
 }
 
@@ -112,6 +115,13 @@ func initMeterProvider() *sdkmetric.MeterProvider {
 }
 
 func main() {
+	sentry.Init(sentry.ClientOptions{
+		Dsn:              "",
+		EnableTracing:    true,
+		TracesSampleRate: 1.0,
+		Debug:            true,
+	})
+
 	tp := initTracerProvider()
 	defer func() {
 		if err := tp.Shutdown(context.Background()); err != nil {

@@ -1,15 +1,17 @@
 module github.com/opentelemetry/opentelemetry-demo/src/productcatalogservice
 
-go 1.17
+go 1.19
 
 require (
 	github.com/golang/protobuf v1.5.2 // indirect
-	github.com/sirupsen/logrus v1.8.1
-	golang.org/x/net v0.0.0-20220722155237-a158d28d115b // indirect
+	github.com/sirupsen/logrus v1.9.0
+	golang.org/x/net v0.0.0-20221002022538-bcab6841153b // indirect
 	google.golang.org/grpc v1.51.0
 )
 
 require (
+	github.com/getsentry/sentry-go v0.17.1-0.20230119191648-87ec1ab349e5
+	github.com/getsentry/sentry-go/otel v0.0.0-20230119191648-87ec1ab349e5
 	go.opentelemetry.io/contrib/instrumentation/runtime v0.37.0
 	go.opentelemetry.io/otel/exporters/otlp/otlpmetric/otlpmetricgrpc v0.34.0
 	go.opentelemetry.io/otel/metric v0.34.0
@@ -34,8 +36,7 @@ require (
 	go.opentelemetry.io/contrib/instrumentation/google.golang.org/grpc/otelgrpc v0.29.0
 	go.opentelemetry.io/otel v1.11.2
 	go.opentelemetry.io/otel/exporters/otlp/otlptrace/otlptracegrpc v1.4.1
-	golang.org/x/sys v0.0.0-20220919091848-fb04ddd9f9c8 // indirect
-	golang.org/x/text v0.4.0 // indirect
+	golang.org/x/sys v0.4.0 // indirect
+	golang.org/x/text v0.6.0 // indirect
 	google.golang.org/genproto v0.0.0-20220126215142-9970aeb2e350 // indirect
 )
-
