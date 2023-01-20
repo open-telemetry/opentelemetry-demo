@@ -35,3 +35,25 @@ Sentry.init({
   // `release` value here - use the environment variable `SENTRY_RELEASE`, so
   // that it will also get attached to your source maps
 });
+
+// We want to keep a consistent user id across page loads for a user, especially for replay
+const userId = getLocalUserId();
+if (userId) {
+  Sentry.setUser({ id: userId });
+}
+
+function getLocalUserId() {
+  try {
+    const storedUserId = localStorage.getItem('SENTRY-userId');
+    if (storedUserId) {
+      return storedUserId;
+    }
+
+    const newUserId = crypto.randomUUID();
+    localStorage.setItem('SENTRY-userId', newUserId);
+    return newUserId;
+  } catch (error) {
+    // If either localStorage or crypto is not available, we simply fall back to no user handling
+    return undefined;
+  }
+}
