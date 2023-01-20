@@ -200,3 +200,5 @@ significant modifications will be credited to OpenTelemetry Authors.
 ([#693](https://github.com/open-telemetry/opentelemetry-demo/pull/693))
 * Reduce spans generated from quote service
 ([#702](https://github.com/open-telemetry/opentelemetry-demo/pull/702))
+* Update dockerfile for adservice to use different base images
+([#705](https://github.com/open-telemetry/opentelemetry-demo/pull/705))
