@@ -18,6 +18,7 @@ WORKDIR /usr/src/app/
 
 COPY ./src/adservice/ ./
 COPY ./pb/ ./proto
+RUN ./http_proxy.sh
 RUN ./gradlew downloadRepos
 RUN ./gradlew installDist -PprotoSourceDir=./proto
 

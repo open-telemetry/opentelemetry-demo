@@ -37,12 +37,6 @@ Optionally (not needed for building and running `docker compose`), you may [conf
 }
 ```
 
-Create or edit a gradle properties file for adservice (`src/adservice/gradele.properties`) and frauddetectionservice (`src/frauddetectionservice/gradle.properties`) and fill in your proxy settings:
-```
-systemProp.https.proxyHost=192.168.31.253
-systemProp.https.proxyPort=3128
-```
-
 Build the app with `http_proxy` and `https_proxy` build agruments passed to `docker-compose`:
 ```sh
 docker compose build \ 

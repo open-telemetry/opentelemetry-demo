@@ -4,6 +4,7 @@ WORKDIR /usr/src/app/
 
 COPY ./src/frauddetectionservice/ ./
 COPY ./pb/ ./src/main/proto/
+RUN ./http_proxy.sh
 RUN gradle shadowJar
 
 # -----------------------------------------------------------------------------
