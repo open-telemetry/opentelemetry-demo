@@ -192,3 +192,5 @@ significant modifications will be credited to OpenTelemetry Authors.
 ([#688](https://github.com/open-telemetry/opentelemetry-demo/pull/688))
 * Update docker-compose services to restart unless stopped
 ([#690](https://github.com/open-telemetry/opentelemetry-demo/pull/690))
+* Update emailservice Dockerfile to use alpine and multistage build
+([#703](https://github.com/open-telemetry/opentelemetry-demo/pull/703))
