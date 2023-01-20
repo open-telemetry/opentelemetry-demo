@@ -12,7 +12,13 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-FROM python:3.10-slim-bullseye
+FROM python:3.10-slim-bullseye as base
+
+FROM base as builder
+
+RUN apt-get -qq update \
+    && apt-get install -y --no-install-recommends g++ \
+    && rm -rf /var/lib/apt/lists/*
 
 WORKDIR /usr/src/app/
 
@@ -20,13 +26,19 @@ COPY ./src/recommendationservice/ ./
 COPY ./pb/ ./proto/
 
 RUN pip install --upgrade pip
-RUN pip install -r ./requirements.txt
-
-RUN opentelemetry-bootstrap -a install
+RUN pip install --prefix="/reqs" -r requirements.txt
 
 # add files into working directory
 RUN python -m pip install grpcio-tools==1.48.2
 RUN python -m grpc_tools.protoc -I=./proto/ --python_out=./ --grpc_python_out=./ ./proto/demo.proto
+
+FROM base
+
+WORKDIR /usr/src/app/
+COPY --from=builder /usr/src/app/ .
+COPY --from=builder /reqs /usr/local
+
+RUN opentelemetry-bootstrap -a install
 
 EXPOSE ${RECOMMENDATION_SERVICE_PORT}
 ENTRYPOINT [ "opentelemetry-instrument", "python", "recommendation_server.py" ]
