@@ -255,6 +255,8 @@ services:
       - DATABASE_URL=ecto://ffs:ffs@ffs_postgres:5432/ffs
       - FEATURE_FLAG_SERVICE_PATH_ROOT="/feature"
       - INSTANA_SERVICE_NAME=featureflagservice
+    healthcheck:
+      test: ["CMD", "curl", "-H", "baggage: synthetic_request=true", "-f", "http://localhost:${FEATURE_FLAG_SERVICE_PORT}"]
     depends_on:
       ffs_postgres:
         condition: service_healthy
