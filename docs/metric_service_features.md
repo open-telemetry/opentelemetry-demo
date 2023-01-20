@@ -9,7 +9,7 @@ Emoji Legend
 | Service            | Language        | Instrumentation Libraries | Manual Metric Creation | Multiple Manual Metric Instruments | Metric Attributes | Resource Attributes | Exemplars      | Views          |
 |--------------------|-----------------|---------------------------|------------------------|------------------------------------|-------------------|---------------------|----------------|----------------|
 | Accounting Service | Go              | :construction:            | :construction:         | :construction:                     | :construction:    | :construction:      | :construction: | :construction: |
-| Ad                 | Java            | :100:                     | :100:                  | :construction:                     | :100:             | :100:               | :construction: | :construction: |
+| Ad                 | Java            | :100:                     | :100:                  | :construction:                     | :100:             | :100:               | :100: | :construction: |
 | Cart               | .NET            | :100:                     | :construction:         | :construction:                     | :construction:    | :construction:      | :construction: | :construction: |
 | Checkout           | Go              | :100:                     | :construction:         | :construction:                     | :construction:    | :construction:      | :construction: | :construction: |
 | Currency           | C++             | :no_bell:                 | :construction:         | :construction:                     | :construction:    | :construction:      | :construction: | :construction: |
