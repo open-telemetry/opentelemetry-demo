@@ -24,7 +24,7 @@ helm repo add open-telemetry https://open-telemetry.github.io/opentelemetry-helm
 Set a Kubernetes secret with your New Relic license key: 
 
 ```console
-kubectl create secret generic newrelic-secret --from-literal=new_relic_license_key='<NEW_RELIC_LICENSE_KEY>'
+kubectl create secret generic newrelic-key-secret --from-literal=new_relic_license_key='<NEW_RELIC_LICENSE_KEY>'
 ```
 
 To install the chart with the release name newrelic-otel, run the following command and pass in the provided `values.yaml` file to customize the deployment:
