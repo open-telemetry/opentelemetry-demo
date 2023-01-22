@@ -200,3 +200,5 @@ significant modifications will be credited to OpenTelemetry Authors.
 ([#693](https://github.com/open-telemetry/opentelemetry-demo/pull/693))
 * Update recommendationservice python base image and dependencies
 ([#700](https://github.com/open-telemetry/opentelemetry-demo/pull/700))
+* Reduce spans generated from quote service
+([#702](https://github.com/open-telemetry/opentelemetry-demo/pull/702))
