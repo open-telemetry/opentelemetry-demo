@@ -434,7 +434,7 @@ services:
   # Quote service
   quoteservice:
     image: ${IMAGE_NAME}:${IMAGE_VERSION}-quoteservice
-    container_name: quoteservice
+    container_name: quote-service
     build:
       context: ./
       dockerfile: ./src/quoteservice/Dockerfile
