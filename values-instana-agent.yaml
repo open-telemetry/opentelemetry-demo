@@ -199,7 +199,7 @@ components:
       - name: OTEL_EXPORTER_OTLP_METRICS_ENDPOINT
         value: http://$(INSTANA_AGENT_HOST):4317
       - name: OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE
-        value: cumulative
+
       - name: CHECKOUT_SERVICE_PORT
         value: "8080"
       - name: KAFKA_SERVICE_ADDR
@@ -216,7 +216,7 @@ components:
     env:
       - name: PORT
         value: "8080"
-      - name: OTEL_EXPORTER_OTLP_ENDPOINT
+      - name: OTEL_EXPORTER_OTLP_TRACES_ENDPOINT
         value: http://$(INSTANA_AGENT_HOST):4317
       - name: CURRENCY_SERVICE_PORT
         value: "8080"
