@@ -27,7 +27,10 @@ default:
     - name: INSTANA_SERVICE_NAME
       value: $(OTEL_SERVICE_NAME)
     - name: INSTANA_AGENT_HOST
-      value: instana-agent.instana-agent  # The instana agent service name.namespace
+      # value: instana-agent.instana-agent  # Instana agent service <service name>.<namespace>
+      valueFrom:
+        fieldRef:
+          fieldPath: status.hostIP
     - name: INSTANA_AGENT_PORT
       value: "42699"
 
@@ -36,7 +39,8 @@ default:
   #  - name: OTEL_K8S_NODE_NAME
   #    value: "someConstantValue"
   image:
-    repository: image-registry.openshift-image-registry.svc:5000/otel-demo/demo
+    # repository: image-registry.openshift-image-registry.svc:5000/otel-demo/demo
+    repository: joshuamlee/otel-demo-instana
     # Overrides the image tag whose default is the chart appVersion.
     # The service's name will be applied to the end of this value.
     tag: ""
@@ -256,7 +260,7 @@ components:
         value: 'ecto://ffs:ffs@{{ include "otel-demo.name" . }}-ffspostgres:5432/ffs'
       - name: FEATURE_FLAG_SERVICE_PATH_ROOT
         value: "/feature"
-      - name: OTEL_EXPORTER_OTLP_ENDPOINT
+      - name: OTEL_EXPORTER_OTLP_TRACES_ENDPOINT
         value: http://$(INSTANA_AGENT_HOST):4317
     resources:
       limits:
@@ -405,8 +409,12 @@ components:
       env: true
     servicePort: 8080
     env:
-      - name: OTEL_EXPORTER_OTLP_ENDPOINT
+      - name: OTEL_EXPORTER_OTLP_TRACES_ENDPOINT
         value: http://$(INSTANA_AGENT_HOST):4317
+      - name: OTEL_EXPORTER_OTLP_METRICS_ENDPOINT
+        value: http://$(INSTANA_AGENT_HOST):4317
+      - name: OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE
+        value: cumulative
       - name: PRODUCT_CATALOG_SERVICE_PORT
         value: "8080"
       - name: FEATURE_FLAG_GRPC_SERVICE_ADDR
