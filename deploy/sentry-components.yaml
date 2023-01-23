@@ -21,7 +21,7 @@ components:
 
   # currencyService: {}
 
-  # emailService: {}
+  emailService: {}
 
   # featureflagService: {}
 
