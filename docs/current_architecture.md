@@ -40,7 +40,7 @@ checkoutservice --->|gRPC| currencyservice
 checkoutservice --->|HTTP| emailservice
 checkoutservice --->|gRPC| paymentservice
 checkoutservice -->|gRPC| shippingservice
-checkoutservice -->|TCP| queue
+checkoutservice ---->|TCP| queue
 
 frontend -->|gRPC| adservice
 frontend -->|gRPC| cartservice
@@ -53,6 +53,8 @@ frontend -->|gRPC| shippingservice -->|HTTP| quoteservice
 frauddetectionservice -->|TCP| queue
 
 productcatalogservice -->|gRPC| featureflagservice
+
+recommendationservice -->|gRPC| featureflagservice
 
 shippingservice -->|gRPC| featureflagservice
 
@@ -109,7 +111,7 @@ Follow these links for the current state of
  [metric](https://github.com/open-telemetry/opentelemetry-demo/blob/main/docs/metric_service_features.md)
  and
  [trace](https://github.com/open-telemetry/opentelemetry-demo/blob/main/docs/trace_service_features.md)
- instrumentation of the demo applications.\
+ instrumentation of the demo applications.
 
 The collector is configured in
  [otelcol-config.yml](https://github.com/open-telemetry/opentelemetry-demo/blob/main/src/otelcollector/otelcol-config.yml),
