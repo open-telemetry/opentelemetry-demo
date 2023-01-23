@@ -37,6 +37,7 @@ If you'd like to extend this demo or maintain a fork of it, please read our
 You can be up and running with the demo in a few minutes. Check out the docs for
 your preferred deployment method:
 
+- [Sentry-specific instructions](./README.sentry.md)
 - [Docker](./docs/docker_deployment.md)
 - [Kubernetes](./docs/kubernetes_deployment.md)
 

@@ -79,3 +79,9 @@ It works as follows:
 In a few minutes the environment will be recreated.
 
 **Note**: at the moment we don't persist any data between redeploys.
+
+## Troubleshooting
+
+<!-- markdown-link-check-disable-next-line -->
+For troubleshooting advice (for example, how to access service logs) [see here](https://www.notion.so/sentry/OpenTelemetry-Demo-Deployment-1e53849c3d7f4224bb67671b4764264f)
+(private link).

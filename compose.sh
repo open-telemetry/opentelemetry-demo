@@ -4,7 +4,8 @@
 set -euxo pipefail
 
 # Change to the script directory
-cd "$(dirname "$(realpath "$0")")"
+SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+cd "${SCRIPT_DIR}"
 
 ENV_GLOBAL=".env"
 ENV_SENTRY=".env.sentry"
