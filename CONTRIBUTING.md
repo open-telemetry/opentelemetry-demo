@@ -195,3 +195,15 @@ on each other), the owner should try to get people aligned by:
 - If none of the above worked and the PR has been stuck for more than 2 weeks,
   the owner should bring it to the OpenTelemetry Community Demo SIG
   [meeting](README.md#contributing).
+
+## Making a new release
+
+Maintainers can create a new release when desired by following a few steps.
+
+- Create a new Pull Request that updates the `IMAGE_VERSION` environment
+  variable in `.env` to the _new_ version number.
+- [Draft a new
+  release](https://github.com/open-telemetry/opentelemetry-demo/releases/new),
+  creating a new tag in the format `x.x.x` based on main. Automatically generate
+  release notes. Prepend a summary of the major changes to the release notes.
+- Click 'Publish Release'.
