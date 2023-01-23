@@ -28,8 +28,6 @@
     "@opentelemetry/sdk-node": "0.33.0",
     "@sentry/node": "7.32.0",
     "@sentry/opentelemetry-node": "7.32.0",
-    "@sentry/profiling-node": "0.0.13",
-    "@sentry/tracing": "7.32.0",
     "grpc-js-health-check": "^1.0.2",
     "pino": "8.7.0",
     "simple-card-validator": "1.1.0",
