@@ -20,7 +20,11 @@ of the exporter and resource attributes is performed through environment variabl
 
 ```cs
 services.AddOpenTelemetryTracing((builder) => builder
-    .ConfigureResource(r => r.AddTelemetrySdk())
+    .ConfigureResource(r => r
+        .AddTelemetrySdk()
+        .AddEnvironmentVariableDetector()
+        .AddDetector(new DockerResourceDetector())
+    )
     .AddRedisInstrumentation(
         cartStore.GetConnection(),
         options => options.SetVerboseDatabaseStatements = true)
@@ -70,7 +74,11 @@ instrumentation libraries, exporters, etc.
 
 ```cs
 services.AddOpenTelemetryMetrics(builder => builder
-    .ConfigureResource(r => r.AddTelemetrySdk())
+    .ConfigureResource(r => r
+        .AddTelemetrySdk()
+        .AddEnvironmentVariableDetector()
+        .AddDetector(new DockerResourceDetector())
+    )
     .AddRuntimeInstrumentation()
     .AddAspNetCoreInstrumentation()
     .AddOtlpExporter());
