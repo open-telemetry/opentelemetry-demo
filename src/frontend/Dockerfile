@@ -4,6 +4,7 @@ RUN apk add --no-cache libc6-compat
 WORKDIR /app
 
 COPY ./src/frontend/package*.json ./
+RUN apk add make python3 g++
 RUN npm ci
 
 FROM node:18-alpine AS builder
