@@ -40,7 +40,7 @@ checkoutservice --->|gRPC| currencyservice
 checkoutservice --->|HTTP| emailservice
 checkoutservice --->|gRPC| paymentservice
 checkoutservice -->|gRPC| shippingservice
-checkoutservice -->|TCP| queue
+checkoutservice ---->|TCP| queue
 
 frontend -->|gRPC| adservice
 frontend -->|gRPC| cartservice
@@ -55,6 +55,8 @@ frauddetectionservice -->|TCP| queue
 adservice -->|gRPC| featureflagservice
 
 productcatalogservice -->|gRPC| featureflagservice
+
+recommendationservice -->|gRPC| featureflagservice
 
 shippingservice -->|gRPC| featureflagservice
 
