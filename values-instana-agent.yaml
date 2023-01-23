@@ -134,8 +134,12 @@ components:
     useDefault:
       env: true
     env:
-      - name: OTEL_EXPORTER_OTLP_ENDPOINT
+      - name: OTEL_EXPORTER_OTLP_TRACES_ENDPOINT
         value: http://$(INSTANA_AGENT_HOST):4317
+      - name: OTEL_EXPORTER_OTLP_METRICS_ENDPOINT
+        value: http://$(INSTANA_AGENT_HOST):4317
+      - name: OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE
+        value: cumulative
       - name: OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE
         value: cumulative
       - name: KAFKA_SERVICE_ADDR
@@ -150,8 +154,12 @@ components:
       env: true
     servicePort: 8080
     env:
-      - name: OTEL_EXPORTER_OTLP_ENDPOINT
+      - name: OTEL_EXPORTER_OTLP_TRACES_ENDPOINT
         value: http://$(INSTANA_AGENT_HOST):4317
+      - name: OTEL_EXPORTER_OTLP_METRICS_ENDPOINT
+        value: http://$(INSTANA_AGENT_HOST):4317
+      - name: OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE
+        value: cumulative
       - name: AD_SERVICE_PORT
         value: "8080"
     resources:
@@ -234,8 +242,6 @@ components:
         value: production
       - name: PORT
         value: "8080"
-      - name: OTEL_EXPORTER_OTLP_ENDPOINT
-        value: http://$(INSTANA_AGENT_HOST):4318
       - name: OTEL_EXPORTER_OTLP_TRACES_ENDPOINT
         value: http://$(INSTANA_AGENT_HOST):4318/v1/traces
       - name: EMAIL_SERVICE_PORT
@@ -258,14 +264,14 @@ components:
         value: "50053"
       - name: FEATURE_FLAG_SERVICE_PORT
         value: "8081"
+      - name: OTEL_EXPORTER_OTLP_TRACES_ENDPOINT
+        value: http://$(INSTANA_AGENT_HOST):4317
       - name: OTEL_EXPORTER_OTLP_TRACES_PROTOCOL
         value: grpc
       - name: DATABASE_URL
         value: 'ecto://ffs:ffs@{{ include "otel-demo.name" . }}-ffspostgres:5432/ffs'
       - name: FEATURE_FLAG_SERVICE_PATH_ROOT
         value: "/feature"
-      - name: OTEL_EXPORTER_OTLP_TRACES_ENDPOINT
-        value: http://$(INSTANA_AGENT_HOST):4317
     resources:
       limits:
         memory: 175Mi
@@ -275,7 +281,9 @@ components:
     useDefault:
       env: true
     env:
-      - name: OTEL_EXPORTER_OTLP_ENDPOINT
+      - name: OTEL_EXPORTER_OTLP_TRACES_ENDPOINT
+        value: http://$(INSTANA_AGENT_HOST):4317
+      - name: OTEL_EXPORTER_OTLP_METRICS_ENDPOINT
         value: http://$(INSTANA_AGENT_HOST):4317
       - name: OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE
         value: cumulative
@@ -293,6 +301,8 @@ components:
     env:
       - name: FRONTEND_ADDR
         value: :8080
+      - name: PORT
+        value: "8080"
       - name: AD_SERVICE_ADDR
         value: '{{ include "otel-demo.name" . }}-adservice:8080'
       - name: CART_SERVICE_ADDR
@@ -309,8 +319,8 @@ components:
         value: '{{ include "otel-demo.name" . }}-shippingservice:8080'
       - name: OTEL_EXPORTER_OTLP_ENDPOINT
         value: http://$(INSTANA_AGENT_HOST):4317
-      - name: FRONTEND_PORT
-        value: "8080"
+      - name: OTEL_EXPORTER_OTLP_TRACES_ENDPOINT
+        value: http://$(INSTANA_AGENT_HOST):4317
       - name: PUBLIC_OTEL_EXPORTER_OTLP_TRACES_ENDPOINT
         value: http://localhost:4318/v1/traces             # This expects users to use `kubectl port-forward ...`
       - name: INSTANA_DISABLE_TRACING
@@ -381,8 +391,8 @@ components:
         value: "true"
       - name: PROTOCOL_BUFFERS_PYTHON_IMPLEMENTATION
         value: python
-      - name: OTEL_EXPORTER_OTLP_ENDPOINT
-        value: http://$(INSTANA_AGENT_HOST):4317
+      - name: OTEL_EXPORTER_OTLP_TRACES_ENDPOINT
+        value: http://${OTEL_COLLECTOR_HOST}:4318/v1/traces
       - name: LOADGENERATOR_PORT
         value: "8089"
       - name: INSTANA_DISABLE_AUTO_INSTR
@@ -397,8 +407,12 @@ components:
       env: true
     servicePort: 8080
     env:
-      - name: OTEL_EXPORTER_OTLP_ENDPOINT
+      - name: OTEL_EXPORTER_OTLP_TRACES_ENDPOINT
         value: http://$(INSTANA_AGENT_HOST):4317
+      - name: OTEL_EXPORTER_OTLP_METRICS_ENDPOINT
+        value: http://$(INSTANA_AGENT_HOST):4317
+      - name: OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE
+        value: cumulative
       - name: PAYMENT_SERVICE_PORT
         value: "8080"
       - name: INSTANA_DISABLE_TRACING
@@ -437,8 +451,6 @@ components:
         value: "true"
       - name: OTEL_EXPORTER_OTLP_TRACES_ENDPOINT
         value: http://$(INSTANA_AGENT_HOST):4318/v1/traces
-      - name: OTEL_EXPORTER_OTLP_ENDPOINT
-        value: http://$(INSTANA_AGENT_HOST):4318
       - name: QUOTE_SERVICE_PORT
         value: "8080"
     resources:
@@ -459,8 +471,16 @@ components:
         value: "true"
       - name: PROTOCOL_BUFFERS_PYTHON_IMPLEMENTATION
         value: python
+      - name: OTEL_PYTHON_LOG_CORRELATION
+        value: "true"
+      - name: OTEL_TRACES_EXPORTER
+        value: otlp
+      - name: OTEL_METRICS_EXPORTER
+        value: otlp
       - name: OTEL_EXPORTER_OTLP_ENDPOINT
         value: http://$(INSTANA_AGENT_HOST):4317
+      - name: OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE
+        value: cumulative
       - name: FEATURE_FLAG_GRPC_SERVICE_ADDR
         value: '{{ include "otel-demo.name" . }}-featureflagservice:50053'
       - name: RECOMMENDATION_SERVICE_PORT
@@ -483,8 +503,6 @@ components:
     env:
       - name: PORT
         value: "8080"
-      - name: OTEL_EXPORTER_OTLP_ENDPOINT
-        value: http://$(INSTANA_AGENT_HOST):4317
       - name: OTEL_EXPORTER_OTLP_TRACES_ENDPOINT
         value: 'http://$(INSTANA_AGENT_HOST):4317'
       - name: SHIPPING_SERVICE_PORT
@@ -532,8 +550,12 @@ components:
     env:
       - name: KAFKA_ADVERTISED_LISTENERS
         value: 'PLAINTEXT://{{ include "otel-demo.name" . }}-kafka:9092'
-      - name: OTEL_EXPORTER_OTLP_ENDPOINT
+      - name: OTEL_EXPORTER_OTLP_TRACES_ENDPOINT
         value: http://$(INSTANA_AGENT_HOST):4317
+      - name: OTEL_EXPORTER_OTLP_METRICS_ENDPOINT
+        value: http://$(INSTANA_AGENT_HOST):4317
+      - name: OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE
+        value: cumulative
     resources:
       limits:
         memory: 600Mi
