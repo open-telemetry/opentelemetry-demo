@@ -4,8 +4,8 @@ go 1.19
 
 require (
 	github.com/Shopify/sarama v1.37.2
-	github.com/getsentry/sentry-go v0.17.1-0.20230119191648-87ec1ab349e5
-	github.com/getsentry/sentry-go/otel v0.0.0-20230119191648-87ec1ab349e5
+	github.com/getsentry/sentry-go v0.17.1-0.20230120155554-ab628b4833c1
+	github.com/getsentry/sentry-go/otel v0.0.0-20230120155554-ab628b4833c1
 	github.com/google/uuid v1.3.0
 	github.com/sirupsen/logrus v1.9.0
 	go.opentelemetry.io/contrib/instrumentation/github.com/Shopify/sarama/otelsarama v0.36.2
@@ -53,7 +53,7 @@ require (
 )
 
 require (
-	go.opentelemetry.io/contrib/instrumentation/google.golang.org/grpc/otelgrpc v0.32.0
+	go.opentelemetry.io/contrib/instrumentation/google.golang.org/grpc/otelgrpc v0.37.0
 	go.opentelemetry.io/otel/exporters/otlp/otlptrace v1.11.2 // indirect
 	go.opentelemetry.io/otel/sdk v1.11.2
 	golang.org/x/sys v0.4.0 // indirect
