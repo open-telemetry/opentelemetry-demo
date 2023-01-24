@@ -206,3 +206,5 @@ significant modifications will be credited to OpenTelemetry Authors.
 ([#703](https://github.com/open-telemetry/opentelemetry-demo/pull/703))
 * Update dockerfile for adservice to use different base images
 ([#705](https://github.com/open-telemetry/opentelemetry-demo/pull/705))
+* Enable exemplar support in the metrics exporter, Prometheus, and Grafana
+([#704](https://github.com/open-telemetry/opentelemetry-demo/pull/704))
