@@ -17,7 +17,7 @@ services:
       - /dev:/dev
       - /sys:/sys
       - /var/log:/var/log
-      - ./configuration-otel.yaml:/opt/instana/agent/etc/instana/configuration-otel.yaml
+      - ./configuration.yaml:/opt/instana/agent/etc/instana/configuration.yaml
       #- ./com.instana.agent.main.sender.File.cfg:/opt/instana/agent/etc/instana/com.instana.agent.main.sender.File.cfg
     environment:
       - INSTANA_AGENT_ENDPOINT=${INSTANA_AGENT_ENDPOINT:?No agent endpoint provided}
