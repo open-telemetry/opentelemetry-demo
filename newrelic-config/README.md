@@ -33,6 +33,23 @@ Navigate to the newrelic-config folder then run the following command to initial
 terraform init 
 ```
 
+### Manage Your Terraform State
+
+If you're using Terraform to apply the New Relic configuration to multiple accounts, you'll need to create a separate workspaces in Terraform to do so. 
+
+For example, to create separate workspaces for dev and staging, navigate to the newrelic-config folder then run the following command: 
+
+```console
+terraform workspace new dev
+terraform workspace new staging
+```
+
+Then if you want to apply the configuration in the staging environment, using the following command first: 
+
+```console
+terraform workspace select staging
+```
+
 ## Apply the Configuration
 
 Navigate to the newrelic-config folder then run the following command to create the workloads, service levels, and alert policies in your account: 
@@ -41,7 +58,7 @@ Navigate to the newrelic-config folder then run the following command to create 
 terraform apply -var="account_id=<YOUR ACCOUNT ID>" -var="cluster_name=otel-community-demo" -var="apm_app_name=currencyservice-apm"
 ```
 
-Substitute the name of your Kubernetes (K8s) cluster and New Relic Account ID where your demo is running, and the name of the service which is monitored with the New Relic APM agent, rather than OpenTelemetry.  
+Substitute the name of the Kubernetes (K8s) cluster and New Relic Account ID where your demo is running, and the name of the service which is monitored with the New Relic APM agent, rather than OpenTelemetry.  
 
 # Configuration Details 
 
