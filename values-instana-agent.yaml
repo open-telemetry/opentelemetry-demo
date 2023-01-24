@@ -40,7 +40,7 @@ default:
   #    value: "someConstantValue"
   image:
     # repository: image-registry.openshift-image-registry.svc:5000/otel-demo/demo
-    repository: joshuamlee/otel-demo-instana
+    repository: styblope/otel-demo
     # Overrides the image tag whose default is the chart appVersion.
     # The service's name will be applied to the end of this value.
     tag: ""
