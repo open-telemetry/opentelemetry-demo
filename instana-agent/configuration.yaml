@@ -8,6 +8,7 @@ com.instana.plugin.opentelemetry:
 com.instana.ignore:
   arguments:
     - '-javaagent:/opt/otel/opentelemetry-javaagent-all.jar'
+    # - '-javaagent:/app/opentelemetry-javaagent.jar'
 
 com.instana.tracing:
   extra-http-headers:
