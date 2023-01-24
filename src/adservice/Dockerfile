@@ -12,14 +12,19 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-FROM gradle:7-jdk17 AS builder
+FROM eclipse-temurin:17-jdk AS builder
 
 WORKDIR /usr/src/app/
 
+COPY ./src/adservice/gradlew* ./src/adservice/settings.gradle* ./src/adservice/build.gradle .
+COPY ./src/adservice/gradle ./gradle
+
+RUN ./gradlew
+RUN ./gradlew downloadRepos
+
 COPY ./src/adservice/ ./
 COPY ./pb/ ./proto
-RUN gradle downloadRepos
-RUN gradle installDist -PprotoSourceDir=./proto
+RUN ./gradlew installDist -PprotoSourceDir=./proto
 
 # -----------------------------------------------------------------------------
 
