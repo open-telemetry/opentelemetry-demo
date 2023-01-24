@@ -202,5 +202,7 @@ significant modifications will be credited to OpenTelemetry Authors.
 ([#700](https://github.com/open-telemetry/opentelemetry-demo/pull/700))
 * Reduce spans generated from quote service
 ([#702](https://github.com/open-telemetry/opentelemetry-demo/pull/702))
+* Update emailservice Dockerfile to use alpine and multistage build
+([#703](https://github.com/open-telemetry/opentelemetry-demo/pull/703))
 * Update dockerfile for adservice to use different base images
 ([#705](https://github.com/open-telemetry/opentelemetry-demo/pull/705))
