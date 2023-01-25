@@ -1,0 +1,153 @@
+image:
+  repository: danielqsj/kafka-exporter
+  # Overrides the image tag whose default is the chart appVersion.
+  tag: ""
+  pullPolicy: IfNotPresent
+
+replicaCount: 1
+
+kafkaServer:
+  - newrelic-otel-kafka:9092
+
+# Specifies broker version to use, leave empty for default
+kafkaBrokerVersion:
+
+# Specifies log verbosity
+verbosity: 0
+
+# Sarama logging
+sarama:
+  logEnabled: false
+
+rbac:
+  # Specifies whether RBAC resources should be created
+  create: true
+  # Specifies whether a PodSecurityPolicy should be created
+  pspEnabled: true
+
+serviceAccount:
+  # Specifies whether a ServiceAccount should be created
+  create: true
+  # The name of the ServiceAccount to use.
+  # If not set and create is true, a name is generated using the fullname template
+  name:
+
+env: []
+# - name: <ENV_VAR_NAME>
+#   value: <value>
+
+# List of additional cli arguments to configure kafka-exporter
+# for example: --log.enable-sarama, --log.level=debug, etc.
+# all the possible args can be found here: https://github.com/danielqsj/kafka_exporter#flags
+extraArgs: []
+
+service:
+  type: ClusterIP
+  port: 9308
+  labels: {}
+  annotations:
+    prometheus.io/path: /metrics
+    prometheus.io/port: "9308"
+    prometheus.io/scrape: "true"
+
+liveness:
+  enabled: false
+  probe:
+    httpGet:
+      path: /
+      port: exporter-port
+
+readiness:
+  enabled: false
+  probe:
+    httpGet:
+      path: /
+      port: exporter-port
+
+prometheus:
+  serviceMonitor:
+    enabled: false
+    namespace: monitoring
+    interval: "30s"
+    # If serviceMonitor is enabled and you want prometheus to automatically register
+    # target using serviceMonitor, add additionalLabels with prometheus release name
+    # e.g. If you have deployed kube-prometheus-stack with release name kube-prometheus
+    # then additionalLabels will be
+    # additionalLabels:
+    #   release: kube-prometheus
+    additionalLabels: {}
+    targetLabels: []
+
+resources: {}
+# We usually recommend not to specify default resources and to leave this as a conscious
+# choice for the user. This also increases chances charts run on environments with little
+# resources, such as Minikube. If you do want to specify resources, uncomment the following
+# lines, adjust them as necessary, and remove the curly braces after 'resources:'.
+# limits:
+#  cpu: 100m
+#  memory: 128Mi
+# requests:
+#  cpu: 100m
+#  memory: 128Mi
+
+nodeSelector: {}
+
+annotations: {}
+
+tolerations: []
+
+affinity: {}
+
+# this allows the usage of tls connection to your kafka cluster based on a secret in tls format
+# mandatory keys:
+# ca.crt
+# tls.crt
+# tls.key
+tls:
+  enabled: false
+  insecureSkipVerify: false
+  # The kafka server's name. Used to verify the hostname on the returned certificates unless tls.insecureSkipVerify is set to true.
+  serverName: ""
+  # mountPath: /secret/certs
+  # secretName: <name of an existing secret>
+
+sasl:
+  enabled: false
+  handshake: true
+  scram:
+    enabled: false
+    # mechanism: <plain|scram-sha512|scram-sha256>
+
+    # add username and password
+    # username:
+    # password:
+
+    # or use an existing secret
+    # secretName: <name of an existing secret>
+
+  kerberos:
+    enabled: false
+    # serviceName:
+    # realm:
+    # kerberosAuthType: <keytabAuth|userAuth>
+    # mountPath: /secret/kerberos
+    # secretName: <name of an existing secret>
+
+# This enables TLS for web server
+server:
+  tls:
+    enabled: false
+    mutualAuthEnabled: false
+    # mountPath: /secret/certs
+    # secretName: <name of an existing secret>
+
+# If enabled Kafka dependency chart will be used.
+# This is only needed for the CI job so it should always be disabled.
+kafka:
+  enabled: false
+
+# Set security context for the kafka-exporter container. Useful when you need to adapt to an existing PSP
+securityContext: {}
+# runAsUser:
+# runAsGroup:
+# fsGroup:

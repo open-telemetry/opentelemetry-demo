@@ -31,6 +31,8 @@ import io.grpc.stub.StreamObserver;
 import io.opentelemetry.api.GlobalOpenTelemetry;
 import io.opentelemetry.api.common.AttributeKey;
 import io.opentelemetry.api.common.Attributes;
+import io.opentelemetry.api.metrics.LongCounter;
+import io.opentelemetry.api.metrics.Meter;
 import io.opentelemetry.api.trace.Span;
 import io.opentelemetry.api.trace.StatusCode;
 import io.opentelemetry.api.trace.Tracer;
@@ -58,6 +60,16 @@ public final class AdService {
   private HealthStatusManager healthMgr;
 
   private static final AdService service = new AdService();
+  private static final Tracer tracer = GlobalOpenTelemetry.getTracer("adservice");
+  private static final Meter meter = GlobalOpenTelemetry.getMeter("adservice");
+
+  private static final LongCounter adRequestsCounter = meter
+          .counterBuilder("app.ads.ad_requests")
+          .setDescription("Counts ad requests by request and response type")
+          .build();
+
+  private static final AttributeKey<String> adRequestTypeKey = AttributeKey.stringKey("app.ads.ad_request_type");
+  private static final AttributeKey<String> adResponseTypeKey = AttributeKey.stringKey("app.ads.ad_response_type");
 
   private void start() throws IOException {
     int port = Integer.parseInt(Optional.ofNullable(System.getenv("AD_SERVICE_PORT")).orElseThrow(
@@ -93,6 +105,14 @@ public final class AdService {
     }
   }
 
+  private enum AdRequestType {
+    TARGETED, NOT_TARGETED
+  }
+
+  private enum AdResponseType {
+    TARGETED, RANDOM
+  }
+
   private static class AdServiceImpl extends hipstershop.AdServiceGrpc.AdServiceImplBase {
 
     /**
@@ -110,6 +130,8 @@ public final class AdService {
       Span span = Span.current();
       try {
         List<Ad> allAds = new ArrayList<>();
+        AdRequestType adRequestType;
+        AdResponseType adResponseType;
 
         span.setAttribute("app.ads.contextKeys", req.getContextKeysList().toString());
         span.setAttribute("app.ads.contextKeys.count", req.getContextKeysCount());
@@ -119,17 +141,28 @@ public final class AdService {
             Collection<Ad> ads = service.getAdsByCategory(req.getContextKeys(i));
             allAds.addAll(ads);
           }
+          adRequestType = AdRequestType.TARGETED;
+          adResponseType = AdResponseType.TARGETED;
         } else {
           allAds = service.getRandomAds();
+          adRequestType = AdRequestType.NOT_TARGETED;
+          adResponseType = AdResponseType.RANDOM;
         }
         if (allAds.isEmpty()) {
           // Serve random ads.
           allAds = service.getRandomAds();
+          adResponseType = AdResponseType.RANDOM;
         }
         span.setAttribute("app.ads.count", allAds.size());
+        span.setAttribute("app.ads.ad_request_type", adRequestType.name());
+        span.setAttribute("app.ads.ad_response_type", adResponseType.name());
+
+        adRequestsCounter.add(1, Attributes.of(adRequestTypeKey, adRequestType.name(), adResponseTypeKey, adResponseType.name()));
+
         if (random.nextInt(100) == 1) {
           throw new StatusRuntimeException(Status.RESOURCE_EXHAUSTED);
         }
+        
         AdResponse reply = AdResponse.newBuilder().addAllAds(allAds).build();
         responseObserver.onNext(reply);
         responseObserver.onCompleted();
@@ -159,7 +192,6 @@ public final class AdService {
     List<Ad> ads = new ArrayList<>(MAX_ADS_TO_SERVE);
 
     // create and start a new span manually
-    Tracer tracer = GlobalOpenTelemetry.getTracer("adservice");
     Span span = tracer.spanBuilder("getRandomAds").startSpan();
 
     // put the span into context, so if any child span is started the parent will be set properly
@@ -232,6 +264,7 @@ public final class AdService {
         .putAll("accessories", colorImager, solarFilter, cleaningKit)
         .putAll("assembly", opticalTube)
         .putAll("travel", travelTelescope)
+            // Keep the books category free of ads to ensure the random code branch is tested
         .build();
   }
 
