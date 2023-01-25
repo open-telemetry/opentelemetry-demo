@@ -288,6 +288,7 @@ public final class AdService {
       // This is required for the Sentry Java Agent to actually perform instrumentation
       options.setInstrumenter(Instrumenter.OTEL);
 
+      // This ensures errors are linked to transactions created from OTEL spans
       options.addEventProcessor(new OpenTelemetryLinkErrorEventProcessor());
 
       // Send all transactions to Sentry
