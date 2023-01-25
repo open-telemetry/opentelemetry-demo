@@ -25,7 +25,7 @@ components:
 
   # featureflagService: {}
 
-  # frauddetectionService: {}
+  frauddetectionService: {}
 
   frontend: {}
 
