@@ -41,8 +41,8 @@ dependencies {
     implementation("org.apache.logging.log4j:log4j-core:2.19.0")
     implementation("org.slf4j:slf4j-api:2.0.3")
     implementation("com.google.protobuf:protobuf-kotlin:3.21.8")
-    implementation("io.sentry:sentry:6.12.1")
-    implementation("io.sentry:sentry-opentelemetry-core:6.12.1")
+    implementation("io.sentry:sentry:6.13.0")
+    implementation("io.sentry:sentry-opentelemetry-core:6.13.0")
 
     if (JavaVersion.current().isJava9Compatible) {
         // Workaround for @javax.annotation.Generated
