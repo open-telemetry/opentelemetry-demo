@@ -1,8 +1,8 @@
 # OpenTelemetry Demo with Instana
 
-This repo is a fork of the original [OpenTelemetry Demo](https://github.com/open-telemetry/opentelemetry-demo) with added integration to the Instana backend. The main changes are:
+This repo is a fork of the original [OpenTelemetry Demo](https://github.com/open-telemetry/opentelemetry-demo) with added integration to an Instana backend. The additions and changes include:
 
-- demo-specific Instana agent configuration and agent docker-compose deployment file - both available in `instana-agent` folder
+- demo-specific Instana agent configuration and agent docker-compose deployment file (available in `instana-agent` folder)
 - custom services instrumentation for Instana APM monitoring (Instana-native tracing is disabled)
 - use Instana agent instead of OTel Collector to receive the OTLP data (traces/metrics)
 - provide custom helm config file `./values-instana-agent.yaml` to deploy in Kubernetes (excludes Instana agent deployment)
@@ -40,7 +40,7 @@ Optionally (not needed for building and running `docker compose`), you may [conf
 }
 ```
 
-Build the app with `http_proxy` and `https_proxy` build agruments passed to `docker-compose`:
+Build the app with `http_proxy` and `https_proxy` build arguments passed to `docker-compose`:
 ```sh
 docker compose build \ 
     --build-arg 'https_proxy=http://192.168.31.253:3128' \
@@ -76,7 +76,7 @@ kubectl create namespace otel-demo
 oc new-project otel-demo
 ```
 
-In OpenShift, make sure you have sufficient privileges to run the pods in the namespace (this step my be no longer necessary as the demo containers can now run as non-root):
+In OpenShift, also make sure you have sufficient privileges to run the pods in the namespace (this step my be no longer necessary as the demo containers can now run as non-root):
 ```sh
 oc adm policy -n otel-demo add-scc-to-user anyuid -z default
 ```
@@ -117,7 +117,7 @@ EOF
 
 Deploy the demo using the published Helm chart:
 
-We use custom values file with additional settings for the Instana agent to act as the default OTel traces and metrics receiver, to suppress native Instana tracing so it doesn't clash with the OTel instrumentaion, and to enable Instana infrastructure monitoring including the databases.
+We use custom values file with additional settings for the Instana agent to act as the default OTel traces and metrics receiver, to suppress native Instana tracing so it doesn't clash with the OTel instrumentation, and to enable Instana infrastructure monitoring including the databases.
 ```sh
 helm repo add open-telemetry https://open-telemetry.github.io/opentelemetry-helm-charts
 helm install my-otel-demo open-telemetry/opentelemetry-demo -f values-instana-agent.yaml
@@ -135,5 +135,5 @@ In OpenShift, you can create a route for the `frontendproxy` service for easy ac
 The [patched](https://github.com/styblope/opentelemetry_ecto/commit/0bc71d465621e6f76d71bc8d6d336011661eb754) OpenTelemetryEcto library is available at https://github.com/styblope/opentelemetry_ecto. The rest of the solution involved changing the FeatureFlag service Elixir code dependencies and building a new custom image.
 
 ### Adding W3C context propagation to Envoy the enable cross-tracer trace continuity
-To demosntrate the context propagation across Instana and OTel tracing implementations, we chose to instrument the `frontendproxy` service with the Instana native tracer. The Instana sensor supports W3C propagatiopn headers, which is the default propagation header format used by OpenTelemetry. We use a custom build of the Instana envoy sensor which supports W3C context propagation (public release of the W3C enabled sensor is due soon).
+To demonstrate the context propagation across Instana and OTel tracing implementations, we chose to instrument the `frontendproxy` service with the Instana native tracer. The Instana sensor supports W3C propagation headers, which is the default propagation header format used by OpenTelemetry. We use a custom build of the Instana envoy sensor which supports W3C context propagation (public release of the W3C enabled sensor is due soon).
 
