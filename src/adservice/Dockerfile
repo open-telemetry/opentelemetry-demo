@@ -19,7 +19,9 @@ WORKDIR /usr/src/app/
 COPY ./src/adservice/gradlew* ./src/adservice/settings.gradle* ./src/adservice/build.gradle .
 COPY ./src/adservice/gradle ./gradle
 
+COPY ./src/adservice/http_proxy.sh .
 RUN ./http_proxy.sh
+
 RUN ./gradlew
 RUN ./gradlew downloadRepos
 
