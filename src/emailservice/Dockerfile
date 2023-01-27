@@ -1,13 +1,23 @@
-FROM ruby:3.1.2-slim
+FROM ruby:3.1.2-alpine as base
 
-RUN apt-get update -y && apt-get install -y build-essential
+FROM base as builder
+
+WORKDIR /tmp
+
+COPY Gemfile Gemfile.lock .
+
+RUN apk update && apk add make gcc musl-dev && bundle install
+
+FROM base as release
 
 WORKDIR /email_server
 
 COPY . .
 
-RUN bundle install
 RUN chmod 666 ./Gemfile.lock
+
+COPY --from=builder /usr/local/bundle/ /usr/local/bundle/
+
 
 EXPOSE ${EMAIL_SERVICE_PORT}
 ENTRYPOINT ["bundle", "exec", "ruby", "email_server.rb"]
