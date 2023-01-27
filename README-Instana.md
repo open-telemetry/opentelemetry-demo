@@ -1,6 +1,6 @@
 # OpenTelemetry Demo with Instana
 
-This repo is a fork of the original [OpenTelemetry Demo](https://github.com/open-telemetry/opentelemetry-demo) with integration to Instana backend. The main changes are:
+This repo is a fork of the original [OpenTelemetry Demo](https://github.com/open-telemetry/opentelemetry-demo) with added integration to the Instana backend. The main changes are:
 
 - demo-specific Instana agent configuration and agent docker-compose deployment file - both available in `instana-agent` folder
 - custom services instrumentation for Instana APM monitoring (Instana-native tracing is disabled)
