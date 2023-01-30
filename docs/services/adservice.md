@@ -48,7 +48,7 @@ is caught.
 
 ### Setting span status
 
-If the result of the operation is an error, the span status is should be set
+If the result of the operation is an error, the span status should be set
 accordingly using `setStatus` on the span object. In the `getAds` function the
 span status is set when an exception is caught.
 
@@ -85,7 +85,39 @@ the span.
 
 ## Metrics
 
-TBD
+### Initializing Metrics
+
+Similar to creating spans, the first step in creating metrics is initializing a
+`Meter` instance, e.g. `GlobalOpenTelemetry.getMeter("adservice")`.  From
+there, use the various builder methods available on the `Meter` instance to
+create the desired metric instrument, e.g.:
+
+```java
+meter
+  .counterBuilder("app.ads.ad_requests")
+  .setDescription("Counts ad requests by request and response type")
+  .build();
+```
+
+### Current Metrics Produced
+
+Note that all the metric names below appear in Prometheus/Grafana with `.`
+characters transformed to `_`.
+
+#### Custom metrics
+
+The following custom metrics are currently available:
+
+* `app.ads.ad_requests`: A counter of ad requests with dimensions describing
+whether the request was targeted with context keys or not, and whether the
+response was targeted or random ads.
+
+#### Auto-instrumented metrics
+
+The following auto-instrumented metrics are available for the application:
+
+* [Runtime metrics for the JVM](https://opentelemetry.io/docs/reference/specification/metrics/semantic_conventions/runtime-environment-metrics/#jvm-metrics).
+* [Latency metrics for RPCs](https://opentelemetry.io/docs/reference/specification/metrics/semantic_conventions/rpc-metrics/#rpc-server)
 
 ## Logs
 

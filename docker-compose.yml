@@ -41,7 +41,7 @@ services:
       resources:
         limits:
           memory: 20M
-    restart: always
+    restart: unless-stopped
     environment:
       - KAFKA_SERVICE_ADDR
       - OTEL_EXPORTER_OTLP_TRACES_ENDPOINT
@@ -69,7 +69,7 @@ services:
       resources:
         limits:
           memory: 300M
-    restart: always
+    restart: unless-stopped
     ports:
       - "${AD_SERVICE_PORT}"
     environment:
@@ -96,7 +96,7 @@ services:
       resources:
         limits:
           memory: 160M
-    restart: always
+    restart: unless-stopped
     ports:
       - "${CART_SERVICE_PORT}"
     environment:
@@ -124,7 +124,7 @@ services:
       resources:
         limits:
           memory: 20M
-    restart: always
+    restart: unless-stopped
     ports:
       - "${CHECKOUT_SERVICE_PORT}"
     environment:
@@ -175,7 +175,7 @@ services:
       resources:
         limits:
           memory: 20M
-    restart: always
+    restart: unless-stopped
     ports:
       - "${CURRENCY_SERVICE_PORT}"
     environment:
@@ -198,7 +198,7 @@ services:
       resources:
         limits:
           memory: 100M
-    restart: always
+    restart: unless-stopped
     ports:
       - "${EMAIL_SERVICE_PORT}"
     environment:
@@ -224,7 +224,7 @@ services:
       resources:
         limits:
           memory: 200M
-    restart: always
+    restart: unless-stopped
     ports:
       - "${FEATURE_FLAG_SERVICE_PORT}"                                  # Feature Flag Service UI
       - "${FEATURE_FLAG_GRPC_SERVICE_PORT}"                             # Feature Flag Service gRPC API
@@ -236,6 +236,8 @@ services:
       - OTEL_SERVICE_NAME=featureflagservice
       - DATABASE_URL=ecto://ffs:ffs@ffs_postgres:5432/ffs
       - FEATURE_FLAG_SERVICE_PATH_ROOT="/feature"
+    healthcheck:
+      test: ["CMD", "curl", "-H", "baggage: synthetic_request=true", "-f", "http://localhost:${FEATURE_FLAG_SERVICE_PORT}"]
     depends_on:
       ffs_postgres:
         condition: service_healthy
@@ -254,7 +256,7 @@ services:
       resources:
         limits:
           memory: 200M
-    restart: always
+    restart: unless-stopped
     environment:
       - KAFKA_SERVICE_ADDR
       - OTEL_EXPORTER_OTLP_TRACES_ENDPOINT
@@ -282,7 +284,7 @@ services:
       resources:
         limits:
           memory: 200M
-    restart: always
+    restart: unless-stopped
     ports:
       - "${FRONTEND_PORT}"
     environment:
@@ -358,7 +360,7 @@ services:
       resources:
         limits:
           memory: 120M
-    restart: always
+    restart: unless-stopped
     ports:
       - "${LOCUST_WEB_PORT}"
     environment:
@@ -367,7 +369,7 @@ services:
       - LOCUST_HOST
       - LOCUST_HEADLESS
       - LOCUST_AUTOSTART
-      - OTEL_EXPORTER_OTLP_TRACES_ENDPOINT
+      - OTEL_EXPORTER_OTLP_TRACES_ENDPOINT=http://${OTEL_COLLECTOR_HOST}:4318/v1/traces
       - OTEL_RESOURCE_ATTRIBUTES
       - OTEL_SERVICE_NAME=loadgenerator
       - PROTOCOL_BUFFERS_PYTHON_IMPLEMENTATION=python
@@ -388,7 +390,7 @@ services:
       resources:
         limits:
           memory: 70M
-    restart: always
+    restart: unless-stopped
     ports:
       - "${PAYMENT_SERVICE_PORT}"
     environment:
@@ -415,13 +417,15 @@ services:
       resources:
         limits:
           memory: 20M
-    restart: always
+    restart: unless-stopped
     ports:
       - "${PRODUCT_CATALOG_SERVICE_PORT}"
     environment:
       - PRODUCT_CATALOG_SERVICE_PORT
       - FEATURE_FLAG_GRPC_SERVICE_ADDR
       - OTEL_EXPORTER_OTLP_TRACES_ENDPOINT
+      - OTEL_EXPORTER_OTLP_METRICS_ENDPOINT
+      - OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE
       - OTEL_RESOURCE_ATTRIBUTES
       - OTEL_SERVICE_NAME=productcatalogservice
     depends_on:
@@ -431,7 +435,7 @@ services:
   # Quote service
   quoteservice:
     image: ${IMAGE_NAME}:${IMAGE_VERSION}-quoteservice
-    container_name: quoteservice
+    container_name: quote-service
     build:
       context: ./
       dockerfile: ./src/quoteservice/Dockerfile
@@ -441,7 +445,7 @@ services:
       resources:
         limits:
           memory: 30M
-    restart: always
+    restart: unless-stopped
     ports:
       - "${QUOTE_SERVICE_PORT}"
     environment:
@@ -467,7 +471,7 @@ services:
       resources:
         limits:
           memory: 500M               # This is high to enable supporting the recommendationCache feature flag use case
-    restart: always
+    restart: unless-stopped
     ports:
       - "${RECOMMENDATION_SERVICE_PORT}"
     environment:
@@ -501,7 +505,7 @@ services:
       resources:
         limits:
           memory: 20M
-    restart: always
+    restart: unless-stopped
     ports:
       - "${SHIPPING_SERVICE_PORT}"
     environment:
@@ -526,7 +530,7 @@ services:
       resources:
         limits:
           memory: 200M
-    restart: always
+    restart: unless-stopped
     environment:
       - POSTGRES_USER=ffs
       - POSTGRES_DB=ffs
@@ -551,7 +555,7 @@ services:
       resources:
         limits:
           memory: 800M
-    restart: always
+    restart: unless-stopped
     environment:
       - KAFKA_ADVERTISED_LISTENERS=PLAINTEXT://kafka:9092
       - OTEL_EXPORTER_OTLP_TRACES_ENDPOINT
@@ -576,7 +580,7 @@ services:
       resources:
         limits:
           memory: 20M
-    restart: always
+    restart: unless-stopped
     ports:
       - "${REDIS_PORT}"
     logging: *logging
@@ -600,7 +604,7 @@ services:
       resources:
         limits:
           memory: 275M
-    restart: always
+    restart: unless-stopped
     ports:
       - "${JAEGER_SERVICE_PORT}"                    # Jaeger UI
       - "4317"                           # OTLP gRPC default port
@@ -628,7 +632,7 @@ services:
       resources:
         limits:
           memory: 100M
-    restart: always
+    restart: unless-stopped
     command: [ "--config=/etc/otelcol-config.yml", "--config=/etc/otelcol-config-extras.yml" ]
     volumes:
       - ./src/otelcollector/otelcol-config.yml:/etc/otelcol-config.yml

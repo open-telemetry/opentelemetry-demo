@@ -170,9 +170,35 @@ significant modifications will be credited to OpenTelemetry Authors.
 ([#648](https://github.com/open-telemetry/opentelemetry-demo/pull/648))
 * Add Jaeger-SPM-Config
 ([#655](https://github.com/open-telemetry/opentelemetry-demo/pull/655))
+* Add healthcheck to featureflagservice
+([#661](https://github.com/open-telemetry/opentelemetry-demo/pull/661)
 * Add resource detectors to checkout service
 ([#662](https://github.com/open-telemetry/opentelemetry-demo/pull/662))
 * Add resource detectors to cart service
 ([#663](https://github.com/open-telemetry/opentelemetry-demo/pull/663))
 * Add `OTEL_RESOURCE_ATTRIBUTES` to docker compose setup
 ([#664](https://github.com/open-telemetry/opentelemetry-demo/pull/664))
+* Update loadgenerator python base image and dependencies
+([#669](https://github.com/open-telemetry/opentelemetry-demo/pull/669))
+* Add basic metric support to productcatalog service
+([#674](https://github.com/open-telemetry/opentelemetry-demo/pull/674))
+* Add resource detectors to accounting service
+([#676](https://github.com/open-telemetry/opentelemetry-demo/pull/676))
+* Add resource detectors to product catalog service
+([#677](https://github.com/open-telemetry/opentelemetry-demo/pull/677))
+* Add custom metrics to ads service
+([#678](https://github.com/open-telemetry/opentelemetry-demo/pull/678))
+* Rebuild currency service Dockerfile with alpine
+([#687](https://github.com/open-telemetry/opentelemetry-demo/pull/687))
+* Remove grpc from loadgenerator
+([#688](https://github.com/open-telemetry/opentelemetry-demo/pull/688))
+* Update docker-compose services to restart unless stopped
+([#690](https://github.com/open-telemetry/opentelemetry-demo/pull/690))
+* Use different docker base images for frauddetection service
+([#691](https://github.com/open-telemetry/opentelemetry-demo/pull/691))
+* Fix payment service version to support temporality environment variable
+([#693](https://github.com/open-telemetry/opentelemetry-demo/pull/693))
+* Update recommendationservice python base image and dependencies
+([#700](https://github.com/open-telemetry/opentelemetry-demo/pull/700))
+* Reduce spans generated from quote service
+([#702](https://github.com/open-telemetry/opentelemetry-demo/pull/702))

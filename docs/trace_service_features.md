@@ -6,17 +6,19 @@ Emoji Legend
 - Not Applicable: :no_bell:
 - Not Present (Yet): :construction:
 
-| Service         | Language        | Instrumentation Libraries | Manual Span Creation | Span Data Enrichment | RPC Context Propagation | Span Links | Baggage   |
-|-----------------|-----------------|---------------------------|----------------------|----------------------|-------------------------|------------|-----------|
-| Ad              | Java            | :100:                     | :100:                | :100:                | :no_bell:               | :no_bell:  | :no_bell: |
-| Cart            | .NET            | :100:                     | :100:                | :100:                | :no_bell:               | :no_bell:  | :no_bell: |
-| Checkout        | Go              | :100:                     | :100:                | :100:                | :no_bell:               | :no_bell:  | :no_bell: |
-| Currency        | C++             | :no_bell:                 | :100:                | :100:                | :100:                   | :no_bell:  | :no_bell: |
-| Email           | Ruby            | :100:                     | :100:                | :100:                | :no_bell:               | :no_bell:  | :no_bell: |
-| Feature Flag    | Erlang / Elixir | :100:                     | :100:                | :100:                | :no_bell:               | :no_bell:  | :no_bell: |
-| Frontend        | JavaScript      | :100:                     | :100:                | :100:                | :no_bell:               | :100:      | :100:     |
-| Payment         | JavaScript      | :100:                     | :100:                | :100:                | :no_bell:               | :no_bell:  | :100:     |
-| Product Catalog | Go              | :100:                     | :no_bell:            | :100:                | :no_bell:               | :no_bell:  | :no_bell: |
-| Quote Service   | PHP             | :100:                     | :100:                | :100:                | :no_bell:               | :no_bell:  | :no_bell: |
-| Recommendation  | Python          | :100:                     | :100:                | :100:                | :no_bell:               | :no_bell:  | :no_bell: |
-| Shipping        | Rust            | :no_bell:                 | :100:                | :100:                | :100:                   | :no_bell:  | :no_bell: |
+| Service            | Language        | Instrumentation Libraries | Manual Span Creation | Span Data Enrichment | RPC Context Propagation | Span Links     | Baggage        | Resource Detection |
+|--------------------|-----------------|---------------------------|----------------------|----------------------|-------------------------|----------------|----------------|--------------------|
+| Accounting Service | Go              | :construction:            | :construction:       | :construction:       | :construction:          | :construction: | :construction: | :100:              |
+| Ad                 | Java            | :100:                     | :100:                | :100:                | :no_bell:               | :no_bell:      | :no_bell:      | :construction:     |
+| Cart               | .NET            | :100:                     | :100:                | :100:                | :no_bell:               | :no_bell:      | :no_bell:      | :100:              |
+| Checkout           | Go              | :100:                     | :100:                | :100:                | :no_bell:               | :no_bell:      | :no_bell:      | :100:              |
+| Currency           | C++             | :no_bell:                 | :100:                | :100:                | :100:                   | :no_bell:      | :no_bell:      | :construction:     |
+| Email              | Ruby            | :100:                     | :100:                | :100:                | :no_bell:               | :no_bell:      | :no_bell:      | :construction:     |
+| Feature Flag       | Erlang / Elixir | :100:                     | :100:                | :100:                | :no_bell:               | :no_bell:      | :no_bell:      | :construction:     |
+| Fraud Detection    | Kotlin          | :100:                     | :construction:       | :construction:       | :construction:          | :construction: | :construction: | :construction:     |
+| Frontend           | JavaScript      | :100:                     | :100:                | :100:                | :no_bell:               | :100:          | :100:          | :100:              |
+| Payment            | JavaScript      | :100:                     | :100:                | :100:                | :no_bell:               | :no_bell:      | :100:          | :100:              |
+| Product Catalog    | Go              | :100:                     | :no_bell:            | :100:                | :no_bell:               | :no_bell:      | :no_bell:      | :construction:     |
+| Quote Service      | PHP             | :100:                     | :100:                | :100:                | :no_bell:               | :no_bell:      | :no_bell:      | :construction:     |
+| Recommendation     | Python          | :100:                     | :100:                | :100:                | :no_bell:               | :no_bell:      | :no_bell:      | :construction:     |
+| Shipping           | Rust            | :no_bell:                 | :100:                | :100:                | :100:                   | :no_bell:      | :no_bell:      | :construction:     |
