@@ -1,9 +1,9 @@
 # OpenTelemetry Demo with Instana
 
-This repo is a fork of the original [OpenTelemetry Demo](https://github.com/open-telemetry/opentelemetry-demo) with added integration to an Instana backend. The additions and changes include:
+This repo is a fork of the original [OpenTelemetry Demo](https://github.com/open-telemetry/opentelemetry-demo) with integration to an Instana backend. The additions and modifications include:
 
-- demo-specific Instana agent configuration and agent docker-compose deployment file (available in `instana-agent` folder)
-- custom services instrumentation for Instana APM monitoring (Instana-native tracing is disabled)
+- demo-specific Instana agent configuration and docker-compose file (available in `instana-agent` folder)
+- custom Instana (auto)instrumentation for Instana APM monitoring (Instana-native tracing disabled)
 - use Instana agent instead of OTel Collector to receive the OTLP data (traces/metrics)
 - provide custom helm config file `./values-instana-agent.yaml` to deploy in Kubernetes (excludes Instana agent deployment)
 
@@ -17,7 +17,7 @@ docker compose build
 
 **Note**, if you plan to push the built images to a remote container registry, such as for deploying the demo in Kubernetes, you should modify the `IMAGE_NAME` variable in `.env` and use your own registry domain. 
 
-To push the images to a remote container registry, login to the registry (`oc registry login` in case of OpenShift internal registry) and run:
+To push the images to a remote container registry, login to the registry first (`docker login` or `oc registry login` when pushing to OpenShift's internal registry) and run:
 ```sh
 make push
 ```
@@ -40,7 +40,7 @@ Optionally (not needed for building and running `docker compose`), you may [conf
 }
 ```
 
-Build the app with `http_proxy` and `https_proxy` build arguments passed to `docker-compose`:
+Build the demo with `http_proxy` and `https_proxy` build arguments passed to `docker-compose`:
 ```sh
 docker compose build \ 
     --build-arg 'https_proxy=http://192.168.31.253:3128' \
@@ -85,7 +85,7 @@ Deploy the Instana agent via Helm or using an operator: use a standard installat
 
 The demo assumes that an Instana [agent Kubernetes service](https://www.ibm.com/docs/en/instana-observability/current?topic=requirements-installing-host-agent-kubernetes#instana-agent-service) `instana-agent` is present in `instana-agent` namespace. The agent service, besides exposing the standard Instana agent API endpoint, also provides the common OTLP endpoint for both gRPC (port 4317) and HTTP (port 4318) protocols across all nodes. Be aware that at time of writing, the HTTP endpoint definition wasn't yet included in the public Instana agent Helm chart (and likely neither in the Operator). You can better create the service manually using the following manifest that is tested to work well with the demo.
 ```sh
-cat <<EOF | oc create -f-
+cat <<EOF | kubectl create -f-
 apiVersion: v1
 kind: Service
 metadata:
