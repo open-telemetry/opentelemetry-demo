@@ -158,6 +158,8 @@ significant modifications will be credited to OpenTelemetry Authors.
 ([#628](https://github.com/open-telemetry/opentelemetry-demo/pull/628))
 * Update `quoteservice` to use opentelemetry-php beta release
 ([#644](https://github.com/open-telemetry/opentelemetry-demo/pull/644))
+* Add build for arm64 arch
+([#644](https://github.com/open-telemetry/opentelemetry-demo/pull/657))
 * Add synthetic attribute flag to front end instrumentation
 ([#631](https://github.com/open-telemetry/opentelemetry-demo/pull/631))
 * Fix the total sum on the cart page
