@@ -38,7 +38,7 @@ default:
         fieldRef:
           fieldPath: status.hostIP
     - name: OTEL_RESOURCE_ATTRIBUTES
-      value: service.name=$(OTEL_SERVICE_NAME),service.instance.id=$(OTEL_K8S_POD_NAME),k8s.pod.uid=$(OTEL_K8S_POD_UID),k8s.namespace.name=$(OTEL_K8S_NAMESPACE),k8s.node.name=$(OTEL_K8S_NODE_NAME),k8s.pod.name=$(OTEL_K8S_POD_NAME)
+      value: service.name=$(OTEL_SERVICE_NAME),service.instance.id=$(OTEL_K8S_POD_NAME),k8s.pod.uid=$(OTEL_K8S_POD_UID),service.namespace=opentelemetry-demo,k8s.namespace.name=$(OTEL_K8S_NAMESPACE),k8s.node.name=$(OTEL_K8S_NODE_NAME),k8s.pod.name=$(OTEL_K8S_POD_NAME)
   # Allows overriding and additions to .Values.default.env
   envOverrides: []
   #  - name: OTEL_K8S_NODE_NAME
@@ -133,6 +133,8 @@ components:
   #   command: []
   # # Configuration to for this service; will create a ConfigMap, Volume, and Mount it into the container being spun up/.
   #   configuration: {}
+  # # Kubernetes container health check options
+  #   livenessProbe: {}
   accountingService:
     enabled: true
     useDefault:
@@ -158,6 +160,8 @@ components:
         value: 'http://$(HOST_IP):4317'
       - name: AD_SERVICE_PORT
         value: "8080"
+      - name: FEATURE_FLAG_GRPC_SERVICE_ADDR
+        value: '{{ include "otel-demo.name" . }}-featureflagservice:50053'
     resources:
       limits:
         memory: 300Mi
@@ -267,6 +271,12 @@ components:
     resources:
       limits:
         memory: 175Mi
+    livenessProbe:
+      httpGet:
+        path: /featureflags/
+        port: 8081
+      initialDelaySeconds: 30
+      periodSeconds: 10
 
   frauddetectionService:
     enabled: true
@@ -307,12 +317,12 @@ components:
         value: '{{ include "otel-demo.name" . }}-shippingservice:8080'
       - name: OTEL_EXPORTER_OTLP_ENDPOINT
         value: 'http://$(HOST_IP):4317'
+      - name: WEB_OTEL_SERVICE_NAME
+        value: frontend-web-otel
       - name: FRONTEND_PORT
         value: "8080"
       - name: PUBLIC_OTEL_EXPORTER_OTLP_TRACES_ENDPOINT
         value: 'http://localhost:4318/v1/traces'             # This expects users to use `kubectl port-forward ...`
-      - name: WEB_OTEL_SERVICE_NAME
-        value: frontend-web-otel
     resources:
       limits:
         memory: 200Mi
@@ -352,7 +362,7 @@ components:
         value: "8080"
     resources:
       limits:
-        memory: 30Mi
+        memory: 50Mi
     securityContext:
       runAsUser: 101  # envoy
       runAsGroup: 101
@@ -380,8 +390,8 @@ components:
         value: "true"
       - name: PROTOCOL_BUFFERS_PYTHON_IMPLEMENTATION
         value: python
-      - name: OTEL_EXPORTER_OTLP_ENDPOINT
-        value: 'http://$(HOST_IP):4317'
+      - name: OTEL_EXPORTER_OTLP_TRACES_ENDPOINT
+        value: 'http://$(HOST_IP):4318/v1/traces'
       - name: LOADGENERATOR_PORT
         value: "8089"
     resources:
@@ -400,7 +410,7 @@ components:
         value: "8080"
     resources:
       limits:
-        memory: 70Mi
+        memory: 120Mi
 
   productCatalogService:
     enabled: true
@@ -410,6 +420,8 @@ components:
     env:
       - name: OTEL_EXPORTER_OTLP_ENDPOINT
         value: 'http://$(HOST_IP):4317'
+      - name: OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE
+        value: delta
       - name: PRODUCT_CATALOG_SERVICE_PORT
         value: "8080"
       - name: FEATURE_FLAG_GRPC_SERVICE_ADDR
@@ -424,16 +436,10 @@ components:
       env: true
     servicePort: 8080
     env:
-      - name: OTEL_TRACES_SAMPLER
-        value: "parentbased_always_on"
-      - name: OTEL_TRACES_EXPORTER
-        value: "otlp"
-      - name: OTEL_EXPORTER_OTLP_TRACES_PROTOCOL
-        value: "http/protobuf"
-      - name: OTEL_PHP_TRACES_PROCESSOR
-        value: "simple"
-      - name: OTEL_EXPORTER_OTLP_ENDPOINT
+      - name: OTEL_EXPORTER_OTLP_TRACES_ENDPOINT
         value: 'http://$(HOST_IP):4318'
+      - name: OTEL_PHP_AUTOLOAD_ENABLED
+        value: "true"
       - name: QUOTE_SERVICE_PORT
         value: "8080"
     resources:
@@ -493,10 +499,9 @@ components:
     imageOverride:
       repository: "postgres"
       tag: "14"
-    schedulingRules:
-      nodeSelector: {}
-      affinity: {}
-      tolerations: []
+    ports:
+      - name: postgres
+        value: 5432
     env:
       - name: POSTGRES_DB
         value: ffs
@@ -506,11 +511,6 @@ components:
         value: ffs
       - name: OTEL_EXPORTER_OTLP_ENDPOINT
         value: 'http://$(HOST_IP):4317'
-    envOverrides: []
-    ports:
-      - name: postgres
-        value: 5432
-    podAnnotations: {}
     resources:
       limits:
         memory: 120Mi
@@ -531,9 +531,15 @@ components:
     env:
       - name: KAFKA_ADVERTISED_LISTENERS
         value: 'PLAINTEXT://{{ include "otel-demo.name" . }}-kafka:9092'
+      - name: OTEL_EXPORTER_OTLP_ENDPOINT
+        value: 'http://$(HOST_IP):4317'
+      - name: OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE
+        value: cumulative
+      - name: KAFKA_HEAP_OPTS
+        value: "-Xmx400M -Xms400M"
     resources:
       limits:
-        memory: 600Mi
+        memory: 750Mi
     securityContext:
       runAsUser: 1000  # appuser
       runAsGroup: 1000
@@ -575,6 +581,10 @@ opentelemetry-collector:
       memory: 125Mi
   service:
     type: LoadBalancer
+    annotations:
+      service.beta.kubernetes.io/aws-load-balancer-type: nlb
+      service.beta.kubernetes.io/aws-load-balancer-eip-allocations: "eipalloc-0221149111c163ba7"
+      service.beta.kubernetes.io/aws-load-balancer-subnets: "subnet-388ee15f"
   # Configuration for ports
   ports:
     otlp:
@@ -694,6 +704,22 @@ opentelemetry-collector:
           processors: [memory_limiter, resource, resourcedetection, k8sattributes, cumulativetodelta, batch]
           exporters: [otlp]
 
+  ingress:
+    enabled: true
+    ingressClassName: nginx
+    hosts:
+      - host: otel-collector.demo-newrelic.com
+        paths:
+          - path: /
+            pathType: Prefix
+            port: 4318
+          - path: /
+            pathType: Prefix
+            port: 4317
+          - path: /
+            pathType: Prefix
+            port: 9411
+
   serviceAccount:
     # Specifies whether a service account should be created
     create: true
@@ -737,10 +763,19 @@ jaeger:
     cassandra: false
   allInOne:
     enabled: true
-    args: ["--memory.max-traces", "10000", "--query.base-path", "/jaeger/ui"]
+    args:
+      - "--memory.max-traces"
+      - "10000"
+      - "--query.base-path"
+      - "/jaeger/ui"
+      - "--prometheus.server-url"
+      - 'http://{{ include "otel-demo.name" . }}-prometheus-server:9090'
+    extraEnv:
+      - name: METRICS_STORAGE_TYPE
+        value: prometheus
     resources:
       limits:
-        memory: 275Mi
+        memory: 300Mi
   storage:
     type: none
   agent:
@@ -764,12 +799,17 @@ prometheus:
     enabled: false
 
   server:
+    extraFlags:
+      - "enable-feature=exemplar-storage"
     global:
       scrape_interval: 5s
       scrape_timeout: 3s
       evaluation_interval: 30s
     service:
       servicePort: 9090
+    resources:
+      limits:
+        memory: 750Mi
 
   serverFiles:
     prometheus.yml:
@@ -806,6 +846,15 @@ grafana:
           url: 'http://{{ include "otel-demo.name" . }}-prometheus-server:9090'
           editable: true
           isDefault: true
+          jsonData:
+            exemplarTraceIdDestinations:
+              - datasourceUid: webstore-traces
+                name: trace_id
+
+              - url: http://localhost:8080/jaeger/ui/trace/$${__value.raw}
+                name: trace_id
+                urlDisplayLabel: View in Jaeger UI
+
         - name: Jaeger
           uid: webstore-traces
           type: jaeger
