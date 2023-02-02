@@ -52,6 +52,8 @@ frontend -->|gRPC| shippingservice -->|HTTP| quoteservice
 
 frauddetectionservice -->|TCP| queue
 
+adservice -->|gRPC| featureflagservice
+
 productcatalogservice -->|gRPC| featureflagservice
 
 recommendationservice -->|gRPC| featureflagservice
