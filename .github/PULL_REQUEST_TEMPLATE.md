@@ -8,9 +8,10 @@ For new features contributions please make sure you have completed the following
 essential items:
 
 * [ ] `CHANGELOG.md` updated to document new feature additions
-* [ ] Appropriate documentation updates in the
-[docs](https://github.com/open-telemetry/opentelemetry-demo/tree/main/docs) folder
+* [ ] Appropriate documentation updates in the [docs][]
 
 Maintainers will not merge until the above have been completed. If you're unsure
 which docs need to be changed ping the
 [@open-telemetry/demo-approvers](https://github.com/orgs/open-telemetry/teams/demo-approvers).
+
+[docs]: https://opentelemetry.io/docs/demo/
