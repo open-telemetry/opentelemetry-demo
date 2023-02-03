@@ -95,4 +95,3 @@ Emeritus:
 [![contributors](https://contributors-img.web.app/image?repo=open-telemetry/opentelemetry-demo)](https://github.com/open-telemetry/opentelemetry-demo/graphs/contributors)
 
 [docs]: https://opentelemetry.io/docs/demo/
-[otel-logo]: https://opentelemetry.io/img/logos/opentelemetry-logo-nav.png
