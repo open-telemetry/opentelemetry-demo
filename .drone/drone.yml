@@ -1,0 +1,119 @@
+---
+# kind: pipeline
+# name: frontend
+
+# trigger:
+#   event:
+#     include:
+#     - push
+#     - tag
+
+# steps:
+# # Install dependencies for both the plugin and the CI tools
+# - name: Install dependencies
+#   image: node:18-alpine
+#   environment:
+#     GITHUB_TOKEN:
+#       from_secret: gh_token
+#   commands:
+#   - cd ./src/frontend
+#   - npm install --immutable
+#   - cd ../ci
+#   - npm set //npm.pkg.github.com/:_authToken $${GITHUB_TOKEN}
+#   - yarn install --immutable
+
+# - name: Create version file
+#   image: node:18-alpine
+#   commands:
+#   - VERSION=$(./ci/bin/plugin-tools version)
+#   - cd ./plugin
+#   - mkdir build/
+#   - echo $VERSION > build/version
+#   # For debugging purposes
+#   - echo $VERSION
+
+# - name: Build/Sign/Package plugin
+#   image: node:18-alpine
+#   environment:
+#     GRAFANA_API_KEY:
+#       from_secret: gcom_api_key
+#   commands:
+#   - apt-get update && apt-get -y install zip jq
+#   - cd ./plugin
+#   - yarn build
+#   - yarn grafana-toolkit plugin:sign
+#   - VERSION=$(cat ./build/version)
+#   - PLUGIN_NAME=$(jq '.id' src/plugin.json | tr -d '"')
+#   - mkdir -p build/packages/dev
+#   - zip -r ./build/packages/dev/$PLUGIN_NAME-$VERSION.zip ./dist
+
+# # Copy the artifacts in release/ directory for staging
+# - name: (dev/stg) Create dev/staging artifacts
+#   image: node:18-alpine
+#   commands:
+#   - cd ./plugin
+#   - mkdir -p build/packages/release
+#   - cp ./build/packages/dev/*.zip ./build/packages/release/
+#   when:
+#     ref:
+#     - refs/heads/main
+
+# - name: Publish app ZIP bundles to GCS
+#   image: plugins/gcs
+#   settings:
+#     source: ./src/frontend/.next/
+#     target: integration-artifacts/otel-demo-faro-frontend/
+#     token:
+#       from_secret: gcp_key
+
+# image_pull_secrets:
+#   - dockerconfigjson
+---
+kind: pipeline
+type: docker
+name: docker-push
+steps:
+- name: docker
+  image: plugins/docker
+  settings:
+    auto_tag: true
+    dockerfile: Dockerfile
+    repo: integration-artifacts/otel-demo-frontend
+    tags: latest
+    context: /src/frontend/
+    password:
+      from_secret: docker_password
+    username:
+      from_secret: docker_username
+trigger:
+  event:
+    include:
+    - push
+
+---
+kind: secret
+name: gcp_key
+
+get:
+    name: gcp_key
+    path: infra/data/ci/drone-plugins
+---
+kind: secret
+name: gh_token
+
+get:
+  name: pat
+  path: infra/data/ci/github/grafanabot
+---
+kind: secret
+name: dockerconfigjson
+
+get:
+  path: secret/data/common/gcr
+  name: .dockerconfigjson
+
+---
+kind: signature
+hmac: 4ee6283b599ae6c675ac2a99fee922aab0da6cf79b3f3815f34b3f32f7068774
+
+...
