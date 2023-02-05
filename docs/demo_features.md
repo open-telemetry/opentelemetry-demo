@@ -17,16 +17,20 @@ be added as the relevant SDKs are released.
   Collector](https://opentelemetry.io/docs/collector/getting-started)**: all
   services are instrumented and sending the generated traces and metrics to the
   OpenTelemetry Collector via gRPC. The received traces are then exported to the
-  logs and to Jaeger.
+  logs and to Jaeger; received metrics and exemplars* are exported to logs and Prometheus.
 - **[Jaeger](https://www.jaegertracing.io)**: all generated traces are being
   sent to Jaeger.
 - **Synthetic Load Generation**: the application demo comes with a background
   job that creates realistic usage patterns on the website using
   [Locust](https://locust.io/) load generator.
-- **[Prometheus](https://prometheus.io/)**: all generated metrics are scraped by
-  Prometheus.
+- **[Prometheus](https://prometheus.io/)**: all generated metrics and exemplars
+  are scraped by Prometheus.
 - **[Grafana](https://grafana.com/)**: all metric dashboards are stored in
   Grafana.
 - **[Envoy](https://www.envoyproxy.io/)**: Envoy is used as a reverse proxy for
   user-facing web interfaces such as the frontend, load generator, and feature
   flag service.
+
+_\*Only exemplars attached to histograms are currently exported to Prometheus.
+See [issue in the collector](https://github.com/open-telemetry/opentelemetry-collector-contrib/issues/18201)
+for details._

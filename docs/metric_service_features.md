@@ -9,7 +9,7 @@ Emoji Legend
 | Service         | Language        | Auto-instrumentation | Manual Instrumentation | Multiple Instruments | Views          | Custom Attributes | Resource Detection | Trace Exemplars |
 |-----------------|-----------------|----------------------|------------------------|----------------------|----------------|-------------------|--------------------|-----------------|
 | Accounting      | Go              | :construction:       | :construction:         | :construction:       | :construction: | :construction:    | :construction:     | :construction:  |
-| Ad              | Java            | :100:                | :100:                  | :construction:       | :construction: | :100:             | :100:              | :construction:  |
+| Ad              | Java            | :100:                | :100:                  | :construction:       | :construction: | :100:             | :100:              | :100:           |
 | Cart            | .NET            | :100:                | :construction:         | :construction:       | :construction: | :construction:    | :construction:     | :construction:  |
 | Checkout        | Go              | :100:                | :construction:         | :construction:       | :construction: | :construction:    | :construction:     | :construction:  |
 | Currency        | C++             | :no_bell:            | :construction:         | :construction:       | :construction: | :construction:    | :construction:     | :construction:  |
@@ -17,7 +17,7 @@ Emoji Legend
 | Feature Flag    | Erlang / Elixir | :construction:       | :construction:         | :construction:       | :construction: | :construction:    | :construction:     | :construction:  |
 | Fraud Detection | Kotlin          | :100:                | :construction:         | :construction:       | :construction: | :construction:    | :100:              | :construction:  |
 | Frontend        | TypeScript      | :construction:       | :construction:         | :construction:       | :construction: | :construction:    | :construction:     | :construction:  |
-| Payment         | JavaScript      | :construction:       | :construction:         | :construction:       | :construction: | :construction:    | :100:              | :construction:  |
+| Payment         | JavaScript      | :construction:       | :100:                  | :construction:       | :construction: | :construction:    | :100:              | :construction:  |
 | Product Catalog | Go              | :construction:       | :construction:         | :construction:       | :construction: | :construction:    | :construction:     | :construction:  |
 | Quote           | PHP             | :construction:       | :construction:         | :construction:       | :construction: | :construction:    | :construction:     | :construction:  |
 | Recommendation  | Python          | :100:                | :100:                  | :construction:       | :construction: | :construction:    | :construction:     | :construction:  |

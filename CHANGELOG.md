@@ -158,6 +158,8 @@ significant modifications will be credited to OpenTelemetry Authors.
 ([#628](https://github.com/open-telemetry/opentelemetry-demo/pull/628))
 * Update `quoteservice` to use opentelemetry-php beta release
 ([#644](https://github.com/open-telemetry/opentelemetry-demo/pull/644))
+* Add build for arm64 arch
+([#644](https://github.com/open-telemetry/opentelemetry-demo/pull/657))
 * Add synthetic attribute flag to front end instrumentation
 ([#631](https://github.com/open-telemetry/opentelemetry-demo/pull/631))
 * Fix the total sum on the cart page
@@ -200,7 +202,13 @@ significant modifications will be credited to OpenTelemetry Authors.
 ([#693](https://github.com/open-telemetry/opentelemetry-demo/pull/693))
 * Update recommendationservice python base image and dependencies
 ([#700](https://github.com/open-telemetry/opentelemetry-demo/pull/700))
+* Add adServiceFailure feature flag triggering Ad Service errors
+([#694](https://github.com/open-telemetry/opentelemetry-demo/pull/694))
 * Reduce spans generated from quote service
 ([#702](https://github.com/open-telemetry/opentelemetry-demo/pull/702))
 * Update emailservice Dockerfile to use alpine and multistage build
 ([#703](https://github.com/open-telemetry/opentelemetry-demo/pull/703))
+* Update dockerfile for adservice to use different base images
+([#705](https://github.com/open-telemetry/opentelemetry-demo/pull/705))
+* Enable exemplar support in the metrics exporter, Prometheus, and Grafana
+([#704](https://github.com/open-telemetry/opentelemetry-demo/pull/704))
