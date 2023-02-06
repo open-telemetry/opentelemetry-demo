@@ -1,4 +1,4 @@
-# ![otel-photo](./docs/img/opentelemetry-logo-nav.png) OpenTelemetry Demo
+# OpenTelemetry Demo
 
 [![Slack](https://img.shields.io/badge/slack-@cncf/otel/demo-brightgreen.svg?logo=slack)](https://cloud-native.slack.com/archives/C03B4CWV4DA)
 [![Version](https://img.shields.io/github/v/release/open-telemetry/opentelemetry-demo?color=blueviolet)](https://github.com/open-telemetry/opentelemetry-demo/releases)
@@ -29,22 +29,22 @@ OpenTelemetry across its languages in the future.
 If you'd like to help (**which we would love**), check out our [contributing
 guidance](./CONTRIBUTING.md).
 
-If you'd like to extend this demo or maintain a fork of it, please read our
-[fork guidance](./docs/forking.md).
+If you'd like to extend this demo or maintain a fork of it, read our
+[fork guidance](https://opentelemetry.io/docs/demo/forking/).
 
 ## Quick start
 
 You can be up and running with the demo in a few minutes. Check out the docs for
 your preferred deployment method:
 
-- [Docker](./docs/docker_deployment.md)
-- [Kubernetes](./docs/kubernetes_deployment.md)
+- [Docker](https://opentelemetry.io/docs/demo/docker_deployment/)
+- [Kubernetes](https://opentelemetry.io/docs/demo/kubernetes_deployment/)
 
 ## Documentation
 
-We have detailed documentation available in the [docs](./docs/) folder. If you're
-curious about a specific feature the docs [README](./docs/README.md) can point
-you in the right direction.
+For detailed documentation, see [Demo Documentation][docs]. If you're curious
+about a specific feature, the [docs landing page][docs] can point you in the
+right direction.
 
 ## Demos featuring the Astronomy Shop
 
@@ -93,3 +93,5 @@ Emeritus:
 ### Thanks to all the people who have contributed
 
 [![contributors](https://contributors-img.web.app/image?repo=open-telemetry/opentelemetry-demo)](https://github.com/open-telemetry/opentelemetry-demo/graphs/contributors)
+
+[docs]: https://opentelemetry.io/docs/demo/
