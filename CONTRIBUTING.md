@@ -102,7 +102,7 @@ Once the images are built and containers are started you can access:
 The Demo team is committed to keeping the demo up to date. That means the
 documentation as well as the code. When making changes to any service or feature
 remember to find the related docs and update those as well. Most (but not all)
-documentation can be found the [docs](./docs/) folder.
+documentation can be found on the OTel website under [Demo docs][docs].
 
 ## Create Your First Pull Request
 
@@ -173,7 +173,7 @@ A PR is considered to be **ready to merge** when:
 - Major feedbacks are resolved.
 - It has been open for review for at least one working day. This gives people
   reasonable time to review.
-- The [documentation](./docs/) and [Changelog](./CHANGELOG.md) have been updated
+- The [documentation][docs] and [Changelog](./CHANGELOG.md) have been updated
   to reflect the new changes.
 - Trivial changes (typo, cosmetic, doc, etc.) don't have to wait for one day.
 
@@ -208,3 +208,5 @@ Maintainers can create a new release when desired by following a few steps.
   creating a new tag in the format `x.x.x` based on main. Automatically generate
   release notes. Prepend a summary of the major changes to the release notes.
 - Click 'Publish Release'.
+
+[docs]: https://opentelemetry.io/docs/demo/
