@@ -37,14 +37,13 @@ If you'd like to extend this demo or maintain a fork of it, please read our
 You can be up and running with the demo in a few minutes. Check out the docs for
 your preferred deployment method:
 
-- [Docker](./docs/docker_deployment.md)
-- [Kubernetes](./docs/kubernetes_deployment.md)
+- [Docker](./getting-started/docker_deployment.md)
+- [Kubernetes](./getting-started/kubernetes_deployment.md)
 
 ## Documentation
 
-We have detailed documentation available in the [docs](./docs/) folder. If you're
-curious about a specific feature the docs [README](./docs/README.md) can point
-you in the right direction.
+We have detailed documentation available on the [project
+website](https://opentelemetry.io/docs/demo/).
 
 ## Demos featuring the Astronomy Shop
 
