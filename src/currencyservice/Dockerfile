@@ -12,36 +12,29 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-FROM alpine as builder
+FROM alpine:edge as builder
+
+WORKDIR /currencyservice
 
 RUN apk update
-RUN apk add git cmake make g++ grpc-dev re2-dev protobuf-dev c-ares-dev
+RUN apk add -X http://dl-cdn.alpinelinux.org/alpine/edge/testing git cmake make g++ grpc-dev re2-dev protobuf-dev c-ares-dev opentelemetry-cpp-dev
 
-ARG OPENTELEMETRY_CPP_VERSION=1.8.1
+COPY . .
 
-RUN git clone https://github.com/open-telemetry/opentelemetry-cpp \
-	&& cd opentelemetry-cpp/ \
-    	&& git checkout tags/v${OPENTELEMETRY_CPP_VERSION} -b v${OPENTELEMETRY_CPP_VERSION} \
-	&& mkdir build \
-	&& cd build \
-	&& cmake .. -DCMAKE_POSITION_INDEPENDENT_CODE=ON -DCMAKE_BUILD_TYPE=Release -DBUILD_TESTING=OFF -DWITH_EXAMPLES=OFF -DWITH_OTLP=ON \
-	&& make -j$(nproc || sysctl -n hw.ncpu || echo 1) install && cd ../.. && rm -rf opentelemetry-cpp
-
-COPY . /currencyservice
-
-RUN cd /currencyservice \
-    && mkdir -p build && cd build \
+RUN mkdir -p build && cd build \
     && cmake .. \
     && make -j$(nproc || sysctl -n hw.ncpu || echo 1) install
 
-FROM alpine
+FROM alpine:edge
 
 WORKDIR /usr/src/app/
 
-RUN apk update
-RUN apk add grpc-dev re2-dev protobuf-dev c-ares-dev
+RUN apk update && apk add -X http://dl-cdn.alpinelinux.org/alpine/edge/testing grpc re2 protobuf c-ares opentelemetry-cpp opentelemetry-cpp-exporter-otlp-grpc && rm -rf /var/cache/apk/*
 
 COPY --from=builder /usr/local/bin/currencyservice ./
 
 EXPOSE ${CURRENCY_SERVICE_PORT}
 ENTRYPOINT ./currencyservice ${CURRENCY_SERVICE_PORT}
+
+
+
