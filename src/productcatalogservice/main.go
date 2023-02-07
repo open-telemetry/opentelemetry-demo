@@ -17,6 +17,7 @@ package main
 import (
 	"context"
 	"fmt"
+	"google.golang.org/grpc/reflection"
 	"io/ioutil"
 	"net"
 	"os"
@@ -95,6 +96,7 @@ func main() {
 
 	pb.RegisterProductCatalogServiceServer(srv, svc)
 	healthpb.RegisterHealthServer(srv, svc)
+	reflection.Register(srv)
 	srv.Serve(ln)
 }
 
