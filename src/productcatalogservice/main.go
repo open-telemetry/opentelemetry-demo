@@ -17,12 +17,13 @@ package main
 import (
 	"context"
 	"fmt"
+	"google.golang.org/grpc/reflection"
 	"io/ioutil"
 	"net"
 	"os"
 	"strings"
 
-	pb "github.com/opentelemetry/opentelemetry-demo/src/productcatalogservice/genproto/hipstershop"
+	pb "github.com/open-telemetry/opentelemetry-demo/src/productcatalogservice/genproto/hipstershop"
 	healthpb "google.golang.org/grpc/health/grpc_health_v1"
 
 	"github.com/sirupsen/logrus"
@@ -95,6 +96,7 @@ func main() {
 
 	pb.RegisterProductCatalogServiceServer(srv, svc)
 	healthpb.RegisterHealthServer(srv, svc)
+	reflection.Register(srv)
 	srv.Serve(ln)
 }
 
