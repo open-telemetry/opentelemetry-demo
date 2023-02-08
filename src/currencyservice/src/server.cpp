@@ -22,6 +22,7 @@
 #include "opentelemetry/trace/span_context_kv_iterable_view.h"
 #include "opentelemetry/baggage/baggage.h"
 #include "opentelemetry/nostd/string_view.h"
+#include "meter_common.h"
 #include "tracer_common.h"
 
 #include <grpcpp/grpcpp.h>
@@ -250,6 +251,7 @@ int main(int argc, char **argv) {
   std::cout << "Port: " << port << "\n";
 
   initTracer();
+  initMeter();
   RunServer(port);
 
   return 0;
