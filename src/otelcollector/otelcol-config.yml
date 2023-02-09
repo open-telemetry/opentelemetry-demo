@@ -38,6 +38,12 @@ processors:
   batch:
   spanmetrics:
     metrics_exporter: prometheus
+  # temporary measure until description is fixed in .NET
+  transform:
+    metric_statements:
+      - context: metric
+        statements:
+          - set(description, "Measures the duration of inbound HTTP requests") where name == "http.server.duration"
 
 service:
   pipelines:
@@ -49,5 +55,5 @@ service:
       exporters: [logging, otlp/jaeger, instana]
     metrics:
       receivers: [otlp]
-      processors: [batch]
+      processors: [transform, batch]
       exporters: [prometheus, logging, otlp/instana]
