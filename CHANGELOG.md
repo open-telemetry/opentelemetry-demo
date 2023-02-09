@@ -214,3 +214,5 @@ significant modifications will be credited to OpenTelemetry Authors.
 ([#704](https://github.com/open-telemetry/opentelemetry-demo/pull/704))
 * [docs] Drop docs folder as step in migration to OTel website
 ([#729](https://github.com/open-telemetry/opentelemetry-demo/issues/729))
+* Add cross-compilation for shipping service
+([#715](https://github.com/open-telemetry/opentelemetry-demo/issues/715))
