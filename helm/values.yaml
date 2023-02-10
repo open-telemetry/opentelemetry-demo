@@ -37,6 +37,8 @@ default:
       valueFrom:
         fieldRef:
           fieldPath: status.hostIP
+    - name: OTEL_COLLECTOR_NAME
+      value: '{{ include "otel-demo.name" . }}-otelcol'
     - name: OTEL_RESOURCE_ATTRIBUTES
       value: service.name=$(OTEL_SERVICE_NAME),service.instance.id=$(OTEL_K8S_POD_NAME),k8s.pod.uid=$(OTEL_K8S_POD_UID),service.namespace=opentelemetry-demo,k8s.namespace.name=$(OTEL_K8S_NAMESPACE),k8s.node.name=$(OTEL_K8S_NODE_NAME),k8s.pod.name=$(OTEL_K8S_POD_NAME)
   # Allows overriding and additions to .Values.default.env
@@ -66,12 +68,18 @@ components:
   ## Use default environment variables
   #     env: true
   ## Override Image repository and Tag. Tag will use appVersion as default.
-  ## Service's name will be applied to end of this value.
+  ## Component's name will be applied to end of this value.
   #   imageOverride: {}
+  ## Optional service definitions to apply
+  #   service:
   ## Service Type to use for this component. Default is ClusterIP.
-  #   serviceType: ClusterIP
+  #     type: ClusterIP
   ## Service Port to use to expose this component. Default is nil
-  #   servicePort: 8080
+  #     port: 8080
+  ## Service Node Port to use to expose this component on a NodePort service. Default is nil
+  #     nodePort: 30080
+  ## Service Annotations to add to this component
+  #     annotations: {}
   ## Additional service ports to use to expose this component
   #   ports:
   #     - name: extraServicePort
@@ -143,7 +151,7 @@ components:
       - name: OTEL_EXPORTER_OTLP_ENDPOINT
         value: 'http://$(HOST_IP):4317'
       - name: OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE
-        value: 'delta'
+        value: delta
       - name: KAFKA_SERVICE_ADDR
         value: '{{ include "otel-demo.name" . }}-kafka:9092'
     resources:
@@ -154,7 +162,8 @@ components:
     enabled: true
     useDefault:
       env: true
-    servicePort: 8080
+    service:
+      port: 8080
     env:
       - name: OTEL_EXPORTER_OTLP_ENDPOINT
         value: 'http://$(HOST_IP):4317'
@@ -170,7 +179,8 @@ components:
     enabled: true
     useDefault:
       env: true
-    servicePort: 8080
+    service:
+      port: 8080
     env:
       - name: ASPNETCORE_URLS
         value: http://*:8080
@@ -188,7 +198,8 @@ components:
     enabled: true
     useDefault:
       env: true
-    servicePort: 8080
+    service:
+      port: 8080
     env:
       - name: CART_SERVICE_ADDR
         value: '{{ include "otel-demo.name" . }}-cartservice:8080'
@@ -232,7 +243,8 @@ components:
     enabled: true
     useDefault:
       env: true
-    servicePort: 8080
+    service:
+      port: 8080
     env:
       - name: APP_ENV
         value: production
@@ -286,7 +298,7 @@ components:
       - name: OTEL_EXPORTER_OTLP_ENDPOINT
         value: 'http://$(HOST_IP):4317'
       - name: OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE
-        value: 'delta'
+        value: delta
       - name: KAFKA_SERVICE_ADDR
         value: '{{ include "otel-demo.name" . }}-kafka:9092'
     resources:
@@ -297,7 +309,8 @@ components:
     enabled: true
     useDefault:
       env: true
-    servicePort: 8080
+    service:
+      port: 8080
     env:
       - name: FRONTEND_ADDR
         value: :8080
@@ -331,8 +344,9 @@ components:
     enabled: true
     useDefault:
       env: true
-    serviceType: LoadBalancer
-    servicePort: 8080
+    service:
+      type: LoadBalancer
+      port: 8080
     env:
       - name: FRONTEND_PORT
         value: "8080"
@@ -362,7 +376,7 @@ components:
         value: "8080"
     resources:
       limits:
-        memory: 50Mi
+        memory: 100Mi
     securityContext:
       runAsUser: 101  # envoy
       runAsGroup: 101
@@ -372,7 +386,8 @@ components:
     enabled: true
     useDefault:
       env: true
-    servicePort: 8089
+    service:
+      port: 8089
     env:
       - name: FRONTEND_ADDR
         value: '{{ include "otel-demo.name" . }}-frontend:8080'
@@ -385,7 +400,7 @@ components:
       - name: LOCUST_HOST
         value: "http://$(FRONTEND_ADDR)"
       - name: LOCUST_HEADLESS
-        value: "false"
+        value: "true"
       - name: LOCUST_AUTOSTART
         value: "true"
       - name: PROTOCOL_BUFFERS_PYTHON_IMPLEMENTATION
@@ -402,7 +417,8 @@ components:
     enabled: true
     useDefault:
       env: true
-    servicePort: 8080
+    service:
+      port: 8080
     env:
       - name: OTEL_EXPORTER_OTLP_ENDPOINT
         value: 'http://$(HOST_IP):4317'
@@ -416,7 +432,8 @@ components:
     enabled: true
     useDefault:
       env: true
-    servicePort: 8080
+    service:
+      port: 8080
     env:
       - name: OTEL_EXPORTER_OTLP_ENDPOINT
         value: 'http://$(HOST_IP):4317'
@@ -434,10 +451,11 @@ components:
     enabled: true
     useDefault:
       env: true
-    servicePort: 8080
+    service:
+      port: 8080
     env:
       - name: OTEL_EXPORTER_OTLP_TRACES_ENDPOINT
-        value: 'http://$(HOST_IP):4318'
+        value: 'http://$(HOST_IP):4318/v1/traces'
       - name: OTEL_PHP_AUTOLOAD_ENABLED
         value: "true"
       - name: QUOTE_SERVICE_PORT
@@ -454,7 +472,8 @@ components:
     enabled: true
     useDefault:
       env: true
-    servicePort: 8080
+    service:
+      port: 8080
     env:
       - name: OTEL_PYTHON_LOG_CORRELATION
         value: "true"
@@ -476,14 +495,13 @@ components:
     enabled: true
     useDefault:
       env: true
-    servicePort: 8080
+    service:
+      port: 8080
     env:
       - name: PORT
         value: "8080"
-      - name: OTEL_EXPORTER_OTLP_ENDPOINT
-        value: 'http://$(HOST_IP):4317'
       - name: OTEL_EXPORTER_OTLP_TRACES_ENDPOINT
-        value: 'http://$(HOST_IP):4317'
+        value: 'http://$(HOST_IP):4317/v1/traces'
       - name: SHIPPING_SERVICE_PORT
         value: "8080"
       - name: QUOTE_SERVICE_ADDR
@@ -509,8 +527,6 @@ components:
         value: ffs
       - name: POSTGRES_USER
         value: ffs
-      - name: OTEL_EXPORTER_OTLP_ENDPOINT
-        value: 'http://$(HOST_IP):4317'
     resources:
       limits:
         memory: 120Mi
@@ -534,7 +550,7 @@ components:
       - name: OTEL_EXPORTER_OTLP_ENDPOINT
         value: 'http://$(HOST_IP):4317'
       - name: OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE
-        value: cumulative
+        value: delta
       - name: KAFKA_HEAP_OPTS
         value: "-Xmx400M -Xms400M"
     resources:
@@ -581,10 +597,6 @@ opentelemetry-collector:
       memory: 125Mi
   service:
     type: LoadBalancer
-    annotations:
-      service.beta.kubernetes.io/aws-load-balancer-type: nlb
-      service.beta.kubernetes.io/aws-load-balancer-eip-allocations: "eipalloc-0221149111c163ba7"
-      service.beta.kubernetes.io/aws-load-balancer-subnets: "subnet-388ee15f"
   # Configuration for ports
   ports:
     otlp:
@@ -598,7 +610,7 @@ opentelemetry-collector:
     jaeger-grpc:
       enabled: false
     zipkin:
-      enabled: true
+      enabled: false
     metrics:
       enabled: false
     prometheus:
@@ -703,22 +715,6 @@ opentelemetry-collector:
           receivers: [hostmetrics, otlp]
           processors: [memory_limiter, resource, resourcedetection, k8sattributes, cumulativetodelta, batch]
           exporters: [otlp]
-
-  ingress:
-    enabled: true
-    ingressClassName: nginx
-    hosts:
-      - host: otel-collector.demo-newrelic.com
-        paths:
-          - path: /
-            pathType: Prefix
-            port: 4318
-          - path: /
-            pathType: Prefix
-            port: 4317
-          - path: /
-            pathType: Prefix
-            port: 9411
 
   serviceAccount:
     # Specifies whether a service account should be created
