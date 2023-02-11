@@ -67,17 +67,17 @@ const {
 } = process.env;
 
 test.before(() => {
-  const hipstershop = grpc.loadPackageDefinition(
+  const oteldemo = grpc.loadPackageDefinition(
     protoLoader.loadSync("./demo.proto")
-  ).hipstershop;
+  ).oteldemo;
 
-  const adClient = new hipstershop.AdService(
+  const adClient = new oteldemo.AdService(
     AD_SERVICE_ADDR,
     grpc.credentials.createInsecure()
   );
   adsGet = promisify(adClient.getAds).bind(adClient);
 
-  const cartClient = new hipstershop.CartService(
+  const cartClient = new oteldemo.CartService(
     CART_SERVICE_ADDR,
     grpc.credentials.createInsecure()
   );
@@ -85,13 +85,13 @@ test.before(() => {
   cartGet = promisify(cartClient.getCart).bind(cartClient);
   cartEmpty = promisify(cartClient.emptyCart).bind(cartClient);
 
-  const checkoutClient = new hipstershop.CheckoutService(
+  const checkoutClient = new oteldemo.CheckoutService(
     CHECKOUT_SERVICE_ADDR,
     grpc.credentials.createInsecure()
   );
   checkoutOrder = promisify(checkoutClient.placeOrder).bind(checkoutClient);
 
-  const currencyClient = new hipstershop.CurrencyService(
+  const currencyClient = new oteldemo.CurrencyService(
     CURRENCY_SERVICE_ADDR,
     grpc.credentials.createInsecure()
   );
@@ -100,13 +100,13 @@ test.before(() => {
   );
   currencyConvert = promisify(currencyClient.convert).bind(currencyClient);
 
-  const paymentClient = new hipstershop.PaymentService(
+  const paymentClient = new oteldemo.PaymentService(
     PAYMENT_SERVICE_ADDR,
     grpc.credentials.createInsecure()
   );
   charge = promisify(paymentClient.charge).bind(paymentClient);
 
-  const productCatalogClient = new hipstershop.ProductCatalogService(
+  const productCatalogClient = new oteldemo.ProductCatalogService(
     PRODUCT_CATALOG_SERVICE_ADDR,
     grpc.credentials.createInsecure()
   );
@@ -120,7 +120,7 @@ test.before(() => {
     productCatalogClient
   );
 
-  const recommendationClient = new hipstershop.RecommendationService(
+  const recommendationClient = new oteldemo.RecommendationService(
     RECOMMENDATION_SERVICE_ADDR,
     grpc.credentials.createInsecure()
   );
@@ -128,7 +128,7 @@ test.before(() => {
     recommendationClient
   );
 
-  const shippingClient = new hipstershop.ShippingService(
+  const shippingClient = new oteldemo.ShippingService(
     SHIPPING_SERVICE_ADDR,
     grpc.credentials.createInsecure()
   );

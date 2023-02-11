@@ -14,7 +14,7 @@
 
 syntax = "proto3";
 
-package hipstershop;
+package oteldemo;
 
 // -----------------Cart service-----------------
 

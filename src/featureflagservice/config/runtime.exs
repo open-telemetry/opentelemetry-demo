@@ -12,7 +12,7 @@ config :grpcbox,
       :grpc_opts => %{
         :service_protos => [:ffs_demo_pb],
         :unary_interceptor => {:otel_grpcbox_interceptor, :unary},
-        :services => %{:"hipstershop.FeatureFlagService" => :ffs_service}
+        :services => %{:"oteldemo.FeatureFlagService" => :ffs_service}
       },
       :listen_opts => %{:port => grpc_port}
     }
