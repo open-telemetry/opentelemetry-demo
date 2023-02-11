@@ -16,11 +16,11 @@ using System.Diagnostics;
 using System.Threading.Tasks;
 using Grpc.Core;
 using cartservice.cartstore;
-using Hipstershop;
+using Oteldemo;
 
 namespace cartservice.services
 {
-    public class CartService : Hipstershop.CartService.CartServiceBase
+    public class CartService : Oteldemo.CartService.CartServiceBase
     {
         private readonly static Empty Empty = new Empty();
         private readonly ICartStore _cartStore;
