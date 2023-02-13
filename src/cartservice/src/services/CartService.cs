@@ -18,11 +18,11 @@ using System.Threading.Tasks;
 using Grpc.Core;
 using OpenTelemetry.Trace;
 using cartservice.cartstore;
-using Hipstershop;
+using Oteldemo;
 
 namespace cartservice.services
 {
-    public class CartService : Hipstershop.CartService.CartServiceBase
+    public class CartService : Oteldemo.CartService.CartServiceBase
     {
         private readonly static Empty Empty = new Empty();
         private readonly static Random _random = new Random();

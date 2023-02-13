@@ -32,10 +32,10 @@
 
 using namespace std;
 
-using hipstershop::Empty;
-using hipstershop::GetSupportedCurrenciesResponse;
-using hipstershop::CurrencyConversionRequest;
-using hipstershop::Money;
+using oteldemo::Empty;
+using oteldemo::GetSupportedCurrenciesResponse;
+using oteldemo::CurrencyConversionRequest;
+using oteldemo::Money;
 
 using grpc::Status;
 using grpc::ServerContext;
@@ -98,7 +98,7 @@ class HealthServer final : public grpc::health::v1::Health::Service
   }
 };
 
-class CurrencyService final : public hipstershop::CurrencyService::Service
+class CurrencyService final : public oteldemo::CurrencyService::Service
 {
   Status GetSupportedCurrencies(ServerContext* context,
   	const Empty* request,

@@ -48,14 +48,14 @@ async function closeGracefully(signal) {
   process.kill(process.pid, signal)
 }
 
-const hipsterShopPackage = grpc.loadPackageDefinition(protoLoader.loadSync('demo.proto'))
+const otelDemoPackage = grpc.loadPackageDefinition(protoLoader.loadSync('demo.proto'))
 const server = new grpc.Server()
 
 server.addService(health.service, new health.Implementation({
   '': health.servingStatus.SERVING
 }))
 
-server.addService(hipsterShopPackage.hipstershop.PaymentService.service, { charge: chargeServiceHandler })
+server.addService(otelDemoPackage.oteldemo.PaymentService.service, { charge: chargeServiceHandler })
 
 server.bindAsync(`0.0.0.0:${process.env['PAYMENT_SERVICE_PORT']}`, grpc.ServerCredentials.createInsecure(), (err, port) => {
   if (err) {

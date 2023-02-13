@@ -18,7 +18,7 @@ import org.apache.kafka.clients.consumer.ConsumerConfig.*
 import org.apache.kafka.clients.consumer.KafkaConsumer
 import org.apache.kafka.common.serialization.StringDeserializer
 import org.apache.kafka.common.serialization.ByteArrayDeserializer
-import hipstershop.Demo.*
+import oteldemo.Demo.*
 import java.time.Duration.ofMillis
 import java.util.Properties
 import kotlin.system.exitProcess
