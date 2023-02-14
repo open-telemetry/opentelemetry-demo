@@ -14,7 +14,7 @@ WORKDIR /app/
 COPY --from=builder /app/target/dataservice-0.0.1-SNAPSHOT.jar ./
 
 RUN set -ex; \
-    curl -L -O https://github.com/open-telemetry/opentelemetry-java-instrumentation/releases/download/v1.19.2/opentelemetry-javaagent.jar;
+    curl -L -O https://github.com/open-telemetry/opentelemetry-java-instrumentation/releases/download/v1.22.1/opentelemetry-javaagent.jar;
 
 ENV OTEL_EXPORTER_OTLP_ENDPOINT=http://localhost:4317 \
     OTEL_RESOURCE_ATTRIBUTES=service.name=dataservice \
