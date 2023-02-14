@@ -38,7 +38,7 @@ namespace cartservice.cartstore
         public RedisCartStore(string redisAddress)
         {
             // Serialize empty cart into byte array.
-            var cart = new Hipstershop.Cart();
+            var cart = new Oteldemo.Cart();
             emptyCartBytes = cart.ToByteArray();
             connectionString = $"{redisAddress},ssl=false,allowAdmin=true,abortConnect=false";
 
@@ -126,20 +126,20 @@ namespace cartservice.cartstore
                 // Access the cart from the cache
                 var value = await db.HashGetAsync(userId, CART_FIELD_NAME);
 
-                Hipstershop.Cart cart;
+                Oteldemo.Cart cart;
                 if (value.IsNull)
                 {
-                    cart = new Hipstershop.Cart();
+                    cart = new Oteldemo.Cart();
                     cart.UserId = userId;
-                    cart.Items.Add(new Hipstershop.CartItem { ProductId = productId, Quantity = quantity });
+                    cart.Items.Add(new Oteldemo.CartItem { ProductId = productId, Quantity = quantity });
                 }
                 else
                 {
-                    cart = Hipstershop.Cart.Parser.ParseFrom(value);
+                    cart = Oteldemo.Cart.Parser.ParseFrom(value);
                     var existingItem = cart.Items.SingleOrDefault(i => i.ProductId == productId);
                     if (existingItem == null)
                     {
-                        cart.Items.Add(new Hipstershop.CartItem { ProductId = productId, Quantity = quantity });
+                        cart.Items.Add(new Oteldemo.CartItem { ProductId = productId, Quantity = quantity });
                     }
                     else
                     {
@@ -173,7 +173,7 @@ namespace cartservice.cartstore
             }
         }
 
-        public async Task<Hipstershop.Cart> GetCartAsync(string userId)
+        public async Task<Oteldemo.Cart> GetCartAsync(string userId)
         {
             Console.WriteLine($"GetCartAsync called with userId={userId}");
 
@@ -188,11 +188,11 @@ namespace cartservice.cartstore
 
                 if (!value.IsNull)
                 {
-                    return Hipstershop.Cart.Parser.ParseFrom(value);
+                    return Oteldemo.Cart.Parser.ParseFrom(value);
                 }
 
                 // We decided to return empty cart in cases when user wasn't in the cache before
-                return new Hipstershop.Cart();
+                return new Oteldemo.Cart();
             }
             catch (Exception ex)
             {

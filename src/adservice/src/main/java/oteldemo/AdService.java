@@ -14,15 +14,15 @@
  * limitations under the License.
  */
 
-package hipstershop;
+package oteldemo;
 
 import com.google.common.collect.ImmutableListMultimap;
 import com.google.common.collect.Iterables;
-import hipstershop.Demo.Ad;
-import hipstershop.Demo.AdRequest;
-import hipstershop.Demo.AdResponse;
-import hipstershop.Demo.GetFlagResponse;
-import hipstershop.FeatureFlagServiceGrpc.FeatureFlagServiceBlockingStub;
+import oteldemo.Demo.Ad;
+import oteldemo.Demo.AdRequest;
+import oteldemo.Demo.AdResponse;
+import oteldemo.Demo.GetFlagResponse;
+import oteldemo.FeatureFlagServiceGrpc.FeatureFlagServiceBlockingStub;
 import io.grpc.*;
 import io.grpc.health.v1.HealthCheckResponse.ServingStatus;
 import io.grpc.protobuf.services.*;
@@ -130,7 +130,7 @@ public final class AdService {
     RANDOM
   }
 
-  private static class AdServiceImpl extends hipstershop.AdServiceGrpc.AdServiceImplBase {
+  private static class AdServiceImpl extends oteldemo.AdServiceGrpc.AdServiceImplBase {
 
     private static final String ADSERVICE_FAIL_FEATURE_FLAG = "adServiceFailure";
 
@@ -212,7 +212,7 @@ public final class AdService {
 
       GetFlagResponse response =
           featureFlagServiceStub.getFlag(
-              hipstershop.Demo.GetFlagRequest.newBuilder()
+              oteldemo.Demo.GetFlagRequest.newBuilder()
                   .setName(ADSERVICE_FAIL_FEATURE_FLAG)
                   .build());
       return response.getFlag().getEnabled();

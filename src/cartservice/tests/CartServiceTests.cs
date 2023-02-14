@@ -15,12 +15,12 @@
 using System;
 using System.Threading.Tasks;
 using Grpc.Net.Client;
-using Hipstershop;
+using Oteldemo;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.TestHost;
 using Microsoft.Extensions.Hosting;
 using Xunit;
-using static Hipstershop.CartService;
+using static Oteldemo.CartService;
 
 namespace cartservice.tests
 {
