@@ -9,10 +9,10 @@ cd opentelemetry-demo
 docker compose build up --no-build -d
 ```
 
-> **Note**
+> **Note:**
 > The `--no-build` flag is used to fetch released docker images instead of building from source. Removing the `--no-build` command line option will rebuild all images from source. The image repository is defined in [`.env`](../.env) file. See below for details on building the images.
 
-> **Tip**
+> **Tip:**
 > You can run the demo in the foreground  by omitting the `-d` parameter (`docker compose up`) to get the container logs dumped out to the terminal so you can check for any errors.
 
 #### Deploy Instana agent
