@@ -21,7 +21,7 @@ Add OpenTelemetry Helm repository:
 helm repo add open-telemetry https://open-telemetry.github.io/opentelemetry-helm-charts
 ```
 
-Set a Kubernetes secret with your New Relic license key: 
+Set a Kubernetes secret with your New Relic license key:
 
 ```console
 kubectl create secret generic newrelic-key-secret --from-literal=new_relic_license_key='<NEW_RELIC_LICENSE_KEY>'
@@ -31,6 +31,12 @@ To install the chart with the release name newrelic-otel, run the following comm
 
 ```console
 helm upgrade --install newrelic-otel open-telemetry/opentelemetry-demo --values ./helm/values.yaml
+```
+
+**Remark:** If your New Relic account is in Europe, install the chart as follows instead:
+
+```console
+helm upgrade --install newrelic-otel open-telemetry/opentelemetry-demo --values ./helm/values.yaml --set opentelemetry-collector.config.exporters.otlp.endpoint="otlp.eu01.nr-data.net:4317"
 ```
 
 ## Install Prometheus Integrations (Optional) 
