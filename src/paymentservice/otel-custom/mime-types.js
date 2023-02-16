@@ -9,10 +9,14 @@ const allowedMimeTypePrefix = [
     'application/xhtml',
 ];
 
-export const shouldCaptureBodyByMimeType = (mimeType) => {
+const shouldCaptureBodyByMimeType = (mimeType) => {
     try {
         return !mimeType || allowedMimeTypePrefix.some((prefix) => mimeType.startsWith(prefix));
     } catch {
         return true;
     }
+};
+
+module.exports = {
+    shouldCaptureBodyByMimeType,
 };

@@ -2,7 +2,7 @@ const { HttpExtendedAttribute } = require('./constants');
 const { shouldCaptureBodyByMimeType } = require('./mime-type');
 const { StreamChunks } = require('./stream-chunks');
 
-export const requestHook = (span, req, res) => {
+const requestHook = (span, req, res) => {
     span.setAttributes({
         [HttpExtendedAttribute.HTTP_PATH]: req.path,
         [HttpExtendedAttribute.HTTP_REQUEST_HEADERS]: JSON.stringify(req.headers),
@@ -24,7 +24,7 @@ export const requestHook = (span, req, res) => {
         responseStreamChunks.addChunk(chunk);
         originalResWrite.apply(res, arguments);
     };
-    
+
 
     const oldResEnd = res.end;
     res.end = function (chunk) {
@@ -50,6 +50,10 @@ export const requestHook = (span, req, res) => {
     };
 };
 
-export const expressInstrumentationConfig = {
+const expressInstrumentationConfig = {
     requestHook,
+};
+
+module.exports = {
+    expressInstrumentationConfig
 };

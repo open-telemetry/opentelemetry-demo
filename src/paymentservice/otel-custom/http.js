@@ -80,8 +80,12 @@ const httpCustomAttributesOnResponse = (span, response) => {
     }
 };
 
-export const httpInstrumentationConfig = {
+const httpInstrumentationConfig = {
     applyCustomAttributesOnSpan: httpCustomAttributes,
     requestHook: httpCustomAttributesOnRequest,
     responseHook: httpCustomAttributesOnResponse,
+};
+
+module.exports = {
+    httpInstrumentationConfig
 };
