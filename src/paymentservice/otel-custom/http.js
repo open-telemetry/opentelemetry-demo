@@ -1,7 +1,7 @@
-import { IncomingMessage, ClientRequest } from 'http';
-import { HttpExtendedAttribute } from './constants';
-import { shouldCaptureBodyByMimeType } from './mime-type';
-import { StreamChunks } from './stream-chunks';
+const { IncomingMessage, ClientRequest } = require('http');
+const { HttpExtendedAttribute } = require('./constants');
+const { shouldCaptureBodyByMimeType } = require('./mime-type');
+const { StreamChunks } = require('./stream-chunks');
 
 const streamChunksKey = Symbol('opentelemetry.instrumentation.http.StreamChunks');
 
