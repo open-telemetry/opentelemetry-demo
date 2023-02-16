@@ -227,7 +227,8 @@ components:
     enabled: true
     useDefault:
       env: true
-    servicePort: 8080
+    service:
+      port: 8080
     env:
       - name: PORT
         value: "8080"
