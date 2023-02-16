@@ -16,12 +16,16 @@ const grpc = require('@grpc/grpc-js')
 const protoLoader = require('@grpc/proto-loader')
 const health = require('grpc-js-health-check')
 const opentelemetry = require('@opentelemetry/api')
+const axios = require('axios')
 
 const charge = require('./charge')
 const logger = require('./logger')
 
 function chargeServiceHandler(call, callback) {
   const span = opentelemetry.trace.getActiveSpan();
+
+  axios.post('http://localhost:8080/charge', { message: "I'm in a body!", more: "Let's hope this works" })
+    .catch(() => undefined)
 
   try {
     const amount = call.request.amount

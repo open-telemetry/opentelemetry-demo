@@ -15,6 +15,7 @@
 const {context, propagation, trace, metrics} = require('@opentelemetry/api');
 const cardValidator = require('simple-card-validator');
 const { v4: uuidv4 } = require('uuid');
+const axios = require('axios')
 
 const logger = require('./logger');
 const tracer = trace.getTracer('paymentservice');
@@ -23,6 +24,9 @@ const transactionsCounter = meter.createCounter('app.payment.transactions')
 
 module.exports.charge = request => {
   const span = tracer.startSpan('charge');
+
+  axios.post('http://localhost:8080/charge', { message: "I'm also in a body!", more: "Fingers crossed", num: 100, bool: true })
+  .catch(() => undefined)
 
   const {
     creditCardNumber: number,
