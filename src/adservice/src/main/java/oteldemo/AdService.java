@@ -14,22 +14,24 @@
  * limitations under the License.
  */
 
-package hipstershop;
+package oteldemo;
 
 import com.google.common.collect.ImmutableListMultimap;
 import com.google.common.collect.Iterables;
-import hipstershop.Demo.Ad;
-import hipstershop.Demo.AdRequest;
-import hipstershop.Demo.AdResponse;
-import io.grpc.Server;
-import io.grpc.ServerBuilder;
-import io.grpc.StatusRuntimeException;
+import oteldemo.Demo.Ad;
+import oteldemo.Demo.AdRequest;
+import oteldemo.Demo.AdResponse;
+import oteldemo.Demo.GetFlagResponse;
+import oteldemo.FeatureFlagServiceGrpc.FeatureFlagServiceBlockingStub;
+import io.grpc.*;
 import io.grpc.health.v1.HealthCheckResponse.ServingStatus;
 import io.grpc.protobuf.services.*;
 import io.grpc.stub.StreamObserver;
 import io.opentelemetry.api.GlobalOpenTelemetry;
 import io.opentelemetry.api.common.AttributeKey;
 import io.opentelemetry.api.common.Attributes;
+import io.opentelemetry.api.metrics.LongCounter;
+import io.opentelemetry.api.metrics.Meter;
 import io.opentelemetry.api.trace.Span;
 import io.opentelemetry.api.trace.StatusCode;
 import io.opentelemetry.api.trace.Tracer;
@@ -57,17 +59,43 @@ public final class AdService {
   private HealthStatusManager healthMgr;
 
   private static final AdService service = new AdService();
+  private static final Tracer tracer = GlobalOpenTelemetry.getTracer("adservice");
+  private static final Meter meter = GlobalOpenTelemetry.getMeter("adservice");
+
+  private static final LongCounter adRequestsCounter =
+      meter
+          .counterBuilder("app.ads.ad_requests")
+          .setDescription("Counts ad requests by request and response type")
+          .build();
+
+  private static final AttributeKey<String> adRequestTypeKey =
+      AttributeKey.stringKey("app.ads.ad_request_type");
+  private static final AttributeKey<String> adResponseTypeKey =
+      AttributeKey.stringKey("app.ads.ad_response_type");
 
   private void start() throws IOException {
-    int port = Integer.parseInt(Optional.ofNullable(System.getenv("AD_SERVICE_PORT")).orElseThrow(
-        () -> new IOException(
-            "environment vars: AD_SERVICE_PORT must not be null")
-    ));
+    int port =
+        Integer.parseInt(
+            Optional.ofNullable(System.getenv("AD_SERVICE_PORT"))
+                .orElseThrow(
+                    () ->
+                        new IllegalStateException(
+                            "environment vars: AD_SERVICE_PORT must not be null")));
     healthMgr = new HealthStatusManager();
+
+    String featureFlagServiceAddr =
+        Optional.ofNullable(System.getenv("FEATURE_FLAG_GRPC_SERVICE_ADDR"))
+            .orElseThrow(
+                () ->
+                    new IllegalStateException(
+                        "environment vars: FEATURE_FLAG_GRPC_SERVICE_ADDR must not be null"));
+    FeatureFlagServiceBlockingStub featureFlagServiceStub =
+        FeatureFlagServiceGrpc.newBlockingStub(
+            ManagedChannelBuilder.forTarget(featureFlagServiceAddr).usePlaintext().build());
 
     server =
         ServerBuilder.forPort(port)
-            .addService(new AdServiceImpl())
+            .addService(new AdServiceImpl(featureFlagServiceStub))
             .addService(healthMgr.getHealthService())
             .build()
             .start();
@@ -92,7 +120,25 @@ public final class AdService {
     }
   }
 
-  private static class AdServiceImpl extends hipstershop.AdServiceGrpc.AdServiceImplBase {
+  private enum AdRequestType {
+    TARGETED,
+    NOT_TARGETED
+  }
+
+  private enum AdResponseType {
+    TARGETED,
+    RANDOM
+  }
+
+  private static class AdServiceImpl extends oteldemo.AdServiceGrpc.AdServiceImplBase {
+
+    private static final String ADSERVICE_FAIL_FEATURE_FLAG = "adServiceFailure";
+
+    private final FeatureFlagServiceBlockingStub featureFlagServiceStub;
+
+    private AdServiceImpl(FeatureFlagServiceBlockingStub featureFlagServiceStub) {
+      this.featureFlagServiceStub = featureFlagServiceStub;
+    }
 
     /**
      * Retrieves ads based on context provided in the request {@code AdRequest}.
@@ -109,6 +155,8 @@ public final class AdService {
       Span span = Span.current();
       try {
         List<Ad> allAds = new ArrayList<>();
+        AdRequestType adRequestType;
+        AdResponseType adResponseType;
 
         span.setAttribute("app.ads.contextKeys", req.getContextKeysList().toString());
         span.setAttribute("app.ads.contextKeys.count", req.getContextKeysCount());
@@ -118,14 +166,32 @@ public final class AdService {
             Collection<Ad> ads = service.getAdsByCategory(req.getContextKeys(i));
             allAds.addAll(ads);
           }
+          adRequestType = AdRequestType.TARGETED;
+          adResponseType = AdResponseType.TARGETED;
         } else {
           allAds = service.getRandomAds();
+          adRequestType = AdRequestType.NOT_TARGETED;
+          adResponseType = AdResponseType.RANDOM;
         }
         if (allAds.isEmpty()) {
           // Serve random ads.
           allAds = service.getRandomAds();
+          adResponseType = AdResponseType.RANDOM;
         }
         span.setAttribute("app.ads.count", allAds.size());
+        span.setAttribute("app.ads.ad_request_type", adRequestType.name());
+        span.setAttribute("app.ads.ad_response_type", adResponseType.name());
+
+        adRequestsCounter.add(
+            1,
+            Attributes.of(
+                adRequestTypeKey, adRequestType.name(), adResponseTypeKey, adResponseType.name()));
+
+        if (checkAdFailure()) {
+          logger.warn(ADSERVICE_FAIL_FEATURE_FLAG + " fail feature flag enabled");
+          throw new StatusRuntimeException(Status.RESOURCE_EXHAUSTED);
+        }
+
         AdResponse reply = AdResponse.newBuilder().addAllAds(allAds).build();
         responseObserver.onNext(reply);
         responseObserver.onCompleted();
@@ -136,6 +202,20 @@ public final class AdService {
         logger.log(Level.WARN, "GetAds Failed with status {}", e.getStatus());
         responseObserver.onError(e);
       }
+    }
+
+    boolean checkAdFailure() {
+      // Flip a coin and fail 1/10th of the time if feature flag is enabled
+      if (random.nextInt(10) != 1) {
+        return false;
+      }
+
+      GetFlagResponse response =
+          featureFlagServiceStub.getFlag(
+              oteldemo.Demo.GetFlagRequest.newBuilder()
+                  .setName(ADSERVICE_FAIL_FEATURE_FLAG)
+                  .build());
+      return response.getFlag().getEnabled();
     }
   }
 
@@ -155,7 +235,6 @@ public final class AdService {
     List<Ad> ads = new ArrayList<>(MAX_ADS_TO_SERVE);
 
     // create and start a new span manually
-    Tracer tracer = GlobalOpenTelemetry.getTracer("adservice");
     Span span = tracer.spanBuilder("getRandomAds").startSpan();
 
     // put the span into context, so if any child span is started the parent will be set properly
@@ -228,6 +307,7 @@ public final class AdService {
         .putAll("accessories", colorImager, solarFilter, cleaningKit)
         .putAll("assembly", opticalTube)
         .putAll("travel", travelTelescope)
+        // Keep the books category free of ads to ensure the random code branch is tested
         .build();
   }
 

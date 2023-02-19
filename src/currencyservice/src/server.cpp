@@ -32,10 +32,10 @@
 
 using namespace std;
 
-using hipstershop::Empty;
-using hipstershop::GetSupportedCurrenciesResponse;
-using hipstershop::CurrencyConversionRequest;
-using hipstershop::Money;
+using oteldemo::Empty;
+using oteldemo::GetSupportedCurrenciesResponse;
+using oteldemo::CurrencyConversionRequest;
+using oteldemo::Money;
 
 using grpc::Status;
 using grpc::ServerContext;
@@ -98,7 +98,7 @@ class HealthServer final : public grpc::health::v1::Health::Service
   }
 };
 
-class CurrencyService final : public hipstershop::CurrencyService::Service
+class CurrencyService final : public oteldemo::CurrencyService::Service
 {
   Status GetSupportedCurrencies(ServerContext* context,
   	const Empty* request,
@@ -116,10 +116,10 @@ class CurrencyService final : public hipstershop::CurrencyService::Service
     std::string span_name = "CurrencyService/GetSupportedCurrencies";
     auto span =
         get_tracer("currencyservice")->StartSpan(span_name,
-                                      {{SemanticConventions::RPC_SYSTEM, "grpc"},
-                                       {SemanticConventions::RPC_SERVICE, "CurrencyService"},
-                                       {SemanticConventions::RPC_METHOD, "GetSupportedCurrencies"},
-                                       {SemanticConventions::RPC_GRPC_STATUS_CODE, 0}},
+                                      {{SemanticConventions::kRpcSystem, "grpc"},
+                                       {SemanticConventions::kRpcService, "CurrencyService"},
+                                       {SemanticConventions::kRpcMethod, "GetSupportedCurrencies"},
+                                       {SemanticConventions::kRpcGrpcStatusCode, 0}},
                                       options);
     auto scope = get_tracer("currencyservice")->WithActiveSpan(span);
 
@@ -176,10 +176,10 @@ class CurrencyService final : public hipstershop::CurrencyService::Service
     std::string span_name = "CurrencyService/Convert";
     auto span =
         get_tracer("currencyservice")->StartSpan(span_name,
-                                      {{SemanticConventions::RPC_SYSTEM, "grpc"},
-                                       {SemanticConventions::RPC_SERVICE, "CurrencyService"},
-                                       {SemanticConventions::RPC_METHOD, "Convert"},
-                                       {SemanticConventions::RPC_GRPC_STATUS_CODE, 0}},
+                                      {{SemanticConventions::kRpcSystem, "grpc"},
+                                       {SemanticConventions::kRpcService, "CurrencyService"},
+                                       {SemanticConventions::kRpcMethod, "Convert"},
+                                       {SemanticConventions::kRpcGrpcStatusCode, 0}},
                                       options);
     auto scope = get_tracer("currencyservice")->WithActiveSpan(span);
 
