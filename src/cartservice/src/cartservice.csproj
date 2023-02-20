@@ -7,7 +7,6 @@
   <ItemGroup>
     <PackageReference Include="Grpc.AspNetCore" Version="2.51.0" />
     <PackageReference Include="Grpc.AspNetCore.HealthChecks" Version="2.51.0" />
-    <PackageReference Include="OpenTelemetry.Exporter.Console" Version="1.4.0-rc.4" />
     <PackageReference Include="OpenTelemetry.Extensions.Docker" Version="1.0.0-beta.2" />
     <PackageReference Include="StackExchange.Redis" Version="2.6.90" />
     <PackageReference Include="OpenTelemetry.Exporter.OpenTelemetryProtocol" Version="1.4.0-rc.4" />

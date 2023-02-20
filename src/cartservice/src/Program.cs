@@ -59,7 +59,6 @@ builder.Services.AddOpenTelemetry()
         .AddAspNetCoreInstrumentation()
         .AddGrpcClientInstrumentation()
         .AddHttpClientInstrumentation()
-        .AddConsoleExporter()
         .AddOtlpExporter())
     .WithMetrics(builder => builder
         .SetResourceBuilder(appResourceBuilder)
