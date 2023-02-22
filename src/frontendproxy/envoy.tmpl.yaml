@@ -30,7 +30,7 @@ static_resources:
                       "@type": type.googleapis.com/envoy.config.trace.v3.DynamicOtConfig
                       library: /home/envoy/libcxx-libinstana_sensor.so
                       config:
-                        service: envoy-front-proxy
+                        service: frontend-proxy
 
                 route_config:
                   name: local_route
