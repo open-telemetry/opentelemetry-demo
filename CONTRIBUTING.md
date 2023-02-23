@@ -131,7 +131,7 @@ cd opentelemetry-demo
 Add your fork as an origin:
 
 ```sh
-git remote add fork https://github.com/open-telemetry/opentelemetry-demo.git
+git remote add fork https://github.com/YOUR_GITHUB_USERNAME/opentelemetry-demo.git
 ```
 
 Check out a new branch, make modifications and push the branch to your fork:
@@ -143,7 +143,7 @@ $ git checkout -b feature
 $ docker compose up -d --build
 # Go to Webstore, Jaeger or docker container logs etc. as appropriate to make sure your changes are working correctly.
 $ git add my/changed/files
-$ git commit -m "short discription of the change"
+$ git commit -m "short description of the change"
 $ git push fork feature
 ```
 

@@ -32,39 +32,39 @@ RedisCartStore cartStore = null;
 if (string.IsNullOrEmpty(redisAddress))
 {
     Console.WriteLine("REDIS_ADDR environment variable is required.");
-    System.Environment.Exit(1);
+    Environment.Exit(1);
 }
 cartStore = new RedisCartStore(redisAddress);
 
 // Initialize the redis store
-cartStore.InitializeAsync().GetAwaiter().GetResult();
+await cartStore.InitializeAsync();
 Console.WriteLine("Initialization completed");
 
 builder.Services.AddSingleton<ICartStore>(cartStore);
 
-builder.Services.AddOpenTelemetryTracing((builder) => builder
-    .ConfigureResource(r => r
-        .AddTelemetrySdk()
-        .AddEnvironmentVariableDetector()
-        .AddDetector(new DockerResourceDetector())
-    )
-    .AddRedisInstrumentation(
-        cartStore.GetConnection(),
-        options => options.SetVerboseDatabaseStatements = true)
-    .AddAspNetCoreInstrumentation()
-    .AddGrpcClientInstrumentation()
-    .AddHttpClientInstrumentation()
-    .AddOtlpExporter());
+// see https://opentelemetry.io/docs/instrumentation/net/getting-started/
 
-builder.Services.AddOpenTelemetryMetrics(builder => builder
-    .ConfigureResource(r => r
-        .AddTelemetrySdk()
-        .AddEnvironmentVariableDetector()
-        .AddDetector(new DockerResourceDetector())
-    )
-    .AddRuntimeInstrumentation()
-    .AddAspNetCoreInstrumentation()
-    .AddOtlpExporter());
+var appResourceBuilder = ResourceBuilder
+    .CreateDefault()
+    .AddTelemetrySdk()
+    .AddEnvironmentVariableDetector()
+    .AddDetector(new DockerResourceDetector());
+
+builder.Services.AddOpenTelemetry()
+    .WithTracing(builder => builder
+        .SetResourceBuilder(appResourceBuilder)
+        .AddRedisInstrumentation(
+            cartStore.GetConnection(),
+            options => options.SetVerboseDatabaseStatements = true)
+        .AddAspNetCoreInstrumentation()
+        .AddGrpcClientInstrumentation()
+        .AddHttpClientInstrumentation()
+        .AddOtlpExporter())
+    .WithMetrics(builder => builder
+        .SetResourceBuilder(appResourceBuilder)
+        .AddRuntimeInstrumentation()
+        .AddAspNetCoreInstrumentation()
+        .AddOtlpExporter());
 
 builder.Services.AddGrpc();
 builder.Services.AddGrpcHealthChecks()
@@ -72,22 +72,12 @@ builder.Services.AddGrpcHealthChecks()
 
 var app = builder.Build();
 
-if (app.Environment.IsDevelopment())
-        {
-            app.UseDeveloperExceptionPage();
-        }
+app.MapGrpcService<CartService>();
+app.MapGrpcHealthChecksService();
 
-app.UseRouting();
-
-app.UseEndpoints(endpoints =>
+app.MapGet("/", async context =>
 {
-    endpoints.MapGrpcService<CartService>();
-    endpoints.MapGrpcHealthChecksService();
-
-    endpoints.MapGet("/", async context =>
-    {
-        await context.Response.WriteAsync("Communication with gRPC endpoints must be made through a gRPC client. To learn how to create a client, visit: https://go.microsoft.com/fwlink/?linkid=2086909");
-    });
+    await context.Response.WriteAsync("Communication with gRPC endpoints must be made through a gRPC client. To learn how to create a client, visit: https://go.microsoft.com/fwlink/?linkid=2086909");
 });
 
 app.Run();

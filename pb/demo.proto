@@ -16,9 +16,9 @@ syntax = "proto3";
 
 import "google/protobuf/timestamp.proto";
 
-package hipstershop;
+package oteldemo;
 
-option go_package = "genproto/hipstershop";
+option go_package = "genproto/oteldemo";
 
 // -----------------Cart service-----------------
 
