@@ -12,6 +12,8 @@ release.
 * rename proto package from hipstershop to oteldemo
 ([#740](https://github.com/open-telemetry/opentelemetry-demo/pull/740))
 * Removed unnecessary code from Program.cs
+* Add counter metric to currency service (C++)
+([#759](https://github.com/open-telemetry/opentelemetry-demo/issues/759))
 
 ## v0.1.0
 
@@ -252,5 +254,3 @@ significant modifications will be credited to OpenTelemetry Authors.
 ([#704](https://github.com/open-telemetry/opentelemetry-demo/pull/704))
 * Add cross-compilation for shipping service
 ([#715](https://github.com/open-telemetry/opentelemetry-demo/issues/715))
-* Add counter metric to currency service (C++)
-([#759](https://github.com/open-telemetry/opentelemetry-demo/issues/759))
