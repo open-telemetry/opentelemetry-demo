@@ -12,6 +12,8 @@ release.
 * rename proto package from hipstershop to oteldemo
 ([#740](https://github.com/open-telemetry/opentelemetry-demo/pull/740))
 * Removed unnecessary code from Program.cs
+* feature flag service: update the dependency tls_certificate_check and bump to
+  OTP-25 ([#756](https://github.com/open-telemetry/opentelemetry-demo/pull/756))
 
 ## v0.1.0
 
