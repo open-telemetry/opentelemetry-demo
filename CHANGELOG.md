@@ -11,6 +11,7 @@ release.
 ([#729](https://github.com/open-telemetry/opentelemetry-demo/issues/729))
 * rename proto package from hipstershop to oteldemo
 ([#740](https://github.com/open-telemetry/opentelemetry-demo/pull/740))
+* Removed unnecessary code from Program.cs
 
 ## v0.1.0
 
