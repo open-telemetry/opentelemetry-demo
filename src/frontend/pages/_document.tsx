@@ -1,5 +1,6 @@
 import Document, { DocumentContext, Html, Head, Main, NextScript } from 'next/document';
 import { ServerStyleSheet } from 'styled-components';
+import Script from 'next/script'
 
 const { ENV_PLATFORM, WEB_OTEL_SERVICE_NAME, PUBLIC_OTEL_EXPORTER_OTLP_TRACES_ENDPOINT } = process.env;
 
@@ -11,7 +12,7 @@ window.ENV = {
 };
 `;
 
-export default class MyDocument extends Document<{ envString: string }> {
+export default class MyDocument extends Document<{ envString: string, traceId: string }> {
   static async getInitialProps(ctx: DocumentContext) {
     const sheet = new ServerStyleSheet();
     const originalRenderPage = ctx.renderPage;
@@ -23,10 +24,12 @@ export default class MyDocument extends Document<{ envString: string }> {
         });
 
       const initialProps = await Document.getInitialProps(ctx);
+      const traceId = ctx.req?.headers['x-instana-t'] || ''
       return {
         ...initialProps,
         styles: [initialProps.styles, sheet.getStyleElement()],
         envString,
+	traceId,
       };
     } finally {
       sheet.seal();
@@ -44,6 +47,16 @@ export default class MyDocument extends Document<{ envString: string }> {
             rel="stylesheet"
           />
           <title>OTel demo</title>
+	  <Script id="instana-eum" strategy="beforeInteractive">{`
+	  (function(s,t,a,n){s[t]||(s[t]=a,n=s[a]=function(){n.q.push(arguments)},
+				    n.q=[],n.v=2,n.l=1*new Date)})(window,"InstanaEumObject","ineum");
+
+	  ineum('reportingUrl', 'https://instana.tec.cz.ibm.com:446/eum/');
+	  ineum('key', 'TSgzaBwgS622Twhz-5OlBQ');
+	  ineum('trackSessions');
+	  ineum('traceId', '${this.props.traceId}');
+	  `}</Script>
+	  <Script strategy="beforeInteractive" defer crossOrigin="anonymous" src="https://instana.tec.cz.ibm.com:446/eum/eum.min.js" />
         </Head>
         <body>
           <Main />
