@@ -57,7 +57,7 @@ add_library(demo-proto ${DEMO_PB_H_FILE}
            ${HEALTH_GRPC_PB_H_FILE})
 
 target_link_libraries(demo-proto gRPC::grpc++ protobuf::libprotobuf)
-include_directories("${GENERATED_PROTOBUF_PATH}", "${OPENTELEMETRY_CPP_INCLUDE_DIRS}")
+include_directories("${GENERATED_PROTOBUF_PATH}" "${OPENTELEMETRY_CPP_INCLUDE_DIRS}")
 
 add_executable(currencyservice src/server.cpp)
 add_dependencies(currencyservice demo-proto)
