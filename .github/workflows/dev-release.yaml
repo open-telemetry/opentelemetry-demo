@@ -125,6 +125,7 @@ jobs:
           platforms: linux/amd64
           push: ${{ github.event_name != 'pull_request' }}
           tags: |
+            ${{ env.GHCR_REPO }}:${{ github.sha }}-${{ matrix.file_tag.tag_suffix }}
             ${{ env.GHCR_REPO }}:${{ env.RELEASE_VERSION || 'pr' }}-${{ matrix.file_tag.tag_suffix }}
           cache-from: type=gha
           cache-to: type=gha
