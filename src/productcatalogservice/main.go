@@ -153,7 +153,6 @@ func main() {
 
 	pb.RegisterProductCatalogServiceServer(srv, svc)
 	healthpb.RegisterHealthServer(srv, svc)
-	reflection.Register(srv)
 	srv.Serve(ln)
 }
 
