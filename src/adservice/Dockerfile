@@ -30,7 +30,7 @@ RUN ./gradlew installDist -PprotoSourceDir=./proto
 
 FROM eclipse-temurin:17-jre
 
-ARG version=1.19.1
+ARG version=1.23.0
 WORKDIR /usr/src/app/
 
 COPY --from=builder /usr/src/app/ ./
