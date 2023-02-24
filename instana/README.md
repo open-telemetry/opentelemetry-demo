@@ -9,7 +9,7 @@ To learn more about the demo application please refer to the [upstream README](.
 Changes to the upstream demo include:
 
 - instrumented demo services for Instana infrastructure monitoring (Instana tracing disabled)
-- include ready-to-use agent configuration and docker-compose deployment files (in [instana-agent](../instana-agent) folder)
+- include ready-to-use agent configuration and docker-compose deployment files (in [instana/agent](../instana/agent) folder)
 - provide custom Helm [configuration file](../instana/values-instana-agent.yaml) to deploy the demo in Kubernetes (excluding Instana agent deployment)
 - ship pre-built custom demo container images
 - replaced OpenTelemetry tracer with Instana tracer on the Envoy Frontend-Proxy service to demonstrate Instana cross-protocol trace continuity support and W3C context propagation

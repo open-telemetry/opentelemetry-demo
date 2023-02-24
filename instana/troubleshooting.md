@@ -18,5 +18,5 @@ kubectl edit deployment <deployment_name>
 
 ## No OpenTelemetry traces are received via the agent
 
-- Make sure the agent configuration includes correct settings to enable OpenTelemetry for both gRPC and HTTP enpoints. The reference configuration is [instana-agent/configuration.yaml](../instana-agent/configuration.yaml)
+- Make sure the agent configuration includes correct settings to enable OpenTelemetry for both gRPC and HTTP enpoints. The reference configuration is [instana/agent/configuration.yaml](../instana/agent/configuration.yaml)
 - Double check the Kubernetes service for Instana agent and the OTLP endpoint environment variables in `.env` or in the Helm values file.

@@ -18,7 +18,7 @@ docker compose build up --no-build -d
 #### Deploy Instana agent
 Create a new docker-compose environment file with your Instana backend connection settings. Use the template:
 ```sh
-cd instana-agent
+cd instana/agent
 cp instana-agent.env.template .env
 ```
 
