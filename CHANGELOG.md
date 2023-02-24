@@ -12,6 +12,12 @@ release.
 * rename proto package from hipstershop to oteldemo
 ([#740](https://github.com/open-telemetry/opentelemetry-demo/pull/740))
 * Removed unnecessary code from Program.cs
+([#754](https://github.com/open-telemetry/opentelemetry-demo/pull/754))
+* feature flag service: update the dependency
+tls_certificate_check and bump to OTP-25
+([#756](https://github.com/open-telemetry/opentelemetry-demo/pull/756))
+* Bump up OTEL Java Agent version to 1.23.0
+([#757](https://github.com/open-telemetry/opentelemetry-demo/pull/757))
 * Add counter metric to currency service (C++)
 ([#759](https://github.com/open-telemetry/opentelemetry-demo/issues/759))
 
