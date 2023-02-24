@@ -252,3 +252,5 @@ significant modifications will be credited to OpenTelemetry Authors.
 ([#704](https://github.com/open-telemetry/opentelemetry-demo/pull/704))
 * Add cross-compilation for shipping service
 ([#715](https://github.com/open-telemetry/opentelemetry-demo/issues/715))
+* Add counter metric to currency service (C++)
+([#759](https://github.com/open-telemetry/opentelemetry-demo/issues/759))
