@@ -84,6 +84,16 @@ const httpInstrumentationConfig = {
     applyCustomAttributesOnSpan: httpCustomAttributes,
     requestHook: httpCustomAttributesOnRequest,
     responseHook: httpCustomAttributesOnResponse,
+    headersToSpanAttributes: {
+        client: {
+            requestHeaders: ['traceloop_id'],
+            responseHeaders: ['traceloop_id'],
+        },
+        server: {
+            requestHeaders: ['traceloop_id'],
+            responseHeaders: ['traceloop_id'],
+        },
+    },
 };
 
 module.exports = {

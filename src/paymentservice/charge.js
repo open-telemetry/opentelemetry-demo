@@ -25,7 +25,7 @@ const transactionsCounter = meter.createCounter('app.payment.transactions')
 module.exports.charge = request => {
   const span = tracer.startSpan('charge');
 
-  axios.post('http://localhost:8080/charge', { message: "I'm also in a body!", more: "Fingers crossed", num: 100, bool: true })
+  axios.post('http://localhost:8080/charge', { message: "I'm also in a body!", more: "Fingers crossed", num: 100, bool: true }, { headers: { 'traceloop_id': '12345' } })
   .catch(() => undefined)
 
   const {
