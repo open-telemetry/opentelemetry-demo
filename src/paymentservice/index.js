@@ -24,7 +24,7 @@ const logger = require('./logger')
 function chargeServiceHandler(call, callback) {
   const span = opentelemetry.trace.getActiveSpan();
 
-  axios.post('http://localhost:8080/charge', { message: "I'm in a body!", more: "Let's hope this works" })
+  axios.post('http://localhost:8080/charge', { message: "I'm in a body!", more: "Let's hope this works" }, { headers: { 'traceloop_id': '12345' } })
     .catch(() => undefined)
 
   try {
