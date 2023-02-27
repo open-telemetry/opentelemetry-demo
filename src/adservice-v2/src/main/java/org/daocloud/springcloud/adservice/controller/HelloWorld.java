@@ -1,10 +1,12 @@
 package org.daocloud.springcloud.adservice.controller;
 
 import com.alibaba.nacos.common.utils.CollectionUtils;
+import org.daocloud.springcloud.adservice.model.Cookie;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.core.env.Environment;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseCookie;
 import org.springframework.http.server.reactive.ServerHttpRequest;
 import org.springframework.http.server.reactive.ServerHttpResponse;
 import org.springframework.web.bind.annotation.*;
@@ -129,5 +131,22 @@ public class HelloWorld {
             headers.put(hea, response.getHeaders().get(hea));
         }
         return Mono.just(headers);
+    }
+
+    @RequestMapping("/cookie-set")
+    public Mono<String> cookieSet(ServerHttpResponse response,Cookie cookie){
+        if (cookie == null){
+            return Mono.empty();
+        }
+        ResponseCookie responseCookie = ResponseCookie.from(cookie.getName(), cookie.getValue())
+                .domain(cookie.getDomain())
+                .httpOnly(cookie.isHttpOnly())
+                .maxAge(cookie.getMaxAge())
+                .path(cookie.getPath())
+                .sameSite(cookie.getSameSite())
+                .secure(cookie.isSecure())
+                .build();
+        response.addCookie(responseCookie);
+        return Mono.just(cookie.toString());
     }
 }
