@@ -13,6 +13,7 @@ const sdk = new opentelemetry.NodeSDK({
   traceExporter: new OTLPTraceExporter(),
   instrumentations: [
     getNodeAutoInstrumentations({
+      '@opentelemetry/instrumentation-http': httpInstrumentationConfig,
       '@opentelemetry/instrumentation-fs': {
         enabled: false,
       },
