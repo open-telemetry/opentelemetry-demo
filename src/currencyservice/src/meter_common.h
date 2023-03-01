@@ -18,7 +18,7 @@
 #include "opentelemetry/sdk/metrics/meter.h"
 #include "opentelemetry/sdk/metrics/meter_provider.h"
 
-//namespaces
+// namespaces
 namespace common        = opentelemetry::common;
 namespace metrics_api   = opentelemetry::metrics;
 namespace metric_sdk    = opentelemetry::sdk::metrics;
@@ -33,15 +33,15 @@ namespace
 
   void initMeter() 
   {
-    //Build MetricExporter
+    // Build MetricExporter
     otlp_exporter::OtlpGrpcMetricExporterOptions otlpOptions;
 
-    //Configuration via environment variable not supported yet
+    // Configuration via environment variable not supported yet
     otlpOptions.endpoint = "otelcol:4317";
     otlpOptions.aggregation_temporality = metric_sdk::AggregationTemporality::kDelta;
     auto exporter = otlp_exporter::OtlpGrpcMetricExporterFactory::Create(otlpOptions);
 
-    //Build MeterProvider and Reader
+    // Build MeterProvider and Reader
     metric_sdk::PeriodicExportingMetricReaderOptions options;
     options.export_interval_millis = std::chrono::milliseconds(1000);
     options.export_timeout_millis = std::chrono::milliseconds(500);
