@@ -20,6 +20,8 @@ tls_certificate_check and bump to OTP-25
 ([#757](https://github.com/open-telemetry/opentelemetry-demo/pull/757))
 * Add counter metric to currency service (C++)
 ([#759](https://github.com/open-telemetry/opentelemetry-demo/issues/759))
+* Use browserDetector to populate browser info to frontend-web telemetry
+([#760](https://github.com/open-telemetry/opentelemetry-demo/pull/760))
 
 ## v0.1.0
 
