@@ -294,6 +294,9 @@ services:
 
   # Frontend
   frontend:
+    env_file:
+      - .env
+      - instana/agent/.env
     image: ${IMAGE_NAME}:${IMAGE_VERSION}-frontend
     container_name: frontend
     build:
@@ -331,6 +334,8 @@ services:
       - INSTANA_AGENT_HOST=${INSTANA_AGENT_HOST}
       - INSTANA_AGENT_PORT=${INSTANA_AGENT_PORT}
       - INSTANA_DISABLE_TRACING=true
+      - INSTANA_EUM_URL
+      - INSTANA_EUM_KEY
     depends_on:
       - adservice
       - cartservice
