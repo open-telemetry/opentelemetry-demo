@@ -3,25 +3,6 @@ spring:
     name: dataservice
 server:
   port: 8082
-
-management:
-  endpoint:
-    info:
-      enabled: true
-    health:
-      enabled: true
-      show-details: always
-  server:
-    port: 8999
-  endpoints:
-    web:
-      base-path: /
-      exposure:
-        include:
-          - health
-          - info
-          - ping
-
 ---
 spring:
   cloud:
