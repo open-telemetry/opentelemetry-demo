@@ -2,6 +2,12 @@
 
 ## Run the demo in Docker
 
+Clone the repo:
+```sh
+git clone https://github.com/instana/opentelemetry-demo.git
+cd opentelemetry-demo
+```
+
 #### Deploy Instana agent
 Create a new docker-compose environment file with your Instana backend connection and EUM website monitoring settings. The configuration values are also re-used in building and running the demo containers. Use the template:
 ```sh
@@ -9,7 +15,7 @@ cd instana/agent
 cp instana-agent.env.template .env
 ```
 
-Run the agent (inside `instana-agent` directory):
+Run the agent (inside the `instana/agent` directory):
 ```sh
 docker compose up -d
 ```
@@ -17,8 +23,6 @@ docker compose up -d
 #### Launch the demo
 Refer to the main demo [documentation](https://opentelemetry.io/docs/demo/docker-deployment/). This is basically:
 ```sh
-git clone https://github.com/instana/opentelemetry-demo.git
-cd opentelemetry-demo
 docker compose up --no-build -d
 ```
 
