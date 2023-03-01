@@ -349,6 +349,9 @@ services:
     build:
       context: ./
       dockerfile: src/frontendproxy/Dockerfile
+      args:
+        - INSTANA_AGENT_KEY=${INSTANA_AGENT_KEY}
+        - INSTANA_DOWNLOAD_KEY=${INSTANA_DOWNLOAD_KEY}
     container_name: frontend-proxy
     ports:
       - "${ENVOY_PORT}:${ENVOY_PORT}"

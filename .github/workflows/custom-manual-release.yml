@@ -13,7 +13,9 @@ jobs:
       # RELEASE_VERSION: "${{ github.event.release.tag_name }}"
       RELEASE_VERSION: "1.3.0"
       DOCKERHUB_REPO: "styblope/otel-demo"
-      # GHCR_REPO: "styblope/otel-demo"
+      # GHCR_REPO: "styblope/otel-emo"
+      INSTANA_AGENT_KEY: ${{ secrets.INSTANA_AGENT_KEY }}
+      INSTANA_DOWNLOAD_KEY: ${{ secrets.INSTANA_DOWNLOAD_KEY }}
 
     strategy:
       matrix:
