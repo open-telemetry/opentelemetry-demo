@@ -22,6 +22,8 @@ tls_certificate_check and bump to OTP-25
 ([#759](https://github.com/open-telemetry/opentelemetry-demo/issues/759))
 * Use browserDetector to populate browser info to frontend-web telemetry
 ([#760](https://github.com/open-telemetry/opentelemetry-demo/pull/760))
+* [chore] update for Mac M2 architecture
+([#764](https://github.com/open-telemetry/opentelemetry-demo/pull/764))
 
 ## v0.1.0
 
