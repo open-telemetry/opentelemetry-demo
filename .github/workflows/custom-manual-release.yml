@@ -14,8 +14,6 @@ jobs:
       RELEASE_VERSION: "1.3.0"
       DOCKERHUB_REPO: "styblope/otel-demo"
       # GHCR_REPO: "styblope/otel-emo"
-      INSTANA_AGENT_KEY: ${{ secrets.INSTANA_AGENT_KEY }}
-      INSTANA_DOWNLOAD_KEY: ${{ secrets.INSTANA_DOWNLOAD_KEY }}
 
     strategy:
       matrix:
@@ -120,5 +118,8 @@ jobs:
           #   ${{ env.GHCR_REPO }}:${{ env.RELEASE_VERSION || 'pr' }}-${{ matrix.file_tag.tag_suffix }}
           tags: |
             ${{ env.DOCKERHUB_REPO }}:${{ env.RELEASE_VERSION || 'pr' }}-${{matrix.file_tag.tag_suffix }}
+          build-args: |
+            INSTANA_AGENT_KEY=${{ secrets.INSTANA_AGENT_KEY }}
+            INSTANA_DOWNLOAD_KEY=${{ secrets.INSTANA_DOWNLOAD_KEY }}
           cache-from: type=gha
           cache-to: type=gha
