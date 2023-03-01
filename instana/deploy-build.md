@@ -2,21 +2,8 @@
 
 ## Run the demo in Docker
 
-Refer to the main demo [documentation](https://opentelemetry.io/docs/demo/docker-deployment/). This is basically:
-```sh
-git clone https://github.com/instana/opentelemetry-demo.git
-cd opentelemetry-demo
-docker compose build up --no-build -d
-```
-
-> **Note:**
-> The `--no-build` flag is used to fetch released docker images instead of building from source. Removing the `--no-build` command line option will rebuild all images from source. The image repository is defined in [`.env`](../.env) file. See below for details on building the images.
-
-> **Tip:**
-> You can run the demo in the foreground  by omitting the `-d` parameter (`docker compose up`) to get the container logs dumped out to the terminal so you can check for any errors.
-
 #### Deploy Instana agent
-Create a new docker-compose environment file with your Instana backend connection settings. Use the template:
+Create a new docker-compose environment file with your Instana backend connection and EUM website monitoring settings. The configuration values are also re-used in building and running the demo containers. Use the template:
 ```sh
 cd instana/agent
 cp instana-agent.env.template .env
@@ -26,6 +13,21 @@ Run the agent (inside `instana-agent` directory):
 ```sh
 docker compose up -d
 ```
+
+#### Launch the demo
+Refer to the main demo [documentation](https://opentelemetry.io/docs/demo/docker-deployment/). This is basically:
+```sh
+git clone https://github.com/instana/opentelemetry-demo.git
+cd opentelemetry-demo
+docker compose up --no-build -d
+```
+
+> **Notes:**
+> - The `--no-build` flag is used to fetch released docker images instead of building from source. Removing the `--no-build` command line option will rebuild all images from source. The image repository is defined in [`.env`](../.env) file. See below for details on building the images.
+> - You can configure the pre-injected Instana EUM Javascript by exporting the EUM service configuration values as `INSTANA_EUM_URL` and `INSTANA_EUM_KEY` environment variables in the shell before running the demo.
+
+> **Tip:**
+> You can run the demo in the foreground  by omitting the `-d` parameter (`docker compose up`) to get the container logs dumped out to the terminal so you can check for any errors.
 
 ## Deploy in Kubernetes
 
@@ -42,7 +44,7 @@ In OpenShift, also make sure you have sufficient privileges to run the pods in t
 oc adm policy -n otel-demo add-scc-to-user anyuid -z default
 ```
 
-Deploy the Instana agent via Helm or using an operator: use a standard installation according to Instana documentation. Next, apply the demo-specific agent configuration as in `instana-agent/configuration-otel.yaml`
+Deploy the Instana agent via Helm or using an operator: use a standard installation according to Instana documentation. Apply the demo-specific agent configuration as in `instana-agent/configuration-otel.yaml`. These settings enable the OpenTelemetry ports, add specific service settings for infrastructure monitoring and suppression of native Instana tracing.
 
 The demo assumes that an Instana [agent Kubernetes service](https://www.ibm.com/docs/en/instana-observability/current?topic=requirements-installing-host-agent-kubernetes#instana-agent-service) `instana-agent` is present in `instana-agent` namespace. The agent service, besides exposing the standard Instana agent API endpoint, also provides the common OTLP endpoint for both gRPC (port 4317) and HTTP (port 4318) protocols across all nodes. Be aware that at time of writing, the HTTP endpoint definition wasn't yet included in the public Instana agent Helm chart (and likely neither in the Operator). You can better create the service manually using the following manifest that is tested to work well with the demo.
 ```yaml
@@ -78,7 +80,9 @@ EOF
 
 Deploy the demo using the published Helm chart:
 
-We use custom values file with additional settings for the Instana agent to act as the default OTel traces and metrics receiver, to suppress native Instana tracing so it doesn't clash with the OTel instrumentation, and to enable Instana infrastructure monitoring including the databases.
+> **Note:**
+> We use custom values file ([`values-instana-agent.yaml`](../instana/values-instana-agent.yaml)) with additional settings for the Instana agent to act as the default OTel traces and metrics receiver. There is no need to change the default values except when you want to use Instana website EUM; in this case edit the values file and fill-in the corresponding values for `INSTANA_EUM_URL` and `INSTANA_EUM_KEY` environment variables in the Frontend service component section (you could also add these variables later by editing the frontend service deployment)
+
 ```sh
 cd instana
 helm repo add open-telemetry https://open-telemetry.github.io/opentelemetry-helm-charts
@@ -89,14 +93,20 @@ In OpenShift, you can create a route for the `frontendproxy` service for easy ac
 
 ## Build the demo images from source
 
-To build your local Docker images from source, run
+Before building the project you need to export your Instana instance `INSTANA_AGENT_KEY` and `INSTANA_DOWNLOAD_KEY` values within the shell or, alternatively, if you have already configured your agent `.env` file run:
+```sh
+export $(cat ./instana/agent/.env | xargs)`
+# don't mind the errors
+```
+
+Build the demo:
 ```sh
 docker compose build
 ```
 
-If you plan to push your built images to a remote container registry you should specify your registry domain in the `IMAGE_NAME` variable in [`.env`](../.env) file. 
+If you plan to push the built images to a remote container registry you should specify your registry domain in the `IMAGE_NAME` variable in [`.env`](../.env) file. 
 
-To push the images to a remote container registry, login to the registry first (`docker login` or `oc registry login` for OpenShift's internal registry) and run:
+To push the images to a remote registry, login to the registry first (`docker login` or `oc registry login` for OpenShift's internal registry) and run:
 ```sh
 make push
 ```
