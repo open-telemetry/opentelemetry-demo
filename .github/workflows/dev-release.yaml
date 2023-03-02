@@ -6,7 +6,9 @@ on:
       - 'openinsight/**'
       - 'daocloud'
   pull_request:
-    branches: [ main ]
+    branches:
+      - 'main'
+      - 'daocloud'
 
 jobs:
   build_and_push_images:
