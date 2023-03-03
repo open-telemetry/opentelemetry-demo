@@ -60,7 +60,7 @@ keeping it up to date for you.
 | [Aspecto](https://github.com/aspecto-io/opentelemetry-demo)                                                       | [Honeycomb.io](https://github.com/honeycombio/opentelemetry-demo) | [Sumo Logic](https://www.sumologic.com/blog/common-opentelemetry-demo-application/)          |
 | [Coralogix](https://coralogix.com/blog/configure-otel-demo-send-telemetry-data-coralogix)                         | [Instana](https://github.com/instana/opentelemetry-demo)          | [TelemetryHub](https://github.com/TelemetryHub/opentelemetry-demo/tree/telemetryhub-backend) |
 | [Datadog](https://github.com/DataDog/opentelemetry-demo)                                                          | [Lightstep](https://github.com/lightstep/opentelemetry-demo)      | [Uptrace](https://github.com/uptrace/uptrace/tree/master/example/opentelemetry-demo)         |
-| [Dynatrace](https://www.dynatrace.com/news/blog/opentelemetry-demo-application-with-dynatrace/)                   | [New Relic](https://github.com/newrelic/opentelemetry-demo)       |                                                                                              |                                                                                         |
+| [Dynatrace](https://www.dynatrace.com/news/blog/opentelemetry-demo-application-with-dynatrace/)                   | [New Relic](https://github.com/newrelic/opentelemetry-demo)       | [Kloudfuse](https://github.com/kloudfuse/opentelemetry-demo)                                                                                             |                                                                                         |
 
 ## Contributing
 
