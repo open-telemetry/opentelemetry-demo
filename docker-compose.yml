@@ -224,7 +224,7 @@ services:
     deploy:
       resources:
         limits:
-          memory: 200M
+          memory: 175M
     restart: unless-stopped
     ports:
       - "${FEATURE_FLAG_SERVICE_PORT}"                                  # Feature Flag Service UI
@@ -322,10 +322,14 @@ services:
   # Frontend Proxy (Envoy)
   frontendproxy:
     image: ${IMAGE_NAME}:${IMAGE_VERSION}-frontendproxy
+    container_name: frontend-proxy
     build:
       context: ./
       dockerfile: src/frontendproxy/Dockerfile
-    container_name: frontend-proxy
+    deploy:
+      resources:
+        limits:
+          memory: 50M
     ports:
       - "${ENVOY_PORT}:${ENVOY_PORT}"
       - 10000:10000
@@ -391,7 +395,7 @@ services:
     deploy:
       resources:
         limits:
-          memory: 70M
+          memory: 120M
     restart: unless-stopped
     ports:
       - "${PAYMENT_SERVICE_PORT}"
@@ -446,7 +450,7 @@ services:
     deploy:
       resources:
         limits:
-          memory: 30M
+          memory: 40M
     restart: unless-stopped
     ports:
       - "${QUOTE_SERVICE_PORT}"
@@ -531,18 +535,18 @@ services:
     deploy:
       resources:
         limits:
-          memory: 200M
+          memory: 120M
     restart: unless-stopped
     environment:
       - POSTGRES_USER=ffs
       - POSTGRES_DB=ffs
       - POSTGRES_PASSWORD=ffs
-    logging: *logging
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -d ffs -U ffs"]
       interval: 10s
       timeout: 5s
       retries: 5
+    logging: *logging
 
   # Kafka used by Checkout, Accounting, and Fraud Detection services
   kafka:
@@ -556,7 +560,7 @@ services:
     deploy:
       resources:
         limits:
-          memory: 800M
+          memory: 750M
     restart: unless-stopped
     environment:
       - KAFKA_ADVERTISED_LISTENERS=PLAINTEXT://kafka:9092
@@ -565,13 +569,14 @@ services:
       - OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE
       - OTEL_RESOURCE_ATTRIBUTES
       - OTEL_SERVICE_NAME=kafka
-    logging: *logging
+      - KAFKA_HEAP_OPTS=-Xmx400m -Xms400m
     healthcheck:
       test: nc -z kafka 9092
       start_period: 10s
       interval: 5s
       timeout: 10s
       retries: 10
+    logging: *logging
 
   # Redis used by Cart service
   redis-cart:
@@ -605,7 +610,7 @@ services:
     deploy:
       resources:
         limits:
-          memory: 275M
+          memory: 300M
     restart: unless-stopped
     ports:
       - "${JAEGER_SERVICE_PORT}"                    # Jaeger UI
@@ -619,6 +624,10 @@ services:
   grafana:
     image: grafana/grafana:9.1.0
     container_name: grafana
+    deploy:
+      resources:
+        limits:
+          memory: 75M
     volumes:
       - ./src/grafana/grafana.ini:/etc/grafana/grafana.ini
       - ./src/grafana/provisioning/:/etc/grafana/provisioning/
@@ -633,7 +642,7 @@ services:
     deploy:
       resources:
         limits:
-          memory: 100M
+          memory: 125M
     restart: unless-stopped
     command: [ "--config=/etc/otelcol-config.yml", "--config=/etc/otelcol-config-extras.yml" ]
     volumes:
@@ -663,6 +672,10 @@ services:
       - --enable-feature=exemplar-storage
     volumes:
       - ./src/prometheus/prometheus-config.yaml:/etc/prometheus/prometheus-config.yaml
+    deploy:
+      resources:
+        limits:
+          memory: 300M
     ports:
       - "${PROMETHEUS_SERVICE_PORT}:${PROMETHEUS_SERVICE_PORT}"
     logging: *logging

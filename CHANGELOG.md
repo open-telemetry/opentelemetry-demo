@@ -24,6 +24,8 @@ tls_certificate_check and bump to OTP-25
 ([#760](https://github.com/open-telemetry/opentelemetry-demo/pull/760))
 * [chore] update for Mac M2 architecture
 ([#764](https://github.com/open-telemetry/opentelemetry-demo/pull/764))
+* [chore] align memory limits with Helm chart
+([#781](https://github.com/open-telemetry/opentelemetry-demo/pull/781))
 
 ## v0.1.0
 
