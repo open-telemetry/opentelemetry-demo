@@ -1,11 +1,9 @@
 .github
 docs
 internal
-
-###################################
-# shippingservice
-./src/shippingservice/target
-###################################
+src/*/README.md
+src/*/Dockerfile
+src/*/*/Dockerfile
 
 ###################################
 # currencyservice
@@ -21,6 +19,15 @@ internal
 ./src/featureflagservice/test/
 ./src/featureflagservice/tmp/
 ./src/featureflagservice/.elixir_ls
+
+###################################
+# frontend
+./src/frontend/node_modules/
+
+###################################
+# shippingservice
+./src/shippingservice/target
+###################################
 
 # Mix artifacts
 ./src/featureflagservice/_build/

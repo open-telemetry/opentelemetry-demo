@@ -16,11 +16,19 @@ exporters:
   logging:
   prometheus:
     endpoint: "otelcol:9464"
-
+    resource_to_telemetry_conversion:
+      enabled: true
+    enable_open_metrics: true
 processors:
   batch:
   spanmetrics:
     metrics_exporter: prometheus
+  # temporary measure until description is fixed in .NET
+  transform:
+    metric_statements:
+      - context: metric
+        statements:
+          - set(description, "Measures the duration of inbound HTTP requests") where name == "http.server.duration"
 
 service:
   pipelines:
@@ -30,5 +38,5 @@ service:
       exporters: [logging, otlp]
     metrics:
       receivers: [otlp]
-      processors: [batch]
+      processors: [transform, batch]
       exporters: [prometheus, logging]

@@ -17,23 +17,27 @@ package main
 import (
 	"context"
 	"fmt"
+	pb "github.com/opentelemetry/opentelemetry-demo/src/productcatalogservice/genproto/oteldemo"
+	"github.com/sirupsen/logrus"
+	"go.opentelemetry.io/contrib/instrumentation/google.golang.org/grpc/otelgrpc"
+	"go.opentelemetry.io/contrib/instrumentation/runtime"
+	"go.opentelemetry.io/otel/metric/global"
+	sdkmetric "go.opentelemetry.io/otel/sdk/metric"
+	healthpb "google.golang.org/grpc/health/grpc_health_v1"
 	"io/ioutil"
 	"net"
 	"os"
 	"strings"
-
-	pb "github.com/opentelemetry/opentelemetry-demo/src/productcatalogservice/genproto/hipstershop"
-	healthpb "google.golang.org/grpc/health/grpc_health_v1"
-
-	"github.com/sirupsen/logrus"
-
-	"go.opentelemetry.io/contrib/instrumentation/google.golang.org/grpc/otelgrpc"
+	"sync"
+	"time"
 
 	"go.opentelemetry.io/otel"
 	"go.opentelemetry.io/otel/attribute"
 	otelcodes "go.opentelemetry.io/otel/codes"
+	"go.opentelemetry.io/otel/exporters/otlp/otlpmetric/otlpmetricgrpc"
 	"go.opentelemetry.io/otel/exporters/otlp/otlptrace/otlptracegrpc"
 	"go.opentelemetry.io/otel/propagation"
+	sdkresource "go.opentelemetry.io/otel/sdk/resource"
 	sdktrace "go.opentelemetry.io/otel/sdk/trace"
 	"go.opentelemetry.io/otel/trace"
 
@@ -42,17 +46,37 @@ import (
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/credentials/insecure"
+	"google.golang.org/grpc/reflection"
 	"google.golang.org/grpc/status"
 )
 
 var (
-	log     *logrus.Logger
-	catalog []*pb.Product
+	log               *logrus.Logger
+	catalog           []*pb.Product
+	resource          *sdkresource.Resource
+	initResourcesOnce sync.Once
 )
 
 func init() {
 	log = logrus.New()
 	catalog = readCatalogFile()
+}
+
+func initResource() *sdkresource.Resource {
+	initResourcesOnce.Do(func() {
+		extraResources, _ := sdkresource.New(
+			context.Background(),
+			sdkresource.WithOS(),
+			sdkresource.WithProcess(),
+			sdkresource.WithContainer(),
+			sdkresource.WithHost(),
+		)
+		resource, _ = sdkresource.Merge(
+			sdkresource.Default(),
+			extraResources,
+		)
+	})
+	return resource
 }
 
 func initTracerProvider() *sdktrace.TracerProvider {
@@ -62,10 +86,29 @@ func initTracerProvider() *sdktrace.TracerProvider {
 	if err != nil {
 		log.Fatalf("OTLP Trace gRPC Creation: %v", err)
 	}
-	tp := sdktrace.NewTracerProvider(sdktrace.WithBatcher(exporter))
+	tp := sdktrace.NewTracerProvider(
+		sdktrace.WithBatcher(exporter),
+		sdktrace.WithResource(initResource()),
+	)
 	otel.SetTracerProvider(tp)
 	otel.SetTextMapPropagator(propagation.NewCompositeTextMapPropagator(propagation.TraceContext{}, propagation.Baggage{}))
 	return tp
+}
+
+func initMeterProvider() *sdkmetric.MeterProvider {
+	ctx := context.Background()
+
+	exporter, err := otlpmetricgrpc.New(ctx)
+	if err != nil {
+		log.Fatalf("new otlp metric grpc exporter failed: %v", err)
+	}
+
+	mp := sdkmetric.NewMeterProvider(
+		sdkmetric.WithReader(sdkmetric.NewPeriodicReader(exporter)),
+		sdkmetric.WithResource(initResource()),
+	)
+	global.SetMeterProvider(mp)
+	return mp
 }
 
 func main() {
@@ -75,6 +118,18 @@ func main() {
 			log.Fatalf("Tracer Provider Shutdown: %v", err)
 		}
 	}()
+
+	mp := initMeterProvider()
+	defer func() {
+		if err := mp.Shutdown(context.Background()); err != nil {
+			log.Fatalf("Error shutting down meter provider: %v", err)
+		}
+	}()
+
+	err := runtime.Start(runtime.WithMinimumReadMemStatsInterval(time.Second))
+	if err != nil {
+		log.Fatal(err)
+	}
 
 	svc := &productCatalog{}
 	var port string
@@ -92,6 +147,8 @@ func main() {
 		grpc.UnaryInterceptor(otelgrpc.UnaryServerInterceptor()),
 		grpc.StreamInterceptor(otelgrpc.StreamServerInterceptor()),
 	)
+
+	reflection.Register(srv)
 
 	pb.RegisterProductCatalogServiceServer(srv, svc)
 	healthpb.RegisterHealthServer(srv, svc)

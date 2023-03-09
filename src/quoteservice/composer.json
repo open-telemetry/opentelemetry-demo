@@ -9,8 +9,7 @@
         "monolog/monolog": "2.8.0",
         "open-telemetry/sdk": "1.0.0beta1",
         "open-telemetry/exporter-otlp": "1.0.0beta1",
-        "open-telemetry/opentelemetry-auto-slim": "1.0.0beta3",
-        "open-telemetry/opentelemetry-auto-psr15": "1.0.0beta2",
+        "open-telemetry/opentelemetry-auto-slim": "1.0.0beta4",
         "guzzlehttp/guzzle": "7.4.5",
         "php-di/php-di": "6.4.0",
         "php-di/slim-bridge": "3.2.0",
@@ -21,11 +20,6 @@
     "autoload": {
         "psr-4": {
             "App\\": "src/"
-        }
-    },
-    "config": {
-        "allow-plugins": {
-            "phpstan/extension-installer": true
         }
     }
 }
