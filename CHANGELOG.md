@@ -26,7 +26,7 @@ tls_certificate_check and bump to OTP-25
 ([#764](https://github.com/open-telemetry/opentelemetry-demo/pull/764))
 * [chore] align memory limits with Helm chart
 ([#781](https://github.com/open-telemetry/opentelemetry-demo/pull/781))
-* Sample spanmetrics dashboard showing service and operational level throughputs and latencies
+* spanmetrics dashboard service&operation rates%latencies
 ([#787](https://github.com/open-telemetry/opentelemetry-demo/pull/787))
 
 ## v0.1.0
