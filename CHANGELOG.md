@@ -7,25 +7,8 @@ release.
 
 ## Unreleased
 
-* [docs] Drop docs folder as step in migration to OTel website
-([#729](https://github.com/open-telemetry/opentelemetry-demo/issues/729))
-* rename proto package from hipstershop to oteldemo
-([#740](https://github.com/open-telemetry/opentelemetry-demo/pull/740))
-* Removed unnecessary code from Program.cs
-([#754](https://github.com/open-telemetry/opentelemetry-demo/pull/754))
-* feature flag service: update the dependency
-tls_certificate_check and bump to OTP-25
-([#756](https://github.com/open-telemetry/opentelemetry-demo/pull/756))
-* Bump up OTEL Java Agent version to 1.23.0
-([#757](https://github.com/open-telemetry/opentelemetry-demo/pull/757))
-* Add counter metric to currency service (C++)
-([#759](https://github.com/open-telemetry/opentelemetry-demo/issues/759))
-* Use browserDetector to populate browser info to frontend-web telemetry
-([#760](https://github.com/open-telemetry/opentelemetry-demo/pull/760))
-* [chore] update for Mac M2 architecture
-([#764](https://github.com/open-telemetry/opentelemetry-demo/pull/764))
-* [chore] align memory limits with Helm chart
-([#781](https://github.com/open-telemetry/opentelemetry-demo/pull/781))
+* spanmetrics dashboard service&operation rates%latencies
+([#787](https://github.com/open-telemetry/opentelemetry-demo/pull/787))
 
 ## v0.1.0
 
@@ -266,3 +249,25 @@ significant modifications will be credited to OpenTelemetry Authors.
 ([#704](https://github.com/open-telemetry/opentelemetry-demo/pull/704))
 * Add cross-compilation for shipping service
 ([#715](https://github.com/open-telemetry/opentelemetry-demo/issues/715))
+
+## 1.3.1
+
+* [docs] Drop docs folder as step in migration to OTel website
+  ([#729](https://github.com/open-telemetry/opentelemetry-demo/issues/729))
+* rename proto package from hipstershop to oteldemo
+  ([#740](https://github.com/open-telemetry/opentelemetry-demo/pull/740))
+* Removed unnecessary code from Program.cs
+  ([#754](https://github.com/open-telemetry/opentelemetry-demo/pull/754))
+* feature flag service: update the dependency
+  tls_certificate_check and bump to OTP-25
+  ([#756](https://github.com/open-telemetry/opentelemetry-demo/pull/756))
+* Bump up OTEL Java Agent version to 1.23.0
+  ([#757](https://github.com/open-telemetry/opentelemetry-demo/pull/757))
+* Add counter metric to currency service (C++)
+  ([#759](https://github.com/open-telemetry/opentelemetry-demo/issues/759))
+* Use browserDetector to populate browser info to frontend-web telemetry
+  ([#760](https://github.com/open-telemetry/opentelemetry-demo/pull/760))
+* [chore] update for Mac M2 architecture
+  ([#764](https://github.com/open-telemetry/opentelemetry-demo/pull/764))
+* [chore] align memory limits with Helm chart
+  ([#781](https://github.com/open-telemetry/opentelemetry-demo/pull/781))
