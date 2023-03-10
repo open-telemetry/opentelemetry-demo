@@ -98,3 +98,9 @@ run-tests:
 .PHONY: generate-protobuf
 generate-protobuf:
 	./ide-gen-proto.sh
+
+.PHONY: generate-kubernetes-manifests
+generate-kubernetes-manifests:
+	helm repo add open-telemetry https://open-telemetry.github.io/opentelemetry-helm-charts
+	helm repo update
+	helm template opentelemetry-demo open-telemetry/opentelemetry-demo | sed '/helm.sh\/chart\:/d' | sed '/helm.sh\/hook/d' | sed '/managed-by\: Helm/d' > kubernetes/opentelemetry-demo.yaml
