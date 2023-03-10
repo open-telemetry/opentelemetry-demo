@@ -7,7 +7,8 @@ release.
 
 ## Unreleased
 
-*
+* spanmetrics dashboard service&operation rates%latencies
+([#787](https://github.com/open-telemetry/opentelemetry-demo/pull/787))
 
 ## v0.1.0
 
