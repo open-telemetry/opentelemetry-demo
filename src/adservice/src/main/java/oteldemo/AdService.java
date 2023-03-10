@@ -90,7 +90,7 @@ public final class AdService {
                     new IllegalStateException(
                         "environment vars: FEATURE_FLAG_GRPC_SERVICE_ADDR must not be null"));
     FeatureFlagServiceBlockingStub featureFlagServiceStub =
-        FeatureFlagServiceGrpc.newBlockingStub(
+        oteldemo.FeatureFlagServiceGrpc.newBlockingStub(
             ManagedChannelBuilder.forTarget(featureFlagServiceAddr).usePlaintext().build());
 
     server =
