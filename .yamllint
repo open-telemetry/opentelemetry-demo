@@ -14,7 +14,7 @@
 
 extends: default
 
-ignore-from-file: .gitignore
+ignore-from-file: [.gitignore, .yamlignore]
 
 rules:
   document-start: disable
