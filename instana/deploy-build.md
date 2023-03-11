@@ -28,7 +28,7 @@ docker compose up --no-build -d
 
 > **Notes:**
 > - The `--no-build` flag is used to fetch released docker images instead of building from source. Removing the `--no-build` command line option will rebuild all images from source. The image repository is defined in [`.env`](../.env) file. See below for details on building the images.
-> - You can configure the pre-injected Instana EUM Javascript by exporting the EUM service configuration values as `INSTANA_EUM_URL` and `INSTANA_EUM_KEY` environment variables in the shell before running the demo.
+> - You can configure the pre-injected Instana EUM Javascript in Frontend service by setting and exporting `INSTANA_EUM_URL` and `INSTANA_EUM_KEY` environment varables in the shell before running the demo.
 
 > **Tip:**
 > You can run the demo in the foreground  by omitting the `-d` parameter (`docker compose up`) to get the container logs dumped out to the terminal so you can check for any errors.

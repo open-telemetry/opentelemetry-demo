@@ -3,6 +3,7 @@ import { ServerStyleSheet } from 'styled-components';
 import Script from 'next/script'
 
 const { ENV_PLATFORM, WEB_OTEL_SERVICE_NAME, PUBLIC_OTEL_EXPORTER_OTLP_TRACES_ENDPOINT } = process.env;
+const { INSTANA_EUM_URL, INSTANA_EUM_KEY } = process.env;
 
 const envString = `
 window.ENV = {
@@ -51,12 +52,12 @@ export default class MyDocument extends Document<{ envString: string, traceId: s
 	  (function(s,t,a,n){s[t]||(s[t]=a,n=s[a]=function(){n.q.push(arguments)},
 				    n.q=[],n.v=2,n.l=1*new Date)})(window,"InstanaEumObject","ineum");
 
-	  ineum('reportingUrl', 'https://instana.tec.cz.ibm.com:446/eum/');
-	  ineum('key', 'TSgzaBwgS622Twhz-5OlBQ');
+	  ineum('reportingUrl', '${INSTANA_EUM_URL}');
+	  ineum('key', '${INSTANA_EUM_KEY}');
 	  ineum('trackSessions');
 	  ineum('traceId', '${this.props.traceId}');
 	  `}</Script>
-	  <Script strategy="beforeInteractive" defer crossOrigin="anonymous" src="https://instana.tec.cz.ibm.com:446/eum/eum.min.js" />
+	  <Script strategy="beforeInteractive" defer crossOrigin="anonymous" src={INSTANA_EUM_URL+"eum.min.js"} />
         </Head>
         <body>
           <Main />
