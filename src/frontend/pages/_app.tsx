@@ -41,10 +41,6 @@ function MyApp({ Component, pageProps }: AppProps) {
 
 MyApp.getInitialProps = async (appContext: AppContext) => {
   const appProps = await App.getInitialProps(appContext);
-  
-  // set Instana EUM server-timing response header
-  const traceId = appContext.ctx.req?.headers['x-instana-t'] || ''
-  appContext.ctx.res?.setHeader('Server-Timing', `intid;desc=${traceId}`)
 
   return { ...appProps };
 };
