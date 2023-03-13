@@ -94,7 +94,10 @@ helm repo add open-telemetry https://open-telemetry.github.io/opentelemetry-helm
 helm install my-otel-demo open-telemetry/opentelemetry-demo -f values-instana-agent.yaml
 ```
 
-In OpenShift, you can create a route for the `frontendproxy` service for easy access to the demo frontpage and featureflags services instead of the `kubectl port-forward` way that Helm prompts you after installation.
+In OpenShift, you can create a route for the `frontendproxy` service for easy access to the demo frontpage and featureflags services instead of the `kubectl port-forward` way that Helm prompts you after installation. Using TLS terminated route endpoint enables for better [correlation between EUM and backend tracing](https://www.ibm.com/docs/en/instana-observability/current?topic=websites-backend-correlation#backend-correlation).
+```sh
+oc create route edge my-otel-demo --service my-otel-demo-frontendproxy
+```
 
 ## Build the demo images from source
 
