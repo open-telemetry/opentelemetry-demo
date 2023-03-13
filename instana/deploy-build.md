@@ -43,9 +43,10 @@ kubectl create namespace otel-demo
 oc new-project otel-demo
 ```
 
-In OpenShift, also make sure you have sufficient privileges to run the pods in the namespace (this step my be no longer necessary as the demo containers can now run as non-root):
+In OpenShift, you must provide sufficient security privileges to allow the demo pods to rune in the namespace under the demo's service account (the service accounht name equals is the same as the Helm release name). 
 ```sh
-oc adm policy -n otel-demo add-scc-to-user anyuid -z default
+oc get sa -n otel-demo
+oc adm policy -n otel-demo add-scc-to-user anyuid -z my-otel-demo
 ```
 
 Deploy the Instana agent via Helm or using an operator: use a standard installation according to Instana documentation. Apply the demo-specific agent configuration as in `instana-agent/configuration-otel.yaml`. These settings enable the OpenTelemetry ports, add specific service settings for infrastructure monitoring and suppression of native Instana tracing.
