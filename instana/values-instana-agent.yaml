@@ -21,8 +21,6 @@ default:
         fieldRef:
           apiVersion: v1
           fieldPath: metadata.name
-    - name: OTEL_RESOURCE_ATTRIBUTES
-      value: service.name=$(OTEL_SERVICE_NAME),k8s.namespace.name=$(OTEL_K8S_NAMESPACE),k8s.node.name=$(OTEL_K8S_NODE_NAME),k8s.pod.name=$(OTEL_K8S_POD_NAME)
     # Instana defaults
     - name: INSTANA_SERVICE_NAME
       value: $(OTEL_SERVICE_NAME)
@@ -33,13 +31,21 @@ default:
           fieldPath: status.hostIP
     - name: INSTANA_AGENT_PORT
       value: "42699"
-
+    - name: OTEL_K8S_POD_UID
+      valueFrom:
+        fieldRef:
+          apiVersion: v1
+          fieldPath: metadata.uid
+    - name: OTEL_COLLECTOR_NAME
+      #value: '{{ include "otel-demo.name" . }}-otelcol'
+      value: $(INSTANA_AGENT_HOST)
+    - name: OTEL_RESOURCE_ATTRIBUTES
+      value: service.name=$(OTEL_SERVICE_NAME),service.instance.id=$(OTEL_K8S_POD_UID),service.namespace=opentelemetry-demo,k8s.namespace.name=$(OTEL_K8S_NAMESPACE),k8s.node.name=$(OTEL_K8S_NODE_NAME),k8s.pod.name=$(OTEL_K8S_POD_NAME)
   # Allows overriding and additions to .Values.default.env
   envOverrides: []
   #  - name: OTEL_K8S_NODE_NAME
   #    value: "someConstantValue"
   image:
-    # repository: image-registry.openshift-image-registry.svc:5000/otel-demo/demo
     repository: styblope/otel-demo
     # Overrides the image tag whose default is the chart appVersion.
     # The service's name will be applied to the end of this value.
@@ -51,7 +57,14 @@ default:
     affinity: {}
     tolerations: []
   securityContext: {}
-serviceAccount: ""
+serviceAccount:
+  # Specifies whether a service account should be created
+  create: true
+  # Annotations to add to the service account
+  annotations: {}
+  # The name of the service account to use.
+  # If not set and create is true, a name is generated using the fullname template
+  name: ""
 
 components:
   ## Demo Components are named objects (services) with several properties
@@ -62,12 +75,18 @@ components:
   ## Use default environment variables
   #     env: true
   ## Override Image repository and Tag. Tag will use appVersion as default.
-  ## Service's name will be applied to end of this value.
+  ## Component's name will be applied to end of this value.
   #   imageOverride: {}
+  ## Optional service definitions to apply
+  #   service:
   ## Service Type to use for this component. Default is ClusterIP.
-  #   serviceType: ClusterIP
+  #     type: ClusterIP
   ## Service Port to use to expose this component. Default is nil
-  #   servicePort: 8080
+  #     port: 8080
+  ## Service Node Port to use to expose this component on a NodePort service. Default is nil
+  #     nodePort: 30080
+  ## Service Annotations to add to this component
+  #     annotations: {}
   ## Additional service ports to use to expose this component
   #   ports:
   #     - name: extraServicePort
@@ -129,17 +148,15 @@ components:
   #   command: []
   # # Configuration to for this service; will create a ConfigMap, Volume, and Mount it into the container being spun up/.
   #   configuration: {}
+  # # Kubernetes container health check options
+  #   livenessProbe: {}
   accountingService:
     enabled: true
     useDefault:
       env: true
     env:
-      - name: OTEL_EXPORTER_OTLP_TRACES_ENDPOINT
-        value: http://$(INSTANA_AGENT_HOST):4317
-      - name: OTEL_EXPORTER_OTLP_METRICS_ENDPOINT
-        value: http://$(INSTANA_AGENT_HOST):4317
-      - name: OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE
-        value: cumulative
+      - name: OTEL_EXPORTER_OTLP_ENDPOINT
+        value: http://$(OTEL_COLLECTOR_NAME):4317
       - name: OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE
         value: cumulative
       - name: KAFKA_SERVICE_ADDR
@@ -152,16 +169,15 @@ components:
     enabled: true
     useDefault:
       env: true
-    servicePort: 8080
+    service:
+      port: 8080
     env:
-      - name: OTEL_EXPORTER_OTLP_TRACES_ENDPOINT
-        value: http://$(INSTANA_AGENT_HOST):4317
-      - name: OTEL_EXPORTER_OTLP_METRICS_ENDPOINT
-        value: http://$(INSTANA_AGENT_HOST):4317
-      - name: OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE
-        value: cumulative
+      - name: OTEL_EXPORTER_OTLP_ENDPOINT
+        value: http://$(OTEL_COLLECTOR_NAME):4317
       - name: AD_SERVICE_PORT
         value: "8080"
+      - name: FEATURE_FLAG_GRPC_SERVICE_ADDR
+        value: '{{ include "otel-demo.name" . }}-featureflagservice:50053'
     resources:
       limits:
         memory: 300Mi
@@ -170,14 +186,15 @@ components:
     enabled: true
     useDefault:
       env: true
-    servicePort: 8080
+    service:
+      port: 8080
     env:
       - name: ASPNETCORE_URLS
         value: http://*:8080
       - name: REDIS_ADDR
         value: '{{ include "otel-demo.name" . }}-redis:6379'
       - name: OTEL_EXPORTER_OTLP_ENDPOINT
-        value: http://$(INSTANA_AGENT_HOST):4317
+        value: http://$(OTEL_COLLECTOR_NAME):4317
       - name: CART_SERVICE_PORT
         value: "8080"
     resources:
@@ -188,7 +205,8 @@ components:
     enabled: true
     useDefault:
       env: true
-    servicePort: 8080
+    service:
+      port: 8080
     env:
       - name: CART_SERVICE_ADDR
         value: '{{ include "otel-demo.name" . }}-cartservice:8080'
@@ -202,12 +220,8 @@ components:
         value: '{{ include "otel-demo.name" . }}-shippingservice:8080'
       - name: EMAIL_SERVICE_ADDR
         value: 'http://{{ include "otel-demo.name" . }}-emailservice:8080'
-      - name: OTEL_EXPORTER_OTLP_TRACES_ENDPOINT
-        value: http://$(INSTANA_AGENT_HOST):4317
-      - name: OTEL_EXPORTER_OTLP_METRICS_ENDPOINT
-        value: http://$(INSTANA_AGENT_HOST):4317
-      - name: OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE
-
+      - name: OTEL_EXPORTER_OTLP_ENDPOINT
+        value: http://$(OTEL_COLLECTOR_NAME):4317
       - name: CHECKOUT_SERVICE_PORT
         value: "8080"
       - name: KAFKA_SERVICE_ADDR
@@ -220,12 +234,13 @@ components:
     enabled: true
     useDefault:
       env: true
-    servicePort: 8080
+    service:
+      port: 8080
     env:
       - name: PORT
         value: "8080"
-      - name: OTEL_EXPORTER_OTLP_TRACES_ENDPOINT
-        value: http://$(INSTANA_AGENT_HOST):4317
+      - name: OTEL_EXPORTER_OTLP_ENDPOINT
+        value: http://$(OTEL_COLLECTOR_NAME):4317
       - name: CURRENCY_SERVICE_PORT
         value: "8080"
     resources:
@@ -236,14 +251,17 @@ components:
     enabled: true
     useDefault:
       env: true
-    servicePort: 8080
+    service:
+      port: 8080
     env:
       - name: APP_ENV
         value: production
       - name: PORT
         value: "8080"
+      - name: OTEL_EXPORTER_OTLP_ENDPOINT
+        value: http://$(OTEL_COLLECTOR_NAME):4317
       - name: OTEL_EXPORTER_OTLP_TRACES_ENDPOINT
-        value: http://$(INSTANA_AGENT_HOST):4318/v1/traces
+        value: http://$(OTEL_COLLECTOR_NAME):4318/v1/traces
       - name: EMAIL_SERVICE_PORT
         value: "8080"
     resources:
@@ -264,27 +282,29 @@ components:
         value: "50053"
       - name: FEATURE_FLAG_SERVICE_PORT
         value: "8081"
-      - name: OTEL_EXPORTER_OTLP_TRACES_ENDPOINT
-        value: http://$(INSTANA_AGENT_HOST):4317
       - name: OTEL_EXPORTER_OTLP_TRACES_PROTOCOL
         value: grpc
       - name: DATABASE_URL
         value: 'ecto://ffs:ffs@{{ include "otel-demo.name" . }}-ffspostgres:5432/ffs'
-      - name: FEATURE_FLAG_SERVICE_PATH_ROOT
-        value: "/feature"
+      - name: OTEL_EXPORTER_OTLP_ENDPOINT
+        value: http://$(OTEL_COLLECTOR_NAME):4317
     resources:
       limits:
         memory: 175Mi
+    livenessProbe:
+      httpGet:
+        path: /featureflags/
+        port: 8081
+      initialDelaySeconds: 30
+      periodSeconds: 10
 
   frauddetectionService:
     enabled: true
     useDefault:
       env: true
     env:
-      - name: OTEL_EXPORTER_OTLP_TRACES_ENDPOINT
-        value: http://$(INSTANA_AGENT_HOST):4317
-      - name: OTEL_EXPORTER_OTLP_METRICS_ENDPOINT
-        value: http://$(INSTANA_AGENT_HOST):4317
+      - name: OTEL_EXPORTER_OTLP_ENDPOINT
+        value: http://$(OTEL_COLLECTOR_NAME):4317
       - name: OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE
         value: cumulative
       - name: KAFKA_SERVICE_ADDR
@@ -297,12 +317,11 @@ components:
     enabled: true
     useDefault:
       env: true
-    servicePort: 8080
+    service:
+      port: 8080
     env:
       - name: FRONTEND_ADDR
         value: :8080
-      - name: PORT
-        value: "8080"
       - name: AD_SERVICE_ADDR
         value: '{{ include "otel-demo.name" . }}-adservice:8080'
       - name: CART_SERVICE_ADDR
@@ -318,9 +337,11 @@ components:
       - name: SHIPPING_SERVICE_ADDR
         value: '{{ include "otel-demo.name" . }}-shippingservice:8080'
       - name: OTEL_EXPORTER_OTLP_ENDPOINT
-        value: http://$(INSTANA_AGENT_HOST):4317
-      - name: OTEL_EXPORTER_OTLP_TRACES_ENDPOINT
-        value: http://$(INSTANA_AGENT_HOST):4317
+        value: http://$(OTEL_COLLECTOR_NAME):4317
+      - name: WEB_OTEL_SERVICE_NAME
+        value: frontend-web
+      - name: FRONTEND_PORT
+        value: "8080"
       - name: PUBLIC_OTEL_EXPORTER_OTLP_TRACES_ENDPOINT
         value: http://localhost:4318/v1/traces             # This expects users to use `kubectl port-forward ...`
       - name: INSTANA_DISABLE_TRACING
@@ -337,7 +358,8 @@ components:
     enabled: true
     useDefault:
       env: true
-    servicePort: 8080
+    service:
+      port: 8080
     env:
       - name: FRONTEND_PORT
         value: "8080"
@@ -362,7 +384,7 @@ components:
       - name: OTEL_COLLECTOR_PORT
         value: "4317"
       - name: OTEL_COLLECTOR_HOST
-        value: $(INSTANA_AGENT_HOST):4317
+        value: $(OTEL_COLLECTOR_NAME)
       - name: ENVOY_PORT
         value: "8080"
     resources:
@@ -377,7 +399,8 @@ components:
     enabled: true
     useDefault:
       env: true
-    servicePort: 8089
+    service:
+      port: 8089
     env:
       - name: FRONTEND_ADDR
         value: '{{ include "otel-demo.name" . }}-frontend:8080'
@@ -396,7 +419,7 @@ components:
       - name: PROTOCOL_BUFFERS_PYTHON_IMPLEMENTATION
         value: python
       - name: OTEL_EXPORTER_OTLP_TRACES_ENDPOINT
-        value: http://${OTEL_COLLECTOR_HOST}:4318/v1/traces
+        value: http://$(OTEL_COLLECTOR_NAME):4318/v1/traces
       - name: LOADGENERATOR_PORT
         value: "8089"
       - name: INSTANA_DISABLE_AUTO_INSTR
@@ -409,32 +432,28 @@ components:
     enabled: true
     useDefault:
       env: true
-    servicePort: 8080
+    service:
+      port: 8080
     env:
-      - name: OTEL_EXPORTER_OTLP_TRACES_ENDPOINT
-        value: http://$(INSTANA_AGENT_HOST):4317
-      - name: OTEL_EXPORTER_OTLP_METRICS_ENDPOINT
-        value: http://$(INSTANA_AGENT_HOST):4317
-      - name: OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE
-        value: cumulative
+      - name: OTEL_EXPORTER_OTLP_ENDPOINT
+        value: http://$(OTEL_COLLECTOR_NAME):4317
       - name: PAYMENT_SERVICE_PORT
         value: "8080"
       - name: INSTANA_DISABLE_TRACING
         value: "true"
     resources:
       limits:
-        memory: 70Mi
+        memory: 120Mi
 
   productCatalogService:
     enabled: true
     useDefault:
       env: true
-    servicePort: 8080
+    service:
+      port: 8080
     env:
-      - name: OTEL_EXPORTER_OTLP_TRACES_ENDPOINT
-        value: http://$(INSTANA_AGENT_HOST):4317
-      - name: OTEL_EXPORTER_OTLP_METRICS_ENDPOINT
-        value: http://$(INSTANA_AGENT_HOST):4317
+      - name: OTEL_EXPORTER_OTLP_ENDPOINT
+        value: http://$(OTEL_COLLECTOR_NAME):4317
       - name: OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE
         value: cumulative
       - name: PRODUCT_CATALOG_SERVICE_PORT
@@ -449,12 +468,13 @@ components:
     enabled: true
     useDefault:
       env: true
-    servicePort: 8080
+    service:
+      port: 8080
     env:
+      - name: OTEL_EXPORTER_OTLP_TRACES_ENDPOINT
+        value: http://$(OTEL_COLLECTOR_NAME):4318/v1/traces
       - name: OTEL_PHP_AUTOLOAD_ENABLED
         value: "true"
-      - name: OTEL_EXPORTER_OTLP_TRACES_ENDPOINT
-        value: http://$(INSTANA_AGENT_HOST):4318/v1/traces
       - name: QUOTE_SERVICE_PORT
         value: "8080"
     resources:
@@ -469,22 +489,15 @@ components:
     enabled: true
     useDefault:
       env: true
-    servicePort: 8080
+    service:
+      port: 8080
     env:
       - name: OTEL_PYTHON_LOG_CORRELATION
         value: "true"
       - name: PROTOCOL_BUFFERS_PYTHON_IMPLEMENTATION
         value: python
-      - name: OTEL_PYTHON_LOG_CORRELATION
-        value: "true"
-      - name: OTEL_TRACES_EXPORTER
-        value: otlp
-      - name: OTEL_METRICS_EXPORTER
-        value: otlp
       - name: OTEL_EXPORTER_OTLP_ENDPOINT
-        value: http://$(INSTANA_AGENT_HOST):4317
-      - name: OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE
-        value: cumulative
+        value: http://$(OTEL_COLLECTOR_NAME):4317
       - name: FEATURE_FLAG_GRPC_SERVICE_ADDR
         value: '{{ include "otel-demo.name" . }}-featureflagservice:50053'
       - name: RECOMMENDATION_SERVICE_PORT
@@ -503,12 +516,13 @@ components:
     enabled: true
     useDefault:
       env: true
-    servicePort: 8080
+    service:
+      port: 8080
     env:
       - name: PORT
         value: "8080"
       - name: OTEL_EXPORTER_OTLP_TRACES_ENDPOINT
-        value: 'http://$(INSTANA_AGENT_HOST):4317'
+        value: http://$(OTEL_COLLECTOR_NAME):4317/v1/traces
       - name: SHIPPING_SERVICE_PORT
         value: "8080"
       - name: QUOTE_SERVICE_ADDR
@@ -536,7 +550,7 @@ components:
         value: ffs
     resources:
       limits:
-        memory: 200Mi
+        memory: 120Mi
     securityContext:
       runAsUser: 999  # postgres
       runAsGroup: 999
@@ -545,7 +559,7 @@ components:
   kafka:
     enabled: true
     useDefault:
-      env: true
+      env: false
     ports:
       - name: plaintext
         value: 9092
@@ -554,15 +568,15 @@ components:
     env:
       - name: KAFKA_ADVERTISED_LISTENERS
         value: 'PLAINTEXT://{{ include "otel-demo.name" . }}-kafka:9092'
-      - name: OTEL_EXPORTER_OTLP_TRACES_ENDPOINT
-        value: http://$(INSTANA_AGENT_HOST):4317
-      - name: OTEL_EXPORTER_OTLP_METRICS_ENDPOINT
-        value: http://$(INSTANA_AGENT_HOST):4317
+      - name: OTEL_EXPORTER_OTLP_ENDPOINT
+        value: http://$(OTEL_COLLECTOR_NAME):4317
       - name: OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE
         value: cumulative
+      - name: KAFKA_HEAP_OPTS
+        value: "-Xmx400M -Xms400M"
     resources:
       limits:
-        memory: 600Mi
+        memory: 750Mi
     securityContext:
       runAsUser: 1000  # appuser
       runAsGroup: 1000
@@ -630,13 +644,16 @@ opentelemetry-collector:
 
     exporters:
       ## Create an exporter to Jaeger using the standard `otlp` export format
-      otlp/jaeger:
-        endpoint: '{{ include "otel-demo.name" . }}-jaeger:4317'
+      otlp:
+        endpoint: '{{ include "otel-demo.name" . }}-jaeger-collector:4317'
         tls:
           insecure: true
       # Create an exporter to Prometheus (metrics)
       prometheus:
         endpoint: '0.0.0.0:9464'
+        resource_to_telemetry_conversion:
+          enabled: true
+        enable_open_metrics: true
 
     processors:
       # Make use of the spanmetrics processor to compute RED metrics from all tracing spans
@@ -656,10 +673,19 @@ jaeger:
     cassandra: false
   allInOne:
     enabled: true
-    args: ["--memory.max-traces", "10000", "--query.base-path", "/jaeger/ui"]
+    args:
+      - "--memory.max-traces"
+      - "10000"
+      - "--query.base-path"
+      - "/jaeger/ui"
+      - "--prometheus.server-url"
+      - 'http://{{ include "otel-demo.name" . }}-prometheus-server:9090'
+    extraEnv:
+      - name: METRICS_STORAGE_TYPE
+        value: prometheus
     resources:
       limits:
-        memory: 275Mi
+        memory: 300Mi
   storage:
     type: none
   agent:
@@ -683,17 +709,25 @@ prometheus:
     enabled: false
 
   server:
+    extraFlags:
+      - "enable-feature=exemplar-storage"
     global:
       scrape_interval: 5s
       scrape_timeout: 3s
       evaluation_interval: 30s
+    persistentVolume:
+      enabled: false
     service:
       servicePort: 9090
+    resources:
+      limits:
+        memory: 300Mi
 
   serverFiles:
     prometheus.yml:
       scrape_configs:
         - job_name: 'opentelemetry-community-demo'
+          honor_labels: true
           kubernetes_sd_configs:
             - role: pod
               namespaces:
@@ -715,6 +749,8 @@ grafana:
       root_url: "%(protocol)s://%(domain)s:%(http_port)s/grafana"
       serve_from_sub_path: true
   adminPassword: admin
+  rbac:
+    pspEnabled: false
   datasources:
     datasources.yaml:
       apiVersion: 1
@@ -725,6 +761,15 @@ grafana:
           url: 'http://{{ include "otel-demo.name" . }}-prometheus-server:9090'
           editable: true
           isDefault: true
+          jsonData:
+            exemplarTraceIdDestinations:
+              - datasourceUid: webstore-traces
+                name: trace_id
+
+              - url: http://localhost:8080/jaeger/ui/trace/$${__value.raw}
+                name: trace_id
+                urlDisplayLabel: View in Jaeger UI
+
         - name: Jaeger
           uid: webstore-traces
           type: jaeger
@@ -748,3 +793,4 @@ grafana:
   resources:
     limits:
       memory: 75Mi
+
