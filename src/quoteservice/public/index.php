@@ -17,9 +17,17 @@ declare(strict_types=1);
 
 use DI\Bridge\Slim\Bridge;
 use DI\ContainerBuilder;
+use Monolog\Handler\StreamHandler;
+use Monolog\Logger;
+use OpenTelemetry\API\Common\Log\LoggerHolder;
+use Psr\Log\LogLevel;
 use Slim\Factory\AppFactory;
 
 require __DIR__ . '/../vendor/autoload.php';
+
+LoggerHolder::set(
+    new Logger('otel-php', [new StreamHandler('php://stdout', LogLevel::DEBUG)])
+);
 
 // Instantiate PHP-DI ContainerBuilder
 $containerBuilder = new ContainerBuilder();
