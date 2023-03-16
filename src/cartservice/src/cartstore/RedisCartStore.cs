@@ -148,6 +148,7 @@ namespace cartservice.cartstore
                 }
 
                 await db.HashSetAsync(userId, new[]{ new HashEntry(CART_FIELD_NAME, cart.ToByteArray()) });
+                await db.KeyExpireAsync(userId, TimeSpan.FromMinutes(60));
             }
             catch (Exception ex)
             {
@@ -166,6 +167,7 @@ namespace cartservice.cartstore
 
                 // Update the cache with empty cart for given user
                 await db.HashSetAsync(userId, new[] { new HashEntry(CART_FIELD_NAME, emptyCartBytes) });
+                await db.KeyExpireAsync(userId, TimeSpan.FromMinutes(60));
             }
             catch (Exception ex)
             {

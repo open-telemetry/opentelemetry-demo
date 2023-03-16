@@ -9,6 +9,8 @@ release.
 
 * spanmetrics dashboard service&operation rates%latencies
 ([#787](https://github.com/open-telemetry/opentelemetry-demo/pull/787))
+* [cart] use 60m TTL for cart entries in redis
+([#779](https://github.com/open-telemetry/opentelemetry-demo/pull/779))
 
 ## v0.1.0
 
