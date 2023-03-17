@@ -275,3 +275,5 @@ significant modifications will be credited to OpenTelemetry Authors.
   ([#781](https://github.com/open-telemetry/opentelemetry-demo/pull/781))
 * [bug] fixing quoteservice metrics exporting (PHP)
   ([#793](https://github.com/open-telemetry/opentelemetry-demo/pull/793))
+* Add logs for Ad service and Recommendation service
+  ([#796](https://github.com/open-telemetry/opentelemetry-demo/pull/796))
