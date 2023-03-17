@@ -16,7 +16,6 @@ release.
 * Add logs for Ad service and Recommendation service
 ([#796](https://github.com/open-telemetry/opentelemetry-demo/pull/796))
 
-
 ## v0.1.0
 
 * The initial code base is donated from a
