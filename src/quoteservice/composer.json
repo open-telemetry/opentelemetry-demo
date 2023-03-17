@@ -7,8 +7,9 @@
         "php": ">= 8.2",
         "ext-json": "*",
         "monolog/monolog": "2.8.0",
-        "open-telemetry/sdk": "1.0.0beta1",
-        "open-telemetry/exporter-otlp": "1.0.0beta1",
+        "open-telemetry/api": "1.0.0beta4",
+        "open-telemetry/sdk": "1.0.0beta3",
+        "open-telemetry/exporter-otlp": "1.0.0beta3",
         "open-telemetry/opentelemetry-auto-slim": "1.0.0beta4",
         "guzzlehttp/guzzle": "7.4.5",
         "php-di/php-di": "6.4.0",
@@ -20,6 +21,11 @@
     "autoload": {
         "psr-4": {
             "App\\": "src/"
+        }
+    },
+    "config": {
+        "allow-plugins": {
+            "php-http/discovery": false
         }
     }
 }
