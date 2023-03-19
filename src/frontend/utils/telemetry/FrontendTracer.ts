@@ -20,6 +20,7 @@ import { getWebAutoInstrumentations } from '@opentelemetry/auto-instrumentations
 import { Resource, detectResources, browserDetector } from '@opentelemetry/resources';
 import { SemanticResourceAttributes } from '@opentelemetry/semantic-conventions';
 import { OTLPTraceExporter } from '@opentelemetry/exporter-trace-otlp-http';
+import { SessionIdProcessor } from './SessionIdProcessor';
 
 const { NEXT_PUBLIC_OTEL_SERVICE_NAME = '', NEXT_PUBLIC_OTEL_EXPORTER_OTLP_TRACES_ENDPOINT = '' } =
   typeof window !== 'undefined' ? window.ENV : {};
@@ -36,6 +37,8 @@ const FrontendTracer = async (collectorString: string) => {
   const provider = new WebTracerProvider({
     resource
   });
+
+  provider.addSpanProcessor(new SessionIdProcessor());
 
   provider.addSpanProcessor(
     new SimpleSpanProcessor(

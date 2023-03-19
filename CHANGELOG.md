@@ -13,8 +13,11 @@ release.
 ([#779](https://github.com/open-telemetry/opentelemetry-demo/pull/779))
 * [bug] fixing quoteservice metrics exporting (PHP)
 ([#793](https://github.com/open-telemetry/opentelemetry-demo/pull/793))
+* Added app.session.id attribute to frontend spans
+([#795](https://github.com/open-telemetry/opentelemetry-demo/pull/795))
 * Add logs for Ad service and Recommendation service
 ([#796](https://github.com/open-telemetry/opentelemetry-demo/pull/796))
+
 
 ## v0.1.0
 
