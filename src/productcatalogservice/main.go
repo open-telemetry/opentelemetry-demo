@@ -17,7 +17,6 @@ package main
 import (
 	"context"
 	"fmt"
-	"google.golang.org/grpc/reflection"
 	"io/ioutil"
 	"net"
 	"os"
