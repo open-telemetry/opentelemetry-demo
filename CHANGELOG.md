@@ -7,7 +7,6 @@ release.
 
 ## Unreleased
 
-
 * [cart] use 60m TTL for cart entries in redis
   ([#779](https://github.com/open-telemetry/opentelemetry-demo/pull/779))
 * spanmetrics dashboard service&operation rates & latencies
