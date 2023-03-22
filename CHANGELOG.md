@@ -7,18 +7,20 @@ release.
 
 ## Unreleased
 
-* spanmetrics dashboard service&operation rates%latencies
-([#787](https://github.com/open-telemetry/opentelemetry-demo/pull/787))
 * [cart] use 60m TTL for cart entries in redis
-([#779](https://github.com/open-telemetry/opentelemetry-demo/pull/779))
+  ([#779](https://github.com/open-telemetry/opentelemetry-demo/pull/779))
+* spanmetrics dashboard service&operation rates & latencies
+  ([#787](https://github.com/open-telemetry/opentelemetry-demo/pull/787))
 * [bug] fixing quoteservice metrics exporting (PHP)
-([#793](https://github.com/open-telemetry/opentelemetry-demo/pull/793))
+  ([#793](https://github.com/open-telemetry/opentelemetry-demo/pull/793))
 * Added app.session.id attribute to frontend spans
-([#795](https://github.com/open-telemetry/opentelemetry-demo/pull/795))
+  ([#795](https://github.com/open-telemetry/opentelemetry-demo/pull/795))
 * Add logs for Ad service and Recommendation service
-([#796](https://github.com/open-telemetry/opentelemetry-demo/pull/796))
+  ([#796](https://github.com/open-telemetry/opentelemetry-demo/pull/796))
+* Opentelemetry Collector Data Flow Dashboard
+  ([#797](https://github.com/open-telemetry/opentelemetry-demo/pull/797))
 * Fixed shipping update in the frontend UI when number of products in cart changes
-([#799](https://github.com/open-telemetry/opentelemetry-demo/pull/799))
+  ([#799](https://github.com/open-telemetry/opentelemetry-demo/pull/799))
 
 ## v0.1.0
 
