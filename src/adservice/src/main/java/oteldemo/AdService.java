@@ -99,7 +99,7 @@ public final class AdService {
             .addService(healthMgr.getHealthService())
             .build()
             .start();
-    logger.info("Ad Service started, listening on " + port);
+    logger.info("Ad service started, listening on " + port);
     Runtime.getRuntime()
         .addShutdownHook(
             new Thread(
@@ -160,8 +160,8 @@ public final class AdService {
 
         span.setAttribute("app.ads.contextKeys", req.getContextKeysList().toString());
         span.setAttribute("app.ads.contextKeys.count", req.getContextKeysCount());
-        logger.info("received ad request (context_words=" + req.getContextKeysList() + ")");
         if (req.getContextKeysCount() > 0) {
+          logger.info("Targeted ad request received for " + req.getContextKeysList());
           for (int i = 0; i < req.getContextKeysCount(); i++) {
             Collection<Ad> ads = service.getAdsByCategory(req.getContextKeys(i));
             allAds.addAll(ads);
@@ -169,6 +169,7 @@ public final class AdService {
           adRequestType = AdRequestType.TARGETED;
           adResponseType = AdResponseType.TARGETED;
         } else {
+          logger.info("Non-targeted ad request received, preparing random response.");
           allAds = service.getRandomAds();
           adRequestType = AdRequestType.NOT_TARGETED;
           adResponseType = AdResponseType.RANDOM;
@@ -314,7 +315,7 @@ public final class AdService {
   /** Main launches the server from the command line. */
   public static void main(String[] args) throws IOException, InterruptedException {
     // Start the RPC server. You shouldn't see any output from gRPC before this.
-    logger.info("AdService starting.");
+    logger.info("Ad service starting.");
     final AdService service = AdService.getInstance();
     service.start();
     service.blockUntilShutdown();
