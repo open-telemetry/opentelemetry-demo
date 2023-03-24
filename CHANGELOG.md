@@ -21,6 +21,8 @@ release.
   ([#797](https://github.com/open-telemetry/opentelemetry-demo/pull/797))
 * Fixed shipping update in the frontend UI when number of products in cart changes
   ([#799](https://github.com/open-telemetry/opentelemetry-demo/pull/799))
+* [featureflag] fix root path
+  ([#808](https://github.com/open-telemetry/opentelemetry-demo/pull/799))
 
 ## v0.1.0
 
