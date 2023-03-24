@@ -11,6 +11,8 @@ release.
   ([#779](https://github.com/open-telemetry/opentelemetry-demo/pull/779))
 * spanmetrics dashboard service&operation rates & latencies
   ([#787](https://github.com/open-telemetry/opentelemetry-demo/pull/787))
+* Adds Kubernetes manifests for the demo
+  ([#791](https://github.com/open-telemetry/opentelemetry-demo/pull/791))
 * [bug] fixing quoteservice metrics exporting (PHP)
   ([#793](https://github.com/open-telemetry/opentelemetry-demo/pull/793))
 * Added app.session.id attribute to frontend spans
