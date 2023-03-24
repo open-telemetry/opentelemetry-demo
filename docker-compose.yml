@@ -238,7 +238,6 @@ services:
       - OTEL_EXPORTER_OTLP_TRACES_PROTOCOL=grpc
       - OTEL_SERVICE_NAME=featureflagservice
       - DATABASE_URL=ecto://ffs:ffs@ffs_postgres:5432/ffs
-      - FEATURE_FLAG_SERVICE_PATH_ROOT="/feature"
     healthcheck:
       test: ["CMD", "curl", "-H", "baggage: synthetic_request=true", "-f", "http://localhost:${FEATURE_FLAG_SERVICE_PORT}"]
     depends_on:
