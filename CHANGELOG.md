@@ -23,6 +23,8 @@ release.
   ([#797](https://github.com/open-telemetry/opentelemetry-demo/pull/797))
 * Fixed shipping update in the frontend UI when number of products in cart changes
   ([#799](https://github.com/open-telemetry/opentelemetry-demo/pull/799))
+* Update frontend JavaScript SDKs to: 1.10.1/0.36.x
+  ([#805](https://github.com/open-telemetry/opentelemetry-demo/pull/805))
 
 ## v0.1.0
 
