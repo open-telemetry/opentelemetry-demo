@@ -67,7 +67,9 @@ const InstrumentationMiddleware = (handler: NextApiHandler): NextApiHandler => {
     } finally {
       requestCounter.add(1, { method, target, status: httpStatus });
       span.setAttribute(SemanticAttributes.HTTP_STATUS_CODE, httpStatus);
-      span.end();
+      if (baggage?.getEntry('synthetic_request')?.value == 'true') {
+        span.end();
+      }
     }
   };
 };
