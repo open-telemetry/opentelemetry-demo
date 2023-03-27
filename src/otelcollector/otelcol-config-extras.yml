@@ -1,2 +1,31 @@
 # extra settings to be merged into OpenTelemetry Collector configuration
 # do not delete this file
+
+
+exporters:
+  clickhouse:
+    endpoint: tcp://clickhouse:9000?dial_timeout=10s&compress=lz4
+    ttl_days: 3
+    traces_table_name: otel_traces
+    timeout: 5s
+    database: default
+    retry_on_failure:
+      enabled: true
+      initial_interval: 5s
+      max_interval: 30s
+      max_elapsed_time: 300s
+
+processors:
+  batch:
+    timeout: 5s
+    send_batch_size: 100000
+
+service:
+  pipelines:
+    traces:
+      receivers: [otlp]
+      processors: [spanmetrics, batch]
+      exporters: [logging, clickhouse]
+
+
+
