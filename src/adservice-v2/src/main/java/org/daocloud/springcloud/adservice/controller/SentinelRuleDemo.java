@@ -113,4 +113,9 @@ public class SentinelRuleDemo {
         rules.add(rule);
         AuthorityRuleManager.loadRules(rules);
     }
+
+    @GetMapping("/cluster-flow")
+    public String clusterFlow() {
+        return sentinelRuleDemoService.clusterFlow();
+    }
 }
