@@ -61,6 +61,7 @@ keeping it up to date for you.
 | [Coralogix](https://coralogix.com/blog/configure-otel-demo-send-telemetry-data-coralogix)                         | [Instana](https://github.com/instana/opentelemetry-demo)          | [Sumo Logic](https://www.sumologic.com/blog/common-opentelemetry-demo-application/)          |
 | [Datadog](https://github.com/DataDog/opentelemetry-demo)                                                          | [Kloudfuse](https://github.com/kloudfuse/opentelemetry-demo)      | [TelemetryHub](https://github.com/TelemetryHub/opentelemetry-demo/tree/telemetryhub-backend) |
 | [Dynatrace](https://www.dynatrace.com/news/blog/opentelemetry-demo-application-with-dynatrace/)                   | [Lightstep](https://github.com/lightstep/opentelemetry-demo)      | [Uptrace](https://github.com/uptrace/uptrace/tree/master/example/opentelemetry-demo)         |
+| [Elastic](https://github.com/elastic/opentelemetry-demo)                                                          |                                                                   |                                                                                              |
 |                                                                                                                   |                                                                   |                                                                                              |
 
 ## Contributing
