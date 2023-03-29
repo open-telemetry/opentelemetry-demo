@@ -1,2 +1,34 @@
 # extra settings to be merged into OpenTelemetry Collector configuration
 # do not delete this file
+exporters:
+  azuredataexplorer:
+    cluster_uri: #set clusterRui eg: "https://somecluster.eastus.dev.kusto.windows.net"
+    # Client Id
+    application_id: #set applicationId
+    # The client secret for the client
+    application_key: #set application key 
+    # The tenant
+    tenant_id: #set tenant id
+    # database for the logs
+    db_name: #set database name
+    metrics_table_name: "OTELMetrics"
+    logs_table_name: "OTELLogs"
+    traces_table_name: "OTELTraces"
+    # metrics_table_json_mapping: "rawmetrics_mapping"
+    # logs_table_json_mapping: "rawlogs_mapping"
+    # traces_table_json_mapping: "rawtraces_mapping"
+    # type of ingestion managed or queued
+    ingestion_type : "managed"
+  # logging:
+  #   logLevel: debug
+    
+
+service:
+  pipelines:
+    traces:
+      exporters: [azuredataexplorer]
+    metrics:
+      exporters: [azuredataexplorer, prometheus]
+    logs:
+      receivers: [otlp]
+      exporters: [ azuredataexplorer]
