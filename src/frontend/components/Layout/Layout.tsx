@@ -22,7 +22,6 @@ interface IProps {
 const Layout = ({ children }: IProps) => {
   return (
     <>
-      <PlatformFlag />
       <Header />
       <main>{children}</main>
     </>
