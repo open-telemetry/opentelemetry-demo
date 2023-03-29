@@ -24,28 +24,22 @@ const { gcpDetector } = require('@opentelemetry/resource-detector-gcp');
 const { envDetector, hostDetector, osDetector, processDetector } = require('@opentelemetry/resources');
 
 const sdk = new opentelemetry.NodeSDK({
-  traceExporter: new OTLPTraceExporter(),
-  instrumentations: [
-    getNodeAutoInstrumentations({
-      '@opentelemetry/instrumentation-fs': {
-        enabled: false,
-      },
+    traceExporter: new OTLPTraceExporter(),
+    instrumentations: [getNodeAutoInstrumentations()],
+    metricReader: new PeriodicExportingMetricReader({
+        exporter: new OTLPMetricExporter(),
     }),
-  ],
-  metricReader: new PeriodicExportingMetricReader({
-    exporter: new OTLPMetricExporter(),
-  }),
-  resourceDetectors: [
-    containerDetector,
-    envDetector,
-    hostDetector,
-    osDetector,
-    processDetector,
-    alibabaCloudEcsDetector,
-    awsEksDetector,
-    awsEc2Detector,
-    gcpDetector,
-  ],
+    resourceDetectors: [
+        containerDetector,
+        envDetector,
+        hostDetector,
+        osDetector,
+        processDetector,
+        alibabaCloudEcsDetector,
+        awsEksDetector,
+        awsEc2Detector,
+        gcpDetector,
+    ],
 });
 
 sdk.start();

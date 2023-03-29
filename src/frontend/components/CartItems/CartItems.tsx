@@ -36,7 +36,9 @@ const CartItems = ({ productList, shouldShowPrice = true }: IProps) => {
     country: 'United States',
     zipCode: '94043',
   };
-  const { data: shippingConst = { units: 0, currencyCode: 'USD', nanos: 0 } } = useQuery('shipping', () =>
+
+  const { data: shippingConst = { units: 0, currencyCode: 'USD', nanos: 0 } } = useQuery(['shipping',
+      productList, selectedCurrency, address], () =>
     ApiGateway.getShippingCost(productList, selectedCurrency, address)
   );
 
