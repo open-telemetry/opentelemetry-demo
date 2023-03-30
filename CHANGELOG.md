@@ -27,6 +27,8 @@ release.
   ([#805](https://github.com/open-telemetry/opentelemetry-demo/pull/805))
 * Fix http.status_code on error in frontend
   ([#810](https://github.com/open-telemetry/opentelemetry-demo/pull/810))
+* Fix bug in shipping calculation
+  ([#814](https://github.com/open-telemetry/opentelemetry-demo/pull/814))
 
 ## v0.1.0
 
