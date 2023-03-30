@@ -31,6 +31,8 @@ release.
   ([#814](https://github.com/open-telemetry/opentelemetry-demo/pull/814))
 * Reduce Kafka mem allocation
   ([#798](https://github.com/open-telemetry/opentelemetry-demo/pull/798))
+* Fix email service memory leak
+  ([#820](https://github.com/open-telemetry/opentelemetry-demo/pull/820))
 
 ## v0.1.0
 
