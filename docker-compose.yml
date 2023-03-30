@@ -550,7 +550,7 @@ services:
     deploy:
       resources:
         limits:
-          memory: 750M
+          memory: 500M
     restart: unless-stopped
     environment:
       - KAFKA_ADVERTISED_LISTENERS=PLAINTEXT://kafka:9092
@@ -558,7 +558,7 @@ services:
       - OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE
       - OTEL_RESOURCE_ATTRIBUTES
       - OTEL_SERVICE_NAME=kafka
-      - KAFKA_HEAP_OPTS=-Xmx400m -Xms400m
+      - KAFKA_HEAP_OPTS=-Xmx200m -Xms200m
     healthcheck:
       test: nc -z kafka 9092
       start_period: 10s
