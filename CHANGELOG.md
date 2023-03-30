@@ -29,6 +29,8 @@ release.
   ([#810](https://github.com/open-telemetry/opentelemetry-demo/pull/810))
 * Fix bug in shipping calculation
   ([#814](https://github.com/open-telemetry/opentelemetry-demo/pull/814))
+* Reduce Kafka mem allocation
+  ([#798](https://github.com/open-telemetry/opentelemetry-demo/pull/798))
 
 ## v0.1.0
 
