@@ -17,7 +17,6 @@
 import json
 import random
 import uuid
-import gc
 from locust import HttpUser, task, between
 
 from opentelemetry import context, baggage, trace
@@ -26,11 +25,6 @@ from opentelemetry.sdk.trace.export import BatchSpanProcessor
 from opentelemetry.exporter.otlp.proto.http.trace_exporter import OTLPSpanExporter
 from opentelemetry.instrumentation.requests import RequestsInstrumentor
 from opentelemetry.instrumentation.urllib3 import URLLib3Instrumentor
-
-# Enable the garbage collector
-gc.enable()
-
-## Create TracerProvider
 
 tracer_provider = TracerProvider()
 trace.set_tracer_provider(tracer_provider)
@@ -65,7 +59,6 @@ products = [
 
 people_file = open('people.json')
 people = json.load(people_file)
-
 
 class WebsiteUser(HttpUser):
     wait_time = between(1, 10)
