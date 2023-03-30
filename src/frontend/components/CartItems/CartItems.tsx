@@ -50,7 +50,7 @@ const CartItems = ({ productList, shouldShowPrice = true }: IProps) => {
 
     const unitSum =
       productList.reduce((acc, { product: { priceUsd: { units = 0 } = {} } }) => acc + Number(units), 0) +
-        shippingConst?.units || 0 + nanoExceed;
+        (shippingConst?.units || 0) + nanoExceed;
 
     return {
       units: unitSum,
