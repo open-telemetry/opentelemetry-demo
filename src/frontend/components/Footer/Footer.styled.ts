@@ -15,6 +15,7 @@
 import styled from 'styled-components';
 
 export const Footer = styled.footer`
+  position: relative;
   padding: 65px 9%;
   background-color: ${({ theme }) => theme.colors.otelGray};
 
