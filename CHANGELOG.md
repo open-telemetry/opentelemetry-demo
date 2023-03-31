@@ -31,6 +31,8 @@ release.
   ([#814](https://github.com/open-telemetry/opentelemetry-demo/pull/814))
 * Reduce Kafka mem allocation
   ([#798](https://github.com/open-telemetry/opentelemetry-demo/pull/798))
+* Updated frontend web tracer to us batch processor
+  ([#819](https://github.com/open-telemetry/opentelemetry-demo/pull/819))
 
 ## v0.1.0
 
