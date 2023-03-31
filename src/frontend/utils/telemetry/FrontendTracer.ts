@@ -14,7 +14,7 @@
 
 import { CompositePropagator, W3CBaggagePropagator, W3CTraceContextPropagator } from '@opentelemetry/core';
 import { WebTracerProvider } from '@opentelemetry/sdk-trace-web';
-import { SimpleSpanProcessor } from '@opentelemetry/sdk-trace-base';
+import { BatchSpanProcessor } from '@opentelemetry/sdk-trace-base';
 import { registerInstrumentations } from '@opentelemetry/instrumentation';
 import { getWebAutoInstrumentations } from '@opentelemetry/auto-instrumentations-web';
 import { Resource, detectResources, browserDetector } from '@opentelemetry/resources';
@@ -41,7 +41,7 @@ const FrontendTracer = async (collectorString: string) => {
   provider.addSpanProcessor(new SessionIdProcessor());
 
   provider.addSpanProcessor(
-    new SimpleSpanProcessor(
+    new BatchSpanProcessor(
       new OTLPTraceExporter({
         url: NEXT_PUBLIC_OTEL_EXPORTER_OTLP_TRACES_ENDPOINT || collectorString || 'http://localhost:4318/v1/traces',
       })
