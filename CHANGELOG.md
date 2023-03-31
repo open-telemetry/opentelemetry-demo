@@ -31,6 +31,8 @@ release.
   ([#814](https://github.com/open-telemetry/opentelemetry-demo/pull/814))
 * Reduce Kafka mem allocation
   ([#798](https://github.com/open-telemetry/opentelemetry-demo/pull/798))
+* Update OTel Collector
+  ([#822](https://github.com/open-telemetry/opentelemetry-demo/pull/822))
 
 ## v0.1.0
 
