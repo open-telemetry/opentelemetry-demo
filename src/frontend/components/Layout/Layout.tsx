@@ -13,7 +13,6 @@
 // limitations under the License.
 
 import Header from '../Header';
-import PlatformFlag from '../PlatformFlag';
 
 interface IProps {
   children: React.ReactNode;
