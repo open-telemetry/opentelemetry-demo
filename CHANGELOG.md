@@ -35,6 +35,8 @@ release.
   ([#819](https://github.com/open-telemetry/opentelemetry-demo/pull/819))
 * Moved env platform flag to the footer, changed it to free text
   ([#818](https://github.com/open-telemetry/opentelemetry-demo/pull/818))
+* Update OTel Collector
+  ([#822](https://github.com/open-telemetry/opentelemetry-demo/pull/822))
 
 ## v0.1.0
 
