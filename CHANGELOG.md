@@ -33,6 +33,8 @@ release.
   ([#798](https://github.com/open-telemetry/opentelemetry-demo/pull/798))
 * Updated frontend web tracer to us batch processor
   ([#819](https://github.com/open-telemetry/opentelemetry-demo/pull/819))
+* Moved env platform flag to the footer, changed it to free text
+  ([#818](https://github.com/open-telemetry/opentelemetry-demo/pull/818))
 
 ## v0.1.0
 
