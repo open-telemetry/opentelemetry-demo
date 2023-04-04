@@ -299,3 +299,5 @@ significant modifications will be credited to OpenTelemetry Authors.
   ([#764](https://github.com/open-telemetry/opentelemetry-demo/pull/764))
 * [chore] align memory limits with Helm chart
   ([#781](https://github.com/open-telemetry/opentelemetry-demo/pull/781))
+* Use an async PHP runtime, bump versions to latest betas
+  ([#823](https://github.com/open-telemetry/opentelemetry-demo/pull/823))
