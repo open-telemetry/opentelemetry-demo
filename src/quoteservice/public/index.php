@@ -20,7 +20,11 @@ use DI\ContainerBuilder;
 use Monolog\Handler\StreamHandler;
 use Monolog\Logger;
 use OpenTelemetry\API\Common\Log\LoggerHolder;
+use Psr\Http\Message\ServerRequestInterface;
 use Psr\Log\LogLevel;
+use React\EventLoop\Loop;
+use React\Http\HttpServer;
+use React\Socket\SocketServer;
 use Slim\Factory\AppFactory;
 
 require __DIR__ . '/../vendor/autoload.php';
@@ -59,6 +63,26 @@ $app->addBodyParsingMiddleware();
 
 // Add Error Middleware
 $errorMiddleware = $app->addErrorMiddleware(true, true, true);
+Loop::get()->addSignal(SIGTERM, function() {
+    exit;
+});
 
-// Run App
-$app->run();
+$server = new HttpServer(function (ServerRequestInterface $request) use ($app) {
+    $response = $app->handle($request);
+    echo sprintf('[%s] "%s %s HTTP/%s" %d %d %s',
+        date('Y-m-d H:i:sP'),
+        $request->getMethod(),
+        $request->getUri()->getPath(),
+        $request->getProtocolVersion(),
+        $response->getStatusCode(),
+        $response->getBody()->getSize(),
+        PHP_EOL,
+    );
+
+    return $response;
+});
+$address = '0.0.0.0:' . getenv('QUOTE_SERVICE_PORT');
+$socket = new SocketServer($address);
+$server->listen($socket);
+
+echo "Listening on: {$address}" . PHP_EOL;
