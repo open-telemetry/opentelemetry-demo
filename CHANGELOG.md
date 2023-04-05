@@ -38,7 +38,7 @@ release.
 * Update OTel Collector
   ([#822](https://github.com/open-telemetry/opentelemetry-demo/pull/822))
 * Add cartServiceFailure feature flag triggering Cart Service errors
-  ([#TBD](https://github.com/open-telemetry/opentelemetry-demo/pull/TBD))
+  ([#824](https://github.com/open-telemetry/opentelemetry-demo/pull/824))
 
 ## v0.1.0
 
