@@ -57,9 +57,14 @@ install-yamllint:
 yamllint:
 	yamllint .
 
+.PHONY: checklicense
+checklicense:
+	@echo "Checking license headers..."
+	npx @kt3k/license-checker -q -i
+
 # Run all checks in order of speed / likely failure.
 .PHONY: check
-check: misspell markdownlint
+check: misspell markdownlint checklicense
 	@echo "All checks complete"
 
 # Attempt to fix issues / regenerate tables.
