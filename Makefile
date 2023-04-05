@@ -62,6 +62,11 @@ checklicense:
 	@echo "Checking license headers..."
 	npx @kt3k/license-checker -q
 
+.PHONY: addlicense
+addlicense:
+	@echo "Adding license headers..."
+	npx @kt3k/license-checker -q -i
+
 # Run all checks in order of speed / likely failure.
 .PHONY: check
 check: misspell markdownlint checklicense
