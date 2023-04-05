@@ -60,7 +60,7 @@ yamllint:
 .PHONY: checklicense
 checklicense:
 	@echo "Checking license headers..."
-	npx @kt3k/license-checker -q -i
+	npx @kt3k/license-checker -q
 
 # Run all checks in order of speed / likely failure.
 .PHONY: check
