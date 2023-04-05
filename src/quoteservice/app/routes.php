@@ -53,8 +53,7 @@ return function (App $app) {
         $span = Span::getCurrent();
         $span->addEvent('Received get quote request, processing it');
 
-        $body = $request->getBody()->getContents();
-        $jsonObject = json_decode($body, true);
+        $jsonObject = $request->getParsedBody();
 
         $data = calculateQuote($jsonObject);
 
