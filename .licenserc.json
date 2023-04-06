@@ -19,11 +19,11 @@
       "# Copyright The OpenTelemetry Authors",
       "# SPDX-License-Identifier: Apache-2.0"
     ],
-    "**/*.{ex,exs,rb,yaml,yml}": [
+    "**/*.{ex,exs,rb,yaml,yml,sh,yamllint}": [
       "# Copyright The OpenTelemetry Authors",
       "# SPDX-License-Identifier: Apache-2.0"
     ],
-    "**/Dockerfile": [
+    "**/{Dockerfile,Makefile}": [
       "# Copyright The OpenTelemetry Authors",
       "# SPDX-License-Identifier: Apache-2.0"
     ],
