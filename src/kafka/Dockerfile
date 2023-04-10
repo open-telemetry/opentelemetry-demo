@@ -1,16 +1,6 @@
 # Copyright The OpenTelemetry Authors
-#
-# Licensed under the Apache License, Version 2.0 (the "License");
-# you may not use this file except in compliance with the License.
-# You may obtain a copy of the License at
-#
-#     http://www.apache.org/licenses/LICENSE-2.0
-#
-# Unless required by applicable law or agreed to in writing, software
-# distributed under the License is distributed on an "AS IS" BASIS,
-# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-# See the License for the specific language governing permissions and
-# limitations under the License.
+# SPDX-License-Identifier: Apache-2.0
+
 
 FROM confluentinc/cp-kafka:latest-ubi8
 
@@ -32,7 +22,7 @@ ENV KAFKA_GROUP_INITIAL_REBALANCE_DELAY_MS=0
 ENV KAFKA_PROCESS_ROLES=controller,broker
 ENV KAFKA_NODE_ID=1
 ENV KAFKA_METADATA_LOG_SEGMENT_MS=15000
-ENV KAFKA_METADATA_MAX_RETENTION_MS=1200000
+ENV KAFKA_METADATA_MAX_RETENTION_MS=60000
 ENV KAFKA_METADATA_LOG_MAX_RECORD_BYTES_BETWEEN_SNAPSHOTS=2800
 ENV KAFKA_AUTO_CREATE_TOPICS_ENABLE=true
 ENV KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR=1

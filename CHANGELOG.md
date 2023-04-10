@@ -7,18 +7,36 @@ release.
 
 ## Unreleased
 
-* spanmetrics dashboard service&operation rates%latencies
-([#787](https://github.com/open-telemetry/opentelemetry-demo/pull/787))
 * [cart] use 60m TTL for cart entries in redis
-([#779](https://github.com/open-telemetry/opentelemetry-demo/pull/779))
+  ([#779](https://github.com/open-telemetry/opentelemetry-demo/pull/779))
+* spanmetrics dashboard service&operation rates & latencies
+  ([#787](https://github.com/open-telemetry/opentelemetry-demo/pull/787))
+* Adds Kubernetes manifests for the demo
+  ([#791](https://github.com/open-telemetry/opentelemetry-demo/pull/791))
 * [bug] fixing quoteservice metrics exporting (PHP)
-([#793](https://github.com/open-telemetry/opentelemetry-demo/pull/793))
+  ([#793](https://github.com/open-telemetry/opentelemetry-demo/pull/793))
 * Added app.session.id attribute to frontend spans
-([#795](https://github.com/open-telemetry/opentelemetry-demo/pull/795))
+  ([#795](https://github.com/open-telemetry/opentelemetry-demo/pull/795))
 * Add logs for Ad service and Recommendation service
-([#796](https://github.com/open-telemetry/opentelemetry-demo/pull/796))
+  ([#796](https://github.com/open-telemetry/opentelemetry-demo/pull/796))
+* Opentelemetry Collector Data Flow Dashboard
+  ([#797](https://github.com/open-telemetry/opentelemetry-demo/pull/797))
 * Fixed shipping update in the frontend UI when number of products in cart changes
-([#799](https://github.com/open-telemetry/opentelemetry-demo/pull/799))
+  ([#799](https://github.com/open-telemetry/opentelemetry-demo/pull/799))
+* Update frontend JavaScript SDKs to: 1.10.1/0.36.x
+  ([#805](https://github.com/open-telemetry/opentelemetry-demo/pull/805))
+* Fix http.status_code on error in frontend
+  ([#810](https://github.com/open-telemetry/opentelemetry-demo/pull/810))
+* Fix bug in shipping calculation
+  ([#814](https://github.com/open-telemetry/opentelemetry-demo/pull/814))
+* Reduce Kafka mem allocation
+  ([#798](https://github.com/open-telemetry/opentelemetry-demo/pull/798))
+* Updated frontend web tracer to us batch processor
+  ([#819](https://github.com/open-telemetry/opentelemetry-demo/pull/819))
+* Moved env platform flag to the footer, changed it to free text
+  ([#818](https://github.com/open-telemetry/opentelemetry-demo/pull/818))
+* Update OTel Collector
+  ([#822](https://github.com/open-telemetry/opentelemetry-demo/pull/822))
 
 ## v0.1.0
 
@@ -281,3 +299,5 @@ significant modifications will be credited to OpenTelemetry Authors.
   ([#764](https://github.com/open-telemetry/opentelemetry-demo/pull/764))
 * [chore] align memory limits with Helm chart
   ([#781](https://github.com/open-telemetry/opentelemetry-demo/pull/781))
+* Use an async PHP runtime, bump versions to latest betas
+  ([#823](https://github.com/open-telemetry/opentelemetry-demo/pull/823))
