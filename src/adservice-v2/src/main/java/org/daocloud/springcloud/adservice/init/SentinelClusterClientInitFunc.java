@@ -12,37 +12,36 @@ import com.alibaba.csp.sentinel.slots.block.flow.FlowRuleManager;
 import com.alibaba.csp.sentinel.slots.block.flow.param.ParamFlowRule;
 import com.alibaba.csp.sentinel.slots.block.flow.param.ParamFlowRuleManager;
 import com.alibaba.csp.sentinel.transport.config.TransportConfig;
-import com.alibaba.csp.sentinel.util.AppNameUtil;
 import com.alibaba.csp.sentinel.util.HostNameUtil;
 import com.alibaba.csp.sentinel.util.StringUtil;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.TypeReference;
-import org.daocloud.springcloud.adservice.consts.SentinelConst;
+import com.alibaba.nacos.api.PropertyKeyConst;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.daocloud.springcloud.adservice.dto.ClusterGroupDto;
+import org.daocloud.springcloud.adservice.service.AdServiceGrpcService;
 
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.Properties;
+
+import static org.daocloud.springcloud.adservice.consts.SentinelConst.*;
 
 public class SentinelClusterClientInitFunc implements InitFunc {
-
-    private static final String APP_NAME = AppNameUtil.getAppName();
+    private static final Logger logger = LogManager.getLogger(AdServiceGrpcService.class);
 
     private String nacosAddress;
-    private final String groupId = "SENTINEL_GROUP";
-
-    private final String flowDataId = APP_NAME + SentinelConst.FLOW_POSTFIX;
-    private final String paramDataId = APP_NAME + SentinelConst.PARAM_FLOW_POSTFIX;
-    private final String clusterClientConfig = APP_NAME + SentinelConst.CLUSTER_CLIENT_POSTFIX;
-    private final String clusterMapDataId = APP_NAME + SentinelConst.CLUSTER_MAP_POSTFIX;
+    private Properties properties = new Properties();
+    private String groupId;
+    private String dataId;
 
     @Override
     public void init() throws Exception {
-        nacosAddress = System.getProperty("spring.cloud.nacos.config.server-addr");
-        if (StringUtil.isBlank(nacosAddress)){
-            throw new RuntimeException("nacos address start param must be set");
-        }
-        System.out.printf("nacos address: %s\n", nacosAddress);
+        getNacosAddr();
+
+        parseAppName();
 
         initDynamicRuleProperty();
 
@@ -53,19 +52,43 @@ public class SentinelClusterClientInitFunc implements InitFunc {
         initStateProperty();
     }
 
+    private void getNacosAddr() {
+        nacosAddress = System.getProperty("spring.cloud.nacos.config.server-addr");
+        if (StringUtil.isBlank(nacosAddress)){
+            throw new RuntimeException("nacos address start param must be set");
+        }
+        logger.info("nacos address: %s\n", nacosAddress);
+    }
+
+    private void parseAppName() {
+        String[] apps = APPNAME.split("@@");
+        logger.info("app name: %s\n", APPNAME);
+        if (apps.length != 3) {
+            throw new RuntimeException("app name format must be set like this: {{namespaceId}}@@{{groupName}}@@{{appName}}");
+        } else if (StringUtil.isBlank(apps[1])){
+            throw new RuntimeException("group name cannot be empty");
+        }
+        properties.put(PropertyKeyConst.NAMESPACE, apps[0]);
+        properties.put(PropertyKeyConst.SERVER_ADDR, nacosAddress);
+        properties.put(PropertyKeyConst.USERNAME, DEFAULT_NACOS_USERNAME);
+        properties.put(PropertyKeyConst.PASSWORD, DEFAULT_NACOS_PASSWORD);
+        groupId = apps[1];
+        dataId = apps[2];
+    }
+
     private void initDynamicRuleProperty() {
-        ReadableDataSource<String, List<FlowRule>> ruleSource = new NacosDataSource<>(nacosAddress, groupId,
-            flowDataId, source -> JSON.parseObject(source, new TypeReference<List<FlowRule>>() {}));
+        ReadableDataSource<String, List<FlowRule>> ruleSource = new NacosDataSource<>(properties, groupId,
+            dataId + FLOW_POSTFIX, source -> JSON.parseObject(source, new TypeReference<List<FlowRule>>() {}));
         FlowRuleManager.register2Property(ruleSource.getProperty());
 
         ReadableDataSource<String, List<ParamFlowRule>> paramRuleSource = new NacosDataSource<>(nacosAddress, groupId,
-            paramDataId, source -> JSON.parseObject(source, new TypeReference<List<ParamFlowRule>>() {}));
+                dataId +  PARAM_FLOW_POSTFIX, source -> JSON.parseObject(source, new TypeReference<List<ParamFlowRule>>() {}));
         ParamFlowRuleManager.register2Property(paramRuleSource.getProperty());
     }
 
     private void initClientConfigProperty() {
         ReadableDataSource<String, ClusterClientConfig> clientConfigDs = new NacosDataSource<>(nacosAddress, groupId,
-            clusterClientConfig, source -> JSON.parseObject(source, new TypeReference<ClusterClientConfig>() {}));
+                dataId + CLUSTER_CLIENT_POSTFIX, source -> JSON.parseObject(source, new TypeReference<ClusterClientConfig>() {}));
         ClusterClientConfigManager.registerClientConfigProperty(clientConfigDs.getProperty());
     }
 
@@ -80,7 +103,7 @@ public class SentinelClusterClientInitFunc implements InitFunc {
 //            }
 //        ]
         ReadableDataSource<String, ClusterClientAssignConfig> clientAssignDs = new NacosDataSource<>(nacosAddress, groupId,
-            clusterMapDataId, source -> {
+                dataId +  CLUSTER_MAP_POSTFIX, source -> {
             List<ClusterGroupDto> groupList = JSON.parseObject(source, new TypeReference<List<ClusterGroupDto>>() {});
             return Optional.ofNullable(groupList)
                 .flatMap(this::extractClientAssignment)
@@ -91,7 +114,7 @@ public class SentinelClusterClientInitFunc implements InitFunc {
 
     private void initStateProperty() {
         ReadableDataSource<String, Integer> clusterModeDs = new NacosDataSource<>(nacosAddress, groupId,
-            clusterMapDataId, source -> {
+                dataId + CLUSTER_MAP_POSTFIX, source -> {
             List<ClusterGroupDto> groupList = JSON.parseObject(source, new TypeReference<List<ClusterGroupDto>>() {});
             return Optional.ofNullable(groupList)
                 .map(this::extractMode)
