@@ -113,7 +113,7 @@
           },
           "editorMode": "code",
           "exemplar": false,
-          "expr": "topk(7,histogram_quantile(0.50, sum(rate(latency_bucket{service_name=~\"$service\", operation=~\"$operation\"}[$__rate_interval])) by (le,service_name)))",
+          "expr": "topk(7,histogram_quantile(0.50, sum(rate(duration_bucket{service_name=~\"$service\", span_name=~\"$span_name\"}[$__rate_interval])) by (le,service_name)))",
           "format": "time_series",
           "hide": true,
           "instant": false,
@@ -129,7 +129,7 @@
           },
           "editorMode": "code",
           "exemplar": false,
-          "expr": "topk(7,histogram_quantile(0.95, sum(rate(latency_bucket{service_name=~\"$service\", operation=~\"$operation\"}[$__range])) by (le,service_name)))",
+          "expr": "topk(7,histogram_quantile(0.95, sum(rate(duration_bucket{service_name=~\"$service\", span_name=~\"$span_name\"}[$__range])) by (le,service_name)))",
           "hide": false,
           "instant": true,
           "interval": "",
@@ -144,7 +144,7 @@
           },
           "editorMode": "code",
           "exemplar": false,
-          "expr": "histogram_quantile(0.99, sum(rate(latency_bucket{service_name=~\"$service\", operation=~\"$operation\"}[$__rate_interval])) by (le,service_name))",
+          "expr": "histogram_quantile(0.99, sum(rate(duration_bucket{service_name=~\"$service\", span_name=~\"$span_name\"}[$__rate_interval])) by (le,service_name))",
           "hide": true,
           "interval": "",
           "legendFormat": "quantile99",
@@ -158,7 +158,7 @@
           },
           "editorMode": "code",
           "exemplar": false,
-          "expr": "histogram_quantile(0.999, sum(rate(latency_bucket{service_name=~\"$service\", operation=~\"$operation\"}[$__rate_interval])) by (le,service_name))",
+          "expr": "histogram_quantile(0.999, sum(rate(duration_bucket{service_name=~\"$service\", span_name=~\"$span_name\"}[$__rate_interval])) by (le,service_name))",
           "hide": true,
           "interval": "",
           "legendFormat": "quantile999",
@@ -238,7 +238,7 @@
           },
           "editorMode": "code",
           "exemplar": false,
-          "expr": "topk(7,sum by (service_name) (rate( calls_total{service_name=~\"$service\", operation=~\"$operation\"}[$__range])))",
+          "expr": "topk(7,sum by (service_name) (rate(calls{service_name=~\"$service\", span_name=~\"$span_name\"}[$__range])))",
           "format": "time_series",
           "instant": true,
           "interval": "",
@@ -316,7 +316,7 @@
           },
           "editorMode": "code",
           "exemplar": false,
-          "expr": "topk(7,sum(rate( calls_total{status_code=\"STATUS_CODE_ERROR\",service_name=~\"$service\", operation=~\"$operation\"}[$__range])) by (service_name))",
+          "expr": "topk(7,sum(rate(calls{status_code=\"STATUS_CODE_ERROR\",service_name=~\"$service\", span_name=~\"$span_name\"}[$__range])) by (service_name))",
           "instant": true,
           "interval": "",
           "legendFormat": "{{service_name}}",
@@ -351,7 +351,7 @@
           "refId": "A"
         }
       ],
-      "title": "Operations Level - Throughput",
+      "title": "span_names Level - Throughput",
       "type": "row"
     },
     {
@@ -489,7 +489,7 @@
             "uid": "webstore-metrics"
           },
           "exemplar": false,
-          "expr": "topk(7, sum(rate(calls_total{service_name=~\"$service\", operation=~\"$operation\"}[$__range])) by (operation,service_name)) ",
+          "expr": "topk(7, sum(rate(calls{service_name=~\"$service\", span_name=~\"$span_name\"}[$__range])) by (span_name,service_name)) ",
           "format": "table",
           "instant": true,
           "interval": "",
@@ -502,7 +502,7 @@
             "uid": "webstore-metrics"
           },
           "exemplar": false,
-          "expr": "topk(7, sum(rate(calls_total{status_code=\"STATUS_CODE_ERROR\",service_name=~\"$service\", operation=~\"$operation\"}[$__range])) by (operation,service_name))",
+          "expr": "topk(7, sum(rate(calls{status_code=\"STATUS_CODE_ERROR\",service_name=~\"$service\", span_name=~\"$span_name\"}[$__range])) by (span_name,service_name))",
           "format": "table",
           "hide": false,
           "instant": true,
@@ -511,12 +511,12 @@
           "refId": "Error Rate"
         }
       ],
-      "title": "Top 7 Operations and Errors  (APM Table)",
+      "title": "Top 7 span_names and Errors  (APM Table)",
       "transformations": [
         {
           "id": "seriesToColumns",
           "options": {
-            "byField": "operation"
+            "byField": "span_name"
           }
         },
         {
@@ -576,13 +576,13 @@
               "Rate in Service": 5,
               "bRate": 2,
               "eRate": 3,
-              "operation": 0
+              "span_name": 0
             },
             "renameByName": {
               "Rate in Service": "Service",
               "bRate": "Rate",
               "eRate": "Error Rate",
-              "operation": "Operation Name"
+              "span_name": "span_name Name"
             }
           }
         },
@@ -624,7 +624,7 @@
           "refId": "A"
         }
       ],
-      "title": "Operation Level - Latencies",
+      "title": "span_name Level - Latencies",
       "type": "row"
     },
     {
@@ -696,7 +696,7 @@
           },
           "editorMode": "code",
           "exemplar": false,
-          "expr": "topk(7,histogram_quantile(0.50, sum(rate(latency_bucket{service_name=~\"$service\", operation=~\"$operation\"}[$__rate_interval])) by (le,service_name)))",
+          "expr": "topk(7,histogram_quantile(0.50, sum(rate(duration_bucket{service_name=~\"$service\", span_name=~\"$span_name\"}[$__rate_interval])) by (le,service_name)))",
           "format": "time_series",
           "hide": true,
           "instant": false,
@@ -712,11 +712,11 @@
           },
           "editorMode": "code",
           "exemplar": false,
-          "expr": "topk(7,histogram_quantile(0.95, sum(rate(latency_bucket{service_name=~\"$service\", operation=~\"$operation\"}[$__range])) by (le,operation)))",
+          "expr": "topk(7,histogram_quantile(0.95, sum(rate(duration_bucket{service_name=~\"$service\", span_name=~\"$span_name\"}[$__range])) by (le,span_name)))",
           "hide": false,
           "instant": true,
           "interval": "",
-          "legendFormat": "{{operation}}",
+          "legendFormat": "{{span_name}}",
           "range": false,
           "refId": "B"
         },
@@ -727,7 +727,7 @@
           },
           "editorMode": "code",
           "exemplar": false,
-          "expr": "histogram_quantile(0.99, sum(rate(latency_bucket{service_name=~\"$service\", operation=~\"$operation\"}[$__rate_interval])) by (le,service_name))",
+          "expr": "histogram_quantile(0.99, sum(rate(duration_bucket{service_name=~\"$service\", span_name=~\"$span_name\"}[$__rate_interval])) by (le,service_name))",
           "hide": true,
           "interval": "",
           "legendFormat": "quantile99",
@@ -741,7 +741,7 @@
           },
           "editorMode": "code",
           "exemplar": false,
-          "expr": "histogram_quantile(0.999, sum(rate(latency_bucket{service_name=~\"$service\", operation=~\"$operation\"}[$__rate_interval])) by (le,service_name))",
+          "expr": "histogram_quantile(0.999, sum(rate(duration_bucket{service_name=~\"$service\", span_name=~\"$span_name\"}[$__rate_interval])) by (le,service_name))",
           "hide": true,
           "interval": "",
           "legendFormat": "quantile999",
@@ -749,7 +749,7 @@
           "refId": "D"
         }
       ],
-      "title": "Top 3x3 - Operation Latency - quantile95",
+      "title": "Top 3x3 - span_name Latency - quantile95",
       "type": "gauge"
     },
     {
@@ -812,10 +812,10 @@
           },
           "editorMode": "code",
           "exemplar": false,
-          "expr": "topk(7, sum by (operation,service_name)(increase(latency_sum{service_name=~\"${service}\", operation=~\"$operation\"}[5m]) / increase(latency_count{service_name=~\"${service}\",operation=~\"$operation\"}[5m\n])))",
+          "expr": "topk(7, sum by (span_name,service_name)(increase(duration_sum{service_name=~\"${service}\", span_name=~\"$span_name\"}[5m]) / increase(duration_count{service_name=~\"${service}\",span_name=~\"$span_name\"}[5m\n])))",
           "instant": true,
           "interval": "",
-          "legendFormat": "{{operation}} [{{service_name}}]",
+          "legendFormat": "{{span_name}} [{{service_name}}]",
           "range": false,
           "refId": "A"
         }
@@ -916,10 +916,10 @@
           },
           "editorMode": "code",
           "exemplar": true,
-          "expr": "topk(7,sum by (operation,service_name)(increase(latency_sum{service_name=~\"$service\", operation=~\"$operation\"}[$__rate_interval]) / increase(latency_count{service_name=~\"$service\", operation=~\"$operation\"}[$__rate_interval])))",
+          "expr": "topk(7,sum by (span_name,service_name)(increase(duration_sum{service_name=~\"$service\", span_name=~\"$span_name\"}[$__rate_interval]) / increase(duration_count{service_name=~\"$service\", span_name=~\"$span_name\"}[$__rate_interval])))",
           "instant": false,
           "interval": "",
-          "legendFormat": "[{{service_name}}]  {{operation}}",
+          "legendFormat": "[{{service_name}}]  {{span_name}}",
           "range": true,
           "refId": "A"
         }
@@ -945,14 +945,14 @@
           "type": "prometheus",
           "uid": "webstore-metrics"
         },
-        "definition": "query_result(count by (service_name)(count_over_time(calls_total[$__range])))",
+        "definition": "query_result(count by (service_name)(count_over_time(calls[$__range])))",
         "hide": 0,
         "includeAll": true,
         "multi": true,
         "name": "service",
         "options": [],
         "query": {
-          "query": "query_result(count by (service_name)(count_over_time(calls_total[$__range])))",
+          "query": "query_result(count by (service_name)(count_over_time(calls[$__range])))",
           "refId": "StandardVariableQuery"
         },
         "refresh": 2,
@@ -972,18 +972,18 @@
           "type": "prometheus",
           "uid": "webstore-metrics"
         },
-        "definition": "query_result(sum ({__name__=~\".*calls_total\",service_name=~\"$service\"})  by (operation))",
+        "definition": "query_result(sum ({__name__=~\".*calls\",service_name=~\"$service\"})  by (span_name))",
         "hide": 0,
         "includeAll": true,
         "multi": true,
-        "name": "operation",
+        "name": "span_name",
         "options": [],
         "query": {
-          "query": "query_result(sum ({__name__=~\".*calls_total\",service_name=~\"$service\"})  by (operation))",
+          "query": "query_result(sum ({__name__=~\".*calls\",service_name=~\"$service\"})  by (span_name))",
           "refId": "StandardVariableQuery"
         },
         "refresh": 2,
-        "regex": "/.*operation=\"(.*)\".*/",
+        "regex": "/.*span_name=\"(.*)\".*/",
         "skipUrlSync": false,
         "sort": 0,
         "type": "query"
