@@ -601,12 +601,12 @@ services:
 
   # Grafana
   grafana:
-    image: grafana/grafana:9.1.0
+    image: grafana/grafana:9.4.7
     container_name: grafana
     deploy:
       resources:
         limits:
-          memory: 75M
+          memory: 100M
     volumes:
       - ./src/grafana/grafana.ini:/etc/grafana/grafana.ini
       - ./src/grafana/provisioning/:/etc/grafana/provisioning/
