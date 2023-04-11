@@ -16,3 +16,25 @@
 #    pipelines:
 #      traces:
 #        exporters: [spanmetrics, otlphttp/example]
+
+exporters:
+  otlp/elastic:
+    # !!! Elastic APM https endpoint WITHOUT the "https://" prefix
+    endpoint: "YOUR_APM_ENDPOINT_WITHOUT_HTTPS_PREFIX"
+    headers:
+      Authorization: "Bearer YOUR_APM_SECRET_TOKEN"
+
+service:
+  pipelines:
+    traces:
+      receivers: [otlp]
+      processors: [batch]
+      exporters: [spanmetrics, otlp/elastic]
+    metrics:
+      receivers: [otlp]
+      processors: [filter, transform, batch]
+      exporters: [otlp/elastic]
+    logs:
+      receivers: [otlp]
+      processors: [batch]
+      exporters: [otlp/elastic]

@@ -1,0 +1,51 @@
+opentelemetry-collector:
+  extraEnvs:
+    - name: ELASTIC_APM_ENDPOINT
+      valueFrom:
+        secretKeyRef:
+          name: elastic-secret
+          key: elastic_apm_endpoint
+    - name: ELASTIC_APM_SECRET_TOKEN
+      valueFrom:
+        secretKeyRef:
+          name: elastic-secret
+          key: elastic_apm_secret_token
+  config:
+    exporters:
+      otlp/elastic:
+        endpoint: ${ELASTIC_APM_ENDPOINT}
+        headers:
+          Authorization: Bearer ${ELASTIC_APM_SECRET_TOKEN}
+    receivers:
+      otlp:
+        protocols:
+          grpc:
+            endpoint: ${MY_POD_IP}:4317
+          http:
+            cors:
+              allowed_origins:
+              - http://*
+              - https://*
+            endpoint: ${MY_POD_IP}:4318
+    service:
+      pipelines:
+        traces:
+          receivers: [otlp]
+          processors: [batch]
+          exporters: [otlp/elastic]
+        metrics:
+          receivers: [otlp]
+          processors: [batch]
+          exporters: [otlp/elastic]
+        logs:
+          receivers: [otlp]
+          processors: [batch]
+          exporters: [otlp/elastic]
+grafana:
+  enabled: false
+
+jaeger:
+  enabled: false
+
+prometheus:
+  enabled: false
