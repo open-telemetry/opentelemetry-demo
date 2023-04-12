@@ -1,4 +1,4 @@
-package hipstershop;
+package oteldemo;
 
 import static io.grpc.MethodDescriptor.generateFullMethodName;
 
@@ -12,32 +12,32 @@ public final class AdServiceGrpc {
 
   private AdServiceGrpc() {}
 
-  public static final String SERVICE_NAME = "hipstershop.AdService";
+  public static final String SERVICE_NAME = "oteldemo.AdService";
 
   // Static method descriptors that strictly reflect the proto.
-  private static volatile io.grpc.MethodDescriptor<hipstershop.Demo.AdRequest,
-      hipstershop.Demo.AdResponse> getGetAdsMethod;
+  private static volatile io.grpc.MethodDescriptor<oteldemo.Demo.AdRequest,
+      oteldemo.Demo.AdResponse> getGetAdsMethod;
 
   @io.grpc.stub.annotations.RpcMethod(
       fullMethodName = SERVICE_NAME + '/' + "GetAds",
-      requestType = hipstershop.Demo.AdRequest.class,
-      responseType = hipstershop.Demo.AdResponse.class,
+      requestType = oteldemo.Demo.AdRequest.class,
+      responseType = oteldemo.Demo.AdResponse.class,
       methodType = io.grpc.MethodDescriptor.MethodType.UNARY)
-  public static io.grpc.MethodDescriptor<hipstershop.Demo.AdRequest,
-      hipstershop.Demo.AdResponse> getGetAdsMethod() {
-    io.grpc.MethodDescriptor<hipstershop.Demo.AdRequest, hipstershop.Demo.AdResponse> getGetAdsMethod;
+  public static io.grpc.MethodDescriptor<oteldemo.Demo.AdRequest,
+      oteldemo.Demo.AdResponse> getGetAdsMethod() {
+    io.grpc.MethodDescriptor<oteldemo.Demo.AdRequest, oteldemo.Demo.AdResponse> getGetAdsMethod;
     if ((getGetAdsMethod = AdServiceGrpc.getGetAdsMethod) == null) {
       synchronized (AdServiceGrpc.class) {
         if ((getGetAdsMethod = AdServiceGrpc.getGetAdsMethod) == null) {
           AdServiceGrpc.getGetAdsMethod = getGetAdsMethod =
-              io.grpc.MethodDescriptor.<hipstershop.Demo.AdRequest, hipstershop.Demo.AdResponse>newBuilder()
+              io.grpc.MethodDescriptor.<oteldemo.Demo.AdRequest, oteldemo.Demo.AdResponse>newBuilder()
               .setType(io.grpc.MethodDescriptor.MethodType.UNARY)
               .setFullMethodName(generateFullMethodName(SERVICE_NAME, "GetAds"))
               .setSampledToLocalTracing(true)
               .setRequestMarshaller(io.grpc.protobuf.ProtoUtils.marshaller(
-                  hipstershop.Demo.AdRequest.getDefaultInstance()))
+                  oteldemo.Demo.AdRequest.getDefaultInstance()))
               .setResponseMarshaller(io.grpc.protobuf.ProtoUtils.marshaller(
-                  hipstershop.Demo.AdResponse.getDefaultInstance()))
+                  oteldemo.Demo.AdResponse.getDefaultInstance()))
               .setSchemaDescriptor(new AdServiceMethodDescriptorSupplier("GetAds"))
               .build();
         }
@@ -96,8 +96,8 @@ public final class AdServiceGrpc {
 
     /**
      */
-    public void getAds(hipstershop.Demo.AdRequest request,
-        io.grpc.stub.StreamObserver<hipstershop.Demo.AdResponse> responseObserver) {
+    public void getAds(oteldemo.Demo.AdRequest request,
+        io.grpc.stub.StreamObserver<oteldemo.Demo.AdResponse> responseObserver) {
       io.grpc.stub.ServerCalls.asyncUnimplementedUnaryCall(getGetAdsMethod(), responseObserver);
     }
 
@@ -107,8 +107,8 @@ public final class AdServiceGrpc {
             getGetAdsMethod(),
             io.grpc.stub.ServerCalls.asyncUnaryCall(
               new MethodHandlers<
-                hipstershop.Demo.AdRequest,
-                hipstershop.Demo.AdResponse>(
+                oteldemo.Demo.AdRequest,
+                oteldemo.Demo.AdResponse>(
                   this, METHODID_GET_ADS)))
           .build();
     }
@@ -130,8 +130,8 @@ public final class AdServiceGrpc {
 
     /**
      */
-    public void getAds(hipstershop.Demo.AdRequest request,
-        io.grpc.stub.StreamObserver<hipstershop.Demo.AdResponse> responseObserver) {
+    public void getAds(oteldemo.Demo.AdRequest request,
+        io.grpc.stub.StreamObserver<oteldemo.Demo.AdResponse> responseObserver) {
       io.grpc.stub.ClientCalls.asyncUnaryCall(
           getChannel().newCall(getGetAdsMethod(), getCallOptions()), request, responseObserver);
     }
@@ -153,7 +153,7 @@ public final class AdServiceGrpc {
 
     /**
      */
-    public hipstershop.Demo.AdResponse getAds(hipstershop.Demo.AdRequest request) {
+    public oteldemo.Demo.AdResponse getAds(oteldemo.Demo.AdRequest request) {
       return io.grpc.stub.ClientCalls.blockingUnaryCall(
           getChannel(), getGetAdsMethod(), getCallOptions(), request);
     }
@@ -175,8 +175,8 @@ public final class AdServiceGrpc {
 
     /**
      */
-    public com.google.common.util.concurrent.ListenableFuture<hipstershop.Demo.AdResponse> getAds(
-        hipstershop.Demo.AdRequest request) {
+    public com.google.common.util.concurrent.ListenableFuture<oteldemo.Demo.AdResponse> getAds(
+        oteldemo.Demo.AdRequest request) {
       return io.grpc.stub.ClientCalls.futureUnaryCall(
           getChannel().newCall(getGetAdsMethod(), getCallOptions()), request);
     }
@@ -202,8 +202,8 @@ public final class AdServiceGrpc {
     public void invoke(Req request, io.grpc.stub.StreamObserver<Resp> responseObserver) {
       switch (methodId) {
         case METHODID_GET_ADS:
-          serviceImpl.getAds((hipstershop.Demo.AdRequest) request,
-              (io.grpc.stub.StreamObserver<hipstershop.Demo.AdResponse>) responseObserver);
+          serviceImpl.getAds((oteldemo.Demo.AdRequest) request,
+              (io.grpc.stub.StreamObserver<oteldemo.Demo.AdResponse>) responseObserver);
           break;
         default:
           throw new AssertionError();
@@ -227,7 +227,7 @@ public final class AdServiceGrpc {
 
     @java.lang.Override
     public com.google.protobuf.Descriptors.FileDescriptor getFileDescriptor() {
-      return hipstershop.Demo.getDescriptor();
+      return oteldemo.Demo.getDescriptor();
     }
 
     @java.lang.Override

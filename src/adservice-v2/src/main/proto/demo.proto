@@ -16,9 +16,9 @@ syntax = "proto3";
 
 import "google/protobuf/timestamp.proto";
 
-package hipstershop;
+package oteldemo;
 
-option go_package = "genproto/hipstershop";
+option go_package = "genproto/oteldemo";
 
 // ------------Ad service------------------
 
@@ -42,4 +42,3 @@ message Ad {
     // short advertisement text to display.
     string text = 2;
 }
-

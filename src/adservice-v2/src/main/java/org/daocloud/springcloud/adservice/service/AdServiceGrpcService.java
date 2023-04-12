@@ -2,13 +2,8 @@ package org.daocloud.springcloud.adservice.service;
 
 import com.google.common.collect.ImmutableListMultimap;
 import com.google.common.collect.Iterables;
-import com.google.protobuf.Descriptors;
-import hipstershop.AdServiceGrpc;
-import hipstershop.Demo.Ad;
-import hipstershop.Demo.AdRequest;
-import hipstershop.Demo.AdResponse;
-import io.grpc.StatusRuntimeException;
 import io.grpc.Status;
+import io.grpc.StatusRuntimeException;
 import io.grpc.stub.StreamObserver;
 import io.opentelemetry.api.GlobalOpenTelemetry;
 import io.opentelemetry.api.common.AttributeKey;
@@ -27,6 +22,10 @@ import org.daocloud.springcloud.adservice.meter.Meter;
 import org.ejml.simple.SimpleMatrix;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import oteldemo.AdServiceGrpc;
+import oteldemo.Demo.Ad;
+import oteldemo.Demo.AdRequest;
+import oteldemo.Demo.AdResponse;
 
 import java.util.*;
 

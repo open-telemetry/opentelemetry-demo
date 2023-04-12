@@ -15,7 +15,7 @@ This repo re-implements opentelemetry-demo-webstore's adservice with nacos regis
 ## curl
 
 ```shell
-grpcurl -plaintext -d '{"context_keys": ["binoculars","telescopes"]}' localhost:8080 hipstershop.AdService/GetAds
+grpcurl -plaintext -d '{"context_keys": ["binoculars","telescopes"]}' localhost:8080 oteldemo.AdService/GetAds
 ```
 
 ## metrics
@@ -29,12 +29,12 @@ adservice-springcloud will emit two metrics:
 
 ## mock latency
 
-the `hipstershop.AdService/GetAds` API will do a matrix calculation internally, you can use  `-Dspring.matrixRow=200`
+the `oteldemo.AdService/GetAds` API will do a matrix calculation internally, you can use  `-Dspring.matrixRow=200`
 to specific the matrix size
 
 ## mock error
 
-the `hipstershop.AdService/GetAds` API will return error randomly(50%), you can use `-Dspring.randomError=false`
+the `oteldemo.AdService/GetAds` API will return error randomly(50%), you can use `-Dspring.randomError=false`
 to disable this feature.
 
 
