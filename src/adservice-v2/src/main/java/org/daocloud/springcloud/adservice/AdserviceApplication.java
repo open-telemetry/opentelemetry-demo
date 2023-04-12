@@ -25,7 +25,10 @@ public class AdserviceApplication {
 
     @PostConstruct
     public void initSentinelClusterFlow() throws Exception{
-        new SentinelClusterClientInitFunc().init();
+        String sentinel = System.getProperty("spring.cloud.sentinel.enabled");
+        if("true".equals(sentinel)){
+            new SentinelClusterClientInitFunc().init();
+        }
     }
 }
 
