@@ -41,7 +41,7 @@ jobs:
             tag_suffix: checkoutservice
             context: ./
           - file: ./src/checkoutservice-v2/Dockerfile
-            tag_suffix: checkoutservice
+            tag_suffix: checkoutservice-v2
             context: ./
           - file: ./src/currencyservice/Dockerfile
             tag_suffix: currencyservice
