@@ -406,18 +406,11 @@ func (cs *checkoutService) prepOrderItems(ctx context.Context, items []*pb.CartI
 }
 
 func (cs *checkoutService) convertCurrency(ctx context.Context, from *pb.Money, toCurrency string) (*pb.Money, error) {
-	conn, err := createClient(ctx, cs.currencySvcAddr)
-	if err != nil {
-		return nil, fmt.Errorf("could not connect currency service: %+v", err)
-	}
-	defer conn.Close()
-
-	// always USD
-	return &pb.Money{
-		CurrencyCode: from.CurrencyCode,
-		Units:        from.Units,
-		Nanos:        from.Nanos,
-	}, nil
+	//conn, err := createClient(ctx, cs.currencySvcAddr)
+	//if err != nil {
+	//	return nil, fmt.Errorf("could not connect currency service: %+v", err)
+	//}
+	//defer conn.Close()
 
 	//result, err := pb.NewCurrencyServiceClient(conn).Convert(ctx, &pb.CurrencyConversionRequest{
 	//	From:   from,
@@ -427,6 +420,12 @@ func (cs *checkoutService) convertCurrency(ctx context.Context, from *pb.Money, 
 	//}
 	//return result, err
 
+	// always USD
+	return &pb.Money{
+		CurrencyCode: toCurrency,
+		Units:        from.Units,
+		Nanos:        from.Nanos,
+	}, nil
 }
 
 func (cs *checkoutService) chargeCard(ctx context.Context, amount *pb.Money, paymentInfo *pb.CreditCardInfo) (string, error) {
