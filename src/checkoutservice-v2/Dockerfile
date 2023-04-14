@@ -15,7 +15,7 @@ RUN go install google.golang.org/grpc/cmd/protoc-gen-go-grpc@v1.2
 
 # Build executable
 RUN protoc -I ./proto/ ./proto/demo.proto --go_out=./ --go-grpc_out=./
-RUN go build -o /go/bin/checkoutservice-v2/ ./
+RUN go build -o /go/bin/checkoutservice-v2 ./
 
 # -----------------------------------------------------------------------------
 
@@ -23,7 +23,7 @@ FROM alpine
 
 WORKDIR /usr/src/app/
 
-COPY --from=builder /go/bin/checkoutservice-v2/ ./
+COPY --from=builder /go/bin/checkoutservice-v2 ./
 
 EXPOSE ${CHECKOUT_SERVICE_PORT}
 ENTRYPOINT [ "./checkoutservice-v2" ]
