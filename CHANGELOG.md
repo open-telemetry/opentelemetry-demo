@@ -21,7 +21,8 @@ release.
   ([#796](https://github.com/open-telemetry/opentelemetry-demo/pull/796))
 * Opentelemetry Collector Data Flow Dashboard
   ([#797](https://github.com/open-telemetry/opentelemetry-demo/pull/797))
-* Fixed shipping update in the frontend UI when number of products in cart changes
+* Fixed shipping update in the frontend UI when number of products in cart
+  changes
   ([#799](https://github.com/open-telemetry/opentelemetry-demo/pull/799))
 * Update frontend JavaScript SDKs to: 1.10.1/0.36.x
   ([#805](https://github.com/open-telemetry/opentelemetry-demo/pull/805))
@@ -37,7 +38,8 @@ release.
   ([#818](https://github.com/open-telemetry/opentelemetry-demo/pull/818))
 * Update OTel Collector
   ([#822](https://github.com/open-telemetry/opentelemetry-demo/pull/822))
-* Update OTel Collector to use spanmetrics connector instead of spanmetrics processors
+* Update OTel Collector to use spanmetrics connector instead of spanmetrics
+  processors
   ([#829](https://github.com/open-telemetry/opentelemetry-demo/pull/829))
 
 ## 1.3.1
@@ -48,9 +50,8 @@ release.
   ([#740](https://github.com/open-telemetry/opentelemetry-demo/pull/740))
 * Removed unnecessary code from Program.cs
   ([#754](https://github.com/open-telemetry/opentelemetry-demo/pull/754))
-* feature flag service: update the dependency
-  tls_certificate_check and bump to OTP-25
-  ([#756](https://github.com/open-telemetry/opentelemetry-demo/pull/756))
+* feature flag service: update the dependency tls_certificate_check and bump to
+  OTP-25 ([#756](https://github.com/open-telemetry/opentelemetry-demo/pull/756))
 * Bump up OTEL Java Agent version to 1.23.0
   ([#757](https://github.com/open-telemetry/opentelemetry-demo/pull/757))
 * Add counter metric to currency service (C++)
@@ -157,13 +158,20 @@ release.
 
 ## v1.0
 
-* Add component owners for adservice Java app by @trask in [519](https://github.com/open-telemetry/opentelemetry-demo/pull/519)
-* Add gradle wrapper validation by @trask in [518](https://github.com/open-telemetry/opentelemetry-demo/pull/518)
-fix currency bug by @cartersocha in [522](https://github.com/open-telemetry/opentelemetry-demo/pull/522)
-* Final Docs Review by @austinlparker in [515](https://github.com/open-telemetry/opentelemetry-demo/pull/515)
-* Front End -> Frontend by @austinlparker in [537](https://github.com/open-telemetry/opentelemetry-demo/pull/537)
-* [docs] kubernetes by @puckpuck in [521](https://github.com/open-telemetry/opentelemetry-demo/pull/521)
-* bump to v1.0 for release by @austinlparker in [538](https://github.com/open-telemetry/opentelemetry-demo/pull/538)
+* Add component owners for adservice Java app by @trask in
+  ([519](https://github.com/open-telemetry/opentelemetry-demo/pull/519))
+* Add gradle wrapper validation by @trask in
+  ([518](https://github.com/open-telemetry/opentelemetry-demo/pull/518))
+* fix currency bug by @cartersocha in
+  ([522](https://github.com/open-telemetry/opentelemetry-demo/pull/522))
+* Final Docs Review by @austinlparker in
+  ([515](https://github.com/open-telemetry/opentelemetry-demo/pull/515))
+* Front End -> Frontend by @austinlparker in
+  ([537](https://github.com/open-telemetry/opentelemetry-demo/pull/537))
+* [docs] kubernetes by @puckpuck in
+  ([521](https://github.com/open-telemetry/opentelemetry-demo/pull/521))
+* bump to v1.0 for release by @austinlparker in
+  ([538](https://github.com/open-telemetry/opentelemetry-demo/pull/538))
 
 ## v0.7.0-beta
 
