@@ -156,7 +156,7 @@ release.
 * Add basic metrics support for payment service
 ([#583](https://github.com/open-telemetry/opentelemetry-demo/pull/583))
 
-## v1.0
+## v1.0.0
 
 * Add component owners for adservice Java app by @trask in
   ([519](https://github.com/open-telemetry/opentelemetry-demo/pull/519))
