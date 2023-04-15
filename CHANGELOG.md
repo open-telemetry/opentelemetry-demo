@@ -155,6 +155,16 @@ release.
 * Add basic metrics support for payment service
 ([#583](https://github.com/open-telemetry/opentelemetry-demo/pull/583))
 
+## v1.0
+
+* Add component owners for adservice Java app by @trask in [519](https://github.com/open-telemetry/opentelemetry-demo/pull/519)
+* Add gradle wrapper validation by @trask in [518](https://github.com/open-telemetry/opentelemetry-demo/pull/518)
+fix currency bug by @cartersocha in [522](https://github.com/open-telemetry/opentelemetry-demo/pull/522)
+* Final Docs Review by @austinlparker in [515](https://github.com/open-telemetry/opentelemetry-demo/pull/515)
+* Front End -> Frontend by @austinlparker in [537](https://github.com/open-telemetry/opentelemetry-demo/pull/537)
+* [docs] kubernetes by @puckpuck in [521](https://github.com/open-telemetry/opentelemetry-demo/pull/521)
+* bump to v1.0 for release by @austinlparker in [538](https://github.com/open-telemetry/opentelemetry-demo/pull/538)
+
 ## v0.7.0-beta
 
 * Update shippingservice to add resource data to spans
