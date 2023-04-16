@@ -12,8 +12,8 @@ receivers:
 
 exporters:
   azuremonitor:
-    endpoint: "https://dc.services.visualstudio.com/v2/track"
-    instrumentation_key: "80fe2786-859b-4617-acf6-57b9e0e64392"
+    endpoint: "https://dc.services.visualstudio.com/v2/track" # Azure Monitor Default
+    instrumentation_key: "80fe2786-859b-4617-acf6-57b9e0e64392" # My App Insights 
 
 processors:
   batch:
