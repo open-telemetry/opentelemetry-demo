@@ -33,15 +33,15 @@ builder.Services.AddSingleton<ICartStore>(cartStore);
 
 // see https://opentelemetry.io/docs/instrumentation/net/getting-started/
 
-var appResourceBuilder = ResourceBuilder
-    .CreateDefault()
-    .AddTelemetrySdk()
-    .AddEnvironmentVariableDetector()
-    .AddDetector(new ContainerResourceDetector());
+Action<ResourceBuilder> appResourceBuilder =
+    resource => resource
+        .AddTelemetrySdk()
+        .AddEnvironmentVariableDetector()
+        .AddDetector(new ContainerResourceDetector());
 
 builder.Services.AddOpenTelemetry()
+    .ConfigureResource(appResourceBuilder)
     .WithTracing(builder => builder
-        .SetResourceBuilder(appResourceBuilder)
         .AddRedisInstrumentation(
             cartStore.GetConnection(),
             options => options.SetVerboseDatabaseStatements = true)
@@ -50,7 +50,6 @@ builder.Services.AddOpenTelemetry()
         .AddHttpClientInstrumentation()
         .AddOtlpExporter())
     .WithMetrics(builder => builder
-        .SetResourceBuilder(appResourceBuilder)
         .AddRuntimeInstrumentation()
         .AddAspNetCoreInstrumentation()
         .AddOtlpExporter());
