@@ -6,14 +6,12 @@ using cartservice.cartstore;
 using cartservice.services;
 
 using Microsoft.AspNetCore.Builder;
-using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
-using Microsoft.Extensions.Hosting;
 
-using OpenTelemetry.Extensions.Docker.Resources;
 using OpenTelemetry.Metrics;
+using OpenTelemetry.ResourceDetectors.Container;
 using OpenTelemetry.Resources;
 using OpenTelemetry.Trace;
 
@@ -39,7 +37,7 @@ var appResourceBuilder = ResourceBuilder
     .CreateDefault()
     .AddTelemetrySdk()
     .AddEnvironmentVariableDetector()
-    .AddDetector(new DockerResourceDetector());
+    .AddDetector(new ContainerResourceDetector());
 
 builder.Services.AddOpenTelemetry()
     .WithTracing(builder => builder
