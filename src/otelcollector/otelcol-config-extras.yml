@@ -14,7 +14,7 @@ exporters:
   azuremonitor:
     endpoint: "https://dc.services.visualstudio.com/v2/track" # Azure Monitor Default
     instrumentation_key: "80fe2786-859b-4617-acf6-57b9e0e64392" # My App Insights 
-
+    
 processors:
   batch:
 
@@ -23,4 +23,7 @@ service:
     traces:
       receivers: [otlp]
       processors: [batch]
+      exporters: [azuremonitor, spanmetrics]
+    metrics:
+      receivers: [spanmetrics]
       exporters: [azuremonitor]
