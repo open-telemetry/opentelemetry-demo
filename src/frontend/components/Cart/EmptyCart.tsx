@@ -1,3 +1,6 @@
+// Copyright The OpenTelemetry Authors
+// SPDX-License-Identifier: Apache-2.0
+
 import Link from 'next/link';
 import Button from '../Button';
 import * as S from '../../styles/Cart.styled';

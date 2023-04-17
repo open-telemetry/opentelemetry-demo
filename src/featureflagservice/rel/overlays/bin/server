@@ -1,4 +1,6 @@
 #!/bin/sh
+
+
 cd -P -- "$(dirname -- "$0")"
 
 ./featureflagservice eval Featureflagservice.Release.migrate || { echo "Database setup or migrations failed."; exit 1; }

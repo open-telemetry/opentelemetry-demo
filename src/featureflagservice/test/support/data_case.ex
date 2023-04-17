@@ -1,3 +1,7 @@
+# Copyright The OpenTelemetry Authors
+# SPDX-License-Identifier: Apache-2.0
+
+
 defmodule Featureflagservice.DataCase do
   @moduledoc """
   This module defines the setup for tests requiring

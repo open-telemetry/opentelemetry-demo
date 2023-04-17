@@ -1,17 +1,5 @@
-// Copyright 2018 Google LLC
-//
-// Licensed under the Apache License, Version 2.0 (the "License");
-// you may not use this file except in compliance with the License.
-// You may obtain a copy of the License at
-//
-//      http://www.apache.org/licenses/LICENSE-2.0
-//
-// Unless required by applicable law or agreed to in writing, software
-// distributed under the License is distributed on an "AS IS" BASIS,
-// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-// See the License for the specific language governing permissions and
-// limitations under the License.
-
+// Copyright The OpenTelemetry Authors
+// SPDX-License-Identifier: Apache-2.0
 using System;
 using System.Linq;
 using System.Threading.Tasks;
@@ -38,7 +26,7 @@ namespace cartservice.cartstore
         public RedisCartStore(string redisAddress)
         {
             // Serialize empty cart into byte array.
-            var cart = new Hipstershop.Cart();
+            var cart = new Oteldemo.Cart();
             emptyCartBytes = cart.ToByteArray();
             connectionString = $"{redisAddress},ssl=false,allowAdmin=true,abortConnect=false";
 
@@ -126,20 +114,20 @@ namespace cartservice.cartstore
                 // Access the cart from the cache
                 var value = await db.HashGetAsync(userId, CART_FIELD_NAME);
 
-                Hipstershop.Cart cart;
+                Oteldemo.Cart cart;
                 if (value.IsNull)
                 {
-                    cart = new Hipstershop.Cart();
+                    cart = new Oteldemo.Cart();
                     cart.UserId = userId;
-                    cart.Items.Add(new Hipstershop.CartItem { ProductId = productId, Quantity = quantity });
+                    cart.Items.Add(new Oteldemo.CartItem { ProductId = productId, Quantity = quantity });
                 }
                 else
                 {
-                    cart = Hipstershop.Cart.Parser.ParseFrom(value);
+                    cart = Oteldemo.Cart.Parser.ParseFrom(value);
                     var existingItem = cart.Items.SingleOrDefault(i => i.ProductId == productId);
                     if (existingItem == null)
                     {
-                        cart.Items.Add(new Hipstershop.CartItem { ProductId = productId, Quantity = quantity });
+                        cart.Items.Add(new Oteldemo.CartItem { ProductId = productId, Quantity = quantity });
                     }
                     else
                     {
@@ -148,6 +136,7 @@ namespace cartservice.cartstore
                 }
 
                 await db.HashSetAsync(userId, new[]{ new HashEntry(CART_FIELD_NAME, cart.ToByteArray()) });
+                await db.KeyExpireAsync(userId, TimeSpan.FromMinutes(60));
             }
             catch (Exception ex)
             {
@@ -166,6 +155,7 @@ namespace cartservice.cartstore
 
                 // Update the cache with empty cart for given user
                 await db.HashSetAsync(userId, new[] { new HashEntry(CART_FIELD_NAME, emptyCartBytes) });
+                await db.KeyExpireAsync(userId, TimeSpan.FromMinutes(60));
             }
             catch (Exception ex)
             {
@@ -173,7 +163,7 @@ namespace cartservice.cartstore
             }
         }
 
-        public async Task<Hipstershop.Cart> GetCartAsync(string userId)
+        public async Task<Oteldemo.Cart> GetCartAsync(string userId)
         {
             Console.WriteLine($"GetCartAsync called with userId={userId}");
 
@@ -188,11 +178,11 @@ namespace cartservice.cartstore
 
                 if (!value.IsNull)
                 {
-                    return Hipstershop.Cart.Parser.ParseFrom(value);
+                    return Oteldemo.Cart.Parser.ParseFrom(value);
                 }
 
                 // We decided to return empty cart in cases when user wasn't in the cache before
-                return new Hipstershop.Cart();
+                return new Oteldemo.Cart();
             }
             catch (Exception ex)
             {

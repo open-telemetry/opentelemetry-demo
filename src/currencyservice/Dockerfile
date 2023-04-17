@@ -1,59 +1,49 @@
-FROM ubuntu:20.04
-ENV DEBIAN_FRONTEND noninteractive
+# Copyright The OpenTelemetry Authors
+# SPDX-License-Identifier: Apache-2.0
+# Copyright 2023 The OpenTelemetry Authors
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#      http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
 
-RUN apt-get -y update
-RUN apt-get -y upgrade && apt-get -y dist-upgrade
-RUN apt-get install -qq -y --ignore-missing \
-  build-essential                           \
-  git                                       \
-  make                                      \
-  pkg-config                                \
-  protobuf-compiler                         \
-  libprotobuf-dev                           \
-  libcurl4-openssl-dev                      \
-  nlohmann-json3-dev                        \
-  cmake
+FROM alpine as builder
 
-# The following arguments would be passed from docker-compose.yml
-ARG GRPC_VERSION=1.46.0
-ARG OPENTELEMETRY_VERSION=1.5.0
+RUN apk update
+RUN apk add git cmake make g++ grpc-dev re2-dev protobuf-dev c-ares-dev
 
-# Install GRPC
-RUN git clone --shallow-submodules --depth 1 --recurse-submodules -b v${GRPC_VERSION} \
-  https://github.com/grpc/grpc \
-  && cd grpc \
-  && mkdir -p cmake/build \
-  && cd cmake/build \
-  && cmake \
-    -DgRPC_INSTALL=ON \
-    -DgRPC_BUILD_TESTS=OFF \
-    -DCMAKE_BUILD_TYPE=Release \
-    -DgRPC_BUILD_GRPC_NODE_PLUGIN=OFF \
-    -DgRPC_BUILD_GRPC_OBJECTIVE_C_PLUGIN=OFF \
-    -DgRPC_BUILD_GRPC_PHP_PLUGIN=OFF \
-    -DgRPC_BUILD_GRPC_PHP_PLUGIN=OFF \
-    -DgRPC_BUILD_GRPC_PYTHON_PLUGIN=OFF \
-    -DgRPC_BUILD_GRPC_RUBY_PLUGIN=OFF \
-    ../.. \
-  && make -j$(nproc || sysctl -n hw.ncpu || echo 1) \
-  && make install \
-  && cd ../../.. \
-  && rm -rf grpc
+ARG OPENTELEMETRY_CPP_VERSION=1.8.2
 
-# Install OpenTelemetry
 RUN git clone https://github.com/open-telemetry/opentelemetry-cpp \
-    && cd opentelemetry-cpp/ \
-    && git checkout tags/v${OPENTELEMETRY_VERSION} -b v${OPENTELEMETRY_VERSION} \
-    && git submodule update --init --recursive \
-    && mkdir build \
-    && cd build \
-    && cmake .. -DCMAKE_POSITION_INDEPENDENT_CODE=ON -DCMAKE_BUILD_TYPE=Release -DBUILD_TESTING=OFF -DWITH_OTLP=ON \
-    && make -j install && cd ../.. && rm -rf opentelemetry-cpp
+	&& cd opentelemetry-cpp/ \
+    	&& git checkout tags/v${OPENTELEMETRY_CPP_VERSION} -b v${OPENTELEMETRY_CPP_VERSION} \
+	&& mkdir build \
+	&& cd build \
+	&& cmake .. -DCMAKE_POSITION_INDEPENDENT_CODE=ON -DCMAKE_BUILD_TYPE=Release -DBUILD_TESTING=OFF -DWITH_EXAMPLES=OFF -DWITH_OTLP=ON -DWITH_OTLP_GRPC=ON \
+	&& make -j$(nproc || sysctl -n hw.ncpu || echo 1) install && cd ../.. && rm -rf opentelemetry-cpp
 
 COPY . /currencyservice
 
 RUN cd /currencyservice \
     && mkdir -p build && cd build \
-    && cmake .. && make -j install
+    && cmake .. \
+    && make -j$(nproc || sysctl -n hw.ncpu || echo 1) install
 
-ENTRYPOINT /usr/local/bin/currencyservice ${CURRENCY_SERVICE_PORT}
+FROM alpine
+
+WORKDIR /usr/src/app/
+
+RUN apk update
+RUN apk add grpc-dev re2-dev protobuf-dev c-ares-dev
+
+COPY --from=builder /usr/local/bin/currencyservice ./
+
+EXPOSE ${CURRENCY_SERVICE_PORT}
+ENTRYPOINT ./currencyservice ${CURRENCY_SERVICE_PORT}

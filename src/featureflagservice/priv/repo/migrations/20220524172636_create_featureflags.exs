@@ -1,3 +1,5 @@
+
+
 defmodule Featureflagservice.Repo.Migrations.CreateFeatureflags do
   use Ecto.Migration
 
@@ -25,10 +27,16 @@ defmodule Featureflagservice.Repo.Migrations.CreateFeatureflags do
       name: "recommendationCache",
       description: "Cache recommendations",
       enabled: false})
+
+    repo().insert(%Featureflagservice.FeatureFlags.FeatureFlag{
+      name: "adServiceFailure",
+      description: "Fail ad service requests sporadically",
+      enabled: false})
   end
 
   defp execute_down do
     repo().delete(%Featureflagservice.FeatureFlags.FeatureFlag{name: "productCatalogFailure"})
     repo().delete(%Featureflagservice.FeatureFlags.FeatureFlag{name: "recommendationCache"})
+    repo().delete(%Featureflagservice.FeatureFlags.FeatureFlag{name: "adServiceFailure"})
   end
 end

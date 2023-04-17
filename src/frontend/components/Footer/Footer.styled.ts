@@ -1,6 +1,10 @@
+// Copyright The OpenTelemetry Authors
+// SPDX-License-Identifier: Apache-2.0
+
 import styled from 'styled-components';
 
 export const Footer = styled.footer`
+  position: relative;
   padding: 65px 9%;
   background-color: ${({ theme }) => theme.colors.otelGray};
 

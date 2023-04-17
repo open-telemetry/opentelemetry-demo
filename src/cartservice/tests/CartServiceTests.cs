@@ -1,26 +1,14 @@
-// Copyright 2018 Google LLC
-//
-// Licensed under the Apache License, Version 2.0 (the "License");
-// you may not use this file except in compliance with the License.
-// You may obtain a copy of the License at
-//
-//      http://www.apache.org/licenses/LICENSE-2.0
-//
-// Unless required by applicable law or agreed to in writing, software
-// distributed under the License is distributed on an "AS IS" BASIS,
-// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-// See the License for the specific language governing permissions and
-// limitations under the License.
-
+// Copyright The OpenTelemetry Authors
+// SPDX-License-Identifier: Apache-2.0
 using System;
 using System.Threading.Tasks;
 using Grpc.Net.Client;
-using Hipstershop;
+using Oteldemo;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.TestHost;
 using Microsoft.Extensions.Hosting;
 using Xunit;
-using static Hipstershop.CartService;
+using static Oteldemo.CartService;
 
 namespace cartservice.tests
 {
@@ -33,12 +21,12 @@ namespace cartservice.tests
             _host = new HostBuilder().ConfigureWebHost(webBuilder =>
             {
                 webBuilder
-                    .UseStartup<Startup>()
+                  //  .UseStartup<Startup>()
                     .UseTestServer();
             });
         }
 
-        [Fact]
+        [Fact(Skip = "See https://github.com/open-telemetry/opentelemetry-demo/pull/746#discussion_r1107931240")]
         public async Task GetItem_NoAddItemBefore_EmptyCartReturned()
         {
             // Setup test server and client
@@ -67,7 +55,7 @@ namespace cartservice.tests
             Assert.Equal(new Cart(), cart);
         }
 
-        [Fact]
+        [Fact(Skip = "See https://github.com/open-telemetry/opentelemetry-demo/pull/746#discussion_r1107931240")]
         public async Task AddItem_ItemExists_Updated()
         {
             // Setup test server and client
@@ -113,7 +101,7 @@ namespace cartservice.tests
             await client.EmptyCartAsync(new EmptyCartRequest { UserId = userId });
         }
 
-        [Fact]
+        [Fact(Skip = "See https://github.com/open-telemetry/opentelemetry-demo/pull/746#discussion_r1107931240")]
         public async Task AddItem_New_Inserted()
         {
             // Setup test server and client

@@ -1,3 +1,6 @@
+// Copyright The OpenTelemetry Authors
+// SPDX-License-Identifier: Apache-2.0
+
 import { createContext, useContext, useMemo } from 'react';
 import { useQuery } from 'react-query';
 import ApiGateway from '../gateways/Api.gateway';

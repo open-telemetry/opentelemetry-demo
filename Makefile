@@ -1,3 +1,7 @@
+# Copyright The OpenTelemetry Authors
+# SPDX-License-Identifier: Apache-2.0
+
+
 # All documents to be used in spell check.
 ALL_DOCS := $(shell find . -type f -name '*.md' -not -path './.github/*' -not -path '*/node_modules/*' -not -path '*/_build/*' -not -path '*/deps/*' | sort)
 PWD := $(shell pwd)
@@ -37,15 +41,25 @@ markdownlint:
 .PHONY: install-yamllint
 install-yamllint:
     # Using a venv is recommended
-	pip install -U yamllint~=1.26.1
+	pip install -U yamllint~=1.30.0
 
 .PHONY: yamllint
 yamllint:
 	yamllint .
 
+.PHONY: checklicense
+checklicense:
+	@echo "Checking license headers..."
+	npx @kt3k/license-checker -q
+
+.PHONY: addlicense
+addlicense:
+	@echo "Adding license headers..."
+	npx @kt3k/license-checker -q -i
+
 # Run all checks in order of speed / likely failure.
 .PHONY: check
-check: misspell markdownlint
+check: misspell markdownlint checklicense
 	@echo "All checks complete"
 
 # Attempt to fix issues / regenerate tables.
@@ -84,3 +98,9 @@ run-tests:
 .PHONY: generate-protobuf
 generate-protobuf:
 	./ide-gen-proto.sh
+
+.PHONY: generate-kubernetes-manifests
+generate-kubernetes-manifests:
+	helm repo add open-telemetry https://open-telemetry.github.io/opentelemetry-helm-charts
+	helm repo update
+	helm template opentelemetry-demo open-telemetry/opentelemetry-demo | sed '/helm.sh\/chart\:/d' | sed '/helm.sh\/hook/d' | sed '/managed-by\: Helm/d' > kubernetes/opentelemetry-demo.yaml

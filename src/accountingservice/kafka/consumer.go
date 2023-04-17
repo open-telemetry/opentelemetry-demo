@@ -1,10 +1,12 @@
+// Copyright The OpenTelemetry Authors
+// SPDX-License-Identifier: Apache-2.0
 package kafka
 
 import (
 	"context"
 	"log"
 
-	"github.com/open-telemetry/opentelemetry-demo/src/accountingservice/genproto/hipstershop"
+	"github.com/open-telemetry/opentelemetry-demo/src/accountingservice/genproto/oteldemo"
 
 	"github.com/Shopify/sarama"
 	"github.com/sirupsen/logrus"
@@ -57,7 +59,7 @@ func (g *groupHandler) ConsumeClaim(session sarama.ConsumerGroupSession, claim s
 	for {
 		select {
 		case message := <-claim.Messages():
-			orderResult := hipstershop.OrderResult{}
+			orderResult := oteldemo.OrderResult{}
 			err := proto.Unmarshal(message.Value, &orderResult)
 			if err != nil {
 				return err
