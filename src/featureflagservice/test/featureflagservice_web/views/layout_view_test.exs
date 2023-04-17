@@ -1,3 +1,7 @@
+# Copyright The OpenTelemetry Authors
+# SPDX-License-Identifier: Apache-2.0
+
+
 defmodule FeatureflagserviceWeb.LayoutViewTest do
   use FeatureflagserviceWeb.ConnCase, async: true
 

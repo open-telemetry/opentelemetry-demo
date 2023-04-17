@@ -1,3 +1,6 @@
+// Copyright The OpenTelemetry Authors
+// SPDX-License-Identifier: Apache-2.0
+
 import { ChannelCredentials } from '@grpc/grpc-js';
 import { Address, CartItem, GetQuoteResponse, ShippingServiceClient } from '../../protos/demo';
 

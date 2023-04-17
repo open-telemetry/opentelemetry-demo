@@ -1,3 +1,6 @@
+// Copyright The OpenTelemetry Authors
+// SPDX-License-Identifier: Apache-2.0
+
 import { CypressFields, getElementByField } from '../../utils/Cypress';
 
 describe.skip('Product Detail Page', () => {

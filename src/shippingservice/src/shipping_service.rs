@@ -1,3 +1,6 @@
+// Copyright The OpenTelemetry Authors
+// SPDX-License-Identifier: Apache-2.0
+
 use opentelemetry::{global, propagation::Extractor, trace::Span, Context, KeyValue};
 use opentelemetry_api::trace::{FutureExt, TraceContextExt, SpanKind, Tracer};
 use opentelemetry_semantic_conventions as semcov;
@@ -20,7 +23,7 @@ const RPC_GRPC_STATUS_CODE_OK: i64 = 0;
 const RPC_GRPC_STATUS_CODE_UNKNOWN: i64 = 2;
 
 pub mod shop {
-    tonic::include_proto!("hipstershop"); // The string specified here must match the proto package name
+    tonic::include_proto!("oteldemo"); // The string specified here must match the proto package name
 }
 
 #[derive(Debug, Default)]
@@ -67,7 +70,7 @@ impl ShippingService for ShippingServer {
         // (although now everything is assumed to be the same price)
         // check out the create_quote_from_count method to see how we use the span created here
         let tracer = global::tracer("shippingservice");
-        let mut span = tracer.span_builder("hipstershop.ShippingService/GetQuote").with_kind(SpanKind::Server).start_with_context(&tracer, &parent_cx);
+        let mut span = tracer.span_builder("oteldemo.ShippingService/GetQuote").with_kind(SpanKind::Server).start_with_context(&tracer, &parent_cx);
         span.set_attribute(semcov::trace::RPC_SYSTEM.string(RPC_SYSTEM_GRPC));
 
         span.add_event("Processing get quote request".to_string(), vec![]);
@@ -106,7 +109,7 @@ impl ShippingService for ShippingServer {
         // we'll create a span and associated events all in this function.
         let tracer = global::tracer("shippingservice");
         let mut span = tracer
-            .span_builder("hipstershop.ShippingService/ShipOrder").with_kind(SpanKind::Server).start_with_context(&tracer, &parent_cx);
+            .span_builder("oteldemo.ShippingService/ShipOrder").with_kind(SpanKind::Server).start_with_context(&tracer, &parent_cx);
         span.set_attribute(semcov::trace::RPC_SYSTEM.string(RPC_SYSTEM_GRPC));
 
         span.add_event("Processing shipping order request".to_string(), vec![]);

@@ -1,3 +1,6 @@
+// Copyright The OpenTelemetry Authors
+// SPDX-License-Identifier: Apache-2.0
+
 const opentelemetry = require("@opentelemetry/sdk-node")
 const { getNodeAutoInstrumentations } = require("@opentelemetry/auto-instrumentations-node")
 const { OTLPTraceExporter } = require('@opentelemetry/exporter-trace-otlp-grpc')

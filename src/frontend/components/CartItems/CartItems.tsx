@@ -1,3 +1,6 @@
+// Copyright The OpenTelemetry Authors
+// SPDX-License-Identifier: Apache-2.0
+
 import { useMemo } from 'react';
 import { useQuery } from 'react-query';
 import ApiGateway from '../../gateways/Api.gateway';
@@ -22,7 +25,9 @@ const CartItems = ({ productList, shouldShowPrice = true }: IProps) => {
     country: 'United States',
     zipCode: '94043',
   };
-  const { data: shippingConst = { units: 0, currencyCode: 'USD', nanos: 0 } } = useQuery('shipping', () =>
+
+  const { data: shippingConst = { units: 0, currencyCode: 'USD', nanos: 0 } } = useQuery(['shipping',
+      productList, selectedCurrency, address], () =>
     ApiGateway.getShippingCost(productList, selectedCurrency, address)
   );
 
@@ -34,7 +39,7 @@ const CartItems = ({ productList, shouldShowPrice = true }: IProps) => {
 
     const unitSum =
       productList.reduce((acc, { product: { priceUsd: { units = 0 } = {} } }) => acc + Number(units), 0) +
-        shippingConst?.units || 0 + nanoExceed;
+        (shippingConst?.units || 0) + nanoExceed;
 
     return {
       units: unitSum,

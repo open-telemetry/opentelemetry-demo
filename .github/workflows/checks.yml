@@ -1,3 +1,5 @@
+# Copyright The OpenTelemetry Authors
+# SPDX-License-Identifier: Apache-2.0
 name: Checks
 
 on:
@@ -62,3 +64,13 @@ jobs:
 
     - name: run sanitycheck.py
       run: python3 ./internal/tools/sanitycheck.py
+
+  checklicense:
+    runs-on: ubuntu-latest
+    steps:
+    - name: check out code
+      uses: actions/checkout@v3
+    - name: install tools
+      run: make install-tools
+    - name: run checklicense
+      run: make checklicense

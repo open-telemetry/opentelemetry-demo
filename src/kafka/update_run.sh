@@ -1,4 +1,7 @@
+# Copyright The OpenTelemetry Authors
+# SPDX-License-Identifier: Apache-2.0
 #!/bin/sh
+
 
 # https://github.com/confluentinc/learn-kafka-kraft/blob/4c75598779c4a993464f6979dc0d702552df8f3b/kraft/scripts/update_run.sh
 
