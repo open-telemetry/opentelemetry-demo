@@ -12,6 +12,12 @@ This repo re-implements opentelemetry-demo-webstore's adservice with nacos regis
 - [x] nacos
 - [x] sentinel
 
+## get data from dataservice
+
+if `-Dspring.dataService.enabled` is true, adservice will call dataservice to get Ad data,
+if `-Dspring.cloud.nacos.config.enabled` is true, adservice use service name registry in nacos as addr to call dataservice,
+otherwise it uses host:port as addr.
+
 ## curl
 
 ```shell

@@ -18,10 +18,14 @@ import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.daocloud.springcloud.adservice.Interceptor.MeterInterceptor;
+import org.daocloud.springcloud.adservice.controller.AdController;
+import org.daocloud.springcloud.adservice.dto.Advertise;
 import org.daocloud.springcloud.adservice.meter.Meter;
 import org.ejml.simple.SimpleMatrix;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.client.RestTemplate;
 import oteldemo.AdServiceGrpc;
 import oteldemo.Demo.Ad;
 import oteldemo.Demo.AdRequest;
@@ -38,6 +42,9 @@ public class AdServiceGrpcService extends AdServiceGrpc.AdServiceImplBase {
     @Autowired
     private Meter meterProvider;
 
+    @Autowired
+    private AdController adController;
+
     @Value("${spring.extraAdLabel}")
     private String text;
 
@@ -46,6 +53,12 @@ public class AdServiceGrpcService extends AdServiceGrpc.AdServiceImplBase {
 
     @Value("${spring.matrixRow}")
     private int matrixRow;
+
+    @Value("${spring.dataService.enabled}")
+    private boolean dataServiceEnabled;
+
+    @Value("${spring.cloud.nacos.config.enabled}")
+    private boolean nacosEnabled;
 
     @Override
     public void getAds(AdRequest req, StreamObserver<AdResponse> responseObserver) {
@@ -61,26 +74,56 @@ public class AdServiceGrpcService extends AdServiceGrpc.AdServiceImplBase {
             // do matrixCalculate
             matrixCalculate(matrixRow);
 
-            if(randomError){
-                //throw random error
-                Random random = new Random();
-                int r = random.nextInt(100)+1;
-                if(r > 50){
-                    throw new StatusRuntimeException(Status.INTERNAL.withDescription("connect Canceled randomly"));
+            if(dataServiceEnabled){
+                logger.info("data service is enabled, get Ad data from dataservice");
+                ResponseEntity<Advertise[]> advertiseResponseEntity = null;
+                if(nacosEnabled){
+                    logger.info("nacos is enabled, call dataservice by nacos registry");
+                    for (int i = 0; i < req.getContextKeysCount(); i++){
+                        advertiseResponseEntity = adController.findByAdKey(req.getContextKeys(i));
+                    }
+                }else{
+                    logger.info("nacos is disabled, call dataservice by raw http");
+                    String dataServiceAddr = System.getenv("DATA_SERVICE_ADDR");
+                    RestTemplate restTemplate = new RestTemplate();
+                    for (int i = 0; i < req.getContextKeysCount(); i++){
+                        advertiseResponseEntity = restTemplate.getForEntity("http://"+dataServiceAddr+"/ad/ad-key/{key}",Advertise[].class,req.getContextKeys(i));
+                    }
                 }
-            }
 
-            if (req.getContextKeysCount() > 0) {
-                for (int i = 0; i < req.getContextKeysCount(); i++) {
-                    Collection<Ad> ads = getAdsByCategory(req.getContextKeys(i));
-                    allAds.addAll(ads);
+                assert advertiseResponseEntity != null;
+                Advertise[] advertises =  advertiseResponseEntity.getBody();
+
+                assert advertises != null;
+                for(Advertise a: advertises){
+                    Ad ad = Ad.newBuilder()
+                            .setRedirectUrl(a.getRedirectURL())
+                            .setText(a.getContent())
+                            .build();
+                    allAds.add(ad);;
                 }
-            } else {
-                allAds = getRandomAds();
-            }
-            if (allAds.isEmpty()) {
-                // Serve random ads.
-                allAds = getRandomAds();
+            }else {
+                if(randomError){
+                    //throw random error
+                    Random random = new Random();
+                    int r = random.nextInt(100)+1;
+                    if(r > 50){
+                        throw new StatusRuntimeException(Status.INTERNAL.withDescription("connect Canceled randomly"));
+                    }
+                }
+
+                if (req.getContextKeysCount() > 0) {
+                    for (int i = 0; i < req.getContextKeysCount(); i++) {
+                        Collection<Ad> ads = getAdsByCategory(req.getContextKeys(i));
+                        allAds.addAll(ads);
+                    }
+                } else {
+                    allAds = getRandomAds();
+                }
+                if (allAds.isEmpty()) {
+                    // Serve random ads.
+                    allAds = getRandomAds();
+                }
             }
 
             List<Ad>  allAdsLabeled = addLabel(allAds);

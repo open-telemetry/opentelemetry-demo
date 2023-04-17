@@ -21,6 +21,10 @@ public class AdController {
     @Value("${data_service_name:dataservice}")
     private String dataServiceName;
 
+    @GetMapping("/ad-key/{adKey}")
+    public ResponseEntity<Advertise[]> findByAdKey(@PathVariable String key) {
+        return this.restTemplate.getForEntity("http://" + dataServiceName + "ad/ad-key/{key}", Advertise[].class, key);
+    }
     @GetMapping("/{id}")
     public ResponseEntity<Advertise> findById(@PathVariable Long id) {
         return this.restTemplate.getForEntity("http://" + dataServiceName + "/ad/{id}", Advertise.class, id);
