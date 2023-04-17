@@ -2,7 +2,7 @@ spring:
   application:
     name: dataservice
 server:
-  port: 8082
+  port: 8080
 ---
 spring:
   cloud:
@@ -84,11 +84,3 @@ spring:
 project:
   # 服务注册在sentinel中的名称, 建议与nacos注册服务名相同
   name: ${spring.cloud.nacos.discovery.namespace}@@${spring.cloud.nacos.discovery.group}@@${spring.application.name}
----
-meter:
-  port: 8888
----
-spring:
-  extraAdLabel: Daocloud
-  randomError: true
-  matrixRow: 200

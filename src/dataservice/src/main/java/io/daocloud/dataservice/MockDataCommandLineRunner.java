@@ -22,13 +22,48 @@ class MockDataCommandLineRunner implements CommandLineRunner {
 
     @Override
     public void run(String... args) throws Exception {
-        for (int i = 0; i < 100; i++) {
-            Advertise ad = new Advertise();
-            ad.setId(i + 1);
-            ad.setContent("mock ad content " + i + 1);
-            advertiseRepository.save(ad);
-        }
-        logger.info("init mock data success.");
-    }
+        Advertise ad = new Advertise();
+        ad.setAdKey("binoculars");
+        ad.setRedirectURL("/product/2ZYFJ3GM2N");
+        ad.setContent("Roof Binoculars for sale. 50% off.");
+        advertiseRepository.save(ad);
 
+        ad = new Advertise();
+        ad.setAdKey("telescopes");
+        ad.setRedirectURL("/product/66VCHSJNUP");
+        ad.setContent("Starsense Explorer Refractor Telescope for sale. 20% off.");
+        advertiseRepository.save(ad);
+
+        ad = new Advertise();
+        ad.setAdKey("accessories");
+        ad.setRedirectURL("/product/0PUK6V6EV0");
+        ad.setContent("Solar System Color Imager for sale. 30% off.");
+        advertiseRepository.save(ad);
+
+        ad = new Advertise();
+        ad.setAdKey("accessories");
+        ad.setRedirectURL("/product/6E92ZMYYFZ");
+        ad.setContent("Solar Filter for sale. Buy two, get third one for free");
+        advertiseRepository.save(ad);
+
+        ad = new Advertise();
+        ad.setAdKey("accessories");
+        ad.setRedirectURL("/product/L9ECAV7KIM");
+        ad.setContent("Lens Cleaning Kit for sale. Buy one, get second one for free");
+        advertiseRepository.save(ad);
+
+        ad = new Advertise();
+        ad.setAdKey("assembly");
+        ad.setRedirectURL("/product/9SIQT8TOJO");
+        ad.setContent("Optical Tube Assembly for sale. 10% off.");
+        advertiseRepository.save(ad);
+
+        ad = new Advertise();
+        ad.setAdKey("travel");
+        ad.setRedirectURL("/product/1YMWWN1N4O");
+        ad.setContent("Eclipsmart Travel Refractor Telescope for sale. Buy one, get second kit for free");
+        advertiseRepository.save(ad);
+
+        logger.info("init data success.");
+    }
 }
