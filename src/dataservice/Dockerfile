@@ -23,6 +23,6 @@ ENV OTEL_EXPORTER_OTLP_ENDPOINT=http://localhost:4317 \
     JAVA_TOOL_OPTIONS=-javaagent:/usr/src/app/opentelemetry-javaagent.jar \
     JAVA_OPTS=' -Dotel.jmx.target.system=tomcat -Dspring.cloud.nacos.config.enabled=false'
 
-EXPOSE 8082 8999 8888
+EXPOSE 8080 8999
 
 ENTRYPOINT java $JAVA_OPTS -jar dataservice-0.0.1-SNAPSHOT.jar
