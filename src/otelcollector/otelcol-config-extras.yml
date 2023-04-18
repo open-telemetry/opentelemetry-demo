@@ -5,18 +5,18 @@
 
 
 # Azure Monitor Exporter Configuration
-receivers:
-  otlp:
-    protocols:
-      grpc:
+#receivers:
+#  otlp:
+#    protocols:
+#      grpc:
 
 exporters:
   azuremonitor:
     endpoint: "https://dc.services.visualstudio.com/v2/track" # Azure Monitor Default
     instrumentation_key: "80fe2786-859b-4617-acf6-57b9e0e64392" # My App Insights 
     
-processors:
-  batch:
+#processors:
+#  batch:
 
 service:
   pipelines:
@@ -24,6 +24,6 @@ service:
       receivers: [otlp]
       processors: [batch]
       exporters: [azuremonitor, spanmetrics]
-    metrics:
-      receivers: [spanmetrics]
-      exporters: [azuremonitor]
+#    metrics:
+#      receivers: [spanmetrics]
+#      exporters: [azuremonitor]
