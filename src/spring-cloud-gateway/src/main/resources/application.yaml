@@ -1,0 +1,14 @@
+spring:
+  cloud:
+    gateway:
+      routes:
+        - id: adservice
+          uri: ${ADSERVICE_ADDR:http://localhost:8081}
+          predicates:
+            - Path= /ad/**
+auth:
+  enabled: ${AUTH_ENABLED:false}
+  key: ${AUTH_KEY:key}
+  value: ${AUTH_VALUE:value}
+server:
+  port: 18080
