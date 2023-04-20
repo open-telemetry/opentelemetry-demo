@@ -7,6 +7,9 @@ release.
 
 ## Unreleased
 
+* [chore] use `otel-demo` namespace for generated kubernetes manifests
+  ([#848](https://github.com/open-telemetry/opentelemetry-demo/pull/848))
+
 ## 1.4.0
 
 * [cart] use 60m TTL for cart entries in redis

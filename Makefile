@@ -103,4 +103,6 @@ generate-protobuf:
 generate-kubernetes-manifests:
 	helm repo add open-telemetry https://open-telemetry.github.io/opentelemetry-helm-charts
 	helm repo update
-	helm template opentelemetry-demo open-telemetry/opentelemetry-demo | sed '/helm.sh\/chart\:/d' | sed '/helm.sh\/hook/d' | sed '/managed-by\: Helm/d' > kubernetes/opentelemetry-demo.yaml
+	echo "# Copyright The OpenTelemetry Authors" > kubernetes/opentelemetry-demo.yaml
+	echo "# SPDX-License-Identifier: Apache-2.0" >> kubernetes/opentelemetry-demo.yaml
+	helm template opentelemetry-demo open-telemetry/opentelemetry-demo --namespace otel-demo | sed '/helm.sh\/chart\:/d' | sed '/helm.sh\/hook/d' | sed '/managed-by\: Helm/d' >> kubernetes/opentelemetry-demo.yaml
