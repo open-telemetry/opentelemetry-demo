@@ -69,7 +69,6 @@ public class SentinelRuleDemo {
             @RequestParam(required = false) String a,
             @RequestParam(required = false) String b
     ) {
-        initParamFlowRules();
         Entry entry = null;
         try {
             entry = SphU.entry("hot-test", EntryType.IN, 1, a, b);
