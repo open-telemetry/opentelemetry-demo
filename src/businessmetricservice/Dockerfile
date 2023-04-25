@@ -1,3 +1,5 @@
+# Copyright The OpenTelemetry Authors
+# SPDX-License-Identifier: Apache-2.0
 FROM eclipse-temurin:17-jdk AS builder
 
 WORKDIR /usr/src/app/
