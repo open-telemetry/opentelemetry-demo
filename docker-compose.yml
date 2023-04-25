@@ -257,6 +257,31 @@ services:
       kafka:
         condition: service_healthy
     logging: *logging
+  businessmetricservice:
+    image: ${IMAGE_NAME}:${IMAGE_VERSION}-businessmetricservice
+    container_name: businessmetrics-service
+    build:
+      context: ./
+      dockerfile: ./src/businessmetricservice/Dockerfile
+      cache_from:
+        - ${IMAGE_NAME}:${IMAGE_VERSION}-businessmetricservice
+    deploy:
+      resources:
+        limits:
+          memory: 200M
+    restart: unless-stopped
+    environment:
+      - KAFKA_SERVICE_ADDR
+      - OTEL_EXPORTER_OTLP_ENDPOINT
+      - OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE
+      - OTEL_RESOURCE_ATTRIBUTES
+      - OTEL_SERVICE_NAME=businessmetricservice
+    depends_on:
+      otelcol:
+        condition: service_started
+      kafka:
+        condition: service_healthy
+    logging: *logging
 
   # Frontend
   frontend:
