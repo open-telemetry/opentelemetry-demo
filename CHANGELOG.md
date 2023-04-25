@@ -9,6 +9,8 @@ release.
 
 * [chore] use `otel-demo` namespace for generated kubernetes manifests
   ([#848](https://github.com/open-telemetry/opentelemetry-demo/pull/848))
+* add new `businessmetricservice` to support otel operator instrumentation demo
+  ([#852](https://github.com/open-telemetry/opentelemetry-demo/pull/852))
 
 ## 1.4.0
 
