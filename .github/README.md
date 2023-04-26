@@ -46,13 +46,13 @@ The following guide describes how to setup the OpenTelemetry demo with Elastic O
 ## Explore and analyze the data With Elastic
 
 ### Service map
-![Service map](.github/service-map.png "Service map")
+![Service map](service-map.png "Service map")
 
 ### Traces
-![Traces](.github/trace.png "Traces")
+![Traces](trace.png "Traces")
 
 ### Correlation
-![Correlation](.github/correlation.png "Correlation")
+![Correlation](correlation.png "Correlation")
 
 ### Logs
-![Logs](.github/logs.png "Logs")
+![Logs](logs.png "Logs")
