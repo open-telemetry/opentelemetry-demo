@@ -26,11 +26,6 @@ exporters:
 
 processors:
   batch:
-  transform:
-    metric_statements:
-      - context: metric
-        statements:
-          - set(description, "Measures the duration of inbound HTTP requests") where name == "http.server.duration"
   filter:
     metrics:
       exclude:
@@ -49,7 +44,7 @@ service:
       exporters: [otlp, logging, spanmetrics]
     metrics:
       receivers: [otlp, spanmetrics]
-      processors: [filter, transform, batch]
+      processors: [filter, batch]
       exporters: [prometheus, logging]
     logs:
       receivers: [otlp]

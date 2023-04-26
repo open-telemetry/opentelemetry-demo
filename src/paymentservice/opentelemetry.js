@@ -31,4 +31,4 @@ const sdk = new opentelemetry.NodeSDK({
   ],
 })
 
-sdk.start().then(() => require("./index"));
+sdk.start();
