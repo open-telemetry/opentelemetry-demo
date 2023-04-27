@@ -91,6 +91,9 @@ jobs:
           - file: ./test/Dockerfile
             tag_suffix: integrationTests
             context: ./
+          - file: ./src/spring-cloud-gateway/Dockerfile
+            tag_suffix: spring-cloud-gateway
+            context: ./
 
     steps:
       - uses: actions/checkout@v3
