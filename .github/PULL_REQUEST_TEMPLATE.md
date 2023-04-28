@@ -8,8 +8,8 @@ For new features contributions please make sure you have completed the following
 essential items:
 
 * [ ] `CHANGELOG.md` updated to document new feature additions
-* [ ] Appropriate documentation updates in the [docs repo]()
-* [ ] Appropriate Helm chart updates in the [helm charts repo]()
+* [ ] Appropriate documentation updates in the [docs][]
+* [ ] Appropriate Helm chart updates in the [helm-charts][]
 
 <!--
 A Pull Request that modifies instrumentation code will likely require an
@@ -27,3 +27,4 @@ which docs need to be changed ping the
 [@open-telemetry/demo-approvers](https://github.com/orgs/open-telemetry/teams/demo-approvers).
 
 [docs]: https://opentelemetry.io/docs/demo/
+[helm-charts]: https://github.com/open-telemetry/opentelemetry-helm-charts
