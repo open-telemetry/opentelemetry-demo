@@ -13,6 +13,8 @@ release.
   ([#853](https://github.com/open-telemetry/opentelemetry-demo/pull/853))
 * [chore] use `otel-demo` namespace for generated kubernetes manifests
   ([#848](https://github.com/open-telemetry/opentelemetry-demo/pull/848))
+* [shippingservice] update rust version and dependencies
+  ([#865](https://github.com/open-telemetry/opentelemetry-demo/pull/865))
 
 ## 1.4.0
 
