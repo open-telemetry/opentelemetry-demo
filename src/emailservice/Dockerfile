@@ -2,13 +2,13 @@
 # SPDX-License-Identifier: Apache-2.0
 
 
-FROM ruby:3.1.2-alpine as base
+FROM ruby:3.2.2-alpine as base
 
 FROM base as builder
 
 WORKDIR /tmp
 
-COPY Gemfile Gemfile.lock .
+COPY Gemfile Gemfile.lock ./
 
 RUN apk update && apk add make gcc musl-dev && bundle install
 
