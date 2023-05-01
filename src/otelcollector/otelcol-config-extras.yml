@@ -19,3 +19,4 @@ service:
 
 
 # OTLP Exporter Configuration for Internal Vendor Backend
+# Work-in-progress in getting demo working then will update config
