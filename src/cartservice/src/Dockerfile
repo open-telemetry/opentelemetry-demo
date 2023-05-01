@@ -1,3 +1,5 @@
+# Copyright The OpenTelemetry Authors
+# SPDX-License-Identifier: Apache-2.0
 # Copyright 2021 Google LLC
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -13,7 +15,7 @@
 # limitations under the License.
 
 # https://mcr.microsoft.com/v2/dotnet/sdk/tags/list
-FROM mcr.microsoft.com/dotnet/sdk:6.0.300 AS builder
+FROM mcr.microsoft.com/dotnet/sdk:6.0.408 AS builder
 
 WORKDIR /usr/src/app/
 
@@ -29,7 +31,7 @@ RUN \
 # -----------------------------------------------------------------------------
 
 # https://mcr.microsoft.com/v2/dotnet/runtime-deps/tags/list
-FROM mcr.microsoft.com/dotnet/runtime-deps:6.0.5-alpine3.15
+FROM mcr.microsoft.com/dotnet/runtime-deps:6.0.16-alpine3.17
 
 WORKDIR /usr/src/app/
 COPY --from=builder /cartservice/ ./

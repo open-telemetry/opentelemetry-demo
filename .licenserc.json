@@ -1,0 +1,38 @@
+{
+    "**/*.{go,cs,h,cpp,js,ts,tsx,rs}": [
+      "// Copyright The OpenTelemetry Authors",
+      "// SPDX-License-Identifier: Apache-2.0"
+    ],
+    "**/*.php": [
+      "<?php",
+      "// Copyright The OpenTelemetry Authors",
+      "// SPDX-License-Identifier: Apache-2.0"
+    ],
+    "**/*.java": [
+      "/*",
+      "* Copyright The OpenTelemetry Authors",
+      "* SPDX-License-Identifier: Apache-2.0",
+      "*/"
+    ],
+    "**/*.py": [
+      "#!/usr/bin/python",
+      "# Copyright The OpenTelemetry Authors",
+      "# SPDX-License-Identifier: Apache-2.0"
+    ],
+    "**/*.{ex,exs,rb,yaml,yml,sh,yamllint}": [
+      "# Copyright The OpenTelemetry Authors",
+      "# SPDX-License-Identifier: Apache-2.0"
+    ],
+    "**/{Dockerfile,Makefile}": [
+      "# Copyright The OpenTelemetry Authors",
+      "# SPDX-License-Identifier: Apache-2.0"
+    ],
+    "ignore": [
+        "node_modules/",
+        "src/cartservice/src/obj/",
+        "src/cartservice/tests/obj/",
+        "src/featureflagservice/assets/vendor/",
+        "src/featureflagservice/priv/",
+        "internal/tools/"
+    ]
+  }
