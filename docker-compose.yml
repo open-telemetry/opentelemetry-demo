@@ -616,14 +616,14 @@ services:
 
   # OpenTelemetry Collector
   otelcol:
-    image: otel/opentelemetry-collector-contrib:0.75.0
+    image: otel/opentelemetry-collector-contrib:0.76.1
     container_name: otel-col
     deploy:
       resources:
         limits:
           memory: 125M
     restart: unless-stopped
-    command: [ "--feature-gates=service.connectors", "--config=/etc/otelcol-config.yml", "--config=/etc/otelcol-config-extras.yml" ]
+    command: [ "--config=/etc/otelcol-config.yml", "--config=/etc/otelcol-config-extras.yml" ]
     volumes:
       - ./src/otelcollector/otelcol-config.yml:/etc/otelcol-config.yml
       - ./src/otelcollector/otelcol-config-extras.yml:/etc/otelcol-config-extras.yml
