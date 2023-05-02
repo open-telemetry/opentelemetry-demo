@@ -1,3 +1,5 @@
+# Copyright The OpenTelemetry Authors
+# SPDX-License-Identifier: Apache-2.0
 # assigns reviewers to pull requests in a similar way as CODEOWNERS, but doesn't require reviewers
 # to have write access to the repository
 # see .github/component_owners.yaml for the list of components and their owners
