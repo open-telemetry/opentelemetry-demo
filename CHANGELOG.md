@@ -15,6 +15,8 @@ release.
   ([#848](https://github.com/open-telemetry/opentelemetry-demo/pull/848))
 * [collector] update collector version to 0.76.1 and remove connectors feature gate.
   ([#857](https://github.com/open-telemetry/opentelemetry-demo/pull/857))
+* [load generator] Bump loagen dependencies
+  ([#869](https://github.com/open-telemetry/opentelemetry-demo/pull/869))
 
 ## 1.4.0
 
