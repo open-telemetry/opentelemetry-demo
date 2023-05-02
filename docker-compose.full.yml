@@ -1,8 +1,6 @@
 # Copyright The OpenTelemetry Authors
 # SPDX-License-Identifier: Apache-2.0
 
-
-version: '3.9'
 x-default-logging: &logging
   driver: "json-file"
   options:
@@ -18,6 +16,32 @@ services:
   # ******************
   # Core Demo Services
   # ******************
+  # Accounting service
+  accountingservice:
+    image: ${IMAGE_NAME}:${IMAGE_VERSION}-accountingservice
+    container_name: accounting-service
+    build:
+      context: ./
+      dockerfile: ./src/accountingservice/Dockerfile
+      cache_from:
+        - ${IMAGE_NAME}:${IMAGE_VERSION}-accountingservice
+    deploy:
+      resources:
+        limits:
+          memory: 20M
+    restart: unless-stopped
+    environment:
+      - KAFKA_SERVICE_ADDR
+      - OTEL_EXPORTER_OTLP_ENDPOINT
+      - OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE
+      - OTEL_RESOURCE_ATTRIBUTES
+      - OTEL_SERVICE_NAME=accountingservice
+    depends_on:
+      otelcol:
+        condition: service_started
+      kafka:
+        condition: service_healthy
+    logging: *logging
 
   # AdService
   adservice:
@@ -99,6 +123,7 @@ services:
       - PAYMENT_SERVICE_ADDR
       - PRODUCT_CATALOG_SERVICE_ADDR
       - SHIPPING_SERVICE_ADDR
+      - KAFKA_SERVICE_ADDR
       - OTEL_EXPORTER_OTLP_ENDPOINT
       - OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE
       - OTEL_RESOURCE_ATTRIBUTES
@@ -118,6 +143,8 @@ services:
         condition: service_started
       otelcol:
         condition: service_started
+      kafka:
+        condition: service_healthy
     logging: *logging
 
   # Currency service
@@ -169,6 +196,64 @@ services:
       - OTEL_SERVICE_NAME=emailservice
     depends_on:
       - otelcol
+    logging: *logging
+
+  # Feature Flag service
+  featureflagservice:
+    image: ${IMAGE_NAME}:${IMAGE_VERSION}-featureflagservice
+    container_name: feature-flag-service
+    build:
+      context: ./
+      dockerfile: ./src/featureflagservice/Dockerfile
+      cache_from:
+        - ${IMAGE_NAME}:${IMAGE_VERSION}-featureflagservice
+    deploy:
+      resources:
+        limits:
+          memory: 175M
+    restart: unless-stopped
+    ports:
+      - "${FEATURE_FLAG_SERVICE_PORT}"                                  # Feature Flag Service UI
+      - "${FEATURE_FLAG_GRPC_SERVICE_PORT}"                             # Feature Flag Service gRPC API
+    environment:
+      - FEATURE_FLAG_SERVICE_PORT
+      - FEATURE_FLAG_GRPC_SERVICE_PORT
+      - OTEL_EXPORTER_OTLP_ENDPOINT
+      - OTEL_EXPORTER_OTLP_TRACES_PROTOCOL=grpc
+      - OTEL_SERVICE_NAME=featureflagservice
+      - DATABASE_URL=ecto://ffs:ffs@ffs_postgres:5432/ffs
+    healthcheck:
+      test: ["CMD", "curl", "-H", "baggage: synthetic_request=true", "-f", "http://localhost:${FEATURE_FLAG_SERVICE_PORT}"]
+    depends_on:
+      ffs_postgres:
+        condition: service_healthy
+    logging: *logging
+
+  # Fraud Detection service
+  frauddetectionservice:
+    image: ${IMAGE_NAME}:${IMAGE_VERSION}-frauddetectionservice
+    container_name: frauddetection-service
+    build:
+      context: ./
+      dockerfile: ./src/frauddetectionservice/Dockerfile
+      cache_from:
+        - ${IMAGE_NAME}:${IMAGE_VERSION}-frauddetectionservice
+    deploy:
+      resources:
+        limits:
+          memory: 200M
+    restart: unless-stopped
+    environment:
+      - KAFKA_SERVICE_ADDR
+      - OTEL_EXPORTER_OTLP_ENDPOINT
+      - OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE
+      - OTEL_RESOURCE_ATTRIBUTES
+      - OTEL_SERVICE_NAME=frauddetectionservice
+    depends_on:
+      otelcol:
+        condition: service_started
+      kafka:
+        condition: service_healthy
     logging: *logging
 
   # Frontend
@@ -246,6 +331,39 @@ services:
       - ENVOY_PORT
     depends_on:
       - frontend
+      - featureflagservice
+      - loadgenerator
+      - grafana
+
+  # Load Generator
+  loadgenerator:
+    image: ${IMAGE_NAME}:${IMAGE_VERSION}-loadgenerator
+    container_name: load-generator
+    build:
+      context: ./
+      dockerfile: ./src/loadgenerator/Dockerfile
+      cache_from:
+        - ${IMAGE_NAME}:${IMAGE_VERSION}-loadgenerator
+    deploy:
+      resources:
+        limits:
+          memory: 120M
+    restart: unless-stopped
+    ports:
+      - "${LOCUST_WEB_PORT}"
+    environment:
+      - LOCUST_WEB_PORT
+      - LOCUST_USERS
+      - LOCUST_HOST
+      - LOCUST_HEADLESS
+      - LOCUST_AUTOSTART
+      - OTEL_EXPORTER_OTLP_TRACES_ENDPOINT=http://${OTEL_COLLECTOR_HOST}:4318/v1/traces
+      - OTEL_RESOURCE_ATTRIBUTES
+      - OTEL_SERVICE_NAME=loadgenerator
+      - PROTOCOL_BUFFERS_PYTHON_IMPLEMENTATION=python
+    depends_on:
+      - frontend
+    logging: *logging
 
   # Payment service
   paymentservice:
@@ -355,6 +473,7 @@ services:
     depends_on:
       - productcatalogservice
       - otelcol
+      - featureflagservice
     logging: *logging
 
   # Shipping service
@@ -383,6 +502,59 @@ services:
       - otelcol
     logging: *logging
 
+  # ******************
+  # Dependent Services
+  # ******************
+  # Postgres used by Feature Flag service
+  ffs_postgres:
+    image: postgres:14
+    container_name: postgres
+    user: postgres
+    deploy:
+      resources:
+        limits:
+          memory: 120M
+    restart: unless-stopped
+    environment:
+      - POSTGRES_USER=ffs
+      - POSTGRES_DB=ffs
+      - POSTGRES_PASSWORD=ffs
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -d ffs -U ffs"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    logging: *logging
+
+  # Kafka used by Checkout, Accounting, and Fraud Detection services
+  kafka:
+    image: ${IMAGE_NAME}:${IMAGE_VERSION}-kafka
+    container_name: kafka
+    build:
+      context: ./
+      dockerfile: ./src/kafka/Dockerfile
+      cache_from:
+        - ${IMAGE_NAME}:${IMAGE_VERSION}-kafka
+    deploy:
+      resources:
+        limits:
+          memory: 500M
+    restart: unless-stopped
+    environment:
+      - KAFKA_ADVERTISED_LISTENERS=PLAINTEXT://kafka:9092
+      - OTEL_EXPORTER_OTLP_ENDPOINT
+      - OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE
+      - OTEL_RESOURCE_ATTRIBUTES
+      - OTEL_SERVICE_NAME=kafka
+      - KAFKA_HEAP_OPTS=-Xmx200m -Xms200m
+    healthcheck:
+      test: nc -z kafka 9092
+      start_period: 10s
+      interval: 5s
+      timeout: 10s
+      retries: 10
+    logging: *logging
+
   # Redis used by Cart service
   redis-cart:
     image: redis:alpine
@@ -401,6 +573,44 @@ services:
   # ********************
   # Telemetry Components
   # ********************
+  # Jaeger
+  jaeger:
+    image: jaegertracing/all-in-one
+    container_name: jaeger
+    command:
+      - "--memory.max-traces"
+      - "10000"
+      - "--query.base-path"
+      - "/jaeger/ui"
+      - "--prometheus.server-url"
+      - "http://${PROMETHEUS_ADDR}"
+    deploy:
+      resources:
+        limits:
+          memory: 300M
+    restart: unless-stopped
+    ports:
+      - "${JAEGER_SERVICE_PORT}"                    # Jaeger UI
+      - "4317"                           # OTLP gRPC default port
+    environment:
+      - COLLECTOR_OTLP_ENABLED=true
+      - METRICS_STORAGE_TYPE=prometheus
+    logging: *logging
+
+  # Grafana
+  grafana:
+    image: grafana/grafana:9.4.7
+    container_name: grafana
+    deploy:
+      resources:
+        limits:
+          memory: 100M
+    volumes:
+      - ./src/grafana/grafana.ini:/etc/grafana/grafana.ini
+      - ./src/grafana/provisioning/:/etc/grafana/provisioning/
+    ports:
+      - "${GRAFANA_SERVICE_PORT}"
+    logging: *logging
 
   # OpenTelemetry Collector
   otelcol:
@@ -420,4 +630,82 @@ services:
       - "4318:4318"     # OTLP over HTTP receiver
       - "9464"          # Prometheus exporter
       - "8888"          # metrics endpoint
+    depends_on:
+      - jaeger
     logging: *logging
+
+  # Prometheus
+  prometheus:
+    image: quay.io/prometheus/prometheus:v2.43.0
+    container_name: prometheus
+    command:
+      - --web.console.templates=/etc/prometheus/consoles
+      - --web.console.libraries=/etc/prometheus/console_libraries
+      - --storage.tsdb.retention.time=1h
+      - --config.file=/etc/prometheus/prometheus-config.yaml
+      - --storage.tsdb.path=/prometheus
+      - --web.enable-lifecycle
+      - --web.route-prefix=/
+      - --enable-feature=exemplar-storage
+    volumes:
+      - ./src/prometheus/prometheus-config.yaml:/etc/prometheus/prometheus-config.yaml
+    deploy:
+      resources:
+        limits:
+          memory: 300M
+    ports:
+      - "${PROMETHEUS_SERVICE_PORT}:${PROMETHEUS_SERVICE_PORT}"
+    logging: *logging
+
+  # *****
+  # Tests
+  # *****
+  # Frontend Tests
+  frontendTests:
+    image: ${IMAGE_NAME}:${IMAGE_VERSION}-frontend-tests
+    container_name: frontend-tests
+    build:
+      context: ./
+      dockerfile: ./src/frontend/Dockerfile.cypress
+    profiles:
+      - tests
+    volumes:
+      - ./src/frontend/cypress/videos:/app/cypress/videos
+      - ./src/frontend/cypress/screenshots:/app/cypress/screenshots
+    environment:
+      - CYPRESS_baseUrl=http://${FRONTEND_ADDR}
+      - FRONTEND_ADDR
+      - NODE_ENV=production
+    depends_on:
+      - frontend
+
+  # Integration Tests
+  integrationTests:
+    image: ${IMAGE_NAME}:${IMAGE_VERSION}-integrationTests
+    container_name: integrationTests
+    profiles:
+      - tests
+    build:
+      context: ./
+      dockerfile: ./test/Dockerfile
+    environment:
+      - AD_SERVICE_ADDR
+      - CART_SERVICE_ADDR
+      - CHECKOUT_SERVICE_ADDR
+      - CURRENCY_SERVICE_ADDR
+      - EMAIL_SERVICE_ADDR
+      - PAYMENT_SERVICE_ADDR
+      - PRODUCT_CATALOG_SERVICE_ADDR
+      - RECOMMENDATION_SERVICE_ADDR
+      - SHIPPING_SERVICE_ADDR
+    depends_on:
+      - adservice
+      - cartservice
+      - checkoutservice
+      - currencyservice
+      - emailservice
+      - paymentservice
+      - productcatalogservice
+      - recommendationservice
+      - shippingservice
+      - quoteservice

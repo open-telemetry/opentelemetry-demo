@@ -1,0 +1,104 @@
+# Copyright The OpenTelemetry Authors
+# SPDX-License-Identifier: Apache-2.0
+
+x-default-logging: &logging
+  driver: "json-file"
+  options:
+    max-size: "5m"
+    max-file: "2"
+
+services:
+  # ******************
+  # Core Demo Services
+  # ******************
+  # Accounting service
+  accountingservice:
+    image: ${IMAGE_NAME}:${IMAGE_VERSION}-accountingservice
+    container_name: accounting-service
+    build:
+      context: ./
+      dockerfile: ./src/accountingservice/Dockerfile
+      cache_from:
+        - ${IMAGE_NAME}:${IMAGE_VERSION}-accountingservice
+    deploy:
+      resources:
+        limits:
+          memory: 20M
+    restart: unless-stopped
+    environment:
+      - KAFKA_SERVICE_ADDR
+      - OTEL_EXPORTER_OTLP_ENDPOINT
+      - OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE
+      - OTEL_RESOURCE_ATTRIBUTES
+      - OTEL_SERVICE_NAME=accountingservice
+    depends_on:
+      otelcol:
+        condition: service_started
+      kafka:
+        condition: service_healthy
+    logging: *logging
+
+  # Checkout service
+  checkoutservice:
+    environment:
+      - KAFKA_SERVICE_ADDR
+    depends_on:
+      kafka:
+        condition: service_healthy
+    logging: *logging
+
+  # Fraud Detection service
+  frauddetectionservice:
+    image: ${IMAGE_NAME}:${IMAGE_VERSION}-frauddetectionservice
+    container_name: frauddetection-service
+    build:
+      context: ./
+      dockerfile: ./src/frauddetectionservice/Dockerfile
+      cache_from:
+        - ${IMAGE_NAME}:${IMAGE_VERSION}-frauddetectionservice
+    deploy:
+      resources:
+        limits:
+          memory: 200M
+    restart: unless-stopped
+    environment:
+      - KAFKA_SERVICE_ADDR
+      - OTEL_EXPORTER_OTLP_ENDPOINT
+      - OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE
+      - OTEL_RESOURCE_ATTRIBUTES
+      - OTEL_SERVICE_NAME=frauddetectionservice
+    depends_on:
+      otelcol:
+        condition: service_started
+      kafka:
+        condition: service_healthy
+    logging: *logging
+
+  # Kafka used by Checkout, Accounting, and Fraud Detection services
+  kafka:
+    image: ${IMAGE_NAME}:${IMAGE_VERSION}-kafka
+    container_name: kafka
+    build:
+      context: ./
+      dockerfile: ./src/kafka/Dockerfile
+      cache_from:
+        - ${IMAGE_NAME}:${IMAGE_VERSION}-kafka
+    deploy:
+      resources:
+        limits:
+          memory: 500M
+    restart: unless-stopped
+    environment:
+      - KAFKA_ADVERTISED_LISTENERS=PLAINTEXT://kafka:9092
+      - OTEL_EXPORTER_OTLP_ENDPOINT
+      - OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE
+      - OTEL_RESOURCE_ATTRIBUTES
+      - OTEL_SERVICE_NAME=kafka
+      - KAFKA_HEAP_OPTS=-Xmx200m -Xms200m
+    healthcheck:
+      test: nc -z kafka 9092
+      start_period: 10s
+      interval: 5s
+      timeout: 10s
+      retries: 10
+    logging: *logging
