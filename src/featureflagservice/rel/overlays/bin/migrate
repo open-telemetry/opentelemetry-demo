@@ -1,3 +1,5 @@
 #!/bin/sh
+
+
 cd -P -- "$(dirname -- "$0")"
 exec ./featureflagservice eval Featureflagservice.Release.migrate

@@ -1,5 +1,8 @@
 <?php
-declare(strict_types=1);
+// Copyright The OpenTelemetry Authors
+// SPDX-License-Identifier: Apache-2.0
+
+
 
 use OpenTelemetry\API\Common\Instrumentation\Globals;
 use OpenTelemetry\API\Trace\Span;
@@ -41,8 +44,7 @@ return function (App $app) {
         $span = Span::getCurrent();
         $span->addEvent('Received get quote request, processing it');
 
-        $body = $request->getBody()->getContents();
-        $jsonObject = json_decode($body, true);
+        $jsonObject = $request->getParsedBody();
 
         $data = calculateQuote($jsonObject);
 

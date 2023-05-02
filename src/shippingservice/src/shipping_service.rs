@@ -1,3 +1,6 @@
+// Copyright The OpenTelemetry Authors
+// SPDX-License-Identifier: Apache-2.0
+
 use opentelemetry::{global, propagation::Extractor, trace::Span, Context, KeyValue};
 use opentelemetry_api::trace::{FutureExt, TraceContextExt, SpanKind, Tracer};
 use opentelemetry_semantic_conventions as semcov;

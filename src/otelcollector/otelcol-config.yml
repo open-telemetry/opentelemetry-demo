@@ -1,3 +1,7 @@
+# Copyright The OpenTelemetry Authors
+# SPDX-License-Identifier: Apache-2.0
+
+
 receivers:
   otlp:
     protocols:
@@ -19,24 +23,30 @@ exporters:
     resource_to_telemetry_conversion:
       enabled: true
     enable_open_metrics: true
+
 processors:
   batch:
+  filter:
+    metrics:
+      exclude:
+        match_type: strict
+        metric_names:
+          - queueSize
+
+connectors:
   spanmetrics:
-    metrics_exporter: prometheus
-  # temporary measure until description is fixed in .NET
-  transform:
-    metric_statements:
-      - context: metric
-        statements:
-          - set(description, "Measures the duration of inbound HTTP requests") where name == "http.server.duration"
 
 service:
   pipelines:
     traces:
       receivers: [otlp]
-      processors: [spanmetrics, batch]
-      exporters: [logging, otlp]
+      processors: [batch]
+      exporters: [otlp, logging, spanmetrics]
     metrics:
-      receivers: [otlp]
-      processors: [transform, batch]
+      receivers: [otlp, spanmetrics]
+      processors: [filter, batch]
       exporters: [prometheus, logging]
+    logs:
+      receivers: [otlp]
+      processors: [batch]
+      exporters: [logging]

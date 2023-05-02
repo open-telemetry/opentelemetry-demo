@@ -1,3 +1,7 @@
+# Copyright The OpenTelemetry Authors
+# SPDX-License-Identifier: Apache-2.0
+
+
 FROM gradle:7-jdk17 AS builder
 
 WORKDIR /usr/src/app/

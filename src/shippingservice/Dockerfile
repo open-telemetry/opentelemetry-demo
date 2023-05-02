@@ -1,4 +1,7 @@
-# build context will only work from ../../docker-compose.yml
+# Copyright The OpenTelemetry Authors
+# SPDX-License-Identifier: Apache-2.0
+
+
 FROM --platform=${BUILDPLATFORM} rust:1.61 as builder
 
 ARG TARGETARCH TARGETPLATFORM BUILDPLATFORM

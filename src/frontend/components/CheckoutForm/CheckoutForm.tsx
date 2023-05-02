@@ -1,3 +1,6 @@
+// Copyright The OpenTelemetry Authors
+// SPDX-License-Identifier: Apache-2.0
+
 import Link from 'next/link';
 import { useCallback, useState } from 'react';
 import { CypressFields } from '../../utils/Cypress';

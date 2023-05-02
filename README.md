@@ -55,12 +55,13 @@ keeping it up to date for you.
 
 |                                                                                                                   |                                                                   |                                                                                              |
 | ----------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------- | -------------------------------------------------------------------------------------------- |
-| [AlibabaCloud LogService](https://github.com/aliyun-sls/opentelemetry-demo)                                       | [Grafana Labs](https://github.com/grafana/opentelemetry-demo)     | [New Relic](https://github.com/newrelic/opentelemetry-demo)                                  |
-| [AppDynamics](https://www.appdynamics.com/blog/cloud/how-to-observe-opentelemetry-demo-app-in-appdynamics-cloud/) | [Helios](https://otelsandbox.gethelios.dev)                       | [Sentry](https://github.com/getsentry/opentelemetry-demo)                                    |
-| [Aspecto](https://github.com/aspecto-io/opentelemetry-demo)                                                       | [Honeycomb.io](https://github.com/honeycombio/opentelemetry-demo) | [Splunk](https://github.com/signalfx/opentelemetry-demo)                                     |
-| [Coralogix](https://coralogix.com/blog/configure-otel-demo-send-telemetry-data-coralogix)                         | [Instana](https://github.com/instana/opentelemetry-demo)          | [Sumo Logic](https://www.sumologic.com/blog/common-opentelemetry-demo-application/)          |
-| [Datadog](https://github.com/DataDog/opentelemetry-demo)                                                          | [Kloudfuse](https://github.com/kloudfuse/opentelemetry-demo)      | [TelemetryHub](https://github.com/TelemetryHub/opentelemetry-demo/tree/telemetryhub-backend) |
+| [AlibabaCloud LogService](https://github.com/aliyun-sls/opentelemetry-demo)                                       | [Grafana Labs](https://github.com/grafana/opentelemetry-demo)     | [Sentry](https://github.com/getsentry/opentelemetry-demo)                                  |
+| [AppDynamics](https://www.appdynamics.com/blog/cloud/how-to-observe-opentelemetry-demo-app-in-appdynamics-cloud/) | [Helios](https://otelsandbox.gethelios.dev)                       | [Splunk](https://github.com/signalfx/opentelemetry-demo)                                    |
+| [Aspecto](https://github.com/aspecto-io/opentelemetry-demo)                                                       | [Honeycomb.io](https://github.com/honeycombio/opentelemetry-demo) | [Sumo Logic](https://www.sumologic.com/blog/common-opentelemetry-demo-application/)                                     |
+| [Coralogix](https://coralogix.com/blog/configure-otel-demo-send-telemetry-data-coralogix)                         | [Instana](https://github.com/instana/opentelemetry-demo)          | [TelemetryHub](https://github.com/TelemetryHub/opentelemetry-demo/tree/telemetryhub-backend)          |
+| [Datadog](https://github.com/DataDog/opentelemetry-demo)                                                          | [Kloudfuse](https://github.com/kloudfuse/opentelemetry-demo)      | [Teletrace](https://github.com/teletrace/opentelemetry-demo) |
 | [Dynatrace](https://www.dynatrace.com/news/blog/opentelemetry-demo-application-with-dynatrace/)                   | [Lightstep](https://github.com/lightstep/opentelemetry-demo)      | [Uptrace](https://github.com/uptrace/uptrace/tree/master/example/opentelemetry-demo)         |
+| [Elastic](https://github.com/elastic/opentelemetry-demo)                                                          | [New Relic](https://github.com/newrelic/opentelemetry-demo)      |                                                                                              |
 |                                                                                                                   |                                                                   |                                                                                              |
 
 ## Contributing
@@ -82,7 +83,6 @@ documentation. Our [SIG Calls](CONTRIBUTING.md#join-a-sig-call) are Mondays at
 [Approvers](https://github.com/open-telemetry/community/blob/main/community-membership.md#approver)
 ([@open-telemetry/demo-approvers](https://github.com/orgs/open-telemetry/teams/demo-approvers)):
 
-- [Michael Maxwell](https://github.com/mic-max), Microsoft
 - [Mikko Viitanen](https://github.com/mviitane), Dynatrace
 - [Penghan Wang](https://github.com/wph95), AppDynamics
 - [Reiley Yang](https://github.com/reyang), Microsoft
@@ -90,6 +90,7 @@ documentation. Our [SIG Calls](CONTRIBUTING.md#join-a-sig-call) are Mondays at
 
 Emeritus:
 
+- [Michael Maxwell](https://github.com/mic-max)
 - [Morgan McLean](https://github.com/mtwo)
 
 ### Thanks to all the people who have contributed

@@ -1,3 +1,6 @@
+// Copyright The OpenTelemetry Authors
+// SPDX-License-Identifier: Apache-2.0
+
 import { NextPage } from 'next';
 import Link from 'next/link';
 import { useRouter } from 'next/router';

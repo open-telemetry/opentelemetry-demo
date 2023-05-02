@@ -1,3 +1,7 @@
+# Copyright The OpenTelemetry Authors
+# SPDX-License-Identifier: Apache-2.0
+
+
 FROM golang:1.19.2-alpine AS builder
 RUN apk add build-base protobuf-dev protoc
 WORKDIR /usr/src/app/

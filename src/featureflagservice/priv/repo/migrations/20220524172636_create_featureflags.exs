@@ -1,3 +1,5 @@
+
+
 defmodule Featureflagservice.Repo.Migrations.CreateFeatureflags do
   use Ecto.Migration
 
