@@ -7,8 +7,14 @@ release.
 
 ## Unreleased
 
+* [paymentservice] update JS SDKs to 1.12.0/0.38.0
+  ([#853](https://github.com/open-telemetry/opentelemetry-demo/pull/853))
+* [frontend] update JS SDKs to 1.12.0/0.38.0
+  ([#853](https://github.com/open-telemetry/opentelemetry-demo/pull/853))
 * [chore] use `otel-demo` namespace for generated kubernetes manifests
   ([#848](https://github.com/open-telemetry/opentelemetry-demo/pull/848))
+* [collector] update collector version to 0.76.1 and remove connectors feature gate.
+  ([#857](https://github.com/open-telemetry/opentelemetry-demo/pull/857))
 
 ## 1.4.0
 

@@ -3,14 +3,17 @@
 
 
 FROM golang:1.19.4-alpine AS builder
-
 WORKDIR /usr/src/app/
 
+RUN apk add --no-cache git
 RUN apk add build-base protobuf-dev protoc
 
 # Restore dependencies
 COPY ./src/productcatalogservice/ ./
 COPY ./pb/ ./proto/
+
+ENV GOPROXY=direct
+ENV GOSUMDB=off
 
 RUN go mod download
 RUN go install google.golang.org/protobuf/cmd/protoc-gen-go@v1.28
