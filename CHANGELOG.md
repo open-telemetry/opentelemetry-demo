@@ -17,6 +17,12 @@ release.
   ([#857](https://github.com/open-telemetry/opentelemetry-demo/pull/857))
 * [emailservice] Update Ruby version and bump dependencies
   ([#863](https://github.com/open-telemetry/opentelemetry-demo/pull/863))
+* [shippingservice] update rust version and dependencies
+  ([#865](https://github.com/open-telemetry/opentelemetry-demo/pull/865))
+* [load generator] Bump loagen dependencies
+  ([#869](https://github.com/open-telemetry/opentelemetry-demo/pull/869))
+* [grafana] fix demo dashboard to be compatible with spanmetrics connector
+  ([#874](https://github.com/open-telemetry/opentelemetry-demo/pull/874))
 
 ## 1.4.0
 
