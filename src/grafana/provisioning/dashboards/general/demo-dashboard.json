@@ -413,13 +413,13 @@
             "uid": "webstore-metrics"
           },
           "editorMode": "code",
-          "expr": "rate(calls_total{status_code=\"STATUS_CODE_ERROR\"}[$__interval])",
+          "expr": "rate(calls_total{status_code=\"STATUS_CODE_ERROR\", service_name=\"${service}\"}[$__interval])",
           "legendFormat": "{{ span_name }}",
           "range": true,
           "refId": "A"
         }
       ],
-      "title": "Error Rate",
+      "title": "Error Rate by Service",
       "type": "timeseries"
     },
     {
@@ -552,7 +552,7 @@
           "refId": "D"
         }
       ],
-      "title": "Service Latency (from SpanMetrics)",
+      "title": "Service Latency by Service (from SpanMetrics)",
       "type": "timeseries"
     },
     {
