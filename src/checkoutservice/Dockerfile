@@ -4,6 +4,7 @@
 
 FROM golang:1.19.2-alpine AS builder
 RUN apk add --no-cache git
+RUN apk add --no-cache curl
 RUN apk add build-base protobuf-dev protoc
 WORKDIR /usr/src/app/
 

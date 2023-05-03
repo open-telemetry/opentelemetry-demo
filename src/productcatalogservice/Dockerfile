@@ -7,6 +7,7 @@ WORKDIR /usr/src/app/
 
 RUN apk add --no-cache git
 RUN apk add build-base protobuf-dev protoc
+RUN apk add --no-cache curl
 
 # Restore dependencies
 COPY ./src/productcatalogservice/ ./
