@@ -15,6 +15,8 @@ release.
   ([#848](https://github.com/open-telemetry/opentelemetry-demo/pull/848))
 * [collector] update collector version to 0.76.1 and remove connectors feature gate.
   ([#857](https://github.com/open-telemetry/opentelemetry-demo/pull/857))
+* [shippingservice] update rust version and dependencies
+  ([#865](https://github.com/open-telemetry/opentelemetry-demo/pull/865))
 
 ## 1.4.0
 
