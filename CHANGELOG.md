@@ -17,6 +17,8 @@ release.
   ([#857](https://github.com/open-telemetry/opentelemetry-demo/pull/857))
 * [shippingservice] update rust version and dependencies
   ([#865](https://github.com/open-telemetry/opentelemetry-demo/pull/865))
+* [load generator] Bump loagen dependencies
+  ([#869](https://github.com/open-telemetry/opentelemetry-demo/pull/869))
 
 ## 1.4.0
 
