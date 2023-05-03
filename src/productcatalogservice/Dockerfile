@@ -7,6 +7,7 @@ FROM golang:1.19.4-alpine AS builder
 WORKDIR /usr/src/app/
 
 RUN apk add build-base protobuf-dev protoc
+RUN apk add --no-cache curl
 
 # Restore dependencies
 COPY ./src/productcatalogservice/ ./

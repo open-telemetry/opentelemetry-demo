@@ -17,6 +17,7 @@
 FROM alpine as builder
 
 RUN apk update
+RUN apk add --no-cache curl
 RUN apk add git cmake make g++ grpc-dev re2-dev protobuf-dev c-ares-dev
 
 ARG OPENTELEMETRY_CPP_VERSION=1.8.2
