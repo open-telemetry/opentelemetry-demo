@@ -583,16 +583,13 @@ services:
   # Telemetry Components
   # ********************
   # Jaeger
-  jaeger:
-    image: jaegertracing/all-in-one
-    container_name: jaeger
+  jaeger-collector:
+    image: jaegertracing/jaeger-collector:latest
+    container_name: jaeger-collector
     command:
-      - "--memory.max-traces"
-      - "10000"
-      - "--query.base-path"
-      - "/jaeger/ui"
-      - "--prometheus.server-url"
-      - "http://${PROMETHEUS_ADDR}"
+      - "--metrics-backend=prometheus"
+      - "--es.server-urls=https://opensearch-node1:9200"
+      - "--es.tls.enabled=true"
     deploy:
       resources:
         limits:
@@ -600,11 +597,38 @@ services:
     restart: unless-stopped
     ports:
       - "${JAEGER_SERVICE_PORT}"                    # Jaeger UI
-      - "4317"                           # OTLP gRPC default port
+      - "4317"                                      # OTLP gRPC default port
+      - "14269:14269"
+      - "14268:14268"
+      - "14267:14267"
+      - "14250:14250"
+      - "9411:9411"
     environment:
       - COLLECTOR_OTLP_ENABLED=true
       - METRICS_STORAGE_TYPE=prometheus
+      - SPAN_STORAGE_TYPE=opensearch
+      - ES_TAGS_AS_FIELDS_ALL=true
+      - ES_USERNAME=admin
+      - ES_PASSWORD=admin
+      - ES_TLS_SKIP_HOST_VERIFY=true
+    depends_on:
+      - opensearch-node1
     logging: *logging
+
+  jaeger-agent:
+    image: jaegertracing/jaeger-agent:latest
+    hostname: jaeger-agent
+    command: ["--reporter.grpc.host-port=jaeger-collector:14250"]
+    ports:
+      - "5775:5775/udp"
+      - "6831:6831/udp"
+      - "6832:6832/udp"
+      - "5778:5778"
+    restart: on-failure
+    environment:
+      - SPAN_STORAGE_TYPE=opensearch
+    depends_on:
+      - jaeger-collector
 
   # Grafana
   grafana:
@@ -640,7 +664,7 @@ services:
       - "9464"          # Prometheus exporter
       - "8888"          # metrics endpoint
     depends_on:
-      - jaeger
+      - jaeger-agent
     logging: *logging
 
   # Prometheus
@@ -721,6 +745,15 @@ services:
       - "5601" # Expose port 5601 for web access to OpenSearch Dashboards
     environment:
       OPENSEARCH_HOSTS: '["https://opensearch-node1:9200","https://opensearch-node2:9200"]' # Define the OpenSearch nodes that OpenSearch Dashboards will query
+    depends_on:
+      - opensearch-node1
+      - opensearch-node2
+
+#   Observability OSD Integrations
+#  observability-integration:
+#    build: ./src/integrations/Dockerfile
+#    depends_on:
+#      - opensearch-dashboards
 
   # *****
   # Tests
