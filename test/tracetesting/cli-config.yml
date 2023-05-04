@@ -1,0 +1,3 @@
+scheme: http
+endpoint: localhost:11633
+analyticsEnabled: false

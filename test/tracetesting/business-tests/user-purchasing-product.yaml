@@ -1,0 +1,8 @@
+type: Transaction
+spec:
+  id: user-purchase-product
+  name: User purchasing products
+  description: Simulate a process of a user purchasing products on Astronomy store
+  steps:
+  - ./01-add-product-to-cart.yaml
+  - ./02-checking-out-cart.yaml

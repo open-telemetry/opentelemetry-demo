@@ -1,0 +1,4 @@
+CART_API_URL: http://frontend:8080/api/cart
+CHECKOUT_API_URL: http://frontend:8080/api/checkout
+PRODUCT_ID: OLJCESPC7Z
+USER_ID: 2491f868-88f1-4345-8836-d5d8511a9f83

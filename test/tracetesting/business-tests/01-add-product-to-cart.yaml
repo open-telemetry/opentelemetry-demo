@@ -1,0 +1,19 @@
+type: Test
+spec:
+  id: add-product
+  name: Add product to the cart
+  description: Add a selected product to user shopping cart
+  trigger:
+    type: http
+    httpRequest:
+      url: ${env:CART_API_URL}
+      method: POST
+      headers:
+      - key: Content-Type
+        value: application/json
+      body: '{"item":{"productId":"${env:PRODUCT_ID}","quantity":1},"userId":"${env:USER_ID}"}'
+  specs:
+  - name: "The product was persisted correctly on the shopping cart"
+    selector: span[name="oteldemo.CartService/AddItem"]
+    assertions:
+    - attr:app.product.id = "${env:PRODUCT_ID}"
