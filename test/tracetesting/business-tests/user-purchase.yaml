@@ -4,5 +4,5 @@ spec:
   name: User purchasing products
   description: Simulate a process of a user purchasing products on Astronomy store
   steps:
-  - ./01-add-product-to-cart.yaml
-  - ./02-checking-out-cart.yaml
+  - ./user-purchase-test-steps/01-add-product-to-cart.yaml
+  - ./user-purchase-test-steps/02-checking-out-cart.yaml
