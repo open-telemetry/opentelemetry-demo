@@ -33,6 +33,6 @@ services:
       - INSTANA_REPOSITORY_PROXY_HOST
       - INSTANA_REPOSITORY_PROXY_PORT
       - INSTANA_LOG_LEVEL
-      - HTTP_PROXY=${http_proxy}
-      - HTTPS_PROXY=${https_proxy}
-      - NO_PROXY=${no_proxy}
+      - HTTP_PROXY=${http_proxy:-}
+      - HTTPS_PROXY=${https_proxy:-}
+      - NO_PROXY=${no_proxy:-}

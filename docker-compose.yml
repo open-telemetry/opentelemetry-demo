@@ -693,9 +693,9 @@ services:
       - "9464"          # Prometheus exporter
       - "8888"          # metrics endpoint
     environment:
-      - HTTP_PROXY=${http_proxy}
-      - HTTPS_PROXY=${https_proxy}
-      - NO_PROXY=jaeger,${no_proxy}
+      - HTTP_PROXY=${http_proxy:-}
+      - HTTPS_PROXY=${https_proxy:-}
+      - NO_PROXY=jaeger,${no_proxy:-}
       - INSTANA_SERVICE_NAME=otelcol
     depends_on:
       - jaeger
