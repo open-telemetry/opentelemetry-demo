@@ -751,10 +751,9 @@
       {
         "allValue": "",
         "current": {
-          "isNone": true,
           "selected": false,
-          "text": "None",
-          "value": ""
+          "text": "featureflagservice",
+          "value": "featureflagservice"
         },
         "datasource": {
           "type": "prometheus",
