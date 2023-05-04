@@ -6,6 +6,7 @@
     "require": {
         "php": ">= 8.2",
         "ext-json": "*",
+        "ext-pcntl": "*",
         "monolog/monolog": "3.3.1",
         "open-telemetry/api": "1.0.0beta5",
         "open-telemetry/sdk": "1.0.0beta6",
