@@ -10,7 +10,7 @@ telemetry:
   exporters:
     collector:
       serviceName: tracetest
-      sampling: 100 # 100%
+      sampling: 100
       exporter:
         type: collector
         collector:

@@ -11,7 +11,25 @@ spec:
       headers:
       - key: Content-Type
         value: application/json
-      body: '{"userId":"${env:USER_ID}","email":"someone@example.com","address":{"streetAddress":"1600 Amphitheatre Parkway","state":"CA","country":"United States","city":"Mountain View","zipCode":"94043"},"userCurrency":"USD","creditCard":{"creditCardCvv":672,"creditCardExpirationMonth":1,"creditCardExpirationYear":2030,"creditCardNumber":"4432-8015-6152-0454"}}'
+      body: |
+        {
+          "userId": "${env:USER_ID}",
+          "email": "someone@example.com",
+          "address": {
+            "streetAddress": "1600 Amphitheatre Parkway",
+            "state": "CA",
+            "country": "United States",
+            "city": "Mountain View",
+            "zipCode": "94043"
+          },
+          "userCurrency": "USD",
+          "creditCard": {
+            "creditCardCvv": 672,
+            "creditCardExpirationMonth": 1,
+            "creditCardExpirationYear": 2030,
+            "creditCardNumber": "4432-8015-6152-0454"
+          }
+        }
   specs:
   - selector: span[tracetest.span.type="rpc" name="oteldemo.CheckoutService/PlaceOrder" rpc.system="grpc" rpc.method="PlaceOrder" rpc.service="oteldemo.CheckoutService"]
     name: "The order was placed"
