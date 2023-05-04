@@ -1,6 +1,19 @@
+# Copyright The OpenTelemetry Authors
+# SPDX-License-Identifier: Apache-2.0
 #/bin/bash
 
+# This script set up how to run Tracetest and which test files 
+# be executed
+
 set -e
+
+check_if_tracetest_is_installed() {
+  if ! command -v tracetest &> /dev/null
+  then
+      echo "tracetest CLI could not be found"
+      exit -1
+  fi
+}
 
 run_tracetest() {
   test_file=$1
@@ -16,6 +29,8 @@ run_tracetest_with_env() {
   tracetest -c ./cli-config.yml test run -d $test_file --environment $env_file -w
   return $?
 }
+
+check_if_tracetest_is_installed
 
 echo "Starting tests..."
 
