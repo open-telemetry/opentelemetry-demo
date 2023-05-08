@@ -23,7 +23,7 @@ RUN chmod +x /usr/local/bin/install-php-extensions \
     opcache \
     pcntl \
     protobuf \
-    opentelemetry-1.0.0beta3
+    opentelemetry-beta
 
 WORKDIR /var/www
 COPY --from=build /tmp/vendor/ ./vendor/
