@@ -3,6 +3,7 @@
 using System;
 
 using cartservice.cartstore;
+using cartservice.featureflags;
 using cartservice.services;
 
 using Microsoft.AspNetCore.Builder;
@@ -30,6 +31,7 @@ await cartStore.InitializeAsync();
 Console.WriteLine("Initialization completed");
 
 builder.Services.AddSingleton<ICartStore>(cartStore);
+builder.Services.AddSingleton<FeatureFlagHelper>();
 
 // see https://opentelemetry.io/docs/instrumentation/net/getting-started/
 
