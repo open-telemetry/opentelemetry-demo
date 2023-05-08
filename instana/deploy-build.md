@@ -28,7 +28,7 @@ docker compose up --no-build -d
 
 > **Notes:**
 > - The `--no-build` flag is used to fetch released docker images instead of building from source. Removing the `--no-build` command line option will rebuild all images from source. The image repository is defined in [`.env`](../.env) file. See below for details on building the images.
-> - You can configure the pre-injected Instana EUM Javascript in Frontend service by setting and exporting `INSTANA_EUM_URL` and `INSTANA_EUM_KEY` environment varables in the shell before running the demo.
+> - You can configure the pre-injected Instana EUM Javascript in Frontend service by setting and exporting `INSTANA_EUM_URL` and `INSTANA_EUM_KEY` environment variables in the shell before running the demo.
 
 > **Tip:**
 > You can run the demo in the foreground  by omitting the `-d` parameter (`docker compose up`) to get the container logs dumped out to the terminal so you can check for any errors.
@@ -86,7 +86,7 @@ EOF
 Deploy the demo using the published Helm chart:
 
 > **Note:**
-> We use custom values file ([`values-instana-agent.yaml`](../instana/values-instana-agent.yaml)) with additional settings for the Instana agent to act as the default OTel traces and metrics receiver. There is no need to change the default values except when you want to use Instana website EUM; in this case edit the values file and fill-in the corresponding values for `INSTANA_EUM_URL` and `INSTANA_EUM_KEY` environment variables in the Frontend service component section (you could also add these variables later by editing the frontend service deployment)
+> We use custom values file ([`values-instana-agent.yaml`](../instana/values-instana-agent.yaml)) with additional settings for the Instana agent to act as the default OTel traces and metrics receiver. There is no need to change the default values except when you want to use Instana website EUM; in this case edit the values file and fill-in the corresponding values for `INSTANA_EUM_URL` and `INSTANA_EUM_KEY` environment variables in the Frontend service component section. Alternatively, you can add these variables later after installation by editing the frontend service deployment (`kubectl edit deploy my-otel-demo-frontend`).
 
 ```sh
 cd instana
