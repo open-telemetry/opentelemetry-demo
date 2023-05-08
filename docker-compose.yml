@@ -277,7 +277,7 @@ services:
           memory: 200M
     restart: unless-stopped
     ports:
-      - "${FRONTEND_PORT}"
+      - "${FRONTEND_PORT}:${FRONTEND_PORT}"
     environment:
       - PORT=${FRONTEND_PORT}
       - FRONTEND_ADDR
@@ -356,7 +356,7 @@ services:
           memory: 120M
     restart: unless-stopped
     ports:
-      - "${LOCUST_WEB_PORT}"
+      - "${LOCUST_WEB_PORT}:${LOCUST_WEB_PORT}"
     environment:
       - LOCUST_WEB_PORT
       - LOCUST_USERS
@@ -642,7 +642,7 @@ services:
       - ./src/grafana/grafana.ini:/etc/grafana/grafana.ini
       - ./src/grafana/provisioning/:/etc/grafana/provisioning/
     ports:
-      - "${GRAFANA_SERVICE_PORT}"
+      - "${GRAFANA_SERVICE_PORT}:${GRAFANA_SERVICE_PORT}"
     logging: *logging
 
   # OpenTelemetry Collector
