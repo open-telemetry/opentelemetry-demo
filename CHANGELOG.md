@@ -23,6 +23,8 @@ release.
   ([#874](https://github.com/open-telemetry/opentelemetry-demo/pull/874))
 * [quoteservice] enabling batch span processor metrics
   ([#878](https://github.com/open-telemetry/opentelemetry-demo/pull/878))
+* [kafka] remove KRaft mode support workarounds
+  ([#880](https://github.com/open-telemetry/opentelemetry-demo/pull/880))
 
 ## 1.4.0
 
