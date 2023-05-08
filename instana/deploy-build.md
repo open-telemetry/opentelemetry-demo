@@ -91,8 +91,16 @@ Deploy the demo using the published Helm chart:
 ```sh
 cd instana
 helm repo add open-telemetry https://open-telemetry.github.io/opentelemetry-helm-charts
+helm repo update
 helm install my-otel-demo open-telemetry/opentelemetry-demo -f values-instana-agent.yaml
 ```
+
+> **Tip:**
+> You may occasionally get stuck with pods in `ImagePullBackOff` state due to reaching DockerHub's pull rate limits. You can increase the limits by authenticating to Docker. Create a new secret in the demo namespace with your Docker credentials and attach the secret to the demo service account:
+> ```sh
+> kubectl create secret docker-registry my-docker-hub --docker-username <username> --docker-password <password> --docker-server docker.io
+> kubectl patch serviceaccount my-otel-demo -p '{"imagePullSecrets": [{"name": "my-docker-hub"}]}'
+> ```
 
 In OpenShift, you can create a route for the `frontendproxy` service for easy access to the demo frontpage and featureflags services instead of the `kubectl port-forward` way that Helm prompts you after installation. Using TLS terminated route endpoint enables for better [correlation between EUM and backend tracing](https://www.ibm.com/docs/en/instana-observability/current?topic=websites-backend-correlation#backend-correlation).
 ```sh
