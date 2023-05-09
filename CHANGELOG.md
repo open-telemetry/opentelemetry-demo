@@ -7,6 +7,8 @@ release.
 
 ## Unreleased
 
+* Add cartServiceFailure feature flag triggering Cart Service errors
+  ([#824](https://github.com/open-telemetry/opentelemetry-demo/pull/824))
 * [paymentservice] update JS SDKs to 1.12.0/0.38.0
   ([#853](https://github.com/open-telemetry/opentelemetry-demo/pull/853))
 * [frontend] update JS SDKs to 1.12.0/0.38.0

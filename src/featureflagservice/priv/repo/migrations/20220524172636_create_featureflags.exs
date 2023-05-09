@@ -32,11 +32,17 @@ defmodule Featureflagservice.Repo.Migrations.CreateFeatureflags do
       name: "adServiceFailure",
       description: "Fail ad service requests sporadically",
       enabled: false})
+
+    repo().insert(%Featureflagservice.FeatureFlags.FeatureFlag{
+      name: "cartServiceFailure",
+      description: "Fail cart service requests sporadically",
+      enabled: false})
   end
 
   defp execute_down do
     repo().delete(%Featureflagservice.FeatureFlags.FeatureFlag{name: "productCatalogFailure"})
     repo().delete(%Featureflagservice.FeatureFlags.FeatureFlag{name: "recommendationCache"})
     repo().delete(%Featureflagservice.FeatureFlags.FeatureFlag{name: "adServiceFailure"})
+    repo().delete(%Featureflagservice.FeatureFlags.FeatureFlag{name: "cartServiceFailure"})
   end
 end
