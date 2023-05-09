@@ -1,3 +1,7 @@
+# Copyright The OpenTelemetry Authors
+# SPDX-License-Identifier: Apache-2.0
+
+
 defmodule Featureflagservice.FeatureFlagsFixtures do
   @moduledoc """
   This module defines test helpers for creating

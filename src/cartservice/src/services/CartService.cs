@@ -1,23 +1,11 @@
-// Copyright 2020 Google LLC
-//
-// Licensed under the Apache License, Version 2.0 (the "License");
-// you may not use this file except in compliance with the License.
-// You may obtain a copy of the License at
-//
-//      http://www.apache.org/licenses/LICENSE-2.0
-//
-// Unless required by applicable law or agreed to in writing, software
-// distributed under the License is distributed on an "AS IS" BASIS,
-// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-// See the License for the specific language governing permissions and
-// limitations under the License.
-
-using System;
+// Copyright The OpenTelemetry Authors
+// SPDX-License-Identifier: Apache-2.0
 using System.Diagnostics;
 using System.Threading.Tasks;
 using Grpc.Core;
 using OpenTelemetry.Trace;
 using cartservice.cartstore;
+using cartservice.featureflags;
 using Oteldemo;
 
 namespace cartservice.services
@@ -25,12 +13,14 @@ namespace cartservice.services
     public class CartService : Oteldemo.CartService.CartServiceBase
     {
         private readonly static Empty Empty = new Empty();
-        private readonly static Random _random = new Random();
-        private ICartStore _cartStore;
+        private readonly static ICartStore BadCartStore = new RedisCartStore("badhost:1234");
+        private readonly ICartStore _cartStore;
+        private readonly FeatureFlagHelper _featureFlagHelper;
 
-        public CartService(ICartStore cartStore)
+        public CartService(ICartStore cartStore, FeatureFlagHelper featureFlagService)
         {
             _cartStore = cartStore;
+            _featureFlagHelper = featureFlagService;
         }
 
         public async override Task<Empty> AddItem(AddItemRequest request, ServerCallContext context)
@@ -63,27 +53,26 @@ namespace cartservice.services
 
         public async override Task<Empty> EmptyCart(EmptyCartRequest request, ServerCallContext context)
         {
-            this._cartStore = _random.Next() % 5 != 0 
-                ? this._cartStore
-                : new RedisCartStore("badhost:4567");
-
             var activity = Activity.Current;
             activity?.SetTag("app.user.id", request.UserId);
             activity?.AddEvent(new("Empty cart"));
 
             try
             {
-                await _cartStore.EmptyCartAsync(request.UserId);
+                if (await _featureFlagHelper.GenerateCartError())
+                {
+                    await BadCartStore.EmptyCartAsync(request.UserId);
+                }
+                else
+                {
+                    await _cartStore.EmptyCartAsync(request.UserId);
+                }
             }
-            catch (Exception e)
+            catch (RpcException ex)
             {
-                // Recording the original exception to preserve the stack trace on the activity event
-                activity?.RecordException(e);
-
-                // Throw a new exception and use its message for the status description
-                var ex = new Exception("Can't access cart storage.");
+                Activity.Current?.RecordException(ex);
                 Activity.Current?.SetStatus(ActivityStatusCode.Error, ex.Message);
-                throw ex;
+                throw;
             }
 
             return Empty;

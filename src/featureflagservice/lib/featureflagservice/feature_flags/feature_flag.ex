@@ -1,3 +1,7 @@
+# Copyright The OpenTelemetry Authors
+# SPDX-License-Identifier: Apache-2.0
+
+
 defmodule Featureflagservice.FeatureFlags.FeatureFlag do
   use Ecto.Schema
   import Ecto.Changeset

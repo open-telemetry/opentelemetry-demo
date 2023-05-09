@@ -1,16 +1,5 @@
 // Copyright The OpenTelemetry Authors
-//
-// Licensed under the Apache License, Version 2.0 (the "License");
-// you may not use this file except in compliance with the License.
-// You may obtain a copy of the License at
-//
-//     http://www.apache.org/licenses/LICENSE-2.0
-//
-// Unless required by applicable law or agreed to in writing, software
-// distributed under the License is distributed on an "AS IS" BASIS,
-// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-// See the License for the specific language governing permissions and
-// limitations under the License.
+// SPDX-License-Identifier: Apache-2.0
 
 import { useMemo } from 'react';
 import { useQuery } from 'react-query';
@@ -36,7 +25,9 @@ const CartItems = ({ productList, shouldShowPrice = true }: IProps) => {
     country: 'United States',
     zipCode: '94043',
   };
-  const { data: shippingConst = { units: 0, currencyCode: 'USD', nanos: 0 } } = useQuery('shipping', () =>
+
+  const { data: shippingConst = { units: 0, currencyCode: 'USD', nanos: 0 } } = useQuery(['shipping',
+      productList, selectedCurrency, address], () =>
     ApiGateway.getShippingCost(productList, selectedCurrency, address)
   );
 
@@ -48,7 +39,7 @@ const CartItems = ({ productList, shouldShowPrice = true }: IProps) => {
 
     const unitSum =
       productList.reduce((acc, { product: { priceUsd: { units = 0 } = {} } }) => acc + Number(units), 0) +
-        shippingConst?.units || 0 + nanoExceed;
+        (shippingConst?.units || 0) + nanoExceed;
 
     return {
       units: unitSum,
