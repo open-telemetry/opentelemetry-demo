@@ -584,9 +584,9 @@ services:
   # Telemetry Components
   # ********************
   # Jaeger
-  jaeger-collector:
+  jaeger:
     image: jaegertracing/jaeger-collector:latest
-    container_name: jaeger-collector
+    container_name: jaeger
     command:
       - "--metrics-backend=prometheus"
       - "--es.server-urls=https://opensearch-node1:9200"
@@ -619,8 +619,9 @@ services:
   jaeger-agent:
     image: jaegertracing/jaeger-agent:latest
     hostname: jaeger-agent
-    command: ["--reporter.grpc.host-port=jaeger-collector:14250"]
+    command: ["--reporter.grpc.host-port=jaeger:14250"]
     ports:
+      - "${GRAFANA_SERVICE_PORT}"
       - "5775:5775/udp"
       - "6831:6831/udp"
       - "6832:6832/udp"
@@ -629,7 +630,7 @@ services:
     environment:
       - SPAN_STORAGE_TYPE=opensearch
     depends_on:
-      - jaeger-collector
+      - jaeger
 
   # Grafana
   grafana:
