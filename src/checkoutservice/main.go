@@ -156,11 +156,13 @@ func main() {
 	mustMapEnv(&svc.currencySvcAddr, "CURRENCY_SERVICE_ADDR")
 	mustMapEnv(&svc.emailSvcAddr, "EMAIL_SERVICE_ADDR")
 	mustMapEnv(&svc.paymentSvcAddr, "PAYMENT_SERVICE_ADDR")
-	mustMapEnv(&svc.kafkaBrokerSvcAddr, "KAFKA_SERVICE_ADDR")
+	svc.kafkaBrokerSvcAddr = os.Getenv("KAFKA_SERVICE_ADDR")
 
-	svc.KafkaProducerClient, err = kafka.CreateKafkaProducer([]string{svc.kafkaBrokerSvcAddr}, log)
-	if err != nil {
-		log.Fatal(err)
+	if svc.kafkaBrokerSvcAddr != "" {
+		svc.KafkaProducerClient, err = kafka.CreateKafkaProducer([]string{svc.kafkaBrokerSvcAddr}, log)
+		if err != nil {
+			log.Fatal(err)
+		}
 	}
 
 	log.Infof("service config: %+v", svc)
@@ -274,7 +276,10 @@ func (cs *checkoutService) PlaceOrder(ctx context.Context, req *pb.PlaceOrderReq
 		log.Infof("order confirmation email sent to %q", req.Email)
 	}
 
-	cs.sendToPostProcessor(ctx, orderResult)
+	// send to kafka only if kafka broker address is set
+	if cs.kafkaBrokerSvcAddr != "" {
+		cs.sendToPostProcessor(ctx, orderResult)
+	}
 
 	resp := &pb.PlaceOrderResponse{Order: orderResult}
 	return resp, nil
