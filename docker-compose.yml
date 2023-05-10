@@ -37,14 +37,14 @@ services:
       - "${AD_SERVICE_PORT}"
     environment:
       - AD_SERVICE_PORT
-      - FEATURE_FLAG_GRPC_SERVICE_ADDR
       - OTEL_EXPORTER_OTLP_ENDPOINT
       - OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE
       - OTEL_RESOURCE_ATTRIBUTES
       - OTEL_LOGS_EXPORTER=otlp
       - OTEL_SERVICE_NAME=adservice
     depends_on:
-      - otelcol
+      otelcol:
+        condition: service_started
     logging: *logging
 
   # Cart service
@@ -65,15 +65,16 @@ services:
       - "${CART_SERVICE_PORT}"
     environment:
       - CART_SERVICE_PORT
-      - FEATURE_FLAG_GRPC_SERVICE_ADDR
       - REDIS_ADDR
       - OTEL_EXPORTER_OTLP_ENDPOINT
       - OTEL_RESOURCE_ATTRIBUTES
       - OTEL_SERVICE_NAME=cartservice
       - ASPNETCORE_URLS=http://*:${CART_SERVICE_PORT}
     depends_on:
-      - redis-cart
-      - otelcol
+      redis-cart:
+        condition: service_started
+      otelcol:
+        condition: service_started
     logging: *logging
 
   # Checkout service
@@ -144,7 +145,8 @@ services:
       - OTEL_EXPORTER_OTLP_ENDPOINT
       - OTEL_RESOURCE_ATTRIBUTES=${OTEL_RESOURCE_ATTRIBUTES},service.name=currencyservice   # The C++ SDK does not support OTEL_SERVICE_NAME
     depends_on:
-      - otelcol
+      otelcol:
+        condition: service_started
     logging: *logging
 
   # Email service
@@ -169,7 +171,8 @@ services:
       - OTEL_RESOURCE_ATTRIBUTES
       - OTEL_SERVICE_NAME=emailservice
     depends_on:
-      - otelcol
+      otelcol:
+        condition: service_started
     logging: *logging
 
   # Frontend
@@ -206,15 +209,24 @@ services:
       - OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE
       - WEB_OTEL_SERVICE_NAME=frontend-web
     depends_on:
-      - adservice
-      - cartservice
-      - checkoutservice
-      - currencyservice
-      - otelcol
-      - productcatalogservice
-      - quoteservice
-      - recommendationservice
-      - shippingservice
+      adservice:
+        condition: service_started
+      cartservice:
+        condition: service_started
+      checkoutservice:
+        condition: service_started
+      currencyservice:
+        condition: service_started
+      productcatalogservice:
+        condition: service_started
+      quoteservice:
+        condition: service_started
+      recommendationservice:
+        condition: service_started
+      shippingservice:
+        condition: service_started
+      otelcol:
+        condition: service_started
     logging: *logging
 
   # Frontend Proxy (Envoy)
@@ -246,7 +258,8 @@ services:
       - OTEL_COLLECTOR_PORT
       - ENVOY_PORT
     depends_on:
-      - frontend
+      frontend:
+        condition: service_started
 
   # Payment service
   paymentservice:
@@ -271,7 +284,8 @@ services:
       - OTEL_RESOURCE_ATTRIBUTES
       - OTEL_SERVICE_NAME=paymentservice
     depends_on:
-      - otelcol
+      otelcol:
+        condition: service_started
     logging: *logging
 
   # Product Catalog service
@@ -298,7 +312,8 @@ services:
       - OTEL_RESOURCE_ATTRIBUTES
       - OTEL_SERVICE_NAME=productcatalogservice
     depends_on:
-      - otelcol
+      otelcol:
+        condition: service_started
     logging: *logging
 
   # Quote service
@@ -324,7 +339,8 @@ services:
       - OTEL_RESOURCE_ATTRIBUTES
       - OTEL_SERVICE_NAME=quoteservice
     depends_on:
-      - otelcol
+      otelcol:
+        condition: service_started
     logging: *logging
 
   # Recommendation service
@@ -354,8 +370,10 @@ services:
       - OTEL_SERVICE_NAME=recommendationservice
       - PROTOCOL_BUFFERS_PYTHON_IMPLEMENTATION=python
     depends_on:
-      - productcatalogservice
-      - otelcol
+      productcatalogservice:
+        condition: service_started
+      otelcol:
+        condition: service_started
     logging: *logging
 
   # Shipping service
@@ -381,7 +399,8 @@ services:
       - OTEL_RESOURCE_ATTRIBUTES
       - OTEL_SERVICE_NAME=shippingservice
     depends_on:
-      - otelcol
+      otelcol:
+        condition: service_started
     logging: *logging
 
   # Redis used by Cart service

@@ -13,6 +13,22 @@ services:
   # Core Demo Services
   # ******************
 
+  # AdService
+  adservice:
+    environment:
+      - FEATURE_FLAG_GRPC_SERVICE_ADDR
+    depends_on:
+      featureflagservice:
+        condition: service_started
+
+  # Cart service
+  cartservice:
+    environment:
+      - FEATURE_FLAG_GRPC_SERVICE_ADDR
+    depends_on:
+      featureflagservice:
+        condition: service_started
+
   # Feature Flag service
   featureflagservice:
     image: ${IMAGE_NAME}:${IMAGE_VERSION}-featureflagservice
@@ -43,6 +59,22 @@ services:
       ffs_postgres:
         condition: service_healthy
     logging: *logging
+
+  # productcatalogservice
+  productcatalogservice:
+    environment:
+      - FEATURE_FLAG_GRPC_SERVICE_ADDR
+    depends_on:
+      featureflagservice:
+        condition: service_started
+
+  # recommendationservice
+  recommendationservice:
+    environment:
+      - FEATURE_FLAG_GRPC_SERVICE_ADDR
+    depends_on:
+      featureflagservice:
+        condition: service_started
 
   # ******************
   # Dependent Services

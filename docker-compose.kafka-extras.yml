@@ -11,6 +11,7 @@ services:
   # ******************
   # Core Demo Services
   # ******************
+
   # Accounting service
   accountingservice:
     image: ${IMAGE_NAME}:${IMAGE_VERSION}-accountingservice
@@ -45,7 +46,6 @@ services:
     depends_on:
       kafka:
         condition: service_healthy
-    logging: *logging
 
   # Fraud Detection service
   frauddetectionservice:
@@ -73,6 +73,7 @@ services:
       kafka:
         condition: service_healthy
     logging: *logging
+
 
   # Kafka used by Checkout, Accounting, and Fraud Detection services
   kafka:
