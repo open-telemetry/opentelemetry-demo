@@ -308,40 +308,6 @@ services:
       - shippingservice
     logging: *logging
 
-  # Frontend Proxy (Envoy)
-  frontendproxy:
-    image: ${IMAGE_NAME}:${IMAGE_VERSION}-frontendproxy
-    container_name: frontend-proxy
-    build:
-      context: ./
-      dockerfile: src/frontendproxy/Dockerfile
-    deploy:
-      resources:
-        limits:
-          memory: 50M
-    ports:
-      - "${ENVOY_PORT}:${ENVOY_PORT}"
-      - 10000:10000
-    environment:
-      - FRONTEND_PORT
-      - FRONTEND_HOST
-      - FEATURE_FLAG_SERVICE_PORT
-      - FEATURE_FLAG_SERVICE_HOST
-      - LOCUST_WEB_HOST
-      - LOCUST_WEB_PORT
-      - GRAFANA_SERVICE_PORT
-      - GRAFANA_SERVICE_HOST
-      - JAEGER_SERVICE_PORT
-      - JAEGER_SERVICE_HOST
-      - OTEL_COLLECTOR_HOST
-      - OTEL_COLLECTOR_PORT
-      - ENVOY_PORT
-    depends_on:
-      - frontend
-      - featureflagservice
-      - loadgenerator
-      - grafana
-
   # Load Generator
   loadgenerator:
     image: ${IMAGE_NAME}:${IMAGE_VERSION}-loadgenerator
@@ -486,6 +452,37 @@ services:
       - featureflagservice
     logging: *logging
 
+  # Frontend Proxy service
+  nginx:
+    image: nginx:latest
+    volumes:
+      - ./src/nginx-otel/default.conf:/etc/nginx/conf.d/default.conf
+    ports:
+      - 90:90
+    depends_on:
+      - frontend
+      - fluentbit
+      - otelcol
+    links:
+      - fluentbit
+    logging:
+      driver: "fluentd"
+      options:
+        fluentd-address: 127.0.0.1:24224
+        tag: nginx.access
+
+  # Fluent-bit logs shipper service
+  fluentbit:
+    container_name: fluentbit
+    image: fluent/fluent-bit:latest
+    volumes:
+      - ./src/fluent-bit:/fluent-bit/etc
+    ports:
+      - "24224:24224"
+      - "24224:24224/udp"
+    depends_on:
+      - opensearch-node1
+
   # Shipping service
   shippingservice:
     image: ${IMAGE_NAME}:${IMAGE_VERSION}-shippingservice
@@ -614,6 +611,8 @@ services:
       - ES_TLS_SKIP_HOST_VERIFY=true
     depends_on:
       - opensearch-node1
+      - opensearch-node2
+
     logging: *logging
 
   jaeger-agent:
@@ -712,6 +711,11 @@ services:
         hard: 65536
     volumes:
       - opensearch-data1:/usr/share/opensearch/data # Creates volume called opensearch-data1 and mounts it to the container
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://opensearch-node1:9200/_cluster/health?wait_for_status=yellow"]
+      interval: 5s
+      timeout: 25s
+      retries: 4
     ports:
       - "9200:9200"
       - "9600:9600"
@@ -749,7 +753,6 @@ services:
       OPENSEARCH_HOSTS: '["https://opensearch-node1:9200","https://opensearch-node2:9200"]' # Define the OpenSearch nodes that OpenSearch Dashboards will query
     depends_on:
       - opensearch-node1
-      - opensearch-node2
 
 #   Observability OSD Integrations
 #  observability-integration:
