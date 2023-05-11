@@ -60,7 +60,7 @@ export default class MyDocument extends Document<{ envString: string, traceId: s
 	  ineum('trackSessions');
 	  ineum('traceId', '${this.props.traceId}');
 	  `}</Script>
-	  <Script strategy="beforeInteractive" defer crossOrigin="anonymous" src={INSTANA_EUM_URL+"eum.min.js"} />
+	  <Script strategy="beforeInteractive" defer crossOrigin="anonymous" src={INSTANA_EUM_URL+"/eum.min.js"} />
         </Head>
         <body>
           <Main />
