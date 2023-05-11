@@ -1,0 +1,62 @@
+# Copyright The OpenTelemetry Authors
+# SPDX-License-Identifier: Apache-2.0
+
+type: Test
+spec:
+  id: email-confirmation
+  name: 'Email: Confirmation'
+  description: Send an order confirmation email
+  trigger:
+    type: http
+    httpRequest:
+      url: http://emailservice:6060/send_order_confirmation
+      method: POST
+      headers:
+      - key: Content-Type
+        value: application/json
+      body: |
+        {
+          "email": "google@example.com",
+          "order": {
+            "orderId": "505",
+            "shippingTrackingId": "dead-beef",
+            "shippingCost": {
+              "currencyCode": "USD",
+              "units": 17,
+              "nanos": 980000000
+            },
+            "shippingAddress": {
+              "streetAddress": "1600 Amphitheatre Parkway",
+              "city": "Mountain View",
+              "state": "California",
+              "country": "United States",
+              "zipCode": "94043"
+            },
+            "items": [
+              {
+                "item": {
+                  "productId": "1YMWWN1N4O",
+                  "quantity": 5
+                },
+                "cost": {
+                  "currencyCode": "USD",
+                  "units": 100,
+                  "nanos": 0
+                }
+              }
+            ]
+          }
+        }
+  specs:
+  - name: It should be called successfully
+    selector: span[tracetest.span.type="http" name="POST /send_order_confirmation" http.method="POST"]
+    assertions:
+    - attr:http.status_code = 200
+  - name: It should render a email to send
+    selector: span[tracetest.span.type="general" name="sinatra.render_template"]
+    assertions:
+    - attr:name = "sinatra.render_template"
+  - name: It should send an email
+    selector: span[tracetest.span.type="general" name="send_email"]
+    assertions:
+    - attr:name = "send_email"

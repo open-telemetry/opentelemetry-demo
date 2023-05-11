@@ -3,9 +3,9 @@
 
 type: Test
 spec:
-  id: JVF5jfsVR
-  name: 'Currency: Convert'
-  description: Convert a currency
+  id: payment-amex-credit-card-not-allowed
+  name: 'Payment: Amex credit card not allowed'
+  description: Charge customer with an Amex credit card
   trigger:
     type: grpc
     grpc:
@@ -329,25 +329,30 @@ spec:
         }
 
         message DeleteFlagResponse {}
-      address: currencyservice:7001
-      method: oteldemo.CurrencyService.Convert
+      address: paymentservice:50051
+      method: oteldemo.PaymentService.Charge
       request: |-
         {
-            "from": {
-              "currencyCode": "USD",
-              "units": 330,
-              "nanos": 750000000
-            },
-            "toCode": "CAD"
+          "amount": {
+            "currencyCode": "USD",
+            "units": 43,
+            "nanos": 130000000
+          },
+          "creditCard": {
+            "creditCardNumber": "3714 496353 98431",
+            "creditCardCvv": 672,
+            "creditCardExpirationYear": 2039,
+            "creditCardExpirationMonth": 1
           }
+        }
   specs:
-  - name: It converts from USD to CAD
-    selector: span[tracetest.span.type="rpc" name="CurrencyService/Convert" rpc.system="grpc"
-      rpc.method="Convert" rpc.service="CurrencyService"]
+  - name: It should call Charge method and receive a gRPC error
+    selector: span[tracetest.span.type="rpc" name="grpc.oteldemo.PaymentService/Charge"
+      rpc.system="grpc" rpc.method="Charge" rpc.service="oteldemo.PaymentService"]
     assertions:
-    - attr:app.currency.conversion.from = "USD"
-    - attr:app.currency.conversion.to = "CAD"
-  - name: It has more nanos than expected
-    selector: span[tracetest.span.type="general" name="Tracetest trigger"]
+    - attr:rpc.grpc.status_code  =  2
+  - name: It should receive an invalid credit card message
+    selector: span[tracetest.span.type="rpc" name="grpc.oteldemo.PaymentService/Charge"
+      rpc.system="grpc" rpc.method="Charge" rpc.service="oteldemo.PaymentService"]
     assertions:
-    - attr:tracetest.response.body| json_path '$.nanos'     >=    599380800
+    - attr:grpc.error_message = "Sorry, we cannot process amex credit cards. Only VISA or MasterCard is accepted."

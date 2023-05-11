@@ -9,14 +9,14 @@ spec:
   trigger:
     type: http
     httpRequest:
-      url: ${env:CHECKOUT_API_URL}
+      url: http://frontend:8080/api/checkout
       method: POST
       headers:
       - key: Content-Type
         value: application/json
       body: |
         {
-          "userId": "${env:USER_ID}",
+          "userId": "2491f868-88f1-4345-8836-d5d8511a9f83",
           "email": "someone@example.com",
           "address": {
             "streetAddress": "1600 Amphitheatre Parkway",
@@ -37,7 +37,7 @@ spec:
   - selector: span[tracetest.span.type="rpc" name="oteldemo.CheckoutService/PlaceOrder" rpc.system="grpc" rpc.method="PlaceOrder" rpc.service="oteldemo.CheckoutService"]
     name: "The order was placed"
     assertions:
-    - attr:app.user.id = "${env:USER_ID}"
+    - attr:app.user.id = "2491f868-88f1-4345-8836-d5d8511a9f83"
     - attr:app.order.items.count = 1
   - selector: span[tracetest.span.type="rpc" name="oteldemo.PaymentService/Charge" rpc.system="grpc" rpc.method="Charge" rpc.service="oteldemo.PaymentService"]
     name: "The user was charged"

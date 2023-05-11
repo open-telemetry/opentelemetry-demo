@@ -1,0 +1,15 @@
+# Copyright The OpenTelemetry Authors
+# SPDX-License-Identifier: Apache-2.0
+
+type: Transaction
+spec:
+  id: cart-all
+  name: 'Cart: all'
+  description: Run sequence of cart tests that depends on service state
+  steps:
+  - ./empty-cart.yaml
+  - ./add-item-to-cart.yaml
+  - ./check-if-cart-is-populated.yaml
+  - ./empty-cart.yaml
+  - ./check-if-cart-is-empty.yaml
+  
