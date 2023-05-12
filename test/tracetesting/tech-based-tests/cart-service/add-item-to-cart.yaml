@@ -341,7 +341,7 @@ spec:
           }
   specs:
   - name: It added an item correctly into the shopping cart
-    selector: span[tracetest.span.type="rpc" name="oteldemo.CartService/AddItem" rpc.system="grpc" rpc.method="AddItem" rpc.service="oteldemo.CartService"]
+    selector: span[tracetest.span.type="http" name="oteldemo.CartService/AddItem" http.target="/oteldemo.CartService/AddItem" http.method="POST"]
     assertions:
     - attr:http.status_code = 200
   - name: It set the cart item correctly on the database

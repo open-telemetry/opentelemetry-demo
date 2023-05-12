@@ -337,7 +337,7 @@ spec:
         }
   specs:
   - name: It retrieved the cart items correctly
-    selector: span[tracetest.span.type="rpc" name="oteldemo.CartService/GetCart" rpc.system="grpc" rpc.method="GetCart" rpc.service="oteldemo.CartService"]
+    selector: span[tracetest.span.type="http" name="oteldemo.CartService/GetCart" http.target="/oteldemo.CartService/GetCart" http.method="POST"]
     assertions:
     - attr:http.status_code = 200
   - name: It returned no items

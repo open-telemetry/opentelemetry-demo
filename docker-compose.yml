@@ -714,10 +714,25 @@ services:
       - quoteservice
 
   # Tracebased Tests
+  traceBasedTests:
+    image: ${IMAGE_NAME}:${IMAGE_VERSION}-traceBasedTests
+    container_name: traceBasedTests
+    profiles:
+      - tests
+    build:
+      context: ./
+      dockerfile: ./test/tracetesting/Dockerfile
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    depends_on:
+      - tracetest-server
+
   tracetest-server:
     image: kubeshop/tracetest:latest
     platform: linux/amd64
     container_name: tracetest-server
+    profiles:
+      - tests
     volumes:
       - type: bind
         source: ./test/tracetesting/tracetest-config.yaml
@@ -736,7 +751,7 @@ services:
       otelcol:
         condition: service_started
       # adding demo services as dependencies
-      accountingservice:
+      frontend:
         condition: service_started
       adservice:
         condition: service_started
@@ -748,25 +763,16 @@ services:
         condition: service_started
       emailservice:
         condition: service_started
-      featureflagservice:
-        condition: service_started
-      frauddetectionservice:
-        condition: service_started
-      frontend:
-        condition: service_started
-      frontendproxy:
-        condition: service_started
       paymentservice:
         condition: service_started
       productcatalogservice:
-        condition: service_started
-      quoteservice:
         condition: service_started
       recommendationservice:
         condition: service_started
       shippingservice:
         condition: service_started
-
+      quoteservice:
+        condition: service_started
     healthcheck:
       test: [ "CMD", "wget", "--spider", "localhost:11633" ]
       interval: 1s
@@ -778,6 +784,8 @@ services:
   tracetest-postgres:
     image: postgres:14
     container_name: tracetest-postgres
+    profiles:
+      - tests
     environment:
       POSTGRES_PASSWORD: postgres
       POSTGRES_USER: postgres

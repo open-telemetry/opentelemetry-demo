@@ -337,8 +337,7 @@ spec:
         }
   specs:
   - name: It emptied the shopping cart with success
-    selector: span[tracetest.span.type="http" name="oteldemo.CartService/EmptyCart"
-      http.target="/oteldemo.CartService/EmptyCart" http.method="POST"]
+    selector: span[tracetest.span.type="rpc" name="oteldemo.CartService/EmptyCart" rpc.system="grpc" rpc.method="EmptyCart" rpc.service="oteldemo.CartService"]
     assertions:
     - attr:rpc.grpc.status_code = 0
   - name: It sent cleaning message to the database

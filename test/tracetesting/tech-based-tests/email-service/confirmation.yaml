@@ -14,7 +14,7 @@ spec:
       headers:
       - key: Content-Type
         value: application/json
-      body: |
+      body: |-
         {
           "email": "google@example.com",
           "order": {

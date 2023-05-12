@@ -41,6 +41,13 @@ run_tracetest ./tech-based-tests/payment-service/valid-credit-card.yaml || EXIT_
 run_tracetest ./tech-based-tests/payment-service/invalid-credit-card.yaml || EXIT_STATUS=$?
 run_tracetest ./tech-based-tests/payment-service/amex-credit-card-not-allowed.yaml || EXIT_STATUS=$?
 run_tracetest ./tech-based-tests/payment-service/expired-credit-card.yaml || EXIT_STATUS=$?
+run_tracetest ./tech-based-tests/product-catalog-service/list.yaml || EXIT_STATUS=$?
+run_tracetest ./tech-based-tests/product-catalog-service/get.yaml || EXIT_STATUS=$?
+run_tracetest ./tech-based-tests/product-catalog-service/search.yaml || EXIT_STATUS=$?
+run_tracetest ./tech-based-tests/recommendation-service/list.yaml || EXIT_STATUS=$?
+run_tracetest ./tech-based-tests/shipping-service/quote.yaml || EXIT_STATUS=$?
+run_tracetest ./tech-based-tests/shipping-service/empty-quote.yaml || EXIT_STATUS=$?
+run_tracetest ./tech-based-tests/shipping-service/order.yaml || EXIT_STATUS=$?
 
 # run business tests
 echo ""

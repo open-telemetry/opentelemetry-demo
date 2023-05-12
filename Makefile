@@ -94,6 +94,10 @@ build-env-file:
 run-tests:
 	docker compose run frontendTests
 	docker compose run integrationTests
+	docker compose run traceBasedTests
+
+run-tracetesting:
+	docker compose run traceBasedTests
 
 .PHONY: generate-protobuf
 generate-protobuf:
