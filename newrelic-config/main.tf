@@ -20,7 +20,7 @@ variable "account_id" {
 
 variable "apm_app_name" {
   type = string
-  description = "The name of the application monitoed with an APM agent."
+  description = "The name of the application monitored with an APM agent."
 }
 
 # Configure the New Relic provider
