@@ -19,14 +19,16 @@ FROM alpine as builder
 RUN apk update
 RUN apk add git cmake make g++ grpc-dev re2-dev protobuf-dev c-ares-dev
 
-ARG OPENTELEMETRY_CPP_VERSION=1.8.2
+ARG OPENTELEMETRY_CPP_VERSION=1.9.0
 
 RUN git clone https://github.com/open-telemetry/opentelemetry-cpp \
 	&& cd opentelemetry-cpp/ \
     	&& git checkout tags/v${OPENTELEMETRY_CPP_VERSION} -b v${OPENTELEMETRY_CPP_VERSION} \
 	&& mkdir build \
 	&& cd build \
-	&& cmake .. -DCMAKE_POSITION_INDEPENDENT_CODE=ON -DCMAKE_BUILD_TYPE=Release -DBUILD_TESTING=OFF -DWITH_EXAMPLES=OFF -DWITH_OTLP=ON -DWITH_OTLP_GRPC=ON \
+	&& cmake .. -DCMAKE_CXX_STANDARD=17 -DCMAKE_POSITION_INDEPENDENT_CODE=ON \
+				-DCMAKE_BUILD_TYPE=Release -DBUILD_TESTING=OFF \
+				-DWITH_EXAMPLES=OFF -DWITH_OTLP=ON -DWITH_OTLP_GRPC=ON \
 	&& make -j$(nproc || sysctl -n hw.ncpu || echo 1) install && cd ../.. && rm -rf opentelemetry-cpp
 
 COPY . /currencyservice
