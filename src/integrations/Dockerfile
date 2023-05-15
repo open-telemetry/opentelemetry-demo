@@ -1,8 +1,10 @@
-FROM alpine:latest
+FROM python:3.9
 
-RUN apk update && apk add curl netcat-openbsd
+WORKDIR .
 
-COPY install-observability.sh /install-observability.sh
-RUN chmod +x /install-observability.sh
+COPY src/requirements.txt ./
+RUN pip install --no-cache-dir -r requirements.txt
 
-CMD /install-observability.sh
+COPY . .
+
+CMD [ "python", "./src/install.py" ]

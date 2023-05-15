@@ -1,0 +1,221 @@
+{
+  "index_patterns": [
+    "sso_traces-*-*"
+  ],
+  "data_stream": {},
+  "template": {
+    "mappings": {
+      "_meta": {
+        "version": "1.0.0",
+        "catalog": "observability",
+        "type": "traces",
+        "component": "trace",
+        "correlations": [
+          {
+            "field": "serviceName",
+            "foreign-schema": "services",
+            "foreign-field": "spanId"
+          }
+        ]
+      },
+      "dynamic_templates": [
+        {
+          "attributes_map": {
+            "mapping": {
+              "type": "keyword"
+            },
+            "path_match": "attributes.*"
+          }
+        },
+        {
+          "events_attributes_map": {
+            "mapping": {
+              "type": "keyword"
+            },
+            "path_match": "events.attributes.*"
+          }
+        },
+        {
+          "links_attributes_map": {
+            "mapping": {
+              "type": "keyword"
+            },
+            "path_match": "links.attributes.*"
+          }
+        },
+        {
+          "instrumentation_scope_attributes_map": {
+            "mapping": {
+              "type": "keyword"
+            },
+            "path_match": "instrumentationScope.attributes.*"
+          }
+        },
+        {
+          "resources_map": {
+            "mapping": {
+              "type": "keyword"
+            },
+            "path_match": "resource.*"
+          }
+        }
+      ],
+      "_source": {
+        "enabled": true
+      },
+      "properties": {
+        "traceId": {
+          "ignore_above": 256,
+          "type": "keyword"
+        },
+        "spanId": {
+          "ignore_above": 256,
+          "type": "keyword"
+        },
+        "traceState": {
+          "type": "text",
+          "fields": {
+            "keyword": {
+              "type": "keyword",
+              "ignore_above": 256
+            }
+          }
+        },
+        "parentSpanId": {
+          "ignore_above": 256,
+          "type": "keyword"
+        },
+        "name": {
+          "ignore_above": 1024,
+          "type": "keyword"
+        },
+        "kind": {
+          "ignore_above": 128,
+          "type": "keyword"
+        },
+        "startTime": {
+          "type": "date_nanos"
+        },
+        "endTime": {
+          "type": "date_nanos"
+        },
+        "droppedAttributesCount": {
+          "type": "long"
+        },
+        "droppedEventsCount": {
+          "type": "long"
+        },
+        "droppedLinksCount": {
+          "type": "long"
+        },
+        "status": {
+          "properties": {
+            "code": {
+              "type": "long"
+            },
+            "message": {
+              "ignore_above": 128,
+              "type": "keyword"
+            }
+          }
+        },
+        "attributes": {
+          "type": "object",
+          "properties": {
+            "serviceName": {
+              "type": "keyword"
+            },
+            "data_stream": {
+              "properties": {
+                "dataset": {
+                  "ignore_above": 128,
+                  "type": "keyword"
+                },
+                "namespace": {
+                  "ignore_above": 128,
+                  "type": "keyword"
+                },
+                "type": {
+                  "ignore_above": 56,
+                  "type": "keyword"
+                }
+              }
+            }
+          }
+        },
+        "events": {
+          "type": "nested",
+          "properties": {
+            "name": {
+              "ignore_above": 1024,
+              "type": "keyword"
+            },
+            "@timestamp": {
+              "type": "date_nanos"
+            },
+            "observedTimestamp": {
+              "type": "date_nanos"
+            }
+          }
+        },
+        "links": {
+          "type": "nested",
+          "properties": {
+            "traceId": {
+              "ignore_above": 256,
+              "type": "keyword"
+            },
+            "spanId": {
+              "ignore_above": 256,
+              "type": "keyword"
+            },
+            "traceState": {
+              "type": "text",
+              "fields": {
+                "keyword": {
+                  "type": "keyword",
+                  "ignore_above": 256
+                }
+              }
+            }
+          }
+        },
+        "instrumentationScope": {
+          "properties": {
+            "name": {
+              "type": "keyword"
+            },
+            "version": {
+              "type": "keyword"
+            },
+            "droppedAttributesCount": {
+              "type": "integer"
+            },
+            "schemaUrl": {
+              "type": "keyword"
+            }
+          }
+        },
+        "schemaUrl": {
+          "type": "keyword"
+        }
+      }
+    }
+  },
+  "composed_of": [
+    "tracegroup_template"
+  ],
+  "version": 1,
+  "_meta": {
+    "description": "Observability Traces Mapping Template",
+    "catalog": "observability",
+    "type": "traces",
+    "correlations": [
+      {
+        "field": "serviceName",
+        "foreign-schema": "services",
+        "foreign-field": "spanId"
+      }
+    ]
+  }
+}

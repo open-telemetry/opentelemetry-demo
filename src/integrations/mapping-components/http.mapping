@@ -1,0 +1,118 @@
+{
+  "template": {
+    "mappings": {
+      "dynamic_templates": [
+        {
+          "request_header_map": {
+            "mapping": {
+              "type": "keyword"
+            },
+            "path_match": "request.header.*"
+          }
+        },
+        {
+          "response_header_map": {
+            "mapping": {
+              "type": "keyword"
+            },
+            "path_match": "response.header.*"
+          }
+        }
+      ],
+      "properties": {
+        "http": {
+          "properties": {
+            "flavor": {
+              "type": "keyword",
+              "ignore_above": 256
+            },
+            "user_agent": {
+              "type": "keyword",
+              "ignore_above": 2048
+            },
+            "url": {
+              "type": "keyword",
+              "ignore_above": 2048
+            },
+            "schema": {
+              "type": "keyword",
+              "ignore_above": 1024
+            },
+            "target": {
+              "type": "keyword",
+              "ignore_above": 1024
+            },
+            "route": {
+              "type": "keyword",
+              "ignore_above": 1024
+            },
+            "client.ip": {
+              "type": "ip"
+            },
+            "resent_count": {
+              "type": "integer"
+            },
+            "request": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "text",
+                  "fields": {
+                    "keyword": {
+                      "type": "keyword",
+                      "ignore_above": 256
+                    }
+                  }
+                },
+                "body.content": {
+                  "type": "text"
+                },
+                "bytes": {
+                  "type": "keyword",
+                  "ignore_above": 256
+                },
+                "method": {
+                  "type": "keyword",
+                  "ignore_above": 256
+                },
+                "referrer": {
+                  "type": "keyword",
+                  "ignore_above": 1024
+                },
+                "mime_type": {
+                  "type": "keyword",
+                  "ignore_above": 1024
+                }
+              }
+            },
+            "response": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "text",
+                  "fields": {
+                    "keyword": {
+                      "type": "keyword",
+                      "ignore_above": 256
+                    }
+                  }
+                },
+                "body.content": {
+                  "type": "text"
+                },
+                "bytes": {
+                  "type": "keyword",
+                  "ignore_above": 256
+                },
+                "status_code": {
+                  "type": "keyword",
+                  "ignore_above": 256
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

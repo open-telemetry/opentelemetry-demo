@@ -1,0 +1,69 @@
+{
+  "index_patterns": [
+    "opensearch-*"
+  ],
+  "data_stream": {},
+  "template": {
+    "settings": {
+      "number_of_shards": 1,
+      "number_of_replicas": 1
+    },
+    "mappings": {
+      "properties": {
+        "opensearch.cluster.id": {"type": "keyword"},
+        "opensearch.cluster.name": {"type": "keyword"},
+        "opensearch.index.creation.date": {"type": "date"},
+        "opensearch.index.end_time": {"type": "date"},
+        "opensearch.index.hidden": {"type": "boolean"},
+        "opensearch.index.index_status": {"type": "keyword"},
+        "opensearch.index.name": {"type": "keyword"},
+        "opensearch.index.storage_tier": {"type": "keyword"},
+        "opensearch.index.primaries.docs.count": {"type": "long"},
+        "opensearch.index.primaries.docs.deleted": {"type": "long"},
+        "opensearch.index.primaries.indexing.index_time_in_millis": {"type": "long"},
+        "opensearch.index.primaries.indexing.index_total": {"type": "long"},
+        "opensearch.index.primaries.indexing.throttle_time_in_millis": {"type": "long"},
+        "opensearch.index.primaries.merges.total_size_in_bytes": {"type": "long"},
+        "opensearch.index.primaries.refresh.total_time_in_millis": {"type": "long"},
+        "opensearch.index.primaries.segments.count": {"type": "long"},
+        "opensearch.index.primaries.store.size_in_bytes": {"type": "long"},
+        "opensearch.index.shards.total": {"type": "long"},
+        "opensearch.index.shards.primaries": {"type": "long"},
+        "opensearch.index.start_time": {"type": "date"},
+        "opensearch.index.status": {"type": "keyword"},
+        "opensearch.index.total.docs.count": {"type": "long"},
+        "opensearch.index.total.docs.deleted": {"type": "long"},
+        "opensearch.index.total.fielddata.memory_size_in_bytes": {"type": "long"},
+        "opensearch.index.total.indexing.index_time_in_millis": {"type": "long"},
+        "opensearch.index.total.indexing.index_total": {"type": "long"},
+        "opensearch.index.total.indexing.throttle_time_in_millis": {"type": "long"},
+        "opensearch.index.total.merges.total_size_in_bytes": {"type": "long"},
+        "opensearch.index.total.refresh.total_time_in_millis": {"type": "long"},
+        "opensearch.index.total.search.query_time_in_millis": {"type": "long"},
+        "opensearch.index.total.search.query_total": {"type": "long"},
+        "opensearch.index.total.segments.count": {"type": "long"},
+        "opensearch.index.total.segments.doc_values_memory_in_bytes": {"type": "long"},
+        "opensearch.index.total.segments.fixed_bit_set_memory_in_bytes": {"type": "long"},
+        "opensearch.index.total.segments.index_writer_memory_in_bytes": {"type": "long"},
+        "opensearch.index.total.segments.memory_in_bytes": {"type": "long"},
+        "opensearch.index.total.segments.norms_memory_in_bytes": {"type": "long"},
+        "opensearch.index.total.segments.points_memory_in_bytes": {"type": "long"},
+        "opensearch.index.total.segments.stored_fields_memory_in_bytes": {"type": "long"},
+        "opensearch.index.total.segments.term_vectors_memory_in_bytes": {"type": "long"},
+        "opensearch.index.total.segments.terms_memory_in_bytes": {"type": "long"},
+        "opensearch.index.total.segments.version_map_memory_in_bytes": {"type": "long"},
+        "opensearch.index.total.store.size_in_bytes": {"type": "long"},
+        "opensearch.index.uuid": {"type": "keyword"},
+        "opensearch.node.id": {"type": "keyword"},
+        "opensearch.shard.docs.count": {"type": "long"},
+        "opensearch.shard.number": {"type": "long"},
+        "opensearch.shard.primary": {"type": "boolean"},
+        "opensearch.shard.source_node.name": {"type": "keyword"},
+        "opensearch.shard.source_node.uuid": {"type": "keyword"},
+        "opensearch.shard.state": {"type": "keyword"},
+        "opensearch.shard.store.size_in_bytes": {"type": "long"}
+      }
+    }
+  },
+  "version": 2
+}
