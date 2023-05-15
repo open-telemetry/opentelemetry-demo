@@ -220,7 +220,7 @@ services:
           memory: 175M
     restart: unless-stopped
     ports:
-      - "${FEATURE_FLAG_SERVICE_PORT}"                                  # Feature Flag Service UI
+      - "${FEATURE_FLAG_SERVICE_PORT}:${FEATURE_FLAG_SERVICE_PORT}"     # Feature Flag Service UI
       - "${FEATURE_FLAG_GRPC_SERVICE_PORT}"                             # Feature Flag Service gRPC API
     environment:
       - FEATURE_FLAG_SERVICE_PORT
@@ -306,6 +306,7 @@ services:
       - quoteservice
       - recommendationservice
       - shippingservice
+      - paymentservice
     logging: *logging
 
   # Load Generator
@@ -463,6 +464,7 @@ services:
       - frontend
       - fluentbit
       - otelcol
+      - loadgenerator
     links:
       - fluentbit
     logging:
@@ -712,7 +714,7 @@ services:
     volumes:
       - opensearch-data1:/usr/share/opensearch/data # Creates volume called opensearch-data1 and mounts it to the container
     healthcheck:
-      test: ["CMD", "curl", "-f", "http://opensearch-node1:9200/_cluster/health?wait_for_status=yellow"]
+      test: ["CMD", "curl", "-f", "https://opensearch-node1:9200/_cluster/health?wait_for_status=yellow"]
       interval: 5s
       timeout: 25s
       retries: 4
@@ -755,10 +757,14 @@ services:
       - opensearch-node1
 
 #   Observability OSD Integrations
-#  observability-integration:
-#    build: ./src/integrations/Dockerfile
-#    depends_on:
-#      - opensearch-dashboards
+  integrations:
+    build:
+      context: ./src/integrations
+      dockerfile: Dockerfile
+    volumes:
+      - ./src/integrations:/integrations
+    depends_on:
+      - opensearch-dashboards
 
   # *****
   # Tests

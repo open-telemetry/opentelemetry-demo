@@ -1,0 +1,208 @@
+{
+  "index_patterns": [
+    "sso_logs-*-*"
+  ],
+  "data_stream": {},
+  "template": {
+    "mappings": {
+      "_meta": {
+        "version": "1.0.0",
+        "catalog": "observability",
+        "type": "logs",
+        "component" : "log"
+      },
+      "_source": {
+        "enabled": true
+      },
+      "dynamic_templates": [
+        {
+          "resources_map": {
+            "mapping": {
+              "type": "keyword"
+            },
+            "path_match": "resource.*"
+          }
+        },
+        {
+          "attributes_map": {
+            "mapping": {
+              "type": "keyword"
+            },
+            "path_match": "attributes.*"
+          }
+        },
+        {
+          "instrumentation_scope_attributes_map": {
+            "mapping": {
+              "type": "keyword"
+            },
+            "path_match": "instrumentationScope.attributes.*"
+          }
+        }
+      ],
+      "properties": {
+        "severity": {
+          "properties": {
+            "number": {
+              "type": "long"
+            },
+            "text": {
+              "type": "text",
+              "fields": {
+                "keyword": {
+                  "type": "keyword",
+                  "ignore_above": 256
+                }
+              }
+            }
+          }
+        },
+        "attributes": {
+          "type": "object",
+          "properties": {
+            "data_stream": {
+              "properties": {
+                "dataset": {
+                  "ignore_above": 128,
+                  "type": "keyword"
+                },
+                "namespace": {
+                  "ignore_above": 128,
+                  "type": "keyword"
+                },
+                "type": {
+                  "ignore_above": 56,
+                  "type": "keyword"
+                }
+              }
+            }
+          }
+        },
+        "body": {
+          "type": "text"
+        },
+        "@timestamp": {
+          "type": "date"
+        },
+        "observedTimestamp": {
+          "type": "date"
+        },
+        "traceId": {
+          "ignore_above": 256,
+          "type": "keyword"
+        },
+        "spanId": {
+          "ignore_above": 256,
+          "type": "keyword"
+        },
+        "schemaUrl": {
+          "type": "text",
+          "fields": {
+            "keyword": {
+              "type": "keyword",
+              "ignore_above": 256
+            }
+          }
+        },
+        "instrumentationScope": {
+          "properties": {
+            "name": {
+              "type": "text",
+              "fields": {
+                "keyword": {
+                  "type": "keyword",
+                  "ignore_above": 128
+                }
+              }
+            },
+            "version": {
+              "type": "text",
+              "fields": {
+                "keyword": {
+                  "type": "keyword",
+                  "ignore_above": 256
+                }
+              }
+            },
+            "dropped_attributes_count": {
+              "type": "integer"
+            },
+            "schemaUrl": {
+              "type": "text",
+              "fields": {
+                "keyword": {
+                  "type": "keyword",
+                  "ignore_above": 256
+                }
+              }
+            }
+          }
+        },
+        "event": {
+          "properties": {
+            "domain": {
+              "ignore_above": 256,
+              "type": "keyword"
+            },
+            "name": {
+              "ignore_above": 256,
+              "type": "keyword"
+            },
+            "category": {
+              "ignore_above": 256,
+              "type": "keyword"
+            },
+            "type": {
+              "ignore_above": 256,
+              "type": "keyword"
+            },
+            "kind": {
+              "ignore_above": 256,
+              "type": "keyword"
+            },
+            "result": {
+              "ignore_above": 256,
+              "type": "keyword"
+            },
+            "exception": {
+              "properties": {
+                "message": {
+                  "ignore_above": 1024,
+                  "type": "keyword"
+                },
+                "type": {
+                  "ignore_above": 256,
+                  "type": "keyword"
+                },
+                "stacktrace": {
+                  "type": "text"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "settings": {
+      "index": {
+        "mapping": {
+          "total_fields": {
+            "limit": 10000
+          }
+        },
+        "refresh_interval": "5s"
+      }
+    }
+  },
+  "composed_of": [
+    "http_template",
+    "communication_template",
+    "cloud_template"
+  ],
+  "version": 1,
+  "_meta": {
+    "description": "Simple Schema For Observability",
+    "catalog": "observability",
+    "type": "logs"
+  }
+}

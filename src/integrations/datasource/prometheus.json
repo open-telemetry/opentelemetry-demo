@@ -1,0 +1,8 @@
+{
+  "name" : "prometheus",
+  "connector": "prometheus",
+  "properties" : {
+    "prometheus.uri" : "http://prometheus:9090"
+  },
+  "allowedRoles" : ["prometheus_access"]
+}

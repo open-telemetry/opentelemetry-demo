@@ -1,0 +1,96 @@
+{
+  "template": {
+    "mappings": {
+      "properties": {
+        "communication": {
+          "properties": {
+            "sock.family": {
+              "type": "keyword",
+              "ignore_above": 256
+            },
+            "source": {
+              "type": "object",
+              "properties": {
+                "address": {
+                  "type": "text",
+                  "fields": {
+                    "keyword": {
+                      "type": "keyword",
+                      "ignore_above": 1024
+                    }
+                  }
+                },
+                "domain": {
+                  "type": "text",
+                  "fields": {
+                    "keyword": {
+                      "type": "keyword",
+                      "ignore_above": 1024
+                    }
+                  }
+                },
+                "bytes": {
+                  "type": "keyword",
+                  "ignore_above": 256
+                },
+                "ip": {
+                  "type": "ip"
+                },
+                "port": {
+                  "type": "long"
+                },
+                "mac": {
+                  "type": "keyword",
+                  "ignore_above": 1024
+                },
+                "packets": {
+                  "type": "long"
+                }
+              }
+            },
+            "destination": {
+              "type": "object",
+              "properties": {
+                "address": {
+                  "type": "text",
+                  "fields": {
+                    "keyword": {
+                      "type": "keyword",
+                      "ignore_above": 1024
+                    }
+                  }
+                },
+                "domain": {
+                  "type": "text",
+                  "fields": {
+                    "keyword": {
+                      "type": "keyword",
+                      "ignore_above": 1024
+                    }
+                  }
+                },
+                "bytes": {
+                  "type": "keyword",
+                  "ignore_above": 256
+                },
+                "ip": {
+                  "type": "ip"
+                },
+                "port": {
+                  "type": "long"
+                },
+                "mac": {
+                  "type": "keyword",
+                  "ignore_above": 1024
+                },
+                "packets": {
+                  "type": "long"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

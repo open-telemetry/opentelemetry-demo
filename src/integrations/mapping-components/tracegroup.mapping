@@ -1,0 +1,25 @@
+{
+  "template": {
+    "mappings": {
+      "properties": {
+        "traceGroup": {
+          "ignore_above": 1024,
+          "type": "keyword"
+        },
+        "traceGroupFields": {
+          "properties": {
+            "endTime": {
+              "type": "date_nanos"
+            },
+            "durationInNanos": {
+              "type": "long"
+            },
+            "statusCode": {
+              "type": "integer"
+            }
+          }
+        }
+      }
+    }
+  }
+}

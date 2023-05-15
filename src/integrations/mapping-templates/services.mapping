@@ -1,0 +1,102 @@
+{
+  "index_patterns": [
+    "sso_services-*-*"
+  ],
+  "template": {
+    "mappings": {
+      "_meta": {
+        "version": "1.0.0",
+        "catalog": "observability",
+        "type": "traces",
+        "component": "services",
+        "correlations": [
+          {
+            "field": "traceGroupName",
+            "foreign-schema": "traceGroups",
+            "foreign-field": "traceGroup"
+          }
+        ]
+      },
+      "_source": {
+        "enabled": true
+      },
+      "dynamic_templates": [
+        {
+          "attributes_map": {
+            "mapping": {
+              "type": "keyword"
+            },
+            "path_match": "attributes.*"
+          }
+        }
+      ],
+      "properties": {
+        "destination": {
+          "properties": {
+            "domain": {
+              "type": "keyword",
+              "ignore_above": 1024
+            },
+            "resource": {
+              "type": "keyword",
+              "ignore_above": 1024
+            }
+          }
+        },
+        "hashId": {
+          "type": "keyword",
+          "ignore_above": 1024
+        },
+        "serviceName": {
+          "type": "keyword",
+          "ignore_above": 1024
+        },
+        "kind": {
+          "type": "keyword",
+          "ignore_above": 1024
+        },
+        "target": {
+          "properties": {
+            "domain": {
+              "type": "keyword",
+              "ignore_above": 1024
+            },
+            "resource": {
+              "type": "keyword",
+              "ignore_above": 1024
+            }
+          }
+        },
+        "traceGroupName": {
+          "type": "keyword",
+          "ignore_above": 1024
+        }
+      }
+    },
+    "settings": {
+      "index": {
+        "mapping": {
+          "total_fields": {
+            "limit": 10000
+          }
+        },
+        "refresh_interval": "5s"
+      }
+    }
+  },
+  "composed_of": [
+  ],
+  "version": 1,
+  "_meta": {
+    "description": "Simple Schema For Observability Service",
+    "catalog": "observability",
+    "type": "services",
+    "correlations": [
+      {
+        "field": "traceGroupName",
+        "foreign-schema": "traceGroups",
+        "foreign-field": "traceGroup"
+      }
+    ]
+  }
+}

@@ -1,0 +1,70 @@
+{
+  "template": {
+    "mappings": {
+      "properties": {
+        "cloud": {
+          "properties": {
+            "provider": {
+              "type": "keyword"
+            },
+            "availability_zone": {
+              "type": "keyword"
+            },
+            "region": {
+              "type": "keyword"
+            },
+            "machine": {
+              "type": "object",
+              "properties": {
+                "type": {
+                  "type": "keyword"
+                }
+              }
+            },
+            "account": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "keyword"
+                },
+                "name": {
+                  "type": "keyword"
+                }
+              }
+            },
+            "service": {
+              "type": "object",
+              "properties": {
+                "name": {
+                  "type": "keyword"
+                }
+              }
+            },
+            "project": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "keyword"
+                },
+                "name": {
+                  "type": "keyword"
+                }
+              }
+            },
+            "instance": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "keyword"
+                },
+                "name": {
+                  "type": "keyword"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,317 @@
+{
+  "index_patterns": [
+    "sso_metrics-*-*"
+  ],
+  "data_stream": {},
+  "template": {
+    "mappings": {
+      "_meta": {
+        "version": "1.0.0",
+        "catalog": "observability",
+        "type": "metrics",
+        "component": "metrics",
+        "correlations" : [
+          {
+            "field": "spanId",
+            "foreign-schema" : "traces",
+            "foreign-field" : "spanId"
+          },
+          {
+            "field": "traceId",
+            "foreign-schema" : "traces",
+            "foreign-field" : "traceId"
+          }
+        ]
+      },
+      "_source": {
+        "enabled": true
+      },
+      "dynamic_templates": [
+        {
+          "attributes_map": {
+            "mapping": {
+              "type": "keyword"
+            },
+            "path_match": "attributes.*"
+          }
+        },
+        {
+          "resources_map": {
+            "mapping": {
+              "type": "keyword"
+            },
+            "path_match": "resource.*"
+          }
+        },
+        {
+          "exemplar_attributes_map": {
+            "mapping": {
+              "type": "keyword"
+            },
+            "path_match": "exemplar.attributes.*"
+          }
+        },
+        {
+          "instrumentation_scope_attributes_map": {
+            "mapping": {
+              "type": "keyword"
+            },
+            "path_match": "instrumentationScope.attributes.*"
+          }
+        }
+      ],
+      "properties": {
+        "name": {
+          "type": "text",
+          "fields": {
+            "keyword": {
+              "type": "keyword",
+              "ignore_above": 256
+            }
+          }
+        },
+        "attributes": {
+          "type": "object",
+          "properties": {
+            "data_stream": {
+              "properties": {
+                "dataset": {
+                  "ignore_above": 128,
+                  "type": "keyword"
+                },
+                "namespace": {
+                  "ignore_above": 128,
+                  "type": "keyword"
+                },
+                "type": {
+                  "ignore_above": 56,
+                  "type": "keyword"
+                }
+              }
+            }
+          }
+        },
+        "description": {
+          "type": "text",
+          "fields": {
+            "keyword": {
+              "type": "keyword",
+              "ignore_above": 256
+            }
+          }
+        },
+        "unit": {
+          "type": "keyword",
+          "ignore_above": 128
+        },
+        "kind": {
+          "type": "keyword",
+          "ignore_above": 128
+        },
+        "aggregationTemporality": {
+          "type": "keyword",
+          "ignore_above": 128
+        },
+        "monotonic": {
+          "type": "boolean"
+        },
+        "startTime": {
+          "type": "date"
+        },
+        "@timestamp": {
+          "type": "date"
+        },
+        "observedTimestamp": {
+          "type": "date_nanos"
+        },
+        "value": {
+          "properties": {
+            "int": {
+              "type": "integer"
+            },
+            "double": {
+              "type": "double"
+            }
+          }
+        },
+        "buckets": {
+          "properties": {
+            "count": {
+              "type": "long"
+            },
+            "sum": {
+              "type": "double"
+            },
+            "max": {
+              "type": "float"
+            },
+            "min": {
+              "type": "float"
+            }
+          }
+        },
+        "bucketCount": {
+          "type": "long"
+        },
+        "bucketCountsList": {
+          "type": "long"
+        },
+        "explicitBoundsList": {
+          "type": "float"
+        },
+        "explicitBoundsCount": {
+          "type": "float"
+        },
+        "quantiles": {
+          "properties": {
+            "quantile": {
+              "type": "double"
+            },
+            "value": {
+              "type": "double"
+            }
+          }
+        },
+        "quantileValuesCount": {
+          "type": "long"
+        },
+        "positiveBuckets": {
+          "properties": {
+            "count": {
+              "type": "long"
+            },
+            "max": {
+              "type": "float"
+            },
+            "min": {
+              "type": "float"
+            }
+          }
+        },
+        "negativeBuckets": {
+          "properties": {
+            "count": {
+              "type": "long"
+            },
+            "max": {
+              "type": "float"
+            },
+            "min": {
+              "type": "float"
+            }
+          }
+        },
+        "negativeOffset": {
+          "type": "integer"
+        },
+        "positiveOffset": {
+          "type": "integer"
+        },
+        "zeroCount": {
+          "type": "long"
+        },
+        "scale": {
+          "type": "long"
+        },
+        "max": {
+          "type": "float"
+        },
+        "min": {
+          "type": "float"
+        },
+        "sum": {
+          "type": "float"
+        },
+        "count": {
+          "type": "long"
+        },
+        "exemplar": {
+          "properties": {
+            "time": {
+              "type": "date"
+            },
+            "traceId": {
+              "ignore_above": 256,
+              "type": "keyword"
+            },
+            "spanId": {
+              "ignore_above": 256,
+              "type": "keyword"
+            }
+          }
+        },
+        "instrumentationScope": {
+          "properties": {
+            "name": {
+              "type": "text",
+              "fields": {
+                "keyword": {
+                  "type": "keyword",
+                  "ignore_above": 128
+                }
+              }
+            },
+            "version": {
+              "type": "text",
+              "fields": {
+                "keyword": {
+                  "type": "keyword",
+                  "ignore_above": 256
+                }
+              }
+            },
+            "droppedAttributesCount": {
+              "type": "integer"
+            },
+            "schemaUrl": {
+              "type": "text",
+              "fields": {
+                "keyword": {
+                  "type": "keyword",
+                  "ignore_above": 256
+                }
+              }
+            }
+          }
+        },
+        "schemaUrl": {
+          "type": "text",
+          "fields": {
+            "keyword": {
+              "type": "keyword",
+              "ignore_above": 256
+            }
+          }
+        }
+      }
+    },
+    "settings": {
+      "index": {
+        "mapping": {
+          "total_fields": {
+            "limit": 10000
+          }
+        },
+        "refresh_interval": "5s"
+      }
+    }
+  },
+  "version": 1,
+  "_meta": {
+    "description": "Observability Metrics Mapping Template",
+    "catalog": "observability",
+    "type": "metrics",
+    "correlations" : [
+      {
+        "field": "spanId",
+        "foreign-schema" : "traces",
+        "foreign-field" : "spanId"
+      },
+      {
+        "field": "traceId",
+        "foreign-schema" : "traces",
+        "foreign-field" : "traceId"
+      }
+    ]
+  }
+}
