@@ -96,6 +96,25 @@ def create_mapping_templates(client):
                 except OpenSearchException as e:
                     logger.error(f'Failed to create index template: {template_name}, error: {str(e)}')
 
+# create data streams
+def create_data_streams():
+    with open('../indices/data-stream.json', 'r') as f:
+        data = json.load(f)
+        data_streams = data.get('data-stream', [])
+
+        for ds in data_streams:
+            try:
+                response = requests.put(
+                    url=f'https://{opensearch_host}:9200/_data_stream/{ds}',
+                    auth=HTTPBasicAuth('admin', 'admin'),
+                    headers={'Content-Type': 'application/json'},
+                    verify=False  # Disable SSL verification
+                )
+                response.raise_for_status()  # Raise an exception if the request failed
+                logger.info(f'Successfully created data stream: {ds}')
+            except requests.HTTPError as e:
+                logger.error(f'Failed to create data stream: {ds}, error: {str(e)}')
+
 # load dashboards in the display folder
 def load_dashboards():
     dashboard_dir = '../display/'
@@ -122,23 +141,26 @@ def load_dashboards():
                     logger.error(f'Failed to load dashboard: {dashboard_name}, error: {str(e)}')
 
 # create the data_streams based on the list given in the data-stream.json file
-def create_data_streams():
-    with open('../indices/data-stream.json', 'r') as f:
-        data = json.load(f)
-        data_streams = data.get('data-stream', [])
-
-        for ds in data_streams:
-            try:
-                response = requests.post(
-                    url=f'https://{opensearch_host}:9200/_query/_datasources',
-                    auth=HTTPBasicAuth('admin', 'admin'),
-                    headers={'Content-Type': 'application/json'},
-                    verify=False  # Disable SSL verification
-                )
-                response.raise_for_status()  # Raise an exception if the request failed
-                logger.info(f'Successfully created data stream: {ds}')
-            except requests.HTTPError as e:
-                logger.error(f'Failed to create data stream: {ds}, error: {str(e)}')
+def create_datasources():
+    datasource_dir = '../datasource/'
+    for filename in os.listdir(datasource_dir):
+        if filename.endswith('.json'):
+            with open(os.path.join(datasource_dir, filename), 'r') as f:
+                datasource = json.load(f)
+                try:
+                    response = requests.post(
+                        url=f'https://{opensearch_host}:9200/_plugins/_query/_datasources',
+                        auth=HTTPBasicAuth('admin', 'admin'),
+                        json=datasource,
+                        verify=False,  # Disable SSL verification
+                        headers={'Content-Type': 'application/json'}
+                    )
+                    response.raise_for_status()  # Raise an exception if the request failed
+                    logger.info(f'Successfully created datasource: {filename}')
+                    print(f'Successfully created datasource: {filename}')
+                except requests.HTTPError as e:
+                    print(f'Failed to create datasource: {filename}, error: {str(e)}')
+                    logger.error(f'Failed to create datasource: {filename}, error: {str(e)}')
 
 
 if __name__ == '__main__':
@@ -148,4 +170,4 @@ if __name__ == '__main__':
     create_mapping_templates(client)
     create_data_streams()
     load_dashboards()
-    create_data_streams()
+    create_datasources()

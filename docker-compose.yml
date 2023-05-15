@@ -714,7 +714,7 @@ services:
     volumes:
       - opensearch-data1:/usr/share/opensearch/data # Creates volume called opensearch-data1 and mounts it to the container
     healthcheck:
-      test: ["CMD", "curl", "-f", "https://opensearch-node1:9200/_cluster/health?wait_for_status=yellow"]
+      test: ["CMD", "curl", "-f", "https://opensearch-node1:9200/_cluster/health?wait_for_status=yellow", "-ku admin:admin"]
       interval: 5s
       timeout: 25s
       retries: 4
@@ -745,7 +745,7 @@ services:
 
   # OpenSearch store - dashboard
   opensearch-dashboards:
-    image: opensearchproject/opensearch-dashboards:latest # Make sure the version of opensearch-dashboards matches the version of opensearch installed on other nodes
+    image: opensearchproject/opensearch-dashboards:2.6.0 # Make sure the version of opensearch-dashboards matches the version of opensearch installed on other nodes
     container_name: opensearch-dashboards
     ports:
       - 5601:5601 # Map host port 5601 to container port 5601
