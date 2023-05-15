@@ -30,3 +30,6 @@ kubectl patch serviceaccount my-otel-demo -p '{"imagePullSecrets": [{"name": "my
 
 ## Why do I see "Unspecified" service in Instana dependency graph?
 Some calls reported by OTel spans don't have a downstream counterpart or correlation hints to classify a service. This is also the case of calls originating at Instana sensors (used for infrastructure monitoring) reporting back to the Instana backend. We can effectively treat these calls as 'synthetic' and suppress the respective endpoints via Services -> Configure Services -> synthetic Endpoints -> "endpoint.name containts com.instana"
+
+## Website tracing data is not visible in Instana even though I've properly set both INSTANA_EUM URL and INSTANA_EUM_KEY
+Your browser may be blocking cross-site content. The resource at “https://instana_eum_url:446/eum/eum.min.js” that is requested during the webpage load was probably blocked by the browser's security policy. Disable the content blocking by adding a tracking exception for the Instana domain (see [here](https://developer.mozilla.org/en-US/docs/Web/Privacy/Firefox_tracking_protection) for Firefox)
