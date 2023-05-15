@@ -12,4 +12,3 @@ spec:
   - ./check-if-cart-is-populated.yaml
   - ./empty-cart.yaml
   - ./check-if-cart-is-empty.yaml
-  
