@@ -620,6 +620,7 @@ services:
 
   jaeger-agent:
     image: jaegertracing/jaeger-agent:latest
+    container_name: jaeger-agent
     hostname: jaeger-agent
     command: ["--reporter.grpc.host-port=jaeger:14250"]
     ports:
