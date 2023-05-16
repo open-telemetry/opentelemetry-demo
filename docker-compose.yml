@@ -456,6 +456,7 @@ services:
   # Frontend Proxy service
   nginx:
     image: nginx:latest
+    container_name: nginx
     volumes:
       - ./src/nginx-otel/default.conf:/etc/nginx/conf.d/default.conf
     ports:
