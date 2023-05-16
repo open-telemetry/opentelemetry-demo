@@ -1,7 +1,14 @@
 # Opensearch OTEL Demo Architecture
 This document will review the OpenSearch architecture for the [OTEL demo](https://opentelemetry.io/docs/demo/) and will review how to use the new Observability capabilities
 implemented into OpenSearch.
+---
+This diagram provides an overview of the system components, showcasing the configuration derived from the OpenTelemetry Collector (otelcol) configuration file utilized by the OpenTelemetry demo application.
 
+Additionally, it highlights the observability data (traces and metrics) flow within the system.
+
+![](img/otelcol-data-flow-overview.png)
+
+---
 [OTEL DEMO](https://opentelemetry.io/docs/demo/architecture/) Describes the list of services that are composing the Astronomy Shop.
 
 They are combined of:
@@ -14,9 +21,7 @@ They are combined of:
  - [Feature Flag](https://opentelemetry.io/docs/demo/services/feature-flag/)
  - [Fraud Detection](https://opentelemetry.io/docs/demo/services/fraud-detection/)
  - [Frontend](https://opentelemetry.io/docs/demo/services/frontend/)
- - [Frontend Nginx Proxy](../src/nginx-otel/README.md) *(replacement for _Frontend-Proxy_)* 
  - [Kafka](https://opentelemetry.io/docs/demo/services/kafka/)
- - [Load Generator](https://opentelemetry.io/docs/demo/services/load-generator/)
  - [Payment](https://opentelemetry.io/docs/demo/services/payment/)
  - [Product Catalog](https://opentelemetry.io/docs/demo/services/product-catalog/)
  - [Quote](https://opentelemetry.io/docs/demo/services/quote/)
@@ -25,6 +30,21 @@ They are combined of:
  - [Fluent-Bit](../src/fluent-bit/README.md) *(nginx's otel log exported)* 
  - [Integrations](../src/integrations/README.md) *(pre-canned OpenSearch assets)* 
 
+Backend supportive services
+ - [Load Generator](http://load-generator:8089)
+   - See [description](https://opentelemetry.io/docs/demo/services/load-generator/)
+ - [Frontend Nginx Proxy](http://nginx:90) *(replacement for _Frontend-Proxy_)*
+   - See [description](../src/nginx-otel/README.md)
+ - [OpenSearch](https://opensearch-node1:9200)
+    - See [description](https://github.com/YANG-DB/opentelemetry-demo/blob/12d52cbb23bbf4226f6de2dfec840482a0a7d054/docker-compose.yml#L697)
+ - [Dashboards](http://opensearch-dashboards:5601)
+   - See [description](https://github.com/YANG-DB/opentelemetry-demo/blob/12d52cbb23bbf4226f6de2dfec840482a0a7d054/docker-compose.yml#L747) 
+ - [Prometheus](http://prometheus:9090)
+   - See [description](https://github.com/YANG-DB/opentelemetry-demo/blob/12d52cbb23bbf4226f6de2dfec840482a0a7d054/docker-compose.yml#L674)
+ - [Feature-Flag](http://feature-flag-service:8881)
+   - See [description](../src/featureflagservice/README.md)
+ - [Grafana](http://grafana:3000)
+   - See [description](https://github.com/YANG-DB/opentelemetry-demo/blob/12d52cbb23bbf4226f6de2dfec840482a0a7d054/docker-compose.yml#L637)
 
 ---
 
