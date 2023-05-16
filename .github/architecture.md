@@ -29,6 +29,7 @@ They are combined of:
  - [Shipping](https://opentelemetry.io/docs/demo/services/shipping/)
  - [Fluent-Bit](../src/fluent-bit/README.md) *(nginx's otel log exported)* 
  - [Integrations](../src/integrations/README.md) *(pre-canned OpenSearch assets)* 
+ - [DataPrepper](../src/dataprepper/README.md) *(OpenSearch's ingestion pipeline)
 
 Backend supportive services
  - [Load Generator](http://load-generator:8089)
@@ -45,16 +46,21 @@ Backend supportive services
    - See [description](../src/featureflagservice/README.md)
  - [Grafana](http://grafana:3000)
    - See [description](https://github.com/YANG-DB/opentelemetry-demo/blob/12d52cbb23bbf4226f6de2dfec840482a0a7d054/docker-compose.yml#L637)
-
 ---
 
 ## Purpose
 The purpose of this demo is to demonstrate the different capabilities of OpenSearch Observability to investigate and reflect your system.
 
- - Integrations - the integration service is a list of pre-canned assets that are loaded in a combined manner to allow users the ability
-for simple and automatic way to discover and review their services topology.
+### Ingestion 
+The ingestion capabilities for OpenSearch is to be able to support multiple pipelines:
+  - [Data-Prepper](https://github.com/opensearch-project/data-prepper/) is an OpenSearch ingestion project that allows ingestion of OTEL standard signals using Otel-Collector
+  - [Jaeger](https://opensearch.org/docs/latest/observing-your-data/trace/trace-analytics-jaeger/) is an ingestion framework which has a build in capability for pushing OTEL signals into OpenSearch
+  - [Fluent-Bit](https://docs.fluentbit.io/manual/pipeline/outputs/opensearch) is an ingestion framework which has a build in capability for pushing OTEL signals into OpenSearch
 
-These integrations contain the following assets:
+### Integrations -
+The integration service is a list of pre-canned assets that are loaded in a combined manner to allow users the ability for simple and automatic way to discover and review their services topology.
+
+These (demo-sample) integrations contain the following assets:
  - components & index template mapping
  - datasources 
  - data-stream & indices
@@ -78,7 +84,7 @@ Once these assets are loaded - the user can start reviewing its Observability da
 
 ![Traces](img/traces.png)
 
-
+![ServiceGraph](img/service-graph.png)
 ---
 
 ### **Scenarios**
