@@ -13,6 +13,11 @@ receivers:
             - "https://*"
 
 exporters:
+  otlp/2:
+    endpoint: "data-prepper:21890"
+    tls:
+      insecure: true
+      insecure_skip_verify: true
   otlp:
     endpoint: "jaeger:4317"
     tls:
@@ -41,7 +46,7 @@ service:
     traces:
       receivers: [otlp]
       processors: [batch]
-      exporters: [otlp, logging, spanmetrics]
+      exporters: [otlp, logging, spanmetrics, otlp/2]
     metrics:
       receivers: [otlp, spanmetrics]
       processors: [filter, batch]
