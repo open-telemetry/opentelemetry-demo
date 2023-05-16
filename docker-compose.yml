@@ -591,7 +591,6 @@ services:
     volumes:
       - ./src/dataprepper/trace_analytics_no_ssl_2x.yml:/usr/share/data-prepper/pipelines/pipelines.yaml
       - ./src/dataprepper/data-prepper-config.yaml:/usr/share/data-prepper/config/data-prepper-config.yaml
-      - ./src/dataprepper/root-ca.pem:/usr/share/data-prepper/root-ca.pem
     ports:
       - "21890:21890"
     depends_on:
