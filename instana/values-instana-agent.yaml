@@ -206,6 +206,8 @@ components:
         value: http://*:$(CART_SERVICE_PORT)
       - name: REDIS_ADDR
         value: '{{ include "otel-demo.name" . }}-redis:6379'
+      - name: FEATURE_FLAG_GRPC_SERVICE_ADDR
+        value: '{{ include "otel-demo.name" . }}-featureflagservice:50053'
       - name: OTEL_EXPORTER_OTLP_ENDPOINT
         value: http://$(OTEL_COLLECTOR_NAME):4317
     resources:
