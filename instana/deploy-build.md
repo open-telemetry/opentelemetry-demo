@@ -49,7 +49,7 @@ oc get sa -n otel-demo
 oc adm policy -n otel-demo add-scc-to-user anyuid -z my-otel-demo
 ```
 
-Deploy the Instana agent via Helm or using an operator: use a standard installation according to Instana documentation. Apply the demo-specific agent configuration as in `instana-agent/configuration-otel.yaml`. These settings enable the OpenTelemetry ports, add specific service settings for infrastructure monitoring and suppression of native Instana tracing.
+Deploy the Instana agent via Helm or using an operator: use a standard installation according to Instana documentation. Apply the demo-specific agent configuration as in [`instana/agent/configuration.yaml`](../instana/agent/configuration.yaml). These settings enable the OpenTelemetry ports, add specific service settings for infrastructure monitoring and suppression of native Instana tracing.
 
 The demo assumes that an Instana [agent Kubernetes service](https://www.ibm.com/docs/en/instana-observability/current?topic=requirements-installing-host-agent-kubernetes#instana-agent-service) `instana-agent` is present in `instana-agent` namespace. The agent service, besides exposing the standard Instana agent API endpoint, also provides the common OTLP endpoint for both gRPC (port 4317) and HTTP (port 4318) protocols across all nodes. Be aware that at time of writing, the HTTP endpoint definition wasn't yet included in the public Instana agent Helm chart (and likely neither in the Operator). You can better create the service manually using the following manifest that is tested to work well with the demo.
 ```yaml
