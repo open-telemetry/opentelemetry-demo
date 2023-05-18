@@ -63,8 +63,13 @@ defmodule Featureflagservice.MixProject do
       {:opentelemetry_api, "~> 1.2.1"},
       {:opentelemetry, "~> 1.2.1"},
       {:opentelemetry_phoenix, "~> 1.0.0"},
-      {:opentelemetry_ecto, "~> 1.0.0"}
-    ]
+      #{:opentelemetry_ecto, "~> 1.0.0"},
+      {:opentelemetry_ecto, git: "https://github.com/styblope/opentelemetry_ecto.git"},
+      # for opentelemetry_ecto
+      {:telemetry, "~> 0.4 or ~> 1.0"},
+      {:ex_doc, "~> 0.28.0", only: [:dev], runtime: false},
+      {:dialyxir, "~> 1.1", only: [:dev, :test], runtime: false},
+      {:opentelemetry_process_propagator, "~> 0.1.0"}    ]
   end
 
   # Aliases are shortcuts or tasks specific to the current project.

@@ -761,7 +761,7 @@ services:
 
   # OpenSearch store - dashboard
   opensearch-dashboards:
-    image: opensearchproject/opensearch-dashboards:2.6.0 # Make sure the version of opensearch-dashboards matches the version of opensearch installed on other nodes
+    image: opensearchproject/opensearch-dashboards:latest # Make sure the version of opensearch-dashboards matches the version of opensearch installed on other nodes
     container_name: opensearch-dashboards
     ports:
       - 5601:5601 # Map host port 5601 to container port 5601

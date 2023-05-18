@@ -1,0 +1,41 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <!-- Required meta tags -->
+    <style>
+        .console-table {
+            background-color: rgba(255, 255, 255, 0.35); /* Adjust the last value for desired transparency */
+        }
+    </style>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <!-- Bootstrap CSS -->
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" rel="stylesheet">
+
+    <title>Docker Console</title>
+</head>
+<body>
+<div class="container">
+    <h2>Docker Containers</h2>
+    <table class="table console-table">
+        <thead>
+        <tr>
+            <th>Name</th>
+            <th>State</th>
+            <th>Ports</th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for container in containers %}
+        <tr>
+            <td>{{ container.name }}</td>
+            <td>{{ container.state }}</td>
+            <td>{{ container.ports }}</td>
+        </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+</div>
+</body>
+</html>
