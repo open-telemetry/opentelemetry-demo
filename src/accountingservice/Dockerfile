@@ -4,11 +4,18 @@
 
 FROM golang:1.19.2-alpine AS builder
 RUN apk add build-base protobuf-dev protoc
+RUN apk add --no-cache git
+RUN apk add --no-cache curl
+
 WORKDIR /usr/src/app/
 
 # Restore dependencies
 COPY ./src/accountingservice/ ./
 COPY ./pb/ ./proto/
+
+ENV GOPROXY=direct
+ENV GOSUMDB=off
+
 RUN go mod download
 RUN go install google.golang.org/protobuf/cmd/protoc-gen-go@v1.28
 RUN go install google.golang.org/grpc/cmd/protoc-gen-go-grpc@v1.2
