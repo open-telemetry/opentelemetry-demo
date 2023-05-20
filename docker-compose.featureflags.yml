@@ -72,6 +72,10 @@ services:
   recommendationservice:
     environment:
       - FEATURE_FLAG_GRPC_SERVICE_ADDR
+    deploy:
+      resources:
+        limits:
+          memory: 500M               # This is high to enable supporting the recommendationCache feature flag use case
     depends_on:
       featureflagservice:
         condition: service_started
