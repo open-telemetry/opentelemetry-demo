@@ -19,7 +19,12 @@
       "# Copyright The OpenTelemetry Authors",
       "# SPDX-License-Identifier: Apache-2.0"
     ],
-    "**/*.{ex,exs,rb,yaml,yml,sh,yamllint}": [
+    "**/*.sh": [
+      "#!/bin/sh",
+      "# Copyright The OpenTelemetry Authors",
+      "# SPDX-License-Identifier: Apache-2.0"
+    ],
+    "**/*.{ex,exs,rb,yaml,yml,yamllint}": [
       "# Copyright The OpenTelemetry Authors",
       "# SPDX-License-Identifier: Apache-2.0"
     ],
