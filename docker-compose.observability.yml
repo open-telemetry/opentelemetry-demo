@@ -11,6 +11,13 @@ services:
   # ********************
   # Telemetry Components
   # ********************
+
+  # Collector
+  otelcol:
+    command: [ "--config=/etc/otelcol-config.yml", "--config=/etc/otelcol-observability.yml", "--config=/etc/otelcol-config-extras.yml" ]
+    volumes:
+      - ./src/otelcollector/otelcol-observability.yml:/etc/otelcol-observability.yml
+
   # Jaeger
   jaeger:
     image: jaegertracing/all-in-one
