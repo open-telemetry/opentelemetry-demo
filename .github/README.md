@@ -15,7 +15,7 @@ The following guide describes how to setup the OpenTelemetry demo with OpenSearc
 ```bash
 git clone https://github.com/opensearch/opentelemetry-demo.git
 cd opentelemetry-demo
-docker-compose up -d
+docker compose up -d
 ```
 
 ### Services
@@ -33,22 +33,25 @@ OpenSearch has [documented](https://opensearch.org/docs/latest/observing-your-da
 The next instructions are similar and use the same docker compose file.
 1. Start the demo with the following command from the repository's root directory:
    ```
-   docker-compose up -d
+   docker compose up -d
    ```
-**Note:** The docker-compose `--no-build` flag is used to fetch released docker images from [ghcr](http://ghcr.io/open-telemetry/demo) instead of building from source.
+**Note:** The docker compose `--no-build` flag is used to fetch released docker images from [ghcr](http://ghcr.io/open-telemetry/demo) instead of building from source.
 Removing the `--no-build` command line option will rebuild all images from source. It may take more than 20 minutes to build if the flag is omitted.
 
 ### Explore and analyze the data With OpenSearch Observability
 Review revised OpenSearch [Observability Architecture](architecture.md)
 
-### Service map
+### Start learning OpenSearch Observability using our tutorial
+[Getting started Tutorial](../tutorial/README.md)
+
+#### Service map
 ![Service map](https://docs.aws.amazon.com/images/opensearch-service/latest/developerguide/images/ta-dashboards-services.png)
 
-### Traces
+#### Traces
 ![Traces](https://opensearch.org/docs/2.6/images/ta-trace.png)
 
-### Correlation
+#### Correlation
 ![Correlation](https://opensearch.org/docs/latest/images/observability-trace.png)
 
-### Logs
+#### Logs
 ![Logs](https://opensearch.org/docs/latest/images/trace_log_correlation.gif)

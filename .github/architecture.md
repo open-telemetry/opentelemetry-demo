@@ -46,6 +46,11 @@ Backend supportive services
    - See [description](../src/featureflagservice/README.md)
  - [Grafana](http://grafana:3000)
    - See [description](https://github.com/YANG-DB/opentelemetry-demo/blob/12d52cbb23bbf4226f6de2dfec840482a0a7d054/docker-compose.yml#L637)
+
+### Services Topology
+The next diagram shows the docker compose services dependencies
+
+![](img/docker-services-topology.png)
 ---
 
 ## Purpose

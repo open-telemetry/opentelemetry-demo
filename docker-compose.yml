@@ -297,6 +297,7 @@ services:
       - OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE
       - WEB_OTEL_SERVICE_NAME=frontend-web
     depends_on:
+      - accountingservice
       - adservice
       - cartservice
       - checkoutservice
@@ -771,6 +772,8 @@ services:
       OPENSEARCH_HOSTS: '["https://opensearch-node1:9200","https://opensearch-node2:9200"]' # Define the OpenSearch nodes that OpenSearch Dashboards will query
     depends_on:
       - opensearch-node1
+      - opensearch-node2
+      - prometheus
 
 #   Observability OSD Integrations
   integrations:
