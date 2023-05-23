@@ -6798,6 +6798,24 @@ spec:
                 fieldRef:
                   apiVersion: v1
                   fieldPath: status.podIP
+            - name: DT_API_TOKEN
+              value: null
+              valueFrom:
+                secretKeyRef:
+                  name: dt-credentials
+                  key: DT_API_TOKEN
+            - name: T_OTLP_ENDPOINT
+              value: null
+              valueFrom:
+                secretKeyRef:
+                  name: dt-credentials
+                  key: T_OTLP_ENDPOINT
+            - name: OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE
+              value: null
+              valueFrom:
+                secretKeyRef:
+                  name: dt-credentials
+                  key: OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE
           livenessProbe:
             httpGet:
               path: /
