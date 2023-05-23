@@ -1,5 +1,0 @@
-services: 
-  otelcol: 
-   environment: 
-    - DT_OTLP_ENDPOINT 
-    - DT_API_TOKEN
