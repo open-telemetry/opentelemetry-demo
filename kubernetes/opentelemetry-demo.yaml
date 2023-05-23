@@ -1,6 +1,475 @@
 # Copyright The OpenTelemetry Authors
 # SPDX-License-Identifier: Apache-2.0
 ---
+
+# Data Prepper Deployment
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: data-prepper
+
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: data-prepper
+  template:
+    metadata:
+      labels:
+        app: data-prepper
+    spec:
+      containers:
+        - name: data-prepper
+          image: opensearchproject/data-prepper:latest
+          ports:
+            - containerPort: 21890
+          volumeMounts:
+            - name: config-volume
+              mountPath: /usr/share/data-prepper/pipelines/pipelines.yaml
+              subPath: trace_analytics_no_ssl_2x.yml
+            - name: config-volume
+              mountPath: /usr/share/data-prepper/config/data-prepper-config.yaml
+              subPath: data-prepper-config.yaml
+      volumes:
+        - name: config-volume
+          configMap:
+            name: data-prepper-config
+  # Note: A corresponding ConfigMap needs to be created with the data from ./src/dataprepper/
+---
+# Data Prepper Service
+apiVersion: v1
+kind: Service
+metadata:
+  name: data-prepper-service
+
+spec:
+  selector:
+    app: data-prepper
+  ports:
+    - protocol: TCP
+      port: 21890
+      targetPort: 21890
+---
+
+# OpenSearch Deployment (node1 and node2)
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: opensearch
+
+spec:
+  serviceName: opensearch-service
+  replicas: 2
+  selector:
+    matchLabels:
+      app: opensearch
+  template:
+    metadata:
+      labels:
+        app: opensearch
+    spec:
+      containers:
+        - name: opensearch-node
+          image: opensearchproject/opensearch:latest
+          ports:
+            - containerPort: 9200
+            - containerPort: 9600
+          env:
+            - name: cluster.name
+              value: opensearch-cluster
+            - name: node.name
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.name
+            - name: discovery.seed_hosts
+              value: opensearch-node1,opensearch-node2
+            - name: cluster.initial_cluster_manager_nodes
+              value: opensearch-node1,opensearch-node2
+            - name: bootstrap.memory_lock
+              value: "true"
+            - name: OPENSEARCH_JAVA_OPTS
+              value: "-Xms512m -Xmx512m"
+          volumeMounts:
+            - name: opensearch-data
+              mountPath: /usr/share/opensearch/data
+  volumeClaimTemplates:
+    - metadata:
+        name: opensearch-data
+      spec:
+        accessModes: ["ReadWriteOnce"]
+        resources:
+          requests:
+            storage: 10Gi
+---
+
+# OpenSearch Dashboard Deployment
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: opensearch-dashboards
+
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: opensearch-dashboards
+  template:
+    metadata:
+      labels:
+        app: opensearch-dashboards
+    spec:
+      containers:
+        - name: opensearch-dashboards
+          image: opensearchproject/opensearch-dashboards:latest
+          ports:
+            - containerPort: 5601
+          env:
+            - name: OPENSEARCH_HOSTS
+              value: '["https://opensearch-node1:9200","https://opensearch-node2:9200"]'
+---
+
+# OpenSearch Dashboard Service
+apiVersion: v1
+kind: Service
+metadata:
+  name: opensearch-dashboards-service
+
+spec:
+  selector:
+    app: opensearch-dashboards
+  ports:
+    - protocol: TCP
+      port: 5601
+      targetPort: 5601
+---
+
+# Fluentbit Deployment
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: fluentbit
+
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: fluentbit
+  template:
+    metadata:
+      labels:
+        app: fluentbit
+    spec:
+      containers:
+        - name: fluentbit
+          image: fluent/fluent-bit:latest
+          ports:
+            - containerPort: 24224
+          volumeMounts:
+            - name: config-volume
+              mountPath: /fluent-bit/etc
+              # Assuming a ConfigMap exists with the data from ./src/fluent-bit
+              subPath: fluent-bit-config.yaml
+      volumes:
+        - name: config-volume
+          configMap:
+            name: fluentbit-config
+---
+
+# Fluentbit Service
+apiVersion: v1
+kind: Service
+metadata:
+  name: fluentbit-service
+
+spec:
+  selector:
+    app: fluentbit
+  ports:
+    - protocol: TCP
+      port: 24224
+      targetPort: 24224
+---
+
+# OpenSearch Service
+apiVersion: v1
+kind: Service
+metadata:
+  name: opensearch-service
+
+spec:
+  type: ClusterIP
+  clusterIP: None
+  selector:
+    app: opensearch
+  ports:
+    - name: opensearch-api
+      port: 9200
+      targetPort: 9200
+    - name: opensearch-node
+      port: 9600
+      targetPort: 9600
+---
+
+# Nginx Deployment
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: nginx
+
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: nginx
+  template:
+    metadata:
+      labels:
+        app: nginx
+    spec:
+      containers:
+        - name: nginx
+          image: nginx:latest
+          ports:
+            - containerPort: 90
+          volumeMounts:
+            - name: config-volume
+              mountPath: /etc/nginx/conf.d/default.conf
+              # Assuming a ConfigMap exists with the data from ./src/nginx-otel/default.conf
+              subPath: default.conf
+      volumes:
+        - name: config-volume
+          configMap:
+            name: nginx-config
+---
+
+# Nginx Service
+apiVersion: v1
+kind: Service
+metadata:
+  name: nginx-service
+spec:
+  selector:
+    app: nginx
+  ports:
+    - protocol: TCP
+      port: 90
+      targetPort: 90
+---
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: integrations
+
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: integrations
+  template:
+    metadata:
+      labels:
+        app: integrations
+    spec:
+      containers:
+        - name: integrations
+          image: python:3.9
+          command: ["python", "./src/install.py"]
+          volumeMounts:
+            - name: app-volume
+              mountPath: /app
+      volumes:
+        - name: app-volume
+          configMap:
+            name: integrations-config # Assuming you have a ConfigMap with all the required scripts and requirements.txt
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: integrations-config
+data:
+  requirements.txt: |
+    crhelper==2.0.11
+    requests==2.28.2
+    opensearch-py==2.2.0
+    urllib3==1.26.6
+
+  install.py: |
+    import os
+    import json
+    import logging
+    from opensearchpy import OpenSearch, RequestsHttpConnection, OpenSearchException
+    import requests
+    from requests.auth import HTTPBasicAuth
+    import os
+
+    # load env variables
+    opensearch_host = os.getenv('OPENSEARCH1_HOST', 'opensearch-node1')
+    opensearch_dashboard = os.environ.get('OPENSEARCH_DASHBOARD_HOST', 'opensearch-dashboards')
+
+    # For testing only. Don't store credentials in code.
+    auth = ('admin', 'admin')
+
+    # Configure logging
+    logging.basicConfig(format='%(asctime)s [%(levelname)s] %(message)s', level=logging.INFO)
+    logger = logging.getLogger(__name__)
+
+    # Create the client with SSL/TLS enabled, but hostname verification disabled.
+    client = OpenSearch(
+        hosts = [{'host': opensearch_host, 'port': 9200}],
+        http_compress = True, # enables gzip compression for request bodies
+        http_auth = auth,
+        use_ssl = True,
+        verify_certs = False,
+        ssl_assert_hostname = False,
+        ssl_show_warn = False
+    )
+    # verify connection to opensearch
+    # verify connection to opensearch
+    def test_connection():
+        max_retries = 30  # Maximum number of retries
+        retry_interval = 10  # Wait for 10 seconds between retries
+
+        for i in range(max_retries):
+            try:
+                response = requests.get(
+                    url=f'https://{opensearch_host}:9200/',
+                    auth=HTTPBasicAuth('admin', 'admin'),
+                    headers={'Content-Type': 'application/json'},
+                    verify=False  # Disable SSL verification
+                )
+                response.raise_for_status()  # Raise an exception if the request failed
+                print('Successfully connected to OpenSearch')
+                return  # Exit the function if connection is successful
+            except requests.HTTPError as e:
+                logging.error(f'Failed to connect to OpenSearch, error: {str(e)}')
+
+            print(f'Attempt {i + 1} failed, waiting for {retry_interval} seconds before retrying...')
+            time.sleep(retry_interval)
+
+        print(f'Failed to connect to OpenSearch after {max_retries} attempts')
+        exit(1)  # Exit the program with an error code
+
+    # create mapping components to compose the different observability categories
+    def create_mapping_components(client):
+       mapping_dir = '../mapping-components/'
+       for filename in os.listdir(mapping_dir):
+            if filename.endswith('.mapping'):
+                with open(os.path.join(mapping_dir, filename), 'r') as f:
+                    mapping = json.load(f)
+
+                    template_name = os.path.splitext(filename)[0]  # Remove the .mapping extension
+                    print(f'About to load  template: {template_name}')
+                    # Create the component template
+                    try:
+                        response = requests.put(
+                            url=f'https://{opensearch_host}:9200/_component_template/{template_name}_template',
+                            auth=HTTPBasicAuth('admin', 'admin'),
+                            json=mapping,
+                            verify=False,  # Disable SSL verification
+                            headers={'Content-Type': 'application/json'}
+                        )
+                        response.raise_for_status()  # Raise an exception if the request failed
+                        logger.info(f'Successfully created component template: {template_name}')
+                        print(f'Successfully created component template: {template_name}')
+                    except requests.HTTPError as e:
+                        logger.error(f'Failed to create component template: {template_name}, error: {str(e)}')
+
+    # Create the templates from the mapping content
+    def create_mapping_templates(client):
+        mapping_dir = '../mapping-templates/'
+        for filename in os.listdir(mapping_dir):
+            if filename.endswith('.mapping'):
+                with open(os.path.join(mapping_dir, filename), 'r') as f:
+                    mapping = json.load(f)
+
+                    template_name = os.path.splitext(filename)[0]  # Remove the .mapping extension
+                    print(f'About to created index template: {template_name}')
+
+                    # Create the template
+                    try:
+                        client.indices.put_index_template(name=template_name, body=mapping)
+                        print(f'Successfully created index template: {template_name}')
+                    except OpenSearchException as e:
+                        logger.error(f'Failed to create index template: {template_name}, error: {str(e)}')
+
+    # create data streams
+    def create_data_streams():
+        with open('../indices/data-stream.json', 'r') as f:
+            data = json.load(f)
+            data_streams = data.get('data-stream', [])
+
+            for ds in data_streams:
+                try:
+                    response = requests.put(
+                        url=f'https://{opensearch_host}:9200/_data_stream/{ds}',
+                        auth=HTTPBasicAuth('admin', 'admin'),
+                        headers={'Content-Type': 'application/json'},
+                        verify=False  # Disable SSL verification
+                    )
+                    response.raise_for_status()  # Raise an exception if the request failed
+                    logger.info(f'Successfully created data stream: {ds}')
+                except requests.HTTPError as e:
+                    logger.error(f'Failed to create data stream: {ds}, error: {str(e)}')
+
+    # load dashboards in the display folder
+    def load_dashboards():
+        dashboard_dir = '../display/'
+        for filename in os.listdir(dashboard_dir):
+            if filename.endswith('.ndjson'):
+                with open(os.path.join(dashboard_dir, filename), 'r') as f:
+                    dashboard_data = f.read()
+                    dashboard_name = os.path.splitext(filename)[0]  # Remove the .json extension
+                    logger.info(f'About to load dashboard: {dashboard_name}')
+
+                    # Load the dashboard
+                    try:
+                        response = requests.post(
+                            url=f'http://{opensearch_dashboard}:5601/api/saved_objects/_import?overwrite=true',
+                            auth=HTTPBasicAuth('admin', 'admin'),
+                            files={'file': (f'{dashboard_name}.ndjson', dashboard_data)},
+                            headers={'osd-xsrf': 'true'},
+                            verify=False  # Disable SSL verification
+                        )
+                        response.raise_for_status()  # Raise an exception if the request failed
+                        logger.info(f'Successfully loaded dashboard: {dashboard_name}')
+                        print(f'Successfully loaded: {dashboard_name}')
+                    except requests.HTTPError as e:
+                        logger.error(f'Failed to load dashboard: {dashboard_name}, error: {str(e)}')
+
+    # create the data_streams based on the list given in the data-stream.json file
+    def create_datasources():
+        datasource_dir = '../datasource/'
+        for filename in os.listdir(datasource_dir):
+            if filename.endswith('.json'):
+                with open(os.path.join(datasource_dir, filename), 'r') as f:
+                    datasource = json.load(f)
+                    try:
+                        response = requests.post(
+                            url=f'https://{opensearch_host}:9200/_plugins/_query/_datasources',
+                            auth=HTTPBasicAuth('admin', 'admin'),
+                            json=datasource,
+                            verify=False,  # Disable SSL verification
+                            headers={'Content-Type': 'application/json'}
+                        )
+                        response.raise_for_status()  # Raise an exception if the request failed
+                        logger.info(f'Successfully created datasource: {filename}')
+                        print(f'Successfully created datasource: {filename}')
+                    except requests.HTTPError as e:
+                        print(f'Failed to create datasource: {filename}, error: {str(e)}')
+                        logger.error(f'Failed to create datasource: {filename}, error: {str(e)}')
+
+
+    if __name__ == '__main__':
+        # import all assets
+        test_connection()
+        create_mapping_components(client)
+        create_mapping_templates(client)
+        create_data_streams()
+        load_dashboards()
+        create_datasources()
+---
+
 # Source: opentelemetry-demo/charts/grafana/templates/serviceaccount.yaml
 apiVersion: v1
 kind: ServiceAccount
