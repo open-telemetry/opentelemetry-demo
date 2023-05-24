@@ -1,266 +1,13 @@
 # Copyright The OpenTelemetry Authors
 # SPDX-License-Identifier: Apache-2.0
----
-
-# Data Prepper Deployment
-apiVersion: apps/v1
-kind: Deployment
-metadata:
-  name: data-prepper
-
-spec:
-  replicas: 1
-  selector:
-    matchLabels:
-      app: data-prepper
-  template:
-    metadata:
-      labels:
-        app: data-prepper
-    spec:
-      containers:
-        - name: data-prepper
-          image: opensearchproject/data-prepper:latest
-          ports:
-            - containerPort: 21890
-          volumeMounts:
-            - name: config-volume
-              mountPath: /usr/share/data-prepper/pipelines/pipelines.yaml
-              subPath: trace_analytics_no_ssl_2x.yml
-            - name: config-volume
-              mountPath: /usr/share/data-prepper/config/data-prepper-config.yaml
-              subPath: data-prepper-config.yaml
-      volumes:
-        - name: config-volume
-          configMap:
-            name: data-prepper-config
-  # Note: A corresponding ConfigMap needs to be created with the data from ./src/dataprepper/
----
-# Data Prepper Service
-apiVersion: v1
-kind: Service
-metadata:
-  name: data-prepper-service
-
-spec:
-  selector:
-    app: data-prepper
-  ports:
-    - protocol: TCP
-      port: 21890
-      targetPort: 21890
----
-
-# OpenSearch Deployment (node1 and node2)
-apiVersion: apps/v1
-kind: StatefulSet
-metadata:
-  name: opensearch
-
-spec:
-  serviceName: opensearch-service
-  replicas: 2
-  selector:
-    matchLabels:
-      app: opensearch
-  template:
-    metadata:
-      labels:
-        app: opensearch
-    spec:
-      containers:
-        - name: opensearch-node
-          image: opensearchproject/opensearch:latest
-          ports:
-            - containerPort: 9200
-            - containerPort: 9600
-          env:
-            - name: cluster.name
-              value: opensearch-cluster
-            - name: node.name
-              valueFrom:
-                fieldRef:
-                  fieldPath: metadata.name
-            - name: discovery.seed_hosts
-              value: opensearch-node1,opensearch-node2
-            - name: cluster.initial_cluster_manager_nodes
-              value: opensearch-node1,opensearch-node2
-            - name: bootstrap.memory_lock
-              value: "true"
-            - name: OPENSEARCH_JAVA_OPTS
-              value: "-Xms512m -Xmx512m"
-          volumeMounts:
-            - name: opensearch-data
-              mountPath: /usr/share/opensearch/data
-  volumeClaimTemplates:
-    - metadata:
-        name: opensearch-data
-      spec:
-        accessModes: ["ReadWriteOnce"]
-        resources:
-          requests:
-            storage: 10Gi
----
-
 # OpenSearch Dashboard Deployment
-apiVersion: apps/v1
-kind: Deployment
-metadata:
-  name: opensearch-dashboards
-
-spec:
-  replicas: 1
-  selector:
-    matchLabels:
-      app: opensearch-dashboards
-  template:
-    metadata:
-      labels:
-        app: opensearch-dashboards
-    spec:
-      containers:
-        - name: opensearch-dashboards
-          image: opensearchproject/opensearch-dashboards:latest
-          ports:
-            - containerPort: 5601
-          env:
-            - name: OPENSEARCH_HOSTS
-              value: '["https://opensearch-node1:9200","https://opensearch-node2:9200"]'
 ---
-
-# OpenSearch Dashboard Service
-apiVersion: v1
-kind: Service
-metadata:
-  name: opensearch-dashboards-service
-
-spec:
-  selector:
-    app: opensearch-dashboards
-  ports:
-    - protocol: TCP
-      port: 5601
-      targetPort: 5601
----
-
-# Fluentbit Deployment
-apiVersion: apps/v1
-kind: Deployment
-metadata:
-  name: fluentbit
-
-spec:
-  replicas: 1
-  selector:
-    matchLabels:
-      app: fluentbit
-  template:
-    metadata:
-      labels:
-        app: fluentbit
-    spec:
-      containers:
-        - name: fluentbit
-          image: fluent/fluent-bit:latest
-          ports:
-            - containerPort: 24224
-          volumeMounts:
-            - name: config-volume
-              mountPath: /fluent-bit/etc
-              # Assuming a ConfigMap exists with the data from ./src/fluent-bit
-              subPath: fluent-bit-config.yaml
-      volumes:
-        - name: config-volume
-          configMap:
-            name: fluentbit-config
----
-
-# Fluentbit Service
-apiVersion: v1
-kind: Service
-metadata:
-  name: fluentbit-service
-
-spec:
-  selector:
-    app: fluentbit
-  ports:
-    - protocol: TCP
-      port: 24224
-      targetPort: 24224
----
-
-# OpenSearch Service
-apiVersion: v1
-kind: Service
-metadata:
-  name: opensearch-service
-
-spec:
-  type: ClusterIP
-  clusterIP: None
-  selector:
-    app: opensearch
-  ports:
-    - name: opensearch-api
-      port: 9200
-      targetPort: 9200
-    - name: opensearch-node
-      port: 9600
-      targetPort: 9600
----
-
-# Nginx Deployment
-apiVersion: apps/v1
-kind: Deployment
-metadata:
-  name: nginx
-
-spec:
-  replicas: 1
-  selector:
-    matchLabels:
-      app: nginx
-  template:
-    metadata:
-      labels:
-        app: nginx
-    spec:
-      containers:
-        - name: nginx
-          image: nginx:latest
-          ports:
-            - containerPort: 90
-          volumeMounts:
-            - name: config-volume
-              mountPath: /etc/nginx/conf.d/default.conf
-              # Assuming a ConfigMap exists with the data from ./src/nginx-otel/default.conf
-              subPath: default.conf
-      volumes:
-        - name: config-volume
-          configMap:
-            name: nginx-config
----
-
-# Nginx Service
-apiVersion: v1
-kind: Service
-metadata:
-  name: nginx-service
-spec:
-  selector:
-    app: nginx
-  ports:
-    - protocol: TCP
-      port: 90
-      targetPort: 90
----
-
+# OpenSearch Integration loading script
 apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: integrations
-
+  namespace: otel-demo
 spec:
   replicas: 1
   selector:
@@ -274,19 +21,20 @@ spec:
       containers:
         - name: integrations
           image: python:3.9
-          command: ["python", "./src/install.py"]
+          command: ["python", "/app/install.py"]
           volumeMounts:
             - name: app-volume
               mountPath: /app
       volumes:
         - name: app-volume
           configMap:
-            name: integrations-config # Assuming you have a ConfigMap with all the required scripts and requirements.txt
+            name: integrations-config
 ---
 apiVersion: v1
 kind: ConfigMap
 metadata:
   name: integrations-config
+  namespace: otel-demo
 data:
   requirements.txt: |
     crhelper==2.0.11
@@ -469,7 +217,394 @@ data:
         load_dashboards()
         create_datasources()
 ---
+# Nginx Deployment
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: nginx
+  namespace: otel-demo
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: nginx
+  template:
+    metadata:
+      labels:
+        app: nginx
+    spec:
+      containers:
+        - name: nginx
+          image: nginx:latest
+          ports:
+            - containerPort: 90
+          volumeMounts:
+            - name: config-volume
+              mountPath: /etc/nginx/conf.d/default.conf
+              subPath: default.conf
+            - name: opentelemetry-volume
+              mountPath: /etc/nginx/conf.d/opentelemetry_module.conf
+              subPath: opentelemetry_module.conf
+      volumes:
+        - name: config-volume
+          configMap:
+            name: nginx-config
+            items:
+              - key: default.conf
+                path: default.conf
+        - name: opentelemetry-volume
+          configMap:
+            name: nginx-config
+            items:
+              - key: opentelemetry_module.conf
+                path: opentelemetry_module.conf
 
+---
+# Nginx Config-map
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: nginx-config
+  namespace: otel-demo
+data:
+  default.conf: |
+    server {
+      listen 90;
+
+      location / {
+         proxy_pass http://frontend:8080/;
+         proxy_set_header Host $host;
+         proxy_set_header X-Real-IP $remote_addr;
+         proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+         proxy_set_header X-Forwarded-Proto $scheme;
+       }
+    }
+  opentelemetry_module.conf: |
+    NginxModuleEnabled ON;
+    NginxModuleOtelSpanExporter otlp;
+    NginxModuleOtelExporterEndpoint collector:4317;
+    NginxModuleServiceName NginxProxyService;
+    NginxModuleServiceNamespace NginxProxyServiceNamespace;
+    NginxModuleServiceInstanceId NginxProxyInstanceId;
+    NginxModuleResolveBackends ON;
+    NginxModuleTraceAsError ON;
+
+---
+# Nginx Service
+apiVersion: v1
+kind: Service
+metadata:
+  name: nginx-service
+  namespace: otel-demo
+spec:
+  selector:
+    app: nginx
+  ports:
+    - protocol: TCP
+      port: 90
+      targetPort: 90
+---
+# Fluentbit Deployment
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: fluentbit
+  namespace: otel-demo
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: fluentbit
+  template:
+    metadata:
+      labels:
+        app: fluentbit
+    spec:
+      containers:
+        - name: fluentbit
+          image: fluent/fluent-bit:latest
+          ports:
+            - containerPort: 24224
+          volumeMounts:
+            - name: config-volume
+              mountPath: /fluent-bit/etc/fluent-bit.conf
+              subPath: fluent-bit.conf
+            - name: config-volume
+              mountPath: /fluent-bit/etc/parsers.conf
+              subPath: parsers.conf
+      volumes:
+        - name: config-volume
+          configMap:
+            name: fluentbit-config
+---
+# Fluentbit Service
+apiVersion: v1
+kind: Service
+metadata:
+  name: fluentbit-service
+  namespace: otel-demo
+spec:
+  selector:
+    app: fluentbit
+  ports:
+    - protocol: TCP
+      port: 24224
+      targetPort: 24224
+---
+# Fluentbit Config-Map
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: fluentbit-config
+  namespace: otel-demo
+data:
+  fluent-bit.conf: |
+    [SERVICE]
+        Parsers_File parsers.conf
+        Log_Level info
+        Daemon off
+    [INPUT]
+        Name forward
+        Port 24224
+    [FILTER]
+        Name parser
+        Match nginx.access
+        Key_Name log
+        Parser nginx
+    [FILTER]
+        Name    lua
+        Match   nginx.access
+        code    function cb_filter(a,b,c)local d={}local e=os.date("!%Y-%m-%dT%H:%M:%S.000Z")d["observerTime"]=e;d["body"]=c.remote.." "..c.host.." "..c.user.." ["..os.date("%d/%b/%Y:%H:%M:%S %z").."] \""..c.method.." "..c.path.." HTTP/1.1\" "..c.code.." "..c.size.." \""..c.referer.."\" \""..c.agent.."\""d["trace_id"]="102981ABCD2901"d["span_id"]="abcdef1010"d["attributes"]={}d["attributes"]["data_stream"]={}d["attributes"]["data_stream"]["dataset"]="nginx.access"d["attributes"]["data_stream"]["namespace"]="production"d["attributes"]["data_stream"]["type"]="logs"d["event"]={}d["event"]["category"]={"web"}d["event"]["name"]="access"d["event"]["domain"]="nginx.access"d["event"]["kind"]="event"d["event"]["result"]="success"d["event"]["type"]={"access"}d["http"]={}d["http"]["request"]={}d["http"]["request"]["method"]=c.method;d["http"]["response"]={}d["http"]["response"]["bytes"]=tonumber(c.size)d["http"]["response"]["status_code"]=c.code;d["http"]["flavor"]="1.1"d["http"]["url"]=c.path;d["communication"]={}d["communication"]["source"]={}d["communication"]["source"]["address"]="127.0.0.1"d["communication"]["source"]["ip"]=c.remote;return 1,b,d end
+        call    cb_filter
+    [OUTPUT]
+        Name  opensearch
+        Match nginx.*
+        Host  opensearch-node1
+        Port  9200
+        tls   On
+        tls.verify Off
+        HTTP_Passwd     admin
+        HTTP_User       admin
+        Index sso_logs-nginx-prod
+        Generate_ID On
+        Retry_Limit False
+        Suppress_Type_Name On
+    [OUTPUT]
+        Name stdout
+        Match nginx.access
+  parsers.conf: |
+    [PARSER]
+        Name   nginx
+        Format regex
+        Regex ^(?<remote>[^ ]*) (?<host>[^ ]*) (?<user>[^ ]*) \[(?<time>[^\]]*)\] "(?<method>\S+)(?: +(?<path>[^\"]*?)(?: +\S*)?)?" (?<code>[^ ]*) (?<size>[^ ]*)(?: "(?<referer>[^\"]*)" "(?<agent>[^\"]*)")
+        Time_Key time
+        Time_Format %d/%b/%Y:%H:%M:%S %z
+
+---
+# opensearch-dashboards Config-Map
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: opensearch-dashboards
+  namespace: otel-demo
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: opensearch-dashboards
+  template:
+    metadata:
+      labels:
+        app: opensearch-dashboards
+    spec:
+      containers:
+        - name: opensearch-dashboards
+          image: opensearchproject/opensearch-dashboards:latest
+          ports:
+            - containerPort: 5601
+          env:
+            - name: OPENSEARCH_HOSTS
+              value: '["https://opensearch-node1:9200","https://opensearch-node2:9200"]'
+---
+# OpenSearch Dashboard Service
+apiVersion: v1
+kind: Service
+metadata:
+  name: opensearch-dashboards-service
+  namespace: otel-demo
+spec:
+  selector:
+    app: opensearch-dashboards
+  ports:
+    - protocol: TCP
+      port: 5601
+      targetPort: 5601
+---
+# OpenSearch Deployment (node1 and node2)
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: opensearch
+  namespace: otel-demo
+spec:
+  serviceName: opensearch-service
+  replicas: 2
+  selector:
+    matchLabels:
+      app: opensearch
+  template:
+    metadata:
+      labels:
+        app: opensearch
+    spec:
+      containers:
+        - name: opensearch-node
+          image: opensearchproject/opensearch:latest
+          ports:
+            - containerPort: 9200
+            - containerPort: 9600
+          env:
+            - name: cluster.name
+              value: opensearch-cluster
+            - name: node.name
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.name
+            - name: discovery.seed_hosts
+              value: opensearch-node1,opensearch-node2
+            - name: cluster.initial_cluster_manager_nodes
+              value: opensearch-node1,opensearch-node2
+            - name: bootstrap.memory_lock
+              value: "true"
+            - name: OPENSEARCH_JAVA_OPTS
+              value: "-Xms512m -Xmx512m"
+          volumeMounts:
+            - name: opensearch-data
+              mountPath: /usr/share/opensearch/data
+  volumeClaimTemplates:
+    - metadata:
+        name: opensearch-data
+      spec:
+        accessModes: ["ReadWriteOnce"]
+        resources:
+          requests:
+            storage: 10Gi
+---
+# OpenSearch Service
+apiVersion: v1
+kind: Service
+metadata:
+  name: opensearch-service
+  namespace: otel-demo
+spec:
+  type: ClusterIP
+  clusterIP: None
+  selector:
+    app: opensearch
+  ports:
+    - name: opensearch-api
+      port: 9200
+      targetPort: 9200
+    - name: opensearch-node
+      port: 9600
+      targetPort: 9600
+---
+# Data Prepper Deployment
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: data-prepper
+  namespace: otel-demo
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: data-prepper
+  template:
+    metadata:
+      labels:
+        app: data-prepper
+    spec:
+      containers:
+        - name: data-prepper
+          image: opensearchproject/data-prepper:latest
+          ports:
+            - containerPort: 21890
+          volumeMounts:
+            - name: config-volume
+              mountPath: /usr/share/data-prepper/pipelines/
+              subPath: pipelines.yaml
+            - name: config-volume
+              mountPath: /usr/share/data-prepper/config/
+              subPath: data-prepper-config.yaml
+      volumes:
+        - name: config-volume
+          configMap:
+            name: data-prepper-config
+---
+# Data Prepper config-map
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: data-prepper-config
+  namespace: otel-demo
+data:
+  trace_analytics_no_ssl_2x.yml: |
+    entry-pipeline:
+      delay: "100"
+      source:
+        otel_trace_source:
+          ssl: false
+      sink:
+        - pipeline:
+            name: "raw-pipeline"
+        - pipeline:
+            name: "service-map-pipeline"
+    raw-pipeline:
+      source:
+        pipeline:
+          name: "entry-pipeline"
+      processor:
+        - otel_trace_raw:
+      sink:
+        - opensearch:
+            hosts: [ "https://opensearch-node1:9200" ]
+            insecure: true
+            username: "admin"
+            password: "admin"
+            index_type: trace-analytics-raw
+    service-map-pipeline:
+      delay: "100"
+      source:
+        pipeline:
+          name: "entry-pipeline"
+      processor:
+        - service_map_stateful:
+      sink:
+        - opensearch:
+            hosts: ["https://opensearch-node1:9200"]
+            insecure: true
+            username: "admin"
+            password: "admin"
+            index_type: trace-analytics-service-map
+  data-prepper-config.yaml: |
+    ssl: false
+---
+# Data Prepper Service
+apiVersion: v1
+kind: Service
+metadata:
+  name: data-prepper-service
+  namespace: otel-demo
+spec:
+  selector:
+    app: data-prepper
+  ports:
+    - protocol: TCP
+      port: 21890
+      targetPort: 21890
+
+---
 # Source: opentelemetry-demo/charts/grafana/templates/serviceaccount.yaml
 apiVersion: v1
 kind: ServiceAccount
@@ -6388,9 +6523,9 @@ roleRef:
   kind: Role
   name: opentelemetry-demo-grafana
 subjects:
-- kind: ServiceAccount
-  name: opentelemetry-demo-grafana
-  namespace: otel-demo
+  - kind: ServiceAccount
+    name: opentelemetry-demo-grafana
+    namespace: otel-demo
 ---
 # Source: opentelemetry-demo/charts/grafana/templates/service.yaml
 apiVersion: v1
@@ -6518,8 +6653,8 @@ metadata:
     component: standalone-collector
 spec:
   type: ClusterIP
-  ports: 
-    
+  ports:
+
     - name: jaeger-compact
       port: 6831
       targetPort: 6831
@@ -7220,7 +7355,7 @@ spec:
         app.kubernetes.io/name: otelcol
         app.kubernetes.io/instance: opentelemetry-demo
         component: standalone-collector
-        
+
     spec:
       
       serviceAccountName: opentelemetry-demo-otelcol
@@ -7415,50 +7550,50 @@ spec:
           image: 'ghcr.io/open-telemetry/demo:1.4.0-accountingservice'
           imagePullPolicy: IfNotPresent
           env:
-          - name: OTEL_SERVICE_NAME
-            valueFrom:
-              fieldRef:
-                apiVersion: v1
-                fieldPath: metadata.labels['app.kubernetes.io/component']
-          - name: OTEL_K8S_NAMESPACE
-            valueFrom:
-              fieldRef:
-                apiVersion: v1
-                fieldPath: metadata.namespace
-          - name: OTEL_K8S_NODE_NAME
-            valueFrom:
-              fieldRef:
-                apiVersion: v1
-                fieldPath: spec.nodeName
-          - name: OTEL_K8S_POD_NAME
-            valueFrom:
-              fieldRef:
-                apiVersion: v1
-                fieldPath: metadata.name
-          - name: OTEL_K8S_POD_UID
-            valueFrom:
-              fieldRef:
-                apiVersion: v1
-                fieldPath: metadata.uid
-          - name: OTEL_COLLECTOR_NAME
-            value: 'opentelemetry-demo-otelcol'
-          - name: OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE
-            value: cumulative
-          - name: KAFKA_SERVICE_ADDR
-            value: 'opentelemetry-demo-kafka:9092'
-          - name: OTEL_EXPORTER_OTLP_ENDPOINT
-            value: http://$(OTEL_COLLECTOR_NAME):4317
-          - name: OTEL_RESOURCE_ATTRIBUTES
-            value: service.name=$(OTEL_SERVICE_NAME),service.instance.id=$(OTEL_K8S_POD_UID),service.namespace=opentelemetry-demo,k8s.namespace.name=$(OTEL_K8S_NAMESPACE),k8s.node.name=$(OTEL_K8S_NODE_NAME),k8s.pod.name=$(OTEL_K8S_POD_NAME)
+            - name: OTEL_SERVICE_NAME
+              valueFrom:
+                fieldRef:
+                  apiVersion: v1
+                  fieldPath: metadata.labels['app.kubernetes.io/component']
+            - name: OTEL_K8S_NAMESPACE
+              valueFrom:
+                fieldRef:
+                  apiVersion: v1
+                  fieldPath: metadata.namespace
+            - name: OTEL_K8S_NODE_NAME
+              valueFrom:
+                fieldRef:
+                  apiVersion: v1
+                  fieldPath: spec.nodeName
+            - name: OTEL_K8S_POD_NAME
+              valueFrom:
+                fieldRef:
+                  apiVersion: v1
+                  fieldPath: metadata.name
+            - name: OTEL_K8S_POD_UID
+              valueFrom:
+                fieldRef:
+                  apiVersion: v1
+                  fieldPath: metadata.uid
+            - name: OTEL_COLLECTOR_NAME
+              value: 'opentelemetry-demo-otelcol'
+            - name: OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE
+              value: cumulative
+            - name: KAFKA_SERVICE_ADDR
+              value: 'opentelemetry-demo-kafka:9092'
+            - name: OTEL_EXPORTER_OTLP_ENDPOINT
+              value: http://$(OTEL_COLLECTOR_NAME):4317
+            - name: OTEL_RESOURCE_ATTRIBUTES
+              value: service.name=$(OTEL_SERVICE_NAME),service.instance.id=$(OTEL_K8S_POD_UID),service.namespace=opentelemetry-demo,k8s.namespace.name=$(OTEL_K8S_NAMESPACE),k8s.node.name=$(OTEL_K8S_NODE_NAME),k8s.pod.name=$(OTEL_K8S_POD_NAME)
           resources:
             limits:
               memory: 20Mi
       initContainers:
         - command:
-          - sh
-          - -c
-          - until nc -z -v -w30 opentelemetry-demo-kafka 9092; do echo waiting
-            for kafka; sleep 2; done;
+            - sh
+            - -c
+            - until nc -z -v -w30 opentelemetry-demo-kafka 9092; do echo waiting
+              for kafka; sleep 2; done;
           image: busybox:latest
           name: wait-for-kafka
 ---
@@ -7495,49 +7630,49 @@ spec:
           image: 'ghcr.io/open-telemetry/demo:1.4.0-adservice'
           imagePullPolicy: IfNotPresent
           ports:
-          
-          - containerPort: 8080
-            name: service
+
+            - containerPort: 8080
+              name: service
           env:
-          - name: OTEL_SERVICE_NAME
-            valueFrom:
-              fieldRef:
-                apiVersion: v1
-                fieldPath: metadata.labels['app.kubernetes.io/component']
-          - name: OTEL_K8S_NAMESPACE
-            valueFrom:
-              fieldRef:
-                apiVersion: v1
-                fieldPath: metadata.namespace
-          - name: OTEL_K8S_NODE_NAME
-            valueFrom:
-              fieldRef:
-                apiVersion: v1
-                fieldPath: spec.nodeName
-          - name: OTEL_K8S_POD_NAME
-            valueFrom:
-              fieldRef:
-                apiVersion: v1
-                fieldPath: metadata.name
-          - name: OTEL_K8S_POD_UID
-            valueFrom:
-              fieldRef:
-                apiVersion: v1
-                fieldPath: metadata.uid
-          - name: OTEL_COLLECTOR_NAME
-            value: 'opentelemetry-demo-otelcol'
-          - name: OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE
-            value: cumulative
-          - name: AD_SERVICE_PORT
-            value: "8080"
-          - name: FEATURE_FLAG_GRPC_SERVICE_ADDR
-            value: 'opentelemetry-demo-featureflagservice:50053'
-          - name: OTEL_EXPORTER_OTLP_ENDPOINT
-            value: http://$(OTEL_COLLECTOR_NAME):4317
-          - name: OTLP_LOGS_EXPORTER
-            value: otlp
-          - name: OTEL_RESOURCE_ATTRIBUTES
-            value: service.name=$(OTEL_SERVICE_NAME),service.instance.id=$(OTEL_K8S_POD_UID),service.namespace=opentelemetry-demo,k8s.namespace.name=$(OTEL_K8S_NAMESPACE),k8s.node.name=$(OTEL_K8S_NODE_NAME),k8s.pod.name=$(OTEL_K8S_POD_NAME)
+            - name: OTEL_SERVICE_NAME
+              valueFrom:
+                fieldRef:
+                  apiVersion: v1
+                  fieldPath: metadata.labels['app.kubernetes.io/component']
+            - name: OTEL_K8S_NAMESPACE
+              valueFrom:
+                fieldRef:
+                  apiVersion: v1
+                  fieldPath: metadata.namespace
+            - name: OTEL_K8S_NODE_NAME
+              valueFrom:
+                fieldRef:
+                  apiVersion: v1
+                  fieldPath: spec.nodeName
+            - name: OTEL_K8S_POD_NAME
+              valueFrom:
+                fieldRef:
+                  apiVersion: v1
+                  fieldPath: metadata.name
+            - name: OTEL_K8S_POD_UID
+              valueFrom:
+                fieldRef:
+                  apiVersion: v1
+                  fieldPath: metadata.uid
+            - name: OTEL_COLLECTOR_NAME
+              value: 'opentelemetry-demo-otelcol'
+            - name: OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE
+              value: cumulative
+            - name: AD_SERVICE_PORT
+              value: "8080"
+            - name: FEATURE_FLAG_GRPC_SERVICE_ADDR
+              value: 'opentelemetry-demo-featureflagservice:50053'
+            - name: OTEL_EXPORTER_OTLP_ENDPOINT
+              value: http://$(OTEL_COLLECTOR_NAME):4317
+            - name: OTLP_LOGS_EXPORTER
+              value: otlp
+            - name: OTEL_RESOURCE_ATTRIBUTES
+              value: service.name=$(OTEL_SERVICE_NAME),service.instance.id=$(OTEL_K8S_POD_UID),service.namespace=opentelemetry-demo,k8s.namespace.name=$(OTEL_K8S_NAMESPACE),k8s.node.name=$(OTEL_K8S_NODE_NAME),k8s.pod.name=$(OTEL_K8S_POD_NAME)
           resources:
             limits:
               memory: 300Mi
@@ -7575,58 +7710,58 @@ spec:
           image: 'ghcr.io/open-telemetry/demo:1.4.0-cartservice'
           imagePullPolicy: IfNotPresent
           ports:
-          
-          - containerPort: 8080
-            name: service
+
+            - containerPort: 8080
+              name: service
           env:
-          - name: OTEL_SERVICE_NAME
-            valueFrom:
-              fieldRef:
-                apiVersion: v1
-                fieldPath: metadata.labels['app.kubernetes.io/component']
-          - name: OTEL_K8S_NAMESPACE
-            valueFrom:
-              fieldRef:
-                apiVersion: v1
-                fieldPath: metadata.namespace
-          - name: OTEL_K8S_NODE_NAME
-            valueFrom:
-              fieldRef:
-                apiVersion: v1
-                fieldPath: spec.nodeName
-          - name: OTEL_K8S_POD_NAME
-            valueFrom:
-              fieldRef:
-                apiVersion: v1
-                fieldPath: metadata.name
-          - name: OTEL_K8S_POD_UID
-            valueFrom:
-              fieldRef:
-                apiVersion: v1
-                fieldPath: metadata.uid
-          - name: OTEL_COLLECTOR_NAME
-            value: 'opentelemetry-demo-otelcol'
-          - name: OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE
-            value: cumulative
-          - name: CART_SERVICE_PORT
-            value: "8080"
-          - name: ASPNETCORE_URLS
-            value: http://*:$(CART_SERVICE_PORT)
-          - name: REDIS_ADDR
-            value: 'opentelemetry-demo-redis:6379'
-          - name: OTEL_EXPORTER_OTLP_ENDPOINT
-            value: http://$(OTEL_COLLECTOR_NAME):4317
-          - name: OTEL_RESOURCE_ATTRIBUTES
-            value: service.name=$(OTEL_SERVICE_NAME),service.instance.id=$(OTEL_K8S_POD_UID),service.namespace=opentelemetry-demo,k8s.namespace.name=$(OTEL_K8S_NAMESPACE),k8s.node.name=$(OTEL_K8S_NODE_NAME),k8s.pod.name=$(OTEL_K8S_POD_NAME)
+            - name: OTEL_SERVICE_NAME
+              valueFrom:
+                fieldRef:
+                  apiVersion: v1
+                  fieldPath: metadata.labels['app.kubernetes.io/component']
+            - name: OTEL_K8S_NAMESPACE
+              valueFrom:
+                fieldRef:
+                  apiVersion: v1
+                  fieldPath: metadata.namespace
+            - name: OTEL_K8S_NODE_NAME
+              valueFrom:
+                fieldRef:
+                  apiVersion: v1
+                  fieldPath: spec.nodeName
+            - name: OTEL_K8S_POD_NAME
+              valueFrom:
+                fieldRef:
+                  apiVersion: v1
+                  fieldPath: metadata.name
+            - name: OTEL_K8S_POD_UID
+              valueFrom:
+                fieldRef:
+                  apiVersion: v1
+                  fieldPath: metadata.uid
+            - name: OTEL_COLLECTOR_NAME
+              value: 'opentelemetry-demo-otelcol'
+            - name: OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE
+              value: cumulative
+            - name: CART_SERVICE_PORT
+              value: "8080"
+            - name: ASPNETCORE_URLS
+              value: http://*:$(CART_SERVICE_PORT)
+            - name: REDIS_ADDR
+              value: 'opentelemetry-demo-redis:6379'
+            - name: OTEL_EXPORTER_OTLP_ENDPOINT
+              value: http://$(OTEL_COLLECTOR_NAME):4317
+            - name: OTEL_RESOURCE_ATTRIBUTES
+              value: service.name=$(OTEL_SERVICE_NAME),service.instance.id=$(OTEL_K8S_POD_UID),service.namespace=opentelemetry-demo,k8s.namespace.name=$(OTEL_K8S_NAMESPACE),k8s.node.name=$(OTEL_K8S_NODE_NAME),k8s.pod.name=$(OTEL_K8S_POD_NAME)
           resources:
             limits:
               memory: 160Mi
       initContainers:
         - command:
-          - sh
-          - -c
-          - until nc -z -v -w30 opentelemetry-demo-redis 6379; do echo waiting
-            for redis; sleep 2; done;
+            - sh
+            - -c
+            - until nc -z -v -w30 opentelemetry-demo-redis 6379; do echo waiting
+              for redis; sleep 2; done;
           image: busybox:latest
           name: wait-for-redis
 ---
@@ -7663,68 +7798,68 @@ spec:
           image: 'ghcr.io/open-telemetry/demo:1.4.0-checkoutservice'
           imagePullPolicy: IfNotPresent
           ports:
-          
-          - containerPort: 8080
-            name: service
+
+            - containerPort: 8080
+              name: service
           env:
-          - name: OTEL_SERVICE_NAME
-            valueFrom:
-              fieldRef:
-                apiVersion: v1
-                fieldPath: metadata.labels['app.kubernetes.io/component']
-          - name: OTEL_K8S_NAMESPACE
-            valueFrom:
-              fieldRef:
-                apiVersion: v1
-                fieldPath: metadata.namespace
-          - name: OTEL_K8S_NODE_NAME
-            valueFrom:
-              fieldRef:
-                apiVersion: v1
-                fieldPath: spec.nodeName
-          - name: OTEL_K8S_POD_NAME
-            valueFrom:
-              fieldRef:
-                apiVersion: v1
-                fieldPath: metadata.name
-          - name: OTEL_K8S_POD_UID
-            valueFrom:
-              fieldRef:
-                apiVersion: v1
-                fieldPath: metadata.uid
-          - name: OTEL_COLLECTOR_NAME
-            value: 'opentelemetry-demo-otelcol'
-          - name: OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE
-            value: cumulative
-          - name: CHECKOUT_SERVICE_PORT
-            value: "8080"
-          - name: CART_SERVICE_ADDR
-            value: 'opentelemetry-demo-cartservice:8080'
-          - name: CURRENCY_SERVICE_ADDR
-            value: 'opentelemetry-demo-currencyservice:8080'
-          - name: EMAIL_SERVICE_ADDR
-            value: http://opentelemetry-demo-emailservice:8080
-          - name: PAYMENT_SERVICE_ADDR
-            value: 'opentelemetry-demo-paymentservice:8080'
-          - name: PRODUCT_CATALOG_SERVICE_ADDR
-            value: 'opentelemetry-demo-productcatalogservice:8080'
-          - name: SHIPPING_SERVICE_ADDR
-            value: 'opentelemetry-demo-shippingservice:8080'
-          - name: KAFKA_SERVICE_ADDR
-            value: 'opentelemetry-demo-kafka:9092'
-          - name: OTEL_EXPORTER_OTLP_ENDPOINT
-            value: http://$(OTEL_COLLECTOR_NAME):4317
-          - name: OTEL_RESOURCE_ATTRIBUTES
-            value: service.name=$(OTEL_SERVICE_NAME),service.instance.id=$(OTEL_K8S_POD_UID),service.namespace=opentelemetry-demo,k8s.namespace.name=$(OTEL_K8S_NAMESPACE),k8s.node.name=$(OTEL_K8S_NODE_NAME),k8s.pod.name=$(OTEL_K8S_POD_NAME)
+            - name: OTEL_SERVICE_NAME
+              valueFrom:
+                fieldRef:
+                  apiVersion: v1
+                  fieldPath: metadata.labels['app.kubernetes.io/component']
+            - name: OTEL_K8S_NAMESPACE
+              valueFrom:
+                fieldRef:
+                  apiVersion: v1
+                  fieldPath: metadata.namespace
+            - name: OTEL_K8S_NODE_NAME
+              valueFrom:
+                fieldRef:
+                  apiVersion: v1
+                  fieldPath: spec.nodeName
+            - name: OTEL_K8S_POD_NAME
+              valueFrom:
+                fieldRef:
+                  apiVersion: v1
+                  fieldPath: metadata.name
+            - name: OTEL_K8S_POD_UID
+              valueFrom:
+                fieldRef:
+                  apiVersion: v1
+                  fieldPath: metadata.uid
+            - name: OTEL_COLLECTOR_NAME
+              value: 'opentelemetry-demo-otelcol'
+            - name: OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE
+              value: cumulative
+            - name: CHECKOUT_SERVICE_PORT
+              value: "8080"
+            - name: CART_SERVICE_ADDR
+              value: 'opentelemetry-demo-cartservice:8080'
+            - name: CURRENCY_SERVICE_ADDR
+              value: 'opentelemetry-demo-currencyservice:8080'
+            - name: EMAIL_SERVICE_ADDR
+              value: http://opentelemetry-demo-emailservice:8080
+            - name: PAYMENT_SERVICE_ADDR
+              value: 'opentelemetry-demo-paymentservice:8080'
+            - name: PRODUCT_CATALOG_SERVICE_ADDR
+              value: 'opentelemetry-demo-productcatalogservice:8080'
+            - name: SHIPPING_SERVICE_ADDR
+              value: 'opentelemetry-demo-shippingservice:8080'
+            - name: KAFKA_SERVICE_ADDR
+              value: 'opentelemetry-demo-kafka:9092'
+            - name: OTEL_EXPORTER_OTLP_ENDPOINT
+              value: http://$(OTEL_COLLECTOR_NAME):4317
+            - name: OTEL_RESOURCE_ATTRIBUTES
+              value: service.name=$(OTEL_SERVICE_NAME),service.instance.id=$(OTEL_K8S_POD_UID),service.namespace=opentelemetry-demo,k8s.namespace.name=$(OTEL_K8S_NAMESPACE),k8s.node.name=$(OTEL_K8S_NODE_NAME),k8s.pod.name=$(OTEL_K8S_POD_NAME)
           resources:
             limits:
               memory: 20Mi
       initContainers:
         - command:
-          - sh
-          - -c
-          - until nc -z -v -w30 opentelemetry-demo-kafka 9092; do echo waiting
-            for kafka; sleep 2; done;
+            - sh
+            - -c
+            - until nc -z -v -w30 opentelemetry-demo-kafka 9092; do echo waiting
+              for kafka; sleep 2; done;
           image: busybox:latest
           name: wait-for-kafka
 ---
@@ -7761,45 +7896,45 @@ spec:
           image: 'ghcr.io/open-telemetry/demo:1.4.0-currencyservice'
           imagePullPolicy: IfNotPresent
           ports:
-          
-          - containerPort: 8080
-            name: service
+
+            - containerPort: 8080
+              name: service
           env:
-          - name: OTEL_SERVICE_NAME
-            valueFrom:
-              fieldRef:
-                apiVersion: v1
-                fieldPath: metadata.labels['app.kubernetes.io/component']
-          - name: OTEL_K8S_NAMESPACE
-            valueFrom:
-              fieldRef:
-                apiVersion: v1
-                fieldPath: metadata.namespace
-          - name: OTEL_K8S_NODE_NAME
-            valueFrom:
-              fieldRef:
-                apiVersion: v1
-                fieldPath: spec.nodeName
-          - name: OTEL_K8S_POD_NAME
-            valueFrom:
-              fieldRef:
-                apiVersion: v1
-                fieldPath: metadata.name
-          - name: OTEL_K8S_POD_UID
-            valueFrom:
-              fieldRef:
-                apiVersion: v1
-                fieldPath: metadata.uid
-          - name: OTEL_COLLECTOR_NAME
-            value: 'opentelemetry-demo-otelcol'
-          - name: OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE
-            value: cumulative
-          - name: CURRENCY_SERVICE_PORT
-            value: "8080"
-          - name: OTEL_EXPORTER_OTLP_ENDPOINT
-            value: http://$(OTEL_COLLECTOR_NAME):4317
-          - name: OTEL_RESOURCE_ATTRIBUTES
-            value: service.name=$(OTEL_SERVICE_NAME),service.instance.id=$(OTEL_K8S_POD_UID),service.namespace=opentelemetry-demo,k8s.namespace.name=$(OTEL_K8S_NAMESPACE),k8s.node.name=$(OTEL_K8S_NODE_NAME),k8s.pod.name=$(OTEL_K8S_POD_NAME)
+            - name: OTEL_SERVICE_NAME
+              valueFrom:
+                fieldRef:
+                  apiVersion: v1
+                  fieldPath: metadata.labels['app.kubernetes.io/component']
+            - name: OTEL_K8S_NAMESPACE
+              valueFrom:
+                fieldRef:
+                  apiVersion: v1
+                  fieldPath: metadata.namespace
+            - name: OTEL_K8S_NODE_NAME
+              valueFrom:
+                fieldRef:
+                  apiVersion: v1
+                  fieldPath: spec.nodeName
+            - name: OTEL_K8S_POD_NAME
+              valueFrom:
+                fieldRef:
+                  apiVersion: v1
+                  fieldPath: metadata.name
+            - name: OTEL_K8S_POD_UID
+              valueFrom:
+                fieldRef:
+                  apiVersion: v1
+                  fieldPath: metadata.uid
+            - name: OTEL_COLLECTOR_NAME
+              value: 'opentelemetry-demo-otelcol'
+            - name: OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE
+              value: cumulative
+            - name: CURRENCY_SERVICE_PORT
+              value: "8080"
+            - name: OTEL_EXPORTER_OTLP_ENDPOINT
+              value: http://$(OTEL_COLLECTOR_NAME):4317
+            - name: OTEL_RESOURCE_ATTRIBUTES
+              value: service.name=$(OTEL_SERVICE_NAME),service.instance.id=$(OTEL_K8S_POD_UID),service.namespace=opentelemetry-demo,k8s.namespace.name=$(OTEL_K8S_NAMESPACE),k8s.node.name=$(OTEL_K8S_NODE_NAME),k8s.pod.name=$(OTEL_K8S_POD_NAME)
           resources:
             limits:
               memory: 20Mi
@@ -7837,47 +7972,47 @@ spec:
           image: 'ghcr.io/open-telemetry/demo:1.4.0-emailservice'
           imagePullPolicy: IfNotPresent
           ports:
-          
-          - containerPort: 8080
-            name: service
+
+            - containerPort: 8080
+              name: service
           env:
-          - name: OTEL_SERVICE_NAME
-            valueFrom:
-              fieldRef:
-                apiVersion: v1
-                fieldPath: metadata.labels['app.kubernetes.io/component']
-          - name: OTEL_K8S_NAMESPACE
-            valueFrom:
-              fieldRef:
-                apiVersion: v1
-                fieldPath: metadata.namespace
-          - name: OTEL_K8S_NODE_NAME
-            valueFrom:
-              fieldRef:
-                apiVersion: v1
-                fieldPath: spec.nodeName
-          - name: OTEL_K8S_POD_NAME
-            valueFrom:
-              fieldRef:
-                apiVersion: v1
-                fieldPath: metadata.name
-          - name: OTEL_K8S_POD_UID
-            valueFrom:
-              fieldRef:
-                apiVersion: v1
-                fieldPath: metadata.uid
-          - name: OTEL_COLLECTOR_NAME
-            value: 'opentelemetry-demo-otelcol'
-          - name: OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE
-            value: cumulative
-          - name: EMAIL_SERVICE_PORT
-            value: "8080"
-          - name: APP_ENV
-            value: production
-          - name: OTEL_EXPORTER_OTLP_TRACES_ENDPOINT
-            value: http://$(OTEL_COLLECTOR_NAME):4318/v1/traces
-          - name: OTEL_RESOURCE_ATTRIBUTES
-            value: service.name=$(OTEL_SERVICE_NAME),service.instance.id=$(OTEL_K8S_POD_UID),service.namespace=opentelemetry-demo,k8s.namespace.name=$(OTEL_K8S_NAMESPACE),k8s.node.name=$(OTEL_K8S_NODE_NAME),k8s.pod.name=$(OTEL_K8S_POD_NAME)
+            - name: OTEL_SERVICE_NAME
+              valueFrom:
+                fieldRef:
+                  apiVersion: v1
+                  fieldPath: metadata.labels['app.kubernetes.io/component']
+            - name: OTEL_K8S_NAMESPACE
+              valueFrom:
+                fieldRef:
+                  apiVersion: v1
+                  fieldPath: metadata.namespace
+            - name: OTEL_K8S_NODE_NAME
+              valueFrom:
+                fieldRef:
+                  apiVersion: v1
+                  fieldPath: spec.nodeName
+            - name: OTEL_K8S_POD_NAME
+              valueFrom:
+                fieldRef:
+                  apiVersion: v1
+                  fieldPath: metadata.name
+            - name: OTEL_K8S_POD_UID
+              valueFrom:
+                fieldRef:
+                  apiVersion: v1
+                  fieldPath: metadata.uid
+            - name: OTEL_COLLECTOR_NAME
+              value: 'opentelemetry-demo-otelcol'
+            - name: OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE
+              value: cumulative
+            - name: EMAIL_SERVICE_PORT
+              value: "8080"
+            - name: APP_ENV
+              value: production
+            - name: OTEL_EXPORTER_OTLP_TRACES_ENDPOINT
+              value: http://$(OTEL_COLLECTOR_NAME):4318/v1/traces
+            - name: OTEL_RESOURCE_ATTRIBUTES
+              value: service.name=$(OTEL_SERVICE_NAME),service.instance.id=$(OTEL_K8S_POD_UID),service.namespace=opentelemetry-demo,k8s.namespace.name=$(OTEL_K8S_NAMESPACE),k8s.node.name=$(OTEL_K8S_NODE_NAME),k8s.pod.name=$(OTEL_K8S_POD_NAME)
           resources:
             limits:
               memory: 100Mi
@@ -7915,53 +8050,53 @@ spec:
           image: 'ghcr.io/open-telemetry/demo:1.4.0-featureflagservice'
           imagePullPolicy: IfNotPresent
           ports:
-          
-          - containerPort: 50053
-            name: grpc
-          - containerPort: 8081
-            name: http
+
+            - containerPort: 50053
+              name: grpc
+            - containerPort: 8081
+              name: http
           env:
-          - name: OTEL_SERVICE_NAME
-            valueFrom:
-              fieldRef:
-                apiVersion: v1
-                fieldPath: metadata.labels['app.kubernetes.io/component']
-          - name: OTEL_K8S_NAMESPACE
-            valueFrom:
-              fieldRef:
-                apiVersion: v1
-                fieldPath: metadata.namespace
-          - name: OTEL_K8S_NODE_NAME
-            valueFrom:
-              fieldRef:
-                apiVersion: v1
-                fieldPath: spec.nodeName
-          - name: OTEL_K8S_POD_NAME
-            valueFrom:
-              fieldRef:
-                apiVersion: v1
-                fieldPath: metadata.name
-          - name: OTEL_K8S_POD_UID
-            valueFrom:
-              fieldRef:
-                apiVersion: v1
-                fieldPath: metadata.uid
-          - name: OTEL_COLLECTOR_NAME
-            value: 'opentelemetry-demo-otelcol'
-          - name: OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE
-            value: cumulative
-          - name: FEATURE_FLAG_SERVICE_PORT
-            value: "8081"
-          - name: FEATURE_FLAG_GRPC_SERVICE_PORT
-            value: "50053"
-          - name: DATABASE_URL
-            value: ecto://ffs:ffs@opentelemetry-demo-ffspostgres:5432/ffs
-          - name: OTEL_EXPORTER_OTLP_ENDPOINT
-            value: http://$(OTEL_COLLECTOR_NAME):4317
-          - name: OTEL_EXPORTER_OTLP_TRACES_PROTOCOL
-            value: grpc
-          - name: OTEL_RESOURCE_ATTRIBUTES
-            value: service.name=$(OTEL_SERVICE_NAME),service.instance.id=$(OTEL_K8S_POD_UID),service.namespace=opentelemetry-demo,k8s.namespace.name=$(OTEL_K8S_NAMESPACE),k8s.node.name=$(OTEL_K8S_NODE_NAME),k8s.pod.name=$(OTEL_K8S_POD_NAME)
+            - name: OTEL_SERVICE_NAME
+              valueFrom:
+                fieldRef:
+                  apiVersion: v1
+                  fieldPath: metadata.labels['app.kubernetes.io/component']
+            - name: OTEL_K8S_NAMESPACE
+              valueFrom:
+                fieldRef:
+                  apiVersion: v1
+                  fieldPath: metadata.namespace
+            - name: OTEL_K8S_NODE_NAME
+              valueFrom:
+                fieldRef:
+                  apiVersion: v1
+                  fieldPath: spec.nodeName
+            - name: OTEL_K8S_POD_NAME
+              valueFrom:
+                fieldRef:
+                  apiVersion: v1
+                  fieldPath: metadata.name
+            - name: OTEL_K8S_POD_UID
+              valueFrom:
+                fieldRef:
+                  apiVersion: v1
+                  fieldPath: metadata.uid
+            - name: OTEL_COLLECTOR_NAME
+              value: 'opentelemetry-demo-otelcol'
+            - name: OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE
+              value: cumulative
+            - name: FEATURE_FLAG_SERVICE_PORT
+              value: "8081"
+            - name: FEATURE_FLAG_GRPC_SERVICE_PORT
+              value: "50053"
+            - name: DATABASE_URL
+              value: ecto://ffs:ffs@opentelemetry-demo-ffspostgres:5432/ffs
+            - name: OTEL_EXPORTER_OTLP_ENDPOINT
+              value: http://$(OTEL_COLLECTOR_NAME):4317
+            - name: OTEL_EXPORTER_OTLP_TRACES_PROTOCOL
+              value: grpc
+            - name: OTEL_RESOURCE_ATTRIBUTES
+              value: service.name=$(OTEL_SERVICE_NAME),service.instance.id=$(OTEL_K8S_POD_UID),service.namespace=opentelemetry-demo,k8s.namespace.name=$(OTEL_K8S_NAMESPACE),k8s.node.name=$(OTEL_K8S_NODE_NAME),k8s.pod.name=$(OTEL_K8S_POD_NAME)
           resources:
             limits:
               memory: 175Mi
@@ -7973,10 +8108,10 @@ spec:
             periodSeconds: 10
       initContainers:
         - command:
-          - sh
-          - -c
-          - until nc -z -v -w30 opentelemetry-demo-ffspostgres 5432; do echo
-            waiting for ffspostgres; sleep 2; done
+            - sh
+            - -c
+            - until nc -z -v -w30 opentelemetry-demo-ffspostgres 5432; do echo
+              waiting for ffspostgres; sleep 2; done
           image: busybox:latest
           name: wait-for-ffspostgres
 ---
@@ -8013,47 +8148,47 @@ spec:
           image: 'postgres:14'
           imagePullPolicy: IfNotPresent
           ports:
-          
-          - containerPort: 5432
-            name: postgres
+
+            - containerPort: 5432
+              name: postgres
           env:
-          - name: OTEL_SERVICE_NAME
-            valueFrom:
-              fieldRef:
-                apiVersion: v1
-                fieldPath: metadata.labels['app.kubernetes.io/component']
-          - name: OTEL_K8S_NAMESPACE
-            valueFrom:
-              fieldRef:
-                apiVersion: v1
-                fieldPath: metadata.namespace
-          - name: OTEL_K8S_NODE_NAME
-            valueFrom:
-              fieldRef:
-                apiVersion: v1
-                fieldPath: spec.nodeName
-          - name: OTEL_K8S_POD_NAME
-            valueFrom:
-              fieldRef:
-                apiVersion: v1
-                fieldPath: metadata.name
-          - name: OTEL_K8S_POD_UID
-            valueFrom:
-              fieldRef:
-                apiVersion: v1
-                fieldPath: metadata.uid
-          - name: OTEL_COLLECTOR_NAME
-            value: 'opentelemetry-demo-otelcol'
-          - name: OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE
-            value: cumulative
-          - name: POSTGRES_DB
-            value: ffs
-          - name: POSTGRES_USER
-            value: ffs
-          - name: POSTGRES_PASSWORD
-            value: ffs
-          - name: OTEL_RESOURCE_ATTRIBUTES
-            value: service.name=$(OTEL_SERVICE_NAME),service.instance.id=$(OTEL_K8S_POD_UID),service.namespace=opentelemetry-demo,k8s.namespace.name=$(OTEL_K8S_NAMESPACE),k8s.node.name=$(OTEL_K8S_NODE_NAME),k8s.pod.name=$(OTEL_K8S_POD_NAME)
+            - name: OTEL_SERVICE_NAME
+              valueFrom:
+                fieldRef:
+                  apiVersion: v1
+                  fieldPath: metadata.labels['app.kubernetes.io/component']
+            - name: OTEL_K8S_NAMESPACE
+              valueFrom:
+                fieldRef:
+                  apiVersion: v1
+                  fieldPath: metadata.namespace
+            - name: OTEL_K8S_NODE_NAME
+              valueFrom:
+                fieldRef:
+                  apiVersion: v1
+                  fieldPath: spec.nodeName
+            - name: OTEL_K8S_POD_NAME
+              valueFrom:
+                fieldRef:
+                  apiVersion: v1
+                  fieldPath: metadata.name
+            - name: OTEL_K8S_POD_UID
+              valueFrom:
+                fieldRef:
+                  apiVersion: v1
+                  fieldPath: metadata.uid
+            - name: OTEL_COLLECTOR_NAME
+              value: 'opentelemetry-demo-otelcol'
+            - name: OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE
+              value: cumulative
+            - name: POSTGRES_DB
+              value: ffs
+            - name: POSTGRES_USER
+              value: ffs
+            - name: POSTGRES_PASSWORD
+              value: ffs
+            - name: OTEL_RESOURCE_ATTRIBUTES
+              value: service.name=$(OTEL_SERVICE_NAME),service.instance.id=$(OTEL_K8S_POD_UID),service.namespace=opentelemetry-demo,k8s.namespace.name=$(OTEL_K8S_NAMESPACE),k8s.node.name=$(OTEL_K8S_NODE_NAME),k8s.pod.name=$(OTEL_K8S_POD_NAME)
           resources:
             limits:
               memory: 120Mi
@@ -8095,50 +8230,50 @@ spec:
           image: 'ghcr.io/open-telemetry/demo:1.4.0-frauddetectionservice'
           imagePullPolicy: IfNotPresent
           env:
-          - name: OTEL_SERVICE_NAME
-            valueFrom:
-              fieldRef:
-                apiVersion: v1
-                fieldPath: metadata.labels['app.kubernetes.io/component']
-          - name: OTEL_K8S_NAMESPACE
-            valueFrom:
-              fieldRef:
-                apiVersion: v1
-                fieldPath: metadata.namespace
-          - name: OTEL_K8S_NODE_NAME
-            valueFrom:
-              fieldRef:
-                apiVersion: v1
-                fieldPath: spec.nodeName
-          - name: OTEL_K8S_POD_NAME
-            valueFrom:
-              fieldRef:
-                apiVersion: v1
-                fieldPath: metadata.name
-          - name: OTEL_K8S_POD_UID
-            valueFrom:
-              fieldRef:
-                apiVersion: v1
-                fieldPath: metadata.uid
-          - name: OTEL_COLLECTOR_NAME
-            value: 'opentelemetry-demo-otelcol'
-          - name: OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE
-            value: cumulative
-          - name: KAFKA_SERVICE_ADDR
-            value: 'opentelemetry-demo-kafka:9092'
-          - name: OTEL_EXPORTER_OTLP_ENDPOINT
-            value: http://$(OTEL_COLLECTOR_NAME):4317
-          - name: OTEL_RESOURCE_ATTRIBUTES
-            value: service.name=$(OTEL_SERVICE_NAME),service.instance.id=$(OTEL_K8S_POD_UID),service.namespace=opentelemetry-demo,k8s.namespace.name=$(OTEL_K8S_NAMESPACE),k8s.node.name=$(OTEL_K8S_NODE_NAME),k8s.pod.name=$(OTEL_K8S_POD_NAME)
+            - name: OTEL_SERVICE_NAME
+              valueFrom:
+                fieldRef:
+                  apiVersion: v1
+                  fieldPath: metadata.labels['app.kubernetes.io/component']
+            - name: OTEL_K8S_NAMESPACE
+              valueFrom:
+                fieldRef:
+                  apiVersion: v1
+                  fieldPath: metadata.namespace
+            - name: OTEL_K8S_NODE_NAME
+              valueFrom:
+                fieldRef:
+                  apiVersion: v1
+                  fieldPath: spec.nodeName
+            - name: OTEL_K8S_POD_NAME
+              valueFrom:
+                fieldRef:
+                  apiVersion: v1
+                  fieldPath: metadata.name
+            - name: OTEL_K8S_POD_UID
+              valueFrom:
+                fieldRef:
+                  apiVersion: v1
+                  fieldPath: metadata.uid
+            - name: OTEL_COLLECTOR_NAME
+              value: 'opentelemetry-demo-otelcol'
+            - name: OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE
+              value: cumulative
+            - name: KAFKA_SERVICE_ADDR
+              value: 'opentelemetry-demo-kafka:9092'
+            - name: OTEL_EXPORTER_OTLP_ENDPOINT
+              value: http://$(OTEL_COLLECTOR_NAME):4317
+            - name: OTEL_RESOURCE_ATTRIBUTES
+              value: service.name=$(OTEL_SERVICE_NAME),service.instance.id=$(OTEL_K8S_POD_UID),service.namespace=opentelemetry-demo,k8s.namespace.name=$(OTEL_K8S_NAMESPACE),k8s.node.name=$(OTEL_K8S_NODE_NAME),k8s.pod.name=$(OTEL_K8S_POD_NAME)
           resources:
             limits:
               memory: 200Mi
       initContainers:
         - command:
-          - sh
-          - -c
-          - until nc -z -v -w30 opentelemetry-demo-kafka 9092; do echo waiting
-            for kafka; sleep 2; done;
+            - sh
+            - -c
+            - until nc -z -v -w30 opentelemetry-demo-kafka 9092; do echo waiting
+              for kafka; sleep 2; done;
           image: busybox:latest
           name: wait-for-kafka
 ---
@@ -8175,65 +8310,65 @@ spec:
           image: 'ghcr.io/open-telemetry/demo:1.4.0-frontend'
           imagePullPolicy: IfNotPresent
           ports:
-          
-          - containerPort: 8080
-            name: service
+
+            - containerPort: 8080
+              name: service
           env:
-          - name: OTEL_SERVICE_NAME
-            valueFrom:
-              fieldRef:
-                apiVersion: v1
-                fieldPath: metadata.labels['app.kubernetes.io/component']
-          - name: OTEL_K8S_NAMESPACE
-            valueFrom:
-              fieldRef:
-                apiVersion: v1
-                fieldPath: metadata.namespace
-          - name: OTEL_K8S_NODE_NAME
-            valueFrom:
-              fieldRef:
-                apiVersion: v1
-                fieldPath: spec.nodeName
-          - name: OTEL_K8S_POD_NAME
-            valueFrom:
-              fieldRef:
-                apiVersion: v1
-                fieldPath: metadata.name
-          - name: OTEL_K8S_POD_UID
-            valueFrom:
-              fieldRef:
-                apiVersion: v1
-                fieldPath: metadata.uid
-          - name: OTEL_COLLECTOR_NAME
-            value: 'opentelemetry-demo-otelcol'
-          - name: OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE
-            value: cumulative
-          - name: FRONTEND_PORT
-            value: "8080"
-          - name: FRONTEND_ADDR
-            value: :8080
-          - name: AD_SERVICE_ADDR
-            value: 'opentelemetry-demo-adservice:8080'
-          - name: CART_SERVICE_ADDR
-            value: 'opentelemetry-demo-cartservice:8080'
-          - name: CHECKOUT_SERVICE_ADDR
-            value: 'opentelemetry-demo-checkoutservice:8080'
-          - name: CURRENCY_SERVICE_ADDR
-            value: 'opentelemetry-demo-currencyservice:8080'
-          - name: PRODUCT_CATALOG_SERVICE_ADDR
-            value: 'opentelemetry-demo-productcatalogservice:8080'
-          - name: RECOMMENDATION_SERVICE_ADDR
-            value: 'opentelemetry-demo-recommendationservice:8080'
-          - name: SHIPPING_SERVICE_ADDR
-            value: 'opentelemetry-demo-shippingservice:8080'
-          - name: OTEL_EXPORTER_OTLP_ENDPOINT
-            value: http://$(OTEL_COLLECTOR_NAME):4317
-          - name: WEB_OTEL_SERVICE_NAME
-            value: frontend-web
-          - name: PUBLIC_OTEL_EXPORTER_OTLP_TRACES_ENDPOINT
-            value: http://localhost:4318/v1/traces
-          - name: OTEL_RESOURCE_ATTRIBUTES
-            value: service.name=$(OTEL_SERVICE_NAME),service.instance.id=$(OTEL_K8S_POD_UID),service.namespace=opentelemetry-demo,k8s.namespace.name=$(OTEL_K8S_NAMESPACE),k8s.node.name=$(OTEL_K8S_NODE_NAME),k8s.pod.name=$(OTEL_K8S_POD_NAME)
+            - name: OTEL_SERVICE_NAME
+              valueFrom:
+                fieldRef:
+                  apiVersion: v1
+                  fieldPath: metadata.labels['app.kubernetes.io/component']
+            - name: OTEL_K8S_NAMESPACE
+              valueFrom:
+                fieldRef:
+                  apiVersion: v1
+                  fieldPath: metadata.namespace
+            - name: OTEL_K8S_NODE_NAME
+              valueFrom:
+                fieldRef:
+                  apiVersion: v1
+                  fieldPath: spec.nodeName
+            - name: OTEL_K8S_POD_NAME
+              valueFrom:
+                fieldRef:
+                  apiVersion: v1
+                  fieldPath: metadata.name
+            - name: OTEL_K8S_POD_UID
+              valueFrom:
+                fieldRef:
+                  apiVersion: v1
+                  fieldPath: metadata.uid
+            - name: OTEL_COLLECTOR_NAME
+              value: 'opentelemetry-demo-otelcol'
+            - name: OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE
+              value: cumulative
+            - name: FRONTEND_PORT
+              value: "8080"
+            - name: FRONTEND_ADDR
+              value: :8080
+            - name: AD_SERVICE_ADDR
+              value: 'opentelemetry-demo-adservice:8080'
+            - name: CART_SERVICE_ADDR
+              value: 'opentelemetry-demo-cartservice:8080'
+            - name: CHECKOUT_SERVICE_ADDR
+              value: 'opentelemetry-demo-checkoutservice:8080'
+            - name: CURRENCY_SERVICE_ADDR
+              value: 'opentelemetry-demo-currencyservice:8080'
+            - name: PRODUCT_CATALOG_SERVICE_ADDR
+              value: 'opentelemetry-demo-productcatalogservice:8080'
+            - name: RECOMMENDATION_SERVICE_ADDR
+              value: 'opentelemetry-demo-recommendationservice:8080'
+            - name: SHIPPING_SERVICE_ADDR
+              value: 'opentelemetry-demo-shippingservice:8080'
+            - name: OTEL_EXPORTER_OTLP_ENDPOINT
+              value: http://$(OTEL_COLLECTOR_NAME):4317
+            - name: WEB_OTEL_SERVICE_NAME
+              value: frontend-web
+            - name: PUBLIC_OTEL_EXPORTER_OTLP_TRACES_ENDPOINT
+              value: http://localhost:4318/v1/traces
+            - name: OTEL_RESOURCE_ATTRIBUTES
+              value: service.name=$(OTEL_SERVICE_NAME),service.instance.id=$(OTEL_K8S_POD_UID),service.namespace=opentelemetry-demo,k8s.namespace.name=$(OTEL_K8S_NAMESPACE),k8s.node.name=$(OTEL_K8S_NODE_NAME),k8s.pod.name=$(OTEL_K8S_POD_NAME)
           resources:
             limits:
               memory: 200Mi
@@ -8275,67 +8410,67 @@ spec:
           image: 'ghcr.io/open-telemetry/demo:1.4.0-frontendproxy'
           imagePullPolicy: IfNotPresent
           ports:
-          
-          - containerPort: 8080
-            name: service
+
+            - containerPort: 8080
+              name: service
           env:
-          - name: OTEL_SERVICE_NAME
-            valueFrom:
-              fieldRef:
-                apiVersion: v1
-                fieldPath: metadata.labels['app.kubernetes.io/component']
-          - name: OTEL_K8S_NAMESPACE
-            valueFrom:
-              fieldRef:
-                apiVersion: v1
-                fieldPath: metadata.namespace
-          - name: OTEL_K8S_NODE_NAME
-            valueFrom:
-              fieldRef:
-                apiVersion: v1
-                fieldPath: spec.nodeName
-          - name: OTEL_K8S_POD_NAME
-            valueFrom:
-              fieldRef:
-                apiVersion: v1
-                fieldPath: metadata.name
-          - name: OTEL_K8S_POD_UID
-            valueFrom:
-              fieldRef:
-                apiVersion: v1
-                fieldPath: metadata.uid
-          - name: OTEL_COLLECTOR_NAME
-            value: 'opentelemetry-demo-otelcol'
-          - name: OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE
-            value: cumulative
-          - name: ENVOY_PORT
-            value: "8080"
-          - name: FRONTEND_PORT
-            value: "8080"
-          - name: FRONTEND_HOST
-            value: 'opentelemetry-demo-frontend'
-          - name: FEATURE_FLAG_SERVICE_PORT
-            value: "8081"
-          - name: FEATURE_FLAG_SERVICE_HOST
-            value: 'opentelemetry-demo-featureflagservice'
-          - name: LOCUST_WEB_PORT
-            value: "8089"
-          - name: LOCUST_WEB_HOST
-            value: 'opentelemetry-demo-loadgenerator'
-          - name: GRAFANA_SERVICE_PORT
-            value: "80"
-          - name: GRAFANA_SERVICE_HOST
-            value: 'opentelemetry-demo-grafana'
-          - name: JAEGER_SERVICE_PORT
-            value: "16686"
-          - name: JAEGER_SERVICE_HOST
-            value: 'opentelemetry-demo-jaeger-query'
-          - name: OTEL_COLLECTOR_PORT
-            value: "4317"
-          - name: OTEL_COLLECTOR_HOST
-            value: $(OTEL_COLLECTOR_NAME)
-          - name: OTEL_RESOURCE_ATTRIBUTES
-            value: service.name=$(OTEL_SERVICE_NAME),service.instance.id=$(OTEL_K8S_POD_UID),service.namespace=opentelemetry-demo,k8s.namespace.name=$(OTEL_K8S_NAMESPACE),k8s.node.name=$(OTEL_K8S_NODE_NAME),k8s.pod.name=$(OTEL_K8S_POD_NAME)
+            - name: OTEL_SERVICE_NAME
+              valueFrom:
+                fieldRef:
+                  apiVersion: v1
+                  fieldPath: metadata.labels['app.kubernetes.io/component']
+            - name: OTEL_K8S_NAMESPACE
+              valueFrom:
+                fieldRef:
+                  apiVersion: v1
+                  fieldPath: metadata.namespace
+            - name: OTEL_K8S_NODE_NAME
+              valueFrom:
+                fieldRef:
+                  apiVersion: v1
+                  fieldPath: spec.nodeName
+            - name: OTEL_K8S_POD_NAME
+              valueFrom:
+                fieldRef:
+                  apiVersion: v1
+                  fieldPath: metadata.name
+            - name: OTEL_K8S_POD_UID
+              valueFrom:
+                fieldRef:
+                  apiVersion: v1
+                  fieldPath: metadata.uid
+            - name: OTEL_COLLECTOR_NAME
+              value: 'opentelemetry-demo-otelcol'
+            - name: OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE
+              value: cumulative
+            - name: ENVOY_PORT
+              value: "8080"
+            - name: FRONTEND_PORT
+              value: "8080"
+            - name: FRONTEND_HOST
+              value: 'opentelemetry-demo-frontend'
+            - name: FEATURE_FLAG_SERVICE_PORT
+              value: "8081"
+            - name: FEATURE_FLAG_SERVICE_HOST
+              value: 'opentelemetry-demo-featureflagservice'
+            - name: LOCUST_WEB_PORT
+              value: "8089"
+            - name: LOCUST_WEB_HOST
+              value: 'opentelemetry-demo-loadgenerator'
+            - name: GRAFANA_SERVICE_PORT
+              value: "80"
+            - name: GRAFANA_SERVICE_HOST
+              value: 'opentelemetry-demo-grafana'
+            - name: JAEGER_SERVICE_PORT
+              value: "16686"
+            - name: JAEGER_SERVICE_HOST
+              value: 'opentelemetry-demo-jaeger-query'
+            - name: OTEL_COLLECTOR_PORT
+              value: "4317"
+            - name: OTEL_COLLECTOR_HOST
+              value: $(OTEL_COLLECTOR_NAME)
+            - name: OTEL_RESOURCE_ATTRIBUTES
+              value: service.name=$(OTEL_SERVICE_NAME),service.instance.id=$(OTEL_K8S_POD_UID),service.namespace=opentelemetry-demo,k8s.namespace.name=$(OTEL_K8S_NAMESPACE),k8s.node.name=$(OTEL_K8S_NODE_NAME),k8s.pod.name=$(OTEL_K8S_POD_NAME)
           resources:
             limits:
               memory: 50Mi
@@ -8377,49 +8512,49 @@ spec:
           image: 'ghcr.io/open-telemetry/demo:1.4.0-kafka'
           imagePullPolicy: IfNotPresent
           ports:
-          
-          - containerPort: 9092
-            name: plaintext
-          - containerPort: 9093
-            name: controller
+
+            - containerPort: 9092
+              name: plaintext
+            - containerPort: 9093
+              name: controller
           env:
-          - name: OTEL_SERVICE_NAME
-            valueFrom:
-              fieldRef:
-                apiVersion: v1
-                fieldPath: metadata.labels['app.kubernetes.io/component']
-          - name: OTEL_K8S_NAMESPACE
-            valueFrom:
-              fieldRef:
-                apiVersion: v1
-                fieldPath: metadata.namespace
-          - name: OTEL_K8S_NODE_NAME
-            valueFrom:
-              fieldRef:
-                apiVersion: v1
-                fieldPath: spec.nodeName
-          - name: OTEL_K8S_POD_NAME
-            valueFrom:
-              fieldRef:
-                apiVersion: v1
-                fieldPath: metadata.name
-          - name: OTEL_K8S_POD_UID
-            valueFrom:
-              fieldRef:
-                apiVersion: v1
-                fieldPath: metadata.uid
-          - name: OTEL_COLLECTOR_NAME
-            value: 'opentelemetry-demo-otelcol'
-          - name: OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE
-            value: cumulative
-          - name: KAFKA_ADVERTISED_LISTENERS
-            value: PLAINTEXT://opentelemetry-demo-kafka:9092
-          - name: OTEL_EXPORTER_OTLP_ENDPOINT
-            value: http://$(OTEL_COLLECTOR_NAME):4317
-          - name: KAFKA_HEAP_OPTS
-            value: -Xmx200M -Xms200M
-          - name: OTEL_RESOURCE_ATTRIBUTES
-            value: service.name=$(OTEL_SERVICE_NAME),service.instance.id=$(OTEL_K8S_POD_UID),service.namespace=opentelemetry-demo,k8s.namespace.name=$(OTEL_K8S_NAMESPACE),k8s.node.name=$(OTEL_K8S_NODE_NAME),k8s.pod.name=$(OTEL_K8S_POD_NAME)
+            - name: OTEL_SERVICE_NAME
+              valueFrom:
+                fieldRef:
+                  apiVersion: v1
+                  fieldPath: metadata.labels['app.kubernetes.io/component']
+            - name: OTEL_K8S_NAMESPACE
+              valueFrom:
+                fieldRef:
+                  apiVersion: v1
+                  fieldPath: metadata.namespace
+            - name: OTEL_K8S_NODE_NAME
+              valueFrom:
+                fieldRef:
+                  apiVersion: v1
+                  fieldPath: spec.nodeName
+            - name: OTEL_K8S_POD_NAME
+              valueFrom:
+                fieldRef:
+                  apiVersion: v1
+                  fieldPath: metadata.name
+            - name: OTEL_K8S_POD_UID
+              valueFrom:
+                fieldRef:
+                  apiVersion: v1
+                  fieldPath: metadata.uid
+            - name: OTEL_COLLECTOR_NAME
+              value: 'opentelemetry-demo-otelcol'
+            - name: OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE
+              value: cumulative
+            - name: KAFKA_ADVERTISED_LISTENERS
+              value: PLAINTEXT://opentelemetry-demo-kafka:9092
+            - name: OTEL_EXPORTER_OTLP_ENDPOINT
+              value: http://$(OTEL_COLLECTOR_NAME):4317
+            - name: KAFKA_HEAP_OPTS
+              value: -Xmx200M -Xms200M
+            - name: OTEL_RESOURCE_ATTRIBUTES
+              value: service.name=$(OTEL_SERVICE_NAME),service.instance.id=$(OTEL_K8S_POD_UID),service.namespace=opentelemetry-demo,k8s.namespace.name=$(OTEL_K8S_NAMESPACE),k8s.node.name=$(OTEL_K8S_NODE_NAME),k8s.pod.name=$(OTEL_K8S_POD_NAME)
           resources:
             limits:
               memory: 500Mi
@@ -8461,57 +8596,57 @@ spec:
           image: 'ghcr.io/open-telemetry/demo:1.4.0-loadgenerator'
           imagePullPolicy: IfNotPresent
           ports:
-          
-          - containerPort: 8089
-            name: service
+
+            - containerPort: 8089
+              name: service
           env:
-          - name: OTEL_SERVICE_NAME
-            valueFrom:
-              fieldRef:
-                apiVersion: v1
-                fieldPath: metadata.labels['app.kubernetes.io/component']
-          - name: OTEL_K8S_NAMESPACE
-            valueFrom:
-              fieldRef:
-                apiVersion: v1
-                fieldPath: metadata.namespace
-          - name: OTEL_K8S_NODE_NAME
-            valueFrom:
-              fieldRef:
-                apiVersion: v1
-                fieldPath: spec.nodeName
-          - name: OTEL_K8S_POD_NAME
-            valueFrom:
-              fieldRef:
-                apiVersion: v1
-                fieldPath: metadata.name
-          - name: OTEL_K8S_POD_UID
-            valueFrom:
-              fieldRef:
-                apiVersion: v1
-                fieldPath: metadata.uid
-          - name: OTEL_COLLECTOR_NAME
-            value: 'opentelemetry-demo-otelcol'
-          - name: OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE
-            value: cumulative
-          - name: LOCUST_WEB_PORT
-            value: "8089"
-          - name: LOCUST_USERS
-            value: "10"
-          - name: LOCUST_SPAWN_RATE
-            value: "1"
-          - name: LOCUST_HOST
-            value: http://opentelemetry-demo-frontend:8080
-          - name: LOCUST_HEADLESS
-            value: "false"
-          - name: LOCUST_AUTOSTART
-            value: "true"
-          - name: PROTOCOL_BUFFERS_PYTHON_IMPLEMENTATION
-            value: python
-          - name: OTEL_EXPORTER_OTLP_TRACES_ENDPOINT
-            value: http://$(OTEL_COLLECTOR_NAME):4318/v1/traces
-          - name: OTEL_RESOURCE_ATTRIBUTES
-            value: service.name=$(OTEL_SERVICE_NAME),service.instance.id=$(OTEL_K8S_POD_UID),service.namespace=opentelemetry-demo,k8s.namespace.name=$(OTEL_K8S_NAMESPACE),k8s.node.name=$(OTEL_K8S_NODE_NAME),k8s.pod.name=$(OTEL_K8S_POD_NAME)
+            - name: OTEL_SERVICE_NAME
+              valueFrom:
+                fieldRef:
+                  apiVersion: v1
+                  fieldPath: metadata.labels['app.kubernetes.io/component']
+            - name: OTEL_K8S_NAMESPACE
+              valueFrom:
+                fieldRef:
+                  apiVersion: v1
+                  fieldPath: metadata.namespace
+            - name: OTEL_K8S_NODE_NAME
+              valueFrom:
+                fieldRef:
+                  apiVersion: v1
+                  fieldPath: spec.nodeName
+            - name: OTEL_K8S_POD_NAME
+              valueFrom:
+                fieldRef:
+                  apiVersion: v1
+                  fieldPath: metadata.name
+            - name: OTEL_K8S_POD_UID
+              valueFrom:
+                fieldRef:
+                  apiVersion: v1
+                  fieldPath: metadata.uid
+            - name: OTEL_COLLECTOR_NAME
+              value: 'opentelemetry-demo-otelcol'
+            - name: OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE
+              value: cumulative
+            - name: LOCUST_WEB_PORT
+              value: "8089"
+            - name: LOCUST_USERS
+              value: "10"
+            - name: LOCUST_SPAWN_RATE
+              value: "1"
+            - name: LOCUST_HOST
+              value: http://opentelemetry-demo-frontend:8080
+            - name: LOCUST_HEADLESS
+              value: "false"
+            - name: LOCUST_AUTOSTART
+              value: "true"
+            - name: PROTOCOL_BUFFERS_PYTHON_IMPLEMENTATION
+              value: python
+            - name: OTEL_EXPORTER_OTLP_TRACES_ENDPOINT
+              value: http://$(OTEL_COLLECTOR_NAME):4318/v1/traces
+            - name: OTEL_RESOURCE_ATTRIBUTES
+              value: service.name=$(OTEL_SERVICE_NAME),service.instance.id=$(OTEL_K8S_POD_UID),service.namespace=opentelemetry-demo,k8s.namespace.name=$(OTEL_K8S_NAMESPACE),k8s.node.name=$(OTEL_K8S_NODE_NAME),k8s.pod.name=$(OTEL_K8S_POD_NAME)
           resources:
             limits:
               memory: 120Mi
@@ -8549,45 +8684,45 @@ spec:
           image: 'ghcr.io/open-telemetry/demo:1.4.0-paymentservice'
           imagePullPolicy: IfNotPresent
           ports:
-          
-          - containerPort: 8080
-            name: service
+
+            - containerPort: 8080
+              name: service
           env:
-          - name: OTEL_SERVICE_NAME
-            valueFrom:
-              fieldRef:
-                apiVersion: v1
-                fieldPath: metadata.labels['app.kubernetes.io/component']
-          - name: OTEL_K8S_NAMESPACE
-            valueFrom:
-              fieldRef:
-                apiVersion: v1
-                fieldPath: metadata.namespace
-          - name: OTEL_K8S_NODE_NAME
-            valueFrom:
-              fieldRef:
-                apiVersion: v1
-                fieldPath: spec.nodeName
-          - name: OTEL_K8S_POD_NAME
-            valueFrom:
-              fieldRef:
-                apiVersion: v1
-                fieldPath: metadata.name
-          - name: OTEL_K8S_POD_UID
-            valueFrom:
-              fieldRef:
-                apiVersion: v1
-                fieldPath: metadata.uid
-          - name: OTEL_COLLECTOR_NAME
-            value: 'opentelemetry-demo-otelcol'
-          - name: OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE
-            value: cumulative
-          - name: PAYMENT_SERVICE_PORT
-            value: "8080"
-          - name: OTEL_EXPORTER_OTLP_ENDPOINT
-            value: http://$(OTEL_COLLECTOR_NAME):4317
-          - name: OTEL_RESOURCE_ATTRIBUTES
-            value: service.name=$(OTEL_SERVICE_NAME),service.instance.id=$(OTEL_K8S_POD_UID),service.namespace=opentelemetry-demo,k8s.namespace.name=$(OTEL_K8S_NAMESPACE),k8s.node.name=$(OTEL_K8S_NODE_NAME),k8s.pod.name=$(OTEL_K8S_POD_NAME)
+            - name: OTEL_SERVICE_NAME
+              valueFrom:
+                fieldRef:
+                  apiVersion: v1
+                  fieldPath: metadata.labels['app.kubernetes.io/component']
+            - name: OTEL_K8S_NAMESPACE
+              valueFrom:
+                fieldRef:
+                  apiVersion: v1
+                  fieldPath: metadata.namespace
+            - name: OTEL_K8S_NODE_NAME
+              valueFrom:
+                fieldRef:
+                  apiVersion: v1
+                  fieldPath: spec.nodeName
+            - name: OTEL_K8S_POD_NAME
+              valueFrom:
+                fieldRef:
+                  apiVersion: v1
+                  fieldPath: metadata.name
+            - name: OTEL_K8S_POD_UID
+              valueFrom:
+                fieldRef:
+                  apiVersion: v1
+                  fieldPath: metadata.uid
+            - name: OTEL_COLLECTOR_NAME
+              value: 'opentelemetry-demo-otelcol'
+            - name: OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE
+              value: cumulative
+            - name: PAYMENT_SERVICE_PORT
+              value: "8080"
+            - name: OTEL_EXPORTER_OTLP_ENDPOINT
+              value: http://$(OTEL_COLLECTOR_NAME):4317
+            - name: OTEL_RESOURCE_ATTRIBUTES
+              value: service.name=$(OTEL_SERVICE_NAME),service.instance.id=$(OTEL_K8S_POD_UID),service.namespace=opentelemetry-demo,k8s.namespace.name=$(OTEL_K8S_NAMESPACE),k8s.node.name=$(OTEL_K8S_NODE_NAME),k8s.pod.name=$(OTEL_K8S_POD_NAME)
           resources:
             limits:
               memory: 120Mi
@@ -8629,47 +8764,47 @@ spec:
           image: 'ghcr.io/open-telemetry/demo:1.4.0-productcatalogservice'
           imagePullPolicy: IfNotPresent
           ports:
-          
-          - containerPort: 8080
-            name: service
+
+            - containerPort: 8080
+              name: service
           env:
-          - name: OTEL_SERVICE_NAME
-            valueFrom:
-              fieldRef:
-                apiVersion: v1
-                fieldPath: metadata.labels['app.kubernetes.io/component']
-          - name: OTEL_K8S_NAMESPACE
-            valueFrom:
-              fieldRef:
-                apiVersion: v1
-                fieldPath: metadata.namespace
-          - name: OTEL_K8S_NODE_NAME
-            valueFrom:
-              fieldRef:
-                apiVersion: v1
-                fieldPath: spec.nodeName
-          - name: OTEL_K8S_POD_NAME
-            valueFrom:
-              fieldRef:
-                apiVersion: v1
-                fieldPath: metadata.name
-          - name: OTEL_K8S_POD_UID
-            valueFrom:
-              fieldRef:
-                apiVersion: v1
-                fieldPath: metadata.uid
-          - name: OTEL_COLLECTOR_NAME
-            value: 'opentelemetry-demo-otelcol'
-          - name: OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE
-            value: cumulative
-          - name: PRODUCT_CATALOG_SERVICE_PORT
-            value: "8080"
-          - name: FEATURE_FLAG_GRPC_SERVICE_ADDR
-            value: 'opentelemetry-demo-featureflagservice:50053'
-          - name: OTEL_EXPORTER_OTLP_ENDPOINT
-            value: http://$(OTEL_COLLECTOR_NAME):4317
-          - name: OTEL_RESOURCE_ATTRIBUTES
-            value: service.name=$(OTEL_SERVICE_NAME),service.instance.id=$(OTEL_K8S_POD_UID),service.namespace=opentelemetry-demo,k8s.namespace.name=$(OTEL_K8S_NAMESPACE),k8s.node.name=$(OTEL_K8S_NODE_NAME),k8s.pod.name=$(OTEL_K8S_POD_NAME)
+            - name: OTEL_SERVICE_NAME
+              valueFrom:
+                fieldRef:
+                  apiVersion: v1
+                  fieldPath: metadata.labels['app.kubernetes.io/component']
+            - name: OTEL_K8S_NAMESPACE
+              valueFrom:
+                fieldRef:
+                  apiVersion: v1
+                  fieldPath: metadata.namespace
+            - name: OTEL_K8S_NODE_NAME
+              valueFrom:
+                fieldRef:
+                  apiVersion: v1
+                  fieldPath: spec.nodeName
+            - name: OTEL_K8S_POD_NAME
+              valueFrom:
+                fieldRef:
+                  apiVersion: v1
+                  fieldPath: metadata.name
+            - name: OTEL_K8S_POD_UID
+              valueFrom:
+                fieldRef:
+                  apiVersion: v1
+                  fieldPath: metadata.uid
+            - name: OTEL_COLLECTOR_NAME
+              value: 'opentelemetry-demo-otelcol'
+            - name: OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE
+              value: cumulative
+            - name: PRODUCT_CATALOG_SERVICE_PORT
+              value: "8080"
+            - name: FEATURE_FLAG_GRPC_SERVICE_ADDR
+              value: 'opentelemetry-demo-featureflagservice:50053'
+            - name: OTEL_EXPORTER_OTLP_ENDPOINT
+              value: http://$(OTEL_COLLECTOR_NAME):4317
+            - name: OTEL_RESOURCE_ATTRIBUTES
+              value: service.name=$(OTEL_SERVICE_NAME),service.instance.id=$(OTEL_K8S_POD_UID),service.namespace=opentelemetry-demo,k8s.namespace.name=$(OTEL_K8S_NAMESPACE),k8s.node.name=$(OTEL_K8S_NODE_NAME),k8s.pod.name=$(OTEL_K8S_POD_NAME)
           resources:
             limits:
               memory: 20Mi
@@ -8707,47 +8842,47 @@ spec:
           image: 'ghcr.io/open-telemetry/demo:1.4.0-quoteservice'
           imagePullPolicy: IfNotPresent
           ports:
-          
-          - containerPort: 8080
-            name: service
+
+            - containerPort: 8080
+              name: service
           env:
-          - name: OTEL_SERVICE_NAME
-            valueFrom:
-              fieldRef:
-                apiVersion: v1
-                fieldPath: metadata.labels['app.kubernetes.io/component']
-          - name: OTEL_K8S_NAMESPACE
-            valueFrom:
-              fieldRef:
-                apiVersion: v1
-                fieldPath: metadata.namespace
-          - name: OTEL_K8S_NODE_NAME
-            valueFrom:
-              fieldRef:
-                apiVersion: v1
-                fieldPath: spec.nodeName
-          - name: OTEL_K8S_POD_NAME
-            valueFrom:
-              fieldRef:
-                apiVersion: v1
-                fieldPath: metadata.name
-          - name: OTEL_K8S_POD_UID
-            valueFrom:
-              fieldRef:
-                apiVersion: v1
-                fieldPath: metadata.uid
-          - name: OTEL_COLLECTOR_NAME
-            value: 'opentelemetry-demo-otelcol'
-          - name: OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE
-            value: cumulative
-          - name: QUOTE_SERVICE_PORT
-            value: "8080"
-          - name: OTEL_PHP_AUTOLOAD_ENABLED
-            value: "true"
-          - name: OTEL_EXPORTER_OTLP_ENDPOINT
-            value: http://$(OTEL_COLLECTOR_NAME):4318
-          - name: OTEL_RESOURCE_ATTRIBUTES
-            value: service.name=$(OTEL_SERVICE_NAME),service.instance.id=$(OTEL_K8S_POD_UID),service.namespace=opentelemetry-demo,k8s.namespace.name=$(OTEL_K8S_NAMESPACE),k8s.node.name=$(OTEL_K8S_NODE_NAME),k8s.pod.name=$(OTEL_K8S_POD_NAME)
+            - name: OTEL_SERVICE_NAME
+              valueFrom:
+                fieldRef:
+                  apiVersion: v1
+                  fieldPath: metadata.labels['app.kubernetes.io/component']
+            - name: OTEL_K8S_NAMESPACE
+              valueFrom:
+                fieldRef:
+                  apiVersion: v1
+                  fieldPath: metadata.namespace
+            - name: OTEL_K8S_NODE_NAME
+              valueFrom:
+                fieldRef:
+                  apiVersion: v1
+                  fieldPath: spec.nodeName
+            - name: OTEL_K8S_POD_NAME
+              valueFrom:
+                fieldRef:
+                  apiVersion: v1
+                  fieldPath: metadata.name
+            - name: OTEL_K8S_POD_UID
+              valueFrom:
+                fieldRef:
+                  apiVersion: v1
+                  fieldPath: metadata.uid
+            - name: OTEL_COLLECTOR_NAME
+              value: 'opentelemetry-demo-otelcol'
+            - name: OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE
+              value: cumulative
+            - name: QUOTE_SERVICE_PORT
+              value: "8080"
+            - name: OTEL_PHP_AUTOLOAD_ENABLED
+              value: "true"
+            - name: OTEL_EXPORTER_OTLP_ENDPOINT
+              value: http://$(OTEL_COLLECTOR_NAME):4318
+            - name: OTEL_RESOURCE_ATTRIBUTES
+              value: service.name=$(OTEL_SERVICE_NAME),service.instance.id=$(OTEL_K8S_POD_UID),service.namespace=opentelemetry-demo,k8s.namespace.name=$(OTEL_K8S_NAMESPACE),k8s.node.name=$(OTEL_K8S_NODE_NAME),k8s.pod.name=$(OTEL_K8S_POD_NAME)
           resources:
             limits:
               memory: 40Mi
@@ -8789,53 +8924,53 @@ spec:
           image: 'ghcr.io/open-telemetry/demo:1.4.0-recommendationservice'
           imagePullPolicy: IfNotPresent
           ports:
-          
-          - containerPort: 8080
-            name: service
+
+            - containerPort: 8080
+              name: service
           env:
-          - name: OTEL_SERVICE_NAME
-            valueFrom:
-              fieldRef:
-                apiVersion: v1
-                fieldPath: metadata.labels['app.kubernetes.io/component']
-          - name: OTEL_K8S_NAMESPACE
-            valueFrom:
-              fieldRef:
-                apiVersion: v1
-                fieldPath: metadata.namespace
-          - name: OTEL_K8S_NODE_NAME
-            valueFrom:
-              fieldRef:
-                apiVersion: v1
-                fieldPath: spec.nodeName
-          - name: OTEL_K8S_POD_NAME
-            valueFrom:
-              fieldRef:
-                apiVersion: v1
-                fieldPath: metadata.name
-          - name: OTEL_K8S_POD_UID
-            valueFrom:
-              fieldRef:
-                apiVersion: v1
-                fieldPath: metadata.uid
-          - name: OTEL_COLLECTOR_NAME
-            value: 'opentelemetry-demo-otelcol'
-          - name: OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE
-            value: cumulative
-          - name: RECOMMENDATION_SERVICE_PORT
-            value: "8080"
-          - name: PRODUCT_CATALOG_SERVICE_ADDR
-            value: 'opentelemetry-demo-productcatalogservice:8080'
-          - name: FEATURE_FLAG_GRPC_SERVICE_ADDR
-            value: 'opentelemetry-demo-featureflagservice:50053'
-          - name: OTEL_PYTHON_LOG_CORRELATION
-            value: "true"
-          - name: PROTOCOL_BUFFERS_PYTHON_IMPLEMENTATION
-            value: python
-          - name: OTEL_EXPORTER_OTLP_ENDPOINT
-            value: http://$(OTEL_COLLECTOR_NAME):4317
-          - name: OTEL_RESOURCE_ATTRIBUTES
-            value: service.name=$(OTEL_SERVICE_NAME),service.instance.id=$(OTEL_K8S_POD_UID),service.namespace=opentelemetry-demo,k8s.namespace.name=$(OTEL_K8S_NAMESPACE),k8s.node.name=$(OTEL_K8S_NODE_NAME),k8s.pod.name=$(OTEL_K8S_POD_NAME)
+            - name: OTEL_SERVICE_NAME
+              valueFrom:
+                fieldRef:
+                  apiVersion: v1
+                  fieldPath: metadata.labels['app.kubernetes.io/component']
+            - name: OTEL_K8S_NAMESPACE
+              valueFrom:
+                fieldRef:
+                  apiVersion: v1
+                  fieldPath: metadata.namespace
+            - name: OTEL_K8S_NODE_NAME
+              valueFrom:
+                fieldRef:
+                  apiVersion: v1
+                  fieldPath: spec.nodeName
+            - name: OTEL_K8S_POD_NAME
+              valueFrom:
+                fieldRef:
+                  apiVersion: v1
+                  fieldPath: metadata.name
+            - name: OTEL_K8S_POD_UID
+              valueFrom:
+                fieldRef:
+                  apiVersion: v1
+                  fieldPath: metadata.uid
+            - name: OTEL_COLLECTOR_NAME
+              value: 'opentelemetry-demo-otelcol'
+            - name: OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE
+              value: cumulative
+            - name: RECOMMENDATION_SERVICE_PORT
+              value: "8080"
+            - name: PRODUCT_CATALOG_SERVICE_ADDR
+              value: 'opentelemetry-demo-productcatalogservice:8080'
+            - name: FEATURE_FLAG_GRPC_SERVICE_ADDR
+              value: 'opentelemetry-demo-featureflagservice:50053'
+            - name: OTEL_PYTHON_LOG_CORRELATION
+              value: "true"
+            - name: PROTOCOL_BUFFERS_PYTHON_IMPLEMENTATION
+              value: python
+            - name: OTEL_EXPORTER_OTLP_ENDPOINT
+              value: http://$(OTEL_COLLECTOR_NAME):4317
+            - name: OTEL_RESOURCE_ATTRIBUTES
+              value: service.name=$(OTEL_SERVICE_NAME),service.instance.id=$(OTEL_K8S_POD_UID),service.namespace=opentelemetry-demo,k8s.namespace.name=$(OTEL_K8S_NAMESPACE),k8s.node.name=$(OTEL_K8S_NODE_NAME),k8s.pod.name=$(OTEL_K8S_POD_NAME)
           resources:
             limits:
               memory: 500Mi
@@ -8873,41 +9008,41 @@ spec:
           image: 'redis:alpine'
           imagePullPolicy: IfNotPresent
           ports:
-          
-          - containerPort: 6379
-            name: redis
+
+            - containerPort: 6379
+              name: redis
           env:
-          - name: OTEL_SERVICE_NAME
-            valueFrom:
-              fieldRef:
-                apiVersion: v1
-                fieldPath: metadata.labels['app.kubernetes.io/component']
-          - name: OTEL_K8S_NAMESPACE
-            valueFrom:
-              fieldRef:
-                apiVersion: v1
-                fieldPath: metadata.namespace
-          - name: OTEL_K8S_NODE_NAME
-            valueFrom:
-              fieldRef:
-                apiVersion: v1
-                fieldPath: spec.nodeName
-          - name: OTEL_K8S_POD_NAME
-            valueFrom:
-              fieldRef:
-                apiVersion: v1
-                fieldPath: metadata.name
-          - name: OTEL_K8S_POD_UID
-            valueFrom:
-              fieldRef:
-                apiVersion: v1
-                fieldPath: metadata.uid
-          - name: OTEL_COLLECTOR_NAME
-            value: 'opentelemetry-demo-otelcol'
-          - name: OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE
-            value: cumulative
-          - name: OTEL_RESOURCE_ATTRIBUTES
-            value: service.name=$(OTEL_SERVICE_NAME),service.instance.id=$(OTEL_K8S_POD_UID),service.namespace=opentelemetry-demo,k8s.namespace.name=$(OTEL_K8S_NAMESPACE),k8s.node.name=$(OTEL_K8S_NODE_NAME),k8s.pod.name=$(OTEL_K8S_POD_NAME)
+            - name: OTEL_SERVICE_NAME
+              valueFrom:
+                fieldRef:
+                  apiVersion: v1
+                  fieldPath: metadata.labels['app.kubernetes.io/component']
+            - name: OTEL_K8S_NAMESPACE
+              valueFrom:
+                fieldRef:
+                  apiVersion: v1
+                  fieldPath: metadata.namespace
+            - name: OTEL_K8S_NODE_NAME
+              valueFrom:
+                fieldRef:
+                  apiVersion: v1
+                  fieldPath: spec.nodeName
+            - name: OTEL_K8S_POD_NAME
+              valueFrom:
+                fieldRef:
+                  apiVersion: v1
+                  fieldPath: metadata.name
+            - name: OTEL_K8S_POD_UID
+              valueFrom:
+                fieldRef:
+                  apiVersion: v1
+                  fieldPath: metadata.uid
+            - name: OTEL_COLLECTOR_NAME
+              value: 'opentelemetry-demo-otelcol'
+            - name: OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE
+              value: cumulative
+            - name: OTEL_RESOURCE_ATTRIBUTES
+              value: service.name=$(OTEL_SERVICE_NAME),service.instance.id=$(OTEL_K8S_POD_UID),service.namespace=opentelemetry-demo,k8s.namespace.name=$(OTEL_K8S_NAMESPACE),k8s.node.name=$(OTEL_K8S_NODE_NAME),k8s.pod.name=$(OTEL_K8S_POD_NAME)
           resources:
             limits:
               memory: 20Mi
@@ -8949,47 +9084,47 @@ spec:
           image: 'ghcr.io/open-telemetry/demo:1.4.0-shippingservice'
           imagePullPolicy: IfNotPresent
           ports:
-          
-          - containerPort: 8080
-            name: service
+
+            - containerPort: 8080
+              name: service
           env:
-          - name: OTEL_SERVICE_NAME
-            valueFrom:
-              fieldRef:
-                apiVersion: v1
-                fieldPath: metadata.labels['app.kubernetes.io/component']
-          - name: OTEL_K8S_NAMESPACE
-            valueFrom:
-              fieldRef:
-                apiVersion: v1
-                fieldPath: metadata.namespace
-          - name: OTEL_K8S_NODE_NAME
-            valueFrom:
-              fieldRef:
-                apiVersion: v1
-                fieldPath: spec.nodeName
-          - name: OTEL_K8S_POD_NAME
-            valueFrom:
-              fieldRef:
-                apiVersion: v1
-                fieldPath: metadata.name
-          - name: OTEL_K8S_POD_UID
-            valueFrom:
-              fieldRef:
-                apiVersion: v1
-                fieldPath: metadata.uid
-          - name: OTEL_COLLECTOR_NAME
-            value: 'opentelemetry-demo-otelcol'
-          - name: OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE
-            value: cumulative
-          - name: SHIPPING_SERVICE_PORT
-            value: "8080"
-          - name: QUOTE_SERVICE_ADDR
-            value: http://opentelemetry-demo-quoteservice:8080
-          - name: OTEL_EXPORTER_OTLP_TRACES_ENDPOINT
-            value: http://$(OTEL_COLLECTOR_NAME):4317/v1/traces
-          - name: OTEL_RESOURCE_ATTRIBUTES
-            value: service.name=$(OTEL_SERVICE_NAME),service.instance.id=$(OTEL_K8S_POD_UID),service.namespace=opentelemetry-demo,k8s.namespace.name=$(OTEL_K8S_NAMESPACE),k8s.node.name=$(OTEL_K8S_NODE_NAME),k8s.pod.name=$(OTEL_K8S_POD_NAME)
+            - name: OTEL_SERVICE_NAME
+              valueFrom:
+                fieldRef:
+                  apiVersion: v1
+                  fieldPath: metadata.labels['app.kubernetes.io/component']
+            - name: OTEL_K8S_NAMESPACE
+              valueFrom:
+                fieldRef:
+                  apiVersion: v1
+                  fieldPath: metadata.namespace
+            - name: OTEL_K8S_NODE_NAME
+              valueFrom:
+                fieldRef:
+                  apiVersion: v1
+                  fieldPath: spec.nodeName
+            - name: OTEL_K8S_POD_NAME
+              valueFrom:
+                fieldRef:
+                  apiVersion: v1
+                  fieldPath: metadata.name
+            - name: OTEL_K8S_POD_UID
+              valueFrom:
+                fieldRef:
+                  apiVersion: v1
+                  fieldPath: metadata.uid
+            - name: OTEL_COLLECTOR_NAME
+              value: 'opentelemetry-demo-otelcol'
+            - name: OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE
+              value: cumulative
+            - name: SHIPPING_SERVICE_PORT
+              value: "8080"
+            - name: QUOTE_SERVICE_ADDR
+              value: http://opentelemetry-demo-quoteservice:8080
+            - name: OTEL_EXPORTER_OTLP_TRACES_ENDPOINT
+              value: http://$(OTEL_COLLECTOR_NAME):4317/v1/traces
+            - name: OTEL_RESOURCE_ATTRIBUTES
+              value: service.name=$(OTEL_SERVICE_NAME),service.instance.id=$(OTEL_K8S_POD_UID),service.namespace=opentelemetry-demo,k8s.namespace.name=$(OTEL_K8S_NAMESPACE),k8s.node.name=$(OTEL_K8S_NODE_NAME),k8s.pod.name=$(OTEL_K8S_POD_NAME)
           resources:
             limits:
               memory: 20Mi
