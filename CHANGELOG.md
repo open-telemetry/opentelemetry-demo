@@ -29,7 +29,8 @@ release.
   ([#880](https://github.com/open-telemetry/opentelemetry-demo/pull/880))
 * [currencyservice] Fix OTel C++ build and update OTel version to 1.9.0
   ([#886](https://github.com/open-telemetry/opentelemetry-demo/pull/886))
-
+* [currencyservice] Fix OTLP export to use default env vars
+  ([#904](https://github.com/open-telemetry/opentelemetry-demo/pull/904))
 ## 1.4.0
 
 * [cart] use 60m TTL for cart entries in redis
