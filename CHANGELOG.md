@@ -31,6 +31,7 @@ release.
   ([#886](https://github.com/open-telemetry/opentelemetry-demo/pull/886))
 * [currencyservice] Fix OTLP export to use default env vars
   ([#904](https://github.com/open-telemetry/opentelemetry-demo/pull/904))
+
 ## 1.4.0
 
 * [cart] use 60m TTL for cart entries in redis
