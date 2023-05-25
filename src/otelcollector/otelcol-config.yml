@@ -11,6 +11,10 @@ receivers:
           allowed_origins:
             - "http://*"
             - "https://*"
+  otlp/servicegraph: # Dummy receiver for the metrics pipeline
+    protocols:
+      grpc:
+        endpoint: localhost:12345
 
 exporters:
   otlp/2:
@@ -28,30 +32,57 @@ exporters:
     resource_to_telemetry_conversion:
       enabled: true
     enable_open_metrics: true
+  prometheus/servicegraph:
+    endpoint: localhost:9090
+    namespace: servicegraph
 
 processors:
   batch:
+  memory_limiter:
+    check_interval: 1s
+    limit_mib: 4000
+    spike_limit_mib: 800
   filter:
     metrics:
       exclude:
         match_type: strict
         metric_names:
           - queueSize
+  servicegraph:
+    metrics_exporter: prometheus/servicegraph # Exporter to send metrics to
+    latency_histogram_buckets: [100us, 1ms, 2ms, 6ms, 10ms, 100ms, 250ms] # Buckets for latency histogram
+    dimensions: [cluster, namespace] # Additional dimensions (labels) to be added to the metrics extracted from the resource and span attributes
+    store: # Configuration for the in-memory store
+      ttl: 2s # Value to wait for an edge to be completed
+      max_items: 200 # Amount of edges that will be stored in the storeMap
+    cache_loop: 2m # the time to cleans the cache periodically
+    store_expiration_loop: 10s # the time to expire old entries from the store periodically.
+    virtual_node_peer_attributes:
+      - db.name
+      - rpc.service
 
 connectors:
   spanmetrics:
 
+extensions:
+  health_check: {}
+
 service:
+  extensions: [health_check]
   pipelines:
     traces:
       receivers: [otlp]
-      processors: [batch]
+      processors: [memory_limiter, batch, servicegraph]
       exporters: [otlp, logging, spanmetrics, otlp/2]
+    metrics/servicegraph:
+      receivers: [otlp/servicegraph]
+      processors: []
+      exporters: [prometheus/servicegraph]
     metrics:
       receivers: [otlp, spanmetrics]
-      processors: [filter, batch]
+      processors: [filter, memory_limiter, batch]
       exporters: [prometheus, logging]
     logs:
       receivers: [otlp]
-      processors: [batch]
+      processors: [memory_limiter, batch]
       exporters: [logging]

@@ -458,11 +458,11 @@ spec:
                 fieldRef:
                   fieldPath: metadata.name
             - name: discovery.seed_hosts
-              value: opensearch-node1,opensearch-node2
+              value: opensearch-0.opensearch-service,opensearch-1.opensearch-service
             - name: cluster.initial_cluster_manager_nodes
-              value: opensearch-node1,opensearch-node2
+              value: opensearch-0.opensearch-service,opensearch-1.opensearch-service
             - name: bootstrap.memory_lock
-              value: "true"
+              value: "false"
             - name: OPENSEARCH_JAVA_OPTS
               value: "-Xms512m -Xmx512m"
           volumeMounts:
@@ -6898,7 +6898,6 @@ kind: Service
 metadata:
   name: opentelemetry-demo-frontendproxy
   labels:
-    
     opentelemetry.io/name: opentelemetry-demo-frontendproxy
     app.kubernetes.io/instance: opentelemetry-demo
     app.kubernetes.io/component: frontendproxy

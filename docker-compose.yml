@@ -206,35 +206,35 @@ services:
     logging: *logging
 
   # Feature Flag service
-  featureflagservice:
-    image: ${IMAGE_NAME}:${IMAGE_VERSION}-featureflagservice
-    container_name: feature-flag-service
-    build:
-      context: ./
-      dockerfile: ./src/featureflagservice/Dockerfile
-      cache_from:
-        - ${IMAGE_NAME}:${IMAGE_VERSION}-featureflagservice
-    deploy:
-      resources:
-        limits:
-          memory: 175M
-    restart: unless-stopped
-    ports:
-      - "${FEATURE_FLAG_SERVICE_PORT}:${FEATURE_FLAG_SERVICE_PORT}"     # Feature Flag Service UI
-      - "${FEATURE_FLAG_GRPC_SERVICE_PORT}"                             # Feature Flag Service gRPC API
-    environment:
-      - FEATURE_FLAG_SERVICE_PORT
-      - FEATURE_FLAG_GRPC_SERVICE_PORT
-      - OTEL_EXPORTER_OTLP_ENDPOINT
-      - OTEL_EXPORTER_OTLP_TRACES_PROTOCOL=grpc
-      - OTEL_SERVICE_NAME=featureflagservice
-      - DATABASE_URL=ecto://ffs:ffs@ffs_postgres:5432/ffs
-    healthcheck:
-      test: ["CMD", "curl", "-H", "baggage: synthetic_request=true", "-f", "http://localhost:${FEATURE_FLAG_SERVICE_PORT}"]
-    depends_on:
-      ffs_postgres:
-        condition: service_healthy
-    logging: *logging
+#  featureflagservice:
+#    image: ${IMAGE_NAME}:${IMAGE_VERSION}-featureflagservice
+#    container_name: feature-flag-service
+#    build:
+#      context: ./
+#      dockerfile: ./src/featureflagservice/Dockerfile
+#      cache_from:
+#        - ${IMAGE_NAME}:${IMAGE_VERSION}-featureflagservice
+#    deploy:
+#      resources:
+#        limits:
+#          memory: 175M
+#    restart: unless-stopped
+#    ports:
+#      - "${FEATURE_FLAG_SERVICE_PORT}:${FEATURE_FLAG_SERVICE_PORT}"     # Feature Flag Service UI
+#      - "${FEATURE_FLAG_GRPC_SERVICE_PORT}"                             # Feature Flag Service gRPC API
+#    environment:
+#      - FEATURE_FLAG_SERVICE_PORT
+#      - FEATURE_FLAG_GRPC_SERVICE_PORT
+#      - OTEL_EXPORTER_OTLP_ENDPOINT
+#      - OTEL_EXPORTER_OTLP_TRACES_PROTOCOL=grpc
+#      - OTEL_SERVICE_NAME=featureflagservice
+#      - DATABASE_URL=ecto://ffs:ffs@ffs_postgres:5432/ffs
+#    healthcheck:
+#      test: ["CMD", "curl", "-H", "baggage: synthetic_request=true", "-f", "http://localhost:${FEATURE_FLAG_SERVICE_PORT}"]
+#    depends_on:
+#      ffs_postgres:
+#        condition: service_healthy
+#    logging: *logging
 
   # Fraud Detection service
   frauddetectionservice:
@@ -451,7 +451,7 @@ services:
     depends_on:
       - productcatalogservice
       - otelcol
-      - featureflagservice
+#      - featureflagservice
     logging: *logging
 
   # Frontend Proxy service
@@ -678,10 +678,11 @@ services:
       - ./src/otelcollector/otelcol-config.yml:/etc/otelcol-config.yml
       - ./src/otelcollector/otelcol-config-extras.yml:/etc/otelcol-config-extras.yml
     ports:
-      - "4317"          # OTLP over gRPC receiver
-      - "4318:4318"     # OTLP over HTTP receiver
-      - "9464"          # Prometheus exporter
-      - "8888"          # metrics endpoint
+      - "4317"            # OTLP over gRPC receiver
+      - "4318:4318"       # OTLP over HTTP receiver
+      - "13133:13133"     # health check port
+      - "9464"            # Prometheus exporter
+      - "8888"            # metrics endpoint
     depends_on:
       - jaeger-agent
       - data-prepper
