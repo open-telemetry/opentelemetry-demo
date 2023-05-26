@@ -31,6 +31,8 @@ release.
   ([#886](https://github.com/open-telemetry/opentelemetry-demo/pull/886))
 * [currencyservice] Fix OTLP export to use default env vars
   ([#904](https://github.com/open-telemetry/opentelemetry-demo/pull/904))
+* [featureflagservice] Bump OTP version to 26.0
+  ([#903](https://github.com/open-telemetry/opentelemetry-demo/pull/903))
 
 ## 1.4.0
 
