@@ -29,6 +29,8 @@ release.
   ([#880](https://github.com/open-telemetry/opentelemetry-demo/pull/880))
 * [currencyservice] Fix OTel C++ build and update OTel version to 1.9.0
   ([#886](https://github.com/open-telemetry/opentelemetry-demo/pull/886))
+* [featureflagservice] Bump OTP version to 26.0
+  ([#903](https://github.com/open-telemetry/opentelemetry-demo/pull/903))
 
 ## 1.4.0
 
