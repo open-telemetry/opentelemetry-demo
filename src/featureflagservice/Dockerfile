@@ -16,10 +16,9 @@
 #   - https://pkgs.org/ - resource for finding needed packages
 #   - Ex: hexpm/elixir:1.14.3-erlang-25.2.3-debian-buster-20230202-slim
 #
-# IMPORTANT NOTE - Do not upgrade past OTP 23, otherwise arm64 publishing will break.
-ARG ELIXIR_VERSION=1.14.3
-ARG OTP_VERSION=23.3.4.9
-ARG DEBIAN_VERSION=bullseye-20210902-slim
+ARG ELIXIR_VERSION=1.14.5
+ARG OTP_VERSION=26.0
+ARG DEBIAN_VERSION=buster-20230227-slim
 
 ARG BUILDER_IMAGE="hexpm/elixir:${ELIXIR_VERSION}-erlang-${OTP_VERSION}-debian-${DEBIAN_VERSION}"
 ARG RUNNER_IMAGE="debian:${DEBIAN_VERSION}"
@@ -85,7 +84,7 @@ RUN mix release
 # the compiled release and other runtime necessities
 FROM ${RUNNER_IMAGE}
 
-RUN apt-get update -y && apt-get install -y libstdc++6 openssl libncurses5 locales curl \
+RUN apt-get update -y && apt-get install -y openssl libncurses5 locales curl \
   && apt-get clean && rm -f /var/lib/apt/lists/*_*
 
 # Set the locale
