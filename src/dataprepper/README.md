@@ -50,3 +50,6 @@ There are some additional `trace.group` related fields which are not part of the
 - traceGroupFields.durationInNanos - A derived field, the durationInNanos of the trace's root span.
 
 ```
+### Metrics from Traces Processors
+
+Adding new processors for creating metrics for logs and traces that pass through [Data Prepper](https://opensearch.org/blog/Announcing-Data-Prepper-2.1.0/)
