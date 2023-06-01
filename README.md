@@ -53,7 +53,6 @@ We welcome any vendor to fork the project to demonstrate their services and
 adding a link below. The community is committed to maintaining the project and
 keeping it up to date for you.
 
-
 |                                                                                                                   |                                                                   |                                                                                              |
 | ----------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------- | -------------------------------------------------------------------------------------------- |
 | [AlibabaCloud LogService](https://github.com/aliyun-sls/opentelemetry-demo)                                       | [Grafana Labs](https://github.com/grafana/opentelemetry-demo)     |  [Sentry](https://github.com/getsentry/opentelemetry-demo)                                    |
