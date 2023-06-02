@@ -30,7 +30,7 @@ opentelemetry-util-http==0.38b0
 protobuf==4.22.3
 psutil==5.9.5
 pyzmq==25.0.2
-requests==2.29.0
+requests==2.31.0
 roundrobin==0.0.4
 six==1.16.0
 typing-extensions==4.5.0

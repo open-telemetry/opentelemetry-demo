@@ -44,7 +44,7 @@ defmodule Featureflagservice.MixProject do
     [
       {:phoenix, "~> 1.6.9"},
       {:phoenix_ecto, "~> 4.4"},
-      {:ecto_sql, "~> 3.6"},
+      {:ecto_sql, "~> 3.10"},
       {:postgrex, ">= 0.0.0"},
       {:phoenix_html, "~> 3.0"},
       {:phoenix_live_reload, "~> 1.2", only: :dev},
@@ -63,7 +63,7 @@ defmodule Featureflagservice.MixProject do
       {:opentelemetry_api, "~> 1.2.1"},
       {:opentelemetry, "~> 1.2.1"},
       {:opentelemetry_phoenix, "~> 1.0.0"},
-      {:opentelemetry_ecto, "~> 1.0.0"}
+      {:opentelemetry_ecto, "~> 1.1.1"}
     ]
   end
 
