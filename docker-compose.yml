@@ -725,10 +725,11 @@ services:
     extra_hosts:
       - "host.docker.internal:host-gateway"
     depends_on:
-      - tracetest-server
+      tracetest-server:
+        condition: service_healthy
 
   tracetest-server:
-    image: kubeshop/tracetest:latest
+    image: kubeshop/tracetest:v0.11.10-rc.2
     platform: linux/amd64
     container_name: tracetest-server
     profiles:

@@ -18,7 +18,7 @@ check_if_tracetest_is_installed() {
 run_tracetest() {
   test_file=$1
 
-  tracetest -c ./cli-config.yml test run -d $test_file -w
+  TRACETEST_DEV=true tracetest -c ./cli-config.yml test run -d $test_file -w
   return $?
 }
 
