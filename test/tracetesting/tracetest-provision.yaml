@@ -8,8 +8,8 @@ spec:
   strategy: periodic
   default: true
   periodic:
-    retryDelay: 10s
-    timeout: 10m
+    retryDelay: 3s
+    timeout: 3m
 
 ---
 type: Demo

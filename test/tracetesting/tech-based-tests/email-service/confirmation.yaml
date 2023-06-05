@@ -18,28 +18,28 @@ spec:
         {
           "email": "google@example.com",
           "order": {
-            "orderId": "505",
-            "shippingTrackingId": "dead-beef",
-            "shippingCost": {
-              "currencyCode": "USD",
+            "order_id": "505",
+            "shipping_tracking_id": "dead-beef",
+            "shipping_cost": {
+              "currency_code": "USD",
               "units": 17,
               "nanos": 980000000
             },
-            "shippingAddress": {
-              "streetAddress": "1600 Amphitheatre Parkway",
+            "shipping_address": {
+              "street_address_1": "1600 Amphitheatre Parkway",
               "city": "Mountain View",
               "state": "California",
               "country": "United States",
-              "zipCode": "94043"
+              "zip_code": "94043"
             },
             "items": [
               {
                 "item": {
-                  "productId": "1YMWWN1N4O",
+                  "product_id": "1YMWWN1N4O",
                   "quantity": 5
                 },
                 "cost": {
-                  "currencyCode": "USD",
+                  "currency_code": "USD",
                   "units": 100,
                   "nanos": 0
                 }
