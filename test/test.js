@@ -207,7 +207,7 @@ test("email: confirmation", async (t) => {
     headers: { "Contenty-Type": "application/json" },
   });
 
-  t.truthy(true);
+  t.truthy(res.ok);
 });
 
 // --------------- Payment Service ---------------
