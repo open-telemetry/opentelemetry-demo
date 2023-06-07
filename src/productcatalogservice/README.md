@@ -12,7 +12,7 @@ When this service is run the output should be similar to the following
 To build the protos and the service binary, run:
 
 ```sh
-protoc -I ../pb/ ../pb/demo.proto --go_out=./ --go-grpc_out=./
+protoc -I ../../pb/ ../../pb/demo.proto --go_out=./ --go-grpc_out=./
 go build -o /go/bin/productcatalogservice/ ./
 ```
 
