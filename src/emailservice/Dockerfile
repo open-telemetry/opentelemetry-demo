@@ -1,13 +1,27 @@
-FROM ruby:3.1.2-slim
+# Copyright The OpenTelemetry Authors
+# SPDX-License-Identifier: Apache-2.0
 
-RUN apt-get update -y && apt-get install -y build-essential
+
+FROM ruby:3.1.2-alpine as base
+
+FROM base as builder
+
+WORKDIR /tmp
+
+COPY Gemfile Gemfile.lock .
+
+RUN apk update && apk add make gcc musl-dev && bundle install
+
+FROM base as release
 
 WORKDIR /email_server
 
 COPY . .
 
-RUN bundle install
 RUN chmod 666 ./Gemfile.lock
+
+COPY --from=builder /usr/local/bundle/ /usr/local/bundle/
+
 
 EXPOSE ${EMAIL_SERVICE_PORT}
 ENTRYPOINT ["bundle", "exec", "ruby", "email_server.rb"]

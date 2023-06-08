@@ -1,3 +1,5 @@
+# Copyright The OpenTelemetry Authors
+# SPDX-License-Identifier: Apache-2.0
 name: Gradle wrapper validation
 on:
   pull_request:
@@ -13,4 +15,4 @@ jobs:
     steps:
       - uses: actions/checkout@v3
 
-      - uses: gradle/wrapper-validation-action@v1.0.5
+      - uses: gradle/wrapper-validation-action@v1.0.6

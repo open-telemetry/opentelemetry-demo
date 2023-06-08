@@ -1,8 +1,11 @@
+# Copyright The OpenTelemetry Authors
+# SPDX-License-Identifier: Apache-2.0
 #!/bin/sh
+
 
 # This script is used to generate protobuf files for all services.
 # Useful to ensure code can compile without Docker, and provide hints for IDEs.
-# Several dev tools including: cargo, protoc, python grpc_tools.protoc, and rebar3 may be required to run this script.
+# Several dev tools including: cargo, protoc, python grpcio-tools, and rebar3 may be required to run this script.
 
 base_dir=$(pwd)
 

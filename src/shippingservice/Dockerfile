@@ -1,22 +1,54 @@
-# build context will only work from ../../docker-compose.yml
-FROM rust:1.61-alpine as builder
-RUN apk update
-RUN apk add --no-cache ca-certificates git protobuf-dev protoc cmake clang clang-dev make gcc g++ libc-dev linux-headers
+# Copyright The OpenTelemetry Authors
+# SPDX-License-Identifier: Apache-2.0
+
+
+FROM --platform=${BUILDPLATFORM} rust:1.61 as builder
+
+ARG TARGETARCH TARGETPLATFORM BUILDPLATFORM
+
+RUN echo Building on ${BUILDPLATFORM} for ${TARGETPLATFORM}
+
+# Check if we are doing cross-compilation, if so we need to add in some more dependencies and run rustup
+RUN if [ "${TARGETPLATFORM}" = "${BUILDPLATFORM}" ] ; then \
+        apt-get update && apt-get install --no-install-recommends -y g++ libc6-dev libprotobuf-dev protobuf-compiler ca-certificates; \
+    elif [ "${TARGETPLATFORM}" = "linux/arm64" ] ; then \
+        apt-get update && apt-get install --no-install-recommends -y g++-aarch64-linux-gnu libc6-dev-arm64-cross libprotobuf-dev protobuf-compiler ca-certificates && \
+        rustup target add aarch64-unknown-linux-gnu && \
+        rustup toolchain install stable-aarch64-unknown-linux-gnu; \
+    else \
+        echo "${TARGETPLATFORM} is not supported"; \
+        exit 1; \
+    fi
+
 WORKDIR /app/
 
-# build app
 COPY /src/shippingservice/ /app/
 COPY /pb/ /app/proto/
 
-RUN cargo build -r --features="dockerproto"
+# Compile or crosscompile
+RUN if [ "${TARGETPLATFORM}" = "${BUILDPLATFORM}" ] ; then \
+        cargo build -r --features="dockerproto"; \
+    elif [ "${TARGETPLATFORM}" = "linux/arm64" ] ; then \
+        env CARGO_TARGET_AARCH64_UNKNOWN_LINUX_GNU_LINKER=aarch64-linux-gnu-gcc \
+            CC_aarch64_unknown_linux_gnu=aarch64-linux-gnu-gcc \
+            CXX_aarch64_unknown_linux_gnu=aarch64-linux-gnu-g++ \
+        cargo build -r --features="dockerproto" --target aarch64-unknown-linux-gnu && \
+        cp /app/target/aarch64-unknown-linux-gnu/release/shippingservice /app/target/release/shippingservice; \
+    else \
+        echo "${TARGETPLATFORM} is not supported"; \
+        exit 1; \
+    fi
 
-FROM alpine as release
-RUN apk add --no-cache ca-certificates
-RUN GRPC_HEALTH_PROBE_VERSION=v0.4.7 && \
-    wget -qO/bin/grpc_health_probe https://github.com/grpc-ecosystem/grpc-health-probe/releases/download/${GRPC_HEALTH_PROBE_VERSION}/grpc_health_probe-linux-amd64 && \
+
+ENV GRPC_HEALTH_PROBE_VERSION=v0.4.7
+RUN wget -qO/bin/grpc_health_probe https://github.com/grpc-ecosystem/grpc-health-probe/releases/download/${GRPC_HEALTH_PROBE_VERSION}/grpc_health_probe-linux-${TARGETARCH} && \
     chmod +x /bin/grpc_health_probe
+
+FROM debian:bullseye-slim as release
+
 WORKDIR /app
 COPY --from=builder /app/target/release/shippingservice /app/shippingservice
+COPY --from=builder /bin/grpc_health_probe /bin/grpc_health_probe
 
 EXPOSE ${SHIPPING_SERVICE_PORT}
 ENTRYPOINT ["/app/shippingservice"]

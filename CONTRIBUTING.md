@@ -102,7 +102,7 @@ Once the images are built and containers are started you can access:
 The Demo team is committed to keeping the demo up to date. That means the
 documentation as well as the code. When making changes to any service or feature
 remember to find the related docs and update those as well. Most (but not all)
-documentation can be found the [docs](./docs/) folder.
+documentation can be found on the OTel website under [Demo docs][docs].
 
 ## Create Your First Pull Request
 
@@ -116,6 +116,7 @@ To create a new PR, fork the project in GitHub and clone the upstream repo:
 > **Note**
 > Please fork to a personal GitHub account rather than a corporate/enterprise
 > one so maintainers can push commits to your branch.
+> **Pull requests from protected forks will not be accepted.**
 
 ```sh
 git clone https://github.com/open-telemetry/opentelemetry-demo.git
@@ -130,7 +131,7 @@ cd opentelemetry-demo
 Add your fork as an origin:
 
 ```sh
-git remote add fork https://github.com/open-telemetry/opentelemetry-demo.git
+git remote add fork https://github.com/YOUR_GITHUB_USERNAME/opentelemetry-demo.git
 ```
 
 Check out a new branch, make modifications and push the branch to your fork:
@@ -142,7 +143,7 @@ $ git checkout -b feature
 $ docker compose up -d --build
 # Go to Webstore, Jaeger or docker container logs etc. as appropriate to make sure your changes are working correctly.
 $ git add my/changed/files
-$ git commit -m "short discription of the change"
+$ git commit -m "short description of the change"
 $ git push fork feature
 ```
 
@@ -172,7 +173,7 @@ A PR is considered to be **ready to merge** when:
 - Major feedbacks are resolved.
 - It has been open for review for at least one working day. This gives people
   reasonable time to review.
-- The [documentation](./docs/) and [Changelog](./CHANGELOG.md) have been updated
+- The [documentation][docs] and [Changelog](./CHANGELOG.md) have been updated
   to reflect the new changes.
 - Trivial changes (typo, cosmetic, doc, etc.) don't have to wait for one day.
 
@@ -195,3 +196,17 @@ on each other), the owner should try to get people aligned by:
 - If none of the above worked and the PR has been stuck for more than 2 weeks,
   the owner should bring it to the OpenTelemetry Community Demo SIG
   [meeting](README.md#contributing).
+
+## Making a new release
+
+Maintainers can create a new release when desired by following a few steps.
+
+- Create a new Pull Request that updates the `IMAGE_VERSION` environment
+  variable in `.env` to the _new_ version number.
+- [Draft a new
+  release](https://github.com/open-telemetry/opentelemetry-demo/releases/new),
+  creating a new tag in the format `x.x.x` based on main. Automatically generate
+  release notes. Prepend a summary of the major changes to the release notes.
+- Click 'Publish Release'.
+
+[docs]: https://opentelemetry.io/docs/demo/

@@ -1,3 +1,6 @@
+// Copyright The OpenTelemetry Authors
+// SPDX-License-Identifier: Apache-2.0
+
 import type { NextApiHandler } from 'next';
 import CartGateway from '../../gateways/rpc/Cart.gateway';
 import { AddItemRequest, Empty } from '../../protos/demo';

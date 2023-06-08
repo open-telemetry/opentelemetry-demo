@@ -1,3 +1,4 @@
+
 plugins {
     id 'com.google.protobuf' version '0.8.18'
     id 'com.github.sherter.google-java-format' version '0.9'
@@ -106,9 +107,9 @@ googleJavaFormat {
 sourceSets {
     main {
         java {
-            srcDirs 'hipstershop'
-            srcDirs 'build/generated/source/proto/main/java/hipstershop'
-            srcDirs 'build/generated/source/proto/main/grpc/hipstershop'
+            srcDirs 'oteldemo'
+            srcDirs 'build/generated/source/proto/main/java/oteldemo'
+            srcDirs 'build/generated/source/proto/main/grpc/oteldemo'
         }
     }
 }
@@ -125,7 +126,7 @@ task downloadRepos(type: Copy) {
 }
 
 task adService(type: CreateStartScripts) {
-    mainClass.set('hipstershop.AdService')
+    mainClass.set('oteldemo.AdService')
     applicationName = 'AdService'
     outputDir = new File(project.buildDir, 'tmp')
     classpath = startScripts.classpath

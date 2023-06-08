@@ -1,18 +1,8 @@
 #!/usr/bin/python
+# Copyright The OpenTelemetry Authors
+# SPDX-License-Identifier: Apache-2.0
+#!/usr/bin/python
 #
-# Copyright 2018 Google LLC
-#
-# Licensed under the Apache License, Version 2.0 (the "License");
-# you may not use this file except in compliance with the License.
-# You may obtain a copy of the License at
-#
-#      http://www.apache.org/licenses/LICENSE-2.0
-#
-# Unless required by applicable law or agreed to in writing, software
-# distributed under the License is distributed on an "AS IS" BASIS,
-# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-# See the License for the specific language governing permissions and
-# limitations under the License.
 
 # Python
 import os
@@ -22,14 +12,20 @@ from concurrent import futures
 # Pip
 import grpc
 from opentelemetry import trace, metrics
-
+from opentelemetry._logs import set_logger_provider
+from opentelemetry.exporter.otlp.proto.grpc._log_exporter import (
+    OTLPLogExporter,
+)
+from opentelemetry.sdk._logs import LoggerProvider, LoggingHandler
+from opentelemetry.sdk._logs.export import BatchLogRecordProcessor
+from opentelemetry.sdk.resources import Resource
 
 # Local
+import logging
 import demo_pb2
 import demo_pb2_grpc
 from grpc_health.v1 import health_pb2
 from grpc_health.v1 import health_pb2_grpc
-from logger import getJSONLogger
 
 from metrics import (
     init_metrics
@@ -43,7 +39,8 @@ class RecommendationService(demo_pb2_grpc.RecommendationServiceServicer):
         prod_list = get_product_list(request.product_ids)
         span = trace.get_current_span()
         span.set_attribute("app.products_recommended.count", len(prod_list))
-        logger.info(f"[Recv ListRecommendations] product_ids={prod_list}")
+        logger.info(f"Receive ListRecommendations for product ids:{prod_list}")
+
         # build and return response
         response = demo_pb2.ListRecommendationsResponse()
         response.product_ids.extend(prod_list)
@@ -78,7 +75,7 @@ def get_product_list(request_product_ids):
             if random.random() < 0.5 or first_run:
                 first_run = False
                 span.set_attribute("app.cache_hit", False)
-                logger.info("cache miss")
+                logger.info("get_product_list: cache miss")
                 cat_response = product_catalog_stub.ListProducts(demo_pb2.Empty())
                 response_ids = [x.id for x in cat_response.products]
                 cached_ids = cached_ids + response_ids
@@ -86,7 +83,7 @@ def get_product_list(request_product_ids):
                 product_ids = cached_ids
             else:
                 span.set_attribute("app.cache_hit", True)
-                logger.info("cache hit")
+                logger.info("get_product_list: cache hit")
                 product_ids = cached_ids
         else:
             span.set_attribute("app.recommendation.cache_enabled", False)
@@ -110,7 +107,6 @@ def get_product_list(request_product_ids):
 
         return prod_list
 
-
 def must_map_env(key: str):
     value = os.environ.get(key)
     if value is None:
@@ -119,19 +115,35 @@ def must_map_env(key: str):
 
 def check_feature_flag(flag_name: str):
     flag = feature_flag_stub.GetFlag(demo_pb2.GetFlagRequest(name=flag_name)).flag
-    logger.info(flag)
     return flag.enabled
 
 if __name__ == "__main__":
+    service_name = must_map_env('OTEL_SERVICE_NAME')
+
     # Initialize Traces and Metrics
-    tracer = trace.get_tracer_provider().get_tracer("recommendationservice")
-    meter = metrics.get_meter_provider().get_meter("recommendationservice")
+    tracer = trace.get_tracer_provider().get_tracer(service_name)
+    meter = metrics.get_meter_provider().get_meter(service_name)
     rec_svc_metrics = init_metrics(meter)
 
-    port = must_map_env('RECOMMENDATION_SERVICE_PORT')
+    # Initialize Logs
+    logger_provider = LoggerProvider(
+        resource=Resource.create(
+            {
+                'service.name': service_name,
+            }
+        ),
+    )
+    set_logger_provider(logger_provider)
+    log_exporter = OTLPLogExporter(insecure=True)
+    logger_provider.add_log_record_processor(BatchLogRecordProcessor(log_exporter))
+    handler = LoggingHandler(level=logging.NOTSET, logger_provider=logger_provider)
+
+    # Attach OTLP handler to logger
+    logger = logging.getLogger('main')
+    logger.addHandler(handler)
+
     catalog_addr = must_map_env('PRODUCT_CATALOG_SERVICE_ADDR')
     ff_addr = must_map_env('FEATURE_FLAG_GRPC_SERVICE_ADDR')
-
     pc_channel = grpc.insecure_channel(catalog_addr)
     ff_channel = grpc.insecure_channel(ff_addr)
     product_catalog_stub = demo_pb2_grpc.ProductCatalogServiceStub(pc_channel)
@@ -145,11 +157,9 @@ if __name__ == "__main__":
     demo_pb2_grpc.add_RecommendationServiceServicer_to_server(service, server)
     health_pb2_grpc.add_HealthServicer_to_server(service, server)
 
-    # Start logger
-    logger = getJSONLogger('recommendationservice-server')
-    logger.info(f"RecommendationService listening on port: {port}")
-
     # Start server
+    port = must_map_env('RECOMMENDATION_SERVICE_PORT')
     server.add_insecure_port(f'[::]:{port}')
     server.start()
+    logger.info(f'Recommendation service started, listening on port {port}')
     server.wait_for_termination()

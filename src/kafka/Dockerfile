@@ -1,7 +1,11 @@
+# Copyright The OpenTelemetry Authors
+# SPDX-License-Identifier: Apache-2.0
+
+
 FROM confluentinc/cp-kafka:latest-ubi8
 
 USER root
-ARG version=1.21.0
+ARG version=1.23.0
 ADD https://github.com/open-telemetry/opentelemetry-java-instrumentation/releases/download/v$version/opentelemetry-javaagent.jar /tmp/opentelemetry-javaagent.jar
 RUN chmod go+r /tmp/opentelemetry-javaagent.jar
 
@@ -18,7 +22,7 @@ ENV KAFKA_GROUP_INITIAL_REBALANCE_DELAY_MS=0
 ENV KAFKA_PROCESS_ROLES=controller,broker
 ENV KAFKA_NODE_ID=1
 ENV KAFKA_METADATA_LOG_SEGMENT_MS=15000
-ENV KAFKA_METADATA_MAX_RETENTION_MS=1200000
+ENV KAFKA_METADATA_MAX_RETENTION_MS=60000
 ENV KAFKA_METADATA_LOG_MAX_RECORD_BYTES_BETWEEN_SNAPSHOTS=2800
 ENV KAFKA_AUTO_CREATE_TOPICS_ENABLE=true
 ENV KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR=1

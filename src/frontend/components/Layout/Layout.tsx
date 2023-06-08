@@ -1,5 +1,7 @@
+// Copyright The OpenTelemetry Authors
+// SPDX-License-Identifier: Apache-2.0
+
 import Header from '../Header';
-import PlatformFlag from '../PlatformFlag';
 
 interface IProps {
   children: React.ReactNode;
@@ -8,7 +10,6 @@ interface IProps {
 const Layout = ({ children }: IProps) => {
   return (
     <>
-      <PlatformFlag />
       <Header />
       <main>{children}</main>
     </>
