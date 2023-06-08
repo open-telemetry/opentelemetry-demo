@@ -1,11 +1,7 @@
 #!/usr/bin/python
+
 # Copyright The OpenTelemetry Authors
 # SPDX-License-Identifier: Apache-2.0
-#!/usr/bin/python
-#
-
-#!/usr/bin/python
-#
 
 
 import json
@@ -71,7 +67,7 @@ class WebsiteUser(HttpUser):
         params = {
             "productIds": [random.choice(products)],
         }
-        self.client.get("/api/recommendations/", params=params)
+        self.client.get("/api/recommendations", params=params)
 
     @task(3)
     def get_ads(self):

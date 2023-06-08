@@ -1,6 +1,6 @@
+#!/bin/sh
 # Copyright The OpenTelemetry Authors
 # SPDX-License-Identifier: Apache-2.0
-#!/bin/sh
 
 
 # This script is used to generate protobuf files for all services.

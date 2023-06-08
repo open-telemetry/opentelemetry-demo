@@ -7,6 +7,41 @@ release.
 
 ## Unreleased
 
+* Add cartServiceFailure feature flag triggering Cart Service errors
+  ([#824](https://github.com/open-telemetry/opentelemetry-demo/pull/824))
+* [paymentservice] update JS SDKs to 1.12.0/0.38.0
+  ([#853](https://github.com/open-telemetry/opentelemetry-demo/pull/853))
+* [frontend] update JS SDKs to 1.12.0/0.38.0
+  ([#853](https://github.com/open-telemetry/opentelemetry-demo/pull/853))
+* [chore] use `otel-demo` namespace for generated kubernetes manifests
+  ([#848](https://github.com/open-telemetry/opentelemetry-demo/pull/848))
+* [collector] update collector version to 0.76.1 and remove connectors feature gate.
+  ([#857](https://github.com/open-telemetry/opentelemetry-demo/pull/857))
+* [shippingservice] update rust version and dependencies
+  ([#865](https://github.com/open-telemetry/opentelemetry-demo/pull/865))
+* [load generator] Bump loagen dependencies
+  ([#869](https://github.com/open-telemetry/opentelemetry-demo/pull/869))
+* [grafana] fix demo dashboard to be compatible with spanmetrics connector
+  ([#874](https://github.com/open-telemetry/opentelemetry-demo/pull/874))
+* [quoteservice] enabling batch span processor metrics
+  ([#878](https://github.com/open-telemetry/opentelemetry-demo/pull/878))
+* [kafka] remove KRaft mode support workarounds
+  ([#880](https://github.com/open-telemetry/opentelemetry-demo/pull/880))
+* [currencyservice] Fix OTel C++ build and update OTel version to 1.9.0
+  ([#886](https://github.com/open-telemetry/opentelemetry-demo/pull/886))
+* [featureflagservice] Upgrade opentelemetry_ecto to 1.1.1
+  ([#899](https://github.com/open-telemetry/opentelemetry-demo/pull/899))
+* [currencyservice] Fix OTLP export to use default env vars
+  ([#904](https://github.com/open-telemetry/opentelemetry-demo/pull/904))
+* [featureflagservice] Bump OTP version to 26.0
+  ([#903](https://github.com/open-telemetry/opentelemetry-demo/pull/903))
+* Regenerate kubernetes manifest and add auto-generate comment
+  ([#909](https://github.com/open-telemetry/opentelemetry-demo/pull/909))
+* [loadgenerator] fix redirect on recommendations load
+  ([#913](https://github.com/open-telemetry/opentelemetry-demo/pull/913))
+* [loadgenerator] run load through frontend proxy (Envoy)
+  ([#914](https://github.com/open-telemetry/opentelemetry-demo/pull/914))
+
 ## 1.4.0
 
 * [cart] use 60m TTL for cart entries in redis
