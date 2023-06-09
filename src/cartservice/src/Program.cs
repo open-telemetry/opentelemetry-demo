@@ -37,8 +37,6 @@ builder.Services.AddSingleton<FeatureFlagHelper>();
 
 Action<ResourceBuilder> appResourceBuilder =
     resource => resource
-        .AddTelemetrySdk()
-        .AddEnvironmentVariableDetector()
         .AddDetector(new ContainerResourceDetector());
 
 builder.Services.AddOpenTelemetry()
