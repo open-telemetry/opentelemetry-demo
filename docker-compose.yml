@@ -488,6 +488,11 @@ services:
       dockerfile: ./src/shippingservice/Dockerfile
       cache_from:
         - ${IMAGE_NAME}:${IMAGE_VERSION}-shippingservice
+      args:
+        - BUILDPLATFORM=linux/amd64
+        - TARGETPLATFORM=linux/amd64
+        - TARGETARCH=amd64
+        - GRPC_HEALTH_PROBE_VERSION=v0.4.19
     deploy:
       resources:
         limits:
