@@ -17,11 +17,13 @@ declare global {
       NEXT_PUBLIC_PLATFORM?: string;
       NEXT_PUBLIC_OTEL_SERVICE_NAME?: string;
       NEXT_PUBLIC_OTEL_EXPORTER_OTLP_TRACES_ENDPOINT?: string;
+      INSTANA_EUM_URL?: string;
+      INSTANA_EUM_KEY?: string;
     };
   }
 }
 
-if (typeof window !== 'undefined') {
+if (typeof window !== 'undefined' && (window.ENV.INSTANA_EUM_KEY === '' || window.ENV.INSTANA_EUM_URL === '')) {
   const collector = getCookie('otelCollectorUrl')?.toString() || '';
   FrontendTracer(collector);
 }
