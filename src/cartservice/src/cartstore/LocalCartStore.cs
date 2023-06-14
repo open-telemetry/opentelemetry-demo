@@ -11,8 +11,8 @@ namespace cartservice.cartstore;
 internal class LocalCartStore : ICartStore
 {
     // Maps between user and their cart
-    private ConcurrentDictionary<string, Oteldemo.Cart> userCartItems = new();
-    private readonly Oteldemo.Cart emptyCart = new();
+    private readonly ConcurrentDictionary<string, Oteldemo.Cart> _userCartItems = new();
+    private readonly Oteldemo.Cart _emptyCart = new();
 
     public Task InitializeAsync()
     {
@@ -29,7 +29,7 @@ internal class LocalCartStore : ICartStore
             UserId = userId,
             Items = { new Oteldemo.CartItem { ProductId = productId, Quantity = quantity } }
         };
-        userCartItems.AddOrUpdate(userId, newCart,
+        _userCartItems.AddOrUpdate(userId, newCart,
             (k, exVal) =>
             {
                 // If the item exists, we update its quantity
@@ -55,7 +55,7 @@ internal class LocalCartStore : ICartStore
         eventTags.Add("userId", userId);
         Activity.Current?.AddEvent(new ActivityEvent("EmptyCartAsync called.", default, eventTags));
 
-        userCartItems[userId] = new Oteldemo.Cart();
+        _userCartItems[userId] = new Oteldemo.Cart();
         return Task.CompletedTask;
     }
 
@@ -63,10 +63,10 @@ internal class LocalCartStore : ICartStore
     {
         Console.WriteLine($"GetCartAsync called with userId={userId}");
         Oteldemo.Cart cart = null;
-        if (!userCartItems.TryGetValue(userId, out cart))
+        if (!_userCartItems.TryGetValue(userId, out cart))
         {
             Console.WriteLine($"No carts for user {userId}");
-            return Task.FromResult(emptyCart);
+            return Task.FromResult(_emptyCart);
         }
 
         return Task.FromResult(cart);

@@ -11,38 +11,38 @@ namespace cartservice.cartstore;
 
 public class RedisCartStore : ICartStore
 {
-    private const string CART_FIELD_NAME = "cart";
-    private const int REDIS_RETRY_NUM = 30;
+    private const string CartFieldName = "cart";
+    private const int RedisRetryNumber = 30;
 
-    private volatile ConnectionMultiplexer redis;
-    private volatile bool isRedisConnectionOpened = false;
+    private volatile ConnectionMultiplexer _redis;
+    private volatile bool _isRedisConnectionOpened = false;
 
-    private readonly object locker = new();
-    private readonly byte[] emptyCartBytes;
-    private readonly string connectionString;
+    private readonly object _locker = new();
+    private readonly byte[] _emptyCartBytes;
+    private readonly string _connectionString;
 
-    private readonly ConfigurationOptions redisConnectionOptions;
+    private readonly ConfigurationOptions _redisConnectionOptions;
 
     public RedisCartStore(string redisAddress)
     {
         // Serialize empty cart into byte array.
         var cart = new Oteldemo.Cart();
-        emptyCartBytes = cart.ToByteArray();
-        connectionString = $"{redisAddress},ssl=false,allowAdmin=true,abortConnect=false";
+        _emptyCartBytes = cart.ToByteArray();
+        _connectionString = $"{redisAddress},ssl=false,allowAdmin=true,abortConnect=false";
 
-        redisConnectionOptions = ConfigurationOptions.Parse(connectionString);
+        _redisConnectionOptions = ConfigurationOptions.Parse(_connectionString);
 
         // Try to reconnect multiple times if the first retry fails.
-        redisConnectionOptions.ConnectRetry = REDIS_RETRY_NUM;
-        redisConnectionOptions.ReconnectRetryPolicy = new ExponentialRetry(1000);
+        _redisConnectionOptions.ConnectRetry = RedisRetryNumber;
+        _redisConnectionOptions.ReconnectRetryPolicy = new ExponentialRetry(1000);
 
-        redisConnectionOptions.KeepAlive = 180;
+        _redisConnectionOptions.KeepAlive = 180;
     }
 
     public ConnectionMultiplexer GetConnection()
     {
         EnsureRedisConnected();
-        return redis;
+        return _redis;
     }
 
     public Task InitializeAsync()
@@ -53,23 +53,23 @@ public class RedisCartStore : ICartStore
 
     private void EnsureRedisConnected()
     {
-        if (isRedisConnectionOpened)
+        if (_isRedisConnectionOpened)
         {
             return;
         }
 
         // Connection is closed or failed - open a new one but only at the first thread
-        lock (locker)
+        lock (_locker)
         {
-            if (isRedisConnectionOpened)
+            if (_isRedisConnectionOpened)
             {
                 return;
             }
 
-            Console.WriteLine("Connecting to Redis: " + connectionString);
-            redis = ConnectionMultiplexer.Connect(redisConnectionOptions);
+            Console.WriteLine("Connecting to Redis: " + _connectionString);
+            _redis = ConnectionMultiplexer.Connect(_redisConnectionOptions);
 
-            if (redis == null || !redis.IsConnected)
+            if (_redis == null || !_redis.IsConnected)
             {
                 Console.WriteLine("Wasn't able to connect to redis");
 
@@ -78,26 +78,26 @@ public class RedisCartStore : ICartStore
             }
 
             Console.WriteLine("Successfully connected to Redis");
-            var cache = redis.GetDatabase();
+            var cache = _redis.GetDatabase();
 
             Console.WriteLine("Performing small test");
             cache.StringSet("cart", "OK" );
             object res = cache.StringGet("cart");
             Console.WriteLine($"Small test result: {res}");
 
-            redis.InternalError += (o, e) => { Console.WriteLine(e.Exception); };
-            redis.ConnectionRestored += (o, e) =>
+            _redis.InternalError += (o, e) => { Console.WriteLine(e.Exception); };
+            _redis.ConnectionRestored += (o, e) =>
             {
-                isRedisConnectionOpened = true;
+                _isRedisConnectionOpened = true;
                 Console.WriteLine("Connection to redis was restored successfully.");
             };
-            redis.ConnectionFailed += (o, e) =>
+            _redis.ConnectionFailed += (o, e) =>
             {
                 Console.WriteLine("Connection failed. Disposing the object");
-                isRedisConnectionOpened = false;
+                _isRedisConnectionOpened = false;
             };
 
-            isRedisConnectionOpened = true;
+            _isRedisConnectionOpened = true;
         }
     }
 
@@ -109,10 +109,10 @@ public class RedisCartStore : ICartStore
         {
             EnsureRedisConnected();
 
-            var db = redis.GetDatabase();
+            var db = _redis.GetDatabase();
 
             // Access the cart from the cache
-            var value = await db.HashGetAsync(userId, CART_FIELD_NAME);
+            var value = await db.HashGetAsync(userId, CartFieldName);
 
             Oteldemo.Cart cart;
             if (value.IsNull)
@@ -135,7 +135,7 @@ public class RedisCartStore : ICartStore
                 }
             }
 
-            await db.HashSetAsync(userId, new[]{ new HashEntry(CART_FIELD_NAME, cart.ToByteArray()) });
+            await db.HashSetAsync(userId, new[]{ new HashEntry(CartFieldName, cart.ToByteArray()) });
             await db.KeyExpireAsync(userId, TimeSpan.FromMinutes(60));
         }
         catch (Exception ex)
@@ -151,10 +151,10 @@ public class RedisCartStore : ICartStore
         try
         {
             EnsureRedisConnected();
-            var db = redis.GetDatabase();
+            var db = _redis.GetDatabase();
 
             // Update the cache with empty cart for given user
-            await db.HashSetAsync(userId, new[] { new HashEntry(CART_FIELD_NAME, emptyCartBytes) });
+            await db.HashSetAsync(userId, new[] { new HashEntry(CartFieldName, _emptyCartBytes) });
             await db.KeyExpireAsync(userId, TimeSpan.FromMinutes(60));
         }
         catch (Exception ex)
@@ -171,10 +171,10 @@ public class RedisCartStore : ICartStore
         {
             EnsureRedisConnected();
 
-            var db = redis.GetDatabase();
+            var db = _redis.GetDatabase();
 
             // Access the cart from the cache
-            var value = await db.HashGetAsync(userId, CART_FIELD_NAME);
+            var value = await db.HashGetAsync(userId, CartFieldName);
 
             if (!value.IsNull)
             {
@@ -194,7 +194,7 @@ public class RedisCartStore : ICartStore
     {
         try
         {
-            var cache = redis.GetDatabase();
+            var cache = _redis.GetDatabase();
             var res = cache.Ping();
             return res != TimeSpan.Zero;
         }
