@@ -15,7 +15,7 @@ public class RedisCartStore : ICartStore
     private const int RedisRetryNumber = 30;
 
     private volatile ConnectionMultiplexer _redis;
-    private volatile bool _isRedisConnectionOpened = false;
+    private volatile bool _isRedisConnectionOpened;
 
     private readonly object _locker = new();
     private readonly byte[] _emptyCartBytes;
