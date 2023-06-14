@@ -18,13 +18,12 @@ using OpenTelemetry.Trace;
 
 var builder = WebApplication.CreateBuilder(args);
 string redisAddress = builder.Configuration["REDIS_ADDR"];
-RedisCartStore cartStore = null;
 if (string.IsNullOrEmpty(redisAddress))
 {
     Console.WriteLine("REDIS_ADDR environment variable is required.");
     Environment.Exit(1);
 }
-cartStore = new RedisCartStore(redisAddress);
+var cartStore = new RedisCartStore(redisAddress);
 
 // Initialize the redis store
 await cartStore.InitializeAsync();
