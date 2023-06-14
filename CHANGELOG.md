@@ -41,6 +41,8 @@ release.
   ([#913](https://github.com/open-telemetry/opentelemetry-demo/pull/913))
 * [loadgenerator] run load through frontend proxy (Envoy)
   ([#914](https://github.com/open-telemetry/opentelemetry-demo/pull/914))
+* [cartservice] update .NET package to 1.5.0 release
+  ([#935](https://github.com/open-telemetry/opentelemetry-demo/pull/935))
 
 ## 1.4.0
 
