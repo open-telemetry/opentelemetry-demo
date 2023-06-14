@@ -30,7 +30,7 @@ internal class LocalCartStore : ICartStore
             Items = { new Oteldemo.CartItem { ProductId = productId, Quantity = quantity } }
         };
         _userCartItems.AddOrUpdate(userId, newCart,
-            (k, exVal) =>
+            (_, exVal) =>
             {
                 // If the item exists, we update its quantity
                 var existingItem = exVal.Items.SingleOrDefault(item => item.ProductId == productId);

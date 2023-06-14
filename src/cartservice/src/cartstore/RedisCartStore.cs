@@ -85,13 +85,13 @@ public class RedisCartStore : ICartStore
             object res = cache.StringGet("cart");
             Console.WriteLine($"Small test result: {res}");
 
-            _redis.InternalError += (o, e) => { Console.WriteLine(e.Exception); };
-            _redis.ConnectionRestored += (o, e) =>
+            _redis.InternalError += (_, e) => { Console.WriteLine(e.Exception); };
+            _redis.ConnectionRestored += (_, _) =>
             {
                 _isRedisConnectionOpened = true;
                 Console.WriteLine("Connection to redis was restored successfully.");
             };
-            _redis.ConnectionFailed += (o, e) =>
+            _redis.ConnectionFailed += (_, _) =>
             {
                 Console.WriteLine("Connection failed. Disposing the object");
                 _isRedisConnectionOpened = false;
