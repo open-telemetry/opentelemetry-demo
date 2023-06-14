@@ -62,8 +62,7 @@ internal class LocalCartStore : ICartStore
     public Task<Oteldemo.Cart> GetCartAsync(string userId)
     {
         Console.WriteLine($"GetCartAsync called with userId={userId}");
-        Oteldemo.Cart cart = null;
-        if (!_userCartItems.TryGetValue(userId, out cart))
+        if (!_userCartItems.TryGetValue(userId, out var cart))
         {
             Console.WriteLine($"No carts for user {userId}");
             return Task.FromResult(_emptyCart);
