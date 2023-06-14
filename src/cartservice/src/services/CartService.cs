@@ -12,7 +12,7 @@ namespace cartservice.services;
 
 public class CartService : Oteldemo.CartService.CartServiceBase
 {
-    private static readonly Empty Empty = new Empty();
+    private static readonly Empty Empty = new();
     private static readonly ICartStore BadCartStore = new RedisCartStore("badhost:1234");
     private readonly ICartStore _cartStore;
     private readonly FeatureFlagHelper _featureFlagHelper;

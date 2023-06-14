@@ -17,7 +17,7 @@ public class RedisCartStore : ICartStore
     private volatile ConnectionMultiplexer redis;
     private volatile bool isRedisConnectionOpened = false;
 
-    private readonly object locker = new object();
+    private readonly object locker = new();
     private readonly byte[] emptyCartBytes;
     private readonly string connectionString;
 

@@ -11,8 +11,8 @@ namespace cartservice.cartstore;
 internal class LocalCartStore : ICartStore
 {
     // Maps between user and their cart
-    private ConcurrentDictionary<string, Oteldemo.Cart> userCartItems = new ConcurrentDictionary<string, Oteldemo.Cart>();
-    private readonly Oteldemo.Cart emptyCart = new Oteldemo.Cart();
+    private ConcurrentDictionary<string, Oteldemo.Cart> userCartItems = new();
+    private readonly Oteldemo.Cart emptyCart = new();
 
     public Task InitializeAsync()
     {
