@@ -117,8 +117,10 @@ public class RedisCartStore : ICartStore
             Oteldemo.Cart cart;
             if (value.IsNull)
             {
-                cart = new Oteldemo.Cart();
-                cart.UserId = userId;
+                cart = new Oteldemo.Cart
+                {
+                    UserId = userId
+                };
                 cart.Items.Add(new Oteldemo.CartItem { ProductId = productId, Quantity = quantity });
             }
             else
