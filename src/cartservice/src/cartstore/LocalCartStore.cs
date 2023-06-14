@@ -51,8 +51,7 @@ internal class LocalCartStore : ICartStore
 
     public Task EmptyCartAsync(string userId)
     {
-        var eventTags = new ActivityTagsCollection();
-        eventTags.Add("userId", userId);
+        var eventTags = new ActivityTagsCollection {{"userId", userId}};
         Activity.Current?.AddEvent(new ActivityEvent("EmptyCartAsync called.", default, eventTags));
 
         _userCartItems[userId] = new Oteldemo.Cart();
