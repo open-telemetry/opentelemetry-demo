@@ -12,8 +12,8 @@ namespace cartservice.services;
 
 public class CartService : Oteldemo.CartService.CartServiceBase
 {
-    private readonly static Empty Empty = new Empty();
-    private readonly static ICartStore BadCartStore = new RedisCartStore("badhost:1234");
+    private static readonly Empty Empty = new Empty();
+    private static readonly ICartStore BadCartStore = new RedisCartStore("badhost:1234");
     private readonly ICartStore _cartStore;
     private readonly FeatureFlagHelper _featureFlagHelper;
 
@@ -23,7 +23,7 @@ public class CartService : Oteldemo.CartService.CartServiceBase
         _featureFlagHelper = featureFlagService;
     }
 
-    public async override Task<Empty> AddItem(AddItemRequest request, ServerCallContext context)
+    public override async Task<Empty> AddItem(AddItemRequest request, ServerCallContext context)
     {
         var activity = Activity.Current;
         activity?.SetTag("app.user.id", request.UserId);
@@ -34,7 +34,7 @@ public class CartService : Oteldemo.CartService.CartServiceBase
         return Empty;
     }
 
-    public async override Task<Cart> GetCart(GetCartRequest request, ServerCallContext context)
+    public override async Task<Cart> GetCart(GetCartRequest request, ServerCallContext context)
     {
         var activity = Activity.Current;
         activity?.SetTag("app.user.id", request.UserId);
@@ -51,7 +51,7 @@ public class CartService : Oteldemo.CartService.CartServiceBase
         return cart;
     }
 
-    public async override Task<Empty> EmptyCart(EmptyCartRequest request, ServerCallContext context)
+    public override async Task<Empty> EmptyCart(EmptyCartRequest request, ServerCallContext context)
     {
         var activity = Activity.Current;
         activity?.SetTag("app.user.id", request.UserId);
