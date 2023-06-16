@@ -16,7 +16,8 @@
     <PackageReference Include="OpenTelemetry.Instrumentation.StackExchangeRedis" Version="1.0.0-rc9.8" />
     <PackageReference Include="OpenTelemetry.Instrumentation.Runtime" Version="1.1.0-rc.2" />
     <PackageReference Include="OpenTelemetry.ResourceDetectors.Container" Version="1.0.0-beta.3" />
-    <PackageReference Include="Instana.Tracing.Core.Rewriter.Alpine" Version="1.232.3" />
+    <PackageReference Include="Instana.Tracing.Core" Version="1.251.1" />
+    <PackageReference Include="Instana.Tracing.Core.Rewriter.Alpine" Version="1.251.1" />
   </ItemGroup>
 
   <ItemGroup>
