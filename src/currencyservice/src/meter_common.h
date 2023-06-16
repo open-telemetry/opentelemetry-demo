@@ -26,7 +26,6 @@ namespace
     otlp_exporter::OtlpGrpcMetricExporterOptions otlpOptions;
 
     // Configuration via environment variable not supported yet
-    otlpOptions.endpoint = "otelcol:4317";
     otlpOptions.aggregation_temporality = metric_sdk::AggregationTemporality::kDelta;
     auto exporter = otlp_exporter::OtlpGrpcMetricExporterFactory::Create(otlpOptions);
 
