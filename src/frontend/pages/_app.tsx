@@ -23,7 +23,10 @@ declare global {
   }
 }
 
-if (typeof window !== 'undefined' && (window.ENV.INSTANA_EUM_KEY === '' || window.ENV.INSTANA_EUM_URL === '')) {
+if (typeof window !== 'undefined' && (window.ENV.INSTANA_EUM_KEY === '' || 
+  window.ENV.INSTANA_EUM_KEY === 'undefined' ||
+  window.ENV.INSTANA_EUM_URL === '' || 
+  window.ENV.INSTANA_EUM_URL === 'undefined')) {
   const collector = getCookie('otelCollectorUrl')?.toString() || '';
   FrontendTracer(collector);
 }
