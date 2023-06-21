@@ -40,7 +40,6 @@ src/frontend/cypress/screenshots
 src/shippingservice/target/
 
 # Ignore copied/generated protobuf files
-/src/accountingservice/genproto/
 /src/cartservice/src/protos/
 /src/checkoutservice/genproto/
 /src/featureflagservice/proto/
