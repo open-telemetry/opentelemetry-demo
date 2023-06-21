@@ -34,9 +34,10 @@
     ],
     "ignore": [
         "node_modules/",
-        "src/accountingservice/genproto",
+        "src/accountingservice/genproto/",
         "src/cartservice/src/obj/",
         "src/cartservice/tests/obj/",
+        "src/checkoutservice/genproto/",
         "src/featureflagservice/assets/vendor/",
         "src/featureflagservice/priv/",
         "internal/tools/"
