@@ -4,7 +4,7 @@ This service consumes new orders from a Kafka topic.
 
 ## Local Build
 
-To build the protos and the service binary, run:
+To build the service binary, run:
 
 ```sh
 go build -o /go/bin/accountingservice/
