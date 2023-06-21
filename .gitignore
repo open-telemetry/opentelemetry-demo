@@ -48,6 +48,5 @@ src/shippingservice/target/
 /src/frontend/pb/
 /src/frontend/protos/
 /src/paymentservice/demo.proto
-/src/productcatalogservice/genproto/
 /src/recommendationservice/demo_pb2*.py
 /src/shippingservice/proto/

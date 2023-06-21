@@ -6,7 +6,7 @@ FROM golang:1.19.2-alpine AS builder
 WORKDIR /usr/src/app/
 
 COPY ./src/checkoutservice/ ./
-RUN go build -o /go/bin/checkoutservice/ ./
+RUN go build -o /go/bin/checkoutservice/
 
 # -----------------------------------------------------------------------------
 
