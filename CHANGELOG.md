@@ -43,9 +43,12 @@ release.
   ([#914](https://github.com/open-telemetry/opentelemetry-demo/pull/914))
 * [cartservice] update .NET package to 1.5.0 release
   ([#935](https://github.com/open-telemetry/opentelemetry-demo/pull/935))
+* [cartservice] update service to .NET 7
+  ([#942](https://github.com/open-telemetry/opentelemetry-demo/pull/942))
 * [accountingservice] Update Golang SDKs and APIs to v1.16.0/v0.39.0 ([#940](https://github.com/open-telemetry/opentelemetry-demo/pull/940))
 * [checkoutservice] Update Golang SDKs and APIs to v1.16.0/v0.39.0 ([#940](https://github.com/open-telemetry/opentelemetry-demo/pull/940))
 * [productcatalogservice] Update Golang SDKs and APIs to v1.16.0/v0.39.0 ([#940](https://github.com/open-telemetry/opentelemetry-demo/pull/940))
+
 
 ## 1.4.0
 
