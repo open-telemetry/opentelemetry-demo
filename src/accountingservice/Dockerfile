@@ -2,7 +2,7 @@
 # SPDX-License-Identifier: Apache-2.0
 
 
-FROM golang:1.19.2-alpine AS builder
+FROM registry.ddbuild.io/images/mirror/golang:1.19-alpine AS builder
 WORKDIR /usr/src/app/
 
 COPY ./src/accountingservice/ ./

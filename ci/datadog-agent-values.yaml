@@ -1,0 +1,8 @@
+datadog:
+  otlp:
+    receiver:
+      protocols:
+        grpc:
+          enabled: true
+        http:
+          enabled: true

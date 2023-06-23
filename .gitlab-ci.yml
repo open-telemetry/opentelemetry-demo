@@ -1,133 +1,174 @@
 variables:
-  CI_IMAGE: registry.ddbuild.io/images/docker:20.10.13
+  CI_PROJECT_NAME: "opentelemetry-demo"
+  BUILD_STABLE_REGISTRY: "486234852809.dkr.ecr.us-east-1.amazonaws.com"
+  CI_IMAGE: registry.ddbuild.io/ci/opentelemetry-collector-contrib:ci-image-2
   RESTORE_CACHE_ATTEMPTS: 2
-  BUILD_STABLE_REGISTRY: '486234852809.dkr.ecr.us-east-1.amazonaws.com'
-
+  BUILD_DD_REGISTRY: registry.ddbuild.io/ci/opentelemetry-demo
+  BUILD_DEMO_REGISTRY: 172597598159.dkr.ecr.us-east-1.amazonaws.com/otel-demo
 stages:
   - build
-
+  - prod-deploy
 # =======================================================================
 # Build and deploy the images used for CI
 # =======================================================================
-
 .build-ci-image: &build-ci-image
   stage: build
   tags: ["runner:docker"]
   image: $CI_IMAGE
   script:
     - TAG="v$CI_COMMIT_SHORT_SHA-$IMAGE_TAG_SUFFIX"
-    - docker build --file $DOCKERFILE --tag registry.ddbuild.io/ci/opentelemetry-demo:$TAG --label target=staging $CONTEXT
-    - docker push registry.ddbuild.io/ci/opentelemetry-demo:$TAG
-
+    - docker build --file $DOCKERFILE --tag $BUILD_DD_REGISTRY:$TAG --tag $BUILD_DEMO_REGISTRY:$TAG --label target=staging $CONTEXT
+    - docker push $BUILD_DD_REGISTRY:$TAG
+    - docker push $BUILD_DEMO_REGISTRY:$TAG
 build-ci-image-accountingservice:
-  <<: *build-ci-image
+  !!merge <<: *build-ci-image
   variables:
     DOCKERFILE: src/accountingservice/Dockerfile
     IMAGE_TAG_SUFFIX: accountingservice
     CONTEXT: .
-
 build-ci-image-adservice:
-  <<: *build-ci-image
+  !!merge <<: *build-ci-image
   variables:
     DOCKERFILE: src/adservice/Dockerfile
     IMAGE_TAG_SUFFIX: adservice
     CONTEXT: .
-
 build-ci-image-cartservice:
-  <<: *build-ci-image
+  !!merge <<: *build-ci-image
   variables:
     DOCKERFILE: src/cartservice/src/Dockerfile
     IMAGE_TAG_SUFFIX: cartservice
     CONTEXT: .
-
 build-ci-image-checkoutservice:
-  <<: *build-ci-image
+  !!merge <<: *build-ci-image
   variables:
     DOCKERFILE: src/checkoutservice/Dockerfile
     IMAGE_TAG_SUFFIX: checkoutservice
     CONTEXT: .
-
 build-ci-image-currencyservice:
-  <<: *build-ci-image
+  !!merge <<: *build-ci-image
   variables:
     DOCKERFILE: src/currencyservice/Dockerfile
     IMAGE_TAG_SUFFIX: currencyservice
     CONTEXT: src/currencyservice
-
-
 build-ci-image-emailservice:
-  <<: *build-ci-image
+  !!merge <<: *build-ci-image
   variables:
     DOCKERFILE: src/emailservice/Dockerfile
     IMAGE_TAG_SUFFIX: emailservice
     CONTEXT: src/emailservice
-
 build-ci-image-featureflagservice:
-  <<: *build-ci-image
+  !!merge <<: *build-ci-image
   variables:
     DOCKERFILE: src/featureflagservice/Dockerfile
     IMAGE_TAG_SUFFIX: featureflagservice
     CONTEXT: .
-
 build-ci-image-frauddetectionservice:
-  <<: *build-ci-image
+  !!merge <<: *build-ci-image
   variables:
     DOCKERFILE: src/frauddetectionservice/Dockerfile
     IMAGE_TAG_SUFFIX: frauddetectionservice
     CONTEXT: .
-
 build-ci-image-frontend:
-  <<: *build-ci-image
+  !!merge <<: *build-ci-image
   variables:
     DOCKERFILE: src/frontend/Dockerfile
     IMAGE_TAG_SUFFIX: frontend
     CONTEXT: .
-
 build-ci-image-frontendproxy:
-  <<: *build-ci-image
+  !!merge <<: *build-ci-image
   variables:
     DOCKERFILE: src/frontendproxy/Dockerfile
     IMAGE_TAG_SUFFIX: frontendproxy
     CONTEXT: .
-
 build-ci-image-loadgenerator:
-  <<: *build-ci-image
+  !!merge <<: *build-ci-image
   variables:
     DOCKERFILE: src/loadgenerator/Dockerfile
     IMAGE_TAG_SUFFIX: loadgenerator
     CONTEXT: .
-
 build-ci-image-paymentservice:
-  <<: *build-ci-image
+  !!merge <<: *build-ci-image
   variables:
     DOCKERFILE: src/paymentservice/Dockerfile
     IMAGE_TAG_SUFFIX: paymentservice
     CONTEXT: .
-
 build-ci-image-productcatalogservice:
-  <<: *build-ci-image
+  !!merge <<: *build-ci-image
   variables:
     DOCKERFILE: src/productcatalogservice/Dockerfile
     IMAGE_TAG_SUFFIX: productcatalogservice
     CONTEXT: .
-
 build-ci-image-quoteservice:
-  <<: *build-ci-image
+  !!merge <<: *build-ci-image
   variables:
     DOCKERFILE: src/quoteservice/Dockerfile
     IMAGE_TAG_SUFFIX: quoteservice
     CONTEXT: .
-
 build-ci-image-recommendationservice:
-  <<: *build-ci-image
+  !!merge <<: *build-ci-image
   variables:
     DOCKERFILE: src/recommendationservice/Dockerfile
     IMAGE_TAG_SUFFIX: recommendationservice
     CONTEXT: .
-
 build-ci-image-shippingservice:
-  <<: *build-ci-image
+  stage: build
+  tags: ["runner:docker"]
+  image: $CI_IMAGE
+  script:
+    - TAG="v$CI_COMMIT_SHORT_SHA-$IMAGE_TAG_SUFFIX"
+    - docker buildx build --file $DOCKERFILE --tag $BUILD_DD_REGISTRY:$TAG --tag $BUILD_DEMO_REGISTRY:$TAG --label target=staging $CONTEXT
+    - docker push $BUILD_DD_REGISTRY:$TAG
+    - docker push $BUILD_DEMO_REGISTRY:$TAG
   variables:
     DOCKERFILE: src/shippingservice/Dockerfile
     IMAGE_TAG_SUFFIX: shippingservice
     CONTEXT: .
+build-ci-image-kafka:
+  !!merge <<: *build-ci-image
+  variables:
+    DOCKERFILE: src/kafka/Dockerfile
+    IMAGE_TAG_SUFFIX: kafka
+    CONTEXT: .
+.prod-deploy: &prod-deploy
+  stage: prod-deploy
+  tags: ["runner:docker", "size:large"]
+  image: $CI_IMAGE
+  script:
+    # # For debugging
+    #- aws sts get-caller-identity
+    - >-
+      TEMP_AWS_ACCESS_KEY_ID=$(aws ssm get-parameter --region us-east-1 --name ci.opentelemetry-demo.eks_access_key --with-decryption --query Parameter.Value --out text)
+    - >-
+      TEMP_AWS_SECRET_ACCESS_KEY=$(aws ssm get-parameter --region us-east-1 --name ci.opentelemetry-demo.eks_secret_access_key --with-decryption --query Parameter.Value --out text)
+    - >-
+      TEMP_DD_API_KEY=$(aws ssm get-parameter --region us-east-1 --name ci.opentelemetry-demo.dd-demo-api --with-decryption --query Parameter.Value --out text)
+    - export AWS_ACCESS_KEY_ID=$TEMP_AWS_ACCESS_KEY_ID
+    - export AWS_SECRET_ACCESS_KEY=$TEMP_AWS_SECRET_ACCESS_KEY
+    - export DD_API_KEY=$TEMP_DD_API_KEY
+    # # For debugging
+    # - aws sts get-caller-identity
+    - bash $SCRIPT $CLUSTER_NAME $CLUSTER_ARN $REGION $NAMESPACE
+prod-deploy-otel-demo-eks:
+  !!merge <<: *prod-deploy
+  variables:
+    SCRIPT: ./ci/scripts/ci-deploy-demo.sh
+    CLUSTER_NAME: otel-demo
+    CLUSTER_ARN: arn:aws:eks:us-east-1:172597598159:cluster/otel-demo
+    REGION: us-east-1
+    NAMESPACE: otel
+prod-deploy-otel-ingest-demo-eks:
+  !!merge <<: *prod-deploy
+  variables:
+    SCRIPT: ./ci/scripts/ci-deploy-demo.sh
+    CLUSTER_NAME: otel-ingest-demo
+    CLUSTER_ARN: arn:aws:eks:us-east-2:172597598159:cluster/otel-ingest-demo
+    REGION: us-east-2
+    NAMESPACE: otel-ingest
+prod-deploy-otel-ingest-agent-eks:
+  !!merge <<: *prod-deploy
+  variables:
+    SCRIPT: ./ci/scripts/ci-deploy-agent.sh
+    CLUSTER_NAME: otel-ingest-demo
+    CLUSTER_ARN: arn:aws:eks:us-east-2:172597598159:cluster/otel-ingest-demo
+    REGION: us-east-2
+    NAMESPACE: otel-ingest

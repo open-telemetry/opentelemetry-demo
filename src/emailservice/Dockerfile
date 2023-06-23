@@ -2,13 +2,13 @@
 # SPDX-License-Identifier: Apache-2.0
 
 
-FROM registry.ddbuild.io/images/mirror/ruby:3.1.2-slim as base
+FROM registry.ddbuild.io/images/mirror/ruby:3.1.2-alpine as base
 
 FROM base as builder
 
 WORKDIR /tmp
 
-COPY Gemfile Gemfile.lock .
+COPY Gemfile Gemfile.lock ./
 
 RUN apk update && apk add make gcc musl-dev && bundle install
 

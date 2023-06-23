@@ -2,7 +2,7 @@
 # SPDX-License-Identifier: Apache-2.0
 
 
-FROM confluentinc/cp-kafka:latest-ubi8
+FROM registry.ddbuild.io/images/mirror/confluentinc/cp-kafka:7.4.0
 
 USER root
 ARG version=1.23.0

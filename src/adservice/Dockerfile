@@ -6,7 +6,7 @@ FROM registry.ddbuild.io/images/java:corretto-17 AS builder
 
 WORKDIR /usr/src/app/
 
-COPY ./src/adservice/gradlew* ./src/adservice/settings.gradle* ./src/adservice/build.gradle .
+COPY ./src/adservice/gradlew* ./src/adservice/settings.gradle* ./src/adservice/build.gradle ./
 COPY ./src/adservice/gradle ./gradle
 
 RUN ./gradlew
@@ -18,7 +18,7 @@ RUN ./gradlew installDist -PprotoSourceDir=./proto
 
 # -----------------------------------------------------------------------------
 
-FROM eclipse-temurin:17-jre
+FROM registry.ddbuild.io/images/java:corretto-17
 
 ARG version=1.24.0
 WORKDIR /usr/src/app/

@@ -2,10 +2,8 @@
 # SPDX-License-Identifier: Apache-2.0
 
 
-FROM --platform={BUILDPLATFORM} registry.ddbuild.io/images/mirror/rust:1.61-alpine as builder
+FROM --platform=${BUILDPLATFORM} registry.ddbuild.io/images/mirror/rust:1.69.0-bullseye as builder
 
-RUN apk update
-RUN apk add --no-cache ca-certificates git protobuf-dev protoc cmake clang clang-dev make gcc g++ libc-dev linux-headers
 ARG TARGETARCH TARGETPLATFORM BUILDPLATFORM
 
 RUN echo Building on ${BUILDPLATFORM} for ${TARGETPLATFORM}
@@ -46,7 +44,7 @@ ENV GRPC_HEALTH_PROBE_VERSION=v0.4.18
 RUN wget -qO/bin/grpc_health_probe https://github.com/grpc-ecosystem/grpc-health-probe/releases/download/${GRPC_HEALTH_PROBE_VERSION}/grpc_health_probe-linux-${TARGETARCH} && \
     chmod +x /bin/grpc_health_probe
 
-FROM debian:bullseye-slim as release
+FROM registry.ddbuild.io/images/mirror/debian:bullseye-slim as release
 
 WORKDIR /app
 COPY --from=builder /app/target/release/shippingservice /app/shippingservice

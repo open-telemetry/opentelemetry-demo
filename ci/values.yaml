@@ -1,0 +1,141 @@
+default:
+  env:
+    - name: OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE
+      value: cumulative
+    - name: OTEL_SERVICE_NAME
+      valueFrom:
+        fieldRef:
+          apiVersion: v1
+          fieldPath: "metadata.labels['app.kubernetes.io/component']"
+    - name: OTEL_K8S_NAMESPACE
+      valueFrom:
+        fieldRef:
+          apiVersion: v1
+          fieldPath: metadata.namespace
+    - name: OTEL_K8S_NODE_NAME
+      valueFrom:
+        fieldRef:
+          apiVersion: v1
+          fieldPath: spec.nodeName
+    - name: OTEL_K8S_POD_NAME
+      valueFrom:
+        fieldRef:
+          apiVersion: v1
+          fieldPath: metadata.name
+    - name: OTEL_K8S_POD_UID
+      valueFrom:
+        fieldRef:
+          apiVersion: v1
+          fieldPath: metadata.uid
+    - name: POD_IP
+      valueFrom:
+        fieldRef:
+          fieldPath: status.podIP
+    - name: HOST_IP
+      valueFrom:
+        fieldRef:
+          fieldPath: status.hostIP
+    - name: OTEL_COLLECTOR_NAME
+      value: $(HOST_IP)
+    - name: OTEL_EXPORTER_OTLP_ENDPOINT
+      value: http://$(OTEL_COLLECTOR_NAME):4317
+    - name: OTEL_RESOURCE_ATTRIBUTES
+      value: >-
+        service.name=$(OTEL_SERVICE_NAME),
+        service.instance.id=$(OTEL_K8S_POD_UID),
+        ervice.namespace=opentelemetry-demo,
+        k8s.namespace.name=$(OTEL_K8S_NAMESPACE),
+        k8s.node.name=$(OTEL_K8S_NODE_NAME),
+        k8s.pod.name=$(OTEL_K8S_POD_NAME),
+        deployment.environment=$(OTEL_K8S_NAMESPACE),
+        k8s.pod.ip=$(POD_IP)
+  image:
+    repository: 172597598159.dkr.ecr.us-east-1.amazonaws.com/otel-demo
+    tag: ""
+components:
+  accountingService:
+    resources:
+      limits:
+        memory: 200Mi
+  adService:
+    resources:
+      limits:
+        memory: 500Mi
+  cartService:
+    resources:
+      limits:
+        memory: 200Mi
+  checkoutService:
+    resources:
+      limits:
+        memory: 500Mi
+  currencyService:
+    resources:
+      limits:
+        memory: 200Mi
+  emailService:
+    resources:
+      limits:
+        memory: 200Mi
+  frauddetectionService:
+    resources:
+      limits:
+        memory: 200Mi
+  frontend:
+    resources:
+      limits:
+        memory: 200Mi
+  frontendProxy:
+    resources:
+      limits:
+        memory: 200Mi
+  paymentService:
+    resources:
+      limits:
+        memory: 200Mi
+  quoteService:
+    resources:
+      limits:
+        memory: 200Mi
+  recommendationService:
+    resources:
+      limits:
+        memory: 200Mi
+  shippingService:
+    resources:
+      limits:
+        memory: 200Mi
+  redis:
+    resources:
+      limits:
+        memory: 200Mi
+  loadgenerator:
+    resources:
+      limits:
+        memory: 200Mi
+  ffsPostgres:
+    resources:
+      limits:
+        memory: 200Mi
+  productCatalogService:
+    resources:
+      limits:
+        memory: 200Mi
+  featureflagService:
+    resources:
+      limits:
+        memory: 1Gi
+  kafka:
+    resources:
+      limits:
+        memory: 1Gi
+serviceAccount:
+  create: false
+opentelemetry-collector:
+  enabled: false
+jaeger:
+  enabled: false
+grafana:
+  enabled: false
+prometheus:
+  enabled: false
