@@ -6,7 +6,7 @@ import (
 	"context"
 	"log"
 
-	"github.com/open-telemetry/opentelemetry-demo/src/accountingservice/genproto/oteldemo"
+	pb "github.com/open-telemetry/opentelemetry-demo/src/accountingservice/genproto/oteldemo"
 
 	"github.com/Shopify/sarama"
 	"github.com/sirupsen/logrus"
@@ -59,7 +59,7 @@ func (g *groupHandler) ConsumeClaim(session sarama.ConsumerGroupSession, claim s
 	for {
 		select {
 		case message := <-claim.Messages():
-			orderResult := oteldemo.OrderResult{}
+			orderResult := pb.OrderResult{}
 			err := proto.Unmarshal(message.Value, &orderResult)
 			if err != nil {
 				return err
