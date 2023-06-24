@@ -67,6 +67,7 @@ run_tracetest ad-service || EXIT_STATUS=$?
 run_tracetest cart-service || EXIT_STATUS=$?
 run_tracetest currency-service || EXIT_STATUS=$?
 run_tracetest checkout-service || EXIT_STATUS=$?
+run_tracetest frontend-service || EXIT_STATUS=$?
 run_tracetest email-service || EXIT_STATUS=$?
 run_tracetest payment-service || EXIT_STATUS=$?
 run_tracetest product-catalog-service || EXIT_STATUS=$?

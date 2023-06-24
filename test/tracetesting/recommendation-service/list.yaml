@@ -19,8 +19,7 @@ spec:
         }
   specs:
   - name: It called ListRecommendations correctly and got 5 products
-    selector: span[tracetest.span.type="rpc" name="/oteldemo.RecommendationService/ListRecommendations"
-      rpc.system="grpc" rpc.method="ListRecommendations" rpc.service="oteldemo.RecommendationService"]
+    selector: span[tracetest.span.type="rpc" name="/oteldemo.RecommendationService/ListRecommendations" rpc.system="grpc" rpc.method="ListRecommendations" rpc.service="oteldemo.RecommendationService"]
     assertions:
     - attr:rpc.grpc.status_code  =  0
     - attr:app.products_recommended.count = 5

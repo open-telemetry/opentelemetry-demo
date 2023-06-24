@@ -1,0 +1,27 @@
+# Copyright The OpenTelemetry Authors
+# SPDX-License-Identifier: Apache-2.0
+
+type: Test
+spec:
+  id: frontend-view-cart
+  name: 'Frontend: View cart'
+  description: Simulate a user viewing the shopping cart
+  trigger:
+    type: http
+    httpRequest:
+      url: http://${env:FRONTEND_ADDR}/api/cart
+      method: GET
+      headers:
+      - key: Content-Type
+        value: application/json
+  specs:
+  - name: It called the frontend with success and returned the first item with correct attributes
+    selector: span[tracetest.span.type="general" name="Tracetest trigger"]
+    assertions:
+    - attr:tracetest.response.status = 200
+    - attr:tracetest.response.body | json_path '$.items[0].quantity' = 1
+    - attr:tracetest.response.body | json_path '$.items[0].productId' = "0PUK6V6EV0"
+  - name: It retrieved the cart items correctly
+    selector: span[name="oteldemo.CartService/GetCart"]
+    assertions:
+    - attr:rpc.grpc.status_code = 0
