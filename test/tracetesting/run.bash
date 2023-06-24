@@ -15,44 +15,63 @@ check_if_tracetest_is_installed() {
   fi
 }
 
-run_tracetest() {
-  test_file=$1
+create_env_file() {
+  cat << EOF > tracetesting-env.yaml
+type: Environment
+spec:
+  id: tracetesting-env
+  name: tracetesting-env
+  values:
+    - key: AD_SERVICE_ADDR
+      value: $AD_SERVICE_ADDR
+    - key: CART_SERVICE_ADDR
+      value: $CART_SERVICE_ADDR
+    - key: CHECKOUT_SERVICE_ADDR
+      value: $CHECKOUT_SERVICE_ADDR
+    - key: CURRENCY_SERVICE_ADDR
+      value: $CURRENCY_SERVICE_ADDR
+    - key: EMAIL_SERVICE_ADDR
+      value: $EMAIL_SERVICE_ADDR
+    - key: FRONTEND_ADDR
+      value: $FRONTEND_ADDR
+    - key: PAYMENT_SERVICE_ADDR
+      value: $PAYMENT_SERVICE_ADDR
+    - key: PRODUCT_CATALOG_SERVICE_ADDR
+      value: $PRODUCT_CATALOG_SERVICE_ADDR
+    - key: RECOMMENDATION_SERVICE_ADDR
+      value: $RECOMMENDATION_SERVICE_ADDR
+    - key: SHIPPING_SERVICE_ADDR
+      value: $SHIPPING_SERVICE_ADDR
+EOF
+}
 
-  TRACETEST_DEV=true tracetest -c ./cli-config.yml test run -d $test_file -w
+run_tracetest() {
+  service_name=$1
+  test_file=./$service_name/all.yaml
+
+  tracetest --config ./cli-config.yml test run --definition $test_file --environment ./tracetesting-env.yaml --wait-for-result
   return $?
 }
 
 check_if_tracetest_is_installed
+create_env_file
 
 echo "Starting tests..."
 
 EXIT_STATUS=0
 
-# run tech based tests
 echo ""
-echo "Running tech based tests..."
-run_tracetest ./tech-based-tests/ad-service/get.yaml || EXIT_STATUS=$?
-run_tracetest ./tech-based-tests/cart-service/all.yaml || EXIT_STATUS=$?
-run_tracetest ./tech-based-tests/currency-service/convert.yaml || EXIT_STATUS=$?
-run_tracetest ./tech-based-tests/currency-service/supported.yaml || EXIT_STATUS=$?
-run_tracetest ./tech-based-tests/checkout-service/place-order.yaml || EXIT_STATUS=$?
-run_tracetest ./tech-based-tests/email-service/confirmation.yaml || EXIT_STATUS=$?
-run_tracetest ./tech-based-tests/payment-service/valid-credit-card.yaml || EXIT_STATUS=$?
-run_tracetest ./tech-based-tests/payment-service/invalid-credit-card.yaml || EXIT_STATUS=$?
-run_tracetest ./tech-based-tests/payment-service/amex-credit-card-not-allowed.yaml || EXIT_STATUS=$?
-run_tracetest ./tech-based-tests/payment-service/expired-credit-card.yaml || EXIT_STATUS=$?
-run_tracetest ./tech-based-tests/product-catalog-service/list.yaml || EXIT_STATUS=$?
-run_tracetest ./tech-based-tests/product-catalog-service/get.yaml || EXIT_STATUS=$?
-run_tracetest ./tech-based-tests/product-catalog-service/search.yaml || EXIT_STATUS=$?
-run_tracetest ./tech-based-tests/recommendation-service/list.yaml || EXIT_STATUS=$?
-run_tracetest ./tech-based-tests/shipping-service/quote.yaml || EXIT_STATUS=$?
-run_tracetest ./tech-based-tests/shipping-service/empty-quote.yaml || EXIT_STATUS=$?
-run_tracetest ./tech-based-tests/shipping-service/order.yaml || EXIT_STATUS=$?
+echo "Running trace-based tests..."
 
-# run business tests
-echo ""
-echo "Running business based tests..."
-run_tracetest ./business-tests/user-purchase.yaml || EXIT_STATUS=$?
+run_tracetest ad-service || EXIT_STATUS=$?
+run_tracetest cart-service || EXIT_STATUS=$?
+run_tracetest currency-service || EXIT_STATUS=$?
+run_tracetest checkout-service || EXIT_STATUS=$?
+run_tracetest email-service || EXIT_STATUS=$?
+run_tracetest payment-service || EXIT_STATUS=$?
+run_tracetest product-catalog-service || EXIT_STATUS=$?
+run_tracetest recommendation-service || EXIT_STATUS=$?
+run_tracetest shipping-service || EXIT_STATUS=$?
 
 echo ""
 echo "Tests done! Exit code: $EXIT_STATUS"
