@@ -9,11 +9,10 @@ When this service is run the output should be similar to the following
 
 ## Local Build
 
-To build the protos and the service binary, run:
+To build the service binary, run:
 
 ```sh
-protoc -I ../../pb/ ../../pb/demo.proto --go_out=./ --go-grpc_out=./
-go build -o /go/bin/productcatalogservice/ ./
+go build -o /go/bin/productcatalogservice/
 ```
 
 ## Docker Build
@@ -22,4 +21,24 @@ From the root directory, run:
 
 ```sh
 docker compose build productcatalogservice
+```
+
+## Regenerate protos
+
+> **Note**
+> [`protoc`](https://grpc.io/docs/protoc-installation/) is required.
+
+To regenerate gRPC code run:
+
+```sh
+go generate
+```
+
+## Bump dependencies
+
+To bump all dependencies run:
+
+```sh
+go get -u -t ./...
+go mod tidy
 ```
