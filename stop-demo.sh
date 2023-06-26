@@ -8,5 +8,5 @@
 # ensure a clean state.
 
 echo "Stopping demo..."
-docker compose -f docker-compose.full.yml down --remove-orphans --volumes
+docker compose -f docker-compose.override.yml down --remove-orphans --volumes
 echo "Demo stopped."

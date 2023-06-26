@@ -10,7 +10,7 @@
 
 run_full() {
   echo "Starting full demo..."
-  docker compose -f docker-compose.full.yml up --force-recreate --remove-orphans --detach
+  docker compose -f docker-compose.override.yml up --force-recreate --remove-orphans --detach
   echo "Full demo started."
   print_how_to_use full
 }
