@@ -29,4 +29,3 @@ spec:
     assertions:
     - attr:rpc.grpc.status_code  =  0
     - attr:app.product.id  =  "0PUK6V6EV0"
-    

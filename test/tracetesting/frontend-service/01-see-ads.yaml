@@ -33,4 +33,3 @@ spec:
     selector: span[tracetest.span.type="rpc" name="oteldemo.AdService/GetAds" rpc.system="grpc" rpc.method="GetAds" rpc.service="oteldemo.AdService"]
     assertions:
     - attr:app.ads.count = 2
-    

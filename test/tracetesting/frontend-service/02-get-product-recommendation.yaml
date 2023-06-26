@@ -25,7 +25,7 @@ spec:
           ]
         }
   specs:
-  - name: It called the frontend with success 
+  - name: It called the frontend with success
     selector: span[tracetest.span.type="general" name="Tracetest trigger"]
     assertions:
     - attr:tracetest.response.status = 200
