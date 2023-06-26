@@ -8,3 +8,21 @@ updates:
       interval: "daily"
     labels:
       - "infra"
+  - package-ecosystem: gomod
+    directory: "/src/checkoutservice"
+    schedule:
+      interval: "daily"
+    labels:
+      - go
+  - package-ecosystem: gomod
+    directory: "/src/accountingservice"
+    schedule:
+      interval: "daily"
+    labels:
+      - go
+  - package-ecosystem: gomod
+    directory: "/src/productcatalogservice"
+    schedule:
+      interval: "daily"
+    labels:
+      - go
