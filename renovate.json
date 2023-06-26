@@ -109,6 +109,6 @@
       "matchPaths": ["src/shippingservice"],
       "groupName": "shippingservice",
       "assigneesFromCodeOwners": true
-    },
+    }
   ]
 }
