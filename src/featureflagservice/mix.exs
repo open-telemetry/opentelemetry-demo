@@ -60,8 +60,8 @@ defmodule Featureflagservice.MixProject do
       {:grpcbox, "~> 0.15.0", override: true},
       {:opentelemetry_exporter, "~> 1.4.0"},
       {:opentelemetry_grpcbox, "~> 0.1"},
-      {:opentelemetry_api, "~> 1.2.1"},
-      {:opentelemetry, "~> 1.2.1"},
+      {:opentelemetry_api, "~> 1.3.0"},
+      {:opentelemetry, "~> 1.3.0"},
       {:opentelemetry_phoenix, "~> 1.0.0"},
       {:opentelemetry_ecto, "~> 1.1.1"}
     ]
