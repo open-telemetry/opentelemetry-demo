@@ -5,7 +5,7 @@ on:
         description: Should the images be pushed
         default: false
         required: false
-        type: bool
+        type: boolean
       version:
         description: The version used when tagging the image
         default: dev
