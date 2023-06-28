@@ -128,5 +128,5 @@ jobs:
           tags: |
             ${{ env.DOCKERHUB_REPO }}:${{ inputs.version }}-${{matrix.file_tag.tag_suffix }}
             ${{ env.GHCR_REPO }}:${{ inputs.version }}-${{ matrix.file_tag.tag_suffix }}
-          # cache-from: type=gha
+          cache-from: type=gha
           cache-to: type=gha
