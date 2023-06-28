@@ -27,6 +27,7 @@ jobs:
       GHCR_REPO: "ghcr.io/open-telemetry/demo"
 
     strategy:
+      fail-fast: false
       matrix:
         file_tag:
           - file: ./src/adservice/Dockerfile
