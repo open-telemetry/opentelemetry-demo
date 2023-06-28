@@ -1,15 +1,16 @@
-workflow_call:
-  inputs:
-    push:
-      description: Should the images be pushed
-      default: false
-      required: false
-      type: bool
-    version:
-      description: The version used when tagging the image
-      default: dev
-      required: false
-      type: string
+on:
+  workflow_call:
+    inputs:
+      push:
+        description: Should the images be pushed
+        default: false
+        required: false
+        type: bool
+      version:
+        description: The version used when tagging the image
+        default: dev
+        required: false
+        type: string
 
 jobs:
   build_and_push_images:
