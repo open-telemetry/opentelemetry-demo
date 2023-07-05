@@ -1,0 +1,114 @@
+{
+  "$schema": "https://docs.renovatebot.com/renovate-schema.json",
+  "extends": [
+    "config:base"
+  ],
+  "schedule": "every weekend",
+  "packageRules": [
+    {
+      "matchPaths": ["*"],
+      "ignorePaths": ["src/"],
+      "groupName": "config-no-service"
+    },
+    { 
+      "matchPaths": ["src/accountingservice"],
+      "groupName": "accountingservice",
+      "assigneesFromCodeOwners": true
+    },
+    { 
+      "matchPaths": ["src/adservice"],
+      "groupName": "adservice",
+      "assigneesFromCodeOwners": true
+    },
+    { 
+      "matchPaths": ["src/cartservice"],
+      "groupName": "cartservice",
+      "assigneesFromCodeOwners": true
+    },
+    { 
+      "matchPaths": ["src/checkoutservice"],
+      "groupName": "checkoutservice",
+      "assigneesFromCodeOwners": true
+    },
+    { 
+      "matchPaths": ["src/currencyservice"],
+      "groupName": "currencyservice",
+      "assigneesFromCodeOwners": true
+    },
+    { 
+      "matchPaths": ["src/emailservice"],
+      "groupName": "emailservice",
+      "assigneesFromCodeOwners": true
+    },
+    { 
+      "matchPaths": ["src/featureflagservice"],
+      "groupName": "featureflagservice",
+      "assigneesFromCodeOwners": true
+    },
+    { 
+      "matchPaths": ["src/frauddetectionservice"],
+      "groupName": "frauddetectionservice",
+      "assigneesFromCodeOwners": true
+    },
+    { 
+      "matchPaths": ["src/frontend"],
+      "groupName": "frontend",
+      "assigneesFromCodeOwners": true
+    },
+    { 
+      "matchPaths": ["src/frontendproxy"],
+      "groupName": "frontendproxy",
+      "assigneesFromCodeOwners": true
+    },
+    { 
+      "matchPaths": ["src/grafana"],
+      "groupName": "grafana",
+      "assigneesFromCodeOwners": true
+    },
+    { 
+      "matchPaths": ["src/kakfa"],
+      "groupName": "kakfa",
+      "assigneesFromCodeOwners": true
+    },
+    { 
+      "matchPaths": ["src/loadgenerator"],
+      "groupName": "loadgenerator",
+      "assigneesFromCodeOwners": true
+    },
+    { 
+      "matchPaths": ["src/otelcollector"],
+      "groupName": "otelcollector",
+      "assigneesFromCodeOwners": true
+    },
+    { 
+      "matchPaths": ["src/paymentservice"],
+      "groupName": "paymentservice",
+      "assigneesFromCodeOwners": true
+    },
+    { 
+      "matchPaths": ["src/productcatalogservice"],
+      "groupName": "productcatalogservice",
+      "assigneesFromCodeOwners": true
+    },
+    { 
+      "matchPaths": ["src/prometheus"],
+      "groupName": "prometheus",
+      "assigneesFromCodeOwners": true
+    },
+    { 
+      "matchPaths": ["src/quoteservice"],
+      "groupName": "quoteservice",
+      "assigneesFromCodeOwners": true
+    },
+    { 
+      "matchPaths": ["src/recommendationservice"],
+      "groupName": "recommendationservice",
+      "assigneesFromCodeOwners": true
+    },
+    { 
+      "matchPaths": ["src/shippingservice"],
+      "groupName": "shippingservice",
+      "assigneesFromCodeOwners": true
+    }
+  ]
+}

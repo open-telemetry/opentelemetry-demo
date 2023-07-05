@@ -8,7 +8,7 @@ namespace cartservice.featureflags;
 
 public class FeatureFlagHelper
 {
-    private readonly static Random Random = new Random();
+    private static readonly Random Random = new();
     private readonly FeatureFlagService.FeatureFlagServiceClient _featureFlagServiceClient;
 
     public FeatureFlagHelper()
