@@ -23,12 +23,14 @@ docker compose up -d
 #### Launch the demo
 Refer to the main demo [documentation](https://opentelemetry.io/docs/demo/docker-deployment/). This is basically:
 ```sh
+cd - # move back to the opentelemetry-demo main directory
 docker compose up --no-build -d
 ```
 
 > **Notes:**
 > - The `--no-build` flag is used to fetch released docker images instead of building from source. Removing the `--no-build` command line option will rebuild all images from source. The image repository is defined in [`.env`](../.env) file. See below for details on building the images.
 > - You can configure the pre-injected Instana EUM Javascript in Frontend service by setting and exporting `INSTANA_EUM_URL` and `INSTANA_EUM_KEY` environment variables in the shell before running the demo.
+> - You can safely ignore any WARN messages related to `INSTANA_AGENT_KEY` and `INSTANA_DOWNLOAD_KEY` as these are only important when building the demo images from the source.
 
 > **Tip:**
 > You can run the demo in the foreground  by omitting the `-d` parameter (`docker compose up`) to get the container logs dumped out to the terminal so you can check for any errors.
@@ -51,7 +53,7 @@ oc adm policy -n otel-demo add-scc-to-user anyuid -z my-otel-demo
 
 Deploy the Instana agent via Helm or using an operator: use a standard installation according to Instana documentation. Apply the demo-specific agent configuration as in [`instana/agent/configuration.yaml`](../instana/agent/configuration.yaml). These settings enable the OpenTelemetry ports, add specific service settings for infrastructure monitoring and suppression of native Instana tracing.
 
-The demo assumes that an Instana [agent Kubernetes service](https://www.ibm.com/docs/en/instana-observability/current?topic=requirements-installing-host-agent-kubernetes#instana-agent-service) `instana-agent` is present in `instana-agent` namespace. The agent service, besides exposing the standard Instana agent API endpoint, also provides the common OTLP endpoint for both gRPC (port 4317) and HTTP (port 4318) protocols across all nodes. Be aware that at time of writing, the HTTP endpoint definition wasn't yet included in the public Instana agent Helm chart (and likely neither in the Operator). You can better create the service manually using the following manifest that is tested to work well with the demo.
+The demo assumes that an Instana [agent Kubernetes service](https://www.ibm.com/docs/en/instana-observability/current?topic=agents-installing-host-agent-kubernetes#instana-agent-service) `instana-agent` is present in `instana-agent` namespace. The agent service, besides exposing the standard Instana agent API endpoint, also provides the common OTLP endpoint for both gRPC (port 4317) and HTTP (port 4318) protocols across all nodes. Be aware that at time of writing, the HTTP endpoint definition wasn't yet included in the public Instana agent Helm chart (and likely neither in the Operator). You can better create the service manually using the following manifest that is tested to work well with the demo.
 ```yaml
 cat <<EOF | kubectl create -f-
 apiVersion: v1
