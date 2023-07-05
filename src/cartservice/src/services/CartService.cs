@@ -8,74 +8,73 @@ using cartservice.cartstore;
 using cartservice.featureflags;
 using Oteldemo;
 
-namespace cartservice.services
+namespace cartservice.services;
+
+public class CartService : Oteldemo.CartService.CartServiceBase
 {
-    public class CartService : Oteldemo.CartService.CartServiceBase
+    private static readonly Empty Empty = new();
+    private static readonly ICartStore BadCartStore = new RedisCartStore("badhost:1234");
+    private readonly ICartStore _cartStore;
+    private readonly FeatureFlagHelper _featureFlagHelper;
+
+    public CartService(ICartStore cartStore, FeatureFlagHelper featureFlagService)
     {
-        private readonly static Empty Empty = new Empty();
-        private readonly static ICartStore BadCartStore = new RedisCartStore("badhost:1234");
-        private readonly ICartStore _cartStore;
-        private readonly FeatureFlagHelper _featureFlagHelper;
+        _cartStore = cartStore;
+        _featureFlagHelper = featureFlagService;
+    }
 
-        public CartService(ICartStore cartStore, FeatureFlagHelper featureFlagService)
+    public override async Task<Empty> AddItem(AddItemRequest request, ServerCallContext context)
+    {
+        var activity = Activity.Current;
+        activity?.SetTag("app.user.id", request.UserId);
+        activity?.SetTag("app.product.id", request.Item.ProductId);
+        activity?.SetTag("app.product.quantity", request.Item.Quantity);
+
+        await _cartStore.AddItemAsync(request.UserId, request.Item.ProductId, request.Item.Quantity);
+        return Empty;
+    }
+
+    public override async Task<Cart> GetCart(GetCartRequest request, ServerCallContext context)
+    {
+        var activity = Activity.Current;
+        activity?.SetTag("app.user.id", request.UserId);
+        activity?.AddEvent(new("Fetch cart"));
+
+        var cart = await _cartStore.GetCartAsync(request.UserId);
+        var totalCart = 0;
+        foreach (var item in cart.Items)
         {
-            _cartStore = cartStore;
-            _featureFlagHelper = featureFlagService;
+            totalCart += item.Quantity;
         }
+        activity?.SetTag("app.cart.items.count", totalCart);
 
-        public async override Task<Empty> AddItem(AddItemRequest request, ServerCallContext context)
+        return cart;
+    }
+
+    public override async Task<Empty> EmptyCart(EmptyCartRequest request, ServerCallContext context)
+    {
+        var activity = Activity.Current;
+        activity?.SetTag("app.user.id", request.UserId);
+        activity?.AddEvent(new("Empty cart"));
+
+        try
         {
-            var activity = Activity.Current;
-            activity?.SetTag("app.user.id", request.UserId);
-            activity?.SetTag("app.product.id", request.Item.ProductId);
-            activity?.SetTag("app.product.quantity", request.Item.Quantity);
-
-            await _cartStore.AddItemAsync(request.UserId, request.Item.ProductId, request.Item.Quantity);
-            return Empty;
-        }
-
-        public async override Task<Cart> GetCart(GetCartRequest request, ServerCallContext context)
-        {
-            var activity = Activity.Current;
-            activity?.SetTag("app.user.id", request.UserId);
-            activity?.AddEvent(new("Fetch cart"));
-
-            var cart = await _cartStore.GetCartAsync(request.UserId);
-            var totalCart = 0;
-            foreach (var item in cart.Items)
+            if (await _featureFlagHelper.GenerateCartError())
             {
-                totalCart += item.Quantity;
+                await BadCartStore.EmptyCartAsync(request.UserId);
             }
-            activity?.SetTag("app.cart.items.count", totalCart);
-
-            return cart;
+            else
+            {
+                await _cartStore.EmptyCartAsync(request.UserId);
+            }
         }
-
-        public async override Task<Empty> EmptyCart(EmptyCartRequest request, ServerCallContext context)
+        catch (RpcException ex)
         {
-            var activity = Activity.Current;
-            activity?.SetTag("app.user.id", request.UserId);
-            activity?.AddEvent(new("Empty cart"));
-
-            try
-            {
-                if (await _featureFlagHelper.GenerateCartError())
-                {
-                    await BadCartStore.EmptyCartAsync(request.UserId);
-                }
-                else
-                {
-                    await _cartStore.EmptyCartAsync(request.UserId);
-                }
-            }
-            catch (RpcException ex)
-            {
-                Activity.Current?.RecordException(ex);
-                Activity.Current?.SetStatus(ActivityStatusCode.Error, ex.Message);
-                throw;
-            }
-
-            return Empty;
+            Activity.Current?.RecordException(ex);
+            Activity.Current?.SetStatus(ActivityStatusCode.Error, ex.Message);
+            throw;
         }
+
+        return Empty;
     }
 }
