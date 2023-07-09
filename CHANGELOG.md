@@ -45,6 +45,8 @@ release.
   ([#935](https://github.com/open-telemetry/opentelemetry-demo/pull/935))
 * [cartservice] update service to .NET 7
   ([#942](https://github.com/open-telemetry/opentelemetry-demo/pull/942))
+* Introduce minimal mode to run demo
+  ([#872](https://github.com/open-telemetry/opentelemetry-demo/pull/872))
 
 ## 1.4.0
 
