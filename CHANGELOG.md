@@ -29,8 +29,22 @@ release.
   ([#880](https://github.com/open-telemetry/opentelemetry-demo/pull/880))
 * [currencyservice] Fix OTel C++ build and update OTel version to 1.9.0
   ([#886](https://github.com/open-telemetry/opentelemetry-demo/pull/886))
-* Split optional demo components into modules
-  ([#872](https://github.com/open-telemetry/opentelemetry-demo/pull/872))
+* [featureflagservice] Upgrade opentelemetry_ecto to 1.1.1
+  ([#899](https://github.com/open-telemetry/opentelemetry-demo/pull/899))
+* [currencyservice] Fix OTLP export to use default env vars
+  ([#904](https://github.com/open-telemetry/opentelemetry-demo/pull/904))
+* [featureflagservice] Bump OTP version to 26.0
+  ([#903](https://github.com/open-telemetry/opentelemetry-demo/pull/903))
+* Regenerate kubernetes manifest and add auto-generate comment
+  ([#909](https://github.com/open-telemetry/opentelemetry-demo/pull/909))
+* [loadgenerator] fix redirect on recommendations load
+  ([#913](https://github.com/open-telemetry/opentelemetry-demo/pull/913))
+* [loadgenerator] run load through frontend proxy (Envoy)
+  ([#914](https://github.com/open-telemetry/opentelemetry-demo/pull/914))
+* [cartservice] update .NET package to 1.5.0 release
+  ([#935](https://github.com/open-telemetry/opentelemetry-demo/pull/935))
+* [cartservice] update service to .NET 7
+  ([#942](https://github.com/open-telemetry/opentelemetry-demo/pull/942))
 
 ## 1.4.0
 
