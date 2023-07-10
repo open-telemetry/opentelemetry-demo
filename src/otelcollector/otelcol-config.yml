@@ -13,16 +13,7 @@ receivers:
             - "https://*"
 
 exporters:
-  otlp:
-    endpoint: "jaeger:4317"
-    tls:
-      insecure: true
   logging:
-  prometheus:
-    endpoint: "otelcol:9464"
-    resource_to_telemetry_conversion:
-      enabled: true
-    enable_open_metrics: true
 
 processors:
   batch:
@@ -41,11 +32,11 @@ service:
     traces:
       receivers: [otlp]
       processors: [batch]
-      exporters: [otlp, logging, spanmetrics]
+      exporters: [logging, spanmetrics]
     metrics:
       receivers: [otlp, spanmetrics]
       processors: [filter, batch]
-      exporters: [prometheus, logging]
+      exporters: [logging]
     logs:
       receivers: [otlp]
       processors: [batch]
