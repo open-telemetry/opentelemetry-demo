@@ -17,32 +17,6 @@ services:
   # ******************
   # Core Demo Services
   # ******************
-  # Accounting service
-  accountingservice:
-    image: ${IMAGE_NAME}:${IMAGE_VERSION}-accountingservice
-    container_name: accounting-service
-    build:
-      context: ./
-      dockerfile: ./src/accountingservice/Dockerfile
-      cache_from:
-        - ${IMAGE_NAME}:${IMAGE_VERSION}-accountingservice
-    deploy:
-      resources:
-        limits:
-          memory: 20M
-    restart: unless-stopped
-    environment:
-      - KAFKA_SERVICE_ADDR
-      - OTEL_EXPORTER_OTLP_ENDPOINT
-      - OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE
-      - OTEL_RESOURCE_ATTRIBUTES
-      - OTEL_SERVICE_NAME=accountingservice
-    depends_on:
-      otelcol:
-        condition: service_started
-      kafka:
-        condition: service_healthy
-    logging: *logging
 
   # AdService
   adservice:
@@ -62,7 +36,6 @@ services:
       - "${AD_SERVICE_PORT}"
     environment:
       - AD_SERVICE_PORT
-      - FEATURE_FLAG_GRPC_SERVICE_ADDR
       - OTEL_EXPORTER_OTLP_ENDPOINT
       - OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE
       - OTEL_RESOURCE_ATTRIBUTES
@@ -127,7 +100,6 @@ services:
       - PAYMENT_SERVICE_ADDR
       - PRODUCT_CATALOG_SERVICE_ADDR
       - SHIPPING_SERVICE_ADDR
-      - KAFKA_SERVICE_ADDR
       - OTEL_EXPORTER_OTLP_ENDPOINT
       - OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE
       - OTEL_RESOURCE_ATTRIBUTES
@@ -147,8 +119,6 @@ services:
         condition: service_started
       otelcol:
         condition: service_started
-      kafka:
-        condition: service_healthy
     logging: *logging
 
   # Currency service
@@ -202,64 +172,6 @@ services:
     depends_on:
       otelcol:
         condition: service_started
-    logging: *logging
-
-  # Feature Flag service
-  featureflagservice:
-    image: ${IMAGE_NAME}:${IMAGE_VERSION}-featureflagservice
-    container_name: feature-flag-service
-    build:
-      context: ./
-      dockerfile: ./src/featureflagservice/Dockerfile
-      cache_from:
-        - ${IMAGE_NAME}:${IMAGE_VERSION}-featureflagservice
-    deploy:
-      resources:
-        limits:
-          memory: 175M
-    restart: unless-stopped
-    ports:
-      - "${FEATURE_FLAG_SERVICE_PORT}"                                  # Feature Flag Service UI
-      - "${FEATURE_FLAG_GRPC_SERVICE_PORT}"                             # Feature Flag Service gRPC API
-    environment:
-      - FEATURE_FLAG_SERVICE_PORT
-      - FEATURE_FLAG_GRPC_SERVICE_PORT
-      - OTEL_EXPORTER_OTLP_ENDPOINT
-      - OTEL_EXPORTER_OTLP_TRACES_PROTOCOL=grpc
-      - OTEL_SERVICE_NAME=featureflagservice
-      - DATABASE_URL=ecto://ffs:ffs@ffs_postgres:5432/ffs
-    healthcheck:
-      test: ["CMD", "curl", "-H", "baggage: synthetic_request=true", "-f", "http://localhost:${FEATURE_FLAG_SERVICE_PORT}"]
-    depends_on:
-      ffs_postgres:
-        condition: service_healthy
-    logging: *logging
-
-  # Fraud Detection service
-  frauddetectionservice:
-    image: ${IMAGE_NAME}:${IMAGE_VERSION}-frauddetectionservice
-    container_name: frauddetection-service
-    build:
-      context: ./
-      dockerfile: ./src/frauddetectionservice/Dockerfile
-      cache_from:
-        - ${IMAGE_NAME}:${IMAGE_VERSION}-frauddetectionservice
-    deploy:
-      resources:
-        limits:
-          memory: 200M
-    restart: unless-stopped
-    environment:
-      - KAFKA_SERVICE_ADDR
-      - OTEL_EXPORTER_OTLP_ENDPOINT
-      - OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE
-      - OTEL_RESOURCE_ATTRIBUTES
-      - OTEL_SERVICE_NAME=frauddetectionservice
-    depends_on:
-      otelcol:
-        condition: service_started
-      kafka:
-        condition: service_healthy
     logging: *logging
 
   # Frontend
@@ -342,13 +254,10 @@ services:
       - JAEGER_SERVICE_PORT
       - JAEGER_SERVICE_HOST
       - OTEL_COLLECTOR_HOST
-      - OTEL_COLLECTOR_PORT_GRPC
-      - OTEL_COLLECTOR_PORT_HTTP
+      - OTEL_COLLECTOR_PORT
       - ENVOY_PORT
     depends_on:
       frontend:
-        condition: service_started
-      featureflagservice:
         condition: service_started
       loadgenerator:
         condition: service_started
@@ -433,7 +342,6 @@ services:
       - "${PRODUCT_CATALOG_SERVICE_PORT}"
     environment:
       - PRODUCT_CATALOG_SERVICE_PORT
-      - FEATURE_FLAG_GRPC_SERVICE_ADDR
       - OTEL_EXPORTER_OTLP_ENDPOINT
       - OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE
       - OTEL_RESOURCE_ATTRIBUTES
@@ -482,14 +390,13 @@ services:
     deploy:
       resources:
         limits:
-          memory: 500M               # This is high to enable supporting the recommendationCache feature flag use case
+          memory: 50M
     restart: unless-stopped
     ports:
       - "${RECOMMENDATION_SERVICE_PORT}"
     environment:
       - RECOMMENDATION_SERVICE_PORT
       - PRODUCT_CATALOG_SERVICE_ADDR
-      - FEATURE_FLAG_GRPC_SERVICE_ADDR
       - OTEL_PYTHON_LOG_CORRELATION=true
       - OTEL_EXPORTER_OTLP_ENDPOINT
       - OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE
@@ -497,8 +404,6 @@ services:
       - OTEL_SERVICE_NAME=recommendationservice
       - PROTOCOL_BUFFERS_PYTHON_IMPLEMENTATION=python
     depends_on:
-      featureflagservice:
-        condition: service_started
       productcatalogservice:
         condition: service_started
       otelcol:
@@ -535,56 +440,6 @@ services:
   # ******************
   # Dependent Services
   # ******************
-  # Postgres used by Feature Flag service
-  ffs_postgres:
-    image: postgres:14
-    container_name: postgres
-    user: postgres
-    deploy:
-      resources:
-        limits:
-          memory: 120M
-    restart: unless-stopped
-    environment:
-      - POSTGRES_USER=ffs
-      - POSTGRES_DB=ffs
-      - POSTGRES_PASSWORD=ffs
-    healthcheck:
-      test: ["CMD-SHELL", "pg_isready -d ffs -U ffs"]
-      interval: 10s
-      timeout: 5s
-      retries: 5
-    logging: *logging
-
-  # Kafka used by Checkout, Accounting, and Fraud Detection services
-  kafka:
-    image: ${IMAGE_NAME}:${IMAGE_VERSION}-kafka
-    container_name: kafka
-    build:
-      context: ./
-      dockerfile: ./src/kafka/Dockerfile
-      cache_from:
-        - ${IMAGE_NAME}:${IMAGE_VERSION}-kafka
-    deploy:
-      resources:
-        limits:
-          memory: 500M
-    restart: unless-stopped
-    environment:
-      - KAFKA_ADVERTISED_LISTENERS=PLAINTEXT://kafka:9092
-      - OTEL_EXPORTER_OTLP_ENDPOINT
-      - OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE
-      - OTEL_RESOURCE_ATTRIBUTES
-      - OTEL_SERVICE_NAME=kafka
-      - KAFKA_HEAP_OPTS=-Xmx200m -Xms200m
-    healthcheck:
-      test: nc -z kafka 9092
-      start_period: 10s
-      interval: 5s
-      timeout: 10s
-      retries: 10
-    logging: *logging
-
   # Redis used by Cart service
   redis-cart:
     image: redis:alpine
@@ -687,56 +542,3 @@ services:
     ports:
       - "${PROMETHEUS_SERVICE_PORT}:${PROMETHEUS_SERVICE_PORT}"
     logging: *logging
-
-  # *****
-  # Tests
-  # *****
-  # Frontend Tests
-  frontendTests:
-    image: ${IMAGE_NAME}:${IMAGE_VERSION}-frontend-tests
-    container_name: frontend-tests
-    build:
-      context: ./
-      dockerfile: ./src/frontend/Dockerfile.cypress
-    profiles:
-      - tests
-    volumes:
-      - ./src/frontend/cypress/videos:/app/cypress/videos
-      - ./src/frontend/cypress/screenshots:/app/cypress/screenshots
-    environment:
-      - CYPRESS_baseUrl=http://${FRONTEND_ADDR}
-      - FRONTEND_ADDR
-      - NODE_ENV=production
-    depends_on:
-      - frontend
-
-  # Integration Tests
-  integrationTests:
-    image: ${IMAGE_NAME}:${IMAGE_VERSION}-integrationTests
-    container_name: integrationTests
-    profiles:
-      - tests
-    build:
-      context: ./
-      dockerfile: ./test/Dockerfile
-    environment:
-      - AD_SERVICE_ADDR
-      - CART_SERVICE_ADDR
-      - CHECKOUT_SERVICE_ADDR
-      - CURRENCY_SERVICE_ADDR
-      - EMAIL_SERVICE_ADDR
-      - PAYMENT_SERVICE_ADDR
-      - PRODUCT_CATALOG_SERVICE_ADDR
-      - RECOMMENDATION_SERVICE_ADDR
-      - SHIPPING_SERVICE_ADDR
-    depends_on:
-      - adservice
-      - cartservice
-      - checkoutservice
-      - currencyservice
-      - emailservice
-      - paymentservice
-      - productcatalogservice
-      - recommendationservice
-      - shippingservice
-      - quoteservice
