@@ -7761,7 +7761,7 @@ spec:
           - name: WEB_OTEL_SERVICE_NAME
             value: frontend-web
           - name: PUBLIC_OTEL_EXPORTER_OTLP_TRACES_ENDPOINT
-            value: http://localhost:4318/v1/traces
+            value: http://localhost:8080/oltp-http/v1/traces
           - name: OTEL_RESOURCE_ATTRIBUTES
             value: service.name=$(OTEL_SERVICE_NAME),service.instance.id=$(OTEL_K8S_POD_UID),service.namespace=opentelemetry-demo,k8s.namespace.name=$(OTEL_K8S_NAMESPACE),k8s.node.name=$(OTEL_K8S_NODE_NAME),k8s.pod.name=$(OTEL_K8S_POD_NAME)
           resources:
@@ -7860,8 +7860,10 @@ spec:
             value: "16686"
           - name: JAEGER_SERVICE_HOST
             value: 'opentelemetry-demo-jaeger-query'
-          - name: OTEL_COLLECTOR_PORT
+          - name: OTEL_COLLECTOR_PORT_GRPC
             value: "4317"
+          - name: OTEL_COLLECTOR_PORT_HTTP
+            value: "4318"
           - name: OTEL_COLLECTOR_HOST
             value: $(OTEL_COLLECTOR_NAME)
           - name: OTEL_RESOURCE_ATTRIBUTES
