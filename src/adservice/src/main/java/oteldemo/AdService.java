@@ -74,13 +74,12 @@ public final class AdService {
 
     String featureFlagServiceAddr =
         Optional.ofNullable(System.getenv("FEATURE_FLAG_GRPC_SERVICE_ADDR"))
-            .orElseThrow(
-                () ->
-                    new IllegalStateException(
-                        "environment vars: FEATURE_FLAG_GRPC_SERVICE_ADDR must not be null"));
-    FeatureFlagServiceBlockingStub featureFlagServiceStub =
-        oteldemo.FeatureFlagServiceGrpc.newBlockingStub(
-            ManagedChannelBuilder.forTarget(featureFlagServiceAddr).usePlaintext().build());
+                .orElse("");
+    FeatureFlagServiceBlockingStub featureFlagServiceStub = null;
+    if (!featureFlagServiceAddr.isEmpty()) {
+        featureFlagServiceStub = oteldemo.FeatureFlagServiceGrpc.newBlockingStub(
+                ManagedChannelBuilder.forTarget(featureFlagServiceAddr).usePlaintext().build());
+    }
 
     server =
         ServerBuilder.forPort(port)
@@ -195,6 +194,10 @@ public final class AdService {
     }
 
     boolean checkAdFailure() {
+      if (featureFlagServiceStub == null) {
+        return false;
+      }
+
       // Flip a coin and fail 1/10th of the time if feature flag is enabled
       if (random.nextInt(10) != 1) {
         return false;
