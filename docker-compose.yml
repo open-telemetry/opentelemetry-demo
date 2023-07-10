@@ -740,3 +740,99 @@ services:
       - recommendationservice
       - shippingservice
       - quoteservice
+
+  # Tracebased Tests
+  traceBasedTests:
+    image: ${IMAGE_NAME}:${IMAGE_VERSION}-traceBasedTests
+    container_name: traceBasedTests
+    profiles:
+      - tests
+    build:
+      context: ./
+      dockerfile: ./test/tracetesting/Dockerfile
+    environment:
+      - AD_SERVICE_ADDR
+      - CART_SERVICE_ADDR
+      - CHECKOUT_SERVICE_ADDR
+      - CURRENCY_SERVICE_ADDR
+      - EMAIL_SERVICE_ADDR
+      - FRONTEND_ADDR
+      - PAYMENT_SERVICE_ADDR
+      - PRODUCT_CATALOG_SERVICE_ADDR
+      - RECOMMENDATION_SERVICE_ADDR
+      - SHIPPING_SERVICE_ADDR
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    depends_on:
+      tracetest-server:
+        condition: service_healthy
+      # adding demo services as dependencies
+      frontend:
+        condition: service_started
+      adservice:
+        condition: service_started
+      cartservice:
+        condition: service_started
+      checkoutservice:
+        condition: service_started
+      currencyservice:
+        condition: service_started
+      emailservice:
+        condition: service_started
+      paymentservice:
+        condition: service_started
+      productcatalogservice:
+        condition: service_started
+      recommendationservice:
+        condition: service_started
+      shippingservice:
+        condition: service_started
+      quoteservice:
+        condition: service_started
+
+  tracetest-server:
+    image: kubeshop/tracetest:latest
+    platform: linux/amd64
+    container_name: tracetest-server
+    profiles:
+      - tests
+    volumes:
+      - type: bind
+        source: ./test/tracetesting/tracetest-config.yaml
+        target: /app/tracetest.yaml
+      - type: bind
+        source: ./test/tracetesting/tracetest-provision.yaml
+        target: /app/provision.yaml
+    command: --provisioning-file /app/provision.yaml
+    ports:
+      - 11633:11633
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    depends_on:
+      tracetest-postgres:
+        condition: service_healthy
+      otelcol:
+        condition: service_started
+    healthcheck:
+      test: [ "CMD", "wget", "--spider", "localhost:11633" ]
+      interval: 1s
+      timeout: 3s
+      retries: 60
+    environment:
+      TRACETEST_DEV: ${TRACETEST_DEV}
+
+  tracetest-postgres:
+    image: postgres:14
+    container_name: tracetest-postgres
+    profiles:
+      - tests
+    environment:
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_USER: postgres
+    healthcheck:
+      test: pg_isready -U "$$POSTGRES_USER" -d "$$POSTGRES_DB"
+      interval: 1s
+      timeout: 5s
+      retries: 60
+    ports:
+      - 5432
