@@ -1,0 +1,31 @@
+# Copyright The OpenTelemetry Authors
+# SPDX-License-Identifier: Apache-2.0
+
+---
+type: PollingProfile
+spec:
+  name: Default
+  strategy: periodic
+  default: true
+  periodic:
+    retryDelay: 10s
+    timeout: 3m
+
+---
+type: Demo
+spec:
+  name: "OpenTelemetry Shop"
+  enabled: true
+  type: otelstore
+  opentelemetryStore:
+    frontendEndpoint: http://frontend:8080
+
+---
+type: DataStore
+spec:
+  name: Jaeger
+  type: jaeger
+  jaeger:
+    endpoint: jaeger:16685
+    tls:
+      insecure: true

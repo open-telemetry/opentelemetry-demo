@@ -254,7 +254,7 @@ test("payment: expired credit card", (t) => {
 
 test("product: list", async (t) => {
   const res = await productList({});
-  t.is(res.products.length, 9);
+  t.is(res.products.length, 10);
 });
 
 test("product: get", async (t) => {
@@ -283,7 +283,7 @@ test("recommendation: list products", async (t) => {
   const req = deepCopy(data.recommend);
 
   const res = await recommend(req);
-  t.is(res.productIds.length, 4);
+  t.is(res.productIds.length, 5);
   t.is(arrayIntersection(res.productIds, req.productIds).length, 0);
 });
 
