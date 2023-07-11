@@ -15,7 +15,7 @@
 # limitations under the License.
 
 # https://mcr.microsoft.com/v2/dotnet/sdk/tags/list
-FROM registry.ddbuild.io/images/mirror/dotnet:sdk-7.0.304 as builder
+FROM registry.ddbuild.io/images/mirror/dotnet:sdk-7.0.305 as builder
 
 WORKDIR /usr/src/app/
 
@@ -31,7 +31,7 @@ RUN \
 # -----------------------------------------------------------------------------
 
 # https://mcr.microsoft.com/v2/dotnet/runtime-deps/tags/list
-FROM mcr.microsoft.com/dotnet/runtime-deps:7.0.7-alpine3.17
+FROM registry.ddbuild.io/images/mirror/dotnet/runtime-deps:7.0.8-alpine3.18
 
 WORKDIR /usr/src/app/
 COPY --from=builder /cartservice/ ./
