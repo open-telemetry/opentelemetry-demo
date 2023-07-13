@@ -1,0 +1,13 @@
+# Copyright The OpenTelemetry Authors
+# SPDX-License-Identifier: Apache-2.0
+
+type: Transaction
+spec:
+  id: payment-service-all
+  name: 'Payment Service'
+  description: Run all Payment Service tests enabled in sequence
+  steps:
+  - ./valid-credit-card.yaml
+  - ./invalid-credit-card.yaml
+  - ./amex-credit-card-not-allowed.yaml
+  - ./expired-credit-card.yaml
