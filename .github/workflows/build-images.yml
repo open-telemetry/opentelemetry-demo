@@ -1,0 +1,133 @@
+# Copyright The OpenTelemetry Authors
+# SPDX-License-Identifier: Apache-2.0
+on:
+  workflow_call:
+    inputs:
+      push:
+        description: Should the images be pushed
+        default: false
+        required: false
+        type: boolean
+      version:
+        description: The version used when tagging the image
+        default: dev
+        required: false
+        type: string
+
+jobs:
+  build_and_push_images:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+
+    env:
+      RELEASE_VERSION: "${{ github.event.release.tag_name }}"
+      DOCKERHUB_REPO: "otel/demo"
+      GHCR_REPO: "ghcr.io/open-telemetry/demo"
+
+    strategy:
+      fail-fast: false
+      matrix:
+        file_tag:
+          - file: ./src/adservice/Dockerfile
+            tag_suffix: adservice
+            context: ./
+          - file: ./src/cartservice/src/Dockerfile
+            tag_suffix: cartservice
+            context: ./
+          - file: ./src/checkoutservice/Dockerfile
+            tag_suffix: checkoutservice
+            context: ./
+          - file: ./src/currencyservice/Dockerfile
+            tag_suffix: currencyservice
+            context: ./src/currencyservice
+          - file: ./src/emailservice/Dockerfile
+            tag_suffix: emailservice
+            context: ./src/emailservice
+          # TODO: https://github.com/open-telemetry/opentelemetry-demo/issues/956
+          # - file: ./src/featureflagservice/Dockerfile
+          #   tag_suffix: featureflagservice
+          #   context: ./
+          - file: ./src/frontend/Dockerfile
+            tag_suffix: frontend
+            context: ./
+          - file: ./src/frontendproxy/Dockerfile
+            tag_suffix: frontendproxy
+            context: ./
+          - file: ./src/loadgenerator/Dockerfile
+            tag_suffix: loadgenerator
+            context: ./
+          - file: ./src/paymentservice/Dockerfile
+            tag_suffix: paymentservice
+            context: ./
+          - file: ./src/productcatalogservice/Dockerfile
+            tag_suffix: productcatalogservice
+            context: ./
+          - file: ./src/quoteservice/Dockerfile
+            tag_suffix: quoteservice
+            context: ./
+          - file: ./src/shippingservice/Dockerfile
+            tag_suffix: shippingservice
+            context: ./
+          - file: ./src/recommendationservice/Dockerfile
+            tag_suffix: recommendationservice
+            context: ./
+          - file: ./src/kafka/Dockerfile
+            tag_suffix: kafka
+            context: ./
+          - file: ./src/accountingservice/Dockerfile
+            tag_suffix: accountingservice
+            context: ./
+          - file: ./src/frauddetectionservice/Dockerfile
+            tag_suffix: frauddetectionservice
+            context: ./
+          - file: ./src/frontend/Dockerfile.cypress
+            tag_suffix: frontend-tests
+            context: ./
+          - file: ./test/Dockerfile
+            tag_suffix: integrationTests
+            context: ./
+
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+
+      - name: Log in to the Container registry
+        uses: docker/login-action@v2
+        with:
+          registry: ghcr.io
+          username: ${{ github.repository_owner }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+        if: ${{ inputs.push }}
+
+      - name: Log in to Docker Hub
+        uses: docker/login-action@v2
+        with:
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
+        if: ${{ inputs.push }}
+
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v2
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v2
+        with:
+          config-inline: |
+            [worker.oci]
+              max-parallelism = 2
+
+      - name: Matrix Build and push demo images
+        uses: docker/build-push-action@v3.3.0
+        with:
+          context: ${{ matrix.file_tag.context }}
+          file: ${{ matrix.file_tag.file }}
+          platforms: linux/amd64,linux/arm64
+          push: ${{ inputs.push }}
+          tags: |
+            ${{ env.DOCKERHUB_REPO }}:${{ inputs.version }}-${{matrix.file_tag.tag_suffix }}
+            ${{ env.GHCR_REPO }}:${{ inputs.version }}-${{ matrix.file_tag.tag_suffix }}
+          cache-from: type=gha
+          cache-to: type=gha
