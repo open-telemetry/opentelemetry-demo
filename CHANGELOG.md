@@ -45,8 +45,6 @@ release.
   ([#935](https://github.com/open-telemetry/opentelemetry-demo/pull/935))
 * [cartservice] update service to .NET 7
   ([#942](https://github.com/open-telemetry/opentelemetry-demo/pull/942))
-* [cartservice] update .NET package to 1.5.1 release
-  ([#935](https://github.com/open-telemetry/opentelemetry-demo/pull/957))
 * Introduce minimal mode to run demo
   ([#872](https://github.com/open-telemetry/opentelemetry-demo/pull/872))
 * [frontendproxy]Envoy expose a route for the collector to route frontend spans
