@@ -51,6 +51,8 @@ release.
   ([#938](https://github.com/open-telemetry/opentelemetry-demo/pull/938))
 * [shippingservice] Update Rust dependencies and add TelemetryResourceDetector
   ([#972](https://github.com/open-telemetry/opentelemetry-demo/pull/972))
+* Add OTEL_COLLECTOR_PORT env for frontendproxy to support 1.4 image
+  ([#981](https://github.com/open-telemetry/opentelemetry-demo/pull/981))
 
 ## 1.4.0
 

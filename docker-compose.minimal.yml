@@ -254,7 +254,10 @@ services:
       - JAEGER_SERVICE_PORT
       - JAEGER_SERVICE_HOST
       - OTEL_COLLECTOR_HOST
-      - OTEL_COLLECTOR_PORT
+      - OTEL_COLLECTOR_PORT_GRPC
+      - OTEL_COLLECTOR_PORT_HTTP
+      # Deprecated
+      - OTEL_COLLECTOR_PORT=${OTEL_COLLECTOR_PORT_GRPC}
       - ENVOY_PORT
     depends_on:
       frontend:

@@ -7864,6 +7864,9 @@ spec:
             value: "4317"
           - name: OTEL_COLLECTOR_PORT_HTTP
             value: "4318"
+          # Deprecated
+          - name: OTEL_COLLECTOR_PORT
+            value: "4317"
           - name: OTEL_COLLECTOR_HOST
             value: $(OTEL_COLLECTOR_NAME)
           - name: OTEL_RESOURCE_ATTRIBUTES
