@@ -15,7 +15,7 @@
 # limitations under the License.
 
 # https://mcr.microsoft.com/v2/dotnet/sdk/tags/list
-FROM mcr.microsoft.com/dotnet/sdk:7.0.304 AS builder
+FROM mcr.microsoft.com/dotnet/sdk:7.0.306 AS builder
 
 WORKDIR /usr/src/app/
 
