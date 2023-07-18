@@ -2,6 +2,8 @@
 
   <PropertyGroup>
     <TargetFramework>net7.0</TargetFramework>
+    <ProduceReferenceAssembly>false</ProduceReferenceAssembly>
+    <StaticWebAssetsEnabled>false</StaticWebAssetsEnabled>
   </PropertyGroup>
 
   <ItemGroup>
@@ -21,8 +23,4 @@
   <ItemGroup>
     <Protobuf Include="**\*.proto" GrpcServices="Both" />
   </ItemGroup>
-
-  <PropertyGroup>
-    <StaticWebAssetsEnabled>false</StaticWebAssetsEnabled>
-  </PropertyGroup>
 </Project>
