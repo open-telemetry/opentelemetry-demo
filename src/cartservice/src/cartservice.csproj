@@ -21,4 +21,8 @@
   <ItemGroup>
     <Protobuf Include="**\*.proto" GrpcServices="Both" />
   </ItemGroup>
+
+  <PropertyGroup>
+    <StaticWebAssetsEnabled>false</StaticWebAssetsEnabled>
+  </PropertyGroup>
 </Project>
