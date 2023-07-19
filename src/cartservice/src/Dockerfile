@@ -15,7 +15,7 @@
 # limitations under the License.
 
 # https://mcr.microsoft.com/v2/dotnet/sdk/tags/list
-FROM mcr.microsoft.com/dotnet/sdk:7.0.304 AS builder
+FROM mcr.microsoft.com/dotnet/sdk:7.0.306 AS builder
 
 WORKDIR /usr/src/app/
 
@@ -25,8 +25,12 @@ COPY ./pb/ ./src/protos/
 RUN \
   RUNTIME_IDENTIIFER=linux-musl-x64; \
   if [ "$(uname -m)" = "aarch64" ]; then RUNTIME_IDENTIIFER=linux-musl-arm64; fi; \
-  dotnet restore ./src/cartservice.csproj -r $RUNTIME_IDENTIIFER && \
-  dotnet publish ./src/cartservice.csproj -p:PublishSingleFile=true -r $RUNTIME_IDENTIIFER --self-contained true -p:PublishTrimmed=False -p:TrimMode=Link -c Release -o /cartservice --no-restore
+  dotnet restore ./src/cartservice.csproj -v d -r $RUNTIME_IDENTIIFER
+
+RUN \
+  RUNTIME_IDENTIIFER=linux-musl-x64; \
+  if [ "$(uname -m)" = "aarch64" ]; then RUNTIME_IDENTIIFER=linux-musl-arm64; fi; \
+  dotnet publish ./src/cartservice.csproj -v d -p:PublishSingleFile=true -r $RUNTIME_IDENTIIFER --self-contained true -p:PublishTrimmed=False -p:TrimMode=Link -c Release -o /cartservice --no-restore
 
 # -----------------------------------------------------------------------------
 
