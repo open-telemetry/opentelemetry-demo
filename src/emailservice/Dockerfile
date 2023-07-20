@@ -2,7 +2,7 @@
 # SPDX-License-Identifier: Apache-2.0
 
 
-FROM ruby:3.1.2-alpine as base
+FROM ruby:3.1.4-alpine as base
 
 FROM base as builder
 
