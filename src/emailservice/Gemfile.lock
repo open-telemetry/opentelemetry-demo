@@ -2,6 +2,7 @@ GEM
   remote: https://rubygems.org/
   specs:
     date (3.3.3)
+    google-protobuf (3.23.4-aarch64-linux)
     google-protobuf (3.23.4-arm64-darwin)
     googleapis-common-protos-types (1.7.0)
       google-protobuf (~> 3.14)
@@ -230,14 +231,15 @@ GEM
     timeout (0.4.0)
 
 PLATFORMS
+  aarch64-linux
   arm64-darwin-21
   arm64-darwin-22
 
 DEPENDENCIES
   net-smtp (~> 0.3)
-  opentelemetry-exporter-otlp
-  opentelemetry-instrumentation-all
-  opentelemetry-sdk
+  opentelemetry-exporter-otlp (~> 0.24)
+  opentelemetry-instrumentation-all (~> 0.39)
+  opentelemetry-sdk (~> 1.2)
   pony (~> 1.13)
   puma (~> 6.3)
   sinatra (~> 3.0)
