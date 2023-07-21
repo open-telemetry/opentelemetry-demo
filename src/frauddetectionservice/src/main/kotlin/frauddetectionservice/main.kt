@@ -13,7 +13,7 @@ import kotlin.system.exitProcess
 const val topic = "orders"
 const val groupID = "frauddetectionservice"
 
-fun main(args: Array<String>) {
+fun main() {
     val props = Properties()
     props[KEY_DESERIALIZER_CLASS_CONFIG] = StringDeserializer::class.java.name
     props[VALUE_DESERIALIZER_CLASS_CONFIG] = ByteArrayDeserializer::class.java.name
