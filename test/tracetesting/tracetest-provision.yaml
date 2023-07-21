@@ -29,3 +29,11 @@ spec:
     endpoint: jaeger:16685
     tls:
       insecure: true
+---
+type: TestRunner
+spec:
+  id: current
+  name: default
+  requiredGates:
+    - analyzer-score
+    - test-specs
