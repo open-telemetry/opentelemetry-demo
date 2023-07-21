@@ -1,17 +1,12 @@
 /*
-* Copyright The OpenTelemetry Authors
-* SPDX-License-Identifier: Apache-2.0
-*/
+ * Copyright The OpenTelemetry Authors
+ * SPDX-License-Identifier: Apache-2.0
+ */
 
 package oteldemo;
 
 import com.google.common.collect.ImmutableListMultimap;
 import com.google.common.collect.Iterables;
-import oteldemo.Demo.Ad;
-import oteldemo.Demo.AdRequest;
-import oteldemo.Demo.AdResponse;
-import oteldemo.Demo.GetFlagResponse;
-import oteldemo.FeatureFlagServiceGrpc.FeatureFlagServiceBlockingStub;
 import io.grpc.*;
 import io.grpc.health.v1.HealthCheckResponse.ServingStatus;
 import io.grpc.protobuf.services.*;
@@ -36,6 +31,11 @@ import java.util.Random;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import oteldemo.Demo.Ad;
+import oteldemo.Demo.AdRequest;
+import oteldemo.Demo.AdResponse;
+import oteldemo.Demo.GetFlagResponse;
+import oteldemo.FeatureFlagServiceGrpc.FeatureFlagServiceBlockingStub;
 
 public final class AdService {
 
@@ -73,12 +73,12 @@ public final class AdService {
     healthMgr = new HealthStatusManager();
 
     String featureFlagServiceAddr =
-        Optional.ofNullable(System.getenv("FEATURE_FLAG_GRPC_SERVICE_ADDR"))
-                .orElse("");
+        Optional.ofNullable(System.getenv("FEATURE_FLAG_GRPC_SERVICE_ADDR")).orElse("");
     FeatureFlagServiceBlockingStub featureFlagServiceStub = null;
     if (!featureFlagServiceAddr.isEmpty()) {
-        featureFlagServiceStub = oteldemo.FeatureFlagServiceGrpc.newBlockingStub(
-                ManagedChannelBuilder.forTarget(featureFlagServiceAddr).usePlaintext().build());
+      featureFlagServiceStub =
+          oteldemo.FeatureFlagServiceGrpc.newBlockingStub(
+              ManagedChannelBuilder.forTarget(featureFlagServiceAddr).usePlaintext().build());
     }
 
     server =

@@ -45,6 +45,7 @@ src/shippingservice/target/
 /src/featureflagservice/src/ffs_demo_pb.erl
 /src/featureflagservice/src/ffs_service_*.erl
 /src/featureflagservice/src/oteldemo_*.erl
+/src/frauddetectionservice/src/main/proto
 /src/frontend/pb/
 /src/frontend/protos/
 /src/paymentservice/demo.proto
