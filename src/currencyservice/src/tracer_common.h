@@ -8,6 +8,7 @@
 #include "opentelemetry/exporters/ostream/span_exporter_factory.h"
 #include "opentelemetry/nostd/shared_ptr.h"
 #include "opentelemetry/sdk/trace/simple_processor_factory.h"
+#include "opentelemetry/sdk/trace/tracer_context.h"
 #include "opentelemetry/sdk/trace/tracer_context_factory.h"
 #include "opentelemetry/sdk/trace/tracer_provider_factory.h"
 #include "opentelemetry/trace/propagation/http_trace_context.h"
@@ -76,14 +77,16 @@ void initTracer()
       opentelemetry::sdk::trace::SimpleSpanProcessorFactory::Create(std::move(exporter));
   std::vector<std::unique_ptr<opentelemetry::sdk::trace::SpanProcessor>> processors;
   processors.push_back(std::move(processor));
-  std::shared_ptr<opentelemetry::sdk::trace::TracerContext> context =
+
+  auto context =
       opentelemetry::sdk::trace::TracerContextFactory::Create(std::move(processors));
   std::shared_ptr<opentelemetry::trace::TracerProvider> provider =
-      opentelemetry::sdk::trace::TracerProviderFactory::Create(context);
- // Set the global trace provider
+      opentelemetry::sdk::trace::TracerProviderFactory::Create(std::move(context));
+
+  // Set the global trace provider
   opentelemetry::trace::Provider::SetTracerProvider(provider);
 
- // set global propagator
+  // set global propagator
   opentelemetry::context::propagation::GlobalTextMapPropagator::SetGlobalPropagator(
       opentelemetry::nostd::shared_ptr<opentelemetry::context::propagation::TextMapPropagator>(
           new opentelemetry::trace::propagation::HttpTraceContext()));
