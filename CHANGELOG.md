@@ -55,6 +55,8 @@ release.
   ([#972](https://github.com/open-telemetry/opentelemetry-demo/pull/972))
 * Update frontendproxy's env for minimal
   ([#983](https://github.com/open-telemetry/opentelemetry-demo/pull/983))
+* [LoadGenerator & RecommendatationService] update dependencies
+  ([#988](https://github.com/open-telemetry/opentelemetry-demo/pull/988))
 * [FraudDetectionService] Updated Kotlin version and OTel dependencies
   ([#987](https://github.com/open-telemetry/opentelemetry-demo/pull/987))
 
