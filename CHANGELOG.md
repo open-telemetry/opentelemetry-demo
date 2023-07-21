@@ -55,6 +55,8 @@ release.
   ([#972](https://github.com/open-telemetry/opentelemetry-demo/pull/972))
 * Update frontendproxy's env for minimal
   ([#983](https://github.com/open-telemetry/opentelemetry-demo/pull/983))
+* [currencyService] Update OTel dependency
+  ([#991](https://github.com/open-telemetry/opentelemetry-demo/pull/991))
 
 ## 1.4.0
 
