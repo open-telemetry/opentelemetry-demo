@@ -58,6 +58,9 @@ jobs:
           - file: ./src/loadgenerator/Dockerfile
             tag_suffix: loadgenerator
             context: ./
+          - file: ./src/otelcollector/Dockerfile
+            tag_suffix: otelcollector
+            context: ./
           - file: ./src/paymentservice/Dockerfile
             tag_suffix: paymentservice
             context: ./
