@@ -379,7 +379,8 @@ services:
       - LOCUST_HOST
       - LOCUST_HEADLESS
       - LOCUST_AUTOSTART
-      - OTEL_EXPORTER_OTLP_TRACES_ENDPOINT=http://${OTEL_COLLECTOR_HOST}:4318/v1/traces
+      - OTEL_EXPORTER_OTLP_ENDPOINT
+      - OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE
       - OTEL_RESOURCE_ATTRIBUTES
       - OTEL_SERVICE_NAME=loadgenerator
       - PROTOCOL_BUFFERS_PYTHON_IMPLEMENTATION=python
@@ -644,8 +645,13 @@ services:
 
   # OpenTelemetry Collector
   otelcol:
-    image: otel/opentelemetry-collector-contrib:0.76.1
+    image: ${IMAGE_NAME}:${IMAGE_VERSION}-otelcol
     container_name: otel-col
+    build:
+      context: ./
+      dockerfile: ./src/otelcollector/Dockerfile
+      cache_from:
+        - ${IMAGE_NAME}:${IMAGE_VERSION}-otelcol
     deploy:
       resources:
         limits:
