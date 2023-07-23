@@ -7,6 +7,8 @@ release.
 
 ## Unreleased
 
+* [quoteservice] update php dependencies
+  ([#994](https://github.com/open-telemetry/opentelemetry-demo/issues/994))
 * Add cartServiceFailure feature flag triggering Cart Service errors
   ([#824](https://github.com/open-telemetry/opentelemetry-demo/pull/824))
 * [paymentservice] update JS SDKs to 1.12.0/0.38.0
