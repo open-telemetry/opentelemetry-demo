@@ -7,7 +7,7 @@ The following guide describes how to setup the OpenTelemetry demo with Elastic O
 
 1. Start a free trial on [Elastic Cloud](https://cloud.elastic.co/) and copy the `endpoint` and `secretToken` from the Elastic APM setup instructions in your Kibana.
 1. Open the file `src/otelcollector/otelcol-config-extras.yml` in an editor and replace the following two placeholders:
-   - `YOUR_APM_ENDPOINT_WITHOUT_HTTPS_PREFIX`: your Elastic APM endpoint (*without* `https://` prefix)
+   - `YOUR_APM_ENDPOINT_WITHOUT_HTTPS_PREFIX`: your Elastic APM endpoint (*without* `https://` prefix) that *must* also include the port (example: `1234567.apm.us-west2.gcp.elastic-cloud.com:443`).
    - `YOUR_APM_SECRET_TOKEN`: your Elastic APM secret token.
 1. Start the demo with the following command from the repository's root directory:
    ```
@@ -29,7 +29,7 @@ The following guide describes how to setup the OpenTelemetry demo with Elastic O
      --from-literal=elastic_apm_secret_token='YOUR_APM_SECRET_TOKEN'
    ```
    Don't forget to replace
-   - `YOUR_APM_ENDPOINT_WITHOUT_HTTPS_PREFIX`: your Elastic APM endpoint (*without* `https://` prefix)
+   - `YOUR_APM_ENDPOINT_WITHOUT_HTTPS_PREFIX`: your Elastic APM endpoint (*without* `https://` prefix) that *must* also include the port (example: `1234567.apm.us-west2.gcp.elastic-cloud.com:443`).
    - `YOUR_APM_SECRET_TOKEN`: your Elastic APM secret token
 1. Execute the following commands to deploy the OpenTelemetry demo to your Kubernetes cluster:
    ```
