@@ -24,7 +24,7 @@ FROM base as grpc-builder
 WORKDIR /usr/src/app/
 COPY ./pb/ ./proto/
 
-RUN python -m pip install grpcio-tools==1.48.2
+RUN python -m pip install grpcio-tools==1.56.2
 RUN python -m grpc_tools.protoc -I=./proto/ --python_out=./ --grpc_python_out=./ ./proto/demo.proto
 
 #

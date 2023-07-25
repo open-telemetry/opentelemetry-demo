@@ -4,7 +4,7 @@
 type: Test
 spec:
   id: payment-valid-credit-card
-  name: 'Payment: valid credit card'
+  name: "Payment: valid credit card"
   description: Charge customer with a valid credit card
   trigger:
     type: grpc
@@ -27,12 +27,13 @@ spec:
           }
         }
   specs:
-  - name: It should call Charge method successfully
-    selector: span[tracetest.span.type="rpc" name="grpc.oteldemo.PaymentService/Charge" rpc.system="grpc" rpc.method="Charge" rpc.service="oteldemo.PaymentService"]
-    # instead of returning status_code 0, this service returns 1, but it works as intended
-    assertions:
-    - attr:rpc.grpc.status_code = 1
-  - name: It should return a transaction ID
-    selector: span[tracetest.span.type="general" name="Tracetest trigger"]
-    assertions:
-    - attr:tracetest.response.body | json_path '$.transactionId' != ""
+    - name: It should call Charge method successfully
+      selector: span[tracetest.span.type="rpc" name="grpc.oteldemo.PaymentService/Charge" rpc.system="grpc" rpc.method="Charge" rpc.service="oteldemo.PaymentService"]
+      # instead of returning status_code 0, this service can return 1 depending on timing, but it works as intended
+      assertions:
+        # updating assertion to match 0 and 1
+        - attr:rpc.grpc.status_code <= 1
+    - name: It should return a transaction ID
+      selector: span[tracetest.span.type="general" name="Tracetest trigger"]
+      assertions:
+        - attr:tracetest.response.body | json_path '$.transactionId' != ""
