@@ -43,7 +43,7 @@ default:
       value: >-
         service.name=$(OTEL_SERVICE_NAME),
         service.instance.id=$(OTEL_K8S_POD_UID),
-        ervice.namespace=opentelemetry-demo,
+        service.namespace=opentelemetry-demo,
         k8s.namespace.name=$(OTEL_K8S_NAMESPACE),
         k8s.node.name=$(OTEL_K8S_NODE_NAME),
         k8s.pod.name=$(OTEL_K8S_POD_NAME),
@@ -81,6 +81,43 @@ components:
     resources:
       limits:
         memory: 200Mi
+    ports:
+      - name: jmx-consumer
+        value: 1098
+    env: 
+      - name: KAFKA_SERVICE_ADDR
+        value: 'opentelemetry-demo-kafka:9092'
+      - name: OTEL_RESOURCE_ATTRIBUTES
+        value: >-
+          service.name=$(OTEL_SERVICE_NAME),
+          service.instance.id=$(OTEL_K8S_POD_UID),
+          service.namespace=opentelemetry-demo,
+          k8s.namespace.name=$(OTEL_K8S_NAMESPACE),
+          k8s.node.name=$(OTEL_K8S_NODE_NAME),
+          k8s.pod.name=$(OTEL_K8S_POD_NAME),
+          deployment.environment=$(OTEL_K8S_NAMESPACE),
+          k8s.pod.ip=$(POD_IP),
+          kafka_source=javainstrumentation
+    podAnnotations:
+      ad.datadoghq.com/frauddetectionservice.logs: '[{"source":"kafka","service":"frauddetectionservice"}]'
+      ad.datadoghq.com/frauddetectionservice.checks: |
+        {
+          "kafka": {
+            "init_config": {
+              "is_jmx": true,
+              "collect_default_metrics": true
+            },
+            "instances": [
+              {
+                "host": "opentelemetry-demo-frauddetectionservice",
+                "port": "1098",
+                "tags": [
+                  "kafka_source:agent_consumer"
+                ]
+              }
+            ]
+          }
+        }
   frontend:
     resources:
       limits:
@@ -129,6 +166,37 @@ components:
     resources:
       limits:
         memory: 1Gi
+    ports:
+      - name: jmx
+        value: 1099
+      - name: plaintext
+        value: 9092
+      - name: controller
+        value: 9093
+    initContainers:
+      - name: wait-for-zookeeper
+        image: busybox:latest
+        command: ['sh', '-c', 'until nc -z -v -w30 opentelemetry-demo-zookeeper 2181; do echo waiting for zookeeper; sleep 2; done;']
+    podAnnotations:
+      ad.datadoghq.com/kafka.logs: '[{"source":"kafka","service":"kafka"}]'
+      ad.datadoghq.com/kafka.checks: |
+        {
+          "kafka": {
+            "init_config": {
+              "is_jmx": true,
+              "collect_default_metrics": true
+            },
+            "instances": [
+              {
+                "host": "opentelemetry-demo-kafka",
+                "port": "1099",
+                "tags": [
+                  "kafka_source:agent"
+                ]
+              }
+            ]
+          }
+        }
 serviceAccount:
   create: false
 opentelemetry-collector:
