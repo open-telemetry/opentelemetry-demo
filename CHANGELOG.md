@@ -45,28 +45,12 @@ release.
   ([#935](https://github.com/open-telemetry/opentelemetry-demo/pull/935))
 * [cartservice] update service to .NET 7
   ([#942](https://github.com/open-telemetry/opentelemetry-demo/pull/942))
+* [cartservice] update .NET package to 1.5.1 release
+  ([#935](https://github.com/open-telemetry/opentelemetry-demo/pull/957))
 * Introduce minimal mode to run demo
   ([#872](https://github.com/open-telemetry/opentelemetry-demo/pull/872))
 * [frontendproxy]Envoy expose a route for the collector to route frontend spans
   ([#938](https://github.com/open-telemetry/opentelemetry-demo/pull/938))
-* [frontend] update JS SDKs to 1.15.0/0.41.0
-  ([#853](https://github.com/open-telemetry/opentelemetry-demo/pull/853))
-* [shippingservice] Update Rust dependencies and add TelemetryResourceDetector
-  ([#972](https://github.com/open-telemetry/opentelemetry-demo/pull/972))
-* Update frontendproxy's env for minimal
-  ([#983](https://github.com/open-telemetry/opentelemetry-demo/pull/983))
-* [FeatureFlagService] Update dependencies
-  ([#992](https://github.com/open-telemetry/opentelemetry-demo/pull/992))
-* [currencyService] Update OTel dependency
-  ([#991](https://github.com/open-telemetry/opentelemetry-demo/pull/991))
-* [LoadGenerator & RecommendatationService] update dependencies
-  ([#988](https://github.com/open-telemetry/opentelemetry-demo/pull/988))
-* [FraudDetectionService] Updated Kotlin version and OTel dependencies
-  ([#987](https://github.com/open-telemetry/opentelemetry-demo/pull/987))
-* [otelcol] Use the collector builder to produce otelcol docker image
-  ([#944](https://github.com/open-telemetry/opentelemetry-demo/pull/944))
-* [quoteservice] update php dependencies
-  ([#994](https://github.com/open-telemetry/opentelemetry-demo/issues/994))
 
 ## 1.4.0
 

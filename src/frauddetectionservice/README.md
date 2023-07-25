@@ -8,7 +8,7 @@ suspected of fraud.
 To build the protos and the service binary, run from the repo root:
 
 ```sh
-cp -r ../../pb/ src/main/proto/
+protoc -I ../../pb/ ../../pb/demo.proto --kotlin_out=./src/main/kotlin
 ./gradlew shadowJar
 ```
 
