@@ -14,4 +14,4 @@ COPY ./pb ./pb
 
 WORKDIR /app/test/tracetesting
 
-CMD ["/bin/sh", "/app/test/tracetesting/run.bash"]
+CMD ["/bin/bash", "/app/test/tracetesting/run.bash"]
