@@ -1,8 +1,7 @@
 #!/usr/bin/python
+
 # Copyright The OpenTelemetry Authors
 # SPDX-License-Identifier: Apache-2.0
-#!/usr/bin/python
-#
 
 import logging
 import sys

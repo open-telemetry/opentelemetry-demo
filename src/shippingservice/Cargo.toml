@@ -19,17 +19,17 @@ reqwest = { version = "0.11", default-features = false, features = ["json"] }
 prost = "0.11"
 prost-types = "0.11"
 tokio = { version = "1.28", features = ["macros", "rt-multi-thread"] }
-opentelemetry = { version = "0.18", features = ["rt-tokio", "trace"] }
-opentelemetry-semantic-conventions = "0.10.0"
-opentelemetry_api = { version = "0.18" }
-opentelemetry-http = "0.7.0"
-opentelemetry-otlp = "0.11.0"
-log = "0.4.17"
+opentelemetry = { version = "0.19", features = ["rt-tokio", "trace"] }
+opentelemetry-semantic-conventions = "0.11.0"
+opentelemetry_api = { version = "0.19" }
+opentelemetry-http = "0.8.0"
+opentelemetry-otlp = "0.12.0"
+log = "0.4.19"
 simplelog = "0.12"
-reqwest-middleware = "0.2.0"
-reqwest-tracing = { version = "0.4.0", features = ["opentelemetry_0_18"] }
+reqwest-middleware = "0.2.2"
+reqwest-tracing = { version = "0.4.5", features = ["opentelemetry_0_18"] }
 tracing = { version = "0.1", features = ["max_level_debug", "release_max_level_info"] }
-tracing-opentelemetry = "0.18.0"
+tracing-opentelemetry = "0.19.0"
 tracing-subscriber = "0.3"
 
 [dependencies.uuid]
