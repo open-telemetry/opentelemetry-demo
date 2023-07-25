@@ -29,6 +29,7 @@ RUN git clone https://github.com/open-telemetry/opentelemetry-cpp \
 	&& cmake .. -DCMAKE_CXX_STANDARD=17 -DCMAKE_POSITION_INDEPENDENT_CODE=ON \
 				-DCMAKE_BUILD_TYPE=Release -DBUILD_TESTING=OFF \
 				-DWITH_EXAMPLES=OFF -DWITH_OTLP_GRPC=ON \
+				-DWITH_EXAMPLES=OFF -DWITH_OTLP_GRPC=ON \
 	&& make -j$(nproc || sysctl -n hw.ncpu || echo 1) install && cd ../.. && rm -rf opentelemetry-cpp
 
 COPY . /currencyservice
@@ -48,4 +49,5 @@ RUN apk add grpc-dev re2-dev protobuf-dev c-ares-dev
 COPY --from=builder /usr/local/bin/currencyservice ./
 
 EXPOSE ${CURRENCY_SERVICE_PORT}
+ENTRYPOINT ./usr/local/bin/currencyservice ${CURRENCY_SERVICE_PORT}
 ENTRYPOINT ./usr/local/bin/currencyservice ${CURRENCY_SERVICE_PORT}
