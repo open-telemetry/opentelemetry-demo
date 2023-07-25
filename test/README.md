@@ -2,7 +2,7 @@
 
 There are two ways to test the service APIs on this demo:
 1. Using AVA to do black box testing, calling the gRPC services and validating its direct response
-2. Using Trace-based tests that call each service and validate the emitted traces and the direct response 
+2. Using Trace-based tests that call each service and validate the emitted traces and the direct response
 
 ## Testing gRPC services as black boxes.
 
@@ -27,12 +27,12 @@ docker compose run traceBasedTests
 
 To run tests for specific services, you can pass the name of the service as a parameter (using the folder names located [here](./tracetesting/)):
 ```sh
-make run-tracetesting SERVICES_TO_TEST="service-1 service-2 ..." 
+make run-tracetesting SERVICES_TO_TEST="service-1 service-2 ..."
 #or
-docker compose run traceBasedTests "service-1 service-2 ..." 
+docker compose run traceBasedTests "service-1 service-2 ..."
 ```
 
 For instance, if you need to run the tests for `ad-service` and `payment-service`, you can run it with:
 ```sh
-make run-tracetesting SERVICES_TO_TEST="ad-service payment-service" 
+make run-tracetesting SERVICES_TO_TEST="ad-service payment-service"
 ```
