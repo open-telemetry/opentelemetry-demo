@@ -1,21 +1,21 @@
 # Service Testing
 
-There are two ways to test the service APIs on this demo:
+There are two ways to test the service APIs in the OpenTelemetry Demo:
 
-1. Using black box testing, calling gRPC services
-and validating its direct response
+1. Using black box-testing, calling gRPC services
+and validating their direct response
 2. Using Trace-based tests, calling services
-and validating its direct response and traces
+and validating their direct response as well as the distributed traces they generate
 
 ## Testing gRPC services as black boxes
 
-To run the entire test suite as a blackbox you need just to run the command:
+To run the entire test suite as a black box, run the command:
 
 ```sh
 docker compose run integrationTests
 ```
 
-Now if you want the tests for a specific service:
+If you want to run tests for a specific service, run:
 
 1. Start the services you want to test with `docker compose up --build <service>`
 2. Run `npm install`
@@ -23,7 +23,7 @@ Now if you want the tests for a specific service:
 
 ## Testing services with Trace-based tests
 
-To run the entire test suite of trace-based tests you can run the command:
+To run the entire test suite of trace-based tests, run the command:
 
 ```sh
 make run-tracetesting
@@ -31,7 +31,7 @@ make run-tracetesting
 docker compose run traceBasedTests
 ```
 
-To run tests for specific services, you can pass the name of the service as a
+To run tests for specific services, pass the name of the service as a
 parameter (using the folder names located [here](./tracetesting/)):
 
 ```sh
