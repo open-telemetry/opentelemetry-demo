@@ -4,7 +4,7 @@ certifi==2022.12.7
 charset-normalizer==3.1.0
 click==8.1.6
 configargparse==1.5.3
-deprecated==1.2.13
+deprecated==1.2.14
 flask==2.3.2
 flask-basicauth==0.2.0
 flask-cors==4.0.0
