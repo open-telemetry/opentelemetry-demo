@@ -4,8 +4,9 @@ There are two ways to test the service APIs in the OpenTelemetry Demo:
 
 1. Using black box-testing, calling gRPC services
 and validating their direct response
-2. Using Trace-based tests, calling services
-and validating their direct response as well as the distributed traces they generate
+2. Using Trace-based tests, calling both HTTP and
+gRPC services and validating their direct response as well as
+the distributed traces they generate
 
 ## Testing gRPC services as black boxes
 
