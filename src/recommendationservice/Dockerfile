@@ -37,7 +37,7 @@ COPY --from=builder /reqs /usr/local
 COPY --from=grpc-builder /usr/src/app/ .
 COPY ./src/recommendationservice/ ./
 
-RUN opentelemetry-bootstrap -a install
+RUN middleware-bootstrap -a install
 
 EXPOSE ${RECOMMENDATION_SERVICE_PORT}
-ENTRYPOINT [ "opentelemetry-instrument", "python", "recommendation_server.py" ]
+ENTRYPOINT [ "middleware-instrument","python", "recommendation_server.py" ]
