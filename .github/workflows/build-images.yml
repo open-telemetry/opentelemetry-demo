@@ -125,7 +125,7 @@ jobs:
               max-parallelism = 2
 
       - name: Matrix Build and push demo images
-        uses: docker/build-push-action@v3.3.0
+        uses: docker/build-push-action@v3.3.1
         with:
           context: ${{ matrix.file_tag.context }}
           file: ${{ matrix.file_tag.file }}
