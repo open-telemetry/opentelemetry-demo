@@ -109,6 +109,10 @@
       "matchPaths": ["src/shippingservice"],
       "groupName": "shippingservice",
       "assigneesFromCodeOwners": true
+    },
+    {
+      "matchPackageNames": ["eclipse-temurin"],
+      "enabled": false
     }
   ]
 }
