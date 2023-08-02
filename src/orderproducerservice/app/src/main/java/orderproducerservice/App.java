@@ -65,7 +65,6 @@ public class App {
                 ProducerRecord<String, byte[]> record = new ProducerRecord<>("orders", null, orderResult.toByteArray());
                 producer.send(record);
             } catch (Exception e) {
-                e.printStackTrace();
                 logger.error("Unable to send record: ", e);
             } finally {
                 logger.info("Message sent successfully!");
@@ -73,7 +72,7 @@ public class App {
             try {
                 Thread.sleep(4000);
             } catch (InterruptedException e) {
-                e.printStackTrace();
+                logger.error("Unable to sleep: ", e);
             }
             // producer is never closed because of while loop above. Leaving in case the code changes, to not forget to close producer.
             // producer.close();
