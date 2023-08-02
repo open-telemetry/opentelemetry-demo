@@ -8,6 +8,9 @@ import java.util.Random;
 import java.lang.Thread;
 import java.lang.InterruptedException;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import org.apache.kafka.common.serialization.StringSerializer;
 import org.apache.kafka.common.serialization.ByteArraySerializer;
 import org.apache.kafka.clients.producer.ProducerConfig;
@@ -18,12 +21,13 @@ import org.apache.kafka.clients.producer.Producer;
 import oteldemo.Demo.*;
 
 public class App {
+    private static Logger logger = LoggerFactory.getLogger(App.class);
 
     public static void main(String[] args) {
 
         String kafkaAddr = System.getenv("KAFKA_SERVICE_ADDR");
         if (kafkaAddr != null) {
-            System.out.println("Using Kafka Broker Address: " + kafkaAddr);
+            logger.info("Using Kafka Broker Address: " + kafkaAddr);
         } else {
             throw new RuntimeException("Environment variable KAFKA_SERVICE_ADDR is not set.");
         }
@@ -62,8 +66,9 @@ public class App {
                 producer.send(record);
             } catch (Exception e) {
                 e.printStackTrace();
+                logger.error("Unable to send record: ", e);
             } finally {
-                System.out.println("Message sent successfully!");
+                logger.info("Message sent successfully!");
             }
             try {
                 Thread.sleep(4000);
