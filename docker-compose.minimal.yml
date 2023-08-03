@@ -500,7 +500,7 @@ services:
     logging: *logging
 
   # OpenTelemetry Collector
-    otelcol:
+  otelcol:
     image: ${IMAGE_NAME}:${IMAGE_VERSION}-otelcol
     container_name: otel-col
     build:
