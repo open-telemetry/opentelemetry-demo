@@ -498,7 +498,7 @@ services:
     ports:
       - "${GRAFANA_SERVICE_PORT}"
     logging: *logging
-    
+
   # OpenTelemetry Collector
   otelcol:
     image: ${IMAGE_NAME}:${IMAGE_VERSION}-otelcol
@@ -526,7 +526,7 @@ services:
     depends_on:
       - jaeger
     logging: *logging
-    
+
   # Prometheus
   prometheus:
     image: quay.io/prometheus/prometheus:v2.43.0
