@@ -526,6 +526,7 @@ services:
     depends_on:
       - jaeger
     logging: *logging
+    
   # Prometheus
   prometheus:
     image: quay.io/prometheus/prometheus:v2.43.0
