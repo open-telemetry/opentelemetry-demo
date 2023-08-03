@@ -498,7 +498,7 @@ services:
     ports:
       - "${GRAFANA_SERVICE_PORT}"
     logging: *logging
-
+    
   # OpenTelemetry Collector
   otelcol:
     image: ${IMAGE_NAME}:${IMAGE_VERSION}-otelcol
