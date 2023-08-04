@@ -67,6 +67,8 @@ release.
   ([#944](https://github.com/open-telemetry/opentelemetry-demo/pull/944))
 * [quoteservice] update php dependencies
   ([#994](https://github.com/open-telemetry/opentelemetry-demo/issues/994))
+* [PaymentService] Update node to LTS version and bump deps
+  ([#1029](https://github.com/open-telemetry/opentelemetry-demo/issues/1029))
 
 ## 1.4.0
 
