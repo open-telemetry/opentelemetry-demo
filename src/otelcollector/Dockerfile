@@ -15,7 +15,7 @@ ENV CGO_ENABLED=0
 RUN /builder --config ./manifest.yml --output-path /build/_build
 RUN ls /build/_build
 
-FROM alpine:3.16 as certs
+FROM alpine:3.18 as certs
 RUN apk --update add ca-certificates
 
 FROM alpine
