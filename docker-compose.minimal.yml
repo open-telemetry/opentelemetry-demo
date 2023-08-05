@@ -501,8 +501,13 @@ services:
 
   # OpenTelemetry Collector
   otelcol:
-    image: otel/opentelemetry-collector-contrib:0.76.1
+    image: ${IMAGE_NAME}:${IMAGE_VERSION}-otelcol
     container_name: otel-col
+    build:
+      context: ./
+      dockerfile: ./src/otelcollector/Dockerfile
+      cache_from:
+        - ${IMAGE_NAME}:${IMAGE_VERSION}-otelcol
     deploy:
       resources:
         limits:
