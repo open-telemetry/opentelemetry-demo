@@ -7,6 +7,8 @@ release.
 
 ## Unreleased
 
+* [tests] Update trace-based tests run script
+  ([#1018](https://github.com/open-telemetry/opentelemetry-demo/pull/1018))
 * Add cartServiceFailure feature flag triggering Cart Service errors
   ([#824](https://github.com/open-telemetry/opentelemetry-demo/pull/824))
 * [paymentservice] update JS SDKs to 1.12.0/0.38.0
@@ -45,6 +47,8 @@ release.
   ([#935](https://github.com/open-telemetry/opentelemetry-demo/pull/935))
 * [cartservice] update service to .NET 7
   ([#942](https://github.com/open-telemetry/opentelemetry-demo/pull/942))
+* [tests] Add trace-based testing examples
+  ([#877](https://github.com/open-telemetry/opentelemetry-demo/pull/877))
 * Introduce minimal mode to run demo
   ([#872](https://github.com/open-telemetry/opentelemetry-demo/pull/872))
 * [frontendproxy]Envoy expose a route for the collector to route frontend spans
