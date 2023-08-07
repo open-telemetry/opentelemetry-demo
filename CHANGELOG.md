@@ -7,7 +7,7 @@ release.
 
 ## Unreleased
 
-* Update trace-based tests run script 
+* Update trace-based tests run script
   ([#1018])(https://github.com/open-telemetry/opentelemetry-demo/pull/1018)
 * Add cartServiceFailure feature flag triggering Cart Service errors
   ([#824](https://github.com/open-telemetry/opentelemetry-demo/pull/824))
@@ -47,7 +47,7 @@ release.
   ([#935](https://github.com/open-telemetry/opentelemetry-demo/pull/935))
 * [cartservice] update service to .NET 7
   ([#942](https://github.com/open-telemetry/opentelemetry-demo/pull/942))
-* Add trace-based testing examples 
+* Add trace-based testing examples
   ([#877])(https://github.com/open-telemetry/opentelemetry-demo/pull/877)
 * Introduce minimal mode to run demo
   ([#872](https://github.com/open-telemetry/opentelemetry-demo/pull/872))
