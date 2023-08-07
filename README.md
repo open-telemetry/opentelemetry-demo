@@ -68,7 +68,7 @@ keeping it up to date for you.
 
 To get involved with the project see our [CONTRIBUTING](CONTRIBUTING.md)
 documentation. Our [SIG Calls](CONTRIBUTING.md#join-a-sig-call) are Mondays at
-8:15 AM PST and anyone is welcome.
+8:30 AM PST and anyone is welcome.
 
 ## Project leadership
 
