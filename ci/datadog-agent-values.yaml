@@ -1,4 +1,11 @@
+agents:
+  image:
+    tagSuffix: jmx
 datadog:
+  logs:
+    enabled: true
+  tags:
+    - "env:otel-ingest"
   otlp:
     receiver:
       protocols:

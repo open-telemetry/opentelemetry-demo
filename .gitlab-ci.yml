@@ -129,10 +129,19 @@ build-ci-image-kafka:
     DOCKERFILE: src/kafka/Dockerfile
     IMAGE_TAG_SUFFIX: kafka
     CONTEXT: .
+build-ci-image-orderproducer:
+  !!merge <<: *build-ci-image
+  variables:
+    DOCKERFILE: src/orderproducerservice/Dockerfile
+    IMAGE_TAG_SUFFIX: orderproducer
+    CONTEXT: .
 .prod-deploy: &prod-deploy
   stage: prod-deploy
   tags: ["runner:docker", "size:large"]
   image: $CI_IMAGE
+  rules:
+    - if: '$CI_COMMIT_REF_NAME == "prod"'
+    - if: '$CI_COMMIT_REF_NAME =~ /-staging$/'
   script:
     # # For debugging
     #- aws sts get-caller-identity
