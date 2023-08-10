@@ -2,10 +2,9 @@ agents:
   image:
     tagSuffix: jmx
 datadog:
+  apiKey: $DD_API_KEY
   logs:
     enabled: true
-  tags:
-    - "env:otel-ingest"
   otlp:
     receiver:
       protocols:
@@ -13,3 +12,10 @@ datadog:
           enabled: true
         http:
           enabled: true
+  env:
+    - name: DD_API_KEY
+      valueFrom:
+        secretKeyRef:
+          name: datadog-secrets
+          key: api-key
+          optional: false

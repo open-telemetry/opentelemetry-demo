@@ -8,10 +8,12 @@
 set -euo pipefail
 IFS=$'\n\t'
 
-clusterName=$1
-clusterArn=$2
-region=$3
-namespace=$4
+clusterName=$CLUSTER_NAME
+clusterArn=$CLUSTER_ARN
+region=$REGION
+namespace=$NAMESPACE
+values=$VALUES
+
 install_agent() {
   # Set the namespace and release name
   release_name="datadog-agent"
@@ -21,8 +23,8 @@ install_agent() {
 
   # --install will run `helm install` if not already present.
   helm upgrade "${release_name}" -n "${namespace}" datadog/datadog --install \
-    -f ./ci/datadog-agent-values.yaml --set datadog.apiKey=$DD_API_KEY
-
+    -f ./ci/datadog-agent-values.yaml \
+    -f "${values}"
 }
 
 ###########################################################################################################

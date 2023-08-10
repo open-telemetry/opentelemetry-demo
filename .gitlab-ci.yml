@@ -5,9 +5,11 @@ variables:
   RESTORE_CACHE_ATTEMPTS: 2
   BUILD_DD_REGISTRY: registry.ddbuild.io/ci/opentelemetry-demo
   BUILD_DEMO_REGISTRY: 172597598159.dkr.ecr.us-east-1.amazonaws.com/otel-demo
+  BUILD_SANDBOX_REGISTRY: 601427279990.dkr.ecr.us-east-1.amazonaws.com/otel-demo
 stages:
   - build
   - prod-deploy
+  - staging-deploy
 # =======================================================================
 # Build and deploy the images used for CI
 # =======================================================================
@@ -17,9 +19,13 @@ stages:
   image: $CI_IMAGE
   script:
     - TAG="v$CI_COMMIT_SHORT_SHA-$IMAGE_TAG_SUFFIX"
-    - docker build --file $DOCKERFILE --tag $BUILD_DD_REGISTRY:$TAG --tag $BUILD_DEMO_REGISTRY:$TAG --label target=staging $CONTEXT
-    - docker push $BUILD_DD_REGISTRY:$TAG
-    - docker push $BUILD_DEMO_REGISTRY:$TAG
+    - docker build --file $DOCKERFILE --tag $BUILD_SANDBOX_REGISTRY:$TAG --tag $BUILD_DEMO_REGISTRY:$TAG --label target=staging $CONTEXT
+    - if [[ $CI_COMMIT_REF_NAME =~ -staging$ ]]; then
+        docker push $BUILD_SANDBOX_REGISTRY:$TAG;
+      fi
+    - if [[ $CI_COMMIT_REF_NAME == "prod" ]]; then
+        docker push $BUILD_DEMO_REGISTRY:$TAG;
+      fi
 build-ci-image-accountingservice:
   !!merge <<: *build-ci-image
   variables:
@@ -116,9 +122,10 @@ build-ci-image-shippingservice:
   image: $CI_IMAGE
   script:
     - TAG="v$CI_COMMIT_SHORT_SHA-$IMAGE_TAG_SUFFIX"
-    - docker buildx build --file $DOCKERFILE --tag $BUILD_DD_REGISTRY:$TAG --tag $BUILD_DEMO_REGISTRY:$TAG --label target=staging $CONTEXT
+    - docker buildx build --file $DOCKERFILE --tag $BUILD_DD_REGISTRY:$TAG --tag $BUILD_DEMO_REGISTRY:$TAG --tag $BUILD_SANDBOX_REGISTRY:$TAG --label target=staging $CONTEXT
     - docker push $BUILD_DD_REGISTRY:$TAG
     - docker push $BUILD_DEMO_REGISTRY:$TAG
+    - docker push $BUILD_SANDBOX_REGISTRY:$TAG
   variables:
     DOCKERFILE: src/shippingservice/Dockerfile
     IMAGE_TAG_SUFFIX: shippingservice
@@ -141,7 +148,6 @@ build-ci-image-orderproducer:
   image: $CI_IMAGE
   rules:
     - if: '$CI_COMMIT_REF_NAME == "prod"'
-    - if: '$CI_COMMIT_REF_NAME =~ /-staging$/'
   script:
     # # For debugging
     #- aws sts get-caller-identity
@@ -149,11 +155,8 @@ build-ci-image-orderproducer:
       TEMP_AWS_ACCESS_KEY_ID=$(aws ssm get-parameter --region us-east-1 --name ci.opentelemetry-demo.eks_access_key --with-decryption --query Parameter.Value --out text)
     - >-
       TEMP_AWS_SECRET_ACCESS_KEY=$(aws ssm get-parameter --region us-east-1 --name ci.opentelemetry-demo.eks_secret_access_key --with-decryption --query Parameter.Value --out text)
-    - >-
-      TEMP_DD_API_KEY=$(aws ssm get-parameter --region us-east-1 --name ci.opentelemetry-demo.dd-demo-api --with-decryption --query Parameter.Value --out text)
     - export AWS_ACCESS_KEY_ID=$TEMP_AWS_ACCESS_KEY_ID
     - export AWS_SECRET_ACCESS_KEY=$TEMP_AWS_SECRET_ACCESS_KEY
-    - export DD_API_KEY=$TEMP_DD_API_KEY
     # # For debugging
     # - aws sts get-caller-identity
     - bash $SCRIPT $CLUSTER_NAME $CLUSTER_ARN $REGION $NAMESPACE
@@ -181,3 +184,52 @@ prod-deploy-otel-ingest-agent-eks:
     CLUSTER_ARN: arn:aws:eks:us-east-2:172597598159:cluster/otel-ingest-demo
     REGION: us-east-2
     NAMESPACE: otel-ingest
+    VALUES: ./ci/datadog-agent-values-prod.yaml
+.staging-deploy: &staging-deploy
+  stage: staging-deploy
+  tags: ["runner:docker", "size:large"]
+  image: $CI_IMAGE
+  rules:
+    - if: '$CI_COMMIT_REF_NAME =~ /-staging$/'
+  script:
+    # # For debugging
+    #- aws sts get-caller-identity
+    - >-
+      TEMP_AWS_ACCESS_KEY_ID=$(aws ssm get-parameter --region us-east-1 --name ci.opentelemetry-demo.sand-eks-deploy-api-key --with-decryption --query Parameter.Value --out text)
+    - >-
+      TEMP_AWS_SECRET_ACCESS_KEY=$(aws ssm get-parameter --region us-east-1 --name ci.opentelemetry-demo.sand-eks-deploy-access-key --with-decryption --query Parameter.Value --out text)
+    - export AWS_ACCESS_KEY_ID=$TEMP_AWS_ACCESS_KEY_ID
+    - export AWS_SECRET_ACCESS_KEY=$TEMP_AWS_SECRET_ACCESS_KEY
+    # # For debugging
+    # - aws sts get-caller-identity
+    - bash $SCRIPT
+
+staging-deploy-otel-demo-eks:
+  !!merge <<: *staging-deploy
+  variables:
+    NAMESPACE: otel-staging
+    VALUES: ./ci/values-staging.yaml
+    NODE_GROUP: ng-3
+    SCRIPT: ./ci/scripts/ci-deploy-demo-staging.sh
+    CLUSTER_NAME: dd-otel
+    CLUSTER_ARN: "arn:aws:eks:us-east-1:601427279990:cluster/dd-otel"
+    REGION: us-east-1
+staging-deploy-otel-ingest-demo-eks:
+  !!merge <<: *staging-deploy
+  variables:
+    NAMESPACE: otel-ingest-staging
+    VALUES: ./ci/values-ingest-staging.yaml
+    NODE_GROUP: ng-4
+    SCRIPT: ./ci/scripts/ci-deploy-demo-staging.sh
+    CLUSTER_NAME: dd-otel
+    CLUSTER_ARN: "arn:aws:eks:us-east-1:601427279990:cluster/dd-otel"
+    REGION: us-east-1
+staging-deploy-otel-ingest-agent-eks:
+  !!merge <<: *staging-deploy
+  variables:
+    NAMESPACE: otel-ingest-staging
+    SCRIPT: ./ci/scripts/ci-deploy-agent.sh
+    CLUSTER_NAME: dd-otel
+    CLUSTER_ARN: "arn:aws:eks:us-east-1:601427279990:cluster/dd-otel"
+    REGION: us-east-1
+    VALUES: ./ci/datadog-agent-values-staging.yaml
