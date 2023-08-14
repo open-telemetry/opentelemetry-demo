@@ -114,7 +114,7 @@ jobs:
       - name: Override skip for push
         if: ${{ inputs.push }}
         run: echo "skip=false >> $GITHUB_OUTPUT"
-        id: override_skip          
+        id: override_skip       
       - name: Log in to the Container registry
         uses: docker/login-action@v2
         with:
@@ -139,7 +139,7 @@ jobs:
             [worker.oci]
             max-parallelism = 2
       - name: Matrix Build and push demo images
-        if: steps.check_changes.outputs.skip == 'false' || steps.override_skip.outputs.skip == 'false'  
+        if: steps.check_changes.outputs.skip == 'false' || steps.override_skip.outputs.skip == 'false'
         uses: docker/build-push-action@v3.3.1
         with:
           context: ${{ matrix.file_tag.context }}
