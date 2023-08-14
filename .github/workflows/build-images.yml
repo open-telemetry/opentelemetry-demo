@@ -103,7 +103,8 @@ jobs:
       - name: Check for file changes
         id: check_changes
         run: |
-          FILES_CHANGED=$(git diff --name-only ${{ github.event.before }} ${{ github.sha }} -- ${{ matrix.file_tag.context }})
+          DOCKERFILE_DIR=$(dirname ${{ matrix.file_tag.file }})
+          FILES_CHANGED=$(git diff --name-only ${{ github.event.before }} ${{ github.sha }} -- $DOCKERFILE_DIR)
           if [ -z "$FILES_CHANGED" ]; then
             echo "No changes in ${{ matrix.file_tag.context }}, skipping build."
             echo "::set-output name=skip::true"
@@ -152,4 +153,3 @@ jobs:
             ${{ env.GHCR_REPO }}:${{ inputs.version }}-${{ matrix.file_tag.tag_suffix }}
           cache-from: type=gha
           cache-to: type=gha
-          
