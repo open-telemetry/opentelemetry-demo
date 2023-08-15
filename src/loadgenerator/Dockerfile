@@ -11,7 +11,6 @@ RUN apt-get -qq update \
 
 COPY ./src/loadgenerator/requirements.txt .
 RUN pip install --prefix="/reqs" -r requirements.txt
-RUN pip install --prefix="/reqs" instana
 
 FROM base
 WORKDIR /usr/src/app/

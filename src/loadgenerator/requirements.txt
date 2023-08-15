@@ -39,3 +39,4 @@ werkzeug==2.3.3
 wrapt==1.15.0
 zope-event==4.6
 zope-interface==6.0
+instana

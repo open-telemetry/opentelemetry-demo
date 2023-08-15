@@ -17,7 +17,6 @@ COPY ./src/recommendationservice/requirements.txt ./
 
 RUN pip install --upgrade pip
 RUN pip install --prefix="/reqs" -r requirements.txt
-RUN pip install instana
 
 #
 # Build gRPC files
