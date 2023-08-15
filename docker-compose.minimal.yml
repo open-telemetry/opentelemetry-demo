@@ -486,7 +486,7 @@ services:
 
   # Grafana
   grafana:
-    image: grafana/grafana:9.4.7
+    image: grafana/grafana:9.5.7
     container_name: grafana
     deploy:
       resources:
@@ -524,7 +524,7 @@ services:
 
   # Prometheus
   prometheus:
-    image: quay.io/prometheus/prometheus:v2.43.0
+    image: quay.io/prometheus/prometheus:v2.46.0
     container_name: prometheus
     command:
       - --web.console.templates=/etc/prometheus/consoles
