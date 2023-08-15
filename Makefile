@@ -97,7 +97,7 @@ run-tests:
 	docker compose run traceBasedTests
 
 run-tracetesting:
-	docker compose run traceBasedTests
+	docker compose run traceBasedTests ${SERVICES_TO_TEST}
 
 .PHONY: generate-protobuf
 generate-protobuf:
