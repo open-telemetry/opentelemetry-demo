@@ -2,7 +2,7 @@
 # SPDX-License-Identifier: Apache-2.0
 
 
-FROM composer:2.4 AS build
+FROM composer:2.5 AS build
 
 WORKDIR /tmp/
 COPY ./src/quoteservice/composer.json .
