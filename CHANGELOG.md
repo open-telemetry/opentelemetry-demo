@@ -45,6 +45,8 @@ release.
   ([#935](https://github.com/open-telemetry/opentelemetry-demo/pull/935))
 * [cartservice] update service to .NET 7
   ([#942](https://github.com/open-telemetry/opentelemetry-demo/pull/942))
+* [tests] Add trace-based testing examples
+  ([#877](https://github.com/open-telemetry/opentelemetry-demo/pull/877))
 * Introduce minimal mode to run demo
   ([#872](https://github.com/open-telemetry/opentelemetry-demo/pull/872))
 * [frontendproxy]Envoy expose a route for the collector to route frontend spans
@@ -63,10 +65,10 @@ release.
   ([#988](https://github.com/open-telemetry/opentelemetry-demo/pull/988))
 * [FraudDetectionService] Updated Kotlin version and OTel dependencies
   ([#987](https://github.com/open-telemetry/opentelemetry-demo/pull/987))
-* [otelcol] Use the collector builder to produce otelcol docker image
-  ([#944](https://github.com/open-telemetry/opentelemetry-demo/pull/944))
 * [quoteservice] update php dependencies
   ([#994](https://github.com/open-telemetry/opentelemetry-demo/issues/994))
+* [tests] Update trace-based tests run script
+  ([#1018](https://github.com/open-telemetry/opentelemetry-demo/pull/1018))
 * [PaymentService] Update node to LTS version and bump deps
   ([#1029](https://github.com/open-telemetry/opentelemetry-demo/issues/1029))
 
