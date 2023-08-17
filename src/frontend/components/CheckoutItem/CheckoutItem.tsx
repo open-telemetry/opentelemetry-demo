@@ -52,7 +52,7 @@ const CheckoutItem = ({
         )}
       </S.ShippingData>
       <S.Status>
-        <Image src="/icons/Check.svg" alt="check" height="14px" width="16px" /> <span>Done</span>
+        <Image src="/icons/Check.svg" alt="check" height="14" width="16" /> <span>Done</span>
       </S.Status>
     </S.CheckoutItem>
   );
