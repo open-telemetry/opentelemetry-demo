@@ -9,7 +9,7 @@ spec:
   trigger:
     type: http
     httpRequest:
-      url: http://${env:FRONTEND_ADDR}/api/checkout
+      url: http://${var:FRONTEND_ADDR}/api/checkout
       method: POST
       headers:
       - key: Content-Type

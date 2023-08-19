@@ -16,11 +16,11 @@ check_if_tracetest_is_installed() {
 }
 
 create_env_file() {
-  cat << EOF > tracetesting-env.yaml
-type: Environment
+  cat << EOF > tracetesting-vars.yaml
+type: VariableSet
 spec:
-  id: tracetesting-env
-  name: tracetesting-env
+  id: tracetesting-vars
+  name: tracetesting-vars
   values:
     - key: AD_SERVICE_ADDR
       value: $AD_SERVICE_ADDR
@@ -47,9 +47,9 @@ EOF
 
 run_tracetest() {
   service_name=$1
-  transaction_file=./$service_name/all.yaml
+  testsuite_file=./$service_name/all.yaml
 
-  tracetest --config ./cli-config.yml run transaction --file $transaction_file --environment ./tracetesting-env.yaml
+  tracetest --config ./cli-config.yml run testsuite --file $testsuite_file --vars ./tracetesting-vars.yaml
   return $?
 }
 
