@@ -47,11 +47,25 @@ EOF
 
 run_tracetest() {
   service_name=$1
-  test_file=./$service_name/all.yaml
+  transaction_file=./$service_name/all.yaml
 
-  tracetest --config ./cli-config.yml test run --definition $test_file --environment ./tracetesting-env.yaml --wait-for-result
+  tracetest --config ./cli-config.yml run transaction --file $transaction_file --environment ./tracetesting-env.yaml
   return $?
 }
+
+ALL_SERVICES=("ad-service" "cart-service" "currency-service" "checkout-service" "frontend-service" "email-service" "payment-service" "product-catalog-service" "recommendation-service" "shipping-service")
+CHOSEN_SERVICES=()
+
+while [[ $# -gt 0 ]]; do
+  CHOSEN_SERVICES+=("$1")
+  shift
+done
+
+if [ ${#CHOSEN_SERVICES[@]} -eq 0 ]; then
+  for service in "${ALL_SERVICES[@]}"; do
+    CHOSEN_SERVICES+=("$service")  
+  done
+fi
 
 check_if_tracetest_is_installed
 create_env_file
@@ -62,17 +76,11 @@ EXIT_STATUS=0
 
 echo ""
 echo "Running trace-based tests..."
+echo ""
 
-run_tracetest ad-service || EXIT_STATUS=$?
-run_tracetest cart-service || EXIT_STATUS=$?
-run_tracetest currency-service || EXIT_STATUS=$?
-run_tracetest checkout-service || EXIT_STATUS=$?
-run_tracetest frontend-service || EXIT_STATUS=$?
-run_tracetest email-service || EXIT_STATUS=$?
-run_tracetest payment-service || EXIT_STATUS=$?
-run_tracetest product-catalog-service || EXIT_STATUS=$?
-run_tracetest recommendation-service || EXIT_STATUS=$?
-run_tracetest shipping-service || EXIT_STATUS=$?
+for service in "${CHOSEN_SERVICES[@]}"; do
+  run_tracetest $service || EXIT_STATUS=$?
+done
 
 echo ""
 echo "Tests done! Exit code: $EXIT_STATUS"

@@ -13,7 +13,7 @@
         "open-telemetry/exporter-otlp": "1.0.0beta12",
         "open-telemetry/opentelemetry-auto-slim": "1.0.0beta9",
         "guzzlehttp/guzzle": "7.5.1",
-        "php-di/php-di": "7.0.2",
+        "php-di/php-di": "7.0.3",
         "php-di/slim-bridge": "3.3.0",
         "php-http/guzzle7-adapter": "1.0.0",
         "react/http": "v1.9.0",
