@@ -42,6 +42,8 @@ spec:
       value: $RECOMMENDATION_SERVICE_ADDR
     - key: SHIPPING_SERVICE_ADDR
       value: $SHIPPING_SERVICE_ADDR
+    - key: KAFKA_SERVICE_ADDR
+      value: $KAFKA_SERVICE_ADDR
 EOF
 }
 
@@ -53,7 +55,7 @@ run_tracetest() {
   return $?
 }
 
-ALL_SERVICES=("ad-service" "cart-service" "currency-service" "checkout-service" "frontend-service" "email-service" "payment-service" "product-catalog-service" "recommendation-service" "shipping-service")
+ALL_SERVICES=("accounting-service" "ad-service" "cart-service" "currency-service" "checkout-service" "fraud-detection-service" "frontend-service" "email-service" "payment-service" "product-catalog-service" "recommendation-service" "shipping-service")
 CHOSEN_SERVICES=()
 
 while [[ $# -gt 0 ]]; do

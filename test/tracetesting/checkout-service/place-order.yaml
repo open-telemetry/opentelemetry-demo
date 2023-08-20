@@ -44,3 +44,7 @@ spec:
       rpc.system="grpc" rpc.method="PlaceOrder" rpc.service="oteldemo.CheckoutService"]
     assertions:
     - attr:rpc.grpc.status_code = 0
+  - name: It sends an order to be processed asyncronously
+    selector: span[tracetest.span.type="messaging" name="orders send" messaging.system="kafka" messaging.destination="orders" messaging.destination_kind="topic" messaging.operation="send"]
+    assertions:
+    - attr:messaging.destination = "orders"

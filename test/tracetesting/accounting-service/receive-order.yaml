@@ -1,0 +1,52 @@
+# Copyright The OpenTelemetry Authors
+# SPDX-License-Identifier: Apache-2.0
+
+type: Test
+spec:
+  id: accounting-receive-order
+  name: 'Accounting: receive order'
+  description: Receive an order from Orders stream
+  trigger:
+    type: kafka
+    kafka:
+      brokerUrls:
+      - ${var:KAFKA_SERVICE_ADDR}
+      topic: messaging
+      messageKey: "order-505"
+      messageValue: |
+        {
+          "order_id": "505",
+          "shipping_tracking_id": "dead-beef",
+          "shipping_cost": {
+            "currency_code": "USD",
+            "units": 17,
+            "nanos": 980000000
+          },
+          "shipping_address": {
+            "street_address_1": "1600 Amphitheatre Parkway",
+            "city": "Mountain View",
+            "state": "California",
+            "country": "United States",
+            "zip_code": "94043"
+          },
+          "items": [
+            {
+              "item": {
+                "product_id": "1YMWWN1N4O",
+                "quantity": 5
+              },
+              "cost": {
+                "currency_code": "USD",
+                "units": 100,
+                "nanos": 0
+              }
+            }
+          ]
+        }
+
+  specs:
+  - name: The order was sent to accountability
+    # captures the span emitted by Kafka instrumentation for Go
+    selector: span[tracetest.span.type="messaging" name="orders receive" messaging.system="kafka" messaging.destination="orders" messaging.destination_kind="topic" messaging.operation="receive"]
+    assertions:
+    - attr:name = "orders receive"

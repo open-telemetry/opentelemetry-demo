@@ -1,0 +1,10 @@
+# Copyright The OpenTelemetry Authors
+# SPDX-License-Identifier: Apache-2.0
+
+type: TestSuite
+spec:
+  id: frauddetection-service-all
+  name: 'Fraud Detection Service'
+  description: Run all Fraud Detection Service tests enabled in sequence
+  steps:
+  - ./process-order.yaml
