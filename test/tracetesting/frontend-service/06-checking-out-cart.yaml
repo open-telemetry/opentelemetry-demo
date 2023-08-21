@@ -69,6 +69,6 @@ spec:
     - attr:name = "orders receive"
   - name: The order was sent to fraud detection team
     # captures the span emitted by Kafka instrumentation for Kotlin
-    selector: span[tracetest.span.type="messaging" name="orders process" messaging.system="kafka" messaging.operation="process"] 
+    selector: span[tracetest.span.type="messaging" name="orders process" messaging.system="kafka" messaging.operation="process"]
     assertions:
     - attr:name = "orders process"
