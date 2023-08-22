@@ -71,6 +71,8 @@ release.
   ([#1018](https://github.com/open-telemetry/opentelemetry-demo/pull/1018))
 * [PaymentService] Update node to LTS version and bump deps
   ([#1029](https://github.com/open-telemetry/opentelemetry-demo/issues/1029))
+* [Helm Chart] Update helm chart
+  ([#1074](https://github.com/open-telemetry/opentelemetry-demo/pull/1074))
 
 ## 1.4.0
 
