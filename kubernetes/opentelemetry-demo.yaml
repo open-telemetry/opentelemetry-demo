@@ -9,7 +9,7 @@ metadata:
   labels:
     app.kubernetes.io/name: grafana
     app.kubernetes.io/instance: opentelemetry-demo
-    app.kubernetes.io/version: "9.4.7"
+    app.kubernetes.io/version: "10.0.3"
   name: opentelemetry-demo-grafana
   namespace: otel-demo
 ---
@@ -21,7 +21,7 @@ metadata:
   labels:
     app.kubernetes.io/name: jaeger
     app.kubernetes.io/instance: opentelemetry-demo
-    app.kubernetes.io/version: "1.42.0"
+    app.kubernetes.io/version: "1.45.0"
     app.kubernetes.io/component: all-in-one
 ---
 # Source: opentelemetry-demo/charts/opentelemetry-collector/templates/serviceaccount.yaml
@@ -32,18 +32,18 @@ metadata:
   labels:
     app.kubernetes.io/name: otelcol
     app.kubernetes.io/instance: opentelemetry-demo
-    app.kubernetes.io/version: "0.76.1"
+    app.kubernetes.io/version: "0.82.0"
 ---
 # Source: opentelemetry-demo/charts/prometheus/templates/serviceaccount.yaml
 apiVersion: v1
 kind: ServiceAccount
 metadata:
   labels:
-    component: "server"
-    app: prometheus
-    release: opentelemetry-demo
-    chart: prometheus-20.2.0
-    heritage: Helm
+    app.kubernetes.io/component: server
+    app.kubernetes.io/name: prometheus
+    app.kubernetes.io/instance: opentelemetry-demo
+    app.kubernetes.io/version: v2.46.0
+    app.kubernetes.io/part-of: prometheus
   name: opentelemetry-demo-prometheus-server
   namespace: otel-demo
   annotations:
@@ -71,7 +71,7 @@ metadata:
   labels:
     app.kubernetes.io/name: grafana
     app.kubernetes.io/instance: opentelemetry-demo
-    app.kubernetes.io/version: "9.4.7"
+    app.kubernetes.io/version: "10.0.3"
 type: Opaque
 data:
   admin-user: "YWRtaW4="
@@ -87,7 +87,7 @@ metadata:
   labels:
     app.kubernetes.io/name: grafana
     app.kubernetes.io/instance: opentelemetry-demo
-    app.kubernetes.io/version: "9.4.7"
+    app.kubernetes.io/version: "10.0.3"
 data:
   grafana.ini: |
     [analytics]
@@ -153,7 +153,7 @@ metadata:
   labels:
     app.kubernetes.io/name: otelcol
     app.kubernetes.io/instance: opentelemetry-demo
-    app.kubernetes.io/version: "0.76.1"
+    app.kubernetes.io/version: "0.82.0"
 data:
   relay: |
     connectors:
@@ -265,11 +265,11 @@ apiVersion: v1
 kind: ConfigMap
 metadata:
   labels:
-    component: "server"
-    app: prometheus
-    release: opentelemetry-demo
-    chart: prometheus-20.2.0
-    heritage: Helm
+    app.kubernetes.io/component: server
+    app.kubernetes.io/name: prometheus
+    app.kubernetes.io/instance: opentelemetry-demo
+    app.kubernetes.io/version: v2.46.0
+    app.kubernetes.io/part-of: prometheus
   name: opentelemetry-demo-prometheus-server
   namespace: otel-demo
 data:
@@ -5809,7 +5809,7 @@ metadata:
   labels:
     app.kubernetes.io/name: grafana
     app.kubernetes.io/instance: opentelemetry-demo
-    app.kubernetes.io/version: "9.4.7"
+    app.kubernetes.io/version: "10.0.3"
   name: opentelemetry-demo-grafana-clusterrole
 rules: []
 ---
@@ -5818,11 +5818,11 @@ apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRole
 metadata:
   labels:
-    component: "server"
-    app: prometheus
-    release: opentelemetry-demo
-    chart: prometheus-20.2.0
-    heritage: Helm
+    app.kubernetes.io/component: server
+    app.kubernetes.io/name: prometheus
+    app.kubernetes.io/instance: opentelemetry-demo
+    app.kubernetes.io/version: v2.46.0
+    app.kubernetes.io/part-of: prometheus
   name: opentelemetry-demo-prometheus-server
 rules:
   - apiGroups:
@@ -5863,7 +5863,7 @@ metadata:
   labels:
     app.kubernetes.io/name: grafana
     app.kubernetes.io/instance: opentelemetry-demo
-    app.kubernetes.io/version: "9.4.7"
+    app.kubernetes.io/version: "10.0.3"
 subjects:
   - kind: ServiceAccount
     name: opentelemetry-demo-grafana
@@ -5878,11 +5878,11 @@ apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRoleBinding
 metadata:
   labels:
-    component: "server"
-    app: prometheus
-    release: opentelemetry-demo
-    chart: prometheus-20.2.0
-    heritage: Helm
+    app.kubernetes.io/component: server
+    app.kubernetes.io/name: prometheus
+    app.kubernetes.io/instance: opentelemetry-demo
+    app.kubernetes.io/version: v2.46.0
+    app.kubernetes.io/part-of: prometheus
   name: opentelemetry-demo-prometheus-server
 subjects:
   - kind: ServiceAccount
@@ -5902,7 +5902,7 @@ metadata:
   labels:
     app.kubernetes.io/name: grafana
     app.kubernetes.io/instance: opentelemetry-demo
-    app.kubernetes.io/version: "9.4.7"
+    app.kubernetes.io/version: "10.0.3"
 rules: []
 ---
 # Source: opentelemetry-demo/charts/grafana/templates/rolebinding.yaml
@@ -5914,7 +5914,7 @@ metadata:
   labels:
     app.kubernetes.io/name: grafana
     app.kubernetes.io/instance: opentelemetry-demo
-    app.kubernetes.io/version: "9.4.7"
+    app.kubernetes.io/version: "10.0.3"
 roleRef:
   apiGroup: rbac.authorization.k8s.io
   kind: Role
@@ -5933,7 +5933,7 @@ metadata:
   labels:
     app.kubernetes.io/name: grafana
     app.kubernetes.io/instance: opentelemetry-demo
-    app.kubernetes.io/version: "9.4.7"
+    app.kubernetes.io/version: "10.0.3"
 spec:
   type: ClusterIP
   ports:
@@ -5953,7 +5953,7 @@ metadata:
   labels:
     app.kubernetes.io/name: jaeger
     app.kubernetes.io/instance: opentelemetry-demo
-    app.kubernetes.io/version: "1.42.0"
+    app.kubernetes.io/version: "1.45.0"
     app.kubernetes.io/component: service-agent
 spec:
   clusterIP: None
@@ -5986,7 +5986,7 @@ metadata:
   labels:
     app.kubernetes.io/name: jaeger
     app.kubernetes.io/instance: opentelemetry-demo
-    app.kubernetes.io/version: "1.42.0"
+    app.kubernetes.io/version: "1.45.0"
     app.kubernetes.io/component: service-collector
 spec:
   clusterIP: None
@@ -6022,7 +6022,7 @@ metadata:
   labels:
     app.kubernetes.io/name: jaeger
     app.kubernetes.io/instance: opentelemetry-demo
-    app.kubernetes.io/version: "1.42.0"
+    app.kubernetes.io/version: "1.45.0"
     app.kubernetes.io/component: service-query
 spec:
   clusterIP: None
@@ -6046,7 +6046,7 @@ metadata:
   labels:
     app.kubernetes.io/name: otelcol
     app.kubernetes.io/instance: opentelemetry-demo
-    app.kubernetes.io/version: "0.76.1"
+    app.kubernetes.io/version: "0.82.0"
     component: standalone-collector
 spec:
   type: ClusterIP
@@ -6089,17 +6089,18 @@ spec:
     app.kubernetes.io/name: otelcol
     app.kubernetes.io/instance: opentelemetry-demo
     component: standalone-collector
+  internalTrafficPolicy: Cluster
 ---
 # Source: opentelemetry-demo/charts/prometheus/templates/service.yaml
 apiVersion: v1
 kind: Service
 metadata:
   labels:
-    component: "server"
-    app: prometheus
-    release: opentelemetry-demo
-    chart: prometheus-20.2.0
-    heritage: Helm
+    app.kubernetes.io/component: server
+    app.kubernetes.io/name: prometheus
+    app.kubernetes.io/instance: opentelemetry-demo
+    app.kubernetes.io/version: v2.46.0
+    app.kubernetes.io/part-of: prometheus
   name: opentelemetry-demo-prometheus-server
   namespace: otel-demo
 spec:
@@ -6109,9 +6110,9 @@ spec:
       protocol: TCP
       targetPort: 9090
   selector:
-    component: "server"
-    app: prometheus
-    release: opentelemetry-demo
+    app.kubernetes.io/component: server
+    app.kubernetes.io/name: prometheus
+    app.kubernetes.io/instance: opentelemetry-demo
   sessionAffinity: None
   type: "ClusterIP"
 ---
@@ -6521,7 +6522,7 @@ metadata:
   labels:
     app.kubernetes.io/name: grafana
     app.kubernetes.io/instance: opentelemetry-demo
-    app.kubernetes.io/version: "9.4.7"
+    app.kubernetes.io/version: "10.0.3"
 spec:
   replicas: 1
   revisionHistoryLimit: 10
@@ -6537,10 +6538,11 @@ spec:
         app.kubernetes.io/name: grafana
         app.kubernetes.io/instance: opentelemetry-demo
       annotations:
-        checksum/config: 46e9428a9c36c5c45a84485e747d9911e5d9cc320ac4bec997c39688cfda1b43
+        checksum/config: f92101b40fb01c244a4b9322ca52ebe09642bda49660e6b81391e788b2138cf4
         checksum/dashboards-json-config: 01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b
         checksum/sc-dashboard-provider-config: 01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b
-        checksum/secret: 168eac9549c1155906143bae680e232ce7a8acecd06af6a8ca9d6088db7473f2
+        checksum/secret: fed400946f54af100977a891e2552cb0e3ac2cddd8ff6ef730346abe9021378b
+        kubectl.kubernetes.io/default-container: grafana
     spec:
       
       serviceAccountName: opentelemetry-demo-grafana
@@ -6548,12 +6550,20 @@ spec:
       securityContext:
         fsGroup: 472
         runAsGroup: 472
+        runAsNonRoot: true
         runAsUser: 472
       enableServiceLinks: true
       containers:
         - name: grafana
-          image: "grafana/grafana:9.4.7"
+          image: "docker.io/grafana/grafana:10.0.3"
           imagePullPolicy: IfNotPresent
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+              - ALL
+            seccompProfile:
+              type: RuntimeDefault
           volumeMounts:
             - name: config
               mountPath: "/etc/grafana/grafana.ini"
@@ -6633,7 +6643,7 @@ metadata:
   labels:
     app.kubernetes.io/name: jaeger
     app.kubernetes.io/instance: opentelemetry-demo
-    app.kubernetes.io/version: "1.42.0"
+    app.kubernetes.io/version: "1.45.0"
     app.kubernetes.io/component: all-in-one
     prometheus.io/port: "14269"
     prometheus.io/scrape: "true"
@@ -6668,7 +6678,7 @@ spec:
               value: "false"
             - name: COLLECTOR_OTLP_ENABLED
               value: "true"
-          image: jaegertracing/all-in-one:1.42.0
+          image: jaegertracing/all-in-one:1.45.0
           imagePullPolicy: IfNotPresent
           name: jaeger
           args:
@@ -6720,7 +6730,9 @@ spec:
           resources:
             limits:
               memory: 300Mi
+          volumeMounts:
       serviceAccountName: opentelemetry-demo-jaeger
+      volumes:
 ---
 # Source: opentelemetry-demo/charts/opentelemetry-collector/templates/deployment.yaml
 apiVersion: apps/v1
@@ -6730,7 +6742,7 @@ metadata:
   labels:
     app.kubernetes.io/name: otelcol
     app.kubernetes.io/instance: opentelemetry-demo
-    app.kubernetes.io/version: "0.76.1"
+    app.kubernetes.io/version: "0.82.0"
 spec:
   replicas: 1
   revisionHistoryLimit: 10
@@ -6744,7 +6756,7 @@ spec:
   template:
     metadata:
       annotations:
-        checksum/config: 43d3318bb84ce994167ce160b46e0e06eb17a17b8de61b578bf4a3e97f4dcdd1
+        checksum/config: 6ee75c7ca114abbdb18865ae0ee176e3eb17e8d202b13b067891c6bce2cf1c69
         opentelemetry_community_demo: "true"
         prometheus.io/port: "9464"
         prometheus.io/scrape: "true"
@@ -6765,7 +6777,7 @@ spec:
             - --config=/conf/relay.yaml
           securityContext:
             {}
-          image: "otel/opentelemetry-collector-contrib:0.76.1"
+          image: "otel/opentelemetry-collector-contrib:0.82.0"
           imagePullPolicy: IfNotPresent
           ports:
             - name: jaeger-compact
@@ -6826,38 +6838,39 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   labels:
-    component: "server"
-    app: prometheus
-    release: opentelemetry-demo
-    chart: prometheus-20.2.0
-    heritage: Helm
+    app.kubernetes.io/component: server
+    app.kubernetes.io/name: prometheus
+    app.kubernetes.io/instance: opentelemetry-demo
+    app.kubernetes.io/version: v2.46.0
+    app.kubernetes.io/part-of: prometheus
   name: opentelemetry-demo-prometheus-server
   namespace: otel-demo
 spec:
   selector:
     matchLabels:
-      component: "server"
-      app: prometheus
-      release: opentelemetry-demo
+      app.kubernetes.io/component: server
+      app.kubernetes.io/name: prometheus
+      app.kubernetes.io/instance: opentelemetry-demo
   replicas: 1
+  revisionHistoryLimit: 10
   strategy:
     type: Recreate
     rollingUpdate: null
   template:
     metadata:
       labels:
-        component: "server"
-        app: prometheus
-        release: opentelemetry-demo
-        chart: prometheus-20.2.0
-        heritage: Helm
+        app.kubernetes.io/component: server
+        app.kubernetes.io/name: prometheus
+        app.kubernetes.io/instance: opentelemetry-demo
+        app.kubernetes.io/version: v2.46.0
+        app.kubernetes.io/part-of: prometheus
     spec:
       enableServiceLinks: true
       serviceAccountName: opentelemetry-demo-prometheus-server
       containers:
 
         - name: prometheus-server
-          image: "quay.io/prometheus/prometheus:v2.43.0"
+          image: "quay.io/prometheus/prometheus:v2.46.0"
           imagePullPolicy: "IfNotPresent"
           args:
             - --storage.tsdb.retention.time=15d
@@ -7761,7 +7774,7 @@ spec:
           - name: WEB_OTEL_SERVICE_NAME
             value: frontend-web
           - name: PUBLIC_OTEL_EXPORTER_OTLP_TRACES_ENDPOINT
-            value: http://localhost:8080/oltp-http/v1/traces
+            value: http://localhost:4318/v1/traces
           - name: OTEL_RESOURCE_ATTRIBUTES
             value: service.name=$(OTEL_SERVICE_NAME),service.instance.id=$(OTEL_K8S_POD_UID),service.namespace=opentelemetry-demo,k8s.namespace.name=$(OTEL_K8S_NAMESPACE),k8s.node.name=$(OTEL_K8S_NODE_NAME),k8s.pod.name=$(OTEL_K8S_POD_NAME)
           resources:
@@ -7860,10 +7873,8 @@ spec:
             value: "16686"
           - name: JAEGER_SERVICE_HOST
             value: 'opentelemetry-demo-jaeger-query'
-          - name: OTEL_COLLECTOR_PORT_GRPC
+          - name: OTEL_COLLECTOR_PORT
             value: "4317"
-          - name: OTEL_COLLECTOR_PORT_HTTP
-            value: "4318"
           - name: OTEL_COLLECTOR_HOST
             value: $(OTEL_COLLECTOR_NAME)
           - name: OTEL_RESOURCE_ATTRIBUTES
@@ -8533,7 +8544,7 @@ metadata:
   labels:
     app.kubernetes.io/name: grafana
     app.kubernetes.io/instance: opentelemetry-demo
-    app.kubernetes.io/version: "9.4.7"
+    app.kubernetes.io/version: "10.0.3"
   name: opentelemetry-demo-grafana-test
   namespace: otel-demo
   annotations:
@@ -8548,7 +8559,7 @@ metadata:
   labels:
     app.kubernetes.io/name: grafana
     app.kubernetes.io/instance: opentelemetry-demo
-    app.kubernetes.io/version: "9.4.7"
+    app.kubernetes.io/version: "10.0.3"
 data:
   run.sh: |-
     @test "Test Health" {
@@ -8566,14 +8577,14 @@ metadata:
   labels:
     app.kubernetes.io/name: grafana
     app.kubernetes.io/instance: opentelemetry-demo
-    app.kubernetes.io/version: "9.4.7"
+    app.kubernetes.io/version: "10.0.3"
   annotations:
   namespace: otel-demo
 spec:
   serviceAccountName: opentelemetry-demo-grafana-test
   containers:
     - name: opentelemetry-demo-test
-      image: "bats/bats:v1.4.1"
+      image: "docker.io/bats/bats:v1.4.1"
       imagePullPolicy: "IfNotPresent"
       command: ["/opt/bats/bin/bats", "-t", "/tests/run.sh"]
       volumeMounts:
