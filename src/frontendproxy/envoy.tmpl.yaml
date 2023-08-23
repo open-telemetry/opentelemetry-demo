@@ -36,7 +36,7 @@ static_resources:
                           route: { cluster: featureflag, prefix_rewrite: "/" }
                         - match: { prefix: "/loadgen" }
                           route: { cluster: loadgen, prefix_rewrite: "/" }
-                        - match: { prefix: "/oltp-http/" }
+                        - match: { prefix: "/otlp-http/" }
                           route: { cluster: opentelemetry_collector_http, prefix_rewrite: "/" }
                         - match: { prefix: "/jaeger" }
                           route: { cluster: jaeger }
