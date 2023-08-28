@@ -3,4 +3,4 @@
 
 ## CodeSee Fork
 
-This is a CodeSee fork of the otel demo repo with the following changes:
+This is a CodeSee fork of the otel demo repo with the following changes: [PR](https://github.com/open-telemetry/opentelemetry-demo/compare/main...Codesee-io:opentelemetry-demo:codesee?expand=1)
