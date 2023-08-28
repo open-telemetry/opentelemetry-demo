@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import { useMemo } from 'react';
-import { useQuery } from 'react-query';
+import { useQuery } from '@tanstack/react-query';
 import ApiGateway from '../../gateways/Api.gateway';
 import { Address, Money } from '../../protos/demo';
 import { useCurrency } from '../../providers/Currency.provider';

@@ -68,11 +68,15 @@ release.
 * [FraudDetectionService] Updated Kotlin version and OTel dependencies
   ([#987](https://github.com/open-telemetry/opentelemetry-demo/pull/987))
 * [quoteservice] update php dependencies
-  ([#994](https://github.com/open-telemetry/opentelemetry-demo/issues/994))
+  ([#1009](https://github.com/open-telemetry/opentelemetry-demo/pull/1009))
 * [tests] Update trace-based tests run script
   ([#1018](https://github.com/open-telemetry/opentelemetry-demo/pull/1018))
 * [PaymentService] Update node to LTS version and bump deps
-  ([#1029](https://github.com/open-telemetry/opentelemetry-demo/issues/1029))
+  ([#1029](https://github.com/open-telemetry/opentelemetry-demo/pull/1029))
+* [frontend] Update dependencies
+  ([#1054](https://github.com/open-telemetry/opentelemetry-demo/pull/1054))
+* [frontendproxy] Fix typo URL endpoint for FrontendProxy
+  ([#1075](https://github.com/open-telemetry/opentelemetry-demo/pull/1075))
 
 ## 1.4.0
 
