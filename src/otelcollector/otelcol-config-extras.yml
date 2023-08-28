@@ -2,3 +2,24 @@
 # SPDX-License-Identifier: Apache-2.0
 # extra settings to be merged into OpenTelemetry Collector configuration
 # do not delete this file
+
+receivers:
+  otlp:
+    protocols:
+      grpc:
+
+exporters:
+  otlp/codesee:
+    endpoint: in-otel.codesee.io:443
+    headers:
+      "Authorization": "Bearer <CodeSee api token here>" # https://docs.codesee.io/docs/integration-with-opentelemetry
+
+processors:
+  batch:
+
+service:
+  pipelines:
+    traces:
+      receivers: [otlp]
+      processors: [batch]
+      exporters: [otlp/codesee]
