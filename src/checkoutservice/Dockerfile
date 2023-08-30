@@ -3,10 +3,8 @@
 
 
 FROM golang:1.19.2-alpine AS builder
-RUN apk add build-base protobuf-dev protoc
 WORKDIR /usr/src/app/
 
-# Restore dependencies
 COPY ./src/checkoutservice/ ./
 COPY ./pb/ ./proto/
 RUN go mod download
@@ -16,7 +14,7 @@ RUN go get github.com/instana/go-sensor
 
 # Build executable
 RUN protoc -I ./proto/ ./proto/demo.proto --go_out=./ --go-grpc_out=./
-RUN go build -o /go/bin/checkoutservice/ ./
+RUN go build -o /go/bin/checkoutservice/
 
 # -----------------------------------------------------------------------------
 

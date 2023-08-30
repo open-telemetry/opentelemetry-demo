@@ -1,0 +1,36 @@
+# Copyright The OpenTelemetry Authors
+# SPDX-License-Identifier: Apache-2.0
+
+
+exporters:
+  otlp/jaeger:
+    endpoint: "jaeger:4317"
+    tls:
+      insecure: true
+  otlp/instana:
+    endpoint: "{env:INSTANA_AGENT_HOST}:4317"
+    tls:
+      insecure: true
+  # instana:
+  #   # loglevel: debug
+  #   endpoint: https://serverless-orange-saas.instana.io
+  #   agent_key: <insert your agent key>
+  #   tls:
+  #     insecure_skip_verify: true
+  instana:
+    endpoint: https://instana.tec.cz.ibm.com/serverless
+    agent_key: vzWTqejpZuXVqwUYWeKcFy
+    tls:
+      insecure_skip_verify: true
+  prometheus:
+    endpoint: "otelcol:9464"
+    resource_to_telemetry_conversion:
+      enabled: true
+    enable_open_metrics: true
+
+service:
+  pipelines:
+    traces:
+      exporters: [logging, spanmetrics, otlp/jaeger, instana]
+    metrics:
+      exporters: [prometheus, logging, otlp/instana]

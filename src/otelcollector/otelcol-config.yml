@@ -13,31 +13,7 @@ receivers:
             - "https://*"
 
 exporters:
-  otlp/jaeger:
-    endpoint: "jaeger:4317"
-    tls:
-      insecure: true
-  otlp/instana:
-    endpoint: "{env:INSTANA_AGENT_HOST}:4317"
-    tls:
-      insecure: true
-  # instana:
-  #   # loglevel: debug
-  #   endpoint: https://serverless-orange-saas.instana.io
-  #   agent_key: <insert your agent key>
-  #   tls:
-  #     insecure_skip_verify: true
-  instana:
-    endpoint: https://instana.tec.cz.ibm.com/serverless
-    agent_key: vzWTqejpZuXVqwUYWeKcFy
-    tls:
-      insecure_skip_verify: true
   logging:
-  prometheus:
-    endpoint: "otelcol:9464"
-    resource_to_telemetry_conversion:
-      enabled: true
-    enable_open_metrics: true
 
 processors:
   batch:
@@ -56,13 +32,11 @@ service:
     traces:
       receivers: [otlp]
       processors: [batch]
-      # exporters: [logging, otlp/jaeger, otlp/instana, instana]
-      # exporters: [logging, otlp/jaeger, otlp/instana]
-      exporters: [logging, spanmetrics, otlp/jaeger, instana]
+      exporters: [logging, spanmetrics]
     metrics:
       receivers: [otlp, spanmetrics]
-      exporters: [prometheus, logging, otlp/instana]
       processors: [filter, batch]
+      exporters: [logging]
     logs:
       receivers: [otlp]
       processors: [batch]

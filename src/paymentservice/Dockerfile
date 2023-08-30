@@ -2,7 +2,7 @@
 # SPDX-License-Identifier: Apache-2.0
 
 
-FROM node:16-alpine AS build
+FROM node:18-alpine AS build
 
 WORKDIR /usr/src/app/
 
@@ -13,7 +13,7 @@ RUN npm install --save @instana/collector
 
 # -----------------------------------------------------------------------------
 
-FROM node:16-alpine
+FROM node:18-alpine
 
 USER node
 WORKDIR /usr/src/app/
