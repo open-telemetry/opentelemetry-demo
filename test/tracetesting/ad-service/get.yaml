@@ -10,7 +10,7 @@ spec:
     type: grpc
     grpc:
       protobufFile: ../../../pb/demo.proto
-      address: ${env:AD_SERVICE_ADDR}
+      address: ${var:AD_SERVICE_ADDR}
       method: oteldemo.AdService.GetAds
       request: |-
         {
