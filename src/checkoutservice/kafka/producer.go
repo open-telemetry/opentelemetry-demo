@@ -3,9 +3,8 @@
 package kafka
 
 import (
-	"github.com/Shopify/sarama"
+	"github.com/IBM/sarama"
 	"github.com/sirupsen/logrus"
-	"go.opentelemetry.io/contrib/instrumentation/github.com/Shopify/sarama/otelsarama"
 )
 
 var (
@@ -18,14 +17,12 @@ func CreateKafkaProducer(brokers []string, log *logrus.Logger) (sarama.AsyncProd
 	saramaConfig.Version = ProtocolVersion
 	// So we can know the partition and offset of messages.
 	saramaConfig.Producer.Return.Successes = true
+	saramaConfig.Producer.Interceptors = []sarama.ProducerInterceptor{NewOTelInterceptor()}
 
 	producer, err := sarama.NewAsyncProducer(brokers, saramaConfig)
 	if err != nil {
 		return nil, err
 	}
-
-	// Wrap instrumentation
-	producer = otelsarama.WrapAsyncProducer(saramaConfig, producer)
 
 	// We will log to STDOUT if we're not able to produce messages.
 	go func() {
