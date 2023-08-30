@@ -24,7 +24,7 @@ func StartConsumerGroup(ctx context.Context, brokers []string, log *logrus.Logge
 	saramaConfig.Version = ProtocolVersion
 	// So we can know the partition and offset of messages.
 	saramaConfig.Producer.Return.Successes = true
-	saramaConfig.Consumer.Interceptors = []sarama.ConsumerInterceptor{&OTelInterceptor{}}
+	saramaConfig.Consumer.Interceptors = []sarama.ConsumerInterceptor{NewOTelInterceptor()}
 
 	consumerGroup, err := sarama.NewConsumerGroup(brokers, GroupID, saramaConfig)
 	if err != nil {

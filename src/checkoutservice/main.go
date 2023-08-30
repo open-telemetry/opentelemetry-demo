@@ -7,6 +7,7 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	semconv "go.opentelemetry.io/otel/semconv/v1.19.0"
 	"net"
 	"net/http"
 	"os"
@@ -487,13 +488,43 @@ func (cs *checkoutService) sendToPostProcessor(ctx context.Context, result *pb.O
 		return
 	}
 
-	// Inject tracing info into message
 	msg := sarama.ProducerMessage{
 		Topic: kafka.Topic,
 		Value: sarama.ByteEncoder(message),
 	}
 
+	// Inject tracing info into message
+	span := createProducerSpan(ctx, &msg)
+	defer span.End()
+
 	cs.KafkaProducerClient.Input() <- &msg
 	successMsg := <-cs.KafkaProducerClient.Successes()
 	log.Infof("Successful to write message. offset: %v", successMsg.Offset)
+}
+
+func createProducerSpan(ctx context.Context, msg *sarama.ProducerMessage) trace.Span {
+	spanContext, span := tracer.Start(
+		ctx,
+		fmt.Sprintf("%s publish", msg.Topic),
+		trace.WithSpanKind(trace.SpanKindProducer),
+		trace.WithAttributes(
+			semconv.PeerService("kafka"),
+			semconv.NetTransportTCP,
+			semconv.MessagingSystem("kafka"),
+			semconv.MessagingDestinationKindTopic,
+			semconv.MessagingDestinationName(msg.Topic),
+			semconv.MessagingOperationPublish,
+			semconv.MessagingKafkaDestinationPartition(int(msg.Partition)),
+		),
+	)
+
+	carrier := propagation.MapCarrier{}
+	propagator := otel.GetTextMapPropagator()
+	propagator.Inject(spanContext, carrier)
+
+	for key, value := range carrier {
+		msg.Headers = append(msg.Headers, sarama.RecordHeader{Key: []byte(key), Value: []byte(value)})
+	}
+
+	return span
 }
