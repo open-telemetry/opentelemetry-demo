@@ -606,7 +606,7 @@ services:
   # ********************
   # Jaeger
   jaeger:
-    image: jaegertracing/all-in-one
+    image: jaegertracing/all-in-one:1.48.0
     container_name: jaeger
     command:
       - "--memory.max-traces"
@@ -621,7 +621,7 @@ services:
           memory: 300M
     restart: unless-stopped
     ports:
-      - "${JAEGER_SERVICE_PORT}"                    # Jaeger UI
+      - "${JAEGER_SERVICE_PORT}"         # Jaeger UI
       - "4317"                           # OTLP gRPC default port
     environment:
       - COLLECTOR_OTLP_ENABLED=true
@@ -630,7 +630,7 @@ services:
 
   # Grafana
   grafana:
-    image: grafana/grafana:9.5.7
+    image: grafana/grafana:10.1.0
     container_name: grafana
     deploy:
       resources:
@@ -645,7 +645,7 @@ services:
 
   # OpenTelemetry Collector
   otelcol:
-    image: otel/opentelemetry-collector-contrib:0.82.0
+    image: otel/opentelemetry-collector-contrib:0.84.0
     container_name: otel-col
     deploy:
       resources:
