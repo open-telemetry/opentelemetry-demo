@@ -762,6 +762,7 @@ services:
       - PRODUCT_CATALOG_SERVICE_ADDR
       - RECOMMENDATION_SERVICE_ADDR
       - SHIPPING_SERVICE_ADDR
+      - KAFKA_SERVICE_ADDR
     extra_hosts:
       - "host.docker.internal:host-gateway"
     depends_on:
@@ -789,6 +790,10 @@ services:
       shippingservice:
         condition: service_started
       quoteservice:
+        condition: service_started
+      accountingservice:
+        condition: service_started
+      frauddetectionservice:
         condition: service_started
 
   tracetest-server:

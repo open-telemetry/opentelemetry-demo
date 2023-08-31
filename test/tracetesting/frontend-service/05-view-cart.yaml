@@ -9,7 +9,7 @@ spec:
   trigger:
     type: http
     httpRequest:
-      url: http://${env:FRONTEND_ADDR}/api/cart?userId=2491f868-88f1-4345-8836-d5d8511a9f83
+      url: http://${var:FRONTEND_ADDR}/api/cart?userId=2491f868-88f1-4345-8836-d5d8511a9f83
       method: GET
       headers:
       - key: Content-Type
