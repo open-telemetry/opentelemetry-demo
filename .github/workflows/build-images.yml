@@ -51,9 +51,9 @@ jobs:
             tag_suffix: emailservice
             context: ./src/emailservice
           # TODO: https://github.com/open-telemetry/opentelemetry-demo/issues/956
-          # - file: ./src/featureflagservice/Dockerfile
-          #   tag_suffix: featureflagservice
-          #   context: ./
+          - file: ./src/featureflagservice/Dockerfile
+            tag_suffix: featureflagservice
+            context: ./
           - file: ./src/frontend/Dockerfile
             tag_suffix: frontend
             context: ./
