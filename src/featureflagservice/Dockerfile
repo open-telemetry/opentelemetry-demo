@@ -35,7 +35,7 @@ WORKDIR /app
 # install hex + rebar
 RUN mix local.hex --force --verbose
 RUN mix local.rebar --force --verbose
-RUN wget https://s3.amazonaws.com/rebar3/rebar3 && chmod +x rebar3 && mv rebar3 ~/.mix
+RUN wget https://github.com/erlang/rebar3/releases/download/3.20.0/rebar3 && chmod +x rebar3 && mv rebar3 ~/.mix
 RUN wget https://github.com/rebar/rebar/wiki/rebar && chmod +x rebar && mv rebar ~/.mix
 RUN mix archive.install github hexpm/hex branch latest --force
 
