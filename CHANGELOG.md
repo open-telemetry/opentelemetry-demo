@@ -77,6 +77,10 @@ release.
   ([#1054](https://github.com/open-telemetry/opentelemetry-demo/pull/1054))
 * [frontendproxy] Fix typo URL endpoint for FrontendProxy
   ([#1075](https://github.com/open-telemetry/opentelemetry-demo/pull/1075))
+* [checkoutservice] Upgrade Shopify/sarama to IBM/sarama
+  ([#1083](https://github.com/open-telemetry/opentelemetry-demo/pull/1083))
+* [accountingservice] Upgrade Shopify/sarama to IBM/sarama
+  ([#1083](https://github.com/open-telemetry/opentelemetry-demo/pull/1083))
 
 ## 1.4.0
 
