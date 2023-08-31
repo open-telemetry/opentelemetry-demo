@@ -81,6 +81,8 @@ release.
   ([#1083](https://github.com/open-telemetry/opentelemetry-demo/pull/1083))
 * [accountingservice] Upgrade Shopify/sarama to IBM/sarama
   ([#1083](https://github.com/open-telemetry/opentelemetry-demo/pull/1083))
+* Update Telemetry Components
+  ([#1085](https://github.com/open-telemetry/opentelemetry-demo/pull/1085))
 
 ## 1.4.0
 
