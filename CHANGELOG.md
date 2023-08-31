@@ -77,6 +77,8 @@ release.
   ([#1054](https://github.com/open-telemetry/opentelemetry-demo/pull/1054))
 * [frontendproxy] Fix typo URL endpoint for FrontendProxy
   ([#1075](https://github.com/open-telemetry/opentelemetry-demo/pull/1075))
+* Update Telemetry Components
+  ([#1085](https://github.com/open-telemetry/opentelemetry-demo/pull/1085))
 
 ## 1.4.0
 
