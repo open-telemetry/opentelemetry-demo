@@ -1,4 +1,4 @@
-# Copyright The OpenTelemetry Authors
+    # Copyright The OpenTelemetry Authors
 # SPDX-License-Identifier: Apache-2.0
 
 
@@ -51,6 +51,10 @@ RUN mkdir config
 # to ensure any relevant config change will trigger the dependencies
 # to be re-compiled.
 COPY ./src/featureflagservice/config/config.exs ./src/featureflagservice/config/${MIX_ENV}.exs config/
+
+# patch opentelemetry_ecto to enable Instana downstream correlation
+RUN  sed -i 's/base_attributes = \%{/&\n      "db.system": "postgres",\n      "net.peer.port": "5432",\n      "net.peer.name": repo.config()[:hostname],/' ./deps/opentelemetry_ecto/lib/opentelemetry_ecto.ex
+
 RUN mix deps.compile
 
 COPY ./src/featureflagservice/priv priv

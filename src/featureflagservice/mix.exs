@@ -64,8 +64,6 @@ defmodule Featureflagservice.MixProject do
       {:opentelemetry, "~> 1.3.0"},
       {:opentelemetry_phoenix, "~> 1.1.1"},
       {:opentelemetry_ecto, "~> 1.1.1"}
-      # TODO: patch 
-      # {:opentelemetry_ecto, git: "https://github.com/styblope/opentelemetry_ecto.git"},
     ]
   end
 
