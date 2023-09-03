@@ -83,6 +83,8 @@ release.
   ([#1083](https://github.com/open-telemetry/opentelemetry-demo/pull/1083))
 * Update Telemetry Components
   ([#1085](https://github.com/open-telemetry/opentelemetry-demo/pull/1085))
+* [cartservice] Support for logs
+  ([#1086](https://github.com/open-telemetry/opentelemetry-demo/pull/1086))
 
 ## 1.4.0
 
