@@ -104,7 +104,7 @@ services:
       - INSTANA_SERVICE_NAME=cartservice
       - INSTANA_AGENT_HOST=${INSTANA_AGENT_HOST}
       - INSTANA_AGENT_PORT=${INSTANA_AGENT_PORT}
-      # - DOTNET_STARTUP_HOOKS=/usr/src/app/Instana.Tracing.Core.dll
+      - DOTNET_STARTUP_HOOKS=/usr/src/app/Instana.Tracing.Core.dll
       # - CORECLR_ENABLE_PROFILING=1
       # - CORECLR_PROFILER={cf0d821e-299b-5307-a3d8-b283c03916dd}
       # - CORECLR_PROFILER_PATH=/usr/src/app/instana_tracing/CoreProfiler.so

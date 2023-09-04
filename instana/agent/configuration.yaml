@@ -37,3 +37,7 @@ com.instana.plugin.python:
 com.instana.plugin.php:
   tracing:
     enabled: false
+
+com.instana.plugin.netcore:
+  tracing:
+    enabled: false

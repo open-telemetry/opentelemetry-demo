@@ -30,7 +30,7 @@ RUN \
 RUN \
   RUNTIME_IDENTIIFER=linux-musl-x64; \
   if [ "$(uname -m)" = "aarch64" ]; then RUNTIME_IDENTIIFER=linux-musl-arm64; fi; \
-  dotnet publish ./src/cartservice.csproj -v d -p:PublishSingleFile=true -r $RUNTIME_IDENTIIFER --self-contained true -p:PublishTrimmed=False -p:TrimMode=Link -c Release -o /cartservice --no-restore
+  dotnet publish ./src/cartservice.csproj -v d -p:PublishSingleFile=false -r $RUNTIME_IDENTIIFER --self-contained true -p:PublishTrimmed=False -p:TrimMode=Link -c Release -o /cartservice --no-restore
 
 # -----------------------------------------------------------------------------
 
