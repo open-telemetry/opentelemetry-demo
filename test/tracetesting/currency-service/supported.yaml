@@ -10,7 +10,7 @@ spec:
     type: grpc
     grpc:
       protobufFile: ../../../pb/demo.proto
-      address: ${env:CURRENCY_SERVICE_ADDR}
+      address: ${var:CURRENCY_SERVICE_ADDR}
       method: oteldemo.CurrencyService.GetSupportedCurrencies
   specs:
   - name: It has a span called "CurrencyService/GetSupportedCurrencies"
