@@ -59,12 +59,12 @@ spec:
     - attr:rpc.grpc.status_code = 0
     - attr:tracetest.selected_spans.count >= 1
   - name: The order was sent to be processed asyncronously
-    selector: span[tracetest.span.type="messaging" name="orders send" messaging.system="kafka" messaging.destination="orders" messaging.destination_kind="topic" messaging.operation="send"]
+    selector: span[tracetest.span.type="messaging" name="orders publish" messaging.system="kafka" messaging.destination.name="orders" messaging.destination.kind="topic" messaging.operation="publish"]
     assertions:
-    - attr:messaging.destination = "orders"
+    - attr:messaging.destination.name = "orders"
   - name: The order was sent to accountability
     # captures the span emitted by Kafka instrumentation for Go
-    selector: span[tracetest.span.type="messaging" name="orders receive" messaging.system="kafka" messaging.destination="orders" messaging.destination_kind="topic" messaging.operation="receive"]
+    selector: span[tracetest.span.type="messaging" name="orders receive" messaging.system="kafka" messaging.destination.name="orders" messaging.destination.kind="topic" messaging.operation="receive"]
     assertions:
     - attr:name = "orders receive"
   - name: The order was sent to fraud detection team
