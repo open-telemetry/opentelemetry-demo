@@ -204,6 +204,7 @@ prod-deploy-otel-ingest-agent-eks:
     # - aws sts get-caller-identity
     - bash $SCRIPT
 
+# Demo env:otel-staging
 staging-deploy-otel-demo-eks:
   !!merge <<: *staging-deploy
   variables:
@@ -214,6 +215,7 @@ staging-deploy-otel-demo-eks:
     CLUSTER_NAME: dd-otel
     CLUSTER_ARN: "arn:aws:eks:us-east-1:601427279990:cluster/dd-otel"
     REGION: us-east-1
+# Demo env:otel-ingest-staging
 staging-deploy-otel-ingest-demo-eks:
   !!merge <<: *staging-deploy
   variables:
@@ -224,6 +226,7 @@ staging-deploy-otel-ingest-demo-eks:
     CLUSTER_NAME: dd-otel
     CLUSTER_ARN: "arn:aws:eks:us-east-1:601427279990:cluster/dd-otel"
     REGION: us-east-1
+# Agent env:otel-ingest-staging
 staging-deploy-otel-ingest-agent-eks:
   !!merge <<: *staging-deploy
   variables:
@@ -233,3 +236,14 @@ staging-deploy-otel-ingest-agent-eks:
     CLUSTER_ARN: "arn:aws:eks:us-east-1:601427279990:cluster/dd-otel"
     REGION: us-east-1
     VALUES: ./ci/datadog-agent-values-staging.yaml
+# Demo env:otel-gateway
+staging-deploy-gateway-demo-eks:
+  !!merge <<: *staging-deploy
+  variables:
+    NAMESPACE: otel-gateway
+    VALUES: ./ci/values-gateway.yaml
+    NODE_GROUP: ng-5
+    SCRIPT: ./ci/scripts/ci-deploy-demo-staging.sh
+    CLUSTER_NAME: dd-otel
+    CLUSTER_ARN: "arn:aws:eks:us-east-1:601427279990:cluster/dd-otel"
+    REGION: us-east-1
