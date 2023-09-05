@@ -1,0 +1,142 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: opentelemetry-demo-orderproducer
+  labels:
+    app.kubernetes.io/component: orderproducer
+    app.kubernetes.io/instance: opentelemetry-demo
+    app.kubernetes.io/name: opentelemetry-demo-orderproducer
+    app.kubernetes.io/part-of: opentelemetry-demo
+    app.kubernetes.io/version: "1.4.0"
+spec:
+  replicas: 1
+  revisionHistoryLimit: 10
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: opentelemetry-demo-orderproducer
+  template:
+    metadata:
+      annotations:
+        ad.datadoghq.com/orderproducer.logs: '[{"source":"kafka","service":"orderproducer"}]'
+        ad.datadoghq.com/orderproducer.checks: |
+          {
+            "kafka": {
+              "init_config": {
+                "is_jmx": true,
+                "collect_default_metrics": true
+              },
+              "instances": [
+                {
+                  "host": "opentelemetry-demo-orderproducer",
+                  "port": "1097",
+                  "tags": [
+                    "kafka_source:agent"
+                  ]
+                }
+              ]
+            }
+          }
+      labels:
+        app.kubernetes.io/component: orderproducer
+        app.kubernetes.io/instance: opentelemetry-demo
+        app.kubernetes.io/name: opentelemetry-demo-orderproducer
+    spec:
+      affinity:
+        nodeAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            nodeSelectorTerms:
+              - matchExpressions:
+                  - key: alpha.eksctl.io/nodegroup-name
+                    operator: In
+                    values:
+                      - ng-4
+      initContainers:
+        - command:
+          - sh
+          - -c
+          - until nc -z -v -w30 opentelemetry-demo-kafka 9092; do echo waiting
+            for kafka; sleep 2; done;
+          image: busybox:latest
+          name: wait-for-kafka
+      containers:
+        - name: orderproducer
+          image: 601427279990.dkr.ecr.us-east-1.amazonaws.com/otel-demo:PLACEHOLDER_COMMIT_SHA-orderproducer
+          imagePullPolicy: IfNotPresent
+          ports:
+          - containerPort: 1097
+            name: producerjmx
+            protocol: TCP
+          env:
+          - name: KAFKA_SERVICE_ADDR
+            value: "opentelemetry-demo-kafka:9092"
+          - name: HOST_IP
+            valueFrom:
+              fieldRef:
+                fieldPath: status.hostIP
+          - name: OTEL_SERVICE_NAME
+            valueFrom:
+              fieldRef:
+                apiVersion: v1
+                fieldPath: "metadata.labels['app.kubernetes.io/component']"
+          - name: OTEL_K8S_NAMESPACE
+            valueFrom:
+              fieldRef:
+                apiVersion: v1
+                fieldPath: metadata.namespace
+          - name: OTEL_K8S_NODE_NAME
+            valueFrom:
+              fieldRef:
+                apiVersion: v1
+                fieldPath: spec.nodeName
+          - name: OTEL_K8S_POD_NAME
+            valueFrom:
+              fieldRef:
+                apiVersion: v1
+                fieldPath: metadata.name
+          - name: OTEL_K8S_POD_UID
+            valueFrom:
+              fieldRef:
+                apiVersion: v1
+                fieldPath: metadata.uid
+          - name: POD_IP
+            valueFrom:
+              fieldRef:
+                fieldPath: status.podIP
+          - name: HOST_IP
+            valueFrom:
+              fieldRef:
+                fieldPath: status.hostIP
+          - name: OTEL_COLLECTOR_NAME
+            value: $(HOST_IP)
+          - name: OTEL_EXPORTER_OTLP_ENDPOINT
+            value: http://$(OTEL_COLLECTOR_NAME):4317
+          - name: OTEL_RESOURCE_ATTRIBUTES
+            value: >-
+              service.name=$(OTEL_SERVICE_NAME),
+              service.instance.id=$(OTEL_K8S_POD_UID),
+              service.namespace=opentelemetry-demo,
+              k8s.namespace.name=$(OTEL_K8S_NAMESPACE),
+              k8s.node.name=$(OTEL_K8S_NODE_NAME),
+              k8s.pod.name=$(OTEL_K8S_POD_NAME),
+              deployment.environment=$(OTEL_K8S_NAMESPACE),
+              k8s.pod.ip=$(POD_IP)
+          resources:
+            limits:
+              memory: 1Gi
+          securityContext:
+            runAsGroup: 1000
+            runAsNonRoot: true
+            runAsUser: 1000                                
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: opentelemetry-demo-orderproducer
+spec:
+  selector:
+    app.kubernetes.io/name: opentelemetry-demo-orderproducer
+  ports:
+  - name: orderproducer
+    port: 1097
+    protocol: TCP
+    targetPort: 1097
