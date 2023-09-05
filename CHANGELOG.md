@@ -85,6 +85,8 @@ release.
   ([#1085](https://github.com/open-telemetry/opentelemetry-demo/pull/1085))
 * [cartservice] Support for logs
   ([#1086](https://github.com/open-telemetry/opentelemetry-demo/pull/1086))
+* [TraceTests] Update span attributes to align with new IBM/sarama instrumentation
+  ([#1096](https://github.com/open-telemetry/opentelemetry-demo/pull/1096))
 
 ## 1.4.0
 
