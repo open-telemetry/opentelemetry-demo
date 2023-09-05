@@ -46,7 +46,7 @@
   },
   "devDependencies": {
     "@types/node": "20.5.0",
-    "@types/react": "18.2.20",
+    "@types/react": "18.2.21",
     "@types/react-dom": "18.2.7",
     "@types/uuid": "9.0.2",
     "@types/styled-components": "5.1.26",
@@ -54,7 +54,7 @@
     "@typescript-eslint/parser": "6.4.0",
     "cypress": "10.4.0",
     "eslint": "8.47.0",
-    "eslint-config-next": "13.4.17",
+    "eslint-config-next": "13.4.19",
     "eslint-plugin-react": "7.33.2",
     "eslint-plugin-react-hooks": "4.6.0",
     "openapi-typescript": "6.5.0",
