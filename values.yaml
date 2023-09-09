@@ -1,0 +1,4 @@
+default:
+  image:
+    repository: "demo"
+    tag: "local"

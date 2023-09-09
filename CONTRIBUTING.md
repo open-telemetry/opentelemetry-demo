@@ -97,6 +97,20 @@ Once the images are built and containers are started you can access:
 - Feature Flags UI: <http://localhost:8080/feature/>
 - Load Generator UI: <http://localhost:8080/loadgen//>
 
+
+### Using Tilt For Local Kubernetes Chart Development
+
+To aid in local development/testing of changes to the Helm chart, we include
+a [Tilt](https://tilt.dev/) configuration. Tilt is a tool for local Kubernetes
+development that can be used to build and deploy the Helm chart to a local
+cluster.
+
+Please see the [Tilt documentation](https://docs.tilt.dev/) for installation
+instructions. Create a local cluster using
+[ctlptl](https://github.com/tilt-dev/ctlptl) and then run `tilt up` from the
+root directory of this repository. We expect that the [helm repository](https://github.com/open-telemetry/opentelemetry-helm-charts) is
+adjacent to this repository.
+
 ### Review the Documentation
 
 The Demo team is committed to keeping the demo up to date. That means the
