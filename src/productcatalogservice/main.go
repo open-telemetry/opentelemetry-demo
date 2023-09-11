@@ -20,7 +20,6 @@ import (
 	"github.com/sirupsen/logrus"
 	"go.opentelemetry.io/contrib/instrumentation/google.golang.org/grpc/otelgrpc"
 	"go.opentelemetry.io/contrib/instrumentation/runtime"
-	"go.opentelemetry.io/otel/sdk/instrumentation"
 	sdkmetric "go.opentelemetry.io/otel/sdk/metric"
 	healthpb "google.golang.org/grpc/health/grpc_health_v1"
 
@@ -99,32 +98,9 @@ func initMeterProvider() *sdkmetric.MeterProvider {
 	mp := sdkmetric.NewMeterProvider(
 		sdkmetric.WithReader(sdkmetric.NewPeriodicReader(exporter)),
 		sdkmetric.WithResource(initResource()),
-		sdkmetric.WithView(			
-			sdkmetric.NewView(
-				sdkmetric.Instrument{Scope: instrumentation.Scope{Name: "go.opentelemetry.io/contrib/instrumentation/google.golang.org/grpc/otelgrpc"}},
-				sdkmetric.Stream{
-					AttributeFilter: allowedAttr(
-						"http.method",
-						"http.status_code",
-						"http.target",
-					),
-				},
-			),
-		),
 	)
 	otel.SetMeterProvider(mp)
 	return mp
-}
-
-func allowedAttr(v ...string) attribute.Filter {
-	m := make(map[string]struct{}, len(v))
-	for _, s := range v {
-		m[s] = struct{}{}
-	}
-	return func(kv attribute.KeyValue) bool {
-		_, ok := m[string(kv.Key)]
-		return ok
-	}
 }
 
 func main() {
