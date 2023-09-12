@@ -247,3 +247,14 @@ staging-deploy-gateway-demo-eks:
     CLUSTER_NAME: dd-otel
     CLUSTER_ARN: "arn:aws:eks:us-east-1:601427279990:cluster/dd-otel"
     REGION: us-east-1
+# Demo env:otel-ds-gateway
+staging-deploy-ds-gateway-demo-eks:
+  !!merge <<: *staging-deploy
+  variables:
+    NAMESPACE: otel-ds-gateway
+    VALUES: ./ci/values-ds-gateway.yaml
+    NODE_GROUP: ng-6
+    SCRIPT: ./ci/scripts/ci-deploy-demo-staging.sh
+    CLUSTER_NAME: dd-otel
+    CLUSTER_ARN: "arn:aws:eks:us-east-1:601427279990:cluster/dd-otel"
+    REGION: us-east-1
