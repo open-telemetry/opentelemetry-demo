@@ -103,10 +103,9 @@ func initMeterProvider() *sdkmetric.MeterProvider {
 			sdkmetric.NewView(
 				sdkmetric.Instrument{Scope: instrumentation.Scope{Name: "go.opentelemetry.io/contrib/instrumentation/google.golang.org/grpc/otelgrpc"}},
 				sdkmetric.Stream{
-					AttributeFilter: allowedAttr(
-						"http.method",
-						"http.status_code",
-						"http.target",
+					AttributeFilter: disallowedAttr(
+						"net.sock.peer.port",
+						"net.sock.peer.addr",
 					),
 				},
 			),
@@ -116,14 +115,14 @@ func initMeterProvider() *sdkmetric.MeterProvider {
 	return mp
 }
 
-func allowedAttr(v ...string) attribute.Filter {
+func disallowedAttr(v ...string) attribute.Filter {
 	m := make(map[string]struct{}, len(v))
 	for _, s := range v {
 		m[s] = struct{}{}
 	}
 	return func(kv attribute.KeyValue) bool {
 		_, ok := m[string(kv.Key)]
-		return ok
+		return !ok
 	}
 }
 
