@@ -639,7 +639,7 @@ services:
       start_period: 10s
       interval: 5s
       timeout: 10s
-      retries: 10
+      retries: 20
     logging: *logging
 
   # Redis used by Cart service
