@@ -7,6 +7,8 @@ release.
 
 ## Unreleased
 
+## 1.5.0
+
 * update trace-based tests to test stream events
   ([#1072](https://github.com/open-telemetry/opentelemetry-demo/pull/1072))
 * Add cartServiceFailure feature flag triggering Cart Service errors
