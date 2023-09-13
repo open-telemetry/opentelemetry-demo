@@ -50,10 +50,13 @@ jobs:
           - file: ./src/emailservice/Dockerfile
             tag_suffix: emailservice
             context: ./src/emailservice
-          # TODO: https://github.com/open-telemetry/opentelemetry-demo/issues/956
-          # - file: ./src/featureflagservice/Dockerfile
-          #   tag_suffix: featureflagservice
-          #   context: ./
+          # NOTE:
+          # https://github.com/open-telemetry/opentelemetry-demo/issues/956
+          # Until dedicated ARM runners are available for GHA we cannot upgrade
+          # OTP/Elixir versions. Please do not change the OTP/Elixir versions.
+          - file: ./src/featureflagservice/Dockerfile
+            tag_suffix: featureflagservice
+            context: ./
           - file: ./src/frontend/Dockerfile
             tag_suffix: frontend
             context: ./
@@ -106,14 +109,14 @@ jobs:
           FILES_CHANGED=$(git diff --name-only ${{ github.event.before }} ${{ github.sha }} -- $DOCKERFILE_DIR)
           if [ -z "$FILES_CHANGED" ]; then
             echo "No changes in ${{ matrix.file_tag.context }}, skipping build."
-            echo "skip=true >> $GITHUB_OUTPUT"
+            echo "skip=true" >> "$GITHUB_OUTPUT"
           else
             echo "Changes detected in ${{ matrix.file_tag.context }}, proceeding with build."
-            echo "skip=false >> $GITHUB_OUTPUT"
+            echo "skip=false" >> "$GITHUB_OUTPUT"
           fi
       - name: Override skip for push
         if: ${{ inputs.push }}
-        run: echo "skip=false >> $GITHUB_OUTPUT"
+        run: echo "skip=false" >> "$GITHUB_OUTPUT"
         id: override_skip
       - name: Log in to the Container registry
         uses: docker/login-action@v2

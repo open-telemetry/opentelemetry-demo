@@ -7,6 +7,8 @@ release.
 
 ## Unreleased
 
+## 1.5.0
+
 * update trace-based tests to test stream events
   ([#1072](https://github.com/open-telemetry/opentelemetry-demo/pull/1072))
 * Add cartServiceFailure feature flag triggering Cart Service errors
@@ -83,6 +85,10 @@ release.
   ([#1083](https://github.com/open-telemetry/opentelemetry-demo/pull/1083))
 * Update Telemetry Components
   ([#1085](https://github.com/open-telemetry/opentelemetry-demo/pull/1085))
+* [cartservice] Support for logs
+  ([#1086](https://github.com/open-telemetry/opentelemetry-demo/pull/1086))
+* [TraceTests] Update span attributes to align with new IBM/sarama instrumentation
+  ([#1096](https://github.com/open-telemetry/opentelemetry-demo/pull/1096))
 
 ## 1.4.0
 
