@@ -6,21 +6,6 @@ default:
         fieldRef:
           apiVersion: v1
           fieldPath: "metadata.labels['app.kubernetes.io/component']"
-    - name: OTEL_K8S_NAMESPACE
-      valueFrom:
-        fieldRef:
-          apiVersion: v1
-          fieldPath: metadata.namespace
-    - name: OTEL_K8S_NODE_NAME
-      valueFrom:
-        fieldRef:
-          apiVersion: v1
-          fieldPath: spec.nodeName
-    - name: OTEL_K8S_POD_NAME
-      valueFrom:
-        fieldRef:
-          apiVersion: v1
-          fieldPath: metadata.name
     # Instana defaults
     - name: INSTANA_SERVICE_NAME
       value: $(OTEL_SERVICE_NAME)
@@ -42,7 +27,7 @@ default:
     - name: OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE
       value: cumulative
     - name: OTEL_RESOURCE_ATTRIBUTES
-      value: service.name=$(OTEL_SERVICE_NAME),service.instance.id=$(OTEL_K8S_POD_UID),service.namespace=opentelemetry-demo,k8s.namespace.name=$(OTEL_K8S_NAMESPACE),k8s.node.name=$(OTEL_K8S_NODE_NAME),k8s.pod.name=$(OTEL_K8S_POD_NAME)
+      value: service.name=$(OTEL_SERVICE_NAME),service.namespace=opentelemetry-demo
   # Allows overriding and additions to .Values.default.env
   envOverrides: []
   #  - name: OTEL_K8S_NODE_NAME
@@ -51,7 +36,7 @@ default:
     repository: styblope/otel-demo
     # Overrides the image tag whose default is the chart appVersion.
     # The service's name will be applied to the end of this value.
-    tag: "1.4.0"
+    tag: "1.5.0"
     pullPolicy: IfNotPresent
     pullSecrets: []
   schedulingRules:
@@ -206,10 +191,16 @@ components:
         value: http://*:$(CART_SERVICE_PORT)
       - name: REDIS_ADDR
         value: '{{ include "otel-demo.name" . }}-redis:6379'
-      - name: FEATURE_FLAG_GRPC_SERVICE_ADDR
-        value: '{{ include "otel-demo.name" . }}-featureflagservice:50053'
       - name: OTEL_EXPORTER_OTLP_ENDPOINT
         value: http://$(OTEL_COLLECTOR_NAME):4317
+      - name: DOTNET_STARTUP_HOOKS
+        value: /usr/src/app/Instana.Tracing.Core.dll
+      # - name: CORECLR_ENABLE_PROFILING
+      #   value: 1
+      # - name: CORECLR_PROFILER
+      #   value: '{cf0d821e-299b-5307-a3d8-b283c03916dd}'
+      # - name: CORECLR_PROFILER_PATH
+      #   value: /usr/src/app/instana_tracing/CoreProfiler.so
     resources:
       limits:
         memory: 160Mi
@@ -621,6 +612,9 @@ opentelemetry-collector:
   enabled: false
   nameOverride: otelcol
   mode: deployment
+  presets:
+    kubernetesAttributes:
+      enabled: true
   resources:
     limits:
       memory: 125Mi
@@ -667,6 +661,11 @@ opentelemetry-collector:
         enable_open_metrics: true
 
     processors:
+      resource:
+        attributes:
+        - key: service.instance.id
+          from_attribute: k8s.pod.uid
+          action: insert
       # we can remove when this is fixed: https://github.com/open-telemetry/opentelemetry-demo/issues/737
       transform:
         metric_statements:
@@ -686,11 +685,11 @@ opentelemetry-collector:
     service:
       pipelines:
         traces:
-          processors: [memory_limiter, batch]
+          processors: [memory_limiter, resource, batch]
           exporters: [otlp, logging, spanmetrics]
         metrics:
           receivers: [otlp, spanmetrics]
-          processors: [memory_limiter, filter/ottl, transform, batch]
+          processors: [memory_limiter, filter/ottl, resource, transform, batch]
           exporters: [prometheus, logging]
 
 jaeger:
