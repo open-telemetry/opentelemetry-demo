@@ -16,6 +16,8 @@
 #   - https://pkgs.org/ - resource for finding needed packages
 #   - Ex: hexpm/elixir:1.14.3-erlang-25.2.3-debian-buster-20230202-slim
 # DO NOT CHANGE ELIXIR OR OTP OR DEBIAN VERSION OR IT WILL BREAK GHA BUILD
+# Once there are ARM runners for GHA we can upgrade this.
+# Not until then.
 ARG ELIXIR_VERSION=1.14.3
 ARG OTP_VERSION=23.3.4.14
 ARG DEBIAN_VERSION=buster-20210902-slim

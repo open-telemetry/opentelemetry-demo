@@ -50,7 +50,10 @@ jobs:
           - file: ./src/emailservice/Dockerfile
             tag_suffix: emailservice
             context: ./src/emailservice
-          # TODO: https://github.com/open-telemetry/opentelemetry-demo/issues/956
+          # NOTE:
+          # https://github.com/open-telemetry/opentelemetry-demo/issues/956
+          # Until dedicated ARM runners are available for GHA we cannot upgrade
+          # OTP/Elixir versions. Please do not change the OTP/Elixir versions.
           - file: ./src/featureflagservice/Dockerfile
             tag_suffix: featureflagservice
             context: ./
