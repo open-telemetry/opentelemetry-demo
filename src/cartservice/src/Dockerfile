@@ -37,6 +37,7 @@ RUN \
 # https://mcr.microsoft.com/v2/dotnet/runtime-deps/tags/list
 FROM mcr.microsoft.com/dotnet/runtime-deps:6.0.15-alpine3.16
 
+RUN apk add bash
 WORKDIR /usr/src/app/
 COPY --from=builder /cartservice/ ./
 
