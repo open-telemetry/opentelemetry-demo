@@ -4,7 +4,7 @@
 
 
 
-use OpenTelemetry\API\Common\Instrumentation\Globals;
+use OpenTelemetry\API\Globals;
 use OpenTelemetry\API\Trace\Span;
 use OpenTelemetry\API\Trace\SpanKind;
 use Psr\Http\Message\ResponseInterface as Response;
