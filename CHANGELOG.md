@@ -7,6 +7,9 @@ release.
 
 ## Unreleased
 
+* [cartservice] update .NET package to 1.6.0 release
+  ([#1115](https://github.com/open-telemetry/opentelemetry-demo/pull/1115))
+
 ## 1.5.0
 
 * update trace-based tests to test stream events
