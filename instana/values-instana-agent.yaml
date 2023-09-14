@@ -399,8 +399,10 @@ components:
         value: "16686"
       - name: JAEGER_SERVICE_HOST
         value: '{{ include "otel-demo.name" . }}-jaeger-query'
-      - name: OTEL_COLLECTOR_PORT
+      - name: OTEL_COLLECTOR_PORT_GRPC
         value: "4317"
+      - name: OTEL_COLLECTOR_PORT_HTTP
+        value: "4318"
       - name: OTEL_COLLECTOR_HOST
         value: $(OTEL_COLLECTOR_NAME)
     resources:
