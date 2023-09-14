@@ -38,6 +38,7 @@ docker run --rm -it -v $(pwd):/var/www -e QUOTE_SERVICE_PORT=8999 -p "8999:8999"
 ```
 
 Then, send some curl requests:
+
 ```sh
 curl --location 'http://localhost:8999/getquote' \
 --header 'Content-Type: application/json' \
