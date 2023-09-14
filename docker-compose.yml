@@ -636,7 +636,7 @@ services:
       - KAFKA_HEAP_OPTS=-Xmx400m -Xms400m
     healthcheck:
       test: nc -z kafka 9092
-      start_period: 10s
+      start_period: 20s
       interval: 5s
       timeout: 10s
       retries: 20
