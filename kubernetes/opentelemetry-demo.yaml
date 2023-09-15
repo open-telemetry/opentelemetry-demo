@@ -8276,6 +8276,8 @@ spec:
             value: "8080"
           - name: OTEL_PHP_AUTOLOAD_ENABLED
             value: "true"
+          - name: OTEL_PHP_INTERNAL_METRICS_ENABLED
+            value: "true"
           - name: OTEL_EXPORTER_OTLP_ENDPOINT
             value: http://$(OTEL_COLLECTOR_NAME):4318
           - name: OTEL_RESOURCE_ATTRIBUTES
