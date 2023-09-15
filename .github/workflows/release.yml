@@ -12,3 +12,4 @@ jobs:
     with:
       push: true
       version: ${{ github.event.release.tag_name }}"
+    secrets: inherit
