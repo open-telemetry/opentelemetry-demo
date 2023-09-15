@@ -7,6 +7,9 @@ release.
 
 ## Unreleased
 
+* sluggify Grafana dashboard name
+  ([#1121](https://github.com/open-telemetry/opentelemetry-demo/pull/1121))
+
 ## 1.5.0
 
 * update trace-based tests to test stream events
