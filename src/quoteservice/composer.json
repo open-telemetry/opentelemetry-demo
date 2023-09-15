@@ -12,6 +12,7 @@
         "open-telemetry/sdk": "1.0.0RC1",
         "open-telemetry/exporter-otlp": "1.0.0RC1",
         "open-telemetry/opentelemetry-auto-slim": "1.0.0beta10",
+        "open-telemetry/detector-container": "0.0.3",
         "guzzlehttp/guzzle": "7.8.0",
         "php-di/php-di": "7.0.5",
         "php-di/slim-bridge": "3.4.0",
