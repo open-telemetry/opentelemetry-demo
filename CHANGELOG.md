@@ -7,6 +7,9 @@ release.
 
 ## Unreleased
 
+* Set metric description to blank for rpc.server.duration and queueSize
+  ([#1120](https://github.com/open-telemetry/opentelemetry-demo/pull/1120))
+
 ## 1.5.0
 
 * update trace-based tests to test stream events
