@@ -2,7 +2,22 @@
 # SPDX-License-Identifier: Apache-2.0
 
 
-FROM composer:2.5 AS build
+FROM php:8.2-cli as base
+
+ADD https://github.com/mlocati/docker-php-extension-installer/releases/latest/download/install-php-extensions /usr/local/bin/
+RUN chmod +x /usr/local/bin/install-php-extensions \
+  && install-php-extensions \
+    opcache \
+    pcntl \
+    protobuf \
+    opentelemetry
+
+WORKDIR /var/www
+CMD php public/index.php
+USER www-data
+EXPOSE ${QUOTE_SERVICE_PORT}
+
+FROM composer:2.6 AS vendor
 
 WORKDIR /tmp/
 COPY ./src/quoteservice/composer.json .
@@ -15,21 +30,7 @@ RUN composer install \
     --no-dev \
     --prefer-dist
 
-FROM php:8.2-cli
-
-ADD https://github.com/mlocati/docker-php-extension-installer/releases/latest/download/install-php-extensions /usr/local/bin/
-RUN chmod +x /usr/local/bin/install-php-extensions \
-  && install-php-extensions \
-    opcache \
-    pcntl \
-    protobuf \
-    opentelemetry-beta
-
-WORKDIR /var/www
-COPY --from=build /tmp/vendor/ ./vendor/
+FROM base as final
+COPY --from=vendor /tmp/vendor/ ./vendor/
 COPY ./src/quoteservice/ /var/www
 
-CMD php public/index.php
-
-USER www-data
-EXPOSE ${QUOTE_SERVICE_PORT}
