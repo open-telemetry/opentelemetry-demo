@@ -18,7 +18,7 @@ const CurrencySwitcher = () => {
         <S.SelectedConcurrency>{currencySymbol}</S.SelectedConcurrency>
         <S.Select
           name="currency_code"
-          onChange={event => setSelectedCurrency(event.target.value)}
+          onChange={(event: { target: { value: string; }; }) => setSelectedCurrency(event.target.value)}
           value={selectedCurrency}
           data-cy={CypressFields.CurrencySwitcher}
         >
