@@ -375,6 +375,7 @@ services:
       - QUOTE_SERVICE_PORT
       - OTEL_RESOURCE_ATTRIBUTES
       - OTEL_SERVICE_NAME=quoteservice
+      - OTEL_PHP_INTERNAL_METRICS_ENABLED=true
     depends_on:
       otelcol:
         condition: service_started
