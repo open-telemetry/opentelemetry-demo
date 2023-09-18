@@ -109,7 +109,7 @@ jobs:
           if [ -z "$GITHUB_HEAD_REF" ]; then
             _ref=${{ github.event.before }}
           else
-            _ref=main
+            _ref=${{ github.sha }}
           fi
           FILES_CHANGED=$(git diff --name-only ${_ref} -- $DOCKERFILE_DIR)
           if [ -z "$FILES_CHANGED" ]; then
