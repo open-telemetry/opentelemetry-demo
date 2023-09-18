@@ -37,7 +37,7 @@ roundrobin==0.0.4
 six==1.16.0
 typing-extensions==4.7.1
 urllib3==2.0.4
-werkzeug==2.3.6
+werkzeug==2.3.7
 wrapt==1.15.0
 zope-event==5.0
 zope-interface==6.0
