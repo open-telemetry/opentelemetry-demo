@@ -11,6 +11,8 @@ release.
   ([#1114](https://github.com/open-telemetry/opentelemetry-demo/pull/1114))
 * [cartservice] update .NET package to 1.6.0 release
   ([#1115](https://github.com/open-telemetry/opentelemetry-demo/pull/1115))
+* Set metric description to blank for rpc.server.duration and queueSize
+  ([#1120](https://github.com/open-telemetry/opentelemetry-demo/pull/1120))
 * sluggify Grafana dashboard name
   ([#1121](https://github.com/open-telemetry/opentelemetry-demo/pull/1121))
 
