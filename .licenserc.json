@@ -19,7 +19,12 @@
       "# Copyright The OpenTelemetry Authors",
       "# SPDX-License-Identifier: Apache-2.0"
     ],
-    "**/*.{ex,exs,rb,yaml,yml,sh,yamllint}": [
+    "**/*.sh": [
+      "#!/bin/sh",
+      "# Copyright The OpenTelemetry Authors",
+      "# SPDX-License-Identifier: Apache-2.0"
+    ],
+    "**/*.{ex,exs,rb,yaml,yml,yamllint}": [
       "# Copyright The OpenTelemetry Authors",
       "# SPDX-License-Identifier: Apache-2.0"
     ],
@@ -29,10 +34,13 @@
     ],
     "ignore": [
         "node_modules/",
+        "src/accountingservice/genproto/",
         "src/cartservice/src/obj/",
         "src/cartservice/tests/obj/",
+        "src/checkoutservice/genproto/",
         "src/featureflagservice/assets/vendor/",
         "src/featureflagservice/priv/",
+        "src/productcatalogservice/genproto/",
         "internal/tools/"
     ]
   }

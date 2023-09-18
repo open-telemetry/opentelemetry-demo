@@ -5,7 +5,7 @@ import { NextPage } from 'next';
 import Image from 'next/image';
 import { useRouter } from 'next/router';
 import { useCallback, useState } from 'react';
-import { useQuery } from 'react-query';
+import { useQuery } from '@tanstack/react-query';
 import Ad from '../../../components/Ad';
 import Footer from '../../../components/Footer';
 import Layout from '../../../components/Layout';

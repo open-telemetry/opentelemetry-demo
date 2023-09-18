@@ -1,0 +1,6 @@
+# Copyright The OpenTelemetry Authors
+# SPDX-License-Identifier: Apache-2.0
+
+scheme: http
+endpoint: tracetest-server:11633
+analyticsEnabled: false

@@ -3,10 +3,19 @@
 name: Checks
 
 on:
+  push:
+    branches: [ main ]
   pull_request:
     branches: [ main ]
+  workflow_dispatch:
 
 jobs:
+  build_images:
+    uses: ./.github/workflows/build-images.yml
+    with:
+      push: false
+      version: dev
+
   markdownlint:
     runs-on: ubuntu-latest
     steps:
