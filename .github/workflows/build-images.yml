@@ -106,7 +106,12 @@ jobs:
         if: ${{ !inputs.push }}
         run: |
           DOCKERFILE_DIR=$(dirname ${{ matrix.file_tag.file }})
-          FILES_CHANGED=$(git diff --name-only ${{ github.event.before }} ${{ github.sha }} -- $DOCKERFILE_DIR)
+          if [ -z "$GITHUB_HEAD_REF" ]; then
+            _ref=${{ github.event.before }}
+          else
+            _ref="${GITHUB_REF}"
+          fi
+          FILES_CHANGED=$(git diff --name-only ${_ref} -- $DOCKERFILE_DIR)
           if [ -z "$FILES_CHANGED" ]; then
             echo "No changes in ${DOCKERFILE_DIR}, skipping build."
             echo "skip=true" >> "$GITHUB_OUTPUT"
