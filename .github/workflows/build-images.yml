@@ -108,10 +108,10 @@ jobs:
           DOCKERFILE_DIR=$(dirname ${{ matrix.file_tag.file }})
           FILES_CHANGED=$(git diff --name-only ${{ github.event.before }} ${{ github.sha }} -- $DOCKERFILE_DIR)
           if [ -z "$FILES_CHANGED" ]; then
-            echo "No changes in ${{ matrix.file_tag.context }}, skipping build."
+            echo "No changes in ${DOCKERFILE_DIR}, skipping build."
             echo "skip=true" >> "$GITHUB_OUTPUT"
           else
-            echo "Changes detected in ${{ matrix.file_tag.context }}, proceeding with build."
+            echo "Changes detected in ${DOCKERFILE_DIR}, proceeding with build."
             echo "skip=false" >> "$GITHUB_OUTPUT"
           fi
       - name: Override skip for push
