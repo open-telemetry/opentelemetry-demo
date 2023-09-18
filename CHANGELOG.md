@@ -11,6 +11,8 @@ release.
   ([#1114](https://github.com/open-telemetry/opentelemetry-demo/pull/1114))
 * [cartservice] update .NET package to 1.6.0 release
   ([#1115](https://github.com/open-telemetry/opentelemetry-demo/pull/1115))
+* [kafka frauddetection adservice] update java agent versions
+  ([#1132](https://github.com/open-telemetry/opentelemetry-demo/pull/1132))
 
 ## 1.5.0
 
