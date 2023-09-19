@@ -9,7 +9,7 @@ metadata:
   labels:
     app.kubernetes.io/name: grafana
     app.kubernetes.io/instance: opentelemetry-demo
-    app.kubernetes.io/version: "9.4.7"
+    app.kubernetes.io/version: "10.0.3"
   name: opentelemetry-demo-grafana
   namespace: otel-demo
 ---
@@ -21,7 +21,7 @@ metadata:
   labels:
     app.kubernetes.io/name: jaeger
     app.kubernetes.io/instance: opentelemetry-demo
-    app.kubernetes.io/version: "1.42.0"
+    app.kubernetes.io/version: "1.45.0"
     app.kubernetes.io/component: all-in-one
 ---
 # Source: opentelemetry-demo/charts/opentelemetry-collector/templates/serviceaccount.yaml
@@ -32,18 +32,18 @@ metadata:
   labels:
     app.kubernetes.io/name: otelcol
     app.kubernetes.io/instance: opentelemetry-demo
-    app.kubernetes.io/version: "0.76.1"
+    app.kubernetes.io/version: "0.82.0"
 ---
 # Source: opentelemetry-demo/charts/prometheus/templates/serviceaccount.yaml
 apiVersion: v1
 kind: ServiceAccount
 metadata:
   labels:
-    component: "server"
-    app: prometheus
-    release: opentelemetry-demo
-    chart: prometheus-20.2.0
-    heritage: Helm
+    app.kubernetes.io/component: server
+    app.kubernetes.io/name: prometheus
+    app.kubernetes.io/instance: opentelemetry-demo
+    app.kubernetes.io/version: v2.46.0
+    app.kubernetes.io/part-of: prometheus
   name: opentelemetry-demo-prometheus-server
   namespace: otel-demo
   annotations:
@@ -59,7 +59,7 @@ metadata:
     opentelemetry.io/name: opentelemetry-demo
     app.kubernetes.io/instance: opentelemetry-demo
     app.kubernetes.io/name: opentelemetry-demo
-    app.kubernetes.io/version: "1.4.0"
+    app.kubernetes.io/version: "1.5.0"
     app.kubernetes.io/part-of: opentelemetry-demo
 ---
 # Source: opentelemetry-demo/charts/grafana/templates/secret.yaml
@@ -71,7 +71,7 @@ metadata:
   labels:
     app.kubernetes.io/name: grafana
     app.kubernetes.io/instance: opentelemetry-demo
-    app.kubernetes.io/version: "9.4.7"
+    app.kubernetes.io/version: "10.0.3"
 type: Opaque
 data:
   admin-user: "YWRtaW4="
@@ -87,7 +87,7 @@ metadata:
   labels:
     app.kubernetes.io/name: grafana
     app.kubernetes.io/instance: opentelemetry-demo
-    app.kubernetes.io/version: "9.4.7"
+    app.kubernetes.io/version: "10.0.3"
 data:
   grafana.ini: |
     [analytics]
@@ -153,7 +153,7 @@ metadata:
   labels:
     app.kubernetes.io/name: otelcol
     app.kubernetes.io/instance: opentelemetry-demo
-    app.kubernetes.io/version: "0.76.1"
+    app.kubernetes.io/version: "0.82.0"
 data:
   relay: |
     connectors:
@@ -166,7 +166,7 @@ data:
           insecure: true
       prometheus:
         enable_open_metrics: true
-        endpoint: 0.0.0.0:9464
+        endpoint: ${env.MY_POD_IP}:9464
         resource_to_telemetry_conversion:
           enabled: true
     extensions:
@@ -179,17 +179,46 @@ data:
         error_mode: ignore
         metrics:
           metric:
-          - name == "queueSize"
+          - name == "rpc.server.duration"
+      k8sattributes:
+        extract:
+          metadata:
+          - k8s.namespace.name
+          - k8s.deployment.name
+          - k8s.statefulset.name
+          - k8s.daemonset.name
+          - k8s.cronjob.name
+          - k8s.job.name
+          - k8s.node.name
+          - k8s.pod.name
+          - k8s.pod.uid
+          - k8s.pod.start_time
+        passthrough: false
+        pod_association:
+        - sources:
+          - from: resource_attribute
+            name: k8s.pod.ip
+        - sources:
+          - from: resource_attribute
+            name: k8s.pod.uid
+        - sources:
+          - from: connection
       memory_limiter:
         check_interval: 5s
         limit_percentage: 80
         spike_limit_percentage: 25
+      resource:
+        attributes:
+        - action: insert
+          from_attribute: k8s.pod.uid
+          key: service.instance.id
       transform:
         metric_statements:
         - context: metric
           statements:
-          - set(description, "Measures the duration of inbound HTTP requests") where name
-            == "http.server.duration"
+          - set(description, "") where name == "queueSize"
+          - set(description, "") where name == "rpc.server.duration"
+          - set(description, "") where name == "http.client.duration"
     receivers:
       jaeger:
         protocols:
@@ -208,7 +237,7 @@ data:
               allowed_origins:
               - http://*
               - https://*
-            endpoint: 0.0.0.0:4318
+            endpoint: ${env:MY_POD_IP}:4318
       prometheus:
         config:
           scrape_configs:
@@ -228,6 +257,7 @@ data:
           exporters:
           - logging
           processors:
+          - k8sattributes
           - memory_limiter
           - batch
           receivers:
@@ -237,9 +267,11 @@ data:
           - prometheus
           - logging
           processors:
+          - k8sattributes
           - memory_limiter
           - filter/ottl
           - transform
+          - resource
           - batch
           receivers:
           - otlp
@@ -250,7 +282,9 @@ data:
           - logging
           - spanmetrics
           processors:
+          - k8sattributes
           - memory_limiter
+          - resource
           - batch
           receivers:
           - otlp
@@ -265,11 +299,11 @@ apiVersion: v1
 kind: ConfigMap
 metadata:
   labels:
-    component: "server"
-    app: prometheus
-    release: opentelemetry-demo
-    chart: prometheus-20.2.0
-    heritage: Helm
+    app.kubernetes.io/component: server
+    app.kubernetes.io/name: prometheus
+    app.kubernetes.io/instance: opentelemetry-demo
+    app.kubernetes.io/version: v2.46.0
+    app.kubernetes.io/part-of: prometheus
   name: opentelemetry-demo-prometheus-server
   namespace: otel-demo
 data:
@@ -315,11 +349,11 @@ metadata:
     opentelemetry.io/name: opentelemetry-demo
     app.kubernetes.io/instance: opentelemetry-demo
     app.kubernetes.io/name: opentelemetry-demo
-    app.kubernetes.io/version: "1.4.0"
+    app.kubernetes.io/version: "1.5.0"
     app.kubernetes.io/part-of: opentelemetry-demo
 data:
   
-  demo-dashboard.json: |
+  demo-dashboard.json: |-
     {
       "annotations": {
         "list": [
@@ -735,13 +769,13 @@ data:
                 "uid": "webstore-metrics"
               },
               "editorMode": "code",
-              "expr": "rate(calls_total{status_code=\"STATUS_CODE_ERROR\"}[$__interval])",
-              "legendFormat": "__auto",
+              "expr": "rate(calls_total{status_code=\"STATUS_CODE_ERROR\", service_name=\"${service}\"}[$__interval])",
+              "legendFormat": "{{ span_name }}",
               "range": true,
               "refId": "A"
             }
           ],
-          "title": "Error Rate",
+          "title": "Error Rate by Service",
           "type": "timeseries"
         },
         {
@@ -829,8 +863,8 @@ data:
               },
               "editorMode": "code",
               "exemplar": true,
-              "expr": "histogram_quantile(0.50, sum(rate(latency_bucket{service_name=\"${service}\"}[$__rate_interval])) by (le))",
-              "legendFormat": "__auto",
+              "expr": "histogram_quantile(0.50, sum(rate(duration_milliseconds_bucket{service_name=\"${service}\"}[$__rate_interval])) by (le))",
+              "legendFormat": "quantile50",
               "range": true,
               "refId": "A"
             },
@@ -841,9 +875,9 @@ data:
               },
               "editorMode": "code",
               "exemplar": false,
-              "expr": "histogram_quantile(0.95, sum(rate(latency_bucket{service_name=\"${service}\"}[$__rate_interval])) by (le))",
+              "expr": "histogram_quantile(0.95, sum(rate(duration_milliseconds_bucket{service_name=\"${service}\"}[$__rate_interval])) by (le))",
               "hide": false,
-              "legendFormat": "__auto",
+              "legendFormat": "quantile95",
               "range": true,
               "refId": "B"
             },
@@ -854,9 +888,9 @@ data:
               },
               "editorMode": "code",
               "exemplar": false,
-              "expr": "histogram_quantile(0.99, sum(rate(latency_bucket{service_name=\"${service}\"}[$__rate_interval])) by (le))",
+              "expr": "histogram_quantile(0.99, sum(rate(duration_milliseconds_bucket{service_name=\"${service}\"}[$__rate_interval])) by (le))",
               "hide": false,
-              "legendFormat": "__auto",
+              "legendFormat": "quantile99",
               "range": true,
               "refId": "C"
             },
@@ -867,14 +901,14 @@ data:
               },
               "editorMode": "code",
               "exemplar": false,
-              "expr": "histogram_quantile(0.999, sum(rate(latency_bucket{service_name=\"${service}\"}[$__rate_interval])) by (le))",
+              "expr": "histogram_quantile(0.999, sum(rate(duration_milliseconds_bucket{service_name=\"${service}\"}[$__rate_interval])) by (le))",
               "hide": false,
-              "legendFormat": "__auto",
+              "legendFormat": "quantile999",
               "range": true,
               "refId": "D"
             }
           ],
-          "title": "Service Latency (from SpanMetrics)",
+          "title": "Service Latency by Service (from SpanMetrics)",
           "type": "timeseries"
         },
         {
@@ -961,17 +995,111 @@ data:
                 "uid": "webstore-metrics"
               },
               "editorMode": "code",
-              "expr": "rate(latency_count{service_name=\"${service}\"}[$__rate_interval])",
-              "legendFormat": "__auto",
+              "expr": "rate(duration_milliseconds_count{service_name=\"${service}\"}[$__rate_interval])",
+              "legendFormat": "{{ span_name }}",
               "range": true,
               "refId": "A"
             }
           ],
           "title": "Endpoint Rate by Service",
           "type": "timeseries"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "webstore-metrics"
+          },
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "palette-classic"
+              },
+              "custom": {
+                "axisCenteredZero": false,
+                "axisColorMode": "text",
+                "axisLabel": "",
+                "axisPlacement": "auto",
+                "barAlignment": 0,
+                "drawStyle": "line",
+                "fillOpacity": 0,
+                "gradientMode": "none",
+                "hideFrom": {
+                  "legend": false,
+                  "tooltip": false,
+                  "viz": false
+                },
+                "lineInterpolation": "linear",
+                "lineWidth": 1,
+                "pointSize": 5,
+                "scaleDistribution": {
+                  "type": "linear"
+                },
+                "showPoints": "auto",
+                "spanNulls": false,
+                "stacking": {
+                  "group": "A",
+                  "mode": "none"
+                },
+                "thresholdsStyle": {
+                  "mode": "off"
+                }
+              },
+              "mappings": [],
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green",
+                    "value": null
+                  },
+                  {
+                    "color": "red",
+                    "value": 80
+                  }
+                ]
+              }
+            },
+            "overrides": []
+          },
+          "gridPos": {
+            "h": 8,
+            "w": 12,
+            "x": 0,
+            "y": 25
+          },
+          "id": 16,
+          "options": {
+            "legend": {
+              "calcs": [],
+              "displayMode": "list",
+              "placement": "bottom",
+              "showLegend": true
+            },
+            "tooltip": {
+              "mode": "single",
+              "sort": "none"
+            }
+          },
+          "targets": [
+            {
+              "datasource": {
+                "type": "prometheus",
+                "uid": "webstore-metrics"
+              },
+              "editorMode": "builder",
+              "expr": "otel_trace_span_processor_spans{service_name=\"quoteservice\"}",
+              "legendFormat": "{{state}}",
+              "range": true,
+              "refId": "A"
+            }
+          ],
+          "title": "Quote Service batch span processor",
+          "type": "timeseries"
         }
       ],
-      "schemaVersion": 37,
+      "refresh": "",
+      "revision": 1,
+      "schemaVersion": 38,
       "style": "dark",
       "tags": [],
       "templating": {
@@ -987,14 +1115,14 @@ data:
               "type": "prometheus",
               "uid": "webstore-metrics"
             },
-            "definition": "latency_bucket",
+            "definition": "duration_milliseconds_bucket",
             "hide": 0,
             "includeAll": false,
             "multi": false,
             "name": "service",
             "options": [],
             "query": {
-              "query": "latency_bucket",
+              "query": "duration_milliseconds_bucket",
               "refId": "StandardVariableQuery"
             },
             "refresh": 1,
@@ -1013,7 +1141,7 @@ data:
       "timezone": "",
       "title": "Demo Dashboard",
       "uid": "W2gX2zHVk",
-      "version": 1,
+      "version": 2,
       "weekStart": ""
     }
   opentelemetry-collector-data-flow.json: |
@@ -5809,20 +5937,40 @@ metadata:
   labels:
     app.kubernetes.io/name: grafana
     app.kubernetes.io/instance: opentelemetry-demo
-    app.kubernetes.io/version: "9.4.7"
+    app.kubernetes.io/version: "10.0.3"
   name: opentelemetry-demo-grafana-clusterrole
 rules: []
+---
+# Source: opentelemetry-demo/charts/opentelemetry-collector/templates/clusterrole.yaml
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: opentelemetry-demo-otelcol
+  labels:
+    app.kubernetes.io/name: otelcol
+    app.kubernetes.io/instance: opentelemetry-demo
+    app.kubernetes.io/version: "0.82.0"
+rules:
+  - apiGroups: [""]
+    resources: ["pods", "namespaces"]
+    verbs: ["get", "watch", "list"]
+  - apiGroups: ["apps"]
+    resources: ["replicasets"]
+    verbs: ["get", "list", "watch"]
+  - apiGroups: ["extensions"]
+    resources: ["replicasets"]
+    verbs: ["get", "list", "watch"]
 ---
 # Source: opentelemetry-demo/charts/prometheus/templates/clusterrole.yaml
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRole
 metadata:
   labels:
-    component: "server"
-    app: prometheus
-    release: opentelemetry-demo
-    chart: prometheus-20.2.0
-    heritage: Helm
+    app.kubernetes.io/component: server
+    app.kubernetes.io/name: prometheus
+    app.kubernetes.io/instance: opentelemetry-demo
+    app.kubernetes.io/version: v2.46.0
+    app.kubernetes.io/part-of: prometheus
   name: opentelemetry-demo-prometheus-server
 rules:
   - apiGroups:
@@ -5863,7 +6011,7 @@ metadata:
   labels:
     app.kubernetes.io/name: grafana
     app.kubernetes.io/instance: opentelemetry-demo
-    app.kubernetes.io/version: "9.4.7"
+    app.kubernetes.io/version: "10.0.3"
 subjects:
   - kind: ServiceAccount
     name: opentelemetry-demo-grafana
@@ -5873,16 +6021,34 @@ roleRef:
   name: opentelemetry-demo-grafana-clusterrole
   apiGroup: rbac.authorization.k8s.io
 ---
+# Source: opentelemetry-demo/charts/opentelemetry-collector/templates/clusterrolebinding.yaml
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: opentelemetry-demo-otelcol
+  labels:
+    app.kubernetes.io/name: otelcol
+    app.kubernetes.io/instance: opentelemetry-demo
+    app.kubernetes.io/version: "0.82.0"
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: opentelemetry-demo-otelcol
+subjects:
+- kind: ServiceAccount
+  name: opentelemetry-demo-otelcol
+  namespace: otel-demo
+---
 # Source: opentelemetry-demo/charts/prometheus/templates/clusterrolebinding.yaml
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRoleBinding
 metadata:
   labels:
-    component: "server"
-    app: prometheus
-    release: opentelemetry-demo
-    chart: prometheus-20.2.0
-    heritage: Helm
+    app.kubernetes.io/component: server
+    app.kubernetes.io/name: prometheus
+    app.kubernetes.io/instance: opentelemetry-demo
+    app.kubernetes.io/version: v2.46.0
+    app.kubernetes.io/part-of: prometheus
   name: opentelemetry-demo-prometheus-server
 subjects:
   - kind: ServiceAccount
@@ -5902,7 +6068,7 @@ metadata:
   labels:
     app.kubernetes.io/name: grafana
     app.kubernetes.io/instance: opentelemetry-demo
-    app.kubernetes.io/version: "9.4.7"
+    app.kubernetes.io/version: "10.0.3"
 rules: []
 ---
 # Source: opentelemetry-demo/charts/grafana/templates/rolebinding.yaml
@@ -5914,7 +6080,7 @@ metadata:
   labels:
     app.kubernetes.io/name: grafana
     app.kubernetes.io/instance: opentelemetry-demo
-    app.kubernetes.io/version: "9.4.7"
+    app.kubernetes.io/version: "10.0.3"
 roleRef:
   apiGroup: rbac.authorization.k8s.io
   kind: Role
@@ -5933,7 +6099,7 @@ metadata:
   labels:
     app.kubernetes.io/name: grafana
     app.kubernetes.io/instance: opentelemetry-demo
-    app.kubernetes.io/version: "9.4.7"
+    app.kubernetes.io/version: "10.0.3"
 spec:
   type: ClusterIP
   ports:
@@ -5953,7 +6119,7 @@ metadata:
   labels:
     app.kubernetes.io/name: jaeger
     app.kubernetes.io/instance: opentelemetry-demo
-    app.kubernetes.io/version: "1.42.0"
+    app.kubernetes.io/version: "1.45.0"
     app.kubernetes.io/component: service-agent
 spec:
   clusterIP: None
@@ -5986,7 +6152,7 @@ metadata:
   labels:
     app.kubernetes.io/name: jaeger
     app.kubernetes.io/instance: opentelemetry-demo
-    app.kubernetes.io/version: "1.42.0"
+    app.kubernetes.io/version: "1.45.0"
     app.kubernetes.io/component: service-collector
 spec:
   clusterIP: None
@@ -6022,7 +6188,7 @@ metadata:
   labels:
     app.kubernetes.io/name: jaeger
     app.kubernetes.io/instance: opentelemetry-demo
-    app.kubernetes.io/version: "1.42.0"
+    app.kubernetes.io/version: "1.45.0"
     app.kubernetes.io/component: service-query
 spec:
   clusterIP: None
@@ -6046,7 +6212,7 @@ metadata:
   labels:
     app.kubernetes.io/name: otelcol
     app.kubernetes.io/instance: opentelemetry-demo
-    app.kubernetes.io/version: "0.76.1"
+    app.kubernetes.io/version: "0.82.0"
     component: standalone-collector
 spec:
   type: ClusterIP
@@ -6089,17 +6255,18 @@ spec:
     app.kubernetes.io/name: otelcol
     app.kubernetes.io/instance: opentelemetry-demo
     component: standalone-collector
+  internalTrafficPolicy: Cluster
 ---
 # Source: opentelemetry-demo/charts/prometheus/templates/service.yaml
 apiVersion: v1
 kind: Service
 metadata:
   labels:
-    component: "server"
-    app: prometheus
-    release: opentelemetry-demo
-    chart: prometheus-20.2.0
-    heritage: Helm
+    app.kubernetes.io/component: server
+    app.kubernetes.io/name: prometheus
+    app.kubernetes.io/instance: opentelemetry-demo
+    app.kubernetes.io/version: v2.46.0
+    app.kubernetes.io/part-of: prometheus
   name: opentelemetry-demo-prometheus-server
   namespace: otel-demo
 spec:
@@ -6109,9 +6276,9 @@ spec:
       protocol: TCP
       targetPort: 9090
   selector:
-    component: "server"
-    app: prometheus
-    release: opentelemetry-demo
+    app.kubernetes.io/component: server
+    app.kubernetes.io/name: prometheus
+    app.kubernetes.io/instance: opentelemetry-demo
   sessionAffinity: None
   type: "ClusterIP"
 ---
@@ -6126,7 +6293,7 @@ metadata:
     app.kubernetes.io/instance: opentelemetry-demo
     app.kubernetes.io/component: adservice
     app.kubernetes.io/name: opentelemetry-demo-adservice
-    app.kubernetes.io/version: "1.4.0"
+    app.kubernetes.io/version: "1.5.0"
     app.kubernetes.io/part-of: opentelemetry-demo
 spec:
   type: ClusterIP
@@ -6149,7 +6316,7 @@ metadata:
     app.kubernetes.io/instance: opentelemetry-demo
     app.kubernetes.io/component: cartservice
     app.kubernetes.io/name: opentelemetry-demo-cartservice
-    app.kubernetes.io/version: "1.4.0"
+    app.kubernetes.io/version: "1.5.0"
     app.kubernetes.io/part-of: opentelemetry-demo
 spec:
   type: ClusterIP
@@ -6172,7 +6339,7 @@ metadata:
     app.kubernetes.io/instance: opentelemetry-demo
     app.kubernetes.io/component: checkoutservice
     app.kubernetes.io/name: opentelemetry-demo-checkoutservice
-    app.kubernetes.io/version: "1.4.0"
+    app.kubernetes.io/version: "1.5.0"
     app.kubernetes.io/part-of: opentelemetry-demo
 spec:
   type: ClusterIP
@@ -6195,7 +6362,7 @@ metadata:
     app.kubernetes.io/instance: opentelemetry-demo
     app.kubernetes.io/component: currencyservice
     app.kubernetes.io/name: opentelemetry-demo-currencyservice
-    app.kubernetes.io/version: "1.4.0"
+    app.kubernetes.io/version: "1.5.0"
     app.kubernetes.io/part-of: opentelemetry-demo
 spec:
   type: ClusterIP
@@ -6218,7 +6385,7 @@ metadata:
     app.kubernetes.io/instance: opentelemetry-demo
     app.kubernetes.io/component: emailservice
     app.kubernetes.io/name: opentelemetry-demo-emailservice
-    app.kubernetes.io/version: "1.4.0"
+    app.kubernetes.io/version: "1.5.0"
     app.kubernetes.io/part-of: opentelemetry-demo
 spec:
   type: ClusterIP
@@ -6241,7 +6408,7 @@ metadata:
     app.kubernetes.io/instance: opentelemetry-demo
     app.kubernetes.io/component: featureflagservice
     app.kubernetes.io/name: opentelemetry-demo-featureflagservice
-    app.kubernetes.io/version: "1.4.0"
+    app.kubernetes.io/version: "1.5.0"
     app.kubernetes.io/part-of: opentelemetry-demo
 spec:
   type: ClusterIP
@@ -6267,7 +6434,7 @@ metadata:
     app.kubernetes.io/instance: opentelemetry-demo
     app.kubernetes.io/component: ffspostgres
     app.kubernetes.io/name: opentelemetry-demo-ffspostgres
-    app.kubernetes.io/version: "1.4.0"
+    app.kubernetes.io/version: "1.5.0"
     app.kubernetes.io/part-of: opentelemetry-demo
 spec:
   type: ClusterIP
@@ -6290,7 +6457,7 @@ metadata:
     app.kubernetes.io/instance: opentelemetry-demo
     app.kubernetes.io/component: frontend
     app.kubernetes.io/name: opentelemetry-demo-frontend
-    app.kubernetes.io/version: "1.4.0"
+    app.kubernetes.io/version: "1.5.0"
     app.kubernetes.io/part-of: opentelemetry-demo
 spec:
   type: ClusterIP
@@ -6313,7 +6480,7 @@ metadata:
     app.kubernetes.io/instance: opentelemetry-demo
     app.kubernetes.io/component: frontendproxy
     app.kubernetes.io/name: opentelemetry-demo-frontendproxy
-    app.kubernetes.io/version: "1.4.0"
+    app.kubernetes.io/version: "1.5.0"
     app.kubernetes.io/part-of: opentelemetry-demo
 spec:
   type: ClusterIP
@@ -6336,7 +6503,7 @@ metadata:
     app.kubernetes.io/instance: opentelemetry-demo
     app.kubernetes.io/component: kafka
     app.kubernetes.io/name: opentelemetry-demo-kafka
-    app.kubernetes.io/version: "1.4.0"
+    app.kubernetes.io/version: "1.5.0"
     app.kubernetes.io/part-of: opentelemetry-demo
 spec:
   type: ClusterIP
@@ -6362,7 +6529,7 @@ metadata:
     app.kubernetes.io/instance: opentelemetry-demo
     app.kubernetes.io/component: loadgenerator
     app.kubernetes.io/name: opentelemetry-demo-loadgenerator
-    app.kubernetes.io/version: "1.4.0"
+    app.kubernetes.io/version: "1.5.0"
     app.kubernetes.io/part-of: opentelemetry-demo
 spec:
   type: ClusterIP
@@ -6385,7 +6552,7 @@ metadata:
     app.kubernetes.io/instance: opentelemetry-demo
     app.kubernetes.io/component: paymentservice
     app.kubernetes.io/name: opentelemetry-demo-paymentservice
-    app.kubernetes.io/version: "1.4.0"
+    app.kubernetes.io/version: "1.5.0"
     app.kubernetes.io/part-of: opentelemetry-demo
 spec:
   type: ClusterIP
@@ -6408,7 +6575,7 @@ metadata:
     app.kubernetes.io/instance: opentelemetry-demo
     app.kubernetes.io/component: productcatalogservice
     app.kubernetes.io/name: opentelemetry-demo-productcatalogservice
-    app.kubernetes.io/version: "1.4.0"
+    app.kubernetes.io/version: "1.5.0"
     app.kubernetes.io/part-of: opentelemetry-demo
 spec:
   type: ClusterIP
@@ -6431,7 +6598,7 @@ metadata:
     app.kubernetes.io/instance: opentelemetry-demo
     app.kubernetes.io/component: quoteservice
     app.kubernetes.io/name: opentelemetry-demo-quoteservice
-    app.kubernetes.io/version: "1.4.0"
+    app.kubernetes.io/version: "1.5.0"
     app.kubernetes.io/part-of: opentelemetry-demo
 spec:
   type: ClusterIP
@@ -6454,7 +6621,7 @@ metadata:
     app.kubernetes.io/instance: opentelemetry-demo
     app.kubernetes.io/component: recommendationservice
     app.kubernetes.io/name: opentelemetry-demo-recommendationservice
-    app.kubernetes.io/version: "1.4.0"
+    app.kubernetes.io/version: "1.5.0"
     app.kubernetes.io/part-of: opentelemetry-demo
 spec:
   type: ClusterIP
@@ -6477,7 +6644,7 @@ metadata:
     app.kubernetes.io/instance: opentelemetry-demo
     app.kubernetes.io/component: redis
     app.kubernetes.io/name: opentelemetry-demo-redis
-    app.kubernetes.io/version: "1.4.0"
+    app.kubernetes.io/version: "1.5.0"
     app.kubernetes.io/part-of: opentelemetry-demo
 spec:
   type: ClusterIP
@@ -6500,7 +6667,7 @@ metadata:
     app.kubernetes.io/instance: opentelemetry-demo
     app.kubernetes.io/component: shippingservice
     app.kubernetes.io/name: opentelemetry-demo-shippingservice
-    app.kubernetes.io/version: "1.4.0"
+    app.kubernetes.io/version: "1.5.0"
     app.kubernetes.io/part-of: opentelemetry-demo
 spec:
   type: ClusterIP
@@ -6521,7 +6688,7 @@ metadata:
   labels:
     app.kubernetes.io/name: grafana
     app.kubernetes.io/instance: opentelemetry-demo
-    app.kubernetes.io/version: "9.4.7"
+    app.kubernetes.io/version: "10.0.3"
 spec:
   replicas: 1
   revisionHistoryLimit: 10
@@ -6537,10 +6704,11 @@ spec:
         app.kubernetes.io/name: grafana
         app.kubernetes.io/instance: opentelemetry-demo
       annotations:
-        checksum/config: 46e9428a9c36c5c45a84485e747d9911e5d9cc320ac4bec997c39688cfda1b43
+        checksum/config: f92101b40fb01c244a4b9322ca52ebe09642bda49660e6b81391e788b2138cf4
         checksum/dashboards-json-config: 01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b
         checksum/sc-dashboard-provider-config: 01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b
-        checksum/secret: 168eac9549c1155906143bae680e232ce7a8acecd06af6a8ca9d6088db7473f2
+        checksum/secret: fed400946f54af100977a891e2552cb0e3ac2cddd8ff6ef730346abe9021378b
+        kubectl.kubernetes.io/default-container: grafana
     spec:
       
       serviceAccountName: opentelemetry-demo-grafana
@@ -6548,12 +6716,20 @@ spec:
       securityContext:
         fsGroup: 472
         runAsGroup: 472
+        runAsNonRoot: true
         runAsUser: 472
       enableServiceLinks: true
       containers:
         - name: grafana
-          image: "grafana/grafana:9.4.7"
+          image: "docker.io/grafana/grafana:10.0.3"
           imagePullPolicy: IfNotPresent
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+              - ALL
+            seccompProfile:
+              type: RuntimeDefault
           volumeMounts:
             - name: config
               mountPath: "/etc/grafana/grafana.ini"
@@ -6614,7 +6790,7 @@ spec:
               port: 3000
           resources:
             limits:
-              memory: 100Mi
+              memory: 150Mi
       volumes:
         - name: config
           configMap:
@@ -6633,7 +6809,7 @@ metadata:
   labels:
     app.kubernetes.io/name: jaeger
     app.kubernetes.io/instance: opentelemetry-demo
-    app.kubernetes.io/version: "1.42.0"
+    app.kubernetes.io/version: "1.45.0"
     app.kubernetes.io/component: all-in-one
     prometheus.io/port: "14269"
     prometheus.io/scrape: "true"
@@ -6668,12 +6844,12 @@ spec:
               value: "false"
             - name: COLLECTOR_OTLP_ENABLED
               value: "true"
-          image: jaegertracing/all-in-one:1.42.0
+          image: jaegertracing/all-in-one:1.45.0
           imagePullPolicy: IfNotPresent
           name: jaeger
           args:
             - "--memory.max-traces"
-            - "10000"
+            - "8000"
             - "--query.base-path"
             - "/jaeger/ui"
             - "--prometheus.server-url"
@@ -6720,7 +6896,9 @@ spec:
           resources:
             limits:
               memory: 300Mi
+          volumeMounts:
       serviceAccountName: opentelemetry-demo-jaeger
+      volumes:
 ---
 # Source: opentelemetry-demo/charts/opentelemetry-collector/templates/deployment.yaml
 apiVersion: apps/v1
@@ -6730,7 +6908,7 @@ metadata:
   labels:
     app.kubernetes.io/name: otelcol
     app.kubernetes.io/instance: opentelemetry-demo
-    app.kubernetes.io/version: "0.76.1"
+    app.kubernetes.io/version: "0.82.0"
 spec:
   replicas: 1
   revisionHistoryLimit: 10
@@ -6744,7 +6922,7 @@ spec:
   template:
     metadata:
       annotations:
-        checksum/config: 43d3318bb84ce994167ce160b46e0e06eb17a17b8de61b578bf4a3e97f4dcdd1
+        checksum/config: be965f39564d9f1f9664b97da079e61192b013b8ecf5d458dca451699f15c5f9
         opentelemetry_community_demo: "true"
         prometheus.io/port: "9464"
         prometheus.io/scrape: "true"
@@ -6765,7 +6943,7 @@ spec:
             - --config=/conf/relay.yaml
           securityContext:
             {}
-          image: "otel/opentelemetry-collector-contrib:0.76.1"
+          image: "otel/opentelemetry-collector-contrib:0.82.0"
           imagePullPolicy: IfNotPresent
           ports:
             - name: jaeger-compact
@@ -6808,7 +6986,7 @@ spec:
               port: 13133
           resources:
             limits:
-              memory: 125Mi
+              memory: 200Mi
           volumeMounts:
             - mountPath: /conf
               name: opentelemetry-collector-configmap
@@ -6826,38 +7004,39 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   labels:
-    component: "server"
-    app: prometheus
-    release: opentelemetry-demo
-    chart: prometheus-20.2.0
-    heritage: Helm
+    app.kubernetes.io/component: server
+    app.kubernetes.io/name: prometheus
+    app.kubernetes.io/instance: opentelemetry-demo
+    app.kubernetes.io/version: v2.46.0
+    app.kubernetes.io/part-of: prometheus
   name: opentelemetry-demo-prometheus-server
   namespace: otel-demo
 spec:
   selector:
     matchLabels:
-      component: "server"
-      app: prometheus
-      release: opentelemetry-demo
+      app.kubernetes.io/component: server
+      app.kubernetes.io/name: prometheus
+      app.kubernetes.io/instance: opentelemetry-demo
   replicas: 1
+  revisionHistoryLimit: 10
   strategy:
     type: Recreate
     rollingUpdate: null
   template:
     metadata:
       labels:
-        component: "server"
-        app: prometheus
-        release: opentelemetry-demo
-        chart: prometheus-20.2.0
-        heritage: Helm
+        app.kubernetes.io/component: server
+        app.kubernetes.io/name: prometheus
+        app.kubernetes.io/instance: opentelemetry-demo
+        app.kubernetes.io/version: v2.46.0
+        app.kubernetes.io/part-of: prometheus
     spec:
       enableServiceLinks: true
       serviceAccountName: opentelemetry-demo-prometheus-server
       containers:
 
         - name: prometheus-server
-          image: "quay.io/prometheus/prometheus:v2.43.0"
+          image: "quay.io/prometheus/prometheus:v2.46.0"
           imagePullPolicy: "IfNotPresent"
           args:
             - --storage.tsdb.retention.time=15d
@@ -6923,7 +7102,7 @@ metadata:
     app.kubernetes.io/instance: opentelemetry-demo
     app.kubernetes.io/component: accountingservice
     app.kubernetes.io/name: opentelemetry-demo-accountingservice
-    app.kubernetes.io/version: "1.4.0"
+    app.kubernetes.io/version: "1.5.0"
     app.kubernetes.io/part-of: opentelemetry-demo
 spec:
   selector:
@@ -6942,7 +7121,7 @@ spec:
       serviceAccountName: opentelemetry-demo
       containers:
         - name: accountingservice
-          image: 'ghcr.io/open-telemetry/demo:1.4.0-accountingservice'
+          image: 'ghcr.io/open-telemetry/demo:1.5.0-accountingservice'
           imagePullPolicy: IfNotPresent
           env:
           - name: OTEL_SERVICE_NAME
@@ -6950,26 +7129,6 @@ spec:
               fieldRef:
                 apiVersion: v1
                 fieldPath: metadata.labels['app.kubernetes.io/component']
-          - name: OTEL_K8S_NAMESPACE
-            valueFrom:
-              fieldRef:
-                apiVersion: v1
-                fieldPath: metadata.namespace
-          - name: OTEL_K8S_NODE_NAME
-            valueFrom:
-              fieldRef:
-                apiVersion: v1
-                fieldPath: spec.nodeName
-          - name: OTEL_K8S_POD_NAME
-            valueFrom:
-              fieldRef:
-                apiVersion: v1
-                fieldPath: metadata.name
-          - name: OTEL_K8S_POD_UID
-            valueFrom:
-              fieldRef:
-                apiVersion: v1
-                fieldPath: metadata.uid
           - name: OTEL_COLLECTOR_NAME
             value: 'opentelemetry-demo-otelcol'
           - name: OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE
@@ -6979,7 +7138,7 @@ spec:
           - name: OTEL_EXPORTER_OTLP_ENDPOINT
             value: http://$(OTEL_COLLECTOR_NAME):4317
           - name: OTEL_RESOURCE_ATTRIBUTES
-            value: service.name=$(OTEL_SERVICE_NAME),service.instance.id=$(OTEL_K8S_POD_UID),service.namespace=opentelemetry-demo,k8s.namespace.name=$(OTEL_K8S_NAMESPACE),k8s.node.name=$(OTEL_K8S_NODE_NAME),k8s.pod.name=$(OTEL_K8S_POD_NAME)
+            value: service.name=$(OTEL_SERVICE_NAME),service.namespace=opentelemetry-demo
           resources:
             limits:
               memory: 20Mi
@@ -7003,7 +7162,7 @@ metadata:
     app.kubernetes.io/instance: opentelemetry-demo
     app.kubernetes.io/component: adservice
     app.kubernetes.io/name: opentelemetry-demo-adservice
-    app.kubernetes.io/version: "1.4.0"
+    app.kubernetes.io/version: "1.5.0"
     app.kubernetes.io/part-of: opentelemetry-demo
 spec:
   selector:
@@ -7022,7 +7181,7 @@ spec:
       serviceAccountName: opentelemetry-demo
       containers:
         - name: adservice
-          image: 'ghcr.io/open-telemetry/demo:1.4.0-adservice'
+          image: 'ghcr.io/open-telemetry/demo:1.5.0-adservice'
           imagePullPolicy: IfNotPresent
           ports:
           
@@ -7034,26 +7193,6 @@ spec:
               fieldRef:
                 apiVersion: v1
                 fieldPath: metadata.labels['app.kubernetes.io/component']
-          - name: OTEL_K8S_NAMESPACE
-            valueFrom:
-              fieldRef:
-                apiVersion: v1
-                fieldPath: metadata.namespace
-          - name: OTEL_K8S_NODE_NAME
-            valueFrom:
-              fieldRef:
-                apiVersion: v1
-                fieldPath: spec.nodeName
-          - name: OTEL_K8S_POD_NAME
-            valueFrom:
-              fieldRef:
-                apiVersion: v1
-                fieldPath: metadata.name
-          - name: OTEL_K8S_POD_UID
-            valueFrom:
-              fieldRef:
-                apiVersion: v1
-                fieldPath: metadata.uid
           - name: OTEL_COLLECTOR_NAME
             value: 'opentelemetry-demo-otelcol'
           - name: OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE
@@ -7067,7 +7206,7 @@ spec:
           - name: OTLP_LOGS_EXPORTER
             value: otlp
           - name: OTEL_RESOURCE_ATTRIBUTES
-            value: service.name=$(OTEL_SERVICE_NAME),service.instance.id=$(OTEL_K8S_POD_UID),service.namespace=opentelemetry-demo,k8s.namespace.name=$(OTEL_K8S_NAMESPACE),k8s.node.name=$(OTEL_K8S_NODE_NAME),k8s.pod.name=$(OTEL_K8S_POD_NAME)
+            value: service.name=$(OTEL_SERVICE_NAME),service.namespace=opentelemetry-demo
           resources:
             limits:
               memory: 300Mi
@@ -7083,7 +7222,7 @@ metadata:
     app.kubernetes.io/instance: opentelemetry-demo
     app.kubernetes.io/component: cartservice
     app.kubernetes.io/name: opentelemetry-demo-cartservice
-    app.kubernetes.io/version: "1.4.0"
+    app.kubernetes.io/version: "1.5.0"
     app.kubernetes.io/part-of: opentelemetry-demo
 spec:
   selector:
@@ -7102,7 +7241,7 @@ spec:
       serviceAccountName: opentelemetry-demo
       containers:
         - name: cartservice
-          image: 'ghcr.io/open-telemetry/demo:1.4.0-cartservice'
+          image: 'ghcr.io/open-telemetry/demo:1.5.0-cartservice'
           imagePullPolicy: IfNotPresent
           ports:
           
@@ -7114,26 +7253,6 @@ spec:
               fieldRef:
                 apiVersion: v1
                 fieldPath: metadata.labels['app.kubernetes.io/component']
-          - name: OTEL_K8S_NAMESPACE
-            valueFrom:
-              fieldRef:
-                apiVersion: v1
-                fieldPath: metadata.namespace
-          - name: OTEL_K8S_NODE_NAME
-            valueFrom:
-              fieldRef:
-                apiVersion: v1
-                fieldPath: spec.nodeName
-          - name: OTEL_K8S_POD_NAME
-            valueFrom:
-              fieldRef:
-                apiVersion: v1
-                fieldPath: metadata.name
-          - name: OTEL_K8S_POD_UID
-            valueFrom:
-              fieldRef:
-                apiVersion: v1
-                fieldPath: metadata.uid
           - name: OTEL_COLLECTOR_NAME
             value: 'opentelemetry-demo-otelcol'
           - name: OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE
@@ -7142,12 +7261,14 @@ spec:
             value: "8080"
           - name: ASPNETCORE_URLS
             value: http://*:$(CART_SERVICE_PORT)
+          - name: FEATURE_FLAG_GRPC_SERVICE_ADDR
+            value: 'opentelemetry-demo-featureflagservice:50053'
           - name: REDIS_ADDR
             value: 'opentelemetry-demo-redis:6379'
           - name: OTEL_EXPORTER_OTLP_ENDPOINT
             value: http://$(OTEL_COLLECTOR_NAME):4317
           - name: OTEL_RESOURCE_ATTRIBUTES
-            value: service.name=$(OTEL_SERVICE_NAME),service.instance.id=$(OTEL_K8S_POD_UID),service.namespace=opentelemetry-demo,k8s.namespace.name=$(OTEL_K8S_NAMESPACE),k8s.node.name=$(OTEL_K8S_NODE_NAME),k8s.pod.name=$(OTEL_K8S_POD_NAME)
+            value: service.name=$(OTEL_SERVICE_NAME),service.namespace=opentelemetry-demo
           resources:
             limits:
               memory: 160Mi
@@ -7171,7 +7292,7 @@ metadata:
     app.kubernetes.io/instance: opentelemetry-demo
     app.kubernetes.io/component: checkoutservice
     app.kubernetes.io/name: opentelemetry-demo-checkoutservice
-    app.kubernetes.io/version: "1.4.0"
+    app.kubernetes.io/version: "1.5.0"
     app.kubernetes.io/part-of: opentelemetry-demo
 spec:
   selector:
@@ -7190,7 +7311,7 @@ spec:
       serviceAccountName: opentelemetry-demo
       containers:
         - name: checkoutservice
-          image: 'ghcr.io/open-telemetry/demo:1.4.0-checkoutservice'
+          image: 'ghcr.io/open-telemetry/demo:1.5.0-checkoutservice'
           imagePullPolicy: IfNotPresent
           ports:
           
@@ -7202,26 +7323,6 @@ spec:
               fieldRef:
                 apiVersion: v1
                 fieldPath: metadata.labels['app.kubernetes.io/component']
-          - name: OTEL_K8S_NAMESPACE
-            valueFrom:
-              fieldRef:
-                apiVersion: v1
-                fieldPath: metadata.namespace
-          - name: OTEL_K8S_NODE_NAME
-            valueFrom:
-              fieldRef:
-                apiVersion: v1
-                fieldPath: spec.nodeName
-          - name: OTEL_K8S_POD_NAME
-            valueFrom:
-              fieldRef:
-                apiVersion: v1
-                fieldPath: metadata.name
-          - name: OTEL_K8S_POD_UID
-            valueFrom:
-              fieldRef:
-                apiVersion: v1
-                fieldPath: metadata.uid
           - name: OTEL_COLLECTOR_NAME
             value: 'opentelemetry-demo-otelcol'
           - name: OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE
@@ -7245,7 +7346,7 @@ spec:
           - name: OTEL_EXPORTER_OTLP_ENDPOINT
             value: http://$(OTEL_COLLECTOR_NAME):4317
           - name: OTEL_RESOURCE_ATTRIBUTES
-            value: service.name=$(OTEL_SERVICE_NAME),service.instance.id=$(OTEL_K8S_POD_UID),service.namespace=opentelemetry-demo,k8s.namespace.name=$(OTEL_K8S_NAMESPACE),k8s.node.name=$(OTEL_K8S_NODE_NAME),k8s.pod.name=$(OTEL_K8S_POD_NAME)
+            value: service.name=$(OTEL_SERVICE_NAME),service.namespace=opentelemetry-demo
           resources:
             limits:
               memory: 20Mi
@@ -7269,7 +7370,7 @@ metadata:
     app.kubernetes.io/instance: opentelemetry-demo
     app.kubernetes.io/component: currencyservice
     app.kubernetes.io/name: opentelemetry-demo-currencyservice
-    app.kubernetes.io/version: "1.4.0"
+    app.kubernetes.io/version: "1.5.0"
     app.kubernetes.io/part-of: opentelemetry-demo
 spec:
   selector:
@@ -7288,7 +7389,7 @@ spec:
       serviceAccountName: opentelemetry-demo
       containers:
         - name: currencyservice
-          image: 'ghcr.io/open-telemetry/demo:1.4.0-currencyservice'
+          image: 'ghcr.io/open-telemetry/demo:1.5.0-currencyservice'
           imagePullPolicy: IfNotPresent
           ports:
           
@@ -7300,26 +7401,6 @@ spec:
               fieldRef:
                 apiVersion: v1
                 fieldPath: metadata.labels['app.kubernetes.io/component']
-          - name: OTEL_K8S_NAMESPACE
-            valueFrom:
-              fieldRef:
-                apiVersion: v1
-                fieldPath: metadata.namespace
-          - name: OTEL_K8S_NODE_NAME
-            valueFrom:
-              fieldRef:
-                apiVersion: v1
-                fieldPath: spec.nodeName
-          - name: OTEL_K8S_POD_NAME
-            valueFrom:
-              fieldRef:
-                apiVersion: v1
-                fieldPath: metadata.name
-          - name: OTEL_K8S_POD_UID
-            valueFrom:
-              fieldRef:
-                apiVersion: v1
-                fieldPath: metadata.uid
           - name: OTEL_COLLECTOR_NAME
             value: 'opentelemetry-demo-otelcol'
           - name: OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE
@@ -7329,7 +7410,7 @@ spec:
           - name: OTEL_EXPORTER_OTLP_ENDPOINT
             value: http://$(OTEL_COLLECTOR_NAME):4317
           - name: OTEL_RESOURCE_ATTRIBUTES
-            value: service.name=$(OTEL_SERVICE_NAME),service.instance.id=$(OTEL_K8S_POD_UID),service.namespace=opentelemetry-demo,k8s.namespace.name=$(OTEL_K8S_NAMESPACE),k8s.node.name=$(OTEL_K8S_NODE_NAME),k8s.pod.name=$(OTEL_K8S_POD_NAME)
+            value: service.name=$(OTEL_SERVICE_NAME),service.namespace=opentelemetry-demo
           resources:
             limits:
               memory: 20Mi
@@ -7345,7 +7426,7 @@ metadata:
     app.kubernetes.io/instance: opentelemetry-demo
     app.kubernetes.io/component: emailservice
     app.kubernetes.io/name: opentelemetry-demo-emailservice
-    app.kubernetes.io/version: "1.4.0"
+    app.kubernetes.io/version: "1.5.0"
     app.kubernetes.io/part-of: opentelemetry-demo
 spec:
   selector:
@@ -7364,7 +7445,7 @@ spec:
       serviceAccountName: opentelemetry-demo
       containers:
         - name: emailservice
-          image: 'ghcr.io/open-telemetry/demo:1.4.0-emailservice'
+          image: 'ghcr.io/open-telemetry/demo:1.5.0-emailservice'
           imagePullPolicy: IfNotPresent
           ports:
           
@@ -7376,26 +7457,6 @@ spec:
               fieldRef:
                 apiVersion: v1
                 fieldPath: metadata.labels['app.kubernetes.io/component']
-          - name: OTEL_K8S_NAMESPACE
-            valueFrom:
-              fieldRef:
-                apiVersion: v1
-                fieldPath: metadata.namespace
-          - name: OTEL_K8S_NODE_NAME
-            valueFrom:
-              fieldRef:
-                apiVersion: v1
-                fieldPath: spec.nodeName
-          - name: OTEL_K8S_POD_NAME
-            valueFrom:
-              fieldRef:
-                apiVersion: v1
-                fieldPath: metadata.name
-          - name: OTEL_K8S_POD_UID
-            valueFrom:
-              fieldRef:
-                apiVersion: v1
-                fieldPath: metadata.uid
           - name: OTEL_COLLECTOR_NAME
             value: 'opentelemetry-demo-otelcol'
           - name: OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE
@@ -7407,7 +7468,7 @@ spec:
           - name: OTEL_EXPORTER_OTLP_TRACES_ENDPOINT
             value: http://$(OTEL_COLLECTOR_NAME):4318/v1/traces
           - name: OTEL_RESOURCE_ATTRIBUTES
-            value: service.name=$(OTEL_SERVICE_NAME),service.instance.id=$(OTEL_K8S_POD_UID),service.namespace=opentelemetry-demo,k8s.namespace.name=$(OTEL_K8S_NAMESPACE),k8s.node.name=$(OTEL_K8S_NODE_NAME),k8s.pod.name=$(OTEL_K8S_POD_NAME)
+            value: service.name=$(OTEL_SERVICE_NAME),service.namespace=opentelemetry-demo
           resources:
             limits:
               memory: 100Mi
@@ -7423,7 +7484,7 @@ metadata:
     app.kubernetes.io/instance: opentelemetry-demo
     app.kubernetes.io/component: featureflagservice
     app.kubernetes.io/name: opentelemetry-demo-featureflagservice
-    app.kubernetes.io/version: "1.4.0"
+    app.kubernetes.io/version: "1.5.0"
     app.kubernetes.io/part-of: opentelemetry-demo
 spec:
   selector:
@@ -7442,7 +7503,7 @@ spec:
       serviceAccountName: opentelemetry-demo
       containers:
         - name: featureflagservice
-          image: 'ghcr.io/open-telemetry/demo:1.4.0-featureflagservice'
+          image: 'ghcr.io/open-telemetry/demo:1.5.0-featureflagservice'
           imagePullPolicy: IfNotPresent
           ports:
           
@@ -7456,26 +7517,6 @@ spec:
               fieldRef:
                 apiVersion: v1
                 fieldPath: metadata.labels['app.kubernetes.io/component']
-          - name: OTEL_K8S_NAMESPACE
-            valueFrom:
-              fieldRef:
-                apiVersion: v1
-                fieldPath: metadata.namespace
-          - name: OTEL_K8S_NODE_NAME
-            valueFrom:
-              fieldRef:
-                apiVersion: v1
-                fieldPath: spec.nodeName
-          - name: OTEL_K8S_POD_NAME
-            valueFrom:
-              fieldRef:
-                apiVersion: v1
-                fieldPath: metadata.name
-          - name: OTEL_K8S_POD_UID
-            valueFrom:
-              fieldRef:
-                apiVersion: v1
-                fieldPath: metadata.uid
           - name: OTEL_COLLECTOR_NAME
             value: 'opentelemetry-demo-otelcol'
           - name: OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE
@@ -7491,7 +7532,7 @@ spec:
           - name: OTEL_EXPORTER_OTLP_TRACES_PROTOCOL
             value: grpc
           - name: OTEL_RESOURCE_ATTRIBUTES
-            value: service.name=$(OTEL_SERVICE_NAME),service.instance.id=$(OTEL_K8S_POD_UID),service.namespace=opentelemetry-demo,k8s.namespace.name=$(OTEL_K8S_NAMESPACE),k8s.node.name=$(OTEL_K8S_NODE_NAME),k8s.pod.name=$(OTEL_K8S_POD_NAME)
+            value: service.name=$(OTEL_SERVICE_NAME),service.namespace=opentelemetry-demo
           resources:
             limits:
               memory: 175Mi
@@ -7521,7 +7562,7 @@ metadata:
     app.kubernetes.io/instance: opentelemetry-demo
     app.kubernetes.io/component: ffspostgres
     app.kubernetes.io/name: opentelemetry-demo-ffspostgres
-    app.kubernetes.io/version: "1.4.0"
+    app.kubernetes.io/version: "1.5.0"
     app.kubernetes.io/part-of: opentelemetry-demo
 spec:
   selector:
@@ -7552,26 +7593,6 @@ spec:
               fieldRef:
                 apiVersion: v1
                 fieldPath: metadata.labels['app.kubernetes.io/component']
-          - name: OTEL_K8S_NAMESPACE
-            valueFrom:
-              fieldRef:
-                apiVersion: v1
-                fieldPath: metadata.namespace
-          - name: OTEL_K8S_NODE_NAME
-            valueFrom:
-              fieldRef:
-                apiVersion: v1
-                fieldPath: spec.nodeName
-          - name: OTEL_K8S_POD_NAME
-            valueFrom:
-              fieldRef:
-                apiVersion: v1
-                fieldPath: metadata.name
-          - name: OTEL_K8S_POD_UID
-            valueFrom:
-              fieldRef:
-                apiVersion: v1
-                fieldPath: metadata.uid
           - name: OTEL_COLLECTOR_NAME
             value: 'opentelemetry-demo-otelcol'
           - name: OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE
@@ -7583,7 +7604,7 @@ spec:
           - name: POSTGRES_PASSWORD
             value: ffs
           - name: OTEL_RESOURCE_ATTRIBUTES
-            value: service.name=$(OTEL_SERVICE_NAME),service.instance.id=$(OTEL_K8S_POD_UID),service.namespace=opentelemetry-demo,k8s.namespace.name=$(OTEL_K8S_NAMESPACE),k8s.node.name=$(OTEL_K8S_NODE_NAME),k8s.pod.name=$(OTEL_K8S_POD_NAME)
+            value: service.name=$(OTEL_SERVICE_NAME),service.namespace=opentelemetry-demo
           resources:
             limits:
               memory: 120Mi
@@ -7603,7 +7624,7 @@ metadata:
     app.kubernetes.io/instance: opentelemetry-demo
     app.kubernetes.io/component: frauddetectionservice
     app.kubernetes.io/name: opentelemetry-demo-frauddetectionservice
-    app.kubernetes.io/version: "1.4.0"
+    app.kubernetes.io/version: "1.5.0"
     app.kubernetes.io/part-of: opentelemetry-demo
 spec:
   selector:
@@ -7622,7 +7643,7 @@ spec:
       serviceAccountName: opentelemetry-demo
       containers:
         - name: frauddetectionservice
-          image: 'ghcr.io/open-telemetry/demo:1.4.0-frauddetectionservice'
+          image: 'ghcr.io/open-telemetry/demo:1.5.0-frauddetectionservice'
           imagePullPolicy: IfNotPresent
           env:
           - name: OTEL_SERVICE_NAME
@@ -7630,26 +7651,6 @@ spec:
               fieldRef:
                 apiVersion: v1
                 fieldPath: metadata.labels['app.kubernetes.io/component']
-          - name: OTEL_K8S_NAMESPACE
-            valueFrom:
-              fieldRef:
-                apiVersion: v1
-                fieldPath: metadata.namespace
-          - name: OTEL_K8S_NODE_NAME
-            valueFrom:
-              fieldRef:
-                apiVersion: v1
-                fieldPath: spec.nodeName
-          - name: OTEL_K8S_POD_NAME
-            valueFrom:
-              fieldRef:
-                apiVersion: v1
-                fieldPath: metadata.name
-          - name: OTEL_K8S_POD_UID
-            valueFrom:
-              fieldRef:
-                apiVersion: v1
-                fieldPath: metadata.uid
           - name: OTEL_COLLECTOR_NAME
             value: 'opentelemetry-demo-otelcol'
           - name: OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE
@@ -7659,7 +7660,7 @@ spec:
           - name: OTEL_EXPORTER_OTLP_ENDPOINT
             value: http://$(OTEL_COLLECTOR_NAME):4317
           - name: OTEL_RESOURCE_ATTRIBUTES
-            value: service.name=$(OTEL_SERVICE_NAME),service.instance.id=$(OTEL_K8S_POD_UID),service.namespace=opentelemetry-demo,k8s.namespace.name=$(OTEL_K8S_NAMESPACE),k8s.node.name=$(OTEL_K8S_NODE_NAME),k8s.pod.name=$(OTEL_K8S_POD_NAME)
+            value: service.name=$(OTEL_SERVICE_NAME),service.namespace=opentelemetry-demo
           resources:
             limits:
               memory: 200Mi
@@ -7683,7 +7684,7 @@ metadata:
     app.kubernetes.io/instance: opentelemetry-demo
     app.kubernetes.io/component: frontend
     app.kubernetes.io/name: opentelemetry-demo-frontend
-    app.kubernetes.io/version: "1.4.0"
+    app.kubernetes.io/version: "1.5.0"
     app.kubernetes.io/part-of: opentelemetry-demo
 spec:
   selector:
@@ -7702,7 +7703,7 @@ spec:
       serviceAccountName: opentelemetry-demo
       containers:
         - name: frontend
-          image: 'ghcr.io/open-telemetry/demo:1.4.0-frontend'
+          image: 'ghcr.io/open-telemetry/demo:1.5.0-frontend'
           imagePullPolicy: IfNotPresent
           ports:
           
@@ -7714,26 +7715,6 @@ spec:
               fieldRef:
                 apiVersion: v1
                 fieldPath: metadata.labels['app.kubernetes.io/component']
-          - name: OTEL_K8S_NAMESPACE
-            valueFrom:
-              fieldRef:
-                apiVersion: v1
-                fieldPath: metadata.namespace
-          - name: OTEL_K8S_NODE_NAME
-            valueFrom:
-              fieldRef:
-                apiVersion: v1
-                fieldPath: spec.nodeName
-          - name: OTEL_K8S_POD_NAME
-            valueFrom:
-              fieldRef:
-                apiVersion: v1
-                fieldPath: metadata.name
-          - name: OTEL_K8S_POD_UID
-            valueFrom:
-              fieldRef:
-                apiVersion: v1
-                fieldPath: metadata.uid
           - name: OTEL_COLLECTOR_NAME
             value: 'opentelemetry-demo-otelcol'
           - name: OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE
@@ -7763,7 +7744,7 @@ spec:
           - name: PUBLIC_OTEL_EXPORTER_OTLP_TRACES_ENDPOINT
             value: http://localhost:8080/otlp-http/v1/traces
           - name: OTEL_RESOURCE_ATTRIBUTES
-            value: service.name=$(OTEL_SERVICE_NAME),service.instance.id=$(OTEL_K8S_POD_UID),service.namespace=opentelemetry-demo,k8s.namespace.name=$(OTEL_K8S_NAMESPACE),k8s.node.name=$(OTEL_K8S_NODE_NAME),k8s.pod.name=$(OTEL_K8S_POD_NAME)
+            value: service.name=$(OTEL_SERVICE_NAME),service.namespace=opentelemetry-demo
           resources:
             limits:
               memory: 200Mi
@@ -7783,7 +7764,7 @@ metadata:
     app.kubernetes.io/instance: opentelemetry-demo
     app.kubernetes.io/component: frontendproxy
     app.kubernetes.io/name: opentelemetry-demo-frontendproxy
-    app.kubernetes.io/version: "1.4.0"
+    app.kubernetes.io/version: "1.5.0"
     app.kubernetes.io/part-of: opentelemetry-demo
 spec:
   selector:
@@ -7802,7 +7783,7 @@ spec:
       serviceAccountName: opentelemetry-demo
       containers:
         - name: frontendproxy
-          image: 'ghcr.io/open-telemetry/demo:1.4.0-frontendproxy'
+          image: 'ghcr.io/open-telemetry/demo:1.5.0-frontendproxy'
           imagePullPolicy: IfNotPresent
           ports:
           
@@ -7814,26 +7795,6 @@ spec:
               fieldRef:
                 apiVersion: v1
                 fieldPath: metadata.labels['app.kubernetes.io/component']
-          - name: OTEL_K8S_NAMESPACE
-            valueFrom:
-              fieldRef:
-                apiVersion: v1
-                fieldPath: metadata.namespace
-          - name: OTEL_K8S_NODE_NAME
-            valueFrom:
-              fieldRef:
-                apiVersion: v1
-                fieldPath: spec.nodeName
-          - name: OTEL_K8S_POD_NAME
-            valueFrom:
-              fieldRef:
-                apiVersion: v1
-                fieldPath: metadata.name
-          - name: OTEL_K8S_POD_UID
-            valueFrom:
-              fieldRef:
-                apiVersion: v1
-                fieldPath: metadata.uid
           - name: OTEL_COLLECTOR_NAME
             value: 'opentelemetry-demo-otelcol'
           - name: OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE
@@ -7867,7 +7828,7 @@ spec:
           - name: OTEL_COLLECTOR_HOST
             value: $(OTEL_COLLECTOR_NAME)
           - name: OTEL_RESOURCE_ATTRIBUTES
-            value: service.name=$(OTEL_SERVICE_NAME),service.instance.id=$(OTEL_K8S_POD_UID),service.namespace=opentelemetry-demo,k8s.namespace.name=$(OTEL_K8S_NAMESPACE),k8s.node.name=$(OTEL_K8S_NODE_NAME),k8s.pod.name=$(OTEL_K8S_POD_NAME)
+            value: service.name=$(OTEL_SERVICE_NAME),service.namespace=opentelemetry-demo
           resources:
             limits:
               memory: 50Mi
@@ -7887,7 +7848,7 @@ metadata:
     app.kubernetes.io/instance: opentelemetry-demo
     app.kubernetes.io/component: kafka
     app.kubernetes.io/name: opentelemetry-demo-kafka
-    app.kubernetes.io/version: "1.4.0"
+    app.kubernetes.io/version: "1.5.0"
     app.kubernetes.io/part-of: opentelemetry-demo
 spec:
   selector:
@@ -7906,7 +7867,7 @@ spec:
       serviceAccountName: opentelemetry-demo
       containers:
         - name: kafka
-          image: 'ghcr.io/open-telemetry/demo:1.4.0-kafka'
+          image: 'ghcr.io/open-telemetry/demo:1.5.0-kafka'
           imagePullPolicy: IfNotPresent
           ports:
           
@@ -7920,26 +7881,6 @@ spec:
               fieldRef:
                 apiVersion: v1
                 fieldPath: metadata.labels['app.kubernetes.io/component']
-          - name: OTEL_K8S_NAMESPACE
-            valueFrom:
-              fieldRef:
-                apiVersion: v1
-                fieldPath: metadata.namespace
-          - name: OTEL_K8S_NODE_NAME
-            valueFrom:
-              fieldRef:
-                apiVersion: v1
-                fieldPath: spec.nodeName
-          - name: OTEL_K8S_POD_NAME
-            valueFrom:
-              fieldRef:
-                apiVersion: v1
-                fieldPath: metadata.name
-          - name: OTEL_K8S_POD_UID
-            valueFrom:
-              fieldRef:
-                apiVersion: v1
-                fieldPath: metadata.uid
           - name: OTEL_COLLECTOR_NAME
             value: 'opentelemetry-demo-otelcol'
           - name: OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE
@@ -7951,7 +7892,7 @@ spec:
           - name: KAFKA_HEAP_OPTS
             value: -Xmx200M -Xms200M
           - name: OTEL_RESOURCE_ATTRIBUTES
-            value: service.name=$(OTEL_SERVICE_NAME),service.instance.id=$(OTEL_K8S_POD_UID),service.namespace=opentelemetry-demo,k8s.namespace.name=$(OTEL_K8S_NAMESPACE),k8s.node.name=$(OTEL_K8S_NODE_NAME),k8s.pod.name=$(OTEL_K8S_POD_NAME)
+            value: service.name=$(OTEL_SERVICE_NAME),service.namespace=opentelemetry-demo
           resources:
             limits:
               memory: 500Mi
@@ -7971,7 +7912,7 @@ metadata:
     app.kubernetes.io/instance: opentelemetry-demo
     app.kubernetes.io/component: loadgenerator
     app.kubernetes.io/name: opentelemetry-demo-loadgenerator
-    app.kubernetes.io/version: "1.4.0"
+    app.kubernetes.io/version: "1.5.0"
     app.kubernetes.io/part-of: opentelemetry-demo
 spec:
   selector:
@@ -7990,7 +7931,7 @@ spec:
       serviceAccountName: opentelemetry-demo
       containers:
         - name: loadgenerator
-          image: 'ghcr.io/open-telemetry/demo:1.4.0-loadgenerator'
+          image: 'ghcr.io/open-telemetry/demo:1.5.0-loadgenerator'
           imagePullPolicy: IfNotPresent
           ports:
           
@@ -8002,26 +7943,6 @@ spec:
               fieldRef:
                 apiVersion: v1
                 fieldPath: metadata.labels['app.kubernetes.io/component']
-          - name: OTEL_K8S_NAMESPACE
-            valueFrom:
-              fieldRef:
-                apiVersion: v1
-                fieldPath: metadata.namespace
-          - name: OTEL_K8S_NODE_NAME
-            valueFrom:
-              fieldRef:
-                apiVersion: v1
-                fieldPath: spec.nodeName
-          - name: OTEL_K8S_POD_NAME
-            valueFrom:
-              fieldRef:
-                apiVersion: v1
-                fieldPath: metadata.name
-          - name: OTEL_K8S_POD_UID
-            valueFrom:
-              fieldRef:
-                apiVersion: v1
-                fieldPath: metadata.uid
           - name: OTEL_COLLECTOR_NAME
             value: 'opentelemetry-demo-otelcol'
           - name: OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE
@@ -8033,17 +7954,17 @@ spec:
           - name: LOCUST_SPAWN_RATE
             value: "1"
           - name: LOCUST_HOST
-            value: http://opentelemetry-demo-frontend:8080
+            value: http://opentelemetry-demo-frontendproxy:8080
           - name: LOCUST_HEADLESS
             value: "false"
           - name: LOCUST_AUTOSTART
             value: "true"
           - name: PROTOCOL_BUFFERS_PYTHON_IMPLEMENTATION
             value: python
-          - name: OTEL_EXPORTER_OTLP_TRACES_ENDPOINT
-            value: http://$(OTEL_COLLECTOR_NAME):4318/v1/traces
+          - name: OTEL_EXPORTER_OTLP_ENDPOINT
+            value: http://$(OTEL_COLLECTOR_NAME):4317
           - name: OTEL_RESOURCE_ATTRIBUTES
-            value: service.name=$(OTEL_SERVICE_NAME),service.instance.id=$(OTEL_K8S_POD_UID),service.namespace=opentelemetry-demo,k8s.namespace.name=$(OTEL_K8S_NAMESPACE),k8s.node.name=$(OTEL_K8S_NODE_NAME),k8s.pod.name=$(OTEL_K8S_POD_NAME)
+            value: service.name=$(OTEL_SERVICE_NAME),service.namespace=opentelemetry-demo
           resources:
             limits:
               memory: 120Mi
@@ -8059,7 +7980,7 @@ metadata:
     app.kubernetes.io/instance: opentelemetry-demo
     app.kubernetes.io/component: paymentservice
     app.kubernetes.io/name: opentelemetry-demo-paymentservice
-    app.kubernetes.io/version: "1.4.0"
+    app.kubernetes.io/version: "1.5.0"
     app.kubernetes.io/part-of: opentelemetry-demo
 spec:
   selector:
@@ -8078,7 +7999,7 @@ spec:
       serviceAccountName: opentelemetry-demo
       containers:
         - name: paymentservice
-          image: 'ghcr.io/open-telemetry/demo:1.4.0-paymentservice'
+          image: 'ghcr.io/open-telemetry/demo:1.5.0-paymentservice'
           imagePullPolicy: IfNotPresent
           ports:
           
@@ -8090,26 +8011,6 @@ spec:
               fieldRef:
                 apiVersion: v1
                 fieldPath: metadata.labels['app.kubernetes.io/component']
-          - name: OTEL_K8S_NAMESPACE
-            valueFrom:
-              fieldRef:
-                apiVersion: v1
-                fieldPath: metadata.namespace
-          - name: OTEL_K8S_NODE_NAME
-            valueFrom:
-              fieldRef:
-                apiVersion: v1
-                fieldPath: spec.nodeName
-          - name: OTEL_K8S_POD_NAME
-            valueFrom:
-              fieldRef:
-                apiVersion: v1
-                fieldPath: metadata.name
-          - name: OTEL_K8S_POD_UID
-            valueFrom:
-              fieldRef:
-                apiVersion: v1
-                fieldPath: metadata.uid
           - name: OTEL_COLLECTOR_NAME
             value: 'opentelemetry-demo-otelcol'
           - name: OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE
@@ -8119,7 +8020,7 @@ spec:
           - name: OTEL_EXPORTER_OTLP_ENDPOINT
             value: http://$(OTEL_COLLECTOR_NAME):4317
           - name: OTEL_RESOURCE_ATTRIBUTES
-            value: service.name=$(OTEL_SERVICE_NAME),service.instance.id=$(OTEL_K8S_POD_UID),service.namespace=opentelemetry-demo,k8s.namespace.name=$(OTEL_K8S_NAMESPACE),k8s.node.name=$(OTEL_K8S_NODE_NAME),k8s.pod.name=$(OTEL_K8S_POD_NAME)
+            value: service.name=$(OTEL_SERVICE_NAME),service.namespace=opentelemetry-demo
           resources:
             limits:
               memory: 120Mi
@@ -8139,7 +8040,7 @@ metadata:
     app.kubernetes.io/instance: opentelemetry-demo
     app.kubernetes.io/component: productcatalogservice
     app.kubernetes.io/name: opentelemetry-demo-productcatalogservice
-    app.kubernetes.io/version: "1.4.0"
+    app.kubernetes.io/version: "1.5.0"
     app.kubernetes.io/part-of: opentelemetry-demo
 spec:
   selector:
@@ -8158,7 +8059,7 @@ spec:
       serviceAccountName: opentelemetry-demo
       containers:
         - name: productcatalogservice
-          image: 'ghcr.io/open-telemetry/demo:1.4.0-productcatalogservice'
+          image: 'ghcr.io/open-telemetry/demo:1.5.0-productcatalogservice'
           imagePullPolicy: IfNotPresent
           ports:
           
@@ -8170,26 +8071,6 @@ spec:
               fieldRef:
                 apiVersion: v1
                 fieldPath: metadata.labels['app.kubernetes.io/component']
-          - name: OTEL_K8S_NAMESPACE
-            valueFrom:
-              fieldRef:
-                apiVersion: v1
-                fieldPath: metadata.namespace
-          - name: OTEL_K8S_NODE_NAME
-            valueFrom:
-              fieldRef:
-                apiVersion: v1
-                fieldPath: spec.nodeName
-          - name: OTEL_K8S_POD_NAME
-            valueFrom:
-              fieldRef:
-                apiVersion: v1
-                fieldPath: metadata.name
-          - name: OTEL_K8S_POD_UID
-            valueFrom:
-              fieldRef:
-                apiVersion: v1
-                fieldPath: metadata.uid
           - name: OTEL_COLLECTOR_NAME
             value: 'opentelemetry-demo-otelcol'
           - name: OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE
@@ -8201,7 +8082,7 @@ spec:
           - name: OTEL_EXPORTER_OTLP_ENDPOINT
             value: http://$(OTEL_COLLECTOR_NAME):4317
           - name: OTEL_RESOURCE_ATTRIBUTES
-            value: service.name=$(OTEL_SERVICE_NAME),service.instance.id=$(OTEL_K8S_POD_UID),service.namespace=opentelemetry-demo,k8s.namespace.name=$(OTEL_K8S_NAMESPACE),k8s.node.name=$(OTEL_K8S_NODE_NAME),k8s.pod.name=$(OTEL_K8S_POD_NAME)
+            value: service.name=$(OTEL_SERVICE_NAME),service.namespace=opentelemetry-demo
           resources:
             limits:
               memory: 20Mi
@@ -8217,7 +8098,7 @@ metadata:
     app.kubernetes.io/instance: opentelemetry-demo
     app.kubernetes.io/component: quoteservice
     app.kubernetes.io/name: opentelemetry-demo-quoteservice
-    app.kubernetes.io/version: "1.4.0"
+    app.kubernetes.io/version: "1.5.0"
     app.kubernetes.io/part-of: opentelemetry-demo
 spec:
   selector:
@@ -8236,7 +8117,7 @@ spec:
       serviceAccountName: opentelemetry-demo
       containers:
         - name: quoteservice
-          image: 'ghcr.io/open-telemetry/demo:1.4.0-quoteservice'
+          image: 'ghcr.io/open-telemetry/demo:1.5.0-quoteservice'
           imagePullPolicy: IfNotPresent
           ports:
           
@@ -8248,26 +8129,6 @@ spec:
               fieldRef:
                 apiVersion: v1
                 fieldPath: metadata.labels['app.kubernetes.io/component']
-          - name: OTEL_K8S_NAMESPACE
-            valueFrom:
-              fieldRef:
-                apiVersion: v1
-                fieldPath: metadata.namespace
-          - name: OTEL_K8S_NODE_NAME
-            valueFrom:
-              fieldRef:
-                apiVersion: v1
-                fieldPath: spec.nodeName
-          - name: OTEL_K8S_POD_NAME
-            valueFrom:
-              fieldRef:
-                apiVersion: v1
-                fieldPath: metadata.name
-          - name: OTEL_K8S_POD_UID
-            valueFrom:
-              fieldRef:
-                apiVersion: v1
-                fieldPath: metadata.uid
           - name: OTEL_COLLECTOR_NAME
             value: 'opentelemetry-demo-otelcol'
           - name: OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE
@@ -8276,12 +8137,10 @@ spec:
             value: "8080"
           - name: OTEL_PHP_AUTOLOAD_ENABLED
             value: "true"
-          - name: OTEL_PHP_INTERNAL_METRICS_ENABLED
-            value: "true"
           - name: OTEL_EXPORTER_OTLP_ENDPOINT
             value: http://$(OTEL_COLLECTOR_NAME):4318
           - name: OTEL_RESOURCE_ATTRIBUTES
-            value: service.name=$(OTEL_SERVICE_NAME),service.instance.id=$(OTEL_K8S_POD_UID),service.namespace=opentelemetry-demo,k8s.namespace.name=$(OTEL_K8S_NAMESPACE),k8s.node.name=$(OTEL_K8S_NODE_NAME),k8s.pod.name=$(OTEL_K8S_POD_NAME)
+            value: service.name=$(OTEL_SERVICE_NAME),service.namespace=opentelemetry-demo
           resources:
             limits:
               memory: 40Mi
@@ -8301,7 +8160,7 @@ metadata:
     app.kubernetes.io/instance: opentelemetry-demo
     app.kubernetes.io/component: recommendationservice
     app.kubernetes.io/name: opentelemetry-demo-recommendationservice
-    app.kubernetes.io/version: "1.4.0"
+    app.kubernetes.io/version: "1.5.0"
     app.kubernetes.io/part-of: opentelemetry-demo
 spec:
   selector:
@@ -8320,7 +8179,7 @@ spec:
       serviceAccountName: opentelemetry-demo
       containers:
         - name: recommendationservice
-          image: 'ghcr.io/open-telemetry/demo:1.4.0-recommendationservice'
+          image: 'ghcr.io/open-telemetry/demo:1.5.0-recommendationservice'
           imagePullPolicy: IfNotPresent
           ports:
           
@@ -8332,26 +8191,6 @@ spec:
               fieldRef:
                 apiVersion: v1
                 fieldPath: metadata.labels['app.kubernetes.io/component']
-          - name: OTEL_K8S_NAMESPACE
-            valueFrom:
-              fieldRef:
-                apiVersion: v1
-                fieldPath: metadata.namespace
-          - name: OTEL_K8S_NODE_NAME
-            valueFrom:
-              fieldRef:
-                apiVersion: v1
-                fieldPath: spec.nodeName
-          - name: OTEL_K8S_POD_NAME
-            valueFrom:
-              fieldRef:
-                apiVersion: v1
-                fieldPath: metadata.name
-          - name: OTEL_K8S_POD_UID
-            valueFrom:
-              fieldRef:
-                apiVersion: v1
-                fieldPath: metadata.uid
           - name: OTEL_COLLECTOR_NAME
             value: 'opentelemetry-demo-otelcol'
           - name: OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE
@@ -8369,7 +8208,7 @@ spec:
           - name: OTEL_EXPORTER_OTLP_ENDPOINT
             value: http://$(OTEL_COLLECTOR_NAME):4317
           - name: OTEL_RESOURCE_ATTRIBUTES
-            value: service.name=$(OTEL_SERVICE_NAME),service.instance.id=$(OTEL_K8S_POD_UID),service.namespace=opentelemetry-demo,k8s.namespace.name=$(OTEL_K8S_NAMESPACE),k8s.node.name=$(OTEL_K8S_NODE_NAME),k8s.pod.name=$(OTEL_K8S_POD_NAME)
+            value: service.name=$(OTEL_SERVICE_NAME),service.namespace=opentelemetry-demo
           resources:
             limits:
               memory: 500Mi
@@ -8385,7 +8224,7 @@ metadata:
     app.kubernetes.io/instance: opentelemetry-demo
     app.kubernetes.io/component: redis
     app.kubernetes.io/name: opentelemetry-demo-redis
-    app.kubernetes.io/version: "1.4.0"
+    app.kubernetes.io/version: "1.5.0"
     app.kubernetes.io/part-of: opentelemetry-demo
 spec:
   selector:
@@ -8416,32 +8255,12 @@ spec:
               fieldRef:
                 apiVersion: v1
                 fieldPath: metadata.labels['app.kubernetes.io/component']
-          - name: OTEL_K8S_NAMESPACE
-            valueFrom:
-              fieldRef:
-                apiVersion: v1
-                fieldPath: metadata.namespace
-          - name: OTEL_K8S_NODE_NAME
-            valueFrom:
-              fieldRef:
-                apiVersion: v1
-                fieldPath: spec.nodeName
-          - name: OTEL_K8S_POD_NAME
-            valueFrom:
-              fieldRef:
-                apiVersion: v1
-                fieldPath: metadata.name
-          - name: OTEL_K8S_POD_UID
-            valueFrom:
-              fieldRef:
-                apiVersion: v1
-                fieldPath: metadata.uid
           - name: OTEL_COLLECTOR_NAME
             value: 'opentelemetry-demo-otelcol'
           - name: OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE
             value: cumulative
           - name: OTEL_RESOURCE_ATTRIBUTES
-            value: service.name=$(OTEL_SERVICE_NAME),service.instance.id=$(OTEL_K8S_POD_UID),service.namespace=opentelemetry-demo,k8s.namespace.name=$(OTEL_K8S_NAMESPACE),k8s.node.name=$(OTEL_K8S_NODE_NAME),k8s.pod.name=$(OTEL_K8S_POD_NAME)
+            value: service.name=$(OTEL_SERVICE_NAME),service.namespace=opentelemetry-demo
           resources:
             limits:
               memory: 20Mi
@@ -8461,7 +8280,7 @@ metadata:
     app.kubernetes.io/instance: opentelemetry-demo
     app.kubernetes.io/component: shippingservice
     app.kubernetes.io/name: opentelemetry-demo-shippingservice
-    app.kubernetes.io/version: "1.4.0"
+    app.kubernetes.io/version: "1.5.0"
     app.kubernetes.io/part-of: opentelemetry-demo
 spec:
   selector:
@@ -8480,7 +8299,7 @@ spec:
       serviceAccountName: opentelemetry-demo
       containers:
         - name: shippingservice
-          image: 'ghcr.io/open-telemetry/demo:1.4.0-shippingservice'
+          image: 'ghcr.io/open-telemetry/demo:1.5.0-shippingservice'
           imagePullPolicy: IfNotPresent
           ports:
           
@@ -8492,26 +8311,6 @@ spec:
               fieldRef:
                 apiVersion: v1
                 fieldPath: metadata.labels['app.kubernetes.io/component']
-          - name: OTEL_K8S_NAMESPACE
-            valueFrom:
-              fieldRef:
-                apiVersion: v1
-                fieldPath: metadata.namespace
-          - name: OTEL_K8S_NODE_NAME
-            valueFrom:
-              fieldRef:
-                apiVersion: v1
-                fieldPath: spec.nodeName
-          - name: OTEL_K8S_POD_NAME
-            valueFrom:
-              fieldRef:
-                apiVersion: v1
-                fieldPath: metadata.name
-          - name: OTEL_K8S_POD_UID
-            valueFrom:
-              fieldRef:
-                apiVersion: v1
-                fieldPath: metadata.uid
           - name: OTEL_COLLECTOR_NAME
             value: 'opentelemetry-demo-otelcol'
           - name: OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE
@@ -8523,7 +8322,7 @@ spec:
           - name: OTEL_EXPORTER_OTLP_TRACES_ENDPOINT
             value: http://$(OTEL_COLLECTOR_NAME):4317/v1/traces
           - name: OTEL_RESOURCE_ATTRIBUTES
-            value: service.name=$(OTEL_SERVICE_NAME),service.instance.id=$(OTEL_K8S_POD_UID),service.namespace=opentelemetry-demo,k8s.namespace.name=$(OTEL_K8S_NAMESPACE),k8s.node.name=$(OTEL_K8S_NODE_NAME),k8s.pod.name=$(OTEL_K8S_POD_NAME)
+            value: service.name=$(OTEL_SERVICE_NAME),service.namespace=opentelemetry-demo
           resources:
             limits:
               memory: 20Mi
@@ -8535,7 +8334,7 @@ metadata:
   labels:
     app.kubernetes.io/name: grafana
     app.kubernetes.io/instance: opentelemetry-demo
-    app.kubernetes.io/version: "9.4.7"
+    app.kubernetes.io/version: "10.0.3"
   name: opentelemetry-demo-grafana-test
   namespace: otel-demo
   annotations:
@@ -8550,7 +8349,7 @@ metadata:
   labels:
     app.kubernetes.io/name: grafana
     app.kubernetes.io/instance: opentelemetry-demo
-    app.kubernetes.io/version: "9.4.7"
+    app.kubernetes.io/version: "10.0.3"
 data:
   run.sh: |-
     @test "Test Health" {
@@ -8568,14 +8367,14 @@ metadata:
   labels:
     app.kubernetes.io/name: grafana
     app.kubernetes.io/instance: opentelemetry-demo
-    app.kubernetes.io/version: "9.4.7"
+    app.kubernetes.io/version: "10.0.3"
   annotations:
   namespace: otel-demo
 spec:
   serviceAccountName: opentelemetry-demo-grafana-test
   containers:
     - name: opentelemetry-demo-test
-      image: "bats/bats:v1.4.1"
+      image: "docker.io/bats/bats:v1.4.1"
       imagePullPolicy: "IfNotPresent"
       command: ["/opt/bats/bin/bats", "-t", "/tests/run.sh"]
       volumeMounts:
