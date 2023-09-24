@@ -29,6 +29,7 @@ processors:
           - set(description, "") where name == "rpc.server.duration"
 
 connectors:
+  forward:
   spanmetrics:
 
 service:
@@ -36,12 +37,23 @@ service:
     traces:
       receivers: [otlp]
       processors: [batch]
-      exporters: [logging, spanmetrics]
+      exporters: [spanmetrics, forward]
+    traces/logging:
+      receivers: [forward]
+      exporters: [logging]
+
     metrics:
       receivers: [otlp, spanmetrics]
       processors: [transform, batch]
+      exporters: [forward]
+    metrics/logging:
+      receivers: [forward]
       exporters: [logging]
+
     logs:
       receivers: [otlp]
       processors: [batch]
+      exporters: [forward]
+    logs/logging:
+      receivers: [forward]
       exporters: [logging]
