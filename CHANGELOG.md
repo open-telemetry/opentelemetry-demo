@@ -17,6 +17,8 @@ release.
   ([#1121](https://github.com/open-telemetry/opentelemetry-demo/pull/1121))
 * [kafka frauddetection adservice] update java agent versions
   ([#1132](https://github.com/open-telemetry/opentelemetry-demo/pull/1132))
+* [otelcol] use forward connector to decouple pipelines
+  ([#1142](https://github.com/open-telemetry/opentelemetry-demo/pull/1142))
 
 ## 1.5.0
 
