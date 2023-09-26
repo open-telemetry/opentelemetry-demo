@@ -25,6 +25,17 @@ steps:
       - ${DRONE_COMMIT_SHA:0:7}
     json_key:
       from_secret: gcr_credentials
+- name: productcatalogservice-docker
+  image: plugins/gcr
+  settings:
+    dockerfile: ./src/productcatalogservice/Dockerfile
+    registry: us.gcr.io
+    repo: kubernetes-dev/opentelemetry-demo-productcatalogservice
+    tags:
+      - latest
+      - ${DRONE_COMMIT_SHA:0:7}
+    json_key:
+      from_secret: gcr_credentials
 - name: frontend-docker
   image: plugins/gcr
   settings:
