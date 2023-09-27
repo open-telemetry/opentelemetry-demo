@@ -30,10 +30,6 @@ processors:
           statements:
             # FIXME: remove when this issue is resolved: https://github.com/open-telemetry/opentelemetry-java/issues/4834
             - set(description, "") where name == "queueSize"
-            # FIXME: remove when these 2 issues are resolved:
-            # Java: https://github.com/open-telemetry/opentelemetry-java-instrumentation/issues/9478
-            # Go: https://github.com/open-telemetry/opentelemetry-go-contrib/issues/4301
-            - set(description, "") where name == "rpc.server.duration"
             # FIXME: remove when this issue is resolved: https://github.com/open-telemetry/opentelemetry-python-contrib/issues/1958
             - set(description, "") where name == "http.client.duration"
 
