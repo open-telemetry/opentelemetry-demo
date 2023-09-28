@@ -32,7 +32,7 @@ metadata:
   labels:
     app.kubernetes.io/name: otelcol
     app.kubernetes.io/instance: opentelemetry-demo
-    app.kubernetes.io/version: "0.82.0"
+    app.kubernetes.io/version: "0.86.0"
 ---
 # Source: opentelemetry-demo/charts/prometheus/templates/serviceaccount.yaml
 apiVersion: v1
@@ -153,13 +153,13 @@ metadata:
   labels:
     app.kubernetes.io/name: otelcol
     app.kubernetes.io/instance: opentelemetry-demo
-    app.kubernetes.io/version: "0.82.0"
+    app.kubernetes.io/version: "0.86.0"
 data:
   relay: |
     connectors:
       spanmetrics: null
     exporters:
-      logging: {}
+      debug: {}
       otlp:
         endpoint: 'opentelemetry-demo-jaeger-collector:4317'
         tls:
@@ -255,7 +255,7 @@ data:
       pipelines:
         logs:
           exporters:
-          - logging
+          - debug
           processors:
           - k8sattributes
           - memory_limiter
@@ -265,7 +265,7 @@ data:
         metrics:
           exporters:
           - prometheus
-          - logging
+          - debug
           processors:
           - k8sattributes
           - memory_limiter
@@ -279,7 +279,7 @@ data:
         traces:
           exporters:
           - otlp
-          - logging
+          - debug
           - spanmetrics
           processors:
           - k8sattributes
@@ -2311,7 +2311,7 @@ data:
                 "renameByName": {
                   "Time": "",
                   "percent": "Percent",
-                  "{exporter=\"logging\", instance=\"otelcol:8888\", job=\"otel-collector\", service_instance_id=\"fbfa720a-ebf9-45c8-a79a-9d3b6021a663\", service_name=\"otelcol-contrib\", service_version=\"0.70.0\"}": ""
+                  "{exporter=\"debug\", instance=\"otelcol:8888\", job=\"otel-collector\", service_instance_id=\"fbfa720a-ebf9-45c8-a79a-9d3b6021a663\", service_name=\"otelcol-contrib\", service_version=\"0.70.0\"}": ""
                 }
               }
             }
@@ -5949,7 +5949,7 @@ metadata:
   labels:
     app.kubernetes.io/name: otelcol
     app.kubernetes.io/instance: opentelemetry-demo
-    app.kubernetes.io/version: "0.82.0"
+    app.kubernetes.io/version: "0.86.0"
 rules:
   - apiGroups: [""]
     resources: ["pods", "namespaces"]
@@ -6029,7 +6029,7 @@ metadata:
   labels:
     app.kubernetes.io/name: otelcol
     app.kubernetes.io/instance: opentelemetry-demo
-    app.kubernetes.io/version: "0.82.0"
+    app.kubernetes.io/version: "0.86.0"
 roleRef:
   apiGroup: rbac.authorization.k8s.io
   kind: ClusterRole
@@ -6212,7 +6212,7 @@ metadata:
   labels:
     app.kubernetes.io/name: otelcol
     app.kubernetes.io/instance: opentelemetry-demo
-    app.kubernetes.io/version: "0.82.0"
+    app.kubernetes.io/version: "0.86.0"
     component: standalone-collector
 spec:
   type: ClusterIP
@@ -6908,7 +6908,7 @@ metadata:
   labels:
     app.kubernetes.io/name: otelcol
     app.kubernetes.io/instance: opentelemetry-demo
-    app.kubernetes.io/version: "0.82.0"
+    app.kubernetes.io/version: "0.86.0"
 spec:
   replicas: 1
   revisionHistoryLimit: 10
@@ -6943,7 +6943,7 @@ spec:
             - --config=/conf/relay.yaml
           securityContext:
             {}
-          image: "otel/opentelemetry-collector-contrib:0.82.0"
+          image: "otel/opentelemetry-collector-contrib:0.86.0"
           imagePullPolicy: IfNotPresent
           ports:
             - name: jaeger-compact

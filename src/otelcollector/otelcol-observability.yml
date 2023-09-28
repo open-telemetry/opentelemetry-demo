@@ -19,8 +19,8 @@ exporters:
 service:
   pipelines:
     traces:
-      exporters: [otlp, logging, spanmetrics]
+      exporters: [otlp, debug, spanmetrics]
     metrics:
-      exporters: [otlphttp/prometheus, logging]
+      exporters: [otlphttp/prometheus, debug]
     logs:
-      exporters: [otlp/logs, logging]
+      exporters: [otlp/logs, debug]
