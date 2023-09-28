@@ -7,6 +7,19 @@ release.
 
 ## Unreleased
 
+* update PHP quoteservice to use RC1
+  ([#1114](https://github.com/open-telemetry/opentelemetry-demo/pull/1114))
+* [cartservice] update .NET package to 1.6.0 release
+  ([#1115](https://github.com/open-telemetry/opentelemetry-demo/pull/1115))
+* Set metric description to blank for rpc.server.duration and queueSize
+  ([#1120](https://github.com/open-telemetry/opentelemetry-demo/pull/1120))
+* sluggify Grafana dashboard name
+  ([#1121](https://github.com/open-telemetry/opentelemetry-demo/pull/1121))
+* [kafka frauddetection adservice] update java agent versions
+  ([#1132](https://github.com/open-telemetry/opentelemetry-demo/pull/1132))
+
+## 1.5.0
+
 * update trace-based tests to test stream events
   ([#1072](https://github.com/open-telemetry/opentelemetry-demo/pull/1072))
 * Add cartServiceFailure feature flag triggering Cart Service errors

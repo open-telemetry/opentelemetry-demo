@@ -17,12 +17,16 @@ exporters:
 
 processors:
   batch:
-  filter:
-    metrics:
-      exclude:
-        match_type: strict
-        metric_names:
-          - queueSize
+  transform:
+    metric_statements:
+      - context: metric
+        statements:
+          # FIXME: remove this when this is issue is resolved: https://github.com/open-telemetry/opentelemetry-java/issues/4834
+          - set(description, "") where name == "queueSize"
+          # FIXME: remove this when the following 2 issues are resolved
+          # Java: https://github.com/open-telemetry/opentelemetry-java-instrumentation/issues/9478
+          # Go: https://github.com/open-telemetry/opentelemetry-go-contrib/issues/4301
+          - set(description, "") where name == "rpc.server.duration"
 
 connectors:
   spanmetrics:
@@ -35,7 +39,7 @@ service:
       exporters: [logging, spanmetrics]
     metrics:
       receivers: [otlp, spanmetrics]
-      processors: [filter, batch]
+      processors: [transform, batch]
       exporters: [logging]
     logs:
       receivers: [otlp]
