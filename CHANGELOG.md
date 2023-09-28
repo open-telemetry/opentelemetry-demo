@@ -19,6 +19,8 @@ release.
   ([#1132](https://github.com/open-telemetry/opentelemetry-demo/pull/1132))
 * update dependent components to latest versions
   ([#1146](https://github.com/open-telemetry/opentelemetry-demo/pull/1146))
+* [grafana] fix dashboard metric names and update settings
+  ([#1150](https://github.com/open-telemetry/opentelemetry-demo/pull/1150))
 
 ## 1.5.0
 
