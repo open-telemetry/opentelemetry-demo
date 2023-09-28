@@ -539,7 +539,7 @@ services:
   # ******************
   # Postgres used by Feature Flag service
   ffs_postgres:
-    image: postgres:14
+    image: postgres:16.0
     container_name: postgres
     user: postgres
     deploy:
@@ -589,7 +589,7 @@ services:
 
   # Redis used by Cart service
   redis-cart:
-    image: redis:alpine
+    image: redis:7.2-alpine
     container_name: redis-cart
     user: redis
     deploy:
@@ -607,11 +607,11 @@ services:
   # ********************
   # Jaeger
   jaeger:
-    image: jaegertracing/all-in-one:1.48.0
+    image: jaegertracing/all-in-one:1.49
     container_name: jaeger
     command:
       - "--memory.max-traces"
-      - "10000"
+      - "8000"
       - "--query.base-path"
       - "/jaeger/ui"
       - "--prometheus.server-url"
@@ -631,7 +631,7 @@ services:
 
   # Grafana
   grafana:
-    image: grafana/grafana:10.1.0
+    image: grafana/grafana:10.1.2
     container_name: grafana
     deploy:
       resources:
@@ -646,7 +646,7 @@ services:
 
   # OpenTelemetry Collector
   otelcol:
-    image: otel/opentelemetry-collector-contrib:0.84.0
+    image: otel/opentelemetry-collector-contrib:0.86.0
     container_name: otel-col
     deploy:
       resources:
@@ -669,7 +669,7 @@ services:
 
   # Prometheus
   prometheus:
-    image: quay.io/prometheus/prometheus:v2.46.0
+    image: quay.io/prometheus/prometheus:v2.47.0
     container_name: prometheus
     command:
       - --web.console.templates=/etc/prometheus/consoles
@@ -798,7 +798,7 @@ services:
         condition: service_started
 
   tracetest-server:
-    image: kubeshop/tracetest:latest
+    image: kubeshop/tracetest:v0.13.10
     platform: linux/amd64
     container_name: tracetest-server
     profiles:
@@ -827,7 +827,7 @@ services:
       retries: 60
 
   tracetest-postgres:
-    image: postgres:14
+    image: postgres:16.0
     container_name: tracetest-postgres
     profiles:
       - tests

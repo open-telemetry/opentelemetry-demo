@@ -17,6 +17,8 @@ release.
   ([#1121](https://github.com/open-telemetry/opentelemetry-demo/pull/1121))
 * [kafka frauddetection adservice] update java agent versions
   ([#1132](https://github.com/open-telemetry/opentelemetry-demo/pull/1132))
+* update dependent components to latest versions
+  ([#1146](https://github.com/open-telemetry/opentelemetry-demo/pull/1146))
 
 ## 1.5.0
 
