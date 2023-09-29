@@ -12,6 +12,10 @@ exporters:
     resource_to_telemetry_conversion:
       enabled: true
     enable_open_metrics: true
+  otlp/logs:
+    endpoint: "dataprepper:21892"
+    tls:
+      insecure: true
 
 service:
   pipelines:
@@ -19,3 +23,5 @@ service:
       exporters: [otlp, logging, spanmetrics]
     metrics:
       exporters: [prometheus, logging]
+    logs:
+      exporters: [otlp/logs, logging]
