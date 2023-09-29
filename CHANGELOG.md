@@ -19,6 +19,8 @@ release.
   ([#1132](https://github.com/open-telemetry/opentelemetry-demo/pull/1132))
 * update dependent components to latest versions
   ([#1146](https://github.com/open-telemetry/opentelemetry-demo/pull/1146))
+* [prometheus] Enabled support for the OTLP write receiver
+  ([#1149](https://github.com/open-telemetry/opentelemetry-demo/pull/1149))
 
 ## 1.5.0
 

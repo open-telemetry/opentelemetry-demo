@@ -616,6 +616,7 @@ services:
       - "/jaeger/ui"
       - "--prometheus.server-url"
       - "http://${PROMETHEUS_ADDR}"
+      - "--prometheus.query.support-spanmetrics-connector=true"
     deploy:
       resources:
         limits:
@@ -680,6 +681,7 @@ services:
       - --web.enable-lifecycle
       - --web.route-prefix=/
       - --enable-feature=exemplar-storage
+      - --enable-feature=otlp-write-receiver
     volumes:
       - ./src/prometheus/prometheus-config.yaml:/etc/prometheus/prometheus-config.yaml
     deploy:
