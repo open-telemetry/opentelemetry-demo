@@ -17,16 +17,21 @@ exporters:
 
 processors:
   batch:
-  transform:
-    metric_statements:
-      - context: metric
-        statements:
-          # FIXME: remove this when this is issue is resolved: https://github.com/open-telemetry/opentelemetry-java/issues/4834
-          - set(description, "") where name == "queueSize"
-          # FIXME: remove this when the following 2 issues are resolved
-          # Java: https://github.com/open-telemetry/opentelemetry-java-instrumentation/issues/9478
-          # Go: https://github.com/open-telemetry/opentelemetry-go-contrib/issues/4301
-          - set(description, "") where name == "rpc.server.duration"
+    filter/ottl:
+      error_mode: ignore
+      metrics:
+        metric:
+          # FIXME: remove when a Metrics View is implemented in the checkout and productcatalog components
+          # or when this issue is resolved: https://github.com/open-telemetry/opentelemetry-go-contrib/issues/3071
+          - 'name == "rpc.server.duration"'
+    transform:
+      metric_statements:
+        - context: metric
+          statements:
+            # FIXME: remove when this issue is resolved: https://github.com/open-telemetry/opentelemetry-java/issues/4834
+            - set(description, "") where name == "queueSize"
+            # FIXME: remove when this issue is resolved: https://github.com/open-telemetry/opentelemetry-python-contrib/issues/1958
+            - set(description, "") where name == "http.client.duration"
 
 connectors:
   spanmetrics:
@@ -39,7 +44,7 @@ service:
       exporters: [logging, spanmetrics]
     metrics:
       receivers: [otlp, spanmetrics]
-      processors: [transform, batch]
+      processors: [filter/ottl, transform, batch]
       exporters: [logging]
     logs:
       receivers: [otlp]
