@@ -7,15 +7,14 @@ exporters:
     endpoint: "jaeger:4317"
     tls:
       insecure: true
-  prometheus:
-    endpoint: "otelcol:9464"
-    resource_to_telemetry_conversion:
-      enabled: true
-    enable_open_metrics: true
+  otlphttp/prometheus:
+    endpoint: "http://prometheus:9090/api/v1/otlp"
+    tls:
+      insecure: true
 
 service:
   pipelines:
     traces:
       exporters: [otlp, logging, spanmetrics]
     metrics:
-      exporters: [prometheus, logging]
+      exporters: [otlphttp/prometheus, logging]

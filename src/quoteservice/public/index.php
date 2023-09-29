@@ -8,26 +8,18 @@ declare(strict_types=1);
 
 use DI\Bridge\Slim\Bridge;
 use DI\ContainerBuilder;
-use Monolog\Handler\StreamHandler;
-use Monolog\Logger;
-use OpenTelemetry\API\Common\Instrumentation\Globals;
-use OpenTelemetry\API\Common\Log\LoggerHolder;
+use OpenTelemetry\API\Globals;
 use OpenTelemetry\SDK\Common\Configuration\Configuration;
 use OpenTelemetry\SDK\Common\Configuration\Variables;
 use OpenTelemetry\SDK\Metrics\MeterProviderInterface;
 use OpenTelemetry\SDK\Trace\TracerProviderInterface;
 use Psr\Http\Message\ServerRequestInterface;
-use Psr\Log\LogLevel;
 use React\EventLoop\Loop;
 use React\Http\HttpServer;
 use React\Socket\SocketServer;
 use Slim\Factory\AppFactory;
 
 require __DIR__ . '/../vendor/autoload.php';
-
-LoggerHolder::set(
-    new Logger('otel-php', [new StreamHandler('php://stdout', LogLevel::DEBUG)])
-);
 
 // Instantiate PHP-DI ContainerBuilder
 $containerBuilder = new ContainerBuilder();
