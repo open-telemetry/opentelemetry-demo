@@ -1,7 +1,6 @@
 # Copyright The OpenTelemetry Authors
 # SPDX-License-Identifier: Apache-2.0
 
-
 apiVersion: 1
 
 datasources:
@@ -19,4 +18,3 @@ datasources:
       flavor: 'opensearch'
       logMessageField: body
       logLevelField: severitynumber
-

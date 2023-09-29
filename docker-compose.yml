@@ -715,7 +715,7 @@ services:
     ports:
       - "9200:9200"
     logging: *logging
-  
+
   dataprepper:
     image: opensearchproject/data-prepper:latest
     volumes:
