@@ -189,6 +189,8 @@ components:
         value: "8080"
       - name: ASPNETCORE_URLS
         value: http://*:$(CART_SERVICE_PORT)
+      - name: FEATURE_FLAG_GRPC_SERVICE_ADDR
+        value: '{{ include "otel-demo.name" . }}-featureflagservice:50053'
       - name: REDIS_ADDR
         value: '{{ include "otel-demo.name" . }}-redis:6379'
       - name: OTEL_EXPORTER_OTLP_ENDPOINT
@@ -355,13 +357,7 @@ components:
       - name: WEB_OTEL_SERVICE_NAME
         value: frontend-web
       - name: PUBLIC_OTEL_EXPORTER_OTLP_TRACES_ENDPOINT
-        value: http://localhost:4318/v1/traces             # This expects users to use `kubectl port-forward ...`
-      - name: INSTANA_DISABLE_TRACING
-        value: "true"
-      - name: INSTANA_EUM_URL
-        value: ""
-      - name: INSTANA_EUM_KEY
-        value: ""
+        value: http://localhost:8080/otlp-http/v1/traces             # This expects users to use `kubectl port-forward ...`
     resources:
       limits:
         memory: 200Mi
@@ -427,15 +423,15 @@ components:
       - name: LOCUST_SPAWN_RATE
         value: "1"
       - name: LOCUST_HOST
-        value: 'http://{{ include "otel-demo.name" . }}-frontend:8080'
+        value: 'http://{{ include "otel-demo.name" . }}-frontendproxy:8080'
       - name: LOCUST_HEADLESS
         value: "false"
       - name: LOCUST_AUTOSTART
         value: "true"
       - name: PROTOCOL_BUFFERS_PYTHON_IMPLEMENTATION
         value: python
-      - name: OTEL_EXPORTER_OTLP_TRACES_ENDPOINT
-        value: http://$(OTEL_COLLECTOR_NAME):4318/v1/traces
+      - name: OTEL_EXPORTER_OTLP_ENDPOINT
+        value: http://$(OTEL_COLLECTOR_NAME):4317
     resources:
       limits:
         memory: 120Mi
@@ -619,7 +615,7 @@ opentelemetry-collector:
       enabled: true
   resources:
     limits:
-      memory: 125Mi
+      memory: 200Mi
   service:
     type: ClusterIP
   ports:
@@ -639,9 +635,6 @@ opentelemetry-collector:
       otlp:
         protocols:
           http:
-            # Bind to 0.0.0.0 to allow for `kubectl port-forward` to work
-            # This may be susceptible to denial of service attacks - CWE-1327 https://cwe.mitre.org/data/definitions/1327.html
-            endpoint: 0.0.0.0:4318
             # Since this collector needs to receive data from the web, enable cors for all origins
             # `allowed_origins` can be refined for your deployment domain
             cors:
@@ -656,11 +649,10 @@ opentelemetry-collector:
         tls:
           insecure: true
       # Create an exporter to Prometheus (metrics)
-      prometheus:
-        endpoint: '0.0.0.0:9464'
-        resource_to_telemetry_conversion:
-          enabled: true
-        enable_open_metrics: true
+      otlphttp/prometheus:
+        endpoint: '{{ include "otel-demo.name" . }}-prometheus-server:9090/api/v1/otlp'
+        tls:
+          insecure: true
 
     processors:
       resource:
@@ -668,18 +660,25 @@ opentelemetry-collector:
         - key: service.instance.id
           from_attribute: k8s.pod.uid
           action: insert
-      # we can remove when this is fixed: https://github.com/open-telemetry/opentelemetry-demo/issues/737
-      transform:
-        metric_statements:
-          - context: metric
-            statements:
-              - set(description, "Measures the duration of inbound HTTP requests") where name == "http.server.duration"
-      # we can remove when this is fixed: https://github.com/open-telemetry/opentelemetry-demo/issues/826
       filter/ottl:
         error_mode: ignore
         metrics:
           metric:
-            - 'name == "queueSize"'
+            # FIXME: remove when a Metrics View is implemented in the checkout and productcatalog components
+            # or when this issue is resolved: https://github.com/open-telemetry/opentelemetry-go-contrib/issues/3071
+            - 'name == "rpc.server.duration"'
+      transform:
+        metric_statements:
+          - context: metric
+            statements:
+              # FIXME: remove when this issue is resolved: https://github.com/open-telemetry/opentelemetry-java/issues/4834
+              - set(description, "") where name == "queueSize"
+              # FIXME: remove when these 2 issues are resolved:
+              # Java: https://github.com/open-telemetry/opentelemetry-java-instrumentation/issues/9478
+              # Go: https://github.com/open-telemetry/opentelemetry-go-contrib/issues/4301
+              - set(description, "") where name == "rpc.server.duration"
+              # FIXME: remove when this issue is resolved: https://github.com/open-telemetry/opentelemetry-python-contrib/issues/1958
+              - set(description, "") where name == "http.client.duration"
 
     connectors:
       spanmetrics:
@@ -688,11 +687,11 @@ opentelemetry-collector:
       pipelines:
         traces:
           processors: [memory_limiter, resource, batch]
-          exporters: [otlp, logging, spanmetrics]
+          exporters: [otlp, debug, spanmetrics]
         metrics:
           receivers: [otlp, spanmetrics]
-          processors: [memory_limiter, filter/ottl, resource, transform, batch]
-          exporters: [prometheus, logging]
+          processors: [memory_limiter, filter/ottl, transform, resource, batch]
+          exporters: [otlphttp/prometheus, debug]
 
 jaeger:
   enabled: false
@@ -702,7 +701,7 @@ jaeger:
     enabled: true
     args:
       - "--memory.max-traces"
-      - "10000"
+      - "8000"
       - "--query.base-path"
       - "/jaeger/ui"
       - "--prometheus.server-url"
@@ -739,6 +738,7 @@ prometheus:
   server:
     extraFlags:
       - "enable-feature=exemplar-storage"
+      - "enable-feature=otlp-write-receiver"
     global:
       scrape_interval: 5s
       scrape_timeout: 3s
@@ -819,4 +819,4 @@ grafana:
     default: '{{ include "otel-demo.name" . }}-grafana-dashboards'
   resources:
     limits:
-      memory: 100Mi
+      memory: 150Mi
