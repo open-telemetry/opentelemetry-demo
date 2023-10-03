@@ -1,0 +1,20 @@
+# Copyright The OpenTelemetry Authors
+# SPDX-License-Identifier: Apache-2.0
+
+apiVersion: 1
+
+datasources:
+  - name: OpenSearch
+    type: grafana-opensearch-datasource
+    url: http://opensearch:9200/
+    access: proxy
+    editable: true
+    isDefault: false
+    jsonData:
+      database: 'otel'
+      interval: Daily
+      timeField: 'time'
+      version: '2.10.0'
+      flavor: 'opensearch'
+      logMessageField: body
+      logLevelField: severitynumber
