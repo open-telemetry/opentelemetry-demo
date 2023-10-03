@@ -9,6 +9,8 @@ exporters:
       insecure: true
   otlp/logs:
     endpoint: "dataprepper:21892"
+    tls:
+      insecure: true
   otlphttp/prometheus:
     endpoint: "http://prometheus:9090/api/v1/otlp"
     tls:

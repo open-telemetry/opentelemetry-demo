@@ -12,3 +12,4 @@ demo-pipeline:
         username: admin
         password: admin
         index: otel
+    - stdout:
