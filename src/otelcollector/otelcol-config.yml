@@ -11,6 +11,9 @@ receivers:
           allowed_origins:
             - "http://*"
             - "https://*"
+  httpcheck/frontendproxy:
+    targets:
+      - endpoint: http://frontendproxy:${env:ENVOY_PORT}
 
 exporters:
   logging:
@@ -43,7 +46,7 @@ service:
       processors: [batch]
       exporters: [logging, spanmetrics]
     metrics:
-      receivers: [otlp, spanmetrics]
+      receivers: [httpcheck/frontendproxy, otlp, spanmetrics]
       processors: [filter/ottl, transform, batch]
       exporters: [logging]
     logs:
