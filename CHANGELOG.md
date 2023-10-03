@@ -21,6 +21,8 @@ release.
   ([#1146](https://github.com/open-telemetry/opentelemetry-demo/pull/1146))
 * [prometheus] Enabled support for the OTLP write receiver
   ([#1149](https://github.com/open-telemetry/opentelemetry-demo/pull/1149))
+* [grafana] fix dashboard metric names and update settings
+  ([#1150](https://github.com/open-telemetry/opentelemetry-demo/pull/1150))
 * [otelcol] add httpcheck receiver for synthetic check of frontendproxy
   ([#1162](https://github.com/open-telemetry/opentelemetry-demo/pull/1162))
 
