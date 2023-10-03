@@ -669,6 +669,8 @@ services:
     depends_on:
       - jaeger
     logging: *logging
+    environment:
+      - ENVOY_PORT
 
   # Prometheus
   prometheus:
