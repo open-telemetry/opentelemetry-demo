@@ -21,6 +21,7 @@ exporters:
   otlp/elastic:
     # !!! Elastic APM https endpoint WITHOUT the "https://" prefix
     endpoint: "YOUR_APM_ENDPOINT_WITHOUT_HTTPS_PREFIX"
+    compression: none
     headers:
       Authorization: "Bearer YOUR_APM_SECRET_TOKEN"
 
