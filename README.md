@@ -10,6 +10,8 @@
 
 ## Welcome to the OpenTelemetry Astronomy Shop Demo
 
+> Note: Grafana specific documentation can be found at this [Grafana internal URL](https://github.com/grafana/deployment_tools/tree/master/docs/app-o11y/otel-demo). 
+
 This repository contains the OpenTelemetry Astronomy Shop, a microservice-based
 distributed system intended to illustrate the implementation of OpenTelemetry in
 a near real-world environment.
