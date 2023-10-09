@@ -72,6 +72,10 @@ install-tools: $(MISSPELL)
 	npm install
 	@echo "All tools installed"
 
+.PHONY: build
+build:
+	docker compose build
+
 .PHONY: build-and-push-dockerhub
 build-and-push-dockerhub:
 	docker compose --env-file .dockerhub.env -f docker-compose.yml build

@@ -6,11 +6,13 @@ using System.Threading.Tasks;
 using Grpc.Core;
 using StackExchange.Redis;
 using Google.Protobuf;
+using Microsoft.Extensions.Logging;
 
 namespace cartservice.cartstore;
 
 public class RedisCartStore : ICartStore
 {
+    private readonly ILogger _logger;
     private const string CartFieldName = "cart";
     private const int RedisRetryNumber = 30;
 
@@ -23,8 +25,9 @@ public class RedisCartStore : ICartStore
 
     private readonly ConfigurationOptions _redisConnectionOptions;
 
-    public RedisCartStore(string redisAddress)
+    public RedisCartStore(ILogger<RedisCartStore> logger, string redisAddress)
     {
+        _logger = logger;
         // Serialize empty cart into byte array.
         var cart = new Oteldemo.Cart();
         _emptyCartBytes = cart.ToByteArray();
@@ -45,10 +48,9 @@ public class RedisCartStore : ICartStore
         return _redis;
     }
 
-    public Task InitializeAsync()
+    public void Initialize()
     {
         EnsureRedisConnected();
-        return Task.CompletedTask;
     }
 
     private void EnsureRedisConnected()
@@ -66,34 +68,34 @@ public class RedisCartStore : ICartStore
                 return;
             }
 
-            Console.WriteLine("Connecting to Redis: " + _connectionString);
+            _logger.LogDebug("Connecting to Redis: {_connectionString}", _connectionString);
             _redis = ConnectionMultiplexer.Connect(_redisConnectionOptions);
 
             if (_redis == null || !_redis.IsConnected)
             {
-                Console.WriteLine("Wasn't able to connect to redis");
+                _logger.LogError("Wasn't able to connect to redis");
 
                 // We weren't able to connect to Redis despite some retries with exponential backoff.
                 throw new ApplicationException("Wasn't able to connect to redis");
             }
 
-            Console.WriteLine("Successfully connected to Redis");
+            _logger.LogInformation("Successfully connected to Redis");
             var cache = _redis.GetDatabase();
 
-            Console.WriteLine("Performing small test");
+            _logger.LogDebug("Performing small test");
             cache.StringSet("cart", "OK" );
             object res = cache.StringGet("cart");
-            Console.WriteLine($"Small test result: {res}");
+            _logger.LogDebug("Small test result: {res}", res);
 
             _redis.InternalError += (_, e) => { Console.WriteLine(e.Exception); };
             _redis.ConnectionRestored += (_, _) =>
             {
                 _isRedisConnectionOpened = true;
-                Console.WriteLine("Connection to redis was restored successfully.");
+                _logger.LogInformation("Connection to redis was restored successfully.");
             };
             _redis.ConnectionFailed += (_, _) =>
             {
-                Console.WriteLine("Connection failed. Disposing the object");
+                _logger.LogInformation("Connection failed. Disposing the object");
                 _isRedisConnectionOpened = false;
             };
 
@@ -103,7 +105,7 @@ public class RedisCartStore : ICartStore
 
     public async Task AddItemAsync(string userId, string productId, int quantity)
     {
-        Console.WriteLine($"AddItemAsync called with userId={userId}, productId={productId}, quantity={quantity}");
+        _logger.LogInformation("AddItemAsync called with userId={userId}, productId={productId}, quantity={quantity}", userId, productId, quantity);
 
         try
         {
@@ -148,7 +150,7 @@ public class RedisCartStore : ICartStore
 
     public async Task EmptyCartAsync(string userId)
     {
-        Console.WriteLine($"EmptyCartAsync called with userId={userId}");
+        _logger.LogInformation("EmptyCartAsync called with userId={userId}", userId);
 
         try
         {
@@ -167,7 +169,7 @@ public class RedisCartStore : ICartStore
 
     public async Task<Oteldemo.Cart> GetCartAsync(string userId)
     {
-        Console.WriteLine($"GetCartAsync called with userId={userId}");
+        _logger.LogInformation("GetCartAsync called with userId={userId}", userId);
 
         try
         {

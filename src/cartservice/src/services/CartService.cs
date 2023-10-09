@@ -13,12 +13,13 @@ namespace cartservice.services;
 public class CartService : Oteldemo.CartService.CartServiceBase
 {
     private static readonly Empty Empty = new();
-    private static readonly ICartStore BadCartStore = new RedisCartStore("badhost:1234");
+    private readonly ICartStore _badCartStore;
     private readonly ICartStore _cartStore;
     private readonly FeatureFlagHelper _featureFlagHelper;
 
-    public CartService(ICartStore cartStore, FeatureFlagHelper featureFlagService)
+    public CartService(ICartStore cartStore, ICartStore badCartStore, FeatureFlagHelper featureFlagService)
     {
+        _badCartStore = badCartStore;
         _cartStore = cartStore;
         _featureFlagHelper = featureFlagService;
     }
@@ -61,7 +62,7 @@ public class CartService : Oteldemo.CartService.CartServiceBase
         {
             if (await _featureFlagHelper.GenerateCartError())
             {
-                await BadCartStore.EmptyCartAsync(request.UserId);
+                await _badCartStore.EmptyCartAsync(request.UserId);
             }
             else
             {

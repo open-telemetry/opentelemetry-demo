@@ -10,7 +10,9 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
-
+using Microsoft.Extensions.Logging;
+using OpenTelemetry.Instrumentation.StackExchangeRedis;
+using OpenTelemetry.Logs;
 using OpenTelemetry.Metrics;
 using OpenTelemetry.ResourceDetectors.Container;
 using OpenTelemetry.Resources;
@@ -23,14 +25,23 @@ if (string.IsNullOrEmpty(redisAddress))
     Console.WriteLine("REDIS_ADDR environment variable is required.");
     Environment.Exit(1);
 }
-var cartStore = new RedisCartStore(redisAddress);
 
-// Initialize the redis store
-await cartStore.InitializeAsync();
-Console.WriteLine("Initialization completed");
+builder.Logging
+    .AddOpenTelemetry(options => options.AddOtlpExporter())
+    .AddConsole();
 
-builder.Services.AddSingleton<ICartStore>(cartStore);
+builder.Services.AddSingleton<ICartStore>(x=>
+{
+    var store = new RedisCartStore(x.GetRequiredService<ILogger<RedisCartStore>>(), redisAddress);
+    store.Initialize();
+    return store;
+});
+
 builder.Services.AddSingleton<FeatureFlagHelper>();
+builder.Services.AddSingleton(x => new CartService(x.GetRequiredService<ICartStore>(),
+    new RedisCartStore(x.GetRequiredService<ILogger<RedisCartStore>>(), "badhost:1234"),
+    x.GetRequiredService<FeatureFlagHelper>()));
+
 
 // see https://opentelemetry.io/docs/instrumentation/net/getting-started/
 
@@ -42,7 +53,6 @@ builder.Services.AddOpenTelemetry()
     .ConfigureResource(appResourceBuilder)
     .WithTracing(tracerBuilder => tracerBuilder
         .AddRedisInstrumentation(
-            cartStore.GetConnection(),
             options => options.SetVerboseDatabaseStatements = true)
         .AddAspNetCoreInstrumentation()
         .AddGrpcClientInstrumentation()
@@ -58,6 +68,9 @@ builder.Services.AddGrpcHealthChecks()
     .AddCheck("Sample", () => HealthCheckResult.Healthy());
 
 var app = builder.Build();
+
+var redisCartStore = (RedisCartStore) app.Services.GetRequiredService<ICartStore>();
+app.Services.GetRequiredService<StackExchangeRedisInstrumentation>().AddConnection(redisCartStore.GetConnection());
 
 app.MapGrpcService<CartService>();
 app.MapGrpcHealthChecksService();
