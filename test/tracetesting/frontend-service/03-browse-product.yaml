@@ -9,7 +9,7 @@ spec:
   trigger:
     type: http
     httpRequest:
-      url: http://${env:FRONTEND_ADDR}/api/products/0PUK6V6EV0
+      url: http://${var:FRONTEND_ADDR}/api/products/0PUK6V6EV0
       method: GET
       headers:
       - key: Content-Type

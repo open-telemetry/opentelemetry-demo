@@ -11,4 +11,4 @@ providers:
     disableDeletion: false
     editable: true
     options:
-      path: /etc/grafana/provisioning/dashboards/general
+      path: /etc/grafana/provisioning/dashboards/demo

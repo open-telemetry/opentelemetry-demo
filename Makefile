@@ -72,6 +72,10 @@ install-tools: $(MISSPELL)
 	npm install
 	@echo "All tools installed"
 
+.PHONY: build
+build:
+	docker compose build
+
 .PHONY: build-and-push-dockerhub
 build-and-push-dockerhub:
 	docker compose --env-file .dockerhub.env -f docker-compose.yml build
@@ -97,7 +101,7 @@ run-tests:
 	docker compose run traceBasedTests
 
 run-tracetesting:
-	docker compose run traceBasedTests
+	docker compose run traceBasedTests ${SERVICES_TO_TEST}
 
 .PHONY: generate-protobuf
 generate-protobuf:

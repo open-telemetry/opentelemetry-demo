@@ -1,7 +1,7 @@
 # Copyright The OpenTelemetry Authors
 # SPDX-License-Identifier: Apache-2.0
 
-type: Transaction
+type: TestSuite
 spec:
   id: currency-service-all
   name: 'Currency Service'

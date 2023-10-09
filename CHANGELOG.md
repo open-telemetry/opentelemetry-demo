@@ -7,6 +7,29 @@ release.
 
 ## Unreleased
 
+* update PHP quoteservice to use RC1
+  ([#1114](https://github.com/open-telemetry/opentelemetry-demo/pull/1114))
+* [cartservice] update .NET package to 1.6.0 release
+  ([#1115](https://github.com/open-telemetry/opentelemetry-demo/pull/1115))
+* Set metric description to blank for rpc.server.duration and queueSize
+  ([#1120](https://github.com/open-telemetry/opentelemetry-demo/pull/1120))
+* sluggify Grafana dashboard name
+  ([#1121](https://github.com/open-telemetry/opentelemetry-demo/pull/1121))
+* [kafka frauddetection adservice] update java agent versions
+  ([#1132](https://github.com/open-telemetry/opentelemetry-demo/pull/1132))
+* update dependent components to latest versions
+  ([#1146](https://github.com/open-telemetry/opentelemetry-demo/pull/1146))
+* [prometheus] Enabled support for the OTLP write receiver
+  ([#1149](https://github.com/open-telemetry/opentelemetry-demo/pull/1149))
+* [grafana] fix dashboard metric names and update settings
+  ([#1150](https://github.com/open-telemetry/opentelemetry-demo/pull/1150))
+* [otelcol] add httpcheck receiver for synthetic check of frontendproxy
+  ([#1162](https://github.com/open-telemetry/opentelemetry-demo/pull/1162))
+
+## 1.5.0
+
+* update trace-based tests to test stream events
+  ([#1072](https://github.com/open-telemetry/opentelemetry-demo/pull/1072))
 * Add cartServiceFailure feature flag triggering Cart Service errors
   ([#824](https://github.com/open-telemetry/opentelemetry-demo/pull/824))
 * [paymentservice] update JS SDKs to 1.12.0/0.38.0
@@ -45,6 +68,8 @@ release.
   ([#935](https://github.com/open-telemetry/opentelemetry-demo/pull/935))
 * [cartservice] update service to .NET 7
   ([#942](https://github.com/open-telemetry/opentelemetry-demo/pull/942))
+* [tests] Add trace-based testing examples
+  ([#877](https://github.com/open-telemetry/opentelemetry-demo/pull/877))
 * Introduce minimal mode to run demo
   ([#872](https://github.com/open-telemetry/opentelemetry-demo/pull/872))
 * [frontendproxy]Envoy expose a route for the collector to route frontend spans
@@ -63,10 +88,26 @@ release.
   ([#988](https://github.com/open-telemetry/opentelemetry-demo/pull/988))
 * [FraudDetectionService] Updated Kotlin version and OTel dependencies
   ([#987](https://github.com/open-telemetry/opentelemetry-demo/pull/987))
-* [otelcol] Use the collector builder to produce otelcol docker image
-  ([#944](https://github.com/open-telemetry/opentelemetry-demo/pull/944))
 * [quoteservice] update php dependencies
-  ([#994](https://github.com/open-telemetry/opentelemetry-demo/issues/994))
+  ([#1009](https://github.com/open-telemetry/opentelemetry-demo/pull/1009))
+* [tests] Update trace-based tests run script
+  ([#1018](https://github.com/open-telemetry/opentelemetry-demo/pull/1018))
+* [PaymentService] Update node to LTS version and bump deps
+  ([#1029](https://github.com/open-telemetry/opentelemetry-demo/pull/1029))
+* [frontend] Update dependencies
+  ([#1054](https://github.com/open-telemetry/opentelemetry-demo/pull/1054))
+* [frontendproxy] Fix typo URL endpoint for FrontendProxy
+  ([#1075](https://github.com/open-telemetry/opentelemetry-demo/pull/1075))
+* [checkoutservice] Upgrade Shopify/sarama to IBM/sarama
+  ([#1083](https://github.com/open-telemetry/opentelemetry-demo/pull/1083))
+* [accountingservice] Upgrade Shopify/sarama to IBM/sarama
+  ([#1083](https://github.com/open-telemetry/opentelemetry-demo/pull/1083))
+* Update Telemetry Components
+  ([#1085](https://github.com/open-telemetry/opentelemetry-demo/pull/1085))
+* [cartservice] Support for logs
+  ([#1086](https://github.com/open-telemetry/opentelemetry-demo/pull/1086))
+* [TraceTests] Update span attributes to align with new IBM/sarama instrumentation
+  ([#1096](https://github.com/open-telemetry/opentelemetry-demo/pull/1096))
 
 ## 1.4.0
 
