@@ -16,7 +16,7 @@ receivers:
       - endpoint: http://frontendproxy:${env:ENVOY_PORT}
 
 exporters:
-  logging:
+  debug:
 
 processors:
   batch:
@@ -44,12 +44,12 @@ service:
     traces:
       receivers: [otlp]
       processors: [batch]
-      exporters: [logging, spanmetrics]
+      exporters: [debug, spanmetrics]
     metrics:
       receivers: [httpcheck/frontendproxy, otlp, spanmetrics]
       processors: [filter/ottl, transform, batch]
-      exporters: [logging]
+      exporters: [debug]
     logs:
       receivers: [otlp]
       processors: [batch]
-      exporters: [logging]
+      exporters: [debug]
