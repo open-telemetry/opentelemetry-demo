@@ -15,7 +15,7 @@ on:
         type: boolean
       version:
         description: The version used when tagging the image
-        default: dev
+        default: 'dev'
         required: false
         type: string
 
@@ -142,7 +142,7 @@ jobs:
             [worker.oci]
             max-parallelism = 2
       - name: Matrix Build and push demo images
-        if: steps.check_changes.outputs.skip == 'false' || steps.override_skip.outputs.skip == 'false'
+        if: steps.check_changes.outputs.skip == false || steps.override_skip.outputs.skip == false
         uses: docker/build-push-action@v3.3.1
         with:
           context: ${{ matrix.file_tag.context }}
