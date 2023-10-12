@@ -25,6 +25,8 @@ release.
   ([#1150](https://github.com/open-telemetry/opentelemetry-demo/pull/1150))
 * [otelcol] add httpcheck receiver for synthetic check of frontendproxy
   ([#1162](https://github.com/open-telemetry/opentelemetry-demo/pull/1162))
+* [otelcol] merge configuration files for base and observability configs
+  ([#1173](https://github.com/open-telemetry/opentelemetry-demo/pull/1173))
 
 ## 1.5.0
 
