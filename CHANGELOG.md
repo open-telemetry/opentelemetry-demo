@@ -26,7 +26,7 @@ release.
 * [otelcol] add httpcheck receiver for synthetic check of frontendproxy
   ([#1162](https://github.com/open-telemetry/opentelemetry-demo/pull/1162))
 * [frontend] mark frontend server spans as synthetic when coming from loadgen
-  ([#]()
+  ([#1181](https://github.com/open-telemetry/opentelemetry-demo/pull/1181)
 
 ## 1.5.0
 
