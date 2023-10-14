@@ -1,3 +1,7 @@
+# Copyright The OpenTelemetry Authors
+# SPDX-License-Identifier: Apache-2.0
+
+
 defmodule FeatureflagserviceWeb do
   @moduledoc """
   The entrypoint for defining your web interface, such

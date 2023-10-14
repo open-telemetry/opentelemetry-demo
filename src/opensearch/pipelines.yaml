@@ -1,0 +1,14 @@
+# Copyright The OpenTelemetry Authors
+# SPDX-License-Identifier: Apache-2.0
+
+demo-pipeline:
+  source:
+    otel_logs_source:
+      ssl: false
+  sink:
+    - opensearch:
+        hosts: ["http://opensearch:9200"]
+        insecure: true
+        username: admin
+        password: admin
+        index: otel

@@ -14,13 +14,14 @@ To build Ad Service, run:
 ```
 
 It will create an executable script
-`src/adservice/build/install/hipstershop/bin/AdService`.
+`src/adservice/build/install/oteldemo/bin/AdService`.
 
 To run the Ad Service:
 
 ```sh
 export AD_SERVICE_PORT=8080
-./build/install/hipstershop/bin/AdService
+export FEATURE_FLAG_GRPC_SERVICE_ADDR=featureflagservice:50053
+./build/install/oteldemo/bin/AdService
 ```
 
 ### Upgrading Gradle

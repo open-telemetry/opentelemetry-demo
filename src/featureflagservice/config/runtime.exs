@@ -1,3 +1,7 @@
+# Copyright The OpenTelemetry Authors
+# SPDX-License-Identifier: Apache-2.0
+
+
 import Config
 
 if System.get_env("PHX_SERVER") do
@@ -12,7 +16,7 @@ config :grpcbox,
       :grpc_opts => %{
         :service_protos => [:ffs_demo_pb],
         :unary_interceptor => {:otel_grpcbox_interceptor, :unary},
-        :services => %{:"hipstershop.FeatureFlagService" => :ffs_service}
+        :services => %{:"oteldemo.FeatureFlagService" => :ffs_service}
       },
       :listen_opts => %{:port => grpc_port}
     }

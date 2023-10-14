@@ -1,3 +1,7 @@
+# Copyright The OpenTelemetry Authors
+# SPDX-License-Identifier: Apache-2.0
+
+
 static_resources:
   listeners:
     - address:
@@ -19,7 +23,7 @@ static_resources:
                       "@type": type.googleapis.com/envoy.config.trace.v3.OpenTelemetryConfig
                       grpc_service:
                         envoy_grpc:
-                          cluster_name: opentelemetry_collector
+                          cluster_name: opentelemetry_collector_grpc
                         timeout: 0.250s
                       service_name: frontend-proxy
                 route_config:
@@ -33,6 +37,8 @@ static_resources:
                           route: { cluster: featureflag, prefix_rewrite: "/" }
                         - match: { prefix: "/loadgen" }
                           route: { cluster: loadgen, prefix_rewrite: "/" }
+                        - match: { prefix: "/otlp-http/" }
+                          route: { cluster: opentelemetry_collector_http, prefix_rewrite: "/" }
                         - match: { prefix: "/jaeger" }
                           route: { cluster: jaeger }
                         - match: { prefix: "/grafana" }
@@ -46,7 +52,7 @@ static_resources:
                       start_child_span: true
 
   clusters:
-    - name: opentelemetry_collector
+    - name: opentelemetry_collector_grpc
       type: STRICT_DNS
       lb_policy: ROUND_ROBIN
       typed_extension_protocol_options:
@@ -55,14 +61,26 @@ static_resources:
           explicit_http_config:
             http2_protocol_options: {}
       load_assignment:
-        cluster_name: opentelemetry_collector
+        cluster_name: opentelemetry_collector_grpc
         endpoints:
           - lb_endpoints:
               - endpoint:
                   address:
                     socket_address:
                       address: ${OTEL_COLLECTOR_HOST}
-                      port_value: ${OTEL_COLLECTOR_PORT}
+                      port_value: ${OTEL_COLLECTOR_PORT_GRPC}
+    - name: opentelemetry_collector_http
+      type: STRICT_DNS
+      lb_policy: ROUND_ROBIN
+      load_assignment:
+        cluster_name: opentelemetry_collector_http
+        endpoints:
+          - lb_endpoints:
+              - endpoint:
+                  address:
+                    socket_address:
+                      address: ${OTEL_COLLECTOR_HOST}
+                      port_value: ${OTEL_COLLECTOR_PORT_HTTP}
     - name: frontend
       type: STRICT_DNS
       lb_policy: ROUND_ROBIN

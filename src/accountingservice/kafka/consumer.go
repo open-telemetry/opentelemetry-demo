@@ -1,14 +1,15 @@
+// Copyright The OpenTelemetry Authors
+// SPDX-License-Identifier: Apache-2.0
 package kafka
 
 import (
 	"context"
 	"log"
 
-	"github.com/open-telemetry/opentelemetry-demo/src/accountingservice/genproto/hipstershop"
+	pb "github.com/open-telemetry/opentelemetry-demo/src/accountingservice/genproto/oteldemo"
 
-	"github.com/Shopify/sarama"
+	"github.com/IBM/sarama"
 	"github.com/sirupsen/logrus"
-	"go.opentelemetry.io/contrib/instrumentation/github.com/Shopify/sarama/otelsarama"
 	"google.golang.org/protobuf/proto"
 )
 
@@ -23,6 +24,7 @@ func StartConsumerGroup(ctx context.Context, brokers []string, log *logrus.Logge
 	saramaConfig.Version = ProtocolVersion
 	// So we can know the partition and offset of messages.
 	saramaConfig.Producer.Return.Successes = true
+	saramaConfig.Consumer.Interceptors = []sarama.ConsumerInterceptor{NewOTelInterceptor()}
 
 	consumerGroup, err := sarama.NewConsumerGroup(brokers, GroupID, saramaConfig)
 	if err != nil {
@@ -32,9 +34,8 @@ func StartConsumerGroup(ctx context.Context, brokers []string, log *logrus.Logge
 	handler := groupHandler{
 		log: log,
 	}
-	wrappedHandler := otelsarama.WrapConsumerGroupHandler(&handler)
 
-	err = consumerGroup.Consume(ctx, []string{Topic}, wrappedHandler)
+	err = consumerGroup.Consume(ctx, []string{Topic}, &handler)
 	if err != nil {
 		return err
 	}
@@ -57,7 +58,7 @@ func (g *groupHandler) ConsumeClaim(session sarama.ConsumerGroupSession, claim s
 	for {
 		select {
 		case message := <-claim.Messages():
-			orderResult := hipstershop.OrderResult{}
+			orderResult := pb.OrderResult{}
 			err := proto.Unmarshal(message.Value, &orderResult)
 			if err != nil {
 				return err

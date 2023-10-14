@@ -1,18 +1,8 @@
 #!/usr/bin/python
-#
+
 # Copyright The OpenTelemetry Authors
-#
-# Licensed under the Apache License, Version 2.0 (the "License");
-# you may not use this file except in compliance with the License.
-# You may obtain a copy of the License at
-#
-#      http://www.apache.org/licenses/LICENSE-2.0
-#
-# Unless required by applicable law or agreed to in writing, software
-# distributed under the License is distributed on an "AS IS" BASIS,
-# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-# See the License for the specific language governing permissions and
-# limitations under the License.
+# SPDX-License-Identifier: Apache-2.0
+
 
 import json
 import random
@@ -20,18 +10,29 @@ import uuid
 from locust import HttpUser, task, between
 
 from opentelemetry import context, baggage, trace
+from opentelemetry.metrics import set_meter_provider
+from opentelemetry.sdk.metrics import MeterProvider
+from opentelemetry.sdk.metrics.export import MetricExporter, PeriodicExportingMetricReader
 from opentelemetry.sdk.trace import TracerProvider
 from opentelemetry.sdk.trace.export import BatchSpanProcessor
+from opentelemetry.exporter.otlp.proto.grpc.metric_exporter import OTLPMetricExporter
 from opentelemetry.exporter.otlp.proto.grpc.trace_exporter import OTLPSpanExporter
+from opentelemetry.instrumentation.jinja2 import Jinja2Instrumentor
 from opentelemetry.instrumentation.requests import RequestsInstrumentor
+from opentelemetry.instrumentation.system_metrics import SystemMetricsInstrumentor
 from opentelemetry.instrumentation.urllib3 import URLLib3Instrumentor
+
+exporter = OTLPMetricExporter(insecure=True)
+set_meter_provider(MeterProvider([PeriodicExportingMetricReader(exporter)]))
 
 tracer_provider = TracerProvider()
 trace.set_tracer_provider(tracer_provider)
 tracer_provider.add_span_processor(BatchSpanProcessor(OTLPSpanExporter()))
 
 # Instrumenting manually to avoid error with locust gevent monkey
+Jinja2Instrumentor().instrument()
 RequestsInstrumentor().instrument()
+SystemMetricsInstrumentor().instrument()
 URLLib3Instrumentor().instrument()
 
 categories = [
@@ -77,7 +78,7 @@ class WebsiteUser(HttpUser):
         params = {
             "productIds": [random.choice(products)],
         }
-        self.client.get("/api/recommendations/", params=params)
+        self.client.get("/api/recommendations", params=params)
 
     @task(3)
     def get_ads(self):

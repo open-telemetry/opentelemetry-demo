@@ -1,3 +1,6 @@
+// Copyright The OpenTelemetry Authors
+// SPDX-License-Identifier: Apache-2.0
+
 import Image from 'next/image';
 import { useState } from 'react';
 import { CypressFields } from '../../utils/Cypress';
@@ -49,7 +52,7 @@ const CheckoutItem = ({
         )}
       </S.ShippingData>
       <S.Status>
-        <Image src="/icons/Check.svg" alt="check" height="14px" width="16px" /> <span>Done</span>
+        <Image src="/icons/Check.svg" alt="check" height="14" width="16" /> <span>Done</span>
       </S.Status>
     </S.CheckoutItem>
   );

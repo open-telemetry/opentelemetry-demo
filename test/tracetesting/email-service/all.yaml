@@ -1,0 +1,10 @@
+# Copyright The OpenTelemetry Authors
+# SPDX-License-Identifier: Apache-2.0
+
+type: TestSuite
+spec:
+  id: email-service-all
+  name: 'Email Service'
+  description: Run all Email Service tests enabled in sequence
+  steps:
+  - ./confirmation.yaml

@@ -1,3 +1,6 @@
+// Copyright The OpenTelemetry Authors
+// SPDX-License-Identifier: Apache-2.0
+
 import styled, { css } from 'styled-components';
 
 const Button = styled.button<{ $type?: 'primary' | 'secondary' | 'link' }>`

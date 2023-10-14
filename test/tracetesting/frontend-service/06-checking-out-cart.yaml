@@ -1,0 +1,74 @@
+# Copyright The OpenTelemetry Authors
+# SPDX-License-Identifier: Apache-2.0
+
+type: Test
+spec:
+  id: frontend-checkout-shopping-cart
+  name: 'Frontend: Checking out shopping cart'
+  description: Simulate user checking out shopping cart
+  trigger:
+    type: http
+    httpRequest:
+      url: http://${var:FRONTEND_ADDR}/api/checkout
+      method: POST
+      headers:
+      - key: Content-Type
+        value: application/json
+      body: |
+        {
+          "userId": "2491f868-88f1-4345-8836-d5d8511a9f83",
+          "email": "someone@example.com",
+          "address": {
+            "streetAddress": "1600 Amphitheatre Parkway",
+            "state": "CA",
+            "country": "United States",
+            "city": "Mountain View",
+            "zipCode": "94043"
+          },
+          "userCurrency": "USD",
+          "creditCard": {
+            "creditCardCvv": 672,
+            "creditCardExpirationMonth": 1,
+            "creditCardExpirationYear": 2030,
+            "creditCardNumber": "4432-8015-6152-0454"
+          }
+        }
+  specs:
+  - name: It called the frontend with success
+    selector: span[tracetest.span.type="general" name="Tracetest trigger"]
+    assertions:
+    - attr:tracetest.response.status = 200
+  - name: "The order was placed"
+    selector: span[tracetest.span.type="rpc" name="oteldemo.CheckoutService/PlaceOrder" rpc.system="grpc" rpc.method="PlaceOrder" rpc.service="oteldemo.CheckoutService"]
+    assertions:
+    - attr:app.user.id = "2491f868-88f1-4345-8836-d5d8511a9f83"
+    - attr:app.order.items.count = 1
+  - name: "The user was charged"
+    selector: span[tracetest.span.type="rpc" name="oteldemo.PaymentService/Charge" rpc.system="grpc" rpc.method="Charge" rpc.service="oteldemo.PaymentService"]
+    assertions:
+    - attr:rpc.grpc.status_code  =  0
+    - attr:tracetest.selected_spans.count >= 1
+  - name: "The product was shipped"
+    selector: span[tracetest.span.type="rpc" name="oteldemo.ShippingService/ShipOrder" rpc.system="grpc" rpc.method="ShipOrder" rpc.service="oteldemo.ShippingService"]
+    assertions:
+    - attr:rpc.grpc.status_code = 0
+    - attr:tracetest.selected_spans.count >= 1
+  - name: "The cart was emptied"
+    selector: span[tracetest.span.type="rpc" name="oteldemo.CartService/EmptyCart" rpc.system="grpc" rpc.method="EmptyCart" rpc.service="oteldemo.CartService"]
+    assertions:
+    - attr:rpc.grpc.status_code = 0
+    - attr:tracetest.selected_spans.count >= 1
+  - name: The order was sent to be processed asyncronously
+    selector: span[tracetest.span.type="messaging" name="orders publish" messaging.system="kafka" messaging.destination.name="orders" messaging.destination.kind="topic" messaging.operation="publish"]
+    assertions:
+    - attr:messaging.destination.name = "orders"
+  - name: The order was sent to accountability
+    # captures the span emitted by Kafka instrumentation for Go
+    selector: span[tracetest.span.type="messaging" name="orders receive" messaging.system="kafka" messaging.destination.name="orders" messaging.destination.kind="topic" messaging.operation="receive"]
+    assertions:
+    - attr:name = "orders receive"
+  - name: The order was sent to fraud detection team
+    # captures the span emitted by Kafka instrumentation for Kotlin
+    selector: span[tracetest.span.type="messaging" name="orders process" messaging.system="kafka" messaging.operation="process"]
+    assertions:
+    - attr:name = "orders process"

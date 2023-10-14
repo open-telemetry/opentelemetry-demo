@@ -1,6 +1,8 @@
+# Copyright The OpenTelemetry Authors
+# SPDX-License-Identifier: Apache-2.0
 extends: default
 
-ignore-from-file: .gitignore
+ignore-from-file: [.gitignore, .yamlignore]
 
 rules:
   document-start: disable
