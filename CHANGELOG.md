@@ -25,6 +25,8 @@ release.
   ([#1150](https://github.com/open-telemetry/opentelemetry-demo/pull/1150))
 * [otelcol] add httpcheck receiver for synthetic check of frontendproxy
   ([#1162](https://github.com/open-telemetry/opentelemetry-demo/pull/1162))
+* [frontendproxy] Fix service graph by enabling client spans in envoy proxy
+   ([#1180](https://github.com/open-telemetry/opentelemetry-demo/pull/1180))
 
 ## 1.5.0
 
