@@ -8,7 +8,6 @@
 ## Note: the spanmetrics exporter must be included in the exporters array
 ## if overriding the traces pipeline.
 ##
-#exporters:
 #  exporters:
 #    otlphttp/example:
 #      endpoint: <your-endpoint-url>
