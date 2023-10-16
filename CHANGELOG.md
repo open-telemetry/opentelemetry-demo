@@ -7,6 +7,8 @@ release.
 
 ## Unreleased
 
+* pinning trace-based test tool version and adding files as volumes
+  ([#1182](https://github.com/open-telemetry/opentelemetry-demo/pull/1182))
 * update PHP quoteservice to use RC1
   ([#1114](https://github.com/open-telemetry/opentelemetry-demo/pull/1114))
 * [cartservice] update .NET package to 1.6.0 release
