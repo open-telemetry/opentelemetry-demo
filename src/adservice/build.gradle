@@ -16,20 +16,21 @@ description = 'Ad Service'
 group = "adservice"
 version = "0.1.0-SNAPSHOT"
 
-def opentelemetryVersion = "1.28.0"
-def opentelemetryInstrumentationAlphaVersion = "1.28.0-alpha"
-def grpcVersion = "1.56.1"
-def jacksonVersion = "2.15.2"
-def protocVersion = "3.20.0"
+def opentelemetryVersion = "1.31.0"
+def opentelemetryInstrumentationAlphaVersion = "1.31.0-alpha"
+def grpcVersion = "1.58.0"
+def jacksonVersion = "2.15.3"
+def protocVersion = "3.24.4"
 
-tasks.withType(JavaCompile) {
-    sourceCompatibility = JavaVersion.VERSION_17
-    targetCompatibility = JavaVersion.VERSION_17
+tasks.withType(JavaCompile).configureEach {
+    sourceCompatibility = JavaVersion.VERSION_21
+    targetCompatibility = JavaVersion.VERSION_21
 }
 
 ext {
     speed = project.hasProperty('speed') ? project.getProperty('speed') : false
-    offlineCompile = new File("$buildDir/output/lib")
+    Provider<Directory> output = layout.buildDirectory.dir("outputLocation")
+    offlineCompile = output.get().asFile
 }
 
 dependencies {
@@ -48,11 +49,11 @@ dependencies {
                 "io.opentelemetry:opentelemetry-api",
                 "io.opentelemetry:opentelemetry-sdk",
                 "io.opentelemetry.instrumentation:opentelemetry-instrumentation-annotations",
-                "org.apache.logging.log4j:log4j-core:2.20.0"
+                "org.apache.logging.log4j:log4j-core:2.21.0"
 
         runtimeOnly "com.fasterxml.jackson.core:jackson-core:${jacksonVersion}",
                 "com.fasterxml.jackson.core:jackson-databind:${jacksonVersion}",
-                "io.netty:netty-tcnative-boringssl-static:2.0.61.Final"
+                "io.netty:netty-tcnative-boringssl-static:2.0.62.Final"
     }
 }
 
