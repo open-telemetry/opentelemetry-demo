@@ -509,10 +509,9 @@ services:
         limits:
           memory: 125M
     restart: unless-stopped
-    command: [ "--config=/etc/otelcol-config.yml", "--config=/etc/otelcol-observability.yml", "--config=/etc/otelcol-config-extras.yml" ]
+    command: [ "--config=/etc/otelcol-config.yml", "--config=/etc/otelcol-config-extras.yml" ]
     volumes:
       - ./src/otelcollector/otelcol-config.yml:/etc/otelcol-config.yml
-      - ./src/otelcollector/otelcol-observability.yml:/etc/otelcol-observability.yml
       - ./src/otelcollector/otelcol-config-extras.yml:/etc/otelcol-config-extras.yml
     ports:
       - "4317"          # OTLP over gRPC receiver
