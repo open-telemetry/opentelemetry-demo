@@ -25,10 +25,16 @@ release.
   ([#1150](https://github.com/open-telemetry/opentelemetry-demo/pull/1150))
 * [otelcol] add httpcheck receiver for synthetic check of frontendproxy
   ([#1162](https://github.com/open-telemetry/opentelemetry-demo/pull/1162))
+* pinning trace-based test tool version and adding files as volumes
+  ([#1182](https://github.com/open-telemetry/opentelemetry-demo/pull/1182))
+* [jaeger] fix Jager SPM / Monitor support
+  ([#1174](https://github.com/open-telemetry/opentelemetry-demo/pull/1174))
 * [otelcol] merge configuration files for base and observability configs
   ([#1173](https://github.com/open-telemetry/opentelemetry-demo/pull/1173))
 * [frontendproxy] Fix service graph by enabling client spans in envoy proxy
   ([#1180](https://github.com/open-telemetry/opentelemetry-demo/pull/1180))
+* [java-services] Update java, gradle and OTel agent versions
+  ([#1183](https://github.com/open-telemetry/opentelemetry-demo/pull/1183))
 
 ## 1.5.0
 
