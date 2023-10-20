@@ -25,6 +25,8 @@ release.
   ([#1150](https://github.com/open-telemetry/opentelemetry-demo/pull/1150))
 * [otelcol] add httpcheck receiver for synthetic check of frontendproxy
   ([#1162](https://github.com/open-telemetry/opentelemetry-demo/pull/1162))
+* pinning trace-based test tool version and adding files as volumes
+  ([#1182](https://github.com/open-telemetry/opentelemetry-demo/pull/1182))
 * [jaeger] fix Jager SPM / Monitor support
   ([#1174](https://github.com/open-telemetry/opentelemetry-demo/pull/1174))
 * [otelcol] merge configuration files for base and observability configs

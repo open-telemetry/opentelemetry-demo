@@ -797,6 +797,9 @@ services:
       - KAFKA_SERVICE_ADDR
     extra_hosts:
       - "host.docker.internal:host-gateway"
+    volumes:
+      - ./test/tracetesting:/app/test/tracetesting
+      - ./pb:/app/pb
     depends_on:
       tracetest-server:
         condition: service_healthy
