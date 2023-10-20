@@ -27,6 +27,8 @@ release.
   ([#1162](https://github.com/open-telemetry/opentelemetry-demo/pull/1162))
 * [otelcol] merge configuration files for base and observability configs
   ([#1173](https://github.com/open-telemetry/opentelemetry-demo/pull/1173))
+* [java-services] Update java, gradle and OTel agent versions
+  ([#1183](https://github.com/open-telemetry/opentelemetry-demo/pull/1183))
 
 ## 1.5.0
 
