@@ -27,6 +27,8 @@ release.
   ([#1162](https://github.com/open-telemetry/opentelemetry-demo/pull/1162))
 * [jaeger] fix Jager SPM / Monitor support
   ([#1174](https://github.com/open-telemetry/opentelemetry-demo/pull/1174))
+* [otelcol] merge configuration files for base and observability configs
+  ([#1173](https://github.com/open-telemetry/opentelemetry-demo/pull/1173))
 
 ## 1.5.0
 
