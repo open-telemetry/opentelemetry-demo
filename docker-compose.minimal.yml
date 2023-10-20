@@ -463,36 +463,36 @@ services:
   # ********************
   # Jaeger
   jaeger:
-    image: jaegertracing/all-in-one:1.48.0
+    image: jaegertracing/all-in-one:1.50
     container_name: jaeger
     command:
-      - "--memory.max-traces"
-      - "10000"
-      - "--query.base-path"
-      - "/jaeger/ui"
-      - "--prometheus.server-url"
-      - "http://${PROMETHEUS_ADDR}"
+      - "--memory.max-traces=8000"
+      - "--query.base-path=/jaeger/ui"
+      - "--prometheus.server-url=http://${PROMETHEUS_ADDR}"
+      - "--prometheus.query.normalize-calls=true"
+      - "--prometheus.query.normalize-duration=true"
     deploy:
       resources:
         limits:
           memory: 300M
     restart: unless-stopped
     ports:
-      - "${JAEGER_SERVICE_PORT}"                    # Jaeger UI
+      - "${JAEGER_SERVICE_PORT}"         # Jaeger UI
       - "4317"                           # OTLP gRPC default port
     environment:
-      - COLLECTOR_OTLP_ENABLED=true
       - METRICS_STORAGE_TYPE=prometheus
     logging: *logging
 
   # Grafana
   grafana:
-    image: grafana/grafana:10.1.0
+    image: grafana/grafana:10.1.2
     container_name: grafana
     deploy:
       resources:
         limits:
           memory: 100M
+    environment:
+      - "GF_INSTALL_PLUGINS=grafana-opensearch-datasource"
     volumes:
       - ./src/grafana/grafana.ini:/etc/grafana/grafana.ini
       - ./src/grafana/provisioning/:/etc/grafana/provisioning/
@@ -502,7 +502,7 @@ services:
 
   # OpenTelemetry Collector
   otelcol:
-    image: otel/opentelemetry-collector-contrib:0.84.0
+    image: otel/opentelemetry-collector-contrib:0.86.0
     container_name: otel-col
     deploy:
       resources:
@@ -515,16 +515,16 @@ services:
       - ./src/otelcollector/otelcol-config-extras.yml:/etc/otelcol-config-extras.yml
     ports:
       - "4317"          # OTLP over gRPC receiver
-      - "4318:4318"     # OTLP over HTTP receiver
-      - "9464"          # Prometheus exporter
-      - "8888"          # metrics endpoint
+      - "4318"          # OTLP over HTTP receiver
     depends_on:
       - jaeger
     logging: *logging
+    environment:
+      - ENVOY_PORT
 
   # Prometheus
   prometheus:
-    image: quay.io/prometheus/prometheus:v2.46.0
+    image: quay.io/prometheus/prometheus:v2.47.0
     container_name: prometheus
     command:
       - --web.console.templates=/etc/prometheus/consoles
@@ -535,6 +535,7 @@ services:
       - --web.enable-lifecycle
       - --web.route-prefix=/
       - --enable-feature=exemplar-storage
+      - --enable-feature=otlp-write-receiver
     volumes:
       - ./src/prometheus/prometheus-config.yaml:/etc/prometheus/prometheus-config.yaml
     deploy:
@@ -544,3 +545,186 @@ services:
     ports:
       - "${PROMETHEUS_SERVICE_PORT}:${PROMETHEUS_SERVICE_PORT}"
     logging: *logging
+
+  opensearch:
+    image: opensearchproject/opensearch:latest
+    container_name: opensearch
+    environment:
+      - cluster.name=demo-cluster
+      - node.name=demo-node
+      - bootstrap.memory_lock=true
+      - discovery.type=single-node
+      - "OPENSEARCH_JAVA_OPTS=-Xms512m -Xmx512m"
+      - "DISABLE_INSTALL_DEMO_CONFIG=true"
+      - "DISABLE_SECURITY_PLUGIN=true"
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+      nofile:
+        soft: 65536
+        hard: 65536
+    ports:
+      - "9200:9200"
+    logging: *logging
+
+  dataprepper:
+    image: opensearchproject/data-prepper:latest
+    volumes:
+      - ./src/opensearch/pipelines.yaml:/usr/share/data-prepper/pipelines/pipelines.yaml
+      - ./src/opensearch/data-prepper-config.yaml:/usr/share/data-prepper/config/data-prepper-config.yaml
+    ports:
+      - "21892"
+    logging: *logging
+
+  # *****
+  # Tests
+  # *****
+  # Frontend Tests
+  frontendTests:
+    image: ${IMAGE_NAME}:${IMAGE_VERSION}-frontend-tests
+    container_name: frontend-tests
+    build:
+      context: ./
+      dockerfile: ./src/frontend/Dockerfile.cypress
+    profiles:
+      - tests
+    volumes:
+      - ./src/frontend/cypress/videos:/app/cypress/videos
+      - ./src/frontend/cypress/screenshots:/app/cypress/screenshots
+    environment:
+      - CYPRESS_baseUrl=http://${FRONTEND_ADDR}
+      - FRONTEND_ADDR
+      - NODE_ENV=production
+    depends_on:
+      - frontend
+
+  # Integration Tests
+  integrationTests:
+    image: ${IMAGE_NAME}:${IMAGE_VERSION}-integrationTests
+    container_name: integrationTests
+    profiles:
+      - tests
+    build:
+      context: ./
+      dockerfile: ./test/Dockerfile
+    environment:
+      - AD_SERVICE_ADDR
+      - CART_SERVICE_ADDR
+      - CHECKOUT_SERVICE_ADDR
+      - CURRENCY_SERVICE_ADDR
+      - EMAIL_SERVICE_ADDR
+      - PAYMENT_SERVICE_ADDR
+      - PRODUCT_CATALOG_SERVICE_ADDR
+      - RECOMMENDATION_SERVICE_ADDR
+      - SHIPPING_SERVICE_ADDR
+    depends_on:
+      - adservice
+      - cartservice
+      - checkoutservice
+      - currencyservice
+      - emailservice
+      - paymentservice
+      - productcatalogservice
+      - recommendationservice
+      - shippingservice
+      - quoteservice
+
+  # Tracebased Tests
+  traceBasedTests:
+    image: ${IMAGE_NAME}:${IMAGE_VERSION}-traceBasedTests
+    container_name: traceBasedTests
+    profiles:
+      - tests
+    build:
+      context: ./
+      dockerfile: ./test/tracetesting/Dockerfile
+    environment:
+      - AD_SERVICE_ADDR
+      - CART_SERVICE_ADDR
+      - CHECKOUT_SERVICE_ADDR
+      - CURRENCY_SERVICE_ADDR
+      - EMAIL_SERVICE_ADDR
+      - FRONTEND_ADDR
+      - PAYMENT_SERVICE_ADDR
+      - PRODUCT_CATALOG_SERVICE_ADDR
+      - RECOMMENDATION_SERVICE_ADDR
+      - SHIPPING_SERVICE_ADDR
+      - KAFKA_SERVICE_ADDR
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    depends_on:
+      tracetest-server:
+        condition: service_healthy
+      # adding demo services as dependencies
+      frontend:
+        condition: service_started
+      adservice:
+        condition: service_started
+      cartservice:
+        condition: service_started
+      checkoutservice:
+        condition: service_started
+      currencyservice:
+        condition: service_started
+      emailservice:
+        condition: service_started
+      paymentservice:
+        condition: service_started
+      productcatalogservice:
+        condition: service_started
+      recommendationservice:
+        condition: service_started
+      shippingservice:
+        condition: service_started
+      quoteservice:
+        condition: service_started
+      accountingservice:
+        condition: service_started
+      frauddetectionservice:
+        condition: service_started
+
+  tracetest-server:
+    image: kubeshop/tracetest:v0.13.10
+    platform: linux/amd64
+    container_name: tracetest-server
+    profiles:
+      - tests
+    volumes:
+      - type: bind
+        source: ./test/tracetesting/tracetest-config.yaml
+        target: /app/tracetest.yaml
+      - type: bind
+        source: ./test/tracetesting/tracetest-provision.yaml
+        target: /app/provision.yaml
+    command: --provisioning-file /app/provision.yaml
+    ports:
+      - 11633:11633
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    depends_on:
+      tracetest-postgres:
+        condition: service_healthy
+      otelcol:
+        condition: service_started
+    healthcheck:
+      test: [ "CMD", "wget", "--spider", "localhost:11633" ]
+      interval: 1s
+      timeout: 3s
+      retries: 60
+
+  tracetest-postgres:
+    image: postgres:16.0
+    container_name: tracetest-postgres
+    profiles:
+      - tests
+    environment:
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_USER: postgres
+    healthcheck:
+      test: pg_isready -U "$$POSTGRES_USER" -d "$$POSTGRES_DB"
+      interval: 1s
+      timeout: 5s
+      retries: 60
+    ports:
+      - 5432

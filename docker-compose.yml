@@ -607,16 +607,14 @@ services:
   # ********************
   # Jaeger
   jaeger:
-    image: jaegertracing/all-in-one:1.49
+    image: jaegertracing/all-in-one:1.50
     container_name: jaeger
     command:
-      - "--memory.max-traces"
-      - "8000"
-      - "--query.base-path"
-      - "/jaeger/ui"
-      - "--prometheus.server-url"
-      - "http://${PROMETHEUS_ADDR}"
-      - "--prometheus.query.support-spanmetrics-connector=true"
+      - "--memory.max-traces=8000"
+      - "--query.base-path=/jaeger/ui"
+      - "--prometheus.server-url=http://${PROMETHEUS_ADDR}"
+      - "--prometheus.query.normalize-calls=true"
+      - "--prometheus.query.normalize-duration=true"
     deploy:
       resources:
         limits:
@@ -626,7 +624,6 @@ services:
       - "${JAEGER_SERVICE_PORT}"         # Jaeger UI
       - "4317"                           # OTLP gRPC default port
     environment:
-      - COLLECTOR_OTLP_ENABLED=true
       - METRICS_STORAGE_TYPE=prometheus
     logging: *logging
 
@@ -662,9 +659,7 @@ services:
       - ./src/otelcollector/otelcol-config-extras.yml:/etc/otelcol-config-extras.yml
     ports:
       - "4317"          # OTLP over gRPC receiver
-      - "4318:4318"     # OTLP over HTTP receiver
-      - "9464"          # Prometheus exporter
-      - "8888"          # metrics endpoint
+      - "4318"          # OTLP over HTTP receiver
     depends_on:
       - jaeger
     logging: *logging
