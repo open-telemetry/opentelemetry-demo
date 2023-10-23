@@ -1164,7 +1164,7 @@
             "renameByName": {
               "Time": "",
               "percent": "Percent",
-              "{exporter=\"logging\", instance=\"otelcol:8888\", job=\"otel-collector\", service_instance_id=\"fbfa720a-ebf9-45c8-a79a-9d3b6021a663\", service_name=\"otelcol-contrib\", service_version=\"0.70.0\"}": ""
+              "{exporter=\"debug\", instance=\"otelcol:8888\", job=\"otel-collector\", service_instance_id=\"fbfa720a-ebf9-45c8-a79a-9d3b6021a663\", service_name=\"otelcol-contrib\", service_version=\"0.70.0\"}": ""
             }
           }
         }
