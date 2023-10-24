@@ -76,7 +76,7 @@ Monday at 8:30 AM PST and anyone is welcome.
 [Maintainers](https://github.com/open-telemetry/community/blob/main/community-membership.md#maintainer)
 ([@open-telemetry/demo-maintainers](https://github.com/orgs/open-telemetry/teams/demo-maintainers)):
 
-- [Austin Parker](https://github.com/austinlparker), Lightstep
+- [Austin Parker](https://github.com/austinlparker), Honeycomb
 - [Carter Socha](https://github.com/cartersocha), Lightstep
 - [Juliano Costa](https://github.com/julianocosta89), Dynatrace
 - [Pierre Tessier](https://github.com/puckpuck), Honeycomb
