@@ -16,6 +16,7 @@ static_resources:
                 codec_type: AUTO
                 stat_prefix: ingress_http
                 tracing:
+                  spawn_upstream_span: true
                   provider:
                     name: envoy.tracers.opentelemetry
                     typed_config:
@@ -48,6 +49,7 @@ static_resources:
                   - name: envoy.filters.http.router
                     typed_config:
                       "@type": type.googleapis.com/envoy.extensions.filters.http.router.v3.Router
+                      start_child_span: true
 
   clusters:
     - name: opentelemetry_collector_grpc

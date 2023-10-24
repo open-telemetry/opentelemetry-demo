@@ -27,6 +27,20 @@ release.
   ([#1162](https://github.com/open-telemetry/opentelemetry-demo/pull/1162))
 * [frontend] mark frontend server spans as synthetic when coming from loadgen
   ([#1181](https://github.com/open-telemetry/opentelemetry-demo/pull/1181)
+* pinning trace-based test tool version and adding files as volumes
+  ([#1182](https://github.com/open-telemetry/opentelemetry-demo/pull/1182))
+* [jaeger] fix Jager SPM / Monitor support
+  ([#1174](https://github.com/open-telemetry/opentelemetry-demo/pull/1174))
+* [otelcol] merge configuration files for base and observability configs
+  ([#1173](https://github.com/open-telemetry/opentelemetry-demo/pull/1173))
+* [frontendproxy] Fix service graph by enabling client spans in envoy proxy
+  ([#1180](https://github.com/open-telemetry/opentelemetry-demo/pull/1180))
+* [java-services] Update java, gradle and OTel agent versions
+  ([#1183](https://github.com/open-telemetry/opentelemetry-demo/pull/1183))
+* [opensearch] Add OpenSearch as an OTLP Logging backend
+  ([#1151](https://github.com/open-telemetry/opentelemetry-demo/pull/1151))
+* [opensearch] Add Grafana dashboard panels for OpenSearch log data
+  ([#1193](https://github.com/open-telemetry/opentelemetry-demo/pull/1193))
 
 ## 1.5.0
 
