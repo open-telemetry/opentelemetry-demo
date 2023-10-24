@@ -35,6 +35,10 @@ release.
   ([#1180](https://github.com/open-telemetry/opentelemetry-demo/pull/1180))
 * [java-services] Update java, gradle and OTel agent versions
   ([#1183](https://github.com/open-telemetry/opentelemetry-demo/pull/1183))
+* [opensearch] Add OpenSearch as an OTLP Logging backend
+  ([#1151](https://github.com/open-telemetry/opentelemetry-demo/pull/1151))
+* [opensearch] Add Grafana dashboard panels for OpenSearch log data
+  ([#1193](https://github.com/open-telemetry/opentelemetry-demo/pull/1193))
 
 ## 1.5.0
 
