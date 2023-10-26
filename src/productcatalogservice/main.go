@@ -2,6 +2,10 @@
 // SPDX-License-Identifier: Apache-2.0
 package main
 
+//go:generate go install google.golang.org/protobuf/cmd/protoc-gen-go
+//go:generate go install google.golang.org/grpc/cmd/protoc-gen-go-grpc
+//go:generate protoc --go_out=./ --go-grpc_out=./ --proto_path=../../pb ../../pb/demo.proto
+
 import (
 	"context"
 	"fmt"
@@ -16,7 +20,6 @@ import (
 	"github.com/sirupsen/logrus"
 	"go.opentelemetry.io/contrib/instrumentation/google.golang.org/grpc/otelgrpc"
 	"go.opentelemetry.io/contrib/instrumentation/runtime"
-	"go.opentelemetry.io/otel/metric/global"
 	sdkmetric "go.opentelemetry.io/otel/sdk/metric"
 	healthpb "google.golang.org/grpc/health/grpc_health_v1"
 
@@ -96,7 +99,7 @@ func initMeterProvider() *sdkmetric.MeterProvider {
 		sdkmetric.WithReader(sdkmetric.NewPeriodicReader(exporter)),
 		sdkmetric.WithResource(initResource()),
 	)
-	global.SetMeterProvider(mp)
+	otel.SetMeterProvider(mp)
 	return mp
 }
 
@@ -123,7 +126,7 @@ func main() {
 	svc := &productCatalog{}
 	var port string
 	mustMapEnv(&port, "PRODUCT_CATALOG_SERVICE_PORT")
-	mustMapEnv(&svc.featureFlagSvcAddr, "FEATURE_FLAG_GRPC_SERVICE_ADDR")
+	svc.featureFlagSvcAddr = os.Getenv("FEATURE_FLAG_GRPC_SERVICE_ADDR")
 
 	log.Infof("ProductCatalogService gRPC server started on port: %s", port)
 
@@ -242,7 +245,7 @@ func (p *productCatalog) SearchProducts(ctx context.Context, req *pb.SearchProdu
 }
 
 func (p *productCatalog) checkProductFailure(ctx context.Context, id string) bool {
-	if id != "OLJCESPC7Z" {
+	if id != "OLJCESPC7Z" || p.featureFlagSvcAddr == "" {
 		return false
 	}
 

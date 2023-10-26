@@ -64,7 +64,7 @@ const CheckoutForm = ({ onSubmit }: IProps) => {
 
   return (
     <S.CheckoutForm
-      onSubmit={event => {
+      onSubmit={(event: { preventDefault: () => void; }) => {
         event.preventDefault();
         onSubmit({
           email,

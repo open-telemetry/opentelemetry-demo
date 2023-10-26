@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Copyright The OpenTelemetry Authors -->
+<!-- -->
+<!-- Licensed under the Apache License, Version 2.0 (the "License"); -->
+<!-- you may not use this file except in compliance with the License. -->
+<!-- You may obtain a copy of the License at -->
+<!-- -->
+<!--     http://www.apache.org/licenses/LICENSE-2.0 -->
+<!-- -->
+<!-- Unless required by applicable law or agreed to in writing, software -->
+<!-- distributed under the License is distributed on an "AS IS" BASIS, -->
+<!-- WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. -->
+<!-- See the License for the specific language governing permissions and -->
+<!-- limitations under the License. -->
+
+<svg xmlns="http://www.w3.org/2000/svg" id="svg5" width="10.435" height="11.003" version="1.1" viewBox="0 0 2.761 2.911">
+    <g id="cart" transform="translate(-41.248 -118.392)">
+        <path id="path1192" d="M41.248 118.393v.29h.29l.53 1.104-.199.357a.29.29 0 0 0 .256.431h1.747v-.29h-1.688a.037.037 0 0 1-.04-.038v-.016l.13-.237h1.085a.29.29 0 0 0 .264-.151l.386-1.165-2.15.005-.138-.29zm.717.549 1.72-.009-.262.81-1.1-.004zm.156 1.78a.29.29 0 1 0 0 .581.29.29 0 0 0 0-.582zm1.455 0a.29.29 0 1 0 0 .581.29.29 0 0 0 0-.582z"/>
+    </g>
+</svg>

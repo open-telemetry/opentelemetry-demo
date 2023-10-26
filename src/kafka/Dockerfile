@@ -2,10 +2,10 @@
 # SPDX-License-Identifier: Apache-2.0
 
 
-FROM confluentinc/cp-kafka:latest-ubi8
+FROM confluentinc/cp-kafka:7.5.0
 
 USER root
-ARG version=1.23.0
+ARG version=1.31.0
 ADD https://github.com/open-telemetry/opentelemetry-java-instrumentation/releases/download/v$version/opentelemetry-javaagent.jar /tmp/opentelemetry-javaagent.jar
 RUN chmod go+r /tmp/opentelemetry-javaagent.jar
 

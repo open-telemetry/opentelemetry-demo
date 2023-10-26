@@ -7,6 +7,7 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	semconv "go.opentelemetry.io/otel/semconv/v1.19.0"
 	"net"
 	"net/http"
 	"os"
@@ -17,17 +18,15 @@ import (
 	"go.opentelemetry.io/otel/attribute"
 	"go.opentelemetry.io/otel/trace"
 
-	"github.com/Shopify/sarama"
+	"github.com/IBM/sarama"
 	"github.com/google/uuid"
 	"github.com/sirupsen/logrus"
-	"go.opentelemetry.io/contrib/instrumentation/github.com/Shopify/sarama/otelsarama"
 	"go.opentelemetry.io/contrib/instrumentation/google.golang.org/grpc/otelgrpc"
 	"go.opentelemetry.io/contrib/instrumentation/net/http/otelhttp"
 	"go.opentelemetry.io/contrib/instrumentation/runtime"
 	"go.opentelemetry.io/otel"
 	"go.opentelemetry.io/otel/exporters/otlp/otlpmetric/otlpmetricgrpc"
 	"go.opentelemetry.io/otel/exporters/otlp/otlptrace/otlptracegrpc"
-	"go.opentelemetry.io/otel/metric/global"
 	"go.opentelemetry.io/otel/propagation"
 	sdkmetric "go.opentelemetry.io/otel/sdk/metric"
 	sdkresource "go.opentelemetry.io/otel/sdk/resource"
@@ -43,6 +42,10 @@ import (
 	"github.com/open-telemetry/opentelemetry-demo/src/checkoutservice/kafka"
 	"github.com/open-telemetry/opentelemetry-demo/src/checkoutservice/money"
 )
+
+//go:generate go install google.golang.org/protobuf/cmd/protoc-gen-go
+//go:generate go install google.golang.org/grpc/cmd/protoc-gen-go-grpc
+//go:generate protoc --go_out=./ --go-grpc_out=./ --proto_path=../../pb ../../pb/demo.proto
 
 var log *logrus.Logger
 var tracer trace.Tracer
@@ -108,7 +111,7 @@ func initMeterProvider() *sdkmetric.MeterProvider {
 		sdkmetric.WithReader(sdkmetric.NewPeriodicReader(exporter)),
 		sdkmetric.WithResource(initResource()),
 	)
-	global.SetMeterProvider(mp)
+	otel.SetMeterProvider(mp)
 	return mp
 }
 
@@ -156,11 +159,13 @@ func main() {
 	mustMapEnv(&svc.currencySvcAddr, "CURRENCY_SERVICE_ADDR")
 	mustMapEnv(&svc.emailSvcAddr, "EMAIL_SERVICE_ADDR")
 	mustMapEnv(&svc.paymentSvcAddr, "PAYMENT_SERVICE_ADDR")
-	mustMapEnv(&svc.kafkaBrokerSvcAddr, "KAFKA_SERVICE_ADDR")
+	svc.kafkaBrokerSvcAddr = os.Getenv("KAFKA_SERVICE_ADDR")
 
-	svc.KafkaProducerClient, err = kafka.CreateKafkaProducer([]string{svc.kafkaBrokerSvcAddr}, log)
-	if err != nil {
-		log.Fatal(err)
+	if svc.kafkaBrokerSvcAddr != "" {
+		svc.KafkaProducerClient, err = kafka.CreateKafkaProducer([]string{svc.kafkaBrokerSvcAddr}, log)
+		if err != nil {
+			log.Fatal(err)
+		}
 	}
 
 	log.Infof("service config: %+v", svc)
@@ -274,7 +279,10 @@ func (cs *checkoutService) PlaceOrder(ctx context.Context, req *pb.PlaceOrderReq
 		log.Infof("order confirmation email sent to %q", req.Email)
 	}
 
-	cs.sendToPostProcessor(ctx, orderResult)
+	// send to kafka only if kafka broker address is set
+	if cs.kafkaBrokerSvcAddr != "" {
+		cs.sendToPostProcessor(ctx, orderResult)
+	}
 
 	resp := &pb.PlaceOrderResponse{Order: orderResult}
 	return resp, nil
@@ -480,15 +488,43 @@ func (cs *checkoutService) sendToPostProcessor(ctx context.Context, result *pb.O
 		return
 	}
 
-	// Inject tracing info into message
 	msg := sarama.ProducerMessage{
 		Topic: kafka.Topic,
 		Value: sarama.ByteEncoder(message),
 	}
 
-	otel.GetTextMapPropagator().Inject(ctx, otelsarama.NewProducerMessageCarrier(&msg))
+	// Inject tracing info into message
+	span := createProducerSpan(ctx, &msg)
+	defer span.End()
 
 	cs.KafkaProducerClient.Input() <- &msg
 	successMsg := <-cs.KafkaProducerClient.Successes()
 	log.Infof("Successful to write message. offset: %v", successMsg.Offset)
+}
+
+func createProducerSpan(ctx context.Context, msg *sarama.ProducerMessage) trace.Span {
+	spanContext, span := tracer.Start(
+		ctx,
+		fmt.Sprintf("%s publish", msg.Topic),
+		trace.WithSpanKind(trace.SpanKindProducer),
+		trace.WithAttributes(
+			semconv.PeerService("kafka"),
+			semconv.NetTransportTCP,
+			semconv.MessagingSystem("kafka"),
+			semconv.MessagingDestinationKindTopic,
+			semconv.MessagingDestinationName(msg.Topic),
+			semconv.MessagingOperationPublish,
+			semconv.MessagingKafkaDestinationPartition(int(msg.Partition)),
+		),
+	)
+
+	carrier := propagation.MapCarrier{}
+	propagator := otel.GetTextMapPropagator()
+	propagator.Inject(spanContext, carrier)
+
+	for key, value := range carrier {
+		msg.Headers = append(msg.Headers, sarama.RecordHeader{Key: []byte(key), Value: []byte(value)})
+	}
+
+	return span
 }
