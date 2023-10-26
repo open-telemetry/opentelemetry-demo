@@ -1,3 +1,7 @@
+/*
+ *   Copyright (c) 2023 
+ *   All rights reserved.
+ */
 // Copyright The OpenTelemetry Authors
 // SPDX-License-Identifier: Apache-2.0
 package main
@@ -205,6 +209,12 @@ func (p *productCatalog) GetProduct(ctx context.Context, req *pb.GetProductReque
 		return nil, status.Errorf(codes.Internal, msg)
 	}
 
+	if p.checkProductTimeout(ctx, req.Id) {
+		log.Info("Product timeout flag enabled, sleeping..")
+		// add delay of a second
+		time.Sleep(time.Second)
+	}
+
 	var found *pb.Product
 	for _, product := range catalog {
 		if req.Id == product.Id {
@@ -266,7 +276,33 @@ func (p *productCatalog) checkProductFailure(ctx context.Context, id string) boo
 		span.AddEvent("error", trace.WithAttributes(attribute.String("message", fmt.Sprintf("GetFlag Failed: %s", flagName))))
 		return false
 	}
+	attribute.Boolean(flagName, ffResponse.GetFlag().Enabled)
+	return ffResponse.GetFlag().Enabled
+}
 
+func (p *productCatalog) checkProductTimeout(ctx context.Context, id string) bool {
+	if id != "OLJCESPC7Z" || p.featureFlagSvcAddr == "" {
+		return false
+	}
+
+	conn, err := createClient(ctx, p.featureFlagSvcAddr)
+	if err != nil {
+		span := trace.SpanFromContext(ctx)
+		span.AddEvent("error", trace.WithAttributes(attribute.String("message", "Feature Flag Connection Failed")))
+		return false
+	}
+	defer conn.Close()
+	
+	flagName := "productCatalogTimeout"
+	ffResponse, err := pb.NewFeatureFlagServiceClient(conn).GetFlag(ctx, &pb.GetFlagRequest{
+		Name: flagName,
+	})
+	if err != nil {
+		span := trace.SpanFromContext(ctx)
+		span.AddEvent("error", trace.WithAttributes(attribute.String("message", fmt.Sprintf("GetFlag Failed: %s", flagName))))
+		return false
+	}
+	attribute.Boolean(flagName, ffResponse.GetFlag().Enabled)
 	return ffResponse.GetFlag().Enabled
 }
 

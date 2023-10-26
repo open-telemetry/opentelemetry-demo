@@ -23,6 +23,11 @@ defmodule Featureflagservice.Repo.Migrations.CreateFeatureflags do
       description: "Fail product catalog service on a specific product",
       enabled: false})
 
+     repo().insert(%Featureflagservice.FeatureFlags.FeatureFlag{
+      name: "productCatalogTimeout",
+      description: "Timeout product catalog service on a specific product",
+      enabled: false})
+
     repo().insert(%Featureflagservice.FeatureFlags.FeatureFlag{
       name: "recommendationCache",
       description: "Cache recommendations",
@@ -41,6 +46,7 @@ defmodule Featureflagservice.Repo.Migrations.CreateFeatureflags do
 
   defp execute_down do
     repo().delete(%Featureflagservice.FeatureFlags.FeatureFlag{name: "productCatalogFailure"})
+    repo().delete(%Featureflagservice.FeatureFlags.FeatureFlag{name: "productCatalogTimeout"})
     repo().delete(%Featureflagservice.FeatureFlags.FeatureFlag{name: "recommendationCache"})
     repo().delete(%Featureflagservice.FeatureFlags.FeatureFlag{name: "adServiceFailure"})
     repo().delete(%Featureflagservice.FeatureFlags.FeatureFlag{name: "cartServiceFailure"})
