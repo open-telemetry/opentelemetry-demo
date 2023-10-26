@@ -646,7 +646,7 @@ services:
 
   # OpenTelemetry Collector
   otelcol:
-    image: otel/opentelemetry-collector-contrib:0.86.0
+    image: otel/opentelemetry-collector-contrib:0.88.0
     container_name: otel-col
     deploy:
       resources:
@@ -662,6 +662,7 @@ services:
       - "4318"          # OTLP over HTTP receiver
     depends_on:
       - jaeger
+      - dataprepper
     logging: *logging
     environment:
       - ENVOY_PORT
@@ -691,7 +692,7 @@ services:
     logging: *logging
 
   opensearch:
-    image: opensearchproject/opensearch:latest
+    image: opensearchproject/opensearch:2.11.0
     container_name: opensearch
     environment:
       - cluster.name=demo-cluster
@@ -713,12 +714,29 @@ services:
     logging: *logging
 
   dataprepper:
-    image: opensearchproject/data-prepper:latest
+    image: opensearchproject/data-prepper:2
     volumes:
       - ./src/opensearch/pipelines.yaml:/usr/share/data-prepper/pipelines/pipelines.yaml
       - ./src/opensearch/data-prepper-config.yaml:/usr/share/data-prepper/config/data-prepper-config.yaml
     ports:
+      - "4900"
+      - "21890"
+      - "21891"
       - "21892"
+    logging: *logging
+
+  opensearch-dashboards:
+    image: ${IMAGE_NAME}:${IMAGE_VERSION}-opensearch-dashboard
+    container_name: opensearch-dashboard
+    build:
+      context: ./src/opensearch-dashboard
+      dockerfile: .//Dockerfile
+    ports:
+      - 5601:5601 # Map host port 5601 to container port 5601
+    expose:
+      - "5601" # Expose port 5601 for web access to OpenSearch Dashboards
+    environment:
+      OPENSEARCH_HOSTS: '["http://opensearch:9200"]'
     logging: *logging
 
   # *****
