@@ -1,0 +1,55 @@
+name: Scheduled Merge Upstream
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: '23 0/3 * * *'
+
+jobs:
+  merge_upstream:
+    runs-on: ubuntu-latest
+    steps: 
+      - name: Checkout
+        uses: actions/checkout@v2
+        with:
+          ref: main
+          fetch-depth: 0
+      - name: fetch and push
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          UPSTREAM: https://github.com/open-telemetry/opentelemetry-demo
+        run: |       
+          git config --global user.name "github-actions"
+          git config --global user.email "github-actions@users.noreply.github.com"
+          
+          git remote add upstream "${UPSTREAM}"
+
+          # Get all recent branches and commits from the upstream
+          git fetch upstream main
+
+          git rebase upstream/main
+
+          if [ "$(git status | grep diverged)" ]; then
+            git push origin $(git branch --show-current) --force;
+          fi;
+  notify-failure:
+    needs: [merge_upstream]
+    if: always() && needs.merge_upstream.result != 'success'
+    runs-on: ubuntu-latest
+    steps:
+    - name: Get previous workflow status
+      uses: Mercymeilya/last-workflow-status@v0.3.3
+      id: last_status
+      with:
+        github_token: ${{ secrets.GITHUB_TOKEN }}
+    - name: Slack notification
+      if: success() && steps.last_status.outputs.last_status == 'success'
+      env:
+        SLACK_WEBHOOK: ${{ secrets.OTELSLACKCHANNELWEBHOOK }}
+        SLACK_UNFURL_LINKS: "true"
+      uses: AlexanderWert/action-slack@2.3.0
+      with:
+        args: |
+          :wave:
+          Auto-merge of the <${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}|elastic/opentelemetry-demo> repository with the upstream failed!
+          Manual resolution of the merge conflicts is required!
+  
