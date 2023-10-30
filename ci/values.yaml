@@ -197,6 +197,23 @@ components:
             ]
           }
         }
+      ad.datadoghq.com/kafka_consumer.checks: |
+        {
+          "kafka_consumer": {
+            "init_config": {
+              "is_jmx": true,
+              "collect_default_metrics": true
+            },
+            "instances": [
+              {
+                "kafka_connect_str": "opentelemetry-demo-kafka:9092",
+                "tags": [
+                  "kafka_source:agent"
+                ]
+              }
+            ]
+          }
+        }
 serviceAccount:
   create: false
 opentelemetry-collector:
