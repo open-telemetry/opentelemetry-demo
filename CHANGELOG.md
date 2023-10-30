@@ -35,7 +35,8 @@ release.
   ([#1180](https://github.com/open-telemetry/opentelemetry-demo/pull/1180))
 * [java-services] Update java, gradle and OTel agent versions
   ([#1183](https://github.com/open-telemetry/opentelemetry-demo/pull/1183))
-
+* [go-sdk] Workaround: disable gRPC metrics in Go services
+  ([#1205](https://github.com/open-telemetry/opentelemetry-demo/pull/1205))
 ## 1.5.0
 
 * update trace-based tests to test stream events
