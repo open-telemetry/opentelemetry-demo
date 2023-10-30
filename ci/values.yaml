@@ -195,10 +195,7 @@ components:
                 ]
               }
             ]
-          }
-        }
-      ad.datadoghq.com/kafka_consumer.checks: |
-        {
+          },
           "kafka_consumer": {
             "init_config": {
               "is_jmx": true,
