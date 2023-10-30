@@ -197,10 +197,6 @@ components:
             ]
           },
           "kafka_consumer": {
-            "init_config": {
-              "is_jmx": true,
-              "collect_default_metrics": true
-            },
             "instances": [
               {
                 "kafka_connect_str": "opentelemetry-demo-kafka:9092",
