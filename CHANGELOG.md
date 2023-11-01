@@ -39,6 +39,8 @@ release.
   ([#1151](https://github.com/open-telemetry/opentelemetry-demo/pull/1151))
 * [opensearch] Add Grafana dashboard panels for OpenSearch log data
   ([#1193](https://github.com/open-telemetry/opentelemetry-demo/pull/1193))
+* [go-sdk] Workaround: disable gRPC metrics in Go services
+  ([#1205](https://github.com/open-telemetry/opentelemetry-demo/pull/1205))
 
 ## 1.5.0
 
