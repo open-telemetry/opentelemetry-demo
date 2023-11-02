@@ -5,9 +5,12 @@
 
 
 import json
+import logging
 import random
+import time
 import uuid
 from locust import HttpUser, task, between
+from locust.env import Environment
 
 from opentelemetry import context, baggage, trace
 from opentelemetry.metrics import set_meter_provider
@@ -55,6 +58,10 @@ products = [
     "L9ECAV7KIM",
     "LS4PSXUNUM",
     "OLJCESPC7Z",
+    "OLJCESPC7Z", 
+    "OLJCESPC7Z", 
+    "OLJCESPC7Z", 
+    "OLJCESPC7Z", 
     "HQTGWGPNH4",
 ]
 
@@ -110,7 +117,15 @@ class WebsiteUser(HttpUser):
     def checkout(self):
         # checkout call with an item added to cart
         user = str(uuid.uuid1())
+        start_time = time.time()
+
         self.add_to_cart(user=user)
+
+        duration = time.time() - start_time
+        # skip checkout if the latency is more than a second
+        if (self.skip_checkout(duration)):
+            logging.info("skipping checkout, duration:", duration)
+            return
         checkout_person = random.choice(people)
         checkout_person["userId"] = user
         self.client.post("/api/checkout", json=checkout_person)
@@ -119,8 +134,17 @@ class WebsiteUser(HttpUser):
     def checkout_multi(self):
         # checkout call which adds 2-4 different items to cart before checkout
         user = str(uuid.uuid1())
+
+        start_time = time.time()
         for i in range(random.choice([2, 3, 4])):
             self.add_to_cart(user=user)
+
+        duration = time.time() - start_time
+        # skip checkout if the latency is more than a second
+        if (self.skip_checkout(duration)):
+            logging.info("skipping checkout_multi, duration:", duration)
+            return
+
         checkout_person = random.choice(people)
         checkout_person["userId"] = user
         self.client.post("/api/checkout", json=checkout_person)
@@ -129,3 +153,14 @@ class WebsiteUser(HttpUser):
         ctx = baggage.set_baggage("synthetic_request", "true")
         context.attach(ctx)
         self.index()
+
+    # Skip the checkout if the latency for adding items to the cart is beyond a threshold (default 1 secs)
+    def skip_checkout(self, duration):
+        # Check latency threshold
+        latency_threshold_secs = getattr(Environment().parsed_options, 'latency_threshold_secs', 1)
+        # Check the environment variable to skip checkout
+        skip_checkout_if_slow = getattr(Environment().parsed_options, 'skip_checkout_if_slow', True)
+        if skip_checkout_if_slow and duration > latency_threshold_secs:
+            return True
+
+

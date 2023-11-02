@@ -16,3 +16,14 @@
 #    pipelines:
 #      traces:
 #        exporters: [spanmetrics, otlphttp/example]
+
+connectors:
+  spanmetrics:
+    dimensions:
+      - name: app.product.id
+      - name: flag.productCatalogTimeout
+      - name: app.cache_hit
+      - name: app.recommendation.cache_enabled
+    dimensions_cache_size: 1000
+    aggregation_temporality: "AGGREGATION_TEMPORALITY_CUMULATIVE"     
+    metrics_flush_interval: 15s

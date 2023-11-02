@@ -92,6 +92,7 @@ def get_product_list(request_product_ids):
             product_ids = [x.id for x in cat_response.products]
 
         span.set_attribute("app.products.count", len(product_ids))
+        rec_svc_metrics["app_recommendations_cache_size"].add(len(product_ids))
 
         # Create a filtered list of products excluding the products received as input
         filtered_products = list(set(product_ids) - set(request_product_ids))
