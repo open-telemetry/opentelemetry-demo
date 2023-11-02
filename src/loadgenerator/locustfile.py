@@ -5,6 +5,7 @@
 
 
 import json
+import logging
 import random
 import time
 import uuid
@@ -57,6 +58,10 @@ products = [
     "L9ECAV7KIM",
     "LS4PSXUNUM",
     "OLJCESPC7Z",
+    "OLJCESPC7Z", 
+    "OLJCESPC7Z", 
+    "OLJCESPC7Z", 
+    "OLJCESPC7Z", 
     "HQTGWGPNH4",
 ]
 
@@ -115,10 +120,11 @@ class WebsiteUser(HttpUser):
         start_time = time.time()
 
         self.add_to_cart(user=user)
-        
+
         duration = time.time() - start_time
         # skip checkout if the latency is more than a second
         if (self.skip_checkout(duration)):
+            logging.info("skipping checkout, duration:", duration)
             return
         checkout_person = random.choice(people)
         checkout_person["userId"] = user
@@ -132,12 +138,13 @@ class WebsiteUser(HttpUser):
         start_time = time.time()
         for i in range(random.choice([2, 3, 4])):
             self.add_to_cart(user=user)
-        
+
         duration = time.time() - start_time
         # skip checkout if the latency is more than a second
         if (self.skip_checkout(duration)):
-            return 
-        
+            logging.info("skipping checkout_multi, duration:", duration)
+            return
+
         checkout_person = random.choice(people)
         checkout_person["userId"] = user
         self.client.post("/api/checkout", json=checkout_person)
@@ -155,5 +162,5 @@ class WebsiteUser(HttpUser):
         skip_checkout_if_slow = getattr(Environment().parsed_options, 'skip_checkout_if_slow', True)
         if skip_checkout_if_slow and duration > latency_threshold_secs:
             return True
-    
+
 

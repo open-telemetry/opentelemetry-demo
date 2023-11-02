@@ -276,7 +276,10 @@ func (p *productCatalog) checkProductFailure(ctx context.Context, id string) boo
 		span.AddEvent("error", trace.WithAttributes(attribute.String("message", fmt.Sprintf("GetFlag Failed: %s", flagName))))
 		return false
 	}
-	attribute.Boolean(flagName, ffResponse.GetFlag().Enabled)
+	span := trace.SpanFromContext(ctx)
+	span.SetAttributes(
+		attribute.Bool("flag.productCatalogFailure", ffResponse.GetFlag().Enabled),
+	)
 	return ffResponse.GetFlag().Enabled
 }
 
@@ -302,7 +305,10 @@ func (p *productCatalog) checkProductTimeout(ctx context.Context, id string) boo
 		span.AddEvent("error", trace.WithAttributes(attribute.String("message", fmt.Sprintf("GetFlag Failed: %s", flagName))))
 		return false
 	}
-	attribute.Boolean(flagName, ffResponse.GetFlag().Enabled)
+	span := trace.SpanFromContext(ctx)
+	span.SetAttributes(
+		attribute.Bool("flag.productCatalogTimeout", ffResponse.GetFlag().Enabled),
+	)
 	return ffResponse.GetFlag().Enabled
 }
 
