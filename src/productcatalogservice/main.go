@@ -1,7 +1,3 @@
-/*
- *   Copyright (c) 2023 
- *   All rights reserved.
- */
 // Copyright The OpenTelemetry Authors
 // SPDX-License-Identifier: Apache-2.0
 package main
