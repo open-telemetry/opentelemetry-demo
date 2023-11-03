@@ -109,13 +109,13 @@ jobs:
           FORCE_PUSH=${{ inputs.push }}
           if [ "$FORCE_PUSH" = true ]; then
             echo "Force push is enabled, proceeding with build."
-            echo "skip='false'" >> "$GITHUB_OUTPUT"
+            echo "skip=false" >> "$GITHUB_OUTPUT"
           elif [ -z "$FILES_CHANGED" ]; then
             echo "No changes in ${{ matrix.file_tag.context }}, skipping build."
-            echo "skip='true'" >> "$GITHUB_OUTPUT"
+            echo "skip=true" >> "$GITHUB_OUTPUT"
           else
             echo "Changes detected in ${{ matrix.file_tag.context }}, proceeding with build."
-            echo "skip='false'" >> "$GITHUB_OUTPUT"
+            echo "skip=false" >> "$GITHUB_OUTPUT"
           fi
       - name: Log in to the Container registry
         uses: docker/login-action@v3
