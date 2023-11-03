@@ -7,6 +7,8 @@ release.
 
 ## Unreleased
 
+## 1.6.0
+
 * update PHP quoteservice to use RC1
   ([#1114](https://github.com/open-telemetry/opentelemetry-demo/pull/1114))
 * [cartservice] update .NET package to 1.6.0 release
