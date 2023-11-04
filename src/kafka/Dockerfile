@@ -2,7 +2,7 @@
 # SPDX-License-Identifier: Apache-2.0
 
 
-FROM confluentinc/cp-kafka:7.5.0
+FROM confluentinc/cp-kafka:7.5.1
 
 USER root
 ARG version=1.31.0
