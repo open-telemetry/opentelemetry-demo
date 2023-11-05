@@ -11,8 +11,8 @@
   "dependencies": {
     "@grpc/grpc-js": "1.6.7",
     "dotenv": "16.0.1",
-    "dotenv-expand": "^8.0.3",
-    "node-fetch": "2.6.7",
-    "ava": "4.3.0"
+    "dotenv-expand": "^10.0.0",
+    "node-fetch": "3.3.2",
+    "ava": "5.3.1"
   }
 }
