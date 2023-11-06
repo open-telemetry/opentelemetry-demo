@@ -105,7 +105,7 @@ jobs:
         id: check_changes
         run: |
           DOCKERFILE_DIR=$(dirname ${{ matrix.file_tag.file }})
-          FILES_CHANGED=$(git diff --name-only ${{ github.event.before }} ${{ github.sha }} -- $DOCKERFILE_DIR)
+          FILES_CHANGED=$(git diff --name-only ${{ github.event.pull_request.base.sha }} ${{ github.sha }} -- $DOCKERFILE_DIR)
           FORCE_PUSH=${{ inputs.push }}
           if [ "$FORCE_PUSH" = true ]; then
             echo "Force push is enabled, proceeding with build."
