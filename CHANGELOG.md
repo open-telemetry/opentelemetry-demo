@@ -7,6 +7,9 @@ release.
 
 ## Unreleased
 
+* Add ability to do probabilistic A/B testing with feature flags
+  ([#1237](https://github.com/open-telemetry/opentelemetry-demo/pull/1237))
+
 ## 1.6.0
 
 * update PHP quoteservice to use RC1
