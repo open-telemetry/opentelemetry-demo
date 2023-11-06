@@ -195,6 +195,17 @@ components:
                 ]
               }
             ]
+          },
+          "kafka_consumer": {
+            "instances": [
+              {
+                "kafka_connect_str": "opentelemetry-demo-kafka:9092",
+                "monitor_unlisted_consumer_groups": true,
+                "tags": [
+                  "kafka_source:agent"
+                ]
+              }
+            ]
           }
         }
 serviceAccount:
