@@ -29,10 +29,8 @@
   <%= text_input f, :description %>
   <%= error_tag f, :description %>
 
-  <div class="float-right">
-    <%= checkbox f, :enabled %>
-    <%= label f, :enabled, class: "label-inline" %>
-  </div>
+  <%= label f, :enabled %>
+  <%= text_input f, :enabled  %>
   <%= error_tag f, :enabled %>
 
   <%= submit "Save" %>
