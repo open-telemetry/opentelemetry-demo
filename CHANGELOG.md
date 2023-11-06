@@ -12,7 +12,6 @@ release.
 * update PHP quoteservice to use 1.0.0
   ([#1236](https://github.com/open-telemetry/opentelemetry-demo/pull/1236))
 
-
 ## 1.6.0
 
 * update PHP quoteservice to use RC1
