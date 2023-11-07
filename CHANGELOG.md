@@ -7,6 +7,11 @@ release.
 
 ## Unreleased
 
+* update PHP quoteservice to use 1.0.0
+  ([#1236](https://github.com/open-telemetry/opentelemetry-demo/pull/1236))
+
+## 1.6.0
+
 * update PHP quoteservice to use RC1
   ([#1114](https://github.com/open-telemetry/opentelemetry-demo/pull/1114))
 * [cartservice] update .NET package to 1.6.0 release
@@ -41,6 +46,8 @@ release.
   ([#1151](https://github.com/open-telemetry/opentelemetry-demo/pull/1151))
 * [opensearch] Add Grafana dashboard panels for OpenSearch log data
   ([#1193](https://github.com/open-telemetry/opentelemetry-demo/pull/1193))
+* [go-sdk] Workaround: disable gRPC metrics in Go services
+  ([#1205](https://github.com/open-telemetry/opentelemetry-demo/pull/1205))
 
 ## 1.5.0
 

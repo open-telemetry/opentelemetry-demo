@@ -7,6 +7,7 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	"go.opentelemetry.io/otel/sdk/instrumentation"
 	semconv "go.opentelemetry.io/otel/semconv/v1.19.0"
 	"net"
 	"net/http"
@@ -110,6 +111,10 @@ func initMeterProvider() *sdkmetric.MeterProvider {
 	mp := sdkmetric.NewMeterProvider(
 		sdkmetric.WithReader(sdkmetric.NewPeriodicReader(exporter)),
 		sdkmetric.WithResource(initResource()),
+		sdkmetric.WithView(sdkmetric.NewView(
+			sdkmetric.Instrument{Scope: instrumentation.Scope{Name: "go.opentelemetry.io/contrib/google.golang.org/grpc/otelgrpc"}},
+			sdkmetric.Stream{Aggregation: sdkmetric.AggregationDrop{}},
+		)),
 	)
 	otel.SetMeterProvider(mp)
 	return mp

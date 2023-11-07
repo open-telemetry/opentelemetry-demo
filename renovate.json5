@@ -1,114 +1,98 @@
 {
   "$schema": "https://docs.renovatebot.com/renovate-schema.json",
-  "extends": [
-    "config:base"
-  ],
+
   "schedule": "every weekend",
+
+  // double PR and branch limits
+  prConcurrentLimit: 20,
+  branchConcurrentLimit: 20,
+  labels: ['dependencies'],
+
+  // put by default dependency update all in one group
+  groupName: "config-no-service",
+
+  "assigneesFromCodeOwners": true,
+
   "packageRules": [
     {
-      "matchPaths": ["*"],
-      "ignorePaths": ["src/"],
-      "groupName": "config-no-service"
-    },
-    { 
-      "matchPaths": ["src/accountingservice"],
+      "matchFileNames": ["src/accountingservice/**"],
       "groupName": "accountingservice",
-      "assigneesFromCodeOwners": true
     },
-    { 
-      "matchPaths": ["src/adservice"],
+    {
+      "matchFileNames": ["src/adservice/**"],
       "groupName": "adservice",
-      "assigneesFromCodeOwners": true
     },
-    { 
-      "matchPaths": ["src/cartservice"],
+    {
+      "matchFileNames": ["src/cartservice/**"],
       "groupName": "cartservice",
-      "assigneesFromCodeOwners": true
     },
-    { 
-      "matchPaths": ["src/checkoutservice"],
+    {
+      "matchFileNames": ["src/checkoutservice/**"],
       "groupName": "checkoutservice",
-      "assigneesFromCodeOwners": true
     },
-    { 
-      "matchPaths": ["src/currencyservice"],
+    {
+      "matchFileNames": ["src/currencyservice/**"],
       "groupName": "currencyservice",
-      "assigneesFromCodeOwners": true
     },
-    { 
-      "matchPaths": ["src/emailservice"],
+    {
+      "matchFileNames": ["src/emailservice/**"],
       "groupName": "emailservice",
-      "assigneesFromCodeOwners": true
     },
-    { 
-      "matchPaths": ["src/featureflagservice"],
+    {
+      "matchFileNames": ["src/featureflagservice/**"],
       "groupName": "featureflagservice",
-      "assigneesFromCodeOwners": true
     },
-    { 
-      "matchPaths": ["src/frauddetectionservice"],
+    {
+      "matchFileNames": ["src/frauddetectionservice/**"],
       "groupName": "frauddetectionservice",
-      "assigneesFromCodeOwners": true
     },
-    { 
-      "matchPaths": ["src/frontend"],
+    {
+      "matchFileNames": ["src/frontend/**"],
       "groupName": "frontend",
-      "assigneesFromCodeOwners": true
     },
-    { 
-      "matchPaths": ["src/frontendproxy"],
+    {
+      "matchFileNames": ["src/frontendproxy/**"],
       "groupName": "frontendproxy",
-      "assigneesFromCodeOwners": true
     },
-    { 
-      "matchPaths": ["src/grafana"],
+    {
+      "matchFileNames": ["src/grafana/**"],
       "groupName": "grafana",
-      "assigneesFromCodeOwners": true
     },
-    { 
-      "matchPaths": ["src/kakfa"],
-      "groupName": "kakfa",
-      "assigneesFromCodeOwners": true
+    {
+      "matchFileNames": ["src/kafka/**"],
+      "groupName": "kafka",
     },
-    { 
-      "matchPaths": ["src/loadgenerator"],
+    {
+      "matchFileNames": ["src/loadgenerator/**"],
       "groupName": "loadgenerator",
-      "assigneesFromCodeOwners": true
     },
-    { 
-      "matchPaths": ["src/otelcollector"],
+    {
+      "matchFileNames": ["src/otelcollector/**"],
       "groupName": "otelcollector",
-      "assigneesFromCodeOwners": true
     },
-    { 
-      "matchPaths": ["src/paymentservice"],
+    {
+      "matchFileNames": ["src/paymentservice/**"],
       "groupName": "paymentservice",
-      "assigneesFromCodeOwners": true
     },
-    { 
-      "matchPaths": ["src/productcatalogservice"],
+    {
+      "matchFileNames": ["src/productcatalogservice/**"],
       "groupName": "productcatalogservice",
-      "assigneesFromCodeOwners": true
     },
-    { 
-      "matchPaths": ["src/prometheus"],
+    {
+      "matchFileNames": ["src/prometheus/**"],
       "groupName": "prometheus",
-      "assigneesFromCodeOwners": true
     },
-    { 
-      "matchPaths": ["src/quoteservice"],
+    {
+      "matchFileNames": ["src/quoteservice/**"],
       "groupName": "quoteservice",
-      "assigneesFromCodeOwners": true
     },
-    { 
-      "matchPaths": ["src/recommendationservice"],
+    {
+      "matchFileNames": ["src/recommendationservice/**"],
       "groupName": "recommendationservice",
-      "assigneesFromCodeOwners": true
     },
-    { 
-      "matchPaths": ["src/shippingservice"],
+    {
+      "matchFileNames": ["src/shippingservice/**"],
       "groupName": "shippingservice",
-      "assigneesFromCodeOwners": true
     },
     {
       // intentionally using Java 11 in some examples
