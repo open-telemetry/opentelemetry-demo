@@ -26,7 +26,7 @@ spec:
   name: Jaeger
   type: jaeger
   jaeger:
-    endpoint: jaeger:16685
+    endpoint: jaeger-query:16685
     tls:
       insecure: true
 ---

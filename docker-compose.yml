@@ -8,6 +8,9 @@ x-default-logging: &logging
     max-size: "5m"
     max-file: "2"
 
+volumes:
+  opensearch-data:
+
 networks:
   default:
     name: opentelemetry-demo
@@ -219,8 +222,8 @@ services:
           memory: 175M
     restart: unless-stopped
     ports:
-      - "${FEATURE_FLAG_SERVICE_PORT}"                                  # Feature Flag Service UI
-      - "${FEATURE_FLAG_GRPC_SERVICE_PORT}"                             # Feature Flag Service gRPC API
+      - "${FEATURE_FLAG_SERVICE_PORT}:${FEATURE_FLAG_SERVICE_PORT}" # Feature Flag Service UI
+      - "${FEATURE_FLAG_GRPC_SERVICE_PORT}" # Feature Flag Service gRPC API
     environment:
       - FEATURE_FLAG_SERVICE_PORT
       - FEATURE_FLAG_GRPC_SERVICE_PORT
@@ -277,7 +280,7 @@ services:
           memory: 200M
     restart: unless-stopped
     ports:
-      - "${FRONTEND_PORT}"
+      - "${FRONTEND_PORT}:${FRONTEND_PORT}"
     environment:
       - PORT=${FRONTEND_PORT}
       - FRONTEND_ADDR
@@ -316,47 +319,6 @@ services:
         condition: service_started
     logging: *logging
 
-  # Frontend Proxy (Envoy)
-  frontendproxy:
-    image: ${IMAGE_NAME}:${IMAGE_VERSION}-frontendproxy
-    container_name: frontend-proxy
-    build:
-      context: ./
-      dockerfile: src/frontendproxy/Dockerfile
-    deploy:
-      resources:
-        limits:
-          memory: 50M
-    ports:
-      - "${ENVOY_PORT}:${ENVOY_PORT}"
-      - 10000:10000
-    environment:
-      - FRONTEND_PORT
-      - FRONTEND_HOST
-      - FEATURE_FLAG_SERVICE_PORT
-      - FEATURE_FLAG_SERVICE_HOST
-      - LOCUST_WEB_HOST
-      - LOCUST_WEB_PORT
-      - GRAFANA_SERVICE_PORT
-      - GRAFANA_SERVICE_HOST
-      - JAEGER_SERVICE_PORT
-      - JAEGER_SERVICE_HOST
-      - OTEL_COLLECTOR_HOST
-      - OTEL_COLLECTOR_PORT_GRPC
-      - OTEL_COLLECTOR_PORT_HTTP
-      - ENVOY_PORT
-    depends_on:
-      frontend:
-        condition: service_started
-      featureflagservice:
-        condition: service_started
-      loadgenerator:
-        condition: service_started
-      jaeger:
-        condition: service_started
-      grafana:
-        condition: service_started
-
   # Load Generator
   loadgenerator:
     image: ${IMAGE_NAME}:${IMAGE_VERSION}-loadgenerator
@@ -372,7 +334,7 @@ services:
           memory: 120M
     restart: unless-stopped
     ports:
-      - "${LOCUST_WEB_PORT}"
+      - "${LOCUST_WEB_PORT}:${LOCUST_WEB_PORT}"
     environment:
       - LOCUST_WEB_PORT
       - LOCUST_USERS
@@ -461,6 +423,7 @@ services:
     ports:
       - "${QUOTE_SERVICE_PORT}"
     environment:
+      - FEATURE_FLAG_GRPC_SERVICE_ADDR
       - OTEL_EXPORTER_OTLP_ENDPOINT=http://${OTEL_COLLECTOR_HOST}:4318
       - OTEL_PHP_AUTOLOAD_ENABLED=true
       - QUOTE_SERVICE_PORT
@@ -506,6 +469,39 @@ services:
       otelcol:
         condition: service_started
     logging: *logging
+
+  # Frontend Nginx Proxy service
+  nginx:
+    image: nginx:latest
+    container_name: nginx
+    volumes:
+      - ./src/nginx-otel/default.conf:/etc/nginx/conf.d/default.conf
+    ports:
+      - 90:90
+    depends_on:
+      - frontend
+      - fluentbit
+      - otelcol
+      - loadgenerator
+    links:
+      - fluentbit
+    logging:
+      driver: "fluentd"
+      options:
+        fluentd-address: 127.0.0.1:24224
+        tag: nginx.access
+
+  # Fluent-bit logs shipper service
+  fluentbit:
+    container_name: fluentbit
+    image: fluent/fluent-bit:latest
+    volumes:
+      - ./src/fluent-bit:/fluent-bit/etc
+    ports:
+      - "24224:24224"
+      - "24224:24224/udp"
+    depends_on:
+      - opensearch
 
   # Shipping service
   shippingservice:
@@ -607,25 +603,80 @@ services:
   # ********************
   # Jaeger
   jaeger:
-    image: jaegertracing/all-in-one:1.51
+    image: jaegertracing/jaeger-collector:latest
     container_name: jaeger
     command:
-      - "--memory.max-traces=8000"
-      - "--query.base-path=/jaeger/ui"
-      - "--prometheus.server-url=http://${PROMETHEUS_ADDR}"
-      - "--prometheus.query.normalize-calls=true"
-      - "--prometheus.query.normalize-duration=true"
+      - "--metrics-backend=prometheus"
+      - "--es.server-urls=https://opensearch:9200"
+      - "--es.tls.enabled=true"
     deploy:
       resources:
         limits:
           memory: 300M
     restart: unless-stopped
     ports:
-      - "${JAEGER_SERVICE_PORT}"         # Jaeger UI
-      - "4317"                           # OTLP gRPC default port
+      - "${JAEGER_SERVICE_PORT}" # Jaeger UI
+      - "4317" # OTLP gRPC default port
+      - "14269:14269"
+      - "14268:14268"
+      - "14267:14267"
+      - "14250:14250"
+      - "9411:9411"
     environment:
+      - COLLECTOR_OTLP_ENABLED=true
       - METRICS_STORAGE_TYPE=prometheus
+      - SPAN_STORAGE_TYPE=opensearch
+      - ES_TAGS_AS_FIELDS_ALL=true
+      - ES_USERNAME=admin
+      - ES_PASSWORD=admin
+      - ES_TLS_SKIP_HOST_VERIFY=true
     logging: *logging
+    depends_on:
+      - opensearch
+
+  jaeger-query:
+    image: jaegertracing/jaeger-query:latest
+    container_name: jaeger-query
+    command:
+      - "--metrics-backend=prometheus"
+      - "--es.server-urls=https://opensearch-node1:9200"
+      - "--es.tls.enabled=true"
+    deploy:
+      resources:
+        limits:
+          memory: 300M
+    restart: unless-stopped
+    ports:
+      - 16685
+    environment:
+      - COLLECTOR_OTLP_ENABLED=true
+      - METRICS_STORAGE_TYPE=prometheus
+      - SPAN_STORAGE_TYPE=opensearch
+      - ES_TAGS_AS_FIELDS_ALL=true
+      - ES_USERNAME=admin
+      - ES_PASSWORD=admin
+      - ES_TLS_SKIP_HOST_VERIFY=true
+    depends_on:
+      - opensearch-node1
+      - opensearch-node2
+    logging: *logging
+
+  jaeger-agent:
+    image: jaegertracing/jaeger-agent:latest
+    container_name: jaeger-agent
+    hostname: jaeger-agent
+    command: ["--reporter.grpc.host-port=jaeger:14250"]
+    ports:
+      - "${GRAFANA_SERVICE_PORT}"
+      - "5775:5775/udp"
+      - "6831:6831/udp"
+      - "6832:6832/udp"
+      - "5778:5778"
+    restart: on-failure
+    environment:
+      - SPAN_STORAGE_TYPE=opensearch
+    depends_on:
+      - jaeger
 
   # Grafana
   grafana:
@@ -641,7 +692,7 @@ services:
       - ./src/grafana/grafana.ini:/etc/grafana/grafana.ini
       - ./src/grafana/provisioning/:/etc/grafana/provisioning/
     ports:
-      - "${GRAFANA_SERVICE_PORT}"
+      - "${GRAFANA_SERVICE_PORT}:${GRAFANA_SERVICE_PORT}"
     logging: *logging
 
   # OpenTelemetry Collector
@@ -658,10 +709,15 @@ services:
       - ./src/otelcollector/otelcol-config.yml:/etc/otelcol-config.yml
       - ./src/otelcollector/otelcol-config-extras.yml:/etc/otelcol-config-extras.yml
     ports:
-      - "4317"          # OTLP over gRPC receiver
-      - "4318"          # OTLP over HTTP receiver
+      - "4317" # OTLP over gRPC receiver
+      - "4318:4318" # OTLP over HTTP receiver
+      - "13133:13133" # health check port
+      - "9464" # Prometheus exporter
+      - "8888" # metrics endpoint
     depends_on:
-      - jaeger
+      - jaeger-agent
+      - jaeger-query
+      - data-prepper
     logging: *logging
     environment:
       - ENVOY_PORT
@@ -690,36 +746,61 @@ services:
       - "${PROMETHEUS_SERVICE_PORT}:${PROMETHEUS_SERVICE_PORT}"
     logging: *logging
 
+  # OpenSearch store - engine
   opensearch:
-    image: opensearchproject/opensearch:latest
+    image: opensearchstaging/opensearch:${OPENSEARCH_VERSION}
     container_name: opensearch
     environment:
-      - cluster.name=demo-cluster
-      - node.name=demo-node
+      - cluster.name=opensearch-cluster
+      - node.name=opensearch
+      - discovery.seed_hosts=opensearch
+      - cluster.initial_cluster_manager_nodes=opensearch
       - bootstrap.memory_lock=true
-      - discovery.type=single-node
       - "OPENSEARCH_JAVA_OPTS=-Xms512m -Xmx512m"
-      - "DISABLE_INSTALL_DEMO_CONFIG=true"
-      - "DISABLE_SECURITY_PLUGIN=true"
     ulimits:
       memlock:
         soft: -1
         hard: -1
       nofile:
-        soft: 65536
+        soft: 65536 # Maximum number of open files for the opensearch user - set to at least 65536
         hard: 65536
+    volumes:
+      - opensearch-data:/usr/share/opensearch/data # Creates volume called opensearch-data1 and mounts it to the container
     ports:
-      - "9200:9200"
+      - 9200:9200
+      - 9600:9600
     logging: *logging
+    expose:
+      - "9200"
+    healthcheck:
+      test: ["CMD", "curl", "-f", "https://localhost:9200/_cluster/health?wait_for_status=yellow"]
+      interval: 20s
+      timeout: 10s
+      retries: 10
 
-  dataprepper:
+  # OpenSearch store - dashboard
+  data-prepper:
     image: opensearchproject/data-prepper:latest
     volumes:
-      - ./src/opensearch/pipelines.yaml:/usr/share/data-prepper/pipelines/pipelines.yaml
-      - ./src/opensearch/data-prepper-config.yaml:/usr/share/data-prepper/config/data-prepper-config.yaml
+      - ./src/dataprepper/pipelines.yaml:/usr/share/data-prepper/pipelines/pipelines.yaml
+      - ./src/dataprepper/data-prepper-config.yaml:/usr/share/data-prepper/config/data-prepper-config.yaml
     ports:
       - "21892"
     logging: *logging
+
+  # OpenSearch store - dashboard
+  opensearch-dashboards:
+    image: opensearchproject/opensearch-dashboards:${OPENSEARCH_VERSION} # Make sure the version of opensearch-dashboards matches the version of opensearch installed on other nodes
+    container_name: opensearch-dashboards
+    ports:
+      - 5601:5601 # Map host port 5601 to container port 5601
+    expose:
+      - "5601" # Expose port 5601 for web access to OpenSearch Dashboards
+    environment:
+      OPENSEARCH_HOSTS: '["https://opensearch:9200"]' # Define the OpenSearch nodes that OpenSearch Dashboards will query
+    depends_on:
+      - opensearch
+      - prometheus
 
   # *****
   # Tests
@@ -855,7 +936,7 @@ services:
       otelcol:
         condition: service_started
     healthcheck:
-      test: [ "CMD", "wget", "--spider", "localhost:11633" ]
+      test: ["CMD", "wget", "--spider", "localhost:11633"]
       interval: 1s
       timeout: 3s
       retries: 60

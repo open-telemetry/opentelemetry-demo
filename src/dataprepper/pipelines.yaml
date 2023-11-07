@@ -7,7 +7,7 @@ demo-pipeline:
       ssl: false
   sink:
     - opensearch:
-        hosts: ["http://opensearch:9200"]
+        hosts: ["https://opensearch:9200"]
         insecure: true
         username: admin
         password: admin

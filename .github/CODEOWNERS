@@ -1,5 +1,2 @@
-# Code owners file.
-# This file controls who is tagged for review for any given pull request.
-
-# For anything not explicitly taken by someone else:
-* @open-telemetry/demo-approvers
+# OpenSearch-Project: This should match the owning team set up in https://github.com/orgs/opensearch-project/teams
+*   @pjfitzgibbons @ps48 @kavithacm @derek-ho @joshuali925 @dai-chen @YANG-DB @rupal-bq @mengweieric @vamsi-amazon @swiddis @penghuo @seankao-az

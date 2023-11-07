@@ -1,4 +1,28 @@
 # Copyright The OpenTelemetry Authors
 # SPDX-License-Identifier: Apache-2.0
 
-# do not delete this file
+
+global:
+  evaluation_interval: 30s
+  scrape_interval: 5s
+scrape_configs:
+- job_name: otel
+  honor_labels: true
+  static_configs:
+  - targets:
+    - 'otelcol:9464'
+- job_name: otel-collector
+  static_configs:
+  - targets:
+    - 'otelcol:8888'
+- job_name: opensearch
+  metrics_path: "/_prometheus/metrics"
+  static_configs:
+    - targets:
+        - opensearch:9200
+  scheme: https
+  basic_auth:
+    username: admin
+    password: admin
+  tls_config:
+    insecure_skip_verify: true
