@@ -634,33 +634,6 @@ services:
     depends_on:
       - opensearch
 
-  jaeger-query:
-    image: jaegertracing/jaeger-query:latest
-    container_name: jaeger-query
-    command:
-      - "--metrics-backend=prometheus"
-      - "--es.server-urls=https://opensearch-node1:9200"
-      - "--es.tls.enabled=true"
-    deploy:
-      resources:
-        limits:
-          memory: 300M
-    restart: unless-stopped
-    ports:
-      - 16685
-    environment:
-      - COLLECTOR_OTLP_ENABLED=true
-      - METRICS_STORAGE_TYPE=prometheus
-      - SPAN_STORAGE_TYPE=opensearch
-      - ES_TAGS_AS_FIELDS_ALL=true
-      - ES_USERNAME=admin
-      - ES_PASSWORD=admin
-      - ES_TLS_SKIP_HOST_VERIFY=true
-    depends_on:
-      - opensearch-node1
-      - opensearch-node2
-    logging: *logging
-
   jaeger-agent:
     image: jaegertracing/jaeger-agent:latest
     container_name: jaeger-agent
@@ -716,7 +689,6 @@ services:
       - "8888" # metrics endpoint
     depends_on:
       - jaeger-agent
-      - jaeger-query
       - data-prepper
     logging: *logging
     environment:
@@ -781,8 +753,9 @@ services:
   # OpenSearch store - dashboard
   data-prepper:
     image: opensearchproject/data-prepper:latest
+    container_name: dataprepper
     volumes:
-      - ./src/dataprepper/pipelines.yaml:/usr/share/data-prepper/pipelines/pipelines.yaml
+      - ./src/dataprepper/pipelines.yaml:/usr/share/data-prepper/pipelines/trace_analytics_no_ssl_2x.yml
       - ./src/dataprepper/data-prepper-config.yaml:/usr/share/data-prepper/config/data-prepper-config.yaml
     ports:
       - "21892"

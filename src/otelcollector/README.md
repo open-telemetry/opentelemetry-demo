@@ -87,7 +87,7 @@ After processing, the data is sent to the configured exporters:
 
 3. **spanmetrics:** This is likely a custom exporter defined as a connector in your configuration. It seems to be designed to create metrics from spans, but this is mostly conjecture based on the name.
 
-4. **otlp/2:** This exporter sends data to an endpoint configured as data-prepper:21890 over OTLP with TLS encryption in insecure mode.
+4. **otlp/logs:** This exporter sends data to an endpoint configured as dataprepper:21892 over OTLP with TLS encryption in insecure mode.
 
 ### Metrics
 **Metrics Pipeline**

@@ -22,6 +22,7 @@ exporters:
     endpoint: "dataprepper:21892"
     tls:
       insecure: true
+      insecure_skip_verify: true
   otlphttp/prometheus:
     endpoint: "http://prometheus:9090/api/v1/otlp"
     tls:
@@ -53,7 +54,7 @@ service:
     traces:
       receivers: [otlp]
       processors: [batch]
-      exporters: [otlp, debug, spanmetrics]
+      exporters: [otlp, debug, spanmetrics, otlp/logs]
     metrics:
       receivers: [otlp, spanmetrics]
       processors: [filter/ottl, transform, batch]
