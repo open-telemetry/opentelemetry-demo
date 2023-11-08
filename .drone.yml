@@ -14,12 +14,34 @@ trigger:
       - push
 
 steps:
+- name: adservice-docker
+  image: plugins/gcr
+  settings:
+    dockerfile: ./src/adservice/Dockerfile
+    registry: us.gcr.io
+    repo: kubernetes-dev/opentelemetry-demo-adservice
+    tags:
+      - latest
+      - ${DRONE_COMMIT_SHA:0:7}
+    json_key:
+      from_secret: gcr_credentials
 - name: checkoutservice-docker
   image: plugins/gcr
   settings:
     dockerfile: ./src/checkoutservice/Dockerfile
     registry: us.gcr.io
     repo: kubernetes-dev/opentelemetry-demo-checkoutservice
+    tags:
+      - latest
+      - ${DRONE_COMMIT_SHA:0:7}
+    json_key:
+      from_secret: gcr_credentials
+- name: frauddetectionservice-docker
+  image: plugins/gcr
+  settings:
+    dockerfile: ./src/frauddetectionservice/Dockerfile
+    registry: us.gcr.io
+    repo: kubernetes-dev/opentelemetry-demo-frauddetectionservice
     tags:
       - latest
       - ${DRONE_COMMIT_SHA:0:7}
@@ -78,6 +100,6 @@ get:
 
 ---
 kind: signature
-hmac: c72a8e93a37d947403ae03befdc51d71bb9ec0f5919e772c6c29a6f539ffdb35
+hmac: 0c235dbf3a239c315ce96a2d0ddf90a1123dbce344fbf81c1732d67c72d4de80
 
 ...

@@ -24,7 +24,8 @@ ARG version=1.31.0
 WORKDIR /usr/src/app/
 
 COPY --from=builder /usr/src/app/ ./
-ADD https://github.com/open-telemetry/opentelemetry-java-instrumentation/releases/download/v$version/opentelemetry-javaagent.jar /usr/src/app/opentelemetry-javaagent.jar
+# we ignore the version (which is from upstream) and use the latest version of the grafana distribution
+ADD https://github.com/grafana/grafana-opentelemetry-java/releases/latest/download/grafana-opentelemetry-java.jar /usr/src/app/opentelemetry-javaagent.jar
 ENV JAVA_TOOL_OPTIONS=-javaagent:/usr/src/app/opentelemetry-javaagent.jar
 
 EXPOSE ${AD_SERVICE_PORT}
