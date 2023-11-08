@@ -591,7 +591,7 @@ services:
   # ******************
   # Postgres used by Feature Flag service
   ffs_postgres:
-    image: postgres:14
+    image: postgres:16.0
     container_name: postgres
     user: postgres
     deploy:
@@ -645,7 +645,7 @@ services:
 
   # Redis used by Cart service
   redis-cart:
-    image: redis:alpine
+    image: redis:7.2-alpine
     container_name: redis-cart
     user: redis
     deploy:
@@ -665,15 +665,14 @@ services:
   # ********************
   # Jaeger
   jaeger:
-    image: jaegertracing/all-in-one:1.48.0
+    image: jaegertracing/all-in-one:1.51
     container_name: jaeger
     command:
-      - "--memory.max-traces"
-      - "10000"
-      - "--query.base-path"
-      - "/jaeger/ui"
-      - "--prometheus.server-url"
-      - "http://${PROMETHEUS_ADDR}"
+      - "--memory.max-traces=8000"
+      - "--query.base-path=/jaeger/ui"
+      - "--prometheus.server-url=http://${PROMETHEUS_ADDR}"
+      - "--prometheus.query.normalize-calls=true"
+      - "--prometheus.query.normalize-duration=true"
     deploy:
       resources:
         limits:
@@ -683,18 +682,19 @@ services:
       - "${JAEGER_SERVICE_PORT}"         # Jaeger UI
       - "4317"                           # OTLP gRPC default port
     environment:
-      - COLLECTOR_OTLP_ENABLED=true
       - METRICS_STORAGE_TYPE=prometheus
     logging: *logging
 
   # Grafana
   grafana:
-    image: grafana/grafana:10.1.0
+    image: grafana/grafana:10.2.0
     container_name: grafana
     deploy:
       resources:
         limits:
           memory: 100M
+    environment:
+      - "GF_INSTALL_PLUGINS=grafana-opensearch-datasource"
     volumes:
       - ./src/grafana/grafana.ini:/etc/grafana/grafana.ini
       - ./src/grafana/provisioning/:/etc/grafana/provisioning/
@@ -704,17 +704,16 @@ services:
 
   # OpenTelemetry Collector
   otelcol:
-    image: otel/opentelemetry-collector-contrib:0.84.0
+    image: otel/opentelemetry-collector-contrib:0.88.0
     container_name: otel-col
     deploy:
       resources:
         limits:
           memory: 125M
     restart: unless-stopped
-    command: [ "--config=/etc/otelcol-config.yml", "--config=/etc/otelcol-observability.yml", "--config=/etc/otelcol-config-extras.yml" ]
+    command: [ "--config=/etc/otelcol-config.yml", "--config=/etc/otelcol-config-extras.yml" ]
     volumes:
       - ./src/otelcollector/otelcol-config.yml:/etc/otelcol-config.yml
-      - ./src/otelcollector/otelcol-observability.yml:/etc/otelcol-observability.yml
       - ./src/otelcollector/otelcol-config-extras.yml:/etc/otelcol-config-extras.yml
     ports:
       # - "4317"          # OTLP over gRPC receiver
@@ -729,13 +728,14 @@ services:
       - HTTPS_PROXY=${https_proxy:-}
       - NO_PROXY=jaeger,${no_proxy:-}
       - INSTANA_SERVICE_NAME=otelcol
+      - ENVOY_PORT
     depends_on:
       - jaeger
     logging: *logging
 
   # Prometheus
   prometheus:
-    image: quay.io/prometheus/prometheus:v2.46.0
+    image: quay.io/prometheus/prometheus:v2.47.2
     container_name: prometheus
     command:
       - --web.console.templates=/etc/prometheus/consoles
@@ -746,6 +746,7 @@ services:
       - --web.enable-lifecycle
       - --web.route-prefix=/
       - --enable-feature=exemplar-storage
+      - --enable-feature=otlp-write-receiver
     volumes:
       - ./src/prometheus/prometheus-config.yaml:/etc/prometheus/prometheus-config.yaml
     deploy:
@@ -754,6 +755,37 @@ services:
           memory: 300M
     ports:
       - "${PROMETHEUS_SERVICE_PORT}:${PROMETHEUS_SERVICE_PORT}"
+    logging: *logging
+
+  opensearch:
+    image: opensearchproject/opensearch:latest
+    container_name: opensearch
+    environment:
+      - cluster.name=demo-cluster
+      - node.name=demo-node
+      - bootstrap.memory_lock=true
+      - discovery.type=single-node
+      - "OPENSEARCH_JAVA_OPTS=-Xms512m -Xmx512m"
+      - "DISABLE_INSTALL_DEMO_CONFIG=true"
+      - "DISABLE_SECURITY_PLUGIN=true"
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+      nofile:
+        soft: 65536
+        hard: 65536
+    ports:
+      - "9200:9200"
+    logging: *logging
+
+  dataprepper:
+    image: opensearchproject/data-prepper:latest
+    volumes:
+      - ./src/opensearch/pipelines.yaml:/usr/share/data-prepper/pipelines/pipelines.yaml
+      - ./src/opensearch/data-prepper-config.yaml:/usr/share/data-prepper/config/data-prepper-config.yaml
+    ports:
+      - "21892"
     logging: *logging
 
   # *****
@@ -832,6 +864,9 @@ services:
       - KAFKA_SERVICE_ADDR
     extra_hosts:
       - "host.docker.internal:host-gateway"
+    volumes:
+      - ./test/tracetesting:/app/test/tracetesting
+      - ./pb:/app/pb
     depends_on:
       tracetest-server:
         condition: service_healthy
@@ -864,7 +899,7 @@ services:
         condition: service_started
 
   tracetest-server:
-    image: kubeshop/tracetest:latest
+    image: kubeshop/tracetest:v0.14.5
     platform: linux/amd64
     container_name: tracetest-server
     profiles:
@@ -893,7 +928,7 @@ services:
       retries: 60
 
   tracetest-postgres:
-    image: postgres:14
+    image: postgres:16.0
     container_name: tracetest-postgres
     profiles:
       - tests

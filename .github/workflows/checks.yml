@@ -14,7 +14,7 @@ jobs:
     uses: ./.github/workflows/build-images.yml
     with:
       push: false
-      version: dev
+      version: 'dev'
 
   markdownlint:
     runs-on: ubuntu-latest

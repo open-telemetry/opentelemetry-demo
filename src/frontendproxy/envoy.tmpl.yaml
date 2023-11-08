@@ -28,6 +28,7 @@ static_resources:
 
                 # Instana tracing
                 tracing:
+                  spawn_upstream_span: true
                   provider:
                     name: envoy.tracers.dynamic_ot
                     typed_config:
@@ -59,6 +60,7 @@ static_resources:
                   - name: envoy.filters.http.router
                     typed_config:
                       "@type": type.googleapis.com/envoy.extensions.filters.http.router.v3.Router
+                      start_child_span: true
 
   clusters:
     - name: opentelemetry_collector_grpc

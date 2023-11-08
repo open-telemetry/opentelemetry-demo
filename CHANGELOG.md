@@ -7,6 +7,11 @@ release.
 
 ## Unreleased
 
+* update PHP quoteservice to use 1.0.0
+  ([#1236](https://github.com/open-telemetry/opentelemetry-demo/pull/1236))
+
+## 1.6.0
+
 * update PHP quoteservice to use RC1
   ([#1114](https://github.com/open-telemetry/opentelemetry-demo/pull/1114))
 * [cartservice] update .NET package to 1.6.0 release
@@ -17,6 +22,30 @@ release.
   ([#1121](https://github.com/open-telemetry/opentelemetry-demo/pull/1121))
 * [kafka frauddetection adservice] update java agent versions
   ([#1132](https://github.com/open-telemetry/opentelemetry-demo/pull/1132))
+* update dependent components to latest versions
+  ([#1146](https://github.com/open-telemetry/opentelemetry-demo/pull/1146))
+* [prometheus] Enabled support for the OTLP write receiver
+  ([#1149](https://github.com/open-telemetry/opentelemetry-demo/pull/1149))
+* [grafana] fix dashboard metric names and update settings
+  ([#1150](https://github.com/open-telemetry/opentelemetry-demo/pull/1150))
+* [otelcol] add httpcheck receiver for synthetic check of frontendproxy
+  ([#1162](https://github.com/open-telemetry/opentelemetry-demo/pull/1162))
+* pinning trace-based test tool version and adding files as volumes
+  ([#1182](https://github.com/open-telemetry/opentelemetry-demo/pull/1182))
+* [jaeger] fix Jager SPM / Monitor support
+  ([#1174](https://github.com/open-telemetry/opentelemetry-demo/pull/1174))
+* [otelcol] merge configuration files for base and observability configs
+  ([#1173](https://github.com/open-telemetry/opentelemetry-demo/pull/1173))
+* [frontendproxy] Fix service graph by enabling client spans in envoy proxy
+  ([#1180](https://github.com/open-telemetry/opentelemetry-demo/pull/1180))
+* [java-services] Update java, gradle and OTel agent versions
+  ([#1183](https://github.com/open-telemetry/opentelemetry-demo/pull/1183))
+* [opensearch] Add OpenSearch as an OTLP Logging backend
+  ([#1151](https://github.com/open-telemetry/opentelemetry-demo/pull/1151))
+* [opensearch] Add Grafana dashboard panels for OpenSearch log data
+  ([#1193](https://github.com/open-telemetry/opentelemetry-demo/pull/1193))
+* [go-sdk] Workaround: disable gRPC metrics in Go services
+  ([#1205](https://github.com/open-telemetry/opentelemetry-demo/pull/1205))
 
 ## 1.5.0
 
