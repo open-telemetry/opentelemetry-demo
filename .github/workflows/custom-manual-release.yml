@@ -11,7 +11,7 @@ jobs:
 
     env:
       # RELEASE_VERSION: "${{ github.event.release.tag_name }}"
-      RELEASE_VERSION: "1.5.0"
+      RELEASE_VERSION: "1.6.0"
       DOCKERHUB_REPO: "styblope/otel-demo"
       # GHCR_REPO: "styblope/otel-emo"
 
