@@ -832,7 +832,7 @@ services:
         condition: service_started
 
   tracetest-server:
-    image: kubeshop/tracetest:v0.14.5
+    image: kubeshop/tracetest:${TRACETEST_IMAGE_VERSION}
     platform: linux/amd64
     container_name: tracetest-server
     profiles:
