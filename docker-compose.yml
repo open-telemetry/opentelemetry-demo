@@ -716,13 +716,8 @@ services:
       - ./src/otelcollector/otelcol-config.yml:/etc/otelcol-config.yml
       - ./src/otelcollector/otelcol-config-extras.yml:/etc/otelcol-config-extras.yml
     ports:
-      # - "4317"          # OTLP over gRPC receiver
-      - "44317:4317"          # OTLP over gRPC receiver
-      # - "4318:4318"     # OTLP over HTTP receiver
-      # Do not export port 4318 as it would collide with Instana's http/grpc port
+      - "4317"          # OTLP over gRPC receiver
       - "4318"     # OTLP over HTTP receiver
-      - "9464"          # Prometheus exporter
-      - "8888"          # metrics endpoint
     environment:
       - HTTP_PROXY=${http_proxy:-}
       - HTTPS_PROXY=${https_proxy:-}
