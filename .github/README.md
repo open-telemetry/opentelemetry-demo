@@ -36,8 +36,11 @@ The following guide describes how to setup the OpenTelemetry demo with Elastic O
    # switch to the kubernetes/elastic-helm directory
    cd kubernetes/elastic-helm
 
-   # add the open-telemetry Helm repostiroy
+   # !(when running it for the first time) add the open-telemetry Helm repostiroy
    helm repo add open-telemetry https://open-telemetry.github.io/opentelemetry-helm-charts
+
+   # !(when an older helm open-telemetry repo exists) update the open-telemetry helm repo
+   helm repo update open-telemetry
 
    # deploy the demo through helm install
    helm install -f values.yaml my-otel-demo open-telemetry/opentelemetry-demo
