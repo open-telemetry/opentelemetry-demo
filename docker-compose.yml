@@ -832,11 +832,12 @@ services:
         condition: service_started
 
   tracetest-server:
-    image: kubeshop/tracetest:v0.14.5
+    image: kubeshop/tracetest:${TRACETEST_IMAGE_VERSION}
     platform: linux/amd64
     container_name: tracetest-server
     profiles:
       - tests
+      - odd          # Observabilty-Driven Development (ODD)
     volumes:
       - type: bind
         source: ./test/tracetesting/tracetest-config.yaml
@@ -865,6 +866,7 @@ services:
     container_name: tracetest-postgres
     profiles:
       - tests
+      - odd          # Observabilty-Driven Development (ODD)
     environment:
       POSTGRES_PASSWORD: postgres
       POSTGRES_USER: postgres
