@@ -9,6 +9,8 @@ release.
 
 * update PHP quoteservice to use 1.0.0
   ([#1236](https://github.com/open-telemetry/opentelemetry-demo/pull/1236))
+* [cartservice] Add .NET memory, CPU, and thread metrics
+  ([#1265](https://github.com/open-telemetry/opentelemetry-demo/pull/1265))
 
 ## 1.6.0
 
