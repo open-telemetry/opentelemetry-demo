@@ -18,8 +18,10 @@ ARG version=1.31.0
 WORKDIR /usr/src/app/
 
 COPY --from=builder /usr/src/app/build/libs/frauddetectionservice-1.0-all.jar ./
-# we ignore the version (which is from upstream) and use the latest version of the grafana distribution
+# use a fixed version
+# ADD https://github.com/grafana/grafana-opentelemetry-java/releases/download/v$version/grafana-opentelemetry-java.jar /usr/src/app/opentelemetry-javaagent.jar
+# use the latest version
 ADD https://github.com/grafana/grafana-opentelemetry-java/releases/latest/download/grafana-opentelemetry-java.jar /usr/src/app/opentelemetry-javaagent.jar
-ENV JAVA_TOOL_OPTIONS=-javaagent:/app/opentelemetry-javaagent.jar
+ENV JAVA_TOOL_OPTIONS=-javaagent:/usr/src/app/opentelemetry-javaagent.jar
 
 ENTRYPOINT [ "java", "-jar", "frauddetectionservice-1.0-all.jar" ]
