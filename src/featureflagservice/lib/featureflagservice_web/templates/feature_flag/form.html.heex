@@ -30,7 +30,8 @@
   <%= error_tag f, :description %>
 
   <%= label f, :enabled %>
-  <%= text_input f, :enabled  %>
+  <%= number_input f, :enabled, min: 0, max: 1, step: 0.1, "aria-describedby": "enabled_help_text" %>
+  <p id="enabled_help_text">A value between 0.0 and 1.0. 0.0 is always disabled, 1.0 is always enabled, and all values between set a percentage chance on each request.</p>
   <%= error_tag f, :enabled %>
 
   <%= submit "Save" %>
