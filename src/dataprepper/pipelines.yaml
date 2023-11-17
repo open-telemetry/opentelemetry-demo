@@ -4,7 +4,10 @@
 demo-pipeline:
   source:
     otel_logs_source:
+      port: 21891
       ssl: false
+      authentication:
+        unauthenticated:
   sink:
     - opensearch:
         hosts: ["https://opensearch:9200"]

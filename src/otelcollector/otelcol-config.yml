@@ -1,7 +1,6 @@
 # Copyright The OpenTelemetry Authors
 # SPDX-License-Identifier: Apache-2.0
 
-
 receivers:
   otlp:
     protocols:
@@ -18,8 +17,13 @@ exporters:
     endpoint: "jaeger:4317"
     tls:
       insecure: true
+  otlp/traces:
+    endpoint: "data-prepper:21890"
+    tls:
+      insecure: true
+      insecure_skip_verify: true
   otlp/logs:
-    endpoint: "dataprepper:21892"
+    endpoint: "data-prepper:21891"
     tls:
       insecure: true
       insecure_skip_verify: true
@@ -54,7 +58,7 @@ service:
     traces:
       receivers: [otlp]
       processors: [batch]
-      exporters: [otlp, debug, spanmetrics, otlp/logs]
+      exporters: [otlp, debug, spanmetrics, otlp/traces]
     metrics:
       receivers: [otlp, spanmetrics]
       processors: [filter/ottl, transform, batch]

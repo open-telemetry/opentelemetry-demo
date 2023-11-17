@@ -1,7 +1,7 @@
 # Copyright The OpenTelemetry Authors
 # SPDX-License-Identifier: Apache-2.0
 
-version: '3.9'
+version: "3.9"
 x-default-logging: &logging
   driver: "json-file"
   options:
@@ -175,7 +175,7 @@ services:
     environment:
       - CURRENCY_SERVICE_PORT
       - OTEL_EXPORTER_OTLP_ENDPOINT
-      - OTEL_RESOURCE_ATTRIBUTES=${OTEL_RESOURCE_ATTRIBUTES},service.name=currencyservice   # The C++ SDK does not support OTEL_SERVICE_NAME
+      - OTEL_RESOURCE_ATTRIBUTES=${OTEL_RESOURCE_ATTRIBUTES},service.name=currencyservice # The C++ SDK does not support OTEL_SERVICE_NAME
     depends_on:
       otelcol:
         condition: service_started
@@ -232,7 +232,15 @@ services:
       - OTEL_SERVICE_NAME=featureflagservice
       - DATABASE_URL=ecto://ffs:ffs@ffs_postgres:5432/ffs
     healthcheck:
-      test: ["CMD", "curl", "-H", "baggage: synthetic_request=true", "-f", "http://localhost:${FEATURE_FLAG_SERVICE_PORT}"]
+      test:
+        [
+          "CMD",
+          "curl",
+          "-H",
+          "baggage: synthetic_request=true",
+          "-f",
+          "http://localhost:${FEATURE_FLAG_SERVICE_PORT}",
+        ]
     depends_on:
       ffs_postgres:
         condition: service_healthy
@@ -447,7 +455,7 @@ services:
     deploy:
       resources:
         limits:
-          memory: 500M               # This is high to enable supporting the recommendationCache feature flag use case
+          memory: 500M # This is high to enable supporting the recommendationCache feature flag use case
     restart: unless-stopped
     ports:
       - "${RECOMMENDATION_SERVICE_PORT}"
@@ -597,7 +605,6 @@ services:
       - "${REDIS_PORT}"
     logging: *logging
 
-
   # ********************
   # Telemetry Components
   # ********************
@@ -677,7 +684,11 @@ services:
         limits:
           memory: 125M
     restart: unless-stopped
-    command: [ "--config=/etc/otelcol-config.yml", "--config=/etc/otelcol-config-extras.yml" ]
+    command:
+      [
+        "--config=/etc/otelcol-config.yml",
+        "--config=/etc/otelcol-config-extras.yml",
+      ]
     volumes:
       - ./src/otelcollector/otelcol-config.yml:/etc/otelcol-config.yml
       - ./src/otelcollector/otelcol-config-extras.yml:/etc/otelcol-config-extras.yml
@@ -745,7 +756,13 @@ services:
     expose:
       - "9200"
     healthcheck:
-      test: ["CMD", "curl", "-f", "https://localhost:9200/_cluster/health?wait_for_status=yellow"]
+      test:
+        [
+          "CMD",
+          "curl",
+          "-f",
+          "https://localhost:9200/_cluster/health?wait_for_status=yellow",
+        ]
       interval: 20s
       timeout: 10s
       retries: 10
@@ -755,11 +772,19 @@ services:
     image: opensearchproject/data-prepper:latest
     container_name: dataprepper
     volumes:
-      - ./src/dataprepper/pipelines.yaml:/usr/share/data-prepper/pipelines/trace_analytics_no_ssl_2x.yml
+      - /data/service-map/
+      - ./src/dataprepper/trace_analytics_no_ssl_2x.yml:/usr/share/data-prepper/pipelines/trace_analytics_no_ssl_2x.yml
+      - ./src/dataprepper/pipelines.yaml:/usr/share/data-prepper/pipelines/pipelines.yaml
       - ./src/dataprepper/data-prepper-config.yaml:/usr/share/data-prepper/config/data-prepper-config.yaml
     ports:
-      - "21892"
+      - "21890:21890"
+      - "21891:21891"
+    expose:
+      - "21890"
+      - "21891"
     logging: *logging
+    depends_on:
+      - opensearch
 
   # OpenSearch store - dashboard
   opensearch-dashboards:
