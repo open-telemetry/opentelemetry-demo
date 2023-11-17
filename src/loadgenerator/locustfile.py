@@ -156,8 +156,9 @@ if browser_traffic_enabled:
             try:
                 async with event(self, "Load up Astronomy Shop home page"):
                     await page.goto("/")
-                async with event(self, "Click on a button"):
+                async with event(self, "Click on Go Shopping button"):
                     async with page.expect_navigation(wait_until="domcontentloaded"):
                         await page.click('button:has-text("Go Shopping")')
             except:
                 pass
+
