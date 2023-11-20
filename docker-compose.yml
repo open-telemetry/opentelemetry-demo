@@ -232,15 +232,7 @@ services:
       - OTEL_SERVICE_NAME=featureflagservice
       - DATABASE_URL=ecto://ffs:ffs@ffs_postgres:5432/ffs
     healthcheck:
-      test:
-        [
-          "CMD",
-          "curl",
-          "-H",
-          "baggage: synthetic_request=true",
-          "-f",
-          "http://localhost:${FEATURE_FLAG_SERVICE_PORT}",
-        ]
+      test: ["CMD", "curl", "-H", "baggage: synthetic_request=true", "-f", "http://localhost:${FEATURE_FLAG_SERVICE_PORT}"]
     depends_on:
       ffs_postgres:
         condition: service_healthy
@@ -455,7 +447,7 @@ services:
     deploy:
       resources:
         limits:
-          memory: 500M # This is high to enable supporting the recommendationCache feature flag use case
+          memory: 500M               # This is high to enable supporting the recommendationCache feature flag use case
     restart: unless-stopped
     ports:
       - "${RECOMMENDATION_SERVICE_PORT}"
@@ -773,7 +765,6 @@ services:
     container_name: dataprepper
     volumes:
       - /data/service-map/
-      - ./src/dataprepper/trace_analytics_no_ssl_2x.yml:/usr/share/data-prepper/pipelines/trace_analytics_no_ssl_2x.yml
       - ./src/dataprepper/pipelines.yaml:/usr/share/data-prepper/pipelines/pipelines.yaml
       - ./src/dataprepper/data-prepper-config.yaml:/usr/share/data-prepper/config/data-prepper-config.yaml
     ports:
