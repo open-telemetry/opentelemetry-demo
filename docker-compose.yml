@@ -770,9 +770,11 @@ services:
     ports:
       - "21890:21890"
       - "21891:21891"
+      - "21892:21892"
     expose:
       - "21890"
       - "21891"
+      - "21892"
     logging: *logging
     depends_on:
       - opensearch

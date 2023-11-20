@@ -1,20 +1,23 @@
 # Copyright The OpenTelemetry Authors
 # SPDX-License-Identifier: Apache-2.0
 
-demo-pipeline:
+otel-logs-pipeline:
+  workers: 5
+  delay: 10
   source:
     otel_logs_source:
-      port: 21891
       ssl: false
-      authentication:
-        unauthenticated:
+  buffer:
+    bounded_blocking:
   sink:
     - opensearch:
         hosts: ["https://opensearch:9200"]
+        username: "admin"
+        password: "admin"
         insecure: true
-        username: admin
-        password: admin
-        index: otel
+        index_type: custom
+        index: otel-events-%{yyyy.MM.dd}
+        bulk_size: 4
 
 entry-pipeline:
   delay: "100"
@@ -53,3 +56,29 @@ service-map-pipeline:
         username: "admin"
         password: "admin"
         index_type: trace-analytics-service-map
+otel-metrics-pipeline:
+  workers: 8
+  delay: 3000
+  source:
+    otel_metrics_source:
+      health_check_service: true
+      ssl: false
+  buffer:
+    bounded_blocking:
+      buffer_size: 1024 # max number of records the buffer accepts
+      batch_size: 1024 # max number of records the buffer drains after each read
+  processor:
+    - otel_metrics:
+        calculate_histogram_buckets: true
+        calculate_exponential_histogram_buckets: true
+        exponential_histogram_max_allowed_scale: 10
+        flatten_attributes: false
+  sink:
+    - opensearch:
+        hosts: ["https://opensearch:9200"]
+        username: "admin"
+        password: "admin"
+        insecure: true
+        index_type: custom
+        index: otel-metrics-%{yyyy.MM.dd}
+        bulk_size: 4

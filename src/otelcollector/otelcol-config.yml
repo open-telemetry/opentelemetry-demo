@@ -22,8 +22,13 @@ exporters:
     tls:
       insecure: true
       insecure_skip_verify: true
-  otlp/logs:
+  otlp/data-prepper:
     endpoint: "data-prepper:21891"
+    tls:
+      insecure: true
+      insecure_skip_verify: true
+  otlp/logs:
+    endpoint: "data-prepper:21892"
     tls:
       insecure: true
       insecure_skip_verify: true
@@ -62,7 +67,7 @@ service:
     metrics:
       receivers: [otlp, spanmetrics]
       processors: [filter/ottl, transform, batch]
-      exporters: [otlphttp/prometheus, debug]
+      exporters: [otlphttp/prometheus, otlp/data-prepper, debug]
     logs:
       receivers: [otlp]
       processors: [batch]
