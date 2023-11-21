@@ -7,6 +7,8 @@ release.
 
 ## Unreleased
 
+* add env var for pinning trace-based test tool version
+  ([#1239](https://github.com/open-telemetry/opentelemetry-demo/pull/1239))
 * Add ability to do probabilistic A/B testing with feature flags
   ([#1237](https://github.com/open-telemetry/opentelemetry-demo/pull/1237))
 * update PHP quoteservice to use 1.0.0
