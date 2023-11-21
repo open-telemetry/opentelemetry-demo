@@ -30,6 +30,9 @@
   <%= error_tag f, :description %>
 
   <%= label f, :enabled %>
+  <div style="font-size:smaller; margin:-5px 0 3px 0">
+    0 = false. 1 = true. Values between 0 and 1 are treated as a random probability.
+  </div>
   <%= text_input f, :enabled  %>
   <%= error_tag f, :enabled %>
 
