@@ -111,10 +111,13 @@ oc create route edge my-otel-demo --service my-otel-demo-frontendproxy
 
 ## Build the demo images from source
 
-Before building the project you need to export your Instana instance `INSTANA_AGENT_KEY` and `INSTANA_DOWNLOAD_KEY` values within the shell or, alternatively, if you have already configured your agent `.env` file run:
+This step only applies if you make custom changes in the demo source code and you need to re-build the docker images locally.
+
+Before building the project, you first need to export your Instana instance `INSTANA_AGENT_KEY` and `INSTANA_DOWNLOAD_KEY` values to your shell environment. You can use the values from the previously configured agent's `.env` file and export them by running:
 ```sh
-export $(cat ./instana/agent/.env | xargs)`
-# don't mind the errors
+set -a
+. ./instana/agent/.env
+set +a
 ```
 
 Build the demo:
