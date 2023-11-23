@@ -1,4 +1,28 @@
 opentelemetry-collector:
+# Uncomment these lines to enable k8s infra monitoring.
+# Note that only node level metrics will be collected since cluster level metrics
+# require "deployment" mode
+#  mode: "daemonset"
+#  presets:
+#    kubernetesAttributes:
+#      enabled: true
+#    kubeletMetrics:
+#      enabled: true
+#    hostMetrics:
+#      enabled: true
+#    logsCollection:
+#      enabled: true
+#      includeCollectorLogs: false
+#      storeCheckpoints: true
+#
+#  Uncomment these lines to enable k8s cluster level metrics.
+#  At the moment it cannot be used along with the node level metrics from above.
+#  mode: "deployment"
+#  presets:
+#    kubernetesAttributes:
+#      enabled: true
+#    clusterMetrics:
+#      enabled: true
   extraEnvs:
     - name: ELASTIC_APM_ENDPOINT
       valueFrom:
