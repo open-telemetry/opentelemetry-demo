@@ -13,6 +13,8 @@ release.
   ([#1239](https://github.com/open-telemetry/opentelemetry-demo/pull/1239))
 * [cartservice] Add .NET memory, CPU, and thread metrics
   ([#1265](https://github.com/open-telemetry/opentelemetry-demo/pull/1265))
+* [cartservice] update .NET to .NET 8.0
+  ([#1272](https://github.com/open-telemetry/opentelemetry-demo/pull/1272))
 * enable browser traffic in loadgenerator using playwright
   ([#1266](https://github.com/open-telemetry/opentelemetry-demo/pull/1266))
 * update loadgenerator dependencies and the base image
