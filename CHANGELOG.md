@@ -7,6 +7,8 @@ release.
 
 ## Unreleased
 
+* [currencyservice]: update opentelemetry-cpp to 1.12.0
+  ([#1275](https://github.com/open-telemetry/opentelemetry-demo/pull/1275))
 * add env var for pinning trace-based test tool version
   ([#1239](https://github.com/open-telemetry/opentelemetry-demo/pull/1239))
 * update PHP quoteservice to use 1.0.0
