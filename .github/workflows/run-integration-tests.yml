@@ -4,7 +4,7 @@ name: Integration Tests
 
 on:
   workflow_run:
-    workflows: ["Checks"]
+    workflows: ["build_images"]
     types:
       - completed
 
