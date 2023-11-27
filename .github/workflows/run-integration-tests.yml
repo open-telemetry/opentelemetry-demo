@@ -3,15 +3,15 @@
 name: Integration Tests
 
 on:
-  workflow_run:
-    workflows: ["build_images"]
-    types:
-      - completed
+  push:
+    paths:
+      - 'src/**'
+      - 'test/**'
+  workflow_call:
 
 jobs:
   build_runner:
     runs-on: ubuntu-latest
-    if: ${{ github.event.workflow_run.conclusion == 'success' }}
     steps:
       - name: metal-runner-action
         uses: equinix-labs/metal-action-runner@v0.1.1
