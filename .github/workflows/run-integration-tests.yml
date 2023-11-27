@@ -17,7 +17,7 @@ jobs:
       - name: metal-runner-action
         uses: equinix-labs/metal-action-runner@v0.1.1
         with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
+          github_token: ${{ secrets.CI_GH_TOKEN }}
           metal_auth_token: ${{ secrets.METAL_AUTH_TOKEN }}
           metal_project_id: ${{ secrets.METAL_PROJECT_ID }}
           metro: "da"
