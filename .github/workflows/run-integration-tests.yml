@@ -36,7 +36,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: metal-sweeper-action
-        uses: equinix-labs/metal-action-sweeper@v0.6.0
+        uses: equinix-labs/metal-sweeper-action@v0.6.1
         with:
           authToken: ${{ secrets.METAL_AUTH_TOKEN }}
           projectID: ${{ secrets.METAL_PROJECT_ID }}
