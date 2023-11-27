@@ -7,6 +7,8 @@ release.
 
 ## Unreleased
 
+* update loadgenerator dependencies and the base image
+  ([#1274](https://github.com/open-telemetry/opentelemetry-demo/pull/1274))
 * add env var for pinning trace-based test tool version
   ([#1239](https://github.com/open-telemetry/opentelemetry-demo/pull/1239))
 * update PHP quoteservice to use 1.0.0
