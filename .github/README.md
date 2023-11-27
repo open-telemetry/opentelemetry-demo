@@ -46,6 +46,62 @@ The following guide describes how to setup the OpenTelemetry demo with Elastic O
    helm install -f values.yaml my-otel-demo open-telemetry/opentelemetry-demo
    ```
 
+#### Kubernetes monitoring
+
+##### Kubernetes infrastructure monitoring
+
+In `opentelemetry-collector` section uncomment the following to enable the k8s node level monitoring.
+This will enable metrics' collection on node level as well as logs collection from Pods.
+```yml
+mode: "daemonset"
+presets:
+  kubernetesAttributes:
+    enabled: true
+  kubeletMetrics:
+    enabled: true
+  hostMetrics:
+    enabled: true
+  logsCollection:
+    enabled: true
+    includeCollectorLogs: false
+    storeCheckpoints: true
+```
+
+##### Kubernetes Pod autodiscovery
+
+Under `config` section enable the `k8s_observer` with the following:
+
+```yml
+extensions:
+  k8s_observer:
+    auth_type: serviceAccount
+    node: ${env:K8S_NODE_NAME}
+    observe_pods: true
+```
+
+Then under `receivers` section enable the Redis receiver based on an autodiscovery rule:
+
+```yml
+receiver_creator:
+  watch_observers: [ k8s_observer ]
+  receivers:
+    redis:
+      rule: type == "port" && pod.name matches "redis"
+      config:
+        collection_interval: 2s
+```
+
+Under `service` section add the `extensions`:
+
+```yml
+extensions: [k8s_observer]
+```
+
+and register the `receiver_creator` in the `metrics` `receivers` list:
+```yml
+receivers: [otlp, receiver_creator]
+```
+
 ## Explore and analyze the data With Elastic
 
 ### Service map
