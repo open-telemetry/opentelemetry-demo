@@ -20,6 +20,7 @@ jobs:
     needs: build_images
     if: ${{ needs.build_images.result == 'success' }}
     uses: ./.github/workflows/run-integration-tests.yml
+    secrets: inherit
 
   markdownlint:
     runs-on: ubuntu-latest
