@@ -1,3 +1,5 @@
+# Copyright The OpenTelemetry Authors
+# SPDX-License-Identifier: Apache-2.0
 name: Integration Tests
 
 on:
@@ -11,27 +13,24 @@ jobs:
     runs-on: ubuntu-latest
     if: ${{ github.event.workflow_run.conclusion == 'success' }}
     steps:
-    - name: metal-runner-action
-      uses: equinix-labs/metal-action-runner@v0.1.1
-      with:
-        github_token: ${{ secrets.GITHUB_TOKEN }}
-        metal_auth_token: ${{ secrets.METAL_AUTH_TOKEN }}
-        metal_project_id: ${{ secrets.METAL_PROJECT_ID }}
-        metro: "da"
-        plan: "c3.small.x86"
-        os: "ubuntu_20_04"
-  
+      - name: metal-runner-action
+        uses: equinix-labs/metal-action-runner@v0.1.1
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          metal_auth_token: ${{ secrets.METAL_AUTH_TOKEN }}
+          metal_project_id: ${{ secrets.METAL_PROJECT_ID }}
+          metro: "da"
+          plan: "c3.small.x86"
+          os: "ubuntu_20_04"
   run_tests:
     needs: build_runner
     runs-on: self-hosted
-
     steps:
       - name: check out code
         uses: actions/checkout@v3
       - name: run tracetesting
         run: |
           make run-tracetesting
-  
   destroy:
     needs: [build_runner, run_tests]
     runs-on: ubuntu-latest
