@@ -44,7 +44,7 @@ ENV GRPC_HEALTH_PROBE_VERSION=v0.4.18
 RUN wget -qO/bin/grpc_health_probe https://github.com/grpc-ecosystem/grpc-health-probe/releases/download/${GRPC_HEALTH_PROBE_VERSION}/grpc_health_probe-linux-${TARGETARCH} && \
     chmod +x /bin/grpc_health_probe
 
-FROM debian:bullseye-slim as release
+FROM debian:bookworm-slim as release
 
 WORKDIR /app
 COPY --from=builder /app/target/release/shippingservice /app/shippingservice

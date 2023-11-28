@@ -369,7 +369,7 @@ services:
     deploy:
       resources:
         limits:
-          memory: 120M
+          memory: 1G
     restart: unless-stopped
     ports:
       - "${LOCUST_WEB_PORT}"
@@ -379,6 +379,7 @@ services:
       - LOCUST_HOST
       - LOCUST_HEADLESS
       - LOCUST_AUTOSTART
+      - LOCUST_BROWSER_TRAFFIC_ENABLED
       - OTEL_EXPORTER_OTLP_ENDPOINT
       - OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE
       - OTEL_RESOURCE_ATTRIBUTES
@@ -832,11 +833,12 @@ services:
         condition: service_started
 
   tracetest-server:
-    image: kubeshop/tracetest:v0.14.5
+    image: kubeshop/tracetest:${TRACETEST_IMAGE_VERSION}
     platform: linux/amd64
     container_name: tracetest-server
     profiles:
       - tests
+      - odd          # Observabilty-Driven Development (ODD)
     volumes:
       - type: bind
         source: ./test/tracetesting/tracetest-config.yaml
@@ -865,6 +867,7 @@ services:
     container_name: tracetest-postgres
     profiles:
       - tests
+      - odd          # Observabilty-Driven Development (ODD)
     environment:
       POSTGRES_PASSWORD: postgres
       POSTGRES_USER: postgres
