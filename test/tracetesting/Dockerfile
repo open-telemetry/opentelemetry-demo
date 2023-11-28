@@ -7,7 +7,7 @@ FROM alpine
 WORKDIR /app
 
 RUN apk --update add bash jq curl
-RUN curl -L https://raw.githubusercontent.com/kubeshop/tracetest/main/install-cli.sh | bash -s -- v0.13.10
+RUN curl -L https://raw.githubusercontent.com/kubeshop/tracetest/main/install-cli.sh | bash -s -- ${TRACETEST_IMAGE_VERSION}
 
 WORKDIR /app/test/tracetesting
 
