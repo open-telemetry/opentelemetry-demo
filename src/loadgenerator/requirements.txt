@@ -1,11 +1,11 @@
 backoff==2.2.1
 brotli==1.1.0
-certifi==2022.12.7
+certifi==2023.7.22
 charset-normalizer==3.3.2
 click==8.1.7
 configargparse==1.7
 deprecated==1.2.14
-flask==2.3.3
+flask==3.0.0
 flask-basicauth==0.2.0
 flask-cors==4.0.0
 gevent==23.9.1
@@ -37,7 +37,7 @@ roundrobin==0.0.4
 six==1.16.0
 typing-extensions==4.8.0
 urllib3==2.0.7
-werkzeug==2.3.8
+werkzeug==3.0.1
 wrapt==1.16.0
 zope-event==5.0
 zope-interface==6.1
