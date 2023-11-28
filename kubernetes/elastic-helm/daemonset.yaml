@@ -1,0 +1,56 @@
+mode: daemonset
+presets:
+  logsCollection:
+    enabled: true
+  hostMetrics:
+    enabled: true
+  kubeletMetrics:
+    enabled: true
+  kubernetesAttributes:
+    enabled: true
+
+extraEnvs:
+  - name: ELASTIC_APM_ENDPOINT
+    valueFrom:
+      secretKeyRef:
+        name: elastic-secret
+        key: elastic_apm_endpoint
+  - name: ELASTIC_APM_SECRET_TOKEN
+    valueFrom:
+      secretKeyRef:
+        name: elastic-secret
+        key: elastic_apm_secret_token
+
+config:
+  extensions:
+    k8s_observer:
+      auth_type: serviceAccount
+      node: ${env:K8S_NODE_NAME}
+      observe_pods: true
+  exporters:
+    otlp/elastic:
+      endpoint: ${ELASTIC_APM_ENDPOINT}
+      compression: none
+      headers:
+        Authorization: Bearer ${ELASTIC_APM_SECRET_TOKEN}
+  receivers:
+    receiver_creator:
+      watch_observers: [ k8s_observer ]
+      receivers:
+        redis:
+          rule: type == "port" && pod.name matches "redis"
+          config:
+            collection_interval: 2s
+  service:
+    extensions: [k8s_observer]
+    pipelines:
+      traces:
+        processors: [batch]
+        exporters: [otlp/elastic]
+      metrics:
+        receivers: [ receiver_creator]
+        processors: [batch]
+        exporters: [otlp/elastic]
+      logs:
+        processors: [batch]
+        exporters: [otlp/elastic]

@@ -1,28 +1,13 @@
 opentelemetry-collector:
-# Uncomment these lines to enable k8s infra monitoring.
-# Note that only node level metrics will be collected since cluster level metrics
-# require "deployment" mode
-#  mode: "daemonset"
-#  presets:
-#    kubernetesAttributes:
-#      enabled: true
-#    kubeletMetrics:
-#      enabled: true
-#    hostMetrics:
-#      enabled: true
-#    logsCollection:
-#      enabled: true
-#      includeCollectorLogs: false
-#      storeCheckpoints: true
-#
-#  Uncomment these lines to enable k8s cluster level metrics.
-#  At the moment it cannot be used along with the node level metrics from above.
-#  mode: "deployment"
-#  presets:
-#    kubernetesAttributes:
-#      enabled: true
-#    clusterMetrics:
-#      enabled: true
+  mode: "deployment"
+  presets:
+    kubernetesAttributes:
+      enabled: true
+    kubernetesEvents:
+      enabled: true
+    clusterMetrics:
+      enabled: true
+
   extraEnvs:
     - name: ELASTIC_APM_ENDPOINT
       valueFrom:
@@ -35,14 +20,6 @@ opentelemetry-collector:
           name: elastic-secret
           key: elastic_apm_secret_token
   config:
-# k8s_observer section enables the k8s autodiscovery observer
-# With this enabled we can automatically enable service specific receivers
-# based on conditions
-#    extensions:
-#      k8s_observer:
-#        auth_type: serviceAccount
-#        node: ${env:K8S_NODE_NAME}
-#        observe_pods: true
     exporters:
       otlp/elastic:
         endpoint: ${ELASTIC_APM_ENDPOINT}
@@ -50,15 +27,6 @@ opentelemetry-collector:
         headers:
           Authorization: Bearer ${ELASTIC_APM_SECRET_TOKEN}
     receivers:
-# receiver_creator enables service specific receivers
-# based on conditions
-#      receiver_creator:
-#        watch_observers: [ k8s_observer ]
-#        receivers:
-#          redis:
-#            rule: type == "port" && pod.name matches "redis"
-#            config:
-#              collection_interval: 2s
       otlp:
         protocols:
           grpc:
@@ -70,8 +38,6 @@ opentelemetry-collector:
               - https://*
             endpoint: ${MY_POD_IP}:4318
     service:
-# Enable extensions
-#      extensions: [k8s_observer]
       pipelines:
         traces:
           receivers: [otlp]
@@ -79,8 +45,6 @@ opentelemetry-collector:
           exporters: [otlp/elastic]
         metrics:
           receivers: [otlp]
-# Add the receiver_creator
-#          receivers: [otlp, receiver_creator]
           processors: [batch]
           exporters: [otlp/elastic]
         logs:
