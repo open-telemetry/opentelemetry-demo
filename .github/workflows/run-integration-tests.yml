@@ -36,7 +36,7 @@ jobs:
           sudo sh get-docker.sh
       - name: run tracetesting
         run: |
-          make run-tracetesting
+          make build && make run-tracetesting
   destroy:
     needs: [build_runner, run_tests]
     runs-on: ubuntu-latest
