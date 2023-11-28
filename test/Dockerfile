@@ -2,7 +2,7 @@
 # SPDX-License-Identifier: Apache-2.0
 
 
-FROM node:16-alpine AS build
+FROM node:21-alpine AS build
 
 WORKDIR /app
 
@@ -12,7 +12,7 @@ RUN npm ci --omit=dev
 
 # -----------------------------------------------------------------------------
 
-FROM node:16-alpine
+FROM node:21-alpine
 
 USER node
 WORKDIR /app
