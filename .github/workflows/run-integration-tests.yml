@@ -17,7 +17,7 @@ jobs:
       - name: metal-runner-action
         uses: equinix-labs/metal-action-runner@v0.1.1
         with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
+          github_token: ${{ secrets.GH_CI_SECRET }}
           metal_auth_token: ${{ secrets.METAL_AUTH_TOKEN }}
           metal_project_id: ${{ secrets.METAL_PROJECT_ID }}
           metro: "da"
@@ -30,6 +30,10 @@ jobs:
     steps:
       - name: check out code
         uses: actions/checkout@v3
+      - name: install docker
+        run: |
+          curl -fsSL https://get.docker.com -o get-docker.sh
+          sudo sh get-docker.sh
       - name: run tracetesting
         run: |
           make run-tracetesting
