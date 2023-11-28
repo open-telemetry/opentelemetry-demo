@@ -1,0 +1,46 @@
+# Copyright The OpenTelemetry Authors
+# SPDX-License-Identifier: Apache-2.0
+name: Integration Tests
+
+on:
+  pull_request:
+    branches:
+      - main
+    types: [closed]
+
+jobs:
+  build_runner:
+    runs-on: ubuntu-latest
+    name: "Build Runner"
+    if: github.event.pull_request.merged == true
+    steps:
+      - name: metal-runner-action
+        uses: equinix-labs/metal-action-runner@v0.1.1
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          metal_auth_token: ${{ secrets.METAL_AUTH_TOKEN }}
+          metal_project_id: ${{ secrets.METAL_PROJECT_ID }}
+          metro: "da"
+          plan: "c3.small.x86"
+          os: "ubuntu_20_04"
+  run_tests:
+    needs: build_runner
+    runs-on: self-hosted
+    name: "Run CI"
+    steps:
+      - name: check out code
+        uses: actions/checkout@v3
+      - name: run tracetesting
+        run: |
+          make run-tracetesting
+  destroy:
+    needs: [build_runner, run_tests]
+    runs-on: ubuntu-latest
+    name: "Cleanup"
+    steps:
+      - name: metal-sweeper-action
+        uses: equinix-labs/metal-sweeper-action@v0.6.1
+        with:
+          authToken: ${{ secrets.METAL_AUTH_TOKEN }}
+          projectID: ${{ secrets.METAL_PROJECT_ID }}
+          keepProject: true
