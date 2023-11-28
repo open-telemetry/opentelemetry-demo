@@ -20,7 +20,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - name: check out code
-      uses: actions/checkout@v3
+      uses: actions/checkout@v4
 
     - name: install dependencies
       run: npm install
@@ -32,7 +32,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - name: check out code
-      uses: actions/checkout@v3
+      uses: actions/checkout@v4
 
     - uses: actions/setup-python@v4
       with:
@@ -48,7 +48,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - name: check out code
-      uses: actions/checkout@v3
+      uses: actions/checkout@v4
 
     - name: run misspell
       run: make misspell
@@ -57,7 +57,7 @@ jobs:
     name: markdownlinkcheck
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@v4
     - name: Run link check
       uses: gaurav-nelson/github-action-markdown-link-check@v1
       with:
@@ -69,7 +69,7 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@v4
 
     - name: run sanitycheck.py
       run: python3 ./internal/tools/sanitycheck.py
@@ -78,7 +78,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - name: check out code
-      uses: actions/checkout@v3
+      uses: actions/checkout@v4
     - name: install tools
       run: make install-tools
     - name: run checklicense
