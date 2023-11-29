@@ -13,9 +13,10 @@ jobs:
         with:
           ref: main
           fetch-depth: 0
+          token: ${{ secrets.WORKFLOW_TOKEN }}
       - name: fetch and push
         env:
-          GITHUB_TOKEN: ${{ secrets.OTEL_DEMO_MERGE_SECRET }}
+          GITHUB_TOKEN: ${{ github.token }}
           UPSTREAM: https://github.com/open-telemetry/opentelemetry-demo
         run: |       
           git config --global user.name "github-actions"
