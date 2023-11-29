@@ -18,7 +18,7 @@ FROM alpine as builder
 
 RUN apk update && apk add git cmake make g++ grpc-dev protobuf-dev
 
-ARG OPENTELEMETRY_CPP_VERSION=1.10.0
+ARG OPENTELEMETRY_CPP_VERSION=1.12.0
 
 RUN git clone https://github.com/open-telemetry/opentelemetry-cpp \
 	  && cd opentelemetry-cpp/ \
