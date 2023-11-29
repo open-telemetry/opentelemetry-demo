@@ -7,6 +7,8 @@ release.
 
 ## Unreleased
 
+* [currencyservice] bring back multistage build
+  ([#1276](https://github.com/open-telemetry/opentelemetry-demo/pull/1276))
 * [currencyservice]: update opentelemetry-cpp to 1.12.0
   ([#1275](https://github.com/open-telemetry/opentelemetry-demo/pull/1275))
 * update loadgenerator dependencies and the base image
