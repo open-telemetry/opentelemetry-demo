@@ -7,6 +7,8 @@ release.
 
 ## Unreleased
 
+* [currencyservice]: update opentelemetry-cpp to 1.12.0
+  ([#1275](https://github.com/open-telemetry/opentelemetry-demo/pull/1275))
 * update loadgenerator dependencies and the base image
   ([#1274](https://github.com/open-telemetry/opentelemetry-demo/pull/1274))
 * add env var for pinning trace-based test tool version
