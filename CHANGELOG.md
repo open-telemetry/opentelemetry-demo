@@ -7,6 +7,8 @@ release.
 
 ## Unreleased
 
+* fix env var for pinning trace-based test tool version
+  ([#1283](https://github.com/open-telemetry/opentelemetry-demo/pull/1283))
 * [currencyservice] bring back multistage build
   ([#1276](https://github.com/open-telemetry/opentelemetry-demo/pull/1276))
 * [currencyservice]: update opentelemetry-cpp to 1.12.0
