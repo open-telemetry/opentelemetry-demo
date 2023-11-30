@@ -6,7 +6,7 @@
         "php": ">= 8.2",
         "ext-json": "*",
         "ext-pcntl": "*",
-        "monolog/monolog": "3.4.0",
+        "monolog/monolog": "3.5.0",
         "open-telemetry/api": "1.0.0",
         "open-telemetry/sdk": "1.0.0",
         "open-telemetry/exporter-otlp": "1.0.0",
