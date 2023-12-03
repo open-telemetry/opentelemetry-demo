@@ -1,5 +1,3 @@
-
-
 defmodule Featureflagservice.Repo.Migrations.CreateFeatureflags do
   use Ecto.Migration
 
@@ -7,7 +5,7 @@ defmodule Featureflagservice.Repo.Migrations.CreateFeatureflags do
     create table(:featureflags) do
       add :name, :string
       add :description, :string
-      add :enabled, :float, default: 0, null: false
+      add :enabled, :boolean, default: false, null: false
 
       timestamps()
     end
@@ -21,22 +19,26 @@ defmodule Featureflagservice.Repo.Migrations.CreateFeatureflags do
     repo().insert(%Featureflagservice.FeatureFlags.FeatureFlag{
       name: "productCatalogFailure",
       description: "Fail product catalog service on a specific product",
-      enabled: 0.0})
+      enabled: false
+    })
 
     repo().insert(%Featureflagservice.FeatureFlags.FeatureFlag{
       name: "recommendationCache",
       description: "Cache recommendations",
-      enabled: 0.0})
+      enabled: false
+    })
 
     repo().insert(%Featureflagservice.FeatureFlags.FeatureFlag{
       name: "adServiceFailure",
       description: "Fail ad service requests sporadically",
-      enabled: 0.0})
+      enabled: false
+    })
 
     repo().insert(%Featureflagservice.FeatureFlags.FeatureFlag{
       name: "cartServiceFailure",
       description: "Fail cart service requests sporadically",
-      enabled: 0.0})
+      enabled: false
+    })
   end
 
   defp execute_down do
