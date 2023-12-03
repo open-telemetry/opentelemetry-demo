@@ -369,7 +369,7 @@ services:
     deploy:
       resources:
         limits:
-          memory: 120M
+          memory: 1G
     restart: unless-stopped
     ports:
       - "${LOCUST_WEB_PORT}"
@@ -379,6 +379,7 @@ services:
       - LOCUST_HOST
       - LOCUST_HEADLESS
       - LOCUST_AUTOSTART
+      - LOCUST_BROWSER_TRAFFIC_ENABLED
       - OTEL_EXPORTER_OTLP_ENDPOINT
       - OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE
       - OTEL_RESOURCE_ATTRIBUTES
@@ -607,7 +608,7 @@ services:
   # ********************
   # Jaeger
   jaeger:
-    image: jaegertracing/all-in-one:1.50
+    image: jaegertracing/all-in-one:1.51
     container_name: jaeger
     command:
       - "--memory.max-traces=8000"
@@ -629,7 +630,7 @@ services:
 
   # Grafana
   grafana:
-    image: grafana/grafana:10.1.2
+    image: grafana/grafana:10.2.0
     container_name: grafana
     deploy:
       resources:
@@ -646,7 +647,7 @@ services:
 
   # OpenTelemetry Collector
   otelcol:
-    image: otel/opentelemetry-collector-contrib:0.86.0
+    image: otel/opentelemetry-collector-contrib:0.88.0
     container_name: otel-col
     deploy:
       resources:
@@ -668,7 +669,7 @@ services:
 
   # Prometheus
   prometheus:
-    image: quay.io/prometheus/prometheus:v2.47.0
+    image: quay.io/prometheus/prometheus:v2.47.2
     container_name: prometheus
     command:
       - --web.console.templates=/etc/prometheus/consoles
@@ -832,11 +833,12 @@ services:
         condition: service_started
 
   tracetest-server:
-    image: kubeshop/tracetest:v0.13.10
+    image: kubeshop/tracetest:${TRACETEST_IMAGE_VERSION}
     platform: linux/amd64
     container_name: tracetest-server
     profiles:
       - tests
+      - odd          # Observabilty-Driven Development (ODD)
     volumes:
       - type: bind
         source: ./test/tracetesting/tracetest-config.yaml
@@ -865,6 +867,7 @@ services:
     container_name: tracetest-postgres
     profiles:
       - tests
+      - odd          # Observabilty-Driven Development (ODD)
     environment:
       POSTGRES_PASSWORD: postgres
       POSTGRES_USER: postgres
