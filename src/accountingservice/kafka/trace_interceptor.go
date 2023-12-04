@@ -21,12 +21,13 @@ type OTelInterceptor struct {
 
 // NewOTelInterceptor processes span for intercepted messages and add some
 // headers with the span data.
-func NewOTelInterceptor() *OTelInterceptor {
+func NewOTelInterceptor(groupID string) *OTelInterceptor {
 	oi := OTelInterceptor{}
 	oi.tracer = otel.Tracer("github.com/open-telemetry/opentelemetry-demo/accountingservice/sarama")
 
 	oi.fixedAttrs = []attribute.KeyValue{
 		semconv.MessagingSystem("kafka"),
+		semconv.MessagingKafkaConsumerGroup(groupID),
 		semconv.NetTransportTCP,
 	}
 	return &oi
@@ -50,6 +51,8 @@ func (oi *OTelInterceptor) OnConsume(msg *sarama.ConsumerMessage) {
 		trace.WithAttributes(
 			semconv.MessagingDestinationKindTopic,
 			semconv.MessagingDestinationName(msg.Topic),
+			semconv.MessagingKafkaMessageOffset(int(msg.Offset)),
+			semconv.MessagingMessagePayloadSizeBytes(len(msg.Value)),
 			semconv.MessagingOperationReceive,
 			semconv.MessagingKafkaDestinationPartition(int(msg.Partition)),
 		),
