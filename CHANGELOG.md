@@ -19,7 +19,10 @@ release.
   ([#1236](https://github.com/open-telemetry/opentelemetry-demo/pull/1236))
 * [cartservice] Add .NET memory, CPU, and thread metrics
   ([#1265](https://github.com/open-telemetry/opentelemetry-demo/pull/1265))
-* enable browser traffic in loadgenerator using playwright ([#1266](https://github.com/open-telemetry/opentelemetry-demo/pull/1266))
+* enable browser traffic in loadgenerator using playwright
+  ([#1266](https://github.com/open-telemetry/opentelemetry-demo/pull/1266))
+* [accountingservice] Add additional attributes to Kafka spans
+  ([#1286](https://github.com/open-telemetry/opentelemetry-demo/pull/1286))
 
 ## 1.6.0
 
