@@ -23,6 +23,8 @@ release.
   ([#1266](https://github.com/open-telemetry/opentelemetry-demo/pull/1266))
 * [accountingservice] Add additional attributes to Kafka spans
   ([#1286](https://github.com/open-telemetry/opentelemetry-demo/pull/1286))
+* fix env var for pinning trace-based test tool version
+  ([#1283](https://github.com/open-telemetry/opentelemetry-demo/pull/1283))
 
 ## 1.6.0
 
