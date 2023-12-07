@@ -7,24 +7,26 @@ release.
 
 ## Unreleased
 
-* [currencyservice] bring back multistage build
-  ([#1276](https://github.com/open-telemetry/opentelemetry-demo/pull/1276))
-* [currencyservice]: update opentelemetry-cpp to 1.12.0
-  ([#1275](https://github.com/open-telemetry/opentelemetry-demo/pull/1275))
-* update loadgenerator dependencies and the base image
-  ([#1274](https://github.com/open-telemetry/opentelemetry-demo/pull/1274))
-* add env var for pinning trace-based test tool version
-  ([#1239](https://github.com/open-telemetry/opentelemetry-demo/pull/1239))
 * update PHP quoteservice to use 1.0.0
   ([#1236](https://github.com/open-telemetry/opentelemetry-demo/pull/1236))
+* add env var for pinning trace-based test tool version
+  ([#1239](https://github.com/open-telemetry/opentelemetry-demo/pull/1239))
 * [cartservice] Add .NET memory, CPU, and thread metrics
   ([#1265](https://github.com/open-telemetry/opentelemetry-demo/pull/1265))
 * enable browser traffic in loadgenerator using playwright
   ([#1266](https://github.com/open-telemetry/opentelemetry-demo/pull/1266))
-* [accountingservice] Add additional attributes to Kafka spans
-  ([#1286](https://github.com/open-telemetry/opentelemetry-demo/pull/1286))
+* update loadgenerator dependencies and the base image
+  ([#1274](https://github.com/open-telemetry/opentelemetry-demo/pull/1274))
+* [currencyservice]: update opentelemetry-cpp to 1.12.0
+  ([#1275](https://github.com/open-telemetry/opentelemetry-demo/pull/1275))
+* [currencyservice] bring back multistage build
+  ([#1276](https://github.com/open-telemetry/opentelemetry-demo/pull/1276))
 * fix env var for pinning trace-based test tool version
   ([#1283](https://github.com/open-telemetry/opentelemetry-demo/pull/1283))
+* [accountingservice] Add additional attributes to Kafka spans
+  ([#1286](https://github.com/open-telemetry/opentelemetry-demo/pull/1286))
+* [shippingservice] update Rust OTel libraries to 0.21
+  ([#1287](https://github.com/open-telemetry/opentelemetry-demo/pull/1287))
 
 ## 1.6.0
 
