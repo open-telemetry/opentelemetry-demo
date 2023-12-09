@@ -784,6 +784,8 @@ services:
     build:
       context: ./
       dockerfile: ./test/tracetesting/Dockerfile
+      args:
+        - TRACETEST_IMAGE_VERSION
     environment:
       - AD_SERVICE_ADDR
       - CART_SERVICE_ADDR
