@@ -1,14 +1,13 @@
 # Copyright The OpenTelemetry Authors
 # SPDX-License-Identifier: Apache-2.0
 
-
 defmodule Featureflagservice.FeatureFlags.FeatureFlag do
   use Ecto.Schema
   import Ecto.Changeset
 
   schema "featureflags" do
     field :description, :string
-    field :enabled, :float, default: 0.0
+    field :enabled, :decimal, default: 0.0
     field :name, :string
 
     timestamps()
