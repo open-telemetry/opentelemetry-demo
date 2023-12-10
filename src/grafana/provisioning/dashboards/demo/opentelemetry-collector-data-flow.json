@@ -1813,7 +1813,7 @@
         "type": "prometheus",
         "uid": "webstore-metrics"
       },
-      "description": "otelcol prometheus exporter 9464 export rate versus prometheus scrape metrics",
+      "description": "otelcol prometheus exporter 8888 export rate versus prometheus scrape metrics",
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -1882,7 +1882,7 @@
           },
           "editorMode": "code",
           "exemplar": false,
-          "expr": "(sum_over_time(scrape_samples_scraped{job=\"otel\"}[$__range])/ count_over_time(scrape_samples_scraped{job=\"otel\"}[$__range])/(5*30)) ",
+          "expr": "(sum_over_time(scrape_samples_scraped{job=\"otel-collector\"}[$__range])/ count_over_time(scrape_samples_scraped{job=\"otel-collector\"}[$__range])/(5*30)) ",
           "format": "time_series",
           "instant": false,
           "legendFormat": "__auto",
@@ -1910,7 +1910,7 @@
           "options": {
             "alias": "percent",
             "binary": {
-              "left": "{instance=\"otelcol:9464\", job=\"otel\"}",
+              "left": "{instance=\"otelcol:9464\", job=\"otel-collector\"}",
               "operator": "/",
               "reducer": "sum",
               "right": "(sum(rate(otelcol_exporter_sent_metric_points{exporter=\"prometheus\"}[1m0s])) )"
@@ -2080,7 +2080,6 @@
             "mode": "reduceRow",
             "reduce": {
               "include": [
-                "{instance=\"otelcol:9464\", job=\"otel\"}",
                 "{instance=\"otelcol:8888\", job=\"otel-collector\"}"
               ],
               "reducer": "sum"

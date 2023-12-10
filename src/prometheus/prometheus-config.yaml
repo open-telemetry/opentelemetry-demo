@@ -1,4 +1,11 @@
 # Copyright The OpenTelemetry Authors
 # SPDX-License-Identifier: Apache-2.0
 
-# do not delete this file
+global:
+  evaluation_interval: 30s
+  scrape_interval: 5s
+scrape_configs:
+- job_name: otel-collector
+  static_configs:
+  - targets:
+    - 'otelcol:8888'
