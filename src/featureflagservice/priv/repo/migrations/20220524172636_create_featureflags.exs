@@ -5,7 +5,7 @@ defmodule Featureflagservice.Repo.Migrations.CreateFeatureflags do
     create table(:featureflags) do
       add :name, :string
       add :description, :string
-      add :enabled, :decimal, default: 0.0, null: false
+      add :enabled, :float, default: 0.0, null: false
 
       timestamps()
     end

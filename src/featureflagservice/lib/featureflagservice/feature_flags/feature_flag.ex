@@ -7,7 +7,7 @@ defmodule Featureflagservice.FeatureFlags.FeatureFlag do
 
   schema "featureflags" do
     field :description, :string
-    field :enabled, :decimal, default: 0.0
+    field :enabled, :float, default: 0.0
     field :name, :string
 
     timestamps()
