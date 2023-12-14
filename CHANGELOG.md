@@ -9,6 +9,8 @@ release.
 
 * update PHP quoteservice to use 1.0.0
   ([#1236](https://github.com/open-telemetry/opentelemetry-demo/pull/1236))
+* Add ability to do probabilistic A/B testing with feature flags
+  ([#1237](https://github.com/open-telemetry/opentelemetry-demo/pull/1237))
 * add env var for pinning trace-based test tool version
   ([#1239](https://github.com/open-telemetry/opentelemetry-demo/pull/1239))
 * [cartservice] Add .NET memory, CPU, and thread metrics

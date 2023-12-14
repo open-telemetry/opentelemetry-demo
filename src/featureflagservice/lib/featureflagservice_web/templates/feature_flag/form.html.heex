@@ -29,10 +29,15 @@
   <%= text_input f, :description %>
   <%= error_tag f, :description %>
 
-  <div class="float-right">
-    <%= checkbox f, :enabled %>
-    <%= label f, :enabled, class: "label-inline" %>
-  </div>
+  <%= label f, :enabled %>
+  <%= number_input f, :enabled, min: 0, max: 1, step: 0.01, "aria-describedby": "enabled_help_text" %>
+  <p id="enabled_help_text" style="font-size: smaller; margin-top: -10px;">
+    A decimal value between 0 and 1 (inclusive)<br />
+    0.0 is always disabled<br />
+    1.0 is always enabled<br />
+    All values between set a percentage chance on each request<br />
+    example: 0.55 is enabled 55% of the time<br />
+  </p>
   <%= error_tag f, :enabled %>
 
   <%= submit "Save" %>
