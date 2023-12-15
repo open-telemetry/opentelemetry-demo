@@ -576,4 +576,3 @@ services:
     ports:
       - "21892"
     logging: *logging
-
