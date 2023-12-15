@@ -158,7 +158,8 @@ stop:
 
 
 # Use to rebuild and restart a single service component
-# Example: make restart SERVICE=frontend
+# Example: make restart service=frontend
 .PHONY: restart
 restart:
-	./rebuild-service.sh ${SERVICE}
+	# work with `service` or `SERVICE` as input
+	./restart-service.sh ${service}${SERVICE}
