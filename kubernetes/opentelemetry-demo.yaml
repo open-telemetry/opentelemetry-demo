@@ -9818,8 +9818,6 @@ spec:
             value: "false"
           - name: LOCUST_AUTOSTART
             value: "true"
-          - name: LOCUST_BROWSER_TRAFFIC_ENABLED
-            value: "false"
           - name: PROTOCOL_BUFFERS_PYTHON_IMPLEMENTATION
             value: python
           - name: OTEL_EXPORTER_OTLP_ENDPOINT
@@ -9828,7 +9826,7 @@ spec:
             value: service.name=$(OTEL_SERVICE_NAME),service.namespace=opentelemetry-demo
           resources:
             limits:
-              memory: 1Gi
+              memory: 120Mi
 ---
 # Source: opentelemetry-demo/templates/component.yaml
 apiVersion: apps/v1
