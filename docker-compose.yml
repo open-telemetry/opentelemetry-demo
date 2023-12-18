@@ -369,7 +369,7 @@ services:
     deploy:
       resources:
         limits:
-          memory: 1G
+          memory: 120M
     restart: unless-stopped
     ports:
       - "${LOCUST_WEB_PORT}"
@@ -379,7 +379,6 @@ services:
       - LOCUST_HOST
       - LOCUST_HEADLESS
       - LOCUST_AUTOSTART
-      - LOCUST_BROWSER_TRAFFIC_ENABLED
       - OTEL_EXPORTER_OTLP_ENDPOINT
       - OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE
       - OTEL_RESOURCE_ATTRIBUTES
@@ -540,7 +539,7 @@ services:
   # ******************
   # Postgres used by Feature Flag service
   ffs_postgres:
-    image: postgres:16.0
+    image: postgres:16.1
     container_name: postgres
     user: postgres
     deploy:
@@ -608,7 +607,7 @@ services:
   # ********************
   # Jaeger
   jaeger:
-    image: jaegertracing/all-in-one:1.51
+    image: jaegertracing/all-in-one:1.52
     container_name: jaeger
     command:
       - "--memory.max-traces=8000"
@@ -630,7 +629,7 @@ services:
 
   # Grafana
   grafana:
-    image: grafana/grafana:10.2.0
+    image: grafana/grafana:10.2.2
     container_name: grafana
     deploy:
       resources:
@@ -647,7 +646,7 @@ services:
 
   # OpenTelemetry Collector
   otelcol:
-    image: otel/opentelemetry-collector-contrib:0.88.0
+    image: otel/opentelemetry-collector-contrib:0.91.0
     container_name: otel-col
     deploy:
       resources:
@@ -669,7 +668,7 @@ services:
 
   # Prometheus
   prometheus:
-    image: quay.io/prometheus/prometheus:v2.47.2
+    image: quay.io/prometheus/prometheus:v2.48.1
     container_name: prometheus
     command:
       - --web.console.templates=/etc/prometheus/consoles

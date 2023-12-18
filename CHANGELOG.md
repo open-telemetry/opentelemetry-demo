@@ -17,8 +17,6 @@ release.
   ([#1265](https://github.com/open-telemetry/opentelemetry-demo/pull/1265))
 * [cartservice] update .NET to .NET 8.0
   ([#1272](https://github.com/open-telemetry/opentelemetry-demo/pull/1272))
-* enable browser traffic in loadgenerator using playwright
-  ([#1266](https://github.com/open-telemetry/opentelemetry-demo/pull/1266))
 * update loadgenerator dependencies and the base image
   ([#1274](https://github.com/open-telemetry/opentelemetry-demo/pull/1274))
 * [currencyservice]: update opentelemetry-cpp to 1.12.0
