@@ -155,3 +155,11 @@ stop:
 	docker compose down --remove-orphans --volumes
 	@echo ""
 	@echo "OpenTelemetry Demo is stopped."
+
+
+# Use to rebuild and restart a single service component
+# Example: make restart service=frontend
+.PHONY: restart
+restart:
+	# work with `service` or `SERVICE` as input
+	./restart-service.sh ${service}${SERVICE}
