@@ -23,15 +23,9 @@ WORKDIR /usr/src/app/
 COPY ./src/cartservice/ ./
 COPY ./pb/ ./src/protos/
 
-RUN \
-  RUNTIME_IDENTIIFER=linux-musl-x64; \
-  if [ "${TARGETARCH}" = "arm64" ]; then RUNTIME_IDENTIIFER=linux-musl-arm64; fi; \
-  dotnet restore ./src/cartservice.csproj -v d -r $RUNTIME_IDENTIIFER
+RUN dotnet restore ./src/cartservice.csproj -v d -r linux-musl-$TARGETARCH
 
-RUN \
-  RUNTIME_IDENTIIFER=linux-musl-x64; \
-  if [ "${TARGETARCH}" = "arm64" ]; then RUNTIME_IDENTIIFER=linux-musl-arm64; fi; \
-  dotnet publish ./src/cartservice.csproj -v d -p:PublishSingleFile=true -r $RUNTIME_IDENTIIFER --self-contained true -p:PublishTrimmed=False -p:TrimMode=Link -c Release -o /cartservice --no-restore
+RUN dotnet publish ./src/cartservice.csproj -v d -r linux-musl-$TARGETARCH --no-restore -o /cartservice
 
 # -----------------------------------------------------------------------------
 
