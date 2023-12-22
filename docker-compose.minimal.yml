@@ -485,7 +485,7 @@ services:
 
   # Grafana
   grafana:
-    image: grafana/grafana:10.2.2
+    image: grafana/grafana:10.2.0
     container_name: grafana
     deploy:
       resources:
