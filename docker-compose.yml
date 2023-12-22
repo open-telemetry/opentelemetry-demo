@@ -91,6 +91,7 @@ services:
       - "${CART_SERVICE_PORT}"
     environment:
       - CART_SERVICE_PORT
+      - FEATURE_FLAG_GRPC_SERVICE_ADDR
       - REDIS_ADDR
       - OTEL_EXPORTER_OTLP_ENDPOINT
       - OTEL_RESOURCE_ATTRIBUTES
