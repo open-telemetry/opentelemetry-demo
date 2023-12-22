@@ -9,6 +9,8 @@ release.
 
 * [cartservice] disable config reload
   ([#1312](https://github.com/open-telemetry/opentelemetry-demo/pull/1312))
+* [cartservice] fixed cartServiceFailure feature flag
+  ([#1313](https://github.com/open-telemetry/opentelemetry-demo/pull/1313))
 
 ## 1.7.0
 
