@@ -124,7 +124,7 @@ class WebsiteUser(HttpUser):
         duration = time.time() - start_time
         # skip checkout if the latency is more than a second
         if (self.skip_checkout(duration)):
-            logging.info("skipping checkout, duration:", duration)
+            logging.info(f"skipping checkout, duration: {duration}")
             return
         checkout_person = random.choice(people)
         checkout_person["userId"] = user
@@ -142,7 +142,7 @@ class WebsiteUser(HttpUser):
         duration = time.time() - start_time
         # skip checkout if the latency is more than a second
         if (self.skip_checkout(duration)):
-            logging.info("skipping checkout_multi, duration:", duration)
+            logging.info(f"skipping checkout_multi, duration: {duration}")
             return
 
         checkout_person = random.choice(people)
