@@ -35,5 +35,7 @@ FROM mcr.microsoft.com/dotnet/runtime-deps:8.0.0-alpine3.18
 WORKDIR /usr/src/app/
 COPY --from=builder /cartservice/ ./
 
+ENV DOTNET_HOSTBUILDER__RELOADCONFIGONCHANGE=false
+
 EXPOSE ${CART_SERVICE_PORT}
 ENTRYPOINT [ "./cartservice" ]
