@@ -4,6 +4,9 @@
     <TargetFramework>net8.0</TargetFramework>
     <ProduceReferenceAssembly>false</ProduceReferenceAssembly>
     <StaticWebAssetsEnabled>false</StaticWebAssetsEnabled>
+    <PublishSingleFile>true</PublishSingleFile>
+    <SelfContained>true</SelfContained>
+    <PublishTrimmed>false</PublishTrimmed>
   </PropertyGroup>
 
   <ItemGroup>
