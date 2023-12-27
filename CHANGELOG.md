@@ -7,6 +7,9 @@ release.
 
 ## Unreleased
 
+* [cartservice] disable config reload
+  ([#1312](https://github.com/open-telemetry/opentelemetry-demo/pull/1312))
+
 ## 1.7.0
 
 * update PHP quoteservice to use 1.0.0
