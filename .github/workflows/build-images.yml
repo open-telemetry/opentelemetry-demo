@@ -29,7 +29,7 @@ jobs:
     env:
       RELEASE_VERSION: "${{ github.event.release.tag_name }}"
       DOCKERHUB_REPO: "otel/demo"
-      GHCR_REPO: "ghcr.io/open-telemetry/demo"
+      GHCR_REPO: "ghcr.io/dbado-sumologic/open-telemetry/demo"
 
     strategy:
       fail-fast: false
