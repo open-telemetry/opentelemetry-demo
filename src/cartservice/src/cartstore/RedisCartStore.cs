@@ -68,7 +68,7 @@ public class RedisCartStore : ICartStore
                 return;
             }
 
-            _logger.LogDebug("Connecting from forked to Redis 2: {_connectionString}", _connectionString);
+            _logger.LogDebug("Connecting from forked to Redis 3: {_connectionString}", _connectionString);
             _redis = ConnectionMultiplexer.Connect(_redisConnectionOptions);
 
             if (_redis == null || !_redis.IsConnected)
