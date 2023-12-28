@@ -11,18 +11,42 @@ receivers:
           allowed_origins:
             - "http://*"
             - "https://*"
+  httpcheck/frontendproxy:
+    targets:
+      - endpoint: http://frontendproxy:${env:ENVOY_PORT}
 
 exporters:
-  logging:
+  debug:
+  otlp:
+    endpoint: "jaeger:4317"
+    tls:
+      insecure: true
+  otlp/logs:
+    endpoint: "dataprepper:21892"
+    tls:
+      insecure: true
+  otlphttp/prometheus:
+    endpoint: "http://prometheus:9090/api/v1/otlp"
+    tls:
+      insecure: true
 
 processors:
   batch:
-  filter:
+  filter/ottl:
+    error_mode: ignore
     metrics:
-      exclude:
-        match_type: strict
-        metric_names:
-          - queueSize
+      metric:
+        # FIXME: remove when a Metrics View is implemented in the checkout and productcatalog components
+        # or when this issue is resolved: https://github.com/open-telemetry/opentelemetry-go-contrib/issues/3071
+        - 'name == "rpc.server.duration"'
+  transform:
+    metric_statements:
+      - context: metric
+        statements:
+          # FIXME: remove when this issue is resolved: https://github.com/open-telemetry/opentelemetry-java/issues/4834
+          - set(description, "") where name == "queueSize"
+          # FIXME: remove when this issue is resolved: https://github.com/open-telemetry/opentelemetry-python-contrib/issues/1958
+          - set(description, "") where name == "http.client.duration"
 
 connectors:
   spanmetrics:
@@ -32,12 +56,12 @@ service:
     traces:
       receivers: [otlp]
       processors: [batch]
-      exporters: [logging, spanmetrics]
+      exporters: [otlp, debug, spanmetrics]
     metrics:
-      receivers: [otlp, spanmetrics]
-      processors: [filter, batch]
-      exporters: [logging]
+      receivers: [httpcheck/frontendproxy, otlp, spanmetrics]
+      processors: [filter/ottl, transform, batch]
+      exporters: [otlphttp/prometheus, debug]
     logs:
       receivers: [otlp]
       processors: [batch]
-      exporters: [logging]
+      exporters: [otlp/logs, debug]
