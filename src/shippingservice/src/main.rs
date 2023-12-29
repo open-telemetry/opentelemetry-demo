@@ -2,18 +2,12 @@
 // SPDX-License-Identifier: Apache-2.0
 
 use opentelemetry::trace::TraceError;
-use opentelemetry::{
-    global,
-    sdk::{
-        propagation::TraceContextPropagator,
-        resource::{
-            OsResourceDetector, ProcessResourceDetector, ResourceDetector,
-            EnvResourceDetector, TelemetryResourceDetector,
-            SdkProvidedResourceDetector,
-        },
-        trace as sdktrace,
-    },
-};
+use opentelemetry::global;
+use opentelemetry_sdk::{propagation::TraceContextPropagator, resource::{
+    OsResourceDetector, ProcessResourceDetector, ResourceDetector,
+    EnvResourceDetector, TelemetryResourceDetector,
+    SdkProvidedResourceDetector,
+}, runtime, trace as sdktrace};
 use opentelemetry_otlp::{self, WithExportConfig};
 
 use tonic::transport::Server;
@@ -64,7 +58,7 @@ fn init_tracer() -> Result<sdktrace::Tracer, TraceError> {
             sdktrace::config()
                 .with_resource(os_resource.merge(&process_resource).merge(&sdk_resource).merge(&env_resource).merge(&telemetry_resource)),
         )
-        .install_batch(opentelemetry::runtime::Tokio)
+        .install_batch(runtime::Tokio)
 }
 
 fn init_reqwest_tracing(tracer: sdktrace::Tracer) -> Result<(), tracing::subscriber::SetGlobalDefaultError> {

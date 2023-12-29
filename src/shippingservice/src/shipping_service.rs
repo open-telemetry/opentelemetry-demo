@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 use opentelemetry::{global, propagation::Extractor, trace::Span, Context, KeyValue};
-use opentelemetry_api::trace::{FutureExt, TraceContextExt, SpanKind, Tracer};
+use opentelemetry::trace::{FutureExt, TraceContextExt, SpanKind, Tracer};
 use opentelemetry_semantic_conventions as semcov;
 use shop::shipping_service_server::ShippingService;
 use shop::{GetQuoteRequest, GetQuoteResponse, Money, ShipOrderRequest, ShipOrderResponse};

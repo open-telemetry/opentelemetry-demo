@@ -129,3 +129,4 @@ class WebsiteUser(HttpUser):
         ctx = baggage.set_baggage("synthetic_request", "true")
         context.attach(ctx)
         self.index()
+
