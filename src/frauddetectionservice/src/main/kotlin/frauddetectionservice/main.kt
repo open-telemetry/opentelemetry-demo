@@ -1,32 +1,27 @@
-// Copyright The OpenTelemetry Authors
-//
-// Licensed under the Apache License, Version 2.0 (the "License");
-// you may not use this file except in compliance with the License.
-// You may obtain a copy of the License at
-//
-//     http://www.apache.org/licenses/LICENSE-2.0
-//
-// Unless required by applicable law or agreed to in writing, software
-// distributed under the License is distributed on an "AS IS" BASIS,
-// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-// See the License for the specific language governing permissions and
-// limitations under the License.
+/*
+ * Copyright The OpenTelemetry Authors
+ * SPDX-License-Identifier: Apache-2.0
+ */
 
 package frauddetectionservice
 
 import org.apache.kafka.clients.consumer.ConsumerConfig.*
 import org.apache.kafka.clients.consumer.KafkaConsumer
-import org.apache.kafka.common.serialization.StringDeserializer
 import org.apache.kafka.common.serialization.ByteArrayDeserializer
+import org.apache.kafka.common.serialization.StringDeserializer
+import org.apache.logging.log4j.LogManager
+import org.apache.logging.log4j.Logger
 import oteldemo.Demo.*
 import java.time.Duration.ofMillis
-import java.util.Properties
+import java.util.*
 import kotlin.system.exitProcess
 
 const val topic = "orders"
 const val groupID = "frauddetectionservice"
 
-fun main(args: Array<String>) {
+private val logger: Logger = LogManager.getLogger(groupID)
+
+fun main() {
     val props = Properties()
     props[KEY_DESERIALIZER_CLASS_CONFIG] = StringDeserializer::class.java.name
     props[VALUE_DESERIALIZER_CLASS_CONFIG] = ByteArrayDeserializer::class.java.name
@@ -50,7 +45,7 @@ fun main(args: Array<String>) {
                 .fold(totalCount) { accumulator, record ->
                     val newCount = accumulator + 1
                     val orders = OrderResult.parseFrom(record.value())
-                    println("Consumed record with orderId: ${orders.orderId}, and updated total count to: $newCount")
+                    logger.info("Consumed record with orderId: ${orders.orderId}, and updated total count to: $newCount")
                     newCount
                 }
         }

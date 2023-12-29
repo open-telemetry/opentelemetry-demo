@@ -1,28 +1,12 @@
 /*
- * Copyright 2018, Google LLC.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Copyright The OpenTelemetry Authors
+ * SPDX-License-Identifier: Apache-2.0
  */
 
 package oteldemo;
 
 import com.google.common.collect.ImmutableListMultimap;
 import com.google.common.collect.Iterables;
-import oteldemo.Demo.Ad;
-import oteldemo.Demo.AdRequest;
-import oteldemo.Demo.AdResponse;
-import oteldemo.Demo.GetFlagResponse;
-import oteldemo.FeatureFlagServiceGrpc.FeatureFlagServiceBlockingStub;
 import io.grpc.*;
 import io.grpc.health.v1.HealthCheckResponse.ServingStatus;
 import io.grpc.protobuf.services.*;
@@ -47,6 +31,11 @@ import java.util.Random;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import oteldemo.Demo.Ad;
+import oteldemo.Demo.AdRequest;
+import oteldemo.Demo.AdResponse;
+import oteldemo.Demo.GetFlagResponse;
+import oteldemo.FeatureFlagServiceGrpc.FeatureFlagServiceBlockingStub;
 
 public final class AdService {
 
@@ -84,14 +73,13 @@ public final class AdService {
     healthMgr = new HealthStatusManager();
 
     String featureFlagServiceAddr =
-        Optional.ofNullable(System.getenv("FEATURE_FLAG_GRPC_SERVICE_ADDR"))
-            .orElseThrow(
-                () ->
-                    new IllegalStateException(
-                        "environment vars: FEATURE_FLAG_GRPC_SERVICE_ADDR must not be null"));
-    FeatureFlagServiceBlockingStub featureFlagServiceStub =
-        oteldemo.FeatureFlagServiceGrpc.newBlockingStub(
-            ManagedChannelBuilder.forTarget(featureFlagServiceAddr).usePlaintext().build());
+        Optional.ofNullable(System.getenv("FEATURE_FLAG_GRPC_SERVICE_ADDR")).orElse("");
+    FeatureFlagServiceBlockingStub featureFlagServiceStub = null;
+    if (!featureFlagServiceAddr.isEmpty()) {
+      featureFlagServiceStub =
+          oteldemo.FeatureFlagServiceGrpc.newBlockingStub(
+              ManagedChannelBuilder.forTarget(featureFlagServiceAddr).usePlaintext().build());
+    }
 
     server =
         ServerBuilder.forPort(port)
@@ -99,7 +87,7 @@ public final class AdService {
             .addService(healthMgr.getHealthService())
             .build()
             .start();
-    logger.info("Ad Service started, listening on " + port);
+    logger.info("Ad service started, listening on " + port);
     Runtime.getRuntime()
         .addShutdownHook(
             new Thread(
@@ -160,8 +148,8 @@ public final class AdService {
 
         span.setAttribute("app.ads.contextKeys", req.getContextKeysList().toString());
         span.setAttribute("app.ads.contextKeys.count", req.getContextKeysCount());
-        logger.info("received ad request (context_words=" + req.getContextKeysList() + ")");
         if (req.getContextKeysCount() > 0) {
+          logger.info("Targeted ad request received for " + req.getContextKeysList());
           for (int i = 0; i < req.getContextKeysCount(); i++) {
             Collection<Ad> ads = service.getAdsByCategory(req.getContextKeys(i));
             allAds.addAll(ads);
@@ -169,6 +157,7 @@ public final class AdService {
           adRequestType = AdRequestType.TARGETED;
           adResponseType = AdResponseType.TARGETED;
         } else {
+          logger.info("Non-targeted ad request received, preparing random response.");
           allAds = service.getRandomAds();
           adRequestType = AdRequestType.NOT_TARGETED;
           adResponseType = AdResponseType.RANDOM;
@@ -205,6 +194,10 @@ public final class AdService {
     }
 
     boolean checkAdFailure() {
+      if (featureFlagServiceStub == null) {
+        return false;
+      }
+
       // Flip a coin and fail 1/10th of the time if feature flag is enabled
       if (random.nextInt(10) != 1) {
         return false;
@@ -314,7 +307,7 @@ public final class AdService {
   /** Main launches the server from the command line. */
   public static void main(String[] args) throws IOException, InterruptedException {
     // Start the RPC server. You shouldn't see any output from gRPC before this.
-    logger.info("AdService starting.");
+    logger.info("Ad service starting.");
     final AdService service = AdService.getInstance();
     service.start();
     service.blockUntilShutdown();

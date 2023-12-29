@@ -1,0 +1,104 @@
+{
+  "$schema": "https://docs.renovatebot.com/renovate-schema.json",
+
+  "schedule": "every weekend",
+
+  // double PR and branch limits
+  prConcurrentLimit: 20,
+  branchConcurrentLimit: 20,
+  labels: ['dependencies'],
+
+  // put by default dependency update all in one group
+  groupName: "config-no-service",
+
+  "assigneesFromCodeOwners": true,
+
+  "packageRules": [
+    {
+      "matchFileNames": ["src/accountingservice/**"],
+      "groupName": "accountingservice",
+    },
+    {
+      "matchFileNames": ["src/adservice/**"],
+      "groupName": "adservice",
+    },
+    {
+      "matchFileNames": ["src/cartservice/**"],
+      "groupName": "cartservice",
+    },
+    {
+      "matchFileNames": ["src/checkoutservice/**"],
+      "groupName": "checkoutservice",
+    },
+    {
+      "matchFileNames": ["src/currencyservice/**"],
+      "groupName": "currencyservice",
+    },
+    {
+      "matchFileNames": ["src/emailservice/**"],
+      "groupName": "emailservice",
+    },
+    {
+      "matchFileNames": ["src/featureflagservice/**"],
+      "groupName": "featureflagservice",
+    },
+    {
+      "matchFileNames": ["src/frauddetectionservice/**"],
+      "groupName": "frauddetectionservice",
+    },
+    {
+      "matchFileNames": ["src/frontend/**"],
+      "groupName": "frontend",
+    },
+    {
+      "matchFileNames": ["src/frontendproxy/**"],
+      "groupName": "frontendproxy",
+    },
+    {
+      "matchFileNames": ["src/grafana/**"],
+      "groupName": "grafana",
+    },
+    {
+      "matchFileNames": ["src/kafka/**"],
+      "groupName": "kafka",
+    },
+    {
+      "matchFileNames": ["src/loadgenerator/**"],
+      "groupName": "loadgenerator",
+    },
+    {
+      "matchFileNames": ["src/otelcollector/**"],
+      "groupName": "otelcollector",
+    },
+    {
+      "matchFileNames": ["src/paymentservice/**"],
+      "groupName": "paymentservice",
+    },
+    {
+      "matchFileNames": ["src/productcatalogservice/**"],
+      "groupName": "productcatalogservice",
+    },
+    {
+      "matchFileNames": ["src/prometheus/**"],
+      "groupName": "prometheus",
+    },
+    {
+      "matchFileNames": ["src/quoteservice/**"],
+      "groupName": "quoteservice",
+    },
+    {
+      "matchFileNames": ["src/recommendationservice/**"],
+      "groupName": "recommendationservice",
+    },
+    {
+      "matchFileNames": ["src/shippingservice/**"],
+      "groupName": "shippingservice",
+    },
+    {
+      // intentionally using Java 11 in some examples
+      // not using matchUpdateTypes "major", because renovate wants to bump "11-jre" to "11.0.19_7-jre"
+      "matchPackageNames": ["eclipse-temurin"],
+      "enabled": false
+    }
+  ]
+}

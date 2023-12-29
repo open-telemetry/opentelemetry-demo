@@ -1,15 +1,26 @@
+# Copyright The OpenTelemetry Authors
+# SPDX-License-Identifier: Apache-2.0
 name: Checks
 
 on:
+  push:
+    branches: [ main ]
   pull_request:
     branches: [ main ]
+  workflow_dispatch:
 
 jobs:
+  build_images:
+    uses: ./.github/workflows/build-images.yml
+    with:
+      push: false
+      version: 'dev'
+
   markdownlint:
     runs-on: ubuntu-latest
     steps:
     - name: check out code
-      uses: actions/checkout@v3
+      uses: actions/checkout@v4
 
     - name: install dependencies
       run: npm install
@@ -21,9 +32,9 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - name: check out code
-      uses: actions/checkout@v3
+      uses: actions/checkout@v4
 
-    - uses: actions/setup-python@v4
+    - uses: actions/setup-python@v5
       with:
         python-version: '3.x'
 
@@ -37,7 +48,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - name: check out code
-      uses: actions/checkout@v3
+      uses: actions/checkout@v4
 
     - name: run misspell
       run: make misspell
@@ -46,7 +57,7 @@ jobs:
     name: markdownlinkcheck
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@v4
     - name: Run link check
       uses: gaurav-nelson/github-action-markdown-link-check@v1
       with:
@@ -58,7 +69,17 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@v4
 
     - name: run sanitycheck.py
       run: python3 ./internal/tools/sanitycheck.py
+
+  checklicense:
+    runs-on: ubuntu-latest
+    steps:
+    - name: check out code
+      uses: actions/checkout@v4
+    - name: install tools
+      run: make install-tools
+    - name: run checklicense
+      run: make checklicense

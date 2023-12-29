@@ -1,0 +1,46 @@
+{
+    "**/*.{go,cs,h,cpp,js,ts,tsx,rs}": [
+      "// Copyright The OpenTelemetry Authors",
+      "// SPDX-License-Identifier: Apache-2.0"
+    ],
+    "**/*.php": [
+      "<?php",
+      "// Copyright The OpenTelemetry Authors",
+      "// SPDX-License-Identifier: Apache-2.0"
+    ],
+    "**/*.java": [
+      "/*",
+      "* Copyright The OpenTelemetry Authors",
+      "* SPDX-License-Identifier: Apache-2.0",
+      "*/"
+    ],
+    "**/*.py": [
+      "#!/usr/bin/python",
+      "# Copyright The OpenTelemetry Authors",
+      "# SPDX-License-Identifier: Apache-2.0"
+    ],
+    "**/*.sh": [
+      "#!/bin/sh",
+      "# Copyright The OpenTelemetry Authors",
+      "# SPDX-License-Identifier: Apache-2.0"
+    ],
+    "**/*.{ex,exs,rb,yaml,yml,yamllint}": [
+      "# Copyright The OpenTelemetry Authors",
+      "# SPDX-License-Identifier: Apache-2.0"
+    ],
+    "**/{Dockerfile,Makefile}": [
+      "# Copyright The OpenTelemetry Authors",
+      "# SPDX-License-Identifier: Apache-2.0"
+    ],
+    "ignore": [
+        "node_modules/",
+        "src/accountingservice/genproto/",
+        "src/cartservice/src/obj/",
+        "src/cartservice/tests/obj/",
+        "src/checkoutservice/genproto/",
+        "src/featureflagservice/assets/vendor/",
+        "src/featureflagservice/priv/",
+        "src/productcatalogservice/genproto/",
+        "internal/tools/"
+    ]
+  }

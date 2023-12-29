@@ -1,0 +1,36 @@
+# Copyright The OpenTelemetry Authors
+# SPDX-License-Identifier: Apache-2.0
+
+type: Test
+spec:
+  id: frontend-get-recommendation
+  name: 'Frontend: Get recommendations'
+  description: Simulate the user seeing recomendations on Astronomy Shop
+  trigger:
+    type: http
+    httpRequest:
+      url: http://${var:FRONTEND_ADDR}/api/recommendations
+      method: GET
+      headers:
+      - key: Content-Type
+        value: application/json
+      body: |
+        {
+          "productIds":[
+            "0PUK6V6EV0",
+            "1YMWWN1N4O",
+            "2ZYFJ3GM2N",
+            "66VCHSJNUP",
+            "6E92ZMYYFZ"
+          ]
+        }
+  specs:
+  - name: It called the frontend with success
+    selector: span[tracetest.span.type="general" name="Tracetest trigger"]
+    assertions:
+    - attr:tracetest.response.status = 200
+  - name: It called ListRecommendations correctly and got 5 products
+    selector: span[tracetest.span.type="rpc" name="/oteldemo.RecommendationService/ListRecommendations" rpc.system="grpc" rpc.method="ListRecommendations" rpc.service="oteldemo.RecommendationService"]
+    assertions:
+    - attr:rpc.grpc.status_code = 0
+    - attr:app.products_recommended.count = 5

@@ -1,6 +1,8 @@
+# Copyright The OpenTelemetry Authors
+# SPDX-License-Identifier: Apache-2.0
+
 # extra settings to be merged into OpenTelemetry Collector configuration
 # do not delete this file
-
 
 exporters:
   clickhouse:
@@ -26,6 +28,3 @@ service:
       receivers: [otlp]
       processors: [spanmetrics, batch]
       exporters: [logging, clickhouse]
-
-
-
