@@ -9,6 +9,8 @@ release.
 
 * [cartservice] disable config reload
   ([#1312](https://github.com/open-telemetry/opentelemetry-demo/pull/1312))
+* [accountingservice] Update dependencies and semconv
+* ([#1316](https://github.com/open-telemetry/opentelemetry-demo/pull/1316))
 
 ## 1.7.0
 
