@@ -30,10 +30,6 @@ public class FeatureFlagHelper
         {
             return false;
         }
-        if (Random.Next(10) != 1)
-        {
-            return false;
-        }
 
         var getFlagRequest = new GetFlagRequest { Name = "cartServiceFailure" };
         var getFlagResponse = await _featureFlagServiceClient.GetFlagAsync(getFlagRequest);
