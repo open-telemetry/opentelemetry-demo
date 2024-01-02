@@ -11,6 +11,8 @@ release.
   ([#1312](https://github.com/open-telemetry/opentelemetry-demo/pull/1312))
 * [cartservice] fixed cartServiceFailure feature flag
   ([#1313](https://github.com/open-telemetry/opentelemetry-demo/pull/1313))
+* [accountingservice] Update dependencies and semconv
+* ([#1316](https://github.com/open-telemetry/opentelemetry-demo/pull/1316))
 
 ## 1.7.0
 
