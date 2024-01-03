@@ -552,6 +552,9 @@ services:
       - POSTGRES_USER=ffs
       - POSTGRES_DB=ffs
       - POSTGRES_PASSWORD=ffs
+    volumes:
+      - ./src/ffs_postgres/10-ffs_schema.sql:/docker-entrypoint-initdb.d/10-ffs_schema.sql
+      - ./src/ffs_postgres/20-ffs_data.sql:/docker-entrypoint-initdb.d/20-ffs_data.sql
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -d ffs -U ffs"]
       interval: 10s
