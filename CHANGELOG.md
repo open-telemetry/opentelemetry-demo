@@ -7,6 +7,9 @@ release.
 
 ## Unreleased
 
+## 1.7.1
+
+* [grafana] revert to 10.2.0
 * [cartservice] disable config reload
   ([#1312](https://github.com/open-telemetry/opentelemetry-demo/pull/1312))
 * [cartservice] fixed cartServiceFailure feature flag
