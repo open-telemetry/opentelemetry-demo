@@ -11,5 +11,5 @@ INSERT INTO public.featureflags (name, description, enabled)
 VALUES
     ('productCatalogFailure', 'Fail product catalog service on a specific product', 0),
     ('recommendationCache', 'Cache recommendations', 0),
-    ('adServiceFailure', 'Fail ad service requests sporadically', 0),
+    ('adServiceFailure', 'Fail ad service requests', 0),
     ('cartServiceFailure', 'Fail cart service requests sporadically', 0);
