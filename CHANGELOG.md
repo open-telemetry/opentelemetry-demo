@@ -7,6 +7,9 @@ release.
 
 ## Unreleased
 
+* [featureflagservice] change to custom ffs_postgres image 
+  ([#1322](https://github.com/open-telemetry/opentelemetry-demo/pull/1322))
+
 ## 1.7.1
 
 * [grafana] revert to 10.2.0
