@@ -79,7 +79,7 @@ Monday at 8:30 AM PST and anyone is welcome.
 
 - [Austin Parker](https://github.com/austinlparker), Honeycomb
 - [Carter Socha](https://github.com/cartersocha), Lightstep
-- [Juliano Costa](https://github.com/julianocosta89), Dynatrace
+- [Juliano Costa](https://github.com/julianocosta89), Datadog
 - [Pierre Tessier](https://github.com/puckpuck), Honeycomb
 
 [Approvers](https://github.com/open-telemetry/community/blob/main/community-membership.md#approver)
