@@ -5,12 +5,12 @@ defmodule Featureflagservice.FeatureFlags.FeatureFlag do
   use Ecto.Schema
   import Ecto.Changeset
 
-  schema "featureflags" do
+  @primary_key {:name, :string, autogenerate: false}
+  @derive {Phoenix.Param, key: :name}
+
+  schema "featureflags"  do
     field :description, :string
     field :enabled, :float, default: 0.0
-    field :name, :string
-
-    timestamps()
   end
 
   @doc false

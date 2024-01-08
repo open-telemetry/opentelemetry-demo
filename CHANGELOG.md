@@ -16,6 +16,8 @@ release.
   ([#1313](https://github.com/open-telemetry/opentelemetry-demo/pull/1313))
 * [accountingservice] Update dependencies and semconv
 * ([#1316](https://github.com/open-telemetry/opentelemetry-demo/pull/1316))
+* [featureflagservice] Allow setting initial feature flag values
+  ([#1319](https://github.com/open-telemetry/opentelemetry-demo/pull/1319))
 
 ## 1.7.0
 
