@@ -7,6 +7,9 @@ release.
 
 ## Unreleased
 
+* [cartservice] update .NET package to 1.7.0 release
+  ([#1326](https://github.com/open-telemetry/opentelemetry-demo/pull/1326))
+
 ## 1.7.1
 
 * [grafana] revert to 10.2.0
@@ -18,8 +21,6 @@ release.
 * ([#1316](https://github.com/open-telemetry/opentelemetry-demo/pull/1316))
 * [featureflagservice] Allow setting initial feature flag values
   ([#1319](https://github.com/open-telemetry/opentelemetry-demo/pull/1319))
-* [cartservice] update .NET package to 1.7.0 release
-  ([#1326](https://github.com/open-telemetry/opentelemetry-demo/pull/1326))
 
 ## 1.7.0
 
