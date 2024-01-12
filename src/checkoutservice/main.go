@@ -127,7 +127,7 @@ func initProfilerProvider() *pyroscope.Profiler {
 	stdruntime.SetMutexProfileFraction(5)
 	stdruntime.SetBlockProfileRate(5)
 
-	addr := os.Getenv("PYROSCOPE_ADDR")
+	addr := os.Getenv("GRAFANA_PYROSCOPE_ADDR")
 	if addr == "" {
 		addr = "http://127.0.0.1:4040"
 	}
@@ -135,9 +135,9 @@ func initProfilerProvider() *pyroscope.Profiler {
 	cfg := pyroscope.Config{
 		ApplicationName:   "checkoutservice",
 		ServerAddress:     addr,
-		BasicAuthUser:     os.Getenv("PYROSCOPE_AUTH_USER"),
-		BasicAuthPassword: os.Getenv("PYROSCOPE_AUTH_PASS"),
-		Logger:            nil,
+		BasicAuthUser:     os.Getenv("GRAFANA_PYROSCOPE_AUTH_USER"),
+		BasicAuthPassword: os.Getenv("GRAFANA_PYROSCOPE_AUTH_PASS"),
+		Logger:            log,
 		Tags:              map[string]string{},
 		ProfileTypes: []pyroscope.ProfileType{
 			pyroscope.ProfileCPU,
