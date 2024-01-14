@@ -1,3 +1,5 @@
+// Copyright The OpenTelemetry Authors
+// SPDX-License-Identifier: Apache-2.0
 using cartservice.cartstore;
 using cartservice.services;
 using Microsoft.AspNetCore.Builder;
