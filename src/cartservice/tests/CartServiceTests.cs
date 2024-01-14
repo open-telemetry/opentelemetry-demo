@@ -7,6 +7,7 @@ using Oteldemo;
 using Microsoft.AspNetCore.TestHost;
 using Microsoft.Extensions.Hosting;
 using Xunit;
+using Microsoft.AspNetCore.Hosting;
 using static Oteldemo.CartService;
 
 namespace cartservice.tests;
@@ -20,12 +21,12 @@ public class CartServiceTests
         _host = new HostBuilder().ConfigureWebHost(webBuilder =>
         {
             webBuilder
-                //  .UseStartup<Startup>()
+                .UseStartup<Startup>()
                 .UseTestServer();
         });
     }
 
-    [Fact(Skip = "See https://github.com/open-telemetry/opentelemetry-demo/pull/746#discussion_r1107931240")]
+    [Fact]
     public async Task GetItem_NoAddItemBefore_EmptyCartReturned()
     {
         // Setup test server and client
@@ -54,7 +55,7 @@ public class CartServiceTests
         Assert.Equal(new Cart(), cart);
     }
 
-    [Fact(Skip = "See https://github.com/open-telemetry/opentelemetry-demo/pull/746#discussion_r1107931240")]
+    [Fact]
     public async Task AddItem_ItemExists_Updated()
     {
         // Setup test server and client
@@ -100,7 +101,7 @@ public class CartServiceTests
         await client.EmptyCartAsync(new EmptyCartRequest { UserId = userId });
     }
 
-    [Fact(Skip = "See https://github.com/open-telemetry/opentelemetry-demo/pull/746#discussion_r1107931240")]
+    [Fact]
     public async Task AddItem_New_Inserted()
     {
         // Setup test server and client
