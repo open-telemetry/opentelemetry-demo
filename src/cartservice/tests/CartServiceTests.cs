@@ -5,9 +5,9 @@ using System.Threading.Tasks;
 using Grpc.Net.Client;
 using Oteldemo;
 using Microsoft.AspNetCore.TestHost;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Hosting;
 using Xunit;
-using Microsoft.AspNetCore.Hosting;
 using static Oteldemo.CartService;
 
 namespace cartservice.tests;
