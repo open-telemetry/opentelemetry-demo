@@ -7,8 +7,12 @@ release.
 
 ## Unreleased
 
+## 1.7.2
+
 * [cartservice] update .NET package to 1.7.0 release
   ([#1326](https://github.com/open-telemetry/opentelemetry-demo/pull/1326))
+* [loadgenerator and recommendationservice] Update python base image
+  ([#1329](https://github.com/open-telemetry/opentelemetry-demo/pull/1329))
 
 ## 1.7.1
 
