@@ -9,6 +9,8 @@ release.
 
 * [grafana] update grafana to 10.2.3
   ([#1332](https://github.com/open-telemetry/opentelemetry-demo/pull/1332))
+* [currency] fix metric exporter options
+  ([#1335](https://github.com/open-telemetry/opentelemetry-demo/pull/1335))
 
 ## 1.7.2
 
