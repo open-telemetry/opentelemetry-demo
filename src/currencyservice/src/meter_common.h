@@ -24,15 +24,14 @@ namespace
   {
     // Build MetricExporter
     otlp_exporter::OtlpGrpcMetricExporterOptions otlpOptions;
-
     // Configuration via environment variable not supported yet
-    otlpOptions.aggregation_temporality = otlp_exporter::PreferredAggregationTemporality::kDelta;
+    //otlpOptions.aggregation_temporality = otlp_exporter::PreferredAggregationTemporality::kCumulative;
     auto exporter = otlp_exporter::OtlpGrpcMetricExporterFactory::Create(otlpOptions);
 
     // Build MeterProvider and Reader
     metric_sdk::PeriodicExportingMetricReaderOptions options;
-    options.export_interval_millis = std::chrono::milliseconds(1000);
-    options.export_timeout_millis = std::chrono::milliseconds(500);
+    //options.export_interval_millis = std::chrono::milliseconds(60000);
+    //options.export_timeout_millis = std::chrono::milliseconds(30000);
     std::unique_ptr<metric_sdk::MetricReader> reader{
         new metric_sdk::PeriodicExportingMetricReader(std::move(exporter), options) };
     auto provider = std::shared_ptr<metrics_api::MeterProvider>(new metric_sdk::MeterProvider());
