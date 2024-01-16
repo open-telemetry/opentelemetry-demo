@@ -8,8 +8,8 @@ FROM python:3.12-slim-bullseye as base
 # Fetch requirements
 #
 FROM base as builder
-RUN apt-get -qq update \
-    && apt-get install -y --no-install-recommends build-essential \
+RUN apt-get update \
+    && apt-get install -y --no-install-recommends g++ \
     && rm -rf /var/lib/apt/lists/*
 
 WORKDIR /usr/src/app/
