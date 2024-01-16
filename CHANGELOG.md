@@ -7,6 +7,9 @@ release.
 
 ## Unreleased
 
+* [currencyservice] - add package name prefix to `rpc.service` attribute
+  ([#1333](https://github.com/open-telemetry/opentelemetry-demo/pull/1333))
+
 ## 1.7.2
 
 * [cartservice] update .NET package to 1.7.0 release
