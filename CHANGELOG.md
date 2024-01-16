@@ -7,6 +7,8 @@ release.
 
 ## Unreleased
 
+## 1.7.3
+
 * [grafana] update grafana to 10.2.3
   ([#1332](https://github.com/open-telemetry/opentelemetry-demo/pull/1332))
 
