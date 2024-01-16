@@ -7,6 +7,9 @@ release.
 
 ## Unreleased
 
+* [grafana] update grafana to 10.2.3
+  ([#1332](https://github.com/open-telemetry/opentelemetry-demo/pull/1332))
+
 ## 1.7.2
 
 * [cartservice] update .NET package to 1.7.0 release
