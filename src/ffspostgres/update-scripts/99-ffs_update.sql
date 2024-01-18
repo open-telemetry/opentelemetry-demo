@@ -1,7 +1,7 @@
 -- Copyright The OpenTelemetry Authors
 -- SPDX-License-Identifier: Apache-2.0
 
--- Feature Flags created and initialized on startup
+-- Feature Flags updated for startup
 --     'enabled' is a decimal value between 0 and 1 (inclusive)
 --     0.0 is always disabled
 --     1.0 is always enabled
