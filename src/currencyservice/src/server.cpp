@@ -113,7 +113,7 @@ class CurrencyService final : public oteldemo::CurrencyService::Service
     auto span =
         get_tracer("currencyservice")->StartSpan(span_name,
                                       {{SemanticConventions::kRpcSystem, "grpc"},
-                                       {SemanticConventions::kRpcService, "CurrencyService"},
+                                       {SemanticConventions::kRpcService, "oteldemo.CurrencyService"},
                                        {SemanticConventions::kRpcMethod, "GetSupportedCurrencies"},
                                        {SemanticConventions::kRpcGrpcStatusCode, 0}},
                                       options);
@@ -173,7 +173,7 @@ class CurrencyService final : public oteldemo::CurrencyService::Service
     auto span =
         get_tracer("currencyservice")->StartSpan(span_name,
                                       {{SemanticConventions::kRpcSystem, "grpc"},
-                                       {SemanticConventions::kRpcService, "CurrencyService"},
+                                       {SemanticConventions::kRpcService, "oteldemo.CurrencyService"},
                                        {SemanticConventions::kRpcMethod, "Convert"},
                                        {SemanticConventions::kRpcGrpcStatusCode, 0}},
                                       options);
