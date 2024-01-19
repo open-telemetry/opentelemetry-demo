@@ -256,6 +256,7 @@ services:
       - OTEL_COLLECTOR_HOST
       - OTEL_COLLECTOR_PORT_GRPC
       - OTEL_COLLECTOR_PORT_HTTP
+      - OTEL_RESOURCE_ATTRIBUTES
       - ENVOY_PORT
     depends_on:
       frontend:
