@@ -13,6 +13,8 @@ release.
   ([#1291](https://github.com/open-telemetry/opentelemetry-demo/pull/1291))
 * [currencyservice] - add package name prefix to `rpc.service` attribute
   ([#1333](https://github.com/open-telemetry/opentelemetry-demo/pull/1333))
+* [currency] fix metric exporter options
+  ([#1335](https://github.com/open-telemetry/opentelemetry-demo/pull/1335))
 
 ## 1.7.2
 
