@@ -9,6 +9,8 @@ release.
 
 * [grafana] update grafana to 10.2.3
   ([#1332](https://github.com/open-telemetry/opentelemetry-demo/pull/1332))
+* [currencyservice] - add package name prefix to `rpc.service` attribute
+  ([#1333](https://github.com/open-telemetry/opentelemetry-demo/pull/1333))
 
 ## 1.7.2
 
