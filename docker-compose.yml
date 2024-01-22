@@ -228,11 +228,11 @@ services:
       - OTEL_EXPORTER_OTLP_ENDPOINT
       - OTEL_EXPORTER_OTLP_TRACES_PROTOCOL=grpc
       - OTEL_SERVICE_NAME=featureflagservice
-      - DATABASE_URL=ecto://ffs:ffs@ffs_postgres:5432/ffs
+      - DATABASE_URL=ecto://ffs:ffs@ffspostgres:5432/ffs
     healthcheck:
       test: ["CMD", "curl", "-H", "baggage: synthetic_request=true", "-f", "http://localhost:${FEATURE_FLAG_SERVICE_PORT}"]
     depends_on:
-      ffs_postgres:
+      ffspostgres:
         condition: service_healthy
     logging: *logging
 
@@ -540,10 +540,14 @@ services:
   # Dependent Services
   # ******************
   # Postgres used by Feature Flag service
-  ffs_postgres:
-    image: postgres:16.1
-    container_name: postgres
-    user: postgres
+  ffspostgres:
+    image: ${IMAGE_NAME}:${IMAGE_VERSION}-ffspostgres
+    container_name: ffs-postgres
+    build:
+      context: ./
+      dockerfile: ./src/ffspostgres/Dockerfile
+      cache_from:
+        - ${IMAGE_NAME}:${IMAGE_VERSION}-ffspostgres
     deploy:
       resources:
         limits:
@@ -554,8 +558,7 @@ services:
       - POSTGRES_DB=ffs
       - POSTGRES_PASSWORD=ffs
     volumes:
-      - ./src/ffs_postgres/10-ffs_schema.sql:/docker-entrypoint-initdb.d/10-ffs_schema.sql
-      - ./src/ffs_postgres/20-ffs_data.sql:/docker-entrypoint-initdb.d/20-ffs_data.sql
+      - ./src/ffspostgres/update-scripts/99-ffs_update.sql:/docker-entrypoint-initdb.d/99-ffs_update.sql
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -d ffs -U ffs"]
       interval: 10s
