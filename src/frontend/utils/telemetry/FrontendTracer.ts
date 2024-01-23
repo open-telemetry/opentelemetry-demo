@@ -34,7 +34,9 @@ const FrontendTracer = async (collectorString: string) => {
     new BatchSpanProcessor(
       new OTLPTraceExporter({
         url: NEXT_PUBLIC_OTEL_EXPORTER_OTLP_TRACES_ENDPOINT || collectorString || 'http://localhost:4318/v1/traces',
-      })
+      }), {
+          scheduledDelayMillis : 500
+        }
     )
   );
 
