@@ -17,6 +17,12 @@ release.
   ([#1335](https://github.com/open-telemetry/opentelemetry-demo/pull/1335))
 * [ffspostgres] define and use demo specific postgres image
   ([#1338](https://github.com/open-telemetry/opentelemetry-demo/pull/1338))
+* [accountingservice] update wiki link
+  ([#1346](https://github.com/open-telemetry/opentelemetry-demo/pull/1346))
+* [checkoutservice] update wiki link
+  ([#1346](https://github.com/open-telemetry/opentelemetry-demo/pull/1346))
+* [productcatalogservice] update wiki link
+  ([#1346](https://github.com/open-telemetry/opentelemetry-demo/pull/1346))
 
 ## 1.7.2
 
