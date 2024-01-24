@@ -17,6 +17,8 @@ release.
   ([#1335](https://github.com/open-telemetry/opentelemetry-demo/pull/1335))
 * [ffspostgres] define and use demo specific postgres image
   ([#1338](https://github.com/open-telemetry/opentelemetry-demo/pull/1338))
+* [loadgenerator, frontend] enable browser traffic in loadgenerator using playwright
+  ([#1345](https://github.com/open-telemetry/opentelemetry-demo/pull/1345))
 
 ## 1.7.2
 
