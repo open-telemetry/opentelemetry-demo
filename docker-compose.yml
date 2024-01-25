@@ -362,7 +362,6 @@ services:
   # Load Generator
   loadgenerator:
     image: ${IMAGE_NAME}:${IMAGE_VERSION}-loadgenerator
-    container_name: load-generator
     build:
       context: ./
       dockerfile: ./src/loadgenerator/Dockerfile
