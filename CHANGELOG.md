@@ -6,7 +6,10 @@ content of "Unreleased" section content will generate release notes for the
 release.
 
 ## Unreleased
-
+* [adservice] added group and anonymous read permission to opentelemetry-javaagent.jar
+  ([#1348](https://github.com/open-telemetry/opentelemetry-demo/pull/1348))
+* [frauddetectionservice] added group and anonymous read permission to opentelemetry-javaagent.jar
+  ([#1348](https://github.com/open-telemetry/opentelemetry-demo/pull/1348))
 * [grafana] update grafana to 10.2.3
   ([#1332](https://github.com/open-telemetry/opentelemetry-demo/pull/1332))
 * [frontendproxy] Enable envoy environment resource detector
