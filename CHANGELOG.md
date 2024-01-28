@@ -7,6 +7,30 @@ release.
 
 ## Unreleased
 
+* [grafana] update grafana to 10.2.3
+  ([#1332](https://github.com/open-telemetry/opentelemetry-demo/pull/1332))
+* [frontendproxy] Enable envoy environment resource detector
+  ([#1291](https://github.com/open-telemetry/opentelemetry-demo/pull/1291))
+* [currencyservice] - add package name prefix to `rpc.service` attribute
+  ([#1333](https://github.com/open-telemetry/opentelemetry-demo/pull/1333))
+* [currency] fix metric exporter options
+  ([#1335](https://github.com/open-telemetry/opentelemetry-demo/pull/1335))
+* [ffspostgres] define and use demo specific postgres image
+  ([#1338](https://github.com/open-telemetry/opentelemetry-demo/pull/1338))
+* [accountingservice] update wiki link
+  ([#1346](https://github.com/open-telemetry/opentelemetry-demo/pull/1346))
+* [checkoutservice] update wiki link
+  ([#1346](https://github.com/open-telemetry/opentelemetry-demo/pull/1346))
+* [productcatalogservice] update wiki link
+  ([#1346](https://github.com/open-telemetry/opentelemetry-demo/pull/1346))
+
+## 1.7.2
+
+* [cartservice] update .NET package to 1.7.0 release
+  ([#1326](https://github.com/open-telemetry/opentelemetry-demo/pull/1326))
+* [loadgenerator and recommendationservice] Update python base image
+  ([#1329](https://github.com/open-telemetry/opentelemetry-demo/pull/1329))
+
 ## 1.7.1
 
 * [grafana] revert to 10.2.0

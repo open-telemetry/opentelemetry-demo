@@ -26,6 +26,10 @@ static_resources:
                           cluster_name: opentelemetry_collector_grpc
                         timeout: 0.250s
                       service_name: frontend-proxy
+                      resource_detectors:
+                        - name: envoy.tracers.opentelemetry.resource_detectors.environment
+                          typed_config:
+                            "@type": type.googleapis.com/envoy.extensions.tracers.opentelemetry.resource_detectors.v3.EnvironmentResourceDetectorConfig
                 route_config:
                   name: local_route
                   virtual_hosts:
