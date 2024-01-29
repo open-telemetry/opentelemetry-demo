@@ -266,15 +266,21 @@ message Ad {
 service FeatureFlagService {
   rpc GetFlag(GetFlagRequest) returns (GetFlagResponse) {}
   rpc CreateFlag(CreateFlagRequest) returns (CreateFlagResponse) {}
-  rpc UpdateFlag(UpdateFlagRequest) returns (UpdateFlagResponse) {}
+  rpc UpdateFlagProbability(UpdateFlagProbabilityRequest) returns (UpdateFlagProbabilityResponse) {}
   rpc ListFlags(ListFlagsRequest) returns (ListFlagsResponse) {}
   rpc DeleteFlag(DeleteFlagRequest) returns (DeleteFlagResponse) {}
 }
 
-message Flag {
+message FlagEvaluationResult {
   string name = 1;
   string description = 2;
   bool enabled = 3;
+}
+
+message FlagDefinition {
+  string name = 1;
+  string description = 2;
+  float enabled = 3;
 }
 
 message GetFlagRequest {
@@ -282,30 +288,30 @@ message GetFlagRequest {
 }
 
 message GetFlagResponse {
-  Flag flag = 1;
+  FlagEvaluationResult flag = 1;
 }
 
 message CreateFlagRequest {
   string name = 1;
   string description = 2;
-  bool enabled = 3;
+  float enabled = 3;
 }
 
 message CreateFlagResponse {
-  Flag flag = 1;
+  FlagDefinition flag = 1;
 }
 
-message UpdateFlagRequest {
+message UpdateFlagProbabilityRequest {
   string name = 1;
-  bool enabled = 2;
+  float enabled = 2;
 }
 
-message UpdateFlagResponse {}
+message UpdateFlagProbabilityResponse {}
 
 message ListFlagsRequest {}
 
 message ListFlagsResponse {
-  repeated Flag flag = 1;
+  repeated FlagDefinition flag = 1;
 }
 
 message DeleteFlagRequest {

@@ -1,4 +1,7 @@
 #!/bin/sh
+
+set -euo pipefail
+
 # Copyright The OpenTelemetry Authors
 # SPDX-License-Identifier: Apache-2.0
 
@@ -6,9 +9,9 @@
 # and removal of the container, then recreating it. This is useful for development, as it ensures the latest code
 # is running in the container.
 
-if [ -z "$1" ]
+if [ -z "${1:-}" ]
 then
-    echo "Please provide a service name"
+    echo "Please provide a service name."
     exit 1
 fi
 
