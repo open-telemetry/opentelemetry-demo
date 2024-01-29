@@ -142,12 +142,12 @@ if browser_traffic_enabled:
 
         @task
         @pw
-        async def open_cart_page_and_click_button(self, page: PageWithRetry):
+        async def open_cart_page_and_change_currency(self, page: PageWithRetry):
             try:
                 page.on("console", lambda msg: print(msg.text))
                 await page.route('**/*', add_baggage_header)
                 await page.goto("/cart", wait_until="domcontentloaded")
-                await page.click('button:has-text("Continue Shopping")', wait_until="domcontentloaded")
+                await page.select_option('[name="currency_code"]', 'CHF')
                 await page.wait_for_timeout(2000)  # giving the browser time to export the traces
             except:
                 pass
