@@ -76,24 +76,16 @@ install-tools: $(MISSPELL)
 build:
 	docker compose build
 
-.PHONY: build-and-push-dockerhub
-build-and-push-dockerhub:
-	docker compose --env-file .dockerhub.env -f docker-compose.yml build
-	docker compose --env-file .dockerhub.env -f docker-compose.yml push
-
-.PHONY: build-and-push-ghcr
-build-and-push-ghcr:
-	docker compose --env-file .ghcr.env -f docker-compose.yml build
-	docker compose --env-file .ghcr.env -f docker-compose.yml push
+.PHONY: build-and-push-aws-ecr
+build-and-push-aws-ecr:
+	docker compose --env-file .aws_ecr.env -f docker-compose.yml build
+	docker compose --env-file .aws_ecr.env -f docker-compose.yml push
 
 .PHONY: build-env-file
 build-env-file:
-	cp .env .dockerhub.env
-	sed -i '/IMAGE_VERSION=.*/c\IMAGE_VERSION=${RELEASE_VERSION}' .dockerhub.env
-	sed -i '/IMAGE_NAME=.*/c\IMAGE_NAME=${DOCKERHUB_REPO}' .dockerhub.env
-	cp .env .ghcr.env
-	sed -i '/IMAGE_VERSION=.*/c\IMAGE_VERSION=${RELEASE_VERSION}' .ghcr.env
-	sed -i '/IMAGE_NAME=.*/c\IMAGE_NAME=${GHCR_REPO}' .ghcr.env
+	cp .env .aws_ecr.env
+	sed -i '/IMAGE_VERSION=.*/c\IMAGE_VERSION=${RELEASE_VERSION}' .aws_ecr.env
+	sed -i '/IMAGE_NAME=.*/c\IMAGE_NAME=${AWS_ECR_REPO}' .aws_ecr.env
 
 run-tests:
 	docker compose run frontendTests
