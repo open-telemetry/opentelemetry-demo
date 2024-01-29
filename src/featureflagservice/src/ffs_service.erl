@@ -58,13 +58,40 @@ create_flag(_Ctx, _) ->
 
 -spec update_flag(ctx:t(), ffs_demo_pb:update_flag_request()) ->
   {ok, ffs_demo_pb:update_flag_response(), ctx:t()} | grpcbox_stream:grpc_error_response().
-update_flag(_Ctx, _) ->
-  {grpc_error, {?GRPC_STATUS_UNIMPLEMENTED, <<"use the web interface to update flags.">>}}.
+update_flag(Ctx, #{name := Name, enabled := Probability}) ->
+  Flag = 'Elixir.Featureflagservice.FeatureFlags':get_feature_flag_by_name(Name),
+  case Flag of
+    nil ->
+      {grpc_error, {?GRPC_STATUS_NOT_FOUND, <<"the requested feature flag does not exist">>}};
+    #{'__struct__' := 'Elixir.Featureflagservice.FeatureFlags.FeatureFlag',
+      name := Name,
+      description := Description,
+      enabled := _
+    } ->
+      'Elixir.Featureflagservice.FeatureFlags':update_feature_flag(
+        Flag,
+        #{name => Name, description => Description, enabled => Probability}
+      ),
+      {ok, #{}, Ctx}
+  end.
 
 -spec list_flags(ctx:t(), ffs_demo_pb:list_flags_request()) ->
   {ok, ffs_demo_pb:list_flags_response(), ctx:t()} | grpcbox_stream:grpc_error_response().
-list_flags(_Ctx, _) ->
-  {grpc_error, {?GRPC_STATUS_UNIMPLEMENTED, <<"use the web interface to view all flags.">>}}.
+list_flags(Ctx, _) ->
+  Flags = lists:map(fun unpack_flag/1, 'Elixir.Featureflagservice.FeatureFlags':list_feature_flags()),
+  {ok, #{flag => Flags}, Ctx}.
+
+unpack_flag(Flag) ->
+  case Flag of
+    #{'__struct__' := 'Elixir.Featureflagservice.FeatureFlags.FeatureFlag',
+      name := Name,
+      description := Description,
+      enabled := Probability
+    } ->
+      #{name => Name,
+        description => Description,
+        enabled => Probability}
+  end.
 
 -spec delete_flag(ctx:t(), ffs_demo_pb:delete_flag_request()) ->
   {ok, ffs_demo_pb:delete_flag_response(), ctx:t()} | grpcbox_stream:grpc_error_response().
