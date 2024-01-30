@@ -17,4 +17,6 @@ WORKDIR /usr/src/app/
 COPY --from=builder /reqs /usr/local
 COPY ./src/loadgenerator/locustfile.py .
 COPY ./src/loadgenerator/people.json .
+ENV LOCUST_PLAYWRIGHT=1
+RUN playwright install --with-deps chromium
 ENTRYPOINT locust
