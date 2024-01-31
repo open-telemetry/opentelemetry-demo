@@ -27,6 +27,12 @@ release.
   ([#1348](https://github.com/open-telemetry/opentelemetry-demo/pull/1348))
 * [frauddetectionservice] added group and anonymous read permission to opentelemetry-javaagent.jar
   ([#1348](https://github.com/open-telemetry/opentelemetry-demo/pull/1348))
+* [adservice] Major version update for Java instrumentation, version 2.0.0
+  ([#1352](https://github.com/open-telemetry/opentelemetry-demo/pull/1352))
+* [frauddetectionservice] Major version update for Java instrumentation, version 2.0.0
+  ([#1352](https://github.com/open-telemetry/opentelemetry-demo/pull/1352))
+* [kafka] Major version update for Java instrumentation, version 2.0.0
+  ([#1352](https://github.com/open-telemetry/opentelemetry-demo/pull/1352))
 
 ## 1.7.2
 
