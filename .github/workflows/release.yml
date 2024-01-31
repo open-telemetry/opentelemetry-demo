@@ -1,20 +1,15 @@
 # Copyright The OpenTelemetry Authors
 # SPDX-License-Identifier: Apache-2.0
-name: "Create a Release"
+name: "Publish Images"
 
 on:
-  workflow_dispatch:
-    inputs:
-      version:
-        description: version tag for container images
-        default: 0.0.1
-        required: false
-        type: string
+  release:
+    types: [published]
 
 jobs:
   build_and_push_images:
     uses: ./.github/workflows/build-images.yml
     with:
       push: true
-      version: ${{ inputs.version }}
+      version: ${{ github.event.release.tag_name }}
     secrets: inherit
