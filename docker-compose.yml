@@ -197,7 +197,7 @@ services:
     environment:
       - APP_ENV=production
       - EMAIL_SERVICE_PORT
-      - OTEL_EXPORTER_OTLP_TRACES_ENDPOINT=http://${OTEL_COLLECTOR_HOST}:4318/v1/traces
+      - OTEL_EXPORTER_OTLP_TRACES_ENDPOINT=http://${OTEL_COLLECTOR_HOST}:${OTEL_COLLECTOR_PORT_HTTP}/v1/traces
       - OTEL_RESOURCE_ATTRIBUTES
       - OTEL_SERVICE_NAME=emailservice
     depends_on:
@@ -465,7 +465,7 @@ services:
     ports:
       - "${QUOTE_SERVICE_PORT}"
     environment:
-      - OTEL_EXPORTER_OTLP_ENDPOINT=http://${OTEL_COLLECTOR_HOST}:4318
+      - OTEL_EXPORTER_OTLP_ENDPOINT=http://${OTEL_COLLECTOR_HOST}:${OTEL_COLLECTOR_PORT_HTTP}
       - OTEL_PHP_AUTOLOAD_ENABLED=true
       - QUOTE_SERVICE_PORT
       - OTEL_RESOURCE_ATTRIBUTES
@@ -530,7 +530,7 @@ services:
     environment:
       - SHIPPING_SERVICE_PORT
       - QUOTE_SERVICE_ADDR
-      - OTEL_EXPORTER_OTLP_TRACES_ENDPOINT=http://${OTEL_COLLECTOR_HOST}:4317/v1/traces
+      - OTEL_EXPORTER_OTLP_TRACES_ENDPOINT=http://${OTEL_COLLECTOR_HOST}:${OTEL_COLLECTOR_PORT_GRPC}/v1/traces
       - OTEL_RESOURCE_ATTRIBUTES
       - OTEL_SERVICE_NAME=shippingservice
     depends_on:
@@ -632,7 +632,7 @@ services:
     restart: unless-stopped
     ports:
       - "${JAEGER_SERVICE_PORT}"         # Jaeger UI
-      - "4317"                           # OTLP gRPC default port
+      - "${OTEL_COLLECTOR_PORT_GRPC}"
     environment:
       - METRICS_STORAGE_TYPE=prometheus
     logging: *logging
@@ -668,8 +668,8 @@ services:
       - ./src/otelcollector/otelcol-config.yml:/etc/otelcol-config.yml
       - ./src/otelcollector/otelcol-config-extras.yml:/etc/otelcol-config-extras.yml
     ports:
-      - "4317"          # OTLP over gRPC receiver
-      - "4318"          # OTLP over HTTP receiver
+      - "${OTEL_COLLECTOR_PORT_GRPC}"
+      - "${OTEL_COLLECTOR_PORT_HTTP}"
     depends_on:
       - jaeger
     logging: *logging
