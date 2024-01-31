@@ -29,6 +29,8 @@ release.
   ([#1348](https://github.com/open-telemetry/opentelemetry-demo/pull/1348))
 * [frauddetectionservice] added group and anonymous read permission to opentelemetry-javaagent.jar
   ([#1348](https://github.com/open-telemetry/opentelemetry-demo/pull/1348))
+* Align env variables for OTLP ports
+  ([#1353](https://github.com/open-telemetry/opentelemetry-demo/pull/1353))
 
 ## 1.7.2
 
