@@ -3,13 +3,18 @@
 name: "Create a Release"
 
 on:
-  release:
-    types: [published]
+  workflow_dispatch:
+    inputs:
+      version:
+        description: version tag for container images
+        default: 0.0.1
+        required: false
+        type: string
 
 jobs:
   build_and_push_images:
     uses: ./.github/workflows/build-images.yml
     with:
       push: true
-      version: ${{ github.event.release.tag_name }}
+      version: ${{ inputs.version }}
     secrets: inherit
