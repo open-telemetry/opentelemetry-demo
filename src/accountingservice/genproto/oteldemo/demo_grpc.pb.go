@@ -1067,6 +1067,7 @@ var AdService_ServiceDesc = grpc.ServiceDesc{
 const (
 	FeatureFlagService_GetFeatureFlagValue_FullMethodName            = "/oteldemo.FeatureFlagService/GetFeatureFlagValue"
 	FeatureFlagService_EvaluateProbabilityFeatureFlag_FullMethodName = "/oteldemo.FeatureFlagService/EvaluateProbabilityFeatureFlag"
+	FeatureFlagService_GetRangeFeatureFlag_FullMethodName            = "/oteldemo.FeatureFlagService/GetRangeFeatureFlag"
 	FeatureFlagService_CreateFlag_FullMethodName                     = "/oteldemo.FeatureFlagService/CreateFlag"
 	FeatureFlagService_UpdateFlagValue_FullMethodName                = "/oteldemo.FeatureFlagService/UpdateFlagValue"
 	FeatureFlagService_ListFlags_FullMethodName                      = "/oteldemo.FeatureFlagService/ListFlags"
@@ -1084,6 +1085,15 @@ type FeatureFlagServiceClient interface {
 	// of implementing the random decision taking on their own. If no flag with that name exists, the response will have the
 	// value false.
 	EvaluateProbabilityFeatureFlag(ctx context.Context, in *EvaluateProbabilityFeatureFlagRequest, opts ...grpc.CallOption) (*EvaluateProbabilityFeatureFlagResponse, error)
+	// A convenience function to fetch a triplet of feature flag values that represent a range of values. For example, for
+	// simulating increased request latencies in a service, the triplet of feature flags to be created would be
+	// - serviceNameSimulateSlownessEnabled: on/off switch or probability for the feature (value is >= 0 & <= 1),
+	// - serviceNameSimulateSlownessLowerBound: the lower bound in milliseconds for the additional delay,
+	// - serviceNameSimulateSlownessUpperBound: the upper bound in milliseconds for the additional delay.
+	// That is, the feature flag service assumes that there are additional feature flag values with the suffix "LowerBound" and
+	// "UpperBound" when a range feature flag with a particular name is requested. In case one or both of these do not exist, the
+	// arbitrary defaults for the lower and upper bound are 0 and 1000 respectively.
+	GetRangeFeatureFlag(ctx context.Context, in *RangeFeatureFlagRequest, opts ...grpc.CallOption) (*RangeFeatureFlagResponse, error)
 	// Creates a new feature flag.
 	CreateFlag(ctx context.Context, in *CreateFlagRequest, opts ...grpc.CallOption) (*CreateFlagResponse, error)
 	// Updates the value of a feature flag.
@@ -1114,6 +1124,15 @@ func (c *featureFlagServiceClient) GetFeatureFlagValue(ctx context.Context, in *
 func (c *featureFlagServiceClient) EvaluateProbabilityFeatureFlag(ctx context.Context, in *EvaluateProbabilityFeatureFlagRequest, opts ...grpc.CallOption) (*EvaluateProbabilityFeatureFlagResponse, error) {
 	out := new(EvaluateProbabilityFeatureFlagResponse)
 	err := c.cc.Invoke(ctx, FeatureFlagService_EvaluateProbabilityFeatureFlag_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *featureFlagServiceClient) GetRangeFeatureFlag(ctx context.Context, in *RangeFeatureFlagRequest, opts ...grpc.CallOption) (*RangeFeatureFlagResponse, error) {
+	out := new(RangeFeatureFlagResponse)
+	err := c.cc.Invoke(ctx, FeatureFlagService_GetRangeFeatureFlag_FullMethodName, in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -1167,6 +1186,15 @@ type FeatureFlagServiceServer interface {
 	// of implementing the random decision taking on their own. If no flag with that name exists, the response will have the
 	// value false.
 	EvaluateProbabilityFeatureFlag(context.Context, *EvaluateProbabilityFeatureFlagRequest) (*EvaluateProbabilityFeatureFlagResponse, error)
+	// A convenience function to fetch a triplet of feature flag values that represent a range of values. For example, for
+	// simulating increased request latencies in a service, the triplet of feature flags to be created would be
+	// - serviceNameSimulateSlownessEnabled: on/off switch or probability for the feature (value is >= 0 & <= 1),
+	// - serviceNameSimulateSlownessLowerBound: the lower bound in milliseconds for the additional delay,
+	// - serviceNameSimulateSlownessUpperBound: the upper bound in milliseconds for the additional delay.
+	// That is, the feature flag service assumes that there are additional feature flag values with the suffix "LowerBound" and
+	// "UpperBound" when a range feature flag with a particular name is requested. In case one or both of these do not exist, the
+	// arbitrary defaults for the lower and upper bound are 0 and 1000 respectively.
+	GetRangeFeatureFlag(context.Context, *RangeFeatureFlagRequest) (*RangeFeatureFlagResponse, error)
 	// Creates a new feature flag.
 	CreateFlag(context.Context, *CreateFlagRequest) (*CreateFlagResponse, error)
 	// Updates the value of a feature flag.
@@ -1187,6 +1215,9 @@ func (UnimplementedFeatureFlagServiceServer) GetFeatureFlagValue(context.Context
 }
 func (UnimplementedFeatureFlagServiceServer) EvaluateProbabilityFeatureFlag(context.Context, *EvaluateProbabilityFeatureFlagRequest) (*EvaluateProbabilityFeatureFlagResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method EvaluateProbabilityFeatureFlag not implemented")
+}
+func (UnimplementedFeatureFlagServiceServer) GetRangeFeatureFlag(context.Context, *RangeFeatureFlagRequest) (*RangeFeatureFlagResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetRangeFeatureFlag not implemented")
 }
 func (UnimplementedFeatureFlagServiceServer) CreateFlag(context.Context, *CreateFlagRequest) (*CreateFlagResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method CreateFlag not implemented")
@@ -1245,6 +1276,24 @@ func _FeatureFlagService_EvaluateProbabilityFeatureFlag_Handler(srv interface{},
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(FeatureFlagServiceServer).EvaluateProbabilityFeatureFlag(ctx, req.(*EvaluateProbabilityFeatureFlagRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _FeatureFlagService_GetRangeFeatureFlag_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(RangeFeatureFlagRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(FeatureFlagServiceServer).GetRangeFeatureFlag(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: FeatureFlagService_GetRangeFeatureFlag_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(FeatureFlagServiceServer).GetRangeFeatureFlag(ctx, req.(*RangeFeatureFlagRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -1335,6 +1384,10 @@ var FeatureFlagService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "EvaluateProbabilityFeatureFlag",
 			Handler:    _FeatureFlagService_EvaluateProbabilityFeatureFlag_Handler,
+		},
+		{
+			MethodName: "GetRangeFeatureFlag",
+			Handler:    _FeatureFlagService_GetRangeFeatureFlag_Handler,
 		},
 		{
 			MethodName: "CreateFlag",

@@ -37,7 +37,6 @@ EOF
   exit 1
 }
 
-
 command -v protoc >/dev/null 2>&1 || {
   cat <<EOF >&2
 protoc needs to be installed but it isn't.
@@ -74,7 +73,7 @@ popd > /dev/null
 
 echo "Regenerating Java code in src/adservice based on demo.proto"
 pushd src/adservice > /dev/null
-./gradlew  generateProto
+./gradlew generateProto
 popd > /dev/null
 
 echo "Recompiling Erlang code in src/featureflagservice based on demo.proto"

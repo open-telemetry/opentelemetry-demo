@@ -15,13 +15,19 @@ type TResponse = Empty | GetFeatureFlagValueResponse | EvaluateProbabilityFeatur
 const handler = async ({method, query, body}: NextApiRequest, res: NextApiResponse<TResponse>) => {
     switch (method) {
         case 'GET': {
-            const {name = '', raw = ''} = query
-            if (raw && 'true' === (raw as string).toLowerCase()) {
-                const flag = await FeatureFlagGateway.getFeatureFlagValue(name as string);
-                return res.status(200).json(flag);
-            } else {
-                const flag = await FeatureFlagGateway.evaluateProbabilityFeatureFlag(name as string);
-                return res.status(200).json(flag);
+            const {name = '', mode = 'raw'} = query
+            switch (mode as string) {
+                case 'probability':
+                    const randomDecisionOutcome = await FeatureFlagGateway.evaluateProbabilityFeatureFlag(name as string);
+                    return res.status(200).json(randomDecisionOutcome);
+                case 'range':
+                    const range = await FeatureFlagGateway.getRangeFeatureFlag(name as string);
+                    return res.status(200).json(range);
+                case 'raw':
+                // fall through
+                default:
+                    const flag = await FeatureFlagGateway.getFeatureFlagValue(name as string);
+                    return res.status(200).json(flag);
             }
         }
 
@@ -30,7 +36,7 @@ const handler = async ({method, query, body}: NextApiRequest, res: NextApiRespon
             if (!name || Array.isArray(name)) {
                 return res.status(400).end()
             }
-            if (!body || typeof body.value !== 'number'){
+            if (!body || typeof body.value !== 'number') {
                 return res.status(400).end()
             }
             const updateFlagProbabilityRequest = body as UpdateFlagValueRequest;

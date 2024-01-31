@@ -16,8 +16,9 @@
 
 -behaviour(ffs_service_bhvr).
 
--export([evaluate_probability_feature_flag/2,
-  get_feature_flag_value/2,
+-export([get_feature_flag_value/2,
+  evaluate_probability_feature_flag/2,
+  get_range_feature_flag/2,
   create_flag/2,
   update_flag_value/2,
   list_flags/2,
@@ -37,9 +38,7 @@ get_feature_flag_value(Ctx, #{name := Name}) ->
       % deployment of the demo immediately sets them.
       {ok, #{value => 0.0}, Ctx};
 
-    #{'__struct__' := 'Elixir.Featureflagservice.FeatureFlags.FeatureFlag',
-      enabled := Value
-    } ->
+    #{ enabled := Value } ->
 
       ?set_attribute('app.featureflag.name', Name),
       ?set_attribute('app.featureflag.raw_value', Value),
@@ -61,17 +60,61 @@ evaluate_probability_feature_flag(Ctx, #{name := Name}) ->
       % deployment of the demo immediately sets them.
       {ok, #{enabled => false}, Ctx};
 
-    #{'__struct__' := 'Elixir.Featureflagservice.FeatureFlags.FeatureFlag',
-      enabled := RawValue
-    } ->
+    #{ enabled := EnabledRaw } ->
       RandomNumber = rand:uniform(),
-      FlagEnabledValue = RandomNumber =< RawValue,
+      FlagEnabledValue = RandomNumber =< EnabledRaw,
 
       ?set_attribute('app.featureflag.name', Name),
-      ?set_attribute('app.featureflag.raw_value', RawValue),
+      ?set_attribute('app.featureflag.raw_value', EnabledRaw),
       ?set_attribute('app.featureflag.enabled', FlagEnabledValue),
 
       {ok, #{enabled => FlagEnabledValue}, Ctx};
+
+    _ ->
+      {grpc_error, {?GRPC_STATUS_INTERNAL, <<"unexpected response from get_feature_flag_by_name">>}}
+
+  end.
+
+-spec get_range_feature_flag(ctx:t(), ffs_demo_pb:get_range_feature_flag_request()) ->
+  {ok, ffs_demo_pb:get_range_feature_flag_response(), ctx:t()} | grpcbox_stream:grpc_error_response().
+get_range_feature_flag(Ctx, #{name := Name, nameLowerBound := NameLowerBound, nameUpperBound := NameUpperBound }) ->
+  EnabledFlag = 'Elixir.Featureflagservice.FeatureFlags':get_feature_flag_by_name(Name),
+  case EnabledFlag of
+    nil ->
+      % Do not fail with a GRPC error when feature flag has not been configured, instead just return false.
+      % This allows services to seamlessly introduce new feature flags without requiring that every
+      % deployment of the demo immediately sets them.
+      {ok, #{enabled => false, lowerBound => 0, upperBound => 0}, Ctx};
+
+    #{ enabled := EnabledRaw } ->
+      RandomNumber = rand:uniform(),
+      FlagEnabledValue = RandomNumber =< EnabledRaw,
+
+      ?set_attribute('app.featureflag.name', Name),
+      ?set_attribute('app.featureflag.raw_value', EnabledRaw),
+      ?set_attribute('app.featureflag.enabled', FlagEnabledValue),
+
+      if
+        FlagEnabledValue ->
+          LowerBound = 'Elixir.Featureflagservice.FeatureFlags':get_feature_flag_by_name(NameLowerBound),
+          UpperBound = 'Elixir.Featureflagservice.FeatureFlags':get_feature_flag_by_name(NameUpperBound),
+          LowerBoundDefault = 0,
+          UpperBoundDefault = 1000,
+          case {LowerBound, UpperBound} of
+            {#{ enabled := RawValueLowerBound }, #{ enabled := RawValueUpperBound }} ->
+              {ok, #{enabled => FlagEnabledValue, lowerBound => RawValueLowerBound, upperBound => RawValueUpperBound}, Ctx};
+            {#{ enabled := RawValueLowerBound }, _} ->
+              {ok, #{enabled => FlagEnabledValue, lowerBound => RawValueLowerBound, upperBound => UpperBoundDefault}, Ctx};
+            {_, #{ enabled := RawValueUpperBound }} ->
+              {ok, #{enabled => FlagEnabledValue, lowerBound => LowerBoundDefault, upperBound => RawValueUpperBound}, Ctx};
+            _ ->
+              {ok, #{enabled => FlagEnabledValue, lowerBound => LowerBoundDefault, upperBound => UpperBoundDefault}, Ctx}
+          end;
+
+        true ->
+          % flag is not enabled
+          {ok, #{enabled => false, lowerBound => 0, upperBound => 0}, Ctx}
+      end;
 
     _ ->
       {grpc_error, {?GRPC_STATUS_INTERNAL, <<"unexpected response from get_feature_flag_by_name">>}}
@@ -137,7 +180,7 @@ list_flags(Ctx, _) ->
 
 unpack_flag(Flag) ->
   case Flag of
-    #{'__struct__' := 'Elixir.Featureflagservice.FeatureFlags.FeatureFlag',
+    #{
       name := Name,
       description := Description,
       enabled := Value

@@ -414,6 +414,7 @@ services:
       - OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE
       - OTEL_RESOURCE_ATTRIBUTES
       - OTEL_SERVICE_NAME=paymentservice
+      - FEATURE_FLAG_GRPC_SERVICE_ADDR
     depends_on:
       otelcol:
         condition: service_started

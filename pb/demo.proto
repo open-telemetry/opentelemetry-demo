@@ -276,6 +276,18 @@ service FeatureFlagService {
    */
   rpc EvaluateProbabilityFeatureFlag(EvaluateProbabilityFeatureFlagRequest) returns (EvaluateProbabilityFeatureFlagResponse) {}
 
+  /*
+   * A convenience function to fetch a triplet of feature flag values that represent a range of values. For example, for
+   * simulating increased request latencies in a service, the triplet of feature flags to be created would be
+   * - serviceNameSimulateSlowness: on/off switch or probability for the feature (value is >= 0 & <= 1),
+   * - serviceNameSimulateSlownessLowerBound: the lower bound in milliseconds for the additional delay,
+   * - serviceNameSimulateSlownessUpperBound: the upper bound in milliseconds for the additional delay.
+   * That is, the feature flag API assumes that there are additional feature flag values with the suffix "LowerBound" and
+   * "UpperBound" when a range feature flag with a particular name is requested. In case the feature is enabled, but one or both
+   * of lower/upper bound does not exist, the arbitrary defaults for the lower and upper bound are 0 and 1000 respectively.
+   */
+  rpc GetRangeFeatureFlag(RangeFeatureFlagRequest) returns (RangeFeatureFlagResponse) {}
+
   /* Creates a new feature flag. */
   rpc CreateFlag(CreateFlagRequest) returns (CreateFlagResponse) {}
 
@@ -301,6 +313,18 @@ message EvaluateProbabilityFeatureFlagRequest {
 
 message EvaluateProbabilityFeatureFlagResponse {
   bool enabled = 1;
+}
+
+message RangeFeatureFlagRequest {
+  string name = 1;
+  string nameLowerBound = 2;
+  string nameUpperBound = 3;
+}
+
+message RangeFeatureFlagResponse {
+  bool enabled = 1;
+  float lowerBound = 2;
+  float upperBound = 3;
 }
 
 message GetFeatureFlagValueRequest {

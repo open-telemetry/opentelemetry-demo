@@ -28,6 +28,16 @@ const FeatureFlagGateway = () => ({
         );
     },
 
+    getRangeFeatureFlag(name: string) {
+        return new Promise<EvaluateProbabilityFeatureFlagResponse>((resolve, reject) =>
+            client.getRangeFeatureFlag({
+                name,
+                nameLowerBound: `${name}LowerBound`,
+                nameUpperBound: `${name}UpperBound`
+            }, (error, response) => (error ? reject(error) : resolve(response)))
+        );
+    },
+
     createFlag(flag: CreateFlagRequest) {
         return new Promise<CreateFlagResponse>((resolve, reject) =>
             client.createFlag(flag, (error, response) => (error ? reject(error) : resolve(response)))
