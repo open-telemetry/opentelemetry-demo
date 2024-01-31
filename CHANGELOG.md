@@ -29,6 +29,8 @@ release.
   ([#1348](https://github.com/open-telemetry/opentelemetry-demo/pull/1348))
 * [frauddetectionservice] added group and anonymous read permission to opentelemetry-javaagent.jar
   ([#1348](https://github.com/open-telemetry/opentelemetry-demo/pull/1348))
+* Update dependent services - Collector, Grafana, Jaeger, Prometheus, etc.
+  ([#1354](https://github.com/open-telemetry/opentelemetry-demo/pull/1354))
 
 ## 1.7.2
 
