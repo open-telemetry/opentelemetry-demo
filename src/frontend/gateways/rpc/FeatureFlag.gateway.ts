@@ -5,12 +5,9 @@ import {ChannelCredentials, status} from '@grpc/grpc-js';
 import {
     CreateFlagRequest,
     CreateFlagResponse,
-    DeleteFlagResponse,
-    FeatureFlagServiceClient,
-    GetFlagResponse,
-    ListFlagsResponse,
-    UpdateFlagProbabilityRequest,
-    UpdateFlagProbabilityResponse
+    DeleteFlagResponse, EvaluateProbabilityFeatureFlagResponse,
+    FeatureFlagServiceClient, GetFeatureFlagValueResponse,
+    ListFlagsResponse, UpdateFlagValueRequest, UpdateFlagValueResponse,
 } from '../../protos/demo';
 
 const {FEATURE_FLAG_GRPC_SERVICE_ADDR = ''} = process.env;
@@ -19,30 +16,36 @@ const client = new FeatureFlagServiceClient(FEATURE_FLAG_GRPC_SERVICE_ADDR, Chan
 
 const FeatureFlagGateway = () => ({
 
-    getFeatureFlag(name: string) {
-        return new Promise<GetFlagResponse>((resolve, reject) =>
-            client.getFlag({name}, (error, response) => (error ? reject(error) : resolve(response)))
+    getFeatureFlagValue(name: string) {
+        return new Promise<GetFeatureFlagValueResponse>((resolve, reject) =>
+            client.getFeatureFlagValue({name}, (error, response) => (error ? reject(error) : resolve(response)))
         );
     },
 
-    createFeatureFlag(flag: CreateFlagRequest) {
+    evaluateProbabilityFeatureFlag(name: string) {
+        return new Promise<EvaluateProbabilityFeatureFlagResponse>((resolve, reject) =>
+            client.evaluateProbabilityFeatureFlag({name}, (error, response) => (error ? reject(error) : resolve(response)))
+        );
+    },
+
+    createFlag(flag: CreateFlagRequest) {
         return new Promise<CreateFlagResponse>((resolve, reject) =>
             client.createFlag(flag, (error, response) => (error ? reject(error) : resolve(response)))
         );
     },
 
-    updateFeatureFlag(name: string, flag: UpdateFlagProbabilityRequest) {
-        return new Promise<UpdateFlagProbabilityResponse>((resolve, reject) => client.updateFlagProbability(flag, (error, response) => (error ? reject(error) : resolve(response)))
+    updateFlagValue(name: string, flag: UpdateFlagValueRequest) {
+        return new Promise<UpdateFlagValueResponse>((resolve, reject) => client.updateFlagValue(flag, (error, response) => (error ? reject(error) : resolve(response)))
         );
     },
 
-    listFeatureFlags() {
+    listFlags() {
         return new Promise<ListFlagsResponse>((resolve, reject) =>
             client.listFlags({}, (error, response) => (error ? reject(error) : resolve(response)))
         );
     },
 
-    deleteFeatureFlag(name: string) {
+    deleteFlag(name: string) {
         return new Promise<DeleteFlagResponse>((resolve, reject) => client.deleteFlag({name},
                 (error, response) => {
                     if (error) {
@@ -57,7 +60,6 @@ const FeatureFlagGateway = () => ({
             )
         );
     },
-
 });
 
 export default FeatureFlagGateway();

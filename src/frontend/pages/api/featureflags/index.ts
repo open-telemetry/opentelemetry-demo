@@ -10,16 +10,16 @@ type TResponse = FlagDefinition[] | FlagDefinition | Empty;
 const handler = async ({method, body}: NextApiRequest, res: NextApiResponse<TResponse>) => {
     switch (method) {
         case 'POST': {
-            if (!body || typeof body.name !== 'string' || typeof body.description !== 'string' || typeof body.enabled !== 'number') {
+            if (!body || typeof body.name !== 'string' || typeof body.description !== 'string' || typeof body.value !== 'number') {
                 return res.status(400).end()
             }
             const flagFromRequest = body as CreateFlagRequest
-            const {flag: flagFromResponse} = await FeatureFlagGateway.createFeatureFlag(flagFromRequest);
-            return res.status(200).json(flagFromResponse!);
+            await FeatureFlagGateway.createFlag(flagFromRequest);
+            return res.status(204).end();
         }
 
         case 'GET': {
-            const {flag: allFlags} = await FeatureFlagGateway.listFeatureFlags();
+            const {flag: allFlags} = await FeatureFlagGateway.listFlags();
             return res.status(200).json(allFlags);
         }
 

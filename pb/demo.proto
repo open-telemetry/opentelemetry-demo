@@ -264,49 +264,67 @@ message Ad {
 // ------------Feature flag service------------------
 
 service FeatureFlagService {
-  rpc GetFlag(GetFlagRequest) returns (GetFlagResponse) {}
-  rpc CreateFlag(CreateFlagRequest) returns (CreateFlagResponse) {}
-  rpc UpdateFlagProbability(UpdateFlagProbabilityRequest) returns (UpdateFlagProbabilityResponse) {}
-  rpc ListFlags(ListFlagsRequest) returns (ListFlagsResponse) {}
-  rpc DeleteFlag(DeleteFlagRequest) returns (DeleteFlagResponse) {}
-}
 
-message FlagEvaluationResult {
-  string name = 1;
-  string description = 2;
-  bool enabled = 3;
+  /* Returns the raw value of the feature flag. If no flag with that name exists, the response will have the value 0. */
+  rpc GetFeatureFlagValue(GetFeatureFlagValueRequest) returns (GetFeatureFlagValueResponse) {}
+
+  /*
+   * A convenience function to evaluate a feature flag that represents a probability, that is, a flag with a value between 0 and 1
+   * Returns the random decision as a boolean value. Services that use probability based feature flags can use this method instead
+   * of implementing the random decision taking on their own. If no flag with that name exists, the response will have the
+   * value false.
+   */
+  rpc EvaluateProbabilityFeatureFlag(EvaluateProbabilityFeatureFlagRequest) returns (EvaluateProbabilityFeatureFlagResponse) {}
+
+  /* Creates a new feature flag. */
+  rpc CreateFlag(CreateFlagRequest) returns (CreateFlagResponse) {}
+
+  /* Updates the value of a feature flag. */
+  rpc UpdateFlagValue(UpdateFlagValueRequest) returns (UpdateFlagValueResponse) {}
+
+  /* Lists all feature flags with their descriptions and values. */
+  rpc ListFlags(ListFlagsRequest) returns (ListFlagsResponse) {}
+
+  /* Deletes an existing feature flag. */
+  rpc DeleteFlag(DeleteFlagRequest) returns (DeleteFlagResponse) {}
 }
 
 message FlagDefinition {
   string name = 1;
   string description = 2;
-  float enabled = 3;
+  float value = 3;
 }
 
-message GetFlagRequest {
+message EvaluateProbabilityFeatureFlagRequest {
   string name = 1;
 }
 
-message GetFlagResponse {
-  FlagEvaluationResult flag = 1;
+message EvaluateProbabilityFeatureFlagResponse {
+  bool enabled = 1;
+}
+
+message GetFeatureFlagValueRequest {
+  string name = 1;
+}
+
+message GetFeatureFlagValueResponse {
+  float value = 3;
 }
 
 message CreateFlagRequest {
   string name = 1;
   string description = 2;
-  float enabled = 3;
+  float value = 3;
 }
 
-message CreateFlagResponse {
-  FlagDefinition flag = 1;
-}
+message CreateFlagResponse {}
 
-message UpdateFlagProbabilityRequest {
+message UpdateFlagValueRequest {
   string name = 1;
-  float enabled = 2;
+  float value = 2;
 }
 
-message UpdateFlagProbabilityResponse {}
+message UpdateFlagValueResponse {}
 
 message ListFlagsRequest {}
 

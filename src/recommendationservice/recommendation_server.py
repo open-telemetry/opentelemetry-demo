@@ -119,8 +119,7 @@ def must_map_env(key: str):
 def check_feature_flag(flag_name: str):
     if feature_flag_stub is None:
         return False
-    flag = feature_flag_stub.GetFlag(demo_pb2.GetFlagRequest(name=flag_name)).flag
-    return flag.enabled
+    return feature_flag_stub.EvaluateProbabilityFeatureFlag(demo_pb2.EvaluateProbabilityFeatureFlagRequest(name=flag_name)).enabled
 
 
 if __name__ == "__main__":

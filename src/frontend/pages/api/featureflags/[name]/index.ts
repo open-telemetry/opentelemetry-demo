@@ -3,16 +3,26 @@
 
 import type {NextApiRequest, NextApiResponse} from 'next';
 import FeatureFlagGateway from '../../../../gateways/rpc/FeatureFlag.gateway';
-import {Empty, FlagEvaluationResult, UpdateFlagProbabilityRequest} from '../../../../protos/demo';
+import {
+    Empty,
+    EvaluateProbabilityFeatureFlagResponse,
+    GetFeatureFlagValueResponse,
+    UpdateFlagValueRequest,
+} from '../../../../protos/demo';
 
-type TResponse = FlagEvaluationResult | Empty;
+type TResponse = Empty | GetFeatureFlagValueResponse | EvaluateProbabilityFeatureFlagResponse;
 
 const handler = async ({method, query, body}: NextApiRequest, res: NextApiResponse<TResponse>) => {
     switch (method) {
         case 'GET': {
-            const {name = ''} = query
-            const flag = await FeatureFlagGateway.getFeatureFlag(name as string);
-            return res.status(200).json(flag);
+            const {name = '', raw = ''} = query
+            if (raw && 'true' === (raw as string).toLowerCase()) {
+                const flag = await FeatureFlagGateway.getFeatureFlagValue(name as string);
+                return res.status(200).json(flag);
+            } else {
+                const flag = await FeatureFlagGateway.evaluateProbabilityFeatureFlag(name as string);
+                return res.status(200).json(flag);
+            }
         }
 
         case 'PUT': {
@@ -20,20 +30,20 @@ const handler = async ({method, query, body}: NextApiRequest, res: NextApiRespon
             if (!name || Array.isArray(name)) {
                 return res.status(400).end()
             }
-            if (!body || typeof body.enabled !== 'number'){
+            if (!body || typeof body.value !== 'number'){
                 return res.status(400).end()
             }
-            const updateFlagProbabilityRequest = body as UpdateFlagProbabilityRequest;
+            const updateFlagProbabilityRequest = body as UpdateFlagValueRequest;
             // The name is part of the resource path, and we do not want to require clients to repeat the name in the request
             // body; but on the grpc level the name needs to be in the message body, so we move it there.
             updateFlagProbabilityRequest.name = name;
-            await FeatureFlagGateway.updateFeatureFlag(name as string, updateFlagProbabilityRequest);
+            await FeatureFlagGateway.updateFlagValue(name as string, updateFlagProbabilityRequest);
             return res.status(204).end();
         }
 
         case 'DELETE': {
             const {name = ''} = query
-            await FeatureFlagGateway.deleteFeatureFlag(name as string);
+            await FeatureFlagGateway.deleteFlag(name as string);
             return res.status(204).end();
         }
 

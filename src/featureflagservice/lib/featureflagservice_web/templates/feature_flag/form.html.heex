@@ -29,14 +29,15 @@
   <%= text_input f, :description %>
   <%= error_tag f, :description %>
 
-  <%= label f, :enabled %>
-  <%= number_input f, :enabled, min: 0, max: 1, step: 0.01, "aria-describedby": "enabled_help_text" %>
-  <p id="enabled_help_text" style="font-size: smaller; margin-top: -10px;">
-    A decimal value between 0 and 1 (inclusive)<br />
-    0.0 is always disabled<br />
-    1.0 is always enabled<br />
-    All values between set a percentage chance on each request<br />
-    example: 0.55 is enabled 55% of the time<br />
+  <label for="feature_flag_enabled">Value</label>
+  <%= number_input f, :enabled, step: 0.01, "aria-describedby": "value_help_text" %>
+  <p id="value_help_text" style="font-size: smaller; margin-top: -10px;">
+    A decimal value. Most values are interpreted as a <em>probability</em>, feature flags of that kind
+    should have a value between 0.0 (inclusive) and 1.0 (inclusive). A feature flag with the value 0.0 is
+    always disabled, a flag with the value 1.0 is always enabled. Values between 0 and 1 define the
+    probability for the feature being active for a given request.<br />
+    Ultimtately though, feature flags can have arbitrary numeric values and it is up to the service
+    reading the feature flag setting to interprete it.
   </p>
   <%= error_tag f, :enabled %>
 

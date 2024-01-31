@@ -31,8 +31,8 @@ public class FeatureFlagHelper
             return false;
         }
 
-        var getFlagRequest = new GetFlagRequest { Name = "cartServiceFailure" };
-        var getFlagResponse = await _featureFlagServiceClient.GetFlagAsync(getFlagRequest);
-        return getFlagResponse.Flag.Enabled;
+        var featureFlagRequest = new EvaluateProbabilityFeatureFlagRequest { Name = "cartServiceFailure" };
+        var featureFlagResponse = await _featureFlagServiceClient.EvaluateProbabilityFeatureFlagAsync(featureFlagRequest);
+        return featureFlagResponse.Enabled;
     }
 }

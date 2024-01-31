@@ -262,16 +262,16 @@ func (p *productCatalog) checkProductFailure(ctx context.Context, id string) boo
 	defer conn.Close()
 
 	flagName := "productCatalogFailure"
-	ffResponse, err := pb.NewFeatureFlagServiceClient(conn).GetFlag(ctx, &pb.GetFlagRequest{
+	ffResponse, err := pb.NewFeatureFlagServiceClient(conn).EvaluateProbabilityFeatureFlag(ctx, &pb.EvaluateProbabilityFeatureFlagRequest{
 		Name: flagName,
 	})
 	if err != nil {
 		span := trace.SpanFromContext(ctx)
-		span.AddEvent("error", trace.WithAttributes(attribute.String("message", fmt.Sprintf("GetFlag Failed: %s", flagName))))
+		span.AddEvent("error", trace.WithAttributes(attribute.String("message", fmt.Sprintf("EvaluateProbabilityFeatureFlag Failed: %s", flagName))))
 		return false
 	}
 
-	return ffResponse.GetFlag().Enabled
+	return ffResponse.Enabled
 }
 
 func createClient(ctx context.Context, svcAddr string) (*grpc.ClientConn, error) {

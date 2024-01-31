@@ -1,8 +1,15 @@
 # Feature Flag Service
 
-This project provides an web interface for creating and updating feature flags
-and a GRPC service for fetching the status of flags by their name. Each runs on
-their own port but are in the same Release.
+This project provides a web interface and a GRPC API for creating, updating and
+fetching settings and feature flags. The web interface and the GRPC API each run
+on their own port but are in the same Release.
+
+Historically, the service only handled simple boolean feature flags, but it now
+has evolved to handling arbitrary numerical settings. Feature flags that have a
+simple on/off semantic can be represented with the values 1 and 0 respectively.
+Feature with a probability semantic (that is, for each request there is a random
+decision whether the flag is active or not), values between 0.0 and 1.0 can be
+used.
 
 ## Running
 

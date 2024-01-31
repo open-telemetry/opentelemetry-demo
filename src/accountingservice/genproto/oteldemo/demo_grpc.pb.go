@@ -1065,21 +1065,32 @@ var AdService_ServiceDesc = grpc.ServiceDesc{
 }
 
 const (
-	FeatureFlagService_GetFlag_FullMethodName               = "/oteldemo.FeatureFlagService/GetFlag"
-	FeatureFlagService_CreateFlag_FullMethodName            = "/oteldemo.FeatureFlagService/CreateFlag"
-	FeatureFlagService_UpdateFlagProbability_FullMethodName = "/oteldemo.FeatureFlagService/UpdateFlagProbability"
-	FeatureFlagService_ListFlags_FullMethodName             = "/oteldemo.FeatureFlagService/ListFlags"
-	FeatureFlagService_DeleteFlag_FullMethodName            = "/oteldemo.FeatureFlagService/DeleteFlag"
+	FeatureFlagService_GetFeatureFlagValue_FullMethodName            = "/oteldemo.FeatureFlagService/GetFeatureFlagValue"
+	FeatureFlagService_EvaluateProbabilityFeatureFlag_FullMethodName = "/oteldemo.FeatureFlagService/EvaluateProbabilityFeatureFlag"
+	FeatureFlagService_CreateFlag_FullMethodName                     = "/oteldemo.FeatureFlagService/CreateFlag"
+	FeatureFlagService_UpdateFlagValue_FullMethodName                = "/oteldemo.FeatureFlagService/UpdateFlagValue"
+	FeatureFlagService_ListFlags_FullMethodName                      = "/oteldemo.FeatureFlagService/ListFlags"
+	FeatureFlagService_DeleteFlag_FullMethodName                     = "/oteldemo.FeatureFlagService/DeleteFlag"
 )
 
 // FeatureFlagServiceClient is the client API for FeatureFlagService service.
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type FeatureFlagServiceClient interface {
-	GetFlag(ctx context.Context, in *GetFlagRequest, opts ...grpc.CallOption) (*GetFlagResponse, error)
+	// Returns the raw value of the feature flag. If no flag with that name exists, the response will have the value 0.
+	GetFeatureFlagValue(ctx context.Context, in *GetFeatureFlagValueRequest, opts ...grpc.CallOption) (*GetFeatureFlagValueResponse, error)
+	// A convenience function to evaluate a feature flag that represents a probability, that is, a flag with a value between 0 and 1
+	// Returns the random decision as a boolean value. Services that use probability based feature flags can use this method instead
+	// of implementing the random decision taking on their own. If no flag with that name exists, the response will have the
+	// value false.
+	EvaluateProbabilityFeatureFlag(ctx context.Context, in *EvaluateProbabilityFeatureFlagRequest, opts ...grpc.CallOption) (*EvaluateProbabilityFeatureFlagResponse, error)
+	// Creates a new feature flag.
 	CreateFlag(ctx context.Context, in *CreateFlagRequest, opts ...grpc.CallOption) (*CreateFlagResponse, error)
-	UpdateFlagProbability(ctx context.Context, in *UpdateFlagProbabilityRequest, opts ...grpc.CallOption) (*UpdateFlagProbabilityResponse, error)
+	// Updates the value of a feature flag.
+	UpdateFlagValue(ctx context.Context, in *UpdateFlagValueRequest, opts ...grpc.CallOption) (*UpdateFlagValueResponse, error)
+	// Lists all feature flags with their descriptions and values.
 	ListFlags(ctx context.Context, in *ListFlagsRequest, opts ...grpc.CallOption) (*ListFlagsResponse, error)
+	// Deletes an existing feature flag.
 	DeleteFlag(ctx context.Context, in *DeleteFlagRequest, opts ...grpc.CallOption) (*DeleteFlagResponse, error)
 }
 
@@ -1091,9 +1102,18 @@ func NewFeatureFlagServiceClient(cc grpc.ClientConnInterface) FeatureFlagService
 	return &featureFlagServiceClient{cc}
 }
 
-func (c *featureFlagServiceClient) GetFlag(ctx context.Context, in *GetFlagRequest, opts ...grpc.CallOption) (*GetFlagResponse, error) {
-	out := new(GetFlagResponse)
-	err := c.cc.Invoke(ctx, FeatureFlagService_GetFlag_FullMethodName, in, out, opts...)
+func (c *featureFlagServiceClient) GetFeatureFlagValue(ctx context.Context, in *GetFeatureFlagValueRequest, opts ...grpc.CallOption) (*GetFeatureFlagValueResponse, error) {
+	out := new(GetFeatureFlagValueResponse)
+	err := c.cc.Invoke(ctx, FeatureFlagService_GetFeatureFlagValue_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *featureFlagServiceClient) EvaluateProbabilityFeatureFlag(ctx context.Context, in *EvaluateProbabilityFeatureFlagRequest, opts ...grpc.CallOption) (*EvaluateProbabilityFeatureFlagResponse, error) {
+	out := new(EvaluateProbabilityFeatureFlagResponse)
+	err := c.cc.Invoke(ctx, FeatureFlagService_EvaluateProbabilityFeatureFlag_FullMethodName, in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -1109,9 +1129,9 @@ func (c *featureFlagServiceClient) CreateFlag(ctx context.Context, in *CreateFla
 	return out, nil
 }
 
-func (c *featureFlagServiceClient) UpdateFlagProbability(ctx context.Context, in *UpdateFlagProbabilityRequest, opts ...grpc.CallOption) (*UpdateFlagProbabilityResponse, error) {
-	out := new(UpdateFlagProbabilityResponse)
-	err := c.cc.Invoke(ctx, FeatureFlagService_UpdateFlagProbability_FullMethodName, in, out, opts...)
+func (c *featureFlagServiceClient) UpdateFlagValue(ctx context.Context, in *UpdateFlagValueRequest, opts ...grpc.CallOption) (*UpdateFlagValueResponse, error) {
+	out := new(UpdateFlagValueResponse)
+	err := c.cc.Invoke(ctx, FeatureFlagService_UpdateFlagValue_FullMethodName, in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -1140,10 +1160,20 @@ func (c *featureFlagServiceClient) DeleteFlag(ctx context.Context, in *DeleteFla
 // All implementations must embed UnimplementedFeatureFlagServiceServer
 // for forward compatibility
 type FeatureFlagServiceServer interface {
-	GetFlag(context.Context, *GetFlagRequest) (*GetFlagResponse, error)
+	// Returns the raw value of the feature flag. If no flag with that name exists, the response will have the value 0.
+	GetFeatureFlagValue(context.Context, *GetFeatureFlagValueRequest) (*GetFeatureFlagValueResponse, error)
+	// A convenience function to evaluate a feature flag that represents a probability, that is, a flag with a value between 0 and 1
+	// Returns the random decision as a boolean value. Services that use probability based feature flags can use this method instead
+	// of implementing the random decision taking on their own. If no flag with that name exists, the response will have the
+	// value false.
+	EvaluateProbabilityFeatureFlag(context.Context, *EvaluateProbabilityFeatureFlagRequest) (*EvaluateProbabilityFeatureFlagResponse, error)
+	// Creates a new feature flag.
 	CreateFlag(context.Context, *CreateFlagRequest) (*CreateFlagResponse, error)
-	UpdateFlagProbability(context.Context, *UpdateFlagProbabilityRequest) (*UpdateFlagProbabilityResponse, error)
+	// Updates the value of a feature flag.
+	UpdateFlagValue(context.Context, *UpdateFlagValueRequest) (*UpdateFlagValueResponse, error)
+	// Lists all feature flags with their descriptions and values.
 	ListFlags(context.Context, *ListFlagsRequest) (*ListFlagsResponse, error)
+	// Deletes an existing feature flag.
 	DeleteFlag(context.Context, *DeleteFlagRequest) (*DeleteFlagResponse, error)
 	mustEmbedUnimplementedFeatureFlagServiceServer()
 }
@@ -1152,14 +1182,17 @@ type FeatureFlagServiceServer interface {
 type UnimplementedFeatureFlagServiceServer struct {
 }
 
-func (UnimplementedFeatureFlagServiceServer) GetFlag(context.Context, *GetFlagRequest) (*GetFlagResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method GetFlag not implemented")
+func (UnimplementedFeatureFlagServiceServer) GetFeatureFlagValue(context.Context, *GetFeatureFlagValueRequest) (*GetFeatureFlagValueResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetFeatureFlagValue not implemented")
+}
+func (UnimplementedFeatureFlagServiceServer) EvaluateProbabilityFeatureFlag(context.Context, *EvaluateProbabilityFeatureFlagRequest) (*EvaluateProbabilityFeatureFlagResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method EvaluateProbabilityFeatureFlag not implemented")
 }
 func (UnimplementedFeatureFlagServiceServer) CreateFlag(context.Context, *CreateFlagRequest) (*CreateFlagResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method CreateFlag not implemented")
 }
-func (UnimplementedFeatureFlagServiceServer) UpdateFlagProbability(context.Context, *UpdateFlagProbabilityRequest) (*UpdateFlagProbabilityResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method UpdateFlagProbability not implemented")
+func (UnimplementedFeatureFlagServiceServer) UpdateFlagValue(context.Context, *UpdateFlagValueRequest) (*UpdateFlagValueResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method UpdateFlagValue not implemented")
 }
 func (UnimplementedFeatureFlagServiceServer) ListFlags(context.Context, *ListFlagsRequest) (*ListFlagsResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method ListFlags not implemented")
@@ -1180,20 +1213,38 @@ func RegisterFeatureFlagServiceServer(s grpc.ServiceRegistrar, srv FeatureFlagSe
 	s.RegisterService(&FeatureFlagService_ServiceDesc, srv)
 }
 
-func _FeatureFlagService_GetFlag_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(GetFlagRequest)
+func _FeatureFlagService_GetFeatureFlagValue_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetFeatureFlagValueRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(FeatureFlagServiceServer).GetFlag(ctx, in)
+		return srv.(FeatureFlagServiceServer).GetFeatureFlagValue(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: FeatureFlagService_GetFlag_FullMethodName,
+		FullMethod: FeatureFlagService_GetFeatureFlagValue_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(FeatureFlagServiceServer).GetFlag(ctx, req.(*GetFlagRequest))
+		return srv.(FeatureFlagServiceServer).GetFeatureFlagValue(ctx, req.(*GetFeatureFlagValueRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _FeatureFlagService_EvaluateProbabilityFeatureFlag_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(EvaluateProbabilityFeatureFlagRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(FeatureFlagServiceServer).EvaluateProbabilityFeatureFlag(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: FeatureFlagService_EvaluateProbabilityFeatureFlag_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(FeatureFlagServiceServer).EvaluateProbabilityFeatureFlag(ctx, req.(*EvaluateProbabilityFeatureFlagRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -1216,20 +1267,20 @@ func _FeatureFlagService_CreateFlag_Handler(srv interface{}, ctx context.Context
 	return interceptor(ctx, in, info, handler)
 }
 
-func _FeatureFlagService_UpdateFlagProbability_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(UpdateFlagProbabilityRequest)
+func _FeatureFlagService_UpdateFlagValue_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(UpdateFlagValueRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(FeatureFlagServiceServer).UpdateFlagProbability(ctx, in)
+		return srv.(FeatureFlagServiceServer).UpdateFlagValue(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: FeatureFlagService_UpdateFlagProbability_FullMethodName,
+		FullMethod: FeatureFlagService_UpdateFlagValue_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(FeatureFlagServiceServer).UpdateFlagProbability(ctx, req.(*UpdateFlagProbabilityRequest))
+		return srv.(FeatureFlagServiceServer).UpdateFlagValue(ctx, req.(*UpdateFlagValueRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -1278,16 +1329,20 @@ var FeatureFlagService_ServiceDesc = grpc.ServiceDesc{
 	HandlerType: (*FeatureFlagServiceServer)(nil),
 	Methods: []grpc.MethodDesc{
 		{
-			MethodName: "GetFlag",
-			Handler:    _FeatureFlagService_GetFlag_Handler,
+			MethodName: "GetFeatureFlagValue",
+			Handler:    _FeatureFlagService_GetFeatureFlagValue_Handler,
+		},
+		{
+			MethodName: "EvaluateProbabilityFeatureFlag",
+			Handler:    _FeatureFlagService_EvaluateProbabilityFeatureFlag_Handler,
 		},
 		{
 			MethodName: "CreateFlag",
 			Handler:    _FeatureFlagService_CreateFlag_Handler,
 		},
 		{
-			MethodName: "UpdateFlagProbability",
-			Handler:    _FeatureFlagService_UpdateFlagProbability_Handler,
+			MethodName: "UpdateFlagValue",
+			Handler:    _FeatureFlagService_UpdateFlagValue_Handler,
 		},
 		{
 			MethodName: "ListFlags",

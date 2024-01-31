@@ -16,9 +16,10 @@
 
 -behaviour(ffs_service_bhvr).
 
--export([get_flag/2,
+-export([evaluate_probability_feature_flag/2,
+  get_feature_flag_value/2,
   create_flag/2,
-  update_flag_probability/2,
+  update_flag_value/2,
   list_flags/2,
   delete_flag/2]).
 
@@ -26,30 +27,51 @@
 
 -include_lib("opentelemetry_api/include/otel_tracer.hrl").
 
--spec get_flag(ctx:t(), ffs_demo_pb:get_flag_request()) ->
-  {ok, ffs_demo_pb:get_flag_response(), ctx:t()} | grpcbox_stream:grpc_error_response().
-get_flag(Ctx, #{name := Name}) ->
+-spec get_feature_flag_value(ctx:t(), ffs_demo_pb:get_feature_flag_value_request()) ->
+  {ok, ffs_demo_pb:get_feature_flag_value_response(), ctx:t()} | grpcbox_stream:grpc_error_response().
+get_feature_flag_value(Ctx, #{name := Name}) ->
   case 'Elixir.Featureflagservice.FeatureFlags':get_feature_flag_by_name(Name) of
     nil ->
-      {grpc_error, {?GRPC_STATUS_NOT_FOUND, <<"the requested feature flag does not exist">>}};
+      % Do not fail with a GRPC error when feature flag has not been configured, instead just return 0.
+      % This allows services to seamlessly introduce new feature flags without requiring that every
+      % deployment of the demo immediately sets them.
+      {ok, #{value => 0.0}, Ctx};
 
     #{'__struct__' := 'Elixir.Featureflagservice.FeatureFlags.FeatureFlag',
-      description := Description,
-      enabled := Enabled
+      enabled := Value
     } ->
-      RandomNumber = rand:uniform(100), % Generate a random number between 0 and 100
-      Probability = trunc(Enabled * 100), % Convert the Enabled value to a percentage
-      FlagEnabledValue = RandomNumber =< Probability, % Determine if the random number falls within the probability range
 
       ?set_attribute('app.featureflag.name', Name),
-      ?set_attribute('app.featureflag.raw_value', Enabled),
+      ?set_attribute('app.featureflag.raw_value', Value),
+
+      {ok, #{value => Value}, Ctx};
+
+    _ ->
+      {grpc_error, {?GRPC_STATUS_INTERNAL, <<"unexpected response from get_feature_flag_by_name">>}}
+
+  end.
+
+-spec evaluate_probability_feature_flag(ctx:t(), ffs_demo_pb:evaluate_probability_feature_flag_request()) ->
+  {ok, ffs_demo_pb:evaluate_probability_feature_flag_response(), ctx:t()} | grpcbox_stream:grpc_error_response().
+evaluate_probability_feature_flag(Ctx, #{name := Name}) ->
+  case 'Elixir.Featureflagservice.FeatureFlags':get_feature_flag_by_name(Name) of
+    nil ->
+      % Do not fail with a GRPC error when feature flag has not been configured, instead just return false.
+      % This allows services to seamlessly introduce new feature flags without requiring that every
+      % deployment of the demo immediately sets them.
+      {ok, #{enabled => false}, Ctx};
+
+    #{'__struct__' := 'Elixir.Featureflagservice.FeatureFlags.FeatureFlag',
+      enabled := RawValue
+    } ->
+      RandomNumber = rand:uniform(),
+      FlagEnabledValue = RandomNumber =< RawValue,
+
+      ?set_attribute('app.featureflag.name', Name),
+      ?set_attribute('app.featureflag.raw_value', RawValue),
       ?set_attribute('app.featureflag.enabled', FlagEnabledValue),
 
-      Flag = #{name => Name,
-        description => Description,
-        enabled => FlagEnabledValue},
-
-      {ok, #{flag => Flag}, Ctx};
+      {ok, #{enabled => FlagEnabledValue}, Ctx};
 
     _ ->
       {grpc_error, {?GRPC_STATUS_INTERNAL, <<"unexpected response from get_feature_flag_by_name">>}}
@@ -59,26 +81,48 @@ get_flag(Ctx, #{name := Name}) ->
 -spec create_flag(ctx:t(), ffs_demo_pb:create_flag_request()) ->
   {ok, ffs_demo_pb:create_flag_response(), ctx:t()} | grpcbox_stream:grpc_error_response().
 create_flag(Ctx, Flag) ->
-  'Elixir.Featureflagservice.FeatureFlags':create_feature_flag(Flag),
-  {ok, #{}, Ctx}.
+  case Flag of
+    nil ->
+      {grpc_error, {?GRPC_STATUS_INVALID_ARGUMENT, <<"Flag is nil">>}};
 
--spec update_flag_probability(ctx:t(), ffs_demo_pb:update_flag_probability_request()) ->
-  {ok, ffs_demo_pb:update_flag_probability_response(), ctx:t()} | grpcbox_stream:grpc_error_response().
-update_flag_probability(Ctx, #{name := Name, enabled := Probability}) ->
+    #{
+      name := Name,
+      description := Description,
+      value := Value
+    } ->
+      'Elixir.Featureflagservice.FeatureFlags':create_feature_flag(#{
+        name => Name,
+        description => Description,
+        enabled => Value
+      }),
+
+      ?set_attribute('app.featureflag.name', Name),
+      ?set_attribute('app.featureflag.raw_value', Value),
+
+      {ok, #{}, Ctx};
+
+    _ ->
+      {grpc_error, {?GRPC_STATUS_INVALID_ARGUMENT, <<"Malformed flag definition">>}}
+
+  end.
+
+-spec update_flag_value(ctx:t(), ffs_demo_pb:update_flag_value_request()) ->
+  {ok, ffs_demo_pb:update_flag_value_response(), ctx:t()} | grpcbox_stream:grpc_error_response().
+update_flag_value(Ctx, #{name := Name, value := Value}) ->
   Flag = 'Elixir.Featureflagservice.FeatureFlags':get_feature_flag_by_name(Name),
   case Flag of
     nil ->
       {grpc_error, {?GRPC_STATUS_NOT_FOUND, <<"the requested feature flag does not exist">>}};
 
-    #{'__struct__' := 'Elixir.Featureflagservice.FeatureFlags.FeatureFlag',
-      name := _,
-      description := _,
-      enabled := _
-    } ->
+    #{'__struct__' := 'Elixir.Featureflagservice.FeatureFlags.FeatureFlag'} ->
       'Elixir.Featureflagservice.FeatureFlags':update_feature_flag(
         Flag,
-        #{enabled => Probability}
+        #{enabled => Value}
       ),
+
+      ?set_attribute('app.featureflag.name', Name),
+      ?set_attribute('app.featureflag.raw_value', Value),
+
       {ok, #{}, Ctx};
 
     _ ->
@@ -96,11 +140,11 @@ unpack_flag(Flag) ->
     #{'__struct__' := 'Elixir.Featureflagservice.FeatureFlags.FeatureFlag',
       name := Name,
       description := Description,
-      enabled := Probability
+      enabled := Value
     } ->
       #{name => Name,
         description => Description,
-        enabled => Probability}
+        value => Value}
   end.
 
 -spec delete_flag(ctx:t(), ffs_demo_pb:delete_flag_request()) ->
@@ -111,12 +155,11 @@ delete_flag(Ctx, #{name := Name}) ->
     nil ->
       {grpc_error, {?GRPC_STATUS_NOT_FOUND, <<"the requested feature flag does not exist">>}};
 
-    #{'__struct__' := 'Elixir.Featureflagservice.FeatureFlags.FeatureFlag',
-      name := _,
-      description := _,
-      enabled := _
-    } ->
+    #{'__struct__' := 'Elixir.Featureflagservice.FeatureFlags.FeatureFlag'} ->
       'Elixir.Featureflagservice.FeatureFlags':delete_feature_flag(Flag),
+
+      ?set_attribute('app.featureflag.name', Name),
+
       {ok, #{}, Ctx};
 
     _ ->

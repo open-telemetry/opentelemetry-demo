@@ -34,7 +34,8 @@ import org.apache.logging.log4j.Logger;
 import oteldemo.Demo.Ad;
 import oteldemo.Demo.AdRequest;
 import oteldemo.Demo.AdResponse;
-import oteldemo.Demo.GetFlagResponse;
+import oteldemo.Demo.EvaluateProbabilityFeatureFlagRequest;
+import oteldemo.Demo.EvaluateProbabilityFeatureFlagResponse;
 import oteldemo.FeatureFlagServiceGrpc.FeatureFlagServiceBlockingStub;
 
 public final class AdService {
@@ -203,12 +204,12 @@ public final class AdService {
         return false;
       }
 
-      GetFlagResponse response =
-          featureFlagServiceStub.getFlag(
-              oteldemo.Demo.GetFlagRequest.newBuilder()
+      EvaluateProbabilityFeatureFlagResponse response =
+          featureFlagServiceStub.evaluateProbabilityFeatureFlag(
+              EvaluateProbabilityFeatureFlagRequest.newBuilder()
                   .setName(ADSERVICE_FAIL_FEATURE_FLAG)
                   .build());
-      return response.getFlag().getEnabled();
+      return response.getEnabled();
     }
   }
 
