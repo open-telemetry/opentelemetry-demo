@@ -599,7 +599,7 @@ services:
 
   # Redis used by Cart service
   redis-cart:
-    image: redis:7.2-alpine
+    image: ${REDIS_IMAGE}
     container_name: redis-cart
     user: redis
     deploy:
@@ -617,7 +617,7 @@ services:
   # ********************
   # Jaeger
   jaeger:
-    image: jaegertracing/all-in-one:1.52
+    image: ${JAEGERTRACING_IMAGE}
     container_name: jaeger
     command:
       - "--memory.max-traces=8000"
@@ -639,7 +639,7 @@ services:
 
   # Grafana
   grafana:
-    image: grafana/grafana:10.2.3
+    image: ${GRAFANA_IMAGE}
     container_name: grafana
     deploy:
       resources:
@@ -656,7 +656,7 @@ services:
 
   # OpenTelemetry Collector
   otelcol:
-    image: otel/opentelemetry-collector-contrib:0.91.0
+    image: ${COLLECTOR_CONTRIB_IMAGE}
     container_name: otel-col
     deploy:
       resources:
@@ -678,7 +678,7 @@ services:
 
   # Prometheus
   prometheus:
-    image: quay.io/prometheus/prometheus:v2.48.1
+    image: ${PROMETHEUS_IMAGE}
     container_name: prometheus
     command:
       - --web.console.templates=/etc/prometheus/consoles
@@ -701,7 +701,7 @@ services:
     logging: *logging
 
   opensearch:
-    image: opensearchproject/opensearch:latest
+    image: ${OPENSEARCH_IMAGE}
     container_name: opensearch
     environment:
       - cluster.name=demo-cluster
@@ -723,7 +723,7 @@ services:
     logging: *logging
 
   dataprepper:
-    image: opensearchproject/data-prepper:latest
+    image: ${DATAPREPPER_IMAGE}
     volumes:
       - ./src/opensearch/pipelines.yaml:/usr/share/data-prepper/pipelines/pipelines.yaml
       - ./src/opensearch/data-prepper-config.yaml:/usr/share/data-prepper/config/data-prepper-config.yaml
@@ -844,7 +844,7 @@ services:
         condition: service_started
 
   tracetest-server:
-    image: kubeshop/tracetest:${TRACETEST_IMAGE_VERSION}
+    image: ${TRACETEST_IMAGE}
     platform: linux/amd64
     container_name: tracetest-server
     profiles:
@@ -874,7 +874,7 @@ services:
       retries: 60
 
   tracetest-postgres:
-    image: postgres:16.0
+    image: ${POSTGRES_IMAGE}
     container_name: tracetest-postgres
     profiles:
       - tests
