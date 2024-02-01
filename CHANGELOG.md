@@ -1,9 +1,9 @@
 # Changelog
 
 Please update changelog as part of any significant pull request. Place short
-description of your change into "Unreleased" section. As part of release process
-content of "Unreleased" section content will generate release notes for the
-release.
+description of your change into "Unreleased" section. As part of release
+process content of "Unreleased" section content will generate release notes for
+the release.
 
 ## Unreleased
 
@@ -25,10 +25,19 @@ release.
   ([#1346](https://github.com/open-telemetry/opentelemetry-demo/pull/1346))
 * [productcatalogservice] update wiki link
   ([#1346](https://github.com/open-telemetry/opentelemetry-demo/pull/1346))
-* [adservice] added group and anonymous read permission to opentelemetry-javaagent.jar
+* [adservice] added group and anonymous read permission to
+  opentelemetry-javaagent.jar
   ([#1348](https://github.com/open-telemetry/opentelemetry-demo/pull/1348))
-* [frauddetectionservice] added group and anonymous read permission to opentelemetry-javaagent.jar
+* [frauddetectionservice] added group and anonymous read permission to
+  opentelemetry-javaagent.jar
   ([#1348](https://github.com/open-telemetry/opentelemetry-demo/pull/1348))
+* [adservice] Major version update for Java instrumentation, version 2.0.0
+  ([#1352](https://github.com/open-telemetry/opentelemetry-demo/pull/1352))
+* [frauddetectionservice] Major version update for Java instrumentation,
+  version 2.0.0
+  ([#1352](https://github.com/open-telemetry/opentelemetry-demo/pull/1352))
+* [kafka] Major version update for Java instrumentation, version 2.0.0
+  ([#1352](https://github.com/open-telemetry/opentelemetry-demo/pull/1352))
 
 ## 1.7.2
 
