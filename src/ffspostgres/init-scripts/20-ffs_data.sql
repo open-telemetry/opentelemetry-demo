@@ -10,4 +10,7 @@ VALUES
     ('cartServiceFailure', 'Fail cart service requests', 0),
     ('paymentServiceSimulateSlowness', 'Simulate slow response times in the payment service', 0),
     ('paymentServiceSimulateSlownessLowerBound', 'Minimum simulated delay in milliseconds in payment service, if enabled', 200),
-    ('paymentServiceSimulateSlownessUpperBound', 'Maximum simulated delay in milliseconds in payment service, if enabled', 600);
+    ('paymentServiceSimulateSlownessUpperBound', 'Maximum simulated delay in milliseconds in payment service, if enabled', 600),
+    ('shippingServiceSimulateSlowness', 'Simulate slow response times in the shipping service', 0),
+    ('shippingServiceSimulateSlownessLowerBound', 'Minimum simulated delay in milliseconds in shipping service, if enabled', 250),
+    ('shippingServiceSimulateSlownessUpperBound', 'Maximum simulated delay in milliseconds in shipping service, if enabled', 400);

@@ -10,7 +10,7 @@ use opentelemetry_sdk::{propagation::TraceContextPropagator, resource::{
 }, runtime, trace as sdktrace};
 use opentelemetry_otlp::{self, WithExportConfig};
 
-use tonic::transport::Server;
+use tonic::transport::{Channel, Server};
 
 use tracing_subscriber::Registry;
 use tracing_subscriber::layer::SubscriberExt;
@@ -22,8 +22,15 @@ use std::env;
 use std::time::Duration;
 
 mod shipping_service;
+
 use shipping_service::shop::shipping_service_server::ShippingServiceServer;
 use shipping_service::ShippingServer;
+use shop::feature_flag_service_client::FeatureFlagServiceClient;
+
+pub mod shop {
+    // The string specified here must match the proto package name
+    tonic::include_proto!("oteldemo");
+}
 
 fn init_logger() -> Result<(), log::SetLoggerError> {
     CombinedLogger::init(vec![
@@ -67,6 +74,28 @@ fn init_reqwest_tracing(tracer: sdktrace::Tracer) -> Result<(), tracing::subscri
     tracing::subscriber::set_global_default(subscriber)
 }
 
+async fn init_feature_flag_client() -> Option<FeatureFlagServiceClient<Channel>> {
+    let ffs_addr_env = env::var("FEATURE_FLAG_GRPC_SERVICE_ADDR");
+    if ffs_addr_env.is_ok() {
+        let addr = ffs_addr_env.unwrap();
+        let addr_with_scheme = "http://".to_owned() + addr.as_str();
+        info!("Trying to connect to feature flag service at: {}", addr_with_scheme);
+        let result = Channel::from_shared(addr_with_scheme.clone());
+        if result.is_ok() {
+            let ffs_channel = result.ok()?.connect().await;
+            if ffs_channel.is_ok() {
+                let ffc = FeatureFlagServiceClient::new(ffs_channel.ok()?);
+                info!("Connected to feature flag service at: {}", addr_with_scheme);
+                return Some(ffc);
+            }
+            warn!("Could not connect to feature flag service at: {}, simulated slowness will not be enabled.", addr_with_scheme);
+        }
+    } else {
+        warn!("FEATURE_FLAG_GRPC_SERVICE_ADDR is not set, simulated slowness will not be enabled.");
+    }
+    return None
+}
+
 #[tokio::main]
 async fn main() -> Result<(), Box<dyn std::error::Error>> {
     let (mut health_reporter, health_service) = tonic_health::server::health_reporter();
@@ -76,11 +105,13 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
 
     init_logger()?;
     init_reqwest_tracing(init_tracer()?)?;
+    let feature_flag_client = init_feature_flag_client().await;
+
     info!("OTel pipeline created");
     let port = env::var("SHIPPING_SERVICE_PORT").expect("$SHIPPING_SERVICE_PORT is not set");
     let addr = format!("0.0.0.0:{}", port).parse()?;
     info!("listening on {}", addr);
-    let shipper = ShippingServer::default();
+    let shipper = ShippingServer::new(feature_flag_client);
 
     Server::builder()
         .add_service(ShippingServiceServer::new(shipper))

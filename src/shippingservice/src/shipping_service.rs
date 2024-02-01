@@ -1,14 +1,21 @@
 // Copyright The OpenTelemetry Authors
 // SPDX-License-Identifier: Apache-2.0
 
+use std::{thread, time};
+use rand::Rng;
+
 use opentelemetry::{global, propagation::Extractor, trace::Span, Context, KeyValue};
 use opentelemetry::trace::{FutureExt, TraceContextExt, SpanKind, Tracer};
 use opentelemetry_semantic_conventions as semcov;
 use shop::shipping_service_server::ShippingService;
-use shop::{GetQuoteRequest, GetQuoteResponse, Money, ShipOrderRequest, ShipOrderResponse};
 use tonic::{Request, Response, Status};
 
 use log::*;
+use tonic::transport::Channel;
+
+use shop::{GetQuoteRequest, GetQuoteResponse, Money, ShipOrderRequest, ShipOrderResponse};
+use crate::shop::feature_flag_service_client::FeatureFlagServiceClient;
+use crate::shop::{RangeFeatureFlagRequest, RangeFeatureFlagResponse};
 
 mod quote;
 use quote::create_quote_from_count;
@@ -23,11 +30,14 @@ const RPC_GRPC_STATUS_CODE_OK: i64 = 0;
 const RPC_GRPC_STATUS_CODE_UNKNOWN: i64 = 2;
 
 pub mod shop {
-    tonic::include_proto!("oteldemo"); // The string specified here must match the proto package name
+    // The string specified here must match the proto package name
+    tonic::include_proto!("oteldemo");
 }
 
 #[derive(Debug, Default)]
-pub struct ShippingServer {}
+pub struct ShippingServer {
+    feature_flag_client: Option<FeatureFlagServiceClient<Channel>>,
+}
 
 struct MetadataMap<'a>(&'a tonic::metadata::MetadataMap);
 
@@ -85,6 +95,8 @@ impl ShippingService for ShippingServer {
             Err(status) => {cx.span().set_attribute(semcov::trace::RPC_GRPC_STATUS_CODE.i64(RPC_GRPC_STATUS_CODE_UNKNOWN)); return Err(status)},
         };
 
+        self.simulate_slowness().await;
+
         let reply = GetQuoteResponse {
             cost_usd: Some(Money {
                 currency_code: "USD".into(),
@@ -114,6 +126,8 @@ impl ShippingService for ShippingServer {
 
         span.add_event("Processing shipping order request".to_string(), vec![]);
 
+        self.simulate_slowness().await;
+
         let tid = create_tracking_id();
         span.set_attribute(KeyValue::new("app.shipping.tracking.id", tid.clone()));
         info!("Tracking ID Created: {}", tid);
@@ -125,6 +139,42 @@ impl ShippingService for ShippingServer {
 
         span.set_attribute(semcov::trace::RPC_GRPC_STATUS_CODE.i64(RPC_GRPC_STATUS_CODE_OK));
         Ok(Response::new(ShipOrderResponse { tracking_id: tid }))
+    }
+}
+
+impl ShippingServer {
+
+    pub fn new(feature_flag_client: Option<FeatureFlagServiceClient<Channel>>) -> Self {
+        Self { feature_flag_client }
+    }
+
+    async fn simulate_slowness(&self) {
+        if self.feature_flag_client.is_none() {
+            return;
+        }
+
+        let mut client = self.feature_flag_client.clone().unwrap();
+
+        let request = Request::new(
+            RangeFeatureFlagRequest {
+                name: String::from("shippingServiceSimulateSlowness"),
+                name_lower_bound: String::from("shippingServiceSimulateSlownessLowerBound"),
+                name_upper_bound: String::from("shippingServiceSimulateSlownessUpperBound"),
+            },
+        );
+
+
+        let response: Response<RangeFeatureFlagResponse> =
+            client.get_range_feature_flag(request).await.unwrap();
+        let range_response: RangeFeatureFlagResponse = response.into_inner();
+        if range_response.enabled {
+            let minimum_delay = range_response.lower_bound.floor();
+            let maximum_delay = range_response.upper_bound.floor();
+            let delay_millis = rand::thread_rng().gen_range(minimum_delay..maximum_delay).floor();
+            info!("Simulating shipping service slowness, waiting {}.", delay_millis);
+            let sleep_time = time::Duration::from_millis(delay_millis as u64);
+            thread::sleep(sleep_time);
+        }
     }
 }
 
@@ -157,6 +207,7 @@ mod tests {
     fn make_empty_quote_request() -> Request<GetQuoteRequest> {
         Request::new(GetQuoteRequest::default())
     }
+
     #[tokio::test]
     async fn empty_quote() {
         let server = ShippingServer::default();
