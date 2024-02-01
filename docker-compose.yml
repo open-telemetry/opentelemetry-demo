@@ -63,7 +63,7 @@ services:
     environment:
       - AD_SERVICE_PORT
       - FEATURE_FLAG_GRPC_SERVICE_ADDR
-      - OTEL_EXPORTER_OTLP_ENDPOINT
+      - OTEL_EXPORTER_OTLP_ENDPOINT=http://${OTEL_COLLECTOR_HOST}:${OTEL_COLLECTOR_PORT_HTTP}
       - OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE
       - OTEL_RESOURCE_ATTRIBUTES
       - OTEL_LOGS_EXPORTER=otlp
@@ -197,7 +197,7 @@ services:
     environment:
       - APP_ENV=production
       - EMAIL_SERVICE_PORT
-      - OTEL_EXPORTER_OTLP_TRACES_ENDPOINT=http://${OTEL_COLLECTOR_HOST}:4318/v1/traces
+      - OTEL_EXPORTER_OTLP_TRACES_ENDPOINT=http://${OTEL_COLLECTOR_HOST}:${OTEL_COLLECTOR_PORT_HTTP}/v1/traces
       - OTEL_RESOURCE_ATTRIBUTES
       - OTEL_SERVICE_NAME=emailservice
     depends_on:
@@ -252,7 +252,7 @@ services:
     restart: unless-stopped
     environment:
       - KAFKA_SERVICE_ADDR
-      - OTEL_EXPORTER_OTLP_ENDPOINT
+      - OTEL_EXPORTER_OTLP_ENDPOINT=http://${OTEL_COLLECTOR_HOST}:${OTEL_COLLECTOR_PORT_HTTP}
       - OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE
       - OTEL_RESOURCE_ATTRIBUTES
       - OTEL_SERVICE_NAME=frauddetectionservice
@@ -465,7 +465,7 @@ services:
     ports:
       - "${QUOTE_SERVICE_PORT}"
     environment:
-      - OTEL_EXPORTER_OTLP_ENDPOINT=http://${OTEL_COLLECTOR_HOST}:4318
+      - OTEL_EXPORTER_OTLP_ENDPOINT=http://${OTEL_COLLECTOR_HOST}:${OTEL_COLLECTOR_PORT_HTTP}
       - OTEL_PHP_AUTOLOAD_ENABLED=true
       - QUOTE_SERVICE_PORT
       - OTEL_RESOURCE_ATTRIBUTES
@@ -530,7 +530,7 @@ services:
     environment:
       - SHIPPING_SERVICE_PORT
       - QUOTE_SERVICE_ADDR
-      - OTEL_EXPORTER_OTLP_TRACES_ENDPOINT=http://${OTEL_COLLECTOR_HOST}:4317/v1/traces
+      - OTEL_EXPORTER_OTLP_TRACES_ENDPOINT=http://${OTEL_COLLECTOR_HOST}:${OTEL_COLLECTOR_PORT_GRPC}/v1/traces
       - OTEL_RESOURCE_ATTRIBUTES
       - OTEL_SERVICE_NAME=shippingservice
     depends_on:
@@ -584,7 +584,7 @@ services:
     restart: unless-stopped
     environment:
       - KAFKA_ADVERTISED_LISTENERS=PLAINTEXT://kafka:9092
-      - OTEL_EXPORTER_OTLP_ENDPOINT
+      - OTEL_EXPORTER_OTLP_ENDPOINT=http://${OTEL_COLLECTOR_HOST}:${OTEL_COLLECTOR_PORT_HTTP}
       - OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE
       - OTEL_RESOURCE_ATTRIBUTES
       - OTEL_SERVICE_NAME=kafka
@@ -599,7 +599,7 @@ services:
 
   # Redis used by Cart service
   redis-cart:
-    image: redis:7.2-alpine
+    image: ${REDIS_IMAGE}
     container_name: redis-cart
     user: redis
     deploy:
@@ -617,7 +617,7 @@ services:
   # ********************
   # Jaeger
   jaeger:
-    image: jaegertracing/all-in-one:1.52
+    image: ${JAEGERTRACING_IMAGE}
     container_name: jaeger
     command:
       - "--memory.max-traces=8000"
@@ -632,14 +632,14 @@ services:
     restart: unless-stopped
     ports:
       - "${JAEGER_SERVICE_PORT}"         # Jaeger UI
-      - "4317"                           # OTLP gRPC default port
+      - "${OTEL_COLLECTOR_PORT_GRPC}"
     environment:
       - METRICS_STORAGE_TYPE=prometheus
     logging: *logging
 
   # Grafana
   grafana:
-    image: grafana/grafana:10.2.3
+    image: ${GRAFANA_IMAGE}
     container_name: grafana
     deploy:
       resources:
@@ -656,7 +656,7 @@ services:
 
   # OpenTelemetry Collector
   otelcol:
-    image: otel/opentelemetry-collector-contrib:0.93.0
+    image: ${COLLECTOR_CONTRIB_IMAGE}
     container_name: otel-col
     deploy:
       resources:
@@ -668,8 +668,8 @@ services:
       - ./src/otelcollector/otelcol-config.yml:/etc/otelcol-config.yml
       - ./src/otelcollector/otelcol-config-extras.yml:/etc/otelcol-config-extras.yml
     ports:
-      - "4317"          # OTLP over gRPC receiver
-      - "4318"          # OTLP over HTTP receiver
+      - "${OTEL_COLLECTOR_PORT_GRPC}"
+      - "${OTEL_COLLECTOR_PORT_HTTP}"
     depends_on:
       - jaeger
     logging: *logging
@@ -678,7 +678,7 @@ services:
 
   # Prometheus
   prometheus:
-    image: quay.io/prometheus/prometheus:v2.48.1
+    image: ${PROMETHEUS_IMAGE}
     container_name: prometheus
     command:
       - --web.console.templates=/etc/prometheus/consoles
@@ -701,7 +701,7 @@ services:
     logging: *logging
 
   opensearch:
-    image: opensearchproject/opensearch:1.3.14
+    image: ${OPENSEARCH_IMAGE}
     container_name: opensearch
     environment:
       - cluster.name=demo-cluster
@@ -836,7 +836,7 @@ services:
         condition: service_started
 
   tracetest-server:
-    image: kubeshop/tracetest:${TRACETEST_IMAGE_VERSION}
+    image: ${TRACETEST_IMAGE}
     platform: linux/amd64
     container_name: tracetest-server
     profiles:
@@ -866,7 +866,7 @@ services:
       retries: 60
 
   tracetest-postgres:
-    image: postgres:16.0
+    image: ${POSTGRES_IMAGE}
     container_name: tracetest-postgres
     profiles:
       - tests
