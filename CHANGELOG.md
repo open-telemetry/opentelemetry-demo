@@ -38,6 +38,8 @@ the release.
   ([#1352](https://github.com/open-telemetry/opentelemetry-demo/pull/1352))
 * [kafka] Major version update for Java instrumentation, version 2.0.0
   ([#1352](https://github.com/open-telemetry/opentelemetry-demo/pull/1352))
+* Align env variables for OTLP ports
+  ([#1353](https://github.com/open-telemetry/opentelemetry-demo/pull/1353))
 
 ## 1.7.2
 
