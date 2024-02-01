@@ -48,18 +48,6 @@ jobs:
     - name: run misspell
       run: make misspell
 
-  markdownlinkcheck:
-    name: markdownlinkcheck
-    runs-on: ubuntu-latest
-    steps:
-    - uses: actions/checkout@v4
-    - name: Run link check
-      uses: gaurav-nelson/github-action-markdown-link-check@v1
-      with:
-        use-quiet-mode: 'no'
-        use-verbose-mode: 'yes'
-        config-file: '.github/.mlc_config.json'
-
   sanity:
     runs-on: ubuntu-latest
 
