@@ -1,0 +1,110 @@
+---
+receivers:
+  ## Webhookevent receiver is used to connect to a GitHub App and receive json event logs
+  ## The processors are used to extract/filter all the meaningful data from those logs
+  webhookevent:
+    endpoint: 0.0.0.0:8088
+    path: "/events"
+    health_path: "/healthcheck"
+
+processors:
+  transform/deployments:
+    log_statements:
+      - context: log
+        statements:
+          - merge_maps(attributes, ParseJSON(body), "upsert")
+          - set(attributes["name"], attributes["workflow"]["name"]) where attributes["workflow"]["name"] != nil
+          - set(attributes["created_at"], attributes["deployment"]["created_at"]) where attributes["deployment"]["created_at"] != nil
+          - set(attributes["status"], attributes["deployment_status"]["state"]) where attributes["deployment_status"]["state"] != nil
+          - set(attributes["sha"], attributes["deployment"]["sha"]) where attributes["deployment"]["sha"] != nil
+          - set(attributes["user"], attributes["deployment"]["creator"]["login"]) where attributes["deployment"]["creator"]["login"] != nil
+          - set(attributes["repository.name"], attributes["repository"]["name"]) where attributes["repository"]["name"] != nil
+          - set(attributes["repository.owner"], attributes["repository"]["owner"]["login"]) where attributes["repository"]["owner"]["login"] != nil
+          - set(attributes["action"], attributes["action"]) where attributes["action"] != nil
+        
+  transform/pull_requests:
+    log_statements:
+      - context: log
+        statements:
+          - merge_maps(attributes, ParseJSON(body), "upsert")
+          - set(attributes["title"], attributes["pull_request"]["title"]) where attributes["pull_request"]["title"] != nil
+          - set(attributes["merged_at"], attributes["pull_request"]["merged_at"]) where attributes["pull_request"]["merged_at"] != nil
+          - set(attributes["sha"], attributes["pull_request"]["merge_commit_sha"]) where attributes["pull_request"]["merge_commit_sha"] != nil
+          - set(attributes["repository.name"], attributes["repository"]["name"]) where attributes["repository"]["name"] != nil
+          - set(attributes["repository.owner"], attributes["repository"]["owner"]["login"]) where attributes["repository"]["owner"]["login"] != nil
+          - set(attributes["action"], attributes["action"]) where attributes["action"] != nil
+
+
+  transform/issues:
+    log_statements:
+      - context: log
+        statements:
+          - merge_maps(attributes, ParseJSON(body), "upsert")
+          - set(attributes["repository.name"], attributes["repository"]["name"]) where attributes["repository"]["name"] != nil
+          - set(attributes["created_at"], attributes["issue"]["created_at"]) where attributes["issue"]["created_at"] != nil
+          - set(attributes["closed_at"], attributes["issue"]["closed_at"]) where attributes["issue"]["closed_at"] != nil
+          - set(attributes["action"], attributes["action"]) where attributes["action"] != nil
+          - set(attributes["issue_labels"], attributes["issue"]["labels"]) where attributes["issue"]["labels"] != nil
+          - set(attributes["repository.owner"], attributes["repository"]["owner"]["login"]) where attributes["repository"]["owner"]["login"] != nil
+          - set(attributes["title"], attributes["issue"]["title"]) where attributes["issue"]["title"] != nil
+
+  attributes/deployments:
+    actions:
+      - action: upsert
+        key: loki.attribute.labels
+        value: repository.name, status, user, name, created_at, repository.owner, sha
+  attributes/issues:
+    actions:
+      - action: upsert
+        key: loki.attribute.labels
+        value: repository.name, action, created_at, closed_at, repository.owner, issue_labels, title
+  attributes/pull_requests:
+    actions:
+      - action: upsert
+        key: loki.attribute.labels
+        value: repository.name, action, merged_at, sha, repository.owner, title
+  filter/deployments:
+    logs:
+      include:
+        match_type: regexp
+        record_attributes:
+          - key: status
+            value: "success|failure"
+  filter/pull_requests:
+    logs:
+      include:
+        match_type: strict
+        record_attributes:
+          - key: action
+            value: "closed"
+  filter/issues:
+    logs:
+      exclude:
+        match_type: regexp
+        record_attributes:
+          - key: action
+            value: "reopened|labeled"
+
+exporters:
+  logging:
+    #verbosity: detailed
+
+  loki:
+    endpoint: "http://loki:3100/loki/api/v1/push"
+
+service:
+  pipelines:
+    logs/deployments:
+      receivers: [webhookevent]
+      processors: [transform/deployments, attributes/deployments, filter/deployments]
+      exporters: [loki]
+    
+    logs/pull_requests:
+      receivers: [webhookevent]
+      processors: [transform/pull_requests, attributes/pull_requests, filter/pull_requests]
+      exporters: [loki]
+
+    logs/issues:
+      receivers: [webhookevent]
+      processors: [transform/issues, attributes/issues, filter/issues]
+      exporters: [loki]

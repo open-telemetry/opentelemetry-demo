@@ -1,0 +1,49 @@
+---
+extensions:
+  bearertokenauth:
+      token: ${env:GH_PAT}
+
+receivers:
+  gitprovider:
+    initial_delay: 10s
+    collection_interval: 300s
+    scrapers:
+      github:
+        github_org: "${env:GH_ORG}"
+        search_query: "${env:GH_SEARCH_QUERY}"
+        auth:
+          authenticator: bearertokenauth
+        metrics:
+          git.repository.contributor.count:
+            enabled: true
+
+processors:
+  batch:
+  resource/opentelemetry:
+    attributes:
+      - key: team.name
+        value: "opentelemetry"
+        action: upsert
+
+
+exporters:
+  logging:
+    #verbosity: detailed
+
+  # Using the prometheus exporter because resource attributes are dropped
+  # when using the prometheus OTLP feature flag
+  prometheus:
+    endpoint: "${env.HOSTNAME}:9464"
+    resource_to_telemetry_conversion:
+      enabled: true
+    enable_open_metrics: true
+    add_metric_suffixes: false
+
+service:
+  ## Add bearertokenauth to the extension list if you want to auth to GitHub
+  extensions: [bearertokenauth]
+  pipelines:
+    metrics:
+      receivers: [gitprovider]
+      processors: [batch, resource/opentelemetry]
+      exporters: [logging, prometheus]

@@ -48,6 +48,9 @@ For detailed documentation, see [Demo Documentation][docs]. If you're curious
 about a specific feature, the [docs landing page][docs] can point you in the
 right direction.
 
+If you're looking to get started with the delivery aspects of this forked demo,
+please see [Delivery Documentation](docs/delivery.md).
+
 ## Demos featuring the Astronomy Shop
 
 We welcome any vendor to fork the project to demonstrate their services and

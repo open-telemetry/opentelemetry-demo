@@ -674,6 +674,67 @@ services:
     environment:
       - ENVOY_PORT
 
+  # OpenTelemetry Collector GitProvider Receiver
+  delivery-otelcol:
+    image: ${LIATRIO_OTEL_IMAGE:-ghcr.io/liatrio/liatrio-otel-collector:0.40.2-arm64}
+    container_name: delivery-otelcol
+    deploy:
+      resources:
+        limits:
+          memory: 500M
+    restart: unless-stopped
+    command: [ "--config=/etc/otelcol-config.yml"]
+    profiles:
+      - delivery
+    env_file:
+      - ./.liatrio-otelcol.env
+    volumes:
+      - ./src/otelcollector/delivery-config.yml:/etc/otelcol-config.yml
+    depends_on:
+      - prometheus
+    logging: *logging
+    environment:
+      - ENVOY_PORT
+
+  # OpenTelemetry Collector WebHook Receiver
+  dora-otelcol:
+    image: ${LIATRIO_OTEL_IMAGE:-ghcr.io/liatrio/liatrio-otel-collector:0.40.2-arm64}
+    container_name: dora-otelcol
+    deploy:
+      resources:
+        limits:
+          memory: 500M
+    restart: unless-stopped
+    command: [ "--config=/etc/otelcol-config.yml"]
+    profiles:
+      - dora
+    env_file:
+      - ./.liatrio-otelcol.env
+    volumes:
+      - ./src/otelcollector/dora-config.yml:/etc/otelcol-config.yml
+    ports:
+      - "8088:8088"          # WebHook Receiver Port
+    depends_on:
+      - prometheus
+    logging: *logging
+    environment:
+      - ENVOY_PORT
+
+  # Loki logging for GitHub Event Logs
+  loki:
+    image: grafana/loki:2.9.2
+    volumes:
+      - ./src/grafana/loki-config.yaml:/etc/loki/local-config.yaml
+    deploy:
+      resources:
+        limits:
+          memory: 300M
+    ports:
+      - "3100:3100"
+    command: -config.file=/etc/loki/local-config.yaml
+    profiles:
+      - dora
+
   # Prometheus
   prometheus:
     image: quay.io/prometheus/prometheus:v2.48.1

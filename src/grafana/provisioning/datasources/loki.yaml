@@ -1,0 +1,9 @@
+apiVersion: 1
+
+datasources:
+  - name: loki-webhookreceiver
+    uid: loki
+    type: loki
+    url: "http://loki:3100/"
+    editable: true
+    isDefault: false
