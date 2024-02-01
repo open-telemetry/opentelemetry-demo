@@ -46,6 +46,7 @@
         "src/featureflagservice/priv/",
         "src/productcatalogservice/genproto/",
         "internal/tools/",
-        ".github/actions/deploy-demo/action.yaml"
+        ".github/actions/deploy-demo/action.yaml",
+        ".github/actions/update-env-file/action.yaml"
     ]
   }

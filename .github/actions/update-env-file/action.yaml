@@ -1,0 +1,27 @@
+# Copyright 2024 Dash0 Inc.
+# SPDX-License-Identifier: Apache-2.0
+name: Deploy Dash0 OTel Demo
+description: deploy a release of the Dash0 fork of the OpenTelemetry demo
+inputs:
+  containerImageVersion:
+    description: 'version tag of the Dash0 OTel Demo container images, e.g. 1.1.0'
+    required: true
+
+runs:
+  using: "composite"
+  steps:
+    - name: check out code
+      uses: actions/checkout@v4
+      with:
+        ref: main
+
+    - name: update version in .env file
+      shell: bash
+      run: |
+        sed -i "s/^IMAGE_VERSION=[[:digit:]][[:digit:]]*\.[[:digit:]][[:digit:]]*\.[[:digit:]][[:digit:]]*$/IMAGE_VERSION=1.0.0/" .env
+        git --no-pager diff .env
+        git config user.name "github-actions[bot]"
+        git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+        git add .env
+        git commit -m"[dash0] update image version in .env to ${{ inputs.containerImageVersion }}"
+        git push

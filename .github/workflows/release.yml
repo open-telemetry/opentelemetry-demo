@@ -27,3 +27,12 @@ jobs:
         with:
           token: ${{ secrets.REPOSITORY_FULL_ACCESS_GITHUB_TOKEN }}
           containerImageVersion: ${{ github.event.release.tag_name }}
+
+  update-release-in-env-file:
+    runs-on: ubuntu-latest
+    concurrency: update-env-file
+    steps:
+      - name: update .env file
+        uses: ./.github/actions/update-env-file
+        with:
+          containerImageVersion: ${{ github.event.release.tag_name }}

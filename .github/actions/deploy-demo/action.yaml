@@ -9,6 +9,7 @@ inputs:
   containerImageVersion:
     description: 'version tag of the Dash0 OTel Demo container images, e.g. 1.1.0'
     required: true
+
 runs:
   using: "composite"
   steps:
@@ -27,8 +28,8 @@ runs:
       shell: bash
       run: |
         cd dash0-configuration
-        git add demo/environments/aws/demo-eu-west-1-demo.yaml
         git config user.name "github-actions[bot]"
         git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-        git commit -am "chore(otel-demo): update otel-demo image version to ${{ inputs.containerImageVersion }}"
+        git add demo/environments/aws/demo-eu-west-1-demo.yaml
+        git commit -m"chore(otel-demo): update otel-demo image version to ${{ inputs.containerImageVersion }}"
         git push
