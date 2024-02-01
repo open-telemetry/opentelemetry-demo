@@ -656,7 +656,7 @@ services:
 
   # OpenTelemetry Collector
   otelcol:
-    image: otel/opentelemetry-collector-contrib:0.91.0
+    image: otel/opentelemetry-collector-contrib:0.93.0
     container_name: otel-col
     deploy:
       resources:
@@ -701,7 +701,7 @@ services:
     logging: *logging
 
   opensearch:
-    image: opensearchproject/opensearch:latest
+    image: opensearchproject/opensearch:1.3.14
     container_name: opensearch
     environment:
       - cluster.name=demo-cluster
@@ -720,15 +720,7 @@ services:
         hard: 65536
     ports:
       - "9200:9200"
-    logging: *logging
-
-  dataprepper:
-    image: opensearchproject/data-prepper:latest
-    volumes:
-      - ./src/opensearch/pipelines.yaml:/usr/share/data-prepper/pipelines/pipelines.yaml
-      - ./src/opensearch/data-prepper-config.yaml:/usr/share/data-prepper/config/data-prepper-config.yaml
-    ports:
-      - "21892"
+      - "5601:5601"
     logging: *logging
 
   # *****
