@@ -8,6 +8,13 @@
 [![License](https://img.shields.io/badge/License-Apache_2.0-blue.svg?color=red)](https://github.com/open-telemetry/opentelemetry-demo/blob/main/LICENSE)
 [![Integration Tests](https://github.com/open-telemetry/opentelemetry-demo/actions/workflows/run-integration-tests.yml/badge.svg)](https://github.com/open-telemetry/opentelemetry-demo/actions/workflows/run-integration-tests.yml)
 
+## Dash0
+
+This is Dash0's fork of the OpenTelemetry Demo.
+
+<!-- markdownlint-disable MD013 MD036 -->
+**:bangbang: :warning: Dash0 Employees: Please take a look at the additional documentation at <https://docs.google.com/document/d/1ASCn8AUR0ehqSynsUkTqvH2biTYsFAxz1rXi1Lkh3DE>**
+
 ## Welcome to the OpenTelemetry Astronomy Shop Demo
 
 This repository contains the OpenTelemetry Astronomy Shop, a microservice-based
