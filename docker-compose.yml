@@ -708,9 +708,9 @@ services:
       - node.name=demo-node
       - bootstrap.memory_lock=true
       - discovery.type=single-node
-      - "OPENSEARCH_JAVA_OPTS=-Xms512m -Xmx512m"
-      - "DISABLE_INSTALL_DEMO_CONFIG=true"
-      - "DISABLE_SECURITY_PLUGIN=true"
+      - OPENSEARCH_JAVA_OPTS=-Xms512m -Xmx512m
+      - DISABLE_INSTALL_DEMO_CONFIG=true
+      - DISABLE_SECURITY_PLUGIN=true
     ulimits:
       memlock:
         soft: -1
@@ -719,8 +719,7 @@ services:
         soft: 65536
         hard: 65536
     ports:
-      - "9200:9200"
-      - "5601:5601"
+      - "9200"
     logging: *logging
 
   # *****
