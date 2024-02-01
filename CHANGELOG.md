@@ -40,6 +40,8 @@ the release.
   ([#1352](https://github.com/open-telemetry/opentelemetry-demo/pull/1352))
 * Align env variables for OTLP ports
   ([#1353](https://github.com/open-telemetry/opentelemetry-demo/pull/1353))
+* Update dependent services - Collector, Grafana, Jaeger, Prometheus, etc.
+  ([#1354](https://github.com/open-telemetry/opentelemetry-demo/pull/1354))
 
 ## 1.7.2
 
