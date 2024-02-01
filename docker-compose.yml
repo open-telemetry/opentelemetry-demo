@@ -296,6 +296,7 @@ services:
       - PUBLIC_OTEL_EXPORTER_OTLP_TRACES_ENDPOINT
       - OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE
       - WEB_OTEL_SERVICE_NAME=frontend-web
+      - OTEL_COLLECTOR_HOST
     depends_on:
       adservice:
         condition: service_started
@@ -371,7 +372,7 @@ services:
     deploy:
       resources:
         limits:
-          memory: 120M
+          memory: 1G
     restart: unless-stopped
     ports:
       - "${LOCUST_WEB_PORT}"
@@ -381,6 +382,7 @@ services:
       - LOCUST_HOST
       - LOCUST_HEADLESS
       - LOCUST_AUTOSTART
+      - LOCUST_BROWSER_TRAFFIC_ENABLED
       - OTEL_EXPORTER_OTLP_ENDPOINT
       - OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE
       - OTEL_RESOURCE_ATTRIBUTES

@@ -16,6 +16,7 @@ idna==3.4
 itsdangerous==2.1.2
 jinja2==3.1.2
 locust==2.18.2
+locust_plugins==3.4.0
 markupsafe==2.1.3
 msgpack==1.0.7
 opentelemetry-api==1.21.0

@@ -9824,6 +9824,8 @@ spec:
             value: http://localhost:8080/otlp-http/v1/traces
           - name: OTEL_RESOURCE_ATTRIBUTES
             value: service.name=$(OTEL_SERVICE_NAME),service.namespace=opentelemetry-demo
+          - name: OTEL_COLLECTOR_HOST
+            value: $(OTEL_COLLECTOR_NAME)
           resources:
             limits:
               memory: 200Mi
@@ -10041,6 +10043,8 @@ spec:
             value: "false"
           - name: LOCUST_AUTOSTART
             value: "true"
+          - name: LOCUST_BROWSER_TRAFFIC_ENABLED
+            value: "false"
           - name: PROTOCOL_BUFFERS_PYTHON_IMPLEMENTATION
             value: python
           - name: OTEL_EXPORTER_OTLP_ENDPOINT
@@ -10049,7 +10053,7 @@ spec:
             value: service.name=$(OTEL_SERVICE_NAME),service.namespace=opentelemetry-demo
           resources:
             limits:
-              memory: 120Mi
+              memory: 1Gi
 ---
 # Source: opentelemetry-demo/templates/component.yaml
 apiVersion: apps/v1
