@@ -36,9 +36,10 @@ get_flag(Ctx, #{name := Name}) ->
       description := Description,
       enabled := Enabled
     } ->
+      ServiceEnabled = 'Elixir.FeatureFlagService.FeatureFlags':is_enabled(),
       RandomNumber = rand:uniform(100), % Generate a random number between 0 and 100
       Probability = trunc(Enabled * 100), % Convert the Enabled value to a percentage
-      FlagEnabledValue = RandomNumber =< Probability, % Determine if the random number falls within the probability range
+      FlagEnabledValue = (RandomNumber =< Probability) and ServiceEnabled, % Determine if the random number falls within the probability range
 
       ?set_attribute('app.featureflag.name', Name),
       ?set_attribute('app.featureflag.raw_value', Enabled),

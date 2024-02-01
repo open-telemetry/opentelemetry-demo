@@ -8,6 +8,10 @@ if System.get_env("PHX_SERVER") do
   config :featureflagservice, FeatureflagserviceWeb.Endpoint, server: true
 end
 
+if System.get_env("DISABLE_FEATURE_FLAGS") do
+  config :featureflagservice, enabled: false
+end
+
 grpc_port = String.to_integer(System.get_env("FEATURE_FLAG_GRPC_SERVICE_PORT"))
 
 config :grpcbox,

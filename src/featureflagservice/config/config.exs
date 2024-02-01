@@ -12,7 +12,8 @@
 import Config
 
 config :featureflagservice,
-  ecto_repos: [Featureflagservice.Repo]
+  ecto_repos: [Featureflagservice.Repo],
+  enabled: true
 
 # Configures the endpoint
 config :featureflagservice, FeatureflagserviceWeb.Endpoint,
