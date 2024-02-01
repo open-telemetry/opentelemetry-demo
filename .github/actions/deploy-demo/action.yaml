@@ -1,0 +1,34 @@
+# Copyright 2024 Dash0 Inc.
+# SPDX-License-Identifier: Apache-2.0
+name: Deploy Dash0 OTel Demo
+description: deploy a release of the Dash0 fork of the OpenTelemetry demo
+inputs:
+  token:
+    description: 'read/write Github access token for thr dash0-configuration repository'
+    required: true
+  containerImageVersion:
+    description: 'version tag of the Dash0 OTel Demo container images, e.g. 1.1.0'
+    required: true
+runs:
+  using: "composite"
+  steps:
+    - name: checkout dash0-configuration
+      uses: actions/checkout@v4
+      with:
+        repository: dash0hq/dash0-configuration
+        token: ${{ inputs.token }}
+        path: dash0-configuration
+
+    - name: update container image version
+      uses: mikefarah/yq@v4.35.2
+      with:
+        cmd: yq -i '.otelDemo.helm.default.image.tag="${{ inputs.containerImageVersion }}"' dash0-configuration/demo/environments/aws/demo-eu-west-1-demo.yaml
+    - name: git push dash0-configuration
+      shell: bash
+      run: |
+        cd dash0-configuration
+        git add demo/environments/aws/demo-eu-west-1-demo.yaml
+        git config user.name "github-actions[bot]"
+        git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+        git commit -am "chore(otel-demo): update otel-demo image version to ${{ inputs.containerImageVersion }}"
+        git push

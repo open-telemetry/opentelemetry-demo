@@ -1,6 +1,6 @@
 # Copyright The OpenTelemetry Authors
 # SPDX-License-Identifier: Apache-2.0
-name: "Publish Images"
+name: "Publish Images & Deploy"
 
 on:
   release:
@@ -13,3 +13,17 @@ jobs:
       push: true
       version: ${{ github.event.release.tag_name }}
     secrets: inherit
+
+  deploy_release:
+    name: deploy to https://otel-demo.eu-west-1.aws.dash0-demo.com/
+    needs:
+      - build_and_push_images
+    runs-on: ubuntu-latest
+    # do not run multiple deployment jobs concurrently
+    concurrency: deploy
+    steps:
+      - name: deploy release
+        uses: ./.github/actions/deploy-demo
+        with:
+          token: ${{ secrets.REPOSITORY_FULL_ACCESS_GITHUB_TOKEN }}
+          containerImageVersion: ${{ github.event.release.tag_name }}

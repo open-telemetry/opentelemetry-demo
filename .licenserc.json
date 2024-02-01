@@ -45,6 +45,7 @@
         "src/featureflagservice/assets/vendor/",
         "src/featureflagservice/priv/",
         "src/productcatalogservice/genproto/",
-        "internal/tools/"
+        "internal/tools/",
+        ".github/actions/deploy-demo/action.yaml"
     ]
   }
