@@ -134,7 +134,7 @@ class WebsiteUser(HttpUser):
         self.index()
 
 
-browser_traffic_enabled = os.environ.get('LOCUST_BROWSER_TRAFFIC_ENABLED', False)
+browser_traffic_enabled = os.environ.get("LOCUST_BROWSER_TRAFFIC_ENABLED", "").lower() in ("true", "yes", "on")
 
 if browser_traffic_enabled:
     class WebsiteBrowserUser(PlaywrightUser):
