@@ -17,7 +17,6 @@ FROM alpine AS release
 
 WORKDIR /usr/src/app/
 
-COPY ./src/productcatalogservice/products.json ./
 COPY --from=builder /go/bin/productcatalogservice/ ./
 
 EXPOSE ${PRODUCT_SERVICE_PORT}

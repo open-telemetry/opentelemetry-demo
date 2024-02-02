@@ -8,9 +8,9 @@ package main
 
 import (
 	"context"
+	_ "embed"
 	"fmt"
 	"go.opentelemetry.io/otel/sdk/instrumentation"
-	"io/ioutil"
 	"net"
 	"os"
 	"strings"
@@ -49,6 +49,9 @@ var (
 	resource          *sdkresource.Resource
 	initResourcesOnce sync.Once
 )
+
+//go:embed products.json
+var products []byte
 
 func init() {
 	log = logrus.New()
@@ -157,13 +160,8 @@ type productCatalog struct {
 }
 
 func readCatalogFile() []*pb.Product {
-	catalogJSON, err := ioutil.ReadFile("products.json")
-	if err != nil {
-		log.Fatalf("Reading Catalog File: %v", err)
-	}
-
 	var res pb.ListProductsResponse
-	if err := protojson.Unmarshal(catalogJSON, &res); err != nil {
+	if err := protojson.Unmarshal(products, &res); err != nil {
 		log.Fatalf("Parsing Catalog JSON: %v", err)
 	}
 
