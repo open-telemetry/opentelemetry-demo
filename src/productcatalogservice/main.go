@@ -9,7 +9,6 @@ package main
 import (
 	"context"
 	"fmt"
-	"go.opentelemetry.io/otel/sdk/instrumentation"
 	"io/fs"
 
 	"net"
