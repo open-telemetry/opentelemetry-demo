@@ -1,12 +1,6 @@
 # Copyright The OpenTelemetry Authors
 # SPDX-License-Identifier: Apache-2.0
 
-extensions:
-  basicauth/opensearch:
-    client_auth:
-      username: admin
-      password: admin
-
 receivers:
   otlp:
     protocols:
@@ -34,8 +28,6 @@ exporters:
     logs_index: otel
     http:
       endpoint: "http://opensearch:9200"
-      auth:
-        authenticator: basicauth/opensearch
       tls:
         insecure: true
 
@@ -61,7 +53,6 @@ connectors:
   spanmetrics:
 
 service:
-  extensions: [basicauth/opensearch]
   pipelines:
     traces:
       receivers: [otlp]
