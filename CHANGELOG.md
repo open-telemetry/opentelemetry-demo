@@ -42,6 +42,8 @@ the release.
   ([#1353](https://github.com/open-telemetry/opentelemetry-demo/pull/1353))
 * Update dependent services - Collector, Grafana, Jaeger, Prometheus, etc.
   ([#1354](https://github.com/open-telemetry/opentelemetry-demo/pull/1354))
+* [productcatalog] allow products to be extended
+  ([#1363](https://github.com/open-telemetry/opentelemetry-demo/pull/1363))
 
 ## 1.7.2
 
