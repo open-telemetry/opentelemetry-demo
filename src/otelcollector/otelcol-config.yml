@@ -1,7 +1,6 @@
 # Copyright The OpenTelemetry Authors
 # SPDX-License-Identifier: Apache-2.0
 
-
 receivers:
   otlp:
     protocols:
@@ -21,14 +20,16 @@ exporters:
     endpoint: "jaeger:4317"
     tls:
       insecure: true
-  otlp/logs:
-    endpoint: "dataprepper:21892"
-    tls:
-      insecure: true
   otlphttp/prometheus:
     endpoint: "http://prometheus:9090/api/v1/otlp"
     tls:
       insecure: true
+  opensearch:
+    logs_index: otel
+    http:
+      endpoint: "http://opensearch:9200"
+      tls:
+        insecure: true
 
 processors:
   batch:
@@ -64,4 +65,4 @@ service:
     logs:
       receivers: [otlp]
       processors: [batch]
-      exporters: [otlp/logs, debug]
+      exporters: [opensearch, debug]
