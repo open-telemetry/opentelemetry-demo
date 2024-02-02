@@ -48,7 +48,7 @@ the release.
   ([#1357](https://github.com/open-telemetry/opentelemetry-demo/pull/1357))
 * Update Python SDKs
   ([#1358](https://github.com/open-telemetry/opentelemetry-demo/pull/1358))
-  
+
 ## 1.7.2
 
 * [cartservice] update .NET package to 1.7.0 release
