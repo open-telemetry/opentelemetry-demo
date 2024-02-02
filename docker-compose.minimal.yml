@@ -574,14 +574,5 @@ services:
         soft: 65536
         hard: 65536
     ports:
-      - "9200:9200"
-    logging: *logging
-
-  dataprepper:
-    image: ${DATAPREPPER_IMAGE}
-    volumes:
-      - ./src/opensearch/pipelines.yaml:/usr/share/data-prepper/pipelines/pipelines.yaml
-      - ./src/opensearch/data-prepper-config.yaml:/usr/share/data-prepper/config/data-prepper-config.yaml
-    ports:
-      - "21892"
+      - "9200"
     logging: *logging
