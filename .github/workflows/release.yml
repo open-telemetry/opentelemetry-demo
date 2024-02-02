@@ -22,6 +22,11 @@ jobs:
     # do not run multiple deployment jobs concurrently
     concurrency: deploy
     steps:
+      - name: checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
       - name: deploy release
         uses: ./.github/actions/deploy-demo
         with:
@@ -29,9 +34,17 @@ jobs:
           containerImageVersion: ${{ github.event.release.tag_name }}
 
   update-release-in-env-file:
+    name: update .env file
+    needs:
+      - deploy_release
     runs-on: ubuntu-latest
     concurrency: update-env-file
     steps:
+      - name: checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
       - name: update .env file
         uses: ./.github/actions/update-env-file
         with:
