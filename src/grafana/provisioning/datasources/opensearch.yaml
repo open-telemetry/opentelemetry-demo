@@ -11,10 +11,9 @@ datasources:
     editable: true
     isDefault: false
     jsonData:
-      database: 'otel'
-      interval: Daily
-      timeField: 'time'
-      version: '2.10.0'
-      flavor: 'opensearch'
+      database: otel
+      flavor: opensearch
+      logLevelField: severity
       logMessageField: body
-      logLevelField: severitynumber
+      pplEnabled: true
+      timeField: "@timestamp"
