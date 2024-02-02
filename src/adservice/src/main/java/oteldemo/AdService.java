@@ -138,6 +138,7 @@ public final class AdService {
      */
     @Override
     public void getAds(AdRequest req, StreamObserver<AdResponse> responseObserver) {
+      logger.debug("received getAds request");
       AdService service = AdService.getInstance();
 
       // get the current span in context
@@ -177,14 +178,16 @@ public final class AdService {
             Attributes.of(
                 adRequestTypeKey, adRequestType.name(), adResponseTypeKey, adResponseType.name()));
 
+        logger.debug("checking adServiceFailure feature flag");
         if (checkAdFailure()) {
-          logger.warn(ADSERVICE_FAIL_FEATURE_FLAG + " fail feature flag enabled");
+          logger.warn(ADSERVICE_FAIL_FEATURE_FLAG + " fail feature flag enabled, failing request.");
           throw new StatusRuntimeException(Status.RESOURCE_EXHAUSTED);
         }
 
         AdResponse reply = AdResponse.newBuilder().addAllAds(allAds).build();
         responseObserver.onNext(reply);
         responseObserver.onCompleted();
+        logger.debug("getAds request completed");
       } catch (StatusRuntimeException e) {
         span.addEvent(
             "Error", Attributes.of(AttributeKey.stringKey("exception.message"), e.getMessage()));

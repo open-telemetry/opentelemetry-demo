@@ -18,14 +18,15 @@ limitations under the License.
 <Configuration status="WARN">
   <Appenders>
     <Console name="STDOUT" target="SYSTEM_OUT">
-      <PatternLayout pattern="%d{yyyy-MM-dd HH:mm:ss} - %logger{36} - %msg trace_id=%X{trace_id} span_id=%X{span_id} trace_flags=%X{trace_flags} %n"/>
+      <PatternLayout pattern="%d{yyyy-MM-dd HH:mm:ss} - %level{WARN=WARNING, DEBUG=DEBUG, ERROR=ERROR, TRACE=TRACE, INFO=INFO} - %logger{36} - %msg trace_id=%X{trace_id} span_id=%X{span_id} trace_flags=%X{trace_flags} %n"/>
     </Console>
   </Appenders>
   <Loggers>
     <Logger name="io.grpc.netty" level="INFO"/>
     <Logger name="io.netty" level="INFO"/>
     <Logger name="sun.net" level="INFO"/>
-    <Root level="INFO">
+    <Logger name="oteldemo" level="DEBUG"/>
+    <Root level="DEBUG">
       <AppenderRef ref="STDOUT"/>
     </Root>
   </Loggers>
