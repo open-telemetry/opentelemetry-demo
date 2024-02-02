@@ -44,6 +44,8 @@ the release.
   ([#1354](https://github.com/open-telemetry/opentelemetry-demo/pull/1354))
 * [OpenSearch] Use native OpenSearch exporter from Collector
   ([#1356](https://github.com/open-telemetry/opentelemetry-demo/pull/1356))
+* Update GO SDKs & fix metrics config
+  ([#1357](https://github.com/open-telemetry/opentelemetry-demo/pull/1357))
 
 ## 1.7.2
 
