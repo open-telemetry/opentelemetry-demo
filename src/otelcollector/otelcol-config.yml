@@ -33,12 +33,6 @@ exporters:
 
 processors:
   batch:
-  transform:
-    metric_statements:
-      - context: metric
-        statements:
-          # FIXME: remove when this issue is resolved: https://github.com/open-telemetry/opentelemetry-python-contrib/issues/1958
-          - set(description, "") where name == "http.client.duration"
 
 connectors:
   spanmetrics:
@@ -51,7 +45,7 @@ service:
       exporters: [otlp, debug, spanmetrics]
     metrics:
       receivers: [httpcheck/frontendproxy, otlp, spanmetrics]
-      processors: [transform, batch]
+      processors: [batch]
       exporters: [otlphttp/prometheus, debug]
     logs:
       receivers: [otlp]
