@@ -42,6 +42,12 @@ the release.
   ([#1353](https://github.com/open-telemetry/opentelemetry-demo/pull/1353))
 * Update dependent services - Collector, Grafana, Jaeger, Prometheus, etc.
   ([#1354](https://github.com/open-telemetry/opentelemetry-demo/pull/1354))
+* [OpenSearch] Use native OpenSearch exporter from Collector
+  ([#1356](https://github.com/open-telemetry/opentelemetry-demo/pull/1356))
+* Update GO SDKs & fix metrics config
+  ([#1357](https://github.com/open-telemetry/opentelemetry-demo/pull/1357))
+* Update Python SDKs
+  ([#1358](https://github.com/open-telemetry/opentelemetry-demo/pull/1358))
 * [loadgenerator] fix browser traffic enabled flag
   ([#1359](https://github.com/open-telemetry/opentelemetry-demo/pull/1359))
 

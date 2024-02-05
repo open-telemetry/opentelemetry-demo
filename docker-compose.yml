@@ -645,6 +645,7 @@ services:
       resources:
         limits:
           memory: 100M
+    restart: unless-stopped
     environment:
       - "GF_INSTALL_PLUGINS=grafana-opensearch-datasource"
     volumes:
@@ -696,21 +697,28 @@ services:
       resources:
         limits:
           memory: 300M
+    restart: unless-stopped
     ports:
       - "${PROMETHEUS_SERVICE_PORT}:${PROMETHEUS_SERVICE_PORT}"
     logging: *logging
 
+  # OpenSearch
   opensearch:
     image: ${OPENSEARCH_IMAGE}
     container_name: opensearch
+    deploy:
+      resources:
+        limits:
+          memory: 1G
+    restart: unless-stopped
     environment:
       - cluster.name=demo-cluster
       - node.name=demo-node
       - bootstrap.memory_lock=true
       - discovery.type=single-node
-      - "OPENSEARCH_JAVA_OPTS=-Xms512m -Xmx512m"
-      - "DISABLE_INSTALL_DEMO_CONFIG=true"
-      - "DISABLE_SECURITY_PLUGIN=true"
+      - OPENSEARCH_JAVA_OPTS=-Xms300m -Xmx300m
+      - DISABLE_INSTALL_DEMO_CONFIG=true
+      - DISABLE_SECURITY_PLUGIN=true
     ulimits:
       memlock:
         soft: -1
@@ -719,16 +727,7 @@ services:
         soft: 65536
         hard: 65536
     ports:
-      - "9200:9200"
-    logging: *logging
-
-  dataprepper:
-    image: ${DATAPREPPER_IMAGE}
-    volumes:
-      - ./src/opensearch/pipelines.yaml:/usr/share/data-prepper/pipelines/pipelines.yaml
-      - ./src/opensearch/data-prepper-config.yaml:/usr/share/data-prepper/config/data-prepper-config.yaml
-    ports:
-      - "21892"
+      - "9200"
     logging: *logging
 
   # *****
