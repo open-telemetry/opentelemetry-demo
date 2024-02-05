@@ -472,7 +472,7 @@ func (cs *checkoutService) sendOrderConfirmation(ctx context.Context, email stri
 func (cs *checkoutService) shipOrder(ctx context.Context, address *pb.Address, items []*pb.CartItem) (string, error) {
 	conn, err := createClient(ctx, cs.shippingSvcAddr)
 	if err != nil {
-		return "", fmt.Errorf("failed to connect email service: %+v", err)
+		return "", fmt.Errorf("failed to connect shipping service: %+v", err)
 	}
 	defer conn.Close()
 	resp, err := pb.NewShippingServiceClient(conn).ShipOrder(ctx, &pb.ShipOrderRequest{
