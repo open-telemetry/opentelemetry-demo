@@ -1,0 +1,57 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: opentelemetry-demo-in-ns2-emailservice
+  namespace: otel-demo-ns1
+spec:
+  type: ExternalName
+  externalName: opentelemetry-demo-ns2-emailservice.otel-demo-ns2.svc.cluster.local
+  ports:
+  - port: 8080
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: opentelemetry-demo-in-ns2-paymentservice
+  namespace: otel-demo-ns1
+spec:
+  type: ExternalName
+  externalName: opentelemetry-demo-ns2-paymentservice.otel-demo-ns2.svc.cluster.local
+  ports:
+  - port: 8080
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: opentelemetry-demo-in-ns2-shippingservice
+  namespace: otel-demo-ns1
+spec:
+  type: ExternalName
+  externalName: opentelemetry-demo-ns2-shippingservice.otel-demo-ns2.svc.cluster.local
+  ports:
+  - port: 8080
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: opentelemetry-demo-in-ns1-featureflagservice
+  namespace: otel-demo-ns2
+spec:
+  type: ExternalName
+  externalName: opentelemetry-demo-ns1-featureflagservice.otel-demo-ns1.svc.cluster.local
+  ports:
+  - name: grpc
+    port: 50053
+  - name: http
+    port: 8081
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: opentelemetry-demo-in-ns1-quoteservice
+  namespace: otel-demo-ns2
+spec:
+  type: ExternalName
+  externalName: opentelemetry-demo-ns1-quoteservice.otel-demo-ns1.svc.cluster.local
+  ports:
+  - port: 8080

@@ -1,0 +1,34 @@
+.otelDemo.helm |
+del(.prometheus) |
+.default.image.pullSecrets=[{"name": "regcred"}] |
+del(.default.envOverrides) |
+.components.ffsPostgres.enabled=false |
+.components.accountingService.enabled=false |
+.components.adService.enabled=false |
+.components.cartService.enabled=false |
+.components.checkoutService.enabled=false |
+.components.currencyService.enabled=false |
+.components.emailService.enabled=false |
+.components.cartService.enabled=false |
+.components.checkoutService.enabled=false |
+.components.currencyService.enabled=false |
+.components.emailService.enabled=true |
+.components.featureflagService.enabled=false |
+.components.frauddetectionService.enabled=false |
+.components.frontend.enabled=false |
+.components.frontendProxy.enabled=false |
+.components.kafka.enabled=false |
+.components.loadgenerator.enabled=false |
+.components.paymentService.enabled=true |
+.components.paymentService.envOverrides=[{ "name": "FEATURE_FLAG_GRPC_SERVICE_ADDR", "value": "opentelemetry-demo-in-ns1-featureflagservice:50053" } ] |
+.components.productCatalogService.enabled=false |
+.components.quoteService.enabled=false |
+.components.recommendationService.enabled=false |
+.components.redis.enabled=false |
+.components.shippingService.enabled=true |
+.components.shippingService.envOverrides=[{ "name": "FEATURE_FLAG_GRPC_SERVICE_ADDR", "value": "opentelemetry-demo-in-ns1-featureflagservice:50053" }, { "name": "QUOTE_SERVICE_ADDR", "value": "http://opentelemetry-demo-in-ns1-quoteservice:8080" }] |
+del(.grafana) |
+.jaeger.enabled=false |
+.prometheus.enabled=false |
+.grafana.enabled=false
+

@@ -1,0 +1,2 @@
+.otelDemo.helm |
+.default.image.pullSecrets=[{"name": "regcred"}]
