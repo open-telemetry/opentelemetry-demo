@@ -1,0 +1,35 @@
+variables:
+  DST_REPOSITORY: quay.io/stackstate/opentelemetry-demo
+  OPENTELEMETRY_DEMO_VERSION: dev
+  DOCKER_DRIVER: overlay2
+  DOCKER_HOST: tcp://docker:2375
+  DOCKER_TLS_CERTDIR: ""
+
+services:
+  - alias: docker
+    command:
+      - --experimental
+      - --tls=false
+    name: ${DOCKER_PROXY_URL}/docker:20-dind
+
+stages:
+  - build
+
+build-featureflag:
+  tags:
+    - sts-k8s-xl-no-agent-runner
+  stage: build
+  image: ${DOCKER_PROXY_URL}/docker:20-git
+  script:
+    - echo "${quay_password}" | docker login --username=${quay_user} --password-stdin quay.io
+    - echo "${artifactory_password}" | docker login --username=${artifactory_user} --password-stdin artifactory.tooling.stackstate.io
+    - DST_TAG="${OPENTELEMETRY_DEMO_VERSION}-${CI_COMMIT_SHORT_SHA}-featureflagservice"
+    # fix for https://github.com/docker/buildx/issues/493
+    - docker run --privileged --rm artifactory.tooling.stackstate.io/docker-virtual/tonistiigi/binfmt --install all
+    - docker buildx create --name builder --use --bootstrap
+    - docker buildx build --label "published-by=${CI_JOB_URL}" --platform linux/amd64,linux/arm64 --file "$CI_PROJECT_DIR/src/featureflagservice/Dockerfile" --tag "${DST_REPOSITORY}:${DST_TAG}" --push "$CI_PROJECT_DIR"
+  retry:
+    max: 2
+    when:
+      - always
+
