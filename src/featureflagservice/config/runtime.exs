@@ -8,10 +8,6 @@ if System.get_env("PHX_SERVER") do
   config :featureflagservice, FeatureflagserviceWeb.Endpoint, server: true
 end
 
-if System.get_env("DISABLE_FEATURE_FLAGS") do
-  config :featureflagservice, enabled: false
-end
-
 grpc_port = String.to_integer(System.get_env("FEATURE_FLAG_GRPC_SERVICE_PORT"))
 
 config :grpcbox,
@@ -33,6 +29,8 @@ if config_env() == :prod do
       environment variable DATABASE_URL is missing.
       For example: ecto://USER:PASS@HOST/DATABASE
       """
+
+  config :featureflagservice, enabled: (System.get_env("DISABLE_FEATURE_FLAGS") == :true)
 
   maybe_ipv6 = if System.get_env("ECTO_IPV6"), do: [:inet6], else: []
 
