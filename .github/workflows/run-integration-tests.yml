@@ -41,6 +41,7 @@ jobs:
     needs: [build_runner, run_tests]
     runs-on: ubuntu-latest
     name: "Cleanup"
+    if: always()
     steps:
       - name: metal-sweeper-action
         uses: equinix-labs/metal-sweeper-action@v0.6.1
