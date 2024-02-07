@@ -1,6 +1,6 @@
 module github.com/open-telemetry/opentelemetry-demo/src/checkoutservice
 
-go 1.19
+go 1.22
 
 require (
 	github.com/IBM/sarama v1.42.1
