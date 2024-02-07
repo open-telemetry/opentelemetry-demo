@@ -48,6 +48,8 @@ the release.
   ([#1357](https://github.com/open-telemetry/opentelemetry-demo/pull/1357))
 * Update Python SDKs
   ([#1358](https://github.com/open-telemetry/opentelemetry-demo/pull/1358))
+* [loadgenerator] fix browser traffic enabled flag
+  ([#1359](https://github.com/open-telemetry/opentelemetry-demo/pull/1359))
 
 ## 1.7.2
 
