@@ -15,4 +15,4 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - uses: gradle/wrapper-validation-action@v2.0.1
+      - uses: gradle/wrapper-validation-action@v2.1.0
