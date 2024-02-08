@@ -90,7 +90,7 @@
             "uid": "loki"
           },
           "editorMode": "code",
-          "expr": "count by (name) (count_over_time({status=\"success\", repository_name=~\"$repo\"}[$__auto])) ",
+          "expr": "count by (name) (count_over_time({repository_name=~\"$repo\",repository_owner=~\"$organization\",status=\"success\"}[$__auto])) ",
           "hide": true,
           "legendFormat": "",
           "queryType": "instant",
@@ -102,7 +102,7 @@
             "uid": "loki"
           },
           "editorMode": "code",
-          "expr": "count by (action) (count_over_time({repository_name=~\"$repo\", repository_owner=~\"$organization\", action=\"closed\"}[$__auto]))",
+          "expr": "count by (action) (count_over_time({repository_name=~\"$repo\", repository_owner=~\"$organization\", action=\"closed\", issue_labels!=\"\"}[$__auto]))",
           "hide": true,
           "queryType": "instant",
           "refId": "B"
