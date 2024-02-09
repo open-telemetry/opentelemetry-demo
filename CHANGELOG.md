@@ -50,6 +50,8 @@ the release.
   ([#1358](https://github.com/open-telemetry/opentelemetry-demo/pull/1358))
 * [loadgenerator] fix browser traffic enabled flag
   ([#1359](https://github.com/open-telemetry/opentelemetry-demo/pull/1359))
+* [productcatalog] allow products to be extended
+  ([#1363](https://github.com/open-telemetry/opentelemetry-demo/pull/1363))
 
 ## 1.7.2
 

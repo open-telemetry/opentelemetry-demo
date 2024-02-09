@@ -9,7 +9,8 @@ package main
 import (
 	"context"
 	"fmt"
-	"io/ioutil"
+	"io/fs"
+
 	"net"
 	"os"
 	"strings"
@@ -51,7 +52,12 @@ var (
 
 func init() {
 	log = logrus.New()
-	catalog = readCatalogFile()
+	var err error
+	catalog, err = readProductFiles()
+	if err != nil {
+		log.Fatalf("Reading Product Files: %v", err)
+		os.Exit(1)
+	}
 }
 
 func initResource() *sdkresource.Resource {
@@ -151,18 +157,45 @@ type productCatalog struct {
 	pb.UnimplementedProductCatalogServiceServer
 }
 
-func readCatalogFile() []*pb.Product {
-	catalogJSON, err := ioutil.ReadFile("products.json")
+func readProductFiles() ([]*pb.Product, error) {
+
+	// find all .json files in the products directory
+	entries, err := os.ReadDir("./products")
 	if err != nil {
-		log.Fatalf("Reading Catalog File: %v", err)
+		return nil, err
 	}
 
-	var res pb.ListProductsResponse
-	if err := protojson.Unmarshal(catalogJSON, &res); err != nil {
-		log.Fatalf("Parsing Catalog JSON: %v", err)
+	jsonFiles := make([]fs.FileInfo, 0, len(entries))
+	for _, entry := range entries {
+		if strings.HasSuffix(entry.Name(), ".json") {
+			info, err := entry.Info()
+			if err != nil {
+				return nil, err
+			}
+			jsonFiles = append(jsonFiles, info)
+		}
 	}
 
-	return res.Products
+	// read the contents of each .json file and unmarshal into a ListProductsResponse
+	// then append the products to the catalog
+	var products []*pb.Product
+	for _, f := range jsonFiles {
+		jsonData, err := os.ReadFile("./products/" + f.Name())
+		if err != nil {
+			return nil, err
+		}
+
+		var res pb.ListProductsResponse
+		if err := protojson.Unmarshal(jsonData, &res); err != nil {
+			return nil, err
+		}
+
+		products = append(products, res.Products...)
+	}
+
+	log.Infof("Loaded %d products", len(products))
+
+	return products, nil
 }
 
 func mustMapEnv(target *string, key string) {
