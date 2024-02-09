@@ -3,12 +3,18 @@
 
 
 FROM golang:1.22.0-alpine AS builder
+RUN apk update && apk add --no-cache make protobuf-dev
+RUN go install google.golang.org/protobuf/cmd/protoc-gen-go@latest
+RUN go install google.golang.org/grpc/cmd/protoc-gen-go-grpc@latest
 
 WORKDIR /usr/src/app/
 
 RUN apk add build-base protobuf-dev protoc
 
 COPY ./src/productcatalogservice/ ./
+COPY ./pb/ ./pb
+
+RUN protoc -I ./pb ./pb/demo.proto --go_out=./ --go-grpc_out=./
 RUN go build -o /go/bin/productcatalogservice/
 
 # -----------------------------------------------------------------------------
