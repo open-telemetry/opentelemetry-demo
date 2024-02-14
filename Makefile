@@ -95,11 +95,14 @@ build-env-file:
 	sed -i '/IMAGE_VERSION=.*/c\IMAGE_VERSION=${RELEASE_VERSION}' .ghcr.env
 	sed -i '/IMAGE_NAME=.*/c\IMAGE_NAME=${GHCR_REPO}' .ghcr.env
 
+.PHONY: run-tests
 run-tests:
 	docker compose run frontendTests
-	docker compose run integrationTests
+	# integrationTests is deprecated in favor of traceBasedTests
+	# docker compose run integrationTests
 	docker compose run traceBasedTests
 
+.PHONY: run-tracetesting
 run-tracetesting:
 	docker compose run traceBasedTests ${SERVICES_TO_TEST}
 
