@@ -20,6 +20,6 @@ spec:
     assertions:
     - attr:tracetest.response.status = 200
   - name: It retrieved the cart items correctly
-    selector: span[name="oteldemo.CartService/GetCart"]
+    selector: span[name="POST /oteldemo.CartService/GetCart"]
     assertions:
-    - attr:rpc.grpc.status_code = 0
+    - attr:grpc.status_code = 0
