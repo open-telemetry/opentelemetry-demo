@@ -52,6 +52,8 @@ the release.
   ([#1359](https://github.com/open-telemetry/opentelemetry-demo/pull/1359))
 * [productcatalog] allow products to be extended
   ([#1363](https://github.com/open-telemetry/opentelemetry-demo/pull/1363))
+* [tests] update trace based tests for semantic conventions
+  ([#1377](https://github.com/open-telemetry/opentelemetry-demo/pull/1377))
 
 ## 1.7.2
 
