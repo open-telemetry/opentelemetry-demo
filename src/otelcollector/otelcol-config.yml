@@ -1,7 +1,6 @@
 # Copyright The OpenTelemetry Authors
 # SPDX-License-Identifier: Apache-2.0
 
-
 receivers:
   otlp:
     protocols:
@@ -11,22 +10,29 @@ receivers:
           allowed_origins:
             - "http://*"
             - "https://*"
+  httpcheck/frontendproxy:
+    targets:
+      - endpoint: http://frontendproxy:${env:ENVOY_PORT}
 
 exporters:
-  logging:
+  debug:
+  otlp:
+    endpoint: "jaeger:4317"
+    tls:
+      insecure: true
+  otlphttp/prometheus:
+    endpoint: "http://prometheus:9090/api/v1/otlp"
+    tls:
+      insecure: true
+  opensearch:
+    logs_index: otel
+    http:
+      endpoint: "http://opensearch:9200"
+      tls:
+        insecure: true
 
 processors:
   batch:
-  transform:
-    metric_statements:
-      - context: metric
-        statements:
-          # FIXME: remove this when this is issue is resolved: https://github.com/open-telemetry/opentelemetry-java/issues/4834
-          - set(description, "") where name == "queueSize"
-          # FIXME: remove this when the following 2 issues are resolved
-          # Java: https://github.com/open-telemetry/opentelemetry-java-instrumentation/issues/9478
-          # Go: https://github.com/open-telemetry/opentelemetry-go-contrib/issues/4301
-          - set(description, "") where name == "rpc.server.duration"
 
 connectors:
   spanmetrics:
@@ -36,12 +42,12 @@ service:
     traces:
       receivers: [otlp]
       processors: [batch]
-      exporters: [logging, spanmetrics]
+      exporters: [otlp, debug, spanmetrics]
     metrics:
-      receivers: [otlp, spanmetrics]
-      processors: [transform, batch]
-      exporters: [logging]
+      receivers: [httpcheck/frontendproxy, otlp, spanmetrics]
+      processors: [batch]
+      exporters: [otlphttp/prometheus, debug]
     logs:
       receivers: [otlp]
       processors: [batch]
-      exporters: [logging]
+      exporters: [opensearch, debug]
