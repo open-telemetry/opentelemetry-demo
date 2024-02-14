@@ -160,8 +160,6 @@ services:
       context: ./src/currencyservice
       cache_from:
         - ${IMAGE_NAME}:${IMAGE_VERSION}-currencyservice
-      args:
-        - OPENTELEMETRY_CPP_VERSION
     deploy:
       resources:
         limits:
