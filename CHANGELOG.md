@@ -52,6 +52,8 @@ the release.
   ([#1359](https://github.com/open-telemetry/opentelemetry-demo/pull/1359))
 * [productcatalog] allow products to be extended
   ([#1363](https://github.com/open-telemetry/opentelemetry-demo/pull/1363))
+* [currencyservice] Add OTLP logs
+  ([#1378](https://github.com/open-telemetry/opentelemetry-demo/pull/1378))
 
 ## 1.7.2
 
