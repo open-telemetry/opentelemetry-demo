@@ -202,11 +202,6 @@ public final class AdService {
         return false;
       }
 
-      // Flip a coin and fail 1/10th of the time if feature flag is enabled
-      if (random.nextInt(10) != 1) {
-        return false;
-      }
-
       EvaluateProbabilityFeatureFlagResponse response =
           featureFlagServiceStub.evaluateProbabilityFeatureFlag(
               EvaluateProbabilityFeatureFlagRequest.newBuilder()
