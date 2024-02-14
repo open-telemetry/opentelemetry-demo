@@ -12,7 +12,7 @@ const protoLoader = require("@grpc/proto-loader");
 const fetch = require("node-fetch");
 const dotenvExpand = require("dotenv-expand");
 const { resolve } = require("path");
-const productData = require("../src/productcatalogservice/products.json");
+const productData = require("../src/productcatalogservice/products/products.json");
 
 const myEnv = dotEnv.config({
   path: resolve(__dirname, "../.env"),

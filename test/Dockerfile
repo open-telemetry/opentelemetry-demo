@@ -2,7 +2,7 @@
 # SPDX-License-Identifier: Apache-2.0
 
 
-FROM node:16-alpine AS build
+FROM node:21-alpine AS build
 
 WORKDIR /app
 
@@ -12,7 +12,7 @@ RUN npm ci --omit=dev
 
 # -----------------------------------------------------------------------------
 
-FROM node:16-alpine
+FROM node:21-alpine
 
 USER node
 WORKDIR /app
@@ -21,6 +21,6 @@ ENV NODE_ENV production
 COPY --chown=node:node --from=build /app/node_modules/ ./node_modules/
 COPY ./test ./
 COPY ./pb/demo.proto ./
-COPY ./src/productcatalogservice/products.json ../src/productcatalogservice/products.json
+COPY ./src/productcatalogservice/products/products.json ../src/productcatalogservice/products/products.json
 
 ENTRYPOINT ["npm", "test"]
