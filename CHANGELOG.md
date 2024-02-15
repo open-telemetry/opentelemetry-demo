@@ -56,6 +56,8 @@ the release.
   ([#1377](https://github.com/open-telemetry/opentelemetry-demo/pull/1377))
 * [cartservice] update .NET to .NET 8.0.2
   ([#1380](https://github.com/open-telemetry/opentelemetry-demo/pull/1380))
+* [productcatalogservice] Added Problems to ListProducts and GetProduct endpoints
+  ([#1382](https://github.com/open-telemetry/opentelemetry-demo/pull/1382))
 
 ## 1.7.2
 
