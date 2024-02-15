@@ -49,3 +49,4 @@ jobs:
         uses: ./.github/actions/update-env-file
         with:
           containerImageVersion: ${{ github.event.release.tag_name }}
+          token: ${{ secrets.REPOSITORY_FULL_ACCESS_GITHUB_TOKEN }}

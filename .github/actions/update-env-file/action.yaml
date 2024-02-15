@@ -4,7 +4,10 @@ name: Deploy Dash0 OTel Demo
 description: deploy a release of the Dash0 fork of the OpenTelemetry demo
 inputs:
   containerImageVersion:
-    description: 'version tag of the Dash0 OTel Demo container images, e.g. 1.1.0'
+    description: "version tag of the Dash0 OTel Demo container images, e.g. 1.1.0"
+    required: true
+  token:
+    description: "token granting read/write access to dash0-configuration repository."
     required: true
 
 runs:
@@ -19,9 +22,29 @@ runs:
       shell: bash
       run: |
         sed -i "s/^IMAGE_VERSION=[[:digit:]][[:digit:]]*\.[[:digit:]][[:digit:]]*\.[[:digit:]][[:digit:]]*$/IMAGE_VERSION=${{ inputs.containerImageVersion }}/" .env
-        git --no-pager diff .env
-        git config user.name "github-actions[bot]"
-        git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-        git add .env
-        git commit -m"[dash0] update image version in .env to ${{ inputs.containerImageVersion }}"
-        git push
+
+    - name: create pull request
+      id: cpr
+      uses: peter-evans/create-pull-request@v5
+      with:
+        title: update .env file with latest tag
+        commit-message: '[dash0] update image version in .env to ${{ inputs.containerImageVersion }}'
+        add-paths: .env
+        base: main
+        branch: env-file-update
+        author: 'github-actions[bot] <41898282+github-actions[bot]@users.noreply.github.com>'
+
+    - name: auto approve
+      if: steps.cpr.outputs.pull-request-operation == 'created'
+      run: gh pr review --approve "${{ steps.cpr.outputs.pull-request-number }}"
+      shell: bash
+      env:
+        GH_TOKEN: ${{ inputs.token }}
+
+    - name: enable pull request auto merge
+      if: steps.cpr.outputs.pull-request-operation == 'created'
+      uses: peter-evans/enable-pull-request-automerge@v3
+      with:
+        token: ${{ inputs.token }}
+        pull-request-number: ${{ steps.cpr.outputs.pull-request-number }}
+        merge-method: squash

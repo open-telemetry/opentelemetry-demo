@@ -8,7 +8,6 @@ set -euo pipefail
 # This script is used to update generated code after changing demo.proto.
 
 cd -P -- "$(dirname -- "$0")"
-pwd
 
 command -v npm >/dev/null 2>&1 || {
   cat <<EOF >&2
