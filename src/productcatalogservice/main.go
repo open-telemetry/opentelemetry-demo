@@ -281,6 +281,11 @@ func (p *productCatalog) checkProductFailure(ctx context.Context, id string) boo
 		return false
 	}
 
+	return p.getFeatureFlag(ctx, "productCatalogFailure")
+}
+
+func (p *productCatalog) getFeatureFlag(ctx context.Context, flagName string) bool {
+
 	conn, err := createClient(ctx, p.featureFlagSvcAddr)
 	if err != nil {
 		span := trace.SpanFromContext(ctx)
@@ -289,7 +294,6 @@ func (p *productCatalog) checkProductFailure(ctx context.Context, id string) boo
 	}
 	defer conn.Close()
 
-	flagName := "productCatalogFailure"
 	ffResponse, err := pb.NewFeatureFlagServiceClient(conn).GetFlag(ctx, &pb.GetFlagRequest{
 		Name: flagName,
 	})
