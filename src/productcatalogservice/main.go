@@ -217,6 +217,13 @@ func (p *productCatalog) Watch(req *healthpb.HealthCheckRequest, ws healthpb.Hea
 func (p *productCatalog) ListProducts(ctx context.Context, req *pb.Empty) (*pb.ListProductsResponse, error) {
 	span := trace.SpanFromContext(ctx)
 
+	if p.getFeatureFlag(ctx, "ItemListInternal") {
+		msg := fmt.Sprintf("ItemListInternal flag enabled! List failed!")
+		span.SetStatus(otelcodes.Error, msg)
+		span.AddEvent(msg)
+		return nil, status.Errorf(codes.Internal, msg)
+	}
+
 	span.SetAttributes(
 		attribute.Int("app.products.count", len(catalog)),
 	)
@@ -235,6 +242,13 @@ func (p *productCatalog) GetProduct(ctx context.Context, req *pb.GetProductReque
 		span.SetStatus(otelcodes.Error, msg)
 		span.AddEvent(msg)
 		return nil, status.Errorf(codes.Internal, msg)
+	}
+
+	if p.getFeatureFlag(ctx, "ItemNotFound") {
+		msg := fmt.Sprintf("ItemNotFound flag enabled! Product Not Found!")
+		span.SetStatus(otelcodes.Error, msg)
+		span.AddEvent(msg)
+		return nil, status.Errorf(codes.NotFound, msg)
 	}
 
 	var found *pb.Product
