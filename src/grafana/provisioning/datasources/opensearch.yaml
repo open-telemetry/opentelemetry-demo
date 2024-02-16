@@ -16,4 +16,5 @@ datasources:
       logLevelField: severity
       logMessageField: body
       pplEnabled: true
-      timeField: "@timestamp"
+      timeField: observedTimestamp
+      version: 2.11.1
