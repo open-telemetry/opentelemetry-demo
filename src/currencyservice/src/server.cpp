@@ -248,7 +248,7 @@ void RunServer(uint16_t port)
   builder.AddListeningPort(address, grpc::InsecureServerCredentials());
 
   std::unique_ptr<Server> server(builder.BuildAndStart());
-  logger->Debug("Currency Server listening on port: " + address);
+  logger->Info("Currency Server listening on port: " + address);
   server->Wait();
   server->Shutdown();
 }
