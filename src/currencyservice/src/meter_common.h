@@ -16,22 +16,14 @@ namespace otlp_exporter = opentelemetry::exporter::otlp;
 
 namespace
 {
-  std::string version{ "1.3.0" };
-  std::string name{ "app_currency" };
-  std::string schema{ "https://opentelemetry.io/schemas/1.2.0" };
-
   void initMeter() 
   {
     // Build MetricExporter
     otlp_exporter::OtlpGrpcMetricExporterOptions otlpOptions;
-    // Configuration via environment variable not supported yet
-    //otlpOptions.aggregation_temporality = otlp_exporter::PreferredAggregationTemporality::kCumulative;
     auto exporter = otlp_exporter::OtlpGrpcMetricExporterFactory::Create(otlpOptions);
 
     // Build MeterProvider and Reader
     metric_sdk::PeriodicExportingMetricReaderOptions options;
-    //options.export_interval_millis = std::chrono::milliseconds(60000);
-    //options.export_timeout_millis = std::chrono::milliseconds(30000);
     std::unique_ptr<metric_sdk::MetricReader> reader{
         new metric_sdk::PeriodicExportingMetricReader(std::move(exporter), options) };
     auto provider = std::shared_ptr<metrics_api::MeterProvider>(new metric_sdk::MeterProvider());
@@ -40,7 +32,7 @@ namespace
     metrics_api::Provider::SetMeterProvider(provider);
   }
 
-  nostd::unique_ptr<metrics_api::Counter<uint64_t>> initIntCounter()
+  nostd::unique_ptr<metrics_api::Counter<uint64_t>> initIntCounter(std::string name, std::string version)
   {
     std::string counter_name = name + "_counter";
     auto provider = metrics_api::Provider::GetMeterProvider();
