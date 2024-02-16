@@ -160,9 +160,6 @@ services:
       context: ./src/currencyservice
       cache_from:
         - ${IMAGE_NAME}:${IMAGE_VERSION}-currencyservice
-      args:
-        - GRPC_VERSION=1.46.0
-        - OPENTELEMETRY_VERSION=1.5.0
     deploy:
       resources:
         limits:
@@ -172,6 +169,7 @@ services:
       - "${CURRENCY_SERVICE_PORT}"
     environment:
       - CURRENCY_SERVICE_PORT
+      - VERSION=${IMAGE_VERSION}
       - OTEL_EXPORTER_OTLP_ENDPOINT
       - OTEL_RESOURCE_ATTRIBUTES=${OTEL_RESOURCE_ATTRIBUTES},service.name=currencyservice   # The C++ SDK does not support OTEL_SERVICE_NAME
     depends_on:
