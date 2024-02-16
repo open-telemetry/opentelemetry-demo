@@ -7,6 +7,8 @@ the release.
 
 ## Unreleased
 
+## 1.8.0
+
 * [grafana] update grafana to 10.2.3
   ([#1332](https://github.com/open-telemetry/opentelemetry-demo/pull/1332))
 * [frontendproxy] Enable envoy environment resource detector
