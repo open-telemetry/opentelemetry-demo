@@ -7,6 +7,8 @@ the release.
 
 ## Unreleased
 
+## 1.8.0
+
 * [grafana] update grafana to 10.2.3
   ([#1332](https://github.com/open-telemetry/opentelemetry-demo/pull/1332))
 * [frontendproxy] Enable envoy environment resource detector
@@ -54,6 +56,8 @@ the release.
   ([#1363](https://github.com/open-telemetry/opentelemetry-demo/pull/1363))
 * [tests] update trace based tests for semantic conventions
   ([#1377](https://github.com/open-telemetry/opentelemetry-demo/pull/1377))
+* [currencyservice] Add OTLP logs
+  ([#1378](https://github.com/open-telemetry/opentelemetry-demo/pull/1378))
 * [cartservice] update .NET to .NET 8.0.2
   ([#1380](https://github.com/open-telemetry/opentelemetry-demo/pull/1380))
 
