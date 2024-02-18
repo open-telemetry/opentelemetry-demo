@@ -7,6 +7,9 @@ the release.
 
 ## Unreleased
 
+* [featureflag] deprecate in favor of flagd
+  ([#1338](https://github.com/open-telemetry/opentelemetry-demo/pull/1388))
+
 ## 1.8.0
 
 * [grafana] update grafana to 10.2.3
