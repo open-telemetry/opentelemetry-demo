@@ -41,6 +41,9 @@ import (
 	"google.golang.org/grpc/credentials/insecure"
 	"google.golang.org/grpc/reflection"
 	"google.golang.org/grpc/status"
+
+	flagd "github.com/open-feature/go-sdk-contrib/providers/flagd/pkg"
+	"github.com/open-feature/go-sdk/openfeature"
 )
 
 var (
@@ -123,6 +126,7 @@ func main() {
 			log.Fatalf("Error shutting down meter provider: %v", err)
 		}
 	}()
+	openfeature.SetProvider(flagd.NewProvider())
 
 	err := runtime.Start(runtime.WithMinimumReadMemStatsInterval(time.Second))
 	if err != nil {
@@ -132,7 +136,6 @@ func main() {
 	svc := &productCatalog{}
 	var port string
 	mustMapEnv(&port, "PRODUCT_CATALOG_SERVICE_PORT")
-	svc.featureFlagSvcAddr = os.Getenv("FEATURE_FLAG_GRPC_SERVICE_ADDR")
 
 	log.Infof("ProductCatalogService gRPC server started on port: %s", port)
 
@@ -153,7 +156,6 @@ func main() {
 }
 
 type productCatalog struct {
-	featureFlagSvcAddr string
 	pb.UnimplementedProductCatalogServiceServer
 }
 
@@ -277,29 +279,14 @@ func (p *productCatalog) SearchProducts(ctx context.Context, req *pb.SearchProdu
 }
 
 func (p *productCatalog) checkProductFailure(ctx context.Context, id string) bool {
-	if id != "OLJCESPC7Z" || p.featureFlagSvcAddr == "" {
+	if id != "OLJCESPC7Z" {
 		return false
 	}
-
-	conn, err := createClient(ctx, p.featureFlagSvcAddr)
-	if err != nil {
-		span := trace.SpanFromContext(ctx)
-		span.AddEvent("error", trace.WithAttributes(attribute.String("message", "Feature Flag Connection Failed")))
-		return false
-	}
-	defer conn.Close()
-
-	flagName := "productCatalogFailure"
-	ffResponse, err := pb.NewFeatureFlagServiceClient(conn).GetFlag(ctx, &pb.GetFlagRequest{
-		Name: flagName,
-	})
-	if err != nil {
-		span := trace.SpanFromContext(ctx)
-		span.AddEvent("error", trace.WithAttributes(attribute.String("message", fmt.Sprintf("GetFlag Failed: %s", flagName))))
-		return false
-	}
-
-	return ffResponse.GetFlag().Enabled
+	client := openfeature.NewClient("productCatalog")
+	failureEnabled, _ := client.BooleanValue(
+		context.Background(), "productCatalogFailure", false, openfeature.EvaluationContext{},
+	)
+	return failureEnabled
 }
 
 func createClient(ctx context.Context, svcAddr string) (*grpc.ClientConn, error) {

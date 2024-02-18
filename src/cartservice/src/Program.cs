@@ -3,7 +3,6 @@
 using System;
 
 using cartservice.cartstore;
-using cartservice.featureflags;
 using cartservice.services;
 
 using Microsoft.AspNetCore.Builder;
@@ -17,6 +16,8 @@ using OpenTelemetry.Metrics;
 using OpenTelemetry.ResourceDetectors.Container;
 using OpenTelemetry.Resources;
 using OpenTelemetry.Trace;
+using OpenFeature;
+using OpenFeature.Contrib.Providers.Flagd;
 
 var builder = WebApplication.CreateBuilder(args);
 string redisAddress = builder.Configuration["REDIS_ADDR"];
@@ -37,13 +38,16 @@ builder.Services.AddSingleton<ICartStore>(x=>
     return store;
 });
 
-builder.Services.AddSingleton<FeatureFlagHelper>();
 builder.Services.AddSingleton(x => new CartService(x.GetRequiredService<ICartStore>(),
-    new RedisCartStore(x.GetRequiredService<ILogger<RedisCartStore>>(), "badhost:1234"),
-    x.GetRequiredService<FeatureFlagHelper>()));
+    new RedisCartStore(x.GetRequiredService<ILogger<RedisCartStore>>(), "badhost:1234"), x.GetRequiredService<IFeatureClient>()));
 
+builder.Services.AddSingleton<IFeatureClient>(x => {
+    var flagdProvider = new FlagdProvider();
+    Api.Instance.SetProviderAsync(flagdProvider).GetAwaiter().GetResult();
+    var client = Api.Instance.GetClient();
+    return client;
+});
 
-// see https://opentelemetry.io/docs/instrumentation/net/getting-started/
 
 Action<ResourceBuilder> appResourceBuilder =
     resource => resource

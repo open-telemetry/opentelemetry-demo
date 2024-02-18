@@ -117,10 +117,7 @@ def must_map_env(key: str):
 
 
 def check_feature_flag(flag_name: str):
-    if feature_flag_stub is None:
-        return False
-    flag = feature_flag_stub.GetFlag(demo_pb2.GetFlagRequest(name=flag_name)).flag
-    return flag.enabled
+    return False
 
 
 if __name__ == "__main__":
@@ -151,13 +148,7 @@ if __name__ == "__main__":
     catalog_addr = must_map_env('PRODUCT_CATALOG_SERVICE_ADDR')
     pc_channel = grpc.insecure_channel(catalog_addr)
     product_catalog_stub = demo_pb2_grpc.ProductCatalogServiceStub(pc_channel)
-
-    ff_addr = os.environ.get('FEATURE_FLAG_GRPC_SERVICE_ADDR')
-    feature_flag_stub = None
-    if ff_addr is not None:
-        ff_channel = grpc.insecure_channel(ff_addr)
-        feature_flag_stub = demo_pb2_grpc.FeatureFlagServiceStub(ff_channel)
-
+    
     # Create gRPC server
     server = grpc.server(futures.ThreadPoolExecutor(max_workers=10))
 
