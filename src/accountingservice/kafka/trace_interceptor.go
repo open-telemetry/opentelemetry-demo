@@ -9,7 +9,7 @@ import (
 	"go.opentelemetry.io/otel"
 	"go.opentelemetry.io/otel/attribute"
 	"go.opentelemetry.io/otel/propagation"
-	semconv "go.opentelemetry.io/otel/semconv/v1.21.0"
+	semconv "go.opentelemetry.io/otel/semconv/v1.24.0"
 	"go.opentelemetry.io/otel/trace"
 
 	"github.com/IBM/sarama"
@@ -27,9 +27,9 @@ func NewOTelInterceptor(groupID string) *OTelInterceptor {
 	oi.tracer = otel.Tracer("github.com/open-telemetry/opentelemetry-demo/accountingservice/sarama")
 
 	oi.fixedAttrs = []attribute.KeyValue{
-		semconv.MessagingSystem("kafka"),
+		semconv.MessagingSystemKafka,
 		semconv.MessagingKafkaConsumerGroup(groupID),
-		semconv.NetTransportTCP,
+		semconv.NetworkTransportTCP,
 	}
 	return &oi
 }
@@ -52,7 +52,7 @@ func (oi *OTelInterceptor) OnConsume(msg *sarama.ConsumerMessage) {
 		trace.WithAttributes(
 			semconv.MessagingDestinationName(msg.Topic),
 			semconv.MessagingKafkaMessageOffset(int(msg.Offset)),
-			semconv.MessagingMessagePayloadSizeBytes(len(msg.Value)),
+			semconv.MessagingMessageBodySize(len(msg.Value)),
 			semconv.MessagingOperationReceive,
 			semconv.MessagingKafkaDestinationPartition(int(msg.Partition)),
 		),
