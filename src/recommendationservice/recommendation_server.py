@@ -20,6 +20,9 @@ from opentelemetry.sdk._logs import LoggerProvider, LoggingHandler
 from opentelemetry.sdk._logs.export import BatchLogRecordProcessor
 from opentelemetry.sdk.resources import Resource
 
+from openfeature import api
+from openfeature.provider.in_memory_provider import InMemoryFlag, InMemoryProvider
+
 # Local
 import logging
 import demo_pb2
@@ -33,6 +36,10 @@ from metrics import (
 
 cached_ids = []
 first_run = True
+
+my_flags = {
+  "enable_cache": InMemoryFlag("on", {"on": True, "off": False})
+}
 
 
 class RecommendationService(demo_pb2_grpc.RecommendationServiceServicer):
@@ -117,7 +124,11 @@ def must_map_env(key: str):
 
 
 def check_feature_flag(flag_name: str):
-    return False
+    # Initialize OpenFeature
+    # TODO: move this to init
+    api.set_provider(InMemoryProvider(my_flags))
+    client = api.get_client()
+    return client.get_boolean_value("enable_cache", False)
 
 
 if __name__ == "__main__":
