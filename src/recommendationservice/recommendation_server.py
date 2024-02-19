@@ -38,7 +38,7 @@ cached_ids = []
 first_run = True
 
 my_flags = {
-  "enable_cache": InMemoryFlag("on", {"on": True, "off": False})
+    "enable_cache": InMemoryFlag("on", {"on": True, "off": False})
 }
 
 
