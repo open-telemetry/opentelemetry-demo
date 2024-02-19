@@ -7,7 +7,7 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
-	semconv "go.opentelemetry.io/otel/semconv/v1.19.0"
+	semconv "go.opentelemetry.io/otel/semconv/v1.24.0"
 	"net"
 	"net/http"
 	"os"
@@ -502,9 +502,8 @@ func createProducerSpan(ctx context.Context, msg *sarama.ProducerMessage) trace.
 		trace.WithSpanKind(trace.SpanKindProducer),
 		trace.WithAttributes(
 			semconv.PeerService("kafka"),
-			semconv.NetTransportTCP,
-			semconv.MessagingSystem("kafka"),
-			semconv.MessagingDestinationKindTopic,
+			semconv.NetworkTransportTCP,
+			semconv.MessagingSystemKafka,
 			semconv.MessagingDestinationName(msg.Topic),
 			semconv.MessagingOperationPublish,
 			semconv.MessagingKafkaDestinationPartition(int(msg.Partition)),
