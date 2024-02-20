@@ -1,0 +1,30 @@
+apiVersion: backstage.io/v1alpha1
+kind: Location
+metadata:
+  name: opentelemetry-demo
+  description: A collection of all Backstage example entities, except users, groups, and templates
+spec:
+  targets:
+    - ./pb/backstage.yaml
+    - ./src/accountingservice/backstage.yaml
+    - ./src/adservice/backstage.yaml
+    - ./src/cartservice/backstage.yaml
+    - ./src/checkoutservice/backstage.yaml
+    - ./src/currencyservice/backstage.yaml
+    - ./src/emailservice/backstage.yaml
+    - ./src/featureflagservice/backstage.yaml
+    - ./src/ffspostgres/backstage.yaml
+    - ./src/frauddetectionservice/backstage.yaml
+    - ./src/frontend/backstage.yaml
+    - ./src/frontendproxy/backstage.yaml
+    - ./src/grafana/backstage.yaml
+    - ./src/kafka/backstage.yaml
+    - ./src/loadgenerator/backstage.yaml
+    - ./src/otelcollector/backstage.yaml
+    - ./src/paymentservice/backstage.yaml
+    - ./src/productcatalogservice/backstage.yaml
+    - ./src/prometheus/backstage.yaml
+    - ./src/quoteservice/backstage.yaml
+    - ./src/recommendationservice/backstage.yaml
+    - ./src/shippingservice/backstage.yaml
+    - https://github.com/jmichalak9/opentelemetry.io/blob/main/catalog-info.yaml

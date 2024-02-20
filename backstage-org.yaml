@@ -1,0 +1,24 @@
+apiVersion: backstage.io/v1alpha1
+kind: System
+metadata:
+  name: opentelemetry-demo
+  annotations:
+    backstage.io/techdocs-ref: url:https://opentelemetry.io/docs/demo/
+  description: OTEL demo app
+spec:
+  owner: user:guest
+---
+apiVersion: backstage.io/v1alpha1
+kind: Group
+metadata:
+  name: devs
+spec:
+  type: team
+  children: []
+---
+apiVersion: backstage.io/v1alpha1
+kind: User
+metadata:
+  name: guest
+spec:
+  memberOf: [devs]

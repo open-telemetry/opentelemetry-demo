@@ -1,0 +1,20 @@
+
+apiVersion: backstage.io/v1alpha1
+kind: Component
+metadata:
+  name: frontend
+  description: This service is responsible to process a checkout order from the user. The checkout service will call many other services in order to process an order.
+  annotations:
+    backstage.io/techdocs-ref: url:https://opentelemetry.io/docs/demo/services/frontend/
+spec:
+  type: service
+  lifecycle: production
+  owner: user:guest
+  system: opentelemetry-demo
+  dependsOn:
+    - component:default/cartservice
+    - component:default/currencyservice
+    - component:default/checkoutservice
+    - component:default/productcatalogservice
+    - component:default/shippingservice
+    - component:default/recommendationservice

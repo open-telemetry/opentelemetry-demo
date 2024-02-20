@@ -1,0 +1,13 @@
+
+apiVersion: backstage.io/v1alpha1
+kind: Resource
+metadata:
+  name: kafka
+  description: This service is responsible to process a checkout order from the user. The checkout service will call many other services in order to process an order.
+  annotations:
+    backstage.io/techdocs-ref: url:https://opentelemetry.io/docs/demo/services/kafka/
+spec:
+  type: database
+  lifecycle: production
+  owner: user:guest
+  system: opentelemetry-demo

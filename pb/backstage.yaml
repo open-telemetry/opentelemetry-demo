@@ -1,0 +1,12 @@
+apiVersion: backstage.io/v1alpha1
+kind: API
+metadata:
+  name: pb
+  description: grpc api
+spec:
+  type: grpc
+  lifecycle: production
+  owner: user:guest
+  system: opentelemetry-demo
+  definition:
+    $text: ./demo.proto
