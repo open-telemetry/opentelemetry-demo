@@ -7,6 +7,13 @@ the release.
 
 ## Unreleased
 
+* [chore] increase memory for Collector and Jaeger
+  ([#1396](https://github.com/open-telemetry/opentelemetry-demo/pull/1396))
+* [chore] fix Make targets for restart and redeploy
+  ([#1397](https://github.com/open-telemetry/opentelemetry-demo/pull/1397))
+* [chore] add nightly releases
+  ([#1398](https://github.com/open-telemetry/opentelemetry-demo/pull/1398))
+
 ## 1.8.0
 
 * [grafana] update grafana to 10.2.3
