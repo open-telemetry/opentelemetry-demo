@@ -7,6 +7,9 @@ the release.
 
 ## Unreleased
 
+* [chore] fix Make targets for restart and redeploy
+  ([#1397](https://github.com/open-telemetry/opentelemetry-demo/pull/1397))
+
 ## 1.8.0
 
 * [grafana] update grafana to 10.2.3
