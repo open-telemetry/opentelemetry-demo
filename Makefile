@@ -179,7 +179,7 @@ ifdef service
 	docker compose create $(service)
 	docker compose start $(service)
 else
-	@echo "Please provide a service name using `service=[service name]`"
+	@echo "Please provide a service name using `service=[service name]` or `SERVICE=[service name]`"
 endif
 
 # Use to rebuild and restart (redeploy) a single service component
@@ -198,6 +198,6 @@ ifdef service
 	docker compose create $(service)
 	docker compose start $(service)
 else
-	@echo "Please provide a service name using `service=[service name]`"
+	@echo "Please provide a service name using `service=[service name]` or `SERVICE=[service name]`"
 endif
 
