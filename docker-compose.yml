@@ -19,7 +19,7 @@ services:
   # ******************
   # Accounting service
   accountingservice:
-    image: ${IMAGE_NAME}:${IMAGE_VERSION}-accountingservice
+    image: ${IMAGE_NAME}:${DEMO_VERSION}-accountingservice
     container_name: accounting-service
     build:
       context: ./
@@ -46,7 +46,7 @@ services:
 
   # AdService
   adservice:
-    image: ${IMAGE_NAME}:${IMAGE_VERSION}-adservice
+    image: ${IMAGE_NAME}:${DEMO_VERSION}-adservice
     container_name: ad-service
     build:
       context: ./
@@ -75,7 +75,7 @@ services:
 
   # Cart service
   cartservice:
-    image: ${IMAGE_NAME}:${IMAGE_VERSION}-cartservice
+    image: ${IMAGE_NAME}:${DEMO_VERSION}-cartservice
     container_name: cart-service
     build:
       context: ./
@@ -106,7 +106,7 @@ services:
 
   # Checkout service
   checkoutservice:
-    image: ${IMAGE_NAME}:${IMAGE_VERSION}-checkoutservice
+    image: ${IMAGE_NAME}:${DEMO_VERSION}-checkoutservice
     container_name: checkout-service
     build:
       context: ./
@@ -154,7 +154,7 @@ services:
 
   # Currency service
   currencyservice:
-    image: ${IMAGE_NAME}:${IMAGE_VERSION}-currencyservice
+    image: ${IMAGE_NAME}:${DEMO_VERSION}-currencyservice
     container_name: currency-service
     build:
       context: ./src/currencyservice
@@ -179,7 +179,7 @@ services:
 
   # Email service
   emailservice:
-    image: ${IMAGE_NAME}:${IMAGE_VERSION}-emailservice
+    image: ${IMAGE_NAME}:${DEMO_VERSION}-emailservice
     container_name: email-service
     build:
       context: ./src/emailservice
@@ -205,7 +205,7 @@ services:
 
   # Feature Flag service
   featureflagservice:
-    image: ${IMAGE_NAME}:${IMAGE_VERSION}-featureflagservice
+    image: ${IMAGE_NAME}:${DEMO_VERSION}-featureflagservice
     container_name: feature-flag-service
     build:
       context: ./
@@ -236,7 +236,7 @@ services:
 
   # Fraud Detection service
   frauddetectionservice:
-    image: ${IMAGE_NAME}:${IMAGE_VERSION}-frauddetectionservice
+    image: ${IMAGE_NAME}:${DEMO_VERSION}-frauddetectionservice
     container_name: frauddetection-service
     build:
       context: ./
@@ -263,7 +263,7 @@ services:
 
   # Frontend
   frontend:
-    image: ${IMAGE_NAME}:${IMAGE_VERSION}-frontend
+    image: ${IMAGE_NAME}:${DEMO_VERSION}-frontend
     container_name: frontend
     build:
       context: ./
@@ -318,7 +318,7 @@ services:
 
   # Frontend Proxy (Envoy)
   frontendproxy:
-    image: ${IMAGE_NAME}:${IMAGE_VERSION}-frontendproxy
+    image: ${IMAGE_NAME}:${DEMO_VERSION}-frontendproxy
     container_name: frontend-proxy
     build:
       context: ./
@@ -360,7 +360,7 @@ services:
 
   # Load Generator
   loadgenerator:
-    image: ${IMAGE_NAME}:${IMAGE_VERSION}-loadgenerator
+    image: ${IMAGE_NAME}:${DEMO_VERSION}-loadgenerator
     container_name: load-generator
     build:
       context: ./
@@ -393,7 +393,7 @@ services:
 
   # Payment service
   paymentservice:
-    image: ${IMAGE_NAME}:${IMAGE_VERSION}-paymentservice
+    image: ${IMAGE_NAME}:${DEMO_VERSION}-paymentservice
     container_name: payment-service
     build:
       context: ./
@@ -420,7 +420,7 @@ services:
 
   # Product Catalog service
   productcatalogservice:
-    image: ${IMAGE_NAME}:${IMAGE_VERSION}-productcatalogservice
+    image: ${IMAGE_NAME}:${DEMO_VERSION}-productcatalogservice
     container_name: product-catalog-service
     build:
       context: ./
@@ -448,7 +448,7 @@ services:
 
   # Quote service
   quoteservice:
-    image: ${IMAGE_NAME}:${IMAGE_VERSION}-quoteservice
+    image: ${IMAGE_NAME}:${DEMO_VERSION}-quoteservice
     container_name: quote-service
     build:
       context: ./
@@ -476,7 +476,7 @@ services:
 
   # Recommendation service
   recommendationservice:
-    image: ${IMAGE_NAME}:${IMAGE_VERSION}-recommendationservice
+    image: ${IMAGE_NAME}:${DEMO_VERSION}-recommendationservice
     container_name: recommendation-service
     build:
       context: ./
@@ -511,7 +511,7 @@ services:
 
   # Shipping service
   shippingservice:
-    image: ${IMAGE_NAME}:${IMAGE_VERSION}-shippingservice
+    image: ${IMAGE_NAME}:${DEMO_VERSION}-shippingservice
     container_name: shipping-service
     build:
       context: ./
@@ -541,7 +541,7 @@ services:
   # ******************
   # Postgres used by Feature Flag service
   ffspostgres:
-    image: ${IMAGE_NAME}:${IMAGE_VERSION}-ffspostgres
+    image: ${IMAGE_NAME}:${DEMO_VERSION}-ffspostgres
     container_name: ffs-postgres
     build:
       context: ./
@@ -568,7 +568,7 @@ services:
 
   # Kafka used by Checkout, Accounting, and Fraud Detection services
   kafka:
-    image: ${IMAGE_NAME}:${IMAGE_VERSION}-kafka
+    image: ${IMAGE_NAME}:${DEMO_VERSION}-kafka
     container_name: kafka
     build:
       context: ./
@@ -733,7 +733,7 @@ services:
   # *****
   # Frontend Tests
   frontendTests:
-    image: ${IMAGE_NAME}:${IMAGE_VERSION}-frontend-tests
+    image: ${IMAGE_NAME}:${DEMO_VERSION}-frontend-tests
     container_name: frontend-tests
     build:
       context: ./
@@ -752,7 +752,7 @@ services:
 
   # Integration Tests
   integrationTests:
-    image: ${IMAGE_NAME}:${IMAGE_VERSION}-integrationTests
+    image: ${IMAGE_NAME}:${DEMO_VERSION}-integrationTests
     container_name: integrationTests
     profiles:
       - tests
@@ -783,7 +783,7 @@ services:
 
   # Tracebased Tests
   traceBasedTests:
-    image: ${IMAGE_NAME}:${IMAGE_VERSION}-traceBasedTests
+    image: ${IMAGE_NAME}:${DEMO_VERSION}-traceBasedTests
     container_name: traceBasedTests
     profiles:
       - tests
