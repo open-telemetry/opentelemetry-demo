@@ -750,37 +750,6 @@ services:
     depends_on:
       - frontend
 
-  # Integration Tests
-  integrationTests:
-    image: ${IMAGE_NAME}:${DEMO_VERSION}-integrationTests
-    container_name: integrationTests
-    profiles:
-      - tests
-    build:
-      context: ./
-      dockerfile: ./test/Dockerfile
-    environment:
-      - AD_SERVICE_ADDR
-      - CART_SERVICE_ADDR
-      - CHECKOUT_SERVICE_ADDR
-      - CURRENCY_SERVICE_ADDR
-      - EMAIL_SERVICE_ADDR
-      - PAYMENT_SERVICE_ADDR
-      - PRODUCT_CATALOG_SERVICE_ADDR
-      - RECOMMENDATION_SERVICE_ADDR
-      - SHIPPING_SERVICE_ADDR
-    depends_on:
-      - adservice
-      - cartservice
-      - checkoutservice
-      - currencyservice
-      - emailservice
-      - paymentservice
-      - productcatalogservice
-      - recommendationservice
-      - shippingservice
-      - quoteservice
-
   # Tracebased Tests
   traceBasedTests:
     image: ${IMAGE_NAME}:${DEMO_VERSION}-traceBasedTests

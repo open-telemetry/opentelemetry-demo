@@ -115,10 +115,6 @@ jobs:
             tag_suffix: frontend-tests
             context: ./
             setup-qemu: true
-          - file: ./test/Dockerfile
-            tag_suffix: integrationTests
-            context: ./
-            setup-qemu: true
 
     steps:
       - uses: actions/checkout@v4
