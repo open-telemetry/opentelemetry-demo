@@ -98,8 +98,6 @@ build-env-file:
 .PHONY: run-tests
 run-tests:
 	docker compose run frontendTests
-	# integrationTests is deprecated in favor of traceBasedTests
-	# docker compose run integrationTests
 	docker compose run traceBasedTests
 
 .PHONY: run-tracetesting
