@@ -13,6 +13,8 @@ the release.
   ([#1397](https://github.com/open-telemetry/opentelemetry-demo/pull/1397))
 * [chore] add nightly releases
   ([#1398](https://github.com/open-telemetry/opentelemetry-demo/pull/1398))
+* [chore] remove unused integration test
+  ([#1406](https://github.com/open-telemetry/opentelemetry-demo/pull/1406))
 
 ## 1.8.0
 
