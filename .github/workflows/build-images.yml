@@ -103,10 +103,6 @@ jobs:
             tag_suffix: frontend-tests
             context: ./
             setup-qemu: true
-          - file: ./test/Dockerfile
-            tag_suffix: integrationTests
-            context: ./
-            setup-qemu: true
 
     steps:
       - uses: actions/checkout@v4
@@ -162,6 +158,8 @@ jobs:
           push: ${{ inputs.push }}
           tags: |
             ${{ env.DOCKERHUB_REPO }}:${{ inputs.version }}-${{matrix.file_tag.tag_suffix }}
+            ${{ env.DOCKERHUB_REPO }}:latest-${{matrix.file_tag.tag_suffix }}
             ${{ env.GHCR_REPO }}:${{ inputs.version }}-${{ matrix.file_tag.tag_suffix }}
+            ${{ env.GHCR_REPO }}:latest-${{ matrix.file_tag.tag_suffix }}
           cache-from: type=gha
           cache-to: type=gha
