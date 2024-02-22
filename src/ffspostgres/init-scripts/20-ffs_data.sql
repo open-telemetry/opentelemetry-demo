@@ -8,5 +8,5 @@ VALUES
     ('recommendationCache', 'Cache recommendations', 0),
     ('adServiceFailure', 'Fail ad service requests', 0),
     ('cartServiceFailure', 'Fail cart service requests', 0),
-    ('ItemNotFound', 'Fail Product Catalog Get - Not Found', 0),
-    ('ItemListInternal', 'Fail Product Catalog List - Internal server error', 0);
+    ('itemNotFound', 'Fail Product Catalog Get - Not Found', 0),
+    ('itemListInternal', 'Fail Product Catalog List - Internal server error', 0);
