@@ -38,7 +38,10 @@ import oteldemo.Demo.GetFlagResponse;
 import dev.openfeature.contrib.providers.flagd.FlagdOptions;
 import dev.openfeature.contrib.providers.flagd.FlagdProvider;
 import dev.openfeature.sdk.Client;
+import dev.openfeature.sdk.EvaluationContext;
+import dev.openfeature.sdk.MutableContext;
 import dev.openfeature.sdk.OpenFeatureAPI;
+import java.util.UUID;
 
 
 public final class AdService {
@@ -193,12 +196,10 @@ public final class AdService {
 
     boolean checkAdFailure() {
       Client client = OpenFeatureAPI.getInstance().getClient();
+      // TODO: Plumb the actual session ID from the frontend via baggage?
+      UUID uuid = UUID.randomUUID();
+      client.setEvaluationContext(new MutableContext().add("session", uuid.toString()));
       Boolean boolValue = client.getBooleanValue("adServiceFailure", false);
-      // Flip a coin and fail 1/10th of the time if feature flag is enabled
-      if (random.nextInt(10) != 1) {
-        return false;
-      }
-
       return boolValue;
     }
   }

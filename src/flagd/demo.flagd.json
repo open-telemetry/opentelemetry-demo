@@ -29,7 +29,20 @@
                 "on": true,
                 "off": false
               },
-              "defaultVariant": "off"
+              "defaultVariant": "off",
+              "targeting": {
+                "fractional": [
+                  { "var": "session" },
+                  [
+                    "on",
+                    10
+                  ],
+                  [
+                    "off",
+                    90
+                  ]
+                ]
+              }
         },
         "cartServiceFailure": {
             "description": "Fail cart service",
