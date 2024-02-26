@@ -82,7 +82,7 @@ func initTracerProvider() *sdktrace.TracerProvider {
 
 	exporter, err := otlptracegrpc.New(ctx)
 	if err != nil {
-		log.Fatalf("OTLP Trace gRPC Creation: %v", err)
+		log.Fatalf("OTLP Trace asdf gRPC Creation: %v", err)
 	}
 	tp := sdktrace.NewTracerProvider(
 		sdktrace.WithBatcher(exporter),
