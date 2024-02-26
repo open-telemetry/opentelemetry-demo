@@ -28,6 +28,7 @@ func NewOTelInterceptor(groupID string) *OTelInterceptor {
 
 	oi.fixedAttrs = []attribute.KeyValue{
 		semconv.MessagingSystemKafka,
+		semconv.MessagingOperationReceive,
 		semconv.MessagingKafkaConsumerGroup(groupID),
 		semconv.NetworkTransportTCP,
 	}
