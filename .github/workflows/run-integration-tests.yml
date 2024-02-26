@@ -15,10 +15,6 @@ jobs:
     steps:
       - name: check out code
         uses: actions/checkout@v4
-      - name: install docker
-        run: |
-          curl -fsSL https://get.docker.com -o get-docker.sh
-          sudo sh get-docker.sh
       - name: run tracetesting
         run: |
           make build && make run-tracetesting
