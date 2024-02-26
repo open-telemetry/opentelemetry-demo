@@ -10,40 +10,40 @@ import (
 	"context"
 	"fmt"
 	"io/fs"
-
 	"net"
 	"os"
+	"os/signal"
 	"strings"
 	"sync"
+	"syscall"
 	"time"
 
-	pb "github.com/opentelemetry/opentelemetry-demo/src/productcatalogservice/genproto/oteldemo"
 	"github.com/sirupsen/logrus"
+
 	"go.opentelemetry.io/contrib/instrumentation/google.golang.org/grpc/otelgrpc"
 	"go.opentelemetry.io/contrib/instrumentation/runtime"
-	sdkmetric "go.opentelemetry.io/otel/sdk/metric"
-	healthpb "google.golang.org/grpc/health/grpc_health_v1"
-
 	"go.opentelemetry.io/otel"
 	"go.opentelemetry.io/otel/attribute"
 	otelcodes "go.opentelemetry.io/otel/codes"
 	"go.opentelemetry.io/otel/exporters/otlp/otlpmetric/otlpmetricgrpc"
 	"go.opentelemetry.io/otel/exporters/otlp/otlptrace/otlptracegrpc"
 	"go.opentelemetry.io/otel/propagation"
+	sdkmetric "go.opentelemetry.io/otel/sdk/metric"
 	sdkresource "go.opentelemetry.io/otel/sdk/resource"
 	sdktrace "go.opentelemetry.io/otel/sdk/trace"
 	"go.opentelemetry.io/otel/trace"
 
-	"google.golang.org/protobuf/encoding/protojson"
-
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/credentials/insecure"
+	healthpb "google.golang.org/grpc/health/grpc_health_v1"
 	"google.golang.org/grpc/reflection"
 	"google.golang.org/grpc/status"
-
 	flagd "github.com/open-feature/go-sdk-contrib/providers/flagd/pkg"
 	"github.com/open-feature/go-sdk/openfeature"
+	"google.golang.org/protobuf/encoding/protojson"
+	pb "github.com/opentelemetry/opentelemetry-demo/src/productcatalogservice/genproto/oteldemo"
+
 )
 
 var (
@@ -118,6 +118,7 @@ func main() {
 		if err := tp.Shutdown(context.Background()); err != nil {
 			log.Fatalf("Tracer Provider Shutdown: %v", err)
 		}
+		log.Println("Shutdown tracer provider")
 	}()
 
 	mp := initMeterProvider()
@@ -125,6 +126,7 @@ func main() {
 		if err := mp.Shutdown(context.Background()); err != nil {
 			log.Fatalf("Error shutting down meter provider: %v", err)
 		}
+		log.Println("Shutdown meter provider")
 	}()
 	openfeature.SetProvider(flagd.NewProvider())
 
@@ -152,7 +154,20 @@ func main() {
 
 	pb.RegisterProductCatalogServiceServer(srv, svc)
 	healthpb.RegisterHealthServer(srv, svc)
-	srv.Serve(ln)
+
+	ctx, cancel := signal.NotifyContext(context.Background(), os.Interrupt, syscall.SIGTERM, syscall.SIGKILL)
+	defer cancel()
+
+	go func() {
+		if err := srv.Serve(ln); err != nil {
+			log.Fatalf("Failed to serve gRPC server, err: %v", err)
+		}
+	}()
+
+	<-ctx.Done()
+
+	srv.GracefulStop()
+	log.Println("ProductCatalogService gRPC server stopped")
 }
 
 type productCatalog struct {
