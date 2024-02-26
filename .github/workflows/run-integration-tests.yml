@@ -3,6 +3,7 @@
 name: Integration Tests
 
 on:
+  workflow_call:
   pull_request_review:
     types: [submitted]
 
