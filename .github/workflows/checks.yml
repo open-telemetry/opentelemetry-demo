@@ -15,7 +15,7 @@ jobs:
     with:
       push: false
       version: 'dev'
-  
+
   integration_tests:
     uses: ./.github/workflows/run-integration-tests.yml
 
