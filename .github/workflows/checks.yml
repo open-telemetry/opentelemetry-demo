@@ -16,9 +16,6 @@ jobs:
       push: false
       version: 'dev'
 
-  integration_tests:
-    uses: ./.github/workflows/run-integration-tests.yml
-
   markdownlint:
     runs-on: ubuntu-latest
     steps:
