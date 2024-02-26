@@ -17,6 +17,8 @@ the release.
   ([#1398](https://github.com/open-telemetry/opentelemetry-demo/pull/1398))
 * [chore] remove unused integration test
   ([#1406](https://github.com/open-telemetry/opentelemetry-demo/pull/1406))
+* [productcatalogservice] fix graceful shutdown issues
+  ([#1402](https://github.com/open-telemetry/opentelemetry-demo/pull/1402))
 
 ## 1.8.0
 
