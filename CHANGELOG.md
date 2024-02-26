@@ -7,6 +7,19 @@ the release.
 
 ## Unreleased
 
+* [checkoutservice] add producer interceptor for tracing
+  ([#1400](https://github.com/open-telemetry/opentelemetry-demo/pull/1400))
+* [chore] increase memory for Collector and Jaeger
+  ([#1396](https://github.com/open-telemetry/opentelemetry-demo/pull/1396))
+* [chore] fix Make targets for restart and redeploy
+  ([#1397](https://github.com/open-telemetry/opentelemetry-demo/pull/1397))
+* [chore] add nightly releases
+  ([#1398](https://github.com/open-telemetry/opentelemetry-demo/pull/1398))
+* [chore] remove unused integration test
+  ([#1406](https://github.com/open-telemetry/opentelemetry-demo/pull/1406))
+* [productcatalogservice] fix graceful shutdown issues
+  ([#1402](https://github.com/open-telemetry/opentelemetry-demo/pull/1402))
+
 ## 1.8.0
 
 * [grafana] update grafana to 10.2.3
