@@ -13,8 +13,10 @@ import (
 	"os/signal"
 	"strings"
 	"sync"
+	"syscall"
 	"time"
 
+	"github.com/IBM/sarama"
 	"github.com/sirupsen/logrus"
 	"go.opentelemetry.io/otel"
 	"go.opentelemetry.io/otel/exporters/otlp/otlptrace/otlptracegrpc"
@@ -85,6 +87,7 @@ func main() {
 		if err := tp.Shutdown(context.Background()); err != nil {
 			log.Printf("Error shutting down tracer provider: %v", err)
 		}
+		log.Println("Shutdown trace provider")
 	}()
 
 	var brokers string
@@ -93,13 +96,22 @@ func main() {
 	brokerList := strings.Split(brokers, ",")
 	log.Printf("Kafka brokers: %s", strings.Join(brokerList, ", "))
 
-	ctx, cancel := signal.NotifyContext(context.Background(), os.Interrupt)
+	ctx, cancel := signal.NotifyContext(context.Background(), os.Interrupt, syscall.SIGTERM, syscall.SIGKILL)
 	defer cancel()
-	if err := kafka.StartConsumerGroup(ctx, brokerList, log); err != nil {
+	var consumerGroup sarama.ConsumerGroup
+	if consumerGroup, err = kafka.StartConsumerGroup(ctx, brokerList, log); err != nil {
 		log.Fatal(err)
 	}
+	defer func() {
+		if err := consumerGroup.Close(); err != nil {
+			log.Printf("Error closing consumer group: %v", err)
+		}
+		log.Println("Closed consumer group")
+	}()
 
 	<-ctx.Done()
+
+	log.Println("Accounting service exited")
 }
 
 func mustMapEnv(target *string, envKey string) {
