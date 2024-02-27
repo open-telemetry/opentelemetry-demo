@@ -1,3 +1,5 @@
+dash0_configuration_dir=../../../dash0-configuration
+
 # Switches to the local Kubernetes context (docker-desktop by default) and sets
 # the variable original_context to the previously active context name.
 function switch_to_local_context {
@@ -20,3 +22,15 @@ function switch_back_to_original_context {
   echo "switching back to Kubernetes context $original_context"
   kubectx $original_context
 }
+
+function git_pull_dash0_configuration {
+  if [[ ! -e $dash0_configuration_dir ]]; then
+    echo Error: expected $dash0_configuration_dir to exist, but it does not.
+    exit 1
+  fi
+  echo executing git pull in $dash0_configuration_dir
+  pushd $dash0_configuration_dir > /dev/null
+  git pull
+  popd > /dev/null
+}
+

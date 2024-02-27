@@ -4,7 +4,10 @@ set -euo pipefail
 
 cd -P -- "$(dirname -- "$0")"
 
-source manage-kubectx
+source utils
+
+git_pull_dash0_configuration
+
 trap switch_back_to_original_context EXIT
 switch_to_local_context
 
@@ -12,8 +15,8 @@ switch_to_local_context
 
 sleep 5
 
-yq --from-file ns1.yq ../../../dash0-configuration/demo/environments/aws/demo-eu-west-1-demo.yaml > ns1-values.yaml
-yq --from-file ns2.yq ../../../dash0-configuration/demo/environments/aws/demo-eu-west-1-demo.yaml > ns2-values.yaml
+yq --from-file ns1.yq $dash0_configuration_dir/demo/environments/aws/demo-eu-west-1-demo.yaml > ns1-values.yaml
+yq --from-file ns2.yq $dash0_configuration_dir/demo/environments/aws/demo-eu-west-1-demo.yaml > ns2-values.yaml
 
 helm install --namespace otel-demo-ns1 --create-namespace opentelemetry-demo-postgresql oci://registry-1.docker.io/bitnamicharts/postgresql --values postgres-values.yaml
 helm install --namespace otel-demo-ns1 --create-namespace opentelemetry-demo-ns1 open-telemetry/opentelemetry-demo --values ns1-values.yaml
@@ -26,5 +29,8 @@ kubectl cp ../../src/ffspostgres/init-scripts/20-ffs_data.sql --namespace otel-d
 kubectl exec --namespace otel-demo-ns1 opentelemetry-demo-postgresql-0 -- psql postgresql://ffs:ffs@localhost/ffs -a -f /tmp/10-ffs_schema.sql
 kubectl exec --namespace otel-demo-ns1 opentelemetry-demo-postgresql-0 -- psql postgresql://ffs:ffs@localhost/ffs -a -f /tmp/20-ffs_data.sql
 
+echo waiting for the frontend and frontendproxy pod to become ready
+kubectl wait --namespace otel-demo-ns-1 --for=condition=ready pod -l app.kubernetes.io/component=frontendproxy --timeout 10s
+kubectl wait --namespace otel-demo-ns-1 --for=condition=ready pod -l app.kubernetes.io/component=frontend --timeout 20s
 kubectl port-forward --namespace otel-demo-ns1 service/opentelemetry-demo-ns1-frontendproxy 8080:8080
 
