@@ -4,7 +4,11 @@ set -euo pipefail
 
 cd -P -- "$(dirname -- "$0")"
 
-./teardown.sh
+source manage-kubectx
+trap switch_back_to_original_context EXIT
+switch_to_local_context
+
+./teardown.sh no-context-switch
 
 sleep 5
 

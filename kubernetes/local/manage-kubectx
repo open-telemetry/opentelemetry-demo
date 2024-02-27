@@ -1,0 +1,22 @@
+# Switches to the local Kubernetes context (docker-desktop by default) and sets
+# the variable original_context to the previously active context name.
+function switch_to_local_context {
+  original_context=$(kubectx --current)
+  local_context=docker-desktop
+  if [[ -n ${LOCAL_KUBERNETES_CONTEXT:-} ]]; then
+    local_context=$LOCAL_KUBERNETES_CONTEXT
+  fi
+  echo "switching to Kubernetes context $local_context"
+  kubectx $local_context
+}
+
+# Switches back to the orignal local Kubernetes context that was active before
+# switch_to_local_context had been called.
+function switch_back_to_original_context {
+  if [[ -z $original_context ]]; then
+    echo "Error: switch_back_to_original_context requires that switch_to_local_context has been called earlier."
+    exit 1
+  fi
+  echo "switching back to Kubernetes context $original_context"
+  kubectx $original_context
+}
