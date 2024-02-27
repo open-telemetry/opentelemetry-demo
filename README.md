@@ -56,16 +56,16 @@ keeping it up to date for you.
 
 |                                         |                             |                                                                |
 |-----------------------------------------|-----------------------------|----------------------------------------------------------------|
-| [AlibabaCloud LogService][AlibabaCloud] | [Google Cloud][GoogleCloud] | [Sentry][Sentry]                                               |
-| [AppDynamics][AppDynamics]              | [Grafana Labs][GrafanaLabs] | [ServiceNow Cloud Observability][ServiceNowCloudObservability] |
-| [Aspecto][Aspecto]                      | [Guance][Guance]            | [Splunk][Splunk]                                               |
-| [Axiom][Axiom]                          | [Helios][Helios]            | [Sumo Logic][SumoLogic]                                        |
-| [Axoflow][Axoflow]                      | [Honeycomb.io][Honeycombio] | [TelemetryHub][TelemetryHub]                                   |
-| [Azure Data Explorer][Azure]            | [Instana][Instana]          | [Teletrace][Teletrace]                                         |
-| [Coralogix][Coralogix]                  | [Kloudfuse][Kloudfuse]      | [Tracetest][Tracetest]                                         |
+| [AlibabaCloud LogService][AlibabaCloud] | [Elastic][Elastic]          | [OpenSearch][OpenSearch]                                       |
+| [AppDynamics][AppDynamics]              | [Google Cloud][GoogleCloud] | [Sentry][Sentry]                                               |
+| [Aspecto][Aspecto]                      | [Grafana Labs][GrafanaLabs] | [ServiceNow Cloud Observability][ServiceNowCloudObservability] |
+| [Axiom][Axiom]                          | [Guance][Guance]            | [Splunk][Splunk]                                               |
+| [Axoflow][Axoflow]                      | [Helios][Helios]            | [Sumo Logic][SumoLogic]                                        |
+| [Azure Data Explorer][Azure]            | [Honeycomb.io][Honeycombio] | [TelemetryHub][TelemetryHub]                                   |
+| [Coralogix][Coralogix]                  | [Instana][Instana]          | [Teletrace][Teletrace]                                         |
+| [Dash0][Dash0]                          | [Kloudfuse][Kloudfuse]      | [Tracetest][Tracetest]                                         |
 | [Datadog][Datadog]                      | [Logz.io][Logzio]           | [Uptrace][Uptrace]                                             |
 | [Dynatrace][Dynatrace]                  | [New Relic][NewRelic]       |                                                                |
-| [Elastic][Elastic]                      | [OpenSearch][OpenSearch]    |                                                                |
 
 ## Contributing
 
@@ -112,6 +112,7 @@ Emeritus:
 [Axoflow]: https://axoflow.com/opentelemetry-support-in-more-detail-in-axosyslog-and-syslog-ng/
 [Azure]: https://github.com/Azure/Azure-kusto-opentelemetry-demo
 [Coralogix]: https://coralogix.com/blog/configure-otel-demo-send-telemetry-data-coralogix
+[Dash0]: https://github.com/dash0hq/opentelemetry-demo
 [Datadog]: https://github.com/DataDog/opentelemetry-demo
 [Dynatrace]: https://www.dynatrace.com/news/blog/opentelemetry-demo-application-with-dynatrace/
 [Elastic]: https://github.com/elastic/opentelemetry-demo

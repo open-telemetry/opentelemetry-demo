@@ -3,49 +3,18 @@
 name: Integration Tests
 
 on:
-  pull_request_target:
-    branches:
-      - main
-    types: [closed]
+  pull_request_review:
+    types:
+      - submitted
 
 jobs:
-  build_runner:
-    runs-on: ubuntu-latest
-    name: "Build Runner"
-    if: github.event.pull_request.merged == true
-    steps:
-      - name: metal-runner-action
-        uses: equinix-labs/metal-action-runner@v0.1.1
-        with:
-          github_token: ${{ secrets.GH_CI_SECRET }}
-          metal_auth_token: ${{ secrets.METAL_AUTH_TOKEN }}
-          metal_project_id: ${{ secrets.METAL_PROJECT_ID }}
-          metro: "da"
-          plan: "c3.small.x86"
-          os: "ubuntu_20_04"
   run_tests:
-    needs: build_runner
-    runs-on: self-hosted
+    runs-on: ubuntu-latest
     name: "Run CI"
+    if: github.event.review.state == 'APPROVED'
     steps:
       - name: check out code
         uses: actions/checkout@v4
-      - name: install docker
-        run: |
-          curl -fsSL https://get.docker.com -o get-docker.sh
-          sudo sh get-docker.sh
       - name: run tracetesting
         run: |
           make build && make run-tracetesting
-  destroy:
-    needs: [build_runner, run_tests]
-    runs-on: ubuntu-latest
-    name: "Cleanup"
-    if: always()
-    steps:
-      - name: metal-sweeper-action
-        uses: equinix-labs/metal-sweeper-action@v0.6.1
-        with:
-          authToken: ${{ secrets.METAL_AUTH_TOKEN }}
-          projectID: ${{ secrets.METAL_PROJECT_ID }}
-          keepProject: true

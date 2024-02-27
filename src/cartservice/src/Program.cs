@@ -14,6 +14,7 @@ using OpenTelemetry.Instrumentation.StackExchangeRedis;
 using OpenTelemetry.Logs;
 using OpenTelemetry.Metrics;
 using OpenTelemetry.ResourceDetectors.Container;
+using OpenTelemetry.ResourceDetectors.Host;
 using OpenTelemetry.Resources;
 using OpenTelemetry.Trace;
 using OpenFeature;
@@ -51,7 +52,8 @@ builder.Services.AddSingleton<IFeatureClient>(x => {
 
 Action<ResourceBuilder> appResourceBuilder =
     resource => resource
-        .AddDetector(new ContainerResourceDetector());
+        .AddDetector(new ContainerResourceDetector())
+        .AddDetector(new HostDetector());
 
 builder.Services.AddOpenTelemetry()
     .ConfigureResource(appResourceBuilder)
