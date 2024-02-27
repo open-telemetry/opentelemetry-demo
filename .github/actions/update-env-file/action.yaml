@@ -17,34 +17,20 @@ runs:
       uses: actions/checkout@v4
       with:
         ref: main
+        token: ${{ inputs.token }}
 
     - name: update version in .env file
       shell: bash
       run: |
         sed -i "s/^IMAGE_VERSION=[[:digit:]][[:digit:]]*\.[[:digit:]][[:digit:]]*\.[[:digit:]][[:digit:]]*$/IMAGE_VERSION=${{ inputs.containerImageVersion }}/" .env
 
-    - name: create pull request
-      id: cpr
-      uses: peter-evans/create-pull-request@v5
-      with:
-        title: update .env file with latest tag
-        commit-message: '[dash0] update image version in .env to ${{ inputs.containerImageVersion }}'
-        add-paths: .env
-        base: main
-        branch: env-file-update
-        author: 'github-actions[bot] <41898282+github-actions[bot]@users.noreply.github.com>'
-
-    - name: auto approve
-      if: steps.cpr.outputs.pull-request-operation == 'created'
-      run: gh pr review --approve "${{ steps.cpr.outputs.pull-request-number }}"
+    - name: commit and push
       shell: bash
-      env:
-        GH_TOKEN: ${{ inputs.token }}
+      run: |
+        git add .env
+        git config user.name "github-actions[bot]"
+        git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+        git commit -a -m"[dash0] update image version in .env to ${{ inputs.containerImageVersion }}" -m"[ci skip]"
+        git status
+        git push
 
-    - name: enable pull request auto merge
-      if: steps.cpr.outputs.pull-request-operation == 'created'
-      uses: peter-evans/enable-pull-request-automerge@v3
-      with:
-        token: ${{ inputs.token }}
-        pull-request-number: ${{ steps.cpr.outputs.pull-request-number }}
-        merge-method: squash
