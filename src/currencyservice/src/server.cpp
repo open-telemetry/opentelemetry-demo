@@ -1,6 +1,7 @@
 // Copyright The OpenTelemetry Authors
 // SPDX-License-Identifier: Apache-2.0
 
+#include <cstdlib>
 #include <iostream>
 #include <math.h>
 #include <demo.grpc.pb.h>
@@ -11,6 +12,7 @@
 #include "opentelemetry/trace/span_context_kv_iterable_view.h"
 #include "opentelemetry/baggage/baggage.h"
 #include "opentelemetry/nostd/string_view.h"
+#include "logger_common.h"
 #include "meter_common.h"
 #include "tracer_common.h"
 
@@ -80,7 +82,11 @@ namespace
     {"ZAR", 16.0583},
   };
 
+  std::string version = std::getenv("VERSION"); 
+  std::string name{ "currencyservice" };
+
   nostd::unique_ptr<metrics_api::Counter<uint64_t>> currency_counter;
+  nostd::shared_ptr<opentelemetry::logs::Logger> logger;
 
 class HealthServer final : public grpc::health::v1::Health::Service
 {
@@ -127,10 +133,11 @@ class CurrencyService final : public oteldemo::CurrencyService::Service
 
     span->AddEvent("Currencies fetched, response sent back");
     span->SetStatus(StatusCode::kOk);
+
+    logger->Info(std::string(__func__) + " successful");
+
     // Make sure to end your spans!
     span->End();
-
-    std::cout << __func__ << " successful" << std::endl;
   	return Status::OK;
   }
 
@@ -203,14 +210,18 @@ class CurrencyService final : public oteldemo::CurrencyService::Service
       // End the span
       span->AddEvent("Conversion successful, response sent back");
       span->SetStatus(StatusCode::kOk);
-      std::cout << __func__ << " conversion successful" << std::endl;
+
+      logger->Info(std::string(__func__) + " conversion successful");
+
       span->End();
       return Status::OK;
 
     } catch(...) {
       span->AddEvent("Conversion failed");
       span->SetStatus(StatusCode::kError);
-      std::cout << __func__ << " conversion failure" << std::endl;
+
+      logger->Error(std::string(__func__) + " conversion failure");
+
       span->End();
       return Status::CANCELLED;
     }
@@ -237,7 +248,7 @@ void RunServer(uint16_t port)
   builder.AddListeningPort(address, grpc::InsecureServerCredentials());
 
   std::unique_ptr<Server> server(builder.BuildAndStart());
-  std::cout << "Currency Server listening on port: " << address << std::endl;
+  logger->Info("Currency Server listening on port: " + address);
   server->Wait();
   server->Shutdown();
 }
@@ -252,11 +263,11 @@ int main(int argc, char **argv) {
 
   uint16_t port = atoi(argv[1]);
 
-  std::cout << "Port: " << port << "\n";
-
   initTracer();
   initMeter();
-  currency_counter = initIntCounter();
+  initLogger();
+  currency_counter = initIntCounter(name, version);
+  logger = getLogger(name);
   RunServer(port);
 
   return 0;

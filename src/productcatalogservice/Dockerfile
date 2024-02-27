@@ -2,7 +2,7 @@
 # SPDX-License-Identifier: Apache-2.0
 
 
-FROM golang:1.21.4-alpine AS builder
+FROM golang:1.22.0-alpine AS builder
 
 WORKDIR /usr/src/app/
 
@@ -17,7 +17,7 @@ FROM alpine AS release
 
 WORKDIR /usr/src/app/
 
-COPY ./src/productcatalogservice/products.json ./
+COPY ./src/productcatalogservice/products/ ./products/
 COPY --from=builder /go/bin/productcatalogservice/ ./
 
 EXPOSE ${PRODUCT_SERVICE_PORT}
