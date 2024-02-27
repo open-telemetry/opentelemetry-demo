@@ -21,6 +21,7 @@
     <PackageReference Include="OpenTelemetry.Instrumentation.StackExchangeRedis" Version="1.0.0-rc9.13" />
     <PackageReference Include="OpenTelemetry.Instrumentation.Runtime" Version="1.7.0" />
     <PackageReference Include="OpenTelemetry.ResourceDetectors.Container" Version="1.0.0-beta.6" />
+    <PackageReference Include="OpenTelemetry.ResourceDetectors.Host" Version="0.1.0-alpha.2" />
     <PackageReference Include="StackExchange.Redis" Version="2.7.17" />
   </ItemGroup>
 
