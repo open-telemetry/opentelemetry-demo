@@ -30,6 +30,10 @@ exporters:
       endpoint: "http://opensearch:9200"
       tls:
         insecure: true
+  kafka:
+    brokers:
+      - kafka:9092
+    protocol_version: 2.0.0
 
 processors:
   batch:
@@ -42,11 +46,11 @@ service:
     traces:
       receivers: [otlp]
       processors: [batch]
-      exporters: [otlp, debug, spanmetrics]
+      exporters: [otlp, debug, spanmetrics, kafka]
     metrics:
       receivers: [httpcheck/frontendproxy, otlp, spanmetrics]
       processors: [batch]
-      exporters: [otlphttp/prometheus, debug]
+      exporters: [otlphttp/prometheus, debug, kafka]
     logs:
       receivers: [otlp]
       processors: [batch]

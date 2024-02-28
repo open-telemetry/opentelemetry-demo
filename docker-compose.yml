@@ -636,6 +636,9 @@ services:
     logging: *logging
 
   # Grafana
+  # docker exec  --user root -it grafana  /bin/bash
+  # cp /etc/grafana/my-ca-certificates/zscaler.crt /usr/local/share/ca-certificates/zscaler.crt  && chmod 644 /usr/local/share/ca-certificates/zscaler.crt && update-ca-certificates --fresh
+  # and then restart the container
   grafana:
     image: ${GRAFANA_IMAGE}
     container_name: grafana
@@ -649,9 +652,13 @@ services:
     volumes:
       - ./src/grafana/grafana.ini:/etc/grafana/grafana.ini
       - ./src/grafana/provisioning/:/etc/grafana/provisioning/
+      - /Users/shreedhar-kchampaka/.ssl/:/etc/grafana/my-ca-certificates/
+      - /Users/shreedhar-kchampaka/Documents/My_Code_Stuff/kafka/kafka_2.12-2.4.1/:/kafka_2.12-2.4.1
     ports:
       - "${GRAFANA_SERVICE_PORT}"
     logging: *logging
+
+
 
   # OpenTelemetry Collector
   otelcol:
@@ -717,6 +724,8 @@ services:
       - OPENSEARCH_JAVA_OPTS=-Xms300m -Xmx300m
       - DISABLE_INSTALL_DEMO_CONFIG=true
       - DISABLE_SECURITY_PLUGIN=true
+    volumes:
+      - /Users/shreedhar-kchampaka/Documents/My_Code_Stuff/kafka/kafka_2.12-2.4.1/:/kafka_2.12-2.4.1
     ulimits:
       memlock:
         soft: -1
@@ -725,7 +734,32 @@ services:
         soft: 65536
         hard: 65536
     ports:
-      - "9200"
+      - 9600:9200
+    logging: *logging
+
+  # OpenSearch_Dashboard
+  opensearch_dashboard:
+    image: ${OPENSEARCH_DASHBOARD_IMAGE}
+    container_name: opensearch_dashboard
+    deploy:
+      resources:
+        limits:
+          memory: 1G
+    restart: unless-stopped
+    environment:
+      - OPENSEARCH_HOSTS=["http://opensearch:9600"]
+      - DISABLE_SECURITY_DASHBOARDS_PLUGIN=true
+    volumes:
+      - /Users/shreedhar-kchampaka/Documents/My_Code_Stuff/kafka/kafka_2.12-2.4.1/:/kafka_2.12-2.4.1
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+      nofile:
+        soft: 65536
+        hard: 65536
+    ports:
+      - 5601:5601
     logging: *logging
 
   # *****
