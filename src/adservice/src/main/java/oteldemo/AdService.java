@@ -261,38 +261,38 @@ public final class AdService {
     Ad binoculars =
         Ad.newBuilder()
             .setRedirectUrl("/product/2ZYFJ3GM2N")
-            .setText("Roof Binoculars for sale. 50% off.")
+            .setText("Linux Foundation for sale. 50% off.")
             .build();
     Ad explorerTelescope =
         Ad.newBuilder()
             .setRedirectUrl("/product/66VCHSJNUP")
-            .setText("Starsense Explorer Refractor Telescope for sale. 20% off.")
+            .setText("Amazon Web Service for sale. 20% off.")
             .build();
     Ad colorImager =
         Ad.newBuilder()
             .setRedirectUrl("/product/0PUK6V6EV0")
-            .setText("Solar System Color Imager for sale. 30% off.")
+            .setText("Tableau for sale. 30% off.")
             .build();
     Ad opticalTube =
         Ad.newBuilder()
             .setRedirectUrl("/product/9SIQT8TOJO")
-            .setText("Optical Tube Assembly for sale. 10% off.")
+            .setText("Confluent Kafka for sale. 10% off.")
             .build();
     Ad travelTelescope =
         Ad.newBuilder()
             .setRedirectUrl("/product/1YMWWN1N4O")
             .setText(
-                "Eclipsmart Travel Refractor Telescope for sale. Buy one, get second kit for free")
+                "Oracle Corporation for sale. Buy one, get test kit for free")
             .build();
     Ad solarFilter =
         Ad.newBuilder()
             .setRedirectUrl("/product/6E92ZMYYFZ")
-            .setText("Solar Filter for sale. Buy two, get third one for free")
+            .setText("Snowflake for sale. Buy now, get test one for free")
             .build();
     Ad cleaningKit =
         Ad.newBuilder()
             .setRedirectUrl("/product/L9ECAV7KIM")
-            .setText("Lens Cleaning Kit for sale. Buy one, get second one for free")
+            .setText("GCP for sale.")
             .build();
     return ImmutableListMultimap.<String, Ad>builder()
         .putAll("binoculars", binoculars)

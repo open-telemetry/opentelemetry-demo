@@ -71,6 +71,54 @@
         "nanos": 0
       },
       "categories": ["accessories", "telescopes"]
+    },
+    {
+      "id": "LS4PSXUNUM",
+      "name": "Apache Spark",
+      "description": "Apache Spark",
+      "picture": "Spark.jpg",
+      "priceUsd": {
+        "currencyCode": "USD",
+        "units": 57,
+        "nanos": 80000000
+      },
+      "categories": ["accessories", "flashlights"]
+    },
+    {
+      "id": "9SIQT8TOJO",
+      "name": "Confluent Kafka",
+      "description": "Confluent Kafka",
+      "picture": "Kafka.jpg",
+      "priceUsd": {
+        "currencyCode": "USD",
+        "units": 3599,
+        "nanos": 0
+      },
+      "categories": ["accessories", "telescopes", "assembly"]
+    },
+    {
+      "id": "6E92ZMYYFZ",
+      "name": "Snowflake",
+      "description": "Snowflake",
+      "picture": "Snowflake.jpg",
+      "priceUsd": {
+        "currencyCode": "USD",
+        "units": 69,
+        "nanos": 950000000
+      },
+      "categories": ["accessories", "telescopes"]
+    },
+    {
+      "id": "HQTGWGPNH4",
+      "name": "Data Engineering",
+      "description": "Data Engineering",
+      "picture": "DE.jpg",
+      "priceUsd": {
+        "currencyCode": "USD",
+        "units": 0,
+        "nanos": 990000000
+      },
+      "categories": ["books"]
     }
   ]
 }
