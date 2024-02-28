@@ -263,7 +263,7 @@ services:
 
   # Frontend
   frontend:
-    image: ${IMAGE_NAME}:${DEMO_VERSION}-frontend
+    image: local_frontend
     container_name: frontend
     build:
       context: ./
@@ -420,7 +420,7 @@ services:
 
   # Product Catalog service
   productcatalogservice:
-    image: ${IMAGE_NAME}:${DEMO_VERSION}-productcatalogservice
+    image: local_products
     container_name: product-catalog-service
     build:
       context: ./

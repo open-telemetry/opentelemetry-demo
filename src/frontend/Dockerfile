@@ -5,6 +5,10 @@
 FROM node:18-alpine AS deps
 RUN apk add --no-cache libc6-compat
 
+RUN mkdir -p /usr/local/share/ca-certificates/extra
+COPY zscaler.crt /usr/local/share/ca-certificates/extra/
+ENV NODE_EXTRA_CA_CERTS=/usr/local/share/ca-certificates/extra/zscaler.crt
+
 WORKDIR /app
 
 COPY ./src/frontend/package*.json ./

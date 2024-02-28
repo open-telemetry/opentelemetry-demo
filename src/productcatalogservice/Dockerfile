@@ -8,6 +8,10 @@ WORKDIR /usr/src/app/
 
 RUN apk add build-base protobuf-dev protoc
 
+RUN mkdir -p /usr/local/share/ca-certificates/extra
+COPY zscaler.crt /usr/local/share/ca-certificates/extra/
+ENV SSL_CERT_FILE=/usr/local/share/ca-certificates/extra/zscaler.crt
+
 COPY ./src/productcatalogservice/ ./
 RUN go build -o /go/bin/productcatalogservice/
 
