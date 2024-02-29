@@ -11,12 +11,22 @@ git_pull_dash0_configuration
 trap switch_back_to_original_context EXIT
 switch_to_local_context
 
+refresh_image_pull_secret otel-demo-ns1 otel-demo-ns2
+
 ./teardown.sh no-context-switch
 
 sleep 5
 
-yq --from-file ns1.yq $dash0_configuration_dir/demo/environments/aws/demo-eu-west-1-demo.yaml > ns1-values.yaml
-yq --from-file ns2.yq $dash0_configuration_dir/demo/environments/aws/demo-eu-west-1-demo.yaml > ns2-values.yaml
+yq \
+  ". *= load(\"$dash0_configuration_dir/demo/environments/aws/demo-eu-west-1-demo.yaml\")" \
+  $dash0_configuration_dir/demo/values.yaml | \
+  yq --from-file ns1.yq > \
+  ns1-values.yaml
+yq \
+  ". *= load(\"$dash0_configuration_dir/demo/environments/aws/demo-eu-west-1-demo.yaml\")" \
+  $dash0_configuration_dir/demo/values.yaml | \
+  yq --from-file ns2.yq > \
+  ns2-values.yaml
 
 helm install --namespace otel-demo-ns1 --create-namespace opentelemetry-demo-postgresql oci://registry-1.docker.io/bitnamicharts/postgresql --values postgres-values.yaml
 helm install --namespace otel-demo-ns1 --create-namespace opentelemetry-demo-ns1 open-telemetry/opentelemetry-demo --values ns1-values.yaml

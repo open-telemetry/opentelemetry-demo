@@ -34,3 +34,22 @@ function git_pull_dash0_configuration {
   popd > /dev/null
 }
 
+function refresh_image_pull_secret {
+  echo
+  echo "Note: You might need to execute \"aws sso login\" before trying to deploy."
+  echo
+  namespaces=("$@")
+  aws ecr get-login-password --region eu-west-1 | docker login --username AWS --password-stdin 718306648796.dkr.ecr.eu-west-1.amazonaws.com
+  for n in "${namespaces[@]}"; do
+    if kubectl get namespaces --show-labels -l  kubernetes.io/metadata.name=$n | grep $n; then
+      echo "namespace $n exists"
+    else
+      echo "creating namespace $n"
+      kubectl create namespace $n
+    fi
+    echo "recreating image pull secret in namespace $n"
+    kubectl delete secret --namespace=$n --ignore-not-found regcred
+    kubectl create secret docker-registry regcred --namespace=$n --docker-server=718306648796.dkr.ecr.eu-west-1.amazonaws.com --docker-username=AWS --docker-password=$(aws ecr get-login-password --region eu-west-1 --profile Demo_Dash0DeveloperAssumeRole)
+  done
+}
+
