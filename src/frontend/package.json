@@ -12,10 +12,9 @@
     "drone:sign": "drone --server https://drone.grafana.net sign --save grafana/opentelemetry-demo .drone/drone.yml"
   },
   "dependencies": {
+    "@grafana/faro-web-sdk": "^1.4.0",
+    "@grafana/faro-web-tracing": "^1.4.0",
     "@grpc/grpc-js": "1.9.13",
-    "@grafana/faro-instrumentation-performance-timeline": "^1.0.5",
-    "@grafana/faro-web-sdk": "^1.0.5",
-    "@grafana/faro-web-tracing": "^1.0.5",
     "@opentelemetry/api": "1.7.0",
     "@opentelemetry/auto-instrumentations-node": "0.40.2",
     "@opentelemetry/auto-instrumentations-web": "0.34.0",
@@ -52,8 +51,8 @@
     "@types/node": "20.9.0",
     "@types/react": "18.2.37",
     "@types/react-dom": "18.2.15",
-    "@types/uuid": "9.0.7",
     "@types/styled-components": "5.1.30",
+    "@types/uuid": "9.0.7",
     "@typescript-eslint/eslint-plugin": "6.10.0",
     "@typescript-eslint/parser": "6.10.0",
     "cypress": "10.11.0",
