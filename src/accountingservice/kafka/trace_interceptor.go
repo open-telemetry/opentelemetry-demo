@@ -24,7 +24,7 @@ type OTelInterceptor struct {
 // headers with the span data.
 func NewOTelInterceptor(groupID string) *OTelInterceptor {
 	oi := OTelInterceptor{}
-	oi.tracer = otel.Tracer("github.com/open-telemetry/opentelemetry-demo/accountingservice/sarama")
+	oi.tracer = otel.Tracer("accountingservice")
 
 	oi.fixedAttrs = []attribute.KeyValue{
 		semconv.MessagingSystemKafka,
