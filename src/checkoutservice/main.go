@@ -7,6 +7,7 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	semconv "go.opentelemetry.io/otel/semconv/v1.24.0"
 	"net"
 	"net/http"
 	"os"
@@ -310,7 +311,7 @@ func (cs *checkoutService) PlaceOrder(ctx context.Context, req *pb.PlaceOrderReq
 
 	// send to kafka only if kafka broker address is set
 	if cs.kafkaBrokerSvcAddr != "" {
-		cs.sendToPostProcessor(orderResult)
+		cs.sendToPostProcessor(ctx, orderResult)
 	}
 
 	resp := &pb.PlaceOrderResponse{Order: orderResult}
@@ -473,7 +474,7 @@ func (cs *checkoutService) shipOrder(ctx context.Context, address *pb.Address, i
 	return resp.GetTrackingId(), nil
 }
 
-func (cs *checkoutService) sendToPostProcessor(result *pb.OrderResult) {
+func (cs *checkoutService) sendToPostProcessor(ctx context.Context, result *pb.OrderResult) {
 	message, err := proto.Marshal(result)
 	if err != nil {
 		log.Errorf("Failed to marshal message to protobuf: %+v", err)
@@ -485,7 +486,37 @@ func (cs *checkoutService) sendToPostProcessor(result *pb.OrderResult) {
 		Value: sarama.ByteEncoder(message),
 	}
 
+	// Inject tracing info into message
+	span := createProducerSpan(ctx, &msg)
+	defer span.End()
+
 	cs.KafkaProducerClient.Input() <- &msg
 	successMsg := <-cs.KafkaProducerClient.Successes()
 	log.Infof("Successful to write message. offset: %v", successMsg.Offset)
+}
+
+func createProducerSpan(ctx context.Context, msg *sarama.ProducerMessage) trace.Span {
+	spanContext, span := tracer.Start(
+		ctx,
+		fmt.Sprintf("%s publish", msg.Topic),
+		trace.WithSpanKind(trace.SpanKindProducer),
+		trace.WithAttributes(
+			semconv.PeerService("kafka"),
+			semconv.NetworkTransportTCP,
+			semconv.MessagingSystemKafka,
+			semconv.MessagingDestinationName(msg.Topic),
+			semconv.MessagingOperationPublish,
+			semconv.MessagingKafkaDestinationPartition(int(msg.Partition)),
+		),
+	)
+
+	carrier := propagation.MapCarrier{}
+	propagator := otel.GetTextMapPropagator()
+	propagator.Inject(spanContext, carrier)
+
+	for key, value := range carrier {
+		msg.Headers = append(msg.Headers, sarama.RecordHeader{Key: []byte(key), Value: []byte(value)})
+	}
+
+	return span
 }
