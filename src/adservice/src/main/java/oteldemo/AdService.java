@@ -34,7 +34,6 @@ import org.apache.logging.log4j.Logger;
 import oteldemo.Demo.Ad;
 import oteldemo.Demo.AdRequest;
 import oteldemo.Demo.AdResponse;
-import oteldemo.Demo.GetFlagResponse;
 import dev.openfeature.contrib.providers.flagd.FlagdOptions;
 import dev.openfeature.contrib.providers.flagd.FlagdProvider;
 import dev.openfeature.sdk.Client;
@@ -91,6 +90,7 @@ public final class AdService {
   
     server =
         ServerBuilder.forPort(port)
+            .addService(new AdServiceImpl())
             .addService(healthMgr.getHealthService())
             .build()
             .start();
@@ -126,8 +126,8 @@ public final class AdService {
   }
 
   private static class AdServiceImpl extends oteldemo.AdServiceGrpc.AdServiceImplBase {
-
-    private static final String ADSERVICE_FAIL_FEATURE_FLAG = "adServiceFailure";
+    
+    private AdServiceImpl() {}
 
     /**
      * Retrieves ads based on context provided in the request {@code AdRequest}.
@@ -178,7 +178,6 @@ public final class AdService {
                 adRequestTypeKey, adRequestType.name(), adResponseTypeKey, adResponseType.name()));
 
         if (checkAdFailure()) {
-          logger.warn(ADSERVICE_FAIL_FEATURE_FLAG + " fail feature flag enabled");
           throw new StatusRuntimeException(Status.RESOURCE_EXHAUSTED);
         }
 
