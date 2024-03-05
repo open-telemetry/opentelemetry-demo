@@ -9,7 +9,6 @@ use opentelemetry::{trace::get_active_span, KeyValue};
 use reqwest_middleware::ClientBuilder;
 use reqwest_tracing::{SpanBackendWithUrl, TracingMiddleware};
 
-
 #[derive(Debug, Default)]
 pub struct Quote {
     pub dollars: i64,
