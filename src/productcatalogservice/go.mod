@@ -4,6 +4,7 @@ go 1.22.0
 
 require (
 	github.com/open-feature/go-sdk v1.10.0
+	github.com/open-feature/go-sdk-contrib/hooks/open-telemetry v0.3.1
 	github.com/open-feature/go-sdk-contrib/providers/flagd v0.1.22
 	github.com/sirupsen/logrus v1.9.3
 	go.opentelemetry.io/contrib/instrumentation/google.golang.org/grpc/otelgrpc v0.49.0

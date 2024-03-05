@@ -619,6 +619,8 @@ github.com/open-feature/flagd/core v0.7.4 h1:UwwNRT9aabxnf8RGit9NJrqA3f607zWnlYs
 github.com/open-feature/flagd/core v0.7.4/go.mod h1:uuQwVFNIg2IbZKrKKTd/Pt8SW1K+ijtG/VgwowwXvUk=
 github.com/open-feature/go-sdk v1.10.0 h1:druQtYOrN+gyz3rMsXp0F2jW1oBXJb0V26PVQnUGLbM=
 github.com/open-feature/go-sdk v1.10.0/go.mod h1:+rkJhLBtYsJ5PZNddAgFILhRAAxwrJ32aU7UEUm4zQI=
+github.com/open-feature/go-sdk-contrib/hooks/open-telemetry v0.3.1 h1:usfFIieiA85/ykcOLudiwXqPNShoyNfaEhjsUB390Mc=
+github.com/open-feature/go-sdk-contrib/hooks/open-telemetry v0.3.1/go.mod h1:F4KSDe0M/GCq83mfyw0MdYDtm1ZlHr+EGJLtokcLyac=
 github.com/open-feature/go-sdk-contrib/providers/flagd v0.1.22 h1:5pUjGo+YbxCk5IIEDDdcCPUs9x4A3azYSMHiFX0qY2I=
 github.com/open-feature/go-sdk-contrib/providers/flagd v0.1.22/go.mod h1:zCBA9yu0W3BSv++VlFv6IW7JhdE40ldoG5jbPNuBExQ=
 github.com/open-feature/schemas v0.2.8 h1:oA75hJXpOd9SFgmNI2IAxWZkwzQPUDm7Jyyh3q489wM=

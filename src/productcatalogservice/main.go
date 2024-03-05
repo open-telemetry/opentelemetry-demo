@@ -33,17 +33,17 @@ import (
 	sdktrace "go.opentelemetry.io/otel/sdk/trace"
 	"go.opentelemetry.io/otel/trace"
 
+	otelhooks "github.com/open-feature/go-sdk-contrib/hooks/open-telemetry/pkg"
+	flagd "github.com/open-feature/go-sdk-contrib/providers/flagd/pkg"
+	"github.com/open-feature/go-sdk/openfeature"
+	pb "github.com/opentelemetry/opentelemetry-demo/src/productcatalogservice/genproto/oteldemo"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/credentials/insecure"
 	healthpb "google.golang.org/grpc/health/grpc_health_v1"
 	"google.golang.org/grpc/reflection"
 	"google.golang.org/grpc/status"
-	flagd "github.com/open-feature/go-sdk-contrib/providers/flagd/pkg"
-	"github.com/open-feature/go-sdk/openfeature"
 	"google.golang.org/protobuf/encoding/protojson"
-	pb "github.com/opentelemetry/opentelemetry-demo/src/productcatalogservice/genproto/oteldemo"
-
 )
 
 var (
@@ -297,9 +297,10 @@ func (p *productCatalog) checkProductFailure(ctx context.Context, id string) boo
 	if id != "OLJCESPC7Z" {
 		return false
 	}
+	openfeature.AddHooks(otelhooks.NewTracesHook())
 	client := openfeature.NewClient("productCatalog")
 	failureEnabled, _ := client.BooleanValue(
-		context.Background(), "productCatalogFailure", false, openfeature.EvaluationContext{},
+		ctx, "productCatalogFailure", false, openfeature.EvaluationContext{},
 	)
 	return failureEnabled
 }
