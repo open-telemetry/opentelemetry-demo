@@ -21,6 +21,8 @@ the release.
   ([#1406](https://github.com/open-telemetry/opentelemetry-demo/pull/1406))
 * [CartService] - Add Host Detector
   ([#1415](https://github.com/open-telemetry/opentelemetry-demo/pull/1415))
+* [shippingservice] fix context propagation and add OTLP logs
+  ([#1433](https://github.com/open-telemetry/opentelemetry-demo/pull/1433))
 
 ## 1.8.0
 
