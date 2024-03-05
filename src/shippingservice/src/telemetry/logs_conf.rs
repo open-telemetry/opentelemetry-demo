@@ -17,14 +17,12 @@ pub fn init_logger() {
         .with_exporter(opentelemetry_otlp::new_exporter().tonic())
         .install_batch(runtime::Tokio);
 
-    bla();
+    set_log_bridge();
 }
 
-fn bla() {
-    // Retrieve the global LoggerProvider.
+fn set_log_bridge() {
     let logger_provider = logger_provider();
 
-    // Create a new OpenTelemetryLogBridge using the above LoggerProvider.
     let otel_log_appender = OpenTelemetryLogBridge::new(&logger_provider);
     log::set_boxed_logger(Box::new(otel_log_appender)).unwrap();
     log::set_max_level(Level::Info.to_level_filter());

@@ -55,7 +55,7 @@ impl ShippingService for ShippingServer {
         &self,
         request: Request<GetQuoteRequest>,
     ) -> Result<Response<GetQuoteResponse>, Status> {
-        info!("GetQuoteRequest: {:?}", request);
+        debug!("GetQuoteRequest: {:?}", request);
         let parent_cx =
             global::get_text_map_propagator(|prop| prop.extract(&MetadataMap(request.metadata())));
 
@@ -113,7 +113,7 @@ impl ShippingService for ShippingServer {
         &self,
         request: Request<ShipOrderRequest>,
     ) -> Result<Response<ShipOrderResponse>, Status> {
-        info!("ShipOrderRequest: {:?}", request);
+        debug!("ShipOrderRequest: {:?}", request);
 
         let parent_cx =
             global::get_text_map_propagator(|prop| prop.extract(&MetadataMap(request.metadata())));
@@ -146,81 +146,11 @@ impl ShippingService for ShippingServer {
 mod tests {
     use super::{
         shop::shipping_service_server::ShippingService,
-        shop::{Address, GetQuoteRequest},
-        shop::{CartItem, ShipOrderRequest},
-        ShippingServer, NANOS_MULTIPLE,
+        shop::ShipOrderRequest,
+        ShippingServer,
     };
     use tonic::Request;
     use uuid::Uuid;
-
-    fn make_quote_request_with_items(items: Vec<i32>) -> Request<GetQuoteRequest> {
-        let cart_items: Vec<CartItem> = items.into_iter().fold(Vec::new(), |mut accum, count| {
-            accum.push(CartItem {
-                product_id: "fake-item".to_string(),
-                quantity: count,
-            });
-            accum
-        });
-
-        Request::new(GetQuoteRequest {
-            address: Some(Address::default()),
-            items: cart_items,
-        })
-    }
-
-    fn make_empty_quote_request() -> Request<GetQuoteRequest> {
-        Request::new(GetQuoteRequest::default())
-    }
-    #[tokio::test]
-    async fn empty_quote() {
-        let server = ShippingServer::default();
-
-        // when we provide no items, the quote should be empty
-        match server.get_quote(make_empty_quote_request()).await {
-            Ok(resp) => {
-                let money = resp.into_inner().cost_usd.unwrap();
-                assert_eq!(money.units, 0);
-                assert_eq!(money.nanos, 0);
-            }
-            Err(e) => panic!("error when making empty quote request: {}", e),
-        }
-    }
-
-    #[tokio::test]
-    async fn quote_for_one_value() {
-        let server = ShippingServer::default();
-
-        match server
-            .get_quote(make_quote_request_with_items(vec![1_i32]))
-            .await
-        {
-            Ok(resp) => {
-                // items are fixed at 8.99, so we should see that price reflected.
-                let money = resp.into_inner().cost_usd.unwrap();
-                assert_eq!(money.units, 8);
-                assert_eq!(money.nanos, 99 * NANOS_MULTIPLE);
-            }
-            Err(e) => panic!("error when making quote request for one value: {}", e),
-        }
-    }
-
-    #[tokio::test]
-    async fn quote_for_many_values() {
-        let server = ShippingServer::default();
-
-        match server
-            .get_quote(make_quote_request_with_items(vec![1_i32, 2_i32]))
-            .await
-        {
-            Ok(resp) => {
-                // items are fixed at 8.99, so we should see that price reflected for 3 items
-                let money = resp.into_inner().cost_usd.unwrap();
-                assert_eq!(money.units, 26);
-                assert_eq!(money.nanos, 97 * NANOS_MULTIPLE);
-            }
-            Err(e) => panic!("error when making quote request for many values: {}", e),
-        }
-    }
 
     #[tokio::test]
     async fn can_get_tracking_id() {

@@ -10,3 +10,6 @@ pub use traces_conf::init_tracer;
 
 mod logs_conf;
 pub use logs_conf::init_logger;
+
+mod metrics_conf;
+pub use metrics_conf::init_metrics;

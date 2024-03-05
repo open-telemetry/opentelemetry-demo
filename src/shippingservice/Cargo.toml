@@ -19,9 +19,9 @@ reqwest = { version = "0.11", default-features = false, features = ["json"] }
 prost = "0.12"
 prost-types = "0.12"
 tokio = { version = "1.36", features = ["macros", "rt-multi-thread"] }
-opentelemetry = { version = "0.21", features = ["trace", "logs"] }
+opentelemetry = { version = "0.21", features = ["trace", "metrics", "logs"] }
 opentelemetry-appender-log = "0.2.0"
-opentelemetry_sdk = { version = "0.21", features = ["rt-tokio", "logs_level_enabled"]}
+opentelemetry_sdk = { version = "0.21", features = ["rt-tokio", "metrics", "logs_level_enabled"]}
 opentelemetry-semantic-conventions = "0.13.0"
 opentelemetry-http = "0.10.0"
 opentelemetry-otlp = { version = "0.14.0", features = ["tonic", "metrics", "logs"] }
