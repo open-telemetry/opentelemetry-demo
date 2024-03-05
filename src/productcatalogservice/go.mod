@@ -1,6 +1,6 @@
 module github.com/opentelemetry/opentelemetry-demo/src/productcatalogservice
 
-go 1.22
+go 1.22.0
 
 require (
 	github.com/open-feature/go-sdk v1.10.0
