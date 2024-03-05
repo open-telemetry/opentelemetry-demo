@@ -1,19 +1,22 @@
 // Copyright The OpenTelemetry Authors
 // SPDX-License-Identifier: Apache-2.0
 
-use opentelemetry::trace::TraceError;
 use opentelemetry::global;
-use opentelemetry_sdk::{propagation::TraceContextPropagator, resource::{
-    OsResourceDetector, ProcessResourceDetector, ResourceDetector,
-    EnvResourceDetector, TelemetryResourceDetector,
-    SdkProvidedResourceDetector,
-}, runtime, trace as sdktrace};
-use opentelemetry_otlp::{self, WithExportConfig};
+use opentelemetry::trace::TraceError;
+use opentelemetry_otlp;
+use opentelemetry_sdk::{
+    propagation::TraceContextPropagator,
+    resource::{
+        EnvResourceDetector, OsResourceDetector, ProcessResourceDetector, ResourceDetector,
+        SdkProvidedResourceDetector, TelemetryResourceDetector,
+    },
+    runtime, trace as sdktrace,
+};
 
 use tonic::transport::Server;
 
-use tracing_subscriber::Registry;
 use tracing_subscriber::layer::SubscriberExt;
+use tracing_subscriber::Registry;
 
 use log::*;
 use simplelog::*;
@@ -43,25 +46,22 @@ fn init_tracer() -> Result<sdktrace::Tracer, TraceError> {
     let telemetry_resource = TelemetryResourceDetector.detect(Duration::from_secs(0));
     opentelemetry_otlp::new_pipeline()
         .tracing()
-        .with_exporter(
-            opentelemetry_otlp::new_exporter()
-                .tonic()
-                .with_endpoint(format!(
-                    "{}{}",
-                    env::var("OTEL_EXPORTER_OTLP_TRACES_ENDPOINT")
-                        .unwrap_or_else(|_| "http://otelcol:4317".to_string()),
-                    "/v1/traces"
-                )), // TODO: assume this ^ is true from config when opentelemetry crate > v0.17.0
-                    // https://github.com/open-telemetry/opentelemetry-rust/pull/806 includes the environment variable.
-        )
+        .with_exporter(opentelemetry_otlp::new_exporter().tonic())
         .with_trace_config(
-            sdktrace::config()
-                .with_resource(os_resource.merge(&process_resource).merge(&sdk_resource).merge(&env_resource).merge(&telemetry_resource)),
+            sdktrace::config().with_resource(
+                os_resource
+                    .merge(&process_resource)
+                    .merge(&sdk_resource)
+                    .merge(&env_resource)
+                    .merge(&telemetry_resource),
+            ),
         )
         .install_batch(runtime::Tokio)
 }
 
-fn init_reqwest_tracing(tracer: sdktrace::Tracer) -> Result<(), tracing::subscriber::SetGlobalDefaultError> {
+fn init_reqwest_tracing(
+    tracer: sdktrace::Tracer,
+) -> Result<(), tracing::subscriber::SetGlobalDefaultError> {
     let telemetry = tracing_opentelemetry::layer().with_tracer(tracer);
     let subscriber = Registry::default().with(telemetry);
     tracing::subscriber::set_global_default(subscriber)

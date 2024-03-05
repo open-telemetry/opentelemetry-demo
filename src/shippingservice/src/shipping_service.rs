@@ -1,8 +1,8 @@
 // Copyright The OpenTelemetry Authors
 // SPDX-License-Identifier: Apache-2.0
 
+use opentelemetry::trace::{FutureExt, SpanKind, TraceContextExt, Tracer};
 use opentelemetry::{global, propagation::Extractor, trace::Span, Context, KeyValue};
-use opentelemetry::trace::{FutureExt, TraceContextExt, SpanKind, Tracer};
 use opentelemetry_semantic_conventions as semcov;
 use shop::shipping_service_server::ShippingService;
 use shop::{GetQuoteRequest, GetQuoteResponse, Money, ShipOrderRequest, ShipOrderResponse};
@@ -70,11 +70,17 @@ impl ShippingService for ShippingServer {
         // (although now everything is assumed to be the same price)
         // check out the create_quote_from_count method to see how we use the span created here
         let tracer = global::tracer("shippingservice");
-        let mut span = tracer.span_builder("oteldemo.ShippingService/GetQuote").with_kind(SpanKind::Server).start_with_context(&tracer, &parent_cx);
+        let mut span = tracer
+            .span_builder("oteldemo.ShippingService/GetQuote")
+            .with_kind(SpanKind::Server)
+            .start_with_context(&tracer, &parent_cx);
         span.set_attribute(semcov::trace::RPC_SYSTEM.string(RPC_SYSTEM_GRPC));
 
         span.add_event("Processing get quote request".to_string(), vec![]);
-        span.set_attribute(KeyValue::new("app.shipping.zip_code", request_message.address.unwrap().zip_code));
+        span.set_attribute(KeyValue::new(
+            "app.shipping.zip_code",
+            request_message.address.unwrap().zip_code,
+        ));
 
         let cx = Context::current_with_span(span);
         let q = match create_quote_from_count(itemct)
@@ -82,7 +88,12 @@ impl ShippingService for ShippingServer {
             .await
         {
             Ok(quote) => quote,
-            Err(status) => {cx.span().set_attribute(semcov::trace::RPC_GRPC_STATUS_CODE.i64(RPC_GRPC_STATUS_CODE_UNKNOWN)); return Err(status)},
+            Err(status) => {
+                cx.span().set_attribute(
+                    semcov::trace::RPC_GRPC_STATUS_CODE.i64(RPC_GRPC_STATUS_CODE_UNKNOWN),
+                );
+                return Err(status);
+            }
         };
 
         let reply = GetQuoteResponse {
@@ -94,7 +105,8 @@ impl ShippingService for ShippingServer {
         };
         info!("Sending Quote: {}", q);
 
-        cx.span().set_attribute(semcov::trace::RPC_GRPC_STATUS_CODE.i64(RPC_GRPC_STATUS_CODE_OK));
+        cx.span()
+            .set_attribute(semcov::trace::RPC_GRPC_STATUS_CODE.i64(RPC_GRPC_STATUS_CODE_OK));
         Ok(Response::new(reply))
     }
     async fn ship_order(
@@ -109,7 +121,9 @@ impl ShippingService for ShippingServer {
         // we'll create a span and associated events all in this function.
         let tracer = global::tracer("shippingservice");
         let mut span = tracer
-            .span_builder("oteldemo.ShippingService/ShipOrder").with_kind(SpanKind::Server).start_with_context(&tracer, &parent_cx);
+            .span_builder("oteldemo.ShippingService/ShipOrder")
+            .with_kind(SpanKind::Server)
+            .start_with_context(&tracer, &parent_cx);
         span.set_attribute(semcov::trace::RPC_SYSTEM.string(RPC_SYSTEM_GRPC));
 
         span.add_event("Processing shipping order request".to_string(), vec![]);
