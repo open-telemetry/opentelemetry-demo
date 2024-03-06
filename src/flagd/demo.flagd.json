@@ -3,7 +3,6 @@
     "flags": {
         "productCatalogFailure": {
             "description": "Fail product catalog service on a specific product",
-            "default": false,
             "state": "ENABLED",
             "variants": {
                 "on": true,
@@ -13,7 +12,6 @@
         },
         "recommendationServiceCacheFailure": {
             "description": "Fail recommendation service cache",
-            "default": false,
             "state": "ENABLED",
             "variants": {
                 "on": true,
@@ -23,7 +21,6 @@
         },
         "adServiceFailure": {
             "description": "Fail ad service",
-            "default": false,
             "state": "ENABLED",
             "variants": {
                 "on": true,
@@ -46,7 +43,6 @@
         },
         "cartServiceFailure": {
             "description": "Fail cart service",
-            "default": false,
             "state": "ENABLED",
             "variants": {
                 "on": true,
