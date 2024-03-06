@@ -47,11 +47,11 @@ builder.Services.AddSingleton<IFeatureClient>(x => {
     return client;
 });
 
-builder.Services.AddSingleton(x => 
+builder.Services.AddSingleton(x =>
     new CartService(
         x.GetRequiredService<ICartStore>(),
         new RedisCartStore(x.GetRequiredService<ILogger<RedisCartStore>>(), "badhost:1234"),
-        x.GetRequiredService<IFeatureClient>() 
+        x.GetRequiredService<IFeatureClient>()
 ));
 
 
