@@ -1,6 +1,6 @@
 module github.com/open-telemetry/opentelemetry-demo/src/checkoutservice
 
-go 1.22
+go 1.22.0
 
 require (
 	github.com/IBM/sarama v1.42.1
@@ -53,5 +53,3 @@ require (
 	google.golang.org/genproto/googleapis/api v0.0.0-20240125205218-1f4bbc51befe // indirect
 	google.golang.org/genproto/googleapis/rpc v0.0.0-20240125205218-1f4bbc51befe // indirect
 )
-
-replace github.com/opentelemetry/opentelemetry-demo/src/productcatalogservice => ../productcatalogservice
