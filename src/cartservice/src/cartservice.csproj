@@ -23,6 +23,9 @@
     <PackageReference Include="OpenTelemetry.ResourceDetectors.Container" Version="1.0.0-beta.6" />
     <PackageReference Include="OpenTelemetry.ResourceDetectors.Host" Version="0.1.0-alpha.2" />
     <PackageReference Include="StackExchange.Redis" Version="2.7.17" />
+    <PackageReference Include="OpenFeature.Contrib.Providers.Flagd" Version="0.1.8" />
+    <PackageReference Include="OpenFeature.Contrib.Hooks.Otel" Version="0.1.4" />
+    <PackageReference Include="OpenFeature" Version="1.4.1" />
   </ItemGroup>
 
   <ItemGroup>
