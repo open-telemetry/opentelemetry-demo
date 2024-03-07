@@ -55,18 +55,6 @@ jobs:
             tag_suffix: emailservice
             context: ./src/emailservice
             setup-qemu: true
-          - file: ./src/ffspostgres/Dockerfile
-            tag_suffix: ffspostgres
-            context: ./
-            setup-qemu: true
-          # NOTE:
-          # https://github.com/open-telemetry/opentelemetry-demo/issues/956
-          # Until dedicated ARM runners are available for GHA we cannot upgrade
-          # OTP/Elixir versions. Please do not change the OTP/Elixir versions.
-          - file: ./src/featureflagservice/Dockerfile
-            tag_suffix: featureflagservice
-            context: ./
-            setup-qemu: true
           - file: ./src/frontend/Dockerfile
             tag_suffix: frontend
             context: ./
