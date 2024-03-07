@@ -37,8 +37,6 @@ static_resources:
                       domains:
                         - "*"
                       routes:
-                        - match: { prefix: "/feature" }
-                          route: { cluster: featureflag, prefix_rewrite: "/" }
                         - match: { prefix: "/loadgen" }
                           route: { cluster: loadgen, prefix_rewrite: "/" }
                         - match: { prefix: "/otlp-http/" }
@@ -97,18 +95,6 @@ static_resources:
                     socket_address:
                       address: ${FRONTEND_HOST}
                       port_value: ${FRONTEND_PORT}
-    - name: featureflag
-      type: STRICT_DNS
-      lb_policy: ROUND_ROBIN
-      load_assignment:
-        cluster_name: featureflag
-        endpoints:
-          - lb_endpoints:
-              - endpoint:
-                  address:
-                    socket_address:
-                      address: ${FEATURE_FLAG_SERVICE_HOST}
-                      port_value: ${FEATURE_FLAG_SERVICE_PORT}
     - name: loadgen
       type: STRICT_DNS
       lb_policy: ROUND_ROBIN

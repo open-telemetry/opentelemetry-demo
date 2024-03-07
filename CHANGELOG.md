@@ -7,6 +7,10 @@ the release.
 
 ## Unreleased
 
+* [featureflag] deprecate in favor of flagd
+  ([#1338](https://github.com/open-telemetry/opentelemetry-demo/pull/1388))
+* [checkoutservice] add producer interceptor for tracing
+  ([#1400](https://github.com/open-telemetry/opentelemetry-demo/pull/1400))
 * [chore] increase memory for Collector and Jaeger
   ([#1396](https://github.com/open-telemetry/opentelemetry-demo/pull/1396))
 * [chore] fix Make targets for restart and redeploy

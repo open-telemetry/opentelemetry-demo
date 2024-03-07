@@ -1,0 +1,54 @@
+{
+    "$schema": "https://flagd.dev/schema/v0/flags.json",
+    "flags": {
+        "productCatalogFailure": {
+            "description": "Fail product catalog service on a specific product",
+            "state": "ENABLED",
+            "variants": {
+                "on": true,
+                "off": false
+              },
+              "defaultVariant": "off"
+        },
+        "recommendationServiceCacheFailure": {
+            "description": "Fail recommendation service cache",
+            "state": "ENABLED",
+            "variants": {
+                "on": true,
+                "off": false
+              },
+              "defaultVariant": "off"
+        },
+        "adServiceFailure": {
+            "description": "Fail ad service",
+            "state": "ENABLED",
+            "variants": {
+                "on": true,
+                "off": false
+              },
+              "defaultVariant": "off",
+              "targeting": {
+                "fractional": [
+                  { "var": "session" },
+                  [
+                    "on",
+                    10
+                  ],
+                  [
+                    "off",
+                    90
+                  ]
+                ]
+              }
+        },
+        "cartServiceFailure": {
+            "description": "Fail cart service",
+            "state": "ENABLED",
+            "variants": {
+                "on": true,
+                "off": false
+              },
+              "defaultVariant": "off"
+        }
+    }
+  }
