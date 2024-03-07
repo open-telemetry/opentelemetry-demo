@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 using Grpc.Core;
 using OpenTelemetry.Trace;
 using cartservice.cartstore;
-using cartservice.featureflags;
+using OpenFeature;
 using Oteldemo;
 
 namespace cartservice.services;
@@ -15,9 +15,9 @@ public class CartService : Oteldemo.CartService.CartServiceBase
     private static readonly Empty Empty = new();
     private readonly ICartStore _badCartStore;
     private readonly ICartStore _cartStore;
-    private readonly FeatureFlagHelper _featureFlagHelper;
+    private readonly IFeatureClient _featureFlagHelper;
 
-    public CartService(ICartStore cartStore, ICartStore badCartStore, FeatureFlagHelper featureFlagService)
+    public CartService(ICartStore cartStore, ICartStore badCartStore, IFeatureClient featureFlagService)
     {
         _badCartStore = badCartStore;
         _cartStore = cartStore;
@@ -60,7 +60,7 @@ public class CartService : Oteldemo.CartService.CartServiceBase
 
         try
         {
-            if (await _featureFlagHelper.GenerateCartError())
+            if (await _featureFlagHelper.GetBooleanValue("cartServiceFailure", false))
             {
                 await _badCartStore.EmptyCartAsync(request.UserId);
             }

@@ -20,6 +20,12 @@ from opentelemetry.sdk._logs import LoggerProvider, LoggingHandler
 from opentelemetry.sdk._logs.export import BatchLogRecordProcessor
 from opentelemetry.sdk.resources import Resource
 
+from openfeature import api
+from openfeature.contrib.provider.flagd import FlagdProvider
+
+# TODO: once openfeature otel hook for python is released, this will work
+# from openfeature.contrib.hooks.otel import TracingHook
+
 # Local
 import logging
 import demo_pb2
@@ -33,7 +39,6 @@ from metrics import (
 
 cached_ids = []
 first_run = True
-
 
 class RecommendationService(demo_pb2_grpc.RecommendationServiceServicer):
     def ListRecommendations(self, request, context):
@@ -117,14 +122,16 @@ def must_map_env(key: str):
 
 
 def check_feature_flag(flag_name: str):
-    if feature_flag_stub is None:
-        return False
-    flag = feature_flag_stub.GetFlag(demo_pb2.GetFlagRequest(name=flag_name)).flag
-    return flag.enabled
+    # Initialize OpenFeature
+    client = api.get_client()
+    # TODO: once openfeature otel hook for python is released, this will work
+    # api.add_hooks(TracingHook())
+    return client.get_boolean_value("recommendationServiceCacheFailure", False)
 
 
 if __name__ == "__main__":
     service_name = must_map_env('OTEL_SERVICE_NAME')
+    api.set_provider(FlagdProvider(host=os.environ.get('FLAGD_HOST', 'flagd'), port=os.environ.get('FLAGD_PORT', 8013)))
 
     # Initialize Traces and Metrics
     tracer = trace.get_tracer_provider().get_tracer(service_name)
@@ -151,12 +158,6 @@ if __name__ == "__main__":
     catalog_addr = must_map_env('PRODUCT_CATALOG_SERVICE_ADDR')
     pc_channel = grpc.insecure_channel(catalog_addr)
     product_catalog_stub = demo_pb2_grpc.ProductCatalogServiceStub(pc_channel)
-
-    ff_addr = os.environ.get('FEATURE_FLAG_GRPC_SERVICE_ADDR')
-    feature_flag_stub = None
-    if ff_addr is not None:
-        ff_channel = grpc.insecure_channel(ff_addr)
-        feature_flag_stub = demo_pb2_grpc.FeatureFlagServiceStub(ff_channel)
 
     # Create gRPC server
     server = grpc.server(futures.ThreadPoolExecutor(max_workers=10))
