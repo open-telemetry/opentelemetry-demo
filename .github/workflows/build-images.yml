@@ -49,7 +49,7 @@ jobs:
             setup-qemu: true
           - file: ./src/currencyservice/Dockerfile
             tag_suffix: currencyservice
-            context: ./src/currencyservice
+            context: ./
             setup-qemu: true
           - file: ./src/emailservice/Dockerfile
             tag_suffix: emailservice
