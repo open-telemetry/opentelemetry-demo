@@ -30,8 +30,7 @@ RUN git clone https://github.com/open-telemetry/opentelemetry-cpp \
           -DWITH_EXAMPLES=OFF -DWITH_OTLP_GRPC=ON -DWITH_ABSEIL=ON \
     && make -j$(nproc || sysctl -n hw.ncpu || echo 1) install && cd ../..
 
-COPY ./src/currencyservice /currencyservice
-COPY ./pb/demo.proto /currencyservice/proto/demo.proto
+COPY . /currencyservice
 
 RUN cd /currencyservice \
     && mkdir -p build && cd build \

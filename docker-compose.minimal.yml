@@ -126,8 +126,7 @@ services:
     image: ${IMAGE_NAME}:${DEMO_VERSION}-currencyservice
     container_name: currency-service
     build:
-      context: ./
-      dockerfile: ./src/currencyservice/Dockerfile
+      context: ./src/currencyservice
       cache_from:
         - ${IMAGE_NAME}:${IMAGE_VERSION}-currencyservice
     deploy:
