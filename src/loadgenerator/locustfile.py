@@ -48,6 +48,7 @@ handler = LoggingHandler(level=logging.INFO, logger_provider=logger_provider)
 
 # Attach OTLP handler to locust logger
 logging.getLogger().addHandler(handler)
+logging.getLogger().setLevel(logging.INFO)
 
 exporter = OTLPMetricExporter(insecure=True)
 set_meter_provider(MeterProvider([PeriodicExportingMetricReader(exporter)]))
