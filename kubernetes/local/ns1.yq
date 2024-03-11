@@ -26,4 +26,5 @@ del(.default.envOverrides) |
 .components.quoteService.enabled=true |
 .components.recommendationService.enabled=true |
 .components.redis.enabled=true |
-.components.shippingService.enabled=false
+.components.shippingService.enabled=false |
+.opentelemetry-collector.config.processors.resource.attributes[] |= select(.key == "cloud.account.id").value |= "012345678901"

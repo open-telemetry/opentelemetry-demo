@@ -1,2 +1,3 @@
 .otelDemo.helm |
-.default.image.pullSecrets=[{"name": "regcred"}]
+.default.image.pullSecrets=[{"name": "regcred"}] |
+.opentelemetry-collector.config.processors.resource.attributes[] |= select(.key == "cloud.account.id").value |= "012345678901"

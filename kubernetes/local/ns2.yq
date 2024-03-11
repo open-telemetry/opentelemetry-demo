@@ -30,5 +30,5 @@ del(.default.envOverrides) |
 del(.grafana) |
 .jaeger.enabled=false |
 .prometheus.enabled=false |
-.grafana.enabled=false
-
+.grafana.enabled=false |
+.opentelemetry-collector.config.processors.resource.attributes[] |= select(.key == "cloud.account.id").value |= "012345678901"
