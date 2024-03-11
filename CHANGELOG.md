@@ -7,6 +7,8 @@ the release.
 
 ## Unreleased
 
+* [loadgenerator] emit logs via OTLP
+  ([#1446](https://github.com/open-telemetry/opentelemetry-demo/pull/1446))
 * [featureflag] deprecate in favor of flagd
   ([#1338](https://github.com/open-telemetry/opentelemetry-demo/pull/1388))
 * [checkoutservice] add producer interceptor for tracing
