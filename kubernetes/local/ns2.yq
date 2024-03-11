@@ -31,4 +31,6 @@ del(.grafana) |
 .jaeger.enabled=false |
 .prometheus.enabled=false |
 .grafana.enabled=false |
+del(.opentelemetry-collector.config.exporters.otlp/dash0-prod) |
+del(.opentelemetry-collector.config.service.pipelines.*.exporters.[] | select(. == "otlp/dash0-prod*") ) |
 .opentelemetry-collector.config.processors.resource.attributes[] |= select(.key == "cloud.account.id").value |= "012345678901"

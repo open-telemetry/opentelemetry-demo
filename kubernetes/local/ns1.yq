@@ -27,4 +27,6 @@ del(.default.envOverrides) |
 .components.recommendationService.enabled=true |
 .components.redis.enabled=true |
 .components.shippingService.enabled=false |
+del(.opentelemetry-collector.config.exporters.otlp/dash0-prod) |
+del(.opentelemetry-collector.config.service.pipelines.*.exporters.[] | select(. == "otlp/dash0-prod*") ) |
 .opentelemetry-collector.config.processors.resource.attributes[] |= select(.key == "cloud.account.id").value |= "012345678901"
