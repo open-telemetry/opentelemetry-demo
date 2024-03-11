@@ -49,6 +49,24 @@
                 "off": false
               },
               "defaultVariant": "off"
+        },
+        "paymentServiceFailure": {
+          "description": "Fail payment service charge requests",
+          "state": "ENABLED",
+          "variants": {
+              "on": true,
+              "off": false
+            },
+            "defaultVariant": "off"
+        },
+        "paymentServiceUnreachable": {
+          "description": "Payment service is unavailable",
+          "state": "ENABLED",
+          "variants": {
+              "on": true,
+              "off": false
+            },
+            "defaultVariant": "off"
         }
     }
   }
