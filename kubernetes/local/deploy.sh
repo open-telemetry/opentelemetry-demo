@@ -38,7 +38,8 @@ kubectl exec --namespace otel-demo-ns opentelemetry-demo-postgresql-0 -- psql po
 kubectl exec --namespace otel-demo-ns opentelemetry-demo-postgresql-0 -- psql postgresql://ffs:ffs@localhost/ffs -a -f /tmp/20-ffs_data.sql
 
 echo waiting for the frontend and frontendproxy pod to become ready
+sleep 5
 kubectl wait --namespace otel-demo-ns --for=condition=ready pod -l app.kubernetes.io/component=frontendproxy --timeout 10s
 kubectl wait --namespace otel-demo-ns --for=condition=ready pod -l app.kubernetes.io/component=frontend --timeout 20s
-kubectl port-forward --namespace otel-demo-ns service/opentelemetry-demo-frontendproxy 8080:8080
+./port-forward.sh
 
