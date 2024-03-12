@@ -371,7 +371,6 @@ func (cs *checkoutService) prepareOrderItemsAndShippingQuoteFromCart(ctx context
 }
 
 func mustCreateClient(ctx context.Context, svcAddr string) *grpc.ClientConn {
-	log.Infof("Connecting to %t", svcAddr)
 	c, err := grpc.DialContext(ctx, svcAddr,
 		grpc.WithTransportCredentials(insecure.NewCredentials()),
 		grpc.WithStatsHandler(otelgrpc.NewClientHandler()),
