@@ -27,6 +27,8 @@ the release.
   ([#1415](https://github.com/open-telemetry/opentelemetry-demo/pull/1415))
 * [chore] - add tests and odd profiles to make stop
   ([#1427](https://github.com/open-telemetry/opentelemetry-demo/pull/1427))
+* [Frontend-proxy] Add restart policy to compose file
+  ([#1448](https://github.com/open-telemetry/opentelemetry-demo/pull/1448))
 
 ## 1.8.0
 
