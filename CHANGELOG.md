@@ -27,6 +27,10 @@ the release.
   ([#1415](https://github.com/open-telemetry/opentelemetry-demo/pull/1415))
 * [chore] - add tests and odd profiles to make stop
   ([#1427](https://github.com/open-telemetry/opentelemetry-demo/pull/1427))
+* [paymentservice] add paymentServiceFailure feature flag
+  ([#1449](https://github.com/open-telemetry/opentelemetry-demo/pull/1449))
+* [checkoutservice] add paymentServiceUnreachable feature flag
+  ([#1449](https://github.com/open-telemetry/opentelemetry-demo/pull/1449))
 
 ## 1.8.0
 
