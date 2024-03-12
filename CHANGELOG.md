@@ -29,6 +29,8 @@ the release.
   ([#1427](https://github.com/open-telemetry/opentelemetry-demo/pull/1427))
 * [shippingservice] fix context propagation and add OTLP logs
   ([#1433](https://github.com/open-telemetry/opentelemetry-demo/pull/1433))
+* [chore] - Update Telemetry Components
+  ([#1440](https://github.com/open-telemetry/opentelemetry-demo/pull/1440))
 
 ## 1.8.0
 
