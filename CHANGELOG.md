@@ -29,6 +29,8 @@ the release.
   ([#1427](https://github.com/open-telemetry/opentelemetry-demo/pull/1427))
 * [chore] - Update Telemetry Components
   ([#1440](https://github.com/open-telemetry/opentelemetry-demo/pull/1440))
+* [Frontend-proxy] Add restart policy to compose file
+  ([#1448](https://github.com/open-telemetry/opentelemetry-demo/pull/1448))
 
 ## 1.8.0
 
