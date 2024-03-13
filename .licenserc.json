@@ -44,6 +44,8 @@
         "src/checkoutservice/genproto/",
         "src/featureflagservice/assets/vendor/",
         "src/featureflagservice/priv/",
+        "src/frontend/utils/telemetry/KubernetesResourceDetector.js",
+        "src/frontend/utils/telemetry/KubernetesResourceDetector.test.js",
         "src/productcatalogservice/genproto/",
         "internal/tools/",
         ".github/actions/",

@@ -33,4 +33,3 @@ runs:
         git commit -a -m"[dash0] update image version in .env to ${{ inputs.containerImageVersion }}" -m"[ci skip]"
         git status
         git push
-

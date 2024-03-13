@@ -1,13 +1,13 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import { readFile } from 'fs/promises';
-import { Detector, Resource, ResourceDetectionConfig } from '@opentelemetry/resources';
-import { SemanticResourceAttributes } from '@opentelemetry/semantic-conventions';
+const { readFile } = require('fs/promises');
+const { Detector, Resource, ResourceDetectionConfig } = require('@opentelemetry/resources');
+const { SemanticResourceAttributes } = require('@opentelemetry/semantic-conventions');
 
 const POD_ID_LENGTH = 36;
 const CONTAINER_ID_LENGTH = 64;
 
-export class KubernetesResourceDetector implements Detector {
-  async detect(_config?: ResourceDetectionConfig): Promise<Resource> {
+class KubernetesResourceDetector {
+  async detect(_config) {
     try {
       const hostFileContent = await readFile('/etc/hosts', {
         encoding: 'utf8',
@@ -27,7 +27,7 @@ export class KubernetesResourceDetector implements Detector {
       return Resource.EMPTY;
     }
 
-    let podUid: string | null | undefined = null;
+    let podUid = null;
     try {
       podUid = await readPodUidCgroupsV1();
     } catch (err) {
@@ -49,7 +49,7 @@ export class KubernetesResourceDetector implements Detector {
   }
 }
 
-const readPodUidCgroupsV1 = async (): Promise<string> => {
+async function readPodUidCgroupsV1() {
   const mountinfo = await readFile('/proc/self/mountinfo', {
     encoding: 'utf8',
   });
@@ -66,9 +66,9 @@ const readPodUidCgroupsV1 = async (): Promise<string> => {
   }
 
   return podMountInfoEntry.split('/pods/')[1].substring(0, POD_ID_LENGTH);
-};
+}
 
-const readPodUidCgroupsV2 = async (): Promise<string | null | undefined> => {
+async function readPodUidCgroupsV2() {
   const cgroups = await readFile('/proc/self/cgroup', {
     encoding: 'utf8',
   });
@@ -94,4 +94,6 @@ const readPodUidCgroupsV2 = async (): Promise<string | null | undefined> => {
       return segments[segments.length - 2];
     })
     .find(podUid => !!podUid);
-};
+}
+
+module.exports = KubernetesResourceDetector;

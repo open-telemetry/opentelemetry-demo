@@ -1,14 +1,14 @@
-import { KubernetesResourceDetector } from './KubernetesResourceDetector';
-import { SemanticResourceAttributes } from '@opentelemetry/semantic-conventions';
-import {expect, jest, test} from '@jest/globals';
-import mock from 'mock-fs';
+const KubernetesResourceDetector = require('./KubernetesResourceDetector');
+const { SemanticResourceAttributes } = require('@opentelemetry/semantic-conventions');
+const { expect, test } = require('@jest/globals');
+const mock = require('mock-fs');
 
 const K8S_POD_ID = '6189e731-8c9a-4c3a-ba6f-9796664788a8';
 
-const trimMultiline = (s: string) =>
+const trimMultiline = s =>
   s
     .split('\n')
-    .map((s) => s.trim())
+    .map(s => s.trim())
     .join('\n');
 
 describe('KubernetesResourceDetector', () => {
