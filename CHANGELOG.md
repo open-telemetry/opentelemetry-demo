@@ -7,6 +7,8 @@ the release.
 
 ## Unreleased
 
+* [loadgenerator] emit logs via OTLP
+  ([#1446](https://github.com/open-telemetry/opentelemetry-demo/pull/1446))
 * [frontend] reset quantity when new product selected
   ([#1447](https://github.com/open-telemetry/opentelemetry-demo/pull/1447))
 * [featureflag] deprecate in favor of flagd
