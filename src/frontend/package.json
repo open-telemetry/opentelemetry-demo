@@ -8,7 +8,8 @@
     "start": "node --require ./Instrumentation.js server.js",
     "lint": "next lint",
     "cy:open": "cypress open",
-    "grpc:generate": "mkdir -p ./protos && protoc -I ./pb  --plugin=./node_modules/.bin/protoc-gen-ts_proto --ts_proto_opt=esModuleInterop=true --ts_proto_out=./protos --ts_proto_opt=outputServices=grpc-js demo.proto"
+    "grpc:generate": "mkdir -p ./protos && protoc -I ./pb  --plugin=./node_modules/.bin/protoc-gen-ts_proto --ts_proto_opt=esModuleInterop=true --ts_proto_out=./protos --ts_proto_opt=outputServices=grpc-js demo.proto",
+    "test": "jest"
   },
   "dependencies": {
     "@grpc/grpc-js": "1.9.13",
@@ -31,6 +32,7 @@
     "@opentelemetry/sdk-trace-base": "1.18.1",
     "@opentelemetry/sdk-trace-node": "1.18.1",
     "@opentelemetry/sdk-trace-web": "1.18.1",
+    "@opentelemetry/semantic-conventions": "1.18.1",
     "@tanstack/react-query": "4.36.1",
     "cookies-next": "2.1.2",
     "currency-symbol-map": "5.1.0",
@@ -45,6 +47,7 @@
     "uuid": "9.0.1"
   },
   "devDependencies": {
+    "@types/mock-fs": "^4.13.4",
     "@types/node": "20.9.0",
     "@types/react": "18.2.37",
     "@types/react-dom": "18.2.15",
@@ -57,7 +60,11 @@
     "eslint-config-next": "13.5.6",
     "eslint-plugin-react": "7.33.2",
     "eslint-plugin-react-hooks": "4.6.0",
+    "jest": "^29.7.0",
+    "mock-fs": "^5.2.0",
     "openapi-typescript": "6.7.1",
+    "ts-jest": "^29.1.2",
+    "ts-node": "^10.9.2",
     "typescript": "5.2.2"
   }
 }
