@@ -7,6 +7,10 @@ the release.
 
 ## Unreleased
 
+* [loadgenerator] emit logs via OTLP
+  ([#1446](https://github.com/open-telemetry/opentelemetry-demo/pull/1446))
+* [frontend] reset quantity when new product selected
+  ([#1447](https://github.com/open-telemetry/opentelemetry-demo/pull/1447))
 * [featureflag] deprecate in favor of flagd
   ([#1338](https://github.com/open-telemetry/opentelemetry-demo/pull/1388))
 * [checkoutservice] add producer interceptor for tracing
@@ -31,6 +35,12 @@ the release.
   ([#1433](https://github.com/open-telemetry/opentelemetry-demo/pull/1433))
 * [chore] - Update Telemetry Components
   ([#1440](https://github.com/open-telemetry/opentelemetry-demo/pull/1440))
+* [paymentservice] add paymentServiceFailure feature flag
+  ([#1449](https://github.com/open-telemetry/opentelemetry-demo/pull/1449))
+* [checkoutservice] add paymentServiceUnreachable feature flag
+  ([#1449](https://github.com/open-telemetry/opentelemetry-demo/pull/1449))
+* [Frontend-proxy] Add restart policy to compose file
+  ([#1448](https://github.com/open-telemetry/opentelemetry-demo/pull/1448))
 
 ## 1.8.0
 
