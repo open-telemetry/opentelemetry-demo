@@ -33,6 +33,10 @@ the release.
   ([#1427](https://github.com/open-telemetry/opentelemetry-demo/pull/1427))
 * [chore] - Update Telemetry Components
   ([#1440](https://github.com/open-telemetry/opentelemetry-demo/pull/1440))
+* [paymentservice] add paymentServiceFailure feature flag
+  ([#1449](https://github.com/open-telemetry/opentelemetry-demo/pull/1449))
+* [checkoutservice] add paymentServiceUnreachable feature flag
+  ([#1449](https://github.com/open-telemetry/opentelemetry-demo/pull/1449))
 * [Frontend-proxy] Add restart policy to compose file
   ([#1448](https://github.com/open-telemetry/opentelemetry-demo/pull/1448))
 
