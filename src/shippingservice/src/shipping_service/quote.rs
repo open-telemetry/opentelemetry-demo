@@ -4,7 +4,7 @@
 use core::fmt;
 use std::{collections::HashMap, env};
 
-use log::debug;
+use log::info;
 use opentelemetry::{trace::get_active_span, KeyValue};
 use reqwest_middleware::ClientBuilder;
 use reqwest_tracing::{SpanBackendWithUrl, TracingMiddleware};
@@ -62,7 +62,7 @@ async fn request_quote(count: u32) -> Result<f64, Box<dyn std::error::Error>> {
         .text_with_charset("utf-8")
         .await?;
 
-    debug!("{:?}", resp);
+    info!("Received quote: {:?}", resp);
 
     match resp.parse::<f64>() {
         Ok(f) => Ok(f),

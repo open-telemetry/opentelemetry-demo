@@ -145,9 +145,7 @@ impl ShippingService for ShippingServer {
 #[cfg(test)]
 mod tests {
     use super::{
-        shop::shipping_service_server::ShippingService,
-        shop::ShipOrderRequest,
-        ShippingServer,
+        shop::shipping_service_server::ShippingService, shop::ShipOrderRequest, ShippingServer,
     };
     use tonic::Request;
     use uuid::Uuid;
