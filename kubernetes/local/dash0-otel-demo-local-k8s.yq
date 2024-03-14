@@ -1,5 +1,6 @@
 .otelDemo.helm |
 .default.image.pullSecrets=[{"name": "regcred"}] |
 del(.opentelemetry-collector.config.exporters.otlp/dash0-prod) |
+del(.opentelemetry-collector.config.exporters.otlp/dash0-prod-pen-testing) |
 del(.opentelemetry-collector.config.service.pipelines.*.exporters.[] | select(. == "otlp/dash0-prod*") ) |
 .opentelemetry-collector.config.processors.resource.attributes[] |= select(.key == "cloud.account.id").value |= "012345678901"
