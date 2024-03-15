@@ -63,6 +63,7 @@ services:
     environment:
       - AD_SERVICE_PORT
       - FLAGD_HOST
+      - FLAGD_PORT
       - OTEL_EXPORTER_OTLP_ENDPOINT=http://${OTEL_COLLECTOR_HOST}:${OTEL_COLLECTOR_PORT_HTTP}
       - OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE
       - OTEL_RESOURCE_ATTRIBUTES
@@ -70,6 +71,8 @@ services:
       - OTEL_SERVICE_NAME=adservice
     depends_on:
       otelcol:
+        condition: service_started
+      flagd:
         condition: service_started
     logging: *logging
 
@@ -92,6 +95,7 @@ services:
     environment:
       - CART_SERVICE_PORT
       - FLAGD_HOST
+      - FLAGD_PORT
       - REDIS_ADDR
       - OTEL_EXPORTER_OTLP_ENDPOINT
       - OTEL_RESOURCE_ATTRIBUTES
@@ -101,6 +105,8 @@ services:
       redis-cart:
         condition: service_started
       otelcol:
+        condition: service_started
+      flagd:
         condition: service_started
     logging: *logging
 
@@ -122,6 +128,7 @@ services:
       - "${CHECKOUT_SERVICE_PORT}"
     environment:
       - FLAGD_HOST
+      - FLAGD_PORT
       - CHECKOUT_SERVICE_PORT
       - CART_SERVICE_ADDR
       - CURRENCY_SERVICE_ADDR
@@ -151,6 +158,8 @@ services:
         condition: service_started
       kafka:
         condition: service_healthy
+      flagd:
+        condition: service_started
     logging: *logging
 
   # Currency service
@@ -206,7 +215,7 @@ services:
     logging: *logging
 
   flagd:
-    image: ghcr.io/open-feature/flagd:latest
+    image: ghcr.io/open-feature/flagd:v0.9.0
     container_name: flagd
     command: [
       "start",
@@ -393,12 +402,15 @@ services:
     environment:
       - PAYMENT_SERVICE_PORT
       - FLAGD_HOST
+      - FLAGD_PORT
       - OTEL_EXPORTER_OTLP_ENDPOINT
       - OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE
       - OTEL_RESOURCE_ATTRIBUTES
       - OTEL_SERVICE_NAME=paymentservice
     depends_on:
       otelcol:
+        condition: service_started
+      flagd:
         condition: service_started
     logging: *logging
 
@@ -421,12 +433,15 @@ services:
     environment:
       - PRODUCT_CATALOG_SERVICE_PORT
       - FLAGD_HOST
+      - FLAGD_PORT
       - OTEL_EXPORTER_OTLP_ENDPOINT
       - OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE
       - OTEL_RESOURCE_ATTRIBUTES
       - OTEL_SERVICE_NAME=productcatalogservice
     depends_on:
       otelcol:
+        condition: service_started
+      flagd:
         condition: service_started
     logging: *logging
 
@@ -478,6 +493,7 @@ services:
       - RECOMMENDATION_SERVICE_PORT
       - PRODUCT_CATALOG_SERVICE_ADDR
       - FLAGD_HOST
+      - FLAGD_PORT
       - OTEL_PYTHON_LOG_CORRELATION=true
       - OTEL_EXPORTER_OTLP_ENDPOINT
       - OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE
@@ -488,6 +504,8 @@ services:
       productcatalogservice:
         condition: service_started
       otelcol:
+        condition: service_started
+      flagd:
         condition: service_started
     logging: *logging
 
@@ -762,6 +780,8 @@ services:
       accountingservice:
         condition: service_started
       frauddetectionservice:
+        condition: service_started
+      flagd:
         condition: service_started
 
   tracetest-server:
