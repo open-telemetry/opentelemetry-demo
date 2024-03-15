@@ -33,7 +33,7 @@ spec:
         }
   specs:
   - name: It returns a valid order
-    selector: span[tracetest.span.type="general" name="Trigger test"]
+    selector: span[tracetest.span.type="general" name="Tracetest trigger"]
     assertions:
     - attr:tracetest.response.body | json_path '$.order.orderId' != ""
     - attr:tracetest.response.body | json_path '$.order.shippingTrackingId' != ""
