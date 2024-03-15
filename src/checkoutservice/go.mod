@@ -5,6 +5,9 @@ go 1.22.0
 require (
 	github.com/IBM/sarama v1.42.1
 	github.com/google/uuid v1.6.0
+	github.com/open-feature/go-sdk v1.10.0
+	github.com/open-feature/go-sdk-contrib/hooks/open-telemetry v0.3.1
+	github.com/open-feature/go-sdk-contrib/providers/flagd v0.1.22
 	github.com/sirupsen/logrus v1.9.3
 	go.opentelemetry.io/contrib/instrumentation/google.golang.org/grpc/otelgrpc v0.49.0
 	go.opentelemetry.io/contrib/instrumentation/net/http/otelhttp v0.49.0
@@ -59,9 +62,6 @@ require (
 	github.com/modern-go/concurrent v0.0.0-20180306012644-bacd9c7ef1dd // indirect
 	github.com/modern-go/reflect2 v1.0.2 // indirect
 	github.com/open-feature/flagd/core v0.7.4 // indirect
-	github.com/open-feature/go-sdk v1.10.0 // indirect
-	github.com/open-feature/go-sdk-contrib/hooks/open-telemetry v0.3.1 // indirect
-	github.com/open-feature/go-sdk-contrib/providers/flagd v0.1.22 // indirect
 	github.com/open-feature/schemas v0.2.8 // indirect
 	github.com/pierrec/lz4/v4 v4.1.21 // indirect
 	github.com/rcrowley/go-metrics v0.0.0-20201227073835-cf1acfcdf475 // indirect
