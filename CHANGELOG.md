@@ -39,6 +39,8 @@ the release.
   ([#1449](https://github.com/open-telemetry/opentelemetry-demo/pull/1449))
 * [Frontend-proxy] Add restart policy to compose file
   ([#1448](https://github.com/open-telemetry/opentelemetry-demo/pull/1448))
+* [cartservice] update .NET to .NET 8.0.3
+  ([#1460](https://github.com/open-telemetry/opentelemetry-demo/pull/1460))
 
 ## 1.8.0
 
