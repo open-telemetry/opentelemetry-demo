@@ -412,6 +412,7 @@ services:
       - OTEL_RESOURCE_ATTRIBUTES
       - OTEL_SERVICE_NAME=loadgenerator
       - PROTOCOL_BUFFERS_PYTHON_IMPLEMENTATION=python
+      - FLAGD_HOST
     depends_on:
       frontend:
         condition: service_started
