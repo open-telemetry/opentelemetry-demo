@@ -34,8 +34,14 @@ import org.apache.logging.log4j.Logger;
 import oteldemo.Demo.Ad;
 import oteldemo.Demo.AdRequest;
 import oteldemo.Demo.AdResponse;
-import oteldemo.Demo.GetFlagResponse;
-import oteldemo.FeatureFlagServiceGrpc.FeatureFlagServiceBlockingStub;
+import dev.openfeature.contrib.providers.flagd.FlagdOptions;
+import dev.openfeature.contrib.providers.flagd.FlagdProvider;
+import dev.openfeature.sdk.Client;
+import dev.openfeature.sdk.EvaluationContext;
+import dev.openfeature.sdk.MutableContext;
+import dev.openfeature.sdk.OpenFeatureAPI;
+import java.util.UUID;
+
 
 public final class AdService {
 
@@ -72,18 +78,19 @@ public final class AdService {
                             "environment vars: AD_SERVICE_PORT must not be null")));
     healthMgr = new HealthStatusManager();
 
-    String featureFlagServiceAddr =
-        Optional.ofNullable(System.getenv("FEATURE_FLAG_GRPC_SERVICE_ADDR")).orElse("");
-    FeatureFlagServiceBlockingStub featureFlagServiceStub = null;
-    if (!featureFlagServiceAddr.isEmpty()) {
-      featureFlagServiceStub =
-          oteldemo.FeatureFlagServiceGrpc.newBlockingStub(
-              ManagedChannelBuilder.forTarget(featureFlagServiceAddr).usePlaintext().build());
-    }
+    // Create a flagd instance with OpenTelemetry
+    FlagdOptions options =
+        FlagdOptions.builder()
+            .withGlobalTelemetry(true)
+            .build();
 
+    FlagdProvider flagdProvider = new FlagdProvider(options);
+    // Set flagd as the OpenFeature Provider
+    OpenFeatureAPI.getInstance().setProvider(flagdProvider);
+  
     server =
         ServerBuilder.forPort(port)
-            .addService(new AdServiceImpl(featureFlagServiceStub))
+            .addService(new AdServiceImpl())
             .addService(healthMgr.getHealthService())
             .build()
             .start();
@@ -119,14 +126,8 @@ public final class AdService {
   }
 
   private static class AdServiceImpl extends oteldemo.AdServiceGrpc.AdServiceImplBase {
-
-    private static final String ADSERVICE_FAIL_FEATURE_FLAG = "adServiceFailure";
-
-    private final FeatureFlagServiceBlockingStub featureFlagServiceStub;
-
-    private AdServiceImpl(FeatureFlagServiceBlockingStub featureFlagServiceStub) {
-      this.featureFlagServiceStub = featureFlagServiceStub;
-    }
+    
+    private AdServiceImpl() {}
 
     /**
      * Retrieves ads based on context provided in the request {@code AdRequest}.
@@ -177,7 +178,6 @@ public final class AdService {
                 adRequestTypeKey, adRequestType.name(), adResponseTypeKey, adResponseType.name()));
 
         if (checkAdFailure()) {
-          logger.warn(ADSERVICE_FAIL_FEATURE_FLAG + " fail feature flag enabled");
           throw new StatusRuntimeException(Status.RESOURCE_EXHAUSTED);
         }
 
@@ -194,21 +194,12 @@ public final class AdService {
     }
 
     boolean checkAdFailure() {
-      if (featureFlagServiceStub == null) {
-        return false;
-      }
-
-      // Flip a coin and fail 1/10th of the time if feature flag is enabled
-      if (random.nextInt(10) != 1) {
-        return false;
-      }
-
-      GetFlagResponse response =
-          featureFlagServiceStub.getFlag(
-              oteldemo.Demo.GetFlagRequest.newBuilder()
-                  .setName(ADSERVICE_FAIL_FEATURE_FLAG)
-                  .build());
-      return response.getFlag().getEnabled();
+      Client client = OpenFeatureAPI.getInstance().getClient();
+      // TODO: Plumb the actual session ID from the frontend via baggage?
+      UUID uuid = UUID.randomUUID();
+      client.setEvaluationContext(new MutableContext().add("session", uuid.toString()));
+      Boolean boolValue = client.getBooleanValue("adServiceFailure", false);
+      return boolValue;
     }
   }
 

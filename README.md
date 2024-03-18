@@ -56,16 +56,16 @@ keeping it up to date for you.
 
 |                                         |                             |                                                                |
 |-----------------------------------------|-----------------------------|----------------------------------------------------------------|
-| [AlibabaCloud LogService][AlibabaCloud] | [Google Cloud][GoogleCloud] | [Sentry][Sentry]                                               |
-| [AppDynamics][AppDynamics]              | [Grafana Labs][GrafanaLabs] | [ServiceNow Cloud Observability][ServiceNowCloudObservability] |
-| [Aspecto][Aspecto]                      | [Guance][Guance]            | [Splunk][Splunk]                                               |
-| [Axiom][Axiom]                          | [Helios][Helios]            | [Sumo Logic][SumoLogic]                                        |
-| [Axoflow][Axoflow]                      | [Honeycomb.io][Honeycombio] | [TelemetryHub][TelemetryHub]                                   |
-| [Azure Data Explorer][Azure]            | [Instana][Instana]          | [Teletrace][Teletrace]                                         |
-| [Coralogix][Coralogix]                  | [Kloudfuse][Kloudfuse]      | [Tracetest][Tracetest]                                         |
-| [Datadog][Datadog]                      | [Logz.io][Logzio]           | [Uptrace][Uptrace]                                             |
-| [Dynatrace][Dynatrace]                  | [New Relic][NewRelic]       |                                                                |
-| [Elastic][Elastic]                      | [OpenSearch][OpenSearch]    |                                                                |
+| [AlibabaCloud LogService][AlibabaCloud] | [Elastic][Elastic]          | [New Relic][NewRelic]                                          |
+| [AppDynamics][AppDynamics]              | [Google Cloud][GoogleCloud] | [OpenSearch][OpenSearch]                                       |
+| [Aspecto][Aspecto]                      | [Grafana Labs][GrafanaLabs] | [Sentry][Sentry]                                               |
+| [Axiom][Axiom]                          | [Guance][Guance]            | [ServiceNow Cloud Observability][ServiceNowCloudObservability] |
+| Axoflow                                 | [Helios][Helios]            | [Splunk][Splunk]                                               |
+| [Azure Data Explorer][Azure]            | [Honeycomb.io][Honeycombio] | [Sumo Logic][SumoLogic]                                        |
+| [Coralogix][Coralogix]                  | [Instana][Instana]          | [TelemetryHub][TelemetryHub]                                   |
+| [Dash0][Dash0]                          | [Kloudfuse][Kloudfuse]      | [Teletrace][Teletrace]                                         |
+| [Datadog][Datadog]                      | [Liatrio][Liatrio]          | [Tracetest][Tracetest]                                         |
+| [Dynatrace][Dynatrace]                  | [Logz.io][Logzio]           | [Uptrace][Uptrace]                                             |
 
 ## Contributing
 
@@ -109,9 +109,9 @@ Emeritus:
 [AppDynamics]: https://www.appdynamics.com/blog/cloud/how-to-observe-opentelemetry-demo-app-in-appdynamics-cloud/
 [Aspecto]: https://github.com/aspecto-io/opentelemetry-demo
 [Axiom]: https://play.axiom.co/axiom-play-qf1k/dashboards/otel.traces.otel-demo-traces
-[Axoflow]: https://axoflow.com/opentelemetry-support-in-more-detail-in-axosyslog-and-syslog-ng/
 [Azure]: https://github.com/Azure/Azure-kusto-opentelemetry-demo
 [Coralogix]: https://coralogix.com/blog/configure-otel-demo-send-telemetry-data-coralogix
+[Dash0]: https://github.com/dash0hq/opentelemetry-demo
 [Datadog]: https://github.com/DataDog/opentelemetry-demo
 [Dynatrace]: https://www.dynatrace.com/news/blog/opentelemetry-demo-application-with-dynatrace/
 [Elastic]: https://github.com/elastic/opentelemetry-demo
@@ -122,6 +122,7 @@ Emeritus:
 [Honeycombio]: https://github.com/honeycombio/opentelemetry-demo
 [Instana]: https://github.com/instana/opentelemetry-demo
 [Kloudfuse]: https://github.com/kloudfuse/opentelemetry-demo
+[Liatrio]: https://github.com/liatrio/opentelemetry-demo
 [Logzio]: https://logz.io/learn/how-to-run-opentelemetry-demo-with-logz-io/
 [NewRelic]: https://github.com/newrelic/opentelemetry-demo
 [OpenSearch]: https://github.com/opensearch-project/opentelemetry-demo

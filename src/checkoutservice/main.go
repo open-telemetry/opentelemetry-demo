@@ -7,7 +7,6 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
-	semconv "go.opentelemetry.io/otel/semconv/v1.24.0"
 	"net"
 	"net/http"
 	"os"
@@ -16,6 +15,7 @@ import (
 	"time"
 
 	"go.opentelemetry.io/otel/attribute"
+	semconv "go.opentelemetry.io/otel/semconv/v1.24.0"
 	"go.opentelemetry.io/otel/trace"
 
 	"github.com/IBM/sarama"
@@ -34,6 +34,9 @@ import (
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/credentials/insecure"
+	flagd "github.com/open-feature/go-sdk-contrib/providers/flagd/pkg"
+	"github.com/open-feature/go-sdk/openfeature"
+	otelhooks "github.com/open-feature/go-sdk-contrib/hooks/open-telemetry/pkg"
 	healthpb "google.golang.org/grpc/health/grpc_health_v1"
 	"google.golang.org/grpc/status"
 	"google.golang.org/protobuf/proto"
@@ -156,6 +159,8 @@ func main() {
 		log.Fatal(err)
 	}
 
+	openfeature.SetProvider(flagd.NewProvider())
+
 	tracer = tp.Tracer("checkoutservice")
 
 	svc := new(checkoutService)
@@ -243,7 +248,7 @@ func (cs *checkoutService) PlaceOrder(ctx context.Context, req *pb.PlaceOrderReq
 	var err error
 	defer func() {
 		if err != nil {
-			span.AddEvent("error", trace.WithAttributes(attribute.String("exception.message", err.Error())))
+			span.AddEvent("error", trace.WithAttributes(semconv.ExceptionMessageKey.String(err.Error())))
 		}
 	}()
 
@@ -433,7 +438,14 @@ func (cs *checkoutService) convertCurrency(ctx context.Context, from *pb.Money, 
 }
 
 func (cs *checkoutService) chargeCard(ctx context.Context, amount *pb.Money, paymentInfo *pb.CreditCardInfo) (string, error) {
-	paymentResp, err := cs.paymentSvcClient.Charge(ctx, &pb.ChargeRequest{
+    paymentService := cs.paymentSvcClient
+	if cs.checkPaymentFailure(ctx) {
+        badAddress := "badAddress:50051"
+        c := mustCreateClient(context.Background(), badAddress)
+		paymentService = pb.NewPaymentServiceClient(c)
+    }
+	
+	paymentResp, err := paymentService.Charge(ctx, &pb.ChargeRequest{
 		Amount:     amount,
 		CreditCard: paymentInfo})
 	if err != nil {
@@ -519,4 +531,13 @@ func createProducerSpan(ctx context.Context, msg *sarama.ProducerMessage) trace.
 	}
 
 	return span
+}
+
+func (cs *checkoutService) checkPaymentFailure(ctx context.Context) bool {
+	openfeature.AddHooks(otelhooks.NewTracesHook())
+	client := openfeature.NewClient("checkout")
+	failureEnabled, _ := client.BooleanValue(
+		ctx, "paymentServiceUnreachable", false, openfeature.EvaluationContext{},
+	)
+	return failureEnabled
 }

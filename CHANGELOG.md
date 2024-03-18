@@ -7,12 +7,40 @@ the release.
 
 ## Unreleased
 
+* [loadgenerator] emit logs via OTLP
+  ([#1446](https://github.com/open-telemetry/opentelemetry-demo/pull/1446))
+* [frontend] reset quantity when new product selected
+  ([#1447](https://github.com/open-telemetry/opentelemetry-demo/pull/1447))
+* [featureflag] deprecate in favor of flagd
+  ([#1338](https://github.com/open-telemetry/opentelemetry-demo/pull/1388))
+* [checkoutservice] add producer interceptor for tracing
+  ([#1400](https://github.com/open-telemetry/opentelemetry-demo/pull/1400))
 * [chore] increase memory for Collector and Jaeger
   ([#1396](https://github.com/open-telemetry/opentelemetry-demo/pull/1396))
 * [chore] fix Make targets for restart and redeploy
   ([#1397](https://github.com/open-telemetry/opentelemetry-demo/pull/1397))
 * [chore] add nightly releases
   ([#1398](https://github.com/open-telemetry/opentelemetry-demo/pull/1398))
+* [checkoutservice] add producer interceptor for tracing
+  ([#1400](https://github.com/open-telemetry/opentelemetry-demo/pull/1400))
+* [productcatalogservice] fix graceful shutdown issues
+  ([#1402](https://github.com/open-telemetry/opentelemetry-demo/pull/1402))
+* [chore] remove unused integration test
+  ([#1406](https://github.com/open-telemetry/opentelemetry-demo/pull/1406))
+* [CartService] - Add Host Detector
+  ([#1415](https://github.com/open-telemetry/opentelemetry-demo/pull/1415))
+* [chore] - add tests and odd profiles to make stop
+  ([#1427](https://github.com/open-telemetry/opentelemetry-demo/pull/1427))
+* [chore] - Update Telemetry Components
+  ([#1440](https://github.com/open-telemetry/opentelemetry-demo/pull/1440))
+* [paymentservice] add paymentServiceFailure feature flag
+  ([#1449](https://github.com/open-telemetry/opentelemetry-demo/pull/1449))
+* [checkoutservice] add paymentServiceUnreachable feature flag
+  ([#1449](https://github.com/open-telemetry/opentelemetry-demo/pull/1449))
+* [Frontend-proxy] Add restart policy to compose file
+  ([#1448](https://github.com/open-telemetry/opentelemetry-demo/pull/1448))
+* [cartservice] update .NET to .NET 8.0.3
+  ([#1460](https://github.com/open-telemetry/opentelemetry-demo/pull/1460))
 
 ## 1.8.0
 
