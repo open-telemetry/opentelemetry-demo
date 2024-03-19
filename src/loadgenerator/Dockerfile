@@ -2,7 +2,7 @@
 # SPDX-License-Identifier: Apache-2.0
 
 
-FROM python:3.12-slim-bookworm as base
+FROM python:3.13.0a4-slim as base
 
 FROM base as builder
 RUN apt-get -qq update \
