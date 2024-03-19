@@ -35,7 +35,6 @@ import oteldemo.Demo.Ad;
 import oteldemo.Demo.AdRequest;
 import oteldemo.Demo.AdResponse;
 import oteldemo.problempattern.GarbageCollectionTrigger;
-import oteldemo.problempattern.MemoryUtils;
 import dev.openfeature.contrib.providers.flagd.FlagdOptions;
 import dev.openfeature.contrib.providers.flagd.FlagdProvider;
 import dev.openfeature.sdk.Client;
@@ -43,7 +42,6 @@ import dev.openfeature.sdk.EvaluationContext;
 import dev.openfeature.sdk.MutableContext;
 import dev.openfeature.sdk.OpenFeatureAPI;
 import java.util.UUID;
-import java.lang.management.ManagementFactory;
 
 
 public final class AdService {
@@ -66,8 +64,6 @@ public final class AdService {
           .setDescription("Counts ad requests by request and response type")
           .build();
 
-  private static final MemoryUtils memUtils = new MemoryUtils(ManagementFactory.getMemoryMXBean());
-
   private static final AttributeKey<String> adRequestTypeKey =
       AttributeKey.stringKey("app.ads.ad_request_type");
   private static final AttributeKey<String> adResponseTypeKey =
@@ -82,26 +78,6 @@ public final class AdService {
                         new IllegalStateException(
                             "environment vars: AD_SERVICE_PORT must not be null")));
     healthMgr = new HealthStatusManager();
-
-    // Create heap usage and memory metrics using async gauges
-    meter.gaugeBuilder("app.ads.heap_usage")
-        .setDescription("Heap Usage in %")
-        .setUnit("%")
-        .buildWithCallback(measurement -> {
-            measurement.record(
-                memUtils.getHeapUsage() * 100, 
-                Attributes.of(AttributeKey.stringKey("Key"), "HeapUsage")
-            );
-        });
-    meter.gaugeBuilder("app.ads.free_memory")
-        .setDescription("Available memory in bytes")
-        .setUnit("bytes")
-        .buildWithCallback(measurement -> {
-            measurement.record(
-                Runtime.getRuntime().freeMemory(),
-                Attributes.of(AttributeKey.stringKey("Key"), "FreeMemory")
-            );
-        });
 
     // Create a flagd instance with OpenTelemetry
     FlagdOptions options =
