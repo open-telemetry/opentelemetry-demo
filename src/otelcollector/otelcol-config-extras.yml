@@ -21,7 +21,7 @@ service:
         - otlp/honeycomb
     metrics:
       exporters:
-        - otlp/prometheus
+        - otlphttp/prometheus
         - debug
         - otlp/honeycomb
     logs:
