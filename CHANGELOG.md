@@ -41,6 +41,8 @@ the release.
   ([#1448](https://github.com/open-telemetry/opentelemetry-demo/pull/1448))
 * [cartservice] update .NET to .NET 8.0.3
   ([#1460](https://github.com/open-telemetry/opentelemetry-demo/pull/1460))
+* [currency] fix metric name
+  ([#1470](https://github.com/open-telemetry/opentelemetry-demo/pull/1470))
 
 ## 1.8.0
 
