@@ -10,29 +10,22 @@ exporters:
     headers:
       "x-honeycomb-team": "<HONEYCOMB_API_KEY>"
       "x-honeycomb-dataset": "webstore-metrics"
-processors:
-  attributes:
-    include:
-      match_type: strict
-      services:
-        - frontend-proxy
-    actions:
-      - key: "net.component"
-        value: "proxy"
-        action: insert
+      
 service:
   pipelines:
-    metrics:
-      exporters:
-        - prometheus
-        - logging
-        - otlp/honeycomb
     traces:
       exporters:
         - otlp
-        - logging
+        - debug
         - spanmetrics
         - otlp/honeycomb
-      processors:
-        - attributes
-        - batch
+    metrics:
+      exporters:
+        - otlp/prometheus
+        - debug
+        - otlp/honeycomb
+    logs:
+      exporters:
+        - opensearch
+        - debug
+        - otlp/honeycomb
