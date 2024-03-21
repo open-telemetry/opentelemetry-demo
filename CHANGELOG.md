@@ -43,6 +43,8 @@ the release.
   ([#1460](https://github.com/open-telemetry/opentelemetry-demo/pull/1460))
 * [frontendproxy] remove deprecated start_child_span option
   ([#1469](https://github.com/open-telemetry/opentelemetry-demo/pull/1469))
+* [frontend] disable instrumentation-fs library
+  ([#1473](https://github.com/open-telemetry/opentelemetry-demo/pull/1473))
 
 ## 1.8.0
 
