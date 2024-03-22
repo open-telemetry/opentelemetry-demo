@@ -25,7 +25,7 @@ jobs:
             helmUpdateRequired:
               - '.env'
               - 'docker-compose.yaml'
-              - 'src/flagd/**
+              - 'src/flagd/**'
               - 'src/grafana/**'
               - 'src/otelcollector/**'
               - 'src/prometheus/**'
