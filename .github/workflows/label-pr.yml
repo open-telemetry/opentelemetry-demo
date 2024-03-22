@@ -57,4 +57,3 @@ jobs:
               repo: context.repo.repo,
               labels: ['helm-update-required']
             })
-
