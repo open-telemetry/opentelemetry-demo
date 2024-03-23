@@ -14,10 +14,10 @@ import (
 	"strings"
 	"sync"
 	"syscall"
-	"time"
 
 	"github.com/IBM/sarama"
 	"github.com/sirupsen/logrus"
+	"github.com/uptrace/opentelemetry-go-extra/otellogrus"
 	"go.opentelemetry.io/otel"
 	"go.opentelemetry.io/otel/exporters/otlp/otlptrace/otlptracegrpc"
 	"go.opentelemetry.io/otel/propagation"
@@ -33,15 +33,12 @@ var initResourcesOnce sync.Once
 
 func init() {
 	log = logrus.New()
-	log.Level = logrus.DebugLevel
-	log.Formatter = &logrus.JSONFormatter{
-		FieldMap: logrus.FieldMap{
-			logrus.FieldKeyTime:  "timestamp",
-			logrus.FieldKeyLevel: "severity",
-			logrus.FieldKeyMsg:   "message",
-		},
-		TimestampFormat: time.RFC3339Nano,
-	}
+	log.AddHook(otellogrus.NewHook(otellogrus.WithLevels(
+		logrus.PanicLevel,
+		logrus.FatalLevel,
+		logrus.ErrorLevel,
+		logrus.WarnLevel,
+	)))
 	log.Out = os.Stdout
 }
 
@@ -79,39 +76,40 @@ func initTracerProvider() (*sdktrace.TracerProvider, error) {
 }
 
 func main() {
+	ctx := context.Background()
 	tp, err := initTracerProvider()
 	if err != nil {
-		log.Fatal(err)
+		log.WithContext(ctx).WithContext(ctx)
 	}
 	defer func() {
-		if err := tp.Shutdown(context.Background()); err != nil {
-			log.Printf("Error shutting down tracer provider: %v", err)
+		if err := tp.Shutdown(ctx); err != nil {
+			log.WithContext(ctx).WithError(err)
 		}
-		log.Println("Shutdown trace provider")
+		log.WithContext(ctx).WithField("Message", "Shotdown trace provider")
 	}()
 
 	var brokers string
 	mustMapEnv(&brokers, "KAFKA_SERVICE_ADDR")
 
 	brokerList := strings.Split(brokers, ",")
-	log.Printf("Kafka brokers: %s", strings.Join(brokerList, ", "))
+	log.WithField("Kafka brokers: %s", strings.Join(brokerList, ", "))
 
 	ctx, cancel := signal.NotifyContext(context.Background(), os.Interrupt, syscall.SIGTERM, syscall.SIGKILL)
 	defer cancel()
 	var consumerGroup sarama.ConsumerGroup
 	if consumerGroup, err = kafka.StartConsumerGroup(ctx, brokerList, log); err != nil {
-		log.Fatal(err)
+		log.WithContext(ctx).WithError(err)
 	}
 	defer func() {
 		if err := consumerGroup.Close(); err != nil {
-			log.Printf("Error closing consumer group: %v", err)
+			log.WithContext(ctx).WithField("Error closing consumer group: %v", err)
 		}
-		log.Println("Closed consumer group")
+		log.WithContext(ctx).WithField("Message", "Closed consumer group")
 	}()
 
 	<-ctx.Done()
 
-	log.Println("Accounting service exited")
+	log.WithContext(ctx).WithField("Message", "Accounting service exited")
 }
 
 func mustMapEnv(target *string, envKey string) {

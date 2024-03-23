@@ -4,10 +4,12 @@ package kafka
 
 import (
 	"context"
+
 	pb "github.com/open-telemetry/opentelemetry-demo/src/accountingservice/genproto/oteldemo"
 
 	"github.com/IBM/sarama"
 	"github.com/sirupsen/logrus"
+	"github.com/uptrace/opentelemetry-go-extra/otellogrus"
 	"google.golang.org/protobuf/proto"
 )
 
@@ -16,6 +18,15 @@ var (
 	ProtocolVersion = sarama.V3_0_0_0
 	GroupID         = "accountingservice"
 )
+
+func initLogger() {
+	logrus.AddHook(otellogrus.NewHook(otellogrus.WithLevels(
+		logrus.PanicLevel,
+		logrus.FatalLevel,
+		logrus.ErrorLevel,
+		logrus.WarnLevel,
+	)))
+}
 
 func StartConsumerGroup(ctx context.Context, brokers []string, log *logrus.Logger) (sarama.ConsumerGroup, error) {
 	saramaConfig := sarama.NewConfig()
@@ -63,7 +74,7 @@ func (g *groupHandler) ConsumeClaim(session sarama.ConsumerGroupSession, claim s
 				return err
 			}
 
-			g.log.WithFields(logrus.Fields{
+			g.log.WithContext(context.Background()).WithFields(logrus.Fields{
 				"orderId":          orderResult.OrderId,
 				"messageTimestamp": message.Timestamp,
 				"messageTopic":     message.Topic,
