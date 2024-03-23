@@ -23,6 +23,8 @@ require (
 	google.golang.org/protobuf v1.33.0
 )
 
+require github.com/uptrace/opentelemetry-go-extra/otelutil v0.2.4 // indirect
+
 require (
 	buf.build/gen/go/open-feature/flagd/connectrpc/go v1.12.0-20231031123731-ac2ec0f39838.1 // indirect
 	buf.build/gen/go/open-feature/flagd/grpc/go v1.3.0-20231031123731-ac2ec0f39838.2 // indirect
@@ -63,9 +65,11 @@ require (
 	github.com/modern-go/reflect2 v1.0.2 // indirect
 	github.com/open-feature/flagd/core v0.7.4 // indirect
 	github.com/open-feature/schemas v0.2.8 // indirect
+	github.com/open-telemetry/opentelemetry-demo v1.2.1 // indirect
 	github.com/pierrec/lz4/v4 v4.1.21 // indirect
 	github.com/rcrowley/go-metrics v0.0.0-20201227073835-cf1acfcdf475 // indirect
 	github.com/twmb/murmur3 v1.1.8 // indirect
+	github.com/uptrace/opentelemetry-go-extra/otellogrus v0.2.4
 	github.com/xeipuuv/gojsonpointer v0.0.0-20190905194746-02993c407bfb // indirect
 	github.com/xeipuuv/gojsonreference v0.0.0-20180127040603-bd5ef7bd5415 // indirect
 	github.com/xeipuuv/gojsonschema v1.2.0 // indirect
@@ -79,7 +83,7 @@ require (
 	golang.org/x/exp v0.0.0-20240205201215-2c58cdc269a3 // indirect
 	golang.org/x/mod v0.14.0 // indirect
 	golang.org/x/net v0.21.0 // indirect
-	golang.org/x/sys v0.17.0 // indirect
+	golang.org/x/sys v0.18.0 // indirect
 	golang.org/x/text v0.14.0 // indirect
 	google.golang.org/genproto/googleapis/api v0.0.0-20240125205218-1f4bbc51befe // indirect
 	google.golang.org/genproto/googleapis/rpc v0.0.0-20240125205218-1f4bbc51befe // indirect

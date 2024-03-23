@@ -3,6 +3,8 @@
 package kafka
 
 import (
+	"context"
+
 	"github.com/IBM/sarama"
 	"github.com/sirupsen/logrus"
 )
@@ -22,11 +24,10 @@ func CreateKafkaProducer(brokers []string, log *logrus.Logger) (sarama.AsyncProd
 	if err != nil {
 		return nil, err
 	}
-
 	// We will log to STDOUT if we're not able to produce messages.
 	go func() {
 		for err := range producer.Errors() {
-			log.Errorf("Failed to write message: %+v", err)
+			log.WithContext(context.Background()).WithError(err)
 		}
 	}()
 	return producer, nil
