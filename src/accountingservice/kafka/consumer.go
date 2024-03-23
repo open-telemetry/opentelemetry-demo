@@ -74,7 +74,7 @@ func (g *groupHandler) ConsumeClaim(session sarama.ConsumerGroupSession, claim s
 				return err
 			}
 
-			g.log.WithContext(context.Background()).WithFields(logrus.Fields{
+			g.log.WithContext(session.Context()).WithFields(logrus.Fields{
 				"orderId":          orderResult.OrderId,
 				"messageTimestamp": message.Timestamp,
 				"messageTopic":     message.Topic,
