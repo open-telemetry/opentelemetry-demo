@@ -19,6 +19,7 @@ import (
 	"time"
 
 	"github.com/sirupsen/logrus"
+	"github.com/uptrace/opentelemetry-go-extra/otellogrus"
 
 	"go.opentelemetry.io/contrib/instrumentation/google.golang.org/grpc/otelgrpc"
 	"go.opentelemetry.io/contrib/instrumentation/runtime"
@@ -55,10 +56,17 @@ var (
 
 func init() {
 	log = logrus.New()
+	log.AddHook(otellogrus.NewHook(otellogrus.WithLevels(
+		logrus.PanicLevel,
+		logrus.FatalLevel,
+		logrus.WarnLevel,
+		logrus.InfoLevel,
+		logrus.DebugLevel,
+	)))
 	var err error
 	catalog, err = readProductFiles()
 	if err != nil {
-		log.Fatalf("Reading Product Files: %v", err)
+		log.WithContext(context.Background()).Errorf("Reading Product Files: %v", err)
 		os.Exit(1)
 	}
 }
@@ -85,7 +93,7 @@ func initTracerProvider() *sdktrace.TracerProvider {
 
 	exporter, err := otlptracegrpc.New(ctx)
 	if err != nil {
-		log.Fatalf("OTLP Trace gRPC Creation: %v", err)
+		log.WithContext(context.Background()).Errorf("OTLP Trace gRPC Creation: %v", err)
 	}
 	tp := sdktrace.NewTracerProvider(
 		sdktrace.WithBatcher(exporter),
@@ -101,7 +109,7 @@ func initMeterProvider() *sdkmetric.MeterProvider {
 
 	exporter, err := otlpmetricgrpc.New(ctx)
 	if err != nil {
-		log.Fatalf("new otlp metric grpc exporter failed: %v", err)
+		log.WithContext(ctx).Errorf("new otlp metric grpc exporter failed: %v", err)
 	}
 
 	mp := sdkmetric.NewMeterProvider(
@@ -115,24 +123,27 @@ func initMeterProvider() *sdkmetric.MeterProvider {
 func main() {
 	tp := initTracerProvider()
 	defer func() {
-		if err := tp.Shutdown(context.Background()); err != nil {
-			log.Fatalf("Tracer Provider Shutdown: %v", err)
+		ctx := context.Background()
+		if err := tp.Shutdown(ctx); err != nil {
+			log.WithContext(ctx).Errorf("Tracer Provider Shutdown: %v", err)
 		}
-		log.Println("Shutdown tracer provider")
+		log.WithContext(ctx).Info("Shutdown tracer provider")
 	}()
 
 	mp := initMeterProvider()
 	defer func() {
-		if err := mp.Shutdown(context.Background()); err != nil {
-			log.Fatalf("Error shutting down meter provider: %v", err)
+		ctx := context.Background()
+		if err := mp.Shutdown(ctx); err != nil {
+
+			log.WithContext(ctx).Errorf("Error shutting down meter provider: %v", err)
 		}
-		log.Println("Shutdown meter provider")
+		log.WithContext(ctx).Error("Shutdown meter provider")
 	}()
 	openfeature.SetProvider(flagd.NewProvider())
 
 	err := runtime.Start(runtime.WithMinimumReadMemStatsInterval(time.Second))
 	if err != nil {
-		log.Fatal(err)
+		log.WithContext(context.Background()).WithError(err)
 	}
 
 	svc := &productCatalog{}
@@ -143,7 +154,7 @@ func main() {
 
 	ln, err := net.Listen("tcp", fmt.Sprintf(":%s", port))
 	if err != nil {
-		log.Fatalf("TCP Listen: %v", err)
+		log.WithContext(context.Background()).Errorf("TCP Listen: %v", err)
 	}
 
 	srv := grpc.NewServer(
@@ -160,14 +171,14 @@ func main() {
 
 	go func() {
 		if err := srv.Serve(ln); err != nil {
-			log.Fatalf("Failed to serve gRPC server, err: %v", err)
+			log.WithContext(context.Background()).Errorf("Failed to serve gRPC server, err: %v", err)
 		}
 	}()
 
 	<-ctx.Done()
 
 	srv.GracefulStop()
-	log.Println("ProductCatalogService gRPC server stopped")
+	log.WithContext(context.Background()).Info("ProductCatalogService gRPC server stopped")
 }
 
 type productCatalog struct {
@@ -210,7 +221,7 @@ func readProductFiles() ([]*pb.Product, error) {
 		products = append(products, res.Products...)
 	}
 
-	log.Infof("Loaded %d products", len(products))
+	log.WithContext(context.Background()).Infof("Loaded %d products", len(products))
 
 	return products, nil
 }
