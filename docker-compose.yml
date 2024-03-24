@@ -590,7 +590,7 @@ services:
       - OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE
       - OTEL_RESOURCE_ATTRIBUTES
       - OTEL_SERVICE_NAME=kafka
-      - KAFKA_HEAP_OPTS=-Xmx200m -Xms200m
+      - KAFKA_HEAP_OPTS=-Xmx250m -Xms250m
     healthcheck:
       test: nc -z kafka 9092
       start_period: 10s
