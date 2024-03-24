@@ -52,7 +52,6 @@ const sdk = new opentelemetry.NodeSDK({
 				traceFlags: 'traceFlags',
 			},
 		}),
-		// instrument logging here
 	],
 	metricReader: new PeriodicExportingMetricReader({
 		exporter: new OTLPMetricExporter(),
