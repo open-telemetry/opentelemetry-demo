@@ -266,7 +266,7 @@ int main(int argc, char **argv) {
   initTracer();
   initMeter();
   initLogger();
-  currency_counter = initIntCounter(name, version);
+  currency_counter = initIntCounter("app.currency", version);
   logger = getLogger(name);
   RunServer(port);
 
