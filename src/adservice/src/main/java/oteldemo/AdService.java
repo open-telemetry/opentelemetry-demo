@@ -34,6 +34,7 @@ import org.apache.logging.log4j.Logger;
 import oteldemo.Demo.Ad;
 import oteldemo.Demo.AdRequest;
 import oteldemo.Demo.AdResponse;
+import oteldemo.problempattern.GarbageCollectionTrigger;
 import dev.openfeature.contrib.providers.flagd.FlagdOptions;
 import dev.openfeature.contrib.providers.flagd.FlagdProvider;
 import dev.openfeature.sdk.Client;
@@ -127,6 +128,9 @@ public final class AdService {
 
   private static class AdServiceImpl extends oteldemo.AdServiceGrpc.AdServiceImplBase {
     
+    private static final String ADSERVICE_FAILURE = "adServiceFailure";
+    private static final String ADSERVICE_MANUAL_GC_FEATURE_FLAG = "adServiceManualGc";
+
     private AdServiceImpl() {}
 
     /**
@@ -177,8 +181,14 @@ public final class AdService {
             Attributes.of(
                 adRequestTypeKey, adRequestType.name(), adResponseTypeKey, adResponseType.name()));
 
-        if (checkAdFailure()) {
+        if (getFeatureFlagEnabled(ADSERVICE_FAILURE)) {
           throw new StatusRuntimeException(Status.RESOURCE_EXHAUSTED);
+        }
+
+        if (getFeatureFlagEnabled(ADSERVICE_MANUAL_GC_FEATURE_FLAG)) {
+          logger.warn("Feature Flag " + ADSERVICE_MANUAL_GC_FEATURE_FLAG + " enabled, performing a manual gc now");
+          GarbageCollectionTrigger gct = new GarbageCollectionTrigger();
+          gct.doExecute();
         }
 
         AdResponse reply = AdResponse.newBuilder().addAllAds(allAds).build();
@@ -193,12 +203,18 @@ public final class AdService {
       }
     }
 
-    boolean checkAdFailure() {
+    /**
+     * Retrieves the status of a feature flag from the Feature Flag service.
+     *
+     * @param ff The name of the feature flag to retrieve.
+     * @return {@code true} if the feature flag is enabled, {@code false} otherwise or in case of errors.
+     */
+    boolean getFeatureFlagEnabled(String ff) {
       Client client = OpenFeatureAPI.getInstance().getClient();
       // TODO: Plumb the actual session ID from the frontend via baggage?
       UUID uuid = UUID.randomUUID();
       client.setEvaluationContext(new MutableContext().add("session", uuid.toString()));
-      Boolean boolValue = client.getBooleanValue("adServiceFailure", false);
+      Boolean boolValue = client.getBooleanValue(ff, false);
       return boolValue;
     }
   }
