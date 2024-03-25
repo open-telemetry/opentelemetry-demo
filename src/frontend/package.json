@@ -41,7 +41,7 @@
     "react-dom": "18.2.0",
     "sharp": "0.33.2",
     "styled-components": "6.1.1",
-    "ts-proto": "1.164.0",
+    "ts-proto": "1.167.9",
     "uuid": "9.0.1"
   },
   "devDependencies": {
