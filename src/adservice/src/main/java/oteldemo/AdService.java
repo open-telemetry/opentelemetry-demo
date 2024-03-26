@@ -182,7 +182,7 @@ public final class AdService {
                 adRequestTypeKey, adRequestType.name(), adResponseTypeKey, adResponseType.name()));
 
         if (getFeatureFlagEnabled(ADSERVICE_FAILURE)) {
-          throw new StatusRuntimeException(Status.RESOURCE_EXHAUSTED);
+          throw new StatusRuntimeException(Status.UNAVAILABLE);
         }
 
         if (getFeatureFlagEnabled(ADSERVICE_MANUAL_GC_FEATURE_FLAG)) {
