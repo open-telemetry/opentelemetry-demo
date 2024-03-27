@@ -79,21 +79,21 @@ Monday at 8:30 AM PST and anyone is welcome.
 ([@open-telemetry/demo-maintainers](https://github.com/orgs/open-telemetry/teams/demo-maintainers)):
 
 - [Austin Parker](https://github.com/austinlparker), Honeycomb
-- [Carter Socha](https://github.com/cartersocha), Lightstep
 - [Juliano Costa](https://github.com/julianocosta89), Datadog
+- [Mikko Viitanen](https://github.com/mviitane), Dynatrace
 - [Pierre Tessier](https://github.com/puckpuck), Honeycomb
 
 [Approvers](https://github.com/open-telemetry/community/blob/main/community-membership.md#approver)
 ([@open-telemetry/demo-approvers](https://github.com/orgs/open-telemetry/teams/demo-approvers)):
 
 - [Cedric Ziel](https://github.com/cedricziel) Grafana Labs
-- [Mikko Viitanen](https://github.com/mviitane), Dynatrace
 - [Penghan Wang](https://github.com/wph95), AppDynamics
 - [Reiley Yang](https://github.com/reyang), Microsoft
 - [Ziqi Zhao](https://github.com/fatsheep9146), Alibaba
 
 Emeritus:
 
+- [Carter Socha](https://github.com/cartersocha)
 - [Michael Maxwell](https://github.com/mic-max)
 - [Morgan McLean](https://github.com/mtwo)
 
