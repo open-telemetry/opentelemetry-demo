@@ -4,15 +4,10 @@
 use core::fmt;
 use std::{collections::HashMap, env};
 
-use log::debug;
-use opentelemetry::global;
-use opentelemetry::{trace::get_active_span, Context, KeyValue};
-use opentelemetry_http::HeaderInjector;
-use reqwest::header::HeaderMap;
+use log::info;
+use opentelemetry::{trace::get_active_span, KeyValue};
 use reqwest_middleware::ClientBuilder;
-use reqwest_tracing::{TracingMiddleware, SpanBackendWithUrl};
-
-use reqwest::Method;
+use reqwest_tracing::{SpanBackendWithUrl, TracingMiddleware};
 
 #[derive(Debug, Default)]
 pub struct Quote {
@@ -20,7 +15,7 @@ pub struct Quote {
     pub cents: i32,
 }
 
-// TODO: Check product catalog for price on each item (will likley need item ID)
+// TODO: Check product catalog for price on each item (will likely need item ID)
 pub async fn create_quote_from_count(count: u32) -> Result<Quote, tonic::Status> {
     let f = match request_quote(count).await {
         Ok(float) => float,
@@ -43,10 +38,12 @@ pub async fn create_quote_from_count(count: u32) -> Result<Quote, tonic::Status>
 }
 
 async fn request_quote(count: u32) -> Result<f64, Box<dyn std::error::Error>> {
-    // TODO: better testing here and default quote_service_addr
     let quote_service_addr: String = format!(
         "{}{}",
-        env::var("QUOTE_SERVICE_ADDR").expect("$QUOTE_SERVICE_ADDR is not set"),
+        env::var("QUOTE_SERVICE_ADDR")
+            .unwrap_or_else(|_| "http://quoteservice:8090".to_string())
+            .parse::<String>()
+            .expect("Invalid quote service address"),
         "/getquote"
     );
 
@@ -57,24 +54,15 @@ async fn request_quote(count: u32) -> Result<f64, Box<dyn std::error::Error>> {
         .with(TracingMiddleware::<SpanBackendWithUrl>::new())
         .build();
 
-    let req = client.request(Method::POST, quote_service_addr);
-
-    let mut headers = HeaderMap::new();
-
-    let cx = Context::current();
-    global::get_text_map_propagator(|propagator| {
-        propagator.inject_context(&cx, &mut HeaderInjector(&mut headers))
-    });
-
-    let resp = req
+    let resp = client
+        .post(quote_service_addr)
         .json(&reqbody)
-        .headers(headers)
         .send()
         .await?
         .text_with_charset("utf-8")
         .await?;
 
-    debug!("{:?}", resp);
+    info!("Received quote: {:?}", resp);
 
     match resp.parse::<f64>() {
         Ok(f) => Ok(f),
