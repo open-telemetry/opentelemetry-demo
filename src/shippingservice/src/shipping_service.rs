@@ -3,7 +3,7 @@
 
 use opentelemetry::trace::{FutureExt, SpanKind, TraceContextExt, Tracer};
 use opentelemetry::{global, propagation::Extractor, trace::Span, Context, KeyValue};
-use opentelemetry_semantic_conventions as semcov;
+use opentelemetry_semantic_conventions as semconv;
 use shop::shipping_service_server::ShippingService;
 use shop::{GetQuoteRequest, GetQuoteResponse, Money, ShipOrderRequest, ShipOrderResponse};
 use tonic::{Request, Response, Status};
@@ -74,7 +74,7 @@ impl ShippingService for ShippingServer {
             .span_builder("oteldemo.ShippingService/GetQuote")
             .with_kind(SpanKind::Server)
             .start_with_context(&tracer, &parent_cx);
-        span.set_attribute(semcov::trace::RPC_SYSTEM.string(RPC_SYSTEM_GRPC));
+        span.set_attribute(KeyValue::new(semconv::trace::RPC_SYSTEM, RPC_SYSTEM_GRPC));
 
         span.add_event("Processing get quote request".to_string(), vec![]);
         span.set_attribute(KeyValue::new(
@@ -89,9 +89,10 @@ impl ShippingService for ShippingServer {
         {
             Ok(quote) => quote,
             Err(status) => {
-                cx.span().set_attribute(
-                    semcov::trace::RPC_GRPC_STATUS_CODE.i64(RPC_GRPC_STATUS_CODE_UNKNOWN),
-                );
+                cx.span().set_attribute(KeyValue::new(
+                    semconv::trace::RPC_GRPC_STATUS_CODE,
+                    RPC_GRPC_STATUS_CODE_UNKNOWN,
+                ));
                 return Err(status);
             }
         };
@@ -105,8 +106,10 @@ impl ShippingService for ShippingServer {
         };
         info!("Sending Quote: {}", q);
 
-        cx.span()
-            .set_attribute(semcov::trace::RPC_GRPC_STATUS_CODE.i64(RPC_GRPC_STATUS_CODE_OK));
+        cx.span().set_attribute(KeyValue::new(
+            semconv::trace::RPC_GRPC_STATUS_CODE,
+            RPC_GRPC_STATUS_CODE_OK,
+        ));
         Ok(Response::new(reply))
     }
     async fn ship_order(
@@ -124,7 +127,7 @@ impl ShippingService for ShippingServer {
             .span_builder("oteldemo.ShippingService/ShipOrder")
             .with_kind(SpanKind::Server)
             .start_with_context(&tracer, &parent_cx);
-        span.set_attribute(semcov::trace::RPC_SYSTEM.string(RPC_SYSTEM_GRPC));
+        span.set_attribute(KeyValue::new(semconv::trace::RPC_SYSTEM, RPC_SYSTEM_GRPC));
 
         span.add_event("Processing shipping order request".to_string(), vec![]);
 
@@ -137,7 +140,10 @@ impl ShippingService for ShippingServer {
             vec![],
         );
 
-        span.set_attribute(semcov::trace::RPC_GRPC_STATUS_CODE.i64(RPC_GRPC_STATUS_CODE_OK));
+        span.set_attribute(KeyValue::new(
+            semconv::trace::RPC_GRPC_STATUS_CODE,
+            RPC_GRPC_STATUS_CODE_OK,
+        ));
         Ok(Response::new(ShipOrderResponse { tracking_id: tid }))
     }
 }

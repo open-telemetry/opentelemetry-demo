@@ -12,10 +12,9 @@ use shipping_service::shop::shipping_service_server::ShippingServiceServer;
 use shipping_service::ShippingServer;
 
 mod telemetry;
-use telemetry::configure_global_logger;
 use telemetry::init_logger;
-use telemetry::init_metrics;
 
+use telemetry::init_reqwest_tracing;
 use telemetry::init_tracer;
 
 #[tokio::main]
@@ -25,11 +24,8 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
         .set_serving::<ShippingServiceServer<ShippingServer>>()
         .await;
 
-    let tracer = init_tracer()?;
-    let _ = init_metrics()?;
-
-    let _ = init_logger();
-    configure_global_logger(tracer);
+    init_logger()?;
+    init_reqwest_tracing(init_tracer()?)?;
 
     info!("OTel pipeline created");
     let port = env::var("SHIPPING_SERVICE_PORT").expect("$SHIPPING_SERVICE_PORT is not set");
