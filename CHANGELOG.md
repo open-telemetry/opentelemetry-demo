@@ -49,6 +49,8 @@ the release.
   ([#1470](https://github.com/open-telemetry/opentelemetry-demo/pull/1470))
 * [frontend] disable instrumentation-fs library
   ([#1473](https://github.com/open-telemetry/opentelemetry-demo/pull/1473))
+* [loadgenerator] added loadgeneratorFloodHomepage flagd
+  ([#1486](https://github.com/open-telemetry/opentelemetry-demo/pull/1486))
 
 ## 1.8.0
 
