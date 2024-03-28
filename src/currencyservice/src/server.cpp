@@ -207,12 +207,12 @@ class CurrencyService final : public oteldemo::CurrencyService::Service
 
       CurrencyCounter(to_code);
 
-      // End the span
       span->AddEvent("Conversion successful, response sent back");
       span->SetStatus(StatusCode::kOk);
 
       logger->Info(std::string(__func__) + " conversion successful");
-
+      
+      // End the span
       span->End();
       return Status::OK;
 
@@ -266,7 +266,7 @@ int main(int argc, char **argv) {
   initTracer();
   initMeter();
   initLogger();
-  currency_counter = initIntCounter(name, version);
+  currency_counter = initIntCounter("app.currency", version);
   logger = getLogger(name);
   RunServer(port);
 

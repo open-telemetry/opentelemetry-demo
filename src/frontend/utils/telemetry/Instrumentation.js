@@ -16,9 +16,9 @@ const sdk = new opentelemetry.NodeSDK({
   traceExporter: new OTLPTraceExporter(),
   instrumentations: [
     getNodeAutoInstrumentations({
-      // only instrument fs if it is part of another trace
+      // disable fs instrumentation to reduce noise
       '@opentelemetry/instrumentation-fs': {
-        requireParentSpan: true,
+        enabled: false,
       },
     })
   ],

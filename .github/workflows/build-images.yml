@@ -21,6 +21,7 @@ on:
 
 jobs:
   build_and_push_images:
+    if: github.repository == 'open-telemetry/opentelemetry-demo'
     runs-on: ubuntu-latest
     permissions:
       contents: read

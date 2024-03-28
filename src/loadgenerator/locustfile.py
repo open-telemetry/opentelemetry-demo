@@ -8,6 +8,9 @@ import json
 import os
 import random
 import uuid
+import logging
+import sys
+from pythonjsonlogger import jsonlogger
 from locust import HttpUser, task, between
 from locust_plugins.users.playwright import PlaywrightUser, pw, PageWithRetry, event
 
@@ -23,7 +26,29 @@ from opentelemetry.instrumentation.jinja2 import Jinja2Instrumentor
 from opentelemetry.instrumentation.requests import RequestsInstrumentor
 from opentelemetry.instrumentation.system_metrics import SystemMetricsInstrumentor
 from opentelemetry.instrumentation.urllib3 import URLLib3Instrumentor
+from opentelemetry._logs import set_logger_provider
+from opentelemetry.exporter.otlp.proto.grpc._log_exporter import (
+    OTLPLogExporter,
+)
+from opentelemetry.sdk._logs import LoggerProvider, LoggingHandler
+from opentelemetry.sdk._logs.export import BatchLogRecordProcessor
+from opentelemetry.sdk.resources import Resource
 from playwright.async_api import Route, Request
+
+logger_provider = LoggerProvider(resource=Resource.create(
+        {
+            "service.name": "loadgenerator",
+        }
+    ),)
+set_logger_provider(logger_provider)
+
+exporter = OTLPLogExporter(insecure=True)
+logger_provider.add_log_record_processor(BatchLogRecordProcessor(exporter))
+handler = LoggingHandler(level=logging.INFO, logger_provider=logger_provider)
+
+# Attach OTLP handler to locust logger
+logging.getLogger().addHandler(handler)
+logging.getLogger().setLevel(logging.INFO)
 
 exporter = OTLPMetricExporter(insecure=True)
 set_meter_provider(MeterProvider([PeriodicExportingMetricReader(exporter)]))
@@ -37,6 +62,7 @@ Jinja2Instrumentor().instrument()
 RequestsInstrumentor().instrument()
 SystemMetricsInstrumentor().instrument()
 URLLib3Instrumentor().instrument()
+logging.info("Instrumentation complete")
 
 categories = [
     "binoculars",
@@ -63,7 +89,6 @@ products = [
 
 people_file = open('people.json')
 people = json.load(people_file)
-
 
 class WebsiteUser(HttpUser):
     wait_time = between(1, 10)
