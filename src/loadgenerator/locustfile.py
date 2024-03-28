@@ -33,6 +33,13 @@ from opentelemetry.exporter.otlp.proto.grpc._log_exporter import (
 from opentelemetry.sdk._logs import LoggerProvider, LoggingHandler
 from opentelemetry.sdk._logs.export import BatchLogRecordProcessor
 from opentelemetry.sdk.resources import Resource
+
+from openfeature import api
+from openfeature.contrib.provider.flagd import FlagdProvider
+
+# TODO: once openfeature otel hook for python is released, this will work
+# from openfeature.contrib.hooks.otel import TracingHook
+
 from playwright.async_api import Route, Request
 
 logger_provider = LoggerProvider(resource=Resource.create(
@@ -63,6 +70,20 @@ RequestsInstrumentor().instrument()
 SystemMetricsInstrumentor().instrument()
 URLLib3Instrumentor().instrument()
 logging.info("Instrumentation complete")
+
+# Initialize Flagd provider
+api.set_provider(FlagdProvider(host=os.environ.get('FLAGD_HOST', 'flagd'), port=os.environ.get('FLAGD_PORT', 8013)))
+
+# Get flagd value
+def check_flagd(flag_name: str):
+    # Initialize OpenFeature
+    client = api.get_client()
+    # TODO: once openfeature otel hook for python is released, this will work
+    # api.add_hooks(TracingHook())
+    return client.get_boolean_value("loadgeneratorFloodHomepage", False)
+
+# Amount of iterations
+flood_count = int(os.environ.get("FLOOD_COUNT", 100))
 
 categories = [
     "binoculars",
@@ -152,6 +173,12 @@ class WebsiteUser(HttpUser):
         checkout_person = random.choice(people)
         checkout_person["userId"] = user
         self.client.post("/api/checkout", json=checkout_person)
+
+    @task(5)
+    def flood_home(self):
+        if check_flagd("loadgeneratorFloodHomepage"):
+            for _ in range(0, flood_count):
+                self.client.get("/")
 
     def on_start(self):
         ctx = baggage.set_baggage("synthetic_request", "true")
