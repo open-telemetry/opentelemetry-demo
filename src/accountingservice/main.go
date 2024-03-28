@@ -29,11 +29,6 @@ import (
 var resource *sdkresource.Resource
 var initResourcesOnce sync.Once
 
-func initLogger() *slog.Logger {
-	logger := slog.New(slog.NewJSONHandler(os.Stderr, nil)).With("service", "accounting")
-	slog.SetDefault(logger)
-	return logger
-}
 func initResource() *sdkresource.Resource {
 	initResourcesOnce.Do(func() {
 		extraResources, _ := sdkresource.New(
@@ -68,23 +63,23 @@ func initTracerProvider() (*sdktrace.TracerProvider, error) {
 }
 
 func main() {
-	logger := initLogger()
+	logger := slog.New(slog.NewJSONHandler(os.Stderr, nil)).With("service", "accounting")
 	ctx := context.Background()
 	tp, err := initTracerProvider()
 	if err != nil {
-		logger.LogAttrs(ctx, slog.LevelError, "failed to initialize trace provider", slog.String("error", err.Error()))
+		logger.LogAttrs(ctx, slog.LevelError, "Failed to initialize trace provider", slog.String("error", err.Error()))
 	}
 	defer func() {
 		if err := tp.Shutdown(ctx); err != nil {
-			logger.LogAttrs(ctx, slog.LevelError, "failed to shotdown properly", slog.String("error", err.Error()))
+			logger.LogAttrs(ctx, slog.LevelError, "Failed to shutdown properly", slog.String("error", err.Error()))
 		}
-		logger.LogAttrs(ctx, slog.LevelInfo, "", slog.String("message", "Shotdown trace provider"))
+		logger.LogAttrs(ctx, slog.LevelInfo, "", slog.String("message", "Shutdown trace provider"))
 	}()
 
 	var brokers string
 	mustMapEnv(&brokers, "KAFKA_SERVICE_ADDR")
 
-	brokerList := strings.Split(brokers, ",")
+	brokerList := strings.Split(brokers, ", ")
 	logger.LogAttrs(ctx, slog.LevelInfo, "Kafka brokers", slog.String("Kafka brokers", strings.Join(brokerList, ",")))
 
 	ctx, cancel := signal.NotifyContext(context.Background(), os.Interrupt, syscall.SIGTERM, syscall.SIGKILL)
@@ -97,12 +92,12 @@ func main() {
 		if err := consumerGroup.Close(); err != nil {
 			logger.LogAttrs(ctx, slog.LevelError, "Error closing consumer group", slog.String("error", err.Error()))
 		}
-		logger.Log(ctx, slog.LevelInfo, "Closed consumer group")
+		logger.LogAttrs(ctx, slog.LevelInfo, "Closed consumer group")
 	}()
 
 	<-ctx.Done()
 
-	logger.Log(ctx, slog.LevelInfo, "message", "Accounting service exited")
+	logger.LogAttrs(ctx, slog.LevelInfo, "Accounting service exited")
 }
 
 func mustMapEnv(target *string, envKey string) {
