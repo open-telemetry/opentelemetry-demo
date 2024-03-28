@@ -20,7 +20,11 @@ import (
 
 	"github.com/IBM/sarama"
 	"github.com/google/uuid"
+	otelhooks "github.com/open-feature/go-sdk-contrib/hooks/open-telemetry/pkg"
+	flagd "github.com/open-feature/go-sdk-contrib/providers/flagd/pkg"
+	"github.com/open-feature/go-sdk/openfeature"
 	"github.com/sirupsen/logrus"
+	"github.com/uptrace/opentelemetry-go-extra/otellogrus"
 	"go.opentelemetry.io/contrib/instrumentation/google.golang.org/grpc/otelgrpc"
 	"go.opentelemetry.io/contrib/instrumentation/net/http/otelhttp"
 	"go.opentelemetry.io/contrib/instrumentation/runtime"
@@ -34,9 +38,6 @@ import (
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/credentials/insecure"
-	flagd "github.com/open-feature/go-sdk-contrib/providers/flagd/pkg"
-	"github.com/open-feature/go-sdk/openfeature"
-	otelhooks "github.com/open-feature/go-sdk-contrib/hooks/open-telemetry/pkg"
 	healthpb "google.golang.org/grpc/health/grpc_health_v1"
 	"google.golang.org/grpc/status"
 	"google.golang.org/protobuf/proto"
@@ -57,15 +58,13 @@ var initResourcesOnce sync.Once
 
 func init() {
 	log = logrus.New()
-	log.Level = logrus.DebugLevel
-	log.Formatter = &logrus.JSONFormatter{
-		FieldMap: logrus.FieldMap{
-			logrus.FieldKeyTime:  "timestamp",
-			logrus.FieldKeyLevel: "severity",
-			logrus.FieldKeyMsg:   "message",
-		},
-		TimestampFormat: time.RFC3339Nano,
-	}
+	log.AddHook(otellogrus.NewHook(otellogrus.WithLevels(
+		logrus.PanicLevel,
+		logrus.FatalLevel,
+		logrus.WarnLevel,
+		logrus.InfoLevel,
+		logrus.DebugLevel,
+	)))
 	log.Out = os.Stdout
 }
 
@@ -91,7 +90,7 @@ func initTracerProvider() *sdktrace.TracerProvider {
 
 	exporter, err := otlptracegrpc.New(ctx)
 	if err != nil {
-		log.Fatalf("new otlp trace grpc exporter failed: %v", err)
+		log.WithContext(ctx).WithError(err)
 	}
 	tp := sdktrace.NewTracerProvider(
 		sdktrace.WithBatcher(exporter),
@@ -107,7 +106,7 @@ func initMeterProvider() *sdkmetric.MeterProvider {
 
 	exporter, err := otlpmetricgrpc.New(ctx)
 	if err != nil {
-		log.Fatalf("new otlp metric grpc exporter failed: %v", err)
+		log.WithContext(ctx).WithError(err)
 	}
 
 	mp := sdkmetric.NewMeterProvider(
@@ -200,15 +199,15 @@ func main() {
 	if svc.kafkaBrokerSvcAddr != "" {
 		svc.KafkaProducerClient, err = kafka.CreateKafkaProducer([]string{svc.kafkaBrokerSvcAddr}, log)
 		if err != nil {
-			log.Fatal(err)
+			log.WithContext(context.Background()).WithError(err)
 		}
 	}
 
-	log.Infof("service config: %+v", svc)
+	log.WithContext(context.Background()).Info("service config: %+v", svc)
 
 	lis, err := net.Listen("tcp", fmt.Sprintf(":%s", port))
 	if err != nil {
-		log.Fatal(err)
+		log.WithContext(context.Background()).WithError(err)
 	}
 
 	var srv = grpc.NewServer(
@@ -216,9 +215,9 @@ func main() {
 	)
 	pb.RegisterCheckoutServiceServer(srv, svc)
 	healthpb.RegisterHealthServer(srv, svc)
-	log.Infof("starting to listen on tcp: %q", lis.Addr().String())
+	log.WithContext(context.Background()).Info("starting to listen on tcp: %q", lis.Addr().String())
 	err = srv.Serve(lis)
-	log.Fatal(err)
+	log.WithContext(context.Background()).WithError(err)
 }
 
 func mustMapEnv(target *string, envKey string) {
@@ -243,7 +242,7 @@ func (cs *checkoutService) PlaceOrder(ctx context.Context, req *pb.PlaceOrderReq
 		attribute.String("app.user.id", req.UserId),
 		attribute.String("app.user.currency", req.UserCurrency),
 	)
-	log.Infof("[PlaceOrder] user_id=%q user_currency=%q", req.UserId, req.UserCurrency)
+	log.WithContext(ctx).Info("[PlaceOrder] user_id=%q user_currency=%q", req.UserId, req.UserCurrency)
 
 	var err error
 	defer func() {
@@ -276,7 +275,7 @@ func (cs *checkoutService) PlaceOrder(ctx context.Context, req *pb.PlaceOrderReq
 	if err != nil {
 		return nil, status.Errorf(codes.Internal, "failed to charge card: %+v", err)
 	}
-	log.Infof("payment went through (transaction_id: %s)", txID)
+	log.WithContext(ctx).Info("payment went through (transaction_id: %s)", txID)
 	span.AddEvent("charged",
 		trace.WithAttributes(attribute.String("app.payment.transaction.id", txID)))
 
@@ -309,9 +308,9 @@ func (cs *checkoutService) PlaceOrder(ctx context.Context, req *pb.PlaceOrderReq
 	)
 
 	if err := cs.sendOrderConfirmation(ctx, req.Email, orderResult); err != nil {
-		log.Warnf("failed to send order confirmation to %q: %+v", req.Email, err)
+		log.WithContext(ctx).Warn("failed to send order confirmation to %q: %+v", req.Email, err)
 	} else {
-		log.Infof("order confirmation email sent to %q", req.Email)
+		log.WithContext(ctx).Info("order confirmation email sent to %q", req.Email)
 	}
 
 	// send to kafka only if kafka broker address is set
@@ -376,7 +375,7 @@ func mustCreateClient(ctx context.Context, svcAddr string) *grpc.ClientConn {
 		grpc.WithStatsHandler(otelgrpc.NewClientHandler()),
 	)
 	if err != nil {
-		log.Fatalf("could not connect to %s service, err: %+v", svcAddr, err)
+		log.WithContext(ctx).WithError(err)
 	}
 
 	return c
@@ -438,13 +437,13 @@ func (cs *checkoutService) convertCurrency(ctx context.Context, from *pb.Money, 
 }
 
 func (cs *checkoutService) chargeCard(ctx context.Context, amount *pb.Money, paymentInfo *pb.CreditCardInfo) (string, error) {
-    paymentService := cs.paymentSvcClient
+	paymentService := cs.paymentSvcClient
 	if cs.checkPaymentFailure(ctx) {
-        badAddress := "badAddress:50051"
-        c := mustCreateClient(context.Background(), badAddress)
+		badAddress := "badAddress:50051"
+		c := mustCreateClient(context.Background(), badAddress)
 		paymentService = pb.NewPaymentServiceClient(c)
-    }
-	
+	}
+
 	paymentResp, err := paymentService.Charge(ctx, &pb.ChargeRequest{
 		Amount:     amount,
 		CreditCard: paymentInfo})
@@ -489,7 +488,7 @@ func (cs *checkoutService) shipOrder(ctx context.Context, address *pb.Address, i
 func (cs *checkoutService) sendToPostProcessor(ctx context.Context, result *pb.OrderResult) {
 	message, err := proto.Marshal(result)
 	if err != nil {
-		log.Errorf("Failed to marshal message to protobuf: %+v", err)
+		log.WithContext(ctx).WithError(err)
 		return
 	}
 
@@ -504,7 +503,7 @@ func (cs *checkoutService) sendToPostProcessor(ctx context.Context, result *pb.O
 
 	cs.KafkaProducerClient.Input() <- &msg
 	successMsg := <-cs.KafkaProducerClient.Successes()
-	log.Infof("Successful to write message. offset: %v", successMsg.Offset)
+	log.WithContext(ctx).Info("Successful to write message. offset: %v", successMsg.Offset)
 }
 
 func createProducerSpan(ctx context.Context, msg *sarama.ProducerMessage) trace.Span {
