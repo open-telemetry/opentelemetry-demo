@@ -9,6 +9,7 @@ package main
 import (
 	"context"
 	"fmt"
+	"log/slog"
 	"os"
 	"os/signal"
 	"strings"
@@ -16,8 +17,6 @@ import (
 	"syscall"
 
 	"github.com/IBM/sarama"
-	"github.com/sirupsen/logrus"
-	"github.com/uptrace/opentelemetry-go-extra/otellogrus"
 	"go.opentelemetry.io/otel"
 	"go.opentelemetry.io/otel/exporters/otlp/otlptrace/otlptracegrpc"
 	"go.opentelemetry.io/otel/propagation"
@@ -27,21 +26,14 @@ import (
 	"github.com/open-telemetry/opentelemetry-demo/src/accountingservice/kafka"
 )
 
-var log *logrus.Logger
 var resource *sdkresource.Resource
 var initResourcesOnce sync.Once
 
-func init() {
-	log = logrus.New()
-	log.AddHook(otellogrus.NewHook(otellogrus.WithLevels(
-		logrus.PanicLevel,
-		logrus.FatalLevel,
-		logrus.ErrorLevel,
-		logrus.WarnLevel,
-	)))
-	log.Out = os.Stdout
+func initLogger() *slog.Logger {
+	logger := slog.New(slog.NewJSONHandler(os.Stderr, nil)).With("service", "accounting")
+	slog.SetDefault(logger)
+	return logger
 }
-
 func initResource() *sdkresource.Resource {
 	initResourcesOnce.Do(func() {
 		extraResources, _ := sdkresource.New(
@@ -76,40 +68,41 @@ func initTracerProvider() (*sdktrace.TracerProvider, error) {
 }
 
 func main() {
+	logger := initLogger()
 	ctx := context.Background()
 	tp, err := initTracerProvider()
 	if err != nil {
-		log.WithContext(ctx).WithContext(ctx)
+		logger.LogAttrs(ctx, slog.LevelError, "failed to initialize trace provider", slog.String("error", err.Error()))
 	}
 	defer func() {
 		if err := tp.Shutdown(ctx); err != nil {
-			log.WithContext(ctx).WithError(err)
+			logger.LogAttrs(ctx, slog.LevelError, "failed to shotdown properly", slog.String("error", err.Error()))
 		}
-		log.WithContext(ctx).WithField("Message", "Shotdown trace provider")
+		logger.LogAttrs(ctx, slog.LevelInfo, "", slog.String("message", "Shotdown trace provider"))
 	}()
 
 	var brokers string
 	mustMapEnv(&brokers, "KAFKA_SERVICE_ADDR")
 
 	brokerList := strings.Split(brokers, ",")
-	log.WithField("Kafka brokers: %s", strings.Join(brokerList, ", "))
+	logger.LogAttrs(ctx, slog.LevelInfo, "Kafka brokers", slog.String("Kafka brokers", strings.Join(brokerList, ",")))
 
 	ctx, cancel := signal.NotifyContext(context.Background(), os.Interrupt, syscall.SIGTERM, syscall.SIGKILL)
 	defer cancel()
 	var consumerGroup sarama.ConsumerGroup
-	if consumerGroup, err = kafka.StartConsumerGroup(ctx, brokerList, log); err != nil {
-		log.WithContext(ctx).WithError(err)
+	if consumerGroup, err = kafka.StartConsumerGroup(ctx, brokerList, logger); err != nil {
+		logger.LogAttrs(ctx, slog.LevelError, "Failed to start consumer group", slog.String("error", err.Error()))
 	}
 	defer func() {
 		if err := consumerGroup.Close(); err != nil {
-			log.WithContext(ctx).WithField("Error closing consumer group: %v", err)
+			logger.LogAttrs(ctx, slog.LevelError, "Error closing consumer group", slog.String("error", err.Error()))
 		}
-		log.WithContext(ctx).WithField("Message", "Closed consumer group")
+		logger.Log(ctx, slog.LevelInfo, "Closed consumer group")
 	}()
 
 	<-ctx.Done()
 
-	log.WithContext(ctx).WithField("Message", "Accounting service exited")
+	logger.Log(ctx, slog.LevelInfo, "message", "Accounting service exited")
 }
 
 func mustMapEnv(target *string, envKey string) {

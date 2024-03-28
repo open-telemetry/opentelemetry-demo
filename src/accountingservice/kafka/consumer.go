@@ -4,12 +4,11 @@ package kafka
 
 import (
 	"context"
+	"log/slog"
 
 	pb "github.com/open-telemetry/opentelemetry-demo/src/accountingservice/genproto/oteldemo"
 
 	"github.com/IBM/sarama"
-	"github.com/sirupsen/logrus"
-	"github.com/uptrace/opentelemetry-go-extra/otellogrus"
 	"google.golang.org/protobuf/proto"
 )
 
@@ -19,16 +18,7 @@ var (
 	GroupID         = "accountingservice"
 )
 
-func initLogger() {
-	logrus.AddHook(otellogrus.NewHook(otellogrus.WithLevels(
-		logrus.PanicLevel,
-		logrus.FatalLevel,
-		logrus.ErrorLevel,
-		logrus.WarnLevel,
-	)))
-}
-
-func StartConsumerGroup(ctx context.Context, brokers []string, log *logrus.Logger) (sarama.ConsumerGroup, error) {
+func StartConsumerGroup(ctx context.Context, brokers []string, log *slog.Logger) (sarama.ConsumerGroup, error) {
 	saramaConfig := sarama.NewConfig()
 	saramaConfig.Version = ProtocolVersion
 	// So we can know the partition and offset of messages.
@@ -53,7 +43,7 @@ func StartConsumerGroup(ctx context.Context, brokers []string, log *logrus.Logge
 }
 
 type groupHandler struct {
-	log *logrus.Logger
+	log *slog.Logger
 }
 
 func (g *groupHandler) Setup(_ sarama.ConsumerGroupSession) error {
@@ -73,12 +63,7 @@ func (g *groupHandler) ConsumeClaim(session sarama.ConsumerGroupSession, claim s
 			if err != nil {
 				return err
 			}
-
-			g.log.WithContext(session.Context()).WithFields(logrus.Fields{
-				"orderId":          orderResult.OrderId,
-				"messageTimestamp": message.Timestamp,
-				"messageTopic":     message.Topic,
-			}).Info("Message claimed")
+			g.log.LogAttrs(session.Context(), slog.LevelInfo, "Message claimed", slog.String("orderId", orderResult.OrderId), slog.String("messageTimestamp", message.Timestamp.String()), slog.String("messageTopic", message.Topic))
 			session.MarkMessage(message, "")
 
 		case <-session.Context().Done():
