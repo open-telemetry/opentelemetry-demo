@@ -7,6 +7,8 @@ the release.
 
 ## Unreleased
 
+## 1.9.0
+
 * [featureflag] deprecate in favor of flagd
   ([#1338](https://github.com/open-telemetry/opentelemetry-demo/pull/1388))
 * [checkoutservice] add producer interceptor for tracing
