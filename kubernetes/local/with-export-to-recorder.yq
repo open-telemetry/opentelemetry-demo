@@ -1,0 +1,2 @@
+.opentelemetry-collector.config.exporters.otlp/recorder={"endpoint": "dash0-load-test-recorder:4317", "tls": {"insecure": true}} |
+.opentelemetry-collector.config.service.pipelines.[].exporters += "otlp/recorder"

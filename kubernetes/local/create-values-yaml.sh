@@ -21,6 +21,11 @@ else
     yq --from-file dash0-otel-demo-local-k8s.yq > \
     dash0-otel-demo-local-k8s-values.yaml
 
+  if [[ -n ${WITH_RECORDER:-} ]]; then
+    echo "Adding an additional exporter to send to the recorder (needs to be deployed separately)"
+    yq -i --from-file with-export-to-recorder.yq dash0-otel-demo-local-k8s-values.yaml
+  fi
+
   if [[ -n ${OTEL_EXPORTER_OTLP_ENDPOINT:-} ]]; then
     echo "Using non-default reporting endpoint from environment variable"
     echo "OTEL_EXPORTER_OTLP_ENDPOINT: $OTEL_EXPORTER_OTLP_ENDPOINT"
