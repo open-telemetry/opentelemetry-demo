@@ -1,0 +1,86 @@
+nameOverride: load-test-recorder
+mode: deployment
+ports:
+  # Explicitly disable the default ports
+  jaeger-compact:
+    enabled: false
+  jaeger-thrift:
+    enabled: false
+  jaeger-grpc:
+    enabled: false
+  zipkin:
+    enabled: false
+    # Expose the self-monitoring Prometheus metric scrape endpoint
+    # metrics:
+    #   enabled: true
+replicaCount: 1
+podDisruptionBudget:
+  enabled: true
+  minAvailable: 1
+autoscaling:
+  enabled: true
+resources:
+  requests:
+    cpu: 256m
+    memory: 512Mi
+  limits:
+    cpu: 4
+    memory: 8Gi
+podAnnotations:
+  prometheus.io/scrape: "true"
+  prometheus.io/scheme: "http"
+  prometheus.io/path: "/metrics"
+  prometheus.io/port: "8888"
+extraVolumes:
+  - name: recorded-data
+    hostPath:
+      path: /will/be/replaced/by/deploy-recorder.sh
+      type: Directory
+extraVolumeMounts:
+  - name: recorded-data
+    mountPath: /data
+config:
+  extensions:
+    # The health_check extension is mandatory for this chart.
+    # Without the health_check extension the collector will fail the readiness and liveliness probes.
+    # The health_check extension can be modified, but should never be removed.
+    health_check: {}
+    memory_ballast:
+      size_in_percentage: "0"
+      size_mib: 0
+  receivers:
+    # Disable the standard Jaeger, Zipkin & Prometheus receivers.
+    jaeger: null
+    zipkin: null
+    prometheus: null
+  exporters:
+    debug: {}
+    #   verbosity: detailed
+    file/metrics:
+      path: /data/metrics.json
+    file/traces:
+      path: /data/traces.json
+    file/logs:
+      path: /data/logs.json
+  service:
+    extensions:
+      - health_check
+    pipelines:
+      metrics:
+        receivers:
+          - otlp
+        exporters:
+          - debug
+          - file/metrics
+      traces:
+        receivers:
+          - otlp
+        exporters:
+          - debug
+          - file/traces
+      logs:
+        receivers:
+          - otlp
+        exporters:
+          - debug
+          - file/logs
