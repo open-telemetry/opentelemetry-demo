@@ -1,6 +1,17 @@
 .otelDemo.helm |
+del(.grafana.*) |
+.grafana.enabled=false |
+del(.jaeger.*) |
+.jaeger.enabled=false |
+del(.opentelemetry-collector.config.exporters.otlp) |
+del(.prometheus.*) |
+.prometheus.enabled=false |
+del(.opensearch.*) |
+.opensearch.enabled=false |
 .default.image.pullSecrets=[{"name": "regcred"}] |
+del(.opentelemetry-collector.config.exporters.prometheus) |
 del(.opentelemetry-collector.config.exporters.otlp/dash0-prod) |
 del(.opentelemetry-collector.config.exporters.otlp/dash0-prod-pen-testing) |
 del(.opentelemetry-collector.config.service.pipelines.*.exporters.[] | select(. == "otlp/dash0-prod*") ) |
+del(.opentelemetry-collector.config.service.pipelines.traces.exporters.[] | select(. == "otlp") ) |
 .opentelemetry-collector.config.processors.resource.attributes[] |= select(.key == "cloud.account.id").value |= "012345678901"
