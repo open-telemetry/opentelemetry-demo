@@ -9,8 +9,9 @@ http {
         endpoint ${OTEL_COLLECTOR_HOST}:${OTEL_COLLECTOR_PORT_GRPC};
     }
     otel_trace on;
-    otel_trace_context extract;
+    otel_trace_context propagate;
     otel_service_name ${OTEL_SERVICE_NAME};
+    otel_span_name imageprovider;
 
 
     include mime.types;
