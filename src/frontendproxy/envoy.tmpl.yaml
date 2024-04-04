@@ -45,6 +45,8 @@ static_resources:
                           route: { cluster: jaeger }
                         - match: { prefix: "/grafana" }
                           route: { cluster: grafana }
+                        - match: { prefix: "/images/" }
+                          route: { cluster: imageprovider, prefix_rewrite: "/" }
                         - match: { prefix: "/" }
                           route: { cluster: frontend }
                 http_filters:
@@ -94,6 +96,18 @@ static_resources:
                     socket_address:
                       address: ${FRONTEND_HOST}
                       port_value: ${FRONTEND_PORT}
+    - name: imageprovider
+      type: STRICT_DNS
+      lb_policy: ROUND_ROBIN
+      load_assignment:
+        cluster_name: imageprovider
+        endpoints:
+          - lb_endpoints:
+              - endpoint:
+                  address:
+                    socket_address:
+                      address: ${IMAGE_PROVIDER_HOST}
+                      port_value: ${IMAGE_PROVIDER_PORT}
     - name: loadgen
       type: STRICT_DNS
       lb_policy: ROUND_ROBIN

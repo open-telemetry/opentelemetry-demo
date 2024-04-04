@@ -309,6 +309,8 @@ services:
         condition: service_started
       otelcol:
         condition: service_started
+      imageprovider:
+        condition: service_started
     logging: *logging
 
   # Frontend Proxy (Envoy)
@@ -336,6 +338,8 @@ services:
       - JAEGER_SERVICE_PORT
       - JAEGER_SERVICE_HOST
       - OTEL_COLLECTOR_HOST
+      - IMAGE_PROVIDER_HOST
+      - IMAGE_PROVIDER_PORT
       - OTEL_COLLECTOR_PORT_GRPC
       - OTEL_COLLECTOR_PORT_HTTP
       - OTEL_RESOURCE_ATTRIBUTES
@@ -349,6 +353,33 @@ services:
         condition: service_started
       grafana:
         condition: service_started
+
+  # Imageprovider
+  imageprovider:
+    image: ${IMAGE_NAME}:${DEMO_VERSION}-imageprovider
+    container_name: imageprovider
+    build:
+      context: ./
+      dockerfile: ./src/imageprovider/Dockerfile
+      cache_from:
+        - ${IMAGE_NAME}:${IMAGE_VERSION}-imageprovider
+    deploy:
+      resources:
+        limits:
+          memory: 120M
+    restart: unless-stopped
+    ports:
+      - "${IMAGE_PROVIDER_PORT}"
+    environment:
+      - IMAGE_PROVIDER_PORT
+      - OTEL_COLLECTOR_HOST
+      - OTEL_COLLECTOR_PORT_GRPC
+      - OTEL_SERVICE_NAME=imageprovider
+      - OTEL_RESOURCE_ATTRIBUTES
+    depends_on:
+      otelcol:
+        condition: service_started
+    logging: *logging
 
   # Load Generator
   loadgenerator:

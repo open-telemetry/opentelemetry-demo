@@ -53,6 +53,8 @@ the release.
   ([#1470](https://github.com/open-telemetry/opentelemetry-demo/pull/1470))
 * [frontend] disable instrumentation-fs library
   ([#1473](https://github.com/open-telemetry/opentelemetry-demo/pull/1473))
+* [Imageprovider] Create Nginx service to host images, add instrumentation to it
+  ([#1462](https://github.com/open-telemetry/opentelemetry-demo/pull/1462))
 
 ## 1.8.0
 
