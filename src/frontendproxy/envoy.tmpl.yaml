@@ -45,7 +45,7 @@ static_resources:
                           route: { cluster: jaeger }
                         - match: { prefix: "/grafana" }
                           route: { cluster: grafana }
-                        - match: { prefix: "/images" }
+                        - match: { prefix: "/images/" }
                           route: { cluster: imageprovider, prefix_rewrite: "/" }
                         - match: { prefix: "/" }
                           route: { cluster: frontend }
