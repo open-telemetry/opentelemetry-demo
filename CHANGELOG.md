@@ -7,10 +7,8 @@ the release.
 
 ## Unreleased
 
-* [loadgenerator] emit logs via OTLP
-  ([#1446](https://github.com/open-telemetry/opentelemetry-demo/pull/1446))
-* [frontend] reset quantity when new product selected
-  ([#1447](https://github.com/open-telemetry/opentelemetry-demo/pull/1447))
+## 1.9.0
+
 * [featureflag] deprecate in favor of flagd
   ([#1338](https://github.com/open-telemetry/opentelemetry-demo/pull/1388))
 * [checkoutservice] add producer interceptor for tracing
@@ -31,8 +29,14 @@ the release.
   ([#1415](https://github.com/open-telemetry/opentelemetry-demo/pull/1415))
 * [chore] - add tests and odd profiles to make stop
   ([#1427](https://github.com/open-telemetry/opentelemetry-demo/pull/1427))
+* [shippingservice] fix context propagation
+  ([#1433](https://github.com/open-telemetry/opentelemetry-demo/pull/1433))
 * [chore] - Update Telemetry Components
   ([#1440](https://github.com/open-telemetry/opentelemetry-demo/pull/1440))
+* [loadgenerator] emit logs via OTLP
+  ([#1446](https://github.com/open-telemetry/opentelemetry-demo/pull/1446))
+* [frontend] reset quantity when new product selected
+  ([#1447](https://github.com/open-telemetry/opentelemetry-demo/pull/1447))
 * [paymentservice] add paymentServiceFailure feature flag
   ([#1449](https://github.com/open-telemetry/opentelemetry-demo/pull/1449))
 * [checkoutservice] add paymentServiceUnreachable feature flag
@@ -41,12 +45,16 @@ the release.
   ([#1448](https://github.com/open-telemetry/opentelemetry-demo/pull/1448))
 * [cartservice] update .NET to .NET 8.0.3
   ([#1460](https://github.com/open-telemetry/opentelemetry-demo/pull/1460))
+* [adservice] add adServiceManualGC feature flag
+  ([#1463](https://github.com/open-telemetry/opentelemetry-demo/pull/1463))
 * [frontendproxy] remove deprecated start_child_span option
   ([#1469](https://github.com/open-telemetry/opentelemetry-demo/pull/1469))
 * [currency] fix metric name
   ([#1470](https://github.com/open-telemetry/opentelemetry-demo/pull/1470))
 * [frontend] disable instrumentation-fs library
   ([#1473](https://github.com/open-telemetry/opentelemetry-demo/pull/1473))
+* [Imageprovider] Create Nginx service to host images, add instrumentation to it
+  ([#1462](https://github.com/open-telemetry/opentelemetry-demo/pull/1462))
 
 ## 1.8.0
 
