@@ -1,20 +1,46 @@
 // Copyright The OpenTelemetry Authors
 // SPDX-License-Identifier: Apache-2.0
 
-const opentelemetry = require('@opentelemetry/sdk-node');
-const { getNodeAutoInstrumentations } = require('@opentelemetry/auto-instrumentations-node');
-const { OTLPTraceExporter } = require('@opentelemetry/exporter-trace-otlp-grpc');
-const { OTLPMetricExporter } = require('@opentelemetry/exporter-metrics-otlp-grpc');
+const { NodeSDK, logs, tracing } = require('@opentelemetry/sdk-node');
+const {
+	getNodeAutoInstrumentations,
+} = require('@opentelemetry/auto-instrumentations-node');
+const {
+	OTLPTraceExporter,
+} = require('@opentelemetry/exporter-trace-otlp-grpc');
+const {
+	OTLPMetricExporter,
+} = require('@opentelemetry/exporter-metrics-otlp-grpc');
 const { PeriodicExportingMetricReader } = require('@opentelemetry/sdk-metrics');
-const { alibabaCloudEcsDetector } = require('@opentelemetry/resource-detector-alibaba-cloud');
-const { awsEc2Detector, awsEksDetector } = require('@opentelemetry/resource-detector-aws');
-const { containerDetector } = require('@opentelemetry/resource-detector-container');
+const {
+	alibabaCloudEcsDetector,
+} = require('@opentelemetry/resource-detector-alibaba-cloud');
+const {
+	awsEc2Detector,
+	awsEksDetector,
+} = require('@opentelemetry/resource-detector-aws');
+const {
+	containerDetector,
+} = require('@opentelemetry/resource-detector-container');
 const { gcpDetector } = require('@opentelemetry/resource-detector-gcp');
-const { envDetector, hostDetector, osDetector, processDetector } = require('@opentelemetry/resources');
-const { PinoInstrumentation } = require('@opentelemetry/instrumentation-pino');
+const {
+	envDetector,
+	hostDetector,
+	osDetector,
+	processDetector,
+} = require('@opentelemetry/resources');
+const {
+	BunyanInstrumentation,
+} = require('@opentelemetry/instrumentation-bunyan');
 
-const sdk = new opentelemetry.NodeSDK({
+const sdk = new NodeSDK({
 	traceExporter: new OTLPTraceExporter(),
+	spanProcessor: new tracing.SimpleSpanProcessor(
+		new tracing.ConsoleSpanExporter()
+	),
+	logRecordProcessor: new logs.SimpleLogRecordProcessor(
+		new logs.ConsoleLogRecordExporter()
+	),
 	instrumentations: [
 		getNodeAutoInstrumentations({
 			// only instrument fs if it is part of another trace
@@ -22,16 +48,8 @@ const sdk = new opentelemetry.NodeSDK({
 				requireParentSpan: true,
 			},
 		}),
-		new PinoInstrumentation({
-			logHook: (span, record, level) => {
-				record['resource.service.name'] =
-					provider.resource.attributes['service.name'];
-			},
-			logKeys: {
-				traceId: 'traceId',
-				spanId: 'spanId',
-				traceFlags: 'traceFlags',
-			},
+		new BunyanInstrumentation({
+			// See below for Bunyan instrumentation options.
 		}),
 	],
 	metricReader: new PeriodicExportingMetricReader({

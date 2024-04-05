@@ -1,6 +1,5 @@
 // Copyright The OpenTelemetry Authors
 // SPDX-License-Identifier: Apache-2.0
 
-const pino = require('pino');
-
-module.exports = pino();
+const bunyan = require('bunyan');
+module.exports = bunyan.createLogger({ name: 'paymentservice' });
