@@ -9,6 +9,7 @@ the release.
 
 ## 1.9.0
 
+* [chore] docker compose: add container name as tag attribute to container logs
 * [featureflag] deprecate in favor of flagd
   ([#1338](https://github.com/open-telemetry/opentelemetry-demo/pull/1388))
 * [checkoutservice] add producer interceptor for tracing
