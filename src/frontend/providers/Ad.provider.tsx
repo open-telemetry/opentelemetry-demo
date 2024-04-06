@@ -29,9 +29,9 @@ const AdProvider = ({ children, productIds, contextKeys }: IProps) => {
   const { selectedCurrency } = useCurrency();
   const { data: adList = [] } = useQuery(
     ['ads', contextKeys],
-    () => {
+    async () => {
       if (contextKeys.length === 0) {
-        return Promise.resolve([]);
+        return [];
       } else {
         return ApiGateway.listAds(contextKeys);
       }

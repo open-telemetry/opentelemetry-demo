@@ -5,6 +5,7 @@ import { Ad, Address, Cart, CartItem, Money, PlaceOrderRequest, Product } from '
 import { IProductCart, IProductCartItem, IProductCheckout } from '../types/Cart';
 import request from '../utils/Request';
 import SessionGateway from './Session.gateway';
+import { context, propagation } from "@opentelemetry/api";
 
 const { userId } = SessionGateway.getSession();
 
@@ -82,11 +83,18 @@ const ApiGateway = () => ({
     });
   },
   listAds(contextKeys: string[]) {
-    return request<Ad[]>({
-      url: `${basePath}/data`,
-      queryParams: {
-        contextKeys,
-      },
+    // TODO: Figure out a better way to do this so session ID gets propagated to
+    // all endpoints
+    const baggage = propagation.getActiveBaggage() || propagation.createBaggage();
+    const newBaggage = baggage.setEntry('app.session.id', { value: userId });
+    const newContext = propagation.setBaggage(context.active(), newBaggage);
+    context.with(newContext, () => {
+      return request<Ad[]>({
+        url: `${basePath}/data`,
+        queryParams: {
+          contextKeys,
+        },
+      });
     });
   },
 });
