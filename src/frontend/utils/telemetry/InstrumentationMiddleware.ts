@@ -2,10 +2,9 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import { NextApiHandler } from 'next';
-import {BaggageEntry, context, Exception, propagation, Span, SpanStatusCode, trace} from '@opentelemetry/api';
+import {context, Exception, Span, SpanStatusCode, trace} from '@opentelemetry/api';
 import { SemanticAttributes } from '@opentelemetry/semantic-conventions';
 import { metrics } from '@opentelemetry/api';
-import { AttributeNames } from '../enums/AttributeNames';
 
 const meter = metrics.getMeter('frontend');
 const requestCounter = meter.createCounter('app.frontend.requests');
@@ -16,12 +15,6 @@ const InstrumentationMiddleware = (handler: NextApiHandler): NextApiHandler => {
     const [target] = url.split('?');
 
     const span = trace.getSpan(context.active()) as Span;
-
-    if (request.query['sessionId'] != null) {
-      span.setAttribute(AttributeNames.SESSION_ID, request.query['sessionId']);
-      const baggage = propagation.getBaggage(context.active());
-      baggage?.setEntry(AttributeNames.SESSION_ID, { value: request.query['sessionId'] } as BaggageEntry);
-    }
 
     let httpStatus = 200;
     try {
