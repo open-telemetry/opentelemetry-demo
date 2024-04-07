@@ -104,6 +104,10 @@ jobs:
             tag_suffix: frontend-tests
             context: ./
             setup-qemu: true
+          - file: ./test/tracetesting/Dockerfile
+            tag_suffix: traceBasedTests
+            context: ./
+            setup-qemu: true
 
     steps:
       - uses: actions/checkout@v4
