@@ -61,6 +61,8 @@ the release.
   ([#1473](https://github.com/open-telemetry/opentelemetry-demo/pull/1473))
 * [Imageprovider] Create Nginx service to host images, add instrumentation to it
   ([#1462](https://github.com/open-telemetry/opentelemetry-demo/pull/1462))
+* [adservice] add adServiceHighCpu feature flag
+  ([#1510](https://github.com/open-telemetry/opentelemetry-demo/pull/1510))
 
 ## 1.8.0
 
