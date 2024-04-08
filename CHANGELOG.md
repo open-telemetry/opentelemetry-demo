@@ -64,7 +64,6 @@ the release.
 * [loadgenerator] added loadgeneratorFloodHomepage flagd
   ([#1486](https://github.com/open-telemetry/opentelemetry-demo/pull/1486))
 
-
 ## 1.8.0
 
 * [grafana] update grafana to 10.2.3

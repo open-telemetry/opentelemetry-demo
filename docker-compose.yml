@@ -413,8 +413,11 @@ services:
       - OTEL_SERVICE_NAME=loadgenerator
       - PROTOCOL_BUFFERS_PYTHON_IMPLEMENTATION=python
       - FLAGD_HOST
+      - FLAGD_PORT
     depends_on:
       frontend:
+        condition: service_started
+      flagd:
         condition: service_started
     logging: *logging
 
