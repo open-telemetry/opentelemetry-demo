@@ -78,6 +78,15 @@
         "off": false
       },
       "defaultVariant": "off"
+    },
+    "loadgeneratorFloodHomepage": {
+      "description": "Flood the frontend with a large amount of requests.",
+      "state": "ENABLED",
+      "variants": {
+        "on": 100,
+        "off": 0
+      },
+      "defaultVariant": "off"
     }
   }
 }
