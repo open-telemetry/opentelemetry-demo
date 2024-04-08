@@ -4,6 +4,7 @@
 import { Ad, Address, Cart, CartItem, Money, PlaceOrderRequest, Product } from '../protos/demo';
 import { IProductCart, IProductCartItem, IProductCheckout } from '../types/Cart';
 import request from '../utils/Request';
+import { AttributeNames } from '../utils/enums/AttributeNames';
 import SessionGateway from './Session.gateway';
 import { context, propagation } from "@opentelemetry/api";
 
@@ -86,7 +87,7 @@ const ApiGateway = () => ({
     // TODO: Figure out a better way to do this so session ID gets propagated to
     // all endpoints
     const baggage = propagation.getActiveBaggage() || propagation.createBaggage();
-    const newBaggage = baggage.setEntry('app.session.id', { value: userId });
+    const newBaggage = baggage.setEntry(AttributeNames.SESSION_ID, { value: userId });
     const newContext = propagation.setBaggage(context.active(), newBaggage);
     context.with(newContext, () => {
       return request<Ad[]>({

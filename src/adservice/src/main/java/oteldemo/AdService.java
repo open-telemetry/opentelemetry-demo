@@ -157,8 +157,8 @@ public final class AdService {
 
         Baggage baggage = Baggage.fromContextOrNull(Context.current());
         if (baggage != null) {
-          final String sessionId = baggage.getEntryValue("app.session.id");
-          span.setAttribute("app.session.id", sessionId);
+          final String sessionId = baggage.getEntryValue("session.id");
+          span.setAttribute("session.id", sessionId);
           ffClient.setEvaluationContext(new MutableContext().add("session", sessionId));
         } else {
           logger.info("no baggage found in context");
