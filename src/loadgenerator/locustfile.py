@@ -33,6 +33,11 @@ from opentelemetry.exporter.otlp.proto.grpc._log_exporter import (
 from opentelemetry.sdk._logs import LoggerProvider, LoggingHandler
 from opentelemetry.sdk._logs.export import BatchLogRecordProcessor
 from opentelemetry.sdk.resources import Resource
+
+from openfeature import api
+from openfeature.contrib.provider.flagd import FlagdProvider
+from openfeature.exception import OpenFeatureError
+
 from playwright.async_api import Route, Request
 
 logger_provider = LoggerProvider(resource=Resource.create(
@@ -63,6 +68,14 @@ RequestsInstrumentor().instrument()
 SystemMetricsInstrumentor().instrument()
 URLLib3Instrumentor().instrument()
 logging.info("Instrumentation complete")
+
+# Initialize Flagd provider
+api.set_provider(FlagdProvider(host=os.environ.get('FLAGD_HOST', 'flagd'), port=os.environ.get('FLAGD_PORT', 8013)))
+
+def get_flagd_value(FlagName):
+    # Initialize OpenFeature
+    client = api.get_client()
+    return client.get_integer_value(FlagName, 0)
 
 categories = [
     "binoculars",
@@ -152,6 +165,11 @@ class WebsiteUser(HttpUser):
         checkout_person = random.choice(people)
         checkout_person["userId"] = user
         self.client.post("/api/checkout", json=checkout_person)
+
+    @task(5)
+    def flood_home(self):
+        for _ in range(0, get_flagd_value("loadgeneratorFloodHomepage")):
+            self.client.get("/")
 
     def on_start(self):
         ctx = baggage.set_baggage("synthetic_request", "true")
