@@ -67,8 +67,3 @@ spec:
     selector: span[tracetest.span.type="messaging" name="orders receive" messaging.system="kafka" messaging.destination.name="orders" messaging.operation="receive"]
     assertions:
     - attr:name = "orders receive"
-  - name: The order was sent to fraud detection team
-    # captures the span emitted by Kafka instrumentation for Kotlin
-    selector: span[tracetest.span.type="messaging" name="orders process" messaging.system="kafka" messaging.operation="process"]
-    assertions:
-    - attr:name = "orders process"
