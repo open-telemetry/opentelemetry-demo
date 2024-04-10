@@ -4,12 +4,15 @@
 name: Label Pull Requests
 
 on:
-  pull_request:
+  pull_request_target:
     types: [opened, synchronize, reopened]
 
 jobs:
   label:
     runs-on: ubuntu-latest
+    permissions:
+      pull-requests: write
+      contents: read
     steps:
       - name: Checkout
         uses: actions/checkout@v2
@@ -34,10 +37,9 @@ jobs:
         if: steps.file_changes.outputs.docsUpdateRequired == 'true'
         uses: actions/github-script@v7
         with:
-          github-token: ${{secrets.GITHUB_TOKEN}}
           script: |
             const issue_number = context.issue.number;
-            github.issues.addLabels({
+            github.rest.issues.addLabels({
               issue_number: issue_number,
               owner: context.repo.owner,
               repo: context.repo.repo,
@@ -48,10 +50,9 @@ jobs:
         if: steps.file_changes.outputs.helmUpdateRequired == 'true'
         uses: actions/github-script@v7
         with:
-          github-token: ${{secrets.GITHUB_TOKEN}}
           script: |
             const issue_number = context.issue.number;
-            github.issues.addLabels({
+            github.rest.issues.addLabels({
               issue_number: issue_number,
               owner: context.repo.owner,
               repo: context.repo.repo,

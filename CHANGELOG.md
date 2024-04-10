@@ -7,8 +7,16 @@ the release.
 
 ## Unreleased
 
+* [frauddetectionservice] use span links when consuming from Kafka
+  ([#1501](https://github.com/open-telemetry/opentelemetry-demo/pull/1501))
+* [frontend] reunite trace from loadgenerator
+  ([#1506](https://github.com/open-telemetry/opentelemetry-demo/pull/1506))
+* [repo] add traceBasedTests image to published images
+  ([#1507](https://github.com/open-telemetry/opentelemetry-demo/pull/1507))
+
 ## 1.9.0
 
+* [chore] docker compose: add container name as tag attribute to container logs
 * [featureflag] deprecate in favor of flagd
   ([#1338](https://github.com/open-telemetry/opentelemetry-demo/pull/1388))
 * [checkoutservice] add producer interceptor for tracing
@@ -55,6 +63,8 @@ the release.
   ([#1473](https://github.com/open-telemetry/opentelemetry-demo/pull/1473))
 * [Imageprovider] Create Nginx service to host images, add instrumentation to it
   ([#1462](https://github.com/open-telemetry/opentelemetry-demo/pull/1462))
+* [loadgenerator] added loadgeneratorFloodHomepage flagd
+  ([#1486](https://github.com/open-telemetry/opentelemetry-demo/pull/1486))
 
 ## 1.8.0
 
