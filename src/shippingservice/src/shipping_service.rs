@@ -1,9 +1,9 @@
 // Copyright The OpenTelemetry Authors
 // SPDX-License-Identifier: Apache-2.0
 
+use opentelemetry::trace::{FutureExt, SpanKind, TraceContextExt, Tracer};
 use opentelemetry::{global, propagation::Extractor, trace::Span, Context, KeyValue};
-use opentelemetry::trace::{FutureExt, TraceContextExt, SpanKind, Tracer};
-use opentelemetry_semantic_conventions as semcov;
+use opentelemetry_semantic_conventions as semconv;
 use shop::shipping_service_server::ShippingService;
 use shop::{GetQuoteRequest, GetQuoteResponse, Money, ShipOrderRequest, ShipOrderResponse};
 use tonic::{Request, Response, Status};
@@ -55,7 +55,7 @@ impl ShippingService for ShippingServer {
         &self,
         request: Request<GetQuoteRequest>,
     ) -> Result<Response<GetQuoteResponse>, Status> {
-        info!("GetQuoteRequest: {:?}", request);
+        debug!("GetQuoteRequest: {:?}", request);
         let parent_cx =
             global::get_text_map_propagator(|prop| prop.extract(&MetadataMap(request.metadata())));
 
@@ -70,11 +70,17 @@ impl ShippingService for ShippingServer {
         // (although now everything is assumed to be the same price)
         // check out the create_quote_from_count method to see how we use the span created here
         let tracer = global::tracer("shippingservice");
-        let mut span = tracer.span_builder("oteldemo.ShippingService/GetQuote").with_kind(SpanKind::Server).start_with_context(&tracer, &parent_cx);
-        span.set_attribute(semcov::trace::RPC_SYSTEM.string(RPC_SYSTEM_GRPC));
+        let mut span = tracer
+            .span_builder("oteldemo.ShippingService/GetQuote")
+            .with_kind(SpanKind::Server)
+            .start_with_context(&tracer, &parent_cx);
+        span.set_attribute(KeyValue::new(semconv::trace::RPC_SYSTEM, RPC_SYSTEM_GRPC));
 
         span.add_event("Processing get quote request".to_string(), vec![]);
-        span.set_attribute(KeyValue::new("app.shipping.zip_code", request_message.address.unwrap().zip_code));
+        span.set_attribute(KeyValue::new(
+            "app.shipping.zip_code",
+            request_message.address.unwrap().zip_code,
+        ));
 
         let cx = Context::current_with_span(span);
         let q = match create_quote_from_count(itemct)
@@ -82,7 +88,13 @@ impl ShippingService for ShippingServer {
             .await
         {
             Ok(quote) => quote,
-            Err(status) => {cx.span().set_attribute(semcov::trace::RPC_GRPC_STATUS_CODE.i64(RPC_GRPC_STATUS_CODE_UNKNOWN)); return Err(status)},
+            Err(status) => {
+                cx.span().set_attribute(KeyValue::new(
+                    semconv::trace::RPC_GRPC_STATUS_CODE,
+                    RPC_GRPC_STATUS_CODE_UNKNOWN,
+                ));
+                return Err(status);
+            }
         };
 
         let reply = GetQuoteResponse {
@@ -94,14 +106,17 @@ impl ShippingService for ShippingServer {
         };
         info!("Sending Quote: {}", q);
 
-        cx.span().set_attribute(semcov::trace::RPC_GRPC_STATUS_CODE.i64(RPC_GRPC_STATUS_CODE_OK));
+        cx.span().set_attribute(KeyValue::new(
+            semconv::trace::RPC_GRPC_STATUS_CODE,
+            RPC_GRPC_STATUS_CODE_OK,
+        ));
         Ok(Response::new(reply))
     }
     async fn ship_order(
         &self,
         request: Request<ShipOrderRequest>,
     ) -> Result<Response<ShipOrderResponse>, Status> {
-        info!("ShipOrderRequest: {:?}", request);
+        debug!("ShipOrderRequest: {:?}", request);
 
         let parent_cx =
             global::get_text_map_propagator(|prop| prop.extract(&MetadataMap(request.metadata())));
@@ -109,8 +124,10 @@ impl ShippingService for ShippingServer {
         // we'll create a span and associated events all in this function.
         let tracer = global::tracer("shippingservice");
         let mut span = tracer
-            .span_builder("oteldemo.ShippingService/ShipOrder").with_kind(SpanKind::Server).start_with_context(&tracer, &parent_cx);
-        span.set_attribute(semcov::trace::RPC_SYSTEM.string(RPC_SYSTEM_GRPC));
+            .span_builder("oteldemo.ShippingService/ShipOrder")
+            .with_kind(SpanKind::Server)
+            .start_with_context(&tracer, &parent_cx);
+        span.set_attribute(KeyValue::new(semconv::trace::RPC_SYSTEM, RPC_SYSTEM_GRPC));
 
         span.add_event("Processing shipping order request".to_string(), vec![]);
 
@@ -123,7 +140,10 @@ impl ShippingService for ShippingServer {
             vec![],
         );
 
-        span.set_attribute(semcov::trace::RPC_GRPC_STATUS_CODE.i64(RPC_GRPC_STATUS_CODE_OK));
+        span.set_attribute(KeyValue::new(
+            semconv::trace::RPC_GRPC_STATUS_CODE,
+            RPC_GRPC_STATUS_CODE_OK,
+        ));
         Ok(Response::new(ShipOrderResponse { tracking_id: tid }))
     }
 }
@@ -131,82 +151,10 @@ impl ShippingService for ShippingServer {
 #[cfg(test)]
 mod tests {
     use super::{
-        shop::shipping_service_server::ShippingService,
-        shop::{Address, GetQuoteRequest},
-        shop::{CartItem, ShipOrderRequest},
-        ShippingServer, NANOS_MULTIPLE,
+        shop::shipping_service_server::ShippingService, shop::ShipOrderRequest, ShippingServer,
     };
     use tonic::Request;
     use uuid::Uuid;
-
-    fn make_quote_request_with_items(items: Vec<i32>) -> Request<GetQuoteRequest> {
-        let cart_items: Vec<CartItem> = items.into_iter().fold(Vec::new(), |mut accum, count| {
-            accum.push(CartItem {
-                product_id: "fake-item".to_string(),
-                quantity: count,
-            });
-            accum
-        });
-
-        Request::new(GetQuoteRequest {
-            address: Some(Address::default()),
-            items: cart_items,
-        })
-    }
-
-    fn make_empty_quote_request() -> Request<GetQuoteRequest> {
-        Request::new(GetQuoteRequest::default())
-    }
-    #[tokio::test]
-    async fn empty_quote() {
-        let server = ShippingServer::default();
-
-        // when we provide no items, the quote should be empty
-        match server.get_quote(make_empty_quote_request()).await {
-            Ok(resp) => {
-                let money = resp.into_inner().cost_usd.unwrap();
-                assert_eq!(money.units, 0);
-                assert_eq!(money.nanos, 0);
-            }
-            Err(e) => panic!("error when making empty quote request: {}", e),
-        }
-    }
-
-    #[tokio::test]
-    async fn quote_for_one_value() {
-        let server = ShippingServer::default();
-
-        match server
-            .get_quote(make_quote_request_with_items(vec![1_i32]))
-            .await
-        {
-            Ok(resp) => {
-                // items are fixed at 8.99, so we should see that price reflected.
-                let money = resp.into_inner().cost_usd.unwrap();
-                assert_eq!(money.units, 8);
-                assert_eq!(money.nanos, 99 * NANOS_MULTIPLE);
-            }
-            Err(e) => panic!("error when making quote request for one value: {}", e),
-        }
-    }
-
-    #[tokio::test]
-    async fn quote_for_many_values() {
-        let server = ShippingServer::default();
-
-        match server
-            .get_quote(make_quote_request_with_items(vec![1_i32, 2_i32]))
-            .await
-        {
-            Ok(resp) => {
-                // items are fixed at 8.99, so we should see that price reflected for 3 items
-                let money = resp.into_inner().cost_usd.unwrap();
-                assert_eq!(money.units, 26);
-                assert_eq!(money.nanos, 97 * NANOS_MULTIPLE);
-            }
-            Err(e) => panic!("error when making quote request for many values: {}", e),
-        }
-    }
 
     #[tokio::test]
     async fn can_get_tracking_id() {

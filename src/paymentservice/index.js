@@ -8,7 +8,7 @@ const opentelemetry = require('@opentelemetry/api')
 const charge = require('./charge')
 const logger = require('./logger')
 
-function chargeServiceHandler(call, callback) {
+async function chargeServiceHandler(call, callback) {
   const span = opentelemetry.trace.getActiveSpan();
 
   try {
@@ -18,7 +18,7 @@ function chargeServiceHandler(call, callback) {
     })
     logger.info({ request: call.request }, "Charge request received.")
 
-    const response = charge.charge(call.request)
+    const response = await charge.charge(call.request)
     callback(null, response)
 
   } catch (err) {

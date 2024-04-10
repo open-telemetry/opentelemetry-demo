@@ -11,6 +11,8 @@
 .DS_Store
 \#*\#
 
+docker-compose.override.yml
+
 # Eclipse
 .classpath
 .project

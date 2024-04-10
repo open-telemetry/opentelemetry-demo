@@ -20,4 +20,4 @@ COPY ./src/loadgenerator/people.json .
 ENV LOCUST_PLAYWRIGHT=1
 ENV PLAYWRIGHT_BROWSERS_PATH=/opt/pw-browsers
 RUN playwright install --with-deps chromium
-ENTRYPOINT locust
+ENTRYPOINT locust --skip-log-setup
