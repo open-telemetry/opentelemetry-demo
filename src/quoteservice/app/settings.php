@@ -9,7 +9,7 @@ declare(strict_types=1);
 use App\Application\Settings\Settings;
 use App\Application\Settings\SettingsInterface;
 use DI\ContainerBuilder;
-use Monolog\Logger;
+use Psr\Log\LogLevel;
 
 return function (ContainerBuilder $containerBuilder) {
     // Global Settings Object
@@ -22,7 +22,7 @@ return function (ContainerBuilder $containerBuilder) {
                 'logger' => [
                     'name' => 'slim-app',
                     'path' => 'php://stdout',
-                    'level' => Logger::DEBUG,
+                    'level' => LogLevel::DEBUG,
                 ],
             ]);
         }

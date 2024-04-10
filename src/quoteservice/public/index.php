@@ -61,6 +61,11 @@ if (($tracerProvider = Globals::tracerProvider()) instanceof TracerProviderInter
         $tracerProvider->forceFlush();
     });
 }
+if (($loggerProvider = Globals::tracerProvider()) instanceof \OpenTelemetry\SDK\Logs\LoggerProviderInterface) {
+    Loop::addPeriodicTimer(Configuration::getInt(Variables::OTEL_BLRP_SCHEDULE_DELAY)/1000, function() use ($loggerProvider) {
+        $loggerProvider->forceFlush();
+    });
+}
 if (($meterProvider = Globals::meterProvider()) instanceof MeterProviderInterface) {
     Loop::addPeriodicTimer(Configuration::getInt(Variables::OTEL_METRIC_EXPORT_INTERVAL)/1000, function() use ($meterProvider) {
         $meterProvider->forceFlush();
