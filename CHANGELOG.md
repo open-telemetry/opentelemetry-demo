@@ -13,6 +13,8 @@ the release.
   ([#1506](https://github.com/open-telemetry/opentelemetry-demo/pull/1506))
 * [repo] add traceBasedTests image to published images
   ([#1507](https://github.com/open-telemetry/opentelemetry-demo/pull/1507))
+* [cartservice] update .NET package to 1.8.0 release
+  ([#1514](https://github.com/open-telemetry/opentelemetry-demo/pull/1514))
 
 ## 1.9.0
 
