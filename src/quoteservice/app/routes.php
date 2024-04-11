@@ -35,11 +35,11 @@ function calculateQuote($jsonObject): float
         $childSpan->addEvent('Quote calculated, returning its value');
 
         //manual metrics
-        static $meter;
-        $meter ??= Globals::meterProvider()
+        static $counter;
+        $counter ??= Globals::meterProvider()
             ->getMeter('quotes')
             ->createCounter('quotes', 'quotes', 'number of quotes calculated');
-        $meter->add(1, ['number_of_items' => $numberOfItems, 'total_cost' => $quote]);
+        $counter->add(1, ['number_of_items' => $numberOfItems, 'total_cost' => $quote]);
     } catch (\Exception $exception) {
         $childSpan->recordException($exception);
     } finally {
