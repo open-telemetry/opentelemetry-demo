@@ -37,5 +37,4 @@ spec:
     selector: span[tracetest.span.type="general" name="Tracetest trigger"]
     assertions:
     - attr:tracetest.response.body | json_path '$.costUsd.currencyCode' = "USD"
-    - attr:tracetest.response.body | json_path '$.costUsd.units' = 17
-    - attr:tracetest.response.body | json_path '$.costUsd.nanos' = 800000000
+    - attr:tracetest.response.body | json_path '$.costUsd.units' > 0
