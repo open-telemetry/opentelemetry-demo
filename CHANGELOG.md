@@ -67,6 +67,8 @@ the release.
   ([#1462](https://github.com/open-telemetry/opentelemetry-demo/pull/1462))
 * [loadgenerator] added loadgeneratorFloodHomepage flagd
   ([#1486](https://github.com/open-telemetry/opentelemetry-demo/pull/1486))
+* [adservice] add adServiceHighCpu feature flag
+  ([#1510](https://github.com/open-telemetry/opentelemetry-demo/pull/1510))
 
 ## 1.8.0
 
