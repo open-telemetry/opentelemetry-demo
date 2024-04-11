@@ -11,6 +11,7 @@ use DI\ContainerBuilder;
 use OpenTelemetry\API\Globals;
 use OpenTelemetry\SDK\Common\Configuration\Configuration;
 use OpenTelemetry\SDK\Common\Configuration\Variables;
+use OpenTelemetry\SDK\Logs\LoggerProviderInterface;
 use OpenTelemetry\SDK\Metrics\MeterProviderInterface;
 use OpenTelemetry\SDK\Trace\TracerProviderInterface;
 use Psr\Http\Message\ServerRequestInterface;
@@ -61,7 +62,7 @@ if (($tracerProvider = Globals::tracerProvider()) instanceof TracerProviderInter
         $tracerProvider->forceFlush();
     });
 }
-if (($loggerProvider = Globals::tracerProvider()) instanceof \OpenTelemetry\SDK\Logs\LoggerProviderInterface) {
+if (($loggerProvider = Globals::loggerProvider()) instanceof LoggerProviderInterface) {
     Loop::addPeriodicTimer(Configuration::getInt(Variables::OTEL_BLRP_SCHEDULE_DELAY)/1000, function() use ($loggerProvider) {
         $loggerProvider->forceFlush();
     });
