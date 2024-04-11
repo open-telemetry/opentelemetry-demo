@@ -15,6 +15,8 @@ the release.
   ([#1507](https://github.com/open-telemetry/opentelemetry-demo/pull/1507))
 * [cartservice] update .NET package to 1.8.0 release
   ([#1514](https://github.com/open-telemetry/opentelemetry-demo/pull/1514))
+* [quoteservice] add manual metric, export logs periodically
+  ([#1519](https://github.com/open-telemetry/opentelemetry-demo/pull/1519))
 
 ## 1.9.0
 
