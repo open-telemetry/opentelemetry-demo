@@ -26,12 +26,20 @@ function calculateQuote($jsonObject): float
             throw new \InvalidArgumentException('numberOfItems not provided');
         }
         $numberOfItems = intval($jsonObject['numberOfItems']);
-        $quote = round(8.90 * $numberOfItems, 2);
+        $costPerItem = rand(400, 1000)/10;
+        $quote = round($costPerItem * $numberOfItems, 2);
 
         $childSpan->setAttribute('app.quote.items.count', $numberOfItems);
         $childSpan->setAttribute('app.quote.cost.total', $quote);
 
         $childSpan->addEvent('Quote calculated, returning its value');
+
+        //manual metrics
+        static $counter;
+        $counter ??= Globals::meterProvider()
+            ->getMeter('quotes')
+            ->createCounter('quotes', 'quotes', 'number of quotes calculated');
+        $counter->add(1, ['number_of_items' => $numberOfItems]);
     } catch (\Exception $exception) {
         $childSpan->recordException($exception);
     } finally {
@@ -55,6 +63,7 @@ return function (App $app) {
         $span->addEvent('Quote processed, response sent back', [
             'app.quote.cost.total' => $data
         ]);
+        //exported as an opentelemetry log (see dependencies.php)
         $logger->info('Calculated quote', [
             'total' => $data,
         ]);
