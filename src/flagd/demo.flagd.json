@@ -28,6 +28,15 @@
         },
         "defaultVariant": "off"
     },
+    "adServiceHighCpu": {
+      "description": "Triggers high cpu load in the ad service",
+      "state": "ENABLED",
+      "variants": {
+          "on": true,
+          "off": false
+        },
+        "defaultVariant": "off"
+    },
     "adServiceFailure": {
       "description": "Fail ad service",
       "state": "ENABLED",
@@ -76,6 +85,15 @@
       "variants": {
         "on": true,
         "off": false
+      },
+      "defaultVariant": "off"
+    },
+    "loadgeneratorFloodHomepage": {
+      "description": "Flood the frontend with a large amount of requests.",
+      "state": "ENABLED",
+      "variants": {
+        "on": 100,
+        "off": 0
       },
       "defaultVariant": "off"
     }
