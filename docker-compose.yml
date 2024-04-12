@@ -218,6 +218,11 @@ services:
   flagd:
     image: ghcr.io/open-feature/flagd:v0.9.0
     container_name: flagd
+    environment:
+      - FLAGD_OTEL_COLLECTOR_URI=${OTEL_COLLECTOR_HOST}:${OTEL_COLLECTOR_PORT_GRPC}
+      - FLAGD_METRICS_EXPORTER=otel
+      - OTEL_RESOURCE_ATTRIBUTES
+      - OTEL_SERVICE_NAME=flagd
     command: [
       "start",
       "--uri",
