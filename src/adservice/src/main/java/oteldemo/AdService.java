@@ -38,6 +38,7 @@ import oteldemo.Demo.Ad;
 import oteldemo.Demo.AdRequest;
 import oteldemo.Demo.AdResponse;
 import oteldemo.problempattern.GarbageCollectionTrigger;
+import oteldemo.problempattern.CPULoad;
 import dev.openfeature.contrib.providers.flagd.FlagdOptions;
 import dev.openfeature.contrib.providers.flagd.FlagdProvider;
 import dev.openfeature.sdk.Client;
@@ -133,8 +134,9 @@ public final class AdService {
     
     private static final String ADSERVICE_FAILURE = "adServiceFailure";
     private static final String ADSERVICE_MANUAL_GC_FEATURE_FLAG = "adServiceManualGc";
+    private static final String ADSERVICE_HIGH_CPU_FEATURE_FLAG = "adServiceHighCpu";
     Client ffClient = OpenFeatureAPI.getInstance().getClient();
-
+    
     private AdServiceImpl() {}
 
     /**
@@ -147,6 +149,8 @@ public final class AdService {
     @Override
     public void getAds(AdRequest req, StreamObserver<AdResponse> responseObserver) {
       AdService service = AdService.getInstance();
+      CPULoad cpuload = CPULoad.getInstance();
+      cpuload.execute(getFeatureFlagEnabled(ADSERVICE_HIGH_CPU_FEATURE_FLAG));
 
       // get the current span in context
       Span span = Span.current();

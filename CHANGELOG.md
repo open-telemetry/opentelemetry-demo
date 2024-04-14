@@ -11,6 +11,14 @@ the release.
   ([#1501](https://github.com/open-telemetry/opentelemetry-demo/pull/1501))
 * [frontend] reunite trace from loadgenerator
   ([#1506](https://github.com/open-telemetry/opentelemetry-demo/pull/1506))
+* [repo] add traceBasedTests image to published images
+  ([#1507](https://github.com/open-telemetry/opentelemetry-demo/pull/1507))
+* [cartservice] update .NET package to 1.8.0 release
+  ([#1514](https://github.com/open-telemetry/opentelemetry-demo/pull/1514))
+* [quoteservice] add manual metric, export logs periodically
+  ([#1519](https://github.com/open-telemetry/opentelemetry-demo/pull/1519))
+* [flagd] export flagd traces to otel collector
+  ([#1522](https://github.com/open-telemetry/opentelemetry-demo/pull/1522))
 
 ## 1.9.0
 
@@ -63,6 +71,8 @@ the release.
   ([#1462](https://github.com/open-telemetry/opentelemetry-demo/pull/1462))
 * [loadgenerator] added loadgeneratorFloodHomepage flagd
   ([#1486](https://github.com/open-telemetry/opentelemetry-demo/pull/1486))
+* [adservice] add adServiceHighCpu feature flag
+  ([#1510](https://github.com/open-telemetry/opentelemetry-demo/pull/1510))
 
 ## 1.8.0
 
