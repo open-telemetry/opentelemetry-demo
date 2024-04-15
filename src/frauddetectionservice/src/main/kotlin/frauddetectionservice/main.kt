@@ -15,6 +15,12 @@ import oteldemo.Demo.*
 import java.time.Duration.ofMillis
 import java.util.*
 import kotlin.system.exitProcess
+import dev.openfeature.contrib.providers.flagd.FlagdOptions
+import dev.openfeature.contrib.providers.flagd.FlagdProvider
+import dev.openfeature.sdk.Client
+import dev.openfeature.sdk.EvaluationContext
+import dev.openfeature.sdk.MutableContext
+import dev.openfeature.sdk.OpenFeatureAPI
 
 const val topic = "orders"
 const val groupID = "frauddetectionservice"
@@ -22,6 +28,12 @@ const val groupID = "frauddetectionservice"
 private val logger: Logger = LogManager.getLogger(groupID)
 
 fun main() {
+    val options = FlagdOptions.builder()
+    .withGlobalTelemetry(true)
+    .build()
+    val flagdProvider = FlagdProvider(options)
+    OpenFeatureAPI.getInstance().setProvider(flagdProvider)
+
     val props = Properties()
     props[KEY_DESERIALIZER_CLASS_CONFIG] = StringDeserializer::class.java.name
     props[VALUE_DESERIALIZER_CLASS_CONFIG] = ByteArrayDeserializer::class.java.name
@@ -46,8 +58,27 @@ fun main() {
                     val newCount = accumulator + 1
                     val orders = OrderResult.parseFrom(record.value())
                     logger.info("Consumed record with orderId: ${orders.orderId}, and updated total count to: $newCount")
+                    if (getFeatureFlagEnabled("kafakQueueProblems")) {
+                        logger.info("FeatureFlag 'kafakQueueProblems' is enabled, sleeping 1 second")
+                        Thread.sleep(1000)
+                    }
                     newCount
                 }
         }
     }
+}
+
+/**
+* Retrieves the status of a feature flag from the Feature Flag service.
+*
+* @param ff The name of the feature flag to retrieve.
+* @return `true` if the feature flag is enabled, `false` otherwise or in case of errors.
+*/
+fun getFeatureFlagEnabled(ff: String): Boolean {
+    val client = OpenFeatureAPI.getInstance().client
+    // TODO: Plumb the actual session ID from the frontend via baggage?
+    val uuid = UUID.randomUUID()
+    client.evaluationContext = MutableContext().add("session", uuid.toString())
+    val booleanValue = client.getBooleanValue(ff, false)
+    return booleanValue
 }

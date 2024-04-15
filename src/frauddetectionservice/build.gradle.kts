@@ -42,11 +42,19 @@ dependencies {
     implementation("org.apache.logging.log4j:log4j-core:2.21.1")
     implementation("org.slf4j:slf4j-api:2.0.9")
     implementation("com.google.protobuf:protobuf-kotlin:${protobufVersion}")
+    implementation("dev.openfeature:sdk:1.7.4")
+    implementation("dev.openfeature.contrib.providers:flagd:0.7.0")
 
     if (JavaVersion.current().isJava9Compatible) {
         // Workaround for @javax.annotation.Generated
         // see: https://github.com/grpc/grpc-java/issues/3633
         implementation("javax.annotation:javax.annotation-api:1.3.2")
+    }
+}
+
+tasks {
+    shadowJar {
+        mergeServiceFiles()
     }
 }
 
