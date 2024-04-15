@@ -19,6 +19,8 @@ the release.
   ([#1519](https://github.com/open-telemetry/opentelemetry-demo/pull/1519))
 * [flagd] export flagd traces to otel collector
   ([#1522](https://github.com/open-telemetry/opentelemetry-demo/pull/1522))
+* [frontend] Pass down image optimization requests to imageprovider
+  ([#1522](https://github.com/open-telemetry/opentelemetry-demo/pull/1522))
 
 ## 1.9.0
 
