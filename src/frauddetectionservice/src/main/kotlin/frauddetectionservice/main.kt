@@ -58,8 +58,8 @@ fun main() {
                     val newCount = accumulator + 1
                     val orders = OrderResult.parseFrom(record.value())
                     logger.info("Consumed record with orderId: ${orders.orderId}, and updated total count to: $newCount")
-                    if (getFeatureFlagEnabled("kafakQueueProblems")) {
-                        logger.info("FeatureFlag 'kafakQueueProblems' is enabled, sleeping 1 second")
+                    if (getFeatureFlagValue("kafkaQueueProblems") > 0) {
+                        logger.info("FeatureFlag 'kafkaQueueProblems' is enabled, sleeping 1 second")
                         Thread.sleep(1000)
                     }
                     newCount
@@ -74,11 +74,11 @@ fun main() {
 * @param ff The name of the feature flag to retrieve.
 * @return `true` if the feature flag is enabled, `false` otherwise or in case of errors.
 */
-fun getFeatureFlagEnabled(ff: String): Boolean {
+fun getFeatureFlagValue(ff: String): Int {
     val client = OpenFeatureAPI.getInstance().client
     // TODO: Plumb the actual session ID from the frontend via baggage?
     val uuid = UUID.randomUUID()
     client.evaluationContext = MutableContext().add("session", uuid.toString())
-    val booleanValue = client.getBooleanValue(ff, false)
-    return booleanValue
+    val intValue = client.getIntegerValue(ff, 0)
+    return intValue
 }

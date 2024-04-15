@@ -507,16 +507,16 @@ func (cs *checkoutService) sendToPostProcessor(ctx context.Context, result *pb.O
 	successMsg := <-cs.KafkaProducerClient.Successes()
 	log.Infof("Successful to write message. offset: %v", successMsg.Offset)
 
-	if cs.isFeatureFlagEnabled(ctx, "kafakQueueProblems") {
-		log.Infof("Warning: FeatureFlag 'kafakQueueProblems' is activated, overloading queue now.")
-		messageCount := 100
-		for i := 0; i < messageCount; i++ {
+	ffValue := cs.getIntFeatureFlag(ctx, "kafkaQueueProblems")
+	if ffValue > 0 {
+		log.Infof("Warning: FeatureFlag 'kafkaQueueProblems' is activated, overloading queue now.")
+		for i := 0; i < ffValue; i++ {
     		go func(i int) {
     		    cs.KafkaProducerClient.Input() <- &msg
 				_ = <-cs.KafkaProducerClient.Successes()
             }(i)
 		}
-		log.Infof("Done with #%d messages for overload simulation.", messageCount)
+		log.Infof("Done with #%d messages for overload simulation.", ffValue)
 	}
 }
 
@@ -559,4 +559,19 @@ func (cs *checkoutService) isFeatureFlagEnabled(ctx context.Context, featureFlag
     )
     
     return featureEnabled
+}
+
+func (cs *checkoutService) getIntFeatureFlag(ctx context.Context, featureFlagName string) int {
+    openfeature.AddHooks(otelhooks.NewTracesHook())
+    client := openfeature.NewClient("checkout")
+    
+    // Default value is set to 0, but you could also make this a parameter.
+    featureFlagValue, _ := client.IntValue(
+        ctx, 
+        featureFlagName, 
+        0, 
+        openfeature.EvaluationContext{},
+    )
+    
+    return int(featureFlagValue)
 }
