@@ -112,7 +112,7 @@ Emeritus:
 [Azure]: https://github.com/Azure/Azure-kusto-opentelemetry-demo
 [Coralogix]: https://coralogix.com/blog/configure-otel-demo-send-telemetry-data-coralogix
 [Dash0]: https://github.com/dash0hq/opentelemetry-demo
-[Datadog]: https://github.com/DataDog/opentelemetry-demo
+[Datadog]: https://docs.datadoghq.com/opentelemetry/guide/otel_demo_to_datadog
 [Dynatrace]: https://www.dynatrace.com/news/blog/opentelemetry-demo-application-with-dynatrace/
 [Elastic]: https://github.com/elastic/opentelemetry-demo
 [GoogleCloud]: https://github.com/GoogleCloudPlatform/opentelemetry-demo
