@@ -57,14 +57,15 @@ keeping it up to date for you.
 |                                         |                             |                                                                |
 |-----------------------------------------|-----------------------------|----------------------------------------------------------------|
 | [AlibabaCloud LogService][AlibabaCloud] | [Elastic][Elastic]          | [OpenSearch][OpenSearch]                                       |
-| [AppDynamics][AppDynamics]              | [Grafana Labs][GrafanaLabs] | [Sentry][Sentry]                                               |
-| [Aspecto][Aspecto]                      | [Guance][Guance]            | [ServiceNow Cloud Observability][ServiceNowCloudObservability] |
-| [Axiom][Axiom]                          | [Helios][Helios]            | [Splunk][Splunk]                                               |
-| [Axoflow][Axoflow]                      | [Honeycomb.io][Honeycombio] | [Sumo Logic][SumoLogic]                                        |
-| [Azure Data Explorer][Azure]            | [Instana][Instana]          | [TelemetryHub][TelemetryHub]                                   |
-| [Coralogix][Coralogix]                  | [Kloudfuse][Kloudfuse]      | [Teletrace][Teletrace]                                         |
-| [Datadog][Datadog]                      | [Logz.io][Logzio]           | [Tracetest][Tracetest]                                         |
-| [Dynatrace][Dynatrace]                  | [New Relic][NewRelic]       | [Uptrace][Uptrace]                                             |
+| [AppDynamics][AppDynamics]              | [Google Cloud][GoogleCloud] | [Sentry][Sentry]                                               |
+| [Aspecto][Aspecto]                      | [Grafana Labs][GrafanaLabs] | [ServiceNow Cloud Observability][ServiceNowCloudObservability] |
+| [Axiom][Axiom]                          | [Guance][Guance]            | [Splunk][Splunk]                                               |
+| [Axoflow][Axoflow]                      | [Helios][Helios]            | [Sumo Logic][SumoLogic]                                        |
+| [Azure Data Explorer][Azure]            | [Honeycomb.io][Honeycombio] | [TelemetryHub][TelemetryHub]                                   |
+| [Coralogix][Coralogix]                  | [Instana][Instana]          | [Teletrace][Teletrace]                                         |
+| [Dash0][Dash0]                          | [Kloudfuse][Kloudfuse]      | [Tracetest][Tracetest]                                         |
+| [Datadog][Datadog]                      | [Logz.io][Logzio]           | [Uptrace][Uptrace]                                             |
+| [Dynatrace][Dynatrace]                  | [New Relic][NewRelic]       |                                                                |
 
 ## Contributing
 
@@ -79,7 +80,7 @@ Monday at 8:30 AM PST and anyone is welcome.
 
 - [Austin Parker](https://github.com/austinlparker), Honeycomb
 - [Carter Socha](https://github.com/cartersocha), Lightstep
-- [Juliano Costa](https://github.com/julianocosta89), Dynatrace
+- [Juliano Costa](https://github.com/julianocosta89), Datadog
 - [Pierre Tessier](https://github.com/puckpuck), Honeycomb
 
 [Approvers](https://github.com/open-telemetry/community/blob/main/community-membership.md#approver)
@@ -111,9 +112,11 @@ Emeritus:
 [Axoflow]: https://axoflow.com/opentelemetry-support-in-more-detail-in-axosyslog-and-syslog-ng/
 [Azure]: https://github.com/Azure/Azure-kusto-opentelemetry-demo
 [Coralogix]: https://coralogix.com/blog/configure-otel-demo-send-telemetry-data-coralogix
+[Dash0]: https://github.com/dash0hq/opentelemetry-demo
 [Datadog]: https://github.com/DataDog/opentelemetry-demo
 [Dynatrace]: https://www.dynatrace.com/news/blog/opentelemetry-demo-application-with-dynatrace/
 [Elastic]: https://github.com/elastic/opentelemetry-demo
+[GoogleCloud]: https://github.com/GoogleCloudPlatform/opentelemetry-demo
 [GrafanaLabs]: https://github.com/grafana/opentelemetry-demo
 [Guance]: https://github.com/GuanceCloud/opentelemetry-demo
 [Helios]: https://otelsandbox.gethelios.dev

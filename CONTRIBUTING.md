@@ -113,7 +113,7 @@ GitHub pull requests (PRs).
 
 To create a new PR, fork the project in GitHub and clone the upstream repo:
 
-> **Note**
+> [!NOTE]
 > Please fork to a personal GitHub account rather than a corporate/enterprise
 > one so maintainers can push commits to your branch.
 > **Pull requests from protected forks will not be accepted.**

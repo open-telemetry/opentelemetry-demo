@@ -1,0 +1,218 @@
+default:
+  env:
+    - name: OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE
+      value: cumulative
+    - name: OTEL_SERVICE_NAME
+      valueFrom:
+        fieldRef:
+          apiVersion: v1
+          fieldPath: "metadata.labels['app.kubernetes.io/component']"
+    - name: OTEL_K8S_NAMESPACE
+      valueFrom:
+        fieldRef:
+          apiVersion: v1
+          fieldPath: metadata.namespace
+    - name: OTEL_K8S_NODE_NAME
+      valueFrom:
+        fieldRef:
+          apiVersion: v1
+          fieldPath: spec.nodeName
+    - name: OTEL_K8S_POD_NAME
+      valueFrom:
+        fieldRef:
+          apiVersion: v1
+          fieldPath: metadata.name
+    - name: OTEL_K8S_POD_UID
+      valueFrom:
+        fieldRef:
+          apiVersion: v1
+          fieldPath: metadata.uid
+    - name: POD_IP
+      valueFrom:
+        fieldRef:
+          fieldPath: status.podIP
+    - name: HOST_IP
+      valueFrom:
+        fieldRef:
+          fieldPath: status.hostIP
+    - name: DD_AGENT_HOST
+      value: $(HOST_IP)
+    - name: OTEL_COLLECTOR_NAME
+      value: $(HOST_IP)
+    - name: OTEL_EXPORTER_OTLP_ENDPOINT
+      value: http://$(OTEL_COLLECTOR_NAME):4317
+    - name: OTEL_RESOURCE_ATTRIBUTES
+      value: >-
+        service.name=$(OTEL_SERVICE_NAME),
+        service.instance.id=$(OTEL_K8S_POD_UID),
+        service.namespace=opentelemetry-demo,
+        k8s.namespace.name=$(OTEL_K8S_NAMESPACE),
+        k8s.node.name=$(OTEL_K8S_NODE_NAME),
+        k8s.pod.name=$(OTEL_K8S_POD_NAME),
+        deployment.environment=$(OTEL_K8S_NAMESPACE),
+        k8s.pod.ip=$(POD_IP)
+  image:
+    repository: 172597598159.dkr.ecr.us-east-1.amazonaws.com/otel-demo
+    tag: ""
+components:
+  accountingService:
+    resources:
+      limits:
+        memory: 200Mi
+  adService:
+    resources:
+      limits:
+        memory: 500Mi
+  cartService:
+    resources:
+      limits:
+        memory: 200Mi
+  checkoutService:
+    resources:
+      limits:
+        memory: 500Mi
+  currencyService:
+    resources:
+      limits:
+        memory: 200Mi
+  emailService:
+    resources:
+      limits:
+        memory: 200Mi
+  frauddetectionService:
+    resources:
+      limits:
+        memory: 200Mi
+    ports:
+      - name: jmx-consumer
+        value: 1098
+    env: 
+      - name: KAFKA_SERVICE_ADDR
+        value: 'opentelemetry-demo-kafka:9092'
+      - name: OTEL_RESOURCE_ATTRIBUTES
+        value: >-
+          service.name=$(OTEL_SERVICE_NAME),
+          service.instance.id=$(OTEL_K8S_POD_UID),
+          service.namespace=opentelemetry-demo,
+          k8s.namespace.name=$(OTEL_K8S_NAMESPACE),
+          k8s.node.name=$(OTEL_K8S_NODE_NAME),
+          k8s.pod.name=$(OTEL_K8S_POD_NAME),
+          deployment.environment=$(OTEL_K8S_NAMESPACE),
+          k8s.pod.ip=$(POD_IP),
+          kafka_source=javainstrumentation
+    podAnnotations:
+      ad.datadoghq.com/frauddetectionservice.logs: '[{"source":"kafka","service":"frauddetectionservice"}]'
+      ad.datadoghq.com/frauddetectionservice.checks: |
+        {
+          "kafka": {
+            "init_config": {
+              "is_jmx": true,
+              "collect_default_metrics": true
+            },
+            "instances": [
+              {
+                "host": "opentelemetry-demo-frauddetectionservice",
+                "port": "1098",
+                "tags": [
+                  "kafka_source:agent_consumer"
+                ]
+              }
+            ]
+          }
+        }
+  frontend:
+    resources:
+      limits:
+        memory: 200Mi
+  frontendProxy:
+    resources:
+      limits:
+        memory: 200Mi
+  paymentService:
+    resources:
+      limits:
+        memory: 200Mi
+  quoteService:
+    resources:
+      limits:
+        memory: 200Mi
+  recommendationService:
+    resources:
+      limits:
+        memory: 200Mi
+  shippingService:
+    resources:
+      limits:
+        memory: 200Mi
+  redis:
+    resources:
+      limits:
+        memory: 200Mi
+  loadgenerator:
+    resources:
+      limits:
+        memory: 200Mi
+  ffsPostgres:
+    resources:
+      limits:
+        memory: 200Mi
+  productCatalogService:
+    resources:
+      limits:
+        memory: 200Mi
+  kafka:
+    resources:
+      limits:
+        memory: 1Gi
+    ports:
+      - name: jmx
+        value: 1099
+      - name: plaintext
+        value: 9092
+      - name: controller
+        value: 9093
+    initContainers:
+      - name: wait-for-zookeeper
+        image: busybox:latest
+        command: ['sh', '-c', 'until nc -z -v -w30 opentelemetry-demo-zookeeper 2181; do echo waiting for zookeeper; sleep 2; done;']
+    podAnnotations:
+      ad.datadoghq.com/kafka.logs: '[{"source":"kafka","service":"kafka"}]'
+      ad.datadoghq.com/kafka.checks: |
+        {
+          "kafka": {
+            "init_config": {
+              "is_jmx": true,
+              "collect_default_metrics": true
+            },
+            "instances": [
+              {
+                "host": "opentelemetry-demo-kafka",
+                "port": "1099",
+                "tags": [
+                  "kafka_source:agent"
+                ]
+              }
+            ]
+          },
+          "kafka_consumer": {
+            "instances": [
+              {
+                "kafka_connect_str": "opentelemetry-demo-kafka:9092",
+                "monitor_unlisted_consumer_groups": true,
+                "tags": [
+                  "kafka_source:agent"
+                ]
+              }
+            ]
+          }
+        }
+serviceAccount:
+  create: false
+opentelemetry-collector:
+  enabled: false
+jaeger:
+  enabled: false
+grafana:
+  enabled: false
+prometheus:
+  enabled: false

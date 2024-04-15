@@ -39,7 +39,7 @@
     "next": "12.3.4",
     "react": "18.2.0",
     "react-dom": "18.2.0",
-    "sharp": "0.32.6",
+    "sharp": "0.33.2",
     "styled-components": "6.1.1",
     "ts-proto": "1.164.0",
     "uuid": "9.0.1"
@@ -48,8 +48,8 @@
     "@types/node": "20.9.0",
     "@types/react": "18.2.37",
     "@types/react-dom": "18.2.15",
-    "@types/uuid": "9.0.7",
     "@types/styled-components": "5.1.30",
+    "@types/uuid": "9.0.7",
     "@typescript-eslint/eslint-plugin": "6.10.0",
     "@typescript-eslint/parser": "6.10.0",
     "cypress": "10.11.0",

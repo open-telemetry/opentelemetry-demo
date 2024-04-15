@@ -22,9 +22,9 @@ spec:
           }
   specs:
   - name: It added an item correctly into the shopping cart
-    selector: span[name="oteldemo.CartService/AddItem"]
+    selector: span[name="POST /oteldemo.CartService/AddItem"]
     assertions:
-    - attr:rpc.grpc.status_code = 0
+    - attr:grpc.status_code = 0
   - name: It set the cart item correctly on the database
     selector: span[tracetest.span.type="database" name="HMSET" db.system="redis" db.redis.database_index="0"]
     assertions:

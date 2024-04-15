@@ -20,7 +20,7 @@ docker compose build checkoutservice
 
 ## Regenerate protos
 
-> **Note**
+> [!NOTE]
 > [`protoc`](https://grpc.io/docs/protoc-installation/) is required.
 
 To regenerate gRPC code run:

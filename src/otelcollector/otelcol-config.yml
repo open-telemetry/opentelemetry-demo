@@ -1,7 +1,6 @@
 # Copyright The OpenTelemetry Authors
 # SPDX-License-Identifier: Apache-2.0
 
-
 receivers:
   otlp:
     protocols:
@@ -21,32 +20,19 @@ exporters:
     endpoint: "jaeger:4317"
     tls:
       insecure: true
-  otlp/logs:
-    endpoint: "dataprepper:21892"
-    tls:
-      insecure: true
   otlphttp/prometheus:
     endpoint: "http://prometheus:9090/api/v1/otlp"
     tls:
       insecure: true
+  opensearch:
+    logs_index: otel
+    http:
+      endpoint: "http://opensearch:9200"
+      tls:
+        insecure: true
 
 processors:
   batch:
-  filter/ottl:
-    error_mode: ignore
-    metrics:
-      metric:
-        # FIXME: remove when a Metrics View is implemented in the checkout and productcatalog components
-        # or when this issue is resolved: https://github.com/open-telemetry/opentelemetry-go-contrib/issues/3071
-        - 'name == "rpc.server.duration"'
-  transform:
-    metric_statements:
-      - context: metric
-        statements:
-          # FIXME: remove when this issue is resolved: https://github.com/open-telemetry/opentelemetry-java/issues/4834
-          - set(description, "") where name == "queueSize"
-          # FIXME: remove when this issue is resolved: https://github.com/open-telemetry/opentelemetry-python-contrib/issues/1958
-          - set(description, "") where name == "http.client.duration"
 
 connectors:
   spanmetrics:
@@ -59,9 +45,9 @@ service:
       exporters: [otlp, debug, spanmetrics]
     metrics:
       receivers: [httpcheck/frontendproxy, otlp, spanmetrics]
-      processors: [filter/ottl, transform, batch]
+      processors: [batch]
       exporters: [otlphttp/prometheus, debug]
     logs:
       receivers: [otlp]
       processors: [batch]
-      exporters: [otlp/logs, debug]
+      exporters: [opensearch, debug]

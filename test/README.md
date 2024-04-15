@@ -1,26 +1,10 @@
 # Service Testing
 
-There are two ways to test the service APIs in the OpenTelemetry Demo:
+The OpenTelemetry Demo uses traced-based testing to validate the
+functionality of the services and the traces they generate.
 
-1. Using black box-testing, calling gRPC services
-and validating their direct response
-2. Using Trace-based tests, calling both HTTP and
-gRPC services and validating their direct response as well as
-the distributed traces they generate
-
-## Testing gRPC services as black boxes
-
-To run the entire test suite as a black box, run the command:
-
-```sh
-docker compose run integrationTests
-```
-
-If you want to run tests for a specific service, run:
-
-1. Start the services you want to test with `docker compose up --build <service>`
-2. Run `npm install`
-3. Run `npm test` or `npx ava --match='<pattern>'` to match test names
+The trace-based tests will each service and validate the traces they
+generate and stored in Jaeger, to a known working trace for the same operation.
 
 ## Testing services with Trace-based tests
 

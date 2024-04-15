@@ -1,0 +1,75 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: opentelemetry-demo-zookeeper
+  labels:
+    app.kubernetes.io/component: zookeeper
+    app.kubernetes.io/instance: opentelemetry-demo
+    app.kubernetes.io/name: opentelemetry-demo-zookeeper
+    app.kubernetes.io/part-of: opentelemetry-demo
+    app.kubernetes.io/version: "1.4.0"
+spec:
+  replicas: 1
+  revisionHistoryLimit: 10
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: opentelemetry-demo-zookeeper
+  template:
+    metadata:
+      annotations:
+        ad.datadoghq.com/zookeeper.logs: '[{"source":"zookeeper","service":"zookeeper"}]'
+        ad.datadoghq.com/zookeeper.checks: |
+          {
+            "zk": {
+              "instances": [
+                {
+                  "host": "opentelemetry-demo-zookeeper",
+                  "port": "2181",
+                  "tags": [
+                    "zookeeper_source:agent"
+                  ]
+                }
+              ]
+            }
+          }
+      labels:
+        app.kubernetes.io/component: zookeeper
+        app.kubernetes.io/instance: opentelemetry-demo
+        app.kubernetes.io/name: opentelemetry-demo-zookeeper
+    spec:
+      containers:
+        - name: zookeeper
+          image: confluentinc/cp-zookeeper:7.2.2
+          imagePullPolicy: IfNotPresent
+          ports:
+          - containerPort: 2181
+            name: zookeeper
+            protocol: TCP
+          env:
+          - name: ZOOKEEPER_TICK_TIME
+            value: "2000"
+          - name: ZOOKEEPER_CLIENT_PORT
+            value: "2181"
+          - name: KAFKA_OPTS
+            value: "-Dzookeeper.4lw.commands.whitelist=*" 
+          resources:
+            limits:
+              memory: 1Gi
+          securityContext:
+            runAsGroup: 1000
+            runAsNonRoot: true
+            runAsUser: 1000
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: opentelemetry-demo-zookeeper
+spec:
+  selector:
+    app.kubernetes.io/name: opentelemetry-demo-zookeeper
+  ports:
+  - name: zookeeper
+    port: 2181
+    protocol: TCP
+    targetPort: 2181

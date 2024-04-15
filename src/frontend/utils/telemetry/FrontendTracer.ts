@@ -12,7 +12,7 @@ import { OTLPTraceExporter } from '@opentelemetry/exporter-trace-otlp-http';
 import { SessionIdProcessor } from './SessionIdProcessor';
 import { detectResourcesSync } from '@opentelemetry/resources/build/src/detect-resources';
 
-const { NEXT_PUBLIC_OTEL_SERVICE_NAME = '', NEXT_PUBLIC_OTEL_EXPORTER_OTLP_TRACES_ENDPOINT = '' } =
+const { NEXT_PUBLIC_OTEL_SERVICE_NAME = '', NEXT_PUBLIC_OTEL_EXPORTER_OTLP_TRACES_ENDPOINT = '', IS_SYNTHETIC_REQUEST = '' } =
   typeof window !== 'undefined' ? window.ENV : {};
 
 const FrontendTracer = async (collectorString: string) => {
@@ -34,7 +34,9 @@ const FrontendTracer = async (collectorString: string) => {
     new BatchSpanProcessor(
       new OTLPTraceExporter({
         url: NEXT_PUBLIC_OTEL_EXPORTER_OTLP_TRACES_ENDPOINT || collectorString || 'http://localhost:4318/v1/traces',
-      })
+      }), {
+          scheduledDelayMillis : 500
+        }
     )
   );
 
@@ -55,7 +57,7 @@ const FrontendTracer = async (collectorString: string) => {
           propagateTraceHeaderCorsUrls: /.*/,
           clearTimingResources: true,
           applyCustomAttributesOnSpan(span) {
-            span.setAttribute('app.synthetic_request', 'false');
+            span.setAttribute('app.synthetic_request', IS_SYNTHETIC_REQUEST);
           },
         },
       }),

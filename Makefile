@@ -95,11 +95,12 @@ build-env-file:
 	sed -i '/IMAGE_VERSION=.*/c\IMAGE_VERSION=${RELEASE_VERSION}' .ghcr.env
 	sed -i '/IMAGE_NAME=.*/c\IMAGE_NAME=${GHCR_REPO}' .ghcr.env
 
+.PHONY: run-tests
 run-tests:
 	docker compose run frontendTests
-	docker compose run integrationTests
 	docker compose run traceBasedTests
 
+.PHONY: run-tracetesting
 run-tracetesting:
 	docker compose run traceBasedTests ${SERVICES_TO_TEST}
 
@@ -161,10 +162,40 @@ stop:
 	@echo ""
 	@echo "OpenTelemetry Demo is stopped."
 
-
-# Use to rebuild and restart a single service component
+# Use to restart a single service component
 # Example: make restart service=frontend
 .PHONY: restart
 restart:
-	# work with `service` or `SERVICE` as input
-	./restart-service.sh ${service}${SERVICE}
+# work with `service` or `SERVICE` as input
+ifdef SERVICE
+	service := $(SERVICE)
+endif
+
+ifdef service
+	docker compose stop $(service)
+	docker compose rm --force $(service)
+	docker compose create $(service)
+	docker compose start $(service)
+else
+	@echo "Please provide a service name using `service=[service name]` or `SERVICE=[service name]`"
+endif
+
+# Use to rebuild and restart (redeploy) a single service component
+# Example: make redeploy service=frontend
+.PHONY: redeploy
+redeploy:
+# work with `service` or `SERVICE` as input
+ifdef SERVICE
+	service := $(SERVICE)
+endif
+
+ifdef service
+	docker compose build $(service)
+	docker compose stop $(service)
+	docker compose rm --force $(service)
+	docker compose create $(service)
+	docker compose start $(service)
+else
+	@echo "Please provide a service name using `service=[service name]` or `SERVICE=[service name]`"
+endif
+

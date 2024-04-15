@@ -1,0 +1,3 @@
+datadog:
+  tags:
+    - "env:otel-ingest"

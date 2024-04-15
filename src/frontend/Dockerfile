@@ -2,7 +2,7 @@
 # SPDX-License-Identifier: Apache-2.0
 
 
-FROM node:18-alpine AS deps
+FROM registry.ddbuild.io/images/mirror/node:21-alpine AS deps
 RUN apk add --no-cache libc6-compat
 
 WORKDIR /app
@@ -10,7 +10,11 @@ WORKDIR /app
 COPY ./src/frontend/package*.json ./
 RUN npm ci
 
-FROM node:18-alpine AS builder
+RUN \
+    chown root:root -R /app/node_modules
+
+
+FROM registry.ddbuild.io/images/mirror/node:21-alpine AS builder
 RUN apk add --no-cache libc6-compat protobuf-dev protoc
 WORKDIR /app
 COPY --from=deps /app/node_modules ./node_modules
@@ -20,7 +24,7 @@ COPY ./src/frontend .
 RUN npm run grpc:generate
 RUN npm run build
 
-FROM node:18-alpine AS runner
+FROM registry.ddbuild.io/images/mirror/node:21-alpine AS runner
 WORKDIR /app
 RUN apk add --no-cache protobuf-dev protoc
 

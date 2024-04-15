@@ -1,0 +1,6 @@
+agents:
+  nodeSelector:
+    alpha.eksctl.io/nodegroup-name: ng-7
+datadog:
+  tags:
+    - "env:dd-ingest-staging"

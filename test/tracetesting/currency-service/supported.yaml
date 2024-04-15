@@ -15,7 +15,7 @@ spec:
   specs:
   - name: It has a span called "CurrencyService/GetSupportedCurrencies"
     selector: span[tracetest.span.type="rpc" name="CurrencyService/GetSupportedCurrencies"
-      rpc.system="grpc" rpc.method="GetSupportedCurrencies" rpc.service="CurrencyService"]
+      rpc.system="grpc" rpc.method="GetSupportedCurrencies" rpc.service="oteldemo.CurrencyService"]
     assertions:
     - attr:name = "CurrencyService/GetSupportedCurrencies"
   - name: It returns the expected currency codes

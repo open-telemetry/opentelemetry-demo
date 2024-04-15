@@ -2,7 +2,7 @@
 # SPDX-License-Identifier: Apache-2.0
 
 
-FROM python:3.12-slim-bullseye as base
+FROM registry.ddbuild.io/images/mirror/python:3.12-slim-bullseye as base
 
 #
 # Fetch requirements

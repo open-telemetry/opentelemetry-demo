@@ -1,0 +1,9 @@
+default:
+  envOverrides:
+    - name: OTEL_COLLECTOR_NAME
+      value: opentelemetry-collector
+    - name: OTEL_EXPORTER_OTLP_ENDPOINT
+      value: http://opentelemetry-collector:4317
+  schedulingRules:
+    nodeSelector:
+      alpha.eksctl.io/nodegroup-name: ng-5
