@@ -636,15 +636,19 @@ services:
     container_name: jaeger
     command:
       - "--memory.max-traces=5000"
+      - "--query.ui-config=/etc/jaeger/jaeger-ui.json"
       - "--query.base-path=/jaeger/ui"
       - "--prometheus.server-url=http://${PROMETHEUS_ADDR}"
       - "--prometheus.query.normalize-calls=true"
       - "--prometheus.query.normalize-duration=true"
+      - "--prometheus.query.support-spanmetrics-connector=true"
     deploy:
       resources:
         limits:
           memory: 400M
     restart: unless-stopped
+    volumes:
+      - ./src/jaeger/jaeger-ui.json:/etc/jaeger/jaeger-ui.json
     ports:
       - "${JAEGER_SERVICE_PORT}"         # Jaeger UI
       - "${OTEL_COLLECTOR_PORT_GRPC}"
