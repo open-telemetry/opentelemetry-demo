@@ -19,7 +19,8 @@ import dev.openfeature.contrib.providers.flagd.FlagdOptions
 import dev.openfeature.contrib.providers.flagd.FlagdProvider
 import dev.openfeature.sdk.Client
 import dev.openfeature.sdk.EvaluationContext
-import dev.openfeature.sdk.MutableContext
+import dev.openfeature.sdk.ImmutableContext
+import dev.openfeature.sdk.Value
 import dev.openfeature.sdk.OpenFeatureAPI
 
 const val topic = "orders"
@@ -78,7 +79,10 @@ fun getFeatureFlagValue(ff: String): Int {
     val client = OpenFeatureAPI.getInstance().client
     // TODO: Plumb the actual session ID from the frontend via baggage?
     val uuid = UUID.randomUUID()
-    client.evaluationContext = MutableContext().add("session", uuid.toString())
+
+    val clientAttrs = mutableMapOf<String, Value>()
+    clientAttrs["session"] = Value(uuid.toString())
+    client.evaluationContext = ImmutableContext(clientAttrs)
     val intValue = client.getIntegerValue(ff, 0)
     return intValue
 }

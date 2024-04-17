@@ -160,6 +160,7 @@ func main() {
 	}
 
 	openfeature.SetProvider(flagd.NewProvider())
+	openfeature.AddHooks(otelhooks.NewTracesHook())
 
 	tracer = tp.Tracer("checkoutservice")
 
@@ -547,9 +548,8 @@ func createProducerSpan(ctx context.Context, msg *sarama.ProducerMessage) trace.
 }
 
 func (cs *checkoutService) isFeatureFlagEnabled(ctx context.Context, featureFlagName string) bool {
-    openfeature.AddHooks(otelhooks.NewTracesHook())
     client := openfeature.NewClient("checkout")
-    
+	
     // Default value is set to false, but you could also make this a parameter.
     featureEnabled, _ := client.BooleanValue(
         ctx, 
@@ -562,7 +562,6 @@ func (cs *checkoutService) isFeatureFlagEnabled(ctx context.Context, featureFlag
 }
 
 func (cs *checkoutService) getIntFeatureFlag(ctx context.Context, featureFlagName string) int {
-    openfeature.AddHooks(otelhooks.NewTracesHook())
     client := openfeature.NewClient("checkout")
     
     // Default value is set to 0, but you could also make this a parameter.
