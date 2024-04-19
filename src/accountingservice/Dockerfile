@@ -5,7 +5,7 @@ WORKDIR /app
 FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
 ARG BUILD_CONFIGURATION=Release
 WORKDIR /src
-COPY ["AccountingService/AccountingService.csproj", "AccountingService/"]
+COPY ["/src/AccountingService/AccountingService.csproj", "AccountingService/"]
 RUN dotnet restore "./AccountingService/AccountingService.csproj"
 COPY . .
 WORKDIR "/src/AccountingService"
