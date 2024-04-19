@@ -1,4 +1,7 @@
-﻿using Confluent.Kafka;
+﻿// Copyright The OpenTelemetry Authors
+// SPDX-License-Identifier: Apache-2.0
+
+using Confluent.Kafka;
 using Confluent.Kafka.SyncOverAsync;
 using Confluent.SchemaRegistry.Serdes;
 using Microsoft.Extensions.Logging;

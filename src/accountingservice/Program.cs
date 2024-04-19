@@ -1,4 +1,7 @@
-﻿using AccountingService;
+﻿// Copyright The OpenTelemetry Authors
+// SPDX-License-Identifier: Apache-2.0
+
+using AccountingService;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 
