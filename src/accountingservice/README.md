@@ -7,7 +7,7 @@ This service consumes new orders from a Kafka topic.
 To build the service binary, run:
 
 ```sh
-go build -o /go/bin/accountingservice/
+dotnet build
 ```
 
 ## Docker Build
@@ -18,22 +18,10 @@ From the root directory, run:
 docker compose build accountingservice
 ```
 
-## Regenerate protos
-
-> [!NOTE]
-> [`protoc`](https://grpc.io/docs/protoc-installation/) is required.
-
-To regenerate gRPC code run:
-
-```sh
-go generate
-```
-
 ## Bump dependencies
 
-To bump all dependencies run:
+To bump all dependencies run in Package manager:
 
 ```sh
-go get -u -t ./...
-go mod tidy
+Update-Package -ProjectName AccountingService
 ```
