@@ -5,10 +5,11 @@ WORKDIR /app
 FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
 ARG BUILD_CONFIGURATION=Release
 WORKDIR /src
-COPY ["/src/accountingservice/AccountingService.csproj", "AccountingService/"]
+COPY ["/src/accountingservice/", "AccountingService/"]
+COPY ["/pb/demo.proto", "AccountingService/proto/"]
 RUN dotnet restore "./AccountingService/AccountingService.csproj"
-COPY . .
 WORKDIR "/src/AccountingService"
+
 RUN dotnet build "./AccountingService.csproj" -c $BUILD_CONFIGURATION -o /app/build
 
 FROM build AS publish
@@ -25,7 +26,7 @@ RUN chown app "/var/log/opentelemetry/dotnet"
 USER app
 
 ENV OTEL_TRACES_EXPORTER=otlp
-ENV OTEL_METRICS_EXPORTER=none
+ENV OTEL_METRICS_EXPORTER=otlp
 ENV OTEL_LOGS_EXPORTER=otlp
 ENV OTEL_LOG_LEVEL=debug
 
