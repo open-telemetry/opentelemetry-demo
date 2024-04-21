@@ -5,10 +5,12 @@ const {
 	SimpleLogRecordProcessor,
 	ConsoleLogRecordExporter,
 } = require("@opentelemetry/sdk-logs");
+import { logs } from "@opentelemetry/api-logs";
 
 const loggerProvider = new LoggerProvider();
 loggerProvider.addLogRecordProcessor(
 	new SimpleLogRecordProcessor(new ConsoleLogRecordExporter())
 );
+logs.setGlobalLoggerProvider(loggerProvider);
 
-module.exports = loggerProvider.getLogger("paymentservice", "1.0.0");
+module.exports = logs.getLogger("paymentservice", "1.0.0");

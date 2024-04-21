@@ -70,7 +70,6 @@ server.bindAsync(
 			return logger.error({ err });
 		}
 
-		logger.info(`PaymentService gRPC server started on port ${port}`);
 		logger.emit({
 			severityNumber: SeverityNumber.INFO,
 			severityText: "INFO",
