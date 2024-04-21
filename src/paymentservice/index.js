@@ -1,12 +1,13 @@
 // Copyright The OpenTelemetry Authors
 // SPDX-License-Identifier: Apache-2.0
-const grpc = require('@grpc/grpc-js');
-const protoLoader = require('@grpc/proto-loader');
-const health = require('grpc-js-health-check');
-const opentelemetry = require('@opentelemetry/api');
+const grpc = require("@grpc/grpc-js");
+const protoLoader = require("@grpc/proto-loader");
+const health = require("grpc-js-health-check");
+const opentelemetry = require("@opentelemetry/api");
+const { SeverityNumber } = require("@opentelemetry/api-logs");
 
-const charge = require('./charge');
-const logger = require('./logger');
+const charge = require("./charge");
+const logger = require("./logger");
 
 async function chargeServiceHandler(call, callback) {
 	const span = opentelemetry.trace.getActiveSpan();
@@ -14,14 +15,24 @@ async function chargeServiceHandler(call, callback) {
 	try {
 		const amount = call.request.amount;
 		span.setAttributes({
-			'app.payment.amount': parseFloat(`${amount.units}.${amount.nanos}`),
+			"app.payment.amount": parseFloat(`${amount.units}.${amount.nanos}`),
 		});
-		logger.info({ request: call.request }, 'Charge request received.');
+		logger.emit({
+			severityNumber: SeverityNumber.INFO,
+			severityText: "INFO",
+			body: "Charge request received.",
+			attributes: { request: call.request },
+		});
 
 		const response = await charge.charge(call.request);
 		callback(null, response);
 	} catch (err) {
-		logger.warn({ error: err });
+		logger.emit({
+			severityNumber: SeverityNumber.WARN,
+			severityText: "ERROR",
+			body: "Charge request failed.",
+			attributes: { request: call.request },
+		});
 
 		span.recordException(err);
 		span.setStatus({ code: opentelemetry.SpanStatusCode.ERROR });
@@ -36,14 +47,14 @@ async function closeGracefully(signal) {
 }
 
 const otelDemoPackage = grpc.loadPackageDefinition(
-	protoLoader.loadSync('demo.proto')
+	protoLoader.loadSync("demo.proto")
 );
 const server = new grpc.Server();
 
 server.addService(
 	health.service,
 	new health.Implementation({
-		'': health.servingStatus.SERVING,
+		"": health.servingStatus.SERVING,
 	})
 );
 
@@ -52,7 +63,7 @@ server.addService(otelDemoPackage.oteldemo.PaymentService.service, {
 });
 
 server.bindAsync(
-	`0.0.0.0:${process.env['PAYMENT_SERVICE_PORT']}`,
+	`0.0.0.0:${process.env["PAYMENT_SERVICE_PORT"]}`,
 	grpc.ServerCredentials.createInsecure(),
 	(err, port) => {
 		if (err) {
@@ -60,6 +71,11 @@ server.bindAsync(
 		}
 
 		logger.info(`PaymentService gRPC server started on port ${port}`);
+		logger.emit({
+			severityNumber: SeverityNumber.INFO,
+			severityText: "INFO",
+			body: `PaymentService gRPC server started on port ${port}.`,
+		});
 		server.start();
 	}
 );
