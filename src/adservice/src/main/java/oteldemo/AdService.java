@@ -12,6 +12,8 @@ import io.grpc.health.v1.HealthCheckResponse.ServingStatus;
 import io.grpc.protobuf.services.*;
 import io.grpc.stub.StreamObserver;
 import io.opentelemetry.api.GlobalOpenTelemetry;
+import io.opentelemetry.api.OpenTelemetry;
+import io.opentelemetry.api.baggage.Baggage;
 import io.opentelemetry.api.common.AttributeKey;
 import io.opentelemetry.api.common.Attributes;
 import io.opentelemetry.api.metrics.LongCounter;
@@ -19,6 +21,7 @@ import io.opentelemetry.api.metrics.Meter;
 import io.opentelemetry.api.trace.Span;
 import io.opentelemetry.api.trace.StatusCode;
 import io.opentelemetry.api.trace.Tracer;
+import io.opentelemetry.context.Context;
 import io.opentelemetry.context.Scope;
 import io.opentelemetry.instrumentation.annotations.SpanAttribute;
 import io.opentelemetry.instrumentation.annotations.WithSpan;
@@ -132,7 +135,8 @@ public final class AdService {
     private static final String ADSERVICE_FAILURE = "adServiceFailure";
     private static final String ADSERVICE_MANUAL_GC_FEATURE_FLAG = "adServiceManualGc";
     private static final String ADSERVICE_HIGH_CPU_FEATURE_FLAG = "adServiceHighCpu";
-
+    Client ffClient = OpenFeatureAPI.getInstance().getClient();
+    
     private AdServiceImpl() {}
 
     /**
@@ -154,6 +158,15 @@ public final class AdService {
         List<Ad> allAds = new ArrayList<>();
         AdRequestType adRequestType;
         AdResponseType adResponseType;
+
+        Baggage baggage = Baggage.fromContextOrNull(Context.current());
+        if (baggage != null) {
+          final String sessionId = baggage.getEntryValue("session.id");
+          span.setAttribute("session.id", sessionId);
+          ffClient.setEvaluationContext(new MutableContext().add("session", sessionId));
+        } else {
+          logger.info("no baggage found in context");
+        }
 
         span.setAttribute("app.ads.contextKeys", req.getContextKeysList().toString());
         span.setAttribute("app.ads.contextKeys.count", req.getContextKeysCount());
@@ -214,11 +227,7 @@ public final class AdService {
      * @return {@code true} if the feature flag is enabled, {@code false} otherwise or in case of errors.
      */
     boolean getFeatureFlagEnabled(String ff) {
-      Client client = OpenFeatureAPI.getInstance().getClient();
-      // TODO: Plumb the actual session ID from the frontend via baggage?
-      UUID uuid = UUID.randomUUID();
-      client.setEvaluationContext(new MutableContext().add("session", uuid.toString()));
-      Boolean boolValue = client.getBooleanValue(ff, false);
+      Boolean boolValue = ffClient.getBooleanValue(ff, false);
       return boolValue;
     }
   }
