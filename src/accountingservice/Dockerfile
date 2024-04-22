@@ -28,9 +28,4 @@ RUN mkdir -p "/var/log/opentelemetry/dotnet"
 RUN chown app "/var/log/opentelemetry/dotnet"
 USER app
 
-ENV OTEL_TRACES_EXPORTER=otlp
-ENV OTEL_METRICS_EXPORTER=otlp
-ENV OTEL_LOGS_EXPORTER=otlp
-ENV OTEL_LOG_LEVEL=debug
-
 ENTRYPOINT ["./instrument.sh", "dotnet", "AccountingService.dll"]
