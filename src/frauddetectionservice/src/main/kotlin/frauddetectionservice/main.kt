@@ -57,12 +57,12 @@ fun main() {
                 .poll(ofMillis(100))
                 .fold(totalCount) { accumulator, record ->
                     val newCount = accumulator + 1
-                    val orders = OrderResult.parseFrom(record.value())
-                    logger.info("Consumed record with orderId: ${orders.orderId}, and updated total count to: $newCount")
                     if (getFeatureFlagValue("kafkaQueueProblems") > 0) {
                         logger.info("FeatureFlag 'kafkaQueueProblems' is enabled, sleeping 1 second")
                         Thread.sleep(1000)
                     }
+                    val orders = OrderResult.parseFrom(record.value())
+                    logger.info("Consumed record with orderId: ${orders.orderId}, and updated total count to: $newCount")
                     newCount
                 }
         }
