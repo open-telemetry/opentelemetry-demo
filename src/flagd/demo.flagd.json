@@ -47,17 +47,8 @@
       "defaultVariant": "off",
       "targeting": {
         "fractional": [
-          {
-            "var": "session"
-          },
-          [
-            "on",
-            10
-          ],
-          [
-            "off",
-            90
-          ]
+          ["on", 10],
+          ["off", 90]
         ]
       }
     },
