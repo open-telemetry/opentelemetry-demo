@@ -128,9 +128,12 @@ func main() {
 		}
 		log.Println("Shutdown meter provider")
 	}()
-	openfeature.SetProvider(flagd.NewProvider())
+	err := openfeature.SetProvider(flagd.NewProvider())
+	if err != nil {
+		log.Fatal(err)
+	}
 
-	err := runtime.Start(runtime.WithMinimumReadMemStatsInterval(time.Second))
+	err = runtime.Start(runtime.WithMinimumReadMemStatsInterval(time.Second))
 	if err != nil {
 		log.Fatal(err)
 	}
