@@ -33,7 +33,7 @@ service:
       exporters: [spanmetrics, otlp/elastic]
     metrics:
       receivers: [otlp, spanmetrics]
-      processors: [filter, batch]
+      processors: [batch]
       exporters: [otlp/elastic]
     logs:
       receivers: [otlp]
