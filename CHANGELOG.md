@@ -21,6 +21,8 @@ the release.
   ([#1522](https://github.com/open-telemetry/opentelemetry-demo/pull/1522))
 * [frontend] Pass down image optimization requests to imageprovider
   ([#1522](https://github.com/open-telemetry/opentelemetry-demo/pull/1522))
+* [kafka] add kafkaQueueProblems feature flag
+  ([#1528](https://github.com/open-telemetry/opentelemetry-demo/pull/1528))
 * [otelcollector] Add `redisreceiver`
   ([#1537](https://github.com/open-telemetry/opentelemetry-demo/pull/1537))
 
