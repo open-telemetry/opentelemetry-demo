@@ -94,7 +94,8 @@ Deploy the demo using the published Helm chart:
 cd instana
 helm repo add open-telemetry https://open-telemetry.github.io/opentelemetry-helm-charts
 helm repo update
-helm install my-otel-demo open-telemetry/opentelemetry-demo -f values-instana-agent.yaml
+# install the chart using pinned chart version that corresponds to the 1.6 release
+helm install my-otel-demo open-telemetry/opentelemetry-demo -f values-instana-agent.yaml --version 0.26.1
 ```
 
 > **Tip:**
