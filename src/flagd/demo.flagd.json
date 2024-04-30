@@ -61,6 +61,15 @@
         ]
       }
     },
+    "kafkaQueueProblems": {
+      "description": "Overloads Kafka queue while simultaneously introducing a consumer side delay leading to a lag spike",
+      "state": "ENABLED",
+      "variants": {
+          "on": 100,
+          "off": 0
+        },
+        "defaultVariant": "off"
+    },
     "cartServiceFailure": {
       "description": "Fail cart service",
       "state": "ENABLED",
