@@ -25,6 +25,8 @@ the release.
   ([#1528](https://github.com/open-telemetry/opentelemetry-demo/pull/1528))
 * [otelcollector] Add `redisreceiver`
   ([#1537](https://github.com/open-telemetry/opentelemetry-demo/pull/1537))
+* [flagd] update to 0.10.1 and set 50M memory limit
+  ([#1554](https://github.com/open-telemetry/opentelemetry-demo/pull/1554))
 
 ## 1.9.0
 
