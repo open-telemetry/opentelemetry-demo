@@ -2,8 +2,6 @@
 // SPDX-License-Identifier: Apache-2.0
 
 using Confluent.Kafka;
-using Confluent.Kafka.SyncOverAsync;
-using Confluent.SchemaRegistry.Serdes;
 using Microsoft.Extensions.Logging;
 using Oteldemo;
 
@@ -14,7 +12,7 @@ internal class Consumer : IDisposable
     private const string TopicName = "orders";
 
     private ILogger _logger;
-    private IConsumer<string, OrderResult> _consumer;
+    private IConsumer<string, byte[]> _consumer;
     private bool _isListening;
 
     public Consumer(ILogger<Consumer> logger)
@@ -62,12 +60,21 @@ internal class Consumer : IDisposable
         }
     }
 
-    private void ProcessMessage(Message<string, OrderResult> message)
+    private void ProcessMessage(Message<string, byte[]> message)
     {
-        Log.LogOrderReceivedMessage(_logger, message.Value);
+        try
+        {
+            var order = OrderResult.Parser.ParseFrom(message.Value);
+
+            Log.OrderReceivedMessage(_logger, order);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Order parsing failed:");
+        }
     }
 
-    private IConsumer<string, OrderResult> BuildConsumer(string servers)
+    private IConsumer<string, byte[]> BuildConsumer(string servers)
     {
         var conf = new ConsumerConfig
         {
@@ -76,11 +83,11 @@ internal class Consumer : IDisposable
             // https://github.com/confluentinc/confluent-kafka-dotnet/tree/07de95ed647af80a0db39ce6a8891a630423b952#basic-consumer-example
             AutoOffsetReset = AutoOffsetReset.Earliest,
             CancellationDelayMaxMs = 10_000,
-            EnableAutoCommit = true
+            EnableAutoCommit = true,
+            EnablePartitionEof = true,
         };
 
-        return new ConsumerBuilder<string, OrderResult>(conf)
-            .SetValueDeserializer(new ProtobufDeserializer<OrderResult>().AsSyncOverAsync())
+        return new ConsumerBuilder<string, byte[]>(conf)
             .Build();
     }
 

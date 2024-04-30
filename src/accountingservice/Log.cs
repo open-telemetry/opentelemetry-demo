@@ -11,6 +11,6 @@ namespace AccountingService
         [LoggerMessage(
             Level = LogLevel.Information,
             Message = "Order details: {@OrderResult}.")]
-        public static partial void LogOrderReceivedMessage(ILogger logger, OrderResult orderResult);
+        public static partial void OrderReceivedMessage(ILogger logger, OrderResult orderResult);
     }
 }
