@@ -247,9 +247,11 @@ services:
     deploy:
       resources:
         limits:
-          memory: 200M
+          memory: 300M
     restart: unless-stopped
     environment:
+      - FLAGD_HOST
+      - FLAGD_PORT
       - KAFKA_SERVICE_ADDR
       - OTEL_EXPORTER_OTLP_ENDPOINT=http://${OTEL_COLLECTOR_HOST}:${OTEL_COLLECTOR_PORT_HTTP}
       - OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE

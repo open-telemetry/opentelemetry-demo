@@ -160,6 +160,7 @@ func main() {
 	}
 
 	openfeature.SetProvider(flagd.NewProvider())
+	openfeature.AddHooks(otelhooks.NewTracesHook())
 
 	tracer = tp.Tracer("checkoutservice")
 
@@ -316,6 +317,7 @@ func (cs *checkoutService) PlaceOrder(ctx context.Context, req *pb.PlaceOrderReq
 
 	// send to kafka only if kafka broker address is set
 	if cs.kafkaBrokerSvcAddr != "" {
+		log.Infof("sending to postProcessor")
 		cs.sendToPostProcessor(ctx, orderResult)
 	}
 
@@ -439,7 +441,7 @@ func (cs *checkoutService) convertCurrency(ctx context.Context, from *pb.Money, 
 
 func (cs *checkoutService) chargeCard(ctx context.Context, amount *pb.Money, paymentInfo *pb.CreditCardInfo) (string, error) {
     paymentService := cs.paymentSvcClient
-	if cs.checkPaymentFailure(ctx) {
+	if cs.isFeatureFlagEnabled(ctx, "paymentServiceUnreachable") {
         badAddress := "badAddress:50051"
         c := mustCreateClient(context.Background(), badAddress)
 		paymentService = pb.NewPaymentServiceClient(c)
@@ -505,6 +507,18 @@ func (cs *checkoutService) sendToPostProcessor(ctx context.Context, result *pb.O
 	cs.KafkaProducerClient.Input() <- &msg
 	successMsg := <-cs.KafkaProducerClient.Successes()
 	log.Infof("Successful to write message. offset: %v", successMsg.Offset)
+
+	ffValue := cs.getIntFeatureFlag(ctx, "kafkaQueueProblems")
+	if ffValue > 0 {
+		log.Infof("Warning: FeatureFlag 'kafkaQueueProblems' is activated, overloading queue now.")
+		for i := 0; i < ffValue; i++ {
+    		go func(i int) {
+    		    cs.KafkaProducerClient.Input() <- &msg
+				_ = <-cs.KafkaProducerClient.Successes()
+            }(i)
+		}
+		log.Infof("Done with #%d messages for overload simulation.", ffValue)
+	}
 }
 
 func createProducerSpan(ctx context.Context, msg *sarama.ProducerMessage) trace.Span {
@@ -533,11 +547,30 @@ func createProducerSpan(ctx context.Context, msg *sarama.ProducerMessage) trace.
 	return span
 }
 
-func (cs *checkoutService) checkPaymentFailure(ctx context.Context) bool {
-	openfeature.AddHooks(otelhooks.NewTracesHook())
-	client := openfeature.NewClient("checkout")
-	failureEnabled, _ := client.BooleanValue(
-		ctx, "paymentServiceUnreachable", false, openfeature.EvaluationContext{},
-	)
-	return failureEnabled
+func (cs *checkoutService) isFeatureFlagEnabled(ctx context.Context, featureFlagName string) bool {
+    client := openfeature.NewClient("checkout")
+	
+    // Default value is set to false, but you could also make this a parameter.
+    featureEnabled, _ := client.BooleanValue(
+        ctx, 
+        featureFlagName, 
+        false, 
+        openfeature.EvaluationContext{},
+    )
+    
+    return featureEnabled
+}
+
+func (cs *checkoutService) getIntFeatureFlag(ctx context.Context, featureFlagName string) int {
+    client := openfeature.NewClient("checkout")
+    
+    // Default value is set to 0, but you could also make this a parameter.
+    featureFlagValue, _ := client.IntValue(
+        ctx, 
+        featureFlagName, 
+        0, 
+        openfeature.EvaluationContext{},
+    )
+    
+    return int(featureFlagValue)
 }
