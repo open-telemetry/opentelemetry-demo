@@ -135,7 +135,7 @@ public final class AdService {
     private static final String ADSERVICE_FAILURE = "adServiceFailure";
     private static final String ADSERVICE_MANUAL_GC_FEATURE_FLAG = "adServiceManualGc";
     private static final String ADSERVICE_HIGH_CPU_FEATURE_FLAG = "adServiceHighCpu";
-    Client ffClient = OpenFeatureAPI.getInstance().getClient();
+    private static final Client ffClient = OpenFeatureAPI.getInstance().getClient();
     
     private AdServiceImpl() {}
 
@@ -149,8 +149,6 @@ public final class AdService {
     @Override
     public void getAds(AdRequest req, StreamObserver<AdResponse> responseObserver) {
       AdService service = AdService.getInstance();
-      CPULoad cpuload = CPULoad.getInstance();
-      cpuload.execute(getFeatureFlagEnabled(ADSERVICE_HIGH_CPU_FEATURE_FLAG));
 
       // get the current span in context
       Span span = Span.current();
@@ -160,13 +158,18 @@ public final class AdService {
         AdResponseType adResponseType;
 
         Baggage baggage = Baggage.fromContextOrNull(Context.current());
+        MutableContext evaluationContext = new MutableContext();
         if (baggage != null) {
           final String sessionId = baggage.getEntryValue("session.id");
           span.setAttribute("session.id", sessionId);
-          ffClient.setEvaluationContext(new MutableContext().add("session", sessionId));
+          evaluationContext.setTargetingKey(sessionId);
+          evaluationContext.add("session", sessionId);
         } else {
           logger.info("no baggage found in context");
         }
+
+        CPULoad cpuload = CPULoad.getInstance();
+        cpuload.execute(ffClient.getBooleanValue(ADSERVICE_HIGH_CPU_FEATURE_FLAG, false, evaluationContext));
 
         span.setAttribute("app.ads.contextKeys", req.getContextKeysList().toString());
         span.setAttribute("app.ads.contextKeys.count", req.getContextKeysCount());
@@ -198,11 +201,11 @@ public final class AdService {
             Attributes.of(
                 adRequestTypeKey, adRequestType.name(), adResponseTypeKey, adResponseType.name()));
 
-        if (getFeatureFlagEnabled(ADSERVICE_FAILURE)) {
+        if (ffClient.getBooleanValue(ADSERVICE_FAILURE, false, evaluationContext)) {
           throw new StatusRuntimeException(Status.UNAVAILABLE);
         }
 
-        if (getFeatureFlagEnabled(ADSERVICE_MANUAL_GC_FEATURE_FLAG)) {
+        if (ffClient.getBooleanValue(ADSERVICE_MANUAL_GC_FEATURE_FLAG, false, evaluationContext)) {
           logger.warn("Feature Flag " + ADSERVICE_MANUAL_GC_FEATURE_FLAG + " enabled, performing a manual gc now");
           GarbageCollectionTrigger gct = new GarbageCollectionTrigger();
           gct.doExecute();
@@ -218,17 +221,6 @@ public final class AdService {
         logger.log(Level.WARN, "GetAds Failed with status {}", e.getStatus());
         responseObserver.onError(e);
       }
-    }
-
-    /**
-     * Retrieves the status of a feature flag from the Feature Flag service.
-     *
-     * @param ff The name of the feature flag to retrieve.
-     * @return {@code true} if the feature flag is enabled, {@code false} otherwise or in case of errors.
-     */
-    boolean getFeatureFlagEnabled(String ff) {
-      Boolean boolValue = ffClient.getBooleanValue(ff, false);
-      return boolValue;
     }
   }
 
