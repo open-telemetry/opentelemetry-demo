@@ -215,26 +215,6 @@ services:
         condition: service_started
     logging: *logging
 
-  flagd:
-    image: ghcr.io/open-feature/flagd:v0.9.0
-    container_name: flagd
-    environment:
-      - FLAGD_OTEL_COLLECTOR_URI=${OTEL_COLLECTOR_HOST}:${OTEL_COLLECTOR_PORT_GRPC}
-      - FLAGD_METRICS_EXPORTER=otel
-      - OTEL_RESOURCE_ATTRIBUTES
-      - OTEL_SERVICE_NAME=flagd
-    command: [
-      "start",
-      "--uri",
-      "file:./etc/flagd/demo.flagd.json"
-    ]
-    ports:
-      - 8013
-    volumes:
-      - ./src/flagd:/etc/flagd
-    logging:
-      *logging
-
   # Fraud Detection service
   frauddetectionservice:
     image: ${IMAGE_NAME}:${DEMO_VERSION}-frauddetectionservice
@@ -585,6 +565,31 @@ services:
   # ******************
   # Dependent Services
   # ******************
+  # Flagd, feature flagging service
+  flagd:
+    image: ghcr.io/open-feature/flagd:v0.10.1
+    container_name: flagd
+    deploy:
+      resources:
+        limits:
+          memory: 50M
+    environment:
+      - FLAGD_OTEL_COLLECTOR_URI=${OTEL_COLLECTOR_HOST}:${OTEL_COLLECTOR_PORT_GRPC}
+      - FLAGD_METRICS_EXPORTER=otel
+      - OTEL_RESOURCE_ATTRIBUTES
+      - OTEL_SERVICE_NAME=flagd
+    command: [
+      "start",
+      "--uri",
+      "file:./etc/flagd/demo.flagd.json"
+    ]
+    ports:
+      - 8013
+    volumes:
+      - ./src/flagd:/etc/flagd
+    logging:
+      *logging
+
   # Kafka used by Checkout, Accounting, and Fraud Detection services
   kafka:
     image: ${IMAGE_NAME}:${DEMO_VERSION}-kafka
