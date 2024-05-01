@@ -25,6 +25,8 @@ the release.
   ([#1528](https://github.com/open-telemetry/opentelemetry-demo/pull/1528))
 * [otelcollector] Add `redisreceiver`
   ([#1537](https://github.com/open-telemetry/opentelemetry-demo/pull/1537))
+* [traceBasedTests] update to v1.0.0
+  ([#1551](https://github.com/open-telemetry/opentelemetry-demo/pull/1551))
 
 ## 1.9.0
 
