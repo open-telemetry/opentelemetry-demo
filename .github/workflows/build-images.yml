@@ -36,6 +36,10 @@ jobs:
       fail-fast: false
       matrix:
         file_tag:
+          - file: ./src/accountingservice/Dockerfile
+            tag_suffix: accountingservice
+            context: ./
+            setup-qemu: true
           - file: ./src/adservice/Dockerfile
             tag_suffix: adservice
             context: ./
@@ -56,12 +60,28 @@ jobs:
             tag_suffix: emailservice
             context: ./src/emailservice
             setup-qemu: true
+          - file: ./src/frauddetectionservice/Dockerfile
+            tag_suffix: frauddetectionservice
+            context: ./
+            setup-qemu: true
           - file: ./src/frontend/Dockerfile
             tag_suffix: frontend
             context: ./
             setup-qemu: true
           - file: ./src/frontendproxy/Dockerfile
             tag_suffix: frontendproxy
+            context: ./
+            setup-qemu: true
+          - file: ./src/frontend/Dockerfile.cypress
+            tag_suffix: frontend-tests
+            context: ./
+            setup-qemu: true
+          - file: ./src/imageprovider/Dockerfile
+            tag_suffix: imageprovider
+            context: ./
+            setup-qemu: true
+          - file: ./src/kafka/Dockerfile
+            tag_suffix: kafka
             context: ./
             setup-qemu: true
           - file: ./src/loadgenerator/Dockerfile
@@ -80,28 +100,12 @@ jobs:
             tag_suffix: quoteservice
             context: ./
             setup-qemu: true
-          - file: ./src/shippingservice/Dockerfile
-            tag_suffix: shippingservice
-            context: ./
-            setup-qemu: true
           - file: ./src/recommendationservice/Dockerfile
             tag_suffix: recommendationservice
             context: ./
             setup-qemu: true
-          - file: ./src/kafka/Dockerfile
-            tag_suffix: kafka
-            context: ./
-            setup-qemu: true
-          - file: ./src/accountingservice/Dockerfile
-            tag_suffix: accountingservice
-            context: ./
-            setup-qemu: true
-          - file: ./src/frauddetectionservice/Dockerfile
-            tag_suffix: frauddetectionservice
-            context: ./
-            setup-qemu: true
-          - file: ./src/frontend/Dockerfile.cypress
-            tag_suffix: frontend-tests
+          - file: ./src/shippingservice/Dockerfile
+            tag_suffix: shippingservice
             context: ./
             setup-qemu: true
           - file: ./test/tracetesting/Dockerfile
