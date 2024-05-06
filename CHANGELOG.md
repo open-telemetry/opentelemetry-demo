@@ -29,6 +29,9 @@ the release.
   ([#1551](https://github.com/open-telemetry/opentelemetry-demo/pull/1551))
 * [flagd] update to 0.10.1 and set 50M memory limit
   ([#1554](https://github.com/open-telemetry/opentelemetry-demo/pull/1554))
+* [accountingservice] convert from Go service to .NET service, uses
+  OpenTelemetry .NET Automatic Instrumentation.
+  ([#1538](https://github.com/open-telemetry/opentelemetry-demo/pull/1538))
 
 ## 1.9.0
 
