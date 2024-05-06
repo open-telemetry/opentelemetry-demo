@@ -35,6 +35,7 @@ from opentelemetry.sdk.resources import Resource
 
 from openfeature import api
 from openfeature.contrib.provider.flagd import FlagdProvider
+from openfeature.contrib.hook.opentelemetry import TracingHook
 
 from playwright.async_api import Route, Request
 
@@ -69,6 +70,7 @@ logging.info("Instrumentation complete")
 
 # Initialize Flagd provider
 api.set_provider(FlagdProvider(host=os.environ.get('FLAGD_HOST', 'flagd'), port=os.environ.get('FLAGD_PORT', 8013)))
+api.set_hooks([TracingHook()])
 
 def get_flagd_value(FlagName):
     # Initialize OpenFeature

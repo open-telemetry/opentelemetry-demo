@@ -4,7 +4,8 @@ opentelemetry-distro==0.43b0
 opentelemetry-exporter-otlp-proto-grpc==1.22.0
 python-dotenv==1.0.0
 python-json-logger==2.0.7
-openfeature-sdk==0.5.0
-openfeature-provider-flagd==0.1.3
+openfeature-sdk==0.7.0
+openfeature-provider-flagd==0.1.5
+openfeature-hooks-opentelemetry==0.1.3
 psutil==5.9.6 # Importing this will also import opentelemetry-instrumentation-system-metrics when running opentelemetry-bootstrap
 
