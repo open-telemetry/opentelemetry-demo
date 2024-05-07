@@ -618,6 +618,40 @@ services:
       retries: 10
     logging: *logging
 
+  # Zilla used by Accounting and Fraud Detection services
+  zilla:
+    image: ghcr.io/aklivity/zilla:0.9.79
+    container_name: zilla
+    deploy:
+      resources:
+        limits:
+          memory: 500M
+    restart: unless-stopped
+    ports:
+      - "${ZILLA_PORT}:${ZILLA_PORT}"
+      - "7190:7190"
+    environment:
+      - KAFKA_SERVICE_ADDR
+      - OTEL_EXPORTER_OTLP_ENDPOINT=http://${OTEL_COLLECTOR_HOST}:${OTEL_COLLECTOR_PORT_HTTP}
+      - OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE
+      - OTEL_RESOURCE_ATTRIBUTES
+      - OTEL_SERVICE_NAME=zillaservice
+    volumes:
+      - ./src/zilla/zilla.yaml:/etc/zilla/zilla.yaml
+    command: start -v -e
+    healthcheck:
+      test: nc -z zilla ${ZILLA_PORT}
+      start_period: 10s
+      interval: 5s
+      timeout: 10s
+      retries: 10
+    depends_on:
+      otelcol:
+        condition: service_started
+      kafka:
+        condition: service_healthy
+    logging: *logging
+
   # Redis used by Cart service
   redis-cart:
     image: ${REDIS_IMAGE}

@@ -1,0 +1,114 @@
+---
+name: example
+bindings:
+  north_tcp_server:
+    type: tcp
+    kind: server
+    options:
+      host: 0.0.0.0
+      port:
+        - 7114
+    routes:
+      - when:
+          - port: 7114
+        exit: north_http_server
+    telemetry:
+      metrics:
+        - stream.*
+  north_http_server:
+    type: http
+    kind: server
+    routes:
+      - when:
+          - headers:
+              :scheme: http
+              :authority: localhost:7114
+        exit: north_http_kafka_mapping
+    telemetry:
+      metrics:
+        - http.*
+        - stream.*
+  north_http_kafka_mapping:
+    type: http-kafka
+    kind: proxy
+    routes:
+      - when:
+          - method: GET
+            path: /{topic}
+        exit: north_kafka_cache_client
+        with:
+          capability: fetch
+          topic: ${params.topic}
+          merge:
+            content-type: application/json
+    telemetry:
+      metrics:
+        - http.*
+        - stream.*
+  north_kafka_cache_client:
+    type: kafka
+    kind: cache_client
+    exit: south_kafka_cache_server
+    telemetry:
+      metrics:
+        - stream.*
+  south_kafka_cache_server:
+    type: kafka
+    kind: cache_server
+    exit: south_kafka_client
+    telemetry:
+      metrics:
+        - stream.*
+  south_kafka_client:
+    type: kafka
+    kind: client
+    options:
+      servers:
+        - ${{ env.KAFKA_SERVICE_ADDR }}
+    exit: south_tcp_client
+    telemetry:
+      metrics:
+        - stream.*
+  south_tcp_client:
+    type: tcp
+    kind: client
+    telemetry:
+      metrics:
+        - stream.*
+
+telemetry:
+  attributes:
+    service.namespace: my_ns_${{ env.OTEL_SERVICE_NAME }}__
+    service.name: my_svc_${{ env.OTEL_SERVICE_NAME }}__
+    service.version: ${{ env.ZILLA_VERSION }}
+    service.kind: proxy
+    another.attribute: testing
+
+  # Desired metrics to track
+  metrics:
+    - http.request.size
+    - http.response.size
+    - stream.opens.sent
+    - stream.closes.sent
+
+  # Prometheus endpoint definition
+  exporters:
+    # prometheus_metric_exporter:
+    #   type: prometheus
+    #   options:
+    #     endpoints:
+    #       - scheme: http
+    #         path: /metrics
+    #         port: 7190
+    # standard_out:
+    #   type: stdout
+    otel_exporter_otlp:
+      type: otlp
+      options:
+        interval: 5
+        signals:
+          - metrics
+          - logs
+        endpoint:
+          protocol: http
+          location: ${{ env.OTEL_EXPORTER_OTLP_ENDPOINT }}
