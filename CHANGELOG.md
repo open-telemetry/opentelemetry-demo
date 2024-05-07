@@ -33,6 +33,8 @@ the release.
   ([#1553](https://github.com/open-telemetry/opentelemetry-demo/pull/1553))
 * [recommendationservice] Configure feature flag evaluation tracing
   ([#1553](https://github.com/open-telemetry/opentelemetry-demo/pull/1553))
+* [loadgenerator] Fix feature flag hooks setter method
+  ([#1556](https://github.com/open-telemetry/opentelemetry-demo/pull/1556))
 
 ## 1.9.0
 
