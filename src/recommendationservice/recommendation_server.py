@@ -23,8 +23,7 @@ from opentelemetry.sdk.resources import Resource
 from openfeature import api
 from openfeature.contrib.provider.flagd import FlagdProvider
 
-# TODO: once openfeature otel hook for python is released, this will work
-# from openfeature.contrib.hooks.otel import TracingHook
+from openfeature.contrib.hook.opentelemetry import TracingHook
 
 # Local
 import logging
@@ -124,14 +123,13 @@ def must_map_env(key: str):
 def check_feature_flag(flag_name: str):
     # Initialize OpenFeature
     client = api.get_client()
-    # TODO: once openfeature otel hook for python is released, this will work
-    # api.add_hooks(TracingHook())
     return client.get_boolean_value("recommendationServiceCacheFailure", False)
 
 
 if __name__ == "__main__":
     service_name = must_map_env('OTEL_SERVICE_NAME')
     api.set_provider(FlagdProvider(host=os.environ.get('FLAGD_HOST', 'flagd'), port=os.environ.get('FLAGD_PORT', 8013)))
+    api.add_hooks([TracingHook()])
 
     # Initialize Traces and Metrics
     tracer = trace.get_tracer_provider().get_tracer(service_name)
