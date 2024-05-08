@@ -8,9 +8,9 @@ requirements and recommendations.
 
 ## Join a SIG Call
 
-We meet weekly Monday's at 8:15 AM PT. The meeting is subject to change
+We meet every other week on Wednesday's at 8:00 PT. The meeting is subject to change
 depending on contributors' availability. Check the [OpenTelemetry community
-calendar](https://calendar.google.com/calendar/embed?src=google.com_b79e3e90j7bbsa2n2p5an5lf60%40group.calendar.google.com)
+calendar](https://github.com/open-telemetry/community?tab=readme-ov-file#special-interest-groups)
 for specific dates and Zoom meeting links.
 
 Meeting notes are available as a public [Google
