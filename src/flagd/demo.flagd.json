@@ -96,6 +96,16 @@
         "off": 0
       },
       "defaultVariant": "off"
+    },
+    "imageSlowLoad": {
+      "description": "slow loading images in the frontend",
+      "state": "ENABLED",
+      "variants": {
+        "10sec": 10000,
+        "5sec": 5000,
+        "off": 0
+      },
+      "defaultVariant": "off"
     }
   }
 }

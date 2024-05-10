@@ -10,6 +10,7 @@ import CartProvider from '../providers/Cart.provider';
 import { ThemeProvider } from 'styled-components';
 import Theme from '../styles/Theme';
 import FrontendTracer from '../utils/telemetry/FrontendTracer';
+import { OpenFeatureProvider, OpenFeature } from '@openfeature/react-sdk';
 
 declare global {
   interface Window {
@@ -28,17 +29,21 @@ if (typeof window !== 'undefined') {
 }
 
 const queryClient = new QueryClient();
+const client = OpenFeature.getClient();
 
 function MyApp({ Component, pageProps }: AppProps) {
+
   return (
     <ThemeProvider theme={Theme}>
-      <QueryClientProvider client={queryClient}>
-        <CurrencyProvider>
-          <CartProvider>
-            <Component {...pageProps} />
-          </CartProvider>
-        </CurrencyProvider>
-      </QueryClientProvider>
+      <OpenFeatureProvider client={client}>
+        <QueryClientProvider client={queryClient}>
+          <CurrencyProvider>
+            <CartProvider>
+              <Component {...pageProps} />
+            </CartProvider>
+          </CurrencyProvider>
+        </QueryClientProvider>
+      </OpenFeatureProvider>
     </ThemeProvider>
   );
 }
