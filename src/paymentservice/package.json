@@ -7,7 +7,7 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "lint": "semistandard *.js",
-    "start": "node --require ./opentelemetry.js index.js"
+    "start": "node --import solarwinds-apm index.js"
   },
   "author": "Jonathan Lui",
   "license": "ISC",
@@ -20,17 +20,10 @@
     "@opentelemetry/core": "1.18.1",
     "@opentelemetry/resources": "1.18.1",
     "@opentelemetry/api": "1.7.0",
-    "@opentelemetry/sdk-metrics": "1.18.1",
-    "@opentelemetry/exporter-trace-otlp-grpc": "0.45.1",
-    "@opentelemetry/exporter-metrics-otlp-grpc": "0.45.1",
-    "@opentelemetry/sdk-node": "0.45.1",
-    "@opentelemetry/resource-detector-alibaba-cloud": "0.28.4",
-    "@opentelemetry/resource-detector-aws": "1.3.4",
-    "@opentelemetry/resource-detector-container": "0.3.4",
-    "@opentelemetry/resource-detector-gcp": "0.29.4",
     "grpc-js-health-check": "1.1.0",
     "pino": "8.16.1",
     "simple-card-validator": "1.1.0",
+    "solarwinds-apm": "14.0.2",
     "uuid": "9.0.1"
   }
 }

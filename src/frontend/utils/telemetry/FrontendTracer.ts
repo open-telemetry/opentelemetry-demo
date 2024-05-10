@@ -6,11 +6,10 @@ import { WebTracerProvider } from '@opentelemetry/sdk-trace-web';
 import { BatchSpanProcessor } from '@opentelemetry/sdk-trace-base';
 import { registerInstrumentations } from '@opentelemetry/instrumentation';
 import { getWebAutoInstrumentations } from '@opentelemetry/auto-instrumentations-web';
-import { Resource, browserDetector } from '@opentelemetry/resources';
+import { Resource, browserDetector, detectResourcesSync } from '@opentelemetry/resources';
 import { SemanticResourceAttributes } from '@opentelemetry/semantic-conventions';
 import { OTLPTraceExporter } from '@opentelemetry/exporter-trace-otlp-http';
 import { SessionIdProcessor } from './SessionIdProcessor';
-import { detectResourcesSync } from '@opentelemetry/resources/build/src/detect-resources';
 import { ZoneContextManager } from '@opentelemetry/context-zone';
 
 const {
