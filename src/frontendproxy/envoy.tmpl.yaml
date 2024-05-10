@@ -48,7 +48,7 @@ static_resources:
                         - match: { prefix: "/images/" }
                           route: { cluster: imageprovider, prefix_rewrite: "/" }
                         - match: { prefix: "/flagservice/" }
-                          route: { cluster: flagservice, prefix_rewrite: "/" }
+                          route: { cluster: flagservice, prefix_rewrite: "/", timeout: 0s }
                         - match: { prefix: "/" }
                           route: { cluster: frontend }
                 http_filters:
