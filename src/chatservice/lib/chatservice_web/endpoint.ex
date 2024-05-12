@@ -1,4 +1,4 @@
-defmodule ChatserviceWeb.Endpoint do
+defmodule ChatServiceWeb.Endpoint do
   use Phoenix.Endpoint, otp_app: :chatservice
 
   # The session will be stored in the cookie and signed,
@@ -23,7 +23,7 @@ defmodule ChatserviceWeb.Endpoint do
     at: "/",
     from: :chatservice,
     gzip: false,
-    only: ChatserviceWeb.static_paths()
+    only: ChatServiceWeb.static_paths()
 
   # Code reloading can be explicitly enabled under the
   # :code_reloader configuration of your endpoint.
@@ -49,5 +49,5 @@ defmodule ChatserviceWeb.Endpoint do
   plug Plug.MethodOverride
   plug Plug.Head
   plug Plug.Session, @session_options
-  plug ChatserviceWeb.Router
+  plug ChatServiceWeb.Router
 end

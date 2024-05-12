@@ -1,5 +1,5 @@
-defmodule ChatserviceWeb.ErrorHTML do
-  use ChatserviceWeb, :html
+defmodule ChatServiceWeb.ErrorHTML do
+  use ChatServiceWeb, :html
 
   # If you want to customize your error pages,
   # uncomment the embed_templates/1 call below

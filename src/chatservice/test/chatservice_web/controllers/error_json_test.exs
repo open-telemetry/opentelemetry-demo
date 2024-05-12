@@ -1,12 +1,12 @@
-defmodule ChatserviceWeb.ErrorJSONTest do
-  use ChatserviceWeb.ConnCase, async: true
+defmodule ChatServiceWeb.ErrorJSONTest do
+  use ChatServiceWeb.ConnCase, async: true
 
   test "renders 404" do
-    assert ChatserviceWeb.ErrorJSON.render("404.json", %{}) == %{errors: %{detail: "Not Found"}}
+    assert ChatServiceWeb.ErrorJSON.render("404.json", %{}) == %{errors: %{detail: "Not Found"}}
   end
 
   test "renders 500" do
-    assert ChatserviceWeb.ErrorJSON.render("500.json", %{}) ==
+    assert ChatServiceWeb.ErrorJSON.render("500.json", %{}) ==
              %{errors: %{detail: "Internal Server Error"}}
   end
 end

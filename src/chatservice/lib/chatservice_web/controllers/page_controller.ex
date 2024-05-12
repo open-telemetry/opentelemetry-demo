@@ -1,5 +1,5 @@
-defmodule ChatserviceWeb.PageController do
-  use ChatserviceWeb, :controller
+defmodule ChatServiceWeb.PageController do
+  use ChatServiceWeb, :controller
 
   def home(conn, _params) do
     # The home page is often custom made,

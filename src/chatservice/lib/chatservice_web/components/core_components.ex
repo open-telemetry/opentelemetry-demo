@@ -1,4 +1,4 @@
-defmodule ChatserviceWeb.CoreComponents do
+defmodule ChatServiceWeb.CoreComponents do
   @moduledoc """
   Provides core UI components.
 
@@ -17,7 +17,7 @@ defmodule ChatserviceWeb.CoreComponents do
   use Phoenix.Component
 
   alias Phoenix.LiveView.JS
-  import ChatserviceWeb.Gettext
+  import ChatServiceWeb.Gettext
 
   @doc """
   Renders a modal.
@@ -660,9 +660,9 @@ defmodule ChatserviceWeb.CoreComponents do
     # with our gettext backend as first argument. Translations are
     # available in the errors.po file (as we use the "errors" domain).
     if count = opts[:count] do
-      Gettext.dngettext(ChatserviceWeb.Gettext, "errors", msg, msg, count, opts)
+      Gettext.dngettext(ChatServiceWeb.Gettext, "errors", msg, msg, count, opts)
     else
-      Gettext.dgettext(ChatserviceWeb.Gettext, "errors", msg, opts)
+      Gettext.dgettext(ChatServiceWeb.Gettext, "errors", msg, opts)
     end
   end
 

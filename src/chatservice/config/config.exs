@@ -8,18 +8,18 @@
 import Config
 
 config :chatservice,
-  ecto_repos: [Chatservice.Repo],
+  ecto_repos: [ChatService.Repo],
   generators: [timestamp_type: :utc_datetime]
 
 # Configures the endpoint
-config :chatservice, ChatserviceWeb.Endpoint,
+config :chatservice, ChatServiceWeb.Endpoint,
   url: [host: "localhost"],
   adapter: Bandit.PhoenixAdapter,
   render_errors: [
-    formats: [html: ChatserviceWeb.ErrorHTML, json: ChatserviceWeb.ErrorJSON],
+    formats: [html: ChatServiceWeb.ErrorHTML, json: ChatServiceWeb.ErrorJSON],
     layout: false
   ],
-  pubsub_server: Chatservice.PubSub,
+  pubsub_server: ChatService.PubSub,
   live_view: [signing_salt: "vhPzRN9o"]
 
 # Configures the mailer
@@ -29,7 +29,7 @@ config :chatservice, ChatserviceWeb.Endpoint,
 #
 # For production it's recommended to configure a different adapter
 # at the `config/runtime.exs`.
-config :chatservice, Chatservice.Mailer, adapter: Swoosh.Adapters.Local
+config :chatservice, ChatService.Mailer, adapter: Swoosh.Adapters.Local
 
 # Configure esbuild (the version is required)
 config :esbuild,
