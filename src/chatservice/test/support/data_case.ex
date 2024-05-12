@@ -1,4 +1,4 @@
-defmodule Chatservice.DataCase do
+defmodule ChatService.DataCase do
   @moduledoc """
   This module defines the setup for tests requiring
   access to the application's data layer.
@@ -10,7 +10,7 @@ defmodule Chatservice.DataCase do
   we enable the SQL sandbox, so changes done to the database
   are reverted at the end of every test. If you are using
   PostgreSQL, you can even run database tests asynchronously
-  by setting `use Chatservice.DataCase, async: true`, although
+  by setting `use ChatService.DataCase, async: true`, although
   this option is not recommended for other databases.
   """
 
@@ -18,17 +18,17 @@ defmodule Chatservice.DataCase do
 
   using do
     quote do
-      alias Chatservice.Repo
+      alias ChatService.Repo
 
       import Ecto
       import Ecto.Changeset
       import Ecto.Query
-      import Chatservice.DataCase
+      import ChatService.DataCase
     end
   end
 
   setup tags do
-    Chatservice.DataCase.setup_sandbox(tags)
+    ChatService.DataCase.setup_sandbox(tags)
     :ok
   end
 
@@ -36,7 +36,7 @@ defmodule Chatservice.DataCase do
   Sets up the sandbox based on the test tags.
   """
   def setup_sandbox(tags) do
-    pid = Ecto.Adapters.SQL.Sandbox.start_owner!(Chatservice.Repo, shared: not tags[:async])
+    pid = Ecto.Adapters.SQL.Sandbox.start_owner!(ChatService.Repo, shared: not tags[:async])
     on_exit(fn -> Ecto.Adapters.SQL.Sandbox.stop_owner(pid) end)
   end
 

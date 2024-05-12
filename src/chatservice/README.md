@@ -1,4 +1,4 @@
-# Chatservice
+# ChatService
 
 To start your Phoenix server:
 

@@ -1,11 +1,11 @@
-defmodule ChatserviceWeb.Router do
-  use ChatserviceWeb, :router
+defmodule ChatServiceWeb.Router do
+  use ChatServiceWeb, :router
 
   pipeline :browser do
     plug :accepts, ["html"]
     plug :fetch_session
     plug :fetch_live_flash
-    plug :put_root_layout, html: {ChatserviceWeb.Layouts, :root}
+    plug :put_root_layout, html: {ChatServiceWeb.Layouts, :root}
     plug :protect_from_forgery
     plug :put_secure_browser_headers
   end
@@ -14,14 +14,14 @@ defmodule ChatserviceWeb.Router do
     plug :accepts, ["json"]
   end
 
-  scope "/", ChatserviceWeb do
+  scope "/", ChatServiceWeb do
     pipe_through :browser
 
     get "/", PageController, :home
   end
 
   # Other scopes may use custom stacks.
-  # scope "/api", ChatserviceWeb do
+  # scope "/api", ChatServiceWeb do
   #   pipe_through :api
   # end
 
@@ -37,7 +37,7 @@ defmodule ChatserviceWeb.Router do
     scope "/dev" do
       pipe_through :browser
 
-      live_dashboard "/dashboard", metrics: ChatserviceWeb.Telemetry
+      live_dashboard "/dashboard", metrics: ChatServiceWeb.Telemetry
       forward "/mailbox", Plug.Swoosh.MailboxPreview
     end
   end

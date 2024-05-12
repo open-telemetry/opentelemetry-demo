@@ -1,4 +1,4 @@
-defmodule ChatserviceWeb.ConnCase do
+defmodule ChatServiceWeb.ConnCase do
   @moduledoc """
   This module defines the test case to be used by
   tests that require setting up a connection.
@@ -11,7 +11,7 @@ defmodule ChatserviceWeb.ConnCase do
   we enable the SQL sandbox, so changes done to the database
   are reverted at the end of every test. If you are using
   PostgreSQL, you can even run database tests asynchronously
-  by setting `use ChatserviceWeb.ConnCase, async: true`, although
+  by setting `use ChatServiceWeb.ConnCase, async: true`, although
   this option is not recommended for other databases.
   """
 
@@ -20,19 +20,19 @@ defmodule ChatserviceWeb.ConnCase do
   using do
     quote do
       # The default endpoint for testing
-      @endpoint ChatserviceWeb.Endpoint
+      @endpoint ChatServiceWeb.Endpoint
 
-      use ChatserviceWeb, :verified_routes
+      use ChatServiceWeb, :verified_routes
 
       # Import conveniences for testing with connections
       import Plug.Conn
       import Phoenix.ConnTest
-      import ChatserviceWeb.ConnCase
+      import ChatServiceWeb.ConnCase
     end
   end
 
   setup tags do
-    Chatservice.DataCase.setup_sandbox(tags)
+    ChatService.DataCase.setup_sandbox(tags)
     {:ok, conn: Phoenix.ConnTest.build_conn()}
   end
 end

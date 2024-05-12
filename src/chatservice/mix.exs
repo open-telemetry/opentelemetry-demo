@@ -1,4 +1,4 @@
-defmodule Chatservice.MixProject do
+defmodule ChatService.MixProject do
   use Mix.Project
 
   def project do
@@ -18,7 +18,7 @@ defmodule Chatservice.MixProject do
   # Type `mix help compile.app` for more information.
   def application do
     [
-      mod: {Chatservice.Application, []},
+      mod: {ChatService.Application, []},
       extra_applications: [:logger, :runtime_tools]
     ]
   end

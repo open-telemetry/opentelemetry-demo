@@ -1,5 +1,5 @@
-defmodule ChatserviceWeb.Layouts do
-  use ChatserviceWeb, :html
+defmodule ChatServiceWeb.Layouts do
+  use ChatServiceWeb, :html
 
   embed_templates "layouts/*"
 end
