@@ -11,6 +11,11 @@ defmodule ChatServiceWeb.Endpoint do
     same_site: "Lax"
   ]
 
+  # add socket created by mix.phx.gen.channel
+  socket "/socket", ChatServiceWeb.UserSocket,
+    websocket: true,
+    longpoll: false
+
   socket "/live", Phoenix.LiveView.Socket,
     websocket: [connect_info: [session: @session_options]],
     longpoll: [connect_info: [session: @session_options]]
