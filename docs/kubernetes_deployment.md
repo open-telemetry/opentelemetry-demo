@@ -160,7 +160,8 @@ favor of the New Relic tool suite:
   cumulativetodelta [(New Relic Opentelemetry metrics)](https://docs.newrelic.com/docs/more-integrations/open-source-telemetry-integrations/opentelemetry/best-practices/opentelemetry-best-practices-metrics/#otel-histogram),
   resource, resourcedetection, and k8sattributes
   [(Link OpenTelemetry-instrumented applications to Kubernetes in New Relic)](https://docs.newrelic.com/docs/kubernetes-pixie/kubernetes-integration/advanced-configuration/link-otel-applications-kubernetes/).
-  - `exporters` : used to configure the New Relic OTLP backed with the required `api-key` header
+  - `exporters` : used to configure the New Relic OTLP backed with the required
+    `api-key` header
 - `service` inside `config` is used to configure the service extensions,
   `pipelines` are used to configure the different pipelines that the collector
   should use to process different types of telemetry data, like traces and
