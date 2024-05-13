@@ -17,7 +17,7 @@ const CartItem = ({
 }: IProps) => {
   return (
     <S.CartItem>
-      <Link href={`/product/${id}`} >
+      <Link href={`/product/${id}`}>
         <S.NameContainer>
           <S.CartItemImage alt={name} src={"/images/products/" + picture} />
           <p>{name}</p>

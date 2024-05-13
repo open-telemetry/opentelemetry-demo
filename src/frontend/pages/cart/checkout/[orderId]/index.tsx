@@ -40,7 +40,7 @@ const Checkout: NextPage = () => {
             </S.ItemList>
 
             <S.ButtonContainer>
-              <Link href="/" >
+              <Link href="/">
                 <Button type="submit">Continue Shopping</Button>
               </Link>
             </S.ButtonContainer>

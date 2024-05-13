@@ -190,7 +190,7 @@ const CheckoutForm = ({ onSubmit }: IProps) => {
       </S.CardRow>
 
       <S.SubmitContainer>
-        <Link href="/" >
+        <Link href="/">
           <S.CartButton $type="secondary">Continue Shopping</S.CartButton>
         </Link>
         <S.CartButton data-cy={CypressFields.CheckoutPlaceOrder} type="submit">Place Order</S.CartButton>
