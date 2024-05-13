@@ -12,7 +12,7 @@ const EmptyCart = () => {
       <S.Subtitle>Items you add to your shopping cart will appear here.</S.Subtitle>
 
       <S.ButtonContainer>
-        <Link href="/">
+        <Link href="/" >
           <Button type="submit">Continue Shopping</Button>
         </Link>
       </S.ButtonContainer>
