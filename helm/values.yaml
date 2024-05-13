@@ -1,3 +1,6 @@
+#  Copyright (c) 2022-present New Relic Corporation. All rights reserved.
+#  SPDX-License-Identifier: Apache-2.0
+
 default:
   # list of environment variables applied to all components
   env:
@@ -161,7 +164,7 @@ components:
       env: true
     env:
       - name: OTEL_EXPORTER_OTLP_ENDPOINT
-        value: 'http://$(HOST_IP):4317'
+        value: "http://$(HOST_IP):4317"
       - name: OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE
         value: delta
       - name: KAFKA_SERVICE_ADDR
@@ -172,7 +175,12 @@ components:
     initContainers:
       - name: wait-for-kafka
         image: busybox:latest
-        command: ['sh', '-c', 'until nc -z -v -w30 {{ include "otel-demo.name" . }}-kafka 9092; do echo waiting for kafka; sleep 2; done;']
+        command:
+          [
+            "sh",
+            "-c",
+            'until nc -z -v -w30 {{ include "otel-demo.name" . }}-kafka 9092; do echo waiting for kafka; sleep 2; done;',
+          ]
 
   adService:
     enabled: true
@@ -186,7 +194,7 @@ components:
       - name: FEATURE_FLAG_GRPC_SERVICE_ADDR
         value: '{{ include "otel-demo.name" . }}-featureflagservice:50053'
       - name: OTEL_EXPORTER_OTLP_ENDPOINT
-        value: 'http://$(HOST_IP):4317'
+        value: "http://$(HOST_IP):4317"
       - name: OTLP_LOGS_EXPORTER
         value: otlp
     resources:
@@ -207,14 +215,19 @@ components:
       - name: REDIS_ADDR
         value: '{{ include "otel-demo.name" . }}-redis:6379'
       - name: OTEL_EXPORTER_OTLP_ENDPOINT
-        value: 'http://$(HOST_IP):4317'
+        value: "http://$(HOST_IP):4317"
     resources:
       limits:
         memory: 160Mi
     initContainers:
       - name: wait-for-redis
         image: busybox:latest
-        command: ['sh', '-c', 'until nc -z -v -w30 {{ include "otel-demo.name" . }}-redis 6379; do echo waiting for redis; sleep 2; done;']
+        command:
+          [
+            "sh",
+            "-c",
+            'until nc -z -v -w30 {{ include "otel-demo.name" . }}-redis 6379; do echo waiting for redis; sleep 2; done;',
+          ]
 
   checkoutService:
     enabled: true
@@ -240,14 +253,19 @@ components:
       - name: KAFKA_SERVICE_ADDR
         value: '{{ include "otel-demo.name" . }}-kafka:9092'
       - name: OTEL_EXPORTER_OTLP_ENDPOINT
-        value: 'http://$(HOST_IP):4317'
+        value: "http://$(HOST_IP):4317"
     resources:
       limits:
         memory: 20Mi
     initContainers:
       - name: wait-for-kafka
         image: busybox:latest
-        command: ['sh', '-c', 'until nc -z -v -w30 {{ include "otel-demo.name" . }}-kafka 9092; do echo waiting for kafka; sleep 2; done;']
+        command:
+          [
+            "sh",
+            "-c",
+            'until nc -z -v -w30 {{ include "otel-demo.name" . }}-kafka 9092; do echo waiting for kafka; sleep 2; done;',
+          ]
 
   currencyService:
     enabled: true
@@ -259,7 +277,7 @@ components:
       - name: CURRENCY_SERVICE_PORT
         value: "8080"
       - name: OTEL_EXPORTER_OTLP_ENDPOINT
-        value: 'http://$(HOST_IP):4317'
+        value: "http://$(HOST_IP):4317"
     resources:
       limits:
         memory: 20Mi
@@ -276,7 +294,7 @@ components:
       - name: APP_ENV
         value: production
       - name: OTEL_EXPORTER_OTLP_TRACES_ENDPOINT
-        value: 'http://$(HOST_IP):4318/v1/traces'
+        value: "http://$(HOST_IP):4318/v1/traces"
     resources:
       limits:
         memory: 100Mi
@@ -298,7 +316,7 @@ components:
       - name: DATABASE_URL
         value: 'ecto://ffs:ffs@{{ include "otel-demo.name" . }}-ffspostgres:5432/ffs'
       - name: OTEL_EXPORTER_OTLP_ENDPOINT
-        value: 'http://$(HOST_IP):4317'
+        value: "http://$(HOST_IP):4317"
       - name: OTEL_EXPORTER_OTLP_TRACES_PROTOCOL
         value: grpc
     resources:
@@ -313,7 +331,12 @@ components:
     initContainers:
       - name: wait-for-ffspostgres
         image: busybox:latest
-        command: ['sh', '-c', 'until nc -z -v -w30 {{ include "otel-demo.name" . }}-ffspostgres 5432; do echo waiting for ffspostgres; sleep 2; done']
+        command:
+          [
+            "sh",
+            "-c",
+            'until nc -z -v -w30 {{ include "otel-demo.name" . }}-ffspostgres 5432; do echo waiting for ffspostgres; sleep 2; done',
+          ]
 
   frauddetectionService:
     enabled: true
@@ -323,7 +346,7 @@ components:
       - name: KAFKA_SERVICE_ADDR
         value: '{{ include "otel-demo.name" . }}-kafka:9092'
       - name: OTEL_EXPORTER_OTLP_ENDPOINT
-        value: 'http://$(HOST_IP):4317'
+        value: "http://$(HOST_IP):4317"
       - name: OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE
         value: delta
     resources:
@@ -332,7 +355,12 @@ components:
     initContainers:
       - name: wait-for-kafka
         image: busybox:latest
-        command: ['sh', '-c', 'until nc -z -v -w30 {{ include "otel-demo.name" . }}-kafka 9092; do echo waiting for kafka; sleep 2; done;']
+        command:
+          [
+            "sh",
+            "-c",
+            'until nc -z -v -w30 {{ include "otel-demo.name" . }}-kafka 9092; do echo waiting for kafka; sleep 2; done;',
+          ]
 
   frontend:
     enabled: true
@@ -360,16 +388,16 @@ components:
       - name: SHIPPING_SERVICE_ADDR
         value: '{{ include "otel-demo.name" . }}-shippingservice:8080'
       - name: OTEL_EXPORTER_OTLP_ENDPOINT
-        value: 'http://$(HOST_IP):4317'
+        value: "http://$(HOST_IP):4317"
       - name: WEB_OTEL_SERVICE_NAME
         value: frontend-web-otel
       - name: PUBLIC_OTEL_EXPORTER_OTLP_TRACES_ENDPOINT
-        value: 'http://localhost:4318/v1/traces'             # This expects users to use `kubectl port-forward ...`
+        value: "http://localhost:4318/v1/traces" # This expects users to use `kubectl port-forward ...`
     resources:
       limits:
         memory: 400Mi
     securityContext:
-      runAsUser: 1001  # nextjs
+      runAsUser: 1001 # nextjs
       runAsGroup: 1001
       runAsNonRoot: true
 
@@ -406,12 +434,12 @@ components:
       - name: OTEL_COLLECTOR_PORT
         value: "4317"
       - name: OTEL_COLLECTOR_HOST
-        value: 'http://$(HOST_IP)'
+        value: "http://$(HOST_IP)"
     resources:
       limits:
         memory: 100Mi
     securityContext:
-      runAsUser: 101  # envoy
+      runAsUser: 101 # envoy
       runAsGroup: 101
       runAsNonRoot: true
 
@@ -437,7 +465,7 @@ components:
       - name: PROTOCOL_BUFFERS_PYTHON_IMPLEMENTATION
         value: python
       - name: OTEL_EXPORTER_OTLP_TRACES_ENDPOINT
-        value: 'http://$(HOST_IP):4318/v1/traces'
+        value: "http://$(HOST_IP):4318/v1/traces"
     resources:
       limits:
         memory: 120Mi
@@ -452,12 +480,12 @@ components:
       - name: PAYMENT_SERVICE_PORT
         value: "8080"
       - name: OTEL_EXPORTER_OTLP_ENDPOINT
-        value: 'http://$(HOST_IP):4317'
+        value: "http://$(HOST_IP):4317"
     resources:
       limits:
         memory: 120Mi
     securityContext:
-      runAsUser: 1000  # node
+      runAsUser: 1000 # node
       runAsGroup: 1000
       runAsNonRoot: true
 
@@ -469,7 +497,7 @@ components:
       port: 8080
     env:
       - name: OTEL_EXPORTER_OTLP_ENDPOINT
-        value: 'http://$(HOST_IP):4317'
+        value: "http://$(HOST_IP):4317"
       - name: OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE
         value: delta
       - name: PRODUCT_CATALOG_SERVICE_PORT
@@ -492,12 +520,12 @@ components:
       - name: OTEL_PHP_AUTOLOAD_ENABLED
         value: "true"
       - name: OTEL_EXPORTER_OTLP_TRACES_ENDPOINT
-        value: 'http://$(HOST_IP):4318/v1/traces'
+        value: "http://$(HOST_IP):4318/v1/traces"
     resources:
       limits:
         memory: 40Mi
     securityContext:
-      runAsUser: 33  # www-data
+      runAsUser: 33 # www-data
       runAsGroup: 33
       runAsNonRoot: true
 
@@ -519,10 +547,10 @@ components:
       - name: PROTOCOL_BUFFERS_PYTHON_IMPLEMENTATION
         value: python
       - name: OTEL_EXPORTER_OTLP_ENDPOINT
-        value: 'http://$(HOST_IP):4317'
+        value: "http://$(HOST_IP):4317"
     resources:
       limits:
-        memory: 500Mi            # This is high to enable supporting the recommendationCache feature flag use case
+        memory: 500Mi # This is high to enable supporting the recommendationCache feature flag use case
 
   shippingService:
     enabled: true
@@ -536,7 +564,7 @@ components:
       - name: QUOTE_SERVICE_ADDR
         value: 'http://{{ include "otel-demo.name" . }}-quoteservice:8080'
       - name: OTEL_EXPORTER_OTLP_TRACES_ENDPOINT
-        value: 'http://$(HOST_IP):4317/v1/traces'
+        value: "http://$(HOST_IP):4317/v1/traces"
     resources:
       limits:
         memory: 20Mi
@@ -562,7 +590,7 @@ components:
       limits:
         memory: 120Mi
     securityContext:
-      runAsUser: 999  # postgres
+      runAsUser: 999 # postgres
       runAsGroup: 999
       runAsNonRoot: true
 
@@ -579,7 +607,7 @@ components:
       - name: KAFKA_ADVERTISED_LISTENERS
         value: 'PLAINTEXT://{{ include "otel-demo.name" . }}-kafka:9092'
       - name: OTEL_EXPORTER_OTLP_ENDPOINT
-        value: 'http://$(HOST_IP):4317'
+        value: "http://$(HOST_IP):4317"
       - name: OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE
         value: delta
       - name: KAFKA_HEAP_OPTS
@@ -588,7 +616,7 @@ components:
       limits:
         memory: 750Mi
     securityContext:
-      runAsUser: 1000  # appuser
+      runAsUser: 1000 # appuser
       runAsGroup: 1000
       runAsNonRoot: true
 
@@ -606,7 +634,7 @@ components:
       limits:
         memory: 20Mi
     securityContext:
-      runAsUser: 999  # redis
+      runAsUser: 999 # redis
       runAsGroup: 1000
       runAsNonRoot: true
 
@@ -730,11 +758,27 @@ opentelemetry-collector:
       pipelines:
         traces:
           receivers: [otlp]
-          processors: [memory_limiter, resource, resourcedetection, k8sattributes, spanmetrics, batch]
+          processors:
+            [
+              memory_limiter,
+              resource,
+              resourcedetection,
+              k8sattributes,
+              spanmetrics,
+              batch,
+            ]
           exporters: [otlp]
         metrics:
           receivers: [hostmetrics, otlp]
-          processors: [memory_limiter, resource, resourcedetection, k8sattributes, cumulativetodelta, batch]
+          processors:
+            [
+              memory_limiter,
+              resource,
+              resourcedetection,
+              k8sattributes,
+              cumulativetodelta,
+              batch,
+            ]
           exporters: [otlp]
 
   clusterRole:
@@ -747,9 +791,9 @@ opentelemetry-collector:
     name: ""
     # A set of rules as documented here : https://kubernetes.io/docs/reference/access-authn-authz/rbac/
     rules:
-      - apiGroups: ['']
-        resources: ['pods', 'nodes', 'namespace']
-        verbs: ['get', 'watch', 'list']
+      - apiGroups: [""]
+        resources: ["pods", "nodes", "namespace"]
+        verbs: ["get", "watch", "list"]
 
     clusterRoleBinding:
       # Annotations to add to the clusterRoleBinding
@@ -764,7 +808,7 @@ opentelemetry-collector:
           name: newrelic-key-secret
           key: new_relic_license_key
     - name: OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE
-      value: 'delta'
+      value: "delta"
 
 jaeger:
   enabled: false
@@ -824,13 +868,14 @@ prometheus:
   serverFiles:
     prometheus.yml:
       scrape_configs:
-        - job_name: 'opentelemetry-community-demo'
+        - job_name: "opentelemetry-community-demo"
           kubernetes_sd_configs:
             - role: pod
               namespaces:
                 own_namespace: true
           relabel_configs:
-            - source_labels: [__meta_kubernetes_pod_annotation_opentelemetry_community_demo]
+            - source_labels:
+                [__meta_kubernetes_pod_annotation_opentelemetry_community_demo]
               action: keep
               regex: true
 
@@ -876,9 +921,9 @@ grafana:
     dashboardproviders.yaml:
       apiVersion: 1
       providers:
-        - name: 'default'
+        - name: "default"
           orgId: 1
-          folder: ''
+          folder: ""
           type: file
           disableDeletion: false
           editable: true

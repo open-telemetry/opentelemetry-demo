@@ -1,3 +1,6 @@
+#  Copyright (c) 2022-present New Relic Corporation. All rights reserved.
+#  SPDX-License-Identifier: Apache-2.0
+
 # Default values for prometheus-postgres-exporter.
 # This is a YAML-formatted file.
 # Declare variables to be passed into your templates.
@@ -50,7 +53,8 @@ prometheusRule:
   enabled: false
   additionalLabels: {}
   namespace: ""
-  rules: []
+  rules:
+    []
     ## These are just examples rules, please adapt them to your needs.
     ## Make sure to constraint the rules to the current prometheus-postgres-exporter service.
     # - alert: HugeReplicationLag
@@ -62,7 +66,8 @@ prometheusRule:
     #     description: replication for {{ template "prometheus-postgres-exporter.fullname" . }} PostgreSQL is lagging by {{ "{{ $value }}" }} hour(s).
     #     summary: PostgreSQL replication is lagging by {{ "{{ $value }}" }} hour(s).
 
-resources: {}
+resources:
+  {}
   # We usually recommend not to specify default resources and to leave this as a conscious
   # choice for the user. This also increases chances charts run on environments with little
   # resources, such as Minikube. If you do want to specify resources, uncomment the following
@@ -96,11 +101,13 @@ networkPolicy:
   # Set labels for the NetworkPolicy
   labels: {}
 
-securityContext: {}
+securityContext:
+  {}
   # The securityContext this Pod should use. See https://kubernetes.io/docs/concepts/policy/security-context/ for more.
   # runAsUser: 65534
 
-hostAliases: []
+hostAliases:
+  []
   # Set Host Aliases as per https://kubernetes.io/docs/tasks/network/customize-hosts-file-for-pods/
   # - ip: "127.0.0.1"
   #   hostnames:
@@ -127,10 +134,11 @@ config:
     # If pgpassfile is set, it is used to initialize the PGPASSFILE environment variable.
     # See https://www.postgresql.org/docs/14/libpq-pgpass.html for more info.
     port: "5432"
-    database: 'ffs'
+    database: "ffs"
     sslmode: disable
-    extraParams: ''
-  datasourceSecret: {}
+    extraParams: ""
+  datasourceSecret:
+    {}
     # Specifies if datasource should be sourced from secret value in format: postgresql://login:password@hostname:port/dbname?sslmode=disable
     # Multiple Postgres databases can be configured by comma separated postgres connection strings
     # Secret name
@@ -450,9 +458,9 @@ readinessProbe:
   initialDelaySeconds: 0
   timeoutSeconds: 1
 
-
 # Init containers, e. g. for secrets creation before the exporter
-initContainers: []
+initContainers:
+  []
   # - name:
   #   image:
   #   volumeMounts:
