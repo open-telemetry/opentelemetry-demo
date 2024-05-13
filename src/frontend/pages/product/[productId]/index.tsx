@@ -4,8 +4,8 @@
 import { NextPage } from 'next';
 import Image from 'next/image';
 import { useRouter } from 'next/router';
-import { useCallback, useState } from 'react';
-import { useQuery } from 'react-query';
+import { useCallback, useState, useEffect } from 'react';
+import { useQuery } from '@tanstack/react-query';
 import Ad from '../../../components/Ad';
 import Footer from '../../../components/Footer';
 import Layout from '../../../components/Layout';
@@ -31,6 +31,10 @@ const ProductDetail: NextPage = () => {
   } = useCart();
   const { selectedCurrency } = useCurrency();
   const productId = query.productId as string;
+
+  useEffect(() => {
+    setQuantity(1);
+  }, [productId]);
 
   const {
     data: {
@@ -64,7 +68,7 @@ const ProductDetail: NextPage = () => {
       <Layout>
         <S.ProductDetail data-cy={CypressFields.ProductDetail}>
           <S.Container>
-            <S.Image $src={picture} data-cy={CypressFields.ProductPicture} />
+            <S.Image $src={"/images/products/" + picture} data-cy={CypressFields.ProductPicture} />
             <S.Details>
               <S.Name data-cy={CypressFields.ProductName}>{name}</S.Name>
               <S.Description data-cy={CypressFields.ProductDescription}>{description}</S.Description>

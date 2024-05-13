@@ -1,22 +1,19 @@
 /*
-* Copyright The OpenTelemetry Authors
-* SPDX-License-Identifier: Apache-2.0
-*/
+ * Copyright The OpenTelemetry Authors
+ * SPDX-License-Identifier: Apache-2.0
+ */
 
 package oteldemo;
 
 import com.google.common.collect.ImmutableListMultimap;
 import com.google.common.collect.Iterables;
-import oteldemo.Demo.Ad;
-import oteldemo.Demo.AdRequest;
-import oteldemo.Demo.AdResponse;
-import oteldemo.Demo.GetFlagResponse;
-import oteldemo.FeatureFlagServiceGrpc.FeatureFlagServiceBlockingStub;
 import io.grpc.*;
 import io.grpc.health.v1.HealthCheckResponse.ServingStatus;
 import io.grpc.protobuf.services.*;
 import io.grpc.stub.StreamObserver;
 import io.opentelemetry.api.GlobalOpenTelemetry;
+import io.opentelemetry.api.OpenTelemetry;
+import io.opentelemetry.api.baggage.Baggage;
 import io.opentelemetry.api.common.AttributeKey;
 import io.opentelemetry.api.common.Attributes;
 import io.opentelemetry.api.metrics.LongCounter;
@@ -24,6 +21,7 @@ import io.opentelemetry.api.metrics.Meter;
 import io.opentelemetry.api.trace.Span;
 import io.opentelemetry.api.trace.StatusCode;
 import io.opentelemetry.api.trace.Tracer;
+import io.opentelemetry.context.Context;
 import io.opentelemetry.context.Scope;
 import io.opentelemetry.instrumentation.annotations.SpanAttribute;
 import io.opentelemetry.instrumentation.annotations.WithSpan;
@@ -36,6 +34,19 @@ import java.util.Random;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import oteldemo.Demo.Ad;
+import oteldemo.Demo.AdRequest;
+import oteldemo.Demo.AdResponse;
+import oteldemo.problempattern.GarbageCollectionTrigger;
+import oteldemo.problempattern.CPULoad;
+import dev.openfeature.contrib.providers.flagd.FlagdOptions;
+import dev.openfeature.contrib.providers.flagd.FlagdProvider;
+import dev.openfeature.sdk.Client;
+import dev.openfeature.sdk.EvaluationContext;
+import dev.openfeature.sdk.MutableContext;
+import dev.openfeature.sdk.OpenFeatureAPI;
+import java.util.UUID;
+
 
 public final class AdService {
 
@@ -72,19 +83,19 @@ public final class AdService {
                             "environment vars: AD_SERVICE_PORT must not be null")));
     healthMgr = new HealthStatusManager();
 
-    String featureFlagServiceAddr =
-        Optional.ofNullable(System.getenv("FEATURE_FLAG_GRPC_SERVICE_ADDR"))
-            .orElseThrow(
-                () ->
-                    new IllegalStateException(
-                        "environment vars: FEATURE_FLAG_GRPC_SERVICE_ADDR must not be null"));
-    FeatureFlagServiceBlockingStub featureFlagServiceStub =
-        oteldemo.FeatureFlagServiceGrpc.newBlockingStub(
-            ManagedChannelBuilder.forTarget(featureFlagServiceAddr).usePlaintext().build());
+    // Create a flagd instance with OpenTelemetry
+    FlagdOptions options =
+        FlagdOptions.builder()
+            .withGlobalTelemetry(true)
+            .build();
 
+    FlagdProvider flagdProvider = new FlagdProvider(options);
+    // Set flagd as the OpenFeature Provider
+    OpenFeatureAPI.getInstance().setProvider(flagdProvider);
+  
     server =
         ServerBuilder.forPort(port)
-            .addService(new AdServiceImpl(featureFlagServiceStub))
+            .addService(new AdServiceImpl())
             .addService(healthMgr.getHealthService())
             .build()
             .start();
@@ -120,14 +131,13 @@ public final class AdService {
   }
 
   private static class AdServiceImpl extends oteldemo.AdServiceGrpc.AdServiceImplBase {
-
-    private static final String ADSERVICE_FAIL_FEATURE_FLAG = "adServiceFailure";
-
-    private final FeatureFlagServiceBlockingStub featureFlagServiceStub;
-
-    private AdServiceImpl(FeatureFlagServiceBlockingStub featureFlagServiceStub) {
-      this.featureFlagServiceStub = featureFlagServiceStub;
-    }
+    
+    private static final String ADSERVICE_FAILURE = "adServiceFailure";
+    private static final String ADSERVICE_MANUAL_GC_FEATURE_FLAG = "adServiceManualGc";
+    private static final String ADSERVICE_HIGH_CPU_FEATURE_FLAG = "adServiceHighCpu";
+    private static final Client ffClient = OpenFeatureAPI.getInstance().getClient();
+    
+    private AdServiceImpl() {}
 
     /**
      * Retrieves ads based on context provided in the request {@code AdRequest}.
@@ -146,6 +156,20 @@ public final class AdService {
         List<Ad> allAds = new ArrayList<>();
         AdRequestType adRequestType;
         AdResponseType adResponseType;
+
+        Baggage baggage = Baggage.fromContextOrNull(Context.current());
+        MutableContext evaluationContext = new MutableContext();
+        if (baggage != null) {
+          final String sessionId = baggage.getEntryValue("session.id");
+          span.setAttribute("session.id", sessionId);
+          evaluationContext.setTargetingKey(sessionId);
+          evaluationContext.add("session", sessionId);
+        } else {
+          logger.info("no baggage found in context");
+        }
+
+        CPULoad cpuload = CPULoad.getInstance();
+        cpuload.execute(ffClient.getBooleanValue(ADSERVICE_HIGH_CPU_FEATURE_FLAG, false, evaluationContext));
 
         span.setAttribute("app.ads.contextKeys", req.getContextKeysList().toString());
         span.setAttribute("app.ads.contextKeys.count", req.getContextKeysCount());
@@ -177,9 +201,14 @@ public final class AdService {
             Attributes.of(
                 adRequestTypeKey, adRequestType.name(), adResponseTypeKey, adResponseType.name()));
 
-        if (checkAdFailure()) {
-          logger.warn(ADSERVICE_FAIL_FEATURE_FLAG + " fail feature flag enabled");
-          throw new StatusRuntimeException(Status.RESOURCE_EXHAUSTED);
+        if (ffClient.getBooleanValue(ADSERVICE_FAILURE, false, evaluationContext)) {
+          throw new StatusRuntimeException(Status.UNAVAILABLE);
+        }
+
+        if (ffClient.getBooleanValue(ADSERVICE_MANUAL_GC_FEATURE_FLAG, false, evaluationContext)) {
+          logger.warn("Feature Flag " + ADSERVICE_MANUAL_GC_FEATURE_FLAG + " enabled, performing a manual gc now");
+          GarbageCollectionTrigger gct = new GarbageCollectionTrigger();
+          gct.doExecute();
         }
 
         AdResponse reply = AdResponse.newBuilder().addAllAds(allAds).build();
@@ -192,20 +221,6 @@ public final class AdService {
         logger.log(Level.WARN, "GetAds Failed with status {}", e.getStatus());
         responseObserver.onError(e);
       }
-    }
-
-    boolean checkAdFailure() {
-      // Flip a coin and fail 1/10th of the time if feature flag is enabled
-      if (random.nextInt(10) != 1) {
-        return false;
-      }
-
-      GetFlagResponse response =
-          featureFlagServiceStub.getFlag(
-              oteldemo.Demo.GetFlagRequest.newBuilder()
-                  .setName(ADSERVICE_FAIL_FEATURE_FLAG)
-                  .build());
-      return response.getFlag().getEnabled();
     }
   }
 

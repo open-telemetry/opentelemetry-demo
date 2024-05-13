@@ -1,0 +1,35 @@
+# Copyright The OpenTelemetry Authors
+# SPDX-License-Identifier: Apache-2.0
+
+type: Test
+spec:
+  id: frontend-see-adds
+  name: 'Frontend: See Ads'
+  description: Simulate the user seeing a ads on Astronomy Shop
+  trigger:
+    type: http
+    httpRequest:
+      url: http://${var:FRONTEND_ADDR}/api/data
+      method: GET
+      headers:
+      - key: Content-Type
+        value: application/json
+      body: |
+        {
+          "contextKeys": [
+            "binoculars",
+            "telescopes",
+            "accessories"
+          ]
+        }
+  specs:
+  - name: It called the frontend with success and got a valid redirectUrl for each ads
+    selector: span[tracetest.span.type="general" name="Tracetest trigger"]
+    assertions:
+    - attr:tracetest.response.status = 200
+    - attr:tracetest.response.body | json_path '$[0].redirectUrl' contains "/product/"
+    - attr:tracetest.response.body | json_path '$[1].redirectUrl' contains "/product/"
+  - name: It returns two ads
+    selector: span[tracetest.span.type="rpc" name="oteldemo.AdService/GetAds" rpc.system="grpc" rpc.method="GetAds" rpc.service="oteldemo.AdService"]
+    assertions:
+    - attr:app.ads.count = 2
