@@ -1,5 +1,5 @@
-#  Copyright (c) 2022-present New Relic Corporation. All rights reserved.
-#  SPDX-License-Identifier: Apache-2.0
+# Copyright (c) 2022-present New Relic Corporation. All rights reserved.
+# SPDX-License-Identifier: Apache-2.0
 
 default:
   # list of environment variables applied to all components
@@ -43,7 +43,14 @@ default:
     - name: OTEL_COLLECTOR_NAME
       value: '{{ include "otel-demo.name" . }}-otelcol'
     - name: OTEL_RESOURCE_ATTRIBUTES
-      value: service.name=$(OTEL_SERVICE_NAME),service.instance.id=$(OTEL_K8S_POD_NAME),k8s.pod.uid=$(OTEL_K8S_POD_UID),service.namespace=opentelemetry-demo,k8s.namespace.name=$(OTEL_K8S_NAMESPACE),k8s.node.name=$(OTEL_K8S_NODE_NAME),k8s.pod.name=$(OTEL_K8S_POD_NAME)
+      value: >- 
+        service.name=$(OTEL_SERVICE_NAME),
+        service.instance.id=$(OTEL_K8S_POD_NAME),
+        k8s.pod.uid=$(OTEL_K8S_POD_UID),
+        service.namespace=opentelemetry-demo,
+        k8s.namespace.name=$(OTEL_K8S_NAMESPACE),
+        k8s.node.name=$(OTEL_K8S_NODE_NAME),
+        k8s.pod.name=$(OTEL_K8S_POD_NAME)
   # Allows overriding and additions to .Values.default.env
   envOverrides: []
   #  - name: OTEL_K8S_NODE_NAME
