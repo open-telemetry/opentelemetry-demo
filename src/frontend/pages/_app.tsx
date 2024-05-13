@@ -10,6 +10,9 @@ import CartProvider from '../providers/Cart.provider';
 import { ThemeProvider } from 'styled-components';
 import Theme from '../styles/Theme';
 import FrontendTracer from '../utils/telemetry/FrontendTracer';
+import SessionGateway from '../gateways/Session.gateway';
+import { OpenFeatureProvider, OpenFeature } from '@openfeature/react-sdk';
+import { FlagdWebProvider } from '@openfeature/flagd-web-provider';
 
 declare global {
   interface Window {
@@ -25,6 +28,27 @@ declare global {
 if (typeof window !== 'undefined') {
   const collector = getCookie('otelCollectorUrl')?.toString() || '';
   FrontendTracer(collector);
+  if (window.location) {
+    const session = SessionGateway.getSession();
+
+    // Set context prior to provider init to avoid multiple http calls
+    OpenFeature.setContext({ targetingKey: session.userId, ...session }).then(() => {
+      /**
+       * We connect to flagd through the envoy proxy, straight from the browser,
+       * for this we need to know the current hostname and port.
+       */
+      OpenFeature.setProvider(
+        new FlagdWebProvider({
+          host: window.location.hostname,
+          pathPrefix: 'flagservice',
+          port: window.location.port ? parseInt(window.location.port, 10) : 80,
+          tls: window.location.protocol === 'https:',
+          maxRetries: 3,
+          maxDelay: 10000,
+        })
+      );
+    });
+  }
 }
 
 const queryClient = new QueryClient();
@@ -32,13 +56,15 @@ const queryClient = new QueryClient();
 function MyApp({ Component, pageProps }: AppProps) {
   return (
     <ThemeProvider theme={Theme}>
-      <QueryClientProvider client={queryClient}>
-        <CurrencyProvider>
-          <CartProvider>
-            <Component {...pageProps} />
-          </CartProvider>
-        </CurrencyProvider>
-      </QueryClientProvider>
+      <OpenFeatureProvider>
+        <QueryClientProvider client={queryClient}>
+          <CurrencyProvider>
+            <CartProvider>
+              <Component {...pageProps} />
+            </CartProvider>
+          </CurrencyProvider>
+        </QueryClientProvider>
+      </OpenFeatureProvider>
     </ThemeProvider>
   );
 }
