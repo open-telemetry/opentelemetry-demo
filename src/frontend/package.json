@@ -40,9 +40,9 @@
     "dotenv": "16.3.1",
     "dotenv-expand": "10.0.0",
     "next": "13.0.0",
-    "react": "18.2.0",
-    "react-dom": "18.2.0",
-    "sharp": "0.33.2",
+    "react": "18.3.1",
+    "react-dom": "18.3.1",
+    "sharp": "0.33.3",
     "styled-components": "6.1.11",
     "ts-proto": "1.174.0",
     "uuid": "9.0.1"
