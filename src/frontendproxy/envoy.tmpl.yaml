@@ -47,9 +47,19 @@ static_resources:
                           route: { cluster: grafana }
                         - match: { prefix: "/images/" }
                           route: { cluster: imageprovider, prefix_rewrite: "/" }
+                        - match: { prefix: "/flagservice/" }
+                          route: { cluster: flagservice, prefix_rewrite: "/", timeout: 0s }
                         - match: { prefix: "/" }
                           route: { cluster: frontend }
                 http_filters:
+                  - name: envoy.filters.http.fault
+                    typed_config:
+                      "@type": type.googleapis.com/envoy.extensions.filters.http.fault.v3.HTTPFault
+                      max_active_faults: 100
+                      delay:
+                        header_delay: {}
+                        percentage:
+                          numerator: 100
                   - name: envoy.filters.http.router
                     typed_config:
                       "@type": type.googleapis.com/envoy.extensions.filters.http.router.v3.Router
@@ -108,6 +118,18 @@ static_resources:
                     socket_address:
                       address: ${IMAGE_PROVIDER_HOST}
                       port_value: ${IMAGE_PROVIDER_PORT}
+    - name: flagservice
+      type: STRICT_DNS
+      lb_policy: ROUND_ROBIN
+      load_assignment:
+        cluster_name: flagservice
+        endpoints:
+          - lb_endpoints:
+              - endpoint:
+                  address:
+                    socket_address:
+                      address: ${FLAGD_HOST}
+                      port_value: ${FLAGD_PORT}
     - name: loadgen
       type: STRICT_DNS
       lb_policy: ROUND_ROBIN

@@ -35,6 +35,8 @@ the release.
   ([#1553](https://github.com/open-telemetry/opentelemetry-demo/pull/1553))
 * [loadgenerator] Fix feature flag hooks setter method
   ([#1556](https://github.com/open-telemetry/opentelemetry-demo/pull/1556))
+* [frontend] Slowloading of images based on imageSlowLoad flag
+  ([#1515](https://github.com/open-telemetry/opentelemetry-demo/pull/1486))
 * [accountingservice] convert from Go service to .NET service, uses
   OpenTelemetry .NET Automatic Instrumentation.
   ([#1538](https://github.com/open-telemetry/opentelemetry-demo/pull/1538))
