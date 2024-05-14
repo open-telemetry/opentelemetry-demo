@@ -37,6 +37,8 @@ the release.
   ([#1556](https://github.com/open-telemetry/opentelemetry-demo/pull/1556))
 * [frontend] Slowloading of images based on imageSlowLoad flag
   ([#1515](https://github.com/open-telemetry/opentelemetry-demo/pull/1486))
+* [kafka] Fix permission issue with the telemetry agent when running in docker compose
+  ([#1574](https://github.com/open-telemetry/opentelemetry-demo/pull/1574))
 
 ## 1.9.0
 
