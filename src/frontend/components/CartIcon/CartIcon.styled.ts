@@ -16,8 +16,8 @@ export const CartIcon = styled.a`
 `;
 
 export const Icon = styled(Image).attrs({
-  width: '24px',
-  height: '24px',
+  width: '24',
+  height: '24',
 })`
   margin-bottom: 3px;
 `;
