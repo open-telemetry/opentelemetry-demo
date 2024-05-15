@@ -78,7 +78,6 @@ internal class Consumer : IDisposable
             BootstrapServers = servers,
             // https://github.com/confluentinc/confluent-kafka-dotnet/tree/07de95ed647af80a0db39ce6a8891a630423b952#basic-consumer-example
             AutoOffsetReset = AutoOffsetReset.Earliest,
-            CancellationDelayMaxMs = 10_000,
             EnableAutoCommit = true
         };
 
