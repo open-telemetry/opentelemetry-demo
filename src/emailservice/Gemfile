@@ -7,6 +7,4 @@ gem "pony",     "~> 1.13"
 gem "puma",     "~> 6.3"
 gem "sinatra",  "~> 3.0"
 
-gem "opentelemetry-sdk", "~> 1.2"
-gem "opentelemetry-exporter-otlp", "~> 0.24"
-gem "opentelemetry-instrumentation-all", "~> 0.39"
+gem 'solarwinds_apm'

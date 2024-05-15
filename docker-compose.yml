@@ -209,6 +209,8 @@ services:
       - OTEL_EXPORTER_OTLP_TRACES_ENDPOINT=http://${OTEL_COLLECTOR_HOST}:${OTEL_COLLECTOR_PORT_HTTP}/v1/traces
       - OTEL_RESOURCE_ATTRIBUTES
       - OTEL_SERVICE_NAME=emailservice
+      - SW_APM_SERVICE_KEY=${SW_APM_SERVICE_KEY}
+      - SW_APM_COLLECTOR=${SW_APM_COLLECTOR}
     depends_on:
       otelcol:
         condition: service_started
