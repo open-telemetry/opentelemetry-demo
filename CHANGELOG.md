@@ -39,6 +39,8 @@ the release.
   ([#1515](https://github.com/open-telemetry/opentelemetry-demo/pull/1486))
 * [frontend] Fix imageloading issues on optimized images. bump next.js version
   ([#1571](https://github.com/open-telemetry/opentelemetry-demo/pull/1571))
+* [cartservice] bump .NET package to 1.8.1 release
+  ([#1576](https://github.com/open-telemetry/opentelemetry-demo/pull/1576))
 
 ## 1.9.0
 
