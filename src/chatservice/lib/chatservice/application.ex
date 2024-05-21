@@ -14,13 +14,9 @@ defmodule ChatService.Application do
     children = [
       ChatServiceWeb.Telemetry,
       ChatService.Repo,
-      {DNSCluster, query: Application.get_env(:chatservice, :dns_cluster_query) || :ignore},
+      # {DNSCluster, query: Application.get_env(:chatservice, :dns_cluster_query) || :ignore},
       {Phoenix.PubSub, name: ChatService.PubSub},
-      # Start the Finch HTTP client for sending emails
-      {Finch, name: ChatService.Finch},
-      # Start a worker by calling: ChatService.Worker.start_link(arg)
-      # {ChatService.Worker, arg},
-      # Start to serve requests, typically the last entry
+      {Registry, keys: :unique, name: ChatService.Registry},
       ChatServiceWeb.Endpoint
     ]
 

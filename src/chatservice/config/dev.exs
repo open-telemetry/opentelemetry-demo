@@ -25,8 +25,7 @@ config :chatservice, ChatServiceWeb.Endpoint,
   debug_errors: true,
   secret_key_base: "n+w1XD8A1cQBvipOZZpvch1nKpb1enMm4Jhqn/uNPr+ypQ/PA8JxiztV6VPElipy",
   watchers: [
-    esbuild: {Esbuild, :install_and_run, [:chatservice, ~w(--sourcemap=inline --watch)]},
-    tailwind: {Tailwind, :install_and_run, [:chatservice, ~w(--watch)]}
+    esbuild: {Esbuild, :install_and_run, [:chatservice, ~w(--sourcemap=inline --watch)]}
   ]
 
 # ## SSL Support
@@ -77,6 +76,3 @@ config :phoenix, :plug_init_mode, :runtime
 
 # Include HEEx debug annotations as HTML comments in rendered markup
 config :phoenix_live_view, :debug_heex_annotations, true
-
-# Disable swoosh api client as it is only required for production adapters.
-config :swoosh, :api_client, false

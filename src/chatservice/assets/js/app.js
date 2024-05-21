@@ -1,44 +1,82 @@
-// If you want to use Phoenix channels, run `mix help phx.gen.channel`
-// to get started and then uncomment the line below.
-// import "./user_socket.js"
+import socket from "./user_socket.js";
 
-// You can include dependencies in two ways.
-//
-// The simplest option is to put them in assets/vendor and
-// import them using relative paths:
-//
-//     import "../vendor/some-package.js"
-//
-// Alternatively, you can `npm install some-package --prefix assets` and import
-// them using a path starting with the package name:
-//
-//     import "some-package"
-//
+const form = document.getElementById('login-form');
+const loginContainer = document.getElementById('login-container');
+const chatContainer = document.getElementById('chat-container');
+const chatMessages = document.getElementById('chat-messages');
+const chatInput = document.getElementById('chat-input');
+const nameInput = document.getElementById('name-input');
 
-// Include phoenix_html to handle method=PUT/DELETE in forms and buttons.
-import "phoenix_html"
-// Establish Phoenix Socket and LiveView configuration.
-import {Socket} from "phoenix"
-import {LiveSocket} from "phoenix_live_view"
-import topbar from "../vendor/topbar"
+let chatInputEventHandler;
+let channelEventHandler;
 
-let csrfToken = document.querySelector("meta[name='csrf-token']").getAttribute("content")
-let liveSocket = new LiveSocket("/live", Socket, {
-  longPollFallbackMs: 2500,
-  params: {_csrf_token: csrfToken}
-})
+const addEventHandlers = (channel) => {
+  removeEventHandlers(channel);
 
-// Show progress bar on live navigation and form submits
-topbar.config({barColors: {0: "#29d"}, shadowColor: "rgba(0, 0, 0, .3)"})
-window.addEventListener("phx:page-loading-start", _info => topbar.show(300))
-window.addEventListener("phx:page-loading-stop", _info => topbar.hide())
+  chatInputEventHandler = (event) => {
+    if (event.key === 'Enter') {
+      const message = chatInput.value.trim();
+      if (message) {
+        sendMessage(channel, nameInput.value, message);
+        chatInput.value = '';
+      }
+    }
+  };
+  chatInput.addEventListener('keydown', chatInputEventHandler);
 
-// connect if there are any LiveViews on the page
-liveSocket.connect()
+  channelEventHandler = (payload) => {
+    renderMessage(payload);
+  };
+  channel.on('shout', channelEventHandler);
+};
 
-// expose liveSocket on window for web console debug logs and latency simulation:
-// >> liveSocket.enableDebug()
-// >> liveSocket.enableLatencySim(1000)  // enabled for duration of browser session
-// >> liveSocket.disableLatencySim()
-window.liveSocket = liveSocket
+const removeEventHandlers = (channel) => {
+  if (chatInputEventHandler) {
+    chatInput.removeEventListener('keydown', chatInputEventHandler);
+    chatInputEventHandler = null;
+  }
+
+  if (channelEventHandler) {
+    channel.off('shout', channelEventHandler);
+    channelEventHandler = null;
+  }
+};
+
+form.addEventListener('submit', (event) => {
+  event.preventDefault();
+
+  const name = nameInput.value;
+
+  // Sanitize the username
+  const sanitizedName = name.replace(/[^a-zA-Z0-9]/g, '');
+  const urlParams = new URLSearchParams(window.location.search);
+  const channelName = urlParams.get('channel') || sanitizedName;
+  console.log(channelName);
+  const channel = socket.channel(`chat:${channelName}`, {});
+  channel.join()
+    .receive("ok", resp => {
+      console.log("Joined successfully", resp);
+
+      // Hide the login form and show the chat window
+      loginContainer.style.display = 'none';
+      chatContainer.style.display = 'block';
+
+      addEventHandlers(channel);
+    })
+    .receive("error", resp => {
+      console.log("Unable to join", resp);
+    });
+});
+
+function sendMessage(channel, name, message) {
+  channel.push('shout', {
+    name: name,
+    message: message,
+    inserted_at: new Date()
+  })
+}
+
+function renderMessage(payload) {
+  console.log(payload)
+}
 
