@@ -1,6 +1,7 @@
 // If you want to use Phoenix channels, run `mix help phx.gen.channel`
 // to get started and then uncomment the line below.
-// import "./user_socket.js"
+import {Socket} from "phoenix"
+import { joinChannel } from "./user_socket.js"
 
 // You can include dependencies in two ways.
 //
@@ -16,9 +17,8 @@
 //
 
 // Include phoenix_html to handle method=PUT/DELETE in forms and buttons.
-import "phoenix_html"
 // Establish Phoenix Socket and LiveView configuration.
-import {Socket} from "phoenix"
+// import {Socket} from "phoenix"
 import {LiveSocket} from "phoenix_live_view"
 import topbar from "../vendor/topbar"
 
@@ -27,11 +27,6 @@ let liveSocket = new LiveSocket("/live", Socket, {
   longPollFallbackMs: 2500,
   params: {_csrf_token: csrfToken}
 })
-
-// Show progress bar on live navigation and form submits
-topbar.config({barColors: {0: "#29d"}, shadowColor: "rgba(0, 0, 0, .3)"})
-window.addEventListener("phx:page-loading-start", _info => topbar.show(300))
-window.addEventListener("phx:page-loading-stop", _info => topbar.hide())
 
 // connect if there are any LiveViews on the page
 liveSocket.connect()
@@ -42,3 +37,11 @@ liveSocket.connect()
 // >> liveSocket.disableLatencySim()
 window.liveSocket = liveSocket
 
+const login   = document.getElementById("login-submit")
+const name    = document.getElementById("name")
+const message = document.getElementById("message")
+const send    = document.getElementById("message-submit")
+
+login.addEventListener("click", function(event){
+  joinChannel("lobby", {name: name.value, session_id: 42}, (resp) => console.log("success"), (resp) => console.log(resp))
+})

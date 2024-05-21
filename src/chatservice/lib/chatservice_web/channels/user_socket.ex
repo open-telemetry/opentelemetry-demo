@@ -1,14 +1,12 @@
 defmodule ChatServiceWeb.UserSocket do
+  require Logger
   use Phoenix.Socket
 
   # A Socket handler
-  #
-  # It's possible to control the websocket connection and
-  # assign values that can be accessed by your channel topics.
 
   ## Channels
 
-  channel "chat:*", ChatServiceWeb.ChatChannel
+  channel("chat:*", ChatServiceWeb.ChatChannel)
 
   # Socket params are passed from the client and can
   # be used to verify and authenticate a user. After
@@ -25,8 +23,14 @@ defmodule ChatServiceWeb.UserSocket do
   # See `Phoenix.Token` documentation for examples in
   # performing token verification on connect.
   @impl true
-  def connect(_params, socket, _connect_info) do
-    {:ok, socket}
+  def connect(params, socket, _connect_info) do
+    # In a real application we might want to verify
+    # this session ID but since this is a demo we will
+    # trust the front-end.
+
+    # This session ID will provide a way to identify users
+    # across different chats.
+    {:ok, assign(socket, :session_id, params["session_id"])}
   end
 
   # Socket IDs are topics that allow you to identify all sockets for a given user:
@@ -40,5 +44,5 @@ defmodule ChatServiceWeb.UserSocket do
   #
   # Returning `nil` makes this socket anonymous.
   @impl true
-  def id(_socket), do: nil
+  def id(socket), do: "user_socket:#{socket.assigns.session_id}"
 end

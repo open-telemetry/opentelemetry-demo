@@ -1,8 +1,11 @@
 defmodule ChatServiceWeb.ChatChannel do
   use ChatServiceWeb, :channel
+  require Logger
 
   @impl true
   def join("chat:lobby", payload, socket) do
+    Logger.debug("Socket: " <> inspect(socket))
+
     if authorized?(payload) do
       {:ok, socket}
     else
@@ -26,7 +29,8 @@ defmodule ChatServiceWeb.ChatChannel do
   end
 
   # Add authorization logic here as required.
-  defp authorized?(_payload) do
+  defp authorized?(payload) do
+    Logger.debug("Join params: " <> inspect(payload))
     true
   end
 end
