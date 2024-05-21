@@ -1,21 +1,31 @@
-{ sources ? import ./nix/sources.nix
-, pkgs ? import <nixpkgs> { }
-}:
-
-with pkgs;
+with import <nixpkgs> {};
 let
-  inherit (lib) optional optionals;
-in
+  basePackages = [
+    gnumake
+    gcc
+    curl
+    elixir
+    inotify-tools
+  ];
+  
+  inputs = if pkgs.system == "x86_64-darwin" then
+    basePackages ++ [ pkgs.darwin.apple_skd.frameworks.CoreServices ]
+  else
+    basePackages;
 
-mkShell {
-  buildInputs = [
-    (import ./nix/default.nix { inherit pkgs; })
-    niv
+  hooks = ''
+    mkdir -p .nix-mix
+    mkdir -p .nix-hex
+    export MIX_HOME=$PWD/.nix-mix
+    export HEX_HOME=$PWD/.nix-hex
+    export PATH=$MIX_HOME/bin:$PATH
+    export PATH=$HEX_HOME/bin:$PATH
+    export LANG=en_US.UTF-8
+  '';
+in mkShell {
+  buildInputs = inputs ++ [
     otel-desktop-viewer
-  ] ++ optional stdenv.isLinux inotify-tools
-  ++ optional stdenv.isDarwin terminal-notifier
-  ++ optionals stdenv.isDarwin (with darwin.apple_sdk.frameworks; [
-    CoreFoundation
-    CoreServices
-  ]);
+  ];
+  
+  shellHook = hooks;
 }
