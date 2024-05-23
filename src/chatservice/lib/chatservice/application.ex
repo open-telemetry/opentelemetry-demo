@@ -16,11 +16,7 @@ defmodule ChatService.Application do
       ChatService.Repo,
       {DNSCluster, query: Application.get_env(:chatservice, :dns_cluster_query) || :ignore},
       {Phoenix.PubSub, name: ChatService.PubSub},
-      # Start the Finch HTTP client for sending emails
-      {Finch, name: ChatService.Finch},
-      # Start a worker by calling: ChatService.Worker.start_link(arg)
-      # {ChatService.Worker, arg},
-      # Start to serve requests, typically the last entry
+      {Registry, keys: :unique, name: :chat_registry},
       ChatServiceWeb.Endpoint
     ]
 
