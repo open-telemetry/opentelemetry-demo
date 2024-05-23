@@ -14,6 +14,16 @@ on:
         default: 'dev'
         required: false
         type: string
+      dockerhub_repo:
+        description: Docker Hub repository
+        default: 'otel/demo'
+        required: false
+        type: string
+      ghcr_repo:
+        description: GHCR repository
+        default: 'ghcr.io/open-telemetry/demo'
+        required: false
+        type: string
 
 jobs:
   build_and_push_images:
@@ -24,8 +34,6 @@ jobs:
 
     env:
       RELEASE_VERSION: "${{ github.event.release.tag_name }}"
-      DOCKERHUB_REPO: "otel/demo"
-      GHCR_REPO: "ghcr.io/open-telemetry/demo"
 
     strategy:
       fail-fast: false
@@ -161,9 +169,9 @@ jobs:
           platforms: linux/amd64,linux/arm64
           push: ${{ inputs.push }}
           tags: |
-            ${{ env.DOCKERHUB_REPO }}:${{ inputs.version }}-${{matrix.file_tag.tag_suffix }}
-            ${{ env.DOCKERHUB_REPO }}:latest-${{matrix.file_tag.tag_suffix }}
-            ${{ env.GHCR_REPO }}:${{ inputs.version }}-${{ matrix.file_tag.tag_suffix }}
-            ${{ env.GHCR_REPO }}:latest-${{ matrix.file_tag.tag_suffix }}
+            ${{ inputs.dockerhub_repo }}:${{ inputs.version }}-${{matrix.file_tag.tag_suffix }}
+            ${{ inputs.dockerhub_repo }}:latest-${{matrix.file_tag.tag_suffix }}
+            ${{ inputs.ghcr_repo }}:${{ inputs.version }}-${{ matrix.file_tag.tag_suffix }}
+            ${{ inputs.ghcr_repo }}:latest-${{ matrix.file_tag.tag_suffix }}
           cache-from: type=gha
           cache-to: type=gha
