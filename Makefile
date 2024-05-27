@@ -124,7 +124,7 @@ generate-kubernetes-manifests:
 
 .PHONY: start
 start:
-	docker compose up --force-recreate --remove-orphans --detach
+	docker compose --env-file .env --env-file .env.override up --force-recreate --remove-orphans --detach
 	@echo ""
 	@echo "OpenTelemetry Demo is running."
 	@echo "Go to http://localhost:8080 for the demo UI."
@@ -135,7 +135,7 @@ start:
 
 .PHONY: start-minimal
 start-minimal:
-	docker compose -f docker-compose.minimal.yml up --force-recreate --remove-orphans --detach
+	docker compose --env-file .env --env-file .env.override up -f docker-compose.minimal.yml up --force-recreate --remove-orphans --detach
 	@echo ""
 	@echo "OpenTelemetry Demo in minimal mode is running."
 	@echo "Go to http://localhost:8080 for the demo UI."
@@ -147,7 +147,7 @@ start-minimal:
 # Observabilty-Driven Development (ODD)
 .PHONY: start-odd
 start-odd:
-	docker compose --profile odd up --force-recreate --remove-orphans --detach
+	docker compose --env-file .env --env-file .env.override up --profile odd up --force-recreate --remove-orphans --detach
 	@echo ""
 	@echo "OpenTelemetry Demo is running."
 	@echo "Go to http://localhost:8080 for the demo UI."
