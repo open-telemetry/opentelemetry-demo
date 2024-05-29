@@ -1,0 +1,38 @@
+# Copyright The OpenTelemetry Authors
+# SPDX-License-Identifier: Apache-2.0
+
+type: Test
+spec:
+  id: frontend-add-product
+  name: 'Frontend: Add product to the cart'
+  description: Simulate a user adding a selected product to the shopping cart
+  trigger:
+    type: http
+    httpRequest:
+      url: http://${var:FRONTEND_ADDR}/api/cart
+      method: POST
+      headers:
+      - key: Content-Type
+        value: application/json
+      body: |
+        {
+          "item": {
+            "productId": "0PUK6V6EV0",
+            "quantity": 2
+          },
+          "userId": "2491f868-88f1-4345-8836-d5d8511a9f83"
+        }
+  specs:
+  - name: It called the frontend with success
+    selector: span[tracetest.span.type="general" name="Tracetest trigger"]
+    assertions:
+    - attr:tracetest.response.status = 200
+  - name: It added an item correctly into the shopping cart
+    selector: span[name="POST /oteldemo.CartService/AddItem"]
+    assertions:
+    - attr:grpc.status_code = 0
+    - attr:app.product.id = "0PUK6V6EV0"
+  - name: It set the cart item correctly on the database
+    selector: span[tracetest.span.type="database" name="HMSET" db.system="redis" db.redis.database_index="0"]
+    assertions:
+    - attr:db.statement = "HMSET 2491f868-88f1-4345-8836-d5d8511a9f83"

@@ -2,7 +2,7 @@
 # SPDX-License-Identifier: Apache-2.0
 
 
-FROM --platform=${BUILDPLATFORM} rust:1.69 as builder
+FROM --platform=${BUILDPLATFORM} rust:1.76 as builder
 
 ARG TARGETARCH TARGETPLATFORM BUILDPLATFORM
 
@@ -40,11 +40,11 @@ RUN if [ "${TARGETPLATFORM}" = "${BUILDPLATFORM}" ] ; then \
     fi
 
 
-ENV GRPC_HEALTH_PROBE_VERSION=v0.4.18
+ENV GRPC_HEALTH_PROBE_VERSION=v0.4.24
 RUN wget -qO/bin/grpc_health_probe https://github.com/grpc-ecosystem/grpc-health-probe/releases/download/${GRPC_HEALTH_PROBE_VERSION}/grpc_health_probe-linux-${TARGETARCH} && \
     chmod +x /bin/grpc_health_probe
 
-FROM debian:bullseye-slim as release
+FROM debian:bookworm-slim as release
 
 WORKDIR /app
 COPY --from=builder /app/target/release/shippingservice /app/shippingservice

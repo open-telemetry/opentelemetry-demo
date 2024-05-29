@@ -1,3 +1,6 @@
+# Copyright (c) 2022-present New Relic Corporation. All rights reserved.
+# SPDX-License-Identifier: Apache-2.0
+
 rbac:
   # Specifies whether RBAC resources should be created
   create: true
@@ -40,7 +43,8 @@ service:
     prometheus.io/port: "9121"
     prometheus.io/scrape: "true"
     fluentbit.io/exclude: "true"
-  labels: {}
+  labels:
+    {}
     # prometheus.io/path: /metrics
     # prometheus.io/port: "9121"
     # prometheus.io/scrape: "true"
@@ -117,7 +121,8 @@ prometheusRule:
   enabled: false
   additionalLabels: {}
   namespace: ""
-  rules: []
+  rules:
+    []
     ## These are just examples rules, please adapt them to your needs.
     ## Make sure to constraint the rules to the current service.
     #  - alert: RedisDown

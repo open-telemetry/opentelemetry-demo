@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import { createContext, useCallback, useContext, useMemo, useState, useEffect } from 'react';
-import { useQuery } from 'react-query';
+import { useQuery } from '@tanstack/react-query';
 import ApiGateway from '../gateways/Api.gateway';
 import SessionGateway from '../gateways/Session.gateway';
 
@@ -27,7 +27,10 @@ interface IProps {
 export const useCurrency = () => useContext(Context);
 
 const CurrencyProvider = ({ children }: IProps) => {
-  const { data: currencyCodeListUnsorted = [] } = useQuery('currency', ApiGateway.getSupportedCurrencyList);
+  const { data: currencyCodeListUnsorted = [] } = useQuery({
+    queryKey: ['currency'],
+    queryFn: ApiGateway.getSupportedCurrencyList
+  });
   const [selectedCurrency, setSelectedCurrency] = useState<string>('');
 
   useEffect(() => {

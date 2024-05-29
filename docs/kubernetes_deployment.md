@@ -1,9 +1,14 @@
 
 # Kubernetes
 
-We provide an [OpenTelemetry Demo Helm chart](https://github.com/open-telemetry/opentelemetry-helm-charts/tree/main/charts/opentelemetry-demo) to help deploy the demo to an existing Kubernetes cluster. We also provide a [values.yaml](https://github.com/newrelic/opentelemetry-demo/blob/main/helm/values.yaml) template to customize the deployment for New Relic. More details on this are included below. 
+We provide an [OpenTelemetry Demo Helm chart](https://github.com/open-telemetry/opentelemetry-helm-charts/tree/main/charts/opentelemetry-demo)
+to help deploy the demo to an existing Kubernetes cluster. We also provide a
+[values.yaml](https://github.com/newrelic/opentelemetry-demo/blob/main/helm/values.yaml)
+template to customize the deployment for New Relic. More details on this are included
+below.
 
-[Helm](https://helm.sh) must be installed to use the charts. Please refer to Helm's [documentation](https://helm.sh/docs/) to get started.
+[Helm](https://helm.sh) must be installed to use the charts. Please refer to
+Helm's [documentation](https://helm.sh/docs/) to get started.
 
 ## Prerequisites
 
@@ -11,7 +16,8 @@ We provide an [OpenTelemetry Demo Helm chart](https://github.com/open-telemetry/
 - Helm 3.9+
 - New Relic Account
 
-**Please note that this chart is not supported for clusters running on arm64 architecture, such as kind/minikube running on Apple Silicon.**
+**Please note that this chart is not supported for clusters running on arm64
+architecture, such as kind/minikube running on Apple Silicon.**
 
 ## Install the Chart
 
@@ -27,21 +33,24 @@ Set a Kubernetes secret with your New Relic license key:
 kubectl create secret generic newrelic-key-secret --from-literal=new_relic_license_key='<NEW_RELIC_LICENSE_KEY>'
 ```
 
-To install the chart with the release name newrelic-otel, run the following command and pass in the provided `values.yaml` file to customize the deployment:
+To install the chart with the release name newrelic-otel, run the following
+command and pass in the provided `values.yaml` file to customize the deployment:
 
 ```console
 helm upgrade --install newrelic-otel open-telemetry/opentelemetry-demo --values ./helm/values.yaml
 ```
 
-**Remark:** If your New Relic account is in Europe, install the chart as follows instead:
+**Remark:** If your New Relic account is in Europe, install the chart as follows
+instead:
 
 ```console
 helm upgrade --install newrelic-otel open-telemetry/opentelemetry-demo --values ./helm/values.yaml --set opentelemetry-collector.config.exporters.otlp.endpoint="otlp.eu01.nr-data.net:4317"
 ```
 
-## Install Prometheus Integrations (Optional) 
+## Install Prometheus Integrations (Optional)
 
-You can install New Relic Prometheus integrations to gather data from the Kafka, Postgres, and Redis components used by the demo application. 
+You can install New Relic Prometheus integrations to gather data from the Kafka,
+Postgres, and Redis components used by the demo application.
 
 Add the Prometheus Helm repository:
 
@@ -49,29 +58,30 @@ Add the Prometheus Helm repository:
 helm repo add prometheus-community https://prometheus-community.github.io/helm-charts
 ```
 
-Install the Prometheus Kafka exporter: 
+Install the Prometheus Kafka exporter:
 
 ```console
-helm upgrade --install prometheus-kafka-exporter prometheus-community/prometheus-kafka-exporter --values ./helm/prometheus-kafka-exporter/values.yaml 
+helm upgrade --install prometheus-kafka-exporter prometheus-community/prometheus-kafka-exporter --values ./helm/prometheus-kafka-exporter/values.yaml
 ```
 
-Install the Prometheus Postgres exporter: 
+Install the Prometheus Postgres exporter:
 
 ```console
-helm upgrade --install prometheus-postgres-exporter prometheus-community/prometheus-postgres-exporter --values ./helm/prometheus-postgres-exporter/values.yaml 
+helm upgrade --install prometheus-postgres-exporter prometheus-community/prometheus-postgres-exporter --values ./helm/prometheus-postgres-exporter/values.yaml
 ```
 
-Install the Prometheus Redis exporter: 
+Install the Prometheus Redis exporter:
 
 ```console
-helm upgrade --install prometheus-redis-exporter prometheus-community/prometheus-redis-exporter --values ./helm/prometheus-redis-exporter/values.yaml 
+helm upgrade --install prometheus-redis-exporter prometheus-community/prometheus-redis-exporter --values ./helm/prometheus-redis-exporter/values.yaml
 ```
 
-## Install Kubernetes Integration (Optional) 
+## Install Kubernetes Integration (Optional)
 
-You can install the New Relic Kubernetes integration to give you visibility into the K8s cluster used to host the demo application. 
+You can install the New Relic Kubernetes integration to give you visibility into
+ the K8s cluster used to host the demo application.
 
-Create the newrelic namespace in your K8s cluster: 
+Create the newrelic namespace in your K8s cluster:
 
 ```console
 kubectl create namespace newrelic
@@ -83,7 +93,8 @@ Add the New Relic Helm repository:
 helm repo add newrelic https://helm-charts.newrelic.com
 ```
 
-Install the New Relic Kubernetes integration (be sure to add your New Relic license key and K8s cluster name): 
+Install the New Relic Kubernetes integration (be sure to add your New Relic
+ license key and K8s cluster name):
 
 ```console
  helm upgrade --install newrelic-bundle newrelic/nri-bundle \
@@ -99,20 +110,20 @@ Install the New Relic Kubernetes integration (be sure to add your New Relic lice
  --set newrelic-prometheus-agent.lowDataMode=true
 ```
 
-
 ## Helm Chart Parameters
 
 Chart parameters are separated in 4 general sections:
-* Default - Used to specify defaults applied to all demo components
-* Components - Used to configure the individual components (microservices) for
-the demo
-* Observability - Used to enable/disable dependencies
-* Sub-charts - Configuration for all sub-charts
 
+- Default - Used to specify defaults applied to all demo components
+- Components - Used to configure the individual components (microservices) for
+the demo
+- Observability - Used to enable/disable dependencies
+- Sub-charts - Configuration for all sub-charts
 
 ## New Relic Configurations
 
-In our values template we have disabled several observability components in favor of the New Relic tool suite: 
+In our values template we have disabled several observability components in
+favor of the New Relic tool suite:
 
 | Parameter                          | Description                                   | Default |
 |------------------------------------|-----------------------------------------------|---------|
@@ -121,34 +132,56 @@ In our values template we have disabled several observability components in favo
 | `observability.prometheus.enabled` | Enables the Prometheus sub-chart              | `false`  |
 | `observability.grafana.enabled`    | Enables the Grafana sub-chart                 | `false`  |
 
-
 ### OpenTelemetry Collector
 
 > **Note**
 > The following parameters have a `opentelemetry-collector.` prefix.
 
-- `mode`: Specifies the mode in which the collector should run. In this case, it is set to run in a "daemonset" mode, which means that the collector will be running on each node in a Kubernetes cluster. We use this mode for the resourcedetection, k8sattributes processors
-- `service`: Configures the service that is exposed by the collector, it uses LoadBalancer type service on AWS.
-- `ports`: Configures the ports that the collector should listen on. In this case, it is configured to listen on several different ports for different protocols such as otlp, otlp-http, jaeger-compact, jaeger-thrift, jaeger-grpc, zipkin and metrics, with some protocols enabled and some disabled based on support and usage.
-- `podAnnotations`: Configures annotations that should be added to the collector's pod. In this case, it is configured to be scraped by Prometheus and specify the port for Prometheus to scrape on.
-- `config` : 
+- `mode`: Specifies the mode in which the collector should run. In this case, it
+  is set to run in a "daemonset" mode, which means that the collector will be
+  running on each node in a Kubernetes cluster. We use this mode for the
+  resourcedetection, k8sattributes processors
+- `service`: Configures the service that is exposed by the collector, it uses
+ LoadBalancer type service on AWS.
+- `ports`: Configures the ports that the collector should listen on. In this
+  case, it is configured to listen on several different ports for different
+  protocols such as otlp, otlp-http, jaeger-compact, jaeger-thrift, jaeger-grpc,
+  zipkin and metrics, with some protocols enabled and some disabled based on
+  support and usage.
+- `podAnnotations`: Configures annotations that should be added to the collector's
+  pod. In this case, it is configured to be scraped by Prometheus and specify the
+  port for Prometheus to scrape on.
+- `config` :
   - `extensions` : used for health_check and zpages.
-  - `receivers` : used to configure the different receivers that the collector should use to receive telemetry data. like hostmetrics and otlp.
-  - `processors` : used to configure the different processors that the collector should use to process telemetry data. like batch [(New Relic Opentelemetry Framework)](https://discuss.newrelic.com/t/opentelemetry-troubleshooting-framework-troubleshooting/178669), cumulativetodelta [(New Relic Opentelemetry metrics)](https://docs.newrelic.com/docs/more-integrations/open-source-telemetry-integrations/opentelemetry/best-practices/opentelemetry-best-practices-metrics/#otel-histogram), resource, resourcedetection, and k8sattributes [(Link OpenTelemetry-instrumented applications to Kubernetes in New Relic)](https://docs.newrelic.com/docs/kubernetes-pixie/kubernetes-integration/advanced-configuration/link-otel-applications-kubernetes/). 
-  - `exporters` : used to configure the New Relic OTLP backed with the required `api-key` header
-- `service` inside `config` is used to configure the service extensions, `pipelines` are used to configure the different pipelines that the collector should use to process different types of telemetry data, like traces and metrics with their respective receivers, processors and exporters.
-- `ingress` configuration is not present in the file since we are using the LoadBalancer type service on AWS
+  - `receivers` : used to configure the different receivers that the collector
+  should use to receive telemetry data. like hostmetrics and otlp.
+  - `processors` : used to configure the different processors that the collector
+  should use to process telemetry data. like batch [(New Relic Opentelemetry Framework)](https://discuss.newrelic.com/t/opentelemetry-troubleshooting-framework-troubleshooting/178669),
+  cumulativetodelta [(New Relic Opentelemetry metrics)](https://docs.newrelic.com/docs/more-integrations/open-source-telemetry-integrations/opentelemetry/best-practices/opentelemetry-best-practices-metrics/#otel-histogram),
+  resource, resourcedetection, and k8sattributes
+  [(Link OpenTelemetry-instrumented applications to Kubernetes in New Relic)](https://docs.newrelic.com/docs/kubernetes-pixie/kubernetes-integration/advanced-configuration/link-otel-applications-kubernetes/).
+  - `exporters` : used to configure the New Relic OTLP backed with the required
+    `api-key` header
+- `service` inside `config` is used to configure the service extensions,
+  `pipelines` are used to configure the different pipelines that the collector
+  should use to process different types of telemetry data, like traces and
+  metrics with their respective receivers, processors and exporters.
+- `ingress` configuration is not present in the file since we are using the
+  LoadBalancer type service on AWS
 
 > **Note**
-> Please make sure to update the collector configuration options according to your needs before using values template file.
+> Please make sure to update the collector configuration options according to
+> your needs before using values template file.
 
 ### Component parameters
 
-The OpenTelemetry demo contains several components (microservices). Each component is configured with a common set of parameters. All components will be defined within `components.[NAME]` where `[NAME]` is the name of the demo component.
+The OpenTelemetry demo contains several components (microservices). Each
+component is configured with a common set of parameters. All components will be
+defined within `components.[NAME]` where `[NAME]` is the name of the demo component.
 
 > **Note**
-> The following parameters require a `components.[NAME].` prefix where `[NAME]` is the name of the demo component. 
-
+> The following parameters require a `components.[NAME].` prefix where `[NAME]`
+> is the name of the demo component.
 
 | Parameter                            | Description                                                                                                | Default                                                       |
 |--------------------------------------|------------------------------------------------------------------------------------------------------------|---------------------------------------------------------------|
@@ -181,11 +214,21 @@ The OpenTelemetry demo contains several components (microservices). Each compone
 | `command`                            | Command & arguments to pass to the container being spun up for this service                                | `[]`                                                          |
 | `configuration`                      | Configuration for the container being spun up; will create a ConfigMap, Volume and VolumeMount             | `{}`                                                          |
 
-The services are configured to use the OpenTelemetry exporter to send traces and metrics to a backend service. The endpoint for these services are set to use the environment variable `OTEL_EXPORTER_OTLP_ENDPOINT`. The endpoint is set to the value `http://$(HOST_IP):4317` and `http://$(HOST_IP):4318` respectively.
+The services are configured to use the OpenTelemetry exporter to send traces
+and metrics to a backend service. The endpoint for these services are set to
+use the environment variable `OTEL_EXPORTER_OTLP_ENDPOINT`. The endpoint is
+set to the value `http://$(HOST_IP):4317` and `http://$(HOST_IP):4318` respectively.
 
-This configuration is necessary because the service is deployed as a Kubernetes daemonset. A daemonset ensures that all, or some, nodes run a copy the collector pod. This means the IP address of the endpoint may be different depending on the node that the pod is running on. By using the variable `HOST_IP` the exporter will automatically substitute the correct IP address of the endpoint when the pod starts up, regardless of which node it's running on.
+This configuration is necessary because the service is deployed as a Kubernetes
+daemonset. A daemonset ensures that all, or some, nodes run a copy the collector
+pod. This means the IP address of the endpoint may be different depending on the
+node that the pod is running on. By using the variable `HOST_IP` the exporter
+ will automatically substitute the correct IP address of the endpoint when the
+  pod starts up, regardless of which node it's running on.
 
-So, this configuration ensures that the exporter sends traces and metrics to the correct endpoint, even if the pod is running on different nodes in the kubernetes cluster.
+So, this configuration ensures that the exporter sends traces and metrics to the
+correct endpoint, even if the pod is running on different nodes in the
+kubernetes cluster.
 
 ### Default parameters (applied to all demo components)
 

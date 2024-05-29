@@ -1,3 +1,6 @@
+# Copyright (c) 2022-present New Relic Corporation. All rights reserved.
+# SPDX-License-Identifier: Apache-2.0
+
 default:
   # list of environment variables applied to all components
   env:
@@ -37,10 +40,18 @@ default:
       valueFrom:
         fieldRef:
           fieldPath: status.hostIP
+      # Set to HOST_IP for Daemonset mode.
     - name: OTEL_COLLECTOR_NAME
-      value: '{{ include "otel-demo.name" . }}-otelcol'
+      value: "$(HOST_IP)"
     - name: OTEL_RESOURCE_ATTRIBUTES
-      value: service.name=$(OTEL_SERVICE_NAME),service.instance.id=$(OTEL_K8S_POD_NAME),k8s.pod.uid=$(OTEL_K8S_POD_UID),service.namespace=opentelemetry-demo,k8s.namespace.name=$(OTEL_K8S_NAMESPACE),k8s.node.name=$(OTEL_K8S_NODE_NAME),k8s.pod.name=$(OTEL_K8S_POD_NAME)
+      value: >-
+        service.name=$(OTEL_SERVICE_NAME),
+        service.instance.id=$(OTEL_K8S_POD_NAME),
+        k8s.pod.uid=$(OTEL_K8S_POD_UID),
+        service.namespace=opentelemetry-demo,
+        k8s.namespace.name=$(OTEL_K8S_NAMESPACE),
+        k8s.node.name=$(OTEL_K8S_NODE_NAME),
+        k8s.pod.name=$(OTEL_K8S_POD_NAME)
   # Allows overriding and additions to .Values.default.env
   envOverrides: []
   #  - name: OTEL_K8S_NODE_NAME
@@ -94,6 +105,7 @@ components:
   ## Environment variables to add to the component's pod
   #   env:
   ## Environment variables that upsert (append + merge) into the `env` specification for this component.
+  ## A variable named OTEL_RESOURCE_ATTRIBUTES_EXTRA will have its value appended to the OTEL_RESOURCE_ATTRIBUTES value.
   #   envOverrides:
   ## Pod Scheduling rules for nodeSelector, affinity, or tolerations.
   #   schedulingRules:
@@ -144,10 +156,19 @@ components:
   #         - secretName: demo-tls
   #           hosts:
   #             - demo.example.com
-  # # Command to use in the container spec, in case you don't want to go with the default command from the image.
+  ## Command to use in the container spec, in case you don't want to go with the default command from the image.
   #   command: []
-  # # Configuration to for this service; will create a ConfigMap, Volume, and Mount it into the container being spun up/.
-  #   configuration: {}
+  ## Configuration to for this component; will create a Volume, and Mount backed by an optionally created ConfigMap.
+  ## The name, mountPath are required, and one of existingConfigMap or data is required.
+  ## If an existing ConfigMap is not provided, the contents under data will be used for the created ConfigMap.
+  #   mountedConfigMaps: []
+  #     - name: my-config
+  #       mountPath: /etc/config
+  #       subPath:
+  #       existingConfigMap: my-configmap
+  #       data:
+  #         my-config.yaml: |
+  #           key: value
   # # Kubernetes container health check options
   #   livenessProbe: {}
   # # Optional init container to run before the pod starts.
@@ -155,24 +176,37 @@ components:
   #     - name: <init-container-name>
   #       image: <init-container-image>
   #       command: [list of commands for the init container to run]
+  # # Replicas for the component
+  #  replicas: 1
+  # # Optional pod security context for setting user ID (UID), group ID (GID) and other security policies
+  # # This will be applied at pod level, can be applied globally for all pods: .Values.default.podSecurityContext
+  # # Or it can be applied to a specific component: .Values.components.<component-name>.podSecurityContext
+  #    podSecurityContext:
+  #      runAsGroup: 65534
+  #      runAsNonRoot: true
+  #      runAsUser: 65534
+
   accountingService:
     enabled: true
     useDefault:
       env: true
     env:
-      - name: OTEL_EXPORTER_OTLP_ENDPOINT
-        value: 'http://$(HOST_IP):4317'
-      - name: OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE
-        value: delta
       - name: KAFKA_SERVICE_ADDR
         value: '{{ include "otel-demo.name" . }}-kafka:9092'
+      - name: OTEL_EXPORTER_OTLP_ENDPOINT
+        value: http://$(OTEL_COLLECTOR_NAME):4317
     resources:
       limits:
         memory: 20Mi
     initContainers:
       - name: wait-for-kafka
         image: busybox:latest
-        command: ['sh', '-c', 'until nc -z -v -w30 {{ include "otel-demo.name" . }}-kafka 9092; do echo waiting for kafka; sleep 2; done;']
+        command:
+          [
+            "sh",
+            "-c",
+            'until nc -z -v -w30 {{ include "otel-demo.name" . }}-kafka 9092; do echo waiting for kafka; sleep 2; done;',
+          ]
 
   adService:
     enabled: true
@@ -183,11 +217,13 @@ components:
     env:
       - name: AD_SERVICE_PORT
         value: "8080"
-      - name: FEATURE_FLAG_GRPC_SERVICE_ADDR
-        value: '{{ include "otel-demo.name" . }}-featureflagservice:50053'
+      - name: FLAGD_HOST
+        value: '{{ include "otel-demo.name" . }}-flagd'
+      - name: FLAGD_PORT
+        value: "8013"
       - name: OTEL_EXPORTER_OTLP_ENDPOINT
-        value: 'http://$(HOST_IP):4317'
-      - name: OTLP_LOGS_EXPORTER
+        value: http://$(OTEL_COLLECTOR_NAME):4318
+      - name: OTEL_LOGS_EXPORTER
         value: otlp
     resources:
       limits:
@@ -204,17 +240,26 @@ components:
         value: "8080"
       - name: ASPNETCORE_URLS
         value: http://*:$(CART_SERVICE_PORT)
+      - name: FLAGD_HOST
+        value: '{{ include "otel-demo.name" . }}-flagd'
+      - name: FLAGD_PORT
+        value: "8013"
       - name: REDIS_ADDR
         value: '{{ include "otel-demo.name" . }}-redis:6379'
       - name: OTEL_EXPORTER_OTLP_ENDPOINT
-        value: 'http://$(HOST_IP):4317'
+        value: http://$(OTEL_COLLECTOR_NAME):4317
     resources:
       limits:
         memory: 160Mi
     initContainers:
       - name: wait-for-redis
         image: busybox:latest
-        command: ['sh', '-c', 'until nc -z -v -w30 {{ include "otel-demo.name" . }}-redis 6379; do echo waiting for redis; sleep 2; done;']
+        command:
+          [
+            "sh",
+            "-c",
+            'until nc -z -v -w30 {{ include "otel-demo.name" . }}-redis 6379; do echo waiting for redis; sleep 2; done;',
+          ]
 
   checkoutService:
     enabled: true
@@ -225,6 +270,10 @@ components:
     env:
       - name: CHECKOUT_SERVICE_PORT
         value: "8080"
+      - name: FLAGD_HOST
+        value: '{{ include "otel-demo.name" . }}-flagd'
+      - name: FLAGD_PORT
+        value: "8013"
       - name: CART_SERVICE_ADDR
         value: '{{ include "otel-demo.name" . }}-cartservice:8080'
       - name: CURRENCY_SERVICE_ADDR
@@ -240,14 +289,19 @@ components:
       - name: KAFKA_SERVICE_ADDR
         value: '{{ include "otel-demo.name" . }}-kafka:9092'
       - name: OTEL_EXPORTER_OTLP_ENDPOINT
-        value: 'http://$(HOST_IP):4317'
+        value: http://$(OTEL_COLLECTOR_NAME):4317
     resources:
       limits:
         memory: 20Mi
     initContainers:
       - name: wait-for-kafka
         image: busybox:latest
-        command: ['sh', '-c', 'until nc -z -v -w30 {{ include "otel-demo.name" . }}-kafka 9092; do echo waiting for kafka; sleep 2; done;']
+        command:
+          [
+            "sh",
+            "-c",
+            'until nc -z -v -w30 {{ include "otel-demo.name" . }}-kafka 9092; do echo waiting for kafka; sleep 2; done;',
+          ]
 
   currencyService:
     enabled: true
@@ -259,7 +313,9 @@ components:
       - name: CURRENCY_SERVICE_PORT
         value: "8080"
       - name: OTEL_EXPORTER_OTLP_ENDPOINT
-        value: 'http://$(HOST_IP):4317'
+        value: http://$(OTEL_COLLECTOR_NAME):4317
+      - name: VERSION
+        value: "{{ .Chart.AppVersion }}"
     resources:
       limits:
         memory: 20Mi
@@ -276,63 +332,36 @@ components:
       - name: APP_ENV
         value: production
       - name: OTEL_EXPORTER_OTLP_TRACES_ENDPOINT
-        value: 'http://$(HOST_IP):4318/v1/traces'
+        value: http://$(OTEL_COLLECTOR_NAME):4318/v1/traces
     resources:
       limits:
         memory: 100Mi
-
-  featureflagService:
-    enabled: true
-    useDefault:
-      env: true
-    ports:
-      - name: grpc
-        value: 50053
-      - name: http
-        value: 8081
-    env:
-      - name: FEATURE_FLAG_SERVICE_PORT
-        value: "8081"
-      - name: FEATURE_FLAG_GRPC_SERVICE_PORT
-        value: "50053"
-      - name: DATABASE_URL
-        value: 'ecto://ffs:ffs@{{ include "otel-demo.name" . }}-ffspostgres:5432/ffs'
-      - name: OTEL_EXPORTER_OTLP_ENDPOINT
-        value: 'http://$(HOST_IP):4317'
-      - name: OTEL_EXPORTER_OTLP_TRACES_PROTOCOL
-        value: grpc
-    resources:
-      limits:
-        memory: 175Mi
-    livenessProbe:
-      httpGet:
-        path: /featureflags/
-        port: 8081
-      initialDelaySeconds: 30
-      periodSeconds: 10
-    initContainers:
-      - name: wait-for-ffspostgres
-        image: busybox:latest
-        command: ['sh', '-c', 'until nc -z -v -w30 {{ include "otel-demo.name" . }}-ffspostgres 5432; do echo waiting for ffspostgres; sleep 2; done']
 
   frauddetectionService:
     enabled: true
     useDefault:
       env: true
     env:
+      - name: FLAGD_HOST
+        value: '{{ include "otel-demo.name" . }}-flagd'
+      - name: FLAGD_PORT
+        value: "8013"
       - name: KAFKA_SERVICE_ADDR
         value: '{{ include "otel-demo.name" . }}-kafka:9092'
       - name: OTEL_EXPORTER_OTLP_ENDPOINT
-        value: 'http://$(HOST_IP):4317'
-      - name: OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE
-        value: delta
+        value: http://$(OTEL_COLLECTOR_NAME):4318
     resources:
       limits:
-        memory: 200Mi
+        memory: 300Mi
     initContainers:
       - name: wait-for-kafka
         image: busybox:latest
-        command: ['sh', '-c', 'until nc -z -v -w30 {{ include "otel-demo.name" . }}-kafka 9092; do echo waiting for kafka; sleep 2; done;']
+        command:
+          [
+            "sh",
+            "-c",
+            'until nc -z -v -w30 {{ include "otel-demo.name" . }}-kafka 9092; do echo waiting for kafka; sleep 2; done;',
+          ]
 
   frontend:
     enabled: true
@@ -359,17 +388,19 @@ components:
         value: '{{ include "otel-demo.name" . }}-recommendationservice:8080'
       - name: SHIPPING_SERVICE_ADDR
         value: '{{ include "otel-demo.name" . }}-shippingservice:8080'
+      - name: OTEL_COLLECTOR_HOST
+        value: $(OTEL_COLLECTOR_NAME)
       - name: OTEL_EXPORTER_OTLP_ENDPOINT
-        value: 'http://$(HOST_IP):4317'
+        value: http://$(OTEL_COLLECTOR_NAME):4317
       - name: WEB_OTEL_SERVICE_NAME
-        value: frontend-web-otel
+        value: frontend-web
       - name: PUBLIC_OTEL_EXPORTER_OTLP_TRACES_ENDPOINT
-        value: 'http://localhost:4318/v1/traces'             # This expects users to use `kubectl port-forward ...`
+        value: http://localhost:8080/otlp-http/v1/traces # This expects users to use `kubectl port-forward ...`
     resources:
       limits:
-        memory: 400Mi
+        memory: 200Mi
     securityContext:
-      runAsUser: 1001  # nextjs
+      runAsUser: 1001 # nextjs
       runAsGroup: 1001
       runAsNonRoot: true
 
@@ -378,7 +409,6 @@ components:
     useDefault:
       env: true
     service:
-      type: LoadBalancer
       port: 8080
     env:
       - name: ENVOY_PORT
@@ -387,10 +417,6 @@ components:
         value: "8080"
       - name: FRONTEND_HOST
         value: '{{ include "otel-demo.name" . }}-frontend'
-      - name: FEATURE_FLAG_SERVICE_PORT
-        value: "8081"
-      - name: FEATURE_FLAG_SERVICE_HOST
-        value: '{{ include "otel-demo.name" . }}-featureflagservice'
       - name: LOCUST_WEB_PORT
         value: "8089"
       - name: LOCUST_WEB_HOST
@@ -403,15 +429,17 @@ components:
         value: "16686"
       - name: JAEGER_SERVICE_HOST
         value: '{{ include "otel-demo.name" . }}-jaeger-query'
-      - name: OTEL_COLLECTOR_PORT
+      - name: OTEL_COLLECTOR_PORT_GRPC
         value: "4317"
+      - name: OTEL_COLLECTOR_PORT_HTTP
+        value: "4318"
       - name: OTEL_COLLECTOR_HOST
-        value: 'http://$(HOST_IP)'
+        value: $(OTEL_COLLECTOR_NAME)
     resources:
       limits:
-        memory: 100Mi
+        memory: 50Mi
     securityContext:
-      runAsUser: 101  # envoy
+      runAsUser: 101 # envoy
       runAsGroup: 101
       runAsNonRoot: true
 
@@ -429,18 +457,24 @@ components:
       - name: LOCUST_SPAWN_RATE
         value: "1"
       - name: LOCUST_HOST
-        value: 'http://{{ include "otel-demo.name" . }}-frontend:8080'
+        value: 'http://{{ include "otel-demo.name" . }}-frontendproxy:8080'
       - name: LOCUST_HEADLESS
-        value: "true"
+        value: "false"
       - name: LOCUST_AUTOSTART
+        value: "true"
+      - name: LOCUST_BROWSER_TRAFFIC_ENABLED
         value: "true"
       - name: PROTOCOL_BUFFERS_PYTHON_IMPLEMENTATION
         value: python
-      - name: OTEL_EXPORTER_OTLP_TRACES_ENDPOINT
-        value: 'http://$(HOST_IP):4318/v1/traces'
+      - name: OTEL_EXPORTER_OTLP_ENDPOINT
+        value: http://$(OTEL_COLLECTOR_NAME):4317
+      - name: FLAGD_HOST
+        value: '{{ include "otel-demo.name" . }}-flagd'
+      - name: FLAGD_PORT
+        value: "8013"
     resources:
       limits:
-        memory: 120Mi
+        memory: 1Gi
 
   paymentService:
     enabled: true
@@ -451,13 +485,17 @@ components:
     env:
       - name: PAYMENT_SERVICE_PORT
         value: "8080"
+      - name: FLAGD_HOST
+        value: '{{ include "otel-demo.name" . }}-flagd'
+      - name: FLAGD_PORT
+        value: "8013"
       - name: OTEL_EXPORTER_OTLP_ENDPOINT
-        value: 'http://$(HOST_IP):4317'
+        value: http://$(OTEL_COLLECTOR_NAME):4317
     resources:
       limits:
         memory: 120Mi
     securityContext:
-      runAsUser: 1000  # node
+      runAsUser: 1000 # node
       runAsGroup: 1000
       runAsNonRoot: true
 
@@ -468,14 +506,14 @@ components:
     service:
       port: 8080
     env:
-      - name: OTEL_EXPORTER_OTLP_ENDPOINT
-        value: 'http://$(HOST_IP):4317'
-      - name: OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE
-        value: delta
       - name: PRODUCT_CATALOG_SERVICE_PORT
         value: "8080"
-      - name: FEATURE_FLAG_GRPC_SERVICE_ADDR
-        value: '{{ include "otel-demo.name" . }}-featureflagservice:50053'
+      - name: FLAGD_HOST
+        value: '{{ include "otel-demo.name" . }}-flagd'
+      - name: FLAGD_PORT
+        value: "8013"
+      - name: OTEL_EXPORTER_OTLP_ENDPOINT
+        value: http://$(OTEL_COLLECTOR_NAME):4317
     resources:
       limits:
         memory: 20Mi
@@ -491,13 +529,13 @@ components:
         value: "8080"
       - name: OTEL_PHP_AUTOLOAD_ENABLED
         value: "true"
-      - name: OTEL_EXPORTER_OTLP_TRACES_ENDPOINT
-        value: 'http://$(HOST_IP):4318/v1/traces'
+      - name: OTEL_EXPORTER_OTLP_ENDPOINT
+        value: http://$(OTEL_COLLECTOR_NAME):4318
     resources:
       limits:
         memory: 40Mi
     securityContext:
-      runAsUser: 33  # www-data
+      runAsUser: 33 # www-data
       runAsGroup: 33
       runAsNonRoot: true
 
@@ -512,17 +550,19 @@ components:
         value: "8080"
       - name: PRODUCT_CATALOG_SERVICE_ADDR
         value: '{{ include "otel-demo.name" . }}-productcatalogservice:8080'
-      - name: FEATURE_FLAG_GRPC_SERVICE_ADDR
-        value: '{{ include "otel-demo.name" . }}-featureflagservice:50053'
+      - name: FLAGD_HOST
+        value: '{{ include "otel-demo.name" . }}-flagd'
+      - name: FLAGD_PORT
+        value: "8013"
       - name: OTEL_PYTHON_LOG_CORRELATION
         value: "true"
       - name: PROTOCOL_BUFFERS_PYTHON_IMPLEMENTATION
         value: python
       - name: OTEL_EXPORTER_OTLP_ENDPOINT
-        value: 'http://$(HOST_IP):4317'
+        value: http://$(OTEL_COLLECTOR_NAME):4317
     resources:
       limits:
-        memory: 500Mi            # This is high to enable supporting the recommendationCache feature flag use case
+        memory: 500Mi # This is high to enable supporting the recommendationCache feature flag use case
 
   shippingService:
     enabled: true
@@ -535,41 +575,40 @@ components:
         value: "8080"
       - name: QUOTE_SERVICE_ADDR
         value: 'http://{{ include "otel-demo.name" . }}-quoteservice:8080'
-      - name: OTEL_EXPORTER_OTLP_TRACES_ENDPOINT
-        value: 'http://$(HOST_IP):4317/v1/traces'
+      - name: OTEL_EXPORTER_OTLP_ENDPOINT
+        value: http://$(OTEL_COLLECTOR_NAME):4317
     resources:
       limits:
         memory: 20Mi
 
-  ffsPostgres:
+  flagd:
     enabled: true
+    imageOverride:
+      repository: "ghcr.io/open-feature/flagd"
+      tag: "v0.10.1"
     useDefault:
       env: true
-    imageOverride:
-      repository: "postgres"
-      tag: "14"
-    ports:
-      - name: postgres
-        value: 5432
-    env:
-      - name: POSTGRES_DB
-        value: ffs
-      - name: POSTGRES_USER
-        value: ffs
-      - name: POSTGRES_PASSWORD
-        value: ffs
+    replicas: 1
+    service:
+      port: 8013
     resources:
       limits:
-        memory: 120Mi
-    securityContext:
-      runAsUser: 999  # postgres
-      runAsGroup: 999
-      runAsNonRoot: true
+        memory: 50Mi
+    command:
+      - "/flagd-build"
+      - "start"
+      - "--uri"
+      - "file:./etc/flagd/demo.flagd.json"
+    mountedConfigMaps:
+      - name: config
+        mountPath: /etc/flagd
+        existingConfigMap: '{{ include "otel-demo.name" . }}-flagd-config'
 
   kafka:
     enabled: true
     useDefault:
-      env: false
+      env: true
+    replicas: 1
     ports:
       - name: plaintext
         value: 9092
@@ -579,16 +618,14 @@ components:
       - name: KAFKA_ADVERTISED_LISTENERS
         value: 'PLAINTEXT://{{ include "otel-demo.name" . }}-kafka:9092'
       - name: OTEL_EXPORTER_OTLP_ENDPOINT
-        value: 'http://$(HOST_IP):4317'
-      - name: OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE
-        value: delta
+        value: http://$(OTEL_COLLECTOR_NAME):4318
       - name: KAFKA_HEAP_OPTS
         value: "-Xmx400M -Xms400M"
     resources:
       limits:
-        memory: 750Mi
+        memory: 600Mi
     securityContext:
-      runAsUser: 1000  # appuser
+      runAsUser: 1000 # appuser
       runAsGroup: 1000
       runAsNonRoot: true
 
@@ -598,7 +635,8 @@ components:
       env: true
     imageOverride:
       repository: "redis"
-      tag: "alpine"
+      tag: "7.2-alpine"
+    replicas: 1
     ports:
       - name: redis
         value: 6379
@@ -606,7 +644,7 @@ components:
       limits:
         memory: 20Mi
     securityContext:
-      runAsUser: 999  # redis
+      runAsUser: 999 # redis
       runAsGroup: 1000
       runAsNonRoot: true
 
@@ -676,6 +714,9 @@ opentelemetry-collector:
                 - "http://*"
                 - "https://*"
 
+    connectors:
+      spanmetrics: {}
+
     exporters:
       otlp:
         endpoint: "otlp.nr-data.net:4317"
@@ -722,19 +763,26 @@ opentelemetry-collector:
               - from: resource_attribute
                 name: k8s.pod.uid
       memory_limiter: null
-      spanmetrics:
-        metrics_exporter: otlp
 
     service:
       extensions: [health_check, zpages]
       pipelines:
         traces:
           receivers: [otlp]
-          processors: [memory_limiter, resource, resourcedetection, k8sattributes, spanmetrics, batch]
-          exporters: [otlp]
+          processors:
+            [memory_limiter, resource, resourcedetection, k8sattributes, batch]
+          exporters: [spanmetrics, otlp]
         metrics:
-          receivers: [hostmetrics, otlp]
-          processors: [memory_limiter, resource, resourcedetection, k8sattributes, cumulativetodelta, batch]
+          receivers: [spanmetrics, hostmetrics, otlp]
+          processors:
+            [
+              memory_limiter,
+              resource,
+              resourcedetection,
+              k8sattributes,
+              cumulativetodelta,
+              batch,
+            ]
           exporters: [otlp]
 
   clusterRole:
@@ -747,9 +795,9 @@ opentelemetry-collector:
     name: ""
     # A set of rules as documented here : https://kubernetes.io/docs/reference/access-authn-authz/rbac/
     rules:
-      - apiGroups: ['']
-        resources: ['pods', 'nodes', 'namespace']
-        verbs: ['get', 'watch', 'list']
+      - apiGroups: [""]
+        resources: ["pods", "nodes", "namespace"]
+        verbs: ["get", "watch", "list"]
 
     clusterRoleBinding:
       # Annotations to add to the clusterRoleBinding
@@ -764,7 +812,7 @@ opentelemetry-collector:
           name: newrelic-key-secret
           key: new_relic_license_key
     - name: OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE
-      value: 'delta'
+      value: "delta"
 
 jaeger:
   enabled: false
@@ -824,13 +872,14 @@ prometheus:
   serverFiles:
     prometheus.yml:
       scrape_configs:
-        - job_name: 'opentelemetry-community-demo'
+        - job_name: "opentelemetry-community-demo"
           kubernetes_sd_configs:
             - role: pod
               namespaces:
                 own_namespace: true
           relabel_configs:
-            - source_labels: [__meta_kubernetes_pod_annotation_opentelemetry_community_demo]
+            - source_labels:
+                [__meta_kubernetes_pod_annotation_opentelemetry_community_demo]
               action: keep
               regex: true
 
@@ -876,9 +925,9 @@ grafana:
     dashboardproviders.yaml:
       apiVersion: 1
       providers:
-        - name: 'default'
+        - name: "default"
           orgId: 1
-          folder: ''
+          folder: ""
           type: file
           disableDeletion: false
           editable: true

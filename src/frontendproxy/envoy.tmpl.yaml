@@ -16,15 +16,20 @@ static_resources:
                 codec_type: AUTO
                 stat_prefix: ingress_http
                 tracing:
+                  spawn_upstream_span: true
                   provider:
                     name: envoy.tracers.opentelemetry
                     typed_config:
                       "@type": type.googleapis.com/envoy.config.trace.v3.OpenTelemetryConfig
                       grpc_service:
                         envoy_grpc:
-                          cluster_name: opentelemetry_collector
+                          cluster_name: opentelemetry_collector_grpc
                         timeout: 0.250s
                       service_name: frontend-proxy
+                      resource_detectors:
+                        - name: envoy.tracers.opentelemetry.resource_detectors.environment
+                          typed_config:
+                            "@type": type.googleapis.com/envoy.extensions.tracers.opentelemetry.resource_detectors.v3.EnvironmentResourceDetectorConfig
                 route_config:
                   name: local_route
                   virtual_hosts:
@@ -32,23 +37,35 @@ static_resources:
                       domains:
                         - "*"
                       routes:
-                        - match: { prefix: "/feature" }
-                          route: { cluster: featureflag, prefix_rewrite: "/" }
                         - match: { prefix: "/loadgen" }
                           route: { cluster: loadgen, prefix_rewrite: "/" }
+                        - match: { prefix: "/otlp-http/" }
+                          route: { cluster: opentelemetry_collector_http, prefix_rewrite: "/" }
                         - match: { prefix: "/jaeger" }
                           route: { cluster: jaeger }
                         - match: { prefix: "/grafana" }
                           route: { cluster: grafana }
+                        - match: { prefix: "/images/" }
+                          route: { cluster: imageprovider, prefix_rewrite: "/" }
+                        - match: { prefix: "/flagservice/" }
+                          route: { cluster: flagservice, prefix_rewrite: "/", timeout: 0s }
                         - match: { prefix: "/" }
                           route: { cluster: frontend }
                 http_filters:
+                  - name: envoy.filters.http.fault
+                    typed_config:
+                      "@type": type.googleapis.com/envoy.extensions.filters.http.fault.v3.HTTPFault
+                      max_active_faults: 100
+                      delay:
+                        header_delay: {}
+                        percentage:
+                          numerator: 100
                   - name: envoy.filters.http.router
                     typed_config:
                       "@type": type.googleapis.com/envoy.extensions.filters.http.router.v3.Router
 
   clusters:
-    - name: opentelemetry_collector
+    - name: opentelemetry_collector_grpc
       type: STRICT_DNS
       lb_policy: ROUND_ROBIN
       typed_extension_protocol_options:
@@ -57,14 +74,26 @@ static_resources:
           explicit_http_config:
             http2_protocol_options: {}
       load_assignment:
-        cluster_name: opentelemetry_collector
+        cluster_name: opentelemetry_collector_grpc
         endpoints:
           - lb_endpoints:
               - endpoint:
                   address:
                     socket_address:
                       address: ${OTEL_COLLECTOR_HOST}
-                      port_value: ${OTEL_COLLECTOR_PORT}
+                      port_value: ${OTEL_COLLECTOR_PORT_GRPC}
+    - name: opentelemetry_collector_http
+      type: STRICT_DNS
+      lb_policy: ROUND_ROBIN
+      load_assignment:
+        cluster_name: opentelemetry_collector_http
+        endpoints:
+          - lb_endpoints:
+              - endpoint:
+                  address:
+                    socket_address:
+                      address: ${OTEL_COLLECTOR_HOST}
+                      port_value: ${OTEL_COLLECTOR_PORT_HTTP}
     - name: frontend
       type: STRICT_DNS
       lb_policy: ROUND_ROBIN
@@ -77,18 +106,30 @@ static_resources:
                     socket_address:
                       address: ${FRONTEND_HOST}
                       port_value: ${FRONTEND_PORT}
-    - name: featureflag
+    - name: imageprovider
       type: STRICT_DNS
       lb_policy: ROUND_ROBIN
       load_assignment:
-        cluster_name: featureflag
+        cluster_name: imageprovider
         endpoints:
           - lb_endpoints:
               - endpoint:
                   address:
                     socket_address:
-                      address: ${FEATURE_FLAG_SERVICE_HOST}
-                      port_value: ${FEATURE_FLAG_SERVICE_PORT}
+                      address: ${IMAGE_PROVIDER_HOST}
+                      port_value: ${IMAGE_PROVIDER_PORT}
+    - name: flagservice
+      type: STRICT_DNS
+      lb_policy: ROUND_ROBIN
+      load_assignment:
+        cluster_name: flagservice
+        endpoints:
+          - lb_endpoints:
+              - endpoint:
+                  address:
+                    socket_address:
+                      address: ${FLAGD_HOST}
+                      port_value: ${FLAGD_PORT}
     - name: loadgen
       type: STRICT_DNS
       lb_policy: ROUND_ROBIN

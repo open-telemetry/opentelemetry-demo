@@ -1,3 +1,6 @@
+# Copyright (c) 2022-present New Relic Corporation. All rights reserved.
+# SPDX-License-Identifier: Apache-2.0
+
 image:
   repository: danielqsj/kafka-exporter
   # Overrides the image tag whose default is the chart appVersion.

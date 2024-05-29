@@ -2,7 +2,7 @@
 # SPDX-License-Identifier: Apache-2.0
 
 
-FROM python:3.11-slim-buster as base
+FROM python:3.12-slim-bookworm as base
 
 FROM base as builder
 RUN apt-get -qq update \
@@ -17,4 +17,7 @@ WORKDIR /usr/src/app/
 COPY --from=builder /reqs /usr/local
 COPY ./src/loadgenerator/locustfile.py .
 COPY ./src/loadgenerator/people.json .
-ENTRYPOINT locust
+ENV LOCUST_PLAYWRIGHT=1
+ENV PLAYWRIGHT_BROWSERS_PATH=/opt/pw-browsers
+RUN playwright install --with-deps chromium
+ENTRYPOINT locust --skip-log-setup
