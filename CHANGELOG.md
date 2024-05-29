@@ -37,6 +37,8 @@ the release.
   ([#1556](https://github.com/open-telemetry/opentelemetry-demo/pull/1556))
 * [frontend] Slowloading of images based on imageSlowLoad flag
   ([#1515](https://github.com/open-telemetry/opentelemetry-demo/pull/1486))
+* [frontend] Fix imageloading issues on optimized images. bump next.js version
+  ([#1571](https://github.com/open-telemetry/opentelemetry-demo/pull/1571))
 
 ## 1.9.0
 

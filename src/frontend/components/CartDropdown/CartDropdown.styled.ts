@@ -56,8 +56,8 @@ export const Item = styled.div`
 `;
 
 export const ItemImage = styled(Image).attrs({
-  width: '80px',
-  height: '80px',
+  width: '80',
+  height: '80',
 })`
   border-radius: 5px;
 `;
