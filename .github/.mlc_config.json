@@ -2,6 +2,7 @@
     "ignorePatterns": [
         {"pattern": "^http://localhost:8080"},
         {"pattern": "^https://calendar.google.com/calendar"}
+        {"pattern": "^https://coralogix.com"}
     ],
     "replacementPatterns": [
         {
