@@ -6,9 +6,10 @@ FROM apache/kafka:3.7.0
 
 USER root
 ARG version=2.3.0
-ADD --chmod=644 https://github.com/open-telemetry/opentelemetry-java-instrumentation/releases/download/v$version/opentelemetry-javaagent.jar /tmp/opentelemetry-javaagent.jar
 
 USER appuser
+
+ADD --chown=appuser:appuser https://github.com/open-telemetry/opentelemetry-java-instrumentation/releases/download/v$version/opentelemetry-javaagent.jar /tmp/opentelemetry-javaagent.jar
 
 ENV KAFKA_LISTENERS=PLAINTEXT://0.0.0.0:9092,CONTROLLER://0.0.0.0:9093
 ENV KAFKA_CONTROLLER_QUORUM_VOTERS='1@0.0.0.0:9093'

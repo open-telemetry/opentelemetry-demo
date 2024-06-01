@@ -39,6 +39,8 @@ the release.
   ([#1515](https://github.com/open-telemetry/opentelemetry-demo/pull/1486))
 * [frontend] Fix imageloading issues on optimized images. bump next.js version
   ([#1571](https://github.com/open-telemetry/opentelemetry-demo/pull/1571))
+* [kafka] Fix permission issue with the telemetry agent when running in docker compose
+  ([#1574](https://github.com/open-telemetry/opentelemetry-demo/pull/1574))
 
 ## 1.9.0
 
