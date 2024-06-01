@@ -41,6 +41,8 @@ the release.
   ([#1514](https://github.com/open-telemetry/opentelemetry-demo/pull/1514)), ([#1580](https://github.com/open-telemetry/opentelemetry-demo/pull/1580))
 * [kafka] Fix permission issue with the telemetry agent when running in docker compose
   ([#1574](https://github.com/open-telemetry/opentelemetry-demo/pull/1574))
+* [flagd] Add flagd service to minimal docker compose deployment
+  ([#1585](https://github.com/open-telemetry/opentelemetry-demo/pull/1585))
 
 ## 1.9.0
 
