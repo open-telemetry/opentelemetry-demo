@@ -13,8 +13,6 @@ the release.
   ([#1506](https://github.com/open-telemetry/opentelemetry-demo/pull/1506))
 * [repo] add traceBasedTests image to published images
   ([#1507](https://github.com/open-telemetry/opentelemetry-demo/pull/1507))
-* [cartservice] update .NET package to 1.8.0 release
-  ([#1514](https://github.com/open-telemetry/opentelemetry-demo/pull/1514))
 * [quoteservice] add manual metric, export logs periodically
   ([#1519](https://github.com/open-telemetry/opentelemetry-demo/pull/1519))
 * [flagd] export flagd traces to otel collector
@@ -39,6 +37,8 @@ the release.
   ([#1515](https://github.com/open-telemetry/opentelemetry-demo/pull/1486))
 * [frontend] Fix imageloading issues on optimized images. bump next.js version
   ([#1571](https://github.com/open-telemetry/opentelemetry-demo/pull/1571))
+* [cartservice] bump .NET package to 1.8.1 release
+  ([#1514](https://github.com/open-telemetry/opentelemetry-demo/pull/1514)), ([#1580](https://github.com/open-telemetry/opentelemetry-demo/pull/1580))
 * [kafka] Fix permission issue with the telemetry agent when running in docker compose
   ([#1574](https://github.com/open-telemetry/opentelemetry-demo/pull/1574))
 
