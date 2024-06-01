@@ -6,11 +6,9 @@ This service stores user shopping carts in Redis.
 
 Run `dotnet restore` and `dotnet build`.
 
-Protobufs must be present in `./src/protos`
-
 ## Docker Build
 
-From the root directory, run:
+From the root directory of this repository, run:
 
 ```sh
 docker compose build cartservice
