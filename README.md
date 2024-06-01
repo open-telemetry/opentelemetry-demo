@@ -62,7 +62,7 @@ keeping it up to date for you.
 | [Axiom][Axiom]                          | [Guance][Guance]            | [ServiceNow Cloud Observability][ServiceNowCloudObservability] |
 | [Axoflow][Axoflow]                      | [Helios][Helios]            | [Splunk][Splunk]                                               |
 | [Azure Data Explorer][Azure]            | [Honeycomb.io][Honeycombio] | [Sumo Logic][SumoLogic]                                        |
-| [Coralogix][Coralogix]                  | [Instana][Instana]          | [TelemetryHub][TelemetryHub]                                   |
+| Coralogix                               | [Instana][Instana]          | [TelemetryHub][TelemetryHub]                                   |
 | [Dash0][Dash0]                          | [Kloudfuse][Kloudfuse]      | [Teletrace][Teletrace]                                         |
 | [Datadog][Datadog]                      | [Liatrio][Liatrio]          | [Tracetest][Tracetest]                                         |
 | [Dynatrace][Dynatrace]                  | [Logz.io][Logzio]           | [Uptrace][Uptrace]                                             |
@@ -111,7 +111,6 @@ Emeritus:
 [Axiom]: https://play.axiom.co/axiom-play-qf1k/dashboards/otel.traces.otel-demo-traces
 [Axoflow]: https://axoflow.com/opentelemetry-support-in-more-detail-in-axosyslog-and-syslog-ng/
 [Azure]: https://github.com/Azure/Azure-kusto-opentelemetry-demo
-[Coralogix]: https://coralogix.com/blog/configure-otel-demo-send-telemetry-data-coralogix
 [Dash0]: https://github.com/dash0hq/opentelemetry-demo
 [Datadog]: https://docs.datadoghq.com/opentelemetry/guide/otel_demo_to_datadog
 [Dynatrace]: https://www.dynatrace.com/news/blog/opentelemetry-demo-application-with-dynatrace/
