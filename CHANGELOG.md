@@ -43,6 +43,8 @@ the release.
   ([#1574](https://github.com/open-telemetry/opentelemetry-demo/pull/1574))
 * [flagd] Add flagd service to minimal docker compose deployment
   ([#1585](https://github.com/open-telemetry/opentelemetry-demo/pull/1585))
+* [kafka] Increase memory and Java heap limits
+  ([#1592](https://github.com/open-telemetry/opentelemetry-demo/pull/1592))
 
 ## 1.9.0
 
