@@ -572,7 +572,7 @@ services:
   # ******************
   # Flagd, feature flagging service
   flagd:
-    image: ghcr.io/open-feature/flagd:v0.10.1
+    image: ${FLAGD_IMAGE}
     container_name: flagd
     deploy:
       resources:
