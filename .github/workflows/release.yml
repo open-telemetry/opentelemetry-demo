@@ -8,7 +8,7 @@ on:
 
 jobs:
   build_and_push_images:
-    uses: ./.github/workflows/build-images.yml
+    uses: ./.github/workflows/component_build-images.yml
     if: github.repository == 'open-telemetry/opentelemetry-demo'
     with:
       push: true
