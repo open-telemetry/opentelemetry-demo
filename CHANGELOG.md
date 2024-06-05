@@ -45,6 +45,8 @@ the release.
   ([#1585](https://github.com/open-telemetry/opentelemetry-demo/pull/1585))
 * [kafka] Increase memory and Java heap limits
   ([#1592](https://github.com/open-telemetry/opentelemetry-demo/pull/1592))
+* chore: Add service version to OTEL_RESOURCE_ATTRIBUTES
+  ([#1594](https://github.com/open-telemetry/opentelemetry-demo/pull/1594))
 
 ## 1.9.0
 
