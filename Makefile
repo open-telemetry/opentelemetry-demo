@@ -10,6 +10,9 @@ TOOLS_DIR := ./internal/tools
 MISSPELL_BINARY=bin/misspell
 MISSPELL = $(TOOLS_DIR)/$(MISSPELL_BINARY)
 
+DOCKER_COMPOSE_CMD ?= docker compose
+DOCKER_COMPOSE_ENV=--env-file .env --env-file .env.override
+
 # see https://github.com/open-telemetry/build-tools/releases for semconvgen updates
 # Keep links in semantic_conventions/README.md and .vscode/settings.json in sync!
 SEMCONVGEN_VERSION=0.11.0
@@ -74,17 +77,17 @@ install-tools: $(MISSPELL)
 
 .PHONY: build
 build:
-	docker compose build
+	$(DOCKER_COMPOSE_CMD) build
 
 .PHONY: build-and-push-dockerhub
 build-and-push-dockerhub:
-	docker compose --env-file .dockerhub.env -f docker-compose.yml build
-	docker compose --env-file .dockerhub.env -f docker-compose.yml push
+	$(DOCKER_COMPOSE_CMD) --env-file .dockerhub.env -f docker-compose.yml build
+	$(DOCKER_COMPOSE_CMD) --env-file .dockerhub.env -f docker-compose.yml push
 
 .PHONY: build-and-push-ghcr
 build-and-push-ghcr:
-	docker compose --env-file .ghcr.env -f docker-compose.yml build
-	docker compose --env-file .ghcr.env -f docker-compose.yml push
+	$(DOCKER_COMPOSE_CMD) --env-file .ghcr.env -f docker-compose.yml build
+	$(DOCKER_COMPOSE_CMD) --env-file .ghcr.env -f docker-compose.yml push
 
 .PHONY: build-env-file
 build-env-file:
@@ -97,12 +100,12 @@ build-env-file:
 
 .PHONY: run-tests
 run-tests:
-	docker compose run frontendTests
-	docker compose run traceBasedTests
+	$(DOCKER_COMPOSE_CMD) $(DOCKER_COMPOSE_ENV) run frontendTests
+	$(DOCKER_COMPOSE_CMD) $(DOCKER_COMPOSE_ENV) run traceBasedTests
 
 .PHONY: run-tracetesting
 run-tracetesting:
-	docker compose run traceBasedTests ${SERVICES_TO_TEST}
+	$(DOCKER_COMPOSE_CMD) $(DOCKER_COMPOSE_ENV) run traceBasedTests ${SERVICES_TO_TEST}
 
 .PHONY: generate-protobuf
 generate-protobuf:
@@ -124,7 +127,7 @@ generate-kubernetes-manifests:
 
 .PHONY: start
 start:
-	docker compose up --force-recreate --remove-orphans --detach
+	$(DOCKER_COMPOSE_CMD) $(DOCKER_COMPOSE_ENV) up --force-recreate --remove-orphans --detach
 	@echo ""
 	@echo "OpenTelemetry Demo is running."
 	@echo "Go to http://localhost:8080 for the demo UI."
@@ -135,7 +138,7 @@ start:
 
 .PHONY: start-minimal
 start-minimal:
-	docker compose -f docker-compose.minimal.yml up --force-recreate --remove-orphans --detach
+	$(DOCKER_COMPOSE_CMD) $(DOCKER_COMPOSE_ENV) up -f docker-compose.minimal.yml up --force-recreate --remove-orphans --detach
 	@echo ""
 	@echo "OpenTelemetry Demo in minimal mode is running."
 	@echo "Go to http://localhost:8080 for the demo UI."
@@ -147,7 +150,7 @@ start-minimal:
 # Observabilty-Driven Development (ODD)
 .PHONY: start-odd
 start-odd:
-	docker compose --profile odd up --force-recreate --remove-orphans --detach
+	$(DOCKER_COMPOSE_CMD) $(DOCKER_COMPOSE_ENV) --profile odd up --force-recreate --remove-orphans --detach
 	@echo ""
 	@echo "OpenTelemetry Demo is running."
 	@echo "Go to http://localhost:8080 for the demo UI."
@@ -159,7 +162,7 @@ start-odd:
 
 .PHONY: stop
 stop:
-	docker compose --profile tests --profile odd down --remove-orphans --volumes
+	$(DOCKER_COMPOSE_CMD) --profile tests --profile odd down --remove-orphans --volumes
 	@echo ""
 	@echo "OpenTelemetry Demo is stopped."
 
@@ -173,10 +176,10 @@ ifdef SERVICE
 endif
 
 ifdef service
-	docker compose stop $(service)
-	docker compose rm --force $(service)
-	docker compose create $(service)
-	docker compose start $(service)
+	$(DOCKER_COMPOSE_CMD) stop $(service)
+	$(DOCKER_COMPOSE_CMD) rm --force $(service)
+	$(DOCKER_COMPOSE_CMD) create $(service)
+	$(DOCKER_COMPOSE_CMD) start $(service)
 else
 	@echo "Please provide a service name using `service=[service name]` or `SERVICE=[service name]`"
 endif
@@ -191,11 +194,11 @@ ifdef SERVICE
 endif
 
 ifdef service
-	docker compose build $(service)
-	docker compose stop $(service)
-	docker compose rm --force $(service)
-	docker compose create $(service)
-	docker compose start $(service)
+	$(DOCKER_COMPOSE_CMD) build $(service)
+	$(DOCKER_COMPOSE_CMD) stop $(service)
+	$(DOCKER_COMPOSE_CMD) rm --force $(service)
+	$(DOCKER_COMPOSE_CMD) create $(service)
+	$(DOCKER_COMPOSE_CMD) start $(service)
 else
 	@echo "Please provide a service name using `service=[service name]` or `SERVICE=[service name]`"
 endif
