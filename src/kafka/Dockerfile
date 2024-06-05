@@ -5,7 +5,7 @@
 FROM apache/kafka:3.7.0
 
 USER root
-ARG version=2.3.0
+ARG version=2.4.0
 
 USER appuser
 

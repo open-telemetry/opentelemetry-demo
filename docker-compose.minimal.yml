@@ -95,11 +95,11 @@ services:
     ports:
       - "${CHECKOUT_SERVICE_PORT}"
     environment:
-      - FLAGD_HOST
       - CHECKOUT_SERVICE_PORT
       - CART_SERVICE_ADDR
       - CURRENCY_SERVICE_ADDR
       - EMAIL_SERVICE_ADDR
+      - FLAGD_HOST
       - PAYMENT_SERVICE_ADDR
       - PRODUCT_CATALOG_SERVICE_ADDR
       - SHIPPING_SERVICE_ADDR
@@ -209,6 +209,7 @@ services:
       - PUBLIC_OTEL_EXPORTER_OTLP_TRACES_ENDPOINT
       - OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE
       - WEB_OTEL_SERVICE_NAME=frontend-web
+      - OTEL_COLLECTOR_HOST
       - FLAGD_HOST
       - FLAGD_PORT
     depends_on:
@@ -359,8 +360,8 @@ services:
     ports:
       - "${PAYMENT_SERVICE_PORT}"
     environment:
-      - PAYMENT_SERVICE_PORT
       - FLAGD_HOST
+      - PAYMENT_SERVICE_PORT
       - OTEL_EXPORTER_OTLP_ENDPOINT
       - OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE
       - OTEL_RESOURCE_ATTRIBUTES
@@ -387,8 +388,8 @@ services:
     ports:
       - "${PRODUCT_CATALOG_SERVICE_PORT}"
     environment:
-      - PRODUCT_CATALOG_SERVICE_PORT
       - FLAGD_HOST
+      - PRODUCT_CATALOG_SERVICE_PORT
       - OTEL_EXPORTER_OTLP_ENDPOINT
       - OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE
       - OTEL_RESOURCE_ATTRIBUTES
@@ -443,8 +444,8 @@ services:
     ports:
       - "${RECOMMENDATION_SERVICE_PORT}"
     environment:
-      - RECOMMENDATION_SERVICE_PORT
       - FLAGD_HOST
+      - RECOMMENDATION_SERVICE_PORT
       - PRODUCT_CATALOG_SERVICE_ADDR
       - OTEL_PYTHON_LOG_CORRELATION=true
       - OTEL_EXPORTER_OTLP_ENDPOINT
@@ -489,23 +490,9 @@ services:
   # ******************
   # Dependent Services
   # ******************
-  # Redis used by Cart service
-  redis-cart:
-    image: ${REDIS_IMAGE}
-    container_name: redis-cart
-    user: redis
-    deploy:
-      resources:
-        limits:
-          memory: 20M
-    restart: unless-stopped
-    ports:
-      - "${REDIS_PORT}"
-    logging: *logging
-
   # Flagd, feature flagging service
   flagd:
-    image: ghcr.io/open-feature/flagd:v0.10.1
+    image: ${FLAGD_IMAGE}
     container_name: flagd
     deploy:
       resources:
@@ -527,6 +514,20 @@ services:
       - ./src/flagd:/etc/flagd
     logging:
       *logging
+
+  # Redis used by Cart service
+  redis-cart:
+    image: ${REDIS_IMAGE}
+    container_name: redis-cart
+    user: redis
+    deploy:
+      resources:
+        limits:
+          memory: 20M
+    restart: unless-stopped
+    ports:
+      - "${REDIS_PORT}"
+    logging: *logging
 
 
   # ********************
