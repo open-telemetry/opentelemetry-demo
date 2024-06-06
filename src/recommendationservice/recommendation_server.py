@@ -92,7 +92,7 @@ def get_product_list(request_product_ids):
         if random.random() < 0.5 or first_run:
             first_run = False
             # span.set_attribute("app.cache_hit", False)
-            ewrelic.agent.add_custom_attribute("cache_hit", "False")
+            newrelic.agent.add_custom_attribute("cache_hit", "False")
             logger.info("get_product_list: cache miss")
             cat_response = product_catalog_stub.ListProducts(demo_pb2.Empty())
             response_ids = [x.id for x in cat_response.products]
