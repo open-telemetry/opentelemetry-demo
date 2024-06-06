@@ -163,7 +163,7 @@ if __name__ == "__main__":
     # Logging
     logger = logging.getLogger('main')
     logger.setLevel(logging.INFO)
-    
+
     handler = logging.StreamHandler(sys.stdout)
     handler.setLevel(logging.INFO)
 
@@ -189,3 +189,4 @@ if __name__ == "__main__":
     server.start()
     logger.info(f'Recommendation service started, listening on port {port}')
     server.wait_for_termination()
+    
