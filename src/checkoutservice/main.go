@@ -514,7 +514,7 @@ func (cs *checkoutService) sendToPostProcessor(ctx context.Context, result *pb.O
 		case successMsg := <-cs.KafkaProducerClient.Successes():
 			span.SetAttributes(
 				attribute.Bool("kafka.producer.success", true),
-				attribute.Int64("kafka.offset", successMsg.Offset),
+				attribute.KeyValue(semconv.MessagingKafkaMessageOffset(int(successMsg.Offset))),
 				attribute.Int("kafka.producer.duration_ms", int(time.Since(startTime).Milliseconds())),
 			)
 			log.Infof("Successful to write message. offset: %v, duration: %v", successMsg.Offset, time.Since(startTime))
