@@ -47,6 +47,8 @@ the release.
   ([#1592](https://github.com/open-telemetry/opentelemetry-demo/pull/1592))
 * chore: Add service version to OTEL_RESOURCE_ATTRIBUTES
   ([#1594](https://github.com/open-telemetry/opentelemetry-demo/pull/1594))
+* [checkout] increase Kafka resiliency and observability
+  ([#1590](https://github.com/open-telemetry/opentelemetry-demo/pull/1590))
 
 ## 1.9.0
 
