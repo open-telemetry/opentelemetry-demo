@@ -513,30 +513,30 @@ func (cs *checkoutService) sendToPostProcessor(ctx context.Context, result *pb.O
 		select {
 		case successMsg := <-cs.KafkaProducerClient.Successes():
 			span.SetAttributes(
-				attribute.Bool("kafka.producer.success", true),
+				attribute.Bool("messaging.kafka.producer.success", true),
+				attribute.Int("messaging.kafka.producer.duration_ms", int(time.Since(startTime).Milliseconds())),
 				attribute.KeyValue(semconv.MessagingKafkaMessageOffset(int(successMsg.Offset))),
-				attribute.Int("kafka.producer.duration_ms", int(time.Since(startTime).Milliseconds())),
 			)
 			log.Infof("Successful to write message. offset: %v, duration: %v", successMsg.Offset, time.Since(startTime))
 		case errMsg := <-cs.KafkaProducerClient.Errors():
 			span.SetAttributes(
-				attribute.Bool("kafka.producer.success", false),
-				attribute.Int("kafka.producer.duration_ms", int(time.Since(startTime).Milliseconds())),
+				attribute.Bool("messaging.kafka.producer.success", false),
+				attribute.Int("messaging.kafka.producer.duration_ms", int(time.Since(startTime).Milliseconds())),
 			)
 			span.SetStatus(otelcodes.Error, errMsg.Err.Error())
 			log.Errorf("Failed to write message: %v", errMsg.Err)
 		case <-ctx.Done():
 			span.SetAttributes(
-				attribute.Bool("kafka.producer.success", false),
-				attribute.Int("kafka.producer.duration_ms", int(time.Since(startTime).Milliseconds())),
+				attribute.Bool("messaging.kafka.producer.success", false),
+				attribute.Int("messaging.kafka.producer.duration_ms", int(time.Since(startTime).Milliseconds())),
 			)
 			span.SetStatus(otelcodes.Error, "Context cancelled: "+ctx.Err().Error())
 			log.Warnf("Context canceled before success message received: %v", ctx.Err())
 		}
 	case <-ctx.Done():
 		span.SetAttributes(
-			attribute.Bool("kafka.producer.success", false),
-			attribute.Int("kafka.producer.duration_ms", int(time.Since(startTime).Milliseconds())),
+			attribute.Bool("messaging.kafka.producer.success", false),
+			attribute.Int("messaging.kafka.producer.duration_ms", int(time.Since(startTime).Milliseconds())),
 		)
 		span.SetStatus(otelcodes.Error, "Failed to send: "+ctx.Err().Error())
 		log.Errorf("Failed to send message to Kafka within context deadline: %v", ctx.Err())
