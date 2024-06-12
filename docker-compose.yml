@@ -23,7 +23,7 @@ services:
     container_name: accounting-service
     build:
       context: ./
-      dockerfile: ./src/accountingservice/${ACCOUNTING_SERVICE_DOCKERFILE}
+      dockerfile: ${ACCOUNTING_SERVICE_PATH}/${ACCOUNTING_SERVICE_DOCKERFILE}
       cache_from:
         - ${IMAGE_NAME}:${IMAGE_VERSION}-accountingservice
     deploy:
