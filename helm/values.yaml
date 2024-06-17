@@ -418,7 +418,7 @@ components:
       limits:
         memory: 200Mi
     securityContext:
-      runAsUser: 1001  # nextjs
+      runAsUser: 1001 # nextjs
       runAsGroup: 1001
       runAsNonRoot: true
 
@@ -461,7 +461,7 @@ components:
       limits:
         memory: 50Mi
     securityContext:
-      runAsUser: 101  # envoy
+      runAsUser: 101 # envoy
       runAsGroup: 101
       runAsNonRoot: true
 
@@ -525,7 +525,7 @@ components:
       limits:
         memory: 120Mi
     securityContext:
-      runAsUser: 1000  # node
+      runAsUser: 1000 # node
       runAsGroup: 1000
       runAsNonRoot: true
 
@@ -573,7 +573,7 @@ components:
       limits:
         memory: 40Mi
     securityContext:
-      runAsUser: 33  # www-data
+      runAsUser: 33 # www-data
       runAsGroup: 33
       runAsNonRoot: true
 
@@ -611,7 +611,7 @@ components:
             key: new_relic_license_key
     resources:
       limits:
-        memory: 500Mi            # This is high to enable supporting the recommendationCache feature flag use case
+        memory: 500Mi # This is high to enable supporting the recommendationCache feature flag use case
 
   shippingService:
     enabled: true
