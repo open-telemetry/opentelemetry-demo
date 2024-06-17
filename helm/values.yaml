@@ -745,7 +745,7 @@ components:
   recommendationService:
     enabled: true
     imageOverride:
-      repository: bpschmitt/otel-demo
+      repository: bschmitt769/otel-demo
       tag: 1.9.0.1-recommendationservice-nr
       pullPolicy: Always
     useDefault:
