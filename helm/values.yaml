@@ -1,3 +1,4 @@
+# New Relic Fork
 # Copyright (c) 2022-present New Relic Corporation. All rights reserved.
 # SPDX-License-Identifier: Apache-2.0
 
@@ -188,6 +189,10 @@ components:
 
   accountingService:
     enabled: true
+    imageOverride:
+      repository: ghcr.io/open-telemetry/demo
+      tag: 1.9.0-accountingservice
+      pullPolicy: Always
     useDefault:
       env: true
     env:
@@ -201,15 +206,15 @@ components:
     initContainers:
       - name: wait-for-kafka
         image: busybox:latest
-        command:
-          [
-            "sh",
-            "-c",
-            'until nc -z -v -w30 {{ include "otel-demo.name" . }}-kafka 9092; do echo waiting for kafka; sleep 2; done;',
-          ]
+        command: ['sh', '-c', 'until nc -z -v -w30 {{ include "otel-demo.name" . }}-kafka 9092; do echo waiting for kafka; sleep 2; done;']
+
 
   adService:
     enabled: true
+    imageOverride:
+      repository: ghcr.io/open-telemetry/demo
+      tag: 1.9.0-adservice
+      pullPolicy: Always
     useDefault:
       env: true
     service:
@@ -231,6 +236,10 @@ components:
 
   cartService:
     enabled: true
+    imageOverride:
+      repository: ghcr.io/open-telemetry/demo
+      tag: 1.9.0-cartservice
+      pullPolicy: Always
     useDefault:
       env: true
     service:
@@ -248,21 +257,22 @@ components:
         value: '{{ include "otel-demo.name" . }}-redis:6379'
       - name: OTEL_EXPORTER_OTLP_ENDPOINT
         value: http://$(OTEL_COLLECTOR_NAME):4317
+      - name: OTEL_LOGS_EXPORTER
+        value: otlp
     resources:
       limits:
         memory: 160Mi
     initContainers:
       - name: wait-for-redis
         image: busybox:latest
-        command:
-          [
-            "sh",
-            "-c",
-            'until nc -z -v -w30 {{ include "otel-demo.name" . }}-redis 6379; do echo waiting for redis; sleep 2; done;',
-          ]
+        command: ['sh', '-c', 'until nc -z -v -w30 {{ include "otel-demo.name" . }}-redis 6379; do echo waiting for redis; sleep 2; done;']
 
   checkoutService:
     enabled: true
+    imageOverride:
+      repository: ghcr.io/open-telemetry/demo
+      tag: 1.9.0-checkoutservice
+      pullPolicy: Always
     useDefault:
       env: true
     service:
@@ -290,21 +300,22 @@ components:
         value: '{{ include "otel-demo.name" . }}-kafka:9092'
       - name: OTEL_EXPORTER_OTLP_ENDPOINT
         value: http://$(OTEL_COLLECTOR_NAME):4317
+      - name: OTEL_LOGS_EXPORTER
+        value: otlp
     resources:
       limits:
         memory: 20Mi
     initContainers:
       - name: wait-for-kafka
         image: busybox:latest
-        command:
-          [
-            "sh",
-            "-c",
-            'until nc -z -v -w30 {{ include "otel-demo.name" . }}-kafka 9092; do echo waiting for kafka; sleep 2; done;',
-          ]
+        command: ['sh', '-c', 'until nc -z -v -w30 {{ include "otel-demo.name" . }}-kafka 9092; do echo waiting for kafka; sleep 2; done;']
 
   currencyService:
     enabled: true
+    imageOverride:
+      repository: ghcr.io/open-telemetry/demo
+      tag: 1.9.0-currencyservice
+      pullPolicy: Always
     useDefault:
       env: true
     service:
@@ -322,6 +333,10 @@ components:
 
   emailService:
     enabled: true
+    imageOverride:
+      repository: ghcr.io/open-telemetry/demo
+      tag: 1.9.0-emailservice
+      pullPolicy: Always
     useDefault:
       env: true
     service:
@@ -339,6 +354,10 @@ components:
 
   frauddetectionService:
     enabled: true
+    imageOverride:
+      repository: ghcr.io/open-telemetry/demo
+      tag: 1.9.0-frauddetectionservice
+      pullPolicy: Always
     useDefault:
       env: true
     env:
@@ -356,15 +375,14 @@ components:
     initContainers:
       - name: wait-for-kafka
         image: busybox:latest
-        command:
-          [
-            "sh",
-            "-c",
-            'until nc -z -v -w30 {{ include "otel-demo.name" . }}-kafka 9092; do echo waiting for kafka; sleep 2; done;',
-          ]
+        command: ['sh', '-c', 'until nc -z -v -w30 {{ include "otel-demo.name" . }}-kafka 9092; do echo waiting for kafka; sleep 2; done;']
 
   frontend:
     enabled: true
+    imageOverride:
+      repository: ghcr.io/open-telemetry/demo
+      tag: 1.9.0-frontend
+      pullPolicy: Always
     useDefault:
       env: true
     service:
@@ -395,17 +413,21 @@ components:
       - name: WEB_OTEL_SERVICE_NAME
         value: frontend-web
       - name: PUBLIC_OTEL_EXPORTER_OTLP_TRACES_ENDPOINT
-        value: http://localhost:8080/otlp-http/v1/traces # This expects users to use `kubectl port-forward ...`
+        value: http://localhost:8080/otlp-http/v1/traces             # This expects users to use `kubectl port-forward ...`
     resources:
       limits:
         memory: 200Mi
     securityContext:
-      runAsUser: 1001 # nextjs
+      runAsUser: 1001  # nextjs
       runAsGroup: 1001
       runAsNonRoot: true
 
   frontendProxy:
     enabled: true
+    imageOverride:
+      repository: ghcr.io/open-telemetry/demo
+      tag: 1.9.0-frontendproxy
+      pullPolicy: Always
     useDefault:
       env: true
     service:
@@ -439,12 +461,16 @@ components:
       limits:
         memory: 50Mi
     securityContext:
-      runAsUser: 101 # envoy
+      runAsUser: 101  # envoy
       runAsGroup: 101
       runAsNonRoot: true
 
   loadgenerator:
     enabled: true
+    imageOverride:
+      repository: ghcr.io/open-telemetry/demo
+      tag: 1.9.0-loadgenerator
+      pullPolicy: Always
     useDefault:
       env: true
     service:
@@ -478,6 +504,10 @@ components:
 
   paymentService:
     enabled: true
+    imageOverride:
+      repository: ghcr.io/open-telemetry/demo
+      tag: 1.9.0-paymentservice
+      pullPolicy: Always
     useDefault:
       env: true
     service:
@@ -495,12 +525,16 @@ components:
       limits:
         memory: 120Mi
     securityContext:
-      runAsUser: 1000 # node
+      runAsUser: 1000  # node
       runAsGroup: 1000
       runAsNonRoot: true
 
   productCatalogService:
     enabled: true
+    imageOverride:
+      repository: ghcr.io/open-telemetry/demo
+      tag: 1.9.0-productcatalogservice
+      pullPolicy: Always
     useDefault:
       env: true
     service:
@@ -520,6 +554,10 @@ components:
 
   quoteService:
     enabled: true
+    imageOverride:
+      repository: ghcr.io/open-telemetry/demo
+      tag: 1.9.0-quoteservice
+      pullPolicy: Always
     useDefault:
       env: true
     service:
@@ -535,12 +573,16 @@ components:
       limits:
         memory: 40Mi
     securityContext:
-      runAsUser: 33 # www-data
+      runAsUser: 33  # www-data
       runAsGroup: 33
       runAsNonRoot: true
 
   recommendationService:
     enabled: true
+    imageOverride:
+      repository: bpschmitt/otel-demo
+      tag: 1.9.0.1-recommendationservice-nr
+      pullPolicy: Always
     useDefault:
       env: true
     service:
@@ -560,12 +602,23 @@ components:
         value: python
       - name: OTEL_EXPORTER_OTLP_ENDPOINT
         value: http://$(OTEL_COLLECTOR_NAME):4317
+      - name: NEW_RELIC_APP_NAME
+        value: "recommendationservice"
+      - name: NEW_RELIC_LICENSE_KEY
+        valueFrom:
+          secretKeyRef:
+            name: newrelic-key-secret
+            key: new_relic_license_key
     resources:
       limits:
-        memory: 500Mi # This is high to enable supporting the recommendationCache feature flag use case
+        memory: 500Mi            # This is high to enable supporting the recommendationCache feature flag use case
 
   shippingService:
     enabled: true
+    imageOverride:
+      repository: ghcr.io/open-telemetry/demo
+      tag: 1.9.0-shippingservice
+      pullPolicy: Always
     useDefault:
       env: true
     service:
@@ -606,6 +659,10 @@ components:
 
   kafka:
     enabled: true
+    imageOverride:
+      repository: ghcr.io/open-telemetry/demo
+      tag: 1.9.0-kafka
+      pullPolicy: Always
     useDefault:
       env: true
     replicas: 1
@@ -625,7 +682,7 @@ components:
       limits:
         memory: 600Mi
     securityContext:
-      runAsUser: 1000 # appuser
+      runAsUser: 1000  # appuser
       runAsGroup: 1000
       runAsNonRoot: true
 
@@ -644,9 +701,173 @@ components:
       limits:
         memory: 20Mi
     securityContext:
-      runAsUser: 999 # redis
+      runAsUser: 999  # redis
       runAsGroup: 1000
       runAsNonRoot: true
+
+jaeger:
+  enabled: false
+  provisionDataStore:
+    cassandra: false
+  allInOne:
+    enabled: true
+    args:
+      - "--memory.max-traces=5000"
+      - "--query.base-path=/jaeger/ui"
+      - "--prometheus.server-url=http://{{ include \"otel-demo.name\" . }}-prometheus-server:9090"
+      - "--prometheus.query.normalize-calls=true"
+      - "--prometheus.query.normalize-duration=true"
+    extraEnv:
+      - name: METRICS_STORAGE_TYPE
+        value: prometheus
+    resources:
+      limits:
+        memory: 400Mi
+  storage:
+    type: memory
+  agent:
+    enabled: false
+  collector:
+    enabled: false
+  query:
+    enabled: false
+
+prometheus:
+  enabled: false
+  alertmanager:
+    enabled: false
+  configmapReload:
+    prometheus:
+      enabled: false
+  kube-state-metrics:
+    enabled: false
+  prometheus-node-exporter:
+    enabled: false
+  prometheus-pushgateway:
+    enabled: false
+
+  server:
+    extraFlags:
+      - "enable-feature=exemplar-storage"
+      - "enable-feature=otlp-write-receiver"
+    global:
+      scrape_interval: 5s
+      scrape_timeout: 3s
+      evaluation_interval: 30s
+    persistentVolume:
+      enabled: false
+    service:
+      servicePort: 9090
+    resources:
+      limits:
+        memory: 300Mi
+
+  serverFiles:
+    prometheus.yml:
+      scrape_configs:
+        - job_name: 'otel-collector'
+          honor_labels: true
+          kubernetes_sd_configs:
+            - role: pod
+              namespaces:
+                own_namespace: true
+          relabel_configs:
+            - source_labels: [__meta_kubernetes_pod_annotation_opentelemetry_community_demo]
+              action: keep
+              regex: true
+
+grafana:
+  enabled: false
+  grafana.ini:
+    auth:
+      disable_login_form: true
+    auth.anonymous:
+      enabled: true
+      org_name: Main Org.
+      org_role: Admin
+    server:
+      root_url: "%(protocol)s://%(domain)s:%(http_port)s/grafana"
+      serve_from_sub_path: true
+  adminPassword: admin
+  plugins:
+    - grafana-opensearch-datasource
+  datasources:
+    datasources.yaml:
+      apiVersion: 1
+      datasources:
+        - name: Prometheus
+          uid: webstore-metrics
+          type: prometheus
+          url: 'http://{{ include "otel-demo.name" . }}-prometheus-server:9090'
+          editable: true
+          isDefault: true
+          jsonData:
+            exemplarTraceIdDestinations:
+              - datasourceUid: webstore-traces
+                name: trace_id
+
+              - url: http://localhost:8080/jaeger/ui/trace/$${__value.raw}
+                name: trace_id
+                urlDisplayLabel: View in Jaeger UI
+
+        - name: Jaeger
+          uid: webstore-traces
+          type: jaeger
+          url: 'http://{{ include "otel-demo.name" . }}-jaeger-query:16686/jaeger/ui'
+          editable: true
+          isDefault: false
+
+        - name: OpenSearch
+          type: grafana-opensearch-datasource
+          url: 'http://otel-demo-opensearch:9200/'
+          access: proxy
+          editable: true
+          isDefault: false
+          jsonData:
+            database: otel
+            flavor: opensearch
+            logLevelField: severity
+            logMessageField: body
+            pplEnabled: true
+            timeField: observedTimestamp
+            version: 2.13.0
+  dashboardProviders:
+    dashboardproviders.yaml:
+      apiVersion: 1
+      providers:
+        - name: 'default'
+          orgId: 1
+          folder: ''
+          type: file
+          disableDeletion: false
+          editable: true
+          options:
+            path: /var/lib/grafana/dashboards/default
+  dashboardsConfigMaps:
+    default: '{{ include "otel-demo.name" . }}-grafana-dashboards'
+  resources:
+    limits:
+      memory: 150Mi
+
+opensearch:
+  enabled: true
+  fullnameOverride: otel-demo-opensearch
+  clusterName: demo-cluster
+  nodeGroup: otel-demo
+  singleNode: true
+  opensearchJavaOpts: "-Xms300m -Xmx300m"
+  persistence:
+    enabled: false
+  extraEnvs:
+    - name: "bootstrap.memory_lock"
+      value: "true"
+    - name: "DISABLE_INSTALL_DEMO_CONFIG"
+      value: "true"
+    - name: "DISABLE_SECURITY_PLUGIN"
+      value: "true"
+  resources:
+    limits:
+      memory: 1Gi
 
 opentelemetry-collector:
   enabled: true
@@ -654,7 +875,7 @@ opentelemetry-collector:
   mode: daemonset
   resources:
     limits:
-      memory: 125Mi
+      memory: 768Mi
   service:
     type: LoadBalancer
   # Configuration for ports
@@ -813,128 +1034,3 @@ opentelemetry-collector:
           key: new_relic_license_key
     - name: OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE
       value: "delta"
-
-jaeger:
-  enabled: false
-  provisionDataStore:
-    cassandra: false
-  allInOne:
-    enabled: true
-    args:
-      - "--memory.max-traces"
-      - "10000"
-      - "--query.base-path"
-      - "/jaeger/ui"
-      - "--prometheus.server-url"
-      - 'http://{{ include "otel-demo.name" . }}-prometheus-server:9090'
-    extraEnv:
-      - name: METRICS_STORAGE_TYPE
-        value: prometheus
-    resources:
-      limits:
-        memory: 300Mi
-  storage:
-    type: none
-  agent:
-    enabled: false
-  collector:
-    enabled: false
-  query:
-    enabled: false
-
-prometheus:
-  enabled: false
-  alertmanager:
-    enabled: false
-  configmapReload:
-    prometheus:
-      enabled: false
-  kube-state-metrics:
-    enabled: false
-  prometheus-node-exporter:
-    enabled: false
-  prometheus-pushgateway:
-    enabled: false
-
-  server:
-    extraFlags:
-      - "enable-feature=exemplar-storage"
-    global:
-      scrape_interval: 5s
-      scrape_timeout: 3s
-      evaluation_interval: 30s
-    service:
-      servicePort: 9090
-    resources:
-      limits:
-        memory: 750Mi
-
-  serverFiles:
-    prometheus.yml:
-      scrape_configs:
-        - job_name: "opentelemetry-community-demo"
-          kubernetes_sd_configs:
-            - role: pod
-              namespaces:
-                own_namespace: true
-          relabel_configs:
-            - source_labels:
-                [__meta_kubernetes_pod_annotation_opentelemetry_community_demo]
-              action: keep
-              regex: true
-
-grafana:
-  enabled: false
-  grafana.ini:
-    auth:
-      disable_login_form: true
-    auth.anonymous:
-      enabled: true
-      org_name: Main Org.
-      org_role: Admin
-    server:
-      root_url: "%(protocol)s://%(domain)s:%(http_port)s/grafana"
-      serve_from_sub_path: true
-  adminPassword: admin
-  datasources:
-    datasources.yaml:
-      apiVersion: 1
-      datasources:
-        - name: Prometheus
-          uid: webstore-metrics
-          type: prometheus
-          url: 'http://{{ include "otel-demo.name" . }}-prometheus-server:9090'
-          editable: true
-          isDefault: true
-          jsonData:
-            exemplarTraceIdDestinations:
-              - datasourceUid: webstore-traces
-                name: trace_id
-
-              - url: http://localhost:8080/jaeger/ui/trace/$${__value.raw}
-                name: trace_id
-                urlDisplayLabel: View in Jaeger UI
-
-        - name: Jaeger
-          uid: webstore-traces
-          type: jaeger
-          url: 'http://{{ include "otel-demo.name" . }}-jaeger-query:16686/jaeger/ui'
-          editable: true
-          isDefault: false
-  dashboardProviders:
-    dashboardproviders.yaml:
-      apiVersion: 1
-      providers:
-        - name: "default"
-          orgId: 1
-          folder: ""
-          type: file
-          disableDeletion: false
-          editable: true
-          options:
-            path: /var/lib/grafana/dashboards/default
-  dashboardsConfigMaps:
-    default: '{{ include "otel-demo.name" . }}-grafana-dashboards'
-  resources:
-    limits:
-      memory: 75Mi
