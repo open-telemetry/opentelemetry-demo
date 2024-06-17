@@ -78,6 +78,172 @@ serviceAccount:
   # If not set and create is true, a name is generated using the fullname template
   name: ""
 
+opentelemetry-collector:
+  enabled: true
+  nameOverride: otelcol
+  mode: daemonset
+  resources:
+    limits:
+      memory: 768Mi
+  service:
+    type: LoadBalancer
+  # Configuration for ports
+  ports:
+    otlp:
+      enabled: true
+    otlp-http:
+      enabled: true
+    jaeger-compact:
+      enabled: false
+    jaeger-thrift:
+      enabled: false
+    jaeger-grpc:
+      enabled: false
+    zipkin:
+      enabled: false
+    metrics:
+      enabled: false
+    prometheus:
+      enabled: false
+  podAnnotations:
+    prometheus.io/scrape: "true"
+    prometheus.io/port: "9464"
+    opentelemetry_community_demo: "true"
+  config:
+    extensions:
+      health_check: {}
+      zpages: {}
+    receivers:
+      hostmetrics:
+        collection_interval: 20s
+        scrapers:
+          cpu:
+            metrics:
+              system.cpu.utilization:
+                enabled: true
+          load:
+          memory:
+            metrics:
+              system.memory.utilization:
+                enabled: true
+          disk:
+          filesystem:
+            metrics:
+              system.filesystem.utilization:
+                enabled: true
+          network:
+          paging:
+            metrics:
+              system.paging.utilization:
+                enabled: true
+      otlp:
+        protocols:
+          http:
+            cors:
+              allowed_origins:
+                - "http://*"
+                - "https://*"
+
+    connectors:
+      spanmetrics: {}
+
+    exporters:
+      otlp:
+        endpoint: "otlp.nr-data.net:4317"
+        tls:
+          insecure: false
+        headers:
+          api-key: $NEW_RELIC_LICENSE_KEY
+
+    processors:
+      batch:
+        send_batch_size: 1000
+        send_batch_max_size: 1000
+      cumulativetodelta: {}
+      resource:
+        attributes:
+          - key: host.id
+            from_attribute: host.name
+            action: upsert
+          - key: k8s.cluster.name
+            value: otel-community-demo
+            action: insert
+      resource/collector:
+        attributes:
+          - key: service.instance.id
+            value: $POD_NAME
+            action: upsert
+      resourcedetection:
+        detectors: [env, eks, ec2]
+      k8sattributes:
+        auth_type: "serviceAccount"
+        passthrough: false
+        filter:
+          node_from_env_var: KUBE_NODE_NAME
+        extract:
+          metadata:
+            - k8s.pod.name
+            - k8s.pod.uid
+            - k8s.deployment.name
+            - k8s.namespace.name
+            - k8s.node.name
+            - k8s.pod.start_time
+        pod_association:
+          - sources:
+              - from: resource_attribute
+                name: k8s.pod.uid
+      memory_limiter: null
+
+    service:
+      extensions: [health_check, zpages]
+      pipelines:
+        traces:
+          receivers: [otlp]
+          processors:
+            [memory_limiter, resource, resourcedetection, k8sattributes, batch]
+          exporters: [spanmetrics, otlp]
+        metrics:
+          receivers: [spanmetrics, hostmetrics, otlp]
+          processors:
+            [
+              memory_limiter,
+              resource,
+              resourcedetection,
+              k8sattributes,
+              cumulativetodelta,
+              batch,
+            ]
+          exporters: [otlp]
+
+  clusterRole:
+    # Specifies whether a clusterRole should be created
+    create: true
+    # Annotations to add to the clusterRole
+    annotations: {}
+    # The name of the clusterRole to use.
+    # If not set and create is true, a name is generated using the fullname template
+    name: ""
+    # A set of rules as documented here : https://kubernetes.io/docs/reference/access-authn-authz/rbac/
+    rules:
+      - apiGroups: [""]
+        resources: ["pods", "nodes", "namespace"]
+        verbs: ["get", "watch", "list"]
+
+    clusterRoleBinding:
+      # Annotations to add to the clusterRoleBinding
+      annotations: {}
+      # The name of the clusterRoleBinding to use.
+      # If not set and create is true, a name is generated using the fullname template
+      name: ""
+  extraEnvs:
+    - name: NEW_RELIC_LICENSE_KEY
+      valueFrom:
+        secretKeyRef:
+          name: newrelic-key-secret
+          key: new_relic_license_key
+    - name: OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE
+      value: "delta"
+
 components:
   ## Demo Components are named objects (services) with several properties
   # demoService:
@@ -413,7 +579,7 @@ components:
       - name: WEB_OTEL_SERVICE_NAME
         value: frontend-web
       - name: PUBLIC_OTEL_EXPORTER_OTLP_TRACES_ENDPOINT
-        value: http://localhost:8080/otlp-http/v1/traces             # This expects users to use `kubectl port-forward ...`
+        value: http://localhost:8080/otlp-http/v1/traces # This expects users to use `kubectl port-forward ...`
     resources:
       limits:
         memory: 200Mi
@@ -682,7 +848,7 @@ components:
       limits:
         memory: 600Mi
     securityContext:
-      runAsUser: 1000  # appuser
+      runAsUser: 1000 # appuser
       runAsGroup: 1000
       runAsNonRoot: true
 
@@ -701,7 +867,7 @@ components:
       limits:
         memory: 20Mi
     securityContext:
-      runAsUser: 999  # redis
+      runAsUser: 999 # redis
       runAsGroup: 1000
       runAsNonRoot: true
 
@@ -868,169 +1034,3 @@ opensearch:
   resources:
     limits:
       memory: 1Gi
-
-opentelemetry-collector:
-  enabled: true
-  nameOverride: otelcol
-  mode: daemonset
-  resources:
-    limits:
-      memory: 768Mi
-  service:
-    type: LoadBalancer
-  # Configuration for ports
-  ports:
-    otlp:
-      enabled: true
-    otlp-http:
-      enabled: true
-    jaeger-compact:
-      enabled: false
-    jaeger-thrift:
-      enabled: false
-    jaeger-grpc:
-      enabled: false
-    zipkin:
-      enabled: false
-    metrics:
-      enabled: false
-    prometheus:
-      enabled: false
-  podAnnotations:
-    prometheus.io/scrape: "true"
-    prometheus.io/port: "9464"
-    opentelemetry_community_demo: "true"
-  config:
-    extensions:
-      health_check: {}
-      zpages: {}
-    receivers:
-      hostmetrics:
-        collection_interval: 20s
-        scrapers:
-          cpu:
-            metrics:
-              system.cpu.utilization:
-                enabled: true
-          load:
-          memory:
-            metrics:
-              system.memory.utilization:
-                enabled: true
-          disk:
-          filesystem:
-            metrics:
-              system.filesystem.utilization:
-                enabled: true
-          network:
-          paging:
-            metrics:
-              system.paging.utilization:
-                enabled: true
-      otlp:
-        protocols:
-          http:
-            cors:
-              allowed_origins:
-                - "http://*"
-                - "https://*"
-
-    connectors:
-      spanmetrics: {}
-
-    exporters:
-      otlp:
-        endpoint: "otlp.nr-data.net:4317"
-        tls:
-          insecure: false
-        headers:
-          api-key: $NEW_RELIC_LICENSE_KEY
-
-    processors:
-      batch:
-        send_batch_size: 1000
-        send_batch_max_size: 1000
-      cumulativetodelta: {}
-      resource:
-        attributes:
-          - key: host.id
-            from_attribute: host.name
-            action: upsert
-          - key: k8s.cluster.name
-            value: otel-community-demo
-            action: insert
-      resource/collector:
-        attributes:
-          - key: service.instance.id
-            value: $POD_NAME
-            action: upsert
-      resourcedetection:
-        detectors: [env, eks, ec2]
-      k8sattributes:
-        auth_type: "serviceAccount"
-        passthrough: false
-        filter:
-          node_from_env_var: KUBE_NODE_NAME
-        extract:
-          metadata:
-            - k8s.pod.name
-            - k8s.pod.uid
-            - k8s.deployment.name
-            - k8s.namespace.name
-            - k8s.node.name
-            - k8s.pod.start_time
-        pod_association:
-          - sources:
-              - from: resource_attribute
-                name: k8s.pod.uid
-      memory_limiter: null
-
-    service:
-      extensions: [health_check, zpages]
-      pipelines:
-        traces:
-          receivers: [otlp]
-          processors:
-            [memory_limiter, resource, resourcedetection, k8sattributes, batch]
-          exporters: [spanmetrics, otlp]
-        metrics:
-          receivers: [spanmetrics, hostmetrics, otlp]
-          processors:
-            [
-              memory_limiter,
-              resource,
-              resourcedetection,
-              k8sattributes,
-              cumulativetodelta,
-              batch,
-            ]
-          exporters: [otlp]
-
-  clusterRole:
-    # Specifies whether a clusterRole should be created
-    create: true
-    # Annotations to add to the clusterRole
-    annotations: {}
-    # The name of the clusterRole to use.
-    # If not set and create is true, a name is generated using the fullname template
-    name: ""
-    # A set of rules as documented here : https://kubernetes.io/docs/reference/access-authn-authz/rbac/
-    rules:
-      - apiGroups: [""]
-        resources: ["pods", "nodes", "namespace"]
-        verbs: ["get", "watch", "list"]
-
-    clusterRoleBinding:
-      # Annotations to add to the clusterRoleBinding
-      annotations: {}
-      # The name of the clusterRoleBinding to use.
-      # If not set and create is true, a name is generated using the fullname template
-      name: ""
-  extraEnvs:
-    - name: NEW_RELIC_LICENSE_KEY
-      valueFrom:
-        secretKeyRef:
-          name: newrelic-key-secret
-          key: new_relic_license_key
-    - name: OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE
-      value: "delta"
