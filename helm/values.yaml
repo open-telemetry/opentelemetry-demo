@@ -170,7 +170,7 @@ opentelemetry-collector:
       resource/collector:
         attributes:
           - key: service.instance.id
-            value: $POD_NAME
+            value: $OTEL_K8S_POD_NAME
             action: upsert
       resourcedetection:
         detectors: [env, eks, ec2]
@@ -213,6 +213,9 @@ opentelemetry-collector:
               batch,
             ]
           exporters: [otlp]
+        logs:
+          processors: [memory_limiter, k8sattributes, resource, resourcedetection, batch]
+          exporters: [otlp, debug]
 
   clusterRole:
     # Specifies whether a clusterRole should be created
@@ -422,8 +425,17 @@ components:
         value: '{{ include "otel-demo.name" . }}-redis:6379'
       - name: OTEL_EXPORTER_OTLP_ENDPOINT
         value: http://$(OTEL_COLLECTOR_NAME):4317
+      - name: OTEL_EXPORTER_OTLP_LOGS_ENDPOINT
+        value: "https://otlp.nr-data.net:4317"
+      - name: OTEL_EXPORTER_OTLP_LOGS_HEADERS
+        value: "api-key=$NEW_RELIC_LICENSE_KEY"
       - name: OTEL_LOGS_EXPORTER
         value: otlp
+      - name: NEW_RELIC_LICENSE_KEY
+        valueFrom:
+          secretKeyRef:
+            name: newrelic-key-secret
+            key: new_relic_license_key
     resources:
       limits:
         memory: 160Mi
