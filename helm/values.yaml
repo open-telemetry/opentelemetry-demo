@@ -152,7 +152,7 @@ opentelemetry-collector:
         tls:
           insecure: false
         headers:
-          api-key: $NEW_RELIC_LICENSE_KEY
+          api-key: ${NEW_RELIC_LICENSE_KEY}
 
     processors:
       batch:
@@ -170,7 +170,7 @@ opentelemetry-collector:
       resource/collector:
         attributes:
           - key: service.instance.id
-            value: $OTEL_K8S_POD_NAME
+            value: ${OTEL_K8S_POD_NAME}
             action: upsert
       resourcedetection:
         detectors: [env, eks, ec2]
