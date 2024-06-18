@@ -7,6 +7,8 @@ the release.
 
 ## Unreleased
 
+## 1.10.0
+
 * [frauddetectionservice] use span links when consuming from Kafka
   ([#1501](https://github.com/open-telemetry/opentelemetry-demo/pull/1501))
 * [frontend] reunite trace from loadgenerator
