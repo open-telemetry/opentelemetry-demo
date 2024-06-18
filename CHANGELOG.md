@@ -9,7 +9,7 @@ the release.
 
 * [cartservice] bump .NET package to 1.9.0 release
   ([#1610](https://github.com/open-telemetry/opentelemetry-demo/pull/1610))
-  
+
 ## 1.10.0
 
 * [frauddetectionservice] use span links when consuming from Kafka
