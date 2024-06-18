@@ -674,7 +674,7 @@ services:
           memory: 100M
     restart: unless-stopped
     environment:
-      - "GF_INSTALL_PLUGINS=grafana-opensearch-datasource"
+      - "GF_INSTALL_PLUGINS=grafana-opensearch-datasource,grafana-clickhouse-datasource"
     volumes:
       - ./src/grafana/grafana.ini:/etc/grafana/grafana.ini
       - ./src/grafana/provisioning/:/etc/grafana/provisioning/
