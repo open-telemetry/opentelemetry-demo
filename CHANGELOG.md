@@ -1,14 +1,183 @@
 # Changelog
 
 Please update changelog as part of any significant pull request. Place short
-description of your change into "Unreleased" section. As part of release process
-content of "Unreleased" section content will generate release notes for the
-release.
+description of your change into "Unreleased" section. As part of release
+process content of "Unreleased" section content will generate release notes for
+the release.
 
 ## Unreleased
 
+## 1.10.0
+
+* [frauddetectionservice] use span links when consuming from Kafka
+  ([#1501](https://github.com/open-telemetry/opentelemetry-demo/pull/1501))
+* [frontend] reunite trace from loadgenerator
+  ([#1506](https://github.com/open-telemetry/opentelemetry-demo/pull/1506))
+* [repo] add traceBasedTests image to published images
+  ([#1507](https://github.com/open-telemetry/opentelemetry-demo/pull/1507))
+* [quoteservice] add manual metric, export logs periodically
+  ([#1519](https://github.com/open-telemetry/opentelemetry-demo/pull/1519))
+* [flagd] export flagd traces to otel collector
+  ([#1522](https://github.com/open-telemetry/opentelemetry-demo/pull/1522))
+* [frontend] Pass down image optimization requests to imageprovider
+  ([#1522](https://github.com/open-telemetry/opentelemetry-demo/pull/1522))
+* [kafka] add kafkaQueueProblems feature flag
+  ([#1528](https://github.com/open-telemetry/opentelemetry-demo/pull/1528))
+* [otelcollector] Add `redisreceiver`
+  ([#1537](https://github.com/open-telemetry/opentelemetry-demo/pull/1537))
+* [traceBasedTests] update to v1.0.0
+  ([#1551](https://github.com/open-telemetry/opentelemetry-demo/pull/1551))
+* [flagd] update to 0.10.1 and set 50M memory limit
+  ([#1554](https://github.com/open-telemetry/opentelemetry-demo/pull/1554))
+* [loadgenerator] Configure feature flag evaluation tracing
+  ([#1553](https://github.com/open-telemetry/opentelemetry-demo/pull/1553))
+* [recommendationservice] Configure feature flag evaluation tracing
+  ([#1553](https://github.com/open-telemetry/opentelemetry-demo/pull/1553))
+* [loadgenerator] Fix feature flag hooks setter method
+  ([#1556](https://github.com/open-telemetry/opentelemetry-demo/pull/1556))
+* [frontend] Slowloading of images based on imageSlowLoad flag
+  ([#1515](https://github.com/open-telemetry/opentelemetry-demo/pull/1486))
+* [frontend] Fix imageloading issues on optimized images. bump next.js version
+  ([#1571](https://github.com/open-telemetry/opentelemetry-demo/pull/1571))
+* [cartservice] bump .NET package to 1.8.1 release
+  ([#1514](https://github.com/open-telemetry/opentelemetry-demo/pull/1514)), ([#1580](https://github.com/open-telemetry/opentelemetry-demo/pull/1580))
+* [kafka] Fix permission issue with the telemetry agent when running in docker compose
+  ([#1574](https://github.com/open-telemetry/opentelemetry-demo/pull/1574))
+* [flagd] Add flagd service to minimal docker compose deployment
+  ([#1585](https://github.com/open-telemetry/opentelemetry-demo/pull/1585))
+* [kafka] Increase memory and Java heap limits
+  ([#1592](https://github.com/open-telemetry/opentelemetry-demo/pull/1592))
+* chore: Add service version to OTEL_RESOURCE_ATTRIBUTES
+  ([#1594](https://github.com/open-telemetry/opentelemetry-demo/pull/1594))
+* [checkout] increase Kafka resiliency and observability
+  ([#1590](https://github.com/open-telemetry/opentelemetry-demo/pull/1590))
+
+## 1.9.0
+
+* [chore] docker compose: add container name as tag attribute to container logs
+* [featureflag] deprecate in favor of flagd
+  ([#1338](https://github.com/open-telemetry/opentelemetry-demo/pull/1388))
+* [checkoutservice] add producer interceptor for tracing
+  ([#1400](https://github.com/open-telemetry/opentelemetry-demo/pull/1400))
+* [chore] increase memory for Collector and Jaeger
+  ([#1396](https://github.com/open-telemetry/opentelemetry-demo/pull/1396))
+* [chore] fix Make targets for restart and redeploy
+  ([#1397](https://github.com/open-telemetry/opentelemetry-demo/pull/1397))
+* [chore] add nightly releases
+  ([#1398](https://github.com/open-telemetry/opentelemetry-demo/pull/1398))
+* [checkoutservice] add producer interceptor for tracing
+  ([#1400](https://github.com/open-telemetry/opentelemetry-demo/pull/1400))
+* [productcatalogservice] fix graceful shutdown issues
+  ([#1402](https://github.com/open-telemetry/opentelemetry-demo/pull/1402))
+* [chore] remove unused integration test
+  ([#1406](https://github.com/open-telemetry/opentelemetry-demo/pull/1406))
+* [CartService] - Add Host Detector
+  ([#1415](https://github.com/open-telemetry/opentelemetry-demo/pull/1415))
+* [chore] - add tests and odd profiles to make stop
+  ([#1427](https://github.com/open-telemetry/opentelemetry-demo/pull/1427))
+* [shippingservice] fix context propagation
+  ([#1433](https://github.com/open-telemetry/opentelemetry-demo/pull/1433))
+* [chore] - Update Telemetry Components
+  ([#1440](https://github.com/open-telemetry/opentelemetry-demo/pull/1440))
+* [loadgenerator] emit logs via OTLP
+  ([#1446](https://github.com/open-telemetry/opentelemetry-demo/pull/1446))
+* [frontend] reset quantity when new product selected
+  ([#1447](https://github.com/open-telemetry/opentelemetry-demo/pull/1447))
+* [paymentservice] add paymentServiceFailure feature flag
+  ([#1449](https://github.com/open-telemetry/opentelemetry-demo/pull/1449))
+* [checkoutservice] add paymentServiceUnreachable feature flag
+  ([#1449](https://github.com/open-telemetry/opentelemetry-demo/pull/1449))
+* [Frontend-proxy] Add restart policy to compose file
+  ([#1448](https://github.com/open-telemetry/opentelemetry-demo/pull/1448))
+* [cartservice] update .NET to .NET 8.0.3
+  ([#1460](https://github.com/open-telemetry/opentelemetry-demo/pull/1460))
+* [adservice] add adServiceManualGC feature flag
+  ([#1463](https://github.com/open-telemetry/opentelemetry-demo/pull/1463))
+* [frontendproxy] remove deprecated start_child_span option
+  ([#1469](https://github.com/open-telemetry/opentelemetry-demo/pull/1469))
+* [currency] fix metric name
+  ([#1470](https://github.com/open-telemetry/opentelemetry-demo/pull/1470))
+* [frontend] disable instrumentation-fs library
+  ([#1473](https://github.com/open-telemetry/opentelemetry-demo/pull/1473))
+* [Imageprovider] Create Nginx service to host images, add instrumentation to it
+  ([#1462](https://github.com/open-telemetry/opentelemetry-demo/pull/1462))
+* [loadgenerator] added loadgeneratorFloodHomepage flagd
+  ([#1486](https://github.com/open-telemetry/opentelemetry-demo/pull/1486))
+* [adservice] add adServiceHighCpu feature flag
+  ([#1510](https://github.com/open-telemetry/opentelemetry-demo/pull/1510))
+
+## 1.8.0
+
+* [grafana] update grafana to 10.2.3
+  ([#1332](https://github.com/open-telemetry/opentelemetry-demo/pull/1332))
+* [frontendproxy] Enable envoy environment resource detector
+  ([#1291](https://github.com/open-telemetry/opentelemetry-demo/pull/1291))
+* [currencyservice] - add package name prefix to `rpc.service` attribute
+  ([#1333](https://github.com/open-telemetry/opentelemetry-demo/pull/1333))
+* [currency] fix metric exporter options
+  ([#1335](https://github.com/open-telemetry/opentelemetry-demo/pull/1335))
+* [ffspostgres] define and use demo specific postgres image
+  ([#1338](https://github.com/open-telemetry/opentelemetry-demo/pull/1338))
+* [loadgenerator, frontend] enable browser traffic in loadgenerator using playwright
+  ([#1345](https://github.com/open-telemetry/opentelemetry-demo/pull/1345))
+* [accountingservice] update wiki link
+  ([#1346](https://github.com/open-telemetry/opentelemetry-demo/pull/1346))
+* [checkoutservice] update wiki link
+  ([#1346](https://github.com/open-telemetry/opentelemetry-demo/pull/1346))
+* [productcatalogservice] update wiki link
+  ([#1346](https://github.com/open-telemetry/opentelemetry-demo/pull/1346))
+* [adservice] added group and anonymous read permission to
+  opentelemetry-javaagent.jar
+  ([#1348](https://github.com/open-telemetry/opentelemetry-demo/pull/1348))
+* [frauddetectionservice] added group and anonymous read permission to
+  opentelemetry-javaagent.jar
+  ([#1348](https://github.com/open-telemetry/opentelemetry-demo/pull/1348))
+* [adservice] Major version update for Java instrumentation, version 2.0.0
+  ([#1352](https://github.com/open-telemetry/opentelemetry-demo/pull/1352))
+* [frauddetectionservice] Major version update for Java instrumentation,
+  version 2.0.0
+  ([#1352](https://github.com/open-telemetry/opentelemetry-demo/pull/1352))
+* [kafka] Major version update for Java instrumentation, version 2.0.0
+  ([#1352](https://github.com/open-telemetry/opentelemetry-demo/pull/1352))
+* Align env variables for OTLP ports
+  ([#1353](https://github.com/open-telemetry/opentelemetry-demo/pull/1353))
+* Update dependent services - Collector, Grafana, Jaeger, Prometheus, etc.
+  ([#1354](https://github.com/open-telemetry/opentelemetry-demo/pull/1354))
+* [OpenSearch] Use native OpenSearch exporter from Collector
+  ([#1356](https://github.com/open-telemetry/opentelemetry-demo/pull/1356))
+* Update GO SDKs & fix metrics config
+  ([#1357](https://github.com/open-telemetry/opentelemetry-demo/pull/1357))
+* Update Python SDKs
+  ([#1358](https://github.com/open-telemetry/opentelemetry-demo/pull/1358))
+* [loadgenerator] fix browser traffic enabled flag
+  ([#1359](https://github.com/open-telemetry/opentelemetry-demo/pull/1359))
+* [productcatalog] allow products to be extended
+  ([#1363](https://github.com/open-telemetry/opentelemetry-demo/pull/1363))
+* [tests] update trace based tests for semantic conventions
+  ([#1377](https://github.com/open-telemetry/opentelemetry-demo/pull/1377))
+* [currencyservice] Add OTLP logs
+  ([#1378](https://github.com/open-telemetry/opentelemetry-demo/pull/1378))
+* [cartservice] update .NET to .NET 8.0.2
+  ([#1380](https://github.com/open-telemetry/opentelemetry-demo/pull/1380))
+
+## 1.7.2
+
+* [cartservice] update .NET package to 1.7.0 release
+  ([#1326](https://github.com/open-telemetry/opentelemetry-demo/pull/1326))
+* [loadgenerator and recommendationservice] Update python base image
+  ([#1329](https://github.com/open-telemetry/opentelemetry-demo/pull/1329))
+
+## 1.7.1
+
+* [grafana] revert to 10.2.0
 * [cartservice] disable config reload
   ([#1312](https://github.com/open-telemetry/opentelemetry-demo/pull/1312))
+* [cartservice] fixed cartServiceFailure feature flag
+  ([#1313](https://github.com/open-telemetry/opentelemetry-demo/pull/1313))
+* [accountingservice] Update dependencies and semconv
+* ([#1316](https://github.com/open-telemetry/opentelemetry-demo/pull/1316))
+* [featureflagservice] Allow setting initial feature flag values
+  ([#1319](https://github.com/open-telemetry/opentelemetry-demo/pull/1319))
 
 ## 1.7.0
 

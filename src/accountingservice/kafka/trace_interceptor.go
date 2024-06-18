@@ -5,10 +5,11 @@ package kafka
 import (
 	"context"
 	"fmt"
+
 	"go.opentelemetry.io/otel"
 	"go.opentelemetry.io/otel/attribute"
 	"go.opentelemetry.io/otel/propagation"
-	semconv "go.opentelemetry.io/otel/semconv/v1.17.0"
+	semconv "go.opentelemetry.io/otel/semconv/v1.24.0"
 	"go.opentelemetry.io/otel/trace"
 
 	"github.com/IBM/sarama"
@@ -23,12 +24,13 @@ type OTelInterceptor struct {
 // headers with the span data.
 func NewOTelInterceptor(groupID string) *OTelInterceptor {
 	oi := OTelInterceptor{}
-	oi.tracer = otel.Tracer("github.com/open-telemetry/opentelemetry-demo/accountingservice/sarama")
+	oi.tracer = otel.Tracer("accountingservice")
 
 	oi.fixedAttrs = []attribute.KeyValue{
-		semconv.MessagingSystem("kafka"),
+		semconv.MessagingSystemKafka,
+		semconv.MessagingOperationReceive,
 		semconv.MessagingKafkaConsumerGroup(groupID),
-		semconv.NetTransportTCP,
+		semconv.NetworkTransportTCP,
 	}
 	return &oi
 }
@@ -49,10 +51,9 @@ func (oi *OTelInterceptor) OnConsume(msg *sarama.ConsumerMessage) {
 		trace.WithSpanKind(trace.SpanKindConsumer),
 		trace.WithAttributes(oi.fixedAttrs...),
 		trace.WithAttributes(
-			semconv.MessagingDestinationKindTopic,
 			semconv.MessagingDestinationName(msg.Topic),
 			semconv.MessagingKafkaMessageOffset(int(msg.Offset)),
-			semconv.MessagingMessagePayloadSizeBytes(len(msg.Value)),
+			semconv.MessagingMessageBodySize(len(msg.Value)),
 			semconv.MessagingOperationReceive,
 			semconv.MessagingKafkaDestinationPartition(int(msg.Partition)),
 		),

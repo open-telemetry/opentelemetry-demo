@@ -456,7 +456,7 @@
               "type": "count"
             }
           ],
-          "query": "search source=otel\n| where serviceName=\"${service}\"\n| stats count() by severityText",
+          "query": "search source=otel\n| where resource.service.name=\"${service}\"\n| stats count() by severity.text",
           "queryType": "PPL",
           "refId": "A",
           "timeField": "time"
@@ -544,7 +544,7 @@
               "type": "count"
             }
           ],
-          "query": "search source=otel\n| where serviceName=\"${service}\"",
+          "query": "search source=otel\n| where resource.service.name=\"${service}\"",
           "queryType": "PPL",
           "refId": "A",
           "timeField": "time"

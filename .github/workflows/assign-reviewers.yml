@@ -12,6 +12,7 @@ on:
 
 jobs:
   assign-reviewers:
+    if: github.repository == 'open-telemetry/opentelemetry-demo'
     runs-on: ubuntu-latest
     steps:
       - uses: dyladan/component-owners@main

@@ -14,8 +14,6 @@
 
 syntax = "proto3";
 
-import "google/protobuf/timestamp.proto";
-
 package oteldemo;
 
 option go_package = "genproto/oteldemo";
@@ -277,8 +275,6 @@ message Flag {
   string name = 1;
   string description = 2;
   bool enabled = 3;
-  google.protobuf.Timestamp created_at = 4;
-  google.protobuf.Timestamp updated_at = 5;
 }
 
 message GetFlagRequest {

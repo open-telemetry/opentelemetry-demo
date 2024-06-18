@@ -7,8 +7,6 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
-	"go.opentelemetry.io/otel/sdk/instrumentation"
-	semconv "go.opentelemetry.io/otel/semconv/v1.19.0"
 	"net"
 	"net/http"
 	"os"
@@ -17,15 +15,20 @@ import (
 	"time"
 
 	"go.opentelemetry.io/otel/attribute"
+	semconv "go.opentelemetry.io/otel/semconv/v1.24.0"
 	"go.opentelemetry.io/otel/trace"
 
 	"github.com/IBM/sarama"
 	"github.com/google/uuid"
+	otelhooks "github.com/open-feature/go-sdk-contrib/hooks/open-telemetry/pkg"
+	flagd "github.com/open-feature/go-sdk-contrib/providers/flagd/pkg"
+	"github.com/open-feature/go-sdk/openfeature"
 	"github.com/sirupsen/logrus"
 	"go.opentelemetry.io/contrib/instrumentation/google.golang.org/grpc/otelgrpc"
 	"go.opentelemetry.io/contrib/instrumentation/net/http/otelhttp"
 	"go.opentelemetry.io/contrib/instrumentation/runtime"
 	"go.opentelemetry.io/otel"
+	otelcodes "go.opentelemetry.io/otel/codes"
 	"go.opentelemetry.io/otel/exporters/otlp/otlpmetric/otlpmetricgrpc"
 	"go.opentelemetry.io/otel/exporters/otlp/otlptrace/otlptracegrpc"
 	"go.opentelemetry.io/otel/propagation"
@@ -111,10 +114,6 @@ func initMeterProvider() *sdkmetric.MeterProvider {
 	mp := sdkmetric.NewMeterProvider(
 		sdkmetric.WithReader(sdkmetric.NewPeriodicReader(exporter)),
 		sdkmetric.WithResource(initResource()),
-		sdkmetric.WithView(sdkmetric.NewView(
-			sdkmetric.Instrument{Scope: instrumentation.Scope{Name: "go.opentelemetry.io/contrib/google.golang.org/grpc/otelgrpc"}},
-			sdkmetric.Stream{Aggregation: sdkmetric.AggregationDrop{}},
-		)),
 	)
 	otel.SetMeterProvider(mp)
 	return mp
@@ -129,7 +128,13 @@ type checkoutService struct {
 	paymentSvcAddr        string
 	kafkaBrokerSvcAddr    string
 	pb.UnimplementedCheckoutServiceServer
-	KafkaProducerClient sarama.AsyncProducer
+	KafkaProducerClient     sarama.AsyncProducer
+	shippingSvcClient       pb.ShippingServiceClient
+	productCatalogSvcClient pb.ProductCatalogServiceClient
+	cartSvcClient           pb.CartServiceClient
+	currencySvcClient       pb.CurrencyServiceClient
+	emailSvcClient          pb.EmailServiceClient
+	paymentSvcClient        pb.PaymentServiceClient
 }
 
 func main() {
@@ -155,15 +160,43 @@ func main() {
 		log.Fatal(err)
 	}
 
+	openfeature.SetProvider(flagd.NewProvider())
+	openfeature.AddHooks(otelhooks.NewTracesHook())
+
 	tracer = tp.Tracer("checkoutservice")
 
 	svc := new(checkoutService)
+
 	mustMapEnv(&svc.shippingSvcAddr, "SHIPPING_SERVICE_ADDR")
+	c := mustCreateClient(context.Background(), svc.shippingSvcAddr)
+	svc.shippingSvcClient = pb.NewShippingServiceClient(c)
+	defer c.Close()
+
 	mustMapEnv(&svc.productCatalogSvcAddr, "PRODUCT_CATALOG_SERVICE_ADDR")
+	c = mustCreateClient(context.Background(), svc.productCatalogSvcAddr)
+	svc.productCatalogSvcClient = pb.NewProductCatalogServiceClient(c)
+	defer c.Close()
+
 	mustMapEnv(&svc.cartSvcAddr, "CART_SERVICE_ADDR")
+	c = mustCreateClient(context.Background(), svc.cartSvcAddr)
+	svc.cartSvcClient = pb.NewCartServiceClient(c)
+	defer c.Close()
+
 	mustMapEnv(&svc.currencySvcAddr, "CURRENCY_SERVICE_ADDR")
+	c = mustCreateClient(context.Background(), svc.currencySvcAddr)
+	svc.currencySvcClient = pb.NewCurrencyServiceClient(c)
+	defer c.Close()
+
 	mustMapEnv(&svc.emailSvcAddr, "EMAIL_SERVICE_ADDR")
+	c = mustCreateClient(context.Background(), svc.emailSvcAddr)
+	svc.emailSvcClient = pb.NewEmailServiceClient(c)
+	defer c.Close()
+
 	mustMapEnv(&svc.paymentSvcAddr, "PAYMENT_SERVICE_ADDR")
+	c = mustCreateClient(context.Background(), svc.paymentSvcAddr)
+	svc.paymentSvcClient = pb.NewPaymentServiceClient(c)
+	defer c.Close()
+
 	svc.kafkaBrokerSvcAddr = os.Getenv("KAFKA_SERVICE_ADDR")
 
 	if svc.kafkaBrokerSvcAddr != "" {
@@ -217,7 +250,7 @@ func (cs *checkoutService) PlaceOrder(ctx context.Context, req *pb.PlaceOrderReq
 	var err error
 	defer func() {
 		if err != nil {
-			span.AddEvent("error", trace.WithAttributes(attribute.String("exception.message", err.Error())))
+			span.AddEvent("error", trace.WithAttributes(semconv.ExceptionMessageKey.String(err.Error())))
 		}
 	}()
 
@@ -285,6 +318,7 @@ func (cs *checkoutService) PlaceOrder(ctx context.Context, req *pb.PlaceOrderReq
 
 	// send to kafka only if kafka broker address is set
 	if cs.kafkaBrokerSvcAddr != "" {
+		log.Infof("sending to postProcessor")
 		cs.sendToPostProcessor(ctx, orderResult)
 	}
 
@@ -339,21 +373,20 @@ func (cs *checkoutService) prepareOrderItemsAndShippingQuoteFromCart(ctx context
 	return out, nil
 }
 
-func createClient(ctx context.Context, svcAddr string) (*grpc.ClientConn, error) {
-	return grpc.DialContext(ctx, svcAddr,
+func mustCreateClient(ctx context.Context, svcAddr string) *grpc.ClientConn {
+	c, err := grpc.DialContext(ctx, svcAddr,
 		grpc.WithTransportCredentials(insecure.NewCredentials()),
 		grpc.WithStatsHandler(otelgrpc.NewClientHandler()),
 	)
+	if err != nil {
+		log.Fatalf("could not connect to %s service, err: %+v", svcAddr, err)
+	}
+
+	return c
 }
 
 func (cs *checkoutService) quoteShipping(ctx context.Context, address *pb.Address, items []*pb.CartItem) (*pb.Money, error) {
-	conn, err := createClient(ctx, cs.shippingSvcAddr)
-	if err != nil {
-		return nil, fmt.Errorf("could not connect shipping service: %+v", err)
-	}
-	defer conn.Close()
-
-	shippingQuote, err := pb.NewShippingServiceClient(conn).
+	shippingQuote, err := cs.shippingSvcClient.
 		GetQuote(ctx, &pb.GetQuoteRequest{
 			Address: address,
 			Items:   items})
@@ -364,13 +397,7 @@ func (cs *checkoutService) quoteShipping(ctx context.Context, address *pb.Addres
 }
 
 func (cs *checkoutService) getUserCart(ctx context.Context, userID string) ([]*pb.CartItem, error) {
-	conn, err := createClient(ctx, cs.cartSvcAddr)
-	if err != nil {
-		return nil, fmt.Errorf("could not connect cart service: %+v", err)
-	}
-	defer conn.Close()
-
-	cart, err := pb.NewCartServiceClient(conn).GetCart(ctx, &pb.GetCartRequest{UserId: userID})
+	cart, err := cs.cartSvcClient.GetCart(ctx, &pb.GetCartRequest{UserId: userID})
 	if err != nil {
 		return nil, fmt.Errorf("failed to get user cart during checkout: %+v", err)
 	}
@@ -378,13 +405,7 @@ func (cs *checkoutService) getUserCart(ctx context.Context, userID string) ([]*p
 }
 
 func (cs *checkoutService) emptyUserCart(ctx context.Context, userID string) error {
-	conn, err := createClient(ctx, cs.cartSvcAddr)
-	if err != nil {
-		return fmt.Errorf("could not connect cart service: %+v", err)
-	}
-	defer conn.Close()
-
-	if _, err = pb.NewCartServiceClient(conn).EmptyCart(ctx, &pb.EmptyCartRequest{UserId: userID}); err != nil {
+	if _, err := cs.cartSvcClient.EmptyCart(ctx, &pb.EmptyCartRequest{UserId: userID}); err != nil {
 		return fmt.Errorf("failed to empty user cart during checkout: %+v", err)
 	}
 	return nil
@@ -393,15 +414,8 @@ func (cs *checkoutService) emptyUserCart(ctx context.Context, userID string) err
 func (cs *checkoutService) prepOrderItems(ctx context.Context, items []*pb.CartItem, userCurrency string) ([]*pb.OrderItem, error) {
 	out := make([]*pb.OrderItem, len(items))
 
-	conn, err := createClient(ctx, cs.productCatalogSvcAddr)
-	if err != nil {
-		return nil, fmt.Errorf("could not connect product catalog service: %+v", err)
-	}
-	defer conn.Close()
-	cl := pb.NewProductCatalogServiceClient(conn)
-
 	for i, item := range items {
-		product, err := cl.GetProduct(ctx, &pb.GetProductRequest{Id: item.GetProductId()})
+		product, err := cs.productCatalogSvcClient.GetProduct(ctx, &pb.GetProductRequest{Id: item.GetProductId()})
 		if err != nil {
 			return nil, fmt.Errorf("failed to get product #%q", item.GetProductId())
 		}
@@ -417,12 +431,7 @@ func (cs *checkoutService) prepOrderItems(ctx context.Context, items []*pb.CartI
 }
 
 func (cs *checkoutService) convertCurrency(ctx context.Context, from *pb.Money, toCurrency string) (*pb.Money, error) {
-	conn, err := createClient(ctx, cs.currencySvcAddr)
-	if err != nil {
-		return nil, fmt.Errorf("could not connect currency service: %+v", err)
-	}
-	defer conn.Close()
-	result, err := pb.NewCurrencyServiceClient(conn).Convert(ctx, &pb.CurrencyConversionRequest{
+	result, err := cs.currencySvcClient.Convert(ctx, &pb.CurrencyConversionRequest{
 		From:   from,
 		ToCode: toCurrency})
 	if err != nil {
@@ -432,13 +441,14 @@ func (cs *checkoutService) convertCurrency(ctx context.Context, from *pb.Money, 
 }
 
 func (cs *checkoutService) chargeCard(ctx context.Context, amount *pb.Money, paymentInfo *pb.CreditCardInfo) (string, error) {
-	conn, err := createClient(ctx, cs.paymentSvcAddr)
-	if err != nil {
-		return "", fmt.Errorf("failed to connect payment service: %+v", err)
+	paymentService := cs.paymentSvcClient
+	if cs.isFeatureFlagEnabled(ctx, "paymentServiceUnreachable") {
+		badAddress := "badAddress:50051"
+		c := mustCreateClient(context.Background(), badAddress)
+		paymentService = pb.NewPaymentServiceClient(c)
 	}
-	defer conn.Close()
 
-	paymentResp, err := pb.NewPaymentServiceClient(conn).Charge(ctx, &pb.ChargeRequest{
+	paymentResp, err := paymentService.Charge(ctx, &pb.ChargeRequest{
 		Amount:     amount,
 		CreditCard: paymentInfo})
 	if err != nil {
@@ -470,12 +480,7 @@ func (cs *checkoutService) sendOrderConfirmation(ctx context.Context, email stri
 }
 
 func (cs *checkoutService) shipOrder(ctx context.Context, address *pb.Address, items []*pb.CartItem) (string, error) {
-	conn, err := createClient(ctx, cs.shippingSvcAddr)
-	if err != nil {
-		return "", fmt.Errorf("failed to connect email service: %+v", err)
-	}
-	defer conn.Close()
-	resp, err := pb.NewShippingServiceClient(conn).ShipOrder(ctx, &pb.ShipOrderRequest{
+	resp, err := cs.shippingSvcClient.ShipOrder(ctx, &pb.ShipOrderRequest{
 		Address: address,
 		Items:   items})
 	if err != nil {
@@ -500,9 +505,55 @@ func (cs *checkoutService) sendToPostProcessor(ctx context.Context, result *pb.O
 	span := createProducerSpan(ctx, &msg)
 	defer span.End()
 
-	cs.KafkaProducerClient.Input() <- &msg
-	successMsg := <-cs.KafkaProducerClient.Successes()
-	log.Infof("Successful to write message. offset: %v", successMsg.Offset)
+	// Send message and handle response
+	startTime := time.Now()
+	select {
+	case cs.KafkaProducerClient.Input() <- &msg:
+		log.Infof("Message sent to Kafka: %v", msg)
+		select {
+		case successMsg := <-cs.KafkaProducerClient.Successes():
+			span.SetAttributes(
+				attribute.Bool("messaging.kafka.producer.success", true),
+				attribute.Int("messaging.kafka.producer.duration_ms", int(time.Since(startTime).Milliseconds())),
+				attribute.KeyValue(semconv.MessagingKafkaMessageOffset(int(successMsg.Offset))),
+			)
+			log.Infof("Successful to write message. offset: %v, duration: %v", successMsg.Offset, time.Since(startTime))
+		case errMsg := <-cs.KafkaProducerClient.Errors():
+			span.SetAttributes(
+				attribute.Bool("messaging.kafka.producer.success", false),
+				attribute.Int("messaging.kafka.producer.duration_ms", int(time.Since(startTime).Milliseconds())),
+			)
+			span.SetStatus(otelcodes.Error, errMsg.Err.Error())
+			log.Errorf("Failed to write message: %v", errMsg.Err)
+		case <-ctx.Done():
+			span.SetAttributes(
+				attribute.Bool("messaging.kafka.producer.success", false),
+				attribute.Int("messaging.kafka.producer.duration_ms", int(time.Since(startTime).Milliseconds())),
+			)
+			span.SetStatus(otelcodes.Error, "Context cancelled: "+ctx.Err().Error())
+			log.Warnf("Context canceled before success message received: %v", ctx.Err())
+		}
+	case <-ctx.Done():
+		span.SetAttributes(
+			attribute.Bool("messaging.kafka.producer.success", false),
+			attribute.Int("messaging.kafka.producer.duration_ms", int(time.Since(startTime).Milliseconds())),
+		)
+		span.SetStatus(otelcodes.Error, "Failed to send: "+ctx.Err().Error())
+		log.Errorf("Failed to send message to Kafka within context deadline: %v", ctx.Err())
+		return
+	}
+
+	ffValue := cs.getIntFeatureFlag(ctx, "kafkaQueueProblems")
+	if ffValue > 0 {
+		log.Infof("Warning: FeatureFlag 'kafkaQueueProblems' is activated, overloading queue now.")
+		for i := 0; i < ffValue; i++ {
+			go func(i int) {
+				cs.KafkaProducerClient.Input() <- &msg
+				_ = <-cs.KafkaProducerClient.Successes()
+			}(i)
+		}
+		log.Infof("Done with #%d messages for overload simulation.", ffValue)
+	}
 }
 
 func createProducerSpan(ctx context.Context, msg *sarama.ProducerMessage) trace.Span {
@@ -512,9 +563,8 @@ func createProducerSpan(ctx context.Context, msg *sarama.ProducerMessage) trace.
 		trace.WithSpanKind(trace.SpanKindProducer),
 		trace.WithAttributes(
 			semconv.PeerService("kafka"),
-			semconv.NetTransportTCP,
-			semconv.MessagingSystem("kafka"),
-			semconv.MessagingDestinationKindTopic,
+			semconv.NetworkTransportTCP,
+			semconv.MessagingSystemKafka,
 			semconv.MessagingDestinationName(msg.Topic),
 			semconv.MessagingOperationPublish,
 			semconv.MessagingKafkaDestinationPartition(int(msg.Partition)),
@@ -530,4 +580,32 @@ func createProducerSpan(ctx context.Context, msg *sarama.ProducerMessage) trace.
 	}
 
 	return span
+}
+
+func (cs *checkoutService) isFeatureFlagEnabled(ctx context.Context, featureFlagName string) bool {
+	client := openfeature.NewClient("checkout")
+
+	// Default value is set to false, but you could also make this a parameter.
+	featureEnabled, _ := client.BooleanValue(
+		ctx,
+		featureFlagName,
+		false,
+		openfeature.EvaluationContext{},
+	)
+
+	return featureEnabled
+}
+
+func (cs *checkoutService) getIntFeatureFlag(ctx context.Context, featureFlagName string) int {
+	client := openfeature.NewClient("checkout")
+
+	// Default value is set to 0, but you could also make this a parameter.
+	featureFlagValue, _ := client.IntValue(
+		ctx,
+		featureFlagName,
+		0,
+		openfeature.EvaluationContext{},
+	)
+
+	return int(featureFlagValue)
 }

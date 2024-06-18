@@ -4,8 +4,6 @@ package kafka
 
 import (
 	"context"
-	"log"
-
 	pb "github.com/open-telemetry/opentelemetry-demo/src/accountingservice/genproto/oteldemo"
 
 	"github.com/IBM/sarama"
@@ -19,7 +17,7 @@ var (
 	GroupID         = "accountingservice"
 )
 
-func StartConsumerGroup(ctx context.Context, brokers []string, log *logrus.Logger) error {
+func StartConsumerGroup(ctx context.Context, brokers []string, log *logrus.Logger) (sarama.ConsumerGroup, error) {
 	saramaConfig := sarama.NewConfig()
 	saramaConfig.Version = ProtocolVersion
 	// So we can know the partition and offset of messages.
@@ -28,7 +26,7 @@ func StartConsumerGroup(ctx context.Context, brokers []string, log *logrus.Logge
 
 	consumerGroup, err := sarama.NewConsumerGroup(brokers, GroupID, saramaConfig)
 	if err != nil {
-		return err
+		return nil, err
 	}
 
 	handler := groupHandler{
@@ -37,9 +35,10 @@ func StartConsumerGroup(ctx context.Context, brokers []string, log *logrus.Logge
 
 	err = consumerGroup.Consume(ctx, []string{Topic}, &handler)
 	if err != nil {
-		return err
+		return nil, err
 	}
-	return nil
+
+	return consumerGroup, nil
 }
 
 type groupHandler struct {
@@ -64,7 +63,11 @@ func (g *groupHandler) ConsumeClaim(session sarama.ConsumerGroupSession, claim s
 				return err
 			}
 
-			log.Printf("Message claimed: orderId = %s, timestamp = %v, topic = %s", orderResult.OrderId, message.Timestamp, message.Topic)
+			g.log.WithFields(logrus.Fields{
+				"orderId":          orderResult.OrderId,
+				"messageTimestamp": message.Timestamp,
+				"messageTopic":     message.Topic,
+			}).Info("Message claimed")
 			session.MarkMessage(message, "")
 
 		case <-session.Context().Done():

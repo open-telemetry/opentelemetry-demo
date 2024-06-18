@@ -18,7 +18,7 @@ FROM alpine:3.18 as builder
 
 RUN apk update && apk add git cmake make g++ grpc-dev protobuf-dev linux-headers
 
-ARG OPENTELEMETRY_CPP_VERSION=1.13.0
+ARG OPENTELEMETRY_CPP_VERSION=1.15.0
 
 RUN git clone https://github.com/open-telemetry/opentelemetry-cpp \
 	  && cd opentelemetry-cpp/ \
@@ -30,7 +30,8 @@ RUN git clone https://github.com/open-telemetry/opentelemetry-cpp \
           -DWITH_EXAMPLES=OFF -DWITH_OTLP_GRPC=ON -DWITH_ABSEIL=ON \
     && make -j$(nproc || sysctl -n hw.ncpu || echo 1) install && cd ../..
 
-COPY . /currencyservice
+COPY ./src/currencyservice /currencyservice
+COPY ./pb/demo.proto /currencyservice/proto/demo.proto
 
 RUN cd /currencyservice \
     && mkdir -p build && cd build \

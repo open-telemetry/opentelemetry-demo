@@ -24,7 +24,7 @@ spec:
   specs:
   - name: It converts from USD to CAD
     selector: span[tracetest.span.type="rpc" name="CurrencyService/Convert" rpc.system="grpc"
-      rpc.method="Convert" rpc.service="CurrencyService"]
+      rpc.method="Convert" rpc.service="oteldemo.CurrencyService"]
     assertions:
     - attr:app.currency.conversion.from = "USD"
     - attr:app.currency.conversion.to = "CAD"
