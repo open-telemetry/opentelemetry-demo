@@ -12,4 +12,3 @@ jobs:
     with:
       push: true
       version: 'dev'
-    secrets: inherit
