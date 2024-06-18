@@ -680,8 +680,6 @@ services:
       - ./src/grafana/provisioning/:/etc/grafana/provisioning/
     ports:
       - "3000:${GRAFANA_SERVICE_PORT}"
-    environment:
-      - GF_INSTALL_PLUGINS=grafana-clickhouse-datasource
     logging: *logging
 
   # OpenTelemetry Collector
