@@ -6,6 +6,7 @@ process content of "Unreleased" section content will generate release notes for
 the release.
 
 ## Unreleased
+
 * [cartservice] bump .NET package to 1.9.0 release
   ([#1610](https://github.com/open-telemetry/opentelemetry-demo/pull/1610))
   
