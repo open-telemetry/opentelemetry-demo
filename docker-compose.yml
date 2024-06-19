@@ -23,7 +23,7 @@ services:
     container_name: accounting-service
     build:
       context: ./
-      dockerfile: ./src/accountingservice/Dockerfile
+      dockerfile: ${ACCOUNTING_SERVICE_DOCKERFILE}
       cache_from:
         - ${IMAGE_NAME}:${IMAGE_VERSION}-accountingservice
     deploy:
@@ -50,7 +50,7 @@ services:
     container_name: ad-service
     build:
       context: ./
-      dockerfile: ./src/adservice/Dockerfile
+      dockerfile: ${AD_SERVICE_DOCKERFILE}
       cache_from:
         - ${IMAGE_NAME}:${IMAGE_VERSION}-adservice
     deploy:
@@ -82,7 +82,7 @@ services:
     container_name: cart-service
     build:
       context: ./
-      dockerfile: ./src/cartservice/src/Dockerfile
+      dockerfile: ${CART_SERVICE_DOCKERFILE}
       cache_from:
         - ${IMAGE_NAME}:${IMAGE_VERSION}-cartservice
     deploy:
@@ -116,7 +116,7 @@ services:
     container_name: checkout-service
     build:
       context: ./
-      dockerfile: ./src/checkoutservice/Dockerfile
+      dockerfile: ${CHECKOUT_SERVICE_DOCKERFILE}
       cache_from:
         - ${IMAGE_NAME}:${IMAGE_VERSION}-checkoutservice
     deploy:
@@ -168,7 +168,7 @@ services:
     container_name: currency-service
     build:
       context: ./
-      dockerfile: ./src/currencyservice/Dockerfile
+      dockerfile: ${CURRENCY_SERVICE_DOCKERFILE}
       cache_from:
         - ${IMAGE_NAME}:${IMAGE_VERSION}-currencyservice
     deploy:
@@ -190,10 +190,11 @@ services:
 
   # Email service
   emailservice:
-    image: ${IMAGE_NAME}:${DEMO_VERSION}-emailservice
+    image: demo/emailservice-contrib:latest
     container_name: email-service
     build:
-      context: ./src/emailservice
+      context: ./
+      dockerfile: ${EMAIL_SERVICE_DOCKERFILE}
       cache_from:
         - ${IMAGE_NAME}:${IMAGE_VERSION}-emailservice
     deploy:
@@ -220,7 +221,7 @@ services:
     container_name: frauddetection-service
     build:
       context: ./
-      dockerfile: ./src/frauddetectionservice/Dockerfile
+      dockerfile: ${FRAUD_SERVICE_DOCKERFILE}
       cache_from:
         - ${IMAGE_NAME}:${IMAGE_VERSION}-frauddetectionservice
     deploy:
@@ -251,7 +252,7 @@ services:
     container_name: frontend
     build:
       context: ./
-      dockerfile: ./src/frontend/Dockerfile
+      dockerfile: ${FRONTEND_DOCKERFILE}
       cache_from:
         - ${IMAGE_NAME}:${IMAGE_VERSION}-frontend
     deploy:
@@ -312,7 +313,7 @@ services:
     container_name: frontend-proxy
     build:
       context: ./
-      dockerfile: src/frontendproxy/Dockerfile
+      dockerfile: ${FRONTEND_PROXY_DOCKERFILE}
     deploy:
       resources:
         limits:
@@ -355,7 +356,7 @@ services:
     container_name: imageprovider
     build:
       context: ./
-      dockerfile: ./src/imageprovider/Dockerfile
+      dockerfile: ${IMAGE_PROVIDER_DOCKERFILE}
       cache_from:
         - ${IMAGE_NAME}:${IMAGE_VERSION}-imageprovider
     deploy:
@@ -382,7 +383,7 @@ services:
     container_name: load-generator
     build:
       context: ./
-      dockerfile: ./src/loadgenerator/Dockerfile
+      dockerfile: ${LOAD_GENERATOR_DOCKERFILE}
       cache_from:
         - ${IMAGE_NAME}:${IMAGE_VERSION}-loadgenerator
     deploy:
@@ -420,7 +421,7 @@ services:
     container_name: payment-service
     build:
       context: ./
-      dockerfile: ./src/paymentservice/Dockerfile
+      dockerfile: ${PAYMENT_SERVICE_DOCKERFILE}
       cache_from:
         - ${IMAGE_NAME}:${IMAGE_VERSION}-paymentservice
     deploy:
@@ -451,7 +452,7 @@ services:
     container_name: product-catalog-service
     build:
       context: ./
-      dockerfile: ./src/productcatalogservice/Dockerfile
+      dockerfile: ${PRODUCT_CATALOG_DOCKERFILE}
       cache_from:
         - ${IMAGE_NAME}:${IMAGE_VERSION}-productcatalogservice
     deploy:
@@ -482,7 +483,7 @@ services:
     container_name: quote-service
     build:
       context: ./
-      dockerfile: ./src/quoteservice/Dockerfile
+      dockerfile: ${QUOTE_SERVICE_DOCKERFILE}
       cache_from:
         - ${IMAGE_NAME}:${IMAGE_VERSION}-quoteservice
     deploy:
@@ -510,7 +511,7 @@ services:
     container_name: recommendation-service
     build:
       context: ./
-      dockerfile: ./src/recommendationservice/Dockerfile
+      dockerfile: ${RECOMMENDATION_SERVICE_DOCKERFILE}
       cache_from:
         - ${IMAGE_NAME}:${IMAGE_VERSION}-recommendationservice
     deploy:
@@ -546,7 +547,7 @@ services:
     container_name: shipping-service
     build:
       context: ./
-      dockerfile: ./src/shippingservice/Dockerfile
+      dockerfile: ${SHIPPING_SERVICE_DOCKERFILE}
       cache_from:
         - ${IMAGE_NAME}:${IMAGE_VERSION}-shippingservice
     deploy:
