@@ -61,7 +61,7 @@ jobs:
             setup-qemu: true
           - file: ./src/emailservice/Dockerfile
             tag_suffix: emailservice
-            context: ./src/emailservice
+            context: ./
             setup-qemu: true
           - file: ./src/frauddetectionservice/Dockerfile
             tag_suffix: frauddetectionservice
