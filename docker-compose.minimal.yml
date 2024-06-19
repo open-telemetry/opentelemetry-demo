@@ -95,11 +95,11 @@ services:
     ports:
       - "${CHECKOUT_SERVICE_PORT}"
     environment:
-      - FLAGD_HOST
       - CHECKOUT_SERVICE_PORT
       - CART_SERVICE_ADDR
       - CURRENCY_SERVICE_ADDR
       - EMAIL_SERVICE_ADDR
+      - FLAGD_HOST
       - PAYMENT_SERVICE_ADDR
       - PRODUCT_CATALOG_SERVICE_ADDR
       - SHIPPING_SERVICE_ADDR
@@ -209,6 +209,7 @@ services:
       - PUBLIC_OTEL_EXPORTER_OTLP_TRACES_ENDPOINT
       - OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE
       - WEB_OTEL_SERVICE_NAME=frontend-web
+      - OTEL_COLLECTOR_HOST
       - FLAGD_HOST
       - FLAGD_PORT
     depends_on:
@@ -252,21 +253,21 @@ services:
     environment:
       - FRONTEND_PORT
       - FRONTEND_HOST
-      - FEATURE_FLAG_SERVICE_PORT
-      - FEATURE_FLAG_SERVICE_HOST
       - LOCUST_WEB_HOST
       - LOCUST_WEB_PORT
       - GRAFANA_SERVICE_PORT
       - GRAFANA_SERVICE_HOST
       - JAEGER_SERVICE_PORT
       - JAEGER_SERVICE_HOST
+      - OTEL_COLLECTOR_HOST
       - IMAGE_PROVIDER_HOST
       - IMAGE_PROVIDER_PORT
-      - OTEL_COLLECTOR_HOST
       - OTEL_COLLECTOR_PORT_GRPC
       - OTEL_COLLECTOR_PORT_HTTP
       - OTEL_RESOURCE_ATTRIBUTES
       - ENVOY_PORT
+      - FLAGD_HOST
+      - FLAGD_PORT
     depends_on:
       frontend:
         condition: service_started
@@ -359,8 +360,8 @@ services:
     ports:
       - "${PAYMENT_SERVICE_PORT}"
     environment:
-      - PAYMENT_SERVICE_PORT
       - FLAGD_HOST
+      - PAYMENT_SERVICE_PORT
       - OTEL_EXPORTER_OTLP_ENDPOINT
       - OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE
       - OTEL_RESOURCE_ATTRIBUTES
@@ -387,8 +388,8 @@ services:
     ports:
       - "${PRODUCT_CATALOG_SERVICE_PORT}"
     environment:
-      - PRODUCT_CATALOG_SERVICE_PORT
       - FLAGD_HOST
+      - PRODUCT_CATALOG_SERVICE_PORT
       - OTEL_EXPORTER_OTLP_ENDPOINT
       - OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE
       - OTEL_RESOURCE_ATTRIBUTES
@@ -443,8 +444,8 @@ services:
     ports:
       - "${RECOMMENDATION_SERVICE_PORT}"
     environment:
-      - RECOMMENDATION_SERVICE_PORT
       - FLAGD_HOST
+      - RECOMMENDATION_SERVICE_PORT
       - PRODUCT_CATALOG_SERVICE_ADDR
       - OTEL_PYTHON_LOG_CORRELATION=true
       - OTEL_EXPORTER_OTLP_ENDPOINT
@@ -489,6 +490,31 @@ services:
   # ******************
   # Dependent Services
   # ******************
+  # Flagd, feature flagging service
+  flagd:
+    image: ${FLAGD_IMAGE}
+    container_name: flagd
+    deploy:
+      resources:
+        limits:
+          memory: 50M
+    environment:
+      - FLAGD_OTEL_COLLECTOR_URI=${OTEL_COLLECTOR_HOST}:${OTEL_COLLECTOR_PORT_GRPC}
+      - FLAGD_METRICS_EXPORTER=otel
+      - OTEL_RESOURCE_ATTRIBUTES
+      - OTEL_SERVICE_NAME=flagd
+    command: [
+      "start",
+      "--uri",
+      "file:./etc/flagd/demo.flagd.json"
+    ]
+    ports:
+      - 8013
+    volumes:
+      - ./src/flagd:/etc/flagd
+    logging:
+      *logging
+
   # Redis used by Cart service
   redis-cart:
     image: ${REDIS_IMAGE}

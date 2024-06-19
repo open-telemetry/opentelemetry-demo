@@ -10,7 +10,7 @@
         "open-telemetry/api": "1.0.3",
         "open-telemetry/sdk": "1.0.8",
         "open-telemetry/exporter-otlp": "1.0.4",
-        "open-telemetry/opentelemetry-auto-slim": "1.0.4",
+        "open-telemetry/opentelemetry-auto-slim": "1.0.6",
         "open-telemetry/detector-container": "1.0.0",
         "open-telemetry/opentelemetry-logger-monolog": "1.0.0",
         "guzzlehttp/guzzle": "7.8.1",
