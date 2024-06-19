@@ -9,6 +9,9 @@ the release.
 
 * [cartservice] bump .NET package to 1.9.0 release
   ([#1610](https://github.com/open-telemetry/opentelemetry-demo/pull/1610))
+* [accountingservice] convert from Go service to .NET service, uses
+  OpenTelemetry .NET Automatic Instrumentation.
+  ([#1538](https://github.com/open-telemetry/opentelemetry-demo/pull/1538))
 
 ## 1.10.0
 
@@ -55,9 +58,6 @@ the release.
   ([#1594](https://github.com/open-telemetry/opentelemetry-demo/pull/1594))
 * [checkout] increase Kafka resiliency and observability
   ([#1590](https://github.com/open-telemetry/opentelemetry-demo/pull/1590))
-* [accountingservice] convert from Go service to .NET service, uses
-  OpenTelemetry .NET Automatic Instrumentation.
-  ([#1538](https://github.com/open-telemetry/opentelemetry-demo/pull/1538))
 
 ## 1.9.0
 
