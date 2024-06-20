@@ -20,10 +20,10 @@ using OpenFeature.Contrib.Providers.Flagd;
 using OpenFeature.Contrib.Hooks.Otel;
 
 var builder = WebApplication.CreateBuilder(args);
-string redisAddress = builder.Configuration["REDIS_ADDR"];
-if (string.IsNullOrEmpty(redisAddress))
+string valkeyAddress = builder.Configuration["VALKEY_ADDR"];
+if (string.IsNullOrEmpty(valkeyAddress))
 {
-    Console.WriteLine("REDIS_ADDR environment variable is required.");
+    Console.WriteLine("VALKEY_ADDR environment variable is required.");
     Environment.Exit(1);
 }
 
@@ -33,7 +33,7 @@ builder.Logging
 
 builder.Services.AddSingleton<ICartStore>(x=>
 {
-    var store = new RedisCartStore(x.GetRequiredService<ILogger<RedisCartStore>>(), redisAddress);
+    var store = new ValkeyCartStore(x.GetRequiredService<ILogger<ValkeyCartStore>>(), valkeyAddress);
     store.Initialize();
     return store;
 });
@@ -48,7 +48,7 @@ builder.Services.AddSingleton<IFeatureClient>(x => {
 builder.Services.AddSingleton(x =>
     new CartService(
         x.GetRequiredService<ICartStore>(),
-        new RedisCartStore(x.GetRequiredService<ILogger<RedisCartStore>>(), "badhost:1234"),
+        new ValkeyCartStore(x.GetRequiredService<ILogger<ValkeyCartStore>>(), "badhost:1234"),
         x.GetRequiredService<IFeatureClient>()
 ));
 
@@ -79,8 +79,8 @@ builder.Services.AddGrpcHealthChecks()
 
 var app = builder.Build();
 
-var redisCartStore = (RedisCartStore) app.Services.GetRequiredService<ICartStore>();
-app.Services.GetRequiredService<StackExchangeRedisInstrumentation>().AddConnection(redisCartStore.GetConnection());
+var ValkeyCartStore = (ValkeyCartStore) app.Services.GetRequiredService<ICartStore>();
+app.Services.GetRequiredService<StackExchangeRedisInstrumentation>().AddConnection(ValkeyCartStore.GetConnection());
 
 app.MapGrpcService<CartService>();
 app.MapGrpcHealthChecksService();
