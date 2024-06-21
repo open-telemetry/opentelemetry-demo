@@ -66,13 +66,13 @@ services:
     environment:
       - CART_SERVICE_PORT
       - FLAGD_HOST
-      - REDIS_ADDR
+      - VALKEY_ADDR
       - OTEL_EXPORTER_OTLP_ENDPOINT
       - OTEL_RESOURCE_ATTRIBUTES
       - OTEL_SERVICE_NAME=cartservice
       - ASPNETCORE_URLS=http://*:${CART_SERVICE_PORT}
     depends_on:
-      redis-cart:
+      valkey-cart:
         condition: service_started
       otelcol:
         condition: service_started
@@ -515,18 +515,18 @@ services:
     logging:
       *logging
 
-  # Redis used by Cart service
-  redis-cart:
-    image: ${REDIS_IMAGE}
-    container_name: redis-cart
-    user: redis
+  # Valkey used by Cart service
+  valkey-cart:
+    image: ${VALKEY_IMAGE}
+    container_name: valkey-cart
+    user: valkey
     deploy:
       resources:
         limits:
           memory: 20M
     restart: unless-stopped
     ports:
-      - "${REDIS_PORT}"
+      - "${VALKEY_PORT}"
     logging: *logging
 
 

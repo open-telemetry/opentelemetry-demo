@@ -10,7 +10,7 @@ using Microsoft.Extensions.Logging;
 
 namespace cartservice.cartstore;
 
-public class RedisCartStore : ICartStore
+public class ValkeyCartStore : ICartStore
 {
     private readonly ILogger _logger;
     private const string CartFieldName = "cart";
@@ -25,13 +25,13 @@ public class RedisCartStore : ICartStore
 
     private readonly ConfigurationOptions _redisConnectionOptions;
 
-    public RedisCartStore(ILogger<RedisCartStore> logger, string redisAddress)
+    public ValkeyCartStore(ILogger<ValkeyCartStore> logger, string valkeyAddress)
     {
         _logger = logger;
         // Serialize empty cart into byte array.
         var cart = new Oteldemo.Cart();
         _emptyCartBytes = cart.ToByteArray();
-        _connectionString = $"{redisAddress},ssl=false,allowAdmin=true,abortConnect=false";
+        _connectionString = $"{valkeyAddress},ssl=false,allowAdmin=true,abortConnect=false";
 
         _redisConnectionOptions = ConfigurationOptions.Parse(_connectionString);
 
