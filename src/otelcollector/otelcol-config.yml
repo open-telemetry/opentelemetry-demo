@@ -14,7 +14,8 @@ receivers:
     targets:
       - endpoint: http://frontendproxy:${env:ENVOY_PORT}
   redis:
-    endpoint: "redis-cart:6379"
+    endpoint: "valkey-cart:6379"
+    username: "valkey"
     collection_interval: 10s
 
 exporters:
