@@ -475,6 +475,8 @@ services:
         condition: service_started
       flagd:
         condition: service_started
+      mongo:
+        condition: service_started
     logging: *logging
 
   # Quote service
@@ -637,6 +639,28 @@ services:
     restart: unless-stopped
     ports:
       - "${VALKEY_PORT}"
+    logging: *logging
+
+  # MongoDB used by Product Catalog Service
+  mongo:
+    image: ${MONGO_IMAGE}
+    container_name: mongodb-catalog
+    deploy:
+      resources:
+        limits:
+          memory: 256M
+    restart: unless-stopped
+    ports:
+      - "${MONGO_PORT}:${MONGO_PORT}"
+    environment:
+      - MONGO_INITDB_ROOT_USERNAME=${MONGO_USERNAME}
+      - MONGO_INITDB_ROOT_PASSWORD=${MONGO_PASSWORD}
+    healthcheck:
+      test: echo 'db.runCommand("ping").ok' | mongosh localhost:${MONGO_PORT}/test --quiet
+      start_period: 10s
+      interval: 5s
+      timeout: 10s
+      retries: 10
     logging: *logging
 
 

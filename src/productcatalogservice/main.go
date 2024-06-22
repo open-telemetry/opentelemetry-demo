@@ -44,6 +44,12 @@ import (
 	"google.golang.org/grpc/reflection"
 	"google.golang.org/grpc/status"
 	"google.golang.org/protobuf/encoding/protojson"
+
+	"go.mongodb.org/mongo-driver/bson"
+	"go.mongodb.org/mongo-driver/mongo"
+	"go.mongodb.org/mongo-driver/mongo/options"
+	"encoding/json"
+	"io/ioutil"
 )
 
 var (
@@ -53,14 +59,119 @@ var (
 	initResourcesOnce sync.Once
 )
 
+var mongoClient *mongo.Client
+
+func initMongoDB() {
+	var err error
+	mongoClient, err = mongo.Connect(context.Background(), options.Client().ApplyURI("mongodb://mongo:mongo_product_catalog@mongo:27017")) // FIXME: hardcoded username and password for now, same with hostname and port of MongoDB
+	if err != nil {
+		log.Fatalf("Failed to connect to MongoDB: %v", err)
+	} else {
+		log.Println("Successfully connected to MongoDB!")
+	}
+}
+
+type Price struct {
+	CurrencyCode string `bson:"currencyCode"`
+	Units        int    `bson:"units"`
+	Nanos        int    `bson:"nanos"`
+}
+
+type Product struct {
+	ID          string   `bson:"id"`
+	Name        string   `bson:"name"`
+	Description string   `bson:"description"`
+	Picture	    string   `bson:"picture"`
+	PriceUsd	Price    `bson:"priceUsd"`
+	Categories  []string `bson:"categories"`
+}
+
+func loadProductsIntoMongoDB() {
+	productsData, err := ioutil.ReadFile("./products/products.json")
+	if err != nil {
+		log.Fatalf("Failed to read products.json: %v", err)
+	} else {
+		log.Println("Successfully read products.json!")
+	}
+
+	var products struct {
+		Products []Product `json:"products"`
+	}
+
+	err = json.Unmarshal(productsData, &products)
+	if err != nil {
+		log.Fatalf("Failed to unmarshal products.json: %v", err)
+	} else {
+		log.Println("Successfully unmarshaled products.json!")
+	}
+
+	collection := mongoClient.Database("productCatalog").Collection("products")
+	for _, product := range products.Products {
+		_, err = collection.InsertOne(context.Background(), product)
+		if err != nil {
+			log.Fatalf("Failed to insert product into MongoDB: %v", err)
+		} else {
+			log.Printf("Successfully inserted product with ID: %s into MongoDB!\n", product.ID)
+		}
+	}
+	log.Println("Successfully loaded products into MongoDB!")
+}
+
+func fetchProductsFromMongoDB() ([]Product, error) {
+	var products []Product
+	collection := mongoClient.Database("productCatalog").Collection("products")
+	cursor, err := collection.Find(context.Background(), bson.D{})
+	if err != nil {
+		return nil, err
+	}
+	defer cursor.Close(context.Background())
+
+	for cursor.Next(context.Background()) {
+		var product Product
+		if err := cursor.Decode(&product); err != nil {
+			return nil, err
+		}
+		products = append(products, product)
+	}
+
+	return products, nil
+}
+
+func convertProductsToPbProducts(products []Product) []*pb.Product {
+	pbProducts := make([]*pb.Product, 0, len(products))
+	for _, product := range products {
+		pbProduct := &pb.Product{
+			Id:          product.ID,
+			Name:        product.Name,
+			Description: product.Description,
+			Picture:     product.Picture,
+			PriceUsd: &pb.Money{
+				CurrencyCode: product.PriceUsd.CurrencyCode,
+				Units:        int64(product.PriceUsd.Units),
+				Nanos:        int32(product.PriceUsd.Nanos),
+			},
+			Categories: product.Categories,
+		}
+		pbProducts = append(pbProducts, pbProduct)
+	}
+	return pbProducts
+}
+
 func init() {
 	log = logrus.New()
+
+	// Init MongoDB and load products into MongoDB
+	initMongoDB()
+	loadProductsIntoMongoDB()
+
 	var err error
-	catalog, err = readProductFiles()
-	if err != nil {
-		log.Fatalf("Reading Product Files: %v", err)
-		os.Exit(1)
-	}
+	var fetechedProducts []Product
+	fetechedProducts, err = fetchProductsFromMongoDB()
+    if err != nil {
+        log.Fatalf("Error while fetching Products from MongoDB: %v", err)
+        os.Exit(1)
+    }
+	catalog = convertProductsToPbProducts(fetechedProducts)
 }
 
 func initResource() *sdkresource.Resource {
