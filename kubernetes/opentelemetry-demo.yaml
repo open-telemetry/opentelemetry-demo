@@ -8867,6 +8867,29 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
+  name: opentelemetry-demo-mongo
+  labels:
+    
+    opentelemetry.io/name: opentelemetry-demo-mongo
+    app.kubernetes.io/instance: opentelemetry-demo
+    app.kubernetes.io/component: mongo
+    app.kubernetes.io/name: opentelemetry-demo-mongo
+    app.kubernetes.io/version: "1.10.0"
+    app.kubernetes.io/part-of: opentelemetry-demo
+spec:
+  type: ClusterIP
+  ports:
+    - port: 27017
+      name: plaintext
+      targetPort: 27017
+  selector:
+    
+    opentelemetry.io/name: opentelemetry-demo-mongo
+---
+# Source: opentelemetry-demo/templates/component.yaml
+apiVersion: v1
+kind: Service
+metadata:
   name: opentelemetry-demo-loadgenerator
   labels:
     
@@ -10308,6 +10331,58 @@ spec:
 apiVersion: apps/v1
 kind: Deployment
 metadata:
+  name: opentelemetry-demo-mongo
+  labels:
+    
+    opentelemetry.io/name: opentelemetry-demo-mongo
+    app.kubernetes.io/instance: opentelemetry-demo
+    app.kubernetes.io/component: mongo
+    app.kubernetes.io/name: opentelemetry-demo-mongo
+    app.kubernetes.io/version: "1.10.0"
+    app.kubernetes.io/part-of: opentelemetry-demo
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      
+      opentelemetry.io/name: opentelemetry-demo-mongo
+  template:
+    metadata:
+      labels:
+        
+        opentelemetry.io/name: opentelemetry-demo-mongo
+        app.kubernetes.io/instance: opentelemetry-demo
+        app.kubernetes.io/component: mongo
+        app.kubernetes.io/name: opentelemetry-demo-mongo
+    spec:
+      serviceAccountName: opentelemetry-demo
+      containers:
+        - name: mongo
+          image: 'mongo:8.0.0-rc9'
+          imagePullPolicy: IfNotPresent
+          ports:
+          
+          - containerPort: 27017
+            name: plaintext
+          env:
+          - name: MONGO_INITDB_ROOT_USERNAME
+            value: $(MONGO_USERNAME)
+          - name: MONGO_INITDB_ROOT_PASSWORD
+            value: $(MONGO_PASSWORD)
+          resources:
+            limits:
+              memory: 256Mi
+          securityContext:
+            runAsGroup: 1000
+            runAsNonRoot: true
+            runAsUser: 1000
+          volumeMounts:
+      volumes:
+---
+# Source: opentelemetry-demo/templates/component.yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
   name: opentelemetry-demo-loadgenerator
   labels:
     
@@ -10505,6 +10580,14 @@ spec:
             value: http://$(OTEL_COLLECTOR_NAME):4317
           - name: OTEL_RESOURCE_ATTRIBUTES
             value: service.name=$(OTEL_SERVICE_NAME),service.namespace=opentelemetry-demo,service.version=1.10.0
+          - name: MONGO_USERNAME
+            value: $(MONGO_USERNAME)
+          - name: MONGO_PASSWORD
+            value: $(MONGO_PASSWORD)
+          - name: MONGO_HOST
+            value: 'opentelemetry-demo-mongo'
+          - name: MONGO_PORT
+            value: $(MONGO_PORT)
           resources:
             limits:
               memory: 20Mi
