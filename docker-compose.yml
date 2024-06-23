@@ -470,6 +470,10 @@ services:
       - OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE
       - OTEL_RESOURCE_ATTRIBUTES
       - OTEL_SERVICE_NAME=productcatalogservice
+      - MONGO_USERNAME=${MONGO_USERNAME}
+      - MONGO_PASSWORD=${MONGO_PASSWORD}
+      - MONGO_HOSTNAME=mongo
+      - MONGO_PORT=${MONGO_PORT}
     depends_on:
       otelcol:
         condition: service_started
@@ -651,12 +655,12 @@ services:
           memory: 256M
     restart: unless-stopped
     ports:
-      - "${MONGO_PORT}:${MONGO_PORT}"
+      - "${MONGO_PORT}:27017"
     environment:
       - MONGO_INITDB_ROOT_USERNAME=${MONGO_USERNAME}
       - MONGO_INITDB_ROOT_PASSWORD=${MONGO_PASSWORD}
     healthcheck:
-      test: echo 'db.runCommand("ping").ok' | mongosh localhost:${MONGO_PORT}/test --quiet
+      test: echo 'db.runCommand("ping").ok' | mongosh localhost:27017/test --quiet
       start_period: 10s
       interval: 5s
       timeout: 10s

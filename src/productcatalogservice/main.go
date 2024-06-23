@@ -61,13 +61,30 @@ var (
 
 var mongoClient *mongo.Client
 
+func getEnvVariables() string {
+	// Load environment variables
+	mongoUsername := os.Getenv("MONGO_USERNAME")
+	mongoPassword := os.Getenv("MONGO_PASSWORD")
+	mongoHostname := os.Getenv("MONGO_HOSTNAME")
+	mongoPort := os.Getenv("MONGO_PORT")
+	if mongoUsername == "" || mongoPassword == "" || mongoHostname == "" || mongoPort == "" {
+		log.Fatal("Failed to load environment variables")
+	} else {
+		log.Println("Successfully loaded environment variables")
+		// log.Println("MongoURI: " + "mongodb://" + mongoUsername + ":" + mongoPassword + "@" + mongoHostname + ":" + mongoPort)
+	}
+	return "mongodb://" + mongoUsername + ":" + mongoPassword + "@" + mongoHostname + ":" + mongoPort
+}
+
 func initMongoDB() {
+	mongoURI := getEnvVariables()
+
 	var err error
-	mongoClient, err = mongo.Connect(context.Background(), options.Client().ApplyURI("mongodb://mongo:mongo_product_catalog@mongo:27017")) // FIXME: hardcoded username and password for now, same with hostname and port of MongoDB
+	mongoClient, err = mongo.Connect(context.Background(), options.Client().ApplyURI(mongoURI))
 	if err != nil {
 		log.Fatalf("Failed to connect to MongoDB: %v", err)
 	} else {
-		log.Println("Successfully connected to MongoDB!")
+		log.Println("Successfully connected to MongoDB")
 	}
 }
 
@@ -91,7 +108,7 @@ func loadProductsIntoMongoDB() {
 	if err != nil {
 		log.Fatalf("Failed to read products.json: %v", err)
 	} else {
-		log.Println("Successfully read products.json!")
+		log.Println("Successfully read products.json")
 	}
 
 	var products struct {
@@ -102,7 +119,7 @@ func loadProductsIntoMongoDB() {
 	if err != nil {
 		log.Fatalf("Failed to unmarshal products.json: %v", err)
 	} else {
-		log.Println("Successfully unmarshaled products.json!")
+		log.Println("Successfully unmarshaled products.json")
 	}
 
 	collection := mongoClient.Database("productCatalog").Collection("products")
@@ -111,10 +128,10 @@ func loadProductsIntoMongoDB() {
 		if err != nil {
 			log.Fatalf("Failed to insert product into MongoDB: %v", err)
 		} else {
-			log.Printf("Successfully inserted product with ID: %s into MongoDB!\n", product.ID)
+			log.Printf("Successfully inserted product with ID: %s into MongoDB", product.ID)
 		}
 	}
-	log.Println("Successfully loaded products into MongoDB!")
+	log.Println("Successfully loaded products into MongoDB")
 }
 
 func fetchProductsFromMongoDB() ([]Product, error) {
