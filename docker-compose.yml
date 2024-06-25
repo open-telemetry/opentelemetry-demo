@@ -190,7 +190,7 @@ services:
 
   # Email service
   emailservice:
-    image: demo/emailservice-contrib:latest
+    image: ${IMAGE_NAME}:${DEMO_VERSION}-emailservice
     container_name: email-service
     build:
       context: ./
