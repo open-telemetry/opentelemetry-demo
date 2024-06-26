@@ -11,6 +11,8 @@ the release.
   ([#1610](https://github.com/open-telemetry/opentelemetry-demo/pull/1610))
 * [Valkey] Replace Redis with Valkey
   ([#1619](https://github.com/open-telemetry/opentelemetry-demo/pull/1619))
+* [frontend] fixed default flagd port for HTTPS connections
+  ([#1609](https://github.com/open-telemetry/opentelemetry-demo/pull/1609))
 
 ## 1.10.0
 
