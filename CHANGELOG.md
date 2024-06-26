@@ -11,6 +11,8 @@ the release.
   ([#1610](https://github.com/open-telemetry/opentelemetry-demo/pull/1610))
 * [Valkey] Replace Redis with Valkey
   ([#1619](https://github.com/open-telemetry/opentelemetry-demo/pull/1619))
+* [grafana] Allow Grafana to run without an Internet connection
+  ([#1633](https://github.com/open-telemetry/opentelemetry-demo/pull/1633))
 
 ## 1.10.0
 

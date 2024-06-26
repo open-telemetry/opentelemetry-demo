@@ -7,7 +7,6 @@ datasources:
   - name: OpenSearch
     type: grafana-opensearch-datasource
     url: http://opensearch:9200/
-    access: proxy
     editable: true
     isDefault: false
     jsonData:
