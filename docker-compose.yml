@@ -29,11 +29,11 @@ services:
     deploy:
       resources:
         limits:
-          memory: 20M
+          memory: 50M
     restart: unless-stopped
     environment:
       - KAFKA_SERVICE_ADDR
-      - OTEL_EXPORTER_OTLP_ENDPOINT
+      - OTEL_EXPORTER_OTLP_ENDPOINT=http://${OTEL_COLLECTOR_HOST}:${OTEL_COLLECTOR_PORT_HTTP}
       - OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE
       - OTEL_RESOURCE_ATTRIBUTES
       - OTEL_SERVICE_NAME=accountingservice

@@ -7,12 +7,15 @@ the release.
 
 ## Unreleased
 
+* [accountingservice] convert from Go service to .NET service, uses
+  OpenTelemetry .NET Automatic Instrumentation.
+  ([#1538](https://github.com/open-telemetry/opentelemetry-demo/pull/1538))
+* [frontend] fixed default flagd port for HTTPS connections
+  ([#1609](https://github.com/open-telemetry/opentelemetry-demo/pull/1609))
 * [cartservice] bump .NET package to 1.9.0 release
   ([#1610](https://github.com/open-telemetry/opentelemetry-demo/pull/1610))
 * [Valkey] Replace Redis with Valkey
   ([#1619](https://github.com/open-telemetry/opentelemetry-demo/pull/1619))
-* [frontend] fixed default flagd port for HTTPS connections
-  ([#1609](https://github.com/open-telemetry/opentelemetry-demo/pull/1609))
 * ([recommendation] updated flag name to match flagd configuration
   ([#1634](https://github.com/open-telemetry/opentelemetry-demo/pull/1634))
 
