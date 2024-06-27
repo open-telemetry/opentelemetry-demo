@@ -13,6 +13,8 @@ the release.
   ([#1619](https://github.com/open-telemetry/opentelemetry-demo/pull/1619))
 * [frontend] fixed default flagd port for HTTPS connections
   ([#1609](https://github.com/open-telemetry/opentelemetry-demo/pull/1609))
+* ([recommendation] updated flag name to match flagd configuration
+  ([#1634](https://github.com/open-telemetry/opentelemetry-demo/pull/1634))
 
 ## 1.10.0
 
