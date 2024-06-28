@@ -7,6 +7,8 @@ the release.
 
 ## Unreleased
 
+## 1.11.0
+
 * [accountingservice] convert from Go service to .NET service, uses
   OpenTelemetry .NET Automatic Instrumentation.
   ([#1538](https://github.com/open-telemetry/opentelemetry-demo/pull/1538))
