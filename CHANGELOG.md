@@ -7,6 +7,9 @@ the release.
 
 ## Unreleased
 
+* ([chore] ensure ad and cart service do not generate errors by default
+  ([#1641](https://github.com/open-telemetry/opentelemetry-demo/pull/1641))
+
 ## 1.11.0
 
 * [accountingservice] convert from Go service to .NET service, uses

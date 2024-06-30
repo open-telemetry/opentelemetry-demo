@@ -48,7 +48,7 @@
       "targeting": {
         "fractional": [
           ["on", 10],
-          ["off", 90]
+          ["off", 100]
         ]
       }
     },
@@ -68,7 +68,13 @@
         "on": true,
         "off": false
       },
-      "defaultVariant": "off"
+      "defaultVariant": "off",
+      "targeting": {
+        "fractional": [
+          ["on", 10],
+          ["off", 100]
+        ]
+      }
     },
     "paymentServiceFailure": {
       "description": "Fail payment service charge requests",
