@@ -93,7 +93,7 @@ Monday at 8:30 AM PST and anyone is welcome.
 
 Emeritus:
 
-- [Austin Parker](https://github.com/austinlparker), Honeycomb
+- [Austin Parker](https://github.com/austinlparker)
 - [Carter Socha](https://github.com/cartersocha)
 - [Michael Maxwell](https://github.com/mic-max)
 - [Morgan McLean](https://github.com/mtwo)
