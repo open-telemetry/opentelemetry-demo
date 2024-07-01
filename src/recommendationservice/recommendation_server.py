@@ -75,7 +75,7 @@ def get_product_list(request_product_ids):
         request_product_ids = request_product_ids_str.split(',')
 
         # Feature flag scenario - Cache Leak
-        if check_feature_flag("recommendationCache"):
+        if check_feature_flag("recommendationServiceCacheFailure"):
             span.set_attribute("app.recommendation.cache_enabled", True)
             if random.random() < 0.5 or first_run:
                 first_run = False

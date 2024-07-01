@@ -37,12 +37,19 @@ if (typeof window !== 'undefined') {
        * We connect to flagd through the envoy proxy, straight from the browser,
        * for this we need to know the current hostname and port.
        */
+
+      const useTLS = window.location.protocol === 'https:';
+      let port = useTLS ? 443 : 80;
+      if (window.location.port) {
+          port = parseInt(window.location.port, 10);
+      }
+
       OpenFeature.setProvider(
         new FlagdWebProvider({
           host: window.location.hostname,
           pathPrefix: 'flagservice',
-          port: window.location.port ? parseInt(window.location.port, 10) : 80,
-          tls: window.location.protocol === 'https:',
+          port: port,
+          tls: useTLS,
           maxRetries: 3,
           maxDelay: 10000,
         })

@@ -199,14 +199,21 @@ on each other), the owner should try to get people aligned by:
 
 ## Making a new release
 
-Maintainers can create a new release when desired by following a few steps.
+Maintainers can create a new release when desired by following these steps.
 
-- Create a new Pull Request that updates the `IMAGE_VERSION` environment
-  variable in `.env` to the _new_ version number.
-- [Draft a new
+- [Create a new
   release](https://github.com/open-telemetry/opentelemetry-demo/releases/new),
   creating a new tag in the format `x.x.x` based on main. Automatically generate
   release notes. Prepend a summary of the major changes to the release notes.
-- Click 'Publish Release'.
+- After images for the new release are built and published, create a new Pull
+  Request that updates the `IMAGE_VERSION` environment variable in `.env` to the
+  _new_ version number, and update the `CHANGELOG.md` with the new version
+  leaving the `Unreleased` section for the next release.
+- Create a new Pull Request to update the deployment of the demo in the
+  [OpenTelemetry Helm
+  Charts](https://github.com/open-telemetry/opentelemetry-helm-charts) repo.
+- After the Helm chart is released, create a new Pull Request which updates the
+  Demo's Kubernetes manifest by running `make generate-kubernetes-manifests` and
+  committing the changes.
 
 [docs]: https://opentelemetry.io/docs/demo/
