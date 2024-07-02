@@ -1,8 +1,11 @@
 {
   "devDependencies": {
+    "@kt3k/license-checker": "^3.2.2",
     "markdown-link-check": "^3.9.3",
     "markdown-toc": "^1.2.0",
-    "markdownlint-cli": "0.37.0",
-    "@kt3k/license-checker": "^3.2.2"
+    "markdownlint-cli": "0.37.0"
+  },
+  "dependencies": {
+    "@honeycombio/opentelemetry-web": "^0.4.0"
   }
 }

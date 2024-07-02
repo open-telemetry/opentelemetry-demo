@@ -16,3 +16,29 @@
 #    pipelines:
 #      traces:
 #        exporters: [spanmetrics, otlphttp/example]
+
+exporters:
+  otlp/honeycomb:
+    endpoint: "api.honeycomb.io:443"
+    headers:
+      "x-honeycomb-team": "<HONEYCOMB_API_KEY>"
+      "x-honeycomb-dataset": "webstore-metrics"
+      
+service:
+  pipelines:
+    traces:
+      exporters:
+        - otlp
+        - debug
+        - spanmetrics
+        - otlp/honeycomb
+    metrics:
+      exporters:
+        - otlphttp/prometheus
+        - debug
+        - otlp/honeycomb
+    logs:
+      exporters:
+        - opensearch
+        - debug
+        - otlp/honeycomb

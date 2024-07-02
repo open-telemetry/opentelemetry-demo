@@ -192,7 +192,7 @@ if browser_traffic_enabled:
                 await page.route('**/*', add_baggage_header)
                 await page.goto("/cart", wait_until="domcontentloaded")
                 await page.select_option('[name="currency_code"]', 'CHF')
-                await page.wait_for_timeout(2000)  # giving the browser time to export the traces
+                await page.wait_for_timeout(11000)  # giving the browser time to export the traces
             except:
                 pass
 
@@ -205,7 +205,7 @@ if browser_traffic_enabled:
                 await page.goto("/", wait_until="domcontentloaded")
                 await page.click('p:has-text("Roof Binoculars")', wait_until="domcontentloaded")
                 await page.click('button:has-text("Add To Cart")', wait_until="domcontentloaded")
-                await page.wait_for_timeout(2000)  # giving the browser time to export the traces
+                await page.wait_for_timeout(11000)  # giving the browser time to export the traces
             except:
                 pass
 
