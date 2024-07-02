@@ -199,7 +199,7 @@ on each other), the owner should try to get people aligned by:
 
 ## Multi-platform Builds
 
-Creating multi-platform builds requires the docker buildx to be installed. This
+Creating multi-platform builds requires docker buildx to be installed. This
 is part of Docker Desktop for macOS, or can be installed using
 `apt install docker-buildx` on Ubuntu.
 
