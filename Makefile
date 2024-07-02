@@ -159,7 +159,8 @@ start-odd:
 
 .PHONY: stop
 stop:
-	$(DOCKER_COMPOSE_CMD) --profile tests --profile odd down --remove-orphans --volumes
+	$(DOCKER_COMPOSE_CMD) down --remove-orphans --volumes
+	$(DOCKER_COMPOSE_CMD) -f docker-compose-tests.yml --profile tests down --remove-orphans --volumes
 	@echo ""
 	@echo "OpenTelemetry Demo is stopped."
 

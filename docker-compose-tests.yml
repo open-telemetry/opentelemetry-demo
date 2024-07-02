@@ -92,7 +92,6 @@ services:
     container_name: tracetest-server
     profiles:
       - tests
-      - odd          # Observabilty-Driven Development (ODD)
     volumes:
       - type: bind
         source: ./test/tracetesting/tracetest-config.yaml
@@ -121,7 +120,6 @@ services:
     container_name: tracetest-postgres
     profiles:
       - tests
-      - odd          # Observabilty-Driven Development (ODD)
     environment:
       POSTGRES_PASSWORD: postgres
       POSTGRES_USER: postgres
