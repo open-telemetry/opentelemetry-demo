@@ -7,6 +7,9 @@ the release.
 
 ## Unreleased
 
+* [chore] multi-platform build support for all services
+  ([#1651](https://github.com/open-telemetry/opentelemetry-demo/pull/1651))
+
 ## 1.11.0
 
 * [accountingservice] convert from Go service to .NET service, uses

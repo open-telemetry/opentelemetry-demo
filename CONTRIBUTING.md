@@ -197,6 +197,54 @@ on each other), the owner should try to get people aligned by:
   the owner should bring it to the OpenTelemetry Community Demo SIG
   [meeting](README.md#contributing).
 
+## Multi-platform Builds
+
+Creating multi-platform builds requires docker buildx to be installed. This
+is part of Docker Desktop for macOS, or can be installed using
+`apt install docker-buildx` on Ubuntu.
+
+You will need a multi-platform capable builder with a limiter set of parallelism
+to avoid errors while building the images. On an M2 Mac, it is recommended to
+limit the parallelism to 8. This can be done by specifying a configuration file
+when creating the builder. First create the configuration file:
+
+```shell
+cat <<EOF > otel-builder.toml
+[worker.oci]
+  max-parallelism = 8
+EOF
+```
+
+Then create the builder for your environment.
+
+If you are using **MacOS** use this command to create the builder:
+
+```shell
+docker buildx create --name otel-builder --bootstrap --use --driver docker-container --buildkitd-config ./otel-builder.toml
+```
+
+If you are using **Ubuntu** use this command to create the builder:
+
+```shell
+docker buildx create --name otel-builder --bootstrap --use --driver docker-container --config ./otel-builder.toml
+```
+
+A builder will be created and set as the active builder. You can check the
+builder status with `docker buildx inspect`. To build multi-platform images for
+linux/amd64 and linux/arm64, use the following command:
+
+```shell
+make build-multiplatform
+```
+
+To build and push multi-platform images to a registry, ensure to set
+`IMAGE_NAME` to the name of the registry and image repository to use in the
+`.env.override` file and run:
+
+```shell
+make build-multiplatform-and-push
+```
+
 ## Making a new release
 
 Maintainers can create a new release when desired by following these steps.

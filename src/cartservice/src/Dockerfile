@@ -23,14 +23,14 @@ WORKDIR /usr/src/app/
 COPY ./src/cartservice/ ./
 COPY ./pb/ ./pb/
 
-RUN dotnet restore ./src/cartservice.csproj -v d -r linux-musl-$TARGETARCH
+RUN dotnet restore ./src/cartservice.csproj -r linux-musl-$TARGETARCH
 
-RUN dotnet publish ./src/cartservice.csproj -v d -r linux-musl-$TARGETARCH --no-restore -o /cartservice
+RUN dotnet publish ./src/cartservice.csproj -r linux-musl-$TARGETARCH --no-restore -o /cartservice
 
 # -----------------------------------------------------------------------------
 
 # https://mcr.microsoft.com/v2/dotnet/runtime-deps/tags/list
-FROM mcr.microsoft.com/dotnet/runtime-deps:8.0.6-alpine3.20
+FROM --platform=$TARGETPLATFORM mcr.microsoft.com/dotnet/runtime-deps:8.0.6-alpine3.20
 
 WORKDIR /usr/src/app/
 COPY --from=builder /cartservice/ ./

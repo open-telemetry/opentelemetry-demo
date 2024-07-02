@@ -2,7 +2,7 @@
 # SPDX-License-Identifier: Apache-2.0
 
 
-FROM eclipse-temurin:21-jdk as builder
+FROM --platform=${BUILDPLATFORM} eclipse-temurin:21-jdk as builder
 
 WORKDIR /usr/src/app/
 
@@ -18,7 +18,7 @@ RUN ./gradlew installDist -PprotoSourceDir=./proto
 
 # -----------------------------------------------------------------------------
 
-FROM eclipse-temurin:21-jre
+FROM --platform=${TARGETPLATFORM} eclipse-temurin:21-jre
 
 ARG version=2.3.0
 WORKDIR /usr/src/app/
