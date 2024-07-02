@@ -8,7 +8,7 @@ the release.
 ## Unreleased
 
 * [frauddetectionservice] use child spans for Kafka processing
-  ([#1654](https://github.com/open-telemetry/opentelemetry-demo/pull/1654
+  ([#1654](https://github.com/open-telemetry/opentelemetry-demo/pull/1654))
 
 ## 1.11.0
 
