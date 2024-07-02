@@ -13,10 +13,20 @@ receivers:
   httpcheck/frontendproxy:
     targets:
       - endpoint: http://frontendproxy:${env:ENVOY_PORT}
+  docker_stats:
+    endpoint: unix:///var/run/docker.sock
   redis:
     endpoint: "valkey-cart:6379"
     username: "valkey"
     collection_interval: 10s
+  # Collector metrics
+  prometheus:
+    config:
+      scrape_configs:
+        - job_name: 'otelcol'
+          scrape_interval: 10s
+          static_configs:
+            - targets: ['0.0.0.0:8888']
 
 exporters:
   debug:
@@ -48,7 +58,7 @@ service:
       processors: [batch]
       exporters: [otlp, debug, spanmetrics]
     metrics:
-      receivers: [httpcheck/frontendproxy, redis, otlp, spanmetrics]
+      receivers: [docker_stats, httpcheck/frontendproxy, otlp, prometheus, redis, spanmetrics]
       processors: [batch]
       exporters: [otlphttp/prometheus, debug]
     logs:
