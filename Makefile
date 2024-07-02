@@ -88,12 +88,12 @@ build-and-push:
 .PHONY: build-multiplatform
 build-multiplatform:
 	# Because buildx bake does not support --env-file yet, we need to load it into the environment first.
-	set -a; . .env.override; set +a && docker buildx bake -f docker-compose.yml --set "*.platform=linux/amd64,linux/arm64"
+	set -a; . ./.env.override; set +a && docker buildx bake -f docker-compose.yml --set "*.platform=linux/amd64,linux/arm64"
 
 .PHONY: build-multiplatform-and-push
 build-multiplatform-and-push:
     # Because buildx bake does not support --env-file yet, we need to load it into the environment first.
-	set -a; . .env.override; set +a && docker buildx bake -f docker-compose.yml --push --set "*.platform=linux/amd64,linux/arm64"
+	set -a; . ./.env.override; set +a && docker buildx bake -f docker-compose.yml --push --set "*.platform=linux/amd64,linux/arm64"
 
 .PHONY: run-tests
 run-tests:
