@@ -602,7 +602,7 @@ services:
     container_name: kafka
     build:
       context: ./
-      dockerfile: ./src/kafka/Dockerfile
+      dockerfile: ${KAFKA_SERVICE_DOCKERFILE}
       cache_from:
         - ${IMAGE_NAME}:${IMAGE_VERSION}-kafka
     deploy:
