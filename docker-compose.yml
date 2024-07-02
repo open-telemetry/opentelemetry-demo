@@ -693,7 +693,9 @@ services:
           memory: 200M
     restart: unless-stopped
     command: [ "--config=/etc/otelcol-config.yml", "--config=/etc/otelcol-config-extras.yml" ]
+    user: 0:0
     volumes:
+      - ${DOCKER_SOCK}:/var/run/docker.sock:ro
       - ${OTEL_COLLECTOR_CONFIG}:/etc/otelcol-config.yml
       - ${OTEL_COLLECTOR_CONFIG_EXTRAS}:/etc/otelcol-config-extras.yml
     ports:

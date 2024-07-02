@@ -18,8 +18,10 @@ the release.
   ([#1610](https://github.com/open-telemetry/opentelemetry-demo/pull/1610))
 * [Valkey] Replace Redis with Valkey
   ([#1619](https://github.com/open-telemetry/opentelemetry-demo/pull/1619))
-* ([recommendation] updated flag name to match flagd configuration
+* [recommendation] updated flag name to match flagd configuration
   ([#1634](https://github.com/open-telemetry/opentelemetry-demo/pull/1634))
+* [otel-col] Add docker stats receiver
+  ([#1650](https://github.com/open-telemetry/opentelemetry-demo/pull/1650))
 
 ## 1.10.0
 
