@@ -2,7 +2,7 @@
 # SPDX-License-Identifier: Apache-2.0
 
 
-FROM gradle:8-jdk17 AS builder
+FROM --platform=${BUILDPLATFORM} gradle:8-jdk17 AS builder
 
 WORKDIR /usr/src/app/
 
@@ -12,7 +12,7 @@ RUN gradle shadowJar
 
 # -----------------------------------------------------------------------------
 
-FROM gcr.io/distroless/java17-debian11
+FROM --platform=${TARGETPLATFORM} gcr.io/distroless/java17-debian11
 
 ARG version=2.4.0
 WORKDIR /usr/src/app/

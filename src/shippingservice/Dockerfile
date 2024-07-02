@@ -15,6 +15,8 @@ RUN if [ "${TARGETPLATFORM}" = "${BUILDPLATFORM}" ] ; then \
         apt-get update && apt-get install --no-install-recommends -y g++-aarch64-linux-gnu libc6-dev-arm64-cross libprotobuf-dev protobuf-compiler ca-certificates && \
         rustup target add aarch64-unknown-linux-gnu && \
         rustup toolchain install stable-aarch64-unknown-linux-gnu; \
+    elif [ "${TARGETPLATFORM}" = "linux/amd64" ] ; then \
+        apt-get update && apt-get install --no-install-recommends -y g++ libc6-dev libprotobuf-dev protobuf-compiler ca-certificates; \
     else \
         echo "${TARGETPLATFORM} is not supported"; \
         exit 1; \
@@ -34,6 +36,8 @@ RUN if [ "${TARGETPLATFORM}" = "${BUILDPLATFORM}" ] ; then \
             CXX_aarch64_unknown_linux_gnu=aarch64-linux-gnu-g++ \
         cargo build -r --features="dockerproto" --target aarch64-unknown-linux-gnu && \
         cp /app/target/aarch64-unknown-linux-gnu/release/shippingservice /app/target/release/shippingservice; \
+    elif [ "${TARGETPLATFORM}" = "linux/amd64" ] ; then \
+        cargo build -r --features="dockerproto"; \
     else \
         echo "${TARGETPLATFORM} is not supported"; \
         exit 1; \

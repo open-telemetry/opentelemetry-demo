@@ -79,24 +79,16 @@ install-tools: $(MISSPELL)
 build:
 	$(DOCKER_COMPOSE_CMD) build
 
-.PHONY: build-and-push-dockerhub
-build-and-push-dockerhub:
-	$(DOCKER_COMPOSE_CMD) --env-file .dockerhub.env -f docker-compose.yml build
-	$(DOCKER_COMPOSE_CMD) --env-file .dockerhub.env -f docker-compose.yml push
+.PHONY: build-and-push
+build-and-push:
+	$(DOCKER_COMPOSE_CMD) $(DOCKER_COMPOSE_ENV) build --push
 
-.PHONY: build-and-push-ghcr
-build-and-push-ghcr:
-	$(DOCKER_COMPOSE_CMD) --env-file .ghcr.env -f docker-compose.yml build
-	$(DOCKER_COMPOSE_CMD) --env-file .ghcr.env -f docker-compose.yml push
-
-.PHONY: build-env-file
-build-env-file:
-	cp .env .dockerhub.env
-	sed -i '/IMAGE_VERSION=.*/c\IMAGE_VERSION=${RELEASE_VERSION}' .dockerhub.env
-	sed -i '/IMAGE_NAME=.*/c\IMAGE_NAME=${DOCKERHUB_REPO}' .dockerhub.env
-	cp .env .ghcr.env
-	sed -i '/IMAGE_VERSION=.*/c\IMAGE_VERSION=${RELEASE_VERSION}' .ghcr.env
-	sed -i '/IMAGE_NAME=.*/c\IMAGE_NAME=${GHCR_REPO}' .ghcr.env
+# Build and push multiplatform images (linux/amd64, linux/arm64) using buildx.
+# Requires docker with buildx enabled and a multi-platform capable builder in use.
+.PHONY: build-multiplatform-and-push
+build-multiplatform-and-push:
+    # Because buildx bake does not support --env-file yet, we need to load it into the environment first.
+	set -a; . .env.override; set +a && docker buildx bake -f docker-compose.yml --push --set "*.platform=linux/amd64,linux/arm64"
 
 .PHONY: run-tests
 run-tests:
