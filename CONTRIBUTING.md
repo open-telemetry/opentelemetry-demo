@@ -215,14 +215,16 @@ cat <<EOF > otel-builder.toml
 EOF
 ```
 
-Then create the builder for your environment:
+Then create the builder for your environment.
 
-**MacOS**
+If you are using **MacOS** use this command to create the builder:
+
 ```shell
 docker buildx create --name otel-builder --bootstrap --use --driver docker-container --buildkitd-config ./otel-builder.toml
 ```
 
-**Ubuntu Linux**
+If you are using **Ubuntu** use this command to create the builder:
+
 ```shell
 docker buildx create --name otel-builder --bootstrap --use --driver docker-container --config ./otel-builder.toml
 ```
