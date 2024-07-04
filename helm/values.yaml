@@ -247,6 +247,8 @@ opentelemetry-collector:
       value: "delta"
 
 components:
+  frontendProxy:
+    serviceType: LoadBalancer
   ## Demo Components are named objects (services) with several properties
   # demoService:
   ## Enable the component (service)
@@ -641,6 +643,8 @@ components:
       runAsUser: 101 # envoy
       runAsGroup: 101
       runAsNonRoot: true
+    service:
+      type: LoadBalancer
 
   loadgenerator:
     enabled: true
