@@ -509,7 +509,7 @@ components:
         value: "{{ .Chart.AppVersion }}"
     resources:
       limits:
-        memory: 20Mi
+        memory: 25Mi
 
   emailService:
     enabled: true
