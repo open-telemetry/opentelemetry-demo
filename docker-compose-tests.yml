@@ -2,7 +2,7 @@
 # SPDX-License-Identifier: Apache-2.0
 
 include:
-  - path :
+  - path:
       - docker-compose.yml     # depend on the main docker-compose file
       - docker-compose-tests_include-override.yml  # include override for tests
 

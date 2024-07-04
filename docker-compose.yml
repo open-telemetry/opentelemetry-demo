@@ -759,4 +759,3 @@ services:
     ports:
       - "9200"
     logging: *logging
-
