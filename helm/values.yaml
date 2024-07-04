@@ -247,6 +247,7 @@ opentelemetry-collector:
       value: "delta"
 
 components:
+  # configuring load balancer
   frontendProxy:
     serviceType: LoadBalancer
   ## Demo Components are named objects (services) with several properties
