@@ -14,7 +14,6 @@ defmodule ChatService.Application do
     children = [
       ChatServiceWeb.Telemetry,
       ChatService.Repo,
-      # {DNSCluster, query: Application.get_env(:chatservice, :dns_cluster_query) || :ignore},
       {Phoenix.PubSub, name: ChatService.PubSub},
       {Registry, keys: :unique, name: ChatService.Registry},
       ChatServiceWeb.Endpoint

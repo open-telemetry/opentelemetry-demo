@@ -20,12 +20,6 @@ config :chatservice, ChatServiceWeb.Endpoint,
   secret_key_base: "cfHSrMhdqQLdzdAiLRZazXjUBlnd12ZuG3ilwKigBsbA58cOWzW0Rm2cUa5oF8ts",
   server: false
 
-# In test we don't send emails.
-config :chatservice, ChatService.Mailer, adapter: Swoosh.Adapters.Test
-
-# Disable swoosh api client as it is only required for production adapters.
-config :swoosh, :api_client, false
-
 # Print only warnings and errors during test
 config :logger, level: :warning
 

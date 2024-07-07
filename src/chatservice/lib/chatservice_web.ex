@@ -43,7 +43,6 @@ defmodule ChatServiceWeb do
         layouts: [html: ChatServiceWeb.Layouts]
 
       import Plug.Conn
-      import ChatServiceWeb.Gettext
 
       unquote(verified_routes())
     end
