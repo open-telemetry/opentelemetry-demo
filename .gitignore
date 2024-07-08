@@ -19,6 +19,7 @@ docker-compose.override.yml
 .settings
 
 bin/
+!src/chatservice/rel/overlays/bin
 obj/
 .vs/
 .vscode
