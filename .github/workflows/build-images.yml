@@ -11,4 +11,4 @@ on:
 jobs:
   build_images:
     if: github.repository == 'open-telemetry/opentelemetry-demo'
-    uses: ./.github/workflows/component_build_images.yml
+    uses: ./.github/workflows/component-build-images.yml
