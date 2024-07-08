@@ -1,0 +1,12 @@
+# Copyright The OpenTelemetry Authors
+# SPDX-License-Identifier: Apache-2.0
+
+services:
+
+  otelcol:
+    command: [ "--config=/etc/otelcol-config.yml", "--config=/etc/otelcol-config-tracetest.yml" ]
+    volumes:
+      - ${DOCKER_SOCK}:/var/run/docker.sock:ro
+      - ${OTEL_COLLECTOR_CONFIG}:/etc/otelcol-config.yml
+      - ./test/tracetesting/otelcol-config-tracetest.yml:/etc/otelcol-config-tracetest.yml
+    depends_on: []

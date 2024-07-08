@@ -7,6 +7,9 @@ the release.
 
 ## Unreleased
 
+* [tests] run trace based tests concurrently
+  ([#1659](https://github.com/open-telemetry/opentelemetry-demo/pull/1659))
+
 ## 1.11.0
 
 * [accountingservice] convert from Go service to .NET service, uses
