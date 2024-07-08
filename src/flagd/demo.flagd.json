@@ -23,19 +23,19 @@
       "description": "Triggers full manual garbage collections in the ad service",
       "state": "ENABLED",
       "variants": {
-          "on": true,
-          "off": false
-        },
-        "defaultVariant": "off"
+        "on": true,
+        "off": false
+      },
+      "defaultVariant": "off"
     },
     "adServiceHighCpu": {
       "description": "Triggers high cpu load in the ad service",
       "state": "ENABLED",
       "variants": {
-          "on": true,
-          "off": false
-        },
-        "defaultVariant": "off"
+        "on": true,
+        "off": false
+      },
+      "defaultVariant": "off"
     },
     "adServiceFailure": {
       "description": "Fail ad service",
@@ -44,22 +44,16 @@
         "on": true,
         "off": false
       },
-      "defaultVariant": "off",
-      "targeting": {
-        "fractional": [
-          ["on", 10],
-          ["off", 90]
-        ]
-      }
+      "defaultVariant": "off"
     },
     "kafkaQueueProblems": {
       "description": "Overloads Kafka queue while simultaneously introducing a consumer side delay leading to a lag spike",
       "state": "ENABLED",
       "variants": {
-          "on": 100,
-          "off": 0
-        },
-        "defaultVariant": "off"
+        "on": 100,
+        "off": 0
+      },
+      "defaultVariant": "off"
     },
     "cartServiceFailure": {
       "description": "Fail cart service",
