@@ -1,0 +1,128 @@
+# Copyright The OpenTelemetry Authors
+# SPDX-License-Identifier: Apache-2.0
+
+include:
+  - path:
+      - docker-compose.yml     # depend on the main docker-compose file
+      - docker-compose-tests_include-override.yml  # include override for tests
+
+services:
+  # *****
+  # Tests
+  # *****
+  # Frontend Tests
+  frontendTests:
+    image: ${IMAGE_NAME}:${DEMO_VERSION}-frontend-tests
+    container_name: frontend-tests
+    build:
+      context: ./
+      dockerfile: ./src/frontend/Dockerfile.cypress
+    volumes:
+      - ./src/frontend/cypress/videos:/app/cypress/videos
+      - ./src/frontend/cypress/screenshots:/app/cypress/screenshots
+    environment:
+      - CYPRESS_baseUrl=http://${FRONTEND_ADDR}
+      - FRONTEND_ADDR
+      - NODE_ENV=production
+    depends_on:
+      - frontend
+
+  # Tracebased Tests
+  traceBasedTests:
+    image: ${IMAGE_NAME}:${DEMO_VERSION}-traceBasedTests
+    container_name: traceBasedTests
+    build:
+      context: ./
+      dockerfile: ./test/tracetesting/Dockerfile
+    environment:
+      - AD_SERVICE_ADDR
+      - CART_SERVICE_ADDR
+      - CHECKOUT_SERVICE_ADDR
+      - CURRENCY_SERVICE_ADDR
+      - EMAIL_SERVICE_ADDR
+      - FRONTEND_ADDR
+      - PAYMENT_SERVICE_ADDR
+      - PRODUCT_CATALOG_SERVICE_ADDR
+      - RECOMMENDATION_SERVICE_ADDR
+      - SHIPPING_SERVICE_ADDR
+      - KAFKA_SERVICE_ADDR
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    volumes:
+      - ./test/tracetesting:/app/test/tracetesting
+      - ./pb:/app/pb
+    depends_on:
+      tracetest-server:
+        condition: service_healthy
+      # adding demo services as dependencies
+      accountingservice:
+        condition: service_started
+      adservice:
+        condition: service_started
+      cartservice:
+        condition: service_started
+      checkoutservice:
+        condition: service_started
+      currencyservice:
+        condition: service_started
+      emailservice:
+        condition: service_started
+      frauddetectionservice:
+        condition: service_started
+      frontend:
+        condition: service_started
+      paymentservice:
+        condition: service_started
+      productcatalogservice:
+        condition: service_started
+      quoteservice:
+        condition: service_started
+      recommendationservice:
+        condition: service_started
+      shippingservice:
+        condition: service_started
+      flagd:
+        condition: service_started
+      kafka:
+        condition: service_started
+
+  tracetest-server:
+    image: ${TRACETEST_IMAGE}
+    platform: linux/amd64
+    container_name: tracetest-server
+    volumes:
+      - type: bind
+        source: ./test/tracetesting/tracetest-config.yaml
+        target: /app/tracetest.yaml
+      - type: bind
+        source: ./test/tracetesting/tracetest-provision.yaml
+        target: /app/provision.yaml
+    command: --provisioning-file /app/provision.yaml
+    ports:
+      - 11633:11633
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    depends_on:
+      tracetest-postgres:
+        condition: service_healthy
+      otelcol:
+        condition: service_started
+    healthcheck:
+      test: [ "CMD", "wget", "--spider", "localhost:11633" ]
+      interval: 1s
+      timeout: 3s
+      retries: 60
+
+  tracetest-postgres:
+    image: ${POSTGRES_IMAGE}
+    container_name: tracetest-postgres
+    environment:
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_USER: postgres
+    healthcheck:
+      test: pg_isready -U "$$POSTGRES_USER" -d "$$POSTGRES_DB"
+      interval: 1s
+      timeout: 5s
+      retries: 60
+    ports:
+      - 5432
