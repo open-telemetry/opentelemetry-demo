@@ -3,6 +3,7 @@ defmodule ChatService.ChatContext.Message do
   use Ecto.Schema
   import Ecto.Changeset
 
+  @primary_key false
   schema "messages" do
     field :topic, :string
     field :name, :string
