@@ -144,23 +144,10 @@ start-minimal:
 	@echo "Go to http://localhost:8080/loadgen/ for the Load Generator UI."
 	@echo "Go to https://opentelemetry.io/docs/demo/feature-flags/ to learn how to change feature flags."
 
-# Observabilty-Driven Development (ODD)
-.PHONY: start-odd
-start-odd:
-	$(DOCKER_COMPOSE_CMD) $(DOCKER_COMPOSE_ENV) --profile odd up --force-recreate --remove-orphans --detach
-	@echo ""
-	@echo "OpenTelemetry Demo is running."
-	@echo "Go to http://localhost:8080 for the demo UI."
-	@echo "Go to http://localhost:8080/jaeger/ui for the Jaeger UI."
-	@echo "Go to http://localhost:8080/grafana/ for the Grafana UI."
-	@echo "Go to http://localhost:8080/loadgen/ for the Load Generator UI."
-	@echo "Go to http://localhost:11633/ for the Tracetest Web UI."
-	@echo "Go to https://opentelemetry.io/docs/demo/feature-flags/ to learn how to change feature flags."
-
 .PHONY: stop
 stop:
 	$(DOCKER_COMPOSE_CMD) down --remove-orphans --volumes
-	$(DOCKER_COMPOSE_CMD) -f docker-compose-tests.yml --profile tests down --remove-orphans --volumes
+	$(DOCKER_COMPOSE_CMD) -f docker-compose-tests.yml down --remove-orphans --volumes
 	@echo ""
 	@echo "OpenTelemetry Demo is stopped."
 

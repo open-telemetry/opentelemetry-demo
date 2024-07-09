@@ -2,6 +2,7 @@
 // SPDX-License-Identifier: Apache-2.0
 using System.Diagnostics;
 using System.Threading.Tasks;
+using System;
 using Grpc.Core;
 using OpenTelemetry.Trace;
 using cartservice.cartstore;
@@ -13,6 +14,7 @@ namespace cartservice.services;
 public class CartService : Oteldemo.CartService.CartServiceBase
 {
     private static readonly Empty Empty = new();
+    private readonly Random random = new Random();
     private readonly ICartStore _badCartStore;
     private readonly ICartStore _cartStore;
     private readonly IFeatureClient _featureFlagHelper;
@@ -60,7 +62,8 @@ public class CartService : Oteldemo.CartService.CartServiceBase
 
         try
         {
-            if (await _featureFlagHelper.GetBooleanValue("cartServiceFailure", false))
+            // Throw 1/10 of the time to simulate a failure when the feature flag is enabled
+            if (await _featureFlagHelper.GetBooleanValue("cartServiceFailure", false) && random.Next(10) == 0)
             {
                 await _badCartStore.EmptyCartAsync(request.UserId);
             }
