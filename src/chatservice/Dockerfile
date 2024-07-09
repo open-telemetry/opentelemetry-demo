@@ -36,32 +36,29 @@ RUN mix local.rebar --force --verbose
 ENV MIX_ENV="prod"
 
 # install mix dependencies
-COPY mix.exs mix.lock ./
+COPY ./src/chatservice/mix.exs ./src/chatservice/mix.lock ./
 RUN mix deps.get --only $MIX_ENV
 RUN mkdir config
 
 # copy compile-time config files before we compile dependencies
 # to ensure any relevant config change will trigger the dependencies
 # to be re-compiled.
-COPY config/config.exs config/${MIX_ENV}.exs config/
+COPY ./src/chatservice/config/config.exs ./src/chatservice/config/${MIX_ENV}.exs config/
 RUN mix deps.compile
 
-COPY priv priv
+COPY ./src/chatservice/priv priv
 
-COPY lib lib
+COPY ./src/chatservice/lib lib
 
-COPY assets assets
-
-# compile assets
-RUN mix assets.deploy
+COPY ./src/chatservice/assets assets
 
 # Compile the release
 RUN mix compile
 
 # Changes to config/runtime.exs don't require recompiling the code
-COPY config/runtime.exs config/
+COPY ./src/chatservice/config/runtime.exs config/
 
-COPY rel rel
+COPY ./src/chatservice/rel rel
 RUN mix release
 
 # start a new build stage so that the final image will only contain
