@@ -49,6 +49,8 @@ static_resources:
                           route: { cluster: imageprovider, prefix_rewrite: "/" }
                         - match: { prefix: "/flagservice/" }
                           route: { cluster: flagservice, prefix_rewrite: "/", timeout: 0s }
+                        - match: { prefix: "/chat" }
+                          route: { cluster: chat, prefix_rewrite: "/" }
                         - match: { prefix: "/" }
                           route: { cluster: frontend }
                 http_filters:
@@ -65,6 +67,18 @@ static_resources:
                       "@type": type.googleapis.com/envoy.extensions.filters.http.router.v3.Router
 
   clusters:
+    - name: chat
+      type: STRICT_DNS
+      lb_policy: ROUND_ROBIN
+      load_assignment:
+        cluster_name: chat
+        endpoints:
+          - lb_endpoints:
+              - endpoint:
+                  address:
+                    socket_address:
+                      address: ${CHAT_SERVICE_HOST}
+                      port_value: ${CHAT_SERVICE_PORT}
     - name: opentelemetry_collector_grpc
       type: STRICT_DNS
       lb_policy: ROUND_ROBIN

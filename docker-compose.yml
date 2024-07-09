@@ -117,18 +117,18 @@ services:
     build:
       context: ./
       dockerfile: ${CHAT_SERVICE_DOCKERFILE}
-      # cache_from:
-      #   - ${IMAGE_NAME}:${IMAGE_VERSION}-chatservice
+      cache_from:
+        - ${IMAGE_NAME}:${IMAGE_VERSION}-chatservice
     deploy:
       resources:
         limits:
           memory: 360M
     restart: unless-stopped
     ports:
-      - "${CHAT_SERVICE_PORT}:${CHAT_SERVICE_PORT}"
+      - "${CHAT_SERVICE_PORT}"
     environment:
       - CHAT_SERVICE_PORT
-      - OTEL_EXPORTER_OTLP_ENDPOINT
+      - OTEL_EXPORTER_OTLP_ENDPOINT=http://${OTEL_COLLECTOR_HOST}:${OTEL_COLLECTOR_PORT_HTTP}
       - OTEL_RESOURCE_ATTRIBUTES
       - OTEL_SERVICE_NAME=chatservice
       - DATABASE_URL=ecto://chat:chat@chat-db:5432/chats
@@ -350,23 +350,25 @@ services:
       - "${ENVOY_PORT}:${ENVOY_PORT}"
       - 10000:10000
     environment:
-      - FRONTEND_PORT
-      - FRONTEND_HOST
-      - LOCUST_WEB_HOST
-      - LOCUST_WEB_PORT
-      - GRAFANA_SERVICE_PORT
-      - GRAFANA_SERVICE_HOST
-      - JAEGER_SERVICE_PORT
-      - JAEGER_SERVICE_HOST
-      - OTEL_COLLECTOR_HOST
-      - IMAGE_PROVIDER_HOST
-      - IMAGE_PROVIDER_PORT
-      - OTEL_COLLECTOR_PORT_GRPC
-      - OTEL_COLLECTOR_PORT_HTTP
-      - OTEL_RESOURCE_ATTRIBUTES
+      - CHAT_SERVICE_HOST
+      - CHAT_SERVICE_PORT
       - ENVOY_PORT
       - FLAGD_HOST
       - FLAGD_PORT
+      - FRONTEND_HOST
+      - FRONTEND_PORT
+      - GRAFANA_SERVICE_HOST
+      - GRAFANA_SERVICE_PORT
+      - IMAGE_PROVIDER_HOST
+      - IMAGE_PROVIDER_PORT
+      - JAEGER_SERVICE_HOST
+      - JAEGER_SERVICE_PORT
+      - LOCUST_WEB_HOST
+      - LOCUST_WEB_PORT
+      - OTEL_COLLECTOR_HOST
+      - OTEL_COLLECTOR_PORT_GRPC
+      - OTEL_COLLECTOR_PORT_HTTP
+      - OTEL_RESOURCE_ATTRIBUTES
     depends_on:
       frontend:
         condition: service_started
@@ -640,7 +642,7 @@ services:
     volumes:
       - ./src/chat_postgres/10-chat_schema.sql:/docker-entrypoint-initdb.d/10-chat_schema.sql
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -d ffs -U ffs"]
+      test: ["CMD-SHELL", "pg_isready -d chats -U chat"]
       interval: 10s
       timeout: 5s
       retries: 5
