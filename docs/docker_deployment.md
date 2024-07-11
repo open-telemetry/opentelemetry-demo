@@ -44,7 +44,6 @@ Once the images are built and containers are started you can access:
 
 - Webstore: <http://localhost:8080/>
 - Grafana: <http://localhost:8080/grafana/>
-- Feature Flags UI: <http://localhost:8080/feature/>
 - Load Generator UI: <http://localhost:8080/loadgen/>
 - Jaeger UI: <http://localhost:8080/jaeger/ui/>
 
@@ -72,9 +71,9 @@ variables.
 ```yaml
 exporters:
   otlp/newrelic:
-    endpoint: ${NEWRELIC_OTLP_ENDPOINT}
+    endpoint: ${NEW_RELIC_OTLP_ENDPOINT}
     headers:
-      api-key: ${NEWRELIC_LICENSE_KEY}
+      api-key: ${NEW_RELIC_LICENSE_KEY}
 ```
 
 - Your New Relic exporter above is also already added into your pipeline:
@@ -88,23 +87,23 @@ service:
       exporters: [otlp/newrelic]
 ```
 
-To define your endpoint and your license key, open the file [.env](../.env).
+To define your endpoint and your license key, open the file [.env.override](../.env.override).
 
 - Down below the file you will see the New Relic specific variables. Configure
 them according to the region which your account is in.
 
-- You can directly copy/paste your license key to `NEWRELIC_LICENSE_KEY` or
+- You can directly copy/paste your license key to `NEW_RELIC_LICENSE_KEY` or
 define it in your terminal.
 
 ```yaml
 ### New Relic
 # Select corresponding OTLP endpoint depending where your account is.
-NEWRELIC_OTLP_ENDPOINT_US=https://otlp.nr-data.net:4317
-NEWRELIC_OTLP_ENDPOINT_EU=https://otlp.eu01.nr-data.net:4317
-NEWRELIC_OTLP_ENDPOINT=${NEWRELIC_OTLP_ENDPOINT_US}
+NEW_RELIC_OTLP_ENDPOINT_US=https://otlp.nr-data.net:4317
+NEW_RELIC_OTLP_ENDPOINT_EU=https://otlp.eu01.nr-data.net:4317
+NEW_RELIC_OTLP_ENDPOINT=${NEW_RELIC_OTLP_ENDPOINT_US}
 
 # Define license key as environment variable
-NEWRELIC_LICENSE_KEY=${NEWRELIC_LICENSE_KEY}
+NEW_RELIC_LICENSE_KEY=${NEW_RELIC_LICENSE_KEY}
 ```
 
 After updating the `otelcol-config-extras.yml` and `env` files, start the demo

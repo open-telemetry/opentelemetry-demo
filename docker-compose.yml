@@ -706,8 +706,8 @@ services:
     logging: *logging
     environment:
       - ENVOY_PORT
-      - NEWRELIC_OTLP_ENDPOINT=${NEWRELIC_OTLP_ENDPOINT}
-      - NEWRELIC_LICENSE_KEY=${NEWRELIC_LICENSE_KEY}
+      - NEW_RELIC_OTLP_ENDPOINT=${NEW_RELIC_OTLP_ENDPOINT}
+      - NEW_RELIC_LICENSE_KEY=${NEW_RELIC_LICENSE_KEY}
 
   # Prometheus
   prometheus:
