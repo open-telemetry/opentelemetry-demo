@@ -100,5 +100,38 @@
       "matchPackageNames": ["eclipse-temurin"],
       "enabled": false
     }
+  ],
+
+  "regexManagers": [
+    {
+      // Parse image version from .env file.
+      "fileMatch": [
+        ".env$"
+      ],
+      "datasourceTemplate": "docker",
+      "matchStrings": [
+        "IMAGE=(?<depName>.+):(?<currentValue>.+)"
+      ]
+    },
+    {
+      "fileMatch": [
+        "test/tracetesting/Dockerfile$"
+      ],
+      "datasourceTemplate": "docker",
+      "depNameTemplate": "kubeshop/tracetest",
+      "matchStrings": [
+        "IMAGE_VERSION=(?<currentValue>.+)"
+      ]
+    },
+    {
+      "fileMatch": [
+        "src/grafana/provisioning/datasources/opensearch.yaml$"
+      ],
+      "datasourceTemplate": "docker",
+      "depNameTemplate": "opensearchproject/opensearch",
+      "matchStrings": [
+        "version: (?<currentValue>.+)"
+      ]
+    }
   ]
 }
