@@ -44,7 +44,7 @@ service:
     prometheus.io/scrape: "true"
     fluentbit.io/exclude: "true"
   labels:
-    {}
+    app.kubernetes.io/name: redis
     # prometheus.io/path: /metrics
     # prometheus.io/port: "9121"
     # prometheus.io/scrape: "true"

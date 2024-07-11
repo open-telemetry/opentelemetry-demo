@@ -47,7 +47,8 @@ extraArgs: []
 service:
   type: ClusterIP
   port: 9308
-  labels: {}
+  labels:
+    app.kubernetes.io/name: kafka
   annotations:
     prometheus.io/path: /metrics
     prometheus.io/port: "9308"
