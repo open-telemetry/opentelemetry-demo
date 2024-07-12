@@ -1,0 +1,13 @@
+components:
+  recommendationService:
+    imageOverride:
+      repository: newrelic/otel-demo
+      tag: "1.9.0-recommendationservice-nr"
+    env:
+      - name: NEW_RELIC_APP_NAME
+        value: "recommendationservice"
+      - name: NEW_RELIC_LICENSE_KEY
+        valueFrom:
+          secretKeyRef:
+            name: newrelic-license-key
+            key: license-key
