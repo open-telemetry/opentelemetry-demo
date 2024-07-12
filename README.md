@@ -5,8 +5,8 @@ This app is a microservice-based distributed system intended to illustrate the
 implementation of OpenTelemetry in a near real-world environment. To view the
 original repo README, scroll down or click [this link](https://github.com/newrelic/opentelemetry-demo/tree/main?tab=readme-ov-file#-opentelemetry-demo).
 
-After you follow our [quick start instructions]() to deploy the app, check out
-[this section]() on how to navigate your data in your New Relic account! 
+After you follow our [quick start instructions](https://github.com/newrelic/opentelemetry-demo?tab=readme-ov-file#quick-start-with-new-relic) 
+to deploy the app, check out [how to navigate the OTLP data in your New Relic account](https://github.com/newrelic/opentelemetry-demo?tab=readme-ov-file#navigate-your-otlp-data-in-new-relic)! 
 
 ### Modifications
 Please note the following modifications to our fork:
