@@ -1,0 +1,38 @@
+name: Helm Update
+
+on:
+  push:
+    paths:
+      - 'helm/values.yaml'
+
+jobs:
+  helm-update:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v2
+
+    - name: Configure AWS credentials
+      uses: aws-actions/configure-aws-credentials@v1
+      with:
+        aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+        aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        aws-region: ${{ secrets.AWS_REGION }}
+
+    - name: Install kubectl
+      run: |
+        curl -o kubectl https://amazon-eks.s3.us-west-2.amazonaws.com/1.21.0/2021-07-05/bin/linux/amd64/kubectl
+        chmod +x ./kubectl
+        sudo mv ./kubectl /usr/local/bin/
+
+    - name: Install Helm
+      run: |
+        curl https://raw.githubusercontent.com/helm/helm/master/scripts/get-helm-3 | bash
+
+    - name: Update kubeconfig
+      run: |
+        aws eks update-kubeconfig --name <cluster_name> --region ${{ secrets.AWS_REGION }}
+
+    - name: Run Helm update
+      run: helm upgrade --install newrelic-otel open-telemetry/opentelemetry-demo --values ./helm/values.yaml

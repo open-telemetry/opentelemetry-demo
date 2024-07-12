@@ -70,6 +70,9 @@ serviceAccount:
   name: ""
 
 components:
+  # configuring load balancer
+  frontendProxy:
+    serviceType: LoadBalancer
   ## Demo Components are named objects (services) with several properties
   # demoService:
   ## Enable the component (service)
@@ -295,7 +298,7 @@ components:
         value: "{{ .Chart.AppVersion }}"
     resources:
       limits:
-        memory: 20Mi
+        memory: 25Mi
 
   emailService:
     enabled: true
@@ -428,6 +431,8 @@ components:
       runAsUser: 101  # envoy
       runAsGroup: 101
       runAsNonRoot: true
+    service:
+      type: LoadBalancer
 
   imageprovider:
     enabled: true
