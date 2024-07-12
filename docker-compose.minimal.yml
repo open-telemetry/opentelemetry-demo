@@ -24,7 +24,7 @@ services:
     container_name: ad-service
     build:
       context: ./
-      dockerfile: ./src/adservice/Dockerfile
+      dockerfile: ${AD_SERVICE_DOCKERFILE}
       cache_from:
         - ${IMAGE_NAME}:${IMAGE_VERSION}-adservice
     deploy:
@@ -53,7 +53,7 @@ services:
     container_name: cart-service
     build:
       context: ./
-      dockerfile: ./src/cartservice/src/Dockerfile
+      dockerfile: ${CART_SERVICE_DOCKERFILE}
       cache_from:
         - ${IMAGE_NAME}:${IMAGE_VERSION}-cartservice
     deploy:
@@ -66,13 +66,13 @@ services:
     environment:
       - CART_SERVICE_PORT
       - FLAGD_HOST
-      - REDIS_ADDR
+      - VALKEY_ADDR
       - OTEL_EXPORTER_OTLP_ENDPOINT
       - OTEL_RESOURCE_ATTRIBUTES
       - OTEL_SERVICE_NAME=cartservice
       - ASPNETCORE_URLS=http://*:${CART_SERVICE_PORT}
     depends_on:
-      redis-cart:
+      valkey-cart:
         condition: service_started
       otelcol:
         condition: service_started
@@ -84,7 +84,7 @@ services:
     container_name: checkout-service
     build:
       context: ./
-      dockerfile: ./src/checkoutservice/Dockerfile
+      dockerfile: ${CHECKOUT_SERVICE_DOCKERFILE}
       cache_from:
         - ${IMAGE_NAME}:${IMAGE_VERSION}-checkoutservice
     deploy:
@@ -95,11 +95,11 @@ services:
     ports:
       - "${CHECKOUT_SERVICE_PORT}"
     environment:
-      - FLAGD_HOST
       - CHECKOUT_SERVICE_PORT
       - CART_SERVICE_ADDR
       - CURRENCY_SERVICE_ADDR
       - EMAIL_SERVICE_ADDR
+      - FLAGD_HOST
       - PAYMENT_SERVICE_ADDR
       - PRODUCT_CATALOG_SERVICE_ADDR
       - SHIPPING_SERVICE_ADDR
@@ -130,7 +130,7 @@ services:
     container_name: currency-service
     build:
       context: ./
-      dockerfile: ./src/currencyservice/Dockerfile
+      dockerfile: ${CURRENCY_SERVICE_DOCKERFILE}
       cache_from:
         - ${IMAGE_NAME}:${IMAGE_VERSION}-currencyservice
     deploy:
@@ -182,7 +182,7 @@ services:
     container_name: frontend
     build:
       context: ./
-      dockerfile: ./src/frontend/Dockerfile
+      dockerfile: ${FRONTEND_DOCKERFILE}
       cache_from:
         - ${IMAGE_NAME}:${IMAGE_VERSION}-frontend
     deploy:
@@ -209,6 +209,7 @@ services:
       - PUBLIC_OTEL_EXPORTER_OTLP_TRACES_ENDPOINT
       - OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE
       - WEB_OTEL_SERVICE_NAME=frontend-web
+      - OTEL_COLLECTOR_HOST
       - FLAGD_HOST
       - FLAGD_PORT
     depends_on:
@@ -240,7 +241,7 @@ services:
     container_name: frontend-proxy
     build:
       context: ./
-      dockerfile: src/frontendproxy/Dockerfile
+      dockerfile: ${FRONTEND_PROXY_DOCKERFILE}
     deploy:
       resources:
         limits:
@@ -252,21 +253,21 @@ services:
     environment:
       - FRONTEND_PORT
       - FRONTEND_HOST
-      - FEATURE_FLAG_SERVICE_PORT
-      - FEATURE_FLAG_SERVICE_HOST
       - LOCUST_WEB_HOST
       - LOCUST_WEB_PORT
       - GRAFANA_SERVICE_PORT
       - GRAFANA_SERVICE_HOST
       - JAEGER_SERVICE_PORT
       - JAEGER_SERVICE_HOST
+      - OTEL_COLLECTOR_HOST
       - IMAGE_PROVIDER_HOST
       - IMAGE_PROVIDER_PORT
-      - OTEL_COLLECTOR_HOST
       - OTEL_COLLECTOR_PORT_GRPC
       - OTEL_COLLECTOR_PORT_HTTP
       - OTEL_RESOURCE_ATTRIBUTES
       - ENVOY_PORT
+      - FLAGD_HOST
+      - FLAGD_PORT
     depends_on:
       frontend:
         condition: service_started
@@ -283,7 +284,7 @@ services:
     container_name: imageprovider
     build:
       context: ./
-      dockerfile: ./src/imageprovider/Dockerfile
+      dockerfile: ${IMAGE_PROVIDER_DOCKERFILE}
       cache_from:
         - ${IMAGE_NAME}:${IMAGE_VERSION}-imageprovider
     deploy:
@@ -310,7 +311,7 @@ services:
     container_name: load-generator
     build:
       context: ./
-      dockerfile: ./src/loadgenerator/Dockerfile
+      dockerfile: ${LOAD_GENERATOR_DOCKERFILE}
       cache_from:
         - ${IMAGE_NAME}:${IMAGE_VERSION}-loadgenerator
     deploy:
@@ -348,7 +349,7 @@ services:
     container_name: payment-service
     build:
       context: ./
-      dockerfile: ./src/paymentservice/Dockerfile
+      dockerfile: ${PAYMENT_SERVICE_DOCKERFILE}
       cache_from:
         - ${IMAGE_NAME}:${IMAGE_VERSION}-paymentservice
     deploy:
@@ -359,8 +360,8 @@ services:
     ports:
       - "${PAYMENT_SERVICE_PORT}"
     environment:
-      - PAYMENT_SERVICE_PORT
       - FLAGD_HOST
+      - PAYMENT_SERVICE_PORT
       - OTEL_EXPORTER_OTLP_ENDPOINT
       - OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE
       - OTEL_RESOURCE_ATTRIBUTES
@@ -376,7 +377,7 @@ services:
     container_name: product-catalog-service
     build:
       context: ./
-      dockerfile: ./src/productcatalogservice/Dockerfile
+      dockerfile: ${PRODUCT_CATALOG_DOCKERFILE}
       cache_from:
         - ${IMAGE_NAME}:${IMAGE_VERSION}-productcatalogservice
     deploy:
@@ -387,8 +388,8 @@ services:
     ports:
       - "${PRODUCT_CATALOG_SERVICE_PORT}"
     environment:
-      - PRODUCT_CATALOG_SERVICE_PORT
       - FLAGD_HOST
+      - PRODUCT_CATALOG_SERVICE_PORT
       - OTEL_EXPORTER_OTLP_ENDPOINT
       - OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE
       - OTEL_RESOURCE_ATTRIBUTES
@@ -404,7 +405,7 @@ services:
     container_name: quote-service
     build:
       context: ./
-      dockerfile: ./src/quoteservice/Dockerfile
+      dockerfile: ${QUOTE_SERVICE_DOCKERFILE}
       cache_from:
         - ${IMAGE_NAME}:${IMAGE_VERSION}-quoteservice
     deploy:
@@ -432,7 +433,7 @@ services:
     container_name: recommendation-service
     build:
       context: ./
-      dockerfile: ./src/recommendationservice/Dockerfile
+      dockerfile: ${RECOMMENDATION_SERVICE_DOCKERFILE}
       cache_from:
         - ${IMAGE_NAME}:${IMAGE_VERSION}-recommendationservice
     deploy:
@@ -443,8 +444,8 @@ services:
     ports:
       - "${RECOMMENDATION_SERVICE_PORT}"
     environment:
-      - RECOMMENDATION_SERVICE_PORT
       - FLAGD_HOST
+      - RECOMMENDATION_SERVICE_PORT
       - PRODUCT_CATALOG_SERVICE_ADDR
       - OTEL_PYTHON_LOG_CORRELATION=true
       - OTEL_EXPORTER_OTLP_ENDPOINT
@@ -465,7 +466,7 @@ services:
     container_name: shipping-service
     build:
       context: ./
-      dockerfile: ./src/shippingservice/Dockerfile
+      dockerfile: ${SHIPPING_SERVICE_DOCKERFILE}
       cache_from:
         - ${IMAGE_NAME}:${IMAGE_VERSION}-shippingservice
     deploy:
@@ -489,18 +490,43 @@ services:
   # ******************
   # Dependent Services
   # ******************
-  # Redis used by Cart service
-  redis-cart:
-    image: ${REDIS_IMAGE}
-    container_name: redis-cart
-    user: redis
+  # Flagd, feature flagging service
+  flagd:
+    image: ${FLAGD_IMAGE}
+    container_name: flagd
+    deploy:
+      resources:
+        limits:
+          memory: 50M
+    environment:
+      - FLAGD_OTEL_COLLECTOR_URI=${OTEL_COLLECTOR_HOST}:${OTEL_COLLECTOR_PORT_GRPC}
+      - FLAGD_METRICS_EXPORTER=otel
+      - OTEL_RESOURCE_ATTRIBUTES
+      - OTEL_SERVICE_NAME=flagd
+    command: [
+      "start",
+      "--uri",
+      "file:./etc/flagd/demo.flagd.json"
+    ]
+    ports:
+      - 8013
+    volumes:
+      - ./src/flagd:/etc/flagd
+    logging:
+      *logging
+
+  # Valkey used by Cart service
+  valkey-cart:
+    image: ${VALKEY_IMAGE}
+    container_name: valkey-cart
+    user: valkey
     deploy:
       resources:
         limits:
           memory: 20M
     restart: unless-stopped
     ports:
-      - "${REDIS_PORT}"
+      - "${VALKEY_PORT}"
     logging: *logging
 
 
@@ -557,9 +583,11 @@ services:
           memory: 200M
     restart: unless-stopped
     command: [ "--config=/etc/otelcol-config.yml", "--config=/etc/otelcol-config-extras.yml" ]
+    user: 0:0
     volumes:
-      - ./src/otelcollector/otelcol-config.yml:/etc/otelcol-config.yml
-      - ./src/otelcollector/otelcol-config-extras.yml:/etc/otelcol-config-extras.yml
+      - ${DOCKER_SOCK}:/var/run/docker.sock:ro
+      - ${OTEL_COLLECTOR_CONFIG}:/etc/otelcol-config.yml
+      - ${OTEL_COLLECTOR_CONFIG_EXTRAS}:/etc/otelcol-config-extras.yml
     ports:
       - "${OTEL_COLLECTOR_PORT_GRPC}"
       - "${OTEL_COLLECTOR_PORT_HTTP}"

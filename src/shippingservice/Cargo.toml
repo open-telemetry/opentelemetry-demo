@@ -21,7 +21,7 @@ prost-types = "0.12"
 tokio = { version = "1.36", features = ["macros", "rt-multi-thread"] }
 opentelemetry = { version = "0.22", features = ["trace"] }
 opentelemetry_sdk = { version = "0.22", features = ["rt-tokio"]}
-opentelemetry-semantic-conventions = "0.14.0"
+opentelemetry-semantic-conventions = "0.15.0"
 opentelemetry-http = "0.11.0"
 opentelemetry-otlp = { version = "0.15.0", features = ["tonic"] }
 log = "0.4.21"

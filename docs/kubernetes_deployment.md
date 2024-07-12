@@ -24,73 +24,80 @@ architecture, such as kind/minikube running on Apple Silicon.**
 Add OpenTelemetry Helm repository:
 
 ```console
-helm repo add open-telemetry https://open-telemetry.github.io/opentelemetry-helm-charts
+helm repo add open-telemetry https://open-telemetry.github.io/opentelemetry-helm-charts && helm repo update open-telemetry
 ```
 
-Set a Kubernetes secret with your New Relic license key:
+Set your New Relic license key environment variable:
 
 ```console
-kubectl create secret generic newrelic-key-secret --from-literal=new_relic_license_key='<NEW_RELIC_LICENSE_KEY>'
+export NEW_RELIC_LICENSE_KEY='<NEW_RELIC_LICENSE_KEY>'
+```
+
+Set a Kubernetes secret containing your New Relic license key:
+
+```console
+kubectl create ns opentelemetry-demo && kubectl create secret generic newrelic-license-key --from-literal=license-key="$NEW_RELIC_LICENSE_KEY" -n opentelemetry-demo
 ```
 
 To install the chart with the release name newrelic-otel, run the following
 command and pass in the provided `values.yaml` file to customize the deployment:
 
 ```console
-helm upgrade --install newrelic-otel open-telemetry/opentelemetry-demo --values ./helm/values.yaml
+helm upgrade --install newrelic-otel open-telemetry/opentelemetry-demo --values ./helm/values.yaml -n opentelemetry-demo
 ```
 
-**Remark:** If your New Relic account is in Europe, install the chart as follows
-instead:
+**Remark:** If your New Relic account is in Europe, install the chart as follows instead:
 
 ```console
-helm upgrade --install newrelic-otel open-telemetry/opentelemetry-demo --values ./helm/values.yaml --set opentelemetry-collector.config.exporters.otlp.endpoint="otlp.eu01.nr-data.net:4317"
+helm upgrade --install newrelic-otel open-telemetry/opentelemetry-demo --values ./helm/values.yaml --set opentelemetry-collector.config.exporters.otlp.endpoint="otlp.eu01.nr-data.net:4317" -n opentelemetry-demo
 ```
 
-## Install Prometheus Integrations (Optional)
+## (optional) New Relic Overrides
 
-You can install New Relic Prometheus integrations to gather data from the Kafka,
+Optionally, you can enable a version of the `recommendationService` that is instrumented with New Relic APM instead of OpenTelemetry.  New Relic APM instrumented services are interoperable with OpenTelemetry instrumented services as New Relic supports W3C trace context.
+
+```console
+helm upgrade --install newrelic-otel open-telemetry/opentelemetry-demo --values ./helm/values.yaml --values ./helm/recommendation_service_values.yaml -n opentelemetry-demo
+```
+
+## Install Prometheus Exporters (Optional)
+
+You can install the Prometheus Exporters for Kafka, Postgres, and Redis to expose Prometheus metrics for the Kafka,
 Postgres, and Redis components used by the demo application.
 
 Add the Prometheus Helm repository:
 
 ```console
-helm repo add prometheus-community https://prometheus-community.github.io/helm-charts
+helm repo add prometheus-community https://prometheus-community.github.io/helm-charts && helm repo update prometheus-community
 ```
 
 Install the Prometheus Kafka exporter:
 
 ```console
-helm upgrade --install prometheus-kafka-exporter prometheus-community/prometheus-kafka-exporter --values ./helm/prometheus-kafka-exporter/values.yaml
+helm upgrade --install prometheus-kafka-exporter prometheus-community/prometheus-kafka-exporter --values ./helm/prometheus-kafka-exporter/values.yaml -n opentelemetry-demo
 ```
 
 Install the Prometheus Postgres exporter:
 
 ```console
-helm upgrade --install prometheus-postgres-exporter prometheus-community/prometheus-postgres-exporter --values ./helm/prometheus-postgres-exporter/values.yaml
+helm upgrade --install prometheus-postgres-exporter prometheus-community/prometheus-postgres-exporter --values ./helm/prometheus-postgres-exporter/values.yaml -n opentelemetry-demo
 ```
 
 Install the Prometheus Redis exporter:
 
 ```console
-helm upgrade --install prometheus-redis-exporter prometheus-community/prometheus-redis-exporter --values ./helm/prometheus-redis-exporter/values.yaml
+helm upgrade --install prometheus-redis-exporter prometheus-community/prometheus-redis-exporter --values ./helm/prometheus-redis-exporter/values.yaml -n opentelemetry-demo
 ```
 
 ## Install Kubernetes Integration (Optional)
 
-You can install the New Relic Kubernetes integration to give you visibility into
+You can install the New Relic Kubernetes integration, which includes the Prometheus Agent, to give you visibility into
  the K8s cluster used to host the demo application.
-
-Create the newrelic namespace in your K8s cluster:
-
-```console
-kubectl create namespace newrelic
-```
 
 Add the New Relic Helm repository:
 
 ```console
-helm repo add newrelic https://helm-charts.newrelic.com
+helm repo add newrelic https://helm-charts.newrelic.com && helm repo update newrelic
 ```
 
 Install the New Relic Kubernetes integration (be sure to add your New Relic
@@ -101,24 +108,25 @@ Install the New Relic Kubernetes integration (be sure to add your New Relic
  --set global.licenseKey=<NEW_RELIC_LICENSE_KEY> \
  --set global.cluster=<K8S_CLUSTER_NAME> \
  --namespace=newrelic \
+ --create-namespace \
  --set newrelic-infrastructure.privileged=true \
  --set nri-metadata-injection.enable=true \
  --set kube-state-metrics.enabled=true \
  --set newrelic-logging.enabled=false \
  --set nri-kube-events.enabled=true \
  --set newrelic-prometheus-agent.enabled=true \
- --set newrelic-prometheus-agent.lowDataMode=true
+ --set newrelic-prometheus-agent.lowDataMode=true \
+ --set-json='newrelic-prometheus-agent.config.kubernetes.integrations_filter.app_values=["redis", "kafka", "postgres"]'
 ```
 
 ## Helm Chart Parameters
 
 Chart parameters are separated in 4 general sections:
 
-- Default - Used to specify defaults applied to all demo components
-- Components - Used to configure the individual components (microservices) for
+- `default` - Used to specify defaults applied to all demo components
+- `components` - Used to configure the individual components (microservices) for
 the demo
-- Observability - Used to enable/disable dependencies
-- Sub-charts - Configuration for all sub-charts
+- `opentelemetry-collector` - Used to configure the OpenTelemetry Collector
 
 ## New Relic Configurations
 
@@ -127,10 +135,11 @@ favor of the New Relic tool suite:
 
 | Parameter                          | Description                                   | Default |
 |------------------------------------|-----------------------------------------------|---------|
-| `observability.otelcol.enabled`    | Enables the OpenTelemetry Collector sub-chart | `true`  |
-| `observability.jaeger.enabled`     | Enables the Jaeger sub-chart                  | `false`  |
-| `observability.prometheus.enabled` | Enables the Prometheus sub-chart              | `false`  |
-| `observability.grafana.enabled`    | Enables the Grafana sub-chart                 | `false`  |
+| `opentelemetry-collector.enabled`  | Enables the OpenTelemetry Collector sub-chart | `true`  |
+| `jaeger.enabled`                   | Enables the Jaeger sub-chart                  | `false`  |
+| `prometheus.enabled`               | Enables the Prometheus sub-chart              | `false`  |
+| `grafana.enabled`                  | Enables the Grafana sub-chart                 | `false`  |
+| `opensearch.enabled`               | Enables the Opensearch sub-chart              | `false`  |
 
 ### OpenTelemetry Collector
 
@@ -275,11 +284,11 @@ kubectl port-forward svc/newrelic-otel-otelcol 4318:4318
 > may need to create separate terminal sessions for each use of
 > `kubectl port-forward`, and use CTRL-C to terminate the process when done.
 
-With the frontendproxy and Collector port-forward set up, you can access:
-
-- Webstore: <http://localhost:8080/>
-- Feature Flags UI: <http://localhost:8080/feature/>
-- Load Generator UI: <http://localhost:8080/loadgen/>
+The following services are available at these paths once the proxy is exposed:
+- Webstore             http://localhost:8080/
+- Grafana              http://localhost:8080/grafana/
+- Load Generator UI    http://localhost:8080/loadgen/
+- Jaeger UI            http://localhost:8080/jaeger/ui/
 
 ### Expose services using service type configurations
 
@@ -330,5 +339,4 @@ base path for the frontendproxy. Other demo components can be accessed at the
 following sub-paths:
 
 - Webstore: `/` (base)
-- Feature Flags UI: `/feature`
 - Load Generator UI: `/loadgen/` (must include trailing slash)

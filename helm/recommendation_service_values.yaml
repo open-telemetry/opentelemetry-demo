@@ -1,0 +1,28 @@
+components:
+  recommendationService:
+    imageOverride:
+      repository: newrelic/otel-demo
+      tag: "1.9.0-recommendationservice-nr"
+      pullPolicy: Always
+    env:
+      - name: RECOMMENDATION_SERVICE_PORT
+        value: "8080"
+      - name: PRODUCT_CATALOG_SERVICE_ADDR
+        value: '{{ include "otel-demo.name" . }}-productcatalogservice:8080'
+      - name: OTEL_PYTHON_LOG_CORRELATION
+        value: "true"
+      - name: PROTOCOL_BUFFERS_PYTHON_IMPLEMENTATION
+        value: python
+      - name: FLAGD_HOST
+        value: '{{ include "otel-demo.name" . }}-flagd'
+      - name: FLAGD_PORT
+        value: "8013"
+      - name: OTEL_EXPORTER_OTLP_ENDPOINT
+        value: http://$(OTEL_COLLECTOR_NAME):4317
+      - name: NEW_RELIC_APP_NAME
+        value: "recommendationservice"
+      - name: NEW_RELIC_LICENSE_KEY
+        valueFrom:
+          secretKeyRef:
+            name: newrelic-license-key
+            key: license-key

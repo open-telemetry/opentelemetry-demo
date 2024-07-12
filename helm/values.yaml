@@ -1,27 +1,17 @@
-# Copyright (c) 2022-present New Relic Corporation. All rights reserved.
-# SPDX-License-Identifier: Apache-2.0
-
 default:
-  # list of environment variables applied to all components
+  # List of environment variables applied to all components
   env:
-    - name: OTEL_COMPONENT_NAME
+    - name: OTEL_SERVICE_NAME
       valueFrom:
         fieldRef:
           apiVersion: v1
           fieldPath: "metadata.labels['app.kubernetes.io/component']"
-    - name: OTEL_SERVICE_NAME
-      value: $(OTEL_COMPONENT_NAME)-otel
     - name: OTEL_K8S_NAMESPACE
       valueFrom:
         fieldRef:
           apiVersion: v1
           fieldPath: metadata.namespace
     - name: OTEL_K8S_NODE_NAME
-      valueFrom:
-        fieldRef:
-          apiVersion: v1
-          fieldPath: spec.nodeName
-    - name: KUBE_NODE_NAME
       valueFrom:
         fieldRef:
           apiVersion: v1
@@ -36,20 +26,17 @@ default:
         fieldRef:
           apiVersion: v1
           fieldPath: metadata.uid
-    - name: HOST_IP
-      valueFrom:
-        fieldRef:
-          fieldPath: status.hostIP
-      # Set to HOST_IP for Daemonset mode.
     - name: OTEL_COLLECTOR_NAME
-      value: "$(HOST_IP)"
+      value: '{{ include "otel-demo.name" . }}-otelcol'
+    - name: OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE
+      value: delta
     - name: OTEL_RESOURCE_ATTRIBUTES
       value: >-
         service.name=$(OTEL_SERVICE_NAME),
+        service.namespace=opentelemetry-demo,
+        service.version={{ .Chart.AppVersion }}
         service.instance.id=$(OTEL_K8S_POD_NAME),
         k8s.pod.uid=$(OTEL_K8S_POD_UID),
-        service.namespace=opentelemetry-demo,
-        k8s.namespace.name=$(OTEL_K8S_NAMESPACE),
         k8s.node.name=$(OTEL_K8S_NODE_NAME),
         k8s.pod.name=$(OTEL_K8S_POD_NAME)
   # Allows overriding and additions to .Values.default.env
@@ -60,14 +47,19 @@ default:
     repository: ghcr.io/open-telemetry/demo
     # Overrides the image tag whose default is the chart appVersion.
     # The service's name will be applied to the end of this value.
-    tag: ""
+    tag: "1.11.0"
     pullPolicy: IfNotPresent
     pullSecrets: []
+  # Default # of replicas for all components
+  replicas: 1
+  # Default schedulingRules for all components
   schedulingRules:
     nodeSelector: {}
     affinity: {}
     tolerations: []
+  # Default securityContext for all components
   securityContext: {}
+
 serviceAccount:
   # Specifies whether a service account should be created
   create: true
@@ -76,175 +68,6 @@ serviceAccount:
   # The name of the service account to use.
   # If not set and create is true, a name is generated using the fullname template
   name: ""
-
-opentelemetry-collector:
-  enabled: true
-  nameOverride: otelcol
-  mode: daemonset
-  resources:
-    limits:
-      memory: 768Mi
-  service:
-    type: LoadBalancer
-  # Configuration for ports
-  ports:
-    otlp:
-      enabled: true
-    otlp-http:
-      enabled: true
-    jaeger-compact:
-      enabled: false
-    jaeger-thrift:
-      enabled: false
-    jaeger-grpc:
-      enabled: false
-    zipkin:
-      enabled: false
-    metrics:
-      enabled: false
-    prometheus:
-      enabled: false
-  podAnnotations:
-    prometheus.io/scrape: "true"
-    prometheus.io/port: "9464"
-    opentelemetry_community_demo: "true"
-  config:
-    extensions:
-      health_check: {}
-      zpages: {}
-    receivers:
-      hostmetrics:
-        collection_interval: 20s
-        scrapers:
-          cpu:
-            metrics:
-              system.cpu.utilization:
-                enabled: true
-          load:
-          memory:
-            metrics:
-              system.memory.utilization:
-                enabled: true
-          disk:
-          filesystem:
-            metrics:
-              system.filesystem.utilization:
-                enabled: true
-          network:
-          paging:
-            metrics:
-              system.paging.utilization:
-                enabled: true
-      otlp:
-        protocols:
-          http:
-            cors:
-              allowed_origins:
-                - "http://*"
-                - "https://*"
-
-    connectors:
-      spanmetrics: {}
-
-    exporters:
-      otlp:
-        endpoint: "otlp.nr-data.net:4317"
-        tls:
-          insecure: false
-        headers:
-          api-key: ${NEW_RELIC_LICENSE_KEY}
-
-    processors:
-      batch:
-        send_batch_size: 1000
-        send_batch_max_size: 1000
-      cumulativetodelta: {}
-      resource:
-        attributes:
-          - key: host.id
-            from_attribute: host.name
-            action: upsert
-          - key: k8s.cluster.name
-            value: otel-community-demo
-            action: insert
-      resource/collector:
-        attributes:
-          - key: service.instance.id
-            value: ${OTEL_K8S_POD_NAME}
-            action: upsert
-      resourcedetection:
-        detectors: [env, eks, ec2]
-      k8sattributes:
-        auth_type: "serviceAccount"
-        passthrough: false
-        filter:
-          node_from_env_var: KUBE_NODE_NAME
-        extract:
-          metadata:
-            - k8s.pod.name
-            - k8s.pod.uid
-            - k8s.deployment.name
-            - k8s.namespace.name
-            - k8s.node.name
-            - k8s.pod.start_time
-        pod_association:
-          - sources:
-              - from: resource_attribute
-                name: k8s.pod.uid
-      memory_limiter: null
-
-    service:
-      extensions: [health_check, zpages]
-      pipelines:
-        traces:
-          receivers: [otlp]
-          processors:
-            [memory_limiter, resource, resourcedetection, k8sattributes, batch]
-          exporters: [spanmetrics, otlp]
-        metrics:
-          receivers: [spanmetrics, hostmetrics, otlp]
-          processors:
-            [
-              memory_limiter,
-              resource,
-              resourcedetection,
-              k8sattributes,
-              cumulativetodelta,
-              batch,
-            ]
-          exporters: [otlp]
-        logs:
-          processors: [memory_limiter, k8sattributes, resource, resourcedetection, batch]
-          exporters: [otlp, debug]
-
-  clusterRole:
-    # Specifies whether a clusterRole should be created
-    create: true
-    # Annotations to add to the clusterRole
-    annotations: {}
-    # The name of the clusterRole to use.
-    # If not set and create is true, a name is generated using the fullname template
-    name: ""
-    # A set of rules as documented here : https://kubernetes.io/docs/reference/access-authn-authz/rbac/
-    rules:
-      - apiGroups: [""]
-        resources: ["pods", "nodes", "namespace"]
-        verbs: ["get", "watch", "list"]
-
-    clusterRoleBinding:
-      # Annotations to add to the clusterRoleBinding
-      annotations: {}
-      # The name of the clusterRoleBinding to use.
-      # If not set and create is true, a name is generated using the fullname template
-      name: ""
-  extraEnvs:
-    - name: NEW_RELIC_LICENSE_KEY
-      valueFrom:
-        secretKeyRef:
-          name: newrelic-key-secret
-          key: new_relic_license_key
-    - name: OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE
-      value: "delta"
 
 components:
   # configuring load balancer
@@ -360,10 +183,6 @@ components:
 
   accountingService:
     enabled: true
-    imageOverride:
-      repository: ghcr.io/open-telemetry/demo
-      tag: 1.9.0-accountingservice
-      pullPolicy: Always
     useDefault:
       env: true
     env:
@@ -373,19 +192,14 @@ components:
         value: http://$(OTEL_COLLECTOR_NAME):4317
     resources:
       limits:
-        memory: 20Mi
+        memory: 150Mi
     initContainers:
       - name: wait-for-kafka
         image: busybox:latest
         command: ['sh', '-c', 'until nc -z -v -w30 {{ include "otel-demo.name" . }}-kafka 9092; do echo waiting for kafka; sleep 2; done;']
 
-
   adService:
     enabled: true
-    imageOverride:
-      repository: ghcr.io/open-telemetry/demo
-      tag: 1.9.0-adservice
-      pullPolicy: Always
     useDefault:
       env: true
     service:
@@ -407,10 +221,6 @@ components:
 
   cartService:
     enabled: true
-    imageOverride:
-      repository: ghcr.io/open-telemetry/demo
-      tag: 1.9.0-cartservice
-      pullPolicy: Always
     useDefault:
       env: true
     service:
@@ -420,39 +230,24 @@ components:
         value: "8080"
       - name: ASPNETCORE_URLS
         value: http://*:$(CART_SERVICE_PORT)
+      - name: VALKEY_ADDR
+        value: '{{ include "otel-demo.name" . }}-valkey:6379'
       - name: FLAGD_HOST
         value: '{{ include "otel-demo.name" . }}-flagd'
       - name: FLAGD_PORT
         value: "8013"
-      - name: REDIS_ADDR
-        value: '{{ include "otel-demo.name" . }}-redis:6379'
       - name: OTEL_EXPORTER_OTLP_ENDPOINT
         value: http://$(OTEL_COLLECTOR_NAME):4317
-      - name: OTEL_EXPORTER_OTLP_LOGS_ENDPOINT
-        value: "https://otlp.nr-data.net:4317"
-      - name: OTEL_EXPORTER_OTLP_LOGS_HEADERS
-        value: "api-key=$NEW_RELIC_LICENSE_KEY"
-      - name: OTEL_LOGS_EXPORTER
-        value: otlp
-      - name: NEW_RELIC_LICENSE_KEY
-        valueFrom:
-          secretKeyRef:
-            name: newrelic-key-secret
-            key: new_relic_license_key
     resources:
       limits:
         memory: 160Mi
     initContainers:
-      - name: wait-for-redis
+      - name: wait-for-valkey
         image: busybox:latest
-        command: ['sh', '-c', 'until nc -z -v -w30 {{ include "otel-demo.name" . }}-redis 6379; do echo waiting for redis; sleep 2; done;']
+        command: ['sh', '-c', 'until nc -z -v -w30 {{ include "otel-demo.name" . }}-valkey 6379; do echo waiting for valkey; sleep 2; done;']
 
   checkoutService:
     enabled: true
-    imageOverride:
-      repository: ghcr.io/open-telemetry/demo
-      tag: 1.9.0-checkoutservice
-      pullPolicy: Always
     useDefault:
       env: true
     service:
@@ -460,10 +255,6 @@ components:
     env:
       - name: CHECKOUT_SERVICE_PORT
         value: "8080"
-      - name: FLAGD_HOST
-        value: '{{ include "otel-demo.name" . }}-flagd'
-      - name: FLAGD_PORT
-        value: "8013"
       - name: CART_SERVICE_ADDR
         value: '{{ include "otel-demo.name" . }}-cartservice:8080'
       - name: CURRENCY_SERVICE_ADDR
@@ -478,10 +269,12 @@ components:
         value: '{{ include "otel-demo.name" . }}-shippingservice:8080'
       - name: KAFKA_SERVICE_ADDR
         value: '{{ include "otel-demo.name" . }}-kafka:9092'
+      - name: FLAGD_HOST
+        value: '{{ include "otel-demo.name" . }}-flagd'
+      - name: FLAGD_PORT
+        value: "8013"
       - name: OTEL_EXPORTER_OTLP_ENDPOINT
         value: http://$(OTEL_COLLECTOR_NAME):4317
-      - name: OTEL_LOGS_EXPORTER
-        value: otlp
     resources:
       limits:
         memory: 20Mi
@@ -492,10 +285,6 @@ components:
 
   currencyService:
     enabled: true
-    imageOverride:
-      repository: ghcr.io/open-telemetry/demo
-      tag: 1.9.0-currencyservice
-      pullPolicy: Always
     useDefault:
       env: true
     service:
@@ -513,10 +302,6 @@ components:
 
   emailService:
     enabled: true
-    imageOverride:
-      repository: ghcr.io/open-telemetry/demo
-      tag: 1.9.0-emailservice
-      pullPolicy: Always
     useDefault:
       env: true
     service:
@@ -534,19 +319,15 @@ components:
 
   frauddetectionService:
     enabled: true
-    imageOverride:
-      repository: ghcr.io/open-telemetry/demo
-      tag: 1.9.0-frauddetectionservice
-      pullPolicy: Always
     useDefault:
       env: true
     env:
+      - name: KAFKA_SERVICE_ADDR
+        value: '{{ include "otel-demo.name" . }}-kafka:9092'
       - name: FLAGD_HOST
         value: '{{ include "otel-demo.name" . }}-flagd'
       - name: FLAGD_PORT
         value: "8013"
-      - name: KAFKA_SERVICE_ADDR
-        value: '{{ include "otel-demo.name" . }}-kafka:9092'
       - name: OTEL_EXPORTER_OTLP_ENDPOINT
         value: http://$(OTEL_COLLECTOR_NAME):4318
     resources:
@@ -559,10 +340,6 @@ components:
 
   frontend:
     enabled: true
-    imageOverride:
-      repository: ghcr.io/open-telemetry/demo
-      tag: 1.9.0-frontend
-      pullPolicy: Always
     useDefault:
       env: true
     service:
@@ -586,6 +363,10 @@ components:
         value: '{{ include "otel-demo.name" . }}-recommendationservice:8080'
       - name: SHIPPING_SERVICE_ADDR
         value: '{{ include "otel-demo.name" . }}-shippingservice:8080'
+      - name: FLAGD_HOST
+        value: '{{ include "otel-demo.name" . }}-flagd'
+      - name: FLAGD_PORT
+        value: "8013"
       - name: OTEL_COLLECTOR_HOST
         value: $(OTEL_COLLECTOR_NAME)
       - name: OTEL_EXPORTER_OTLP_ENDPOINT
@@ -593,66 +374,85 @@ components:
       - name: WEB_OTEL_SERVICE_NAME
         value: frontend-web
       - name: PUBLIC_OTEL_EXPORTER_OTLP_TRACES_ENDPOINT
-        value: http://localhost:8080/otlp-http/v1/traces # This expects users to use `kubectl port-forward ...`
+        value: http://localhost:8080/otlp-http/v1/traces             # This expects users to use `kubectl port-forward ...`
     resources:
       limits:
-        memory: 200Mi
+        memory: 250Mi
     securityContext:
-      runAsUser: 1001 # nextjs
+      runAsUser: 1001  # nextjs
       runAsGroup: 1001
       runAsNonRoot: true
 
   frontendProxy:
     enabled: true
-    imageOverride:
-      repository: ghcr.io/open-telemetry/demo
-      tag: 1.9.0-frontendproxy
-      pullPolicy: Always
     useDefault:
       env: true
     service:
       port: 8080
+      # # Uncomment if you want to expose the Frontend to the interwebz
+      # type: LoadBalancer
     env:
       - name: ENVOY_PORT
         value: "8080"
-      - name: FRONTEND_PORT
-        value: "8080"
+      - name: FLAGD_HOST
+        value: '{{ include "otel-demo.name" . }}-flagd'
+      - name: FLAGD_PORT
+        value: "8013"
       - name: FRONTEND_HOST
         value: '{{ include "otel-demo.name" . }}-frontend'
-      - name: LOCUST_WEB_PORT
-        value: "8089"
-      - name: LOCUST_WEB_HOST
-        value: '{{ include "otel-demo.name" . }}-loadgenerator'
-      - name: GRAFANA_SERVICE_PORT
-        value: "80"
+      - name: FRONTEND_PORT
+        value: "8080"
       - name: GRAFANA_SERVICE_HOST
         value: '{{ include "otel-demo.name" . }}-grafana'
-      - name: JAEGER_SERVICE_PORT
-        value: "16686"
+      - name: GRAFANA_SERVICE_PORT
+        value: "80"
+      - name: IMAGE_PROVIDER_HOST
+        value: '{{ include "otel-demo.name" . }}-imageprovider'
+      - name: IMAGE_PROVIDER_PORT
+        value: "8081"
       - name: JAEGER_SERVICE_HOST
         value: '{{ include "otel-demo.name" . }}-jaeger-query'
+      - name: JAEGER_SERVICE_PORT
+        value: "16686"
+      - name: LOCUST_WEB_HOST
+        value: '{{ include "otel-demo.name" . }}-loadgenerator'
+      - name: LOCUST_WEB_PORT
+        value: "8089"
+      - name: OTEL_COLLECTOR_HOST
+        value: $(OTEL_COLLECTOR_NAME)
       - name: OTEL_COLLECTOR_PORT_GRPC
         value: "4317"
       - name: OTEL_COLLECTOR_PORT_HTTP
         value: "4318"
-      - name: OTEL_COLLECTOR_HOST
-        value: $(OTEL_COLLECTOR_NAME)
     resources:
       limits:
         memory: 50Mi
     securityContext:
-      runAsUser: 101 # envoy
+      runAsUser: 101  # envoy
       runAsGroup: 101
       runAsNonRoot: true
     service:
       type: LoadBalancer
 
+  imageprovider:
+    enabled: true
+    useDefault:
+      env: true
+    service:
+      port: 8081
+    env:
+      - name: IMAGE_PROVIDER_PORT
+        value: "8081"
+      - name: OTEL_COLLECTOR_PORT_GRPC
+        value: "4317"
+      - name: OTEL_COLLECTOR_HOST
+        value: $(OTEL_COLLECTOR_NAME)
+    resources:
+      limits:
+        memory: 50Mi
+
   loadgenerator:
     enabled: true
-    imageOverride:
-      repository: ghcr.io/open-telemetry/demo
-      tag: 1.9.0-loadgenerator
-      pullPolicy: Always
     useDefault:
       env: true
     service:
@@ -674,22 +474,18 @@ components:
         value: "true"
       - name: PROTOCOL_BUFFERS_PYTHON_IMPLEMENTATION
         value: python
-      - name: OTEL_EXPORTER_OTLP_ENDPOINT
-        value: http://$(OTEL_COLLECTOR_NAME):4317
       - name: FLAGD_HOST
         value: '{{ include "otel-demo.name" . }}-flagd'
       - name: FLAGD_PORT
         value: "8013"
+      - name: OTEL_EXPORTER_OTLP_ENDPOINT
+        value: http://$(OTEL_COLLECTOR_NAME):4317
     resources:
       limits:
         memory: 1Gi
 
   paymentService:
     enabled: true
-    imageOverride:
-      repository: ghcr.io/open-telemetry/demo
-      tag: 1.9.0-paymentservice
-      pullPolicy: Always
     useDefault:
       env: true
     service:
@@ -707,16 +503,12 @@ components:
       limits:
         memory: 120Mi
     securityContext:
-      runAsUser: 1000 # node
+      runAsUser: 1000  # node
       runAsGroup: 1000
       runAsNonRoot: true
 
   productCatalogService:
     enabled: true
-    imageOverride:
-      repository: ghcr.io/open-telemetry/demo
-      tag: 1.9.0-productcatalogservice
-      pullPolicy: Always
     useDefault:
       env: true
     service:
@@ -736,10 +528,6 @@ components:
 
   quoteService:
     enabled: true
-    imageOverride:
-      repository: ghcr.io/open-telemetry/demo
-      tag: 1.9.0-quoteservice
-      pullPolicy: Always
     useDefault:
       env: true
     service:
@@ -755,16 +543,12 @@ components:
       limits:
         memory: 40Mi
     securityContext:
-      runAsUser: 33 # www-data
+      runAsUser: 33  # www-data
       runAsGroup: 33
       runAsNonRoot: true
 
   recommendationService:
     enabled: true
-    imageOverride:
-      repository: bschmitt769/otel-demo
-      tag: 1.9.0.1-recommendationservice-nr
-      pullPolicy: Always
     useDefault:
       env: true
     service:
@@ -774,33 +558,22 @@ components:
         value: "8080"
       - name: PRODUCT_CATALOG_SERVICE_ADDR
         value: '{{ include "otel-demo.name" . }}-productcatalogservice:8080'
-      - name: FLAGD_HOST
-        value: '{{ include "otel-demo.name" . }}-flagd'
-      - name: FLAGD_PORT
-        value: "8013"
       - name: OTEL_PYTHON_LOG_CORRELATION
         value: "true"
       - name: PROTOCOL_BUFFERS_PYTHON_IMPLEMENTATION
         value: python
+      - name: FLAGD_HOST
+        value: '{{ include "otel-demo.name" . }}-flagd'
+      - name: FLAGD_PORT
+        value: "8013"
       - name: OTEL_EXPORTER_OTLP_ENDPOINT
         value: http://$(OTEL_COLLECTOR_NAME):4317
-      - name: NEW_RELIC_APP_NAME
-        value: "recommendationservice"
-      - name: NEW_RELIC_LICENSE_KEY
-        valueFrom:
-          secretKeyRef:
-            name: newrelic-key-secret
-            key: new_relic_license_key
     resources:
       limits:
-        memory: 500Mi # This is high to enable supporting the recommendationCache feature flag use case
+        memory: 500Mi            # This is high to enable supporting the recommendationCache feature flag use case
 
   shippingService:
     enabled: true
-    imageOverride:
-      repository: ghcr.io/open-telemetry/demo
-      tag: 1.9.0-shippingservice
-      pullPolicy: Always
     useDefault:
       env: true
     service:
@@ -826,6 +599,11 @@ components:
     replicas: 1
     service:
       port: 8013
+    env:
+      - name: FLAGD_METRICS_EXPORTER
+        value: otel
+      - name: FLAGD_OTEL_COLLECTOR_URI
+        value: $(OTEL_COLLECTOR_NAME):4317
     resources:
       limits:
         memory: 50Mi
@@ -841,10 +619,6 @@ components:
 
   kafka:
     enabled: true
-    imageOverride:
-      repository: ghcr.io/open-telemetry/demo
-      tag: 1.9.0-kafka
-      pullPolicy: Always
     useDefault:
       env: true
     replicas: 1
@@ -864,28 +638,133 @@ components:
       limits:
         memory: 600Mi
     securityContext:
-      runAsUser: 1000 # appuser
+      runAsUser: 1000  # appuser
       runAsGroup: 1000
       runAsNonRoot: true
 
-  redis:
+  valkey:
     enabled: true
     useDefault:
       env: true
     imageOverride:
-      repository: "redis"
+      repository: "valkey/valkey"
       tag: "7.2-alpine"
     replicas: 1
     ports:
-      - name: redis
+      - name: valkey
         value: 6379
     resources:
       limits:
         memory: 20Mi
     securityContext:
-      runAsUser: 999 # redis
+      runAsUser: 999  # valkey
       runAsGroup: 1000
       runAsNonRoot: true
+
+opentelemetry-collector:
+  image:
+    repository: "otel/opentelemetry-collector-contrib"
+  enabled: true
+  nameOverride: otelcol
+  mode: deployment
+  presets:
+    kubernetesAttributes:
+      enabled: true
+  resources:
+    limits:
+      memory: 200Mi
+  service:
+    type: ClusterIP
+  ports:
+    metrics:
+      enabled: true
+    prometheus:
+      enabled: true
+      containerPort: 9464
+      servicePort: 9464
+      protocol: TCP
+  podAnnotations:
+    prometheus.io/scrape: "true"
+    prometheus.io/port: "9464"
+    opentelemetry_community_demo: "true"
+  config:
+    receivers:
+      otlp:
+        protocols:
+          http:
+            # Since this collector needs to receive data from the web, enable cors for all origins
+            # `allowed_origins` can be refined for your deployment domain
+            cors:
+              allowed_origins:
+                - "http://*"
+                - "https://*"
+      httpcheck/frontendproxy:
+        targets:
+          - endpoint: 'http://{{ include "otel-demo.name" . }}-frontendproxy:8080'
+      redis:
+        endpoint: '{{ include "otel-demo.name" . }}-valkey:6379'
+        collection_interval: 10s
+
+    exporters:
+      ## Create an exporter to Jaeger using the standard `otlp` export format
+      otlp:
+        endpoint: '{{ include "otel-demo.name" . }}-jaeger-collector:4317'
+        tls:
+          insecure: true
+      otlphttp/newrelic:
+        endpoint: "https://otlp.nr-data.net:4317"
+        tls:
+          insecure: false
+        headers:
+          api-key: ${NEW_RELIC_LICENSE_KEY}
+      # Create an exporter to Prometheus (metrics)
+      otlphttp/prometheus:
+        endpoint: 'http://{{ include "otel-demo.name" . }}-prometheus-server:9090/api/v1/otlp'
+        tls:
+          insecure: true
+      opensearch:
+        logs_index: otel
+        http:
+          endpoint: "http://otel-demo-opensearch:9200"
+          tls:
+            insecure: true
+
+    processors:
+      resourcedetection:
+        detectors: [env]
+      resource:
+        attributes:
+        - key: service.instance.id
+          from_attribute: k8s.pod.uid
+          action: insert
+
+    connectors:
+      spanmetrics: {}
+
+    service:
+      pipelines:
+        traces:
+          processors: [memory_limiter, resource, resourcedetection, batch]
+          exporters: [otlphttp/newrelic, debug, spanmetrics]
+          # exporters: [otlp, debug, spanmetrics]
+        metrics:
+          receivers: [httpcheck/frontendproxy, redis, otlp, spanmetrics]
+          processors: [memory_limiter, resource, resourcedetection, batch]
+          exporters: [otlphttp/newrelic, debug]
+          # exporters: [otlphttp/prometheus, debug]
+        logs:
+          processors: [memory_limiter, resource,resourcedetection, batch]
+          exporters: [otlphttp/newrelic, debug]
+          # exporters: [opensearch, debug]
+
+  extraEnvs:
+    - name: NEW_RELIC_LICENSE_KEY
+      valueFrom:
+        secretKeyRef:
+          name: newrelic-license-key
+          key: license-key
+    - name: OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE
+      value: "delta"
 
 jaeger:
   enabled: false
@@ -1032,7 +911,7 @@ grafana:
       memory: 150Mi
 
 opensearch:
-  enabled: true
+  enabled: false
   fullnameOverride: otel-demo-opensearch
   clusterName: demo-cluster
   nodeGroup: otel-demo

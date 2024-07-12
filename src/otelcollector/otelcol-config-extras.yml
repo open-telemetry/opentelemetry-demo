@@ -6,9 +6,9 @@
 
 exporters:
   otlp/newrelic:
-    endpoint: ${NEWRELIC_OTLP_ENDPOINT}
+    endpoint: ${NEW_RELIC_OTLP_ENDPOINT}
     headers:
-      api-key: ${NEWRELIC_LICENSE_KEY}
+      api-key: ${NEW_RELIC_LICENSE_KEY}
 
 service:
   pipelines:
@@ -17,6 +17,10 @@ service:
       processors: [batch]
       exporters: [otlp/newrelic]
     metrics:
+      receivers: [otlp]
+      processors: [batch]
+      exporters: [otlp/newrelic]
+    logs:
       receivers: [otlp]
       processors: [batch]
       exporters: [otlp/newrelic]
