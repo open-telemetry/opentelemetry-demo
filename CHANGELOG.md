@@ -9,6 +9,8 @@ the release.
 
 * [tests] run trace based tests concurrently
   ([#1659](https://github.com/open-telemetry/opentelemetry-demo/pull/1659))
+* [accountingservice] increase memory to 120MB
+  ([#1666](https://github.com/open-telemetry/opentelemetry-demo/pull/1666))
 
 ## 1.11.0
 
