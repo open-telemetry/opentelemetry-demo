@@ -46,11 +46,18 @@ command and pass in the provided `values.yaml` file to customize the deployment:
 helm upgrade --install newrelic-otel open-telemetry/opentelemetry-demo --values ./helm/values.yaml -n opentelemetry-demo
 ```
 
-**Remark:** If your New Relic account is in Europe, install the chart as follows
-instead:
+**Remark:** If your New Relic account is in Europe, install the chart as follows instead:
 
 ```console
 helm upgrade --install newrelic-otel open-telemetry/opentelemetry-demo --values ./helm/values.yaml --set opentelemetry-collector.config.exporters.otlp.endpoint="otlp.eu01.nr-data.net:4317" -n opentelemetry-demo
+```
+
+## (optional) New Relic Overrides
+
+Optionally, you can enable a version of the `recommendationService` that is instrumented with New Relic APM instead of OpenTelemetry.  New Relic APM instrumented services are interoperable with OpenTelemetry instrumented services as New Relic supports W3C trace context.
+
+```console
+helm upgrade --install newrelic-otel open-telemetry/opentelemetry-demo --values ./helm/values.yaml --values ./helm/recommendation_service_values.yaml -n opentelemetry-demo
 ```
 
 ## Install Prometheus Exporters (Optional)
