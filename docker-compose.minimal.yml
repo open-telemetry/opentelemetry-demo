@@ -596,6 +596,9 @@ services:
     logging: *logging
     environment:
       - ENVOY_PORT
+      - OTEL_COLLECTOR_HOST
+      - OTEL_COLLECTOR_PORT_GRPC
+      - OTEL_COLLECTOR_PORT_HTTP
 
   # Prometheus
   prometheus:
