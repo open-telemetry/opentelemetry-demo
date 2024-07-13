@@ -1,32 +1,25 @@
 # Copyright The OpenTelemetry Authors
 # SPDX-License-Identifier: Apache-2.0
 
-FROM --platform=${TARGETPLATFORM} mcr.microsoft.com/dotnet/aspnet:8.0 AS base
-USER app
-WORKDIR /app
-
-FROM --platform=${BUILDPLATFORM} mcr.microsoft.com/dotnet/sdk:8.0 AS build
+FROM --platform=${BUILDPLATFORM} mcr.microsoft.com/dotnet/sdk:8.0 AS builder
 ARG TARGETARCH
-ARG BUILD_CONFIGURATION=Release
-WORKDIR /src
-COPY ["/src/accountingservice/", "AccountingService/"]
-COPY ["/pb/demo.proto", "AccountingService/proto/"]
-RUN dotnet restore "./AccountingService/AccountingService.csproj" -r linux-musl-$TARGETARCH
-WORKDIR "/src/AccountingService"
 
-RUN dotnet build "./AccountingService.csproj" -r linux-musl-$TARGETARCH -c $BUILD_CONFIGURATION -o /app/build
+WORKDIR /usr/src/app/
 
-FROM build AS publish
-ARG BUILD_CONFIGURATION=Release
-RUN dotnet publish "./AccountingService.csproj" -r linux-musl-$TARGETARCH -c $BUILD_CONFIGURATION -o /app/publish /p:UseAppHost=false
+COPY ./src/accountingservice/ ./
+COPY ./pb/ ./proto/
 
-FROM base AS final
-WORKDIR /app
-COPY --from=publish /app/publish .
+RUN dotnet restore "./AccountingService.csproj" -r linux-musl-$TARGETARCH
 
-USER root
-RUN mkdir -p "/var/log/opentelemetry/dotnet"
-RUN chown app "/var/log/opentelemetry/dotnet"
-USER app
+RUN dotnet publish "./AccountingService.csproj" -r linux-musl-$TARGETARCH --no-restore -o /accountingservice
+
+# -----------------------------------------------------------------------------
+
+FROM --platform=${TARGETPLATFORM} mcr.microsoft.com/dotnet/aspnet:8.0
+
+WORKDIR /usr/src/app/
+COPY --from=builder /accountingservice/ ./
+
+ENV DOTNET_HOSTBUILDER__RELOADCONFIGONCHANGE=false
 
 ENTRYPOINT ["./instrument.sh", "dotnet", "AccountingService.dll"]
