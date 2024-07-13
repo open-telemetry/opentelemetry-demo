@@ -16,7 +16,9 @@ RUN if [ "${TARGETPLATFORM}" = "${BUILDPLATFORM}" ] ; then \
         rustup target add aarch64-unknown-linux-gnu && \
         rustup toolchain install stable-aarch64-unknown-linux-gnu; \
     elif [ "${TARGETPLATFORM}" = "linux/amd64" ] ; then \
-        apt-get update && apt-get install --no-install-recommends -y g++ libc6-dev libprotobuf-dev protobuf-compiler ca-certificates; \
+        apt-get update && apt-get install --no-install-recommends -y g++-x86-64-linux-gnu libc6-amd64-cross libprotobuf-dev protobuf-compiler ca-certificates && \
+        rustup target add x86_64-unknown-linux-gnu && \
+        rustup toolchain install stable-x86_64-unknown-linux-gnu; \
     else \
         echo "${TARGETPLATFORM} is not supported"; \
         exit 1; \
@@ -37,7 +39,11 @@ RUN if [ "${TARGETPLATFORM}" = "${BUILDPLATFORM}" ] ; then \
         cargo build -r --features="dockerproto" --target aarch64-unknown-linux-gnu && \
         cp /app/target/aarch64-unknown-linux-gnu/release/shippingservice /app/target/release/shippingservice; \
     elif [ "${TARGETPLATFORM}" = "linux/amd64" ] ; then \
-        cargo build -r --features="dockerproto"; \
+        env CARGO_TARGET_X86_64_UNKNOWN_LINUX_GNU_LINKER=x86_64-linux-gnu-gcc \
+            CC_x86_64_unknown_linux_gnu=x86_64-linux-gnu-gcc \
+            CXX_x86_64_unknown_linux_gnu=x86_64-linux-gnu-g++ \
+        cargo build -r --features="dockerproto" --target x86_64-unknown-linux-gnu && \
+        cp /app/target/x86_64-unknown-linux-gnu/release/shippingservice /app/target/release/shippingservice; \
     else \
         echo "${TARGETPLATFORM} is not supported"; \
         exit 1; \
