@@ -51,7 +51,7 @@ processors:
     error_mode: ignore
     trace_statements:
       - context: span
-        statements: 
+        statements:
           # could be removed when https://github.com/vercel/next.js/pull/64852 is fixed upstream
           - replace_pattern(name, "\\?.*", "")
           - replace_match(name, "GET /api/products/*", "GET /api/products/{productId}")
