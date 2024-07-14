@@ -1,5 +1,30 @@
 properties: []
 components:
+  - default:
+      type: "physical_node"
+      description: null
+      properties:
+        - cpu_count: 4
+        - ram_GiB: 16
+        - storage_GiB: 32
+      operations: [ ]
+      artifacts: [ ]
+  - default-operating-system:
+      type: "operating_system"
+      description: null
+      properties:
+        - name: "Ubuntu"
+        - version: "18.04"
+        - os_family: "Linux"
+      operations: [ ]
+      artifacts: [ ]
+  - default-container-runtime:
+      type: "container_runtime"
+      description: null
+      properties:
+        - name: "Kubernetes"
+      operations: [ ]
+      artifacts: [ ]
   - name: opentelemetry-demo-currencyservice
     type: opentelemetry-demo-currencyservice-type
     properties:
@@ -1285,7 +1310,170 @@ components:
       - type: docker_image
         name: "quay.io/prometheus/prometheus:v2.52.0"
         fileURI: "-"
-relations: []
+relations:
+  - default-operating-system_HostedOn_default:
+      type: "HostedOn"
+      description: null
+      source: "default-operating-system"
+      target: "default"
+      properties: [ ]
+      operations: [ ]
+  - default-container-runtime_HostedOn_default-operating-system:
+      type: "HostedOn"
+      description: null
+      source: "default-container-runtime"
+      target: "default-operating-system"
+      properties: [ ]
+      operations: [ ]
+  - opentelemetry-demo-accountingservice_HostedOn_default-container-runtime:
+      type: "HostedOn"
+      description: null
+      source: "opentelemetry-demo-accountingservice"
+      target: "default-container-runtime"
+      properties: [ ]
+      operations: [ ]
+  - opentelemetry-demo-adservice_HostedOn_default-container-runtime:
+      type: "HostedOn"
+      description: null
+      source: "opentelemetry-demo-adservice"
+      target: "default-container-runtime"
+      properties: [ ]
+      operations: [ ]
+  - opentelemetry-demo-cartservice_HostedOn_default-container-runtime:
+      type: "HostedOn"
+      description: null
+      source: "opentelemetry-demo-cartservice"
+      target: "default-container-runtime"
+      properties: [ ]
+      operations: [ ]
+  - opentelemetry-demo-checkoutservice_HostedOn_default-container-runtime:
+      type: "HostedOn"
+      description: null
+      source: "opentelemetry-demo-checkoutservice"
+      target: "default-container-runtime"
+      properties: [ ]
+      operations: [ ]
+  - opentelemetry-demo-currencyservice_HostedOn_default-container-runtime:
+      type: "HostedOn"
+      description: null
+      source: "opentelemetry-demo-currencyservice"
+      target: "default-container-runtime"
+      properties: [ ]
+      operations: [ ]
+  - opentelemetry-demo-emailservice_HostedOn_default-container-runtime:
+      type: "HostedOn"
+      description: null
+      source: "opentelemetry-demo-emailservice"
+      target: "default-container-runtime"
+      properties: [ ]
+      operations: [ ]
+  - opentelemetry-demo-flagd_HostedOn_default-container-runtime:
+      type: "HostedOn"
+      description: null
+      source: "opentelemetry-demo-flagd"
+      target: "default-container-runtime"
+      properties: [ ]
+      operations: [ ]
+  - opentelemetry-demo-frauddetectionservice_HostedOn_default-container-runtime:
+      type: "HostedOn"
+      description: null
+      source: "opentelemetry-demo-frauddetectionservice"
+      target: "default-container-runtime"
+      properties: [ ]
+      operations: [ ]
+  - opentelemetry-demo-frontend_HostedOn_default-container-runtime:
+      type: "HostedOn"
+      description: null
+      source: "opentelemetry-demo-frontend"
+      target: "default-container-runtime"
+      properties: [ ]
+      operations: [ ]
+  - opentelemetry-demo-frontendproxy_HostedOn_default-container-runtime:
+      type: "HostedOn"
+      description: null
+      source: "opentelemetry-demo-frontendproxy"
+      target: "default-container-runtime"
+      properties: [ ]
+      operations: [ ]
+  - opentelemetry-demo-grafana_HostedOn_default-container-runtime:
+      type: "HostedOn"
+      description: null
+      source: "opentelemetry-demo-grafana"
+      target: "default-container-runtime"
+      properties: [ ]
+      operations: [ ]
+  - opentelemetry-demo-imageprovider_HostedOn_default-container-runtime:
+      type: "HostedOn"
+      description: null
+      source: "opentelemetry-demo-imageprovider"
+      target: "default-container-runtime"
+      properties: [ ]
+      operations: [ ]
+  - opentelemetry-demo-kafka_HostedOn_default-container-runtime:
+      type: "HostedOn"
+      description: null
+      source: "opentelemetry-demo-kafka"
+      target: "default-container-runtime"
+      properties: [ ]
+      operations: [ ]
+  - opentelemetry-demo-loadgenerator_HostedOn_default-container-runtime:
+      type: "HostedOn"
+      description: null
+      source: "opentelemetry-demo-loadgenerator"
+      target: "default-container-runtime"
+      properties: [ ]
+      operations: [ ]
+  - opentelemetry-demo-otelcollector_HostedOn_default-container-runtime:
+      type: "HostedOn"
+      description: null
+      source: "opentelemetry-demo-otelcollector"
+      target: "default-container-runtime"
+      properties: [ ]
+      operations: [ ]
+  - opentelemetry-demo-paymentservice_HostedOn_default-container-runtime:
+      type: "HostedOn"
+      description: null
+      source: "opentelemetry-demo-paymentservice"
+      target: "default-container-runtime"
+      properties: [ ]
+      operations: [ ]
+  - opentelemetry-demo-productcatalogservice_HostedOn_default-container-runtime:
+      type: "HostedOn"
+      description: null
+      source: "opentelemetry-demo-productcatalogservice"
+      target: "default-container-runtime"
+      properties: [ ]
+      operations: [ ]
+  - opentelemetry-demo-prometheus_HostedOn_default-container-runtime:
+      type: "HostedOn"
+      description: null
+      source: "opentelemetry-demo-prometheus"
+      target: "default-container-runtime"
+      properties: [ ]
+      operations: [ ]
+  - opentelemetry-demo-quoteservice_HostedOn_default-container-runtime:
+      type: "HostedOn"
+      description: null
+      source: "opentelemetry-demo-quoteservice"
+      target: "default-container-runtime"
+      properties: [ ]
+      operations: [ ]
+  - opentelemetry-demo-recommendataionservice_HostedOn_default-container-runtime:
+      type: "HostedOn"
+      description: null
+      source: "opentelemetry-demo-recommendataionservice"
+      target: "default-container-runtime"
+      properties: [ ]
+      operations: [ ]
+  - opentelemetry-demo-shippingservice_HostedOn_default-container-runtime:
+      type: "HostedOn"
+      description: null
+      source: "opentelemetry-demo-shippingservice"
+      target: "default-container-runtime"
+      properties: [ ]
+      operations: [ ]
+
+
 component types:
   - name: opentelemetry-demo-currencyservice-type
     extends: 
@@ -2472,4 +2660,19 @@ component types:
         required: true
     operations:
       []
-relation types: []
+relation types: 
+  - DependsOn:
+      extends: "-"
+      description: "generic relation type"
+      properties: []
+      operations: []
+  - HostedOn:
+      extends: "DependsOn"
+      description: "hosted on relation"
+      properties: []
+      operations: []
+  - ConnectsTo:
+      extends: "DependsOn"
+      description: "connects to relation"
+      properties: []
+      operations: []
