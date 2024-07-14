@@ -5,7 +5,9 @@ receivers:
   otlp:
     protocols:
       grpc:
+        endpoint: ${env:OTEL_COLLECTOR_HOST}:${env:OTEL_COLLECTOR_PORT_GRPC}
       http:
+        endpoint: ${env:OTEL_COLLECTOR_HOST}:${env:OTEL_COLLECTOR_PORT_HTTP}
         cors:
           allowed_origins:
             - "http://*"
