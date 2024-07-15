@@ -52,6 +52,9 @@ COPY ./src/chatservice/lib lib
 
 COPY ./src/chatservice/assets assets
 
+# Compile assets
+RUN mix assets.deploy
+
 # Compile the release
 RUN mix compile
 

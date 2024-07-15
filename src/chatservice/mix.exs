@@ -41,7 +41,6 @@ defmodule ChatService.MixProject do
       {:phoenix_live_reload, "~> 1.2", only: :dev},
       {:phoenix_live_view, "~> 0.20.2"},
       {:esbuild, "~> 0.8", runtime: Mix.env() == :dev},
-      {:tailwind, "~> 0.2", runtime: Mix.env() == :dev},
       {:telemetry_metrics, "~> 0.6"},
       {:telemetry_poller, "~> 1.0"},
       {:gettext, "~> 0.20"},
@@ -70,10 +69,9 @@ defmodule ChatService.MixProject do
       "ecto.setup": ["ecto.create", "ecto.migrate", "run priv/repo/seeds.exs"],
       "ecto.reset": ["ecto.drop", "ecto.setup"],
       test: ["ecto.create --quiet", "ecto.migrate --quiet", "test"],
-      "assets.setup": ["tailwind.install --if-missing", "esbuild.install --if-missing"],
-      "assets.build": ["tailwind chatservice", "esbuild chatservice"],
+      "assets.setup": ["esbuild.install --if-missing"],
+      "assets.build": ["esbuild chatservice"],
       "assets.deploy": [
-        "tailwind chatservice --minify",
         "esbuild chatservice --minify",
         "phx.digest"
       ]

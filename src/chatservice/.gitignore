@@ -36,3 +36,5 @@ npm-debug.log
 /assets/node_modules/
 
 .nix-*
+
+.elixir_ls
