@@ -50,7 +50,7 @@ const ProductDetail: NextPage = () => {
     {
       enabled: !!productId,
     }
-  );
+  ) as { data: Product };
 
   const onAddItem = useCallback(async () => {
     await addItem({

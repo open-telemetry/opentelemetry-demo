@@ -7,12 +7,18 @@ the release.
 
 ## Unreleased
 
+* [otel-col] Add docker stats receiver
+  ([#1650](https://github.com/open-telemetry/opentelemetry-demo/pull/1650))
 * [otel-col] strip high-cardinality segments of span names
   ([#1668](https://github.com/open-telemetry/opentelemetry-demo/pull/1668))
 * [tests] run trace based tests concurrently
   ([#1659](https://github.com/open-telemetry/opentelemetry-demo/pull/1659))
+* [otel-col] Set OTLP receiver endpoint to avoid breaking changes
+  ([#1662](https://github.com/open-telemetry/opentelemetry-demo/pull/1662))
 * [accountingservice] increase memory to 120MB
   ([#1666](https://github.com/open-telemetry/opentelemetry-demo/pull/1666))
+* [frontend] Update nodejs to latest LTS and bump dependencies
+  ([#1670](https://github.com/open-telemetry/opentelemetry-demo/pull/1670))
 
 ## 1.11.0
 
@@ -27,10 +33,6 @@ the release.
   ([#1619](https://github.com/open-telemetry/opentelemetry-demo/pull/1619))
 * [recommendation] updated flag name to match flagd configuration
   ([#1634](https://github.com/open-telemetry/opentelemetry-demo/pull/1634))
-* [otel-col] Add docker stats receiver
-  ([#1650](https://github.com/open-telemetry/opentelemetry-demo/pull/1650))
-* [otel-col] Set OTLP receiver endpoint to avoid breaking changes
-  ([#1662](https://github.com/open-telemetry/opentelemetry-demo/pull/1662))
 
 ## 1.10.0
 
