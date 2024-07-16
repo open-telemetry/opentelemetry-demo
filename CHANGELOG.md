@@ -9,6 +9,8 @@ the release.
 
 * [otel-col] Add docker stats receiver
   ([#1650](https://github.com/open-telemetry/opentelemetry-demo/pull/1650))
+* [otel-col] strip high-cardinality segments of span names
+  ([#1668](https://github.com/open-telemetry/opentelemetry-demo/pull/1668))
 * [tests] run trace based tests concurrently
   ([#1659](https://github.com/open-telemetry/opentelemetry-demo/pull/1659))
 * [otel-col] Set OTLP receiver endpoint to avoid breaking changes
