@@ -1,3 +1,5 @@
+<img width="1545" alt="nr-hearts-otel" src="https://github.com/user-attachments/assets/96fb9c0e-3cc3-4319-9025-fa4a6fc48f0f">
+
 ## New Relic’s Fork of the OpenTelemetry Astronomy Shop
 
 Welcome to New Relic’s fork of the [OpenTelemetry Astronomy Shop](https://opentelemetry.io/ecosystem/demo/)!
@@ -15,116 +17,32 @@ Please note the following modifications to our fork:
 ship the data to your account
 
 ### Quick start
-Get started quickly by running the app according to your deployment method preference.
+Get started quickly by running the app according to your deployment method preference:
+
+* [Docker](https://github.com/newrelic/opentelemetry-demo/blob/main/docs/docker_deployment.md)
+* [Kubernetes](https://github.com/newrelic/opentelemetry-demo/blob/main/docs/kubernetes_deployment.md)
 
 Requirements: A New Relic account – [sign up for a free account](https://newrelic.com/signup) if you need one
-
-#### Docker
-To run our fork of the app locally using Docker, follow these steps:
-1. Clone the repo:
-```
-git clone https://github.com/newrelic/opentelemetry-demo.git
-```
-2. Navigate to the repo directory:
-```
-cd opentelemetry-demo
-```
-3. Export your [account license key](https://one.newrelic.com/launcher/api-keys-ui.api-keys-launcher?_gl=1*r26ze0*_gcl_au*NjkxMjc4NDcyLjE3MTU2NDM4OTg.*_ga*NjYzMTg1ODUwLjE3MTU2NDM4OTg.*_ga_R5EF3MCG7B*MTcxOTQ1MzE4Ni4xNS4xLjE3MTk0NTMyOTQuNTYuMS40OTYzNDkyMzk.)
-(make sure to replace `your_license_key` with your license key):
-```
-export NEW_RELIC_LICENSE_KEY=your_license_key
-```
-4. Build and run the app:
-```
-docker compose up
-```
-5. Head to your account to view the data
-6. To stop the app: `control + c`
-
-#### Kubernetes
-[Check out these steps](https://github.com/newrelic/opentelemetry-demo/blob/main/docs/kubernetes_deployment.md). 
 
 ### Navigate OTLP data in New Relic
 The Demo comes with a number of problem scenarios that you can enable via 
 a [feature flag](https://opentelemetry.io/docs/demo/feature-flags/); please 
 note that some of these are currently still under testing on our end. 
 
-For this example, we've enabled the feature flag for `productcatalogservice`,
-which generates an error for `GetProduct` requests with the product ID: 
-OLJCESPC7Z.
+Coming soon: tutorials on how to troubleshoot each demo scenario using New Relic!
 
-If you would like to follow along, navigate to src > flagd > demo.flagd.json,
-and on line 11, change the value for `defaultVariant` to `on`. Save the file,
-and restart the app. 
-
-Wait a few minutes for the load generator to generate new data; you will pretty
-quickly see that the error rates for a couple services have increased. First, go
-to the `productcatalogservice` entity in your New Relic account and click on `Errors 
-inbox`:
-
-<img width="1401" alt="demo-productcatalogservice-01" src="https://github.com/user-attachments/assets/0105da4b-67d0-4ffe-96d7-fc34b163e6d5">
-
-(In case you are wondering why the Error rate chart next to the Error count chart
-appears empty, click on the `...` and select `View query`. You'll see that
-this chart is querying for HTTP status code 500. Since this entity isn't 
-reporting any 500s, this chart is empty.)
-
-Select the error group `oteldemo.ProductCatalogService/GetProduct`, which will open up 
-the error group summary and confirm that the feature flag was enabled:
-
-<img width="1460" alt="demo-productcatalogservice02" src="https://github.com/user-attachments/assets/818f7340-340b-4489-961e-849653520d86">
-
-(Note that there are no logs for this service at this time; per this [
-table](https://opentelemetry.io/docs/demo/telemetry-features/log-coverage/), logs have not yet been 
-added for `productcatalogservice`.)
-
-Scroll down to `Attributes`, and you can see the attribute `app.product.id` with 
-the value `OLJCESPC7Z` was captured:
-
-<img width="1453" alt="demo-productcatalogservice03" src="https://github.com/user-attachments/assets/c4149479-9274-4e20-abb6-1c1db97819d6">
-
-This in itself is not particularly interesting; head on over to the `checkoutservice`
-entity and click on `Errors inbox`. You'll see an error group named 
-`oteldemo.CheckoutService/PlaceOrder`, with the message `failed to prepare order: 
-failed to get product #"OLJCESPC7Z"`:
-
-<img width="1404" alt="demo-checkoutservice01" src="https://github.com/user-attachments/assets/a08c1ca3-376a-48b1-b154-095925668663">
-
-Click on the blue icon under `Distributed Trace`:
-
-<img width="1471" alt="demo-checkoutservice02" src="https://github.com/user-attachments/assets/2c0b69b2-a227-4d64-884c-93a17690dbc9">
-
-You'll see a distributed trace that includes an entity map, showing you how the
-error you enabled with the feature flag affected upstream services:
-
-<img width="1333" alt="demo-checkoutservice03" src="https://github.com/user-attachments/assets/d21365d7-4fb3-4ecc-9719-9fb503f2b476">
-
-Click on the "Errors" dropdown menu and select the `checkoutservice` span named
-`oteldemo.CheckoutService/PlaceOrder`:
-
-<img width="954" alt="demo-checkoutservice04" src="https://github.com/user-attachments/assets/54402a1e-c6b8-41fe-9c59-bdff62952d24">
-
-On the right-hand panel, click on `View span events` to view more details about
-the span event that was captured:
-
-<img width="1330" alt="demo-checkoutservice-05" src="https://github.com/user-attachments/assets/06a29ac2-9492-4a0e-8f58-63d4f48c51b9">
-
-<img width="1468" alt="demo-checkoutservice06" src="https://github.com/user-attachments/assets/dbf7100a-c831-4392-8c8e-ac19e4d95c97">
-
-Since this is a contrived issue, there isn't a lot of particularly useful information 
-to view, but it does demonstrate how the error metrics captured are early indicators of these issues
-and how they can affect the performance and reliability of your services. Using New Relic
-can help you quickly resolve issues by uncovering the root cause through correlated logs and traces,
-giving you detailed insights into what happened during a given problem. 
+In the meantime, check out our [documentation](https://docs.newrelic.com/docs/opentelemetry/best-practices/opentelemetry-data-overview/) 
+to learn how to navigate your OpenTelemetry traces, metrics, and logs in New Relic. 
 
 ### Roadmap
 Similar to how the Astronomy Shop is under active development, we are also actively
 developing and maintaining our fork. Here are a few things we have are working on, or
 have planned for the near future:
 * [Demo scenario feature flags](https://opentelemetry.io/docs/demo/feature-flags/) are in testing
+* Troubleshooting tutorials for each demo scenario
 * Support for OTel-sourced Kubernetes infrastructure metrics in New Relic
-* add NR instrumentation for recommendationservice to demonstrate interoperability between our language agents and OpenTelemetry
-instrumentation
+* Add a feature flag to enable NR instrumentation for recommendationservice to demonstrate 
+interoperability between our language agents and OpenTelemetry instrumentation
 
 Have a suggestion, or running into problems with our fork? Please let us know by
 [opening an issue](https://github.com/newrelic/opentelemetry-demo/issues/new/choose)!
@@ -133,6 +51,9 @@ Have a suggestion, or running into problems with our fork? Please let us know by
 * [Brad Schmitt](https://github.com/bpschmitt)
 * [Daniel Kim](https://github.com/lazyplatypus)
 * [Krzysztof Spikowski](https://github.com/greenszpila)
+* [Ugur Türkarslan](https://github.com/utr1903)
+* [Alan West](https://github.com/alanwest)
+* [Justin Eveland](https://github.com/jbeveland27)
 * [Reese Lee](https://github.com/reese-lee)
 
 -----------
