@@ -29,7 +29,8 @@ The Demo comes with a number of problem scenarios that you can enable via
 a [feature flag](https://opentelemetry.io/docs/demo/feature-flags/); please 
 note that some of these are currently still under testing on our end. 
 
-Coming soon: tutorials on how to troubleshoot each demo scenario using New Relic!
+We are working on [tutorials](https://github.com/newrelic/opentelemetry-demo/blob/main/docs/demo-scenarios/README.md) 
+to show you how to troubleshoot these scenarios in New Relic. 
 
 In the meantime, check out our [documentation](https://docs.newrelic.com/docs/opentelemetry/best-practices/opentelemetry-data-overview/) 
 to learn how to navigate your OpenTelemetry traces, metrics, and logs in New Relic. 
@@ -39,7 +40,7 @@ Similar to how the Astronomy Shop is under active development, we are also activ
 developing and maintaining our fork. Here are a few things we have are working on, or
 have planned for the near future:
 * [Demo scenario feature flags](https://opentelemetry.io/docs/demo/feature-flags/) are in testing
-* Troubleshooting tutorials for each demo scenario
+* [Troubleshooting tutorials](https://github.com/newrelic/opentelemetry-demo/blob/main/docs/demo-scenarios/README.md) for each demo scenario
 * Support for OTel-sourced Kubernetes infrastructure metrics in New Relic
 * Add a feature flag to enable NR instrumentation for recommendationservice to demonstrate 
 interoperability between our language agents and OpenTelemetry instrumentation
