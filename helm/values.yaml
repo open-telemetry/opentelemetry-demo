@@ -616,8 +616,7 @@ components:
     mountedConfigMaps:
       - name: config
         mountPath: /etc/flagd
-        existingConfigMap: flagd-configmap
-        # existingConfigMap: '{{ include "otel-demo.name" . }}-flagd-config'
+        existingConfigMap: '{{ include "otel-demo.name" . }}-flagd-config'
 
   kafka:
     enabled: true
