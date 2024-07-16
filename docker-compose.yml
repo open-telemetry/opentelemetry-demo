@@ -29,7 +29,7 @@ services:
     deploy:
       resources:
         limits:
-          memory: 50M
+          memory: 120M
     restart: unless-stopped
     environment:
       - KAFKA_SERVICE_ADDR

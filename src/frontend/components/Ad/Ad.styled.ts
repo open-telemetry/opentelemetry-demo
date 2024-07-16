@@ -20,4 +20,5 @@ export const Ad = styled.section`
 
 export const Link = styled(RouterLink)`
   color: black;
+  text-decoration: none;
 `;
