@@ -26,6 +26,8 @@ default:
         fieldRef:
           apiVersion: v1
           fieldPath: metadata.uid
+    - name: OTEL_K8S_CLUSTER_NAME
+      value: opentelemetry-demo
     - name: OTEL_COLLECTOR_NAME
       value: '{{ include "otel-demo.name" . }}-otelcol'
     - name: OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE
@@ -38,7 +40,8 @@ default:
         service.instance.id=$(OTEL_K8S_POD_NAME),
         k8s.pod.uid=$(OTEL_K8S_POD_UID),
         k8s.node.name=$(OTEL_K8S_NODE_NAME),
-        k8s.pod.name=$(OTEL_K8S_POD_NAME)
+        k8s.pod.name=$(OTEL_K8S_POD_NAME),
+        k8s.cluster.name=$(OTEL_K8S_CLUSTER_NAME)
   # Allows overriding and additions to .Values.default.env
   envOverrides: []
   #  - name: OTEL_K8S_NODE_NAME
@@ -71,8 +74,8 @@ serviceAccount:
 
 components:
   # configuring load balancer
-  frontendProxy:
-    serviceType: LoadBalancer
+  # frontendProxy:
+  #   serviceType: LoadBalancer
   ## Demo Components are named objects (services) with several properties
   # demoService:
   ## Enable the component (service)
@@ -431,8 +434,6 @@ components:
       runAsUser: 101  # envoy
       runAsGroup: 101
       runAsNonRoot: true
-    service:
-      type: LoadBalancer
 
   imageprovider:
     enabled: true
@@ -615,7 +616,8 @@ components:
     mountedConfigMaps:
       - name: config
         mountPath: /etc/flagd
-        existingConfigMap: '{{ include "otel-demo.name" . }}-flagd-config'
+        existingConfigMap: flagd-configmap
+        # existingConfigMap: '{{ include "otel-demo.name" . }}-flagd-config'
 
   kafka:
     enabled: true
@@ -672,7 +674,7 @@ opentelemetry-collector:
       enabled: true
   resources:
     limits:
-      memory: 200Mi
+      memory: 250Mi
   service:
     type: ClusterIP
   ports:
@@ -738,17 +740,18 @@ opentelemetry-collector:
           from_attribute: k8s.pod.uid
           action: insert
 
-    connectors:
-      spanmetrics: {}
+    # connectors:
+    #   spanmetrics: {}
 
     service:
       pipelines:
         traces:
           processors: [memory_limiter, resource, resourcedetection, batch]
-          exporters: [otlphttp/newrelic, debug, spanmetrics]
+          exporters: [otlphttp/newrelic, debug]
           # exporters: [otlp, debug, spanmetrics]
         metrics:
-          receivers: [httpcheck/frontendproxy, redis, otlp, spanmetrics]
+          # receivers: [httpcheck/frontendproxy, redis, otlp, spanmetrics]
+          receivers: [httpcheck/frontendproxy, redis, otlp]
           processors: [memory_limiter, resource, resourcedetection, batch]
           exporters: [otlphttp/newrelic, debug]
           # exporters: [otlphttp/prometheus, debug]
