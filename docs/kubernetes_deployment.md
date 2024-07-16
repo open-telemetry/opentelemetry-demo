@@ -52,7 +52,7 @@ helm upgrade --install newrelic-otel open-telemetry/opentelemetry-demo --values 
 helm upgrade --install newrelic-otel open-telemetry/opentelemetry-demo --values ./helm/values.yaml --set opentelemetry-collector.config.exporters.otlp.endpoint="otlp.eu01.nr-data.net:4317" -n opentelemetry-demo
 ```
 
-## (optional) New Relic Overrides
+## New Relic Overrides (Optional)
 
 Optionally, you can enable a version of the `recommendationService` that is instrumented with New Relic APM instead of OpenTelemetry.  New Relic APM instrumented services are interoperable with OpenTelemetry instrumented services as New Relic supports W3C trace context.
 
