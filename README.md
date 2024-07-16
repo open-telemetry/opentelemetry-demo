@@ -133,6 +133,7 @@ Have a suggestion, or running into problems with our fork? Please let us know by
 * [Brad Schmitt](https://github.com/bpschmitt)
 * [Daniel Kim](https://github.com/lazyplatypus)
 * [Krzysztof Spikowski](https://github.com/greenszpila)
+* [Reese Lee](https://github.com/reese-lee)
 
 -----------
 
