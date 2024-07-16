@@ -49,6 +49,14 @@ exporters:
 
 processors:
   batch:
+  transform:
+    error_mode: ignore
+    trace_statements:
+      - context: span
+        statements:
+          # could be removed when https://github.com/vercel/next.js/pull/64852 is fixed upstream
+          - replace_pattern(name, "\\?.*", "")
+          - replace_match(name, "GET /api/products/*", "GET /api/products/{productId}")
 
 connectors:
   spanmetrics:
@@ -57,7 +65,7 @@ service:
   pipelines:
     traces:
       receivers: [otlp]
-      processors: [batch]
+      processors: [transform, batch]
       exporters: [otlp, debug, spanmetrics]
     metrics:
       receivers: [docker_stats, httpcheck/frontendproxy, otlp, prometheus, redis, spanmetrics]
