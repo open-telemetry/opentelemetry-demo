@@ -1,4 +1,4 @@
-name: Build and Push Docker Images
+name: CI/CD Pipeline by Fortress Technologies Inc
 
 on:
   push:
@@ -6,32 +6,29 @@ on:
       - main
 
 jobs:
-  build-and-push:
+  build:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v1
+      - name: Checkout code
+        uses: actions/checkout@v2
 
-      - name: Build and Push Docker Images
-        run: |
-          docker buildx build --platform linux/amd64 -t iscanprint/accountingservice:3.0 ./src/accountingservice/
-          docker buildx build --platform linux/amd64 -t iscanprint/adservice:3.0 ./src/adservice/
-          docker buildx build --platform linux/amd64 -t iscanprint/cartservice:3.0 ./src/cartservice/src/
-          docker buildx build --platform linux/amd64 -t iscanprint/checkoutservice:3.0 ./src/checkoutservice/
-          docker buildx build --platform linux/amd64 -t iscanprint/currencyservice:3.0 ./src/currencyservice/
-          docker buildx build --platform linux/amd64 -t iscanprint/emailservice:3.0 ./src/emailservice/
-          docker buildx build --platform linux/amd64 -t iscanprint/frauddetectionservice:3.0 ./src/frauddetectionservice/
-          docker buildx build --platform linux/amd64 -t iscanprint/frontend:3.0 ./src/frontend/
-          docker buildx build --platform linux/amd64 -t iscanprint/frontendproxy:3.0 ./src/frontendproxy/
-          docker buildx build --platform linux/amd64 -t iscanprint/imageprovider:3.0 ./src/imageprovider/
-          docker buildx build --platform linux/amd64 -t iscanprint/kafka:3.0 ./src/kafka/
-          docker buildx build --platform linux/amd64 -t iscanprint/loadgenerator:3.0 ./src/loadgenerator/
-          docker buildx build --platform linux/amd64 -t iscanprint/paymentservice:3.0 ./src/paymentservice/
-          docker buildx build --platform linux/amd64 -t iscanprint/productcatalogservice:3.0 ./src/productcatalogservice/
-          docker buildx build --platform linux/amd64 -t iscanprint/quoteservice:3.0 ./src/quoteservice/
-          docker buildx build --platform linux/amd64 -t iscanprint/recommendationservice:3.0 ./src/recommendationservice/
-          docker buildx build --platform linux/amd64 -t iscanprint/shippingservice:3.0 ./src/shippingservice/
+      - name: Setup Java
+        uses: actions/setup-java@v2
+        with:
+          distribution: adopt
+          java-version: "17"
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v2
+        with:
+          node-version: "20"
+
+      - name: Install jq
+        run: sudo apt-get update && sudo apt-get install -y jq
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v2
 
       - name: Log in to Docker Hub
         uses: docker/login-action@v2
@@ -39,22 +36,40 @@ jobs:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
 
-      - name: Push Docker Images
+      - name: Build and Push Docker Images
         run: |
-          docker push iscanprint/accountingservice:3.0
-          docker push iscanprint/adservice:3.0
-          docker push iscanprint/cartservice:3.0
-          docker push iscanprint/checkoutservice:3.0
-          docker push iscanprint/currencyservice:3.0
-          docker push iscanprint/emailservice:3.0
-          docker push iscanprint/frauddetectionservice:3.0
-          docker push iscanprint/frontend:3.0
-          docker push iscanprint/frontendproxy:3.0
-          docker push iscanprint/imageprovider:3.0
-          docker push iscanprint/kafka:3.0
-          docker push iscanprint/loadgenerator:3.0
-          docker push iscanprint/paymentservice:3.0
-          docker push iscanprint/productcatalogservice:3.0
-          docker push iscanprint/quoteservice:3.0
-          docker push iscanprint/recommendationservice:3.0
-          docker push iscanprint/shippingservice:3.0
+          docker_build_push() {
+            service_name=$1
+            dockerfile=$2
+            docker_tag=iscanprint/${service_name}:3.0
+
+            docker build -t $docker_tag -f $dockerfile .
+            docker push $docker_tag
+            docker rmi -f $docker_tag
+          }
+
+          services=(
+            "accountingservice src/accountingservice/Dockerfile"
+            "adservice otp/src/adservice/Dockerfile"
+            "cartservice otp/src/cartservice/src/"
+            "checkoutservice otp/src/checkoutservice/"
+            "currencyservice otp/src/currencyservice/"
+            "emailservice otp/src/emailservice/"
+            "frauddetectionservice otp/src/frauddetectionservice/"
+            "frontend otp/src/frontend/"
+            "frontendproxy otp/src/frontendproxy/"
+            "imageprovider otp/src/imageprovider/"
+            "kafka otp/src/kafka/"
+            "loadgenerator otp/src/loadgenerator/"
+            "paymentservice otp/src/paymentservice/"
+            "productcatalogservice otp/src/productcatalogservice/"
+            "quoteservice otp/src/quoteservice/"
+            "recommendationservice src/recommendationservice/"
+            "shippingservice otp/src/shippingservice/"
+          )
+
+          for service in "${services[@]}"; do
+            service_name=$(echo $service | cut -d ' ' -f 1)
+            service_path=$(echo $service | cut -d ' ' -f 2)
+            docker_build_push $service_name $service_path
+          }
