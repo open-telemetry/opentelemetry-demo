@@ -19,6 +19,8 @@ the release.
   ([#1666](https://github.com/open-telemetry/opentelemetry-demo/pull/1666))
 * [frontend] Update nodejs to latest LTS and bump dependencies
   ([#1670](https://github.com/open-telemetry/opentelemetry-demo/pull/1670))
+* [otel-col] Add host metrics receiver
+  ([#1675](https://github.com/open-telemetry/opentelemetry-demo/pull/1675))
 
 ## 1.11.0
 
