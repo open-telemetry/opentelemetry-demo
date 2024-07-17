@@ -8762,7 +8762,7 @@ spec:
       targetPort: 8013
   selector:
     opentelemetry.io/name: opentelemetry-demo-flagd
-
+#frontendproxy services 
 ---
 apiVersion: v1
 kind: Service
