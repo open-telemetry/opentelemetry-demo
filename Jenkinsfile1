@@ -1,0 +1,70 @@
+pipeline {
+    agent any
+
+    tools {
+        maven 'maven'
+        jdk 'jdk'
+        nodejs 'nodejs'
+        docker 'docker'
+    }
+
+    environment {
+        SCANNER_HOME = tool 'scanner'
+        DOCKER_REGISTRY_CREDENTIALS = 'docker'
+    }
+
+    stages {
+        stage('1.0 Clean Workspace') {
+            steps {
+                cleanWs()
+            }
+        }
+
+        stage('2.0 Git Checkout') {
+            steps {
+                git branch: 'main', url: 'https://github.com/FortressTechnologiesInc/opentelemetry-project.git'
+            }
+        }
+
+        stage('3.0 Build and Push Services') {
+            steps {
+                script {
+                    buildAndPush('accountingservice', '/root/appnode/workspace/otp/src/accountingservice/Dockerfile')
+                    buildAndPush('adservice', '/root/appnode/workspace/otp/src/adservice/Dockerfile')
+                    buildAndPush('cartservice', '/root/appnode/workspace/otp/src/cartservice/src/Dockerfile')
+                    buildAndPush('checkoutservice', '/root/appnode/workspace/otp/src/checkoutservice/Dockerfile')
+                    buildAndPush('currencyservice', '/root/appnode/workspace/otp/src/currencyservice/Dockerfile')
+                    buildAndPush('emailservice', '/root/appnode/workspace/otp/src/emailservice/Dockerfile')
+                    buildAndPush('frauddetectionservice', '/root/appnode/workspace/otp/src/frauddetectionservice/Dockerfile')
+                    buildAndPush('frontend', '/root/appnode/workspace/otp/src/frontend/Dockerfile')
+                    buildAndPush('frontendproxy', '/root/appnode/workspace/otp/src/frontendproxy/Dockerfile')
+                    buildAndPush('imageprovider', '/root/appnode/workspace/otp/src/imageprovider/Dockerfile')
+                    buildAndPush('kafka', '/root/appnode/workspace/otp/src/kafka/Dockerfile')
+                    buildAndPush('loadgenerator', '/root/appnode/workspace/otp/src/loadgenerator/Dockerfile')
+                    buildAndPush('paymentservice', '/root/appnode/workspace/otp/src/paymentservice/Dockerfile')
+                    buildAndPush('productcatalogservice', '/root/appnode/workspace/otp/src/productcatalogservice/Dockerfile')
+                    buildAndPush('quoteservice', '/root/appnode/workspace/otp/src/quoteservice/Dockerfile')
+                    buildAndPush('recommendationservice', '/root/appnode/workspace/otp/src/recommendationservice/Dockerfile')
+                    buildAndPush('shippingservice', '/root/appnode/workspace/otp/src/shippingservice/Dockerfile')
+                }
+            }
+        }
+    }
+}
+
+def buildAndPush(serviceName, dockerfilePath) {
+    def dockerImageTag = "iscanprint/${serviceName}:3.0"
+
+    // Build Docker image
+    dir("/root/appnode/workspace/otp/src/${serviceName}") {
+        sh "docker build -t ${dockerImageTag} -f ${dockerfilePath} ."
+    }
+
+    // Push Docker image
+    withDockerRegistry(credentialsId: DOCKER_REGISTRY_CREDENTIALS, toolName: 'docker') {
+        sh "docker push ${dockerImageTag}"
+    }
+
+    // Clean up local Docker image
+    sh "docker rmi -f ${dockerImageTag}"
+}
