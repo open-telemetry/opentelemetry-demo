@@ -1,0 +1,285 @@
+pipeline {
+    agent any
+
+    tools {
+        maven 'maven'
+        jdk 'jdk'
+        nodejs 'nodejs'
+    }
+
+    environment {
+        SCANNER_HOME = tool 'scanner'
+    }
+
+    stages {
+        stage('1.0 Clean Workspace') {
+            steps {
+                cleanWs()
+            }
+        }
+
+        stage('2.0 Git') {
+            steps {
+                git branch: 'main', url: 'https://github.com/FortressTechnologiesInc/opentelemetry-project.git'
+            }
+        }
+	stage('1.0 accountingservice') {
+            steps {
+                script {
+                    withDockerRegistry(credentialsId: 'docker', toolName: 'docker') {
+                        dir('/root/appnode/workspace/otp/src/accountingservice/') {
+                            sh "docker build -t iscanprint/accountingservice:3.0 -f /root/appnode/workspace/otp/src/accountingservice/Dockerfile ."
+                            
+                            sh "docker push iscanprint/accountingservice:3.0"
+                            sh "docker rmi -f iscanprint/accountingservice:3.0 "
+                        }
+                    }
+                }
+            }
+        }
+        
+        stage('2.0 adservice') {
+            steps {
+                script {
+                    withDockerRegistry(credentialsId: 'docker', toolName: 'docker') {
+                        dir('/root/appnode/workspace/otp/src/adservice/') {
+                            sh "docker build -t iscanprint/adservice:3.0 -f /root/appnode/workspace/otp/src/adservice/Dockerfile ."
+                            
+                            sh "docker push iscanprint/adservice:3.0"
+                            sh "docker rmi -f iscanprint/adservice:3.0 "
+                        }
+                    }
+                }
+            }
+        }
+
+        stage('3.0 cartservice') {
+            steps {
+                script {
+                    withDockerRegistry(credentialsId: 'docker', toolName: 'docker') {
+                        dir('/root/appnode/workspace/otp/src/cartservice/src/') {
+                            sh "docker build -t iscanprint/cartservice:3.0 ."
+                            
+                            sh "docker push iscanprint/cartservice:3.0"
+                            sh "docker rmi -f iscanprint/cartservice:3.0"
+                        }
+                    }
+                }
+            }
+        }
+
+        stage('4.0 checkoutservice') {
+            steps {
+                script {
+                    withDockerRegistry(credentialsId: 'docker', toolName: 'docker') {
+                        dir('/root/appnode/workspace/otp/src/checkoutservice/') {
+                            sh "docker build -t iscanprint/checkoutservice:3.0 ."
+                            
+                            sh "docker push iscanprint/checkoutservice:3.0"
+                            sh "docker rmi -f iscanprint/checkoutservice:3.0"
+                        }
+                    }
+                }
+            }
+        }
+
+        stage('5.0 currencyservice') {
+            steps {
+                script {
+                    withDockerRegistry(credentialsId: 'docker', toolName: 'docker') {
+                        dir('/root/appnode/workspace/otp/src/currencyservice/') {
+                            sh "docker build -t iscanprint/currencyservice:3.0 ."
+                            
+                            sh "docker push iscanprint/currencyservice:3.0"
+                            sh "docker rmi -f iscanprint/currencyservice:3.0" 
+                        }
+                    }
+                }
+            }
+        }
+
+        stage('6.0 emailservice') {
+            steps {
+                script {
+                    withDockerRegistry(credentialsId: 'docker', toolName: 'docker') {
+                        dir('/root/appnode/workspace/otp/src/emailservice/') {
+                            sh "docker build -t iscanprint/emailservice:3.0 ."
+                            
+                            sh "docker push iscanprint/emailservice:3.0"
+                            sh "docker rmi -f iscanprint/emailservice:3.0"
+                        }
+                    }
+                }
+            }
+        }
+	
+	stage('7.0 frauddetectionservice') {
+            steps {
+                script {
+                    withDockerRegistry(credentialsId: 'docker', toolName: 'docker') {
+                        dir('/root/appnode/workspace/otp/src/frauddetectionservice/') {
+                            sh "docker build -t iscanprint/frauddetectionservice:3.0 ."
+                            
+                            sh "docker push iscanprint/frauddetectionservice:3.0"
+                            sh "docker rmi -f iscanprint/frauddetectionservice:3.0"
+                        }
+                    }
+                }
+            }
+        }
+
+        stage('8.0 frontend') {
+            steps {
+                script {
+                    withDockerRegistry(credentialsId: 'docker', toolName: 'docker') {
+                        dir('/root/appnode/workspace/otp/src/frontend/') {
+                            sh "docker build -t iscanprint/frontend:3.0 ."
+                             
+                            sh "docker push iscanprint/frontend:3.0"
+                            sh "docker rmi -f  iscanprint/frontend:3.0"
+                        }
+                    }
+                }
+            }
+        }
+
+	stage('9.0 frontendproxy') {
+            steps {
+                script {
+                    withDockerRegistry(credentialsId: 'docker', toolName: 'docker') {
+                        dir('/root/appnode/workspace/otp/src/frontendproxy/') {
+                            sh "docker build -t iscanprint/frontendproxy:3.0 ."
+                           
+                            sh "docker push iscanprint/frontendproxy:3.0"
+                            sh "docker rmi -f iscanprint/frontendproxy:3.0"
+                        }
+                    }
+                }
+            }
+        }
+
+	stage('10 imageprovider') {
+            steps {
+                script {
+                    withDockerRegistry(credentialsId: 'docker', toolName: 'docker') {
+                        dir('/root/appnode/workspace/otp/src/imageprovider/') {
+                            sh "docker build -t iscanprint/imageprovider:3.0 ."
+                           
+                            sh "docker push iscanprint/imageprovider:3.0"
+                            sh "docker rmi -f iscanprint/imageprovider:3.0"
+                        }
+                    }
+                }
+            }
+        }
+
+
+	stage('11 kafka') {
+            steps {
+                script {
+                    withDockerRegistry(credentialsId: 'docker', toolName: 'docker') {
+                        dir('/root/appnode/workspace/otp/src/kafka/') {
+                            sh "docker build -t iscanprint/kafka:3.0 ."
+                           
+                            sh "docker push iscanprint/kafka:3.0"
+                            sh "docker rmi -f iscanprint/kafka:3.0"
+                        }
+                    }
+                }
+            }
+        }
+
+
+
+        stage('12 loadgenerator') {
+            steps {
+                script {
+                    withDockerRegistry(credentialsId: 'docker', toolName: 'docker') {
+                        dir('/root/appnode/workspace/otp/src/loadgenerator/') {
+                            sh "docker build -t iscanprint/loadgenerator:3.0 ."
+                           
+                            sh "docker push iscanprint/loadgenerator:3.0"
+                            sh "docker rmi -f iscanprint/loadgenerator:3.0"
+                        }
+                    }
+                }
+            }
+        }
+
+        stage('13 paymentservice') {
+            steps {
+                script {
+                    withDockerRegistry(credentialsId: 'docker', toolName: 'docker') {
+                        dir('/root/appnode/workspace/otp/src/paymentservice/') {
+                            sh "docker build -t iscanprint/paymentservice:3.0 ."
+                            sh "docker push iscanprint/paymentservice:3.0"
+                             
+                            sh "docker rmi -f iscanprint/paymentservice:3.0"
+                        }
+                    }
+                }
+            }
+        }
+
+        stage('14 productcatalogservice') {
+            steps {
+                script {
+                    withDockerRegistry(credentialsId: 'docker', toolName: 'docker') {
+                        dir('/root/appnode/workspace/otp/src/productcatalogservice/') {
+                            sh "docker build -t iscanprint/productcatalogservice:3.0 ."
+                            
+                            sh "docker push iscanprint/productcatalogservice:3.0"
+                            sh "docker rmi -f iscanprint/productcatalogservice:3.0"
+                        }
+                    }
+                }
+            }
+        }
+
+	stage('15 quoteservice') {
+            steps {
+                script {
+                    withDockerRegistry(credentialsId: 'docker', toolName: 'docker') {
+                        dir('/root/appnode/workspace/otp/src/quoteservice/') {
+                            sh "docker build -t iscanprint/quoteservice:3.0 ."
+                             
+                            sh "docker push iscanprint/quoteservice:3.0"
+                            sh "docker rmi -f iscanprint/quoteservice:3.0"
+                        }
+                    }
+                }
+            }
+        }
+
+        stage('16 recommendationservice') {
+            steps {
+                script {
+                    withDockerRegistry(credentialsId: 'docker', toolName: 'docker') {
+                        dir('/root/appnode/workspace/otp/src/recommendationservice/') {
+                            sh "docker build -t iscanprint/recommendationservice:3.0 ."
+                             
+                            sh "docker push iscanprint/recommendationservice:3.0"
+                            sh "docker rmi -f iscanprint/recommendationservice:3.0"
+                        }
+                    }
+                }
+            }
+        }
+
+        stage('17 shippingservice') {
+            steps {
+                script {
+                    withDockerRegistry(credentialsId: 'docker', toolName: 'docker') {
+                        dir('/root/appnode/workspace/otp/src/shippingservice/') {
+                            sh "docker build -t iscanprint/shippingservice:3.0 ."
+                           
+                            sh "docker push iscanprint/shippingservice:3.0"
+                            sh "docker rmi -f iscanprint/shippingservice:3.0"
+                        }
+                    }
+                }
+            }
+        }
+        
+    }
+}
