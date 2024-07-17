@@ -36,40 +36,104 @@ jobs:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
 
-      - name: Build and Push Docker Images
+      - name: Build and push accountingservice
+        working-directory: src/accountingservice
         run: |
-          docker_build_push() {
-            service_name=$1
-            dockerfile=$2
-            docker_tag=iscanprint/${service_name}:3.0
+          docker build -t iscanprint/accountingservice:3.0 .
+          docker push iscanprint/accountingservice:3.0
 
-            docker build -t $docker_tag -f $dockerfile .
-            docker push $docker_tag
-            docker rmi -f $docker_tag
-          }
+      - name: Build and push adservice
+        working-directory: src/adservice
+        run: |
+          docker build -t iscanprint/adservice:3.0 .
+          docker push iscanprint/adservice:3.0
 
-          services=(
-            "accountingservice src/accountingservice/Dockerfile"
-            "adservice otp/src/adservice/Dockerfile"
-            "cartservice otp/src/cartservice/src/"
-            "checkoutservice otp/src/checkoutservice/"
-            "currencyservice otp/src/currencyservice/"
-            "emailservice otp/src/emailservice/"
-            "frauddetectionservice otp/src/frauddetectionservice/"
-            "frontend otp/src/frontend/"
-            "frontendproxy otp/src/frontendproxy/"
-            "imageprovider otp/src/imageprovider/"
-            "kafka otp/src/kafka/"
-            "loadgenerator otp/src/loadgenerator/"
-            "paymentservice otp/src/paymentservice/"
-            "productcatalogservice otp/src/productcatalogservice/"
-            "quoteservice otp/src/quoteservice/"
-            "recommendationservice src/recommendationservice/"
-            "shippingservice otp/src/shippingservice/"
-          )
+      - name: Build and push cartservice
+        working-directory: src/cartservice/src
+        run: |
+          docker build -t iscanprint/cartservice:3.0 .
+          docker push iscanprint/cartservice:3.0
 
-          for service in "${services[@]}"; do
-            service_name=$(echo $service | cut -d ' ' -f 1)
-            service_path=$(echo $service | cut -d ' ' -f 2)
-            docker_build_push $service_name $service_path
-          }
+      - name: Build and push checkoutservice
+        working-directory: src/checkoutservice
+        run: |
+          docker build -t iscanprint/checkoutservice:3.0 .
+          docker push iscanprint/checkoutservice:3.0
+
+      - name: Build and push currencyservice
+        working-directory: src/currencyservice
+        run: |
+          docker build -t iscanprint/currencyservice:3.0 .
+          docker push iscanprint/currencyservice:3.0
+
+      - name: Build and push emailservice
+        working-directory: src/emailservice
+        run: |
+          docker build -t iscanprint/emailservice:3.0 .
+          docker push iscanprint/emailservice:3.0
+
+      - name: Build and push frauddetectionservice
+        working-directory: src/frauddetectionservice
+        run: |
+          docker build -t iscanprint/frauddetectionservice:3.0 .
+          docker push iscanprint/frauddetectionservice:3.0
+
+      - name: Build and push frontend
+        working-directory: src/frontend
+        run: |
+          docker build -t iscanprint/frontend:3.0 .
+          docker push iscanprint/frontend:3.0
+
+      - name: Build and push frontendproxy
+        working-directory: src/frontendproxy
+        run: |
+          docker build -t iscanprint/frontendproxy:3.0 .
+          docker push iscanprint/frontendproxy:3.0
+
+      - name: Build and push imageprovider
+        working-directory: src/imageprovider
+        run: |
+          docker build -t iscanprint/imageprovider:3.0 .
+          docker push iscanprint/imageprovider:3.0
+
+      - name: Build and push kafka
+        working-directory: src/kafka
+        run: |
+          docker build -t iscanprint/kafka:3.0 .
+          docker push iscanprint/kafka:3.0
+
+      - name: Build and push loadgenerator
+        working-directory: src/loadgenerator
+        run: |
+          docker build -t iscanprint/loadgenerator:3.0 .
+          docker push iscanprint/loadgenerator:3.0
+
+      - name: Build and push paymentservice
+        working-directory: src/paymentservice
+        run: |
+          docker build -t iscanprint/paymentservice:3.0 .
+          docker push iscanprint/paymentservice:3.0
+
+      - name: Build and push productcatalogservice
+        working-directory: src/productcatalogservice
+        run: |
+          docker build -t iscanprint/productcatalogservice:3.0 .
+          docker push iscanprint/productcatalogservice:3.0
+
+      - name: Build and push quoteservice
+        working-directory: src/quoteservice
+        run: |
+          docker build -t iscanprint/quoteservice:3.0 .
+          docker push iscanprint/quoteservice:3.0
+
+      - name: Build and push recommendationservice
+        working-directory: src/recommendationservice
+        run: |
+          docker build -t iscanprint/recommendationservice:3.0 .
+          docker push iscanprint/recommendationservice:3.0
+
+      - name: Build and push shippingservice
+        working-directory: src/shippingservice
+        run: |
+          docker build -t iscanprint/shippingservice:3.0 .
+          docker push iscanprint/shippingservice:3.0
