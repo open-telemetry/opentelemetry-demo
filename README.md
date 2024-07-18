@@ -12,17 +12,19 @@ to deploy the app, check out [how to navigate the OTLP data in your New Relic ac
 
 ### Modifications
 Please note the following modifications to our fork:
-* The helm values file has been modified to avoid breaking upstream changes
 * The .env file contains New Relic-specific environment variables so you can quickly
 ship the data to your account
+* recommendationservice has been instrumented with the New Relic Python APM 
+agent to demonstrate interoperability between our language agents and OpenTelemetry 
+instrumentation 
 
-### Quick start
+### Quick start with New Relic
 Get started quickly by running the app according to your deployment method preference:
 
 * [Docker](https://github.com/newrelic/opentelemetry-demo/blob/main/docs/docker_deployment.md)
 * [Kubernetes](https://github.com/newrelic/opentelemetry-demo/blob/main/docs/kubernetes_deployment.md)
 
-Requirements: A New Relic account – [sign up for a free account](https://newrelic.com/signup) if you need one
+Requirements: A New Relic account – [sign up for a free account](https://newrelic.com/signup) if you need one.
 
 ### Navigate OTLP data in New Relic
 The Demo comes with a number of problem scenarios that you can enable via 
@@ -42,8 +44,8 @@ have planned for the near future:
 * [Demo scenario feature flags](https://opentelemetry.io/docs/demo/feature-flags/) are in testing
 * [Troubleshooting tutorials](https://github.com/newrelic/opentelemetry-demo/blob/main/docs/demo-scenarios/README.md) for each demo scenario
 * Support for OTel-sourced Kubernetes infrastructure metrics in New Relic
-* Add a feature flag to enable NR instrumentation for recommendationservice to demonstrate 
-interoperability between our language agents and OpenTelemetry instrumentation
+* Add a feature flag to enable NR instrumentation for recommendationservice when 
+using Docker quick start method
 
 Have a suggestion, or running into problems with our fork? Please let us know by
 [opening an issue](https://github.com/newrelic/opentelemetry-demo/issues/new/choose)!
