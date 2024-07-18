@@ -1,0 +1,2678 @@
+properties: []
+components:
+  - default:
+      type: "physical_node"
+      description: null
+      properties:
+        - cpu_count: 4
+        - ram_GiB: 16
+        - storage_GiB: 32
+      operations: [ ]
+      artifacts: [ ]
+  - default-operating-system:
+      type: "operating_system"
+      description: null
+      properties:
+        - name: "Ubuntu"
+        - version: "18.04"
+        - os_family: "Linux"
+      operations: [ ]
+      artifacts: [ ]
+  - default-container-runtime:
+      type: "container_runtime"
+      description: null
+      properties:
+        - name: "Kubernetes"
+      operations: [ ]
+      artifacts: [ ]
+  - name: opentelemetry-demo-currencyservice
+    type: opentelemetry-demo-currencyservice-type
+    properties:
+      - key: service
+        type: INTEGER
+        value: 8080
+        required: true
+      - key: VERSION
+        type: STRING
+        value: "'1.10.0'"
+        required: true
+      - key: CURRENCY_SERVICE_PORT
+        type: STRING
+        value: "8080"
+        required: true
+      - key: OTEL_EXPORTER_OTLP_ENDPOINT
+        type: STRING
+        value: "http://$(OTEL_COLLECTOR_NAME):4317"
+        required: true
+      - key: OTEL_RESOURCE_ATTRIBUTES
+        type: STRING
+        value: "service.name=$(OTEL_SERVICE_NAME),service.namespace=opentelemetry-demo,service.version=1.10.0"
+        required: true
+      - key: OTEL_COLLECTOR_NAME
+        type: STRING
+        value: "'opentelemetry-demo-otelcol'"
+        required: true
+      - key: OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE
+        type: STRING
+        value: "cumulative"
+        required: true
+      - key: tcp-service
+        type: STRING
+        value: "8080:8080"
+        required: true    
+    operations:
+      []    
+    artifacts:
+      - type: docker_image
+        name: 'ghcr.io/open-telemetry/demo:1.10.0-currencyservice'
+        fileURI: "-"
+  - name: opentelemetry-demo-frauddetectionservice
+    type: opentelemetry-demo-frauddetectionservice-type
+    properties:
+      - key: KAFKA_SERVICE_ADDR
+        type: STRING
+        value: "'opentelemetry-demo-kafka:9092'"
+        required: true
+      - key: FLAGD_PORT
+        type: STRING
+        value: "8013"
+        required: true
+      - key: OTEL_EXPORTER_OTLP_ENDPOINT
+        type: STRING
+        value: "http://$(OTEL_COLLECTOR_NAME):4318"
+        required: true
+      - key: OTEL_RESOURCE_ATTRIBUTES
+        type: STRING
+        value: "service.name=$(OTEL_SERVICE_NAME),service.namespace=opentelemetry-demo,service.version=1.10.0"
+        required: true
+      - key: OTEL_COLLECTOR_NAME
+        type: STRING
+        value: "'opentelemetry-demo-otelcol'"
+        required: true
+      - key: OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE
+        type: STRING
+        value: "cumulative"
+        required: true
+      - key: FLAGD_HOST
+        type: STRING
+        value: "'opentelemetry-demo-flagd'"
+        required: true    
+    operations:
+      []    
+    artifacts:
+      - type: docker_image
+        name: 'ghcr.io/open-telemetry/demo:1.10.0-frauddetectionservice'
+        fileURI: "-"
+  - name: opentelemetry-demo-paymentservice
+    type: opentelemetry-demo-paymentservice-type
+    properties:
+      - key: service
+        type: INTEGER
+        value: 8080
+        required: true
+      - key: PAYMENT_SERVICE_PORT
+        type: STRING
+        value: "8080"
+        required: true
+      - key: FLAGD_PORT
+        type: STRING
+        value: "8013"
+        required: true
+      - key: OTEL_EXPORTER_OTLP_ENDPOINT
+        type: STRING
+        value: "http://$(OTEL_COLLECTOR_NAME):4317"
+        required: true
+      - key: OTEL_RESOURCE_ATTRIBUTES
+        type: STRING
+        value: "service.name=$(OTEL_SERVICE_NAME),service.namespace=opentelemetry-demo,service.version=1.10.0"
+        required: true
+      - key: OTEL_COLLECTOR_NAME
+        type: STRING
+        value: "'opentelemetry-demo-otelcol'"
+        required: true
+      - key: OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE
+        type: STRING
+        value: "cumulative"
+        required: true
+      - key: FLAGD_HOST
+        type: STRING
+        value: "'opentelemetry-demo-flagd'"
+        required: true
+      - key: tcp-service
+        type: STRING
+        value: "8080:8080"
+        required: true    
+    operations:
+      []    
+    artifacts:
+      - type: docker_image
+        name: 'ghcr.io/open-telemetry/demo:1.10.0-paymentservice'
+        fileURI: "-"
+  - name: opentelemetry-demo-quoteservice
+    type: opentelemetry-demo-quoteservice-type
+    properties:
+      - key: service
+        type: INTEGER
+        value: 8080
+        required: true
+      - key: QUOTE_SERVICE_PORT
+        type: STRING
+        value: "8080"
+        required: true
+      - key: OTEL_PHP_AUTOLOAD_ENABLED
+        type: STRING
+        value: "true"
+        required: true
+      - key: OTEL_EXPORTER_OTLP_ENDPOINT
+        type: STRING
+        value: "http://$(OTEL_COLLECTOR_NAME):4318"
+        required: true
+      - key: OTEL_RESOURCE_ATTRIBUTES
+        type: STRING
+        value: "service.name=$(OTEL_SERVICE_NAME),service.namespace=opentelemetry-demo,service.version=1.10.0"
+        required: true
+      - key: OTEL_COLLECTOR_NAME
+        type: STRING
+        value: "'opentelemetry-demo-otelcol'"
+        required: true
+      - key: OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE
+        type: STRING
+        value: "cumulative"
+        required: true
+      - key: tcp-service
+        type: STRING
+        value: "8080:8080"
+        required: true    
+    operations:
+      []    
+    artifacts:
+      - type: docker_image
+        name: 'ghcr.io/open-telemetry/demo:1.10.0-quoteservice'
+        fileURI: "-"
+  - name: opentelemetry-demo-frontend
+    type: opentelemetry-demo-frontend-type
+    properties:
+      - key: service
+        type: INTEGER
+        value: 8080
+        required: true
+      - key: WEB_OTEL_SERVICE_NAME
+        type: STRING
+        value: "frontend-web"
+        required: true
+      - key: FRONTEND_PORT
+        type: STRING
+        value: "8080"
+        required: true
+      - key: OTEL_EXPORTER_OTLP_ENDPOINT
+        type: STRING
+        value: "http://$(OTEL_COLLECTOR_NAME):4317"
+        required: true
+      - key: RECOMMENDATION_SERVICE_ADDR
+        type: STRING
+        value: "'opentelemetry-demo-recommendationservice:8080'"
+        required: true
+      - key: CHECKOUT_SERVICE_ADDR
+        type: STRING
+        value: "'opentelemetry-demo-checkoutservice:8080'"
+        required: true
+      - key: PUBLIC_OTEL_EXPORTER_OTLP_TRACES_ENDPOINT
+        type: STRING
+        value: "http://localhost:8080/otlp-http/v1/traces"
+        required: true
+      - key: FRONTEND_ADDR
+        type: STRING
+        value: ":8080"
+        required: true
+      - key: OTEL_COLLECTOR_NAME
+        type: STRING
+        value: "'opentelemetry-demo-otelcol'"
+        required: true
+      - key: PRODUCT_CATALOG_SERVICE_ADDR
+        type: STRING
+        value: "'opentelemetry-demo-productcatalogservice:8080'"
+        required: true
+      - key: FLAGD_PORT
+        type: STRING
+        value: "8013"
+        required: true
+      - key: AD_SERVICE_ADDR
+        type: STRING
+        value: "'opentelemetry-demo-adservice:8080'"
+        required: true
+      - key: OTEL_COLLECTOR_HOST
+        type: STRING
+        value: "$(OTEL_COLLECTOR_NAME)"
+        required: true
+      - key: OTEL_RESOURCE_ATTRIBUTES
+        type: STRING
+        value: "service.name=$(OTEL_SERVICE_NAME),service.namespace=opentelemetry-demo,service.version=1.10.0"
+        required: true
+      - key: CURRENCY_SERVICE_ADDR
+        type: STRING
+        value: "'opentelemetry-demo-currencyservice:8080'"
+        required: true
+      - key: SHIPPING_SERVICE_ADDR
+        type: STRING
+        value: "'opentelemetry-demo-shippingservice:8080'"
+        required: true
+      - key: CART_SERVICE_ADDR
+        type: STRING
+        value: "'opentelemetry-demo-cartservice:8080'"
+        required: true
+      - key: OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE
+        type: STRING
+        value: "cumulative"
+        required: true
+      - key: FLAGD_HOST
+        type: STRING
+        value: "'opentelemetry-demo-flagd'"
+        required: true
+      - key: tcp-service
+        type: STRING
+        value: "8080:8080"
+        required: true    
+    operations:
+      []    
+    artifacts:
+      - type: docker_image
+        name: 'ghcr.io/open-telemetry/demo:1.10.0-frontend'
+        fileURI: "-"
+  - name: opentelemetry-demo-grafana
+    type: opentelemetry-demo-grafana-type
+    properties:
+      - key: grafana
+        type: INTEGER
+        value: 3000
+        required: true
+      - key: gossip-tcp
+        type: INTEGER
+        value: 9094
+        required: true
+      - key: gossip-udp
+        type: INTEGER
+        value: 9094
+        required: true
+      - key: GF_PATHS_PROVISIONING
+        type: STRING
+        value: "/etc/grafana/provisioning"
+        required: true
+      - key: GF_PATHS_PLUGINS
+        type: STRING
+        value: "/var/lib/grafana/plugins"
+        required: true
+      - key: GF_PATHS_DATA
+        type: STRING
+        value: "/var/lib/grafana/"
+        required: true
+      - key: GF_PATHS_LOGS
+        type: STRING
+        value: "/var/log/grafana"
+        required: true
+      - key: service
+        type: STRING
+        value: "80:3000"
+        required: true    
+    operations:
+      []    
+    artifacts:
+      - type: docker_image
+        name: "docker.io/grafana/grafana:10.4.1"
+        fileURI: "-"
+  - name: opentelemetry-demo-redis
+    type: opentelemetry-demo-redis-type
+    properties:
+      - key: redis
+        type: INTEGER
+        value: 6379
+        required: true
+      - key: OTEL_RESOURCE_ATTRIBUTES
+        type: STRING
+        value: "service.name=$(OTEL_SERVICE_NAME),service.namespace=opentelemetry-demo,service.version=1.10.0"
+        required: true
+      - key: OTEL_COLLECTOR_NAME
+        type: STRING
+        value: "'opentelemetry-demo-otelcol'"
+        required: true
+      - key: OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE
+        type: STRING
+        value: "cumulative"
+        required: true
+      - key: redis
+        type: STRING
+        value: "6379:6379"
+        required: true    
+    operations:
+      []    
+    artifacts:
+      - type: docker_image
+        name: 'redis:7.2-alpine'
+        fileURI: "-"
+  - name: otel-demo-opensearch
+    type: otel-demo-opensearch-type
+    properties:
+      - key: transport
+        type: INTEGER
+        value: 9300
+        required: true
+      - key: metrics
+        type: INTEGER
+        value: 9600
+        required: true
+      - key: http
+        type: INTEGER
+        value: 9200
+        required: true
+      - key: discovery.seed_hosts
+        type: STRING
+        value: "opensearch-cluster-master-headless"
+        required: true
+      - key: network.host
+        type: STRING
+        value: "0.0.0.0"
+        required: true
+      - key: node.roles
+        type: STRING
+        value: "master,ingest,data,remote_cluster_client,"
+        required: true
+      - key: cluster.name
+        type: STRING
+        value: "demo-cluster"
+        required: true
+      - key: DISABLE_INSTALL_DEMO_CONFIG
+        type: STRING
+        value: "true"
+        required: true
+      - key: discovery.type
+        type: STRING
+        value: "single-node"
+        required: true
+      - key: bootstrap.memory_lock
+        type: STRING
+        value: "true"
+        required: true
+      - key: DISABLE_SECURITY_PLUGIN
+        type: STRING
+        value: "true"
+        required: true
+      - key: OPENSEARCH_JAVA_OPTS
+        type: STRING
+        value: "-Xms300m -Xmx300m"
+        required: true    
+    operations:
+      []    
+    artifacts:
+      - type: docker_image
+        name: "opensearchproject/opensearch:2.13.0"
+        fileURI: "-"
+  - name: opentelemetry-demo-flagd
+    type: opentelemetry-demo-flagd-type
+    properties:
+      - key: service
+        type: INTEGER
+        value: 8013
+        required: true
+      - key: FLAGD_METRICS_EXPORTER
+        type: STRING
+        value: "otel"
+        required: true
+      - key: OTEL_RESOURCE_ATTRIBUTES
+        type: STRING
+        value: "service.name=$(OTEL_SERVICE_NAME),service.namespace=opentelemetry-demo,service.version=1.10.0"
+        required: true
+      - key: OTEL_COLLECTOR_NAME
+        type: STRING
+        value: "'opentelemetry-demo-otelcol'"
+        required: true
+      - key: FLAGD_OTEL_COLLECTOR_URI
+        type: STRING
+        value: "$(OTEL_COLLECTOR_NAME):4317"
+        required: true
+      - key: OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE
+        type: STRING
+        value: "cumulative"
+        required: true
+      - key: tcp-service
+        type: STRING
+        value: "8013:8013"
+        required: true    
+    operations:
+      []    
+    artifacts:
+      - type: docker_image
+        name: 'ghcr.io/open-feature/flagd:v0.10.1'
+        fileURI: "-"
+  - name: opentelemetry-demo-mongo
+    type: opentelemetry-demo-mongo-type
+    properties:
+      - key: plaintext
+        type: INTEGER
+        value: 27017
+        required: true
+      - key: MONGO_INITDB_ROOT_PASSWORD
+        type: STRING
+        value: "'mongo_product_catalog'"
+        required: true
+      - key: MONGO_INITDB_ROOT_USERNAME
+        type: STRING
+        value: "'mongo'"
+        required: true
+      - key: plaintext
+        type: STRING
+        value: "27017:27017"
+        required: true    
+    operations:
+      []    
+    artifacts:
+      - type: docker_image
+        name: 'mongo:8.0.0-rc9'
+        fileURI: "-"
+  - name: opentelemetry-demo-frontendproxy
+    type: opentelemetry-demo-frontendproxy-type
+    properties:
+      - key: service
+        type: INTEGER
+        value: 8080
+        required: true
+      - key: GRAFANA_SERVICE_PORT
+        type: STRING
+        value: "80"
+        required: true
+      - key: OTEL_COLLECTOR_PORT_GRPC
+        type: STRING
+        value: "4317"
+        required: true
+      - key: JAEGER_SERVICE_PORT
+        type: STRING
+        value: "16686"
+        required: true
+      - key: FRONTEND_PORT
+        type: STRING
+        value: "8080"
+        required: true
+      - key: GRAFANA_SERVICE_HOST
+        type: STRING
+        value: "'opentelemetry-demo-grafana'"
+        required: true
+      - key: ENVOY_PORT
+        type: STRING
+        value: "8080"
+        required: true
+      - key: OTEL_COLLECTOR_NAME
+        type: STRING
+        value: "'opentelemetry-demo-otelcol'"
+        required: true
+      - key: LOCUST_WEB_PORT
+        type: STRING
+        value: "8089"
+        required: true
+      - key: OTEL_COLLECTOR_PORT_HTTP
+        type: STRING
+        value: "4318"
+        required: true
+      - key: IMAGE_PROVIDER_HOST
+        type: STRING
+        value: "'opentelemetry-demo-imageprovider'"
+        required: true
+      - key: FLAGD_PORT
+        type: STRING
+        value: "8013"
+        required: true
+      - key: LOCUST_WEB_HOST
+        type: STRING
+        value: "'opentelemetry-demo-loadgenerator'"
+        required: true
+      - key: OTEL_COLLECTOR_HOST
+        type: STRING
+        value: "$(OTEL_COLLECTOR_NAME)"
+        required: true
+      - key: OTEL_RESOURCE_ATTRIBUTES
+        type: STRING
+        value: "service.name=$(OTEL_SERVICE_NAME),service.namespace=opentelemetry-demo,service.version=1.10.0"
+        required: true
+      - key: JAEGER_SERVICE_HOST
+        type: STRING
+        value: "'opentelemetry-demo-jaeger-query'"
+        required: true
+      - key: FRONTEND_HOST
+        type: STRING
+        value: "'opentelemetry-demo-frontend'"
+        required: true
+      - key: IMAGE_PROVIDER_PORT
+        type: STRING
+        value: "8081"
+        required: true
+      - key: OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE
+        type: STRING
+        value: "cumulative"
+        required: true
+      - key: FLAGD_HOST
+        type: STRING
+        value: "'opentelemetry-demo-flagd'"
+        required: true
+      - key: tcp-service
+        type: STRING
+        value: "8080:8080"
+        required: true    
+    operations:
+      []    
+    artifacts:
+      - type: docker_image
+        name: 'ghcr.io/open-telemetry/demo:1.10.0-frontendproxy'
+        fileURI: "-"
+  - name: opentelemetry-demo-loadgenerator
+    type: opentelemetry-demo-loadgenerator-type
+    properties:
+      - key: service
+        type: INTEGER
+        value: 8089
+        required: true
+      - key: LOCUST_USERS
+        type: STRING
+        value: "10"
+        required: true
+      - key: OTEL_EXPORTER_OTLP_ENDPOINT
+        type: STRING
+        value: "http://$(OTEL_COLLECTOR_NAME):4317"
+        required: true
+      - key: OTEL_COLLECTOR_NAME
+        type: STRING
+        value: "'opentelemetry-demo-otelcol'"
+        required: true
+      - key: PROTOCOL_BUFFERS_PYTHON_IMPLEMENTATION
+        type: STRING
+        value: "python"
+        required: true
+      - key: LOCUST_WEB_PORT
+        type: STRING
+        value: "8089"
+        required: true
+      - key: FLAGD_PORT
+        type: STRING
+        value: "8013"
+        required: true
+      - key: LOCUST_BROWSER_TRAFFIC_ENABLED
+        type: STRING
+        value: "true"
+        required: true
+      - key: LOCUST_HOST
+        type: STRING
+        value: "http://opentelemetry-demo-frontendproxy:8080"
+        required: true
+      - key: OTEL_RESOURCE_ATTRIBUTES
+        type: STRING
+        value: "service.name=$(OTEL_SERVICE_NAME),service.namespace=opentelemetry-demo,service.version=1.10.0"
+        required: true
+      - key: LOCUST_AUTOSTART
+        type: STRING
+        value: "true"
+        required: true
+      - key: OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE
+        type: STRING
+        value: "cumulative"
+        required: true
+      - key: LOCUST_SPAWN_RATE
+        type: STRING
+        value: "1"
+        required: true
+      - key: LOCUST_HEADLESS
+        type: STRING
+        value: "false"
+        required: true
+      - key: FLAGD_HOST
+        type: STRING
+        value: "'opentelemetry-demo-flagd'"
+        required: true
+      - key: tcp-service
+        type: STRING
+        value: "8089:8089"
+        required: true    
+    operations:
+      []    
+    artifacts:
+      - type: docker_image
+        name: 'ghcr.io/open-telemetry/demo:1.10.0-loadgenerator'
+        fileURI: "-"
+  - name: opentelemetry-demo-adservice
+    type: opentelemetry-demo-adservice-type
+    properties:
+      - key: service
+        type: INTEGER
+        value: 8080
+        required: true
+      - key: FLAGD_PORT
+        type: STRING
+        value: "8013"
+        required: true
+      - key: OTEL_EXPORTER_OTLP_ENDPOINT
+        type: STRING
+        value: "http://$(OTEL_COLLECTOR_NAME):4318"
+        required: true
+      - key: OTEL_RESOURCE_ATTRIBUTES
+        type: STRING
+        value: "service.name=$(OTEL_SERVICE_NAME),service.namespace=opentelemetry-demo,service.version=1.10.0"
+        required: true
+      - key: AD_SERVICE_PORT
+        type: STRING
+        value: "8080"
+        required: true
+      - key: OTEL_COLLECTOR_NAME
+        type: STRING
+        value: "'opentelemetry-demo-otelcol'"
+        required: true
+      - key: OTEL_LOGS_EXPORTER
+        type: STRING
+        value: "otlp"
+        required: true
+      - key: OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE
+        type: STRING
+        value: "cumulative"
+        required: true
+      - key: FLAGD_HOST
+        type: STRING
+        value: "'opentelemetry-demo-flagd'"
+        required: true
+      - key: tcp-service
+        type: STRING
+        value: "8080:8080"
+        required: true    
+    operations:
+      []    
+    artifacts:
+      - type: docker_image
+        name: 'ghcr.io/open-telemetry/demo:1.10.0-adservice'
+        fileURI: "-"
+  - name: opentelemetry-demo-jaeger
+    type: opentelemetry-demo-jaeger-type
+    properties:
+      - key: container_port
+        type: INTEGER
+        value: 5775
+        required: true
+      - key: container_port
+        type: INTEGER
+        value: 6831
+        required: true
+      - key: container_port
+        type: INTEGER
+        value: 6832
+        required: true
+      - key: container_port
+        type: INTEGER
+        value: 5778
+        required: true
+      - key: container_port
+        type: INTEGER
+        value: 9411
+        required: true
+      - key: container_port
+        type: INTEGER
+        value: 16685
+        required: true
+      - key: container_port
+        type: INTEGER
+        value: 4317
+        required: true
+      - key: container_port
+        type: INTEGER
+        value: 16686
+        required: true
+      - key: container_port
+        type: INTEGER
+        value: 4318
+        required: true
+      - key: SPAN_STORAGE_TYPE
+        type: STRING
+        value: "memory"
+        required: true
+      - key: COLLECTOR_ZIPKIN_HOST_PORT
+        type: STRING
+        value: ":9411"
+        required: true
+      - key: COLLECTOR_OTLP_ENABLED
+        type: STRING
+        value: "true"
+        required: true
+      - key: METRICS_STORAGE_TYPE
+        type: STRING
+        value: "prometheus"
+        required: true
+      - key: JAEGER_DISABLED
+        type: STRING
+        value: "false"
+        required: true
+      - key: grpc-query
+        type: STRING
+        value: "16685:16685"
+        required: true
+      - key: http-query
+        type: STRING
+        value: "16686:16686"
+        required: true
+      - key: otlp-http
+        type: STRING
+        value: "4318:4318"
+        required: true
+      - key: jaeger-compact
+        type: STRING
+        value: "6831:6831"
+        required: true
+      - key: zipkin
+        type: STRING
+        value: "9411:9411"
+        required: true
+      - key: otlp
+        type: STRING
+        value: "4317:4317"
+        required: true    
+    operations:
+      []    
+    artifacts:
+      - type: docker_image
+        name: jaegertracing/all-in-one:1.53.0
+        fileURI: "-"
+  - name: opentelemetry-demo-cartservice
+    type: opentelemetry-demo-cartservice-type
+    properties:
+      - key: service
+        type: INTEGER
+        value: 8080
+        required: true
+      - key: FLAGD_PORT
+        type: STRING
+        value: "8013"
+        required: true
+      - key: OTEL_EXPORTER_OTLP_ENDPOINT
+        type: STRING
+        value: "http://$(OTEL_COLLECTOR_NAME):4317"
+        required: true
+      - key: OTEL_RESOURCE_ATTRIBUTES
+        type: STRING
+        value: "service.name=$(OTEL_SERVICE_NAME),service.namespace=opentelemetry-demo,service.version=1.10.0"
+        required: true
+      - key: OTEL_COLLECTOR_NAME
+        type: STRING
+        value: "'opentelemetry-demo-otelcol'"
+        required: true
+      - key: ASPNETCORE_URLS
+        type: STRING
+        value: "http://*:$(CART_SERVICE_PORT)"
+        required: true
+      - key: OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE
+        type: STRING
+        value: "cumulative"
+        required: true
+      - key: CART_SERVICE_PORT
+        type: STRING
+        value: "8080"
+        required: true
+      - key: REDIS_ADDR
+        type: STRING
+        value: "'opentelemetry-demo-redis:6379'"
+        required: true
+      - key: FLAGD_HOST
+        type: STRING
+        value: "'opentelemetry-demo-flagd'"
+        required: true
+      - key: tcp-service
+        type: STRING
+        value: "8080:8080"
+        required: true    
+    operations:
+      []    
+    artifacts:
+      - type: docker_image
+        name: 'ghcr.io/open-telemetry/demo:1.10.0-cartservice'
+        fileURI: "-"
+  - name: opentelemetry-demo-emailservice
+    type: opentelemetry-demo-emailservice-type
+    properties:
+      - key: service
+        type: INTEGER
+        value: 8080
+        required: true
+      - key: APP_ENV
+        type: STRING
+        value: "production"
+        required: true
+      - key: OTEL_EXPORTER_OTLP_TRACES_ENDPOINT
+        type: STRING
+        value: "http://$(OTEL_COLLECTOR_NAME):4318/v1/traces"
+        required: true
+      - key: OTEL_RESOURCE_ATTRIBUTES
+        type: STRING
+        value: "service.name=$(OTEL_SERVICE_NAME),service.namespace=opentelemetry-demo,service.version=1.10.0"
+        required: true
+      - key: OTEL_COLLECTOR_NAME
+        type: STRING
+        value: "'opentelemetry-demo-otelcol'"
+        required: true
+      - key: OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE
+        type: STRING
+        value: "cumulative"
+        required: true
+      - key: EMAIL_SERVICE_PORT
+        type: STRING
+        value: "8080"
+        required: true
+      - key: tcp-service
+        type: STRING
+        value: "8080:8080"
+        required: true    
+    operations:
+      []    
+    artifacts:
+      - type: docker_image
+        name: 'ghcr.io/open-telemetry/demo:1.10.0-emailservice'
+        fileURI: "-"
+  - name: opentelemetry-demo-imageprovider
+    type: opentelemetry-demo-imageprovider-type
+    properties:
+      - key: service
+        type: INTEGER
+        value: 8081
+        required: true
+      - key: OTEL_COLLECTOR_PORT_GRPC
+        type: STRING
+        value: "4317"
+        required: true
+      - key: OTEL_COLLECTOR_HOST
+        type: STRING
+        value: "$(OTEL_COLLECTOR_NAME)"
+        required: true
+      - key: OTEL_RESOURCE_ATTRIBUTES
+        type: STRING
+        value: "service.name=$(OTEL_SERVICE_NAME),service.namespace=opentelemetry-demo,service.version=1.10.0"
+        required: true
+      - key: IMAGE_PROVIDER_PORT
+        type: STRING
+        value: "8081"
+        required: true
+      - key: OTEL_COLLECTOR_NAME
+        type: STRING
+        value: "'opentelemetry-demo-otelcol'"
+        required: true
+      - key: OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE
+        type: STRING
+        value: "cumulative"
+        required: true
+      - key: tcp-service
+        type: STRING
+        value: "8081:8081"
+        required: true    
+    operations:
+      []    
+    artifacts:
+      - type: docker_image
+        name: 'ghcr.io/open-telemetry/demo:1.10.0-imageprovider'
+        fileURI: "-"
+  - name: opentelemetry-demo-productcatalogservice
+    type: opentelemetry-demo-productcatalogservice-type
+    properties:
+      - key: service
+        type: INTEGER
+        value: 8080
+        required: true
+      - key: MONGO_HOST
+        type: STRING
+        value: "'opentelemetry-demo-mongo'"
+        required: true
+      - key: PRODUCT_CATALOG_SERVICE_PORT
+        type: STRING
+        value: "8080"
+        required: true
+      - key: MONGO_PASSWORD
+        type: STRING
+        value: "'mongo_product_catalog'"
+        required: true
+      - key: FLAGD_PORT
+        type: STRING
+        value: "8013"
+        required: true
+      - key: OTEL_EXPORTER_OTLP_ENDPOINT
+        type: STRING
+        value: "http://$(OTEL_COLLECTOR_NAME):4317"
+        required: true
+      - key: OTEL_RESOURCE_ATTRIBUTES
+        type: STRING
+        value: "service.name=$(OTEL_SERVICE_NAME),service.namespace=opentelemetry-demo,service.version=1.10.0"
+        required: true
+      - key: MONGO_PORT
+        type: STRING
+        value: "'27017'"
+        required: true
+      - key: OTEL_COLLECTOR_NAME
+        type: STRING
+        value: "'opentelemetry-demo-otelcol'"
+        required: true
+      - key: MONGO_USERNAME
+        type: STRING
+        value: "'mongo'"
+        required: true
+      - key: OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE
+        type: STRING
+        value: "cumulative"
+        required: true
+      - key: FLAGD_HOST
+        type: STRING
+        value: "'opentelemetry-demo-flagd'"
+        required: true
+      - key: tcp-service
+        type: STRING
+        value: "8080:8080"
+        required: true    
+    operations:
+      []    
+    artifacts:
+      - type: docker_image
+        name: 'ghcr.io/open-telemetry/demo:1.10.0-productcatalogservice'
+        fileURI: "-"
+  - name: opentelemetry-demo-accountingservice
+    type: opentelemetry-demo-accountingservice-type
+    properties:
+      - key: KAFKA_SERVICE_ADDR
+        type: STRING
+        value: "'opentelemetry-demo-kafka:9092'"
+        required: true
+      - key: OTEL_EXPORTER_OTLP_ENDPOINT
+        type: STRING
+        value: "http://$(OTEL_COLLECTOR_NAME):4317"
+        required: true
+      - key: OTEL_RESOURCE_ATTRIBUTES
+        type: STRING
+        value: "service.name=$(OTEL_SERVICE_NAME),service.namespace=opentelemetry-demo,service.version=1.10.0"
+        required: true
+      - key: OTEL_COLLECTOR_NAME
+        type: STRING
+        value: "'opentelemetry-demo-otelcol'"
+        required: true
+      - key: OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE
+        type: STRING
+        value: "cumulative"
+        required: true    
+    operations:
+      []    
+    artifacts:
+      - type: docker_image
+        name: 'ghcr.io/open-telemetry/demo:1.10.0-accountingservice'
+        fileURI: "-"
+  - name: opentelemetry-demo-checkoutservice
+    type: opentelemetry-demo-checkoutservice-type
+    properties:
+      - key: service
+        type: INTEGER
+        value: 8080
+        required: true
+      - key: KAFKA_SERVICE_ADDR
+        type: STRING
+        value: "'opentelemetry-demo-kafka:9092'"
+        required: true
+      - key: OTEL_EXPORTER_OTLP_ENDPOINT
+        type: STRING
+        value: "http://$(OTEL_COLLECTOR_NAME):4317"
+        required: true
+      - key: OTEL_COLLECTOR_NAME
+        type: STRING
+        value: "'opentelemetry-demo-otelcol'"
+        required: true
+      - key: PRODUCT_CATALOG_SERVICE_ADDR
+        type: STRING
+        value: "'opentelemetry-demo-productcatalogservice:8080'"
+        required: true
+      - key: CHECKOUT_SERVICE_PORT
+        type: STRING
+        value: "8080"
+        required: true
+      - key: PAYMENT_SERVICE_ADDR
+        type: STRING
+        value: "'opentelemetry-demo-paymentservice:8080'"
+        required: true
+      - key: FLAGD_PORT
+        type: STRING
+        value: "8013"
+        required: true
+      - key: EMAIL_SERVICE_ADDR
+        type: STRING
+        value: "http://opentelemetry-demo-emailservice:8080"
+        required: true
+      - key: OTEL_RESOURCE_ATTRIBUTES
+        type: STRING
+        value: "service.name=$(OTEL_SERVICE_NAME),service.namespace=opentelemetry-demo,service.version=1.10.0"
+        required: true
+      - key: CURRENCY_SERVICE_ADDR
+        type: STRING
+        value: "'opentelemetry-demo-currencyservice:8080'"
+        required: true
+      - key: SHIPPING_SERVICE_ADDR
+        type: STRING
+        value: "'opentelemetry-demo-shippingservice:8080'"
+        required: true
+      - key: CART_SERVICE_ADDR
+        type: STRING
+        value: "'opentelemetry-demo-cartservice:8080'"
+        required: true
+      - key: OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE
+        type: STRING
+        value: "cumulative"
+        required: true
+      - key: FLAGD_HOST
+        type: STRING
+        value: "'opentelemetry-demo-flagd'"
+        required: true
+      - key: tcp-service
+        type: STRING
+        value: "8080:8080"
+        required: true    
+    operations:
+      []    
+    artifacts:
+      - type: docker_image
+        name: 'ghcr.io/open-telemetry/demo:1.10.0-checkoutservice'
+        fileURI: "-"
+  - name: opentelemetry-demo-shippingservice
+    type: opentelemetry-demo-shippingservice-type
+    properties:
+      - key: service
+        type: INTEGER
+        value: 8080
+        required: true
+      - key: OTEL_EXPORTER_OTLP_ENDPOINT
+        type: STRING
+        value: "http://$(OTEL_COLLECTOR_NAME):4317"
+        required: true
+      - key: OTEL_RESOURCE_ATTRIBUTES
+        type: STRING
+        value: "service.name=$(OTEL_SERVICE_NAME),service.namespace=opentelemetry-demo,service.version=1.10.0"
+        required: true
+      - key: QUOTE_SERVICE_ADDR
+        type: STRING
+        value: "http://opentelemetry-demo-quoteservice:8080"
+        required: true
+      - key: OTEL_COLLECTOR_NAME
+        type: STRING
+        value: "'opentelemetry-demo-otelcol'"
+        required: true
+      - key: SHIPPING_SERVICE_PORT
+        type: STRING
+        value: "8080"
+        required: true
+      - key: OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE
+        type: STRING
+        value: "cumulative"
+        required: true
+      - key: tcp-service
+        type: STRING
+        value: "8080:8080"
+        required: true    
+    operations:
+      []    
+    artifacts:
+      - type: docker_image
+        name: 'ghcr.io/open-telemetry/demo:1.10.0-shippingservice'
+        fileURI: "-"
+  - name: opentelemetry-demo-recommendationservice
+    type: opentelemetry-demo-recommendationservice-type
+    properties:
+      - key: service
+        type: INTEGER
+        value: 8080
+        required: true
+      - key: FLAGD_PORT
+        type: STRING
+        value: "8013"
+        required: true
+      - key: OTEL_PYTHON_LOG_CORRELATION
+        type: STRING
+        value: "true"
+        required: true
+      - key: OTEL_EXPORTER_OTLP_ENDPOINT
+        type: STRING
+        value: "http://$(OTEL_COLLECTOR_NAME):4317"
+        required: true
+      - key: OTEL_RESOURCE_ATTRIBUTES
+        type: STRING
+        value: "service.name=$(OTEL_SERVICE_NAME),service.namespace=opentelemetry-demo,service.version=1.10.0"
+        required: true
+      - key: OTEL_COLLECTOR_NAME
+        type: STRING
+        value: "'opentelemetry-demo-otelcol'"
+        required: true
+      - key: PRODUCT_CATALOG_SERVICE_ADDR
+        type: STRING
+        value: "'opentelemetry-demo-productcatalogservice:8080'"
+        required: true
+      - key: RECOMMENDATION_SERVICE_PORT
+        type: STRING
+        value: "8080"
+        required: true
+      - key: OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE
+        type: STRING
+        value: "cumulative"
+        required: true
+      - key: PROTOCOL_BUFFERS_PYTHON_IMPLEMENTATION
+        type: STRING
+        value: "python"
+        required: true
+      - key: FLAGD_HOST
+        type: STRING
+        value: "'opentelemetry-demo-flagd'"
+        required: true
+      - key: tcp-service
+        type: STRING
+        value: "8080:8080"
+        required: true    
+    operations:
+      []    
+    artifacts:
+      - type: docker_image
+        name: 'ghcr.io/open-telemetry/demo:1.10.0-recommendationservice'
+        fileURI: "-"
+  - name: opentelemetry-demo-kafka
+    type: opentelemetry-demo-kafka-type
+    properties:
+      - key: controller
+        type: INTEGER
+        value: 9093
+        required: true
+      - key: plaintext
+        type: INTEGER
+        value: 9092
+        required: true
+      - key: KAFKA_HEAP_OPTS
+        type: STRING
+        value: "-Xmx400M -Xms400M"
+        required: true
+      - key: OTEL_EXPORTER_OTLP_ENDPOINT
+        type: STRING
+        value: "http://$(OTEL_COLLECTOR_NAME):4318"
+        required: true
+      - key: KAFKA_ADVERTISED_LISTENERS
+        type: STRING
+        value: "PLAINTEXT://opentelemetry-demo-kafka:9092"
+        required: true
+      - key: OTEL_RESOURCE_ATTRIBUTES
+        type: STRING
+        value: "service.name=$(OTEL_SERVICE_NAME),service.namespace=opentelemetry-demo,service.version=1.10.0"
+        required: true
+      - key: OTEL_COLLECTOR_NAME
+        type: STRING
+        value: "'opentelemetry-demo-otelcol'"
+        required: true
+      - key: OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE
+        type: STRING
+        value: "cumulative"
+        required: true
+      - key: controller
+        type: STRING
+        value: "9093:9093"
+        required: true
+      - key: plaintext
+        type: STRING
+        value: "9092:9092"
+        required: true    
+    operations:
+      []    
+    artifacts:
+      - type: docker_image
+        name: 'ghcr.io/open-telemetry/demo:1.10.0-kafka'
+        fileURI: "-"
+  - name: opentelemetry-demo-otelcol
+    type: opentelemetry-demo-otelcol-type
+    properties:
+      - key: prometheus
+        type: INTEGER
+        value: 9464
+        required: true
+      - key: jaeger-compact
+        type: INTEGER
+        value: 6831
+        required: true
+      - key: jaeger-thrift
+        type: INTEGER
+        value: 14268
+        required: true
+      - key: zipkin
+        type: INTEGER
+        value: 9411
+        required: true
+      - key: jaeger-grpc
+        type: INTEGER
+        value: 14250
+        required: true
+      - key: otlp
+        type: INTEGER
+        value: 4317
+        required: true
+      - key: metrics
+        type: INTEGER
+        value: 8888
+        required: true
+      - key: otlp-http
+        type: INTEGER
+        value: 4318
+        required: true
+      - key: GOMEMLIMIT
+        type: STRING
+        value: "160MiB"
+        required: true
+      - key: metrics
+        type: STRING
+        value: "8888:8888"
+        required: true
+      - key: jaeger-grpc
+        type: STRING
+        value: "14250:14250"
+        required: true
+      - key: jaeger-thrift
+        type: STRING
+        value: "14268:14268"
+        required: true
+      - key: otlp-http
+        type: STRING
+        value: "4318:4318"
+        required: true
+      - key: jaeger-compact
+        type: STRING
+        value: "6831:6831"
+        required: true
+      - key: zipkin
+        type: STRING
+        value: "9411:9411"
+        required: true
+      - key: prometheus
+        type: STRING
+        value: "9464:9464"
+        required: true
+      - key: otlp
+        type: STRING
+        value: "4317:4317"
+        required: true    
+    operations:
+      []    
+    artifacts:
+      - type: docker_image
+        name: "otel/opentelemetry-collector-contrib:0.102.1"
+        fileURI: "-"
+  - name: opentelemetry-demo-prometheus-server
+    type: opentelemetry-demo-prometheus-server-type
+    properties:
+      - key: container_port
+        type: INTEGER
+        value: 9090
+        required: true
+      - key: http
+        type: STRING
+        value: "9090:9090"
+        required: true    
+    operations:
+      []    
+    artifacts:
+      - type: docker_image
+        name: "quay.io/prometheus/prometheus:v2.52.0"
+        fileURI: "-"
+relations:
+  - default-operating-system_HostedOn_default:
+      type: "HostedOn"
+      description: null
+      source: "default-operating-system"
+      target: "default"
+      properties: [ ]
+      operations: [ ]
+  - default-container-runtime_HostedOn_default-operating-system:
+      type: "HostedOn"
+      description: null
+      source: "default-container-runtime"
+      target: "default-operating-system"
+      properties: [ ]
+      operations: [ ]
+  - opentelemetry-demo-accountingservice_HostedOn_default-container-runtime:
+      type: "HostedOn"
+      description: null
+      source: "opentelemetry-demo-accountingservice"
+      target: "default-container-runtime"
+      properties: [ ]
+      operations: [ ]
+  - opentelemetry-demo-adservice_HostedOn_default-container-runtime:
+      type: "HostedOn"
+      description: null
+      source: "opentelemetry-demo-adservice"
+      target: "default-container-runtime"
+      properties: [ ]
+      operations: [ ]
+  - opentelemetry-demo-cartservice_HostedOn_default-container-runtime:
+      type: "HostedOn"
+      description: null
+      source: "opentelemetry-demo-cartservice"
+      target: "default-container-runtime"
+      properties: [ ]
+      operations: [ ]
+  - opentelemetry-demo-checkoutservice_HostedOn_default-container-runtime:
+      type: "HostedOn"
+      description: null
+      source: "opentelemetry-demo-checkoutservice"
+      target: "default-container-runtime"
+      properties: [ ]
+      operations: [ ]
+  - opentelemetry-demo-currencyservice_HostedOn_default-container-runtime:
+      type: "HostedOn"
+      description: null
+      source: "opentelemetry-demo-currencyservice"
+      target: "default-container-runtime"
+      properties: [ ]
+      operations: [ ]
+  - opentelemetry-demo-emailservice_HostedOn_default-container-runtime:
+      type: "HostedOn"
+      description: null
+      source: "opentelemetry-demo-emailservice"
+      target: "default-container-runtime"
+      properties: [ ]
+      operations: [ ]
+  - opentelemetry-demo-flagd_HostedOn_default-container-runtime:
+      type: "HostedOn"
+      description: null
+      source: "opentelemetry-demo-flagd"
+      target: "default-container-runtime"
+      properties: [ ]
+      operations: [ ]
+  - opentelemetry-demo-frauddetectionservice_HostedOn_default-container-runtime:
+      type: "HostedOn"
+      description: null
+      source: "opentelemetry-demo-frauddetectionservice"
+      target: "default-container-runtime"
+      properties: [ ]
+      operations: [ ]
+  - opentelemetry-demo-frontend_HostedOn_default-container-runtime:
+      type: "HostedOn"
+      description: null
+      source: "opentelemetry-demo-frontend"
+      target: "default-container-runtime"
+      properties: [ ]
+      operations: [ ]
+  - opentelemetry-demo-frontendproxy_HostedOn_default-container-runtime:
+      type: "HostedOn"
+      description: null
+      source: "opentelemetry-demo-frontendproxy"
+      target: "default-container-runtime"
+      properties: [ ]
+      operations: [ ]
+  - opentelemetry-demo-grafana_HostedOn_default-container-runtime:
+      type: "HostedOn"
+      description: null
+      source: "opentelemetry-demo-grafana"
+      target: "default-container-runtime"
+      properties: [ ]
+      operations: [ ]
+  - opentelemetry-demo-imageprovider_HostedOn_default-container-runtime:
+      type: "HostedOn"
+      description: null
+      source: "opentelemetry-demo-imageprovider"
+      target: "default-container-runtime"
+      properties: [ ]
+      operations: [ ]
+  - opentelemetry-demo-kafka_HostedOn_default-container-runtime:
+      type: "HostedOn"
+      description: null
+      source: "opentelemetry-demo-kafka"
+      target: "default-container-runtime"
+      properties: [ ]
+      operations: [ ]
+  - opentelemetry-demo-loadgenerator_HostedOn_default-container-runtime:
+      type: "HostedOn"
+      description: null
+      source: "opentelemetry-demo-loadgenerator"
+      target: "default-container-runtime"
+      properties: [ ]
+      operations: [ ]
+  - opentelemetry-demo-otelcollector_HostedOn_default-container-runtime:
+      type: "HostedOn"
+      description: null
+      source: "opentelemetry-demo-otelcollector"
+      target: "default-container-runtime"
+      properties: [ ]
+      operations: [ ]
+  - opentelemetry-demo-paymentservice_HostedOn_default-container-runtime:
+      type: "HostedOn"
+      description: null
+      source: "opentelemetry-demo-paymentservice"
+      target: "default-container-runtime"
+      properties: [ ]
+      operations: [ ]
+  - opentelemetry-demo-productcatalogservice_HostedOn_default-container-runtime:
+      type: "HostedOn"
+      description: null
+      source: "opentelemetry-demo-productcatalogservice"
+      target: "default-container-runtime"
+      properties: [ ]
+      operations: [ ]
+  - opentelemetry-demo-prometheus_HostedOn_default-container-runtime:
+      type: "HostedOn"
+      description: null
+      source: "opentelemetry-demo-prometheus"
+      target: "default-container-runtime"
+      properties: [ ]
+      operations: [ ]
+  - opentelemetry-demo-quoteservice_HostedOn_default-container-runtime:
+      type: "HostedOn"
+      description: null
+      source: "opentelemetry-demo-quoteservice"
+      target: "default-container-runtime"
+      properties: [ ]
+      operations: [ ]
+  - opentelemetry-demo-recommendataionservice_HostedOn_default-container-runtime:
+      type: "HostedOn"
+      description: null
+      source: "opentelemetry-demo-recommendataionservice"
+      target: "default-container-runtime"
+      properties: [ ]
+      operations: [ ]
+  - opentelemetry-demo-shippingservice_HostedOn_default-container-runtime:
+      type: "HostedOn"
+      description: null
+      source: "opentelemetry-demo-shippingservice"
+      target: "default-container-runtime"
+      properties: [ ]
+      operations: [ ]
+
+
+component types:
+  - name: opentelemetry-demo-currencyservice-type
+    extends: 
+    properties:
+      - key: service
+        type: INTEGER
+        value: 8080
+        required: true
+      - key: VERSION
+        type: STRING
+        value: "'1.10.0'"
+        required: true
+      - key: CURRENCY_SERVICE_PORT
+        type: STRING
+        value: "8080"
+        required: true
+      - key: OTEL_EXPORTER_OTLP_ENDPOINT
+        type: STRING
+        value: "http://$(OTEL_COLLECTOR_NAME):4317"
+        required: true
+      - key: OTEL_RESOURCE_ATTRIBUTES
+        type: STRING
+        value: "service.name=$(OTEL_SERVICE_NAME),service.namespace=opentelemetry-demo,service.version=1.10.0"
+        required: true
+      - key: OTEL_COLLECTOR_NAME
+        type: STRING
+        value: "'opentelemetry-demo-otelcol'"
+        required: true
+      - key: OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE
+        type: STRING
+        value: "cumulative"
+        required: true
+      - key: tcp-service
+        type: STRING
+        value: "8080:8080"
+        required: true
+    operations:
+      []
+  - name: opentelemetry-demo-frauddetectionservice-type
+    extends: 
+    properties:
+      - key: KAFKA_SERVICE_ADDR
+        type: STRING
+        value: "'opentelemetry-demo-kafka:9092'"
+        required: true
+      - key: FLAGD_PORT
+        type: STRING
+        value: "8013"
+        required: true
+      - key: OTEL_EXPORTER_OTLP_ENDPOINT
+        type: STRING
+        value: "http://$(OTEL_COLLECTOR_NAME):4318"
+        required: true
+      - key: OTEL_RESOURCE_ATTRIBUTES
+        type: STRING
+        value: "service.name=$(OTEL_SERVICE_NAME),service.namespace=opentelemetry-demo,service.version=1.10.0"
+        required: true
+      - key: OTEL_COLLECTOR_NAME
+        type: STRING
+        value: "'opentelemetry-demo-otelcol'"
+        required: true
+      - key: OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE
+        type: STRING
+        value: "cumulative"
+        required: true
+      - key: FLAGD_HOST
+        type: STRING
+        value: "'opentelemetry-demo-flagd'"
+        required: true
+    operations:
+      []
+  - name: opentelemetry-demo-paymentservice-type
+    extends: 
+    properties:
+      - key: service
+        type: INTEGER
+        value: 8080
+        required: true
+      - key: PAYMENT_SERVICE_PORT
+        type: STRING
+        value: "8080"
+        required: true
+      - key: FLAGD_PORT
+        type: STRING
+        value: "8013"
+        required: true
+      - key: OTEL_EXPORTER_OTLP_ENDPOINT
+        type: STRING
+        value: "http://$(OTEL_COLLECTOR_NAME):4317"
+        required: true
+      - key: OTEL_RESOURCE_ATTRIBUTES
+        type: STRING
+        value: "service.name=$(OTEL_SERVICE_NAME),service.namespace=opentelemetry-demo,service.version=1.10.0"
+        required: true
+      - key: OTEL_COLLECTOR_NAME
+        type: STRING
+        value: "'opentelemetry-demo-otelcol'"
+        required: true
+      - key: OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE
+        type: STRING
+        value: "cumulative"
+        required: true
+      - key: FLAGD_HOST
+        type: STRING
+        value: "'opentelemetry-demo-flagd'"
+        required: true
+      - key: tcp-service
+        type: STRING
+        value: "8080:8080"
+        required: true
+    operations:
+      []
+  - name: opentelemetry-demo-quoteservice-type
+    extends: 
+    properties:
+      - key: service
+        type: INTEGER
+        value: 8080
+        required: true
+      - key: QUOTE_SERVICE_PORT
+        type: STRING
+        value: "8080"
+        required: true
+      - key: OTEL_PHP_AUTOLOAD_ENABLED
+        type: STRING
+        value: "true"
+        required: true
+      - key: OTEL_EXPORTER_OTLP_ENDPOINT
+        type: STRING
+        value: "http://$(OTEL_COLLECTOR_NAME):4318"
+        required: true
+      - key: OTEL_RESOURCE_ATTRIBUTES
+        type: STRING
+        value: "service.name=$(OTEL_SERVICE_NAME),service.namespace=opentelemetry-demo,service.version=1.10.0"
+        required: true
+      - key: OTEL_COLLECTOR_NAME
+        type: STRING
+        value: "'opentelemetry-demo-otelcol'"
+        required: true
+      - key: OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE
+        type: STRING
+        value: "cumulative"
+        required: true
+      - key: tcp-service
+        type: STRING
+        value: "8080:8080"
+        required: true
+    operations:
+      []
+  - name: opentelemetry-demo-frontend-type
+    extends: 
+    properties:
+      - key: service
+        type: INTEGER
+        value: 8080
+        required: true
+      - key: WEB_OTEL_SERVICE_NAME
+        type: STRING
+        value: "frontend-web"
+        required: true
+      - key: FRONTEND_PORT
+        type: STRING
+        value: "8080"
+        required: true
+      - key: OTEL_EXPORTER_OTLP_ENDPOINT
+        type: STRING
+        value: "http://$(OTEL_COLLECTOR_NAME):4317"
+        required: true
+      - key: RECOMMENDATION_SERVICE_ADDR
+        type: STRING
+        value: "'opentelemetry-demo-recommendationservice:8080'"
+        required: true
+      - key: CHECKOUT_SERVICE_ADDR
+        type: STRING
+        value: "'opentelemetry-demo-checkoutservice:8080'"
+        required: true
+      - key: PUBLIC_OTEL_EXPORTER_OTLP_TRACES_ENDPOINT
+        type: STRING
+        value: "http://localhost:8080/otlp-http/v1/traces"
+        required: true
+      - key: FRONTEND_ADDR
+        type: STRING
+        value: ":8080"
+        required: true
+      - key: OTEL_COLLECTOR_NAME
+        type: STRING
+        value: "'opentelemetry-demo-otelcol'"
+        required: true
+      - key: PRODUCT_CATALOG_SERVICE_ADDR
+        type: STRING
+        value: "'opentelemetry-demo-productcatalogservice:8080'"
+        required: true
+      - key: FLAGD_PORT
+        type: STRING
+        value: "8013"
+        required: true
+      - key: AD_SERVICE_ADDR
+        type: STRING
+        value: "'opentelemetry-demo-adservice:8080'"
+        required: true
+      - key: OTEL_COLLECTOR_HOST
+        type: STRING
+        value: "$(OTEL_COLLECTOR_NAME)"
+        required: true
+      - key: OTEL_RESOURCE_ATTRIBUTES
+        type: STRING
+        value: "service.name=$(OTEL_SERVICE_NAME),service.namespace=opentelemetry-demo,service.version=1.10.0"
+        required: true
+      - key: CURRENCY_SERVICE_ADDR
+        type: STRING
+        value: "'opentelemetry-demo-currencyservice:8080'"
+        required: true
+      - key: SHIPPING_SERVICE_ADDR
+        type: STRING
+        value: "'opentelemetry-demo-shippingservice:8080'"
+        required: true
+      - key: CART_SERVICE_ADDR
+        type: STRING
+        value: "'opentelemetry-demo-cartservice:8080'"
+        required: true
+      - key: OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE
+        type: STRING
+        value: "cumulative"
+        required: true
+      - key: FLAGD_HOST
+        type: STRING
+        value: "'opentelemetry-demo-flagd'"
+        required: true
+      - key: tcp-service
+        type: STRING
+        value: "8080:8080"
+        required: true
+    operations:
+      []
+  - name: opentelemetry-demo-grafana-type
+    extends: 
+    properties:
+      - key: grafana
+        type: INTEGER
+        value: 3000
+        required: true
+      - key: gossip-tcp
+        type: INTEGER
+        value: 9094
+        required: true
+      - key: gossip-udp
+        type: INTEGER
+        value: 9094
+        required: true
+      - key: GF_PATHS_PROVISIONING
+        type: STRING
+        value: "/etc/grafana/provisioning"
+        required: true
+      - key: GF_PATHS_PLUGINS
+        type: STRING
+        value: "/var/lib/grafana/plugins"
+        required: true
+      - key: GF_PATHS_DATA
+        type: STRING
+        value: "/var/lib/grafana/"
+        required: true
+      - key: GF_PATHS_LOGS
+        type: STRING
+        value: "/var/log/grafana"
+        required: true
+      - key: service
+        type: STRING
+        value: "80:3000"
+        required: true
+    operations:
+      []
+  - name: opentelemetry-demo-redis-type
+    extends: 
+    properties:
+      - key: redis
+        type: INTEGER
+        value: 6379
+        required: true
+      - key: OTEL_RESOURCE_ATTRIBUTES
+        type: STRING
+        value: "service.name=$(OTEL_SERVICE_NAME),service.namespace=opentelemetry-demo,service.version=1.10.0"
+        required: true
+      - key: OTEL_COLLECTOR_NAME
+        type: STRING
+        value: "'opentelemetry-demo-otelcol'"
+        required: true
+      - key: OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE
+        type: STRING
+        value: "cumulative"
+        required: true
+      - key: redis
+        type: STRING
+        value: "6379:6379"
+        required: true
+    operations:
+      []
+  - name: otel-demo-opensearch-type
+    extends: 
+    properties:
+      - key: transport
+        type: INTEGER
+        value: 9300
+        required: true
+      - key: metrics
+        type: INTEGER
+        value: 9600
+        required: true
+      - key: http
+        type: INTEGER
+        value: 9200
+        required: true
+      - key: discovery.seed_hosts
+        type: STRING
+        value: "opensearch-cluster-master-headless"
+        required: true
+      - key: network.host
+        type: STRING
+        value: "0.0.0.0"
+        required: true
+      - key: node.roles
+        type: STRING
+        value: "master,ingest,data,remote_cluster_client,"
+        required: true
+      - key: cluster.name
+        type: STRING
+        value: "demo-cluster"
+        required: true
+      - key: DISABLE_INSTALL_DEMO_CONFIG
+        type: STRING
+        value: "true"
+        required: true
+      - key: discovery.type
+        type: STRING
+        value: "single-node"
+        required: true
+      - key: bootstrap.memory_lock
+        type: STRING
+        value: "true"
+        required: true
+      - key: DISABLE_SECURITY_PLUGIN
+        type: STRING
+        value: "true"
+        required: true
+      - key: OPENSEARCH_JAVA_OPTS
+        type: STRING
+        value: "-Xms300m -Xmx300m"
+        required: true
+    operations:
+      []
+  - name: opentelemetry-demo-flagd-type
+    extends: 
+    properties:
+      - key: service
+        type: INTEGER
+        value: 8013
+        required: true
+      - key: FLAGD_METRICS_EXPORTER
+        type: STRING
+        value: "otel"
+        required: true
+      - key: OTEL_RESOURCE_ATTRIBUTES
+        type: STRING
+        value: "service.name=$(OTEL_SERVICE_NAME),service.namespace=opentelemetry-demo,service.version=1.10.0"
+        required: true
+      - key: OTEL_COLLECTOR_NAME
+        type: STRING
+        value: "'opentelemetry-demo-otelcol'"
+        required: true
+      - key: FLAGD_OTEL_COLLECTOR_URI
+        type: STRING
+        value: "$(OTEL_COLLECTOR_NAME):4317"
+        required: true
+      - key: OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE
+        type: STRING
+        value: "cumulative"
+        required: true
+      - key: tcp-service
+        type: STRING
+        value: "8013:8013"
+        required: true
+    operations:
+      []
+  - name: opentelemetry-demo-mongo-type
+    extends: 
+    properties:
+      - key: plaintext
+        type: INTEGER
+        value: 27017
+        required: true
+      - key: MONGO_INITDB_ROOT_PASSWORD
+        type: STRING
+        value: "'mongo_product_catalog'"
+        required: true
+      - key: MONGO_INITDB_ROOT_USERNAME
+        type: STRING
+        value: "'mongo'"
+        required: true
+      - key: plaintext
+        type: STRING
+        value: "27017:27017"
+        required: true
+    operations:
+      []
+  - name: opentelemetry-demo-frontendproxy-type
+    extends: 
+    properties:
+      - key: service
+        type: INTEGER
+        value: 8080
+        required: true
+      - key: GRAFANA_SERVICE_PORT
+        type: STRING
+        value: "80"
+        required: true
+      - key: OTEL_COLLECTOR_PORT_GRPC
+        type: STRING
+        value: "4317"
+        required: true
+      - key: JAEGER_SERVICE_PORT
+        type: STRING
+        value: "16686"
+        required: true
+      - key: FRONTEND_PORT
+        type: STRING
+        value: "8080"
+        required: true
+      - key: GRAFANA_SERVICE_HOST
+        type: STRING
+        value: "'opentelemetry-demo-grafana'"
+        required: true
+      - key: ENVOY_PORT
+        type: STRING
+        value: "8080"
+        required: true
+      - key: OTEL_COLLECTOR_NAME
+        type: STRING
+        value: "'opentelemetry-demo-otelcol'"
+        required: true
+      - key: LOCUST_WEB_PORT
+        type: STRING
+        value: "8089"
+        required: true
+      - key: OTEL_COLLECTOR_PORT_HTTP
+        type: STRING
+        value: "4318"
+        required: true
+      - key: IMAGE_PROVIDER_HOST
+        type: STRING
+        value: "'opentelemetry-demo-imageprovider'"
+        required: true
+      - key: FLAGD_PORT
+        type: STRING
+        value: "8013"
+        required: true
+      - key: LOCUST_WEB_HOST
+        type: STRING
+        value: "'opentelemetry-demo-loadgenerator'"
+        required: true
+      - key: OTEL_COLLECTOR_HOST
+        type: STRING
+        value: "$(OTEL_COLLECTOR_NAME)"
+        required: true
+      - key: OTEL_RESOURCE_ATTRIBUTES
+        type: STRING
+        value: "service.name=$(OTEL_SERVICE_NAME),service.namespace=opentelemetry-demo,service.version=1.10.0"
+        required: true
+      - key: JAEGER_SERVICE_HOST
+        type: STRING
+        value: "'opentelemetry-demo-jaeger-query'"
+        required: true
+      - key: FRONTEND_HOST
+        type: STRING
+        value: "'opentelemetry-demo-frontend'"
+        required: true
+      - key: IMAGE_PROVIDER_PORT
+        type: STRING
+        value: "8081"
+        required: true
+      - key: OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE
+        type: STRING
+        value: "cumulative"
+        required: true
+      - key: FLAGD_HOST
+        type: STRING
+        value: "'opentelemetry-demo-flagd'"
+        required: true
+      - key: tcp-service
+        type: STRING
+        value: "8080:8080"
+        required: true
+    operations:
+      []
+  - name: opentelemetry-demo-loadgenerator-type
+    extends: 
+    properties:
+      - key: service
+        type: INTEGER
+        value: 8089
+        required: true
+      - key: LOCUST_USERS
+        type: STRING
+        value: "10"
+        required: true
+      - key: OTEL_EXPORTER_OTLP_ENDPOINT
+        type: STRING
+        value: "http://$(OTEL_COLLECTOR_NAME):4317"
+        required: true
+      - key: OTEL_COLLECTOR_NAME
+        type: STRING
+        value: "'opentelemetry-demo-otelcol'"
+        required: true
+      - key: PROTOCOL_BUFFERS_PYTHON_IMPLEMENTATION
+        type: STRING
+        value: "python"
+        required: true
+      - key: LOCUST_WEB_PORT
+        type: STRING
+        value: "8089"
+        required: true
+      - key: FLAGD_PORT
+        type: STRING
+        value: "8013"
+        required: true
+      - key: LOCUST_BROWSER_TRAFFIC_ENABLED
+        type: STRING
+        value: "true"
+        required: true
+      - key: LOCUST_HOST
+        type: STRING
+        value: "http://opentelemetry-demo-frontendproxy:8080"
+        required: true
+      - key: OTEL_RESOURCE_ATTRIBUTES
+        type: STRING
+        value: "service.name=$(OTEL_SERVICE_NAME),service.namespace=opentelemetry-demo,service.version=1.10.0"
+        required: true
+      - key: LOCUST_AUTOSTART
+        type: STRING
+        value: "true"
+        required: true
+      - key: OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE
+        type: STRING
+        value: "cumulative"
+        required: true
+      - key: LOCUST_SPAWN_RATE
+        type: STRING
+        value: "1"
+        required: true
+      - key: LOCUST_HEADLESS
+        type: STRING
+        value: "false"
+        required: true
+      - key: FLAGD_HOST
+        type: STRING
+        value: "'opentelemetry-demo-flagd'"
+        required: true
+      - key: tcp-service
+        type: STRING
+        value: "8089:8089"
+        required: true
+    operations:
+      []
+  - name: opentelemetry-demo-adservice-type
+    extends: 
+    properties:
+      - key: service
+        type: INTEGER
+        value: 8080
+        required: true
+      - key: FLAGD_PORT
+        type: STRING
+        value: "8013"
+        required: true
+      - key: OTEL_EXPORTER_OTLP_ENDPOINT
+        type: STRING
+        value: "http://$(OTEL_COLLECTOR_NAME):4318"
+        required: true
+      - key: OTEL_RESOURCE_ATTRIBUTES
+        type: STRING
+        value: "service.name=$(OTEL_SERVICE_NAME),service.namespace=opentelemetry-demo,service.version=1.10.0"
+        required: true
+      - key: AD_SERVICE_PORT
+        type: STRING
+        value: "8080"
+        required: true
+      - key: OTEL_COLLECTOR_NAME
+        type: STRING
+        value: "'opentelemetry-demo-otelcol'"
+        required: true
+      - key: OTEL_LOGS_EXPORTER
+        type: STRING
+        value: "otlp"
+        required: true
+      - key: OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE
+        type: STRING
+        value: "cumulative"
+        required: true
+      - key: FLAGD_HOST
+        type: STRING
+        value: "'opentelemetry-demo-flagd'"
+        required: true
+      - key: tcp-service
+        type: STRING
+        value: "8080:8080"
+        required: true
+    operations:
+      []
+  - name: opentelemetry-demo-jaeger-type
+    extends: 
+    properties:
+      - key: container_port
+        type: INTEGER
+        value: 5775
+        required: true
+      - key: container_port
+        type: INTEGER
+        value: 6831
+        required: true
+      - key: container_port
+        type: INTEGER
+        value: 6832
+        required: true
+      - key: container_port
+        type: INTEGER
+        value: 5778
+        required: true
+      - key: container_port
+        type: INTEGER
+        value: 9411
+        required: true
+      - key: container_port
+        type: INTEGER
+        value: 16685
+        required: true
+      - key: container_port
+        type: INTEGER
+        value: 4317
+        required: true
+      - key: container_port
+        type: INTEGER
+        value: 16686
+        required: true
+      - key: container_port
+        type: INTEGER
+        value: 4318
+        required: true
+      - key: SPAN_STORAGE_TYPE
+        type: STRING
+        value: "memory"
+        required: true
+      - key: COLLECTOR_ZIPKIN_HOST_PORT
+        type: STRING
+        value: ":9411"
+        required: true
+      - key: COLLECTOR_OTLP_ENABLED
+        type: STRING
+        value: "true"
+        required: true
+      - key: METRICS_STORAGE_TYPE
+        type: STRING
+        value: "prometheus"
+        required: true
+      - key: JAEGER_DISABLED
+        type: STRING
+        value: "false"
+        required: true
+      - key: grpc-query
+        type: STRING
+        value: "16685:16685"
+        required: true
+      - key: http-query
+        type: STRING
+        value: "16686:16686"
+        required: true
+      - key: otlp-http
+        type: STRING
+        value: "4318:4318"
+        required: true
+      - key: jaeger-compact
+        type: STRING
+        value: "6831:6831"
+        required: true
+      - key: zipkin
+        type: STRING
+        value: "9411:9411"
+        required: true
+      - key: otlp
+        type: STRING
+        value: "4317:4317"
+        required: true
+    operations:
+      []
+  - name: opentelemetry-demo-cartservice-type
+    extends: 
+    properties:
+      - key: service
+        type: INTEGER
+        value: 8080
+        required: true
+      - key: FLAGD_PORT
+        type: STRING
+        value: "8013"
+        required: true
+      - key: OTEL_EXPORTER_OTLP_ENDPOINT
+        type: STRING
+        value: "http://$(OTEL_COLLECTOR_NAME):4317"
+        required: true
+      - key: OTEL_RESOURCE_ATTRIBUTES
+        type: STRING
+        value: "service.name=$(OTEL_SERVICE_NAME),service.namespace=opentelemetry-demo,service.version=1.10.0"
+        required: true
+      - key: OTEL_COLLECTOR_NAME
+        type: STRING
+        value: "'opentelemetry-demo-otelcol'"
+        required: true
+      - key: ASPNETCORE_URLS
+        type: STRING
+        value: "http://*:$(CART_SERVICE_PORT)"
+        required: true
+      - key: OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE
+        type: STRING
+        value: "cumulative"
+        required: true
+      - key: CART_SERVICE_PORT
+        type: STRING
+        value: "8080"
+        required: true
+      - key: REDIS_ADDR
+        type: STRING
+        value: "'opentelemetry-demo-redis:6379'"
+        required: true
+      - key: FLAGD_HOST
+        type: STRING
+        value: "'opentelemetry-demo-flagd'"
+        required: true
+      - key: tcp-service
+        type: STRING
+        value: "8080:8080"
+        required: true
+    operations:
+      []
+  - name: opentelemetry-demo-emailservice-type
+    extends: 
+    properties:
+      - key: service
+        type: INTEGER
+        value: 8080
+        required: true
+      - key: APP_ENV
+        type: STRING
+        value: "production"
+        required: true
+      - key: OTEL_EXPORTER_OTLP_TRACES_ENDPOINT
+        type: STRING
+        value: "http://$(OTEL_COLLECTOR_NAME):4318/v1/traces"
+        required: true
+      - key: OTEL_RESOURCE_ATTRIBUTES
+        type: STRING
+        value: "service.name=$(OTEL_SERVICE_NAME),service.namespace=opentelemetry-demo,service.version=1.10.0"
+        required: true
+      - key: OTEL_COLLECTOR_NAME
+        type: STRING
+        value: "'opentelemetry-demo-otelcol'"
+        required: true
+      - key: OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE
+        type: STRING
+        value: "cumulative"
+        required: true
+      - key: EMAIL_SERVICE_PORT
+        type: STRING
+        value: "8080"
+        required: true
+      - key: tcp-service
+        type: STRING
+        value: "8080:8080"
+        required: true
+    operations:
+      []
+  - name: opentelemetry-demo-imageprovider-type
+    extends: 
+    properties:
+      - key: service
+        type: INTEGER
+        value: 8081
+        required: true
+      - key: OTEL_COLLECTOR_PORT_GRPC
+        type: STRING
+        value: "4317"
+        required: true
+      - key: OTEL_COLLECTOR_HOST
+        type: STRING
+        value: "$(OTEL_COLLECTOR_NAME)"
+        required: true
+      - key: OTEL_RESOURCE_ATTRIBUTES
+        type: STRING
+        value: "service.name=$(OTEL_SERVICE_NAME),service.namespace=opentelemetry-demo,service.version=1.10.0"
+        required: true
+      - key: IMAGE_PROVIDER_PORT
+        type: STRING
+        value: "8081"
+        required: true
+      - key: OTEL_COLLECTOR_NAME
+        type: STRING
+        value: "'opentelemetry-demo-otelcol'"
+        required: true
+      - key: OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE
+        type: STRING
+        value: "cumulative"
+        required: true
+      - key: tcp-service
+        type: STRING
+        value: "8081:8081"
+        required: true
+    operations:
+      []
+  - name: opentelemetry-demo-productcatalogservice-type
+    extends: 
+    properties:
+      - key: service
+        type: INTEGER
+        value: 8080
+        required: true
+      - key: MONGO_HOST
+        type: STRING
+        value: "'opentelemetry-demo-mongo'"
+        required: true
+      - key: PRODUCT_CATALOG_SERVICE_PORT
+        type: STRING
+        value: "8080"
+        required: true
+      - key: MONGO_PASSWORD
+        type: STRING
+        value: "'mongo_product_catalog'"
+        required: true
+      - key: FLAGD_PORT
+        type: STRING
+        value: "8013"
+        required: true
+      - key: OTEL_EXPORTER_OTLP_ENDPOINT
+        type: STRING
+        value: "http://$(OTEL_COLLECTOR_NAME):4317"
+        required: true
+      - key: OTEL_RESOURCE_ATTRIBUTES
+        type: STRING
+        value: "service.name=$(OTEL_SERVICE_NAME),service.namespace=opentelemetry-demo,service.version=1.10.0"
+        required: true
+      - key: MONGO_PORT
+        type: STRING
+        value: "'27017'"
+        required: true
+      - key: OTEL_COLLECTOR_NAME
+        type: STRING
+        value: "'opentelemetry-demo-otelcol'"
+        required: true
+      - key: MONGO_USERNAME
+        type: STRING
+        value: "'mongo'"
+        required: true
+      - key: OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE
+        type: STRING
+        value: "cumulative"
+        required: true
+      - key: FLAGD_HOST
+        type: STRING
+        value: "'opentelemetry-demo-flagd'"
+        required: true
+      - key: tcp-service
+        type: STRING
+        value: "8080:8080"
+        required: true
+    operations:
+      []
+  - name: opentelemetry-demo-accountingservice-type
+    extends: 
+    properties:
+      - key: KAFKA_SERVICE_ADDR
+        type: STRING
+        value: "'opentelemetry-demo-kafka:9092'"
+        required: true
+      - key: OTEL_EXPORTER_OTLP_ENDPOINT
+        type: STRING
+        value: "http://$(OTEL_COLLECTOR_NAME):4317"
+        required: true
+      - key: OTEL_RESOURCE_ATTRIBUTES
+        type: STRING
+        value: "service.name=$(OTEL_SERVICE_NAME),service.namespace=opentelemetry-demo,service.version=1.10.0"
+        required: true
+      - key: OTEL_COLLECTOR_NAME
+        type: STRING
+        value: "'opentelemetry-demo-otelcol'"
+        required: true
+      - key: OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE
+        type: STRING
+        value: "cumulative"
+        required: true
+    operations:
+      []
+  - name: opentelemetry-demo-checkoutservice-type
+    extends: 
+    properties:
+      - key: service
+        type: INTEGER
+        value: 8080
+        required: true
+      - key: KAFKA_SERVICE_ADDR
+        type: STRING
+        value: "'opentelemetry-demo-kafka:9092'"
+        required: true
+      - key: OTEL_EXPORTER_OTLP_ENDPOINT
+        type: STRING
+        value: "http://$(OTEL_COLLECTOR_NAME):4317"
+        required: true
+      - key: OTEL_COLLECTOR_NAME
+        type: STRING
+        value: "'opentelemetry-demo-otelcol'"
+        required: true
+      - key: PRODUCT_CATALOG_SERVICE_ADDR
+        type: STRING
+        value: "'opentelemetry-demo-productcatalogservice:8080'"
+        required: true
+      - key: CHECKOUT_SERVICE_PORT
+        type: STRING
+        value: "8080"
+        required: true
+      - key: PAYMENT_SERVICE_ADDR
+        type: STRING
+        value: "'opentelemetry-demo-paymentservice:8080'"
+        required: true
+      - key: FLAGD_PORT
+        type: STRING
+        value: "8013"
+        required: true
+      - key: EMAIL_SERVICE_ADDR
+        type: STRING
+        value: "http://opentelemetry-demo-emailservice:8080"
+        required: true
+      - key: OTEL_RESOURCE_ATTRIBUTES
+        type: STRING
+        value: "service.name=$(OTEL_SERVICE_NAME),service.namespace=opentelemetry-demo,service.version=1.10.0"
+        required: true
+      - key: CURRENCY_SERVICE_ADDR
+        type: STRING
+        value: "'opentelemetry-demo-currencyservice:8080'"
+        required: true
+      - key: SHIPPING_SERVICE_ADDR
+        type: STRING
+        value: "'opentelemetry-demo-shippingservice:8080'"
+        required: true
+      - key: CART_SERVICE_ADDR
+        type: STRING
+        value: "'opentelemetry-demo-cartservice:8080'"
+        required: true
+      - key: OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE
+        type: STRING
+        value: "cumulative"
+        required: true
+      - key: FLAGD_HOST
+        type: STRING
+        value: "'opentelemetry-demo-flagd'"
+        required: true
+      - key: tcp-service
+        type: STRING
+        value: "8080:8080"
+        required: true
+    operations:
+      []
+  - name: opentelemetry-demo-shippingservice-type
+    extends: 
+    properties:
+      - key: service
+        type: INTEGER
+        value: 8080
+        required: true
+      - key: OTEL_EXPORTER_OTLP_ENDPOINT
+        type: STRING
+        value: "http://$(OTEL_COLLECTOR_NAME):4317"
+        required: true
+      - key: OTEL_RESOURCE_ATTRIBUTES
+        type: STRING
+        value: "service.name=$(OTEL_SERVICE_NAME),service.namespace=opentelemetry-demo,service.version=1.10.0"
+        required: true
+      - key: QUOTE_SERVICE_ADDR
+        type: STRING
+        value: "http://opentelemetry-demo-quoteservice:8080"
+        required: true
+      - key: OTEL_COLLECTOR_NAME
+        type: STRING
+        value: "'opentelemetry-demo-otelcol'"
+        required: true
+      - key: SHIPPING_SERVICE_PORT
+        type: STRING
+        value: "8080"
+        required: true
+      - key: OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE
+        type: STRING
+        value: "cumulative"
+        required: true
+      - key: tcp-service
+        type: STRING
+        value: "8080:8080"
+        required: true
+    operations:
+      []
+  - name: opentelemetry-demo-recommendationservice-type
+    extends: 
+    properties:
+      - key: service
+        type: INTEGER
+        value: 8080
+        required: true
+      - key: FLAGD_PORT
+        type: STRING
+        value: "8013"
+        required: true
+      - key: OTEL_PYTHON_LOG_CORRELATION
+        type: STRING
+        value: "true"
+        required: true
+      - key: OTEL_EXPORTER_OTLP_ENDPOINT
+        type: STRING
+        value: "http://$(OTEL_COLLECTOR_NAME):4317"
+        required: true
+      - key: OTEL_RESOURCE_ATTRIBUTES
+        type: STRING
+        value: "service.name=$(OTEL_SERVICE_NAME),service.namespace=opentelemetry-demo,service.version=1.10.0"
+        required: true
+      - key: OTEL_COLLECTOR_NAME
+        type: STRING
+        value: "'opentelemetry-demo-otelcol'"
+        required: true
+      - key: PRODUCT_CATALOG_SERVICE_ADDR
+        type: STRING
+        value: "'opentelemetry-demo-productcatalogservice:8080'"
+        required: true
+      - key: RECOMMENDATION_SERVICE_PORT
+        type: STRING
+        value: "8080"
+        required: true
+      - key: OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE
+        type: STRING
+        value: "cumulative"
+        required: true
+      - key: PROTOCOL_BUFFERS_PYTHON_IMPLEMENTATION
+        type: STRING
+        value: "python"
+        required: true
+      - key: FLAGD_HOST
+        type: STRING
+        value: "'opentelemetry-demo-flagd'"
+        required: true
+      - key: tcp-service
+        type: STRING
+        value: "8080:8080"
+        required: true
+    operations:
+      []
+  - name: opentelemetry-demo-kafka-type
+    extends: 
+    properties:
+      - key: controller
+        type: INTEGER
+        value: 9093
+        required: true
+      - key: plaintext
+        type: INTEGER
+        value: 9092
+        required: true
+      - key: KAFKA_HEAP_OPTS
+        type: STRING
+        value: "-Xmx400M -Xms400M"
+        required: true
+      - key: OTEL_EXPORTER_OTLP_ENDPOINT
+        type: STRING
+        value: "http://$(OTEL_COLLECTOR_NAME):4318"
+        required: true
+      - key: KAFKA_ADVERTISED_LISTENERS
+        type: STRING
+        value: "PLAINTEXT://opentelemetry-demo-kafka:9092"
+        required: true
+      - key: OTEL_RESOURCE_ATTRIBUTES
+        type: STRING
+        value: "service.name=$(OTEL_SERVICE_NAME),service.namespace=opentelemetry-demo,service.version=1.10.0"
+        required: true
+      - key: OTEL_COLLECTOR_NAME
+        type: STRING
+        value: "'opentelemetry-demo-otelcol'"
+        required: true
+      - key: OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE
+        type: STRING
+        value: "cumulative"
+        required: true
+      - key: controller
+        type: STRING
+        value: "9093:9093"
+        required: true
+      - key: plaintext
+        type: STRING
+        value: "9092:9092"
+        required: true
+    operations:
+      []
+  - name: opentelemetry-demo-otelcol-type
+    extends: 
+    properties:
+      - key: prometheus
+        type: INTEGER
+        value: 9464
+        required: true
+      - key: jaeger-compact
+        type: INTEGER
+        value: 6831
+        required: true
+      - key: jaeger-thrift
+        type: INTEGER
+        value: 14268
+        required: true
+      - key: zipkin
+        type: INTEGER
+        value: 9411
+        required: true
+      - key: jaeger-grpc
+        type: INTEGER
+        value: 14250
+        required: true
+      - key: otlp
+        type: INTEGER
+        value: 4317
+        required: true
+      - key: metrics
+        type: INTEGER
+        value: 8888
+        required: true
+      - key: otlp-http
+        type: INTEGER
+        value: 4318
+        required: true
+      - key: GOMEMLIMIT
+        type: STRING
+        value: "160MiB"
+        required: true
+      - key: metrics
+        type: STRING
+        value: "8888:8888"
+        required: true
+      - key: jaeger-grpc
+        type: STRING
+        value: "14250:14250"
+        required: true
+      - key: jaeger-thrift
+        type: STRING
+        value: "14268:14268"
+        required: true
+      - key: otlp-http
+        type: STRING
+        value: "4318:4318"
+        required: true
+      - key: jaeger-compact
+        type: STRING
+        value: "6831:6831"
+        required: true
+      - key: zipkin
+        type: STRING
+        value: "9411:9411"
+        required: true
+      - key: prometheus
+        type: STRING
+        value: "9464:9464"
+        required: true
+      - key: otlp
+        type: STRING
+        value: "4317:4317"
+        required: true
+    operations:
+      []
+  - name: opentelemetry-demo-prometheus-server-type
+    extends: 
+    properties:
+      - key: container_port
+        type: INTEGER
+        value: 9090
+        required: true
+      - key: http
+        type: STRING
+        value: "9090:9090"
+        required: true
+    operations:
+      []
+relation types: 
+  - DependsOn:
+      extends: "-"
+      description: "generic relation type"
+      properties: []
+      operations: []
+  - HostedOn:
+      extends: "DependsOn"
+      description: "hosted on relation"
+      properties: []
+      operations: []
+  - ConnectsTo:
+      extends: "DependsOn"
+      description: "connects to relation"
+      properties: []
+      operations: []
