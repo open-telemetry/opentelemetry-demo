@@ -1,0 +1,8 @@
+service_name: "recommendationservice"
+image_name: "ghcr.io/open-telemetry/demo:1.10.0-recommendationservice"
+ports: "9001"
+otlp_metrics_temporality_preference : "cumulative"
+memory_limit: "40M"
+productcatalogservice_addr: "productcatalogservice:3550"
+otel_python_features: "true"
+protobuf_python: "python"

@@ -1,0 +1,142 @@
+---
+- name: Deploy OpenTelemetry Demo
+  hosts: all
+  become: true
+  vars:
+    demo_version: "1.10.0"
+    network_name: "opentelemetry-demo"
+    state: "started"
+    restart_policy: "unless-stopped"
+    log_driver: "json-file"
+    log_options_max_size: "5m"
+    log_options_max_file: "2"
+    flagd_host: "flagd"
+    flagd_port: "8013"
+    otel_collector_host: "otelcol"
+    otel_collector_port_grpc: "4317"
+    otel_collector_port_http: "4318"
+    envoy_port: "8080"
+  pre_tasks:
+    #- name: Ensure Docker is installed
+    #  apt:
+    #    name: docker.io
+    #    state: present
+    #  become: true
+
+    - name: Ensure default network is created
+      docker_network:
+        name: opentelemetry-demo
+        driver: bridge
+
+  roles:
+    - role: accountingservice
+      become: true
+    - role: adservice
+      become: true
+    - role: cartservice
+      become: true
+    - role: checkoutservice
+      become: true
+    - role: currencyservice
+      become: true
+    - role: emailservice
+      become: true
+    - role: frauddetectionservice
+      become: true
+    - role: flagd
+      become: true
+    - role: frontend
+      become: true
+    - role: frontendproxy
+      become: true
+    - role: grafana
+      become: true
+    - role: imageprovider
+      become: true
+    - role: jaeger
+      become: true
+    - role: kafka
+      become: true
+    - role: loadgenerator
+      become: true
+    - role: mongo
+      become: true
+    - role: opensearch
+      become: true
+    - role: otelcol
+      become: true
+    - role: paymentservice
+      become: true
+    - role: productcatalogservice
+      become: true
+    - role: prometheus
+      become: true
+    - role: quoteservice
+      become: true
+    - role: recommendationservice
+      become: true
+    - role: shippingservice
+      become: true
+    - role: valkeycart
+      become: true
+
+  post_tasks:
+    - name: Ensure services are started
+      community.general.launchd:
+        name: "{{ item }}"
+        state: "{{ state }}"
+      loop:
+        - accountingservice
+        - adservice
+        - cartservice
+        - checkoutservice
+        - emailservice
+        - flagd
+        - frauddetectionserice
+        - frontend
+        - frontendproxy
+        - grafana
+        - imageprovider
+        - jaeger
+        - kafka
+        - loadgenerator
+        - mongo
+        - opensearch
+        - otelcol
+        - paymentservice
+        - productcatalogservice
+        - prometheus
+        - quoteservice
+        - recommendationservice
+        - shippingservice
+        - valkeycart
+
+    - name: Ensure services are enabled to start at boot
+      community.general.launchd:
+        name: "{{ item }}"
+        enabled: yes
+      loop:
+        - accountingservice
+        - adservice
+        - cartservice
+        - checkoutservice
+        - emailservice
+        - flagd
+        - frauddetectionserice
+        - frontend
+        - frontendproxy
+        - grafana
+        - imageprovider
+        - jaeger
+        - kafka
+        - loadgenerator
+        - mongo
+        - opensearch
+        - otelcol
+        - paymentservice
+        - productcatalogservice
+        - prometheus
+        - quoteservice
+        - recommendationservice
+        - shippingservice
+        - valkeycart

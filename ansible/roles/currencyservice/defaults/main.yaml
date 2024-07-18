@@ -1,0 +1,7 @@
+service_name: "currencyservice"
+image_name: "ghcr.io/open-telemetry/demo:1.10.0-currencyservice"
+ports: "7001"
+otlp_metrics_temporality_preference : "cumulative"
+memory_limit: "20M"
+
+logs_exporter: "otlp"

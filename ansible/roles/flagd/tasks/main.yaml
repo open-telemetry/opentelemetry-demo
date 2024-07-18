@@ -1,0 +1,28 @@
+---
+- name: Pull the latest Docker image
+  docker_image:
+    name: "{{ image_name }}"
+    source: pull
+
+- name: Deploy Service
+  docker_container:
+    name: "{{ service_name }}"
+    image: "{{ image_name }}"
+    env:
+      FLAGD_OTEL_COLLECTOR_URI: "{{ otel_collector_host }}:{{ otel_collector_port_grpc }}"
+      FLAGD_METRICS_EXPORTER: "otel"
+      OTEL_RESOURCE_ATTRIBUTES: "service.name={{ service_name }},service.namespace=opentelemetry-demo,service.version={{ demo_version }}"
+      OTEL_SERVICE_NAME: "{{ service_name }}"
+    memory: "{{ memory_limit }}"
+    ports: "{{ ports }}"
+    state: "{{ state }}"
+    command: "{{ command }}"
+    volumes: "{{ volumes }}"
+    network_mode: "{{ network_name }}"
+    networks:
+      - name: "{{ network_name }}"
+    log_driver: "{{ log_driver }}"
+    log_options:
+      max-size: "{{ log_options_max_size }}"
+      max-file: "{{ log_options_max_file }}"
+      tag: "{{ service_name }}"

@@ -1,0 +1,26 @@
+---
+- name: Pull the latest Docker image
+  docker_image:
+    name: "{{ image_name }}"
+    source: pull
+
+- name: Deploy Service
+  become: true
+  docker_container:
+    name: "{{ service_name }}"
+    image: "{{ image_name }}"
+    env:
+      GF_INSTALL_PLUGINS: "grafana-opensearch-datasource"
+    restart_policy: "{{ restart_policy }}"
+    memory: "{{ memory_limit }}"
+    volumes: "{{ volumes }}"
+    state: "{{ state }}"
+    ports: "{{ ports }}"
+    network_mode: "{{ network_name }}"
+    networks:
+      - name: "{{ network_name }}"
+    log_driver: "{{ log_driver }}"
+    log_options:
+      max-size: "{{ log_options_max_size }}"
+      max-file: "{{ log_options_max_file }}"
+      tag: "{{ service_name }}"

@@ -1,0 +1,12 @@
+service_name: "jaeger"
+image_name: "jaegertracing/all-in-one:1.57"
+memory_limit: "400M"
+command: '- "--memory.max-traces=5000"
+      - "--query.base-path=/jaeger/ui"
+      - "--prometheus.server-url=http://prometheus:9090"
+      - "--prometheus.query.normalize-calls=true"
+      - "--prometheus.query.normalize-duration=true"'
+ports:
+  - "16686"
+  - "4317"
+metrics_storage_type: "prometheus"
