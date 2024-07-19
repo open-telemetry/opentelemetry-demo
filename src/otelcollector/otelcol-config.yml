@@ -26,6 +26,9 @@ receivers:
     root_path: /hostfs
     scrapers:
       cpu:
+        metrics:
+          system.cpu.utilization:
+            enabled: true
       disk:
       load:
       filesystem:
