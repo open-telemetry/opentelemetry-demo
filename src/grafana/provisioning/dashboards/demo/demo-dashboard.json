@@ -24,6 +24,7 @@
   "editable": true,
   "fiscalYearStartMonth": 0,
   "graphTooltip": 0,
+  "id": 2,
   "links": [],
   "liveNow": false,
   "panels": [
@@ -108,7 +109,7 @@
         "y": 1
       },
       "id": 2,
-      "interval": "60s",
+      "interval": "2m",
       "options": {
         "legend": {
           "calcs": [],
@@ -244,7 +245,7 @@
         "y": 1
       },
       "id": 10,
-      "interval": "60s",
+      "interval": "2m",
       "options": {
         "legend": {
           "calcs": [],
@@ -341,7 +342,7 @@
         "y": 9
       },
       "id": 12,
-      "interval": "60s",
+      "interval": "2m",
       "options": {
         "legend": {
           "calcs": [],
@@ -956,6 +957,7 @@
         "y": 35
       },
       "id": 16,
+      "interval": "2m",
       "options": {
         "legend": {
           "calcs": [],
@@ -975,7 +977,7 @@
             "uid": "webstore-metrics"
           },
           "editorMode": "code",
-          "expr": "rate(otel_trace_span_processor_spans{job=\"opentelemetry-demo/quoteservice\"}[2m])*120",
+          "expr": "rate(otel_trace_span_processor_spans{job=\"quoteservice\"}[2m])*120",
           "interval": "2m",
           "legendFormat": "{{state}}",
           "range": true,
@@ -1022,7 +1024,7 @@
     ]
   },
   "time": {
-    "from": "now-3h",
+    "from": "now-1h",
     "to": "now"
   },
   "timepicker": {},
