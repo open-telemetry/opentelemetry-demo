@@ -1,3 +1,66 @@
+<img width="1545" alt="nr-hearts-otel" src="https://github.com/user-attachments/assets/96fb9c0e-3cc3-4319-9025-fa4a6fc48f0f">
+
+## New Relic’s Fork of the OpenTelemetry Astronomy Shop
+
+Welcome to New Relic’s fork of the [OpenTelemetry Astronomy Shop](https://opentelemetry.io/ecosystem/demo/)!
+This app is a microservice-based distributed system intended to illustrate the
+implementation of OpenTelemetry in a near real-world environment. To view the
+original repo README, scroll down or click [this link](https://github.com/newrelic/opentelemetry-demo/tree/main?tab=readme-ov-file#-opentelemetry-demo).
+
+After you follow our [quick start instructions](https://github.com/newrelic/opentelemetry-demo?tab=readme-ov-file#quick-start-with-new-relic) 
+to deploy the app, check out [how to navigate the OTLP data in your New Relic account](https://github.com/newrelic/opentelemetry-demo?tab=readme-ov-file#navigate-your-otlp-data-in-new-relic)! 
+
+### Modifications
+Please note the following modifications to our fork:
+* The .env file contains New Relic-specific environment variables so you can quickly
+ship the data to your account
+* recommendationservice has been instrumented with the New Relic Python APM 
+agent to demonstrate interoperability between our language agents and OpenTelemetry 
+instrumentation 
+
+### Quick start with New Relic
+Get started quickly by running the app according to your deployment method preference:
+
+* [Docker](https://github.com/newrelic/opentelemetry-demo/blob/main/docs/docker_deployment.md)
+* [Kubernetes](https://github.com/newrelic/opentelemetry-demo/blob/main/docs/kubernetes_deployment.md)
+
+Requirements: A New Relic account – [sign up for a free account](https://newrelic.com/signup) if you need one.
+
+### Navigate OTLP data in New Relic
+The Demo comes with a number of problem scenarios that you can enable via 
+a [feature flag](https://opentelemetry.io/docs/demo/feature-flags/); please 
+note that some of these are currently still under testing on our end. 
+
+We are working on [tutorials](https://github.com/newrelic/opentelemetry-demo/blob/main/docs/demo-scenarios/README.md) 
+to show you how to troubleshoot these scenarios in New Relic. 
+
+In the meantime, check out our [documentation](https://docs.newrelic.com/docs/opentelemetry/best-practices/opentelemetry-data-overview/) 
+to learn how to navigate your OpenTelemetry traces, metrics, and logs in New Relic. 
+
+### Roadmap
+Similar to how the Astronomy Shop is under active development, we are also actively
+developing and maintaining our fork. Here are a few things we have are working on, or
+have planned for the near future:
+* [Demo scenario feature flags](https://opentelemetry.io/docs/demo/feature-flags/) are in testing
+* [Troubleshooting tutorials](https://github.com/newrelic/opentelemetry-demo/blob/main/docs/demo-scenarios/README.md) for each demo scenario
+* Support for OTel-sourced Kubernetes infrastructure metrics in New Relic
+* Add a feature flag to enable NR instrumentation for recommendationservice when 
+using Docker quick start method
+
+Have a suggestion, or running into problems with our fork? Please let us know by
+[opening an issue](https://github.com/newrelic/opentelemetry-demo/issues/new/choose)!
+
+### Contributors
+* [Brad Schmitt](https://github.com/bpschmitt)
+* [Daniel Kim](https://github.com/lazyplatypus)
+* [Krzysztof Spikowski](https://github.com/greenszpila)
+* [Ugur Türkarslan](https://github.com/utr1903)
+* [Alan West](https://github.com/alanwest)
+* [Justin Eveland](https://github.com/jbeveland27)
+* [Reese Lee](https://github.com/reese-lee)
+
+-----------
+
 <!-- markdownlint-disable-next-line -->
 # <img src="https://opentelemetry.io/img/logos/opentelemetry-logo-nav.png" alt="OTel logo" width="45"> OpenTelemetry Demo
 
