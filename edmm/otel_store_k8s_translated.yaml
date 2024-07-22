@@ -279,7 +279,7 @@ components:
         name: 'ghcr.io/open-telemetry/demo:1.10.0-frontend'
         fileURI: "-"
   - name: opentelemetry-demo-grafana
-    type: opentelemetry-demo-grafana-type
+    type: grafana
     properties:
       - key: grafana
         type: INTEGER
@@ -319,10 +319,10 @@ components:
       - type: docker_image
         name: "docker.io/grafana/grafana:10.4.1"
         fileURI: "-"
-  - name: opentelemetry-demo-redis
-    type: opentelemetry-demo-redis-type
+  - name: opentelemetry-demo-valkey-cart
+    type: valkey
     properties:
-      - key: redis
+      - key: port
         type: INTEGER
         value: 6379
         required: true
@@ -346,10 +346,10 @@ components:
       []    
     artifacts:
       - type: docker_image
-        name: 'redis:7.2-alpine'
+        name: 'valkey/valkey:7.2-alpine'
         fileURI: "-"
   - name: otel-demo-opensearch
-    type: otel-demo-opensearch-type
+    type: opensearch
     properties:
       - key: transport
         type: INTEGER
@@ -406,7 +406,7 @@ components:
         name: "opensearchproject/opensearch:2.13.0"
         fileURI: "-"
   - name: opentelemetry-demo-flagd
-    type: opentelemetry-demo-flagd-type
+    type: flagd
     properties:
       - key: service
         type: INTEGER
@@ -443,7 +443,7 @@ components:
         name: 'ghcr.io/open-feature/flagd:v0.10.1'
         fileURI: "-"
   - name: opentelemetry-demo-mongo
-    type: opentelemetry-demo-mongo-type
+    type: mongo
     properties:
       - key: plaintext
         type: INTEGER
@@ -683,7 +683,7 @@ components:
         name: 'ghcr.io/open-telemetry/demo:1.10.0-adservice'
         fileURI: "-"
   - name: opentelemetry-demo-jaeger
-    type: opentelemetry-demo-jaeger-type
+    type: jaeger
     properties:
       - key: container_port
         type: INTEGER
@@ -1168,7 +1168,7 @@ components:
         name: 'ghcr.io/open-telemetry/demo:1.10.0-recommendationservice'
         fileURI: "-"
   - name: opentelemetry-demo-kafka
-    type: opentelemetry-demo-kafka-type
+    type: kafka
     properties:
       - key: controller
         type: INTEGER
@@ -1217,7 +1217,7 @@ components:
         name: 'ghcr.io/open-telemetry/demo:1.10.0-kafka'
         fileURI: "-"
   - name: opentelemetry-demo-otelcol
-    type: opentelemetry-demo-otelcol-type
+    type: opentelemetry-collector
     properties:
       - key: prometheus
         type: INTEGER
@@ -1294,7 +1294,7 @@ components:
         name: "otel/opentelemetry-collector-contrib:0.102.1"
         fileURI: "-"
   - name: opentelemetry-demo-prometheus-server
-    type: opentelemetry-demo-prometheus-server-type
+    type: prometheus
     properties:
       - key: container_port
         type: INTEGER
@@ -1472,13 +1472,158 @@ relations:
       target: "default-container-runtime"
       properties: [ ]
       operations: [ ]
-
-
+  - opentelemetry-demo-loadgenerator_ConnectsTo_opentelemetry-demo-frontendproxy:
+      type: "ConnectsTo"
+      description: null
+      source: "opentelemetry-demo-loadgenerator"
+      target: "opentelemetry-demo-frontendproxy"
+      properties: [ ]
+      operations: [ ]
+  - opentelemetry-demo-frontendproxy_ConnectsTo_opentelemetry-demo-frontend:
+      type: "ConnectsTo"
+      description: null
+      source: "opentelemetry-demo-frontendproxy"
+      target: "opentelemetry-demo-frontend"
+      properties: [ ]
+      operations: [ ]
+  - opentelemetry-demo-frontendproxy_ConnectsTo_opentelemetry-demo-imageprovider:
+      type: "ConnectsTo"
+      description: null
+      source: "opentelemetry-demo-frontendproxy"
+      target: "opentelemetry-demo-imageprovider"
+      properties: [ ]
+      operations: [ ]
+  - opentelemetry-demo-frontend_ConnectsTo_opentelemetry-demo-adservice:
+      type: "ConnectsTo"
+      description: null
+      source: "opentelemetry-demo-frontend"
+      target: "opentelemetry-demo-adservice"
+      properties: [ ]
+      operations: [ ]
+  - opentelemetry-demo-frontend_ConnectsTo_opentelemetry-demo-checkoutservice:
+      type: "ConnectsTo"
+      description: null
+      source: "opentelemetry-demo-frontend"
+      target: "opentelemetry-demo-checkoutservice"
+      properties: [ ]
+      operations: [ ]
+  - opentelemetry-demo-frontend_ConnectsTo_opentelemetry-demo-recommendationservice:
+      type: "ConnectsTo"
+      description: null
+      source: "opentelemetry-demo-frontend"
+      target: "opentelemetry-demo-recommendationservice"
+      properties: [ ]
+      operations: [ ]
+  - opentelemetry-demo-frontend_ConnectsTo_opentelemetry-demo-cartservice:
+      type: "ConnectsTo"
+      description: null
+      source: "opentelemetry-demo-frontend"
+      target: "opentelemetry-demo-cartservice"
+      properties: [ ]
+      operations: [ ]
+  - opentelemetry-demo-frontend_ConnectsTo_opentelemetry-demo-currencyservice:
+      type: "ConnectsTo"
+      description: null
+      source: "opentelemetry-demo-frontend"
+      target: "opentelemetry-demo-currencyservice"
+      properties: [ ]
+      operations: [ ]
+  - opentelemetry-demo-frontend_ConnectsTo_opentelemetry-demo-productcatalogservice:
+      type: "ConnectsTo"
+      description: null
+      source: "opentelemetry-demo-frontend"
+      target: "opentelemetry-demo-productcatalogservice"
+      properties: [ ]
+      operations: [ ]
+  - opentelemetry-demo-checkoutservice_ConnectsTo_opentelemetry-demo-kafka:
+      type: "ConnectsTo"
+      description: null
+      source: "opentelemetry-demo-checkoutservice"
+      target: "opentelemetry-demo-kafka"
+      properties: [ ]
+      operations: [ ]
+  - opentelemetry-demo-checkoutservice_ConnectsTo_opentelemetry-demo-cartservice:
+      type: "ConnectsTo"
+      description: null
+      source: "opentelemetry-demo-checkoutservice"
+      target: "opentelemetry-demo-cartservice"
+      properties: [ ]
+      operations: [ ]
+  - opentelemetry-demo-checkoutservice_ConnectsTo_opentelemetry-demo-currencyservice:
+      type: "ConnectsTo"
+      description: null
+      source: "opentelemetry-demo-checkoutservice"
+      target: "opentelemetry-demo-currencyservice"
+      properties: [ ]
+      operations: [ ]
+  - opentelemetry-demo-checkoutservice_ConnectsTo_opentelemetry-demo-emailservice:
+      type: "ConnectsTo"
+      description: null
+      source: "opentelemetry-demo-checkoutservice"
+      target: "opentelemetry-demo-emailservice"
+      properties: [ ]
+      operations: [ ]
+  - opentelemetry-demo-checkoutservice_ConnectsTo_opentelemetry-demo-paymentservice:
+      type: "ConnectsTo"
+      description: null
+      source: "opentelemetry-demo-checkoutservice"
+      target: "opentelemetry-demo-paymentservice"
+      properties: [ ]
+      operations: [ ]
+  - opentelemetry-demo-checkoutservice_ConnectsTo_opentelemetry-demo-productcatalogservice:
+      type: "ConnectsTo"
+      description: null
+      source: "opentelemetry-demo-checkoutservice"
+      target: "opentelemetry-demo-productcatalogservice"
+      properties: [ ]
+      operations: [ ]
+  - opentelemetry-demo-checkoutservice_ConnectsTo_opentelemetry-demo-shippingservice:
+      type: "ConnectsTo"
+      description: null
+      source: "opentelemetry-demo-checkoutservice"
+      target: "opentelemetry-demo-shippingservice"
+      properties: [ ]
+      operations: [ ]
+  - opentelemetry-demo-kafka_ConnectsTo_opentelemetry-demo-accountingservice:
+      type: "ConnectsTo"
+      description: null
+      source: "opentelemetry-demo-kafka"
+      target: "opentelemetry-demo-accountingservice"
+      properties: [ ]
+      operations: [ ]
+  - opentelemetry-demo-kafka_ConnectsTo_opentelemetry-demo-frauddetectionservice:
+      type: "ConnectsTo"
+      description: null
+      source: "opentelemetry-demo-kafka"
+      target: "opentelemetry-demo-frauddetectionservice"
+      properties: [ ]
+      operations: [ ]
+  - opentelemetry-demo-cartservice_ConnectsTo_opentelemetry-demo-valkey-cart:
+      type: "ConnectsTo"
+      description: null
+      source: "opentelemetry-demo-cartservice"
+      target: "opentelemetry-demo-valkey-cart"
+      properties: [ ]
+      operations: [ ]
+  - opentelemetry-demo-recommendationservice_ConnectsTo_opentelemetry-demo-productcatalogservice:
+      type: "ConnectsTo"
+      description: null
+      source: "opentelemetry-demo-recommendationservice"
+      target: "opentelemetry-demo-productcatalogservice"
+      properties: [ ]
+      operations: [ ]
+  - opentelemetry-demo-shippingservice_ConnectsTo_opentelemetry-demo-quoteservice:
+      type: "ConnectsTo"
+      description: null
+      source: "opentelemetry-demo-shippingservice"
+      target: "opentelemetry-demo-quoteservice"
+      properties: [ ]
+      operations: [ ]
 component types:
   - name: opentelemetry-demo-currencyservice-type
     extends: 
     properties:
-      - key: service
+      - key: port
         type: INTEGER
         value: 8080
         required: true
@@ -1548,7 +1693,7 @@ component types:
   - name: opentelemetry-demo-paymentservice-type
     extends: 
     properties:
-      - key: service
+      - key: port
         type: INTEGER
         value: 8080
         required: true
@@ -1589,7 +1734,7 @@ component types:
   - name: opentelemetry-demo-quoteservice-type
     extends: 
     properties:
-      - key: service
+      - key: port
         type: INTEGER
         value: 8080
         required: true
@@ -1626,7 +1771,7 @@ component types:
   - name: opentelemetry-demo-frontend-type
     extends: 
     properties:
-      - key: service
+      - key: port
         type: INTEGER
         value: 8080
         required: true
@@ -1708,10 +1853,10 @@ component types:
         required: true
     operations:
       []
-  - name: opentelemetry-demo-grafana-type
+  - name: grafana
     extends: 
     properties:
-      - key: grafana
+      - key: port
         type: INTEGER
         value: 3000
         required: true
@@ -1745,10 +1890,10 @@ component types:
         required: true
     operations:
       []
-  - name: opentelemetry-demo-redis-type
+  - name: valkey
     extends: 
     properties:
-      - key: redis
+      - key: port
         type: INTEGER
         value: 6379
         required: true
@@ -1770,7 +1915,7 @@ component types:
         required: true
     operations:
       []
-  - name: otel-demo-opensearch-type
+  - name: opensearch
     extends: 
     properties:
       - key: transport
@@ -1781,7 +1926,7 @@ component types:
         type: INTEGER
         value: 9600
         required: true
-      - key: http
+      - key: port
         type: INTEGER
         value: 9200
         required: true
@@ -1823,10 +1968,10 @@ component types:
         required: true
     operations:
       []
-  - name: opentelemetry-demo-flagd-type
+  - name: flagd
     extends: 
     properties:
-      - key: service
+      - key: port
         type: INTEGER
         value: 8013
         required: true
@@ -1856,10 +2001,10 @@ component types:
         required: true
     operations:
       []
-  - name: opentelemetry-demo-mongo-type
+  - name: mongo
     extends: 
     properties:
-      - key: plaintext
+      - key: port
         type: INTEGER
         value: 27017
         required: true
@@ -1880,7 +2025,7 @@ component types:
   - name: opentelemetry-demo-frontendproxy-type
     extends: 
     properties:
-      - key: service
+      - key: port
         type: INTEGER
         value: 8080
         required: true
@@ -1969,7 +2114,7 @@ component types:
   - name: opentelemetry-demo-loadgenerator-type
     extends: 
     properties:
-      - key: service
+      - key: port
         type: INTEGER
         value: 8089
         required: true
@@ -2038,7 +2183,7 @@ component types:
   - name: opentelemetry-demo-adservice-type
     extends: 
     properties:
-      - key: service
+      - key: port
         type: INTEGER
         value: 8080
         required: true
@@ -2080,7 +2225,7 @@ component types:
         required: true
     operations:
       []
-  - name: opentelemetry-demo-jaeger-type
+  - name: jaeger
     extends: 
     properties:
       - key: container_port
@@ -2168,7 +2313,7 @@ component types:
   - name: opentelemetry-demo-cartservice-type
     extends: 
     properties:
-      - key: service
+      - key: port
         type: INTEGER
         value: 8080
         required: true
@@ -2217,7 +2362,7 @@ component types:
   - name: opentelemetry-demo-emailservice-type
     extends: 
     properties:
-      - key: service
+      - key: port
         type: INTEGER
         value: 8080
         required: true
@@ -2254,7 +2399,7 @@ component types:
   - name: opentelemetry-demo-imageprovider-type
     extends: 
     properties:
-      - key: service
+      - key: port
         type: INTEGER
         value: 8081
         required: true
@@ -2291,7 +2436,7 @@ component types:
   - name: opentelemetry-demo-productcatalogservice-type
     extends: 
     properties:
-      - key: service
+      - key: port
         type: INTEGER
         value: 8080
         required: true
@@ -2373,7 +2518,7 @@ component types:
   - name: opentelemetry-demo-checkoutservice-type
     extends: 
     properties:
-      - key: service
+      - key: port
         type: INTEGER
         value: 8080
         required: true
@@ -2442,7 +2587,7 @@ component types:
   - name: opentelemetry-demo-shippingservice-type
     extends: 
     properties:
-      - key: service
+      - key: port
         type: INTEGER
         value: 8080
         required: true
@@ -2479,7 +2624,7 @@ component types:
   - name: opentelemetry-demo-recommendationservice-type
     extends: 
     properties:
-      - key: service
+      - key: port
         type: INTEGER
         value: 8080
         required: true
@@ -2529,7 +2674,7 @@ component types:
         required: true
     operations:
       []
-  - name: opentelemetry-demo-kafka-type
+  - name: kafka
     extends: 
     properties:
       - key: controller
@@ -2574,7 +2719,7 @@ component types:
         required: true
     operations:
       []
-  - name: opentelemetry-demo-otelcol-type
+  - name: opentelemetry-collector
     extends: 
     properties:
       - key: prometheus
@@ -2647,14 +2792,14 @@ component types:
         required: true
     operations:
       []
-  - name: opentelemetry-demo-prometheus-server-type
+  - name: prometheus
     extends: 
     properties:
       - key: container_port
         type: INTEGER
         value: 9090
         required: true
-      - key: http
+      - key: port
         type: STRING
         value: "9090:9090"
         required: true
