@@ -6,7 +6,6 @@ import { Product } from '../../protos/demo';
 import ProductPrice from '../ProductPrice';
 import * as S from './ProductCard.styled';
 import { useState, useEffect } from 'react';
-import { RequestInfo } from 'undici-types';
 import { useNumberFlagValue } from '@openfeature/react-sdk';
 
 interface IProps {
@@ -34,11 +33,12 @@ const ProductCard = ({
   const [imageSrc, setImageSrc] = useState<string>('');
 
   useEffect(() => {
+    const requestInfo = new Request('/images/products/' + picture);
     const headers = { 'x-envoy-fault-delay-request': imageSlowLoad.toString(), 'Cache-Control': 'no-cache' };
-    getImageWithHeaders('/images/products/' + picture, headers).then(blob => {
+    getImageWithHeaders(requestInfo, headers).then(blob => {
       setImageSrc(URL.createObjectURL(blob));
     });
-  }, [picture, imageSlowLoad]);
+  }, [imageSlowLoad, picture]);
 
   return (
     <S.Link href={`/product/${id}`}>
