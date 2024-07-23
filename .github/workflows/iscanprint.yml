@@ -35,13 +35,7 @@ jobs:
         with:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
-
-      - name: Build and push accountingservice
-        working-directory: src/accountingservice
-        run: |
-          docker build -t iscanprint/accountingservice:3.0 .
-          docker push iscanprint/accountingservice:3.0
-
+          
       - name: Build and push adservice
         working-directory: src/adservice
         run: |
@@ -137,3 +131,9 @@ jobs:
         run: |
           docker build -t iscanprint/shippingservice:3.0 .
           docker push iscanprint/shippingservice:3.0
+
+      - name: Build and push accountingservice
+        working-directory: src/accountingservice
+        run: |
+          docker build -t iscanprint/accountingservice:3.0 .
+          docker push iscanprint/accountingservice:3.0
