@@ -1,0 +1,6 @@
+default:
+  envOverrides:
+    - name: "DD_API_KEY"
+      value: "secrets"
+    - name: "DD_SITE"
+      value: "datadoghq.com"
