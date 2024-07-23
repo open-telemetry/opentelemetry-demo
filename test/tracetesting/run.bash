@@ -7,6 +7,18 @@
 
 set -e
 
+# Availalble services to test
+ALL_SERVICES=("adservice" "cartservice" "currencyservice" "checkoutservice" "frontend" "emailservice" "paymentservice" "productcatalogservice" "recommendationservice" "shippingservice")
+
+## Script variables
+# Will contain the list of services to test
+chosen_services=()
+# Array to hold process IDs
+pids=()
+# Array to hold exit codes
+exit_codes=()
+
+## Script functions
 check_if_tracetest_is_installed() {
   if ! command -v tracetest &> /dev/null
   then
@@ -51,21 +63,19 @@ run_tracetest() {
   service_name=$1
   testsuite_file=./$service_name/all.yaml
 
-  tracetest --config ./cli-config.yml run testsuite --file $testsuite_file --vars ./tracetesting-vars.yaml
-  return $?
+  tracetest --config ./cli-config.yml run testsuite --file $testsuite_file --vars ./tracetesting-vars.yaml &
+  pids+=($!)
 }
 
-ALL_SERVICES=("ad-service" "cart-service" "currency-service" "checkout-service" "frontend-service" "email-service" "payment-service" "product-catalog-service" "recommendation-service" "shipping-service")
-CHOSEN_SERVICES=()
-
+## Script execution
 while [[ $# -gt 0 ]]; do
-  CHOSEN_SERVICES+=("$1")
+  chosen_services+=("$1")
   shift
 done
 
-if [ ${#CHOSEN_SERVICES[@]} -eq 0 ]; then
+if [ ${#chosen_services[@]} -eq 0 ]; then
   for service in "${ALL_SERVICES[@]}"; do
-    CHOSEN_SERVICES+=("$service")  
+    chosen_services+=("$service")
   done
 fi
 
@@ -73,18 +83,28 @@ check_if_tracetest_is_installed
 create_env_file
 
 echo "Starting tests..."
-
-EXIT_STATUS=0
-
-echo ""
-echo "Running trace-based tests..."
+echo "Running trace-based tests for: ${chosen_services[*]} ..."
 echo ""
 
-for service in "${CHOSEN_SERVICES[@]}"; do
-  run_tracetest $service || EXIT_STATUS=$?
+for service in "${chosen_services[@]}"; do
+  run_tracetest $service
+done
+
+# Wait for processes to finish and capture their exit codes
+for pid in "${pids[@]}"; do
+    wait $pid
+    exit_codes+=($?)
+done
+
+# Find the maximum exit code
+max_exit_code=0
+for code in "${exit_codes[@]}"; do
+    if [[ $code -gt $max_exit_code ]]; then
+        max_exit_code=$code
+    fi
 done
 
 echo ""
-echo "Tests done! Exit code: $EXIT_STATUS"
+echo "Tests done! Exit code: $max_exit_code"
 
-exit $EXIT_STATUS
+exit $max_exit_code

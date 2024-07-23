@@ -8,7 +8,7 @@ spec:
   strategy: periodic
   default: true
   periodic:
-    retryDelay: 10s
+    retryDelay: 5s
     timeout: 3m
 
 ---
@@ -23,12 +23,10 @@ spec:
 ---
 type: DataStore
 spec:
-  name: Jaeger
-  type: jaeger
-  jaeger:
-    endpoint: jaeger:16685
-    tls:
-      insecure: true
+  name: Opentelemetry Collector pipeline
+  type: otlp
+  default: true
+
 ---
 type: TestRunner
 spec:
