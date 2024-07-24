@@ -21,6 +21,8 @@ the release.
   ([#1670](https://github.com/open-telemetry/opentelemetry-demo/pull/1670))
 * [otel-col] Add host metrics receiver
   ([#1675](https://github.com/open-telemetry/opentelemetry-demo/pull/1675))
+* [adservice] bump dependencies & gradle version
+  ([#1681](https://github.com/open-telemetry/opentelemetry-demo/pull/1681))
 
 ## 1.11.0
 
