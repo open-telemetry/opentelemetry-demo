@@ -8776,7 +8776,7 @@ metadata:
     app.kubernetes.io/version: 1.11.0
     app.kubernetes.io/part-of: opentelemetry-demo
 spec:
-  type: LoadBalancer   #NodePort
+  type: NodePort
   ports:
     - port: 8080
       name: tcp-service
@@ -8797,7 +8797,7 @@ metadata:
     app.kubernetes.io/version: 1.11.0
     app.kubernetes.io/part-of: opentelemetry-demo
 spec:
-  type: LoadBalancer  #NodePort
+  type: NodePort
   ports:
     - port: 8080
       name: tcp-service
