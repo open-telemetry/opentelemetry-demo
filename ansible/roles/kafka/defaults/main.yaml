@@ -1,0 +1,7 @@
+service_name: "kafka"
+image_name: "ghcr.io/open-telemetry/demo:1.10.0-kafka"
+ports: "9092"
+memory_limit: "600M"
+kafkaservice_addr: "kafka:9092"
+kafka_advertised_listeners: "PLAINTEXT://{{ kafkaservice_addr }}"
+kafka_heap_opts: "-Xmx400m -Xms400m"

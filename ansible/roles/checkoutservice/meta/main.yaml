@@ -1,0 +1,11 @@
+---
+dependencies:
+  - role: cartservice
+  - role: currencyservice
+  - role: emailservice
+  - role: paymentservice
+  - role: productcatalogservice
+  - role: shippingservice
+  - role: otelcol
+  - role: kafka
+  - role: flagd

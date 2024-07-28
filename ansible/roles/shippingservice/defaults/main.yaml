@@ -1,0 +1,5 @@
+service_name: "shippingservice"
+image_name: "ghcr.io/open-telemetry/demo:1.10.0-shippingservice"
+ports: "50050"
+memory_limit: "20M"
+quoteservice_addr: "http://quoteservice:8090"

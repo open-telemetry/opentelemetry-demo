@@ -1,0 +1,45 @@
+---
+- name: Pull the latest Docker image
+  docker_image:
+    name: "{{ image_name }}:{{ demo_version }}-{{ service_name }}"
+    source: pull
+
+- name: Deploy Service
+  docker_container:
+    name: "{{ service_name }}"
+    image: "{{ image_name }}"
+    env:
+      OTEL_EXPORTER_OTLP_ENDPOINT: "http://{{ otel_collector_host }}:{{ otel_collector_port_grpc }}"
+      OTEL_RESOURCE_ATTRIBUTES: "service.name={{ service_name }},service.namespace=opentelemetry-demo,service.version={{ demo_version }}"
+      OTEL_SERVICE_NAME: "{{ service_name }}"
+      VERSION: "{{ demo_version }}"
+      FLAGD_HOST: "{{ flagd_host }}"
+      FLAGD_PORT: "{{ flagd_port }}"
+      KAFKA_SERVICE_ADDR: "{{ kafkaservice_addr }}"
+      OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE: "{{ otlp_metrics_temporality_preference }}"
+      PORT: "{{ ports }}"
+      FRONTEND_ADDR: "{{ service_name }}:{{ ports }}"
+      AD_SERVICE_ADDR: "{{ adservice_addr }}"
+      CART_SERVICE_ADDR: "{{ cartservice_addr }}"
+      CHECKOUT_SERVICE_ADDR: "{{ checkoutservice_addr }}"
+      CURRENCY_SERVICE_ADDR: "{{ currencyservice_addr }}"
+      PRODUCT_CATALOG_SERVICE_ADDR: "{{ productcatalogservice_addr }}"
+      RECOMMENDATION_SERVICE_ADDR: "{{ recommendationservice_addr }}"
+      SHIPPING_SERVICE_ADDR: "{{ shippingservice_addr }}"
+      ENV_PLATFORM: "{{ env_platform }}"
+      PUBLIC_OTEL_EXPORTER_OTLP_TRACES_ENDPOINT: "{{ otlp_exporter_traces_endpoint }}"
+      WEB_OTEL_SERVICE_NAME: "{{ web_otel_service_name }}"
+      otel_collector_host: "{{ otel_collector_host }}"
+
+    restart_policy: "{{ restart_policy }}"
+    memory: "{{ memory_limit }}"
+    ports: "{{ ports }}"
+    state: "{{ state }}"
+    network_mode: "{{ network_name }}"
+    networks:
+      - name: "{{ network_name }}"
+    log_driver: "{{ log_driver }}"
+    log_options:
+      max-size: "{{ log_options_max_size }}"
+      max-file: "{{ log_options_max_file }}"
+      tag: "{{ service_name }}"

@@ -1,0 +1,13 @@
+---
+dependencies:
+  - role: adservice
+  - role: cartservice
+  - role: checkoutservice
+  - role: currencyservice
+  - role: productcatalogservice
+  - role: quoteservice
+  - role: recommendationservice
+  - role: shippingservice
+  - role: otelcol
+  - role: imageprovider
+  - role: flagd
