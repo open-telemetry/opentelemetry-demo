@@ -1594,7 +1594,7 @@ relations:
       target: "opentelemetry-demo-quoteservice"
       properties: []
       operations: []
-component types:
+component_types:
   - name: opentelemetry-demo-currencyservice-type
     extends: 
     properties:
@@ -2755,7 +2755,7 @@ component types:
         value: "9090:9090"
         required: true
     operations: []
-relation types: 
+relation_types: 
   - DependsOn:
       extends: "-"
       description: "generic relation type"
