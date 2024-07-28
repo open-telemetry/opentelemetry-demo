@@ -7,8 +7,8 @@ components:
         - cpu_count: 4
         - ram_GiB: 16
         - storage_GiB: 32
-      operations: [ ]
-      artifacts: [ ]
+      operations: []
+      artifacts: []
   - default-operating-system:
       type: "operating_system"
       description: null
@@ -16,15 +16,15 @@ components:
         - name: "Ubuntu"
         - version: "18.04"
         - os_family: "Linux"
-      operations: [ ]
-      artifacts: [ ]
+      operations: []
+      artifacts: []
   - default-container-runtime:
       type: "container_runtime"
       description: null
       properties:
         - name: "Kubernetes"
-      operations: [ ]
-      artifacts: [ ]
+      operations: []
+      artifacts: []
   - name: opentelemetry-demo-currencyservice
     type: opentelemetry-demo-currencyservice-type
     properties:
@@ -60,8 +60,7 @@ components:
         type: STRING
         value: "8080:8080"
         required: true    
-    operations:
-      []    
+    operations: []    
     artifacts:
       - type: docker_image
         name: 'ghcr.io/open-telemetry/demo:1.10.0-currencyservice'
@@ -97,8 +96,7 @@ components:
         type: STRING
         value: "'opentelemetry-demo-flagd'"
         required: true    
-    operations:
-      []    
+    operations: []    
     artifacts:
       - type: docker_image
         name: 'ghcr.io/open-telemetry/demo:1.10.0-frauddetectionservice'
@@ -142,8 +140,7 @@ components:
         type: STRING
         value: "8080:8080"
         required: true    
-    operations:
-      []    
+    operations: []    
     artifacts:
       - type: docker_image
         name: 'ghcr.io/open-telemetry/demo:1.10.0-paymentservice'
@@ -183,8 +180,7 @@ components:
         type: STRING
         value: "8080:8080"
         required: true    
-    operations:
-      []    
+    operations: []    
     artifacts:
       - type: docker_image
         name: 'ghcr.io/open-telemetry/demo:1.10.0-quoteservice'
@@ -272,8 +268,7 @@ components:
         type: STRING
         value: "8080:8080"
         required: true    
-    operations:
-      []    
+    operations: []    
     artifacts:
       - type: docker_image
         name: 'ghcr.io/open-telemetry/demo:1.10.0-frontend'
@@ -313,8 +308,7 @@ components:
         type: STRING
         value: "80:3000"
         required: true    
-    operations:
-      []    
+    operations: []    
     artifacts:
       - type: docker_image
         name: "docker.io/grafana/grafana:10.4.1"
@@ -342,8 +336,7 @@ components:
         type: STRING
         value: "6379:6379"
         required: true    
-    operations:
-      []    
+    operations: []    
     artifacts:
       - type: docker_image
         name: 'valkey/valkey:7.2-alpine'
@@ -399,8 +392,7 @@ components:
         type: STRING
         value: "-Xms300m -Xmx300m"
         required: true    
-    operations:
-      []    
+    operations: []    
     artifacts:
       - type: docker_image
         name: "opensearchproject/opensearch:2.13.0"
@@ -436,8 +428,7 @@ components:
         type: STRING
         value: "8013:8013"
         required: true    
-    operations:
-      []    
+    operations: []    
     artifacts:
       - type: docker_image
         name: 'ghcr.io/open-feature/flagd:v0.10.1'
@@ -461,8 +452,7 @@ components:
         type: STRING
         value: "27017:27017"
         required: true    
-    operations:
-      []    
+    operations: []    
     artifacts:
       - type: docker_image
         name: 'mongo:8.0.0-rc9'
@@ -554,8 +544,7 @@ components:
         type: STRING
         value: "8080:8080"
         required: true    
-    operations:
-      []    
+    operations: []    
     artifacts:
       - type: docker_image
         name: 'ghcr.io/open-telemetry/demo:1.10.0-frontendproxy'
@@ -627,8 +616,7 @@ components:
         type: STRING
         value: "8089:8089"
         required: true    
-    operations:
-      []    
+    operations: []    
     artifacts:
       - type: docker_image
         name: 'ghcr.io/open-telemetry/demo:1.10.0-loadgenerator'
@@ -676,8 +664,7 @@ components:
         type: STRING
         value: "8080:8080"
         required: true    
-    operations:
-      []    
+    operations: []    
     artifacts:
       - type: docker_image
         name: 'ghcr.io/open-telemetry/demo:1.10.0-adservice'
@@ -765,8 +752,7 @@ components:
         type: STRING
         value: "4317:4317"
         required: true    
-    operations:
-      []    
+    operations: []    
     artifacts:
       - type: docker_image
         name: jaegertracing/all-in-one:1.53.0
@@ -818,8 +804,7 @@ components:
         type: STRING
         value: "8080:8080"
         required: true    
-    operations:
-      []    
+    operations: []    
     artifacts:
       - type: docker_image
         name: 'ghcr.io/open-telemetry/demo:1.10.0-cartservice'
@@ -859,8 +844,7 @@ components:
         type: STRING
         value: "8080:8080"
         required: true    
-    operations:
-      []    
+    operations: []    
     artifacts:
       - type: docker_image
         name: 'ghcr.io/open-telemetry/demo:1.10.0-emailservice'
@@ -900,8 +884,7 @@ components:
         type: STRING
         value: "8081:8081"
         required: true    
-    operations:
-      []    
+    operations: []    
     artifacts:
       - type: docker_image
         name: 'ghcr.io/open-telemetry/demo:1.10.0-imageprovider'
@@ -961,8 +944,7 @@ components:
         type: STRING
         value: "8080:8080"
         required: true    
-    operations:
-      []    
+    operations: []    
     artifacts:
       - type: docker_image
         name: 'ghcr.io/open-telemetry/demo:1.10.0-productcatalogservice'
@@ -990,8 +972,7 @@ components:
         type: STRING
         value: "cumulative"
         required: true    
-    operations:
-      []    
+    operations: []    
     artifacts:
       - type: docker_image
         name: 'ghcr.io/open-telemetry/demo:1.10.0-accountingservice'
@@ -1063,8 +1044,7 @@ components:
         type: STRING
         value: "8080:8080"
         required: true    
-    operations:
-      []    
+    operations: []    
     artifacts:
       - type: docker_image
         name: 'ghcr.io/open-telemetry/demo:1.10.0-checkoutservice'
@@ -1104,8 +1084,7 @@ components:
         type: STRING
         value: "8080:8080"
         required: true    
-    operations:
-      []    
+    operations: []    
     artifacts:
       - type: docker_image
         name: 'ghcr.io/open-telemetry/demo:1.10.0-shippingservice'
@@ -1161,8 +1140,7 @@ components:
         type: STRING
         value: "8080:8080"
         required: true    
-    operations:
-      []    
+    operations: []    
     artifacts:
       - type: docker_image
         name: 'ghcr.io/open-telemetry/demo:1.10.0-recommendationservice'
@@ -1210,8 +1188,7 @@ components:
         type: STRING
         value: "9092:9092"
         required: true    
-    operations:
-      []    
+    operations: []    
     artifacts:
       - type: docker_image
         name: 'ghcr.io/open-telemetry/demo:1.10.0-kafka'
@@ -1287,8 +1264,7 @@ components:
         type: STRING
         value: "4317:4317"
         required: true    
-    operations:
-      []    
+    operations: []    
     artifacts:
       - type: docker_image
         name: "otel/opentelemetry-collector-contrib:0.102.1"
@@ -1304,8 +1280,7 @@ components:
         type: STRING
         value: "9090:9090"
         required: true    
-    operations:
-      []    
+    operations: []    
     artifacts:
       - type: docker_image
         name: "quay.io/prometheus/prometheus:v2.52.0"
@@ -1316,309 +1291,309 @@ relations:
       description: null
       source: "default-operating-system"
       target: "default"
-      properties: [ ]
-      operations: [ ]
+      properties: []
+      operations: []
   - default-container-runtime_HostedOn_default-operating-system:
       type: "HostedOn"
       description: null
       source: "default-container-runtime"
       target: "default-operating-system"
-      properties: [ ]
-      operations: [ ]
+      properties: []
+      operations: []
   - opentelemetry-demo-accountingservice_HostedOn_default-container-runtime:
       type: "HostedOn"
       description: null
       source: "opentelemetry-demo-accountingservice"
       target: "default-container-runtime"
-      properties: [ ]
-      operations: [ ]
+      properties: []
+      operations: []
   - opentelemetry-demo-adservice_HostedOn_default-container-runtime:
       type: "HostedOn"
       description: null
       source: "opentelemetry-demo-adservice"
       target: "default-container-runtime"
-      properties: [ ]
-      operations: [ ]
+      properties: []
+      operations: []
   - opentelemetry-demo-cartservice_HostedOn_default-container-runtime:
       type: "HostedOn"
       description: null
       source: "opentelemetry-demo-cartservice"
       target: "default-container-runtime"
-      properties: [ ]
-      operations: [ ]
+      properties: []
+      operations: []
   - opentelemetry-demo-checkoutservice_HostedOn_default-container-runtime:
       type: "HostedOn"
       description: null
       source: "opentelemetry-demo-checkoutservice"
       target: "default-container-runtime"
-      properties: [ ]
-      operations: [ ]
+      properties: []
+      operations: []
   - opentelemetry-demo-currencyservice_HostedOn_default-container-runtime:
       type: "HostedOn"
       description: null
       source: "opentelemetry-demo-currencyservice"
       target: "default-container-runtime"
-      properties: [ ]
-      operations: [ ]
+      properties: []
+      operations: []
   - opentelemetry-demo-emailservice_HostedOn_default-container-runtime:
       type: "HostedOn"
       description: null
       source: "opentelemetry-demo-emailservice"
       target: "default-container-runtime"
-      properties: [ ]
-      operations: [ ]
+      properties: []
+      operations: []
   - opentelemetry-demo-flagd_HostedOn_default-container-runtime:
       type: "HostedOn"
       description: null
       source: "opentelemetry-demo-flagd"
       target: "default-container-runtime"
-      properties: [ ]
-      operations: [ ]
+      properties: []
+      operations: []
   - opentelemetry-demo-frauddetectionservice_HostedOn_default-container-runtime:
       type: "HostedOn"
       description: null
       source: "opentelemetry-demo-frauddetectionservice"
       target: "default-container-runtime"
-      properties: [ ]
-      operations: [ ]
+      properties: []
+      operations: []
   - opentelemetry-demo-frontend_HostedOn_default-container-runtime:
       type: "HostedOn"
       description: null
       source: "opentelemetry-demo-frontend"
       target: "default-container-runtime"
-      properties: [ ]
-      operations: [ ]
+      properties: []
+      operations: []
   - opentelemetry-demo-frontendproxy_HostedOn_default-container-runtime:
       type: "HostedOn"
       description: null
       source: "opentelemetry-demo-frontendproxy"
       target: "default-container-runtime"
-      properties: [ ]
-      operations: [ ]
+      properties: []
+      operations: []
   - opentelemetry-demo-grafana_HostedOn_default-container-runtime:
       type: "HostedOn"
       description: null
       source: "opentelemetry-demo-grafana"
       target: "default-container-runtime"
-      properties: [ ]
-      operations: [ ]
+      properties: []
+      operations: []
   - opentelemetry-demo-imageprovider_HostedOn_default-container-runtime:
       type: "HostedOn"
       description: null
       source: "opentelemetry-demo-imageprovider"
       target: "default-container-runtime"
-      properties: [ ]
-      operations: [ ]
+      properties: []
+      operations: []
   - opentelemetry-demo-kafka_HostedOn_default-container-runtime:
       type: "HostedOn"
       description: null
       source: "opentelemetry-demo-kafka"
       target: "default-container-runtime"
-      properties: [ ]
-      operations: [ ]
+      properties: []
+      operations: []
   - opentelemetry-demo-loadgenerator_HostedOn_default-container-runtime:
       type: "HostedOn"
       description: null
       source: "opentelemetry-demo-loadgenerator"
       target: "default-container-runtime"
-      properties: [ ]
-      operations: [ ]
+      properties: []
+      operations: []
   - opentelemetry-demo-otelcollector_HostedOn_default-container-runtime:
       type: "HostedOn"
       description: null
       source: "opentelemetry-demo-otelcollector"
       target: "default-container-runtime"
-      properties: [ ]
-      operations: [ ]
+      properties: []
+      operations: []
   - opentelemetry-demo-paymentservice_HostedOn_default-container-runtime:
       type: "HostedOn"
       description: null
       source: "opentelemetry-demo-paymentservice"
       target: "default-container-runtime"
-      properties: [ ]
-      operations: [ ]
+      properties: []
+      operations: []
   - opentelemetry-demo-productcatalogservice_HostedOn_default-container-runtime:
       type: "HostedOn"
       description: null
       source: "opentelemetry-demo-productcatalogservice"
       target: "default-container-runtime"
-      properties: [ ]
-      operations: [ ]
+      properties: []
+      operations: []
   - opentelemetry-demo-prometheus_HostedOn_default-container-runtime:
       type: "HostedOn"
       description: null
       source: "opentelemetry-demo-prometheus"
       target: "default-container-runtime"
-      properties: [ ]
-      operations: [ ]
+      properties: []
+      operations: []
   - opentelemetry-demo-quoteservice_HostedOn_default-container-runtime:
       type: "HostedOn"
       description: null
       source: "opentelemetry-demo-quoteservice"
       target: "default-container-runtime"
-      properties: [ ]
-      operations: [ ]
+      properties: []
+      operations: []
   - opentelemetry-demo-recommendataionservice_HostedOn_default-container-runtime:
       type: "HostedOn"
       description: null
       source: "opentelemetry-demo-recommendataionservice"
       target: "default-container-runtime"
-      properties: [ ]
-      operations: [ ]
+      properties: []
+      operations: []
   - opentelemetry-demo-shippingservice_HostedOn_default-container-runtime:
       type: "HostedOn"
       description: null
       source: "opentelemetry-demo-shippingservice"
       target: "default-container-runtime"
-      properties: [ ]
-      operations: [ ]
+      properties: []
+      operations: []
   - opentelemetry-demo-loadgenerator_ConnectsTo_opentelemetry-demo-frontendproxy:
       type: "ConnectsTo"
       description: null
       source: "opentelemetry-demo-loadgenerator"
       target: "opentelemetry-demo-frontendproxy"
-      properties: [ ]
-      operations: [ ]
+      properties: []
+      operations: []
   - opentelemetry-demo-frontendproxy_ConnectsTo_opentelemetry-demo-frontend:
       type: "ConnectsTo"
       description: null
       source: "opentelemetry-demo-frontendproxy"
       target: "opentelemetry-demo-frontend"
-      properties: [ ]
-      operations: [ ]
+      properties: []
+      operations: []
   - opentelemetry-demo-frontendproxy_ConnectsTo_opentelemetry-demo-imageprovider:
       type: "ConnectsTo"
       description: null
       source: "opentelemetry-demo-frontendproxy"
       target: "opentelemetry-demo-imageprovider"
-      properties: [ ]
-      operations: [ ]
+      properties: []
+      operations: []
   - opentelemetry-demo-frontend_ConnectsTo_opentelemetry-demo-adservice:
       type: "ConnectsTo"
       description: null
       source: "opentelemetry-demo-frontend"
       target: "opentelemetry-demo-adservice"
-      properties: [ ]
-      operations: [ ]
+      properties: []
+      operations: []
   - opentelemetry-demo-frontend_ConnectsTo_opentelemetry-demo-checkoutservice:
       type: "ConnectsTo"
       description: null
       source: "opentelemetry-demo-frontend"
       target: "opentelemetry-demo-checkoutservice"
-      properties: [ ]
-      operations: [ ]
+      properties: []
+      operations: []
   - opentelemetry-demo-frontend_ConnectsTo_opentelemetry-demo-recommendationservice:
       type: "ConnectsTo"
       description: null
       source: "opentelemetry-demo-frontend"
       target: "opentelemetry-demo-recommendationservice"
-      properties: [ ]
-      operations: [ ]
+      properties: []
+      operations: []
   - opentelemetry-demo-frontend_ConnectsTo_opentelemetry-demo-cartservice:
       type: "ConnectsTo"
       description: null
       source: "opentelemetry-demo-frontend"
       target: "opentelemetry-demo-cartservice"
-      properties: [ ]
-      operations: [ ]
+      properties: []
+      operations: []
   - opentelemetry-demo-frontend_ConnectsTo_opentelemetry-demo-currencyservice:
       type: "ConnectsTo"
       description: null
       source: "opentelemetry-demo-frontend"
       target: "opentelemetry-demo-currencyservice"
-      properties: [ ]
-      operations: [ ]
+      properties: []
+      operations: []
   - opentelemetry-demo-frontend_ConnectsTo_opentelemetry-demo-productcatalogservice:
       type: "ConnectsTo"
       description: null
       source: "opentelemetry-demo-frontend"
       target: "opentelemetry-demo-productcatalogservice"
-      properties: [ ]
-      operations: [ ]
+      properties: []
+      operations: []
   - opentelemetry-demo-checkoutservice_ConnectsTo_opentelemetry-demo-kafka:
       type: "ConnectsTo"
       description: null
       source: "opentelemetry-demo-checkoutservice"
       target: "opentelemetry-demo-kafka"
-      properties: [ ]
-      operations: [ ]
+      properties: []
+      operations: []
   - opentelemetry-demo-checkoutservice_ConnectsTo_opentelemetry-demo-cartservice:
       type: "ConnectsTo"
       description: null
       source: "opentelemetry-demo-checkoutservice"
       target: "opentelemetry-demo-cartservice"
-      properties: [ ]
-      operations: [ ]
+      properties: []
+      operations: []
   - opentelemetry-demo-checkoutservice_ConnectsTo_opentelemetry-demo-currencyservice:
       type: "ConnectsTo"
       description: null
       source: "opentelemetry-demo-checkoutservice"
       target: "opentelemetry-demo-currencyservice"
-      properties: [ ]
-      operations: [ ]
+      properties: []
+      operations: []
   - opentelemetry-demo-checkoutservice_ConnectsTo_opentelemetry-demo-emailservice:
       type: "ConnectsTo"
       description: null
       source: "opentelemetry-demo-checkoutservice"
       target: "opentelemetry-demo-emailservice"
-      properties: [ ]
-      operations: [ ]
+      properties: []
+      operations: []
   - opentelemetry-demo-checkoutservice_ConnectsTo_opentelemetry-demo-paymentservice:
       type: "ConnectsTo"
       description: null
       source: "opentelemetry-demo-checkoutservice"
       target: "opentelemetry-demo-paymentservice"
-      properties: [ ]
-      operations: [ ]
+      properties: []
+      operations: []
   - opentelemetry-demo-checkoutservice_ConnectsTo_opentelemetry-demo-productcatalogservice:
       type: "ConnectsTo"
       description: null
       source: "opentelemetry-demo-checkoutservice"
       target: "opentelemetry-demo-productcatalogservice"
-      properties: [ ]
-      operations: [ ]
+      properties: []
+      operations: []
   - opentelemetry-demo-checkoutservice_ConnectsTo_opentelemetry-demo-shippingservice:
       type: "ConnectsTo"
       description: null
       source: "opentelemetry-demo-checkoutservice"
       target: "opentelemetry-demo-shippingservice"
-      properties: [ ]
-      operations: [ ]
+      properties: []
+      operations: []
   - opentelemetry-demo-kafka_ConnectsTo_opentelemetry-demo-accountingservice:
       type: "ConnectsTo"
       description: null
       source: "opentelemetry-demo-kafka"
       target: "opentelemetry-demo-accountingservice"
-      properties: [ ]
-      operations: [ ]
+      properties: []
+      operations: []
   - opentelemetry-demo-kafka_ConnectsTo_opentelemetry-demo-frauddetectionservice:
       type: "ConnectsTo"
       description: null
       source: "opentelemetry-demo-kafka"
       target: "opentelemetry-demo-frauddetectionservice"
-      properties: [ ]
-      operations: [ ]
+      properties: []
+      operations: []
   - opentelemetry-demo-cartservice_ConnectsTo_opentelemetry-demo-valkey-cart:
       type: "ConnectsTo"
       description: null
       source: "opentelemetry-demo-cartservice"
       target: "opentelemetry-demo-valkey-cart"
-      properties: [ ]
-      operations: [ ]
+      properties: []
+      operations: []
   - opentelemetry-demo-recommendationservice_ConnectsTo_opentelemetry-demo-productcatalogservice:
       type: "ConnectsTo"
       description: null
       source: "opentelemetry-demo-recommendationservice"
       target: "opentelemetry-demo-productcatalogservice"
-      properties: [ ]
-      operations: [ ]
+      properties: []
+      operations: []
   - opentelemetry-demo-shippingservice_ConnectsTo_opentelemetry-demo-quoteservice:
       type: "ConnectsTo"
       description: null
       source: "opentelemetry-demo-shippingservice"
       target: "opentelemetry-demo-quoteservice"
-      properties: [ ]
-      operations: [ ]
+      properties: []
+      operations: []
 component types:
   - name: opentelemetry-demo-currencyservice-type
     extends: 
@@ -1655,8 +1630,7 @@ component types:
         type: STRING
         value: "8080:8080"
         required: true
-    operations:
-      []
+    operations: []
   - name: opentelemetry-demo-frauddetectionservice-type
     extends: 
     properties:
@@ -1688,8 +1662,7 @@ component types:
         type: STRING
         value: "'opentelemetry-demo-flagd'"
         required: true
-    operations:
-      []
+    operations: []
   - name: opentelemetry-demo-paymentservice-type
     extends: 
     properties:
@@ -1729,8 +1702,7 @@ component types:
         type: STRING
         value: "8080:8080"
         required: true
-    operations:
-      []
+    operations: []
   - name: opentelemetry-demo-quoteservice-type
     extends: 
     properties:
@@ -1766,8 +1738,7 @@ component types:
         type: STRING
         value: "8080:8080"
         required: true
-    operations:
-      []
+    operations: []
   - name: opentelemetry-demo-frontend-type
     extends: 
     properties:
@@ -1851,8 +1822,7 @@ component types:
         type: STRING
         value: "8080:8080"
         required: true
-    operations:
-      []
+    operations: []
   - name: grafana
     extends: 
     properties:
@@ -1888,8 +1858,7 @@ component types:
         type: STRING
         value: "80:3000"
         required: true
-    operations:
-      []
+    operations: []
   - name: valkey
     extends: 
     properties:
@@ -1913,8 +1882,7 @@ component types:
         type: STRING
         value: "6379:6379"
         required: true
-    operations:
-      []
+    operations: []
   - name: opensearch
     extends: 
     properties:
@@ -1966,8 +1934,7 @@ component types:
         type: STRING
         value: "-Xms300m -Xmx300m"
         required: true
-    operations:
-      []
+    operations: []
   - name: flagd
     extends: 
     properties:
@@ -1999,8 +1966,7 @@ component types:
         type: STRING
         value: "8013:8013"
         required: true
-    operations:
-      []
+    operations: []
   - name: mongo
     extends: 
     properties:
@@ -2020,8 +1986,7 @@ component types:
         type: STRING
         value: "27017:27017"
         required: true
-    operations:
-      []
+    operations: []
   - name: opentelemetry-demo-frontendproxy-type
     extends: 
     properties:
@@ -2109,8 +2074,7 @@ component types:
         type: STRING
         value: "8080:8080"
         required: true
-    operations:
-      []
+    operations: []
   - name: opentelemetry-demo-loadgenerator-type
     extends: 
     properties:
@@ -2178,8 +2142,7 @@ component types:
         type: STRING
         value: "8089:8089"
         required: true
-    operations:
-      []
+    operations: []
   - name: opentelemetry-demo-adservice-type
     extends: 
     properties:
@@ -2223,8 +2186,7 @@ component types:
         type: STRING
         value: "8080:8080"
         required: true
-    operations:
-      []
+    operations: []
   - name: jaeger
     extends: 
     properties:
@@ -2308,8 +2270,7 @@ component types:
         type: STRING
         value: "4317:4317"
         required: true
-    operations:
-      []
+    operations: []
   - name: opentelemetry-demo-cartservice-type
     extends: 
     properties:
@@ -2357,8 +2318,7 @@ component types:
         type: STRING
         value: "8080:8080"
         required: true
-    operations:
-      []
+    operations: []
   - name: opentelemetry-demo-emailservice-type
     extends: 
     properties:
@@ -2394,8 +2354,7 @@ component types:
         type: STRING
         value: "8080:8080"
         required: true
-    operations:
-      []
+    operations: []
   - name: opentelemetry-demo-imageprovider-type
     extends: 
     properties:
@@ -2431,8 +2390,7 @@ component types:
         type: STRING
         value: "8081:8081"
         required: true
-    operations:
-      []
+    operations: []
   - name: opentelemetry-demo-productcatalogservice-type
     extends: 
     properties:
@@ -2488,8 +2446,7 @@ component types:
         type: STRING
         value: "8080:8080"
         required: true
-    operations:
-      []
+    operations: []
   - name: opentelemetry-demo-accountingservice-type
     extends: 
     properties:
@@ -2513,8 +2470,7 @@ component types:
         type: STRING
         value: "cumulative"
         required: true
-    operations:
-      []
+    operations: []
   - name: opentelemetry-demo-checkoutservice-type
     extends: 
     properties:
@@ -2582,8 +2538,7 @@ component types:
         type: STRING
         value: "8080:8080"
         required: true
-    operations:
-      []
+    operations: []
   - name: opentelemetry-demo-shippingservice-type
     extends: 
     properties:
@@ -2619,8 +2574,7 @@ component types:
         type: STRING
         value: "8080:8080"
         required: true
-    operations:
-      []
+    operations: []
   - name: opentelemetry-demo-recommendationservice-type
     extends: 
     properties:
@@ -2672,8 +2626,7 @@ component types:
         type: STRING
         value: "8080:8080"
         required: true
-    operations:
-      []
+    operations: []
   - name: kafka
     extends: 
     properties:
@@ -2717,8 +2670,7 @@ component types:
         type: STRING
         value: "9092:9092"
         required: true
-    operations:
-      []
+    operations: []
   - name: opentelemetry-collector
     extends: 
     properties:
@@ -2790,8 +2742,7 @@ component types:
         type: STRING
         value: "4317:4317"
         required: true
-    operations:
-      []
+    operations: []
   - name: prometheus
     extends: 
     properties:
@@ -2803,8 +2754,7 @@ component types:
         type: STRING
         value: "9090:9090"
         required: true
-    operations:
-      []
+    operations: []
 relation types: 
   - DependsOn:
       extends: "-"
