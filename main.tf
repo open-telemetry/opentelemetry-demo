@@ -47,10 +47,8 @@ resource "docker_container" "accountingservice-container" {
     "OTEL_EXPORTER_OTLP_ENDPOINT=http://otel-collector:4317",
     "OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE=Cumulative",
     "OTEL_RESOURCE_ATTRIBUTES=docker.cli.cobra.command_path=docker%20compose",
-    "OTEL_SERVICE_NAME = accountingservice"
+    "OTEL_SERVICE_NAME=ccountingservice"
   ]
-
-
 }
 
 #ad service container
@@ -182,7 +180,7 @@ resource "docker_container" "currencyservice-container" {
 
 resource "docker_container" "emailservice-container" {
   name       = "email-service"
-  image      = "demo/emailservice-contrib:latest"
+  image      = "ghcr.io/open-telemetry/demo:latest-emailservice"
   depends_on = [docker_container.otelcol]
   network_mode = "bridge"
   networks_advanced {
@@ -275,8 +273,8 @@ resource "docker_container" "frontend" {
     "OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE=cumulative",
     "WEB_OTEL_SERVICE_NAME=frontend-web",
     "OTEL_COLLECTOR_HOST=otelcol",
-    "FLAGD_HOST = flagd",
-    "FLAGD_PORT = 8013"
+    "FLAGD_HOST=flagd",
+    "FLAGD_PORT=8013"
   ]
 }
 
@@ -802,139 +800,3 @@ resource "docker_container" "opensearch" {
     internal = 9200
   }
 }
-# test container
-
-#frontend test container
-
-resource "docker_container" "namfrontendTests" {
-  name       = "frontend-tests"
-  image      = "ghcr.io/open-telemetry/demo:latest-frontend-tests"
-  depends_on = [docker_container.frontend]
-  network_mode = "bridge"
-  networks_advanced {
-    name = docker_network.open-telemetry-network.name
-  }
-  volumes {
-    host_path      = "${var.project_path}${var.seperator}src${var.seperator}frontend${var.seperator}cypress${var.seperator}videos"
-    container_path = "/app/cypress/videos"
-  }
-  volumes {
-    host_path      = "${var.project_path}${var.seperator}src${var.seperator}frontend${var.seperator}cypress${var.seperator}screenshots"
-    container_path = "/app/cypress/screenshots"
-  }
-  env = [
-    "CYPRESS_baseUrl=http://frontend:8080",
-    "FRONTEND_ADDR=frontend:8080",
-  "NODE_ENV=production"]
-}
-
-# tracebased test container
-
-resource "docker_container" "traceBasedTests" {
-  name  = "traceBasedTests"
-  image = "ghcr.io/open-telemetry/demo:latest-traceBasedTests"
-  depends_on = [docker_container.tracetest-server,
-    docker_container.frontend,
-    docker_container.adservice-container,
-    docker_container.cartservice-container,
-    docker_container.checkoutservice-container,
-    docker_container.currencyservice-container,
-    docker_container.emailservice-container,
-    docker_container.paymentservice,
-    docker_container.productcatalogservice,
-    docker_container.recommendationservice,
-    docker_container.shippingservice,
-    docker_container.quoteservice,
-    docker_container.accountingservice-container,
-    docker_container.frauddetectionservice-container,
-  docker_container.flagd]
-  network_mode = "bridge"
-  networks_advanced {
-    name = docker_network.open-telemetry-network.name
-  }
-  env = [
-    "AD_SERVICE_ADDR=adservice:9555",
-    "CART_SERVICE_ADDR =  cartservice:7070",
-    "CHECKOUT_SERVICE_ADDR = checkoutservice:5050",
-    "CURRENCY_SERVICE_ADDR = currencyservice:7001",
-    "EMAIL_SERVICE_ADDR = http://emailservice:6060",
-    "FRONTEND_ADDR = frontend:8080",
-    "PAYMENT_SERVICE_ADDR = paymentservice:50051",
-    "PRODUCT_CATALOG_SERVICE_ADDR = productcatalogservice:3550",
-    "RECOMMENDATION_SERVICE_ADDR = recommendationservice:9001",
-    "SHIPPING_SERVICE_ADDR = shippingservice:50050",
-    "KAFKA_SERVICE_ADDR = kafka:9092"
-  ]
-  volumes {
-    host_path      = "${var.project_path}${var.seperator}test${var.seperator}tracetesting"
-    container_path = "/app/test/tracetesting"
-  }
-  volumes {
-    host_path      = "${var.project_path}${var.seperator}pb"
-    container_path = "/app/pb"
-  }
-
-}
-
-# tracetest server container
-
-resource "docker_container" "tracetest-server" {
-  name       = "tracetest-server"
-  image      = "kubeshop/tracetest:v1.3.0"
-  depends_on = [docker_container.tracetest-postgres, docker_container.otelcol, docker_container.frontendproxy]
-  network_mode = "bridge"
-  networks_advanced {
-    name = docker_network.open-telemetry-network.name
-  }
-  volumes {
-    host_path      = "${var.project_path}${var.seperator}test${var.seperator}tracetesting${var.seperator}tracetest-config.yaml"
-    container_path = "/app/tracetest.yaml"
-  }
-  volumes {
-    host_path      = "${var.project_path}${var.seperator}test${var.seperator}tracetesting${var.seperator}tracetest-provision.yaml"
-    container_path = "/app/provision.yaml"
-  }
-  command = ["--provisioning-file /app/provision.yaml"]
-  ports {
-    internal = 11633
-    external = 11633
-  }
-  healthcheck {
-    test     = ["wget", "--spider", "localhost:11633"]
-    interval = "1s"
-    timeout  = "3s"
-    retries  = 60
-  }
-
-}
-
-#tracetest postgress container
-
-resource "docker_container" "tracetest-postgres" {
-  name  = "tracetest-postgres"
-  image = "postgres:16.3"
-  env = [
-    "POSTGRES_PASSWORD= postgres",
-    "POSTGRES_USER= postgres"
-  ]
-  network_mode = "bridge"
-  networks_advanced {
-    name = docker_network.open-telemetry-network.name
-  }
-  healthcheck {
-    test     = ["pg_isready", "-U", "$$POSTGRES_USER", "-d", "$$POSTGRES_DB"]
-    interval = "1s"
-    timeout  = "5s"
-    retries  = 60
-  }
-  ports {
-    internal = 5432
-  }
-
-}
-
-
-
-
-
-
