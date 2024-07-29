@@ -1,0 +1,7 @@
+service_name: "flagd"
+image_name: "ghcr.io/open-feature/flagd:v0.10.2"
+ports: "8013"
+memory_limit: "50M"
+command: '["start", "--uri", "file:./etc/flagd/demo.flagd.json"]'
+volumes: 
+  - ./roles/flagd/files/demo.flagd.json:/etc/flagd/demo.flagd.json

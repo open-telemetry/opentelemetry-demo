@@ -1,0 +1,6 @@
+service_name: "emailservice"
+image_name: "ghcr.io/open-telemetry/demo:1.10.0-emailservice"
+ports: "6060"
+otlp_metrics_temporality_preference : "cumulative"
+memory_limit: "100M"
+app_env: "production"

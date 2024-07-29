@@ -1,0 +1,4 @@
+---
+dependencies:
+  - role: frontend
+  - role: flagd

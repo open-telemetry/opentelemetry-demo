@@ -1,0 +1,12 @@
+service_name: "otelcol"
+image_name: "otel/opentelemetry-collector-contrib:0.104.0"
+memory_limit: "200M"
+command: '"--config=/etc/otelcol-config.yml" "--config=/etc/otelcol-config-extras.yml"'
+user: "0:0"
+ports:
+  - "4317"
+  - "4318"
+volumes:
+  - /var/run/docker.sock:/var/run/docker.sock:ro
+  - ./roles/otelcol/files/otelcol-config.yml:/etc/otelcol-config.yml
+  - ./roles/otelcol/files/otelcol-config-extras.yml:/etc/otelcol-config-extras.yml

@@ -1,0 +1,31 @@
+---
+- name: Pull the latest Docker image
+  docker_image:
+    name: "{{ image_name }}"
+    source: pull
+
+- name: Deploy Service
+  become: true
+  docker_container:
+    name: "{{ service_name }}"
+    image: "{{ image_name }}"
+    env:
+      OTEL_COLLECTOR_HOST: "otelcol"
+      OTEL_COLLECTOR_PORT_GRPC: "{{ otel_collector_port_grpc }}"
+      OTEL_COLLECTOR_PORT_HTTP: "{{ otel_collector_port_http }}"
+      ENVOY_PORT: "{{ envoy_port }}"
+    restart_policy: "{{ restart_policy }}"
+    volumes: "{{ volumes }}"
+    command: "{{ command }}"
+    user: "{{ user }}"
+    memory: "{{ memory_limit }}"
+    state: "{{ state }}"
+    ports: "{{ ports }}"
+    network_mode: "{{ network_name }}"
+    networks:
+      - name: "{{ network_name }}"
+    log_driver: "{{ log_driver }}"
+    log_options:
+      max-size: "{{ log_options_max_size }}"
+      max-file: "{{ log_options_max_file }}"
+      tag: "{{ service_name }}"

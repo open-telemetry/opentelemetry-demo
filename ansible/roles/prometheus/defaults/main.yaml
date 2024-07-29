@@ -1,0 +1,15 @@
+service_name: "prometheus"
+image_name: "quay.io/prometheus/prometheus:v2.52.0"
+memory_limit: "300M"
+ports: "9090:9090"
+command: "--web.console.templates=/etc/prometheus/consoles
+      --web.console.libraries=/etc/prometheus/console_libraries
+      --storage.tsdb.retention.time=1h
+      --config.file=/etc/prometheus/prometheus-config.yaml
+      --storage.tsdb.path=/prometheus
+      --web.enable-lifecycle
+      --web.route-prefix=/
+      --enable-feature=exemplar-storage
+      --enable-feature=otlp-write-receiver"
+volumes:
+  - ./roles/prometheus/files/prometheus-config.yaml:/etc/prometheus/prometheus-config.yaml

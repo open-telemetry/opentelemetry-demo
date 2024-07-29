@@ -1,0 +1,5 @@
+service_name: "quoteservice"
+image_name: "ghcr.io/open-telemetry/demo:1.10.0-quoteservice"
+ports: "8090"
+memory_limit: "40M"
+otel_php_features: "true"

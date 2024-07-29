@@ -1,0 +1,10 @@
+service_name: "productcatalogservice"
+image_name: "ghcr.io/open-telemetry/demo:1.10.0-productcatalogservice"
+ports: "3550"
+
+otlp_metrics_temporality_preference : "cumulative"
+memory_limit: "20M"
+mongo_hostname: "mongo"
+mongo_port: "27017"
+mongo_username: "mongo"
+mongo_password: "mongo_product_catalog"

@@ -1,0 +1,6 @@
+service_name: "cartservice"
+image_name: "ghcr.io/open-telemetry/demo:1.10.0-cartservice"
+ports: "7070"
+memory_limit: "160M"
+valkey_addr: "valkeycart:6379"
+aspnetcore_urls: "http://*:7070"
