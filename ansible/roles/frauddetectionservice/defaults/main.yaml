@@ -1,0 +1,6 @@
+service_name: "frauddetectionservice"
+image_name: "ghcr.io/open-telemetry/demo:1.10.0-frauddetectionservice"
+otlp_metrics_temporality_preference : "cumulative"
+memory_limit: "300M"
+kafkaservice_addr: "kafka:9092"
+otlp_experimental_features: "true"

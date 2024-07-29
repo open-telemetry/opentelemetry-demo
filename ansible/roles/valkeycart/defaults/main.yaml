@@ -1,0 +1,5 @@
+service_name: "valkeycart"
+image_name: "valkey/valkey:7.2-alpine"
+ports: "6379"
+memory_limit: "20M"
+user: "valkey"

@@ -10369,70 +10369,22 @@ spec:
             name: plaintext
           env:
           - name: MONGO_INITDB_ROOT_USERNAME
-            value: $(MONGO_USERNAME)
+            value: "mongo"
           - name: MONGO_INITDB_ROOT_PASSWORD
-            value: $(MONGO_PASSWORD)
+            value: "mongo_product_catalog"
           resources:
             limits:
               memory: 256Mi
           securityContext:
-            runAsGroup: 1000
-            runAsNonRoot: true
-            runAsUser: 1000
+            runAsGroup: 999
+            runAsUser: 999
           volumeMounts:
+          - name: storage-volume
+            mountPath: /data/db
       volumes:
----
-# Source: opentelemetry-demo/templates/component.yaml
-apiVersion: apps/v1
-kind: Deployment
-metadata:
-  name: opentelemetry-demo-mongo
-  labels:
-
-    opentelemetry.io/name: opentelemetry-demo-mongo
-    app.kubernetes.io/instance: opentelemetry-demo
-    app.kubernetes.io/component: mongo
-    app.kubernetes.io/name: opentelemetry-demo-mongo
-    app.kubernetes.io/version: "1.10.0"
-    app.kubernetes.io/part-of: opentelemetry-demo
-spec:
-  replicas: 1
-  selector:
-    matchLabels:
-
-      opentelemetry.io/name: opentelemetry-demo-mongo
-  template:
-    metadata:
-      labels:
-
-        opentelemetry.io/name: opentelemetry-demo-mongo
-        app.kubernetes.io/instance: opentelemetry-demo
-        app.kubernetes.io/component: mongo
-        app.kubernetes.io/name: opentelemetry-demo-mongo
-    spec:
-      serviceAccountName: opentelemetry-demo
-      containers:
-        - name: mongo
-          image: 'mongo:8.0.0-rc9'
-          imagePullPolicy: IfNotPresent
-          ports:
-
-          - containerPort: 27017
-            name: plaintext
-          env:
-          - name: MONGO_INITDB_ROOT_USERNAME
-            value: $(MONGO_USERNAME)
-          - name: MONGO_INITDB_ROOT_PASSWORD
-            value: $(MONGO_PASSWORD)
-          resources:
-            limits:
-              memory: 256Mi
-          securityContext:
-            runAsGroup: 1000
-            runAsNonRoot: true
-            runAsUser: 1000
-          volumeMounts:
-      volumes:
+        - name: storage-volume
+          emptyDir:
+            {}
 ---
 # Source: opentelemetry-demo/templates/component.yaml
 apiVersion: apps/v1
@@ -10636,13 +10588,13 @@ spec:
           - name: OTEL_RESOURCE_ATTRIBUTES
             value: service.name=$(OTEL_SERVICE_NAME),service.namespace=opentelemetry-demo,service.version=1.11.0
           - name: MONGO_USERNAME
-            value: $(MONGO_USERNAME)
+            value: "mongo"
           - name: MONGO_PASSWORD
-            value: $(MONGO_PASSWORD)
+            value: "mongo_product_catalog"
           - name: MONGO_HOST
             value: 'opentelemetry-demo-mongo'
           - name: MONGO_PORT
-            value: $(MONGO_PORT)
+            value: "27017"
           resources:
             limits:
               memory: 20Mi

@@ -1,0 +1,5 @@
+service_name: "imageprovider"
+
+image_name: "ghcr.io/open-telemetry/demo:1.10.0-imageprovider"
+ports: "8081"
+memory_limit: "120M"

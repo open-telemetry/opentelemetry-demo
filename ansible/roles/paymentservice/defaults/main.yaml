@@ -1,0 +1,5 @@
+service_name: "paymentservice"
+image_name: "ghcr.io/open-telemetry/demo:1.10.0-paymentservice"
+ports: "50051"
+otlp_metrics_temporality_preference : "cumulative"
+memory_limit: "120M"

@@ -1,0 +1,22 @@
+---
+- name: Pull the latest Docker image
+  docker_image:
+    name: "{{ image_name }}"
+    source: pull
+
+- name: Deploy Service
+  docker_container:
+    name: "{{ service_name }}"
+    image: "{{ image_name }}"
+    memory: "{{ memory_limit }}"
+    ports: "{{ ports }}"
+    state: "{{ state }}"
+    user: "{{ user }}"
+    network_mode: "{{ network_name }}"
+    networks:
+      - name: "{{ network_name }}"
+    log_driver: "{{ log_driver }}"
+    log_options:
+      max-size: "{{ log_options_max_size }}"
+      max-file: "{{ log_options_max_file }}"
+      tag: "{{ service_name }}"

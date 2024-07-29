@@ -1,0 +1,7 @@
+service_name: "grafana"
+image_name: "grafana/grafana:10.4.3"
+memory_limit: "100M"
+ports: "3000"
+volumes:
+  - ./roles/grafana/files/grafana.ini:/etc/grafana/grafana.ini
+  - ./roles/grafana/files/provisioning/:/etc/grafana/provisioning/
