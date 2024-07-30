@@ -7,6 +7,8 @@ the release.
 
 ## Unreleased
 
+## 1.11.1
+
 * [otel-col] Add docker stats receiver
   ([#1650](https://github.com/open-telemetry/opentelemetry-demo/pull/1650))
 * [otel-col] strip high-cardinality segments of span names
