@@ -4,7 +4,7 @@ Please provide a brief description of the changes here.
 
 ## Merge Requirements
 
-For new features contributions please make sure you have completed the following
+For new features contributions, please make sure you have completed the following
 essential items:
 
 * [ ] `CHANGELOG.md` updated to document new feature additions
@@ -17,7 +17,7 @@ update in docs. Please make sure to update the opentelemetry.io repo with any
 docs changes.
 
 A Pull Request that modifies docker-compose.yaml, otelcol-config.yaml, or
-Grafana dashboards, will likely require an update to the Demo Helm chart.
+Grafana dashboards will likely require an update to the Demo Helm chart.
 Other changes affecting how a service is deployed will also likely require an
 update to the Demo Helm chart.
 -->
