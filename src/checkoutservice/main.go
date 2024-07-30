@@ -168,32 +168,32 @@ func main() {
 	svc := new(checkoutService)
 
 	mustMapEnv(&svc.shippingSvcAddr, "SHIPPING_SERVICE_ADDR")
-	c := mustCreateClient(context.Background(), svc.shippingSvcAddr)
+	c := mustCreateClient(svc.shippingSvcAddr)
 	svc.shippingSvcClient = pb.NewShippingServiceClient(c)
 	defer c.Close()
 
 	mustMapEnv(&svc.productCatalogSvcAddr, "PRODUCT_CATALOG_SERVICE_ADDR")
-	c = mustCreateClient(context.Background(), svc.productCatalogSvcAddr)
+	c = mustCreateClient(svc.productCatalogSvcAddr)
 	svc.productCatalogSvcClient = pb.NewProductCatalogServiceClient(c)
 	defer c.Close()
 
 	mustMapEnv(&svc.cartSvcAddr, "CART_SERVICE_ADDR")
-	c = mustCreateClient(context.Background(), svc.cartSvcAddr)
+	c = mustCreateClient(svc.cartSvcAddr)
 	svc.cartSvcClient = pb.NewCartServiceClient(c)
 	defer c.Close()
 
 	mustMapEnv(&svc.currencySvcAddr, "CURRENCY_SERVICE_ADDR")
-	c = mustCreateClient(context.Background(), svc.currencySvcAddr)
+	c = mustCreateClient(svc.currencySvcAddr)
 	svc.currencySvcClient = pb.NewCurrencyServiceClient(c)
 	defer c.Close()
 
 	mustMapEnv(&svc.emailSvcAddr, "EMAIL_SERVICE_ADDR")
-	c = mustCreateClient(context.Background(), svc.emailSvcAddr)
+	c = mustCreateClient(svc.emailSvcAddr)
 	svc.emailSvcClient = pb.NewEmailServiceClient(c)
 	defer c.Close()
 
 	mustMapEnv(&svc.paymentSvcAddr, "PAYMENT_SERVICE_ADDR")
-	c = mustCreateClient(context.Background(), svc.paymentSvcAddr)
+	c = mustCreateClient(svc.paymentSvcAddr)
 	svc.paymentSvcClient = pb.NewPaymentServiceClient(c)
 	defer c.Close()
 
@@ -373,8 +373,8 @@ func (cs *checkoutService) prepareOrderItemsAndShippingQuoteFromCart(ctx context
 	return out, nil
 }
 
-func mustCreateClient(ctx context.Context, svcAddr string) *grpc.ClientConn {
-	c, err := grpc.DialContext(ctx, svcAddr,
+func mustCreateClient(svcAddr string) *grpc.ClientConn {
+	c, err := grpc.NewClient(svcAddr,
 		grpc.WithTransportCredentials(insecure.NewCredentials()),
 		grpc.WithStatsHandler(otelgrpc.NewClientHandler()),
 	)
@@ -444,7 +444,7 @@ func (cs *checkoutService) chargeCard(ctx context.Context, amount *pb.Money, pay
 	paymentService := cs.paymentSvcClient
 	if cs.isFeatureFlagEnabled(ctx, "paymentServiceUnreachable") {
 		badAddress := "badAddress:50051"
-		c := mustCreateClient(context.Background(), badAddress)
+		c := mustCreateClient(badAddress)
 		paymentService = pb.NewPaymentServiceClient(c)
 	}
 
