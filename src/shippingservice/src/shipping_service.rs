@@ -19,6 +19,7 @@ use tracking::create_tracking_id;
 const NANOS_MULTIPLE: i32 = 10000000i32;
 
 const RPC_SYSTEM_GRPC: &'static str = "grpc";
+const RPC_SERVICE_SHIPPING: &'static str = "oteldemo.ShippingService";
 const RPC_GRPC_STATUS_CODE_OK: i64 = 0;
 const RPC_GRPC_STATUS_CODE_UNKNOWN: i64 = 2;
 
@@ -75,6 +76,8 @@ impl ShippingService for ShippingServer {
             .with_kind(SpanKind::Server)
             .start_with_context(&tracer, &parent_cx);
         span.set_attribute(KeyValue::new(semconv::trace::RPC_SYSTEM, RPC_SYSTEM_GRPC));
+        span.set_attribute(KeyValue::new(semconv::trace::RPC_SERVICE, RPC_SERVICE_SHIPPING));
+        span.set_attribute(KeyValue::new(semconv::trace::RPC_METHOD, "GetQuote"));
 
         span.add_event("Processing get quote request".to_string(), vec![]);
         span.set_attribute(KeyValue::new(
@@ -128,6 +131,8 @@ impl ShippingService for ShippingServer {
             .with_kind(SpanKind::Server)
             .start_with_context(&tracer, &parent_cx);
         span.set_attribute(KeyValue::new(semconv::trace::RPC_SYSTEM, RPC_SYSTEM_GRPC));
+        span.set_attribute(KeyValue::new(semconv::trace::RPC_SERVICE, RPC_SERVICE_SHIPPING));
+        span.set_attribute(KeyValue::new(semconv::trace::RPC_METHOD, "ShipOrder"));
 
         span.add_event("Processing shipping order request".to_string(), vec![]);
 
