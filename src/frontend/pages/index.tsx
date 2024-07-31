@@ -14,9 +14,10 @@ import { useCurrency } from '../providers/Currency.provider';
 
 const Home: NextPage = () => {
   const { selectedCurrency } = useCurrency();
-  const { data: productList = [] } = useQuery(['products', selectedCurrency], () =>
-    ApiGateway.listProducts(selectedCurrency)
-  );
+  const { data: productList = [] } = useQuery({
+    queryKey: ['products', selectedCurrency],
+    queryFn: () => ApiGateway.listProducts(selectedCurrency),
+  });
 
   return (
     <Layout>
