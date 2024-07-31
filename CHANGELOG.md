@@ -6,6 +6,9 @@ process content of "Unreleased" section content will generate release notes for
 the release.
 
 ## Unreleased
+* [accountingservice] allow run the container with non root user
+  ([#1692](https://github.com/open-telemetry/opentelemetry-demo/pull/1692))
+
 
 ## 1.11.1
 
