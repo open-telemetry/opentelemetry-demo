@@ -282,6 +282,7 @@ services:
       - OTEL_COLLECTOR_HOST
       - FLAGD_HOST
       - FLAGD_PORT
+      - BUGSNAG_API_KEY
     depends_on:
       adservice:
         condition: service_started
