@@ -39,7 +39,6 @@ import (
 	pb "github.com/opentelemetry/opentelemetry-demo/src/productcatalogservice/genproto/oteldemo"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/codes"
-	"google.golang.org/grpc/credentials/insecure"
 	healthpb "google.golang.org/grpc/health/grpc_health_v1"
 	"google.golang.org/grpc/reflection"
 	"google.golang.org/grpc/status"
@@ -306,11 +305,4 @@ func (p *productCatalog) checkProductFailure(ctx context.Context, id string) boo
 		ctx, "productCatalogFailure", false, openfeature.EvaluationContext{},
 	)
 	return failureEnabled
-}
-
-func createClient(ctx context.Context, svcAddr string) (*grpc.ClientConn, error) {
-	return grpc.DialContext(ctx, svcAddr,
-		grpc.WithTransportCredentials(insecure.NewCredentials()),
-		grpc.WithStatsHandler(otelgrpc.NewClientHandler()),
-	)
 }
