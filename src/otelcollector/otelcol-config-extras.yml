@@ -1,6 +1,6 @@
 exporters:
   otlp/bugsnag:
-    endpoint:  <your-api-token>.otlp.bugsnag.com:4317
+    endpoint: <your-api-key>.otlp.bugsnag.com:4317
     compression: none
 service:
   pipelines:
