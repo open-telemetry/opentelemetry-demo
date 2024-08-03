@@ -77,6 +77,25 @@ function sendMessage(channel, name, message) {
 }
 
 function renderMessage(payload) {
-  console.log(payload)
+  console.log(payload);
+  const messageContainer = document.createElement('div');
+  messageContainer.classList.add('message');
+
+  const nameElement = document.createElement('span');
+  nameElement.classList.add('name');
+  nameElement.textContent = payload.name;
+
+  const messageElement = document.createElement('p');
+  messageElement.textContent = payload.message;
+
+  const timestampElement = document.createElement('small');
+  timestampElement.classList.add('timestamp');
+  timestampElement.textContent = new Date(payload.inserted_at).toLocaleString();
+
+  messageContainer.appendChild(nameElement);
+  messageContainer.appendChild(messageElement);
+  messageContainer.appendChild(timestampElement);
+
+  chatMessages.appendChild(messageContainer);
 }
 
