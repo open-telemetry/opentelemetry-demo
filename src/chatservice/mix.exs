@@ -51,7 +51,7 @@ defmodule ChatService.MixProject do
       {:opentelemetry, "~> 1.4"},
       {:opentelemetry_api, "~> 1.3"},
       {:opentelemetry_exporter, "~> 1.6"},
-      {:opentelemetry_cowboy, "~> 0.3"},
+      {:opentelemetry_bandit, "~> 0.1"},
       {:opentelemetry_ecto, "~> 1.2"},
       {:opentelemetry_phoenix, "~> 1.2"}
     ]
