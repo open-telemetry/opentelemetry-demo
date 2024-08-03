@@ -1,6 +1,7 @@
 defmodule ChatService.ChatServer do
   use GenServer
   alias ChatService.ChatContext
+  require OpenTelemetry.Tracer
 
   def start_chat(topic) do
     case Registry.lookup(ChatService.Registry, topic) do
@@ -16,7 +17,10 @@ defmodule ChatService.ChatServer do
   end
 
   def send_message(topic, message) do
-    GenServer.call(via_tuple(topic), {:send_message, Map.put(message, "topic", topic)})
+    # todo: pass span context here
+    OpenTelemetry.Tracer.with_span :send_message do
+      GenServer.call(via_tuple(topic), {:send_message, Map.put(message, "topic", topic)})
+    end
   end
 
   def get_messages(topic) do
@@ -35,8 +39,10 @@ defmodule ChatService.ChatServer do
 
   @impl true
   def handle_call({:send_message, message}, _from, state) do
-    saved = ChatContext.create_message(message)
-    {:reply, saved, [saved | state]}
+    OpenTelemetry.Tracer.with_span :handle_call do
+      saved = ChatContext.create_message(message)
+      {:reply, saved, [saved | state]}
+    end
   end
 
   @impl true

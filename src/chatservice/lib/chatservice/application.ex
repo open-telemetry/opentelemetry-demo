@@ -9,7 +9,7 @@ defmodule ChatService.Application do
   def start(_type, _args) do
     # Set up OpenTelemetry instrumentation
     OpentelemetryPhoenix.setup()
-    OpentelemetryEcto.setup([:chatservice, :repo])
+    OpentelemetryEcto.setup([:chat_service, :repo])
 
     children = [
       ChatServiceWeb.Telemetry,
