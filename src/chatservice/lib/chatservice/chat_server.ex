@@ -17,9 +17,9 @@ defmodule ChatService.ChatServer do
   end
 
   def send_message(topic, message) do
-    # todo: pass span context here
-    OpenTelemetry.Tracer.with_span :send_message do
-      GenServer.call(via_tuple(topic), {:send_message, Map.put(message, "topic", topic)})
+    OpenTelemetry.Tracer.with_span "ChatServer.send_message" do
+      current_ctx = OpenTelemetry.Ctx.get_current()
+      GenServer.call(via_tuple(topic), {:send_message, Map.put(message, "topic", topic), current_ctx})
     end
   end
 
@@ -38,7 +38,8 @@ defmodule ChatService.ChatServer do
   end
 
   @impl true
-  def handle_call({:send_message, message}, _from, state) do
+  def handle_call({:send_message, message, parent_ctx}, _from, state) do
+    OpenTelemetry.Ctx.attach(parent_ctx)
     OpenTelemetry.Tracer.with_span :handle_call do
       saved = ChatContext.create_message(message)
       {:reply, saved, [saved | state]}
