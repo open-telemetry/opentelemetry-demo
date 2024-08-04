@@ -15,7 +15,12 @@ defmodule ChatServiceWeb.ChatChannel do
 
   @impl true
   def handle_in("shout", payload, socket) do
-    OpenTelemetry.Tracer.with_span :shout do
+    OpenTelemetry.Tracer.with_span :shout, %{kind: :consumer} do
+      OpenTelemetry.Tracer.set_attributes(%{
+        "messaging.operation.name": :shout,
+        "messaging.destination.name": socket.assigns.topic,
+        "messaging.message.body.size": byte_size(:erlang.term_to_binary(payload))
+      })
       ChatServer.send_message(socket.assigns.topic, payload)
       broadcast(socket, "shout", payload)
       {:noreply, socket}
