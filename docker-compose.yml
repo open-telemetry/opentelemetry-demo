@@ -110,6 +110,33 @@ services:
         condition: service_started
     logging: *logging
 
+  # Cart service
+  chatservice:
+    image: ${IMAGE_NAME}:${DEMO_VERSION}-chatservice
+    container_name: chat-service
+    build:
+      context: ./
+      dockerfile: ${CHAT_SERVICE_DOCKERFILE}
+      cache_from:
+        - ${IMAGE_NAME}:${IMAGE_VERSION}-chatservice
+    deploy:
+      resources:
+        limits:
+          memory: 360M
+    restart: unless-stopped
+    ports:
+      - "${CHAT_SERVICE_PORT}"
+    environment:
+      - CHAT_SERVICE_PORT
+      - OTEL_EXPORTER_OTLP_ENDPOINT=http://${OTEL_COLLECTOR_HOST}:${OTEL_COLLECTOR_PORT_HTTP}
+      - OTEL_RESOURCE_ATTRIBUTES
+      - OTEL_SERVICE_NAME=chatservice
+      - DATABASE_URL=ecto://chat:chat@chat-db:5432/chats
+    depends_on:
+      otelcol:
+        condition: service_started
+    logging: *logging
+
   # Checkout service
   checkoutservice:
     image: ${IMAGE_NAME}:${DEMO_VERSION}-checkoutservice
@@ -323,23 +350,25 @@ services:
       - "${ENVOY_PORT}:${ENVOY_PORT}"
       - 10000:10000
     environment:
-      - FRONTEND_PORT
-      - FRONTEND_HOST
-      - LOCUST_WEB_HOST
-      - LOCUST_WEB_PORT
-      - GRAFANA_SERVICE_PORT
-      - GRAFANA_SERVICE_HOST
-      - JAEGER_SERVICE_PORT
-      - JAEGER_SERVICE_HOST
-      - OTEL_COLLECTOR_HOST
-      - IMAGE_PROVIDER_HOST
-      - IMAGE_PROVIDER_PORT
-      - OTEL_COLLECTOR_PORT_GRPC
-      - OTEL_COLLECTOR_PORT_HTTP
-      - OTEL_RESOURCE_ATTRIBUTES
+      - CHAT_SERVICE_HOST
+      - CHAT_SERVICE_PORT
       - ENVOY_PORT
       - FLAGD_HOST
       - FLAGD_PORT
+      - FRONTEND_HOST
+      - FRONTEND_PORT
+      - GRAFANA_SERVICE_HOST
+      - GRAFANA_SERVICE_PORT
+      - IMAGE_PROVIDER_HOST
+      - IMAGE_PROVIDER_PORT
+      - JAEGER_SERVICE_HOST
+      - JAEGER_SERVICE_PORT
+      - LOCUST_WEB_HOST
+      - LOCUST_WEB_PORT
+      - OTEL_COLLECTOR_HOST
+      - OTEL_COLLECTOR_PORT_GRPC
+      - OTEL_COLLECTOR_PORT_HTTP
+      - OTEL_RESOURCE_ATTRIBUTES
     depends_on:
       frontend:
         condition: service_started
@@ -595,6 +624,29 @@ services:
       - ./src/flagd:/etc/flagd
     logging:
       *logging
+
+  # Postgres used by chat service
+  chat_postgres:
+    image: ${POSTGRES_IMAGE}
+    container_name: chat-db
+    user: postgres
+    deploy:
+      resources:
+        limits:
+          memory: 120M
+    restart: unless-stopped
+    environment:
+      - POSTGRES_USER=chat
+      - POSTGRES_DB=chats
+      - POSTGRES_PASSWORD=chat
+    volumes:
+      - ./src/chat_postgres/10-chat_schema.sql:/docker-entrypoint-initdb.d/10-chat_schema.sql
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -d chats -U chat"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    logging: *logging
 
   # Kafka used by Checkout, Accounting, and Fraud Detection services
   kafka:
