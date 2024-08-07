@@ -38,8 +38,10 @@ services:
       - OTEL_RESOURCE_ATTRIBUTES
       - OTEL_SERVICE_NAME=accountingservice
     depends_on:
-      otelcol:
+      otel-lgtm:
         condition: service_started
+      #otelcol:
+      #  condition: service_started
       kafka:
         condition: service_healthy
     logging: *logging
@@ -70,8 +72,10 @@ services:
       - OTEL_LOGS_EXPORTER=otlp
       - OTEL_SERVICE_NAME=adservice
     depends_on:
-      otelcol:
+      otel-lgtm:
         condition: service_started
+      #otelcol:
+      #  condition: service_started
       flagd:
         condition: service_started
     logging: *logging
@@ -104,8 +108,10 @@ services:
     depends_on:
       valkey-cart:
         condition: service_started
-      otelcol:
+      otel-lgtm:
         condition: service_started
+      #otelcol:
+      #  condition: service_started
       flagd:
         condition: service_started
     logging: *logging
@@ -154,8 +160,10 @@ services:
         condition: service_started
       shippingservice:
         condition: service_started
-      otelcol:
+      otel-lgtm:
         condition: service_started
+      #otelcol:
+      #  condition: service_started
       kafka:
         condition: service_healthy
       flagd:
@@ -184,8 +192,10 @@ services:
       - OTEL_EXPORTER_OTLP_ENDPOINT
       - OTEL_RESOURCE_ATTRIBUTES=${OTEL_RESOURCE_ATTRIBUTES},service.name=currencyservice   # The C++ SDK does not support OTEL_SERVICE_NAME
     depends_on:
-      otelcol:
+      otel-lgtm:
         condition: service_started
+      #otelcol:
+      #  condition: service_started
     logging: *logging
 
   # Email service
@@ -211,8 +221,10 @@ services:
       - OTEL_RESOURCE_ATTRIBUTES
       - OTEL_SERVICE_NAME=emailservice
     depends_on:
-      otelcol:
+      otel-lgtm:
         condition: service_started
+      #otelcol:
+      #  condition: service_started
     logging: *logging
 
   # Fraud Detection service
@@ -240,8 +252,10 @@ services:
       - OTEL_RESOURCE_ATTRIBUTES
       - OTEL_SERVICE_NAME=frauddetectionservice
     depends_on:
-      otelcol:
+      otel-lgtm:
         condition: service_started
+      #otelcol:
+      #  condition: service_started
       kafka:
         condition: service_healthy
     logging: *logging
@@ -299,8 +313,10 @@ services:
         condition: service_started
       shippingservice:
         condition: service_started
-      otelcol:
+      otel-lgtm:
         condition: service_started
+      #otelcol:
+      #  condition: service_started
       imageprovider:
         condition: service_started
       flagd:
@@ -345,10 +361,12 @@ services:
         condition: service_started
       loadgenerator:
         condition: service_started
-      jaeger:
+      otel-lgtm:
         condition: service_started
-      grafana:
-        condition: service_started
+      #jaeger:
+      #  condition: service_started
+      #grafana:
+      #  condition: service_started
 
   # Imageprovider
   imageprovider:
@@ -373,8 +391,10 @@ services:
       - OTEL_SERVICE_NAME=imageprovider
       - OTEL_RESOURCE_ATTRIBUTES
     depends_on:
-      otelcol:
+      otel-lgtm:
         condition: service_started
+      #otelcol:
+      #  condition: service_started
     logging: *logging
 
   # Load Generator
@@ -440,7 +460,9 @@ services:
       - OTEL_RESOURCE_ATTRIBUTES
       - OTEL_SERVICE_NAME=paymentservice
     depends_on:
-      otelcol:
+      #otelcol:
+      #  condition: service_started
+      otel-lgtm:
         condition: service_started
       flagd:
         condition: service_started
@@ -471,7 +493,9 @@ services:
       - OTEL_RESOURCE_ATTRIBUTES
       - OTEL_SERVICE_NAME=productcatalogservice
     depends_on:
-      otelcol:
+      #otelcol:
+      #  condition: service_started
+      otel-lgtm:
         condition: service_started
       flagd:
         condition: service_started
@@ -501,8 +525,10 @@ services:
       - OTEL_SERVICE_NAME=quoteservice
       - OTEL_PHP_INTERNAL_METRICS_ENABLED=true
     depends_on:
-      otelcol:
+      otel-lgtm:
         condition: service_started
+      #otelcol:
+      #  condition: service_started
     logging: *logging
 
   # Recommendation service
@@ -535,8 +561,10 @@ services:
     depends_on:
       productcatalogservice:
         condition: service_started
-      otelcol:
+      otel-lgtm:
         condition: service_started
+      #otelcol:
+      #  condition: service_started
       flagd:
         condition: service_started
     logging: *logging
@@ -564,8 +592,10 @@ services:
       - OTEL_RESOURCE_ATTRIBUTES
       - OTEL_SERVICE_NAME=shippingservice
     depends_on:
-      otelcol:
+      otel-lgtm:
         condition: service_started
+      #otelcol:
+      #  condition: service_started
     logging: *logging
 
   # ******************
@@ -643,125 +673,133 @@ services:
   # ********************
   # Telemetry Components
   # ********************
+  otel-lgtm:
+    image: grafana/otel-lgtm:latest
+    container_name: otel-lgtm
+    ports:
+      - "${GRAFANA_SERVICE_PORT}:${GRAFANA_SERVICE_PORT}"
+    logging: *logging
+
   # Jaeger
-  jaeger:
-    image: ${JAEGERTRACING_IMAGE}
-    container_name: jaeger
-    command:
-      - "--memory.max-traces=5000"
-      - "--query.base-path=/jaeger/ui"
-      - "--prometheus.server-url=http://${PROMETHEUS_ADDR}"
-      - "--prometheus.query.normalize-calls=true"
-      - "--prometheus.query.normalize-duration=true"
-    deploy:
-      resources:
-        limits:
-          memory: 400M
-    restart: unless-stopped
-    ports:
-      - "${JAEGER_SERVICE_PORT}"         # Jaeger UI
-      - "${OTEL_COLLECTOR_PORT_GRPC}"
-    environment:
-      - METRICS_STORAGE_TYPE=prometheus
-      - COLLECTOR_OTLP_GRPC_HOST_PORT=${JAEGER_SERVICE_HOST}:${OTEL_COLLECTOR_PORT_GRPC}
-    logging: *logging
-
-  # Grafana
-  grafana:
-    image: ${GRAFANA_IMAGE}
-    container_name: grafana
-    deploy:
-      resources:
-        limits:
-          memory: 100M
-    restart: unless-stopped
-    environment:
-      - "GF_INSTALL_PLUGINS=grafana-opensearch-datasource"
-    volumes:
-      - ./src/grafana/grafana.ini:/etc/grafana/grafana.ini
-      - ./src/grafana/provisioning/:/etc/grafana/provisioning/
-    ports:
-      - "${GRAFANA_SERVICE_PORT}"
-    logging: *logging
-
-  # OpenTelemetry Collector
-  otelcol:
-    image: ${COLLECTOR_CONTRIB_IMAGE}
-    container_name: otel-col
-    deploy:
-      resources:
-        limits:
-          memory: 200M
-    restart: unless-stopped
-    command: [ "--config=/etc/otelcol-config.yml", "--config=/etc/otelcol-config-extras.yml" ]
-    user: 0:0
-    volumes:
-      - ${HOST_FILESYSTEM}:/hostfs:ro
-      - ${DOCKER_SOCK}:/var/run/docker.sock:ro
-      - ${OTEL_COLLECTOR_CONFIG}:/etc/otelcol-config.yml
-      - ${OTEL_COLLECTOR_CONFIG_EXTRAS}:/etc/otelcol-config-extras.yml
-    ports:
-      - "${OTEL_COLLECTOR_PORT_GRPC}"
-      - "${OTEL_COLLECTOR_PORT_HTTP}"
-    depends_on:
-      - jaeger
-    logging: *logging
-    environment:
-      - ENVOY_PORT
-      - HOST_FILESYSTEM
-      - OTEL_COLLECTOR_HOST
-      - OTEL_COLLECTOR_PORT_GRPC
-      - OTEL_COLLECTOR_PORT_HTTP
-
-  # Prometheus
-  prometheus:
-    image: ${PROMETHEUS_IMAGE}
-    container_name: prometheus
-    command:
-      - --web.console.templates=/etc/prometheus/consoles
-      - --web.console.libraries=/etc/prometheus/console_libraries
-      - --storage.tsdb.retention.time=1h
-      - --config.file=/etc/prometheus/prometheus-config.yaml
-      - --storage.tsdb.path=/prometheus
-      - --web.enable-lifecycle
-      - --web.route-prefix=/
-      - --enable-feature=exemplar-storage
-      - --enable-feature=otlp-write-receiver
-    volumes:
-      - ./src/prometheus/prometheus-config.yaml:/etc/prometheus/prometheus-config.yaml
-    deploy:
-      resources:
-        limits:
-          memory: 300M
-    restart: unless-stopped
-    ports:
-      - "${PROMETHEUS_SERVICE_PORT}:${PROMETHEUS_SERVICE_PORT}"
-    logging: *logging
-
-  # OpenSearch
-  opensearch:
-    image: ${OPENSEARCH_IMAGE}
-    container_name: opensearch
-    deploy:
-      resources:
-        limits:
-          memory: 1G
-    restart: unless-stopped
-    environment:
-      - cluster.name=demo-cluster
-      - node.name=demo-node
-      - bootstrap.memory_lock=true
-      - discovery.type=single-node
-      - OPENSEARCH_JAVA_OPTS=-Xms300m -Xmx300m
-      - DISABLE_INSTALL_DEMO_CONFIG=true
-      - DISABLE_SECURITY_PLUGIN=true
-    ulimits:
-      memlock:
-        soft: -1
-        hard: -1
-      nofile:
-        soft: 65536
-        hard: 65536
-    ports:
-      - "9200"
-    logging: *logging
+  #  jaeger:
+  #    image: ${JAEGERTRACING_IMAGE}
+  #    container_name: jaeger
+  #    command:
+  #      - "--memory.max-traces=5000"
+  #      - "--query.base-path=/jaeger/ui"
+  #      - "--prometheus.server-url=http://${PROMETHEUS_ADDR}"
+  #      - "--prometheus.query.normalize-calls=true"
+  #      - "--prometheus.query.normalize-duration=true"
+  #    deploy:
+  #      resources:
+  #        limits:
+  #          memory: 400M
+  #    restart: unless-stopped
+  #    ports:
+  #      - "${JAEGER_SERVICE_PORT}"         # Jaeger UI
+  #      - "${OTEL_COLLECTOR_PORT_GRPC}"
+  #    environment:
+  #      - METRICS_STORAGE_TYPE=prometheus
+  #      - COLLECTOR_OTLP_GRPC_HOST_PORT=${JAEGER_SERVICE_HOST}:${OTEL_COLLECTOR_PORT_GRPC}
+  #    logging: *logging
+  #
+  #  # Grafana
+  #  grafana:
+  #    image: ${GRAFANA_IMAGE}
+  #    container_name: grafana
+  #    deploy:
+  #      resources:
+  #        limits:
+  #          memory: 100M
+  #    restart: unless-stopped
+  #    environment:
+  #      - "GF_INSTALL_PLUGINS=grafana-opensearch-datasource"
+  #    volumes:
+  #      - ./src/grafana/grafana.ini:/etc/grafana/grafana.ini
+  #      - ./src/grafana/provisioning/:/etc/grafana/provisioning/
+  #    ports:
+  #      - "${GRAFANA_SERVICE_PORT}"
+  #    logging: *logging
+  #
+  #  # OpenTelemetry Collector
+  #  otelcol:
+  #    image: ${COLLECTOR_CONTRIB_IMAGE}
+  #    container_name: otel-col
+  #    deploy:
+  #      resources:
+  #        limits:
+  #          memory: 200M
+  #    restart: unless-stopped
+  #    command: [ "--config=/etc/otelcol-config.yml", "--config=/etc/otelcol-config-extras.yml" ]
+  #    user: 0:0
+  #    volumes:
+  #      - ${HOST_FILESYSTEM}:/hostfs:ro
+  #      - ${DOCKER_SOCK}:/var/run/docker.sock:ro
+  #      - ${OTEL_COLLECTOR_CONFIG}:/etc/otelcol-config.yml
+  #      - ${OTEL_COLLECTOR_CONFIG_EXTRAS}:/etc/otelcol-config-extras.yml
+  #    ports:
+  #      - "${OTEL_COLLECTOR_PORT_GRPC}"
+  #      - "${OTEL_COLLECTOR_PORT_HTTP}"
+  #    depends_on:
+  #      - jaeger
+  #    logging: *logging
+  #    environment:
+  #      - ENVOY_PORT
+  #      - HOST_FILESYSTEM
+  #      - OTEL_COLLECTOR_HOST
+  #      - OTEL_COLLECTOR_PORT_GRPC
+  #      - OTEL_COLLECTOR_PORT_HTTP
+  #
+  #  # Prometheus
+  #  prometheus:
+  #    image: ${PROMETHEUS_IMAGE}
+  #    container_name: prometheus
+  #    command:
+  #      - --web.console.templates=/etc/prometheus/consoles
+  #      - --web.console.libraries=/etc/prometheus/console_libraries
+  #      - --storage.tsdb.retention.time=1h
+  #      - --config.file=/etc/prometheus/prometheus-config.yaml
+  #      - --storage.tsdb.path=/prometheus
+  #      - --web.enable-lifecycle
+  #      - --web.route-prefix=/
+  #      - --enable-feature=exemplar-storage
+  #      - --enable-feature=otlp-write-receiver
+  #    volumes:
+  #      - ./src/prometheus/prometheus-config.yaml:/etc/prometheus/prometheus-config.yaml
+  #    deploy:
+  #      resources:
+  #        limits:
+  #          memory: 300M
+  #    restart: unless-stopped
+  #    ports:
+  #      - "${PROMETHEUS_SERVICE_PORT}:${PROMETHEUS_SERVICE_PORT}"
+  #    logging: *logging
+  #
+  #  # OpenSearch
+  #  opensearch:
+  #    image: ${OPENSEARCH_IMAGE}
+  #    container_name: opensearch
+  #    deploy:
+  #      resources:
+  #        limits:
+  #          memory: 1G
+  #    restart: unless-stopped
+  #    environment:
+  #      - cluster.name=demo-cluster
+  #      - node.name=demo-node
+  #      - bootstrap.memory_lock=true
+  #      - discovery.type=single-node
+  #      - OPENSEARCH_JAVA_OPTS=-Xms300m -Xmx300m
+  #      - DISABLE_INSTALL_DEMO_CONFIG=true
+  #      - DISABLE_SECURITY_PLUGIN=true
+  #    ulimits:
+  #      memlock:
+  #        soft: -1
+  #        hard: -1
+  #      nofile:
+  #        soft: 65536
+  #        hard: 65536
+  #    ports:
+  #      - "9200"
+  #    logging: *logging
+  #
