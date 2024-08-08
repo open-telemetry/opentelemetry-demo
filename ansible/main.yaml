@@ -17,11 +17,11 @@
     otel_collector_port_http: "4318"
     envoy_port: "8080"
   pre_tasks:
-    #- name: Ensure Docker is installed
-    #  apt:
-    #    name: docker.io
-    #    state: present
-    #  become: true
+    - name: Ensure Docker is installed
+      apt:
+        name: docker.io
+        state: present
+      become: true
 
     - name: Ensure default network is created
       docker_network:
@@ -83,7 +83,8 @@
   post_tasks:
     - name: Ensure services are started
       community.general.launchd:
-        name: "{{ item }}"
+        # TODO FIX should be {{ item }} but this cannot be properly parsed yet
+        name: "item"
         state: "{{ state }}"
       loop:
         - accountingservice
@@ -113,7 +114,8 @@
 
     - name: Ensure services are enabled to start at boot
       community.general.launchd:
-        name: "{{ item }}"
+        # TODO FIX should be {{ item }} but this cannot be properly parsed yet
+        name: "item"
         enabled: yes
       loop:
         - accountingservice
