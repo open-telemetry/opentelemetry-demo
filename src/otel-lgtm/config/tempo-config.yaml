@@ -1,0 +1,36 @@
+server:
+  http_listen_port: 3200
+  grpc_listen_port: 9096
+
+distributor:
+  receivers:
+    otlp:
+      protocols:
+        grpc:
+          endpoint: "localhost:4417"
+        http:
+          endpoint: "localhost:4418"
+
+storage:
+  trace:
+    backend: local
+    wal:
+      path: /tmp/tempo/wal
+    local:
+      path: /tmp/tempo/blocks
+
+metrics_generator:
+  processor:
+    local_blocks:
+      filter_server_spans: false
+  traces_storage:
+    path: /tmp/tempo/generator/traces
+  storage:
+    path: /tmp/tempo/generator/wal
+    # TODO: support otlp at metrics_generator
+    remote_write:
+      - url: http://localhost:9090/api/v1/write
+        send_exemplars: true
+
+overrides:
+  metrics_generator_processors: [service-graphs, span-metrics, local-blocks]

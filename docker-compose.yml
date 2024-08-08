@@ -677,7 +677,14 @@ services:
     image: grafana/otel-lgtm:latest
     container_name: otel-lgtm
     ports:
-      - "${GRAFANA_SERVICE_PORT}:${GRAFANA_SERVICE_PORT}"
+      - "${GRAFANA_SERVICE_PORT}"
+    environment:
+      - GF_SERVER_DOMAIN=localhost
+      - GF_SERVER_ROOT_URL=%(protocol)s://%(domain)s/grafana/
+      - GF_SERVER_SERVE_FROM_SUB_PATH=true
+    volumes:
+      - ./src/otel-lgtm/config/otelcol-config.yaml:/otel-lgtm/otelcol-config.yaml
+      - ./src/otel-lgtm/config/tempo-config.yaml:/otel-lgtm/tempo-config.yaml
     logging: *logging
 
   # Jaeger
