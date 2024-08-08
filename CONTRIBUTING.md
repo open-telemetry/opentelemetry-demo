@@ -2,9 +2,9 @@
 
 Welcome to OpenTelemetry Demo Webstore repository!
 
-Before you start - see OpenTelemetry general
-[contributing](https://github.com/open-telemetry/community/blob/main/CONTRIBUTING.md)
-requirements and recommendations.
+Before you start - see OpenTelemetry
+ [Contributor Guide](https://github.com/open-telemetry/community/blob/main/guides/contributor/README.md)
+ for details on code attribution.
 
 ## Join a SIG Call
 
@@ -167,9 +167,9 @@ Open a pull request against the main `opentelemetry-demo` repo.
 A PR is considered to be **ready to merge** when:
 
 - It has received approval from
-  [Approvers](https://github.com/open-telemetry/community/blob/main/community-membership.md#approver)
+  [Approvers](https://github.com/open-telemetry/community/blob/main/guides/contributor/membership.md#approver)
   /
-  [Maintainers](https://github.com/open-telemetry/community/blob/main/community-membership.md#maintainer).
+  [Maintainers](https://github.com/open-telemetry/community/blob/main/guides/contributor/membership.md#maintainer).
 - Major feedbacks are resolved.
 - It has been open for review for at least one working day. This gives people
   reasonable time to review.
