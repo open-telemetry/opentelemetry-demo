@@ -7,6 +7,9 @@ the release.
 
 ## Unreleased
 
+* [accountingservice] allow running the container with non root user
+  ([#1692](https://github.com/open-telemetry/opentelemetry-demo/pull/1692))
+
 ## 1.11.1
 
 * [otel-col] Add docker stats receiver
