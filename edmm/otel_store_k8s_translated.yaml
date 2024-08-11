@@ -59,8 +59,8 @@ components:
       - key: tcp-service
         type: STRING
         value: "8080:8080"
-        required: true    
-    operations: []    
+        required: true
+    operations: []
     artifacts:
       - type: docker_image
         name: 'ghcr.io/open-telemetry/demo:1.10.0-currencyservice'
@@ -95,8 +95,8 @@ components:
       - key: FLAGD_HOST
         type: STRING
         value: "'opentelemetry-demo-flagd'"
-        required: true    
-    operations: []    
+        required: true
+    operations: []
     artifacts:
       - type: docker_image
         name: 'ghcr.io/open-telemetry/demo:1.10.0-frauddetectionservice'
@@ -139,8 +139,8 @@ components:
       - key: tcp-service
         type: STRING
         value: "8080:8080"
-        required: true    
-    operations: []    
+        required: true
+    operations: []
     artifacts:
       - type: docker_image
         name: 'ghcr.io/open-telemetry/demo:1.10.0-paymentservice'
@@ -179,8 +179,8 @@ components:
       - key: tcp-service
         type: STRING
         value: "8080:8080"
-        required: true    
-    operations: []    
+        required: true
+    operations: []
     artifacts:
       - type: docker_image
         name: 'ghcr.io/open-telemetry/demo:1.10.0-quoteservice'
@@ -267,8 +267,8 @@ components:
       - key: tcp-service
         type: STRING
         value: "8080:8080"
-        required: true    
-    operations: []    
+        required: true
+    operations: []
     artifacts:
       - type: docker_image
         name: 'ghcr.io/open-telemetry/demo:1.10.0-frontend'
@@ -307,8 +307,8 @@ components:
       - key: service
         type: STRING
         value: "80:3000"
-        required: true    
-    operations: []    
+        required: true
+    operations: []
     artifacts:
       - type: docker_image
         name: "docker.io/grafana/grafana:10.4.1"
@@ -335,8 +335,8 @@ components:
       - key: redis
         type: STRING
         value: "6379:6379"
-        required: true    
-    operations: []    
+        required: true
+    operations: []
     artifacts:
       - type: docker_image
         name: 'valkey/valkey:7.2-alpine'
@@ -391,8 +391,8 @@ components:
       - key: OPENSEARCH_JAVA_OPTS
         type: STRING
         value: "-Xms300m -Xmx300m"
-        required: true    
-    operations: []    
+        required: true
+    operations: []
     artifacts:
       - type: docker_image
         name: "opensearchproject/opensearch:2.13.0"
@@ -427,8 +427,8 @@ components:
       - key: tcp-service
         type: STRING
         value: "8013:8013"
-        required: true    
-    operations: []    
+        required: true
+    operations: []
     artifacts:
       - type: docker_image
         name: 'ghcr.io/open-feature/flagd:v0.10.1'
@@ -451,8 +451,8 @@ components:
       - key: plaintext
         type: STRING
         value: "27017:27017"
-        required: true    
-    operations: []    
+        required: true
+    operations: []
     artifacts:
       - type: docker_image
         name: 'mongo:8.0.0-rc9'
@@ -543,8 +543,8 @@ components:
       - key: tcp-service
         type: STRING
         value: "8080:8080"
-        required: true    
-    operations: []    
+        required: true
+    operations: []
     artifacts:
       - type: docker_image
         name: 'ghcr.io/open-telemetry/demo:1.10.0-frontendproxy'
@@ -615,8 +615,8 @@ components:
       - key: tcp-service
         type: STRING
         value: "8089:8089"
-        required: true    
-    operations: []    
+        required: true
+    operations: []
     artifacts:
       - type: docker_image
         name: 'ghcr.io/open-telemetry/demo:1.10.0-loadgenerator'
@@ -663,8 +663,8 @@ components:
       - key: tcp-service
         type: STRING
         value: "8080:8080"
-        required: true    
-    operations: []    
+        required: true
+    operations: []
     artifacts:
       - type: docker_image
         name: 'ghcr.io/open-telemetry/demo:1.10.0-adservice'
@@ -751,8 +751,8 @@ components:
       - key: otlp
         type: STRING
         value: "4317:4317"
-        required: true    
-    operations: []    
+        required: true
+    operations: []
     artifacts:
       - type: docker_image
         name: jaegertracing/all-in-one:1.53.0
@@ -803,8 +803,8 @@ components:
       - key: tcp-service
         type: STRING
         value: "8080:8080"
-        required: true    
-    operations: []    
+        required: true
+    operations: []
     artifacts:
       - type: docker_image
         name: 'ghcr.io/open-telemetry/demo:1.10.0-cartservice'
@@ -843,8 +843,8 @@ components:
       - key: tcp-service
         type: STRING
         value: "8080:8080"
-        required: true    
-    operations: []    
+        required: true
+    operations: []
     artifacts:
       - type: docker_image
         name: 'ghcr.io/open-telemetry/demo:1.10.0-emailservice'
@@ -883,8 +883,8 @@ components:
       - key: tcp-service
         type: STRING
         value: "8081:8081"
-        required: true    
-    operations: []    
+        required: true
+    operations: []
     artifacts:
       - type: docker_image
         name: 'ghcr.io/open-telemetry/demo:1.10.0-imageprovider'
@@ -943,8 +943,8 @@ components:
       - key: tcp-service
         type: STRING
         value: "8080:8080"
-        required: true    
-    operations: []    
+        required: true
+    operations: []
     artifacts:
       - type: docker_image
         name: 'ghcr.io/open-telemetry/demo:1.10.0-productcatalogservice'
@@ -971,8 +971,8 @@ components:
       - key: OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE
         type: STRING
         value: "cumulative"
-        required: true    
-    operations: []    
+        required: true
+    operations: []
     artifacts:
       - type: docker_image
         name: 'ghcr.io/open-telemetry/demo:1.10.0-accountingservice'
@@ -1043,8 +1043,8 @@ components:
       - key: tcp-service
         type: STRING
         value: "8080:8080"
-        required: true    
-    operations: []    
+        required: true
+    operations: []
     artifacts:
       - type: docker_image
         name: 'ghcr.io/open-telemetry/demo:1.10.0-checkoutservice'
@@ -1083,8 +1083,8 @@ components:
       - key: tcp-service
         type: STRING
         value: "8080:8080"
-        required: true    
-    operations: []    
+        required: true
+    operations: []
     artifacts:
       - type: docker_image
         name: 'ghcr.io/open-telemetry/demo:1.10.0-shippingservice'
@@ -1139,8 +1139,8 @@ components:
       - key: tcp-service
         type: STRING
         value: "8080:8080"
-        required: true    
-    operations: []    
+        required: true
+    operations: []
     artifacts:
       - type: docker_image
         name: 'ghcr.io/open-telemetry/demo:1.10.0-recommendationservice'
@@ -1187,8 +1187,8 @@ components:
       - key: plaintext
         type: STRING
         value: "9092:9092"
-        required: true    
-    operations: []    
+        required: true
+    operations: []
     artifacts:
       - type: docker_image
         name: 'ghcr.io/open-telemetry/demo:1.10.0-kafka'
@@ -1263,8 +1263,8 @@ components:
       - key: otlp
         type: STRING
         value: "4317:4317"
-        required: true    
-    operations: []    
+        required: true
+    operations: []
     artifacts:
       - type: docker_image
         name: "otel/opentelemetry-collector-contrib:0.102.1"
@@ -1279,8 +1279,8 @@ components:
       - key: http
         type: STRING
         value: "9090:9090"
-        required: true    
-    operations: []    
+        required: true
+    operations: []
     artifacts:
       - type: docker_image
         name: "quay.io/prometheus/prometheus:v2.52.0"
@@ -1398,10 +1398,10 @@ relations:
       target: "default-container-runtime"
       properties: []
       operations: []
-  - opentelemetry-demo-otelcollector_HostedOn_default-container-runtime:
+  - opentelemetry-demo-otelcol_HostedOn_default-container-runtime:
       type: "HostedOn"
       description: null
-      source: "opentelemetry-demo-otelcollector"
+      source: "opentelemetry-demo-otelcol"
       target: "default-container-runtime"
       properties: []
       operations: []
@@ -1419,10 +1419,10 @@ relations:
       target: "default-container-runtime"
       properties: []
       operations: []
-  - opentelemetry-demo-prometheus_HostedOn_default-container-runtime:
+  - opentelemetry-demo-prometheus-server_HostedOn_default-container-runtime:
       type: "HostedOn"
       description: null
-      source: "opentelemetry-demo-prometheus"
+      source: "opentelemetry-demo-prometheus-server"
       target: "default-container-runtime"
       properties: []
       operations: []
@@ -1433,10 +1433,10 @@ relations:
       target: "default-container-runtime"
       properties: []
       operations: []
-  - opentelemetry-demo-recommendataionservice_HostedOn_default-container-runtime:
+  - opentelemetry-demo-recommendationservice_HostedOn_default-container-runtime:
       type: "HostedOn"
       description: null
-      source: "opentelemetry-demo-recommendataionservice"
+      source: "opentelemetry-demo-recommendationservice"
       target: "default-container-runtime"
       properties: []
       operations: []
@@ -1595,8 +1595,52 @@ relations:
       properties: []
       operations: []
 component_types:
+  - BaseType:
+      extends: "-"
+      description: "This is the base type"
+      properties: [ ]
+      operations: [ ]
+  - physical_node:
+      extends: "-"
+      description: null
+      properties:
+        - cpu_count:
+            type: "INTEGER"
+            required: false
+        - ram_GiB:
+            type: "INTEGER"
+            required: false
+        - storage_GiB:
+            type: "INTEGER"
+            required: false
+      operations: [ ]
+  - operating_system:
+      extends: "-"
+      description: null
+      properties:
+        - name:
+            type: "STRING"
+            required: false
+        - version:
+            type: "STRING"
+            required: false
+        - os_family:
+            type: "STRING"
+            required: false
+      operations: [ ]
+  - container_runtime:
+      extends: "-"
+      description: null
+      properties:
+        - name:
+            type: "STRING"
+            required: false
+        - version:
+            type: "STRING"
+            required: false
+      operations: [ ]
   - name: opentelemetry-demo-currencyservice-type
-    extends: 
+    extends:
     properties:
       - key: port
         type: INTEGER
@@ -1632,7 +1676,7 @@ component_types:
         required: true
     operations: []
   - name: opentelemetry-demo-frauddetectionservice-type
-    extends: 
+    extends:
     properties:
       - key: KAFKA_SERVICE_ADDR
         type: STRING
@@ -1664,7 +1708,7 @@ component_types:
         required: true
     operations: []
   - name: opentelemetry-demo-paymentservice-type
-    extends: 
+    extends:
     properties:
       - key: port
         type: INTEGER
@@ -1704,7 +1748,7 @@ component_types:
         required: true
     operations: []
   - name: opentelemetry-demo-quoteservice-type
-    extends: 
+    extends:
     properties:
       - key: port
         type: INTEGER
@@ -1740,7 +1784,7 @@ component_types:
         required: true
     operations: []
   - name: opentelemetry-demo-frontend-type
-    extends: 
+    extends:
     properties:
       - key: port
         type: INTEGER
@@ -1824,7 +1868,7 @@ component_types:
         required: true
     operations: []
   - name: grafana
-    extends: 
+    extends:
     properties:
       - key: port
         type: INTEGER
@@ -1860,7 +1904,7 @@ component_types:
         required: true
     operations: []
   - name: valkey
-    extends: 
+    extends:
     properties:
       - key: port
         type: INTEGER
@@ -1884,7 +1928,7 @@ component_types:
         required: true
     operations: []
   - name: opensearch
-    extends: 
+    extends:
     properties:
       - key: transport
         type: INTEGER
@@ -1936,7 +1980,7 @@ component_types:
         required: true
     operations: []
   - name: flagd
-    extends: 
+    extends:
     properties:
       - key: port
         type: INTEGER
@@ -1968,7 +2012,7 @@ component_types:
         required: true
     operations: []
   - name: mongo
-    extends: 
+    extends:
     properties:
       - key: port
         type: INTEGER
@@ -1988,7 +2032,7 @@ component_types:
         required: true
     operations: []
   - name: opentelemetry-demo-frontendproxy-type
-    extends: 
+    extends:
     properties:
       - key: port
         type: INTEGER
@@ -2076,7 +2120,7 @@ component_types:
         required: true
     operations: []
   - name: opentelemetry-demo-loadgenerator-type
-    extends: 
+    extends:
     properties:
       - key: port
         type: INTEGER
@@ -2144,7 +2188,7 @@ component_types:
         required: true
     operations: []
   - name: opentelemetry-demo-adservice-type
-    extends: 
+    extends:
     properties:
       - key: port
         type: INTEGER
@@ -2188,7 +2232,7 @@ component_types:
         required: true
     operations: []
   - name: jaeger
-    extends: 
+    extends:
     properties:
       - key: container_port
         type: INTEGER
@@ -2272,7 +2316,7 @@ component_types:
         required: true
     operations: []
   - name: opentelemetry-demo-cartservice-type
-    extends: 
+    extends:
     properties:
       - key: port
         type: INTEGER
@@ -2320,7 +2364,7 @@ component_types:
         required: true
     operations: []
   - name: opentelemetry-demo-emailservice-type
-    extends: 
+    extends:
     properties:
       - key: port
         type: INTEGER
@@ -2356,7 +2400,7 @@ component_types:
         required: true
     operations: []
   - name: opentelemetry-demo-imageprovider-type
-    extends: 
+    extends:
     properties:
       - key: port
         type: INTEGER
@@ -2392,7 +2436,7 @@ component_types:
         required: true
     operations: []
   - name: opentelemetry-demo-productcatalogservice-type
-    extends: 
+    extends:
     properties:
       - key: port
         type: INTEGER
@@ -2448,7 +2492,7 @@ component_types:
         required: true
     operations: []
   - name: opentelemetry-demo-accountingservice-type
-    extends: 
+    extends:
     properties:
       - key: KAFKA_SERVICE_ADDR
         type: STRING
@@ -2472,7 +2516,7 @@ component_types:
         required: true
     operations: []
   - name: opentelemetry-demo-checkoutservice-type
-    extends: 
+    extends:
     properties:
       - key: port
         type: INTEGER
@@ -2540,7 +2584,7 @@ component_types:
         required: true
     operations: []
   - name: opentelemetry-demo-shippingservice-type
-    extends: 
+    extends:
     properties:
       - key: port
         type: INTEGER
@@ -2576,7 +2620,7 @@ component_types:
         required: true
     operations: []
   - name: opentelemetry-demo-recommendationservice-type
-    extends: 
+    extends:
     properties:
       - key: port
         type: INTEGER
@@ -2628,7 +2672,7 @@ component_types:
         required: true
     operations: []
   - name: kafka
-    extends: 
+    extends:
     properties:
       - key: controller
         type: INTEGER
@@ -2672,7 +2716,7 @@ component_types:
         required: true
     operations: []
   - name: opentelemetry-collector
-    extends: 
+    extends:
     properties:
       - key: prometheus
         type: INTEGER
@@ -2744,7 +2788,7 @@ component_types:
         required: true
     operations: []
   - name: prometheus
-    extends: 
+    extends:
     properties:
       - key: container_port
         type: INTEGER
@@ -2755,7 +2799,7 @@ component_types:
         value: "9090:9090"
         required: true
     operations: []
-relation_types: 
+relation_types:
   - DependsOn:
       extends: "-"
       description: "generic relation type"
