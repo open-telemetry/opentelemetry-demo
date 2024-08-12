@@ -1391,6 +1391,27 @@ relations:
       target: "default-container-runtime"
       properties: []
       operations: []
+  - opentelemetry-demo-mongo_HostedOn_default-container-runtime:
+      type: "HostedOn"
+      description: null
+      source: "opentelemetry-demo-mongo"
+      target: "default-container-runtime"
+      properties: [ ]
+      operations: [ ]
+  - opentelemetry-demo-jaeger_HostedOn_default-container-runtime:
+      type: "HostedOn"
+      description: null
+      source: "opentelemetry-demo-jaeger"
+      target: "default-container-runtime"
+      properties: [ ]
+      operations: [ ]
+  - opentelemetry-demo-opensearch_HostedOn_default-container-runtime:
+      type: "HostedOn"
+      description: null
+      source: "otel-demo-opensearch"
+      target: "default-container-runtime"
+      properties: [ ]
+      operations: [ ]
   - opentelemetry-demo-loadgenerator_HostedOn_default-container-runtime:
       type: "HostedOn"
       description: null
@@ -1445,6 +1466,20 @@ relations:
       description: null
       source: "opentelemetry-demo-shippingservice"
       target: "default-container-runtime"
+      properties: []
+      operations: []
+  - opentelemetry-demo-otelcol_ConnectsTo_opentelemetry-demo-jaeger:
+      type: "ConnectsTo"
+      description: null
+      source: "opentelemetry-demo-otelcol"
+      target: "opentelemetry-demo-jaeger"
+      properties: []
+      operations: []
+  - opentelemetry-demo-productcatalogservice_ConnectsTo_opentelemetry-demo-mongo:
+      type: "ConnectsTo"
+      description: null
+      source: "opentelemetry-demo-productcatalogservice"
+      target: "opentelemetry-demo-mongo"
       properties: []
       operations: []
   - opentelemetry-demo-loadgenerator_ConnectsTo_opentelemetry-demo-frontendproxy:
