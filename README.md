@@ -77,14 +77,14 @@ Monday at 8:30 AM PST and anyone is welcome.
 
 ## Project leadership
 
-[Maintainers](https://github.com/open-telemetry/community/blob/main/community-membership.md#maintainer)
+[Maintainers](https://github.com/open-telemetry/community/blob/main/guides/contributor/membership.md#maintainer)
 ([@open-telemetry/demo-maintainers](https://github.com/orgs/open-telemetry/teams/demo-maintainers)):
 
 - [Juliano Costa](https://github.com/julianocosta89), Datadog
 - [Mikko Viitanen](https://github.com/mviitane), Dynatrace
 - [Pierre Tessier](https://github.com/puckpuck), Honeycomb
 
-[Approvers](https://github.com/open-telemetry/community/blob/main/community-membership.md#approver)
+[Approvers](https://github.com/open-telemetry/community/blob/main/guides/contributor/membership.md#approver)
 ([@open-telemetry/demo-approvers](https://github.com/orgs/open-telemetry/teams/demo-approvers)):
 
 - [Cedric Ziel](https://github.com/cedricziel) Grafana Labs
