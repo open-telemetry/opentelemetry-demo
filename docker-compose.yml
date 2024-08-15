@@ -685,6 +685,8 @@ services:
     volumes:
       - ./src/otel-lgtm/config/otelcol-config.yaml:/otel-lgtm/otelcol-config.yaml
       - ./src/otel-lgtm/config/tempo-config.yaml:/otel-lgtm/tempo-config.yaml
+      - ./src/otel-lgtm/config/grafana-dashboards.yaml:/otel-lgtm/grafana/conf/provisioning/dashboards/grafana-dashboards.yaml
+      - ./src/otel-lgtm/dashboards:/otel-lgtm/dashboards
     logging: *logging
 
   # Jaeger
