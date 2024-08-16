@@ -75,6 +75,11 @@ services:
       flagd:
         condition: service_started
     logging: *logging
+    healthcheck:
+      test: ["CMD-SHELL", "pgrep java || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
 
   # Cart service
   cartservice:
@@ -103,12 +108,17 @@ services:
       - ASPNETCORE_URLS=http://*:${CART_SERVICE_PORT}
     depends_on:
       valkey-cart:
-        condition: service_started
+        condition: service_healthy
       otelcol:
         condition: service_started
       flagd:
         condition: service_started
     logging: *logging
+    healthcheck:
+      test: ["CMD-SHELL", "pgrep cartservice || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
 
   # Checkout service
   checkoutservice:
@@ -143,15 +153,15 @@ services:
       - OTEL_SERVICE_NAME=checkoutservice
     depends_on:
       cartservice:
-        condition: service_started
+        condition: service_healthy
       currencyservice:
-        condition: service_started
+        condition: service_healthy
       emailservice:
-        condition: service_started
+        condition: service_healthy
       paymentservice:
-        condition: service_started
+        condition: service_healthy
       productcatalogservice:
-        condition: service_started
+        condition: service_healthy
       shippingservice:
         condition: service_started
       otelcol:
@@ -161,6 +171,11 @@ services:
       flagd:
         condition: service_started
     logging: *logging
+    healthcheck:
+      test: ["CMD-SHELL", "pgrep checkoutservice || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
 
   # Currency service
   currencyservice:
@@ -187,6 +202,11 @@ services:
       otelcol:
         condition: service_started
     logging: *logging
+    healthcheck:
+      test: ["CMD-SHELL", "pgrep currencyservice || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
 
   # Email service
   emailservice:
@@ -214,6 +234,11 @@ services:
       otelcol:
         condition: service_started
     logging: *logging
+    healthcheck:
+      test: ["CMD-SHELL", "pgrep ruby || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
 
   # Fraud Detection service
   frauddetectionservice:
@@ -284,15 +309,15 @@ services:
       - FLAGD_PORT
     depends_on:
       adservice:
-        condition: service_started
+        condition: service_healthy
       cartservice:
-        condition: service_started
+        condition: service_healthy
       checkoutservice:
-        condition: service_started
+        condition: service_healthy
       currencyservice:
-        condition: service_started
+        condition: service_healthy
       productcatalogservice:
-        condition: service_started
+        condition: service_healthy
       quoteservice:
         condition: service_started
       recommendationservice:
@@ -302,10 +327,15 @@ services:
       otelcol:
         condition: service_started
       imageprovider:
-        condition: service_started
+        condition: service_healthy
       flagd:
         condition: service_started
     logging: *logging
+    healthcheck:
+      test: ["CMD-SHELL", "pgrep next-server || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
 
   # Frontend Proxy (Envoy)
   frontendproxy:
@@ -342,13 +372,13 @@ services:
       - FLAGD_PORT
     depends_on:
       frontend:
-        condition: service_started
+        condition: service_healthy
       loadgenerator:
         condition: service_started
       jaeger:
-        condition: service_started
+        condition: service_healthy
       grafana:
-        condition: service_started
+        condition: service_healthy
 
   # Imageprovider
   imageprovider:
@@ -376,6 +406,11 @@ services:
       otelcol:
         condition: service_started
     logging: *logging
+    healthcheck:
+      test: ["CMD", "service", "nginx", "status"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
 
   # Load Generator
   loadgenerator:
@@ -410,7 +445,7 @@ services:
       - FLAGD_PORT
     depends_on:
       frontend:
-        condition: service_started
+        condition: service_healthy
       flagd:
         condition: service_started
     logging: *logging
@@ -445,6 +480,11 @@ services:
       flagd:
         condition: service_started
     logging: *logging
+    healthcheck:
+      test: ["CMD-SHELL", "pgrep node || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
 
   # Product Catalog service
   productcatalogservice:
@@ -480,8 +520,13 @@ services:
       flagd:
         condition: service_started
       mongo:
-        condition: service_started
+        condition: service_healthy
     logging: *logging
+    healthcheck:
+      test: ["CMD-SHELL", "pgrep productcatalogservice || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
 
   # Quote service
   quoteservice:
@@ -540,7 +585,7 @@ services:
       - PROTOCOL_BUFFERS_PYTHON_IMPLEMENTATION=python
     depends_on:
       productcatalogservice:
-        condition: service_started
+        condition: service_healthy
       otelcol:
         condition: service_started
       flagd:
@@ -644,6 +689,11 @@ services:
     ports:
       - "${VALKEY_PORT}"
     logging: *logging
+    healthcheck:
+      test: ["CMD-SHELL", "pgrep valkey-server || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
 
   # MongoDB used by Product Catalog Service
   mongo:
@@ -659,14 +709,13 @@ services:
     environment:
       - MONGO_INITDB_ROOT_USERNAME=${MONGO_USERNAME}
       - MONGO_INITDB_ROOT_PASSWORD=${MONGO_PASSWORD}
+    logging: *logging
     healthcheck:
       test: echo 'db.runCommand("ping").ok' | mongosh localhost:27017/test --quiet
       start_period: 10s
       interval: 5s
       timeout: 10s
       retries: 10
-    logging: *logging
-
 
   # ********************
   # Telemetry Components
@@ -692,6 +741,11 @@ services:
     environment:
       - METRICS_STORAGE_TYPE=prometheus
     logging: *logging
+    healthcheck:
+      test: ["CMD-SHELL", "wget -qO- http://localhost:14269 || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
 
   # Grafana
   grafana:
@@ -710,6 +764,11 @@ services:
     ports:
       - "${GRAFANA_SERVICE_PORT}"
     logging: *logging
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:${GRAFANA_SERVICE_PORT}/api/health"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
 
   # OpenTelemetry Collector
   otelcol:
@@ -762,6 +821,11 @@ services:
     ports:
       - "${PROMETHEUS_SERVICE_PORT}:${PROMETHEUS_SERVICE_PORT}"
     logging: *logging
+    healthcheck:
+      test: ["CMD-SHELL", "wget -qO- http://localhost:${PROMETHEUS_SERVICE_PORT}/-/healthy || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
 
   # OpenSearch
   opensearch:
@@ -790,3 +854,8 @@ services:
     ports:
       - "9200"
     logging: *logging
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:9200/_cluster/health"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
