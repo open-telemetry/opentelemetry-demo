@@ -125,7 +125,7 @@ services:
           memory: 360M
     restart: unless-stopped
     ports:
-      - "${CHAT_SERVICE_PORT}"
+      - "${CHAT_SERVICE_PORT}:${CHAT_SERVICE_PORT}"
     environment:
       - CHAT_SERVICE_PORT
       - OTEL_EXPORTER_OTLP_ENDPOINT=http://${OTEL_COLLECTOR_HOST}:${OTEL_COLLECTOR_PORT_HTTP}
