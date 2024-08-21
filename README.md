@@ -1,7 +1,37 @@
-<!-- markdownlint-disable-next-line -->
-# <img src="https://opentelemetry.io/img/logos/opentelemetry-logo-nav.png" alt="OTel logo" width="45"> Bugsnag OpenTelemetry Demo
+<div align="center">
+  <a href="https://www.bugsnag.com">
+    <picture>
+      <source media="(prefers-color-scheme: dark)" srcset="https://assets.smartbear.com/m/3dab7e6cf880aa2b/original/BugSnag-Repository-Header-Dark.svg">
+      <img alt="SmartBear BugSnag logo" src="https://assets.smartbear.com/m/3945e02cdc983893/original/BugSnag-Repository-Header-Light.svg">
+    </picture>
+  </a>
+  <h1>BugSnag OpenTelemetry Demo</h1>
+</div>
 
-A fork of the [Open Telemetry demo](https://github.com/open-telemetry/opentelemetry-demo). To set up BugSnag, put your BugSnag API key into `src/otelcollector/otelcol-config-extras.yml` and `.env` in place of `<your-api-key>`.
+A fork of the [Open Telemetry demo](https://github.com/open-telemetry/opentelemetry-demo) to demonstrate the range of instrumentation features available to BugSnag users.
+
+## Setup instructions
+
+To send data from the Demo services to your BugSnag project, put your BugSnag API key into `src/otelcollector/otelcol-config-extras.yml` and `.env` in place of the `<your-api-key>` placeholder and follow the [Quick start](#quick-start) guide below.
+
+## Features
+
+- `FrontendTracer` with the BugSnag JavaScript Performance SDK configured with full auto-instrumentation and trace ID propagation for Distributed Tracing;
+- Service exporters configured with the BugSnag OLTP endpoint.
+
+<br />
+
+<!-- markdownlint-disable-next-line -->
+# <img src="https://opentelemetry.io/img/logos/opentelemetry-logo-nav.png" alt="OTel logo" width="45"> OpenTelemetry Demo
+
+[![Slack](https://img.shields.io/badge/slack-@cncf/otel/demo-brightgreen.svg?logo=slack)](https://cloud-native.slack.com/archives/C03B4CWV4DA)
+[![Version](https://img.shields.io/github/v/release/open-telemetry/opentelemetry-demo?color=blueviolet)](https://github.com/open-telemetry/opentelemetry-demo/releases)
+[![Commits](https://img.shields.io/github/commits-since/open-telemetry/opentelemetry-demo/latest?color=ff69b4&include_prereleases)](https://github.com/open-telemetry/opentelemetry-demo/graphs/commit-activity)
+[![Downloads](https://img.shields.io/docker/pulls/otel/demo)](https://hub.docker.com/r/otel/demo)
+[![License](https://img.shields.io/badge/License-Apache_2.0-blue.svg?color=red)](https://github.com/open-telemetry/opentelemetry-demo/blob/main/LICENSE)
+[![Integration Tests](https://github.com/open-telemetry/opentelemetry-demo/actions/workflows/run-integration-tests.yml/badge.svg)](https://github.com/open-telemetry/opentelemetry-demo/actions/workflows/run-integration-tests.yml)
+[![Artifact Hub](https://img.shields.io/endpoint?url=https://artifacthub.io/badge/repository/opentelemetry-demo)](https://artifacthub.io/packages/helm/opentelemetry-helm/opentelemetry-demo)
+[![OpenSSF Best Practices](https://www.bestpractices.dev/projects/9247/badge)](https://www.bestpractices.dev/en/projects/9247)
 
 ## Welcome to the OpenTelemetry Astronomy Shop Demo
 
