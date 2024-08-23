@@ -194,8 +194,8 @@ services:
     depends_on:
       otel-lgtm:
         condition: service_started
-      #otelcol:
-      #  condition: service_started
+      postgres:
+        condition: service_started  
     logging: *logging
 
   # Email service
@@ -688,6 +688,17 @@ services:
       - ./src/otel-lgtm/config/grafana-dashboards.yaml:/otel-lgtm/grafana/conf/provisioning/dashboards/grafana-dashboards.yaml
       - ./src/otel-lgtm/dashboards:/otel-lgtm/dashboards
     logging: *logging
+  postgres:
+    image: postgres:latest
+    container_name: postgres_db
+    environment:
+      POSTGRES_USER: user
+      POSTGRES_PASSWORD: user
+      POSTGRES_DB: test
+    volumes:
+      - ./devSql:/docker-entrypoint-initdb.d
+    ports:
+      - "5432:5432" 
 
   # Jaeger
   #  jaeger:
