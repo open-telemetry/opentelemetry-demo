@@ -44,7 +44,7 @@ markdownlint:
 .PHONY: install-yamllint
 install-yamllint:
     # Using a venv is recommended
-	yamllint --version >/dev/null 2>&1 || pip install -U yamllint~=${YAMLLINT_VERSION}
+	yamllint --version >/dev/null 2>&1 || pip install -U yamllint~=$(YAMLLINT_VERSION)
 
 .PHONY: yamllint
 yamllint: install-yamllint
