@@ -16,10 +16,10 @@ DOCKER_COMPOSE_ENV=--env-file .env --env-file .env.override
 # see https://github.com/open-telemetry/build-tools/releases for semconvgen updates
 # Keep links in semantic_conventions/README.md and .vscode/settings.json in sync!
 SEMCONVGEN_VERSION=0.11.0
+YAMLLINT_VERSION=1.30.0
 
-# TODO: add `yamllint` step to `all` after making sure it works on Mac.
 .PHONY: all
-all: install-tools markdownlint misspell
+all: install-tools markdownlint misspell yamllint
 
 $(MISSPELL):
 	cd $(TOOLS_DIR) && go build -o $(MISSPELL_BINARY) github.com/client9/misspell/cmd/misspell
@@ -44,10 +44,10 @@ markdownlint:
 .PHONY: install-yamllint
 install-yamllint:
     # Using a venv is recommended
-	pip install -U yamllint~=1.30.0
+	yamllint --version >/dev/null 2>&1 || pip install -U yamllint~=$(YAMLLINT_VERSION)
 
 .PHONY: yamllint
-yamllint:
+yamllint: install-yamllint
 	yamllint .
 
 .PHONY: checklicense
