@@ -621,7 +621,9 @@ services:
       "file:./etc/flagd/demo.flagd.json"
     ]
     ports:
-      - 8013
+      - 8013:8013
+      - 8014
+      - 8015
     volumes:
       - ./src/flagd:/etc/flagd
     logging:
