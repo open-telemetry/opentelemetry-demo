@@ -22,6 +22,11 @@ Let's jump righ in and start exploring the traces.
 
 ## Working with Traces
 
+!!!
+    Before you continue, we reccomend you watch the following video to get a better understanding of the Grafana Tempo query language (TraceQL).
+
+    [![Grafana Tempo Query Language](https://i.vimeocdn.com/video/1604745175-f6aff29f85dc88abdc89d20524329e3dee7c0142e4395ff5a7c95946b808fe29-d?mw=1920&mh=1080&q=70)](https://vimeo.com/796408188)
+
 In the `Explore` section, select the `Tempo` data source and click on the `Service Graph` tab.
 
 ![Grafana Tempo](./assets/04-grafana-service-graph.png)
@@ -37,6 +42,8 @@ When you hover over a node in the service graph, you will see the request rate f
 You can click on the nodes in the service graph to see the traces for that service. You can also click on the operations in the latency and error rate section to see the traces for that operation.
 
 !!! info
+
+    :question: How many services are
 
     :question: Using the `Service Graph`, what services are the the `checkoutservice` connected to and what are the relationships to them?
 
@@ -133,7 +140,7 @@ To query the relationships between spans, we need to use the `TraceQL` query typ
 * `>` : Direct parent-child relationship.
 * `>>` : Ancestor-descendant relationship.
 
-Here is an example of a query that finds the traces where the `frontend` service calls the `checkoutservice` service:
+Here is an example of a query that finds the traces where the `frontend` service calls the `checkoutservice` service directly:
 
 ```promql
 {span.service.name="frontend"} > {span.service.name="checkoutservice"}
