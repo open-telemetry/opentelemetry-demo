@@ -195,7 +195,7 @@ services:
       otel-lgtm:
         condition: service_started
       postgres:
-        condition: service_started  
+        condition: service_started
     logging: *logging
 
   # Email service
@@ -609,6 +609,7 @@ services:
       resources:
         limits:
           memory: 50M
+    restart: unless-stopped
     environment:
       - FLAGD_OTEL_COLLECTOR_URI=${OTEL_COLLECTOR_HOST}:${OTEL_COLLECTOR_PORT_GRPC}
       - FLAGD_METRICS_EXPORTER=otel
@@ -698,7 +699,7 @@ services:
     volumes:
       - ./devSql:/docker-entrypoint-initdb.d
     ports:
-      - "5432:5432" 
+      - "5432:5432"
 
   # Jaeger
   #  jaeger:
