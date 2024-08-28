@@ -1,9 +1,16 @@
 receivers:
+  httpcheck/frontendproxy:
+    targets:
+      - endpoint: http://opentelemetry-demo-frontendproxy:8080
   otlp:
     protocols:
       grpc:
         endpoint: 0.0.0.0:4317
       http:
+        cors:
+          allowed_origins:
+            - http://*
+            - https://*
         endpoint: 0.0.0.0:4318
   prometheus/collector:
     config:
@@ -21,6 +28,11 @@ processors:
           - set(attributes["service_name"], resource.attributes["service.name"])
           - set(attributes["service_version"], resource.attributes["service.version"])
           - set(attributes["service_namespace"], resource.attributes["service.namespace"])
+    trace_statements:
+      - context: span
+        statements:
+          - replace_pattern(name, "\\?.*", "")
+          - replace_match(name, "GET /api/products/*", "GET /api/products/{productId}")
 
 exporters:
   otlphttp/metrics:
@@ -43,6 +55,7 @@ exporters:
     verbosity: detailed
 
 service:
+  #extensions: [health_checkk]
   pipelines:
     traces:
       receivers: [otlp]
