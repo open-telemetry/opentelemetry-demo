@@ -7,6 +7,8 @@ In this section, we will explore the OpenTelemetry data (logs, metrics, and trac
 Make sure you have started the stack using Docker Compose. If you haven't done that yet, please run the following command:
 
 ```bash
+docker-compose up -d flagd
+docker-compose up -d otel-lgtm
 docker-compose up
 ```
 
@@ -43,7 +45,7 @@ You can click on the nodes in the service graph to see the traces for that servi
 
 !!! info
 
-    :question: How many services are
+    :question: How many services are there in the service graph?
 
     :question: Using the `Service Graph`, what services are the the `checkoutservice` connected to and what are the relationships to them?
 
@@ -62,12 +64,12 @@ You can click on the nodes in the service graph to see the traces for that servi
     * `frontend` (inbound)
     </details>
 
-    :question: Can you spot the failing service in the service graph? What is the error rate for the failing service?
+    :question: Can you spot the failing service(s) in the service graph? What is the error rate for the failing service?
 
     <details>
     <summary>Hint</summary>
 
-    The `accountservice` is failing. The error rate is aproxomently `0.0005`. Click on the `accountservice` node and select the `Failed request rate` menu to see the error rate.
+    The `adservice` is failing. The error rate is around `0.01`. Click on the `adservice` node and select the `Failed request rate` menu to see the error rate.
     </details>
 
 Let's see some more details about our traces. Click on the `frontend` node in the service graph to see the traces for the service by clicking on the `View traces` menu.
@@ -113,11 +115,18 @@ Let's add some filters to our trace search query to refine the results and find 
     ```
     </details>
 
-    :question: Find the traces for the `frontend` service where the `http.status_code` is `500`. What is the TraceQL query for this filter?
+    :question: Find the traces for the `frontend` service where the `http.method` is `GET` and `http.status_code` is `500`. What is the TraceQL query for this filter?
 
     <details>
     <summary>Hint</summary>
     Apply the following filter in the query editor:
+
+    * `span`
+    * `http.method`
+    * `=`
+    * `GET`
+
+    Click the `+` button to add another filter:
 
     * `span`
     * `http.status_code`
@@ -127,7 +136,7 @@ Let's add some filters to our trace search query to refine the results and find 
     The TraceQL query for this filter is:
 
     ```promql
-    {span.http.status_code="500" && resource.service.name="fronted"}
+    {span.http.method="GET" && span.http.status_code="500" && resource.service.name="fronted"}
     ```
     </details>
 
@@ -146,9 +155,15 @@ Here is an example of a query that finds the traces where the `frontend` service
 {span.service.name="frontend"} > {span.service.name="checkoutservice"}
 ```
 
+But in most cases, you will need to use the ancestor-descendant relationship operator `>>` to query relationships between spans since there can be multiple spans between the parent and child spans. Here is an example of a query that finds the traces where the `frontend` service calls the `checkoutservice` service:
+
+```promql
+{span.service.name="frontend"} >> {span.service.name="emailservice"}
+```
+
 !!! info
 
-    :question: Find the traces where the `frontend` service calls the `checkoutservice` service. What is the TraceQL query for this filter?
+    :question: Find any traces where the `frontend` service calls the `checkoutservice` service. What is the TraceQL query for this filter?
 
     <details>
     <summary>Hint</summary>
@@ -160,7 +175,7 @@ Here is an example of a query that finds the traces where the `frontend` service
     ```
     </details>
 
-    :question: Find the traces where the `frontend` service calls the `checkoutservice` service and the `checkoutservice` service calls the `productcatalogservice` service. What is the TraceQL query for this filter?
+    :question: Find the traces where the `frontend` service calls the `checkoutservice` service and the `checkoutservice` service calls the `email` service. What is the TraceQL query for this filter?
 
     <details>
     <summary>Hint</summary>
@@ -168,7 +183,7 @@ Here is an example of a query that finds the traces where the `frontend` service
     The TraceQL query for this filter is:
 
     ```promql
-    {span.service.name="frontend"} > {span.service.name="checkoutservice"} > {span.service.name="productcatalogservice"}
+    {span.service.name="frontend"} >> {span.service.name="checkoutservice"} >> {span.service.name="emailservice"}
     ```
     </details>
 
