@@ -664,7 +664,6 @@ services:
       - "${OTEL_COLLECTOR_PORT_GRPC}"
     environment:
       - METRICS_STORAGE_TYPE=prometheus
-      - COLLECTOR_OTLP_GRPC_HOST_PORT=${JAEGER_SERVICE_HOST}:${OTEL_COLLECTOR_PORT_GRPC}
     logging: *logging
 
   # Grafana
