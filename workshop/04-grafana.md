@@ -1,4 +1,4 @@
-# Lab 4: Working with Grafana
+# Lab 4: Exploring data in Grafana
 
 In this section, we will explore the OpenTelemetry data (logs, metrics, and traces) in Grafana. We will use the Grafana dashboard to visualize the data and understand the performance of the application.
 
@@ -187,4 +187,40 @@ But in most cases, you will need to use the ancestor-descendant relationship ope
     ```
     </details>
 
-    :question: Find the traces where the
+![Grafana Trace Details](./assets/04-grafana-trace-details.png)
+
+Now, click on one of the traces in the list to see the details of the trace. You will see the `Trace Details` view that has four sections labeled `F`, `G`, `H` and `I`.
+
+- Section `F` is the trace search query editor as we saw in the `Trace Search` view.
+- Section `G` is the trace metadata. It shows the trace ID, the duration of the trace, the start
+- Section `H` is the span filter. Here you can filter the spans that will be displayed in the trace view below in section `I`.
+- Section `I` is the trace view. It shows the spans in the trace and the relationships between them.
+
+The trace view is a tree structure where the root span is at the top and the child spans are below it. You can click on a span to see the details of the span.
+
+Different colors are used to represent different services in the trace view and the indentation is used to represent the parent-child relationship between spans.
+
+!!! info
+
+    :question: What is the duration of the trace that you selected? How many spans are there in the trace?
+
+    :question: What is the relationship between the spans in the trace view?
+
+    :question: What is the service name of the root span in the trace view?
+
+    :question: Find all the spans in the trace view where the `http.method` is `GET`. What is the duration of the span with the `http.method` `GET` or `POST`?
+
+    <details>
+    <summary>Hint</summary>
+
+    Apply the following filter in the span filter (section `H`):
+
+    * `Tags`
+    * `http.method`
+    * `=`
+    * `GET` or `POST`
+
+    The duration of the span with the `http.method` `GET` or `POST` is the sum of the durations of the spans that match the filter.
+    </details>
+
+Have you noticed the little `LOG` icon next to the span name in the trace view? This icon indicates that there are logs associated with the span. You can click on the span to see the logs in the `Logs` view. If there are no logs associated with that particluar span, you will see a message that says `No logs found`, try clicking on another span to see the logs.
