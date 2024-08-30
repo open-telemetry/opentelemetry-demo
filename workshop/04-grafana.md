@@ -25,7 +25,7 @@ Let's jump righ in and start exploring the traces.
 ## Working with Traces
 
 !!!
-    Before you continue, we reccomend you watch the following video to get a better understanding of the Grafana Tempo query language (TraceQL).
+    Before you continue, we reccomend you watch the following video to get a better understanding of the [Grafana Tempo query language (TraceQL)](https://grafana.com/docs/tempo/latest/traceql/).
 
     [![Grafana Tempo Query Language](https://i.vimeocdn.com/video/1604745175-f6aff29f85dc88abdc89d20524329e3dee7c0142e4395ff5a7c95946b808fe29-d?mw=1920&mh=1080&q=70)](https://vimeo.com/796408188)
 
@@ -224,3 +224,20 @@ Different colors are used to represent different services in the trace view and 
     </details>
 
 Have you noticed the little `LOG` icon next to the span name in the trace view? This icon indicates that there are logs associated with the span. You can click on the span to see the logs in the `Logs` view. If there are no logs associated with that particluar span, you will see a message that says `No logs found`, try clicking on another span to see the logs.
+
+## Working with Logs
+
+!!!
+    Before you continue, we reccomend you watch the following video to get a better understanding of the [Grafana Loki query language (LogQL)](https://grafana.com/docs/loki/latest/query/).
+
+    [![Grafana Tempo Query Language](https://i.ytimg.com/vi/zIdEVNA6YTI/hqdefault.jpg)](https://www.youtube.com/watch?v=zIdEVNA6YTI)
+
+Grafana Loki is the log aggregation system that we are using to store and query logs in Grafana. In the `Explore` section, select the `Loki` data source and click on the `Logs` tab.
+
+![Grafana Loki](./assets/04-grafana-logs-search.png)
+
+The `Logs` explorer has three sections labeled `A`, `B`, and `C`.
+
+- Section `A` is the log search query editor. You can write a query to filter the logs based on the log labels and other attributes.
+- Section `B` is the log volume graph. It shows the log volume over time.
+- Section `C` is the log stream. It shows all the logs that match the query in a table format. Click on a log to see the details of the log.
