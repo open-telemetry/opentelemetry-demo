@@ -49,6 +49,7 @@ Select the following parameters:
 Click on the `hint: add histogram_quantile` link to add the quantile function to the query.
 
 !!! note
+
     A histogram is a type of metric that samples observations (usually things like request durations or response sizes) and counts them in configurable buckets. It also provides a sum of all observed values.
 
     The `histogram_quantile` function is built into the PromQL query language and calculates the selected quantile over time from a histogram.
@@ -60,6 +61,7 @@ Click on the `Run query` button to see the results of the query.
 ![Dashboard panel](./assets/05-dashboard-query.png)
 
 !!! note
+
     :question: What is the prometheus query that we are using to visualize the span latency?
 
     <details>
