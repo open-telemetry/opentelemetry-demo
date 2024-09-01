@@ -48,7 +48,7 @@ services:
 
   # AdService
   adservice:
-    image: ${IMAGE_NAME}:${DEMO_VERSION}-adservice
+    #image: ${IMAGE_NAME}:${DEMO_VERSION}-adservice
     container_name: ad-service
     build:
       context: ./
