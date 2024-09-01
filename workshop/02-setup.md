@@ -1,4 +1,4 @@
-# Lab 2: Local setup
+# Exercise 2: Local setup
 
 In this section, we will set up the environment for the workshop. We will use Docker and Docker Compose to run the services required for the workshop.
 
@@ -34,4 +34,4 @@ docker-compose pull
 
 Now that you have the repository cloned and the Docker images pulled, you are ready to start the workshop. In the next section, we will cover the basics of instrumentation with OpenTelemetry.
 
-Continue to [Lab 3: Instrumentation with JAVA](./03-instrumentation.md)
+Continue to [Exercise 3: Instrumentation with JAVA](./03-instrumentation.md)

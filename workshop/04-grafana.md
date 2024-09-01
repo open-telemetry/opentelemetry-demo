@@ -1,4 +1,4 @@
-# Lab 4: Exploring data in Grafana
+# Exercise 4: Exploring data in Grafana
 
 In this section, we will explore the OpenTelemetry data (logs, metrics, and traces) in Grafana. We will use the Grafana dashboard to visualize the data and understand the performance of the application.
 
