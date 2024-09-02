@@ -54,6 +54,17 @@ it should be used to enrich the current span and to update a custom context obje
 If no baggage is found, you will handle this case by logging an appropriate message.
 
 
+## OpenTelemetry with Spring boot and micrometer
+
+Spring boot 3 has excellent support for OpenTelemetry via the micrometer. Spring Boot 3 comes with full support for OpenTelemetry.
+
+## Instrument Currency-service 
+
+Currency-service has been reimplemented in Spring Boot 3 from C++. To enable that we have to comment out the image from currency-service in the docker-compose file.
+
+´´´
+
+
 
 
 
