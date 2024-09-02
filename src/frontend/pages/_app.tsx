@@ -21,6 +21,8 @@ declare global {
       NEXT_PUBLIC_OTEL_EXPORTER_OTLP_TRACES_ENDPOINT?: string;
       IS_SYNTHETIC_REQUEST?: string;
       BUGSNAG_API_KEY: string;
+      BUGSNAG_APP_VERSION: string;
+      BUGSNAG_RELEASE_STAGE: string;
     };
   }
 }
@@ -28,6 +30,8 @@ declare global {
 if (typeof window !== 'undefined') {
   BugsnagPerformance.start({
     apiKey: window.ENV.BUGSNAG_API_KEY,
+    appVersion: window.ENV.BUGSNAG_APP_VERSION,
+    releaseStage: window.ENV.BUGSNAG_RELEASE_STAGE,
     serviceName: 'opentelemetry-demo-frontend',
     networkRequestCallback: (requestInfo) => {
       requestInfo.propagateTraceContext = true

@@ -5,8 +5,6 @@ import Document, { DocumentContext, Html, Head, Main, NextScript } from 'next/do
 import { ServerStyleSheet } from 'styled-components';
 import {context, propagation} from "@opentelemetry/api";
 
-const { ENV_PLATFORM, WEB_OTEL_SERVICE_NAME, PUBLIC_OTEL_EXPORTER_OTLP_TRACES_ENDPOINT, OTEL_COLLECTOR_HOST, BUGSNAG_API_KEY} = process.env;
-
 export default class MyDocument extends Document<{ envString: string }> {
   static async getInitialProps(ctx: DocumentContext) {
     const sheet = new ServerStyleSheet();
@@ -23,16 +21,18 @@ export default class MyDocument extends Document<{ envString: string }> {
       const isSyntheticRequest = baggage?.getEntry('synthetic_request')?.value === 'true';
 
       const otlpTracesEndpoint = isSyntheticRequest
-          ? `http://${OTEL_COLLECTOR_HOST}:4318/v1/traces`
-          : PUBLIC_OTEL_EXPORTER_OTLP_TRACES_ENDPOINT;
+          ? `http://${process.env.OTEL_COLLECTOR_HOST}:4318/v1/traces`
+          : process.env.PUBLIC_OTEL_EXPORTER_OTLP_TRACES_ENDPOINT;
 
       const envString = `
         window.ENV = {
-          NEXT_PUBLIC_PLATFORM: '${ENV_PLATFORM}',
-          NEXT_PUBLIC_OTEL_SERVICE_NAME: '${WEB_OTEL_SERVICE_NAME}',
+          NEXT_PUBLIC_PLATFORM: '${process.env.ENV_PLATFORM}',
+          NEXT_PUBLIC_OTEL_SERVICE_NAME: '${process.env.WEB_OTEL_SERVICE_NAME}',
           NEXT_PUBLIC_OTEL_EXPORTER_OTLP_TRACES_ENDPOINT: '${otlpTracesEndpoint}',
           IS_SYNTHETIC_REQUEST: '${isSyntheticRequest}',
-          BUGSNAG_API_KEY: '${BUGSNAG_API_KEY}'
+          BUGSNAG_API_KEY: '${process.env.BUGSNAG_API_KEY}',
+          BUGSNAG_APP_VERSION: '${process.env.BUGSNAG_APP_VERSION}',
+          BUGSNAG_RELEASE_STAGE: '${process.env.BUGSNAG_RELEASE_STAGE}',
         };`;
       return {
         ...initialProps,
