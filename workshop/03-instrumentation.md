@@ -31,6 +31,13 @@ Assignment :
 
 In get getAds method hook into the span context and add the following attributes to the span  "app.ads.contextKeys", "app.ads.contextKeys.count", "app.ads.count", "app.ads.ad_request_type", "app.ads.ad_response_type" . This will give us insight into what advertisement that has been shown.
 
+You can rebuild the adservice with the following command : 
+
+```bash
+docker-compose down adservice
+docker-compose up adservice --build -d
+```
+
 You can verify that the attributes are set by looking at the traces in Grafana with Tempo as the datasource.
 
 Next we want to refine the traces from the span with events and status codes if getAds method fails. So inside the catch block add and error event with attributeKey thats should be called : "exception.message" that adds the exception to the span. We should also as part of this mark the span as failed.
@@ -60,15 +67,6 @@ it should be used to enrich the current span and to update a custom context obje
 If no baggage is found, you will handle this case by logging an appropriate message.
 
 
-## OpenTelemetry with Spring boot and micrometer
-
-Spring boot 3 has excellent support for OpenTelemetry via the micrometer. Spring Boot 3 comes with full support for OpenTelemetry.
-
-## Instrument Currency-service 
-
-Currency-service has been reimplemented in Spring Boot 3 from C++. To enable that we have to comment out the image from currency-service in the docker-compose file.
-
-´´´
 
 
 
