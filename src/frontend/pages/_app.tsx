@@ -11,7 +11,7 @@ import Theme from '../styles/Theme';
 import SessionGateway from '../gateways/Session.gateway';
 import { OpenFeatureProvider, OpenFeature } from '@openfeature/react-sdk';
 import { FlagdWebProvider } from '@openfeature/flagd-web-provider';
-import BugsnagPerformance from '@bugsnag/browser-performance'
+import BugsnagPerformance, { DefaultRoutingProvider } from '@bugsnag/browser-performance'
 
 declare global {
   interface Window {
@@ -27,12 +27,31 @@ declare global {
   }
 }
 
+const resolveRoute = function resolveRoute (url: URL): string {
+  const pathname = url.pathname
+
+  if (pathname.startsWith('/product')) {
+    return '/product/{product-id}'
+  }
+
+  if (pathname.startsWith('/api/products/')) {
+    return '/api/products/{product-id}'
+  }
+
+  if (pathname.startsWith('/cart/checkout/')) {
+    return '/cart/checkout/{order-id}'
+  }
+
+  return pathname
+}
+
 if (typeof window !== 'undefined') {
   BugsnagPerformance.start({
     apiKey: window.ENV.BUGSNAG_API_KEY,
     appVersion: window.ENV.BUGSNAG_APP_VERSION,
     releaseStage: window.ENV.BUGSNAG_RELEASE_STAGE,
     serviceName: 'opentelemetry-demo-frontend',
+    routingProvider: new DefaultRoutingProvider(resolveRoute),
     networkRequestCallback: (requestInfo) => {
       requestInfo.propagateTraceContext = true
       return requestInfo
