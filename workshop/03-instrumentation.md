@@ -8,15 +8,21 @@ In this section, we will instrument a simple Java application with OpenTelemetry
 In this assignment we are going to instrument ad service with the OpenTelemetry Java agent. You can read about the documentation [here](https://github.com/open-telemetry/opentelemetry-java-instrumentation/)
 
 ### Assignment 1 - Enable OpenTelemetry Java agent in the Adservice
-First assignment is to enable Opentelemetry java agent for the adservice. You can read about how it's done here  : 
+First assignment is to enable Opentelemetry java agent for the adservice. You can read about how it's done here  : https://opentelemetry.io/docs/zero-code/java/agent/getting-started/
 
-https://opentelemetry.io/docs/zero-code/java/agent/getting-started/
+We should configure the agent as well with the current environment variables. 
 
 ```bash
-ADD --chmod=644 https://github.com/open-telemetry/opentelemetry-java-instrumentation/releases/download/v$version/opentelemetry-javaagent.jar /usr/src/app/opentelemetry-javaagent.jar
-ENV JAVA_TOOL_OPTIONS=-javaagent:/usr/src/app/opentelemetry-javaagent.jar
+OTEL_EXPORTER_OTLP_ENDPOINT // endpoint for the OTEL collector
+OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE // Configure the exporter’s aggregation temporality option (see above) on the basis of instrument kind. 
+OTEL_RESOURCE_ATTRIBUTES // default attribute config is needed
+OTEL_LOGS_EXPORTER // format we are sending logs in 
+OTEL_SERVICE_NAME // name of the service
+JAVA_TOOL_OPTIONS  // url to the java agent that we are injecting
 ```
-Now you should be able to get standard metrics and traces from the adservice.  
+Now you should be able to get standard metrics and traces from the adservice.  Open grafana and navigate to  Explore and select Tempo as a datasource and click on the service graph. Adservice should now be available there.
+
+TIPS :  If you get stuck you can look at the dockerfile and docker-compose file for other services
 
 ### Assignment 2 -  Add attributes and events to auto instrumented spans
 We can use the span context to hook into so we can enrich traces with more information. 

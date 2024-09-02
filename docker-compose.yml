@@ -66,11 +66,6 @@ services:
       - AD_SERVICE_PORT
       - FLAGD_HOST
       - FLAGD_PORT
-      - OTEL_EXPORTER_OTLP_ENDPOINT=http://${OTEL_COLLECTOR_HOST}:${OTEL_COLLECTOR_PORT_HTTP}
-      - OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE
-      - OTEL_RESOURCE_ATTRIBUTES
-      - OTEL_LOGS_EXPORTER=otlp
-      - OTEL_SERVICE_NAME=adservice
     depends_on:
       otel-lgtm:
         condition: service_started
