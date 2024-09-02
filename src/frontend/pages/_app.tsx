@@ -8,10 +8,10 @@ import CurrencyProvider from '../providers/Currency.provider';
 import CartProvider from '../providers/Cart.provider';
 import { ThemeProvider } from 'styled-components';
 import Theme from '../styles/Theme';
-import FrontendTracer from '../utils/telemetry/BugsnagTracer';
 import SessionGateway from '../gateways/Session.gateway';
 import { OpenFeatureProvider, OpenFeature } from '@openfeature/react-sdk';
 import { FlagdWebProvider } from '@openfeature/flagd-web-provider';
+import BugsnagPerformance from '@bugsnag/browser-performance'
 
 declare global {
   interface Window {
@@ -26,7 +26,14 @@ declare global {
 }
 
 if (typeof window !== 'undefined') {
-  FrontendTracer();
+  BugsnagPerformance.start({
+    apiKey: window.ENV.BUGSNAG_API_KEY,
+    networkRequestCallback: (requestInfo) => {
+      requestInfo.propagateTraceContext = true
+      return requestInfo
+    }
+  })
+
   if (window.location) {
     const session = SessionGateway.getSession();
 
