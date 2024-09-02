@@ -28,6 +28,7 @@ declare global {
 if (typeof window !== 'undefined') {
   BugsnagPerformance.start({
     apiKey: window.ENV.BUGSNAG_API_KEY,
+    serviceName: 'opentelemetry-demo-frontend',
     networkRequestCallback: (requestInfo) => {
       requestInfo.propagateTraceContext = true
       return requestInfo
