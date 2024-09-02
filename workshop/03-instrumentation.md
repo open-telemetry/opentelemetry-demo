@@ -24,12 +24,12 @@ Now you should be able to get standard metrics and traces from the adservice.  O
 
 TIPS :  If you get stuck you can look at the dockerfile and docker-compose file for other services
 
-### Assignment 2 -  Add attributes and events to auto instrumented spans
-We can use the span context to hook into so we can enrich traces with more information. 
+### Assignment 2 - Add attributes and events to auto instrumented spans
+We can use the span context to hook into so we can enrich traces with more information.  Read about 
 
-Assignment : 
+__Assignment :__
 
-In get getAds method hook into the span context and add the following attributes to the span  "app.ads.contextKeys", "app.ads.contextKeys.count", "app.ads.count", "app.ads.ad_request_type", "app.ads.ad_response_type" . This will give us insight into what advertisement that has been shown.
+In get `getAds` method hook into the span context and add the following attributes to the span  "app.ads.contextKeys", "app.ads.contextKeys.count", "app.ads.count", "app.ads.ad_request_type", "app.ads.ad_response_type" . This will give us insight into what advertisement that has been shown.
 
 You can rebuild the adservice with the following command : 
 
