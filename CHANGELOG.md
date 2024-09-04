@@ -11,6 +11,8 @@ the release.
   ([#1692](https://github.com/open-telemetry/opentelemetry-demo/pull/1692))
 * [chore] Add yamllint to `make all`
   ([#1707](https://github.com/open-telemetry/opentelemetry-demo/pull/1707))
+* [chore] Fix gen-proto for accountingservice
+  ([#1709](https://github.com/open-telemetry/opentelemetry-demo/pull/1709))
 
 ## 1.11.1
 
