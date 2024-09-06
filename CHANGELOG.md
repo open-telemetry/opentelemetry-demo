@@ -13,6 +13,8 @@ the release.
   ([#1707](https://github.com/open-telemetry/opentelemetry-demo/pull/1707))
 * [chore] Fix gen-proto for accountingservice
   ([#1709](https://github.com/open-telemetry/opentelemetry-demo/pull/1709))
+* [chore] Move dependencies control to .env file
+  ([#1715](https://github.com/open-telemetry/opentelemetry-demo/pull/1715))
 
 ## 1.11.1
 
