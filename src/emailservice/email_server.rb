@@ -7,12 +7,20 @@ require "sinatra"
 
 require "opentelemetry/sdk"
 require "opentelemetry/exporter/otlp"
-require "opentelemetry/instrumentation/sinatra"
+require "opentelemetry/instrumentation/all"
+
+require "bugsnag_performance"
 
 set :port, ENV["EMAIL_SERVICE_PORT"]
 
-OpenTelemetry::SDK.configure do |c|
-  c.use "OpenTelemetry::Instrumentation::Sinatra"
+BugsnagPerformance.configure do |c|
+  c.api_key = ENV["BUGSNAG_API_KEY"]
+  c.app_version = ENV["BUGSNAG_APP_VERSION"]
+  c.release_stage = ENV["BUGSNAG_RELEASE_STAGE"]
+
+  c.configure_open_telemetry do |otel_c|
+    otel_c.use_all
+  end
 end
 
 post "/send_order_confirmation" do
@@ -43,7 +51,11 @@ def send_email(data)
       body:     erb(:confirmation, locals: { order: data.order }),
       via:      :test
     )
+
+    # mark this span as "first class" so that it is aggregated in the bugsnag dashboard
+    span.set_attribute("bugsnag.span.first_class", true)
     span.set_attribute("app.email.recipient", data.email)
+
     puts "Order confirmation email sent to: #{data.email}"
   end
   # manually created spans need to be ended

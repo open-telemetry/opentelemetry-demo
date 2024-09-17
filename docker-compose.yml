@@ -210,6 +210,9 @@ services:
       - OTEL_EXPORTER_OTLP_TRACES_ENDPOINT=http://${OTEL_COLLECTOR_HOST}:${OTEL_COLLECTOR_PORT_HTTP}/v1/traces
       - OTEL_RESOURCE_ATTRIBUTES
       - OTEL_SERVICE_NAME=emailservice
+      - BUGSNAG_API_KEY
+      - BUGSNAG_APP_VERSION
+      - BUGSNAG_RELEASE_STAGE
     depends_on:
       otelcol:
         condition: service_started
