@@ -332,6 +332,12 @@ services:
       - JAEGER_SERVICE_PORT
       - JAEGER_SERVICE_HOST
       - OTEL_COLLECTOR_HOST
+      - ELASTICSEARCH_SERVICE_PORT
+      - ELASTICSEARCH_SERVICE_HOST
+      - LOGSTASH_SERVICE_PORT
+      - LOGSTASH_SERVICE_HOST
+      - KIBANA_SERVICE_PORT
+      - KIBANA_SERVICE_HOST
       - IMAGE_PROVIDER_HOST
       - IMAGE_PROVIDER_PORT
       - OTEL_COLLECTOR_PORT_GRPC
@@ -764,4 +770,101 @@ services:
         hard: 65536
     ports:
       - "9200"
+    logging: *logging
+
+  # Elasticsearch
+  elasticsearch:
+    image: docker.elastic.co/elasticsearch/elasticsearch:${ELASTICSEARCH_IMAGE}
+    container_name: elasticsearch
+    deploy:
+      resources:
+        limits:
+          memory: 1G
+    restart: unless-stopped
+    environment:
+      - node.name=es01
+      - cluster.name=${CLUSTER_NAME}
+      - discovery.type=single-node
+      - ELASTIC_PASSWORD=${ELASTIC_PASSWORD}
+      - bootstrap.memory_lock=true
+      - xpack.security.enabled=true
+      - xpack.security.http.ssl.enabled=true
+      - xpack.security.http.ssl.key=certs/es01/es01.key
+      - xpack.security.http.ssl.certificate=certs/es01/es01.crt
+      - xpack.security.http.ssl.certificate_authorities=certs/ca/ca.crt
+      - xpack.security.transport.ssl.enabled=true
+      - xpack.security.transport.ssl.key=certs/es01/es01.key
+      - xpack.security.transport.ssl.certificate=certs/es01/es01.crt
+      - xpack.security.transport.ssl.certificate_authorities=certs/ca/ca.crt
+      - xpack.security.transport.ssl.verification_mode=certificate
+      - xpack.license.self_generated.type=${LICENSE}
+    volumes:
+      - certs:/usr/share/elasticsearch/config/certs
+      - esdata:/usr/share/elasticsearch/data
+    ports:
+      - "9200"
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+    healthcheck:
+      test:
+        [
+          "CMD-SHELL",
+          "curl -s --cacert /usr/share/elasticsearch/config/certs/ca/ca.crt https://localhost:9200 | grep -q 'missing authentication credentials'",
+        ]
+      interval: 10s
+      timeout: 10s
+      retries: 120
+
+  # Logstash
+  logstash:
+    image: docker.elastic.co/logstash/logstash:${LOGSTASH_IMAGE}
+    container_name: logstash
+    command:
+    - "--config.path=/usr/share/logstash/pipeline"
+    - "--path.data=/usr/share/logstash/data"
+    - "--path.logs=/usr/share/logstash/logs"
+    - "--xpack.monitoring.enabled=false"
+    - "--xpack.security.enabled=true"
+    - "--xpack.security.authc.realms.file.file1.type=file"
+    - "--xpack.security.authc.realms.native.native1.type=native"
+    - "--xpack.security.authc.realms.native.native1.order=0"
+    volumes:
+    - certs:/usr/share/logstash/certs
+    - logstashdata01:/usr/share/logstash/data
+    - ./logstash_ingest_data/:/usr/share/logstash/ingest_data/
+    - ./logstash.conf:/usr/share/logstash/pipeline/logstash.conf:ro
+    deploy:
+      resources:
+        limits:
+          memory: 500M
+    restart: unless-stopped
+    ports:
+      - "${LOGSTASH_SERVICE_PORT}:${LOGSTASH_SERVICE_PORT}"
+    logging: *logging
+
+  # Kibana
+  kibana:
+    image: docker.elastic.co/kibana/kibana:${KIBANA_IMAGE}
+    container_name: kibana
+    deploy:
+      resources:
+        limits:
+          memory: 100M
+    restart: unless-stopped
+    environment:
+      - SERVERNAME=kibana
+      - ELASTICSEARCH_HOSTS=https://es01:9200
+      - ELASTICSEARCH_USERNAME=kibana_system
+      - ELASTICSEARCH_PASSWORD=${KIBANA_PASSWORD}
+      - ELASTICSEARCH_SSL_CERTIFICATEAUTHORITIES=config/certs/ca/ca.crt
+      - XPACK_SECURITY_ENCRYPTIONKEY=${ENCRYPTION_KEY}
+      - XPACK_ENCRYPTEDSAVEDOBJECTS_ENCRYPTIONKEY=${ENCRYPTION_KEY}
+      - XPACK_REPORTING_ENCRYPTIONKEY=${ENCRYPTION_KEY}
+    volumes:
+    - certs:/usr/share/kibana/config/certs
+    - kibanadata:/usr/share/kibana/data
+    ports:
+    - "${KIBANA_SERVICE_PORT}:${KIBANA_SERVICE_PORT}"
     logging: *logging

@@ -660,3 +660,68 @@ services:
     ports:
       - "9200"
     logging: *logging
+
+  # Elasticsearch
+  elasticsearch:
+    image: ${ELASTICSEARCH_IMAGE}
+    container_name: elasticsearch
+    deploy:
+      resources:
+        limits:
+          memory: 1G
+    restart: unless-stopped
+    environment:
+     - bootstrap.memory_lock=true
+     - xpack.security.enabled=true
+     - xpack.security.http.ssl.enabled=true
+     - xpack.security.http.ssl.key=certs/es01/es01.key
+     - xpack.security.http.ssl.certificate=certs/es01/es01.crt
+     - xpack.security.http.ssl.certificate_authorities=certs/ca/ca.crt
+     - xpack.security.transport.ssl.enabled=true
+     - xpack.security.transport.ssl.key=certs/es01/es01.key
+     - xpack.security.transport.ssl.certificate=certs/es01/es01.crt
+     - xpack.security.transport.ssl.certificate_authorities=certs/ca/ca.crt
+     - xpack.security.transport.ssl.verification_mode=certificate
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+      nofile:
+        soft: 65536
+        hard: 65536
+    ports:
+      - "9200"
+    logging: *logging
+
+  #Logstash
+  logstash:
+    image: ${LOGSTASH_IMAGE}
+    container_name: logstash
+    volumes:
+     - certs:/usr/share/logstash/certs
+     - logstashdata01:/usr/share/logstash/data
+     - "./logstash_ingest_data/:/usr/share/logstash/ingest_data/"
+     - "./logstash.conf:/usr/share/logstash/pipeline/logstash.conf:ro"
+    deploy:
+      resources:
+        limits:
+          memory: 300M
+    restart: unless-stopped
+    ports:
+      - "${LOGSTASH_SERVICE_PORT}:${LOGSTASH_SERVICE_PORT}"
+    logging: *logging
+
+  # Kibana
+  kibana:
+    image: ${KIBANA_IMAGE}
+    container_name: kibana
+    deploy:
+      resources:
+        limits:
+          memory: 100M
+    restart: unless-stopped
+    environment:
+      - ELASTICSEARCH_SSL_CERTIFICATEAUTHORITIES=config/certs/ca/ca.crt
+    ports:
+      - "${KIBANA_SERVICE_PORT}"
+    logging: *logging
