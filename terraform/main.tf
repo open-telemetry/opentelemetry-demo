@@ -9,13 +9,13 @@ terraform {
 
 variable "project_path" {
   type = string
-  default = "C:\\Users\\Pasca\\Documents\\Uni\\Master\\3. Semester\\Enpro\\opentelemetry-demo"
+  default = "/"
   description = "Path to the project"
 }
 
 variable "seperator" {
   type = string
-  default = "\\"
+  default = "/"
   description = "Path seperator"
 }
 
@@ -47,7 +47,7 @@ resource "docker_container" "accountingservice-container" {
     "OTEL_EXPORTER_OTLP_ENDPOINT=http://otel-collector:4317",
     "OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE=Cumulative",
     "OTEL_RESOURCE_ATTRIBUTES=docker.cli.cobra.command_path=docker%20compose",
-    "OTEL_SERVICE_NAME=ccountingservice"
+    "OTEL_SERVICE_NAME=accountingservice"
   ]
 }
 
