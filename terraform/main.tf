@@ -6,7 +6,8 @@ terraform {
     }
   }
 }
-
+# Use these variables to set path in volume blocks of flagd, grafana, otelcol and prometheus containers. 
+# This is necessary because the abspath function does not work correctly on windows
 variable "project_path" {
   type = string
   default = "/"
@@ -15,12 +16,15 @@ variable "project_path" {
 
 variable "seperator" {
   type = string
-  default = "/"
+  default = "\\"
   description = "Path seperator"
 }
 
 provider "docker" {
-  host = "npipe:////.//pipe//docker_engine"
+  # Use on linux or mac
+  host = "unix:///var/run/docker.sock"
+  # Use on windows
+  #host = "npipe:////.//pipe//docker_engine"
 }
 
 
@@ -31,7 +35,7 @@ resource "docker_network" "open-telemetry-network" {
 }
 
 # accounting service container
-resource "docker_container" "accountingservice-container" {
+resource "docker_container" "accountingservice" {
   name       = "accounting-service"
   image      = "ghcr.io/open-telemetry/demo:latest-accountingservice"
   depends_on = [docker_container.otelcol, docker_container.kafka]
@@ -40,19 +44,19 @@ resource "docker_container" "accountingservice-container" {
     name = docker_network.open-telemetry-network.name
   }
   hostname = "accountingservice"
-  memory     = 20
+  memory     = 50
   restart    = "unless-stopped"
   env = [
     "KAFKA_SERVICE_ADDR=kafka:9092",
-    "OTEL_EXPORTER_OTLP_ENDPOINT=http://otel-collector:4317",
+    "OTEL_EXPORTER_OTLP_ENDPOINT=http://otelcol:4318",
     "OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE=Cumulative",
-    "OTEL_RESOURCE_ATTRIBUTES=docker.cli.cobra.command_path=docker%20compose",
+    "OTEL_RESOURCE_ATTRIBUTES=service.namespace=opentelemetry-demo,service.version=1.11.0",
     "OTEL_SERVICE_NAME=accountingservice"
   ]
 }
 
 #ad service container
-resource "docker_container" "adservice-container" {
+resource "docker_container" "adservice" {
   name       = "ad-service"
   image      = "ghcr.io/open-telemetry/demo:latest-adservice"
   depends_on = [docker_container.otelcol, docker_container.flagd]
@@ -72,7 +76,7 @@ resource "docker_container" "adservice-container" {
     "FLAGD_PORT=8013",
     "OTEL_EXPORTER_OTLP_ENDPOINT=http://otelcol:4318",
     "OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE=Cumulative",
-    "OTEL_RESOURCE_ATTRIBUTES=docker.cli.cobra.command_path=docker%20compose",
+    "OTEL_RESOURCE_ATTRIBUTES=service.namespace=opentelemetry-demo,service.version=1.11.0",
     "OTEL_LOGS_EXPORTER=otlp",
     "OTEL_SERVICE_NAME=adservice"
   ]
@@ -80,7 +84,7 @@ resource "docker_container" "adservice-container" {
 
 #cart service container
 
-resource "docker_container" "cartservice-container" {
+resource "docker_container" "cartservice" {
   name       = "cart-service"
   image      = "ghcr.io/open-telemetry/demo:latest-cartservice"
   depends_on = [docker_container.valkey-cart, docker_container.otelcol, docker_container.flagd]
@@ -98,10 +102,9 @@ resource "docker_container" "cartservice-container" {
     "CART_SERVICE_PORT=7070",
     "FLAGD_HOST=flagd",
     "FLAGD_PORT=8013",
-    "REDIS_ADDR=redis-cart:6379",
     "VALKEY_ADDR=valkey-cart:6379",
-    "OTEL_EXPORTER_OTLP_ENDPOINT=http://otelcol:4318",
-    "OTEL_RESOURCE_ATTRIBUTES=docker.cli.cobra.command_path=docker%20compose",
+    "OTEL_EXPORTER_OTLP_ENDPOINT=http://otelcol:4317",
+    "OTEL_RESOURCE_ATTRIBUTES=service.namespace=opentelemetry-demo,service.version=1.11.0",
     "OTEL_SERVICE_NAME=cartservice",
     "ASPNETCORE_URLS=http://*:7070"
   ]
@@ -110,12 +113,12 @@ resource "docker_container" "cartservice-container" {
 
 # checkout service container
 
-resource "docker_container" "checkoutservice-container" {
+resource "docker_container" "checkoutservice" {
   name  = "checkout-service"
   image = "ghcr.io/open-telemetry/demo:latest-checkoutservice"
-  depends_on = [docker_container.cartservice-container,
-    docker_container.currencyservice-container,
-    docker_container.emailservice-container,
+  depends_on = [docker_container.cartservice,
+    docker_container.currencyservice,
+    docker_container.emailservice,
     docker_container.paymentservice,
     docker_container.productcatalogservice,
     docker_container.shippingservice,
@@ -132,19 +135,19 @@ resource "docker_container" "checkoutservice-container" {
     internal = 5050
   }
   env = [
-    "FLAGD_HOST =flagd",
-    "FLAGD_PORT =8013",
+    "FLAGD_HOST=flagd",
+    "FLAGD_PORT=8013",
     "CHECKOUT_SERVICE_PORT=5050",
-    "CART_SERVICE_ADDR=cart-service:7070",
+    "CART_SERVICE_ADDR=cartservice:7070",
     "CURRENCY_SERVICE_ADDR=currencyservice:7001",
     "EMAIL_SERVICE_ADDR=http://emailservice:6060",
     "PAYMENT_SERVICE_ADDR=paymentservice:50051",
     "PRODUCT_CATALOG_SERVICE_ADDR=productcatalogservice:3550",
     "SHIPPING_SERVICE_ADDR=shippingservice:50050",
     "KAFKA_SERVICE_ADDR=kafka:9092",
-    "OTEL_EXPORTER_OTLP_ENDPOINT=http://otelcol:4318",
+    "OTEL_EXPORTER_OTLP_ENDPOINT=http://otelcol:4317",
     "OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE=Cumulative",
-    "OTEL_RESOURCE_ATTRIBUTES=docker.cli.cobra.command_path=docker%20compose",
+    "OTEL_RESOURCE_ATTRIBUTES=opentelemetry-demo,service.version=1.11.0",
     "OTEL_SERVICE_NAME=checkoutservice"
 
   ]
@@ -153,7 +156,7 @@ resource "docker_container" "checkoutservice-container" {
 
 # currency service container
 
-resource "docker_container" "currencyservice-container" {
+resource "docker_container" "currencyservice" {
   name       = "currency-service"
   image      = "ghcr.io/open-telemetry/demo:latest-currencyservice"
   depends_on = [docker_container.otelcol]
@@ -169,16 +172,16 @@ resource "docker_container" "currencyservice-container" {
   }
   env = [
     "CURRENCY_SERVICE_PORT=7001",
-    "VERSION=1.10.0",
+    "VERSION=1.11.0",
     "OTEL_EXPORTER_OTLP_ENDPOINT=http://otelcol:4317",
-    "OTEL_RESOURCE_ATTRIBUTES=docker.cli.cobra.command_path=docker%20compose ,service.name=currencyservice"
+    "OTEL_RESOURCE_ATTRIBUTES=ervice.namespace=opentelemetry-demo,service.version=1.11.0,service.name=currencyservice"
   ]
 
 }
 
 # email service container
 
-resource "docker_container" "emailservice-container" {
+resource "docker_container" "emailservice" {
   name       = "email-service"
   image      = "ghcr.io/open-telemetry/demo:latest-emailservice"
   depends_on = [docker_container.otelcol]
@@ -194,9 +197,9 @@ resource "docker_container" "emailservice-container" {
   }
   env = [
     "APP_ENV=production",
-    "EMAIL_SERVICE_PORT =6060",
+    "EMAIL_SERVICE_PORT=6060",
     "OTEL_EXPORTER_OTLP_TRACES_ENDPOINT=http://otelcol:4318/v1/traces",
-    "OTEL_RESOURCE_ATTRIBUTES=docker.cli.cobra.command_path=docker%20compose",
+    "OTEL_RESOURCE_ATTRIBUTES=service.namespace=opentelemetry-demo,service.version=1.11.0",
     "OTEL_SERVICE_NAME=emailservice"
   ]
 
@@ -204,7 +207,7 @@ resource "docker_container" "emailservice-container" {
 
 # fraud detection service container
 
-resource "docker_container" "frauddetectionservice-container" {
+resource "docker_container" "frauddetectionservice" {
   name       = "frauddetection-service"
   image      = "ghcr.io/open-telemetry/demo:latest-frauddetectionservice"
   depends_on = [docker_container.otelcol, docker_container.kafka]
@@ -223,7 +226,7 @@ resource "docker_container" "frauddetectionservice-container" {
     "OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE=Cumulative",
     "OTEL_INSTRUMENTATION_KAFKA_EXPERIMENTAL_SPAN_ATTRIBUTES=true",
     "OTEL_INSTRUMENTATION_MESSAGING_EXPERIMENTAL_RECEIVE_TELEMETRY_ENABLED=true",
-    "OTEL_RESOURCE_ATTRIBUTES=docker.cli.cobra.command_path=docker%20compose",
+    "OTEL_RESOURCE_ATTRIBUTES=service.namespace=opentelemetry-demo,service.version=1.11.0",
     "OTEL_SERVICE_NAME=frauddetectionservice"
   ]
 
@@ -234,10 +237,10 @@ resource "docker_container" "frauddetectionservice-container" {
 resource "docker_container" "frontend" {
   name  = "frontend"
   image = "ghcr.io/open-telemetry/demo:latest-frontend"
-  depends_on = [docker_container.adservice-container,
-    docker_container.cartservice-container,
-    docker_container.checkoutservice-container,
-    docker_container.currencyservice-container,
+  depends_on = [docker_container.adservice,
+    docker_container.cartservice,
+    docker_container.checkoutservice,
+    docker_container.currencyservice,
     docker_container.productcatalogservice,
     docker_container.quoteservice,
     docker_container.recommendationservice,
@@ -265,9 +268,9 @@ resource "docker_container" "frontend" {
     "PRODUCT_CATALOG_SERVICE_ADDR=productcatalogservice:3550",
     "RECOMMENDATION_SERVICE_ADDR=recommendationservice:9001",
     "SHIPPING_SERVICE_ADDR=shippingservice:50050",
-    "OTEL_EXPORTER_OTLP_ENDPOINT = http://otelcol:4317",
-    "OTEL_RESOURCE_ATTRIBUTES=docker.cli.cobra.command_path=docker%20compose",
-    "ENV_PLATFORM = local",
+    "OTEL_EXPORTER_OTLP_ENDPOINT=http://otelcol:4317",
+    "OTEL_RESOURCE_ATTRIBUTES=service.namespace=opentelemetry-demo,service.version=1.11.0",
+    "ENV_PLATFORM=local",
     "OTEL_SERVICE_NAME=frontend",
     "PUBLIC_OTEL_EXPORTER_OTLP_TRACES_ENDPOINT=http://localhost:8080/otlp-http/v1/traces",
     "OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE=cumulative",
@@ -316,7 +319,7 @@ resource "docker_container" "frontendproxy" {
     "IMAGE_PROVIDER_PORT=8081",
     "OTEL_COLLECTOR_PORT_GRPC=4317",
     "OTEL_COLLECTOR_PORT_HTTP=4318",
-    "OTEL_RESOURCE_ATTRIBUTES=docker.cli.cobra.command_path=docker%20compose",
+    "OTEL_RESOURCE_ATTRIBUTES=service.namespace=opentelemetry-demo,service.version=1.11.0",
     "ENVOY_PORT=8080",
     "FLAGD_HOST=flagd",
     "FLAGD_PORT=8013"
@@ -345,7 +348,7 @@ resource "docker_container" "imageprovider" {
     "OTEL_COLLECTOR_HOST=otelcol",
     "OTEL_COLLECTOR_PORT_GRPC=4317",
     "OTEL_SERVICE_NAME=imageprovider",
-    "OTEL_RESOURCE_ATTRIBUTES=docker.cli.cobra.command_path=docker%20compose"
+    "OTEL_RESOURCE_ATTRIBUTES=service.namespace=opentelemetry-demo,service.version=1.11.0"
   ]
 
 }
@@ -376,7 +379,7 @@ resource "docker_container" "loadgenerator" {
     "LOCUST_BROWSER_TRAFFIC_ENABLED=true",
     "OTEL_EXPORTER_OTLP_ENDPOINT=http://otelcol:4317",
     "OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE=cumulative",
-    "OTEL_RESOURCE_ATTRIBUTES=docker.cli.cobra.command_path=docker%20compose",
+    "OTEL_RESOURCE_ATTRIBUTES=service.namespace=opentelemetry-demo,service.version=1.11.0",
     "OTEL_SERVICE_NAME=loadgenerator",
     "PROTOCOL_BUFFERS_PYTHON_IMPLEMENTATION=python",
     "LOCUST_WEB_HOST=0.0.0.0",
@@ -409,7 +412,7 @@ resource "docker_container" "paymentservice" {
     "FLAGD_PORT=8013",
     "OTEL_EXPORTER_OTLP_ENDPOINT=http://otelcol:4317",
     "OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE=cumulative",
-    "OTEL_RESOURCE_ATTRIBUTES=docker.cli.cobra.command_path=docker%20compose",
+    "OTEL_RESOURCE_ATTRIBUTES=service.namespace=opentelemetry-demo,service.version=1.11.0",
     "OTEL_SERVICE_NAME=paymentservice"
   ]
 
@@ -439,7 +442,7 @@ resource "docker_container" "productcatalogservice" {
     "FLAGD_PORT=8013",
     "OTEL_EXPORTER_OTLP_ENDPOINT=http://otelcol:4317",
     "OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE=cumulative",
-    "OTEL_RESOURCE_ATTRIBUTES=docker.cli.cobra.command_path=docker%20compose",
+    "OTEL_RESOURCE_ATTRIBUTES=service.namespace=opentelemetry-demo,service.version=1.11.0",
     "OTEL_SERVICE_NAME=productcatalogservice",
     "MONGO_USERNAME=mongo",
     "MONGO_PASSWORD=mongo_product_catalog",
@@ -468,7 +471,7 @@ resource "docker_container" "quoteservice" {
     "OTEL_EXPORTER_OTLP_ENDPOINT=http://otelcol:4318",
     "OTEL_PHP_AUTOLOAD_ENABLED=true",
     "QUOTE_SERVICE_PORT=8090",
-    "OTEL_RESOURCE_ATTRIBUTES=docker.cli.cobra.command_path=docker%20compose",
+    "OTEL_RESOURCE_ATTRIBUTES=service.namespace=opentelemetry-demo,service.version=1.11.0",
     "OTEL_SERVICE_NAME=quoteservice",
     "OTEL_PHP_INTERNAL_METRICS_ENABLED=true"
   ]
@@ -496,13 +499,13 @@ resource "docker_container" "recommendationservice" {
   }
   env = [
     "RECOMMENDATION_SERVICE_PORT=9001",
-    "PRODUCT_CATALOG_SERVICE_ADDR=productcatalogservice:50051",
+    "PRODUCT_CATALOG_SERVICE_ADDR=productcatalogservice:3550",
     "FLAGD_HOST=flagd",
     "FLAGD_PORT=8013",
     "OTEL_PYTHON_LOG_CORRELATION=true",
     "OTEL_EXPORTER_OTLP_ENDPOINT=http://otelcol:4317",
     "OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE=cumulative",
-    "OTEL_RESOURCE_ATTRIBUTES=docker.cli.cobra.command_path=docker%20compose",
+    "OTEL_RESOURCE_ATTRIBUTES=service.namespace=opentelemetry-demo,service.version=1.11.0",
     "OTEL_SERVICE_NAME=recommendationservice",
     "PROTOCOL_BUFFERS_PYTHON_IMPLEMENTATION=python"
   ]
@@ -529,7 +532,7 @@ resource "docker_container" "shippingservice" {
     "SHIPPING_SERVICE_PORT=50050",
     "QUOTE_SERVICE_ADDR=http://quoteservice:8090",
     "OTEL_EXPORTER_OTLP_ENDPOINT=http://otelcol:4317",
-    "OTEL_RESOURCE_ATTRIBUTES=docker.cli.cobra.command_path=docker%20compose",
+    "OTEL_RESOURCE_ATTRIBUTES=service.namespace=opentelemetry-demo,service.version=1.11.0",
     "OTEL_SERVICE_NAME=shippingservice"
   ]
 }
@@ -545,7 +548,7 @@ resource "docker_container" "flagd" {
   env = [
     "FLAGD_OTEL_COLLECTOR_URI=otelcol:4317",
     "FLAGD_METRICS_EXPORTER=otel",
-    "OTEL_RESOURCE_ATTRIBUTES=docker.cli.cobra.command_path=docker%20compose",
+    "OTEL_RESOURCE_ATTRIBUTES=service.namespace=opentelemetry-demo,service.version=1.11.0",
     "OTEL_SERVICE_NAME=flagd"
   ]
   network_mode = "bridge"
@@ -561,7 +564,7 @@ resource "docker_container" "flagd" {
     internal = 8013
   }
   volumes {
-    host_path      = "${var.project_path}${var.seperator}src${var.seperator}flagd"
+    host_path      = abspath("../src/flagd")
     container_path = "/etc/flagd"
   }
 
@@ -585,7 +588,7 @@ resource "docker_container" "kafka" {
     "KAFKA_ADVERTISED_LISTENERS=PLAINTEXT://kafka:9092",
     "OTEL_EXPORTER_OTLP_ENDPOINT=http://otelcol:4318",
     "OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE=cumulative",
-    "OTEL_RESOURCE_ATTRIBUTES=docker.cli.cobra.command_path=docker%20compose",
+    "OTEL_RESOURCE_ATTRIBUTES=service.namespace=opentelemetry-demo,service.version=1.11.0",
     "OTEL_SERVICE_NAME=kafka",
     "KAFKA_HEAP_OPTS=-Xmx400m -Xms400m"
   ]
@@ -691,12 +694,12 @@ resource "docker_container" "grafana" {
   restart = "unless-stopped"
   env     = ["GF_INSTALL_PLUGINS=grafana-opensearch-datasource"]
   volumes {
-    host_path      = "${var.project_path}${var.seperator}src${var.seperator}grafana${var.seperator}grafana.ini"
+    host_path      = abspath("../src/grafana/grafana.ini")
     container_path = "/etc/grafana/grafana.ini"
 
   }
   volumes {
-    host_path      = "${var.project_path}${var.seperator}src${var.seperator}grafana${var.seperator}provisioning${var.seperator}"
+    host_path      = abspath("../src/grafana/provisioning/")
     container_path = "/etc/grafana/provisioning/"
   }
   ports {
@@ -708,23 +711,25 @@ resource "docker_container" "grafana" {
 # opentelemetry collector container
 
 resource "docker_container" "otelcol" {
-  name       = "otelcol"
+  name       = "otel-col"
   image      = "otel/opentelemetry-collector-contrib:0.102.1"
   depends_on = [docker_container.jaeger]
   network_mode = "bridge"
   networks_advanced {
     name = docker_network.open-telemetry-network.name
   }
+  hostname = "otelcol"
   memory     = 200
   restart    = "unless-stopped"
   command    = ["--config=/etc/otelcol-config.yml", "--config=/etc/otelcol-config-extras.yml"
   ]
+  user = "0:0"
   volumes {
-    host_path      = "${var.project_path}${var.seperator}src${var.seperator}otelcollector${var.seperator}otelcol-config.yml"
+    host_path      = abspath("../src/otelcollector/otelcol-config.yml")
     container_path = "/etc/otelcol-config.yml"
   }
   volumes {
-    host_path      = "${var.project_path}${var.seperator}src${var.seperator}otelcollector${var.seperator}otelcol-config-extras.yml"
+    host_path      = abspath("../src/otelcollector/otelcol-config-extras.yml")
     container_path = "/etc/otelcol-config-extras.yml"
   }
   volumes {
@@ -765,7 +770,7 @@ resource "docker_container" "prometheus" {
     name = docker_network.open-telemetry-network.name
   }
   volumes {
-    host_path      = "${var.project_path}${var.seperator}src${var.seperator}prometheus${var.seperator}prometheus-config.yaml"
+    host_path      = abspath("../src/prometheus/prometheus-config.yaml")
     container_path = "/etc/prometheus/prometheus-config.yaml"
   }
   memory  = 300
