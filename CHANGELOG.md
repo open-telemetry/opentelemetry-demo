@@ -13,6 +13,8 @@ the release.
   ([#1707](https://github.com/open-telemetry/opentelemetry-demo/pull/1707))
 * [chore] Fix gen-proto for accountingservice
   ([#1709](https://github.com/open-telemetry/opentelemetry-demo/pull/1709))
+* [chore] Fix binding for host's volume mount
+  ([#1709](https://github.com/open-telemetry/opentelemetry-demo/pull/1728))
 
 ## 1.11.1
 
