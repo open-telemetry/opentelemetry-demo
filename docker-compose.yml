@@ -29,7 +29,7 @@ services:
     deploy:
       resources:
         limits:
-          memory: 50M
+          memory: 120M
     restart: unless-stopped
     environment:
       - KAFKA_SERVICE_ADDR
@@ -630,6 +630,7 @@ services:
       resources:
         limits:
           memory: 50M
+    restart: unless-stopped
     environment:
       - FLAGD_OTEL_COLLECTOR_URI=${OTEL_COLLECTOR_HOST}:${OTEL_COLLECTOR_PORT_GRPC}
       - FLAGD_METRICS_EXPORTER=otel
@@ -782,6 +783,7 @@ services:
     command: [ "--config=/etc/otelcol-config.yml", "--config=/etc/otelcol-config-extras.yml" ]
     user: 0:0
     volumes:
+      - ${HOST_FILESYSTEM}:/hostfs:ro
       - ${DOCKER_SOCK}:/var/run/docker.sock:ro
       - ${OTEL_COLLECTOR_CONFIG}:/etc/otelcol-config.yml
       - ${OTEL_COLLECTOR_CONFIG_EXTRAS}:/etc/otelcol-config-extras.yml
@@ -793,6 +795,7 @@ services:
     logging: *logging
     environment:
       - ENVOY_PORT
+      - HOST_FILESYSTEM
       - OTEL_COLLECTOR_HOST
       - OTEL_COLLECTOR_PORT_GRPC
       - OTEL_COLLECTOR_PORT_HTTP
@@ -859,3 +862,4 @@ services:
       interval: 10s
       timeout: 5s
       retries: 3
+
