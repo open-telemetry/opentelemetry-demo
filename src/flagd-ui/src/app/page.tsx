@@ -1,0 +1,14 @@
+// Copyright The OpenTelemetry Authors
+// SPDX-License-Identifier: Apache-2.0
+"use client";
+import React from "react";
+import Link from "next/link";
+import BasicView from "../components/basic/BasicView";
+
+export default function Home() {
+  return (
+    <div className="app">
+      <BasicView />
+    </div>
+  );
+}
