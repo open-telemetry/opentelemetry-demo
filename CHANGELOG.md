@@ -9,6 +9,13 @@ the release.
 
 * [accountingservice] allow running the container with non root user
   ([#1692](https://github.com/open-telemetry/opentelemetry-demo/pull/1692))
+* [chore] Add yamllint to `make all`
+  ([#1707](https://github.com/open-telemetry/opentelemetry-demo/pull/1707))
+* [chore] Fix gen-proto for accountingservice
+  ([#1709](https://github.com/open-telemetry/opentelemetry-demo/pull/1709))
+* [accountingservice] bump OpenTelemetry .NET Automatic Instrumentation
+  to 1.8.0 together with other dependencies
+  ([#1727](https://github.com/open-telemetry/opentelemetry-demo/pull/1727))
 
 ## 1.11.1
 
