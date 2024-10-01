@@ -12,8 +12,8 @@ interface IProps {
   product: Product;
 }
 
-async function getImageWithHeaders(url: RequestInfo, headers: Record<string, string>) {
-  const res = await fetch(url, { headers });
+async function getImageWithHeaders(requestInfo: Request) {
+  const res = await fetch(requestInfo);
   return await res.blob();
 }
 
@@ -33,9 +33,16 @@ const ProductCard = ({
   const [imageSrc, setImageSrc] = useState<string>('');
 
   useEffect(() => {
-    const requestInfo = new Request('/images/products/' + picture);
-    const headers = { 'x-envoy-fault-delay-request': imageSlowLoad.toString(), 'Cache-Control': 'no-cache' };
-    getImageWithHeaders(requestInfo, headers).then(blob => {
+    const headers = new Headers();
+    headers.append('x-envoy-fault-delay-request', imageSlowLoad.toString());
+    headers.append('Cache-Control', 'no-cache')
+    const requestInit = {
+      method: "GET",
+      headers: headers
+    };
+    const image_url ='/images/products/' + picture
+    const requestInfo = new Request(image_url, requestInit);
+    getImageWithHeaders(requestInfo).then(blob => {
       setImageSrc(URL.createObjectURL(blob));
     });
   }, [imageSlowLoad, picture]);
