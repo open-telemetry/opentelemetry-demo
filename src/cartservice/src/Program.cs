@@ -82,7 +82,8 @@ var app = builder.Build();
 var ValkeyCartStore = (ValkeyCartStore) app.Services.GetRequiredService<ICartStore>();
 app.Services.GetRequiredService<StackExchangeRedisInstrumentation>().AddConnection(ValkeyCartStore.GetConnection());
 
-app.MapGrpcService<CartService>();
+app.MapGrpcService<CartService>()
+   .AddInterceptor(new ServiceNameInterceptor());
 app.MapGrpcHealthChecksService();
 
 app.MapGet("/", async context =>
