@@ -96,6 +96,7 @@ public final class AdService {
     server =
         ServerBuilder.forPort(port)
             .addService(new AdServiceImpl())
+            .intercept(new ServiceNameInterceptor())
             .addService(healthMgr.getHealthService())
             .build()
             .start();
