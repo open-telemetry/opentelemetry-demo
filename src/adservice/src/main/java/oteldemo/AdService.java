@@ -47,7 +47,6 @@ import dev.openfeature.sdk.MutableContext;
 import dev.openfeature.sdk.OpenFeatureAPI;
 import java.util.UUID;
 
-
 public final class AdService {
 
   private static final Logger logger = LogManager.getLogger(AdService.class);
@@ -62,49 +61,44 @@ public final class AdService {
   private static final Tracer tracer = GlobalOpenTelemetry.getTracer("adservice");
   private static final Meter meter = GlobalOpenTelemetry.getMeter("adservice");
 
-  private static final LongCounter adRequestsCounter =
-      meter
-          .counterBuilder("app.ads.ad_requests")
-          .setDescription("Counts ad requests by request and response type")
-          .build();
+  private static final LongCounter adRequestsCounter = meter
+      .counterBuilder("app.ads.ad_requests")
+      .setDescription("Counts ad requests by request and response type")
+      .build();
 
-  private static final AttributeKey<String> adRequestTypeKey =
-      AttributeKey.stringKey("app.ads.ad_request_type");
-  private static final AttributeKey<String> adResponseTypeKey =
-      AttributeKey.stringKey("app.ads.ad_response_type");
+  private static final AttributeKey<String> adRequestTypeKey = AttributeKey.stringKey("app.ads.ad_request_type");
+  private static final AttributeKey<String> adResponseTypeKey = AttributeKey.stringKey("app.ads.ad_response_type");
 
   private void start() throws IOException {
-    int port =
-        Integer.parseInt(
-            Optional.ofNullable(System.getenv("AD_SERVICE_PORT"))
-                .orElseThrow(
-                    () ->
-                        new IllegalStateException(
-                            "environment vars: AD_SERVICE_PORT must not be null")));
+    int port = Integer.parseInt(
+        Optional.ofNullable(System.getenv("AD_SERVICE_PORT"))
+            .orElseThrow(
+                () -> new IllegalStateException(
+                    "environment vars: AD_SERVICE_PORT must not be null")));
     healthMgr = new HealthStatusManager();
 
     // Create a flagd instance with OpenTelemetry
-    FlagdOptions options =
-        FlagdOptions.builder()
-            .withGlobalTelemetry(true)
-            .build();
+    FlagdOptions options = FlagdOptions.builder()
+        .withGlobalTelemetry(true)
+        .build();
 
     FlagdProvider flagdProvider = new FlagdProvider(options);
     // Set flagd as the OpenFeature Provider
     OpenFeatureAPI.getInstance().setProvider(flagdProvider);
-  
-    server =
-        ServerBuilder.forPort(port)
-            .addService(new AdServiceImpl())
-            .addService(healthMgr.getHealthService())
-            .build()
-            .start();
+
+    server = ServerBuilder.forPort(port)
+        .addService(new AdServiceImpl())
+        .intercept(new ServiceNameInterceptor())
+        .addService(healthMgr.getHealthService())
+        .build()
+        .start();
     logger.info("Ad service started, listening on " + port);
     Runtime.getRuntime()
         .addShutdownHook(
             new Thread(
                 () -> {
-                  // Use stderr here since the logger may have been reset by its JVM shutdown hook.
+                  // Use stderr here since the logger may have been reset by its JVM shutdown
+                  // hook.
                   System.err.println(
                       "*** shutting down gRPC ads server since JVM is shutting down");
                   AdService.this.stop();
@@ -131,19 +125,21 @@ public final class AdService {
   }
 
   private static class AdServiceImpl extends oteldemo.AdServiceGrpc.AdServiceImplBase {
-    
+
     private static final String ADSERVICE_FAILURE = "adServiceFailure";
     private static final String ADSERVICE_MANUAL_GC_FEATURE_FLAG = "adServiceManualGc";
     private static final String ADSERVICE_HIGH_CPU_FEATURE_FLAG = "adServiceHighCpu";
     private static final Client ffClient = OpenFeatureAPI.getInstance().getClient();
-    
-    private AdServiceImpl() {}
+
+    private AdServiceImpl() {
+    }
 
     /**
      * Retrieves ads based on context provided in the request {@code AdRequest}.
      *
-     * @param req the request containing context.
-     * @param responseObserver the stream observer which gets notified with the value of {@code
+     * @param req              the request containing context.
+     * @param responseObserver the stream observer which gets notified with the
+     *                         value of {@code
      *     AdResponse}
      */
     @Override
@@ -243,7 +239,8 @@ public final class AdService {
     // create and start a new span manually
     Span span = tracer.spanBuilder("getRandomAds").startSpan();
 
-    // put the span into context, so if any child span is started the parent will be set properly
+    // put the span into context, so if any child span is started the parent will be
+    // set properly
     try (Scope ignored = span.makeCurrent()) {
 
       Collection<Ad> allAds = adsMap.values();
@@ -263,7 +260,10 @@ public final class AdService {
     return service;
   }
 
-  /** Await termination on the main thread since the grpc library uses daemon threads. */
+  /**
+   * Await termination on the main thread since the grpc library uses daemon
+   * threads.
+   */
   private void blockUntilShutdown() throws InterruptedException {
     if (server != null) {
       server.awaitTermination();
@@ -271,49 +271,43 @@ public final class AdService {
   }
 
   private static ImmutableListMultimap<String, Ad> createAdsMap() {
-    Ad binoculars =
-        Ad.newBuilder()
-            .setRedirectUrl("/product/2ZYFJ3GM2N")
-            .setText("Roof Binoculars for sale. 50% off.")
-            .build();
-    Ad explorerTelescope =
-        Ad.newBuilder()
-            .setRedirectUrl("/product/66VCHSJNUP")
-            .setText("Starsense Explorer Refractor Telescope for sale. 20% off.")
-            .build();
-    Ad colorImager =
-        Ad.newBuilder()
-            .setRedirectUrl("/product/0PUK6V6EV0")
-            .setText("Solar System Color Imager for sale. 30% off.")
-            .build();
-    Ad opticalTube =
-        Ad.newBuilder()
-            .setRedirectUrl("/product/9SIQT8TOJO")
-            .setText("Optical Tube Assembly for sale. 10% off.")
-            .build();
-    Ad travelTelescope =
-        Ad.newBuilder()
-            .setRedirectUrl("/product/1YMWWN1N4O")
-            .setText(
-                "Eclipsmart Travel Refractor Telescope for sale. Buy one, get second kit for free")
-            .build();
-    Ad solarFilter =
-        Ad.newBuilder()
-            .setRedirectUrl("/product/6E92ZMYYFZ")
-            .setText("Solar Filter for sale. Buy two, get third one for free")
-            .build();
-    Ad cleaningKit =
-        Ad.newBuilder()
-            .setRedirectUrl("/product/L9ECAV7KIM")
-            .setText("Lens Cleaning Kit for sale. Buy one, get second one for free")
-            .build();
+    Ad binoculars = Ad.newBuilder()
+        .setRedirectUrl("/product/2ZYFJ3GM2N")
+        .setText("Roof Binoculars for sale. 50% off.")
+        .build();
+    Ad explorerTelescope = Ad.newBuilder()
+        .setRedirectUrl("/product/66VCHSJNUP")
+        .setText("Starsense Explorer Refractor Telescope for sale. 20% off.")
+        .build();
+    Ad colorImager = Ad.newBuilder()
+        .setRedirectUrl("/product/0PUK6V6EV0")
+        .setText("Solar System Color Imager for sale. 30% off.")
+        .build();
+    Ad opticalTube = Ad.newBuilder()
+        .setRedirectUrl("/product/9SIQT8TOJO")
+        .setText("Optical Tube Assembly for sale. 10% off.")
+        .build();
+    Ad travelTelescope = Ad.newBuilder()
+        .setRedirectUrl("/product/1YMWWN1N4O")
+        .setText(
+            "Eclipsmart Travel Refractor Telescope for sale. Buy one, get second kit for free")
+        .build();
+    Ad solarFilter = Ad.newBuilder()
+        .setRedirectUrl("/product/6E92ZMYYFZ")
+        .setText("Solar Filter for sale. Buy two, get third one for free")
+        .build();
+    Ad cleaningKit = Ad.newBuilder()
+        .setRedirectUrl("/product/L9ECAV7KIM")
+        .setText("Lens Cleaning Kit for sale. Buy one, get second one for free")
+        .build();
     return ImmutableListMultimap.<String, Ad>builder()
         .putAll("binoculars", binoculars)
         .putAll("telescopes", explorerTelescope)
         .putAll("accessories", colorImager, solarFilter, cleaningKit)
         .putAll("assembly", opticalTube)
         .putAll("travel", travelTelescope)
-        // Keep the books category free of ads to ensure the random code branch is tested
+        // Keep the books category free of ads to ensure the random code branch is
+        // tested
         .build();
   }
 
