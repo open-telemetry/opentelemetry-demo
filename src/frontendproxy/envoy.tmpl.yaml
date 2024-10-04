@@ -49,6 +49,8 @@ static_resources:
                           route: { cluster: imageprovider, prefix_rewrite: "/" }
                         - match: { prefix: "/flagservice/" }
                           route: { cluster: flagservice, prefix_rewrite: "/", timeout: 0s }
+                        - match: { prefix: "/feature" }
+                          route: { cluster: flagd-ui }
                         - match: { prefix: "/" }
                           route: { cluster: frontend }
                 http_filters:
@@ -130,6 +132,18 @@ static_resources:
                     socket_address:
                       address: ${FLAGD_HOST}
                       port_value: ${FLAGD_PORT}
+    - name: flagd-ui
+      type: STRICT_DNS
+      lb_policy: ROUND_ROBIN
+      load_assignment:
+        cluster_name: flagd-ui
+        endpoints:
+          - lb_endpoints:
+              - endpoint:
+                  address:
+                    socket_address:
+                      address: ${FLAGD_UI_HOST}
+                      port_value: ${FLAGD_UI_PORT}
     - name: loadgen
       type: STRICT_DNS
       lb_policy: ROUND_ROBIN

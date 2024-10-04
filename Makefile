@@ -134,7 +134,7 @@ start:
 	@echo "Go to http://localhost:8080/jaeger/ui for the Jaeger UI."
 	@echo "Go to http://localhost:8080/grafana/ for the Grafana UI."
 	@echo "Go to http://localhost:8080/loadgen/ for the Load Generator UI."
-	@echo "Go to https://opentelemetry.io/docs/demo/feature-flags/ to learn how to change feature flags."
+	@echo "Go to http://localhost:8080/feature/ to to change feature flags."
 
 .PHONY: start-minimal
 start-minimal:

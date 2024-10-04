@@ -340,6 +340,8 @@ services:
       - ENVOY_PORT
       - FLAGD_HOST
       - FLAGD_PORT
+      - FLAGD_UI_HOST
+      - FLAGD_UI_PORT
     depends_on:
       frontend:
         condition: service_started
@@ -348,6 +350,8 @@ services:
       jaeger:
         condition: service_started
       grafana:
+        condition: service_started
+      flagd-ui:
         condition: service_started
 
   # Imageprovider
@@ -596,6 +600,33 @@ services:
       - ./src/flagd:/etc/flagd
     logging:
       *logging
+  
+  #Flagd-ui, UI for configuring the feature flagging service
+  flagd-ui:
+    image: ${IMAGE_NAME}:${DEMO_VERSION}-flagd-ui
+    container_name: flagd-ui
+    build:
+      context: ./
+      dockerfile: ${FLAGD_UI_DOCKERFILE}
+    deploy:
+      resources:
+        limits:
+          memory: 150M
+    restart: unless-stopped
+    environment:
+      - OTEL_EXPORTER_OTLP_ENDPOINT=http://${OTEL_COLLECTOR_HOST}:${OTEL_COLLECTOR_PORT_HTTP}
+      - OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE
+      - OTEL_RESOURCE_ATTRIBUTES
+      - OTEL_SERVICE_NAME=flagd-ui
+    ports:
+      - "${FLAGD_UI_PORT}"
+    depends_on:
+      otelcol:
+        condition: service_started
+      flagd:
+        condition: service_started
+    volumes:
+      - ./src/flagd:/app/data
 
   # Kafka used by Checkout, Accounting, and Fraud Detection services
   kafka:
@@ -696,7 +727,7 @@ services:
     command: [ "--config=/etc/otelcol-config.yml", "--config=/etc/otelcol-config-extras.yml" ]
     user: 0:0
     volumes:
-      - ${HOST_FILESYSTEM}:/hostfs:ro
+      - ${HOST_FILESYSTEM}:/hostfs:ro,rslave
       - ${DOCKER_SOCK}:/var/run/docker.sock:ro
       - ${OTEL_COLLECTOR_CONFIG}:/etc/otelcol-config.yml
       - ${OTEL_COLLECTOR_CONFIG_EXTRAS}:/etc/otelcol-config-extras.yml
@@ -704,7 +735,10 @@ services:
       - "${OTEL_COLLECTOR_PORT_GRPC}"
       - "${OTEL_COLLECTOR_PORT_HTTP}"
     depends_on:
-      - jaeger
+      jaeger:
+        condition: service_started
+      opensearch:
+        condition: service_healthy
     logging: *logging
     environment:
       - ENVOY_PORT
@@ -764,4 +798,10 @@ services:
         hard: 65536
     ports:
       - "9200"
+    healthcheck:
+      test: curl -s http://localhost:9200/_cluster/health | grep -q '"status":"green"'
+      start_period: 10s
+      interval: 5s
+      timeout: 10s
+      retries: 10
     logging: *logging
