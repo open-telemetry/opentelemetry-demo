@@ -1,6 +1,8 @@
 # Copyright The OpenTelemetry Authors
 # SPDX-License-Identifier: Apache-2.0
 
+AttributeNetPeerName = "net.peer.name"
+
 require "ostruct"
 require "pony"
 require "sinatra"
@@ -20,6 +22,13 @@ post "/send_order_confirmation" do
 
   # get the current auto-instrumented span
   current_span = OpenTelemetry::Trace.current_span
+
+    # check for 'X-Service-Name' and add it to the span
+    service_name = request.env['HTTP_X_SERVICE_NAME']  # Extracting 'X-Service-Name' from the headers
+    if service_name
+      current_span.add_attributes({ AttributeNetPeerName => service_name })
+    end
+
   current_span.add_attributes({
     "app.order.id" => data.order.order_id,
   })
