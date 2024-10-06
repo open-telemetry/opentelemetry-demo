@@ -7,7 +7,7 @@ import (
 	"reflect"
 	"testing"
 
-	pb "github.com/open-telemetry/opentelemetry-demo/src/checkoutservice/genproto/oteldemo"
+	pb "github.com/edgedelta/opentelemetry-demo/src/checkoutservice/genproto/oteldemo"
 )
 
 func mmc(u int64, n int32, c string) *pb.Money { return &pb.Money{Units: u, Nanos: n, CurrencyCode: c} }
