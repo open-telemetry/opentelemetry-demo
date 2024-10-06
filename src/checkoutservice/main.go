@@ -42,14 +42,22 @@ import (
 	"google.golang.org/grpc/status"
 	"google.golang.org/protobuf/proto"
 
-	pb "github.com/open-telemetry/opentelemetry-demo/src/checkoutservice/genproto/oteldemo"
-	"github.com/open-telemetry/opentelemetry-demo/src/checkoutservice/kafka"
-	"github.com/open-telemetry/opentelemetry-demo/src/checkoutservice/money"
+	pb "github.com/edgedelta/opentelemetry-demo/src/checkoutservice/genproto/oteldemo"
+	"github.com/edgedelta/opentelemetry-demo/src/checkoutservice/kafka"
+	"github.com/edgedelta/opentelemetry-demo/src/checkoutservice/money"
 )
 
 //go:generate go install google.golang.org/protobuf/cmd/protoc-gen-go
 //go:generate go install google.golang.org/grpc/cmd/protoc-gen-go-grpc
 //go:generate protoc --go_out=./ --go-grpc_out=./ --proto_path=../../pb ../../pb/demo.proto
+
+const (
+	AttributeNetPeerName      = "net.peer.name"
+	CartServiceName           = "opentelemetry-demo-cartservice"
+	ProductCatalogServiceName = "opentelemetry-demo-productcatalogservice"
+	ShippingServiceName       = "opentelemetry-demo-shippingservice"
+	CurrencyServiceName       = "opentelemetry-demo-currencyservice"
+)
 
 var log *logrus.Logger
 var tracer trace.Tracer
@@ -334,22 +342,25 @@ type orderPrep struct {
 
 func (cs *checkoutService) prepareOrderItemsAndShippingQuoteFromCart(ctx context.Context, userID, userCurrency string, address *pb.Address) (orderPrep, error) {
 
-	ctx, span := tracer.Start(ctx, "prepareOrderItemsAndShippingQuoteFromCart")
-	defer span.End()
+	ctx, parentSpan := tracer.Start(ctx, "prepareOrderItemsAndShippingQuoteFromCart")
+	defer parentSpan.End()
 
 	var out orderPrep
 	cartItems, err := cs.getUserCart(ctx, userID)
 	if err != nil {
 		return out, fmt.Errorf("cart failure: %+v", err)
 	}
+
 	orderItems, err := cs.prepOrderItems(ctx, cartItems, userCurrency)
 	if err != nil {
 		return out, fmt.Errorf("failed to prepare order: %+v", err)
 	}
+
 	shippingUSD, err := cs.quoteShipping(ctx, address, cartItems)
 	if err != nil {
 		return out, fmt.Errorf("shipping quote failure: %+v", err)
 	}
+
 	shippingPrice, err := cs.convertCurrency(ctx, shippingUSD, userCurrency)
 	if err != nil {
 		return out, fmt.Errorf("failed to convert shipping cost to currency: %+v", err)
@@ -365,7 +376,7 @@ func (cs *checkoutService) prepareOrderItemsAndShippingQuoteFromCart(ctx context
 	}
 	shippingCostFloat, _ := strconv.ParseFloat(fmt.Sprintf("%d.%02d", shippingPrice.GetUnits(), shippingPrice.GetNanos()/1000000000), 64)
 
-	span.SetAttributes(
+	parentSpan.SetAttributes(
 		attribute.Float64("app.shipping.amount", shippingCostFloat),
 		attribute.Int("app.cart.items.count", int(totalCart)),
 		attribute.Int("app.order.items.count", len(orderItems)),
@@ -386,10 +397,14 @@ func mustCreateClient(svcAddr string) *grpc.ClientConn {
 }
 
 func (cs *checkoutService) quoteShipping(ctx context.Context, address *pb.Address, items []*pb.CartItem) (*pb.Money, error) {
+	ctxShipping, spanShipping := tracer.Start(ctx, "CallShippingService", trace.WithAttributes(
+		attribute.String(AttributeNetPeerName, ShippingServiceName),
+	))
 	shippingQuote, err := cs.shippingSvcClient.
-		GetQuote(ctx, &pb.GetQuoteRequest{
+		GetQuote(ctxShipping, &pb.GetQuoteRequest{
 			Address: address,
 			Items:   items})
+	spanShipping.End()
 	if err != nil {
 		return nil, fmt.Errorf("failed to get shipping quote: %+v", err)
 	}
@@ -397,7 +412,11 @@ func (cs *checkoutService) quoteShipping(ctx context.Context, address *pb.Addres
 }
 
 func (cs *checkoutService) getUserCart(ctx context.Context, userID string) ([]*pb.CartItem, error) {
-	cart, err := cs.cartSvcClient.GetCart(ctx, &pb.GetCartRequest{UserId: userID})
+	ctxCart, spanCart := tracer.Start(ctx, "CallCartService", trace.WithAttributes(
+		attribute.String(AttributeNetPeerName, CartServiceName),
+	))
+	cart, err := cs.cartSvcClient.GetCart(ctxCart, &pb.GetCartRequest{UserId: userID})
+	spanCart.End()
 	if err != nil {
 		return nil, fmt.Errorf("failed to get user cart during checkout: %+v", err)
 	}
@@ -415,11 +434,20 @@ func (cs *checkoutService) prepOrderItems(ctx context.Context, items []*pb.CartI
 	out := make([]*pb.OrderItem, len(items))
 
 	for i, item := range items {
-		product, err := cs.productCatalogSvcClient.GetProduct(ctx, &pb.GetProductRequest{Id: item.GetProductId()})
+		ctxProduct, spanProduct := tracer.Start(ctx, "CallProductService", trace.WithAttributes(
+			attribute.String(AttributeNetPeerName, ProductCatalogServiceName),
+		))
+		product, err := cs.productCatalogSvcClient.GetProduct(ctxProduct, &pb.GetProductRequest{Id: item.GetProductId()})
+		spanProduct.End()
 		if err != nil {
 			return nil, fmt.Errorf("failed to get product #%q", item.GetProductId())
 		}
-		price, err := cs.convertCurrency(ctx, product.GetPriceUsd(), userCurrency)
+
+		ctxCurrency, spanCurrency := tracer.Start(ctx, "CallCurrencyService", trace.WithAttributes(
+			attribute.String(AttributeNetPeerName, CurrencyServiceName),
+		))
+		price, err := cs.convertCurrency(ctxCurrency, product.GetPriceUsd(), userCurrency)
+		spanCurrency.End()
 		if err != nil {
 			return nil, fmt.Errorf("failed to convert price of %q to %s", item.GetProductId(), userCurrency)
 		}
@@ -431,9 +459,13 @@ func (cs *checkoutService) prepOrderItems(ctx context.Context, items []*pb.CartI
 }
 
 func (cs *checkoutService) convertCurrency(ctx context.Context, from *pb.Money, toCurrency string) (*pb.Money, error) {
-	result, err := cs.currencySvcClient.Convert(ctx, &pb.CurrencyConversionRequest{
+	ctxCurrency, spanCurrency := tracer.Start(ctx, "CallCurrencyService", trace.WithAttributes(
+		attribute.String(AttributeNetPeerName, CurrencyServiceName),
+	))
+	result, err := cs.currencySvcClient.Convert(ctxCurrency, &pb.CurrencyConversionRequest{
 		From:   from,
 		ToCode: toCurrency})
+	spanCurrency.End()
 	if err != nil {
 		return nil, fmt.Errorf("failed to convert currency: %+v", err)
 	}
@@ -608,4 +640,8 @@ func (cs *checkoutService) getIntFeatureFlag(ctx context.Context, featureFlagNam
 	)
 
 	return int(featureFlagValue)
+}
+
+func getServiceName() string {
+	return os.Getenv("OTEL_SERVICE_NAME")
 }

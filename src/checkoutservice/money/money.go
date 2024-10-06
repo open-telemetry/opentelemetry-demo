@@ -5,7 +5,7 @@ package money
 import (
 	"errors"
 
-	pb "github.com/open-telemetry/opentelemetry-demo/src/checkoutservice/genproto/oteldemo"
+	pb "github.com/edgedelta/opentelemetry-demo/src/checkoutservice/genproto/oteldemo"
 )
 
 const (
