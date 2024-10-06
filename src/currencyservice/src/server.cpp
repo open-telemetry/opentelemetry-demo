@@ -45,6 +45,8 @@ namespace nostd       = opentelemetry::nostd;
 
 namespace
 {
+  const std::string AttributeNetPeerName = "net.peer.name";
+
   std::unordered_map<std::string, double> currency_conversion
   {
     {"EUR", 1.0},
@@ -124,6 +126,16 @@ class CurrencyService final : public oteldemo::CurrencyService::Service
                                        {SemanticConventions::kRpcGrpcStatusCode, 0}},
                                       options);
     auto scope = get_tracer("currencyservice")->WithActiveSpan(span);
+
+    // Extract 'X-Service-Name' from the client request and add to span attributes
+    auto metadata = context->client_metadata();
+    auto service_name_it = metadata.find("X-Service-Name");
+
+    if (service_name_it != metadata.end()) {
+        // If the service name is found in the metadata
+        std::string service_name = service_name_it->second.data();
+        span->SetAttribute(AttributeNetPeerName, service_name);
+    } 
 
     span->AddEvent("Processing supported currencies request");
 
