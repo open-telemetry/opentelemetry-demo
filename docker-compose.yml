@@ -704,7 +704,10 @@ services:
       - "${OTEL_COLLECTOR_PORT_GRPC}"
       - "${OTEL_COLLECTOR_PORT_HTTP}"
     depends_on:
-      - jaeger
+      jaeger:
+        condition: service_started
+      opensearch:
+        condition: service_healthy
     logging: *logging
     environment:
       - ENVOY_PORT
@@ -764,4 +767,10 @@ services:
         hard: 65536
     ports:
       - "9200"
+    healthcheck:
+      test: curl -s http://localhost:9200/_cluster/health | grep -q '"status":"green"'
+      start_period: 10s
+      interval: 5s
+      timeout: 10s
+      retries: 10
     logging: *logging

@@ -13,6 +13,8 @@ the release.
   ([#1707](https://github.com/open-telemetry/opentelemetry-demo/pull/1707))
 * [chore] Fix gen-proto for accountingservice
   ([#1709](https://github.com/open-telemetry/opentelemetry-demo/pull/1709))
+* [chore] Add depends on to otelcol to wait on healthy opensearch
+  ([#1724](https://github.com/open-telemetry/opentelemetry-demo/pull/1724))
 * [accountingservice] bump OpenTelemetry .NET Automatic Instrumentation
   to 1.8.0 together with other dependencies
   ([#1727](https://github.com/open-telemetry/opentelemetry-demo/pull/1727))
