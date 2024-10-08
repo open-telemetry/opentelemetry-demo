@@ -16,6 +16,12 @@ const InstrumentationMiddleware = (handler: NextApiHandler): NextApiHandler => {
 
     const span = trace.getSpan(context.active()) as Span;
 
+    // Extract X-Service-Name from headers
+    const serviceName = request.headers['x-service-name'];
+    if (serviceName) {
+        span.setAttribute('net.peer.name', serviceName);
+    }
+
     let httpStatus = 200;
     try {
       await runWithSpan(span, async () => handler(request, response));
