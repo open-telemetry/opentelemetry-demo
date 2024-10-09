@@ -72,6 +72,12 @@ logging.info("Instrumentation complete")
 api.set_provider(FlagdProvider(host=os.environ.get('FLAGD_HOST', 'flagd'), port=os.environ.get('FLAGD_PORT', 8013)))
 api.add_hooks([TracingHook()])
 
+# Get the service name from the environment variable
+SERVICE_NAME = os.getenv("OTEL_SERVICE_NAME", "opentelemetry-demo-loadgenerator")
+headers = {"X-Service-Name": SERVICE_NAME}
+
+tracer = trace.get_tracer("loadgenerator")
+
 def get_flagd_value(FlagName):
     # Initialize OpenFeature
     client = api.get_client()
@@ -112,32 +118,54 @@ class WebsiteUser(HttpUser):
 
     @task(10)
     def browse_product(self):
-        self.client.get("/api/products/" + random.choice(products))
+        # net.peer.name
+        span = tracer.start_span("product")
+        span.set_attribute("net.peer.name", "opentelemetry-demo-productcatalogservice")
+        self.client.get("/api/products/" + random.choice(products), headers=headers)
+        span.end()
 
     @task(3)
     def get_recommendations(self):
         params = {
             "productIds": [random.choice(products)],
         }
-        self.client.get("/api/recommendations", params=params)
+        # net.peer.name
+        span = tracer.start_span("recommendations")
+        span.set_attribute("net.peer.name", "opentelemetry-demo-recommendationservice")
+        self.client.get("/api/recommendations", params=params, headers=headers)
+        span.end()
 
     @task(3)
     def get_ads(self):
         params = {
             "contextKeys": [random.choice(categories)],
         }
-        self.client.get("/api/data/", params=params)
+        # net.peer.name
+        span = tracer.start_span("ads")
+        span.set_attribute("net.peer.name", "opentelemetry-demo-adservice")
+        self.client.get("/api/data/", params=params, headers=headers)
+        span.end()
 
     @task(3)
     def view_cart(self):
-        self.client.get("/api/cart")
+        # net.peer.name
+        span = tracer.start_span("cart")
+        span.set_attribute("net.peer.name", "opentelemetry-demo-cartservice")
+        self.client.get("/api/cart", headers=headers)
+        span.end()
 
     @task(2)
     def add_to_cart(self, user=""):
         if user == "":
             user = str(uuid.uuid1())
         product = random.choice(products)
-        self.client.get("/api/products/" + product)
+        
+        # net.peer.name
+        span = tracer.start_span("cart")
+        span.set_attribute("net.peer.name", "opentelemetry-demo-productcatalogservice")
+        self.client.get("/api/products/" + product, headers=headers)
+        span.end()
+        
         cart_item = {
             "item": {
                 "productId": product,
@@ -145,7 +173,11 @@ class WebsiteUser(HttpUser):
             },
             "userId": user,
         }
-        self.client.post("/api/cart", json=cart_item)
+        
+        span = tracer.start_span("cart")
+        span.set_attribute("net.peer.name", "opentelemetry-demo-cartservice")
+        self.client.post("/api/cart", json=cart_item, headers=headers)
+        span.end()
 
     @task(1)
     def checkout(self):
@@ -154,7 +186,11 @@ class WebsiteUser(HttpUser):
         self.add_to_cart(user=user)
         checkout_person = random.choice(people)
         checkout_person["userId"] = user
-        self.client.post("/api/checkout", json=checkout_person)
+        # net.peer.name
+        span = tracer.start_span("checkout")
+        span.set_attribute("net.peer.name", "opentelemetry-demo-checkoutservice")
+        self.client.post("/api/checkout", json=checkout_person, headers=headers)
+        span.end()
 
     @task(1)
     def checkout_multi(self):
@@ -164,7 +200,11 @@ class WebsiteUser(HttpUser):
             self.add_to_cart(user=user)
         checkout_person = random.choice(people)
         checkout_person["userId"] = user
-        self.client.post("/api/checkout", json=checkout_person)
+        # net.peer.name
+        span = tracer.start_span("checkout")
+        span.set_attribute("net.peer.name", "opentelemetry-demo-checkoutservice")
+        self.client.post("/api/checkout", json=checkout_person, headers=headers)
+        span.end()
 
     @task(5)
     def flood_home(self):
