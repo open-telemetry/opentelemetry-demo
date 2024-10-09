@@ -6,7 +6,7 @@ import InstrumentationMiddleware from '../../utils/telemetry/InstrumentationMidd
 import ShippingGateway from '../../gateways/rpc/Shipping.gateway';
 import { Address, CartItem, Empty, Money } from '../../protos/demo';
 import CurrencyGateway from '../../gateways/rpc/Currency.gateway';
-import { context, trace, Exception } from '@opentelemetry/api';
+import { context, trace, Exception, SpanStatusCode } from '@opentelemetry/api';
 
 type TResponse = Money | Empty;
 
@@ -31,6 +31,7 @@ const handler = async ({ method, query }: NextApiRequest, res: NextApiResponse<T
         return res.status(200).json(cost!);
       } catch (error) {
         parentSpan.recordException(error as Exception);
+        parentSpan.setStatus({ code: SpanStatusCode.ERROR });
         return res.status(500).json({ error: 'Internal Server Error' });
       } finally {
         parentSpan.end();

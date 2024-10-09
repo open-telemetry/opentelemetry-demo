@@ -7,7 +7,7 @@ import CheckoutGateway from '../../gateways/rpc/Checkout.gateway';
 import { Empty, PlaceOrderRequest } from '../../protos/demo';
 import { IProductCheckoutItem, IProductCheckout } from '../../types/Cart';
 import ProductCatalogService from '../../services/ProductCatalog.service';
-import { context, Exception, trace } from '@opentelemetry/api';
+import { context, Exception, trace, SpanStatusCode } from '@opentelemetry/api';
 
 type TResponse = IProductCheckout | Empty;
 
@@ -50,6 +50,7 @@ const handler = async ({ method, body, query }: NextApiRequest, res: NextApiResp
         return res.status(200).json({ ...order, items: productList });
     } catch (error) {
       parentSpan.recordException(error as Exception);
+      parentSpan.setStatus({ code: SpanStatusCode.ERROR });
       return res.status(500).json({ error: 'Internal Server Error' });
     } finally {
       parentSpan.end();

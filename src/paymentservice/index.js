@@ -12,6 +12,13 @@ async function chargeServiceHandler(call, callback) {
   const span = opentelemetry.trace.getActiveSpan();
 
   try {
+
+    const clientServiceName = call.metadata.get('x-service-name');
+    // Conditionally set net.peer.name only if X-Service-Name is found
+    if (clientServiceName) {
+      span.setAttribute('net.peer.name', clientServiceName);
+    }
+
     const amount = call.request.amount
     span.setAttributes({
       'app.payment.amount': parseFloat(`${amount.units}.${amount.nanos}`)

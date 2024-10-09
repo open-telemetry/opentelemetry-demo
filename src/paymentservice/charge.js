@@ -16,6 +16,13 @@ const transactionsCounter = meter.createCounter('app.payment.transactions')
 module.exports.charge = async request => {
   const span = tracer.startSpan('charge');
 
+  // Extract X-Service-Name from client request
+  const clientServiceName = request.metadata && request.metadata['x-service-name'];
+  // Conditionally set net.peer.name if X-Service-Name is found
+  if (clientServiceName) {
+    span.setAttribute('net.peer.name', clientServiceName);
+  }
+
   await OpenFeature.setProviderAndWait(flagProvider);
   if (await OpenFeature.getClient().getBooleanValue("paymentServiceFailure", false)) {
     throw new Error("PaymentService Fail Feature Flag Enabled");
