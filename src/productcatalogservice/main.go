@@ -33,14 +33,15 @@ import (
 	sdktrace "go.opentelemetry.io/otel/sdk/trace"
 	"go.opentelemetry.io/otel/trace"
 
+	pb "github.com/edgedelta/opentelemetry-demo/src/productcatalogservice/genproto/oteldemo"
 	otelhooks "github.com/open-feature/go-sdk-contrib/hooks/open-telemetry/pkg"
 	flagd "github.com/open-feature/go-sdk-contrib/providers/flagd/pkg"
 	"github.com/open-feature/go-sdk/openfeature"
-	pb "github.com/opentelemetry/opentelemetry-demo/src/productcatalogservice/genproto/oteldemo"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/credentials/insecure"
 	healthpb "google.golang.org/grpc/health/grpc_health_v1"
+	"google.golang.org/grpc/metadata"
 	"google.golang.org/grpc/reflection"
 	"google.golang.org/grpc/status"
 	"google.golang.org/protobuf/encoding/protojson"
@@ -240,6 +241,17 @@ func (p *productCatalog) ListProducts(ctx context.Context, req *pb.Empty) (*pb.L
 	span.SetAttributes(
 		attribute.Int("app.products.count", len(catalog)),
 	)
+
+	// Extract X-Service-Name from the metadata (client request headers)
+	md, ok := metadata.FromIncomingContext(ctx)
+	if ok {
+		clientServiceName := md.Get("x-service-name")
+		if len(clientServiceName) > 0 && clientServiceName[0] != "" {
+			// Add net.peer.name as the client service name if found
+			span.SetAttributes(attribute.String("net.peer.name", clientServiceName[0]))
+		}
+	}
+
 	return &pb.ListProductsResponse{Products: catalog}, nil
 }
 
@@ -248,6 +260,16 @@ func (p *productCatalog) GetProduct(ctx context.Context, req *pb.GetProductReque
 	span.SetAttributes(
 		attribute.String("app.product.id", req.Id),
 	)
+
+	// Extract X-Service-Name from the metadata (client request headers)
+	md, ok := metadata.FromIncomingContext(ctx)
+	if ok {
+		clientServiceName := md.Get("x-service-name")
+		if len(clientServiceName) > 0 && clientServiceName[0] != "" {
+			// Add net.peer.name as the client service name if found
+			span.SetAttributes(attribute.String("net.peer.name", clientServiceName[0]))
+		}
+	}
 
 	// GetProduct will fail on a specific product when feature flag is enabled
 	if p.checkProductFailure(ctx, req.Id) {
@@ -293,6 +315,17 @@ func (p *productCatalog) SearchProducts(ctx context.Context, req *pb.SearchProdu
 	span.SetAttributes(
 		attribute.Int("app.products_search.count", len(result)),
 	)
+
+	// Extract X-Service-Name from the metadata (client request headers)
+	md, ok := metadata.FromIncomingContext(ctx)
+	if ok {
+		clientServiceName := md.Get("x-service-name")
+		if len(clientServiceName) > 0 && clientServiceName[0] != "" {
+			// Add net.peer.name as the client service name if found
+			span.SetAttributes(attribute.String("net.peer.name", clientServiceName[0]))
+		}
+	}
+
 	return &pb.SearchProductsResponse{Results: result}, nil
 }
 
