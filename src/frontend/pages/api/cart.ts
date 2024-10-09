@@ -7,7 +7,7 @@ import { AddItemRequest, Empty } from '../../protos/demo';
 import ProductCatalogService from '../../services/ProductCatalog.service';
 import { IProductCart, IProductCartItem } from '../../types/Cart';
 import InstrumentationMiddleware from '../../utils/telemetry/InstrumentationMiddleware';
-import { context, Exception, trace } from '@opentelemetry/api';
+import { context, Exception, SpanStatusCode, trace } from '@opentelemetry/api';
 
 type TResponse = IProductCart | Empty;
 
@@ -45,6 +45,7 @@ const handler: NextApiHandler<TResponse> = async ({ method, body, query }, res) 
         return res.status(200).json({ userId, items: productList });
       } catch (error) {
         parentSpan.recordException(error as Exception);
+        parentSpan.setStatus({ code: SpanStatusCode.ERROR });
         return res.status(500).json({ error: 'Internal Server Error' });
       } finally {
         parentSpan.end();
@@ -65,6 +66,7 @@ const handler: NextApiHandler<TResponse> = async ({ method, body, query }, res) 
         return res.status(200).json(cart);
       } catch (error) {
         parentSpan.recordException(error as Exception);
+        parentSpan.setStatus({ code: SpanStatusCode.ERROR });
         return res.status(500).json({ error: 'Internal Server Error' });
       } finally {
         parentSpan.end();
@@ -84,6 +86,7 @@ const handler: NextApiHandler<TResponse> = async ({ method, body, query }, res) 
         return res.status(204).send('');
       } catch (error) {
         parentSpan.recordException(error as Exception);
+        parentSpan.setStatus({ code: SpanStatusCode.ERROR });
         return res.status(500).send('');
       } finally {
         parentSpan.end();
