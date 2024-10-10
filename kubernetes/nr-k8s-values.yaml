@@ -64,7 +64,7 @@ global:
   cluster: otel-community-demo
 
   # -- The license key for your New Relic Account. This will be preferred configuration option if both `licenseKey` and `customSecret` are specified.
-  licenseKey: e1fdf569974401ae9d9bf44c95ad4db9ed3fNRAL
+  licenseKey: [insert license key here]
   # -- The license key for your New Relic Account. This will be preferred configuration option if both `insightsKey` and `customSecret` are specified.
   insightsKey: ""
   # -- Name of the Secret object where the license key is stored
