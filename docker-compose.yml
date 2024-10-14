@@ -748,7 +748,7 @@ services:
     command: [ "--config=/etc/otelcol-config.yml", "--config=/etc/otelcol-config-extras.yml" ]
     user: 0:0
     volumes:
-      - ${HOST_FILESYSTEM}:/hostfs:ro
+      - ${HOST_FILESYSTEM}:/hostfs:ro,rslave
       - ${DOCKER_SOCK}:/var/run/docker.sock:ro
       - ${OTEL_COLLECTOR_CONFIG}:/etc/otelcol-config.yml
       - ${OTEL_COLLECTOR_CONFIG_EXTRAS}:/etc/otelcol-config-extras.yml
@@ -756,7 +756,10 @@ services:
       - "${OTEL_COLLECTOR_PORT_GRPC}"
       - "${OTEL_COLLECTOR_PORT_HTTP}"
     depends_on:
-      - jaeger
+      jaeger:
+        condition: service_started
+      opensearch:
+        condition: service_healthy
     logging: *logging
     environment:
       - ENVOY_PORT
@@ -816,4 +819,10 @@ services:
         hard: 65536
     ports:
       - "9200"
+    healthcheck:
+      test: curl -s http://localhost:9200/_cluster/health | grep '"status":"green"'
+      start_period: 10s
+      interval: 5s
+      timeout: 10s
+      retries: 10
     logging: *logging
