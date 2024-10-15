@@ -111,6 +111,10 @@ jobs:
             tag_suffix: shippingservice
             context: ./
             setup-qemu: true
+          - file: ./src/flagd-ui/Dockerfile
+            tag_suffix: flagdui
+            context: ./
+            setup-qemu: true
           - file: ./test/tracetesting/Dockerfile
             tag_suffix: traceBasedTests
             context: ./

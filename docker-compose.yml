@@ -340,6 +340,8 @@ services:
       - ENVOY_PORT
       - FLAGD_HOST
       - FLAGD_PORT
+      - FLAGD_UI_HOST
+      - FLAGD_UI_PORT
     depends_on:
       frontend:
         condition: service_started
@@ -348,6 +350,8 @@ services:
       jaeger:
         condition: service_started
       grafana:
+        condition: service_started
+      flagd-ui:
         condition: service_started
 
   # Imageprovider
@@ -596,6 +600,33 @@ services:
       - ./src/flagd:/etc/flagd
     logging:
       *logging
+
+  # Flagd-ui, UI for configuring the feature flagging service
+  flagd-ui:
+    image: ${IMAGE_NAME}:${DEMO_VERSION}-flagd-ui
+    container_name: flagd-ui
+    build:
+      context: ./
+      dockerfile: ${FLAGD_UI_DOCKERFILE}
+    deploy:
+      resources:
+        limits:
+          memory: 150M
+    restart: unless-stopped
+    environment:
+      - OTEL_EXPORTER_OTLP_ENDPOINT=http://${OTEL_COLLECTOR_HOST}:${OTEL_COLLECTOR_PORT_HTTP}
+      - OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE
+      - OTEL_RESOURCE_ATTRIBUTES
+      - OTEL_SERVICE_NAME=flagd-ui
+    ports:
+      - "${FLAGD_UI_PORT}"
+    depends_on:
+      otelcol:
+        condition: service_started
+      flagd:
+        condition: service_started
+    volumes:
+      - ./src/flagd:/app/data
 
   # Kafka used by Checkout, Accounting, and Fraud Detection services
   kafka:

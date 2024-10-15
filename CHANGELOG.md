@@ -23,6 +23,8 @@ the release.
 * [frontend] fix imageSlowLoad headers not applied
   to 1.8.0 together with other dependencies
   ([#1733](https://github.com/open-telemetry/opentelemetry-demo/pull/1733))
+* [flagd-ui] Add UI for managing Flagd feature flags
+  ([#1725](https://github.com/open-telemetry/opentelemetry-demo/pull/1725))
 
 ## 1.11.1
 
