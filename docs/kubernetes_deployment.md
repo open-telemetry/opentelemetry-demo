@@ -62,7 +62,7 @@ helm upgrade --install newrelic-otel open-telemetry/opentelemetry-demo --version
 ```
 
 
-You can also enable New Relic browser agent to the frontend service. New Relic browser agents are interoperable with OpenTelemetry services as they support W3C headers.
+You can also enable New Relic browser agent to the frontend service. New Relic browser agent is interoperable with OpenTelemetry services as it supports W3C headers.
 
 ```console
 helm upgrade --install newrelic-otel open-telemetry/opentelemetry-demo --version 0.32.0 --values ./helm/values.yaml --values ./helm/frontend_service.yaml -n opentelemetry-demo
