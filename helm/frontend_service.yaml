@@ -1,0 +1,44 @@
+components:
+  frontend:
+    imageOverride:
+      repository: newrelic/otel-demo
+      tag: "1.11.0-frontend"
+      pullPolicy: Always
+    env:
+      - name: NEW_RELIC_APP_NAME
+        value: "frontend-web-nr"
+      - name: FRONTEND_PORT
+        value: "8080"
+      - name: FRONTEND_ADDR
+        value: :8080
+      - name: AD_SERVICE_ADDR
+        value: '{{ include "otel-demo.name" . }}-adservice:8080'
+      - name: CART_SERVICE_ADDR
+        value: '{{ include "otel-demo.name" . }}-cartservice:8080'
+      - name: CHECKOUT_SERVICE_ADDR
+        value: '{{ include "otel-demo.name" . }}-checkoutservice:8080'
+      - name: CURRENCY_SERVICE_ADDR
+        value: '{{ include "otel-demo.name" . }}-currencyservice:8080'
+      - name: PRODUCT_CATALOG_SERVICE_ADDR
+        value: '{{ include "otel-demo.name" . }}-productcatalogservice:8080'
+      - name: RECOMMENDATION_SERVICE_ADDR
+        value: '{{ include "otel-demo.name" . }}-recommendationservice:8080'
+      - name: SHIPPING_SERVICE_ADDR
+        value: '{{ include "otel-demo.name" . }}-shippingservice:8080'
+      - name: FLAGD_HOST
+        value: '{{ include "otel-demo.name" . }}-flagd'
+      - name: FLAGD_PORT
+        value: "8013"
+      - name: OTEL_COLLECTOR_HOST
+        value: $(OTEL_COLLECTOR_NAME)
+      - name: OTEL_EXPORTER_OTLP_ENDPOINT
+        value: http://$(OTEL_COLLECTOR_NAME):4317
+      - name: WEB_OTEL_SERVICE_NAME
+        value: frontend-web
+      - name: PUBLIC_OTEL_EXPORTER_OTLP_TRACES_ENDPOINT
+        value: http://localhost:8080/otlp-http/v1/traces
+      - name: NEW_RELIC_LICENSE_KEY
+        valueFrom:
+          secretKeyRef:
+            name: newrelic-license-key
+            key: license-key
