@@ -52,6 +52,7 @@ Have a suggestion, or running into problems with our fork? Please let us know by
 
 ### Contributors
 * [Brad Schmitt](https://github.com/bpschmitt)
+* [Mir Ansar](https://github.com/miransar)
 * [Daniel Kim](https://github.com/lazyplatypus)
 * [Krzysztof Spikowski](https://github.com/greenszpila)
 * [Ugur Türkarslan](https://github.com/utr1903)
