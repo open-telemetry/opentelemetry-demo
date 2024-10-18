@@ -15,6 +15,8 @@ the release.
   ([#1709](https://github.com/open-telemetry/opentelemetry-demo/pull/1709))
 * [chore] Add depends on to otelcol to wait on healthy opensearch
   ([#1724](https://github.com/open-telemetry/opentelemetry-demo/pull/1724))
+* [flagd-ui] Add UI for managing Flagd feature flags
+  ([#1725](https://github.com/open-telemetry/opentelemetry-demo/pull/1725))
 * [accountingservice] bump OpenTelemetry .NET Automatic Instrumentation
   to 1.8.0 together with other dependencies
   ([#1727](https://github.com/open-telemetry/opentelemetry-demo/pull/1727))
@@ -23,8 +25,8 @@ the release.
 * [frontend] fix imageSlowLoad headers not applied
   to 1.8.0 together with other dependencies
   ([#1733](https://github.com/open-telemetry/opentelemetry-demo/pull/1733))
-* [flagd-ui] Add UI for managing Flagd feature flags
-  ([#1725](https://github.com/open-telemetry/opentelemetry-demo/pull/1725))
+* [chore] Move opensearch image version to .env file
+  ([#1743](https://github.com/open-telemetry/opentelemetry-demo/pull/1743))
 
 ## 1.11.1
 
