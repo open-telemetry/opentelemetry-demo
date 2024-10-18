@@ -33,8 +33,18 @@ public class CartService : Oteldemo.CartService.CartServiceBase
         activity?.SetTag("app.product.id", request.Item.ProductId);
         activity?.SetTag("app.product.quantity", request.Item.Quantity);
 
-        await _cartStore.AddItemAsync(request.UserId, request.Item.ProductId, request.Item.Quantity);
-        return Empty;
+        try
+        {
+            await _cartStore.AddItemAsync(request.UserId, request.Item.ProductId, request.Item.Quantity);
+
+            return Empty;
+        }
+        catch (RpcException ex)
+        {
+            activity?.RecordException(ex);
+            activity?.SetStatus(ActivityStatusCode.Error, ex.Message);
+            throw;
+        }
     }
 
     public override async Task<Cart> GetCart(GetCartRequest request, ServerCallContext context)
