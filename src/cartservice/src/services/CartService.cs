@@ -43,15 +43,24 @@ public class CartService : Oteldemo.CartService.CartServiceBase
         activity?.SetTag("app.user.id", request.UserId);
         activity?.AddEvent(new("Fetch cart"));
 
-        var cart = await _cartStore.GetCartAsync(request.UserId);
-        var totalCart = 0;
-        foreach (var item in cart.Items)
+        try
         {
-            totalCart += item.Quantity;
-        }
-        activity?.SetTag("app.cart.items.count", totalCart);
+            var cart = await _cartStore.GetCartAsync(request.UserId);
+            var totalCart = 0;
+            foreach (var item in cart.Items)
+            {
+                totalCart += item.Quantity;
+            }
+            activity?.SetTag("app.cart.items.count", totalCart);
 
-        return cart;
+            return cart;
+        }
+        catch (RpcException ex)
+        {
+            activity?.RecordException(ex);
+            activity?.SetStatus(ActivityStatusCode.Error, ex.Message);
+            throw;
+        }
     }
 
     public override async Task<Empty> EmptyCart(EmptyCartRequest request, ServerCallContext context)
