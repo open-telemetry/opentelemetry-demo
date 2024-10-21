@@ -25,6 +25,8 @@ the release.
   ([#1733](https://github.com/open-telemetry/opentelemetry-demo/pull/1733))
 * [flagd-ui] Add UI for managing Flagd feature flags
   ([#1725](https://github.com/open-telemetry/opentelemetry-demo/pull/1725))
+* [cartservice] Update cart service to fail when cartServiceFailure is enabled
+  ([#1748](https://github.com/open-telemetry/opentelemetry-demo/pull/1748))
 
 ## 1.11.1
 
