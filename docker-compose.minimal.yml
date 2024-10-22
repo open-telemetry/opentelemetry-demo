@@ -657,7 +657,7 @@ services:
     ports:
       - "9200"
     healthcheck:
-      test: curl -s http://localhost:9200/_cluster/health | grep '"status":"green"'
+      test: curl -s http://localhost:9200/_cluster/health | grep -E '"status":"(green|yellow)"'
       start_period: 10s
       interval: 5s
       timeout: 10s
