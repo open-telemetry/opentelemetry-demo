@@ -29,6 +29,8 @@ the release.
   ([#1743](https://github.com/open-telemetry/opentelemetry-demo/pull/1743))
 * [cartservice] Propagate cartservice exceptions
   ([#1744](https://github.com/open-telemetry/opentelemetry-demo/pull/1744))
+* [cartservice] Update cart service to fail when cartServiceFailure is enabled
+  ([#1748](https://github.com/open-telemetry/opentelemetry-demo/pull/1748))
 
 ## 1.11.1
 
