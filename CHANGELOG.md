@@ -27,6 +27,8 @@ the release.
   ([#1733](https://github.com/open-telemetry/opentelemetry-demo/pull/1733))
 * [chore] Move opensearch image version to .env file
   ([#1743](https://github.com/open-telemetry/opentelemetry-demo/pull/1743))
+* [cartservice] Update cart service to fail when cartServiceFailure is enabled
+  ([#1748](https://github.com/open-telemetry/opentelemetry-demo/pull/1748))
 
 ## 1.11.1
 

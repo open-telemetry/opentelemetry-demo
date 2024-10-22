@@ -62,8 +62,7 @@ public class CartService : Oteldemo.CartService.CartServiceBase
 
         try
         {
-            // Throw 1/10 of the time to simulate a failure when the feature flag is enabled
-            if (await _featureFlagHelper.GetBooleanValue("cartServiceFailure", false) && random.Next(10) == 0)
+            if (await _featureFlagHelper.GetBooleanValueAsync("cartServiceFailure", false))
             {
                 await _badCartStore.EmptyCartAsync(request.UserId);
             }
