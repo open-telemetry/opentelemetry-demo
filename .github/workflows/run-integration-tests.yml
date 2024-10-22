@@ -9,7 +9,7 @@ on:
 
 jobs:
   run_tests:
-    runs-on: ubuntu-latest
+    runs-on: otel-linux-arm64
     name: "Run CI"
     if: github.event.review.state == 'APPROVED'
     steps:
