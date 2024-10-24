@@ -17,4 +17,4 @@ jobs:
         uses: actions/checkout@v4
       - name: run tracetesting
         run: |
-          make build && make run-tracetesting
+          make build && docker system prune -f && make run-tracetesting
