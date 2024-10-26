@@ -1,7 +1,9 @@
 # Copyright The OpenTelemetry Authors
 # SPDX-License-Identifier: Apache-2.0
 name: Dependabot auto-merge
-on: pull_request
+on:
+  pull_request:
+      branches: [ main ]
 permissions:
   pull-requests: write
   contents: write
@@ -9,6 +11,7 @@ jobs:
   dependabot:
     runs-on: ubuntu-latest
     if: github.event.pull_request.user.login == 'dependabot[bot]' && github.repository == 'charlietle/opentelemetry-demo'
+    needs: [build_images, markdownlint, yamllint, misspell, markdownlinkcheck, sanity, checklicense]
     steps:
       - name: Dependabot metadata
         id: dependabot-metadata
