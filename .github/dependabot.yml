@@ -10,7 +10,7 @@ updates:
       - "infra"
   - package-ecosystem: "gomod"
     directories:
-      - "/src/checkoutservice"
+      # - "/src/checkoutservice"
       - "/src/productcatalogservice"
     open-pull-requests-limit: 20
     schedule:
