@@ -1484,8 +1484,8 @@ github.com/open-feature/go-sdk v1.13.1 h1:RJbS70eyi7Jd3Zm5bFnaahNKNDXn+RAVnctpGu
 github.com/open-feature/go-sdk v1.13.1/go.mod h1:O8r4mhgeRIsjJ0ZBXlnE0BtbT/79W44gQceR7K8KYgo=
 github.com/open-feature/go-sdk-contrib/hooks/open-telemetry v0.3.4 h1:1+YZs4PjvIX2vGjg3FenuXJpN8m83jiTAdfudUjAQuU=
 github.com/open-feature/go-sdk-contrib/hooks/open-telemetry v0.3.4/go.mod h1:QiuIhaGRUFNmW+w1q0OaYLm92lfm//aJr4uTPQonSGQ=
-github.com/open-feature/go-sdk-contrib/providers/flagd v0.2.1 h1:srxsMTsEW5FAS025ga1YzzFqOspuu5Bg+tkDgzxtfZk=
-github.com/open-feature/go-sdk-contrib/providers/flagd v0.2.1/go.mod h1:3lSJDWZsnPRkitNnJviKXbgKhTIoyae25NUVQnGc3/Y=
+github.com/open-feature/go-sdk-contrib/providers/flagd v0.2.2 h1:NjmlUXgmBsdOs9QxL2Xxs23rU9mPwBU5ERWnteVRGkU=
+github.com/open-feature/go-sdk-contrib/providers/flagd v0.2.2/go.mod h1:wZuvLv2D8ft0/v7srIb3EEfG984spKi4dwNWYLIDQbY=
 github.com/phpdave11/gofpdf v1.4.2/go.mod h1:zpO6xFn9yxo3YLyMvW8HcKWVdbNqgIfOOp2dXMnm1mY=
 github.com/phpdave11/gofpdi v1.0.12/go.mod h1:vBmVV0Do6hSBHC8uKUQ71JGW+ZGQq74llk/7bXwjDoI=
 github.com/phpdave11/gofpdi v1.0.13/go.mod h1:vBmVV0Do6hSBHC8uKUQ71JGW+ZGQq74llk/7bXwjDoI=
