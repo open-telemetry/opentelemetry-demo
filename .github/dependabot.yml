@@ -8,3 +8,12 @@ updates:
       interval: "daily"
     labels:
       - "infra"
+  - package-ecosystem: "gomod"
+    directories:
+      - "/src/checkoutservice"
+      - "/src/productcatalogservice"
+    groups:
+      go-production-dependencies:
+        dependency-type: "production"
+    schedule:
+      interval: "daily"
