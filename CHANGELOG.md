@@ -20,8 +20,6 @@ the release.
 * [accountingservice] bump OpenTelemetry .NET Automatic Instrumentation
   to 1.8.0 together with other dependencies
   ([#1727](https://github.com/open-telemetry/opentelemetry-demo/pull/1727))
-* [chore] Fix binding for host's volume mount
-  ([#1728](https://github.com/open-telemetry/opentelemetry-demo/pull/1728))
 * [frontend] fix imageSlowLoad headers not applied
   to 1.8.0 together with other dependencies
   ([#1733](https://github.com/open-telemetry/opentelemetry-demo/pull/1733))
