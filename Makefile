@@ -149,8 +149,8 @@ start-minimal:
 
 .PHONY: stop
 stop:
-	$(DOCKER_COMPOSE_CMD) down --remove-orphans --volumes
-	$(DOCKER_COMPOSE_CMD) -f docker-compose-tests.yml down --remove-orphans --volumes
+	$(DOCKER_COMPOSE_CMD) $(DOCKER_COMPOSE_ENV) down --remove-orphans --volumes
+	$(DOCKER_COMPOSE_CMD) $(DOCKER_COMPOSE_ENV) -f docker-compose-tests.yml down --remove-orphans --volumes
 	@echo ""
 	@echo "OpenTelemetry Demo is stopped."
 
@@ -164,10 +164,10 @@ ifdef SERVICE
 endif
 
 ifdef service
-	$(DOCKER_COMPOSE_CMD) stop $(service)
-	$(DOCKER_COMPOSE_CMD) rm --force $(service)
-	$(DOCKER_COMPOSE_CMD) create $(service)
-	$(DOCKER_COMPOSE_CMD) start $(service)
+	$(DOCKER_COMPOSE_CMD) $(DOCKER_COMPOSE_ENV) stop $(service)
+	$(DOCKER_COMPOSE_CMD) $(DOCKER_COMPOSE_ENV) rm --force $(service)
+	$(DOCKER_COMPOSE_CMD) $(DOCKER_COMPOSE_ENV) create $(service)
+	$(DOCKER_COMPOSE_CMD) $(DOCKER_COMPOSE_ENV) start $(service)
 else
 	@echo "Please provide a service name using `service=[service name]` or `SERVICE=[service name]`"
 endif
@@ -182,11 +182,11 @@ ifdef SERVICE
 endif
 
 ifdef service
-	$(DOCKER_COMPOSE_CMD) build $(service)
-	$(DOCKER_COMPOSE_CMD) stop $(service)
-	$(DOCKER_COMPOSE_CMD) rm --force $(service)
-	$(DOCKER_COMPOSE_CMD) create $(service)
-	$(DOCKER_COMPOSE_CMD) start $(service)
+	$(DOCKER_COMPOSE_CMD) $(DOCKER_COMPOSE_ENV) build $(service)
+	$(DOCKER_COMPOSE_CMD) $(DOCKER_COMPOSE_ENV) stop $(service)
+	$(DOCKER_COMPOSE_CMD) $(DOCKER_COMPOSE_ENV) rm --force $(service)
+	$(DOCKER_COMPOSE_CMD) $(DOCKER_COMPOSE_ENV) create $(service)
+	$(DOCKER_COMPOSE_CMD) $(DOCKER_COMPOSE_ENV) start $(service)
 else
 	@echo "Please provide a service name using `service=[service name]` or `SERVICE=[service name]`"
 endif
