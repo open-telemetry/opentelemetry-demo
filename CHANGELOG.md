@@ -23,8 +23,6 @@ the release.
 * [frontend] fix imageSlowLoad headers not applied
   to 1.8.0 together with other dependencies
   ([#1733](https://github.com/open-telemetry/opentelemetry-demo/pull/1733))
-* [chore] Move opensearch image version to .env file
-  ([#1743](https://github.com/open-telemetry/opentelemetry-demo/pull/1743))
 * [cartservice] Propagate cartservice exceptions
   ([#1744](https://github.com/open-telemetry/opentelemetry-demo/pull/1744))
 * [cartservice] Update cart service to fail when cartServiceFailure is enabled
