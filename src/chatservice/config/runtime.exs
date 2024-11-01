@@ -36,6 +36,9 @@ if System.get_env("PHX_SERVER") do
 end
 
 if config_env() == :prod do
+  config :chatservice, ChatServiceWeb.Endpoint,
+    static_url: [path: "/chat"]
+
   database_url =
     System.get_env("DATABASE_URL") ||
       raise """

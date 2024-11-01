@@ -59,6 +59,7 @@ const removeEventHandlers = (channel) => {
 };
 
 form.addEventListener('submit', (event) => {
+  console.log("form submitted");
   event.preventDefault();
 
   const name = nameInput.value;
