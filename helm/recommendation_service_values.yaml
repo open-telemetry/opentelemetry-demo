@@ -2,7 +2,7 @@ components:
   recommendationService:
     imageOverride:
       repository: newrelic/otel-demo
-      tag: "1.9.0-recommendationservice-nr"
+      tag: "1.11.0-recommendationservice"
       pullPolicy: Always
     env:
       - name: RECOMMENDATION_SERVICE_PORT
