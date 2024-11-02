@@ -56,8 +56,16 @@ helm upgrade --install newrelic-otel open-telemetry/opentelemetry-demo --version
 
 Optionally, you can enable a version of the `recommendationService` that is instrumented with New Relic APM instead of OpenTelemetry.  New Relic APM instrumented services are interoperable with OpenTelemetry instrumented services as New Relic supports W3C trace context.
 
+
 ```console
 helm upgrade --install newrelic-otel open-telemetry/opentelemetry-demo --version 0.32.0 --values ./helm/values.yaml --values ./helm/recommendation_service_values.yaml -n opentelemetry-demo
+```
+
+
+You can also enable New Relic browser agent to the frontend service. New Relic browser agent is interoperable with OpenTelemetry services as it supports W3C headers.
+
+```console
+helm upgrade --install newrelic-otel open-telemetry/opentelemetry-demo --version 0.32.0 --values ./helm/values.yaml --values ./helm/frontend_service.yaml -n opentelemetry-demo
 ```
 
 ## Install Prometheus Exporters (Optional)
