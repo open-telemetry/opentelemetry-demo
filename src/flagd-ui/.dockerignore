@@ -1,0 +1,56 @@
+# Dependency directories
+node_modules
+/.pnp
+.pnp.js
+
+# Next.js build output
+.next
+out
+
+# Testing
+/coverage
+
+# Production
+/build
+
+# Misc
+.DS_Store
+*.pem
+
+# Debug
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Local env files
+.env*.local
+
+# Vercel
+.vercel
+
+# TypeScript
+*.tsbuildinfo
+next-env.d.ts
+
+# IDE/Editor folders
+.idea
+.vscode
+
+# OS generated files
+Thumbs.db
+
+# Temporary files
+*.swp
+*.swo
+
+# Git related
+.git
+.gitignore
+
+# Docker related
+Dockerfile
+.dockerignore
+
+# Other
+README.md
+*.log
