@@ -9,6 +9,8 @@ the release.
 
 * [grafana] Update grafana to 11.3.0
   ([#1764](https://github.com/open-telemetry/opentelemetry-demo/pull/1764))
+* [chore] Move build args to .env file
+  ([#1767](https://github.com/open-telemetry/opentelemetry-demo/pull/1767))
 
 ## 1.12.0
 
