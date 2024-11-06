@@ -7,6 +7,9 @@ the release.
 
 ## Unreleased
 
+* [grafana] Update grafana to 11.3.0
+  ([#1764](https://github.com/open-telemetry/opentelemetry-demo/pull/1764))
+
 ## 1.12.0
 
 * [accountingservice] allow running the container with non root user
