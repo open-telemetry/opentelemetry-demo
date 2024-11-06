@@ -124,13 +124,26 @@ jobs:
       - uses: actions/checkout@v4
         with:
           fetch-depth: 0
-      - name: Load .env variables
+      - name: Load .env variables into GitHub environment
         if: ${{ inputs.push }}
         run: |
+          echo "Loading environment variables from .env..."
           while IFS= read -r line || [ -n "$line" ]; do
+            # Skip empty lines and comments
             [[ "$line" =~ ^#.*$ ]] || [[ -z "$line" ]] && continue
+            # Export variable to GitHub Actions environment
             echo "$line" >> $GITHUB_ENV
+            echo "Exported $line"
           done < .env
+
+      - name: Verify loaded environment variables
+        run: |
+          echo "OTEL_JAVA_AGENT_VERSION: $OTEL_JAVA_AGENT_VERSION"
+          echo "AD_SERVICE_PORT: $AD_SERVICE_PORT"
+        env:
+          OTEL_JAVA_AGENT_VERSION: ${{ env.OTEL_JAVA_AGENT_VERSION }}
+          AD_SERVICE_PORT: ${{ env.AD_SERVICE_PORT }}
+
       - name: Check for changes and set push options
         id: check_changes
         run: |
