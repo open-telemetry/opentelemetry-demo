@@ -127,12 +127,10 @@ jobs:
       - name: Load .env variables
         if: ${{ inputs.push }}
         run: |
-          set -a
-          source <(grep -vE '^\s*#|^\s*$' .env)
-          set +a
-          for var in $(cat .env | cut -d= -f1); do
-            echo "$var=${!var}" >> $GITHUB_ENV
-          done
+          while IFS= read -r line || [ -n "$line" ]; do
+            [[ "$line" =~ ^#.*$ ]] || [[ -z "$line" ]] && continue
+            echo "$line" >> $GITHUB_ENV
+          done < .env
       - name: Check for changes and set push options
         id: check_changes
         run: |
