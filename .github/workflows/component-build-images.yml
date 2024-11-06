@@ -127,8 +127,15 @@ jobs:
       - name: Load .env variables
         id: load_env
         run: |
-          export $(grep -v '^#' .env | xargs)
-          echo "OTEL_JAVA_AGENT_VERSION=${OTEL_JAVA_AGENT_VERSION}" >> $GITHUB_ENV
+          set -a  # Automatically export all variables
+          source <(grep -v '^#' .env | xargs -I {} echo export {})
+          set +a  # Disable automatic export
+          # Also set them in GITHUB_ENV for future steps
+          while IFS= read -r line || [[ -n "$line" ]]; do
+            [[ -z "$line" || "$line" =~ ^# ]] && continue
+            IFS='=' read -r key value <<< "$line"
+            echo "${key}=${value}" >> $GITHUB_ENV
+          done < .env
       - name: Check for changes and set push options
         id: check_changes
         run: |
