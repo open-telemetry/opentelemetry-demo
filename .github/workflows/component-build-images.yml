@@ -127,8 +127,10 @@ jobs:
       - name: Load environment variables from .env file
         run: |
           if [ -f .env ]; then
-            export $(grep -vE '^\s*#|^\s*$' .env | xargs)
-            echo "OTEL_JAVA_AGENT_VERSION=$OTEL_JAVA_AGENT_VERSION" >> $GITHUB_ENV
+            # Filter out comments and empty lines, then add each variable to $GITHUB_ENV
+            grep -vE '^\s*#|^\s*$' .env | while read -r line; do
+              echo "$line" >> $GITHUB_ENV
+            done
           else
             echo ".env file not found!"
             exit 1
