@@ -125,11 +125,10 @@ jobs:
         with:
           fetch-depth: 0
       - name: Load .env variables
+        id: load_env
         run: |
-          while IFS= read -r line || [ -n "$line" ]; do
-            [[ "$line" =~ ^#.*$ ]] || [[ -z "$line" ]] && continue
-            echo "$line" >> $GITHUB_ENV
-          done < .env
+          export $(grep -v '^#' .env | xargs)
+          echo "OTEL_JAVA_AGENT_VERSION=${OTEL_JAVA_AGENT_VERSION}" >> $GITHUB_ENV
       - name: Check for changes and set push options
         id: check_changes
         run: |
@@ -178,6 +177,8 @@ jobs:
           file: ${{ matrix.file_tag.file }}
           platforms: linux/amd64,linux/arm64
           push: ${{ inputs.push }}
+          build-args: |
+            OTEL_JAVA_AGENT_VERSION=${OTEL_JAVA_AGENT_VERSION}
           tags: |
             ${{ inputs.dockerhub_repo }}:${{ inputs.version }}-${{matrix.file_tag.tag_suffix }}
             ${{ inputs.dockerhub_repo }}:latest-${{matrix.file_tag.tag_suffix }}
