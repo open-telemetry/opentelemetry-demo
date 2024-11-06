@@ -124,18 +124,15 @@ jobs:
       - uses: actions/checkout@v4
         with:
           fetch-depth: 0
-      - name: Load .env variables
-        id: load_env
+      - name: Load environment variables from .env file
         run: |
-          set -a  # Automatically export all variables
-          source <(grep -v '^#' .env | xargs -I {} echo export {})
-          set +a  # Disable automatic export
-          # Also set them in GITHUB_ENV for future steps
-          while IFS= read -r line || [[ -n "$line" ]]; do
-            [[ -z "$line" || "$line" =~ ^# ]] && continue
-            IFS='=' read -r key value <<< "$line"
-            echo "${key}=${value}" >> $GITHUB_ENV
-          done < .env
+          if [ -f .env ]; then
+            export $(grep -vE '^\s*#|^\s*$' .env | xargs)
+            echo "OTEL_JAVA_AGENT_VERSION=$OTEL_JAVA_AGENT_VERSION" >> $GITHUB_ENV
+          else
+            echo ".env file not found!"
+            exit 1
+          fi
       - name: Check for changes and set push options
         id: check_changes
         run: |
@@ -185,7 +182,7 @@ jobs:
           platforms: linux/amd64,linux/arm64
           push: ${{ inputs.push }}
           build-args: |
-            OTEL_JAVA_AGENT_VERSION=${OTEL_JAVA_AGENT_VERSION}
+            OTEL_JAVA_AGENT_VERSION=${{ env.OTEL_JAVA_AGENT_VERSION }}
           tags: |
             ${{ inputs.dockerhub_repo }}:${{ inputs.version }}-${{matrix.file_tag.tag_suffix }}
             ${{ inputs.dockerhub_repo }}:latest-${{matrix.file_tag.tag_suffix }}
