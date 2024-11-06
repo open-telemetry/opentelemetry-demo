@@ -34,7 +34,7 @@ services:
     build:
       context: ./
       dockerfile: ./test/tracetesting/Dockerfile
-    args:
+      args:
         TRACETEST_IMAGE_VERSION: ${TRACETEST_IMAGE_VERSION}
     environment:
       - AD_SERVICE_ADDR
