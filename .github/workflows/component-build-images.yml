@@ -124,25 +124,14 @@ jobs:
       - uses: actions/checkout@v4
         with:
           fetch-depth: 0
-      - name: Load .env variables into GitHub environment
-        if: ${{ inputs.push }}
+      - name: Load .env variables
         run: |
-          echo "Loading environment variables from .env..."
-          while IFS= read -r line || [ -n "$line" ]; do
-            # Skip empty lines and comments
-            [[ "$line" =~ ^#.*$ ]] || [[ -z "$line" ]] && continue
-            # Export variable to GitHub Actions environment
-            echo "$line" >> $GITHUB_ENV
-            echo "Exported $line"
-          done < .env
-
-      - name: Verify loaded environment variables
-        run: |
-          echo "OTEL_JAVA_AGENT_VERSION: $OTEL_JAVA_AGENT_VERSION"
-          echo "AD_SERVICE_PORT: $AD_SERVICE_PORT"
-        env:
-          OTEL_JAVA_AGENT_VERSION: ${{ env.OTEL_JAVA_AGENT_VERSION }}
-          AD_SERVICE_PORT: ${{ env.AD_SERVICE_PORT }}
+          set -a
+          source <(grep -vE '^\s*#|^\s*$' .env)
+          set +a
+          for var in $(cat .env | cut -d= -f1); do
+            echo "$var=${!var}" >> $GITHUB_ENV
+          done
 
       - name: Check for changes and set push options
         id: check_changes
@@ -192,8 +181,6 @@ jobs:
           file: ${{ matrix.file_tag.file }}
           platforms: linux/amd64,linux/arm64
           push: ${{ inputs.push }}
-          build-args: |
-            OTEL_JAVA_AGENT_VERSION=${{ env.OTEL_JAVA_AGENT_VERSION }}
           tags: |
             ${{ inputs.dockerhub_repo }}:${{ inputs.version }}-${{matrix.file_tag.tag_suffix }}
             ${{ inputs.dockerhub_repo }}:latest-${{matrix.file_tag.tag_suffix }}
