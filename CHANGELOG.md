@@ -7,6 +7,9 @@ the release.
 
 ## Unreleased
 
+* [frontendproxy] add access logs
+  ([#1768](https://github.com/open-telemetry/opentelemetry-demo/pull/1768))
+
 ## 1.12.0
 
 * [accountingservice] allow running the container with non root user
