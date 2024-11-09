@@ -53,6 +53,8 @@ services:
       dockerfile: ${AD_SERVICE_DOCKERFILE}
       cache_from:
         - ${IMAGE_NAME}:${IMAGE_VERSION}-adservice
+      args:
+        OTEL_JAVA_AGENT_VERSION: ${OTEL_JAVA_AGENT_VERSION}
     deploy:
       resources:
         limits:
@@ -171,6 +173,8 @@ services:
       dockerfile: ${CURRENCY_SERVICE_DOCKERFILE}
       cache_from:
         - ${IMAGE_NAME}:${IMAGE_VERSION}-currencyservice
+      args:
+        OPENTELEMETRY_CPP_VERSION: ${OPENTELEMETRY_CPP_VERSION}
     deploy:
       resources:
         limits:
@@ -224,6 +228,8 @@ services:
       dockerfile: ${FRAUD_SERVICE_DOCKERFILE}
       cache_from:
         - ${IMAGE_NAME}:${IMAGE_VERSION}-frauddetectionservice
+      args:
+        OTEL_JAVA_AGENT_VERSION: ${OTEL_JAVA_AGENT_VERSION}
     deploy:
       resources:
         limits:
@@ -352,7 +358,7 @@ services:
         condition: service_started
       grafana:
         condition: service_started
-      flagd-ui:
+      flagdui:
         condition: service_started
 
   # Imageprovider
@@ -602,10 +608,10 @@ services:
     logging:
       *logging
 
-  # Flagd-ui, UI for configuring the feature flagging service
-  flagd-ui:
-    image: ${IMAGE_NAME}:${DEMO_VERSION}-flagd-ui
-    container_name: flagd-ui
+  # Flagd UI for configuring the feature flag service
+  flagdui:
+    image: ${IMAGE_NAME}:${DEMO_VERSION}-flagdui
+    container_name: flagdui
     build:
       context: ./
       dockerfile: ${FLAGD_UI_DOCKERFILE}
@@ -618,7 +624,7 @@ services:
       - OTEL_EXPORTER_OTLP_ENDPOINT=http://${OTEL_COLLECTOR_HOST}:${OTEL_COLLECTOR_PORT_HTTP}
       - OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE
       - OTEL_RESOURCE_ATTRIBUTES
-      - OTEL_SERVICE_NAME=flagd-ui
+      - OTEL_SERVICE_NAME=flagdui
     ports:
       - "${FLAGD_UI_PORT}"
     depends_on:
@@ -638,6 +644,8 @@ services:
       dockerfile: ${KAFKA_SERVICE_DOCKERFILE}
       cache_from:
         - ${IMAGE_NAME}:${IMAGE_VERSION}-kafka
+      args:
+        OTEL_JAVA_AGENT_VERSION: ${OTEL_JAVA_AGENT_VERSION}
     deploy:
       resources:
         limits:
