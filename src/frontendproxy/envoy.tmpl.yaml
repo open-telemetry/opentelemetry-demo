@@ -50,7 +50,7 @@ static_resources:
                         - match: { prefix: "/flagservice/" }
                           route: { cluster: flagservice, prefix_rewrite: "/", timeout: 0s }
                         - match: { prefix: "/feature" }
-                          route: { cluster: flagd-ui }
+                          route: { cluster: flagdui }
                         - match: { prefix: "/" }
                           route: { cluster: frontend }
                 http_filters:
@@ -132,11 +132,11 @@ static_resources:
                     socket_address:
                       address: ${FLAGD_HOST}
                       port_value: ${FLAGD_PORT}
-    - name: flagd-ui
+    - name: flagdui
       type: STRICT_DNS
       lb_policy: ROUND_ROBIN
       load_assignment:
-        cluster_name: flagd-ui
+        cluster_name: flagdui
         endpoints:
           - lb_endpoints:
               - endpoint:
