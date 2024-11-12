@@ -3,7 +3,7 @@
 
 
 # All documents to be used in spell check.
-ALL_DOCS := $(shell find . -type f -name '*.md' -not -path './.github/*' -not -path '*/node_modules/*' -not -path '*/_build/*' -not -path '*/deps/*' | sort)
+ALL_DOCS := $(shell find . -type f -name '*.md' -not -path './.github/*' -not -path '*/node_modules/*' -not -path '*/_build/*' -not -path '*/deps/*' -not -path */Pods/* -not -path */.expo/* | sort)
 PWD := $(shell pwd)
 
 TOOLS_DIR := ./internal/tools
@@ -191,3 +191,13 @@ else
 	@echo "Please provide a service name using `service=[service name]` or `SERVICE=[service name]`"
 endif
 
+src/reactnativeapp/node_modules:
+	npm --prefix src/reactnativeapp install
+
+.PHONY: reactnative-android
+reactnative-android: src/reactnativeapp/node_modules
+	npm --prefix src/reactnativeapp run android
+
+.PHONY: reactnative-ios
+reactnative-ios: src/reactnativeapp/node_modules
+	npm --prefix src/reactnativeapp run ios

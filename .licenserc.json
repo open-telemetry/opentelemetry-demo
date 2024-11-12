@@ -45,6 +45,12 @@
         "src/featureflagservice/assets/vendor/",
         "src/featureflagservice/priv/",
         "src/productcatalogservice/genproto/",
+        "src/reactnativeapp/ios/Pods/",
+        "src/reactnativeapp/ios/build/",
+        "src/reactnativeapp/android/app/build/",
+        "src/reactnativeapp/android/.gradle/",
+        "src/reactnativeapp/.expo/",
+        "src/reactnativeapp/expo-env.d.ts",
         "internal/tools/"
     ]
   }
