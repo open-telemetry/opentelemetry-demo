@@ -1,50 +1,4 @@
 {
-  "__inputs": [],
-  "__elements": {},
-  "__requires": [
-    {
-      "type": "grafana",
-      "id": "grafana",
-      "name": "Grafana",
-      "version": "10.0.3"
-    },
-    {
-      "type": "panel",
-      "id": "heatmap",
-      "name": "Heatmap",
-      "version": ""
-    },
-    {
-      "type": "panel",
-      "id": "nodeGraph",
-      "name": "Node Graph",
-      "version": ""
-    },
-    {
-      "type": "datasource",
-      "id": "prometheus",
-      "name": "Prometheus",
-      "version": "1.0.0"
-    },
-    {
-      "type": "panel",
-      "id": "table",
-      "name": "Table",
-      "version": ""
-    },
-    {
-      "type": "panel",
-      "id": "text",
-      "name": "Text",
-      "version": ""
-    },
-    {
-      "type": "panel",
-      "id": "timeseries",
-      "name": "Time series",
-      "version": ""
-    }
-  ],
   "annotations": {
     "list": [
       {
@@ -67,21 +21,15 @@
       }
     ]
   },
-  "description": "Visualize OpenTelemetry (OTEL) collector metrics (tested with OTEL contrib v0.84.0)",
+  "description": "Visualize OpenTelemetry (OTEL) collector metrics (tested with OTEL contrib v0.113.0)",
   "editable": true,
   "fiscalYearStartMonth": 0,
-  "gnetId": 15983,
   "graphTooltip": 1,
-  "id": null,
+  "id": 4,
   "links": [],
-  "liveNow": false,
   "panels": [
     {
       "collapsed": false,
-      "datasource": {
-        "type": "prometheus",
-        "uid": "$datasource"
-      },
       "gridPos": {
         "h": 1,
         "w": 24,
@@ -90,15 +38,6 @@
       },
       "id": 23,
       "panels": [],
-      "targets": [
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "$datasource"
-          },
-          "refId": "A"
-        }
-      ],
       "title": "Receivers",
       "type": "row"
     },
@@ -114,11 +53,13 @@
             "mode": "palette-classic"
           },
           "custom": {
+            "axisBorderShow": false,
             "axisCenteredZero": false,
             "axisColorMode": "text",
             "axisLabel": "",
             "axisPlacement": "auto",
             "barAlignment": 0,
+            "barWidthFactor": 0.6,
             "drawStyle": "line",
             "fillOpacity": 0,
             "gradientMode": "none",
@@ -127,6 +68,7 @@
               "tooltip": false,
               "viz": false
             },
+            "insertNulls": false,
             "lineInterpolation": "linear",
             "lineWidth": 1,
             "pointSize": 5,
@@ -187,7 +129,6 @@
       },
       "id": 28,
       "interval": "$minstep",
-      "links": [],
       "options": {
         "legend": {
           "calcs": [
@@ -204,7 +145,7 @@
           "sort": "none"
         }
       },
-      "pluginVersion": "8.3.5",
+      "pluginVersion": "11.3.0",
       "targets": [
         {
           "datasource": {
@@ -213,7 +154,7 @@
           },
           "editorMode": "code",
           "exemplar": true,
-          "expr": "sum(${metric:value}(otelcol_receiver_accepted_spans{receiver=~\"$receiver\",job=\"$job\"}[$__rate_interval])) by (receiver $grouping)",
+          "expr": "sum(${metric:value}(otelcol_receiver_accepted_spans_total{receiver=~\"$receiver\",job=\"$job\"}[$__rate_interval])) by (receiver $grouping)",
           "format": "time_series",
           "interval": "$minstep",
           "intervalFactor": 1,
@@ -228,7 +169,7 @@
           },
           "editorMode": "code",
           "exemplar": true,
-          "expr": "sum(${metric:value}(otelcol_receiver_refused_spans{receiver=~\"$receiver\",job=\"$job\"}[$__rate_interval])) by (receiver $grouping)",
+          "expr": "sum(${metric:value}(otelcol_receiver_refused_spans_total{receiver=~\"$receiver\",job=\"$job\"}[$__rate_interval])) by (receiver $grouping)",
           "format": "time_series",
           "hide": false,
           "interval": "$minstep",
@@ -253,11 +194,13 @@
             "mode": "palette-classic"
           },
           "custom": {
+            "axisBorderShow": false,
             "axisCenteredZero": false,
             "axisColorMode": "text",
             "axisLabel": "",
             "axisPlacement": "auto",
             "barAlignment": 0,
+            "barWidthFactor": 0.6,
             "drawStyle": "line",
             "fillOpacity": 0,
             "gradientMode": "none",
@@ -266,6 +209,7 @@
               "tooltip": false,
               "viz": false
             },
+            "insertNulls": false,
             "lineInterpolation": "linear",
             "lineWidth": 1,
             "pointSize": 5,
@@ -326,7 +270,6 @@
       },
       "id": 32,
       "interval": "$minstep",
-      "links": [],
       "options": {
         "legend": {
           "calcs": [
@@ -343,7 +286,7 @@
           "sort": "none"
         }
       },
-      "pluginVersion": "8.3.5",
+      "pluginVersion": "11.3.0",
       "targets": [
         {
           "datasource": {
@@ -352,7 +295,7 @@
           },
           "editorMode": "code",
           "exemplar": true,
-          "expr": "sum(${metric:value}(otelcol_receiver_accepted_metric_points{receiver=~\"$receiver\",job=\"$job\"}[$__rate_interval])) by (receiver $grouping)",
+          "expr": "sum(${metric:value}(otelcol_receiver_accepted_metric_points_total{receiver=~\"$receiver\",job=\"$job\"}[$__rate_interval])) by (receiver $grouping)",
           "format": "time_series",
           "interval": "$minstep",
           "intervalFactor": 1,
@@ -367,7 +310,7 @@
           },
           "editorMode": "code",
           "exemplar": true,
-          "expr": "sum(${metric:value}(otelcol_receiver_refused_metric_points{receiver=~\"$receiver\",job=\"$job\"}[$__rate_interval])) by (receiver $grouping)",
+          "expr": "sum(${metric:value}(otelcol_receiver_refused_metric_points_total{receiver=~\"$receiver\",job=\"$job\"}[$__rate_interval])) by (receiver $grouping)",
           "format": "time_series",
           "hide": false,
           "interval": "$minstep",
@@ -392,11 +335,13 @@
             "mode": "palette-classic"
           },
           "custom": {
+            "axisBorderShow": false,
             "axisCenteredZero": false,
             "axisColorMode": "text",
             "axisLabel": "",
             "axisPlacement": "auto",
             "barAlignment": 0,
+            "barWidthFactor": 0.6,
             "drawStyle": "line",
             "fillOpacity": 0,
             "gradientMode": "none",
@@ -405,6 +350,7 @@
               "tooltip": false,
               "viz": false
             },
+            "insertNulls": false,
             "lineInterpolation": "linear",
             "lineWidth": 1,
             "pointSize": 5,
@@ -465,7 +411,6 @@
       },
       "id": 47,
       "interval": "$minstep",
-      "links": [],
       "options": {
         "legend": {
           "calcs": [
@@ -482,7 +427,7 @@
           "sort": "none"
         }
       },
-      "pluginVersion": "8.3.5",
+      "pluginVersion": "11.3.0",
       "targets": [
         {
           "datasource": {
@@ -491,7 +436,7 @@
           },
           "editorMode": "code",
           "exemplar": true,
-          "expr": "sum(${metric:value}(otelcol_receiver_accepted_log_records{receiver=~\"$receiver\",job=\"$job\"}[$__rate_interval])) by (receiver $grouping)",
+          "expr": "sum(${metric:value}(otelcol_receiver_accepted_log_records_total{receiver=~\"$receiver\",job=\"$job\"}[$__rate_interval])) by (receiver $grouping)",
           "format": "time_series",
           "interval": "$minstep",
           "intervalFactor": 1,
@@ -506,7 +451,7 @@
           },
           "editorMode": "code",
           "exemplar": true,
-          "expr": "sum(${metric:value}(otelcol_receiver_refused_log_records{receiver=~\"$receiver\",job=\"$job\"}[$__rate_interval])) by (receiver $grouping)",
+          "expr": "sum(${metric:value}(otelcol_receiver_refused_log_records_total{receiver=~\"$receiver\",job=\"$job\"}[$__rate_interval])) by (receiver $grouping)",
           "format": "time_series",
           "hide": false,
           "interval": "$minstep",
@@ -521,10 +466,6 @@
     },
     {
       "collapsed": false,
-      "datasource": {
-        "type": "prometheus",
-        "uid": "$datasource"
-      },
       "gridPos": {
         "h": 1,
         "w": 24,
@@ -533,15 +474,6 @@
       },
       "id": 34,
       "panels": [],
-      "targets": [
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "$datasource"
-          },
-          "refId": "A"
-        }
-      ],
       "title": "Processors",
       "type": "row"
     },
@@ -557,11 +489,13 @@
             "mode": "palette-classic"
           },
           "custom": {
+            "axisBorderShow": false,
             "axisCenteredZero": false,
             "axisColorMode": "text",
             "axisLabel": "",
             "axisPlacement": "auto",
             "barAlignment": 0,
+            "barWidthFactor": 0.6,
             "drawStyle": "line",
             "fillOpacity": 0,
             "gradientMode": "none",
@@ -570,6 +504,7 @@
               "tooltip": false,
               "viz": false
             },
+            "insertNulls": false,
             "lineInterpolation": "linear",
             "lineWidth": 1,
             "pointSize": 5,
@@ -641,11 +576,10 @@
         "h": 8,
         "w": 8,
         "x": 0,
-        "y": 18
+        "y": 10
       },
       "id": 36,
       "interval": "$minstep",
-      "links": [],
       "options": {
         "legend": {
           "calcs": [
@@ -662,7 +596,7 @@
           "sort": "none"
         }
       },
-      "pluginVersion": "8.3.5",
+      "pluginVersion": "11.3.0",
       "targets": [
         {
           "datasource": {
@@ -726,11 +660,10 @@
         "h": 8,
         "w": 8,
         "x": 8,
-        "y": 18
+        "y": 10
       },
       "id": 49,
       "interval": "$minstep",
-      "links": [],
       "maxDataPoints": 50,
       "options": {
         "calculate": false,
@@ -757,7 +690,8 @@
           "layout": "auto"
         },
         "tooltip": {
-          "show": true,
+          "mode": "single",
+          "showColorScale": false,
           "yHistogram": false
         },
         "yAxis": {
@@ -765,7 +699,7 @@
           "reverse": false
         }
       },
-      "pluginVersion": "10.0.3",
+      "pluginVersion": "11.3.0",
       "targets": [
         {
           "datasource": {
@@ -799,11 +733,13 @@
             "mode": "palette-classic"
           },
           "custom": {
+            "axisBorderShow": false,
             "axisCenteredZero": false,
             "axisColorMode": "text",
             "axisLabel": "",
             "axisPlacement": "auto",
             "barAlignment": 0,
+            "barWidthFactor": 0.6,
             "drawStyle": "line",
             "fillOpacity": 0,
             "gradientMode": "none",
@@ -812,6 +748,7 @@
               "tooltip": false,
               "viz": false
             },
+            "insertNulls": false,
             "lineInterpolation": "linear",
             "lineWidth": 1,
             "pointSize": 5,
@@ -883,11 +820,10 @@
         "h": 8,
         "w": 8,
         "x": 16,
-        "y": 18
+        "y": 10
       },
       "id": 56,
       "interval": "$minstep",
-      "links": [],
       "options": {
         "legend": {
           "calcs": [
@@ -904,7 +840,7 @@
           "sort": "none"
         }
       },
-      "pluginVersion": "8.3.5",
+      "pluginVersion": "11.3.0",
       "targets": [
         {
           "datasource": {
@@ -913,13 +849,13 @@
           },
           "editorMode": "code",
           "exemplar": true,
-          "expr": "sum(${metric:value}(otelcol_processor_batch_batch_size_trigger_send{processor=~\"$processor\",job=\"$job\"}[$__rate_interval])) by (processor)",
+          "expr": "sum(${metric:value}(otelcol_processor_batch_timeout_trigger_send_total {processor=~\"$processor\",job=\"$job\"}[$__rate_interval])) by (processor)",
           "format": "time_series",
           "hide": false,
           "instant": false,
           "interval": "$minstep",
           "intervalFactor": 1,
-          "legendFormat": "Batch sent due to a size trigger: {{processor}}",
+          "legendFormat": "Batch sent due to a timeout trigger: {{processor}}",
           "refId": "B"
         },
         {
@@ -944,27 +880,14 @@
     },
     {
       "collapsed": false,
-      "datasource": {
-        "type": "prometheus",
-        "uid": "$datasource"
-      },
       "gridPos": {
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 26
+        "y": 18
       },
       "id": 25,
       "panels": [],
-      "targets": [
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "$datasource"
-          },
-          "refId": "A"
-        }
-      ],
       "title": "Exporters",
       "type": "row"
     },
@@ -980,11 +903,13 @@
             "mode": "palette-classic"
           },
           "custom": {
+            "axisBorderShow": false,
             "axisCenteredZero": false,
             "axisColorMode": "text",
             "axisLabel": "",
             "axisPlacement": "auto",
             "barAlignment": 0,
+            "barWidthFactor": 0.6,
             "drawStyle": "line",
             "fillOpacity": 0,
             "gradientMode": "none",
@@ -993,6 +918,7 @@
               "tooltip": false,
               "viz": false
             },
+            "insertNulls": false,
             "lineInterpolation": "linear",
             "lineWidth": 1,
             "pointSize": 5,
@@ -1049,11 +975,10 @@
         "h": 9,
         "w": 8,
         "x": 0,
-        "y": 27
+        "y": 19
       },
       "id": 37,
       "interval": "$minstep",
-      "links": [],
       "options": {
         "legend": {
           "calcs": [
@@ -1070,7 +995,7 @@
           "sort": "none"
         }
       },
-      "pluginVersion": "8.3.5",
+      "pluginVersion": "11.3.0",
       "targets": [
         {
           "datasource": {
@@ -1079,7 +1004,7 @@
           },
           "editorMode": "code",
           "exemplar": true,
-          "expr": "sum(${metric:value}(otelcol_exporter_sent_spans{exporter=~\"$exporter\",job=\"$job\"}[$__rate_interval])) by (exporter $grouping)",
+          "expr": "sum(${metric:value}(otelcol_exporter_sent_spans_total{exporter=~\"$exporter\",job=\"$job\"}[$__rate_interval])) by (exporter $grouping)",
           "format": "time_series",
           "interval": "$minstep",
           "intervalFactor": 1,
@@ -1135,11 +1060,13 @@
             "mode": "palette-classic"
           },
           "custom": {
+            "axisBorderShow": false,
             "axisCenteredZero": false,
             "axisColorMode": "text",
             "axisLabel": "",
             "axisPlacement": "auto",
             "barAlignment": 0,
+            "barWidthFactor": 0.6,
             "drawStyle": "line",
             "fillOpacity": 0,
             "gradientMode": "none",
@@ -1148,6 +1075,7 @@
               "tooltip": false,
               "viz": false
             },
+            "insertNulls": false,
             "lineInterpolation": "linear",
             "lineWidth": 1,
             "pointSize": 5,
@@ -1204,11 +1132,10 @@
         "h": 9,
         "w": 8,
         "x": 8,
-        "y": 27
+        "y": 19
       },
       "id": 38,
       "interval": "$minstep",
-      "links": [],
       "options": {
         "legend": {
           "calcs": [
@@ -1225,7 +1152,7 @@
           "sort": "none"
         }
       },
-      "pluginVersion": "8.3.5",
+      "pluginVersion": "11.3.0",
       "targets": [
         {
           "datasource": {
@@ -1234,7 +1161,7 @@
           },
           "editorMode": "code",
           "exemplar": true,
-          "expr": "sum(${metric:value}(otelcol_exporter_sent_metric_points{exporter=~\"$exporter\",job=\"$job\"}[$__rate_interval])) by (exporter $grouping)",
+          "expr": "sum(${metric:value}(otelcol_exporter_sent_metric_points_total{exporter=~\"$exporter\",job=\"$job\"}[$__rate_interval])) by (exporter $grouping)",
           "format": "time_series",
           "interval": "$minstep",
           "intervalFactor": 1,
@@ -1290,11 +1217,13 @@
             "mode": "palette-classic"
           },
           "custom": {
+            "axisBorderShow": false,
             "axisCenteredZero": false,
             "axisColorMode": "text",
             "axisLabel": "",
             "axisPlacement": "auto",
             "barAlignment": 0,
+            "barWidthFactor": 0.6,
             "drawStyle": "line",
             "fillOpacity": 0,
             "gradientMode": "none",
@@ -1303,6 +1232,7 @@
               "tooltip": false,
               "viz": false
             },
+            "insertNulls": false,
             "lineInterpolation": "linear",
             "lineWidth": 1,
             "pointSize": 5,
@@ -1359,11 +1289,10 @@
         "h": 9,
         "w": 8,
         "x": 16,
-        "y": 27
+        "y": 19
       },
       "id": 48,
       "interval": "$minstep",
-      "links": [],
       "options": {
         "legend": {
           "calcs": [
@@ -1380,7 +1309,7 @@
           "sort": "none"
         }
       },
-      "pluginVersion": "8.3.5",
+      "pluginVersion": "11.3.0",
       "targets": [
         {
           "datasource": {
@@ -1389,7 +1318,7 @@
           },
           "editorMode": "code",
           "exemplar": true,
-          "expr": "sum(${metric:value}(otelcol_exporter_sent_log_records{exporter=~\"$exporter\",job=\"$job\"}[$__rate_interval])) by (exporter $grouping)",
+          "expr": "sum(${metric:value}(otelcol_exporter_sent_log_records_total{exporter=~\"$exporter\",job=\"$job\"}[$__rate_interval])) by (exporter $grouping)",
           "format": "time_series",
           "interval": "$minstep",
           "intervalFactor": 1,
@@ -1445,11 +1374,13 @@
             "mode": "palette-classic"
           },
           "custom": {
+            "axisBorderShow": false,
             "axisCenteredZero": false,
             "axisColorMode": "text",
             "axisLabel": "",
             "axisPlacement": "auto",
             "barAlignment": 0,
+            "barWidthFactor": 0.6,
             "drawStyle": "line",
             "fillOpacity": 0,
             "gradientMode": "none",
@@ -1458,6 +1389,7 @@
               "tooltip": false,
               "viz": false
             },
+            "insertNulls": false,
             "lineInterpolation": "linear",
             "lineWidth": 1,
             "pointSize": 5,
@@ -1497,10 +1429,9 @@
         "h": 9,
         "w": 12,
         "x": 0,
-        "y": 36
+        "y": 28
       },
       "id": 10,
-      "links": [],
       "options": {
         "legend": {
           "calcs": [
@@ -1517,7 +1448,7 @@
           "sort": "none"
         }
       },
-      "pluginVersion": "8.3.5",
+      "pluginVersion": "11.3.0",
       "targets": [
         {
           "datasource": {
@@ -1550,11 +1481,13 @@
             "mode": "palette-classic"
           },
           "custom": {
+            "axisBorderShow": false,
             "axisCenteredZero": false,
             "axisColorMode": "text",
             "axisLabel": "",
             "axisPlacement": "auto",
             "barAlignment": 0,
+            "barWidthFactor": 0.6,
             "drawStyle": "line",
             "fillOpacity": 0,
             "gradientMode": "none",
@@ -1563,6 +1496,7 @@
               "tooltip": false,
               "viz": false
             },
+            "insertNulls": false,
             "lineInterpolation": "linear",
             "lineWidth": 1,
             "pointSize": 5,
@@ -1602,10 +1536,9 @@
         "h": 9,
         "w": 12,
         "x": 12,
-        "y": 36
+        "y": 28
       },
       "id": 55,
-      "links": [],
       "options": {
         "legend": {
           "calcs": [
@@ -1622,7 +1555,7 @@
           "sort": "none"
         }
       },
-      "pluginVersion": "8.3.5",
+      "pluginVersion": "11.3.0",
       "targets": [
         {
           "datasource": {
@@ -1645,27 +1578,14 @@
     },
     {
       "collapsed": false,
-      "datasource": {
-        "type": "prometheus",
-        "uid": "$datasource"
-      },
       "gridPos": {
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 45
+        "y": 37
       },
       "id": 21,
       "panels": [],
-      "targets": [
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "$datasource"
-          },
-          "refId": "A"
-        }
-      ],
       "title": "Collector",
       "type": "row"
     },
@@ -1681,11 +1601,13 @@
             "mode": "palette-classic"
           },
           "custom": {
+            "axisBorderShow": false,
             "axisCenteredZero": false,
             "axisColorMode": "text",
             "axisLabel": "",
             "axisPlacement": "auto",
             "barAlignment": 0,
+            "barWidthFactor": 0.6,
             "drawStyle": "line",
             "fillOpacity": 0,
             "gradientMode": "none",
@@ -1694,6 +1616,7 @@
               "tooltip": false,
               "viz": false
             },
+            "insertNulls": false,
             "lineInterpolation": "linear",
             "lineWidth": 1,
             "pointSize": 5,
@@ -1804,11 +1727,10 @@
         "h": 9,
         "w": 8,
         "x": 0,
-        "y": 46
+        "y": 38
       },
       "id": 40,
       "interval": "$minstep",
-      "links": [],
       "options": {
         "legend": {
           "calcs": [
@@ -1825,7 +1747,7 @@
           "sort": "none"
         }
       },
-      "pluginVersion": "8.3.5",
+      "pluginVersion": "11.3.0",
       "targets": [
         {
           "datasource": {
@@ -1890,11 +1812,13 @@
             "mode": "palette-classic"
           },
           "custom": {
+            "axisBorderShow": false,
             "axisCenteredZero": false,
             "axisColorMode": "text",
             "axisLabel": "",
             "axisPlacement": "auto",
             "barAlignment": 0,
+            "barWidthFactor": 0.6,
             "drawStyle": "line",
             "fillOpacity": 0,
             "gradientMode": "none",
@@ -1903,6 +1827,7 @@
               "tooltip": false,
               "viz": false
             },
+            "insertNulls": false,
             "lineInterpolation": "linear",
             "lineWidth": 1,
             "pointSize": 5,
@@ -2013,11 +1938,10 @@
         "h": 9,
         "w": 8,
         "x": 8,
-        "y": 46
+        "y": 38
       },
       "id": 52,
       "interval": "$minstep",
-      "links": [],
       "options": {
         "legend": {
           "calcs": [
@@ -2034,7 +1958,7 @@
           "sort": "none"
         }
       },
-      "pluginVersion": "8.3.5",
+      "pluginVersion": "11.3.0",
       "targets": [
         {
           "datasource": {
@@ -2099,11 +2023,13 @@
             "mode": "palette-classic"
           },
           "custom": {
+            "axisBorderShow": false,
             "axisCenteredZero": false,
             "axisColorMode": "text",
             "axisLabel": "",
             "axisPlacement": "auto",
             "barAlignment": 0,
+            "barWidthFactor": 0.6,
             "drawStyle": "line",
             "fillOpacity": 0,
             "gradientMode": "none",
@@ -2112,6 +2038,7 @@
               "tooltip": false,
               "viz": false
             },
+            "insertNulls": false,
             "lineInterpolation": "linear",
             "lineWidth": 1,
             "pointSize": 5,
@@ -2222,11 +2149,10 @@
         "h": 9,
         "w": 8,
         "x": 16,
-        "y": 46
+        "y": 38
       },
       "id": 53,
       "interval": "$minstep",
-      "links": [],
       "options": {
         "legend": {
           "calcs": [
@@ -2243,7 +2169,7 @@
           "sort": "none"
         }
       },
-      "pluginVersion": "8.3.5",
+      "pluginVersion": "11.3.0",
       "targets": [
         {
           "datasource": {
@@ -2308,11 +2234,13 @@
             "mode": "palette-classic"
           },
           "custom": {
+            "axisBorderShow": false,
             "axisCenteredZero": false,
             "axisColorMode": "text",
             "axisLabel": "",
             "axisPlacement": "auto",
             "barAlignment": 0,
+            "barWidthFactor": 0.6,
             "drawStyle": "line",
             "fillOpacity": 0,
             "gradientMode": "none",
@@ -2321,6 +2249,7 @@
               "tooltip": false,
               "viz": false
             },
+            "insertNulls": false,
             "lineInterpolation": "linear",
             "lineWidth": 1,
             "pointSize": 5,
@@ -2427,11 +2356,10 @@
         "h": 9,
         "w": 8,
         "x": 0,
-        "y": 55
+        "y": 47
       },
       "id": 39,
       "interval": "$minstep",
-      "links": [],
       "options": {
         "legend": {
           "calcs": [
@@ -2448,7 +2376,7 @@
           "sort": "none"
         }
       },
-      "pluginVersion": "8.3.5",
+      "pluginVersion": "11.3.0",
       "targets": [
         {
           "datasource": {
@@ -2457,7 +2385,7 @@
           },
           "editorMode": "code",
           "exemplar": true,
-          "expr": "max(rate(otelcol_process_cpu_seconds{job=\"$job\"}[$__rate_interval])*100) by (job $grouping)",
+          "expr": "max(rate(otelcol_process_cpu_seconds_total{job=\"$job\"}[$__rate_interval])*100) by (job $grouping)",
           "format": "time_series",
           "hide": false,
           "interval": "$minstep",
@@ -2473,7 +2401,7 @@
           },
           "editorMode": "code",
           "exemplar": true,
-          "expr": "avg(rate(otelcol_process_cpu_seconds{job=\"$job\"}[$__rate_interval])*100) by (job $grouping)",
+          "expr": "avg(rate(otelcol_process_cpu_seconds_total{job=\"$job\"}[$__rate_interval])*100) by (job $grouping)",
           "format": "time_series",
           "hide": false,
           "interval": "$minstep",
@@ -2489,7 +2417,7 @@
           },
           "editorMode": "code",
           "exemplar": true,
-          "expr": "min(rate(otelcol_process_cpu_seconds{job=\"$job\"}[$__rate_interval])*100) by (job $grouping)",
+          "expr": "min(rate(otelcol_process_cpu_seconds_total{job=\"$job\"}[$__rate_interval])*100) by (job $grouping)",
           "format": "time_series",
           "hide": false,
           "interval": "$minstep",
@@ -2514,11 +2442,13 @@
             "mode": "palette-classic"
           },
           "custom": {
+            "axisBorderShow": false,
             "axisCenteredZero": false,
             "axisColorMode": "text",
             "axisLabel": "",
             "axisPlacement": "auto",
             "barAlignment": 0,
+            "barWidthFactor": 0.6,
             "drawStyle": "line",
             "fillOpacity": 0,
             "gradientMode": "none",
@@ -2527,6 +2457,7 @@
               "tooltip": false,
               "viz": false
             },
+            "insertNulls": false,
             "lineInterpolation": "linear",
             "lineWidth": 1,
             "pointSize": 5,
@@ -2567,11 +2498,10 @@
         "h": 9,
         "w": 8,
         "x": 8,
-        "y": 55
+        "y": 47
       },
       "id": 41,
       "interval": "$minstep",
-      "links": [],
       "options": {
         "legend": {
           "calcs": [
@@ -2588,7 +2518,7 @@
           "sort": "none"
         }
       },
-      "pluginVersion": "8.3.5",
+      "pluginVersion": "11.3.0",
       "targets": [
         {
           "datasource": {
@@ -2597,7 +2527,7 @@
           },
           "editorMode": "code",
           "exemplar": true,
-          "expr": "count(count(otelcol_process_cpu_seconds{service_instance_id=~\".*\",job=\"$job\"}) by (service_instance_id))",
+          "expr": "count(count(otelcol_process_cpu_seconds_total{service_instance_id=~\".*\",job=\"$job\"}) by (service_instance_id))",
           "format": "time_series",
           "hide": false,
           "interval": "$minstep",
@@ -2622,11 +2552,13 @@
             "mode": "palette-classic"
           },
           "custom": {
+            "axisBorderShow": false,
             "axisCenteredZero": false,
             "axisColorMode": "text",
             "axisLabel": "",
             "axisPlacement": "auto",
             "barAlignment": 0,
+            "barWidthFactor": 0.6,
             "drawStyle": "line",
             "fillOpacity": 0,
             "gradientMode": "none",
@@ -2635,6 +2567,7 @@
               "tooltip": false,
               "viz": false
             },
+            "insertNulls": false,
             "lineInterpolation": "linear",
             "lineWidth": 1,
             "pointSize": 5,
@@ -2675,11 +2608,10 @@
         "h": 9,
         "w": 8,
         "x": 16,
-        "y": 55
+        "y": 47
       },
       "id": 54,
       "interval": "$minstep",
-      "links": [],
       "options": {
         "legend": {
           "calcs": [
@@ -2696,7 +2628,7 @@
           "sort": "none"
         }
       },
-      "pluginVersion": "8.3.5",
+      "pluginVersion": "11.3.0",
       "targets": [
         {
           "datasource": {
@@ -2705,7 +2637,7 @@
           },
           "editorMode": "code",
           "exemplar": true,
-          "expr": "max(otelcol_process_uptime{service_instance_id=~\".*\",job=\"$job\"}) by (service_instance_id)",
+          "expr": "max(otelcol_process_uptime_total{service_instance_id=~\".*\",job=\"$job\"}) by (service_instance_id)",
           "format": "time_series",
           "hide": false,
           "interval": "$minstep",
@@ -2760,11 +2692,10 @@
         "h": 5,
         "w": 24,
         "x": 0,
-        "y": 64
+        "y": 56
       },
       "id": 57,
       "interval": "$minstep",
-      "links": [],
       "options": {
         "cellHeight": "sm",
         "footer": {
@@ -2777,7 +2708,7 @@
         },
         "showHeader": true
       },
-      "pluginVersion": "10.0.3",
+      "pluginVersion": "11.3.0",
       "targets": [
         {
           "datasource": {
@@ -2786,7 +2717,7 @@
           },
           "editorMode": "code",
           "exemplar": false,
-          "expr": "max(otelcol_process_uptime{service_instance_id=~\".*\",job=\"$job\"}) by (service_instance_id,service_name,service_version)",
+          "expr": "max(otelcol_process_uptime_total{service_instance_id=~\".*\",job=\"$job\"}) by (service_instance_id,service_name,service_version)",
           "format": "table",
           "hide": false,
           "instant": true,
@@ -2819,7 +2750,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 69
+        "y": 61
       },
       "id": 59,
       "panels": [],
@@ -2832,18 +2763,24 @@
         "uid": "$datasource"
       },
       "description": "Receivers -> Processor(s) -> Exporters (Node Graph panel is beta, so this panel may not show data correctly).",
+      "fieldConfig": {
+        "defaults": {},
+        "overrides": []
+      },
       "gridPos": {
         "h": 9,
         "w": 8,
         "x": 0,
-        "y": 70
+        "y": 62
       },
       "id": 58,
       "options": {
+        "edges": {},
         "nodes": {
           "mainStatUnit": "flops"
         }
       },
+      "pluginVersion": "11.3.0",
       "targets": [
         {
           "datasource": {
@@ -2852,7 +2789,7 @@
           },
           "editorMode": "code",
           "exemplar": false,
-          "expr": "# receivers\nlabel_replace(\n  label_join(\n    label_join(\n      sum(${metric:value}(\n        otelcol_receiver_accepted_spans{receiver=~\"$receiver\",job=\"$job\"}[$__rate_interval])\n      ) by (receiver)\n      , \"id\", \"-rcv-\", \"transport\", \"receiver\"\n    )\n    , \"title\", \"\", \"transport\", \"receiver\"\n  )\n  , \"icon\", \"arrow-to-right\", \"\", \"\"\n)\n\n# dummy processor\nor\nlabel_replace(\n  label_replace(\n    label_replace(\n      (sum(rate(otelcol_process_uptime{job=\"$job\"}[$__interval])))\n      , \"id\", \"processor\", \"\", \"\"\n    )\n    , \"title\", \"Processor(s)\", \"\", \"\"\n  )\n  , \"icon\", \"arrow-random\", \"\", \"\"\n)\n\n# exporters\nor\nlabel_replace(\n  label_join(\n    label_join(\n      sum(${metric:value}(\n        otelcol_exporter_sent_spans{exporter=~\"$exporter\",job=\"$job\"}[$__rate_interval])\n      ) by (exporter)\n      , \"id\", \"-exp-\", \"transport\", \"exporter\"\n    )\n    , \"title\", \"\", \"transport\", \"exporter\"\n  )\n  , \"icon\", \"arrow-from-right\", \"\", \"\"\n)",
+          "expr": "# receivers\nlabel_replace(\n  label_join(\n    label_join(\n      sum(${metric:value}(\n        otelcol_receiver_accepted_spans_total{receiver=~\"$receiver\",job=\"$job\"}[$__rate_interval])\n      ) by (receiver)\n      , \"id\", \"-rcv-\", \"transport\", \"receiver\"\n    )\n    , \"title\", \"\", \"transport\", \"receiver\"\n  )\n  , \"icon\", \"arrow-to-right\", \"\", \"\"\n)\n\n# dummy processor\nor\nlabel_replace(\n  label_replace(\n    label_replace(\n      (sum(rate(otelcol_process_uptime_total{job=\"$job\"}[$__interval])))\n      , \"id\", \"processor\", \"\", \"\"\n    )\n    , \"title\", \"Processor(s)\", \"\", \"\"\n  )\n  , \"icon\", \"arrow-random\", \"\", \"\"\n)\n\n# exporters\nor\nlabel_replace(\n  label_join(\n    label_join(\n      sum(${metric:value}(\n        otelcol_exporter_sent_spans_total{exporter=~\"$exporter\",job=\"$job\"}[$__rate_interval])\n      ) by (exporter)\n      , \"id\", \"-exp-\", \"transport\", \"exporter\"\n    )\n    , \"title\", \"\", \"transport\", \"exporter\"\n  )\n  , \"icon\", \"arrow-from-right\", \"\", \"\"\n)",
           "format": "table",
           "hide": false,
           "instant": true,
@@ -2867,7 +2804,7 @@
           },
           "editorMode": "code",
           "exemplar": false,
-          "expr": "# receivers -> processor\r\nlabel_join(\r\n    label_replace(\r\n        label_join(\r\n            (sum(rate(otelcol_receiver_accepted_spans{job=\"$job\"}[$__interval])) by (receiver))\r\n            ,\"source\", \"-rcv-\", \"transport\", \"receiver\"\r\n        )\r\n        ,\"target\", \"processor\", \"\", \"\"\r\n    )\r\n    , \"id\", \"-\", \"source\", \"target\"\r\n)\r\n\r\n# processor -> exporters\r\nor\r\nlabel_join(\r\n    label_replace(\r\n        label_join(\r\n            (sum(rate(otelcol_exporter_sent_spans{job=\"$job\"}[$__interval])) by (exporter))\r\n            , \"target\", \"-exp-\", \"transport\", \"exporter\"\r\n        )\r\n        , \"source\", \"processor\", \"\", \"\"\r\n    )\r\n    , \"id\", \"-\", \"source\", \"target\"\r\n)",
+          "expr": "# receivers -> processor\r\nlabel_join(\r\n    label_replace(\r\n        label_join(\r\n            (sum(rate(otelcol_receiver_accepted_spans_total{job=\"$job\"}[$__interval])) by (receiver))\r\n            ,\"source\", \"-rcv-\", \"transport\", \"receiver\"\r\n        )\r\n        ,\"target\", \"processor\", \"\", \"\"\r\n    )\r\n    , \"id\", \"-\", \"source\", \"target\"\r\n)\r\n\r\n# processor -> exporters\r\nor\r\nlabel_join(\r\n    label_replace(\r\n        label_join(\r\n            (sum(rate(otelcol_exporter_sent_spans_total{job=\"$job\"}[$__interval])) by (exporter))\r\n            , \"target\", \"-exp-\", \"transport\", \"exporter\"\r\n        )\r\n        , \"source\", \"processor\", \"\", \"\"\r\n    )\r\n    , \"id\", \"-\", \"source\", \"target\"\r\n)",
           "format": "table",
           "hide": false,
           "instant": true,
@@ -2908,18 +2845,24 @@
         "uid": "$datasource"
       },
       "description": "Receivers -> Processor(s) -> Exporters (Node Graph panel is beta, so this panel may not show data correctly).",
+      "fieldConfig": {
+        "defaults": {},
+        "overrides": []
+      },
       "gridPos": {
         "h": 9,
         "w": 8,
         "x": 8,
-        "y": 70
+        "y": 62
       },
       "id": 60,
       "options": {
+        "edges": {},
         "nodes": {
           "mainStatUnit": "none"
         }
       },
+      "pluginVersion": "11.3.0",
       "targets": [
         {
           "datasource": {
@@ -2928,7 +2871,7 @@
           },
           "editorMode": "code",
           "exemplar": false,
-          "expr": "# receivers\nlabel_replace(\n  label_join(\n    label_join(\n      (sum(\n        ${metric:value}(otelcol_receiver_accepted_metric_points{receiver=~\"$receiver\",job=\"$job\"}[$__rate_interval])\n      ) by (receiver))\n      , \"id\", \"-rcv-\", \"transport\", \"receiver\"\n    )\n    , \"title\", \"\", \"transport\", \"receiver\"\n  )\n  , \"icon\", \"arrow-to-right\", \"\", \"\"\n)\n\n# dummy processor\nor\nlabel_replace(\n  label_replace(\n    label_replace(\n      (sum(rate(otelcol_process_uptime{job=\"$job\"}[$__interval])))\n      , \"id\", \"processor\", \"\", \"\"\n    )\n    , \"title\", \"Processor(s)\", \"\", \"\"\n  )\n  , \"icon\", \"arrow-random\", \"\", \"\"\n)\n\n# exporters\nor\nlabel_replace(\n  label_join(\n    label_join(\n      (sum(\n        ${metric:value}(otelcol_exporter_sent_metric_points{exporter=~\"$exporter\",job=\"$job\"}[$__rate_interval])\n      ) by (exporter))\n      , \"id\", \"-exp-\", \"transport\", \"exporter\"\n    )\n    , \"title\", \"\", \"transport\", \"exporter\"\n  )\n  , \"icon\", \"arrow-from-right\", \"\", \"\"\n)",
+          "expr": "# receivers\nlabel_replace(\n  label_join(\n    label_join(\n      (sum(\n        ${metric:value}(otelcol_receiver_accepted_metric_points_total{receiver=~\"$receiver\",job=\"$job\"}[$__rate_interval])\n      ) by (receiver))\n      , \"id\", \"-rcv-\", \"transport\", \"receiver\"\n    )\n    , \"title\", \"\", \"transport\", \"receiver\"\n  )\n  , \"icon\", \"arrow-to-right\", \"\", \"\"\n)\n\n# dummy processor\nor\nlabel_replace(\n  label_replace(\n    label_replace(\n      (sum(rate(otelcol_process_uptime_total{job=\"$job\"}[$__interval])))\n      , \"id\", \"processor\", \"\", \"\"\n    )\n    , \"title\", \"Processor(s)\", \"\", \"\"\n  )\n  , \"icon\", \"arrow-random\", \"\", \"\"\n)\n\n# exporters\nor\nlabel_replace(\n  label_join(\n    label_join(\n      (sum(\n        ${metric:value}(otelcol_exporter_sent_metric_points_total{exporter=~\"$exporter\",job=\"$job\"}[$__rate_interval])\n      ) by (exporter))\n      , \"id\", \"-exp-\", \"transport\", \"exporter\"\n    )\n    , \"title\", \"\", \"transport\", \"exporter\"\n  )\n  , \"icon\", \"arrow-from-right\", \"\", \"\"\n)",
           "format": "table",
           "hide": false,
           "instant": true,
@@ -2943,7 +2886,7 @@
           },
           "editorMode": "code",
           "exemplar": false,
-          "expr": "# receivers -> processor\r\nlabel_join(\r\n    label_replace(\r\n        label_join(\r\n            (sum(rate(otelcol_receiver_accepted_metric_points{job=\"$job\"}[$__interval])) by (receiver))\r\n            , \"source\", \"-rcv-\", \"transport\", \"receiver\"\r\n        )\r\n        , \"target\", \"processor\", \"\", \"\"\r\n    )\r\n    , \"id\", \"-\", \"source\", \"target\"\r\n)\r\n\r\n# processor -> exporters\r\nor \r\nlabel_join(\r\n    label_replace(\r\n        label_join(\r\n            (sum(rate(otelcol_exporter_sent_metric_points{job=\"$job\"}[$__interval])) by (exporter))\r\n            , \"target\", \"-exp-\", \"transport\", \"exporter\"\r\n        )\r\n        , \"source\", \"processor\", \"\", \"\"\r\n    )\r\n    , \"id\", \"-\", \"source\", \"target\"\r\n)",
+          "expr": "# receivers -> processor\r\nlabel_join(\r\n    label_replace(\r\n        label_join(\r\n            (sum(rate(otelcol_receiver_accepted_metric_points_total{job=\"$job\"}[$__interval])) by (receiver))\r\n            , \"source\", \"-rcv-\", \"transport\", \"receiver\"\r\n        )\r\n        , \"target\", \"processor\", \"\", \"\"\r\n    )\r\n    , \"id\", \"-\", \"source\", \"target\"\r\n)\r\n\r\n# processor -> exporters\r\nor \r\nlabel_join(\r\n    label_replace(\r\n        label_join(\r\n            (sum(rate(otelcol_exporter_sent_metric_points_total{job=\"$job\"}[$__interval])) by (exporter))\r\n            , \"target\", \"-exp-\", \"transport\", \"exporter\"\r\n        )\r\n        , \"source\", \"processor\", \"\", \"\"\r\n    )\r\n    , \"id\", \"-\", \"source\", \"target\"\r\n)",
           "format": "table",
           "hide": false,
           "instant": true,
@@ -2984,18 +2927,24 @@
         "uid": "$datasource"
       },
       "description": "Receivers -> Processor(s) -> Exporters (Node Graph panel is beta, so this panel may not show data correctly).",
+      "fieldConfig": {
+        "defaults": {},
+        "overrides": []
+      },
       "gridPos": {
         "h": 9,
         "w": 8,
         "x": 16,
-        "y": 70
+        "y": 62
       },
       "id": 61,
       "options": {
+        "edges": {},
         "nodes": {
           "mainStatUnit": "flops"
         }
       },
+      "pluginVersion": "11.3.0",
       "targets": [
         {
           "datasource": {
@@ -3004,7 +2953,7 @@
           },
           "editorMode": "code",
           "exemplar": false,
-          "expr": "# receivers\nlabel_replace(\n  label_join(\n    label_join(\n      sum(${metric:value}(\n        otelcol_receiver_accepted_log_records{receiver=~\"$receiver\",job=\"$job\"}[$__rate_interval])\n      ) by (receiver)\n      , \"id\", \"-rcv-\", \"transport\", \"receiver\"\n    )\n    , \"title\", \"\", \"transport\", \"receiver\"\n  )\n  , \"icon\", \"arrow-to-right\", \"\", \"\"\n)\n\n# dummy processor\nor\nlabel_replace(\n  label_replace(\n    label_replace(\n      (sum(rate(otelcol_process_uptime{job=\"$job\"}[$__interval])))\n      , \"id\", \"processor\", \"\", \"\"\n    )\n    , \"title\", \"Processor(s)\", \"\", \"\"\n  )\n  , \"icon\", \"arrow-random\", \"\", \"\"\n)\n\n# exporters\nor\nlabel_replace(\n  label_join(\n    label_join(\n      sum(${metric:value}(\n        otelcol_exporter_sent_log_records{exporter=~\"$exporter\",job=\"$job\"}[$__rate_interval])\n      ) by (exporter)\n      , \"id\", \"-exp-\", \"transport\", \"exporter\"\n    )\n    , \"title\", \"\", \"transport\", \"exporter\"\n  )\n  , \"icon\", \"arrow-from-right\", \"\", \"\"\n)",
+          "expr": "# receivers\nlabel_replace(\n  label_join(\n    label_join(\n      sum(${metric:value}(\n        otelcol_receiver_accepted_log_records_total{receiver=~\"$receiver\",job=\"$job\"}[$__rate_interval])\n      ) by (receiver)\n      , \"id\", \"-rcv-\", \"transport\", \"receiver\"\n    )\n    , \"title\", \"\", \"transport\", \"receiver\"\n  )\n  , \"icon\", \"arrow-to-right\", \"\", \"\"\n)\n\n# dummy processor\nor\nlabel_replace(\n  label_replace(\n    label_replace(\n      (sum(rate(otelcol_process_uptime_total{job=\"$job\"}[$__interval])))\n      , \"id\", \"processor\", \"\", \"\"\n    )\n    , \"title\", \"Processor(s)\", \"\", \"\"\n  )\n  , \"icon\", \"arrow-random\", \"\", \"\"\n)\n\n# exporters\nor\nlabel_replace(\n  label_join(\n    label_join(\n      sum(${metric:value}(\n        otelcol_exporter_sent_log_records_total{exporter=~\"$exporter\",job=\"$job\"}[$__rate_interval])\n      ) by (exporter)\n      , \"id\", \"-exp-\", \"transport\", \"exporter\"\n    )\n    , \"title\", \"\", \"transport\", \"exporter\"\n  )\n  , \"icon\", \"arrow-from-right\", \"\", \"\"\n)",
           "format": "table",
           "hide": false,
           "instant": true,
@@ -3019,7 +2968,7 @@
           },
           "editorMode": "code",
           "exemplar": false,
-          "expr": "# receivers -> processor\r\nlabel_join(\r\n    label_replace(\r\n        label_join(\r\n            (sum(rate(otelcol_receiver_accepted_log_records{job=\"$job\"}[$__interval])) by (receiver))\r\n            , \"source\", \"-rcv-\", \"transport\", \"receiver\"\r\n        )\r\n        , \"target\", \"processor\", \"\", \"\"\r\n    )\r\n    , \"id\", \"-edg-\", \"source\", \"target\"\r\n)\r\n\r\n# processor -> exporters\r\nor \r\nlabel_join(\r\n    label_replace(\r\n        label_join(\r\n            (sum(rate(otelcol_exporter_sent_log_records{job=\"$job\"}[$__interval])) by (exporter))\r\n            ,\"target\",\"-exp-\",\"transport\",\"exporter\"\r\n        )\r\n        ,\"source\",\"processor\",\"\",\"\"\r\n    )\r\n    ,\"id\",\"-edg-\",\"source\",\"target\"\r\n)",
+          "expr": "# receivers -> processor\r\nlabel_join(\r\n    label_replace(\r\n        label_join(\r\n            (sum(rate(otelcol_receiver_accepted_log_records_total{job=\"$job\"}[$__interval])) by (receiver))\r\n            , \"source\", \"-rcv-\", \"transport\", \"receiver\"\r\n        )\r\n        , \"target\", \"processor\", \"\", \"\"\r\n    )\r\n    , \"id\", \"-edg-\", \"source\", \"target\"\r\n)\r\n\r\n# processor -> exporters\r\nor \r\nlabel_join(\r\n    label_replace(\r\n        label_join(\r\n            (sum(rate(otelcol_exporter_sent_log_records_total{job=\"$job\"}[$__interval])) by (exporter))\r\n            ,\"target\",\"-exp-\",\"transport\",\"exporter\"\r\n        )\r\n        ,\"source\",\"processor\",\"\",\"\"\r\n    )\r\n    ,\"id\",\"-edg-\",\"source\",\"target\"\r\n)",
           "format": "table",
           "hide": false,
           "instant": true,
@@ -3055,20 +3004,17 @@
       "type": "nodeGraph"
     },
     {
-      "datasource": {
-        "type": "prometheus",
-        "uid": "$datasource"
+      "fieldConfig": {
+        "defaults": {},
+        "overrides": []
       },
-      "editable": true,
-      "error": false,
       "gridPos": {
         "h": 3,
         "w": 24,
         "x": 0,
-        "y": 79
+        "y": 71
       },
       "id": 45,
-      "links": [],
       "options": {
         "code": {
           "language": "plaintext",
@@ -3078,23 +3024,14 @@
         "content": "<a href=\"http://www.monitoringartist.com\" target=\"_blank\" title=\"Dashboard maintained by Monitoring Artist - DevOps / Docker / Kubernetes / AWS ECS / Google GCP / Zabbix / Zenoss / Terraform / Monitoring\"><img src=\"https://monitoringartist.github.io/monitoring-artist-logo-grafana.png\" height=\"30px\" /></a> | \n<a target=\"_blank\" href=\"https://github.com/open-telemetry/opentelemetry-collector/blob/main/docs/troubleshooting.md#metrics\">OTEL collector troubleshooting (how to enable telemetry metrics)</a> | \n<a target=\"_blank\" href=\"https://opentelemetry.io/docs/collector/scaling/\">Scaling the Collector (metrics to watch)</a> | \n<a target=\"_blank\" href=\"https://grafana.com/grafana/dashboards/15983-opentelemetry-collector/\">Installed from Grafana.com dashboards</a>",
         "mode": "html"
       },
-      "pluginVersion": "10.0.3",
-      "targets": [
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "$datasource"
-          },
-          "refId": "A"
-        }
-      ],
+      "pluginVersion": "11.3.0",
       "title": "Documentation",
       "type": "text"
     }
   ],
+  "preload": false,
   "refresh": "10s",
-  "schemaVersion": 38,
-  "style": "dark",
+  "schemaVersion": 40,
   "tags": [
     "opentelemetry",
     "monitoring"
@@ -3103,17 +3040,13 @@
     "list": [
       {
         "current": {},
-        "hide": 0,
         "includeAll": false,
         "label": "Datasource",
-        "multi": false,
         "name": "datasource",
         "options": [],
         "query": "prometheus",
-        "queryValue": "",
         "refresh": 1,
         "regex": "",
-        "skipUrlSync": false,
         "type": "datasource"
       },
       {
@@ -3123,10 +3056,8 @@
           "uid": "$datasource"
         },
         "definition": "label_values(otelcol_process_uptime, job)",
-        "hide": 0,
         "includeAll": false,
         "label": "Job",
-        "multi": false,
         "name": "job",
         "options": [],
         "query": {
@@ -3135,7 +3066,6 @@
         },
         "refresh": 1,
         "regex": "",
-        "skipUrlSync": false,
         "sort": 1,
         "type": "query"
       },
@@ -3144,11 +3074,9 @@
         "auto_count": 300,
         "auto_min": "10s",
         "current": {
-          "selected": false,
           "text": "auto",
           "value": "$__auto_interval_minstep"
         },
-        "hide": 0,
         "label": "Min step",
         "name": "minstep",
         "options": [
@@ -3179,21 +3107,16 @@
           }
         ],
         "query": "10s,30s,1m,5m",
-        "queryValue": "",
         "refresh": 2,
-        "skipUrlSync": false,
         "type": "interval"
       },
       {
         "current": {
-          "selected": true,
           "text": "Rate",
           "value": "rate"
         },
-        "hide": 0,
         "includeAll": false,
         "label": "Base metric",
-        "multi": false,
         "name": "metric",
         "options": [
           {
@@ -3208,8 +3131,6 @@
           }
         ],
         "query": "Rate : rate, Count : increase",
-        "queryValue": "",
-        "skipUrlSync": false,
         "type": "custom"
       },
       {
@@ -3220,10 +3141,8 @@
           "uid": "$datasource"
         },
         "definition": "label_values(receiver)",
-        "hide": 0,
         "includeAll": true,
         "label": "Receiver",
-        "multi": false,
         "name": "receiver",
         "options": [],
         "query": {
@@ -3232,12 +3151,8 @@
         },
         "refresh": 2,
         "regex": "",
-        "skipUrlSync": false,
         "sort": 1,
-        "tagValuesQuery": "",
-        "tagsQuery": "",
-        "type": "query",
-        "useTags": false
+        "type": "query"
       },
       {
         "current": {},
@@ -3246,10 +3161,8 @@
           "uid": "$datasource"
         },
         "definition": "label_values(processor)",
-        "hide": 0,
         "includeAll": true,
         "label": "Processor",
-        "multi": false,
         "name": "processor",
         "options": [],
         "query": {
@@ -3258,12 +3171,8 @@
         },
         "refresh": 2,
         "regex": "",
-        "skipUrlSync": false,
         "sort": 1,
-        "tagValuesQuery": "",
-        "tagsQuery": "",
-        "type": "query",
-        "useTags": false
+        "type": "query"
       },
       {
         "allValue": ".*",
@@ -3273,10 +3182,8 @@
           "uid": "$datasource"
         },
         "definition": "label_values(exporter)",
-        "hide": 0,
         "includeAll": true,
         "label": "Exporter",
-        "multi": false,
         "name": "exporter",
         "options": [],
         "query": {
@@ -3285,24 +3192,17 @@
         },
         "refresh": 2,
         "regex": "",
-        "skipUrlSync": false,
         "sort": 1,
-        "tagValuesQuery": "",
-        "tagsQuery": "",
-        "type": "query",
-        "useTags": false
+        "type": "query"
       },
       {
         "current": {
-          "selected": true,
           "text": "None (basic metrics)",
           "value": ""
         },
         "description": "Detailed metrics must be configured in the collector configuration. They add grouping by transport protocol (http/grpc) for receivers. ",
-        "hide": 0,
         "includeAll": false,
         "label": "Additional groupping",
-        "multi": false,
         "name": "grouping",
         "options": [
           {
@@ -3322,8 +3222,6 @@
           }
         ],
         "query": "None (basic metrics) :  , By transport (detailed metrics) : \\,transport, By service instance id : \\,service_instance_id",
-        "queryValue": "",
-        "skipUrlSync": false,
         "type": "custom"
       }
     ]
@@ -3332,34 +3230,10 @@
     "from": "now-6h",
     "to": "now"
   },
-  "timepicker": {
-    "refresh_intervals": [
-      "5s",
-      "10s",
-      "30s",
-      "1m",
-      "5m",
-      "15m",
-      "30m",
-      "1h",
-      "2h",
-      "1d"
-    ],
-    "time_options": [
-      "5m",
-      "15m",
-      "1h",
-      "6h",
-      "12h",
-      "24h",
-      "2d",
-      "7d",
-      "30d"
-    ]
-  },
+  "timepicker": {},
   "timezone": "utc",
   "title": "OpenTelemetry Collector",
   "uid": "BKf2sowmj",
-  "version": 72,
+  "version": 10,
   "weekStart": ""
 }
