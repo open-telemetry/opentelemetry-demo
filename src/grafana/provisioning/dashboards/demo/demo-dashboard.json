@@ -26,7 +26,6 @@
   "graphTooltip": 0,
   "id": 2,
   "links": [],
-  "liveNow": false,
   "panels": [
     {
       "collapsed": false,
@@ -59,6 +58,7 @@
             "axisLabel": "",
             "axisPlacement": "auto",
             "barAlignment": 0,
+            "barWidthFactor": 0.6,
             "drawStyle": "line",
             "fillOpacity": 0,
             "gradientMode": "none",
@@ -122,6 +122,7 @@
           "sort": "none"
         }
       },
+      "pluginVersion": "11.3.0",
       "targets": [
         {
           "datasource": {
@@ -130,7 +131,7 @@
           },
           "editorMode": "code",
           "exemplar": true,
-          "expr": "histogram_quantile(0.50, sum(rate(duration_milliseconds_bucket{service_name=\"${service}\"}[$__rate_interval])) by (le))",
+          "expr": "histogram_quantile(0.50, sum(rate(traces_span_metrics_duration_milliseconds_bucket{service_name=\"${service}\"}[$__rate_interval])) by (le))",
           "legendFormat": "quantile50",
           "range": true,
           "refId": "A"
@@ -142,7 +143,7 @@
           },
           "editorMode": "code",
           "exemplar": false,
-          "expr": "histogram_quantile(0.95, sum(rate(duration_milliseconds_bucket{service_name=\"${service}\"}[$__rate_interval])) by (le))",
+          "expr": "histogram_quantile(0.95, sum(rate(traces_span_metrics_duration_milliseconds_bucket{service_name=\"${service}\"}[$__rate_interval])) by (le))",
           "hide": false,
           "legendFormat": "quantile95",
           "range": true,
@@ -155,7 +156,7 @@
           },
           "editorMode": "code",
           "exemplar": false,
-          "expr": "histogram_quantile(0.99, sum(rate(duration_milliseconds_bucket{service_name=\"${service}\"}[$__rate_interval])) by (le))",
+          "expr": "histogram_quantile(0.99, sum(rate(traces_span_metrics_duration_milliseconds_bucket{service_name=\"${service}\"}[$__rate_interval])) by (le))",
           "hide": false,
           "legendFormat": "quantile99",
           "range": true,
@@ -168,7 +169,7 @@
           },
           "editorMode": "code",
           "exemplar": false,
-          "expr": "histogram_quantile(0.999, sum(rate(duration_milliseconds_bucket{service_name=\"${service}\"}[$__rate_interval])) by (le))",
+          "expr": "histogram_quantile(0.999, sum(rate(traces_span_metrics_duration_milliseconds_bucket{service_name=\"${service}\"}[$__rate_interval])) by (le))",
           "hide": false,
           "legendFormat": "quantile999",
           "range": true,
@@ -196,6 +197,7 @@
             "axisLabel": "",
             "axisPlacement": "auto",
             "barAlignment": 0,
+            "barWidthFactor": 0.6,
             "drawStyle": "line",
             "fillOpacity": 0,
             "gradientMode": "none",
@@ -258,6 +260,7 @@
           "sort": "none"
         }
       },
+      "pluginVersion": "11.3.0",
       "targets": [
         {
           "datasource": {
@@ -265,7 +268,7 @@
             "uid": "webstore-metrics"
           },
           "editorMode": "code",
-          "expr": " sum by (span_name) (rate(calls_total{status_code=\"STATUS_CODE_ERROR\", service_name=\"${service}\"}[$__rate_interval]))",
+          "expr": " sum by (span_name) (rate(traces_span_metrics_calls_total{status_code=\"STATUS_CODE_ERROR\", service_name=\"${service}\"}[$__rate_interval]))",
           "interval": "",
           "legendFormat": "{{ span_name }}",
           "range": true,
@@ -292,6 +295,7 @@
             "axisLabel": "",
             "axisPlacement": "auto",
             "barAlignment": 0,
+            "barWidthFactor": 0.6,
             "drawStyle": "line",
             "fillOpacity": 0,
             "gradientMode": "none",
@@ -355,6 +359,7 @@
           "sort": "none"
         }
       },
+      "pluginVersion": "11.3.0",
       "targets": [
         {
           "datasource": {
@@ -362,7 +367,7 @@
             "uid": "webstore-metrics"
           },
           "editorMode": "code",
-          "expr": "sum by (span_name) (rate(duration_milliseconds_count{service_name=\"${service}\"}[$__rate_interval]))",
+          "expr": "sum by (span_name) (rate(traces_span_metrics_duration_milliseconds_count{service_name=\"${service}\"}[$__rate_interval]))",
           "legendFormat": "{{ span_name }}",
           "range": true,
           "refId": "A"
@@ -438,7 +443,7 @@
         },
         "showHeader": true
       },
-      "pluginVersion": "10.4.3",
+      "pluginVersion": "11.3.0",
       "targets": [
         {
           "alias": "",
@@ -525,7 +530,7 @@
         },
         "showHeader": true
       },
-      "pluginVersion": "10.4.3",
+      "pluginVersion": "11.3.0",
       "targets": [
         {
           "alias": "",
@@ -590,6 +595,7 @@
             "axisLabel": "",
             "axisPlacement": "auto",
             "barAlignment": 0,
+            "barWidthFactor": 0.6,
             "drawStyle": "line",
             "fillOpacity": 0,
             "gradientMode": "none",
@@ -652,6 +658,7 @@
           "sort": "none"
         }
       },
+      "pluginVersion": "11.3.0",
       "targets": [
         {
           "datasource": {
@@ -709,6 +716,7 @@
             "axisLabel": "",
             "axisPlacement": "auto",
             "barAlignment": 0,
+            "barWidthFactor": 0.6,
             "drawStyle": "line",
             "fillOpacity": 0,
             "gradientMode": "none",
@@ -771,6 +779,7 @@
           "sort": "none"
         }
       },
+      "pluginVersion": "11.3.0",
       "targets": [
         {
           "datasource": {
@@ -813,6 +822,7 @@
             "axisLabel": "",
             "axisPlacement": "auto",
             "barAlignment": 0,
+            "barWidthFactor": 0.6,
             "drawStyle": "bars",
             "fillOpacity": 0,
             "gradientMode": "none",
@@ -874,6 +884,7 @@
           "sort": "none"
         }
       },
+      "pluginVersion": "11.3.0",
       "targets": [
         {
           "datasource": {
@@ -908,6 +919,7 @@
             "axisLabel": "",
             "axisPlacement": "auto",
             "barAlignment": 0,
+            "barWidthFactor": 0.6,
             "drawStyle": "line",
             "fillOpacity": 0,
             "gradientMode": "none",
@@ -970,6 +982,7 @@
           "sort": "none"
         }
       },
+      "pluginVersion": "11.3.0",
       "targets": [
         {
           "datasource": {
@@ -977,7 +990,7 @@
             "uid": "webstore-metrics"
           },
           "editorMode": "code",
-          "expr": "rate(otel_trace_span_processor_spans{job=\"quoteservice\"}[2m])*120",
+          "expr": "rate(otel_trace_span_processor_spans{job=\"opentelemetry-demo/quoteservice\"}[2m])*120",
           "interval": "2m",
           "legendFormat": "{{state}}",
           "range": true,
@@ -988,16 +1001,14 @@
       "type": "timeseries"
     }
   ],
+  "preload": false,
   "refresh": "",
-  "revision": 1,
-  "schemaVersion": 39,
+  "schemaVersion": 40,
   "tags": [],
   "templating": {
     "list": [
       {
-        "allValue": "",
         "current": {
-          "selected": true,
           "text": "frontend",
           "value": "frontend"
         },
@@ -1005,19 +1016,16 @@
           "type": "prometheus",
           "uid": "webstore-metrics"
         },
-        "definition": "duration_milliseconds_bucket",
-        "hide": 0,
+        "definition": "traces_span_metrics_duration_milliseconds_bucket",
         "includeAll": false,
-        "multi": false,
         "name": "service",
         "options": [],
         "query": {
-          "query": "duration_milliseconds_bucket",
+          "query": "traces_span_metrics_duration_milliseconds_bucket",
           "refId": "PrometheusVariableQueryEditor-VariableQuery"
         },
         "refresh": 1,
         "regex": "/.*service_name=\\\"([^\\\"]+)\\\".*/",
-        "skipUrlSync": false,
         "sort": 1,
         "type": "query"
       }
@@ -1031,6 +1039,6 @@
   "timezone": "",
   "title": "Demo Dashboard",
   "uid": "W2gX2zHVk",
-  "version": 1,
+  "version": 2,
   "weekStart": ""
 }
