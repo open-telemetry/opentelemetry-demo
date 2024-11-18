@@ -15,7 +15,7 @@ the release.
   to 1.9.0 ([#1780](https://github.com/open-telemetry/opentelemetry-demo/pull/1780))
 * [reactnativeapp] Add React Native example app
   ([#1781](https://github.com/open-telemetry/opentelemetry-demo/pull/1781))
-  
+
 ## 1.12.0
 
 * [accountingservice] allow running the container with non root user
