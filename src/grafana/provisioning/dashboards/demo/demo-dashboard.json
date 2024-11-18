@@ -556,13 +556,13 @@
               "type": "count"
             }
           ],
-          "query": "search source=otel\n| where resource.service.name=\"${service}\"",
+          "query": "search source=otel\n| where resource.service.name=\"${service}\" | sort - @timestamp | head 100",
           "queryType": "PPL",
           "refId": "A",
-          "timeField": "time"
+          "timeField": "observedTimestamp"
         }
       ],
-      "title": "${service} Logs",
+      "title": "${service} Logs (100 recent entries)",
       "type": "table"
     },
     {
@@ -1039,6 +1039,6 @@
   "timezone": "",
   "title": "Demo Dashboard",
   "uid": "W2gX2zHVk",
-  "version": 2,
+  "version": 1,
   "weekStart": ""
 }
