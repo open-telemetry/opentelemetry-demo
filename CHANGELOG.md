@@ -11,9 +11,11 @@ the release.
   ([#1764](https://github.com/open-telemetry/opentelemetry-demo/pull/1764))
 * [chore] Move build args to .env file
   ([#1767](https://github.com/open-telemetry/opentelemetry-demo/pull/1767))
+* [accountingservice] bump OpenTelemetry .NET Automatic Instrumentation
+  to 1.9.0 ([#1780](https://github.com/open-telemetry/opentelemetry-demo/pull/1780))
 * [reactnativeapp] Add React Native example app
   ([#1781](https://github.com/open-telemetry/opentelemetry-demo/pull/1781))
-
+  
 ## 1.12.0
 
 * [accountingservice] allow running the container with non root user
