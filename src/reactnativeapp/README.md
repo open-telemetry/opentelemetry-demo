@@ -20,15 +20,6 @@ cd ../..
 make start # or start-minimal
 ```
 
-Before running the app the Typescript protobuf files need to be generated. This
-requires at least `protoc`, if you do not have the other dev tools installed you
-can comment the other invocations in `ide-gen-proto.sh` and just have
-`gen_proto_ts reactnativeapp` before running:
-
-```bash
-make generate-protobuf
-```
-
 Then start the React Native app:
 
 ```bash

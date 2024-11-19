@@ -19,6 +19,3 @@ web-build/
 expo-env.d.ts
 # @end expo-cli
 
-# TODO, should we consider committing these?
-protos/demo.ts
-pb/demo.proto
