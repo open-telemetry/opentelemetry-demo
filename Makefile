@@ -83,6 +83,11 @@ build:
 build-and-push:
 	$(DOCKER_COMPOSE_CMD) $(DOCKER_COMPOSE_ENV) build --push
 
+# Create multiplatform builder for buildx
+.PHONY: create-multiplatform-builder
+create-multiplatform-builder:
+	docker buildx create --name otel-demo-builder --buildkitd-config ./buildkitd.toml --use
+
 # Build and push multiplatform images (linux/amd64, linux/arm64) using buildx.
 # Requires docker with buildx enabled and a multi-platform capable builder in use.
 .PHONY: build-multiplatform
