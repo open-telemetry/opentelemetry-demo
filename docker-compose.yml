@@ -53,6 +53,8 @@ services:
       dockerfile: ${AD_SERVICE_DOCKERFILE}
       cache_from:
         - ${IMAGE_NAME}:${IMAGE_VERSION}-adservice
+      args:
+        OTEL_JAVA_AGENT_VERSION: ${OTEL_JAVA_AGENT_VERSION}
     deploy:
       resources:
         limits:
@@ -171,6 +173,8 @@ services:
       dockerfile: ${CURRENCY_SERVICE_DOCKERFILE}
       cache_from:
         - ${IMAGE_NAME}:${IMAGE_VERSION}-currencyservice
+      args:
+        OPENTELEMETRY_CPP_VERSION: ${OPENTELEMETRY_CPP_VERSION}
     deploy:
       resources:
         limits:
@@ -224,6 +228,8 @@ services:
       dockerfile: ${FRAUD_SERVICE_DOCKERFILE}
       cache_from:
         - ${IMAGE_NAME}:${IMAGE_VERSION}-frauddetectionservice
+      args:
+        OTEL_JAVA_AGENT_VERSION: ${OTEL_JAVA_AGENT_VERSION}
     deploy:
       resources:
         limits:
@@ -340,6 +346,8 @@ services:
       - ENVOY_PORT
       - FLAGD_HOST
       - FLAGD_PORT
+      - FLAGD_UI_HOST
+      - FLAGD_UI_PORT
     depends_on:
       frontend:
         condition: service_started
@@ -348,6 +356,8 @@ services:
       jaeger:
         condition: service_started
       grafana:
+        condition: service_started
+      flagdui:
         condition: service_started
 
   # Imageprovider
@@ -579,6 +589,7 @@ services:
       resources:
         limits:
           memory: 50M
+    restart: unless-stopped
     environment:
       - FLAGD_OTEL_COLLECTOR_URI=${OTEL_COLLECTOR_HOST}:${OTEL_COLLECTOR_PORT_GRPC}
       - FLAGD_METRICS_EXPORTER=otel
@@ -596,6 +607,33 @@ services:
     logging:
       *logging
 
+  # Flagd UI for configuring the feature flag service
+  flagdui:
+    image: ${IMAGE_NAME}:${DEMO_VERSION}-flagdui
+    container_name: flagdui
+    build:
+      context: ./
+      dockerfile: ${FLAGD_UI_DOCKERFILE}
+    deploy:
+      resources:
+        limits:
+          memory: 150M
+    restart: unless-stopped
+    environment:
+      - OTEL_EXPORTER_OTLP_ENDPOINT=http://${OTEL_COLLECTOR_HOST}:${OTEL_COLLECTOR_PORT_HTTP}
+      - OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE
+      - OTEL_RESOURCE_ATTRIBUTES
+      - OTEL_SERVICE_NAME=flagdui
+    ports:
+      - "${FLAGD_UI_PORT}"
+    depends_on:
+      otelcol:
+        condition: service_started
+      flagd:
+        condition: service_started
+    volumes:
+      - ./src/flagd:/app/data
+
   # Kafka used by Checkout, Accounting, and Fraud Detection services
   kafka:
     image: ${IMAGE_NAME}:${DEMO_VERSION}-kafka
@@ -605,6 +643,8 @@ services:
       dockerfile: ${KAFKA_SERVICE_DOCKERFILE}
       cache_from:
         - ${IMAGE_NAME}:${IMAGE_VERSION}-kafka
+      args:
+        OTEL_JAVA_AGENT_VERSION: ${OTEL_JAVA_AGENT_VERSION}
     deploy:
       resources:
         limits:
@@ -703,7 +743,10 @@ services:
       - "${OTEL_COLLECTOR_PORT_GRPC}"
       - "${OTEL_COLLECTOR_PORT_HTTP}"
     depends_on:
-      - jaeger
+      jaeger:
+        condition: service_started
+      opensearch:
+        condition: service_healthy
     logging: *logging
     environment:
       - ENVOY_PORT
@@ -763,4 +806,10 @@ services:
         hard: 65536
     ports:
       - "9200"
+    healthcheck:
+      test: curl -s http://localhost:9200/_cluster/health | grep -E '"status":"(green|yellow)"'
+      start_period: 10s
+      interval: 5s
+      timeout: 10s
+      retries: 10
     logging: *logging
