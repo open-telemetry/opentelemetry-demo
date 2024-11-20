@@ -12,7 +12,7 @@ RUN gradle shadowJar
 
 # -----------------------------------------------------------------------------
 
-FROM --platform=${TARGETPLATFORM} gcr.io/distroless/java17-debian11
+FROM gcr.io/distroless/java17-debian11
 
 ARG OTEL_JAVA_AGENT_VERSION
 WORKDIR /usr/src/app/

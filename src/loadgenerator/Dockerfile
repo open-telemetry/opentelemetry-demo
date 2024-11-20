@@ -2,9 +2,9 @@
 # SPDX-License-Identifier: Apache-2.0
 
 
-FROM python:3.12-slim-bookworm as base
+FROM python:3.12-slim-bookworm AS base
 
-FROM base as builder
+FROM base AS builder
 RUN apt-get -qq update \
     && apt-get install -y --no-install-recommends g++ \
     && rm -rf /var/lib/apt/lists/*
@@ -20,4 +20,4 @@ COPY ./src/loadgenerator/people.json .
 ENV LOCUST_PLAYWRIGHT=1
 ENV PLAYWRIGHT_BROWSERS_PATH=/opt/pw-browsers
 RUN playwright install --with-deps chromium
-ENTRYPOINT locust --skip-log-setup
+ENTRYPOINT ["locust", "--skip-log-setup"]

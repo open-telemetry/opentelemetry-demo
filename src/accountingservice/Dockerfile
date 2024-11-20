@@ -15,7 +15,7 @@ RUN dotnet publish "./AccountingService.csproj" -r linux-musl-$TARGETARCH --no-r
 
 # -----------------------------------------------------------------------------
 
-FROM --platform=${TARGETPLATFORM} mcr.microsoft.com/dotnet/aspnet:8.0
+FROM mcr.microsoft.com/dotnet/aspnet:8.0
 
 WORKDIR /usr/src/app/
 COPY --from=builder /accountingservice/ ./
