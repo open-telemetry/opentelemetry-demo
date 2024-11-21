@@ -400,7 +400,7 @@ services:
     deploy:
       resources:
         limits:
-          memory: 1G
+          memory: 1500M
     restart: unless-stopped
     ports:
       - "${LOCUST_WEB_PORT}"
@@ -589,7 +589,7 @@ services:
     deploy:
       resources:
         limits:
-          memory: 50M
+          memory: 75M
     restart: unless-stopped
     environment:
       - FLAGD_OTEL_COLLECTOR_URI=${OTEL_COLLECTOR_HOST}:${OTEL_COLLECTOR_PORT_GRPC}
@@ -618,7 +618,7 @@ services:
     deploy:
       resources:
         limits:
-          memory: 150M
+          memory: 75M
     restart: unless-stopped
     environment:
       - OTEL_EXPORTER_OTLP_ENDPOINT=http://${OTEL_COLLECTOR_HOST}:${OTEL_COLLECTOR_PORT_HTTP}

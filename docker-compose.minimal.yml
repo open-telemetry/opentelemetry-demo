@@ -504,7 +504,7 @@ services:
     deploy:
       resources:
         limits:
-          memory: 50M
+          memory: 75M
     environment:
       - FLAGD_OTEL_COLLECTOR_URI=${OTEL_COLLECTOR_HOST}:${OTEL_COLLECTOR_PORT_GRPC}
       - FLAGD_METRICS_EXPORTER=otel
