@@ -93,6 +93,7 @@ else ifeq ($(OS), Linux)
 	docker buildx create --name otel-builder --bootstrap --use --driver docker-container --config ./buildkitd.toml
 else
 	@echo "Unsupported OS: $(OS)"
+endif
 
 # Build and push multiplatform images (linux/amd64, linux/arm64) using buildx.
 # Requires docker with buildx enabled and a multi-platform capable builder in use.
