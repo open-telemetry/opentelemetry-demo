@@ -80,11 +80,10 @@ cd .\src\adservice\
 
 ### Run Docker Compose
 
-- Start the demo (It can take ~20min the first time the command is executed as
-all the images will be build):
+- Start the demo:
 
 ```shell
-docker compose up -d
+docker compose up --force-recreate --remove-orphans --detach
 ```
 
 ### Verify the Webstore & the Telemetry
@@ -203,30 +202,17 @@ Creating multi-platform builds requires docker buildx to be installed. This
 is part of Docker Desktop for macOS, or can be installed using
 `apt install docker-buildx` on Ubuntu.
 
-You will need a multi-platform capable builder with a limiter set of parallelism
-to avoid errors while building the images. On an M2 Mac, it is recommended to
-limit the parallelism to 8. This can be done by specifying a configuration file
-when creating the builder. First create the configuration file:
+You will need a multi-platform capable builder with a limiter set on parallelism
+to avoid errors while building the images. It is recommended to limit the
+parallelism to 4. This can be done by specifying a configuration file when
+creating the builder. The `buildkitd.toml` file in this repository can be used
+as the builder configuration file.
+
+To create a multi-platform builder with a parallelism limit of 4, use the
+following command:
 
 ```shell
-cat <<EOF > otel-builder.toml
-[worker.oci]
-  max-parallelism = 8
-EOF
-```
-
-Then create the builder for your environment.
-
-If you are using **MacOS** use this command to create the builder:
-
-```shell
-docker buildx create --name otel-builder --bootstrap --use --driver docker-container --buildkitd-config ./otel-builder.toml
-```
-
-If you are using **Ubuntu** use this command to create the builder:
-
-```shell
-docker buildx create --name otel-builder --bootstrap --use --driver docker-container --config ./otel-builder.toml
+make create-multiplatform-builder
 ```
 
 A builder will be created and set as the active builder. You can check the
