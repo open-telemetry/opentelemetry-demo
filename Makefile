@@ -10,6 +10,7 @@ TOOLS_DIR := ./internal/tools
 MISSPELL_BINARY=bin/misspell
 MISSPELL = $(TOOLS_DIR)/$(MISSPELL_BINARY)
 
+OS := $(shell uname)
 DOCKER_COMPOSE_CMD ?= docker compose
 DOCKER_COMPOSE_ENV=--env-file .env --env-file .env.override
 
@@ -86,7 +87,12 @@ build-and-push:
 # Create multiplatform builder for buildx
 .PHONY: create-multiplatform-builder
 create-multiplatform-builder:
-	docker buildx create --name otel-demo-builder --buildkitd-config ./buildkitd.toml --use
+ifeq ($(OS), Darwin)
+	docker buildx create --name otel-builder --bootstrap --use --driver docker-container --buildkitd-config ./buildkitd.toml
+else ifeq ($(OS), Linux)
+	docker buildx create --name otel-builder --bootstrap --use --driver docker-container --config ./buildkitd.toml
+else
+	@echo "Unsupported OS: $(OS)"
 
 # Build and push multiplatform images (linux/amd64, linux/arm64) using buildx.
 # Requires docker with buildx enabled and a multi-platform capable builder in use.
