@@ -15,7 +15,8 @@ the release.
   ([#1779](https://github.com/open-telemetry/opentelemetry-demo/pull/1779))
 * [accountingservice] bump OpenTelemetry .NET Automatic Instrumentation
   to 1.9.0 ([#1780](https://github.com/open-telemetry/opentelemetry-demo/pull/1780))
-* 
+* [chore] Add multi-platform build support
+  ([#1785](https://github.com/open-telemetry/opentelemetry-demo/pull/1785))
 
 ## 1.12.0
 
