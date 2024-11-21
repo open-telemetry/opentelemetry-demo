@@ -11,6 +11,8 @@ the release.
   ([#1764](https://github.com/open-telemetry/opentelemetry-demo/pull/1764))
 * [chore] Move build args to .env file
   ([#1767](https://github.com/open-telemetry/opentelemetry-demo/pull/1767))
+* [frontendproxy] add access logs
+  ([#1768](https://github.com/open-telemetry/opentelemetry-demo/pull/1768))
 * [grafana] Fix Dashboards
   ([#1779](https://github.com/open-telemetry/opentelemetry-demo/pull/1779))
 * [accountingservice] bump OpenTelemetry .NET Automatic Instrumentation

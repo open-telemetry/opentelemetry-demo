@@ -269,6 +269,7 @@ services:
       - OTEL_COLLECTOR_PORT_GRPC
       - OTEL_COLLECTOR_PORT_HTTP
       - OTEL_RESOURCE_ATTRIBUTES
+      - OTEL_SERVICE_NAME=frontend-proxy
       - ENVOY_PORT
       - FLAGD_HOST
       - FLAGD_PORT

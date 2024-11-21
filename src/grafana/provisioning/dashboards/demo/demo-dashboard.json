@@ -401,7 +401,7 @@
             "mode": "thresholds"
           },
           "custom": {
-            "align": "auto",
+            "align": "left",
             "cellOptions": {
               "type": "auto"
             },
@@ -422,7 +422,20 @@
             ]
           }
         },
-        "overrides": []
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "count()"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 90
+              }
+            ]
+          }
+        ]
       },
       "gridPos": {
         "h": 8,
@@ -509,7 +522,20 @@
             ]
           }
         },
-        "overrides": []
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "observedTimestamp"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 222
+              }
+            ]
+          }
+        ]
       },
       "gridPos": {
         "h": 8,
@@ -528,7 +554,13 @@
           ],
           "show": false
         },
-        "showHeader": true
+        "showHeader": true,
+        "sortBy": [
+          {
+            "desc": true,
+            "displayName": "observedTimestamp"
+          }
+        ]
       },
       "pluginVersion": "11.3.0",
       "targets": [
@@ -556,13 +588,13 @@
               "type": "count"
             }
           ],
-          "query": "search source=otel\n| where resource.service.name=\"${service}\"",
+          "query": "search source=otel\n| where resource.service.name=\"${service}\"| sort - observedTimestamp | head 100",
           "queryType": "PPL",
           "refId": "A",
-          "timeField": "time"
+          "timeField": "observedTimestamp"
         }
       ],
-      "title": "${service} Logs",
+      "title": "${service} Logs (100 recent entries)",
       "type": "table"
     },
     {
@@ -1039,6 +1071,6 @@
   "timezone": "",
   "title": "Demo Dashboard",
   "uid": "W2gX2zHVk",
-  "version": 2,
+  "version": 1,
   "weekStart": ""
 }
