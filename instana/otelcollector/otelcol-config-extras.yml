@@ -1,0 +1,39 @@
+# Copyright The OpenTelemetry Authors
+# SPDX-License-Identifier: Apache-2.0
+
+# extra settings to be merged into OpenTelemetry Collector configuration
+# do not delete this file
+
+## Example configuration for sending data to your own OTLP HTTP backend
+## Note: the spanmetrics exporter must be included in the exporters array
+## if overriding the traces pipeline.
+##
+processors:
+  resource:
+    attributes:
+      - key: service.instance.id
+        value: otel-demo
+        action: upsert
+
+# Replace the INSTANA_ENDPOINT, more information:
+# https://www.ibm.com/docs/en/instana-observability/current?topic=opentelemetry-sending-data-instana
+exporters:
+  otlp/instana:
+    endpoint: INSTANA_ENDPOINT
+    tls:
+      insecure: true
+
+service:
+  pipelines:
+    traces:
+      receivers: [otlp]
+      processors: [transform, batch, resource]
+      exporters: [otlp, debug, spanmetrics, otlp/instana]
+    metrics:
+      receivers: [otlp, spanmetrics]
+      processors: [batch, resource]
+      exporters: [otlphttp/prometheus, debug, otlp/instana]
+    logs:
+      receivers: [otlp]
+      processors: [batch, resource]
+      exporters: [opensearch, debug]

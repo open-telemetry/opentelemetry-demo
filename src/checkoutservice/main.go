@@ -155,6 +155,11 @@ func main() {
 		}
 	}()
 
+	meter := mp.Meter("checkoutservice")
+	if err := recordRuntimeMetrics(meter); err != nil {
+		log.Fatal(err)
+	}
+
 	err := runtime.Start(runtime.WithMinimumReadMemStatsInterval(time.Second))
 	if err != nil {
 		log.Fatal(err)
