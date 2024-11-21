@@ -17,6 +17,8 @@ the release.
   ([#1779](https://github.com/open-telemetry/opentelemetry-demo/pull/1779))
 * [accountingservice] bump OpenTelemetry .NET Automatic Instrumentation
   to 1.9.0 ([#1780](https://github.com/open-telemetry/opentelemetry-demo/pull/1780))
+* [chore] update memory limits for flagd, flagdui, and loadgenerator
+  ([#1786](https://github.com/open-telemetry/opentelemetry-demo/pull/1786))
 
 ## 1.12.0
 
