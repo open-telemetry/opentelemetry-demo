@@ -202,6 +202,13 @@ Creating multi-platform builds requires docker buildx to be installed. This
 is part of Docker Desktop for macOS, or can be installed using
 `apt install docker-buildx` on Ubuntu.
 
+To build and load the multi-platform images locally you will need to configure
+docker to use `containerd`. This can be done in Docker Desktop settings on MacOS
+or Windows. Please follow
+[these instructions](https://docs.docker.com/engine/storage/containerd/#enable-containerd-image-store-on-docker-engine)
+to configure Docker Engine on Linux/Unbuntu.
+
+
 You will need a multi-platform capable builder with a limiter set on parallelism
 to avoid errors while building the images. It is recommended to limit the
 parallelism to 4. This can be done by specifying a configuration file when
