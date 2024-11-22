@@ -10,7 +10,6 @@ TOOLS_DIR := ./internal/tools
 MISSPELL_BINARY=bin/misspell
 MISSPELL = $(TOOLS_DIR)/$(MISSPELL_BINARY)
 
-OS := $(shell uname)
 DOCKER_COMPOSE_CMD ?= docker compose
 DOCKER_COMPOSE_ENV=--env-file .env --env-file .env.override
 
@@ -87,16 +86,16 @@ build-and-push:
 # Create multiplatform builder for buildx
 .PHONY: create-multiplatform-builder
 create-multiplatform-builder:
-ifeq ($(OS), Darwin)
-	docker buildx create --name otel-builder --bootstrap --use --driver docker-container --buildkitd-config ./buildkitd.toml
-else ifeq ($(OS), Linux)
-	docker buildx create --name otel-builder --bootstrap --use --driver docker-container --config ./buildkitd.toml
-else
-	@echo "Unsupported OS: $(OS)"
-endif
+	docker buildx create --name otel-demo-builder --bootstrap --use --driver docker-container --config ./buildkitd.toml
+
+# Remove multiplatform builder for buildx
+.PHONY: remove-multiplatform-builder
+remove-multiplatform-builder:
+	docker buildx rm otel-demo-builder
 
 # Build and push multiplatform images (linux/amd64, linux/arm64) using buildx.
 # Requires docker with buildx enabled and a multi-platform capable builder in use.
+# Docker needs to be configured to use containerd storage for images to be loaded into the local registry.
 .PHONY: build-multiplatform
 build-multiplatform:
 	# Because buildx bake does not support --env-file yet, we need to load it into the environment first.
