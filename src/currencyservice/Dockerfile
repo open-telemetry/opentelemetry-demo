@@ -45,4 +45,4 @@ RUN apk update && apk add grpc-dev protobuf-dev
 COPY --from=builder /usr/local /usr/local
 
 EXPOSE ${CURRENCY_SERVICE_PORT}
-ENTRYPOINT ["./usr/local/bin/currencyservice", "${CURRENCY_SERVICE_PORT}"]
+ENTRYPOINT ["sh", "-c", "./usr/local/bin/currencyservice ${CURRENCY_SERVICE_PORT}"]
