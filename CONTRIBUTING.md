@@ -83,7 +83,7 @@ cd .\src\adservice\
 - Start the demo:
 
 ```shell
-docker compose up --force-recreate --remove-orphans --detach
+make start
 ```
 
 ### Verify the Webstore & the Telemetry
