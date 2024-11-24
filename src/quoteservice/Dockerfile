@@ -2,7 +2,7 @@
 # SPDX-License-Identifier: Apache-2.0
 
 
-FROM php:8.3-cli as base
+FROM php:8.3-cli AS base
 
 ADD https://github.com/mlocati/docker-php-extension-installer/releases/latest/download/install-php-extensions /usr/local/bin/
 RUN chmod +x /usr/local/bin/install-php-extensions \
@@ -13,7 +13,7 @@ RUN chmod +x /usr/local/bin/install-php-extensions \
     opentelemetry
 
 WORKDIR /var/www
-CMD php public/index.php
+CMD ["php", "public/index.php"]
 USER www-data
 EXPOSE ${QUOTE_SERVICE_PORT}
 
@@ -30,7 +30,6 @@ RUN composer install \
     --no-dev \
     --prefer-dist
 
-FROM base as final
+FROM base AS final
 COPY --from=vendor /tmp/vendor/ ./vendor/
 COPY ./src/quoteservice/ /var/www
-

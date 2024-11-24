@@ -14,7 +14,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-FROM alpine:3.18 as builder
+FROM alpine:3.18 AS builder
 
 RUN apk update && apk add git cmake make g++ grpc-dev protobuf-dev linux-headers
 
@@ -39,10 +39,10 @@ RUN cd /currencyservice \
     && make -j$(nproc || sysctl -n hw.ncpu || echo 1) install
 
 
-FROM alpine:3.18 as release
+FROM alpine:3.18 AS release
 
 RUN apk update && apk add grpc-dev protobuf-dev
 COPY --from=builder /usr/local /usr/local
 
 EXPOSE ${CURRENCY_SERVICE_PORT}
-ENTRYPOINT ./usr/local/bin/currencyservice ${CURRENCY_SERVICE_PORT}
+ENTRYPOINT ["sh", "-c", "./usr/local/bin/currencyservice ${CURRENCY_SERVICE_PORT}"]

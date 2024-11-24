@@ -2,9 +2,9 @@
 # SPDX-License-Identifier: Apache-2.0
 
 
-FROM ruby:3.2.2-slim as base
+FROM ruby:3.2.2-slim AS base
 
-FROM base as builder
+FROM base AS builder
 
 WORKDIR /tmp
 
@@ -12,7 +12,7 @@ COPY ./src/emailservice/Gemfile ./src/emailservice/Gemfile.lock ./
 
 #RUN apk update && apk add make gcc musl-dev gcompat && bundle install
 RUN apt-get update && apt-get install build-essential -y && bundle install
-FROM base as release
+FROM base AS release
 
 WORKDIR /email_server
 
