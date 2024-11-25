@@ -11,8 +11,9 @@ import {
   SimpleSpanProcessor,
   ConsoleSpanExporter,
 } from "@opentelemetry/sdk-trace-base";
+import { XMLHttpRequestInstrumentation } from "@opentelemetry/instrumentation-xml-http-request";
+import { FetchInstrumentation } from "@opentelemetry/instrumentation-fetch";
 import { registerInstrumentations } from "@opentelemetry/instrumentation";
-import { getWebAutoInstrumentations } from "@opentelemetry/auto-instrumentations-web";
 import { Resource } from "@opentelemetry/resources";
 import {
   ATTR_DEVICE_ID,
@@ -30,7 +31,7 @@ import {
   getVersion,
 } from "react-native-device-info";
 import { Platform } from "react-native";
-import {SessionIdProcessor} from "@/utils/SessionIdProcessor";
+import { SessionIdProcessor } from "@/utils/SessionIdProcessor";
 
 const Tracer = async () => {
   // TODO Should add a resource detector for React Native that provides this automatically
@@ -79,21 +80,16 @@ const Tracer = async () => {
   });
 
   registerInstrumentations({
-    tracerProvider: provider,
     instrumentations: [
-      // TODO Some tiptoeing required here, 'instrumentation-user-interaction' and 'instrumentation-document-load' are
-      // not valid for React Native. For 'instrumentation-fetch' propagateTraceHeaderCorsUrls is required to make it
+      new XMLHttpRequestInstrumentation(),
+      // TODO Some tiptoeing required here, propagateTraceHeaderCorsUrls is required to make the instrumentation
       // work in the context of a mobile app even though we are not making CORS requests. `clearTimingResources` must
       // be turned off to avoid using the web-only Performance API
-      // Overall wrapping or forking these and providing a React Native specific auto instrumentation will ease
+      // Overall wrapping or forking this and providing a React Native specific auto instrumentation will ease
       // integration and make it less error-prone
-      getWebAutoInstrumentations({
-        "@opentelemetry/instrumentation-user-interaction": { enabled: false },
-        "@opentelemetry/instrumentation-document-load": { enabled: false },
-        "@opentelemetry/instrumentation-fetch": {
-          propagateTraceHeaderCorsUrls: /.*/,
-          clearTimingResources: false,
-        },
+      new FetchInstrumentation({
+        propagateTraceHeaderCorsUrls: /.*/,
+        clearTimingResources: false,
       }),
     ],
   });
