@@ -34,6 +34,8 @@ import { Platform } from "react-native";
 import { SessionIdProcessor } from "@/utils/SessionIdProcessor";
 
 const Tracer = async () => {
+  const localhost = await getLocalhost();
+
   // TODO Should add a resource detector for React Native that provides this automatically
   const resource = new Resource({
     [ATTR_SERVICE_NAME]: "reactnativeapp",
@@ -49,26 +51,26 @@ const Tracer = async () => {
   //  for React Native.
   //  Alternatively could offer a TracerProvider that exposed a JS interface on top of the OTEL Android and Swift SDKS,
   //  giving developers the option of collecting telemetry at the native mobile layer
-  const provider = new WebTracerProvider({ resource });
+  const provider = new WebTracerProvider({
+    resource,
+    spanProcessors: [
+      new BatchSpanProcessor(
+        new OTLPTraceExporter({
+          url: `http://${localhost}:${process.env.EXPO_PUBLIC_FRONTEND_PROXY_PORT}/otlp-http/v1/traces`,
+        }),
+        {
+          scheduledDelayMillis: 500,
+        },
+      ),
 
-  const localhost = await getLocalhost();
-  provider.addSpanProcessor(
-    new BatchSpanProcessor(
-      new OTLPTraceExporter({
-        url: `http://${localhost}:${process.env.EXPO_PUBLIC_FRONTEND_PROXY_PORT}/otlp-http/v1/traces`,
-      }),
-      {
-        scheduledDelayMillis: 500,
-      },
-    ),
-  );
+      // TODO introduce a React Native session processor package that could be used here, taking into account mobile
+      // specific considerations for the session such as putting the app into the background
+      new SessionIdProcessor(),
 
-  // TODO introduce a React Native session processor package that could be used here, taking into account mobile
-  // specific considerations for the session such as putting the app into the background
-  provider.addSpanProcessor(new SessionIdProcessor());
-
-  // Helpful for debugging
-  provider.addSpanProcessor(new SimpleSpanProcessor(new ConsoleSpanExporter()));
+      // Helpful for debugging
+      new SimpleSpanProcessor(new ConsoleSpanExporter()),
+    ],
+  });
 
   provider.register({
     propagator: new CompositePropagator({
