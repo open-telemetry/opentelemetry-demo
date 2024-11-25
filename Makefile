@@ -133,6 +133,25 @@ generate-kubernetes-manifests:
 	echo "  name: otel-demo" >> kubernetes/opentelemetry-demo.yaml
 	helm template opentelemetry-demo open-telemetry/opentelemetry-demo --namespace otel-demo | sed '/helm.sh\/chart\:/d' | sed '/helm.sh\/hook/d' | sed '/managed-by\: Helm/d' >> kubernetes/opentelemetry-demo.yaml
 
+.PHONY: docker-generate-protobuf
+docker-generate-protobuf:
+	./docker-gen-proto.sh
+
+.PHONY: clean
+clean:
+	rm -rf ./src/{checkoutservice,productcatalogservice}/genproto/oteldemo/
+	rm -rf ./src/recommendationservice/{demo_pb2,demo_pb2_grpc}.py
+
+.PHONY: check-clean-work-tree
+check-clean-work-tree:
+	@if ! git diff --quiet; then \
+	  echo; \
+	  echo 'Working tree is not clean, did you forget to run "make docker-generate-protobuf"?'; \
+	  echo; \
+	  git status; \
+	  exit 1; \
+	fi
+
 .PHONY: start
 start:
 	$(DOCKER_COMPOSE_CMD) $(DOCKER_COMPOSE_ENV) up --force-recreate --remove-orphans --detach

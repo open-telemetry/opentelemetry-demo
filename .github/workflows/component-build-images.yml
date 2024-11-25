@@ -26,8 +26,20 @@ on:
         type: string
 
 jobs:
+  protobufcheck:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Generate
+        run: make clean docker-generate-protobuf
+      - name: Check Clean Work Tree
+        run: make check-clean-work-tree
+
   build_and_push_images:
     runs-on: ubuntu-latest
+    needs: protobufcheck
+
     permissions:
       contents: read
       packages: write
