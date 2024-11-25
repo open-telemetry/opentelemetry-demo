@@ -3,7 +3,7 @@
 import { StyleSheet, TextInput, type TextInputProps } from "react-native";
 import { ThemedView } from "@/components/ThemedView";
 import { ThemedText } from "@/components/ThemedText";
-import {useThemeColor} from "@/hooks/useThemeColor";
+import { useThemeColor } from "@/hooks/useThemeColor";
 
 export type FieldProps = TextInputProps & {
   label: string;
