@@ -16,7 +16,7 @@ FROM node:21-alpine
 
 USER node
 WORKDIR /usr/src/app/
-ENV NODE_ENV production
+ENV NODE_ENV=production
 
 COPY --chown=node:node --from=build /usr/src/app/node_modules/ ./node_modules/
 COPY ./src/paymentservice/ ./

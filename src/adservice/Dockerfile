@@ -2,7 +2,7 @@
 # SPDX-License-Identifier: Apache-2.0
 
 
-FROM eclipse-temurin:21-jdk as builder
+FROM --platform=${BUILDPLATFORM} eclipse-temurin:21-jdk AS builder
 
 WORKDIR /usr/src/app/
 
