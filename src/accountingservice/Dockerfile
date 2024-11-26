@@ -3,23 +3,32 @@
 
 FROM --platform=${BUILDPLATFORM} mcr.microsoft.com/dotnet/sdk:8.0 AS builder
 ARG TARGETARCH
+ARG BUILD_CONFIGURATION=Release
+WORKDIR /src
+COPY ["/src/accountingservice/", "AccountingService/"]
+COPY ["/pb/demo.proto", "AccountingService/proto/"]
+RUN dotnet restore "./AccountingService/AccountingService.csproj" -r linux-musl-$TARGETARCH
+WORKDIR "/src/AccountingService"
 
-WORKDIR /usr/src/app/
+RUN dotnet build "./AccountingService.csproj" -r linux-musl-$TARGETARCH -c $BUILD_CONFIGURATION -o /app/build
 
-COPY ./src/accountingservice/ ./
-COPY ./pb/ ./proto/
+# -----------------------------------------------------------------------------
 
-RUN dotnet restore "./AccountingService.csproj" -r linux-musl-$TARGETARCH
-
-RUN dotnet publish "./AccountingService.csproj" -r linux-musl-$TARGETARCH --no-restore -o /accountingservice
+FROM builder AS publish
+ARG BUILD_CONFIGURATION=Release
+RUN dotnet publish "./AccountingService.csproj" --use-current-runtime -c $BUILD_CONFIGURATION -o /app/publish /p:UseAppHost=false
 
 # -----------------------------------------------------------------------------
 
 FROM mcr.microsoft.com/dotnet/aspnet:8.0
+USER app
+WORKDIR /app
+COPY --from=publish /app/publish .
 
-WORKDIR /usr/src/app/
-COPY --from=builder /accountingservice/ ./
-
-ENV DOTNET_HOSTBUILDER__RELOADCONFIGONCHANGE=false
+USER root
+RUN mkdir -p "/var/log/opentelemetry/dotnet"
+RUN chown app "/var/log/opentelemetry/dotnet"
+RUN chown app "/app/instrument.sh"
+USER app
 
 ENTRYPOINT ["./instrument.sh", "dotnet", "AccountingService.dll"]
