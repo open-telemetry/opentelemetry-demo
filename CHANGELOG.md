@@ -21,6 +21,8 @@ the release.
   ([#1786](https://github.com/open-telemetry/opentelemetry-demo/pull/1786))
 * [chore] Add multi-platform build support
   ([#1785](https://github.com/open-telemetry/opentelemetry-demo/pull/1785))
+* [paymentservice] Add nodejs auto-instrumentation for runtime metrics
+  ([#1797](https://github.com/open-telemetry/opentelemetry-demo/pull/1797))
 
 ## 1.12.0
 
