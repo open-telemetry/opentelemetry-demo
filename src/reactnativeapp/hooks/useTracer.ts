@@ -83,7 +83,6 @@ const Tracer = async () => {
 
   registerInstrumentations({
     instrumentations: [
-      new XMLHttpRequestInstrumentation(),
       // TODO Some tiptoeing required here, propagateTraceHeaderCorsUrls is required to make the instrumentation
       // work in the context of a mobile app even though we are not making CORS requests. `clearTimingResources` must
       // be turned off to avoid using the web-only Performance API
@@ -92,6 +91,15 @@ const Tracer = async () => {
       new FetchInstrumentation({
         propagateTraceHeaderCorsUrls: /.*/,
         clearTimingResources: false,
+      }),
+
+      // The React Native implementation of fetch is simply a polyfill on top of XMLHttpRequest:
+      // https://github.com/facebook/react-native/blob/7ccc5934d0f341f9bc8157f18913a7b340f5db2d/packages/react-native/Libraries/Network/fetch.js#L17
+      // Because of this when making requests using `fetch` there will an additional span created for the underlying
+      // request made with XMLHttpRequest. Since in this demo calls to /api/ are made using fetch, turn off
+      // instrumentation for that path to avoid the extra spans.
+      new XMLHttpRequestInstrumentation({
+        ignoreUrls: [/\/api\/.*/],
       }),
     ],
   });
