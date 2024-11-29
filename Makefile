@@ -194,10 +194,14 @@ endif
 src/reactnativeapp/node_modules:
 	npm --prefix src/reactnativeapp install
 
-.PHONY: reactnative-android
-reactnative-android: src/reactnativeapp/node_modules
+.PHONY: reactnative-run-android
+reactnative-run-android: src/reactnativeapp/node_modules
 	npm --prefix src/reactnativeapp run android
 
-.PHONY: reactnative-ios
-reactnative-ios: src/reactnativeapp/node_modules
+.PHONY: reactnative-run-ios
+reactnative-run-ios: src/reactnativeapp/node_modules
 	npm --prefix src/reactnativeapp run ios
+
+.PHONY: reactnative-build-android
+reactnative-build-android:
+	docker build -f src/reactnativeapp/android.Dockerfile --output=. src/reactnativeapp
