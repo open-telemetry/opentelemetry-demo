@@ -15,6 +15,8 @@ static_resources:
                 "@type": type.googleapis.com/envoy.extensions.filters.network.http_connection_manager.v3.HttpConnectionManager
                 codec_type: AUTO
                 stat_prefix: ingress_http
+                internal_address_config: 
+                  unix_sockets: true
                 tracing:
                   spawn_upstream_span: true
                   provider:
