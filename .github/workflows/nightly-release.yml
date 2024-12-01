@@ -12,6 +12,5 @@ jobs:
     uses: ./.github/workflows/component-build-images.yml
     if: github.repository == 'open-telemetry/opentelemetry-demo'
     with:
-      push: true
       version: nightly-${{ github.run_id }}
     secrets: inherit
