@@ -9975,7 +9975,7 @@ spec:
               value: service.name=$(OTEL_SERVICE_NAME),service.namespace=opentelemetry-demo,service.version=1.12.0
           resources:
             limits:
-              memory: 50Mi
+              memory: 75Mi
           volumeMounts:
             - name: config-rw
               mountPath: /etc/flagd
@@ -10004,7 +10004,7 @@ spec:
               value: service.name=$(OTEL_SERVICE_NAME),service.namespace=opentelemetry-demo,service.version=1.12.0
           resources:
             limits:
-              memory: 150Mi
+              memory: 75Mi
           volumeMounts:
             - mountPath: /app/data
               name: config-rw
@@ -10269,8 +10269,6 @@ spec:
               value: "4317"
             - name: OTEL_COLLECTOR_PORT_HTTP
               value: "4318"
-            - name: OTEL_SERVICE_NAME
-              value: frontend-proxy
             - name: OTEL_RESOURCE_ATTRIBUTES
               value: service.name=$(OTEL_SERVICE_NAME),service.namespace=opentelemetry-demo,service.version=1.12.0
           resources:
@@ -10487,7 +10485,7 @@ spec:
               value: service.name=$(OTEL_SERVICE_NAME),service.namespace=opentelemetry-demo,service.version=1.12.0
           resources:
             limits:
-              memory: 1Gi
+              memory: 1500Mi
           volumeMounts:
       volumes:
 ---
