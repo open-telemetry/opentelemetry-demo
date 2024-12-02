@@ -15,6 +15,7 @@ RUN dotnet build "./AccountingService.csproj" -r linux-musl-$TARGETARCH -c $BUIL
 # -----------------------------------------------------------------------------
 
 FROM builder AS publish
+ARG TARGETARCH
 ARG BUILD_CONFIGURATION=Release
 RUN dotnet publish "./AccountingService.csproj" -r linux-musl-$TARGETARCH --use-current-runtime -c $BUILD_CONFIGURATION -o /app/publish /p:UseAppHost=false
 
