@@ -23,9 +23,9 @@ WORKDIR /usr/src/app/
 COPY ./src/cartservice/ ./
 COPY ./pb/ ./pb/
 
-RUN dotnet restore ./src/cartservice.csproj -r linux-musl-$TARGETARCH
+RUN dotnet restore ./src/cartservice.csproj -r linux-$TARGETARCH
 
-RUN dotnet publish ./src/cartservice.csproj -r linux-musl-$TARGETARCH --no-restore -o /cartservice
+RUN dotnet publish ./src/cartservice.csproj -r linux-$TARGETARCH --no-restore -o /cartservice
 
 # -----------------------------------------------------------------------------
 
