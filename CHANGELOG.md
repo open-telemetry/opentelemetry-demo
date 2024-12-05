@@ -23,6 +23,8 @@ the release.
   ([#1785](https://github.com/open-telemetry/opentelemetry-demo/pull/1785))
 * [chore] Generate protobuf code for Go and Python services
   ([#1794](https://github.com/open-telemetry/opentelemetry-demo/pull/1784))
+* [paymentservice] Add nodejs instrumentation for runtime metrics
+  ([#1797](https://github.com/open-telemetry/opentelemetry-demo/pull/1797))
 
 ## 1.12.0
 
