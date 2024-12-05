@@ -186,7 +186,7 @@ services:
       - CURRENCY_SERVICE_PORT
       - VERSION=${IMAGE_VERSION}
       - OTEL_EXPORTER_OTLP_ENDPOINT
-      - OTEL_RESOURCE_ATTRIBUTES=${OTEL_RESOURCE_ATTRIBUTES},service.name=currencyservice   # The C++ SDK does not support OTEL_SERVICE_NAME
+      - OTEL_RESOURCE_ATTRIBUTES=${OTEL_RESOURCE_ATTRIBUTES},service.name=currencyservice # The C++ SDK does not support OTEL_SERVICE_NAME
     depends_on:
       otelcol:
         condition: service_started
@@ -333,7 +333,7 @@ services:
     restart: unless-stopped
     ports:
       - "${ENVOY_PORT}:${ENVOY_PORT}"
-      - 10000:10000
+      - 10001:10000
     environment:
       - FRONTEND_PORT
       - FRONTEND_HOST
@@ -533,7 +533,7 @@ services:
     deploy:
       resources:
         limits:
-          memory: 500M               # This is high to enable supporting the recommendationCache feature flag use case
+          memory: 500M # This is high to enable supporting the recommendationCache feature flag use case
     restart: unless-stopped
     ports:
       - "${RECOMMENDATION_SERVICE_PORT}"
@@ -601,17 +601,12 @@ services:
       - FLAGD_METRICS_EXPORTER=otel
       - OTEL_RESOURCE_ATTRIBUTES
       - OTEL_SERVICE_NAME=flagd
-    command: [
-      "start",
-      "--uri",
-      "file:./etc/flagd/demo.flagd.json"
-    ]
+    command: ["start", "--uri", "file:./etc/flagd/demo.flagd.json"]
     ports:
       - 8013
     volumes:
       - ./src/flagd:/etc/flagd
-    logging:
-      *logging
+    logging: *logging
 
   # Flagd UI for configuring the feature flag service
   flagdui:
@@ -685,7 +680,6 @@ services:
       - "${VALKEY_PORT}"
     logging: *logging
 
-
   # ********************
   # Telemetry Components
   # ********************
@@ -705,7 +699,7 @@ services:
           memory: 400M
     restart: unless-stopped
     ports:
-      - "${JAEGER_SERVICE_PORT}"         # Jaeger UI
+      - "${JAEGER_SERVICE_PORT}" # Jaeger UI
       - "${OTEL_COLLECTOR_PORT_GRPC}"
     environment:
       - METRICS_STORAGE_TYPE=prometheus
@@ -738,7 +732,11 @@ services:
         limits:
           memory: 200M
     restart: unless-stopped
-    command: [ "--config=/etc/otelcol-config.yml", "--config=/etc/otelcol-config-extras.yml" ]
+    command:
+      [
+        "--config=/etc/otelcol-config.yml",
+        "--config=/etc/otelcol-config-extras.yml",
+      ]
     user: 0:0
     volumes:
       - ${HOST_FILESYSTEM}:/hostfs:ro

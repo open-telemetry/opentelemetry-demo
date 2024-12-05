@@ -1,0 +1,43 @@
+default:
+  envOverrides:
+    - name: BUGSNAG_API_KEY
+      value: <your-api-key>
+    - name: BUGSNAG_APP_VERSION
+      value: 1.0.0
+    - name: BUGSNAG_RELEASE_STAGE
+      value: production
+
+components:
+  emailService:
+    imageOverride:
+      repository: <emailservice-docker-image>
+      tag: "1"
+  frontend:
+    imageOverride:
+      repository: <frontend-docker-image>
+      tag: "1"
+
+opentelemetry-collector:
+  hostAliases:
+    - ip: <minikube-host-ip>
+      hostnames:
+        - "host.minikube.internal"
+  config:
+    exporters:
+      otlp/bugsnag:
+        endpoint: http://host.minikube.internal:4317
+        headers:
+          Bugsnag-Api-Key: <your-api-key>
+        compression: none
+        tls:
+          insecure: true
+      # debug:
+      #   verbosity: detailed
+
+    service:
+      pipelines:
+        traces:
+          exporters: [spanmetrics, otlp/bugsnag]
+
+jaeger:
+  enabled: false

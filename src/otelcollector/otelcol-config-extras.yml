@@ -1,7 +1,13 @@
 exporters:
   otlp/bugsnag:
-    endpoint: <your-api-key>.otlp.bugsnag.com:4317
+    # endpoint: <your-api-key>.otlp.bugsnag.com:4317
+    endpoint: host.docker.internal:4317
+    headers:
+      Bugsnag-Api-Key: <your-api-key>
     compression: none
+    tls:
+      insecure: true
+
 service:
   pipelines:
     traces:
