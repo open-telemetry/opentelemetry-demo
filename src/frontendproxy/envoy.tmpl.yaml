@@ -16,7 +16,13 @@ static_resources:
                 codec_type: AUTO
                 stat_prefix: ingress_http
                 internal_address_config:
-                  unix_sockets: true
+                  cidr_ranges:
+                    - address_prefix: "10.0.0.0"
+                      prefix_len: 8
+                    - address_prefix: "127.0.0.1"
+                      prefix_len: 32
+                    - address_prefix: "::10"
+                      prefix_len: 128
                 tracing:
                   spawn_upstream_span: true
                   provider:
