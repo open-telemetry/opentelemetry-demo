@@ -15,6 +15,14 @@ static_resources:
                 "@type": type.googleapis.com/envoy.extensions.filters.network.http_connection_manager.v3.HttpConnectionManager
                 codec_type: AUTO
                 stat_prefix: ingress_http
+                internal_address_config:
+                  cidr_ranges:
+                    - address_prefix: "10.0.0.0"
+                      prefix_len: 8
+                    - address_prefix: "127.0.0.1"
+                      prefix_len: 32
+                    - address_prefix: "::10"
+                      prefix_len: 128
                 tracing:
                   spawn_upstream_span: true
                   provider:
