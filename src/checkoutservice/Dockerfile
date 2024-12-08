@@ -19,6 +19,10 @@ RUN --mount=type=cache,target=/go/pkg/mod/ \
 FROM alpine
 
 WORKDIR /usr/src/app/
+ARG DD_GIT_REPOSITORY_URL
+ARG DD_GIT_COMMIT_SHA
+ENV DD_GIT_REPOSITORY_URL=${DD_GIT_REPOSITORY_URL} 
+ENV DD_GIT_COMMIT_SHA=${DD_GIT_COMMIT_SHA}
 
 COPY --from=builder /go/bin/checkoutservice/ ./
 

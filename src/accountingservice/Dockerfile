@@ -16,6 +16,10 @@ RUN dotnet build "./AccountingService.csproj" -r linux-$TARGETARCH -c $BUILD_CON
 
 FROM builder AS publish
 ARG TARGETARCH
+ARG DD_GIT_REPOSITORY_URL
+ARG DD_GIT_COMMIT_SHA
+ENV DD_GIT_REPOSITORY_URL=${DD_GIT_REPOSITORY_URL} 
+ENV DD_GIT_COMMIT_SHA=${DD_GIT_COMMIT_SHA}
 ARG BUILD_CONFIGURATION=Release
 RUN dotnet publish "./AccountingService.csproj" -r linux-$TARGETARCH -c $BUILD_CONFIGURATION -o /app/publish /p:UseAppHost=false
 

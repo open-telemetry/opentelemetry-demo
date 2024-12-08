@@ -21,6 +21,10 @@ RUN ./gradlew installDist -PprotoSourceDir=./proto
 FROM eclipse-temurin:21-jre
 
 ARG OTEL_JAVA_AGENT_VERSION
+ARG DD_GIT_REPOSITORY_URL
+ARG DD_GIT_COMMIT_SHA
+ENV DD_GIT_REPOSITORY_URL=${DD_GIT_REPOSITORY_URL} 
+ENV DD_GIT_COMMIT_SHA=${DD_GIT_COMMIT_SHA}
 WORKDIR /usr/src/app/
 
 COPY --from=builder /usr/src/app/ ./

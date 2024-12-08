@@ -12,7 +12,10 @@ RUN apt-get update ; apt-get install nginx-module-otel --no-install-recommends -
 
 RUN mkdir /static
 COPY src/imageprovider/static /static
-
+ARG DD_GIT_REPOSITORY_URL
+ARG DD_GIT_COMMIT_SHA
+ENV DD_GIT_REPOSITORY_URL=${DD_GIT_REPOSITORY_URL} 
+ENV DD_GIT_COMMIT_SHA=${DD_GIT_COMMIT_SHA}
 EXPOSE ${IMAGE_PROVIDER_PORT}
 
 STOPSIGNAL SIGQUIT

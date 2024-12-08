@@ -21,6 +21,9 @@ ENV NODE_ENV=production
 COPY --chown=node:node --from=build /usr/src/app/node_modules/ ./node_modules/
 COPY ./src/paymentservice/ ./
 COPY ./pb/demo.proto ./
-
+ARG DD_GIT_REPOSITORY_URL
+ARG DD_GIT_COMMIT_SHA
+ENV DD_GIT_REPOSITORY_URL=${DD_GIT_REPOSITORY_URL} 
+ENV DD_GIT_COMMIT_SHA=${DD_GIT_COMMIT_SHA}
 EXPOSE ${PAYMENT_SERVICE_PORT}
 ENTRYPOINT [ "npm", "run", "start" ]

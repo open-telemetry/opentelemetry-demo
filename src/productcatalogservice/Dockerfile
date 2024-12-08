@@ -17,7 +17,10 @@ RUN --mount=type=cache,target=/go/pkg/mod/ \
     go build -ldflags "-s -w" -o /go/bin/productcatalogservice/ ./
 
 FROM alpine AS release
-
+ARG DD_GIT_REPOSITORY_URL
+ARG DD_GIT_COMMIT_SHA
+ENV DD_GIT_REPOSITORY_URL=${DD_GIT_REPOSITORY_URL} 
+ENV DD_GIT_COMMIT_SHA=${DD_GIT_COMMIT_SHA}
 WORKDIR /usr/src/app/
 
 COPY ./src/productcatalogservice/products/ ./products/
