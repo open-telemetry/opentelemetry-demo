@@ -3,7 +3,7 @@ serviceAccounts:
     name: amp-iamproxy-ingest-service-account
     annotations:
       eks.amazonaws.com/role-arn: arn:aws:iam::221082195566:role/amp-iamproxy-ingest-role
- 
+
 server:
   persistentVolume:
     enabled: true
