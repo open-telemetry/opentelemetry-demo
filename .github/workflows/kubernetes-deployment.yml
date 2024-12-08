@@ -27,7 +27,7 @@ jobs:
       
       - name: K8s apply ${{ matrix.step }}
         run: |
-          kubectl apply -f ./split_yaml/Deployment/opentelemetry-demo-${{ matrix.step }}.yaml
+          kubectl apply -f ./modular_files/Deployment/opentelemetry-demo-${{ matrix.step }}.yaml
 
   kubernetes-failure-rollout:
     needs: kubernetes-deployment-apply

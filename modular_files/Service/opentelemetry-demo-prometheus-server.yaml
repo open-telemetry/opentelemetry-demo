@@ -1,0 +1,23 @@
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app.kubernetes.io/component: server
+    app.kubernetes.io/name: prometheus
+    app.kubernetes.io/instance: opentelemetry-demo
+    app.kubernetes.io/version: v2.55.1
+    app.kubernetes.io/part-of: prometheus
+  name: opentelemetry-demo-prometheus-server
+  namespace: otel-demo
+spec:
+  ports:
+    - name: http
+      port: 9090
+      protocol: TCP
+      targetPort: 9090
+  selector:
+    app.kubernetes.io/component: server
+    app.kubernetes.io/name: prometheus
+    app.kubernetes.io/instance: opentelemetry-demo
+  sessionAffinity: None
+  type: "ClusterIP"

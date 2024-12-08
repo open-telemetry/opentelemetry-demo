@@ -1,0 +1,18 @@
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  labels:
+    app.kubernetes.io/component: server
+    app.kubernetes.io/name: prometheus
+    app.kubernetes.io/instance: opentelemetry-demo
+    app.kubernetes.io/version: v2.55.1
+    app.kubernetes.io/part-of: prometheus
+  name: opentelemetry-demo-prometheus-server
+subjects:
+  - kind: ServiceAccount
+    name: opentelemetry-demo-prometheus-server
+    namespace: otel-demo
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: opentelemetry-demo-prometheus-server

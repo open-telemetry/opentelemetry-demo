@@ -1,0 +1,25 @@
+kind: Service
+apiVersion: v1
+metadata:
+  name: otel-demo-opensearch-headless
+  labels:
+    app.kubernetes.io/name: opensearch
+    app.kubernetes.io/instance: opentelemetry-demo
+    app.kubernetes.io/version: "2.18.0"
+    app.kubernetes.io/component: otel-demo-opensearch
+  annotations:
+    service.alpha.kubernetes.io/tolerate-unready-endpoints: "true"
+spec:
+  clusterIP: None # This is needed for statefulset hostnames like opensearch-0 to resolve
+  # Create endpoints also if the related pod isn't ready
+  publishNotReadyAddresses: true
+  selector:
+    app.kubernetes.io/name: opensearch
+    app.kubernetes.io/instance: opentelemetry-demo
+  ports:
+  - name: http
+    port: 9200
+  - name: transport
+    port: 9300
+  - name: metrics
+    port: 9600
