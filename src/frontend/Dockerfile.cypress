@@ -2,5 +2,8 @@ FROM cypress/included:10.3.1-typescript
 WORKDIR /app
 COPY ./src/frontend .
 RUN npm clean-install
-
+ARG DD_GIT_REPOSITORY_URL
+ARG DD_GIT_COMMIT_SHA
+ENV DD_GIT_REPOSITORY_URL=${DD_GIT_REPOSITORY_URL} 
+ENV DD_GIT_COMMIT_SHA=${DD_GIT_COMMIT_SHA}
 ENTRYPOINT ["cypress", "run"]

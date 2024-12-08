@@ -16,12 +16,12 @@ on:
         type: string
       dockerhub_repo:
         description: Docker Hub repository
-        default: 'otel/demo'
+        default: 'cfallwell/otel-demo'
         required: false
         type: string
       ghcr_repo:
         description: GHCR repository
-        default: 'ghcr.io/open-telemetry/demo'
+        default: 'ghcr.io/cftechwiz/otel-demo'
         required: false
         type: string
 
