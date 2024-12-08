@@ -1,0 +1,20 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: alertmanager-config
+  namespace: prometheus
+data:
+  alertmanager.yml: |
+    global:
+      resolve_timeout: 5m
+
+    route:
+      receiver: sns-alerts
+
+    receivers:
+    - name: sns-alerts
+      sns_configs:
+      - api_url: https://sns.us-east-1.amazonaws.com/
+        topic_arn: arn:aws:sns:us-east-1:221082195566:PrometheusAlerts
+        sigv4:
+          region: us-east-1

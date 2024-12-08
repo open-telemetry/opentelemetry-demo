@@ -1,0 +1,145 @@
+apiVersion: v1
+data:
+  alert-rules.yaml: |
+    groups:
+    - name: pod-restart-alerts
+      rules:
+      - alert: HighPodRestarts
+        expr: increase(kube_pod_container_status_restarts_total[5m]) > 1
+        for: 2m
+        labels:
+          severity: warning
+        annotations:
+          summary: "High pod restarts detected"
+          description: "Pod {{ $labels.pod }} in namespace {{ $labels.namespace }} has restarted more than once in the last 5 minutes."
+  alerting-rules.yaml: |
+    groups:
+    - name: pod-restart-alerts
+      rules:
+      - alert: HighPodRestarts
+        expr: increase(kube_pod_container_status_restarts_total[5m]) > 1
+        for: 2m
+        labels:
+          severity: warning
+        annotations:
+          summary: "High pod restarts detected"
+          description: "Pod {{ $labels.pod }} in namespace {{ $labels.namespace }} has restarted more than once in the last 5 minutes."
+  alerts: |
+    {}
+  allow-snippet-annotations: "false"
+  prometheus.yml: |
+    global:
+      scrape_interval: 1m
+      evaluation_interval: 1m
+      scrape_timeout: 10s
+
+    rule_files:
+      - /etc/config/recording_rules.yml
+      - /etc/config/alerting_rules.yml
+      - /etc/config/rules
+      - /etc/config/alerts
+      - /etc/config/alert-rules.yaml
+
+    scrape_configs:
+      - job_name: 'prometheus'
+        static_configs:
+          - targets:
+            - 'localhost:9090'
+
+      - job_name: 'kubernetes-apiservers'
+        kubernetes_sd_configs:
+          - role: endpoints
+        scheme: https
+        tls_config:
+          insecure_skip_verify: true
+          ca_file: /var/run/secrets/kubernetes.io/serviceaccount/ca.crt
+        bearer_token_file: /var/run/secrets/kubernetes.io/serviceaccount/token
+        relabel_configs:
+          - source_labels: [__meta_kubernetes_namespace, __meta_kubernetes_service_name, __meta_kubernetes_endpoint_port_name]
+            action: keep
+regex: default;kubernetes;https
+
+      - job_name: 'kubernetes-nodes'
+        kubernetes_sd_configs:
+          - role: node
+        scheme: https
+        tls_config:
+          insecure_skip_verify: true
+          ca_file: /var/run/secrets/kubernetes.io/serviceaccount/ca.crt
+        bearer_token_file: /var/run/secrets/kubernetes.io/serviceaccount/token
+        relabel_configs:
+          - source_labels: [__meta_kubernetes_node_name]
+            target_label: instance
+          - source_labels: [__meta_kubernetes_node_label_<label>]
+            action: labelmap
+            regex: __meta_kubernetes_node_label_(.+)
+
+      - job_name: 'kubernetes-pods'
+        kubernetes_sd_configs:
+          - role: pod
+        relabel_configs:
+          - action: keep
+            source_labels: [__meta_kubernetes_pod_annotation_prometheus_io_scrape]
+            regex: true
+          - action: replace
+            source_labels: [__meta_kubernetes_pod_annotation_prometheus_io_path]
+            target_label: __metrics_path__
+          - action: replace
+            source_labels: [__meta_kubernetes_namespace]
+            target_label: namespace
+          - action: replace
+            source_labels: [__meta_kubernetes_pod_name]
+            target_label: pod
+
+      - job_name: 'kube-state-metrics'
+        metrics_path: /metrics
+        scrape_interval: 15s
+        static_configs:
+          - targets: ['kube-state-metrics.kube-system.svc.cluster.local:8080']
+
+    alerting:
+      alertmanagers:
+      - static_configs:
+          - targets:
+            - prometheus-alertmanager:9093
+      - kubernetes_sd_configs:
+          - role: pod
+        tls_config:
+          ca_file: /var/run/secrets/kubernetes.io/serviceaccount/ca.crt
+        bearer_token_file: /var/run/secrets/kubernetes.io/serviceaccount/token
+        relabel_configs:
+          - source_labels: [__meta_kubernetes_namespace]
+            regex: prometheus
+            action: keep
+          - source_labels: [__meta_kubernetes_pod_label_app_kubernetes_io_instance]
+regex: prometheus
+            action: keep
+          - source_labels: [__meta_kubernetes_pod_label_app_kubernetes_io_name]
+            regex: alertmanager
+            action: keep
+          - source_labels: [__meta_kubernetes_pod_container_port_number]
+            regex: "9093"
+            action: keep
+  recording_rules.yml: |
+    {}
+  rules: |
+    {}
+kind: ConfigMap
+metadata:
+  annotations:
+    kubectl.kubernetes.io/last-applied-configuration: |
+      {"apiVersion":"v1","data":{"alert-rules.yaml":"groups:\n- name: pod-restart-alerts\n  rules:\n  - alert: HighPodRestarts\n    expr: increase(kube_pod_container_status_restarts_total[5m]) \u003e 1\n    for: 2m\n    labels:\n      s>    meta.helm.sh/release-name: prometheus
+    meta.helm.sh/release-namespace: prometheus
+  creationTimestamp: "2024-12-07T23:37:45Z"
+  labels:
+    app.kubernetes.io/component: server
+    app.kubernetes.io/instance: prometheus
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/name: prometheus
+    app.kubernetes.io/part-of: prometheus
+    app.kubernetes.io/version: v3.0.0
+    helm.sh/chart: prometheus-26.0.0
+  name: prometheus-server
+  namespace: prometheus
+  resourceVersion: "90959"
+  uid: 339c52aa-7389-43e5-8fb7-e7a30aaffb89

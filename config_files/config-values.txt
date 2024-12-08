@@ -1,0 +1,19 @@
+serviceAccounts:
+  server:
+    name: amp-iamproxy-ingest-service-account
+    annotations:
+      eks.amazonaws.com/role-arn: arn:aws:iam::221082195566:role/amp-iamproxy-ingest-role
+
+server:
+  persistentVolume:
+    enabled: true
+    storageClass: gp2  # Ensure this matches your cluster's storage class
+    size: 20Gi         # Set appropriate size for Prometheus storage
+  remoteWrite:
+    - url: https://aps-workspaces.us-east-1.amazonaws.com/workspaces/ws-cbc75a64-9a9f-442f-be28-879c8df3f791/api/v1/remote_write
+      sigv4:
+        region: us-east-1  # Replace <REGION> with the correct AWS region (us-east-2 in your case)
+      queue_config:
+        max_samples_per_send: 1000
+        max_shards: 200
+        capacity: 2500
