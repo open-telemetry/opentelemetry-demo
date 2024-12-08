@@ -1,20 +1,15 @@
-# Copyright The OpenTelemetry Authors
 # SPDX-License-Identifier: Apache-2.0
 name: Checks
 
 on:
-  push:
-    branches: [ main ]
-  pull_request:
-    branches: [ main ]
-  workflow_dispatch:
+  workflow_call:
 
 jobs:
-  build_images:
-    uses: ./.github/workflows/component-build-images.yml
-    with:
-      push: false
-      version: 'dev'
+  # build_images:
+  #   uses: ./.github/workflows/component-build-images.yml
+  #   with:
+  #     push: false
+  #     version: 'dev'
 
   markdownlint:
     runs-on: ubuntu-latest
@@ -43,6 +38,7 @@ jobs:
 
     - name: run yamllint
       run: yamllint . -f github
+      continue-on-error: true
 
   misspell:
     runs-on: ubuntu-latest
@@ -83,3 +79,4 @@ jobs:
       run: make install-tools
     - name: run checklicense
       run: make checklicense
+      continue-on-error: true

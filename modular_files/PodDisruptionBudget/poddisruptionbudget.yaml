@@ -1,0 +1,16 @@
+# Source: opentelemetry-demo/charts/opensearch/templates/poddisruptionbudget.yaml
+apiVersion: policy/v1
+kind: PodDisruptionBudget
+metadata:
+  name: "otel-demo-opensearch-pdb"
+  labels:
+    app.kubernetes.io/name: opensearch
+    app.kubernetes.io/instance: opentelemetry-demo
+    app.kubernetes.io/version: "2.18.0"
+    app.kubernetes.io/component: otel-demo-opensearch
+spec:
+  maxUnavailable: 1
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: opensearch
+      app.kubernetes.io/instance: opentelemetry-demo

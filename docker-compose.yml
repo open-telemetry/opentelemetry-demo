@@ -610,7 +610,7 @@ services:
 
   # Flagd UI for configuring the feature flag service
   flagdui:
-    image: ${IMAGE_NAME}:${DEMO_VERSION}-flagdui
+    image: ${IMAGE_NAME}:flagdui
     container_name: flagdui
     build:
       context: ./
@@ -637,7 +637,7 @@ services:
 
   # Kafka used by Checkout, Accounting, and Fraud Detection services
   kafka:
-    image: ${IMAGE_NAME}:${DEMO_VERSION}-kafka
+    image: ${IMAGE_NAME}:kafka
     container_name: kafka
     build:
       context: ./

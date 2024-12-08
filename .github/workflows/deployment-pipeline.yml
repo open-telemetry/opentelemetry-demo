@@ -1,0 +1,26 @@
+# Copyright The OpenTelemetry Authors
+# SPDX-License-Identifier: Apache-2.0
+
+name: End-End Code Deployment pipeline
+
+on:
+  push:
+    branches:
+      - dev  # Adjust to the branch you want to trigger the workflow
+
+jobs:
+  build_images:
+    uses: ./.github/workflows/component-build-images.yml
+    secrets: inherit
+    with:
+      push: true
+      version: 'dev'
+  integration_checks:
+    uses: ./.github/workflows/checks.yml
+    needs: build_images
+    secrets: inherit
+  kubenetes_deployment:
+    uses: ./.github/workflows/kubernetes-deployment.yml
+    needs: integration_checks
+    secrets: inherit
+  

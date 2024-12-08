@@ -1,0 +1,26 @@
+kind: Service
+apiVersion: v1
+metadata:
+  name: otel-demo-opensearch
+  labels:
+    app.kubernetes.io/name: opensearch
+    app.kubernetes.io/instance: opentelemetry-demo
+    app.kubernetes.io/version: "2.18.0"
+    app.kubernetes.io/component: otel-demo-opensearch
+  annotations:
+    {}
+spec:
+  type: ClusterIP
+  selector:
+    app.kubernetes.io/name: opensearch
+    app.kubernetes.io/instance: opentelemetry-demo
+  ports:
+  - name: http
+    protocol: TCP
+    port: 9200
+  - name: transport
+    protocol: TCP
+    port: 9300
+  - name: metrics
+    protocol: TCP
+    port: 9600

@@ -1,0 +1,22 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: opentelemetry-demo-jaeger-query
+  labels:
+    app.kubernetes.io/name: jaeger
+    app.kubernetes.io/instance: opentelemetry-demo
+    app.kubernetes.io/version: "1.53.0"
+    app.kubernetes.io/component: service-query
+spec:
+  clusterIP: None
+  ports:
+    - name: http-query
+      port: 16686
+      targetPort: 16686
+    - name: grpc-query
+      port: 16685
+      targetPort: 16685
+  selector:
+    app.kubernetes.io/name: jaeger
+    app.kubernetes.io/instance: opentelemetry-demo
+    app.kubernetes.io/component: all-in-one

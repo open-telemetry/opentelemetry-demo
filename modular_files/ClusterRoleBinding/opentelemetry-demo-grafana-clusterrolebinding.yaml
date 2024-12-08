@@ -1,0 +1,16 @@
+kind: ClusterRoleBinding
+apiVersion: rbac.authorization.k8s.io/v1
+metadata:
+  name: opentelemetry-demo-grafana-clusterrolebinding
+  labels:
+    app.kubernetes.io/name: grafana
+    app.kubernetes.io/instance: opentelemetry-demo
+    app.kubernetes.io/version: "11.3.0"
+subjects:
+  - kind: ServiceAccount
+    name: opentelemetry-demo-grafana
+    namespace: otel-demo
+roleRef:
+  kind: ClusterRole
+  name: opentelemetry-demo-grafana-clusterrole
+  apiGroup: rbac.authorization.k8s.io
