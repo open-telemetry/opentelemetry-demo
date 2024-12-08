@@ -1,0 +1,44 @@
+# Please edit the object below. Lines beginning with a '#' will be ignored,
+# and an empty file will abort the edit. If an error occurs while saving this file will be
+# reopened with the relevant failures.
+#
+apiVersion: v1
+data:
+  alertmanager.yml: |
+    global: {}
+    route:
+      group_interval: 5m
+      group_wait: 10s
+      receiver: sns-alert
+      repeat_interval: 3h
+
+    receivers:
+    - name: sns-alert
+      sns_configs:
+        - api_url: "https://sns.us-east-1.amazonaws.com/" # Replace with your AWS Region
+          sigv4:
+            region: "us-east-1" # Replace with your AWS Region, e.g., us-east-1
+          topic_arn: "arn:aws:sns:us-east-1:221082195566:PrometheusAlerts"
+          send_resolved: true
+          subject: "Prometheus Alert"
+
+    templates:
+    - /etc/alertmanager/*.tmpl
+kind: ConfigMap
+metadata:
+  annotations:
+    kubectl.kubernetes.io/last-applied-configuration: |
+      {"apiVersion":"v1","data":{"alertmanager.yml":"global: {}\nroute:\n  group_interval: 5m\n  group_wait: 10s\n  receiver: sns-alert\n  repeat_interval: 3h\n\nreceivers:\n- name: sns-alert\n  sns_configs:\n    - api_url: \"https://sns.us-east-1.amazonaws.com/\" # Replace with your AWS Region\n      sigv4:\n        region: \"us-east-1\" # Replace with your AWS Region, e.g., us-east-1\n      topic_arn: \"arn:aws:sns:us-east-1:221082195566:PrometheusAlerts\"\n      send_resolved: true\n\ntemplates:\n- /etc/alertmanager/*.tmpl\n"},"kind":"ConfigMap","metadata":{"annotations":{"meta.helm.sh/release-name":"prometheus","meta.helm.sh/release-namespace":"prometheus"},"creationTimestamp":"2024-12-07T23:37:45Z","labels":{"app.kubernetes.io/instance":"prometheus","app.kubernetes.io/managed-by":"Helm","app.kubernetes.io/name":"alertmanager","app.kubernetes.io/version":"v0.27.0","helm.sh/chart":"alertmanager-1.13.1"},"name":"prometheus-alertmanager","namespace":"prometheus","resourceVersion":"22875","uid":"820c4990-b595-42ef-92b1-1f47fd91beb4"}}
+    meta.helm.sh/release-name: prometheus
+    meta.helm.sh/release-namespace: prometheus
+  creationTimestamp: "2024-12-07T23:37:45Z"
+  labels:
+    app.kubernetes.io/instance: prometheus
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/name: alertmanager
+    app.kubernetes.io/version: v0.27.0
+    helm.sh/chart: alertmanager-1.13.1
+  name: prometheus-alertmanager
+  namespace: prometheus
+  resourceVersion: "101569"
+  uid: 820c4990-b595-42ef-92b1-1f47fd91beb4

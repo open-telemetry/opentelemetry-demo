@@ -1,0 +1,10 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: failing-pod
+  namespace: otel-demo
+spec:
+  containers:
+  - name: fail
+    image: busybox
+    command: ["false"]
