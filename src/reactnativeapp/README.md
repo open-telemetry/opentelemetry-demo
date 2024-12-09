@@ -72,12 +72,13 @@ make reactnative-build-android
 Or directly from this folder using:
 
 ```bash
-docker build -f android.Dockerfile --output=. .
+docker build -f android.Dockerfile --platform=linux/amd64 --output=. .
 ```
 
 This will produce `reactnativeapp.apk` in the directory where you ran the command.
 If you have an Android emulator running on your machine then you can simply drag
-and drop this file onto the emulator's window in order to install it.
+and drop this file onto the emulator's window in order to install it following
+[these steps](https://developer.android.com/studio/run/emulator-install-add-files).
 
 TODO: For a physical device you can install this by sending the apk file to your
 device, giving the "Install unknown apps" permission to the app you will be opening

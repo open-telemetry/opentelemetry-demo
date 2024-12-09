@@ -204,4 +204,4 @@ reactnative-run-ios: src/reactnativeapp/node_modules
 
 .PHONY: reactnative-build-android
 reactnative-build-android:
-	docker build -f src/reactnativeapp/android.Dockerfile --output=. src/reactnativeapp
+	docker build -f src/reactnativeapp/android.Dockerfile --platform=linux/amd64 --output=. src/reactnativeapp
