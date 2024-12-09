@@ -543,8 +543,13 @@ data:
           "description": "Fail payment service charge requests",
           "state": "ENABLED",
           "variants": {
-            "on": true,
-            "off": false
+            "100%": 1.00,
+            "90%": 0.95,
+            "75%": 0.75,
+            "50%": 0.50,
+            "25%": 0.25,
+            "10%": 0.10,
+            "off": 0.00
           },
           "defaultVariant": "off"
         },
