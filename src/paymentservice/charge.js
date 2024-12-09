@@ -29,9 +29,9 @@ module.exports.charge = async request => {
   const numberVariant =  await OpenFeature.getClient().getNumberValue("paymentServiceFailure", 0);
 
   if (numberVariant > 0) {
-    // n% chance to fail with version 350.10 span tag
+    // n% chance to fail with variant B span tag
     if (Math.random() < numberVariant) {
-      span.setAttributes({ 'service.version': '350.10', 'app.loyalty.level': random(LOYALTY_LEVEL) });
+      span.setAttributes({ 'app.variant': 'B', 'app.loyalty.level': random(LOYALTY_LEVEL) });
       span.end();
 
       throw new Error('Payment request failed. Invalid token. Version: 350.10');
@@ -57,17 +57,17 @@ module.exports.charge = async request => {
   });
 
   if (!valid) {
-    span.setAttributes({ 'service.version': '350.09', 'app.loyalty.level': random(LOYALTY_LEVEL) });
+    span.setAttributes({ 'app.variant': 'A', 'app.loyalty.level': random(LOYALTY_LEVEL) });
     throw new Error('Credit card info is invalid.');
   }
 
   if (!['visa', 'mastercard'].includes(cardType)) {
-    span.setAttributes({ 'service.version': '350.09', 'app.loyalty.level': random(LOYALTY_LEVEL) });
+    span.setAttributes({ 'app.variant': 'A', 'app.loyalty.level': random(LOYALTY_LEVEL) });
     throw new Error(`Sorry, we cannot process ${cardType} credit cards. Only VISA or MasterCard is accepted.`);
   }
 
   if ((currentYear * 12 + currentMonth) > (year * 12 + month)) {
-    span.setAttributes({ 'service.version': '350.09', 'app.loyalty.level': random(LOYALTY_LEVEL) });
+    span.setAttributes({ 'app.variant': 'A', 'app.loyalty.level': random(LOYALTY_LEVEL) });
     throw new Error(`The credit card (ending ${lastFourDigits}) expired on ${month}/${year}.`);
   }
 
@@ -79,7 +79,7 @@ module.exports.charge = async request => {
     span.setAttribute('app.payment.charged', true);
   }
 
-  span.setAttributes({ 'service.version': '350.09', 'app.loyalty.level': random(LOYALTY_LEVEL) });
+  span.setAttributes({ 'app.variant': 'A', 'app.loyalty.level': random(LOYALTY_LEVEL) });
 
   const { units, nanos, currencyCode } = request.amount;
   logger.info({ transactionId, cardType, lastFourDigits, amount: { units, nanos, currencyCode } }, 'Transaction complete.');

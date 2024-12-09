@@ -7,7 +7,9 @@ the release.
 
 ## Unreleased
 
-* [paymentservice] Add verion and tenant level attributes to spans. Added service.name to logs.
+* [flagd] Update `paymentServiceFailure` to use a list of variants.
+* [paymentservice] Add variant and loyalty level attributes to spans.
+  Added `service.name` to logs.
   ([#1815]https://github.com/open-telemetry/opentelemetry-demo/pull/1815)
 * [grafana] Update grafana to 11.3.0
   ([#1764](https://github.com/open-telemetry/opentelemetry-demo/pull/1764))
