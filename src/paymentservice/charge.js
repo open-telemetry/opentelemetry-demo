@@ -13,7 +13,7 @@ const tracer = trace.getTracer('paymentservice');
 const meter = metrics.getMeter('paymentservice');
 const transactionsCounter = meter.createCounter('app.payment.transactions');
 
-const TENANT_LEVEL = ['gold', 'silver', 'bronze'];
+const LOYALTY_LEVEL = ['gold', 'silver', 'bronze'];
 
 /** Return random element from given array */
 function random(arr) {
@@ -26,10 +26,12 @@ module.exports.charge = async request => {
 
   await OpenFeature.setProviderAndWait(flagProvider);
 
-  if (await OpenFeature.getClient().getBooleanValue("paymentServiceFailure", false)) {
-    // 75% chance to fail with version 350.10 span tag
-    if (Math.random() < 0.75) {
-      span.setAttributes({ 'app.version': '350.10', 'app.tenant.level': random(TENANT_LEVEL) });
+  const numberVariant =  await OpenFeature.getClient().getNumberValue("paymentServiceFailure", 0);
+
+  if (numberVariant > 0) {
+    // n% chance to fail with version 350.10 span tag
+    if (Math.random() < numberVariant) {
+      span.setAttributes({ 'service.version': '350.10', 'app.loyalty.level': random(LOYALTY_LEVEL) });
       span.end();
 
       throw new Error('Payment request failed. Invalid token. Version: 350.10');
@@ -55,17 +57,17 @@ module.exports.charge = async request => {
   });
 
   if (!valid) {
-    span.setAttributes({ 'app.version': '350.09', 'app.tenant.level': random(TENANT_LEVEL) });
+    span.setAttributes({ 'service.version': '350.09', 'app.loyalty.level': random(LOYALTY_LEVEL) });
     throw new Error('Credit card info is invalid.');
   }
 
   if (!['visa', 'mastercard'].includes(cardType)) {
-    span.setAttributes({ 'app.version': '350.09', 'app.tenant.level': random(TENANT_LEVEL) });
+    span.setAttributes({ 'service.version': '350.09', 'app.loyalty.level': random(LOYALTY_LEVEL) });
     throw new Error(`Sorry, we cannot process ${cardType} credit cards. Only VISA or MasterCard is accepted.`);
   }
 
   if ((currentYear * 12 + currentMonth) > (year * 12 + month)) {
-    span.setAttributes({ 'app.version': '350.09', 'app.tenant.level': random(TENANT_LEVEL) });
+    span.setAttributes({ 'service.version': '350.09', 'app.loyalty.level': random(LOYALTY_LEVEL) });
     throw new Error(`The credit card (ending ${lastFourDigits}) expired on ${month}/${year}.`);
   }
 
@@ -77,7 +79,7 @@ module.exports.charge = async request => {
     span.setAttribute('app.payment.charged', true);
   }
 
-  span.setAttributes({ 'app.version': '350.09', 'app.tenant.level': random(TENANT_LEVEL) });
+  span.setAttributes({ 'service.version': '350.09', 'app.loyalty.level': random(LOYALTY_LEVEL) });
 
   const { units, nanos, currencyCode } = request.amount;
   logger.info({ transactionId, cardType, lastFourDigits, amount: { units, nanos, currencyCode } }, 'Transaction complete.');
