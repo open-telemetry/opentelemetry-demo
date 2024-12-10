@@ -2,13 +2,7 @@
 # SPDX-License-Identifier: Apache-2.0
 name: CI/CD for Microservices
 on:
-  push:
-    branches:
-      - main # Trigger on pushes to the main branch
-  pull_request:
-    branches:
-      - main # Trigger on pull requests to the main branch
-
+  workflow_dispatch:
 jobs:
   build-and-deploy:
     name: Build and Deploy Microservices
