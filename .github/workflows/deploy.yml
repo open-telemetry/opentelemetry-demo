@@ -1,7 +1,4 @@
-# Copyright The OpenTelemetry Authors
-# SPDX-License-Identifier: Apache-2.0
 name: CI/CD for Microservices
-
 on:
   push:
     branches:
@@ -56,6 +53,7 @@ jobs:
 
       # Step 3: Build Docker Image
       - name: Build Docker Image for ${{ matrix.service }}
+        if: success()
         run: |
           docker build -t ghcr.io/${{ github.repository }}/${{ matrix.service }}:latest ./src/${{ matrix.service }}
 
