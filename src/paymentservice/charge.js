@@ -34,7 +34,7 @@ module.exports.charge = async request => {
       span.setAttributes({ 'app.variant': 'B', 'app.loyalty.level': random(LOYALTY_LEVEL) });
       span.end();
 
-      throw new Error('Payment request failed. Invalid token. Version: 350.10');
+      throw new Error('Payment request failed. Invalid token. Variant B');
     }
   }
 
