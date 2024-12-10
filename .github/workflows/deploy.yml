@@ -55,7 +55,8 @@ jobs:
       # Step 3: Build Docker Image
       - name: Build Docker Image for ${{ matrix.service }}
         run: |
-          docker build -t ghcr.io/${{ github.repository }}/${{ matrix.service }}:latest ./src/${{ matrix.service }}
+          docker build -t ghcr.io/${{ github.repository }}/${{ matrix.service }}:latest \
+      ./src/${{ matrix.service }}
 
       # Step 4: Push Docker Image
       - name: Push Docker Image for ${{ matrix.service }}
