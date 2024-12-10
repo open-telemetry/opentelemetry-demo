@@ -1,0 +1,81 @@
+name: CI/CD for Microservices
+
+on:
+  push:
+    branches:
+      - main # Trigger on pushes to the main branch
+  pull_request:
+    branches:
+      - main # Trigger on pull requests to the main branch
+
+jobs:
+  build-and-deploy:
+    name: Build and Deploy Microservices
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        service:
+          - accountingservice
+          - adservice
+          - catservice
+          - checkoutservice
+          - currencyservice
+          - emailservice
+          - flagd-ui
+          - flagd
+          - frauddetectionservice
+          - frontend
+          - frontendproxy
+          - grafana
+          - imageprovider
+          - kafka
+          - loadgenerator
+          - otelcollector
+          - paymentservice
+          - productcatalogservice
+          - prometheus
+          - quoteservice
+          - recommendationservice
+          - shippingservice
+
+    steps:
+      # Step 1: Checkout code
+      - name: Checkout Code
+        uses: actions/checkout@v3
+
+      # Step 2: Log in to Container Registry (GitHub Container Registry or ECR)
+      - name: Log in to GitHub Container Registry
+        uses: docker/login-action@v2
+        with:
+          username: ${{ secrets.GHCR_USERNAME }}
+          password: ${{ secrets.GHCR_PAT }}
+
+      # Step 3: Build Docker Image
+      - name: Build Docker Image for ${{ matrix.service }}
+        run: |
+          docker build -t ghcr.io/${{ github.repository }}/${{ matrix.service }}:latest ./${{ matrix.service }}
+
+      # Step 4: Push Docker Image
+      - name: Push Docker Image for ${{ matrix.service }}
+        run: |
+          docker push ghcr.io/${{ github.repository }}/${{ matrix.service }}:latest
+
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v2
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET }}
+          aws-region: us-east-1
+
+      - name: Set up kubeconfig
+        run: |
+          aws eks update-kubeconfig --name otel-demo-project10 --region us-east-1
+      # Step 5: Deploy to Kubernetes
+      - name: Deploy to Kubernetes
+        uses: azure/k8s-deploy@v4
+        with:
+          namespace: otel-demo
+          manifests: |
+            ./k8s/deployment-${{ matrix.service }}.yaml
+          images: ghcr.io/${{ github.repository }}/${{ matrix.service }}:latest
