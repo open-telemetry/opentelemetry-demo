@@ -1,7 +1,7 @@
 // Copyright The OpenTelemetry Authors
 // SPDX-License-Identifier: Apache-2.0
-var Bugsnag = require("@bugsnag/js");
-var BugsnagPerformance = require("@bugsnag/browser-performance");
+const Bugsnag = require("@bugsnag/js");
+// const BugsnagPerformance = require("@bugsnag/browser-performance");
 
 const grpc = require("@grpc/grpc-js");
 const protoLoader = require("@grpc/proto-loader");
@@ -12,10 +12,9 @@ const charge = require("./charge");
 const logger = require("./logger");
 
 Bugsnag.start({ apiKey: "01b9eac8f217a08829952da129612990" });
-BugsnagPerformance.start({
-  apiKey: "01b9eac8f217a08829952da129612990",
-  bugsnag: Bugsnag,
-});
+// BugsnagPerformance.start({
+//   apiKey: "01b9eac8f217a08829952da129612990",
+// });
 
 async function chargeServiceHandler(call, callback) {
   const span = opentelemetry.trace.getActiveSpan();
