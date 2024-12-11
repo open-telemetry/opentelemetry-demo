@@ -1,8 +1,12 @@
 {
   "devDependencies": {
+    "@kt3k/license-checker": "^3.2.2",
     "markdown-link-check": "^3.9.3",
     "markdown-toc": "^1.2.0",
-    "markdownlint-cli": "0.37.0",
-    "@kt3k/license-checker": "^3.2.2"
+    "markdownlint-cli": "0.37.0"
+  },
+  "dependencies": {
+    "@bugsnag/browser-performance": "^2.10.1",
+    "@bugsnag/js": "^8.1.2"
   }
 }
