@@ -51,8 +51,8 @@ jobs:
       fail-fast: false
       matrix:
         file_tag:
-          - file: ./src/accountingservice/Dockerfile
-            tag_suffix: accountingservice
+          - file: ./src/accounting/Dockerfile
+            tag_suffix: accounting
             context: ./
             setup-qemu: true
           - file: ./src/adservice/Dockerfile

@@ -18,14 +18,14 @@ services:
   # Core Demo Services
   # ******************
   # Accounting service
-  accountingservice:
-    image: ${IMAGE_NAME}:${DEMO_VERSION}-accountingservice
-    container_name: accounting-service
+  accounting:
+    image: ${IMAGE_NAME}:${DEMO_VERSION}-accounting
+    container_name: accounting
     build:
       context: ./
-      dockerfile: ${ACCOUNTING_SERVICE_DOCKERFILE}
+      dockerfile: ${ACCOUNTING_DOCKERFILE}
       cache_from:
-        - ${IMAGE_NAME}:${IMAGE_VERSION}-accountingservice
+        - ${IMAGE_NAME}:${IMAGE_VERSION}-accounting
     deploy:
       resources:
         limits:
@@ -36,7 +36,7 @@ services:
       - OTEL_EXPORTER_OTLP_ENDPOINT=http://${OTEL_COLLECTOR_HOST}:${OTEL_COLLECTOR_PORT_HTTP}
       - OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE
       - OTEL_RESOURCE_ATTRIBUTES
-      - OTEL_SERVICE_NAME=accountingservice
+      - OTEL_SERVICE_NAME=accounting
     depends_on:
       otelcol:
         condition: service_started
