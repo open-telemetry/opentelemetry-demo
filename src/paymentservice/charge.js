@@ -13,7 +13,7 @@ const tracer = trace.getTracer('paymentservice');
 const meter = metrics.getMeter('paymentservice');
 const transactionsCounter = meter.createCounter('app.payment.transactions');
 
-const LOYALTY_LEVEL = ['gold', 'silver', 'bronze'];
+const LOYALTY_LEVEL = ['platinum', 'silver', 'bronze'];
 
 /** Return random element from given array */
 function random(arr) {
@@ -29,12 +29,12 @@ module.exports.charge = async request => {
   const numberVariant =  await OpenFeature.getClient().getNumberValue("paymentServiceFailure", 0);
 
   if (numberVariant > 0) {
-    // n% chance to fail with variant B span tag
+    // n% chance to fail with app.loyalty.level=gold
     if (Math.random() < numberVariant) {
-      span.setAttributes({ 'app.variant': 'B', 'app.loyalty.level': random(LOYALTY_LEVEL) });
+      span.setAttributes({'app.loyalty.level': 'gold' });
       span.end();
 
-      throw new Error('Payment request failed. Invalid token. Variant B');
+      throw new Error('Payment request failed. Invalid token. app.logalty.level=gold');
     }
   }
 
@@ -53,21 +53,19 @@ module.exports.charge = async request => {
 
   span.setAttributes({
     'app.payment.card_type': cardType,
-    'app.payment.card_valid': valid
+    'app.payment.card_valid': valid,
+    'app.loyalty.level': random(LOYALTY_LEVEL)
   });
 
   if (!valid) {
-    span.setAttributes({ 'app.variant': 'A', 'app.loyalty.level': random(LOYALTY_LEVEL) });
     throw new Error('Credit card info is invalid.');
   }
 
   if (!['visa', 'mastercard'].includes(cardType)) {
-    span.setAttributes({ 'app.variant': 'A', 'app.loyalty.level': random(LOYALTY_LEVEL) });
     throw new Error(`Sorry, we cannot process ${cardType} credit cards. Only VISA or MasterCard is accepted.`);
   }
 
   if ((currentYear * 12 + currentMonth) > (year * 12 + month)) {
-    span.setAttributes({ 'app.variant': 'A', 'app.loyalty.level': random(LOYALTY_LEVEL) });
     throw new Error(`The credit card (ending ${lastFourDigits}) expired on ${month}/${year}.`);
   }
 
@@ -78,8 +76,6 @@ module.exports.charge = async request => {
   } else {
     span.setAttribute('app.payment.charged', true);
   }
-
-  span.setAttributes({ 'app.variant': 'A', 'app.loyalty.level': random(LOYALTY_LEVEL) });
 
   const { units, nanos, currencyCode } = request.amount;
   logger.info({ transactionId, cardType, lastFourDigits, amount: { units, nanos, currencyCode } }, 'Transaction complete.');
