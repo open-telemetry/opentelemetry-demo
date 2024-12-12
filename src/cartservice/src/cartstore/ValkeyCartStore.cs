@@ -25,8 +25,8 @@ public class ValkeyCartStore : ICartStore
     private readonly byte[] _emptyCartBytes;
     private readonly string _connectionString;
 
-    private static readonly ActivitySource CartActivitySource = new("OpenTelemetry.Demo.Cart");
-    private static readonly Meter CartMeter = new Meter("OpenTelemetry.Demo.Cart");
+    private static readonly ActivitySource CartActivitySource = new("OpenTelemetry.Demo.Cart.Source");
+    private static readonly Meter CartMeter = new Meter("OpenTelemetry.Demo.Cart.Meter");
     private static readonly Histogram<long> addItemHistogram = CartMeter.CreateHistogram<long>("app.cart.add_item.latency");
     private static readonly Histogram<long> getCartHistogram = CartMeter.CreateHistogram<long>("app.cart.get_cart.latency");
 

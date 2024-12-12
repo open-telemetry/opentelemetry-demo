@@ -61,6 +61,7 @@ Action<ResourceBuilder> appResourceBuilder =
 builder.Services.AddOpenTelemetry()
     .ConfigureResource(appResourceBuilder)
     .WithTracing(tracerBuilder => tracerBuilder
+        .AddSource("OpenTelemetry.Demo.Cart.Source")
         .AddRedisInstrumentation(
             options => options.SetVerboseDatabaseStatements = true)
         .AddAspNetCoreInstrumentation()
@@ -68,6 +69,7 @@ builder.Services.AddOpenTelemetry()
         .AddHttpClientInstrumentation()
         .AddOtlpExporter())
     .WithMetrics(meterBuilder => meterBuilder
+        .AddMeter("OpenTelemetry.Demo.Cart.Meter")
         .AddProcessInstrumentation()
         .AddRuntimeInstrumentation()
         .AddAspNetCoreInstrumentation()

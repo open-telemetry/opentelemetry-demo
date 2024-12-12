@@ -30,7 +30,7 @@
     <PackageReference Include="StackExchange.Redis" Version="2.8.22" />
     <PackageReference Include="OpenFeature.Contrib.Providers.Flagd" Version="0.3.0" />
     <PackageReference Include="OpenFeature.Contrib.Hooks.Otel" Version="0.2.0" />
-    <PackageReference Include="OpenFeature" Version="2.1.0" />    
+    <PackageReference Include="OpenFeature" Version="2.1.0" />
   </ItemGroup>
 
   <ItemGroup>
