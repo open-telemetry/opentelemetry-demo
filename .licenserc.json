@@ -38,6 +38,7 @@
     ],
     "ignore": [
         "node_modules/",
+        "/src/accounting/src/protos/",
         "src/cartservice/src/obj/",
         "src/cartservice/tests/obj/",
         "src/checkoutservice/genproto/",
