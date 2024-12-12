@@ -7,6 +7,10 @@ the release.
 
 ## Unreleased
 
+* [flagd] Update `paymentServiceFailure` to use a list of variants.
+* [paymentservice] Add loyalty level attributes to spans.
+  Added `service.name` to logs.
+  ([#1815](https://github.com/open-telemetry/opentelemetry-demo/pull/1815))
 * [grafana] Update grafana to 11.3.0
   ([#1764](https://github.com/open-telemetry/opentelemetry-demo/pull/1764))
 * [chore] Move build args to .env file
