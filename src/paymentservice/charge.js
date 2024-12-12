@@ -13,7 +13,7 @@ const tracer = trace.getTracer('paymentservice');
 const meter = metrics.getMeter('paymentservice');
 const transactionsCounter = meter.createCounter('app.payment.transactions');
 
-const LOYALTY_LEVEL = ['platinum', 'silver', 'bronze'];
+const LOYALTY_LEVEL = ['platinum', 'gold', 'silver', 'bronze'];
 
 /** Return random element from given array */
 function random(arr) {
@@ -51,10 +51,12 @@ module.exports.charge = async request => {
   const card = cardValidator(number);
   const { card_type: cardType, valid } = card.getCardDetails();
 
+  const loyalty_level = random(LOYALTY_LEVEL);
+
   span.setAttributes({
     'app.payment.card_type': cardType,
     'app.payment.card_valid': valid,
-    'app.loyalty.level': random(LOYALTY_LEVEL)
+    'app.loyalty.level': loyalty_level
   });
 
   if (!valid) {
@@ -78,7 +80,7 @@ module.exports.charge = async request => {
   }
 
   const { units, nanos, currencyCode } = request.amount;
-  logger.info({ transactionId, cardType, lastFourDigits, amount: { units, nanos, currencyCode } }, 'Transaction complete.');
+  logger.info({ transactionId, cardType, lastFourDigits, amount: { units, nanos, currencyCode }, loyalty_level }, 'Transaction complete.');
   transactionsCounter.add(1, { 'app.payment.currency': currencyCode });
   span.end();
 
