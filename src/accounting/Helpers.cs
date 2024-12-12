@@ -3,7 +3,7 @@
 
 using System.Collections;
 
-namespace AccountingService
+namespace Accounting
 {
     internal static class Helpers
     {

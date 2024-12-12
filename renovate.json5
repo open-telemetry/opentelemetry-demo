@@ -15,8 +15,8 @@
 
   "packageRules": [
     {
-      "matchFileNames": ["src/accountingservice/**"],
-      "groupName": "accountingservice",
+      "matchFileNames": ["src/accounting/**"],
+      "groupName": "accounting",
     },
     {
       "matchFileNames": ["src/adservice/**"],

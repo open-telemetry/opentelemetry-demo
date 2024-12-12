@@ -57,7 +57,7 @@ services:
       tracetest-server:
         condition: service_healthy
       # adding demo services as dependencies
-      accountingservice:
+      accounting:
         condition: service_started
       adservice:
         condition: service_started

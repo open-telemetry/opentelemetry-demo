@@ -43,6 +43,7 @@ src/shippingservice/target/
 test/tracetesting/tracetesting-vars.yaml
 
 # Ignore copied/generated protobuf files
+/src/accounting/src/protos/
 /src/cartservice/src/protos/
 /src/featureflagservice/proto/
 /src/featureflagservice/src/ffs_demo_pb.erl
@@ -54,4 +55,3 @@ test/tracetesting/tracetesting-vars.yaml
 /src/paymentservice/demo.proto
 /src/shippingservice/proto/
 /src/currencyservice/proto
-/src/accountingservice/genproto
