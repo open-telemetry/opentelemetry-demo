@@ -32,7 +32,7 @@ metadata:
   labels:
     app.kubernetes.io/name: grafana
     app.kubernetes.io/instance: opentelemetry-demo
-    app.kubernetes.io/version: "11.3.0"
+    app.kubernetes.io/version: "11.3.1"
   name: opentelemetry-demo-grafana
   namespace: otel-demo
 ---
@@ -57,7 +57,8 @@ metadata:
   labels:
     app.kubernetes.io/name: otelcol
     app.kubernetes.io/instance: opentelemetry-demo
-    app.kubernetes.io/version: "0.113.0"
+    app.kubernetes.io/version: "0.114.0"
+    app.kubernetes.io/component: standalone-collector
 ---
 # Source: opentelemetry-demo/charts/prometheus/templates/serviceaccount.yaml
 apiVersion: v1
@@ -67,7 +68,7 @@ metadata:
     app.kubernetes.io/component: server
     app.kubernetes.io/name: prometheus
     app.kubernetes.io/instance: opentelemetry-demo
-    app.kubernetes.io/version: v2.55.1
+    app.kubernetes.io/version: v3.0.0
     app.kubernetes.io/part-of: prometheus
   name: opentelemetry-demo-prometheus-server
   namespace: otel-demo
@@ -96,7 +97,7 @@ metadata:
   labels:
     app.kubernetes.io/name: grafana
     app.kubernetes.io/instance: opentelemetry-demo
-    app.kubernetes.io/version: "11.3.0"
+    app.kubernetes.io/version: "11.3.1"
 type: Opaque
 data:
   
@@ -113,7 +114,7 @@ metadata:
   labels:
     app.kubernetes.io/name: grafana
     app.kubernetes.io/instance: opentelemetry-demo
-    app.kubernetes.io/version: "11.3.0"
+    app.kubernetes.io/version: "11.3.1"
 data:
   
   plugins: grafana-opensearch-datasource
@@ -210,44 +211,44 @@ data:
     
     # Start OpenSearch Security Demo Configuration
     # WARNING: revise all the lines below before you go into production
-    plugins:
-      security:
-        ssl:
-          transport:
-            pemcert_filepath: esnode.pem
-            pemkey_filepath: esnode-key.pem
-            pemtrustedcas_filepath: root-ca.pem
-            enforce_hostname_verification: false
-          http:
-            enabled: true
-            pemcert_filepath: esnode.pem
-            pemkey_filepath: esnode-key.pem
-            pemtrustedcas_filepath: root-ca.pem
-        allow_unsafe_democertificates: true
-        allow_default_init_securityindex: true
-        authcz:
-          admin_dn:
-            - CN=kirk,OU=client,O=client,L=test,C=de
-        audit.type: internal_opensearch
-        enable_snapshot_restore_privilege: true
-        check_snapshot_restore_write_privileges: true
-        restapi:
-          roles_enabled: ["all_access", "security_rest_api_access"]
-        system_indices:
-          enabled: true
-          indices:
-            [
-              ".opendistro-alerting-config",
-              ".opendistro-alerting-alert*",
-              ".opendistro-anomaly-results*",
-              ".opendistro-anomaly-detector*",
-              ".opendistro-anomaly-checkpoints",
-              ".opendistro-anomaly-detection-state",
-              ".opendistro-reports-*",
-              ".opendistro-notifications-*",
-              ".opendistro-notebooks",
-              ".opendistro-asynchronous-search-response*",
-            ]
+    # plugins:
+    #   security:
+    #     ssl:
+    #       transport:
+    #         pemcert_filepath: esnode.pem
+    #         pemkey_filepath: esnode-key.pem
+    #         pemtrustedcas_filepath: root-ca.pem
+    #         enforce_hostname_verification: false
+    #       http:
+    #         enabled: true
+    #         pemcert_filepath: esnode.pem
+    #         pemkey_filepath: esnode-key.pem
+    #         pemtrustedcas_filepath: root-ca.pem
+    #     allow_unsafe_democertificates: true
+    #     allow_default_init_securityindex: true
+    #     authcz:
+    #       admin_dn:
+    #         - CN=kirk,OU=client,O=client,L=test,C=de
+    #     audit.type: internal_opensearch
+    #     enable_snapshot_restore_privilege: true
+    #     check_snapshot_restore_write_privileges: true
+    #     restapi:
+    #       roles_enabled: ["all_access", "security_rest_api_access"]
+    #     system_indices:
+    #       enabled: true
+    #       indices:
+    #         [
+    #           ".opendistro-alerting-config",
+    #           ".opendistro-alerting-alert*",
+    #           ".opendistro-anomaly-results*",
+    #           ".opendistro-anomaly-detector*",
+    #           ".opendistro-anomaly-checkpoints",
+    #           ".opendistro-anomaly-detection-state",
+    #           ".opendistro-reports-*",
+    #           ".opendistro-notifications-*",
+    #           ".opendistro-notebooks",
+    #           ".opendistro-asynchronous-search-response*",
+    #         ]
     ######## End OpenSearch Security Demo Configuration ########
 ---
 # Source: opentelemetry-demo/charts/opentelemetry-collector/templates/configmap.yaml
@@ -259,8 +260,8 @@ metadata:
   labels:
     app.kubernetes.io/name: otelcol
     app.kubernetes.io/instance: opentelemetry-demo
-    app.kubernetes.io/version: "0.113.0"
-    
+    app.kubernetes.io/version: "0.114.0"
+    app.kubernetes.io/component: standalone-collector
 data:
   relay: |
     connectors:
@@ -416,7 +417,7 @@ metadata:
     app.kubernetes.io/component: server
     app.kubernetes.io/name: prometheus
     app.kubernetes.io/instance: opentelemetry-demo
-    app.kubernetes.io/version: v2.55.1
+    app.kubernetes.io/version: v3.0.0
     app.kubernetes.io/part-of: prometheus
   name: opentelemetry-demo-prometheus-server
   namespace: otel-demo
@@ -8252,7 +8253,7 @@ metadata:
   labels:
     app.kubernetes.io/name: grafana
     app.kubernetes.io/instance: opentelemetry-demo
-    app.kubernetes.io/version: "11.3.0"
+    app.kubernetes.io/version: "11.3.1"
   name: opentelemetry-demo-grafana-clusterrole
 rules: []
 ---
@@ -8264,8 +8265,8 @@ metadata:
   labels:
     app.kubernetes.io/name: otelcol
     app.kubernetes.io/instance: opentelemetry-demo
-    app.kubernetes.io/version: "0.113.0"
-    
+    app.kubernetes.io/version: "0.114.0"
+    app.kubernetes.io/component: standalone-collector
 rules:
   - apiGroups: [""]
     resources: ["pods", "namespaces"]
@@ -8285,7 +8286,7 @@ metadata:
     app.kubernetes.io/component: server
     app.kubernetes.io/name: prometheus
     app.kubernetes.io/instance: opentelemetry-demo
-    app.kubernetes.io/version: v2.55.1
+    app.kubernetes.io/version: v3.0.0
     app.kubernetes.io/part-of: prometheus
   name: opentelemetry-demo-prometheus-server
 rules:
@@ -8335,7 +8336,7 @@ metadata:
   labels:
     app.kubernetes.io/name: grafana
     app.kubernetes.io/instance: opentelemetry-demo
-    app.kubernetes.io/version: "11.3.0"
+    app.kubernetes.io/version: "11.3.1"
 subjects:
   - kind: ServiceAccount
     name: opentelemetry-demo-grafana
@@ -8353,8 +8354,8 @@ metadata:
   labels:
     app.kubernetes.io/name: otelcol
     app.kubernetes.io/instance: opentelemetry-demo
-    app.kubernetes.io/version: "0.113.0"
-    
+    app.kubernetes.io/version: "0.114.0"
+    app.kubernetes.io/component: standalone-collector
 roleRef:
   apiGroup: rbac.authorization.k8s.io
   kind: ClusterRole
@@ -8372,7 +8373,7 @@ metadata:
     app.kubernetes.io/component: server
     app.kubernetes.io/name: prometheus
     app.kubernetes.io/instance: opentelemetry-demo
-    app.kubernetes.io/version: v2.55.1
+    app.kubernetes.io/version: v3.0.0
     app.kubernetes.io/part-of: prometheus
   name: opentelemetry-demo-prometheus-server
 subjects:
@@ -8393,7 +8394,7 @@ metadata:
   labels:
     app.kubernetes.io/name: grafana
     app.kubernetes.io/instance: opentelemetry-demo
-    app.kubernetes.io/version: "11.3.0"
+    app.kubernetes.io/version: "11.3.1"
 rules: []
 ---
 # Source: opentelemetry-demo/charts/grafana/templates/rolebinding.yaml
@@ -8405,7 +8406,7 @@ metadata:
   labels:
     app.kubernetes.io/name: grafana
     app.kubernetes.io/instance: opentelemetry-demo
-    app.kubernetes.io/version: "11.3.0"
+    app.kubernetes.io/version: "11.3.1"
 roleRef:
   apiGroup: rbac.authorization.k8s.io
   kind: Role
@@ -8424,7 +8425,7 @@ metadata:
   labels:
     app.kubernetes.io/name: grafana
     app.kubernetes.io/instance: opentelemetry-demo
-    app.kubernetes.io/version: "11.3.0"
+    app.kubernetes.io/version: "11.3.1"
 spec:
   type: ClusterIP
   ports:
@@ -8598,8 +8599,8 @@ metadata:
   labels:
     app.kubernetes.io/name: otelcol
     app.kubernetes.io/instance: opentelemetry-demo
-    app.kubernetes.io/version: "0.113.0"
-    
+    app.kubernetes.io/version: "0.114.0"
+    app.kubernetes.io/component: standalone-collector
     component: standalone-collector
 spec:
   type: ClusterIP
@@ -8652,7 +8653,7 @@ metadata:
     app.kubernetes.io/component: server
     app.kubernetes.io/name: prometheus
     app.kubernetes.io/instance: opentelemetry-demo
-    app.kubernetes.io/version: v2.55.1
+    app.kubernetes.io/version: v3.0.0
     app.kubernetes.io/part-of: prometheus
   name: opentelemetry-demo-prometheus-server
   namespace: otel-demo
@@ -9075,7 +9076,7 @@ metadata:
   labels:
     app.kubernetes.io/name: grafana
     app.kubernetes.io/instance: opentelemetry-demo
-    app.kubernetes.io/version: "11.3.0"
+    app.kubernetes.io/version: "11.3.1"
 spec:
   replicas: 1
   revisionHistoryLimit: 10
@@ -9090,6 +9091,7 @@ spec:
       labels:
         app.kubernetes.io/name: grafana
         app.kubernetes.io/instance: opentelemetry-demo
+        app.kubernetes.io/version: "11.3.1"
       annotations:
         checksum/config: 66402109ab73b3549330f38a66f20b78067ca4fdd1b77fc12fd760727d05f34c
         checksum/sc-dashboard-provider-config: e70bf6a851099d385178a76de9757bb0bef8299da6d8443602590e44f05fdf24
@@ -9107,7 +9109,7 @@ spec:
       enableServiceLinks: true
       containers:
         - name: grafana
-          image: "docker.io/grafana/grafana:11.3.0"
+          image: "docker.io/grafana/grafana:11.3.1"
           imagePullPolicy: IfNotPresent
           securityContext:
             allowPrivilegeEscalation: false
@@ -9311,8 +9313,8 @@ metadata:
   labels:
     app.kubernetes.io/name: otelcol
     app.kubernetes.io/instance: opentelemetry-demo
-    app.kubernetes.io/version: "0.113.0"
-    
+    app.kubernetes.io/version: "0.114.0"
+    app.kubernetes.io/component: standalone-collector
 spec:
   replicas: 1
   revisionHistoryLimit: 10
@@ -9326,7 +9328,7 @@ spec:
   template:
     metadata:
       annotations:
-        checksum/config: 2d923ab8c3aa2c63ec32fe4a7aa4993b12f3e03b2e255f1909b97f5e43b58226
+        checksum/config: c953028ca96450ba37c5dbeb9458b2c6a8a733dc3fc5784339c7b2df5619a16a
         opentelemetry_community_demo: "true"
         prometheus.io/port: "9464"
         prometheus.io/scrape: "true"
@@ -9346,7 +9348,7 @@ spec:
             - --config=/conf/relay.yaml
           securityContext:
             {}
-          image: "otel/opentelemetry-collector-contrib:0.113.0"
+          image: "otel/opentelemetry-collector-contrib:0.114.0"
           imagePullPolicy: IfNotPresent
           ports:
             
@@ -9413,7 +9415,7 @@ metadata:
     app.kubernetes.io/component: server
     app.kubernetes.io/name: prometheus
     app.kubernetes.io/instance: opentelemetry-demo
-    app.kubernetes.io/version: v2.55.1
+    app.kubernetes.io/version: v3.0.0
     app.kubernetes.io/part-of: prometheus
   name: opentelemetry-demo-prometheus-server
   namespace: otel-demo
@@ -9434,7 +9436,7 @@ spec:
         app.kubernetes.io/component: server
         app.kubernetes.io/name: prometheus
         app.kubernetes.io/instance: opentelemetry-demo
-        app.kubernetes.io/version: v2.55.1
+        app.kubernetes.io/version: v3.0.0
         app.kubernetes.io/part-of: prometheus
     spec:
       enableServiceLinks: true
@@ -9442,7 +9444,7 @@ spec:
       containers:
 
         - name: prometheus-server
-          image: "quay.io/prometheus/prometheus:v2.55.1"
+          image: "quay.io/prometheus/prometheus:v3.0.0"
           imagePullPolicy: "IfNotPresent"
           args:
             - --storage.tsdb.retention.time=15d
@@ -9545,7 +9547,7 @@ spec:
             - name: KAFKA_SERVICE_ADDR
               value: 'opentelemetry-demo-kafka:9092'
             - name: OTEL_EXPORTER_OTLP_ENDPOINT
-              value: http://$(OTEL_COLLECTOR_NAME):4317
+              value: http://$(OTEL_COLLECTOR_NAME):4318
             - name: OTEL_RESOURCE_ATTRIBUTES
               value: service.name=$(OTEL_SERVICE_NAME),service.namespace=opentelemetry-demo,service.version=1.12.0
           resources:
@@ -9999,7 +10001,7 @@ spec:
             - name: FLAGD_METRICS_EXPORTER
               value: otel
             - name: OTEL_EXPORTER_OTLP_ENDPOINT
-              value: http://$(OTEL_COLLECTOR_NAME):4317
+              value: http://$(OTEL_COLLECTOR_NAME):4318
             - name: OTEL_RESOURCE_ATTRIBUTES
               value: service.name=$(OTEL_SERVICE_NAME),service.namespace=opentelemetry-demo,service.version=1.12.0
           resources:
@@ -10910,7 +10912,7 @@ spec:
         app.kubernetes.io/version: "2.18.0"
         app.kubernetes.io/component: otel-demo-opensearch
       annotations:
-        configchecksum: e8c450687c20323f6f710672deb70783c1872772b09c7e40d93ae72e602bec3
+        configchecksum: 6b540fc53745495be7b7bc6fdf907e4fa78e90b008ac9ff231c3b50a12e2d80
     spec:
       securityContext:
         fsGroup: 1000

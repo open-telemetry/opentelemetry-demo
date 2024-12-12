@@ -7,7 +7,7 @@ toolchain go1.22.9
 require (
 	github.com/IBM/sarama v1.43.3
 	github.com/google/uuid v1.6.0
-	github.com/open-feature/go-sdk v1.13.1
+	github.com/open-feature/go-sdk v1.14.0
 	github.com/open-feature/go-sdk-contrib/hooks/open-telemetry v0.3.4
 	github.com/open-feature/go-sdk-contrib/providers/flagd v0.2.3
 	github.com/sirupsen/logrus v1.9.3
@@ -82,7 +82,7 @@ require (
 	golang.org/x/mod v0.21.0 // indirect
 	golang.org/x/net v0.30.0 // indirect
 	golang.org/x/sys v0.27.0 // indirect
-	golang.org/x/text v0.20.0 // indirect
+	golang.org/x/text v0.21.0 // indirect
 	google.golang.org/genproto/googleapis/api v0.0.0-20241104194629-dd2ea8efbc28 // indirect
 	google.golang.org/genproto/googleapis/rpc v0.0.0-20241104194629-dd2ea8efbc28 // indirect
 	gopkg.in/inf.v0 v0.9.1 // indirect
