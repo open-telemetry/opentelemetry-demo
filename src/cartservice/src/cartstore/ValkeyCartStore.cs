@@ -156,7 +156,6 @@ public class ValkeyCartStore : ICartStore
         }
         finally
         {
-            _logger.LogInformation("addItemHistogram should be set to {stopwatch.ElapsedTicks} µs", stopwatch.ElapsedTicks);
             addItemHistogram.Record(stopwatch.ElapsedTicks);
         }
     }
@@ -208,7 +207,6 @@ public class ValkeyCartStore : ICartStore
         }
         finally
         {
-            _logger.LogInformation("getCartHistogram should be set to {stopwatch.ElapsedTicks} µs", stopwatch.ElapsedTicks);
             getCartHistogram.Record(stopwatch.ElapsedTicks);
         }
     }

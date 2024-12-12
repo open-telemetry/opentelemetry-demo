@@ -70,6 +70,12 @@ builder.Services.AddOpenTelemetry()
         .AddOtlpExporter())
     .WithMetrics(meterBuilder => meterBuilder
         .AddMeter("OpenTelemetry.Demo.Cart.Meter")
+        .AddView(
+            instrumentName: "CartLatency",
+            new ExplicitBucketHistogramConfiguration {
+                Boundaries = new double[] {300000, 400000, 500000, 600000, 700000, 800000, 900000}
+            }
+        )
         .AddProcessInstrumentation()
         .AddRuntimeInstrumentation()
         .AddAspNetCoreInstrumentation()
