@@ -4,7 +4,7 @@
 using Microsoft.Extensions.Logging;
 using Oteldemo;
 
-namespace AccountingService
+namespace Accounting
 {
     internal static partial class Log
     {

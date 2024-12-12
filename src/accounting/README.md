@@ -7,7 +7,7 @@ This service consumes new orders from a Kafka topic.
 To build the service binary, run:
 
 ```sh
-cp pb/demo.proto src/accoutingservice/proto/demo.proto # root context
+cp pb/demo.proto src/accouting/proto/demo.proto # root context
 dotnet build # accounting service context
 ```
 
@@ -16,7 +16,7 @@ dotnet build # accounting service context
 From the root directory, run:
 
 ```sh
-docker compose build accountingservice
+docker compose build accounting
 ```
 
 ## Bump dependencies
@@ -24,5 +24,5 @@ docker compose build accountingservice
 To bump all dependencies run in Package manager:
 
 ```sh
-Update-Package -ProjectName AccountingService
+Update-Package -ProjectName Accounting
 ```

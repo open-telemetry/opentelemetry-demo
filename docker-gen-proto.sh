@@ -21,7 +21,7 @@ gen_proto_python() {
     python -m grpc_tools.protoc -I /build/pb/ --python_out="./src/$1/" --grpc_python_out="./src/$1/" /build/pb/demo.proto
 }
 
-#gen_proto_dotnet accountingservice
+#gen_proto_dotnet accounting
 #gen_proto_java adservice
 #gen_proto_dotnet cartservice
 gen_proto_go checkoutservice

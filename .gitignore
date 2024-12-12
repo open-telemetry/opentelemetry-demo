@@ -54,4 +54,3 @@ test/tracetesting/tracetesting-vars.yaml
 /src/paymentservice/demo.proto
 /src/shippingservice/proto/
 /src/currencyservice/proto
-/src/accountingservice/genproto
