@@ -71,6 +71,7 @@ builder.Services.AddOpenTelemetry()
         .AddProcessInstrumentation()
         .AddRuntimeInstrumentation()
         .AddAspNetCoreInstrumentation()
+        .SetExemplarFilter(ExemplarFilterType.TraceBased)
         .AddOtlpExporter());
 OpenFeature.Api.Instance.AddHooks(new TracingHook());
 builder.Services.AddGrpc();
