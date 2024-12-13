@@ -7,10 +7,6 @@ the release.
 
 ## Unreleased
 
-* [flagd] Update `paymentServiceFailure` to use a list of variants.
-* [paymentservice] Add loyalty level attributes to spans.
-  Added `service.name` to logs.
-  ([#1815](https://github.com/open-telemetry/opentelemetry-demo/pull/1815))
 * [grafana] Update grafana to 11.3.0
   ([#1764](https://github.com/open-telemetry/opentelemetry-demo/pull/1764))
 * [chore] Move build args to .env file
@@ -29,8 +25,13 @@ the release.
   ([#1794](https://github.com/open-telemetry/opentelemetry-demo/pull/1784))
 * [paymentservice] Add nodejs instrumentation for runtime metrics
   ([#1797](https://github.com/open-telemetry/opentelemetry-demo/pull/1797))
+* [flagd and paymentservice] Update `paymentServiceFailure` to use a list of
+  variants and add loyalty level attributes to spans. Added `service.name` to logs.
+  ([#1815](https://github.com/open-telemetry/opentelemetry-demo/pull/1815))
 * [accounting] rename accountingservice to accounting
   ([#1827](https://github.com/open-telemetry/opentelemetry-demo/pull/1827))
+* [cartservice] - Add Exemplars to Cart Service
+  ([#1830](https://github.com/open-telemetry/opentelemetry-demo/pull/1830))
 
 ## 1.12.0
 

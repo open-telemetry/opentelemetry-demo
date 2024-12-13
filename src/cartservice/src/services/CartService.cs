@@ -4,7 +4,6 @@ using System.Diagnostics;
 using System.Threading.Tasks;
 using System;
 using Grpc.Core;
-using OpenTelemetry.Trace;
 using cartservice.cartstore;
 using OpenFeature;
 using Oteldemo;
@@ -41,7 +40,7 @@ public class CartService : Oteldemo.CartService.CartServiceBase
         }
         catch (RpcException ex)
         {
-            activity?.RecordException(ex);
+            activity?.AddException(ex);
             activity?.SetStatus(ActivityStatusCode.Error, ex.Message);
             throw;
         }
@@ -67,7 +66,7 @@ public class CartService : Oteldemo.CartService.CartServiceBase
         }
         catch (RpcException ex)
         {
-            activity?.RecordException(ex);
+            activity?.AddException(ex);
             activity?.SetStatus(ActivityStatusCode.Error, ex.Message);
             throw;
         }
@@ -92,7 +91,7 @@ public class CartService : Oteldemo.CartService.CartServiceBase
         }
         catch (RpcException ex)
         {
-            Activity.Current?.RecordException(ex);
+            Activity.Current?.AddException(ex);
             Activity.Current?.SetStatus(ActivityStatusCode.Error, ex.Message);
             throw;
         }
