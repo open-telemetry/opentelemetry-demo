@@ -33,7 +33,7 @@ public class ValkeyCartStore : ICartStore
             "app.cart.add_item.latency",
             advice: new InstrumentAdvice<long>
             { 
-                HistogramBucketBoundaries = [ 500000, 600000, 700000, 800000, 900000, 1000000, 1100000 ] 
+                HistogramBucketBoundaries = [ 500000, 600000, 700000, 800000, 900000, 1000000, 1100000 ]
             }
         );
     private static readonly Histogram<long> getCartHistogram =
@@ -42,7 +42,7 @@ public class ValkeyCartStore : ICartStore
             "app.cart.get_cart.latency",
             advice: new InstrumentAdvice<long>
             { 
-                HistogramBucketBoundaries = [ 300000, 400000, 500000, 600000, 700000, 800000, 900000 ] 
+                HistogramBucketBoundaries = [ 300000, 400000, 500000, 600000, 700000, 800000, 900000 ]
             }
         );
 
