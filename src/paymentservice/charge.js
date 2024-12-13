@@ -12,9 +12,9 @@ const logger = require("./logger");
 const tracer = trace.getTracer("paymentservice");
 const meter = metrics.getMeter("paymentservice");
 const transactionsCounter = meter.createCounter("app.payment.transactions");
+var Bugsnag = require("@bugsnag/js");
 
 module.exports.charge = async (request) => {
-  Bugsnag.notify(new Error("Test error"));
   const span = tracer.startSpan("charge");
 
   await OpenFeature.setProviderAndWait(flagProvider);
@@ -24,6 +24,7 @@ module.exports.charge = async (request) => {
       false
     )
   ) {
+    Bugsnag.notify(new Error("Correlation in Index with new naming traceId"));
     throw new Error("PaymentService Fail Feature Flag Enabled");
   }
 
