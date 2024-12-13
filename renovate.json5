@@ -23,8 +23,8 @@
       "groupName": "adservice",
     },
     {
-      "matchFileNames": ["src/cartservice/**"],
-      "groupName": "cartservice",
+      "matchFileNames": ["src/cart/**"],
+      "groupName": "cart",
     },
     {
       "matchFileNames": ["src/checkoutservice/**"],

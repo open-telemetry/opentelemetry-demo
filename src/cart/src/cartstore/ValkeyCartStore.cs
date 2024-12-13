@@ -8,7 +8,7 @@ using StackExchange.Redis;
 using Google.Protobuf;
 using Microsoft.Extensions.Logging;
 
-namespace cartservice.cartstore;
+namespace cart.cartstore;
 
 public class ValkeyCartStore : ICartStore
 {

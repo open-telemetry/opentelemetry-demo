@@ -5,11 +5,11 @@ using System.Threading.Tasks;
 using System;
 using Grpc.Core;
 using OpenTelemetry.Trace;
-using cartservice.cartstore;
+using cart.cartstore;
 using OpenFeature;
 using Oteldemo;
 
-namespace cartservice.services;
+namespace cart.services;
 
 public class CartService : Oteldemo.CartService.CartServiceBase
 {
@@ -81,7 +81,7 @@ public class CartService : Oteldemo.CartService.CartServiceBase
 
         try
         {
-            if (await _featureFlagHelper.GetBooleanValueAsync("cartServiceFailure", false))
+            if (await _featureFlagHelper.GetBooleanValueAsync("cartFailure", false))
             {
                 await _badCartStore.EmptyCartAsync(request.UserId);
             }
