@@ -7,7 +7,7 @@ in a React Native environment.
 
 ## Get started
 
-Start the OpenTelemetry demo:
+Start the OpenTelemetry demo from the root of this repo:
 
 ```bash
 cd ../..
@@ -27,20 +27,8 @@ leverage a container to build the app's apk for you.
 
 ### Build on your host machine
 
-Build and run the React Native app for a given platform by running these make targets
-from the project root:
-
-```bash
-make reactnative-run-android
-```
-
-Or
-
-```bash
-make reactnative-run-ios
-```
-
-You can also install dependencies and launch the app directly from this folder using:
+Build and run the React Native app for a given platform by navigating to this folder
+and running:
 
 ```bash
 cd src/reactnativeapp
@@ -57,8 +45,8 @@ Or
 npm run ios
 ```
 
-Note that for all the above commands a release build is created rather than a debug
-one to avoid needing a dev server to provide the JS bundle.
+Note that for the above commands a server is also spun up to serve the JS bundle
+to the deployed apps.
 
 ### Build within a container
 
@@ -85,3 +73,52 @@ device, giving the "Install unknown apps" permission to the app you will be open
 the file with, and then installing it. However this won't be able to hit the APIs
 because they are hard-coded to be localhost, need those to be configurable before
 this method would work.
+
+## Troubleshooting
+
+### iOS build issues
+
+If you see a build failure related to pods try forcing a clean install with:
+
+```bash
+  cd src/reactnativeapp/ios
+  rm Podfile.lock
+  pod cache clean --all
+  pod repo update --verbose
+  pod deintegrate
+  pod install --repo-update --verbose
+```
+
+If there is an error compiling or running the app try closing any open simulators
+and clearing all derived data:
+
+```bash
+rm -rf ~/Library/Developer/Xcode/DerivedData
+```
+
+If issues persist building on the command-line you may have better luck or at least
+get a clearer error log by building through the XCode IDE. First spin up the react
+native dev server with:
+
+```bash
+npm run start
+```
+
+Then open XCode, open this as an existing project by opening `src/reactnativeapp/ios/reactnativeapp.xcworkspace`
+then trigger the build by hitting the Play button or from the menu using Product->Run.
+
+### Android build issues
+
+Try stopping and cleaning local services (in case there are unknown issues related
+to the start of the app):
+
+```bash
+  cd src/reactnativeapp/android
+  ./gradlew --stop  // stop daemons
+  rm -rf ~/.gradle/caches/
+```
+
+### JS build issues
+
+Try removing the `src/reactnativeapp/node_modules/` folder and then re-run `npm install`
+from inside `src/reactnativeapp`.

@@ -5,10 +5,8 @@
   "scripts": {
     "start": "ENVFILE=.env expo start",
     "reset-project": "node ./scripts/reset-project.js",
-    "android-debug": "expo run:android",
-    "android": "expo run:android --variant release",
-    "ios-debug": "expo run:ios",
-    "ios": "expo run:ios --configuration Release",
+    "android": "expo run:android",
+    "ios": "expo run:ios",
     "web": "expo start --web",
     "test": "jest --watchAll",
     "lint": "expo lint"

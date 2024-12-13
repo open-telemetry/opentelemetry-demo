@@ -191,17 +191,6 @@ else
 	@echo "Please provide a service name using `service=[service name]` or `SERVICE=[service name]`"
 endif
 
-src/reactnativeapp/node_modules:
-	npm --prefix src/reactnativeapp install
-
-.PHONY: reactnative-run-android
-reactnative-run-android: src/reactnativeapp/node_modules
-	npm --prefix src/reactnativeapp run android
-
-.PHONY: reactnative-run-ios
-reactnative-run-ios: src/reactnativeapp/node_modules
-	npm --prefix src/reactnativeapp run ios
-
 .PHONY: reactnative-build-android
 reactnative-build-android:
 	docker build -f src/reactnativeapp/android.Dockerfile --platform=linux/amd64 --output=. src/reactnativeapp
