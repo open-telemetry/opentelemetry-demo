@@ -121,7 +121,7 @@ generate-protobuf:
 
 .PHONY: generate-kubernetes-manifests
 generate-kubernetes-manifests:
-	helm repo add open-telemetry https://open-telemetry.github.io/opentelemetry-helm-charts
+	helm repo add liteverge-open-telemetry https://liteverge.github.io/opentelemetry-helm-charts
 	helm repo update
 	echo "# Copyright The OpenTelemetry Authors" > kubernetes/opentelemetry-demo.yaml
 	echo "# SPDX-License-Identifier: Apache-2.0" >> kubernetes/opentelemetry-demo.yaml
@@ -131,7 +131,7 @@ generate-kubernetes-manifests:
 	echo "kind: Namespace" >> kubernetes/opentelemetry-demo.yaml
 	echo "metadata:" >> kubernetes/opentelemetry-demo.yaml
 	echo "  name: otel-demo" >> kubernetes/opentelemetry-demo.yaml
-	helm template opentelemetry-demo open-telemetry/opentelemetry-demo --namespace otel-demo | sed '/helm.sh\/chart\:/d' | sed '/helm.sh\/hook/d' | sed '/managed-by\: Helm/d' >> kubernetes/opentelemetry-demo.yaml
+	helm template opentelemetry-demo liteverge-open-telemetry/opentelemetry-demo --namespace otel-demo | sed '/helm.sh\/chart\:/d' | sed '/helm.sh\/hook/d' | sed '/managed-by\: Helm/d' >> kubernetes/opentelemetry-demo.yaml
 
 .PHONY: docker-generate-protobuf
 docker-generate-protobuf:

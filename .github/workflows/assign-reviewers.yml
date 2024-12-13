@@ -12,7 +12,7 @@ on:
 
 jobs:
   assign-reviewers:
-    if: github.repository == 'open-telemetry/opentelemetry-demo'
+    if: github.repository == 'liteverge/opentelemetry-demo'
     runs-on: ubuntu-latest
     steps:
       - uses: dyladan/component-owners@main

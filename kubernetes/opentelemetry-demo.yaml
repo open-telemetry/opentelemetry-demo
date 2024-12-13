@@ -9453,7 +9453,7 @@ spec:
             - --web.console.libraries=/etc/prometheus/console_libraries
             - --web.console.templates=/etc/prometheus/consoles
             - --enable-feature=exemplar-storage
-            - --enable-feature=otlp-write-receiver
+            - --web.enable-otlp-receiver
           ports:
             - containerPort: 9090
           readinessProbe:
@@ -9532,7 +9532,7 @@ spec:
       serviceAccountName: opentelemetry-demo
       containers:
         - name: accountingservice
-          image: 'ghcr.io/open-telemetry/demo:1.12.0-accountingservice'
+          image: 'ghcr.io/liteverge/opentelemetry-demo:1.12.0-accountingservice'
           imagePullPolicy: IfNotPresent
           env:
             - name: OTEL_SERVICE_NAME
@@ -9596,7 +9596,7 @@ spec:
       serviceAccountName: opentelemetry-demo
       containers:
         - name: adservice
-          image: 'ghcr.io/open-telemetry/demo:1.12.0-adservice'
+          image: 'ghcr.io/liteverge/opentelemetry-demo:1.12.0-adservice'
           imagePullPolicy: IfNotPresent
           ports:
             
@@ -9662,7 +9662,7 @@ spec:
       serviceAccountName: opentelemetry-demo
       containers:
         - name: cartservice
-          image: 'ghcr.io/open-telemetry/demo:1.12.0-cartservice'
+          image: 'ghcr.io/liteverge/opentelemetry-demo:1.12.0-cartservice'
           imagePullPolicy: IfNotPresent
           ports:
             
@@ -9738,7 +9738,7 @@ spec:
       serviceAccountName: opentelemetry-demo
       containers:
         - name: checkoutservice
-          image: 'ghcr.io/open-telemetry/demo:1.12.0-checkoutservice'
+          image: 'ghcr.io/liteverge/opentelemetry-demo:1.12.0-checkoutservice'
           imagePullPolicy: IfNotPresent
           ports:
             
@@ -9824,7 +9824,7 @@ spec:
       serviceAccountName: opentelemetry-demo
       containers:
         - name: currencyservice
-          image: 'ghcr.io/open-telemetry/demo:1.12.0-currencyservice'
+          image: 'ghcr.io/liteverge/opentelemetry-demo:1.12.0-currencyservice'
           imagePullPolicy: IfNotPresent
           ports:
             
@@ -9886,7 +9886,7 @@ spec:
       serviceAccountName: opentelemetry-demo
       containers:
         - name: emailservice
-          image: 'ghcr.io/open-telemetry/demo:1.12.0-emailservice'
+          image: 'ghcr.io/liteverge/opentelemetry-demo:1.12.0-emailservice'
           imagePullPolicy: IfNotPresent
           ports:
             
@@ -9982,7 +9982,7 @@ spec:
             - name: config-rw
               mountPath: /etc/flagd
         - name: flagdui
-          image: 'ghcr.io/open-telemetry/demo:1.12.0-flagdui'
+          image: 'ghcr.io/liteverge/opentelemetry-demo:1.12.0-flagdui'
           imagePullPolicy: IfNotPresent
           ports:
             
@@ -10061,7 +10061,7 @@ spec:
       serviceAccountName: opentelemetry-demo
       containers:
         - name: frauddetectionservice
-          image: 'ghcr.io/open-telemetry/demo:1.12.0-frauddetectionservice'
+          image: 'ghcr.io/liteverge/opentelemetry-demo:1.12.0-frauddetectionservice'
           imagePullPolicy: IfNotPresent
           env:
             - name: OTEL_SERVICE_NAME
@@ -10129,7 +10129,7 @@ spec:
       serviceAccountName: opentelemetry-demo
       containers:
         - name: frontend
-          image: 'ghcr.io/open-telemetry/demo:1.12.0-frontend'
+          image: 'ghcr.io/liteverge/opentelemetry-demo:1.12.0-frontend'
           imagePullPolicy: IfNotPresent
           ports:
             
@@ -10219,7 +10219,7 @@ spec:
       serviceAccountName: opentelemetry-demo
       containers:
         - name: frontendproxy
-          image: 'ghcr.io/open-telemetry/demo:1.12.0-frontendproxy'
+          image: 'ghcr.io/liteverge/opentelemetry-demo:1.12.0-frontendproxy'
           imagePullPolicy: IfNotPresent
           ports:
             
@@ -10315,7 +10315,7 @@ spec:
       serviceAccountName: opentelemetry-demo
       containers:
         - name: imageprovider
-          image: 'ghcr.io/open-telemetry/demo:1.12.0-imageprovider'
+          image: 'ghcr.io/liteverge/opentelemetry-demo:1.12.0-imageprovider'
           imagePullPolicy: IfNotPresent
           ports:
             
@@ -10377,7 +10377,7 @@ spec:
       serviceAccountName: opentelemetry-demo
       containers:
         - name: kafka
-          image: 'ghcr.io/open-telemetry/demo:1.12.0-kafka'
+          image: 'ghcr.io/liteverge/opentelemetry-demo:1.12.0-kafka'
           imagePullPolicy: IfNotPresent
           ports:
             
@@ -10445,7 +10445,7 @@ spec:
       serviceAccountName: opentelemetry-demo
       containers:
         - name: loadgenerator
-          image: 'ghcr.io/open-telemetry/demo:1.12.0-loadgenerator'
+          image: 'ghcr.io/liteverge/opentelemetry-demo:1.12.0-loadgenerator'
           imagePullPolicy: IfNotPresent
           ports:
             
@@ -10523,7 +10523,7 @@ spec:
       serviceAccountName: opentelemetry-demo
       containers:
         - name: paymentservice
-          image: 'ghcr.io/open-telemetry/demo:1.12.0-paymentservice'
+          image: 'ghcr.io/liteverge/opentelemetry-demo:1.12.0-paymentservice'
           imagePullPolicy: IfNotPresent
           ports:
             
@@ -10591,7 +10591,7 @@ spec:
       serviceAccountName: opentelemetry-demo
       containers:
         - name: productcatalogservice
-          image: 'ghcr.io/open-telemetry/demo:1.12.0-productcatalogservice'
+          image: 'ghcr.io/liteverge/opentelemetry-demo:1.12.0-productcatalogservice'
           imagePullPolicy: IfNotPresent
           ports:
             
@@ -10655,7 +10655,7 @@ spec:
       serviceAccountName: opentelemetry-demo
       containers:
         - name: quoteservice
-          image: 'ghcr.io/open-telemetry/demo:1.12.0-quoteservice'
+          image: 'ghcr.io/liteverge/opentelemetry-demo:1.12.0-quoteservice'
           imagePullPolicy: IfNotPresent
           ports:
             
@@ -10721,7 +10721,7 @@ spec:
       serviceAccountName: opentelemetry-demo
       containers:
         - name: recommendationservice
-          image: 'ghcr.io/open-telemetry/demo:1.12.0-recommendationservice'
+          image: 'ghcr.io/liteverge/opentelemetry-demo:1.12.0-recommendationservice'
           imagePullPolicy: IfNotPresent
           ports:
             
@@ -10791,7 +10791,7 @@ spec:
       serviceAccountName: opentelemetry-demo
       containers:
         - name: shippingservice
-          image: 'ghcr.io/open-telemetry/demo:1.12.0-shippingservice'
+          image: 'ghcr.io/liteverge/opentelemetry-demo:1.12.0-shippingservice'
           imagePullPolicy: IfNotPresent
           ports:
             
