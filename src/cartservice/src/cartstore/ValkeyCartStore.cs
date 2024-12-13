@@ -27,25 +27,18 @@ public class ValkeyCartStore : ICartStore
 
     private static readonly ActivitySource CartActivitySource = new("OpenTelemetry.Demo.Cart");
     private static readonly Meter CartMeter = new Meter("OpenTelemetry.Demo.Cart");
-    private static readonly Histogram<long> addItemHistogram =
-        CartMeter.CreateHistogram<long>
-        (
-            "app.cart.add_item.latency",
-            advice: new InstrumentAdvice<long>
-            {
-                HistogramBucketBoundaries = [ 500000, 600000, 700000, 800000, 900000, 1000000, 1100000 ]
-            }
-        );
-    private static readonly Histogram<long> getCartHistogram =
-        CartMeter.CreateHistogram<long>
-        (
-            "app.cart.get_cart.latency",
-            advice: new InstrumentAdvice<long>
-            {
-                HistogramBucketBoundaries = [ 300000, 400000, 500000, 600000, 700000, 800000, 900000 ]
-            }
-        );
-
+    private static readonly Histogram<long> addItemHistogram = CartMeter.CreateHistogram<long>(
+        "app.cart.add_item.latency",
+        advice: new InstrumentAdvice<long>
+        {
+            HistogramBucketBoundaries = [ 500000, 600000, 700000, 800000, 900000, 1000000, 1100000 ]
+        });
+    private static readonly Histogram<long> getCartHistogram = CartMeter.CreateHistogram<long>(
+        "app.cart.get_cart.latency",
+        advice: new InstrumentAdvice<long>
+        {
+            HistogramBucketBoundaries = [ 300000, 400000, 500000, 600000, 700000, 800000, 900000 ]
+        });
     private readonly ConfigurationOptions _redisConnectionOptions;
 
     public ValkeyCartStore(ILogger<ValkeyCartStore> logger, string valkeyAddress)
