@@ -27,6 +27,8 @@ the release.
   ([#1797](https://github.com/open-telemetry/opentelemetry-demo/pull/1797))
 * [accounting] rename accountingservice to accounting
   ([#1827](https://github.com/open-telemetry/opentelemetry-demo/pull/1827))
+* [grafana] Add Exemplars Dashboard
+  ([#1836](https://github.com/open-telemetry/opentelemetry-demo/pull/1836))
 
 ## 1.12.0
 
