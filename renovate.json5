@@ -19,8 +19,8 @@
       "groupName": "accounting",
     },
     {
-      "matchFileNames": ["src/adservice/**"],
-      "groupName": "adservice",
+      "matchFileNames": ["src/ad/**"],
+      "groupName": "ad",
     },
     {
       "matchFileNames": ["src/cartservice/**"],

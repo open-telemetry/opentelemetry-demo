@@ -76,7 +76,7 @@ public final class AdService {
   private void start() throws IOException {
     int port =
         Integer.parseInt(
-            Optional.ofNullable(System.getenv("AD_SERVICE_PORT"))
+            Optional.ofNullable(System.getenv("AD_PORT"))
                 .orElseThrow(
                     () ->
                         new IllegalStateException(

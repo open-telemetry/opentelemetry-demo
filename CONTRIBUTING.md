@@ -73,7 +73,7 @@ cd opentelemetry-demo/
 - Navigate to the Java Ad Service folder to install and update Gradle:
 
 ```shell
-cd .\src\adservice\
+cd .\src\ad\
 .\gradlew installDist
 .\gradlew wrapper --gradle-version 7.4.2
 ```

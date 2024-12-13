@@ -22,7 +22,7 @@ gen_proto_python() {
 }
 
 #gen_proto_dotnet accounting
-#gen_proto_java adservice
+#gen_proto_java ad
 #gen_proto_dotnet cartservice
 gen_proto_go checkoutservice
 #gen_proto_cpp currencyservice
