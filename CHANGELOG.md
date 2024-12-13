@@ -31,6 +31,8 @@ the release.
   ([#1797](https://github.com/open-telemetry/opentelemetry-demo/pull/1797))
 * [accounting] rename accountingservice to accounting
   ([#1827](https://github.com/open-telemetry/opentelemetry-demo/pull/1827))
+* [cart] rename cartservice to cart
+  ([#1834](https://github.com/open-telemetry/opentelemetry-demo/pull/1834))
 
 ## 1.12.0
 
