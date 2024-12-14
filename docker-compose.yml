@@ -358,7 +358,7 @@ services:
         condition: service_started
       grafana:
         condition: service_started
-      flagdui:
+      flagd-ui:
         condition: service_started
 
   # Imageprovider
@@ -609,9 +609,9 @@ services:
       *logging
 
   # Flagd UI for configuring the feature flag service
-  flagdui:
-    image: ${IMAGE_NAME}:${DEMO_VERSION}-flagdui
-    container_name: flagdui
+  flagd-ui:
+    image: ${IMAGE_NAME}:${DEMO_VERSION}-flagd-ui
+    container_name: flagd-ui
     build:
       context: ./
       dockerfile: ${FLAGD_UI_DOCKERFILE}
@@ -624,7 +624,7 @@ services:
       - OTEL_EXPORTER_OTLP_ENDPOINT=http://${OTEL_COLLECTOR_HOST}:${OTEL_COLLECTOR_PORT_HTTP}
       - OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE
       - OTEL_RESOURCE_ATTRIBUTES
-      - OTEL_SERVICE_NAME=flagdui
+      - OTEL_SERVICE_NAME=flagd-ui
     ports:
       - "${FLAGD_UI_PORT}"
     depends_on:

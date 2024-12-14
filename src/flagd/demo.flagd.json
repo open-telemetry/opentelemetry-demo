@@ -44,7 +44,7 @@
         "on": true,
         "off": false
       },
-      "defaultVariant": "off"
+      "defaultVariant": "on"
     },
     "kafkaQueueProblems": {
       "description": "Overloads Kafka queue while simultaneously introducing a consumer side delay leading to a lag spike",
@@ -68,13 +68,13 @@
       "description": "Fail payment service charge requests n%",
       "state": "ENABLED",
       "variants": {
-        "100%": 1.00,
+        "100%": 1,
         "90%": 0.95,
         "75%": 0.75,
-        "50%": 0.50,
+        "50%": 0.5,
         "25%": 0.25,
-        "10%": 0.10,
-        "off": 0.00
+        "10%": 0.1,
+        "off": 0
       },
       "defaultVariant": "off"
     },
