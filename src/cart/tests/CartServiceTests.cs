@@ -9,7 +9,7 @@ using Microsoft.Extensions.Hosting;
 using Xunit;
 using static Oteldemo.CartService;
 
-namespace cartservice.tests;
+namespace cart.tests;
 
 public class CartServiceTests
 {

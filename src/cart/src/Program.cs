@@ -2,8 +2,8 @@
 // SPDX-License-Identifier: Apache-2.0
 using System;
 
-using cartservice.cartstore;
-using cartservice.services;
+using cart.cartstore;
+using cart.services;
 
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;

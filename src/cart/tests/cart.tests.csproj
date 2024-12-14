@@ -16,6 +16,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\src\cartservice.csproj" />
+    <ProjectReference Include="..\src\cart.csproj" />
   </ItemGroup>
 </Project>

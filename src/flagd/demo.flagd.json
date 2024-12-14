@@ -55,7 +55,7 @@
       },
       "defaultVariant": "off"
     },
-    "cartServiceFailure": {
+    "cartFailure": {
       "description": "Fail cart service",
       "state": "ENABLED",
       "variants": {

@@ -4,9 +4,9 @@
 import { ChannelCredentials } from '@grpc/grpc-js';
 import { Cart, CartItem, CartServiceClient, Empty } from '../../protos/demo';
 
-const { CART_SERVICE_ADDR = '' } = process.env;
+const { CART_ADDR = '' } = process.env;
 
-const client = new CartServiceClient(CART_SERVICE_ADDR, ChannelCredentials.createInsecure());
+const client = new CartServiceClient(CART_ADDR, ChannelCredentials.createInsecure());
 
 const CartGateway = () => ({
   getCart(userId: string) {
