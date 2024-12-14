@@ -32,6 +32,8 @@ the release.
   ([#1827](https://github.com/open-telemetry/opentelemetry-demo/pull/1827))
 * [cartservice] - Add Exemplars to Cart Service
   ([#1830](https://github.com/open-telemetry/opentelemetry-demo/pull/1830))
+* [flagd-ui] rename flagdui to flagd-ui
+  ([#1840](https://github.com/open-telemetry/opentelemetry-demo/pull/1840))
 
 ## 1.12.0
 
