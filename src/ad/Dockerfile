@@ -9,11 +9,13 @@ WORKDIR /usr/src/app/
 COPY ./src/ad/gradlew* ./src/ad/settings.gradle* ./src/ad/build.gradle ./
 COPY ./src/ad/gradle ./gradle
 
+RUN chmod +x ./gradlew
 RUN ./gradlew
 RUN ./gradlew downloadRepos
 
 COPY ./src/ad/ ./
 COPY ./pb/ ./proto
+RUN chmod +x ./gradlew
 RUN ./gradlew installDist -PprotoSourceDir=./proto
 
 # -----------------------------------------------------------------------------
