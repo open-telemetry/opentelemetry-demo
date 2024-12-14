@@ -25,7 +25,7 @@
   "editable": true,
   "fiscalYearStartMonth": 0,
   "graphTooltip": 1,
-  "id": 4,
+  "id": 3,
   "links": [],
   "panels": [
     {
@@ -3055,13 +3055,13 @@
           "type": "prometheus",
           "uid": "$datasource"
         },
-        "definition": "label_values(otelcol_process_uptime, job)",
+        "definition": "label_values(otelcol_process_uptime_total,job)",
         "includeAll": false,
         "label": "Job",
         "name": "job",
         "options": [],
         "query": {
-          "query": "label_values(otelcol_process_uptime, job)",
+          "query": "label_values(otelcol_process_uptime_total,job)",
           "refId": "StandardVariableQuery"
         },
         "refresh": 1,
@@ -3234,6 +3234,6 @@
   "timezone": "utc",
   "title": "OpenTelemetry Collector",
   "uid": "BKf2sowmj",
-  "version": 10,
+  "version": 1,
   "weekStart": ""
 }

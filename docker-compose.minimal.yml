@@ -45,7 +45,7 @@ services:
       - OTEL_LOGS_EXPORTER=otlp
       - OTEL_SERVICE_NAME=adservice
     depends_on:
-      otelcol:
+      otel-collector:
         condition: service_started
     logging: *logging
 
@@ -76,7 +76,7 @@ services:
     depends_on:
       valkey-cart:
         condition: service_started
-      otelcol:
+      otel-collector:
         condition: service_started
     logging: *logging
 
@@ -122,7 +122,7 @@ services:
         condition: service_started
       shippingservice:
         condition: service_started
-      otelcol:
+      otel-collector:
         condition: service_started
     logging: *logging
 
@@ -150,7 +150,7 @@ services:
       - OTEL_EXPORTER_OTLP_ENDPOINT
       - OTEL_RESOURCE_ATTRIBUTES=${OTEL_RESOURCE_ATTRIBUTES},service.name=currencyservice   # The C++ SDK does not support OTEL_SERVICE_NAME
     depends_on:
-      otelcol:
+      otel-collector:
         condition: service_started
     logging: *logging
 
@@ -176,7 +176,7 @@ services:
       - OTEL_RESOURCE_ATTRIBUTES
       - OTEL_SERVICE_NAME=emailservice
     depends_on:
-      otelcol:
+      otel-collector:
         condition: service_started
     logging: *logging
 
@@ -233,7 +233,7 @@ services:
         condition: service_started
       shippingservice:
         condition: service_started
-      otelcol:
+      otel-collector:
         condition: service_started
       imageprovider:
         condition: service_started
@@ -308,7 +308,7 @@ services:
       - OTEL_SERVICE_NAME=imageprovider
       - OTEL_RESOURCE_ATTRIBUTES
     depends_on:
-      otelcol:
+      otel-collector:
         condition: service_started
     logging: *logging
 
@@ -374,7 +374,7 @@ services:
       - OTEL_RESOURCE_ATTRIBUTES
       - OTEL_SERVICE_NAME=paymentservice
     depends_on:
-      otelcol:
+      otel-collector:
         condition: service_started
     logging: *logging
 
@@ -402,7 +402,7 @@ services:
       - OTEL_RESOURCE_ATTRIBUTES
       - OTEL_SERVICE_NAME=productcatalogservice
     depends_on:
-      otelcol:
+      otel-collector:
         condition: service_started
     logging: *logging
 
@@ -430,7 +430,7 @@ services:
       - OTEL_SERVICE_NAME=quoteservice
       - OTEL_PHP_INTERNAL_METRICS_ENABLED=true
     depends_on:
-      otelcol:
+      otel-collector:
         condition: service_started
     logging: *logging
 
@@ -463,7 +463,7 @@ services:
     depends_on:
       productcatalogservice:
         condition: service_started
-      otelcol:
+      otel-collector:
         condition: service_started
     logging: *logging
 
@@ -490,7 +490,7 @@ services:
       - OTEL_RESOURCE_ATTRIBUTES
       - OTEL_SERVICE_NAME=shippingservice
     depends_on:
-      otelcol:
+      otel-collector:
         condition: service_started
     logging: *logging
 
@@ -581,9 +581,9 @@ services:
     logging: *logging
 
   # OpenTelemetry Collector
-  otelcol:
+  otel-collector:
     image: ${COLLECTOR_CONTRIB_IMAGE}
-    container_name: otel-col
+    container_name: otel-collector
     deploy:
       resources:
         limits:
