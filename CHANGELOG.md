@@ -34,7 +34,7 @@ the release.
   ([#1830](https://github.com/open-telemetry/opentelemetry-demo/pull/1830))
 * [grafana] Add Exemplars Dashboard
   ([#1836](https://github.com/open-telemetry/opentelemetry-demo/pull/1836))
-  
+
 ## 1.12.0
 
 * [accountingservice] allow running the container with non root user
