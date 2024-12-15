@@ -1,0 +1,14 @@
+# Copyright The OpenTelemetry Authors
+# SPDX-License-Identifier: Apache-2.0
+name: Test image generation
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  build_images:
+    if: github.repository == 'multiplayer-app/opentelemetry-demo'
+    uses: ./.github/workflows/component-build-images.yml
