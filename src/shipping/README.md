@@ -13,7 +13,7 @@ rust [here](https://www.rust-lang.org/tools/install).
 From `../../`, run:
 
 ```sh
-docker compose build shippingservice
+docker compose build shipping
 ```
 
 ## Test
