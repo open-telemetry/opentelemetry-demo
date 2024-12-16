@@ -1,7 +1,7 @@
 {
   "expo": {
-    "name": "reactnativeapp",
-    "slug": "reactnativeapp",
+    "name": "Astronomy Shop App",
+    "slug": "astronomyshopapp",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
@@ -14,14 +14,14 @@
     },
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "com.anonymous.reactnativeapp"
+      "bundleIdentifier": "io.opentelemetry.reactnativeapp"
     },
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./assets/images/adaptive-icon.png",
         "backgroundColor": "#ffffff"
       },
-      "package": "com.anonymous.reactnativeapp"
+      "package": "io.opentelemetry.reactnativeapp"
     },
     "web": {
       "bundler": "metro",

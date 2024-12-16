@@ -1,4 +1,4 @@
-package com.anonymous.reactnativeapp
+package io.opentelemetry.reactnativeapp
 
 import android.app.Application
 import android.content.res.Configuration

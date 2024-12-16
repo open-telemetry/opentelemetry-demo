@@ -43,9 +43,9 @@ android {
     buildToolsVersion rootProject.ext.buildToolsVersion
     compileSdk rootProject.ext.compileSdkVersion
 
-    namespace 'com.anonymous.reactnativeapp'
+    namespace 'io.opentelemetry.reactnativeapp'
     defaultConfig {
-        applicationId 'com.anonymous.reactnativeapp'
+        applicationId 'io.opentelemetry.reactnativeapp'
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
         versionCode 1
