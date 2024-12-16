@@ -8,8 +8,6 @@ import {
 import { WebTracerProvider } from "@opentelemetry/sdk-trace-web";
 import {
   BatchSpanProcessor,
-  SimpleSpanProcessor,
-  ConsoleSpanExporter,
 } from "@opentelemetry/sdk-trace-base";
 import { XMLHttpRequestInstrumentation } from "@opentelemetry/instrumentation-xml-http-request";
 import { FetchInstrumentation } from "@opentelemetry/instrumentation-fetch";
@@ -66,9 +64,6 @@ const Tracer = async () => {
       // TODO introduce a React Native session processor package that could be used here, taking into account mobile
       // specific considerations for the session such as putting the app into the background
       new SessionIdProcessor(),
-
-      // Helpful for debugging
-      new SimpleSpanProcessor(new ConsoleSpanExporter()),
     ],
   });
 
