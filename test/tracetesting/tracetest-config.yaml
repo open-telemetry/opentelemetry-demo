@@ -17,7 +17,7 @@ telemetry:
       exporter:
         type: collector
         collector:
-          endpoint: otelcol:4317
+          endpoint: otel-collector:4317
 
 server:
   telemetry:
