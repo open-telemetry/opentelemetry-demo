@@ -7,6 +7,19 @@ const opentelemetry = require('@opentelemetry/api')
 
 const charge = require('./charge')
 const logger = require('./logger')
+const { trace, context } = require('@opentelemetry/api');
+const Bugsnag = require('@bugsnag/js');
+
+Bugsnag.start({
+  apiKey: process.env.PAYMENT_SERVICE_BUGSNAG_API_KEY,
+  onError: function (event) {
+    const spanContext = trace.getSpanContext(context.active());
+    event.addMetadata("correlation", {
+      traceId: spanContext.traceId,
+      spanId: spanContext.spanId,
+    });
+  },
+});
 
 async function chargeServiceHandler(call, callback) {
   const span = opentelemetry.trace.getActiveSpan();
