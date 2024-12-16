@@ -16,7 +16,7 @@ make start # or start-minimal
 
 ## Building the app
 
-Unlike the other components under src/ which run within docker containers this
+Unlike the other components under src/ which run within containers this
 app must be built and then run on a mobile simulator on your machine or a physical
 device. If this is your first time running a React Native app then in order to
 execute the steps under "Build on your host machine" you will need to setup your
