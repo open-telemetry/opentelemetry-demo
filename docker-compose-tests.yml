@@ -107,7 +107,7 @@ services:
     depends_on:
       tracetest-postgres:
         condition: service_healthy
-      otelcol:
+      otel-collector:
         condition: service_started
     healthcheck:
       test: [ "CMD", "wget", "--spider", "localhost:11633" ]

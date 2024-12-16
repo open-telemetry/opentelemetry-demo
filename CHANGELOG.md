@@ -32,8 +32,12 @@ the release.
   ([#1827](https://github.com/open-telemetry/opentelemetry-demo/pull/1827))
 * [cartservice] - Add Exemplars to Cart Service
   ([#1830](https://github.com/open-telemetry/opentelemetry-demo/pull/1830))
+* [grafana] Add Exemplars Dashboard
+  ([#1836](https://github.com/open-telemetry/opentelemetry-demo/pull/1836))
 * [quote] rename quoteservice to quote
   ([#1838](https://github.com/open-telemetry/opentelemetry-demo/pull/1838))
+* [otel-collector] rename otelcol to otel-collector
+  ([#1841](https://github.com/open-telemetry/opentelemetry-demo/pull/1841))
 
 ## 1.12.0
 
