@@ -35,17 +35,33 @@ cd src/reactnativeapp
 npm install
 ```
 
+To run on Android:
+
 ```bash
 npm run android
 ```
 
-Or
+Note that for the above command a server is also spun up to serve the JS bundle
+to the deployed app.
+
+To run on iOS you may find it cleanest to build through the XCode IDE. First spin
+up the react native dev server with:
+
+```bash
+npm run start
+```
+
+Then open XCode, open this as an existing project by opening `src/reactnativeapp/ios/reactnativeapp.xcworkspace`
+then trigger the build by hitting the Play button or from the menu using Product->Run.
+
+
+Or alternatively build and run from the command-line:
 
 ```bash
 npm run ios
 ```
 
-Note that for the above commands a server is also spun up to serve the JS bundle
+Note that for the above command a server is also spun up to serve the JS bundle
 to the deployed apps.
 
 ### Build within a container
@@ -78,7 +94,8 @@ this method would work.
 
 ### iOS build issues
 
-If you see a build failure related to pods try forcing a clean install with:
+If you see a build failure related to pods try forcing a clean install with and
+then attempt another build after:
 
 ```bash
   cd src/reactnativeapp/ios
@@ -95,17 +112,6 @@ and clearing all derived data:
 ```bash
 rm -rf ~/Library/Developer/Xcode/DerivedData
 ```
-
-If issues persist building on the command-line you may have better luck or at least
-get a clearer error log by building through the XCode IDE. First spin up the react
-native dev server with:
-
-```bash
-npm run start
-```
-
-Then open XCode, open this as an existing project by opening `src/reactnativeapp/ios/reactnativeapp.xcworkspace`
-then trigger the build by hitting the Play button or from the menu using Product->Run.
 
 ### Android build issues
 
