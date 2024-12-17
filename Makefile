@@ -191,6 +191,6 @@ else
 	@echo "Please provide a service name using `service=[service name]` or `SERVICE=[service name]`"
 endif
 
-.PHONY: reactnative-build-android
-reactnative-build-android:
+.PHONY: build-react-native-android
+build-react-native-android:
 	docker build -f src/react-native-app/android.Dockerfile --platform=linux/amd64 --output=. src/react-native-app

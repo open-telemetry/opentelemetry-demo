@@ -70,7 +70,7 @@ For Android builds you can produce an apk using Docker without requiring the dev
 tools to be installed on your host. From the project root run:
 
 ```bash
-make reactnative-build-android
+make build-react-native-android
 ```
 
 Or directly from this folder using:
