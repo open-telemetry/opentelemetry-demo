@@ -52,7 +52,7 @@ jobs:
       matrix:
         file_tag:
           - file: ./src/accounting/Dockerfile
-            tag_suffix: accounting
+            tag_suffix: accountingservice
             context: ./
             setup-qemu: true
           - file: ./src/adservice/Dockerfile
