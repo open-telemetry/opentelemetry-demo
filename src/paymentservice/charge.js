@@ -12,14 +12,12 @@ const logger = require('./logger');
 const tracer = trace.getTracer('paymentservice');
 const meter = metrics.getMeter('paymentservice');
 const transactionsCounter = meter.createCounter('app.payment.transactions')
-const Bugsnag = require("@bugsnag/js");
 
 module.exports.charge = async request => {
   const span = tracer.startSpan('charge');
 
   await OpenFeature.setProviderAndWait(flagProvider);
   if (await OpenFeature.getClient().getBooleanValue("paymentServiceFailure", false)) {
-    Bugsnag.notify(new Error("PaymentService Fail Feature Flag Enabled"));
     throw new Error("PaymentService Fail Feature Flag Enabled");
   }
 

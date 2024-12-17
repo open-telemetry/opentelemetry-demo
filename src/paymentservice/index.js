@@ -18,7 +18,7 @@ Bugsnag.start({
       traceId: spanContext.traceId,
       spanId: spanContext.spanId,
     });
-  },
+  }
 });
 
 async function chargeServiceHandler(call, callback) {
@@ -36,7 +36,8 @@ async function chargeServiceHandler(call, callback) {
 
   } catch (err) {
     logger.warn({ err })
-
+    Bugsnag.notify(err);
+    
     span.recordException(err)
     span.setStatus({ code: opentelemetry.SpanStatusCode.ERROR })
 
