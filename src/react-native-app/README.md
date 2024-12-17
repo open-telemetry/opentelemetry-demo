@@ -51,9 +51,15 @@ up the react native dev server with:
 npm run start
 ```
 
+Then install the pods for the project:
+
+```bash
+cd src/react-native-app/ios
+pod install
+```
+
 Then open XCode, open this as an existing project by opening `src/react-native-app/ios/react-native-app.xcworkspace`
 then trigger the build by hitting the Play button or from the menu using Product->Run.
-
 
 Or alternatively build and run from the command-line:
 
