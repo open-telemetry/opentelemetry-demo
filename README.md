@@ -14,9 +14,9 @@ to deploy the app, check out [how to navigate the OTLP data in your New Relic ac
 Please note the following modifications to our fork:
 * The .env file contains New Relic-specific environment variables so you can quickly
 ship the data to your account
-* recommendationservice has been instrumented with the New Relic Python APM 
+* By default, the `recommendationservice` is instrumented with the OTel SDK. An [optional install step](https://github.com/newrelic/opentelemetry-demo/blob/main/docs/kubernetes_deployment.md#new-relic-overrides-optional) has been added that will instrument the `recommendationservice` with the New Relic Python APM 
 agent to demonstrate interoperability between our language agents and OpenTelemetry 
-instrumentation 
+instrumentation.
 
 ### Quick start with New Relic
 Get started quickly by running the app according to your deployment method preference:
