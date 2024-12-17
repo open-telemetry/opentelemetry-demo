@@ -31,7 +31,7 @@ Build and run the React Native app for a given platform by navigating to this fo
 and running:
 
 ```bash
-cd src/reactnativeapp
+cd src/react-native-app
 npm install
 ```
 
@@ -51,7 +51,7 @@ up the react native dev server with:
 npm run start
 ```
 
-Then open XCode, open this as an existing project by opening `src/reactnativeapp/ios/reactnativeapp.xcworkspace`
+Then open XCode, open this as an existing project by opening `src/react-native-app/ios/react-native-app.xcworkspace`
 then trigger the build by hitting the Play button or from the menu using Product->Run.
 
 
@@ -79,7 +79,7 @@ Or directly from this folder using:
 docker build -f android.Dockerfile --platform=linux/amd64 --output=. .
 ```
 
-This will produce `reactnativeapp.apk` in the directory where you ran the command.
+This will produce `react-native-app.apk` in the directory where you ran the command.
 If you have an Android emulator running on your machine then you can simply drag
 and drop this file onto the emulator's window in order to install it following
 [these steps](https://developer.android.com/studio/run/emulator-install-add-files).
@@ -98,7 +98,7 @@ If you see a build failure related to pods try forcing a clean install with and
 then attempt another build after:
 
 ```bash
-  cd src/reactnativeapp/ios
+  cd src/react-native-app/ios
   rm Podfile.lock
   pod cache clean --all
   pod repo update --verbose
@@ -119,12 +119,12 @@ Try stopping and cleaning local services (in case there are unknown issues relat
 to the start of the app):
 
 ```bash
-  cd src/reactnativeapp/android
+  cd src/react-native-app/android
   ./gradlew --stop  // stop daemons
   rm -rf ~/.gradle/caches/
 ```
 
 ### JS build issues
 
-Try removing the `src/reactnativeapp/node_modules/` folder and then re-run `npm install`
-from inside `src/reactnativeapp`.
+Try removing the `src/react-native-app/node_modules/` folder and then re-run `npm install`
+from inside `src/react-native-app`.

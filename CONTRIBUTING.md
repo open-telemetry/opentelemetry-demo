@@ -107,7 +107,7 @@ documentation can be found on the OTel website under [Demo docs][docs].
 ### Running the React Native example
 
 If you are interested in running the React Native example app in this repo please
-review [these instructions](src/reactnativeapp/README.md).
+review [these instructions](src/react-native-app/README.md).
 
 ## Create Your First Pull Request
 

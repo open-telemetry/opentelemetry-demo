@@ -36,7 +36,7 @@ const Tracer = async () => {
 
   // TODO Should add a resource detector for React Native that provides this automatically
   const resource = new Resource({
-    [ATTR_SERVICE_NAME]: "reactnativeapp",
+    [ATTR_SERVICE_NAME]: "react-native-app",
     [ATTR_OS_NAME]: Platform.OS,
     [ATTR_OS_VERSION]: getSystemVersion(),
     [ATTR_SERVICE_VERSION]: getVersion(),

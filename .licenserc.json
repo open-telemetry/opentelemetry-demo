@@ -45,12 +45,12 @@
         "src/featureflagservice/assets/vendor/",
         "src/featureflagservice/priv/",
         "src/productcatalogservice/genproto/",
-        "src/reactnativeapp/ios/Pods/",
-        "src/reactnativeapp/ios/build/",
-        "src/reactnativeapp/android/app/build/",
-        "src/reactnativeapp/android/.gradle/",
-        "src/reactnativeapp/.expo/",
-        "src/reactnativeapp/expo-env.d.ts",
+        "src/react-native-app/ios/Pods/",
+        "src/react-native-app/ios/build/",
+        "src/react-native-app/android/app/build/",
+        "src/react-native-app/android/.gradle/",
+        "src/react-native-app/.expo/",
+        "src/react-native-app/expo-env.d.ts",
         "internal/tools/"
     ]
   }

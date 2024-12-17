@@ -193,4 +193,4 @@ endif
 
 .PHONY: reactnative-build-android
 reactnative-build-android:
-	docker build -f src/reactnativeapp/android.Dockerfile --platform=linux/amd64 --output=. src/reactnativeapp
+	docker build -f src/react-native-app/android.Dockerfile --platform=linux/amd64 --output=. src/react-native-app
