@@ -7,6 +7,7 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	"github.com/uptrace/opentelemetry-go-extra/otellogrus"
 	"net"
 	"net/http"
 	"os"
@@ -57,6 +58,18 @@ var resource *sdkresource.Resource
 var initResourcesOnce sync.Once
 
 func init() {
+	ctx := context.Background()
+
+	logrus.AddHook(otellogrus.NewHook(otellogrus.WithLevels(
+		logrus.PanicLevel,
+		logrus.FatalLevel,
+		logrus.ErrorLevel,
+		logrus.WarnLevel,
+		logrus.InfoLevel,
+		logrus.DebugLevel,
+	)))
+	logrus.WithContext(ctx)
+
 	log = logrus.New()
 	log.Level = logrus.DebugLevel
 	log.Formatter = &logrus.JSONFormatter{
