@@ -45,7 +45,9 @@ Note that for the above command a server is also spun up to serve the JS bundle
 to the deployed app.
 
 To run on iOS you may find it cleanest to build through the XCode IDE. First spin
-up the react native dev server with:
+up the react native dev server with the following (feel free to ignore the output
+commands referring to opening an iOS simulator, we'll do that directly through
+XCode in a later step):
 
 ```bash
 npm run start
