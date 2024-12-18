@@ -54,8 +54,20 @@ npm run start
 Then install the pods for the project:
 
 ```bash
-cd src/react-native-app/ios
+cd ios
 pod install
+```
+
+Note that the above is the quickest way to get going but you may end up with
+slightly different versions of the Pods than what has been committed to this repo,
+in order to install the precise versions first setup [rbenv](https://github.com/rbenv/rbenv#installation)
+followed by:
+
+```bash
+rbenv install 2.7.6 # the version of ruby we've pinned for this app
+bundle install
+cd ios
+bundle exec pod install
 ```
 
 Then open XCode, open this as an existing project by opening `src/react-native-app/ios/react-native-app.xcworkspace`
@@ -132,5 +144,5 @@ to the start of the app):
 
 ### JS build issues
 
-Try removing the `src/react-native-app/node_modules/` folder and then re-run `npm install`
-from inside `src/react-native-app`.
+Try removing the `src/react-native-app/node_modules/` folder and then re-run
+`npm install` from inside `src/react-native-app`.
