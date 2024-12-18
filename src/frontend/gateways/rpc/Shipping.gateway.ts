@@ -4,9 +4,9 @@
 import { ChannelCredentials } from '@grpc/grpc-js';
 import { Address, CartItem, GetQuoteResponse, ShippingServiceClient } from '../../protos/demo';
 
-const { SHIPPING_SERVICE_ADDR = '' } = process.env;
+const { SHIPPING_ADDR = '' } = process.env;
 
-const client = new ShippingServiceClient(SHIPPING_SERVICE_ADDR, ChannelCredentials.createInsecure());
+const client = new ShippingServiceClient(SHIPPING_ADDR, ChannelCredentials.createInsecure());
 
 const ShippingGateway = () => ({
   getShippingCost(itemList: CartItem[], address: Address) {

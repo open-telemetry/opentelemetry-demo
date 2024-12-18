@@ -10,7 +10,7 @@ spec:
     type: grpc
     grpc:
       protobufFile: ../../../pb/demo.proto
-      address: ${var:SHIPPING_SERVICE_ADDR}
+      address: ${var:SHIPPING_ADDR}
       method: oteldemo.ShippingService.ShipOrder
       request: |-
         {
