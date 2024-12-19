@@ -11,7 +11,7 @@ To build the quote service, run the following from root directory
 of opentelemetry-demo
 
 ```sh
-docker compose build quoteservice
+docker compose build quote
 ```
 
 ## Run the service
@@ -19,7 +19,7 @@ docker compose build quoteservice
 Execute the below command to run the service.
 
 ```sh
-docker compose up quoteservice
+docker compose up quote
 ```
 
 In order to get traffic into the service you have to deploy
@@ -32,9 +32,9 @@ Please follow the root README to do so.
 To build and run the quote service locally:
 
 ```sh
-docker build src/quoteservice --target base -t quoteservice
-cd src/quoteservice
-docker run --rm -it -v $(pwd):/var/www -e QUOTE_SERVICE_PORT=8999 -p "8999:8999" quoteservice
+docker build src/quote --target base -t quote
+cd src/quote
+docker run --rm -it -v $(pwd):/var/www -e QUOTE_PORT=8999 -p "8999:8999" quote
 ```
 
 Then, send some curl requests:
