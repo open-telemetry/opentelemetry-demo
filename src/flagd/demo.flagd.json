@@ -19,7 +19,7 @@
       },
       "defaultVariant": "off"
     },
-    "adServiceManualGc": {
+    "adManualGc": {
       "description": "Triggers full manual garbage collections in the ad service",
       "state": "ENABLED",
       "variants": {
@@ -28,7 +28,7 @@
       },
       "defaultVariant": "off"
     },
-    "adServiceHighCpu": {
+    "adHighCpu": {
       "description": "Triggers high cpu load in the ad service",
       "state": "ENABLED",
       "variants": {
@@ -37,14 +37,14 @@
       },
       "defaultVariant": "off"
     },
-    "adServiceFailure": {
+    "adFailure": {
       "description": "Fail ad service",
       "state": "ENABLED",
       "variants": {
         "on": true,
         "off": false
       },
-      "defaultVariant": "off"
+      "defaultVariant": "on"
     },
     "kafkaQueueProblems": {
       "description": "Overloads Kafka queue while simultaneously introducing a consumer side delay leading to a lag spike",
@@ -55,7 +55,7 @@
       },
       "defaultVariant": "off"
     },
-    "cartServiceFailure": {
+    "cartFailure": {
       "description": "Fail cart service",
       "state": "ENABLED",
       "variants": {
@@ -65,11 +65,16 @@
       "defaultVariant": "off"
     },
     "paymentServiceFailure": {
-      "description": "Fail payment service charge requests",
+      "description": "Fail payment service charge requests n%",
       "state": "ENABLED",
       "variants": {
-        "on": true,
-        "off": false
+        "100%": 1,
+        "90%": 0.95,
+        "75%": 0.75,
+        "50%": 0.5,
+        "25%": 0.25,
+        "10%": 0.1,
+        "off": 0
       },
       "defaultVariant": "off"
     },

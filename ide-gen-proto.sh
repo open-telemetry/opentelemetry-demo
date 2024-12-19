@@ -65,9 +65,9 @@ gen_proto_ts() {
   cd "$base_dir" || return
 }
 
-gen_proto_dotnet accountingservice
-# gen_proto_java adservice
-gen_proto_dotnet cartservice
+gen_proto_dotnet accounting
+# gen_proto_java ad
+gen_proto_dotnet cart
 gen_proto_go checkoutservice
 # gen_proto_cpp currencyservice
 # gen_proto_ruby emailservice
@@ -75,6 +75,6 @@ gen_proto_ts frontend
 gen_proto_ts react-native-app
 gen_proto_js paymentservice
 gen_proto_go productcatalogservice
-# gen_proto_php quoteservice
+# gen_proto_php quote
 gen_proto_python recommendationservice
 gen_proto_rust shippingservice

@@ -1,0 +1,27 @@
+# Copyright The OpenTelemetry Authors
+# SPDX-License-Identifier: Apache-2.0
+
+type: Test
+spec:
+  id: cart-empty-cart
+  name: 'Cart: empty cart'
+  description: Clean shopping cart
+  trigger:
+    type: grpc
+    grpc:
+      protobufFile: ../../../pb/demo.proto
+      address: ${var:CART_ADDR}
+      method: oteldemo.CartService.EmptyCart
+      request: |-
+        {
+            "userId": "1234"
+        }
+  specs:
+  - name: It emptied the shopping cart with success
+    selector: span[name="POST /oteldemo.CartService/EmptyCart"]
+    assertions:
+    - attr:grpc.status_code = 0
+  - name: It sent cleaning message to the database
+    selector: span[tracetest.span.type="database" name="EXPIRE" db.system="redis" db.redis.database_index="0"]
+    assertions:
+    - attr:db.statement = "EXPIRE 1234"

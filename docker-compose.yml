@@ -18,14 +18,14 @@ services:
   # Core Demo Services
   # ******************
   # Accounting service
-  accountingservice:
-    image: ${IMAGE_NAME}:${DEMO_VERSION}-accountingservice
-    container_name: accounting-service
+  accounting:
+    image: ${IMAGE_NAME}:${DEMO_VERSION}-accounting
+    container_name: accounting
     build:
       context: ./
-      dockerfile: ${ACCOUNTING_SERVICE_DOCKERFILE}
+      dockerfile: ${ACCOUNTING_DOCKERFILE}
       cache_from:
-        - ${IMAGE_NAME}:${IMAGE_VERSION}-accountingservice
+        - ${IMAGE_NAME}:${IMAGE_VERSION}-accounting
     deploy:
       resources:
         limits:
@@ -36,23 +36,23 @@ services:
       - OTEL_EXPORTER_OTLP_ENDPOINT=http://${OTEL_COLLECTOR_HOST}:${OTEL_COLLECTOR_PORT_HTTP}
       - OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE
       - OTEL_RESOURCE_ATTRIBUTES
-      - OTEL_SERVICE_NAME=accountingservice
+      - OTEL_SERVICE_NAME=accounting
     depends_on:
-      otelcol:
+      otel-collector:
         condition: service_started
       kafka:
         condition: service_healthy
     logging: *logging
 
   # AdService
-  adservice:
-    image: ${IMAGE_NAME}:${DEMO_VERSION}-adservice
-    container_name: ad-service
+  ad:
+    image: ${IMAGE_NAME}:${DEMO_VERSION}-ad
+    container_name: ad
     build:
       context: ./
-      dockerfile: ${AD_SERVICE_DOCKERFILE}
+      dockerfile: ${AD_DOCKERFILE}
       cache_from:
-        - ${IMAGE_NAME}:${IMAGE_VERSION}-adservice
+        - ${IMAGE_NAME}:${IMAGE_VERSION}-ad
       args:
         OTEL_JAVA_AGENT_VERSION: ${OTEL_JAVA_AGENT_VERSION}
     deploy:
@@ -61,52 +61,52 @@ services:
           memory: 300M
     restart: unless-stopped
     ports:
-      - "${AD_SERVICE_PORT}"
+      - "${AD_PORT}"
     environment:
-      - AD_SERVICE_PORT
+      - AD_PORT
       - FLAGD_HOST
       - FLAGD_PORT
       - OTEL_EXPORTER_OTLP_ENDPOINT=http://${OTEL_COLLECTOR_HOST}:${OTEL_COLLECTOR_PORT_HTTP}
       - OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE
       - OTEL_RESOURCE_ATTRIBUTES
       - OTEL_LOGS_EXPORTER=otlp
-      - OTEL_SERVICE_NAME=adservice
+      - OTEL_SERVICE_NAME=ad
     depends_on:
-      otelcol:
+      otel-collector:
         condition: service_started
       flagd:
         condition: service_started
     logging: *logging
 
   # Cart service
-  cartservice:
-    image: ${IMAGE_NAME}:${DEMO_VERSION}-cartservice
+  cart:
+    image: ${IMAGE_NAME}:${DEMO_VERSION}-cart
     container_name: cart-service
     build:
       context: ./
-      dockerfile: ${CART_SERVICE_DOCKERFILE}
+      dockerfile: ${CART_DOCKERFILE}
       cache_from:
-        - ${IMAGE_NAME}:${IMAGE_VERSION}-cartservice
+        - ${IMAGE_NAME}:${IMAGE_VERSION}-cart
     deploy:
       resources:
         limits:
           memory: 160M
     restart: unless-stopped
     ports:
-      - "${CART_SERVICE_PORT}"
+      - "${CART_PORT}"
     environment:
-      - CART_SERVICE_PORT
+      - CART_PORT
       - FLAGD_HOST
       - FLAGD_PORT
       - VALKEY_ADDR
       - OTEL_EXPORTER_OTLP_ENDPOINT
       - OTEL_RESOURCE_ATTRIBUTES
-      - OTEL_SERVICE_NAME=cartservice
-      - ASPNETCORE_URLS=http://*:${CART_SERVICE_PORT}
+      - OTEL_SERVICE_NAME=cart
+      - ASPNETCORE_URLS=http://*:${CART_PORT}
     depends_on:
       valkey-cart:
         condition: service_started
-      otelcol:
+      otel-collector:
         condition: service_started
       flagd:
         condition: service_started
@@ -132,7 +132,7 @@ services:
       - FLAGD_HOST
       - FLAGD_PORT
       - CHECKOUT_SERVICE_PORT
-      - CART_SERVICE_ADDR
+      - CART_ADDR
       - CURRENCY_SERVICE_ADDR
       - EMAIL_SERVICE_ADDR
       - PAYMENT_SERVICE_ADDR
@@ -144,7 +144,7 @@ services:
       - OTEL_RESOURCE_ATTRIBUTES
       - OTEL_SERVICE_NAME=checkoutservice
     depends_on:
-      cartservice:
+      cart:
         condition: service_started
       currencyservice:
         condition: service_started
@@ -156,7 +156,7 @@ services:
         condition: service_started
       shippingservice:
         condition: service_started
-      otelcol:
+      otel-collector:
         condition: service_started
       kafka:
         condition: service_healthy
@@ -188,7 +188,7 @@ services:
       - OTEL_EXPORTER_OTLP_ENDPOINT
       - OTEL_RESOURCE_ATTRIBUTES=${OTEL_RESOURCE_ATTRIBUTES},service.name=currencyservice   # The C++ SDK does not support OTEL_SERVICE_NAME
     depends_on:
-      otelcol:
+      otel-collector:
         condition: service_started
     logging: *logging
 
@@ -215,7 +215,7 @@ services:
       - OTEL_RESOURCE_ATTRIBUTES
       - OTEL_SERVICE_NAME=emailservice
     depends_on:
-      otelcol:
+      otel-collector:
         condition: service_started
     logging: *logging
 
@@ -246,7 +246,7 @@ services:
       - OTEL_RESOURCE_ATTRIBUTES
       - OTEL_SERVICE_NAME=frauddetectionservice
     depends_on:
-      otelcol:
+      otel-collector:
         condition: service_started
       kafka:
         condition: service_healthy
@@ -271,8 +271,8 @@ services:
     environment:
       - PORT=${FRONTEND_PORT}
       - FRONTEND_ADDR
-      - AD_SERVICE_ADDR
-      - CART_SERVICE_ADDR
+      - AD_ADDR
+      - CART_ADDR
       - CHECKOUT_SERVICE_ADDR
       - CURRENCY_SERVICE_ADDR
       - PRODUCT_CATALOG_SERVICE_ADDR
@@ -289,9 +289,9 @@ services:
       - FLAGD_HOST
       - FLAGD_PORT
     depends_on:
-      adservice:
+      ad:
         condition: service_started
-      cartservice:
+      cart:
         condition: service_started
       checkoutservice:
         condition: service_started
@@ -299,13 +299,13 @@ services:
         condition: service_started
       productcatalogservice:
         condition: service_started
-      quoteservice:
+      quote:
         condition: service_started
       recommendationservice:
         condition: service_started
       shippingservice:
         condition: service_started
-      otelcol:
+      otel-collector:
         condition: service_started
       imageprovider:
         condition: service_started
@@ -343,6 +343,7 @@ services:
       - OTEL_COLLECTOR_PORT_GRPC
       - OTEL_COLLECTOR_PORT_HTTP
       - OTEL_RESOURCE_ATTRIBUTES
+      - OTEL_SERVICE_NAME=frontend-proxy
       - ENVOY_PORT
       - FLAGD_HOST
       - FLAGD_PORT
@@ -357,7 +358,7 @@ services:
         condition: service_started
       grafana:
         condition: service_started
-      flagdui:
+      flagd-ui:
         condition: service_started
 
   # Imageprovider
@@ -383,7 +384,7 @@ services:
       - OTEL_SERVICE_NAME=imageprovider
       - OTEL_RESOURCE_ATTRIBUTES
     depends_on:
-      otelcol:
+      otel-collector:
         condition: service_started
     logging: *logging
 
@@ -399,7 +400,7 @@ services:
     deploy:
       resources:
         limits:
-          memory: 1G
+          memory: 1500M
     restart: unless-stopped
     ports:
       - "${LOCUST_WEB_PORT}"
@@ -450,7 +451,7 @@ services:
       - OTEL_RESOURCE_ATTRIBUTES
       - OTEL_SERVICE_NAME=paymentservice
     depends_on:
-      otelcol:
+      otel-collector:
         condition: service_started
       flagd:
         condition: service_started
@@ -481,37 +482,37 @@ services:
       - OTEL_RESOURCE_ATTRIBUTES
       - OTEL_SERVICE_NAME=productcatalogservice
     depends_on:
-      otelcol:
+      otel-collector:
         condition: service_started
       flagd:
         condition: service_started
     logging: *logging
 
   # Quote service
-  quoteservice:
-    image: ${IMAGE_NAME}:${DEMO_VERSION}-quoteservice
+  quote:
+    image: ${IMAGE_NAME}:${DEMO_VERSION}-quote
     container_name: quote-service
     build:
       context: ./
-      dockerfile: ${QUOTE_SERVICE_DOCKERFILE}
+      dockerfile: ${QUOTE_DOCKERFILE}
       cache_from:
-        - ${IMAGE_NAME}:${IMAGE_VERSION}-quoteservice
+        - ${IMAGE_NAME}:${IMAGE_VERSION}-quote
     deploy:
       resources:
         limits:
           memory: 40M
     restart: unless-stopped
     ports:
-      - "${QUOTE_SERVICE_PORT}"
+      - "${QUOTE_PORT}"
     environment:
       - OTEL_EXPORTER_OTLP_ENDPOINT=http://${OTEL_COLLECTOR_HOST}:${OTEL_COLLECTOR_PORT_HTTP}
       - OTEL_PHP_AUTOLOAD_ENABLED=true
-      - QUOTE_SERVICE_PORT
+      - QUOTE_PORT
       - OTEL_RESOURCE_ATTRIBUTES
-      - OTEL_SERVICE_NAME=quoteservice
+      - OTEL_SERVICE_NAME=quote
       - OTEL_PHP_INTERNAL_METRICS_ENABLED=true
     depends_on:
-      otelcol:
+      otel-collector:
         condition: service_started
     logging: *logging
 
@@ -545,7 +546,7 @@ services:
     depends_on:
       productcatalogservice:
         condition: service_started
-      otelcol:
+      otel-collector:
         condition: service_started
       flagd:
         condition: service_started
@@ -569,12 +570,12 @@ services:
       - "${SHIPPING_SERVICE_PORT}"
     environment:
       - SHIPPING_SERVICE_PORT
-      - QUOTE_SERVICE_ADDR
+      - QUOTE_ADDR
       - OTEL_EXPORTER_OTLP_ENDPOINT=http://${OTEL_COLLECTOR_HOST}:${OTEL_COLLECTOR_PORT_GRPC}
       - OTEL_RESOURCE_ATTRIBUTES
       - OTEL_SERVICE_NAME=shippingservice
     depends_on:
-      otelcol:
+      otel-collector:
         condition: service_started
     logging: *logging
 
@@ -588,7 +589,7 @@ services:
     deploy:
       resources:
         limits:
-          memory: 50M
+          memory: 75M
     restart: unless-stopped
     environment:
       - FLAGD_OTEL_COLLECTOR_URI=${OTEL_COLLECTOR_HOST}:${OTEL_COLLECTOR_PORT_GRPC}
@@ -608,26 +609,26 @@ services:
       *logging
 
   # Flagd UI for configuring the feature flag service
-  flagdui:
-    image: ${IMAGE_NAME}:${DEMO_VERSION}-flagdui
-    container_name: flagdui
+  flagd-ui:
+    image: ${IMAGE_NAME}:${DEMO_VERSION}-flagd-ui
+    container_name: flagd-ui
     build:
       context: ./
       dockerfile: ${FLAGD_UI_DOCKERFILE}
     deploy:
       resources:
         limits:
-          memory: 150M
+          memory: 75M
     restart: unless-stopped
     environment:
       - OTEL_EXPORTER_OTLP_ENDPOINT=http://${OTEL_COLLECTOR_HOST}:${OTEL_COLLECTOR_PORT_HTTP}
       - OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE
       - OTEL_RESOURCE_ATTRIBUTES
-      - OTEL_SERVICE_NAME=flagdui
+      - OTEL_SERVICE_NAME=flagd-ui
     ports:
       - "${FLAGD_UI_PORT}"
     depends_on:
-      otelcol:
+      otel-collector:
         condition: service_started
       flagd:
         condition: service_started
@@ -688,7 +689,7 @@ services:
     image: ${JAEGERTRACING_IMAGE}
     container_name: jaeger
     command:
-      - "--memory.max-traces=5000"
+      - "--memory.max-traces=25000"
       - "--query.base-path=/jaeger/ui"
       - "--prometheus.server-url=http://${PROMETHEUS_ADDR}"
       - "--prometheus.query.normalize-calls=true"
@@ -696,7 +697,7 @@ services:
     deploy:
       resources:
         limits:
-          memory: 400M
+          memory: 1200M
     restart: unless-stopped
     ports:
       - "${JAEGER_SERVICE_PORT}"         # Jaeger UI
@@ -724,9 +725,9 @@ services:
     logging: *logging
 
   # OpenTelemetry Collector
-  otelcol:
+  otel-collector:
     image: ${COLLECTOR_CONTRIB_IMAGE}
-    container_name: otel-col
+    container_name: otel-collector
     deploy:
       resources:
         limits:

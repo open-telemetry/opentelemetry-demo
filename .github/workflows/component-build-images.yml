@@ -26,8 +26,20 @@ on:
         type: string
 
 jobs:
+  protobufcheck:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Generate
+        run: make clean docker-generate-protobuf
+      - name: Check Clean Work Tree
+        run: make check-clean-work-tree
+
   build_and_push_images:
     runs-on: ubuntu-latest
+    needs: protobufcheck
+
     permissions:
       contents: read
       packages: write
@@ -39,16 +51,16 @@ jobs:
       fail-fast: false
       matrix:
         file_tag:
-          - file: ./src/accountingservice/Dockerfile
-            tag_suffix: accountingservice
+          - file: ./src/accounting/Dockerfile
+            tag_suffix: accounting
             context: ./
             setup-qemu: true
-          - file: ./src/adservice/Dockerfile
-            tag_suffix: adservice
+          - file: ./src/ad/Dockerfile
+            tag_suffix: ad
             context: ./
             setup-qemu: true
-          - file: ./src/cartservice/src/Dockerfile
-            tag_suffix: cartservice
+          - file: ./src/cart/src/Dockerfile
+            tag_suffix: cart
             context: ./
             setup-qemu: false
           - file: ./src/checkoutservice/Dockerfile
@@ -99,8 +111,8 @@ jobs:
             tag_suffix: productcatalogservice
             context: ./
             setup-qemu: true
-          - file: ./src/quoteservice/Dockerfile
-            tag_suffix: quoteservice
+          - file: ./src/quote/Dockerfile
+            tag_suffix: quote
             context: ./
             setup-qemu: true
           - file: ./src/recommendationservice/Dockerfile
@@ -112,7 +124,7 @@ jobs:
             context: ./
             setup-qemu: true
           - file: ./src/flagd-ui/Dockerfile
-            tag_suffix: flagdui
+            tag_suffix: flagd-ui
             context: ./
             setup-qemu: true
           - file: ./test/tracetesting/Dockerfile
@@ -177,7 +189,7 @@ jobs:
             max-parallelism = 2
       - name: Matrix Build and push demo images
         if: steps.check_changes.outputs.skip == 'false'
-        uses: docker/build-push-action@v6.9.0
+        uses: docker/build-push-action@v6.10.0
         with:
           context: ${{ matrix.file_tag.context }}
           file: ${{ matrix.file_tag.file }}

@@ -38,9 +38,9 @@
     ],
     "ignore": [
         "node_modules/",
-        "src/accountingservice/genproto/",
-        "src/cartservice/src/obj/",
-        "src/cartservice/tests/obj/",
+        "/src/accounting/src/protos/",
+        "src/cart/src/obj/",
+        "src/cart/tests/obj/",
         "src/checkoutservice/genproto/",
         "src/featureflagservice/assets/vendor/",
         "src/featureflagservice/priv/",
@@ -51,6 +51,8 @@
         "src/react-native-app/android/.gradle/",
         "src/react-native-app/.expo/",
         "src/react-native-app/expo-env.d.ts",
+        "src/recommendationservice/demo_pb2.py",
+        "src/recommendationservice/demo_pb2_grpc.py",
         "internal/tools/"
     ]
   }
