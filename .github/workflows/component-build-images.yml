@@ -55,8 +55,8 @@ jobs:
             tag_suffix: accounting
             context: ./
             setup-qemu: true
-          - file: ./src/adservice/Dockerfile
-            tag_suffix: adservice
+          - file: ./src/ad/Dockerfile
+            tag_suffix: ad
             context: ./
             setup-qemu: true
           - file: ./src/cartservice/src/Dockerfile

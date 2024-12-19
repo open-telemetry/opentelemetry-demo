@@ -14,14 +14,14 @@ To build Ad Service, run:
 ```
 
 It will create an executable script
-`src/adservice/build/install/oteldemo/bin/AdService`.
+`src/ad/build/install/oteldemo/bin/Ad`.
 
 To run the Ad Service:
 
 ```sh
-export AD_SERVICE_PORT=8080
+export AD_PORT=8080
 export FEATURE_FLAG_GRPC_SERVICE_ADDR=featureflagservice:50053
-./build/install/opentelemetry-demo-ad-service/bin/AdService
+./build/install/opentelemetry-demo-ad-service/bin/Ad
 ```
 
 ### Upgrading Gradle
@@ -37,5 +37,5 @@ If you need to upgrade the version of gradle then run
 From the root of `opentelemetry-demo`, run:
 
 ```sh
-docker build --file ./src/adservice/Dockerfile ./
+docker build --file ./src/ad/Dockerfile ./
 ```

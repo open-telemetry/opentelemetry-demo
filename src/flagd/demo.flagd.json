@@ -19,7 +19,7 @@
       },
       "defaultVariant": "off"
     },
-    "adServiceManualGc": {
+    "adManualGc": {
       "description": "Triggers full manual garbage collections in the ad service",
       "state": "ENABLED",
       "variants": {
@@ -28,7 +28,7 @@
       },
       "defaultVariant": "off"
     },
-    "adServiceHighCpu": {
+    "adHighCpu": {
       "description": "Triggers high cpu load in the ad service",
       "state": "ENABLED",
       "variants": {
@@ -37,7 +37,7 @@
       },
       "defaultVariant": "off"
     },
-    "adServiceFailure": {
+    "adFailure": {
       "description": "Fail ad service",
       "state": "ENABLED",
       "variants": {

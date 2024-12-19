@@ -45,14 +45,14 @@ services:
     logging: *logging
 
   # AdService
-  adservice:
-    image: ${IMAGE_NAME}:${DEMO_VERSION}-adservice
-    container_name: ad-service
+  ad:
+    image: ${IMAGE_NAME}:${DEMO_VERSION}-ad
+    container_name: ad
     build:
       context: ./
-      dockerfile: ${AD_SERVICE_DOCKERFILE}
+      dockerfile: ${AD_DOCKERFILE}
       cache_from:
-        - ${IMAGE_NAME}:${IMAGE_VERSION}-adservice
+        - ${IMAGE_NAME}:${IMAGE_VERSION}-ad
       args:
         OTEL_JAVA_AGENT_VERSION: ${OTEL_JAVA_AGENT_VERSION}
     deploy:
@@ -61,16 +61,16 @@ services:
           memory: 300M
     restart: unless-stopped
     ports:
-      - "${AD_SERVICE_PORT}"
+      - "${AD_PORT}"
     environment:
-      - AD_SERVICE_PORT
+      - AD_PORT
       - FLAGD_HOST
       - FLAGD_PORT
       - OTEL_EXPORTER_OTLP_ENDPOINT=http://${OTEL_COLLECTOR_HOST}:${OTEL_COLLECTOR_PORT_HTTP}
       - OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE
       - OTEL_RESOURCE_ATTRIBUTES
       - OTEL_LOGS_EXPORTER=otlp
-      - OTEL_SERVICE_NAME=adservice
+      - OTEL_SERVICE_NAME=ad
     depends_on:
       otel-collector:
         condition: service_started
@@ -271,7 +271,7 @@ services:
     environment:
       - PORT=${FRONTEND_PORT}
       - FRONTEND_ADDR
-      - AD_SERVICE_ADDR
+      - AD_ADDR
       - CART_SERVICE_ADDR
       - CHECKOUT_SERVICE_ADDR
       - CURRENCY_SERVICE_ADDR
@@ -289,7 +289,7 @@ services:
       - FLAGD_HOST
       - FLAGD_PORT
     depends_on:
-      adservice:
+      ad:
         condition: service_started
       cartservice:
         condition: service_started

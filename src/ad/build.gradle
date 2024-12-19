@@ -13,7 +13,7 @@ repositories {
 }
 
 description = 'Ad Service'
-group = "adservice"
+group = "ad"
 version = "0.1.0-SNAPSHOT"
 
 def opentelemetryVersion = "1.40.0"
@@ -129,14 +129,14 @@ task downloadRepos(type: Copy) {
     into offlineCompile
 }
 
-task adService(type: CreateStartScripts) {
+task ad(type: CreateStartScripts) {
     mainClass.set('oteldemo.AdService')
-    applicationName = 'AdService'
+    applicationName = 'Ad'
     outputDir = new File(project.buildDir, 'tmp')
     classpath = startScripts.classpath
 }
 
 applicationDistribution.into('bin') {
-    from(adService)
+    from(ad)
     fileMode = 0755
 }

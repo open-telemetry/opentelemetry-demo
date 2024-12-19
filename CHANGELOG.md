@@ -38,6 +38,8 @@ the release.
   ([#1838](https://github.com/open-telemetry/opentelemetry-demo/pull/1838))
 * [otel-collector] rename otelcol to otel-collector
   ([#1841](https://github.com/open-telemetry/opentelemetry-demo/pull/1841))
+* [ad] rename adservice to ad
+  ([#1827](https://github.com/open-telemetry/opentelemetry-demo/pull/1832))
 
 ## 1.12.0
 
