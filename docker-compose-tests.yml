@@ -77,7 +77,7 @@ services:
         condition: service_started
       productcatalogservice:
         condition: service_started
-      quoteservice:
+      quote:
         condition: service_started
       recommendationservice:
         condition: service_started

@@ -1,5 +1,5 @@
 {
-    "name": "openteletry-demo/quoteservice",
+    "name": "openteletry-demo/quote",
     "description": "Quote Service part of OpenTelemetry Demo",
     "license": "Apache-2.0",
     "require": {

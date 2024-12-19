@@ -83,8 +83,8 @@
       "groupName": "prometheus",
     },
     {
-      "matchFileNames": ["src/quoteservice/**"],
-      "groupName": "quoteservice",
+      "matchFileNames": ["src/quote/**"],
+      "groupName": "quote",
     },
     {
       "matchFileNames": ["src/recommendationservice/**"],
