@@ -45,6 +45,12 @@
         "src/featureflagservice/assets/vendor/",
         "src/featureflagservice/priv/",
         "src/productcatalogservice/genproto/",
+        "src/react-native-app/ios/Pods/",
+        "src/react-native-app/ios/build/",
+        "src/react-native-app/android/app/build/",
+        "src/react-native-app/android/.gradle/",
+        "src/react-native-app/.expo/",
+        "src/react-native-app/expo-env.d.ts",
         "src/recommendationservice/demo_pb2.py",
         "src/recommendationservice/demo_pb2_grpc.py",
         "internal/tools/"
