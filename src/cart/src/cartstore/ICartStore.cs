@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: Apache-2.0
 using System.Threading.Tasks;
 
-namespace cartservice.cartstore;
+namespace cart.cartstore;
 
 public interface ICartStore
 {

@@ -59,8 +59,8 @@ jobs:
             tag_suffix: ad
             context: ./
             setup-qemu: true
-          - file: ./src/cartservice/src/Dockerfile
-            tag_suffix: cartservice
+          - file: ./src/cart/src/Dockerfile
+            tag_suffix: cart
             context: ./
             setup-qemu: false
           - file: ./src/checkoutservice/Dockerfile

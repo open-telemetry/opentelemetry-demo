@@ -38,7 +38,7 @@ services:
         TRACETEST_IMAGE_VERSION: ${TRACETEST_IMAGE_VERSION}
     environment:
       - AD_ADDR
-      - CART_SERVICE_ADDR
+      - CART_ADDR
       - CHECKOUT_SERVICE_ADDR
       - CURRENCY_SERVICE_ADDR
       - EMAIL_SERVICE_ADDR
@@ -61,7 +61,7 @@ services:
         condition: service_started
       ad:
         condition: service_started
-      cartservice:
+      cart:
         condition: service_started
       checkoutservice:
         condition: service_started

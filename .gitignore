@@ -44,7 +44,7 @@ test/tracetesting/tracetesting-vars.yaml
 
 # Ignore copied/generated protobuf files
 /src/accounting/src/protos/
-/src/cartservice/src/protos/
+/src/cart/src/protos/
 /src/featureflagservice/proto/
 /src/featureflagservice/src/ffs_demo_pb.erl
 /src/featureflagservice/src/ffs_service_*.erl
