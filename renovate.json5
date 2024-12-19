@@ -67,8 +67,8 @@
       "groupName": "loadgenerator",
     },
     {
-      "matchFileNames": ["src/otelcollector/**"],
-      "groupName": "otelcollector",
+      "matchFileNames": ["src/otel-collector/**"],
+      "groupName": "otel-collector",
     },
     {
       "matchFileNames": ["src/paymentservice/**"],
@@ -83,8 +83,8 @@
       "groupName": "prometheus",
     },
     {
-      "matchFileNames": ["src/quoteservice/**"],
-      "groupName": "quoteservice",
+      "matchFileNames": ["src/quote/**"],
+      "groupName": "quote",
     },
     {
       "matchFileNames": ["src/recommendationservice/**"],

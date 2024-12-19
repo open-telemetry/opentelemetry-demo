@@ -74,6 +74,6 @@ gen_proto_go checkoutservice
 gen_proto_ts frontend
 gen_proto_js paymentservice
 gen_proto_go productcatalogservice
-# gen_proto_php quoteservice
+# gen_proto_php quote
 gen_proto_python recommendationservice
 gen_proto_rust shippingservice
