@@ -50,29 +50,29 @@ services:
     logging: *logging
 
   # Cart service
-  cartservice:
-    image: ${IMAGE_NAME}:${DEMO_VERSION}-cartservice
+  cart:
+    image: ${IMAGE_NAME}:${DEMO_VERSION}-cart
     container_name: cart-service
     build:
       context: ./
-      dockerfile: ${CART_SERVICE_DOCKERFILE}
+      dockerfile: ${CART_DOCKERFILE}
       cache_from:
-        - ${IMAGE_NAME}:${IMAGE_VERSION}-cartservice
+        - ${IMAGE_NAME}:${IMAGE_VERSION}-cart
     deploy:
       resources:
         limits:
           memory: 160M
     restart: unless-stopped
     ports:
-      - "${CART_SERVICE_PORT}"
+      - "${CART_PORT}"
     environment:
-      - CART_SERVICE_PORT
+      - CART_PORT
       - FLAGD_HOST
       - VALKEY_ADDR
       - OTEL_EXPORTER_OTLP_ENDPOINT
       - OTEL_RESOURCE_ATTRIBUTES
-      - OTEL_SERVICE_NAME=cartservice
-      - ASPNETCORE_URLS=http://*:${CART_SERVICE_PORT}
+      - OTEL_SERVICE_NAME=cart
+      - ASPNETCORE_URLS=http://*:${CART_PORT}
     depends_on:
       valkey-cart:
         condition: service_started
@@ -98,7 +98,7 @@ services:
       - "${CHECKOUT_SERVICE_PORT}"
     environment:
       - CHECKOUT_SERVICE_PORT
-      - CART_SERVICE_ADDR
+      - CART_ADDR
       - CURRENCY_SERVICE_ADDR
       - EMAIL_SERVICE_ADDR
       - FLAGD_HOST
@@ -110,7 +110,7 @@ services:
       - OTEL_RESOURCE_ATTRIBUTES
       - OTEL_SERVICE_NAME=checkoutservice
     depends_on:
-      cartservice:
+      cart:
         condition: service_started
       currencyservice:
         condition: service_started
@@ -200,7 +200,7 @@ services:
       - PORT=${FRONTEND_PORT}
       - FRONTEND_ADDR
       - AD_ADDR
-      - CART_SERVICE_ADDR
+      - CART_ADDR
       - CHECKOUT_SERVICE_ADDR
       - CURRENCY_SERVICE_ADDR
       - PRODUCT_CATALOG_SERVICE_ADDR
@@ -219,7 +219,7 @@ services:
     depends_on:
       ad:
         condition: service_started
-      cartservice:
+      cart:
         condition: service_started
       checkoutservice:
         condition: service_started

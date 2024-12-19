@@ -20,12 +20,12 @@ ARG TARGETARCH
 
 WORKDIR /usr/src/app/
 
-COPY ./src/cartservice/ ./
+COPY ./src/cart/ ./
 COPY ./pb/ ./pb/
 
-RUN dotnet restore ./src/cartservice.csproj -r linux-musl-$TARGETARCH
+RUN dotnet restore ./src/cart.csproj -r linux-musl-$TARGETARCH
 
-RUN dotnet publish ./src/cartservice.csproj -r linux-musl-$TARGETARCH --no-restore -o /cartservice
+RUN dotnet publish ./src/cart.csproj -r linux-musl-$TARGETARCH --no-restore -o /cart
 
 # -----------------------------------------------------------------------------
 
@@ -33,9 +33,9 @@ RUN dotnet publish ./src/cartservice.csproj -r linux-musl-$TARGETARCH --no-resto
 FROM mcr.microsoft.com/dotnet/runtime-deps:8.0-alpine3.20
 
 WORKDIR /usr/src/app/
-COPY --from=builder /cartservice/ ./
+COPY --from=builder /cart/ ./
 
 ENV DOTNET_HOSTBUILDER__RELOADCONFIGONCHANGE=false
 
-EXPOSE ${CART_SERVICE_PORT}
-ENTRYPOINT [ "./cartservice" ]
+EXPOSE ${CART_PORT}
+ENTRYPOINT [ "./cart" ]

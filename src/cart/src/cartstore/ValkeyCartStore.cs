@@ -10,7 +10,7 @@ using Microsoft.Extensions.Logging;
 using System.Diagnostics.Metrics;
 using System.Diagnostics;
 
-namespace cartservice.cartstore;
+namespace cart.cartstore;
 
 public class ValkeyCartStore : ICartStore
 {
