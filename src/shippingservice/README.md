@@ -1,6 +1,6 @@
 # Shipping Service
 
-The Shipping service queries `quoteservice` for price quote, provides tracking IDs,
+The Shipping service queries `quote` for price quote, provides tracking IDs,
 and the impression of order fulfillment & shipping processes.
 
 ## Local

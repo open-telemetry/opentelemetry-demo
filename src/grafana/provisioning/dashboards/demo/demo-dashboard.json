@@ -1022,7 +1022,7 @@
             "uid": "webstore-metrics"
           },
           "editorMode": "code",
-          "expr": "rate(otel_trace_span_processor_spans{job=\"opentelemetry-demo/quoteservice\"}[2m])*120",
+          "expr": "rate(otel_trace_span_processor_spans{job=\"opentelemetry-demo/quote\"}[2m])*120",
           "interval": "2m",
           "legendFormat": "{{state}}",
           "range": true,
