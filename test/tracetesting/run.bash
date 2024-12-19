@@ -8,7 +8,7 @@
 set -e
 
 # Availalble services to test
-ALL_SERVICES=("adservice" "cartservice" "currencyservice" "checkoutservice" "frontend" "emailservice" "paymentservice" "productcatalogservice" "recommendationservice" "shippingservice")
+ALL_SERVICES=("ad" "cartservice" "currencyservice" "checkoutservice" "frontend" "emailservice" "paymentservice" "productcatalogservice" "recommendationservice" "shippingservice")
 
 ## Script variables
 # Will contain the list of services to test
@@ -34,8 +34,8 @@ spec:
   id: tracetesting-vars
   name: tracetesting-vars
   values:
-    - key: AD_SERVICE_ADDR
-      value: $AD_SERVICE_ADDR
+    - key: AD_ADDR
+      value: $AD_ADDR
     - key: CART_SERVICE_ADDR
       value: $CART_SERVICE_ADDR
     - key: CHECKOUT_SERVICE_ADDR

@@ -37,7 +37,7 @@ services:
       args:
         TRACETEST_IMAGE_VERSION: ${TRACETEST_IMAGE_VERSION}
     environment:
-      - AD_SERVICE_ADDR
+      - AD_ADDR
       - CART_SERVICE_ADDR
       - CHECKOUT_SERVICE_ADDR
       - CURRENCY_SERVICE_ADDR
@@ -59,7 +59,7 @@ services:
       # adding demo services as dependencies
       accounting:
         condition: service_started
-      adservice:
+      ad:
         condition: service_started
       cartservice:
         condition: service_started

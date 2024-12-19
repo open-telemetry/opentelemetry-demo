@@ -59,8 +59,8 @@ public final class AdService {
   private HealthStatusManager healthMgr;
 
   private static final AdService service = new AdService();
-  private static final Tracer tracer = GlobalOpenTelemetry.getTracer("adservice");
-  private static final Meter meter = GlobalOpenTelemetry.getMeter("adservice");
+  private static final Tracer tracer = GlobalOpenTelemetry.getTracer("ad");
+  private static final Meter meter = GlobalOpenTelemetry.getMeter("ad");
 
   private static final LongCounter adRequestsCounter =
       meter
@@ -76,11 +76,11 @@ public final class AdService {
   private void start() throws IOException {
     int port =
         Integer.parseInt(
-            Optional.ofNullable(System.getenv("AD_SERVICE_PORT"))
+            Optional.ofNullable(System.getenv("AD_PORT"))
                 .orElseThrow(
                     () ->
                         new IllegalStateException(
-                            "environment vars: AD_SERVICE_PORT must not be null")));
+                            "environment vars: AD_PORT must not be null")));
     healthMgr = new HealthStatusManager();
 
     // Create a flagd instance with OpenTelemetry
@@ -132,9 +132,9 @@ public final class AdService {
 
   private static class AdServiceImpl extends oteldemo.AdServiceGrpc.AdServiceImplBase {
     
-    private static final String ADSERVICE_FAILURE = "adServiceFailure";
-    private static final String ADSERVICE_MANUAL_GC_FEATURE_FLAG = "adServiceManualGc";
-    private static final String ADSERVICE_HIGH_CPU_FEATURE_FLAG = "adServiceHighCpu";
+    private static final String AD_FAILURE = "adFailure";
+    private static final String AD_MANUAL_GC_FEATURE_FLAG = "adManualGc";
+    private static final String AD_HIGH_CPU_FEATURE_FLAG = "adHighCpu";
     private static final Client ffClient = OpenFeatureAPI.getInstance().getClient();
     
     private AdServiceImpl() {}
@@ -169,7 +169,7 @@ public final class AdService {
         }
 
         CPULoad cpuload = CPULoad.getInstance();
-        cpuload.execute(ffClient.getBooleanValue(ADSERVICE_HIGH_CPU_FEATURE_FLAG, false, evaluationContext));
+        cpuload.execute(ffClient.getBooleanValue(AD_HIGH_CPU_FEATURE_FLAG, false, evaluationContext));
 
         span.setAttribute("app.ads.contextKeys", req.getContextKeysList().toString());
         span.setAttribute("app.ads.contextKeys.count", req.getContextKeysCount());
@@ -202,12 +202,12 @@ public final class AdService {
                 adRequestTypeKey, adRequestType.name(), adResponseTypeKey, adResponseType.name()));
 
         // Throw 1/10 of the time to simulate a failure when the feature flag is enabled
-        if (ffClient.getBooleanValue(ADSERVICE_FAILURE, false, evaluationContext) && random.nextInt(10) == 0) {
+        if (ffClient.getBooleanValue(AD_FAILURE, false, evaluationContext) && random.nextInt(10) == 0) {
           throw new StatusRuntimeException(Status.UNAVAILABLE);
         }
 
-        if (ffClient.getBooleanValue(ADSERVICE_MANUAL_GC_FEATURE_FLAG, false, evaluationContext)) {
-          logger.warn("Feature Flag " + ADSERVICE_MANUAL_GC_FEATURE_FLAG + " enabled, performing a manual gc now");
+        if (ffClient.getBooleanValue(AD_MANUAL_GC_FEATURE_FLAG, false, evaluationContext)) {
+          logger.warn("Feature Flag " + AD_MANUAL_GC_FEATURE_FLAG + " enabled, performing a manual gc now");
           GarbageCollectionTrigger gct = new GarbageCollectionTrigger();
           gct.doExecute();
         }
