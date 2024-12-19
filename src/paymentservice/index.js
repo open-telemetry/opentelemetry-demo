@@ -14,7 +14,7 @@ async function chargeServiceHandler(call, callback) {
   try {
     const amount = call.request.amount
     span.setAttributes({
-      'app.payment.amount': parseFloat(`${amount.units}.${amount.nanos}`)
+      'app.payment.amount': parseFloat(`${amount.units}.${amount.nanos}`).toFixed(2)
     })
     logger.info({ request: call.request }, "Charge request received.")
 
@@ -51,9 +51,7 @@ server.bindAsync(`0.0.0.0:${process.env['PAYMENT_SERVICE_PORT']}`, grpc.ServerCr
   }
 
   logger.info(`PaymentService gRPC server started on port ${port}`)
-  server.start()
-}
-)
+})
 
 process.once('SIGINT', closeGracefully)
 process.once('SIGTERM', closeGracefully)
