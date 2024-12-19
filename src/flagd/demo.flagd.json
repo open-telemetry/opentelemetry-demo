@@ -17,7 +17,7 @@
         "on": true,
         "off": false
       },
-      "defaultVariant": "off"
+      "defaultVariant": "on"
     },
     "adServiceManualGc": {
       "description": "Triggers full manual garbage collections in the ad service",
