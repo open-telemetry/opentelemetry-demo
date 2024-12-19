@@ -42,7 +42,7 @@ the release.
   ([#1840](https://github.com/open-telemetry/opentelemetry-demo/pull/1840))
 * [otel-collector] rename otelcol to otel-collector
   ([#1841](https://github.com/open-telemetry/opentelemetry-demo/pull/1841))
-* [cart] rename cadtservice to cart
+* [cart] rename cartservice to cart
   ([#1839](https://github.com/open-telemetry/opentelemetry-demo/pull/1839))
 
 ## 1.12.0
