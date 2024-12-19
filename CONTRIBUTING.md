@@ -103,6 +103,11 @@ documentation as well as the code. When making changes to any service or feature
 remember to find the related docs and update those as well. Most (but not all)
 documentation can be found on the OTel website under [Demo docs][docs].
 
+### Running the React Native example
+
+If you are interested in running the React Native example app in this repo please
+review [these instructions](src/react-native-app/README.md).
+
 ## Create Your First Pull Request
 
 ### How to Send Pull Requests

@@ -46,6 +46,8 @@ the release.
   ([#1839](https://github.com/open-telemetry/opentelemetry-demo/pull/1839))
 * [shipping] rename shippingservice to shipping
   ([#1842](https://github.com/open-telemetry/opentelemetry-demo/pull/1842))
+* [react-native-app] Add React Native example app
+  ([#1781](https://github.com/open-telemetry/opentelemetry-demo/pull/1781))
 
 ## 1.12.0
 
