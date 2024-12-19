@@ -1131,7 +1131,7 @@ dependencies = [
 ]
 
 [[package]]
-name = "shippingservice"
+name = "shipping"
 version = "1.8.0"
 dependencies = [
  "log",

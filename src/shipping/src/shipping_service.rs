@@ -70,7 +70,7 @@ impl ShippingService for ShippingServer {
         // We may want to ask another service for product pricing / info
         // (although now everything is assumed to be the same price)
         // check out the create_quote_from_count method to see how we use the span created here
-        let tracer = global::tracer("shippingservice");
+        let tracer = global::tracer("shipping");
         let mut span = tracer
             .span_builder("oteldemo.ShippingService/GetQuote")
             .with_kind(SpanKind::Server)
@@ -125,7 +125,7 @@ impl ShippingService for ShippingServer {
             global::get_text_map_propagator(|prop| prop.extract(&MetadataMap(request.metadata())));
         // in this case, generating a tracking ID is trivial
         // we'll create a span and associated events all in this function.
-        let tracer = global::tracer("shippingservice");
+        let tracer = global::tracer("shipping");
         let mut span = tracer
             .span_builder("oteldemo.ShippingService/ShipOrder")
             .with_kind(SpanKind::Server)

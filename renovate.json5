@@ -91,8 +91,8 @@
       "groupName": "recommendationservice",
     },
     {
-      "matchFileNames": ["src/shippingservice/**"],
-      "groupName": "shippingservice",
+      "matchFileNames": ["src/shipping/**"],
+      "groupName": "shipping",
     },
     {
       // intentionally using Java 11 in some examples

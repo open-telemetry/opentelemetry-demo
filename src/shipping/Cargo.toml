@@ -1,12 +1,12 @@
 
 
 [package]
-name = "shippingservice"
+name = "shipping"
 version = "1.8.0"
 edition = "2021"
 
 [[bin]]
-name = "shippingservice"
+name = "shipping"
 path = "src/main.rs"
 
 [features]

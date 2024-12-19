@@ -28,7 +28,7 @@ src/*/*/Dockerfile
 
 ###################################
 # shippingservice
-./src/shippingservice/target
+./src/shipping/target
 ###################################
 
 # Mix artifacts
