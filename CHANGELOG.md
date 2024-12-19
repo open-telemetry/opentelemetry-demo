@@ -41,7 +41,6 @@ the release.
 * [flagd-ui] rename flagdui to flagd-ui
   ([#1840](https://github.com/open-telemetry/opentelemetry-demo/pull/1840))
 
-
 ## 1.12.0
 
 * [accountingservice] allow running the container with non root user
