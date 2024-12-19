@@ -299,7 +299,7 @@ services:
         condition: service_started
       productcatalogservice:
         condition: service_started
-      quoteservice:
+      quote:
         condition: service_started
       recommendationservice:
         condition: service_started
@@ -489,27 +489,27 @@ services:
     logging: *logging
 
   # Quote service
-  quoteservice:
-    image: ${IMAGE_NAME}:${DEMO_VERSION}-quoteservice
+  quote:
+    image: ${IMAGE_NAME}:${DEMO_VERSION}-quote
     container_name: quote-service
     build:
       context: ./
-      dockerfile: ${QUOTE_SERVICE_DOCKERFILE}
+      dockerfile: ${QUOTE_DOCKERFILE}
       cache_from:
-        - ${IMAGE_NAME}:${IMAGE_VERSION}-quoteservice
+        - ${IMAGE_NAME}:${IMAGE_VERSION}-quote
     deploy:
       resources:
         limits:
           memory: 40M
     restart: unless-stopped
     ports:
-      - "${QUOTE_SERVICE_PORT}"
+      - "${QUOTE_PORT}"
     environment:
       - OTEL_EXPORTER_OTLP_ENDPOINT=http://${OTEL_COLLECTOR_HOST}:${OTEL_COLLECTOR_PORT_HTTP}
       - OTEL_PHP_AUTOLOAD_ENABLED=true
-      - QUOTE_SERVICE_PORT
+      - QUOTE_PORT
       - OTEL_RESOURCE_ATTRIBUTES
-      - OTEL_SERVICE_NAME=quoteservice
+      - OTEL_SERVICE_NAME=quote
       - OTEL_PHP_INTERNAL_METRICS_ENABLED=true
     depends_on:
       otel-collector:
@@ -570,7 +570,7 @@ services:
       - "${SHIPPING_SERVICE_PORT}"
     environment:
       - SHIPPING_SERVICE_PORT
-      - QUOTE_SERVICE_ADDR
+      - QUOTE_ADDR
       - OTEL_EXPORTER_OTLP_ENDPOINT=http://${OTEL_COLLECTOR_HOST}:${OTEL_COLLECTOR_PORT_GRPC}
       - OTEL_RESOURCE_ATTRIBUTES
       - OTEL_SERVICE_NAME=shippingservice

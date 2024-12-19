@@ -111,8 +111,8 @@ jobs:
             tag_suffix: productcatalogservice
             context: ./
             setup-qemu: true
-          - file: ./src/quoteservice/Dockerfile
-            tag_suffix: quoteservice
+          - file: ./src/quote/Dockerfile
+            tag_suffix: quote
             context: ./
             setup-qemu: true
           - file: ./src/recommendationservice/Dockerfile

@@ -15,12 +15,12 @@ RUN chmod +x /usr/local/bin/install-php-extensions \
 WORKDIR /var/www
 CMD ["php", "public/index.php"]
 USER www-data
-EXPOSE ${QUOTE_SERVICE_PORT}
+EXPOSE ${QUOTE_PORT}
 
 FROM composer:2.7 AS vendor
 
 WORKDIR /tmp/
-COPY ./src/quoteservice/composer.json .
+COPY ./src/quote/composer.json .
 
 RUN composer install \
     --ignore-platform-reqs \
@@ -32,4 +32,4 @@ RUN composer install \
 
 FROM base AS final
 COPY --from=vendor /tmp/vendor/ ./vendor/
-COPY ./src/quoteservice/ /var/www
+COPY ./src/quote/ /var/www
