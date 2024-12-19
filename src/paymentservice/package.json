@@ -1,12 +1,9 @@
 {
   "name": "paymentservice",
-  "version": "1.12.0",
-  "description": "Payment Microservice",
+  "description": "Payment Service",
   "repository": "https://github.com/opentelemetry/opentelemetry-demo",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "lint": "semistandard *.js",
     "start": "node --require ./opentelemetry.js index.js"
   },
   "author": "Jonathan Lui",
