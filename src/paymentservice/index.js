@@ -12,6 +12,7 @@ const Bugsnag = require('@bugsnag/js');
 
 Bugsnag.start({
   apiKey: process.env.BUGSNAG_API_KEY,
+  appVersion: process.env.BUGSNAG_APP_VERSION,
   onError: function (event) {
     const spanContext = trace.getSpanContext(context.active());
     event.addMetadata("correlation", {
@@ -37,7 +38,7 @@ async function chargeServiceHandler(call, callback) {
   } catch (err) {
     logger.warn({ err })
     Bugsnag.notify(err);
-    
+
     span.recordException(err)
     span.setStatus({ code: opentelemetry.SpanStatusCode.ERROR })
 
