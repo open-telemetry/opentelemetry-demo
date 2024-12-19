@@ -124,7 +124,7 @@ jobs:
             context: ./
             setup-qemu: true
           - file: ./src/flagd-ui/Dockerfile
-            tag_suffix: flagdui
+            tag_suffix: flagd-ui
             context: ./
             setup-qemu: true
           - file: ./test/tracetesting/Dockerfile
