@@ -39,7 +39,7 @@ composer.lock
 
 src/frontend/cypress/videos
 src/frontend/cypress/screenshots
-src/shippingservice/target/
+src/shipping/target/
 test/tracetesting/tracetesting-vars.yaml
 
 # Ignore copied/generated protobuf files
@@ -53,5 +53,5 @@ test/tracetesting/tracetesting-vars.yaml
 /src/frontend/pb/
 /src/frontend/protos/
 /src/paymentservice/demo.proto
-/src/shippingservice/proto/
+/src/shipping/proto/
 /src/currencyservice/proto

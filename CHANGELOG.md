@@ -44,6 +44,8 @@ the release.
   ([#1841](https://github.com/open-telemetry/opentelemetry-demo/pull/1841))
 * [cart] rename cartservice to cart
   ([#1839](https://github.com/open-telemetry/opentelemetry-demo/pull/1839))
+* [shipping] rename shippingservice to shipping
+  ([#1842](https://github.com/open-telemetry/opentelemetry-demo/pull/1842))
 
 ## 1.12.0
 

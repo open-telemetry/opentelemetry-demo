@@ -119,8 +119,8 @@ jobs:
             tag_suffix: recommendationservice
             context: ./
             setup-qemu: true
-          - file: ./src/shippingservice/Dockerfile
-            tag_suffix: shippingservice
+          - file: ./src/shipping/Dockerfile
+            tag_suffix: shipping
             context: ./
             setup-qemu: true
           - file: ./src/flagd-ui/Dockerfile

@@ -8,7 +8,7 @@
 set -e
 
 # Availalble services to test
-ALL_SERVICES=("ad" "cart" "currencyservice" "checkoutservice" "frontend" "emailservice" "paymentservice" "productcatalogservice" "recommendationservice" "shippingservice")
+ALL_SERVICES=("ad" "cart" "currencyservice" "checkoutservice" "frontend" "emailservice" "paymentservice" "productcatalogservice" "recommendationservice" "shipping")
 
 ## Script variables
 # Will contain the list of services to test
@@ -52,8 +52,8 @@ spec:
       value: $PRODUCT_CATALOG_SERVICE_ADDR
     - key: RECOMMENDATION_SERVICE_ADDR
       value: $RECOMMENDATION_SERVICE_ADDR
-    - key: SHIPPING_SERVICE_ADDR
-      value: $SHIPPING_SERVICE_ADDR
+    - key: SHIPPING_ADDR
+      value: $SHIPPING_ADDR
     - key: KAFKA_SERVICE_ADDR
       value: $KAFKA_SERVICE_ADDR
 EOF

@@ -27,7 +27,7 @@ RUN if [ "${TARGETPLATFORM}" = "${BUILDPLATFORM}" ] ; then \
 
 WORKDIR /app/
 
-COPY /src/shippingservice/ /app/
+COPY /src/shipping/ /app/
 COPY /pb/ /app/proto/
 
 # Compile or crosscompile
@@ -38,13 +38,13 @@ RUN if [ "${TARGETPLATFORM}" = "${BUILDPLATFORM}" ] ; then \
             CC_aarch64_unknown_linux_gnu=aarch64-linux-gnu-gcc \
             CXX_aarch64_unknown_linux_gnu=aarch64-linux-gnu-g++ \
         cargo build -r --features="dockerproto" --target aarch64-unknown-linux-gnu && \
-        cp /app/target/aarch64-unknown-linux-gnu/release/shippingservice /app/target/release/shippingservice; \
+        cp /app/target/aarch64-unknown-linux-gnu/release/shipping /app/target/release/shipping; \
     elif [ "${TARGETPLATFORM}" = "linux/amd64" ] ; then \
         env CARGO_TARGET_X86_64_UNKNOWN_LINUX_GNU_LINKER=x86_64-linux-gnu-gcc \
             CC_x86_64_unknown_linux_gnu=x86_64-linux-gnu-gcc \
             CXX_x86_64_unknown_linux_gnu=x86_64-linux-gnu-g++ \
         cargo build -r --features="dockerproto" --target x86_64-unknown-linux-gnu && \
-        cp /app/target/x86_64-unknown-linux-gnu/release/shippingservice /app/target/release/shippingservice; \
+        cp /app/target/x86_64-unknown-linux-gnu/release/shipping /app/target/release/shipping; \
     else \
         echo "${TARGETPLATFORM} is not supported"; \
         exit 1; \
@@ -58,8 +58,8 @@ RUN wget -qO/bin/grpc_health_probe https://github.com/grpc-ecosystem/grpc-health
 FROM debian:bookworm-slim AS release
 
 WORKDIR /app
-COPY --from=builder /app/target/release/shippingservice /app/shippingservice
+COPY --from=builder /app/target/release/shipping /app/shipping
 COPY --from=builder /bin/grpc_health_probe /bin/grpc_health_probe
 
-EXPOSE ${SHIPPING_SERVICE_PORT}
-ENTRYPOINT ["/app/shippingservice"]
+EXPOSE ${SHIPPING_PORT}
+ENTRYPOINT ["/app/shipping"]

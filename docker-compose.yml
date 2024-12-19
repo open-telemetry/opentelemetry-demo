@@ -137,7 +137,7 @@ services:
       - EMAIL_SERVICE_ADDR
       - PAYMENT_SERVICE_ADDR
       - PRODUCT_CATALOG_SERVICE_ADDR
-      - SHIPPING_SERVICE_ADDR
+      - SHIPPING_ADDR
       - KAFKA_SERVICE_ADDR
       - OTEL_EXPORTER_OTLP_ENDPOINT
       - OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE
@@ -154,7 +154,7 @@ services:
         condition: service_started
       productcatalogservice:
         condition: service_started
-      shippingservice:
+      shipping:
         condition: service_started
       otel-collector:
         condition: service_started
@@ -277,7 +277,7 @@ services:
       - CURRENCY_SERVICE_ADDR
       - PRODUCT_CATALOG_SERVICE_ADDR
       - RECOMMENDATION_SERVICE_ADDR
-      - SHIPPING_SERVICE_ADDR
+      - SHIPPING_ADDR
       - OTEL_EXPORTER_OTLP_ENDPOINT
       - OTEL_RESOURCE_ATTRIBUTES=${OTEL_RESOURCE_ATTRIBUTES}
       - ENV_PLATFORM
@@ -303,7 +303,7 @@ services:
         condition: service_started
       recommendationservice:
         condition: service_started
-      shippingservice:
+      shipping:
         condition: service_started
       otel-collector:
         condition: service_started
@@ -553,27 +553,27 @@ services:
     logging: *logging
 
   # Shipping service
-  shippingservice:
-    image: ${IMAGE_NAME}:${DEMO_VERSION}-shippingservice
-    container_name: shipping-service
+  shipping:
+    image: ${IMAGE_NAME}:${DEMO_VERSION}-shipping
+    container_name: shipping
     build:
       context: ./
-      dockerfile: ${SHIPPING_SERVICE_DOCKERFILE}
+      dockerfile: ${SHIPPING_DOCKERFILE}
       cache_from:
-        - ${IMAGE_NAME}:${IMAGE_VERSION}-shippingservice
+        - ${IMAGE_NAME}:${IMAGE_VERSION}-shipping
     deploy:
       resources:
         limits:
           memory: 20M
     restart: unless-stopped
     ports:
-      - "${SHIPPING_SERVICE_PORT}"
+      - "${SHIPPING_PORT}"
     environment:
-      - SHIPPING_SERVICE_PORT
+      - SHIPPING_PORT
       - QUOTE_ADDR
       - OTEL_EXPORTER_OTLP_ENDPOINT=http://${OTEL_COLLECTOR_HOST}:${OTEL_COLLECTOR_PORT_GRPC}
       - OTEL_RESOURCE_ATTRIBUTES
-      - OTEL_SERVICE_NAME=shippingservice
+      - OTEL_SERVICE_NAME=shipping
     depends_on:
       otel-collector:
         condition: service_started
