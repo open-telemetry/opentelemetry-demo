@@ -112,7 +112,7 @@ services:
     depends_on:
       cart:
         condition: service_started
-      currencyservice:
+      currency:
         condition: service_started
       emailservice:
         condition: service_started
@@ -127,14 +127,14 @@ services:
     logging: *logging
 
   # Currency service
-  currencyservice:
-    image: ${IMAGE_NAME}:${DEMO_VERSION}-currencyservice
+  currency:
+    image: ${IMAGE_NAME}:${DEMO_VERSION}-currency
     container_name: currency-service
     build:
       context: ./
       dockerfile: ${CURRENCY_DOCKERFILE}
       cache_from:
-        - ${IMAGE_NAME}:${IMAGE_VERSION}-currencyservice
+        - ${IMAGE_NAME}:${IMAGE_VERSION}-currency
       args:
         OPENTELEMETRY_CPP_VERSION: ${OPENTELEMETRY_CPP_VERSION}
     deploy:
@@ -148,7 +148,7 @@ services:
       - CURRENCY_PORT
       - VERSION=${IMAGE_VERSION}
       - OTEL_EXPORTER_OTLP_ENDPOINT
-      - OTEL_RESOURCE_ATTRIBUTES=${OTEL_RESOURCE_ATTRIBUTES},service.name=currencyservice   # The C++ SDK does not support OTEL_SERVICE_NAME
+      - OTEL_RESOURCE_ATTRIBUTES=${OTEL_RESOURCE_ATTRIBUTES},service.name=currency   # The C++ SDK does not support OTEL_SERVICE_NAME
     depends_on:
       otel-collector:
         condition: service_started
@@ -223,7 +223,7 @@ services:
         condition: service_started
       checkoutservice:
         condition: service_started
-      currencyservice:
+      currency:
         condition: service_started
       productcatalogservice:
         condition: service_started

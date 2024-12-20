@@ -8,9 +8,9 @@ src/*/Dockerfile
 src/*/*/Dockerfile
 
 ###################################
-# currencyservice
-./src/currencyservice/client.js
-./src/currencyservice/node_modules/
+# currency
+./src/currency/client.js
+./src/currency/node_modules/
 ###################################
 
 ###################################

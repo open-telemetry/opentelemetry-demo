@@ -25,7 +25,7 @@ gen_proto_python() {
 #gen_proto_java ad
 #gen_proto_dotnet cart
 gen_proto_go checkoutservice
-#gen_proto_cpp currencyservice
+#gen_proto_cpp currency
 #gen_proto_ruby emailservice
 #gen_proto_ts frontend
 #gen_proto_js paymentservice

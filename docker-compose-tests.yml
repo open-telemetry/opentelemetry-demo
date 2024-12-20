@@ -65,7 +65,7 @@ services:
         condition: service_started
       checkoutservice:
         condition: service_started
-      currencyservice:
+      currency:
         condition: service_started
       emailservice:
         condition: service_started
