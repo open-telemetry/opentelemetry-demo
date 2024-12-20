@@ -34,9 +34,11 @@ services:
     build:
       context: ./
       dockerfile: ./test/tracetesting/Dockerfile
+      args:
+        TRACETEST_IMAGE_VERSION: ${TRACETEST_IMAGE_VERSION}
     environment:
-      - AD_SERVICE_ADDR
-      - CART_SERVICE_ADDR
+      - AD_ADDR
+      - CART_ADDR
       - CHECKOUT_SERVICE_ADDR
       - CURRENCY_SERVICE_ADDR
       - EMAIL_SERVICE_ADDR
@@ -44,7 +46,7 @@ services:
       - PAYMENT_SERVICE_ADDR
       - PRODUCT_CATALOG_SERVICE_ADDR
       - RECOMMENDATION_SERVICE_ADDR
-      - SHIPPING_SERVICE_ADDR
+      - SHIPPING_ADDR
       - KAFKA_SERVICE_ADDR
     extra_hosts:
       - "host.docker.internal:host-gateway"
@@ -55,11 +57,11 @@ services:
       tracetest-server:
         condition: service_healthy
       # adding demo services as dependencies
-      accountingservice:
+      accounting:
         condition: service_started
-      adservice:
+      ad:
         condition: service_started
-      cartservice:
+      cart:
         condition: service_started
       checkoutservice:
         condition: service_started
@@ -75,11 +77,11 @@ services:
         condition: service_started
       productcatalogservice:
         condition: service_started
-      quoteservice:
+      quote:
         condition: service_started
       recommendationservice:
         condition: service_started
-      shippingservice:
+      shipping:
         condition: service_started
       flagd:
         condition: service_started
@@ -105,7 +107,7 @@ services:
     depends_on:
       tracetest-postgres:
         condition: service_healthy
-      otelcol:
+      otel-collector:
         condition: service_started
     healthcheck:
       test: [ "CMD", "wget", "--spider", "localhost:11633" ]

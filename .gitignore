@@ -39,11 +39,12 @@ composer.lock
 
 src/frontend/cypress/videos
 src/frontend/cypress/screenshots
-src/shippingservice/target/
+src/shipping/target/
 test/tracetesting/tracetesting-vars.yaml
 
 # Ignore copied/generated protobuf files
-/src/cartservice/src/protos/
+/src/accounting/src/protos/
+/src/cart/src/protos/
 /src/featureflagservice/proto/
 /src/featureflagservice/src/ffs_demo_pb.erl
 /src/featureflagservice/src/ffs_service_*.erl
@@ -52,9 +53,8 @@ test/tracetesting/tracetesting-vars.yaml
 /src/frontend/pb/
 /src/frontend/protos/
 /src/paymentservice/demo.proto
-/src/recommendationservice/demo_pb2*.py
-/src/shippingservice/proto/
-/src/productcatalogservice/genproto
+/src/shipping/proto/
 /src/currencyservice/proto
-/src/checkoutservice/genproto
-/src/accountingservice/genproto
+
+# Android
+*.apk

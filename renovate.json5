@@ -15,16 +15,16 @@
 
   "packageRules": [
     {
-      "matchFileNames": ["src/accountingservice/**"],
-      "groupName": "accountingservice",
+      "matchFileNames": ["src/accounting/**"],
+      "groupName": "accounting",
     },
     {
-      "matchFileNames": ["src/adservice/**"],
-      "groupName": "adservice",
+      "matchFileNames": ["src/ad/**"],
+      "groupName": "ad",
     },
     {
-      "matchFileNames": ["src/cartservice/**"],
-      "groupName": "cartservice",
+      "matchFileNames": ["src/cart/**"],
+      "groupName": "cart",
     },
     {
       "matchFileNames": ["src/checkoutservice/**"],
@@ -67,8 +67,8 @@
       "groupName": "loadgenerator",
     },
     {
-      "matchFileNames": ["src/otelcollector/**"],
-      "groupName": "otelcollector",
+      "matchFileNames": ["src/otel-collector/**"],
+      "groupName": "otel-collector",
     },
     {
       "matchFileNames": ["src/paymentservice/**"],
@@ -83,16 +83,16 @@
       "groupName": "prometheus",
     },
     {
-      "matchFileNames": ["src/quoteservice/**"],
-      "groupName": "quoteservice",
+      "matchFileNames": ["src/quote/**"],
+      "groupName": "quote",
     },
     {
       "matchFileNames": ["src/recommendationservice/**"],
       "groupName": "recommendationservice",
     },
     {
-      "matchFileNames": ["src/shippingservice/**"],
-      "groupName": "shippingservice",
+      "matchFileNames": ["src/shipping/**"],
+      "groupName": "shipping",
     },
     {
       // intentionally using Java 11 in some examples

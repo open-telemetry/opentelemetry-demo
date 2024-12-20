@@ -7,15 +7,70 @@ the release.
 
 ## Unreleased
 
+* [grafana] Update grafana to 11.3.0
+  ([#1764](https://github.com/open-telemetry/opentelemetry-demo/pull/1764))
+* [chore] Move build args to .env file
+  ([#1767](https://github.com/open-telemetry/opentelemetry-demo/pull/1767))
+* [frontendproxy] add access logs
+  ([#1768](https://github.com/open-telemetry/opentelemetry-demo/pull/1768))
+* [grafana] Fix Dashboards
+  ([#1779](https://github.com/open-telemetry/opentelemetry-demo/pull/1779))
+* [accountingservice] bump OpenTelemetry .NET Automatic Instrumentation
+  to 1.9.0 ([#1780](https://github.com/open-telemetry/opentelemetry-demo/pull/1780))
+* [chore] update memory limits for flagd, flagdui, and loadgenerator
+  ([#1786](https://github.com/open-telemetry/opentelemetry-demo/pull/1786))
+* [chore] Add multi-platform build support
+  ([#1785](https://github.com/open-telemetry/opentelemetry-demo/pull/1785))
+* [chore] Generate protobuf code for Go and Python services
+  ([#1794](https://github.com/open-telemetry/opentelemetry-demo/pull/1784))
+* [paymentservice] Add nodejs instrumentation for runtime metrics
+  ([#1797](https://github.com/open-telemetry/opentelemetry-demo/pull/1797))
+* [flagd and paymentservice] Update `paymentServiceFailure` to use a list of
+  variants and add loyalty level attributes to spans. Added `service.name` to logs.
+  ([#1815](https://github.com/open-telemetry/opentelemetry-demo/pull/1815))
+* [accounting] rename accountingservice to accounting
+  ([#1827](https://github.com/open-telemetry/opentelemetry-demo/pull/1827))
+* [cartservice] - Add Exemplars to Cart Service
+  ([#1830](https://github.com/open-telemetry/opentelemetry-demo/pull/1830))
+* [ad] rename adservice to ad
+  ([#1832](https://github.com/open-telemetry/opentelemetry-demo/pull/1832))
+* [grafana] Add Exemplars Dashboard
+  ([#1836](https://github.com/open-telemetry/opentelemetry-demo/pull/1836))
+* [quote] rename quoteservice to quote
+  ([#1838](https://github.com/open-telemetry/opentelemetry-demo/pull/1838))
+* [flagd-ui] rename flagdui to flagd-ui
+  ([#1840](https://github.com/open-telemetry/opentelemetry-demo/pull/1840))
+* [otel-collector] rename otelcol to otel-collector
+  ([#1841](https://github.com/open-telemetry/opentelemetry-demo/pull/1841))
+* [cart] rename cartservice to cart
+  ([#1839](https://github.com/open-telemetry/opentelemetry-demo/pull/1839))
+* [shipping] rename shippingservice to shipping
+  ([#1842](https://github.com/open-telemetry/opentelemetry-demo/pull/1842))
+* [react-native-app] Add React Native example app
+  ([#1781](https://github.com/open-telemetry/opentelemetry-demo/pull/1781))
+
+## 1.12.0
+
 * [accountingservice] allow running the container with non root user
   ([#1692](https://github.com/open-telemetry/opentelemetry-demo/pull/1692))
 * [chore] Add yamllint to `make all`
   ([#1707](https://github.com/open-telemetry/opentelemetry-demo/pull/1707))
 * [chore] Fix gen-proto for accountingservice
   ([#1709](https://github.com/open-telemetry/opentelemetry-demo/pull/1709))
+* [chore] Add depends on to otelcol to wait on healthy opensearch
+  ([#1724](https://github.com/open-telemetry/opentelemetry-demo/pull/1724))
+* [flagd-ui] Add UI for managing Flagd feature flags
+  ([#1725](https://github.com/open-telemetry/opentelemetry-demo/pull/1725))
 * [accountingservice] bump OpenTelemetry .NET Automatic Instrumentation
   to 1.8.0 together with other dependencies
   ([#1727](https://github.com/open-telemetry/opentelemetry-demo/pull/1727))
+* [frontend] fix imageSlowLoad headers not applied
+  to 1.8.0 together with other dependencies
+  ([#1733](https://github.com/open-telemetry/opentelemetry-demo/pull/1733))
+* [cartservice] Propagate cartservice exceptions
+  ([#1744](https://github.com/open-telemetry/opentelemetry-demo/pull/1744))
+* [cartservice] Update cart service to fail when cartServiceFailure is enabled
+  ([#1748](https://github.com/open-telemetry/opentelemetry-demo/pull/1748))
 
 ## 1.11.1
 

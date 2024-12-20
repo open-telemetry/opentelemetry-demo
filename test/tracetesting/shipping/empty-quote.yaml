@@ -1,0 +1,36 @@
+# Copyright The OpenTelemetry Authors
+# SPDX-License-Identifier: Apache-2.0
+
+type: Test
+spec:
+  id: shipping-empty-quote
+  name: 'Shipping: Empty Quote'
+  description: Quote delivery for no items
+  trigger:
+    type: grpc
+    grpc:
+      protobufFile: ../../../pb/demo.proto
+      address: ${var:SHIPPING_ADDR}
+      method: oteldemo.ShippingService.GetQuote
+      request: |-
+        {
+          "address": {
+            "streetAddress": "One Microsoft Way",
+            "city": "Redmond",
+            "state": "Washington",
+            "country": "United States",
+            "zipCode": "98052"
+          },
+          "items": []
+        }
+  specs:
+  - name: It called GetQuote correctly
+    selector: span[tracetest.span.type="rpc" name="oteldemo.ShippingService/GetQuote" rpc.system="grpc"]
+    assertions:
+    - attr:rpc.grpc.status_code = 0
+  - name: It returned a valid quote
+    selector: span[tracetest.span.type="general" name="Tracetest trigger"]
+    assertions:
+    - attr:tracetest.response.body | json_path '$.costUsd.currencyCode' = "USD"
+    - attr:tracetest.response.body | json_path '$.costUsd.units' = 0
+    - attr:tracetest.response.body | json_path '$.costUsd.nanos' = 0
