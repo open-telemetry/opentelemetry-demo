@@ -11,13 +11,13 @@ RUN echo "deb [signed-by=/usr/share/keyrings/nginx-archive-keyring.gpg] http://n
 RUN apt-get update ; apt-get install nginx-module-otel --no-install-recommends --no-install-suggests -y
 
 RUN mkdir /static
-COPY src/imageprovider/static /static
+COPY src/image-provider/static /static
 
 EXPOSE ${IMAGE_PROVIDER_PORT}
 
 STOPSIGNAL SIGQUIT
 
-COPY src/imageprovider/nginx.conf.template /nginx.conf.template
+COPY src/image-provider/nginx.conf.template /nginx.conf.template
 
 # Start nginx
 CMD ["/bin/sh" , "-c" , "envsubst '$OTEL_COLLECTOR_HOST $IMAGE_PROVIDER_PORT $OTEL_COLLECTOR_PORT_GRPC $OTEL_SERVICE_NAME' < /nginx.conf.template > /etc/nginx/nginx.conf && cat  /etc/nginx/nginx.conf && exec nginx -g 'daemon off;'"]

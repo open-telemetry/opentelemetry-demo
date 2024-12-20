@@ -11,7 +11,7 @@ http {
     otel_trace on;
     otel_trace_context propagate;
     otel_service_name ${OTEL_SERVICE_NAME};
-    otel_span_name imageprovider;
+    otel_span_name image-provider;
 
 
     include mime.types;
