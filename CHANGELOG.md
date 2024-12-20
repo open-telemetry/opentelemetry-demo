@@ -48,6 +48,8 @@ the release.
   ([#1842](https://github.com/open-telemetry/opentelemetry-demo/pull/1842))
 * [react-native-app] Add React Native example app
   ([#1781](https://github.com/open-telemetry/opentelemetry-demo/pull/1781))
+* [currency] rename currencyservice to currency
+  ([#1858](https://github.com/open-telemetry/opentelemetry-demo/pull/1858))
 
 ## 1.12.0
 
