@@ -4,9 +4,9 @@
 import { ChannelCredentials } from '@grpc/grpc-js';
 import { GetSupportedCurrenciesResponse, CurrencyServiceClient, Money } from '../../protos/demo';
 
-const { CURRENCY_SERVICE_ADDR = '' } = process.env;
+const { CURRENCY_ADDR = '' } = process.env;
 
-const client = new CurrencyServiceClient(CURRENCY_SERVICE_ADDR, ChannelCredentials.createInsecure());
+const client = new CurrencyServiceClient(CURRENCY_ADDR, ChannelCredentials.createInsecure());
 
 const CurrencyGateway = () => ({
   convert(from: Money, toCode: string) {

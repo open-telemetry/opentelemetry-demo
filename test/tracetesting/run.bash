@@ -40,8 +40,8 @@ spec:
       value: $CART_ADDR
     - key: CHECKOUT_SERVICE_ADDR
       value: $CHECKOUT_SERVICE_ADDR
-    - key: CURRENCY_SERVICE_ADDR
-      value: $CURRENCY_SERVICE_ADDR
+    - key: CURRENCY_ADDR
+      value: $CURRENCY_ADDR
     - key: EMAIL_SERVICE_ADDR
       value: $EMAIL_SERVICE_ADDR
     - key: FRONTEND_ADDR

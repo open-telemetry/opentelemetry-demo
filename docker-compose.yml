@@ -133,7 +133,7 @@ services:
       - FLAGD_PORT
       - CHECKOUT_SERVICE_PORT
       - CART_ADDR
-      - CURRENCY_SERVICE_ADDR
+      - CURRENCY_ADDR
       - EMAIL_SERVICE_ADDR
       - PAYMENT_SERVICE_ADDR
       - PRODUCT_CATALOG_SERVICE_ADDR
@@ -170,7 +170,7 @@ services:
     container_name: currency-service
     build:
       context: ./
-      dockerfile: ${CURRENCY_SERVICE_DOCKERFILE}
+      dockerfile: ${CURRENCY_DOCKERFILE}
       cache_from:
         - ${IMAGE_NAME}:${IMAGE_VERSION}-currencyservice
       args:
@@ -181,9 +181,9 @@ services:
           memory: 20M
     restart: unless-stopped
     ports:
-      - "${CURRENCY_SERVICE_PORT}"
+      - "${CURRENCY_PORT}"
     environment:
-      - CURRENCY_SERVICE_PORT
+      - CURRENCY_PORT
       - VERSION=${IMAGE_VERSION}
       - OTEL_EXPORTER_OTLP_ENDPOINT
       - OTEL_RESOURCE_ATTRIBUTES=${OTEL_RESOURCE_ATTRIBUTES},service.name=currencyservice   # The C++ SDK does not support OTEL_SERVICE_NAME
@@ -274,7 +274,7 @@ services:
       - AD_ADDR
       - CART_ADDR
       - CHECKOUT_SERVICE_ADDR
-      - CURRENCY_SERVICE_ADDR
+      - CURRENCY_ADDR
       - PRODUCT_CATALOG_SERVICE_ADDR
       - RECOMMENDATION_SERVICE_ADDR
       - SHIPPING_ADDR
