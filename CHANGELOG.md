@@ -17,10 +17,12 @@ the release.
   ([#1779](https://github.com/open-telemetry/opentelemetry-demo/pull/1779))
 * [accountingservice] bump OpenTelemetry .NET Automatic Instrumentation
   to 1.9.0 ([#1780](https://github.com/open-telemetry/opentelemetry-demo/pull/1780))
-* [chore] update memory limits for flagd, flagdui, and loadgenerator
-  ([#1786](https://github.com/open-telemetry/opentelemetry-demo/pull/1786))
+* [react-native-app] Add React Native example app
+  ([#1781](https://github.com/open-telemetry/opentelemetry-demo/pull/1781))
 * [chore] Add multi-platform build support
   ([#1785](https://github.com/open-telemetry/opentelemetry-demo/pull/1785))
+* [chore] update memory limits for flagd, flagdui, and loadgenerator
+  ([#1786](https://github.com/open-telemetry/opentelemetry-demo/pull/1786))
 * [chore] Generate protobuf code for Go and Python services
   ([#1794](https://github.com/open-telemetry/opentelemetry-demo/pull/1784))
 * [paymentservice] Add nodejs instrumentation for runtime metrics
@@ -38,18 +40,18 @@ the release.
   ([#1836](https://github.com/open-telemetry/opentelemetry-demo/pull/1836))
 * [quote] rename quoteservice to quote
   ([#1838](https://github.com/open-telemetry/opentelemetry-demo/pull/1838))
+* [cart] rename cartservice to cart
+  ([#1839](https://github.com/open-telemetry/opentelemetry-demo/pull/1839))
 * [flagd-ui] rename flagdui to flagd-ui
   ([#1840](https://github.com/open-telemetry/opentelemetry-demo/pull/1840))
 * [otel-collector] rename otelcol to otel-collector
   ([#1841](https://github.com/open-telemetry/opentelemetry-demo/pull/1841))
-* [cart] rename cartservice to cart
-  ([#1839](https://github.com/open-telemetry/opentelemetry-demo/pull/1839))
 * [shipping] rename shippingservice to shipping
   ([#1842](https://github.com/open-telemetry/opentelemetry-demo/pull/1842))
-* [react-native-app] Add React Native example app
-  ([#1781](https://github.com/open-telemetry/opentelemetry-demo/pull/1781))
 * [chore] Update demo Dependencies (Collector, Grafana, FlagD, Jaeger, Prometheus)
   ([#1855](https://github.com/open-telemetry/opentelemetry-demo/pull/1855))
+* [load-generator] rename loadgenerator to load-generator
+  ([#1856](https://github.com/open-telemetry/opentelemetry-demo/pull/1856))
 
 ## 1.12.0
 

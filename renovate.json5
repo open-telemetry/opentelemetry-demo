@@ -63,8 +63,8 @@
       "groupName": "kafka",
     },
     {
-      "matchFileNames": ["src/loadgenerator/**"],
-      "groupName": "loadgenerator",
+      "matchFileNames": ["src/load-generator/**"],
+      "groupName": "load-generator",
     },
     {
       "matchFileNames": ["src/otel-collector/**"],

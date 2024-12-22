@@ -41,7 +41,7 @@ from playwright.async_api import Route, Request
 
 logger_provider = LoggerProvider(resource=Resource.create(
         {
-            "service.name": "loadgenerator",
+            "service.name": "load-generator",
         }
     ),)
 set_logger_provider(logger_provider)
@@ -168,7 +168,7 @@ class WebsiteUser(HttpUser):
 
     @task(5)
     def flood_home(self):
-        for _ in range(0, get_flagd_value("loadgeneratorFloodHomepage")):
+        for _ in range(0, get_flagd_value("loadGeneratorFloodHomepage")):
             self.client.get("/")
 
     def on_start(self):
