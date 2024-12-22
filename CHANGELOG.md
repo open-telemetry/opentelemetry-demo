@@ -48,6 +48,8 @@ the release.
   ([#1842](https://github.com/open-telemetry/opentelemetry-demo/pull/1842))
 * [react-native-app] Add React Native example app
   ([#1781](https://github.com/open-telemetry/opentelemetry-demo/pull/1781))
+* [chore] Update demo Dependencies (Collector, Grafana, FlagD, Jaeger, Prometheus)
+  ([#1855](https://github.com/open-telemetry/opentelemetry-demo/pull/1855))
 * [image-provider] rename imageprovider to image-provider
   ([#1857](https://github.com/open-telemetry/opentelemetry-demo/pull/1857))
 

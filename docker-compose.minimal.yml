@@ -624,8 +624,8 @@ services:
       - --storage.tsdb.path=/prometheus
       - --web.enable-lifecycle
       - --web.route-prefix=/
+      - --web.enable-otlp-receiver
       - --enable-feature=exemplar-storage
-      - --enable-feature=otlp-write-receiver
     volumes:
       - ./src/prometheus/prometheus-config.yaml:/etc/prometheus/prometheus-config.yaml
     deploy:
