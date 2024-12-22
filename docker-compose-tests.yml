@@ -40,7 +40,7 @@ services:
       - AD_ADDR
       - CART_ADDR
       - CHECKOUT_SERVICE_ADDR
-      - CURRENCY_SERVICE_ADDR
+      - CURRENCY_ADDR
       - EMAIL_SERVICE_ADDR
       - FRONTEND_ADDR
       - PAYMENT_SERVICE_ADDR
@@ -65,7 +65,7 @@ services:
         condition: service_started
       checkoutservice:
         condition: service_started
-      currencyservice:
+      currency:
         condition: service_started
       emailservice:
         condition: service_started

@@ -83,7 +83,7 @@ namespace
   };
 
   std::string version = std::getenv("VERSION"); 
-  std::string name{ "currencyservice" };
+  std::string name{ "currency" };
 
   nostd::unique_ptr<metrics_api::Counter<uint64_t>> currency_counter;
   nostd::shared_ptr<opentelemetry::logs::Logger> logger;
@@ -115,15 +115,15 @@ class CurrencyService final : public oteldemo::CurrencyService::Service
     auto new_context = prop->Extract(carrier, current_ctx);
     options.parent   = GetSpan(new_context)->GetContext();
 
-    std::string span_name = "CurrencyService/GetSupportedCurrencies";
+    std::string span_name = "Currency/GetSupportedCurrencies";
     auto span =
-        get_tracer("currencyservice")->StartSpan(span_name,
+        get_tracer("currency")->StartSpan(span_name,
                                       {{SemanticConventions::kRpcSystem, "grpc"},
                                        {SemanticConventions::kRpcService, "oteldemo.CurrencyService"},
                                        {SemanticConventions::kRpcMethod, "GetSupportedCurrencies"},
                                        {SemanticConventions::kRpcGrpcStatusCode, 0}},
                                       options);
-    auto scope = get_tracer("currencyservice")->WithActiveSpan(span);
+    auto scope = get_tracer("currency")->WithActiveSpan(span);
 
     span->AddEvent("Processing supported currencies request");
 
@@ -176,15 +176,15 @@ class CurrencyService final : public oteldemo::CurrencyService::Service
     auto new_context = prop->Extract(carrier, current_ctx);
     options.parent   = GetSpan(new_context)->GetContext();
 
-    std::string span_name = "CurrencyService/Convert";
+    std::string span_name = "Currency/Convert";
     auto span =
-        get_tracer("currencyservice")->StartSpan(span_name,
+        get_tracer("currency")->StartSpan(span_name,
                                       {{SemanticConventions::kRpcSystem, "grpc"},
                                        {SemanticConventions::kRpcService, "oteldemo.CurrencyService"},
                                        {SemanticConventions::kRpcMethod, "Convert"},
                                        {SemanticConventions::kRpcGrpcStatusCode, 0}},
                                       options);
-    auto scope = get_tracer("currencyservice")->WithActiveSpan(span);
+    auto scope = get_tracer("currency")->WithActiveSpan(span);
 
     span->AddEvent("Processing currency conversion request");
 
@@ -257,7 +257,7 @@ void RunServer(uint16_t port)
 int main(int argc, char **argv) {
 
   if (argc < 2) {
-    std::cout << "Usage: currencyservice <port>";
+    std::cout << "Usage: currency <port>";
     return 0;
   }
 

@@ -54,6 +54,8 @@ the release.
   ([#1856](https://github.com/open-telemetry/opentelemetry-demo/pull/1856))
 * [image-provider] rename imageprovider to image-provider
   ([#1857](https://github.com/open-telemetry/opentelemetry-demo/pull/1857))
+* [currency] rename currencyservice to currency
+  ([#1858](https://github.com/open-telemetry/opentelemetry-demo/pull/1858))
 
 ## 1.12.0
 

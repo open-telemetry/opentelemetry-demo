@@ -30,10 +30,10 @@ RUN git clone https://github.com/open-telemetry/opentelemetry-cpp \
           -DWITH_EXAMPLES=OFF -DWITH_OTLP_GRPC=ON -DWITH_ABSEIL=ON \
     && make -j$(nproc || sysctl -n hw.ncpu || echo 1) install && cd ../..
 
-COPY ./src/currencyservice /currencyservice
-COPY ./pb/demo.proto /currencyservice/proto/demo.proto
+COPY ./src/currency /currency
+COPY ./pb/demo.proto /currency/proto/demo.proto
 
-RUN cd /currencyservice \
+RUN cd /currency \
     && mkdir -p build && cd build \
     && cmake .. \
     && make -j$(nproc || sysctl -n hw.ncpu || echo 1) install
@@ -44,5 +44,5 @@ FROM alpine:3.18 AS release
 RUN apk update && apk add grpc-dev protobuf-dev
 COPY --from=builder /usr/local /usr/local
 
-EXPOSE ${CURRENCY_SERVICE_PORT}
-ENTRYPOINT ["sh", "-c", "./usr/local/bin/currencyservice ${CURRENCY_SERVICE_PORT}"]
+EXPOSE ${CURRENCY_PORT}
+ENTRYPOINT ["sh", "-c", "./usr/local/bin/currency ${CURRENCY_PORT}"]

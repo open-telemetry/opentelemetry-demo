@@ -9,7 +9,7 @@ To build the currency service, run the following from root directory
 of opentelemetry-demo
 
 ```sh
-docker-compose build currencyservice
+docker-compose build currency
 ```
 
 ## Run the service
@@ -17,7 +17,7 @@ docker-compose build currencyservice
 Execute the below command to run the service.
 
 ```sh
-docker-compose up currencyservice
+docker-compose up currency
 ```
 
 ## Run the client
@@ -29,4 +29,4 @@ service. To run the client, execute the below command.
 docker exec -it <container_name> currencyclient 7000
 ```
 
-'7000' is port where currencyservice listens to.
+'7000' is port where currency listens to.

@@ -10,7 +10,7 @@ spec:
     type: grpc
     grpc:
       protobufFile: ../../../pb/demo.proto
-      address: ${var:CURRENCY_SERVICE_ADDR}
+      address: ${var:CURRENCY_ADDR}
       method: oteldemo.CurrencyService.Convert
       request: |-
         {
@@ -23,7 +23,7 @@ spec:
           }
   specs:
   - name: It converts from USD to CAD
-    selector: span[tracetest.span.type="rpc" name="CurrencyService/Convert" rpc.system="grpc"
+    selector: span[tracetest.span.type="rpc" name="Currency/Convert" rpc.system="grpc"
       rpc.method="Convert" rpc.service="oteldemo.CurrencyService"]
     assertions:
     - attr:app.currency.conversion.from = "USD"

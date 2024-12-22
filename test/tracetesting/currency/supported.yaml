@@ -10,14 +10,14 @@ spec:
     type: grpc
     grpc:
       protobufFile: ../../../pb/demo.proto
-      address: ${var:CURRENCY_SERVICE_ADDR}
+      address: ${var:CURRENCY_ADDR}
       method: oteldemo.CurrencyService.GetSupportedCurrencies
   specs:
-  - name: It has a span called "CurrencyService/GetSupportedCurrencies"
-    selector: span[tracetest.span.type="rpc" name="CurrencyService/GetSupportedCurrencies"
+  - name: It has a span called "Currency/GetSupportedCurrencies"
+    selector: span[tracetest.span.type="rpc" name="Currency/GetSupportedCurrencies"
       rpc.system="grpc" rpc.method="GetSupportedCurrencies" rpc.service="oteldemo.CurrencyService"]
     assertions:
-    - attr:name = "CurrencyService/GetSupportedCurrencies"
+    - attr:name = "Currency/GetSupportedCurrencies"
   - name: It returns the expected currency codes
     selector: span[tracetest.span.type="general" name="Tracetest trigger"]
     assertions:

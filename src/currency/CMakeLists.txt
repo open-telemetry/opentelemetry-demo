@@ -59,13 +59,13 @@ add_library(demo-proto ${DEMO_PB_H_FILE}
 target_link_libraries(demo-proto gRPC::grpc++ protobuf::libprotobuf)
 include_directories("${GENERATED_PROTOBUF_PATH}" "${OPENTELEMETRY_CPP_INCLUDE_DIRS}")
 
-add_executable(currencyservice src/server.cpp)
-add_dependencies(currencyservice demo-proto)
+add_executable(currency src/server.cpp)
+add_dependencies(currency demo-proto)
 target_link_libraries(
-    currencyservice demo-proto protobuf::libprotobuf
+    currency demo-proto protobuf::libprotobuf
      ${OPENTELEMETRY_CPP_LIBRARIES} opentelemetry_trace opentelemetry_common 
      opentelemetry_exporter_otlp_grpc opentelemetry_exporter_otlp_grpc_client 
      opentelemetry_proto opentelemetry_otlp_recordable opentelemetry_resources 
      opentelemetry_metrics opentelemetry_exporter_otlp_grpc_metrics gRPC::grpc++)
 
-install(TARGETS currencyservice DESTINATION bin)
+install(TARGETS currency DESTINATION bin)

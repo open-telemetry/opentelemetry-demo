@@ -31,8 +31,8 @@
       "groupName": "checkoutservice",
     },
     {
-      "matchFileNames": ["src/currencyservice/**"],
-      "groupName": "currencyservice",
+      "matchFileNames": ["src/currency/**"],
+      "groupName": "currency",
     },
     {
       "matchFileNames": ["src/emailservice/**"],
