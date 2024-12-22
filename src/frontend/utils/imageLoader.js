@@ -1,7 +1,7 @@
 // Copyright The OpenTelemetry Authors
 // SPDX-License-Identifier: Apache-2.0
 /*
-  * We connect to imageprovider through the envoy proxy, straight from the browser, for this we need to know the current hostname and port.
+  * We connect to image-provider through the envoy proxy, straight from the browser, for this we need to know the current hostname and port.
   * During building and serverside rendering, these are undefined so we use some conditionals and default values.
   */
 let hostname = "localhost";
@@ -15,6 +15,6 @@ if (typeof window !== "undefined" && window.location) {
 }
 
 export default function imageLoader({ src, width, quality }) {
-  // We pass down the optimisation request to the imageprovider service here, without this, nextJs would try to use internal optimiser which is not working with the external imageprovider.
+  // We pass down the optimisation request to the image-provider service here, without this, nextJs would try to use internal optimiser which is not working with the external image-provider.
   return `${protocol}://${hostname}:${port}/${src}?w=${width}&q=${quality || 75}`
 }

@@ -235,7 +235,7 @@ services:
         condition: service_started
       otel-collector:
         condition: service_started
-      imageprovider:
+      image-provider:
         condition: service_started
     logging: *logging
 
@@ -285,15 +285,15 @@ services:
       grafana:
         condition: service_started
 
-  # Imageprovider
-  imageprovider:
-    image: ${IMAGE_NAME}:${DEMO_VERSION}-imageprovider
-    container_name: imageprovider
+  # image-provider
+  image-provider:
+    image: ${IMAGE_NAME}:${DEMO_VERSION}-image-provider
+    container_name: image-provider
     build:
       context: ./
       dockerfile: ${IMAGE_PROVIDER_DOCKERFILE}
       cache_from:
-        - ${IMAGE_NAME}:${IMAGE_VERSION}-imageprovider
+        - ${IMAGE_NAME}:${IMAGE_VERSION}-image-provider
     deploy:
       resources:
         limits:
@@ -305,7 +305,7 @@ services:
       - IMAGE_PROVIDER_PORT
       - OTEL_COLLECTOR_HOST
       - OTEL_COLLECTOR_PORT_GRPC
-      - OTEL_SERVICE_NAME=imageprovider
+      - OTEL_SERVICE_NAME=image-provider
       - OTEL_RESOURCE_ATTRIBUTES
     depends_on:
       otel-collector:

@@ -46,7 +46,7 @@ static_resources:
                         - match: { prefix: "/grafana" }
                           route: { cluster: grafana }
                         - match: { prefix: "/images/" }
-                          route: { cluster: imageprovider, prefix_rewrite: "/" }
+                          route: { cluster: image-provider, prefix_rewrite: "/" }
                         - match: { prefix: "/flagservice/" }
                           route: { cluster: flagservice, prefix_rewrite: "/", timeout: 0s }
                         - match: { prefix: "/feature" }
@@ -200,11 +200,11 @@ static_resources:
                     socket_address:
                       address: ${FRONTEND_HOST}
                       port_value: ${FRONTEND_PORT}
-    - name: imageprovider
+    - name: image-provider
       type: STRICT_DNS
       lb_policy: ROUND_ROBIN
       load_assignment:
-        cluster_name: imageprovider
+        cluster_name: image-provider
         endpoints:
           - lb_endpoints:
               - endpoint:

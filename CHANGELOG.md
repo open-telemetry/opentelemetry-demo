@@ -52,6 +52,8 @@ the release.
   ([#1855](https://github.com/open-telemetry/opentelemetry-demo/pull/1855))
 * [load-generator] rename loadgenerator to load-generator
   ([#1856](https://github.com/open-telemetry/opentelemetry-demo/pull/1856))
+* [image-provider] rename imageprovider to image-provider
+  ([#1857](https://github.com/open-telemetry/opentelemetry-demo/pull/1857))
 
 ## 1.12.0
 
