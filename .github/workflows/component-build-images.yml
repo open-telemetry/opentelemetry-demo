@@ -99,8 +99,8 @@ jobs:
             tag_suffix: kafka
             context: ./
             setup-qemu: true
-          - file: ./src/loadgenerator/Dockerfile
-            tag_suffix: loadgenerator
+          - file: ./src/load-generator/Dockerfile
+            tag_suffix: load-generator
             context: ./
             setup-qemu: true
           - file: ./src/paymentservice/Dockerfile

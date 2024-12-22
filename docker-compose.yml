@@ -352,7 +352,7 @@ services:
     depends_on:
       frontend:
         condition: service_started
-      loadgenerator:
+      load-generator:
         condition: service_started
       jaeger:
         condition: service_started
@@ -389,14 +389,14 @@ services:
     logging: *logging
 
   # Load Generator
-  loadgenerator:
-    image: ${IMAGE_NAME}:${DEMO_VERSION}-loadgenerator
+  load-generator:
+    image: ${IMAGE_NAME}:${DEMO_VERSION}-load-generator
     container_name: load-generator
     build:
       context: ./
       dockerfile: ${LOAD_GENERATOR_DOCKERFILE}
       cache_from:
-        - ${IMAGE_NAME}:${IMAGE_VERSION}-loadgenerator
+        - ${IMAGE_NAME}:${IMAGE_VERSION}-load-generator
     deploy:
       resources:
         limits:
@@ -414,7 +414,7 @@ services:
       - OTEL_EXPORTER_OTLP_ENDPOINT
       - OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE
       - OTEL_RESOURCE_ATTRIBUTES
-      - OTEL_SERVICE_NAME=loadgenerator
+      - OTEL_SERVICE_NAME=load-generator
       - PROTOCOL_BUFFERS_PYTHON_IMPLEMENTATION=python
       - LOCUST_WEB_HOST=0.0.0.0
       - FLAGD_HOST
