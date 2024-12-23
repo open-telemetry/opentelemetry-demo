@@ -62,6 +62,8 @@ the release.
   ([#1862](https://github.com/open-telemetry/opentelemetry-demo/pull/1862))
 * [payment] rename paymentservice to payment
   ([#1863](https://github.com/open-telemetry/opentelemetry-demo/pull/1863))
+* [recommendation] rename recommendationservice to recommendation
+  ([#1865](https://github.com/open-telemetry/opentelemetry-demo/pull/1865))
 
 ## 1.12.0
 

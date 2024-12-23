@@ -45,7 +45,7 @@ services:
       - FRONTEND_ADDR
       - PAYMENT_ADDR
       - PRODUCT_CATALOG_SERVICE_ADDR
-      - RECOMMENDATION_SERVICE_ADDR
+      - RECOMMENDATION_ADDR
       - SHIPPING_ADDR
       - KAFKA_SERVICE_ADDR
     extra_hosts:
@@ -79,7 +79,7 @@ services:
         condition: service_started
       quote:
         condition: service_started
-      recommendationservice:
+      recommendation:
         condition: service_started
       shipping:
         condition: service_started

@@ -276,7 +276,7 @@ services:
       - CHECKOUT_SERVICE_ADDR
       - CURRENCY_ADDR
       - PRODUCT_CATALOG_SERVICE_ADDR
-      - RECOMMENDATION_SERVICE_ADDR
+      - RECOMMENDATION_ADDR
       - SHIPPING_ADDR
       - OTEL_EXPORTER_OTLP_ENDPOINT
       - OTEL_RESOURCE_ATTRIBUTES=${OTEL_RESOURCE_ATTRIBUTES}
@@ -301,7 +301,7 @@ services:
         condition: service_started
       quote:
         condition: service_started
-      recommendationservice:
+      recommendation:
         condition: service_started
       shipping:
         condition: service_started
@@ -517,23 +517,23 @@ services:
     logging: *logging
 
   # Recommendation service
-  recommendationservice:
-    image: ${IMAGE_NAME}:${DEMO_VERSION}-recommendationservice
+  recommendation:
+    image: ${IMAGE_NAME}:${DEMO_VERSION}-recommendation
     container_name: recommendation-service
     build:
       context: ./
-      dockerfile: ${RECOMMENDATION_SERVICE_DOCKERFILE}
+      dockerfile: ${RECOMMENDATION_DOCKERFILE}
       cache_from:
-        - ${IMAGE_NAME}:${IMAGE_VERSION}-recommendationservice
+        - ${IMAGE_NAME}:${IMAGE_VERSION}-recommendation
     deploy:
       resources:
         limits:
           memory: 500M               # This is high to enable supporting the recommendationCache feature flag use case
     restart: unless-stopped
     ports:
-      - "${RECOMMENDATION_SERVICE_PORT}"
+      - "${RECOMMENDATION_PORT}"
     environment:
-      - RECOMMENDATION_SERVICE_PORT
+      - RECOMMENDATION_PORT
       - PRODUCT_CATALOG_SERVICE_ADDR
       - FLAGD_HOST
       - FLAGD_PORT
@@ -541,7 +541,7 @@ services:
       - OTEL_EXPORTER_OTLP_ENDPOINT
       - OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE
       - OTEL_RESOURCE_ATTRIBUTES
-      - OTEL_SERVICE_NAME=recommendationservice
+      - OTEL_SERVICE_NAME=recommendation
       - PROTOCOL_BUFFERS_PYTHON_IMPLEMENTATION=python
     depends_on:
       productcatalogservice:

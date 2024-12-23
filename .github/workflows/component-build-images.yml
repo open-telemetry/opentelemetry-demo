@@ -115,8 +115,8 @@ jobs:
             tag_suffix: quote
             context: ./
             setup-qemu: true
-          - file: ./src/recommendationservice/Dockerfile
-            tag_suffix: recommendationservice
+          - file: ./src/recommendation/Dockerfile
+            tag_suffix: recommendation
             context: ./
             setup-qemu: true
           - file: ./src/shipping/Dockerfile
