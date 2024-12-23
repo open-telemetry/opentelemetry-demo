@@ -71,8 +71,8 @@ jobs:
             tag_suffix: currency
             context: ./
             setup-qemu: true
-          - file: ./src/emailservice/Dockerfile
-            tag_suffix: emailservice
+          - file: ./src/email/Dockerfile
+            tag_suffix: email
             context: ./
             setup-qemu: true
           - file: ./src/frauddetectionservice/Dockerfile
