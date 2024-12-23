@@ -41,11 +41,11 @@ services:
       - CART_ADDR
       - CHECKOUT_SERVICE_ADDR
       - CURRENCY_ADDR
-      - EMAIL_SERVICE_ADDR
+      - EMAIL_ADDR
       - FRONTEND_ADDR
-      - PAYMENT_SERVICE_ADDR
+      - PAYMENT_ADDR
       - PRODUCT_CATALOG_SERVICE_ADDR
-      - RECOMMENDATION_SERVICE_ADDR
+      - RECOMMENDATION_ADDR
       - SHIPPING_ADDR
       - KAFKA_SERVICE_ADDR
     extra_hosts:
@@ -67,19 +67,19 @@ services:
         condition: service_started
       currency:
         condition: service_started
-      emailservice:
+      email:
         condition: service_started
-      frauddetectionservice:
+      fraud-detection:
         condition: service_started
       frontend:
         condition: service_started
-      paymentservice:
+      payment:
         condition: service_started
       productcatalogservice:
         condition: service_started
       quote:
         condition: service_started
-      recommendationservice:
+      recommendation:
         condition: service_started
       shipping:
         condition: service_started

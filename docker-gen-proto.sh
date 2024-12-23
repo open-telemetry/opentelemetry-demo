@@ -26,10 +26,10 @@ gen_proto_python() {
 #gen_proto_dotnet cart
 gen_proto_go checkoutservice
 #gen_proto_cpp currency
-#gen_proto_ruby emailservice
+#gen_proto_ruby email
 #gen_proto_ts frontend
-#gen_proto_js paymentservice
+#gen_proto_js payment
 gen_proto_go productcatalogservice
 #gen_proto_php quote
-gen_proto_python recommendationservice
+gen_proto_python recommendation
 #gen_proto_rust shipping

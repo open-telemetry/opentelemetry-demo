@@ -35,16 +35,16 @@
       "groupName": "currency",
     },
     {
-      "matchFileNames": ["src/emailservice/**"],
-      "groupName": "emailservice",
+      "matchFileNames": ["src/email/**"],
+      "groupName": "email",
     },
     {
       "matchFileNames": ["src/featureflagservice/**"],
       "groupName": "featureflagservice",
     },
     {
-      "matchFileNames": ["src/frauddetectionservice/**"],
-      "groupName": "frauddetectionservice",
+      "matchFileNames": ["src/fraud-detection/**"],
+      "groupName": "fraud-detection",
     },
     {
       "matchFileNames": ["src/frontend/**"],
@@ -71,8 +71,8 @@
       "groupName": "otel-collector",
     },
     {
-      "matchFileNames": ["src/paymentservice/**"],
-      "groupName": "paymentservice",
+      "matchFileNames": ["src/payment/**"],
+      "groupName": "payment",
     },
     {
       "matchFileNames": ["src/productcatalogservice/**"],
@@ -87,8 +87,8 @@
       "groupName": "quote",
     },
     {
-      "matchFileNames": ["src/recommendationservice/**"],
-      "groupName": "recommendationservice",
+      "matchFileNames": ["src/recommendation/**"],
+      "groupName": "recommendation",
     },
     {
       "matchFileNames": ["src/shipping/**"],

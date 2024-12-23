@@ -71,12 +71,12 @@ jobs:
             tag_suffix: currency
             context: ./
             setup-qemu: true
-          - file: ./src/emailservice/Dockerfile
-            tag_suffix: emailservice
+          - file: ./src/email/Dockerfile
+            tag_suffix: email
             context: ./
             setup-qemu: true
-          - file: ./src/frauddetectionservice/Dockerfile
-            tag_suffix: frauddetectionservice
+          - file: ./src/fraud-detection/Dockerfile
+            tag_suffix: fraud-detection
             context: ./
             setup-qemu: true
           - file: ./src/frontend/Dockerfile
@@ -103,8 +103,8 @@ jobs:
             tag_suffix: load-generator
             context: ./
             setup-qemu: true
-          - file: ./src/paymentservice/Dockerfile
-            tag_suffix: paymentservice
+          - file: ./src/payment/Dockerfile
+            tag_suffix: payment
             context: ./
             setup-qemu: true
           - file: ./src/productcatalogservice/Dockerfile
@@ -115,8 +115,8 @@ jobs:
             tag_suffix: quote
             context: ./
             setup-qemu: true
-          - file: ./src/recommendationservice/Dockerfile
-            tag_suffix: recommendationservice
+          - file: ./src/recommendation/Dockerfile
+            tag_suffix: recommendation
             context: ./
             setup-qemu: true
           - file: ./src/shipping/Dockerfile

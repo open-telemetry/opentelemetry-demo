@@ -134,8 +134,8 @@ services:
       - CHECKOUT_SERVICE_PORT
       - CART_ADDR
       - CURRENCY_ADDR
-      - EMAIL_SERVICE_ADDR
-      - PAYMENT_SERVICE_ADDR
+      - EMAIL_ADDR
+      - PAYMENT_ADDR
       - PRODUCT_CATALOG_SERVICE_ADDR
       - SHIPPING_ADDR
       - KAFKA_SERVICE_ADDR
@@ -148,9 +148,9 @@ services:
         condition: service_started
       currency:
         condition: service_started
-      emailservice:
+      email:
         condition: service_started
-      paymentservice:
+      payment:
         condition: service_started
       productcatalogservice:
         condition: service_started
@@ -193,41 +193,41 @@ services:
     logging: *logging
 
   # Email service
-  emailservice:
-    image: ${IMAGE_NAME}:${DEMO_VERSION}-emailservice
+  email:
+    image: ${IMAGE_NAME}:${DEMO_VERSION}-email
     container_name: email-service
     build:
       context: ./
-      dockerfile: ${EMAIL_SERVICE_DOCKERFILE}
+      dockerfile: ${EMAIL_DOCKERFILE}
       cache_from:
-        - ${IMAGE_NAME}:${IMAGE_VERSION}-emailservice
+        - ${IMAGE_NAME}:${IMAGE_VERSION}-email
     deploy:
       resources:
         limits:
           memory: 100M
     restart: unless-stopped
     ports:
-      - "${EMAIL_SERVICE_PORT}"
+      - "${EMAIL_PORT}"
     environment:
       - APP_ENV=production
-      - EMAIL_SERVICE_PORT
+      - EMAIL_PORT
       - OTEL_EXPORTER_OTLP_TRACES_ENDPOINT=http://${OTEL_COLLECTOR_HOST}:${OTEL_COLLECTOR_PORT_HTTP}/v1/traces
       - OTEL_RESOURCE_ATTRIBUTES
-      - OTEL_SERVICE_NAME=emailservice
+      - OTEL_SERVICE_NAME=email
     depends_on:
       otel-collector:
         condition: service_started
     logging: *logging
 
   # Fraud Detection service
-  frauddetectionservice:
-    image: ${IMAGE_NAME}:${DEMO_VERSION}-frauddetectionservice
-    container_name: frauddetection-service
+  fraud-detection:
+    image: ${IMAGE_NAME}:${DEMO_VERSION}-fraud-detection
+    container_name: fraud-detection
     build:
       context: ./
-      dockerfile: ${FRAUD_SERVICE_DOCKERFILE}
+      dockerfile: ${FRAUD_DOCKERFILE}
       cache_from:
-        - ${IMAGE_NAME}:${IMAGE_VERSION}-frauddetectionservice
+        - ${IMAGE_NAME}:${IMAGE_VERSION}-fraud-detection
       args:
         OTEL_JAVA_AGENT_VERSION: ${OTEL_JAVA_AGENT_VERSION}
     deploy:
@@ -244,7 +244,7 @@ services:
       - OTEL_INSTRUMENTATION_KAFKA_EXPERIMENTAL_SPAN_ATTRIBUTES=true
       - OTEL_INSTRUMENTATION_MESSAGING_EXPERIMENTAL_RECEIVE_TELEMETRY_ENABLED=true
       - OTEL_RESOURCE_ATTRIBUTES
-      - OTEL_SERVICE_NAME=frauddetectionservice
+      - OTEL_SERVICE_NAME=fraud-detection
     depends_on:
       otel-collector:
         condition: service_started
@@ -276,7 +276,7 @@ services:
       - CHECKOUT_SERVICE_ADDR
       - CURRENCY_ADDR
       - PRODUCT_CATALOG_SERVICE_ADDR
-      - RECOMMENDATION_SERVICE_ADDR
+      - RECOMMENDATION_ADDR
       - SHIPPING_ADDR
       - OTEL_EXPORTER_OTLP_ENDPOINT
       - OTEL_RESOURCE_ATTRIBUTES=${OTEL_RESOURCE_ATTRIBUTES}
@@ -301,7 +301,7 @@ services:
         condition: service_started
       quote:
         condition: service_started
-      recommendationservice:
+      recommendation:
         condition: service_started
       shipping:
         condition: service_started
@@ -427,29 +427,29 @@ services:
     logging: *logging
 
   # Payment service
-  paymentservice:
-    image: ${IMAGE_NAME}:${DEMO_VERSION}-paymentservice
+  payment:
+    image: ${IMAGE_NAME}:${DEMO_VERSION}-payment
     container_name: payment-service
     build:
       context: ./
-      dockerfile: ${PAYMENT_SERVICE_DOCKERFILE}
+      dockerfile: ${PAYMENT_DOCKERFILE}
       cache_from:
-        - ${IMAGE_NAME}:${IMAGE_VERSION}-paymentservice
+        - ${IMAGE_NAME}:${IMAGE_VERSION}-payment
     deploy:
       resources:
         limits:
           memory: 120M
     restart: unless-stopped
     ports:
-      - "${PAYMENT_SERVICE_PORT}"
+      - "${PAYMENT_PORT}"
     environment:
-      - PAYMENT_SERVICE_PORT
+      - PAYMENT_PORT
       - FLAGD_HOST
       - FLAGD_PORT
       - OTEL_EXPORTER_OTLP_ENDPOINT
       - OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE
       - OTEL_RESOURCE_ATTRIBUTES
-      - OTEL_SERVICE_NAME=paymentservice
+      - OTEL_SERVICE_NAME=payment
     depends_on:
       otel-collector:
         condition: service_started
@@ -517,23 +517,23 @@ services:
     logging: *logging
 
   # Recommendation service
-  recommendationservice:
-    image: ${IMAGE_NAME}:${DEMO_VERSION}-recommendationservice
+  recommendation:
+    image: ${IMAGE_NAME}:${DEMO_VERSION}-recommendation
     container_name: recommendation-service
     build:
       context: ./
-      dockerfile: ${RECOMMENDATION_SERVICE_DOCKERFILE}
+      dockerfile: ${RECOMMENDATION_DOCKERFILE}
       cache_from:
-        - ${IMAGE_NAME}:${IMAGE_VERSION}-recommendationservice
+        - ${IMAGE_NAME}:${IMAGE_VERSION}-recommendation
     deploy:
       resources:
         limits:
           memory: 500M               # This is high to enable supporting the recommendationCache feature flag use case
     restart: unless-stopped
     ports:
-      - "${RECOMMENDATION_SERVICE_PORT}"
+      - "${RECOMMENDATION_PORT}"
     environment:
-      - RECOMMENDATION_SERVICE_PORT
+      - RECOMMENDATION_PORT
       - PRODUCT_CATALOG_SERVICE_ADDR
       - FLAGD_HOST
       - FLAGD_PORT
@@ -541,7 +541,7 @@ services:
       - OTEL_EXPORTER_OTLP_ENDPOINT
       - OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE
       - OTEL_RESOURCE_ATTRIBUTES
-      - OTEL_SERVICE_NAME=recommendationservice
+      - OTEL_SERVICE_NAME=recommendation
       - PROTOCOL_BUFFERS_PYTHON_IMPLEMENTATION=python
     depends_on:
       productcatalogservice:
