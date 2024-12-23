@@ -100,7 +100,7 @@ services:
       - CHECKOUT_SERVICE_PORT
       - CART_ADDR
       - CURRENCY_ADDR
-      - EMAIL_SERVICE_ADDR
+      - EMAIL_ADDR
       - FLAGD_HOST
       - PAYMENT_SERVICE_ADDR
       - PRODUCT_CATALOG_SERVICE_ADDR
@@ -114,7 +114,7 @@ services:
         condition: service_started
       currency:
         condition: service_started
-      emailservice:
+      email:
         condition: service_started
       paymentservice:
         condition: service_started
@@ -155,26 +155,26 @@ services:
     logging: *logging
 
   # Email service
-  emailservice:
-    image: ${IMAGE_NAME}:${DEMO_VERSION}-emailservice
+  email:
+    image: ${IMAGE_NAME}:${DEMO_VERSION}-email
     container_name: email-service
     build:
-      context: ./src/emailservice
+      context: ./src/email
       cache_from:
-        - ${IMAGE_NAME}:${IMAGE_VERSION}-emailservice
+        - ${IMAGE_NAME}:${IMAGE_VERSION}-email
     deploy:
       resources:
         limits:
           memory: 100M
     restart: unless-stopped
     ports:
-      - "${EMAIL_SERVICE_PORT}"
+      - "${EMAIL_PORT}"
     environment:
       - APP_ENV=production
-      - EMAIL_SERVICE_PORT
+      - EMAIL_PORT
       - OTEL_EXPORTER_OTLP_TRACES_ENDPOINT=http://${OTEL_COLLECTOR_HOST}:${OTEL_COLLECTOR_PORT_HTTP}/v1/traces
       - OTEL_RESOURCE_ATTRIBUTES
-      - OTEL_SERVICE_NAME=emailservice
+      - OTEL_SERVICE_NAME=email
     depends_on:
       otel-collector:
         condition: service_started

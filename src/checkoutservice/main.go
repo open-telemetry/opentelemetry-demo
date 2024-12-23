@@ -187,7 +187,7 @@ func main() {
 	svc.currencySvcClient = pb.NewCurrencyServiceClient(c)
 	defer c.Close()
 
-	mustMapEnv(&svc.emailSvcAddr, "EMAIL_SERVICE_ADDR")
+	mustMapEnv(&svc.emailSvcAddr, "EMAIL_ADDR")
 	c = mustCreateClient(svc.emailSvcAddr)
 	svc.emailSvcClient = pb.NewEmailServiceClient(c)
 	defer c.Close()
@@ -458,7 +458,7 @@ func (cs *checkoutService) chargeCard(ctx context.Context, amount *pb.Money, pay
 }
 
 func (cs *checkoutService) sendOrderConfirmation(ctx context.Context, email string, order *pb.OrderResult) error {
-	emailServicePayload, err := json.Marshal(map[string]interface{}{
+	emailPayload, err := json.Marshal(map[string]interface{}{
 		"email": email,
 		"order": order,
 	})
@@ -466,7 +466,7 @@ func (cs *checkoutService) sendOrderConfirmation(ctx context.Context, email stri
 		return fmt.Errorf("failed to marshal order to JSON: %+v", err)
 	}
 
-	resp, err := otelhttp.Post(ctx, cs.emailSvcAddr+"/send_order_confirmation", "application/json", bytes.NewBuffer(emailServicePayload))
+	resp, err := otelhttp.Post(ctx, cs.emailSvcAddr+"/send_order_confirmation", "application/json", bytes.NewBuffer(emailPayload))
 	if err != nil {
 		return fmt.Errorf("failed POST to email service: %+v", err)
 	}
