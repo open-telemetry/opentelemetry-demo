@@ -22,9 +22,9 @@ app must be built and then run on a mobile simulator on your machine or a
 physical device. If this is your first time running a React Native app then in
 order to execute the steps under "Build on your host machine" you will need to
 setup your local environment for Android or iOS development or both following
-[this guide](https://reactnative.dev/docs/set-up-your-environment). Alternatively for Android you can instead follow the steps
-under "Build within a container" to leverage a container to build the app's apk
-for you.
+[this guide](https://reactnative.dev/docs/set-up-your-environment).
+Alternatively for Android you can instead follow the steps under "Build within a
+container" to leverage a container to build the app's apk for you.
 
 ### Build on your host machine
 
