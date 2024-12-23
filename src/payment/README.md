@@ -12,5 +12,5 @@ Copy the `demo.proto` file to this directory and run `npm ci`
 From the root directory, run:
 
 ```sh
-docker compose build paymentservice
+docker compose build payment
 ```

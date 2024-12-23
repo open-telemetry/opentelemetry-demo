@@ -45,12 +45,12 @@ server.addService(health.service, new health.Implementation({
 
 server.addService(otelDemoPackage.oteldemo.PaymentService.service, { charge: chargeServiceHandler })
 
-server.bindAsync(`0.0.0.0:${process.env['PAYMENT_SERVICE_PORT']}`, grpc.ServerCredentials.createInsecure(), (err, port) => {
+server.bindAsync(`0.0.0.0:${process.env['PAYMENT_PORT']}`, grpc.ServerCredentials.createInsecure(), (err, port) => {
   if (err) {
     return logger.error({ err })
   }
 
-  logger.info(`PaymentService gRPC server started on port ${port}`)
+  logger.info(`payment gRPC server started on port ${port}`)
 })
 
 process.once('SIGINT', closeGracefully)

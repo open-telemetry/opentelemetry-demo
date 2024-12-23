@@ -3,9 +3,9 @@
 
 type: TestSuite
 spec:
-  id: payment-service-all
-  name: 'Payment Service'
-  description: Run all Payment Service tests enabled in sequence
+  id: payment-all
+  name: 'Payment'
+  description: Run all Payment tests enabled in sequence
   steps:
   - ./valid-credit-card.yaml
   - ./invalid-credit-card.yaml

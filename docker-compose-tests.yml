@@ -43,7 +43,7 @@ services:
       - CURRENCY_ADDR
       - EMAIL_ADDR
       - FRONTEND_ADDR
-      - PAYMENT_SERVICE_ADDR
+      - PAYMENT_ADDR
       - PRODUCT_CATALOG_SERVICE_ADDR
       - RECOMMENDATION_SERVICE_ADDR
       - SHIPPING_ADDR
@@ -73,7 +73,7 @@ services:
         condition: service_started
       frontend:
         condition: service_started
-      paymentservice:
+      payment:
         condition: service_started
       productcatalogservice:
         condition: service_started

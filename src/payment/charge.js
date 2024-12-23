@@ -9,8 +9,8 @@ const { FlagdProvider } = require('@openfeature/flagd-provider');
 const flagProvider = new FlagdProvider();
 
 const logger = require('./logger');
-const tracer = trace.getTracer('paymentservice');
-const meter = metrics.getMeter('paymentservice');
+const tracer = trace.getTracer('payment');
+const meter = metrics.getMeter('payment');
 const transactionsCounter = meter.createCounter('app.payment.transactions');
 
 const LOYALTY_LEVEL = ['platinum', 'gold', 'silver', 'bronze'];
@@ -26,7 +26,7 @@ module.exports.charge = async request => {
 
   await OpenFeature.setProviderAndWait(flagProvider);
 
-  const numberVariant =  await OpenFeature.getClient().getNumberValue("paymentServiceFailure", 0);
+  const numberVariant =  await OpenFeature.getClient().getNumberValue("paymentFailure", 0);
 
   if (numberVariant > 0) {
     // n% chance to fail with app.loyalty.level=gold

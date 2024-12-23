@@ -192,7 +192,7 @@ func main() {
 	svc.emailSvcClient = pb.NewEmailServiceClient(c)
 	defer c.Close()
 
-	mustMapEnv(&svc.paymentSvcAddr, "PAYMENT_SERVICE_ADDR")
+	mustMapEnv(&svc.paymentSvcAddr, "PAYMENT_ADDR")
 	c = mustCreateClient(svc.paymentSvcAddr)
 	svc.paymentSvcClient = pb.NewPaymentServiceClient(c)
 	defer c.Close()
@@ -442,7 +442,7 @@ func (cs *checkoutService) convertCurrency(ctx context.Context, from *pb.Money, 
 
 func (cs *checkoutService) chargeCard(ctx context.Context, amount *pb.Money, paymentInfo *pb.CreditCardInfo) (string, error) {
 	paymentService := cs.paymentSvcClient
-	if cs.isFeatureFlagEnabled(ctx, "paymentServiceUnreachable") {
+	if cs.isFeatureFlagEnabled(ctx, "paymentUnreachable") {
 		badAddress := "badAddress:50051"
 		c := mustCreateClient(badAddress)
 		paymentService = pb.NewPaymentServiceClient(c)

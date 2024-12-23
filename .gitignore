@@ -52,7 +52,7 @@ test/tracetesting/tracetesting-vars.yaml
 /src/fraud-detection/src/main/proto
 /src/frontend/pb/
 /src/frontend/protos/
-/src/paymentservice/demo.proto
+/src/payment/demo.proto
 /src/shipping/proto/
 /src/currency/proto
 

@@ -60,6 +60,8 @@ the release.
   ([#1861](https://github.com/open-telemetry/opentelemetry-demo/pull/1861))
 * [fraud-detection] rename frauddetectionservice to fraud-detection
   ([#1862](https://github.com/open-telemetry/opentelemetry-demo/pull/1862))
+* [payment] rename paymentservice to payment
+  ([#1863](https://github.com/open-telemetry/opentelemetry-demo/pull/1863))
 
 ## 1.12.0
 

@@ -135,7 +135,7 @@ services:
       - CART_ADDR
       - CURRENCY_ADDR
       - EMAIL_ADDR
-      - PAYMENT_SERVICE_ADDR
+      - PAYMENT_ADDR
       - PRODUCT_CATALOG_SERVICE_ADDR
       - SHIPPING_ADDR
       - KAFKA_SERVICE_ADDR
@@ -150,7 +150,7 @@ services:
         condition: service_started
       email:
         condition: service_started
-      paymentservice:
+      payment:
         condition: service_started
       productcatalogservice:
         condition: service_started
@@ -427,29 +427,29 @@ services:
     logging: *logging
 
   # Payment service
-  paymentservice:
-    image: ${IMAGE_NAME}:${DEMO_VERSION}-paymentservice
+  payment:
+    image: ${IMAGE_NAME}:${DEMO_VERSION}-payment
     container_name: payment-service
     build:
       context: ./
-      dockerfile: ${PAYMENT_SERVICE_DOCKERFILE}
+      dockerfile: ${PAYMENT_DOCKERFILE}
       cache_from:
-        - ${IMAGE_NAME}:${IMAGE_VERSION}-paymentservice
+        - ${IMAGE_NAME}:${IMAGE_VERSION}-payment
     deploy:
       resources:
         limits:
           memory: 120M
     restart: unless-stopped
     ports:
-      - "${PAYMENT_SERVICE_PORT}"
+      - "${PAYMENT_PORT}"
     environment:
-      - PAYMENT_SERVICE_PORT
+      - PAYMENT_PORT
       - FLAGD_HOST
       - FLAGD_PORT
       - OTEL_EXPORTER_OTLP_ENDPOINT
       - OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE
       - OTEL_RESOURCE_ATTRIBUTES
-      - OTEL_SERVICE_NAME=paymentservice
+      - OTEL_SERVICE_NAME=payment
     depends_on:
       otel-collector:
         condition: service_started
