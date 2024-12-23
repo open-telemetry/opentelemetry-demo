@@ -8,7 +8,7 @@ FROM base AS builder
 
 WORKDIR /tmp
 
-COPY ./src/emailservice/Gemfile ./src/emailservice/Gemfile.lock ./
+COPY ./src/email/Gemfile ./src/email/Gemfile.lock ./
 
 #RUN apk update && apk add make gcc musl-dev gcompat && bundle install
 RUN apt-get update && apt-get install build-essential -y && bundle install
@@ -16,12 +16,12 @@ FROM base AS release
 
 WORKDIR /email_server
 
-COPY ./src/emailservice/ .
+COPY ./src/email/ .
 
 RUN chmod 666 ./Gemfile.lock
 
 COPY --from=builder /usr/local/bundle/ /usr/local/bundle/
 
 
-EXPOSE ${EMAIL_SERVICE_PORT}
+EXPOSE ${EMAIL_PORT}
 ENTRYPOINT ["bundle", "exec", "ruby", "email_server.rb"]

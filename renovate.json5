@@ -35,8 +35,8 @@
       "groupName": "currency",
     },
     {
-      "matchFileNames": ["src/emailservice/**"],
-      "groupName": "emailservice",
+      "matchFileNames": ["src/email/**"],
+      "groupName": "email",
     },
     {
       "matchFileNames": ["src/featureflagservice/**"],

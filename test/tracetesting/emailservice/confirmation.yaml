@@ -9,7 +9,7 @@ spec:
   trigger:
     type: http
     httpRequest:
-      url: ${var:EMAIL_SERVICE_ADDR}/send_order_confirmation
+      url: ${var:EMAIL_ADDR}/send_order_confirmation
       method: POST
       headers:
       - key: Content-Type
