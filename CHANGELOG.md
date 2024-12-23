@@ -56,6 +56,8 @@ the release.
   ([#1857](https://github.com/open-telemetry/opentelemetry-demo/pull/1857))
 * [currency] rename currencyservice to currency
   ([#1858](https://github.com/open-telemetry/opentelemetry-demo/pull/1858))
+* [payment] rename paymentservice to payment
+  ([#1863](https://github.com/open-telemetry/opentelemetry-demo/pull/1863))
 
 ## 1.12.0
 
