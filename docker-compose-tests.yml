@@ -41,7 +41,7 @@ services:
       - CART_ADDR
       - CHECKOUT_SERVICE_ADDR
       - CURRENCY_ADDR
-      - EMAIL_SERVICE_ADDR
+      - EMAIL_ADDR
       - FRONTEND_ADDR
       - PAYMENT_ADDR
       - PRODUCT_CATALOG_SERVICE_ADDR
@@ -67,9 +67,9 @@ services:
         condition: service_started
       currency:
         condition: service_started
-      emailservice:
+      email:
         condition: service_started
-      frauddetectionservice:
+      fraud-detection:
         condition: service_started
       frontend:
         condition: service_started

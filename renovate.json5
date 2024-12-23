@@ -35,16 +35,16 @@
       "groupName": "currency",
     },
     {
-      "matchFileNames": ["src/emailservice/**"],
-      "groupName": "emailservice",
+      "matchFileNames": ["src/email/**"],
+      "groupName": "email",
     },
     {
       "matchFileNames": ["src/featureflagservice/**"],
       "groupName": "featureflagservice",
     },
     {
-      "matchFileNames": ["src/frauddetectionservice/**"],
-      "groupName": "frauddetectionservice",
+      "matchFileNames": ["src/fraud-detection/**"],
+      "groupName": "fraud-detection",
     },
     {
       "matchFileNames": ["src/frontend/**"],
