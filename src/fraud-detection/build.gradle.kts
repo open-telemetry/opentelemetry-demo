@@ -90,9 +90,9 @@ protobuf {
 }
 
 application {
-    mainClass.set("frauddetectionservice.MainKt")
+    mainClass.set("frauddetection.MainKt")
 }
 
 tasks.jar {
-    manifest.attributes["Main-Class"] = "frauddetectionservice.MainKt"
+    manifest.attributes["Main-Class"] = "frauddetection.MainKt"
 }

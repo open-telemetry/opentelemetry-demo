@@ -69,7 +69,7 @@ services:
         condition: service_started
       email:
         condition: service_started
-      frauddetectionservice:
+      fraud-detection:
         condition: service_started
       frontend:
         condition: service_started

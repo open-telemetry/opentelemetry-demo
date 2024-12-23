@@ -17,5 +17,5 @@ cp -r ../../pb/ src/main/proto/
 To build using Docker run from the repo root:
 
 ```sh
-docker build -f ./src/frauddetectionservice/Dockerfile .
+docker build -f ./src/fraud-detection/Dockerfile .
 ```
