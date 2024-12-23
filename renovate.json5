@@ -71,8 +71,8 @@
       "groupName": "otel-collector",
     },
     {
-      "matchFileNames": ["src/paymentservice/**"],
-      "groupName": "paymentservice",
+      "matchFileNames": ["src/payment/**"],
+      "groupName": "payment",
     },
     {
       "matchFileNames": ["src/productcatalogservice/**"],

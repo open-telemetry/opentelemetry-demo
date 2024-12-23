@@ -64,7 +64,7 @@
       },
       "defaultVariant": "off"
     },
-    "paymentServiceFailure": {
+    "paymentFailure": {
       "description": "Fail payment service charge requests n%",
       "state": "ENABLED",
       "variants": {
@@ -78,7 +78,7 @@
       },
       "defaultVariant": "off"
     },
-    "paymentServiceUnreachable": {
+    "paymentUnreachable": {
       "description": "Payment service is unavailable",
       "state": "ENABLED",
       "variants": {

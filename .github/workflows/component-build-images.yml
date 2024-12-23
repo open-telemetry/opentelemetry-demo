@@ -103,8 +103,8 @@ jobs:
             tag_suffix: load-generator
             context: ./
             setup-qemu: true
-          - file: ./src/paymentservice/Dockerfile
-            tag_suffix: paymentservice
+          - file: ./src/payment/Dockerfile
+            tag_suffix: payment
             context: ./
             setup-qemu: true
           - file: ./src/productcatalogservice/Dockerfile
