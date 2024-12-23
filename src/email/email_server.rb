@@ -9,7 +9,7 @@ require "opentelemetry/sdk"
 require "opentelemetry/exporter/otlp"
 require "opentelemetry/instrumentation/sinatra"
 
-set :port, ENV["EMAIL_SERVICE_PORT"]
+set :port, ENV["EMAIL_PORT"]
 
 OpenTelemetry::SDK.configure do |c|
   c.use "OpenTelemetry::Instrumentation::Sinatra"
@@ -34,7 +34,7 @@ end
 
 def send_email(data)
   # create and start a manual span
-  tracer = OpenTelemetry.tracer_provider.tracer('emailservice')
+  tracer = OpenTelemetry.tracer_provider.tracer('email')
   tracer.in_span("send_email") do |span|
     Pony.mail(
       to:       data.email,

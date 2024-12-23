@@ -3,14 +3,14 @@
 
 type: Test
 spec:
-  id: payment-invalid-credit-card
-  name: 'Payment: invalid credit card'
-  description: Charge customer with an invalid credit card
+  id: payment-amex-credit-card-not-allowed
+  name: 'Payment: Amex credit card not allowed'
+  description: Charge customer with an Amex credit card
   trigger:
     type: grpc
     grpc:
       protobufFile: ../../../pb/demo.proto
-      address: ${var:PAYMENT_SERVICE_ADDR}
+      address: ${var:PAYMENT_ADDR}
       method: oteldemo.PaymentService.Charge
       request: |-
         {
@@ -20,7 +20,7 @@ spec:
             "nanos": 130000000
           },
           "creditCard": {
-            "creditCardNumber": "0000-0000-0000-0000",
+            "creditCardNumber": "3714 496353 98431",
             "creditCardCvv": 672,
             "creditCardExpirationYear": 2039,
             "creditCardExpirationMonth": 1
@@ -30,7 +30,7 @@ spec:
   - name: It should call Charge method and receive a gRPC error
     selector: span[tracetest.span.type="rpc" name="grpc.oteldemo.PaymentService/Charge" rpc.system="grpc" rpc.method="Charge" rpc.service="oteldemo.PaymentService"]
     assertions:
-    - attr:grpc.error_message = "Credit card info is invalid."
+    - attr:grpc.error_message = "Sorry, we cannot process amex credit cards. Only VISA or MasterCard is accepted."
   - name: It should return a return an gRPC error code to the caller
     selector: span[tracetest.span.type="general" name="Tracetest trigger"]
     assertions:

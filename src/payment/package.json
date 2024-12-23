@@ -1,5 +1,5 @@
 {
-  "name": "paymentservice",
+  "name": "payment",
   "description": "Payment Service",
   "repository": "https://github.com/opentelemetry/opentelemetry-demo",
   "main": "index.js",

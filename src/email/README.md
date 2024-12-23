@@ -20,4 +20,4 @@ You may run this service locally with `bundle exec ruby email_server.rb`.
 
 ## Docker Build
 
-From `src/emailservice`, run `docker build .`
+From `src/email`, run `docker build .`
