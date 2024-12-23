@@ -5,6 +5,6 @@ type: TestSuite
 spec:
   id: email-all
   name: 'Email'
-  description: Run all Email Service tests enabled in sequence
+  description: Run all Email tests enabled in sequence
   steps:
   - ./confirmation.yaml
