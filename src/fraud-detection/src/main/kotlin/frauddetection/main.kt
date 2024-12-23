@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-package frauddetectionservice
+package frauddetection
 
 import org.apache.kafka.clients.consumer.ConsumerConfig.*
 import org.apache.kafka.clients.consumer.KafkaConsumer
@@ -24,7 +24,7 @@ import dev.openfeature.sdk.Value
 import dev.openfeature.sdk.OpenFeatureAPI
 
 const val topic = "orders"
-const val groupID = "frauddetectionservice"
+const val groupID = "fraud-detection"
 
 private val logger: Logger = LogManager.getLogger(groupID)
 

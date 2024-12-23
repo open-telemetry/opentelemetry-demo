@@ -43,8 +43,8 @@
       "groupName": "featureflagservice",
     },
     {
-      "matchFileNames": ["src/frauddetectionservice/**"],
-      "groupName": "frauddetectionservice",
+      "matchFileNames": ["src/fraud-detection/**"],
+      "groupName": "fraud-detection",
     },
     {
       "matchFileNames": ["src/frontend/**"],

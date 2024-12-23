@@ -220,14 +220,14 @@ services:
     logging: *logging
 
   # Fraud Detection service
-  frauddetectionservice:
-    image: ${IMAGE_NAME}:${DEMO_VERSION}-frauddetectionservice
-    container_name: frauddetection-service
+  fraud-detection:
+    image: ${IMAGE_NAME}:${DEMO_VERSION}-fraud-detection
+    container_name: fraud-detection
     build:
       context: ./
-      dockerfile: ${FRAUD_SERVICE_DOCKERFILE}
+      dockerfile: ${FRAUD_DOCKERFILE}
       cache_from:
-        - ${IMAGE_NAME}:${IMAGE_VERSION}-frauddetectionservice
+        - ${IMAGE_NAME}:${IMAGE_VERSION}-fraud-detection
       args:
         OTEL_JAVA_AGENT_VERSION: ${OTEL_JAVA_AGENT_VERSION}
     deploy:
@@ -244,7 +244,7 @@ services:
       - OTEL_INSTRUMENTATION_KAFKA_EXPERIMENTAL_SPAN_ATTRIBUTES=true
       - OTEL_INSTRUMENTATION_MESSAGING_EXPERIMENTAL_RECEIVE_TELEMETRY_ENABLED=true
       - OTEL_RESOURCE_ATTRIBUTES
-      - OTEL_SERVICE_NAME=frauddetectionservice
+      - OTEL_SERVICE_NAME=fraud-detection
     depends_on:
       otel-collector:
         condition: service_started
