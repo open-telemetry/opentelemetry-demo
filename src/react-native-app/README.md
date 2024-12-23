@@ -96,11 +96,9 @@ Or directly from this folder using.
 docker build -f android.Dockerfile --platform=linux/amd64 --output=. .
 ```
 
-This will produce `react-native-app.apk` in the directory where you ran the
-command. If you have an Android emulator running on your machine then you can
-simply drag and drop this file onto the emulator's window in order to install it
-following
-[these steps](https://developer.android.com/studio/run/emulator-install-add-files).
+This will create a `react-native-app.apk` file in the directory where you ran
+the command. If you have an Android emulator running on your machine then you
+can drag and drop this file onto the emulator's window in order to install it.
 
 ## Troubleshooting
 
