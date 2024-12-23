@@ -1,4 +1,4 @@
-module github.com/opentelemetry/opentelemetry-demo/src/productcatalogservice
+module github.com/opentelemetry/opentelemetry-demo/src/product-catalog
 
 go 1.22.7
 

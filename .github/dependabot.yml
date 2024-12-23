@@ -11,7 +11,7 @@ updates:
   - package-ecosystem: "gomod"
     directories:
       - "/src/checkoutservice"
-      - "/src/productcatalogservice"
+      - "/src/product-catalog"
     groups:
       go-production-dependencies:
         dependency-type: "production"

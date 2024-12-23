@@ -139,7 +139,7 @@ docker-generate-protobuf:
 
 .PHONY: clean
 clean:
-	rm -rf ./src/{checkoutservice,productcatalogservice}/genproto/oteldemo/
+	rm -rf ./src/{checkoutservice,product-catalog}/genproto/oteldemo/
 	rm -rf ./src/recommendationservice/{demo_pb2,demo_pb2_grpc}.py
 
 .PHONY: check-clean-work-tree

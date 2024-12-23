@@ -3,7 +3,7 @@
 
 type: TestSuite
 spec:
-  id: product-catalog-service-all
+  id: product-catalog-all
   name: 'Product Catalog Service'
   description: Run all Product Catalog Service tests enabled in sequence
   steps:
