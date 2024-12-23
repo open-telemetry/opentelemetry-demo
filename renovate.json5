@@ -87,8 +87,8 @@
       "groupName": "quote",
     },
     {
-      "matchFileNames": ["src/recommendationservice/**"],
-      "groupName": "recommendationservice",
+      "matchFileNames": ["src/recommendation/**"],
+      "groupName": "recommendation",
     },
     {
       "matchFileNames": ["src/shipping/**"],

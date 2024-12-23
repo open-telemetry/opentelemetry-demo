@@ -13,7 +13,7 @@ RUN apt-get -qq update \
     && rm -rf /var/lib/apt/lists/*
 
 WORKDIR /usr/src/app/
-COPY ./src/recommendationservice/requirements.txt ./
+COPY ./src/recommendation/requirements.txt ./
 
 RUN pip install --upgrade pip
 RUN pip install --prefix="/reqs" -r requirements.txt
@@ -24,9 +24,9 @@ RUN pip install --prefix="/reqs" -r requirements.txt
 FROM base AS runtime
 WORKDIR /usr/src/app/
 COPY --from=builder /reqs /usr/local
-COPY ./src/recommendationservice/ ./
+COPY ./src/recommendation/ ./
 
 RUN opentelemetry-bootstrap -a install
 
-EXPOSE ${RECOMMENDATION_SERVICE_PORT}
+EXPOSE ${RECOMMENDATION_PORT}
 ENTRYPOINT [ "opentelemetry-instrument", "python", "recommendation_server.py" ]

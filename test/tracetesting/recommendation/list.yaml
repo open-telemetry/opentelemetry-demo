@@ -10,7 +10,7 @@ spec:
     type: grpc
     grpc:
       protobufFile: ../../../pb/demo.proto
-      address: ${var:RECOMMENDATION_SERVICE_ADDR}
+      address: ${var:RECOMMENDATION_ADDR}
       method: oteldemo.RecommendationService.ListRecommendations
       request: |-
         {
