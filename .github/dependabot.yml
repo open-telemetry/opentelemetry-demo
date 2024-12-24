@@ -3,11 +3,21 @@
 version: 2
 updates:
   - package-ecosystem: "github-actions"
-    directory: "/"
+    directories:
+      - "/"
+    groups:
+      actions-production-dependencies:
+        dependency-type: "production"
     schedule:
       interval: "daily"
-    labels:
-      - "infra"
+  - package-ecosystem: "docker"
+    directories:
+      - "/src/**/*"
+    groups:
+      docker-production-dependencies:
+        dependency-type: "production"
+    schedule:
+      interval: "daily"
   - package-ecosystem: "gomod"
     directories:
       - "/src/checkoutservice"
@@ -15,5 +25,55 @@ updates:
     groups:
       go-production-dependencies:
         dependency-type: "production"
+    schedule:
+      interval: "daily"
+  - package-ecosystem: "gradle"
+    directories:
+      - "/src/adservice"
+    groups:
+      gradle-production-dependencies:
+        dependency-type: "production"
+    schedule:
+      interval: "daily"
+  - package-ecosystem: "pip"
+    directories:
+      - "/src/**/*"
+    groups:
+      pip-production-dependencies:
+        dependency-type: "production"
+    schedule:
+      interval: "daily"
+  - package-ecosystem: "nuget"
+    directories:
+      - "/src/**/*"
+    groups:
+      nuget-production-dependencies:
+        dependency-type: "production"
+    schedule:
+      interval: "daily"
+  - package-ecosystem: "cargo"
+    directories:
+      - "/src/**/*"
+    groups:
+      cargo-production-dependencies:
+        dependency-type: "production"
+    schedule:
+      interval: "daily"
+  - package-ecosystem: "composer"
+    directories:
+      - "/src/**/*"
+    groups:
+      composer-production-dependencies:
+        dependency-type: "production"
+    schedule:
+      interval: "daily"
+  - package-ecosystem: "npm"
+    directories:
+      - "/src/**/*"
+    groups:
+      npm-production-dependencies:
+        dependency-type: "production"
+      npm-development-dependencies:
+        dependency-type: "development"
     schedule:
       interval: "daily"
