@@ -10,7 +10,7 @@ updates:
       - "infra"
   - package-ecosystem: "gomod"
     directories:
-      - "/src/checkoutservice"
+      - "/src/checkout"
       - "/src/productcatalogservice"
     groups:
       go-production-dependencies:

@@ -42,9 +42,9 @@ import (
 	"google.golang.org/grpc/status"
 	"google.golang.org/protobuf/proto"
 
-	pb "github.com/open-telemetry/opentelemetry-demo/src/checkoutservice/genproto/oteldemo"
-	"github.com/open-telemetry/opentelemetry-demo/src/checkoutservice/kafka"
-	"github.com/open-telemetry/opentelemetry-demo/src/checkoutservice/money"
+	pb "github.com/open-telemetry/opentelemetry-demo/src/checkout/genproto/oteldemo"
+	"github.com/open-telemetry/opentelemetry-demo/src/checkout/kafka"
+	"github.com/open-telemetry/opentelemetry-demo/src/checkout/money"
 )
 
 //go:generate go install google.golang.org/protobuf/cmd/protoc-gen-go
@@ -119,7 +119,7 @@ func initMeterProvider() *sdkmetric.MeterProvider {
 	return mp
 }
 
-type checkoutService struct {
+type checkout struct {
 	productCatalogSvcAddr string
 	cartSvcAddr           string
 	currencySvcAddr       string
@@ -139,7 +139,7 @@ type checkoutService struct {
 
 func main() {
 	var port string
-	mustMapEnv(&port, "CHECKOUT_SERVICE_PORT")
+	mustMapEnv(&port, "CHECKOUT_PORT")
 
 	tp := initTracerProvider()
 	defer func() {
@@ -163,9 +163,9 @@ func main() {
 	openfeature.SetProvider(flagd.NewProvider())
 	openfeature.AddHooks(otelhooks.NewTracesHook())
 
-	tracer = tp.Tracer("checkoutservice")
+	tracer = tp.Tracer("checkout")
 
-	svc := new(checkoutService)
+	svc := new(checkout)
 
 	mustMapEnv(&svc.shippingSvcAddr, "SHIPPING_ADDR")
 	c := mustCreateClient(svc.shippingSvcAddr)
@@ -231,15 +231,15 @@ func mustMapEnv(target *string, envKey string) {
 	*target = v
 }
 
-func (cs *checkoutService) Check(ctx context.Context, req *healthpb.HealthCheckRequest) (*healthpb.HealthCheckResponse, error) {
+func (cs *checkout) Check(ctx context.Context, req *healthpb.HealthCheckRequest) (*healthpb.HealthCheckResponse, error) {
 	return &healthpb.HealthCheckResponse{Status: healthpb.HealthCheckResponse_SERVING}, nil
 }
 
-func (cs *checkoutService) Watch(req *healthpb.HealthCheckRequest, ws healthpb.Health_WatchServer) error {
+func (cs *checkout) Watch(req *healthpb.HealthCheckRequest, ws healthpb.Health_WatchServer) error {
 	return status.Errorf(codes.Unimplemented, "health check via Watch not implemented")
 }
 
-func (cs *checkoutService) PlaceOrder(ctx context.Context, req *pb.PlaceOrderRequest) (*pb.PlaceOrderResponse, error) {
+func (cs *checkout) PlaceOrder(ctx context.Context, req *pb.PlaceOrderRequest) (*pb.PlaceOrderResponse, error) {
 	span := trace.SpanFromContext(ctx)
 	span.SetAttributes(
 		attribute.String("app.user.id", req.UserId),
@@ -332,7 +332,7 @@ type orderPrep struct {
 	shippingCostLocalized *pb.Money
 }
 
-func (cs *checkoutService) prepareOrderItemsAndShippingQuoteFromCart(ctx context.Context, userID, userCurrency string, address *pb.Address) (orderPrep, error) {
+func (cs *checkout) prepareOrderItemsAndShippingQuoteFromCart(ctx context.Context, userID, userCurrency string, address *pb.Address) (orderPrep, error) {
 
 	ctx, span := tracer.Start(ctx, "prepareOrderItemsAndShippingQuoteFromCart")
 	defer span.End()
@@ -385,7 +385,7 @@ func mustCreateClient(svcAddr string) *grpc.ClientConn {
 	return c
 }
 
-func (cs *checkoutService) quoteShipping(ctx context.Context, address *pb.Address, items []*pb.CartItem) (*pb.Money, error) {
+func (cs *checkout) quoteShipping(ctx context.Context, address *pb.Address, items []*pb.CartItem) (*pb.Money, error) {
 	shippingQuote, err := cs.shippingSvcClient.
 		GetQuote(ctx, &pb.GetQuoteRequest{
 			Address: address,
@@ -396,7 +396,7 @@ func (cs *checkoutService) quoteShipping(ctx context.Context, address *pb.Addres
 	return shippingQuote.GetCostUsd(), nil
 }
 
-func (cs *checkoutService) getUserCart(ctx context.Context, userID string) ([]*pb.CartItem, error) {
+func (cs *checkout) getUserCart(ctx context.Context, userID string) ([]*pb.CartItem, error) {
 	cart, err := cs.cartSvcClient.GetCart(ctx, &pb.GetCartRequest{UserId: userID})
 	if err != nil {
 		return nil, fmt.Errorf("failed to get user cart during checkout: %+v", err)
@@ -404,14 +404,14 @@ func (cs *checkoutService) getUserCart(ctx context.Context, userID string) ([]*p
 	return cart.GetItems(), nil
 }
 
-func (cs *checkoutService) emptyUserCart(ctx context.Context, userID string) error {
+func (cs *checkout) emptyUserCart(ctx context.Context, userID string) error {
 	if _, err := cs.cartSvcClient.EmptyCart(ctx, &pb.EmptyCartRequest{UserId: userID}); err != nil {
 		return fmt.Errorf("failed to empty user cart during checkout: %+v", err)
 	}
 	return nil
 }
 
-func (cs *checkoutService) prepOrderItems(ctx context.Context, items []*pb.CartItem, userCurrency string) ([]*pb.OrderItem, error) {
+func (cs *checkout) prepOrderItems(ctx context.Context, items []*pb.CartItem, userCurrency string) ([]*pb.OrderItem, error) {
 	out := make([]*pb.OrderItem, len(items))
 
 	for i, item := range items {
@@ -430,7 +430,7 @@ func (cs *checkoutService) prepOrderItems(ctx context.Context, items []*pb.CartI
 	return out, nil
 }
 
-func (cs *checkoutService) convertCurrency(ctx context.Context, from *pb.Money, toCurrency string) (*pb.Money, error) {
+func (cs *checkout) convertCurrency(ctx context.Context, from *pb.Money, toCurrency string) (*pb.Money, error) {
 	result, err := cs.currencySvcClient.Convert(ctx, &pb.CurrencyConversionRequest{
 		From:   from,
 		ToCode: toCurrency})
@@ -440,7 +440,7 @@ func (cs *checkoutService) convertCurrency(ctx context.Context, from *pb.Money, 
 	return result, err
 }
 
-func (cs *checkoutService) chargeCard(ctx context.Context, amount *pb.Money, paymentInfo *pb.CreditCardInfo) (string, error) {
+func (cs *checkout) chargeCard(ctx context.Context, amount *pb.Money, paymentInfo *pb.CreditCardInfo) (string, error) {
 	paymentService := cs.paymentSvcClient
 	if cs.isFeatureFlagEnabled(ctx, "paymentUnreachable") {
 		badAddress := "badAddress:50051"
@@ -457,7 +457,7 @@ func (cs *checkoutService) chargeCard(ctx context.Context, amount *pb.Money, pay
 	return paymentResp.GetTransactionId(), nil
 }
 
-func (cs *checkoutService) sendOrderConfirmation(ctx context.Context, email string, order *pb.OrderResult) error {
+func (cs *checkout) sendOrderConfirmation(ctx context.Context, email string, order *pb.OrderResult) error {
 	emailPayload, err := json.Marshal(map[string]interface{}{
 		"email": email,
 		"order": order,
@@ -479,7 +479,7 @@ func (cs *checkoutService) sendOrderConfirmation(ctx context.Context, email stri
 	return err
 }
 
-func (cs *checkoutService) shipOrder(ctx context.Context, address *pb.Address, items []*pb.CartItem) (string, error) {
+func (cs *checkout) shipOrder(ctx context.Context, address *pb.Address, items []*pb.CartItem) (string, error) {
 	resp, err := cs.shippingSvcClient.ShipOrder(ctx, &pb.ShipOrderRequest{
 		Address: address,
 		Items:   items})
@@ -489,7 +489,7 @@ func (cs *checkoutService) shipOrder(ctx context.Context, address *pb.Address, i
 	return resp.GetTrackingId(), nil
 }
 
-func (cs *checkoutService) sendToPostProcessor(ctx context.Context, result *pb.OrderResult) {
+func (cs *checkout) sendToPostProcessor(ctx context.Context, result *pb.OrderResult) {
 	message, err := proto.Marshal(result)
 	if err != nil {
 		log.Errorf("Failed to marshal message to protobuf: %+v", err)
@@ -582,7 +582,7 @@ func createProducerSpan(ctx context.Context, msg *sarama.ProducerMessage) trace.
 	return span
 }
 
-func (cs *checkoutService) isFeatureFlagEnabled(ctx context.Context, featureFlagName string) bool {
+func (cs *checkout) isFeatureFlagEnabled(ctx context.Context, featureFlagName string) bool {
 	client := openfeature.NewClient("checkout")
 
 	// Default value is set to false, but you could also make this a parameter.
@@ -596,7 +596,7 @@ func (cs *checkoutService) isFeatureFlagEnabled(ctx context.Context, featureFlag
 	return featureEnabled
 }
 
-func (cs *checkoutService) getIntFeatureFlag(ctx context.Context, featureFlagName string) int {
+func (cs *checkout) getIntFeatureFlag(ctx context.Context, featureFlagName string) int {
 	client := openfeature.NewClient("checkout")
 
 	// Default value is set to 0, but you could also make this a parameter.

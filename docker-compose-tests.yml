@@ -39,7 +39,7 @@ services:
     environment:
       - AD_ADDR
       - CART_ADDR
-      - CHECKOUT_SERVICE_ADDR
+      - CHECKOUT_ADDR
       - CURRENCY_ADDR
       - EMAIL_ADDR
       - FRONTEND_ADDR
@@ -63,7 +63,7 @@ services:
         condition: service_started
       cart:
         condition: service_started
-      checkoutservice:
+      checkout:
         condition: service_started
       currency:
         condition: service_started

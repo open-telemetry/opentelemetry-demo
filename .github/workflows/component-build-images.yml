@@ -63,8 +63,8 @@ jobs:
             tag_suffix: cart
             context: ./
             setup-qemu: false
-          - file: ./src/checkoutservice/Dockerfile
-            tag_suffix: checkoutservice
+          - file: ./src/checkout/Dockerfile
+            tag_suffix: checkout
             context: ./
             setup-qemu: true
           - file: ./src/currency/Dockerfile
