@@ -51,8 +51,8 @@
         "src/react-native-app/android/.gradle/",
         "src/react-native-app/.expo/",
         "src/react-native-app/expo-env.d.ts",
-        "src/recommendationservice/demo_pb2.py",
-        "src/recommendationservice/demo_pb2_grpc.py",
+        "src/recommendation/demo_pb2.py",
+        "src/recommendation/demo_pb2_grpc.py",
         "internal/tools/"
     ]
   }

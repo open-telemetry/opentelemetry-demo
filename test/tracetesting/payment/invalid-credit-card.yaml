@@ -1,0 +1,37 @@
+# Copyright The OpenTelemetry Authors
+# SPDX-License-Identifier: Apache-2.0
+
+type: Test
+spec:
+  id: payment-invalid-credit-card
+  name: 'Payment: invalid credit card'
+  description: Charge customer with an invalid credit card
+  trigger:
+    type: grpc
+    grpc:
+      protobufFile: ../../../pb/demo.proto
+      address: ${var:PAYMENT_ADDR}
+      method: oteldemo.PaymentService.Charge
+      request: |-
+        {
+          "amount": {
+            "currencyCode": "USD",
+            "units": 43,
+            "nanos": 130000000
+          },
+          "creditCard": {
+            "creditCardNumber": "0000-0000-0000-0000",
+            "creditCardCvv": 672,
+            "creditCardExpirationYear": 2039,
+            "creditCardExpirationMonth": 1
+          }
+        }
+  specs:
+  - name: It should call Charge method and receive a gRPC error
+    selector: span[tracetest.span.type="rpc" name="grpc.oteldemo.PaymentService/Charge" rpc.system="grpc" rpc.method="Charge" rpc.service="oteldemo.PaymentService"]
+    assertions:
+    - attr:grpc.error_message = "Credit card info is invalid."
+  - name: It should return a return an gRPC error code to the caller
+    selector: span[tracetest.span.type="general" name="Tracetest trigger"]
+    assertions:
+    - attr:tracetest.response.status = 2
