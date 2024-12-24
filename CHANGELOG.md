@@ -64,6 +64,8 @@ the release.
   ([#1863](https://github.com/open-telemetry/opentelemetry-demo/pull/1863))
 * [recommendation] rename recommendationservice to recommendation
   ([#1865](https://github.com/open-telemetry/opentelemetry-demo/pull/1865))
+* [checkout] rename checkoutservice to checkout
+  ([#1867](https://github.com/open-telemetry/opentelemetry-demo/pull/1867))
 
 ## 1.12.0
 
