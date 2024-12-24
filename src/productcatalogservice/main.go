@@ -8,8 +8,8 @@ package main
 
 import (
 	"context"
+	"database/sql"
 	"fmt"
-	"io/fs"
 	"net"
 	"os"
 	"os/signal"
@@ -17,6 +17,9 @@ import (
 	"sync"
 	"syscall"
 	"time"
+
+	"github.com/lib/pq"
+	_ "github.com/lib/pq"
 
 	"github.com/sirupsen/logrus"
 
@@ -43,7 +46,6 @@ import (
 	healthpb "google.golang.org/grpc/health/grpc_health_v1"
 	"google.golang.org/grpc/reflection"
 	"google.golang.org/grpc/status"
-	"google.golang.org/protobuf/encoding/protojson"
 )
 
 var (
@@ -51,16 +53,68 @@ var (
 	catalog           []*pb.Product
 	resource          *sdkresource.Resource
 	initResourcesOnce sync.Once
+	db                *sql.DB
 )
 
 func init() {
 	log = logrus.New()
 	var err error
+
+	db, err = initDB()
+	if err != nil {
+		log.Fatalf("Error initializing database: %v", err)
+	}
+
+	if db == nil {
+		log.Fatal("Failed to initialize database: db is nil")
+	}
+
 	catalog, err = readProductFiles()
 	if err != nil {
 		log.Fatalf("Reading Product Files: %v", err)
 		os.Exit(1)
 	}
+
+}
+
+func initDB() (*sql.DB, error) {
+
+	connStr := "user=postgres password=postgres dbname=product_catalog host=postgres-db port=5432 sslmode=disable"
+	db, err := sql.Open("postgres", connStr)
+	if err != nil {
+		return nil, fmt.Errorf("could not connect to database: %v", err)
+	}
+
+	if err := db.Ping(); err != nil {
+		return nil, fmt.Errorf("could not ping database: %v", err)
+	}
+
+	log.Info("Successfully connected to the PostgreSQL database")
+
+	err = initDBSchema(db)
+	if err != nil {
+		return nil, fmt.Errorf("could not initialize database schema: %v", err)
+	}
+
+	return db, nil
+}
+
+func initDBSchema(db *sql.DB) error {
+
+	sqlFilePath := "/app/products/initdb.sql"
+
+	sqlBytes, err := os.ReadFile(sqlFilePath)
+	if err != nil {
+		return fmt.Errorf("could not read init.sql file: %v", err)
+	}
+
+	_, err = db.Exec(string(sqlBytes))
+	if err != nil {
+		return fmt.Errorf("could not execute initdb.sql: %v", err)
+	}
+
+	log.Info("Database schema initialized successfully")
+	return nil
 }
 
 func initResource() *sdkresource.Resource {
@@ -180,41 +234,50 @@ type productCatalog struct {
 
 func readProductFiles() ([]*pb.Product, error) {
 
-	// find all .json files in the products directory
-	entries, err := os.ReadDir("./products")
+	if db == nil {
+		return nil, fmt.Errorf("database connection is nil")
+	}
+
+	rows, err := db.Query("SELECT * FROM products")
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("failed to execute query: %v", err)
 	}
+	defer rows.Close()
 
-	jsonFiles := make([]fs.FileInfo, 0, len(entries))
-	for _, entry := range entries {
-		if strings.HasSuffix(entry.Name(), ".json") {
-			info, err := entry.Info()
-			if err != nil {
-				return nil, err
-			}
-			jsonFiles = append(jsonFiles, info)
-		}
-	}
-
-	// read the contents of each .json file and unmarshal into a ListProductsResponse
-	// then append the products to the catalog
 	var products []*pb.Product
-	for _, f := range jsonFiles {
-		jsonData, err := os.ReadFile("./products/" + f.Name())
-		if err != nil {
-			return nil, err
+	for rows.Next() {
+		var product pb.Product
+
+		var priceUsdCurrencyCode string
+		var priceUsdUnits, priceUsdNanos int
+		var categories []string
+
+		if err := rows.Scan(
+			&product.Id,
+			&product.Name,
+			&product.Description,
+			&product.Picture,
+			&priceUsdCurrencyCode,
+			&priceUsdUnits,
+			&priceUsdNanos,
+			pq.Array(&categories),
+		); err != nil {
+			return nil, fmt.Errorf("failed to scan row: %v", err)
 		}
 
-		var res pb.ListProductsResponse
-		if err := protojson.Unmarshal(jsonData, &res); err != nil {
-			return nil, err
+		product.PriceUsd = &pb.Money{
+			CurrencyCode: priceUsdCurrencyCode,
+			Units:        int64(priceUsdUnits),
+			Nanos:        int32(priceUsdNanos),
 		}
+		product.Categories = categories
 
-		products = append(products, res.Products...)
+		products = append(products, &product)
 	}
 
-	log.Infof("Loaded %d products", len(products))
+	if err := rows.Err(); err != nil {
+		return nil, fmt.Errorf("error occurred while iterating over rows: %v", err)
+	}
 
 	return products, nil
 }

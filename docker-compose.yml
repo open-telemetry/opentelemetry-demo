@@ -481,13 +481,35 @@ services:
       - OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE
       - OTEL_RESOURCE_ATTRIBUTES
       - OTEL_SERVICE_NAME=productcatalogservice
+      - DB_HOST=postgres-db 
+      - DB_PORT=5432  
+      - DB_NAME=product_catalog  
+      - DB_USER=postgres 
+      - DB_PASSWORD=postgres  
+    volumes:
+      - ./src/productcatalogservice/products:/app/products
     depends_on:
       otelcol:
         condition: service_started
       flagd:
         condition: service_started
+      postgres:  
+          condition: service_started
     logging: *logging
+    
+ 
 
+  postgres:
+    image: postgres:latest
+    container_name: postgres-db
+    environment:
+      POSTGRES_DB: product_catalog
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    ports:
+      - "5432:5432"
+    
+    
   # Quote service
   quoteservice:
     image: ${IMAGE_NAME}:${DEMO_VERSION}-quoteservice
