@@ -20,7 +20,7 @@ gen_proto_cpp() {
   echo "Generating Cpp protobuf files for $1"
   docker build --build-arg OPENTELEMETRY_CPP_VERSION=${OPENTELEMETRY_CPP_VERSION} -f "src/$1/genproto/Dockerfile" -t "$1-genproto" .
   docker run --rm -v $(pwd):/build "$1-genproto" \
-    cp -r "/$1/build/generated/" "/build/src/$1/build/generated/"
+    cp -r "/$1/build/generated" "/build/src/$1/build/"
 }
 
 gen_proto_python() {
