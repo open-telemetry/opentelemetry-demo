@@ -3,9 +3,8 @@ project(currency-service)
 
 find_package(Protobuf REQUIRED)
 find_package(gRPC CONFIG REQUIRED)
-find_package(opentelemetry-cpp CONFIG REQUIRED)
 
-set(PROTO_PATH "${CMAKE_CURRENT_SOURCE_DIR}/proto")
+set(PROTO_PATH "${CMAKE_CURRENT_SOURCE_DIR}/../proto")
 set(GENERATED_PROTOBUF_PATH "${CMAKE_BINARY_DIR}/generated/proto")
 set(GENERATED_HEALTH_PROTOBUF_PATH "${GENERATED_PROTOBUF_PATH}/grpc/health/v1")
 
@@ -39,7 +38,11 @@ add_custom_command(
            ${HEALTH_GRPC_PB_H_FILE}
 
     COMMAND
-      echo)
+      ${PROTOBUF_PROTOC_EXECUTABLE} ARGS "--experimental_allow_proto3_optional"
+      "--proto_path=${PROTO_PATH}" ${PROTOBUF_INCLUDE_FLAGS}
+      "--cpp_out=${GENERATED_PROTOBUF_PATH}"
+      "--grpc_out=generate_mock_code=true:${GENERATED_PROTOBUF_PATH}"
+      --plugin=protoc-gen-grpc="${gRPC_CPP_PLUGIN_EXECUTABLE}" ${DEMO_PROTO} ${HEALTH_PROTO})
 
 message(STATUS "gRPC_CPP_PLUGIN_EXECUTABLE=${gRPC_CPP_PLUGIN_EXECUTABLE}")
 
@@ -53,15 +56,4 @@ add_library(demo-proto ${DEMO_PB_H_FILE}
            ${HEALTH_GRPC_PB_H_FILE})
 
 target_link_libraries(demo-proto gRPC::grpc++ protobuf::libprotobuf)
-include_directories("${GENERATED_PROTOBUF_PATH}" "${OPENTELEMETRY_CPP_INCLUDE_DIRS}")
-
-add_executable(currency src/server.cpp)
-add_dependencies(currency demo-proto)
-target_link_libraries(
-    currency demo-proto protobuf::libprotobuf
-     ${OPENTELEMETRY_CPP_LIBRARIES} opentelemetry_trace opentelemetry_common 
-     opentelemetry_exporter_otlp_grpc opentelemetry_exporter_otlp_grpc_client 
-     opentelemetry_proto opentelemetry_otlp_recordable opentelemetry_resources 
-     opentelemetry_metrics opentelemetry_exporter_otlp_grpc_metrics gRPC::grpc++)
-
-install(TARGETS currency DESTINATION bin)
+include_directories("${GENERATED_PROTOBUF_PATH}" )
