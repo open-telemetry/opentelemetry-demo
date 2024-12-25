@@ -7,6 +7,8 @@ set -x # Print commands and their arguments as they are executed
 
 # This script is used to generate protobuf files for all services with Docker.
 
+. .env
+
 gen_proto_go() {
   echo "Generating Go protobuf files for $1"
   docker build -f "src/$1/genproto/Dockerfile" -t "$1-genproto" .
