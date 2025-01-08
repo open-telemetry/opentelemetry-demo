@@ -50,14 +50,6 @@ updates:
         dependency-type: "production"
     schedule:
       interval: "daily"
-  - package-ecosystem: "cargo"
-    directories:
-      - "/src/**/*"
-    groups:
-      cargo-production-dependencies:
-        dependency-type: "production"
-    schedule:
-      interval: "daily"
   - package-ecosystem: "composer"
     directories:
       - "/src/**/*"
