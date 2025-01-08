@@ -5,7 +5,7 @@ go 1.22.7
 toolchain go1.22.9
 
 require (
-	github.com/IBM/sarama v1.43.3
+	github.com/IBM/sarama v1.44.0
 	github.com/google/uuid v1.6.0
 	github.com/open-feature/go-sdk v1.14.0
 	github.com/open-feature/go-sdk-contrib/hooks/open-telemetry v0.3.4
@@ -22,7 +22,7 @@ require (
 	go.opentelemetry.io/otel/trace v1.33.0
 	google.golang.org/grpc v1.69.2
 	google.golang.org/grpc/cmd/protoc-gen-go-grpc v1.5.1
-	google.golang.org/protobuf v1.36.1
+	google.golang.org/protobuf v1.36.2
 )
 
 require (
@@ -64,7 +64,7 @@ require (
 	github.com/modern-go/reflect2 v1.0.2 // indirect
 	github.com/open-feature/flagd-schemas v0.2.9-0.20240708163558-2aa89b314322 // indirect
 	github.com/open-feature/flagd/core v0.10.4 // indirect
-	github.com/pierrec/lz4/v4 v4.1.21 // indirect
+	github.com/pierrec/lz4/v4 v4.1.22 // indirect
 	github.com/rcrowley/go-metrics v0.0.0-20201227073835-cf1acfcdf475 // indirect
 	github.com/twmb/murmur3 v1.1.8 // indirect
 	github.com/x448/float16 v0.8.4 // indirect
@@ -78,10 +78,10 @@ require (
 	go.opentelemetry.io/proto/otlp v1.4.0 // indirect
 	go.uber.org/multierr v1.11.0 // indirect
 	go.uber.org/zap v1.27.0 // indirect
-	golang.org/x/crypto v0.30.0 // indirect
+	golang.org/x/crypto v0.31.0 // indirect
 	golang.org/x/exp v0.0.0-20240531132922-fd00a4e0eefc // indirect
 	golang.org/x/mod v0.21.0 // indirect
-	golang.org/x/net v0.32.0 // indirect
+	golang.org/x/net v0.33.0 // indirect
 	golang.org/x/sys v0.28.0 // indirect
 	golang.org/x/text v0.21.0 // indirect
 	google.golang.org/genproto/googleapis/api v0.0.0-20241209162323-e6fa225c2576 // indirect
