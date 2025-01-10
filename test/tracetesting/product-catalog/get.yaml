@@ -10,7 +10,7 @@ spec:
     type: grpc
     grpc:
       protobufFile: ../../../pb/demo.proto
-      address: ${var:PRODUCT_CATALOG_SERVICE_ADDR}
+      address: ${var:PRODUCT_CATALOG_ADDR}
       method: oteldemo.ProductCatalogService.GetProduct
       request: |-
         {

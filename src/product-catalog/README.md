@@ -12,7 +12,7 @@ When this service is run the output should be similar to the following
 To build the service binary, run:
 
 ```sh
-go build -o /go/bin/productcatalogservice/
+go build -o /go/bin/product-catalog/
 ```
 
 ## Docker Build
@@ -20,7 +20,7 @@ go build -o /go/bin/productcatalogservice/
 From the root directory, run:
 
 ```sh
-docker compose build productcatalogservice
+docker compose build product-catalog
 ```
 
 ## Regenerate protos

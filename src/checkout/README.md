@@ -7,7 +7,7 @@ This service provides checkout services for the application.
 To build the service binary, run:
 
 ```sh
-go build -o /go/bin/checkoutservice/
+go build -o /go/bin/checkout/
 ```
 
 ## Docker Build
@@ -15,7 +15,7 @@ go build -o /go/bin/checkoutservice/
 From the root directory, run:
 
 ```sh
-docker compose build checkoutservice
+docker compose build checkout
 ```
 
 ## Regenerate protos

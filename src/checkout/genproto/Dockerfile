@@ -7,10 +7,10 @@ WORKDIR /build
 
 RUN apk add --no-cache protobuf-dev
 
-COPY ./src/productcatalogservice/go.mod ./
-COPY ./src/productcatalogservice/go.sum ./
-COPY ./src/productcatalogservice/tools.go ./
+COPY ./src/checkout/go.mod ./
+COPY ./src/checkout/go.sum ./
+COPY ./src/checkout/tools.go ./
 
 RUN go env -w GOMODCACHE=/root/.cache/go-build
 RUN --mount=type=cache,target=/root/.cache/go-build \
-    go list -e -f '{{range .Imports}}{{.}} {{end}}' tools.go | CGO_ENABLED=0 xargs go install -mod=readonly \
+    go list -e -f '{{range .Imports}}{{.}} {{end}}' tools.go | CGO_ENABLED=0 xargs go install -mod=readonly
