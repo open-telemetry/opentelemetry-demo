@@ -1,0 +1,10 @@
+# Copyright The OpenTelemetry Authors
+# SPDX-License-Identifier: Apache-2.0
+
+type: TestSuite
+spec:
+  id: checkout-all
+  name: 'Checkout Service'
+  description: Run all Checkout Service tests enabled in sequence
+  steps:
+  - ./place-order.yaml
