@@ -3,7 +3,7 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import com.google.protobuf.gradle.*
 
 plugins {
-    kotlin("jvm") version "1.9.20"
+    kotlin("jvm") version "2.1.0"
     application
     id("java")
     id("idea")
@@ -15,8 +15,8 @@ group = "io.opentelemetry"
 version = "1.0"
 
 
-val grpcVersion = "1.59.0"
-val protobufVersion = "3.25.0"
+val grpcVersion = "1.69.0"
+val protobufVersion = "4.29.3"
 
 
 repositories {
@@ -30,20 +30,20 @@ dependencies {
     implementation("com.google.protobuf:protobuf-java:${protobufVersion}")
     testImplementation(kotlin("test"))
     implementation(kotlin("script-runtime"))
-    implementation("org.apache.kafka:kafka-clients:3.6.0")
-    implementation("com.google.api.grpc:proto-google-common-protos:2.28.0")
+    implementation("org.apache.kafka:kafka-clients:3.9.0")
+    implementation("com.google.api.grpc:proto-google-common-protos:2.50.1")
     implementation("io.grpc:grpc-protobuf:${grpcVersion}")
     implementation("io.grpc:grpc-stub:${grpcVersion}")
     implementation("io.grpc:grpc-netty:${grpcVersion}")
     implementation("io.grpc:grpc-services:${grpcVersion}")
-    implementation("io.opentelemetry:opentelemetry-api:1.38.0")
-    implementation("io.opentelemetry:opentelemetry-sdk:1.38.0")
+    implementation("io.opentelemetry:opentelemetry-api:1.45.0")
+    implementation("io.opentelemetry:opentelemetry-sdk:1.45.0")
     implementation("io.opentelemetry:opentelemetry-extension-annotations:1.18.0")
-    implementation("org.apache.logging.log4j:log4j-core:2.21.1")
-    implementation("org.slf4j:slf4j-api:2.0.9")
+    implementation("org.apache.logging.log4j:log4j-core:2.24.3")
+    implementation("org.slf4j:slf4j-api:2.0.16")
     implementation("com.google.protobuf:protobuf-kotlin:${protobufVersion}")
-    implementation("dev.openfeature:sdk:1.7.4")
-    implementation("dev.openfeature.contrib.providers:flagd:0.7.0")
+    implementation("dev.openfeature:sdk:1.13.0")
+    implementation("dev.openfeature.contrib.providers:flagd:0.10.5")
 
     if (JavaVersion.current().isJava9Compatible) {
         // Workaround for @javax.annotation.Generated
