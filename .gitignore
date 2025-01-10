@@ -1,5 +1,3 @@
-
-
 *~
 *.iml
 *.ipr
@@ -58,3 +56,5 @@ test/tracetesting/tracetesting-vars.yaml
 
 # Android
 *.apk
+
+!src/currency/build
