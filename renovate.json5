@@ -75,8 +75,8 @@
       "groupName": "payment",
     },
     {
-      "matchFileNames": ["src/productcatalogservice/**"],
-      "groupName": "productcatalogservice",
+      "matchFileNames": ["src/product-catalog/**"],
+      "groupName": "product-catalog",
     },
     {
       "matchFileNames": ["src/prometheus/**"],

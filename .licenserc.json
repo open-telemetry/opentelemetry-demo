@@ -45,7 +45,7 @@
         "src/checkoutservice/genproto/",
         "src/featureflagservice/assets/vendor/",
         "src/featureflagservice/priv/",
-        "src/productcatalogservice/genproto/",
+        "src/product-catalog/genproto/",
         "src/react-native-app/ios/Pods/",
         "src/react-native-app/ios/build/",
         "src/react-native-app/android/app/build/",

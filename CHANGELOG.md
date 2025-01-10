@@ -64,6 +64,8 @@ the release.
   ([#1863](https://github.com/open-telemetry/opentelemetry-demo/pull/1863))
 * [recommendation] rename recommendationservice to recommendation
   ([#1865](https://github.com/open-telemetry/opentelemetry-demo/pull/1865))
+* [product-catalog] rename productcatalogservice to product-catalog
+  ([#1864](https://github.com/open-telemetry/opentelemetry-demo/pull/1864))
 
 ## 1.12.0
 

@@ -107,8 +107,8 @@ jobs:
             tag_suffix: payment
             context: ./
             setup-qemu: true
-          - file: ./src/productcatalogservice/Dockerfile
-            tag_suffix: productcatalogservice
+          - file: ./src/product-catalog/Dockerfile
+            tag_suffix: product-catalog
             context: ./
             setup-qemu: true
           - file: ./src/quote/Dockerfile

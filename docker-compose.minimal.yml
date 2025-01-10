@@ -103,7 +103,7 @@ services:
       - EMAIL_ADDR
       - FLAGD_HOST
       - PAYMENT_ADDR
-      - PRODUCT_CATALOG_SERVICE_ADDR
+      - PRODUCT_CATALOG_ADDR
       - SHIPPING_ADDR
       - OTEL_EXPORTER_OTLP_ENDPOINT
       - OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE
@@ -118,7 +118,7 @@ services:
         condition: service_started
       payment:
         condition: service_started
-      productcatalogservice:
+      product-catalog:
         condition: service_started
       shipping:
         condition: service_started
@@ -203,7 +203,7 @@ services:
       - CART_ADDR
       - CHECKOUT_SERVICE_ADDR
       - CURRENCY_ADDR
-      - PRODUCT_CATALOG_SERVICE_ADDR
+      - PRODUCT_CATALOG_ADDR
       - RECOMMENDATION_ADDR
       - SHIPPING_ADDR
       - OTEL_EXPORTER_OTLP_ENDPOINT
@@ -225,7 +225,7 @@ services:
         condition: service_started
       currency:
         condition: service_started
-      productcatalogservice:
+      product-catalog:
         condition: service_started
       quote:
         condition: service_started
@@ -379,28 +379,28 @@ services:
     logging: *logging
 
   # Product Catalog service
-  productcatalogservice:
-    image: ${IMAGE_NAME}:${DEMO_VERSION}-productcatalogservice
-    container_name: product-catalog-service
+  product-catalog:
+    image: ${IMAGE_NAME}:${DEMO_VERSION}-product-catalog
+    container_name: product-catalog
     build:
       context: ./
       dockerfile: ${PRODUCT_CATALOG_DOCKERFILE}
       cache_from:
-        - ${IMAGE_NAME}:${IMAGE_VERSION}-productcatalogservice
+        - ${IMAGE_NAME}:${IMAGE_VERSION}-product-catalog
     deploy:
       resources:
         limits:
           memory: 20M
     restart: unless-stopped
     ports:
-      - "${PRODUCT_CATALOG_SERVICE_PORT}"
+      - "${PRODUCT_CATALOG_PORT}"
     environment:
       - FLAGD_HOST
-      - PRODUCT_CATALOG_SERVICE_PORT
+      - PRODUCT_CATALOG_PORT
       - OTEL_EXPORTER_OTLP_ENDPOINT
       - OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE
       - OTEL_RESOURCE_ATTRIBUTES
-      - OTEL_SERVICE_NAME=productcatalogservice
+      - OTEL_SERVICE_NAME=product-catalog
     depends_on:
       otel-collector:
         condition: service_started
@@ -453,7 +453,7 @@ services:
     environment:
       - FLAGD_HOST
       - RECOMMENDATION_PORT
-      - PRODUCT_CATALOG_SERVICE_ADDR
+      - PRODUCT_CATALOG_ADDR
       - OTEL_PYTHON_LOG_CORRELATION=true
       - OTEL_EXPORTER_OTLP_ENDPOINT
       - OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE
@@ -461,7 +461,7 @@ services:
       - OTEL_SERVICE_NAME=recommendation
       - PROTOCOL_BUFFERS_PYTHON_IMPLEMENTATION=python
     depends_on:
-      productcatalogservice:
+      product-catalog:
         condition: service_started
       otel-collector:
         condition: service_started
