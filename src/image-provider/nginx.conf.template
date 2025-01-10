@@ -1,0 +1,32 @@
+load_module modules/ngx_otel_module.so;
+
+events {
+    worker_connections 1024;
+}
+
+http {
+    otel_exporter {
+        endpoint ${OTEL_COLLECTOR_HOST}:${OTEL_COLLECTOR_PORT_GRPC};
+    }
+    otel_trace on;
+    otel_trace_context propagate;
+    otel_service_name ${OTEL_SERVICE_NAME};
+    otel_span_name image-provider;
+
+
+    include mime.types;
+    sendfile on;
+    server {
+        listen ${IMAGE_PROVIDER_PORT};
+        listen [::]:${IMAGE_PROVIDER_PORT};
+
+        resolver 127.0.0.11;
+        autoindex off;
+
+        server_name _;
+        server_tokens off;
+
+        root /static;
+        gzip_static on;
+    }
+}

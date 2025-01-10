@@ -1,0 +1,25 @@
+# Copyright The OpenTelemetry Authors
+# SPDX-License-Identifier: Apache-2.0
+
+type: Test
+spec:
+  id: recommendation-list
+  name: 'Recommendation: List products'
+  description: List all products recommended to an user
+  trigger:
+    type: grpc
+    grpc:
+      protobufFile: ../../../pb/demo.proto
+      address: ${var:RECOMMENDATION_ADDR}
+      method: oteldemo.RecommendationService.ListRecommendations
+      request: |-
+        {
+          "userId": "1234",
+          "productIds": [ "OLJCESPC7Z", "66VCHSJNUP", "1YMWWN1N4O", "L9ECAV7KIM", "2ZYFJ3GM2N" ]
+        }
+  specs:
+  - name: It called ListRecommendations correctly and got 5 products
+    selector: span[tracetest.span.type="rpc" name="/oteldemo.RecommendationService/ListRecommendations" rpc.system="grpc" rpc.method="ListRecommendations" rpc.service="oteldemo.RecommendationService"]
+    assertions:
+    - attr:rpc.grpc.status_code  =  0
+    - attr:app.products_recommended.count = 5

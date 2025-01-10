@@ -58,6 +58,7 @@ if (typeof window !== 'undefined') {
     }
   })
 
+  FrontendTracer();
   if (window.location) {
     const session = SessionGateway.getSession();
 

@@ -73,18 +73,17 @@ cd opentelemetry-demo/
 - Navigate to the Java Ad Service folder to install and update Gradle:
 
 ```shell
-cd .\src\adservice\
+cd .\src\ad\
 .\gradlew installDist
 .\gradlew wrapper --gradle-version 7.4.2
 ```
 
 ### Run Docker Compose
 
-- Start the demo (It can take ~20min the first time the command is executed as
-all the images will be build):
+- Start the demo:
 
 ```shell
-docker compose up -d
+make start
 ```
 
 ### Verify the Webstore & the Telemetry
@@ -103,6 +102,11 @@ The Demo team is committed to keeping the demo up to date. That means the
 documentation as well as the code. When making changes to any service or feature
 remember to find the related docs and update those as well. Most (but not all)
 documentation can be found on the OTel website under [Demo docs][docs].
+
+### Running the React Native example
+
+If you are interested in running the React Native example app in this repo please
+review [these instructions](src/react-native-app/README.md).
 
 ## Create Your First Pull Request
 
@@ -196,6 +200,47 @@ on each other), the owner should try to get people aligned by:
 - If none of the above worked and the PR has been stuck for more than 2 weeks,
   the owner should bring it to the OpenTelemetry Community Demo SIG
   [meeting](README.md#contributing).
+
+## Multi-platform Builds
+
+Creating multi-platform builds requires docker buildx to be installed. This
+is part of Docker Desktop for macOS, or can be installed using
+`apt install docker-buildx` on Ubuntu.
+
+To build and load the multi-platform images locally you will need to configure
+docker to use `containerd`. This can be done in Docker Desktop settings on MacOS
+or Windows. Please follow
+[these instructions](https://docs.docker.com/engine/storage/containerd/#enable-containerd-image-store-on-docker-engine)
+to configure Docker Engine on Linux/Ubuntu.
+
+You will need a multi-platform capable builder with a limiter set on parallelism
+to avoid errors while building the images. It is recommended to limit the
+parallelism to 4. This can be done by specifying a configuration file when
+creating the builder. The `buildkitd.toml` file in this repository can be used
+as the builder configuration file.
+
+To create a multi-platform builder with a parallelism limit of 4, use the
+following command:
+
+```shell
+make create-multiplatform-builder
+```
+
+A builder will be created and set as the active builder. You can check the
+builder status with `docker buildx inspect`. To build multi-platform images for
+linux/amd64 and linux/arm64, use the following command:
+
+```shell
+make build-multiplatform
+```
+
+To build and push multi-platform images to a registry, ensure to set
+`IMAGE_NAME` to the name of the registry and image repository to use in the
+`.env.override` file and run:
+
+```shell
+make build-multiplatform-and-push
+```
 
 ## Making a new release
 
