@@ -70,7 +70,7 @@
     "prettier": "^3.4.2",
     "react-test-renderer": "19.0.0",
     "ts-proto": "1.181.1",
-    "typescript": "~5.7.2"
+    "typescript": "~5.7.3"
   },
   "private": true
 }

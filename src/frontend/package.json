@@ -61,6 +61,6 @@
     "eslint-plugin-react": "7.37.3",
     "eslint-plugin-react-hooks": "5.1.0",
     "openapi-typescript": "7.5.2",
-    "typescript": "5.7.2"
+    "typescript": "5.7.3"
   }
 }
