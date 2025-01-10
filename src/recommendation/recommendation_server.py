@@ -153,7 +153,7 @@ if __name__ == "__main__":
     logger = logging.getLogger('main')
     logger.addHandler(handler)
 
-    catalog_addr = must_map_env('PRODUCT_CATALOG_SERVICE_ADDR')
+    catalog_addr = must_map_env('PRODUCT_CATALOG_ADDR')
     pc_channel = grpc.insecure_channel(catalog_addr)
     product_catalog_stub = demo_pb2_grpc.ProductCatalogServiceStub(pc_channel)
 

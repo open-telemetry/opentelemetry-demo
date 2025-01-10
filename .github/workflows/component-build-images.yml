@@ -107,8 +107,8 @@ jobs:
             tag_suffix: payment
             context: ./
             setup-qemu: true
-          - file: ./src/productcatalogservice/Dockerfile
-            tag_suffix: productcatalogservice
+          - file: ./src/product-catalog/Dockerfile
+            tag_suffix: product-catalog
             context: ./
             setup-qemu: true
           - file: ./src/quote/Dockerfile
@@ -189,7 +189,7 @@ jobs:
             max-parallelism = 2
       - name: Matrix Build and push demo images
         if: steps.check_changes.outputs.skip == 'false'
-        uses: docker/build-push-action@v6.10.0
+        uses: docker/build-push-action@v6.11.0
         with:
           context: ${{ matrix.file_tag.context }}
           file: ${{ matrix.file_tag.file }}
