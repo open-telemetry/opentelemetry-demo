@@ -3,7 +3,7 @@
 
 type: TestSuite
 spec:
-  id: checkout-service-all
+  id: checkout-all
   name: 'Checkout Service'
   description: Run all Checkout Service tests enabled in sequence
   steps:

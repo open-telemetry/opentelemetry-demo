@@ -15,7 +15,7 @@ dotenvExpand.expand(myEnv);
 const {
   AD_ADDR = '',
   CART_ADDR = '',
-  CHECKOUT_SERVICE_ADDR = '',
+  CHECKOUT_ADDR = '',
   CURRENCY_ADDR = '',
   PRODUCT_CATALOG_ADDR = '',
   RECOMMENDATION_ADDR = '',
@@ -47,7 +47,7 @@ const nextConfig = {
   env: {
     AD_ADDR,
     CART_ADDR,
-    CHECKOUT_SERVICE_ADDR,
+    CHECKOUT_ADDR,
     CURRENCY_ADDR,
     PRODUCT_CATALOG_ADDR,
     RECOMMENDATION_ADDR,

@@ -66,6 +66,8 @@ the release.
   ([#1865](https://github.com/open-telemetry/opentelemetry-demo/pull/1865))
 * [product-catalog] rename productcatalogservice to product-catalog
   ([#1864](https://github.com/open-telemetry/opentelemetry-demo/pull/1864))
+* [checkout] rename checkoutservice to checkout
+  ([#1867](https://github.com/open-telemetry/opentelemetry-demo/pull/1867))
 
 ## 1.12.0
 

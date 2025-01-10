@@ -8,7 +8,7 @@
 set -e
 
 # Availalble services to test
-ALL_SERVICES=("ad" "cart" "currency" "checkoutservice" "frontend" "email" "payment" "product-catalog" "recommendation" "shipping")
+ALL_SERVICES=("ad" "cart" "currency" "checkout" "frontend" "email" "payment" "product-catalog" "recommendation" "shipping")
 
 ## Script variables
 # Will contain the list of services to test
@@ -38,8 +38,8 @@ spec:
       value: $AD_ADDR
     - key: CART_ADDR
       value: $CART_ADDR
-    - key: CHECKOUT_SERVICE_ADDR
-      value: $CHECKOUT_SERVICE_ADDR
+    - key: CHECKOUT_ADDR
+      value: $CHECKOUT_ADDR
     - key: CURRENCY_ADDR
       value: $CURRENCY_ADDR
     - key: EMAIL_ADDR

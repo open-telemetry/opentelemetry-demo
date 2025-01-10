@@ -27,8 +27,8 @@
       "groupName": "cart",
     },
     {
-      "matchFileNames": ["src/checkoutservice/**"],
-      "groupName": "checkoutservice",
+      "matchFileNames": ["src/checkout/**"],
+      "groupName": "checkout",
     },
     {
       "matchFileNames": ["src/currency/**"],

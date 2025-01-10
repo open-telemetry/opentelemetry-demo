@@ -34,7 +34,7 @@ if [ -z "$1" ]; then
   #gen_proto_dotnet accounting
   #gen_proto_java ad
   #gen_proto_dotnet cart
-  gen_proto_go checkoutservice
+  gen_proto_go checkout
   gen_proto_cpp currency
   #gen_proto_ruby email
   #gen_proto_ts frontend

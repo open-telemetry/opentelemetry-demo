@@ -42,7 +42,7 @@
         "src/cart/src/obj/",
         "src/cart/tests/obj/",
         "src/currency/build/",
-        "src/checkoutservice/genproto/",
+        "src/checkout/genproto/",
         "src/featureflagservice/assets/vendor/",
         "src/featureflagservice/priv/",
         "src/product-catalog/genproto/",
