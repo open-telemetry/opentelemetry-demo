@@ -41,6 +41,7 @@
         "/src/accounting/src/protos/",
         "src/cart/src/obj/",
         "src/cart/tests/obj/",
+        "src/currency/build/",
         "src/checkoutservice/genproto/",
         "src/featureflagservice/assets/vendor/",
         "src/featureflagservice/priv/",
