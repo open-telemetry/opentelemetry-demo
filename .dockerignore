@@ -14,34 +14,11 @@ src/*/*/Dockerfile
 ###################################
 
 ###################################
-# featureflagservice
-# Common development/test artifacts
-./src/featureflagservice/cover/
-./src/featureflagservice/doc/
-./src/featureflagservice/test/
-./src/featureflagservice/tmp/
-./src/featureflagservice/.elixir_ls
-
-###################################
 # frontend
 ./src/frontend/node_modules/
 
 ###################################
-# shippingservice
+# shipping
 ./src/shipping/target
-###################################
-
-# Mix artifacts
-./src/featureflagservice/_build/
-./src/featureflagservice/deps/
-./src/featureflagservice/*.ez
-
-# Generated on crash by the VM
-./src/featureflagservice/erl_crash.dump
-
-# Static artifacts - These should be fetched and built inside the Docker image
-./src/featureflagservice/assets/node_modules/
-./src/featureflagservice/priv/static/assets/
-./src/featureflagservice/priv/static/cache_manifest.json
 ###################################
 

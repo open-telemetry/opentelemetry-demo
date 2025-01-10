@@ -32,7 +32,7 @@ services:
           memory: 120M
     restart: unless-stopped
     environment:
-      - KAFKA_SERVICE_ADDR
+      - KAFKA_ADDR
       - OTEL_EXPORTER_OTLP_ENDPOINT=http://${OTEL_COLLECTOR_HOST}:${OTEL_COLLECTOR_PORT_HTTP}
       - OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE
       - OTEL_RESOURCE_ATTRIBUTES
@@ -138,7 +138,7 @@ services:
       - PAYMENT_ADDR
       - PRODUCT_CATALOG_ADDR
       - SHIPPING_ADDR
-      - KAFKA_SERVICE_ADDR
+      - KAFKA_ADDR
       - OTEL_EXPORTER_OTLP_ENDPOINT
       - OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE
       - OTEL_RESOURCE_ATTRIBUTES
@@ -238,7 +238,7 @@ services:
     environment:
       - FLAGD_HOST
       - FLAGD_PORT
-      - KAFKA_SERVICE_ADDR
+      - KAFKA_ADDR
       - OTEL_EXPORTER_OTLP_ENDPOINT=http://${OTEL_COLLECTOR_HOST}:${OTEL_COLLECTOR_PORT_HTTP}
       - OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE
       - OTEL_INSTRUMENTATION_KAFKA_EXPERIMENTAL_SPAN_ATTRIBUTES=true
@@ -333,10 +333,10 @@ services:
       - FRONTEND_HOST
       - LOCUST_WEB_HOST
       - LOCUST_WEB_PORT
-      - GRAFANA_SERVICE_PORT
-      - GRAFANA_SERVICE_HOST
-      - JAEGER_SERVICE_PORT
-      - JAEGER_SERVICE_HOST
+      - GRAFANA_PORT
+      - GRAFANA_HOST
+      - JAEGER_PORT
+      - JAEGER_HOST
       - OTEL_COLLECTOR_HOST
       - IMAGE_PROVIDER_HOST
       - IMAGE_PROVIDER_PORT
@@ -641,7 +641,7 @@ services:
     container_name: kafka
     build:
       context: ./
-      dockerfile: ${KAFKA_SERVICE_DOCKERFILE}
+      dockerfile: ${KAFKA_DOCKERFILE}
       cache_from:
         - ${IMAGE_NAME}:${IMAGE_VERSION}-kafka
       args:
@@ -700,7 +700,7 @@ services:
           memory: 1200M
     restart: unless-stopped
     ports:
-      - "${JAEGER_SERVICE_PORT}"         # Jaeger UI
+      - "${JAEGER_PORT}"         # Jaeger UI
       - "${OTEL_COLLECTOR_PORT_GRPC}"
     environment:
       - METRICS_STORAGE_TYPE=prometheus
@@ -721,7 +721,7 @@ services:
       - ./src/grafana/grafana.ini:/etc/grafana/grafana.ini
       - ./src/grafana/provisioning/:/etc/grafana/provisioning/
     ports:
-      - "${GRAFANA_SERVICE_PORT}"
+      - "${GRAFANA_PORT}"
     logging: *logging
 
   # OpenTelemetry Collector
@@ -778,7 +778,7 @@ services:
           memory: 300M
     restart: unless-stopped
     ports:
-      - "${PROMETHEUS_SERVICE_PORT}:${PROMETHEUS_SERVICE_PORT}"
+      - "${PROMETHEUS_PORT}:${PROMETHEUS_PORT}"
     logging: *logging
 
   # OpenSearch
