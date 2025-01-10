@@ -36,7 +36,7 @@ import (
 	otelhooks "github.com/open-feature/go-sdk-contrib/hooks/open-telemetry/pkg"
 	flagd "github.com/open-feature/go-sdk-contrib/providers/flagd/pkg"
 	"github.com/open-feature/go-sdk/openfeature"
-	pb "github.com/opentelemetry/opentelemetry-demo/src/productcatalogservice/genproto/oteldemo"
+	pb "github.com/opentelemetry/opentelemetry-demo/src/product-catalog/genproto/oteldemo"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/credentials/insecure"
@@ -141,9 +141,9 @@ func main() {
 
 	svc := &productCatalog{}
 	var port string
-	mustMapEnv(&port, "PRODUCT_CATALOG_SERVICE_PORT")
+	mustMapEnv(&port, "PRODUCT_CATALOG_PORT")
 
-	log.Infof("ProductCatalogService gRPC server started on port: %s", port)
+	log.Infof("Product Catalog gRPC server started on port: %s", port)
 
 	ln, err := net.Listen("tcp", fmt.Sprintf(":%s", port))
 	if err != nil {
@@ -171,7 +171,7 @@ func main() {
 	<-ctx.Done()
 
 	srv.GracefulStop()
-	log.Println("ProductCatalogService gRPC server stopped")
+	log.Println("Product Catalog gRPC server stopped")
 }
 
 type productCatalog struct {
@@ -252,7 +252,7 @@ func (p *productCatalog) GetProduct(ctx context.Context, req *pb.GetProductReque
 
 	// GetProduct will fail on a specific product when feature flag is enabled
 	if p.checkProductFailure(ctx, req.Id) {
-		msg := fmt.Sprintf("Error: ProductCatalogService Fail Feature Flag Enabled")
+		msg := fmt.Sprintf("Error: Product Catalog Fail Feature Flag Enabled")
 		span.SetStatus(otelcodes.Error, msg)
 		span.AddEvent(msg)
 		return nil, status.Errorf(codes.Internal, msg)
