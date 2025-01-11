@@ -83,34 +83,34 @@ services:
     logging: *logging
 
   # Checkout service
-  checkoutservice:
-    image: ${IMAGE_NAME}:${DEMO_VERSION}-checkoutservice
-    container_name: checkout-service
+  checkout:
+    image: ${IMAGE_NAME}:${DEMO_VERSION}-checkout
+    container_name: checkout
     build:
       context: ./
-      dockerfile: ${CHECKOUT_SERVICE_DOCKERFILE}
+      dockerfile: ${CHECKOUT_DOCKERFILE}
       cache_from:
-        - ${IMAGE_NAME}:${IMAGE_VERSION}-checkoutservice
+        - ${IMAGE_NAME}:${IMAGE_VERSION}-checkout
     deploy:
       resources:
         limits:
           memory: 20M
     restart: unless-stopped
     ports:
-      - "${CHECKOUT_SERVICE_PORT}"
+      - "${CHECKOUT_PORT}"
     environment:
-      - CHECKOUT_SERVICE_PORT
+      - CHECKOUT_PORT
       - CART_ADDR
       - CURRENCY_ADDR
       - EMAIL_ADDR
       - FLAGD_HOST
       - PAYMENT_ADDR
-      - PRODUCT_CATALOG_SERVICE_ADDR
+      - PRODUCT_CATALOG_ADDR
       - SHIPPING_ADDR
       - OTEL_EXPORTER_OTLP_ENDPOINT
       - OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE
       - OTEL_RESOURCE_ATTRIBUTES
-      - OTEL_SERVICE_NAME=checkoutservice
+      - OTEL_SERVICE_NAME=checkout
     depends_on:
       cart:
         condition: service_started
@@ -120,7 +120,7 @@ services:
         condition: service_started
       payment:
         condition: service_started
-      productcatalogservice:
+      product-catalog:
         condition: service_started
       shipping:
         condition: service_started
@@ -203,9 +203,9 @@ services:
       - FRONTEND_ADDR
       - AD_ADDR
       - CART_ADDR
-      - CHECKOUT_SERVICE_ADDR
+      - CHECKOUT_ADDR
       - CURRENCY_ADDR
-      - PRODUCT_CATALOG_SERVICE_ADDR
+      - PRODUCT_CATALOG_ADDR
       - RECOMMENDATION_ADDR
       - SHIPPING_ADDR
       - OTEL_EXPORTER_OTLP_ENDPOINT
@@ -223,11 +223,11 @@ services:
         condition: service_started
       cart:
         condition: service_started
-      checkoutservice:
+      checkout:
         condition: service_started
       currency:
         condition: service_started
-      productcatalogservice:
+      product-catalog:
         condition: service_started
       quote:
         condition: service_started
@@ -381,28 +381,28 @@ services:
     logging: *logging
 
   # Product Catalog service
-  productcatalogservice:
-    image: ${IMAGE_NAME}:${DEMO_VERSION}-productcatalogservice
-    container_name: product-catalog-service
+  product-catalog:
+    image: ${IMAGE_NAME}:${DEMO_VERSION}-product-catalog
+    container_name: product-catalog
     build:
       context: ./
       dockerfile: ${PRODUCT_CATALOG_DOCKERFILE}
       cache_from:
-        - ${IMAGE_NAME}:${IMAGE_VERSION}-productcatalogservice
+        - ${IMAGE_NAME}:${IMAGE_VERSION}-product-catalog
     deploy:
       resources:
         limits:
           memory: 20M
     restart: unless-stopped
     ports:
-      - "${PRODUCT_CATALOG_SERVICE_PORT}"
+      - "${PRODUCT_CATALOG_PORT}"
     environment:
       - FLAGD_HOST
-      - PRODUCT_CATALOG_SERVICE_PORT
+      - PRODUCT_CATALOG_PORT
       - OTEL_EXPORTER_OTLP_ENDPOINT
       - OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE
       - OTEL_RESOURCE_ATTRIBUTES
-      - OTEL_SERVICE_NAME=productcatalogservice
+      - OTEL_SERVICE_NAME=product-catalog
     depends_on:
       otel-collector:
         condition: service_started
@@ -455,7 +455,7 @@ services:
     environment:
       - FLAGD_HOST
       - RECOMMENDATION_PORT
-      - PRODUCT_CATALOG_SERVICE_ADDR
+      - PRODUCT_CATALOG_ADDR
       - OTEL_PYTHON_LOG_CORRELATION=true
       - OTEL_EXPORTER_OTLP_ENDPOINT
       - OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE
@@ -463,7 +463,7 @@ services:
       - OTEL_SERVICE_NAME=recommendation
       - PROTOCOL_BUFFERS_PYTHON_IMPLEMENTATION=python
     depends_on:
-      productcatalogservice:
+      product-catalog:
         condition: service_started
       otel-collector:
         condition: service_started
