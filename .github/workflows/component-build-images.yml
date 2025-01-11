@@ -83,8 +83,8 @@ jobs:
             tag_suffix: frontend
             context: ./
             setup-qemu: true
-          - file: ./src/frontendproxy/Dockerfile
-            tag_suffix: frontendproxy
+          - file: ./src/frontend-proxy/Dockerfile
+            tag_suffix: frontend-proxy
             context: ./
             setup-qemu: true
           - file: ./src/frontend/Dockerfile.cypress
