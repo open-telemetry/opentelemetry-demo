@@ -45,7 +45,7 @@ services:
       - OTEL_LOGS_EXPORTER=otlp
       - OTEL_SERVICE_NAME=ad
       # Workaround on OSX for https://bugs.openjdk.org/browse/JDK-8345296
-      - _JAVA_OPTIONS=-XX:UseSVE=0
+      - _JAVA_OPTIONS
     depends_on:
       otel-collector:
         condition: service_started
@@ -657,7 +657,7 @@ services:
       - DISABLE_INSTALL_DEMO_CONFIG=true
       - DISABLE_SECURITY_PLUGIN=true
       # Workaround on OSX for https://bugs.openjdk.org/browse/JDK-8345296
-      - _JAVA_OPTIONS=-XX:UseSVE=0
+      - _JAVA_OPTIONS
     ulimits:
       memlock:
         soft: -1
