@@ -9,7 +9,6 @@
         "monolog/monolog": "3.5.0",
         "open-telemetry/api": "1.0.3",
         "open-telemetry/sdk": "1.0.8",
-        "open-telemetry/sdk-configuration": "0.0.6",
         "open-telemetry/exporter-otlp": "1.0.4",
         "open-telemetry/opentelemetry-auto-slim": "1.0.6",
         "open-telemetry/detector-container": "1.0.0",
@@ -29,8 +28,7 @@
     },
     "config": {
         "allow-plugins": {
-            "php-http/discovery": false,
-            "tbachert/spi": false
+            "php-http/discovery": false
         }
     }
 }
