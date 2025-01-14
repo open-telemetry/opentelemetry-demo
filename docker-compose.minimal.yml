@@ -242,8 +242,8 @@ services:
     logging: *logging
 
   # Frontend Proxy (Envoy)
-  frontendproxy:
-    image: ${IMAGE_NAME}:${DEMO_VERSION}-frontendproxy
+  frontend-proxy:
+    image: ${IMAGE_NAME}:${DEMO_VERSION}-frontend-proxy
     container_name: frontend-proxy
     build:
       context: ./

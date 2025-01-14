@@ -70,6 +70,8 @@ the release.
   ([#1867](https://github.com/open-telemetry/opentelemetry-demo/pull/1867))
 * [chore] remove `SERVICE_` from environment variables
   ([#1897](https://github.com/open-telemetry/opentelemetry-demo/pull/1897))
+* [frontend-proxy] rename frontendproxy to frontend-proxy
+  ([#1910](https://github.com/open-telemetry/opentelemetry-demo/pull/1910))
 
 ## 1.12.0
 

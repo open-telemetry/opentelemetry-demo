@@ -51,8 +51,8 @@
       "groupName": "frontend",
     },
     {
-      "matchFileNames": ["src/frontendproxy/**"],
-      "groupName": "frontendproxy",
+      "matchFileNames": ["src/frontend-proxy/**"],
+      "groupName": "frontend-proxy",
     },
     {
       "matchFileNames": ["src/grafana/**"],
