@@ -54,8 +54,8 @@ spec:
       value: $RECOMMENDATION_ADDR
     - key: SHIPPING_ADDR
       value: $SHIPPING_ADDR
-    - key: KAFKA_SERVICE_ADDR
-      value: $KAFKA_SERVICE_ADDR
+    - key: KAFKA_ADDR
+      value: $KAFKA_ADDR
 EOF
 }
 

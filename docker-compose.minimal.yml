@@ -54,7 +54,7 @@ services:
   # Cart service
   cart:
     image: ${IMAGE_NAME}:${DEMO_VERSION}-cart
-    container_name: cart-service
+    container_name: cart
     build:
       context: ./
       dockerfile: ${CART_DOCKERFILE}
@@ -131,7 +131,7 @@ services:
   # Currency service
   currency:
     image: ${IMAGE_NAME}:${DEMO_VERSION}-currency
-    container_name: currency-service
+    container_name: currency
     build:
       context: ./
       dockerfile: ${CURRENCY_DOCKERFILE}
@@ -159,7 +159,7 @@ services:
   # Email service
   email:
     image: ${IMAGE_NAME}:${DEMO_VERSION}-email
-    container_name: email-service
+    container_name: email
     build:
       context: ./src/email
       cache_from:
@@ -355,7 +355,7 @@ services:
   # Payment service
   payment:
     image: ${IMAGE_NAME}:${DEMO_VERSION}-payment
-    container_name: payment-service
+    container_name: payment
     build:
       context: ./
       dockerfile: ${PAYMENT_DOCKERFILE}
@@ -411,7 +411,7 @@ services:
   # Quote service
   quote:
     image: ${IMAGE_NAME}:${DEMO_VERSION}-quote
-    container_name: quote-service
+    container_name: quote
     build:
       context: ./
       dockerfile: ${QUOTE_DOCKERFILE}
@@ -439,7 +439,7 @@ services:
   # Recommendation service
   recommendation:
     image: ${IMAGE_NAME}:${DEMO_VERSION}-recommendation
-    container_name: recommendation-service
+    container_name: recommendation
     build:
       context: ./
       dockerfile: ${RECOMMENDATION_DOCKERFILE}
