@@ -12,4 +12,4 @@ MD013:
 # MD033/no-inline-html
 MD033:
   # Allowed elements
-  allowed_elements: [h1,a,picture,source,img,br]
+  allowed_elements: [h1, a, picture, source, img, br]
