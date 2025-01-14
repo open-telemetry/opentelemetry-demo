@@ -39,9 +39,9 @@ fun main() {
     props[KEY_DESERIALIZER_CLASS_CONFIG] = StringDeserializer::class.java.name
     props[VALUE_DESERIALIZER_CLASS_CONFIG] = ByteArrayDeserializer::class.java.name
     props[GROUP_ID_CONFIG] = groupID
-    val bootstrapServers = System.getenv("KAFKA_SERVICE_ADDR")
+    val bootstrapServers = System.getenv("KAFKA_ADDR")
     if (bootstrapServers == null) {
-        println("KAFKA_SERVICE_ADDR is not supplied")
+        println("KAFKA_ADDR is not supplied")
         exitProcess(1)
     }
     props[BOOTSTRAP_SERVERS_CONFIG] = bootstrapServers

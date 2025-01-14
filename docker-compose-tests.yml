@@ -47,7 +47,7 @@ services:
       - PRODUCT_CATALOG_ADDR
       - RECOMMENDATION_ADDR
       - SHIPPING_ADDR
-      - KAFKA_SERVICE_ADDR
+      - KAFKA_ADDR
     extra_hosts:
       - "host.docker.internal:host-gateway"
     volumes:

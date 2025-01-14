@@ -261,10 +261,10 @@ services:
       - FRONTEND_HOST
       - LOCUST_WEB_HOST
       - LOCUST_WEB_PORT
-      - GRAFANA_SERVICE_PORT
-      - GRAFANA_SERVICE_HOST
-      - JAEGER_SERVICE_PORT
-      - JAEGER_SERVICE_HOST
+      - GRAFANA_PORT
+      - GRAFANA_HOST
+      - JAEGER_PORT
+      - JAEGER_HOST
       - OTEL_COLLECTOR_HOST
       - IMAGE_PROVIDER_HOST
       - IMAGE_PROVIDER_PORT
@@ -558,7 +558,7 @@ services:
           memory: 400M
     restart: unless-stopped
     ports:
-      - "${JAEGER_SERVICE_PORT}"         # Jaeger UI
+      - "${JAEGER_PORT}"         # Jaeger UI
       - "${OTEL_COLLECTOR_PORT_GRPC}"
     environment:
       - METRICS_STORAGE_TYPE=prometheus
@@ -579,7 +579,7 @@ services:
       - ./src/grafana/grafana.ini:/etc/grafana/grafana.ini
       - ./src/grafana/provisioning/:/etc/grafana/provisioning/
     ports:
-      - "${GRAFANA_SERVICE_PORT}"
+      - "${GRAFANA_PORT}"
     logging: *logging
 
   # OpenTelemetry Collector
@@ -636,7 +636,7 @@ services:
           memory: 300M
     restart: unless-stopped
     ports:
-      - "${PROMETHEUS_SERVICE_PORT}:${PROMETHEUS_SERVICE_PORT}"
+      - "${PROMETHEUS_PORT}:${PROMETHEUS_PORT}"
     logging: *logging
 
   # OpenSearch

@@ -197,7 +197,7 @@ func main() {
 	svc.paymentSvcClient = pb.NewPaymentServiceClient(c)
 	defer c.Close()
 
-	svc.kafkaBrokerSvcAddr = os.Getenv("KAFKA_SERVICE_ADDR")
+	svc.kafkaBrokerSvcAddr = os.Getenv("KAFKA_ADDR")
 
 	if svc.kafkaBrokerSvcAddr != "" {
 		svc.KafkaProducerClient, err = kafka.CreateKafkaProducer([]string{svc.kafkaBrokerSvcAddr}, log)
