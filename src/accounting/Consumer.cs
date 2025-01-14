@@ -19,8 +19,8 @@ internal class Consumer : IDisposable
     {
         _logger = logger;
 
-        var servers = Environment.GetEnvironmentVariable("KAFKA_SERVICE_ADDR")
-            ?? throw new ArgumentNullException("KAFKA_SERVICE_ADDR");
+        var servers = Environment.GetEnvironmentVariable("KAFKA_ADDR")
+            ?? throw new ArgumentNullException("KAFKA_ADDR");
 
         _consumer = BuildConsumer(servers);
         _consumer.Subscribe(TopicName);

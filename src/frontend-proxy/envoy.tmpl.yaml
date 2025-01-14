@@ -258,8 +258,8 @@ static_resources:
               - endpoint:
                   address:
                     socket_address:
-                      address: ${GRAFANA_SERVICE_HOST}
-                      port_value: ${GRAFANA_SERVICE_PORT}
+                      address: ${GRAFANA_HOST}
+                      port_value: ${GRAFANA_PORT}
     - name: jaeger
       type: STRICT_DNS
       lb_policy: ROUND_ROBIN
@@ -270,8 +270,8 @@ static_resources:
               - endpoint:
                   address:
                     socket_address:
-                      address: ${JAEGER_SERVICE_HOST}
-                      port_value: ${JAEGER_SERVICE_PORT}
+                      address: ${JAEGER_HOST}
+                      port_value: ${JAEGER_PORT}
 admin:
   address:
     socket_address:
