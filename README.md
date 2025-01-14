@@ -9,14 +9,15 @@
   </a>
 </div>
 
-A fork of the [Open Telemetry demo](https://github.com/open-telemetry/opentelemetry-demo) 
+A fork of the
+[Open Telemetry demo](https://github.com/open-telemetry/opentelemetry-demo)
 to demonstrate the range of instrumentation features available to BugSnag users.
 
 ## Setup instructions
 
 To send data from the Demo services to your BugSnag project, put your BugSnag
 API key into `src/otelcollector/otelcol-config-extras.yml` and `.env` in place
-of the `<your-api-key>` placeholder and follow the [Quick start](#quick-start) 
+of the `<your-api-key>` placeholder and follow the [Quick start](#quick-start)
 guide below.
 
 ## Features
