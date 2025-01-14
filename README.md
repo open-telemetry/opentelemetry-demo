@@ -1,11 +1,12 @@
+<!-- markdownlint-disable-next-line -->
 <div align="center">
+  <h1>BugSnag OpenTelemetry Demo</h1>
   <a href="https://www.bugsnag.com">
     <picture>
       <source media="(prefers-color-scheme: dark)" srcset="https://assets.smartbear.com/m/3dab7e6cf880aa2b/original/BugSnag-Repository-Header-Dark.svg">
       <img alt="SmartBear BugSnag logo" src="https://assets.smartbear.com/m/3945e02cdc983893/original/BugSnag-Repository-Header-Light.svg">
     </picture>
   </a>
-  <h1>BugSnag OpenTelemetry Demo</h1>
 </div>
 
 A fork of the [Open Telemetry demo](https://github.com/open-telemetry/opentelemetry-demo) to demonstrate the range of instrumentation features available to BugSnag users.
