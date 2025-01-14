@@ -7,4 +7,4 @@ default: false
 # allow long lines for tables and code blocks
 MD013:
   code_blocks: true
-  tables: true
+  tables: false
