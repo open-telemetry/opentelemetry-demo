@@ -7,7 +7,7 @@
         "ext-json": "*",
         "ext-pcntl": "*",
         "monolog/monolog": "3.8.1",
-        "open-telemetry/api": "1.0.3",
+        "open-telemetry/api": "1.2.0",
         "open-telemetry/sdk": "1.2.0",
         "open-telemetry/exporter-otlp": "1.2.0",
         "open-telemetry/opentelemetry-auto-slim": "1.0.7",
