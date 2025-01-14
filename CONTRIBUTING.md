@@ -145,7 +145,7 @@ $ git checkout -b feature
 # change files
 # Test your changes locally.
 $ docker compose up -d --build
-# Go to Webstore, Jaeger or docker container logs etc. as appropriate 
+# Go to Webstore, Jaeger or docker container logs etc. as appropriate
 # to make sure your changes are working correctly.
 $ git add my/changed/files
 $ git commit -m "short description of the change"
