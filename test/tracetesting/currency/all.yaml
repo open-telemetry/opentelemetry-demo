@@ -3,7 +3,7 @@
 
 type: TestSuite
 spec:
-  id: currency-service-all
+  id: currency-all
   name: 'Currency Service'
   description: Run all Currency Service tests enabled in sequence
   steps:

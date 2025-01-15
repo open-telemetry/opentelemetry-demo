@@ -3,7 +3,7 @@
 
 type: TestSuite
 spec:
-  id: ad-service-all
+  id: ad-all
   name: 'Ad Service'
   description: Run all Ad Service tests enabled in sequence
   steps:

@@ -3,7 +3,7 @@
 
 type: TestSuite
 spec:
-  id: recommendation-service-all
+  id: recommendation-all
   name: 'Recommendation Service'
   description: Run all Recommendation Service tests enabled in sequence
   steps:
