@@ -1,7 +1,7 @@
 // Copyright The OpenTelemetry Authors
 // SPDX-License-Identifier: Apache-2.0
 "use client";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, useCallback } from "react";
 import FileEditor from "./FileEditor";
 import Ajv, { AnySchema } from "ajv";
 import { useLoading } from "../Layout";
@@ -16,6 +16,22 @@ export default function AdvancedView() {
 
   const textAreaRef = useRef<HTMLTextAreaElement>(null);
   const { setIsLoading } = useLoading();
+
+  const requestSchemas = useCallback(async (url: string): Promise<AnySchema | null> => {
+    try {
+      setIsLoading(true);
+      const response = await fetch(url);
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+      const data = await response.json();
+      setIsLoading(false);
+      return data;
+    } catch (error: any) {
+      console.error("There was an error:", error.message);
+    }
+    return null;
+  }, [setIsLoading]);
 
   useEffect(() => {
     const readFile = async (file_name: string) => {
@@ -56,24 +72,8 @@ export default function AdvancedView() {
       return null;
     }
     loadSchema();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [ajv, requestSchemas]);
 
-  async function requestSchemas(url: string): Promise<AnySchema | null> {
-    try {
-      setIsLoading(true);
-      const response = await fetch(url);
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
-      }
-      const data = await response.json();
-      setIsLoading(false);
-      return data;
-    } catch (error: any) {
-      console.error("There was an error:", error.message);
-    }
-    return null;
-  }
 
   function parseJSON(): string | null {
     try {
