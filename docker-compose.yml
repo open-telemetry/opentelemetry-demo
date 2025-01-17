@@ -291,7 +291,7 @@ services:
       - OTEL_COLLECTOR_HOST
       - FLAGD_HOST
       - FLAGD_PORT
-      - BUGSNAG_API_KEY
+      - BUGSNAG_API_KEY=${FRONTEND_BUGSNAG_API_KEY}
       - BUGSNAG_APP_VERSION
       - BUGSNAG_RELEASE_STAGE
     depends_on:

@@ -12,7 +12,8 @@ import FrontendTracer from '../utils/telemetry/FrontendTracer';
 import SessionGateway from '../gateways/Session.gateway';
 import { OpenFeatureProvider, OpenFeature } from '@openfeature/react-sdk';
 import { FlagdWebProvider } from '@openfeature/flagd-web-provider';
-import BugsnagPerformance, { DefaultRoutingProvider } from '@bugsnag/browser-performance'
+import BugsnagPerformance, { DefaultRoutingProvider } from '@bugsnag/browser-performance';
+import Bugsnag from '@bugsnag/js';
 
 declare global {
   interface Window {
@@ -47,17 +48,22 @@ const resolveRoute = function resolveRoute (url: URL): string {
 }
 
 if (typeof window !== 'undefined') {
+  Bugsnag.start({
+    apiKey: window.ENV.BUGSNAG_API_KEY,
+  });
+
   BugsnagPerformance.start({
     apiKey: window.ENV.BUGSNAG_API_KEY,
     appVersion: window.ENV.BUGSNAG_APP_VERSION,
     releaseStage: window.ENV.BUGSNAG_RELEASE_STAGE,
     serviceName: 'opentelemetry-demo-frontend',
     routingProvider: new DefaultRoutingProvider(resolveRoute),
-    networkRequestCallback: (requestInfo) => {
-      requestInfo.propagateTraceContext = true
-      return requestInfo
-    }
-  })
+    networkRequestCallback: networkRequestInfo => {
+      networkRequestInfo.propagateTraceContext = networkRequestInfo.url?.startsWith(window.origin);
+
+      return networkRequestInfo;
+    },
+  });
 
   FrontendTracer();
   if (window.location) {
