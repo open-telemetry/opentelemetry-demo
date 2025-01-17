@@ -137,7 +137,7 @@ export default function AdvancedView() {
         <div>
           <FileEditor
             flagConfig={flagData}
-            textAreaRef={textAreaRef}
+            textAreaRef={textAreaRef as React.RefObject<HTMLTextAreaElement>}
             handleTextAreaChange={handleTextAreaChange}
           />
           <div className="p-2 pl-8 text-gray-300 shadow-md">
