@@ -91,45 +91,6 @@ static_resources:
                           - key: "event.name"
                             value:
                               string_value: "proxy.access"
-                          - key: "http.connection.id"
-                            value:
-                              string_value: "%CONNECTION_ID%"
-                          - key: "http.protocol"
-                            value:
-                              string_value: "%PROTOCOL%"
-                          - key: "http.request.body.size"
-                            value:
-                              string_value: "%BYTES_RECEIVED%"
-                          - key: "http.request.header.x-forwarded-for"
-                            value:
-                              string_value: "%REQ(X-FORWARDED-FOR)%"
-                          - key: "http.request.header.x-request-id"
-                            value:
-                              string_value: "%REQ(X-REQUEST-ID)%"
-                          - key: "http.request.headers.size"
-                            value:
-                              string_value: "%REQUEST_HEADERS_BYTES%"
-                          - key: "http.request.id"
-                            value:
-                              string_value: "%STREAM_ID%"
-                          - key: "http.request.method"
-                            value:
-                              string_value: "%REQ(:METHOD)%"
-                          - key: "http.request.start_time"
-                            value:
-                              string_value: "%START_TIME%"
-                          - key: "http.response.body.size"
-                            value:
-                              string_value: "%BYTES_SENT%"
-                          - key: "http.response.headers.size"
-                            value:
-                              string_value: "%RESPONSE_HEADERS_BYTES%"
-                          - key: "http.response.status_code"
-                            value:
-                              string_value: "%RESPONSE_CODE%"
-                          - key: "http.total_duration_ms"
-                            value:
-                              string_value: "%DURATION%"
                           - key: "server.address"
                             value:
                               string_value: "%DOWNSTREAM_LOCAL_ADDRESS%"
@@ -157,7 +118,6 @@ static_resources:
                           - key: "url.template"
                             value:
                               string_value: "%ROUTE_NAME%"
-
   clusters:
     - name: opentelemetry_collector_grpc
       type: STRICT_DNS
