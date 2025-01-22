@@ -74,6 +74,8 @@ the release.
   ([#1910](https://github.com/open-telemetry/opentelemetry-demo/pull/1910))
 * [flagd-ui] fixed eslint ignore comment with useCallback
   ([#1923](https://github.com/open-telemetry/opentelemetry-demo/pull/1923))
+* [chore] Add memory for frontend-proxy, kafka, grafana, opensearch
+  ([#1931](https://github.com/open-telemetry/opentelemetry-demo/pull/1931))
 
 ## 1.12.0
 
