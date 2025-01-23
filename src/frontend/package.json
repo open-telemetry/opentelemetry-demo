@@ -13,6 +13,7 @@
   "dependencies": {
     "@bugsnag/browser-performance": "^2.10.1",
     "@bugsnag/js": "^8.1.2",
+    "@bugsnag/plugin-react": "^8.1.1",
     "@grpc/grpc-js": "1.10.11",
     "@openfeature/flagd-provider": "0.13.1",
     "@openfeature/flagd-web-provider": "0.7.2",
