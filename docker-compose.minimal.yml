@@ -255,7 +255,7 @@ services:
     restart: unless-stopped
     ports:
       - "${ENVOY_PORT}:${ENVOY_PORT}"
-      - 10000:10000
+      - 10001:10000
     environment:
       - FRONTEND_PORT
       - FRONTEND_HOST
