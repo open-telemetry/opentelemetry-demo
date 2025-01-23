@@ -21,7 +21,7 @@ To run the Ad Service:
 ```sh
 export AD_PORT=8080
 export FEATURE_FLAG_GRPC_SERVICE_ADDR=featureflagservice:50053
-./build/install/opentelemetry-demo-ad-service/bin/Ad
+./build/install/opentelemetry-demo-ad/bin/Ad
 ```
 
 ### Upgrading Gradle

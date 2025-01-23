@@ -64,6 +64,16 @@ the release.
   ([#1863](https://github.com/open-telemetry/opentelemetry-demo/pull/1863))
 * [recommendation] rename recommendationservice to recommendation
   ([#1865](https://github.com/open-telemetry/opentelemetry-demo/pull/1865))
+* [product-catalog] rename productcatalogservice to product-catalog
+  ([#1864](https://github.com/open-telemetry/opentelemetry-demo/pull/1864))
+* [checkout] rename checkoutservice to checkout
+  ([#1867](https://github.com/open-telemetry/opentelemetry-demo/pull/1867))
+* [chore] remove `SERVICE_` from environment variables
+  ([#1897](https://github.com/open-telemetry/opentelemetry-demo/pull/1897))
+* [frontend-proxy] rename frontendproxy to frontend-proxy
+  ([#1910](https://github.com/open-telemetry/opentelemetry-demo/pull/1910))
+* [flagd-ui] fixed eslint ignore comment with useCallback
+  ([#1923](https://github.com/open-telemetry/opentelemetry-demo/pull/1923))
 
 ## 1.12.0
 

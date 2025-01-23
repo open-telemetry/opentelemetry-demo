@@ -12,9 +12,9 @@ receivers:
           allowed_origins:
             - "http://*"
             - "https://*"
-  httpcheck/frontendproxy:
+  httpcheck/frontend-proxy:
     targets:
-      - endpoint: http://frontendproxy:${env:ENVOY_PORT}
+      - endpoint: http://frontend-proxy:${env:ENVOY_PORT}
   docker_stats:
     endpoint: unix:///var/run/docker.sock
   redis:
@@ -126,7 +126,7 @@ service:
       processors: [transform, batch]
       exporters: [otlp, debug, spanmetrics]
     metrics:
-      receivers: [hostmetrics, docker_stats, httpcheck/frontendproxy, otlp, prometheus, redis, spanmetrics]
+      receivers: [hostmetrics, docker_stats, httpcheck/frontend-proxy, otlp, prometheus, redis, spanmetrics]
       processors: [batch]
       exporters: [otlphttp/prometheus, debug]
     logs:
