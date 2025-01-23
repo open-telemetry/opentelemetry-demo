@@ -1,6 +1,7 @@
 // Copyright The OpenTelemetry Authors
 // SPDX-License-Identifier: Apache-2.0
 
+import React from 'react';
 import '../styles/globals.css';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import App, { AppContext, AppProps } from 'next/app';
@@ -13,6 +14,7 @@ import { OpenFeatureProvider, OpenFeature } from '@openfeature/react-sdk';
 import { FlagdWebProvider } from '@openfeature/flagd-web-provider';
 import BugsnagPerformance, { DefaultRoutingProvider } from '@bugsnag/browser-performance';
 import Bugsnag from '@bugsnag/js';
+import BugsnagPluginReact from '@bugsnag/plugin-react';
 
 declare global {
   interface Window {
@@ -49,6 +51,7 @@ const resolveRoute = function resolveRoute (url: URL): string {
 if (typeof window !== 'undefined') {
   Bugsnag.start({
     apiKey: window.ENV.BUGSNAG_API_KEY,
+    plugins: [new BugsnagPluginReact()],
   });
 
   BugsnagPerformance.start({
@@ -56,6 +59,7 @@ if (typeof window !== 'undefined') {
     appVersion: window.ENV.BUGSNAG_APP_VERSION,
     releaseStage: window.ENV.BUGSNAG_RELEASE_STAGE,
     serviceName: 'opentelemetry-demo-frontend',
+    bugsnag: Bugsnag,
     routingProvider: new DefaultRoutingProvider(resolveRoute),
     networkRequestCallback: networkRequestInfo => {
       networkRequestInfo.propagateTraceContext = networkRequestInfo.url?.startsWith(window.origin);
@@ -97,18 +101,23 @@ if (typeof window !== 'undefined') {
 const queryClient = new QueryClient();
 
 function MyApp({ Component, pageProps }: AppProps) {
+  const bugsnagReactPlugin = Bugsnag.getPlugin('react');
+  const ErrorBoundary = bugsnagReactPlugin?.createErrorBoundary(React) || React.Fragment;
+
   return (
-    <ThemeProvider theme={Theme}>
-      <OpenFeatureProvider>
-        <QueryClientProvider client={queryClient}>
-          <CurrencyProvider>
-            <CartProvider>
-              <Component {...pageProps} />
-            </CartProvider>
-          </CurrencyProvider>
-        </QueryClientProvider>
-      </OpenFeatureProvider>
-    </ThemeProvider>
+    <ErrorBoundary>
+      <ThemeProvider theme={Theme}>
+        <OpenFeatureProvider>
+          <QueryClientProvider client={queryClient}>
+            <CurrencyProvider>
+              <CartProvider>
+                <Component {...pageProps} />
+              </CartProvider>
+            </CurrencyProvider>
+          </QueryClientProvider>
+        </OpenFeatureProvider>
+      </ThemeProvider>
+    </ErrorBoundary>
   );
 }
 
