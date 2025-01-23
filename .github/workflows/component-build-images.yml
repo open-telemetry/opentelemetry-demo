@@ -26,8 +26,20 @@ on:
         type: string
 
 jobs:
+  protobufcheck:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Generate
+        run: make clean docker-generate-protobuf
+      - name: Check Clean Work Tree
+        run: make check-clean-work-tree
+
   build_and_push_images:
     runs-on: ubuntu-latest
+    needs: protobufcheck
+
     permissions:
       contents: read
       packages: write
@@ -39,76 +51,80 @@ jobs:
       fail-fast: false
       matrix:
         file_tag:
-          - file: ./src/accountingservice/Dockerfile
-            tag_suffix: accountingservice
+          - file: ./src/accounting/Dockerfile
+            tag_suffix: accounting
             context: ./
             setup-qemu: true
-          - file: ./src/adservice/Dockerfile
-            tag_suffix: adservice
+          - file: ./src/ad/Dockerfile
+            tag_suffix: ad
             context: ./
             setup-qemu: true
-          - file: ./src/cartservice/src/Dockerfile
-            tag_suffix: cartservice
+          - file: ./src/cart/src/Dockerfile
+            tag_suffix: cart
             context: ./
             setup-qemu: false
-          - file: ./src/checkoutservice/Dockerfile
-            tag_suffix: checkoutservice
+          - file: ./src/checkout/Dockerfile
+            tag_suffix: checkout
             context: ./
             setup-qemu: true
-          - file: ./src/currencyservice/Dockerfile
-            tag_suffix: currencyservice
+          - file: ./src/currency/Dockerfile
+            tag_suffix: currency
             context: ./
             setup-qemu: true
-          - file: ./src/emailservice/Dockerfile
-            tag_suffix: emailservice
+          - file: ./src/email/Dockerfile
+            tag_suffix: email
             context: ./
             setup-qemu: true
-          - file: ./src/frauddetectionservice/Dockerfile
-            tag_suffix: frauddetectionservice
+          - file: ./src/fraud-detection/Dockerfile
+            tag_suffix: fraud-detection
             context: ./
             setup-qemu: true
           - file: ./src/frontend/Dockerfile
             tag_suffix: frontend
             context: ./
             setup-qemu: true
-          - file: ./src/frontendproxy/Dockerfile
-            tag_suffix: frontendproxy
+          - file: ./src/frontend-proxy/Dockerfile
+            tag_suffix: frontend-proxy
             context: ./
             setup-qemu: true
           - file: ./src/frontend/Dockerfile.cypress
             tag_suffix: frontend-tests
             context: ./
             setup-qemu: true
-          - file: ./src/imageprovider/Dockerfile
-            tag_suffix: imageprovider
+          - file: ./src/image-provider/Dockerfile
+            tag_suffix: image-provider
             context: ./
             setup-qemu: true
           - file: ./src/kafka/Dockerfile
             tag_suffix: kafka
             context: ./
             setup-qemu: true
-          - file: ./src/loadgenerator/Dockerfile
-            tag_suffix: loadgenerator
+          - file: ./src/load-generator/Dockerfile
+            tag_suffix: load-generator
             context: ./
             setup-qemu: true
-          - file: ./src/paymentservice/Dockerfile
-            tag_suffix: paymentservice
+          - file: ./src/payment/Dockerfile
+            tag_suffix: payment
             context: ./
             setup-qemu: true
-          - file: ./src/productcatalogservice/Dockerfile
-            tag_suffix: productcatalogservice
+          - file: ./src/product-catalog/Dockerfile
+            tag_suffix: product-catalog
             context: ./
             setup-qemu: true
-          - file: ./src/quoteservice/Dockerfile
-            tag_suffix: quoteservice
+          - file: ./src/quote/Dockerfile
+            tag_suffix: quote
             context: ./
             setup-qemu: true
-          - file: ./src/recommendationservice/Dockerfile
-            tag_suffix: recommendationservice
+          - file: ./src/recommendation/Dockerfile
+            tag_suffix: recommendation
             context: ./
             setup-qemu: true
-          - file: ./src/shippingservice/Dockerfile
-            tag_suffix: shippingservice
+          - file: ./src/shipping/Dockerfile
+            tag_suffix: shipping
+            context: ./
+            setup-qemu: true
+          - file: ./src/flagd-ui/Dockerfile
+            tag_suffix: flagd-ui
             context: ./
             setup-qemu: true
           - file: ./test/tracetesting/Dockerfile
@@ -120,6 +136,17 @@ jobs:
       - uses: actions/checkout@v4
         with:
           fetch-depth: 0
+      - name: Load environment variables from .env file
+        run: |
+          if [ -f .env ]; then
+            # Filter out comments and empty lines, then add each variable to $GITHUB_ENV
+            grep -vE '^\s*#|^\s*$' .env | while read -r line; do
+              echo "$line" >> $GITHUB_ENV
+            done
+          else
+            echo ".env file not found!"
+            exit 1
+          fi
       - name: Check for changes and set push options
         id: check_changes
         run: |
@@ -162,12 +189,16 @@ jobs:
             max-parallelism = 2
       - name: Matrix Build and push demo images
         if: steps.check_changes.outputs.skip == 'false'
-        uses: docker/build-push-action@v6.9.0
+        uses: docker/build-push-action@v6.12.0
         with:
           context: ${{ matrix.file_tag.context }}
           file: ${{ matrix.file_tag.file }}
           platforms: linux/amd64,linux/arm64
           push: ${{ inputs.push }}
+          build-args: |
+            OTEL_JAVA_AGENT_VERSION=${{ env.OTEL_JAVA_AGENT_VERSION }}
+            OPENTELEMETRY_CPP_VERSION=${{ env.OPENTELEMETRY_CPP_VERSION }}
+            TRACETEST_IMAGE_VERSION=${{ env.TRACETEST_IMAGE_VERSION }}
           tags: |
             ${{ inputs.dockerhub_repo }}:${{ inputs.version }}-${{matrix.file_tag.tag_suffix }}
             ${{ inputs.dockerhub_repo }}:latest-${{matrix.file_tag.tag_suffix }}

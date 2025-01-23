@@ -1,0 +1,39 @@
+# Copyright The OpenTelemetry Authors
+# SPDX-License-Identifier: Apache-2.0
+
+type: Test
+spec:
+  id: shipping-order
+  name: 'Shipping: Order'
+  description: Create one delivery order
+  trigger:
+    type: grpc
+    grpc:
+      protobufFile: ../../../pb/demo.proto
+      address: ${var:SHIPPING_ADDR}
+      method: oteldemo.ShippingService.ShipOrder
+      request: |-
+        {
+          "address": {
+            "streetAddress": "One Microsoft Way",
+            "city": "Redmond",
+            "state": "Washington",
+            "country": "United States",
+            "zipCode": "98052"
+          },
+          "items": [
+            {
+              "productId": "66VCHSJNUP",
+              "quantity": 2
+            }
+          ]
+        }
+  specs:
+  - name: It called GetQuote correctly
+    selector: span[tracetest.span.type="rpc" name="oteldemo.ShippingService/ShipOrder" rpc.system="grpc"]
+    assertions:
+    - attr:rpc.grpc.status_code = 0
+  - name: It returned a trackingId
+    selector: span[tracetest.span.type="general" name="Tracetest trigger"]
+    assertions:
+    - attr:tracetest.response.body | json_path '$.trackingId' != ""

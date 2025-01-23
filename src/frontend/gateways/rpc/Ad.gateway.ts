@@ -4,9 +4,9 @@
 import { ChannelCredentials } from '@grpc/grpc-js';
 import { AdResponse, AdServiceClient } from '../../protos/demo';
 
-const { AD_SERVICE_ADDR = '' } = process.env;
+const { AD_ADDR = '' } = process.env;
 
-const client = new AdServiceClient(AD_SERVICE_ADDR, ChannelCredentials.createInsecure());
+const client = new AdServiceClient(AD_ADDR, ChannelCredentials.createInsecure());
 
 const AdGateway = () => ({
   listAds(contextKeys: string[]) {

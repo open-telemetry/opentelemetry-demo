@@ -1,0 +1,28 @@
+# Copyright The OpenTelemetry Authors
+# SPDX-License-Identifier: Apache-2.0
+
+type: Test
+spec:
+  id: ad-get-ads
+  name: 'Ad: get'
+  description: Get Ads from API
+  trigger:
+    type: grpc
+    grpc:
+      protobufFile: ../../../pb/demo.proto
+      address: ${var:AD_ADDR}
+      method: oteldemo.AdService.GetAds
+      request: |-
+        {
+            "contextKeys": [ "galaxy", "telescope" ]
+        }
+  specs:
+  - name: It returns two ads
+    selector: span[tracetest.span.type="rpc" name="oteldemo.AdService/GetAds" rpc.system="grpc" rpc.method="GetAds" rpc.service="oteldemo.AdService"]
+    assertions:
+    - attr:app.ads.count = 2
+  - name: It returns a valid redirectUrl for each ads
+    selector: span[tracetest.span.type="general" name="Tracetest trigger"]
+    assertions:
+    - attr:tracetest.response.body | json_path '$.ads[0].redirectUrl' contains "/product/"
+    - attr:tracetest.response.body | json_path '$.ads[1].redirectUrl' contains "/product/"

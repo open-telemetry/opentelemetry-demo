@@ -15,44 +15,44 @@
 
   "packageRules": [
     {
-      "matchFileNames": ["src/accountingservice/**"],
-      "groupName": "accountingservice",
+      "matchFileNames": ["src/accounting/**"],
+      "groupName": "accounting",
     },
     {
-      "matchFileNames": ["src/adservice/**"],
-      "groupName": "adservice",
+      "matchFileNames": ["src/ad/**"],
+      "groupName": "ad",
     },
     {
-      "matchFileNames": ["src/cartservice/**"],
-      "groupName": "cartservice",
+      "matchFileNames": ["src/cart/**"],
+      "groupName": "cart",
     },
     {
-      "matchFileNames": ["src/checkoutservice/**"],
-      "groupName": "checkoutservice",
+      "matchFileNames": ["src/checkout/**"],
+      "groupName": "checkout",
     },
     {
-      "matchFileNames": ["src/currencyservice/**"],
-      "groupName": "currencyservice",
+      "matchFileNames": ["src/currency/**"],
+      "groupName": "currency",
     },
     {
-      "matchFileNames": ["src/emailservice/**"],
-      "groupName": "emailservice",
+      "matchFileNames": ["src/email/**"],
+      "groupName": "email",
     },
     {
       "matchFileNames": ["src/featureflagservice/**"],
       "groupName": "featureflagservice",
     },
     {
-      "matchFileNames": ["src/frauddetectionservice/**"],
-      "groupName": "frauddetectionservice",
+      "matchFileNames": ["src/fraud-detection/**"],
+      "groupName": "fraud-detection",
     },
     {
       "matchFileNames": ["src/frontend/**"],
       "groupName": "frontend",
     },
     {
-      "matchFileNames": ["src/frontendproxy/**"],
-      "groupName": "frontendproxy",
+      "matchFileNames": ["src/frontend-proxy/**"],
+      "groupName": "frontend-proxy",
     },
     {
       "matchFileNames": ["src/grafana/**"],
@@ -63,36 +63,36 @@
       "groupName": "kafka",
     },
     {
-      "matchFileNames": ["src/loadgenerator/**"],
-      "groupName": "loadgenerator",
+      "matchFileNames": ["src/load-generator/**"],
+      "groupName": "load-generator",
     },
     {
-      "matchFileNames": ["src/otelcollector/**"],
-      "groupName": "otelcollector",
+      "matchFileNames": ["src/otel-collector/**"],
+      "groupName": "otel-collector",
     },
     {
-      "matchFileNames": ["src/paymentservice/**"],
-      "groupName": "paymentservice",
+      "matchFileNames": ["src/payment/**"],
+      "groupName": "payment",
     },
     {
-      "matchFileNames": ["src/productcatalogservice/**"],
-      "groupName": "productcatalogservice",
+      "matchFileNames": ["src/product-catalog/**"],
+      "groupName": "product-catalog",
     },
     {
       "matchFileNames": ["src/prometheus/**"],
       "groupName": "prometheus",
     },
     {
-      "matchFileNames": ["src/quoteservice/**"],
-      "groupName": "quoteservice",
+      "matchFileNames": ["src/quote/**"],
+      "groupName": "quote",
     },
     {
-      "matchFileNames": ["src/recommendationservice/**"],
-      "groupName": "recommendationservice",
+      "matchFileNames": ["src/recommendation/**"],
+      "groupName": "recommendation",
     },
     {
-      "matchFileNames": ["src/shippingservice/**"],
-      "groupName": "shippingservice",
+      "matchFileNames": ["src/shipping/**"],
+      "groupName": "shipping",
     },
     {
       // intentionally using Java 11 in some examples

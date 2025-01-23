@@ -10,7 +10,7 @@
       },
       "defaultVariant": "off"
     },
-    "recommendationServiceCacheFailure": {
+    "recommendationCacheFailure": {
       "description": "Fail recommendation service cache",
       "state": "ENABLED",
       "variants": {
@@ -19,7 +19,7 @@
       },
       "defaultVariant": "off"
     },
-    "adServiceManualGc": {
+    "adManualGc": {
       "description": "Triggers full manual garbage collections in the ad service",
       "state": "ENABLED",
       "variants": {
@@ -28,7 +28,7 @@
       },
       "defaultVariant": "off"
     },
-    "adServiceHighCpu": {
+    "adHighCpu": {
       "description": "Triggers high cpu load in the ad service",
       "state": "ENABLED",
       "variants": {
@@ -37,7 +37,7 @@
       },
       "defaultVariant": "off"
     },
-    "adServiceFailure": {
+    "adFailure": {
       "description": "Fail ad service",
       "state": "ENABLED",
       "variants": {
@@ -55,7 +55,7 @@
       },
       "defaultVariant": "off"
     },
-    "cartServiceFailure": {
+    "cartFailure": {
       "description": "Fail cart service",
       "state": "ENABLED",
       "variants": {
@@ -64,16 +64,21 @@
       },
       "defaultVariant": "off"
     },
-    "paymentServiceFailure": {
-      "description": "Fail payment service charge requests",
+    "paymentFailure": {
+      "description": "Fail payment service charge requests n%",
       "state": "ENABLED",
       "variants": {
-        "on": true,
-        "off": false
+        "100%": 1,
+        "90%": 0.95,
+        "75%": 0.75,
+        "50%": 0.5,
+        "25%": 0.25,
+        "10%": 0.1,
+        "off": 0
       },
       "defaultVariant": "off"
     },
-    "paymentServiceUnreachable": {
+    "paymentUnreachable": {
       "description": "Payment service is unavailable",
       "state": "ENABLED",
       "variants": {
@@ -82,7 +87,7 @@
       },
       "defaultVariant": "off"
     },
-    "loadgeneratorFloodHomepage": {
+    "loadGeneratorFloodHomepage": {
       "description": "Flood the frontend with a large amount of requests.",
       "state": "ENABLED",
       "variants": {

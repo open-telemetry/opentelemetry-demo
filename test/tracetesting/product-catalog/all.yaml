@@ -1,0 +1,12 @@
+# Copyright The OpenTelemetry Authors
+# SPDX-License-Identifier: Apache-2.0
+
+type: TestSuite
+spec:
+  id: product-catalog-all
+  name: 'Product Catalog'
+  description: Run all Product Catalog tests enabled in sequence
+  steps:
+  - ./list.yaml
+  - ./get.yaml
+  - ./search.yaml

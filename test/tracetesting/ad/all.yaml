@@ -1,0 +1,10 @@
+# Copyright The OpenTelemetry Authors
+# SPDX-License-Identifier: Apache-2.0
+
+type: TestSuite
+spec:
+  id: ad-all
+  name: 'Ad Service'
+  description: Run all Ad Service tests enabled in sequence
+  steps:
+  - ./get.yaml

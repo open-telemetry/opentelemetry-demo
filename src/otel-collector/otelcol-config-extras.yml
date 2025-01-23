@@ -1,0 +1,11 @@
+# Copyright The OpenTelemetry Authors
+# SPDX-License-Identifier: Apache-2.0
+
+exporters:
+  otlp/bugsnag:
+    endpoint: <your-api-key>.otlp.bugsnag.com:4317
+    compression: none
+service:
+  pipelines:
+    traces:
+      exporters: [spanmetrics, otlp/bugsnag]
