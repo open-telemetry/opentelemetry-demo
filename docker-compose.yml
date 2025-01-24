@@ -485,7 +485,7 @@ services:
       - OTEL_RESOURCE_ATTRIBUTES
       - OTEL_SERVICE_NAME=product-catalog
     volumes:
-        - ./src/product-catalog/products:/usr/src/app/products
+      - ./src/product-catalog/products:/usr/src/app/products
     depends_on:
       otel-collector:
         condition: service_started
