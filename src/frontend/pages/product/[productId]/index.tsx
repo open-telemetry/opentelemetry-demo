@@ -44,10 +44,9 @@ const ProductDetail: NextPage = () => {
       priceUsd = { units: 0, currencyCode: 'USD', nanos: 0 },
       categories,
     } = {} as Product,
-  } = useQuery(
-    ['product', productId, 'selectedCurrency', selectedCurrency],
-    () => ApiGateway.getProduct(productId, selectedCurrency),
-    {
+  } = useQuery({
+      queryKey: ['product', productId, 'selectedCurrency', selectedCurrency],
+      queryFn: () => ApiGateway.getProduct(productId, selectedCurrency),
       enabled: !!productId,
     }
   ) as { data: Product };
