@@ -11,7 +11,7 @@
   "dependencies": {
     "@vercel/otel": "^1.10.0",
     "ajv": "^8.17.1",
-    "next": "15.1.4",
+    "next": "15.1.6",
     "react": "^19",
     "react-dom": "^19"
   },
