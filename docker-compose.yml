@@ -325,7 +325,7 @@ services:
     deploy:
       resources:
         limits:
-          memory: 50M
+          memory: 65M
     restart: unless-stopped
     ports:
       - "${ENVOY_PORT}:${ENVOY_PORT}"
@@ -654,7 +654,7 @@ services:
     deploy:
       resources:
         limits:
-          memory: 600M
+          memory: 620M
     restart: unless-stopped
     environment:
       - KAFKA_ADVERTISED_LISTENERS=PLAINTEXT://kafka:9092
@@ -720,7 +720,7 @@ services:
     deploy:
       resources:
         limits:
-          memory: 100M
+          memory: 120M
     restart: unless-stopped
     environment:
       - "GF_INSTALL_PLUGINS=grafana-opensearch-datasource"
@@ -795,7 +795,7 @@ services:
     deploy:
       resources:
         limits:
-          memory: 1G
+          memory: 1.1G
     restart: unless-stopped
     environment:
       - cluster.name=demo-cluster

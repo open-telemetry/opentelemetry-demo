@@ -27,26 +27,22 @@ export const useAd = () => useContext(Context);
 
 const AdProvider = ({ children, productIds, contextKeys }: IProps) => {
   const { selectedCurrency } = useCurrency();
-  const { data: adList = [] } = useQuery(
-    ['ads', contextKeys],
-    async () => {
+  const { data: adList = [] } = useQuery({
+    queryKey: ['ads', contextKeys],
+    queryFn: async () => {
       if (contextKeys.length === 0) {
         return [];
       } else {
         return ApiGateway.listAds(contextKeys);
       }
     },
-    {
-      refetchOnWindowFocus: false,
-    }
-  );
-  const { data: recommendedProductList = [] } = useQuery(
-    ['recommendations', productIds, 'selectedCurrency', selectedCurrency],
-    () => ApiGateway.listRecommendations(productIds, selectedCurrency),
-    {
-      refetchOnWindowFocus: false,
-    }
-  );
+    refetchOnWindowFocus: false,
+  });
+  const { data: recommendedProductList = [] } = useQuery({
+    queryKey: ['recommendations', productIds, 'selectedCurrency', selectedCurrency],
+    queryFn: () => ApiGateway.listRecommendations(productIds, selectedCurrency),
+    refetchOnWindowFocus: false,
+  });
 
   const value = useMemo(
     () => ({
