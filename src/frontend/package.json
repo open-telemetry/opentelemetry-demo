@@ -44,7 +44,6 @@
     "react-dom": "18.3.1",
     "sharp": "0.33.4",
     "styled-components": "6.1.11",
-    "ts-proto": "1.181.1",
     "uuid": "10.0.0"
   },
   "devDependencies": {
@@ -61,6 +60,7 @@
     "eslint-plugin-react": "7.37.4",
     "eslint-plugin-react-hooks": "5.1.0",
     "openapi-typescript": "7.5.2",
+    "ts-proto": "1.181.1",
     "typescript": "5.7.3"
   }
 }
