@@ -33,7 +33,14 @@ gen_proto_python() {
 gen_proto_ts() {
   echo "Generating Typescript protobuf files for $1"
   docker build -f "src/$1/genproto/Dockerfile" -t "$1-genproto" .
-  docker run --rm -v $(pwd):/build "$1-genproto"
+  docker run --rm -e SERVICE=$1 -v $(pwd):/build "$1-genproto" /bin/sh -c '
+    mkdir -p /build/src/$SERVICE/protos && \
+    protoc -I /build/pb \
+    --plugin=protoc-gen-ts_proto=/app/node_modules/.bin/protoc-gen-ts_proto \
+    --ts_proto_opt=esModuleInterop=true \
+    --ts_proto_out="/build/src/$SERVICE/protos" \
+    --ts_proto_opt=outputServices=grpc-js \
+    /build/pb/demo.proto'
 }
 
 if [ -z "$1" ]; then

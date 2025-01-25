@@ -3,12 +3,12 @@
 
 FROM node:20-alpine
 
-WORKDIR /build
+WORKDIR /app
 
 RUN apk add --no-cache libc6-compat protobuf-dev protoc
 
 COPY ./src/frontend/package*.json ./
-COPY ./pb ./pb
+
 RUN npm ci
 
-CMD ["npm", "run", "grpc:generate"]
+COPY ./pb /build/pb
