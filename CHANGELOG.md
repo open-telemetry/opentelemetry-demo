@@ -76,6 +76,8 @@ the release.
   ([#1923](https://github.com/open-telemetry/opentelemetry-demo/pull/1923))
 * [chore] Add memory for frontend-proxy, kafka, grafana, opensearch
   ([#1931](https://github.com/open-telemetry/opentelemetry-demo/pull/1931))
+* [chore] Generate protobuf code for Typescript service - Frontend
+  ([#1954](https://github.com/open-telemetry/opentelemetry-demo/pull/1954))
 
 ## 1.12.0
 
