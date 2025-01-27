@@ -9,9 +9,9 @@
     "lint": "next lint"
   },
   "dependencies": {
-    "@vercel/otel": "^1.10.0",
+    "@vercel/otel": "^1.10.1",
     "ajv": "^8.17.1",
-    "next": "15.1.4",
+    "next": "15.1.6",
     "react": "^19",
     "react-dom": "^19"
   },
