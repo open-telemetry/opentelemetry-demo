@@ -72,6 +72,8 @@ the release.
   ([#1897](https://github.com/open-telemetry/opentelemetry-demo/pull/1897))
 * [frontend-proxy] rename frontendproxy to frontend-proxy
   ([#1910](https://github.com/open-telemetry/opentelemetry-demo/pull/1910))
+* [product-catalog] load product list on a periodic timer
+  ([#1919](https://github.com/open-telemetry/opentelemetry-demo/pull/1919))
 * [flagd-ui] fixed eslint ignore comment with useCallback
   ([#1923](https://github.com/open-telemetry/opentelemetry-demo/pull/1923))
 * [chore] Add memory for frontend-proxy, kafka, grafana, opensearch
