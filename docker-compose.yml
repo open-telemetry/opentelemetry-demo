@@ -145,6 +145,9 @@ services:
       - OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE
       - OTEL_RESOURCE_ATTRIBUTES
       - OTEL_SERVICE_NAME=checkout
+      - BUGSNAG_API_KEY=${CHECKOUT_BUGSNAG_API_KEY}
+      - BUGSNAG_APP_VERSION
+      - BUGSNAG_RELEASE_STAGE
     depends_on:
       cart:
         condition: service_started

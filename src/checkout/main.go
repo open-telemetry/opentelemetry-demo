@@ -6,6 +6,7 @@ import (
 	"bytes"
 	"context"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"net"
 	"net/http"
@@ -30,7 +31,6 @@ import (
 	"go.opentelemetry.io/otel"
 	otelcodes "go.opentelemetry.io/otel/codes"
 	"go.opentelemetry.io/otel/exporters/otlp/otlpmetric/otlpmetricgrpc"
-	"go.opentelemetry.io/otel/exporters/otlp/otlptrace/otlptracegrpc"
 	"go.opentelemetry.io/otel/propagation"
 	sdkmetric "go.opentelemetry.io/otel/sdk/metric"
 	sdkresource "go.opentelemetry.io/otel/sdk/resource"
@@ -45,6 +45,9 @@ import (
 	pb "github.com/open-telemetry/opentelemetry-demo/src/checkout/genproto/oteldemo"
 	"github.com/open-telemetry/opentelemetry-demo/src/checkout/kafka"
 	"github.com/open-telemetry/opentelemetry-demo/src/checkout/money"
+
+	bugsnagperformance "github.com/bugsnag/bugsnag-go-performance"
+	"github.com/bugsnag/bugsnag-go/v2"
 )
 
 //go:generate go install google.golang.org/protobuf/cmd/protoc-gen-go
@@ -87,19 +90,22 @@ func initResource() *sdkresource.Resource {
 	return resource
 }
 
-func initTracerProvider() *sdktrace.TracerProvider {
-	ctx := context.Background()
+func initTracerProvider(apiKey string, releaseStage string, appVersion string) *sdktrace.TracerProvider {
+	bugsnagOptions, err := bugsnagperformance.Configure(bugsnagperformance.Configuration{
+        APIKey:          apiKey,
+        AppVersion:      appVersion,
+        ReleaseStage:    releaseStage,
+    })
 
-	exporter, err := otlptracegrpc.New(ctx)
-	if err != nil {
-		log.Fatalf("new otlp trace grpc exporter failed: %v", err)
-	}
-	tp := sdktrace.NewTracerProvider(
-		sdktrace.WithBatcher(exporter),
-		sdktrace.WithResource(initResource()),
-	)
-	otel.SetTracerProvider(tp)
+    if err != nil {
+        fmt.Printf("Error configuring bugsnag-go-performance: %+v\n", err)
+    }
+
+    tp := sdktrace.NewTracerProvider(bugsnagOptions...)
+    otel.SetTracerProvider(tp)
+
 	otel.SetTextMapPropagator(propagation.NewCompositeTextMapPropagator(propagation.TraceContext{}, propagation.Baggage{}))
+
 	return tp
 }
 
@@ -138,10 +144,23 @@ type checkout struct {
 }
 
 func main() {
+	var apiKey string
+	mustMapEnv(&apiKey, "BUGSNAG_API_KEY")
+	var releaseStage string
+	mustMapEnv(&releaseStage, "BUGSNAG_RELEASE_STAGE")
+	var appVersion string
+	mustMapEnv(&appVersion, "BUGSNAG_APP_VERSION")
+
+	bugsnag.Configure(bugsnag.Configuration{
+        APIKey:          apiKey,
+        ReleaseStage:    releaseStage,
+        ProjectPackages: []string{"main", "github.com/bugsnag/opentelemetry-demo"},
+    })
+
 	var port string
 	mustMapEnv(&port, "CHECKOUT_PORT")
 
-	tp := initTracerProvider()
+	tp := initTracerProvider(apiKey, releaseStage, appVersion)
 	defer func() {
 		if err := tp.Shutdown(context.Background()); err != nil {
 			log.Printf("Error shutting down tracer provider: %v", err)
@@ -155,12 +174,16 @@ func main() {
 		}
 	}()
 
-	err := runtime.Start(runtime.WithMinimumReadMemStatsInterval(time.Second))
+	err := openfeature.SetProvider(flagd.NewProvider())
 	if err != nil {
 		log.Fatal(err)
 	}
 
-	openfeature.SetProvider(flagd.NewProvider())
+	err = runtime.Start(runtime.WithMinimumReadMemStatsInterval(time.Second))
+	if err != nil {
+		log.Fatal(err)
+	}
+
 	openfeature.AddHooks(otelhooks.NewTracesHook())
 
 	tracer = tp.Tracer("checkout")
@@ -214,6 +237,7 @@ func main() {
 	}
 
 	var srv = grpc.NewServer(
+		grpc.UnaryInterceptor(BugsnagErrorInterceptor()),
 		grpc.StatsHandler(otelgrpc.NewServerHandler()),
 	)
 	pb.RegisterCheckoutServiceServer(srv, svc)
@@ -229,6 +253,24 @@ func mustMapEnv(target *string, envKey string) {
 		panic(fmt.Sprintf("environment variable %q not set", envKey))
 	}
 	*target = v
+}
+
+// BugsnagErrorInterceptor send error to bugsnag
+func BugsnagErrorInterceptor() grpc.UnaryServerInterceptor {
+	return grpc.UnaryServerInterceptor(func(ctx context.Context, req interface{}, info *grpc.UnaryServerInfo, handler grpc.UnaryHandler) (interface{}, error) {
+		traceCtx := trace.SpanContextFromContext(ctx)
+		resp, err := handler(ctx, req)
+		if err != nil {
+			bugsnag.Notify(err, ctx, bugsnag.MetaData{
+				"correlation": {
+					"traceId":     traceCtx.TraceID().String(),
+					"spanId":     traceCtx.SpanID().String(),
+				},
+			})
+		}
+
+		return resp, err
+	})
 }
 
 func (cs *checkout) Check(ctx context.Context, req *healthpb.HealthCheckRequest) (*healthpb.HealthCheckResponse, error) {
@@ -253,6 +295,14 @@ func (cs *checkout) PlaceOrder(ctx context.Context, req *pb.PlaceOrderRequest) (
 			span.AddEvent("error", trace.WithAttributes(semconv.ExceptionMessageKey.String(err.Error())))
 		}
 	}()
+
+	if cs.checkoutFailure(ctx) {
+		msg := fmt.Sprintf("Error: Checkout Fail Feature Flag Enabled")
+		span.SetStatus(otelcodes.Error, msg)
+		span.AddEvent(msg)
+		err = errors.New(msg)
+		return nil, status.Errorf(codes.Internal, msg, err)
+	}
 
 	orderID, err := uuid.NewUUID()
 	if err != nil {
@@ -608,4 +658,13 @@ func (cs *checkout) getIntFeatureFlag(ctx context.Context, featureFlagName strin
 	)
 
 	return int(featureFlagValue)
+}
+
+func (cs *checkout) checkoutFailure(ctx context.Context) bool {
+	openfeature.AddHooks(otelhooks.NewTracesHook())
+	client := openfeature.NewClient("checkout")
+	failureEnabled, _ := client.BooleanValue(
+		ctx, "checkoutFailure", false, openfeature.EvaluationContext{},
+	)
+	return failureEnabled
 }

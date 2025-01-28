@@ -32,6 +32,11 @@ require (
 	connectrpc.com/connect v1.17.0 // indirect
 	connectrpc.com/otelconnect v0.7.1 // indirect
 	github.com/barkimedes/go-deepcopy v0.0.0-20220514131651-17c30cfc62df // indirect
+	github.com/bugsnag/bugsnag-go-performance v1.0.0 // indirect
+	github.com/bugsnag/bugsnag-go/v2 v2.5.1 // indirect
+	github.com/bugsnag/panic-monitor v1.1.0 // indirect
+	github.com/bugsnag/panicwrap v1.3.4 // indirect
+	github.com/bugsnag/proc-launcher v1.0.0 // indirect
 	github.com/cenkalti/backoff/v4 v4.3.0 // indirect
 	github.com/davecgh/go-spew v1.1.2-0.20180830191138-d8f796af33cc // indirect
 	github.com/diegoholiveira/jsonlogic/v3 v3.5.3 // indirect
@@ -58,6 +63,7 @@ require (
 	github.com/jcmturner/gokrb5/v8 v8.4.4 // indirect
 	github.com/jcmturner/rpc/v2 v2.0.3 // indirect
 	github.com/json-iterator/go v1.1.12 // indirect
+	github.com/kardianos/osext v0.0.0-20190222173326-2bc1f35cddc0 // indirect
 	github.com/klauspost/compress v1.17.11 // indirect
 	github.com/klauspost/cpuid/v2 v2.2.7 // indirect
 	github.com/modern-go/concurrent v0.0.0-20180306012644-bacd9c7ef1dd // indirect
@@ -65,6 +71,7 @@ require (
 	github.com/open-feature/flagd-schemas v0.2.9-0.20240708163558-2aa89b314322 // indirect
 	github.com/open-feature/flagd/core v0.10.4 // indirect
 	github.com/pierrec/lz4/v4 v4.1.22 // indirect
+	github.com/pkg/errors v0.9.1 // indirect
 	github.com/rcrowley/go-metrics v0.0.0-20201227073835-cf1acfcdf475 // indirect
 	github.com/twmb/murmur3 v1.1.8 // indirect
 	github.com/x448/float16 v0.8.4 // indirect
