@@ -150,6 +150,7 @@ docker-generate-protobuf:
 clean:
 	rm -rf ./src/{checkout,product-catalog}/genproto/oteldemo/
 	rm -rf ./src/recommendation/{demo_pb2,demo_pb2_grpc}.py
+	rm -rf ./src/frontend/protos/demo.ts
 
 .PHONY: check-clean-work-tree
 check-clean-work-tree:
