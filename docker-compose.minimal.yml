@@ -286,6 +286,7 @@ services:
         condition: service_started
       grafana:
         condition: service_started
+    dns_search: ""
 
   # image-provider
   image-provider:

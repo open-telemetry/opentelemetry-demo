@@ -362,6 +362,7 @@ services:
         condition: service_started
       flagd-ui:
         condition: service_started
+    dns_search: ""
 
   # image-provider
   image-provider:
