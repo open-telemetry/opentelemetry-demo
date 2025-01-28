@@ -400,10 +400,13 @@ services:
     environment:
       - FLAGD_HOST
       - PRODUCT_CATALOG_PORT
+      - PRODUCT_CATALOG_RELOAD_INTERVAL
       - OTEL_EXPORTER_OTLP_ENDPOINT
       - OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE
       - OTEL_RESOURCE_ATTRIBUTES
       - OTEL_SERVICE_NAME=product-catalog
+    volumes:
+      - ./src/product-catalog/products:/usr/src/app/products
     depends_on:
       otel-collector:
         condition: service_started

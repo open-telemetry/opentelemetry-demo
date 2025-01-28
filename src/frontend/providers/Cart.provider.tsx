@@ -40,12 +40,24 @@ const CartProvider = ({ children }: IProps) => {
     [queryClient]
   );
 
-  const { data: cart = { userId: '', items: [] } } = useQuery(['cart', selectedCurrency], () =>
-    ApiGateway.getCart(selectedCurrency)
-  );
-  const addCartMutation = useMutation(ApiGateway.addCartItem, mutationOptions);
-  const emptyCartMutation = useMutation(ApiGateway.emptyCart, mutationOptions);
-  const placeOrderMutation = useMutation(ApiGateway.placeOrder, mutationOptions);
+  const { data: cart = { userId: '', items: [] } } = useQuery({
+    queryKey: ['cart', selectedCurrency],
+    queryFn: () => ApiGateway.getCart(selectedCurrency),
+  });
+  const addCartMutation = useMutation({
+    mutationFn: ApiGateway.addCartItem,
+    ...mutationOptions,
+  });
+
+  const emptyCartMutation = useMutation({
+    mutationFn: ApiGateway.emptyCart,
+    ...mutationOptions,
+  });
+
+  const placeOrderMutation = useMutation({
+    mutationFn: ApiGateway.placeOrder,
+    ...mutationOptions,
+  });
 
   const addItem = useCallback(
     (item: CartItem) => addCartMutation.mutateAsync({ ...item, currencyCode: selectedCurrency }),
