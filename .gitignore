@@ -44,8 +44,6 @@ test/tracetesting/tracetesting-vars.yaml
 /src/accounting/src/protos/
 /src/cart/src/protos/
 /src/fraud-detection/src/main/proto
-/src/frontend/pb/
-/src/frontend/protos/
 /src/payment/demo.proto
 /src/shipping/proto/
 /src/currency/proto

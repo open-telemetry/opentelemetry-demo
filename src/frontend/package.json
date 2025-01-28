@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "npm run grpc:generate && NODE_OPTIONS='-r ./utils/telemetry/Instrumentation.js' next dev",
+    "dev": "NODE_OPTIONS='-r ./utils/telemetry/Instrumentation.js' next dev",
     "build": "next build",
     "start": "node --require ./Instrumentation.js server.js",
     "lint": "next lint",
@@ -44,7 +44,6 @@
     "react-dom": "19.0.0",
     "sharp": "0.33.5",
     "styled-components": "6.1.14",
-    "ts-proto": "1.181.1",
     "uuid": "11.0.5"
   },
   "devDependencies": {
@@ -61,6 +60,7 @@
     "eslint-plugin-react": "7.37.4",
     "eslint-plugin-react-hooks": "5.1.0",
     "openapi-typescript": "7.5.2",
+    "ts-proto": "1.181.1",
     "typescript": "5.7.3"
   }
 }
