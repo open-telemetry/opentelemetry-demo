@@ -8,12 +8,11 @@ package main
 
 import (
 	"context"
+	"errors"
 	"fmt"
-	"io/fs"
 	"net"
 	"os"
 	"os/signal"
-	"strings"
 	"sync"
 	"syscall"
 	"time"
@@ -33,21 +32,29 @@ import (
 	sdktrace "go.opentelemetry.io/otel/sdk/trace"
 	"go.opentelemetry.io/otel/trace"
 
+	"gorm.io/driver/sqlite"
+	"gorm.io/gorm"
+
+	"github.com/golang-migrate/migrate/v4"
+	_ "github.com/golang-migrate/migrate/v4/database/sqlite"
+	_ "github.com/golang-migrate/migrate/v4/source/file"
+	_ "github.com/mattn/go-sqlite3"
 	otelhooks "github.com/open-feature/go-sdk-contrib/hooks/open-telemetry/pkg"
 	flagd "github.com/open-feature/go-sdk-contrib/providers/flagd/pkg"
 	"github.com/open-feature/go-sdk/openfeature"
 	pb "github.com/opentelemetry/opentelemetry-demo/src/product-catalog/genproto/oteldemo"
+	models "github.com/opentelemetry/opentelemetry-demo/src/product-catalog/models"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/credentials/insecure"
 	healthpb "google.golang.org/grpc/health/grpc_health_v1"
 	"google.golang.org/grpc/reflection"
 	"google.golang.org/grpc/status"
-	"google.golang.org/protobuf/encoding/protojson"
 )
 
 var (
 	log               *logrus.Logger
+	db                *gorm.DB
 	catalog           []*pb.Product
 	resource          *sdkresource.Resource
 	initResourcesOnce sync.Once
@@ -55,12 +62,23 @@ var (
 
 func init() {
 	log = logrus.New()
-	var err error
-	catalog, err = readProductFiles()
+}
+
+func init() {
+	m, err := migrate.New(
+		"file://migrations/",
+		"sqlite://products/products.db")
+
+	defer m.Close()
+
+	err = m.Up()
+
 	if err != nil {
-		log.Fatalf("Reading Product Files: %v", err)
-		os.Exit(1)
+		log.Fatalf("Error running database migrations: %v", err)
+		return
 	}
+
+	log.Infof("Migrations run successfully")
 }
 
 func initResource() *sdkresource.Resource {
@@ -112,6 +130,20 @@ func initMeterProvider() *sdkmetric.MeterProvider {
 	return mp
 }
 
+func connectDB() *gorm.DB {
+	db, err := gorm.Open(sqlite.Open("products/products.db"), &gorm.Config{})
+	if err != nil {
+		log.Fatalf("Error connecting to the database: %v", err)
+		panic(err)
+	}
+
+	var products []models.Product
+	db.Preload("ProductPrices").Preload("Categories").Find(&products)
+	log.Infof("Found %d products", len(products))
+
+	return db
+}
+
 func main() {
 	tp := initTracerProvider()
 	defer func() {
@@ -133,6 +165,8 @@ func main() {
 	if err != nil {
 		log.Fatal(err)
 	}
+
+	db = connectDB()
 
 	err = runtime.Start(runtime.WithMinimumReadMemStatsInterval(time.Second))
 	if err != nil {
@@ -178,47 +212,6 @@ type productCatalog struct {
 	pb.UnimplementedProductCatalogServiceServer
 }
 
-func readProductFiles() ([]*pb.Product, error) {
-
-	// find all .json files in the products directory
-	entries, err := os.ReadDir("./products")
-	if err != nil {
-		return nil, err
-	}
-
-	jsonFiles := make([]fs.FileInfo, 0, len(entries))
-	for _, entry := range entries {
-		if strings.HasSuffix(entry.Name(), ".json") {
-			info, err := entry.Info()
-			if err != nil {
-				return nil, err
-			}
-			jsonFiles = append(jsonFiles, info)
-		}
-	}
-
-	// read the contents of each .json file and unmarshal into a ListProductsResponse
-	// then append the products to the catalog
-	var products []*pb.Product
-	for _, f := range jsonFiles {
-		jsonData, err := os.ReadFile("./products/" + f.Name())
-		if err != nil {
-			return nil, err
-		}
-
-		var res pb.ListProductsResponse
-		if err := protojson.Unmarshal(jsonData, &res); err != nil {
-			return nil, err
-		}
-
-		products = append(products, res.Products...)
-	}
-
-	log.Infof("Loaded %d products", len(products))
-
-	return products, nil
-}
-
 func mustMapEnv(target *string, key string) {
 	value, present := os.LookupEnv(key)
 	if !present {
@@ -241,7 +234,24 @@ func (p *productCatalog) ListProducts(ctx context.Context, req *pb.Empty) (*pb.L
 	span.SetAttributes(
 		attribute.Int("app.products.count", len(catalog)),
 	)
-	return &pb.ListProductsResponse{Products: catalog}, nil
+
+	var found []models.Product
+	if err := db.Preload("ProductPrices").Preload("Categories").Find(&found).Error; err != nil {
+		msg := fmt.Sprintf("Error fetching products from the database")
+		span.SetStatus(otelcodes.Error, msg)
+		span.AddEvent(msg)
+		log.Fatalf("%s: %v", msg, err)
+
+		return nil, status.Errorf(codes.Internal, msg)
+	}
+
+	var products []*pb.Product
+	for _, product := range found {
+		converted := toProductProto(&product)
+		products = append(products, &converted)
+	}
+
+	return &pb.ListProductsResponse{Products: products}, nil
 }
 
 func (p *productCatalog) GetProduct(ctx context.Context, req *pb.GetProductRequest) (*pb.Product, error) {
@@ -258,39 +268,54 @@ func (p *productCatalog) GetProduct(ctx context.Context, req *pb.GetProductReque
 		return nil, status.Errorf(codes.Internal, msg)
 	}
 
-	var found *pb.Product
-	for _, product := range catalog {
-		if req.Id == product.Id {
-			found = product
-			break
+	var found models.Product
+	if err := db.Preload("ProductPrices").Preload("Categories").Where("ID = ?", req.Id).First(&found).Error; err != nil {
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			msg := fmt.Sprintf("Product Not Found: %s", req.Id)
+			span.SetStatus(otelcodes.Error, msg)
+			span.AddEvent(msg)
+			return nil, status.Errorf(codes.NotFound, msg)
 		}
-	}
 
-	if found == nil {
-		msg := fmt.Sprintf("Product Not Found: %s", req.Id)
+		msg := fmt.Sprintf("Error fetching product from the database")
 		span.SetStatus(otelcodes.Error, msg)
 		span.AddEvent(msg)
-		return nil, status.Errorf(codes.NotFound, msg)
+		log.Fatalf("%s: %v", msg, err)
+
+		return nil, status.Errorf(codes.Internal, msg)
 	}
 
-	msg := fmt.Sprintf("Product Found - ID: %s, Name: %s", req.Id, found.Name)
+	product := toProductProto(&found)
+
+	msg := fmt.Sprintf("Product Found - ID: %s, Name: %s", req.Id, product.Name)
 	span.AddEvent(msg)
 	span.SetAttributes(
-		attribute.String("app.product.name", found.Name),
+		attribute.String("app.product.name", product.Name),
 	)
-	return found, nil
+
+	return &product, nil
 }
 
 func (p *productCatalog) SearchProducts(ctx context.Context, req *pb.SearchProductsRequest) (*pb.SearchProductsResponse, error) {
 	span := trace.SpanFromContext(ctx)
 
-	var result []*pb.Product
-	for _, product := range catalog {
-		if strings.Contains(strings.ToLower(product.Name), strings.ToLower(req.Query)) ||
-			strings.Contains(strings.ToLower(product.Description), strings.ToLower(req.Query)) {
-			result = append(result, product)
-		}
+	search := fmt.Sprintf("%%%v%%", req.Query)
+	var found []models.Product
+	if err := db.Preload("ProductPrices").Preload("Categories").Where("Name LIKE ?", search).Or("Description LIKE ?", search).Find(&found).Error; err != nil {
+		msg := fmt.Sprintf("Error searching the database")
+		span.SetStatus(otelcodes.Error, msg)
+		span.AddEvent(msg)
+		log.Fatalf("%s: %v", msg, err)
+
+		return nil, status.Errorf(codes.Internal, msg)
 	}
+
+	var result []*pb.Product
+	for _, product := range found {
+		converted := toProductProto(&product)
+		result = append(result, &converted)
+	}
+
 	span.SetAttributes(
 		attribute.Int("app.products_search.count", len(result)),
 	)
@@ -314,4 +339,30 @@ func createClient(ctx context.Context, svcAddr string) (*grpc.ClientConn, error)
 		grpc.WithTransportCredentials(insecure.NewCredentials()),
 		grpc.WithStatsHandler(otelgrpc.NewClientHandler()),
 	)
+}
+
+func toProductProto(p *models.Product) pb.Product {
+	protoProduct := pb.Product{
+		Id:          p.ID,
+		Name:        p.Name,
+		Description: p.Description,
+		Picture:     p.Picture,
+	}
+
+	for _, cat := range p.Categories {
+		protoProduct.Categories = append(protoProduct.Categories, cat.Name)
+	}
+
+	for _, price := range p.ProductPrices {
+		if price.Currency == "USD" {
+			protoProduct.PriceUsd = &pb.Money{
+				CurrencyCode: price.Currency,
+				Units:        int64(price.Units),
+				Nanos:        int32(price.Nanos),
+			}
+			break
+		}
+	}
+
+	return protoProduct
 }

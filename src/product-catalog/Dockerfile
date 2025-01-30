@@ -6,6 +6,9 @@ FROM golang:1.22-alpine AS builder
 
 WORKDIR /usr/src/app/
 
+RUN apk update \
+    && apk add --no-cache gcc g++
+
 RUN --mount=type=cache,target=/go/pkg/mod/ \
     --mount=type=bind,source=./src/product-catalog/go.sum,target=go.sum \
     --mount=type=bind,source=./src/product-catalog/go.mod,target=go.mod \
@@ -14,13 +17,15 @@ RUN --mount=type=cache,target=/go/pkg/mod/ \
 RUN --mount=type=cache,target=/go/pkg/mod/ \
     --mount=type=cache,target=/root/.cache/go-build \
     --mount=type=bind,rw,source=./src/product-catalog,target=. \
-    go build -ldflags "-s -w" -o /go/bin/product-catalog/ ./
+    --mount=type=bind,rw,source=./src/product-catalog/models,target=./models \
+    CGO_ENABLED=1 go build -ldflags "-s -w" -o /go/bin/product-catalog/ ./
 
 FROM alpine AS release
 
 WORKDIR /usr/src/app/
 
 COPY ./src/product-catalog/products/ ./products/
+COPY ./src/product-catalog/migrations/ ./migrations/
 COPY --from=builder /go/bin/product-catalog/ ./
 
 EXPOSE ${PRODUCT_CATALOG_PORT}
