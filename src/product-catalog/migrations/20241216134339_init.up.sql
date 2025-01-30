@@ -1,3 +1,6 @@
+-- Copyright SmartBear Software
+-- SPDX-License-Identifier: Apache-2.0
+
 CREATE TABLE products (
   id TEXT PRIMARY KEY,
   name TEXT NOT NULL UNIQUE,
