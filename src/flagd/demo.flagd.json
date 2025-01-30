@@ -10,6 +10,15 @@
       },
       "defaultVariant": "off"
     },
+    "productCatalogSlowLoad": {
+      "description": "Degrade the database query performance",
+      "state": "ENABLED",
+      "variants": {
+        "on": true,
+        "off": false
+      },
+      "defaultVariant": "on"
+    },
     "recommendationCacheFailure": {
       "description": "Fail recommendation service cache",
       "state": "ENABLED",

@@ -235,8 +235,10 @@ func (p *productCatalog) ListProducts(ctx context.Context, req *pb.Empty) (*pb.L
 		attribute.Int("app.products.count", len(catalog)),
 	)
 
+	slowLoadEnabled := p.checkProductSlowLoad(ctx)
+
 	var found []models.Product
-	if err := db.Preload("ProductPrices").Preload("Categories").Find(&found).Error; err != nil {
+	if err := db.Preload("ProductPrices", !slowLoadEnabled).Preload("Categories").Find(&found).Error; err != nil {
 		msg := fmt.Sprintf("Error fetching products from the database")
 		span.SetStatus(otelcodes.Error, msg)
 		span.AddEvent(msg)
@@ -245,9 +247,26 @@ func (p *productCatalog) ListProducts(ctx context.Context, req *pb.Empty) (*pb.L
 		return nil, status.Errorf(codes.Internal, msg)
 	}
 
+	if slowLoadEnabled {
+		log.Infof("Product catalog slow load feature flag enabled")
+		for idx, _ := range found {
+			var prices []models.ProductPrice
+			if err := db.Find(&prices, "product_id = ?", found[idx].ID).Error; err != nil {
+				msg := fmt.Sprintf("Error fetching product %s price from the database", found[idx].ID)
+				span.SetStatus(otelcodes.Error, msg)
+				span.AddEvent(msg)
+				log.Fatalf("%s: %v", msg, err)
+
+				return nil, status.Errorf(codes.Internal, msg)
+			}
+			found[idx].ProductPrices = prices
+			time.Sleep(200 * time.Millisecond)
+		}
+	}
+
 	var products []*pb.Product
-	for _, product := range found {
-		converted := toProductProto(&product)
+	for idx, _ := range found {
+		converted := toProductProto(&found[idx])
 		products = append(products, &converted)
 	}
 
@@ -311,8 +330,8 @@ func (p *productCatalog) SearchProducts(ctx context.Context, req *pb.SearchProdu
 	}
 
 	var result []*pb.Product
-	for _, product := range found {
-		converted := toProductProto(&product)
+	for idx, _ := range found {
+		converted := toProductProto(&found[idx])
 		result = append(result, &converted)
 	}
 
@@ -332,6 +351,14 @@ func (p *productCatalog) checkProductFailure(ctx context.Context, id string) boo
 		ctx, "productCatalogFailure", false, openfeature.EvaluationContext{},
 	)
 	return failureEnabled
+}
+
+func (p *productCatalog) checkProductSlowLoad(ctx context.Context) bool {
+	client := openfeature.NewClient("productCatalog")
+	slowLoadEnabled, _ := client.BooleanValue(
+		ctx, "productCatalogSlowLoad", false, openfeature.EvaluationContext{},
+	)
+	return slowLoadEnabled
 }
 
 func createClient(ctx context.Context, svcAddr string) (*grpc.ClientConn, error) {
