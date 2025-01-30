@@ -92,17 +92,17 @@ func initResource() *sdkresource.Resource {
 
 func initTracerProvider(apiKey string, releaseStage string, appVersion string) *sdktrace.TracerProvider {
 	bugsnagOptions, err := bugsnagperformance.Configure(bugsnagperformance.Configuration{
-        APIKey:          apiKey,
-        AppVersion:      appVersion,
-        ReleaseStage:    releaseStage,
-    })
+		APIKey:       apiKey,
+		AppVersion:   appVersion,
+		ReleaseStage: releaseStage,
+	})
 
-    if err != nil {
-        fmt.Printf("Error configuring bugsnag-go-performance: %+v\n", err)
-    }
+	if err != nil {
+		fmt.Printf("Error configuring bugsnag-go-performance: %+v\n", err)
+	}
 
-    tp := sdktrace.NewTracerProvider(bugsnagOptions...)
-    otel.SetTracerProvider(tp)
+	tp := sdktrace.NewTracerProvider(bugsnagOptions...)
+	otel.SetTracerProvider(tp)
 
 	otel.SetTextMapPropagator(propagation.NewCompositeTextMapPropagator(propagation.TraceContext{}, propagation.Baggage{}))
 
@@ -152,10 +152,10 @@ func main() {
 	mustMapEnv(&appVersion, "BUGSNAG_APP_VERSION")
 
 	bugsnag.Configure(bugsnag.Configuration{
-        APIKey:          apiKey,
-        ReleaseStage:    releaseStage,
-        ProjectPackages: []string{"main", "github.com/bugsnag/opentelemetry-demo"},
-    })
+		APIKey:          apiKey,
+		ReleaseStage:    releaseStage,
+		ProjectPackages: []string{"main", "github.com/bugsnag/opentelemetry-demo"},
+	})
 
 	var port string
 	mustMapEnv(&port, "CHECKOUT_PORT")
@@ -263,8 +263,8 @@ func BugsnagErrorInterceptor() grpc.UnaryServerInterceptor {
 		if err != nil {
 			bugsnag.Notify(err, ctx, bugsnag.MetaData{
 				"correlation": {
-					"traceId":     traceCtx.TraceID().String(),
-					"spanId":     traceCtx.SpanID().String(),
+					"traceId": traceCtx.TraceID().String(),
+					"spanId":  traceCtx.SpanID().String(),
 				},
 			})
 		}
