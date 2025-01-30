@@ -1,4 +1,5 @@
-{
+[
+  {
     "**/*.{go,cs,h,cpp,js,ts,tsx,rs}": [
       "// Copyright The OpenTelemetry Authors",
       "// SPDX-License-Identifier: Apache-2.0"
@@ -44,6 +45,8 @@
         "src/currency/build/",
         "src/checkout/genproto/",
         "src/product-catalog/genproto/",
+        "src/product-catalog/migrations/",
+        "src/product-catalog/models/",
         "src/react-native-app/ios/Pods/",
         "src/react-native-app/ios/build/",
         "src/react-native-app/android/app/build/",
@@ -54,4 +57,15 @@
         "src/recommendation/demo_pb2_grpc.py",
         "internal/tools/"
     ]
+  },
+  {
+    "src/product-catalog/migrations/**/*.sql": [
+      "-- Copyright SmartBear Software",
+      "-- SPDX-License-Identifier: Apache-2.0"
+    ],
+    "src/product-catalog/models/**/*.go": [
+      "// Copyright SmartBear Software",
+      "// SPDX-License-Identifier: Apache-2.0"
+    ]
   }
+]
