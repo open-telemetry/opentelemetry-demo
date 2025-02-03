@@ -2,6 +2,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import { NextPage } from 'next';
+import Head from 'next/head';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 import Ad from '../../../../components/Ad';
@@ -23,6 +24,9 @@ const Checkout: NextPage = () => {
       productIds={items.map(({ item }) => item?.productId || '')}
       contextKeys={[...new Set(items.flatMap(({ item }) => item.product.categories))]}
     >
+      <Head>
+        <title>Otel Demo - Checkout</title>
+      </Head>
       <Layout>
         <S.Checkout>
           <S.Container>
