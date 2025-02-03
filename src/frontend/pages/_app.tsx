@@ -9,7 +9,6 @@ import CurrencyProvider from '../providers/Currency.provider';
 import CartProvider from '../providers/Cart.provider';
 import { ThemeProvider } from 'styled-components';
 import Theme from '../styles/Theme';
-import FrontendTracer from '../utils/telemetry/FrontendTracer';
 import SessionGateway from '../gateways/Session.gateway';
 import { OpenFeatureProvider, OpenFeature } from '@openfeature/react-sdk';
 import { FlagdWebProvider } from '@openfeature/flagd-web-provider';
@@ -25,6 +24,7 @@ declare global {
       NEXT_PUBLIC_OTEL_EXPORTER_OTLP_TRACES_ENDPOINT?: string;
       IS_SYNTHETIC_REQUEST?: string;
       BUGSNAG_API_KEY: string;
+      OTEL_SERVICE_NAME: string;
       BUGSNAG_APP_VERSION: string;
       BUGSNAG_RELEASE_STAGE: string;
     };
@@ -59,17 +59,15 @@ if (typeof window !== 'undefined') {
     apiKey: window.ENV.BUGSNAG_API_KEY,
     appVersion: window.ENV.BUGSNAG_APP_VERSION,
     releaseStage: window.ENV.BUGSNAG_RELEASE_STAGE,
-    serviceName: 'opentelemetry-demo-frontend',
+    serviceName: window.ENV.OTEL_SERVICE_NAME,
     bugsnag: Bugsnag,
     routingProvider: new DefaultRoutingProvider(resolveRoute),
     networkRequestCallback: networkRequestInfo => {
       networkRequestInfo.propagateTraceContext = networkRequestInfo.url?.startsWith(window.origin);
-
       return networkRequestInfo;
     },
   });
 
-  FrontendTracer();
   if (window.location) {
     const session = SessionGateway.getSession();
 
