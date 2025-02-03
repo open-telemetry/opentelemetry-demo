@@ -30,6 +30,7 @@ export default class MyDocument extends Document<{ envString: string }> {
           NEXT_PUBLIC_OTEL_SERVICE_NAME: '${process.env.WEB_OTEL_SERVICE_NAME}',
           NEXT_PUBLIC_OTEL_EXPORTER_OTLP_TRACES_ENDPOINT: '${otlpTracesEndpoint}',
           IS_SYNTHETIC_REQUEST: '${isSyntheticRequest}',
+          OTEL_SERVICE_NAME: '${process.env.OTEL_SERVICE_NAME}',
           BUGSNAG_API_KEY: '${process.env.BUGSNAG_API_KEY}',
           BUGSNAG_APP_VERSION: '${process.env.BUGSNAG_APP_VERSION}',
           BUGSNAG_RELEASE_STAGE: '${process.env.BUGSNAG_RELEASE_STAGE}',
