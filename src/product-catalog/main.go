@@ -75,11 +75,10 @@ func init() {
 	err = m.Up()
 
 	if err != nil {
-		log.Fatalf("Error running database migrations: %v", err)
-		return
+		log.Errorf("Error running database migrations: %v", err)
+	} else {
+		log.Info("Migrations run successfully")
 	}
-
-	log.Infof("Migrations run successfully")
 }
 
 func initResource() *sdkresource.Resource {
