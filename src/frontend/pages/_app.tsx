@@ -59,7 +59,6 @@ if (typeof window !== 'undefined') {
     apiKey: window.ENV.BUGSNAG_API_KEY,
     appVersion: window.ENV.BUGSNAG_APP_VERSION,
     releaseStage: window.ENV.BUGSNAG_RELEASE_STAGE,
-    serviceName: window.ENV.OTEL_SERVICE_NAME,
     bugsnag: Bugsnag,
     routingProvider: new DefaultRoutingProvider(resolveRoute),
     networkRequestCallback: networkRequestInfo => {
