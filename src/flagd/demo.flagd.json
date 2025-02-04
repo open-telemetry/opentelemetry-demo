@@ -11,13 +11,18 @@
       "defaultVariant": "off"
     },
     "productCatalogSlowLoad": {
-      "description": "Degrade the database query performance",
+      "description": "Degrade the database query performance n%",
       "state": "ENABLED",
       "variants": {
-        "on": true,
-        "off": false
+        "100%": 1,
+        "90%": 0.95,
+        "75%": 0.75,
+        "50%": 0.5,
+        "25%": 0.25,
+        "10%": 0.1,
+        "off": 0
       },
-      "defaultVariant": "on"
+      "defaultVariant": "50%"
     },
     "recommendationCacheFailure": {
       "description": "Fail recommendation service cache",

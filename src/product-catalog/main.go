@@ -10,6 +10,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"math/rand/v2"
 	"net"
 	"os"
 	"os/signal"
@@ -46,7 +47,6 @@ import (
 	models "github.com/opentelemetry/opentelemetry-demo/src/product-catalog/models"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/codes"
-	"google.golang.org/grpc/credentials/insecure"
 	healthpb "google.golang.org/grpc/health/grpc_health_v1"
 	"google.golang.org/grpc/reflection"
 	"google.golang.org/grpc/status"
@@ -69,6 +69,9 @@ func init() {
 	m, err := migrate.New(
 		"file://migrations/",
 		"sqlite://products/products.db")
+	if err != nil {
+		log.Errorf("Error creating migration instance: %v", err)
+	}
 
 	defer m.Close()
 
@@ -178,7 +181,9 @@ func main() {
 		log.Fatal(err)
 	}
 
-	svc := &productCatalog{}
+	svc := &productCatalog{
+		client: openfeature.NewClient("productCatalog"),
+	}
 	var port string
 	mustMapEnv(&port, "PRODUCT_CATALOG_PORT")
 
@@ -215,6 +220,7 @@ func main() {
 
 type productCatalog struct {
 	pb.UnimplementedProductCatalogServiceServer
+	client *openfeature.Client
 }
 
 func mustMapEnv(target *string, key string) {
@@ -244,14 +250,14 @@ func (p *productCatalog) ListProducts(ctx context.Context, req *pb.Empty) (*pb.L
 
 	var found []models.Product
 	if slowLoadEnabled {
-		log.Infof("Product catalog slow load feature flag enabled")
+		log.Info("Product catalog slow load feature flag enabled")
 		if err := db.WithContext(ctx).Preload("Categories").Find(&found).Error; err != nil {
-			msg := fmt.Sprintf("Error fetching products from the database")
+			msg := "Error fetching products from the database"
 			span.SetStatus(otelcodes.Error, msg)
 			span.AddEvent(msg)
 			log.Fatalf("%s: %v", msg, err)
 
-			return nil, status.Errorf(codes.Internal, msg)
+			return nil, status.Error(codes.Internal, msg)
 		}
 
 		for idx, _ := range found {
@@ -262,26 +268,26 @@ func (p *productCatalog) ListProducts(ctx context.Context, req *pb.Empty) (*pb.L
 				span.AddEvent(msg)
 				log.Fatalf("%s: %v", msg, err)
 
-				return nil, status.Errorf(codes.Internal, msg)
+				return nil, status.Error(codes.Internal, msg)
 			}
 			found[idx].ProductPrices = prices
 			time.Sleep(50 * time.Millisecond)
 		}
 	} else {
 		if err := db.WithContext(ctx).Preload("ProductPrices").Preload("Categories").Find(&found).Error; err != nil {
-			msg := fmt.Sprintf("Error fetching products from the database")
+			msg := "Error fetching products from the database"
 			span.SetStatus(otelcodes.Error, msg)
 			span.AddEvent(msg)
 			log.Fatalf("%s: %v", msg, err)
 
-			return nil, status.Errorf(codes.Internal, msg)
+			return nil, status.Error(codes.Internal, msg)
 		}
 	}
 
 	var products []*pb.Product
 	for idx, _ := range found {
 		converted := toProductProto(&found[idx])
-		products = append(products, &converted)
+		products = append(products, converted)
 	}
 
 	return &pb.ListProductsResponse{Products: products}, nil
@@ -295,10 +301,10 @@ func (p *productCatalog) GetProduct(ctx context.Context, req *pb.GetProductReque
 
 	// GetProduct will fail on a specific product when feature flag is enabled
 	if p.checkProductFailure(ctx, req.Id) {
-		msg := fmt.Sprintf("Error: Product Catalog Fail Feature Flag Enabled")
+		msg := "Error: Product Catalog Fail Feature Flag Enabled"
 		span.SetStatus(otelcodes.Error, msg)
 		span.AddEvent(msg)
-		return nil, status.Errorf(codes.Internal, msg)
+		return nil, status.Error(codes.Internal, msg)
 	}
 
 	var found models.Product
@@ -312,15 +318,15 @@ func (p *productCatalog) GetProduct(ctx context.Context, req *pb.GetProductReque
 			msg := fmt.Sprintf("Product Not Found: %s", req.Id)
 			span.SetStatus(otelcodes.Error, msg)
 			span.AddEvent(msg)
-			return nil, status.Errorf(codes.NotFound, msg)
+			return nil, status.Error(codes.NotFound, msg)
 		}
 
-		msg := fmt.Sprintf("Error fetching product from the database")
+		msg := "Error fetching product from the database"
 		span.SetStatus(otelcodes.Error, msg)
 		span.AddEvent(msg)
 		log.Fatalf("%s: %v", msg, err)
 
-		return nil, status.Errorf(codes.Internal, msg)
+		return nil, status.Error(codes.Internal, msg)
 	}
 
 	product := toProductProto(&found)
@@ -331,7 +337,7 @@ func (p *productCatalog) GetProduct(ctx context.Context, req *pb.GetProductReque
 		attribute.String("app.product.name", product.Name),
 	)
 
-	return &product, nil
+	return product, nil
 }
 
 func (p *productCatalog) SearchProducts(ctx context.Context, req *pb.SearchProductsRequest) (*pb.SearchProductsResponse, error) {
@@ -346,18 +352,18 @@ func (p *productCatalog) SearchProducts(ctx context.Context, req *pb.SearchProdu
 		Where("Name LIKE ?", search).
 		Or("Description LIKE ?", search).
 		Find(&found).Error; err != nil {
-		msg := fmt.Sprintf("Error searching the database")
+		msg := "Error searching the database"
 		span.SetStatus(otelcodes.Error, msg)
 		span.AddEvent(msg)
 		log.Fatalf("%s: %v", msg, err)
 
-		return nil, status.Errorf(codes.Internal, msg)
+		return nil, status.Error(codes.Internal, msg)
 	}
 
 	var result []*pb.Product
 	for idx, _ := range found {
 		converted := toProductProto(&found[idx])
-		result = append(result, &converted)
+		result = append(result, converted)
 	}
 
 	span.SetAttributes(
@@ -370,31 +376,28 @@ func (p *productCatalog) checkProductFailure(ctx context.Context, id string) boo
 	if id != "OLJCESPC7Z" {
 		return false
 	}
-
-	client := openfeature.NewClient("productCatalog")
-	failureEnabled, _ := client.BooleanValue(
+	failureEnabled, _ := p.client.BooleanValue(
 		ctx, "productCatalogFailure", false, openfeature.EvaluationContext{},
 	)
 	return failureEnabled
 }
 
 func (p *productCatalog) checkProductSlowLoad(ctx context.Context) bool {
-	client := openfeature.NewClient("productCatalog")
-	slowLoadEnabled, _ := client.BooleanValue(
-		ctx, "productCatalogSlowLoad", false, openfeature.EvaluationContext{},
+	numberVariant, err := p.client.FloatValue(
+		ctx,
+		"productCatalogSlowLoad",
+		0,
+		openfeature.EvaluationContext{},
 	)
-	return slowLoadEnabled
+	if err != nil {
+		log.Printf("Feature flag error: %v", err)
+		return false
+	}
+	return numberVariant > 0 && rand.Float64() < numberVariant
 }
 
-func createClient(ctx context.Context, svcAddr string) (*grpc.ClientConn, error) {
-	return grpc.DialContext(ctx, svcAddr,
-		grpc.WithTransportCredentials(insecure.NewCredentials()),
-		grpc.WithStatsHandler(otelgrpc.NewClientHandler()),
-	)
-}
-
-func toProductProto(p *models.Product) pb.Product {
-	protoProduct := pb.Product{
+func toProductProto(p *models.Product) *pb.Product {
+	protoProduct := &pb.Product{
 		Id:          p.ID,
 		Name:        p.Name,
 		Description: p.Description,
