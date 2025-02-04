@@ -29,8 +29,7 @@ jobs:
         - name: unit tests
           run: |
             cd src/product-catalog
-            go mod download
-            go build -o product-catalog-service main.go
+            go test ./...
     
     code-quality:
         runs-on: ubuntu-latest
@@ -42,7 +41,8 @@ jobs:
         - name: Run golangci-lint
           run: |
                 go install github.com/golangci/golangci-lint/cmd/golangci-lint@v1.56.2
-                golangci-lint run src/product-catalog/...
+                cd src/product-catalog
+                golangci-lint run ./...
 
     docker:
         runs-on: ubuntu-latest
