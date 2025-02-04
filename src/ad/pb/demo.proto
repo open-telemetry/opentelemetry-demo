@@ -313,4 +313,3 @@ message DeleteFlagRequest {
 }
 
 message DeleteFlagResponse {}
-
