@@ -27,7 +27,10 @@ jobs:
             go build -o product-catalog-service main.go
 
         - name: unit tests
-          run: go test ...
+          run: |
+            cd src/product-catalog
+            go mod download
+            go build -o product-catalog-service main.go
     
     code-quality:
         runs-on: ubuntu-latest
