@@ -40,7 +40,7 @@ jobs:
         
         - name: Run golangci-lint
           run: |
-                go install github.com/golangci/golangci-lint/cmd/golangci-lint@v1.56.2
+                curl -sSfL https://raw.githubusercontent.com/golangci/golangci-lint/master/install.sh | sh -s -- -b $(go env GOPATH)/bin v1.63.4
                 cd src/product-catalog
                 golangci-lint run ./...
 
@@ -66,9 +66,9 @@ jobs:
           uses: docker/build-push-action@v6
           with:
             context: src/product-catalog
-            file: Dockerfile
+            file: src/product-catalog/Dockerfile
             push: true
-            tags: ${{ secrets.DOCKERHUB_USERNAME }}/product-catalog:${{github.run_id}}
+            tags: ${{ secrets.DOCKER_USERNAME }}/product-catalog:${{github.run_id}}
 
     
     updatek8s:
@@ -84,7 +84,7 @@ jobs:
 
         - name: Update tag in kubernetes deployment manifest
           run: | 
-               sed -i 's/image: .*/image: ${{ secrets.DOCKERHUB_USERNAME }}/product-catalog:${{github.run_id}}/' kubernetes/productcatalog/deploy.yaml
+               sed -i "s|image: .*|image: ${{ secrets.DOCKER_USERNAME }}/product-catalog:${{github.run_id}}|" kubernetes/productcatalog/deploy.yaml
         
         - name: Commit and push changes
           run: |
@@ -92,7 +92,7 @@ jobs:
             git config --global user.name "Abhishek Veeramalla"
             git add kubernetes/productcatalog/deploy.yaml
             git commit -m "[CI]: Update product catalog image tag"
-            git push
+            git push origin HEAD:main -f
 
         
         
