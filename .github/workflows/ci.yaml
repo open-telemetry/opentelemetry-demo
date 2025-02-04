@@ -38,11 +38,17 @@ jobs:
         - name: checkout code
           uses: actions/checkout@v4
         
+        - name: Setup Go 1.22
+          uses: actions/setup-go@v2
+          with:
+           go-version: 1.22
+        
         - name: Run golangci-lint
-          run: |
-                curl -sSfL https://raw.githubusercontent.com/golangci/golangci-lint/master/install.sh | sh -s -- -b $(go env GOPATH)/bin v1.63.4
-                cd src/product-catalog
-                golangci-lint run ./...
+          uses: golangci/golangci-lint-action@v6
+          with:
+            version: v1.55.2
+            run: golangci-lint run
+            working-directory: src/product-catalog
 
     docker:
         runs-on: ubuntu-latest
