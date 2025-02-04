@@ -1,0 +1,78 @@
+---
+# Source: opentelemetry-demo/templates/component.yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: opentelemetry-demo-loadgenerator
+  labels:
+    
+    opentelemetry.io/name: opentelemetry-demo-loadgenerator
+    app.kubernetes.io/instance: opentelemetry-demo
+    app.kubernetes.io/component: loadgenerator
+    app.kubernetes.io/name: opentelemetry-demo-loadgenerator
+    app.kubernetes.io/version: "1.12.0"
+    app.kubernetes.io/part-of: opentelemetry-demo
+spec:
+  replicas: 1
+  revisionHistoryLimit: 10
+  selector:
+    matchLabels:
+      
+      opentelemetry.io/name: opentelemetry-demo-loadgenerator
+  template:
+    metadata:
+      labels:
+        
+        opentelemetry.io/name: opentelemetry-demo-loadgenerator
+        app.kubernetes.io/instance: opentelemetry-demo
+        app.kubernetes.io/component: loadgenerator
+        app.kubernetes.io/name: opentelemetry-demo-loadgenerator
+    spec:
+      serviceAccountName: opentelemetry-demo
+      containers:
+        - name: loadgenerator
+          image: 'ghcr.io/open-telemetry/demo:1.12.0-loadgenerator'
+          imagePullPolicy: IfNotPresent
+          ports:
+            
+            - containerPort: 8089
+              name: service
+          env:
+            - name: OTEL_SERVICE_NAME
+              valueFrom:
+                fieldRef:
+                  apiVersion: v1
+                  fieldPath: metadata.labels['app.kubernetes.io/component']
+            - name: OTEL_COLLECTOR_NAME
+              value: 'opentelemetry-demo-otelcol'
+            - name: OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE
+              value: cumulative
+            - name: LOCUST_WEB_PORT
+              value: "8089"
+            - name: LOCUST_USERS
+              value: "10"
+            - name: LOCUST_SPAWN_RATE
+              value: "1"
+            - name: LOCUST_HOST
+              value: http://opentelemetry-demo-frontendproxy:8080
+            - name: LOCUST_HEADLESS
+              value: "false"
+            - name: LOCUST_AUTOSTART
+              value: "true"
+            - name: LOCUST_BROWSER_TRAFFIC_ENABLED
+              value: "true"
+            - name: PROTOCOL_BUFFERS_PYTHON_IMPLEMENTATION
+              value: python
+            - name: FLAGD_HOST
+              value: 'opentelemetry-demo-flagd'
+            - name: FLAGD_PORT
+              value: "8013"
+            - name: OTEL_EXPORTER_OTLP_ENDPOINT
+              value: http://$(OTEL_COLLECTOR_NAME):4317
+            - name: OTEL_RESOURCE_ATTRIBUTES
+              value: service.name=$(OTEL_SERVICE_NAME),service.namespace=opentelemetry-demo,service.version=1.12.0
+          resources:
+            limits:
+              memory: 1500Mi
+          volumeMounts:
+      volumes:
