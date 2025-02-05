@@ -196,21 +196,20 @@ if browser_traffic_enabled:
             except Exception as e:
                 print(f'Error while open_cart_page_and_change_currency: {e}')
                 pass
-
-        @task
-        @pw
-        async def add_product_to_cart(self, page: PageWithRetry):
-            try:
-                page.on("console", lambda msg: print(f'add_product_to_cart console: {msg.text}'))
-                await page.route('**/*', add_baggage_header)
-                await page.goto("/", wait_until="domcontentloaded")
-                await page.click('p:has-text("Roof Binoculars")')
-                await page.click('button:has-text("Add To Cart")')
-                await page.wait_for_timeout(31000)  # giving the browser time to export the traces
-            except Exception as e:
                 print(f'Error while add_product_to_cart: {e}')
                 pass
 
+        @task
+        @pw
+        async def goto_product_page(self, page: PageWithRetry):
+            try:
+                page.on("console", lambda msg: print(f'goto_product_page console: {msg.text}'))
+                await page.route('**/*', add_baggage_header)
+                await page.goto("/product/" + random.choice(products), wait_until="domcontentloaded")
+                await page.wait_for_timeout(31000)  # giving the browser time to export the traces
+            except Exception as e:
+                print(f'Error while goto_product_page: {e}')
+                pass
 
 async def add_baggage_header(route: Route, request: Request):
     existing_baggage = request.headers.get('baggage', '')
