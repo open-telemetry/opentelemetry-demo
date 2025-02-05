@@ -195,6 +195,7 @@ if browser_traffic_enabled:
                 await page.wait_for_timeout(31000)  # giving the browser time to export the traces
             except Exception as e:
                 print(f'Error while open_cart_page_and_change_currency: {e}')
+                pass
 
         @task
         @pw
