@@ -1,32 +1,21 @@
-# Contributing
+# Contributing to OpenTelemetry Demo Webstore
 
-Welcome to OpenTelemetry Demo Webstore repository!
+Welcome to the OpenTelemetry Demo Webstore repository! We appreciate your interest in contributing. Whether you're fixing a bug, improving documentation, or adding a new feature, we value your contribution.
 
-Before you start - see OpenTelemetry
- [Contributor Guide](https://github.com/open-telemetry/community/blob/main/guides/contributor/README.md)
- for details on code attribution.
+Before getting started, please review the [OpenTelemetry Contributor Guide](https://github.com/open-telemetry/community/blob/main/guides/contributor/README.md) for details on code attribution and best practices.
 
-## Join a SIG Call
+## Getting Started
 
-We meet every other week on Wednesday's at 8:00 PT. The meeting is subject to change
-depending on contributors' availability. Check the [OpenTelemetry community
-calendar](https://github.com/open-telemetry/community?tab=readme-ov-file#special-interest-groups)
-for specific dates and Zoom meeting links.
+### Join a SIG Call
+We meet every other Wednesday at 8:00 PT. The schedule may change based on contributors' availability. Check the [OpenTelemetry Community Calendar](https://github.com/open-telemetry/community?tab=readme-ov-file#special-interest-groups) for specific dates and Zoom links.
 
-Meeting notes are available as a public [Google
-doc](https://docs.google.com/document/d/16f-JOjKzLgWxULRxY8TmpM_FjlI1sthvKurnqFz9x98/edit).
-For edit access, get in touch on
-[Slack](https://cloud-native.slack.com/archives/C03B4CWV4DA).
+Meeting notes are available [here](https://docs.google.com/document/d/16f-JOjKzLgWxULRxY8TmpM_FjlI1sthvKurnqFz9x98/edit). For edit access, ask in our [Slack channel](https://cloud-native.slack.com/archives/C03B4CWV4DA).
 
-## Sign the CLA
+### Sign the Contributor License Agreement (CLA)
+Before contributing, sign the [CLA](https://identity.linuxfoundation.org/projects/cncf).
 
-Before you can contribute, you will need to sign the [Contributor License
-Agreement](https://identity.linuxfoundation.org/projects/cncf).
-
-## Find a Buddy and Get Started Quickly
-
-If you are looking for someone to help you find a starting point and be a
-resource for your first contribution, join our Slack channel and find a buddy!
+### Find a Mentor (Buddy System)
+New to OpenTelemetry? We encourage you to find a mentor who can guide you through your first contribution.
 
 1. Create your [CNCF Slack account](http://slack.cncf.io/) and join the
    [otel-community-demo](https://app.slack.com/client/T08PSQ7BQ/C03B4CWV4DA) channel.
@@ -41,60 +30,70 @@ contributing to OpenTelemetry: providing context, reviewing PRs, and helping
 those get merged. Buddies will not be available 24/7, but is committed to
 responding during their normal contribution hours.
 
-## Development Environment
+## Setting Up Your Development Environment
 
-You can contribute to this project from a Windows, macOS or Linux machine. The
-first step to contributing is ensuring you can run the demo successfully from
-your local machine.
+### Prerequisites
+Ensure you have the following installed:
 
-On all platforms, the minimum requirements are:
-
-- Docker
+- [Git](https://git-scm.com/book/en/v2/Getting-Started-Installing-Git)
+- [Make](https://www.gnu.org/software/make/)
+- [Docker](https://www.docker.com/get-started/)
 - [Docker Compose](https://docs.docker.com/compose/install/#install-compose) v2.0.0+
 
-### Clone Repo
-
-- Clone the Webstore Demo repository:
-
-```shell
+### Clone the Repository
+```sh
 git clone https://github.com/open-telemetry/opentelemetry-demo.git
-```
-
-### Open Folder
-
-- Navigate to the cloned folder:
-
-```shell
 cd opentelemetry-demo/
 ```
 
-### Gradle Update [Windows Only]
-
-- Navigate to the Java Ad Service folder to install and update Gradle:
-
-```shell
-cd .\src\ad\
-.\gradlew installDist
-.\gradlew wrapper --gradle-version 7.4.2
-```
-
-### Run Docker Compose
-
-- Start the demo:
-
-```shell
+### Run the Demo
+```sh
 make start
 ```
 
-### Verify the Webstore & the Telemetry
+### Verify the Webstore & Telemetry
+Once the images are built and containers are started, visit:
 
-Once the images are built and containers are started you can access:
+- **Webstore**: [http://localhost:8080/](http://localhost:8080/)
+- **Jaeger**: [http://localhost:8080/jaeger/ui/](http://localhost:8080/jaeger/ui/)
+- **Grafana**: [http://localhost:8080/grafana/](http://localhost:8080/grafana/)
+- **Feature Flags UI**: [http://localhost:8080/feature/](http://localhost:8080/feature/)
+- **Load Generator UI**: [http://localhost:8080/loadgen/](http://localhost:8080/loadgen/)
 
-- Webstore: <http://localhost:8080/>
-- Jaeger: <http://localhost:8080/jaeger/ui/>
-- Grafana: <http://localhost:8080/grafana/>
-- Feature Flags UI: <http://localhost:8080/feature/>
-- Load Generator UI: <http://localhost:8080/loadgen//>
+## Troubleshooting Common Issues
+
+### Docker Not Running
+**Error:** `Error response from daemon: Docker daemon is not running.`
+
+**Solution:**
+- **Windows/macOS**: Open Docker Desktop and ensure it's running.
+- **Linux**: Check Docker status:
+  ```sh
+  systemctl status docker
+  ```
+  If inactive, start it:
+  ```sh
+  sudo systemctl start docker
+  ```
+
+### Gradle Issues (Windows)
+If you encounter Gradle issues, run:
+```sh
+cd src/ad/
+./gradlew installDist
+./gradlew wrapper --gradle-version 7.4.2
+```
+
+### Debugging Tips
+- Use `docker ps` to check running containers.
+- View logs for services:
+  ```sh
+  docker logs <container_id>
+  ```
+- Restart containers if needed:
+  ```sh
+  docker-compose restart
+  ```
 
 ### Review the Documentation
 
@@ -262,3 +261,5 @@ Maintainers can create a new release when desired by following these steps.
   committing the changes.
 
 [docs]: https://opentelemetry.io/docs/demo/
+
+By following this guide, you’ll have a smoother onboarding experience as a contributor. Happy coding!
