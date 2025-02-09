@@ -821,6 +821,6 @@ services:
       test: curl -s http://localhost:9200/_cluster/health | grep -E '"status":"(green|yellow)"'
       start_period: 10s
       interval: 5s
-      timeout: 10s
+      timeout: 30s
       retries: 10
     logging: *logging
