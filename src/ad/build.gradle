@@ -16,7 +16,7 @@ description = 'Ad Service'
 group = "ad"
 version = "0.1.0-SNAPSHOT"
 
-def opentelemetryVersion = "1.46.0"
+def opentelemetryVersion = "1.47.0"
 def opentelemetryInstrumentationVersion = "2.12.0"
 def grpcVersion = "1.70.0"
 def jacksonVersion = "2.18.2"
@@ -56,7 +56,7 @@ dependencies {
 
         runtimeOnly "com.fasterxml.jackson.core:jackson-core:${jacksonVersion}",
                 "com.fasterxml.jackson.core:jackson-databind:${jacksonVersion}",
-                "io.netty:netty-tcnative-boringssl-static:2.0.69.Final"
+                "io.netty:netty-tcnative-boringssl-static:2.0.70.Final"
     }
 }
 
