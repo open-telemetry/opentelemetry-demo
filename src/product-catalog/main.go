@@ -184,6 +184,12 @@ func main() {
 	svc := &productCatalog{
 		client: openfeature.NewClient("productCatalog"),
 	}
+
+	db.Callback().Query().Before("otel:after:select").Register("slowdown", func(db *gorm.DB) {
+		if svc.checkProductSlowLoad(db.Statement.Context) {
+			time.Sleep(1 * time.Second)
+		}
+	})
 	var port string
 	mustMapEnv(&port, "PRODUCT_CATALOG_PORT")
 
@@ -255,38 +261,31 @@ func (p *productCatalog) ListProducts(ctx context.Context, req *pb.Empty) (*pb.L
 			msg := "Error fetching products from the database"
 			span.SetStatus(otelcodes.Error, msg)
 			span.AddEvent(msg)
-			log.Fatalf("%s: %v", msg, err)
-
 			return nil, status.Error(codes.Internal, msg)
 		}
 
-		for idx, _ := range found {
+		for idx := range found {
 			var prices []models.ProductPrice
 			if err := db.WithContext(ctx).Find(&prices, "product_id = ?", found[idx].ID).Error; err != nil {
 				msg := fmt.Sprintf("Error fetching product %s price from the database", found[idx].ID)
 				span.SetStatus(otelcodes.Error, msg)
 				span.AddEvent(msg)
-				log.Fatalf("%s: %v", msg, err)
-
 				return nil, status.Error(codes.Internal, msg)
 			}
 			found[idx].ProductPrices = prices
-			time.Sleep(50 * time.Millisecond)
 		}
 	} else {
 		if err := db.WithContext(ctx).Preload("ProductPrices").Preload("Categories").Find(&found).Error; err != nil {
 			msg := "Error fetching products from the database"
 			span.SetStatus(otelcodes.Error, msg)
 			span.AddEvent(msg)
-			log.Fatalf("%s: %v", msg, err)
-
 			return nil, status.Error(codes.Internal, msg)
 		}
 	}
 
 	var products []*pb.Product
-	for idx, _ := range found {
-		converted := toProductProto(&found[idx])
+	for idx := range found {
+		converted := found[idx].ToProto()
 		products = append(products, converted)
 	}
 
@@ -324,12 +323,11 @@ func (p *productCatalog) GetProduct(ctx context.Context, req *pb.GetProductReque
 		msg := "Error fetching product from the database"
 		span.SetStatus(otelcodes.Error, msg)
 		span.AddEvent(msg)
-		log.Fatalf("%s: %v", msg, err)
 
 		return nil, status.Error(codes.Internal, msg)
 	}
 
-	product := toProductProto(&found)
+	product := found.ToProto()
 
 	msg := fmt.Sprintf("Product Found - ID: %s, Name: %s", req.Id, product.Name)
 	span.AddEvent(msg)
@@ -355,14 +353,13 @@ func (p *productCatalog) SearchProducts(ctx context.Context, req *pb.SearchProdu
 		msg := "Error searching the database"
 		span.SetStatus(otelcodes.Error, msg)
 		span.AddEvent(msg)
-		log.Fatalf("%s: %v", msg, err)
 
 		return nil, status.Error(codes.Internal, msg)
 	}
 
 	var result []*pb.Product
-	for idx, _ := range found {
-		converted := toProductProto(&found[idx])
+	for idx := range found {
+		converted := found[idx].ToProto()
 		result = append(result, converted)
 	}
 
@@ -394,30 +391,4 @@ func (p *productCatalog) checkProductSlowLoad(ctx context.Context) bool {
 		return false
 	}
 	return numberVariant > 0 && rand.Float64() < numberVariant
-}
-
-func toProductProto(p *models.Product) *pb.Product {
-	protoProduct := &pb.Product{
-		Id:          p.ID,
-		Name:        p.Name,
-		Description: p.Description,
-		Picture:     p.Picture,
-	}
-
-	for _, cat := range p.Categories {
-		protoProduct.Categories = append(protoProduct.Categories, cat.Name)
-	}
-
-	for _, price := range p.ProductPrices {
-		if price.Currency == "USD" {
-			protoProduct.PriceUsd = &pb.Money{
-				CurrencyCode: price.Currency,
-				Units:        int64(price.Units),
-				Nanos:        int32(price.Nanos),
-			}
-			break
-		}
-	}
-
-	return protoProduct
 }
