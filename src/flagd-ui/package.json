@@ -23,9 +23,9 @@
     "@types/react-dom": "^19.0.3",
     "autoprefixer": "^10.4.20",
     "eslint": "^9",
-    "eslint-config-next": "15.1.6",
-    "postcss": "^8.5.1",
-    "prettier": "^3.4.2",
+    "eslint-config-next": "15.1.7",
+    "postcss": "^8.5.2",
+    "prettier": "^3.5.0",
     "prettier-plugin-tailwindcss": "^0.6.11",
     "tailwindcss": "^4.0.4",
     "typescript": "^5"
