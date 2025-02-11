@@ -1,20 +1,24 @@
 # Contributing to OpenTelemetry Demo Webstore
 
-Welcome to the OpenTelemetry Demo Webstore repository! We appreciate your interest in contributing. Whether you're fixing a bug, improving documentation, or adding a new feature, we value your contribution.
+Welcome to the OpenTelemetry Demo repository! We appreciate your interest in contributing. 
+Whether you're fixing a bug, improving documentation, or adding a new feature, we value your contribution.
 
 Before getting started, please review the [OpenTelemetry Contributor Guide](https://github.com/open-telemetry/community/blob/main/guides/contributor/README.md) for details on code attribution and best practices.
 
 ## Getting Started
 
 ### Join a SIG Call
+
 We meet every other Wednesday at 8:00 PT. The schedule may change based on contributors' availability. Check the [OpenTelemetry Community Calendar](https://github.com/open-telemetry/community?tab=readme-ov-file#special-interest-groups) for specific dates and Zoom links.
 
 Meeting notes are available [here](https://docs.google.com/document/d/16f-JOjKzLgWxULRxY8TmpM_FjlI1sthvKurnqFz9x98/edit). For edit access, ask in our [Slack channel](https://cloud-native.slack.com/archives/C03B4CWV4DA).
 
 ### Sign the Contributor License Agreement (CLA)
-Before contributing, sign the [CLA](https://identity.linuxfoundation.org/projects/cncf).
+
+Before contributing, sign the [CLA](https://identity.linuxfoundation.org/projects/cncf)
 
 ### Find a Mentor (Buddy System)
+
 New to OpenTelemetry? We encourage you to find a mentor who can guide you through your first contribution.
 
 1. Create your [CNCF Slack account](http://slack.cncf.io/) and join the
@@ -33,6 +37,7 @@ responding during their normal contribution hours.
 ## Setting Up Your Development Environment
 
 ### Prerequisites
+
 Ensure you have the following installed:
 
 - [Git](https://git-scm.com/book/en/v2/Getting-Started-Installing-Git)
@@ -41,17 +46,20 @@ Ensure you have the following installed:
 - [Docker Compose](https://docs.docker.com/compose/install/#install-compose) v2.0.0+
 
 ### Clone the Repository
+
 ```sh
 git clone https://github.com/open-telemetry/opentelemetry-demo.git
 cd opentelemetry-demo/
 ```
 
 ### Run the Demo
+
 ```sh
 make start
 ```
 
 ### Verify the Webstore & Telemetry
+
 Once the images are built and containers are started, visit:
 
 - **Webstore**: [http://localhost:8080/](http://localhost:8080/)
@@ -63,21 +71,28 @@ Once the images are built and containers are started, visit:
 ## Troubleshooting Common Issues
 
 ### Docker Not Running
+
 **Error:** `Error response from daemon: Docker daemon is not running.`
 
 **Solution:**
+
 - **Windows/macOS**: Open Docker Desktop and ensure it's running.
 - **Linux**: Check Docker status:
+
   ```sh
   systemctl status docker
   ```
+  
   If inactive, start it:
+  
   ```sh
   sudo systemctl start docker
   ```
 
 ### Gradle Issues (Windows)
+
 If you encounter Gradle issues, run:
+
 ```sh
 cd src/ad/
 ./gradlew installDist
@@ -85,11 +100,14 @@ cd src/ad/
 ```
 
 ### Debugging Tips
+
 - Use `docker ps` to check running containers.
 - View logs for services:
+  
   ```sh
   docker logs <container_id>
   ```
+
 - Restart containers if needed:
   ```sh
   docker-compose restart
