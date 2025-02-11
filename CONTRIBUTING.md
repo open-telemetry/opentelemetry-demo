@@ -1,6 +1,7 @@
 # Contributing to OpenTelemetry Demo Webstore
 
-Welcome to the OpenTelemetry Demo repository! We appreciate your interest in contributing. Whether you're fixing a bug, improving documentation, or adding a new feature, we value your contribution.
+Welcome to the OpenTelemetry Demo repository! We appreciate your interest in contributing.
+Whether you're fixing a bug, improving documentation, or adding a new feature, we value your contribution.
 
 Before getting started, please review the [OpenTelemetry Contributor Guide](https://github.com/open-telemetry/community/blob/main/guides/contributor/README.md) for details on code attribution and best practices.
 
@@ -8,7 +9,8 @@ Before getting started, please review the [OpenTelemetry Contributor Guide](http
 
 ### Join a SIG Call
 
-We meet every other Wednesday at 8:00 PT. The schedule may change based on contributors' availability. Check the [OpenTelemetry Community Calendar](https://github.com/open-telemetry/community?tab=readme-ov-file#special-interest-groups) for specific dates and Zoom links.
+We meet every other Wednesday at 8:00 PT. The schedule may change based on contributors' availability. 
+Check the [OpenTelemetry Community Calendar](https://github.com/open-telemetry/community?tab=readme-ov-file#special-interest-groups) for specific dates and Zoom links.
 
 Meeting notes are available [here](https://docs.google.com/document/d/16f-JOjKzLgWxULRxY8TmpM_FjlI1sthvKurnqFz9x98/edit). For edit access, ask in our [Slack channel](https://cloud-native.slack.com/archives/C03B4CWV4DA).
 
@@ -108,6 +110,7 @@ cd src/ad/
   ```
 
 - Restart containers if needed:
+  
   ```sh
   docker-compose restart
   ```
