@@ -1,7 +1,6 @@
 # Contributing to OpenTelemetry Demo Webstore
 
-Welcome to the OpenTelemetry Demo repository! We appreciate your interest in contributing. 
-Whether you're fixing a bug, improving documentation, or adding a new feature, we value your contribution.
+Welcome to the OpenTelemetry Demo repository! We appreciate your interest in contributing. Whether you're fixing a bug, improving documentation, or adding a new feature, we value your contribution.
 
 Before getting started, please review the [OpenTelemetry Contributor Guide](https://github.com/open-telemetry/community/blob/main/guides/contributor/README.md) for details on code attribution and best practices.
 
