@@ -187,7 +187,7 @@ func main() {
 
 	db.Callback().Query().Before("otel:after:select").Register("slowdown", func(db *gorm.DB) {
 		if svc.checkProductSlowLoad(db.Statement.Context) {
-			time.Sleep(1 * time.Second)
+			time.Sleep(200 * time.Millisecond)
 		}
 	})
 	var port string
