@@ -25,16 +25,41 @@
   "editable": true,
   "fiscalYearStartMonth": 0,
   "graphTooltip": 0,
-  "id": 3,
+  "id": 6,
   "links": [],
   "panels": [
+    {
+      "fieldConfig": {
+        "defaults": {},
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 2,
+        "w": 24,
+        "x": 0,
+        "y": 0
+      },
+      "id": 56,
+      "options": {
+        "code": {
+          "language": "plaintext",
+          "showLineNumbers": false,
+          "showMiniMap": false
+        },
+        "content": "This dashboard is used to understand the data flows for the OpenTelemetry Collector's metrics and traces pipelines.\n<br>\nChart panels may require 5 minutes after the Demo is started before rendering data.",
+        "mode": "html"
+      },
+      "pluginVersion": "11.4.0",
+      "title": "",
+      "type": "text"
+    },
     {
       "collapsed": false,
       "gridPos": {
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 0
+        "y": 2
       },
       "id": 8,
       "panels": [],
@@ -73,7 +98,7 @@
         "h": 4,
         "w": 3,
         "x": 0,
-        "y": 1
+        "y": 3
       },
       "id": 6,
       "options": {
@@ -93,7 +118,7 @@
         "textMode": "auto",
         "wideLayout": true
       },
-      "pluginVersion": "11.3.0",
+      "pluginVersion": "11.4.0",
       "targets": [
         {
           "datasource": {
@@ -143,7 +168,7 @@
         "h": 4,
         "w": 3,
         "x": 3,
-        "y": 1
+        "y": 3
       },
       "id": 24,
       "options": {
@@ -161,7 +186,7 @@
         "showThresholdMarkers": true,
         "sizing": "auto"
       },
-      "pluginVersion": "11.3.0",
+      "pluginVersion": "11.4.0",
       "targets": [
         {
           "datasource": {
@@ -211,7 +236,7 @@
         "h": 4,
         "w": 3,
         "x": 6,
-        "y": 1
+        "y": 3
       },
       "id": 38,
       "options": {
@@ -229,7 +254,7 @@
         "showThresholdMarkers": true,
         "sizing": "auto"
       },
-      "pluginVersion": "11.3.0",
+      "pluginVersion": "11.4.0",
       "targets": [
         {
           "datasource": {
@@ -256,7 +281,7 @@
         "h": 4,
         "w": 15,
         "x": 9,
-        "y": 1
+        "y": 3
       },
       "id": 32,
       "options": {
@@ -268,7 +293,7 @@
         "content": "## Opentelemetry Collector Data Ingress/Egress\n\n`service_version:` ${service_version}\n\n`opentelemetry collector:` contrib\n\n",
         "mode": "markdown"
       },
-      "pluginVersion": "11.3.0",
+      "pluginVersion": "11.4.0",
       "title": "",
       "type": "text"
     },
@@ -278,7 +303,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 5
+        "y": 7
       },
       "id": 10,
       "panels": [],
@@ -335,7 +360,7 @@
         "h": 19,
         "w": 3,
         "x": 0,
-        "y": 6
+        "y": 8
       },
       "id": 55,
       "options": {
@@ -353,7 +378,7 @@
         "showThresholdMarkers": false,
         "sizing": "auto"
       },
-      "pluginVersion": "11.3.0",
+      "pluginVersion": "11.4.0",
       "targets": [
         {
           "datasource": {
@@ -412,7 +437,7 @@
         "h": 11,
         "w": 21,
         "x": 3,
-        "y": 6
+        "y": 8
       },
       "id": 4,
       "options": {
@@ -421,7 +446,7 @@
           "mainStatUnit": "flops"
         }
       },
-      "pluginVersion": "11.3.0",
+      "pluginVersion": "11.4.0",
       "targets": [
         {
           "datasource": {
@@ -486,7 +511,7 @@
         "h": 5,
         "w": 5,
         "x": 3,
-        "y": 17
+        "y": 19
       },
       "id": 12,
       "options": {
@@ -506,7 +531,7 @@
         "textMode": "auto",
         "wideLayout": true
       },
-      "pluginVersion": "11.3.0",
+      "pluginVersion": "11.4.0",
       "targets": [
         {
           "datasource": {
@@ -551,7 +576,7 @@
         "h": 5,
         "w": 3,
         "x": 8,
-        "y": 17
+        "y": 19
       },
       "id": 13,
       "options": {
@@ -569,7 +594,7 @@
         "showThresholdMarkers": true,
         "sizing": "auto"
       },
-      "pluginVersion": "11.3.0",
+      "pluginVersion": "11.4.0",
       "targets": [
         {
           "datasource": {
@@ -619,7 +644,7 @@
         "h": 5,
         "w": 5,
         "x": 11,
-        "y": 17
+        "y": 19
       },
       "id": 15,
       "options": {
@@ -640,7 +665,7 @@
         "textMode": "auto",
         "wideLayout": true
       },
-      "pluginVersion": "11.3.0",
+      "pluginVersion": "11.4.0",
       "targets": [
         {
           "datasource": {
@@ -684,7 +709,7 @@
         "h": 5,
         "w": 3,
         "x": 16,
-        "y": 17
+        "y": 19
       },
       "id": 14,
       "options": {
@@ -702,7 +727,7 @@
         "showThresholdMarkers": true,
         "sizing": "auto"
       },
-      "pluginVersion": "11.3.0",
+      "pluginVersion": "11.4.0",
       "targets": [
         {
           "datasource": {
@@ -751,7 +776,7 @@
         "h": 5,
         "w": 5,
         "x": 19,
-        "y": 17
+        "y": 19
       },
       "id": 30,
       "options": {
@@ -771,7 +796,7 @@
         "textMode": "auto",
         "wideLayout": true
       },
-      "pluginVersion": "11.3.0",
+      "pluginVersion": "11.4.0",
       "targets": [
         {
           "datasource": {
@@ -820,7 +845,7 @@
         "h": 3,
         "w": 5,
         "x": 3,
-        "y": 22
+        "y": 24
       },
       "id": 17,
       "options": {
@@ -840,7 +865,7 @@
         "textMode": "auto",
         "wideLayout": true
       },
-      "pluginVersion": "11.3.0",
+      "pluginVersion": "11.4.0",
       "targets": [
         {
           "datasource": {
@@ -885,7 +910,7 @@
         "h": 3,
         "w": 3,
         "x": 8,
-        "y": 22
+        "y": 24
       },
       "id": 18,
       "options": {
@@ -903,7 +928,7 @@
         "showThresholdMarkers": true,
         "sizing": "auto"
       },
-      "pluginVersion": "11.3.0",
+      "pluginVersion": "11.4.0",
       "targets": [
         {
           "datasource": {
@@ -948,7 +973,7 @@
         "h": 3,
         "w": 3,
         "x": 16,
-        "y": 22
+        "y": 24
       },
       "id": 19,
       "options": {
@@ -966,7 +991,7 @@
         "showThresholdMarkers": true,
         "sizing": "auto"
       },
-      "pluginVersion": "11.3.0",
+      "pluginVersion": "11.4.0",
       "targets": [
         {
           "datasource": {
@@ -1015,7 +1040,7 @@
         "h": 3,
         "w": 5,
         "x": 19,
-        "y": 22
+        "y": 24
       },
       "id": 20,
       "options": {
@@ -1035,7 +1060,7 @@
         "textMode": "auto",
         "wideLayout": true
       },
-      "pluginVersion": "11.3.0",
+      "pluginVersion": "11.4.0",
       "targets": [
         {
           "datasource": {
@@ -1061,7 +1086,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 25
+        "y": 27
       },
       "id": 22,
       "panels": [],
@@ -1085,8 +1110,7 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "light-blue",
-                "value": null
+                "color": "light-blue"
               },
               {
                 "color": "semi-dark-red",
@@ -1118,7 +1142,7 @@
         "h": 19,
         "w": 3,
         "x": 0,
-        "y": 26
+        "y": 28
       },
       "id": 54,
       "options": {
@@ -1232,7 +1256,7 @@
         "h": 11,
         "w": 21,
         "x": 3,
-        "y": 26
+        "y": 28
       },
       "id": 25,
       "options": {
@@ -1293,8 +1317,7 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "text",
-                "value": null
+                "color": "text"
               }
             ]
           },
@@ -1306,7 +1329,7 @@
         "h": 5,
         "w": 5,
         "x": 3,
-        "y": 37
+        "y": 39
       },
       "id": 26,
       "options": {
@@ -1359,8 +1382,7 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "text",
-                "value": null
+                "color": "text"
               }
             ]
           }
@@ -1371,7 +1393,7 @@
         "h": 5,
         "w": 3,
         "x": 8,
-        "y": 37
+        "y": 39
       },
       "id": 27,
       "options": {
@@ -1421,8 +1443,7 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green",
-                "value": null
+                "color": "green"
               },
               {
                 "color": "#EAB839",
@@ -1438,7 +1459,7 @@
         "h": 5,
         "w": 5,
         "x": 11,
-        "y": 37
+        "y": 39
       },
       "id": 28,
       "options": {
@@ -1492,8 +1513,7 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "text",
-                "value": null
+                "color": "text"
               }
             ]
           }
@@ -1504,7 +1524,7 @@
         "h": 5,
         "w": 3,
         "x": 16,
-        "y": 37
+        "y": 39
       },
       "id": 29,
       "options": {
@@ -1558,8 +1578,7 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "text",
-                "value": null
+                "color": "text"
               }
             ]
           },
@@ -1571,7 +1590,7 @@
         "h": 5,
         "w": 5,
         "x": 19,
-        "y": 37
+        "y": 39
       },
       "id": 16,
       "options": {
@@ -1627,8 +1646,7 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "text",
-                "value": null
+                "color": "text"
               }
             ]
           },
@@ -1640,7 +1658,7 @@
         "h": 3,
         "w": 5,
         "x": 3,
-        "y": 42
+        "y": 44
       },
       "id": 47,
       "options": {
@@ -1693,8 +1711,7 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "text",
-                "value": null
+                "color": "text"
               }
             ]
           }
@@ -1705,7 +1722,7 @@
         "h": 3,
         "w": 3,
         "x": 8,
-        "y": 42
+        "y": 44
       },
       "id": 48,
       "options": {
@@ -1756,8 +1773,7 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "text",
-                "value": null
+                "color": "text"
               }
             ]
           }
@@ -1768,7 +1784,7 @@
         "h": 3,
         "w": 3,
         "x": 16,
-        "y": 42
+        "y": 44
       },
       "id": 49,
       "options": {
@@ -1822,8 +1838,7 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "text",
-                "value": null
+                "color": "text"
               }
             ]
           },
@@ -1835,7 +1850,7 @@
         "h": 3,
         "w": 5,
         "x": 19,
-        "y": 42
+        "y": 44
       },
       "id": 50,
       "options": {
@@ -1881,7 +1896,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 45
+        "y": 47
       },
       "id": 35,
       "panels": [],
@@ -1905,8 +1920,7 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "light-blue",
-                "value": null
+                "color": "light-blue"
               },
               {
                 "color": "semi-dark-red",
@@ -1938,7 +1952,7 @@
         "h": 9,
         "w": 3,
         "x": 0,
-        "y": 46
+        "y": 48
       },
       "id": 53,
       "options": {
@@ -2037,8 +2051,7 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green",
-                "value": null
+                "color": "green"
               },
               {
                 "color": "red",
@@ -2053,7 +2066,7 @@
         "h": 9,
         "w": 5,
         "x": 3,
-        "y": 46
+        "y": 48
       },
       "id": 37,
       "options": {
@@ -2109,8 +2122,7 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green",
-                "value": null
+                "color": "green"
               },
               {
                 "color": "red",
@@ -2125,7 +2137,7 @@
         "h": 9,
         "w": 3,
         "x": 8,
-        "y": 46
+        "y": 48
       },
       "id": 42,
       "options": {
@@ -2192,7 +2204,7 @@
         "h": 9,
         "w": 8,
         "x": 11,
-        "y": 46
+        "y": 48
       },
       "id": 41,
       "options": {
@@ -2257,7 +2269,7 @@
         "h": 9,
         "w": 5,
         "x": 19,
-        "y": 46
+        "y": 48
       },
       "id": 52,
       "options": {
@@ -2315,6 +2327,6 @@
   "timezone": "",
   "title": "Opentelemetry Collector Data Flow",
   "uid": "rl5_tea4k",
-  "version": 1,
+  "version": 2,
   "weekStart": ""
 }
