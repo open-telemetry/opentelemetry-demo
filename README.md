@@ -59,15 +59,15 @@ keeping it up to date for you.
 |                           |                |                                  |
 |---------------------------|----------------|----------------------------------|
 | [AlibabaCloud LogService] | [Elastic]      | [OpenSearch]                     |
-| [AppDynamics]             | [Google Cloud] | [Sentry]                         |
-| [Aspecto]                 | [Grafana Labs] | [ServiceNow Cloud Observability] |
-| [Axiom]                   | [Guance]       | [Splunk]                         |
-| [Axoflow]                 | [Honeycomb.io] | [Sumo Logic]                     |
-| [Azure Data Explorer]     | [Instana]      | [TelemetryHub]                   |
-| [Coralogix]               | [Kloudfuse]    | [Teletrace]                      |
-| [Dash0]                   | [Liatrio]      | [Tracetest]                      |
-| [Datadog]                 | [Logz.io]      | [Uptrace]                        |
-| [Dynatrace]               | [New Relic]    |                                  |
+| [AppDynamics]             | [Google Cloud] | [Oracle]                         |
+| [Aspecto]                 | [Grafana Labs] | [Sentry]                         |
+| [Axiom]                   | [Guance]       | [ServiceNow Cloud Observability] |
+| [Axoflow]                 | [Honeycomb.io] | [Splunk]                         |
+| [Azure Data Explorer]     | [Instana]      | [Sumo Logic]                     |
+| [Coralogix]               | [Kloudfuse]    | [TelemetryHub]                   |
+| [Dash0]                   | [Liatrio]      | [Teletrace]                      |
+| [Datadog]                 | [Logz.io]      | [Tracetest]                      |
+| [Dynatrace]               | [New Relic]    | [Uptrace]                        |
 
 ## Contributing
 
