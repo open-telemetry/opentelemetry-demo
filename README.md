@@ -129,6 +129,7 @@ Emeritus:
 [Logz.io]: https://logz.io/learn/how-to-run-opentelemetry-demo-with-logz-io/
 [New Relic]: https://github.com/newrelic/opentelemetry-demo
 [OpenSearch]: https://github.com/opensearch-project/opentelemetry-demo
+[Oracle]: https://github.com/oracle-quickstart/oci-o11y-solutions/blob/main/knowledge-content/opentelemetry-demo
 [Sentry]: https://github.com/getsentry/opentelemetry-demo
 [ServiceNow Cloud Observability]: https://docs.lightstep.com/otel/quick-start-operator#send-data-from-the-opentelemetry-demo
 [Splunk]: https://github.com/signalfx/opentelemetry-demo
