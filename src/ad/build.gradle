@@ -51,7 +51,7 @@ dependencies {
                 "io.opentelemetry:opentelemetry-sdk",
                 "io.opentelemetry.instrumentation:opentelemetry-instrumentation-annotations",
                 "org.apache.logging.log4j:log4j-core:2.24.3",
-                "dev.openfeature.contrib.providers:flagd:0.10.5",
+                "dev.openfeature.contrib.providers:flagd:0.11.1",
                 'dev.openfeature:sdk:1.14.0'
 
         runtimeOnly "com.fasterxml.jackson.core:jackson-core:${jacksonVersion}",
