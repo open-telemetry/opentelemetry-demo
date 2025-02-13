@@ -1,24 +1,31 @@
 # Copyright The OpenTelemetry Authors
 # SPDX-License-Identifier: Apache-2.0
 
-FROM node:20-alpine AS deps
+FROM node:22-alpine AS builder
 RUN apk add --no-cache libc6-compat
+
+USER node
 
 WORKDIR /app
 
 COPY ./src/frontend/package*.json ./
-RUN npm ci
-
-FROM node:20-alpine AS builder
-RUN apk add --no-cache libc6-compat
-WORKDIR /app
-COPY --from=deps /app/node_modules ./node_modules
+RUN npm clean-install --no-audit --no-progress
 COPY ./src/frontend/protos ./protos
 COPY ./src/frontend .
 
 RUN npm run build
 
-FROM node:20-alpine AS runner
+FROM node:22-alpine AS deps
+
+USER node
+
+WORKDIR /app
+COPY --chown=node:node --from=builder /home/node/.npm/ /home/node/.npm/
+COPY ./src/frontend/package*.json ./
+RUN NODE_ENV=production npm clean-install --prefer-offline --no-audit --no-progress
+
+
+FROM node:22-alpine AS runner
 WORKDIR /app
 
 ENV NODE_ENV=production

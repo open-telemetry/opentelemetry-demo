@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "NODE_OPTIONS='-r ./utils/telemetry/Instrumentation.js' next dev",
+    "dev": "NODE_OPTIONS='--require ./utils/telemetry/Instrumentation.js' next dev",
     "build": "next build",
     "start": "node --require ./Instrumentation.js server.js",
     "lint": "next lint",
