@@ -61,6 +61,10 @@ var (
 	initResourcesOnce sync.Once
 )
 
+type ctxKey string
+
+const slowLoadKey ctxKey = "slowLoad"
+
 func init() {
 	log = logrus.New()
 }
@@ -149,6 +153,12 @@ func connectDB() *gorm.DB {
 	db.Preload("ProductPrices").Preload("Categories").Find(&products)
 	log.Infof("Found %d products", len(products))
 
+	db.Callback().Query().Before("otel:after:select").Register("slowdown", func(db *gorm.DB) {
+		if slowLoad, ok := db.Statement.Context.Value(slowLoadKey).(bool); ok && slowLoad {
+			time.Sleep(200 * time.Millisecond)
+		}
+	})
+
 	return db
 }
 
@@ -185,11 +195,6 @@ func main() {
 		client: openfeature.NewClient("productCatalog"),
 	}
 
-	db.Callback().Query().Before("otel:after:select").Register("slowdown", func(db *gorm.DB) {
-		if svc.checkProductSlowLoad(db.Statement.Context) {
-			time.Sleep(200 * time.Millisecond)
-		}
-	})
 	var port string
 	mustMapEnv(&port, "PRODUCT_CATALOG_PORT")
 
@@ -253,6 +258,7 @@ func (p *productCatalog) ListProducts(ctx context.Context, req *pb.Empty) (*pb.L
 	)
 
 	slowLoadEnabled := p.checkProductSlowLoad(ctx)
+	ctx = context.WithValue(ctx, slowLoadKey, slowLoadEnabled)
 
 	var found []models.Product
 	if slowLoadEnabled {
