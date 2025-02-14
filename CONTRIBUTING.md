@@ -100,6 +100,20 @@ cd src/ad/
 ./gradlew wrapper --gradle-version 7.4.2
 ```
 
+### Docker Cache Issues
+
+If outdated images or build errors occur, clear the Docker cache
+
+```sh
+docker system prune -a
+```
+
+⚠️ Warning: This removes all unused Docker data, including images. To frequently clear cache, add an alias:
+
+```sh
+alias dsp='docker system prune -af'
+```
+
 ### Debugging Tips
 
 - Use `docker ps` to check running containers.
