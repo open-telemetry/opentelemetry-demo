@@ -88,14 +88,14 @@ Once the images are built and containers are started, visit:
 - **Windows/macOS**: Open Docker Desktop and ensure it's running.
 - **Linux**: Check Docker status:
 
-  ```sh
-  systemctl status docker
-  ```
-  
-  If inactive, start it:
-  
-  ```sh
-  sudo systemctl start docker
+```sh
+systemctl status docker
+```
+
+If inactive, start it:
+
+```sh
+sudo systemctl start docker
   ```
 
 ### Gradle Issues (Windows)
@@ -117,23 +117,23 @@ cache:
 docker system prune -a
 ```
 
-⚠️ Warning: This removes all unused Docker data, including images, containers,
+Warning: This removes all unused Docker data, including images, containers,
 volumes, and networks. Use with caution.
 
 ### Debugging Tips
 
 - Use `docker ps` to check running containers.
 - View logs for services:
-  
-  ```sh
-  docker logs <container_id>
-  ```
+
+```sh
+docker logs <container_id>
+```
 
 - Restart containers if needed:
-  
-  ```sh
-  docker-compose restart
-  ```
+
+```sh
+docker-compose restart
+```
 
 ### Review the Documentation
 
@@ -302,5 +302,5 @@ Maintainers can create a new release when desired by following these steps.
 
 [docs]: https://opentelemetry.io/docs/demo/
 
-By following this guide, you’ll have a smoother onboarding experience as a
+By following this guide, you'll have a smoother onboarding experience as a
 contributor. Happy coding!
