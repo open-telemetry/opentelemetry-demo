@@ -100,19 +100,17 @@ cd src/ad/
 ./gradlew wrapper --gradle-version 7.4.2
 ```
 
-### Docker Cache Issues
+### Docker build cache issues
 
-If outdated images or build errors occur, clear the Docker cache
+While developing, you may encounter issues with Docker build cache. To clear the
+cache:
 
 ```sh
 docker system prune -a
 ```
 
-⚠️ Warning: This removes all unused Docker data, including images. To frequently clear cache, add an alias:
-
-```sh
-alias dsp='docker system prune -af'
-```
+⚠️ Warning: This removes all unused Docker data, including images, containers,
+volumes, and networks. Use with caution.
 
 ### Debugging Tips
 
