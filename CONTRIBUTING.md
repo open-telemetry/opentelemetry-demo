@@ -1,18 +1,23 @@
 # Contributing to OpenTelemetry Demo Webstore
 
-Welcome to the OpenTelemetry Demo repository! We appreciate your interest in contributing.
-Whether you're fixing a bug, improving documentation, or adding a new feature, we value your contribution.
+Welcome to the OpenTelemetry Demo repository! We appreciate your interest in
+contributing. Whether you're fixing a bug, improving documentation, or adding a
+new feature, we value your contribution.
 
-Before getting started, please review the [OpenTelemetry Contributor Guide](https://github.com/open-telemetry/community/blob/main/guides/contributor/README.md) for details on code attribution and best practices.
+Before getting started, please review the
+[OpenTelemetry Contributor Guide](https://github.com/open-telemetry/community/blob/main/guides/contributor/README.md)
+for details on code attribution and best practices.
 
 ## Getting Started
 
 ### Join a SIG Call
 
-We meet every other Wednesday at 8:00 PT. The schedule may change based on contributors' availability. 
-Check the [OpenTelemetry Community Calendar](https://github.com/open-telemetry/community?tab=readme-ov-file#special-interest-groups) for specific dates and Zoom links.
+We meet every other Wednesday at 8:00 PT. The schedule may change based on
+contributors' availability. Check the [OpenTelemetry Community Calendar](https://github.com/open-telemetry/community?tab=readme-ov-file#special-interest-groups)
+for specific dates and Zoom links.
 
-Meeting notes are available [here](https://docs.google.com/document/d/16f-JOjKzLgWxULRxY8TmpM_FjlI1sthvKurnqFz9x98/edit). For edit access, ask in our [Slack channel](https://cloud-native.slack.com/archives/C03B4CWV4DA).
+Meeting notes are available [here](https://docs.google.com/document/d/16f-JOjKzLgWxULRxY8TmpM_FjlI1sthvKurnqFz9x98/edit). For edit access, ask in our
+[Slack channel](https://cloud-native.slack.com/archives/C03B4CWV4DA).
 
 ### Sign the Contributor License Agreement (CLA)
 
@@ -20,7 +25,8 @@ Before contributing, sign the [CLA](https://identity.linuxfoundation.org/project
 
 ### Find a Mentor (Buddy System)
 
-New to OpenTelemetry? We encourage you to find a mentor who can guide you through your first contribution.
+New to OpenTelemetry? We encourage you to find a mentor who can guide you
+through your first contribution.
 
 1. Create your [CNCF Slack account](http://slack.cncf.io/) and join the
    [otel-community-demo](https://app.slack.com/client/T08PSQ7BQ/C03B4CWV4DA) channel.
@@ -136,8 +142,8 @@ documentation can be found on the OTel website under [Demo docs][docs].
 
 ### Running the React Native example
 
-If you are interested in running the React Native example app in this repo please
-review [these instructions](src/react-native-app/README.md).
+If you are interested in running the React Native example app in this repo
+please review [these instructions](src/react-native-app/README.md).
 
 ## Create Your First Pull Request
 
@@ -294,4 +300,5 @@ Maintainers can create a new release when desired by following these steps.
 
 [docs]: https://opentelemetry.io/docs/demo/
 
-By following this guide, you’ll have a smoother onboarding experience as a contributor. Happy coding!
+By following this guide, you’ll have a smoother onboarding experience as a
+contributor. Happy coding!
