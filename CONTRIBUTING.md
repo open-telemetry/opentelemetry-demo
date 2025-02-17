@@ -304,7 +304,6 @@ Maintainers can create a new release when desired by following these steps.
    Demo's Kubernetes manifest by running `make generate-kubernetes-manifests`
    and committing the changes.
 
-
 [docs]: https://opentelemetry.io/docs/demo/
 
 By following this guide, you'll have a smoother onboarding experience as a
