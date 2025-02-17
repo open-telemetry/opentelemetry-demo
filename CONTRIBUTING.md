@@ -30,8 +30,9 @@ Before contributing, sign the [CLA](https://identity.linuxfoundation.org/project
 New to OpenTelemetry? We encourage you to find a mentor who can guide you
 through your first contribution.
 
-1. Create your [CNCF Slack account](http://slack.cncf.io/) and join the
-   [otel-community-demo](https://app.slack.com/client/T08PSQ7BQ/C03B4CWV4DA) channel.
+1. Create your [CNCF Slack account](https://slack.cncf.io/) and join the
+   [otel-community-demo](https://app.slack.com/client/T08PSQ7BQ/C03B4CWV4DA)
+   channel.
 2. Post in the room with an introduction to yourself, what area you are
    interested in (check issues marked with [help
    wanted](https://github.com/open-telemetry/opentelemetry-demo/labels/help%20wanted)),
