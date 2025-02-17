@@ -17,7 +17,7 @@ group = "ad"
 version = "0.1.0-SNAPSHOT"
 
 def opentelemetryVersion = "1.47.0"
-def opentelemetryInstrumentationVersion = "2.12.0"
+def opentelemetryInstrumentationVersion = "2.13.0"
 def grpcVersion = "1.70.0"
 def jacksonVersion = "2.18.2"
 def protocVersion = "4.29.3"
@@ -52,7 +52,7 @@ dependencies {
                 "io.opentelemetry.instrumentation:opentelemetry-instrumentation-annotations",
                 "org.apache.logging.log4j:log4j-core:2.24.3",
                 "dev.openfeature.contrib.providers:flagd:0.11.2",
-                'dev.openfeature:sdk:1.14.0'
+                'dev.openfeature:sdk:1.14.1'
 
         runtimeOnly "com.fasterxml.jackson.core:jackson-core:${jacksonVersion}",
                 "com.fasterxml.jackson.core:jackson-databind:${jacksonVersion}",
