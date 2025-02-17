@@ -72,10 +72,24 @@ the release.
   ([#1897](https://github.com/open-telemetry/opentelemetry-demo/pull/1897))
 * [frontend-proxy] rename frontendproxy to frontend-proxy
   ([#1910](https://github.com/open-telemetry/opentelemetry-demo/pull/1910))
+* [product-catalog] load product list on a periodic timer
+  ([#1919](https://github.com/open-telemetry/opentelemetry-demo/pull/1919))
 * [flagd-ui] fixed eslint ignore comment with useCallback
   ([#1923](https://github.com/open-telemetry/opentelemetry-demo/pull/1923))
 * [frontend-proxy] fix envoy access logs
   ([#1930](https://github.com/open-telemetry/opentelemetry-demo/pull/1930))
+* [chore] Add memory for frontend-proxy, kafka, grafana, opensearch
+  ([#1931](https://github.com/open-telemetry/opentelemetry-demo/pull/1931))
+* [frontendproxy] fix Docker compose DNS resolver with envoy 1.32
+  ([#1936](https://github.com/open-telemetry/opentelemetry-demo/pull/1936))
+* [chore] Generate protobuf code for Typescript service - Frontend
+  ([#1954](https://github.com/open-telemetry/opentelemetry-demo/pull/1954))
+* [accounting] bump OpenTelemetry .NET Automatic Instrumentation to 1.10.0
+  ([#1998](https://github.com/open-telemetry/opentelemetry-demo/pull/1998))
+* [frontend] update to Node 22
+  ([#2025](https://github.com/open-telemetry/opentelemetry-demo/pull/2025))
+* [frontend] move page titles to individual pages
+  ([#2025](https://github.com/open-telemetry/opentelemetry-demo/pull/2025))
 
 ## 1.12.0
 

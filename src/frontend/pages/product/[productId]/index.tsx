@@ -2,6 +2,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import { NextPage } from 'next';
+import Head from 'next/head';
 import Image from 'next/image';
 import { useRouter } from 'next/router';
 import { useCallback, useState, useEffect } from 'react';
@@ -44,10 +45,9 @@ const ProductDetail: NextPage = () => {
       priceUsd = { units: 0, currencyCode: 'USD', nanos: 0 },
       categories,
     } = {} as Product,
-  } = useQuery(
-    ['product', productId, 'selectedCurrency', selectedCurrency],
-    () => ApiGateway.getProduct(productId, selectedCurrency),
-    {
+  } = useQuery({
+      queryKey: ['product', productId, 'selectedCurrency', selectedCurrency],
+      queryFn: () => ApiGateway.getProduct(productId, selectedCurrency),
       enabled: !!productId,
     }
   ) as { data: Product };
@@ -65,6 +65,9 @@ const ProductDetail: NextPage = () => {
       productIds={[productId, ...items.map(({ productId }) => productId)]}
       contextKeys={[...new Set(categories)]}
     >
+      <Head>
+        <title>Otel Demo - Product</title>
+      </Head>
       <Layout>
         <S.ProductDetail data-cy={CypressFields.ProductDetail}>
           <S.Container>
