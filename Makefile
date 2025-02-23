@@ -115,6 +115,17 @@ build-multiplatform-and-push:
     # Because buildx bake does not support --env-file yet, we need to load it into the environment first.
 	set -a; . ./.env.override; set +a && docker buildx bake -f docker-compose.yml --push --set "*.platform=linux/amd64,linux/arm64"
 
+.PHONY: clean-images
+clean-images:
+	@docker rmi $(shell docker images --filter=reference="ghcr.io/open-telemetry/demo:latest-*" -q); \
+    if [ $$? -ne 0 ]; \
+    then \
+    	echo; \
+        echo "Failed to removed 1 or more OpenTelemetry Demo images."; \
+        echo "Check to ensure the Demo is not running by executing: make stop"; \
+        false; \
+    fi
+
 .PHONY: run-tests
 run-tests:
 	$(DOCKER_COMPOSE_CMD) $(DOCKER_COMPOSE_ENV) -f docker-compose-tests.yml run frontendTests
