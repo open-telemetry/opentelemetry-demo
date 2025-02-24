@@ -9,7 +9,7 @@
     "lint": "next lint"
   },
   "dependencies": {
-    "@tailwindcss/postcss": "^4.0.6",
+    "@tailwindcss/postcss": "^4.0.8",
     "@vercel/otel": "^1.10.1",
     "ajv": "^8.17.1",
     "next": "15.1.7",
