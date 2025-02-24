@@ -7,6 +7,9 @@ the release.
 
 ## Unreleased
 
+* [frontend] Cypress tests base image updated to 14.0.3
+  ([#2072](https://github.com/open-telemetry/opentelemetry-demo/pull/2072))
+
 ## 2.0.0
 
 * [grafana] Update grafana to 11.3.0
