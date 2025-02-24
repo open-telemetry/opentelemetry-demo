@@ -48,7 +48,7 @@ jobs:
         run: make misspell
 
   checklinks:
-    name: runner / linkspector
+    name: linkspector
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
