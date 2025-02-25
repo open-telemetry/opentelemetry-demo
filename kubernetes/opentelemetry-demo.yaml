@@ -1013,7 +1013,7 @@ data:
         {
           "datasource": {
             "type": "grafana-opensearch-datasource",
-            "uid": "P9744FCCEAAFBD98F"
+            "uid": "webstore-logs"
           },
           "description": "",
           "fieldConfig": {
@@ -1093,7 +1093,7 @@ data:
               ],
               "datasource": {
                 "type": "grafana-opensearch-datasource",
-                "uid": "P9744FCCEAAFBD98F"
+                "uid": "webstore-logs"
               },
               "format": "table",
               "metrics": [
@@ -1114,7 +1114,7 @@ data:
         {
           "datasource": {
             "type": "grafana-opensearch-datasource",
-            "uid": "P9744FCCEAAFBD98F"
+            "uid": "webstore-logs"
           },
           "fieldConfig": {
             "defaults": {
@@ -1199,7 +1199,7 @@ data:
               ],
               "datasource": {
                 "type": "grafana-opensearch-datasource",
-                "uid": "P9744FCCEAAFBD98F"
+                "uid": "webstore-logs"
               },
               "format": "logs",
               "hide": false,
@@ -1681,7 +1681,7 @@ data:
         ]
       },
       "time": {
-        "from": "now-1h",
+        "from": "now-15m",
         "to": "now"
       },
       "timepicker": {},
@@ -2141,7 +2141,7 @@ data:
         "list": []
       },
       "time": {
-        "from": "now-1h",
+        "from": "now-15m",
         "to": "now"
       },
       "timepicker": {},
@@ -7730,7 +7730,7 @@ data:
         ]
       },
       "time": {
-        "from": "now-6h",
+        "from": "now-15m",
         "to": "now"
       },
       "timepicker": {},
@@ -8765,7 +8765,7 @@ data:
         ]
       },
       "time": {
-        "from": "now-1h",
+        "from": "now-15m",
         "to": "now"
       },
       "timepicker": {},
