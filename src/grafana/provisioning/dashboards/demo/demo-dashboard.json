@@ -24,7 +24,7 @@
   "editable": true,
   "fiscalYearStartMonth": 0,
   "graphTooltip": 1,
-  "id": 2,
+  "id": 4,
   "links": [],
   "panels": [
     {
@@ -53,52 +53,12 @@
       "type": "text"
     },
     {
-      "datasource": {
-        "type": "jaeger",
-        "uid": "webstore-traces"
-      },
-      "fieldConfig": {
-        "defaults": {},
-        "overrides": []
-      },
-      "gridPos": {
-        "h": 10,
-        "w": 24,
-        "x": 0,
-        "y": 3
-      },
-      "id": 22,
-      "options": {
-        "edges": {
-          "mainStatUnit": "requests"
-        },
-        "nodes": {
-          "arcs": [],
-          "mainStatUnit": ""
-        },
-        "zoomMode": "cooperative"
-      },
-      "pluginVersion": "11.5.2",
-      "targets": [
-        {
-          "datasource": {
-            "type": "jaeger",
-            "uid": "webstore-traces"
-          },
-          "queryType": "dependencyGraph",
-          "refId": "A"
-        }
-      ],
-      "title": "Service Dependency",
-      "type": "nodeGraph"
-    },
-    {
       "collapsed": false,
       "gridPos": {
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 13
+        "y": 3
       },
       "id": 14,
       "panels": [],
@@ -170,7 +130,7 @@
         "h": 8,
         "w": 8,
         "x": 0,
-        "y": 14
+        "y": 4
       },
       "id": 12,
       "interval": "2m",
@@ -269,7 +229,7 @@
         "h": 8,
         "w": 8,
         "x": 8,
-        "y": 14
+        "y": 4
       },
       "id": 10,
       "interval": "2m",
@@ -370,7 +330,7 @@
         "h": 8,
         "w": 8,
         "x": 16,
-        "y": 14
+        "y": 4
       },
       "id": 2,
       "interval": "2m",
@@ -411,7 +371,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 22
+        "y": 12
       },
       "id": 19,
       "panels": [],
@@ -470,7 +430,7 @@
         "h": 8,
         "w": 4,
         "x": 0,
-        "y": 23
+        "y": 13
       },
       "id": 20,
       "options": {
@@ -513,8 +473,8 @@
               "type": "count"
             }
           ],
-          "query": "resource.properties.service.name.keyword=\"${service}\"",
-          "queryType": "lucene",
+          "query": "search source=otel\n| where resource.service.name=\"${service}\"\n| stats count() by severity.text",
+          "queryType": "PPL",
           "refId": "A",
           "timeField": "observedTimestamp"
         }
@@ -542,7 +502,34 @@
         "uid": "webstore-logs"
       },
       "fieldConfig": {
-        "defaults": {},
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "custom": {
+            "align": "auto",
+            "cellOptions": {
+              "type": "auto",
+              "wrapText": false
+            },
+            "filterable": true,
+            "inspect": true
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          }
+        },
         "overrides": [
           {
             "matcher": {
@@ -550,6 +537,30 @@
               "options": "observedTimestamp"
             },
             "properties": []
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "body"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 386
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "severity.text"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 127
+              }
+            ]
           }
         ]
       },
@@ -557,19 +568,21 @@
         "h": 8,
         "w": 20,
         "x": 4,
-        "y": 23
+        "y": 13
       },
       "id": 17,
       "options": {
-        "dedupStrategy": "none",
-        "enableInfiniteScrolling": false,
-        "enableLogDetails": true,
-        "prettifyLogMessage": false,
-        "showCommonLabels": false,
-        "showLabels": false,
-        "showTime": false,
-        "sortOrder": "Descending",
-        "wrapLogMessage": false
+        "cellHeight": "sm",
+        "footer": {
+          "countRows": false,
+          "fields": "",
+          "reducer": [
+            "sum"
+          ],
+          "show": false
+        },
+        "showHeader": true,
+        "sortBy": []
       },
       "pluginVersion": "11.5.2",
       "targets": [
@@ -580,7 +593,7 @@
             "type": "grafana-opensearch-datasource",
             "uid": "webstore-logs"
           },
-          "format": "logs",
+          "format": "table",
           "hide": false,
           "metrics": [
             {
@@ -593,14 +606,49 @@
               "type": "raw_data"
             }
           ],
-          "query": "resource.properties.service.name.keyword=\"${service}\"",
-          "queryType": "lucene",
+          "query": "search source=otel\n| where resource.service.name=\"${service}\"\n| sort - observedTimestamp \n| head 100",
+          "queryType": "PPL",
           "refId": "A",
           "timeField": "observedTimestamp"
         }
       ],
       "title": "Log Records (100 recent entries)",
-      "type": "logs"
+      "transformations": [
+        {
+          "id": "organize",
+          "options": {
+            "excludeByName": {
+              "@timestamp": true
+            },
+            "includeByName": {},
+            "indexByName": {
+              "@timestamp": 1,
+              "attributes.data_stream.dataset": 4,
+              "attributes.data_stream.namespace": 5,
+              "attributes.data_stream.type": 6,
+              "attributes.productId": 7,
+              "attributes.quantity": 8,
+              "attributes.userId": 9,
+              "body": 3,
+              "instrumentationScope.name": 10,
+              "observedTimestamp": 0,
+              "resource.container.id": 11,
+              "resource.docker.cli.cobra.command_path": 12,
+              "resource.host.name": 13,
+              "resource.service.name": 14,
+              "resource.telemetry.sdk.language": 15,
+              "resource.telemetry.sdk.name": 16,
+              "resource.telemetry.sdk.version": 17,
+              "severity.number": 18,
+              "severity.text": 2,
+              "spanId": 19,
+              "traceId": 20
+            },
+            "renameByName": {}
+          }
+        }
+      ],
+      "type": "table"
     },
     {
       "collapsed": false,
@@ -608,7 +656,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 31
+        "y": 21
       },
       "id": 18,
       "panels": [],
@@ -680,7 +728,7 @@
         "h": 8,
         "w": 12,
         "x": 0,
-        "y": 32
+        "y": 22
       },
       "id": 6,
       "options": {
@@ -802,7 +850,7 @@
         "h": 8,
         "w": 12,
         "x": 12,
-        "y": 32
+        "y": 22
       },
       "id": 8,
       "options": {
@@ -908,7 +956,7 @@
         "h": 8,
         "w": 12,
         "x": 0,
-        "y": 40
+        "y": 30
       },
       "id": 4,
       "options": {
@@ -1006,7 +1054,7 @@
         "h": 8,
         "w": 12,
         "x": 12,
-        "y": 40
+        "y": 30
       },
       "id": 16,
       "interval": "2m",
@@ -1040,6 +1088,59 @@
       ],
       "title": "Quote Service batch span processor",
       "type": "timeseries"
+    },
+    {
+      "collapsed": false,
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 38
+      },
+      "id": 23,
+      "panels": [],
+      "title": "Service Dependency",
+      "type": "row"
+    },
+    {
+      "datasource": {
+        "type": "jaeger",
+        "uid": "webstore-traces"
+      },
+      "fieldConfig": {
+        "defaults": {},
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 13,
+        "w": 24,
+        "x": 0,
+        "y": 39
+      },
+      "id": 22,
+      "options": {
+        "edges": {
+          "mainStatUnit": "requests"
+        },
+        "nodes": {
+          "arcs": [],
+          "mainStatUnit": ""
+        },
+        "zoomMode": "cooperative"
+      },
+      "pluginVersion": "11.5.2",
+      "targets": [
+        {
+          "datasource": {
+            "type": "jaeger",
+            "uid": "webstore-traces"
+          },
+          "queryType": "dependencyGraph",
+          "refId": "A"
+        }
+      ],
+      "title": "Service Dependency",
+      "type": "nodeGraph"
     }
   ],
   "preload": false,
