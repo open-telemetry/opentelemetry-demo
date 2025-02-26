@@ -7,6 +7,8 @@ the release.
 
 ## Unreleased
 
+* [chore] Use Linkspector to check links
+  ([#2070](https://github.com/open-telemetry/opentelemetry-demo/pull/2070))
 * [frontend] Cypress tests base image updated to 14.0.3
   ([#2072](https://github.com/open-telemetry/opentelemetry-demo/pull/2072))
 
