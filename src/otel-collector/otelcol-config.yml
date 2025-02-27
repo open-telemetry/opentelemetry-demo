@@ -79,14 +79,6 @@ receivers:
         mute_process_exe_error: true
         mute_process_io_error: true
         mute_process_user_error: true
-  # Collector metrics
-  prometheus:
-    config:
-      scrape_configs:
-        - job_name: 'otel-collector'
-          scrape_interval: 10s
-          static_configs:
-            - targets: ['0.0.0.0:8888']
 
 exporters:
   debug:
@@ -107,6 +99,10 @@ exporters:
 
 processors:
   batch:
+  memory_limiter:
+    check_interval: 5s
+    limit_percentage: 80
+    spike_limit_percentage: 25
   transform:
     error_mode: ignore
     trace_statements:
@@ -123,13 +119,24 @@ service:
   pipelines:
     traces:
       receivers: [otlp]
-      processors: [transform, batch]
+      processors: [memory_limiter, transform, batch]
       exporters: [otlp, debug, spanmetrics]
     metrics:
-      receivers: [hostmetrics, docker_stats, httpcheck/frontend-proxy, otlp, prometheus, redis, spanmetrics]
-      processors: [batch]
+      receivers: [hostmetrics, docker_stats, httpcheck/frontend-proxy, otlp, redis, spanmetrics]
+      processors: [memory_limiter, batch]
       exporters: [otlphttp/prometheus, debug]
     logs:
       receivers: [otlp]
-      processors: [batch]
+      processors: [memory_limiter, batch]
       exporters: [opensearch, debug]
+  telemetry:
+    metrics:
+      level: detailed
+      readers:
+        - periodic:
+            interval: 10000
+            timeout: 5000
+            exporter:
+              otlp:
+                protocol: grpc
+                endpoint: ${env:OTEL_COLLECTOR_HOST}:${env:OTEL_COLLECTOR_PORT_GRPC}
