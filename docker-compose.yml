@@ -763,6 +763,7 @@ services:
       - OTEL_COLLECTOR_HOST
       - OTEL_COLLECTOR_PORT_GRPC
       - OTEL_COLLECTOR_PORT_HTTP
+      - GOMEMLIMIT=160MiB
 
   # Prometheus
   prometheus:

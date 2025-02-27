@@ -11,6 +11,8 @@ the release.
   ([#2070](https://github.com/open-telemetry/opentelemetry-demo/pull/2070))
 * [frontend] Cypress tests base image updated to 14.0.3
   ([#2072](https://github.com/open-telemetry/opentelemetry-demo/pull/2072))
+* [grafana] Update dashboards with service map
+  ([#2085](https://github.com/open-telemetry/opentelemetry-demo/pull/2085))
 
 ## 2.0.0
 
