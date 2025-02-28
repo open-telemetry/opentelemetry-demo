@@ -13,6 +13,8 @@ the release.
   ([#2072](https://github.com/open-telemetry/opentelemetry-demo/pull/2072))
 * [grafana] Update dashboards with service map
   ([#2085](https://github.com/open-telemetry/opentelemetry-demo/pull/2085))
+* [frontend] Update OpenTelemetry Browser SDK initialization
+  ([#2092](https://github.com/open-telemetry/opentelemetry-demo/pull/2092))
 
 ## 2.0.0
 
