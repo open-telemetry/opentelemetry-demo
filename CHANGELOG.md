@@ -7,14 +7,17 @@ the release.
 
 ## Unreleased
 
+* [frontend] Update OpenTelemetry Browser SDK initialization
+  ([#2092](https://github.com/open-telemetry/opentelemetry-demo/pull/2092))
+
+## 2.0.1
+
 * [chore] Use Linkspector to check links
   ([#2070](https://github.com/open-telemetry/opentelemetry-demo/pull/2070))
 * [frontend] Cypress tests base image updated to 14.0.3
   ([#2072](https://github.com/open-telemetry/opentelemetry-demo/pull/2072))
 * [grafana] Update dashboards with service map
   ([#2085](https://github.com/open-telemetry/opentelemetry-demo/pull/2085))
-* [frontend] Update OpenTelemetry Browser SDK initialization
-  ([#2092](https://github.com/open-telemetry/opentelemetry-demo/pull/2092))
 
 ## 2.0.0
 
