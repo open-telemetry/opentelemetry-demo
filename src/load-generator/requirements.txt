@@ -10,7 +10,7 @@ flask-basicauth==0.2.0
 flask-cors==5.0.1
 gevent==24.11.1
 geventhttpclient==2.3.3
-googleapis-common-protos==1.68.0
+googleapis-common-protos==1.69.0
 greenlet==3.1.1
 idna==3.10
 itsdangerous==2.2.0
