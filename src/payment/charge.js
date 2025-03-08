@@ -9,6 +9,7 @@ const { FlagdProvider } = require('@openfeature/flagd-provider');
 const flagProvider = new FlagdProvider();
 
 const logger = require('./logger');
+const chargeHooks = require("./charge-hooks");
 const tracer = trace.getTracer('payment');
 const meter = metrics.getMeter('payment');
 const transactionsCounter = meter.createCounter('app.payment.transactions');
@@ -22,7 +23,14 @@ function random(arr) {
 }
 
 module.exports.charge = async request => {
+  const ch = new chargeHooks(request);
+  // call any fork hooks before starting span
+  ch.preHook();
+
   const span = tracer.startSpan('charge');
+
+  // call any fork hooks after starting span
+  ch.startHook();
 
   await OpenFeature.setProviderAndWait(flagProvider);
 
@@ -82,7 +90,14 @@ module.exports.charge = async request => {
   const { units, nanos, currencyCode } = request.amount;
   logger.info({ transactionId, cardType, lastFourDigits, amount: { units, nanos, currencyCode }, loyalty_level }, 'Transaction complete.');
   transactionsCounter.add(1, { 'app.payment.currency': currencyCode });
+
+  // call any fork hooks before ending span
+  ch.endHook();
+
   span.end();
+
+  // call any fork hooks after ending span
+  ch.postHook();
 
   return { transactionId };
 };
