@@ -9,6 +9,9 @@ the release.
 
 * [frontend] Update OpenTelemetry Browser SDK initialization
   ([#2092](https://github.com/open-telemetry/opentelemetry-demo/pull/2092))
+* [quote] Updated open-telemetry/exporter-otlp to 1.2.1 which includes the
+  fix for `IS_REMOTE` flag feature
+  ([#2112](https://github.com/open-telemetry/opentelemetry-demo/pull/2112))
 
 ## 2.0.1
 
