@@ -608,7 +608,8 @@ services:
       "file:./etc/flagd/demo.flagd.json"
     ]
     ports:
-      - 8013
+      - "${FLAGD_PORT}"
+      - "${FLAGD_OFREP_PORT}"
     volumes:
       - ./src/flagd:/etc/flagd
     logging:
