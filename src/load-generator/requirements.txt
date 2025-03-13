@@ -31,7 +31,7 @@ opentelemetry-sdk==1.30.0
 opentelemetry-semantic-conventions==0.51b0
 opentelemetry-util-http==0.51b0
 openfeature-sdk==0.8.0
-openfeature-provider-flagd==0.1.5
+openfeature-provider-ofrep==0.1.1
 openfeature-hooks-opentelemetry==0.2.0
 protobuf==5.29.3
 psutil==6.1.1

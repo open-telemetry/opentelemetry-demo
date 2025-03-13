@@ -34,7 +34,7 @@ from opentelemetry.sdk._logs.export import BatchLogRecordProcessor
 from opentelemetry.sdk.resources import Resource
 
 from openfeature import api
-from openfeature.contrib.provider.flagd import FlagdProvider
+from openfeature.contrib.provider.ofrep import OFREPProvider
 from openfeature.contrib.hook.opentelemetry import TracingHook
 
 from playwright.async_api import Route, Request
@@ -69,7 +69,8 @@ URLLib3Instrumentor().instrument()
 logging.info("Instrumentation complete")
 
 # Initialize Flagd provider
-api.set_provider(FlagdProvider(host=os.environ.get('FLAGD_HOST', 'flagd'), port=os.environ.get('FLAGD_PORT', 8013)))
+base_url = f"http://{os.environ.get('FLAGD_HOST', 'localhost')}:{os.environ.get('FLAGD_OFREP_PORT', 8016)}"
+api.set_provider(OFREPProvider(base_url=base_url))
 api.add_hooks([TracingHook()])
 
 def get_flagd_value(FlagName):
