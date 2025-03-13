@@ -158,7 +158,7 @@ class WebsiteUser(HttpUser):
         self.client.post("/api/cart", json=cart_item)
 
     @task(1)
-    @tracer.start_as_current_span("checkout with items")
+    @tracer.start_as_current_span("checkout with one item")
     def checkout(self):
         # checkout call with an item added to cart
         user = str(uuid.uuid1())
