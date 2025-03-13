@@ -15,6 +15,9 @@ the release.
 * [load-generator] Change OpenFeature Evaluation to Remote Evaluation Protocol,
   based on [this issue in OpenFeature/python-sdk-contrib](https://github.com/open-feature/python-sdk-contrib/issues/198)
   ([#2114](https://github.com/open-telemetry/opentelemetry-demo/pull/2114))
+* [load-generator] Create well-named spans for each load task, to allow
+  enrichment with information like flag evaluations.
+  ([#2119](https://github.com/open-telemetry/opentelemetry-demo/pull/2119))
 
 ## 2.0.1
 

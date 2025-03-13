@@ -36,6 +36,7 @@ from opentelemetry.sdk.resources import Resource
 from openfeature import api
 from openfeature.contrib.provider.ofrep import OFREPProvider
 from openfeature.contrib.hook.opentelemetry import TracingHook
+from opentelemetry.trace import Tracer
 
 from playwright.async_api import Route, Request
 
@@ -106,16 +107,21 @@ people = json.load(people_file)
 
 class WebsiteUser(HttpUser):
     wait_time = between(1, 10)
+    # Creates a tracer from the global tracer provider
+    tracer = trace.get_tracer("load-generator")
 
     @task(1)
+    @tracer.start_as_current_span("view home")
     def index(self):
         self.client.get("/")
 
     @task(10)
+    @tracer.start_as_current_span("browse product")
     def browse_product(self):
         self.client.get("/api/products/" + random.choice(products))
 
     @task(3)
+    @tracer.start_as_current_span("get recommendations")
     def get_recommendations(self):
         params = {
             "productIds": [random.choice(products)],
@@ -123,6 +129,7 @@ class WebsiteUser(HttpUser):
         self.client.get("/api/recommendations", params=params)
 
     @task(3)
+    @tracer.start_as_current_span("get ads")
     def get_ads(self):
         params = {
             "contextKeys": [random.choice(categories)],
@@ -130,10 +137,12 @@ class WebsiteUser(HttpUser):
         self.client.get("/api/data/", params=params)
 
     @task(3)
+    @tracer.start_as_current_span("view cart")
     def view_cart(self):
         self.client.get("/api/cart")
 
     @task(2)
+    @tracer.start_as_current_span("add to cart")
     def add_to_cart(self, user=""):
         if user == "":
             user = str(uuid.uuid1())
@@ -149,6 +158,7 @@ class WebsiteUser(HttpUser):
         self.client.post("/api/cart", json=cart_item)
 
     @task(1)
+    @tracer.start_as_current_span("checkout with items")
     def checkout(self):
         # checkout call with an item added to cart
         user = str(uuid.uuid1())
@@ -158,6 +168,7 @@ class WebsiteUser(HttpUser):
         self.client.post("/api/checkout", json=checkout_person)
 
     @task(1)
+    @tracer.start_as_current_span("checkout with multiple items")
     def checkout_multi(self):
         # checkout call which adds 2-4 different items to cart before checkout
         user = str(uuid.uuid1())
@@ -168,6 +179,7 @@ class WebsiteUser(HttpUser):
         self.client.post("/api/checkout", json=checkout_person)
 
     @task(5)
+    @tracer.start_as_current_span("flood home")
     def flood_home(self):
         for _ in range(0, get_flagd_value("loadGeneratorFloodHomepage")):
             self.client.get("/")
