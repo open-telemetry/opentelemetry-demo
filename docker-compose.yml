@@ -625,7 +625,7 @@ services:
     deploy:
       resources:
         limits:
-          memory: 75M
+          memory: 100M
     restart: unless-stopped
     environment:
       - OTEL_EXPORTER_OTLP_ENDPOINT=http://${OTEL_COLLECTOR_HOST}:${OTEL_COLLECTOR_PORT_HTTP}
