@@ -4,9 +4,9 @@ name: Checks
 
 on:
   push:
-    branches: [ main ]
+    branches: [main]
   pull_request:
-    branches: [ main ]
+    branches: [main]
   workflow_dispatch:
 
 jobs:
@@ -19,67 +19,59 @@ jobs:
   markdownlint:
     runs-on: ubuntu-latest
     steps:
-    - name: check out code
-      uses: actions/checkout@v4
-
-    - name: install dependencies
-      run: npm install
-
-    - name: run markdownlint
-      run: make markdownlint
+      - name: check out code
+        uses: actions/checkout@v4
+      - name: install dependencies
+        run: npm install
+      - name: run markdownlint
+        run: make markdownlint
 
   yamllint:
     runs-on: ubuntu-latest
     steps:
-    - name: check out code
-      uses: actions/checkout@v4
-
-    - uses: actions/setup-python@v5
-      with:
-        python-version: '3.x'
-
-    - name: install yamllint
-      run: make install-yamllint
-
-    - name: run yamllint
-      run: yamllint . -f github
+      - name: check out code
+        uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.x'
+      - name: install yamllint
+        run: make install-yamllint
+      - name: run yamllint
+        run: yamllint . -f github
 
   misspell:
     runs-on: ubuntu-latest
     steps:
-    - name: check out code
-      uses: actions/checkout@v4
+      - name: check out code
+        uses: actions/checkout@v4
+      - name: run misspell
+        run: make misspell
 
-    - name: run misspell
-      run: make misspell
-
-  markdownlinkcheck:
-    name: markdownlinkcheck
+  checklinks:
+    name: linkspector
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v4
-    - name: Run link check
-      uses: gaurav-nelson/github-action-markdown-link-check@v1
-      with:
-        use-quiet-mode: 'no'
-        use-verbose-mode: 'yes'
-        config-file: '.github/.mlc_config.json'
+      - uses: actions/checkout@v4
+      - name: Run linkspector
+        uses: umbrelladocs/action-linkspector@v1
+        with:
+          level: info
+          fail_level: any
+          config_file: '.linkspector.yml'
 
   sanity:
     runs-on: ubuntu-latest
-
     steps:
-    - uses: actions/checkout@v4
-
-    - name: run sanitycheck.py
-      run: python3 ./internal/tools/sanitycheck.py
+      - uses: actions/checkout@v4
+      - name: run sanitycheck.py
+        run: python3 ./internal/tools/sanitycheck.py
 
   checklicense:
     runs-on: ubuntu-latest
     steps:
-    - name: check out code
-      uses: actions/checkout@v4
-    - name: install tools
-      run: make install-tools
-    - name: run checklicense
-      run: make checklicense
+      - name: check out code
+        uses: actions/checkout@v4
+      - name: install tools
+        run: make install-tools
+      - name: run checklicense
+        run: make checklicense

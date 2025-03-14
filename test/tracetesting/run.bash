@@ -8,7 +8,7 @@
 set -e
 
 # Availalble services to test
-ALL_SERVICES=("adservice" "cartservice" "currencyservice" "checkoutservice" "frontend" "emailservice" "paymentservice" "productcatalogservice" "recommendationservice" "shippingservice")
+ALL_SERVICES=("ad" "cart" "currency" "checkout" "frontend" "email" "payment" "product-catalog" "recommendation" "shipping")
 
 ## Script variables
 # Will contain the list of services to test
@@ -34,28 +34,28 @@ spec:
   id: tracetesting-vars
   name: tracetesting-vars
   values:
-    - key: AD_SERVICE_ADDR
-      value: $AD_SERVICE_ADDR
-    - key: CART_SERVICE_ADDR
-      value: $CART_SERVICE_ADDR
-    - key: CHECKOUT_SERVICE_ADDR
-      value: $CHECKOUT_SERVICE_ADDR
-    - key: CURRENCY_SERVICE_ADDR
-      value: $CURRENCY_SERVICE_ADDR
-    - key: EMAIL_SERVICE_ADDR
-      value: $EMAIL_SERVICE_ADDR
+    - key: AD_ADDR
+      value: $AD_ADDR
+    - key: CART_ADDR
+      value: $CART_ADDR
+    - key: CHECKOUT_ADDR
+      value: $CHECKOUT_ADDR
+    - key: CURRENCY_ADDR
+      value: $CURRENCY_ADDR
+    - key: EMAIL_ADDR
+      value: $EMAIL_ADDR
     - key: FRONTEND_ADDR
       value: $FRONTEND_ADDR
-    - key: PAYMENT_SERVICE_ADDR
-      value: $PAYMENT_SERVICE_ADDR
-    - key: PRODUCT_CATALOG_SERVICE_ADDR
-      value: $PRODUCT_CATALOG_SERVICE_ADDR
-    - key: RECOMMENDATION_SERVICE_ADDR
-      value: $RECOMMENDATION_SERVICE_ADDR
-    - key: SHIPPING_SERVICE_ADDR
-      value: $SHIPPING_SERVICE_ADDR
-    - key: KAFKA_SERVICE_ADDR
-      value: $KAFKA_SERVICE_ADDR
+    - key: PAYMENT_ADDR
+      value: $PAYMENT_ADDR
+    - key: PRODUCT_CATALOG_ADDR
+      value: $PRODUCT_CATALOG_ADDR
+    - key: RECOMMENDATION_ADDR
+      value: $RECOMMENDATION_ADDR
+    - key: SHIPPING_ADDR
+      value: $SHIPPING_ADDR
+    - key: KAFKA_ADDR
+      value: $KAFKA_ADDR
 EOF
 }
 

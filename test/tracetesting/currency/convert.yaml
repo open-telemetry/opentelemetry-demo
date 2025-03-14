@@ -1,0 +1,34 @@
+# Copyright The OpenTelemetry Authors
+# SPDX-License-Identifier: Apache-2.0
+
+type: Test
+spec:
+  id: currency-convert
+  name: 'Currency: Convert'
+  description: Convert a currency
+  trigger:
+    type: grpc
+    grpc:
+      protobufFile: ../../../pb/demo.proto
+      address: ${var:CURRENCY_ADDR}
+      method: oteldemo.CurrencyService.Convert
+      request: |-
+        {
+            "from": {
+              "currencyCode": "USD",
+              "units": 330,
+              "nanos": 750000000
+            },
+            "toCode": "CAD"
+          }
+  specs:
+  - name: It converts from USD to CAD
+    selector: span[tracetest.span.type="rpc" name="Currency/Convert" rpc.system="grpc"
+      rpc.method="Convert" rpc.service="oteldemo.CurrencyService"]
+    assertions:
+    - attr:app.currency.conversion.from = "USD"
+    - attr:app.currency.conversion.to = "CAD"
+  - name: It has more nanos than expected
+    selector: span[tracetest.span.type="general" name="Tracetest trigger"]
+    assertions:
+    - attr:tracetest.response.body| json_path '$.nanos'     >=    599380800

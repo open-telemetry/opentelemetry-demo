@@ -71,6 +71,8 @@ Have a suggestion, or running into problems with our fork? Please let us know by
 [![Downloads](https://img.shields.io/docker/pulls/otel/demo)](https://hub.docker.com/r/otel/demo)
 [![License](https://img.shields.io/badge/License-Apache_2.0-blue.svg?color=red)](https://github.com/open-telemetry/opentelemetry-demo/blob/main/LICENSE)
 [![Integration Tests](https://github.com/open-telemetry/opentelemetry-demo/actions/workflows/run-integration-tests.yml/badge.svg)](https://github.com/open-telemetry/opentelemetry-demo/actions/workflows/run-integration-tests.yml)
+[![Artifact Hub](https://img.shields.io/endpoint?url=https://artifacthub.io/badge/repository/opentelemetry-demo)](https://artifacthub.io/packages/helm/opentelemetry-helm/opentelemetry-demo)
+[![OpenSSF Best Practices](https://www.bestpractices.dev/projects/9247/badge)](https://www.bestpractices.dev/en/projects/9247)
 
 ## Welcome to the OpenTelemetry Astronomy Shop Demo
 
@@ -118,35 +120,35 @@ We welcome any vendor to fork the project to demonstrate their services and
 adding a link below. The community is committed to maintaining the project and
 keeping it up to date for you.
 
-|                                         |                             |                                                                |
-|-----------------------------------------|-----------------------------|----------------------------------------------------------------|
-| [AlibabaCloud LogService][AlibabaCloud] | [Elastic][Elastic]          | [New Relic][NewRelic]                                          |
-| [AppDynamics][AppDynamics]              | [Google Cloud][GoogleCloud] | [OpenSearch][OpenSearch]                                       |
-| [Aspecto][Aspecto]                      | [Grafana Labs][GrafanaLabs] | [Sentry][Sentry]                                               |
-| [Axiom][Axiom]                          | [Guance][Guance]            | [ServiceNow Cloud Observability][ServiceNowCloudObservability] |
-| [Axoflow][Axoflow]                      | [Helios][Helios]            | [Splunk][Splunk]                                               |
-| [Azure Data Explorer][Azure]            | [Honeycomb.io][Honeycombio] | [Sumo Logic][SumoLogic]                                        |
-| [Coralogix][Coralogix]                  | [Instana][Instana]          | [TelemetryHub][TelemetryHub]                                   |
-| [Dash0][Dash0]                          | [Kloudfuse][Kloudfuse]      | [Teletrace][Teletrace]                                         |
-| [Datadog][Datadog]                      | [Liatrio][Liatrio]          | [Tracetest][Tracetest]                                         |
-| [Dynatrace][Dynatrace]                  | [Logz.io][Logzio]           | [Uptrace][Uptrace]                                             |
+|                           |                |                                  |
+|---------------------------|----------------|----------------------------------|
+| [AlibabaCloud LogService] | [Elastic]      | [OpenSearch]                     |
+| [AppDynamics]             | [Google Cloud] | [Oracle]                         |
+| [Aspecto]                 | [Grafana Labs] | [Sentry]                         |
+| [Axiom]                   | [Guance]       | [ServiceNow Cloud Observability] |
+| [Axoflow]                 | [Honeycomb.io] | [Splunk]                         |
+| [Azure Data Explorer]     | [Instana]      | [Sumo Logic]                     |
+| [Coralogix]               | [Kloudfuse]    | [TelemetryHub]                   |
+| [Dash0]                   | [Liatrio]      | [Teletrace]                      |
+| [Datadog]                 | [Logz.io]      | [Tracetest]                      |
+| [Dynatrace]               | [New Relic]    | [Uptrace]                        |
 
 ## Contributing
 
 To get involved with the project see our [CONTRIBUTING](CONTRIBUTING.md)
 documentation. Our [SIG Calls](CONTRIBUTING.md#join-a-sig-call) are every other
-Monday at 8:30 AM PST and anyone is welcome.
+Wednesday at 8:30 AM PST and anyone is welcome.
 
 ## Project leadership
 
-[Maintainers](https://github.com/open-telemetry/community/blob/main/community-membership.md#maintainer)
+[Maintainers](https://github.com/open-telemetry/community/blob/main/guides/contributor/membership.md#maintainer)
 ([@open-telemetry/demo-maintainers](https://github.com/orgs/open-telemetry/teams/demo-maintainers)):
 
 - [Juliano Costa](https://github.com/julianocosta89), Datadog
 - [Mikko Viitanen](https://github.com/mviitane), Dynatrace
 - [Pierre Tessier](https://github.com/puckpuck), Honeycomb
 
-[Approvers](https://github.com/open-telemetry/community/blob/main/community-membership.md#approver)
+[Approvers](https://github.com/open-telemetry/community/blob/main/guides/contributor/membership.md#approver)
 ([@open-telemetry/demo-approvers](https://github.com/orgs/open-telemetry/teams/demo-approvers)):
 
 - [Cedric Ziel](https://github.com/cedricziel) Grafana Labs
@@ -170,32 +172,32 @@ Emeritus:
 
 <!-- Links for Demos featuring the Astronomy Shop section -->
 
-[AlibabaCloud]: https://github.com/aliyun-sls/opentelemetry-demo
-[AppDynamics]: https://www.appdynamics.com/blog/cloud/how-to-observe-opentelemetry-demo-app-in-appdynamics-cloud/
+[AlibabaCloud LogService]: https://github.com/aliyun-sls/opentelemetry-demo
+[AppDynamics]: https://community.appdynamics.com/t5/Knowledge-Base/How-to-observe-OpenTelemetry-demo-app-in-Splunk-AppDynamics/ta-p/58584
 [Aspecto]: https://github.com/aspecto-io/opentelemetry-demo
 [Axiom]: https://play.axiom.co/axiom-play-qf1k/dashboards/otel.traces.otel-demo-traces
 [Axoflow]: https://axoflow.com/opentelemetry-support-in-more-detail-in-axosyslog-and-syslog-ng/
-[Azure]: https://github.com/Azure/Azure-kusto-opentelemetry-demo
+[Azure Data Explorer]: https://github.com/Azure/Azure-kusto-opentelemetry-demo
 [Coralogix]: https://coralogix.com/blog/configure-otel-demo-send-telemetry-data-coralogix
 [Dash0]: https://github.com/dash0hq/opentelemetry-demo
 [Datadog]: https://docs.datadoghq.com/opentelemetry/guide/otel_demo_to_datadog
 [Dynatrace]: https://www.dynatrace.com/news/blog/opentelemetry-demo-application-with-dynatrace/
 [Elastic]: https://github.com/elastic/opentelemetry-demo
-[GoogleCloud]: https://github.com/GoogleCloudPlatform/opentelemetry-demo
-[GrafanaLabs]: https://github.com/grafana/opentelemetry-demo
+[Google Cloud]: https://github.com/GoogleCloudPlatform/opentelemetry-demo
+[Grafana Labs]: https://github.com/grafana/opentelemetry-demo
 [Guance]: https://github.com/GuanceCloud/opentelemetry-demo
-[Helios]: https://otelsandbox.gethelios.dev
-[Honeycombio]: https://github.com/honeycombio/opentelemetry-demo
+[Honeycomb.io]: https://github.com/honeycombio/opentelemetry-demo
 [Instana]: https://github.com/instana/opentelemetry-demo
 [Kloudfuse]: https://github.com/kloudfuse/opentelemetry-demo
 [Liatrio]: https://github.com/liatrio/opentelemetry-demo
-[Logzio]: https://logz.io/learn/how-to-run-opentelemetry-demo-with-logz-io/
-[NewRelic]: https://github.com/newrelic/opentelemetry-demo
+[Logz.io]: https://logz.io/learn/how-to-run-opentelemetry-demo-with-logz-io/
+[New Relic]: https://github.com/newrelic/opentelemetry-demo
 [OpenSearch]: https://github.com/opensearch-project/opentelemetry-demo
+[Oracle]: https://github.com/oracle-quickstart/oci-o11y-solutions/blob/main/knowledge-content/opentelemetry-demo
 [Sentry]: https://github.com/getsentry/opentelemetry-demo
-[ServiceNowCloudObservability]: https://docs.lightstep.com/otel/quick-start-operator#send-data-from-the-opentelemetry-demo
+[ServiceNow Cloud Observability]: https://docs.lightstep.com/otel/quick-start-operator#send-data-from-the-opentelemetry-demo
 [Splunk]: https://github.com/signalfx/opentelemetry-demo
-[SumoLogic]: https://www.sumologic.com/blog/common-opentelemetry-demo-application/
+[Sumo Logic]: https://www.sumologic.com/blog/common-opentelemetry-demo-application/
 [TelemetryHub]: https://github.com/TelemetryHub/opentelemetry-demo/tree/telemetryhub-backend
 [Teletrace]: https://github.com/teletrace/opentelemetry-demo
 [Tracetest]: https://github.com/kubeshop/opentelemetry-demo

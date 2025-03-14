@@ -1,0 +1,26 @@
+# Copyright The OpenTelemetry Authors
+# SPDX-License-Identifier: Apache-2.0
+
+type: Test
+spec:
+  id: product-list
+  name: 'Product: List'
+  description: List all products available on product catalog
+  trigger:
+    type: grpc
+    grpc:
+      protobufFile: ../../../pb/demo.proto
+      address: ${var:PRODUCT_CATALOG_ADDR}
+      method: oteldemo.ProductCatalogService.ListProducts
+      request: ""
+  specs:
+  - name: It queried the product catalog correctly
+    selector: span[tracetest.span.type="rpc" name="oteldemo.ProductCatalogService/ListProducts"
+      rpc.system="grpc" rpc.method="ListProducts" rpc.service="oteldemo.ProductCatalogService"]
+    assertions:
+    - attr:rpc.grpc.status_code  =  0
+    - attr:app.products.count  =  10
+  - name: It returned products with IDs
+    selector: span[tracetest.span.type="general" name="Tracetest trigger"]
+    assertions:
+    - attr:tracetest.response.body | json_path '$.products[*].id' != ""

@@ -1,0 +1,50 @@
+# Copyright The OpenTelemetry Authors
+# SPDX-License-Identifier: Apache-2.0
+
+type: Test
+spec:
+  id: checkout-place-order
+  name: 'Checkout: place order'
+  description: Place one order on the system
+  trigger:
+    type: grpc
+    grpc:
+      protobufFile: ../../../pb/demo.proto
+      address: ${var:CHECKOUT_ADDR}
+      method: oteldemo.CheckoutService.PlaceOrder
+      request: |-
+        {
+          "userId": "1997",
+          "userCurrency": "USD",
+          "address": {
+            "streetAddress": "410 Terry Ave. North",
+            "city": "Seattle",
+            "state": "Washington",
+            "country": "United States",
+            "zipCode": "98109"
+          },
+          "email": "amazon@example.com",
+          "creditCard": {
+            "creditCardNumber": "4117-7059-6121-5486",
+            "creditCardCvv": 346,
+            "creditCardExpirationYear": 2025,
+            "creditCardExpirationMonth": 3
+          }
+        }
+  specs:
+  - name: It returns a valid order
+    selector: span[tracetest.span.type="general" name="Tracetest trigger"]
+    assertions:
+    - attr:tracetest.response.body | json_path '$.order.orderId' != ""
+    - attr:tracetest.response.body | json_path '$.order.shippingTrackingId' != ""
+    - attr:tracetest.response.body | json_path '$.order.shippingAddress' != "{}"
+    - attr:tracetest.response.body | json_path '$.order.shippingCost.currencyCode' = "USD"
+  - name: It calls the PlaceOrder method successfuly
+    selector: span[tracetest.span.type="rpc" name="oteldemo.CheckoutService/PlaceOrder"
+      rpc.system="grpc" rpc.method="PlaceOrder" rpc.service="oteldemo.CheckoutService"]
+    assertions:
+    - attr:rpc.grpc.status_code = 0
+  - name: It sends an order to be processed asyncronously
+    selector: span[tracetest.span.type="messaging" name="orders publish" kind="producer" messaging.system="kafka" messaging.destination.name="orders" messaging.operation="publish"]
+    assertions:
+    - attr:messaging.destination.name = "orders"

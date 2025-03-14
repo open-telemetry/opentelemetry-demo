@@ -15,11 +15,11 @@ jobs:
       contents: read
     steps:
       - name: Checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
 
       - name: Check for changed files
         id: file_changes
-        uses: dorny/paths-filter@v2
+        uses: dorny/paths-filter@v3
         with:
           list-files: shell
           filters: |
@@ -30,7 +30,7 @@ jobs:
               - 'docker-compose*.yml'
               - 'src/flagd/**'
               - 'src/grafana/**'
-              - 'src/otelcollector/**'
+              - 'src/otel-collector/**'
               - 'src/prometheus/**'
 
       - name: "Add Label: docs-update-required"

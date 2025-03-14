@@ -1,0 +1,11 @@
+# Copyright The OpenTelemetry Authors
+# SPDX-License-Identifier: Apache-2.0
+
+type: TestSuite
+spec:
+  id: currency-all
+  name: 'Currency Service'
+  description: Run all Currency Service tests enabled in sequence
+  steps:
+  - ./convert.yaml
+  - ./supported.yaml

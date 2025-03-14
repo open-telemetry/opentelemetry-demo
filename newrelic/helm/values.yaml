@@ -1,0 +1,1059 @@
+# yaml-language-server: $schema=./values.schema.json
+default:
+  # List of environment variables applied to all components
+  env:
+    - name: OTEL_SERVICE_NAME
+      valueFrom:
+        fieldRef:
+          apiVersion: v1
+          fieldPath: "metadata.labels['app.kubernetes.io/component']"
+    - name: OTEL_POD_NAME
+      valueFrom:
+        fieldRef:
+          fieldPath: metadata.name
+    - name: OTEL_K8S_CONTAINER_NAME
+      valueFrom:
+        fieldRef:
+          apiVersion: v1
+          fieldPath: "metadata.labels['app.kubernetes.io/component']"
+    - name: OTEL_NAMESPACE_NAME
+      valueFrom:
+        fieldRef:
+          fieldPath: metadata.namespace
+    - name: OTEL_CLUSTER_NAME
+      value: opentelemetry-demo
+    - name: OTEL_COLLECTOR_NAME
+      value: otel-collector
+    - name: OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE
+      value: delta
+    - name: OTEL_RESOURCE_ATTRIBUTES
+      value: service.name=$(OTEL_SERVICE_NAME),service.namespace=opentelemetry-demo,service.version={{ .Chart.AppVersion }},service.instance.id=$(OTEL_POD_NAME),k8s.container.name=$(OTEL_K8S_CONTAINER_NAME),k8s.pod.name=$(OTEL_POD_NAME),k8s.namespace.name=$(OTEL_NAMESPACE_NAME),k8s.cluster.name=$(OTEL_CLUSTER_NAME)
+          
+  # Allows overriding and additions to .Values.default.env
+  envOverrides: []
+  #  - name: OTEL_K8S_NODE_NAME
+  #    value: "someConstantValue"
+  image:
+    repository: ghcr.io/open-telemetry/demo
+    # Overrides the image tag whose default is the chart appVersion.
+    # The service's name will be applied to the end of this value.
+    tag: ""
+    pullPolicy: IfNotPresent
+    pullSecrets: []
+  # Default # of replicas for all components
+  replicas: 1
+  # default revisionHistoryLimit for all components (number of old ReplicaSets to retain)
+  revisionHistoryLimit: 10
+  # Default schedulingRules for all components
+  schedulingRules:
+    nodeSelector: {}
+    affinity: {}
+    tolerations: []
+  # Default securityContext for all components
+  securityContext: {}
+
+serviceAccount:
+  # Specifies whether a service account should be created
+  create: true
+  # Annotations to add to the service account
+  annotations: {}
+  # The name of the service account to use.
+  # If not set and create is true, a name is generated using the fullname template
+  name: ""
+
+opentelemetry-collector:
+  enabled: true
+  extraEnvs:
+    - name: KUBE_NODE_NAME
+      valueFrom:
+        fieldRef:
+          fieldPath: spec.nodeName
+    - name: NR_LICENSE_KEY
+      valueFrom:
+        secretKeyRef:
+          name: newrelic-license-key
+          key: license-key
+    - name: OTEL_CLUSTER_NAME
+      value: opentelemetry-demo
+  image:
+    repository: "otel/opentelemetry-collector-contrib"
+  fullnameOverride: otel-collector
+  mode: deployment
+  presets:
+    kubernetesAttributes:
+      enabled: true
+    hostMetrics:
+      enabled: true
+    kubeletMetrics:
+      enabled: false
+    kubernetesEvents:
+      enabled: false
+  resources:
+    limits:
+      memory: 200Mi
+  service:
+    type: ClusterIP
+  ports:
+    metrics:
+      enabled: false
+  podAnnotations:
+    prometheus.io/scrape: "true"
+    opentelemetry_community_demo: "true"
+  config:
+    receivers:
+      otlp:
+        protocols:
+          http:
+            # Since this collector needs to receive data from the web, enable cors for all origins
+            # `allowed_origins` can be refined for your deployment domain
+            cors:
+              allowed_origins:
+                - "http://*"
+                - "https://*"
+      httpcheck/frontend-proxy:
+        targets:
+          - endpoint: http://frontend-proxy:8080
+      redis:
+        endpoint: "valkey-cart:6379"
+        collection_interval: 30s
+
+    exporters:
+      debug: {}
+      debug/detailed:
+        verbosity: detailed
+
+      otlphttp/newrelic:
+          endpoint: "https://otlp.nr-data.net:4318"
+          headers:
+            api-key: ${env:NR_LICENSE_KEY}
+
+
+      ## Create an exporter to Jaeger using the standard `otlp` export format
+      # otlp:
+      #   endpoint: jaeger-collector:4317
+      #   tls:
+      #     insecure: true
+      # Create an exporter to Prometheus (metrics)
+      # otlphttp/prometheus:
+      #   endpoint: http://prometheus:9090/api/v1/otlp
+      #   tls:
+      #     insecure: true
+      # opensearch:
+      #   logs_index: otel
+      #   http:
+      #     endpoint: http://opensearch:9200
+      #     tls:
+      #       insecure: true
+
+    processors:
+      # New Relic customizations #
+      # Source: https://github.com/newrelic/newrelic-opentelemetry-examples/blob/main/other-examples/collector/nr-config/otel-config.yaml
+      batch: {}
+      # Will convert all monotonic, cumulative sums to monotonic, delta sums
+      cumulativetodelta: {}
+      # memory_limiter:
+      #   check_interval: 5s
+      #   limit_percentage: 80
+      #   spike_limit_percentage: 15
+
+      transform:
+        trace_statements:
+          - context: span
+            statements:
+            - truncate_all(attributes, 4095)
+            - truncate_all(resource.attributes, 4095)
+          ## Migrated from OTel Demo chart
+          - context: span
+            statements:
+              # could be removed when https://github.com/vercel/next.js/pull/64852 is fixed upstream
+              - replace_pattern(name, "\\?.*", "")
+              - replace_match(name, "GET /api/products/*", "GET /api/products/{productId}")
+        log_statements:
+          - context: log
+            statements:
+            - truncate_all(attributes, 4095)
+            - truncate_all(resource.attributes, 4095)
+        error_mode: ignore
+
+      resourcedetection/env:  
+        detectors: ["env", "system"]
+        override: false
+        system:
+          hostname_sources: ["os"]
+          resource_attributes:
+            host.id:
+              enabled: true
+          
+      # k8sattributes:
+      #   auth_type: "serviceAccount"
+      #   passthrough: false
+      #   filter:
+      #     node_from_env_var: KUBE_NODE_NAME
+      #   extract:
+      #     metadata:
+      #       - k8s.pod.name
+      #       - k8s.pod.uid
+      #       - k8s.deployment.name
+      #       - k8s.daemonset.name
+      #       - k8s.namespace.name
+      #       - k8s.node.name
+      #       - k8s.pod.start_time
+      #   pod_association:
+      #     - sources: 
+      #       - from: resource_attribute
+      #         name: k8s.pod.uid
+      #       - from: resource_attribute
+      #         name: k8s.pod.name
+
+      # End of New Relic customizations #
+
+      # resource:
+      #   attributes:
+      #   - key: service.instance.id
+      #     from_attribute: k8s.pod.name
+      #     action: upsert
+
+    # connectors:
+    #   spanmetrics: {}
+
+    service:
+      pipelines:
+        traces:
+          receivers: [otlp]
+          processors: [memory_limiter, resource, resourcedetection/env, transform, batch]
+          exporters: [otlphttp/newrelic, debug]
+        metrics:
+          receivers: [hostmetrics, redis, otlp]
+          processors: [memory_limiter, resource, resourcedetection/env, k8sattributes, cumulativetodelta, batch]
+          exporters: [otlphttp/newrelic, debug]
+        logs:
+          receivers: [otlp]
+          processors: [memory_limiter, resource, transform, batch]
+          exporters: [otlphttp/newrelic, debug]
+      telemetry:
+        metrics:
+          level: basic
+          readers:
+            - periodic:
+                interval: 30000
+                timeout: 5000
+                exporter:
+                  otlp:
+                    protocol: http/protobuf
+                    endpoint: http://otel-collector:4318
+
+components:
+  ## Demo Components are named objects (services) with several properties
+  # demoService:
+  ## Enable the component (service)
+  #   enabled: true
+  #   useDefault:
+  ## Use default environment variables
+  #     env: true
+  ## Override Image repository and Tag. Tag will use appVersion as default.
+  ## Component's name will be applied to end of this value.
+  #   imageOverride: {}
+  ## Optional service definitions to apply
+  #   service:
+  ## Service Type to use for this component. Default is ClusterIP.
+  #     type: ClusterIP
+  ## Service Port to use to expose this component. Default is nil
+  #     port: 8080
+  ## Service Node Port to use to expose this component on a NodePort service. Default is nil
+  #     nodePort: 30080
+  ## Service Annotations to add to this component
+  #     annotations: {}
+  ## Additional service ports to use to expose this component
+  #   ports:
+  #     - name: extraServicePort
+  #       value: 8081
+  ## Environment variables to add to the component's pod
+  #   env:
+  ## Environment variables that upsert (append + merge) into the `env` specification for this component.
+  ## A variable named OTEL_RESOURCE_ATTRIBUTES_EXTRA will have its value appended to the OTEL_RESOURCE_ATTRIBUTES value.
+  #   envOverrides:
+  ## Pod Scheduling rules for nodeSelector, affinity, or tolerations.
+  #   schedulingRules:
+  #     nodeSelector: {}
+  #     affinity: {}
+  #     tolerations: []
+  ## Pod Annotations to add to this component
+  #   podAnnotations: {}
+  ## Resources for this component
+  #   resources: {}
+  ## Container security context for setting user ID (UID), group ID (GID) and other security policies
+  #   securityContext:
+  ## Ingresses rules to add for the to the component
+  # ingress:
+  ## Enable the creation of Ingress rules. Default is false
+  #   enabled: false
+  ## Annotations to add to the ingress rule
+  #   annotations: {}
+  ## Which Ingress class (controller) to use. Default is unspecified.
+  #   ingressClassName: nginx
+  ## Hosts definitions for the Ingress rule
+  #   hosts:
+  #     - host: demo.example.com
+  ## Each host can have multiple paths/routes
+  #       paths:
+  #         - path: /
+  #           pathType: Prefix
+  #           port: 8080
+  ## Optional TLS specifications for the Ingress rule
+  #   tls:
+  #     - secretName: demo-tls
+  #       hosts:
+  #         - demo.example.com
+  ## Additional ingresses - only created if ingress.enabled is true
+  ## Useful for when differently annotated ingress services are required
+  ## Each additional ingress needs key "name" set to something unique
+  #   additionalIngresses: []
+  #     - name: extra-demo-ingress
+  #       ingressClassName: nginx
+  #       annotations: {}
+  #       hosts:
+  #         - host: demo.example.com
+  #           paths:
+  #             - path: /
+  #               pathType: Prefix
+  #               port: 8080
+  #       tls:
+  #         - secretName: demo-tls
+  #           hosts:
+  #             - demo.example.com
+  ## Command to use in the container spec, in case you don't want to go with the default command from the image.
+  #   command: []
+  ## Configuration to for this component; will create a Volume, and Mount backed by an optionally created ConfigMap.
+  ## The name, mountPath are required, and one of existingConfigMap or data is required.
+  ## If an existing ConfigMap is not provided, the contents under data will be used for the created ConfigMap.
+  #   mountedConfigMaps: []
+  #     - name: my-config
+  #       mountPath: /etc/config
+  #       subPath:
+  #       existingConfigMap: my-configmap
+  #       data:
+  #         my-config.yaml: |
+  #           key: value
+  # # Kubernetes container health check options
+  #   livenessProbe: {}
+  # # Optional init container to run before the pod starts.
+  #   initContainers:
+  #     - name: <init-container-name>
+  #       image: <init-container-image>
+  #       command: [list of commands for the init container to run]
+  # # Replicas for the component
+  #  replicas: 1
+  # # Number of old ReplicaSets to retain
+  #  revisionHistoryLimit: 10
+  # # Optional pod security context for setting user ID (UID), group ID (GID) and other security policies
+  # # This will be applied at pod level, can be applied globally for all pods: .Values.default.podSecurityContext
+  # # Or it can be applied to a specific component: .Values.components.<component-name>.podSecurityContext
+  #    podSecurityContext:
+  #      runAsGroup: 65534
+  #      runAsNonRoot: true
+  #      runAsUser: 65534
+
+  accounting:
+    enabled: true
+    useDefault:
+      env: true
+    env:
+      - name: KAFKA_ADDR
+        value: kafka:9092
+      - name: OTEL_EXPORTER_OTLP_ENDPOINT
+        value: http://$(OTEL_COLLECTOR_NAME):4318
+    resources:
+      limits:
+        memory: 120Mi
+    initContainers:
+      - name: wait-for-kafka
+        image: busybox:latest
+        command: ["sh", "-c", "until nc -z -v -w30 kafka 9092; do echo waiting for kafka; sleep 2; done;"]
+
+  ad:
+    enabled: true
+    useDefault:
+      env: true
+    service:
+      port: 8080
+    env:
+      - name: AD_PORT
+        value: "8080"
+      - name: FLAGD_HOST
+        value: flagd
+      - name: FLAGD_PORT
+        value: "8013"
+      - name: OTEL_EXPORTER_OTLP_ENDPOINT
+        value: http://$(OTEL_COLLECTOR_NAME):4318
+      - name: OTEL_LOGS_EXPORTER
+        value: otlp
+    resources:
+      limits:
+        memory: 300Mi
+
+  cart:
+    enabled: true
+    useDefault:
+      env: true
+    service:
+      port: 8080
+    env:
+      - name: CART_PORT
+        value: "8080"
+      - name: ASPNETCORE_URLS
+        value: http://*:$(CART_PORT)
+      - name: VALKEY_ADDR
+        value: valkey-cart:6379
+      - name: FLAGD_HOST
+        value: flagd
+      - name: FLAGD_PORT
+        value: "8013"
+      - name: OTEL_EXPORTER_OTLP_ENDPOINT
+        value: http://$(OTEL_COLLECTOR_NAME):4317
+    resources:
+      limits:
+        memory: 160Mi
+    initContainers:
+      - name: wait-for-valkey-cart
+        image: busybox:latest
+        command: ["sh", "-c", "until nc -z -v -w30 valkey-cart 6379; do echo waiting for valkey-cart; sleep 2; done;"]
+
+  checkout:
+    enabled: true
+    useDefault:
+      env: true
+    service:
+      port: 8080
+    env:
+      - name: CHECKOUT_PORT
+        value: "8080"
+      - name: CART_ADDR
+        value: cart:8080
+      - name: CURRENCY_ADDR
+        value: currency:8080
+      - name: EMAIL_ADDR
+        value: http://email:8080
+      - name: PAYMENT_ADDR
+        value: payment:8080
+      - name: PRODUCT_CATALOG_ADDR
+        value: product-catalog:8080
+      - name: SHIPPING_ADDR
+        value: shipping:8080
+      - name: KAFKA_ADDR
+        value: kafka:9092
+      - name: FLAGD_HOST
+        value: flagd
+      - name: FLAGD_PORT
+        value: "8013"
+      - name: OTEL_EXPORTER_OTLP_ENDPOINT
+        value: http://$(OTEL_COLLECTOR_NAME):4317
+    resources:
+      limits:
+        memory: 20Mi
+    initContainers:
+      - name: wait-for-kafka
+        image: busybox:latest
+        command: ["sh", "-c", "until nc -z -v -w30 kafka 9092; do echo waiting for kafka; sleep 2; done;"]
+
+  currency:
+    enabled: true
+    useDefault:
+      env: true
+    service:
+      port: 8080
+    env:
+      - name: CURRENCY_PORT
+        value: "8080"
+      - name: OTEL_EXPORTER_OTLP_ENDPOINT
+        value: http://$(OTEL_COLLECTOR_NAME):4317
+      - name: VERSION
+        value: "{{ .Chart.AppVersion }}"
+    resources:
+      limits:
+        memory: 20Mi
+
+  email:
+    enabled: true
+    useDefault:
+      env: true
+    service:
+      port: 8080
+    env:
+      - name: EMAIL_PORT
+        value: "8080"
+      - name: APP_ENV
+        value: production
+      - name: OTEL_EXPORTER_OTLP_TRACES_ENDPOINT
+        value: http://$(OTEL_COLLECTOR_NAME):4318/v1/traces
+    resources:
+      limits:
+        memory: 100Mi
+
+  fraud-detection:
+    enabled: true
+    useDefault:
+      env: true
+    env:
+      - name: KAFKA_ADDR
+        value: kafka:9092
+      - name: FLAGD_HOST
+        value: flagd
+      - name: FLAGD_PORT
+        value: "8013"
+      - name: OTEL_EXPORTER_OTLP_ENDPOINT
+        value: http://$(OTEL_COLLECTOR_NAME):4318
+    resources:
+      limits:
+        memory: 300Mi
+    initContainers:
+      - name: wait-for-kafka
+        image: busybox:latest
+        command: ["sh", "-c", "until nc -z -v -w30 kafka 9092; do echo waiting for kafka; sleep 2; done;"]
+
+  frontend:
+    enabled: true
+    useDefault:
+      env: true
+    service:
+      port: 8080
+    env:
+      - name: FRONTEND_PORT
+        value: "8080"
+      - name: FRONTEND_ADDR
+        value: :8080
+      - name: AD_ADDR
+        value: ad:8080
+      - name: CART_ADDR
+        value: cart:8080
+      - name: CHECKOUT_ADDR
+        value: checkout:8080
+      - name: CURRENCY_ADDR
+        value: currency:8080
+      - name: PRODUCT_CATALOG_ADDR
+        value: product-catalog:8080
+      - name: RECOMMENDATION_ADDR
+        value: recommendation:8080
+      - name: SHIPPING_ADDR
+        value: shipping:8080
+      - name: FLAGD_HOST
+        value: flagd
+      - name: FLAGD_PORT
+        value: "8013"
+      - name: OTEL_COLLECTOR_HOST
+        value: $(OTEL_COLLECTOR_NAME)
+      - name: OTEL_EXPORTER_OTLP_ENDPOINT
+        value: http://$(OTEL_COLLECTOR_NAME):4317
+      - name: WEB_OTEL_SERVICE_NAME
+        value: frontend-web
+      - name: PUBLIC_OTEL_EXPORTER_OTLP_TRACES_ENDPOINT
+        value: http://localhost:8080/otlp-http/v1/traces             # This expects users to use `kubectl port-forward ...`
+    resources:
+      limits:
+        memory: 250Mi
+    securityContext:
+      runAsUser: 1001  # nextjs
+      runAsGroup: 1001
+      runAsNonRoot: true
+
+  frontend-proxy:
+    enabled: true
+    useDefault:
+      env: true
+    service:
+      port: 8080
+    env:
+      - name: ENVOY_PORT
+        value: "8080"
+      - name: FLAGD_HOST
+        value: flagd
+      - name: FLAGD_PORT
+        value: "8013"
+      - name: FLAGD_UI_HOST
+        value: flagd
+      - name: FLAGD_UI_PORT
+        value: "4000"
+      - name: FRONTEND_HOST
+        value: frontend
+      - name: FRONTEND_PORT
+        value: "8080"
+      - name: GRAFANA_HOST
+        value: grafana
+      - name: GRAFANA_PORT
+        value: "80"
+      - name: IMAGE_PROVIDER_HOST
+        value: image-provider
+      - name: IMAGE_PROVIDER_PORT
+        value: "8081"
+      - name: JAEGER_HOST
+        value: jaeger-query
+      - name: JAEGER_PORT
+        value: "16686"
+      - name: LOCUST_WEB_HOST
+        value: load-generator
+      - name: LOCUST_WEB_PORT
+        value: "8089"
+      - name: OTEL_COLLECTOR_HOST
+        value: $(OTEL_COLLECTOR_NAME)
+      - name: OTEL_COLLECTOR_PORT_GRPC
+        value: "4317"
+      - name: OTEL_COLLECTOR_PORT_HTTP
+        value: "4318"
+    resources:
+      limits:
+        memory: 65Mi
+    securityContext:
+      runAsUser: 101  # envoy
+      runAsGroup: 101
+      runAsNonRoot: true
+
+  image-provider:
+    enabled: true
+    useDefault:
+      env: true
+    service:
+      port: 8081
+    env:
+      - name: IMAGE_PROVIDER_PORT
+        value: "8081"
+      - name: OTEL_COLLECTOR_PORT_GRPC
+        value: "4317"
+      - name: OTEL_COLLECTOR_HOST
+        value: $(OTEL_COLLECTOR_NAME)
+    resources:
+      limits:
+        memory: 50Mi
+
+  load-generator:
+    enabled: true
+    useDefault:
+      env: true
+    service:
+      port: 8089
+    env:
+      - name: LOCUST_WEB_HOST
+        value: "0.0.0.0"
+      - name: LOCUST_WEB_PORT
+        value: "8089"
+      - name: LOCUST_USERS
+        value: "10"
+      - name: LOCUST_SPAWN_RATE
+        value: "1"
+      - name: LOCUST_HOST
+        value: http://frontend-proxy:8080
+      - name: LOCUST_HEADLESS
+        value: "false"
+      - name: LOCUST_AUTOSTART
+        value: "true"
+      - name: LOCUST_BROWSER_TRAFFIC_ENABLED
+        value: "false"
+      - name: PROTOCOL_BUFFERS_PYTHON_IMPLEMENTATION
+        value: python
+      - name: FLAGD_HOST
+        value: flagd
+      - name: FLAGD_PORT
+        value: "8013"
+      - name: OTEL_EXPORTER_OTLP_ENDPOINT
+        value: http://$(OTEL_COLLECTOR_NAME):4317
+    resources:
+      limits:
+        memory: 1500Mi
+
+  payment:
+    enabled: true
+    useDefault:
+      env: true
+    service:
+      port: 8080
+    env:
+      - name: PAYMENT_PORT
+        value: "8080"
+      - name: FLAGD_HOST
+        value: flagd
+      - name: FLAGD_PORT
+        value: "8013"
+      - name: OTEL_EXPORTER_OTLP_ENDPOINT
+        value: http://$(OTEL_COLLECTOR_NAME):4317
+    resources:
+      limits:
+        memory: 120Mi
+    securityContext:
+      runAsUser: 1000  # node
+      runAsGroup: 1000
+      runAsNonRoot: true
+
+  product-catalog:
+    enabled: true
+    useDefault:
+      env: true
+    service:
+      port: 8080
+    env:
+      - name: PRODUCT_CATALOG_PORT
+        value: "8080"
+      - name: PRODUCT_CATALOG_RELOAD_INTERVAL
+        value: "10"
+      - name: FLAGD_HOST
+        value: flagd
+      - name: FLAGD_PORT
+        value: "8013"
+      - name: OTEL_EXPORTER_OTLP_ENDPOINT
+        value: http://$(OTEL_COLLECTOR_NAME):4317
+    mountedConfigMaps:
+      - name: product-catalog-products
+        mountPath: /usr/src/app/products
+        existingConfigMap: product-catalog-products
+    resources:
+      limits:
+        memory: 20Mi
+
+  quote:
+    enabled: true
+    useDefault:
+      env: true
+    service:
+      port: 8080
+    env:
+      - name: QUOTE_PORT
+        value: "8080"
+      - name: OTEL_PHP_AUTOLOAD_ENABLED
+        value: "true"
+      - name: OTEL_EXPORTER_OTLP_ENDPOINT
+        value: http://$(OTEL_COLLECTOR_NAME):4318
+    resources:
+      limits:
+        memory: 40Mi
+    securityContext:
+      runAsUser: 33  # www-data
+      runAsGroup: 33
+      runAsNonRoot: true
+
+  recommendation:
+    enabled: true
+    useDefault:
+      env: true
+    service:
+      port: 8080
+    env:
+      - name: RECOMMENDATION_PORT
+        value: "8080"
+      - name: PRODUCT_CATALOG_ADDR
+        value: product-catalog:8080
+      - name: OTEL_PYTHON_LOG_CORRELATION
+        value: "true"
+      - name: PROTOCOL_BUFFERS_PYTHON_IMPLEMENTATION
+        value: python
+      - name: FLAGD_HOST
+        value: flagd
+      - name: FLAGD_PORT
+        value: "8013"
+      - name: OTEL_EXPORTER_OTLP_ENDPOINT
+        value: http://$(OTEL_COLLECTOR_NAME):4317
+    resources:
+      limits:
+        memory: 500Mi            # This is high to enable supporting the recommendationCache feature flag use case
+
+  shipping:
+    enabled: true
+    useDefault:
+      env: true
+    service:
+      port: 8080
+    env:
+      - name: SHIPPING_PORT
+        value: "8080"
+      - name: QUOTE_ADDR
+        value: http://quote:8080
+      - name: OTEL_EXPORTER_OTLP_ENDPOINT
+        value: http://$(OTEL_COLLECTOR_NAME):4317
+    resources:
+      limits:
+        memory: 20Mi
+
+  flagd:
+    enabled: true
+    imageOverride:
+      repository: "ghcr.io/open-feature/flagd"
+      tag: "v0.11.1"
+    useDefault:
+      env: true
+    replicas: 1
+    service:
+      port: 8013
+    env:
+      - name: FLAGD_METRICS_EXPORTER
+        value: otel
+      - name: FLAGD_OTEL_COLLECTOR_URI
+        value: $(OTEL_COLLECTOR_NAME):4317
+    resources:
+      limits:
+        memory: 100Mi
+    command:
+      - "/flagd-build"
+      - "start"
+      - "--port"
+      - "8013"
+      - "--uri"
+      - "file:./etc/flagd/demo.flagd.json"
+    mountedEmptyDirs:
+      - name: config-rw
+        mountPath: /etc/flagd
+    # flgad-ui as a sidecar container in the same pod so the flag json file can be shared
+    sidecarContainers:
+      - name: flagd-ui
+        useDefault:
+          env: true
+        service:
+          port: 4000
+        env:
+          - name: FLAGD_METRICS_EXPORTER
+            value: otel
+          - name: OTEL_EXPORTER_OTLP_ENDPOINT
+            value: http://$(OTEL_COLLECTOR_NAME):4318
+        resources:
+          limits:
+            memory: 150Mi
+        volumeMounts:
+          - name: config-rw
+            mountPath: /app/data
+    initContainers:
+      - name: init-config
+        image: busybox
+        command: ["sh", "-c", "cp /config-ro/demo.flagd.json /config-rw/demo.flagd.json && cat /config-rw/demo.flagd.json"]
+        volumeMounts:
+          - mountPath: /config-ro
+            name: config-ro
+          - mountPath: /config-rw
+            name: config-rw
+    additionalVolumes:
+      - name: config-ro
+        configMap:
+          name: flagd-config
+
+  kafka:
+    enabled: true
+    useDefault:
+      env: true
+    replicas: 1
+    ports:
+      - name: plaintext
+        value: 9092
+      - name: controller
+        value: 9093
+    env:
+      - name: KAFKA_ADVERTISED_LISTENERS
+        value: PLAINTEXT://kafka:9092
+      - name: OTEL_EXPORTER_OTLP_ENDPOINT
+        value: http://$(OTEL_COLLECTOR_NAME):4318
+      - name: KAFKA_HEAP_OPTS
+        value: "-Xmx600M -Xms600M"
+    resources:
+      requests:
+        memory: 600Mi
+      limits:
+        memory: 1Gi
+    securityContext:
+      runAsUser: 1000  # appuser
+      runAsGroup: 1000
+      runAsNonRoot: true
+
+  valkey-cart:
+    enabled: true
+    useDefault:
+      env: true
+    imageOverride:
+      repository: "valkey/valkey"
+      tag: "7.2-alpine"
+    replicas: 1
+    ports:
+      - name: valkey-cart
+        value: 6379
+    resources:
+      limits:
+        memory: 20Mi
+    securityContext:
+      runAsUser: 999  # valkey
+      runAsGroup: 1000
+      runAsNonRoot: true
+
+jaeger:
+  enabled: false
+  fullnameOverride: jaeger
+  provisionDataStore:
+    cassandra: false
+  allInOne:
+    enabled: true
+    args:
+      - "--memory.max-traces=5000"
+      - "--query.base-path=/jaeger/ui"
+      - "--prometheus.server-url=http://prometheus:9090"
+      - "--prometheus.query.normalize-calls=true"
+      - "--prometheus.query.normalize-duration=true"
+    extraEnv:
+      - name: METRICS_STORAGE_TYPE
+        value: prometheus
+      - name: COLLECTOR_OTLP_GRPC_HOST_PORT
+        value: 0.0.0.0:4317
+      - name: COLLECTOR_OTLP_HTTP_HOST_PORT
+        value: 0.0.0.0:4318
+    resources:
+      limits:
+        memory: 400Mi
+  storage:
+    type: memory
+  agent:
+    enabled: false
+  collector:
+    enabled: false
+  query:
+    enabled: false
+
+prometheus:
+  enabled: false
+  alertmanager:
+    enabled: false
+  configmapReload:
+    prometheus:
+      enabled: false
+  kube-state-metrics:
+    enabled: false
+  prometheus-node-exporter:
+    enabled: false
+  prometheus-pushgateway:
+    enabled: false
+  server:
+    fullnameOverride: prometheus
+    extraFlags:
+      - "enable-feature=exemplar-storage"
+      - "web.enable-otlp-receiver"
+    global:
+      scrape_interval: 5s
+      scrape_timeout: 3s
+      evaluation_interval: 30s
+    tsdb:
+      out_of_order_time_window: 30m
+    prometheus.yml:
+      otlp:
+        keep_identifying_resource_attributes: true
+        # Recommended attributes to be promoted to labels.
+        promote_resource_attributes:
+          - service.instance.id
+          - service.name
+          - service.namespace
+          - cloud.availability_zone
+          - cloud.region
+          - container.name
+          - deployment.environment.name
+          - k8s.cluster.name
+          - k8s.container.name
+          - k8s.cronjob.name
+          - k8s.daemonset.name
+          - k8s.deployment.name
+          - k8s.job.name
+          - k8s.namespace.name
+          - k8s.pod.name
+          - k8s.replicaset.name
+          - k8s.statefulset.name
+    persistentVolume:
+      enabled: false
+    service:
+      servicePort: 9090
+    resources:
+      limits:
+        memory: 300Mi
+
+grafana:
+  enabled: false
+  fullnameOverride: grafana
+  testFramework:
+    enabled: false
+  grafana.ini:
+    auth:
+      disable_login_form: true
+    auth.anonymous:
+      enabled: true
+      org_name: Main Org.
+      org_role: Admin
+    server:
+      root_url: "%(protocol)s://%(domain)s:%(http_port)s/grafana"
+      serve_from_sub_path: true
+  adminPassword: admin
+  plugins:
+    - grafana-opensearch-datasource
+  datasources:
+    datasources.yaml:
+      apiVersion: 1
+      datasources:
+        - name: Prometheus
+          uid: webstore-metrics
+          type: prometheus
+          url: http://prometheus:9090
+          editable: true
+          isDefault: true
+          jsonData:
+            exemplarTraceIdDestinations:
+              - datasourceUid: webstore-traces
+                name: trace_id
+
+              - url: http://localhost:8080/jaeger/ui/trace/$${__value.raw}
+                name: trace_id
+                urlDisplayLabel: View in Jaeger UI
+
+        - name: Jaeger
+          uid: webstore-traces
+          type: jaeger
+          url: http://jaeger-query:16686/jaeger/ui
+          editable: true
+          isDefault: false
+
+        - name: OpenSearch
+          uid: webstore-logs
+          type: grafana-opensearch-datasource
+          url: http://opensearch:9200/
+          access: proxy
+          editable: true
+          isDefault: false
+          jsonData:
+            database: otel
+            flavor: opensearch
+            logLevelField: severity.text.keyword
+            logMessageField: body
+            pplEnabled: true
+            timeField: observedTimestamp
+            version: 2.18.0
+  dashboardProviders:
+    dashboardproviders.yaml:
+      apiVersion: 1
+      providers:
+        - name: 'default'
+          orgId: 1
+          folder: ''
+          type: file
+          disableDeletion: false
+          editable: true
+          options:
+            path: /var/lib/grafana/dashboards/default
+  dashboardsConfigMaps:
+    default: grafana-dashboards
+  resources:
+    limits:
+      memory: 150Mi
+
+opensearch:
+  enabled: false
+  fullnameOverride: opensearch
+  clusterName: demo-cluster
+  nodeGroup: otel-demo
+  singleNode: true
+  opensearchJavaOpts: "-Xms300m -Xmx300m"
+  persistence:
+    enabled: false
+  extraEnvs:
+    - name: "bootstrap.memory_lock"
+      value: "true"
+    - name: "DISABLE_INSTALL_DEMO_CONFIG"
+      value: "true"
+    - name: "DISABLE_SECURITY_PLUGIN"
+      value: "true"
+  resources:
+    limits:
+      memory: 1100Mi

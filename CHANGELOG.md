@@ -7,8 +7,148 @@ the release.
 
 ## Unreleased
 
+* [frontend] Update OpenTelemetry Browser SDK initialization
+  ([#2092](https://github.com/open-telemetry/opentelemetry-demo/pull/2092))
+* [quote] Updated open-telemetry/exporter-otlp to 1.2.1 which includes the
+  fix for `IS_REMOTE` flag feature
+  ([#2112](https://github.com/open-telemetry/opentelemetry-demo/pull/2112))
+
+## 2.0.1
+
+* [chore] Use Linkspector to check links
+  ([#2070](https://github.com/open-telemetry/opentelemetry-demo/pull/2070))
+* [frontend] Cypress tests base image updated to 14.0.3
+  ([#2072](https://github.com/open-telemetry/opentelemetry-demo/pull/2072))
+* [grafana] Update dashboards with service map
+  ([#2085](https://github.com/open-telemetry/opentelemetry-demo/pull/2085))
+
+## 2.0.0
+
+* [grafana] Update grafana to 11.3.0
+  ([#1764](https://github.com/open-telemetry/opentelemetry-demo/pull/1764))
+* [chore] Move build args to .env file
+  ([#1767](https://github.com/open-telemetry/opentelemetry-demo/pull/1767))
+* [frontendproxy] add access logs
+  ([#1768](https://github.com/open-telemetry/opentelemetry-demo/pull/1768))
+* [grafana] Fix Dashboards
+  ([#1779](https://github.com/open-telemetry/opentelemetry-demo/pull/1779))
+* [accountingservice] bump OpenTelemetry .NET Automatic Instrumentation
+  to 1.9.0 ([#1780](https://github.com/open-telemetry/opentelemetry-demo/pull/1780))
+* [react-native-app] Add React Native example app
+  ([#1781](https://github.com/open-telemetry/opentelemetry-demo/pull/1781))
+* [chore] Add multi-platform build support
+  ([#1785](https://github.com/open-telemetry/opentelemetry-demo/pull/1785))
+* [chore] update memory limits for flagd, flagdui, and loadgenerator
+  ([#1786](https://github.com/open-telemetry/opentelemetry-demo/pull/1786))
+* [chore] Generate protobuf code for Go and Python services
+  ([#1794](https://github.com/open-telemetry/opentelemetry-demo/pull/1784))
+* [paymentservice] Add nodejs instrumentation for runtime metrics
+  ([#1797](https://github.com/open-telemetry/opentelemetry-demo/pull/1797))
+* [flagd and paymentservice] Update `paymentServiceFailure` to use a list of
+  variants and add loyalty level attributes to spans. Added `service.name` to logs.
+  ([#1815](https://github.com/open-telemetry/opentelemetry-demo/pull/1815))
+* [accounting] rename accountingservice to accounting
+  ([#1827](https://github.com/open-telemetry/opentelemetry-demo/pull/1827))
+* [cartservice] - Add Exemplars to Cart Service
+  ([#1830](https://github.com/open-telemetry/opentelemetry-demo/pull/1830))
+* [ad] rename adservice to ad
+  ([#1832](https://github.com/open-telemetry/opentelemetry-demo/pull/1832))
+* [grafana] Add Exemplars Dashboard
+  ([#1836](https://github.com/open-telemetry/opentelemetry-demo/pull/1836))
+* [quote] rename quoteservice to quote
+  ([#1838](https://github.com/open-telemetry/opentelemetry-demo/pull/1838))
+* [cart] rename cartservice to cart
+  ([#1839](https://github.com/open-telemetry/opentelemetry-demo/pull/1839))
+* [flagd-ui] rename flagdui to flagd-ui
+  ([#1840](https://github.com/open-telemetry/opentelemetry-demo/pull/1840))
+* [otel-collector] rename otelcol to otel-collector
+  ([#1841](https://github.com/open-telemetry/opentelemetry-demo/pull/1841))
+* [shipping] rename shippingservice to shipping
+  ([#1842](https://github.com/open-telemetry/opentelemetry-demo/pull/1842))
+* [chore] Update demo Dependencies (Collector, Grafana, FlagD, Jaeger, Prometheus)
+  ([#1855](https://github.com/open-telemetry/opentelemetry-demo/pull/1855))
+* [load-generator] rename loadgenerator to load-generator
+  ([#1856](https://github.com/open-telemetry/opentelemetry-demo/pull/1856))
+* [image-provider] rename imageprovider to image-provider
+  ([#1857](https://github.com/open-telemetry/opentelemetry-demo/pull/1857))
+* [currency] rename currencyservice to currency
+  ([#1858](https://github.com/open-telemetry/opentelemetry-demo/pull/1858))
+* [email] rename emailservice to email
+  ([#1861](https://github.com/open-telemetry/opentelemetry-demo/pull/1861))
+* [fraud-detection] rename frauddetectionservice to fraud-detection
+  ([#1862](https://github.com/open-telemetry/opentelemetry-demo/pull/1862))
+* [payment] rename paymentservice to payment
+  ([#1863](https://github.com/open-telemetry/opentelemetry-demo/pull/1863))
+* [recommendation] rename recommendationservice to recommendation
+  ([#1865](https://github.com/open-telemetry/opentelemetry-demo/pull/1865))
+* [product-catalog] rename productcatalogservice to product-catalog
+  ([#1864](https://github.com/open-telemetry/opentelemetry-demo/pull/1864))
+* [checkout] rename checkoutservice to checkout
+  ([#1867](https://github.com/open-telemetry/opentelemetry-demo/pull/1867))
+* [chore] remove `SERVICE_` from environment variables
+  ([#1897](https://github.com/open-telemetry/opentelemetry-demo/pull/1897))
+* [frontend-proxy] rename frontendproxy to frontend-proxy
+  ([#1910](https://github.com/open-telemetry/opentelemetry-demo/pull/1910))
+* [product-catalog] load product list on a periodic timer
+  ([#1919](https://github.com/open-telemetry/opentelemetry-demo/pull/1919))
+* [flagd-ui] fixed eslint ignore comment with useCallback
+  ([#1923](https://github.com/open-telemetry/opentelemetry-demo/pull/1923))
+* [frontend-proxy] fix envoy access logs
+  ([#1930](https://github.com/open-telemetry/opentelemetry-demo/pull/1930))
+* [chore] Add memory for frontend-proxy, kafka, grafana, opensearch
+  ([#1931](https://github.com/open-telemetry/opentelemetry-demo/pull/1931))
+* [frontendproxy] fix Docker compose DNS resolver with envoy 1.32
+  ([#1936](https://github.com/open-telemetry/opentelemetry-demo/pull/1936))
+* [chore] Generate protobuf code for Typescript service - Frontend
+  ([#1954](https://github.com/open-telemetry/opentelemetry-demo/pull/1954))
+* [accounting] bump OpenTelemetry .NET Automatic Instrumentation to 1.10.0
+  ([#1998](https://github.com/open-telemetry/opentelemetry-demo/pull/1998))
+* [frontend] update to Node 22
+  ([#2025](https://github.com/open-telemetry/opentelemetry-demo/pull/2025))
+* [frontend] move page titles to individual pages
+  ([#2025](https://github.com/open-telemetry/opentelemetry-demo/pull/2025))
+
+## 1.12.0
+
+* [accountingservice] allow running the container with non root user
+  ([#1692](https://github.com/open-telemetry/opentelemetry-demo/pull/1692))
+* [chore] Add yamllint to `make all`
+  ([#1707](https://github.com/open-telemetry/opentelemetry-demo/pull/1707))
+* [chore] Fix gen-proto for accountingservice
+  ([#1709](https://github.com/open-telemetry/opentelemetry-demo/pull/1709))
+* [chore] Add depends on to otelcol to wait on healthy opensearch
+  ([#1724](https://github.com/open-telemetry/opentelemetry-demo/pull/1724))
+* [flagd-ui] Add UI for managing Flagd feature flags
+  ([#1725](https://github.com/open-telemetry/opentelemetry-demo/pull/1725))
+* [accountingservice] bump OpenTelemetry .NET Automatic Instrumentation
+  to 1.8.0 together with other dependencies
+  ([#1727](https://github.com/open-telemetry/opentelemetry-demo/pull/1727))
+* [frontend] fix imageSlowLoad headers not applied
+  to 1.8.0 together with other dependencies
+  ([#1733](https://github.com/open-telemetry/opentelemetry-demo/pull/1733))
+* [cartservice] Propagate cartservice exceptions
+  ([#1744](https://github.com/open-telemetry/opentelemetry-demo/pull/1744))
+* [cartservice] Update cart service to fail when cartServiceFailure is enabled
+  ([#1748](https://github.com/open-telemetry/opentelemetry-demo/pull/1748))
+
+## 1.11.1
+
+* [otel-col] Add docker stats receiver
+  ([#1650](https://github.com/open-telemetry/opentelemetry-demo/pull/1650))
+* [otel-col] strip high-cardinality segments of span names
+  ([#1668](https://github.com/open-telemetry/opentelemetry-demo/pull/1668))
 * [tests] run trace based tests concurrently
   ([#1659](https://github.com/open-telemetry/opentelemetry-demo/pull/1659))
+* [otel-col] Set OTLP receiver endpoint to avoid breaking changes
+  ([#1662](https://github.com/open-telemetry/opentelemetry-demo/pull/1662))
+* [accountingservice] increase memory to 120MB
+  ([#1666](https://github.com/open-telemetry/opentelemetry-demo/pull/1666))
+* [frontend] Update nodejs to latest LTS and bump dependencies
+  ([#1670](https://github.com/open-telemetry/opentelemetry-demo/pull/1670))
+* [otel-col] Add host metrics receiver
+  ([#1675](https://github.com/open-telemetry/opentelemetry-demo/pull/1675))
+* [adservice] bump dependencies & gradle version
+  ([#1681](https://github.com/open-telemetry/opentelemetry-demo/pull/1681))
 
 ## 1.11.0
 
@@ -23,8 +163,6 @@ the release.
   ([#1619](https://github.com/open-telemetry/opentelemetry-demo/pull/1619))
 * [recommendation] updated flag name to match flagd configuration
   ([#1634](https://github.com/open-telemetry/opentelemetry-demo/pull/1634))
-* [otel-col] Add docker stats receiver
-  ([#1650](https://github.com/open-telemetry/opentelemetry-demo/pull/1650))
 
 ## 1.10.0
 

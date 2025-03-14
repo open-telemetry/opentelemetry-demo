@@ -1,0 +1,28 @@
+# Copyright The OpenTelemetry Authors
+# SPDX-License-Identifier: Apache-2.0
+
+type: Test
+spec:
+  id: product-search
+  name: 'Product: Search'
+  description: Search for products querying for their names
+  trigger:
+    type: grpc
+    grpc:
+      protobufFile: ../../../pb/demo.proto
+      address: ${var:PRODUCT_CATALOG_ADDR}
+      method: oteldemo.ProductCatalogService.SearchProducts
+      request: |-
+        {
+          "query": "Roof Binoculars"
+        }
+  specs:
+  - name: It called SearchProducts correctly and it returned 1 item
+    selector: span[tracetest.span.type="rpc" name="oteldemo.ProductCatalogService/SearchProducts" rpc.system="grpc" rpc.method="SearchProducts" rpc.service="oteldemo.ProductCatalogService"]
+    assertions:
+    - attr:app.products_search.count = 1
+    - attr:rpc.grpc.status_code = 0
+  - name: It returned the desired product
+    selector: span[tracetest.span.type="general" name="Tracetest trigger"]
+    assertions:
+    - attr:tracetest.response.body | json_path '$.results[0].name'  =  "Roof Binoculars"

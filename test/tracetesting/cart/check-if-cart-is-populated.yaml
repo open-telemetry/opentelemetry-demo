@@ -1,0 +1,28 @@
+# Copyright The OpenTelemetry Authors
+# SPDX-License-Identifier: Apache-2.0
+
+type: Test
+spec:
+  id: cart-check-if-cart-is-populated
+  name: 'Cart: check if cart is populated'
+  description: Check if the shopping cart has one item
+  trigger:
+    type: grpc
+    grpc:
+      protobufFile: ../../../pb/demo.proto
+      address: ${var:CART_ADDR}
+      method: oteldemo.CartService.GetCart
+      request: |-
+        {
+             "userId": "1234"
+        }
+  specs:
+  - name: It retrieved the cart items correctly
+    selector: span[name="POST /oteldemo.CartService/GetCart"]
+    assertions:
+    - attr:grpc.status_code = 0
+  - name: It returned the first item with correct attributes
+    selector: span[tracetest.span.type="general" name="Tracetest trigger"]
+    assertions:
+    - attr:tracetest.response.body | json_path '$.items[0].quantity' = 1
+    - attr:tracetest.response.body | json_path '$.items[0].productId' = "OLJCESPC7Z"

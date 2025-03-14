@@ -4,7 +4,9 @@
 import styled from 'styled-components';
 import RouterLink from 'next/link';
 
-export const Link = styled(RouterLink)``;
+export const Link = styled(RouterLink)`
+  text-decoration: none;
+`;
 
 export const Image = styled.div<{ $src: string }>`
   width: 100%;
