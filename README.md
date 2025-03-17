@@ -1,3 +1,11 @@
+# Relvy changes
+## Steps to setup
+1. helm repo add open-telemetry https://open-telemetry.github.io/opentelemetry-helm-charts
+2. kubectl create namespace otel-demo
+3. kubectl create secret generic dd-secrets --from-literal="DD_SITE_PARAMETER=us5.datadoghq.com" --from-literal="DD_API_KEY=XXX" -n otel-demo
+4. helm install my-otel-demo open-telemetry/opentelemetry-demo --values kubernetes/custom-values.yaml
+
+
 <!-- markdownlint-disable-next-line -->
 # <img src="https://opentelemetry.io/img/logos/opentelemetry-logo-nav.png" alt="OTel logo" width="45"> OpenTelemetry Demo
 
