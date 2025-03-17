@@ -9,10 +9,10 @@
     "lint": "next lint"
   },
   "dependencies": {
-    "@tailwindcss/postcss": "^4.0.9",
-    "@vercel/otel": "^1.10.1",
+    "@tailwindcss/postcss": "^4.0.14",
+    "@vercel/otel": "^1.10.4",
     "ajv": "^8.17.1",
-    "next": "15.2.0",
+    "next": "15.2.2",
     "react": "^19",
     "react-dom": "^19"
   },
