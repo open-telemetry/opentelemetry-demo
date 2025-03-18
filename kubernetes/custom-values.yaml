@@ -23,6 +23,7 @@ components:
             mountPath: /app/data
 
 opentelemetry-collector:
+  # Add environment variables for Datadog API key and site
   extraEnvs:
     - name: DD_API_KEY
       valueFrom:
@@ -34,75 +35,86 @@ opentelemetry-collector:
         secretKeyRef:
           name: dd-secrets
           key: DD_SITE_PARAMETER
+  
+  # Collector configuration
   config:
+    exporters:
+      debug: {}  # Keep for debugging purposes
+      datadog:
+        traces:
+          span_name_as_resource_name: true  # Maps span names to resource names in Datadog
+          trace_buffer: 500                 # Buffer size for traces
+        hostname: "otelcol-k8s"             # Hostname for Datadog (customize as needed)
+        api:
+          site: ${env:DD_SITE_PARAMETER}    # Datadog site from env var
+          key: ${env:DD_API_KEY}            # Datadog API key from env var
+  
+    extensions:
+      health_check:
+        endpoint: ${env:MY_POD_IP}:13133  # Required for liveness/readiness probes
+  
+    processors:
+      batch: {}  # Batches telemetry data
+      memory_limiter:  # Limits memory usage
+        check_interval: 5s
+        limit_percentage: 80
+        spike_limit_percentage: 25
+      resource:  # Adds deployment.environment tag
+        attributes:
+          - key: deployment.environment
+            value: "otel"  # Tag for Datadog (customize as needed)
+            action: upsert
+  
+    connectors:
+      datadog/connector:  # Computes APM trace metrics
+        traces:
+          span_name_as_resource_name: true
+  
     receivers:
       otlp:
         protocols:
+          grpc:
+            endpoint: ${env:MY_POD_IP}:4317
           http:
-            cors:
-              allowed_origins:
-                - "http://*"
-                - "https://*"
-      httpcheck/frontend-proxy:
-        targets:
-          - endpoint: http://frontend-proxy:8080
-      redis:
-        endpoint: "valkey-cart:6379"
-        collection_interval: 10s
-
-    exporters:
-      otlp:
-        endpoint: jaeger-collector:4317
-        tls:
-          insecure: true
-      otlphttp/prometheus:
-        endpoint: http://prometheus:9090/api/v1/otlp
-        tls:
-          insecure: true
-      opensearch:
-        logs_index: otel
-        http:
-          endpoint: http://opensearch:9200
-          tls:
-            insecure: true
-      datadog:
-        traces:
-          span_name_as_resource_name: true
-          trace_buffer: 500
-        hostname: "otelcol-helm"
-        api:
-          site: ${DD_SITE_PARAMETER}
-          key: ${DD_API_KEY}
-
-    processors:
-      transform:
-        error_mode: ignore
-        trace_statements:
-          - context: span
-            statements:
-              - replace_pattern(name, "\\?.*", "")
-              - replace_match(name, "GET /api/products/*", "GET /api/products/{productId}")
-      resource:
-        attributes:
-          - key: service.instance.id
-            from_attribute: k8s.pod.uid
-            action: insert
-          - key: deployment.environment
-            value: "otel"
-            action: upsert
-
-    connectors:
-      spanmetrics: {}
-
+            endpoint: ${env:MY_POD_IP}:4318
+      jaeger:
+        protocols:
+          grpc:
+            endpoint: ${env:MY_POD_IP}:14250
+          thrift_http:
+            endpoint: ${env:MY_POD_IP}:14268
+          thrift_compact:
+            endpoint: ${env:MY_POD_IP}:6831
+      zipkin:
+        endpoint: ${env:MY_POD_IP}:9411
+      prometheus:
+        config:
+          scrape_configs:
+            - job_name: opentelemetry-collector
+              scrape_interval: 10s
+              static_configs:
+                - targets:
+                    - ${env:MY_POD_IP}:8888
+  
     service:
+      telemetry:
+        metrics:
+          address: ${env:MY_POD_IP}:8888
+      extensions:
+        - health_check
       pipelines:
         traces:
-          processors: [memory_limiter, resource, transform, batch]
-          exporters: [otlp, debug, spanmetrics, datadog]
+          receivers: [otlp, jaeger, zipkin]  # Receive traces from multiple sources
+          processors: [memory_limiter, resource, batch]  # Process traces
+          exporters: [debug, datadog, datadog/connector]  # Export to Datadog and debug
         metrics:
-          receivers: [httpcheck/frontend-proxy, redis, otlp, spanmetrics]
-          processors: [memory_limiter, resource, batch]
-          exporters: [otlphttp/prometheus, debug, datadog]
+          receivers: [otlp, prometheus, datadog/connector]  # Receive metrics from OTLP and collector itself
+          processors: [memory_limiter, resource, batch]  # Process metrics
+          exporters: [debug, datadog]  # Export to Datadog and debug
         logs:
-          processors: [memory_limiter, resource, batch]
-          exporters: [opensearch, debug, datadog]
+          receivers: [otlp]  # Receive logs from OTLP
+          processors: [memory_limiter, resource, batch]  # Process logs
+          exporters: [debug, datadog]  # Export to Datadog and debug
+
+
+
