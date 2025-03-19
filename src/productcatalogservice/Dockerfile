@@ -9,7 +9,7 @@ WORKDIR /usr/src/app/
 RUN apk add build-base protobuf-dev protoc
 
 COPY ./src/productcatalogservice/ ./
-RUN go build -o /go/bin/productcatalogservice/
+RUN GOTOOLCHAIN=local go build -o /go/bin/productcatalogservice/
 
 # -----------------------------------------------------------------------------
 
