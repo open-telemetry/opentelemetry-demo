@@ -23,7 +23,7 @@ runs:
     - name: update container image version
       uses: mikefarah/yq@v4.35.2
       with:
-        cmd: yq -i '.otelDemo.helm.default.image.tag="${{ inputs.containerImageVersion }}"' dash0-configuration/demo/environments/aws/demo-eu-west-1-demo.yaml
+        cmd: yq -i '.otelDemo.containerVersion="${{ inputs.containerImageVersion }}"' dash0-configuration/demo/environments/aws/demo-eu-west-1-demo.yaml
     - name: git push dash0-configuration
       shell: bash
       run: |
@@ -31,5 +31,5 @@ runs:
         git config user.name "github-actions[bot]"
         git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
         git add demo/environments/aws/demo-eu-west-1-demo.yaml
-        git commit -m"chore(otel-demo): update otel-demo image version to ${{ inputs.containerImageVersion }}"
+        git commit -m"chore(otel-demo): update otel-demo containerVersion to ${{ inputs.containerImageVersion }}"
         git push
