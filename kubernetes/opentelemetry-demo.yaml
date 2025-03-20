@@ -9211,6 +9211,7 @@ spec:
             value: service.name=$(OTEL_SERVICE_NAME),service.namespace=opentelemetry-demo
           resources:
             limits:
+              cpu: 100m
               memory: 20Mi
       initContainers:
         - command:
@@ -9280,6 +9281,7 @@ spec:
             value: service.name=$(OTEL_SERVICE_NAME),service.namespace=opentelemetry-demo
           resources:
             limits:
+              cpu: 200m
               memory: 300Mi
 ---
 # Source: opentelemetry-demo/templates/component.yaml
@@ -9343,6 +9345,7 @@ spec:
             value: service.name=$(OTEL_SERVICE_NAME),service.namespace=opentelemetry-demo
           resources:
             limits:
+              cpu: 200m
               memory: 160Mi
       initContainers:
         - command:
@@ -9422,6 +9425,7 @@ spec:
             value: service.name=$(OTEL_SERVICE_NAME),service.namespace=opentelemetry-demo
           resources:
             limits:
+              cpu: 200m
               memory: 20Mi
       initContainers:
         - command:
@@ -9487,6 +9491,7 @@ spec:
             value: service.name=$(OTEL_SERVICE_NAME),service.namespace=opentelemetry-demo
           resources:
             limits:
+              cpu: 200m
               memory: 20Mi
 ---
 # Source: opentelemetry-demo/templates/component.yaml
@@ -9546,6 +9551,7 @@ spec:
             value: service.name=$(OTEL_SERVICE_NAME),service.namespace=opentelemetry-demo
           resources:
             limits:
+              cpu: 100m
               memory: 100Mi
 ---
 # Source: opentelemetry-demo/templates/component.yaml
@@ -9741,6 +9747,7 @@ spec:
             value: service.name=$(OTEL_SERVICE_NAME),service.namespace=opentelemetry-demo
           resources:
             limits:
+              cput: 100m
               memory: 200Mi
       initContainers:
         - command:
@@ -10106,6 +10113,7 @@ spec:
             value: service.name=$(OTEL_SERVICE_NAME),service.namespace=opentelemetry-demo
           resources:
             limits:
+              cpu: 100m
               memory: 120Mi
           securityContext:
             runAsGroup: 1000
@@ -10169,6 +10177,7 @@ spec:
             value: service.name=$(OTEL_SERVICE_NAME),service.namespace=opentelemetry-demo
           resources:
             limits:
+              cpu: 100m
               memory: 20Mi
 ---
 # Source: opentelemetry-demo/templates/component.yaml
@@ -10228,6 +10237,7 @@ spec:
             value: service.name=$(OTEL_SERVICE_NAME),service.namespace=opentelemetry-demo
           resources:
             limits:
+              cpu: 100m
               memory: 40Mi
           securityContext:
             runAsGroup: 33
@@ -10297,6 +10307,7 @@ spec:
             value: service.name=$(OTEL_SERVICE_NAME),service.namespace=opentelemetry-demo
           resources:
             limits:
+              cpu: 200m
               memory: 500Mi
 ---
 # Source: opentelemetry-demo/templates/component.yaml
@@ -10413,6 +10424,7 @@ spec:
             value: service.name=$(OTEL_SERVICE_NAME),service.namespace=opentelemetry-demo
           resources:
             limits:
+              cpu: 100m
               memory: 20Mi
 ---
 # Source: opentelemetry-demo/charts/grafana/templates/tests/test-serviceaccount.yaml
