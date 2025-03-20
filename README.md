@@ -12,6 +12,13 @@
 
 This is Dash0's fork of the OpenTelemetry Demo.
 
+## How to create a new release
+
+1. Create a new tag following the semantic versioning format: `X.Y.Z`.
+2. This will trigger a GitHub action to build everything.
+3. Create new release using [create release](https://github.com/dash0hq/opentelemetry-demo/releases)
+4. This will automatically update the containerVersion for the demo in ArgoCD
+
 ## Welcome to the OpenTelemetry Astronomy Shop Demo
 
 This repository contains the OpenTelemetry Astronomy Shop, a microservice-based

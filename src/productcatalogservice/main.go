@@ -264,6 +264,7 @@ func (p *productCatalog) GetProduct(ctx context.Context, req *pb.GetProductReque
 		msg := fmt.Sprintf("Error: ProductCatalogService Fail Feature Flag Enabled")
 		span.SetStatus(otelcodes.Error, msg)
 		span.AddEvent(msg)
+		log.WithContext(ctx).WithField("request.id", req.Id).Println("ProductCatalogService Fail Feature Flag Enabled")
 		return nil, status.Errorf(codes.Internal, msg)
 	}
 
@@ -279,6 +280,7 @@ func (p *productCatalog) GetProduct(ctx context.Context, req *pb.GetProductReque
 		msg := fmt.Sprintf("Product Not Found: %s", req.Id)
 		span.SetStatus(otelcodes.Error, msg)
 		span.AddEvent(msg)
+		log.WithContext(ctx).WithField("request.id", req.Id).Println("Product Not Found")
 		return nil, status.Errorf(codes.NotFound, msg)
 	}
 
@@ -287,6 +289,7 @@ func (p *productCatalog) GetProduct(ctx context.Context, req *pb.GetProductReque
 	span.SetAttributes(
 		attribute.String("app.product.name", found.Name),
 	)
+	log.WithContext(ctx).WithField("app.product.name", found.Name).Println(msg)
 	return found, nil
 }
 
