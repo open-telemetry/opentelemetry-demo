@@ -16,6 +16,8 @@ async function chargeServiceHandler(call, callback) {
   if (!span)
   {
     span = tracer.startSpan('chargeServiceHandler');
+    // Mark this new span as active
+    tracer.setSpan(tracer.context.active(), span)
     startedSpan = true;
   }
 
