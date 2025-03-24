@@ -36,6 +36,12 @@ guidance](./CONTRIBUTING.md).
 If you'd like to extend this demo or maintain a fork of it, read our
 [fork guidance](https://opentelemetry.io/docs/demo/forking/).
 
+## New Relic customizations
+
+Some customizations have been made to use the demo application for use with
+the New Relic platform, which can be found in the [newrelic](./newrelic)
+folder.  See [this document](./newrelic/README.md) for details.
+
 ## Quick start
 
 You can be up and running with the demo in a few minutes. Check out the docs for
