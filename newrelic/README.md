@@ -8,6 +8,14 @@ This repository contains a fork of the OpenTelemetry Astronomy Shop, a microserv
 
 Bring a New Relic License Key from your New Relic account.  If you don't have one, you can sign up for a [Free Trial here](https://newrelic.com/signup)!
 
+## Setup
+
+Clone the repo and navigate to the `newrelic/scripts` directory on your machine:
+
+```bash
+git clone https://github.com/bpschmitt/opentelemetry-demo && cd opentelemetry-demo/newrelic/scripts
+```
+
 ## Installation Options
 
 - [Kubernetes](#kubernetes-installation)
