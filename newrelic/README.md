@@ -4,7 +4,18 @@
 
 This repository contains a fork of the OpenTelemetry Astronomy Shop, a microservice-based distributed system intended to illustrate the implementation of OpenTelemetry in a near real-world environment.  It includes customizations for use with the New Relic platform.
 
-## Pre-requisites
+## Table of Contents
+
+- [Prerequisites](#prerequisites)
+- [Setup](#setup)
+- [Installation Options](#installation-options)
+- [Kubernetes Installation](#kubernetes-installation)
+- [Docker Installation](#docker-installation)
+- [Validating the Install](#validating-the-install)
+- [Using the Flagd UI](#using-the-flagd-ui)
+
+
+## Prerequisites
 
 Bring a New Relic License Key from your New Relic account.  If you don't have one, you can sign up for a [Free Trial here](https://newrelic.com/signup)!
 
@@ -121,7 +132,6 @@ Please enter your New Relic License Key: <REDACTED>
  ```
 
 
-
 ### Cleanup Docker
 
 
@@ -174,3 +184,16 @@ After a few minutes, you should see a list of the Astronomy Shop services in the
 If you click on the `Frontend` service, you should see data populated in the Summary page.
 
 ![frontend_service](./images/frontend_service.png)
+
+## Accessing the FlagD UI
+
+You can enable / disable various feature flags provided by the community using the Flagd UI.  In order to access the Flagd UI, you'll need to set up port-forwarding to your local machine.  Here's an example command you can use:
+
+```bash
+kubectl port-forward svc/flagd 4000 -n opentelemetry-demo
+```
+
+After setting up port forwarding, you can access the Flagd UI at [http://localhost:4000/feature](http://localhost:4000/feature).
+
+
+![flagdui](./images/flagdui.png)
