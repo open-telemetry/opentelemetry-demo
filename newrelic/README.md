@@ -6,9 +6,7 @@ This repository contains a fork of the OpenTelemetry Astronomy Shop, a microserv
 
 ## Pre-requisites
 
-This demo assumes you have the following available on your local machine or in your environment:
-
-- a New Relic Account and your New Relic license key.  Sign up for a [Free Trial here](https://newrelic.com/signup)!
+Bring a New Relic License Key from your New Relic account.  If you don't have one, you can sign up for a [Free Trial here](https://newrelic.com/signup)!
 
 ## Installation Options
 
