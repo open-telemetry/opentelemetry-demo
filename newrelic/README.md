@@ -34,7 +34,7 @@ git clone https://github.com/bpschmitt/opentelemetry-demo && cd opentelemetry-de
 
 ## Kubernetes Installation
 
-Run the `install-k8s.sh` script to install the Astronomy Shop Demo into your cluster.  This script uses Helm to perform the install so if you'd rather use `kubectl` and manifests, you can find them [here](../k8s/rendered).  
+Run the `install-k8s.sh` script to install the Astronomy Shop Demo into your cluster.  This script uses `helm` to perform the install so if you'd rather use `kubectl` and manifests, you can find them [here](../k8s/rendered).  
 
 > **_NOTE:_** You'll be prompted for your New Relic license key so have it ready!
 
