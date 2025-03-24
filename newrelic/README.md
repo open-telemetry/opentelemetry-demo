@@ -163,4 +163,14 @@ WARN[0000] The "NEW_RELIC_LICENSE_KEY" variable is not set. Defaulting to a blan
 
 ### Known Issues with Docker
 
-You may see errors in the OTel Collector logs related to the `dockerstats` receiver.  It appears that this is related to running the demo on a Mac.  More info [here](https://github.com/open-telemetry/opentelemetry-demo/issues/1677)
+You may see errors in the OTel Collector logs related to the `dockerstats` receiver.  It appears that this is related to running the demo on a Mac.  More info [here.](https://github.com/open-telemetry/opentelemetry-demo/issues/1677)
+
+## Validating your Install
+
+After a few minutes, you should see a list of the Astronomy Shop services in the `Services - OpenTelemetry` menu under the `All Entities` view.  
+
+![all_otel_entities](./images/all_otel_entities.png)
+
+If you click on the `Frontend` service, you should see data populated in the Summary page.
+
+![frontend_service](./images/frontend_service.png)
