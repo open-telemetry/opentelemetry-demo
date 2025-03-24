@@ -21,10 +21,16 @@ Bring a New Relic License Key from your New Relic account.  If you don't have on
 
 ## Setup
 
-Clone the repo and navigate to the `newrelic/scripts` directory on your machine:
+Clone the repo.
 
 ```bash
-git clone https://github.com/bpschmitt/opentelemetry-demo && cd opentelemetry-demo/newrelic/scripts
+git clone https://github.com/bpschmitt/opentelemetry-demo
+```
+
+Navigate to the `opentelemetry-demo/newrelic/scripts` directory on your machine:
+
+```bash
+cd opentelemetry-demo/newrelic/scripts
 ```
 
 ## Installation Options
