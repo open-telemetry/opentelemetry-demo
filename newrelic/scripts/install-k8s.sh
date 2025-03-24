@@ -38,5 +38,16 @@ else
     helm repo add open-telemetry https://open-telemetry.github.io/opentelemetry-helm-charts
 fi
 
-helm repo update open-telemetry
-helm upgrade --install otel-demo open-telemetry/opentelemetry-demo -n opentelemetry-demo -f ../helm/values.yaml
+# Update Helm repository
+if ! helm repo update open-telemetry; then
+    echo "Error: Failed to update open-telemetry Helm repository."
+    exit 1
+fi
+
+# Install/upgrade OpenTelemetry demo
+if ! helm upgrade --install otel-demo open-telemetry/opentelemetry-demo -n opentelemetry-demo -f ../k8s/helm/values.yaml; then
+    echo "Error: Failed to install or upgrade OpenTelemetry demo."
+    exit 1
+fi
+
+echo "OpenTelemetry demo installation completed successfully!"

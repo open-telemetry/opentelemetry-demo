@@ -6,4 +6,4 @@ if ! command -v docker &> /dev/null; then
     exit 1
 fi
 
-docker-compose --env-file ../../.env --env-file ../../.env.override --file ../docker/docker-compose.yml stop
+docker-compose --env-file ../../.env --env-file ../../.env.override --file ../docker/docker-compose.yml down
