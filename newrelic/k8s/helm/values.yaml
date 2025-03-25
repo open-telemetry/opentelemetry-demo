@@ -1,4 +1,3 @@
-# yaml-language-server: $schema=./values.schema.json
 default:
   # List of environment variables applied to all components
   env:
