@@ -45,7 +45,7 @@ For more details, see the Docker Deployment docs [here](https://opentelemetry.io
 Clone the repo.
 
 ```bash
-git clone https://github.com/bpschmitt/opentelemetry-demo
+git clone https://github.com/newrelic/opentelemetry-demo
 ```
 
 Navigate to the `opentelemetry-demo/newrelic/scripts` directory on your machine:
