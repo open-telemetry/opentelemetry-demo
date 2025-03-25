@@ -66,7 +66,7 @@ Run the `install-k8s.sh` script to install the Astronomy Shop Demo into your clu
 > **_NOTE:_** You'll be prompted for your New Relic license key so have it ready!
 
 ```bash
-./install.sh
+./install-k8s.sh
 ```
 Example output:
 
