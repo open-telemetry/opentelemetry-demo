@@ -17,7 +17,28 @@ This repository contains a fork of the OpenTelemetry Astronomy Shop, a microserv
 
 ## Prerequisites
 
-Bring a New Relic License Key from your New Relic account.  If you don't have one, you can sign up for a [Free Trial here](https://newrelic.com/signup)!
+You'll need a New Relic License Key from your New Relic account.  If you don't have an account, you can get one for [free!](https://newrelic.com/signup)
+
+### Kubernetes
+
+For our testing, we used a [Minikube](https://minikube.sigs.k8s.io/docs/start/) cluster with 4 CPUs and 8GB Memory.  The official demo docs state:
+
+- Kubernetes 1.24+
+- 6 GB of free RAM for the application
+- Helm 3.14+ (for Helm installation method only)
+
+For more details, see the Kubernetes Deployment docs [here](https://opentelemetry.io/docs/demo/kubernetes-deployment/).
+
+### Docker
+
+For our testing, we used [Docker Desktop](https://www.docker.com/products/docker-desktop/).  The official demo docs state:
+
+- Docker
+- [Docker Compose](https://docs.docker.com/compose/install/) v2.0.0+
+- Make (option)
+- 6 GB of RAM for the application
+
+For more details, see the Docker Deployment docs [here](https://opentelemetry.io/docs/demo/docker-deployment/).
 
 ## Setup
 
@@ -85,6 +106,9 @@ NOTES:
   Feature Flags UI     http://localhost:8080/feature/
 ```
 
+
+> **_NOTE:_** It can take anywhere from 2 - 5 minutes for Pods to start up and telemetry to flow through the OTel Collector and on to New Relic.  Please have patience.  If you want to check on the status of the OTel collector, you can run `kubectl logs deployment/otel-collector -n opentelemetry-demo`
+
 ### Cleanup Kubernetes
 
 To uninstall the demo from your cluster, you can use the `cleanup-k8s.sh` script.  This script will uninstall the helm release and delete the `opentelemetry-demo` namespace.
@@ -137,6 +161,7 @@ Please enter your New Relic License Key: <REDACTED>
  ✔ Container frontend-proxy   Started                                                                                                                   15.7s 
  ```
 
+> **_NOTE:_** It can take anywhere from 2 - 5 minutes for data to flow through the OTel Collector and become visible in New Relic once the containers are running.  Please have patience.  If you want to check on the status of the OTel collector, you can run `docker logs -f $(docker ps | grep otel-collector | awk '{print $1}')`.  Use `CTRL + C` to exit.
 
 ### Cleanup Docker
 
