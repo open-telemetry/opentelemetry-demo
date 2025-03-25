@@ -12,7 +12,8 @@ This repository contains a fork of the OpenTelemetry Astronomy Shop, a microserv
 - [Kubernetes Installation](#kubernetes-installation)
 - [Docker Installation](#docker-installation)
 - [Validating the Install](#validating-the-install)
-- [Using the Flagd UI](#using-the-flagd-ui)
+- [Accessing the Flagd UI](#accessing-the-flagd-ui)
+
 
 
 ## Prerequisites
@@ -61,7 +62,7 @@ cd opentelemetry-demo/newrelic/scripts
 
 ## Kubernetes Installation
 
-Run the `install-k8s.sh` script to install the Astronomy Shop Demo into your cluster.  This script uses `helm` to perform the install so if you'd rather use `kubectl` and manifests, you can find them [here](../k8s/rendered).  
+Run the `install-k8s.sh` script to install the Astronomy Shop Demo into your cluster.  This script uses `helm` to perform the install so if you'd rather use `kubectl` and manifests, you can find them [here](./k8s/rendered).  
 
 > **_NOTE:_** You'll be prompted for your New Relic license key so have it ready!
 
