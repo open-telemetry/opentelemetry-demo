@@ -1,7 +1,7 @@
 extensions:
   health_check:
     endpoint: ${env:OTEL_COLLECTOR_HOST}:13133
-    
+
 receivers:
   docker_stats:
     endpoint: unix:///var/run/docker.sock
@@ -86,7 +86,7 @@ processors:
   resource:
     attributes:
     - action: insert
-      # Setting to host.name for now.  
+      # Setting to host.name for now.
       from_attribute: host.name
       key: service.instance.id
   resourcedetection/env:

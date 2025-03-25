@@ -182,7 +182,8 @@ services:
       - CURRENCY_PORT
       - VERSION=${IMAGE_VERSION}
       - OTEL_EXPORTER_OTLP_ENDPOINT
-      - OTEL_RESOURCE_ATTRIBUTES=${OTEL_RESOURCE_ATTRIBUTES},service.name=currency # The C++ SDK does not support OTEL_SERVICE_NAME
+      # The C++ SDK does not support OTEL_SERVICE_NAME
+      - OTEL_RESOURCE_ATTRIBUTES=${OTEL_RESOURCE_ATTRIBUTES},service.name=currency
     depends_on:
       otel-collector:
         condition: service_started
@@ -514,7 +515,8 @@ services:
     deploy:
       resources:
         limits:
-          memory: 500M # This is high to enable supporting the recommendationCache feature flag use case
+          # This is high to enable supporting the recommendationCache feature flag use case
+          memory: 500M 
     restart: unless-stopped
     ports:
       - "${RECOMMENDATION_PORT}"
