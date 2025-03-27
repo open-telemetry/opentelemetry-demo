@@ -9,7 +9,7 @@ const charge = require('./charge')
 const logger = require('./logger')
 
 async function chargeServiceHandler(call, callback) {
-  let span = opentelemetry.trace.getActiveSpan();
+  const span = opentelemetry.trace.getActiveSpan();
 
   try {
     const amount = call.request.amount
