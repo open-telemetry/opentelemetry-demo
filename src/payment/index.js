@@ -4,26 +4,16 @@ const grpc = require('@grpc/grpc-js')
 const protoLoader = require('@grpc/proto-loader')
 const health = require('grpc-js-health-check')
 const opentelemetry = require('@opentelemetry/api')
-const tracer = opentelemetry.trace.getTracer(process.env.OTEL_SERVICE_NAME);
 
 const charge = require('./charge')
 const logger = require('./logger')
 
 async function chargeServiceHandler(call, callback) {
-  // Check if we have an active span if not start a new one
   let span = opentelemetry.trace.getActiveSpan();
-  let startedSpan = false;
-  if (!span)
-  {
-    span = tracer.startSpan('chargeServiceHandler');
-    // Mark this new span as active
-    tracer.setSpan(tracer.context.active(), span)
-    startedSpan = true;
-  }
 
   try {
     const amount = call.request.amount
-    span.setAttributes({
+    span?.setAttributes({
       'app.payment.amount': parseFloat(`${amount.units}.${amount.nanos}`).toFixed(2)
     })
     logger.info({ request: call.request }, "Charge request received.")
@@ -34,12 +24,8 @@ async function chargeServiceHandler(call, callback) {
   } catch (err) {
     logger.warn({ err })
 
-    span.recordException(err)
-    span.setStatus({ code: opentelemetry.SpanStatusCode.ERROR })
-    // Make sure we cleanup by closing the span if we started it.
-    if (startedSpan) {
-      span.end();
-    }
+    span?.recordException(err)
+    span?.setStatus({ code: opentelemetry.SpanStatusCode.ERROR })
     callback(err)
   }
 }
