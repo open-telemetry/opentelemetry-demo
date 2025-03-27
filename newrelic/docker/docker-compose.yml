@@ -516,7 +516,7 @@ services:
       resources:
         limits:
           # This is high to enable supporting the recommendationCache feature flag use case
-          memory: 500M 
+          memory: 500M
     restart: unless-stopped
     ports:
       - "${RECOMMENDATION_PORT}"

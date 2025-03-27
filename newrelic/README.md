@@ -14,8 +14,6 @@ This repository contains a fork of the OpenTelemetry Astronomy Shop, a microserv
 - [Validating the Install](#validating-the-install)
 - [Accessing the Flagd UI](#accessing-the-flagd-ui)
 
-
-
 ## Prerequisites
 
 You'll need a New Relic License Key from your New Relic account.  If you don't have an account, you can get one for [free!](https://newrelic.com/signup)
@@ -107,7 +105,6 @@ NOTES:
   Feature Flags UI     http://localhost:8080/feature/
 ```
 
-
 > **_NOTE:_** It can take anywhere from 2 - 5 minutes for Pods to start up and telemetry to flow through the OTel Collector and on to New Relic.  Please have patience.  If you want to check on the status of the OTel collector, you can run `kubectl logs deployment/otel-collector -n opentelemetry-demo`
 
 ### Cleanup Kubernetes
@@ -128,7 +125,6 @@ Namespace 'opentelemetry-demo' found. Deleting...
 namespace "opentelemetry-demo" deleted
 ```
 
-
 ## Docker Installation
 
 While we recommend running in Kubernetes, the OpenTelemetry Astronomy Shop demo can also run on a Docker machine as well.  Use the `install-docker.sh` script to get up and running quickly.
@@ -139,33 +135,32 @@ While we recommend running in Kubernetes, the OpenTelemetry Astronomy Shop demo 
 $ ./install-docker.sh
 Please enter your New Relic License Key: <REDACTED>
 [+] Running 21/21
- ✔ Container fraud-detection  Started                                                                                                                   16.2s 
- ✔ Container accounting       Started                                                                                                                   16.2s 
- ✔ Container flagd-ui         Started                                                                                                                    7.0s 
- ✔ Container checkout         Started                                                                                                                   16.2s 
- ✔ Container frontend         Started                                                                                                                   16.3s 
- ✔ Container cart             Started                                                                                                                    7.9s 
- ✔ Container image-provider   Started                                                                                                                    7.3s 
- ✔ Container recommendation   Started                                                                                                                    8.5s 
- ✔ Container ad               Started                                                                                                                    7.8s 
- ✔ Container quote            Started                                                                                                                    7.6s 
- ✔ Container load-generator   Started                                                                                                                   16.4s 
- ✔ Container kafka            Healthy                                                                                                                   16.0s 
- ✔ Container valkey-cart      Started                                                                                                                    5.8s 
- ✔ Container payment          Started                                                                                                                    8.0s 
- ✔ Container product-catalog  Started                                                                                                                    7.8s 
- ✔ Container shipping         Started                                                                                                                    7.5s 
- ✔ Container email            Started                                                                                                                    7.3s 
- ✔ Container currency         Started                                                                                                                    7.8s 
- ✔ Container otel-collector   Started                                                                                                                    6.5s 
- ✔ Container flagd            Started                                                                                                                    5.9s 
- ✔ Container frontend-proxy   Started                                                                                                                   15.7s 
+ ✔ Container fraud-detection  Started      16.2s 
+ ✔ Container accounting       Started      16.2s 
+ ✔ Container flagd-ui         Started       7.0s 
+ ✔ Container checkout         Started      16.2s 
+ ✔ Container frontend         Started      16.3s 
+ ✔ Container cart             Started       7.9s 
+ ✔ Container image-provider   Started       7.3s 
+ ✔ Container recommendation   Started       8.5s 
+ ✔ Container ad               Started       7.8s 
+ ✔ Container quote            Started       7.6s 
+ ✔ Container load-generator   Started      16.4s 
+ ✔ Container kafka            Healthy      16.0s 
+ ✔ Container valkey-cart      Started       5.8s 
+ ✔ Container payment          Started       8.0s 
+ ✔ Container product-catalog  Started       7.8s 
+ ✔ Container shipping         Started       7.5s 
+ ✔ Container email            Started       7.3s 
+ ✔ Container currency         Started       7.8s 
+ ✔ Container otel-collector   Started       6.5s 
+ ✔ Container flagd            Started       5.9s 
+ ✔ Container frontend-proxy   Started      15.7s 
  ```
 
 > **_NOTE:_** It can take anywhere from 2 - 5 minutes for data to flow through the OTel Collector and become visible in New Relic once the containers are running.  Please have patience.  If you want to check on the status of the OTel collector, you can run `docker logs -f $(docker ps | grep otel-collector | awk '{print $1}')`.  Use `CTRL + C` to exit.
 
 ### Cleanup Docker
-
 
 To uninstall the demo from your machine, you can use the `cleanup-docker.sh` script.  This script will stop and then remove all of the created containers for the demo
 
@@ -179,28 +174,28 @@ $ ./cleanup-docker.sh
 WARN[0000] The "NEW_RELIC_LICENSE_KEY" variable is not set. Defaulting to a blank string. 
 WARN[0000] The "NEW_RELIC_LICENSE_KEY" variable is not set. Defaulting to a blank string. 
 [+] Running 22/22
- ✔ Container frontend-proxy    Removed                                                                                                                  10.2s 
- ✔ Container fraud-detection   Removed                                                                                                                  0.6s 
- ✔ Container accounting        Removed                                                                                                                  0.2s 
- ✔ Container load-generator    Removed                                                                                                                  5.4s 
- ✔ Container flagd-ui          Removed                                                                                                                  0.2s 
- ✔ Container frontend          Removed                                                                                                                  0.2s 
- ✔ Container checkout          Removed                                                                                                                  0.2s 
- ✔ Container quote             Removed                                                                                                                  0.3s 
- ✔ Container recommendation    Removed                                                                                                                  10.2s 
- ✔ Container ad                Removed                                                                                                                  0.6s 
- ✔ Container image-provider    Removed                                                                                                                  0.2s 
- ✔ Container shipping          Removed                                                                                                                  10.2s 
- ✔ Container cart              Removed                                                                                                                  0.3s 
- ✔ Container kafka             Removed                                                                                                                  1.3s 
- ✔ Container email             Removed                                                                                                                  0.2s 
- ✔ Container payment           Removed                                                                                                                  0.8s 
- ✔ Container currency          Removed                                                                                                                  10.2s 
- ✔ Container valkey-cart       Removed                                                                                                                  0.2s 
- ✔ Container product-catalog   Removed                                                                                                                  0.1s 
- ✔ Container flagd             Removed                                                                                                                  0.2s 
- ✔ Container otel-collector    Removed                                                                                                                  1.5s 
- ✔ Network opentelemetry-demo  Removed                                                                                                                  0.0s
+ ✔ Container frontend-proxy    Removed      10.2s 
+ ✔ Container fraud-detection   Removed      0.6s 
+ ✔ Container accounting        Removed      0.2s 
+ ✔ Container load-generator    Removed      5.4s 
+ ✔ Container flagd-ui          Removed      0.2s 
+ ✔ Container frontend          Removed      0.2s 
+ ✔ Container checkout          Removed      0.2s 
+ ✔ Container quote             Removed      0.3s 
+ ✔ Container recommendation    Removed      10.2s 
+ ✔ Container ad                Removed      0.6s 
+ ✔ Container image-provider    Removed      0.2s 
+ ✔ Container shipping          Removed      10.2s 
+ ✔ Container cart              Removed      0.3s 
+ ✔ Container kafka             Removed      1.3s 
+ ✔ Container email             Removed      0.2s 
+ ✔ Container payment           Removed      0.8s 
+ ✔ Container currency          Removed      10.2s 
+ ✔ Container valkey-cart       Removed      0.2s 
+ ✔ Container product-catalog   Removed      0.1s 
+ ✔ Container flagd             Removed      0.2s 
+ ✔ Container otel-collector    Removed      1.5s 
+ ✔ Network opentelemetry-demo  Removed      0.0s
  ```
 
 ### Known Issues with Docker
