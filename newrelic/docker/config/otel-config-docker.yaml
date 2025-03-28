@@ -1,0 +1,180 @@
+extensions:
+  health_check:
+    endpoint: ${env:OTEL_COLLECTOR_HOST}:13133
+
+receivers:
+  docker_stats:
+    endpoint: unix:///var/run/docker.sock
+  hostmetrics:
+    collection_interval: 30s
+    root_path: /hostfs
+    scrapers:
+      cpu: null
+      disk: null
+      filesystem:
+        exclude_fs_types:
+          fs_types:
+          - autofs
+          - binfmt_misc
+          - bpf
+          - cgroup2
+          - configfs
+          - debugfs
+          - devpts
+          - devtmpfs
+          - fusectl
+          - hugetlbfs
+          - iso9660
+          - mqueue
+          - nsfs
+          - overlay
+          - proc
+          - procfs
+          - pstore
+          - rpc_pipefs
+          - securityfs
+          - selinuxfs
+          - squashfs
+          - sysfs
+          - tracefs
+          match_type: strict
+        exclude_mount_points:
+          match_type: regexp
+          mount_points:
+          - /dev/*
+          - /proc/*
+          - /sys/*
+          - /run/k3s/containerd/*
+          - /var/lib/docker/*
+          - /var/lib/kubelet/*
+          - /snap/*
+      load: null
+      memory: null
+      network: null
+  httpcheck/frontend-proxy:
+    targets:
+    - endpoint: http://frontend-proxy:8080
+  otlp:
+    protocols:
+      grpc:
+        endpoint: ${env:OTEL_COLLECTOR_HOST}:4317
+      http:
+        cors:
+          allowed_origins:
+          - http://*
+          - https://*
+        endpoint: ${env:OTEL_COLLECTOR_HOST}:4318
+  prometheus:
+    config:
+      scrape_configs:
+      - job_name: opentelemetry-collector
+        scrape_interval: 30s
+        static_configs:
+        - targets:
+          - ${env:OTEL_COLLECTOR_HOST}:8888
+  redis:
+    collection_interval: 30s
+    endpoint: valkey-cart:6379
+
+processors:
+  batch: {}
+  cumulativetodelta: {}
+  memory_limiter:
+    check_interval: 5s
+    limit_percentage: 80
+    spike_limit_percentage: 25
+  resource:
+    attributes:
+    - action: insert
+      # Setting to host.name for now.
+      from_attribute: host.name
+      key: service.instance.id
+  resourcedetection/env:
+    detectors:
+    - env
+    - system
+    override: false
+    system:
+      hostname_sources:
+      - os
+      resource_attributes:
+        host.id:
+          enabled: true
+  transform:
+    error_mode: ignore
+    log_statements:
+    - context: log
+      statements:
+      - truncate_all(attributes, 4095)
+      - truncate_all(resource.attributes, 4095)
+    trace_statements:
+    - context: span
+      statements:
+      - truncate_all(attributes, 4095)
+      - truncate_all(resource.attributes, 4095)
+    - context: span
+      statements:
+      - replace_pattern(name, "\\?.*", "")
+      - replace_match(name, "GET /api/products/*", "GET /api/products/{productId}")
+
+exporters:
+  debug: {}
+  otlphttp/newrelic:
+    endpoint: https://otlp.nr-data.net:4318
+    headers:
+      api-key: ${env:NEW_RELIC_LICENSE_KEY}
+
+service:
+  extensions:
+  - health_check
+  pipelines:
+    logs:
+      exporters:
+      - otlphttp/newrelic
+      - debug
+      processors:
+      - memory_limiter
+      - resource
+      - transform
+      - batch
+      receivers:
+      - otlp
+    metrics:
+      exporters:
+      - otlphttp/newrelic
+      - debug
+      processors:
+      - memory_limiter
+      - resource
+      - resourcedetection/env
+      - cumulativetodelta
+      - batch
+      receivers:
+      - hostmetrics
+      - docker_stats
+      - redis
+      - otlp
+    traces:
+      exporters:
+      - otlphttp/newrelic
+      - debug
+      processors:
+      - memory_limiter
+      - resource
+      - resourcedetection/env
+      - transform
+      - batch
+      receivers:
+      - otlp
+  telemetry:
+    metrics:
+      address: ${env:OTEL_COLLECTOR_HOST}:8888
+      level: basic
+      readers:
+      - periodic:
+          exporter:
+            otlp:
+              endpoint: ${env:OTEL_COLLECTOR_HOST}:${env:OTEL_COLLECTOR_PORT_HTTP}
+              protocol: http/protobuf
+          interval: 30000
+          timeout: 5000
