@@ -67,6 +67,7 @@ Run the `install-k8s.sh` script to install the Astronomy Shop Demo into your clu
 ```bash
 ./install-k8s.sh
 ```
+
 Example output:
 
 ```bash
@@ -116,6 +117,7 @@ To uninstall the demo from your cluster, you can use the `cleanup-k8s.sh` script
 ```
 
 Example output:
+
 ```bash
 $ ./cleanup-k8s.sh
 Helm release 'otel-demo' found. Uninstalling...
@@ -169,6 +171,7 @@ To uninstall the demo from your machine, you can use the `cleanup-docker.sh` scr
 ```
 
 Example Output - (Warnings can be ignored):
+
  ```bash
 $ ./cleanup-docker.sh
 WARN[0000] The "NEW_RELIC_LICENSE_KEY" variable is not set. Defaulting to a blank string. 
@@ -221,6 +224,5 @@ kubectl port-forward svc/flagd 4000 -n opentelemetry-demo
 ```
 
 After setting up port forwarding, you can access the Flagd UI at [http://localhost:4000/feature](http://localhost:4000/feature).
-
 
 ![flagdui](./images/flagdui.png)
