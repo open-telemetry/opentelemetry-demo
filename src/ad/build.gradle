@@ -113,8 +113,8 @@ sourceSets {
     main {
         java {
             srcDirs 'oteldemo'
-            srcDirs 'build/generated/source/proto/main/java/oteldemo'
-            srcDirs 'build/generated/source/proto/main/grpc/oteldemo'
+            srcDirs 'build/generated/source/proto/main/java'
+            srcDirs 'build/generated/source/proto/main/grpc'
         }
     }
 }
