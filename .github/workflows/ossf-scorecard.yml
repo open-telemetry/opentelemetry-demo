@@ -8,7 +8,7 @@ on:
     branches:
       - main
   schedule:
-    - cron: "25 11 * * 3" # once a week
+    - cron: "25 11 * * 3"    # once a week
   workflow_dispatch:
 
 permissions: read-all
