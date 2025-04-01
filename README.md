@@ -58,17 +58,17 @@ keeping it up to date for you.
 
 |                           |                |                                  |
 |---------------------------|----------------|----------------------------------|
-| [AlibabaCloud LogService] | [Google Cloud] | [Oracle]                         |
-| [AppDynamics]             | [Grafana Labs] | [Sentry]                         |
-| [Aspecto]                 | [Guance]       | [ServiceNow Cloud Observability] |                       
-| [Axiom]                   | [Honeycomb.io] | [SigNoz]                         |
-| [Axoflow]                 | [Instana]      | [Splunk]                         |
-| [Azure Data Explorer]     | [Kloudfuse]    | [Sumo Logic]                     |
-| [Coralogix]               | [Liatrio]      | [TelemetryHub]                   |
-| [Dash0]                   | [Logz.io]      | [Teletrace]                      |
-| [Datadog]                 | [New Relic]    | [Tracetest]                      |
-| [Dynatrace]               | [OpenSearch]   | [Uptrace]                        |
-| [Elastic]                 |                |                                  |
+| [AlibabaCloud LogService] | [Google Cloud] |  [Sentry]                        |
+| [AppDynamics]             | [Grafana Labs] |  [ServiceNow Cloud Observability]|
+| [Aspecto]                 | [Guance]       |  [SigNoz]                        |                       
+| [Axiom]                   | [Honeycomb.io] |  [Splunk]                        |
+| [Axoflow]                 | [Instana]      |  [Sumo Logic]                    |
+| [Azure Data Explorer]     | [Kloudfuse]    |  [TelemetryHub]                  |
+| [Coralogix]               | [Liatrio]      |  [Teletrace]                     |
+| [Dash0]                   | [Logz.io]      |  [Tracetest]                     |
+| [Datadog]                 | [New Relic]    |  [Uptrace]                       |
+| [Dynatrace]               | [OpenSearch]   |                                  |
+| [Elastic]                 | [Oracle]       |                                  |
 
 
 ## Contributing
