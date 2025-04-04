@@ -1,0 +1,90 @@
+mode: daemonset
+
+image:
+  repository: otel/opentelemetry-collector-contrib
+
+extraEnvs:
+  - name: DD_API_KEY
+    valueFrom:
+      secretKeyRef:
+        name: dd-secrets
+        key: DD_API_KEY
+  - name: DD_SITE
+    valueFrom:
+      secretKeyRef:
+        name: dd-secrets
+        key: DD_SITE
+  - name: PROMETHEUS_ENDPOINT
+    valueFrom:
+      secretKeyRef:
+        name: prometheus
+        key: endpoint
+presets:
+  # enables the k8sattributesprocessor and adds it to the traces, metrics, and logs pipelines
+  kubernetesAttributes:
+    enabled: true
+  # enables the kubeletstatsreceiver and adds it to the metrics pipelines
+  kubeletMetrics:
+    enabled: true
+  # Enables the filelogreceiver and adds it to the logs pipelines
+  logsCollection:
+    enabled: true
+  hostMetrics:
+    enabled: true
+## The chart only includes the loggingexporter by default
+## If you want to send your data somewhere you need to
+## configure an exporter, such as the otlpexporter
+config:
+  receivers:
+    hostmetrics:
+      collection_interval: 10s
+      scrapers:
+        paging:
+          metrics:
+            system.paging.utilization:
+              enabled: true
+        cpu:
+          metrics:
+            system.cpu.utilization:
+              enabled: true
+        disk:
+        filesystem:
+          metrics:
+            system.filesystem.utilization:
+              enabled: true
+        load:
+        memory:
+        network:
+        processes:
+  processors:
+    resource:
+      attributes:
+        - key: deployment.environment
+          value: "otel"
+          action: upsert
+  connectors:
+    spanmetrics:
+    datadog/connector:
+      traces:
+        span_name_as_resource_name: true
+  exporters:
+    datadog/exporter:
+      api:
+        site: ${env:DD_SITE}
+        key: ${env:DD_API_KEY}
+    prometheusremotewrite:
+      endpoint: ${env:PROMETHEUS_ENDPOINT}/api/v1/write
+      namespace: "default"
+      timeout: 60s
+      tls:
+        insecure: true
+  service:
+    extensions: [health_check]
+    pipelines:
+      traces:
+        exporters: [ datadog/connector, datadog/exporter, spanmetrics ]
+      metrics:
+        receivers: [ otlp, hostmetrics, datadog/connector, spanmetrics ]
+        exporters: [ prometheusremotewrite, datadog/exporter ]
+      logs:
+        exporters: [ datadog/exporter ]
