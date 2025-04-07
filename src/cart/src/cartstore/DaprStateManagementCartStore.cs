@@ -92,19 +92,7 @@ public class DaprStateManagementCartStore : ICartStore
                  _logger.LogInformation("Dapr error: code: {errorInfo.Code} , message: {errorInfo.Message}", errorInfo.Code,errorInfo.Message);
 
 
-                foreach (DaprExtendedErrorDetail detail in errorInfo.Details)
-                {
-                    Console.WriteLine(detail.ErrorType);
 
-                    switch (detail.ErrorType)
-                    {
-                        case DaprExtendedErrorConstants.ErrorInfo:
-                             _logger.LogInformation("Dapr error: resons : {detail.Reason} , message: {detail.Domain}", detail.Reason,detail.Domain);
-
-                        default:
-                             _logger.LogInformation("Dapr error: typeUrl : {detail.TypeUrl} ", detail.TypeUrl);
-                    }
-                }
                 throw new RpcException(new Status(StatusCode.FailedPrecondition, $"Can't access cart storage. {daprEx}"));
 
             }
@@ -135,19 +123,7 @@ public class DaprStateManagementCartStore : ICartStore
                  _logger.LogInformation("Dapr error: code: {errorInfo.Code} , message: {errorInfo.Message}", errorInfo.Code,errorInfo.Message);
 
 
-                foreach (DaprExtendedErrorDetail detail in errorInfo.Details)
-                {
-                    Console.WriteLine(detail.ErrorType);
 
-                    switch (detail.ErrorType)
-                    {
-                        case DaprExtendedErrorConstants.ErrorInfo:
-                             _logger.LogInformation("Dapr error: resons : {detail.Reason} , message: {detail.Domain}", detail.Reason,detail.Domain);
-
-                        default:
-                             _logger.LogInformation("Dapr error: typeUrl : {detail.TypeUrl} ", detail.TypeUrl);
-                    }
-                }
                 throw new RpcException(new Status(StatusCode.FailedPrecondition, $"Can't access cart storage. {daprExv}"));
 
             }
@@ -185,19 +161,6 @@ public class DaprStateManagementCartStore : ICartStore
                  _logger.LogInformation("Dapr error: code: {errorInfo.Code} , message: {errorInfo.Message}", errorInfo.Code,errorInfo.Message);
 
 
-                foreach (DaprExtendedErrorDetail detail in errorInfo.Details)
-                {
-                    Console.WriteLine(detail.ErrorType);
-
-                    switch (detail.ErrorType)
-                    {
-                        case DaprExtendedErrorConstants.ErrorInfo:
-                             _logger.LogInformation("Dapr error: resons : {detail.Reason} , message: {detail.Domain}", detail.Reason,detail.Domain);
-
-                        default:
-                             _logger.LogInformation("Dapr error: typeUrl : {detail.TypeUrl} ", detail.TypeUrl);
-                    }
-                }
                 throw new RpcException(new Status(StatusCode.FailedPrecondition, $"Can't access cart storage. {daprEx}"));
 
             }
