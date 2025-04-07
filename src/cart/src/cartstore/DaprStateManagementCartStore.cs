@@ -125,6 +125,31 @@ public class DaprStateManagementCartStore : ICartStore
         {
             await _client.SaveStateAsync(_daprStoreName, userId.ToString(), _emptyCartBytes);
         }
+        catch (DaprException daprEx)
+        {
+            if (daprEx.TryGetExtendedErrorInfo(out DaprExtendedErrorInfo errorInfo))
+            {
+
+                 _logger.LogInformation("Dapr error: code: {errorInfo.Code} , message: {errorInfo.Message}", errorInfo.Code,errorInfo.Message);
+
+
+                foreach (DaprExtendedErrorDetail detail in errorInfo.Details)
+                {
+                    Console.WriteLine(detail.ErrorType);
+
+                    switch (detail.ErrorType)
+                    {
+                        case ExtendedErrorType.ErrorInfo:
+                             _logger.LogInformation("Dapr error: resons : {detail.Reason} , message: {detail.Domain}", detail.Reason,detail.Domain);
+
+                        default:
+                             _logger.LogInformation("Dapr error: typeUrl : {detail.TypeUrl} ", detail.TypeUrl);
+                    }
+                }
+                throw new RpcException(new Status(StatusCode.FailedPrecondition, $"Can't access cart storage. {ex}"));
+
+            }
+        }
         catch (Exception ex)
         {
             throw new RpcException(new Status(StatusCode.FailedPrecondition, $"Can't access cart storage. {ex}"));
@@ -150,6 +175,31 @@ public class DaprStateManagementCartStore : ICartStore
             // We decided to return empty cart in cases when user wasn't in the cache before
             return new Oteldemo.Cart();
         }
+        catch (DaprException daprEx)
+        {
+            if (daprEx.TryGetExtendedErrorInfo(out DaprExtendedErrorInfo errorInfo))
+            {
+
+                 _logger.LogInformation("Dapr error: code: {errorInfo.Code} , message: {errorInfo.Message}", errorInfo.Code,errorInfo.Message);
+
+
+                foreach (DaprExtendedErrorDetail detail in errorInfo.Details)
+                {
+                    Console.WriteLine(detail.ErrorType);
+
+                    switch (detail.ErrorType)
+                    {
+                        case ExtendedErrorType.ErrorInfo:
+                             _logger.LogInformation("Dapr error: resons : {detail.Reason} , message: {detail.Domain}", detail.Reason,detail.Domain);
+
+                        default:
+                             _logger.LogInformation("Dapr error: typeUrl : {detail.TypeUrl} ", detail.TypeUrl);
+                    }
+                }
+                throw new RpcException(new Status(StatusCode.FailedPrecondition, $"Can't access cart storage. {ex}"));
+
+            }
+        }
         catch (Exception ex)
         {
             throw new RpcException(new Status(StatusCode.FailedPrecondition, $"Can't access cart storage. {ex}"));
@@ -159,7 +209,19 @@ public class DaprStateManagementCartStore : ICartStore
             getCartHistogram.Record(stopwatch.ElapsedTicks);
         }
     }
+    public bool Ping()
+    {
+        try
+        {
+            var isDaprReady = await client.CheckHealthAsync();
 
+            return isDaprReady;
+        }
+        catch (Exception)
+        {
+            return false;
+        }
+    }
     public async Task<bool> PingAsync()
     {
         return await _client.CheckOutboundHealthAsync();
