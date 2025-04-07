@@ -80,6 +80,21 @@ services:
         condition: service_started
     logging: *logging
 
+  cart-dapr:
+    image: "daprio/daprd:edge"
+    container_name: cart-dapr
+    command: [ "./daprd",
+               "-app-id", "cart",
+               "-app-port", "3000",
+               "-placement-host-address", "dapr-placement:50006",
+               "-dapr-grpc-port", "50002",
+               "-dapr-http-port", "3500",
+               "-resources-path", "/components" ]
+    volumes:
+      - "./components/:/components"
+    depends_on:
+      - cart
+    network_mode: "service:cart"
   # Cart service
   cart:
     image: ${IMAGE_NAME}:${DEMO_VERSION}-cart
@@ -100,7 +115,8 @@ services:
       - CART_PORT
       - FLAGD_HOST
       - FLAGD_PORT
-      - VALKEY_ADDR
+      - DAPR_GRPC_PORT=50002
+      - DAPR_HTTP_PORT=3500
       - OTEL_EXPORTER_OTLP_ENDPOINT
       - OTEL_RESOURCE_ATTRIBUTES
       - OTEL_SERVICE_NAME=cart
@@ -689,7 +705,15 @@ services:
       - "${VALKEY_PORT}"
     logging: *logging
 
-
+  # ********************
+  # Dapr Components
+  # ********************
+  dapr-placement:
+    image: "daprio/dapr"
+    container_name: dapr-placement
+    command: [ "./placement", "-port", "50006" ]
+    ports:
+      - "50006:50006"
   # ********************
   # Telemetry Components
   # ********************

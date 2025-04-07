@@ -31,6 +31,8 @@
     <PackageReference Include="OpenFeature.Contrib.Providers.Flagd" Version="0.3.0" />
     <PackageReference Include="OpenFeature.Contrib.Hooks.Otel" Version="0.2.0" />
     <PackageReference Include="OpenFeature" Version="2.3.1" />
+    <PackageReference Include="Dapr.AspNetCore" Version="1.15.2" />
+
   </ItemGroup>
 
   <ItemGroup>

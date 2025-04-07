@@ -1,0 +1,14 @@
+apiVersion: dapr.io/v1alpha1
+kind: Component
+metadata:
+  name: cart-state-store
+spec:
+  type: state.redis
+  version: v1
+  metadata:
+  - name: redisHost
+    value: valkey-cart:6379
+  - name: redisPassword
+    value: ""
+  - name: enableTLS
+    value: false 
