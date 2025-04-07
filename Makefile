@@ -10,7 +10,7 @@ TOOLS_DIR := ./internal/tools
 MISSPELL_BINARY=bin/misspell
 MISSPELL = $(TOOLS_DIR)/$(MISSPELL_BINARY)
 
-DOCKER_COMPOSE_CMD ?= docker-compose
+DOCKER_COMPOSE_CMD ?= docker compose
 DOCKER_COMPOSE_ENV=--env-file .env --env-file .env.override
 DOCKER_COMPOSE_BUILD_ARGS=
 
@@ -103,12 +103,12 @@ build-and-push:
 # Create multiplatform builder for buildx
 .PHONY: create-multiplatform-builder
 create-multiplatform-builder:
-	docker-buildx create --name otel-demo-builder --bootstrap --use --driver docker-container --config ./buildkitd.toml
+	docker buildx create --name otel-demo-builder --bootstrap --use --driver docker-container --config ./buildkitd.toml
 
 # Remove multiplatform builder for buildx
 .PHONY: remove-multiplatform-builder
 remove-multiplatform-builder:
-	docker-buildx rm otel-demo-builder
+	docker buildx rm otel-demo-builder
 
 # Build and push multiplatform images (linux/amd64, linux/arm64) using buildx.
 # Requires docker with buildx enabled and a multi-platform capable builder in use.
@@ -116,12 +116,12 @@ remove-multiplatform-builder:
 .PHONY: build-multiplatform
 build-multiplatform:
 	# Because buildx bake does not support --env-file yet, we need to load it into the environment first.
-	set -a; . ./.env.override; set +a && docker-buildx bake -f docker-compose.yml --load --set "*.platform=linux/amd64,linux/arm64"
+	set -a; . ./.env.override; set +a && docker buildx bake -f docker-compose.yml --load --set "*.platform=linux/amd64,linux/arm64"
 
 .PHONY: build-multiplatform-and-push
 build-multiplatform-and-push:
     # Because buildx bake does not support --env-file yet, we need to load it into the environment first.
-	set -a; . ./.env.override; set +a && docker-buildx bake -f docker-compose.yml --push --set "*.platform=linux/amd64,linux/arm64"
+	set -a; . ./.env.override; set +a && docker buildx bake -f docker-compose.yml --push --set "*.platform=linux/amd64,linux/arm64"
 
 .PHONY: clean-images
 clean-images:
