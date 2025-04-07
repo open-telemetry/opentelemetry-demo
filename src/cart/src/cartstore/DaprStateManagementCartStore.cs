@@ -149,9 +149,13 @@ public class DaprStateManagementCartStore : ICartStore
             {
                 return Oteldemo.Cart.Parser.ParseFrom(value);
             }
+            else
+            {
+                return new Oteldemo.Cart();
+            }
 
             // We decided to return empty cart in cases when user wasn't in the cache before
-            return new Oteldemo.Cart();
+
         }
         catch (DaprException daprEx)
         {
