@@ -79,8 +79,7 @@ builder.Services.AddGrpcHealthChecks()
 
 var app = builder.Build();
 
-var ValkeyCartStore = (ValkeyCartStore) app.Services.GetRequiredService<ICartStore>();
-app.Services.GetRequiredService<StackExchangeRedisInstrumentation>().AddConnection(ValkeyCartStore.GetConnection());
+
 
 app.MapGrpcService<CartService>();
 app.MapGrpcHealthChecksService();
