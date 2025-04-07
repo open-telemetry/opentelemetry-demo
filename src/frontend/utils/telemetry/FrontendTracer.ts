@@ -42,8 +42,6 @@ const FrontendTracer = async () => {
     ],
   });
 
-  provider.addSpanProcessor(new SimpleSpanProcessor(new OTLPTraceExporter()));
-
   const contextManager = new ZoneContextManager();
 
   provider.register({
