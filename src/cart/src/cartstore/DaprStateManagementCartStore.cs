@@ -155,7 +155,7 @@ public class DaprStateManagementCartStore : ICartStore
             }
 
             // We decided to return empty cart in cases when user wasn't in the cache before
-
+           return new Oteldemo.Cart();
         }
         catch (DaprException daprEx)
         {
