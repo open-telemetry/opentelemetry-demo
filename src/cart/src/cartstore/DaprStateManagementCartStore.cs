@@ -124,7 +124,7 @@ public class DaprStateManagementCartStore : ICartStore
 
 
 
-                throw new RpcException(new Status(StatusCode.FailedPrecondition, $"Can't access cart storage. {daprExv}"));
+                throw new RpcException(new Status(StatusCode.FailedPrecondition, $"Can't access cart storage. {daprEx}"));
 
             }
         }
@@ -174,7 +174,7 @@ public class DaprStateManagementCartStore : ICartStore
             getCartHistogram.Record(stopwatch.ElapsedTicks);
         }
     }
-    public bool Ping()
+    public async Task<bool> Ping()
     {
         try
         {
