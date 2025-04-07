@@ -18,9 +18,7 @@ import (
 	semconv "go.opentelemetry.io/otel/semconv/v1.24.0"
 	"go.opentelemetry.io/otel/trace"
 
-    dapr "github.com/dapr/go-sdk/client"
-
-
+	"github.com/IBM/sarama"
 	"github.com/google/uuid"
 	otelhooks "github.com/open-feature/go-sdk-contrib/hooks/open-telemetry/pkg"
 	flagd "github.com/open-feature/go-sdk-contrib/providers/flagd/pkg"
@@ -45,6 +43,7 @@ import (
 	"google.golang.org/protobuf/proto"
 
 	pb "github.com/open-telemetry/opentelemetry-demo/src/checkout/genproto/oteldemo"
+	"github.com/open-telemetry/opentelemetry-demo/src/checkout/kafka"
 	"github.com/open-telemetry/opentelemetry-demo/src/checkout/money"
 )
 
@@ -127,8 +126,9 @@ type checkout struct {
 	shippingSvcAddr       string
 	emailSvcAddr          string
 	paymentSvcAddr        string
+	kafkaBrokerSvcAddr    string
 	pb.UnimplementedCheckoutServiceServer
-	daprClient              dapr.Client
+	KafkaProducerClient     sarama.AsyncProducer
 	shippingSvcClient       pb.ShippingServiceClient
 	productCatalogSvcClient pb.ProductCatalogServiceClient
 	cartSvcClient           pb.CartServiceClient
@@ -197,13 +197,14 @@ func main() {
 	svc.paymentSvcClient = pb.NewPaymentServiceClient(c)
 	defer c.Close()
 
+	svc.kafkaBrokerSvcAddr = os.Getenv("KAFKA_ADDR")
 
-    svc.daprClient, err = dapr.NewClient()
-    //#TODO! add error handling dapr
-    if err != nil {
-         log.Fatal(err)
-    }
-
+	if svc.kafkaBrokerSvcAddr != "" {
+		svc.KafkaProducerClient, err = kafka.CreateKafkaProducer([]string{svc.kafkaBrokerSvcAddr}, log)
+		if err != nil {
+			log.Fatal(err)
+		}
+	}
 
 	log.Infof("service config: %+v", svc)
 
@@ -315,9 +316,11 @@ func (cs *checkout) PlaceOrder(ctx context.Context, req *pb.PlaceOrderRequest) (
 		log.Infof("order confirmation email sent to %q", req.Email)
 	}
 
-
-    cs.sendToPostProcessor(ctx, orderResult)
-	//#TODO! add errorhandling
+	// send to kafka only if kafka broker address is set
+	if cs.kafkaBrokerSvcAddr != "" {
+		log.Infof("sending to postProcessor")
+		cs.sendToPostProcessor(ctx, orderResult)
+	}
 
 	resp := &pb.PlaceOrderResponse{Order: orderResult}
 	return resp, nil
@@ -493,34 +496,78 @@ func (cs *checkout) sendToPostProcessor(ctx context.Context, result *pb.OrderRes
 		return
 	}
 
-    var opts = []dapr.PublishEventOption{
-        dapr.PublishEventWithContentType("application/octet-stream"),
-    }
-
-    if err := cs.daprClient.PublishEvent(ctx, PUBSUB_NAME, TOPIC_NAME, message, opts...); err != nil {
-        panic(err)
-        //TODO# add error handling
-    }
+	msg := sarama.ProducerMessage{
+		Topic: kafka.Topic,
+		Value: sarama.ByteEncoder(message),
+	}
 
 	// Inject tracing info into message
 	span := createProducerSpan(ctx, &msg)
 	defer span.End()
 
+	// Send message and handle response
+	startTime := time.Now()
+	select {
+	case cs.KafkaProducerClient.Input() <- &msg:
+		log.Infof("Message sent to Kafka: %v", msg)
+		select {
+		case successMsg := <-cs.KafkaProducerClient.Successes():
+			span.SetAttributes(
+				attribute.Bool("messaging.kafka.producer.success", true),
+				attribute.Int("messaging.kafka.producer.duration_ms", int(time.Since(startTime).Milliseconds())),
+				attribute.KeyValue(semconv.MessagingKafkaMessageOffset(int(successMsg.Offset))),
+			)
+			log.Infof("Successful to write message. offset: %v, duration: %v", successMsg.Offset, time.Since(startTime))
+		case errMsg := <-cs.KafkaProducerClient.Errors():
+			span.SetAttributes(
+				attribute.Bool("messaging.kafka.producer.success", false),
+				attribute.Int("messaging.kafka.producer.duration_ms", int(time.Since(startTime).Milliseconds())),
+			)
+			span.SetStatus(otelcodes.Error, errMsg.Err.Error())
+			log.Errorf("Failed to write message: %v", errMsg.Err)
+		case <-ctx.Done():
+			span.SetAttributes(
+				attribute.Bool("messaging.kafka.producer.success", false),
+				attribute.Int("messaging.kafka.producer.duration_ms", int(time.Since(startTime).Milliseconds())),
+			)
+			span.SetStatus(otelcodes.Error, "Context cancelled: "+ctx.Err().Error())
+			log.Warnf("Context canceled before success message received: %v", ctx.Err())
+		}
+	case <-ctx.Done():
+		span.SetAttributes(
+			attribute.Bool("messaging.kafka.producer.success", false),
+			attribute.Int("messaging.kafka.producer.duration_ms", int(time.Since(startTime).Milliseconds())),
+		)
+		span.SetStatus(otelcodes.Error, "Failed to send: "+ctx.Err().Error())
+		log.Errorf("Failed to send message to Kafka within context deadline: %v", ctx.Err())
+		return
+	}
 
+	ffValue := cs.getIntFeatureFlag(ctx, "kafkaQueueProblems")
+	if ffValue > 0 {
+		log.Infof("Warning: FeatureFlag 'kafkaQueueProblems' is activated, overloading queue now.")
+		for i := 0; i < ffValue; i++ {
+			go func(i int) {
+				cs.KafkaProducerClient.Input() <- &msg
+				_ = <-cs.KafkaProducerClient.Successes()
+			}(i)
+		}
+		log.Infof("Done with #%d messages for overload simulation.", ffValue)
+	}
 }
 
-func createProducerSpan(ctx context.Context,  topic string) trace.Span {
+func createProducerSpan(ctx context.Context, msg *sarama.ProducerMessage) trace.Span {
 	spanContext, span := tracer.Start(
 		ctx,
-		fmt.Sprintf("%s publish", topic),
+		fmt.Sprintf("%s publish", msg.Topic),
 		trace.WithSpanKind(trace.SpanKindProducer),
 		trace.WithAttributes(
 			semconv.PeerService("kafka"),
 			semconv.NetworkTransportTCP,
 			semconv.MessagingSystemKafka,
-			semconv.MessagingDestinationName(topic),
+			semconv.MessagingDestinationName(msg.Topic),
 			semconv.MessagingOperationPublish,
-
+			semconv.MessagingKafkaDestinationPartition(int(msg.Partition)),
 		),
 	)
 
@@ -528,7 +575,9 @@ func createProducerSpan(ctx context.Context,  topic string) trace.Span {
 	propagator := otel.GetTextMapPropagator()
 	propagator.Inject(spanContext, carrier)
 
-
+	for key, value := range carrier {
+		msg.Headers = append(msg.Headers, sarama.RecordHeader{Key: []byte(key), Value: []byte(value)})
+	}
 
 	return span
 }

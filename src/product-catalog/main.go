@@ -215,8 +215,6 @@ func loadProductCatalog() {
 }
 
 func readProductFiles() ([]*pb.Product, error) {
-    /// # todo change the souerce of data
-
 
 	// find all .json files in the products directory
 	entries, err := os.ReadDir("./products")
