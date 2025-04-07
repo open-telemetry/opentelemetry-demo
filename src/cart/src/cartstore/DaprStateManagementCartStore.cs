@@ -178,7 +178,7 @@ public class DaprStateManagementCartStore : ICartStore
     {
         try
         {
-            var isDaprReady = await client.CheckHealthAsync();
+            var isDaprReady = await _client.CheckHealthAsync();
 
             return isDaprReady;
         }

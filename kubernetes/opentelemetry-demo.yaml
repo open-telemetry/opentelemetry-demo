@@ -11437,6 +11437,11 @@ spec:
         app.kubernetes.io/instance: opentelemetry-demo
         app.kubernetes.io/component: cart
         app.kubernetes.io/name: cart
+      annotations:
+        dapr.io/enabled: "true"
+        dapr.io/app-id: "cart"
+        dapr.io/app-port: "8080"
+        dapr.io/config: "cart-state-store"
     spec:
       serviceAccountName: opentelemetry-demo
       containers:
