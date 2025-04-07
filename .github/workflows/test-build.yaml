@@ -1,0 +1,16 @@
+name: test-build
+
+on:
+  push:
+    paths:
+      - ./src/**
+      - ./test/**
+      - ./dynatrace/**
+      - ./docker-compose.yml
+
+jobs:
+  build:
+    uses: ./.github/workflows/build-and-push-images.yaml
+    with:
+      push: false
+    secrets: inherit

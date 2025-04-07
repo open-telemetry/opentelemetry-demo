@@ -11,10 +11,10 @@ on:
 
 jobs:
   build_images:
-    uses: ./.github/workflows/component-build-images.yml
+    uses: ./.github/workflows/build-and-push-images.yaml
     with:
       push: false
-      version: 'dev'
+      version: "dev"
 
   markdownlint:
     runs-on: ubuntu-latest
@@ -33,7 +33,7 @@ jobs:
         uses: actions/checkout@v4
       - uses: actions/setup-python@v5
         with:
-          python-version: '3.x'
+          python-version: "3.x"
       - name: install yamllint
         run: make install-yamllint
       - name: run yamllint
@@ -57,7 +57,7 @@ jobs:
         with:
           level: info
           fail_level: any
-          config_file: '.linkspector.yml'
+          config_file: ".linkspector.yml"
 
   sanity:
     runs-on: ubuntu-latest
