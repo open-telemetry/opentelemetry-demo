@@ -149,13 +149,10 @@ public class DaprStateManagementCartStore : ICartStore
             {
                 return Oteldemo.Cart.Parser.ParseFrom(value);
             }
-            else
-            {
-                return new Oteldemo.Cart();
-            }
+
 
             // We decided to return empty cart in cases when user wasn't in the cache before
-           return new Oteldemo.Cart();
+              return new Oteldemo.Cart();
         }
         catch (DaprException daprEx)
         {
@@ -163,11 +160,9 @@ public class DaprStateManagementCartStore : ICartStore
             {
 
                  _logger.LogInformation("Dapr error: code: {errorInfo.Code} , message: {errorInfo.Message}", errorInfo.Code,errorInfo.Message);
+             }
+                throw new RpcException(new Status(StatusCode.FailedPrecondition, $"Can't access cart storage with Dapr. {daprEx}"));
 
-
-                throw new RpcException(new Status(StatusCode.FailedPrecondition, $"Can't access cart storage. {daprEx}"));
-
-            }
         }
         catch (Exception ex)
         {
@@ -178,19 +173,7 @@ public class DaprStateManagementCartStore : ICartStore
             getCartHistogram.Record(stopwatch.ElapsedTicks);
         }
     }
-    public async Task<bool> Ping()
-    {
-        try
-        {
-            var isDaprReady = await _client.CheckHealthAsync();
 
-            return isDaprReady;
-        }
-        catch (Exception)
-        {
-            return false;
-        }
-    }
     public async Task<bool> PingAsync()
     {
         return await _client.CheckOutboundHealthAsync();
