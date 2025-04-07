@@ -9,7 +9,7 @@ using Microsoft.Extensions.Logging;
 using System.Diagnostics.Metrics;
 using System.Diagnostics;
 using Dapr.Client;
-using Dapr.Common.Exceptions.DaprException;
+using Dapr.Common.Exceptions;
 
 namespace cart.cartstore;
 
