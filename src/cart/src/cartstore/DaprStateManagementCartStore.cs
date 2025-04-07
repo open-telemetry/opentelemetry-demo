@@ -98,7 +98,7 @@ public class DaprStateManagementCartStore : ICartStore
 
                     switch (detail.ErrorType)
                     {
-                        case ExtendedErrorType.ErrorInfo:
+                        case DaprExtendedErrorType.ErrorInfo:
                              _logger.LogInformation("Dapr error: resons : {detail.Reason} , message: {detail.Domain}", detail.Reason,detail.Domain);
 
                         default:
@@ -141,7 +141,7 @@ public class DaprStateManagementCartStore : ICartStore
 
                     switch (detail.ErrorType)
                     {
-                        case ExtendedErrorType.ErrorInfo:
+                        case DaprExtendedErrorType.ErrorInfo:
                              _logger.LogInformation("Dapr error: resons : {detail.Reason} , message: {detail.Domain}", detail.Reason,detail.Domain);
 
                         default:
@@ -191,7 +191,7 @@ public class DaprStateManagementCartStore : ICartStore
 
                     switch (detail.ErrorType)
                     {
-                        case ExtendedErrorType.ErrorInfo:
+                        case DaprExtendedErrorType.ErrorInfo:
                              _logger.LogInformation("Dapr error: resons : {detail.Reason} , message: {detail.Domain}", detail.Reason,detail.Domain);
 
                         default:
