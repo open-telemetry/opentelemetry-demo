@@ -9,7 +9,7 @@ using Microsoft.Extensions.Logging;
 using System.Diagnostics.Metrics;
 using System.Diagnostics;
 using Dapr.Client;
-using Dapr.Common.Exceptions;
+using Dapr.Common.Exceptions.DaprException;
 
 namespace cart.cartstore;
 
@@ -104,7 +104,7 @@ public class DaprStateManagementCartStore : ICartStore
                              _logger.LogInformation("Dapr error: typeUrl : {detail.TypeUrl} ", detail.TypeUrl);
                     }
                 }
-                throw new RpcException(new Status(StatusCode.FailedPrecondition, $"Can't access cart storage. {ex}"));
+                throw new RpcException(new Status(StatusCode.FailedPrecondition, $"Can't access cart storage. {daprEx}"));
 
             }
         }
@@ -147,7 +147,7 @@ public class DaprStateManagementCartStore : ICartStore
                              _logger.LogInformation("Dapr error: typeUrl : {detail.TypeUrl} ", detail.TypeUrl);
                     }
                 }
-                throw new RpcException(new Status(StatusCode.FailedPrecondition, $"Can't access cart storage. {ex}"));
+                throw new RpcException(new Status(StatusCode.FailedPrecondition, $"Can't access cart storage. {daprExv}"));
 
             }
         }
@@ -197,7 +197,7 @@ public class DaprStateManagementCartStore : ICartStore
                              _logger.LogInformation("Dapr error: typeUrl : {detail.TypeUrl} ", detail.TypeUrl);
                     }
                 }
-                throw new RpcException(new Status(StatusCode.FailedPrecondition, $"Can't access cart storage. {ex}"));
+                throw new RpcException(new Status(StatusCode.FailedPrecondition, $"Can't access cart storage. {daprEx}"));
 
             }
         }
