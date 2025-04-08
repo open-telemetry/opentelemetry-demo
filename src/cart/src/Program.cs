@@ -20,7 +20,6 @@ using OpenFeature.Contrib.Providers.Flagd;
 using OpenFeature.Contrib.Hooks.Otel;
 
 var builder = WebApplication.CreateBuilder(args);
-string valkeyAddress = builder.Configuration["VALKEY_ADDR"];
 
 
 builder.Logging

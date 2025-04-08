@@ -45,6 +45,7 @@ import (
 	"google.golang.org/grpc/reflection"
 	"google.golang.org/grpc/status"
 	"google.golang.org/protobuf/encoding/protojson"
+	dapr "github.com/dapr/go-sdk/client"
 )
 
 var (
@@ -55,9 +56,36 @@ var (
 )
 
 const DEFAULT_RELOAD_INTERVAL = 10
+const dapr_store = "product-store"
+type Product_SQL struct {
+	Id          string                 `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
+	Name        string                 `protobuf:"bytes,2,opt,name=name,proto3" json:"name,omitempty"`
+	Description string                 `protobuf:"bytes,3,opt,name=description,proto3" json:"description,omitempty"`
+	Picture     string                 `protobuf:"bytes,4,opt,name=picture,proto3" json:"picture,omitempty"`
+	PriceUSCurrencyCode string `protobuf:"bytes,1,opt,name=currency_code,json=currencyCode,proto3" json:"currency_code,omitempty"`
+    // The whole units of the amount.
+    // For example if `currencyCode` is `"USD"`, then 1 unit is one US dollar.
+    PriceUSCurrencyCode int64 `protobuf:"varint,2,opt,name=units,proto3" json:"units,omitempty"`
+    // Number of nano (10^-9) units of the amount.
+    // The value must be between -999,999,999 and +999,999,999 inclusive.
+    // If `units` is positive, `nanos` must be positive or zero.
+    // If `units` is zero, `nanos` can be positive, zero, or negative.
+    // If `units` is negative, `nanos` must be negative or zero.
+    // For example $-1.75 is represented as `units`=-1 and `nanos`=-750,000,000.
+    PriceUSCurrencyCode         int32 `protobuf:"varint,3,opt,name=nanos,proto3" json:"nanos,omitempty"
+	Categories    []string `protobuf:"bytes,6,rep,name=categories,proto3" json:"categories,omitempty"`
+
+}
 
 func init() {
 	log = logrus.New()
+    client, err := dapr.NewClient()
+    if err != nil {
+           log.Fatalf("Cannot create Dapr client : %s", err)
+          panic(err)
+    }
+    defer client.Close()
+
 
 	loadProductCatalog()
 }
@@ -213,43 +241,88 @@ func loadProductCatalog() {
 		}
 	}()
 }
+func sendQueryToBackend() ([]*pb.Product, error)
+{
+    query := `{
+
+    	"sort": [
+    		{
+    			"key": "name",
+    			"order": "ASC"
+    		}
+    	]
+    }`
+    // Use the client to query the state
+    queryResponse, err := client.QueryState(ctx, dapr_store, query)
+    if err != nil {
+    	log.Fatal(err)
+    	st := status.Convert(err)
+
+        log.Fatal("Code: %s\n", st.Code().String())
+        log.Fatal("Message: %s\n", st.Message())
+
+        for _, detail := range st.Details() {
+            switch t := detail.(type) {
+            case *errdetails.ErrorInfo:
+                // Handle ErrorInfo details
+                log.Fatal("ErrorInfo:\n- Domain: %s\n- Reason: %s\n- Metadata: %v\n", t.GetDomain(), t.GetReason(), t.GetMetadata())
+            case *errdetails.BadRequest:
+                // Handle BadRequest details
+                fmt.Println("BadRequest:")
+                for _, violation := range t.GetFieldViolations() {
+                   log.Fatal("- Key: %s\n", violation.GetField())
+                    log.Fatal("- The %q field was wrong: %s\n", violation.GetField(), violation.GetDescription())
+                }
+            case *errdetails.ResourceInfo:
+                // Handle ResourceInfo details
+                log.Fatal("ResourceInfo:\n- Resource type: %s\n- Resource name: %s\n- Owner: %s\n- Description: %s\n",
+                    t.GetResourceType(), t.GetResourceName(), t.GetOwner(), t.GetDescription())
+            case *errdetails.Help:
+                // Handle ResourceInfo details
+                log.Fatal("HelpInfo:")
+                for _, link := range t.GetLinks() {
+                   log.Fatal("- Url: %s\n", link.Url)
+                   log.Fatal("- Description: %s\n", link.Description)
+                }
+
+            default:
+                // Add cases for other types of details you expect
+               log.Fatal("Unhandled error detail type: %v\n", t)
+            }
+        }
+    }
+
+    for _, product := range queryResponse {
+        var data Product_SQL
+        var json;
+        err := product.Unmarshal(&data)
+
+        if err != nil {
+             log.Fatal("Unhandled error detail type: %v\n", err)
+        }
+
+        products = append(products, pb.Product{
+            Id: data.id,
+            Name: data.name,
+            Description: data.description,
+            Picture: data.Picture,
+            PriceUsd: pb.Money{
+                CurrencyCode: data.priceUsd.currencyCode,
+                Units: data.priceUsd.units,
+                Nanos: data.priceUsd.nanos
+            },
+            Categories: data.categories
+
+        })
+    }
+    log.Infof("Loaded %d products", len(products))
+    return products
+}
 
 func readProductFiles() ([]*pb.Product, error) {
 
-	// find all .json files in the products directory
-	entries, err := os.ReadDir("./products")
-	if err != nil {
-		return nil, err
-	}
 
-	jsonFiles := make([]fs.FileInfo, 0, len(entries))
-	for _, entry := range entries {
-		if strings.HasSuffix(entry.Name(), ".json") {
-			info, err := entry.Info()
-			if err != nil {
-				return nil, err
-			}
-			jsonFiles = append(jsonFiles, info)
-		}
-	}
-
-	// read the contents of each .json file and unmarshal into a ListProductsResponse
-	// then append the products to the catalog
-	var products []*pb.Product
-	for _, f := range jsonFiles {
-		jsonData, err := os.ReadFile("./products/" + f.Name())
-		if err != nil {
-			return nil, err
-		}
-
-		var res pb.ListProductsResponse
-		if err := protojson.Unmarshal(jsonData, &res); err != nil {
-			return nil, err
-		}
-
-		products = append(products, res.Products...)
-	}
-
+	products = sendQueryToBackend()
 	log.Infof("Loaded %d products", len(products))
 
 	return products, nil

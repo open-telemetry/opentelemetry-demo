@@ -478,6 +478,36 @@ services:
         condition: service_started
     logging: *logging
 
+  product_db:
+    image: postgres:15.3-alpine3.18
+    restart: always
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres123
+    volumes:
+      - ./postgresql/product/init.sql:/docker-entrypoint-initdb.d/init.sql
+      - ./postgresql/data:/var/lib/postgresql/data
+    ports:
+      - 5436:5432
+  product-dapr:
+    image: "daprio/daprd:edge"
+    container_name: product-dapr
+    command: [ "./daprd",
+               "-app-id", "product-catalog",
+               "-app-port", "${PRODUCT_CATALOG_PORT}",
+               "-placement-host-address", "dapr-placement:50006",
+               "-dapr-grpc-port", "50002",
+               "-dapr-http-port", "3500",
+               "-resources-path", "/dapr/components"
+               "-config", "/dapr/config.yaml" ]
+    volumes:
+      - "./dapr/:/dapr"
+    depends_on:
+      product_db:
+        condition: service_started
+    logging: *logging
+    network_mode: "service:product-catalog"
+
   # Product Catalog service
   product-catalog:
     image: ${IMAGE_NAME}:${DEMO_VERSION}-product-catalog
@@ -509,6 +539,8 @@ services:
       otel-collector:
         condition: service_started
       flagd:
+        condition: service_started
+      product-dapr:
         condition: service_started
     logging: *logging
 
