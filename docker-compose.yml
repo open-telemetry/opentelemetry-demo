@@ -89,7 +89,7 @@ services:
                "-placement-host-address", "dapr-placement:50006",
                "-dapr-grpc-port", "50002",
                "-dapr-http-port", "3500",
-               "-resources-path", "/dapr/components"
+               "-resources-path", "/dapr/components",
                "-config", "/dapr/config.yaml"]
     volumes:
       - "./dapr/:/dapr"
