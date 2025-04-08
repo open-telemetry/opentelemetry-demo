@@ -489,6 +489,7 @@ services:
       - ./postgresql/data:/var/lib/postgresql/data
     ports:
       - 5436:5432
+
   product-dapr:
     image: "daprio/daprd:edge"
     container_name: product-dapr
@@ -540,8 +541,9 @@ services:
         condition: service_started
       flagd:
         condition: service_started
-      product-dapr:
+      dapr-placement:
         condition: service_started
+
     logging: *logging
 
   # Quote service
