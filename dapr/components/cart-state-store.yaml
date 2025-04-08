@@ -8,7 +8,5 @@ spec:
   metadata:
   - name: redisHost
     value: valkey-cart:6379
-  - name: redisPassword
-    value: ""
   - name: enableTLS
     value: false 

@@ -85,15 +85,17 @@ services:
     container_name: cart-dapr
     command: [ "./daprd",
                "-app-id", "cart",
-               "-app-port", "3000",
+               "-app-port", "${CART_PORT}",
                "-placement-host-address", "dapr-placement:50006",
                "-dapr-grpc-port", "50002",
                "-dapr-http-port", "3500",
-               "-resources-path", "/components" ]
+               "-resources-path", "/dapr/components"
+               "-config", "/dapr/config.yaml"]
     volumes:
-      - "./components/:/components"
+      - "./dapr/:/dapr"
     depends_on:
       - cart
+      - valkey-cart
     network_mode: "service:cart"
   # Cart service
   cart:
@@ -122,7 +124,7 @@ services:
       - OTEL_SERVICE_NAME=cart
       - ASPNETCORE_URLS=http://*:${CART_PORT}
     depends_on:
-      valkey-cart:
+      dapr-placement:
         condition: service_started
       otel-collector:
         condition: service_started
