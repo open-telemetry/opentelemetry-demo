@@ -12,6 +12,6 @@ spec:
   tracing:
     samplingRate: "1"
     otel:
-      endpointAddress: "otel-gateway-collector:4317:4317"
+      endpointAddress: "otel-gateway-collector:4317"
       isSecure: true
       protocol: grpc

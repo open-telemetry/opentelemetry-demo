@@ -17,6 +17,8 @@ the release.
   ([#2114](https://github.com/open-telemetry/opentelemetry-demo/pull/2114))
 * [flagd-ui] increase memory to 100MB
   ([#2120](https://github.com/open-telemetry/opentelemetry-demo/pull/2120))
+* [cart] removed the usage on valkey in the component and replaced it with the usage of Dapr client
+* [sqllit] added the new sqllite service ( required for future change on the product catalog)
 
 ## 2.0.1
 
