@@ -60,7 +60,7 @@ keeping it up to date for you.
 |---------------------------|----------------|----------------------------------|
 | [AlibabaCloud LogService] | [Google Cloud] |  [Sentry]                        |
 | [AppDynamics]             | [Grafana Labs] |  [ServiceNow Cloud Observability]|
-| [Aspecto]                 | [Guance]       |  [SigNoz]                        |                       
+| [Aspecto]                 | [Guance]       |  [SigNoz]                        |
 | [Axiom]                   | [Honeycomb.io] |  [Splunk]                        |
 | [Axoflow]                 | [Instana]      |  [Sumo Logic]                    |
 | [Azure Data Explorer]     | [Kloudfuse]    |  [TelemetryHub]                  |
@@ -69,7 +69,6 @@ keeping it up to date for you.
 | [Datadog]                 | [New Relic]    |  [Uptrace]                       |
 | [Dynatrace]               | [OpenSearch]   |                                  |
 | [Elastic]                 | [Oracle]       |                                  |
-
 
 ## Contributing
 
@@ -134,10 +133,10 @@ Emeritus:
 [Oracle]: https://github.com/oracle-quickstart/oci-o11y-solutions/blob/main/knowledge-content/opentelemetry-demo
 [Sentry]: https://github.com/getsentry/opentelemetry-demo
 [ServiceNow Cloud Observability]: https://docs.lightstep.com/otel/quick-start-operator#send-data-from-the-opentelemetry-demo
+[SigNoz]: https://signoz.io/blog/opentelemetry-demo/
 [Splunk]: https://github.com/signalfx/opentelemetry-demo
 [Sumo Logic]: https://www.sumologic.com/blog/common-opentelemetry-demo-application/
 [TelemetryHub]: https://github.com/TelemetryHub/opentelemetry-demo/tree/telemetryhub-backend
 [Teletrace]: https://github.com/teletrace/opentelemetry-demo
 [Tracetest]: https://github.com/kubeshop/opentelemetry-demo
 [Uptrace]: https://github.com/uptrace/uptrace/tree/master/example/opentelemetry-demo
-[SigNoz]: https://signoz.io/blog/opentelemetry-demo/
