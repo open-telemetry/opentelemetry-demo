@@ -9,7 +9,7 @@ WORKDIR /usr/src/app/
 RUN --mount=type=cache,target=/go/pkg/mod/ \
     --mount=type=bind,source=./src/product-catalog/go.sum,target=go.sum,readonly\
     --mount=type=bind,source=./src/product-catalog/go.mod,target=go.mod,rw \
-    go mod download
+    go mod tidy
 
 RUN --mount=type=cache,target=/go/pkg/mod/ \
     --mount=type=cache,target=/root/.cache/go-build \
