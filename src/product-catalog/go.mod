@@ -1,8 +1,8 @@
 module github.com/opentelemetry/opentelemetry-demo/src/product-catalog
 
-go 1.23.3
+go 1.22.6
 
-toolchain go1.23.6
+toolchain go1.22.6
 
 require (
 	github.com/open-feature/go-sdk v1.14.1
@@ -24,7 +24,7 @@ require (
 )
 
 require (
-	github.com/dapr/dapr v1.15.0-rc.1 // indirect
+	github.com/dapr/dapr v1.14.0 // indirect
 	buf.build/gen/go/open-feature/flagd/connectrpc/go v1.17.0-20240906125204-0a6a901b42e8.1 // indirect
 	buf.build/gen/go/open-feature/flagd/grpc/go v1.5.1-20250127221518-be6d1143b690.2 // indirect
 	buf.build/gen/go/open-feature/flagd/protocolbuffers/go v1.36.5-20250127221518-be6d1143b690.1 // indirect
