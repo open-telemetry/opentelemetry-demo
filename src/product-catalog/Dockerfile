@@ -7,8 +7,8 @@ FROM golang:1.22-alpine AS builder
 WORKDIR /usr/src/app/
 
 RUN --mount=type=cache,target=/go/pkg/mod/ \
-    --mount=type=bind,source=./src/product-catalog/go.sum,target=go.sum \
-    --mount=type=bind,source=./src/product-catalog/go.mod,target=go.mod \
+    --mount=type=bind,source=./src/product-catalog/go.sum,target=go.sum,readonly\
+    --mount=type=bind,source=./src/product-catalog/go.mod,target=go.mod,rw \
     go mod download
 
 RUN --mount=type=cache,target=/go/pkg/mod/ \
