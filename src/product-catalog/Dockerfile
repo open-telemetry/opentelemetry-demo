@@ -11,6 +11,8 @@ RUN --mount=type=cache,target=/go/pkg/mod/ \
     --mount=type=bind,source=./src/product-catalog/go.mod,target=go.mod \
     go mod download
 
+RUN go mod tidy
+
 RUN --mount=type=cache,target=/go/pkg/mod/ \
     --mount=type=cache,target=/root/.cache/go-build \
     --mount=type=bind,rw,source=./src/product-catalog,target=. \
