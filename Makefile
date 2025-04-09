@@ -94,7 +94,7 @@ install-tools: $(MISSPELL)
 
 .PHONY: build
 build:
-	$(DOCKER_COMPOSE_CMD) build $(DOCKER_COMPOSE_BUILD_ARGS)
+	$(DOCKER_COMPOSE_CMD) $(DOCKER_COMPOSE_ENV) build $(DOCKER_COMPOSE_BUILD_ARGS)
 
 .PHONY: build-and-push
 build-and-push:
