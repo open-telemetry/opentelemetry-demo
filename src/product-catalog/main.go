@@ -9,7 +9,6 @@ package main
 import (
 	"context"
 	"fmt"
-	"io/fs"
 	"net"
 	"os"
 	"os/signal"
@@ -18,7 +17,7 @@ import (
 	"sync"
 	"syscall"
 	"time"
-
+     "encoding/json"
 	"github.com/sirupsen/logrus"
 
 	"go.opentelemetry.io/contrib/instrumentation/google.golang.org/grpc/otelgrpc"
@@ -44,7 +43,7 @@ import (
 	healthpb "google.golang.org/grpc/health/grpc_health_v1"
 	"google.golang.org/grpc/reflection"
 	"google.golang.org/grpc/status"
-	"google.golang.org/protobuf/encoding/protojson"
+
 	dapr "github.com/dapr/go-sdk/client"
 )
 
@@ -53,38 +52,28 @@ var (
 	catalog           []*pb.Product
 	resource          *sdkresource.Resource
 	initResourcesOnce sync.Once
+
 )
 
 const DEFAULT_RELOAD_INTERVAL = 10
 const dapr_store = "product-store"
 type Product_SQL struct {
-	Id          string                 `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
-	Name        string                 `protobuf:"bytes,2,opt,name=name,proto3" json:"name,omitempty"`
-	Description string                 `protobuf:"bytes,3,opt,name=description,proto3" json:"description,omitempty"`
-	Picture     string                 `protobuf:"bytes,4,opt,name=picture,proto3" json:"picture,omitempty"`
-	PriceUSCurrencyCode string `protobuf:"bytes,1,opt,name=currency_code,json=currencyCode,proto3" json:"currency_code,omitempty"`
-    // The whole units of the amount.
-    // For example if `currencyCode` is `"USD"`, then 1 unit is one US dollar.
-    PriceUSCurrencyCode int64 `protobuf:"varint,2,opt,name=units,proto3" json:"units,omitempty"`
-    // Number of nano (10^-9) units of the amount.
-    // The value must be between -999,999,999 and +999,999,999 inclusive.
-    // If `units` is positive, `nanos` must be positive or zero.
-    // If `units` is zero, `nanos` can be positive, zero, or negative.
-    // If `units` is negative, `nanos` must be negative or zero.
-    // For example $-1.75 is represented as `units`=-1 and `nanos`=-750,000,000.
-    PriceUSCurrencyCode         int32 `protobuf:"varint,3,opt,name=nanos,proto3" json:"nanos,omitempty"
-	Categories    []string `protobuf:"bytes,6,rep,name=categories,proto3" json:"categories,omitempty"`
+	Id          string
+	Name        string
+	Description string
+	Picture     string
+	PriceUSCurrencyCode string
+
+    PriceUSUnits int64
+
+    PriceUSNano        int32
+	Categories    []string
 
 }
 
 func init() {
 	log = logrus.New()
-    client, err := dapr.NewClient()
-    if err != nil {
-           log.Fatalf("Cannot create Dapr client : %s", err)
-          panic(err)
-    }
-    defer client.Close()
+
 
 
 	loadProductCatalog()
@@ -241,8 +230,7 @@ func loadProductCatalog() {
 		}
 	}()
 }
-func sendQueryToBackend() ([]*pb.Product, error)
-{
+func sendQueryToBackend() ([]*pb.Product, error) {
     query := `{
 
     	"sort": [
@@ -252,78 +240,66 @@ func sendQueryToBackend() ([]*pb.Product, error)
     		}
     	]
     }`
-    // Use the client to query the state
-    queryResponse, err := client.QueryState(ctx, dapr_store, query)
+    client, err := dapr.NewClient()
     if err != nil {
-    	log.Fatal(err)
-    	st := status.Convert(err)
-
-        log.Fatal("Code: %s\n", st.Code().String())
-        log.Fatal("Message: %s\n", st.Message())
-
-        for _, detail := range st.Details() {
-            switch t := detail.(type) {
-            case *errdetails.ErrorInfo:
-                // Handle ErrorInfo details
-                log.Fatal("ErrorInfo:\n- Domain: %s\n- Reason: %s\n- Metadata: %v\n", t.GetDomain(), t.GetReason(), t.GetMetadata())
-            case *errdetails.BadRequest:
-                // Handle BadRequest details
-                fmt.Println("BadRequest:")
-                for _, violation := range t.GetFieldViolations() {
-                   log.Fatal("- Key: %s\n", violation.GetField())
-                    log.Fatal("- The %q field was wrong: %s\n", violation.GetField(), violation.GetDescription())
-                }
-            case *errdetails.ResourceInfo:
-                // Handle ResourceInfo details
-                log.Fatal("ResourceInfo:\n- Resource type: %s\n- Resource name: %s\n- Owner: %s\n- Description: %s\n",
-                    t.GetResourceType(), t.GetResourceName(), t.GetOwner(), t.GetDescription())
-            case *errdetails.Help:
-                // Handle ResourceInfo details
-                log.Fatal("HelpInfo:")
-                for _, link := range t.GetLinks() {
-                   log.Fatal("- Url: %s\n", link.Url)
-                   log.Fatal("- Description: %s\n", link.Description)
-                }
-
-            default:
-                // Add cases for other types of details you expect
-               log.Fatal("Unhandled error detail type: %v\n", t)
-            }
-        }
+           log.Fatalf("Cannot create Dapr client : %s", err)
+           return nil, status.Errorf(codes.Internal, "Cannot create dapr client")
     }
+    defer client.Close()
+    ctx := context.Background()
+    // Use the client to query the state
+    queryResponse, err := client.QueryStateAlpha1(ctx, dapr_store, query,nil)
+    if err != nil {
+    	log.Fatalf("DAPR ERROR when sending query: %s",err)
+        	st := status.Convert(err)
 
-    for _, product := range queryResponse {
-        var data Product_SQL
-        var json;
-        err := product.Unmarshal(&data)
+        log.Fatalf("DAPR Code: %s\n", st.Code().String())
+        log.Fatalf("DAPR Message: %s\n", st.Message())
+        return nil, status.Errorf(codes.Internal, st.Message())
+    }
+    var products []*pb.Product
 
+    for _, product := range queryResponse.Results {
+
+
+
+
+         var jsonData Product_SQL
+         err := json.Unmarshal([]byte(product.Value), &jsonData)
         if err != nil {
-             log.Fatal("Unhandled error detail type: %v\n", err)
-        }
+             return nil, status.Errorf(codes.Internal, "error parsing the data")
+         	}  	// Now jsonData is a map containing the parsed JSON structure 	fmt.Println(jsonData)
 
-        products = append(products, pb.Product{
-            Id: data.id,
-            Name: data.name,
-            Description: data.description,
-            Picture: data.Picture,
-            PriceUsd: pb.Money{
-                CurrencyCode: data.priceUsd.currencyCode,
-                Units: data.priceUsd.units,
-                Nanos: data.priceUsd.nanos
-            },
-            Categories: data.categories
+
+        money := pb.Money{
+                                 CurrencyCode: jsonData.PriceUSCurrencyCode,
+                                 Units: jsonData.PriceUSUnits,
+                                 Nanos: jsonData.PriceUSNano,
+                 }
+
+        products = append(products, &pb.Product{
+            Id: jsonData.Id,
+            Name: jsonData.Name,
+            Description: jsonData.Description,
+            Picture: jsonData.Picture,
+            PriceUsd: &money,
+            Categories: jsonData.Categories,
 
         })
     }
-    log.Infof("Loaded %d products", len(products))
-    return products
+    log.Infof("Loaded x%d products", len(products))
+    return products, nil
 }
 
 func readProductFiles() ([]*pb.Product, error) {
 
+    var products []*pb.Product
+	products, err :=  sendQueryToBackend()
+	  if err != nil {
+        	  return nil, status.Errorf(codes.Internal, "impossible to getproducts from storage")
 
-	products = sendQueryToBackend()
-	log.Infof("Loaded %d products", len(products))
+        }
+
 
 	return products, nil
 }
