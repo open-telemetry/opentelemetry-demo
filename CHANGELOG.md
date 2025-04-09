@@ -17,6 +17,8 @@ the release.
   ([#2114](https://github.com/open-telemetry/opentelemetry-demo/pull/2114))
 * [flagd-ui] increase memory to 100MB
   ([#2120](https://github.com/open-telemetry/opentelemetry-demo/pull/2120))
+* [cartservice] change custom metrics to use seconds
+  ([#2135](https://github.com/open-telemetry/opentelemetry-demo/pull/2135))
 
 ## 2.0.1
 
