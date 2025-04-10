@@ -221,12 +221,6 @@ func loadProductCatalog() {
 func sendQueryToBackend() ([]*pb.Product, error) {
     query := `{
 
-    	"sort": [
-    		{
-    			"key": "key",
-    			"order": "ASC"
-    		}
-    	]
     }`
     client, err := dapr.NewClient()
     if err != nil {
