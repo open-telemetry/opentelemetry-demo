@@ -18,6 +18,8 @@
 		<PackageReference Include="Microsoft.Extensions.Logging" Version="9.0.2" />
 		<PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.21.2" />
 		<PackageReference Include="OpenTelemetry.AutoInstrumentation" Version="1.11.0" />
+        <PackageReference Include="Dapr.Client" Version="1.13.1" />
+        <PackageReference Include="Dapr.AspNetCore" Version="1.13.*-*" />
 	</ItemGroup>
 
 	<ItemGroup>

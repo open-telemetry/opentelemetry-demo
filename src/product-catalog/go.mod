@@ -1,10 +1,11 @@
 module github.com/opentelemetry/opentelemetry-demo/src/product-catalog
 
-go 1.22.7
+go 1.23.6
 
-toolchain go1.22.9
+toolchain go1.24.2
 
 require (
+	github.com/dapr/go-sdk v1.12.0
 	github.com/open-feature/go-sdk v1.14.1
 	github.com/open-feature/go-sdk-contrib/hooks/open-telemetry v0.3.4
 	github.com/open-feature/go-sdk-contrib/providers/flagd v0.2.6
@@ -30,6 +31,7 @@ require (
 	connectrpc.com/otelconnect v0.7.1 // indirect
 	github.com/barkimedes/go-deepcopy v0.0.0-20220514131651-17c30cfc62df // indirect
 	github.com/cenkalti/backoff/v4 v4.3.0 // indirect
+	github.com/dapr/dapr v1.15.0-rc.17 // indirect
 	github.com/diegoholiveira/jsonlogic/v3 v3.7.4 // indirect
 	github.com/fsnotify/fsnotify v1.8.0 // indirect
 	github.com/fxamacker/cbor/v2 v2.7.0 // indirect
@@ -71,7 +73,7 @@ require (
 	gopkg.in/yaml.v3 v3.0.1 // indirect
 	k8s.io/apimachinery v0.31.4 // indirect
 	k8s.io/klog/v2 v2.130.1 // indirect
-	k8s.io/utils v0.0.0-20240711033017-18e509b52bc8 // indirect
+	k8s.io/utils v0.0.0-20241210054802-24370beab758 // indirect
 	sigs.k8s.io/controller-runtime v0.19.0 // indirect
 	sigs.k8s.io/json v0.0.0-20221116044647-bc3834ca7abd // indirect
 	sigs.k8s.io/structured-merge-diff/v4 v4.4.1 // indirect
