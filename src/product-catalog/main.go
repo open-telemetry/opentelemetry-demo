@@ -57,19 +57,7 @@ var (
 
 const DEFAULT_RELOAD_INTERVAL = 10
 const dapr_store = "product-store"
-type Product_SQL struct {
-	Id          string
-	Name        string
-	Description string
-	Picture     string
-	PriceUSCurrencyCode string
 
-    PriceUSUnits int64
-
-    PriceUSNano        int32
-	Categories    []string
-
-}
 
 func init() {
 	log = logrus.New()
@@ -235,7 +223,7 @@ func sendQueryToBackend() ([]*pb.Product, error) {
 
     	"sort": [
     		{
-    			"key": "name",
+    			"key": "key",
     			"order": "ASC"
     		}
     	]
@@ -261,31 +249,13 @@ func sendQueryToBackend() ([]*pb.Product, error) {
 
     for _, product := range queryResponse.Results {
 
-
-
-
-         var jsonData Product_SQL
+         var jsonData pb.Product
          err := json.Unmarshal([]byte(product.Value), &jsonData)
         if err != nil {
              return nil, status.Errorf(codes.Internal, "error parsing the data")
          	}  	// Now jsonData is a map containing the parsed JSON structure 	fmt.Println(jsonData)
 
-
-        money := pb.Money{
-                                 CurrencyCode: jsonData.PriceUSCurrencyCode,
-                                 Units: jsonData.PriceUSUnits,
-                                 Nanos: jsonData.PriceUSNano,
-                 }
-
-        products = append(products, &pb.Product{
-            Id: jsonData.Id,
-            Name: jsonData.Name,
-            Description: jsonData.Description,
-            Picture: jsonData.Picture,
-            PriceUsd: &money,
-            Categories: jsonData.Categories,
-
-        })
+        products = append(products, product)
     }
     log.Infof("Loaded x%d products", len(products))
     return products, nil

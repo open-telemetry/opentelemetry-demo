@@ -9,4 +9,4 @@ spec:
     - name: connectionString
       value: "host=product_db user=postgres password=example port=5432 connect_timeout=10 database=postgres"
     - name: tableName
-      value: "product"
+      value: "productstate"
