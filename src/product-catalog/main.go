@@ -249,13 +249,19 @@ func sendQueryToBackend() ([]*pb.Product, error) {
 
     for _, product := range queryResponse.Results {
 
+
+
+
          var jsonData pb.Product
          err := json.Unmarshal([]byte(product.Value), &jsonData)
         if err != nil {
              return nil, status.Errorf(codes.Internal, "error parsing the data")
          	}  	// Now jsonData is a map containing the parsed JSON structure 	fmt.Println(jsonData)
 
-        products = append(products, product)
+
+
+
+        products = append(products, &jsonData)
     }
     log.Infof("Loaded x%d products", len(products))
     return products, nil
