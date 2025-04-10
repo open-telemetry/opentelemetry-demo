@@ -28,11 +28,14 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       contents: read
+      id-token: write # Required for GCP Workload Identity Federation authentication
       packages: write
 
     env:
       RELEASE_VERSION: "${{ github.event.release.tag_name }}"
       AWS_ECR_REPO: "718306648796.dkr.ecr.us-west-2.amazonaws.com/opentelemetry-demo"
+      GCP_EU_ARTIFACT_REPO: "europe-docker.pkg.dev/dash0-deployment/dash0-europe-default/opentelemetry-demo"
+      GCP_US_ARTIFACT_REPO: "us-docker.pkg.dev/dash0-deployment/dash0-us-default/opentelemetry-demo"
 
     strategy:
       fail-fast: false
@@ -154,6 +157,30 @@ jobs:
         with:
           mask-password: true
 
+      # Authenticate with Google Cloud
+      - name: Authenticate with Google Cloud
+        id: login-gcp
+        uses: google-github-actions/auth@71f986410dfbc7added4569d411d040a91dc6935  # v2.1.8
+        with:
+          token_format: access_token
+          workload_identity_provider: projects/586092074842/locations/global/workloadIdentityPools/github-action/providers/github-identity-provider
+          service_account: github-action-service-account@dash0-deployment.iam.gserviceaccount.com
+          access_token_lifetime: 1800s
+
+      - name: Login to GCP EU Artifact Registry
+        uses: docker/login-action@74a5d142397b4f367a81961eba4e8cd7edddf772  # v3.4.0
+        with:
+          registry: europe-docker.pkg.dev
+          username: oauth2accesstoken
+          password: ${{ steps.login-gcp.outputs.access_token }}
+
+      - name: Login to GCP US Artifact Registry
+        uses: docker/login-action@74a5d142397b4f367a81961eba4e8cd7edddf772  # v3.4.0
+        with:
+          registry: us-docker.pkg.dev
+          username: oauth2accesstoken
+          password: ${{ steps.login-gcp.outputs.access_token }}
+
       - name: Set up QEMU
         if: ${{ matrix.file_tag.setup-qemu }}
         uses: docker/setup-qemu-action@v3
@@ -178,5 +205,9 @@ jobs:
           tags: |
             ${{ env.AWS_ECR_REPO }}:${{ inputs.version }}-${{ matrix.file_tag.tag_suffix }}
             ${{ env.AWS_ECR_REPO }}:latest-${{ matrix.file_tag.tag_suffix }}
+            ${{ env.GCP_EU_ARTIFACT_REPO }}:${{ inputs.version }}-${{ matrix.file_tag.tag_suffix }}
+            ${{ env.GCP_EU_ARTIFACT_REPO }}:latest-${{ matrix.file_tag.tag_suffix }}
+            ${{ env.GCP_US_ARTIFACT_REPO }}:${{ inputs.version }}-${{ matrix.file_tag.tag_suffix }}
+            ${{ env.GCP_US_ARTIFACT_REPO }}:latest-${{ matrix.file_tag.tag_suffix }}
           cache-from: type=gha
           cache-to: type=gha
