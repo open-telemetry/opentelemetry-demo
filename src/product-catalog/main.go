@@ -52,7 +52,8 @@ var (
 	catalog           []*pb.Product
 	resource          *sdkresource.Resource
 	initResourcesOnce sync.Once
-
+	client dapr.Client
+    daprerror error
 )
 
 const DEFAULT_RELOAD_INTERVAL = 10
@@ -61,6 +62,7 @@ const dapr_store = "product-store"
 
 func init() {
 	log = logrus.New()
+
 
 
 
@@ -117,6 +119,13 @@ func initMeterProvider() *sdkmetric.MeterProvider {
 }
 
 func main() {
+
+    client, daprerror = dapr.NewClient()
+        if daprerror != nil {
+               log.Fatalf("Cannot create Dapr client : %s", daprerror)
+
+        }
+
 	tp := initTracerProvider()
 	defer func() {
 		if err := tp.Shutdown(context.Background()); err != nil {
@@ -222,12 +231,7 @@ func sendQueryToBackend() ([]*pb.Product, error) {
     query := `{
 
     }`
-    client, err := dapr.NewClient()
-    if err != nil {
-           log.Fatalf("Cannot create Dapr client : %s", err)
-           return nil, status.Errorf(codes.Internal, "Cannot create dapr client")
-    }
-    defer client.Close()
+
     ctx := context.Background()
     // Use the client to query the state
     queryResponse, err := client.QueryStateAlpha1(ctx, dapr_store, query,nil)
