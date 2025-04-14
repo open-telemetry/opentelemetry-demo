@@ -246,7 +246,6 @@ func sendQueryToBackend() ([]*pb.Product, error) {
 
 
 
-
          var jsonData pb.Product
          err := json.Unmarshal([]byte(product.Value), &jsonData)
         if err != nil {
@@ -254,6 +253,7 @@ func sendQueryToBackend() ([]*pb.Product, error) {
          	}  	// Now jsonData is a map containing the parsed JSON structure 	fmt.Println(jsonData)
 
 
+        log.Infof("Found the following product %s", string(product.Value))
 
 
         products = append(products, &jsonData)
