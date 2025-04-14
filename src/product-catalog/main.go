@@ -62,10 +62,11 @@ const dapr_store = "product-store"
 
 func init() {
 	log = logrus.New()
+    client, daprerror = dapr.NewClient()
+        if daprerror != nil {
+               log.Fatalf("Cannot create Dapr client : %s", daprerror)
 
-
-
-
+        }
 	loadProductCatalog()
 }
 
@@ -120,11 +121,7 @@ func initMeterProvider() *sdkmetric.MeterProvider {
 
 func main() {
 
-    client, daprerror = dapr.NewClient()
-        if daprerror != nil {
-               log.Fatalf("Cannot create Dapr client : %s", daprerror)
 
-        }
 
 	tp := initTracerProvider()
 	defer func() {
