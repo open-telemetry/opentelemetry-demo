@@ -7,6 +7,8 @@ the release.
 
 ## Unreleased
 
+## 2.0.2
+
 * [frontend] Update OpenTelemetry Browser SDK initialization
   ([#2092](https://github.com/open-telemetry/opentelemetry-demo/pull/2092))
 * [quote] Updated open-telemetry/exporter-otlp to 1.2.1 which includes the
