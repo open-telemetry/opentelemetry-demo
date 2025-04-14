@@ -255,7 +255,7 @@ func sendQueryToBackend() ([]*pb.Product, error) {
 
         log.Infof("Found the following product %s", string(product.Value))
 
-
+        log.Infof("Currency of the product %d", jsonData.PriceUsd.CurrencyCode)
         products = append(products, &jsonData)
     }
     log.Infof("Loaded x%d products", len(products))
