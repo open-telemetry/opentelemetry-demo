@@ -7,6 +7,12 @@ the release.
 
 ## Unreleased
 
+## 2.0.3
+
+* [product catalog] removed the usage on the json file , repalced it with a Dapr client
+* [sqllit] dropped the sqllite , because no support for dapr query
+* [postgresl] added postgresql to add a storage of the product catalog ( default database used by dapr)
+
 ## 2.0.2
 
 * [frontend] Update OpenTelemetry Browser SDK initialization

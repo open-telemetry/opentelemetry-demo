@@ -251,11 +251,6 @@ func sendQueryToBackend() ([]*pb.Product, error) {
         if err != nil {
              return nil, status.Errorf(codes.Internal, "error parsing the data")
          	}  	// Now jsonData is a map containing the parsed JSON structure 	fmt.Println(jsonData)
-
-
-        log.Infof("Found the following product %s", string(product.Value))
-
-        log.Infof("Currency of the product %d", jsonData.PriceUsd.CurrencyCode)
         products = append(products, &jsonData)
     }
     log.Infof("Loaded x%d products", len(products))
