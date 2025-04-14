@@ -17,7 +17,6 @@ import (
 	"sync"
 	"syscall"
 	"time"
-     "encoding/json"
 	"github.com/sirupsen/logrus"
 
 	"go.opentelemetry.io/contrib/instrumentation/google.golang.org/grpc/otelgrpc"
@@ -43,6 +42,7 @@ import (
 	healthpb "google.golang.org/grpc/health/grpc_health_v1"
 	"google.golang.org/grpc/reflection"
 	"google.golang.org/grpc/status"
+	"google.golang.org/protobuf/encoding/protojson"
 
 	dapr "github.com/dapr/go-sdk/client"
 )
@@ -247,7 +247,7 @@ func sendQueryToBackend() ([]*pb.Product, error) {
 
 
          var jsonData pb.Product
-         err := json.Unmarshal([]byte(product.Value), &jsonData)
+         err := protojson.Unmarshal([]byte(product.Value), &jsonData)
         if err != nil {
              return nil, status.Errorf(codes.Internal, "error parsing the data")
          	}  	// Now jsonData is a map containing the parsed JSON structure 	fmt.Println(jsonData)
