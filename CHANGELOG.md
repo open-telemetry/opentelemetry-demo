@@ -7,6 +7,9 @@ the release.
 
 ## Unreleased
 
+* [chore] add GOMEMLIMIT to all Go services
+  ([#2148](https://github.com/open-telemetry/opentelemetry-demo/pull/2148))
+
 ## 2.0.2
 
 * [frontend] Update OpenTelemetry Browser SDK initialization
