@@ -13,7 +13,7 @@ async function chargeServiceHandler(call, callback) {
 
   try {
     const amount = call.request.amount
-    span.setAttributes({
+    span?.setAttributes({
       'app.payment.amount': parseFloat(`${amount.units}.${amount.nanos}`).toFixed(2)
     })
     logger.info({ request: call.request }, "Charge request received.")
@@ -24,9 +24,8 @@ async function chargeServiceHandler(call, callback) {
   } catch (err) {
     logger.warn({ err })
 
-    span.recordException(err)
-    span.setStatus({ code: opentelemetry.SpanStatusCode.ERROR })
-
+    span?.recordException(err)
+    span?.setStatus({ code: opentelemetry.SpanStatusCode.ERROR })
     callback(err)
   }
 }
