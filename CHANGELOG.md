@@ -7,6 +7,9 @@ the release.
 
 ## Unreleased
 
+* [product-catalog] Simplify span event name
+  ([#2150](https://github.com/open-telemetry/opentelemetry-demo/pull/2150))
+
 ## 2.0.2
 
 * [frontend] Update OpenTelemetry Browser SDK initialization
