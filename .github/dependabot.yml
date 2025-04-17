@@ -62,3 +62,11 @@ updates:
         dependency-type: "development"
     schedule:
       interval: "daily"
+  - pakage-ecosystem: "docker"
+    directories:
+      - "/src/**/*"
+    groups:
+      docker-production-dependencies:
+        dependency-type: "production"
+    schedule:
+      interval: "daily"
