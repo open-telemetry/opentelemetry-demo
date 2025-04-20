@@ -421,7 +421,7 @@ services:
       - PROTOCOL_BUFFERS_PYTHON_IMPLEMENTATION=python
       - LOCUST_WEB_HOST=0.0.0.0
       - FLAGD_HOST
-      - FLAGD_PORT
+      - FLAGD_OFREP_PORT
     depends_on:
       frontend:
         condition: service_started
@@ -608,7 +608,8 @@ services:
       "file:./etc/flagd/demo.flagd.json"
     ]
     ports:
-      - 8013
+      - "${FLAGD_PORT}"
+      - "${FLAGD_OFREP_PORT}"
     volumes:
       - ./src/flagd:/etc/flagd
     logging:
@@ -624,7 +625,7 @@ services:
     deploy:
       resources:
         limits:
-          memory: 75M
+          memory: 100M
     restart: unless-stopped
     environment:
       - OTEL_EXPORTER_OTLP_ENDPOINT=http://${OTEL_COLLECTOR_HOST}:${OTEL_COLLECTOR_PORT_HTTP}

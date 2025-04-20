@@ -58,16 +58,17 @@ keeping it up to date for you.
 
 |                           |                |                                  |
 |---------------------------|----------------|----------------------------------|
-| [AlibabaCloud LogService] | [Elastic]      | [OpenSearch]                     |
-| [AppDynamics]             | [Google Cloud] | [Oracle]                         |
-| [Aspecto]                 | [Grafana Labs] | [Sentry]                         |
-| [Axiom]                   | [Guance]       | [ServiceNow Cloud Observability] |
-| [Axoflow]                 | [Honeycomb.io] | [Splunk]                         |
-| [Azure Data Explorer]     | [Instana]      | [Sumo Logic]                     |
-| [Coralogix]               | [Kloudfuse]    | [TelemetryHub]                   |
-| [Dash0]                   | [Liatrio]      | [Teletrace]                      |
-| [Datadog]                 | [Logz.io]      | [Tracetest]                      |
-| [Dynatrace]               | [New Relic]    | [Uptrace]                        |
+| [AlibabaCloud LogService] | [Google Cloud] |  [Oracle]                        |
+| [AppDynamics]             | [Grafana Labs] |  [Sentry]                        |
+| [Aspecto]                 | [Guance]       |  [ServiceNow Cloud Observability]|
+| [Axiom]                   | [Honeycomb.io] |  [SigNoz]                        |
+| [Axoflow]                 | [Instana]      |  [Splunk]                        |
+| [Azure Data Explorer]     | [Kloudfuse]    |  [Sumo Logic]                    |
+| [Coralogix]               | [Last9]        |  [TelemetryHub]                  |
+| [Dash0]                   | [Liatrio]      |  [Teletrace]                     |
+| [Datadog]                 | [Logz.io]      |  [Tracetest]                     |
+| [Dynatrace]               | [New Relic]    |  [Uptrace]                       |
+| [Elastic]                 | [OpenSearch]   |                                  |
 
 ## Contributing
 
@@ -125,6 +126,7 @@ Emeritus:
 [Honeycomb.io]: https://github.com/honeycombio/opentelemetry-demo
 [Instana]: https://github.com/instana/opentelemetry-demo
 [Kloudfuse]: https://github.com/kloudfuse/opentelemetry-demo
+[Last9]: https://last9.io/docs/integrations-opentelemetry-demo/
 [Liatrio]: https://github.com/liatrio/opentelemetry-demo
 [Logz.io]: https://logz.io/learn/how-to-run-opentelemetry-demo-with-logz-io/
 [New Relic]: https://github.com/newrelic/opentelemetry-demo
@@ -132,6 +134,7 @@ Emeritus:
 [Oracle]: https://github.com/oracle-quickstart/oci-o11y-solutions/blob/main/knowledge-content/opentelemetry-demo
 [Sentry]: https://github.com/getsentry/opentelemetry-demo
 [ServiceNow Cloud Observability]: https://docs.lightstep.com/otel/quick-start-operator#send-data-from-the-opentelemetry-demo
+[SigNoz]: https://signoz.io/blog/opentelemetry-demo/
 [Splunk]: https://github.com/signalfx/opentelemetry-demo
 [Sumo Logic]: https://www.sumologic.com/blog/common-opentelemetry-demo-application/
 [TelemetryHub]: https://github.com/TelemetryHub/opentelemetry-demo/tree/telemetryhub-backend
