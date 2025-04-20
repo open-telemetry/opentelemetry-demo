@@ -7,6 +7,9 @@ the release.
 
 ## Unreleased
 
+* [product-catalog] Simplify span event name
+  ([#2150](https://github.com/open-telemetry/opentelemetry-demo/pull/2150))
+
 ## 2.0.2
 
 * [frontend] Update OpenTelemetry Browser SDK initialization
@@ -19,6 +22,8 @@ the release.
   ([#2114](https://github.com/open-telemetry/opentelemetry-demo/pull/2114))
 * [flagd-ui] increase memory to 100MB
   ([#2120](https://github.com/open-telemetry/opentelemetry-demo/pull/2120))
+* [cartservice] change custom metrics to use seconds
+  ([#2135](https://github.com/open-telemetry/opentelemetry-demo/pull/2135))
 
 ## 2.0.1
 
