@@ -755,7 +755,7 @@ apiVersion: v1
 kind: ConfigMap
 metadata:
   name: flagd-config
-  namespace: otel-demo
+  namespace: default
   labels:
     
     app.kubernetes.io/instance: opentelemetry-demo
@@ -9896,7 +9896,7 @@ apiVersion: v1
 kind: ConfigMap
 metadata:
   name: product-catalog-products
-  namespace: otel-demo
+  namespace: default
   labels:
     
     app.kubernetes.io/instance: opentelemetry-demo
