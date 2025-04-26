@@ -1,3 +1,6 @@
+# Copyright The OpenTelemetry Authors
+# SPDX-License-Identifier: Apache-2.0
+
 from __future__ import annotations
 
 from textwrap import dedent
@@ -38,9 +41,7 @@ def render_intro() -> None:
                 - Write a query to join these tables and give the result of owners and their pets.
                 Show me the query, then the output as a table."""),
         }
-        for example, tab in zip(
-            examples.values(), st.tabs(list(examples.keys()))
-        ):
+        for example, tab in zip(examples.values(), st.tabs(list(examples.keys()))):
             tab.markdown(example)
 
 
@@ -57,9 +58,7 @@ def render_db_contents(engine: Engine, dbpath: str) -> None:
         return
 
     with open(dbpath, "rb") as file:
-        st.download_button(
-            "Download SQLite DB", data=file, file_name="demo.sqlite3"
-        )
+        st.download_button("Download SQLite DB", data=file, file_name="demo.sqlite3")
 
     for table in tables:
         with engine.connect() as conn:
@@ -71,10 +70,7 @@ def render_db_contents(engine: Engine, dbpath: str) -> None:
 def render_sidebar(checkpointer: InMemorySaver) -> None:
     options = {st.query_params.thread_id}
     options.update(
-        {
-            cp.config["configurable"]["thread_id"]
-            for cp in checkpointer.list(None)
-        }
+        {cp.config["configurable"]["thread_id"] for cp in checkpointer.list(None)}
     )
 
     def on_change() -> None:
