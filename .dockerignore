@@ -18,6 +18,11 @@ src/*/*/Dockerfile
 ./src/frontend/node_modules/
 
 ###################################
+# genai-sql-agent
+./src/genai-sql-agent/.venv
+./src/genai-sql-agent/__pycache__
+
+###################################
 # shipping
 ./src/shipping/target
 ###################################

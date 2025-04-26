@@ -1,7 +1,6 @@
 # Copyright The OpenTelemetry Authors
 # SPDX-License-Identifier: Apache-2.0
 
-
 static_resources:
   listeners:
     - address:
@@ -30,6 +29,8 @@ static_resources:
                         - name: envoy.tracers.opentelemetry.resource_detectors.environment
                           typed_config:
                             "@type": type.googleapis.com/envoy.extensions.tracers.opentelemetry.resource_detectors.v3.EnvironmentResourceDetectorConfig
+                upgrade_configs:
+                  - upgrade_type: websocket
                 route_config:
                   name: local_route
                   virtual_hosts:
@@ -51,6 +52,8 @@ static_resources:
                           route: { cluster: flagservice, prefix_rewrite: "/", timeout: 0s }
                         - match: { prefix: "/feature" }
                           route: { cluster: flagd-ui }
+                        - match: { prefix: "/genai-sql-agent" }
+                          route: { cluster: genai-sql-agent }
                         - match: { prefix: "/" }
                           route: { cluster: frontend }
                 http_filters:
@@ -160,6 +163,18 @@ static_resources:
                     socket_address:
                       address: ${FRONTEND_HOST}
                       port_value: ${FRONTEND_PORT}
+    - name: genai-sql-agent
+      type: STRICT_DNS
+      lb_policy: ROUND_ROBIN
+      load_assignment:
+        cluster_name: genai-sql-agent
+        endpoints:
+          - lb_endpoints:
+              - endpoint:
+                  address:
+                    socket_address:
+                      address: ${GENAI_SQL_AGENT_HOST}
+                      port_value: ${GENAI_SQL_AGENT_PORT}
     - name: image-provider
       type: STRICT_DNS
       lb_policy: ROUND_ROBIN

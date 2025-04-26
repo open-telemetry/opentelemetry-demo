@@ -1,0 +1,7 @@
+services:
+  genai-sql-agent:
+    volumes:
+      - ${GOOGLE_APPLICATION_CREDENTIALS?}:${GOOGLE_APPLICATION_CREDENTIALS}:ro
+    environment:
+      - GOOGLE_APPLICATION_CREDENTIALS
+      - GOOGLE_CLOUD_PROJECT
