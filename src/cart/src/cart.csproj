@@ -15,8 +15,8 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Grpc.AspNetCore" Version="2.67.0" />
-    <PackageReference Include="Grpc.AspNetCore.HealthChecks" Version="2.67.0" />
+    <PackageReference Include="Grpc.AspNetCore" Version="2.70.0" />
+    <PackageReference Include="Grpc.AspNetCore.HealthChecks" Version="2.70.0" />
     <PackageReference Include="OpenTelemetry.Exporter.OpenTelemetryProtocol" Version="1.11.2" />
     <PackageReference Include="OpenTelemetry.Extensions.Hosting" Version="1.11.2" />
     <PackageReference Include="OpenTelemetry.Instrumentation.AspNetCore" Version="1.11.1" />
@@ -27,10 +27,10 @@
     <PackageReference Include="OpenTelemetry.Instrumentation.Runtime" Version="1.11.1" />
     <PackageReference Include="OpenTelemetry.Resources.Container" Version="1.11.0-beta.2" />
     <PackageReference Include="OpenTelemetry.Resources.Host" Version="1.11.0-beta.2" />
-    <PackageReference Include="StackExchange.Redis" Version="2.8.24" />
-    <PackageReference Include="OpenFeature.Contrib.Providers.Flagd" Version="0.3.0" />
+    <PackageReference Include="StackExchange.Redis" Version="2.8.31" />
+    <PackageReference Include="OpenFeature.Contrib.Providers.Flagd" Version="0.3.2" />
     <PackageReference Include="OpenFeature.Contrib.Hooks.Otel" Version="0.2.0" />
-    <PackageReference Include="OpenFeature" Version="2.3.1" />
+    <PackageReference Include="OpenFeature" Version="2.4.0" />
   </ItemGroup>
 
   <ItemGroup>
