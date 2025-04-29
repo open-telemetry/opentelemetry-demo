@@ -51,7 +51,7 @@ RUN if [ "${TARGETPLATFORM}" = "${BUILDPLATFORM}" ] ; then \
     fi
 
 
-ENV GRPC_HEALTH_PROBE_VERSION=v0.4.24
+ENV GRPC_HEALTH_PROBE_VERSION=v0.4.37
 RUN wget -qO/bin/grpc_health_probe https://github.com/grpc-ecosystem/grpc-health-probe/releases/download/${GRPC_HEALTH_PROBE_VERSION}/grpc_health_probe-linux-${TARGETARCH} && \
     chmod +x /bin/grpc_health_probe
 
