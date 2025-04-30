@@ -21,6 +21,8 @@ the release.
   ([#2161](https://github.com/open-telemetry/opentelemetry-demo/pull/2161))
 * [chore] bump dependent images
   ([#2179](https://github.com/open-telemetry/opentelemetry-demo/pull/2179))
+* [recommendation] change image from bookworm to alpine to reduce size
+  ([#2164](https://github.com/open-telemetry/opentelemetry-demo/pull/2164))
 
 ## 2.0.2
 
