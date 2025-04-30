@@ -11,7 +11,8 @@ the release.
   ([#2148](https://github.com/open-telemetry/opentelemetry-demo/pull/2148))
 * [product-catalog] Simplify span event name
   ([#2150](https://github.com/open-telemetry/opentelemetry-demo/pull/2150))
-* [cartservice] Refactor OpenFeature integration and add dependency injection support ([#2160](https://github.com/open-telemetry/opentelemetry-demo/pull/2160))
+* [cartservice] Refactor OpenFeature integration and add Dependency Injection support
+  ([#2160](https://github.com/open-telemetry/opentelemetry-demo/pull/2160))
 
 ## 2.0.2
 
