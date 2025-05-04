@@ -11,3 +11,12 @@ datasources:
     url: http://jaeger:16686/jaeger/ui
     editable: true
     isDefault: false
+    jsonData:
+      tracesToLogsV2:
+        datasourceUid: webstore-logs
+        spanStartTimeShift: "-20m"
+        spanEndTimeShift: "20m"
+        filterByTraceID: true
+        filterBySpanID: true
+        customQuery: true
+        query: traceId:"$${__trace.traceId}" AND spanId:"$${__span.spanId}"
