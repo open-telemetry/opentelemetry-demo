@@ -13,6 +13,10 @@ the release.
   ([#2150](https://github.com/open-telemetry/opentelemetry-demo/pull/2150))
 * [grafana] configure `traceToLogs` integration
   ([#2162](https://github.com/open-telemetry/opentelemetry-demo/pull/2162))
+* [load-generator] change image from alpine to distroless to reduce size
+  ([#2164](https://github.com/open-telemetry/opentelemetry-demo/pull/2164))
+* [recommendation] change image from alpine to distroless to reduce size
+  ([#2164](https://github.com/open-telemetry/opentelemetry-demo/pull/2164))
 
 ## 2.0.2
 

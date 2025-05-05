@@ -1,22 +1,27 @@
 # Copyright The OpenTelemetry Authors
 # SPDX-License-Identifier: Apache-2.0
 
+FROM python:3.12-slim-bookworm AS build-venv
 
-FROM python:3.12-slim-bookworm AS base
+ENV PLAYWRIGHT_BROWSERS_PATH=/opt/playwright
 
-FROM base AS builder
-RUN apt-get -qq update \
-    && apt-get install -y --no-install-recommends g++ \
-    && rm -rf /var/lib/apt/lists/*
+COPY ./src/load-generator/requirements.txt requirements.txt
 
-COPY ./src/load-generator/requirements.txt .
-RUN pip install --prefix="/reqs" -r requirements.txt
+RUN python -m venv venv
+RUN venv/bin/pip install --no-cache-dir -r requirements.txt
 
-FROM base
-WORKDIR /usr/src/app/
-COPY --from=builder /reqs /usr/local
+RUN venv/bin/playwright install --with-deps chromium
+
+FROM gcr.io/distroless/python3-debian12:nonroot
+
 ENV PLAYWRIGHT_BROWSERS_PATH=/opt/pw-browsers
-RUN playwright install --with-deps chromium
-COPY ./src/load-generator/locustfile.py .
-COPY ./src/load-generator/people.json .
-ENTRYPOINT ["locust", "--skip-log-setup"]
+
+COPY --from=build-venv /venv/ /venv/
+COPY --from=build-venv /opt/playwright/ /opt/pw-browsers/
+
+WORKDIR /app
+
+COPY ./src/load-generator/locustfile.py locustfile.py
+COPY ./src/load-generator/people.json people.json
+
+ENTRYPOINT ["/venv/bin/locust", "--skip-log-setup"]
