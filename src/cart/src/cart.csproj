@@ -15,6 +15,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <!-- Keeping Grpc.AspNetCore* to 2.67 due to https://github.com/grpc/grpc/issues/38538 -->
     <PackageReference Include="Grpc.AspNetCore" Version="2.67.0" />
     <PackageReference Include="Grpc.AspNetCore.HealthChecks" Version="2.67.0" />
     <PackageReference Include="OpenTelemetry.Exporter.OpenTelemetryProtocol" Version="1.11.2" />
