@@ -16,7 +16,7 @@ COPY ./src/checkout/kafka/ kafka/
 COPY ./src/checkout/money/ money/
 COPY ./src/checkout/main.go main.go
 
-RUN CGO_ENABLED=0 GOOS=linux GO111MODULE=on go build -ldflags "-s -w" -o checkout main.go
+RUN CGO_ENABLED=0 GOOS=linux go build -ldflags "-s -w" -o checkout main.go
 
 FROM gcr.io/distroless/static-debian12:nonroot
 
