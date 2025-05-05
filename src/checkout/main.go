@@ -24,14 +24,17 @@ import (
 	flagd "github.com/open-feature/go-sdk-contrib/providers/flagd/pkg"
 	"github.com/open-feature/go-sdk/openfeature"
 	"github.com/sirupsen/logrus"
+	"go.opentelemetry.io/contrib/bridges/otellogrus"
 	"go.opentelemetry.io/contrib/instrumentation/google.golang.org/grpc/otelgrpc"
 	"go.opentelemetry.io/contrib/instrumentation/net/http/otelhttp"
 	"go.opentelemetry.io/contrib/instrumentation/runtime"
 	"go.opentelemetry.io/otel"
 	otelcodes "go.opentelemetry.io/otel/codes"
+	"go.opentelemetry.io/otel/exporters/otlp/otlplog/otlploggrpc"
 	"go.opentelemetry.io/otel/exporters/otlp/otlpmetric/otlpmetricgrpc"
 	"go.opentelemetry.io/otel/exporters/otlp/otlptrace/otlptracegrpc"
 	"go.opentelemetry.io/otel/propagation"
+	otellog "go.opentelemetry.io/otel/sdk/log"
 	sdkmetric "go.opentelemetry.io/otel/sdk/metric"
 	sdkresource "go.opentelemetry.io/otel/sdk/resource"
 	sdktrace "go.opentelemetry.io/otel/sdk/trace"
@@ -51,10 +54,13 @@ import (
 //go:generate go install google.golang.org/grpc/cmd/protoc-gen-go-grpc
 //go:generate protoc --go_out=./ --go-grpc_out=./ --proto_path=../../pb ../../pb/demo.proto
 
-var log *logrus.Logger
-var tracer trace.Tracer
-var resource *sdkresource.Resource
-var initResourcesOnce sync.Once
+var (
+	log *logrus.Logger
+
+	tracer      trace.Tracer
+	resource    *sdkresource.Resource
+	initResOnce sync.Once
+)
 
 func init() {
 	log = logrus.New()
@@ -67,11 +73,37 @@ func init() {
 		},
 		TimestampFormat: time.RFC3339Nano,
 	}
-	log.Out = os.Stdout
+
+	// Initialize OpenTelemetry log pipeline
+	ctx := context.Background()
+	exporter, err := otlploggrpc.New(ctx,
+		otlploggrpc.WithEndpoint(os.Getenv("OTEL_EXPORTER_OTLP_ENDPOINT")),
+		otlploggrpc.WithInsecure(),
+	)
+	if err != nil {
+		log.Fatalf("new otlp log grpc exporter failed: %v", err)
+	}
+
+	lp := otellog.NewLoggerProvider(
+		otellog.WithProcessor(otellog.NewBatchProcessor(exporter)),
+		otellog.WithResource(initResource()),
+	)
+
+	// Create an otellogrus.Hook and use it in your application
+	hook := otellogrus.NewHook("checkout", otellogrus.WithLoggerProvider(lp))
+
+	// Set the newly created hook as a global logrus hook
+	logrus.AddHook(hook)
+
+	// Make sure everything is flushed at exit
+	go func() {
+		<-context.Background().Done()
+		_ = lp.Shutdown(context.Background())
+	}()
 }
 
 func initResource() *sdkresource.Resource {
-	initResourcesOnce.Do(func() {
+	initResOnce.Do(func() {
 		extraResources, _ := sdkresource.New(
 			context.Background(),
 			sdkresource.WithOS(),
@@ -101,6 +133,22 @@ func initTracerProvider() *sdktrace.TracerProvider {
 	otel.SetTracerProvider(tp)
 	otel.SetTextMapPropagator(propagation.NewCompositeTextMapPropagator(propagation.TraceContext{}, propagation.Baggage{}))
 	return tp
+}
+
+func initLoggerProvider() *otellog.LoggerProvider {
+	ctx := context.Background()
+	exporter, err := otlploggrpc.New(ctx,
+		otlploggrpc.WithEndpoint(os.Getenv("OTEL_EXPORTER_OTLP_ENDPOINT")),
+		otlploggrpc.WithInsecure(),
+	)
+	if err != nil {
+		log.Fatalf("new otlp log grpc exporter failed: %v", err)
+	}
+	lp := otellog.NewLoggerProvider(
+		otellog.WithProcessor(otellog.NewBatchProcessor(exporter)),
+		otellog.WithResource(initResource()),
+	)
+	return lp
 }
 
 func initMeterProvider() *sdkmetric.MeterProvider {
@@ -141,10 +189,23 @@ func main() {
 	var port string
 	mustMapEnv(&port, "CHECKOUT_PORT")
 
+	// Set up environment variables for OpenTelemetry
+	os.Setenv("OTEL_EXPORTER_OTLP_ENDPOINT", "grpc://otel-collector:4317")
+	os.Setenv("OTEL_SERVICE_NAME", "checkout")
+	os.Setenv("OTEL_RESOURCE_ATTRIBUTES", "service.name=checkout,service.namespace=opentelemetry-demo")
+	os.Setenv("OTEL_LOGS_EXPORTER", "otlp")
+
 	tp := initTracerProvider()
 	defer func() {
 		if err := tp.Shutdown(context.Background()); err != nil {
 			log.Printf("Error shutting down tracer provider: %v", err)
+		}
+	}()
+
+	lp := initLoggerProvider()
+	defer func() {
+		if err := lp.Shutdown(context.Background()); err != nil {
+			log.Printf("Error shutting down logger provider: %v", err)
 		}
 	}()
 
