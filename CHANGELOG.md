@@ -21,6 +21,8 @@ the release.
   ([#2161](https://github.com/open-telemetry/opentelemetry-demo/pull/2161))
 * [chore] bump dependent images
   ([#2179](https://github.com/open-telemetry/opentelemetry-demo/pull/2179))
+* [fraud-detection] update distroless to debian12
+  ([#2170](https://github.com/open-telemetry/opentelemetry-demo/pull/2170))
 
 ## 2.0.2
 
