@@ -15,6 +15,10 @@ the release.
   ([#2162](https://github.com/open-telemetry/opentelemetry-demo/pull/2162))
 * [cartservice] Refactor OpenFeature integration and add Dependency Injection support
   ([#2160](https://github.com/open-telemetry/opentelemetry-demo/pull/2160))
+* [ad] change image from eclipse-temurin to distroless to reduce size
+  ([#2170](https://github.com/open-telemetry/opentelemetry-demo/pull/2170))
+* [fraud-detection] update distroless to debian12
+  ([#2170](https://github.com/open-telemetry/opentelemetry-demo/pull/2170))
 
 ## 2.0.2
 
