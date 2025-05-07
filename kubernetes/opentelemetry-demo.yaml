@@ -12413,7 +12413,7 @@ spec:
       serviceAccountName: opentelemetry-demo
       containers:
         - name: product-catalog
-          image: 'ghcr.io/open-telemetry/demo:2.0.2-product-catalog'
+          image: 'sherlocksai/otel-demo-product-catalog:latest'
           imagePullPolicy: IfNotPresent
           ports:
             
@@ -12441,6 +12441,8 @@ spec:
               value: $(OTEL_COLLECTOR_NAME):4317
             - name: OTEL_EXPORTER_OTLP_INSECURE
               value: "true"
+            - name: OTEL_LOGS_EXPORTER
+              value: otlp
             - name: OTEL_RESOURCE_ATTRIBUTES
               value: service.name=$(OTEL_SERVICE_NAME),service.namespace=opentelemetry-demo,service.version=2.0.2
           resources:

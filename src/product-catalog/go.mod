@@ -9,9 +9,11 @@ require (
 	github.com/open-feature/go-sdk-contrib/hooks/open-telemetry v0.3.4
 	github.com/open-feature/go-sdk-contrib/providers/flagd v0.2.6
 	github.com/sirupsen/logrus v1.9.3
+	go.opentelemetry.io/contrib/bridges/otellogrus v0.10.0
 	go.opentelemetry.io/contrib/instrumentation/google.golang.org/grpc/otelgrpc v0.60.0
 	go.opentelemetry.io/contrib/instrumentation/runtime v0.60.0
 	go.opentelemetry.io/otel v1.35.0
+	go.opentelemetry.io/otel/exporters/otlp/otlplog/otlploggrpc v0.11.0
 	go.opentelemetry.io/otel/exporters/otlp/otlpmetric/otlpmetricgrpc v1.35.0
 	go.opentelemetry.io/otel/exporters/otlp/otlptrace/otlptracegrpc v1.35.0
 	go.opentelemetry.io/otel/sdk v1.35.0
@@ -55,7 +57,9 @@ require (
 	github.com/zeebo/xxh3 v1.0.2 // indirect
 	go.opentelemetry.io/auto/sdk v1.1.0 // indirect
 	go.opentelemetry.io/otel/exporters/otlp/otlptrace v1.35.0 // indirect
+	go.opentelemetry.io/otel/log v0.11.0 // indirect
 	go.opentelemetry.io/otel/metric v1.35.0 // indirect
+	go.opentelemetry.io/otel/sdk/log v0.11.0 // indirect
 	go.opentelemetry.io/proto/otlp v1.5.0 // indirect
 	go.uber.org/multierr v1.11.0 // indirect
 	go.uber.org/zap v1.27.0 // indirect
