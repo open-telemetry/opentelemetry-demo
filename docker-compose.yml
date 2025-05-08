@@ -37,6 +37,7 @@ services:
       - OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE
       - OTEL_RESOURCE_ATTRIBUTES
       - OTEL_SERVICE_NAME=accounting
+      - DB_CONNECTION_STRING=Host=postgresql;Username=otelu;Password=otelp;Database=otel
     depends_on:
       otel-collector:
         condition: service_started
@@ -829,3 +830,15 @@ services:
       timeout: 10s
       retries: 10
     logging: *logging
+
+  postgresql:
+    image: 'postgres:latest'
+    ports:
+      - "5432"
+    environment:
+      POSTGRES_USER: root
+      POSTGRES_PASSWORD: otel 
+      POSTGRES_DB: otel
+    volumes:
+      - ${PWD}/src/accounting/init.sql:/docker-entrypoint-initdb.d/init.sql
+  
