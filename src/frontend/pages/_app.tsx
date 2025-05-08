@@ -4,6 +4,11 @@
 import '../styles/globals.css';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import App, { AppContext, AppProps } from 'next/app';
+import Navbar from '../components/Navbar';
+import { useRouter } from 'next/router';
+import { checkAuth } from '../utils/auth';
+import { useEffect } from 'react';
+import '../styles/globals.css';
 import CurrencyProvider from '../providers/Currency.provider';
 import CartProvider from '../providers/Cart.provider';
 import { ThemeProvider } from 'styled-components';
@@ -59,12 +64,24 @@ if (typeof window !== 'undefined') {
 const queryClient = new QueryClient();
 
 function MyApp({ Component, pageProps }: AppProps) {
+  const router = useRouter();
+
+  useEffect(() => {
+    if (
+      router.pathname !== '/login' &&
+      !router.pathname.startsWith('/api/') &&
+      !checkAuth()
+    ) {
+      router.push('/login');
+    }
+  }, [router.pathname]);
   return (
     <ThemeProvider theme={Theme}>
       <OpenFeatureProvider>
         <QueryClientProvider client={queryClient}>
           <CurrencyProvider>
             <CartProvider>
+              <Navbar />
               <Component {...pageProps} />
             </CartProvider>
           </CurrencyProvider>

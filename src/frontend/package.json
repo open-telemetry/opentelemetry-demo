@@ -4,6 +4,7 @@
   "private": true,
   "scripts": {
     "dev": "NODE_OPTIONS='--require ./utils/telemetry/Instrumentation.js' next dev",
+    "dev-local": "next dev",
     "build": "next build",
     "start": "node --require ./Instrumentation.js server.js",
     "lint": "next lint",
