@@ -1,3 +1,6 @@
+// Copyright The OpenTelemetry Authors
+// SPDX-License-Identifier: Apache-2.0
+
 import { NextResponse } from 'next/server'
 import type { NextRequest } from 'next/server'
 import { v4 } from 'uuid';
