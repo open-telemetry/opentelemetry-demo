@@ -15,29 +15,19 @@ export default async function handler(
   }  
   
   try {  
-    const response = await fetch('http://user:8080/logout', {  
-      method: 'POST',  
-      headers: {  
-        'Cookie': req.headers.cookie || '',  
-      },  
+    const response = await fetch('http://localhost:10001/logout', {
+      method: 'POST',
+      credentials: 'include',
     });  
   
     const data: LogoutResponse = await response.json();  
       
     if (!response.ok) {  
       return res.status(response.status).json(data);  
-    }  
-      
-    // 转发 cookie 清除  
-    if (response.headers.get('set-cookie')) {  
-      res.setHeader('Set-Cookie', response.headers.get('set-cookie') as string);  
-    }  
-      
+    }
+    localStorage.clear()
     return res.status(200).json(data);  
-  } catch (error) {  
-    return res.status(500).json({   
-      message: '内部服务器错误',   
-      error: error instanceof Error ? error.message : '未知错误'   
-    });  
+  } catch (error) {
+    console.error(error)
   }  
 }

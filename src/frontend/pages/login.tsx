@@ -31,11 +31,10 @@ const Login = () => {
         const errorData = await response.json();
         throw new Error(errorData.error || '登录失败');
       }
-
       const data: LoginResponse = await response.json();
       // 存储会话 ID 和角色信息
       localStorage.setItem('sessionId', data.sessionid);
-      localStorage.setItem('userRole', data.role.toString());
+      localStorage.setItem('userRole', String(data.role));
 
       // 重定向到首页
       router.push('/');

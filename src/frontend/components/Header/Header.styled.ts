@@ -53,3 +53,43 @@ export const Controls = styled.div`
   display: flex;
   height: 60px;
 `;
+
+export const AvatarContainer = styled.div`  
+  position: relative;  
+  cursor: pointer;  
+`;
+
+export const Avatar = styled.img`  
+  width: 40px;  
+  height: 40px;  
+  border-radius: 50%;  
+  object-fit: cover;  
+`;
+
+export const Dropdown = styled.div`  
+  position: absolute;  
+  top: 50px;  
+  right: 0;  
+  background-color: white;  
+  border: 1px solid ${({ theme }) => theme.colors.textGray};  
+  border-radius: 4px;  
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);  
+  width: 200px;  
+  z-index: 100;  
+`;
+
+export const DropdownItem = styled.div`  
+  padding: 12px 16px;  
+  cursor: pointer;  
+    
+  &:hover {  
+    background-color: #f5f5f5;  
+  }  
+    
+  a {  
+    text-decoration: none;  
+    color: inherit;  
+    display: block;  
+    width: 100%;  
+  }  
+`;

@@ -16,7 +16,7 @@ export default async function handler(
   }
 
   try {
-    const response = await fetch('http://user:8080/login', {
+    const response = await fetch('http://localhost:10001/login', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -28,11 +28,6 @@ export default async function handler(
 
     if (!response.ok) {
       return res.status(response.status).json(data);
-    }
-
-    // 转发会话 cookie
-    if (response.headers.get('set-cookie')) {
-      res.setHeader('Set-Cookie', response.headers.get('set-cookie') as string);
     }
 
     return res.status(200).json(data);
