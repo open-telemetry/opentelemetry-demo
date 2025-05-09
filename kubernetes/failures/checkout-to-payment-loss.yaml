@@ -1,0 +1,29 @@
+apiVersion: chaos-mesh.org/v1alpha1
+kind: NetworkChaos
+metadata:
+  name: checkout-to-payment-loss
+  namespace: lyrid-016d2205-3e0f-4ef0-aa64-d7debe01f0b1
+spec:
+  action: loss
+  mode: one
+  selector:
+    namespaces:
+      - lyrid-016d2205-3e0f-4ef0-aa64-d7debe01f0b1
+    labelSelectors:
+      app.kubernetes.io/name: checkout
+  loss:
+    loss: "100"
+    correlation: "0"
+  direction: to
+  target:
+    mode: one
+    selector:
+      namespaces:
+        - lyrid-016d2205-3e0f-4ef0-aa64-d7debe01f0b1
+      labelSelectors:
+        app.kubernetes.io/name: payment
+  duration: "5m"
+  externalTargets:
+    - payment.lyrid-016d2205-3e0f-4ef0-aa64-d7debe01f0b1.svc.cluster.local
+    - payment.lyrid-016d2205-3e0f-4ef0-aa64-d7debe01f0b1.svc
+    - payment.lyrid-016d2205-3e0f-4ef0-aa64-d7debe01f0b1

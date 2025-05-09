@@ -2,7 +2,7 @@
 # SPDX-License-Identifier: Apache-2.0
 
 FROM node:22-alpine AS builder
-RUN apk add --no-cache libc6-compat
+RUN apk add --no-cache libc6-compat curl wget netcat-openbsd
 
 USER node
 
