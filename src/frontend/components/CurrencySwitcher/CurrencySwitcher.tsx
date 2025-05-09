@@ -20,7 +20,7 @@ const CurrencySwitcher: FC<CurrencySwitcherProps> = ({ inDropdown = false }) => 
       <S.CurrencySwitcher>
         <S.Container>
           {inDropdown ? (
-              <div onClick={(event) => setSelectedCurrency(selectedCurrency)}>
+              <div onClick={() => setSelectedCurrency(selectedCurrency)}>
                 金额转换 ({selectedCurrency})
               </div>
           ) : (

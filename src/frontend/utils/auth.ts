@@ -48,13 +48,12 @@ export async function logout(): Promise<boolean> {
       throw new Error('注销失败');
     }
 
-    // 清除认证数据
-    localStorage.removeItem('sessionId');
-    localStorage.removeItem('userRole');
+    localStorage.clear();
 
     return true;
   } catch (error) {
     console.error('注销错误:', error);
+    localStorage.clear();
     throw error;
   }
 }

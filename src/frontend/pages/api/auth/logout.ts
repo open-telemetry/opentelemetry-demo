@@ -18,14 +18,11 @@ export default async function handler(
     const response = await fetch('http://localhost:10001/logout', {
       method: 'POST',
       credentials: 'include',
-    });  
-  
-    const data: LogoutResponse = await response.json();  
-      
+    });
+    const data: LogoutResponse = await response.json();
     if (!response.ok) {  
       return res.status(response.status).json(data);  
     }
-    localStorage.clear()
     return res.status(200).json(data);  
   } catch (error) {
     console.error(error)

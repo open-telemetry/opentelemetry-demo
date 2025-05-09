@@ -4,7 +4,7 @@
 import '../styles/globals.css';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import App, { AppContext, AppProps } from 'next/app';
-import Navbar from '../components/Navbar';
+// import Navbar from '../components/Navbar';
 import { useRouter } from 'next/router';
 import { checkAuth } from '../utils/auth';
 import { useEffect } from 'react';
@@ -70,18 +70,18 @@ function MyApp({ Component, pageProps }: AppProps) {
     if (
       router.pathname !== '/login' &&
       !router.pathname.startsWith('/api/') &&
+      router.pathname !== '/' &&
       !checkAuth()
     ) {
       router.push('/login');
     }
-  }, [router.pathname]);
+  }, [router]);
   return (
     <ThemeProvider theme={Theme}>
       <OpenFeatureProvider>
         <QueryClientProvider client={queryClient}>
           <CurrencyProvider>
             <CartProvider>
-              <Navbar />
               <Component {...pageProps} />
             </CartProvider>
           </CurrencyProvider>
