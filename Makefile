@@ -100,6 +100,30 @@ build:
 build-and-push:
 	$(DOCKER_COMPOSE_CMD) $(DOCKER_COMPOSE_ENV) build $(DOCKER_COMPOSE_BUILD_ARGS) --push
 
+.PHONY: build-service
+build-service:
+ifdef SERVICE_PATH
+	docker build -t sherlocksai/otel-demo-$(notdir $(SERVICE_PATH)):$(shell git rev-parse --short HEAD) -t sherlocksai/otel-demo-$(notdir $(SERVICE_PATH)):latest -f $(SERVICE_PATH)/Dockerfile .
+else
+	@echo "Error: SERVICE_PATH is required. Usage: make build-service SERVICE_PATH=path/to/service"
+	@exit 1
+endif
+
+.PHONY: build-and-push-service
+build-and-push-service:
+ifdef SERVICE_PATH
+	$(eval BUILD_TAG := $(shell date +%Y%m%d_%H%M%S))
+	@if ! docker buildx inspect sherlocks-builder-$(notdir $(SERVICE_PATH)) >/dev/null 2>&1; then \
+		docker buildx create --name sherlocks-builder-$(notdir $(SERVICE_PATH)) --use; \
+	else \
+		docker buildx use sherlocks-builder-$(notdir $(SERVICE_PATH)); \
+	fi
+	docker buildx build --platform linux/amd64,linux/arm64 --push -t sherlocksai/otel-demo-$(notdir $(SERVICE_PATH)):$(BUILD_TAG) -t sherlocksai/otel-demo-$(notdir $(SERVICE_PATH)):latest -f $(SERVICE_PATH)/Dockerfile .
+else
+	@echo "Error: SERVICE_PATH is required. Usage: make build-and-push-service SERVICE_PATH=path/to/service"
+	@exit 1
+endif
+
 # Create multiplatform builder for buildx
 .PHONY: create-multiplatform-builder
 create-multiplatform-builder:

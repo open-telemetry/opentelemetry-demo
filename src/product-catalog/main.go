@@ -21,14 +21,17 @@ import (
 
 	"github.com/sirupsen/logrus"
 
+	"go.opentelemetry.io/contrib/bridges/otellogrus"
 	"go.opentelemetry.io/contrib/instrumentation/google.golang.org/grpc/otelgrpc"
 	"go.opentelemetry.io/contrib/instrumentation/runtime"
 	"go.opentelemetry.io/otel"
 	"go.opentelemetry.io/otel/attribute"
 	otelcodes "go.opentelemetry.io/otel/codes"
+	"go.opentelemetry.io/otel/exporters/otlp/otlplog/otlploggrpc"
 	"go.opentelemetry.io/otel/exporters/otlp/otlpmetric/otlpmetricgrpc"
 	"go.opentelemetry.io/otel/exporters/otlp/otlptrace/otlptracegrpc"
 	"go.opentelemetry.io/otel/propagation"
+	otellog "go.opentelemetry.io/otel/sdk/log"
 	sdkmetric "go.opentelemetry.io/otel/sdk/metric"
 	sdkresource "go.opentelemetry.io/otel/sdk/resource"
 	sdktrace "go.opentelemetry.io/otel/sdk/trace"
@@ -48,22 +51,57 @@ import (
 )
 
 var (
-	log               *logrus.Logger
-	catalog           []*pb.Product
-	resource          *sdkresource.Resource
-	initResourcesOnce sync.Once
+	log         *logrus.Logger
+	catalog     []*pb.Product
+	resource    *sdkresource.Resource
+	initResOnce sync.Once
 )
 
 const DEFAULT_RELOAD_INTERVAL = 10
 
 func init() {
 	log = logrus.New()
+	log.Level = logrus.DebugLevel
+	log.Formatter = &logrus.JSONFormatter{
+		FieldMap: logrus.FieldMap{
+			logrus.FieldKeyTime:  "timestamp",
+			logrus.FieldKeyLevel: "severity",
+			logrus.FieldKeyMsg:   "message",
+		},
+		TimestampFormat: time.RFC3339Nano,
+	}
+
+	// Initialize OpenTelemetry log pipeline
+	ctx := context.Background()
+	exporter, err := otlploggrpc.New(ctx,
+		otlploggrpc.WithEndpoint(os.Getenv("OTEL_EXPORTER_OTLP_ENDPOINT")),
+		otlploggrpc.WithInsecure(),
+	)
+	if err != nil {
+		log.Fatalf("new otlp log grpc exporter failed: %v", err)
+	}
+
+	lp := otellog.NewLoggerProvider(
+		otellog.WithProcessor(otellog.NewBatchProcessor(exporter)),
+		otellog.WithResource(initResource()),
+	)
+
+	// Create an otellogrus.Hook and use it in your application
+	hook := otellogrus.NewHook("checkout", otellogrus.WithLoggerProvider(lp))
+
+	// Set the newly created hook as a global logrus hook
+	log.AddHook(hook)
 
 	loadProductCatalog()
+	// Make sure everything is flushed at exit
+	go func() {
+		<-context.Background().Done()
+		_ = lp.Shutdown(context.Background())
+	}()
 }
 
 func initResource() *sdkresource.Resource {
-	initResourcesOnce.Do(func() {
+	initResOnce.Do(func() {
 		extraResources, _ := sdkresource.New(
 			context.Background(),
 			sdkresource.WithOS(),
@@ -84,7 +122,7 @@ func initTracerProvider() *sdktrace.TracerProvider {
 
 	exporter, err := otlptracegrpc.New(ctx)
 	if err != nil {
-		log.Fatalf("OTLP Trace gRPC Creation: %v", err)
+		log.Fatal("new otlp trace grpc exporter failed", "error", err)
 	}
 	tp := sdktrace.NewTracerProvider(
 		sdktrace.WithBatcher(exporter),
@@ -100,7 +138,7 @@ func initMeterProvider() *sdkmetric.MeterProvider {
 
 	exporter, err := otlpmetricgrpc.New(ctx)
 	if err != nil {
-		log.Fatalf("new otlp metric grpc exporter failed: %v", err)
+		log.Fatal("new otlp metric grpc exporter failed", "error", err)
 	}
 
 	mp := sdkmetric.NewMeterProvider(

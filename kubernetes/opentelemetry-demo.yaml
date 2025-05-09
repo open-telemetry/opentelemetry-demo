@@ -11583,7 +11583,9 @@ spec:
             - name: FLAGD_PORT
               value: "8013"
             - name: OTEL_EXPORTER_OTLP_ENDPOINT
-              value: http://$(OTEL_COLLECTOR_NAME):4317
+              value: $(OTEL_COLLECTOR_NAME):4317
+            - name: OTEL_LOGS_EXPORTER
+              value: otlp
             - name: OTEL_RESOURCE_ATTRIBUTES
               value: service.name=$(OTEL_SERVICE_NAME),service.namespace=opentelemetry-demo,service.version=2.0.2
           resources:
@@ -11982,7 +11984,9 @@ spec:
             - name: OTEL_COLLECTOR_HOST
               value: $(OTEL_COLLECTOR_NAME)
             - name: OTEL_EXPORTER_OTLP_ENDPOINT
-              value: http://$(OTEL_COLLECTOR_NAME):4317
+              value: $(OTEL_COLLECTOR_NAME):4317
+            - name: OTEL_EXPORTER_OTLP_INSECURE
+              value: "true"
             - name: WEB_OTEL_SERVICE_NAME
               value: frontend-web
             - name: PUBLIC_OTEL_EXPORTER_OTLP_TRACES_ENDPOINT
@@ -12296,7 +12300,9 @@ spec:
             - name: FLAGD_OFREP_PORT
               value: "8016"
             - name: OTEL_EXPORTER_OTLP_ENDPOINT
-              value: http://$(OTEL_COLLECTOR_NAME):4317
+              value: $(OTEL_COLLECTOR_NAME):4317
+            - name: OTEL_EXPORTER_OTLP_INSECURE
+              value: "true"
             - name: OTEL_RESOURCE_ATTRIBUTES
               value: service.name=$(OTEL_SERVICE_NAME),service.namespace=opentelemetry-demo,service.version=2.0.2
           resources:
@@ -12360,7 +12366,9 @@ spec:
             - name: FLAGD_PORT
               value: "8013"
             - name: OTEL_EXPORTER_OTLP_ENDPOINT
-              value: http://$(OTEL_COLLECTOR_NAME):4317
+              value: $(OTEL_COLLECTOR_NAME):4317
+            - name: OTEL_EXPORTER_OTLP_INSECURE
+              value: "true"
             - name: OTEL_RESOURCE_ATTRIBUTES
               value: service.name=$(OTEL_SERVICE_NAME),service.namespace=opentelemetry-demo,service.version=2.0.2
           resources:
@@ -12405,7 +12413,7 @@ spec:
       serviceAccountName: opentelemetry-demo
       containers:
         - name: product-catalog
-          image: 'ghcr.io/open-telemetry/demo:2.0.2-product-catalog'
+          image: 'sherlocksai/otel-demo-product-catalog:latest'
           imagePullPolicy: IfNotPresent
           ports:
             
@@ -12430,7 +12438,11 @@ spec:
             - name: FLAGD_PORT
               value: "8013"
             - name: OTEL_EXPORTER_OTLP_ENDPOINT
-              value: http://$(OTEL_COLLECTOR_NAME):4317
+              value: $(OTEL_COLLECTOR_NAME):4317
+            - name: OTEL_EXPORTER_OTLP_INSECURE
+              value: "true"
+            - name: OTEL_LOGS_EXPORTER
+              value: otlp
             - name: OTEL_RESOURCE_ATTRIBUTES
               value: service.name=$(OTEL_SERVICE_NAME),service.namespace=opentelemetry-demo,service.version=2.0.2
           resources:
@@ -12497,7 +12509,9 @@ spec:
             - name: OTEL_PHP_AUTOLOAD_ENABLED
               value: "true"
             - name: OTEL_EXPORTER_OTLP_ENDPOINT
-              value: http://$(OTEL_COLLECTOR_NAME):4318
+              value: $(OTEL_COLLECTOR_NAME):4318
+            - name: OTEL_EXPORTER_OTLP_INSECURE
+              value: "true"
             - name: OTEL_RESOURCE_ATTRIBUTES
               value: service.name=$(OTEL_SERVICE_NAME),service.namespace=opentelemetry-demo,service.version=2.0.2
           resources:
@@ -12633,7 +12647,9 @@ spec:
             - name: QUOTE_ADDR
               value: http://quote:8080
             - name: OTEL_EXPORTER_OTLP_ENDPOINT
-              value: http://$(OTEL_COLLECTOR_NAME):4317
+              value: $(OTEL_COLLECTOR_NAME):4317
+            - name: OTEL_EXPORTER_OTLP_INSECURE
+              value: "true"
             - name: OTEL_RESOURCE_ATTRIBUTES
               value: service.name=$(OTEL_SERVICE_NAME),service.namespace=opentelemetry-demo,service.version=2.0.2
           resources:

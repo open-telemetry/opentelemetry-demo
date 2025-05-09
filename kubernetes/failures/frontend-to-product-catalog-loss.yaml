@@ -1,0 +1,29 @@
+apiVersion: chaos-mesh.org/v1alpha1
+kind: NetworkChaos
+metadata:
+  name: frontend-to-product-catalog-loss
+  namespace: lyrid-016d2205-3e0f-4ef0-aa64-d7debe01f0b1
+spec:
+  action: loss
+  mode: one
+  selector:
+    namespaces:
+      - lyrid-016d2205-3e0f-4ef0-aa64-d7debe01f0b1
+    labelSelectors:
+      app.kubernetes.io/name: frontend
+  loss:
+    loss: "100"
+    correlation: "0"
+  direction: to
+  target:
+    mode: one
+    selector:
+      namespaces:
+        - lyrid-016d2205-3e0f-4ef0-aa64-d7debe01f0b1
+      labelSelectors:
+        app.kubernetes.io/name: product-catalog
+  duration: "5h"
+  externalTargets:
+    - product-catalog.lyrid-016d2205-3e0f-4ef0-aa64-d7debe01f0b1.svc.cluster.local
+    - product-catalog.lyrid-016d2205-3e0f-4ef0-aa64-d7debe01f0b1.svc
+    - product-catalog.lyrid-016d2205-3e0f-4ef0-aa64-d7debe01f0b1 

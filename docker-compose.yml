@@ -116,7 +116,7 @@ services:
 
   # Checkout service
   checkout:
-    image: ${IMAGE_NAME}:${DEMO_VERSION}-checkout
+    image: otel-demo-checkout:latest
     container_name: checkout
     build:
       context: ./
@@ -146,6 +146,9 @@ services:
       - OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE
       - OTEL_RESOURCE_ATTRIBUTES
       - OTEL_SERVICE_NAME=checkout
+      - GRPC_GO_LOG_SEVERITY_LEVEL=info
+      - GRPC_GO_LOG_VERBOSITY_LEVEL=99
+      - OTEL_LOG_LEVEL=debug
     depends_on:
       cart:
         condition: service_started
@@ -463,13 +466,11 @@ services:
 
   # Product Catalog service
   product-catalog:
-    image: ${IMAGE_NAME}:${DEMO_VERSION}-product-catalog
+    image: sherlocksai/otel-demo-product-catalog:latest
     container_name: product-catalog
     build:
       context: ./
       dockerfile: ${PRODUCT_CATALOG_DOCKERFILE}
-      cache_from:
-        - ${IMAGE_NAME}:${IMAGE_VERSION}-product-catalog
     deploy:
       resources:
         limits:
@@ -483,10 +484,13 @@ services:
       - FLAGD_HOST
       - FLAGD_PORT
       - GOMEMLIMIT=16MiB
-      - OTEL_EXPORTER_OTLP_ENDPOINT
+      - OTEL_EXPORTER_OTLP_ENDPOINT=otel-collector:4317
+      - OTEL_EXPORTER_OTLP_INSECURE=true
       - OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE
-      - OTEL_RESOURCE_ATTRIBUTES
+      - OTEL_RESOURCE_ATTRIBUTES=service.name=$(OTEL_SERVICE_NAME),service.namespace=opentelemetry-demo,service.version=2.0.2
       - OTEL_SERVICE_NAME=product-catalog
+      - OTEL_LOGS_EXPORTER=otlp
+
     volumes:
       - ./src/product-catalog/products:/usr/src/app/products
     depends_on:
