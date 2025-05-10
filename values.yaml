@@ -1,0 +1,26 @@
+components:
+  checkout:
+    enabled: true
+    imageOverride:
+      repository: sherlocksai/otel-demo-checkout
+      tag: latest
+      pullPolicy: Always
+  product-catalog:
+    enabled: true
+    imageOverride:
+      repository: sherlocksai/otel-demo-product-catalog
+      tag: latest
+      pullPolicy: Always
+
+global:
+  namespace: lyrid-016d2205-3e0f-4ef0-aa64-d7debe01f0b1
+
+prometheus:
+  server:
+    resources:
+      requests:
+        memory: "1Gi"
+        cpu: "500m"
+      limits:
+        memory: "2Gi"
+        cpu: "1000m" 

@@ -1,0 +1,66 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: opentelemetry-demo
+  namespace: argocd
+  # TODO: Enable image updater
+  annotations:
+    argocd-image-updater.argoproj.io/image-list: checkout=sherlocksai/otel-demo-checkout,product-catalog=sherlocksai/otel-demo-product-catalog
+    argocd-image-updater.argoproj.io/checkout.update-strategy: latest
+    argocd-image-updater.argoproj.io/checkout.force-update: "true"
+    argocd-image-updater.argoproj.io/checkout.allow-tags: "latest"
+    argocd-image-updater.argoproj.io/checkout.pull-secret: pullsecret:argocd/argocd-image-updater-secret
+    argocd-image-updater.argoproj.io/product-catalog.update-strategy: latest
+    argocd-image-updater.argoproj.io/product-catalog.force-update: "true"
+    argocd-image-updater.argoproj.io/product-catalog.allow-tags: "latest"
+    argocd-image-updater.argoproj.io/product-catalog.pull-secret: pullsecret:argocd/argocd-image-updater-secret
+spec:
+  project: default
+  source:
+    chart: opentelemetry-demo
+    repoURL: https://migrateai.github.io/opentelemetry-helm-charts
+    targetRevision: 0.37.6
+    helm:
+      releaseName: my-otel-demo
+      valueFiles:
+        - values.yaml
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: lyrid-016d2205-3e0f-4ef0-aa64-d7debe01f0b1
+  syncPolicy:
+    automated:
+      prune: false
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true
+      - ServerSideApply=true
+    retry:
+      limit: 5
+      backoff:
+        duration: 5s
+        factor: 2
+        maxDuration: 3m
+  ignoreDifferences:
+    - group: apps
+      kind: Deployment
+      name: jaeger
+      namespace: lyrid-016d2205-3e0f-4ef0-aa64-d7debe01f0b1
+      jsonPointers:
+        - /spec/selector
+    - group: apps
+      kind: StatefulSet
+      name: opensearch
+      namespace: lyrid-016d2205-3e0f-4ef0-aa64-d7debe01f0b1
+      jsonPointers:
+        - /spec
+    - kind: ConfigMap
+      name: grafana-dashboards
+      namespace: lyrid-016d2205-3e0f-4ef0-aa64-d7debe01f0b1
+      jsonPointers:
+        - /metadata/annotations
+    - group: apps
+      kind: Deployment
+      name: grafana
+      namespace: lyrid-016d2205-3e0f-4ef0-aa64-d7debe01f0b1
+      jsonPointers:
+        - /spec 

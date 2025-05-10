@@ -1,0 +1,55 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: opentelemetry-demo
+  namespace: argocd
+spec:
+  project: default
+  source:
+    repoURL: https://github.com/migrateai/opentelemetry-demo.git
+    targetRevision: HEAD
+    path: kubernetes
+    directory:
+      recurse: true
+      jsonnet: {}
+      include: |
+        **/*.yaml
+      exclude: |
+        **/jaeger*.yaml
+        **/opensearch*.yaml
+        **/grafana-dashboards*.yaml
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: lyrid-016d2205-3e0f-4ef0-aa64-d7debe01f0b1
+  syncPolicy:
+    automated:
+      prune: false
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true
+      - ServerSideApply=true
+  ignoreDifferences:
+    - group: apps
+      kind: Deployment
+      name: jaeger
+      namespace: lyrid-016d2205-3e0f-4ef0-aa64-d7debe01f0b1
+      jsonPointers:
+        - /spec/selector
+    - group: apps
+      kind: StatefulSet
+      name: opensearch
+      namespace: lyrid-016d2205-3e0f-4ef0-aa64-d7debe01f0b1
+      jsonPointers:
+        - /spec
+    - group: ""
+      kind: ConfigMap
+      name: grafana-dashboards
+      namespace: lyrid-016d2205-3e0f-4ef0-aa64-d7debe01f0b1
+      jsonPointers:
+        - /metadata/annotations
+    - group: apps
+      kind: Deployment
+      name: grafana
+      namespace: lyrid-016d2205-3e0f-4ef0-aa64-d7debe01f0b1
+      jsonPointers:
+        - /spec

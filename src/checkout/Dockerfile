@@ -1,20 +1,24 @@
 # Copyright The OpenTelemetry Authors
 # SPDX-License-Identifier: Apache-2.0
 
-
 FROM golang:1.22-alpine AS builder
+
+# Install git and other build dependencies
+RUN apk add --no-cache git
 
 WORKDIR /usr/src/app/
 
-RUN --mount=type=cache,target=/go/pkg/mod/ \
-    --mount=type=bind,source=./src/checkout/go.sum,target=go.sum \
-    --mount=type=bind,source=./src/checkout/go.mod,target=go.mod \
-    go mod download
+# Copy go mod files
+COPY src/checkout/go.sum src/checkout/go.mod ./
 
-RUN --mount=type=cache,target=/go/pkg/mod/ \
-    --mount=type=cache,target=/root/.cache/go-build \
-    --mount=type=bind,rw,source=./src/checkout,target=. \
-    go build -ldflags "-s -w" -o /go/bin/checkout/ ./
+# Download dependencies
+RUN go mod download
+
+# Copy source code
+COPY src/checkout/ ./
+
+# Build for Linux
+RUN CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -ldflags "-s -w" -o /go/bin/checkout/ ./
 
 FROM alpine
 
