@@ -14,45 +14,45 @@ jobs:
       contents: write  # Required to push to branches
 
     steps:
-    - uses: actions/checkout@v4
-      with:
-        fetch-depth: 0  # Fetch all history for all branches
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0  # Fetch all history for all branches
 
-    - name: Configure Git
-      run: |
-        git config --global user.name 'GitHub Actions'
-        git config --global user.email 'github-actions@github.com'
+      - name: Configure Git
+        run: |
+          git config --global user.name 'GitHub Actions'
+          git config --global user.email 'github-actions@github.com'
 
-    - name: Get Chaos Branches
-      id: get-branches
-      run: |
-        # Get all remote branches with chaos/ prefix
-        BRANCHES=$(git branch -r | grep 'origin/chaos/' | sed 's/origin\///' | tr '\n' ' ')
-        echo "branches=$BRANCHES" >> $GITHUB_OUTPUT
+      - name: Get Chaos Branches
+        id: get-branches
+        run: |
+          # Get all remote branches with chaos/ prefix
+          BRANCHES=$(git branch -r | grep 'origin/chaos/' | sed 's/origin\///' | tr '\n' ' ')
+          echo "branches=$BRANCHES" >> $GITHUB_OUTPUT
 
-    - name: Rebase Branches
-      run: |
-        for branch in ${{ steps.get-branches.outputs.branches }}; do
-          echo "Processing branch: $branch"
-          
-          # Checkout the branch
-          git checkout $branch
-          
-          # Fetch latest main
-          git fetch origin main
-          
-          # Attempt to rebase
-          if git rebase origin/main; then
-            # If rebase successful, force push
-            git push origin $branch --force
-            echo "Successfully rebased and pushed $branch"
-          else
-            # If rebase fails, abort and log error
-            git rebase --abort
-            echo "Failed to rebase $branch"
-          fi
-          
-          # Clean up
-          git checkout main
-          git clean -fd
-        done 
+      - name: Rebase Branches
+        run: |
+          for branch in ${{ steps.get-branches.outputs.branches }}; do
+            echo "Processing branch: $branch"
+
+            # Checkout the branch
+            git checkout $branch
+
+            # Fetch latest main
+            git fetch origin main
+
+            # Attempt to rebase
+            if git rebase origin/main; then
+              # If rebase successful, force push
+              git push origin $branch --force
+              echo "Successfully rebased and pushed $branch"
+            else
+              # If rebase fails, abort and log error
+              git rebase --abort
+              echo "Failed to rebase $branch"
+            fi
+
+            # Clean up
+            git checkout main
+            git clean -fd
+          done

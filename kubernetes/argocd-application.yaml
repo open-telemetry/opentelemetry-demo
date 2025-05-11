@@ -66,4 +66,4 @@ spec:
       name: grafana
       namespace: lyrid-016d2205-3e0f-4ef0-aa64-d7debe01f0b1
       jsonPointers:
-        - /spec 
+        - /spec

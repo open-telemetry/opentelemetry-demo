@@ -25,55 +25,55 @@ jobs:
         service: [checkout, product-catalog]
 
     steps:
-    - uses: actions/checkout@v4
+      - uses: actions/checkout@v4
 
-    - name: Set up Docker Buildx
-      uses: docker/setup-buildx-action@v3
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
 
-    - name: Set up Go
-      uses: actions/setup-go@v5
-      with:
-        go-version: '1.21'
-        cache: true
+      - name: Set up Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: '1.21'
+          cache: true
 
-    - name: Install protoc
-      run: |
-        sudo apt-get update
-        sudo apt-get install -y protobuf-compiler
+      - name: Install protoc
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y protobuf-compiler
 
-    - name: Install protoc-gen-go and protoc-gen-go-grpc
-      run: |
-        go install google.golang.org/protobuf/cmd/protoc-gen-go@latest
-        go install google.golang.org/grpc/cmd/protoc-gen-go-grpc@latest
+      - name: Install protoc-gen-go and protoc-gen-go-grpc
+        run: |
+          go install google.golang.org/protobuf/cmd/protoc-gen-go@latest
+          go install google.golang.org/grpc/cmd/protoc-gen-go-grpc@latest
 
-    - name: Generate protobuf
-      run: |
-        cd src/${{ matrix.service }}
-        go generate
+      - name: Generate protobuf
+        run: |
+          cd src/${{ matrix.service }}
+          go generate
 
-    - name: Build
-      run: |
-        cd src/${{ matrix.service }}
-        go build -v ./...
+      - name: Build
+        run: |
+          cd src/${{ matrix.service }}
+          go build -v ./...
 
-    - name: Test
-      run: |
-        cd src/${{ matrix.service }}
-        go test -v ./...
+      - name: Test
+        run: |
+          cd src/${{ matrix.service }}
+          go test -v ./...
 
-    - name: Log in to DockerHub
-      uses: docker/login-action@v3
-      with:
-        registry: ${{ env.DOCKERHUB_REGISTRY }}
-        username: ${{ secrets.DOCKERHUB_USERNAME }}
-        password: ${{ secrets.DOCKERHUB_TOKEN }}
+      - name: Log in to DockerHub
+        uses: docker/login-action@v3
+        with:
+          registry: ${{ env.DOCKERHUB_REGISTRY }}
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
 
-    - name: Build and push Docker image
-      uses: docker/build-push-action@v5
-      with:
-        context: .
-        file: src/${{ matrix.service }}/Dockerfile
-        push: ${{ github.ref == 'refs/heads/main' }}
-        tags: ${{ env.DOCKERHUB_REGISTRY }}/${{ env.DOCKERHUB_IMAGE_NAME }}-${{ matrix.service }}:latest
-        cache-from: type=registry,ref=${{ env.DOCKERHUB_REGISTRY }}/${{ env.DOCKERHUB_IMAGE_NAME }}-${{ matrix.service }}:buildcache
-        cache-to: type=registry,ref=${{ env.DOCKERHUB_REGISTRY }}/${{ env.DOCKERHUB_IMAGE_NAME }}-${{ matrix.service }}:buildcache,mode=max 
+      - name: Build and push Docker image
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          file: src/${{ matrix.service }}/Dockerfile
+          push: ${{ github.ref == 'refs/heads/main' }}
+          tags: ${{ env.DOCKERHUB_REGISTRY }}/${{ env.DOCKERHUB_IMAGE_NAME }}-${{ matrix.service }}:latest
+          cache-from: type=registry,ref=${{ env.DOCKERHUB_REGISTRY }}/${{ env.DOCKERHUB_IMAGE_NAME }}-${{ matrix.service }}:buildcache
+          cache-to: type=registry,ref=${{ env.DOCKERHUB_REGISTRY }}/${{ env.DOCKERHUB_IMAGE_NAME }}-${{ matrix.service }}:buildcache,mode=max
