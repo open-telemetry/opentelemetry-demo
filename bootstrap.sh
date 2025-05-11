@@ -58,3 +58,57 @@ sudo tee /etc/apt/sources.list.d/hashicorp.list
 sudo apt update
 sudo apt-get install terraform
 
+
+
+
+# 1. Validate & view your compose file
+docker compose config
+
+# 2. Build images defined in docker-compose.yml
+docker compose build
+# or rebuild without cache:
+docker compose build --no-cache
+
+# 3. Start all services
+docker compose up
+# in the background (detached):
+docker compose up -d
+
+# 4. Stop and remove containers, networks, volumes
+docker compose down
+# also remove named volumes
+docker compose down --volumes
+
+# 5. List running services
+docker compose ps
+
+# 6. View service logs
+# all services, follow output
+docker compose logs -f
+# only one service
+docker compose logs -f <service-name>
+
+# 7. Run a one‑off command in a service container
+docker compose run <service-name> <command>
+# e.g., open a shell
+docker compose run frontend sh
+
+# 8. Execute a command in a running container
+docker compose exec <service-name> <command>
+# e.g., open a bash shell
+docker compose exec frontend bash
+
+# 9. Pull updated images from registry
+docker compose pull
+
+# 10. Push built images to registry
+docker compose push
+
+# 11. Show images for your services
+docker compose images
+
+# 12. View or filter port mappings
+docker compose port <service-name> <container-port>
+
+# 13. Scale a service (override “replicas” in docker‑compose.yml)
+docker compose up -d --scale <service>=<count>
