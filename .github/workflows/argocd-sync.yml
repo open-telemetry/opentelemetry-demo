@@ -1,0 +1,77 @@
+name: ArgoCD Sync
+
+on:
+  push:
+    branches:
+      - main
+#   pull_request:
+#     branches:
+#       - main
+
+env:
+  ARGOCD_SERVER: ${{ vars.ARGOCD_SERVER }}
+  ARGOCD_AUTH_TOKEN: ${{ secrets.ARGOCD_AUTH_TOKEN }}
+  ARGOCD_APP_NAME: opentelemetry-demo
+  ARGOCD_NAMESPACE: argocd
+  KUBE_NAMESPACE: lyrid-016d2205-3e0f-4ef0-aa64-d7debe01f0b1
+  ARGOCD_OPTS: "--insecure --grpc-web"
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Install ArgoCD CLI
+        run: |
+          curl -sSL -o argocd-linux-amd64 https://github.com/argoproj/argo-cd/releases/latest/download/argocd-linux-amd64
+          sudo install -m 555 argocd-linux-amd64 /usr/local/bin/argocd
+          rm argocd-linux-amd64
+
+      - name: Configure kubectl
+        run: |
+          # Create kubeconfig directory
+          mkdir -p $HOME/.kube
+          
+          # Write kubeconfig from secret
+          echo "${{ secrets.KUBE_CONFIG }}" > $HOME/.kube/config
+          
+          # Set proper permissions
+          chmod 600 $HOME/.kube/config
+          
+          # Verify connection
+          kubectl cluster-info
+
+      - name: Apply ArgoCD Application
+        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+        run: |
+          # Apply the ArgoCD application manifest
+          kubectl apply -f kubernetes/argocd-application.yaml
+
+    #   - name: Sync Application
+    #     if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    #     run: |
+    #       # Sync the application with server-side apply for large resources
+    #       argocd app sync $ARGOCD_APP_NAME \
+    #         --prune=false \
+    #         --assumeYes \
+    #         --namespace $ARGOCD_NAMESPACE
+
+      - name: Check Application Status
+        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+        run: |
+          # Wait for sync to complete
+          argocd app wait $ARGOCD_APP_NAME \
+            --app-namespace $ARGOCD_NAMESPACE \
+            --timeout 300
+
+          # Get application status
+          argocd app get $ARGOCD_APP_NAME \
+            --namespace $ARGOCD_NAMESPACE
+
+      - name: Show Diff
+        if: github.event_name == 'pull_request'
+        run: |
+          argocd app diff $ARGOCD_APP_NAME \
+            --namespace $ARGOCD_NAMESPACE 
