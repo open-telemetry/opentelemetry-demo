@@ -5,15 +5,18 @@ metadata:
   namespace: argocd
   # TODO: Enable image updater
   annotations:
-    argocd-image-updater.argoproj.io/image-list: checkout=sherlocksai/otel-demo-checkout,product-catalog=sherlocksai/otel-demo-product-catalog
-    argocd-image-updater.argoproj.io/checkout.update-strategy: latest
+    argocd-image-updater.argoproj.io/image-list: checkout=sherlocksai/otel-demo-checkout:latest,product-catalog=sherlocksai/otel-demo-product-catalog:latest
+    argocd-image-updater.argoproj.io/checkout.update-strategy: digest
     argocd-image-updater.argoproj.io/checkout.force-update: "true"
-    argocd-image-updater.argoproj.io/checkout.allow-tags: "latest"
     argocd-image-updater.argoproj.io/checkout.pull-secret: pullsecret:argocd/argocd-image-updater-secret
-    argocd-image-updater.argoproj.io/product-catalog.update-strategy: latest
+    argocd-image-updater.argoproj.io/checkout.helm.image-name: components.checkout.imageOverride.repository
+    argocd-image-updater.argoproj.io/checkout.helm.image-tag: components.checkout.imageOverride.tag
+    argocd-image-updater.argoproj.io/product-catalog.update-strategy: digest
     argocd-image-updater.argoproj.io/product-catalog.force-update: "true"
-    argocd-image-updater.argoproj.io/product-catalog.allow-tags: "latest"
     argocd-image-updater.argoproj.io/product-catalog.pull-secret: pullsecret:argocd/argocd-image-updater-secret
+    argocd-image-updater.argoproj.io/product-catalog.helm.image-name: components.product-catalog.imageOverride.repository
+    argocd-image-updater.argoproj.io/product-catalog.helm.image-tag: components.product-catalog.imageOverride.tag
+    argocd-image-updater.argoproj.io/write-back-method: argocd
 spec:
   project: default
   source:
