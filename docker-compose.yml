@@ -14,10 +14,6 @@ networks:
     driver: bridge
 
 services:
-  # ******************
-  # Core Demo Services
-  # ******************
-  # Accounting service
   accounting:
     image: ${IMAGE_NAME}:${DEMO_VERSION}-accounting
     container_name: accounting
