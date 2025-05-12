@@ -1,11 +1,13 @@
 name: Build Go Services
 
 on:
+  workflow_dispatch:
   push:
     branches: [ main ]
     paths:
       - 'src/checkout/**'
       - 'src/product-catalog/**'
+      - '.github/workflows/build-go-services.yml'
   pull_request:
     branches: [ main ]
     paths:

@@ -1,12 +1,14 @@
 name: Build Python Services
 
 on:
+  workflow_dispatch:  # Allows manual triggering
   push:
     branches:
       - main
     paths:
       - 'src/recommendation/**'
       - 'src/product-catalog/**'
+      - '.github/workflows/python-services-build.yml'  # Also trigger on workflow changes
 env:
   DOCKERHUB_REGISTRY: docker.io
   DOCKERHUB_IMAGE_NAME: sherlocksai/otel-demo-recommendation
