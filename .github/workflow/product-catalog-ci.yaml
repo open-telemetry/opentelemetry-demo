@@ -20,7 +20,10 @@ jobs:
             go-version: 1.22
 
         - name: Build
-          run:  go build -o product-catalog-service src/product-catalog/main.go
+          run:  |
+              cd src/product-catalog
+              go mod download
+              go build -o product-catalog-service src/product-catalog/main.go
 
         - name: Unit Tests
           run:  go test src/product-catalog/...
