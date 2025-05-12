@@ -29,6 +29,17 @@ jobs:
           sudo install -m 555 argocd-linux-amd64 /usr/local/bin/argocd
           rm argocd-linux-amd64
 
+      - name: Install Helm
+        run: |
+          curl -fsSL -o get_helm.sh https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3
+          chmod 700 get_helm.sh
+          ./get_helm.sh
+
+      - name: Add Helm Repositories
+        run: |
+          helm repo add sherlocks-otel https://migrateai.github.io/opentelemetry-helm-charts
+          helm repo update
+
       - name: Configure kubectl
         run: |
           # Create kubeconfig directory
@@ -49,6 +60,14 @@ jobs:
           # Apply the ArgoCD application manifest
           kubectl apply -f kubernetes/argocd-application.yaml
 
+      - name: Apply values.yaml
+        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+        run: |
+          # Apply values.yaml to the ArgoCD application using argocd app set
+          argocd app set $ARGOCD_APP_NAME \
+            --values values.yaml \
+            --app-namespace $ARGOCD_NAMESPACE
+
     #   - name: Sync Application
     #     if: github.event_name == 'push' && github.ref == 'refs/heads/main'
     #     run: |
@@ -61,10 +80,10 @@ jobs:
       - name: Check Application Status
         if: github.event_name == 'push' && github.ref == 'refs/heads/main'
         run: |
-          # Wait for sync to complete
-          argocd app wait $ARGOCD_APP_NAME \
-            --app-namespace $ARGOCD_NAMESPACE \
-            --timeout 300
+          # # Wait for sync to complete
+          # argocd app wait $ARGOCD_APP_NAME \
+          #   --app-namespace $ARGOCD_NAMESPACE \
+          #   --timeout 300
 
           # Get application status
           argocd app get $ARGOCD_APP_NAME \

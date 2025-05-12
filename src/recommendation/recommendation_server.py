@@ -38,7 +38,6 @@ from metrics import (
 
 cached_ids = []
 first_run = True
-
 class RecommendationService(demo_pb2_grpc.RecommendationServiceServicer):
     def ListRecommendations(self, request, context):
         prod_list = get_product_list(request.product_ids)

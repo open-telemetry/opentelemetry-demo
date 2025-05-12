@@ -13,7 +13,7 @@ RUN apt-get -qq update \
     && rm -rf /var/lib/apt/lists/*
 
 WORKDIR /usr/src/app/
-COPY ./src/recommendation/requirements.txt ./
+COPY src/recommendation/requirements.txt ./
 
 RUN pip install --upgrade pip
 RUN pip install --prefix="/reqs" -r requirements.txt
@@ -24,7 +24,7 @@ RUN pip install --prefix="/reqs" -r requirements.txt
 FROM base AS runtime
 WORKDIR /usr/src/app/
 COPY --from=builder /reqs /usr/local
-COPY ./src/recommendation/ ./
+COPY src/recommendation/ ./
 
 RUN opentelemetry-bootstrap -a install
 
