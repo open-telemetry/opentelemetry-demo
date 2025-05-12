@@ -68,7 +68,7 @@ jobs:
 
           # Get application status
           argocd app get $ARGOCD_APP_NAME \
-            --namespace $ARGOCD_NAMESPACE
+            --app-namespace $ARGOCD_NAMESPACE
 
       - name: Show Diff
         if: github.event_name == 'pull_request'
