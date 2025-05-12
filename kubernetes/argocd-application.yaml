@@ -5,7 +5,7 @@ metadata:
   namespace: argocd
   # TODO: Enable image updater
   annotations:
-    argocd-image-updater.argoproj.io/image-list: checkout=sherlocksai/otel-demo-checkout:latest,product-catalog=sherlocksai/otel-demo-product-catalog:latest
+    argocd-image-updater.argoproj.io/image-list: checkout=sherlocksai/otel-demo-checkout:latest,product-catalog=sherlocksai/otel-demo-product-catalog:latest,recommendation=sherlocksai/otel-demo-recommendation:latest
     argocd-image-updater.argoproj.io/checkout.update-strategy: digest
     argocd-image-updater.argoproj.io/checkout.force-update: "true"
     argocd-image-updater.argoproj.io/checkout.pull-secret: pullsecret:argocd/argocd-image-updater-secret
@@ -16,6 +16,11 @@ metadata:
     argocd-image-updater.argoproj.io/product-catalog.pull-secret: pullsecret:argocd/argocd-image-updater-secret
     argocd-image-updater.argoproj.io/product-catalog.helm.image-name: components.product-catalog.imageOverride.repository
     argocd-image-updater.argoproj.io/product-catalog.helm.image-tag: components.product-catalog.imageOverride.tag
+    argocd-image-updater.argoproj.io/recommendation.update-strategy: digest
+    argocd-image-updater.argoproj.io/recommendation.force-update: "true"
+    argocd-image-updater.argoproj.io/recommendation.pull-secret: pullsecret:argocd/argocd-image-updater-secret
+    argocd-image-updater.argoproj.io/recommendation.helm.image-name: components.recommendation.imageOverride.repository
+    argocd-image-updater.argoproj.io/recommendation.helm.image-tag: components.recommendation.imageOverride.tag
     argocd-image-updater.argoproj.io/write-back-method: argocd
 spec:
   project: default
