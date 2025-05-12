@@ -15,6 +15,10 @@ the release.
   ([#2162](https://github.com/open-telemetry/opentelemetry-demo/pull/2162))
 * [cartservice] Refactor OpenFeature integration and add Dependency Injection support
   ([#2160](https://github.com/open-telemetry/opentelemetry-demo/pull/2160))
+* [checkout]: change image from alpine to distroless to reduce size
+  ([#2161](https://github.com/open-telemetry/opentelemetry-demo/pull/2161))
+* [product-catalog]: change image from alpine to distroless to reduce size
+  ([#2161](https://github.com/open-telemetry/opentelemetry-demo/pull/2161))
 
 ## 2.0.2
 
