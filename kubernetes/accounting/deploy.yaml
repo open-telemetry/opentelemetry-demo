@@ -1,0 +1,64 @@
+---
+# Source: opentelemetry-demo/templates/component.yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: opentelemetry-demo-accountingservice
+  labels:
+    
+    opentelemetry.io/name: opentelemetry-demo-accountingservice
+    app.kubernetes.io/instance: opentelemetry-demo
+    app.kubernetes.io/component: accountingservice
+    app.kubernetes.io/name: opentelemetry-demo-accountingservice
+    app.kubernetes.io/version: "1.12.0"
+    app.kubernetes.io/part-of: opentelemetry-demo
+spec:
+  replicas: 1
+  revisionHistoryLimit: 10
+  selector:
+    matchLabels:
+      
+      opentelemetry.io/name: opentelemetry-demo-accountingservice
+  template:
+    metadata:
+      labels:
+        
+        opentelemetry.io/name: opentelemetry-demo-accountingservice
+        app.kubernetes.io/instance: opentelemetry-demo
+        app.kubernetes.io/component: accountingservice
+        app.kubernetes.io/name: opentelemetry-demo-accountingservice
+    spec:
+      serviceAccountName: opentelemetry-demo
+      containers:
+        - name: accountingservice
+          image: 'ghcr.io/open-telemetry/demo:1.12.0-accountingservice'
+          imagePullPolicy: IfNotPresent
+          env:
+            - name: OTEL_SERVICE_NAME
+              valueFrom:
+                fieldRef:
+                  apiVersion: v1
+                  fieldPath: metadata.labels['app.kubernetes.io/component']
+            - name: OTEL_COLLECTOR_NAME
+              value: 'opentelemetry-demo-otelcol'
+            - name: OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE
+              value: cumulative
+            - name: KAFKA_SERVICE_ADDR
+              value: 'opentelemetry-demo-kafka:9092'
+            - name: OTEL_EXPORTER_OTLP_ENDPOINT
+              value: http://$(OTEL_COLLECTOR_NAME):4318
+            - name: OTEL_RESOURCE_ATTRIBUTES
+              value: service.name=$(OTEL_SERVICE_NAME),service.namespace=opentelemetry-demo,service.version=1.12.0
+          resources:
+            limits:
+              memory: 120Mi
+          volumeMounts:
+      initContainers:
+        - command:
+          - sh
+          - -c
+          - until nc -z -v -w30 opentelemetry-demo-kafka 9092; do echo waiting
+            for kafka; sleep 2; done;
+          image: busybox:latest
+          name: wait-for-kafka
+      volumes:
