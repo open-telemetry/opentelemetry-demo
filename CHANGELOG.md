@@ -17,7 +17,7 @@ the release.
   ([#2160](https://github.com/open-telemetry/opentelemetry-demo/pull/2160))
 * [chore] bump dependent images
   ([#2179](https://github.com/open-telemetry/opentelemetry-demo/pull/2179))
-  
+
 ## 2.0.2
 
 * [frontend] Update OpenTelemetry Browser SDK initialization
