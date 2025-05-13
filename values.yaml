@@ -17,6 +17,12 @@ components:
       repository: sherlocksai/otel-demo-recommendationn
       tag: latest
       pullPolicy: Always
+  cart:
+    enabled: true
+    imageOverride:
+      repository: sherlocksai/otel-demo-cart
+      tag: latest
+      pullPolicy: Always
 
 global:
   namespace: lyrid-016d2205-3e0f-4ef0-aa64-d7debe01f0b1
