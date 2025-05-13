@@ -68,14 +68,15 @@ jobs:
             --values values.yaml \
             --app-namespace $ARGOCD_NAMESPACE
 
-    #   - name: Sync Application
-    #     if: github.event_name == 'push' && github.ref == 'refs/heads/main'
-    #     run: |
-    #       # Sync the application with server-side apply for large resources
-    #       argocd app sync $ARGOCD_APP_NAME \
-    #         --prune=false \
-    #         --assumeYes \
-    #         --namespace $ARGOCD_NAMESPACE
+      - name: Sync Application
+        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+        run: |
+          # Sync the application with server-side apply for large resources
+          argocd app sync $ARGOCD_APP_NAME \
+            --prune=false \
+            --assumeYes \
+            --app-namespace $ARGOCD_NAMESPACE \
+            $ARGOCD_OPTS
 
       - name: Check Application Status
         if: github.event_name == 'push' && github.ref == 'refs/heads/main'
