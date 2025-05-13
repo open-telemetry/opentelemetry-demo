@@ -9,6 +9,7 @@ on:
       - 'src/recommendation/**'
       - 'src/product-catalog/**'
       - '.github/workflows/python-services-build.yml'  # Also trigger on workflow changes
+
 env:
   DOCKERHUB_REGISTRY: docker.io
   DOCKERHUB_IMAGE_NAME: sherlocksai/otel-demo-recommendation
@@ -38,4 +39,4 @@ jobs:
           push: ${{ github.ref == 'refs/heads/main' }}
           tags: ${{ env.DOCKERHUB_REGISTRY }}/${{ env.DOCKERHUB_IMAGE_NAME }}:latest
           cache-from: type=registry,ref=${{ env.DOCKERHUB_REGISTRY }}/${{ env.DOCKERHUB_IMAGE_NAME }}:buildcache
-          cache-to: type=registry,ref=${{ env.DOCKERHUB_REGISTRY }}/${{ env.DOCKERHUB_IMAGE_NAME }}:buildcache,mode=max 
+          cache-to: type=registry,ref=${{ env.DOCKERHUB_REGISTRY }}/${{ env.DOCKERHUB_IMAGE_NAME }}:buildcache,mode=max

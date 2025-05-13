@@ -44,13 +44,13 @@ jobs:
         run: |
           # Create kubeconfig directory
           mkdir -p $HOME/.kube
-          
+
           # Write kubeconfig from secret
           echo "${{ secrets.KUBE_CONFIG }}" > $HOME/.kube/config
-          
+
           # Set proper permissions
           chmod 600 $HOME/.kube/config
-          
+
           # Verify connection
           kubectl cluster-info
 
@@ -94,4 +94,4 @@ jobs:
         if: github.event_name == 'pull_request'
         run: |
           argocd app diff $ARGOCD_APP_NAME \
-            --namespace $ARGOCD_NAMESPACE 
+            --namespace $ARGOCD_NAMESPACE

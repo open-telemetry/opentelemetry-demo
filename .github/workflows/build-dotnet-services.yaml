@@ -3,12 +3,12 @@ name: Build Dotnet Services
 on:
   workflow_dispatch:
   push:
-    branches: [ main ]
+    branches: [main]
     paths:
       - 'src/cart/**'
       - '.github/workflows/build-cart-service.yml'
   pull_request:
-    branches: [ main ]
+    branches: [main]
     paths:
       - 'src/cart/**'
 

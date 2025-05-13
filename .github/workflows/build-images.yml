@@ -3,10 +3,11 @@
 name: Test image generation
 
 on:
-  push:
-    paths:
-      - 'src/**'
-      - 'test/**'
+  workflow_dispatch:
+  # push:
+  #   paths:
+  #     - 'src/**'
+  #     - 'test/**'
 
 jobs:
   build_images:

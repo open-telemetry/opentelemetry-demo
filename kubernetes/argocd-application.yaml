@@ -26,30 +26,30 @@ spec:
     helm:
       releaseName: my-otel-demo
       parameters:
-      - forceString: true
-        name: components.checkout.imageOverride.repository
-        value: sherlocksai/otel-demo-checkout
-      - forceString: true
-        name: components.checkout.imageOverride.tag
-        value: latest@sha256:595a82b78308c9e679405d5761c43e061e0df72975c91cfac047240e303a3604
-      - forceString: true
-        name: components.product-catalog.imageOverride.repository
-        value: sherlocksai/otel-demo-product-catalog
-      - forceString: true
-        name: components.product-catalog.imageOverride.tag
-        value: latest@sha256:034493521afd4372316cae192a2d82bcf04f6d68d545d180010dd6b741a88e04
-      - forceString: true
-        name: components.recommendation.imageOverride.repository
-        value: sherlocksai/otel-demo-recommendation
-      - forceString: true
-        name: components.recommendation.imageOverride.tag
-        value: latest@sha256:17296398f48cee5ef6be104cac41dc5601e756a4e53dd03e426914eabe1cb86c
-      - forceString: true
-        name: components.cart.imageOverride.repository
-        value: sherlocksai/otel-demo-cart
-      - forceString: true
-        name: components.cart.imageOverride.tag
-        value: latest
+        - forceString: true
+          name: components.checkout.imageOverride.repository
+          value: sherlocksai/otel-demo-checkout
+        - forceString: true
+          name: components.checkout.imageOverride.tag
+          value: latest@sha256:595a82b78308c9e679405d5761c43e061e0df72975c91cfac047240e303a3604
+        - forceString: true
+          name: components.product-catalog.imageOverride.repository
+          value: sherlocksai/otel-demo-product-catalog
+        - forceString: true
+          name: components.product-catalog.imageOverride.tag
+          value: latest@sha256:034493521afd4372316cae192a2d82bcf04f6d68d545d180010dd6b741a88e04
+        - forceString: true
+          name: components.recommendation.imageOverride.repository
+          value: sherlocksai/otel-demo-recommendation
+        - forceString: true
+          name: components.recommendation.imageOverride.tag
+          value: latest@sha256:17296398f48cee5ef6be104cac41dc5601e756a4e53dd03e426914eabe1cb86c
+        - forceString: true
+          name: components.cart.imageOverride.repository
+          value: sherlocksai/otel-demo-cart
+        - forceString: true
+          name: components.cart.imageOverride.tag
+          value: latest
       valueFiles:
         - values.yaml
   destination:

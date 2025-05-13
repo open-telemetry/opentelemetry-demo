@@ -27,7 +27,10 @@ jobs:
         id: get-branches
         run: |
           # Get all remote branches with chaos/ prefix
-          BRANCHES="SHLK-379-fix-env-name-in-checkout-service SHLK-380-redis-unreachable-in-cart-service SHLK-381-fix-memory-leak-in-recommendation-service SHLK-382-fix-image-name-in-checkout-service"
+          BRANCHES="SHLK-379-fix-env-name-in-checkout-service \
+            SHLK-380-redis-unreachable-in-cart-service \
+            SHLK-381-add-global-recommendations-list-in-recommendation-service \
+            SHLK-382-fix-image-name-in-checkout-service"
           echo "branches=$BRANCHES" >> $GITHUB_OUTPUT
 
       - name: Fetch Latest Changes
@@ -42,24 +45,24 @@ jobs:
           FAILED_BRANCHES=()
           SUCCESSFUL_BRANCHES=()
           NO_CHANGES_BRANCHES=()
-          
+
           for branch in ${{ steps.get-branches.outputs.branches }}; do
             echo "Processing branch: $branch"
-            
+
             # Ensure we have the latest state of the branch
             git fetch origin $branch
-            
+
             # Checkout the branch
             git checkout $branch
-            
+
             # Get the current commit hash before rebase
             OLD_COMMIT=$(git rev-parse HEAD)
-            
+
             # Attempt to rebase
             if git rebase origin/main; then
               # Get the new commit hash after rebase
               NEW_COMMIT=$(git rev-parse HEAD)
-              
+
               # Only push if there were actual changes
               if [ "$OLD_COMMIT" != "$NEW_COMMIT" ]; then
                 git push origin $branch --force
@@ -75,12 +78,12 @@ jobs:
               echo "Failed to rebase $branch"
               FAILED_BRANCHES+=("$branch")
             fi
-            
+
             # Clean up
             git checkout main
             git clean -fd
           done
-          
+
           # Report results
           echo "=== Rebase Results ==="
           echo "Successfully rebased branches:"
@@ -91,10 +94,10 @@ jobs:
           echo ""
           echo "Failed branches:"
           printf '%s\n' "${FAILED_BRANCHES[@]}"
-          
+
           # Set output for potential use in other steps
           echo "failed_branches=${FAILED_BRANCHES[*]}" >> $GITHUB_OUTPUT
-          
+
           # Exit with failure if any branches failed
           if [ ${#FAILED_BRANCHES[@]} -gt 0 ]; then
             echo "::error::Some branches failed to rebase. Check the logs for details."
