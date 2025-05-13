@@ -19,6 +19,8 @@ the release.
   ([#2161](https://github.com/open-telemetry/opentelemetry-demo/pull/2161))
 * [product-catalog]: change image from alpine to distroless to reduce size
   ([#2161](https://github.com/open-telemetry/opentelemetry-demo/pull/2161))
+* [chore] bump dependent images
+  ([#2179](https://github.com/open-telemetry/opentelemetry-demo/pull/2179))
 
 ## 2.0.2
 
