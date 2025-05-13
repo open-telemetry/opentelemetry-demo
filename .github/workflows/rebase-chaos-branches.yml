@@ -27,7 +27,7 @@ jobs:
         id: get-branches
         run: |
           # Get all remote branches with chaos/ prefix
-          BRANCHES=$(git branch -r | grep 'origin/chaos/' | sed 's/origin\///' | tr '\n' ' ')
+          BRANCHES="SHLK-379-fix-env-name-in-checkout-service SHLK-380-redis-unreachable-in-cart-service SHLK-381-fix-memory-leak-in-recommendation-service SHLK-382-fix-image-name-in-checkout-service"
           echo "branches=$BRANCHES" >> $GITHUB_OUTPUT
 
       - name: Fetch Latest Changes
