@@ -30,28 +30,44 @@ jobs:
           BRANCHES=$(git branch -r | grep 'origin/chaos/' | sed 's/origin\///' | tr '\n' ' ')
           echo "branches=$BRANCHES" >> $GITHUB_OUTPUT
 
+      - name: Fetch Latest Changes
+        run: |
+          git fetch --prune origin
+          git fetch origin main
+
       - name: Rebase Branches
         run: |
           for branch in ${{ steps.get-branches.outputs.branches }}; do
             echo "Processing branch: $branch"
-
+            
+            # Ensure we have the latest state of the branch
+            git fetch origin $branch
+            
             # Checkout the branch
             git checkout $branch
-
-            # Fetch latest main
-            git fetch origin main
-
+            
+            # Get the current commit hash before rebase
+            OLD_COMMIT=$(git rev-parse HEAD)
+            
             # Attempt to rebase
             if git rebase origin/main; then
-              # If rebase successful, force push
-              git push origin $branch --force
-              echo "Successfully rebased and pushed $branch"
+              # Get the new commit hash after rebase
+              NEW_COMMIT=$(git rev-parse HEAD)
+              
+              # Only push if there were actual changes
+              if [ "$OLD_COMMIT" != "$NEW_COMMIT" ]; then
+                git push origin $branch --force
+                echo "Successfully rebased and pushed $branch"
+              else
+                echo "No changes needed for $branch"
+              fi
             else
               # If rebase fails, abort and log error
               git rebase --abort
               echo "Failed to rebase $branch"
+              exit 1
             fi
-
+            
             # Clean up
             git checkout main
             git clean -fd
