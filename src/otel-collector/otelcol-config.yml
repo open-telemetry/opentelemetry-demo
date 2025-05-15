@@ -138,5 +138,5 @@ service:
             timeout: 5000
             exporter:
               otlp:
-                protocol: grpc
-                endpoint: ${env:OTEL_COLLECTOR_HOST}:${env:OTEL_COLLECTOR_PORT_GRPC}
+                protocol: http/protobuf
+                endpoint: ${env:OTEL_COLLECTOR_HOST}:${env:OTEL_COLLECTOR_PORT_HTTP}
