@@ -728,7 +728,6 @@ services:
     ports:
       - "${JAEGER_PORT}"         # Jaeger UI
       - "${OTEL_COLLECTOR_PORT_GRPC}"
-      - "${OTEL_COLLECTOR_PORT_HTTP}"
     environment:
       - METRICS_STORAGE_TYPE=prometheus
     logging: *logging
