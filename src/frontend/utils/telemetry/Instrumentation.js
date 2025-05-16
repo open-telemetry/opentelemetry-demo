@@ -73,8 +73,7 @@ class SpanNameProcessor {
       shutdown() {}
 }
 
-// use console exporter when OTEL_TRACES_EXPORTER is set to "console"
-const traceExporter = process.env.OTEL_TRACES_EXPORTER === 'console' ? new ConsoleSpanExporter() : new OTLPTraceExporter();
+const traceExporter = process.env.OTEL_TRACES_EXPORTER === 'otlp' ? new OTLPTraceExporter() : new ConsoleSpanExporter();
 
 const sdk = new opentelemetry.NodeSDK({
   instrumentations: [
