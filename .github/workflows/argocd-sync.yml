@@ -4,9 +4,15 @@ on:
   push:
     branches:
       - main
-#   pull_request:
-#     branches:
-#       - main
+    paths:
+      - .github/workflows/argocd-sync.yml
+      - kubernetes/argocd-application.yaml
+  workflow_run:
+    workflows: ["Build Python Services", "Build Go Services", "Build Dotnet Services"]
+    types:
+      - completed
+    branches:
+      - main
 
 env:
   ARGOCD_SERVER: ${{ vars.ARGOCD_SERVER }}
