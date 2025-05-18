@@ -23,16 +23,6 @@ jobs:
           git config --global user.name 'GitHub Actions'
           git config --global user.email 'github-actions@github.com'
 
-      - name: Get Chaos Branches
-        id: get-branches
-        run: |
-          # Get all remote branches with chaos/ prefix
-          BRANCHES="SHLK-379-fix-env-name-in-checkout-service \
-            SHLK-380-redis-unreachable-in-cart-service \
-            SHLK-381-add-global-recommendations-list-in-recommendation-service \
-            SHLK-382-fix-image-name-in-checkout-service"
-          echo "branches=$BRANCHES" >> $GITHUB_OUTPUT
-
       - name: Fetch Latest Changes
         run: |
           git fetch --prune origin
@@ -40,14 +30,19 @@ jobs:
 
       - name: Rebase Branches
         id: rebase
+        env:
+          PR_BRANCHES: ${{ vars.PR_BRANCHES }}
         run: |
           # Initialize arrays to track results
           FAILED_BRANCHES=()
           SUCCESSFUL_BRANCHES=()
           NO_CHANGES_BRANCHES=()
 
-          for branch in ${{ steps.get-branches.outputs.branches }}; do
-            echo "Processing branch: $branch"
+          # Read branches into an array
+          IFS=' ' read -ra BRANCHES <<< "$PR_BRANCHES"
+
+          for branch in "${BRANCHES[@]}"; do
+             echo "Processing branch: $branch"
 
             # Ensure we have the latest state of the branch
             git fetch origin $branch
