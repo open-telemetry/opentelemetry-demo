@@ -1,0 +1,75 @@
+name: Create Missing PRs
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: '0 0 * * *'  # Run daily at midnight UTC
+
+jobs:
+  check-and-create-prs:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install PyGithub
+        run: pip install PyGithub
+
+      - name: Check and Create PRs
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          PR_BRANCHES: ${{ vars.PR_BRANCHES }}
+        run: |
+          cat << 'EOF' > check_prs.py
+          from github import Github
+          import os
+          import sys
+
+          # Initialize GitHub client
+          g = Github(os.environ['GITHUB_TOKEN'])
+          repo = g.get_repo('migrateai/opentelemetry-demo')
+
+          # Get branches from environment variable
+          branches = os.environ['PR_BRANCHES'].split()
+
+          for branch in branches:
+              # Check if PR already exists
+              prs = repo.get_pulls(state='open', head=f'migrateai:{branch}')
+              
+              if prs.totalCount == 0:
+                  print(f"No open PR found for branch {branch}")
+                  
+                  # Get the last commit message
+                  commits = repo.get_commits(sha=branch)
+                  if commits.totalCount > 0:
+                      last_commit = commits[0]
+                      commit_message = last_commit.commit.message
+                      message_lines = commit_message.split('\n')
+                      title = message_lines[0]  # First line as title
+                      body = '\n'.join(message_lines[1:]) if len(message_lines) > 1 else ""  # Remaining lines as body
+                      
+                      # Create PR
+                      try:
+                          pr = repo.create_pull(
+                              title=title,
+                              body=body,
+                              head=branch,
+                              base='main'
+                          )
+                          print(f"Created PR #{pr.number} for branch {branch}")
+                      except Exception as e:
+                          print(f"Error creating PR for branch {branch}: {str(e)}")
+                  else:
+                      print(f"No commits found for branch {branch}")
+              else:
+                  print(f"PR already exists for branch {branch}")
+          EOF
+
+          python check_prs.py 
