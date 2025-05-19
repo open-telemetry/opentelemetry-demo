@@ -8,23 +8,67 @@ on:
       - 'src/checkout/**'
       - 'src/product-catalog/**'
       - '.github/workflows/build-go-services.yml'
-  pull_request:
-    branches: [ main ]
-    paths:
-      - 'src/checkout/**'
-      - 'src/product-catalog/**'
+  # pull_request:
+  #   branches: [ main ]
+  #   paths:
+  #     - 'src/checkout/**'
+  #     - 'src/product-catalog/**'
 
 env:
   DOCKERHUB_REGISTRY: docker.io
   DOCKERHUB_IMAGE_NAME: sherlocksai/otel-demo
 
 jobs:
+  determine-services:
+    name: Determine Services to Build
+    runs-on: ubuntu-latest
+    outputs:
+      matrix: ${{ steps.set-matrix.outputs.matrix }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Set Matrix
+        id: set-matrix
+        run: |
+          # For workflow_dispatch, build all services
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+            echo "matrix={\"service\":[\"checkout\",\"product-catalog\"]}" >> $GITHUB_OUTPUT
+            exit 0
+          fi
+
+          # For push events, check changed files
+          if [ "${{ github.event_name }}" = "push" ]; then
+            # Check if workflow file was changed
+            if git diff --name-only ${{ github.event.before }} ${{ github.event.after }} 2>/dev/null | grep -q "^.github/workflows/build-go-services.yml$"; then
+              echo "matrix={\"service\":[\"checkout\",\"product-catalog\"]}" >> $GITHUB_OUTPUT
+              exit 0
+            fi
+
+            # Check which services were changed
+            SERVICES=()
+            if git diff --name-only ${{ github.event.before }} ${{ github.event.after }} 2>/dev/null | grep -q "^src/checkout/"; then
+              SERVICES+=("checkout")
+            fi
+            if git diff --name-only ${{ github.event.before }} ${{ github.event.after }} 2>/dev/null | grep -q "^src/product-catalog/"; then
+              SERVICES+=("product-catalog")
+            fi
+
+            if [ ${#SERVICES[@]} -eq 0 ]; then
+              echo "matrix={\"service\":[\"none\"]}" >> $GITHUB_OUTPUT
+              exit 0
+            fi
+            echo "matrix={\"service\":$(echo ${SERVICES[@]} | jq -R -s -c 'split(" ")')}" >> $GITHUB_OUTPUT
+          fi
+
   build:
     name: Build Go Services
+    needs: determine-services
+    if: ${{ fromJson(needs.determine-services.outputs.matrix).service != null && fromJson(needs.determine-services.outputs.matrix).service[0] != 'none' }}
     runs-on: ubuntu-latest
     strategy:
-      matrix:
-        service: [checkout, product-catalog]
+      matrix: ${{ fromJson(needs.determine-services.outputs.matrix) }}
 
     steps:
       - uses: actions/checkout@v4
@@ -76,6 +120,8 @@ jobs:
           context: .
           file: src/${{ matrix.service }}/Dockerfile
           push: ${{ github.ref == 'refs/heads/main' }}
-          tags: ${{ env.DOCKERHUB_REGISTRY }}/${{ env.DOCKERHUB_IMAGE_NAME }}-${{ matrix.service }}:latest
-          cache-from: type=registry,ref=${{ env.DOCKERHUB_REGISTRY }}/${{ env.DOCKERHUB_IMAGE_NAME }}-${{ matrix.service }}:buildcache
-          cache-to: type=registry,ref=${{ env.DOCKERHUB_REGISTRY }}/${{ env.DOCKERHUB_IMAGE_NAME }}-${{ matrix.service }}:buildcache,mode=max
+          tags: |
+            ${{ env.DOCKERHUB_REGISTRY }}/${{ env.DOCKERHUB_IMAGE_NAME }}-${{ matrix.service }}:latest
+            ${{ env.DOCKERHUB_REGISTRY }}/${{ env.DOCKERHUB_IMAGE_NAME }}-${{ matrix.service }}:${{ github.sha }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max

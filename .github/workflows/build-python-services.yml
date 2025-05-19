@@ -7,7 +7,6 @@ on:
       - main
     paths:
       - 'src/recommendation/**'
-      - 'src/product-catalog/**'
       - '.github/workflows/python-services-build.yml'  # Also trigger on workflow changes
 
 env:
