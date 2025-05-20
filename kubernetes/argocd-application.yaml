@@ -50,6 +50,15 @@ spec:
         - forceString: true
           name: components.cart.imageOverride.tag
           value: latest
+        - forceString: true
+          name: components.product-catalog.envOverrides.0.name
+          value: NEW_RELIC_LICENSE_KEY
+        - forceString: true
+          name: components.product-catalog.envOverrides.0.valueFrom.secretKeyRef.name
+          value: new-relic-license-key
+        - forceString: true
+          name: components.product-catalog.envOverrides.0.valueFrom.secretKeyRef.key
+          value: license-key
       valueFiles:
         - values.yaml
   destination:

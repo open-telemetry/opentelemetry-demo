@@ -47,6 +47,7 @@ require (
 	github.com/klauspost/cpuid/v2 v2.2.7 // indirect
 	github.com/modern-go/concurrent v0.0.0-20180306012644-bacd9c7ef1dd // indirect
 	github.com/modern-go/reflect2 v1.0.2 // indirect
+	github.com/newrelic/go-agent/v3 v3.39.0 // indirect
 	github.com/open-feature/flagd-schemas v0.2.9-0.20250127221449-bb763438abc5 // indirect
 	github.com/open-feature/flagd/core v0.11.2 // indirect
 	github.com/twmb/murmur3 v1.1.8 // indirect

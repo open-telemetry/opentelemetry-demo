@@ -19,6 +19,7 @@ import (
 	"syscall"
 	"time"
 
+	"github.com/newrelic/go-agent/v3/newrelic"
 	"github.com/sirupsen/logrus"
 
 	"go.opentelemetry.io/contrib/bridges/otellogrus"
@@ -55,6 +56,7 @@ var (
 	catalog     []*pb.Product
 	resource    *sdkresource.Resource
 	initResOnce sync.Once
+	nrApp       *newrelic.Application
 )
 
 const DEFAULT_RELOAD_INTERVAL = 10
@@ -150,6 +152,18 @@ func initMeterProvider() *sdkmetric.MeterProvider {
 }
 
 func main() {
+	// Initialize New Relic
+	var err error
+	nrApp, err = newrelic.NewApplication(
+		newrelic.ConfigAppName("Product Catalog"),
+		newrelic.ConfigLicense(os.Getenv("NEW_RELIC_LICENSE_KEY")),
+		newrelic.ConfigAppLogForwardingEnabled(true),
+	)
+	if err != nil {
+		log.Fatalf("Failed to initialize New Relic: %v", err)
+	}
+	defer nrApp.Shutdown(10 * time.Second)
+
 	tp := initTracerProvider()
 	defer func() {
 		if err := tp.Shutdown(context.Background()); err != nil {
@@ -166,7 +180,7 @@ func main() {
 		log.Println("Shutdown meter provider")
 	}()
 	openfeature.AddHooks(otelhooks.NewTracesHook())
-	err := openfeature.SetProvider(flagd.NewProvider())
+	err = openfeature.SetProvider(flagd.NewProvider())
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -310,8 +324,10 @@ func (p *productCatalog) Watch(req *healthpb.HealthCheckRequest, ws healthpb.Hea
 }
 
 func (p *productCatalog) ListProducts(ctx context.Context, req *pb.Empty) (*pb.ListProductsResponse, error) {
-	span := trace.SpanFromContext(ctx)
+	txn := nrApp.StartTransaction("ListProducts")
+	defer txn.End()
 
+	span := trace.SpanFromContext(ctx)
 	span.SetAttributes(
 		attribute.Int("app.products.count", len(catalog)),
 	)
@@ -319,6 +335,9 @@ func (p *productCatalog) ListProducts(ctx context.Context, req *pb.Empty) (*pb.L
 }
 
 func (p *productCatalog) GetProduct(ctx context.Context, req *pb.GetProductRequest) (*pb.Product, error) {
+	txn := nrApp.StartTransaction("GetProduct")
+	defer txn.End()
+
 	span := trace.SpanFromContext(ctx)
 	span.SetAttributes(
 		attribute.String("app.product.id", req.Id),
@@ -329,6 +348,7 @@ func (p *productCatalog) GetProduct(ctx context.Context, req *pb.GetProductReque
 		msg := fmt.Sprintf("Error: Product Catalog Fail Feature Flag Enabled")
 		span.SetStatus(otelcodes.Error, msg)
 		span.AddEvent(msg)
+		txn.NoticeError(fmt.Errorf(msg))
 		return nil, status.Errorf(codes.Internal, msg)
 	}
 
@@ -344,6 +364,7 @@ func (p *productCatalog) GetProduct(ctx context.Context, req *pb.GetProductReque
 		msg := fmt.Sprintf("Product Not Found: %s", req.Id)
 		span.SetStatus(otelcodes.Error, msg)
 		span.AddEvent(msg)
+		txn.NoticeError(fmt.Errorf(msg))
 		return nil, status.Errorf(codes.NotFound, msg)
 	}
 
@@ -356,6 +377,9 @@ func (p *productCatalog) GetProduct(ctx context.Context, req *pb.GetProductReque
 }
 
 func (p *productCatalog) SearchProducts(ctx context.Context, req *pb.SearchProductsRequest) (*pb.SearchProductsResponse, error) {
+	txn := nrApp.StartTransaction("SearchProducts")
+	defer txn.End()
+
 	span := trace.SpanFromContext(ctx)
 
 	var result []*pb.Product

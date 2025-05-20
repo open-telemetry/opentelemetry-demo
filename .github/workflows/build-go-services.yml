@@ -120,8 +120,6 @@ jobs:
           context: .
           file: src/${{ matrix.service }}/Dockerfile
           push: ${{ github.ref == 'refs/heads/main' }}
-          tags: |
-            ${{ env.DOCKERHUB_REGISTRY }}/${{ env.DOCKERHUB_IMAGE_NAME }}-${{ matrix.service }}:latest
-            ${{ env.DOCKERHUB_REGISTRY }}/${{ env.DOCKERHUB_IMAGE_NAME }}-${{ matrix.service }}:${{ github.sha }}
+          tags: ${{ env.DOCKERHUB_REGISTRY }}/${{ env.DOCKERHUB_IMAGE_NAME }}-${{ matrix.service }}:latest,${{ env.DOCKERHUB_REGISTRY }}/${{ env.DOCKERHUB_IMAGE_NAME }}-${{ matrix.service }}:${{ github.sha }}
           cache-from: type=gha
           cache-to: type=gha,mode=max
