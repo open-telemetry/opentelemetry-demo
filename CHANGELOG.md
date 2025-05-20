@@ -21,6 +21,8 @@ the release.
   ([#2161](https://github.com/open-telemetry/opentelemetry-demo/pull/2161))
 * [chore] bump dependent images
   ([#2179](https://github.com/open-telemetry/opentelemetry-demo/pull/2179))
+* [image-provider]: replace bookworm image with nonroot alpine image
+  ([2193](https://github.com/open-telemetry/opentelemetry-demo/pull/2193))
 
 ## 2.0.2
 
