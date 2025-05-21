@@ -33,11 +33,17 @@ spec:
           name: components.checkout.imageOverride.tag
           value: latest
         - forceString: true
+          name: components.checkout.imageOverride.pullPolicy
+          value: Always
+        - forceString: true
           name: components.product-catalog.imageOverride.repository
           value: sherlocksai/otel-demo-product-catalog
         - forceString: true
           name: components.product-catalog.imageOverride.tag
-          value: latest@sha256:034493521afd4372316cae192a2d82bcf04f6d68d545d180010dd6b741a88e04
+          value: latest
+        - forceString: true
+          name: components.product-catalog.imageOverride.pullPolicy
+          value: Always
         - forceString: true
           name: components.recommendation.imageOverride.repository
           value: sherlocksai/otel-demo-recommendation
@@ -53,6 +59,9 @@ spec:
         - forceString: true
           name: components.cart.imageOverride.tag
           value: latest
+        - forceString: true
+          name: components.cart.imageOverride.pullPolicy
+          value: Always
       values: |
         components:
           product-catalog:
