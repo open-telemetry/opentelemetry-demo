@@ -11,14 +11,18 @@ the release.
   ([#2148](https://github.com/open-telemetry/opentelemetry-demo/pull/2148))
 * [product-catalog] Simplify span event name
   ([#2150](https://github.com/open-telemetry/opentelemetry-demo/pull/2150))
-* [grafana] configure `traceToLogs` integration
-  ([#2162](https://github.com/open-telemetry/opentelemetry-demo/pull/2162))
 * [cartservice] Refactor OpenFeature integration and add Dependency Injection support
   ([#2160](https://github.com/open-telemetry/opentelemetry-demo/pull/2160))
 * [checkout]: change image from alpine to distroless to reduce size
   ([#2161](https://github.com/open-telemetry/opentelemetry-demo/pull/2161))
 * [product-catalog]: change image from alpine to distroless to reduce size
   ([#2161](https://github.com/open-telemetry/opentelemetry-demo/pull/2161))
+* [grafana] configure `traceToLogs` integration
+  ([#2162](https://github.com/open-telemetry/opentelemetry-demo/pull/2162))
+* [recommendation] change image from bookworm to alpine to reduce size
+  ([#2164](https://github.com/open-telemetry/opentelemetry-demo/pull/2164))
+* [fraud-detection] update distroless to debian12
+  ([#2170](https://github.com/open-telemetry/opentelemetry-demo/pull/2170))
 * [chore] bump dependent images
   ([#2179](https://github.com/open-telemetry/opentelemetry-demo/pull/2179))
 * [image-provider]: replace bookworm image with nonroot alpine image
