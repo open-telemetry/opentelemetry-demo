@@ -25,6 +25,8 @@ the release.
   ([#2170](https://github.com/open-telemetry/opentelemetry-demo/pull/2170))
 * [chore] bump dependent images
   ([#2179](https://github.com/open-telemetry/opentelemetry-demo/pull/2179))
+* [kafka] update image to latest
+  ([2194](https://github.com/open-telemetry/opentelemetry-demo/pull/2194))
 
 ## 2.0.2
 
