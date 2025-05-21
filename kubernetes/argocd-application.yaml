@@ -22,7 +22,7 @@ spec:
   source:
     chart: opentelemetry-demo
     repoURL: https://migrateai.github.io/opentelemetry-helm-charts
-    targetRevision: 0.37.6
+    targetRevision: 0.37.7
     helm:
       releaseName: my-otel-demo
       parameters:
@@ -42,23 +42,26 @@ spec:
           name: components.recommendation.imageOverride.repository
           value: sherlocksai/otel-demo-recommendation
         - forceString: true
+          name: components.recommendation.imageOverride.pullPolicy
+          value: Always
+        - forceString: true
           name: components.recommendation.imageOverride.tag
-          value: latest@sha256:17296398f48cee5ef6be104cac41dc5601e756a4e53dd03e426914eabe1cb86c
+          value: latest
         - forceString: true
           name: components.cart.imageOverride.repository
           value: sherlocksai/otel-demo-cart
         - forceString: true
           name: components.cart.imageOverride.tag
           value: latest
-        - forceString: true
-          name: components.product-catalog.envOverrides.0.name
-          value: NEW_RELIC_LICENSE_KEY
-        - forceString: true
-          name: components.product-catalog.envOverrides.0.valueFrom.secretKeyRef.name
-          value: new-relic-license-key
-        - forceString: true
-          name: components.product-catalog.envOverrides.0.valueFrom.secretKeyRef.key
-          value: license-key
+      values: |
+        components:
+          product-catalog:
+            envOverrides:
+              - name: NEW_RELIC_LICENSE_KEY
+                valueFrom:
+                  secretKeyRef:
+                    name: new-relic-license-key
+                    key: license-key
       valueFiles:
         - values.yaml
   destination:
