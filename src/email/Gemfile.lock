@@ -271,8 +271,8 @@ GEM
     timeout (0.4.3)
 
 PLATFORMS
-  arm64-darwin
   aarch64-linux-musl
+  arm64-darwin
   x86_64-darwin
   x86_64-linux-musl
 
@@ -288,4 +288,4 @@ DEPENDENCIES
   sinatra (~> 4.1)
 
 BUNDLED WITH
-   2.4.19
+   2.6.7
