@@ -1,0 +1,27 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: signoz-ingress
+  namespace: signoz
+  annotations:
+    # Uncomment the next line if using cert-manager for TLS
+    # cert-manager.io/cluster-issuer: letsencrypt-prod
+    # Uncomment the next line if using nginx ingress controller
+    kubernetes.io/ingress.class: nginx
+spec:
+  rules:
+    - host: lyrid-otel-demo-signoz.sherlocks.cloud   # <-- Replace with your DNS name
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: signoz
+                port:
+                  number: 8080
+  # Uncomment below for TLS (recommended for production)
+  # tls:
+  #   - hosts:
+  #       - argocd.YOURDOMAIN.com
+  #     secretName: argocd-tls

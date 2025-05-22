@@ -1,0 +1,27 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: argocd-server
+  namespace: argocd
+  annotations:
+    # Uncomment the next line if using cert-manager for TLS
+    # cert-manager.io/cluster-issuer: letsencrypt-prod
+    # Uncomment the next line if using nginx ingress controller
+    kubernetes.io/ingress.class: nginx
+spec:
+  rules:
+    - host: lyrid-otel-demo-argocd.sherlocks.cloud   # <-- Replace with your DNS name
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: argocd-server
+                port:
+                  number: 80
+  # Uncomment below for TLS (recommended for production)
+  # tls:
+  #   - hosts:
+  #       - argocd.YOURDOMAIN.com
+  #     secretName: argocd-tls

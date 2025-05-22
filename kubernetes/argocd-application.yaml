@@ -22,7 +22,7 @@ spec:
   source:
     chart: opentelemetry-demo
     repoURL: https://migrateai.github.io/opentelemetry-helm-charts
-    targetRevision: 0.37.7
+    targetRevision: 0.37.8
     helm:
       releaseName: my-otel-demo
       parameters:
@@ -71,8 +71,136 @@ spec:
                   secretKeyRef:
                     name: new-relic-license-key
                     key: license-key
-      valueFiles:
-        - values.yaml
+
+        prometheus:
+          server:
+            resources:
+              requests:
+                memory: "512Mi"
+                cpu: "500m"
+              limits:
+                memory: "1Gi"
+                cpu: "1"
+            serverFiles:
+              prometheus.yml:
+                global:
+                  scrape_interval: 15s
+                  evaluation_interval: 15s
+            persistentVolume:
+              enabled: true
+              existingClaim: prometheus
+              mountPath: /data
+              subPath: ""
+            emptyDir: {}
+            configMapOverrideName: ""
+            configFromSecret: ""
+            storage:
+              volumeClaimTemplate: null
+            extraConfigmapMounts: []
+            extraSecretMounts: []
+            extraHostPathMounts: []
+
+
+
+        opentelemetry-collector:
+          enabled: true
+          image:
+            repository: "otel/opentelemetry-collector-contrib"
+          fullnameOverride: otel-collector
+          mode: deployment
+          presets:
+            kubernetesAttributes:
+              enabled: true
+          resources:
+            limits:
+              memory: 200Mi
+          service:
+            type: ClusterIP
+          ports:
+            metrics:
+              enabled: true
+          podAnnotations:
+            prometheus.io/scrape: "true"
+            opentelemetry_community_demo: "true"
+          config:
+            receivers:
+              otlp:
+                protocols:
+                  http:
+                    cors:
+                      allowed_origins:
+                        - "http://*"
+                        - "https://*"
+              httpcheck/frontend-proxy:
+                targets:
+                  - endpoint: http://frontend-proxy:8080
+              redis:
+                endpoint: "valkey-cart:6379"
+                collection_interval: 10s
+
+            exporters:
+              otlp:
+                endpoint: jaeger-collector:4317
+                tls:
+                  insecure: true
+              otlphttp/prometheus:
+                endpoint: http://prometheus:9090/api/v1/otlp
+                tls:
+                  insecure: true
+              opensearch:
+                logs_index: otel
+                http:
+                  endpoint: http://opensearch:9200
+                  tls:
+                    insecure: true
+              otlp/signoz:
+                endpoint: signoz-otel-collector.signoz:4317
+                tls:
+                  insecure: true
+
+            processors:
+              transform:
+                error_mode: ignore
+                trace_statements:
+                  - context: span
+                    statements:
+                      - replace_pattern(name, "\\?.*", "")
+                      - replace_match(name, "GET /api/products/*", "GET /api/products/{productId}")
+              resource:
+                attributes:
+                - key: service.instance.id
+                  from_attribute: k8s.pod.uid
+                  action: insert
+
+            connectors:
+              spanmetrics: {}
+
+            service:
+              pipelines:
+                traces:
+                  receivers: [otlp]
+                  processors: [memory_limiter, resource, transform, batch]
+                  exporters: [otlp, otlp/signoz, debug, spanmetrics]
+                metrics:
+                  receivers: [httpcheck/frontend-proxy, redis, otlp, spanmetrics]
+                  processors: [memory_limiter, resource, batch]
+                  exporters: [otlphttp/prometheus, otlp/signoz, debug]
+                logs:
+                  receivers: [otlp]
+                  processors: [memory_limiter, resource, batch]
+                  exporters: [opensearch, otlp/signoz, debug]
+              telemetry:
+                metrics:
+                  level: detailed
+                  readers:
+                    - periodic:
+                        interval: 10000
+                        timeout: 5000
+                        exporter:
+                          otlp:
+                            protocol: grpc
+                            endpoint: otel-collector:4318
+
   destination:
     server: https://kubernetes.default.svc
     namespace: lyrid-016d2205-3e0f-4ef0-aa64-d7debe01f0b1

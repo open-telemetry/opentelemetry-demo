@@ -1,0 +1,45 @@
+signoz:
+  name: "signoz"
+  replicaCount: 1
+  image:
+    registry: docker.io
+    repository: signoz/signoz
+    tag: v0.81.0
+    pullPolicy: IfNotPresent
+  service:
+    type: ClusterIP
+    port: 8080
+    internalPort: 8085
+    opampPort: 4320
+  additionalArgs:
+    - --use-logs-new-schema=true
+    - --use-trace-new-schema=true
+
+clickhouse:
+  persistence:
+    enabled: true
+    storageClass: "longhorn"
+    size: 20Gi
+    accessMode: ReadWriteOnce
+  resources:
+    requests:
+      memory: "2Gi"
+      cpu: "1"
+    limits:
+      memory: "4Gi"
+      cpu: "2"
+
+otel-collector:
+  enabled: true
+
+frontend:
+  enabled: true
+
+query-service:
+  enabled: true
+
+alertmanager:
+  enabled: true
+
+otel-collector-metrics:
+  enabled: true

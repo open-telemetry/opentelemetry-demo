@@ -1,0 +1,80 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: signoz
+  namespace: argocd
+spec:
+  project: default
+  source:
+    repoURL: https://charts.signoz.io
+    targetRevision: 0.81.0
+    chart: signoz
+    helm:
+      values: |
+        signoz:
+          name: "signoz"
+          replicaCount: 1
+          image:
+            registry: docker.io
+            repository: signoz/signoz
+            tag: v0.81.0
+            pullPolicy: IfNotPresent
+          service:
+            type: ClusterIP
+            port: 8080
+            internalPort: 8085
+            opampPort: 4320
+          additionalArgs:
+            - --use-logs-new-schema=true
+            - --use-trace-new-schema=true
+
+        clickhouse:
+          enabled: true
+          persistence:
+            enabled: true
+            storageClass: "longhorn"
+            size: 20Gi
+            accessMode: ReadWriteOnce
+          resources:
+            requests:
+              memory: "2Gi"
+              cpu: "1"
+            limits:
+              memory: "4Gi"
+              cpu: "2"
+          podSecurityContext:
+            fsGroup: 101
+            runAsUser: 101
+            runAsGroup: 101
+          containerSecurityContext:
+            allowPrivilegeEscalation: false
+            runAsNonRoot: true
+            runAsUser: 101
+            runAsGroup: 101
+            capabilities:
+              drop:
+                - ALL
+
+        otel-collector:
+          enabled: false
+
+        frontend:
+          enabled: true
+
+        query-service:
+          enabled: true
+
+        alertmanager:
+          enabled: true
+
+        otel-collector-metrics:
+          enabled: false
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: signoz
+  syncPolicy:
+    automated:
+      prune: false
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true
