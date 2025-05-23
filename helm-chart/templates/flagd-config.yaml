@@ -1,0 +1,11 @@
+{{- if .Values.components.flagd.enabled -}}
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: flagd-config
+  namespace: {{ .Release.Namespace }}
+  labels:
+    {{- include "otel-demo.labels" . | nindent 4 }}
+data:
+  {{ (.Files.Glob "flagd/*.json").AsConfig | nindent 2 }}
+{{- end }}

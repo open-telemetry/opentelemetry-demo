@@ -1,0 +1,18 @@
+{{- range $name, $config := .Values.components }}
+    {{- $config := set . "Capabilities" $.Capabilities }}
+    {{- $config := set . "Template" $.Template }}
+    {{- $config := set . "name" ($name | lower) }}
+    {{- $config := set . "Release" $.Release }}
+    {{- $config := set . "Chart" $.Chart }}
+    {{- $config := set . "serviceAccount" $.Values.serviceAccount }}
+    {{- $config := set . "observability" $.Values.observability }}
+    {{- $config := set . "defaultValues" $.Values.default }}
+
+    {{- if $config.enabled -}}
+        {{- include "otel-demo.deployment" $config -}}
+        {{- include "otel-demo.service" $config -}}
+        {{- include "otel-demo.ingress" $config -}}
+        {{- include "otel-demo.configmap" $config -}}
+    {{ end }}
+
+{{- end }}

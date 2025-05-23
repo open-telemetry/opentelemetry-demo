@@ -1,0 +1,43 @@
+---
+# Source: opentelemetry-demo/charts/jaeger/templates/allinone-collector-svc.yaml
+apiVersion: v1
+kind: Service
+metadata:
+  name: jaeger-collector
+  labels:
+    helm.sh/chart: jaeger-3.4.0
+    app.kubernetes.io/name: jaeger
+    app.kubernetes.io/instance: example
+    app.kubernetes.io/version: "1.53.0"
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/component: service-collector
+spec:
+  clusterIP: None
+  ports:
+    - name: http-zipkin
+      port: 9411
+      targetPort: 0
+      appProtocol: http
+    - name: grpc-http
+      port: 14250
+      targetPort: 0
+      appProtocol: grpc
+    - name: c-tchan-trft
+      port: 14267
+      targetPort: 0
+    - name: http-c-binary-trft
+      port: 14268
+      targetPort: 0
+      appProtocol: http
+    - name: otlp-grpc
+      port: 4317
+      targetPort: 0
+      appProtocol: grpc
+    - name: otlp-http
+      port: 4318
+      targetPort: 0
+      appProtocol: http
+  selector:
+    app.kubernetes.io/name: jaeger
+    app.kubernetes.io/instance: example
+    app.kubernetes.io/component: all-in-one

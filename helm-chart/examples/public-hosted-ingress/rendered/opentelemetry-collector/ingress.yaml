@@ -1,0 +1,27 @@
+---
+# Source: opentelemetry-demo/charts/opentelemetry-collector/templates/ingress.yaml
+apiVersion: "networking.k8s.io/v1"
+kind: Ingress
+metadata:
+  name: otel-collector
+  namespace: default
+  labels:
+    helm.sh/chart: opentelemetry-collector-0.117.1
+    app.kubernetes.io/name: opentelemetry-collector
+    app.kubernetes.io/instance: example
+    app.kubernetes.io/version: "0.120.0"
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/component: standalone-collector
+    component: standalone-collector
+spec:
+  rules:
+    - host: "otel-demo-collector.example.com"
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: otel-collector
+                port:
+                  number: 4318

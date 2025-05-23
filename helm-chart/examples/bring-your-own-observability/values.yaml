@@ -1,0 +1,18 @@
+
+default:
+  envOverrides:
+    - name: OTEL_COLLECTOR_NAME
+      value: my-otel-collector.opentelemetry-ns
+
+opentelemetry-collector:
+  enabled: false
+
+jaeger:
+  enabled: false
+
+prometheus:
+  enabled: false
+
+grafana:
+  enabled: false
+

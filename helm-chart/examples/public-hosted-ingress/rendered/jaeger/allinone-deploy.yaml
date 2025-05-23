@@ -1,0 +1,112 @@
+---
+# Source: opentelemetry-demo/charts/jaeger/templates/allinone-deploy.yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: jaeger
+  labels:
+    helm.sh/chart: jaeger-3.4.0
+    app.kubernetes.io/name: jaeger
+    app.kubernetes.io/instance: example
+    app.kubernetes.io/version: "1.53.0"
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/component: all-in-one
+    prometheus.io/port: "14269"
+    prometheus.io/scrape: "true"
+spec:
+  replicas: 1
+  strategy:
+    type: Recreate
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: jaeger
+      app.kubernetes.io/instance: example
+      app.kubernetes.io/component: all-in-one
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: jaeger
+        app.kubernetes.io/instance: example
+        app.kubernetes.io/component: all-in-one
+      annotations:
+        prometheus.io/port: "14269"
+        prometheus.io/scrape: "true"
+    spec:
+      
+      containers:
+        - env:
+            - name: METRICS_STORAGE_TYPE
+              value: prometheus
+            - name: COLLECTOR_OTLP_GRPC_HOST_PORT
+              value: 0.0.0.0:4317
+            - name: COLLECTOR_OTLP_HTTP_HOST_PORT
+              value: 0.0.0.0:4318
+            - name: SPAN_STORAGE_TYPE
+              value: memory
+            
+            - name: COLLECTOR_ZIPKIN_HOST_PORT
+              value: :9411
+            - name: JAEGER_DISABLED
+              value: "false"
+            - name: COLLECTOR_OTLP_ENABLED
+              value: "true"
+          securityContext:
+            {}
+          image: jaegertracing/all-in-one:1.53.0
+          imagePullPolicy: IfNotPresent
+          name: jaeger
+          args:
+            - "--memory.max-traces=5000"
+            - "--query.base-path=/jaeger/ui"
+            - "--prometheus.server-url=http://prometheus:9090"
+            - "--prometheus.query.normalize-calls=true"
+            - "--prometheus.query.normalize-duration=true"
+          ports:
+            - containerPort: 5775
+              protocol: UDP
+            - containerPort: 6831
+              protocol: UDP
+            - containerPort: 6832
+              protocol: UDP
+            - containerPort: 5778
+              protocol: TCP
+            - containerPort: 16686
+              protocol: TCP
+            - containerPort: 16685
+              protocol: TCP
+            - containerPort: 9411
+              protocol: TCP
+            - containerPort: 4317
+              protocol: TCP
+            - containerPort: 4318
+              protocol: TCP
+          livenessProbe:
+            failureThreshold: 5
+            httpGet:
+              path: /
+              port: 14269
+              scheme: HTTP
+            initialDelaySeconds: 5
+            periodSeconds: 15
+            successThreshold: 1
+            timeoutSeconds: 1
+          readinessProbe:
+            failureThreshold: 3
+            httpGet:
+              path: /
+              port: 14269
+              scheme: HTTP
+            initialDelaySeconds: 1
+            periodSeconds: 10
+            successThreshold: 1
+            timeoutSeconds: 1
+          resources:
+            limits:
+              memory: 400Mi
+          volumeMounts:
+      securityContext:
+        fsGroup: 10001
+        runAsGroup: 10001
+        runAsUser: 10001
+      serviceAccountName: jaeger
+      volumes:

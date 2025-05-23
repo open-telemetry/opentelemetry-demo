@@ -1,0 +1,21 @@
+---
+# Source: opentelemetry-demo/charts/prometheus/templates/clusterrolebinding.yaml
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  labels:
+    app.kubernetes.io/component: server
+    app.kubernetes.io/name: prometheus
+    app.kubernetes.io/instance: example
+    app.kubernetes.io/version: v3.1.0
+    helm.sh/chart: prometheus-27.4.0
+    app.kubernetes.io/part-of: prometheus
+  name: prometheus
+subjects:
+  - kind: ServiceAccount
+    name: prometheus
+    namespace: default
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: prometheus

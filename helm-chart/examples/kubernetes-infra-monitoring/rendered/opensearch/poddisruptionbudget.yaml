@@ -1,0 +1,19 @@
+---
+# Source: opentelemetry-demo/charts/opensearch/templates/poddisruptionbudget.yaml
+apiVersion: policy/v1
+kind: PodDisruptionBudget
+metadata:
+  name: "opensearch-pdb"
+  labels:
+    helm.sh/chart: opensearch-2.31.0
+    app.kubernetes.io/name: opensearch
+    app.kubernetes.io/instance: example
+    app.kubernetes.io/version: "2.19.0"
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/component: opensearch
+spec:
+  maxUnavailable: 1
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: opensearch
+      app.kubernetes.io/instance: example

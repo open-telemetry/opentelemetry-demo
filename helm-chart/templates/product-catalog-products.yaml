@@ -1,0 +1,11 @@
+{{- if .Values.components.flagd.enabled -}}
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: product-catalog-products
+  namespace: {{ .Release.Namespace }}
+  labels:
+    {{- include "otel-demo.labels" . | nindent 4 }}
+data:
+  {{ (.Files.Glob "products/*.json").AsConfig | nindent 2 }}
+{{- end }}

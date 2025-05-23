@@ -1,0 +1,133 @@
+---
+# Source: opentelemetry-demo/charts/grafana/templates/deployment.yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: grafana
+  namespace: default
+  labels:
+    helm.sh/chart: grafana-8.10.1
+    app.kubernetes.io/name: grafana
+    app.kubernetes.io/instance: example
+    app.kubernetes.io/version: "11.5.2"
+spec:
+  replicas: 1
+  revisionHistoryLimit: 10
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: grafana
+      app.kubernetes.io/instance: example
+  strategy:
+    type: RollingUpdate
+  template:
+    metadata:
+      labels:
+        helm.sh/chart: grafana-8.10.1
+        app.kubernetes.io/name: grafana
+        app.kubernetes.io/instance: example
+        app.kubernetes.io/version: "11.5.2"
+      annotations:
+        checksum/config: 99cca986c6d5f6511900d815ee5a70d0c284aeb70af56fb96108c7bf456eff87
+        checksum/sc-dashboard-provider-config: e70bf6a851099d385178a76de9757bb0bef8299da6d8443602590e44f05fdf24
+        checksum/secret: bed677784356b2af7fb0d87455db21f077853059b594101a4f6532bfbd962a7f
+        kubectl.kubernetes.io/default-container: grafana
+    spec:
+      
+      serviceAccountName: grafana
+      automountServiceAccountToken: true
+      shareProcessNamespace: false
+      securityContext:
+        fsGroup: 472
+        runAsGroup: 472
+        runAsNonRoot: true
+        runAsUser: 472
+      enableServiceLinks: true
+      containers:
+        - name: grafana
+          image: "docker.io/grafana/grafana:11.5.2"
+          imagePullPolicy: IfNotPresent
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+              - ALL
+            seccompProfile:
+              type: RuntimeDefault
+          volumeMounts:
+            - name: config
+              mountPath: "/etc/grafana/grafana.ini"
+              subPath: grafana.ini
+            - name: storage
+              mountPath: "/var/lib/grafana"
+            - name: dashboards-default
+              mountPath: "/var/lib/grafana/dashboards/default"
+            - name: config
+              mountPath: "/etc/grafana/provisioning/datasources/datasources.yaml"
+              subPath: "datasources.yaml"
+            - name: config
+              mountPath: "/etc/grafana/provisioning/dashboards/dashboardproviders.yaml"
+              subPath: "dashboardproviders.yaml"
+          ports:
+            - name: grafana
+              containerPort: 3000
+              protocol: TCP
+            - name: gossip-tcp
+              containerPort: 9094
+              protocol: TCP
+            - name: gossip-udp
+              containerPort: 9094
+              protocol: UDP
+            - name: profiling
+              containerPort: 6060
+              protocol: TCP
+          env:
+            - name: POD_IP
+              valueFrom:
+                fieldRef:
+                  fieldPath: status.podIP
+            - name: GF_SECURITY_ADMIN_USER
+              valueFrom:
+                secretKeyRef:
+                  name: grafana
+                  key: admin-user
+            - name: GF_SECURITY_ADMIN_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: grafana
+                  key: admin-password
+            - name: GF_INSTALL_PLUGINS
+              valueFrom:
+                configMapKeyRef:
+                  name: grafana
+                  key: plugins
+            - name: GF_PATHS_DATA
+              value: /var/lib/grafana/
+            - name: GF_PATHS_LOGS
+              value: /var/log/grafana
+            - name: GF_PATHS_PLUGINS
+              value: /var/lib/grafana/plugins
+            - name: GF_PATHS_PROVISIONING
+              value: /etc/grafana/provisioning
+          livenessProbe:
+            failureThreshold: 10
+            httpGet:
+              path: /api/health
+              port: 3000
+            initialDelaySeconds: 60
+            timeoutSeconds: 30
+          readinessProbe:
+            httpGet:
+              path: /api/health
+              port: 3000
+          resources:
+            limits:
+              memory: 150Mi
+      volumes:
+        - name: config
+          configMap:
+            name: grafana
+        - name: dashboards-default
+          configMap:
+            name: grafana-dashboards
+        - name: storage
+          emptyDir: {}

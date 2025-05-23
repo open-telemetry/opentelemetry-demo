@@ -1,0 +1,59 @@
+---
+# Source: opentelemetry-demo/charts/opensearch/templates/service.yaml
+kind: Service
+apiVersion: v1
+metadata:
+  name: opensearch
+  labels:
+    helm.sh/chart: opensearch-2.31.0
+    app.kubernetes.io/name: opensearch
+    app.kubernetes.io/instance: example
+    app.kubernetes.io/version: "2.19.0"
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/component: opensearch
+  annotations:
+    {}
+spec:
+  type: ClusterIP
+  selector:
+    app.kubernetes.io/name: opensearch
+    app.kubernetes.io/instance: example
+  ports:
+  - name: http
+    protocol: TCP
+    port: 9200
+  - name: transport
+    protocol: TCP
+    port: 9300
+  - name: metrics
+    protocol: TCP
+    port: 9600
+---
+# Source: opentelemetry-demo/charts/opensearch/templates/service.yaml
+kind: Service
+apiVersion: v1
+metadata:
+  name: opensearch-headless
+  labels:
+    helm.sh/chart: opensearch-2.31.0
+    app.kubernetes.io/name: opensearch
+    app.kubernetes.io/instance: example
+    app.kubernetes.io/version: "2.19.0"
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/component: opensearch
+  annotations:
+    service.alpha.kubernetes.io/tolerate-unready-endpoints: "true"
+spec:
+  clusterIP: None # This is needed for statefulset hostnames like opensearch-0 to resolve
+  # Create endpoints also if the related pod isn't ready
+  publishNotReadyAddresses: true
+  selector:
+    app.kubernetes.io/name: opensearch
+    app.kubernetes.io/instance: example
+  ports:
+  - name: http
+    port: 9200
+  - name: transport
+    port: 9300
+  - name: metrics
+    port: 9600

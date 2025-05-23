@@ -1,0 +1,35 @@
+---
+# Source: opentelemetry-demo/charts/jaeger/templates/allinone-agent-svc.yaml
+apiVersion: v1
+kind: Service
+metadata:
+  name: jaeger-agent
+  labels:
+    helm.sh/chart: jaeger-3.4.0
+    app.kubernetes.io/name: jaeger
+    app.kubernetes.io/instance: example
+    app.kubernetes.io/version: "1.53.0"
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/component: service-agent
+spec:
+  clusterIP: None
+  ports:
+    - name: zk-compact-trft
+      port: 5775
+      protocol: UDP
+      targetPort: 0
+    - name: config-rest
+      port: 5778
+      targetPort: 0
+    - name: jg-compact-trft
+      port: 6831
+      protocol: UDP
+      targetPort: 0
+    - name: jg-binary-trft
+      port: 6832
+      protocol: UDP
+      targetPort: 0
+  selector:
+    app.kubernetes.io/name: jaeger
+    app.kubernetes.io/instance: example
+    app.kubernetes.io/component: all-in-one

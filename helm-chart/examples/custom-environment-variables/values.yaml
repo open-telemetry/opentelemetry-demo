@@ -1,0 +1,97 @@
+default:
+  envOverrides:
+    - name: OTEL_RESOURCE_ATTRIBUTES
+      value: service.name=$(OTEL_SERVICE_NAME),service.instance.id=$(OTEL_K8S_POD_UID),service.namespace=opentelemetry-demo,k8s.namespace.name=$(OTEL_K8S_NAMESPACE),k8s.node.name=$(OTEL_K8S_NODE_NAME),k8s.pod.name=$(OTEL_K8S_POD_NAME),app.eng.team=$(TEAM_NAME)
+
+components:
+  accounting:
+    envOverrides:
+      - name: TEAM_NAME
+        value: orion
+
+  ad:
+    envOverrides:
+      - name: TEAM_NAME
+        value: helix
+
+  cart:
+    envOverrides:
+      - name: TEAM_NAME
+        value: ring
+
+  checkout:
+    envOverrides:
+      - name: TEAM_NAME
+        value: orion
+
+  currency:
+    envOverrides:
+      - name: TEAM_NAME
+        value: orion
+
+  email:
+    envOverrides:
+      - name: TEAM_NAME
+        value: orion
+
+  fraud-detection:
+    envOverrides:
+      - name: TEAM_NAME
+        value: orion
+
+  frontend:
+    envOverrides:
+      - name: TEAM_NAME
+        value: ring
+
+  load-generator:
+    envOverrides:
+      - name: TEAM_NAME
+        value: ring
+
+  payment:
+    envOverrides:
+      - name: TEAM_NAME
+        value: orion
+
+  product-catalog:
+    envOverrides:
+      - name: TEAM_NAME
+        value: helix
+
+  quote:
+    envOverrides:
+      - name: TEAM_NAME
+        value: orion
+
+  recommendation:
+    envOverrides:
+      - name: TEAM_NAME
+        value: helix
+
+  shipping:
+    envOverrides:
+      - name: TEAM_NAME
+        value: orion
+
+opentelemetry-collector:
+  config:
+    processors:
+      attributes:
+        include:
+          match_type: strict
+          services:
+            - frontend-proxy
+        actions:
+          - key: "app.eng.team"
+            value: "ring"
+            action: insert
+    service:
+      pipelines:
+        traces:
+          processors:
+            - memory_limiter
+            - attributes
+            - spanmetrics
+            - batch
+

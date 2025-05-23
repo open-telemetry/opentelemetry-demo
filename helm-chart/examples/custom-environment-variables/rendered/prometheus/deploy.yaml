@@ -1,0 +1,95 @@
+---
+# Source: opentelemetry-demo/charts/prometheus/templates/deploy.yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app.kubernetes.io/component: server
+    app.kubernetes.io/name: prometheus
+    app.kubernetes.io/instance: example
+    app.kubernetes.io/version: v3.1.0
+    helm.sh/chart: prometheus-27.4.0
+    app.kubernetes.io/part-of: prometheus
+  name: prometheus
+  namespace: default
+spec:
+  selector:
+    matchLabels:
+      app.kubernetes.io/component: server
+      app.kubernetes.io/name: prometheus
+      app.kubernetes.io/instance: example
+  replicas: 1
+  revisionHistoryLimit: 10
+  strategy:
+    type: Recreate
+    rollingUpdate: null
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/component: server
+        app.kubernetes.io/name: prometheus
+        app.kubernetes.io/instance: example
+        app.kubernetes.io/version: v3.1.0
+        helm.sh/chart: prometheus-27.4.0
+        app.kubernetes.io/part-of: prometheus
+    spec:
+      enableServiceLinks: true
+      serviceAccountName: prometheus
+      containers:
+
+        - name: prometheus-server
+          image: "quay.io/prometheus/prometheus:v3.1.0"
+          imagePullPolicy: "IfNotPresent"
+          args:
+            - --storage.tsdb.retention.time=15d
+            - --config.file=/etc/config/prometheus.yml
+            - --storage.tsdb.path=/data
+            - --web.console.libraries=/etc/prometheus/console_libraries
+            - --web.console.templates=/etc/prometheus/consoles
+            - --enable-feature=exemplar-storage
+            - --web.enable-otlp-receiver
+          ports:
+            - containerPort: 9090
+          readinessProbe:
+            httpGet:
+              path: /-/ready
+              port: 9090
+              scheme: HTTP
+            initialDelaySeconds: 30
+            periodSeconds: 5
+            timeoutSeconds: 4
+            failureThreshold: 3
+            successThreshold: 1
+          livenessProbe:
+            httpGet:
+              path: /-/healthy
+              port: 9090
+              scheme: HTTP
+            initialDelaySeconds: 30
+            periodSeconds: 15
+            timeoutSeconds: 10
+            failureThreshold: 3
+            successThreshold: 1
+          resources:
+            limits:
+              memory: 300Mi
+          volumeMounts:
+            - name: config-volume
+              mountPath: /etc/config
+            - name: storage-volume
+              mountPath: /data
+              subPath: ""
+      dnsPolicy: ClusterFirst
+      securityContext:
+        fsGroup: 65534
+        runAsGroup: 65534
+        runAsNonRoot: true
+        runAsUser: 65534
+      terminationGracePeriodSeconds: 300
+      volumes:
+        - name: config-volume
+          configMap:
+            name: prometheus
+        - name: storage-volume
+          emptyDir:
+            {}

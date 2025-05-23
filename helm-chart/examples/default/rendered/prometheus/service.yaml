@@ -1,0 +1,26 @@
+---
+# Source: opentelemetry-demo/charts/prometheus/templates/service.yaml
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app.kubernetes.io/component: server
+    app.kubernetes.io/name: prometheus
+    app.kubernetes.io/instance: example
+    app.kubernetes.io/version: v3.1.0
+    helm.sh/chart: prometheus-27.4.0
+    app.kubernetes.io/part-of: prometheus
+  name: prometheus
+  namespace: default
+spec:
+  ports:
+    - name: http
+      port: 9090
+      protocol: TCP
+      targetPort: 9090
+  selector:
+    app.kubernetes.io/component: server
+    app.kubernetes.io/name: prometheus
+    app.kubernetes.io/instance: example
+  sessionAffinity: None
+  type: "ClusterIP"

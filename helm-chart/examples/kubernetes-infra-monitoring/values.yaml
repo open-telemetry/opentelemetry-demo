@@ -1,0 +1,13 @@
+opentelemetry-collector:
+  mode: "daemonset"
+  presets:
+    kubernetesAttributes:
+      enabled: true
+    kubeletMetrics:
+      enabled: true
+    hostMetrics:
+      enabled: true
+    logsCollection:
+      enabled: true
+      includeCollectorLogs: false
+      storeCheckpoints: true

@@ -1,0 +1,139 @@
+---
+# Source: opentelemetry-demo/charts/opentelemetry-collector/templates/daemonset.yaml
+apiVersion: apps/v1
+kind: DaemonSet
+metadata:
+  name: otel-collector-agent
+  namespace: default
+  labels:
+    helm.sh/chart: opentelemetry-collector-0.117.1
+    app.kubernetes.io/name: opentelemetry-collector
+    app.kubernetes.io/instance: example
+    app.kubernetes.io/version: "0.120.0"
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/component: agent-collector
+spec:
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: opentelemetry-collector
+      app.kubernetes.io/instance: example
+      component: agent-collector
+  updateStrategy:
+    type: RollingUpdate
+  template:
+    metadata:
+      annotations:
+        checksum/config: 774748bc8a0fa5248b8b10b95213e8c18f5bde5c672e0283260d2a35f410ee63
+        opentelemetry_community_demo: "true"
+        prometheus.io/scrape: "true"
+      labels:
+        app.kubernetes.io/name: opentelemetry-collector
+        app.kubernetes.io/instance: example
+        component: agent-collector
+        
+    spec:
+      
+      serviceAccountName: otel-collector
+      securityContext:
+        {}
+      containers:
+        - name: opentelemetry-collector
+          args:
+            - --config=/conf/relay.yaml
+          securityContext:
+            runAsUser: 0
+            runAsGroup: 0
+          image: "otel/opentelemetry-collector-contrib:0.120.0"
+          imagePullPolicy: IfNotPresent
+          ports:
+            
+            - name: jaeger-compact
+              containerPort: 6831
+              protocol: UDP
+              hostPort: 6831
+            - name: jaeger-grpc
+              containerPort: 14250
+              protocol: TCP
+              hostPort: 14250
+            - name: jaeger-thrift
+              containerPort: 14268
+              protocol: TCP
+              hostPort: 14268
+            - name: metrics
+              containerPort: 8888
+              protocol: TCP
+            - name: otlp
+              containerPort: 4317
+              protocol: TCP
+              hostPort: 4317
+            - name: otlp-http
+              containerPort: 4318
+              protocol: TCP
+              hostPort: 4318
+            - name: zipkin
+              containerPort: 9411
+              protocol: TCP
+              hostPort: 9411
+          env:
+            - name: MY_POD_IP
+              valueFrom:
+                fieldRef:
+                  apiVersion: v1
+                  fieldPath: status.podIP
+            - name: K8S_NODE_NAME
+              valueFrom:
+                fieldRef:
+                  fieldPath: spec.nodeName
+            - name: K8S_NODE_IP
+              valueFrom:
+                fieldRef:
+                  fieldPath: status.hostIP
+            - name: GOMEMLIMIT
+              value: "160MiB"
+          livenessProbe:
+            httpGet:
+              path: /
+              port: 13133
+          readinessProbe:
+            httpGet:
+              path: /
+              port: 13133
+          resources:
+            limits:
+              memory: 200Mi
+          volumeMounts:
+            - mountPath: /conf
+              name: opentelemetry-collector-configmap
+            - name: varlogpods
+              mountPath: /var/log/pods
+              readOnly: true
+            - name: varlibdockercontainers
+              mountPath: /var/lib/docker/containers
+              readOnly: true
+            - name: varlibotelcol
+              mountPath: /var/lib/otelcol
+            - name: hostfs
+              mountPath: /hostfs
+              readOnly: true
+              mountPropagation: HostToContainer
+      volumes:
+        - name: opentelemetry-collector-configmap
+          configMap:
+            name: otel-collector-agent
+            items:
+              - key: relay
+                path: relay.yaml
+        - name: varlogpods
+          hostPath:
+            path: /var/log/pods
+        - name: varlibotelcol
+          hostPath:
+            path: /var/lib/otelcol
+            type: DirectoryOrCreate
+        - name: varlibdockercontainers
+          hostPath:
+            path: /var/lib/docker/containers
+        - name: hostfs
+          hostPath:
+            path: /
+      hostNetwork: false

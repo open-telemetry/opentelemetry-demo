@@ -1,0 +1,25 @@
+components:
+  frontend:
+    envOverrides:
+      - name: PUBLIC_OTEL_EXPORTER_OTLP_TRACES_ENDPOINT
+        value: https://otel-demo-collector.example.com/v1/traces
+
+  frontend-proxy:
+    ingress:
+      enabled: true
+      hosts:
+        - host: otel-demo.example.com
+          paths:
+            - path: /
+              pathType: Prefix
+              port: 8080
+
+opentelemetry-collector:
+  ingress:
+    enabled: true
+    hosts:
+      - host: otel-demo-collector.example.com
+        paths:
+          - path: /
+            pathType: Prefix
+            port: 4318

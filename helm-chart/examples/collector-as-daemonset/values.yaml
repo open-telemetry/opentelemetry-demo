@@ -1,0 +1,7 @@
+default:
+  envOverrides:
+    - name: OTEL_COLLECTOR_NAME
+      value: $(OTEL_K8S_NODE_NAME)
+
+opentelemetry-collector:
+  mode: daemonset

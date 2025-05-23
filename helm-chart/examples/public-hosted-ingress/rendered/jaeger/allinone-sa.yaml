@@ -1,0 +1,14 @@
+---
+# Source: opentelemetry-demo/charts/jaeger/templates/allinone-sa.yaml
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: jaeger
+  labels:
+    helm.sh/chart: jaeger-3.4.0
+    app.kubernetes.io/name: jaeger
+    app.kubernetes.io/instance: example
+    app.kubernetes.io/version: "1.53.0"
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/component: all-in-one
+automountServiceAccountToken: true

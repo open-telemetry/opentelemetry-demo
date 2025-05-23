@@ -1,0 +1,26 @@
+---
+# Source: opentelemetry-demo/charts/jaeger/templates/allinone-query-svc.yaml
+apiVersion: v1
+kind: Service
+metadata:
+  name: jaeger-query
+  labels:
+    helm.sh/chart: jaeger-3.4.0
+    app.kubernetes.io/name: jaeger
+    app.kubernetes.io/instance: example
+    app.kubernetes.io/version: "1.53.0"
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/component: service-query
+spec:
+  clusterIP: None
+  ports:
+    - name: http-query
+      port: 16686
+      targetPort: 16686
+    - name: grpc-query
+      port: 16685
+      targetPort: 16685
+  selector:
+    app.kubernetes.io/name: jaeger
+    app.kubernetes.io/instance: example
+    app.kubernetes.io/component: all-in-one

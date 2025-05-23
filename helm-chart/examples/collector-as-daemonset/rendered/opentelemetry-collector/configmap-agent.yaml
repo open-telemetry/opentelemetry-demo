@@ -1,0 +1,171 @@
+---
+# Source: opentelemetry-demo/charts/opentelemetry-collector/templates/configmap-agent.yaml
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: otel-collector-agent
+  namespace: default
+  labels:
+    helm.sh/chart: opentelemetry-collector-0.117.1
+    app.kubernetes.io/name: opentelemetry-collector
+    app.kubernetes.io/instance: example
+    app.kubernetes.io/version: "0.120.0"
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/component: agent-collector
+data:
+  relay: |
+    connectors:
+      spanmetrics: {}
+    exporters:
+      debug: {}
+      opensearch:
+        http:
+          endpoint: http://opensearch:9200
+          tls:
+            insecure: true
+        logs_index: otel
+      otlp:
+        endpoint: jaeger-collector:4317
+        tls:
+          insecure: true
+      otlphttp/prometheus:
+        endpoint: http://prometheus:9090/api/v1/otlp
+        tls:
+          insecure: true
+    extensions:
+      health_check:
+        endpoint: ${env:MY_POD_IP}:13133
+    processors:
+      batch: {}
+      k8sattributes:
+        extract:
+          metadata:
+          - k8s.namespace.name
+          - k8s.deployment.name
+          - k8s.statefulset.name
+          - k8s.daemonset.name
+          - k8s.cronjob.name
+          - k8s.job.name
+          - k8s.node.name
+          - k8s.pod.name
+          - k8s.pod.uid
+          - k8s.pod.start_time
+        filter:
+          node_from_env_var: K8S_NODE_NAME
+        passthrough: false
+        pod_association:
+        - sources:
+          - from: resource_attribute
+            name: k8s.pod.ip
+        - sources:
+          - from: resource_attribute
+            name: k8s.pod.uid
+        - sources:
+          - from: connection
+      memory_limiter:
+        check_interval: 5s
+        limit_percentage: 80
+        spike_limit_percentage: 25
+      resource:
+        attributes:
+        - action: insert
+          from_attribute: k8s.pod.uid
+          key: service.instance.id
+      transform:
+        error_mode: ignore
+        trace_statements:
+        - context: span
+          statements:
+          - replace_pattern(name, "\\?.*", "")
+          - replace_match(name, "GET /api/products/*", "GET /api/products/{productId}")
+    receivers:
+      httpcheck/frontend-proxy:
+        targets:
+        - endpoint: http://frontend-proxy:8080
+      jaeger:
+        protocols:
+          grpc:
+            endpoint: ${env:MY_POD_IP}:14250
+          thrift_compact:
+            endpoint: ${env:MY_POD_IP}:6831
+          thrift_http:
+            endpoint: ${env:MY_POD_IP}:14268
+      otlp:
+        protocols:
+          grpc:
+            endpoint: ${env:MY_POD_IP}:4317
+          http:
+            cors:
+              allowed_origins:
+              - http://*
+              - https://*
+            endpoint: ${env:MY_POD_IP}:4318
+      prometheus:
+        config:
+          scrape_configs:
+          - job_name: opentelemetry-collector
+            scrape_interval: 10s
+            static_configs:
+            - targets:
+              - ${env:MY_POD_IP}:8888
+      redis:
+        collection_interval: 10s
+        endpoint: valkey-cart:6379
+      zipkin:
+        endpoint: ${env:MY_POD_IP}:9411
+    service:
+      extensions:
+      - health_check
+      pipelines:
+        logs:
+          exporters:
+          - opensearch
+          - debug
+          processors:
+          - k8sattributes
+          - memory_limiter
+          - resource
+          - batch
+          receivers:
+          - otlp
+        metrics:
+          exporters:
+          - otlphttp/prometheus
+          - debug
+          processors:
+          - k8sattributes
+          - memory_limiter
+          - resource
+          - batch
+          receivers:
+          - httpcheck/frontend-proxy
+          - redis
+          - otlp
+          - spanmetrics
+        traces:
+          exporters:
+          - otlp
+          - debug
+          - spanmetrics
+          processors:
+          - k8sattributes
+          - memory_limiter
+          - resource
+          - transform
+          - batch
+          receivers:
+          - otlp
+          - jaeger
+          - zipkin
+      telemetry:
+        metrics:
+          address: ${env:MY_POD_IP}:8888
+          level: detailed
+          readers:
+          - periodic:
+              exporter:
+                otlp:
+                  endpoint: otel-collector:4318
+                  protocol: grpc
+              interval: 10000
+              timeout: 5000
