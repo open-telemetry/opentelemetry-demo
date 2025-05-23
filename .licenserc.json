@@ -28,18 +28,12 @@
       "# Copyright The OpenTelemetry Authors",
       "# SPDX-License-Identifier: Apache-2.0"
     ],
-    "**/**/*.{yaml,yml,yamllint}": [
-      "# Copyright The OpenTelemetry Authors",
-      "# SPDX-License-Identifier: Apache-2.0"
-    ],
+
     "**/*.sql": [
       "-- Copyright The OpenTelemetry Authors",
       "-- SPDX-License-Identifier: Apache-2.0"
     ],
-    "**/**/*.sql": [
-      "-- Copyright The OpenTelemetry Authors",
-      "-- SPDX-License-Identifier: Apache-2.0"
-    ],
+
     "**/{Dockerfile,Makefile}": [
       "# Copyright The OpenTelemetry Authors",
       "# SPDX-License-Identifier: Apache-2.0"
@@ -61,7 +55,6 @@
         "src/recommendation/demo_pb2.py",
         "src/recommendation/demo_pb2_grpc.py",
         "src/frontend/protos/demo.ts",
-        "internal/tools/",
-
+        "internal/tools/"
     ]
   }

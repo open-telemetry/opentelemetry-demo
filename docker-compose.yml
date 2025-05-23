@@ -83,7 +83,8 @@ services:
   cart-dapr:
     image: "daprio/daprd:edge"
     container_name: cart-dapr
-    command: [ "./daprd", "-app-id", "cart", "-app-port", "${CART_PORT}", "-placement-host-address", "dapr-placement:50006", "-dapr-grpc-port", "50002", "-dapr-http-port", "3500","-resources-path", "/dapr/components","-config", "/dapr/config.yaml"]
+    command: [ "./daprd", "-app-id", "cart", "-app-port", "${CART_PORT}", "-placement-host-address", "dapr-placement:50006", "-dapr-grpc-port", "50002", "-dapr-http-port", "3500",
+               "-resources-path", "/dapr/components", "-config", "/dapr/config.yaml"]
     volumes:
       - "./dapr/:/dapr"
     depends_on:
@@ -487,7 +488,8 @@ services:
   product-dapr:
     image: "daprio/daprd:edge"
     container_name: product-dapr
-    command: [ "./daprd","-app-id", "product-catalog", "-app-port", "${PRODUCT_CATALOG_PORT}","-placement-host-address", "dapr-placement:50006","-dapr-grpc-port", "50002","-dapr-http-port", "3500", "-resources-path", "/dapr/components","-config", "/dapr/config.yaml" ]
+    command: [ "./daprd","-app-id", "product-catalog", "-app-port", "${PRODUCT_CATALOG_PORT}", "-placement-host-address", "dapr-placement:50006", "-dapr-grpc-port", "50002", "-dapr-http-port",
+               "3500", "-resources-path", "/dapr/components", "-config", "/dapr/config.yaml" ]
     volumes:
       - "./dapr/:/dapr"
     depends_on:

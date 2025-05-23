@@ -6,11 +6,11 @@ spec:
   type: pubsub.kafka
   version: v1
   metadata:
-  - name: brokers # Required. Kafka broker connection setting
+  - name: brokers  # Required. Kafka broker connection setting
     value: "kafka:9092"
-  - name: authType # Required.
+  - name: authType
     value: "none"
-  - name: disableTls # Optional. Disable TLS. This is not safe for production!! You should read the `Mutual TLS` section for how to use TLS.
+  - name: disableTls  # Optional. Disable TLS. This is not safe for production!! You should read the `Mutual TLS` section for how to use TLS.
     value: "false"
   - name: publishingScopes
     value: "checkout=orders"

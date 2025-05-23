@@ -9,9 +9,9 @@ the release.
 
 ## 2.0.3
 
-* [product catalog] removed the usage on the json file , repalced it with a Dapr client
-* [sqllit] dropped the sqllite , because no support for dapr query
-* [postgresl] added postgresql to add a storage of the product catalog ( default database used by dapr)
+* [product catalog] use it with a Dapr client
+* [cartservice] Using Dapr to connect to valkey
+* [postgresl] added postgresql for product
 
 * [chore] add GOMEMLIMIT to all Go services
   ([#2148](https://github.com/open-telemetry/opentelemetry-demo/pull/2148))
