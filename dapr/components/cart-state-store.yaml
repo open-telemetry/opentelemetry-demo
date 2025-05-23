@@ -9,4 +9,4 @@ spec:
   - name: redisHost
     value: valkey-cart:6379
   - name: enableTLS
-    value: false 
+    value: false

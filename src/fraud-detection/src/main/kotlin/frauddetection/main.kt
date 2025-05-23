@@ -9,7 +9,6 @@ import org.apache.kafka.clients.consumer.ConsumerConfig.*
 import org.apache.kafka.clients.consumer.KafkaConsumer
 import org.apache.kafka.common.serialization.ByteArrayDeserializer
 import org.apache.kafka.common.serialization.StringDeserializer
-
 import org.apache.logging.log4j.LogManager
 import org.apache.logging.log4j.Logger
 import oteldemo.Demo.*
@@ -40,9 +39,6 @@ fun main() {
     props[KEY_DESERIALIZER_CLASS_CONFIG] = StringDeserializer::class.java.name
     props[VALUE_DESERIALIZER_CLASS_CONFIG] = ByteArrayDeserializer::class.java.name
     props[GROUP_ID_CONFIG] = groupID
-
-    ///----
-    //#TODO add dapr consumer
     val bootstrapServers = System.getenv("KAFKA_ADDR")
     if (bootstrapServers == null) {
         println("KAFKA_ADDR is not supplied")
@@ -72,7 +68,7 @@ fun main() {
         }
     }
 }
-///-----
+
 /**
 * Retrieves the status of a feature flag from the Feature Flag service.
 *
