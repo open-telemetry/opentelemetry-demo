@@ -2,14 +2,15 @@
 # SPDX-License-Identifier: Apache-2.0
 
 
+
 FROM golang:1.24-bookworm AS builder
 
 WORKDIR /usr/src/app/
 
-COPY ./src/product-catalog/go.mod go.mod
-COPY ./src/product-catalog/go.sum go.sum
-
-RUN go mod download
+RUN --mount=type=cache,target=/go/pkg/mod/ \
+    --mount=type=bind,source=./src/product-catalog/go.sum,target=go.sum \
+    --mount=type=bind,source=./src/product-catalog/go.mod,target=go.mod \
+    go mod download
 
 COPY ./src/product-catalog/genproto/oteldemo/ genproto/oteldemo/
 COPY ./src/product-catalog/products/ products/
