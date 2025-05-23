@@ -13,6 +13,25 @@ the release.
 * [sqllit] dropped the sqllite , because no support for dapr query
 * [postgresl] added postgresql to add a storage of the product catalog ( default database used by dapr)
 
+* [chore] add GOMEMLIMIT to all Go services
+  ([#2148](https://github.com/open-telemetry/opentelemetry-demo/pull/2148))
+* [product-catalog] Simplify span event name
+  ([#2150](https://github.com/open-telemetry/opentelemetry-demo/pull/2150))
+* [cartservice] Refactor OpenFeature integration and add Dependency Injection support
+  ([#2160](https://github.com/open-telemetry/opentelemetry-demo/pull/2160))
+* [checkout]: change image from alpine to distroless to reduce size
+  ([#2161](https://github.com/open-telemetry/opentelemetry-demo/pull/2161))
+* [product-catalog]: change image from alpine to distroless to reduce size
+  ([#2161](https://github.com/open-telemetry/opentelemetry-demo/pull/2161))
+* [grafana] configure `traceToLogs` integration
+  ([#2162](https://github.com/open-telemetry/opentelemetry-demo/pull/2162))
+* [recommendation] change image from bookworm to alpine to reduce size
+  ([#2164](https://github.com/open-telemetry/opentelemetry-demo/pull/2164))
+* [fraud-detection] update distroless to debian12
+  ([#2170](https://github.com/open-telemetry/opentelemetry-demo/pull/2170))
+* [chore] bump dependent images
+  ([#2179](https://github.com/open-telemetry/opentelemetry-demo/pull/2179))
+
 ## 2.0.2
 
 * [frontend] Update OpenTelemetry Browser SDK initialization
@@ -25,8 +44,6 @@ the release.
   ([#2114](https://github.com/open-telemetry/opentelemetry-demo/pull/2114))
 * [flagd-ui] increase memory to 100MB
   ([#2120](https://github.com/open-telemetry/opentelemetry-demo/pull/2120))
-* [cart] removed the usage on valkey in the component and replaced it with the usage of Dapr client
-* [sqllit] added the new sqllite service ( required for future change on the product catalog)
 
 ## 2.0.1
 

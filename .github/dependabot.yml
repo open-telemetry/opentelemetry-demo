@@ -62,3 +62,38 @@ updates:
         dependency-type: "development"
     schedule:
       interval: "daily"
+  - package-ecosystem: "docker"
+    directories:
+      - "/src/**/*"
+    groups:
+      docker-production-dependencies:
+        dependency-type: "production"
+    schedule:
+      interval: "daily"
+  - package-ecosystem: "dotnet-sdk"
+    directories:
+      - "/src/accounting/*"
+      - "/src/cart/src/*"
+    groups:
+      dotnet-sdk-production-dependencies:
+        dependency-type: "production"
+    schedule:
+      interval: "daily"
+  - package-ecosystem: "cargo"
+    directories:
+      - "/src/shipping/*"
+    groups:
+      cargo-production-dependencies:
+        dependency-type: "production"
+    schedule:
+      interval: "daily"
+  - package-ecosystem: "bundler"
+    directories:
+      - "/src/email/*"
+    groups:
+      bundler-production-dependencies:
+        dependency-type: "production"
+      bundler-development-dependencies:
+        dependency-type: "development"
+    schedule:
+      interval: "daily"
