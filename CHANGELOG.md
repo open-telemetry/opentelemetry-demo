@@ -39,7 +39,8 @@ the release.
 * [quote] Updated open-telemetry/exporter-otlp to 1.2.1 which includes the
   fix for `IS_REMOTE` flag feature
   ([#2112](https://github.com/open-telemetry/opentelemetry-demo/pull/2112))
-* [load-generator] Change OpenFeature Evaluation to Remote Evaluation Protocol, based on [this issue in OpenFeature/python-sdk-contrib](https://github.com/open-feature/python-sdk-contrib/issues/198)
+* [load-generator] Change OpenFeature Evaluation to Remote Evaluation Protocol,based on
+  ([this issue in OpenFeature/python-sdk-contrib](https://github.com/open-feature/python-sdk-contrib/issues/198))
   ([#2114](https://github.com/open-telemetry/opentelemetry-demo/pull/2114))
 * [flagd-ui] increase memory to 100MB
   ([#2120](https://github.com/open-telemetry/opentelemetry-demo/pull/2120))
