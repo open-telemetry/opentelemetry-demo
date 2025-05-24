@@ -122,7 +122,10 @@ func initResource() *sdkresource.Resource {
 func initTracerProvider() *sdktrace.TracerProvider {
 	ctx := context.Background()
 
-	exporter, err := otlptracegrpc.New(ctx)
+	exporter, err := otlptracegrpc.New(ctx,
+		otlptracegrpc.WithEndpoint(os.Getenv("OTEL_EXPORTER_OTLP_ENDPOINT")),
+		otlptracegrpc.WithInsecure(),
+	)
 	if err != nil {
 		log.Fatal("new otlp trace grpc exporter failed", "error", err)
 	}
@@ -138,7 +141,10 @@ func initTracerProvider() *sdktrace.TracerProvider {
 func initMeterProvider() *sdkmetric.MeterProvider {
 	ctx := context.Background()
 
-	exporter, err := otlpmetricgrpc.New(ctx)
+	exporter, err := otlpmetricgrpc.New(ctx,
+		otlpmetricgrpc.WithEndpoint(os.Getenv("OTEL_EXPORTER_OTLP_ENDPOINT")),
+		otlpmetricgrpc.WithInsecure(),
+	)
 	if err != nil {
 		log.Fatal("new otlp metric grpc exporter failed", "error", err)
 	}
