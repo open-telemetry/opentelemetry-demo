@@ -38,7 +38,8 @@ builder.Services.AddOpenFeature(openFeatureBuilder =>
 {
     openFeatureBuilder
         .AddHostedFeatureLifecycle()
-        .AddProvider(_ => new FlagdProvider());
+        .AddProvider(_ => new FlagdProvider())
+        .AddHook<TracingHook>();
 });
 
 builder.Services.AddSingleton(x =>
@@ -71,7 +72,6 @@ builder.Services.AddOpenTelemetry()
         .AddAspNetCoreInstrumentation()
         .SetExemplarFilter(ExemplarFilterType.TraceBased)
         .AddOtlpExporter());
-OpenFeature.Api.Instance.AddHooks(new TracingHook());
 builder.Services.AddGrpc();
 builder.Services.AddGrpcHealthChecks()
     .AddCheck("Sample", () => HealthCheckResult.Healthy());
