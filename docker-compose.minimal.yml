@@ -89,7 +89,7 @@ services:
                "-placement-host-address", "dapr-placement:50006",
                "-components-path", "/components", "-components-path", "/components",
                "-config", "/configuration/config.yaml"
-             ]
+              ]
     volumes:
       - "./src/dapr/components/:/components"
       - "./src/dapr/:/configuration"
@@ -450,7 +450,7 @@ services:
                "-placement-host-address", "dapr-placement:50006",
                "-resources-path", "/configuration/config.yaml",
                "-config", "/dapr/config.yaml"
-              ]
+             ]
     volumes:
       - "./src/dapr/components/:/components"
       - "./src/dapr/:/configuration"
