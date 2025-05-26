@@ -76,12 +76,28 @@ services:
       - OTEL_SERVICE_NAME=cart
       - ASPNETCORE_URLS=http://*:${CART_PORT}
     depends_on:
-      valkey-cart:
-        condition: service_started
+
       otel-collector:
         condition: service_started
     logging: *logging
-
+  cart-dapr:
+    image: "daprio/daprd:edge"
+    container_name: cart-dapr
+    command: [ "./daprd",
+               "-app-id", "cart",
+               "-app-port", "${CART_PORT}",
+               "-placement-host-address", "dapr-placement:50006",
+               "-components-path", "/components",  "-components-path", "/components",
+               "-config", "/configuration/config.yaml"
+    ]
+    volumes:
+      - "./src/dapr/components/:/components"
+      - "./src/dapr/:/configuration"
+    depends_on:
+      - cart
+      - valkey-cart
+      - dapr-placement
+    network_mode: "service:cart"
   # Checkout service
   checkout:
     image: ${IMAGE_NAME}:${DEMO_VERSION}-checkout
@@ -382,6 +398,17 @@ services:
         condition: service_started
     logging: *logging
 
+  product_db:
+    image: postgres:15.3-alpine3.18
+    restart: always
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres123
+    volumes:
+      - ./src/postgresql/product/init.sql:/docker-entrypoint-initdb.d/init.sql
+      - ./src/postgresql/data:/var/lib/postgresql/data
+    ports:
+      - 5436:5432
   # Product Catalog service
   product-catalog:
     image: ${IMAGE_NAME}:${DEMO_VERSION}-product-catalog
@@ -413,6 +440,27 @@ services:
       otel-collector:
         condition: service_started
     logging: *logging
+
+  product-dapr:
+    image: "daprio/daprd:edge"
+    container_name: product-dapr
+    command: [ "./daprd",
+               "-app-id", "product-catalog",
+               "-app-port", "${PRODUCT_CATALOG_PORT}",
+               "-placement-host-address", "dapr-placement:50006",
+               "-resources-path", "/configuration/config.yaml",
+               "-config", "/dapr/config.yaml"
+    ]
+    volumes:
+      - "./src/dapr/components/:/components"
+      - "./src/dapr/:/configuration"
+    depends_on:
+      product_db:
+        condition: service_started
+      dapr-placement:
+        condition: service_started
+    logging: *logging
+    network_mode: "service:product-catalog"
 
   # Quote service
   quote:
@@ -546,7 +594,15 @@ services:
       - "${VALKEY_PORT}"
     logging: *logging
 
-
+  # ********************
+  # Dapr Components
+  # ********************
+  dapr-placement:
+    image: "daprio/dapr"
+    container_name: dapr-placement
+    command: [ "./placement", "-port", "50006" ]
+    ports:
+      - "50006:50006"
   # ********************
   # Telemetry Components
   # ********************
