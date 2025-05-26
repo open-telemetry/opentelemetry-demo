@@ -116,12 +116,12 @@ services:
     image: "daprio/daprd:edge"
     container_name: cart-dapr
     command: [ "./daprd",
-      "-app-id", "cart",
-      "-app-port", "${CART_PORT}",
-      "-placement-host-address", "dapr-placement:50006",
-      "-components-path", "/components",  "-components-path", "/components",
-      "-config", "/configuration/config.yaml"
-    ]
+              "-app-id", "cart",
+              "-app-port",  "${CART_PORT}",
+              "-placement-host-address", "dapr-placement:50006",
+              "-components-path", "/components", "-components-path", "/components",
+              "-config", "/configuration/config.yaml"
+             ]
     volumes:
       - "./src/dapr/components/:/components"
       - "./src/dapr/:/configuration"
@@ -531,12 +531,12 @@ services:
     image: "daprio/daprd:edge"
     container_name: product-dapr
     command: ["./daprd",
-      "-app-id", "product-catalog",
-      "-app-port", "${PRODUCT_CATALOG_PORT}",
-      "-placement-host-address", "dapr-placement:50006",
-      "-resources-path", "/configuration/config.yaml",
-      "-config", "/dapr/config.yaml"
-      ]
+              "-app-id", "product-catalog",
+              "-app-port", "${PRODUCT_CATALOG_PORT}",
+              "-placement-host-address", "dapr-placement:50006",
+              "-resources-path", "/configuration/config.yaml",
+              "-config", "/dapr/config.yaml"
+              ]
     volumes:
       - "./src/dapr/components/:/components"
       - "./src/dapr/:/configuration"
