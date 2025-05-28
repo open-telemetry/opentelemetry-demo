@@ -7,6 +7,7 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	"io"
 	"net"
 	"net/http"
 	"os"
@@ -36,9 +37,9 @@ import (
 	sdkresource "go.opentelemetry.io/otel/sdk/resource"
 	sdktrace "go.opentelemetry.io/otel/sdk/trace"
 	"google.golang.org/grpc"
-	"google.golang.org/grpc/health"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/credentials/insecure"
+	"google.golang.org/grpc/health"
 	healthpb "google.golang.org/grpc/health/grpc_health_v1"
 	"google.golang.org/grpc/status"
 	"google.golang.org/protobuf/proto"
@@ -389,14 +390,40 @@ func mustCreateClient(svcAddr string) *grpc.ClientConn {
 }
 
 func (cs *checkout) quoteShipping(ctx context.Context, address *pb.Address, items []*pb.CartItem) (*pb.Money, error) {
-	shippingQuote, err := cs.shippingSvcClient.
-		GetQuote(ctx, &pb.GetQuoteRequest{
-			Address: address,
-			Items:   items})
+	quotePayload, err := json.Marshal(map[string]interface{}{
+		"address": address,
+		"items":   items,
+	})
 	if err != nil {
-		return nil, fmt.Errorf("failed to get shipping quote: %+v", err)
+		return nil, fmt.Errorf("failed to marshal ship order request: %+v", err)
 	}
-	return shippingQuote.GetCostUsd(), nil
+
+	resp, err := otelhttp.Post(ctx, cs.shippingSvcAddr+"/get-quote", "application/json", bytes.NewBuffer(quotePayload))
+	if err != nil {
+		return nil, fmt.Errorf("failed POST to shipping service: %+v", err)
+	}
+	defer resp.Body.Close()
+
+	if resp.StatusCode != http.StatusOK {
+		return nil, fmt.Errorf("failed POST to email service: expected 200, got %d", resp.StatusCode)
+	}
+
+	shippingQuoteBytes, err := io.ReadAll(resp.Body)
+	if err != nil {
+		return nil, fmt.Errorf("failed to read shipping quote response: %+v", err)
+	}
+
+	var quoteResp struct {
+		CostUsd *pb.Money `json:"cost_usd"`
+	}
+	if err := json.Unmarshal(shippingQuoteBytes, &quoteResp); err != nil {
+		return nil, fmt.Errorf("failed to unmarshal shipping quote: %+v", err)
+	}
+	if quoteResp.CostUsd == nil {
+		return nil, fmt.Errorf("shipping quote missing cost_usd field")
+	}
+
+	return quoteResp.CostUsd, nil
 }
 
 func (cs *checkout) getUserCart(ctx context.Context, userID string) ([]*pb.CartItem, error) {
@@ -483,13 +510,40 @@ func (cs *checkout) sendOrderConfirmation(ctx context.Context, email string, ord
 }
 
 func (cs *checkout) shipOrder(ctx context.Context, address *pb.Address, items []*pb.CartItem) (string, error) {
-	resp, err := cs.shippingSvcClient.ShipOrder(ctx, &pb.ShipOrderRequest{
-		Address: address,
-		Items:   items})
+	shipPayload, err := json.Marshal(map[string]interface{}{
+		"address": address,
+		"items":   items,
+	})
 	if err != nil {
-		return "", fmt.Errorf("shipment failed: %+v", err)
+		return "", fmt.Errorf("failed to marshal ship order request: %+v", err)
 	}
-	return resp.GetTrackingId(), nil
+
+	resp, err := otelhttp.Post(ctx, cs.shippingSvcAddr+"/ship-order", "application/json", bytes.NewBuffer(shipPayload))
+	if err != nil {
+		return "", fmt.Errorf("failed POST to shipping service: %+v", err)
+	}
+	defer resp.Body.Close()
+
+	if resp.StatusCode != http.StatusOK {
+		return "", fmt.Errorf("failed POST to email service: expected 200, got %d", resp.StatusCode)
+	}
+
+	trackingRespBytes, err := io.ReadAll(resp.Body)
+	if err != nil {
+		return "", fmt.Errorf("failed to read ship order response: %+v", err)
+	}
+
+	var shipResp struct {
+		TrackingID string `json:"tracking_id"`
+	}
+	if err := json.Unmarshal(trackingRespBytes, &shipResp); err != nil {
+		return "", fmt.Errorf("failed to unmarshal ship order response: %+v", err)
+	}
+	if shipResp.TrackingID == "" {
+		return "", fmt.Errorf("ship order response missing tracking_id field")
+	}
+
+	return shipResp.TrackingID, nil
 }
 
 func (cs *checkout) sendToPostProcessor(ctx context.Context, result *pb.OrderResult) {
