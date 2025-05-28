@@ -13,27 +13,27 @@ path = "src/main.rs"
 dockerproto = [] # compile in docker or not
 
 [dependencies]
-tonic = "0.11"
-tonic-health = "0.11.0"
-reqwest = { version = "0.11", default-features = false, features = ["json"] }
-prost = "0.12"
-prost-types = "0.12"
-tokio = { version = "1.36", features = ["macros", "rt-multi-thread"] }
-opentelemetry = { version = "0.22", features = ["trace"] }
-opentelemetry_sdk = { version = "0.22", features = ["rt-tokio"]}
-opentelemetry-semantic-conventions = "0.15.0"
-opentelemetry-http = "0.11.0"
-opentelemetry-otlp = { version = "0.15.0", features = ["tonic"] }
-log = "0.4.21"
+tonic = "0.12"
+tonic-health = "0.13.1"
+reqwest = { version = "0.12", default-features = false, features = ["json"] }
+prost = "0.13"
+prost-types = "0.13"
+tokio = { version = "1.45", features = ["macros", "rt-multi-thread"] }
+opentelemetry = { version = "0.30", features = ["trace"] }
+opentelemetry_sdk = { version = "0.30", features = ["rt-tokio"]}
+opentelemetry-semantic-conventions = "0.30.0"
+opentelemetry-http = "0.30.0"
+opentelemetry-otlp = { version = "0.30.0", features = ["tonic"] }
+log = "0.4.27"
 simplelog = "0.12"
-reqwest-middleware = "0.2.5"
-reqwest-tracing = { version = "0.4.8", features = ["opentelemetry_0_22"] }
+reqwest-middleware = "0.4.2"
+reqwest-tracing = { version = "0.5.7", features = ["opentelemetry_0_22"] }
 tracing = { version = "0.1", features = ["max_level_debug", "release_max_level_info"] }
-tracing-opentelemetry = "0.23.0"
+tracing-opentelemetry = "0.30.0"
 tracing-subscriber = "0.3"
 
 [dependencies.uuid]
-version = "1.8.0"
+version = "1.16.0"
 features = [
     "v4",                # Lets you generate random UUIDs
     "fast-rng",          # Use a faster (but still sufficiently random) RNG
@@ -41,4 +41,4 @@ features = [
 ]
 
 [build-dependencies]
-tonic-build = "0.11"
+tonic-build = "0.13"
