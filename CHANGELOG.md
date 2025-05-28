@@ -31,6 +31,8 @@ the release.
   ([#2199](https://github.com/open-telemetry/opentelemetry-demo/pull/2199))
 * [kafka] update image to latest
   ([2194](https://github.com/open-telemetry/opentelemetry-demo/pull/2194))
+* [image-provider]: replace bookworm image with nonroot alpine image
+  ([2193](https://github.com/open-telemetry/opentelemetry-demo/pull/2193))
 
 ## 2.0.2
 

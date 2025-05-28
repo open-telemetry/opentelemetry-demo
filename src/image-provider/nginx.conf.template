@@ -1,5 +1,7 @@
 load_module modules/ngx_otel_module.so;
 
+pid /tmp/nginx.pid;
+
 events {
     worker_connections 1024;
 }
