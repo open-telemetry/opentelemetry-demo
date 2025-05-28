@@ -1,3 +1,6 @@
+// Copyright The OpenTelemetry Authors
+// SPDX-License-Identifier: Apache-2.0
+
 use actix_web::{get, Responder, HttpResponse};
 
 #[get("/health")]
