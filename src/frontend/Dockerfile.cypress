@@ -1,4 +1,4 @@
-FROM cypress/included:14.0.3
+FROM cypress/included:14.4.0
 WORKDIR /app
 COPY ./src/frontend .
 RUN npm clean-install
