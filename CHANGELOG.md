@@ -31,6 +31,8 @@ the release.
   ([#2199](https://github.com/open-telemetry/opentelemetry-demo/pull/2199))
 * [kafka] update image to latest
   ([2194](https://github.com/open-telemetry/opentelemetry-demo/pull/2194))
+* [quote] replace debian image with latest alpine image
+  ([2216](https://github.com/open-telemetry/opentelemetry-demo/pull/2216))
 
 ## 2.0.2
 
