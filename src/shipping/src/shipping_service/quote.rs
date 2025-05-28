@@ -1,13 +1,12 @@
 // Copyright The OpenTelemetry Authors
 // SPDX-License-Identifier: Apache-2.0
 
+use actix_web_opentelemetry::ClientExt;
 use core::fmt;
-use std::{collections::HashMap, env};
+use std::{collections::HashMap, env, io};
 
 use log::info;
 use opentelemetry::{trace::get_active_span, KeyValue};
-use reqwest_middleware::ClientBuilder;
-use reqwest_tracing::{SpanBackendWithUrl, TracingMiddleware};
 
 #[derive(Debug, Default)]
 pub struct Quote {
@@ -15,7 +14,6 @@ pub struct Quote {
     pub cents: i32,
 }
 
-// TODO: Check product catalog for price on each item (will likely need item ID)
 pub async fn create_quote_from_count(count: u32) -> Result<Quote, tonic::Status> {
     let f = match request_quote(count).await {
         Ok(float) => float,
@@ -38,6 +36,7 @@ pub async fn create_quote_from_count(count: u32) -> Result<Quote, tonic::Status>
 }
 
 async fn request_quote(count: u32) -> Result<f64, Box<dyn std::error::Error>> {
+    let client = awc::Client::new();
     let quote_service_addr: String = format!(
         "{}{}",
         env::var("QUOTE_ADDR")
@@ -50,17 +49,21 @@ async fn request_quote(count: u32) -> Result<f64, Box<dyn std::error::Error>> {
     let mut reqbody = HashMap::new();
     reqbody.insert("numberOfItems", count);
 
-    let client = ClientBuilder::new(reqwest::Client::new())
-        .with(TracingMiddleware::<SpanBackendWithUrl>::new())
-        .build();
-
-    let resp = client
+    let mut response = client
         .post(quote_service_addr)
-        .json(&reqbody)
-        .send()
-        .await?
-        .text_with_charset("utf-8")
-        .await?;
+        .trace_request()
+        .send_json(&reqbody)
+        .await
+        .map_err(|err| io::Error::new(io::ErrorKind::Other, err.to_string()))?;
+
+    let bytes = response
+        .body()
+        .await
+        .map_err(|err| io::Error::new(io::ErrorKind::Other, err.to_string()))?;
+
+    let resp = std::str::from_utf8(&bytes)
+        .map(|s| s.to_owned())
+        .map_err(|err| io::Error::new(io::ErrorKind::Other, err))?;
 
     info!("Received quote: {:?}", resp);
 
