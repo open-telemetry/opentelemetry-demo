@@ -2,7 +2,7 @@
 # SPDX-License-Identifier: Apache-2.0
 
 
-FROM apache/kafka:3.7.0
+FROM apache/kafka:3.9.1
 
 USER root
 ARG OTEL_JAVA_AGENT_VERSION
