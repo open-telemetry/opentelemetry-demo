@@ -6,7 +6,7 @@
 # https://github.com/react-native-community/docker-android
 # Choosing a tag where the Android build tools match what we have in android/build.gradle to avoid the
 # container having to download them
-FROM reactnativecommunity/react-native-android:v13.2.1 AS builder
+FROM reactnativecommunity/react-native-android:v17.0 AS builder
 
 WORKDIR /reactnativesrc/
 COPY . .
