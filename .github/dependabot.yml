@@ -52,9 +52,7 @@ updates:
       interval: "daily"
   - package-ecosystem: "npm"
     directories:
-      - "/src/flagd-ui/*"
-      - "/src/frontend/*"
-      - "/src/payment/*"
+      - "/src/**/*"
     groups:
       npm-production-dependencies:
         dependency-type: "production"
@@ -70,18 +68,9 @@ updates:
         dependency-type: "production"
     schedule:
       interval: "daily"
-  - package-ecosystem: "dotnet-sdk"
-    directories:
-      - "/src/accounting/*"
-      - "/src/cart/src/*"
-    groups:
-      dotnet-sdk-production-dependencies:
-        dependency-type: "production"
-    schedule:
-      interval: "daily"
   - package-ecosystem: "cargo"
     directories:
-      - "/src/shipping/*"
+      - "/src/**/*"
     groups:
       cargo-production-dependencies:
         dependency-type: "production"
@@ -89,7 +78,7 @@ updates:
       interval: "daily"
   - package-ecosystem: "bundler"
     directories:
-      - "/src/email/*"
+      - "/src/**/*"
     groups:
       bundler-production-dependencies:
         dependency-type: "production"
