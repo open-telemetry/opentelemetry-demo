@@ -29,6 +29,8 @@ the release.
   ([#2196](https://github.com/open-telemetry/opentelemetry-demo/pull/2196))
 * [cartservice] Upgrade OpenFeature version and change Hooks integration
   ([#2199](https://github.com/open-telemetry/opentelemetry-demo/pull/2199))
+* [kafka] update image to latest
+  ([2194](https://github.com/open-telemetry/opentelemetry-demo/pull/2194))
 
 ## 2.0.2
 
