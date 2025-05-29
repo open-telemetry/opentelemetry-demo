@@ -3,7 +3,7 @@
 
 import Link from 'next/link';
 import { useCallback, useState } from 'react';
-import { CypressFields } from '../../utils/Cypress';
+import { CypressFields } from '../../utils/enums/CypressFields';
 import Input from '../Input';
 import * as S from './CheckoutForm.styled';
 
