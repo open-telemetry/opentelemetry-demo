@@ -3,7 +3,7 @@
 
 import Link from 'next/link';
 import { useEffect, useRef } from 'react';
-import { CypressFields } from '../../utils/Cypress';
+import { CypressFields } from '../../utils/enums/CypressFields';
 import { IProductCartItem } from '../../types/Cart';
 import ProductPrice from '../ProductPrice';
 import * as S from './CartDropdown.styled';
