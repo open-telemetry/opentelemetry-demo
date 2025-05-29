@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import { useState } from 'react';
-import { CypressFields } from '../../utils/Cypress';
+import { CypressFields } from '../../utils/enums/CypressFields';
 import { useCart } from '../../providers/Cart.provider';
 import CartDropdown from '../CartDropdown';
 import * as S from './CartIcon.styled';
