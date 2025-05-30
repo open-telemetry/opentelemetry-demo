@@ -24,5 +24,5 @@ COPY --from=builder /usr/src/app/checkout/ ./
 
 EXPOSE ${CHECKOUT_PORT}
 
-# ENTRYPOINT [ "./checkout" ]
-ENTRYPOINT ["/bin/sh", "-c", "'./checkout'"]
+ENTRYPOINT [ "./checkout" ]
+#ENTRYPOINT ["/bin/sh", "-c", "'./checkout'"]
