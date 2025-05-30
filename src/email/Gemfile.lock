@@ -2,9 +2,18 @@ GEM
   remote: https://rubygems.org/
   specs:
     base64 (0.2.0)
-    bigdecimal (3.1.9)
+    bigdecimal (3.2.0)
     date (3.4.1)
-    google-protobuf (4.31.0-aarch64-linux-musl)
+    google-protobuf (4.31.1-aarch64-linux-musl)
+      bigdecimal
+      rake (>= 13)
+    google-protobuf (4.31.1-arm64-darwin)
+      bigdecimal
+      rake (>= 13)
+    google-protobuf (4.31.1-x86_64-darwin)
+      bigdecimal
+      rake (>= 13)
+    google-protobuf (4.31.1-x86_64-linux-musl)
       bigdecimal
       rake (>= 13)
     googleapis-common-protos-types (1.20.0)
@@ -258,7 +267,7 @@ GEM
       rack (>= 3.0.0)
     rackup (2.2.1)
       rack (>= 3)
-    rake (13.2.1)
+    rake (13.3.0)
     ruby2_keywords (0.0.5)
     sinatra (4.1.1)
       logger (>= 1.6.0)
@@ -277,7 +286,7 @@ PLATFORMS
   x86_64-linux-musl
 
 DEPENDENCIES
-  google-protobuf (~> 4.31.0)
+  google-protobuf (~> 4.31.1)
   net-smtp (~> 0.5.1)
   opentelemetry-exporter-otlp (~> 0.30.0)
   opentelemetry-instrumentation-all (~> 0.76.0)
