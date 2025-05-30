@@ -643,7 +643,7 @@ services:
 
   # Kafka used by Checkout, Accounting, and Fraud Detection services
   kafka:
-    image: ghcr.io/open-telemetry/demo:nightly-15232283795-kafka
+    image: ghcr.io/open-telemetry/demo:1.12.0-kafka
     container_name: kafka
     build:
       context: ./
