@@ -38,6 +38,8 @@
     ],
     "ignore": [
         "node_modules/",
+        "src/accounting/bin/",
+        "src/accounting/obj/",
         "/src/accounting/src/protos/",
         "src/cart/src/obj/",
         "src/cart/tests/obj/",
