@@ -31,6 +31,8 @@ the release.
   ([#2199](https://github.com/open-telemetry/opentelemetry-demo/pull/2199))
 * [kafka] update image to latest
   ([2194](https://github.com/open-telemetry/opentelemetry-demo/pull/2194))
+* [kafka] fix KRaft mode startup error by using container name as host instead of 0.0.0.0
+  ([2228](https://github.com/open-telemetry/opentelemetry-demo/pull/TBD))
 
 ## 2.0.2
 
