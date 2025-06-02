@@ -1,9 +1,10 @@
+
 {
   "name": "frontend",
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "NODE_OPTIONS='-r ./utils/telemetry/Instrumentation.js' next dev",
+    "dev": " next dev",
     "build": "next build",
     "start": "node --require ./Instrumentation.js server.js",
     "lint": "next lint",
@@ -12,6 +13,7 @@
   },
   "dependencies": {
     "@bufbuild/protobuf": "^2.2.3",
+    "@embrace-io/web-sdk": "^1.0.0",
     "@grpc/grpc-js": "1.12.5",
     "@openfeature/flagd-provider": "0.13.2",
     "@openfeature/flagd-web-provider": "0.7.2",

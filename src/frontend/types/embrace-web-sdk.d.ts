@@ -1,0 +1,1 @@
+declare module '@embrace-io/web-sdk';
