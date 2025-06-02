@@ -18,9 +18,9 @@ version = "0.1.0-SNAPSHOT"
 
 def opentelemetryVersion = "1.50.0"
 def opentelemetryInstrumentationVersion = "2.16.0"
-def grpcVersion = "1.72.0"
+def grpcVersion = "1.73.0"
 def jacksonVersion = "2.19.0"
-def protocVersion = "4.31.0"
+def protocVersion = "4.31.1"
 
 tasks.withType(JavaCompile).configureEach {
     sourceCompatibility = JavaVersion.VERSION_21
