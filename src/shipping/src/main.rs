@@ -27,7 +27,10 @@ async fn main() -> std::io::Result<()> {
         }
     };
 
-    let port = env::var("SHIPPING_PORT").expect("$SHIPPING_PORT is not set");
+    let port: u16 = env::var("SHIPPING_PORT")
+        .expect("$SHIPPING_PORT is not set")
+        .parse()
+        .expect("$SHIPPING_PORT is not a valid port");
     let addr = format!("0.0.0.0:{}", port);
     info!("listening on {}", addr);
 
