@@ -22,13 +22,19 @@ pub struct GetQuoteRequest {
 #[derive(Debug, Serialize)]
 pub struct Money {
     pub currency_code: String,
-    pub units: i64,
-    pub nanos: i32,
+    pub units: u64,
+    pub nanos: u32,
 }
 
 #[derive(Debug, Serialize)]
 pub struct GetQuoteResponse {
     pub cost_usd: Option<Money>,
+}
+
+#[derive(Debug, Default)]
+pub struct Quote {
+    pub dollars: u64,
+    pub cents: u32,
 }
 
 #[derive(Debug, Deserialize)]

@@ -8,9 +8,7 @@ use opentelemetry_appender_log::OpenTelemetryLogBridge;
 
 use opentelemetry_resource_detectors::{OsResourceDetector, ProcessResourceDetector};
 use opentelemetry_sdk::{
-    propagation::TraceContextPropagator,
-    resource::ResourceDetector,
-    Resource,
+    propagation::TraceContextPropagator, resource::ResourceDetector, Resource,
 };
 
 use std::{env, str::FromStr};
@@ -33,7 +31,7 @@ fn init_tracer_provider() {
             opentelemetry_otlp::SpanExporter::builder()
                 .with_tonic()
                 .build()
-                .expect("Failed to initialize tracing provider")
+                .expect("Failed to initialize tracing provider"),
         )
         .build();
 
@@ -48,7 +46,7 @@ fn init_meter_provider() -> opentelemetry_sdk::metrics::SdkMeterProvider {
                 .with_temporality(opentelemetry_sdk::metrics::Temporality::Delta)
                 .with_tonic()
                 .build()
-                .expect("Failed to initialize metric exporter")
+                .expect("Failed to initialize metric exporter"),
         )
         .build();
     global::set_meter_provider(meter_provider.clone());
@@ -63,7 +61,7 @@ fn init_logger_provider() {
             opentelemetry_otlp::LogExporter::builder()
                 .with_tonic()
                 .build()
-                .expect("Failed to initialize logger provider")
+                .expect("Failed to initialize logger provider"),
         )
         .build();
 

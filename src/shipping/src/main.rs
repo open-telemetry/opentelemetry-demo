@@ -2,8 +2,8 @@
 // SPDX-License-Identifier: Apache-2.0
 
 use actix_web::{App, HttpServer};
-use actix_web_opentelemetry::RequestTracing;
 use log::{info, warn};
+use opentelemetry_instrumentation_actix_web::RequestTracing;
 use std::env;
 
 mod telemetry_conf;
@@ -20,10 +20,8 @@ async fn main() -> std::io::Result<()> {
             info!("Successfully configured OTel");
         }
         Err(err) => {
-            warn!(
-                "Couldn't start OTel! Starting without telemetry: {0}",
-                err
-            );
+            simple_logger::SimpleLogger::new().env().init().unwrap();
+            warn!("Couldn't start OTel! Starting without telemetry: {0}", err);
         }
     };
 

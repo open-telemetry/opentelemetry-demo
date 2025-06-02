@@ -1,7 +1,7 @@
 // Copyright The OpenTelemetry Authors
 // SPDX-License-Identifier: Apache-2.0
 
-use actix_web::{post, web, Responder, HttpResponse};
+use actix_web::{post, web, HttpResponse, Responder};
 use log::*;
 
 mod quote;
@@ -13,7 +13,7 @@ use tracking::create_tracking_id;
 mod shipping_types;
 pub use shipping_types::*;
 
-const NANOS_MULTIPLE: i32 = 10000000i32;
+const NANOS_MULTIPLE: u32 = 10000000u32;
 
 #[post("/get-quote")]
 pub async fn get_quote(req: web::Json<GetQuoteRequest>) -> impl Responder {
