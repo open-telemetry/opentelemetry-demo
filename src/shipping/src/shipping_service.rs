@@ -35,7 +35,7 @@ pub async fn get_quote(req: web::Json<GetQuoteRequest>) -> impl Responder {
     };
 
     info!(
-        name = "get-quote",
+        name = "SendingQuoteValue",
         quote.dollars = quote.dollars,
         quote.cents = quote.cents,
         message = "Sending Quote"
@@ -48,7 +48,7 @@ pub async fn get_quote(req: web::Json<GetQuoteRequest>) -> impl Responder {
 pub async fn ship_order(_req: web::Json<ShipOrderRequest>) -> impl Responder {
     let tid = create_tracking_id();
     info!(
-        name = "ship-order",
+        name = "CreatingTrackingId",
         tracking_id = tid.as_str(),
         message = "Tracking ID Created"
     );

@@ -21,7 +21,7 @@ pub async fn create_quote_from_count(count: u32) -> Result<Quote, tonic::Status>
         }
     };
 
-    let meter = global::meter("items_count_meter");
+    let meter = global::meter("otel_demo.shipping.quote");
     let counter = meter.u64_counter("app.shipping.items_count").build();
     counter.add(count as u64, &[]);
 
@@ -48,7 +48,7 @@ async fn request_quote(count: u32) -> Result<f64, anyhow::Error> {
     );
 
     info!(
-        name = "request-quote",
+        name = "RequestingQuote",
         quote_service_addr = quote_service_addr.as_str(),
         message = "Requesting quote"
     );
