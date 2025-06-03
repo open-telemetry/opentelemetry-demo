@@ -47,6 +47,11 @@ async fn request_quote(count: u32) -> Result<f64, anyhow::Error> {
         "/getquote"
     );
 
+    info!(
+        quote_service_addr = quote_service_addr.as_str();
+        "Requesting quote"
+    );
+
     let mut reqbody = HashMap::new();
     reqbody.insert("numberOfItems", count);
 
@@ -65,8 +70,6 @@ async fn request_quote(count: u32) -> Result<f64, anyhow::Error> {
     let resp = std::str::from_utf8(&bytes)
         .context("Failed to parse quote service response as UTF-8")?
         .to_owned();
-
-    info!("Received quote: {:?}", resp);
 
     let f = resp
         .parse::<f64>()

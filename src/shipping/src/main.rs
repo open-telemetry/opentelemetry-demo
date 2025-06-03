@@ -29,7 +29,10 @@ async fn main() -> std::io::Result<()> {
         .parse()
         .expect("$SHIPPING_PORT is not a valid port");
     let addr = format!("0.0.0.0:{}", port);
-    info!("listening on {}", addr);
+    info!(
+        addr = addr.as_str();
+        "Shipping service is running"
+    );
 
     HttpServer::new(|| {
         App::new()

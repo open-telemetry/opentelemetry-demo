@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 use actix_web::{post, web, HttpResponse, Responder};
-use log::*;
+use log::info;
 
 mod quote;
 use quote::create_quote_from_count;
@@ -33,13 +33,22 @@ pub async fn get_quote(req: web::Json<GetQuoteRequest>) -> impl Responder {
             nanos: quote.cents * NANOS_MULTIPLE,
         }),
     };
-    info!("Sending Quote: {:?}", quote);
+
+    info!(
+        dollars = quote.dollars,
+        cents = quote.cents;
+        "Sending Quote"
+    );
+
     HttpResponse::Ok().json(reply)
 }
 
 #[post("/ship-order")]
 pub async fn ship_order(_req: web::Json<ShipOrderRequest>) -> impl Responder {
     let tid = create_tracking_id();
-    info!("Tracking ID Created: {}", tid);
+    info!(
+        tracking_id = tid.as_str();
+        "Tracking ID Created"
+    );
     HttpResponse::Ok().json(ShipOrderResponse { tracking_id: tid })
 }
