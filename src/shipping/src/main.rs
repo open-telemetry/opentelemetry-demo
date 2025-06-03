@@ -28,7 +28,7 @@ async fn main() -> std::io::Result<()> {
         .expect("$SHIPPING_PORT is not a valid port");
     let addr = format!("0.0.0.0:{}", port);
     info!(
-        name = "shipping-service",
+        name = "ServerStartedSuccessfully",
         addr = addr.as_str(),
         message = "Shipping service is running"
     );
