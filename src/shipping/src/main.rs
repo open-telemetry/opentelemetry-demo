@@ -3,7 +3,7 @@
 
 use actix_web::{App, HttpServer};
 use log::{info, warn};
-use opentelemetry_instrumentation_actix_web::RequestTracing;
+use opentelemetry_instrumentation_actix_web::{RequestMetrics, RequestTracing};
 use std::env;
 
 mod telemetry_conf;
@@ -35,6 +35,7 @@ async fn main() -> std::io::Result<()> {
     HttpServer::new(|| {
         App::new()
             .wrap(RequestTracing::new())
+            .wrap(RequestMetrics::default())
             .service(get_quote)
             .service(health)
             .service(ship_order)
