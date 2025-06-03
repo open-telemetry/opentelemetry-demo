@@ -2,16 +2,15 @@
 // SPDX-License-Identifier: Apache-2.0
 
 use anyhow::Result;
-use log::Level;
 use opentelemetry::global;
-use opentelemetry_appender_log::OpenTelemetryLogBridge;
+use opentelemetry_appender_tracing::layer::OpenTelemetryTracingBridge;
+use tracing_subscriber::prelude::*;
+use tracing_subscriber::EnvFilter;
 
 use opentelemetry_resource_detectors::{OsResourceDetector, ProcessResourceDetector};
 use opentelemetry_sdk::{
     propagation::TraceContextPropagator, resource::ResourceDetector, Resource,
 };
-
-use std::{env, str::FromStr};
 
 fn get_resource() -> Resource {
     let detectors: Vec<Box<dyn ResourceDetector>> = vec![
@@ -65,14 +64,11 @@ fn init_logger_provider() {
         )
         .build();
 
-    let otel_log_appender = OpenTelemetryLogBridge::new(&logger_provider);
-    log::set_boxed_logger(Box::new(otel_log_appender)).unwrap();
+    let otel_layer = OpenTelemetryTracingBridge::new(&logger_provider);
+    let filter_otel = EnvFilter::new("info");
+    let otel_layer = otel_layer.with_filter(filter_otel);
 
-    let max_level = env::var("LOG_LEVEL")
-        .ok()
-        .and_then(|l| Level::from_str(l.to_lowercase().as_str()).ok())
-        .unwrap_or(Level::Info);
-    log::set_max_level(max_level.to_level_filter());
+    tracing_subscriber::registry().with(otel_layer).init();
 }
 
 pub fn init_otel() -> Result<()> {

@@ -2,9 +2,9 @@
 // SPDX-License-Identifier: Apache-2.0
 
 use actix_web::{App, HttpServer};
-use log::info;
 use opentelemetry_instrumentation_actix_web::{RequestMetrics, RequestTracing};
 use std::env;
+use tracing::info;
 
 mod telemetry_conf;
 use telemetry_conf::init_otel;
@@ -28,8 +28,9 @@ async fn main() -> std::io::Result<()> {
         .expect("$SHIPPING_PORT is not a valid port");
     let addr = format!("0.0.0.0:{}", port);
     info!(
-        addr = addr.as_str();
-        "Shipping service is running"
+        name = "shipping-service",
+        addr = addr.as_str(),
+        message = "Shipping service is running"
     );
 
     HttpServer::new(|| {

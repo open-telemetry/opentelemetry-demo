@@ -7,8 +7,8 @@ use opentelemetry_instrumentation_actix_web::ClientExt;
 use std::{collections::HashMap, env};
 
 use anyhow::{Context, Result};
-use log::info;
 use opentelemetry::{trace::get_active_span, KeyValue};
+use tracing::info;
 
 use super::shipping_types::Quote;
 
@@ -48,8 +48,9 @@ async fn request_quote(count: u32) -> Result<f64, anyhow::Error> {
     );
 
     info!(
-        quote_service_addr = quote_service_addr.as_str();
-        "Requesting quote"
+        name = "request-quote",
+        quote_service_addr = quote_service_addr.as_str(),
+        message = "Requesting quote"
     );
 
     let mut reqbody = HashMap::new();
