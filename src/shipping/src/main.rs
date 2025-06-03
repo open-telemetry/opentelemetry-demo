@@ -10,8 +10,6 @@ mod telemetry_conf;
 use telemetry_conf::init_otel;
 mod shipping_service;
 use shipping_service::{get_quote, ship_order};
-mod health_check;
-use health_check::health;
 
 #[actix_web::main]
 async fn main() -> std::io::Result<()> {
@@ -39,7 +37,6 @@ async fn main() -> std::io::Result<()> {
             .wrap(RequestTracing::new())
             .wrap(RequestMetrics::default())
             .service(get_quote)
-            .service(health)
             .service(ship_order)
     })
     .bind(&addr)?
