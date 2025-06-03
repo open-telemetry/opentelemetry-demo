@@ -3,17 +3,17 @@
 
 use serde::{Deserialize, Serialize};
 
-#[derive(Debug, Deserialize)]
+#[derive(Debug, Deserialize, Serialize)]
 pub struct CartItem {
     pub quantity: u32,
 }
 
-#[derive(Debug, Deserialize)]
+#[derive(Debug, Deserialize, Serialize)]
 pub struct Address {
     pub zip_code: String,
 }
 
-#[derive(Debug, Deserialize)]
+#[derive(Debug, Deserialize, Serialize)]
 pub struct GetQuoteRequest {
     pub items: Vec<CartItem>,
     pub address: Option<Address>,
@@ -37,10 +37,10 @@ pub struct Quote {
     pub cents: u32,
 }
 
-#[derive(Debug, Deserialize)]
+#[derive(Debug, Deserialize, Serialize)]
 pub struct ShipOrderRequest {}
 
-#[derive(Debug, Serialize)]
+#[derive(Debug, Deserialize, Serialize)]
 pub struct ShipOrderResponse {
     pub tracking_id: String,
 }

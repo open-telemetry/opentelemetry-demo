@@ -90,3 +90,38 @@ impl fmt::Display for Quote {
         write!(f, "{}.{}", self.dollars, self.cents)
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_create_quote_from_float() {
+        let quote = create_quote_from_float(10.99);
+        assert_eq!(quote.dollars, 10);
+        assert_eq!(quote.cents, 99);
+
+        let quote = create_quote_from_float(0.01);
+        assert_eq!(quote.dollars, 0);
+        assert_eq!(quote.cents, 1);
+
+        let quote = create_quote_from_float(100.00);
+        assert_eq!(quote.dollars, 100);
+        assert_eq!(quote.cents, 0);
+    }
+
+    #[test]
+    fn test_quote_display() {
+        let quote = Quote {
+            dollars: 10,
+            cents: 99,
+        };
+        assert_eq!(format!("{}", quote), "10.99");
+
+        let quote = Quote {
+            dollars: 0,
+            cents: 1,
+        };
+        assert_eq!(format!("{}", quote), "0.1");
+    }
+}

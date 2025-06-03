@@ -52,3 +52,25 @@ pub async fn ship_order(_req: web::Json<ShipOrderRequest>) -> impl Responder {
     );
     HttpResponse::Ok().json(ShipOrderResponse { tracking_id: tid })
 }
+
+#[cfg(test)]
+mod tests {
+    use actix_web::{http::header::ContentType, test, App};
+
+    use super::*;
+
+    #[actix_web::test]
+    async fn test_ship_order() {
+        let app = test::init_service(App::new().service(ship_order)).await;
+        let req = test::TestRequest::post()
+            .uri("/ship-order")
+            .insert_header(ContentType::json())
+            .set_json(&ShipOrderRequest {})
+            .to_request();
+        let resp = test::call_service(&app, req).await;
+        assert!(resp.status().is_success());
+
+        let order: ShipOrderResponse = test::read_body_json(resp).await;
+        assert!(!order.tracking_id.is_empty());
+    }
+}
