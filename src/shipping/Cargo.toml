@@ -11,7 +11,6 @@ actix-web = "4"
 anyhow = "1.0.98"
 awc = { version = "3.7.0", default-features = false, features = ["compress-zstd"] }
 log = { version = "0.4.27", features = ["kv"] }
-simple_logger = "5.0.0"
 serde = { version = "1.0.219", features = ["derive"] }
 tonic = "0.12.3"
 

@@ -21,7 +21,9 @@ pub async fn get_quote(req: web::Json<GetQuoteRequest>) -> impl Responder {
 
     let quote = match create_quote_from_count(itemct).await {
         Ok(q) => q,
-        Err(_) => return HttpResponse::InternalServerError().finish(),
+        Err(e) => {
+            return HttpResponse::InternalServerError().body(format!("Failed to get quote: {}", e));
+        }
     };
 
     let reply = GetQuoteResponse {
