@@ -70,15 +70,6 @@ updates:
         dependency-type: "production"
     schedule:
       interval: "daily"
-  - package-ecosystem: "dotnet-sdk"
-    directories:
-      - "/src/accounting/*"
-      - "/src/cart/src/*"
-    groups:
-      dotnet-sdk-production-dependencies:
-        dependency-type: "production"
-    schedule:
-      interval: "daily"
   - package-ecosystem: "cargo"
     directories:
       - "/src/shipping/*"
