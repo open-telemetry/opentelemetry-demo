@@ -4,7 +4,7 @@
 use core::fmt;
 use std::{collections::HashMap, env};
 
-use log::{info, debug};
+use log::info;
 use opentelemetry::{trace::get_active_span, KeyValue};
 use reqwest_middleware::ClientBuilder;
 use reqwest_tracing::{SpanBackendWithUrl, TracingMiddleware};
@@ -40,20 +40,15 @@ pub async fn create_quote_from_count(count: u32) -> Result<Quote, tonic::Status>
 async fn request_quote(count: u32) -> Result<f64, Box<dyn std::error::Error>> {
     let quote_endpoint = env::var("QUOTE_ENDPOINT")
         .unwrap_or_else(|_| "/getquote".to_string());
-    debug!("Quote endpoint: {}", quote_endpoint);
-    
-    let quote_addr = env::var("QUOTE_ADDR")
-        .unwrap_or_else(|_| "http://quote:8090".to_string());
-    debug!("Quote address: {}", quote_addr);
     
     let quote_service_addr: String = format!(
         "{}{}",
-        quote_addr
+        env::var("QUOTE_ADDR")
+            .unwrap_or_else(|_| "http://quote:8090".to_string())
             .parse::<String>()
             .expect("Invalid quote service address"),
         quote_endpoint
     );
-    debug!("Full quote service address: {}", quote_service_addr);
 
     let mut reqbody = HashMap::new();
     reqbody.insert("numberOfItems", count);
