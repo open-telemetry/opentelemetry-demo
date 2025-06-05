@@ -6,6 +6,7 @@ const EmbraceFrontendTracer = () => {
 
     sdk.initSDK({
     appID: 'p9feh',
+    appVersion: '0.1.0',
     });
 }
 

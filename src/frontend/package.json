@@ -13,7 +13,7 @@
   },
   "dependencies": {
     "@bufbuild/protobuf": "^2.2.3",
-    "@embrace-io/web-sdk": "^1.0.0",
+    "@embrace-io/web-sdk": "^1.1.0",
     "@grpc/grpc-js": "1.12.5",
     "@openfeature/flagd-provider": "0.13.2",
     "@openfeature/flagd-web-provider": "0.7.2",
