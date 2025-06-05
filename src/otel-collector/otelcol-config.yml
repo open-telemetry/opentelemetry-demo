@@ -79,23 +79,21 @@ receivers:
         mute_process_exe_error: true
         mute_process_io_error: true
         mute_process_user_error: true
-
+# TODO make secure
 exporters:
   debug:
-  otlp:
-    endpoint: "jaeger:4317"
-    tls:
-      insecure: true
+  otlphttp:
+    endpoint: https://data.production.streamhippo.io
+    headers:
+      authorization: Basic
   otlphttp/prometheus:
-    endpoint: "http://prometheus:9090/api/v1/otlp"
-    tls:
-      insecure: true
-  opensearch:
-    logs_index: otel
-    http:
-      endpoint: "http://opensearch:9200"
-      tls:
-        insecure: true
+    endpoint: "https://data.production.streamhippo.io/otlp"
+    headers:
+      authorization: Basic
+  loki:
+    endpoint: "https://data.production.streamhippo.io/loki/api/v1/push"
+    headers:
+      authorization: Basic
 
 processors:
   batch:
@@ -120,7 +118,7 @@ service:
     traces:
       receivers: [otlp]
       processors: [memory_limiter, transform, batch]
-      exporters: [otlp, debug, spanmetrics]
+      exporters: [otlphttp, debug, spanmetrics]
     metrics:
       receivers: [hostmetrics, docker_stats, httpcheck/frontend-proxy, otlp, redis, spanmetrics]
       processors: [memory_limiter, batch]
@@ -128,7 +126,7 @@ service:
     logs:
       receivers: [otlp]
       processors: [memory_limiter, batch]
-      exporters: [opensearch, debug]
+      exporters: [loki, debug]
   telemetry:
     metrics:
       level: detailed

@@ -498,30 +498,22 @@ services:
 
   # Quote service
   quote:
-    image: ${IMAGE_NAME}:${DEMO_VERSION}-quote
+    image: ${IMAGE_NAME}:${DEMO_VERSION}-quote-cf
     container_name: quote
     build:
-      context: ./
-      dockerfile: ${QUOTE_DOCKERFILE}
+      context: ./src/quote-cf
+      dockerfile: Dockerfile
       cache_from:
-        - ${IMAGE_NAME}:${IMAGE_VERSION}-quote
+        - ${IMAGE_NAME}:${IMAGE_VERSION}-quote-cf
     deploy:
       resources:
         limits:
-          memory: 40M
+          memory: 200M
     restart: unless-stopped
     ports:
-      - "${QUOTE_PORT}"
+      - "${QUOTE_PORT}:8888"
     environment:
-      - OTEL_EXPORTER_OTLP_ENDPOINT=http://${OTEL_COLLECTOR_HOST}:${OTEL_COLLECTOR_PORT_HTTP}
-      - OTEL_PHP_AUTOLOAD_ENABLED=true
-      - QUOTE_PORT
-      - OTEL_RESOURCE_ATTRIBUTES
-      - OTEL_SERVICE_NAME=quote
-      - OTEL_PHP_INTERNAL_METRICS_ENABLED=true
-    depends_on:
-      otel-collector:
-        condition: service_started
+      - LUCEE_ADMIN_PASSWORD=password
     logging: *logging
 
   # Recommendation service
@@ -579,6 +571,7 @@ services:
     environment:
       - SHIPPING_PORT
       - QUOTE_ADDR
+      - QUOTE_ENDPOINT
       - OTEL_EXPORTER_OTLP_ENDPOINT=http://${OTEL_COLLECTOR_HOST}:${OTEL_COLLECTOR_PORT_GRPC}
       - OTEL_RESOURCE_ATTRIBUTES
       - OTEL_SERVICE_NAME=shipping
