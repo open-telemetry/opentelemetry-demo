@@ -1,0 +1,276 @@
+{
+  "applicationTimeout": "1,0,0,0",
+  "cacheDirectory": "{lucee-config}/cache/",
+  "cacheDirectoryMaxSize": "100mb",
+  "cascadeToResultset": true,
+  "clientCookies": true,
+  "clientDirectory": "{lucee-config}/client-scope/",
+  "clientDirectoryMaxSize": "100mb",
+  "clientManagement": false,
+  "clientTimeout": "0,0,90,0",
+  "componentBase": "/lucee/Component.cfc",
+  "componentDataMemberAccess": "public",
+  "componentDumpTemplate": "/lucee/component-dump.cfm",
+  "debuggingEnabled": false,
+  "debuggingQueryUsage": false,
+  "developMode": false,
+  "domainCookies": false,
+  "listenerMode": "curr2root",
+  "listenerType": "mixed",
+  "mailConnectionTimeout": 30,
+  "mailSpoolEnable": true,
+  "mailSpoolInterval": 5,
+  "mergeUrlForm": false,
+  "mode": "single",
+  "preserveSingleQuote": false,
+  "requestTimeout": "0,0,0,50",
+  "scopeCascading": "standard",
+  "sessionManagement": true,
+  "sessionTimeout": "0,0,30,0",
+  "systemErr": "system",
+  "systemOut": "system",
+  "tempDirectory": "{lucee-config}/temp/",
+  "timeserver": "pool.ntp.org",
+  "updateLocation": "https://update.lucee.org",
+  "updateType": "manual",
+  "version": "5.0",
+  "cacheHandlers": {
+    "timespan": {
+      "class": "lucee.runtime.cache.tag.timespan.TimespanCacheHandler"
+    },
+    "request": {
+      "class": "lucee.runtime.cache.tag.request.RequestCacheHandler"
+    }
+  },
+  "componentMappings": [
+    {
+      "inspectTemplate": "never",
+      "physical": "{lucee-config}/components/"
+    }
+  ],
+  "customTagMappings": [
+    {
+      "inspectTemplate": "never",
+      "physical": "{lucee-config}/customtags/"
+    }
+  ],
+  "dataSources": {
+    "preserveSingleQuote": "yes"
+  },
+  "debugging": {
+    "logMemoryUsage": "no",
+    "template": "/lucee/templates/debugging/debugging.cfm"
+  },
+  "defaultResourceProvider": [
+    {
+      "class": "lucee.commons.io.res.type.file.FileResourceProvider",
+      "arguments": "lock-timeout:1000;"
+    }
+  ],
+  "dumpWriters": [
+    {
+      "name": "html",
+      "class": "lucee.runtime.dump.HTMLDumpWriter",
+      "default": "browser"
+    },
+    {
+      "name": "text",
+      "class": "lucee.runtime.dump.TextDumpWriter",
+      "default": "console"
+    },
+    {
+      "name": "classic",
+      "class": "lucee.runtime.dump.ClassicHTMLDumpWriter"
+    },
+    {
+      "name": "simple",
+      "class": "lucee.runtime.dump.SimpleHTMLDumpWriter"
+    }
+  ],
+  "fileSystem": {
+    "fldDefaultDirectory": "{lucee-config}/library/fld/",
+    "tldDefaultDirectory": "{lucee-config}/library/tld/",
+    "functionDefaultDirectory": "{lucee-config}/library/function/",
+    "tagDefaultDirectory": "{lucee-config}/library/tag/",
+    "deployDirectory": "{lucee-config}/cfclasses/"
+  },
+  "loggers": {
+    "datasource": {
+      "appender": "resource",
+      "appenderArguments": "path:{lucee-config}/logs/datasource.log",
+      "level": "error",
+      "layout": "classic"
+    },
+    "memory": {
+      "appender": "resource",
+      "appenderArguments": "path:{lucee-config}/logs/memory.log",
+      "level": "error",
+      "layout": "classic"
+    },
+    "requesttimeout": {
+      "appender": "resource",
+      "appenderArguments": "path:{lucee-config}/logs/requesttimeout.log",
+      "level": "error",
+      "layout": "classic"
+    },
+    "deploy": {
+      "appender": "resource",
+      "appenderArguments": "path:{lucee-config}/logs/deploy.log",
+      "level": "info",
+      "layout": "classic"
+    },
+    "thread": {
+      "appender": "resource",
+      "appenderArguments": "path:{lucee-config}/logs/thread.log",
+      "level": "error",
+      "layout": "classic"
+    },
+    "exception": {
+      "appender": "resource",
+      "appenderArguments": "path:{lucee-config}/logs/exception.log",
+      "level": "error",
+      "layout": "classic"
+    },
+    "application": {
+      "appender": "resource",
+      "appenderArguments": "path:{lucee-config}/logs/application.log",
+      "level": "info",
+      "layout": "classic"
+    },
+    "scope": {
+      "appender": "resource",
+      "appenderArguments": "path:{lucee-config}/logs/scope.log",
+      "level": "error",
+      "layout": "classic"
+    },
+    "scheduler": {
+      "appender": "resource",
+      "appenderArguments": "path:{lucee-config}/logs/scheduler.log",
+      "level": "error",
+      "layout": "classic"
+    },
+    "search": {
+      "appender": "resource",
+      "appenderArguments": "path:{lucee-config}/logs/search.log",
+      "level": "error",
+      "layout": "classic"
+    },
+    "mail": {
+      "appender": "resource",
+      "appenderArguments": "path:{lucee-config}/logs/mail.log",
+      "level": "error",
+      "layout": "classic"
+    },
+    "orm": {
+      "appender": "resource",
+      "appenderArguments": "path:{lucee-config}/logs/orm.log",
+      "level": "error",
+      "layout": "classic"
+    },
+    "remoteclient": {
+      "appender": "resource",
+      "appenderArguments": "path:{lucee-config}/logs/remoteclient.log",
+      "level": "error",
+      "layout": "classic"
+    },
+    "gateway": {
+      "appender": "resource",
+      "appenderArguments": "path:{lucee-config}/logs/gateway.log",
+      "level": "error",
+      "layout": "classic"
+    },
+    "rest": {
+      "appender": "resource",
+      "appenderArguments": "path:{lucee-config}/logs/rest.log",
+      "level": "error",
+      "layout": "classic"
+    },
+    "mapping": {
+      "appender": "resource",
+      "appenderArguments": "path:{lucee-config}/logs/mapping.log",
+      "level": "error",
+      "layout": "classic"
+    },
+    "execute": {
+      "appender": "resource",
+      "appenderArguments": "path:{lucee-config}/logs/execute.log",
+      "level": "error",
+      "layout": "classic"
+    },
+    "http": {
+      "appender": "resource",
+      "appenderArguments": "path:{lucee-config}/logs/http.log",
+      "level": "error",
+      "layout": "classic"
+    }
+  },
+  "mappings": {
+    "/lucee/": {
+      "readonly": "yes",
+      "physical": "{lucee-config}/context/",
+      "archive": "{lucee-config}/context/lucee-context.lar",
+      "primary": "physical",
+      "listenerMode": "modern",
+      "listenerType": "curr2root",
+      "inspectTemplate": "once"
+    },
+    "/lucee-server/": {
+      "readonly": "yes",
+      "physical": "{lucee-server}/context/",
+      "archive": "",
+      "primary": "physical",
+      "listenerMode": "modern",
+      "listenerType": "curr2root",
+      "inspectTemplate": "once"
+    }
+  },
+  "orm": {
+    "engineClass": "lucee.runtime.orm.DummyORMEngine"
+  },
+  "remoteClients": {
+    "directory": "{lucee-config}remote-client/"
+  },
+  "resourceProviders": [
+    {
+      "scheme": "ftp",
+      "class": "lucee.commons.io.res.type.ftp.FTPResourceProvider",
+      "arguments": "lock-timeout:20000;socket-timeout:-1;client-timeout:60000"
+    },
+    {
+      "scheme": "zip",
+      "class": "lucee.commons.io.res.type.zip.ZipResourceProvider",
+      "arguments": "lock-timeout:1000;case-sensitive:true;"
+    },
+    {
+      "scheme": "tar",
+      "class": "lucee.commons.io.res.type.tar.TarResourceProvider",
+      "arguments": "lock-timeout:1000;case-sensitive:true;"
+    },
+    {
+      "scheme": "tgz",
+      "class": "lucee.commons.io.res.type.tgz.TGZResourceProvider",
+      "arguments": "lock-timeout:1000;case-sensitive:true;"
+    },
+    {
+      "scheme": "http",
+      "class": "lucee.commons.io.res.type.http.HTTPResourceProvider",
+      "arguments": "lock-timeout:10000;case-sensitive:false;"
+    },
+    {
+      "scheme": "https",
+      "class": "lucee.commons.io.res.type.http.HTTPSResourceProvider",
+      "arguments": "lock-timeout:10000;case-sensitive:false;"
+    },
+    {
+      "scheme": "ram",
+      "class": "lucee.commons.io.res.type.cache.CacheResourceProvider",
+      "arguments": "case-sensitive:true;lock-timeout:1000;"
+    }
+  ],
+  "extensions": [
+    {
+      "name": "Redis",
+      "path": "/opt/lucee/extensions/redis.extension-3.0.0.51.lex"
+    }
+  ]
+}
