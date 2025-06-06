@@ -13,7 +13,7 @@ import Layout from '../../../components/Layout';
 import ProductPrice from '../../../components/ProductPrice';
 import Recommendations from '../../../components/Recommendations';
 import Select from '../../../components/Select';
-import { CypressFields } from '../../../utils/Cypress';
+import { CypressFields } from '../../../utils/enums/CypressFields';
 import ApiGateway from '../../../gateways/Api.gateway';
 import { Product } from '../../../protos/demo';
 import AdProvider from '../../../providers/Ad.provider';
