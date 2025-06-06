@@ -31,6 +31,8 @@ the release.
   ([#2199](https://github.com/open-telemetry/opentelemetry-demo/pull/2199))
 * [kafka] update image to latest
   ([2194](https://github.com/open-telemetry/opentelemetry-demo/pull/2194))
+* [shipping] refactor service to use actix-web and demo instrumentation library
+  ([2214](https://github.com/open-telemetry/opentelemetry-demo/pull/2214))
 * [payment] change image from alpine to distroless to reduce size
   ([2224](https://github.com/open-telemetry/opentelemetry-demo/pull/2224))
 * [frontend] change image from alpine to distroless to reduce size
