@@ -2,7 +2,7 @@
 # SPDX-License-Identifier: Apache-2.0
 
 
-FROM python:3.12-alpine3.21 AS build-venv
+FROM python:3.13-alpine3.21 AS build-venv
 
 RUN apk update && \
     apk add gcc g++ linux-headers
@@ -14,7 +14,7 @@ RUN python -m venv venv && \
 
 RUN venv/bin/opentelemetry-bootstrap -a install
 
-FROM python:3.12-alpine3.21
+FROM python:3.13-alpine3.21
 
 COPY --from=build-venv /venv/ /venv/
 
