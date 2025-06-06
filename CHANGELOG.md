@@ -33,6 +33,8 @@ the release.
   ([2194](https://github.com/open-telemetry/opentelemetry-demo/pull/2194))
 * [shipping] refactor service to use actix-web and demo instrumentation library
   ([2214](https://github.com/open-telemetry/opentelemetry-demo/pull/2214))
+* [image-provider]: replace bookworm image with nonroot alpine image
+  ([2193](https://github.com/open-telemetry/opentelemetry-demo/pull/2193))
 
 ## 2.0.2
 
