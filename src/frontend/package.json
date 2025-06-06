@@ -48,7 +48,7 @@
     "uuid": "11.1.0"
   },
   "devDependencies": {
-    "@types/node": "22.15.29",
+    "@types/node": "22.15.30",
     "@types/react": "19.0.10",
     "@types/react-dom": "19.0.4",
     "@types/styled-components": "5.1.34",
