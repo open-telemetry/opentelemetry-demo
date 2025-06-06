@@ -497,6 +497,12 @@ services:
       - OTEL_EXPORTER_OTLP_ENDPOINT=http://${OTEL_COLLECTOR_HOST}:${OTEL_COLLECTOR_PORT_GRPC}
       - OTEL_RESOURCE_ATTRIBUTES
       - OTEL_SERVICE_NAME=shipping
+    healthcheck:
+      test: ["CMD-SHELL", "timeout 1 bash -c '>/dev/tcp/localhost/${SHIPPING_PORT}'"]
+      start_period: 10s
+      interval: 5s
+      timeout: 10s
+      retries: 10
     depends_on:
       otel-collector:
         condition: service_started

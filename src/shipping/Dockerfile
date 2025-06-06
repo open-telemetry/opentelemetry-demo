@@ -2,7 +2,7 @@
 # SPDX-License-Identifier: Apache-2.0
 
 
-FROM --platform=${BUILDPLATFORM} rust:1.76 AS builder
+FROM --platform=${BUILDPLATFORM} rust:1.82 AS builder
 ARG TARGETARCH
 ARG TARGETPLATFORM
 ARG BUILDPLATFORM
@@ -28,22 +28,21 @@ RUN if [ "${TARGETPLATFORM}" = "${BUILDPLATFORM}" ] ; then \
 WORKDIR /app/
 
 COPY /src/shipping/ /app/
-COPY /pb/ /app/proto/
 
 # Compile or crosscompile
 RUN if [ "${TARGETPLATFORM}" = "${BUILDPLATFORM}" ] ; then \
-        cargo build -r --features="dockerproto"; \
+        cargo build -r; \
     elif [ "${TARGETPLATFORM}" = "linux/arm64" ] ; then \
         env CARGO_TARGET_AARCH64_UNKNOWN_LINUX_GNU_LINKER=aarch64-linux-gnu-gcc \
             CC_aarch64_unknown_linux_gnu=aarch64-linux-gnu-gcc \
             CXX_aarch64_unknown_linux_gnu=aarch64-linux-gnu-g++ \
-        cargo build -r --features="dockerproto" --target aarch64-unknown-linux-gnu && \
+        cargo build -r --target aarch64-unknown-linux-gnu && \
         cp /app/target/aarch64-unknown-linux-gnu/release/shipping /app/target/release/shipping; \
     elif [ "${TARGETPLATFORM}" = "linux/amd64" ] ; then \
         env CARGO_TARGET_X86_64_UNKNOWN_LINUX_GNU_LINKER=x86_64-linux-gnu-gcc \
             CC_x86_64_unknown_linux_gnu=x86_64-linux-gnu-gcc \
             CXX_x86_64_unknown_linux_gnu=x86_64-linux-gnu-g++ \
-        cargo build -r --features="dockerproto" --target x86_64-unknown-linux-gnu && \
+        cargo build -r --target x86_64-unknown-linux-gnu && \
         cp /app/target/x86_64-unknown-linux-gnu/release/shipping /app/target/release/shipping; \
     else \
         echo "${TARGETPLATFORM} is not supported"; \
@@ -51,15 +50,10 @@ RUN if [ "${TARGETPLATFORM}" = "${BUILDPLATFORM}" ] ; then \
     fi
 
 
-ENV GRPC_HEALTH_PROBE_VERSION=v0.4.37
-RUN wget -qO/bin/grpc_health_probe https://github.com/grpc-ecosystem/grpc-health-probe/releases/download/${GRPC_HEALTH_PROBE_VERSION}/grpc_health_probe-linux-${TARGETARCH} && \
-    chmod +x /bin/grpc_health_probe
-
 FROM debian:bookworm-slim AS release
 
 WORKDIR /app
 COPY --from=builder /app/target/release/shipping /app/shipping
-COPY --from=builder /bin/grpc_health_probe /bin/grpc_health_probe
 
 EXPOSE ${SHIPPING_PORT}
 ENTRYPOINT ["/app/shipping"]
