@@ -33,6 +33,8 @@ the release.
   ([2194](https://github.com/open-telemetry/opentelemetry-demo/pull/2194))
 * [shipping] refactor service to use actix-web and demo instrumentation library
   ([2214](https://github.com/open-telemetry/opentelemetry-demo/pull/2214))
+* [quote] replace debian image with latest alpine image
+  ([2216](https://github.com/open-telemetry/opentelemetry-demo/pull/2216))
 
 ## 2.0.2
 
