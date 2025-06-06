@@ -3,7 +3,7 @@
 
 import type { NextApiRequest, NextApiResponse } from 'next';
 import InstrumentationMiddleware from '../../utils/telemetry/InstrumentationMiddleware';
-import ShippingGateway from '../../gateways/rpc/Shipping.gateway';
+import ShippingGateway from '../../gateways/http/Shipping.gateway';
 import { Address, CartItem, Empty, Money } from '../../protos/demo';
 import CurrencyGateway from '../../gateways/rpc/Currency.gateway';
 
