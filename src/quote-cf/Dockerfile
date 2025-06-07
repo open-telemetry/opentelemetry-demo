@@ -14,12 +14,21 @@ COPY extensions/ /opt/lucee/extensions/
 # add FR
 RUN mkdir -p /opt/fusionreactor
 
-# Download FusionReactor files
+# Download FusionReactor jar (architecture-independent)
 ADD https://download.fusionreactor.io/FR/Latest/fusionreactor.jar /opt/fusionreactor/fusionreactor.jar
-ADD https://download.fusionreactor.io/FR/Latest/libfrjvmti_aarch64.so /opt/fusionreactor/libfrjvmti_aarch64.so
+
+# Download architecture-specific FusionReactor native library
+RUN ARCH=$(uname -m) && \
+    if [ "$ARCH" = "x86_64" ]; then \
+        curl -L https://download.fusionreactor.io/FR/Latest/libfrjvmti_x64.so -o /opt/fusionreactor/libfrjvmti.so; \
+    elif [ "$ARCH" = "aarch64" ]; then \
+        curl -L https://download.fusionreactor.io/FR/Latest/libfrjvmti_aarch64.so -o /opt/fusionreactor/libfrjvmti.so; \
+    else \
+        echo "Unsupported architecture: $ARCH" && exit 1; \
+    fi
 
 # Set FusionReactor Java options
-ENV LUCEE_JAVA_OPTS="-javaagent:/opt/fusionreactor/fusionreactor.jar=name=otlp-lucee-fr,address=8088 -agentpath:/opt/fusionreactor/libfrjvmti_aarch64.so"
+ENV LUCEE_JAVA_OPTS="-javaagent:/opt/fusionreactor/fusionreactor.jar=name=otlp-lucee-fr,address=8088 -agentpath:/opt/fusionreactor/libfrjvmti.so"
 
 # Expose FusionReactor web interface
 EXPOSE 8088
