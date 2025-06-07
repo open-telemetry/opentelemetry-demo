@@ -19,6 +19,31 @@ extraEnvs:
       secretKeyRef:
         name: prometheus
         key: endpoint
+  - name: OBSERVEINC_COLLECTION_ENDPOINT
+    valueFrom:
+      secretKeyRef:
+        name: observeinc
+        key: collection_endpoint
+  - name: OBSERVEINC_TOKEN
+    valueFrom:
+      secretKeyRef:
+        name: observeinc
+        key: token
+  - name: ELASTIC_PASSWORD
+    valueFrom:
+      secretKeyRef:
+        name: elastic
+        key: password
+  - name: ELASTIC_USERNAME
+    valueFrom:
+      secretKeyRef:
+        name: elastic
+        key: username
+  - name: ELASTIC_ENDPOINT
+    valueFrom:
+      secretKeyRef:
+        name: elastic
+        key: endpoint
 presets:
   # enables the k8sattributesprocessor and adds it to the traces, metrics, and logs pipelines
   kubernetesAttributes:
@@ -72,19 +97,35 @@ config:
       api:
         site: ${env:DD_SITE}
         key: ${env:DD_API_KEY}
+    otlphttp/observeinclogs:
+      endpoint: "${OBSERVEINC_COLLECTION_ENDPOINT}/v2/otel"
+      headers:
+        authorization: "Bearer ${OBSERVEINC_TOKEN}"
     prometheusremotewrite:
       endpoint: ${env:PROMETHEUS_ENDPOINT}/api/v1/write
       namespace: "default"
       timeout: 60s
       tls:
         insecure: true
+    elasticsearch:
+      endpoint: ${env:ELASTIC_ENDPOINT}
+      auth:
+        authenticator: basicauth
+  extensions:
+    basicauth:
+      client_auth:
+        username: ${env:ELASTIC_USERNAME}
+        password: ${env:ELASTIC_PASSWORD}
   service:
-    extensions: [health_check]
+    extensions: [health_check, basicauth]
     pipelines:
       traces:
-        exporters: [ datadog/connector, datadog/exporter, spanmetrics ]
+        processors: [resource]
+        exporters: [ datadog/connector, datadog/exporter, spanmetrics, elasticsearch ]
       metrics:
         receivers: [ otlp, hostmetrics, datadog/connector, spanmetrics ]
+        processors: [resource]
         exporters: [ prometheusremotewrite, datadog/exporter ]
       logs:
-        exporters: [ datadog/exporter ]
+        processors: [resource]
+        exporters: [ datadog/exporter, otlphttp/observeinclogs, elasticsearch ]
