@@ -8,4 +8,4 @@ openfeature-sdk==0.8.0
 openfeature-provider-flagd==0.2.0
 openfeature-hooks-opentelemetry==0.2.0
 psutil==6.1.1 # Importing this will also import opentelemetry-instrumentation-system-metrics when running opentelemetry-bootstrap
-
+deep-agent

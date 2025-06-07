@@ -8,7 +8,7 @@
 import os
 import random
 from concurrent import futures
-
+import deep
 # Pip
 import grpc
 from opentelemetry import trace, metrics
@@ -127,6 +127,8 @@ def check_feature_flag(flag_name: str):
 
 
 if __name__ == "__main__":
+
+    deep.start()
     service_name = must_map_env('OTEL_SERVICE_NAME')
     api.set_provider(FlagdProvider(host=os.environ.get('FLAGD_HOST', 'flagd'), port=os.environ.get('FLAGD_PORT', 8013)))
     api.add_hooks([TracingHook()])
