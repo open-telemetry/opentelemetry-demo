@@ -38,7 +38,7 @@ ADD --chmod=644 https://download.fusionreactor.io/FR/Latest/fusionreactor.jar /u
 COPY --from=builder /usr/src/app/libfrjvmti.so /usr/src/app/libfrjvmti.so
 
 # Set FusionReactor Java options
-ENV JAVA_TOOL_OPTIONS="-javaagent:/usr/src/app/fusionreactor.jar=name=otlp-fraud-detection-fr,address=8089 -agentpath:/usr/src/app/libfrjvmti.so"
+ENV JAVA_TOOL_OPTIONS="-javaagent:/usr/src/app/fusionreactor.jar=name=otlp-fraud-detection-fr,address=8088 -agentpath:/usr/src/app/libfrjvmti.so"
 
 COPY --from=builder /usr/src/app/build/libs/fraud-detection-1.0-all.jar fraud-detection-1.0-all.jar
 
