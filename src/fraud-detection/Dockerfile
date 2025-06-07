@@ -3,20 +3,20 @@
 
 
 FROM --platform=${BUILDPLATFORM} gradle:8-jdk17 AS builder
+ARG TARGETARCH
 
 WORKDIR /usr/src/app/
 
 COPY ./src/fraud-detection/ ./
 COPY ./pb/ ./src/main/proto/
 
-# Download architecture-specific FusionReactor native library in builder stage
-RUN ARCH=$(uname -m) && \
-    if [ "$ARCH" = "x86_64" ]; then \
+# Download architecture-specific FusionReactor native library based on target architecture
+RUN if [ "$TARGETARCH" = "amd64" ]; then \
         curl -L https://download.fusionreactor.io/FR/Latest/libfrjvmti_x64.so -o /usr/src/app/libfrjvmti.so; \
-    elif [ "$ARCH" = "aarch64" ]; then \
+    elif [ "$TARGETARCH" = "arm64" ]; then \
         curl -L https://download.fusionreactor.io/FR/Latest/libfrjvmti_aarch64.so -o /usr/src/app/libfrjvmti.so; \
     else \
-        echo "Unsupported architecture: $ARCH" && exit 1; \
+        echo "Unsupported architecture: $TARGETARCH" && exit 1; \
     fi
 
 RUN gradle shadowJar
