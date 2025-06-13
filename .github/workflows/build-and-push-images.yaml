@@ -1,0 +1,65 @@
+# Copyright The OpenTelemetry Authors
+# SPDX-License-Identifier: Apache-2.0
+
+name: build-and-push-images
+
+on:
+  workflow_call:
+    inputs:
+      push:
+        description: Should the images be pushed
+        default: false
+        required: false
+        type: boolean
+      version:
+        description: The version added to image tag
+        default: latest
+        required: false
+        type: string
+
+jobs:
+  protobufcheck:
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Generate
+        run: make clean docker-generate-protobuf
+      - name: Check Clean Work Tree
+        run: make check-clean-work-tree
+
+  build:
+    needs: protobufcheck
+    runs-on: ubuntu-24.04
+
+    env:
+      COMPOSE_DOCKER_CLI_BUILD: "1"
+      DOCKER_BUILDKIT: "1"
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Auth gcloud
+        if: ${{ inputs.push }}
+        uses: google-github-actions/auth@v2
+        with:
+          credentials_json: "${{ secrets.GCLOUD_SERVICE_ACCOUNT_KEY }}"
+
+      - name: Set up sdk
+        if: ${{ inputs.push }}
+        uses: google-github-actions/setup-gcloud@v2
+
+      - name: Docker auth
+        if: ${{ inputs.push }}
+        run: gcloud auth configure-docker europe-docker.pkg.dev
+
+      - name: Build images
+        run: DEMO_VERSION="${{ inputs.version }}" docker compose --env-file .env --env-file .env.override build
+
+      - name: List images
+        run: docker image ls
+
+      - name: Push images
+        if: ${{ inputs.push }}
+        run: DEMO_VERSION="${{ inputs.version }}" docker compose --env-file .env --env-file .env.override push
