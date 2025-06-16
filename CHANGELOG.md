@@ -31,6 +31,8 @@ the release.
   ([#2199](https://github.com/open-telemetry/opentelemetry-demo/pull/2199))
 * [kafka] update image to latest
   ([2194](https://github.com/open-telemetry/opentelemetry-demo/pull/2194))
+* [load-generator] Update locustfile for logging with TraceContext
+  ([2265](https://github.com/open-telemetry/opentelemetry-demo/pull/2265))
 * [shipping] refactor service to use actix-web and demo instrumentation library
   ([2214](https://github.com/open-telemetry/opentelemetry-demo/pull/2214))
 

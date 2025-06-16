@@ -169,8 +169,7 @@ class WebsiteUser(HttpUser):
             user = str(uuid.uuid1())
         product = random.choice(products)
         quantity = random.choice([1, 2, 3, 4, 5, 10])
-        
-        with self.tracer.start_as_current_span("user_add_to_cart", 
+        with self.tracer.start_as_current_span("user_add_to_cart",
                                             attributes={"user.id": user, "product.id": product, "quantity": quantity}):
             logging.info(f"User {user} adding {quantity} of product {product} to cart")
             self.client.get("/api/products/" + product)
@@ -200,7 +199,7 @@ class WebsiteUser(HttpUser):
         # checkout call which adds 2-4 different items to cart before checkout
         user = str(uuid.uuid1())
         item_count = random.choice([2, 3, 4])
-        with self.tracer.start_as_current_span("user_checkout_multi", 
+        with self.tracer.start_as_current_span("user_checkout_multi",
                                             attributes={"user.id": user, "item.count": item_count}):
             logging.info(f"User {user} performing multi-item checkout with {item_count} items")
             for i in range(item_count):
