@@ -25,16 +25,18 @@ the release.
   ([#2170](https://github.com/open-telemetry/opentelemetry-demo/pull/2170))
 * [chore] bump dependent images
   ([#2179](https://github.com/open-telemetry/opentelemetry-demo/pull/2179))
+* [image-provider]: replace bookworm image with nonroot alpine image
+  ([2193](https://github.com/open-telemetry/opentelemetry-demo/pull/2193))
+* [kafka] update image to latest
+  ([2194](https://github.com/open-telemetry/opentelemetry-demo/pull/2194))
 * [email] bump ruby and dependencies to latest and switch to alpine
   ([#2196](https://github.com/open-telemetry/opentelemetry-demo/pull/2196))
 * [cartservice] Upgrade OpenFeature version and change Hooks integration
   ([#2199](https://github.com/open-telemetry/opentelemetry-demo/pull/2199))
-* [kafka] update image to latest
-  ([2194](https://github.com/open-telemetry/opentelemetry-demo/pull/2194))
 * [shipping] refactor service to use actix-web and demo instrumentation library
   ([2214](https://github.com/open-telemetry/opentelemetry-demo/pull/2214))
-* [image-provider]: replace bookworm image with nonroot alpine image
-  ([2193](https://github.com/open-telemetry/opentelemetry-demo/pull/2193))
+* [quote] replace debian image with latest alpine image
+  ([2216](https://github.com/open-telemetry/opentelemetry-demo/pull/2216))
 
 ## 2.0.2
 
