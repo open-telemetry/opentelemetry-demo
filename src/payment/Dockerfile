@@ -2,7 +2,7 @@
 # SPDX-License-Identifier: Apache-2.0
 
 
-FROM node:22-alpine AS build
+FROM node:24-alpine AS build
 
 WORKDIR /usr/src/app/
 
@@ -12,7 +12,7 @@ RUN apk add --no-cache python3 make g++ && npm ci --omit=dev
 
 # -----------------------------------------------------------------------------
 
-FROM node:22-alpine
+FROM node:24-alpine
 
 USER node
 WORKDIR /usr/src/app/
