@@ -162,7 +162,12 @@ func main() {
 		log.Fatal(err)
 	}
 
-	openfeature.SetProvider(flagd.NewProvider())
+	provider, err := flagd.NewProvider()
+	if err != nil {
+		log.Printf("Error creating flagd provider: %v", err)
+	}
+
+	openfeature.SetProvider(provider)
 	openfeature.AddHooks(otelhooks.NewTracesHook())
 
 	tracer = tp.Tracer("checkout")
