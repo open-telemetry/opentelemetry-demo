@@ -40,18 +40,13 @@ from openfeature.contrib.hook.opentelemetry import TracingHook
 
 from playwright.async_api import Route, Request
 
-# Set up resource for consistent identification across telemetry signals
-resource = Resource.create({
-    "service.name": "load-generator",
-})
-
 # Configure tracer provider first (needed for trace context in logs)
-tracer_provider = TracerProvider(resource=resource)
+tracer_provider = TracerProvider()
 trace.set_tracer_provider(tracer_provider)
 tracer_provider.add_span_processor(BatchSpanProcessor(OTLPSpanExporter(insecure=True)))
 
 # Configure logger provider with the same resource
-logger_provider = LoggerProvider(resource=resource)
+logger_provider = LoggerProvider()
 set_logger_provider(logger_provider)
 
 # Set up log exporter and processor
@@ -68,7 +63,7 @@ root_logger.setLevel(logging.INFO)
 
 # Configure metrics
 metric_exporter = OTLPMetricExporter(insecure=True)
-set_meter_provider(MeterProvider([PeriodicExportingMetricReader(metric_exporter)], resource=resource))
+set_meter_provider(MeterProvider([PeriodicExportingMetricReader(metric_exporter)]))
 
 # Instrument logging to automatically inject trace context
 LoggingInstrumentor().instrument(set_logging_format=True)
@@ -243,7 +238,6 @@ if browser_traffic_enabled:
         async def open_cart_page_and_change_currency(self, page: PageWithRetry):
             with self.tracer.start_as_current_span("browser_change_currency"):
                 try:
-                    logging.info("Browser user opening cart page and changing currency")
                     page.on("console", lambda msg: print(msg.text))
                     await page.route('**/*', add_baggage_header)
                     await page.goto("/cart", wait_until="domcontentloaded")
@@ -258,7 +252,6 @@ if browser_traffic_enabled:
         async def add_product_to_cart(self, page: PageWithRetry):
             with self.tracer.start_as_current_span("browser_add_to_cart"):
                 try:
-                    logging.info("Browser user adding Roof Binoculars to cart")
                     page.on("console", lambda msg: print(msg.text))
                     await page.route('**/*', add_baggage_header)
                     await page.goto("/", wait_until="domcontentloaded")
