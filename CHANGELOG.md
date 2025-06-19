@@ -7,6 +7,8 @@ the release.
 
 ## Unreleased
 
+* [product-catalog] Add OTel grpc Logs to Product Catalog
+  ([]())
 * [chore] add GOMEMLIMIT to all Go services
   ([#2148](https://github.com/open-telemetry/opentelemetry-demo/pull/2148))
 * [product-catalog] Simplify span event name
