@@ -153,7 +153,7 @@ func main() {
 	openfeature.AddHooks(otelhooks.NewTracesHook())
 	provider, err := flagd.NewProvider()
 	if err != nil {
-		log.Fatal(err)
+		logger.Error(err.Error())
 	}
 	err = openfeature.SetProvider(provider)
 	if err != nil {
