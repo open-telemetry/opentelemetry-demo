@@ -336,6 +336,8 @@ services:
       - FRONTEND_HOST
       - LOCUST_WEB_HOST
       - LOCUST_WEB_PORT
+      - GENAI_SQL_AGENT_HOST
+      - GENAI_SQL_AGENT_PORT
       - GRAFANA_PORT
       - GRAFANA_HOST
       - JAEGER_PORT
@@ -364,6 +366,33 @@ services:
       flagd-ui:
         condition: service_started
     dns_search: ""
+
+  # GenAI SQL agent
+  genai-sql-agent:
+    image: ${IMAGE_NAME}:${DEMO_VERSION}-genai-sql-agent
+    container_name: genai-sql-agent
+    build:
+      context: ./
+      dockerfile: ${GENAI_SQL_AGENT_DOCKERFILE}
+      cache_from:
+        - ${IMAGE_NAME}:${IMAGE_VERSION}-genai-sql-agent
+    restart: unless-stopped
+    ports:
+      - "${GENAI_SQL_AGENT_PORT}"
+    environment:
+      - GENAI_SQL_AGENT_PORT
+      - OTEL_EXPORTER_OTLP_ENDPOINT
+      - OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE
+      - OTEL_INSTRUMENTATION_GENAI_CAPTURE_MESSAGE_CONTENT=true
+      - OTEL_PYTHON_LOG_CORRELATION=true
+      - OTEL_PYTHON_LOGGING_AUTO_INSTRUMENTATION_ENABLED=true
+      - OTEL_RESOURCE_ATTRIBUTES
+      - OTEL_SERVICE_NAME=genai-sql-agent
+      - PROTOCOL_BUFFERS_PYTHON_IMPLEMENTATION=python
+    depends_on:
+      otel-collector:
+        condition: service_started
+    logging: *logging
 
   # image-provider
   image-provider:
