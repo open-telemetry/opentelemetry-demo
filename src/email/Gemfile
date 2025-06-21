@@ -12,4 +12,4 @@ gem "google-protobuf", "~> 4.31.1"
 
 gem "opentelemetry-sdk",                 "~> 1.8"
 gem "opentelemetry-exporter-otlp",       "~> 0.30.0"
-gem "opentelemetry-instrumentation-all", "~> 0.77.0"
+gem "opentelemetry-instrumentation-all", "~> 0.78.0"
