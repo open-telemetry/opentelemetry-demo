@@ -37,6 +37,12 @@ the release.
   ([2214](https://github.com/open-telemetry/opentelemetry-demo/pull/2214))
 * [quote] replace debian image with latest alpine image
   ([2216](https://github.com/open-telemetry/opentelemetry-demo/pull/2216))
+* [payment] change image from alpine to distroless to reduce size
+  ([2224](https://github.com/open-telemetry/opentelemetry-demo/pull/2224))
+* [frontend] change image from alpine to distroless to reduce size
+  ([2224](https://github.com/open-telemetry/opentelemetry-demo/pull/2224))
+* [flagd-ui] change image from alpine to distroless to reduce size
+  ([2224](https://github.com/open-telemetry/opentelemetry-demo/pull/2224))
 
 ## 2.0.2
 
