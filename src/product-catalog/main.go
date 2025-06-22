@@ -31,7 +31,7 @@ import (
 	"go.opentelemetry.io/otel/exporters/otlp/otlptrace/otlptracegrpc"
 	"go.opentelemetry.io/otel/log/global"
 	"go.opentelemetry.io/otel/propagation"
-	"go.opentelemetry.io/otel/sdk/log"
+	sdklog "go.opentelemetry.io/otel/sdk/log"
 	sdkmetric "go.opentelemetry.io/otel/sdk/metric"
 	sdkresource "go.opentelemetry.io/otel/sdk/resource"
 	sdktrace "go.opentelemetry.io/otel/sdk/trace"
@@ -116,24 +116,30 @@ func initMeterProvider() *sdkmetric.MeterProvider {
 	return mp
 }
 
-func initLoggerProvider() (*log.LoggerProvider, error) {
+func initLoggerProvider() *sdklog.LoggerProvider {
 	ctx := context.Background()
 
 	logExporter, err := otlploggrpc.New(ctx)
 	if err != nil {
-		return nil, err
+		return nil
 	}
 
-	loggerProvider := log.NewLoggerProvider(
-		log.WithProcessor(log.NewBatchProcessor(logExporter)),
+	loggerProvider := sdklog.NewLoggerProvider(
+		sdklog.WithProcessor(sdklog.NewBatchProcessor(logExporter)),
 	)
 	global.SetLoggerProvider(loggerProvider)
 
-	return loggerProvider, nil
+	return loggerProvider
 }
 
 func main() {
-	initLoggerProvider()
+	lp := initLoggerProvider()
+	defer func() {
+		if err := lp.Shutdown(context.Background()); err != nil {
+			logger.Error(fmt.Sprintf("Logger Provider Shutdown: %v", err))
+		}
+		logger.Info("Shutdown logger provider")
+	}()
 
 	tp := initTracerProvider()
 	defer func() {
