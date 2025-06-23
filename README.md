@@ -97,9 +97,9 @@ Emeritus:
 - [Carter Socha](https://github.com/cartersocha)
 - [Michael Maxwell](https://github.com/mic-max)
 - [Morgan McLean](https://github.com/mtwo)
-- [Penghan Wang](https://github.com/wph95), AppDynamics
-- [Reiley Yang](https://github.com/reyang), Microsoft
-- [Ziqi Zhao](https://github.com/fatsheep9146), Alibaba
+- [Penghan Wang](https://github.com/wph95)
+- [Reiley Yang](https://github.com/reyang)
+- [Ziqi Zhao](https://github.com/fatsheep9146)
 
 ### Thanks to all the people who have contributed
 
