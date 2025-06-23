@@ -182,7 +182,6 @@ class WebsiteUser(HttpUser):
         # checkout call with an item added to cart
         user = str(uuid.uuid1())
         with self.tracer.start_as_current_span("user_checkout_single", attributes={"user.id": user}):
-            logging.info(f"User {user} performing single item checkout")
             self.add_to_cart(user=user)
             checkout_person = random.choice(people)
             checkout_person["userId"] = user
