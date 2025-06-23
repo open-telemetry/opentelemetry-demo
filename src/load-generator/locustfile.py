@@ -195,7 +195,6 @@ class WebsiteUser(HttpUser):
         item_count = random.choice([2, 3, 4])
         with self.tracer.start_as_current_span("user_checkout_multi",
                                             attributes={"user.id": user, "item.count": item_count}):
-            logging.info(f"User {user} performing multi-item checkout with {item_count} items")
             for i in range(item_count):
                 self.add_to_cart(user=user)
             checkout_person = random.choice(people)
