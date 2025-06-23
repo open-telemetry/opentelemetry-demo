@@ -285,8 +285,12 @@ func readProductFiles() ([]*pb.Product, error) {
 		products = append(products, res.Products...)
 	}
 
-	logger.Info(fmt.Sprintf("Loaded %d products", len(products)))
-	logger.LogAttrs(context.Background(), slog.LevelInfo, fmt.Sprintf("Loaded %d products\n", len(products)), slog.Int("products", len(products)))
+	logger.LogAttrs(
+		context.Background(),
+		slog.LevelInfo,
+		fmt.Sprintf("Loaded %d products\n", len(products)),
+		slog.Int("products", len(products)),
+	)
 
 	return products, nil
 }
