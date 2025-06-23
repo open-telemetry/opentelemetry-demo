@@ -41,6 +41,7 @@ import (
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/credentials/insecure"
+	"google.golang.org/grpc/health"
 	healthpb "google.golang.org/grpc/health/grpc_health_v1"
 	"google.golang.org/grpc/reflection"
 	"google.golang.org/grpc/status"
@@ -128,7 +129,11 @@ func main() {
 		log.Println("Shutdown meter provider")
 	}()
 	openfeature.AddHooks(otelhooks.NewTracesHook())
-	err := openfeature.SetProvider(flagd.NewProvider())
+	provider, err := flagd.NewProvider()
+	if err != nil {
+		log.Fatal(err)
+	}
+	err = openfeature.SetProvider(provider)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -156,7 +161,9 @@ func main() {
 	reflection.Register(srv)
 
 	pb.RegisterProductCatalogServiceServer(srv, svc)
-	healthpb.RegisterHealthServer(srv, svc)
+
+	healthcheck := health.NewServer()
+	healthpb.RegisterHealthServer(srv, healthcheck)
 
 	ctx, cancel := signal.NotifyContext(context.Background(), os.Interrupt, syscall.SIGTERM, syscall.SIGKILL)
 	defer cancel()

@@ -11,16 +11,32 @@ the release.
   ([#2148](https://github.com/open-telemetry/opentelemetry-demo/pull/2148))
 * [product-catalog] Simplify span event name
   ([#2150](https://github.com/open-telemetry/opentelemetry-demo/pull/2150))
-* [grafana] configure `traceToLogs` integration
-  ([#2162](https://github.com/open-telemetry/opentelemetry-demo/pull/2162))
 * [cartservice] Refactor OpenFeature integration and add Dependency Injection support
   ([#2160](https://github.com/open-telemetry/opentelemetry-demo/pull/2160))
 * [checkout]: change image from alpine to distroless to reduce size
   ([#2161](https://github.com/open-telemetry/opentelemetry-demo/pull/2161))
 * [product-catalog]: change image from alpine to distroless to reduce size
   ([#2161](https://github.com/open-telemetry/opentelemetry-demo/pull/2161))
+* [grafana] configure `traceToLogs` integration
+  ([#2162](https://github.com/open-telemetry/opentelemetry-demo/pull/2162))
+* [recommendation] change image from bookworm to alpine to reduce size
+  ([#2164](https://github.com/open-telemetry/opentelemetry-demo/pull/2164))
+* [fraud-detection] update distroless to debian12
+  ([#2170](https://github.com/open-telemetry/opentelemetry-demo/pull/2170))
 * [chore] bump dependent images
   ([#2179](https://github.com/open-telemetry/opentelemetry-demo/pull/2179))
+* [image-provider]: replace bookworm image with nonroot alpine image
+  ([2193](https://github.com/open-telemetry/opentelemetry-demo/pull/2193))
+* [kafka] update image to latest
+  ([2194](https://github.com/open-telemetry/opentelemetry-demo/pull/2194))
+* [email] bump ruby and dependencies to latest and switch to alpine
+  ([#2196](https://github.com/open-telemetry/opentelemetry-demo/pull/2196))
+* [cartservice] Upgrade OpenFeature version and change Hooks integration
+  ([#2199](https://github.com/open-telemetry/opentelemetry-demo/pull/2199))
+* [shipping] refactor service to use actix-web and demo instrumentation library
+  ([2214](https://github.com/open-telemetry/opentelemetry-demo/pull/2214))
+* [quote] replace debian image with latest alpine image
+  ([2216](https://github.com/open-telemetry/opentelemetry-demo/pull/2216))
 
 ## 2.0.2
 
