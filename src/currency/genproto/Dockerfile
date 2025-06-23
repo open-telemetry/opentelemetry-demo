@@ -14,12 +14,14 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-FROM alpine:3.18 AS builder
+FROM docker.io/library/alpine:3.22 AS builder
 
-RUN apk update && apk add git cmake make g++ grpc-dev protobuf-dev linux-headers
+RUN apk update && \
+    apk add git cmake make g++ grpc-dev protobuf-dev linux-headers
+
+COPY ./pb/demo.proto /currency/proto/demo.proto
 
 COPY ./src/currency /currency
-COPY ./pb/demo.proto /currency/proto/demo.proto
 
 RUN cd /currency \
     && mkdir -p build && cd build \
