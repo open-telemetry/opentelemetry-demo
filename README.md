@@ -89,7 +89,9 @@ Wednesday at 8:30 AM PST and anyone is welcome.
 [Approvers](https://github.com/open-telemetry/community/blob/main/guides/contributor/membership.md#approver)
 ([@open-telemetry/demo-approvers](https://github.com/orgs/open-telemetry/teams/demo-approvers)):
 
-- [Cedric Ziel](https://github.com/cedricziel) Grafana Labs
+- [Anirudha (Ani) Jadhav](https://github.com/anirudha), AWS
+- [Cedric Ziel](https://github.com/cedricziel), Grafana Labs
+- [Shenoy Pratik](https://github.com/ps48), AWS
 
 Emeritus:
 
