@@ -2,7 +2,7 @@
 # SPDX-License-Identifier: Apache-2.0
 
 
-FROM node:22-slim AS builder
+FROM docker.io/library/node:22-slim AS builder
 
 WORKDIR /usr/src/app/
 
