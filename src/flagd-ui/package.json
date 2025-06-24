@@ -9,18 +9,18 @@
     "lint": "next lint"
   },
   "dependencies": {
-    "@tailwindcss/postcss": "^4.0.14",
-    "@vercel/otel": "^1.10.4",
+    "@tailwindcss/postcss": "^4.1.10",
+    "@vercel/otel": "^1.13.0",
     "ajv": "^8.17.1",
-    "next": "15.2.2",
+    "next": "15.3.4",
     "react": "^19",
     "react-dom": "^19"
   },
   "devDependencies": {
     "@types/json5": "^2.2.0",
     "@types/node": "^24",
-    "@types/react": "^19.0.10",
-    "@types/react-dom": "^19.0.4",
+    "@types/react": "^19.1.8",
+    "@types/react-dom": "^19.1.6",
     "autoprefixer": "^10.4.21",
     "eslint": "^9",
     "eslint-config-next": "15.3.3",
