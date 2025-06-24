@@ -11,3 +11,4 @@ opentelemetry-instrumentation-system-metrics==0.55b1
 opentelemetry-instrumentation-urllib3==0.55b1
 opentelemetry-sdk==1.34.1
 opentelemetry-semantic-conventions==0.55b1
+opentelemetry-instrumentation-logging==0.55b1
