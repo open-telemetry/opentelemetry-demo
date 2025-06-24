@@ -40,19 +40,10 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Auth gcloud
+      - name: Retrieve GAR credentials
         if: ${{ inputs.push }}
-        uses: google-github-actions/auth@v2
-        with:
-          credentials_json: "${{ secrets.GCLOUD_SERVICE_ACCOUNT_KEY }}"
-
-      - name: Set up sdk
-        if: ${{ inputs.push }}
-        uses: google-github-actions/setup-gcloud@v2
-
-      - name: Docker auth
-        if: ${{ inputs.push }}
-        run: gcloud auth configure-docker europe-docker.pkg.dev
+        run: |
+          echo "${{ secrets.GAR_CREDENTIALS }}" |  docker login -u _json_key_base64 --password-stdin europe-docker.pkg.dev
 
       - name: Build images
         run: DEMO_VERSION="${{ inputs.version }}" docker compose --env-file .env --env-file .env.override build

@@ -2,6 +2,10 @@ name: test-build
 
 on:
   push:
+    branches:
+      - '**'
+      - '!main'
+      - '!dynatrace'
     paths:
       - 'src/**'
       - '!src/**.md'

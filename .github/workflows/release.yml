@@ -5,7 +5,7 @@ name: "Build and Publish"
 on:
   push:
     branches:
-      - dynatrace
+      - 'dynatrace'
 
 jobs:
   tag-from-commit:
