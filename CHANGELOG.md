@@ -7,6 +7,8 @@ the release.
 
 ## Unreleased
 
+* [product-catalog] Add OTel grpc Logs to Product Catalog
+  ([#2285](https://github.com/open-telemetry/opentelemetry-demo/pull/2285))
 * [chore] add GOMEMLIMIT to all Go services
   ([#2148](https://github.com/open-telemetry/opentelemetry-demo/pull/2148))
 * [product-catalog] Simplify span event name
@@ -37,6 +39,8 @@ the release.
   ([2214](https://github.com/open-telemetry/opentelemetry-demo/pull/2214))
 * [quote] replace debian image with latest alpine image
   ([2216](https://github.com/open-telemetry/opentelemetry-demo/pull/2216))
+* [load-generator] Update locustfile for logging with TraceContext
+  ([2265](https://github.com/open-telemetry/opentelemetry-demo/pull/2265))
 
 ## 2.0.2
 
