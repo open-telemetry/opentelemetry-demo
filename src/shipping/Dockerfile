@@ -2,7 +2,7 @@
 # SPDX-License-Identifier: Apache-2.0
 
 
-FROM --platform=${BUILDPLATFORM} rust:1.82 AS builder
+FROM --platform=${BUILDPLATFORM} docker.io/library/rust:1.82 AS builder
 ARG TARGETARCH
 ARG TARGETPLATFORM
 ARG BUILDPLATFORM
@@ -50,10 +50,12 @@ RUN if [ "${TARGETPLATFORM}" = "${BUILDPLATFORM}" ] ; then \
     fi
 
 
-FROM debian:bookworm-slim AS release
+FROM gcr.io/distroless/cc-debian12:nonroot
 
 WORKDIR /app
-COPY --from=builder /app/target/release/shipping /app/shipping
+
+COPY --from=builder /app/target/release/shipping shipping
 
 EXPOSE ${SHIPPING_PORT}
-ENTRYPOINT ["/app/shipping"]
+
+CMD ["./shipping"]
