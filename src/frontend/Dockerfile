@@ -46,7 +46,7 @@ FROM gcr.io/distroless/nodejs22-debian12:nonroot
 
 WORKDIR /app
 
-ENV PORT=${FRONTEND_PORT}
+ENV PORT=8080
 
 COPY --from=builder /app/.next/standalone/ ./
 COPY --from=builder /app/.next/static/ .next/static/

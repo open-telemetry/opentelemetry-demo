@@ -23,7 +23,7 @@ RUN npm run build
 
 FROM gcr.io/distroless/nodejs22-debian12:nonroot
 
-ENV PORT=${FLAGD_UI_PORT}
+ENV PORT=4000
 
 WORKDIR /app
 
