@@ -1,7 +1,7 @@
 # Copyright The OpenTelemetry Authors
 # SPDX-License-Identifier: Apache-2.0
 
-FROM node:22-slim AS builder
+FROM docker.io/library/node:22-slim AS builder
 
 WORKDIR /app
 
@@ -23,14 +23,12 @@ RUN npm run build
 
 FROM gcr.io/distroless/nodejs22-debian12:nonroot
 
-ENV PORT=4000
+ENV PORT=${FLAGD_UI_PORT}
 
 WORKDIR /app
 
 COPY --from=builder /app/.next/standalone ./
 COPY --from=builder /app/.next/static .next/static
-
-COPY --from=builder /app/src/instrumentation.ts instrumentation.ts
 
 EXPOSE ${PORT}
 
