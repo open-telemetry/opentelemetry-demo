@@ -4,7 +4,7 @@
 
 FROM ghcr.io/mlocati/php-extension-installer:2.7.34 AS installer
 
-FROM composer:2.8.9 AS vendor
+FROM docker.io/library/composer:2.8.9 AS vendor
 
 WORKDIR /tmp/
 
@@ -18,7 +18,7 @@ RUN composer install \
     --no-dev \
     --prefer-dist
 
-FROM php:8.4-cli-alpine3.21
+FROM docker.io/library/php:8.4-cli-alpine3.22
 
 COPY --from=installer /usr/bin/install-php-extensions /usr/local/bin/
 
