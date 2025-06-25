@@ -52,7 +52,7 @@ jobs:
     - name: Build and push Docker image
       uses: docker/build-push-action@v5
       with:
-        context: ./src/load-generator
+        context: .
         file: ./src/load-generator/Dockerfile
         push: true
         tags: ${{ steps.meta.outputs.tags }}
