@@ -80,3 +80,8 @@ updates:
         dependency-type: "development"
     schedule:
       interval: "daily"
+  - package-ecosystem: "docker"
+    directories:
+      - "/src/**/*"
+    schedule:
+      interval: "daily"
