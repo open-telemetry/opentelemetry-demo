@@ -114,7 +114,7 @@ services:
       flagd:
         condition: service_started
     logging: *logging
-  
+
   cart-dapr:
     image: "daprio/daprd:edge"
     container_name: cart-dapr
@@ -539,12 +539,19 @@ services:
   product-dapr:
     image: "daprio/daprd:edge"
     container_name: product-dapr
-    command: [ "./daprd",
-               "-app-id", "product-catalog",
-               "-app-port", "${PRODUCT_CATALOG_PORT}",
-               "-placement-host-address", "dapr-placement:50006",
-               "-resources-path", "/configuration/config.yaml",
-               "-config", "/dapr/config.yaml" ]
+    command: [ 
+      "./daprd",
+      "-app-id",
+      "product-catalog",
+      "-app-port",
+      "${PRODUCT_CATALOG_PORT}",
+      "-placement-host-address",
+      "dapr-placement:50006",
+      "-resources-path",
+      "/configuration/config.yaml",
+      "-config",
+      "/dapr/config.yaml"
+    ]
     volumes:
       - "./src/dapr/components/:/components"
       - "./src/dapr/:/configuration"
