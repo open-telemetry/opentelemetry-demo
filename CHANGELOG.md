@@ -41,6 +41,8 @@ the release.
   ([2216](https://github.com/open-telemetry/opentelemetry-demo/pull/2216))
 * [load-generator] Update locustfile for logging with TraceContext
   ([2265](https://github.com/open-telemetry/opentelemetry-demo/pull/2265))
+* [shipping]: replace debian image with distroless image
+  ([#2294](https://github.com/open-telemetry/opentelemetry-demo/pull/2294))
 
 ## 2.0.2
 
