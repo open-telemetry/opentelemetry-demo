@@ -1,5 +1,9 @@
 name: Build Ad Service Docker Image
 
+env:
+  REGISTRY: ghcr.io
+  IMAGE_NAME: ${{ github.repository }}/ad
+
 on:
   push:
     branches: [ main ]
@@ -41,7 +45,7 @@ jobs:
       id: meta
       uses: docker/metadata-action@v5
       with:
-        images: ghcr.io/${{ github.repository_owner }}/opentelemetry-demo-ad
+        images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
         tags: |
           type=ref,event=branch
           type=ref,event=pr
