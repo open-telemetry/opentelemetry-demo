@@ -10,6 +10,7 @@
 
 	<ItemGroup>
 		<PackageReference Include="Confluent.Kafka" Version="2.8.0" />
+		<PackageReference Include="EFCore.NamingConventions" Version="9.0.0" />
 		<PackageReference Include="Google.Protobuf" Version="3.30.0" />
 		<PackageReference Include="Grpc.Tools" Version="2.68.1">
 			<PrivateAssets>all</PrivateAssets>
@@ -17,6 +18,7 @@
 		</PackageReference>
 		<PackageReference Include="Microsoft.Extensions.Logging" Version="9.0.2" />
 		<PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.21.2" />
+		<PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="9.0.4" />
 		<PackageReference Include="OpenTelemetry.AutoInstrumentation" Version="1.11.0" />
 	</ItemGroup>
 
