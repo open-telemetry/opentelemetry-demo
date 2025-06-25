@@ -7,12 +7,12 @@ the release.
 
 ## Unreleased
 
-## 2.0.3
-
 * [product catalog] use it with a Dapr client
+  ([#2143](https://github.com/open-telemetry/opentelemetry-demo/pull/2143))
 * [cartservice] Using Dapr to connect to valkey
+  ([#2143](https://github.com/open-telemetry/opentelemetry-demo/pull/2143))
 * [postgresl] added postgresql for product
-
+  ([#2143](https://github.com/open-telemetry/opentelemetry-demo/pull/2143))
 * [chore] add GOMEMLIMIT to all Go services
   ([#2148](https://github.com/open-telemetry/opentelemetry-demo/pull/2148))
 * [product-catalog] Simplify span event name
@@ -31,10 +31,24 @@ the release.
   ([#2170](https://github.com/open-telemetry/opentelemetry-demo/pull/2170))
 * [chore] bump dependent images
   ([#2179](https://github.com/open-telemetry/opentelemetry-demo/pull/2179))
+* [image-provider]: replace bookworm image with nonroot alpine image
+  ([2193](https://github.com/open-telemetry/opentelemetry-demo/pull/2193))
+* [kafka] update image to latest
+  ([2194](https://github.com/open-telemetry/opentelemetry-demo/pull/2194))
 * [email] bump ruby and dependencies to latest and switch to alpine
   ([#2196](https://github.com/open-telemetry/opentelemetry-demo/pull/2196))
 * [cartservice] Upgrade OpenFeature version and change Hooks integration
   ([#2199](https://github.com/open-telemetry/opentelemetry-demo/pull/2199))
+* [shipping] refactor service to use actix-web and demo instrumentation library
+  ([2214](https://github.com/open-telemetry/opentelemetry-demo/pull/2214))
+* [quote] replace debian image with latest alpine image
+  ([2216](https://github.com/open-telemetry/opentelemetry-demo/pull/2216))
+* [load-generator] Update locustfile for logging with TraceContext
+  ([2265](https://github.com/open-telemetry/opentelemetry-demo/pull/2265))
+* [product-catalog] Add OTel grpc Logs to Product Catalog
+  ([#2285](https://github.com/open-telemetry/opentelemetry-demo/pull/2285))
+* [shipping]: replace debian image with distroless image
+  ([#2294](https://github.com/open-telemetry/opentelemetry-demo/pull/2294))
 
 ## 2.0.2
 

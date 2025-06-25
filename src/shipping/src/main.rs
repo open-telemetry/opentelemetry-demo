@@ -1,43 +1,46 @@
 // Copyright The OpenTelemetry Authors
 // SPDX-License-Identifier: Apache-2.0
 
-use tonic::transport::Server;
-
-use log::*;
-
+use actix_web::{App, HttpServer};
+use opentelemetry_instrumentation_actix_web::{RequestMetrics, RequestTracing};
 use std::env;
+use tracing::info;
 
+mod telemetry_conf;
+use telemetry_conf::init_otel;
 mod shipping_service;
-use shipping_service::shop::shipping_service_server::ShippingServiceServer;
-use shipping_service::ShippingServer;
+use shipping_service::{get_quote, ship_order};
 
-mod telemetry;
-use telemetry::init_logger;
+#[actix_web::main]
+async fn main() -> std::io::Result<()> {
+    match init_otel() {
+        Ok(_) => {
+            info!("Successfully configured OTel");
+        }
+        Err(err) => {
+            panic!("Couldn't start OTel: {0}", err);
+        }
+    };
 
-use telemetry::init_reqwest_tracing;
-use telemetry::init_tracer;
+    let port: u16 = env::var("SHIPPING_PORT")
+        .expect("$SHIPPING_PORT is not set")
+        .parse()
+        .expect("$SHIPPING_PORT is not a valid port");
+    let addr = format!("0.0.0.0:{}", port);
+    info!(
+        name = "ServerStartedSuccessfully",
+        addr = addr.as_str(),
+        message = "Shipping service is running"
+    );
 
-#[tokio::main]
-async fn main() -> Result<(), Box<dyn std::error::Error>> {
-    let (mut health_reporter, health_service) = tonic_health::server::health_reporter();
-    health_reporter
-        .set_serving::<ShippingServiceServer<ShippingServer>>()
-        .await;
-
-    init_logger()?;
-    init_reqwest_tracing(init_tracer()?)?;
-
-    info!("OTel pipeline created");
-    let port = env::var("SHIPPING_PORT").expect("$SHIPPING_PORT is not set");
-    let addr = format!("0.0.0.0:{}", port).parse()?;
-    info!("listening on {}", addr);
-    let shipper = ShippingServer::default();
-
-    Server::builder()
-        .add_service(ShippingServiceServer::new(shipper))
-        .add_service(health_service)
-        .serve(addr)
-        .await?;
-
-    Ok(())
+    HttpServer::new(|| {
+        App::new()
+            .wrap(RequestTracing::new())
+            .wrap(RequestMetrics::default())
+            .service(get_quote)
+            .service(ship_order)
+    })
+    .bind(&addr)?
+    .run()
+    .await
 }
