@@ -539,7 +539,7 @@ services:
   product-dapr:
     image: "daprio/daprd:edge"
     container_name: product-dapr
-    command: [ 
+    command: [
       "./daprd",
       "-app-id",
       "product-catalog",
