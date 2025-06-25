@@ -27,8 +27,8 @@ RUN ARCH=$(uname -m) && \
         echo "Unsupported architecture: $ARCH" && exit 1; \
     fi
 
-# Set FusionReactor Java options
-ENV LUCEE_JAVA_OPTS="-javaagent:/opt/fusionreactor/fusionreactor.jar=name=otlp-lucee-fr,address=8088 -agentpath:/opt/fusionreactor/libfrjvmti.so"
+# Set FusionReactor Java options with increased timeouts
+ENV LUCEE_JAVA_OPTS="-javaagent:/opt/fusionreactor/fusionreactor.jar=name=quote-service-lucee,address=8088 -agentpath:/opt/fusionreactor/libfrjvmti.so"
 
 # Expose FusionReactor web interface
 EXPOSE 8088
