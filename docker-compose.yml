@@ -37,6 +37,8 @@ services:
       - OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE
       - OTEL_RESOURCE_ATTRIBUTES
       - OTEL_SERVICE_NAME=accounting
+      - DB_CONNECTION_STRING=Host=postgresql;Username=otelu;Password=otelp;Database=otel
+      - OTEL_DOTNET_AUTO_TRACES_ENTITYFRAMEWORKCORE_INSTRUMENTATION_ENABLED=false
     depends_on:
       otel-collector:
         condition: service_started
@@ -685,6 +687,18 @@ services:
       timeout: 10s
       retries: 10
     logging: *logging
+
+  # Postgresql used by Accounting service
+  postgresql:
+    image: ${POSTGRES_IMAGE}
+    ports:
+      - "5432"
+    environment:
+      POSTGRES_USER: root
+      POSTGRES_PASSWORD: otel
+      POSTGRES_DB: otel
+    volumes:
+      - ${PWD}/src/postgres/init.sql:/docker-entrypoint-initdb.d/init.sql
 
   # Valkey used by Cart service
   valkey-cart:
