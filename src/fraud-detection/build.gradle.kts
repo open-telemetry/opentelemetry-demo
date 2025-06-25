@@ -1,6 +1,7 @@
 
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import com.google.protobuf.gradle.*
+import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 
 plugins {
     kotlin("jvm") version "2.2.0"
@@ -62,8 +63,10 @@ tasks.test {
     useJUnitPlatform()
 }
 
-tasks.withType<KotlinCompile> {
-    kotlinOptions.jvmTarget = "17"
+kotlin {
+  compilerOptions {
+    jvmTarget.set(JvmTarget.JVM_17)
+  }
 }
 
 protobuf {
