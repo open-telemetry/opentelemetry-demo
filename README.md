@@ -91,7 +91,7 @@ Wednesday at 8:30 AM PST and anyone is welcome.
 
 - [Cedric Ziel](https://github.com/cedricziel), Grafana Labs
 
-Emeritus:
+### Emeritus
 
 - [Austin Parker](https://github.com/austinlparker)
 - [Carter Socha](https://github.com/cartersocha)
@@ -100,6 +100,8 @@ Emeritus:
 - [Penghan Wang](https://github.com/wph95)
 - [Reiley Yang](https://github.com/reyang)
 - [Ziqi Zhao](https://github.com/fatsheep9146)
+
+For more information about the emeritus role, see the [community repository](https://github.com/open-telemetry/community/blob/main/guides/contributor/membership.md#emeritus-maintainerapprovertriager).
 
 ### Thanks to all the people who have contributed
 
