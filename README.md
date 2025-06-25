@@ -84,15 +84,12 @@ Wednesday at 8:30 AM PST and anyone is welcome.
 - [Juliano Costa](https://github.com/julianocosta89), Datadog
 - [Mikko Viitanen](https://github.com/mviitane), Dynatrace
 - [Pierre Tessier](https://github.com/puckpuck), Honeycomb
+- [Roger Coll](https://github.com/rogercoll), Elastic
 
 [Approvers](https://github.com/open-telemetry/community/blob/main/guides/contributor/membership.md#approver)
 ([@open-telemetry/demo-approvers](https://github.com/orgs/open-telemetry/teams/demo-approvers)):
 
-- [Cedric Ziel](https://github.com/cedricziel) Grafana Labs
-- [Penghan Wang](https://github.com/wph95), AppDynamics
-- [Reiley Yang](https://github.com/reyang), Microsoft
-- [Roger Coll](https://github.com/rogercoll), Elastic
-- [Ziqi Zhao](https://github.com/fatsheep9146), Alibaba
+- [Cedric Ziel](https://github.com/cedricziel), Grafana Labs
 
 Emeritus:
 
@@ -100,6 +97,9 @@ Emeritus:
 - [Carter Socha](https://github.com/cartersocha)
 - [Michael Maxwell](https://github.com/mic-max)
 - [Morgan McLean](https://github.com/mtwo)
+- [Penghan Wang](https://github.com/wph95)
+- [Reiley Yang](https://github.com/reyang)
+- [Ziqi Zhao](https://github.com/fatsheep9146)
 
 ### Thanks to all the people who have contributed
 
