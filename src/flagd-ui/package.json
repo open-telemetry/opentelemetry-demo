@@ -17,7 +17,6 @@
     "react-dom": "^19"
   },
   "devDependencies": {
-    "@types/json5": "^2.2.0",
     "@types/node": "^24",
     "@types/react": "^19.1.8",
     "@types/react-dom": "^19.1.6",
