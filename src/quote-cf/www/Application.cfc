@@ -8,20 +8,14 @@ this.setClientCookies = true;
 this.requestTimeOut = createTimeSpan(0,0,10,0);
 this.defaultdatasource="mysql";
 
-  // Get MySQL connection details from environment variables
-  mysqlHost = structKeyExists(server.system.environment, "MYSQL_HOST") ? server.system.environment.MYSQL_HOST : "mysql-quote";
-  mysqlPort = structKeyExists(server.system.environment, "MYSQL_PORT") ? server.system.environment.MYSQL_PORT : "3306";
-  mysqlDatabase = structKeyExists(server.system.environment, "MYSQL_DATABASE") ? server.system.environment.MYSQL_DATABASE : "quotes";
-  mysqlUser = structKeyExists(server.system.environment, "MYSQL_USER") ? server.system.environment.MYSQL_USER : "root";
-  mysqlPassword = structKeyExists(server.system.environment, "MYSQL_PASSWORD") ? server.system.environment.MYSQL_PASSWORD : "quote_password";
+  // SQLite datasource configuration
+  sqliteDbPath = structKeyExists(server.system.environment, "SQLITE_DB_PATH") ? server.system.environment.SQLITE_DB_PATH : "/data/quotes.db";
 
   this.datasources["mysql"] = {
-	  class: 'com.mysql.cj.jdbc.Driver'
-	, bundleName: 'com.mysql.cj'
-	, bundleVersion: '8.0.19'
-	, connectionString: 'jdbc:mysql://' & mysqlHost & ':' & mysqlPort & '/' & mysqlDatabase & '?characterEncoding=UTF-8&serverTimezone=Europe/Berlin&maxReconnects=3'
-	, username: mysqlUser
-	, password: mysqlPassword
+	  class: 'org.sqlite.JDBC'
+	, bundleName: 'org.xerial.sqlite-jdbc'
+	, bundleVersion: '3.36.0.3'
+	, connectionString: 'jdbc:sqlite:' & sqliteDbPath
 
 	// optional settings
 	, connectionLimit:100 // default:-1

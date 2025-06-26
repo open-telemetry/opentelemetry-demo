@@ -4,12 +4,12 @@ The Quote Service is a ColdFusion-based microservice that provides quote generat
 
 ## Overview
 
-This service generates quotes for customers based on available services, manages quote lifecycle, and provides various endpoints for quote operations. It's built using Adobe ColdFusion/Lucee and integrates with MySQL for data persistence.
+This service generates quotes for customers based on available services, manages quote lifecycle, and provides various endpoints for quote operations. It's built using Adobe ColdFusion/Lucee and integrates with SQLite for data persistence.
 
 ## Features
 
 - **Quote Generation**: Creates detailed quotes with customer information, services, and pricing
-- **Database Integration**: Full MySQL integration with complex queries and transactions
+- **Database Integration**: Full SQLite integration with complex queries and transactions
 - **Email Processing**: Quote email functionality with error simulation
 - **Quote Management**: Update, retrieve, and cleanup operations
 - **Performance Testing**: Includes deliberately slow queries for observability testing
@@ -33,7 +33,7 @@ This service generates quotes for customers based on available services, manages
 
 ## Database Schema
 
-The service uses a MySQL database with the following tables:
+The service uses a SQLite database with the following tables:
 
 - **customers** - Customer information and contact details
 - **services** - Available services with pricing and categories
@@ -53,9 +53,16 @@ The database includes sample data:
 
 | Variable | Default | Description |
 |----------|---------|-------------|
-| `MYSQL_HOST` | `mysql-quote` | MySQL database host |
-| `MYSQL_PORT` | `3306` | MySQL database port |
-| `MYSQL_DATABASE` | `quotes` | Database name |
-| `MYSQL_USER` | `root` | Database username |
-| `MYSQL_PASSWORD` | `password` | Database password |
+| `SQLITE_DB_PATH` | `/data/quotes.db` | SQLite database file path |
 | `LUCEE_REQUEST_TIMEOUT` | `600` | Request timeout in seconds |
+
+### SQLite Configuration
+
+The application is configured to use SQLite JDBC driver with the following settings:
+
+- **Driver Class**: `org.sqlite.JDBC`
+- **Bundle**: `org.xerial.sqlite-jdbc` (version 3.36.0.3)
+- **Connection String**: `jdbc:sqlite:/data/quotes.db`
+- **Database File**: Mounted from host `./src/sql/quotes.db` to container `/data/quotes.db`
+
+The SQLite database file contains pre-populated sample data and is automatically created from the SQL schema if it doesn't exist.

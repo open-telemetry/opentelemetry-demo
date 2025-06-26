@@ -515,15 +515,10 @@ services:
       - "8188:8088"
     environment:
       - LUCEE_ADMIN_PASSWORD=password
-      - MYSQL_HOST=mysql-quote
-      - MYSQL_PORT=3306
-      - MYSQL_DATABASE=quotes
-      - MYSQL_USER=root
-      - MYSQL_PASSWORD=password
+      - SQLITE_DB_PATH=/data/quotes.db
       - LUCEE_REQUEST_TIMEOUT=600
-    depends_on:
-      mysql-quote:
-        condition: service_healthy
+    volumes:
+      - ./src/sql/quotes.db:/data/quotes.db
     logging: *logging
 
   # Recommendation service
@@ -697,31 +692,6 @@ services:
       - "${VALKEY_PORT}"
     logging: *logging
 
-  # MySQL used by Quote CF service
-  mysql-quote:
-    image: mysql:8.0
-    container_name: mysql-quote
-    deploy:
-      resources:
-        limits:
-          memory: 300M
-    restart: unless-stopped
-    environment:
-      - MYSQL_ROOT_PASSWORD=password
-      - MYSQL_DATABASE=quotes
-      - MYSQL_USER=quote_user
-      - MYSQL_PASSWORD=quote_password
-    ports:
-      - "3306:3306"
-    volumes:
-      - ./src/sql/quotes.sql:/docker-entrypoint-initdb.d/quotes.sql
-    healthcheck:
-      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
-      start_period: 10s
-      interval: 5s
-      timeout: 10s
-      retries: 10
-    logging: *logging
 
 
   # ********************
