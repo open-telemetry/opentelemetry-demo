@@ -14,7 +14,7 @@ this.defaultdatasource="mysql";
   this.datasources["mysql"] = {
 	  class: 'org.sqlite.JDBC'
 	, bundleName: 'org.xerial.sqlite-jdbc'
-	, bundleVersion: '3.36.0.3'
+	, bundleVersion: '3.45.1.0'
 	, connectionString: 'jdbc:sqlite:' & sqliteDbPath
 
 	// optional settings
