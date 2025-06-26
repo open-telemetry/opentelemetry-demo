@@ -3,6 +3,7 @@ module github.com/opentelemetry/opentelemetry-demo/src/product-catalog
 go 1.24.2
 
 require (
+  github.com/dapr/go-sdk v1.12.0
 	go.opentelemetry.io/contrib/bridges/otelslog v0.11.0
 	github.com/open-feature/go-sdk v1.15.1
 	github.com/open-feature/go-sdk-contrib/hooks/open-telemetry v0.3.5
@@ -30,6 +31,7 @@ require (
 	connectrpc.com/otelconnect v0.7.2 // indirect
 	github.com/barkimedes/go-deepcopy v0.0.0-20220514131651-17c30cfc62df // indirect
 	github.com/cenkalti/backoff/v5 v5.0.2 // indirect
+  github.com/dapr/dapr v1.15.0-rc.17 // indirect
 	github.com/diegoholiveira/jsonlogic/v3 v3.7.4 // indirect
 	github.com/fsnotify/fsnotify v1.8.0 // indirect
 	github.com/go-logr/logr v1.4.3 // indirect

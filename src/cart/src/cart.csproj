@@ -34,6 +34,11 @@
     <PackageReference Include="OpenFeature" Version="2.6.0" />
     <PackageReference Include="OpenFeature.DependencyInjection" Version="2.6.0" />
     <PackageReference Include="OpenFeature.Hosting" Version="2.6.0" />
+
+    <PackageReference Include="Dapr.AspNetCore" Version="1.15.2" />
+
+
+
   </ItemGroup>
 
   <ItemGroup>
