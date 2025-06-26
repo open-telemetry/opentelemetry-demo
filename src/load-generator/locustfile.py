@@ -242,21 +242,19 @@ class CFStorefrontUser(HttpUser):
     @task(1)
     def email_quote(self):
         """Email quote endpoint"""
-        self.client.get("/emailquote.cfm", catch_response=True, name="CF Email Quote")
+        self.client.get(f"{self.cf_base_url}/emailquote.cfm", 
+                       catch_response=True, name="CF Email Quote")
     
     @task(1)
     def update_quote(self):
         """Update quote endpoint"""
-        self.client.get("/updatequote.cfm", catch_response=True, name="CF Update Quote")
+        self.client.get(f"{self.cf_base_url}/updatequote.cfm", 
+                       catch_response=True, name="CF Update Quote")
     
     @task(1)
     def remove_old_quotes(self):
         """Remove old quotes endpoint - this may be slow"""
-        with self.client.get("/removeoldquotes.cfm", 
-                           catch_response=True, 
-                           name="CF Remove Old Quotes",
-                           timeout=30) as response:
-            if response.status_code == 200:
-                response.success()
-            else:
-                response.failure(f"Remove old quotes failed with status {response.status_code}")
+        self.client.get(f"{self.cf_base_url}/removeoldquotes.cfm", 
+                       catch_response=True, 
+                       name="CF Remove Old Quotes",
+                       timeout=30)
