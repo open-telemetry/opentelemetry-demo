@@ -44,6 +44,19 @@ your preferred deployment method:
 - [Docker](https://opentelemetry.io/docs/demo/docker_deployment/)
 - [Kubernetes](https://opentelemetry.io/docs/demo/kubernetes_deployment/)
 
+## Database Configuration
+
+The Quote service uses SQLite as its database backend. The SQLite database file is located at `src/sql/quotes.db` and contains sample data for customers, quotes, services, and quote items.
+
+### SQLite Connection Details
+
+- **Database Path**: `/data/quotes.db` (inside the container)
+- **Environment Variable**: `SQLITE_DB_PATH` 
+- **JDBC Connection String**: `jdbc:sqlite:/data/quotes.db`
+- **Driver**: SQLite JDBC (`org.sqlite.JDBC`)
+
+The database is automatically mounted as a volume in the Docker container from the host path `./src/sql/quotes.db`.
+
 ## Documentation
 
 For detailed documentation, see [Demo Documentation][docs]. If you're curious

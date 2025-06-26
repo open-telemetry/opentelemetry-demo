@@ -9,7 +9,7 @@
   } else {
     // Get a random valid quote ID from database
     validQuoteQuery = queryExecute("
-      SELECT quote_id FROM quotes ORDER BY RAND() LIMIT 1
+      SELECT quote_id FROM quotes ORDER BY RANDOM() LIMIT 1
     ", {}, {datasource: "mysql"});
     
     if (validQuoteQuery.recordCount > 0) {
