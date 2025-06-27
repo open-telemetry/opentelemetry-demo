@@ -14,10 +14,10 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-FROM docker.io/library/alpine:3.22 AS builder
+FROM docker.io/library/debian:12-slim
 
-RUN apk update && \
-    apk add git cmake make g++ grpc-dev protobuf-dev linux-headers
+RUN apt-get update -y && \
+    apt-get install -y build-essential autoconf libtool pkg-config cmake git
 
 COPY ./pb/demo.proto /currency/proto/demo.proto
 
@@ -26,4 +26,8 @@ COPY ./src/currency /currency
 RUN cd /currency \
     && mkdir -p build && cd build \
     && cmake ../genproto \
+        -DCMAKE_BUILD_TYPE=Release \
+        -DCMAKE_CXX_STANDARD=17 \
+        -DgRPC_INSTALL=ON \
+        -DgRPC_BUILD_TESTS=OFF \
     && make -j$(nproc || sysctl -n hw.ncpu || echo 1) demo-proto
