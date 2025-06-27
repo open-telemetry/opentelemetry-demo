@@ -1,8 +1,13 @@
-cmake_minimum_required(VERSION 3.1)
+cmake_minimum_required(VERSION 3.16)
 project(currency-proto)
 
-find_package(Protobuf REQUIRED)
-find_package(gRPC CONFIG REQUIRED)
+include(FetchContent)
+FetchContent_Declare(
+  gRPC
+  GIT_REPOSITORY https://github.com/grpc/grpc
+  GIT_TAG        v1.73.1
+)
+FetchContent_MakeAvailable(gRPC)
 
 set(PROTO_PATH "${CMAKE_CURRENT_SOURCE_DIR}/../proto")
 set(GENERATED_PROTOBUF_PATH "${CMAKE_BINARY_DIR}/generated/proto")
@@ -25,8 +30,6 @@ foreach(IMPORT_DIR ${PROTOBUF_IMPORT_DIRS})
   list(APPEND PROTOBUF_INCLUDE_FLAGS "-I${IMPORT_DIR}")
 endforeach()
 
-find_program(gRPC_CPP_PLUGIN_EXECUTABLE grpc_cpp_plugin)
-
 add_custom_command(
     OUTPUT ${DEMO_PB_H_FILE}
            ${DEMO_PB_CPP_FILE}
@@ -42,9 +45,8 @@ add_custom_command(
       "--proto_path=${PROTO_PATH}" ${PROTOBUF_INCLUDE_FLAGS}
       "--cpp_out=${GENERATED_PROTOBUF_PATH}"
       "--grpc_out=generate_mock_code=true:${GENERATED_PROTOBUF_PATH}"
-      --plugin=protoc-gen-grpc="${gRPC_CPP_PLUGIN_EXECUTABLE}" ${DEMO_PROTO} ${HEALTH_PROTO})
-
-message(STATUS "gRPC_CPP_PLUGIN_EXECUTABLE=${gRPC_CPP_PLUGIN_EXECUTABLE}")
+      --plugin=protoc-gen-grpc="${gRPC_CPP_PLUGIN_EXECUTABLE}" ${DEMO_PROTO} ${HEALTH_PROTO}
+)
 
 add_library(demo-proto ${DEMO_PB_H_FILE}
            ${DEMO_PB_CPP_FILE}
@@ -55,5 +57,5 @@ add_library(demo-proto ${DEMO_PB_H_FILE}
            ${HEALTH_GRPC_PB_CPP_FILE}
            ${HEALTH_GRPC_PB_H_FILE})
 
-target_link_libraries(demo-proto gRPC::grpc++ protobuf::libprotobuf)
+target_link_libraries(demo-proto grpc++ protobuf::libprotobuf)
 include_directories("${GENERATED_PROTOBUF_PATH}" )
