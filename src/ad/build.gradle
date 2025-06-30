@@ -17,7 +17,7 @@ group = "ad"
 version = "0.1.0-SNAPSHOT"
 
 def opentelemetryVersion = "1.51.0"
-def opentelemetryInstrumentationVersion = "2.16.0"
+def opentelemetryInstrumentationVersion = "2.17.0"
 def grpcVersion = "1.73.0"
 def jacksonVersion = "2.19.1"
 def protocVersion = "4.31.1"
