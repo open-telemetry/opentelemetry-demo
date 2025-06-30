@@ -106,6 +106,7 @@ people = json.load(people_file)
 
 class WebsiteUser(HttpUser):
     wait_time = between(1, 10)
+    host = "http://frontend-proxy:8080"  # Default frontend host
 
     @task(1)
     def index(self):
