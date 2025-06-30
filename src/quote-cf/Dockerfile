@@ -39,7 +39,7 @@ RUN ARCH=$(uname -m) && \
     fi
 
 # Set FusionReactor Java options with increased timeouts and heap size
-ENV LUCEE_JAVA_OPTS="-Xmx768m -Xms256m -javaagent:/opt/fusionreactor/fusionreactor.jar=name=quote-service-lucee,address=8088 -agentpath:/opt/fusionreactor/libfrjvmti.so"
+ENV LUCEE_JAVA_OPTS="-Xmx1524m -Xms768m -javaagent:/opt/fusionreactor/fusionreactor.jar=name=quote-service-lucee,address=8088 -agentpath:/opt/fusionreactor/libfrjvmti.so"
 
 # Expose FusionReactor web interface
 EXPOSE 8088
