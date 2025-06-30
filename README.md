@@ -76,8 +76,6 @@ To get involved with the project see our [CONTRIBUTING](CONTRIBUTING.md)
 documentation. Our [SIG Calls](CONTRIBUTING.md#join-a-sig-call) are every other
 Wednesday at 8:30 AM PST and anyone is welcome.
 
-## Project leadership
-
 ### Maintainers
 
 - [Juliano Costa](https://github.com/julianocosta89), Datadog
