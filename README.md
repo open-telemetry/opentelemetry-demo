@@ -76,8 +76,6 @@ To get involved with the project see our [CONTRIBUTING](CONTRIBUTING.md)
 documentation. Our [SIG Calls](CONTRIBUTING.md#join-a-sig-call) are every other
 Wednesday at 8:30 AM PST and anyone is welcome.
 
-## Project leadership
-
 ### Maintainers
 
 - [Juliano Costa](https://github.com/julianocosta89), Datadog
@@ -85,13 +83,13 @@ Wednesday at 8:30 AM PST and anyone is welcome.
 - [Pierre Tessier](https://github.com/puckpuck), Honeycomb
 - [Roger Coll](https://github.com/rogercoll), Elastic
 
-For more information about the maintainer role, see the [community repository](https://github.com/open-telemetry/community/blob/main/community-membership.md#maintainer).
+For more information about the maintainer role, see the [community repository](https://github.com/open-telemetry/community/blob/main/guides/contributor/membership.md#maintainer).
 
 ### Approvers
 
 - [Cedric Ziel](https://github.com/cedricziel), Grafana Labs
 
-For more information about the approver role, see the [community repository](https://github.com/open-telemetry/community/blob/main/community-membership.md#approver).
+For more information about the approver role, see the [community repository](https://github.com/open-telemetry/community/blob/main/guides/contributor/membership.md#approver).
 
 ### Emeritus
 
