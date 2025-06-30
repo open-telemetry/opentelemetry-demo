@@ -8,7 +8,7 @@
 #include <grpc/health/v1/health.grpc.pb.h>
 
 #include "opentelemetry/trace/context.h"
-#include "opentelemetry/trace/semantic_conventions.h"
+#include "opentelemetry/semconv/incubating/rpc_attributes.h"
 #include "opentelemetry/trace/span_context_kv_iterable_view.h"
 #include "opentelemetry/baggage/baggage.h"
 #include "opentelemetry/nostd/string_view.h"
@@ -23,6 +23,8 @@
 #include <grpcpp/impl/codegen/string_ref.h>
 
 using namespace std;
+using namespace opentelemetry::baggage;
+using namespace opentelemetry::trace;
 
 using oteldemo::Empty;
 using oteldemo::GetSupportedCurrenciesResponse;
@@ -34,14 +36,12 @@ using grpc::ServerContext;
 using grpc::ServerBuilder;
 using grpc::Server;
 
-using Span        = opentelemetry::trace::Span;
-using SpanContext = opentelemetry::trace::SpanContext;
-using namespace opentelemetry::trace;
-using namespace opentelemetry::baggage;
-namespace context = opentelemetry::context;
-
+using Span            = Span;
+using SpanContext     = SpanContext;
+namespace context     = opentelemetry::context;
 namespace metrics_api = opentelemetry::metrics;
 namespace nostd       = opentelemetry::nostd;
+namespace semconv     = opentelemetry::semconv;
 
 namespace
 {
@@ -118,10 +118,10 @@ class CurrencyService final : public oteldemo::CurrencyService::Service
     std::string span_name = "Currency/GetSupportedCurrencies";
     auto span =
         get_tracer("currency")->StartSpan(span_name,
-                                      {{SemanticConventions::kRpcSystem, "grpc"},
-                                       {SemanticConventions::kRpcService, "oteldemo.CurrencyService"},
-                                       {SemanticConventions::kRpcMethod, "GetSupportedCurrencies"},
-                                       {SemanticConventions::kRpcGrpcStatusCode, 0}},
+                                      {{semconv::rpc::kRpcSystem, "grpc"},
+                                       {semconv::rpc::kRpcService, "oteldemo.CurrencyService"},
+                                       {semconv::rpc::kRpcMethod, "GetSupportedCurrencies"},
+                                       {semconv::rpc::kRpcGrpcStatusCode, semconv::rpc::RpcGrpcStatusCodeValues::kOk}},
                                       options);
     auto scope = get_tracer("currency")->WithActiveSpan(span);
 
@@ -179,10 +179,10 @@ class CurrencyService final : public oteldemo::CurrencyService::Service
     std::string span_name = "Currency/Convert";
     auto span =
         get_tracer("currency")->StartSpan(span_name,
-                                      {{SemanticConventions::kRpcSystem, "grpc"},
-                                       {SemanticConventions::kRpcService, "oteldemo.CurrencyService"},
-                                       {SemanticConventions::kRpcMethod, "Convert"},
-                                       {SemanticConventions::kRpcGrpcStatusCode, 0}},
+                                      {{semconv::rpc::kRpcSystem, "grpc"},
+                                       {semconv::rpc::kRpcService, "oteldemo.CurrencyService"},
+                                       {semconv::rpc::kRpcMethod, "Convert"},
+                                       {semconv::rpc::kRpcGrpcStatusCode, semconv::rpc::RpcGrpcStatusCodeValues::kOk}},
                                       options);
     auto scope = get_tracer("currency")->WithActiveSpan(span);
 
