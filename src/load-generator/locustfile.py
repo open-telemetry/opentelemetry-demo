@@ -242,19 +242,23 @@ class CFStorefrontUser(HttpUser):
     @task(1)
     def email_quote(self):
         """Email quote endpoint"""
-        self.client.get("/emailquote.cfm", 
-                       catch_response=True, name="CF Email Quote")
+        with self.client.get("/emailquote.cfm", 
+                            catch_response=True,
+                            name="CF Email Quote",
+                            timeout=30) as response:
+            if response.status_code == 500 and "Quote 99999 not available" in response.text:
+                response.success()  # Mark intentional errors as success
     
     @task(1)
     def update_quote(self):
         """Update quote endpoint"""
         self.client.get("/updatequote.cfm", 
-                       catch_response=True, name="CF Update Quote")
+                       name="CF Update Quote",
+                       timeout=30)
     
     @task(1)
     def remove_old_quotes(self):
         """Remove old quotes endpoint - this may be slow"""
         self.client.get("/removeoldquotes.cfm", 
-                       catch_response=True, 
                        name="CF Remove Old Quotes",
                        timeout=30)
