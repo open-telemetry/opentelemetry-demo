@@ -45,6 +45,8 @@ the release.
   ([#2224](https://github.com/open-telemetry/opentelemetry-demo/pull/2224))
 * [load-generator] Update locustfile for logging with TraceContext
   ([#2265](https://github.com/open-telemetry/opentelemetry-demo/pull/2265))
+* [load-generator] Split trace grouping based on workflow context
+  ([#2321](https://github.com/open-telemetry/opentelemetry-demo/pull/2321))
 * [product-catalog] Add OTel grpc Logs to Product Catalog
   ([#2285](https://github.com/open-telemetry/opentelemetry-demo/pull/2285))
 * [shipping]: replace debian image with distroless image
