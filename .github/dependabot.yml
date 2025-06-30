@@ -52,6 +52,7 @@ updates:
       interval: "daily"
   - package-ecosystem: "npm"
     directories:
+      - "/"
       - "/src/flagd-ui/*"
       - "/src/frontend/*"
       - "/src/payment/*"
