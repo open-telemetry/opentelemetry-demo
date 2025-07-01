@@ -1,0 +1,1 @@
+<cfoutput>ok</cfoutput>
