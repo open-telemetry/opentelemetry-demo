@@ -25,6 +25,9 @@ on:
         required: false
         type: string
 
+permissions:
+  contents: read
+
 jobs:
   protobufcheck:
     runs-on: ubuntu-latest

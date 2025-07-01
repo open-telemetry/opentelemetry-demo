@@ -10,8 +10,13 @@ on:
   # because repository write permission is needed to assign reviewers
   pull_request_target:
 
+permissions:
+  contents: read
+
 jobs:
   assign-reviewers:
+    permissions:
+      pull-requests: write  # required for assigning reviewers to PRs
     if: github.repository == 'open-telemetry/opentelemetry-demo'
     runs-on: ubuntu-latest
     steps:
