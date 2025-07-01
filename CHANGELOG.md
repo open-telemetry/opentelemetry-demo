@@ -45,12 +45,16 @@ the release.
   ([#2224](https://github.com/open-telemetry/opentelemetry-demo/pull/2224))
 * [load-generator] Update locustfile for logging with TraceContext
   ([#2265](https://github.com/open-telemetry/opentelemetry-demo/pull/2265))
+* [load-generator] Split trace grouping based on workflow context
+  ([#2321](https://github.com/open-telemetry/opentelemetry-demo/pull/2321))
 * [product-catalog] Add OTel grpc Logs to Product Catalog
   ([#2285](https://github.com/open-telemetry/opentelemetry-demo/pull/2285))
 * [shipping]: replace debian image with distroless image
   ([#2294](https://github.com/open-telemetry/opentelemetry-demo/pull/2294))
 * [currency] Update code to use new semconv and remove unused file
   ([#2319](https://github.com/open-telemetry/opentelemetry-demo/pull/2319))
+* [currency] update alpine to 3.21
+  ([#2291](https://github.com/open-telemetry/opentelemetry-demo/pull/2291))
 
 ## 2.0.2
 

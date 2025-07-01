@@ -14,8 +14,10 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-FROM alpine:3.18 AS base
-RUN apk update && apk add grpc-dev protobuf-dev
+FROM docker.io/library/alpine:3.21 AS base
+
+RUN apk update && \
+    apk add grpc-dev protobuf-dev
 
 FROM base AS builder
 
@@ -32,18 +34,25 @@ RUN git clone --depth 1 --branch v${OPENTELEMETRY_CPP_VERSION} https://github.co
           -DWITH_EXAMPLES=OFF -DWITH_OTLP_GRPC=ON -DWITH_ABSEIL=ON \
     && make -j$(nproc || sysctl -n hw.ncpu || echo 1) install && cd ../..
 
-COPY ./src/currency /currency
-COPY ./pb/demo.proto /currency/proto/demo.proto
+WORKDIR /currency
 
-RUN cd /currency \
-    && mkdir -p build && cd build \
+COPY ./src/currency/build/ build/
+COPY ./src/currency/proto/ proto/
+COPY ./src/currency/src/ src/
+
+COPY ./src/currency/genproto/CMakeLists.txt genproto/CMakeLists.txt
+COPY ./src/currency/CMakeLists.txt CMakeLists.txt
+
+COPY ./pb/demo.proto proto/demo.proto
+
+RUN mkdir -p build && cd build \
     && cmake .. \
     && make -j$(nproc || sysctl -n hw.ncpu || echo 1) install
-
 
 FROM base AS release
 
 COPY --from=builder /usr/local /usr/local
 
 EXPOSE ${CURRENCY_PORT}
+
 ENTRYPOINT ["sh", "-c", "./usr/local/bin/currency ${CURRENCY_PORT}"]
