@@ -16,7 +16,9 @@ We meet every other Wednesday at 8:00 PT. The schedule may change based on
 contributors' availability. Check the [OpenTelemetry Community Calendar](https://github.com/open-telemetry/community?tab=readme-ov-file#special-interest-groups)
 for specific dates and Zoom links.
 
-See the [public meeting notes](https://docs.google.com/document/d/16f-JOjKzLgWxULRxY8TmpM_FjlI1sthvKurnqFz9x98/edit) for a summary description of past meetings.
+See the
+[public meeting notes](https://docs.google.com/document/d/16f-JOjKzLgWxULRxY8TmpM_FjlI1sthvKurnqFz9x98/edit)
+for a summary description of past meetings.
 For edit access, ask in our
 [Slack channel](https://cloud-native.slack.com/archives/C03B4CWV4DA).
 
