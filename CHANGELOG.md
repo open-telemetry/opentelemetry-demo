@@ -55,6 +55,8 @@ the release.
   ([#2319](https://github.com/open-telemetry/opentelemetry-demo/pull/2319))
 * [currency] update alpine to 3.21
   ([#2291](https://github.com/open-telemetry/opentelemetry-demo/pull/2291))
+* [react-native-app] Update how resource attributes are set up
+  ([#2331](https://github.com/open-telemetry/opentelemetry-demo/pull/2331))
 
 ## 2.0.2
 
