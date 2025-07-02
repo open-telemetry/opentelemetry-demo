@@ -68,7 +68,8 @@
   };
   
   // Call email service to send order confirmation (this uses HTTP)
-  cfhttp(method="POST", charset="utf-8", url="http://email:6060/send_order_confirmation", result="emailResult") {
+  emailAddr = structKeyExists(server.system.environment, "EMAIL_ADDR") ? server.system.environment.EMAIL_ADDR : "http://email:6060";
+  cfhttp(method="POST", charset="utf-8", url="#emailAddr#/send_order_confirmation", result="emailResult") {
     cfhttpparam(type="header", name="Content-Type", value="application/json");
     cfhttpparam(type="body", value="#serializeJSON(orderData)#");
   }

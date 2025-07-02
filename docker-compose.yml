@@ -517,6 +517,7 @@ services:
       - LUCEE_ADMIN_PASSWORD=password
       - SQLITE_DB_PATH=/data/quotes.db
       - LUCEE_REQUEST_TIMEOUT=600
+      - EMAIL_ADDR
     volumes:
       - ./src/sql/quotes.db:/data/quotes.db
     logging: *logging
