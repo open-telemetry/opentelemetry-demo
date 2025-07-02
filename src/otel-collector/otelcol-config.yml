@@ -14,7 +14,10 @@ receivers:
             - "https://*"
   httpcheck/frontend-proxy:
     targets:
-      - endpoint: http://frontend-proxy:${env:ENVOY_PORT}
+      - endpoint: http://${env:FRONTEND_PROXY_ADDR}
+  nginx:
+    endpoint: http://${env:IMAGE_PROVIDER_HOST}:${env:IMAGE_PROVIDER_PORT}/status
+    collection_interval: 10s
   docker_stats:
     endpoint: unix:///var/run/docker.sock
   redis:
@@ -122,7 +125,7 @@ service:
       processors: [memory_limiter, transform, batch]
       exporters: [otlp, debug, spanmetrics]
     metrics:
-      receivers: [hostmetrics, docker_stats, httpcheck/frontend-proxy, otlp, redis, spanmetrics]
+      receivers: [docker_stats, httpcheck/frontend-proxy, hostmetrics, nginx, otlp, redis, spanmetrics]
       processors: [memory_limiter, batch]
       exporters: [otlphttp/prometheus, debug]
     logs:
