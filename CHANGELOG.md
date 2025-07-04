@@ -51,12 +51,14 @@ the release.
   ([#2321](https://github.com/open-telemetry/opentelemetry-demo/pull/2321))
 * [product-catalog] Add OTel grpc Logs to Product Catalog
   ([#2285](https://github.com/open-telemetry/opentelemetry-demo/pull/2285))
+* [currency] update alpine to 3.21
+  ([#2291](https://github.com/open-telemetry/opentelemetry-demo/pull/2291))
 * [shipping]: replace debian image with distroless image
   ([#2294](https://github.com/open-telemetry/opentelemetry-demo/pull/2294))
 * [currency] Update code to use new semconv and remove unused file
   ([#2319](https://github.com/open-telemetry/opentelemetry-demo/pull/2319))
-* [currency] update alpine to 3.21
-  ([#2291](https://github.com/open-telemetry/opentelemetry-demo/pull/2291))
+* [image-provider] Add nginx metrics receiver and dashboard
+  ([#2330](https://github.com/open-telemetry/opentelemetry-demo/pull/2330))
 
 ## 2.0.2
 
