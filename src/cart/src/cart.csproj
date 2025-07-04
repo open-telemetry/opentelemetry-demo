@@ -30,10 +30,9 @@
     <PackageReference Include="OpenTelemetry.Resources.Host" Version="1.11.0-beta.2" />
     <PackageReference Include="StackExchange.Redis" Version="2.8.31" />
     <PackageReference Include="OpenFeature.Contrib.Providers.Flagd" Version="0.3.2" />
-    <PackageReference Include="OpenFeature.Contrib.Hooks.Otel" Version="0.2.0" />
-    <PackageReference Include="OpenFeature" Version="2.6.0" />
-    <PackageReference Include="OpenFeature.DependencyInjection" Version="2.6.0" />
-    <PackageReference Include="OpenFeature.Hosting" Version="2.6.0" />
+    <PackageReference Include="OpenFeature" Version="2.7.0" />
+    <PackageReference Include="OpenFeature.DependencyInjection" Version="2.7.0" />
+    <PackageReference Include="OpenFeature.Hosting" Version="2.7.0" />
   </ItemGroup>
 
   <ItemGroup>
