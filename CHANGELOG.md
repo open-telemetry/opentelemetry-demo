@@ -7,6 +7,8 @@ the release.
 
 ## Unreleased
 
+* [cartservice] Upgrade OpenFeature and add new telemetry Hooks
+  ([#2332](https://github.com/open-telemetry/opentelemetry-demo/pull/2332))
 * [chore] add GOMEMLIMIT to all Go services
   ([#2148](https://github.com/open-telemetry/opentelemetry-demo/pull/2148))
 * [product-catalog] Simplify span event name
