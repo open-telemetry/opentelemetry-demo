@@ -72,6 +72,7 @@ builder.Services.AddOpenTelemetry()
         .AddOtlpExporter())
     .WithMetrics(meterBuilder => meterBuilder
         .AddMeter("OpenTelemetry.Demo.Cart")
+        .AddMeter("OpenFeature")
         .AddProcessInstrumentation()
         .AddRuntimeInstrumentation()
         .AddAspNetCoreInstrumentation()
