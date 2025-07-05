@@ -7,6 +7,7 @@ the release.
 
 ## Unreleased
 
+* [checkout] Add OTel grpc Logs to checkout ([#2336](https://github.com/open-telemetry/opentelemetry-demo/pull/2336))
 * [cartservice] Upgrade OpenFeature and add new telemetry Hooks
   ([#2332](https://github.com/open-telemetry/opentelemetry-demo/pull/2332))
 * [chore] add GOMEMLIMIT to all Go services
