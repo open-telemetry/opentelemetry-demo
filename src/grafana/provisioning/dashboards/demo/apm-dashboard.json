@@ -2099,7 +2099,8 @@
           },
           "queryType": "search",
           "refId": "A",
-          "service": "$service_name"
+          "service": "$service_name",
+          "tags": "service.namespace=\"$service_namespace\" deployment.environment.name=\"$deployment_environment_name\""
         }
       ],
       "title": "",
