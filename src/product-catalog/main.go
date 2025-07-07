@@ -9,6 +9,7 @@ package main
 import (
 	"context"
 	"fmt"
+	"io/fs"
 	"net"
 	"os"
 	"os/signal"
@@ -17,6 +18,7 @@ import (
 	"sync"
 	"syscall"
 	"time"
+
 	"github.com/sirupsen/logrus"
 
 	"go.opentelemetry.io/contrib/instrumentation/google.golang.org/grpc/otelgrpc"
@@ -32,6 +34,7 @@ import (
 	sdktrace "go.opentelemetry.io/otel/sdk/trace"
 	"go.opentelemetry.io/otel/trace"
 
+	"github.com/jackc/pgx/v5/pgxpool"
 	otelhooks "github.com/open-feature/go-sdk-contrib/hooks/open-telemetry/pkg"
 	flagd "github.com/open-feature/go-sdk-contrib/providers/flagd/pkg"
 	"github.com/open-feature/go-sdk/openfeature"
@@ -43,8 +46,6 @@ import (
 	"google.golang.org/grpc/reflection"
 	"google.golang.org/grpc/status"
 	"google.golang.org/protobuf/encoding/protojson"
-
-	dapr "github.com/dapr/go-sdk/client"
 )
 
 var (
@@ -52,22 +53,15 @@ var (
 	catalog           []*pb.Product
 	resource          *sdkresource.Resource
 	initResourcesOnce sync.Once
-	client dapr.Client
-    daprerror error
+	connPool *pgxpool.Pool
 )
 
 const DEFAULT_RELOAD_INTERVAL = 10
-const dapr_store = "product-store"
-
+const PGX_MAX_CONNS = 5
+const CTX_QUERY_TIMEOUT = 10 * time.Second
 
 func init() {
 	log = logrus.New()
-    client, daprerror = dapr.NewClient()
-        if daprerror != nil {
-               log.Fatalf("Cannot create Dapr client : %s", daprerror)
-
-        }
-	loadProductCatalog()
 }
 
 func initResource() *sdkresource.Resource {
@@ -119,9 +113,35 @@ func initMeterProvider() *sdkmetric.MeterProvider {
 	return mp
 }
 
+func initPostgresConnectionPool() *pgxpool.Pool {
+	var dbhost, dbport, dbuser, dbpassword, dbname string
+	mustMapEnv(&dbhost, "POSTGRES_HOST")
+	mustMapEnv(&dbport, "POSTGRES_PORT")
+	mustMapEnv(&dbuser, "POSTGRES_USER")
+	mustMapEnv(&dbpassword, "POSTGRES_PASSWORD")
+	mustMapEnv(&dbname, "POSTGRES_DB")
+
+	connStr := fmt.Sprintf("postgres://%s:%s@%s:%s/%s", dbuser, dbpassword,  dbhost, dbport, dbname)
+
+	config, err := pgxpool.ParseConfig(connStr)
+	if err != nil {
+		log.Fatalf("Cannot crate database config: %v", err)
+	}
+	log.Infof("Parsed connection string: %s", config.ConnString())
+	config.MaxConns = PGX_MAX_CONNS
+
+	var pool *pgxpool.Pool
+	pool, err = pgxpool.NewWithConfig(context.Background(), config)
+    if err != nil {
+        log.Fatalf("Unable to connect to database: %v", err)
+    }
+
+	return pool
+}
+
 func main() {
-
-
+	connPool = initPostgresConnectionPool()
+	defer connPool.Close()
 
 	tp := initTracerProvider()
 	defer func() {
@@ -188,6 +208,7 @@ type productCatalog struct {
 	pb.UnimplementedProductCatalogServiceServer
 }
 
+//This function is not used when we are using Postgres
 func loadProductCatalog() {
 	log.Info("Loading Product Catalog...")
 	var err error
@@ -224,50 +245,100 @@ func loadProductCatalog() {
 		}
 	}()
 }
-func sendQueryToBackend() ([]*pb.Product, error) {
-    query := `{
 
-    }`
-
-    ctx := context.Background()
-    // Use the client to query the state
-    queryResponse, err := client.QueryStateAlpha1(ctx, dapr_store, query,nil)
-    if err != nil {
-    	log.Fatalf("DAPR ERROR when sending query: %s",err)
-        	st := status.Convert(err)
-
-        log.Fatalf("DAPR Code: %s\n", st.Code().String())
-        log.Fatalf("DAPR Message: %s\n", st.Message())
-        return nil, status.Errorf(codes.Internal, st.Message())
-    }
-    var products []*pb.Product
-
-    for _, product := range queryResponse.Results {
-
-
-
-         var jsonData pb.Product
-         err := protojson.Unmarshal([]byte(product.Value), &jsonData)
-        if err != nil {
-             return nil, status.Errorf(codes.Internal, "error parsing the data")
-         	}  	// Now jsonData is a map containing the parsed JSON structure 	fmt.Println(jsonData)
-        products = append(products, &jsonData)
-    }
-    log.Infof("Loaded x%d products", len(products))
-    return products, nil
-}
-
+//This function is not used when we are using Postgres
 func readProductFiles() ([]*pb.Product, error) {
+	// find all .json files in the products directory
+	entries, err := os.ReadDir("./products")
+	if err != nil {
+		return nil, err
+	}
 
-    var products []*pb.Product
-	products, err :=  sendQueryToBackend()
-	  if err != nil {
-        	  return nil, status.Errorf(codes.Internal, "impossible to getproducts from storage")
+	jsonFiles := make([]fs.FileInfo, 0, len(entries))
+	for _, entry := range entries {
+		if strings.HasSuffix(entry.Name(), ".json") {
+			info, err := entry.Info()
+			if err != nil {
+				return nil, err
+			}
+			jsonFiles = append(jsonFiles, info)
+		}
+	}
 
-        }
+	// read the contents of each .json file and unmarshal into a ListProductsResponse
+	// then append the products to the catalog
+	var products []*pb.Product
+	for _, f := range jsonFiles {
+		jsonData, err := os.ReadFile("./products/" + f.Name())
+		if err != nil {
+			return nil, err
+		}
 
+		var res pb.ListProductsResponse
+		if err := protojson.Unmarshal(jsonData, &res); err != nil {
+			return nil, err
+		}
+
+		products = append(products, res.Products...)
+	}
+
+	log.Infof("Loaded %d products", len(products))
 
 	return products, nil
+}
+
+func readProducts() ([]*pb.Product, error) {
+    var products []*pb.Product
+    
+	ctx, cancelf := context.WithTimeout(context.Background(), CTX_QUERY_TIMEOUT)
+	defer cancelf()
+	rows, err := connPool.Query(ctx, "select value from productstate")
+	if err != nil {
+		log.Errorf("error executing query: %v", err)
+		return nil, status.Errorf(codes.Internal, "impossible to get products from storage") 
+	}
+	defer rows.Close()
+
+	for rows.Next() {
+		var value []byte
+		var jsonData pb.Product
+
+		err := rows.Scan(&value)
+		if err != nil {
+			log.Errorf("error parsing row: %v", err)
+			return nil, status.Errorf(codes.Internal, "error getting data from row")
+		}
+
+		err = protojson.Unmarshal(value, &jsonData)		
+		if err != nil {
+			log.Errorf("error unmarshal: %v", err)
+			return nil, status.Errorf(codes.Internal, "error parsing the data")
+		}
+
+		products = append(products, &jsonData)
+	}
+	return products, nil
+}
+
+func readProduct(productId string) (*pb.Product, error) {
+	var value []byte 
+	var jsonData pb.Product
+
+	ctx, cancelf := context.WithTimeout(context.Background(), CTX_QUERY_TIMEOUT)
+	defer cancelf()
+	err := connPool.QueryRow(ctx, "select value from productstate where key = $1", productId).Scan(&value)
+	if err != nil {
+		log.Errorf("error executing query: %v", err)
+		return nil, status.Errorf(codes.Internal, "impossible to get product for id %s", productId) 
+	}
+	
+	err = protojson.Unmarshal(value, &jsonData)		
+	if err != nil {
+		log.Errorf("error unmarshal: %v", err)
+		return nil, status.Errorf(codes.Internal, "error parsing the data")
+	}
+
+	return &jsonData, nil
 }
 
 func mustMapEnv(target *string, key string) {
@@ -292,7 +363,17 @@ func (p *productCatalog) ListProducts(ctx context.Context, req *pb.Empty) (*pb.L
 	span.SetAttributes(
 		attribute.Int("app.products.count", len(catalog)),
 	)
-	return &pb.ListProductsResponse{Products: catalog}, nil
+
+	log.Infof("List products")
+	startTime := time.Now()
+	products, err := readProducts()
+	if err != nil {
+		log.Errorf("Can't get products in ListProducts, %v", err)
+		return nil, err
+	}
+	log.Infof("Number of products read: %v in: %s", len(products), time.Since(startTime))
+
+	return &pb.ListProductsResponse{Products: products}, nil
 }
 
 func (p *productCatalog) GetProduct(ctx context.Context, req *pb.GetProductRequest) (*pb.Product, error) {
@@ -301,6 +382,8 @@ func (p *productCatalog) GetProduct(ctx context.Context, req *pb.GetProductReque
 		attribute.String("app.product.id", req.Id),
 	)
 
+	log.Infof("Get product for id: %s", req.Id)
+
 	// GetProduct will fail on a specific product when feature flag is enabled
 	if p.checkProductFailure(ctx, req.Id) {
 		msg := fmt.Sprintf("Error: Product Catalog Fail Feature Flag Enabled")
@@ -308,14 +391,14 @@ func (p *productCatalog) GetProduct(ctx context.Context, req *pb.GetProductReque
 		span.AddEvent(msg)
 		return nil, status.Errorf(codes.Internal, msg)
 	}
-
-	var found *pb.Product
-	for _, product := range catalog {
-		if req.Id == product.Id {
-			found = product
-			break
-		}
+	
+	startTime := time.Now()
+	found, err := readProduct(req.Id)
+	if err != nil {
+		log.Errorf("Can't get product in GetProduct for id: %s, %v", req.Id, err)
+		return nil, err
 	}
+	log.Infof("Product details read in: %s", time.Since(startTime))
 
 	if found == nil {
 		msg := fmt.Sprintf("Product Not Found: %s", req.Id)

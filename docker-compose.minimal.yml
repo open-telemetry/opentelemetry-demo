@@ -401,13 +401,14 @@ services:
     image: postgres:15.3-alpine3.18
     restart: always
     environment:
-      - POSTGRES_USER=postgres
-      - POSTGRES_PASSWORD=postgres123
+      - POSTGRES_USER
+      - POSTGRES_PASSWORD
     volumes:
       - ./src/postgresql/product/init.sql:/docker-entrypoint-initdb.d/init.sql
-      - ./src/postgresql/data:/var/lib/postgresql/data
+      - pgdata:/container/path:/var/lib/postgresql/data
     ports:
-      - 5436:5432
+      - "$POSTGRES_PORT"
+
   # Product Catalog service
   product-catalog:
     image: ${IMAGE_NAME}:${DEMO_VERSION}-product-catalog
@@ -438,27 +439,9 @@ services:
     depends_on:
       otel-collector:
         condition: service_started
-    logging: *logging
-
-  product-dapr:
-    image: "daprio/daprd:edge"
-    container_name: product-dapr
-    command: [ "./daprd",
-               "-app-id", "product-catalog",
-               "-app-port", "${PRODUCT_CATALOG_PORT}",
-               "-placement-host-address", "dapr-placement:50006",
-               "-resources-path", "/configuration/config.yaml",
-               "-config", "/dapr/config.yaml" ]
-    volumes:
-      - "./src/dapr/components/:/components"
-      - "./src/dapr/:/configuration"
-    depends_on:
-      product_db:
-        condition: service_started
-      dapr-placement:
+      product_db:   
         condition: service_started
     logging: *logging
-    network_mode: "service:product-catalog"
 
   # Quote service
   quote:
@@ -737,3 +720,8 @@ services:
       timeout: 10s
       retries: 10
     logging: *logging
+
+volumes:
+  pgdata:
+    driver: local
+

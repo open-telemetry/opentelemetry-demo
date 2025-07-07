@@ -5,7 +5,9 @@ description of your change into "Unreleased" section. As part of release
 process content of "Unreleased" section content will generate release notes for
 the release.
 
-## Unreleased
+## Unreleased  
+   
+* [product-catalog] change product catalog to use Postgres database directly   
 
 ## 2.0.3
 
