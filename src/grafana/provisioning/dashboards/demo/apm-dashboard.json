@@ -116,6 +116,7 @@
           },
           "editorMode": "code",
           "expr": "timestamp(sum by (deployment_environment_name, service_namespace, service_name) (target_info{deployment_environment_name=~\"$deployment_environment_name\", service_namespace=~\"$service_namespace\", service_name=\"$service_name\"}) or absent{})\n",
+          "interval": "60s",
           "legendFormat": "__auto",
           "range": true,
           "refId": "A"
@@ -235,6 +236,7 @@
           "fullMetaSearch": false,
           "hide": false,
           "includeNullMetadata": true,
+          "interval": "60s",
           "legendFormat": "P99",
           "range": true,
           "refId": "P99",
@@ -250,6 +252,7 @@
           "expr": "histogram_quantile(0.9, sum by(le, deployment_environment_name, service_namespace, service_name) (rate(http_server_request_duration_seconds_bucket{deployment_environment_name=~\"$deployment_environment_name\", service_namespace=~\"$service_namespace\", service_name=\"$service_name\"}[$__rate_interval])))",
           "fullMetaSearch": false,
           "includeNullMetadata": true,
+          "interval": "60s",
           "legendFormat": "P90",
           "range": true,
           "refId": "P90",
@@ -266,6 +269,7 @@
           "fullMetaSearch": false,
           "hide": false,
           "includeNullMetadata": true,
+          "interval": "60s",
           "legendFormat": "AVG",
           "range": true,
           "refId": "AVG",
@@ -372,6 +376,7 @@
           "hide": false,
           "includeNullMetadata": true,
           "instant": false,
+          "interval": "60s",
           "legendFormat": "5xx",
           "range": true,
           "refId": "5xx",
@@ -477,6 +482,7 @@
           "expr": "(sum(rate(http_server_request_duration_seconds_count{deployment_environment_name=~\"$deployment_environment_name\", service_namespace=~\"$service_namespace\", service_name=\"$service_name\"}[$__rate_interval])) by (deployment_environment_name, service_namespace, service_name)) ",
           "hide": false,
           "instant": false,
+          "interval": "60s",
           "legendFormat": "Requests",
           "range": true,
           "refId": "B"
@@ -592,6 +598,7 @@
               "fullMetaSearch": false,
               "hide": false,
               "includeNullMetadata": true,
+              "interval": "60s",
               "legendFormat": "P99",
               "range": true,
               "refId": "P99",
@@ -607,6 +614,7 @@
               "expr": "histogram_quantile(0.9, sum by(le, deployment_environment_name, service_namespace, service_name) (rate(rpc_server_duration_milliseconds_bucket{deployment_environment_name=~\"$deployment_environment_name\", service_namespace=~\"$service_namespace\", service_name=\"$service_name\"}[$__rate_interval])))",
               "fullMetaSearch": false,
               "includeNullMetadata": true,
+              "interval": "60s",
               "legendFormat": "P90",
               "range": true,
               "refId": "P90",
@@ -623,6 +631,7 @@
               "fullMetaSearch": false,
               "hide": false,
               "includeNullMetadata": true,
+              "interval": "60s",
               "legendFormat": "AVG",
               "range": true,
               "refId": "AVG",
@@ -727,6 +736,7 @@
               "hide": false,
               "includeNullMetadata": true,
               "instant": false,
+              "interval": "60s",
               "legendFormat": "Error",
               "range": true,
               "refId": "ERR",
@@ -830,6 +840,7 @@
               "editorMode": "code",
               "expr": "(sum(rate(rpc_server_duration_milliseconds_count{deployment_environment_name=~\"$deployment_environment_name\", service_namespace=~\"$service_namespace\", service_name=\"$service_name\"}[$__rate_interval])) by (deployment_environment_name, service_namespace, service_name)) * $__interval_ms / 1000",
               "hide": false,
+              "interval": "60s",
               "legendFormat": "Requests",
               "range": true,
               "refId": "RequestRate"
@@ -967,6 +978,7 @@
           "expr": "\n        sum by (operation) (\n            label_join(\n                rate(http_server_request_duration_seconds_count{deployment_environment_name=~\"$deployment_environment_name\", service_namespace=~\"$service_namespace\", service_name=\"$service_name\"}[$__rate_interval]),\n                \"operation\",\n                \" \",\n                \"http_request_method\",\n                \"http_route\"\n            )\n        )\n    ",
           "fullMetaSearch": false,
           "includeNullMetadata": true,
+          "interval": "60s",
           "legendFormat": "{{operation}}",
           "range": true,
           "refId": "RPS",
@@ -981,6 +993,7 @@
           "expr": "(\n        sum by (operation) (\n            label_join(\n                rate(http_server_request_duration_seconds_count{deployment_environment_name=~\"$deployment_environment_name\", service_namespace=~\"$service_namespace\", service_name=\"$service_name\", http_response_status_code=~\"5..\"}[$__rate_interval]),\n                \"operation\",\n                \" \",\n                \"http_request_method\",\n                \"http_route\"\n            )\n        )\n     / \n        sum by (operation) (\n            label_join(\n                rate(http_server_request_duration_seconds_count{deployment_environment_name=~\"$deployment_environment_name\", service_namespace=~\"$service_namespace\", service_name=\"$service_name\"}[$__rate_interval]),\n                \"operation\",\n                \" \",\n                \"http_request_method\",\n                \"http_route\"\n            )\n        )\n    ) or (0 * \n        sum by (operation) (\n            label_join(\n                rate(http_server_request_duration_seconds_count{deployment_environment_name=~\"$deployment_environment_name\", service_namespace=~\"$service_namespace\", service_name=\"$service_name\"}[$__rate_interval]),\n                \"operation\",\n                \" \",\n                \"http_request_method\",\n                \"http_route\"\n            )\n        )\n    )",
           "hide": false,
           "instant": false,
+          "interval": "60s",
           "legendFormat": "{{operation}}",
           "range": true,
           "refId": "ERR_PCT"
@@ -994,6 +1007,7 @@
           "expr": "\n        histogram_quantile(\n            0.99,\n            sum by (le, operation) (\n                label_join(\n                rate(http_server_request_duration_seconds_bucket{deployment_environment_name=~\"$deployment_environment_name\", service_namespace=~\"$service_namespace\", service_name=\"$service_name\"}[5m]),\n                \"operation\",\n                \" \",\n                \"http_request_method\",\n                \"http_route\"\n                )\n            )\n        )\n    ",
           "hide": false,
           "instant": false,
+          "interval": "60s",
           "legendFormat": "{{operation}}",
           "range": true,
           "refId": "Duration"
@@ -1153,6 +1167,7 @@
           "fullMetaSearch": false,
           "hide": false,
           "includeNullMetadata": true,
+          "interval": "60s",
           "legendFormat": "__auto",
           "range": true,
           "refId": "RPS",
@@ -1167,6 +1182,7 @@
           "expr": "(\n        sum by (operation) (\n            label_join(\n                rate(rpc_server_duration_milliseconds_count{deployment_environment_name=~\"$deployment_environment_name\", service_namespace=~\"$service_namespace\", service_name=\"$service_name\", rpc_grpc_status_code!=\"0\"}[$__rate_interval]),\n                \"operation\",\n                \"/\",\n                \"rpc_service\",\n                \"rpc_method\"\n            )\n        )\n     / \n        sum by (operation) (\n            label_join(\n                rate(rpc_server_duration_milliseconds_count{deployment_environment_name=~\"$deployment_environment_name\", service_namespace=~\"$service_namespace\", service_name=\"$service_name\"}[$__rate_interval]),\n                \"operation\",\n                \"/\",\n                \"rpc_service\",\n                \"rpc_method\"\n            )\n        )\n    ) or (0 * \n        sum by (operation) (\n            label_join(\n                rate(rpc_server_duration_milliseconds_count{deployment_environment_name=~\"$deployment_environment_name\", service_namespace=~\"$service_namespace\", service_name=\"$service_name\"}[$__rate_interval]),\n                \"operation\",\n                \"/\",\n                \"rpc_service\",\n                \"rpc_method\"\n            )\n        )\n    )\n    ",
           "hide": false,
           "instant": false,
+          "interval": "60s",
           "legendFormat": "__auto",
           "range": true,
           "refId": "ERR_PCT"
@@ -1180,6 +1196,7 @@
           "expr": "\n        histogram_quantile(\n            0.99,\n            sum by (le, operation) (\n                label_join(\n                rate(rpc_server_duration_milliseconds_bucket{deployment_environment_name=~\"$deployment_environment_name\", service_namespace=~\"$service_namespace\", service_name=\"$service_name\"}[5m]),\n                \"operation\",\n                \"/\",\n                \"rpc_service\",\n                \"rpc_method\"\n                )\n            )\n        )\n    ",
           "hide": false,
           "instant": false,
+          "interval": "60s",
           "legendFormat": "{{operation}}",
           "range": true,
           "refId": "Duration"
@@ -1345,6 +1362,7 @@
           "expr": "\n        sum by (outbound_service) (\n            label_join(\n                rate(http_client_request_duration_seconds_count{deployment_environment_name=~\"$deployment_environment_name\", service_namespace=~\"$service_namespace\", service_name=\"$service_name\"}[$__rate_interval]),\n                \"outbound_service\",\n                \" \",\n                \"server_address\",\n                \"http_request_method\",\n                \"url_template\"\n            )\n        )\n    ",
           "fullMetaSearch": false,
           "includeNullMetadata": true,
+          "interval": "60s",
           "legendFormat": "{{server_address}} {{http_request_method}} {{url_template}}",
           "range": true,
           "refId": "RPS",
@@ -1359,6 +1377,7 @@
           "expr": "(\n        sum by (outbound_service) (\n            label_join(\n                rate(http_client_request_duration_seconds_count{deployment_environment_name=~\"$deployment_environment_name\", service_namespace=~\"$service_namespace\", service_name=\"$service_name\", http_response_status_code=~\"5..\"}[$__rate_interval]),\n                \"outbound_service\",\n                \" \",\n                \"server_address\",\n                \"http_request_method\",\n                \"url_template\"\n            )\n        )\n     / \n        sum by (outbound_service) (\n            label_join(\n                rate(http_client_request_duration_seconds_count{deployment_environment_name=~\"$deployment_environment_name\", service_namespace=~\"$service_namespace\", service_name=\"$service_name\"}[$__rate_interval]),\n                \"outbound_service\",\n                \" \",\n                \"server_address\",\n                \"http_request_method\",\n                \"url_template\"\n            )\n        )\n    ) or (0 * \n        sum by (outbound_service) (\n            label_join(\n                rate(http_client_request_duration_seconds_count{deployment_environment_name=~\"$deployment_environment_name\", service_namespace=~\"$service_namespace\", service_name=\"$service_name\"}[$__rate_interval]),\n                \"outbound_service\",\n                \" \",\n                \"server_address\",\n                \"http_request_method\",\n                \"url_template\"\n            )\n        )\n    )",
           "hide": false,
           "instant": false,
+          "interval": "60s",
           "legendFormat": "{{server_address}} {{http_request_method}} {{url_template}}",
           "range": true,
           "refId": "ERR_PCT"
@@ -1372,6 +1391,7 @@
           "expr": "\nhistogram_quantile(\n    0.99,\n    sum by (le, outbound_service) (\n        label_join(\n        rate(http_client_request_duration_seconds_bucket{deployment_environment_name=~\"$deployment_environment_name\", service_namespace=~\"$service_namespace\", service_name=\"$service_name\"}[5m]),\n        \"outbound_service\",\n        \" \",\n        \"server_address\",\n        \"http_request_method\",\n        \"url_template\"\n        )\n    )\n)",
           "hide": false,
           "instant": false,
+          "interval": "60s",
           "legendFormat": "{{server_address}} {{http_request_method}} {{url_template}}",
           "range": true,
           "refId": "DURATION"
@@ -1528,6 +1548,7 @@
           "fullMetaSearch": false,
           "hide": false,
           "includeNullMetadata": true,
+          "interval": "60s",
           "legendFormat": "{{server_address}} {{db_namespace}}",
           "range": true,
           "refId": "RPS",
@@ -1542,6 +1563,7 @@
           "expr": "(\n        sum by (database) (\n            label_join(\n                rate(db_client_operation_duration_seconds_count{deployment_environment_name=~\"$deployment_environment_name\", service_namespace=~\"$service_namespace\", service_name=\"$service_name\", http_response_status_code=~\"5..\"}[$__rate_interval]),\n                \"database\",\n                \"/\",\n                \"server_address\",\n                \"db_namespace\"\n            )\n        )\n     / \n        sum by (database) (\n            label_join(\n                rate(db_client_operation_duration_seconds_count{deployment_environment_name=~\"$deployment_environment_name\", service_namespace=~\"$service_namespace\", service_name=\"$service_name\"}[$__rate_interval]),\n                \"database\",\n                \"/\",\n                \"server_address\",\n                \"db_namespace\"\n            )\n        )\n    ) or (0 * \n        sum by (database) (\n            label_join(\n                rate(db_client_operation_duration_seconds_count{deployment_environment_name=~\"$deployment_environment_name\", service_namespace=~\"$service_namespace\", service_name=\"$service_name\"}[$__rate_interval]),\n                \"database\",\n                \"/\",\n                \"server_address\",\n                \"db_namespace\"\n            )\n        )\n    )",
           "hide": false,
           "instant": false,
+          "interval": "60s",
           "legendFormat": "{{server_address}} {{db_namespace}}",
           "range": true,
           "refId": "ERR_PCT"
@@ -1555,6 +1577,7 @@
           "expr": "\nhistogram_quantile(\n    0.99,\n    sum by (le, database) (\n        label_join(\n        rate(db_client_operation_duration_seconds_bucket{deployment_environment_name=~\"$deployment_environment_name\", service_namespace=~\"$service_namespace\", service_name=\"$service_name\"}[5m]),\n            \"database\",\n            \"/\",\n            \"server_address\",\n            \"db_namespace\"\n        )\n    )\n)",
           "hide": false,
           "instant": false,
+          "interval": "60s",
           "legendFormat": "{{server_address}} {{db_namespace}}",
           "range": true,
           "refId": "DURATION"
@@ -1715,6 +1738,7 @@
           "fullMetaSearch": false,
           "hide": false,
           "includeNullMetadata": true,
+          "interval": "60s",
           "legendFormat": "__auto",
           "range": true,
           "refId": "RPS",
@@ -1729,6 +1753,7 @@
           "expr": "(\n        sum by (outbound_service) (\n            label_join(\n                rate(rpc_client_duration_milliseconds_count{deployment_environment_name=~\"$deployment_environment_name\", service_namespace=~\"$service_namespace\", service_name=\"$service_name\", http_response_status_code=~\"5..\"}[$__rate_interval]),\n                \"outbound_service\",\n                \"/\",\n                \"server_address\",\n                \"rpc_service\",\n                \"rpc_method\"\n            )\n        )\n     / \n        sum by (outbound_service) (\n            label_join(\n                rate(rpc_client_duration_milliseconds_count{deployment_environment_name=~\"$deployment_environment_name\", service_namespace=~\"$service_namespace\", service_name=\"$service_name\"}[$__rate_interval]),\n                \"outbound_service\",\n                \"/\",\n                \"server_address\",\n                \"rpc_service\",\n                \"rpc_method\"\n            )\n        )\n    ) or (0 * \n        sum by (outbound_service) (\n            label_join(\n                rate(rpc_client_duration_milliseconds_count{deployment_environment_name=~\"$deployment_environment_name\", service_namespace=~\"$service_namespace\", service_name=\"$service_name\"}[$__rate_interval]),\n                \"outbound_service\",\n                \"/\",\n                \"server_address\",\n                \"rpc_service\",\n                \"rpc_method\"\n            )\n        )\n    )",
           "hide": false,
           "instant": false,
+          "interval": "60s",
           "legendFormat": "__auto",
           "range": true,
           "refId": "ERR_PCT"
@@ -1742,6 +1767,7 @@
           "expr": "\nhistogram_quantile(\n    0.99,\n    sum by (le, outbound_service) (\n        label_join(\n        rate(rpc_client_duration_milliseconds_bucket{deployment_environment_name=~\"$deployment_environment_name\", service_namespace=~\"$service_namespace\", service_name=\"$service_name\"}[5m]),\n        \"outbound_service\",\n        \"/\",\n        \"server_address\",\n        \"rpc_service\",\n        \"rpc_method\"\n        )\n    )\n)",
           "hide": false,
           "instant": false,
+          "interval": "60s",
           "legendFormat": "__auto",
           "range": true,
           "refId": "DURATION"
@@ -2177,8 +2203,8 @@
         "allValue": ".*",
         "allowCustomValue": false,
         "current": {
-          "text": "All",
-          "value": ".*"
+          "text": "opentelemetry-demo",
+          "value": "opentelemetry-demo"
         },
         "datasource": {
           "type": "prometheus",
@@ -2234,5 +2260,5 @@
   "timezone": "",
   "title": "APM Dashboard (Jaeger, Prometheus, OpenSearch)",
   "uid": "febljk0a32qyoa",
-  "version": 11
+  "version": 12
 }
