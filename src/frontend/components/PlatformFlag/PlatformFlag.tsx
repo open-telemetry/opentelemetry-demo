@@ -8,9 +8,8 @@ const { NEXT_PUBLIC_PLATFORM = 'local' } = typeof window !== 'undefined' ? windo
 const platform = NEXT_PUBLIC_PLATFORM;
 
 const PlatformFlag = () => {
-  return (
-    <S.Block>{platform}</S.Block>
-  );
+  // Using suppressHydrationWarning here because the current setup renders differently on the server (server is always "local" and client whatever was configured as "ENV_PLATFORM")
+  return <S.Block suppressHydrationWarning>{platform}</S.Block>;
 };
 
 export default PlatformFlag;
