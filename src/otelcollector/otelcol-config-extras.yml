@@ -16,3 +16,28 @@
 #    pipelines:
 #      traces:
 #        exporters: [spanmetrics, otlphttp/example]
+
+# TODO: Probably should remove this again before merging!
+exporters:
+  otlp/dash0:
+    endpoint: ingress.eu-west-1.aws.dash0-dev.com:4317
+    headers:
+      Authorization: "Bearer <YOUR_TOKEN>"
+
+connectors:
+  spanmetrics:
+
+service:
+  pipelines:
+    traces:
+      receivers: [otlp]
+      processors: [batch]
+      exporters: [otlp/dash0]
+    metrics:
+      receivers: [otlp]
+      processors: [batch]
+      exporters: [otlp/dash0]
+    logs:
+      receivers: [otlp]
+      processors: [batch]
+      exporters: [otlp/dash0]
