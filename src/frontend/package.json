@@ -11,6 +11,8 @@
     "grpc:generate": "mkdir -p ./protos && protoc -I ./pb  --plugin=./node_modules/.bin/protoc-gen-ts_proto --ts_proto_opt=esModuleInterop=true --ts_proto_out=./protos --ts_proto_opt=outputServices=grpc-js demo.proto"
   },
   "dependencies": {
+    "@dash0/sdk-web": "^0.10.0",
+    "@faker-js/faker": "^9.9.0",
     "@grpc/grpc-js": "1.9.13",
     "@opentelemetry/api": "1.7.0",
     "@opentelemetry/auto-instrumentations-node": "0.40.2",

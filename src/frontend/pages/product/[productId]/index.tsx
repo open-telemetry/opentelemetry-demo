@@ -19,6 +19,7 @@ import AdProvider from '../../../providers/Ad.provider';
 import { useCart } from '../../../providers/Cart.provider';
 import * as S from '../../../styles/ProductDetail.styled';
 import { useCurrency } from '../../../providers/Currency.provider';
+import { sendEvent } from '@dash0/sdk-web';
 
 const quantityOptions = new Array(10).fill(0).map((_, i) => i + 1);
 
@@ -49,6 +50,10 @@ const ProductDetail: NextPage = () => {
   );
 
   const onAddItem = useCallback(async () => {
+    sendEvent('product_added_to_cart', {
+      attributes: { productId, quantity },
+    });
+
     await addItem({
       productId,
       quantity,
@@ -64,7 +69,7 @@ const ProductDetail: NextPage = () => {
       <Layout>
         <S.ProductDetail data-cy={CypressFields.ProductDetail}>
           <S.Container>
-            <S.Image $src={"/images/products/" + picture} data-cy={CypressFields.ProductPicture} />
+            <S.Image $src={'/images/products/' + picture} data-cy={CypressFields.ProductPicture} />
             <S.Details>
               <S.Name data-cy={CypressFields.ProductName}>{name}</S.Name>
               <S.Description data-cy={CypressFields.ProductDescription}>{description}</S.Description>

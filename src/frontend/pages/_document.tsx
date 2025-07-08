@@ -3,9 +3,10 @@
 
 import Document, { DocumentContext, Html, Head, Main, NextScript } from 'next/document';
 import { ServerStyleSheet } from 'styled-components';
-import {context, propagation} from "@opentelemetry/api";
+import { context, propagation } from '@opentelemetry/api';
 
-const { ENV_PLATFORM, WEB_OTEL_SERVICE_NAME, PUBLIC_OTEL_EXPORTER_OTLP_TRACES_ENDPOINT, OTEL_COLLECTOR_HOST} = process.env;
+const { ENV_PLATFORM, WEB_OTEL_SERVICE_NAME, PUBLIC_OTEL_EXPORTER_OTLP_TRACES_ENDPOINT, OTEL_COLLECTOR_HOST } =
+  process.env;
 
 export default class MyDocument extends Document<{ envString: string }> {
   static async getInitialProps(ctx: DocumentContext) {
@@ -23,8 +24,11 @@ export default class MyDocument extends Document<{ envString: string }> {
       const isSyntheticRequest = baggage?.getEntry('synthetic_request')?.value === 'true';
 
       const otlpTracesEndpoint = isSyntheticRequest
-          ? `http://${OTEL_COLLECTOR_HOST}:4318/v1/traces`
-          : PUBLIC_OTEL_EXPORTER_OTLP_TRACES_ENDPOINT;
+        ? `http://${OTEL_COLLECTOR_HOST}:4318/v1/traces`
+        : PUBLIC_OTEL_EXPORTER_OTLP_TRACES_ENDPOINT;
+
+      // The SDK expects an endpoint without the /v1/traces suffix.
+      const dash0WebSdkUrl = otlpTracesEndpoint?.replace('/v1/traces', '');
 
       const envString = `
         window.ENV = {
@@ -32,6 +36,7 @@ export default class MyDocument extends Document<{ envString: string }> {
           NEXT_PUBLIC_OTEL_SERVICE_NAME: '${WEB_OTEL_SERVICE_NAME}',
           NEXT_PUBLIC_OTEL_EXPORTER_OTLP_TRACES_ENDPOINT: '${otlpTracesEndpoint}',
           IS_SYNTHETIC_REQUEST: '${isSyntheticRequest}',
+          NEXT_PUBLIC_DASH0_WEB_SDK_URL: '${dash0WebSdkUrl}',
         };`;
       return {
         ...initialProps,

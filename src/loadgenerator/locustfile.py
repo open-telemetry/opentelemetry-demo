@@ -159,11 +159,54 @@ if browser_traffic_enabled:
                 page.on("console", lambda msg: print(msg.text))
                 await page.route('**/*', add_baggage_header)
                 await page.goto("/", wait_until="domcontentloaded")
-                await page.click('p:has-text("Roof Binoculars")', wait_until="domcontentloaded")
-                await page.click('button:has-text("Add To Cart")', wait_until="domcontentloaded")
+                await page.click('p:has-text("Roof Binoculars")')
+                await page.click('button:has-text("Add To Cart")')
                 await page.wait_for_timeout(2000)  # giving the browser time to export the traces
             except:
                 pass
+
+        @task
+        @pw
+        async def browse_shop(self, page: PageWithRetry):
+            try:
+                page.on("console", lambda msg: print(msg.text))
+                await page.route('**/*', add_baggage_header)
+
+                async with event(self, 'View shop'):
+                    await page.goto("/", wait_until="domcontentloaded")
+                    await page.wait_for_timeout(random.randint(2000, 15000))  # emulating user
+                async with event(self, 'Browse products'):
+                    await page.click(":nth-match([data-cy=product-card], " + str(random.randint(1, 4)) + ")")
+                    await page.wait_for_timeout(random.randint(2000, 15000))
+                    await page.click(":nth-match([data-cy=product-card], " + str(random.randint(1, 4)) + ")")
+                    await page.wait_for_timeout(random.randint(2000, 15000))
+                    await page.click(":nth-match([data-cy=product-card], " + str(random.randint(1, 4)) + ")")
+                    await page.wait_for_timeout(random.randint(2000, 15000))
+
+                if (random.randint(0, 12) == 0): # Change currency with a chance of 1:12
+                    await page.select_option('[name="currency_code"]', 'CHF')
+
+                async with event(self, 'Choose product'):
+                    await page.goto("/", wait_until="domcontentloaded")
+                    await page.wait_for_timeout(random.randint(2000, 15000))
+                    await page.click('p:has-text("Roof Binoculars")')
+                    await page.wait_for_timeout(random.randint(2000, 15000))
+                    await page.click('button:has-text("Add To Cart")')
+                    await page.wait_for_timeout(random.randint(2000, 15000))
+                async with event(self, 'View cart'):
+                    await page.goto("/cart", wait_until="domcontentloaded")
+                    await page.wait_for_timeout(random.randint(2000, 15000))  # giving the browser time to export the traces
+
+                if (random.randint(0, 8) == 0): # directly open unknown product page with a chance of 1:8
+                    await page.goto("/product/ZFYYMZ29E6", wait_until="domcontentloaded")
+
+                if (random.randint(0, 5) == 0): # checkout with a chance of 1:5
+                    await page.click('a[data-cy="cart-icon"]')
+                    await page.click('button:has-text("Go to Shopping Cart")')
+                    await page.wait_for_timeout(random.randint(2000, 15000))
+                    await page.click('button:has-text("Place Order")')
+            except:
+                raise
 
 
 async def add_baggage_header(route: Route, request: Request):
