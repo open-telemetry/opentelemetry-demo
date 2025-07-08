@@ -4,25 +4,8 @@
 using Confluent.Kafka;
 using Microsoft.Extensions.Logging;
 using Oteldemo;
-using Microsoft.EntityFrameworkCore;
-using System.Diagnostics;
 
 namespace Accounting;
-
-internal class DBContext : DbContext
-{
-    public DbSet<OrderEntity> Orders { get; set; }
-    public DbSet<OrderItemEntity> CartItems { get; set; }
-    public DbSet<ShippingEntity> Shipping { get; set; }
-
-    protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-    {
-        var connectionString = Environment.GetEnvironmentVariable("DB_CONNECTION_STRING");
-
-        optionsBuilder.UseNpgsql(connectionString).UseSnakeCaseNamingConvention();
-    }
-}
-
 
 internal class Consumer : IDisposable
 {
@@ -31,8 +14,6 @@ internal class Consumer : IDisposable
     private ILogger _logger;
     private IConsumer<string, byte[]> _consumer;
     private bool _isListening;
-    private DBContext? _dbContext;
-    private static readonly ActivitySource MyActivitySource = new("Accounting.Consumer");
 
     public Consumer(ILogger<Consumer> logger)
     {
@@ -45,7 +26,6 @@ internal class Consumer : IDisposable
         _consumer.Subscribe(TopicName);
 
         _logger.LogInformation($"Connecting to Kafka: {servers}");
-        _dbContext = Environment.GetEnvironmentVariable("DB_CONNECTION_STRING") == null ? null : new DBContext();
     }
 
     public void StartListening()
@@ -58,8 +38,8 @@ internal class Consumer : IDisposable
             {
                 try
                 {
-                    using var activity = MyActivitySource.StartActivity("order-consumed",  ActivityKind.Internal);
                     var consumeResult = _consumer.Consume();
+
                     ProcessMessage(consumeResult.Message);
                 }
                 catch (ConsumeException e)
@@ -81,48 +61,8 @@ internal class Consumer : IDisposable
         try
         {
             var order = OrderResult.Parser.ParseFrom(message.Value);
+
             Log.OrderReceivedMessage(_logger, order);
-
-            if (_dbContext == null)
-            {
-                return;
-            }
-
-            var orderEntity = new OrderEntity
-            {
-                Id = order.OrderId
-            };
-            _dbContext.Add(orderEntity);
-            foreach (var item in order.Items)
-            {
-                var orderItem = new OrderItemEntity
-                {
-                    ItemCostCurrencyCode = item.Cost.CurrencyCode,
-                    ItemCostUnits = item.Cost.Units,
-                    ItemCostNanos = item.Cost.Nanos,
-                    ProductId = item.Item.ProductId,
-                    Quantity = item.Item.Quantity,
-                    OrderId = order.OrderId
-                };
-
-                _dbContext.Add(orderItem);
-            }
-
-            var shipping = new ShippingEntity
-            {
-                ShippingTrackingId = order.ShippingTrackingId,
-                ShippingCostCurrencyCode = order.ShippingCost.CurrencyCode,
-                ShippingCostUnits = order.ShippingCost.Units,
-                ShippingCostNanos = order.ShippingCost.Nanos,
-                StreetAddress = order.ShippingAddress.StreetAddress,
-                City = order.ShippingAddress.City,
-                State = order.ShippingAddress.State,
-                Country = order.ShippingAddress.Country,
-                ZipCode = order.ShippingAddress.ZipCode,
-                OrderId = order.OrderId
-            };
-            _dbContext.Add(shipping);
-            _dbContext.SaveChanges();
         }
         catch (Exception ex)
         {

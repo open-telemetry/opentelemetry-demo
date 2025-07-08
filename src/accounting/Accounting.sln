@@ -1,25 +1,32 @@
+<Project Sdk="Microsoft.NET.Sdk">
 
-Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 17
-VisualStudioVersion = 17.9.34701.34
-MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Accounting", "Accounting.csproj", "{C66C35E2-DF04-4DCF-8F6A-87B6D6433FF6}"
-EndProject
-Global
-	GlobalSection(SolutionConfigurationPlatforms) = preSolution
-		Debug|Any CPU = Debug|Any CPU
-		Release|Any CPU = Release|Any CPU
-	EndGlobalSection
-	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{C66C35E2-DF04-4DCF-8F6A-87B6D6433FF6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{C66C35E2-DF04-4DCF-8F6A-87B6D6433FF6}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{C66C35E2-DF04-4DCF-8F6A-87B6D6433FF6}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{C66C35E2-DF04-4DCF-8F6A-87B6D6433FF6}.Release|Any CPU.Build.0 = Release|Any CPU
-	EndGlobalSection
-	GlobalSection(SolutionProperties) = preSolution
-		HideSolutionNode = FALSE
-	EndGlobalSection
-	GlobalSection(ExtensibilityGlobals) = postSolution
-		SolutionGuid = {6340CDDC-E917-4532-A056-5526E0A7BDDA}
-	EndGlobalSection
-EndGlobal
+	<PropertyGroup>
+		<OutputType>Exe</OutputType>
+		<TargetFramework>net8.0</TargetFramework>
+		<ImplicitUsings>enable</ImplicitUsings>
+		<Nullable>enable</Nullable>
+		<DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<PackageReference Include="Confluent.Kafka" Version="2.8.0" />
+		<PackageReference Include="Google.Protobuf" Version="3.29.3" />
+		<PackageReference Include="Grpc.Tools" Version="2.69.0">
+			<PrivateAssets>all</PrivateAssets>
+			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+		</PackageReference>
+		<PackageReference Include="Microsoft.Extensions.Logging" Version="9.0.1" />
+		<PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.21.0" />
+		<PackageReference Include="OpenTelemetry.AutoInstrumentation" Version="1.9.0" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<!-- GrpcServices is 'none' so that we do not need to depend on the grpc nuget package, and we only need protobuf support. -->
+		<Protobuf Include="proto\demo.proto" GrpcServices="none" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <Folder Include="proto\" />
+	</ItemGroup>
+
+</Project>
