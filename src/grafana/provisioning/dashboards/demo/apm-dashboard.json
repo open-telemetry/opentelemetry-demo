@@ -21,7 +21,7 @@
       }
     ]
   },
-  "description": "Lightweight APM dashboard for monitoring OpenTelemetry-based services.  \n\nInstrument your applications using OpenTelemetry SDKs and send traces, metrics, and logs to Jaeger for traces, a Prometheus-compatible database for metrics, and OpenSearch for logs. This dashboard provides a centralized view of your application's health and performance. ",
+  "description": "APM dashboard for monitoring OpenTelemetry-based services.  \n\nInstrument your applications using OpenTelemetry SDKs and send traces, metrics, and logs to Jaeger for traces, a Prometheus-compatible database for metrics, and OpenSearch for logs. This dashboard provides a centralized view of your application's health and performance. ",
   "editable": true,
   "fiscalYearStartMonth": 0,
   "graphTooltip": 1,
@@ -47,7 +47,7 @@
           "showLineNumbers": false,
           "showMiniMap": false
         },
-        "content": "<h1><img src=\"https://opentelemetry.io/img/logos/opentelemetry-logo-nav.png\" alt=\"OpenTelemetry Icon\" width=\"25\" height=\"\"> Service ${service_namespace}/${service_name} (env: ${deployment_environment_name})</h1>\n",
+        "content": "<h1><img src=\"https://opentelemetry.io/img/logos/opentelemetry-logo-nav.png\" alt=\"OpenTelemetry Icon\" width=\"25\" height=\"\"> Service ${service_namespace}/${service_name}</h1>\n",
         "mode": "html"
       },
       "pluginVersion": "12.0.2",
@@ -1925,7 +1925,7 @@
               "type": "logs"
             }
           ],
-          "query": "search source=otel | where resource.service.name=\"$service_name\" and resource.deployment.environment.name=\"$deployment_environment_name\" and resource.service.namespace=\"$service_namespace\" | fields @timestamp, severity.text, body, instrumentationScope.name\n",
+          "query": "search source=otel | where resource.service.name=\"$service_name\" and resource.service.namespace=\"$service_namespace\" | fields @timestamp, severity.text, body, instrumentationScope.name\n",
           "queryType": "PPL",
           "refId": "B",
           "timeField": "observedTimestamp"
@@ -2102,7 +2102,7 @@
           "queryType": "search",
           "refId": "A",
           "service": "$service_name",
-          "tags": "service.namespace=\"$service_namespace\" deployment.environment.name=\"$deployment_environment_name\""
+          "tags": "service.namespace=\"$service_namespace\""
         }
       ],
       "title": "",
@@ -2157,39 +2157,28 @@
         "options": [],
         "query": "grafana-opensearch-datasource",
         "refresh": 1,
-        "regex": "(?!grafanacloud-cleclerc-alert-state-history|grafanacloud-.*-usage-insights).+",
+        "regex": "",
         "type": "datasource"
       },
       {
-        "allowCustomValue": false,
         "current": {
-          "text": "production",
-          "value": "production"
+          "text": ".*",
+          "value": ".*"
         },
-        "datasource": {
-          "type": "prometheus",
-          "uid": "webstore-metrics"
-        },
-        "definition": "label_values(target_info,deployment_environment_name)",
-        "description": "Deployment environment (e.g. \"production\").\nResource attribute `deployment.environment.name` via `target_info`",
-        "includeAll": true,
+        "description": "Waiting to implement support of the optional value of `deployment.environment.name` in the OpenSearch and Jager panels, hide variable.",
+        "hide": 2,
         "label": "Environment",
         "name": "deployment_environment_name",
-        "options": [],
-        "query": {
-          "qryType": 1,
-          "query": "label_values(target_info,deployment_environment_name)",
-          "refId": "PrometheusVariableQueryEditor-VariableQuery"
-        },
-        "refresh": 1,
-        "regex": "",
-        "type": "query"
+        "query": ".*",
+        "skipUrlSync": true,
+        "type": "constant"
       },
       {
+        "allValue": ".*",
         "allowCustomValue": false,
         "current": {
-          "text": "otel-demo",
-          "value": "otel-demo"
+          "text": "All",
+          "value": ".*"
         },
         "datasource": {
           "type": "prometheus",
@@ -2197,7 +2186,7 @@
         },
         "definition": "label_values(target_info{deployment_environment_name=~\"$deployment_environment_name\"},service_namespace)",
         "description": "Service namespace.\nResource attribute `service.namespace` via `target_info`",
-        "includeAll": true,
+        "includeAll": false,
         "label": "Namespace",
         "name": "service_namespace",
         "options": [],
@@ -2243,7 +2232,7 @@
   },
   "timepicker": {},
   "timezone": "",
-  "title": "Lightweight APM Dashboard",
+  "title": "APM Dashboard (Jaeger, Prometheus, OpenSearch)",
   "uid": "febljk0a32qyoa",
-  "version": 2
+  "version": 11
 }

@@ -2,9 +2,8 @@
 # SPDX-License-Identifier: Apache-2.0
 
 global:
-  scrape_interval: 5s
-  scrape_timeout: 3s
-  evaluation_interval: 30s
+  # Align Prometheus scrape interval with the OTel SDKs' export interval for consistency (see OTEL_METRIC_EXPORT_INTERVAL) 
+  scrape_interval: 60s
 
 otlp:
   keep_identifying_resource_attributes: true
