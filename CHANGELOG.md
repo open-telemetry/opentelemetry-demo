@@ -60,8 +60,10 @@ the release.
 * [image-provider] Add nginx metrics receiver and dashboard
   ([#2330](https://github.com/open-telemetry/opentelemetry-demo/pull/2330))
 * [prometheus] Activate `keep_identifying_resource_attributes` and promote
-   Kubernetes resource attributes as metric labels
-* [grafana] Add APM dashboard including service metrics, traces, and logs  
+  Kubernetes resource attributes as metric labels
+  ([#2340](https://github.com/open-telemetry/opentelemetry-demo/pull/2340))
+* [grafana] Add APM dashboard including service metrics, traces, and logs
+  ([#2340](https://github.com/open-telemetry/opentelemetry-demo/pull/2340))
 
 ## 2.0.2
 
