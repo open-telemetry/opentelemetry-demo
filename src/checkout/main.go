@@ -65,11 +65,6 @@ var tracer trace.Tracer
 var resource *sdkresource.Resource
 var initResourcesOnce sync.Once
 
-func init() {
-	logger = otelslog.NewLogger("checkout")
-	slog.SetDefault(logger)
-}
-
 func initResource() *sdkresource.Resource {
 	initResourcesOnce.Do(func() {
 		extraResources, _ := sdkresource.New(
@@ -174,10 +169,15 @@ func main() {
 	lp := initLoggerProvider()
 	defer func() {
 		if err := lp.Shutdown(context.Background()); err != nil {
-			logger.Error(fmt.Sprintf("Logger Provider Shutdown: %v", err))
+			logger.Error(fmt.Sprintf("Error shutting down logger provider: %v", err))
 		}
-		logger.Info("Shutdown logger provider")
 	}()
+
+	// this *must* be called after the logger provider is initialized
+	// otherwise the Sarama producer in kafka/producer.go will not be
+	// able to log properly
+	logger = otelslog.NewLogger("checkout")
+	slog.SetDefault(logger)
 
 	err := runtime.Start(runtime.WithMinimumReadMemStatsInterval(time.Second))
 	if err != nil {
