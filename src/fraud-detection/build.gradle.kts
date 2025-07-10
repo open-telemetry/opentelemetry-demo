@@ -32,7 +32,7 @@ dependencies {
     testImplementation(kotlin("test"))
     implementation(kotlin("script-runtime"))
     implementation("org.apache.kafka:kafka-clients:4.0.0")
-    implementation("com.google.api.grpc:proto-google-common-protos:2.59.0")
+    implementation("com.google.api.grpc:proto-google-common-protos:2.59.1")
     implementation("io.grpc:grpc-protobuf:${grpcVersion}")
     implementation("io.grpc:grpc-stub:${grpcVersion}")
     implementation("io.grpc:grpc-netty:${grpcVersion}")
@@ -44,7 +44,7 @@ dependencies {
     implementation("org.slf4j:slf4j-api:2.0.17")
     implementation("com.google.protobuf:protobuf-kotlin:${protobufVersion}")
     implementation("dev.openfeature:sdk:1.16.0")
-    implementation("dev.openfeature.contrib.providers:flagd:0.11.11")
+    implementation("dev.openfeature.contrib.providers:flagd:0.11.12")
 
     if (JavaVersion.current().isJava9Compatible) {
         // Workaround for @javax.annotation.Generated
