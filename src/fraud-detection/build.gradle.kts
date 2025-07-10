@@ -44,7 +44,7 @@ dependencies {
     implementation("org.slf4j:slf4j-api:2.0.17")
     implementation("com.google.protobuf:protobuf-kotlin:${protobufVersion}")
     implementation("dev.openfeature:sdk:1.16.0")
-    implementation("dev.openfeature.contrib.providers:flagd:0.11.12")
+    implementation("dev.openfeature.contrib.providers:flagd:0.11.13")
 
     if (JavaVersion.current().isJava9Compatible) {
         // Workaround for @javax.annotation.Generated
