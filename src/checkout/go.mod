@@ -8,14 +8,17 @@ require (
 	github.com/open-feature/go-sdk v1.15.1
 	github.com/open-feature/go-sdk-contrib/hooks/open-telemetry v0.3.6
 	github.com/open-feature/go-sdk-contrib/providers/flagd v0.3.0
-	github.com/sirupsen/logrus v1.9.3
+	go.opentelemetry.io/contrib/bridges/otelslog v0.12.0
 	go.opentelemetry.io/contrib/instrumentation/google.golang.org/grpc/otelgrpc v0.62.0
 	go.opentelemetry.io/contrib/instrumentation/net/http/otelhttp v0.62.0
 	go.opentelemetry.io/contrib/instrumentation/runtime v0.62.0
 	go.opentelemetry.io/otel v1.37.0
+	go.opentelemetry.io/otel/exporters/otlp/otlplog/otlploggrpc v0.13.0
 	go.opentelemetry.io/otel/exporters/otlp/otlpmetric/otlpmetricgrpc v1.37.0
 	go.opentelemetry.io/otel/exporters/otlp/otlptrace/otlptracegrpc v1.37.0
+	go.opentelemetry.io/otel/log v0.13.0
 	go.opentelemetry.io/otel/sdk v1.37.0
+	go.opentelemetry.io/otel/sdk/log v0.13.0
 	go.opentelemetry.io/otel/sdk/metric v1.37.0
 	go.opentelemetry.io/otel/trace v1.37.0
 	google.golang.org/grpc v1.73.0
