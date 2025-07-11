@@ -65,6 +65,11 @@ the release.
   ([#2332](https://github.com/open-telemetry/opentelemetry-demo/pull/2332))
 * [checkout] Add OTel grpc Logs to checkout
   ([#2336](https://github.com/open-telemetry/opentelemetry-demo/pull/2336))
+* [prometheus] Activate `keep_identifying_resource_attributes` and promote
+  Kubernetes resource attributes as metric labels
+  ([#2340](https://github.com/open-telemetry/opentelemetry-demo/pull/2340))
+* [grafana] Add APM dashboard including service metrics, traces, and logs
+  ([#2340](https://github.com/open-telemetry/opentelemetry-demo/pull/2340))
 
 ## 2.0.2
 
