@@ -6,7 +6,7 @@ process content of "Unreleased" section content will generate release notes for
 the release.
 
 ## Unreleased
-* chore send payment service log to otel-collector via pino-opentelemetry-transport
+* [chore] send payment service log to otel-collector via pino-opentelemetry-transport
   ([#2352]((https://github.com/open-telemetry/opentelemetry-demo/pull/2352)))
 * [chore] add GOMEMLIMIT to all Go services
   ([#2148](https://github.com/open-telemetry/opentelemetry-demo/pull/2148))
