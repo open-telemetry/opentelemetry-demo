@@ -622,7 +622,9 @@ services:
         condition: service_healthy
     logging: *logging
     environment:
-      - ENVOY_PORT
+      - FRONTEND_PROXY_ADDR
+      - IMAGE_PROVIDER_HOST
+      - IMAGE_PROVIDER_PORT
       - HOST_FILESYSTEM
       - OTEL_COLLECTOR_HOST
       - OTEL_COLLECTOR_PORT_GRPC

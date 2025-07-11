@@ -691,6 +691,8 @@ services:
   # Postgresql used by Accounting service
   postgresql:
     image: ${POSTGRES_IMAGE}
+    container_name: postgresql
+    restart: unless-stopped
     ports:
       - "5432"
     environment:
@@ -699,6 +701,7 @@ services:
       POSTGRES_DB: otel
     volumes:
       - ${PWD}/src/postgres/init.sql:/docker-entrypoint-initdb.d/init.sql
+    logging: *logging
 
   # Valkey used by Cart service
   valkey-cart:
@@ -784,7 +787,9 @@ services:
         condition: service_healthy
     logging: *logging
     environment:
-      - ENVOY_PORT
+      - FRONTEND_PROXY_ADDR
+      - IMAGE_PROVIDER_HOST
+      - IMAGE_PROVIDER_PORT
       - HOST_FILESYSTEM
       - OTEL_COLLECTOR_HOST
       - OTEL_COLLECTOR_PORT_GRPC
