@@ -57,8 +57,12 @@ the release.
   ([#2294](https://github.com/open-telemetry/opentelemetry-demo/pull/2294))
 * [currency] Update code to use new semconv and remove unused file
   ([#2319](https://github.com/open-telemetry/opentelemetry-demo/pull/2319))
+* [currency] update alpine to 3.21
+  ([#2291](https://github.com/open-telemetry/opentelemetry-demo/pull/2291))
 * [image-provider] Add nginx metrics receiver and dashboard
   ([#2330](https://github.com/open-telemetry/opentelemetry-demo/pull/2330))
+* [react-native-app] Update how resource attributes are set up
+  ([#2331](https://github.com/open-telemetry/opentelemetry-demo/pull/2331))
 
 ## 2.0.2
 
