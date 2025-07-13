@@ -11,7 +11,9 @@ defmodule FlagdUi.Storage do
   end
 
   @impl true
-  def init(state) do
+  def init(_) do
+    state = File.cwd!() |> file_path() |> File.read!() |> Jason.decode!()
+
     {:ok, state}
   end
 
@@ -24,4 +26,6 @@ defmodule FlagdUi.Storage do
   def handle_cast({:write}, state) do
     {:noreply, nil, state}
   end
+
+  def file_path(cwd), do: "#{cwd}/data/demo.flagd.json"
 end
