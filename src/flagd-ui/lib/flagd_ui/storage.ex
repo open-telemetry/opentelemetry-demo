@@ -6,8 +6,8 @@ defmodule FlagdUi.Storage do
 
   use GenServer
 
-  def start_link(default) do
-    GenServer.start_link(__MODULE__, default)
+  def start_link(_) do
+    GenServer.start_link(__MODULE__, %{}, name: Storage)
   end
 
   @impl true
@@ -19,13 +19,22 @@ defmodule FlagdUi.Storage do
 
   @impl true
   def handle_call(:read, _from, state) do
-    {:reply, nil, state}
+    {:reply, state, state}
   end
 
   @impl true
-  def handle_cast({:write}, state) do
+  def handle_cast({:write, flag_name, flag_value}, state) do
     {:noreply, nil, state}
   end
 
-  def file_path(cwd), do: "#{cwd}/data/demo.flagd.json"
+  defp file_path(cwd), do: "#{cwd}/data/demo.flagd.json"
+
+  defp update_flag(flags, flag_name, value) do
+    flags
+    |> Enum.map(fn
+      {flag, data} when flag == flag_name -> {flag, Map.replace(data, "defaultVariant", value)}
+      {flag, data} -> {flag, data}
+    end)
+    |> Map.new()
+  end
 end
