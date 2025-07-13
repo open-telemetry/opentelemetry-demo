@@ -58,6 +58,7 @@ var (
 
 const DEFAULT_RELOAD_INTERVAL = 10
 const PGX_MAX_CONNS = 5
+const PGS_MAX_CONN_LIFE_TIME = 2 * time.Minute
 const CTX_QUERY_TIMEOUT = 10 * time.Second
 
 func init() {
@@ -129,6 +130,7 @@ func initPostgresConnectionPool() *pgxpool.Pool {
 	}
 	log.Infof("Parsed connection string: %s", config.ConnString())
 	config.MaxConns = PGX_MAX_CONNS
+	config.MaxConnLifetime = PGS_MAX_CONN_LIFE_TIME
 
 	var pool *pgxpool.Pool
 	pool, err = pgxpool.NewWithConfig(context.Background(), config)
