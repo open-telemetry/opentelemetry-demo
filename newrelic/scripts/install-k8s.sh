@@ -1,55 +1,58 @@
 #!/bin/bash
+# -----------------------------------------------------------------------------
+# install-k8s.sh
+#
+# Purpose:
+#   Installs the OpenTelemetry Demo and New Relic Kubernetes instrumentation
+#   into a Kubernetes cluster using Helm charts.
+#
+# How to run:
+#   ./install-k8s.sh
+#   (Run from the newrelic/scripts directory)
+#
+# Dependencies:
+#   - kubectl
+#   - helm
+#   - Access to the target Kubernetes cluster
+#   - NEW_RELIC_LICENSE_KEY (will prompt if not set)
+# -----------------------------------------------------------------------------
+set -euo pipefail
 
-OTEL_DEMO_CHART_VERSION="0.38.1"
+source "$(dirname "$0")/common.sh"
 
-# Check if helm is installed
-if ! command -v helm &> /dev/null; then
-    echo "Error: helm is not installed or not in PATH. Please install helm and try again."
+check_tool_installed helm
+check_tool_installed kubectl
+
+prompt_for_license_key
+
+install_or_upgrade_chart() {
+  local release_name=$1
+  local chart=$2
+  local version=$3
+  local values_file=$4
+  local namespace=$5
+  if ! helm upgrade "$release_name" "$chart" --version "$version" -f "$values_file" -n "$namespace" --install; then
+    echo "Error: Failed to install or upgrade $release_name ($chart) to version $version."
     exit 1
-fi
+  fi
+}
 
-# Check if kubectl is installed
-if ! command -v kubectl &> /dev/null; then
-    echo "Error: kubectl is not installed or not in PATH. Please install kubectl and try again."
-    exit 1
-fi
-
-# Prompt the user for input
-echo -n "Please enter your New Relic License Key: "
-read user_input
-
-# Check if input is empty
-if [ -z "$user_input" ]; then
-    echo "Error: Empty key. Please enter your New Relic License Key."
-    exit 1
-fi
-
-# Check if the opentelemetry-demo namespace already exists
-if kubectl get ns opentelemetry-demo &> /dev/null; then
-    echo "Namespace 'opentelemetry-demo' already exists."
+# Create namespace if it doesn't exist
+if kubectl get ns "$OTEL_DEMO_NAMESPACE" &> /dev/null; then
+  echo "Namespace '$OTEL_DEMO_NAMESPACE' already exists."
 else
-    kubectl create ns opentelemetry-demo
+  kubectl create ns "$OTEL_DEMO_NAMESPACE"
 fi
 
-kubectl create secret generic newrelic-license-key --from-literal=license-key=$user_input -n opentelemetry-demo
+# Create or update New Relic license secret
+kubectl create secret generic "$NR_LICENSE_SECRET" --from-literal=license-key="$NEW_RELIC_LICENSE_KEY" -n "$OTEL_DEMO_NAMESPACE" --dry-run=client -o yaml | kubectl apply -f -
 
-# Check if the open-telemetry repo is already added
-if helm repo list | grep -q 'open-telemetry'; then
-    echo "Helm repository 'open-telemetry' is already added."
-else
-    helm repo add open-telemetry https://open-telemetry.github.io/opentelemetry-helm-charts
-fi
+# Install New Relic K8s OpenTelemetry Collector
+ensure_helm_repo "newrelic" "https://helm-charts.newrelic.com"
+install_or_upgrade_chart "$NR_K8S_RELEASE_NAME" "newrelic/nr-k8s-otel-collector" "$NR_K8S_CHART_VERSION" "../k8s/helm/nr-k8s-otel-collector.yaml" "$OTEL_DEMO_NAMESPACE"
 
-# Update Helm repository
-if ! helm repo update open-telemetry; then
-    echo "Error: Failed to update open-telemetry Helm repository."
-    exit 1
-fi
-
-# Install/upgrade OpenTelemetry demo
-if ! helm upgrade --install otel-demo open-telemetry/opentelemetry-demo --version ${OTEL_DEMO_CHART_VERSION} -n opentelemetry-demo -f ../k8s/helm/values.yaml; then
-    echo "Error: Failed to install or upgrade OpenTelemetry Demo to ${OTEL_DEMO_CHART_VERSION}."
-    exit 1
-fi
+# Install OpenTelemetry Demo
+ensure_helm_repo "open-telemetry" "https://open-telemetry.github.io/opentelemetry-helm-charts"
+install_or_upgrade_chart "$OTEL_DEMO_RELEASE_NAME" "open-telemetry/opentelemetry-demo" "$OTEL_DEMO_CHART_VERSION" "../k8s/helm/opentelemetry-demo.yaml" "$OTEL_DEMO_NAMESPACE"
 
 echo "OpenTelemetry Demo installation completed successfully!"

@@ -1,22 +1,26 @@
 #!/usr/bin/env bash
-set -euo pipefail
-# Purpose: Adapts Docker Compose files after having synced the fork with upstream.
-# Notes:
-#   This should be run after the OpenTelemetry Demo has been synced with the latest changes from the upstream repository.
-# Requirements:
-#   - yq: A portable command-line YAML processor.
-#   Both can be installed using brew:
-#       brew install yq
+#!/usr/bin/env bash
+# -----------------------------------------------------------------------------
+# update-docker.sh
 #
-# Example Usage:
+# Purpose:
+#   Updates the Docker Compose configuration for the OpenTelemetry Demo
+#   by copying, modifying, and customizing the original file for New Relic
+#   compatibility.
+#
+# How to run:
 #   ./update-docker.sh
+#   (Run from the newrelic/scripts directory)
+#
+# Dependencies:
+#   - Docker
+#   - yq (YAML processor)
+#   - Access to the project source and Docker Compose files
+# -----------------------------------------------------------------------------
+set -euo pipefail
 
-# Set default paths if environment variables are not set
-SCRIPT_DIR=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" &> /dev/null && pwd)
-
-DOCKER_COMPOSE_PATH=${DOCKER_COMPOSE_PATH:-"$SCRIPT_DIR/../../docker-compose.yml"}
-NR_DOCKER_COMPOSE_PATH=${NR_DOCKER_COMPOSE_PATH:-"$SCRIPT_DIR/../docker/docker-compose.yml"}
-SRC_DIR=${SRC_DIR:-"$SCRIPT_DIR/../../src"} #.env.override
+source "$(dirname "$0")/common.sh"
+check_tool_installed docker
 
 # Copy the YAML file
 cp "$DOCKER_COMPOSE_PATH" "$NR_DOCKER_COMPOSE_PATH"
