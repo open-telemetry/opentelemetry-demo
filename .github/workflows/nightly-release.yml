@@ -7,8 +7,14 @@ on:
     # Runs at 00:00 UTC every day
     - cron: '0 0 * * *'
 
+permissions:
+  contents: read
+
 jobs:
   build_and_push_images:
+    permissions:  # required by the reusable workflow
+      contents: read
+      packages: write
     uses: ./.github/workflows/component-build-images.yml
     if: github.repository == 'open-telemetry/opentelemetry-demo'
     with:

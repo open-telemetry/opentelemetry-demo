@@ -10,6 +10,7 @@ import (
 	"context"
 	"fmt"
 	"io/fs"
+	"log/slog"
 	"net"
 	"os"
 	"os/signal"
@@ -19,16 +20,18 @@ import (
 	"syscall"
 	"time"
 
-	"github.com/sirupsen/logrus"
-
+	"go.opentelemetry.io/contrib/bridges/otelslog"
 	"go.opentelemetry.io/contrib/instrumentation/google.golang.org/grpc/otelgrpc"
 	"go.opentelemetry.io/contrib/instrumentation/runtime"
 	"go.opentelemetry.io/otel"
 	"go.opentelemetry.io/otel/attribute"
 	otelcodes "go.opentelemetry.io/otel/codes"
+	"go.opentelemetry.io/otel/exporters/otlp/otlplog/otlploggrpc"
 	"go.opentelemetry.io/otel/exporters/otlp/otlpmetric/otlpmetricgrpc"
 	"go.opentelemetry.io/otel/exporters/otlp/otlptrace/otlptracegrpc"
+	"go.opentelemetry.io/otel/log/global"
 	"go.opentelemetry.io/otel/propagation"
+	sdklog "go.opentelemetry.io/otel/sdk/log"
 	sdkmetric "go.opentelemetry.io/otel/sdk/metric"
 	sdkresource "go.opentelemetry.io/otel/sdk/resource"
 	sdktrace "go.opentelemetry.io/otel/sdk/trace"
@@ -41,6 +44,7 @@ import (
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/credentials/insecure"
+	"google.golang.org/grpc/health"
 	healthpb "google.golang.org/grpc/health/grpc_health_v1"
 	"google.golang.org/grpc/reflection"
 	"google.golang.org/grpc/status"
@@ -48,7 +52,7 @@ import (
 )
 
 var (
-	log               *logrus.Logger
+	logger            *slog.Logger
 	catalog           []*pb.Product
 	resource          *sdkresource.Resource
 	initResourcesOnce sync.Once
@@ -57,7 +61,7 @@ var (
 const DEFAULT_RELOAD_INTERVAL = 10
 
 func init() {
-	log = logrus.New()
+	logger = otelslog.NewLogger("product-catalog")
 
 	loadProductCatalog()
 }
@@ -84,7 +88,8 @@ func initTracerProvider() *sdktrace.TracerProvider {
 
 	exporter, err := otlptracegrpc.New(ctx)
 	if err != nil {
-		log.Fatalf("OTLP Trace gRPC Creation: %v", err)
+		logger.Error(fmt.Sprintf("OTLP Trace gRPC Creation: %v", err))
+
 	}
 	tp := sdktrace.NewTracerProvider(
 		sdktrace.WithBatcher(exporter),
@@ -100,7 +105,7 @@ func initMeterProvider() *sdkmetric.MeterProvider {
 
 	exporter, err := otlpmetricgrpc.New(ctx)
 	if err != nil {
-		log.Fatalf("new otlp metric grpc exporter failed: %v", err)
+		logger.Error(fmt.Sprintf("new otlp metric grpc exporter failed: %v", err))
 	}
 
 	mp := sdkmetric.NewMeterProvider(
@@ -111,42 +116,70 @@ func initMeterProvider() *sdkmetric.MeterProvider {
 	return mp
 }
 
+func initLoggerProvider() *sdklog.LoggerProvider {
+	ctx := context.Background()
+
+	logExporter, err := otlploggrpc.New(ctx)
+	if err != nil {
+		return nil
+	}
+
+	loggerProvider := sdklog.NewLoggerProvider(
+		sdklog.WithProcessor(sdklog.NewBatchProcessor(logExporter)),
+	)
+	global.SetLoggerProvider(loggerProvider)
+
+	return loggerProvider
+}
+
 func main() {
+	lp := initLoggerProvider()
+	defer func() {
+		if err := lp.Shutdown(context.Background()); err != nil {
+			logger.Error(fmt.Sprintf("Logger Provider Shutdown: %v", err))
+		}
+		logger.Info("Shutdown logger provider")
+	}()
+
 	tp := initTracerProvider()
 	defer func() {
 		if err := tp.Shutdown(context.Background()); err != nil {
-			log.Fatalf("Tracer Provider Shutdown: %v", err)
+			logger.Error(fmt.Sprintf("Tracer Provider Shutdown: %v", err))
 		}
-		log.Println("Shutdown tracer provider")
+		logger.Info("Shutdown tracer provider")
 	}()
 
 	mp := initMeterProvider()
 	defer func() {
 		if err := mp.Shutdown(context.Background()); err != nil {
-			log.Fatalf("Error shutting down meter provider: %v", err)
+			logger.Error(fmt.Sprintf("Error shutting down meter provider: %v", err))
 		}
-		log.Println("Shutdown meter provider")
+		logger.Info("Shutdown meter provider")
 	}()
 	openfeature.AddHooks(otelhooks.NewTracesHook())
-	err := openfeature.SetProvider(flagd.NewProvider())
+	provider, err := flagd.NewProvider()
 	if err != nil {
-		log.Fatal(err)
+		logger.Error(err.Error())
+	}
+	err = openfeature.SetProvider(provider)
+	if err != nil {
+		logger.Error(err.Error())
 	}
 
 	err = runtime.Start(runtime.WithMinimumReadMemStatsInterval(time.Second))
 	if err != nil {
-		log.Fatal(err)
+		logger.Error(err.Error())
 	}
 
 	svc := &productCatalog{}
 	var port string
 	mustMapEnv(&port, "PRODUCT_CATALOG_PORT")
 
-	log.Infof("Product Catalog gRPC server started on port: %s", port)
+	logger.Info(fmt.Sprintf("Product Catalog gRPC server started on port: %s", port))
 
 	ln, err := net.Listen("tcp", fmt.Sprintf(":%s", port))
 	if err != nil {
-		log.Fatalf("TCP Listen: %v", err)
+		logger.Error(fmt.Sprintf("TCP Listen: %v", err))
 	}
 
 	srv := grpc.NewServer(
@@ -156,21 +189,23 @@ func main() {
 	reflection.Register(srv)
 
 	pb.RegisterProductCatalogServiceServer(srv, svc)
-	healthpb.RegisterHealthServer(srv, svc)
+
+	healthcheck := health.NewServer()
+	healthpb.RegisterHealthServer(srv, healthcheck)
 
 	ctx, cancel := signal.NotifyContext(context.Background(), os.Interrupt, syscall.SIGTERM, syscall.SIGKILL)
 	defer cancel()
 
 	go func() {
 		if err := srv.Serve(ln); err != nil {
-			log.Fatalf("Failed to serve gRPC server, err: %v", err)
+			logger.Error(fmt.Sprintf("Failed to serve gRPC server, err: %v", err))
 		}
 	}()
 
 	<-ctx.Done()
 
 	srv.GracefulStop()
-	log.Println("Product Catalog gRPC server stopped")
+	logger.Info("Product Catalog gRPC server stopped")
 }
 
 type productCatalog struct {
@@ -178,11 +213,11 @@ type productCatalog struct {
 }
 
 func loadProductCatalog() {
-	log.Info("Loading Product Catalog...")
+	logger.Info("Loading Product Catalog...")
 	var err error
 	catalog, err = readProductFiles()
 	if err != nil {
-		log.Fatalf("Error reading product files: %v\n", err)
+		logger.Error(fmt.Sprintf("Error reading product files: %v\n", err))
 		os.Exit(1)
 	}
 
@@ -195,7 +230,7 @@ func loadProductCatalog() {
 			interval = DEFAULT_RELOAD_INTERVAL
 		}
 	}
-	log.Infof("Product Catalog reload interval: %d", interval)
+	logger.Info(fmt.Sprintf("Product Catalog reload interval: %d", interval))
 
 	ticker := time.NewTicker(time.Duration(interval) * time.Second)
 
@@ -203,10 +238,10 @@ func loadProductCatalog() {
 		for {
 			select {
 			case <-ticker.C:
-				log.Info("Reloading Product Catalog...")
+				logger.Info("Reloading Product Catalog...")
 				catalog, err = readProductFiles()
 				if err != nil {
-					log.Errorf("Error reading product files: %v", err)
+					logger.Error(fmt.Sprintf("Error reading product files: %v", err))
 					continue
 				}
 			}
@@ -250,7 +285,12 @@ func readProductFiles() ([]*pb.Product, error) {
 		products = append(products, res.Products...)
 	}
 
-	log.Infof("Loaded %d products", len(products))
+	logger.LogAttrs(
+		context.Background(),
+		slog.LevelInfo,
+		fmt.Sprintf("Loaded %d products\n", len(products)),
+		slog.Int("products", len(products)),
+	)
 
 	return products, nil
 }
@@ -258,7 +298,7 @@ func readProductFiles() ([]*pb.Product, error) {
 func mustMapEnv(target *string, key string) {
 	value, present := os.LookupEnv(key)
 	if !present {
-		log.Fatalf("Environment Variable Not Set: %q", key)
+		logger.Error(fmt.Sprintf("Environment Variable Not Set: %q", key))
 	}
 	*target = value
 }
@@ -288,7 +328,7 @@ func (p *productCatalog) GetProduct(ctx context.Context, req *pb.GetProductReque
 
 	// GetProduct will fail on a specific product when feature flag is enabled
 	if p.checkProductFailure(ctx, req.Id) {
-		msg := fmt.Sprintf("Error: Product Catalog Fail Feature Flag Enabled")
+		msg := "Error: Product Catalog Fail Feature Flag Enabled"
 		span.SetStatus(otelcodes.Error, msg)
 		span.AddEvent(msg)
 		return nil, status.Errorf(codes.Internal, msg)
@@ -309,11 +349,19 @@ func (p *productCatalog) GetProduct(ctx context.Context, req *pb.GetProductReque
 		return nil, status.Errorf(codes.NotFound, msg)
 	}
 
-	msg := fmt.Sprintf("Product Found - ID: %s, Name: %s", req.Id, found.Name)
-	span.AddEvent(msg)
+	span.AddEvent("Product Found")
 	span.SetAttributes(
+		attribute.String("app.product.id", req.Id),
 		attribute.String("app.product.name", found.Name),
 	)
+
+	logger.LogAttrs(
+		ctx,
+		slog.LevelInfo, "Product Found",
+		slog.String("app.product.name", found.Name),
+		slog.String("app.product.id", req.Id),
+	)
+
 	return found, nil
 }
 

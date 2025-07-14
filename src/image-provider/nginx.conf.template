@@ -1,5 +1,7 @@
 load_module modules/ngx_otel_module.so;
 
+pid /tmp/nginx.pid;
+
 events {
     worker_connections 1024;
 }
@@ -28,5 +30,11 @@ http {
 
         root /static;
         gzip_static on;
+
+        location /status {
+            stub_status on;
+            access_log  on;           
+            allow all;
+        }
     }
 }
