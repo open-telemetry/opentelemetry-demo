@@ -43,6 +43,8 @@ grafana:
   enabled: false
 prometheus:
   enabled: false
+jaeger:
+  enabled: false
   
 opentelemetry-collector:
   enabled: true
