@@ -11,7 +11,7 @@ the release.
   ([#2148](https://github.com/open-telemetry/opentelemetry-demo/pull/2148))
 * [product-catalog] Simplify span event name
   ([#2150](https://github.com/open-telemetry/opentelemetry-demo/pull/2150))
-* [cartservice] Refactor OpenFeature integration and add Dependency Injection support
+* [cart] Refactor OpenFeature integration and add Dependency Injection support
   ([#2160](https://github.com/open-telemetry/opentelemetry-demo/pull/2160))
 * [checkout]: change image from alpine to distroless to reduce size
   ([#2161](https://github.com/open-telemetry/opentelemetry-demo/pull/2161))
@@ -31,7 +31,7 @@ the release.
   ([#2194](https://github.com/open-telemetry/opentelemetry-demo/pull/2194))
 * [email] bump ruby and dependencies to latest and switch to alpine
   ([#2196](https://github.com/open-telemetry/opentelemetry-demo/pull/2196))
-* [cartservice] Upgrade OpenFeature version and change Hooks integration
+* [cart] Upgrade OpenFeature version and change Hooks integration
   ([#2199](https://github.com/open-telemetry/opentelemetry-demo/pull/2199))
 * [shipping] refactor service to use actix-web and demo instrumentation library
   ([#2214](https://github.com/open-telemetry/opentelemetry-demo/pull/2214))
@@ -61,10 +61,12 @@ the release.
   ([#2330](https://github.com/open-telemetry/opentelemetry-demo/pull/2330))
 * [react-native-app] Update how resource attributes are set up
   ([#2331](https://github.com/open-telemetry/opentelemetry-demo/pull/2331))
-* [cartservice] Upgrade OpenFeature and add new telemetry Hooks
+* [cart] Upgrade OpenFeature and add new telemetry Hooks
   ([#2332](https://github.com/open-telemetry/opentelemetry-demo/pull/2332))
 * [checkout] Add OTel grpc Logs to checkout
   ([#2336](https://github.com/open-telemetry/opentelemetry-demo/pull/2336))
+* [payment] Send logs to otel-collector via pino-opentelemetry-transport
+  ([#2352]((https://github.com/open-telemetry/opentelemetry-demo/pull/2352)))
 
 ## 2.0.2
 
