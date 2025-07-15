@@ -1,5 +1,7 @@
 #!/bin/bash
 
+OTEL_DEMO_CHART_VERSION="0.37.1"
+
 # Check if helm is installed
 if ! command -v helm &> /dev/null; then
     echo "Error: helm is not installed or not in PATH. Please install helm and try again."
@@ -45,9 +47,9 @@ if ! helm repo update open-telemetry; then
 fi
 
 # Install/upgrade OpenTelemetry demo
-if ! helm upgrade --install otel-demo open-telemetry/opentelemetry-demo -n opentelemetry-demo -f ../k8s/helm/values.yaml; then
-    echo "Error: Failed to install or upgrade OpenTelemetry demo."
+if ! helm upgrade --install otel-demo open-telemetry/opentelemetry-demo --version ${OTEL_DEMO_CHART_VERSION} -n opentelemetry-demo -f ../k8s/helm/values.yaml; then
+    echo "Error: Failed to install or upgrade OpenTelemetry Demo to ${OTEL_DEMO_CHART_VERSION}."
     exit 1
 fi
 
-echo "OpenTelemetry demo installation completed successfully!"
+echo "OpenTelemetry Demo installation completed successfully!"

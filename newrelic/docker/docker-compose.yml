@@ -35,6 +35,8 @@ services:
       - OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE
       - OTEL_RESOURCE_ATTRIBUTES
       - OTEL_SERVICE_NAME=accounting
+      - DB_CONNECTION_STRING=Host=postgresql;Username=otelu;Password=otelp;Database=otel
+      - OTEL_DOTNET_AUTO_TRACES_ENTITYFRAMEWORKCORE_INSTRUMENTATION_ENABLED=false
     depends_on:
       otel-collector:
         condition: service_started
@@ -136,6 +138,7 @@ services:
       - PRODUCT_CATALOG_ADDR
       - SHIPPING_ADDR
       - KAFKA_ADDR
+      - GOMEMLIMIT=16MiB
       - OTEL_EXPORTER_OTLP_ENDPOINT
       - OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE
       - OTEL_RESOURCE_ATTRIBUTES
@@ -182,8 +185,7 @@ services:
       - CURRENCY_PORT
       - VERSION=${IMAGE_VERSION}
       - OTEL_EXPORTER_OTLP_ENDPOINT
-      # The C++ SDK does not support OTEL_SERVICE_NAME
-      - OTEL_RESOURCE_ATTRIBUTES=${OTEL_RESOURCE_ATTRIBUTES},service.name=currency
+      - OTEL_RESOURCE_ATTRIBUTES=${OTEL_RESOURCE_ATTRIBUTES},service.name=currency # The C++ SDK does not support OTEL_SERVICE_NAME
     depends_on:
       otel-collector:
         condition: service_started
@@ -464,6 +466,7 @@ services:
       - PRODUCT_CATALOG_RELOAD_INTERVAL
       - FLAGD_HOST
       - FLAGD_PORT
+      - GOMEMLIMIT=16MiB
       - OTEL_EXPORTER_OTLP_ENDPOINT
       - OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE
       - OTEL_RESOURCE_ATTRIBUTES
@@ -515,8 +518,7 @@ services:
     deploy:
       resources:
         limits:
-          # This is high to enable supporting the recommendationCache feature flag use case
-          memory: 500M
+          memory: 500M # This is high to enable supporting the recommendationCache feature flag use case
     restart: unless-stopped
     ports:
       - "${RECOMMENDATION_PORT}"
@@ -558,9 +560,15 @@ services:
     environment:
       - SHIPPING_PORT
       - QUOTE_ADDR
-      - OTEL_EXPORTER_OTLP_ENDPOINT=http://${OTEL_COLLECTOR_HOST}:${OTEL_COLLECTOR_PORT_GRPC}
+      - OTEL_EXPORTER_OTLP_ENDPOINT
       - OTEL_RESOURCE_ATTRIBUTES
       - OTEL_SERVICE_NAME=shipping
+    healthcheck:
+      test: ["CMD-SHELL", "timeout 1 bash -c '>/dev/tcp/localhost/${SHIPPING_PORT}'"]
+      start_period: 10s
+      interval: 5s
+      timeout: 10s
+      retries: 10
     depends_on:
       otel-collector:
         condition: service_started
@@ -580,6 +588,7 @@ services:
     environment:
       - FLAGD_OTEL_COLLECTOR_URI=${OTEL_COLLECTOR_HOST}:${OTEL_COLLECTOR_PORT_GRPC}
       - FLAGD_METRICS_EXPORTER=otel
+      - GOMEMLIMIT=60MiB
       - OTEL_RESOURCE_ATTRIBUTES
       - OTEL_SERVICE_NAME=flagd
     command: ["start", "--uri", "file:./etc/flagd/demo.flagd.json"]
@@ -632,7 +641,9 @@ services:
           memory: 620M
     restart: unless-stopped
     environment:
-      - KAFKA_ADVERTISED_LISTENERS=PLAINTEXT://kafka:9092
+      - KAFKA_ADVERTISED_LISTENERS=PLAINTEXT://${KAFKA_HOST}:9092
+      - KAFKA_LISTENERS=PLAINTEXT://${KAFKA_HOST}:9092,CONTROLLER://${KAFKA_HOST}:9093
+      - KAFKA_CONTROLLER_QUORUM_VOTERS=1@${KAFKA_HOST}:9093
       - OTEL_EXPORTER_OTLP_ENDPOINT=http://${OTEL_COLLECTOR_HOST}:${OTEL_COLLECTOR_PORT_HTTP}
       - OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE
       - OTEL_RESOURCE_ATTRIBUTES
@@ -646,6 +657,20 @@ services:
       interval: 5s
       timeout: 10s
       retries: 10
+    logging: *logging
+  # Postgresql used by Accounting service
+  postgresql:
+    image: ${POSTGRES_IMAGE}
+    container_name: postgresql
+    restart: unless-stopped
+    ports:
+      - "5432"
+    environment:
+      POSTGRES_USER: root
+      POSTGRES_PASSWORD: otel
+      POSTGRES_DB: otel
+    volumes:
+      - ${PWD}/src/postgres/init.sql:/docker-entrypoint-initdb.d/init.sql
     logging: *logging
   # Valkey used by Cart service
   valkey-cart:
@@ -674,7 +699,7 @@ services:
     volumes:
       - ${HOST_FILESYSTEM}:/hostfs:ro
       - ${DOCKER_SOCK}:/var/run/docker.sock:ro
-      - ./config/otel-config-docker.yaml:/etc/otelcol-config.yml
+      - ../docker/config/otel-config-docker.yaml:/etc/otelcol-config.yml
       - ./logs:/logs
       - ./checkpoint:/checkpoint
     ports:
@@ -684,7 +709,9 @@ services:
       - "13133"
     logging: *logging
     environment:
-      - ENVOY_PORT
+      - FRONTEND_PROXY_ADDR
+      - IMAGE_PROVIDER_HOST
+      - IMAGE_PROVIDER_PORT
       - HOST_FILESYSTEM
       - OTEL_COLLECTOR_HOST
       - OTEL_COLLECTOR_PORT_GRPC

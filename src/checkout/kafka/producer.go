@@ -3,8 +3,10 @@
 package kafka
 
 import (
+	"fmt"
+	"log/slog"
+
 	"github.com/IBM/sarama"
-	"github.com/sirupsen/logrus"
 )
 
 var (
@@ -12,8 +14,23 @@ var (
 	ProtocolVersion = sarama.V3_0_0_0
 )
 
-func CreateKafkaProducer(brokers []string, log *logrus.Logger) (sarama.AsyncProducer, error) {
-	sarama.Logger = log
+type saramaLogger struct {
+	logger *slog.Logger
+}
+
+func (l *saramaLogger) Printf(format string, v ...interface{}) {
+	l.logger.Info(fmt.Sprintf(format, v...))
+}
+func (l *saramaLogger) Println(v ...interface{}) {
+	l.logger.Info(fmt.Sprint(v...))
+}
+func (l *saramaLogger) Print(v ...interface{}) {
+	l.logger.Info(fmt.Sprint(v...))
+}
+
+func CreateKafkaProducer(brokers []string, logger *slog.Logger) (sarama.AsyncProducer, error) {
+	// Set the logger for sarama to use.
+	sarama.Logger = &saramaLogger{logger: logger}
 
 	saramaConfig := sarama.NewConfig()
 	saramaConfig.Producer.Return.Successes = true
@@ -36,7 +53,8 @@ func CreateKafkaProducer(brokers []string, log *logrus.Logger) (sarama.AsyncProd
 	// We will log to STDOUT if we're not able to produce messages.
 	go func() {
 		for err := range producer.Errors() {
-			log.Errorf("Failed to write message: %+v", err)
+			logger.Error(fmt.Sprintf("Failed to write message: %+v", err))
+
 		}
 	}()
 	return producer, nil

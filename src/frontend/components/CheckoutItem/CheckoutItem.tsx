@@ -3,7 +3,7 @@
 
 import Image from 'next/image';
 import { useState } from 'react';
-import { CypressFields } from '../../utils/Cypress';
+import { CypressFields } from '../../utils/enums/CypressFields';
 import { Address } from '../../protos/demo';
 import { IProductCheckoutItem } from '../../types/Cart';
 import ProductPrice from '../ProductPrice';

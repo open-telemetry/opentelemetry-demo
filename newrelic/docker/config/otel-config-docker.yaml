@@ -168,7 +168,6 @@ service:
       - otlp
   telemetry:
     metrics:
-      address: ${env:OTEL_COLLECTOR_HOST}:8888
       level: basic
       readers:
       - periodic:
