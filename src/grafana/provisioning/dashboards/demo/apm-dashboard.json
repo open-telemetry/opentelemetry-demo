@@ -25,7 +25,7 @@
   "editable": true,
   "fiscalYearStartMonth": 0,
   "graphTooltip": 1,
-  "id": 10,
+  "id": 5,
   "links": [],
   "panels": [
     {
@@ -136,7 +136,7 @@
       },
       "id": 15,
       "panels": [],
-      "title": "Server HTTP RED Metrics",
+      "title": "Server RED Metrics",
       "type": "row"
     },
     {
@@ -144,7 +144,7 @@
         "type": "prometheus",
         "uid": "${prometheus_datasource}"
       },
-      "description": "HTTP endpoints aggregation on the `http.server.request.duration` metric.\n\nSee https://opentelemetry.io/docs/specs/semconv/http/http-metrics/#metric-httpserverrequestduration",
+      "description": "HTTP & RPC endpoints aggregation on the `http.server.request.duration` & `rpc.server.duration` metrics.\n\nSee https://opentelemetry.io/docs/specs/semconv/http/http-metrics/#metric-httpserverrequestduration and https://opentelemetry.io/docs/specs/semconv/rpc/rpc-metrics/#metric-rpcserverduration",
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -187,7 +187,7 @@
           },
           "mappings": [],
           "min": 0,
-          "noValue": "No HTTP operation",
+          "noValue": "No HTTP or RPC operation",
           "thresholds": {
             "mode": "absolute",
             "steps": [
@@ -229,18 +229,34 @@
         {
           "datasource": {
             "type": "prometheus",
+            "uid": "${prometheus_datasource}"
+          },
+          "disableTextWrap": false,
+          "editorMode": "code",
+          "expr": "histogram_quantile(\n  0.95,\n  sum by (le, deployment_environment_name, service_namespace, service_name) (\n    rate(\n      http_server_request_duration_seconds_bucket{\n        deployment_environment_name=~\"$deployment_environment_name\",\n        service_namespace=~\"$service_namespace\",\n        service_name=\"$service_name\"\n      }[$__rate_interval]\n    )\n  )\n)",
+          "fullMetaSearch": false,
+          "includeNullMetadata": true,
+          "interval": "60s",
+          "legendFormat": "HTTP p95",
+          "range": true,
+          "refId": "HTTP P95",
+          "useBackend": false
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
             "uid": "webstore-metrics"
           },
           "disableTextWrap": false,
           "editorMode": "code",
-          "expr": "histogram_quantile(0.99, sum by(le, deployment_environment_name, service_namespace, service_name) (rate(http_server_request_duration_seconds_bucket{deployment_environment_name=~\"$deployment_environment_name\", service_namespace=~\"$service_namespace\", service_name=\"$service_name\"}[$__rate_interval])))",
+          "expr": "avg by (deployment_environment_name, service_namespace, service_name) (\n  rate(\n    http_server_request_duration_seconds_sum{\n      deployment_environment_name=~\"$deployment_environment_name\",\n      service_namespace=~\"$service_namespace\",\n      service_name=\"$service_name\"\n    }[$__rate_interval]\n  )\n)\n/\navg by (deployment_environment_name, service_namespace, service_name) (\n  rate(\n    http_server_request_duration_seconds_count{\n      deployment_environment_name=~\"$deployment_environment_name\",\n      service_namespace=~\"$service_namespace\",\n      service_name=\"$service_name\"\n    }[$__rate_interval]\n  )\n)",
           "fullMetaSearch": false,
           "hide": false,
           "includeNullMetadata": true,
           "interval": "60s",
-          "legendFormat": "P99",
+          "legendFormat": "HTTP avg",
           "range": true,
-          "refId": "P99",
+          "refId": "HTTP AVG",
           "useBackend": false
         },
         {
@@ -248,33 +264,28 @@
             "type": "prometheus",
             "uid": "${prometheus_datasource}"
           },
-          "disableTextWrap": false,
           "editorMode": "code",
-          "expr": "histogram_quantile(0.9, sum by(le, deployment_environment_name, service_namespace, service_name) (rate(http_server_request_duration_seconds_bucket{deployment_environment_name=~\"$deployment_environment_name\", service_namespace=~\"$service_namespace\", service_name=\"$service_name\"}[$__rate_interval])))",
-          "fullMetaSearch": false,
-          "includeNullMetadata": true,
-          "interval": "60s",
-          "legendFormat": "P90",
+          "expr": "histogram_quantile(\n  0.95,\n  sum by (le, deployment_environment_name, service_namespace, service_name) (\n    rate(\n      rpc_server_duration_milliseconds_bucket{\n        deployment_environment_name=~\"$deployment_environment_name\",\n        service_namespace=~\"$service_namespace\",\n        service_name=\"$service_name\"\n      }[$__rate_interval]\n    ) / 1000\n  )\n)",
+          "hide": false,
+          "instant": false,
+          "interval": "60",
+          "legendFormat": "RPC p95",
           "range": true,
-          "refId": "P90",
-          "useBackend": false
+          "refId": "RPC P95"
         },
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "webstore-metrics"
+            "uid": "${prometheus_datasource}"
           },
-          "disableTextWrap": false,
           "editorMode": "code",
-          "expr": "avg by(deployment_environment_name, service_namespace, service_name) (rate(http_server_request_duration_seconds_sum{deployment_environment_name=~\"$deployment_environment_name\", service_namespace=~\"$service_namespace\", service_name=\"$service_name\"}[$__rate_interval])) / avg by(deployment_environment_name, service_namespace, service_name) (rate(http_server_request_duration_seconds_count{deployment_environment_name=~\"$deployment_environment_name\", service_namespace=~\"$service_namespace\", service_name=\"$service_name\"}[$__rate_interval]))",
-          "fullMetaSearch": false,
+          "expr": "avg by (deployment_environment_name, service_namespace, service_name) (\n  rate(\n    rpc_server_duration_milliseconds_sum{\n      deployment_environment_name=~\"$deployment_environment_name\",\n      service_namespace=~\"$service_namespace\",\n      service_name=\"$service_name\"\n    }[$__rate_interval]\n  ) / 1000\n)\n/\navg by (deployment_environment_name, service_namespace, service_name) (\n  rate(\n    rpc_server_duration_milliseconds_count{\n      deployment_environment_name=~\"$deployment_environment_name\",\n      service_namespace=~\"$service_namespace\",\n      service_name=\"$service_name\"\n    }[$__rate_interval]\n  )\n)",
           "hide": false,
-          "includeNullMetadata": true,
-          "interval": "60s",
-          "legendFormat": "AVG",
+          "instant": false,
+          "interval": "60",
+          "legendFormat": "RPC avg",
           "range": true,
-          "refId": "AVG",
-          "useBackend": false
+          "refId": "RPC AVG"
         }
       ],
       "title": "Duration",
@@ -285,7 +296,7 @@
         "type": "prometheus",
         "uid": "${prometheus_datasource}"
       },
-      "description": "HTTP endpoints aggregation on the `http.server.request.duration` metric. \n\nErrors are identified by   `http.response.status_code=~\"5..\"`.\n\nSee https://opentelemetry.io/docs/specs/semconv/http/http-metrics/#metric-httpserverrequestduration",
+      "description": "HTTP and RPC endpoints aggregation on the `http.server.request.duration` and `rpc.server.duration` metrics. \n\nErrors are identified by : \n* `http.response.status_code=~\"5..\"`\n* `rpc.grpc.status_code!=\"0\"`\n\nSee https://opentelemetry.io/docs/specs/semconv/http/http-metrics/#metric-httpserverrequestduration\n",
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -327,7 +338,7 @@
             }
           },
           "mappings": [],
-          "noValue": "No HTTP operation",
+          "noValue": "No HTTP or RPC operation",
           "thresholds": {
             "mode": "absolute",
             "steps": [
@@ -379,10 +390,24 @@
           "includeNullMetadata": true,
           "instant": false,
           "interval": "60s",
-          "legendFormat": "5xx",
+          "legendFormat": "HTTP 5xx errors",
           "range": true,
-          "refId": "5xx",
+          "refId": "HTTP 5xx",
           "useBackend": false
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${prometheus_datasource}"
+          },
+          "editorMode": "code",
+          "expr": "((sum without (rpc_grpc_status_code, instance) (rate(rpc_server_duration_milliseconds_count{deployment_environment_name=~\"$deployment_environment_name\", service_namespace=~\"$service_namespace\", service_name=\"$service_name\", rpc_grpc_status_code!=\"0\"}[$__rate_interval])) * 100) / sum without (rpc_grpc_status_code, instance) (rate(rpc_server_duration_milliseconds_count{deployment_environment_name=~\"$deployment_environment_name\", service_namespace=~\"$service_namespace\", service_name=\"$service_name\"}[$__rate_interval])))\nor\n(0 * sum without (rpc_grpc_status_code, instance) (rate(rpc_server_duration_milliseconds_count{deployment_environment_name=~\"$deployment_environment_name\", service_namespace=~\"$service_namespace\", service_name=\"$service_name\"}[$__rate_interval])))",
+          "hide": false,
+          "instant": false,
+          "interval": "60",
+          "legendFormat": "RPC errors",
+          "range": true,
+          "refId": "RPC Err"
         }
       ],
       "title": "Error",
@@ -393,7 +418,7 @@
         "type": "prometheus",
         "uid": "${prometheus_datasource}"
       },
-      "description": "HTTP endpoints aggregation on the `http.server.request.duration` metric.\n\nSee https://opentelemetry.io/docs/specs/semconv/http/http-metrics/#metric-httpserverrequestduration",
+      "description": "HTTP & RPC endpoints aggregation on the `http.server.request.duration` & `rpc.server.duration` metrics.\n\nSee https://opentelemetry.io/docs/specs/semconv/http/http-metrics/#metric-httpserverrequestduration",
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -436,7 +461,7 @@
           },
           "mappings": [],
           "min": 0,
-          "noValue": "No HTTP operation",
+          "noValue": "No HTTP or RPC operation",
           "thresholds": {
             "mode": "absolute",
             "steps": [
@@ -486,391 +511,27 @@
           "hide": false,
           "instant": false,
           "interval": "60s",
-          "legendFormat": "Requests",
+          "legendFormat": "HTTP requests",
           "range": true,
-          "refId": "B"
+          "refId": "HTTP RPS"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${prometheus_datasource}"
+          },
+          "editorMode": "code",
+          "expr": "(sum(rate(rpc_server_duration_milliseconds_count{deployment_environment_name=~\"$deployment_environment_name\", service_namespace=~\"$service_namespace\", service_name=\"$service_name\"}[$__rate_interval])) by (deployment_environment_name, service_namespace, service_name)) * $__interval_ms / 1000",
+          "hide": false,
+          "instant": false,
+          "interval": "60",
+          "legendFormat": "RPC requests",
+          "range": true,
+          "refId": "RPC RPS"
         }
       ],
       "title": "Request Rate",
       "type": "timeseries"
-    },
-    {
-      "collapsed": true,
-      "gridPos": {
-        "h": 1,
-        "w": 24,
-        "x": 0,
-        "y": 9
-      },
-      "id": 31,
-      "panels": [
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "${prometheus_datasource}"
-          },
-          "description": "gRPC Endpoints aggregation, `rpc.server.duration` metric.\n\nSee https://opentelemetry.io/docs/specs/semconv/rpc/rpc-metrics/#metric-rpcserverduration",
-          "fieldConfig": {
-            "defaults": {
-              "color": {
-                "mode": "palette-classic"
-              },
-              "custom": {
-                "axisBorderShow": false,
-                "axisCenteredZero": false,
-                "axisColorMode": "text",
-                "axisLabel": "",
-                "axisPlacement": "auto",
-                "axisSoftMin": 0,
-                "barAlignment": 0,
-                "barWidthFactor": 0.6,
-                "drawStyle": "line",
-                "fillOpacity": 0,
-                "gradientMode": "none",
-                "hideFrom": {
-                  "legend": false,
-                  "tooltip": false,
-                  "viz": false
-                },
-                "insertNulls": false,
-                "lineInterpolation": "smooth",
-                "lineWidth": 1,
-                "pointSize": 5,
-                "scaleDistribution": {
-                  "log": 10,
-                  "type": "log"
-                },
-                "showPoints": "auto",
-                "spanNulls": false,
-                "stacking": {
-                  "group": "A",
-                  "mode": "none"
-                },
-                "thresholdsStyle": {
-                  "mode": "off"
-                }
-              },
-              "mappings": [],
-              "min": 0,
-              "noValue": "No RPC operation",
-              "thresholds": {
-                "mode": "absolute",
-                "steps": [
-                  {
-                    "color": "green"
-                  },
-                  {
-                    "color": "red",
-                    "value": 80
-                  }
-                ]
-              },
-              "unit": "ms"
-            },
-            "overrides": []
-          },
-          "gridPos": {
-            "h": 6,
-            "w": 6,
-            "x": 0,
-            "y": 10
-          },
-          "id": 33,
-          "options": {
-            "legend": {
-              "calcs": [],
-              "displayMode": "list",
-              "placement": "bottom",
-              "showLegend": true
-            },
-            "tooltip": {
-              "hideZeros": false,
-              "mode": "single",
-              "sort": "none"
-            }
-          },
-          "pluginVersion": "12.0.2",
-          "targets": [
-            {
-              "datasource": {
-                "type": "prometheus",
-                "uid": "webstore-metrics"
-              },
-              "disableTextWrap": false,
-              "editorMode": "code",
-              "expr": "histogram_quantile(0.99, sum by(le, deployment_environment_name, service_namespace, service_name) (rate(rpc_server_duration_milliseconds_bucket{deployment_environment_name=~\"$deployment_environment_name\", service_namespace=~\"$service_namespace\", service_name=\"$service_name\"}[$__rate_interval])))",
-              "fullMetaSearch": false,
-              "hide": false,
-              "includeNullMetadata": true,
-              "interval": "60s",
-              "legendFormat": "P99",
-              "range": true,
-              "refId": "P99",
-              "useBackend": false
-            },
-            {
-              "datasource": {
-                "type": "prometheus",
-                "uid": "${prometheus_datasource}"
-              },
-              "disableTextWrap": false,
-              "editorMode": "builder",
-              "expr": "histogram_quantile(0.9, sum by(le, deployment_environment_name, service_namespace, service_name) (rate(rpc_server_duration_milliseconds_bucket{deployment_environment_name=~\"$deployment_environment_name\", service_namespace=~\"$service_namespace\", service_name=\"$service_name\"}[$__rate_interval])))",
-              "fullMetaSearch": false,
-              "includeNullMetadata": true,
-              "interval": "60s",
-              "legendFormat": "P90",
-              "range": true,
-              "refId": "P90",
-              "useBackend": false
-            },
-            {
-              "datasource": {
-                "type": "prometheus",
-                "uid": "webstore-metrics"
-              },
-              "disableTextWrap": false,
-              "editorMode": "builder",
-              "expr": "avg by(deployment_environment_name, service_namespace, service_name) (rate(rpc_server_duration_milliseconds_sum{deployment_environment_name=~\"$deployment_environment_name\", service_namespace=~\"$service_namespace\", service_name=\"$service_name\"}[$__rate_interval])) / avg by(deployment_environment_name, service_namespace, service_name) (rate(rpc_server_duration_milliseconds_count{deployment_environment_name=~\"$deployment_environment_name\", service_namespace=~\"$service_namespace\", service_name=\"$service_name\"}[$__rate_interval]))",
-              "fullMetaSearch": false,
-              "hide": false,
-              "includeNullMetadata": true,
-              "interval": "60s",
-              "legendFormat": "AVG",
-              "range": true,
-              "refId": "AVG",
-              "useBackend": false
-            }
-          ],
-          "title": "Duration",
-          "type": "timeseries"
-        },
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "${prometheus_datasource}"
-          },
-          "description": "gRPC endpoints aggregation based on the `rpc.server.duration` metric.\n\nErrors are identified by `rpc.grpc.status_code != 0` which make the panel specific to the gRPC protocol.\n\nSee https://opentelemetry.io/docs/specs/semconv/rpc/rpc-metrics/#metric-rpcserverdurationInbound ",
-          "fieldConfig": {
-            "defaults": {
-              "color": {
-                "mode": "palette-classic"
-              },
-              "custom": {
-                "axisBorderShow": false,
-                "axisCenteredZero": false,
-                "axisColorMode": "text",
-                "axisLabel": "",
-                "axisPlacement": "auto",
-                "barAlignment": 0,
-                "barWidthFactor": 0.6,
-                "drawStyle": "line",
-                "fillOpacity": 0,
-                "gradientMode": "none",
-                "hideFrom": {
-                  "legend": false,
-                  "tooltip": false,
-                  "viz": false
-                },
-                "insertNulls": false,
-                "lineInterpolation": "smooth",
-                "lineWidth": 1,
-                "pointSize": 5,
-                "scaleDistribution": {
-                  "type": "linear"
-                },
-                "showPoints": "auto",
-                "spanNulls": false,
-                "stacking": {
-                  "group": "A",
-                  "mode": "none"
-                },
-                "thresholdsStyle": {
-                  "mode": "off"
-                }
-              },
-              "mappings": [],
-              "noValue": "No RPC operation",
-              "thresholds": {
-                "mode": "absolute",
-                "steps": [
-                  {
-                    "color": "green"
-                  },
-                  {
-                    "color": "red",
-                    "value": 80
-                  }
-                ]
-              },
-              "unit": "percent"
-            },
-            "overrides": []
-          },
-          "gridPos": {
-            "h": 6,
-            "w": 6,
-            "x": 6,
-            "y": 10
-          },
-          "id": 34,
-          "options": {
-            "legend": {
-              "calcs": [],
-              "displayMode": "list",
-              "placement": "bottom",
-              "showLegend": true
-            },
-            "tooltip": {
-              "hideZeros": false,
-              "mode": "single",
-              "sort": "none"
-            }
-          },
-          "pluginVersion": "12.0.2",
-          "targets": [
-            {
-              "datasource": {
-                "type": "prometheus",
-                "uid": "webstore-metrics"
-              },
-              "disableTextWrap": false,
-              "editorMode": "code",
-              "expr": "((sum without (rpc_grpc_status_code, instance) (rate(rpc_server_duration_milliseconds_count{deployment_environment_name=~\"$deployment_environment_name\", service_namespace=~\"$service_namespace\", service_name=\"$service_name\", rpc_grpc_status_code!=\"0\"}[$__rate_interval])) * 100) / sum without (rpc_grpc_status_code, instance) (rate(rpc_server_duration_milliseconds_count{deployment_environment_name=~\"$deployment_environment_name\", service_namespace=~\"$service_namespace\", service_name=\"$service_name\"}[$__rate_interval])))\nor\n(0 * sum without (rpc_grpc_status_code, instance) (rate(rpc_server_duration_milliseconds_count{deployment_environment_name=~\"$deployment_environment_name\", service_namespace=~\"$service_namespace\", service_name=\"$service_name\"}[$__rate_interval])))",
-              "fullMetaSearch": false,
-              "hide": false,
-              "includeNullMetadata": true,
-              "instant": false,
-              "interval": "60s",
-              "legendFormat": "Error",
-              "range": true,
-              "refId": "ERR",
-              "useBackend": false
-            }
-          ],
-          "title": "Error",
-          "type": "timeseries"
-        },
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "${prometheus_datasource}"
-          },
-          "description": "gRPC endpoints aggregation on the  `rpc.server.duration` metric.\n\nSee https://opentelemetry.io/docs/specs/semconv/rpc/rpc-metrics/#metric-rpcserverduration",
-          "fieldConfig": {
-            "defaults": {
-              "color": {
-                "mode": "palette-classic"
-              },
-              "custom": {
-                "axisBorderShow": false,
-                "axisCenteredZero": false,
-                "axisColorMode": "text",
-                "axisLabel": "",
-                "axisPlacement": "auto",
-                "axisSoftMin": 0,
-                "barAlignment": 0,
-                "barWidthFactor": 0.6,
-                "drawStyle": "line",
-                "fillOpacity": 0,
-                "gradientMode": "none",
-                "hideFrom": {
-                  "legend": false,
-                  "tooltip": false,
-                  "viz": false
-                },
-                "insertNulls": false,
-                "lineInterpolation": "linear",
-                "lineWidth": 1,
-                "pointSize": 5,
-                "scaleDistribution": {
-                  "log": 10,
-                  "type": "log"
-                },
-                "showPoints": "auto",
-                "spanNulls": false,
-                "stacking": {
-                  "group": "A",
-                  "mode": "none"
-                },
-                "thresholdsStyle": {
-                  "mode": "off"
-                }
-              },
-              "mappings": [],
-              "min": 0,
-              "noValue": "No RPC operation",
-              "thresholds": {
-                "mode": "absolute",
-                "steps": [
-                  {
-                    "color": "green"
-                  },
-                  {
-                    "color": "red",
-                    "value": 80
-                  }
-                ]
-              },
-              "unit": "reqps"
-            },
-            "overrides": []
-          },
-          "gridPos": {
-            "h": 6,
-            "w": 5,
-            "x": 12,
-            "y": 10
-          },
-          "id": 35,
-          "options": {
-            "legend": {
-              "calcs": [],
-              "displayMode": "list",
-              "placement": "bottom",
-              "showLegend": true
-            },
-            "tooltip": {
-              "hideZeros": false,
-              "mode": "single",
-              "sort": "none"
-            }
-          },
-          "pluginVersion": "12.0.2",
-          "targets": [
-            {
-              "datasource": {
-                "type": "prometheus",
-                "uid": "webstore-metrics"
-              },
-              "editorMode": "code",
-              "expr": "(sum(rate(rpc_server_duration_milliseconds_count{deployment_environment_name=~\"$deployment_environment_name\", service_namespace=~\"$service_namespace\", service_name=\"$service_name\"}[$__rate_interval])) by (deployment_environment_name, service_namespace, service_name)) * $__interval_ms / 1000",
-              "hide": false,
-              "interval": "60s",
-              "legendFormat": "Requests",
-              "range": true,
-              "refId": "RequestRate"
-            }
-          ],
-          "title": "Request Rate",
-          "type": "timeseries"
-        }
-      ],
-      "title": "Server gRPC RED Metrics",
-      "type": "row"
-    },
-    {
-      "collapsed": false,
-      "gridPos": {
-        "h": 1,
-        "w": 24,
-        "x": 0,
-        "y": 10
-      },
-      "id": 22,
-      "panels": [],
-      "title": "Inbound Operations",
-      "type": "row"
     },
     {
       "datasource": {
@@ -952,7 +613,7 @@
         "h": 6,
         "w": 12,
         "x": 0,
-        "y": 11
+        "y": 9
       },
       "id": 21,
       "options": {
@@ -1141,7 +802,7 @@
         "h": 6,
         "w": 12,
         "x": 12,
-        "y": 11
+        "y": 9
       },
       "id": 27,
       "options": {
@@ -1261,7 +922,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 17
+        "y": 15
       },
       "id": 28,
       "panels": [],
@@ -1344,7 +1005,7 @@
         "h": 5,
         "w": 12,
         "x": 0,
-        "y": 18
+        "y": 16
       },
       "id": 23,
       "options": {
@@ -1529,7 +1190,7 @@
         "h": 5,
         "w": 12,
         "x": 12,
-        "y": 18
+        "y": 16
       },
       "id": 24,
       "options": {
@@ -1721,7 +1382,7 @@
         "h": 5,
         "w": 12,
         "x": 0,
-        "y": 23
+        "y": 21
       },
       "id": 32,
       "options": {
@@ -1837,7 +1498,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 28
+        "y": 26
       },
       "id": 25,
       "panels": [],
@@ -1920,7 +1581,7 @@
         "h": 15,
         "w": 24,
         "x": 0,
-        "y": 29
+        "y": 27
       },
       "id": 26,
       "options": {
@@ -2008,7 +1669,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 44
+        "y": 42
       },
       "id": 29,
       "panels": [],
@@ -2115,7 +1776,7 @@
         "h": 8,
         "w": 15,
         "x": 0,
-        "y": 45
+        "y": 43
       },
       "id": 30,
       "options": {
@@ -2241,8 +1902,8 @@
       },
       {
         "current": {
-          "text": "cart",
-          "value": "cart"
+          "text": "checkout",
+          "value": "checkout"
         },
         "datasource": {
           "type": "prometheus",
@@ -2273,5 +1934,5 @@
   "timezone": "",
   "title": "APM Dashboard (Jaeger, Prometheus, OpenSearch)",
   "uid": "febljk0a32qyoa",
-  "version": 13
+  "version": 1
 }
