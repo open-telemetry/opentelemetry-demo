@@ -12,7 +12,7 @@ datasources:
     editable: true
     isDefault: false
     jsonData:
-      database: otel
+      database: otel-logs-*
       flavor: opensearch
       logLevelField: severity.text.keyword
       logMessageField: body

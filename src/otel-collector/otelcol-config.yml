@@ -94,7 +94,8 @@ exporters:
     tls:
       insecure: true
   opensearch:
-    logs_index: otel
+    logs_index: otel-logs
+    logs_index_time_format: "yyyy-MM-dd"
     http:
       endpoint: "http://opensearch:9200"
       tls:

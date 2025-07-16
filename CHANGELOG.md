@@ -63,6 +63,8 @@ the release.
   ([#2331](https://github.com/open-telemetry/opentelemetry-demo/pull/2331))
 * [cart] Upgrade OpenFeature and add new telemetry Hooks
   ([#2332](https://github.com/open-telemetry/opentelemetry-demo/pull/2332))
+* [otel-collector] Add support for OpenSearch dynamic index
+  ([#2363](https://github.com/open-telemetry/opentelemetry-demo/pull/2363))
 * [checkout] Add OTel grpc Logs to checkout
   ([#2336](https://github.com/open-telemetry/opentelemetry-demo/pull/2336))
 * [payment] Send logs to otel-collector via pino-opentelemetry-transport
