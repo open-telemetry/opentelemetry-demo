@@ -2,7 +2,11 @@
 # SPDX-License-Identifier: Apache-2.0
 
 
-FROM --platform=${BUILDPLATFORM} eclipse-temurin:21-jdk AS builder
+FROM --platform=${BUILDPLATFORM} eclipse-temurin:21-jdk-alpine-3.21 AS builder
+
+RUN apk update && \
+    apk add gcompat
+
 ARG _JAVA_OPTIONS
 WORKDIR /usr/src/app/
 
@@ -16,11 +20,11 @@ RUN ./gradlew downloadRepos
 COPY ./src/ad/ ./
 COPY ./pb/ ./proto
 RUN chmod +x ./gradlew
-RUN ./gradlew installDist -PprotoSourceDir=./proto
+RUN LD_PRELOAD=/lib/libgcompat.so.0 ./gradlew installDist -PprotoSourceDir=./proto
 
 # -----------------------------------------------------------------------------
 
-FROM eclipse-temurin:21-jre
+FROM eclipse-temurin:21-jre-alpine-3.21
 
 ARG OTEL_JAVA_AGENT_VERSION
 ARG _JAVA_OPTIONS
