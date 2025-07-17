@@ -67,6 +67,11 @@ the release.
   ([#2363](https://github.com/open-telemetry/opentelemetry-demo/pull/2363))
 * [checkout] Add OTel grpc Logs to checkout
   ([#2336](https://github.com/open-telemetry/opentelemetry-demo/pull/2336))
+* [prometheus] Activate `keep_identifying_resource_attributes` and promote
+  Kubernetes resource attributes as metric labels
+  ([#2340](https://github.com/open-telemetry/opentelemetry-demo/pull/2340))
+* [grafana] Add APM dashboard including service metrics, traces, and logs
+  ([#2340](https://github.com/open-telemetry/opentelemetry-demo/pull/2340))
 * [payment] Send logs to otel-collector via pino-opentelemetry-transport
   ([#2352]((https://github.com/open-telemetry/opentelemetry-demo/pull/2352)))
 * [image-provider] Update to latest version of nginx and alpine
