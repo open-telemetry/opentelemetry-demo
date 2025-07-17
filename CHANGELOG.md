@@ -74,6 +74,8 @@ the release.
   ([#2340](https://github.com/open-telemetry/opentelemetry-demo/pull/2340))
 * [payment] Send logs to otel-collector via pino-opentelemetry-transport
   ([#2352]((https://github.com/open-telemetry/opentelemetry-demo/pull/2352)))
+* [image-provider] Update to latest version of nginx and alpine
+  ([#2369](https://github.com/open-telemetry/opentelemetry-demo/pull/2369))
 
 ## 2.0.2
 
