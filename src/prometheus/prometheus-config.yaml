@@ -26,6 +26,22 @@ otlp:
     - k8s.pod.name
     - k8s.replicaset.name
     - k8s.statefulset.name
+    #
+    - container.id
+    - container.runtime
+    - container.hostname
+    - container.image.id
+    #
+    - host.name
+    - host.id
+    # https://github.com/open-telemetry/opentelemetry-collector-contrib/blob/main/receiver/postgresqlreceiver/metadata.yaml
+    - postgresql.database.name
+    - postgresql.schema.name
+    - postgresql.table.name
+    - postgresql.index.name
+    # https://github.com/open-telemetry/opentelemetry-collector-contrib/blob/main/receiver/redisreceiver/metadata.yaml
+    - redis.version
+    # https://github.com/open-telemetry/opentelemetry-collector-contrib/blob/main/receiver/nginxreceiver/metadata.yaml
 
 storage:
   tsdb:
