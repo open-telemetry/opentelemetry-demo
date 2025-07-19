@@ -1,4 +1,4 @@
-Note: This project is a fork of opentelemetry-demo. Thanks to the team and contributors for opensourcing this wonderful demo project. Definitely one of the best on internet.
+Note: This project is a fork of opentelemetry-demo. Thanks to the team and contributors for opensourcing this wonderful demo project.
 
 
 <!-- markdownlint-disable-next-line -->
