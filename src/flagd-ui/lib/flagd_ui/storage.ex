@@ -5,6 +5,7 @@ defmodule FlagdUi.Storage do
   """
 
   use GenServer
+  require Logger
 
   def start_link(_) do
     GenServer.start_link(__MODULE__, %{}, name: Storage)
@@ -13,6 +14,7 @@ defmodule FlagdUi.Storage do
   @impl true
   def init(_) do
     state = File.cwd!() |> file_path() |> File.read!() |> Jason.decode!()
+    Logger.info("Read new state from file")
 
     {:ok, state}
   end
@@ -24,7 +26,20 @@ defmodule FlagdUi.Storage do
 
   @impl true
   def handle_cast({:write, flag_name, flag_value}, state) do
-    {:noreply, nil, state}
+    new_state =
+      Map.update(state, "flags", %{}, fn flags ->
+        update_flag(flags, flag_name, flag_value)
+      end)
+
+    json_state = Jason.encode!(new_state, pretty: true)
+
+    File.cwd!()
+    |> file_path()
+    |> File.write!(json_state)
+
+    Logger.info("Wrote new state to file")
+
+    {:noreply, new_state}
   end
 
   defp file_path(cwd), do: "#{cwd}/data/demo.flagd.json"
