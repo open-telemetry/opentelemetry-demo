@@ -17,7 +17,7 @@ defmodule FlagdUiWeb.Router do
   scope "/", FlagdUiWeb do
     pipe_through :browser
 
-    get "/", PageController, :home
+    live "/", Dashboard
   end
 
   # Other scopes may use custom stacks.
