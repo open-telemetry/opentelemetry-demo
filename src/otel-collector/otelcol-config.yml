@@ -24,8 +24,11 @@ receivers:
     endpoint: "postgresql:5432"
     username: "root"
     password: "otel"
-    # https://github.com/open-telemetry/opentelemetry-collector-contrib/blob/main/receiver/postgresqlreceiver/metadata.yaml
     metrics:
+      postgresql.blks_hit:
+        enabled: true
+      postgresql.blks_read:
+        enabled: true
       postgresql.tup_fetched:
         enabled: true
       postgresql.tup_returned:
@@ -38,7 +41,7 @@ receivers:
         enabled: true
       postgresql.deadlocks:
         enabled: true
-      #postgresql.conflicts: # DOES NOT EXIST
+
 
     tls:
       insecure: true

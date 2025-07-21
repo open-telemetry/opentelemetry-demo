@@ -21,11 +21,11 @@
       }
     ]
   },
-  "description": "Performance metrics for Postgres",
+  "description": "Performance metrics for PostgreSQL instrumented with the OpenTelemetry Collector PostgreSQL receiver.",
   "editable": true,
   "fiscalYearStartMonth": 0,
   "graphTooltip": 0,
-  "id": 8,
+  "id": 6,
   "links": [
     {
       "asDropdown": false,
@@ -39,268 +39,6 @@
     }
   ],
   "panels": [
-    {
-      "collapsed": false,
-      "gridPos": {
-        "h": 1,
-        "w": 24,
-        "x": 0,
-        "y": 0
-      },
-      "id": 14,
-      "panels": [],
-      "title": "Integration Status",
-      "type": "row"
-    },
-    {
-      "datasource": {
-        "type": "datasource",
-        "uid": "-- Mixed --"
-      },
-      "description": "Shows if metrics are being received for the selected time range.",
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "fixedColor": "text",
-            "mode": "fixed"
-          },
-          "mappings": [
-            {
-              "options": {
-                "match": "null",
-                "result": {
-                  "color": "light-red",
-                  "index": 0,
-                  "text": "No metrics received - Check configuration"
-                }
-              },
-              "type": "special"
-            },
-            {
-              "options": {
-                "from": 0,
-                "result": {
-                  "color": "light-red",
-                  "index": 1,
-                  "text": "Failed to collect metrics"
-                },
-                "to": 0
-              },
-              "type": "range"
-            },
-            {
-              "options": {
-                "from": 1,
-                "result": {
-                  "color": "light-green",
-                  "index": 2,
-                  "text": "Receiving metrics"
-                },
-                "to": 1000000
-              },
-              "type": "range"
-            }
-          ],
-          "noValue": "No data",
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "green"
-              },
-              {
-                "color": "red",
-                "value": 80
-              }
-            ]
-          },
-          "unit": "string"
-        },
-        "overrides": []
-      },
-      "gridPos": {
-        "h": 2,
-        "w": 8,
-        "x": 0,
-        "y": 1
-      },
-      "id": 15,
-      "options": {
-        "colorMode": "background",
-        "graphMode": "none",
-        "justifyMode": "auto",
-        "orientation": "auto",
-        "percentChangeColorMode": "standard",
-        "reduceOptions": {
-          "calcs": [
-            "lastNotNull"
-          ],
-          "fields": "",
-          "values": false
-        },
-        "showPercentChange": false,
-        "textMode": "auto",
-        "wideLayout": true
-      },
-      "pluginVersion": "12.0.2",
-      "targets": [
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "$datasource"
-          },
-          "expr": "vector(1) and on() ((count(up{job=~\"$job\",cluster=~\"$cluster\"} == 1) > 0) and (absent(absent(pg_up{job=~\"$job\",cluster=~\"$cluster\"})))) or vector(0) and on() ((count(up{job=~\"$job\",cluster=~\"$cluster\"}) > 0) and (absent(pg_up{job=~\"$job\",cluster=~\"$cluster\"})))\n",
-          "refId": "A"
-        }
-      ],
-      "title": "Metrics",
-      "type": "stat"
-    },
-    {
-      "datasource": {
-        "type": "datasource",
-        "uid": "-- Mixed --"
-      },
-      "description": "Shows the timestamp of the latest metrics received for this integration in the last 24 hours.",
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "fixedColor": "text",
-            "mode": "fixed"
-          },
-          "mappings": [],
-          "noValue": "No data",
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "green"
-              },
-              {
-                "color": "red",
-                "value": 80
-              }
-            ]
-          },
-          "unit": "dateTimeFromNow"
-        },
-        "overrides": []
-      },
-      "gridPos": {
-        "h": 2,
-        "w": 8,
-        "x": 8,
-        "y": 1
-      },
-      "id": 16,
-      "options": {
-        "colorMode": "background",
-        "graphMode": "none",
-        "justifyMode": "auto",
-        "orientation": "auto",
-        "percentChangeColorMode": "standard",
-        "reduceOptions": {
-          "calcs": [
-            "lastNotNull"
-          ],
-          "fields": "Time",
-          "values": false
-        },
-        "showPercentChange": false,
-        "textMode": "auto",
-        "wideLayout": true
-      },
-      "pluginVersion": "12.0.2",
-      "targets": [
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "$datasource"
-          },
-          "expr": "vector(1) and on() ((count(up{job=~\"$job\",cluster=~\"$cluster\"} == 1) > 0) and (absent(absent(pg_up{job=~\"$job\",cluster=~\"$cluster\"})))) or vector(0) and on() ((count(up{job=~\"$job\",cluster=~\"$cluster\"}) > 0) and (absent(pg_up{job=~\"$job\",cluster=~\"$cluster\"})))\n",
-          "refId": "A"
-        }
-      ],
-      "timeFrom": "now-24h",
-      "title": "Latest metrics received",
-      "type": "stat"
-    },
-    {
-      "datasource": {
-        "type": "datasource",
-        "uid": "-- Mixed --"
-      },
-      "description": "Shows the installed version of this integration.",
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "fixedColor": "text",
-            "mode": "fixed"
-          },
-          "mappings": [],
-          "noValue": "1.1.1",
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "green"
-              },
-              {
-                "color": "red",
-                "value": 80
-              }
-            ]
-          },
-          "unit": "string"
-        },
-        "overrides": []
-      },
-      "gridPos": {
-        "h": 2,
-        "w": 8,
-        "x": 16,
-        "y": 1
-      },
-      "id": 17,
-      "options": {
-        "colorMode": "value",
-        "graphMode": "area",
-        "justifyMode": "auto",
-        "orientation": "auto",
-        "percentChangeColorMode": "standard",
-        "reduceOptions": {
-          "calcs": [
-            "lastNotNull"
-          ],
-          "fields": "",
-          "values": false
-        },
-        "showPercentChange": false,
-        "textMode": "auto",
-        "wideLayout": true
-      },
-      "pluginVersion": "12.0.2",
-      "targets": [
-        {
-          "refId": "A"
-        }
-      ],
-      "title": "Integration version",
-      "type": "stat"
-    },
-    {
-      "collapsed": false,
-      "gridPos": {
-        "h": 1,
-        "w": 24,
-        "x": 0,
-        "y": 3
-      },
-      "id": 18,
-      "panels": [],
-      "title": "PostgreSQL overview",
-      "type": "row"
-    },
     {
       "datasource": {
         "uid": "$datasource"
@@ -339,7 +77,7 @@
         "h": 7,
         "w": 4,
         "x": 0,
-        "y": 4
+        "y": 0
       },
       "id": 11,
       "maxDataPoints": 100,
@@ -369,7 +107,7 @@
           },
           "dsType": "prometheus",
           "editorMode": "code",
-          "expr": "sum(irate(postgresql_commits_total{postgresql_database_name=~\"$db\",k8s_cluster_name=~\"$k8s_cluster_name\",host_name=~\"$host_name\"}[$__rate_interval])) + sum(irate(postgresql_rollbacks_total{postgresql_database_name=~\"$db\",k8s_cluster_name=~\"$k8s_cluster_name\",host_name=~\"$host_name\"}[$__rate_interval]))",
+          "expr": "sum(irate(postgresql_commits_total{postgresql_database_name=~\"$db\",k8s_cluster_name=~\"$k8s_cluster_name\", k8s_statefulset_name=~\"$k8s_statefulset_name\",host_name=~\"$host_name\"}[$__rate_interval])) + sum(irate(postgresql_rollbacks_total{postgresql_database_name=~\"$db\",k8s_cluster_name=~\"$k8s_cluster_name\", k8s_statefulset_name=~\"$k8s_statefulset_name\",host_name=~\"$host_name\"}[$__rate_interval]))",
           "format": "time_series",
           "groupBy": [
             {
@@ -428,6 +166,7 @@
       "datasource": {
         "uid": "$datasource"
       },
+      "description": "See [pg_stat_database / `tup_fetched`](https://www.postgresql.org/docs/current/monitoring-stats.html#MONITORING-PG-STAT-DATABASE-VIEW)",
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -487,16 +226,12 @@
         "h": 7,
         "w": 20,
         "x": 4,
-        "y": 4
+        "y": 0
       },
       "id": 1,
       "options": {
         "legend": {
-          "calcs": [
-            "mean",
-            "max",
-            "min"
-          ],
+          "calcs": [],
           "displayMode": "table",
           "placement": "right",
           "showLegend": true
@@ -517,7 +252,7 @@
           },
           "dsType": "prometheus",
           "editorMode": "code",
-          "expr": "sum(irate(postgresql_tup_fetched_total{postgresql_database_name=~\"$db\",k8s_cluster_name=~\"$k8s_cluster_name\",host_name=~\"$host_name\"}[$__rate_interval]))",
+          "expr": "sum(irate(postgresql_tup_fetched_total{postgresql_database_name=~\"$db\",k8s_cluster_name=~\"$k8s_cluster_name\", k8s_statefulset_name=~\"$k8s_statefulset_name\",host_name=~\"$host_name\"}[$__rate_interval]))",
           "format": "time_series",
           "groupBy": [
             {
@@ -576,7 +311,7 @@
           },
           "dsType": "prometheus",
           "editorMode": "code",
-          "expr": "sum(irate(postgresql_tup_returned_total{postgresql_database_name=~\"$db\",k8s_cluster_name=~\"$k8s_cluster_name\",host_name=~\"$host_name\"}[$__rate_interval]))",
+          "expr": "sum(irate(postgresql_tup_returned_total{postgresql_database_name=~\"$db\",k8s_cluster_name=~\"$k8s_cluster_name\", k8s_statefulset_name=~\"$k8s_statefulset_name\",host_name=~\"$host_name\"}[$__rate_interval]))",
           "format": "time_series",
           "groupBy": [
             {
@@ -636,7 +371,7 @@
           },
           "dsType": "prometheus",
           "editorMode": "code",
-          "expr": "sum(irate(postgresql_tup_inserted_total{postgresql_database_name=~\"$db\",k8s_cluster_name=~\"$k8s_cluster_name\",host_name=~\"$host_name\"}[$__rate_interval]))",
+          "expr": "sum(irate(postgresql_tup_inserted_total{postgresql_database_name=~\"$db\",k8s_cluster_name=~\"$k8s_cluster_name\", k8s_statefulset_name=~\"$k8s_statefulset_name\",host_name=~\"$host_name\"}[$__rate_interval]))",
           "format": "time_series",
           "groupBy": [
             {
@@ -696,7 +431,7 @@
           },
           "dsType": "prometheus",
           "editorMode": "code",
-          "expr": "sum(irate(postgresql_tup_updated_total{dpostgresql_database_name=~\"$db\",k8s_cluster_name=~\"$k8s_cluster_name\",host_name=~\"$host_name\"}[$__rate_interval]))",
+          "expr": "sum(irate(postgresql_tup_updated_total{dpostgresql_database_name=~\"$db\",k8s_cluster_name=~\"$k8s_cluster_name\", k8s_statefulset_name=~\"$k8s_statefulset_name\",host_name=~\"$host_name\"}[$__rate_interval]))",
           "format": "time_series",
           "groupBy": [
             {
@@ -757,7 +492,7 @@
           },
           "dsType": "prometheus",
           "editorMode": "code",
-          "expr": "sum(irate(postgresql_tup_deleted_total{postgresql_database_name=~\"$db\",k8s_cluster_name=~\"$k8s_cluster_name\",host_name=~\"$host_name\"}[$__rate_interval]))",
+          "expr": "sum(irate(postgresql_tup_deleted_total{postgresql_database_name=~\"$db\",k8s_cluster_name=~\"$k8s_cluster_name\", k8s_statefulset_name=~\"$k8s_statefulset_name\",host_name=~\"$host_name\"}[$__rate_interval]))",
           "format": "time_series",
           "groupBy": [
             {
@@ -878,19 +613,15 @@
         "h": 7,
         "w": 12,
         "x": 0,
-        "y": 11
+        "y": 7
       },
       "id": 2,
       "options": {
         "legend": {
-          "calcs": [
-            "mean",
-            "max",
-            "min"
-          ],
+          "calcs": [],
           "displayMode": "table",
-          "placement": "bottom",
-          "showLegend": false
+          "placement": "right",
+          "showLegend": true
         },
         "tooltip": {
           "hideZeros": false,
@@ -908,7 +639,7 @@
           },
           "dsType": "prometheus",
           "editorMode": "code",
-          "expr": "irate(postgresql_bgwriter_buffers_allocated_total{host_name=~\"$host_name\", k8s_cluster_name=~\"$k8s_cluster_name\"}[$__rate_interval])",
+          "expr": "irate(postgresql_bgwriter_buffers_allocated_total{host_name=~\"$host_name\", k8s_cluster_name=~\"$k8s_cluster_name\", k8s_statefulset_name=~\"$k8s_statefulset_name\"}[$__rate_interval])",
           "format": "time_series",
           "groupBy": [
             {
@@ -965,7 +696,7 @@
           },
           "disableTextWrap": false,
           "editorMode": "code",
-          "expr": "irate(postgresql_bgwriter_buffers_writes_total{host_name=~\"$host_name\", k8s_cluster_name=~\"$k8s_cluster_name\"}[$__interval])",
+          "expr": "irate(postgresql_bgwriter_buffers_writes_total{k8s_cluster_name=~\"$k8s_cluster_name\", k8s_statefulset_name=~\"$k8s_statefulset_name\", host_name=~\"$host_name\"}[$__interval])",
           "fullMetaSearch": false,
           "hide": false,
           "includeNullMetadata": true,
@@ -1095,7 +826,7 @@
           },
           "dsType": "prometheus",
           "editorMode": "code",
-          "expr": "irate(postgresql_bgwriter_checkpoint_count_total{host_name=~\"$host_name\", k8s_cluster_name=~\"$k8s_cluster_name\"}[$__rate_interval])",
+          "expr": "irate(postgresql_bgwriter_checkpoint_count_total{k8s_cluster_name=~\"$k8s_cluster_name\", k8s_statefulset_name=~\"$k8s_statefulset_name\", host_name=~\"$host_name\"}[$__rate_interval])",
           "format": "time_series",
           "groupBy": [
             {
@@ -1223,6 +954,30 @@
                 }
               }
             ]
+          },
+          {
+            "__systemRef": "hideSeriesFrom",
+            "matcher": {
+              "id": "byNames",
+              "options": {
+                "mode": "exclude",
+                "names": [
+                  "deadlocks"
+                ],
+                "prefix": "All except:",
+                "readOnly": true
+              }
+            },
+            "properties": [
+              {
+                "id": "custom.hideFrom",
+                "value": {
+                  "legend": false,
+                  "tooltip": false,
+                  "viz": true
+                }
+              }
+            ]
           }
         ]
       },
@@ -1230,7 +985,7 @@
         "h": 7,
         "w": 12,
         "x": 12,
-        "y": 11
+        "y": 7
       },
       "id": 3,
       "options": {
@@ -1256,7 +1011,7 @@
           },
           "dsType": "prometheus",
           "editorMode": "code",
-          "expr": "sum(postgresql_deadlocks_total{postgresql_database_name=~\"$db\",k8s_cluster_name=~\"$k8s_cluster_name\",host_name=~\"$host_name\"})",
+          "expr": "sum(postgresql_deadlocks_total{postgresql_database_name=~\"$db\",k8s_cluster_name=~\"$k8s_cluster_name\", k8s_statefulset_name=~\"$k8s_statefulset_name\", host_name=~\"$host_name\"})",
           "format": "time_series",
           "groupBy": [
             {
@@ -1313,7 +1068,7 @@
           },
           "dsType": "prometheus",
           "editorMode": "code",
-          "expr": "sum(postgresql_conflicts_total{postgresql_database_name=~\"$db\",k8s_cluster_name=~\"$k8s_cluster_name\",host_name=~\"$host_name\"})",
+          "expr": "sum(postgresql_conflicts_total{postgresql_database_name=~\"$db\",k8s_cluster_name=~\"$k8s_cluster_name\", k8s_statefulset_name=~\"$k8s_statefulset_name\",host_name=~\"$host_name\"})",
           "format": "time_series",
           "groupBy": [
             {
@@ -1433,7 +1188,7 @@
         "h": 7,
         "w": 12,
         "x": 0,
-        "y": 18
+        "y": 14
       },
       "id": 12,
       "options": {
@@ -1455,9 +1210,11 @@
           "datasource": {
             "uid": "$datasource"
           },
-          "expr": "round(sum by (datname) (rate(pg_stat_database_blks_hit{datname=~\"$db\",job=~\"$job\",cluster=~\"$cluster\",instance=~\"$instance\"}[$__rate_interval])) / (sum by (datname)(rate(pg_stat_database_blks_hit{datname=~\"$db\",job=~\"$job\",cluster=~\"$cluster\",instance=~\"$instance\"}[$__rate_interval])) + sum by (datname)(rate(pg_stat_database_blks_read{datname=~\"$db\",job=~\"$job\",cluster=~\"$cluster\",instance=~\"$instance\"}[$__rate_interval])))*100,0.001)",
+          "editorMode": "code",
+          "expr": "round(\n  sum by (postgresql_database_name) (\n    rate(\n      postgresql_blks_hit_total{\n        postgresql_database_name=~\"$db\",\n        k8s_cluster_name=~\"$k8s_cluster_name\", k8s_statefulset_name=~\"$k8s_statefulset_name\",\n        host_name=~\"$host_name\"\n      }[$__rate_interval]\n    )\n  )\n  /\n  (\n    sum by (postgresql_database_name) (\n      rate(\n        postgresql_blks_hit_total{\n          postgresql_database_name=~\"$db\",\n          k8s_cluster_name=~\"$k8s_cluster_name\", k8s_statefulset_name=~\"$k8s_statefulset_name\",\n          host_name=~\"$host_name\"\n        }[$__rate_interval]\n      )\n    )\n    +\n    sum by (postgresql_database_name) (\n      rate(\n        postgresql_blks_read_total{\n          postgresql_database_name=~\"$db\",\n          k8s_cluster_name=~\"$k8s_cluster_name\", k8s_statefulset_name=~\"$k8s_statefulset_name\",\n          host_name=~\"$host_name\"\n        }[$__rate_interval]\n      )\n    )\n  ) * 100,\n  0.001\n)",
           "format": "time_series",
-          "legendFormat": "{{datname}} - cache hit rate",
+          "legendFormat": "{{postgresql_database_name}} - cache hit ratio",
+          "range": true,
           "refId": "A",
           "step": 240
         }
@@ -1529,7 +1286,7 @@
         "h": 7,
         "w": 12,
         "x": 12,
-        "y": 18
+        "y": 14
       },
       "id": 13,
       "options": {
@@ -1551,23 +1308,52 @@
           "datasource": {
             "uid": "$datasource"
           },
-          "expr": "pg_stat_database_numbackends{datname=~\"$db\",job=~\"$job\",cluster=~\"$cluster\",instance=~\"$instance\"}",
+          "editorMode": "code",
+          "expr": "postgresql_backends{postgresql_database_name=~\"$db\",k8s_cluster_name=~\"$k8s_cluster_name\", k8s_statefulset_name=~\"$k8s_statefulset_name\", host_name=~\"$host_name\"}",
           "format": "time_series",
           "intervalFactor": 2,
-          "legendFormat": "{{datname}} - {{__name__}}",
+          "legendFormat": "{{postgresql_database_name}} - connections",
+          "range": true,
           "refId": "A",
           "step": 240
         }
       ],
       "title": "Number of active connections",
       "type": "timeseries"
+    },
+    {
+      "description": "Setup Instructions. Delete this panel after setup.",
+      "fieldConfig": {
+        "defaults": {},
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 24,
+        "x": 0,
+        "y": 21
+      },
+      "id": 14,
+      "options": {
+        "code": {
+          "language": "plaintext",
+          "showLineNumbers": false,
+          "showMiniMap": false
+        },
+        "content": "<h1 style=\"background-color:yellow ; color: black\">Dashboard setup instructions (delete this panel after setup)</h1>\n\nThis dashboard requires:\n\n## Prometheus\n\nPromote required OpenTelemetry PostgreSQL metrics resource Attributes\nThrough the Prometheus OTLP Endpoint. \n\nExample Prometheus OTLP Endpoint configuration snippet:\n\n\n```yaml\notlp:\n  keep_identifying_resource_attributes: true\n  promote_resource_attributes:\n    # REQUIRED RESOURCE ATTRIBUTES\n    # PostgreSQL resource attributes produced by the OTel Collector PostgreSQL receiver\n    # and used in dashboards and alerts.\n    # See https://github.com/open-telemetry/opentelemetry-collector-contrib/blob/main/receiver/postgresqlreceiver/metadata.yaml\n    - postgresql.database.name\n    - postgresql.schema.name\n    - postgresql.table.name\n    - postgresql.index.name\n\n    # When deploying on Kubernetes, resource attributes used to identify the \n    # kubernetes resources in dashboards and alerts.\n    - k8s.cluster.name\n    - k8s.container.name\n    - k8s.cronjob.name\n    - k8s.daemonset.name\n    - k8s.deployment.name\n    - k8s.job.name\n    - k8s.namespace.name\n    - k8s.pod.name\n    - k8s.replicaset.name\n    - k8s.statefulset.name\n    - container.name\n\n    # When deploying on VMs, resource attributes used to identify \n    # the host in dashboards and alerts.\n    - host.name\n  \n    # RECOMMENTED RESOURCE ATTRIBUTES\n\n    - deployment.environment.name\n    - cloud.availability_zone\n    - cloud.region\n\n    - service.instance.id\n    - service.name\n    - service.namespace\n    - service.version\n```\n\n## OpenTelemetry Collector\n\nUse the OpenTelemetry Collector PostgreSQL receiver to scrape PostgreSQL metrics and logs\nand to enrich PostgreSQL telemetry, metrics and logs, with deployment resource attributes \nlike `k8s.*` or `host.*` attributes using the Resource Detection and Kubernetes Attributes processors.\n\nExample configuration snippet:\n\n```yaml\nreceivers:\n  postgresql:\n    endpoint: \"postgresql:5432\"\n    username: \"root\"\n    password: \"otel\"\n    metrics:\n      postgresql.blks_hit:\n        enabled: true\n      postgresql.blks_read:\n        enabled: true\n      postgresql.tup_fetched:\n        enabled: true\n      postgresql.tup_returned:\n        enabled: true\n      postgresql.tup_inserted:\n        enabled: true\n      postgresql.tup_updated:\n        enabled: true\n      postgresql.tup_deleted:\n        enabled: true\n      postgresql.deadlocks:\n        enabled: true\n    tls:\n      insecure: true\n\nprocessors:\n  batch:\n  resourcedetection:\n    # Only use the `docker` detector when running on Docker\n    detectors: [env, docker, system]\n  k8sattributes:\n    extract:\n      metadata:\n        - k8s.deployment.name\n        - k8s.namespace.name\n        - k8s.statefulset.name\n        # ...\n    ...\n\nexporters:\n\n  debug:\n  otlphttp/prometheus:\n    endpoint: \"http://prometheus:9090/api/v1/otlp\"\n    tls:\n      insecure: true\n\nservice:\n  pipelines:\n    metrics:\n      receivers: [postgresql]\n      processors: [k8sattributes, resourcedetection, batch]\n      exporters: [otlp/prometheus]\n    ...\n ```",
+        "mode": "markdown"
+      },
+      "pluginVersion": "12.0.2",
+      "title": "Setup Instructions",
+      "type": "text"
     }
   ],
   "preload": false,
   "refresh": "30s",
   "schemaVersion": 41,
   "tags": [
-    "postgres-integration"
+    "opentelemetry",
+    "postgresql"
   ],
   "templating": {
     "list": [
@@ -1596,7 +1382,7 @@
           "uid": "webstore-metrics"
         },
         "definition": "label_values(postgresql_table_count,k8s_cluster_name)",
-        "description": "",
+        "description": "When deploying PostgreSQL on Kubernetes, name of the Kubernetes cluster.  \nFor other deployments, select \"All\". ",
         "includeAll": true,
         "label": "K8s Cluster",
         "multi": true,
@@ -1613,6 +1399,28 @@
         "type": "query"
       },
       {
+        "allValue": ".*",
+        "current": {
+          "text": "",
+          "value": ""
+        },
+        "definition": "label_values(postgresql_table_count{k8s_cluster_name=~\"$k8s_cluster_name\"},k8s_statefulset_name)",
+        "description": "When deploying on Kubernetes, name of the `StatefulSet` of the PostgreSQL deployment (e.g. `my-pg-cluster`).\nFor other deployments, select \"All\". ",
+        "includeAll": true,
+        "label": "K8s Statefulset",
+        "multi": true,
+        "name": "k8s_statefulset_name",
+        "options": [],
+        "query": {
+          "qryType": 1,
+          "query": "label_values(postgresql_table_count{k8s_cluster_name=~\"$k8s_cluster_name\"},k8s_statefulset_name)",
+          "refId": "PrometheusVariableQueryEditor-VariableQuery"
+        },
+        "refresh": 1,
+        "regex": "",
+        "type": "query"
+      },
+      {
         "allValue": ".+",
         "current": {
           "text": "All",
@@ -1623,8 +1431,8 @@
         "datasource": {
           "uid": "$datasource"
         },
-        "definition": "label_values(postgresql_table_count{k8s_cluster_name=~\"$k8s_cluster_name\"},host_name)",
-        "description": "",
+        "definition": "label_values(postgresql_table_count{k8s_cluster_name=~\"$k8s_cluster_name\", k8s_statefulset_name=~\"$k8s_statefulset_name\"},host_name)",
+        "description": "When deploying PostgreSQL on VMs, name on the host on which the database is deployed.\nFor other deployments, select \"All\". ",
         "includeAll": true,
         "label": "Host",
         "multi": true,
@@ -1632,7 +1440,7 @@
         "options": [],
         "query": {
           "qryType": 1,
-          "query": "label_values(postgresql_table_count{k8s_cluster_name=~\"$k8s_cluster_name\"},host_name)",
+          "query": "label_values(postgresql_table_count{k8s_cluster_name=~\"$k8s_cluster_name\", k8s_statefulset_name=~\"$k8s_statefulset_name\"},host_name)",
           "refId": "PrometheusVariableQueryEditor-VariableQuery"
         },
         "refresh": 2,
@@ -1650,14 +1458,14 @@
           "type": "prometheus",
           "uid": "webstore-metrics"
         },
-        "definition": "label_values(postgresql_table_count{host_name=~\"$host_name\", postgresql_database_name!~\"template.*|postgres\", k8s_cluster_name=~\"$k8s_cluster_name\"},postgresql_database_name)",
+        "definition": "label_values(postgresql_table_count{host_name=~\"$host_name\", postgresql_database_name!~\"template.*|postgres\", k8s_cluster_name=~\"$k8s_cluster_name\", k8s_statefulset_name=~\"$k8s_statefulset_name\"},postgresql_database_name)",
         "includeAll": true,
         "label": "Database",
         "name": "db",
         "options": [],
         "query": {
           "qryType": 1,
-          "query": "label_values(postgresql_table_count{host_name=~\"$host_name\", postgresql_database_name!~\"template.*|postgres\", k8s_cluster_name=~\"$k8s_cluster_name\"},postgresql_database_name)",
+          "query": "label_values(postgresql_table_count{host_name=~\"$host_name\", postgresql_database_name!~\"template.*|postgres\", k8s_cluster_name=~\"$k8s_cluster_name\", k8s_statefulset_name=~\"$k8s_statefulset_name\"},postgresql_database_name)",
           "refId": "PrometheusVariableQueryEditor-VariableQuery"
         },
         "refresh": 2,
@@ -1672,7 +1480,7 @@
   },
   "timepicker": {},
   "timezone": "browser",
-  "title": "Postgres Overview",
+  "title": "PostgreSQL",
   "uid": "xHhbQmdjA",
-  "version": 5
+  "version": 3
 }
