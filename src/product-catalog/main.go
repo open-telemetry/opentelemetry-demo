@@ -128,7 +128,6 @@ func initPostgresConnectionPool() *pgxpool.Pool {
 	if err != nil {
 		log.Fatalf("Cannot crate database config: %v", err)
 	}
-	log.Infof("Parsed connection string: %s", config.ConnString())
 	config.MaxConns = PGX_MAX_CONNS
 	config.MaxConnLifetime = PGS_MAX_CONN_LIFE_TIME
 
@@ -384,7 +383,7 @@ func (p *productCatalog) GetProduct(ctx context.Context, req *pb.GetProductReque
 		attribute.String("app.product.id", req.Id),
 	)
 
-	log.Infof("Get product for id: %s", req.Id)
+	log.Infof("[GetProduct] product.id=%qq", req.Id)
 
 	// GetProduct will fail on a specific product when feature flag is enabled
 	if p.checkProductFailure(ctx, req.Id) {
