@@ -16,7 +16,7 @@ otlp:
     - cloud.region
     - deployment.environment.name
   
-    # Kubernetes and container resource attributes used to identify the 
+    # When deploying on Kubernetes, resource attributes used to identify the 
     # kubernetes resources in dashboards and alerts.
     - k8s.cluster.name
     - k8s.container.name
@@ -30,7 +30,8 @@ otlp:
     - k8s.statefulset.name
     - container.name
 
-    # Host resource attributes used to identify the host in dashboards and alerts.
+    # When deploying on VMs, resource attributes used to identify 
+    # the host in dashboards and alerts.
     - host.name
   
     # PostgreSQL resource attributes produced by the OTel Collector PostgreSQL receiver

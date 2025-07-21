@@ -41,16 +41,8 @@ receivers:
         enabled: true
       postgresql.deadlocks:
         enabled: true
-
-
     tls:
       insecure: true
-    query_sample_collection:
-      enabled: true
-    top_query_collection:
-      enabled: true
-
-
   redis:
     endpoint: "valkey-cart:6379"
     username: "valkey"
@@ -131,12 +123,6 @@ exporters:
       endpoint: "http://opensearch:9200"
       tls:
         insecure: true
-  prometheus:
-    endpoint: "0.0.0.0:8889"
-  prometheus/with_resource_conversion:
-    endpoint: "0.0.0.0:8890"
-    resource_to_telemetry_conversion:
-      enabled: true
 processors:
   batch:
   memory_limiter:
@@ -166,7 +152,7 @@ service:
     metrics:
       receivers: [docker_stats, httpcheck/frontend-proxy, hostmetrics, nginx, otlp, postgresql, redis, spanmetrics]
       processors: [resourcedetection, memory_limiter, batch]
-      exporters: [otlphttp/prometheus, debug, prometheus, prometheus/with_resource_conversion]
+      exporters: [otlphttp/prometheus, debug]
     logs:
       receivers: [otlp]
       processors: [resourcedetection, memory_limiter, batch]
