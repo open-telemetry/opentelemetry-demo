@@ -22,7 +22,7 @@
     "@types/react-dom": "^19.1.6",
     "autoprefixer": "^10.4.21",
     "eslint": "^9",
-    "eslint-config-next": "15.4.1",
+    "eslint-config-next": "15.4.2",
     "postcss": "^8.5.6",
     "prettier": "^3.6.2",
     "prettier-plugin-tailwindcss": "^0.6.14",
