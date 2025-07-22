@@ -3,6 +3,6 @@
     "markdown-toc": "^1.2.0",
     "markdownlint-cli": "0.45.0",
     "@kt3k/license-checker": "^3.2.2",
-    "@umbrelladocs/linkspector": "^0.4.6"
+    "@umbrelladocs/linkspector": "^0.4.7"
   }
 }
