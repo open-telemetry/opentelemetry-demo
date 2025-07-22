@@ -58,17 +58,17 @@ keeping it up to date for you.
 
 |                           |                |                                  |
 |---------------------------|----------------|----------------------------------|
-| [AlibabaCloud LogService] | [Google Cloud] |  [Oracle]                        |
-| [AppDynamics]             | [Grafana Labs] |  [Sentry]                        |
-| [Aspecto]                 | [Guance]       |  [ServiceNow Cloud Observability]|
-| [Axiom]                   | [Honeycomb.io] |  [SigNoz]                        |
-| [Axoflow]                 | [Instana]      |  [Splunk]                        |
-| [Azure Data Explorer]     | [Kloudfuse]    |  [Sumo Logic]                    |
+| [AlibabaCloud LogService] | [Elastic]      |  [OpenSearch]                    |
+| [AppDynamics]             | [Google Cloud] |  [Oracle]                        |
+| [Aspecto]                 | [Grafana Labs] |  [Sentry]                        |
+| [Axiom]                   | [Guance]       |  [ServiceNow Cloud Observability]|
+| [Axoflow]                 | [Honeycomb.io] |  [SigNoz]                        |
+| [Azure Data Explorer]     | [Instana]      |  [Splunk]                        |
+| [Causely]                 | [Kloudfuse]    |  [Sumo Logic]                    |
 | [Coralogix]               | [Last9]        |  [TelemetryHub]                  |
 | [Dash0]                   | [Liatrio]      |  [Teletrace]                     |
 | [Datadog]                 | [Logz.io]      |  [Tracetest]                     |
 | [Dynatrace]               | [New Relic]    |  [Uptrace]                       |
-| [Elastic]                 | [OpenSearch]   |                                  |
 
 ## Contributing
 
@@ -118,6 +118,7 @@ For more information about the emeritus role, see the [community repository](htt
 [Axiom]: https://play.axiom.co/axiom-play-qf1k/dashboards/otel.traces.otel-demo-traces
 [Axoflow]: https://axoflow.com/opentelemetry-support-in-more-detail-in-axosyslog-and-syslog-ng/
 [Azure Data Explorer]: https://github.com/Azure/Azure-kusto-opentelemetry-demo
+[Causely]: https://github.com/causely-oss/otel-demo
 [Coralogix]: https://coralogix.com/blog/configure-otel-demo-send-telemetry-data-coralogix
 [Dash0]: https://github.com/dash0hq/opentelemetry-demo
 [Datadog]: https://docs.datadoghq.com/opentelemetry/guide/otel_demo_to_datadog
