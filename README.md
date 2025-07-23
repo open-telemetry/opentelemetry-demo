@@ -58,25 +58,23 @@ keeping it up to date for you.
 
 |                           |                |                                  |
 |---------------------------|----------------|----------------------------------|
-| [AlibabaCloud LogService] | [Google Cloud] |  [Oracle]                        |
-| [AppDynamics]             | [Grafana Labs] |  [Sentry]                        |
-| [Aspecto]                 | [Guance]       |  [ServiceNow Cloud Observability]|
-| [Axiom]                   | [Honeycomb.io] |  [SigNoz]                        |
-| [Axoflow]                 | [Instana]      |  [Splunk]                        |
-| [Azure Data Explorer]     | [Kloudfuse]    |  [Sumo Logic]                    |
+| [AlibabaCloud LogService] | [Elastic]      |  [OpenSearch]                    |
+| [AppDynamics]             | [Google Cloud] |  [Oracle]                        |
+| [Aspecto]                 | [Grafana Labs] |  [Sentry]                        |
+| [Axiom]                   | [Guance]       |  [ServiceNow Cloud Observability]|
+| [Axoflow]                 | [Honeycomb.io] |  [SigNoz]                        |
+| [Azure Data Explorer]     | [Instana]      |  [Splunk]                        |
+| [Causely]                 | [Kloudfuse]    |  [Sumo Logic]                    |
 | [Coralogix]               | [Last9]        |  [TelemetryHub]                  |
 | [Dash0]                   | [Liatrio]      |  [Teletrace]                     |
 | [Datadog]                 | [Logz.io]      |  [Tracetest]                     |
 | [Dynatrace]               | [New Relic]    |  [Uptrace]                       |
-| [Elastic]                 | [OpenSearch]   |                                  |
 
 ## Contributing
 
 To get involved with the project see our [CONTRIBUTING](CONTRIBUTING.md)
 documentation. Our [SIG Calls](CONTRIBUTING.md#join-a-sig-call) are every other
 Wednesday at 8:30 AM PST and anyone is welcome.
-
-## Project leadership
 
 ### Maintainers
 
@@ -85,13 +83,14 @@ Wednesday at 8:30 AM PST and anyone is welcome.
 - [Pierre Tessier](https://github.com/puckpuck), Honeycomb
 - [Roger Coll](https://github.com/rogercoll), Elastic
 
-For more information about the maintainer role, see the [community repository](https://github.com/open-telemetry/community/blob/main/community-membership.md#maintainer).
+For more information about the maintainer role, see the [community repository](https://github.com/open-telemetry/community/blob/main/guides/contributor/membership.md#maintainer).
 
 ### Approvers
 
 - [Cedric Ziel](https://github.com/cedricziel), Grafana Labs
+- [Shenoy Pratik](https://github.com/ps48), AWS OpenSearch
 
-For more information about the approver role, see the [community repository](https://github.com/open-telemetry/community/blob/main/community-membership.md#approver).
+For more information about the approver role, see the [community repository](https://github.com/open-telemetry/community/blob/main/guides/contributor/membership.md#approver).
 
 ### Emeritus
 
@@ -119,6 +118,7 @@ For more information about the emeritus role, see the [community repository](htt
 [Axiom]: https://play.axiom.co/axiom-play-qf1k/dashboards/otel.traces.otel-demo-traces
 [Axoflow]: https://axoflow.com/opentelemetry-support-in-more-detail-in-axosyslog-and-syslog-ng/
 [Azure Data Explorer]: https://github.com/Azure/Azure-kusto-opentelemetry-demo
+[Causely]: https://github.com/causely-oss/otel-demo
 [Coralogix]: https://coralogix.com/blog/configure-otel-demo-send-telemetry-data-coralogix
 [Dash0]: https://github.com/dash0hq/opentelemetry-demo
 [Datadog]: https://docs.datadoghq.com/opentelemetry/guide/otel_demo_to_datadog

@@ -9,8 +9,14 @@ on:
     branches: [main]
   workflow_dispatch:
 
+permissions:
+  contents: read
+
 jobs:
   build_images:
+    permissions: # required by the reusable workflow
+      contents: read
+      packages: write
     uses: ./.github/workflows/component-build-images.yml
     with:
       push: false

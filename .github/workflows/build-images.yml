@@ -8,6 +8,10 @@ on:
       - 'src/**'
       - 'test/**'
 
+permissions:
+  contents: read
+  packages: write
+
 jobs:
   build_images:
     if: github.repository == 'open-telemetry/opentelemetry-demo'
