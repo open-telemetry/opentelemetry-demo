@@ -561,11 +561,7 @@ services:
     image: ${JAEGERTRACING_IMAGE}
     container_name: jaeger
     command:
-      - "--memory.max-traces=5000"
-      - "--query.base-path=/jaeger/ui"
-      - "--prometheus.server-url=http://${PROMETHEUS_ADDR}"
-      - "--prometheus.query.normalize-calls=true"
-      - "--prometheus.query.normalize-duration=true"
+      - "--config=file:/etc/jaeger/config.yml"
     deploy:
       resources:
         limits:
@@ -575,7 +571,10 @@ services:
       - "${JAEGER_PORT}"         # Jaeger UI
       - "${OTEL_COLLECTOR_PORT_GRPC}"
     environment:
-      - METRICS_STORAGE_TYPE=prometheus
+      - PROMETHEUS_ADDR=${PROMETHEUS_ADDR}
+      - MAX_MEMORY_TRACES=5000
+    volumes:
+      - ./src/jaeger:/etc/jaeger
     logging: *logging
 
   # Grafana

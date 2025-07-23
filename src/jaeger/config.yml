@@ -1,0 +1,54 @@
+service:
+  extensions: [jaeger_storage, jaeger_query, healthcheckv2]
+  pipelines:
+    traces:
+      receivers: [otlp]
+      processors: [batch]
+      exporters: [jaeger_storage_exporter]
+  telemetry:
+    resource:
+      service.name: jaeger-query
+    metrics:
+      level: detailed
+      readers:
+        - pull:
+            exporter:
+              prometheus:
+                host: 0.0.0.0
+                port: 8080
+    logs:
+      level: info
+extensions:
+  healthcheckv2:
+    use_v2: true
+    http:
+
+  jaeger_query:
+    storage:
+      traces: memory_backend
+      metrics: metrics_backend
+    base_path: /jaeger/ui
+  jaeger_storage:
+    backends:
+      memory_backend:
+        memory:
+          max_traces: ${env:MEMORY_MAX_TRACES:-25000}
+    metric_backends:
+      metrics_backend:
+        prometheus:
+          endpoint: "http://${env:PROMETHEUS_ADDR}"
+          normalize_calls: true
+          normalize_duration: true
+
+receivers:
+  otlp:
+    protocols:
+      grpc:
+        endpoint: 0.0.0.0:${env:OTEL_COLLECTOR_PORT_GRPC:-4317}
+
+processors:
+  batch:
+
+exporters:
+  jaeger_storage_exporter:
+    trace_storage: memory_backend
