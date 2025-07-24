@@ -736,12 +736,11 @@ services:
       - "${JAEGER_PORT}"         # Jaeger UI
       - "${OTEL_COLLECTOR_PORT_GRPC}"
     environment:
-      - METRICS_STORAGE_TYPE=prometheus
       - PROMETHEUS_ADDR
       - OTEL_COLLECTOR_PORT_GRPC
       - MEMORY_MAX_TRACES=25000
     volumes:
-      - ./src/jaeger:/etc/jaeger
+      - ./src/jaeger/config.yml:/etc/jaeger/config.yml
     logging: *logging
 
   # Grafana

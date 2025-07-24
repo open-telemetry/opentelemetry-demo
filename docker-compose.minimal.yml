@@ -575,7 +575,7 @@ services:
       - OTEL_COLLECTOR_PORT_GRPC
       - MEMORY_MAX_TRACES=5000
     volumes:
-      - ./src/jaeger:/etc/jaeger
+      - ./src/jaeger/config.yml:/etc/jaeger/config.yml
     logging: *logging
 
   # Grafana
