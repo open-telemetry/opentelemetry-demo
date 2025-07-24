@@ -58,7 +58,7 @@
     "@typescript-eslint/parser": "8.38.0",
     "cypress": "14.5.2",
     "eslint": "9.31.0",
-    "eslint-config-next": "15.4.2",
+    "eslint-config-next": "15.4.3",
     "eslint-plugin-react": "7.37.5",
     "eslint-plugin-react-hooks": "5.2.0",
     "openapi-typescript": "7.8.0",
