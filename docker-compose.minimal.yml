@@ -571,7 +571,8 @@ services:
       - "${JAEGER_PORT}"         # Jaeger UI
       - "${OTEL_COLLECTOR_PORT_GRPC}"
     environment:
-      - PROMETHEUS_ADDR=${PROMETHEUS_ADDR}
+      - PROMETHEUS_ADDR
+      - OTEL_COLLECTOR_PORT_GRPC
       - MAX_MEMORY_TRACES=5000
     volumes:
       - ./src/jaeger:/etc/jaeger
