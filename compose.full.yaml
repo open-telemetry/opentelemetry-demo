@@ -1,27 +1,26 @@
 # Copyright The OpenTelemetry Authors
 # SPDX-License-Identifier: Apache-2.0
 
+# YAML anchor for services that depend on Kafka
+# This template can be reused with 
+# <<: *kafka-service 
+# to avoid duplication
+x-kafka-service: &kafka-service
+  depends_on:
+    kafka:
+      condition: service_healthy
+  environment:
+    - KAFKA_ADDR=${KAFKA_HOST}:${KAFKA_PORT}
+
 services:
   accounting:
-    depends_on:
-      kafka:
-        condition: service_healthy
-    environment:
-      - KAFKA_ADDR=${KAFKA_HOST}:${KAFKA_PORT}
+    <<: *kafka-service
 
   checkout:
-    depends_on:
-      kafka:
-        condition: service_healthy
-    environment:
-      - KAFKA_ADDR=${KAFKA_HOST}:${KAFKA_PORT}
+    <<: *kafka-service
   
   fraud-detection:
-    depends_on:
-      kafka:
-        condition: service_healthy
-    environment:
-      - KAFKA_ADDR=${KAFKA_HOST}:${KAFKA_PORT}
+    <<: *kafka-service
       
   frontend-proxy:
     depends_on:
