@@ -76,6 +76,8 @@ the release.
   ([#2352]((https://github.com/open-telemetry/opentelemetry-demo/pull/2352)))
 * [image-provider] Update to latest version of nginx and alpine
   ([#2369](https://github.com/open-telemetry/opentelemetry-demo/pull/2369))
+* [load-generator] Fix Playwright wait until load state error
+  ([#2374](https://github.com/open-telemetry/opentelemetry-demo/pull/2374))
 
 ## 2.0.2
 
