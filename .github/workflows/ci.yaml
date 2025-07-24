@@ -11,7 +11,7 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - name: checkout code
+      - name: Checkout code
         uses: actions/checkout@v4
 
       - name: Setup Go 1.22
@@ -25,7 +25,7 @@ jobs:
           go mod download
           go build -o product-catalog-service main.go
 
-      - name: unit tests
+      - name: Unit tests
         run: |
           cd src/product-catalog
           go test ./...
@@ -33,7 +33,7 @@ jobs:
   code-quality:
     runs-on: ubuntu-latest
     steps:
-      - name: checkout code
+      - name: Checkout code
         uses: actions/checkout@v4
       
       - name: Setup Go 1.22
@@ -52,38 +52,37 @@ jobs:
     runs-on: ubuntu-latest
     needs: build
     steps:
-      - name: checkout code
+      - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Install Docker
+      - name: Install Docker Buildx
         uses: docker/setup-buildx-action@v1
-      
-      # 🔐 ✅ THIS STEP MUST BE MODIFIED
-      - name: Login to Docker
+
+      - name: Login to Docker Hub
         run: echo "${{ secrets.DOCKER_TOKEN }}" | docker login -u "${{ secrets.DOCKER_USERNAME }}" --password-stdin
-      
-      - name: Docker Push
+
+      - name: Build & Push Docker image
         uses: docker/build-push-action@v6
         with:
           context: src/product-catalog
           file: src/product-catalog/Dockerfile
           push: true
-          tags: pratyusha/product-catalog:${{ github.run_id }}
+          tags: pratyusha687/product-catalog:${{ github.run_id }}
 
   updatek8s:
     runs-on: ubuntu-latest
     needs: docker
     steps:
-      - name: checkout code
+      - name: Checkout code
         uses: actions/checkout@v4
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Update tag in kubernetes deployment manifest
-        run: | 
-          sed -i "s|image: .*|image: pratyusha/product-catalog:${{ github.run_id }}|" kubernetes/productcatalog/deploy.yaml
-      
-      - name: Commit and push changes
+      - name: Update image tag in Kubernetes manifest
+        run: |
+          sed -i "s|image: .*|image: pratyusha687/product-catalog:${{ github.run_id }}|" kubernetes/productcatalog/deploy.yaml
+
+      - name: Commit and push manifest changes
         run: |
           git config --global user.email "prathyusha9449@gmail.com"
           git config --global user.name "Pratyushaa94"
