@@ -12,6 +12,8 @@ datasources:
     editable: true
     isDefault: true
     jsonData:
+      # Align Prometheus data source time interval with the OTel SDKs' export interval (see OTEL_METRIC_EXPORT_INTERVAL)
+      timeInterval: "60s"
       exemplarTraceIdDestinations:
         - datasourceUid: webstore-traces
           name: trace_id
