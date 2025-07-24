@@ -80,7 +80,7 @@ jobs:
 
       - name: Update image tag in Kubernetes manifest
         run: |
-          sed -i "s|image: .*|image: pratyusha687/product-catalog:${{ github.run_id }}|" kubernetes/productcatalog/deploy.yaml
+          sed -i "s|image: .*|image: prathyusha687/product-catalog:${{ github.run_id }}|" kubernetes/productcatalog/deploy.yaml
 
       - name: Commit and push manifest changes
         run: |
