@@ -737,7 +737,9 @@ services:
       - "${OTEL_COLLECTOR_PORT_GRPC}"
     environment:
       - METRICS_STORAGE_TYPE=prometheus
-      - PROMETHEUS_ADDR=${PROMETHEUS_ADDR}
+      - PROMETHEUS_ADDR
+      - OTEL_COLLECTOR_PORT_GRPC
+      - MEMORY_MAX_TRACES=25000
     volumes:
       - ./src/jaeger:/etc/jaeger
     logging: *logging
