@@ -78,6 +78,11 @@ the release.
   ([#2369](https://github.com/open-telemetry/opentelemetry-demo/pull/2369))
 * [chore] Upgrade to v2.8.0 version of jaeger
   ([#2369](https://github.com/open-telemetry/opentelemetry-demo/pull/2389))
+* [load-generator] Fix Playwright wait until load state error
+  ([#2374](https://github.com/open-telemetry/opentelemetry-demo/pull/2374))
+* [flagd] Bump Flagd to v0.12.8 and get compliant `http.Server.request.duration`
+  OTel metrics that can be used in the APM dashboard
+  ([#2392](https://github.com/open-telemetry/opentelemetry-demo/pull/2392))
 
 ## 2.0.2
 

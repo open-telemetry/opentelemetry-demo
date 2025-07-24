@@ -248,8 +248,10 @@ if browser_traffic_enabled:
                     page.on("console", lambda msg: print(msg.text))
                     await page.route('**/*', add_baggage_header)
                     await page.goto("/", wait_until="domcontentloaded")
-                    await page.click('p:has-text("Roof Binoculars")', wait_until="domcontentloaded")
-                    await page.click('button:has-text("Add To Cart")', wait_until="domcontentloaded")
+                    await page.click('p:has-text("Roof Binoculars")')
+                    await page.wait_for_load_state("domcontentloaded")
+                    await page.click('button:has-text("Add To Cart")')
+                    await page.wait_for_load_state("domcontentloaded")
                     await page.wait_for_timeout(2000)  # giving the browser time to export the traces
                     logging.info("Product added to cart successfully")
                 except Exception as e:
