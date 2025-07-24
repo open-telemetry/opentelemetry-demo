@@ -1,0 +1,29 @@
+# Copyright The OpenTelemetry Authors
+# SPDX-License-Identifier: Apache-2.0
+
+services:
+  accounting:
+    depends_on:
+      kafka:
+        condition: service_healthy
+    environment:
+      - KAFKA_ADDR=${KAFKA_HOST}:${KAFKA_PORT}
+
+  checkout:
+    depends_on:
+      kafka:
+        condition: service_healthy
+    environment:
+      - KAFKA_ADDR=${KAFKA_HOST}:${KAFKA_PORT}
+  
+  fraud-detection:
+    depends_on:
+      kafka:
+        condition: service_healthy
+    environment:
+      - KAFKA_ADDR=${KAFKA_HOST}:${KAFKA_PORT}
+      
+  frontend-proxy:
+    depends_on:
+      load-generator:
+        condition: service_started
