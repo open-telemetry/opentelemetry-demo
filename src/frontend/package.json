@@ -11,7 +11,7 @@
     "grpc:generate": "mkdir -p ./protos && protoc -I ./pb  --plugin=./node_modules/.bin/protoc-gen-ts_proto --ts_proto_opt=esModuleInterop=true --ts_proto_out=./protos --ts_proto_opt=outputServices=grpc-js demo.proto"
   },
   "dependencies": {
-    "@bufbuild/protobuf": "^2.6.1",
+    "@bufbuild/protobuf": "^2.6.2",
     "@grpc/grpc-js": "1.12.6",
     "@openfeature/flagd-provider": "0.13.3",
     "@openfeature/flagd-web-provider": "0.7.3",
@@ -41,7 +41,7 @@
     "currency-symbol-map": "5.1.0",
     "dotenv": "17.2.0",
     "dotenv-expand": "12.0.2",
-    "next": "15.4.2",
+    "next": "15.4.3",
     "react": "19.1.0",
     "react-dom": "19.1.0",
     "sharp": "0.34.3",
