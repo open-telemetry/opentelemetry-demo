@@ -2,10 +2,11 @@
 
 name: product-catalog-ci
 
-on: 
-    pull_request:
-        branches:
-        - cicheck
+on:
+  push:
+    branches:
+      - cicheck
+
 
 jobs:
     build:
