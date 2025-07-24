@@ -2,8 +2,8 @@
 # SPDX-License-Identifier: Apache-2.0
 
 # YAML anchor for services that depend on Kafka
-# This template can be reused with 
-# <<: *kafka-service 
+# This template can be reused with
+# <<: *kafka-service
 # to avoid duplication
 x-kafka-service: &kafka-service
   depends_on:
@@ -18,10 +18,10 @@ services:
 
   checkout:
     <<: *kafka-service
-  
+
   fraud-detection:
     <<: *kafka-service
-      
+
   frontend-proxy:
     depends_on:
       load-generator:
