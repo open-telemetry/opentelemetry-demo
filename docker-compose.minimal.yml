@@ -573,7 +573,7 @@ services:
     environment:
       - PROMETHEUS_ADDR
       - OTEL_COLLECTOR_PORT_GRPC
-      - MAX_MEMORY_TRACES=5000
+      - MEMORY_MAX_TRACES=5000
     volumes:
       - ./src/jaeger:/etc/jaeger
     logging: *logging
