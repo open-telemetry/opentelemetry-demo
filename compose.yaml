@@ -243,7 +243,7 @@ services:
     profiles:
       - full
       - minimal
-  
+
   # Fraud Detection service
   fraud-detection:
     image: ${IMAGE_NAME}:${DEMO_VERSION}-fraud-detection
@@ -278,7 +278,7 @@ services:
     logging: *logging
     profiles:
       - full
-  
+
   # Frontend
   frontend:
     image: ${IMAGE_NAME}:${DEMO_VERSION}-frontend
@@ -342,7 +342,7 @@ services:
     profiles:
       - full
       - minimal
-  
+
   # Frontend Proxy (Envoy)
   frontend-proxy:
     image: ${IMAGE_NAME}:${DEMO_VERSION}-frontend-proxy
@@ -394,7 +394,7 @@ services:
     profiles:
       - full
       - minimal
-  
+
   # image-provider
   image-provider:
     image: ${IMAGE_NAME}:${DEMO_VERSION}-image-provider
@@ -424,7 +424,7 @@ services:
     profiles:
       - full
       - minimal
-  
+
   # Load Generator
   load-generator:
     image: ${IMAGE_NAME}:${DEMO_VERSION}-load-generator
@@ -464,7 +464,7 @@ services:
     logging: *logging
     profiles:
       - full
-  
+
   # Payment service
   payment:
     image: ${IMAGE_NAME}:${DEMO_VERSION}-payment
@@ -536,7 +536,7 @@ services:
     profiles:
       - full
       - minimal
-  
+
   # Quote service
   quote:
     image: ${IMAGE_NAME}:${DEMO_VERSION}-quote
@@ -568,7 +568,7 @@ services:
     profiles:
       - full
       - minimal
-  
+
   # Recommendation service
   recommendation:
     image: ${IMAGE_NAME}:${DEMO_VERSION}-recommendation
@@ -609,7 +609,7 @@ services:
     profiles:
       - full
       - minimal
-  
+
   # Shipping service
   shipping:
     image: ${IMAGE_NAME}:${DEMO_VERSION}-shipping
@@ -681,7 +681,7 @@ services:
     profiles:
       - full
       - minimal
-  
+
   # Flagd UI for configuring the feature flag service
   flagd-ui:
     image: ${IMAGE_NAME}:${DEMO_VERSION}-flagd-ui
@@ -712,7 +712,7 @@ services:
     profiles:
       - full
       - minimal
-  
+
   # Kafka used by Checkout, Accounting, and Fraud Detection services
   kafka:
     image: ${IMAGE_NAME}:${DEMO_VERSION}-kafka
@@ -749,7 +749,7 @@ services:
     logging: *logging
     profiles:
       - full
-  
+
   # Postgresql used by Accounting service
   postgresql:
     image: ${POSTGRES_IMAGE}
@@ -766,7 +766,7 @@ services:
     logging: *logging
     profiles:
       - full
-  
+
   # Valkey used by Cart service
   valkey-cart:
     image: ${VALKEY_IMAGE}
@@ -783,7 +783,7 @@ services:
     profiles:
       - full
       - minimal
-  
+
   # ********************
   # Telemetry Components
   # ********************
@@ -833,7 +833,7 @@ services:
     profiles:
       - full
       - minimal
-  
+
   # OpenSearch
   opensearch:
     image: ${OPENSEARCH_IMAGE}
@@ -910,7 +910,7 @@ services:
     profiles:
       - full
       - minimal
-    
+
   # Prometheus
   prometheus:
     image: ${PROMETHEUS_IMAGE}
