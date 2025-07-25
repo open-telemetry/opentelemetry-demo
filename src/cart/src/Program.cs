@@ -17,7 +17,7 @@ using OpenTelemetry.Resources;
 using OpenTelemetry.Trace;
 using OpenFeature;
 using OpenFeature.Contrib.Providers.Flagd;
-using OpenFeature.Contrib.Hooks.Otel;
+using OpenFeature.Hooks;
 
 var builder = WebApplication.CreateBuilder(args);
 string valkeyAddress = builder.Configuration["VALKEY_ADDR"];
@@ -75,7 +75,7 @@ builder.Services.AddOpenTelemetry()
         .AddAspNetCoreInstrumentation()
         .SetExemplarFilter(ExemplarFilterType.TraceBased)
         .AddOtlpExporter());
-OpenFeature.Api.Instance.AddHooks(new TracingHook());
+OpenFeature.Api.Instance.AddHooks(new TraceEnricherHook());
 builder.Services.AddGrpc();
 builder.Services.AddGrpcHealthChecks()
     .AddCheck("Sample", () => HealthCheckResult.Healthy());
