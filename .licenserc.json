@@ -28,10 +28,12 @@
       "# Copyright The OpenTelemetry Authors",
       "# SPDX-License-Identifier: Apache-2.0"
     ],
+
     "**/*.sql": [
       "-- Copyright The OpenTelemetry Authors",
       "-- SPDX-License-Identifier: Apache-2.0"
     ],
+
     "**/{Dockerfile,Makefile}": [
       "# Copyright The OpenTelemetry Authors",
       "# SPDX-License-Identifier: Apache-2.0"

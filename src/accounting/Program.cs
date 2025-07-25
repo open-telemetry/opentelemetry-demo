@@ -4,6 +4,8 @@
 using Accounting;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Dapr;
+using Dapr.Client;
 
 Console.WriteLine("Accounting service started");
 

@@ -7,6 +7,14 @@ the release.
 
 ## Unreleased
 
+
+* [product catalog] use it with a Dapr client
+  ([#2143](https://github.com/open-telemetry/opentelemetry-demo/pull/2143))
+* [cartservice] Using Dapr to connect to valkey
+  ([#2143](https://github.com/open-telemetry/opentelemetry-demo/pull/2143))
+* [postgresl] added postgresql for product
+  ([#2143](https://github.com/open-telemetry/opentelemetry-demo/pull/2143))
+
 * [chore] add GOMEMLIMIT to all Go services
   ([#2148](https://github.com/open-telemetry/opentelemetry-demo/pull/2148))
 * [product-catalog] Simplify span event name
@@ -44,6 +52,7 @@ the release.
 * [flagd-ui] change image from alpine to distroless to reduce size
   ([#2224](https://github.com/open-telemetry/opentelemetry-demo/pull/2224))
 * [load-generator] Update locustfile for logging with TraceContext
+
   ([#2265](https://github.com/open-telemetry/opentelemetry-demo/pull/2265))
 * [product-catalog] Add OTel grpc Logs to Product Catalog
   ([#2285](https://github.com/open-telemetry/opentelemetry-demo/pull/2285))
@@ -90,12 +99,10 @@ the release.
   fix for `IS_REMOTE` flag feature
   ([#2112](https://github.com/open-telemetry/opentelemetry-demo/pull/2112))
 * [load-generator] Change OpenFeature Evaluation to Remote Evaluation Protocol,
-  based on [this issue in OpenFeature/python-sdk-contrib](https://github.com/open-feature/python-sdk-contrib/issues/198)
+  ([this issue in OpenFeature/python-sdk-contrib](https://github.com/open-feature/python-sdk-contrib/issues/198))
   ([#2114](https://github.com/open-telemetry/opentelemetry-demo/pull/2114))
 * [flagd-ui] increase memory to 100MB
   ([#2120](https://github.com/open-telemetry/opentelemetry-demo/pull/2120))
-* [cartservice] change custom metrics to use seconds
-  ([#2135](https://github.com/open-telemetry/opentelemetry-demo/pull/2135))
 
 ## 2.0.1
 
