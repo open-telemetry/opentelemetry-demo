@@ -17,6 +17,9 @@ the release.
   ([#2114](https://github.com/open-telemetry/opentelemetry-demo/pull/2114))
 * [flagd-ui] increase memory to 100MB
   ([#2120](https://github.com/open-telemetry/opentelemetry-demo/pull/2120))
+* [cart] Updated .NET SDK, instrumentation, Redis driver, and OpenFeature libraries
+  to latest releases
+  ([#2400](https://github.com/open-telemetry/opentelemetry-demo/pull/2400))
 
 ## 2.0.1
 
