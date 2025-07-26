@@ -9,9 +9,9 @@ groups:
       rules:
         - uid: des78nlna99tsf
           title: CartAddItemHighLatency
-          condition: C
+          condition: p95_threshold
           data:
-            - refId: A
+            - refId: p95_duration
               relativeTimeRange:
                 from: 600
                 to: 0
@@ -21,7 +21,7 @@ groups:
                 expr: |-
                     histogram_quantile(
                       0.95,
-                      sum by (le, deployment_environment_name, service_namespace, service_name) (
+                      sum by (deployment_environment_name, service_namespace, service_name, service_instance_id, http_route, http_request_method, le) (
                         rate(
                           http_server_request_duration_seconds_bucket{
                             deployment_environment_name="",
@@ -39,8 +39,8 @@ groups:
                 legendFormat: __auto
                 maxDataPoints: 43200
                 range: false
-                refId: A
-            - refId: C
+                refId: p95_duration
+            - refId: p95_threshold
               datasourceUid: __expr__
               model:
                 conditions:
@@ -60,10 +60,10 @@ groups:
                 datasource:
                     type: __expr__
                     uid: __expr__
-                expression: A
+                expression: p95_duration
                 intervalMs: 1000
                 maxDataPoints: 43200
-                refId: C
+                refId: p95_threshold
                 type: threshold
           dashboardUid: febljk0a32qyoa
           panelId: 17
@@ -76,14 +76,13 @@ groups:
             __panelId__: "17"
             description: |-
                 The 95th percentile response time for operation {{ $labels.service_namespace
-                    }}/{{ index $labels.service_name }} "{{ $labels.http_request_method }} {{
-                    $labels.http_route }}" ({{ $labels.deployment_environment_name }}) has been
-                    above 2 seconds for 2 minutes on {{ $labels.service_instance_id}}. Current
-                    value: {{ $value }}.
+                    }}/{{ $labels.service_name }} "{{ $labels.http_request_method }} {{
+                    $labels.http_route }}" has been
+                    above xxx seconds for 2 minutes on {{ $labels.service_instance_id}}. Current
+                    value: {{ .Value | humanizeDuration }}.
             summary: |-
                 High P95 for {{ $labels.service_namespace }}/{{ $labels.service_name }} "{{
-                    $labels.http_request_method }} {{ $labels.http_route }}" ({{
-                    $labels.deployment_environment_name }})
+                    $labels.http_request_method }} {{ $labels.http_route }}"
           labels:
             service_name: cart
             service_namespace: opentelemetry-demo
