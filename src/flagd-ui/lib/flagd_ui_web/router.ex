@@ -18,6 +18,7 @@ defmodule FlagdUiWeb.Router do
     pipe_through :browser
 
     live "/", Dashboard
+    live "/advanced", AdvancedEditor
   end
 
   # Other scopes may use custom stacks.
