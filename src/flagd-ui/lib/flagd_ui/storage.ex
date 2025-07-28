@@ -25,6 +25,15 @@ defmodule FlagdUi.Storage do
   end
 
   @impl true
+  def handle_cast({:replace, json_string}, _) do
+    new_state = Jason.decode!(json_string)
+
+    write_state(json_string)
+
+    {:noreply, new_state}
+  end
+
+  @impl true
   def handle_cast({:write, flag_name, flag_value}, state) do
     new_state =
       Map.update(state, "flags", %{}, fn flags ->
@@ -33,11 +42,7 @@ defmodule FlagdUi.Storage do
 
     json_state = Jason.encode!(new_state, pretty: true)
 
-    File.cwd!()
-    |> file_path()
-    |> File.write!(json_state)
-
-    Logger.info("Wrote new state to file")
+    write_state(json_state)
 
     {:noreply, new_state}
   end
@@ -51,5 +56,13 @@ defmodule FlagdUi.Storage do
       {flag, data} -> {flag, data}
     end)
     |> Map.new()
+  end
+
+  defp write_state(json_string) do
+    File.cwd!()
+    |> file_path()
+    |> File.write!(json_string)
+
+    Logger.info("Wrote new state to file")
   end
 end
