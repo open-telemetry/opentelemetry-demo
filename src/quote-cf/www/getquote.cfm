@@ -5,6 +5,27 @@ sleep(randRange(0,300,'SHA1PRNG')+100);
 // Copyright The OpenTelemetry Authors
 // SPDX-License-Identifier: Apache-2.0
 
+// Function to calculate quote from request data
+function calculateQuote(requestData) {
+    var quote = 0.0;
+    
+    try {
+        if (!structKeyExists(requestData, "numberOfItems")) {
+            throw(type="InvalidArgumentException", message="numberOfItems not provided");
+        }
+        
+        var numberOfItems = val(requestData.numberOfItems);
+        var costPerItem = randRange(400, 1000) / 10.0;
+        quote = round(costPerItem * numberOfItems * 100) / 100; // Round to 2 decimal places
+        
+    } catch (any e) {
+        // Handle errors but still return quote
+        writeLog(file="quote_errors", text="Quote calculation error: " & e.message);
+    }
+    
+    return quote;
+}
+
 // Set the response content type to JSON
 getPageContext().getResponse().setContentType("application/json");
 
@@ -126,7 +147,9 @@ try {
         },
         "items": items,
         "item_count": numberOfItems,
-        "services_selected": servicesQuery.recordCount
+        "services_selected": servicesQuery.recordCount,
+        // total is REQUIRED by the otel demo!! needs to be a float!
+        "total": calculateQuote(requestData),
     };
     
     // Output the response as JSON
