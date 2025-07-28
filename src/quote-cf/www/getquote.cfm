@@ -130,30 +130,8 @@ try {
     // Simulate some processing time
     sleep(randRange(50, 200));
     
-    // Build response with customer and quote details
-    response = {
-        "quote_id": quoteId,
-        "quote_number": quoteNumber,
-        "customer": {
-            "company_name": customerQuery.company_name[1],
-            "contact_name": customerQuery.contact_name[1],
-            "email": customerQuery.email[1]
-        },
-        "quote_summary": {
-            "subtotal": numberFormat(subtotal, "999999.99"),
-            "tax_rate": numberFormat(taxRate * 100, "99.99") & "%",
-            "tax_amount": numberFormat(taxAmount, "999999.99"),
-            "total_amount": numberFormat(totalAmount, "999999.99")
-        },
-        "items": items,
-        "item_count": numberOfItems,
-        "services_selected": servicesQuery.recordCount,
-        // total is REQUIRED by the otel demo!! needs to be a float!
-        "total": calculateQuote(requestData),
-    };
-    
     // Output the response as JSON
-    writeOutput(serializeJSON(response));
+    writeOutput(serializeJSON(calculateQuote(requestData)));
 }
 catch (any e) {
     // Handle errors and log to application
