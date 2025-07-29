@@ -60,15 +60,16 @@ keeping it up to date for you.
 |---------------------------|----------------|----------------------------------|
 | [AlibabaCloud LogService] | [Elastic]      |  [OpenSearch]                    |
 | [AppDynamics]             | [Google Cloud] |  [Oracle]                        |
-| [Aspecto]                 | [Grafana Labs] |  [Sentry]                        |
-| [Axiom]                   | [Guance]       |  [ServiceNow Cloud Observability]|
-| [Axoflow]                 | [Honeycomb.io] |  [SigNoz]                        |
-| [Azure Data Explorer]     | [Instana]      |  [Splunk]                        |
-| [Causely]                 | [Kloudfuse]    |  [Sumo Logic]                    |
-| [Coralogix]               | [Last9]        |  [TelemetryHub]                  |
-| [Dash0]                   | [Liatrio]      |  [Teletrace]                     |
-| [Datadog]                 | [Logz.io]      |  [Tracetest]                     |
-| [Dynatrace]               | [New Relic]    |  [Uptrace]                       |
+| [Aspecto]                 | [Grafana Labs] |  [Parseable]                     |
+| [Axiom]                   | [Guance]       |  [Sentry]                        |
+| [Axoflow]                 | [Honeycomb.io] |  [ServiceNow Cloud Observability]|
+| [Azure Data Explorer]     | [Instana]      |  [SigNoz]                        |
+| [Causely]                 | [Kloudfuse]    |  [Splunk]                        |
+| [Coralogix]               | [Last9]        |  [Sumo Logic]                    |
+| [Dash0]                   | [Liatrio]      |  [TelemetryHub]                  |
+| [Datadog]                 | [Logz.io]      |  [Teletrace]                     |
+| [Dynatrace]               | [New Relic]    |  [Tracetest]                     |
+|                           |                |  [Uptrace]                       |
 
 ## Contributing
 
@@ -136,6 +137,7 @@ For more information about the emeritus role, see the [community repository](htt
 [New Relic]: https://github.com/newrelic/opentelemetry-demo
 [OpenSearch]: https://github.com/opensearch-project/opentelemetry-demo
 [Oracle]: https://github.com/oracle-quickstart/oci-o11y-solutions/blob/main/knowledge-content/opentelemetry-demo
+[Parseable]: https://www.parseable.com/blog/open-telemetry-demo-with-parseable-a-complete-observability-setup
 [Sentry]: https://github.com/getsentry/opentelemetry-demo
 [ServiceNow Cloud Observability]: https://docs.lightstep.com/otel/quick-start-operator#send-data-from-the-opentelemetry-demo
 [SigNoz]: https://signoz.io/blog/opentelemetry-demo/
