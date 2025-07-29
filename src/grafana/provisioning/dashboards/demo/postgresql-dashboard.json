@@ -1334,46 +1334,6 @@
       ],
       "title": "Number of active connections",
       "type": "timeseries"
-    },
-    {
-      "collapsed": true,
-      "gridPos": {
-        "h": 1,
-        "w": 24,
-        "x": 0,
-        "y": 22
-      },
-      "id": 16,
-      "panels": [
-        {
-          "description": "",
-          "fieldConfig": {
-            "defaults": {},
-            "overrides": []
-          },
-          "gridPos": {
-            "h": 8,
-            "w": 24,
-            "x": 0,
-            "y": 23
-          },
-          "id": 14,
-          "options": {
-            "code": {
-              "language": "plaintext",
-              "showLineNumbers": false,
-              "showMiniMap": false
-            },
-            "content": "Setup instructions to use this dashboard outside of the OpenTelemetry demo. This dashboard requires:\n\n## Prometheus\n\nPromote required OpenTelemetry PostgreSQL metrics resource Attributes\nthrough the Prometheus OTLP Endpoint. \n\nExample Prometheus OTLP Endpoint configuration snippet:\n\n\n```yaml\notlp:\n  keep_identifying_resource_attributes: true\n  promote_resource_attributes:\n    # REQUIRED RESOURCE ATTRIBUTES\n    # PostgreSQL resource attributes produced by the OTel Collector PostgreSQL receiver\n    # and used in dashboards and alerts.\n    # See https://github.com/open-telemetry/opentelemetry-collector-contrib/blob/main/receiver/postgresqlreceiver/metadata.yaml\n    - postgresql.database.name\n    - postgresql.schema.name\n    - postgresql.table.name\n    - postgresql.index.name\n\n    # When deploying on Kubernetes, resource attributes used to identify the \n    # kubernetes resources in dashboards and alerts.\n    - k8s.cluster.name\n    - k8s.container.name\n    - k8s.cronjob.name\n    - k8s.daemonset.name\n    - k8s.deployment.name\n    - k8s.job.name\n    - k8s.namespace.name\n    - k8s.pod.name\n    - k8s.replicaset.name\n    - k8s.statefulset.name\n    - container.name\n\n    # When deploying on VMs, resource attributes used to identify \n    # the host in dashboards and alerts.\n    - host.name\n  \n    # RECOMMENTED RESOURCE ATTRIBUTES\n\n    - deployment.environment.name\n    - cloud.availability_zone\n    - cloud.region\n\n    - service.instance.id\n    - service.name\n    - service.namespace\n    - service.version\n```\n\n## OpenTelemetry Collector\n\nUse the OpenTelemetry Collector PostgreSQL receiver to scrape PostgreSQL metrics and logs\nand to enrich PostgreSQL telemetry, metrics and logs, with deployment resource attributes \nlike `k8s.*` or `host.*` attributes using the Resource Detection and Kubernetes Attributes processors.\n\nExample configuration snippet:\n\n```yaml\nreceivers:\n  postgresql:\n    endpoint: \"postgresql:5432\"\n    username: \"root\"\n    password: \"otel\"\n    metrics:\n      postgresql.blks_hit:\n        enabled: true\n      postgresql.blks_read:\n        enabled: true\n      postgresql.tup_fetched:\n        enabled: true\n      postgresql.tup_returned:\n        enabled: true\n      postgresql.tup_inserted:\n        enabled: true\n      postgresql.tup_updated:\n        enabled: true\n      postgresql.tup_deleted:\n        enabled: true\n      postgresql.deadlocks:\n        enabled: true\n    tls:\n      insecure: true\n\nprocessors:\n  batch:\n  resourcedetection:\n    # Only use the `docker` detector when running on Docker\n    detectors: [env, docker, system]\n  k8sattributes:\n    extract:\n      metadata:\n        - k8s.deployment.name\n        - k8s.namespace.name\n        - k8s.statefulset.name\n        # ...\n    ...\n\nexporters:\n\n  debug:\n  otlphttp/prometheus:\n    endpoint: \"http://prometheus:9090/api/v1/otlp\"\n    tls:\n      insecure: true\n\nservice:\n  pipelines:\n    metrics:\n      receivers: [postgresql]\n      processors: [k8sattributes, resourcedetection, batch]\n      exporters: [otlp/prometheus]\n    ...\n ```",
-            "mode": "markdown"
-          },
-          "pluginVersion": "12.0.2",
-          "title": "",
-          "type": "text"
-        }
-      ],
-      "title": "Dashboard setup instructions",
-      "type": "row"
     }
   ],
   "preload": false,
