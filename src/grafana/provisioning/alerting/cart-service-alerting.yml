@@ -74,8 +74,6 @@ groups:
         for: 1m
         keepFiringFor: 2m
         annotations:
-          __dashboardUid__: febljk0a32qyoa
-          __panelId__: "17"
           description: |-
             The 95th percentile response time for operation {{ $labels.service_namespace
                 }}/{{ $labels.service_name }} "{{ $labels.http_request_method }} {{
