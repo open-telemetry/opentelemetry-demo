@@ -58,18 +58,18 @@ keeping it up to date for you.
 
 |                           |                |                                  |
 |---------------------------|----------------|----------------------------------|
-| [AlibabaCloud LogService] | [Elastic]      |  [OpenSearch]                    |
-| [AppDynamics]             | [Google Cloud] |  [Oracle]                        |
-| [Aspecto]                 | [Grafana Labs] |  [Parseable]                     |
-| [Axiom]                   | [Guance]       |  [Sentry]                        |
-| [Axoflow]                 | [Honeycomb.io] |  [ServiceNow Cloud Observability]|
-| [Azure Data Explorer]     | [Instana]      |  [SigNoz]                        |
-| [Causely]                 | [Kloudfuse]    |  [Splunk]                        |
-| [Coralogix]               | [Last9]        |  [Sumo Logic]                    |
-| [Dash0]                   | [Liatrio]      |  [TelemetryHub]                  |
-| [Datadog]                 | [Logz.io]      |  [Teletrace]                     |
-| [Dynatrace]               | [New Relic]    |  [Tracetest]                     |
-|                           |                |  [Uptrace]                       |
+| [AlibabaCloud LogService] | [Google Cloud] | [Parseable]                      |
+| [AppDynamics]             | [Grafana Labs] | [Sentry]                         |
+| [Aspecto]                 | [Guance]       | [ServiceNow Cloud Observability] |
+| [Axiom]                   | [Honeycomb.io] | [SigNoz]                         |
+| [Axoflow]                 | [Instana]      | [Splunk]                         |
+| [Azure Data Explorer]     | [Kloudfuse]    | [Sumo Logic]                     |
+| [Causely]                 | [Last9]        | [TelemetryHub]                   |
+| [Coralogix]               | [Liatrio]      | [Teletrace]                      |
+| [Dash0]                   | [Logz.io]      | [Tracetest]                      |
+| [Datadog]                 | [New Relic]    | [Uptrace]                        |
+| [Dynatrace]               | [OpenSearch]   |                                  |
+| [Elastic]                 | [Oracle]       |                                  |
 
 ## Contributing
 
