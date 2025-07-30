@@ -988,7 +988,7 @@ spec:
             #- name: OTEL_TRACES_SAMPLER_ARG
             #  value: "drop=/grpc.health.v1.Health;fallback=parentbased_always_on"    
             - name: SPLUNK_PROFILER_CALL_STACK_INTERVAL
-              value: 500          
+              value: "500"          
             - name: JAVA_TOOL_OPTIONS
             #  value: "-javaagent:/usr/src/app/splunk-otel-javaagent.jar -Dsplunk.profiler.include.internal.stacks=false -Dsplunk.profiler.cpu.data.format=pprof-gzip-base64 -Xmx640m"
               value: "-javaagent:/usr/src/app/splunk-otel-javaagent.jar"
@@ -1030,7 +1030,7 @@ spec:
       serviceAccountName: opentelemetry-demo
       containers:
         - name: cart
-          image: 'ghcr.io/open-telemetry/demo:2.0.2-cart'
+          image: 'ghcr.io/splunk/opentelemetry-demo/otel-cart:0.0.1'
           imagePullPolicy: IfNotPresent
           ports:
             
