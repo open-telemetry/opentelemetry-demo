@@ -38,11 +38,14 @@ WORKDIR /app
 COPY ./src/frontend/package.json package.json
 COPY ./src/frontend/package-lock.json package-lock.json
 
+RUN npm install  @splunk/rum-cli
+
 RUN npm ci --omit=dev
 
 # -----------------------------------------------------------------------------
 
 FROM gcr.io/distroless/nodejs22-debian12:nonroot
+#FROM node:22-slim
 
 WORKDIR /app
 
@@ -58,3 +61,4 @@ COPY ./src/frontend/utils/telemetry/Instrumentation.js Instrumentation.js
 EXPOSE ${FRONTEND_PORT}
 
 CMD ["--require=./Instrumentation.js", "server.js"]
+#ENTRYPOINT ["tail", "-f", "/dev/null"] 
