@@ -81,6 +81,8 @@ the release.
 * [flagd] Bump Flagd to v0.12.8 and get compliant `http.Server.request.duration`
   OTel metrics that can be used in the APM dashboard
   ([#2392](https://github.com/open-telemetry/opentelemetry-demo/pull/2392))
+* [cart] Enable automatic generation of `service.instance.id`
+  ([#2402](https://github.com/open-telemetry/opentelemetry-demo/pull/2402))
 * [prometheus /grafana] Add alerting demo through the `CartAddItemHighLatency`
   alert rule
   [#2401](https://github.com/open-telemetry/opentelemetry-demo/pull/2401)
