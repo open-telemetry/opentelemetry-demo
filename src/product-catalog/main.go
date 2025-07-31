@@ -49,6 +49,7 @@ import (
 	"google.golang.org/grpc/reflection"
 	"google.golang.org/grpc/status"
 	"google.golang.org/protobuf/encoding/protojson"
+	dapr "github.com/dapr/go-sdk/client"
 )
 
 var (
@@ -56,13 +57,22 @@ var (
 	catalog           []*pb.Product
 	resource          *sdkresource.Resource
 	initResourcesOnce sync.Once
+	client dapr.Client
+    daprerror error
 )
 
 const DEFAULT_RELOAD_INTERVAL = 10
+const dapr_store = "product-store"
+
 
 func init() {
 	logger = otelslog.NewLogger("product-catalog")
 
+  client, daprerror = dapr.NewClient()
+  if daprerror != nil {
+    logger.Error(fmt.Sprintf("Cannot create Dapr client : %s", daprerror)
+  }
+  
 	loadProductCatalog()
 }
 
@@ -140,7 +150,7 @@ func main() {
 		}
 		logger.Info("Shutdown logger provider")
 	}()
-
+  
 	tp := initTracerProvider()
 	defer func() {
 		if err := tp.Shutdown(context.Background()); err != nil {
@@ -249,42 +259,43 @@ func loadProductCatalog() {
 	}()
 }
 
+func sendQueryToBackend() ([]*pb.Product, error) {
+  query := `{
+
+  }`
+
+  ctx := context.Background()
+  // Use the client to query the state
+  queryResponse, err := client.QueryStateAlpha1(ctx, dapr_store, query,nil)
+  if err != nil {
+    logger.Error(fmt.Sprintf("DAPR ERROR when sending query: %s",err))
+    st := status.Convert(err)
+
+    logger.Error(fmt.Sprintf("DAPR Code: %s\n", st.Code().String()))
+    logger.Error(fmt.Sprintf("DAPR Message: %s\n", st.Message()))
+    return nil, status.Errorf(codes.Internal, st.Message())
+  }
+  var products []*pb.Product
+
+  for _, product := range queryResponse.Results {
+      var jsonData pb.Product
+      err := protojson.Unmarshal([]byte(product.Value), &jsonData)
+      if err != nil {
+        return nil, status.Errorf(codes.Internal, "error parsing the data")
+      }  	// Now jsonData is a map containing the parsed JSON structure 	fmt.Println(jsonData)
+      products = append(products, &jsonData)
+  }
+  log.Infof("Loaded x%d products", len(products))
+  return products, nil
+}
+
 func readProductFiles() ([]*pb.Product, error) {
-
-	// find all .json files in the products directory
-	entries, err := os.ReadDir("./products")
-	if err != nil {
-		return nil, err
-	}
-
-	jsonFiles := make([]fs.FileInfo, 0, len(entries))
-	for _, entry := range entries {
-		if strings.HasSuffix(entry.Name(), ".json") {
-			info, err := entry.Info()
-			if err != nil {
-				return nil, err
-			}
-			jsonFiles = append(jsonFiles, info)
-		}
-	}
-
-	// read the contents of each .json file and unmarshal into a ListProductsResponse
-	// then append the products to the catalog
-	var products []*pb.Product
-	for _, f := range jsonFiles {
-		jsonData, err := os.ReadFile("./products/" + f.Name())
-		if err != nil {
-			return nil, err
-		}
-
-		var res pb.ListProductsResponse
-		if err := protojson.Unmarshal(jsonData, &res); err != nil {
-			return nil, err
-		}
-
-		products = append(products, res.Products...)
-	}
-
+  var products []*pb.Product
+  products, err :=  sendQueryToBackend()
+  if err != nil {
+    return nil, status.Errorf(codes.Internal, "impossible to getproducts from storage")
+  }
+  
 	logger.LogAttrs(
 		context.Background(),
 		slog.LevelInfo,
