@@ -55,3 +55,4 @@ test/tracetesting/tracetesting-vars.yaml
 !src/currency/build
 src/frontend/utils/telemetry/FrontendTracer.ts.not_used
 src/frontend/utils/telemetry/SessionIdProcessor.ts.not_used
+src/cart/src/Dockerfile.singlearch
