@@ -124,7 +124,7 @@ public class ValkeyCartStore : ICartStore
     public async Task AddItemAsync(string userId, string productId, int quantity)
     {
         var stopwatch = Stopwatch.StartNew();
-        _logger.LogInformation("AddItemAsync called with userId={userId}, productId={productId}, quantity={quantity}", userId, productId, quantity);
+        _logger.LogInformation($"AddItemAsync called with userId={userId}, productId={productId}, quantity={quantity}");
 
         try
         {
@@ -173,7 +173,7 @@ public class ValkeyCartStore : ICartStore
 
     public async Task EmptyCartAsync(string userId)
     {
-        _logger.LogInformation("EmptyCartAsync called with userId={userId}", userId);
+        _logger.LogInformation($"EmptyCartAsync called with userId={userId}");
 
         try
         {
@@ -193,7 +193,7 @@ public class ValkeyCartStore : ICartStore
     public async Task<Oteldemo.Cart> GetCartAsync(string userId)
     {
         var stopwatch = Stopwatch.StartNew();
-        _logger.LogInformation("GetCartAsync called with userId={userId}", userId);
+        _logger.LogInformation($"GetCartAsync called with userId={userId}");
 
         try
         {
