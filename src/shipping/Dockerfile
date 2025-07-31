@@ -14,8 +14,7 @@ RUN if [ "${TARGETPLATFORM}" = "${BUILDPLATFORM}" ] ; then \
         apt-get update && apt-get install --no-install-recommends -y g++ libc6-dev libprotobuf-dev protobuf-compiler ca-certificates; \
     elif [ "${TARGETPLATFORM}" = "linux/arm64" ] && [ "${BUILDPLATFORM}" != "linux/arm64" ] ; then \
         apt-get update && apt-get install --no-install-recommends -y g++-aarch64-linux-gnu libc6-dev-arm64-cross libprotobuf-dev protobuf-compiler ca-certificates && \
-        rustup target add aarch64-unknown-linux-gnu && \
-        rustup toolchain install stable-aarch64-unknown-linux-gnu; \
+        rustup target add aarch64-unknown-linux-gnu; \
     elif [ "${TARGETPLATFORM}" = "linux/amd64" ] && [ "${BUILDPLATFORM}" != "linux/amd64" ] ; then \
         apt-get update && apt-get install --no-install-recommends -y g++ libc6-dev libprotobuf-dev protobuf-compiler ca-certificates; \
     else \
