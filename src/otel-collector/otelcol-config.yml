@@ -20,6 +20,29 @@ receivers:
     collection_interval: 10s
   docker_stats:
     endpoint: unix:///var/run/docker.sock
+  postgresql:
+    endpoint: "postgresql:5432"
+    username: "root"
+    password: "otel"
+    metrics:
+      postgresql.blks_hit:
+        enabled: true
+      postgresql.blks_read:
+        enabled: true
+      postgresql.tup_fetched:
+        enabled: true
+      postgresql.tup_returned:
+        enabled: true
+      postgresql.tup_inserted:
+        enabled: true
+      postgresql.tup_updated:
+        enabled: true
+      postgresql.tup_deleted:
+        enabled: true
+      postgresql.deadlocks:
+        enabled: true
+    tls:
+      insecure: true
   redis:
     endpoint: "valkey-cart:6379"
     username: "valkey"
@@ -111,7 +134,6 @@ exporters:
       endpoint: "http://opensearch:9200"
       tls:
         insecure: true
-
 processors:
   batch:
   memory_limiter:
@@ -139,7 +161,7 @@ service:
       processors: [resourcedetection, memory_limiter, transform, batch]
       exporters: [otlp, debug, spanmetrics]
     metrics:
-      receivers: [docker_stats, httpcheck/frontend-proxy, hostmetrics, nginx, otlp, redis, spanmetrics]
+      receivers: [docker_stats, httpcheck/frontend-proxy, hostmetrics, nginx, otlp, postgresql, redis, spanmetrics]
       processors: [resourcedetection, memory_limiter, batch]
       exporters: [otlphttp/prometheus, debug]
     logs:

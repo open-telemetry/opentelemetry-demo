@@ -35,6 +35,14 @@ otlp:
     # the host in dashboards and alerts.
     - host.name
 
+    # PostgreSQL resource attributes produced by the OTel Collector PostgreSQL receiver
+    # and used in dashboards and alerts.
+    # See https://github.com/open-telemetry/opentelemetry-collector-contrib/blob/main/receiver/postgresqlreceiver/metadata.yaml
+    - postgresql.database.name
+    - postgresql.schema.name
+    - postgresql.table.name
+    - postgresql.index.name
+
 storage:
   tsdb:
     out_of_order_time_window: 30m
