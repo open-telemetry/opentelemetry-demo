@@ -11,7 +11,7 @@ actix-web = "4"
 anyhow = "1.0.98"
 awc = { version = "3.7.0", default-features = false, features = ["compress-zstd"] }
 serde = { version = "1.0.219", features = ["derive"] }
-tonic = "0.13.1"
+tonic = "0.14.0"
 tracing = "0.1.41"
 tracing-subscriber = { version = "0.3.19", features = ["env-filter"] }
 
