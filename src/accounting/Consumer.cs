@@ -6,6 +6,10 @@ using Microsoft.Extensions.Logging;
 using Oteldemo;
 using Microsoft.EntityFrameworkCore;
 using System.Diagnostics;
+using OpenTelemetry;
+using OpenTelemetry.Context.Propagation;
+
+
 
 namespace Accounting;
 
@@ -33,7 +37,7 @@ internal class Consumer : IDisposable
     private bool _isListening;
     private DBContext? _dbContext;
     private static readonly ActivitySource MyActivitySource = new("Accounting.Consumer");
-
+    private static readonly TextMapPropagator Propagator = Propagators.DefaultTextMapPropagator;
     public Consumer(ILogger<Consumer> logger)
     {
         _logger = logger;
@@ -58,9 +62,30 @@ internal class Consumer : IDisposable
             {
                 try
                 {
-                    using var activity = MyActivitySource.StartActivity("order-consumed",  ActivityKind.Internal);
-                    var consumeResult = _consumer.Consume();
-                    ProcessMessage(consumeResult.Message);
+                    // using var activity = MyActivitySource.StartActivity("order-consumed",  ActivityKind.Internal);
+                    // var consumeResult = _consumer.Consume();
+                    // ProcessMessage(consumeResult.Message);
+                var consumeResult = _consumer.Consume();
+
+                // Extract parent context from Kafka headers
+                var parentContext = Propagator.Extract(default, consumeResult.Message.Headers,
+                    (headers, key) =>
+                    {
+                        return headers.TryGetLastBytes(key, out var value)
+                            ? new[] { System.Text.Encoding.UTF8.GetString(value) }
+                            : Array.Empty<string>();
+                    });
+
+               OpenTelemetry.Baggage.Current = parentContext.Baggage;
+
+                // Start activity as a child of the producer span
+                using var activity = MyActivitySource.StartActivity(
+                    "order-consumed",
+                    ActivityKind.Consumer,
+                    parentContext.ActivityContext);
+
+                ProcessMessage(consumeResult.Message);
+
                 }
                 catch (ConsumeException e)
                 {
