@@ -6,7 +6,8 @@ process content of "Unreleased" section content will generate release notes for
 the release.
 
 ## Unreleased
-
+* [accounting] Added Trace extract on Kafka message for correlation
+  ([#2414](https://github.com/open-telemetry/opentelemetry-demo/pull/2414))
 * [chore] add GOMEMLIMIT to all Go services
   ([#2148](https://github.com/open-telemetry/opentelemetry-demo/pull/2148))
 * [product-catalog] Simplify span event name
