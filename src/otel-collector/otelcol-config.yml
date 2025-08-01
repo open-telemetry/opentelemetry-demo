@@ -55,6 +55,8 @@ receivers:
         metrics:
           system.cpu.utilization:
             enabled: true
+          system.cpu.logical.count:
+            enabled: true
       disk:
       load:
       filesystem:
@@ -98,14 +100,23 @@ receivers:
         metrics:
           system.memory.utilization:
             enabled: true
+          system.memory.limit:
+            enabled: true
       network:
       paging:
+        metrics:
+          system.paging.usage:
+            enabled: true
+
       processes:
       process:
         mute_process_exe_error: true
         mute_process_io_error: true
         mute_process_user_error: true
-
+      system:
+        metrics:
+          system.uptime:
+            enabled: true
 exporters:
   debug:
   otlp:
