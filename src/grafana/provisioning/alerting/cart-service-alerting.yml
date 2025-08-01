@@ -1,0 +1,93 @@
+# Copyright The OpenTelemetry Authors
+# SPDX-License-Identifier: Apache-2.0
+
+---
+apiVersion: 1
+groups:
+  - orgId: 1
+    name: otel-demo
+    folder: cart
+    interval: 1m
+    rules:
+      - uid: des78nlna99tsf
+        title: CartAddItemHighLatency
+        condition: p95_threshold
+        data:
+          - refId: p95_duration
+            relativeTimeRange:
+              from: 600
+              to: 0
+            datasourceUid: webstore-metrics
+            model:
+              editorMode: code
+              expr: |-
+                histogram_quantile(
+                  0.95,
+                  sum by (deployment_environment_name, service_namespace, service_name, service_instance_id, http_route, http_request_method, le) (
+                    rate(
+                      http_server_request_duration_seconds_bucket{
+                        deployment_environment_name="",
+                        service_namespace="opentelemetry-demo",
+                        service_name="cart",
+                        http_request_method="POST",
+                        http_route="/oteldemo.CartService/AddItem"
+                      }[5m]
+                    )
+                  )
+                )
+              instant: true
+              interval: ""
+              intervalMs: 1000
+              legendFormat: __auto
+              maxDataPoints: 43200
+              range: false
+              refId: p95_duration
+          - refId: p95_threshold
+            datasourceUid: __expr__
+            model:
+              conditions:
+                - evaluator:
+                    params:
+                      - 0.0001
+                    type: gt
+                  operator:
+                    type: and
+                  query:
+                    params:
+                      - C
+                  reducer:
+                    params: []
+                    type: last
+                  type: query
+              datasource:
+                type: __expr__
+                uid: __expr__
+              expression: p95_duration
+              intervalMs: 1000
+              maxDataPoints: 43200
+              refId: p95_threshold
+              type: threshold
+        dashboardUid: febljk0a32qyoa
+        panelId: 17
+        noDataState: NoData
+        execErrState: Error
+        for: 1m
+        keepFiringFor: 2m
+        annotations:
+          description: |-
+            The 95th percentile response time for operation {{ $labels.service_namespace
+                }}/{{ $labels.service_name }} "{{ $labels.http_request_method }} {{
+                $labels.http_route }}" has been
+                above xxx seconds for 2 minutes on {{ $labels.service_instance_id}}. Current
+                value: {{ .Value | humanizeDuration }}.
+          summary: |-
+            High P95 for {{ $labels.service_namespace }}/{{ $labels.service_name }} "{{
+                $labels.http_request_method }} {{ $labels.http_route }}"
+        labels:
+          service_name: cart
+          service_namespace: opentelemetry-demo
+          severity: warning
+          team_name: webstore
+        isPaused: false
+        notification_settings:
+          receiver: grafana-default-email

@@ -83,6 +83,9 @@ the release.
   ([#2392](https://github.com/open-telemetry/opentelemetry-demo/pull/2392))
 * [cart] Enable automatic generation of `service.instance.id`
   ([#2402](https://github.com/open-telemetry/opentelemetry-demo/pull/2402))
+* [prometheus /grafana] Add alerting demo through the `CartAddItemHighLatency`
+  alert rule
+  [#2401](https://github.com/open-telemetry/opentelemetry-demo/pull/2401)
 
 ## 2.0.2
 

@@ -206,7 +206,7 @@
       },
       "gridPos": {
         "h": 6,
-        "w": 6,
+        "w": 5,
         "x": 0,
         "y": 3
       },
@@ -357,8 +357,8 @@
       },
       "gridPos": {
         "h": 6,
-        "w": 6,
-        "x": 6,
+        "w": 5,
+        "x": 5,
         "y": 3
       },
       "id": 18,
@@ -481,7 +481,7 @@
       "gridPos": {
         "h": 6,
         "w": 5,
-        "x": 12,
+        "x": 10,
         "y": 3
       },
       "id": 19,
@@ -532,6 +532,41 @@
       ],
       "title": "Request Rate",
       "type": "timeseries"
+    },
+    {
+      "fieldConfig": {
+        "defaults": {},
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 6,
+        "w": 9,
+        "x": 15,
+        "y": 3
+      },
+      "id": 40,
+      "options": {
+        "alertInstanceLabelFilter": "{service_name=\"$service_name\", service_namespace=\"$service_namespace\"}",
+        "alertName": "",
+        "dashboardAlerts": false,
+        "groupBy": [],
+        "groupMode": "default",
+        "maxItems": 20,
+        "showInactiveAlerts": false,
+        "sortOrder": 1,
+        "stateFilter": {
+          "error": true,
+          "firing": true,
+          "noData": false,
+          "normal": false,
+          "pending": true,
+          "recovering": true
+        },
+        "viewMode": "list"
+      },
+      "pluginVersion": "12.0.2",
+      "title": "Alerts",
+      "type": "alertlist"
     },
     {
       "datasource": {
