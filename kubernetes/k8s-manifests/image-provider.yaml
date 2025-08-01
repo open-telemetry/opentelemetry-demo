@@ -1,0 +1,82 @@
+# Source: opentelemetry-demo/templates/component.yaml
+apiVersion: v1
+kind: Service
+metadata:
+  name: image-provider
+  labels:
+    opentelemetry.io/name: image-provider
+    app.kubernetes.io/instance: opentelemetry-demo
+    app.kubernetes.io/component: image-provider
+    app.kubernetes.io/name: image-provider
+    app.kubernetes.io/version: "2.0.2"
+    app.kubernetes.io/part-of: opentelemetry-demo
+spec:
+  type: ClusterIP
+  ports:
+    - port: 8081
+      name: tcp-service
+      targetPort: 8081
+  selector:
+    opentelemetry.io/name: image-provider
+---
+# Source: opentelemetry-demo/templates/component.yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: image-provider
+  labels:
+    opentelemetry.io/name: image-provider
+    app.kubernetes.io/instance: opentelemetry-demo
+    app.kubernetes.io/component: image-provider
+    app.kubernetes.io/name: image-provider
+    app.kubernetes.io/version: "2.0.2"
+    app.kubernetes.io/part-of: opentelemetry-demo
+spec:
+  replicas: 1
+  revisionHistoryLimit: 10
+  selector:
+    matchLabels:
+      opentelemetry.io/name: image-provider
+  template:
+    metadata:
+      labels:
+        opentelemetry.io/name: image-provider
+        app.kubernetes.io/instance: opentelemetry-demo
+        app.kubernetes.io/component: image-provider
+        app.kubernetes.io/name: image-provider
+    spec:
+      serviceAccountName: opentelemetry-demo
+      containers:
+        - name: image-provider
+          image: 'ghcr.io/splunk/opentelemetry-demo/otel-image-provider:0.0.1'
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 8081
+              name: service
+          env:
+            - name: OTEL_SERVICE_NAME
+              valueFrom:
+                fieldRef:
+                  apiVersion: v1
+                  fieldPath: metadata.labels['app.kubernetes.io/component']
+            - name: NODE_IP
+              valueFrom:
+                fieldRef:
+                  fieldPath: status.hostIP
+            - name: OTEL_COLLECTOR_NAME
+              value: $(NODE_IP)
+            - name: OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE
+              value: cumulative
+            - name: IMAGE_PROVIDER_PORT
+              value: "8081"
+            - name: OTEL_COLLECTOR_PORT_GRPC
+              value: "4317"
+            - name: OTEL_COLLECTOR_HOST
+              value: $(OTEL_COLLECTOR_NAME)
+            - name: OTEL_RESOURCE_ATTRIBUTES
+              value: service.name=$(OTEL_SERVICE_NAME),service.namespace=opentelemetry-demo,service.version=2.0.2
+          resources:
+            limits:
+              memory: 50Mi
+          volumeMounts:
+      volumes:

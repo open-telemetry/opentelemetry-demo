@@ -1,0 +1,131 @@
+# Source: opentelemetry-demo/templates/component.yaml
+apiVersion: v1
+kind: Service
+metadata:
+  name: frontend
+  labels:
+    opentelemetry.io/name: frontend
+    app.kubernetes.io/instance: opentelemetry-demo
+    app.kubernetes.io/component: frontend
+    app.kubernetes.io/name: frontend
+    app.kubernetes.io/version: "2.0.2"
+    app.kubernetes.io/part-of: opentelemetry-demo
+spec:
+  type: ClusterIP
+  ports:
+    - port: 8080
+      name: tcp-service
+      targetPort: 8080
+  selector:
+    opentelemetry.io/name: frontend
+---
+# Source: opentelemetry-demo/templates/component.yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: frontend
+  labels:
+    opentelemetry.io/name: frontend
+    app.kubernetes.io/instance: opentelemetry-demo
+    app.kubernetes.io/component: frontend
+    app.kubernetes.io/name: frontend
+    app.kubernetes.io/version: "2.0.2"
+    app.kubernetes.io/part-of: opentelemetry-demo
+spec:
+  replicas: 1
+  revisionHistoryLimit: 10
+  selector:
+    matchLabels:
+      opentelemetry.io/name: frontend
+  template:
+    metadata:
+      labels:
+        opentelemetry.io/name: frontend
+        app.kubernetes.io/instance: opentelemetry-demo
+        app.kubernetes.io/component: frontend
+        app.kubernetes.io/name: frontend
+    spec:
+      serviceAccountName: opentelemetry-demo
+      containers:
+        - name: frontend
+          image: ghcr.io/splunk/opentelemetry-demo/otel-frontend:0.0.1
+          #image: 'ghcr.io/open-telemetry/demo:2.0.2-frontend'
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 8080
+              name: service
+          env:
+            - name: OTEL_SERVICE_NAME
+              valueFrom:
+                fieldRef:
+                  apiVersion: v1
+                  fieldPath: metadata.labels['app.kubernetes.io/component']
+            - name: NODE_IP
+              valueFrom:
+                fieldRef:
+                  fieldPath: status.hostIP
+            - name: OTEL_COLLECTOR_NAME
+              value: $(NODE_IP)
+            - name: OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE
+              value: cumulative
+            - name: FRONTEND_PORT
+              value: "8080"
+            - name: FRONTEND_ADDR
+              value: :8080
+            - name: AD_ADDR
+              value: ad:8080
+            - name: CART_ADDR
+              value: cart:8080
+            - name: CHECKOUT_ADDR
+              value: checkout:8080
+            - name: CURRENCY_ADDR
+              value: currency:8080
+            - name: PRODUCT_CATALOG_ADDR
+              value: product-catalog:8080
+            - name: RECOMMENDATION_ADDR
+              value: recommendation:8080
+            - name: SHIPPING_ADDR
+              value: shipping:8080
+            - name: FLAGD_HOST
+              value: flagd
+            - name: FLAGD_PORT
+              value: "8013"
+            - name: OTEL_COLLECTOR_HOST
+              value: $(OTEL_COLLECTOR_NAME)
+            - name: OTEL_EXPORTER_OTLP_ENDPOINT
+              value: http://$(OTEL_COLLECTOR_NAME):4317
+            - name: WEB_OTEL_SERVICE_NAME
+              value: frontend-web
+            - name: PUBLIC_OTEL_EXPORTER_OTLP_TRACES_ENDPOINT
+              value: http://localhost:8080/otlp-http/v1/traces
+            - name: OTEL_RESOURCE_ATTRIBUTES
+              value: service.name=$(OTEL_SERVICE_NAME),service.namespace=opentelemetry-demo,service.version=2.0.2
+            - name: SPLUNK_RUM_TOKEN
+              valueFrom:
+                secretKeyRef:
+                  name: workshop-secret
+                  key: rum_token
+            - name: SPLUNK_APP_NAME
+              valueFrom:
+                secretKeyRef:
+                  name: workshop-secret
+                  key: app
+            - name: SPLUNK_RUM_ENV
+              valueFrom:
+                secretKeyRef:
+                  name: workshop-secret
+                  key: env
+            - name: SPLUNK_RUM_REALM
+              valueFrom:
+                secretKeyRef:
+                  name: workshop-secret
+                  key: realm
+          resources:
+            limits:
+              memory: 250Mi
+          securityContext:
+            runAsGroup: 1001
+            runAsNonRoot: true
+            runAsUser: 1001
+          volumeMounts:
+      volumes:
