@@ -78,7 +78,7 @@ the release.
   ([#2369](https://github.com/open-telemetry/opentelemetry-demo/pull/2369))
 * [load-generator] Fix Playwright wait until load state error
   ([#2374](https://github.com/open-telemetry/opentelemetry-demo/pull/2374))
-* [grafana] Update OpenSearch logs index in APM Dashboards 
+* [grafana] Update OpenSearch logs index in APM Dashboards
   ([#2419](https://github.com/open-telemetry/opentelemetry-demo/pull/2419))
 * [flagd] Bump Flagd to v0.12.8 and get compliant `http.Server.request.duration`
   OTel metrics that can be used in the APM dashboard
