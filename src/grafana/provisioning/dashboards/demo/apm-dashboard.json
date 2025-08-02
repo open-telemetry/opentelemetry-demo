@@ -1624,7 +1624,7 @@
               "type": "logs"
             }
           ],
-          "query": "search source=otel | where resource.service.name=\"$service_name\" and resource.service.namespace=\"$service_namespace\" | fields @timestamp, severity.text, body, instrumentationScope.name\n",
+          "query": "search source=otel-logs-* | where resource.service.name=\"$service_name\" and resource.service.namespace=\"$service_namespace\" | fields @timestamp, severity.text, body, instrumentationScope.name\n",
           "queryType": "PPL",
           "refId": "B",
           "timeField": "observedTimestamp"
