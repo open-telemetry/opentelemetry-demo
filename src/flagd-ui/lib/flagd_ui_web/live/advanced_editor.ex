@@ -19,8 +19,11 @@ defmodule FlagdUiWeb.AdvancedEditor do
     <div class="relative min-h-screen">
       <Navbar.navbar mode="advanced" />
 
+      <CoreComponents.flash kind={:error} flash={@flash} />
+      <CoreComponents.flash kind={:info} flash={@flash} />
+
       <div>
-        <.form>
+        <.form for={%{}}>
           <textarea
             name="content"
             type="textarea"
@@ -33,12 +36,13 @@ defmodule FlagdUiWeb.AdvancedEditor do
           <div class="p-2 pl-8 text-gray-300 shadow-md">
             <div class="mb-8 flex flex-auto items-center gap-2">
               <button
+                type="button"
                 class="rounded bg-blue-500 px-8 py-4 font-medium text-white transition-colors duration-200 hover:bg-blue-600"
                 phx-click="save"
               >
                 Save
               </button>
-              <p class="text-red-600">Unsaved changes</p>
+              <p :if={@unsaved_changes} class="text-red-600">Unsaved changes</p>
             </div>
           </div>
         </.form>
@@ -65,8 +69,23 @@ defmodule FlagdUiWeb.AdvancedEditor do
           }
         } = socket
       ) do
-    GenServer.cast(Storage, {:replace, content})
+    new_socket =
+      case Jason.decode(content) do
+        {:ok, _} ->
+          trimmed_content = String.trim(content)
 
-    {:noreply, socket}
+          GenServer.cast(Storage, {:replace, trimmed_content})
+
+          socket
+          |> assign(unsaved_changes: false)
+          |> assign(content: trimmed_content)
+          |> clear_flash()
+          |> put_flash(:info, "Saved!")
+
+        {:error, _} ->
+          put_flash(socket, :error, "Invalid JSON")
+      end
+
+    {:noreply, new_socket}
   end
 end
