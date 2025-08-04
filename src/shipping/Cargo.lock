@@ -105,7 +105,7 @@ dependencies = [
  "futures-core",
  "futures-util",
  "mio",
- "socket2",
+ "socket2 0.5.10",
  "tokio",
  "tracing",
 ]
@@ -186,7 +186,7 @@ dependencies = [
  "serde_json",
  "serde_urlencoded",
  "smallvec",
- "socket2",
+ "socket2 0.5.10",
  "time",
  "tracing",
  "url",
@@ -840,7 +840,7 @@ dependencies = [
  "libc",
  "percent-encoding",
  "pin-project-lite",
- "socket2",
+ "socket2 0.5.10",
  "tokio",
  "tower-service",
  "tracing",
@@ -1225,7 +1225,7 @@ dependencies = [
  "reqwest",
  "thiserror",
  "tokio",
- "tonic",
+ "tonic 0.13.1",
  "tracing",
 ]
 
@@ -1238,7 +1238,7 @@ dependencies = [
  "opentelemetry",
  "opentelemetry_sdk",
  "prost",
- "tonic",
+ "tonic 0.13.1",
 ]
 
 [[package]]
@@ -1645,7 +1645,7 @@ dependencies = [
  "opentelemetry-resource-detectors",
  "opentelemetry_sdk",
  "serde",
- "tonic",
+ "tonic 0.14.0",
  "tracing",
  "tracing-subscriber",
  "uuid",
@@ -1689,6 +1689,16 @@ checksum = "e22376abed350d73dd1cd119b57ffccad95b4e585a7cda43e286245ce23c0678"
 dependencies = [
  "libc",
  "windows-sys 0.52.0",
+]
+
+[[package]]
+name = "socket2"
+version = "0.6.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "233504af464074f9d066d7b5416c5f9b894a5862a6506e306f7b816cdd6f1807"
+dependencies = [
+ "libc",
+ "windows-sys 0.59.0",
 ]
 
 [[package]]
@@ -1812,7 +1822,7 @@ dependencies = [
  "parking_lot",
  "pin-project-lite",
  "signal-hook-registry",
- "socket2",
+ "socket2 0.5.10",
  "tokio-macros",
  "windows-sys 0.52.0",
 ]
@@ -1859,6 +1869,32 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "7e581ba15a835f4d9ea06c55ab1bd4dce26fc53752c69a04aac00703bfb49ba9"
 dependencies = [
  "async-trait",
+ "base64",
+ "bytes",
+ "http 1.3.1",
+ "http-body",
+ "http-body-util",
+ "hyper",
+ "hyper-timeout",
+ "hyper-util",
+ "percent-encoding",
+ "pin-project",
+ "prost",
+ "tokio",
+ "tokio-stream",
+ "tower",
+ "tower-layer",
+ "tower-service",
+ "tracing",
+]
+
+[[package]]
+name = "tonic"
+version = "0.14.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "308e1db96abdccdf0a9150fb69112bf6ea72640e0bd834ef0c4a618ccc8c8ddc"
+dependencies = [
+ "async-trait",
  "axum",
  "base64",
  "bytes",
@@ -1871,8 +1907,8 @@ dependencies = [
  "hyper-util",
  "percent-encoding",
  "pin-project",
- "prost",
- "socket2",
+ "socket2 0.6.0",
+ "sync_wrapper",
  "tokio",
  "tokio-stream",
  "tower",
