@@ -4,11 +4,16 @@ This service consumes new orders from a Kafka topic.
 
 ## Local Build
 
-To build the service binary, run:
+To build the service binary, navigate to the root directory of the project and run:
 
 ```sh
-make generate-protobuf # root context
-dotnet build # accounting service context
+make generate-protobuf
+```
+
+Navigate back to `src/accounting` and execute:
+
+```sh
+dotnet build
 ```
 
 ## Docker Build
