@@ -7,8 +7,10 @@ defmodule FlagdUi.Storage do
   use GenServer
   require Logger
 
-  def start_link(_) do
-    GenServer.start_link(__MODULE__, %{}, name: Storage)
+  def start_link(opts) do
+    name = Keyword.get(opts, :name, Storage)
+
+    GenServer.start_link(__MODULE__, %{}, name: name)
   end
 
   @impl true
