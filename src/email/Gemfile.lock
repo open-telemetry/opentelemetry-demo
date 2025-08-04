@@ -255,7 +255,7 @@ GEM
       opentelemetry-api (~> 1.0)
     pony (1.13.1)
       mail (>= 2.0)
-    puma (6.6.0)
+    puma (6.6.1)
       nio4r (~> 2.0)
     rack (3.1.15)
     rack-protection (4.1.1)
