@@ -34,110 +34,12 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 2
+        "y": 0
       },
       "id": 267,
       "panels": [],
       "title": "overview【 $host_name】",
       "type": "row"
-    },
-    {
-      "datasource": {
-        "type": "prometheus",
-        "uid": "${DS_PROMETHEUS}"
-      },
-      "description": "System uptime",
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "mode": "thresholds"
-          },
-          "decimals": 1,
-          "mappings": [
-            {
-              "options": {
-                "match": "null",
-                "result": {
-                  "text": "N/A"
-                }
-              },
-              "type": "special"
-            }
-          ],
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "green"
-              },
-              {
-                "color": "red",
-                "value": 80
-              }
-            ]
-          },
-          "unit": "s"
-        },
-        "overrides": []
-      },
-      "gridPos": {
-        "h": 2,
-        "w": 4,
-        "x": 20,
-        "y": 0
-      },
-      "id": 15,
-      "maxDataPoints": 100,
-      "options": {
-        "colorMode": "none",
-        "graphMode": "none",
-        "justifyMode": "auto",
-        "orientation": "horizontal",
-        "percentChangeColorMode": "standard",
-        "reduceOptions": {
-          "calcs": [
-            "lastNotNull"
-          ],
-          "fields": "",
-          "values": false
-        },
-        "showPercentChange": false,
-        "textMode": "auto",
-        "wideLayout": true
-      },
-      "pluginVersion": "12.0.2",
-      "targets": [
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "${DS_PROMETHEUS}"
-          },
-          "editorMode": "code",
-          "exemplar": false,
-          "expr": "system_uptime_seconds{k8s_cluster_name=~\"$k8s_cluster_name\", k8s_node_name=~\"${node_name}\", host_name=~\"$host_name\"}",
-          "instant": true,
-          "intervalFactor": 1,
-          "legendFormat": "__auto",
-          "range": false,
-          "refId": "A",
-          "step": 240
-        },
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "${DS_PROMETHEUS}"
-          },
-          "editorMode": "code",
-          "expr": "",
-          "hide": false,
-          "instant": false,
-          "legendFormat": "__auto",
-          "range": true,
-          "refId": "B"
-        }
-      ],
-      "title": "Uptime",
-      "type": "stat"
     },
     {
       "datasource": {
@@ -188,7 +90,7 @@
         "h": 4,
         "w": 3,
         "x": 0,
-        "y": 3
+        "y": 1
       },
       "id": 20,
       "options": {
@@ -264,7 +166,7 @@
         "h": 4,
         "w": 3,
         "x": 3,
-        "y": 3
+        "y": 1
       },
       "id": 16,
       "options": {
@@ -357,7 +259,7 @@
         "h": 4,
         "w": 3,
         "x": 6,
-        "y": 3
+        "y": 1
       },
       "id": 154,
       "options": {
@@ -443,7 +345,7 @@
         "h": 4,
         "w": 3,
         "x": 9,
-        "y": 3
+        "y": 1
       },
       "id": 155,
       "options": {
@@ -533,7 +435,7 @@
         "h": 4,
         "w": 3,
         "x": 12,
-        "y": 3
+        "y": 1
       },
       "id": 19,
       "options": {
@@ -621,7 +523,7 @@
         "h": 4,
         "w": 3,
         "x": 15,
-        "y": 3
+        "y": 1
       },
       "id": 21,
       "options": {
@@ -701,7 +603,7 @@
         "h": 2,
         "w": 2,
         "x": 18,
-        "y": 3
+        "y": 1
       },
       "id": 14,
       "maxDataPoints": 100,
@@ -782,7 +684,7 @@
         "h": 2,
         "w": 2,
         "x": 20,
-        "y": 3
+        "y": 1
       },
       "id": 75,
       "maxDataPoints": 100,
@@ -867,7 +769,7 @@
         "h": 2,
         "w": 2,
         "x": 22,
-        "y": 3
+        "y": 1
       },
       "id": 18,
       "maxDataPoints": 100,
@@ -969,7 +871,7 @@
         "h": 2,
         "w": 2,
         "x": 18,
-        "y": 5
+        "y": 3
       },
       "id": 23,
       "maxDataPoints": 100,
@@ -1013,12 +915,110 @@
       "type": "stat"
     },
     {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "${DS_PROMETHEUS}"
+      },
+      "description": "System uptime",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "decimals": 1,
+          "mappings": [
+            {
+              "options": {
+                "match": "null",
+                "result": {
+                  "text": "N/A"
+                }
+              },
+              "type": "special"
+            }
+          ],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green"
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          },
+          "unit": "s"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 2,
+        "w": 4,
+        "x": 20,
+        "y": 3
+      },
+      "id": 15,
+      "maxDataPoints": 100,
+      "options": {
+        "colorMode": "none",
+        "graphMode": "none",
+        "justifyMode": "auto",
+        "orientation": "horizontal",
+        "percentChangeColorMode": "standard",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "showPercentChange": false,
+        "textMode": "auto",
+        "wideLayout": true
+      },
+      "pluginVersion": "12.0.2",
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_PROMETHEUS}"
+          },
+          "editorMode": "code",
+          "exemplar": false,
+          "expr": "system_uptime_seconds{k8s_cluster_name=~\"$k8s_cluster_name\", k8s_node_name=~\"${node_name}\", host_name=~\"$host_name\"}",
+          "instant": true,
+          "intervalFactor": 1,
+          "legendFormat": "__auto",
+          "range": false,
+          "refId": "A",
+          "step": 240
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_PROMETHEUS}"
+          },
+          "editorMode": "code",
+          "expr": "",
+          "hide": false,
+          "instant": false,
+          "legendFormat": "__auto",
+          "range": true,
+          "refId": "B"
+        }
+      ],
+      "title": "Uptime",
+      "type": "stat"
+    },
+    {
       "collapsed": false,
       "gridPos": {
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 7
+        "y": 5
       },
       "id": 266,
       "panels": [],
@@ -1196,9 +1196,9 @@
       },
       "gridPos": {
         "h": 7,
-        "w": 8,
+        "w": 6,
         "x": 0,
-        "y": 8
+        "y": 6
       },
       "id": 77,
       "options": {
@@ -1744,9 +1744,9 @@
       },
       "gridPos": {
         "h": 7,
-        "w": 8,
-        "x": 8,
-        "y": 8
+        "w": 5,
+        "x": 6,
+        "y": 6
       },
       "id": 78,
       "options": {
@@ -1906,9 +1906,9 @@
       },
       "gridPos": {
         "h": 7,
-        "w": 8,
-        "x": 16,
-        "y": 8
+        "w": 6,
+        "x": 11,
+        "y": 6
       },
       "id": 74,
       "options": {
@@ -1957,135 +1957,6 @@
         }
       ],
       "title": "Network Traffic",
-      "type": "timeseries"
-    },
-    {
-      "datasource": {
-        "type": "prometheus",
-        "uid": "${DS_PROMETHEUS}"
-      },
-      "description": "",
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "mode": "palette-classic"
-          },
-          "custom": {
-            "axisBorderShow": false,
-            "axisCenteredZero": false,
-            "axisColorMode": "text",
-            "axisLabel": "IO read (-) / write (+)",
-            "axisPlacement": "auto",
-            "barAlignment": 0,
-            "barWidthFactor": 0.6,
-            "drawStyle": "line",
-            "fillOpacity": 20,
-            "gradientMode": "none",
-            "hideFrom": {
-              "legend": false,
-              "tooltip": false,
-              "viz": false
-            },
-            "insertNulls": false,
-            "lineInterpolation": "linear",
-            "lineWidth": 1,
-            "pointSize": 5,
-            "scaleDistribution": {
-              "type": "linear"
-            },
-            "showPoints": "never",
-            "spanNulls": false,
-            "stacking": {
-              "group": "A",
-              "mode": "none"
-            },
-            "thresholdsStyle": {
-              "mode": "off"
-            }
-          },
-          "links": [],
-          "mappings": [],
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "green"
-              },
-              {
-                "color": "red",
-                "value": 80
-              }
-            ]
-          },
-          "unit": "iops"
-        },
-        "overrides": [
-          {
-            "matcher": {
-              "id": "byRegexp",
-              "options": "/.*Read.*/"
-            },
-            "properties": [
-              {
-                "id": "custom.transform",
-                "value": "negative-Y"
-              }
-            ]
-          }
-        ]
-      },
-      "gridPos": {
-        "h": 12,
-        "w": 8,
-        "x": 0,
-        "y": 15
-      },
-      "id": 229,
-      "options": {
-        "legend": {
-          "calcs": [],
-          "displayMode": "list",
-          "placement": "bottom",
-          "showLegend": true
-        },
-        "tooltip": {
-          "hideZeros": false,
-          "mode": "single",
-          "sort": "none"
-        }
-      },
-      "pluginVersion": "12.0.2",
-      "targets": [
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "${DS_PROMETHEUS}"
-          },
-          "editorMode": "code",
-          "expr": "sum(irate(system_disk_operations_total{k8s_cluster_name=~\"$k8s_cluster_name\", k8s_node_name=~\"${node_name}\", host_name=~\"$host_name\", direction=\"read\"}[$__rate_interval]))",
-          "hide": false,
-          "intervalFactor": 4,
-          "legendFormat": "Read",
-          "range": true,
-          "refId": "read",
-          "step": 240
-        },
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "${DS_PROMETHEUS}"
-          },
-          "editorMode": "code",
-          "expr": "sum(irate(system_disk_operations_total{k8s_cluster_name=~\"$k8s_cluster_name\", k8s_node_name=~\"${node_name}\", host_name=~\"$host_name\", direction=\"write\"}[$__rate_interval]))",
-          "hide": false,
-          "intervalFactor": 1,
-          "legendFormat": "Write",
-          "range": true,
-          "refId": "write",
-          "step": 240
-        }
-      ],
-      "title": "Disk IOps",
       "type": "timeseries"
     },
     {
@@ -2164,10 +2035,10 @@
         ]
       },
       "gridPos": {
-        "h": 12,
-        "w": 8,
-        "x": 8,
-        "y": 15
+        "h": 7,
+        "w": 7,
+        "x": 17,
+        "y": 6
       },
       "id": 42,
       "options": {
@@ -2342,7 +2213,7 @@
         "h": 8,
         "w": 15,
         "x": 0,
-        "y": 27
+        "y": 14
       },
       "id": 270,
       "options": {
@@ -2628,7 +2499,7 @@
         "h": 8,
         "w": 9,
         "x": 15,
-        "y": 27
+        "y": 14
       },
       "id": 269,
       "options": {
@@ -2802,6 +2673,19 @@
         }
       ],
       "type": "table"
+    },
+    {
+      "collapsed": false,
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 13
+      },
+      "id": 272,
+      "panels": [],
+      "title": "Details",
+      "type": "row"
     }
   ],
   "preload": false,
