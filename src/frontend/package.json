@@ -11,7 +11,7 @@
     "grpc:generate": "mkdir -p ./protos && protoc -I ./pb  --plugin=./node_modules/.bin/protoc-gen-ts_proto --ts_proto_opt=esModuleInterop=true --ts_proto_out=./protos --ts_proto_opt=outputServices=grpc-js demo.proto"
   },
   "dependencies": {
-    "@bufbuild/protobuf": "^2.6.2",
+    "@bufbuild/protobuf": "^2.6.3",
     "@grpc/grpc-js": "1.12.6",
     "@openfeature/flagd-provider": "0.13.3",
     "@openfeature/flagd-web-provider": "0.7.3",
@@ -49,13 +49,13 @@
     "uuid": "11.1.0"
   },
   "devDependencies": {
-    "@types/node": "24.1.0",
+    "@types/node": "24.2.0",
     "@types/react": "19.1.9",
     "@types/react-dom": "19.1.7",
     "@types/styled-components": "5.1.34",
     "@types/uuid": "10.0.0",
-    "@typescript-eslint/eslint-plugin": "8.38.0",
-    "@typescript-eslint/parser": "8.38.0",
+    "@typescript-eslint/eslint-plugin": "8.39.0",
+    "@typescript-eslint/parser": "8.39.0",
     "cypress": "14.5.3",
     "eslint": "9.32.0",
     "eslint-config-next": "15.4.5",
@@ -63,6 +63,6 @@
     "eslint-plugin-react-hooks": "5.2.0",
     "openapi-typescript": "7.8.0",
     "ts-proto": "2.7.5",
-    "typescript": "5.8.3"
+    "typescript": "5.9.2"
   }
 }
