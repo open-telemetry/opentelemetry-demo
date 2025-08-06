@@ -58,18 +58,18 @@ keeping it up to date for you.
 
 |                           |                |                                  |
 |---------------------------|----------------|----------------------------------|
-| [AlibabaCloud LogService] | [Google Cloud] | [Parseable]                      |
-| [AppDynamics]             | [Grafana Labs] | [Sentry]                         |
-| [Aspecto]                 | [Guance]       | [ServiceNow Cloud Observability] |
-| [Axiom]                   | [Honeycomb.io] | [SigNoz]                         |
-| [Axoflow]                 | [Instana]      | [Splunk]                         |
-| [Azure Data Explorer]     | [Kloudfuse]    | [Sumo Logic]                     |
-| [Causely]                 | [Last9]        | [TelemetryHub]                   |
+| [AlibabaCloud LogService] | [Elastic]      | [Oracle]                         |
+| [AppDynamics]             | [Google Cloud] | [Parseable]                      |
+| [Aspecto]                 | [Grafana Labs] | [Sentry]                         |
+| [Axiom]                   | [Guance]       | [ServiceNow Cloud Observability] |
+| [Axoflow]                 | [Honeycomb.io] | [SigNoz]                         |
+| [Azure Data Explorer]     | [Instana]      | [Splunk]                         |
+| [Causely]                 | [Kloudfuse]    | [Sumo Logic]                     |
+| [ClickStack]              | [Last9]        | [TelemetryHub]                   |
 | [Coralogix]               | [Liatrio]      | [Teletrace]                      |
 | [Dash0]                   | [Logz.io]      | [Tracetest]                      |
 | [Datadog]                 | [New Relic]    | [Uptrace]                        |
 | [Dynatrace]               | [OpenSearch]   |                                  |
-| [Elastic]                 | [Oracle]       |                                  |
 
 ## Contributing
 
@@ -120,6 +120,7 @@ For more information about the emeritus role, see the [community repository](htt
 [Axoflow]: https://axoflow.com/opentelemetry-support-in-more-detail-in-axosyslog-and-syslog-ng/
 [Azure Data Explorer]: https://github.com/Azure/Azure-kusto-opentelemetry-demo
 [Causely]: https://github.com/causely-oss/otel-demo
+[ClickStack]: https://github.com/ClickHouse/opentelemetry-demo
 [Coralogix]: https://coralogix.com/blog/configure-otel-demo-send-telemetry-data-coralogix
 [Dash0]: https://github.com/dash0hq/opentelemetry-demo
 [Datadog]: https://docs.datadoghq.com/opentelemetry/guide/otel_demo_to_datadog
