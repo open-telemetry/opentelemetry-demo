@@ -36,23 +36,23 @@ RUN mix local.hex --force \
 ENV MIX_ENV="prod"
 
 # install mix dependencies
-COPY mix.exs mix.lock ./
+COPY ./src/flagd-ui/mix.exs ./src/flagd-ui/mix.lock ./
 RUN mix deps.get --only $MIX_ENV
 RUN mkdir config
 
 # copy compile-time config files before we compile dependencies
 # to ensure any relevant config change will trigger the dependencies
 # to be re-compiled.
-COPY config/config.exs config/${MIX_ENV}.exs config/
+COPY ./src/flagd-ui/config/config.exs ./src/flagd-ui/config/${MIX_ENV}.exs config/
 RUN mix deps.compile
 
 RUN mix assets.setup
 
-COPY priv priv
+COPY ./src/flagd-ui/priv priv
 
-COPY lib lib
+COPY ./src/flagd-ui/lib lib
 
-COPY assets assets
+COPY ./src/flagd-ui/assets assets
 
 # compile assets
 RUN mix assets.deploy
@@ -61,9 +61,9 @@ RUN mix assets.deploy
 RUN mix compile
 
 # Changes to config/runtime.exs don't require recompiling the code
-COPY config/runtime.exs config/
+COPY ./src/flagd-ui/config/runtime.exs config/
 
-COPY rel rel
+COPY ./src/flagd-ui/rel rel
 RUN mix release
 
 # start a new build stage so that the final image will only contain
