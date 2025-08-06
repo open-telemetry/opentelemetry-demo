@@ -150,6 +150,14 @@ processors:
           # could be removed when https://github.com/vercel/next.js/pull/64852 is fixed upstream
           - replace_pattern(name, "\\?.*", "")
           - replace_match(name, "GET /api/products/*", "GET /api/products/{productId}")
+  filter/drop_flagd_spans:
+    traces:
+      span:
+        - name: "flagd.evaluation.v1.Service/EventStream"
+        - name: "flagd.evaluation.v1.Service/ResolveAll"
+        - name: "flagd.evaluation.v1.Service/ResolveBoolean"
+        - name: "flagd.evaluation.v1.Service/ResolveFloat"
+        - name: "flagd.evaluation.v1.Service/Resolveint"          
 
 connectors:
   spanmetrics:
@@ -158,7 +166,7 @@ service:
   pipelines:
     traces:
       receivers: [otlp]
-      processors: [resourcedetection, memory_limiter, transform, batch]
+      processors: [resourcedetection, memory_limiter, transform,  filter/drop_flagd_spans, batch]
       exporters: [otlp, debug, spanmetrics]
     metrics:
       receivers: [docker_stats, httpcheck/frontend-proxy, hostmetrics, nginx, otlp, postgresql, redis, spanmetrics]

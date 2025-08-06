@@ -20,8 +20,8 @@ ARG BUILD_CONFIGURATION=Release
 RUN dotnet publish "./Accounting.csproj" -r linux-$TARGETARCH -c $BUILD_CONFIGURATION -o /app/publish /p:UseAppHost=false
 
 # -----------------------------------------------------------------------------
+FROM --platform=$BUILDPLATFORM mcr.microsoft.com/dotnet/aspnet:8.0 AS final
 
-FROM mcr.microsoft.com/dotnet/aspnet:8.0
 USER app
 WORKDIR /app
 COPY --from=publish /app/publish .
@@ -31,6 +31,5 @@ RUN mkdir -p "/var/log/opentelemetry/dotnet"
 RUN chown app "/var/log/opentelemetry/dotnet"
 RUN chown app "/app/instrument.sh"
 USER app
-ENV OTEL_DOTNET_AUTO_TRACES_ADDITIONAL_SOURCES=Accounting.Consumer
 
-ENTRYPOINT ["./instrument.sh", "dotnet", "Accounting.dll"]
+ENTRYPOINT ["dotnet", "Accounting.dll"]

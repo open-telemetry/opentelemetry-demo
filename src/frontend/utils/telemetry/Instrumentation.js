@@ -41,7 +41,7 @@
 // sdk.start();
 const { startTracing } = require('@splunk/otel');
 
-startTracing({
+start({
   serviceName: process.env.OTEL_SERVICE_NAME || 'frontend',
 //  serviceVersion: process.env.OTEL_SERVICE_VERSION,
   // Splunk automatically handles resource detection and instrumentations

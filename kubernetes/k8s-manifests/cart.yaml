@@ -48,7 +48,8 @@ spec:
       serviceAccountName: opentelemetry-demo
       containers:
         - name: cart
-          image: 'ghcr.io/splunk/opentelemetry-demo/otel-cart:0.0.1'
+          image: 'ghcr.io/open-telemetry/demo:2.0.2-cart'
+          #image: 'ghcr.io/splunk/opentelemetry-demo/otel-cart:0.0.1'
           imagePullPolicy: Always
           ports:
             - containerPort: 8080
@@ -81,29 +82,33 @@ spec:
               value: http://$(OTEL_COLLECTOR_NAME):4318
             - name: OTEL_RESOURCE_ATTRIBUTES
               value: service.name=$(OTEL_SERVICE_NAME),service.namespace=opentelemetry-demo,service.version=2.0.2
-            - name: DOTNET_HOSTBUILDER__RELOADCONFIGONCHANGE
-              value: "false"
-            - name: CORECLR_ENABLE_PROFILING
-              value: "1"
-            - name: CORECLR_PROFILER
-              value: "{918728DD-259F-4A6A-AC2B-B85E1B658318}"
-            - name: CORECLR_PROFILER_PATH
-              value: "/opt/splunk-otel-dotnet/linux-musl-x64/OpenTelemetry.AutoInstrumentation.Native.so" # for amd64
-              #value: "/opt/splunk-otel-dotnet/linux-musl-arm64/OpenTelemetry.AutoInstrumentation.Native.so" # for arm64
-            - name: DOTNET_ADDITIONAL_DEPS
-              value: "/opt/splunk-otel-dotnet/additionalDeps"
-            - name: DOTNET_SHARED_STORE
-              value: "/opt/splunk-otel-dotnet/store"
-            - name: DOTNET_STARTUP_HOOKS
-              value: "/opt/splunk-otel-dotnet/net/OpenTelemetry.AutoInstrumentation.StartupHook.dll"
-            - name: OTEL_DOTNET_AUTO_HOME
-              value: "/opt/splunk-otel-dotnet"
-            - name: SPLUNK_PROFILER_ENABLED
-              value: "true"
-            - name: SPLUNK_METRICS_ENABLED
-              value: "true"
-            - name: SPLUNK_PROFILER_MEMORY_ENABLED
-              value: "true"  
+ 
+            # settings for Splunk otel
+            # - name: DOTNET_HOSTBUILDER__RELOADCONFIGONCHANGE
+            #   value: "false"
+            # - name: CORECLR_ENABLE_PROFILING
+            #   value: "1"
+            # - name: CORECLR_PROFILER
+            #   value: "{918728DD-259F-4A6A-AC2B-B85E1B658318}"
+            # - name: CORECLR_PROFILER_PATH
+            #   value: "/opt/splunk-otel-dotnet/linux-musl-x64/OpenTelemetry.AutoInstrumentation.Native.so" # for amd64
+            #   #value: "/opt/splunk-otel-dotnet/linux-musl-arm64/OpenTelemetry.AutoInstrumentation.Native.so" # for arm64
+            # - name: DOTNET_ADDITIONAL_DEPS
+            #   value: "/opt/splunk-otel-dotnet/additionalDeps"
+            # - name: DOTNET_SHARED_STORE
+            #   value: "/opt/splunk-otel-dotnet/store"
+            # - name: DOTNET_STARTUP_HOOKS
+            #   value: "/opt/splunk-otel-dotnet/net/OpenTelemetry.AutoInstrumentation.StartupHook.dll"
+            # - name: OTEL_DOTNET_AUTO_HOME
+            #   value: "/opt/splunk-otel-dotnet"
+            # - name: SPLUNK_PROFILER_ENABLED
+            #   value: "true"
+            # - name: SPLUNK_METRICS_ENABLED
+            #   value: "true"
+            # - name: SPLUNK_PROFILER_MEMORY_ENABLED
+            #   value: "true"  
+            # - name: SPLUNK_PROFILER_CALL_STACK_INTERVAL
+            #   value: "500"  
           resources:
             limits:
               memory: 160Mi

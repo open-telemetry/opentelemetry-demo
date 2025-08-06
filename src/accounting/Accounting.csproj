@@ -19,7 +19,7 @@
 		<PackageReference Include="Microsoft.Extensions.Logging" Version="9.0.7" />
 		<PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.22.1" />
 		<PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="9.0.4" />
-		<PackageReference Include="OpenTelemetry.AutoInstrumentation" Version="1.12.0" />
+		<PackageReference Include="Splunk.OpenTelemetry.AutoInstrumentation" Version="1.11.0" />
 		 <PackageReference Include="OpenTelemetry.Api" Version="1.12.0" />
 	</ItemGroup>
 

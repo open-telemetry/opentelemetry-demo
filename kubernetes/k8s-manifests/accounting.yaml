@@ -28,7 +28,7 @@ spec:
       containers:
         - name: accounting
           #image: 'ghcr.io/open-telemetry/demo:2.0.2-accounting'
-          image: 'ghcr.io/splunk/opentelemetry-demo/otel-accounting:0.0.3'
+          image: 'ghcr.io/splunk/opentelemetry-demo/otel-accounting:0.1.0'
           imagePullPolicy: Always
           env:
             - name: OTEL_SERVICE_NAME
@@ -50,6 +50,10 @@ spec:
               value: http://$(OTEL_COLLECTOR_NAME):4318
             - name: OTEL_RESOURCE_ATTRIBUTES
               value: service.name=$(OTEL_SERVICE_NAME),service.namespace=opentelemetry-demo,service.version=2.0.2
+            - name: SPLUNK_PROFILER_ENABLED
+              value: 'true'
+            - name: SPLUNK_PROFILER_MEMORY_ENABLED
+              value: 'true'
           resources:
             limits:
               memory: 120Mi
