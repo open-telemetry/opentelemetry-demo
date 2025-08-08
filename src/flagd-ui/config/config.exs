@@ -12,7 +12,7 @@ config :flagd_ui,
 
 # Configures the endpoint
 config :flagd_ui, FlagdUiWeb.Endpoint,
-  url: [host: "localhost"],
+  url: [host: "localhost", path: "/feature"],
   adapter: Bandit.PhoenixAdapter,
   render_errors: [
     formats: [html: FlagdUiWeb.ErrorHTML, json: FlagdUiWeb.ErrorJSON],
