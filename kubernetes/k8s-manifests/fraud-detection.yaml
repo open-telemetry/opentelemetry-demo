@@ -55,7 +55,7 @@ spec:
               value: service.name=$(OTEL_SERVICE_NAME),service.namespace=opentelemetry-demo,service.version=2.0.2
           resources:
             limits:
-              memory: 300Mi
+              memory: 450Mi
           volumeMounts:
       initContainers:
         - command:

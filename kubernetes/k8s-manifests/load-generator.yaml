@@ -96,5 +96,6 @@ spec:
           resources:
             limits:
               memory: 1500Mi
+              cpu: 1
           volumeMounts:
       volumes:

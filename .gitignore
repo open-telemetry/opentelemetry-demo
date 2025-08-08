@@ -56,3 +56,4 @@ test/tracetesting/tracetesting-vars.yaml
 src/frontend/utils/telemetry/FrontendTracer.ts.not_used
 src/frontend/utils/telemetry/SessionIdProcessor.ts.not_used
 src/cart/src/Dockerfile.singlearch
+src/cart/src/Dockerfile.too_complex

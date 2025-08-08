@@ -56,7 +56,7 @@ spec:
               value: 'true'
           resources:
             limits:
-              memory: 120Mi
+              memory: 300Mi
           volumeMounts:
       initContainers:
         - command:
