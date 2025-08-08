@@ -86,6 +86,10 @@ spec:
               value: http://$(OTEL_COLLECTOR_NAME):4318
             - name: OTEL_LOGS_EXPORTER
               value: otlp
+            - name: SPLUNK_PROFILER_ENABLED
+              value: "true"
+            - name: SPLUNK_PROFILER_MEMORY_ENABLED
+              value: "true"  
           resources:
             limits:
               memory: 320Mi
