@@ -43,7 +43,7 @@ RUN mkdir config
 # copy compile-time config files before we compile dependencies
 # to ensure any relevant config change will trigger the dependencies
 # to be re-compiled.
-COPY ./src/flagd-ui/config/config.exs ./src/flagd-ui/config/${MIX_ENV}.exs config/
+COPY ./src/flagd-ui/config/config.exs ./src/flagd-ui/config/${MIX_ENV}.exs ./src/flagd-ui/config/runtime.exs config/
 RUN mix deps.compile
 
 RUN mix assets.setup
@@ -59,9 +59,6 @@ RUN mix assets.deploy
 
 # Compile the release
 RUN mix compile
-
-# Changes to config/runtime.exs don't require recompiling the code
-COPY ./src/flagd-ui/config/runtime.exs config/
 
 COPY ./src/flagd-ui/rel rel
 RUN mix release
@@ -87,11 +84,12 @@ RUN chown nobody /app
 
 # set runner ENV
 ENV MIX_ENV="prod"
+ENV PORT=4000
 
 # Only copy the final release from the build stage
 COPY --from=builder --chown=nobody:root /app/_build/${MIX_ENV}/rel/flagd_ui ./
 
-USER nobody
+EXPOSE ${PORT}
 
 # If using an environment that doesn't automatically reap zombie processes, it is
 # advised to add an init process such as tini via `apt-get install`
