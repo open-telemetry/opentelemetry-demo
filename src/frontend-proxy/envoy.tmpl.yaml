@@ -56,7 +56,11 @@ static_resources:
                         - match: { prefix: "/flagservice/" }
                           route: { cluster: flagservice, prefix_rewrite: "/", timeout: 0s }
                         - match: { prefix: "/feature" }
-                          route: { cluster: flagd-ui }
+                          route:
+                            cluster: flagd-ui
+                            prefix_rewrite: "/"
+                            upgrade_configs:
+                              - upgrade_type: websocket
                         - match: { prefix: "/" } # Default/catch-all route - keep last since prefix:"/" matches everything
                           route: { cluster: frontend }
                 http_filters:

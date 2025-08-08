@@ -7,6 +7,8 @@ defmodule FlagdUi.Storage do
   use GenServer
   require Logger
 
+  @file_path Application.compile_env!(:flagd_ui, :storage_file_path)
+
   def start_link(opts) do
     name = Keyword.get(opts, :name, Storage)
 
@@ -15,7 +17,7 @@ defmodule FlagdUi.Storage do
 
   @impl true
   def init(_) do
-    state = File.cwd!() |> file_path() |> File.read!() |> Jason.decode!()
+    state = @file_path |> File.read!() |> Jason.decode!()
     Logger.info("Read new state from file")
 
     {:ok, state}
@@ -49,8 +51,6 @@ defmodule FlagdUi.Storage do
     {:noreply, new_state}
   end
 
-  defp file_path(cwd), do: "#{cwd}/data/demo.flagd.json"
-
   defp update_flag(flags, flag_name, value) do
     flags
     |> Enum.map(fn
@@ -61,9 +61,7 @@ defmodule FlagdUi.Storage do
   end
 
   defp write_state(json_string) do
-    File.cwd!()
-    |> file_path()
-    |> File.write!(json_string)
+    File.write!(@file_path, json_string)
 
     Logger.info("Wrote new state to file")
   end

@@ -8,17 +8,17 @@ defmodule FlagdUiWeb.Components.Navbar do
     ~H"""
     <nav class="bg-gray-800 p-4 sm:p-6">
       <div class="container mx-auto flex items-center justify-between">
-        <a href="/" class="text-xl font-bold text-white">
+        <a href="/feature" class="text-xl font-bold text-white">
           Flagd Configurator
         </a>
         <ul class="flex space-x-2 sm:space-x-4">
           <li>
-            <a href="/" class={classes("basic", @mode)}>
+            <a href="/feature" class={classes("basic", @mode)}>
               Basic
             </a>
           </li>
           <li>
-            <a href="/advanced" class={classes("advanced", @mode)}>
+            <a href="/feature/advanced" class={classes("advanced", @mode)}>
               Advanced
             </a>
           </li>
