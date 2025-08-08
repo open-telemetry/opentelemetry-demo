@@ -20,7 +20,7 @@ ARG BUILD_CONFIGURATION=Release
 RUN dotnet publish "./Accounting.csproj" -r linux-$TARGETARCH -c $BUILD_CONFIGURATION -o /app/publish /p:UseAppHost=false
 
 # -----------------------------------------------------------------------------
-FROM --platform=$BUILDPLATFORM mcr.microsoft.com/dotnet/aspnet:8.0 AS final
+FROM  mcr.microsoft.com/dotnet/aspnet:8.0 AS final
 
 USER app
 WORKDIR /app
@@ -32,4 +32,5 @@ RUN chown app "/var/log/opentelemetry/dotnet"
 RUN chown app "/app/instrument.sh"
 USER app
 
-ENTRYPOINT ["dotnet", "Accounting.dll"]
+ENTRYPOINT ["./instrument.sh","dotnet", "Accounting.dll"]
+#ENTRYPOINT [ "tail", "-f", "/dev/null" ]
