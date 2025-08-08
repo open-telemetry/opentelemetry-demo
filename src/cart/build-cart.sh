@@ -15,6 +15,7 @@ CACHE_OPTION=""
 # Check if the second arg is -cc
 if [[ "$2" == "-cc" ]]; then
   CACHE_OPTION="--no-cache"
+  echo "adding  $CACHE_OPTION"
   # Shift all remaining args so $2 becomes RUM_TOKEN
   shift
 fi
@@ -25,8 +26,9 @@ cd "$(dirname "$0")/../.."
 
 # Build command
 DOCKER_CMD=(
-  docker buildx build $CACHE_OPTION
+  docker buildx build
   --platform=linux/amd64,linux/arm64
+  $CACHE_OPTION
   --build-arg VERSION="$VERSION"
   -t ghcr.io/splunk/opentelemetry-demo/otel-cart:"$VERSION"
   --push
