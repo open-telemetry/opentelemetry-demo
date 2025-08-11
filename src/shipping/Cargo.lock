@@ -1645,7 +1645,7 @@ dependencies = [
  "opentelemetry-resource-detectors",
  "opentelemetry_sdk",
  "serde",
- "tonic 0.14.0",
+ "tonic 0.14.1",
  "tracing",
  "tracing-subscriber",
  "uuid",
@@ -1890,9 +1890,9 @@ dependencies = [
 
 [[package]]
 name = "tonic"
-version = "0.14.0"
+version = "0.14.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "308e1db96abdccdf0a9150fb69112bf6ea72640e0bd834ef0c4a618ccc8c8ddc"
+checksum = "67ac5a8627ada0968acec063a4746bf79588aa03ccb66db2f75d7dce26722a40"
 dependencies = [
  "async-trait",
  "axum",
