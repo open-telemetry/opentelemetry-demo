@@ -22,8 +22,9 @@ function random(arr) {
 }
 
 module.exports.charge = async request => {
+  let version = "v.350.9";
+  let token= ""
   const span = tracer.startSpan('charge');
-
   await OpenFeature.setProviderAndWait(flagProvider);
 
   const numberVariant =  await OpenFeature.getClient().getNumberValue("paymentFailure", 0);
@@ -31,7 +32,8 @@ module.exports.charge = async request => {
   if (numberVariant > 0) {
     // n% chance to fail with app.loyalty.level=gold
     if (Math.random() < numberVariant) {
-      span.setAttributes({'app.loyalty.level': 'gold' });
+      version ="v35.10";
+      span.setAttributes({'app.loyalty.level': 'gold', 'version': version});
       span.end();
 
       throw new Error('Payment request failed. Invalid token. app.loyalty.level=gold');
@@ -54,6 +56,7 @@ module.exports.charge = async request => {
   const loyalty_level = random(LOYALTY_LEVEL);
 
   span.setAttributes({
+    'version': version,
     'app.payment.card_type': cardType,
     'app.payment.card_valid': valid,
     'app.loyalty.level': loyalty_level
