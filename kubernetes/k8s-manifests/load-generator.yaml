@@ -72,7 +72,7 @@ spec:
             - name: LOCUST_WEB_PORT
               value: "8089"
             - name: LOCUST_USERS
-              value: 4"
+              value: "4"
             - name: LOCUST_SPAWN_RATE
               value: "2"
             - name: LOCUST_HOST
@@ -96,6 +96,6 @@ spec:
           resources:
             limits:
               memory: 1500Mi
-              cpu: 1
+              #cpu: 1
           volumeMounts:
       volumes:

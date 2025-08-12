@@ -71,25 +71,25 @@ spec:
             - containerPort: 8016
               name: ofrep
           env:
-            - name: OTEL_SERVICE_NAME
-              valueFrom:
-                fieldRef:
-                  apiVersion: v1
-                  fieldPath: metadata.labels['app.kubernetes.io/component']
-            - name: NODE_IP
-              valueFrom:
-                fieldRef:
-                  fieldPath: status.hostIP
-            - name: OTEL_COLLECTOR_NAME
-              value: $(NODE_IP)
-            - name: OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE
-              value: cumulative
-            - name: FLAGD_METRICS_EXPORTER
-              value: otel
-            - name: FLAGD_OTEL_COLLECTOR_URI
-              value: $(OTEL_COLLECTOR_NAME):4317
-            - name: OTEL_RESOURCE_ATTRIBUTES
-              value: service.name=$(OTEL_SERVICE_NAME),service.namespace=opentelemetry-demo,service.version=2.0.2
+            # - name: OTEL_SERVICE_NAME
+            #   valueFrom:
+            #     fieldRef:
+            #       apiVersion: v1
+            #       fieldPath: metadata.labels['app.kubernetes.io/component']
+            # - name: NODE_IP
+            #   valueFrom:
+            #     fieldRef:
+            #       fieldPath: status.hostIP
+            # - name: OTEL_COLLECTOR_NAME
+            #   value: $(NODE_IP)
+            # - name: OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE
+            #   value: cumulative
+            # - name: FLAGD_METRICS_EXPORTER
+            #   value: otel
+            # - name: FLAGD_OTEL_COLLECTOR_URI
+            #   value: $(OTEL_COLLECTOR_NAME):4317
+            # - name: OTEL_RESOURCE_ATTRIBUTES
+            #   value: service.name=$(OTEL_SERVICE_NAME),service.namespace=opentelemetry-demo,service.version=2.0.2
           resources:
             limits:
               memory: 75Mi
@@ -103,25 +103,25 @@ spec:
             - containerPort: 4000
               name: service
           env:
-            - name: OTEL_SERVICE_NAME
-              valueFrom:
-                fieldRef:
-                  apiVersion: v1
-                  fieldPath: metadata.labels['app.kubernetes.io/component']
-            - name: NODE_IP
-              valueFrom:
-                fieldRef:
-                  fieldPath: status.hostIP
-            - name: OTEL_COLLECTOR_NAME
-              value: $(NODE_IP)
-            - name: OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE
-              value: cumulative
-            - name: FLAGD_METRICS_EXPORTER
-              value: otel
-            - name: OTEL_EXPORTER_OTLP_ENDPOINT
-              value: http://$(OTEL_COLLECTOR_NAME):4318
-            - name: OTEL_RESOURCE_ATTRIBUTES
-              value: service.name=$(OTEL_SERVICE_NAME),service.namespace=opentelemetry-demo,service.version=2.0.2
+          #   - name: OTEL_SERVICE_NAME
+          #     valueFrom:
+          #       fieldRef:
+          #         apiVersion: v1
+          #         fieldPath: metadata.labels['app.kubernetes.io/component']
+          #   - name: NODE_IP
+          #     valueFrom:
+          #       fieldRef:
+          #         fieldPath: status.hostIP
+          #   - name: OTEL_COLLECTOR_NAME
+          #     value: $(NODE_IP)
+          #   - name: OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE
+          #     value: cumulative
+          #   - name: FLAGD_METRICS_EXPORTER
+          #     value: otel
+          #   - name: OTEL_EXPORTER_OTLP_ENDPOINT
+          #     value: http://$(OTEL_COLLECTOR_NAME):4318
+          #   - name: OTEL_RESOURCE_ATTRIBUTES
+          #     value: service.name=$(OTEL_SERVICE_NAME),service.namespace=opentelemetry-demo,service.version=2.0.2
           resources:
             limits:
               memory: 100Mi

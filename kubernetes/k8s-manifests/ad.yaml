@@ -101,6 +101,6 @@ spec:
               value: "-javaagent:/usr/src/app/splunk-otel-javaagent.jar"
           resources:
             limits:
-              memory: 400Mi
+              memory: 600Mi
           volumeMounts:
       volumes:
