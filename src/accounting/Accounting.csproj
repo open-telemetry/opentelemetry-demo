@@ -24,11 +24,11 @@
 
 	<ItemGroup>
 		<!-- GrpcServices is 'none' so that we do not need to depend on the grpc nuget package, and we only need protobuf support. -->
-		<Protobuf Include="proto\demo.proto" GrpcServices="none" />
+		<Protobuf Include="src\protos\demo.proto" GrpcServices="none" />
 	</ItemGroup>
 
 	<ItemGroup>
-	  <Folder Include="proto\" />
+	  <Folder Include="src\protos\" />
 	</ItemGroup>
 
 </Project>

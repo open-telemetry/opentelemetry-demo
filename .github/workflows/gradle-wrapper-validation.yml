@@ -18,4 +18,4 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - uses: gradle/actions/wrapper-validation@v4.4.1
+      - uses: gradle/actions/wrapper-validation@v4.4.2
