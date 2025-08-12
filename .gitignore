@@ -59,3 +59,7 @@ src/cart/src/Dockerfile.singlearch
 src/cart/src/Dockerfile.too_complex
 src/flagd-ui/src/instrumentation.ts.not-used
 .gitignore
+src/payment/charge.js.original
+src/payment/logger.js.not sure
+src/payment/logger.js.original
+src/payment.zip
