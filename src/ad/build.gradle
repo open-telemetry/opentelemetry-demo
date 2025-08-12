@@ -16,7 +16,7 @@ description = 'Ad Service'
 group = "ad"
 version = "0.1.0-SNAPSHOT"
 
-def opentelemetryVersion = "1.52.0"
+def opentelemetryVersion = "1.53.0"
 def opentelemetryInstrumentationVersion = "2.18.1"
 def grpcVersion = "1.74.0"
 def jacksonVersion = "2.19.2"
