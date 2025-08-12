@@ -823,19 +823,24 @@ services:
 
   # OpenSearch
   opensearch:
-    image: ${OPENSEARCH_IMAGE}
+    image: ${IMAGE_NAME}:${DEMO_VERSION}-opensearch-minimal
     container_name: opensearch
+    build:
+      context: ./
+      dockerfile: src/opensearch-minimal/Dockerfile
+      cache_from:
+        - ${IMAGE_NAME}:${IMAGE_VERSION}-opensearch-minimal
     deploy:
       resources:
         limits:
-          memory: 1.1G
+          memory: 800M
     restart: unless-stopped
     environment:
       - cluster.name=demo-cluster
       - node.name=demo-node
       - bootstrap.memory_lock=true
       - discovery.type=single-node
-      - OPENSEARCH_JAVA_OPTS=-Xms300m -Xmx300m
+      - OPENSEARCH_JAVA_OPTS=-Xms400m -Xmx400m
       - DISABLE_INSTALL_DEMO_CONFIG=true
       - DISABLE_SECURITY_PLUGIN=true
       # Workaround on OSX for https://bugs.openjdk.org/browse/JDK-8345296
@@ -856,3 +861,17 @@ services:
       timeout: 10s
       retries: 10
     logging: *logging
+    
+  opensearch-init:
+    image: curlimages/curl:8.4.0
+    depends_on:
+      opensearch:
+        condition: service_healthy
+    entrypoint: >
+      sh -c '
+        echo "Applying default index template for low memory usage...";
+        curl -s -XPUT http://opensearch:9200/_template/default \
+          -H "Content-Type: application/json" \
+          -d "{\"index_patterns\":[\"*\"],\"settings\":{\"number_of_shards\":1,\"number_of_replicas\":0,\"refresh_interval\":\"60s\"}}";
+        echo "Done."
+      '
