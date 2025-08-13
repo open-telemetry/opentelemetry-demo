@@ -128,7 +128,8 @@ type checkout struct {
 	paymentSvcAddr        string
 	kafkaBrokerSvcAddr    string
 	pb.UnimplementedCheckoutServiceServer
-	KafkaProducerClient     sarama.AsyncProducer
+	KafkaAsyncProducer      sarama.AsyncProducer
+	KafkaSyncProducer       sarama.SyncProducer
 	shippingSvcClient       pb.ShippingServiceClient
 	productCatalogSvcClient pb.ProductCatalogServiceClient
 	cartSvcClient           pb.CartServiceClient
@@ -200,10 +201,33 @@ func main() {
 	svc.kafkaBrokerSvcAddr = os.Getenv("KAFKA_ADDR")
 
 	if svc.kafkaBrokerSvcAddr != "" {
-		svc.KafkaProducerClient, err = kafka.CreateKafkaProducer([]string{svc.kafkaBrokerSvcAddr}, log)
+		kafkaClient, err := kafka.CreateClient([]string{svc.kafkaBrokerSvcAddr}, log)
 		if err != nil {
 			log.Fatal(err)
 		}
+		defer func() {
+			if err = kafkaClient.Close(); err != nil {
+				log.Fatalln(err)
+			}
+		}()
+		svc.KafkaSyncProducer, err = sarama.NewSyncProducerFromClient(kafkaClient)
+		if err != nil {
+			log.Fatalln(err)
+		}
+		defer func() {
+			if err = svc.KafkaSyncProducer.Close(); err != nil {
+				log.Fatalln(err)
+			}
+		}()
+		svc.KafkaAsyncProducer, err = sarama.NewAsyncProducerFromClient(kafkaClient)
+		if err != nil {
+			log.Fatalln(err)
+		}
+		defer func() {
+			if err = svc.KafkaAsyncProducer.Close(); err != nil {
+				log.Fatalln(err)
+			}
+		}()
 	}
 
 	log.Infof("service config: %+v", svc)
@@ -507,49 +531,33 @@ func (cs *checkout) sendToPostProcessor(ctx context.Context, result *pb.OrderRes
 
 	// Send message and handle response
 	startTime := time.Now()
-	select {
-	case cs.KafkaProducerClient.Input() <- &msg:
-		log.Infof("Message sent to Kafka: %v", msg)
-		select {
-		case successMsg := <-cs.KafkaProducerClient.Successes():
-			span.SetAttributes(
-				attribute.Bool("messaging.kafka.producer.success", true),
-				attribute.Int("messaging.kafka.producer.duration_ms", int(time.Since(startTime).Milliseconds())),
-				attribute.KeyValue(semconv.MessagingKafkaMessageOffset(int(successMsg.Offset))),
-			)
-			log.Infof("Successful to write message. offset: %v, duration: %v", successMsg.Offset, time.Since(startTime))
-		case errMsg := <-cs.KafkaProducerClient.Errors():
-			span.SetAttributes(
-				attribute.Bool("messaging.kafka.producer.success", false),
-				attribute.Int("messaging.kafka.producer.duration_ms", int(time.Since(startTime).Milliseconds())),
-			)
-			span.SetStatus(otelcodes.Error, errMsg.Err.Error())
-			log.Errorf("Failed to write message: %v", errMsg.Err)
-		case <-ctx.Done():
-			span.SetAttributes(
-				attribute.Bool("messaging.kafka.producer.success", false),
-				attribute.Int("messaging.kafka.producer.duration_ms", int(time.Since(startTime).Milliseconds())),
-			)
-			span.SetStatus(otelcodes.Error, "Context cancelled: "+ctx.Err().Error())
-			log.Warnf("Context canceled before success message received: %v", ctx.Err())
-		}
-	case <-ctx.Done():
+
+	log.Infof("Message sent to Kafka: %v", msg)
+	_, offset, err := cs.KafkaSyncProducer.SendMessage(&msg)
+
+	if err != nil {
 		span.SetAttributes(
 			attribute.Bool("messaging.kafka.producer.success", false),
 			attribute.Int("messaging.kafka.producer.duration_ms", int(time.Since(startTime).Milliseconds())),
 		)
-		span.SetStatus(otelcodes.Error, "Failed to send: "+ctx.Err().Error())
-		log.Errorf("Failed to send message to Kafka within context deadline: %v", ctx.Err())
-		return
+		span.SetStatus(otelcodes.Error, err.Error())
+		log.Errorf("Failed to write message: %v", err)
+	} else {
+		span.SetAttributes(
+			attribute.Bool("messaging.kafka.producer.success", true),
+			attribute.Int("messaging.kafka.producer.duration_ms", int(time.Since(startTime).Milliseconds())),
+			attribute.KeyValue(semconv.MessagingKafkaMessageOffset(int(offset))),
+		)
+		log.Infof("Successful to write message. offset: %v, duration: %v", offset, time.Since(startTime))
 	}
 
 	ffValue := cs.getIntFeatureFlag(ctx, "kafkaQueueProblems")
 	if ffValue > 0 {
 		log.Infof("Warning: FeatureFlag 'kafkaQueueProblems' is activated, overloading queue now.")
-		for i := 0; i < ffValue; i++ {
+		for i := range ffValue {
 			go func(i int) {
-				cs.KafkaProducerClient.Input() <- &msg
-				_ = <-cs.KafkaProducerClient.Successes()
+				cs.KafkaAsyncProducer.Input() <- &msg
+				_ = <-cs.KafkaAsyncProducer.Successes()
 			}(i)
 		}
 		log.Infof("Done with #%d messages for overload simulation.", ffValue)
