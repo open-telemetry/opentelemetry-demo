@@ -22,8 +22,6 @@ func CreateClient(brokers []string, log *logrus.Logger) (sarama.Client, error) {
 	// This setting is to prevent that issue from manifesting itself, but may swallow failed messages.
 	config.Producer.RequiredAcks = sarama.NoResponse
 	config.Version = ProtocolVersion
-	// So we can know the partition and offset of messages.
-	config.Producer.Return.Successes = true
 
 	client, err := sarama.NewClient(brokers, config)
 	if err != nil {
