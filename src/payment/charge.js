@@ -126,7 +126,8 @@ module.exports.charge = async request => {
   const span = tracer.startSpan('charge');
   await OpenFeature.setProviderAndWait(flagProvider);
   // Fetch retry max from OpenFeature; default to 4 if not present
-  const retryMaxRaw = await OpenFeature.getClient().getNumberValue('paymentRetryMax', 4);
+  //const retryMaxRaw = await OpenFeature.getClient().getNumberValue('paymentRetryMax', 4);
+  const retryMaxRaw =  4;
   const RETRY_MAX = Math.max(0, Math.floor(retryMaxRaw));
   const RETRY_BASE_DELAY_MS = 150;
   const numberVariant = await OpenFeature.getClient().getNumberValue('paymentFailure', 0);
@@ -281,50 +282,7 @@ module.exports.charge = async request => {
     if (result) {
       return result;
     }
-// All attempts failed: mark spans and return a 500-style failure (no throw)
-  /*   span.setAttributes({ version: FAILURE_VERSION, error: true, 'app.loyalty.level': 'gold', 'retry.count': attempt - 1, 'retry.success': false });
-    const baggage = propagation.getBaggage(context.active());
-    const synthetic = baggage && baggage.getEntry('synthetic_request') && baggage.getEntry('synthetic_request').value === 'true';
-    span.setAttribute('app.payment.charged', false);
 
-    // IMPORTANT: do NOT throw—return a 500-style result instead
-    context.with(trace.setSpan(context.active(), span), () => {
-      if (lastErr && lastErr.code === 401) {
-        logger.error(
-          {
-            severity: 'error',
-            time: Math.floor(Date.now() / 1000),
-            pid: process.pid,
-            hostname: require('os').hostname(),
-            name: 'payment',
-            trace_id: trace.getSpan(context.active()).spanContext().traceId,
-            span_id: trace.getSpan(context.active()).spanContext().spanId,
-            'service.name': 'payment',
-            token: API_TOKEN_FAILURE_TOKEN,
-            version: FAILURE_VERSION,
-            message: `Failed payment processing through ButtercupPayments: Invalid API Token (${API_TOKEN_FAILURE_TOKEN})`,
-
-          }
-        );
-      } else {
-        logger.error(
-          {
-            severity: 'error',
-            time: Math.floor(Date.now() / 1000),
-            pid: process.pid,
-            hostname: require('os').hostname(),
-            name: 'payment',
-            trace_id: trace.getSpan(context.active()).spanContext().traceId,
-            span_id: trace.getSpan(context.active()).spanContext().spanId,
-            'service.name': 'payment',
-            version: FAILURE_VERSION,
-            message: 'Failed payment processing through ButtercupPayments after retries',
-          }
-        );
-      }
-    });
-    return { transactionId: null, success: false, retries: attempt - 1, errorCode: 500 };
- */
 // All attempts failed: mark spans and return a 500/401-style failure (no throw)
     const finalCode = (lastErr && lastErr.code === 401) ? 401 : 500;
 
@@ -360,8 +318,8 @@ module.exports.charge = async request => {
             'service.name': 'paymentservice',
             token: API_TOKEN_FAILURE_TOKEN,
             version: FAILURE_VERSION,
-            message: `Failed payment processing through ButtercupPayments after retries: Invalid API Token (${API_TOKEN_FAILURE_TOKEN})`,
-            v: 1,
+            message: `Failed payment processing through ButtercupPayments after ${RETRY_MAX} retries: Invalid API Token (${API_TOKEN_FAILURE_TOKEN})`,
+
           }
         );
       } else {
@@ -377,7 +335,7 @@ module.exports.charge = async request => {
             'service.name': 'paymentservice',
             version: FAILURE_VERSION,
             message: 'Failed payment processing through ButtercupPayments after retries',
-            v: 1,
+
           }
         );
       }
