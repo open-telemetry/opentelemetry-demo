@@ -8,7 +8,7 @@ gem "puma",     "~> 6.6"
 gem "sinatra",  "~> 4.1"
 gem "rackup",   "~> 2.2"
 
-gem "google-protobuf", "~> 4.31.1"
+gem "google-protobuf", "~> 4.32.0"
 
 gem "opentelemetry-sdk",                 "~> 1.8"
 gem "opentelemetry-exporter-otlp",       "~> 0.30.0"
