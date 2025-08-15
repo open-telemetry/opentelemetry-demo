@@ -56,12 +56,78 @@ static_resources:
                         - match: { prefix: "/flagservice/" }
                           route: { cluster: flagservice, prefix_rewrite: "/", timeout: 0s }
                         - match: { prefix: "/feature" }
-                          route:
-                            cluster: flagd-ui
-                            prefix_rewrite: "/"
-                            upgrade_configs:
-                              - upgrade_type: websocket
-                        - match: { prefix: "/" } # Default/catch-all route - keep last since prefix:"/" matches everything
+                          route: { cluster: flagd-ui }
+                          typed_per_filter_config:
+                            envoy.filters.http.lua:
+                              "@type": type.googleapis.com/envoy.extensions.filters.http.lua.v3.LuaPerRoute
+                              source_code:
+                                inline_string: |
+                                  local function to_bool(s)
+                                    s = (s or ""):lower()
+                                    return s == "1" or s == "true" or s == "yes" or s == "on"
+                                  end
+
+                                  function envoy_on_request(handle)
+                                    -- These get substituted by your template engine/envsubst. If not set, they’ll be empty.
+                                    local enabled_raw = "${FEATURE_AUTH_ENABLED}"
+                                    local user_expected = "${FEATURE_USER}"
+                                    local pass_expected = "${FEATURE_PASS}"
+
+                                    -- If the flag is NOT enabled (unset/empty/falsey), allow access without auth.
+                                    if not to_bool(enabled_raw) then
+                                      return
+                                    end
+
+                                    -- If auth is enabled but creds are missing, deny with a warning.
+                                    if (user_expected or "") == "" or (pass_expected or "") == "" then
+                                      handle:logWarn("FEATURE_AUTH_ENABLED=true but FEATURE_USER/PASS not set")
+                                      handle:respond(
+                                        { [":status"] = "401", ["www-authenticate"] = "Basic realm=\"restricted\"" },
+                                        "Authentication required\n"
+                                      )
+                                      return
+                                    end
+
+                                    -- Enforce Basic Auth
+                                    local auth = handle:headers():get("authorization")
+                                    if auth == nil or auth:sub(1,6) ~= "Basic " then
+                                      handle:respond(
+                                        { [":status"] = "401", ["www-authenticate"] = "Basic realm=\"restricted\"" },
+                                        "Authentication required\n"
+                                      )
+                                      return
+                                    end
+
+                                    -- Simple Base64 decoder
+                                    local b='ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/'
+                                    local function b64decode(data)
+                                      data = (data or ""):gsub('[^'..b..'=]', '')
+                                      return (data:gsub('.', function(x)
+                                        if x == '=' then return '' end
+                                        local r,f='',(b:find(x,1,true)-1)
+                                        for i=6,1,-1 do r = r .. (f%2^i - f%2^(i-1) > 0 and '1' or '0') end
+                                        return r
+                                      end):gsub('%d%d%d?%d?%d?%d?%d?%d?', function(x)
+                                        if #x ~= 8 then return '' end
+                                        local c=0
+                                        for i=1,8 do c=c + (x:sub(i,i)=='1' and 2^(8-i) or 0) end
+                                        return string.char(c)
+                                      end))
+                                    end
+
+                                    local decoded = b64decode(auth:sub(7))
+                                    local user, pass = decoded:match("([^:]+):(.*)")
+
+                                    if user ~= user_expected or pass ~= pass_expected then
+                                      handle:respond(
+                                        { [":status"] = "401", ["www-authenticate"] = "Basic realm=\"restricted\"" },
+                                        "Unauthorized\n"
+                                      )
+                                      return
+                                    end
+                                    -- Auth OK -> continue
+                                  end                       
+                        - match: { prefix: "/" }
                           route: { cluster: frontend }
                 http_filters:
                   - name: envoy.filters.http.fault
