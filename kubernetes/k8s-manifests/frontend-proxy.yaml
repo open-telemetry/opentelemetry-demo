@@ -48,8 +48,9 @@ spec:
       serviceAccountName: opentelemetry-demo
       containers:
         - name: frontend-proxy
-          image: 'ghcr.io/open-telemetry/demo:2.0.2-frontend-proxy'
-          imagePullPolicy: IfNotPresent
+          #image: 'ghcr.io/open-telemetry/demo:2.0.2-frontend-proxy'
+          image:  ghcr.io/splunk/opentelemetry-demo/otel-frontend-proxy:0.0.1
+          imagePullPolicy: Always
           ports:
             - containerPort: 8080
               name: service
@@ -107,6 +108,12 @@ spec:
               value: "4318"
             - name: OTEL_RESOURCE_ATTRIBUTES
               value: service.name=$(OTEL_SERVICE_NAME),service.namespace=opentelemetry-demo,service.version=2.0.2
+            - name: FEATURE_AUTH_ENABLED
+              value: "false"     # enables auth for /feature
+            - name: FEATURE_USER
+              value: "Robert"
+            - name: FEATURE_PASS
+              value: "007"
           resources:
             limits:
               memory: 65Mi
