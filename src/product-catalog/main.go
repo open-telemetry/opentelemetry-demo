@@ -316,7 +316,4 @@ func createClient(ctx context.Context, svcAddr string) (*grpc.ClientConn, error)
 	)
 }
 
-
-
-
-
+fmt.Println("Hello from GitHub Actions!")
