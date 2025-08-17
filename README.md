@@ -58,8 +58,9 @@ keeping it up to date for you.
 
 |                           |                |                                  |
 |---------------------------|----------------|----------------------------------|
-| [AlibabaCloud LogService] | [Elastic]      | [Oracle]                         |
-| [AppDynamics]             | [Google Cloud] | [Parseable]                      |
+| [AlibabaCloud LogService] | [Dynatrace]    | [OpenSearch]                     |
+| [AppDynamics]             | [Elastic]      | [Oracle]                         |
+| [Apache Doris]            | [Google Cloud] | [Parseable]                      |
 | [Aspecto]                 | [Grafana Labs] | [Sentry]                         |
 | [Axiom]                   | [Guance]       | [ServiceNow Cloud Observability] |
 | [Axoflow]                 | [Honeycomb.io] | [SigNoz]                         |
@@ -69,7 +70,6 @@ keeping it up to date for you.
 | [Coralogix]               | [Liatrio]      | [Teletrace]                      |
 | [Dash0]                   | [Logz.io]      | [Tracetest]                      |
 | [Datadog]                 | [New Relic]    | [Uptrace]                        |
-| [Dynatrace]               | [OpenSearch]   |                                  |
 
 ## Contributing
 
@@ -115,6 +115,7 @@ For more information about the emeritus role, see the [community repository](htt
 
 [AlibabaCloud LogService]: https://github.com/aliyun-sls/opentelemetry-demo
 [AppDynamics]: https://community.splunk.com/t5/AppDynamics-Knowledge-Base/How-to-observe-Kubernetes-deployment-of-OpenTelemetry-demo-app/ta-p/741454
+[Apache Doris]: https://github.com/apache/doris-opentelemetry-demo
 [Aspecto]: https://github.com/aspecto-io/opentelemetry-demo
 [Axiom]: https://play.axiom.co/axiom-play-qf1k/dashboards/otel.traces.otel-demo-traces
 [Axoflow]: https://axoflow.com/opentelemetry-support-in-more-detail-in-axosyslog-and-syslog-ng/
