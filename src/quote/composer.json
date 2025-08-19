@@ -14,7 +14,7 @@
         "open-telemetry/detector-container": "1.1.0",
         "open-telemetry/opentelemetry-logger-monolog": "1.1.0",
         "guzzlehttp/guzzle": "7.9.3",
-        "php-di/php-di": "7.0.11",
+        "php-di/php-di": "7.1.1",
         "php-di/slim-bridge": "3.4.1",
         "php-http/guzzle7-adapter": "1.1.0",
         "react/http": "v1.11.0",
