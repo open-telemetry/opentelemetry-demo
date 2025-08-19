@@ -42,4 +42,6 @@ defmodule FlagdUiWeb.Endpoint do
   plug Plug.Head
   plug Plug.Session, @session_options
   plug FlagdUiWeb.Router
+
+  def get_root_path, do: config(:url) |> Enum.find(fn {k, _} -> k == :path end) |> elem(1)
 end

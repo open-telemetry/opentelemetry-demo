@@ -25,7 +25,8 @@ import {LiveSocket} from "phoenix_live_view"
 import topbar from "../vendor/topbar"
 
 const csrfToken = document.querySelector("meta[name='csrf-token']").getAttribute("content")
-const liveSocket = new LiveSocket("/feature/live", Socket, {
+const rootPath = document.querySelector("meta[name='root-path']").getAttribute("content")
+const liveSocket = new LiveSocket(rootPath === '/' ? '/live' : `${rootPath}live`, Socket, {
   longPollFallbackMs: 2500,
   params: {_csrf_token: csrfToken}
 })
