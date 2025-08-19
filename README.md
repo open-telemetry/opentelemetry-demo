@@ -59,8 +59,8 @@ keeping it up to date for you.
 |                           |                |                                  |
 |---------------------------|----------------|----------------------------------|
 | [AlibabaCloud LogService] | [Dynatrace]    | [OpenSearch]                     |
-| [AppDynamics]             | [Elastic]      | [Oracle]                         |
-| [Apache Doris]            | [Google Cloud] | [Parseable]                      |
+| [Apache Doris]            | [Elastic]      | [Oracle]                         |
+| [AppDynamics]             | [Google Cloud] | [Parseable]                      |
 | [Aspecto]                 | [Grafana Labs] | [Sentry]                         |
 | [Axiom]                   | [Guance]       | [ServiceNow Cloud Observability] |
 | [Axoflow]                 | [Honeycomb.io] | [SigNoz]                         |
