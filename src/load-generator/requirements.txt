@@ -1,4 +1,4 @@
-Flask==3.1.1
+Flask==3.1.2
 locust-plugins[playwright]==4.7.0
 python-json-logger==3.3.0
 openfeature-provider-ofrep==0.1.1
