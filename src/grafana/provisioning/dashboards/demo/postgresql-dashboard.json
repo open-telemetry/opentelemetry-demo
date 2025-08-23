@@ -116,10 +116,10 @@
       "targets": [
         {
           "datasource": {
-            "type": "prometheus",
+            "type": "victoriametrics-metrics-datasource",
             "uid": "webstore-metrics"
           },
-          "dsType": "prometheus",
+          "dsType": "victoriametrics-metrics-datasource",
           "editorMode": "code",
           "expr": "sum(irate(postgresql_commits_total{postgresql_database_name=~\"$db\",k8s_cluster_name=~\"$k8s_cluster_name\", k8s_statefulset_name=~\"$k8s_statefulset_name\",host_name=~\"$host_name\"}[$__rate_interval])) + sum(irate(postgresql_rollbacks_total{postgresql_database_name=~\"$db\",k8s_cluster_name=~\"$k8s_cluster_name\", k8s_statefulset_name=~\"$k8s_statefulset_name\",host_name=~\"$host_name\"}[$__rate_interval]))",
           "format": "time_series",
@@ -261,10 +261,10 @@
         {
           "alias": "fetched",
           "datasource": {
-            "type": "prometheus",
+            "type": "victoriametrics-metrics-datasource",
             "uid": "webstore-metrics"
           },
-          "dsType": "prometheus",
+          "dsType": "victoriametrics-metrics-datasource",
           "editorMode": "code",
           "expr": "sum(irate(postgresql_tup_fetched_total{postgresql_database_name=~\"$db\",k8s_cluster_name=~\"$k8s_cluster_name\", k8s_statefulset_name=~\"$k8s_statefulset_name\",host_name=~\"$host_name\"}[$__rate_interval]))",
           "format": "time_series",
@@ -323,7 +323,7 @@
           "datasource": {
             "uid": "$datasource"
           },
-          "dsType": "prometheus",
+          "dsType": "victoriametrics-metrics-datasource",
           "editorMode": "code",
           "expr": "sum(irate(postgresql_tup_returned_total{postgresql_database_name=~\"$db\",k8s_cluster_name=~\"$k8s_cluster_name\", k8s_statefulset_name=~\"$k8s_statefulset_name\",host_name=~\"$host_name\"}[$__rate_interval]))",
           "format": "time_series",
@@ -380,10 +380,10 @@
         {
           "alias": "fetched",
           "datasource": {
-            "type": "prometheus",
+            "type": "victoriametrics-metrics-datasource",
             "uid": "webstore-metrics"
           },
-          "dsType": "prometheus",
+          "dsType": "victoriametrics-metrics-datasource",
           "editorMode": "code",
           "expr": "sum(irate(postgresql_tup_inserted_total{postgresql_database_name=~\"$db\",k8s_cluster_name=~\"$k8s_cluster_name\", k8s_statefulset_name=~\"$k8s_statefulset_name\",host_name=~\"$host_name\"}[$__rate_interval]))",
           "format": "time_series",
@@ -443,7 +443,7 @@
           "datasource": {
             "uid": "$datasource"
           },
-          "dsType": "prometheus",
+          "dsType": "victoriametrics-metrics-datasource",
           "editorMode": "code",
           "expr": "sum(irate(postgresql_tup_updated_total{dpostgresql_database_name=~\"$db\",k8s_cluster_name=~\"$k8s_cluster_name\", k8s_statefulset_name=~\"$k8s_statefulset_name\",host_name=~\"$host_name\"}[$__rate_interval]))",
           "format": "time_series",
@@ -501,10 +501,10 @@
         {
           "alias": "fetched",
           "datasource": {
-            "type": "prometheus",
+            "type": "victoriametrics-metrics-datasource",
             "uid": "webstore-metrics"
           },
-          "dsType": "prometheus",
+          "dsType": "victoriametrics-metrics-datasource",
           "editorMode": "code",
           "expr": "sum(irate(postgresql_tup_deleted_total{postgresql_database_name=~\"$db\",k8s_cluster_name=~\"$k8s_cluster_name\", k8s_statefulset_name=~\"$k8s_statefulset_name\",host_name=~\"$host_name\"}[$__rate_interval]))",
           "format": "time_series",
@@ -648,10 +648,10 @@
         {
           "alias": "Buffers Allocated",
           "datasource": {
-            "type": "prometheus",
+            "type": "victoriametrics-metrics-datasource",
             "uid": "webstore-metrics"
           },
-          "dsType": "prometheus",
+          "dsType": "victoriametrics-metrics-datasource",
           "editorMode": "code",
           "expr": "irate(postgresql_bgwriter_buffers_allocated_total{host_name=~\"$host_name\", k8s_cluster_name=~\"$k8s_cluster_name\", k8s_statefulset_name=~\"$k8s_statefulset_name\"}[$__rate_interval])",
           "format": "time_series",
@@ -705,7 +705,7 @@
         },
         {
           "datasource": {
-            "type": "prometheus",
+            "type": "victoriametrics-metrics-datasource",
             "uid": "$datasource"
           },
           "disableTextWrap": false,
@@ -724,10 +724,10 @@
         {
           "alias": "Buffers Allocated",
           "datasource": {
-            "type": "prometheus",
+            "type": "victoriametrics-metrics-datasource",
             "uid": "webstore-metrics"
           },
-          "dsType": "prometheus",
+          "dsType": "victoriametrics-metrics-datasource",
           "expr": "irate(pg_stat_bgwriter_buffers_backend_total{job=~\"$job\",cluster=~\"$cluster\",instance=~\"$instance\"}[$__rate_interval])",
           "format": "time_series",
           "groupBy": [
@@ -782,7 +782,7 @@
           "datasource": {
             "uid": "$datasource"
           },
-          "dsType": "prometheus",
+          "dsType": "victoriametrics-metrics-datasource",
           "expr": "irate(pg_stat_bgwriter_buffers_clean_total{job=~\"$job\",cluster=~\"$cluster\",instance=~\"$instance\"}[$__rate_interval])",
           "format": "time_series",
           "groupBy": [
@@ -835,10 +835,10 @@
         {
           "alias": "Buffers Allocated",
           "datasource": {
-            "type": "prometheus",
+            "type": "victoriametrics-metrics-datasource",
             "uid": "webstore-metrics"
           },
-          "dsType": "prometheus",
+          "dsType": "victoriametrics-metrics-datasource",
           "editorMode": "code",
           "expr": "irate(postgresql_bgwriter_checkpoint_count_total{k8s_cluster_name=~\"$k8s_cluster_name\", k8s_statefulset_name=~\"$k8s_statefulset_name\", host_name=~\"$host_name\"}[$__rate_interval])",
           "format": "time_series",
@@ -896,7 +896,7 @@
     },
     {
       "datasource": {
-        "type": "prometheus",
+        "type": "victoriametrics-metrics-datasource",
         "uid": "$datasource"
       },
       "fieldConfig": {
@@ -1020,10 +1020,10 @@
         {
           "alias": "conflicts",
           "datasource": {
-            "type": "prometheus",
+            "type": "victoriametrics-metrics-datasource",
             "uid": "webstore-metrics"
           },
-          "dsType": "prometheus",
+          "dsType": "victoriametrics-metrics-datasource",
           "editorMode": "code",
           "expr": "sum(postgresql_deadlocks_total{postgresql_database_name=~\"$db\",k8s_cluster_name=~\"$k8s_cluster_name\", k8s_statefulset_name=~\"$k8s_statefulset_name\", host_name=~\"$host_name\"})",
           "format": "time_series",
@@ -1080,7 +1080,7 @@
           "datasource": {
             "uid": "$datasource"
           },
-          "dsType": "prometheus",
+          "dsType": "victoriametrics-metrics-datasource",
           "editorMode": "code",
           "expr": "sum(postgresql_conflicts_total{postgresql_database_name=~\"$db\",k8s_cluster_name=~\"$k8s_cluster_name\", k8s_statefulset_name=~\"$k8s_statefulset_name\",host_name=~\"$host_name\"})",
           "format": "time_series",
@@ -1138,7 +1138,7 @@
     },
     {
       "datasource": {
-        "type": "prometheus",
+        "type": "victoriametrics-metrics-datasource",
         "uid": "webstore-metrics"
       },
       "fieldConfig": {
@@ -1238,7 +1238,7 @@
     },
     {
       "datasource": {
-        "type": "prometheus",
+        "type": "victoriametrics-metrics-datasource",
         "uid": "webstore-metrics"
       },
       "fieldConfig": {
@@ -1347,14 +1347,14 @@
     "list": [
       {
         "current": {
-          "text": "Prometheus",
+          "text": "VictoriaMetrics",
           "value": "webstore-metrics"
         },
         "includeAll": false,
         "label": "Data Source",
         "name": "datasource",
         "options": [],
-        "query": "prometheus",
+        "query": "victoriametrics-metrics-datasource",
         "refresh": 1,
         "regex": "(?!grafanacloud-usage|grafanacloud-ml-metrics).+",
         "type": "datasource"
@@ -1366,7 +1366,7 @@
           "value": "$__all"
         },
         "datasource": {
-          "type": "prometheus",
+          "type": "victoriametrics-metrics-datasource",
           "uid": "webstore-metrics"
         },
         "definition": "label_values(postgresql_table_count,k8s_cluster_name)",
@@ -1443,7 +1443,7 @@
           "value": "$__all"
         },
         "datasource": {
-          "type": "prometheus",
+          "type": "victoriametrics-metrics-datasource",
           "uid": "webstore-metrics"
         },
         "definition": "label_values(postgresql_table_count{host_name=~\"$host_name\", postgresql_database_name!~\"template.*|postgres\", k8s_cluster_name=~\"$k8s_cluster_name\", k8s_statefulset_name=~\"$k8s_statefulset_name\"},postgresql_database_name)",

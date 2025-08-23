@@ -68,7 +68,7 @@
     },
     {
       "datasource": {
-        "type": "prometheus",
+        "type": "victoriametrics-metrics-datasource",
         "uid": "$datasource"
       },
       "description": "Accepted: count/rate of spans successfully pushed into the pipeline.\nRefused: count/rate of spans that could not be pushed into the pipeline.",
@@ -179,7 +179,7 @@
       "targets": [
         {
           "datasource": {
-            "type": "prometheus",
+            "type": "victoriametrics-metrics-datasource",
             "uid": "$datasource"
           },
           "editorMode": "code",
@@ -194,7 +194,7 @@
         },
         {
           "datasource": {
-            "type": "prometheus",
+            "type": "victoriametrics-metrics-datasource",
             "uid": "$datasource"
           },
           "editorMode": "code",
@@ -214,7 +214,7 @@
     },
     {
       "datasource": {
-        "type": "prometheus",
+        "type": "victoriametrics-metrics-datasource",
         "uid": "$datasource"
       },
       "description": "Accepted: count/rate of metric points successfully pushed into the pipeline.\nRefused: count/rate of metric points that could not be pushed into the pipeline.",
@@ -325,7 +325,7 @@
       "targets": [
         {
           "datasource": {
-            "type": "prometheus",
+            "type": "victoriametrics-metrics-datasource",
             "uid": "$datasource"
           },
           "editorMode": "code",
@@ -340,7 +340,7 @@
         },
         {
           "datasource": {
-            "type": "prometheus",
+            "type": "victoriametrics-metrics-datasource",
             "uid": "$datasource"
           },
           "editorMode": "code",
@@ -360,7 +360,7 @@
     },
     {
       "datasource": {
-        "type": "prometheus",
+        "type": "victoriametrics-metrics-datasource",
         "uid": "$datasource"
       },
       "description": "Accepted: count/rate of log records successfully pushed into the pipeline.\nRefused: count/rate of log records that could not be pushed into the pipeline.",
@@ -471,7 +471,7 @@
       "targets": [
         {
           "datasource": {
-            "type": "prometheus",
+            "type": "victoriametrics-metrics-datasource",
             "uid": "$datasource"
           },
           "editorMode": "code",
@@ -486,7 +486,7 @@
         },
         {
           "datasource": {
-            "type": "prometheus",
+            "type": "victoriametrics-metrics-datasource",
             "uid": "$datasource"
           },
           "editorMode": "code",
@@ -519,7 +519,7 @@
     },
     {
       "datasource": {
-        "type": "prometheus",
+        "type": "victoriametrics-metrics-datasource",
         "uid": "$datasource"
       },
       "description": "",
@@ -648,7 +648,7 @@
       "targets": [
         {
           "datasource": {
-            "type": "prometheus",
+            "type": "victoriametrics-metrics-datasource",
             "uid": "$datasource"
           },
           "editorMode": "code",
@@ -663,7 +663,7 @@
         },
         {
           "datasource": {
-            "type": "prometheus",
+            "type": "victoriametrics-metrics-datasource",
             "uid": "$datasource"
           },
           "editorMode": "code",
@@ -683,7 +683,7 @@
     },
     {
       "datasource": {
-        "type": "prometheus",
+        "type": "victoriametrics-metrics-datasource",
         "uid": "$datasource"
       },
       "description": "",
@@ -812,7 +812,7 @@
       "targets": [
         {
           "datasource": {
-            "type": "prometheus",
+            "type": "victoriametrics-metrics-datasource",
             "uid": "$datasource"
           },
           "editorMode": "code",
@@ -827,7 +827,7 @@
         },
         {
           "datasource": {
-            "type": "prometheus",
+            "type": "victoriametrics-metrics-datasource",
             "uid": "$datasource"
           },
           "editorMode": "code",
@@ -847,7 +847,7 @@
     },
     {
       "datasource": {
-        "type": "prometheus",
+        "type": "victoriametrics-metrics-datasource",
         "uid": "$datasource"
       },
       "description": "",
@@ -976,7 +976,7 @@
       "targets": [
         {
           "datasource": {
-            "type": "prometheus",
+            "type": "victoriametrics-metrics-datasource",
             "uid": "$datasource"
           },
           "editorMode": "code",
@@ -991,7 +991,7 @@
         },
         {
           "datasource": {
-            "type": "prometheus",
+            "type": "victoriametrics-metrics-datasource",
             "uid": "$datasource"
           },
           "editorMode": "code",
@@ -1011,7 +1011,7 @@
     },
     {
       "datasource": {
-        "type": "prometheus",
+        "type": "victoriametrics-metrics-datasource",
         "uid": "$datasource"
       },
       "description": "Accepted: count/rate of spans successfully pushed into the next component in the pipeline.\nRefused: count/rate of spans that were rejected by the next component in the pipeline.\nDropped: count/rate of spans that were dropped",
@@ -1141,7 +1141,7 @@
       "targets": [
         {
           "datasource": {
-            "type": "prometheus",
+            "type": "victoriametrics-metrics-datasource",
             "uid": "$datasource"
           },
           "editorMode": "code",
@@ -1156,7 +1156,7 @@
         },
         {
           "datasource": {
-            "type": "prometheus",
+            "type": "victoriametrics-metrics-datasource",
             "uid": "$datasource"
           },
           "editorMode": "code",
@@ -1172,7 +1172,7 @@
         },
         {
           "datasource": {
-            "type": "prometheus",
+            "type": "victoriametrics-metrics-datasource",
             "uid": "$datasource"
           },
           "editorMode": "code",
@@ -1192,7 +1192,7 @@
     },
     {
       "datasource": {
-        "type": "prometheus",
+        "type": "victoriametrics-metrics-datasource",
         "uid": "$datasource"
       },
       "description": "Accepted: count/rate of metric points successfully pushed into the next component in the pipeline.\nRefused: count/rate of metric points that were rejected by the next component in the pipeline.\nDropped: count/rate of metric points that were dropped",
@@ -1322,7 +1322,7 @@
       "targets": [
         {
           "datasource": {
-            "type": "prometheus",
+            "type": "victoriametrics-metrics-datasource",
             "uid": "$datasource"
           },
           "editorMode": "code",
@@ -1337,7 +1337,7 @@
         },
         {
           "datasource": {
-            "type": "prometheus",
+            "type": "victoriametrics-metrics-datasource",
             "uid": "$datasource"
           },
           "editorMode": "code",
@@ -1353,7 +1353,7 @@
         },
         {
           "datasource": {
-            "type": "prometheus",
+            "type": "victoriametrics-metrics-datasource",
             "uid": "$datasource"
           },
           "editorMode": "code",
@@ -1373,7 +1373,7 @@
     },
     {
       "datasource": {
-        "type": "prometheus",
+        "type": "victoriametrics-metrics-datasource",
         "uid": "$datasource"
       },
       "description": "Accepted: count/rate of log records successfully pushed into the next component in the pipeline.\nRefused: count/rate of log records that were rejected by the next component in the pipeline.\nDropped: count/rate of log records that were dropped",
@@ -1503,7 +1503,7 @@
       "targets": [
         {
           "datasource": {
-            "type": "prometheus",
+            "type": "victoriametrics-metrics-datasource",
             "uid": "$datasource"
           },
           "editorMode": "code",
@@ -1518,7 +1518,7 @@
         },
         {
           "datasource": {
-            "type": "prometheus",
+            "type": "victoriametrics-metrics-datasource",
             "uid": "$datasource"
           },
           "editorMode": "code",
@@ -1534,7 +1534,7 @@
         },
         {
           "datasource": {
-            "type": "prometheus",
+            "type": "victoriametrics-metrics-datasource",
             "uid": "$datasource"
           },
           "editorMode": "code",
@@ -1554,7 +1554,7 @@
     },
     {
       "datasource": {
-        "type": "prometheus",
+        "type": "victoriametrics-metrics-datasource",
         "uid": "$datasource"
       },
       "description": "Number of units in the batch",
@@ -1621,7 +1621,7 @@
       "targets": [
         {
           "datasource": {
-            "type": "prometheus",
+            "type": "victoriametrics-metrics-datasource",
             "uid": "$datasource"
           },
           "editorMode": "code",
@@ -1641,7 +1641,7 @@
     },
     {
       "datasource": {
-        "type": "prometheus",
+        "type": "victoriametrics-metrics-datasource",
         "uid": "$datasource"
       },
       "description": "",
@@ -1745,7 +1745,7 @@
       "targets": [
         {
           "datasource": {
-            "type": "prometheus",
+            "type": "victoriametrics-metrics-datasource",
             "uid": "$datasource"
           },
           "editorMode": "code",
@@ -1761,7 +1761,7 @@
         },
         {
           "datasource": {
-            "type": "prometheus",
+            "type": "victoriametrics-metrics-datasource",
             "uid": "$datasource"
           },
           "editorMode": "code",
@@ -1781,7 +1781,7 @@
     },
     {
       "datasource": {
-        "type": "prometheus",
+        "type": "victoriametrics-metrics-datasource",
         "uid": "$datasource"
       },
       "description": "Number of times the batch was sent due to a size trigger. Number of times the batch was sent due to a timeout trigger.",
@@ -1885,7 +1885,7 @@
       "targets": [
         {
           "datasource": {
-            "type": "prometheus",
+            "type": "victoriametrics-metrics-datasource",
             "uid": "$datasource"
           },
           "editorMode": "code",
@@ -1901,7 +1901,7 @@
         },
         {
           "datasource": {
-            "type": "prometheus",
+            "type": "victoriametrics-metrics-datasource",
             "uid": "$datasource"
           },
           "editorMode": "code",
@@ -1934,7 +1934,7 @@
     },
     {
       "datasource": {
-        "type": "prometheus",
+        "type": "victoriametrics-metrics-datasource",
         "uid": "$datasource"
       },
       "description": "Sent: count/rate of spans successfully sent to destination.\nEnqueue: count/rate of spans failed to be added to the sending queue.\nFailed: count/rate of spans in failed attempts to send to destination.",
@@ -2045,7 +2045,7 @@
       "targets": [
         {
           "datasource": {
-            "type": "prometheus",
+            "type": "victoriametrics-metrics-datasource",
             "uid": "$datasource"
           },
           "editorMode": "code",
@@ -2060,7 +2060,7 @@
         },
         {
           "datasource": {
-            "type": "prometheus",
+            "type": "victoriametrics-metrics-datasource",
             "uid": "$datasource"
           },
           "editorMode": "code",
@@ -2076,7 +2076,7 @@
         },
         {
           "datasource": {
-            "type": "prometheus",
+            "type": "victoriametrics-metrics-datasource",
             "uid": "$datasource"
           },
           "editorMode": "code",
@@ -2096,7 +2096,7 @@
     },
     {
       "datasource": {
-        "type": "prometheus",
+        "type": "victoriametrics-metrics-datasource",
         "uid": "$datasource"
       },
       "description": "Sent: count/rate of metric points successfully sent to destination.\nEnqueue: count/rate of metric points failed to be added to the sending queue.\nFailed: count/rate of metric points in failed attempts to send to destination.",
@@ -2207,7 +2207,7 @@
       "targets": [
         {
           "datasource": {
-            "type": "prometheus",
+            "type": "victoriametrics-metrics-datasource",
             "uid": "$datasource"
           },
           "editorMode": "code",
@@ -2222,7 +2222,7 @@
         },
         {
           "datasource": {
-            "type": "prometheus",
+            "type": "victoriametrics-metrics-datasource",
             "uid": "$datasource"
           },
           "editorMode": "code",
@@ -2238,7 +2238,7 @@
         },
         {
           "datasource": {
-            "type": "prometheus",
+            "type": "victoriametrics-metrics-datasource",
             "uid": "$datasource"
           },
           "editorMode": "code",
@@ -2258,7 +2258,7 @@
     },
     {
       "datasource": {
-        "type": "prometheus",
+        "type": "victoriametrics-metrics-datasource",
         "uid": "$datasource"
       },
       "description": "Sent: count/rate of log records successfully sent to destination.\nEnqueue: count/rate of log records failed to be added to the sending queue.\nFailed: count/rate of log records in failed attempts to send to destination.",
@@ -2369,7 +2369,7 @@
       "targets": [
         {
           "datasource": {
-            "type": "prometheus",
+            "type": "victoriametrics-metrics-datasource",
             "uid": "$datasource"
           },
           "editorMode": "code",
@@ -2384,7 +2384,7 @@
         },
         {
           "datasource": {
-            "type": "prometheus",
+            "type": "victoriametrics-metrics-datasource",
             "uid": "$datasource"
           },
           "editorMode": "code",
@@ -2400,7 +2400,7 @@
         },
         {
           "datasource": {
-            "type": "prometheus",
+            "type": "victoriametrics-metrics-datasource",
             "uid": "$datasource"
           },
           "editorMode": "code",
@@ -2420,7 +2420,7 @@
     },
     {
       "datasource": {
-        "type": "prometheus",
+        "type": "victoriametrics-metrics-datasource",
         "uid": "$datasource"
       },
       "description": "Current size of the retry queue (in batches)",
@@ -2509,7 +2509,7 @@
       "targets": [
         {
           "datasource": {
-            "type": "prometheus",
+            "type": "victoriametrics-metrics-datasource",
             "uid": "$datasource"
           },
           "editorMode": "code",
@@ -2528,7 +2528,7 @@
     },
     {
       "datasource": {
-        "type": "prometheus",
+        "type": "victoriametrics-metrics-datasource",
         "uid": "$datasource"
       },
       "description": "Fixed capacity of the retry queue (in batches)",
@@ -2617,7 +2617,7 @@
       "targets": [
         {
           "datasource": {
-            "type": "prometheus",
+            "type": "victoriametrics-metrics-datasource",
             "uid": "$datasource"
           },
           "editorMode": "code",
@@ -2636,7 +2636,7 @@
     },
     {
       "datasource": {
-        "type": "prometheus",
+        "type": "victoriametrics-metrics-datasource",
         "uid": "$datasource"
       },
       "description": "",
@@ -2726,7 +2726,7 @@
       "targets": [
         {
           "datasource": {
-            "type": "prometheus",
+            "type": "victoriametrics-metrics-datasource",
             "uid": "$datasource"
           },
           "editorMode": "code",
@@ -2758,7 +2758,7 @@
     },
     {
       "datasource": {
-        "type": "prometheus",
+        "type": "victoriametrics-metrics-datasource",
         "uid": "$datasource"
       },
       "description": "Total physical memory (resident set size)",
@@ -2919,7 +2919,7 @@
       "targets": [
         {
           "datasource": {
-            "type": "prometheus",
+            "type": "victoriametrics-metrics-datasource",
             "uid": "$datasource"
           },
           "editorMode": "code",
@@ -2935,7 +2935,7 @@
         },
         {
           "datasource": {
-            "type": "prometheus",
+            "type": "victoriametrics-metrics-datasource",
             "uid": "$datasource"
           },
           "editorMode": "code",
@@ -2950,7 +2950,7 @@
         },
         {
           "datasource": {
-            "type": "prometheus",
+            "type": "victoriametrics-metrics-datasource",
             "uid": "$datasource"
           },
           "editorMode": "code",
@@ -2970,7 +2970,7 @@
     },
     {
       "datasource": {
-        "type": "prometheus",
+        "type": "victoriametrics-metrics-datasource",
         "uid": "$datasource"
       },
       "description": "Total bytes of memory obtained from the OS (see 'go doc runtime.MemStats.Sys')",
@@ -3131,7 +3131,7 @@
       "targets": [
         {
           "datasource": {
-            "type": "prometheus",
+            "type": "victoriametrics-metrics-datasource",
             "uid": "$datasource"
           },
           "editorMode": "code",
@@ -3147,7 +3147,7 @@
         },
         {
           "datasource": {
-            "type": "prometheus",
+            "type": "victoriametrics-metrics-datasource",
             "uid": "$datasource"
           },
           "editorMode": "code",
@@ -3162,7 +3162,7 @@
         },
         {
           "datasource": {
-            "type": "prometheus",
+            "type": "victoriametrics-metrics-datasource",
             "uid": "$datasource"
           },
           "editorMode": "code",
@@ -3182,7 +3182,7 @@
     },
     {
       "datasource": {
-        "type": "prometheus",
+        "type": "victoriametrics-metrics-datasource",
         "uid": "$datasource"
       },
       "description": "Bytes of allocated heap objects (see 'go doc runtime.MemStats.HeapAlloc')",
@@ -3343,7 +3343,7 @@
       "targets": [
         {
           "datasource": {
-            "type": "prometheus",
+            "type": "victoriametrics-metrics-datasource",
             "uid": "$datasource"
           },
           "editorMode": "code",
@@ -3359,7 +3359,7 @@
         },
         {
           "datasource": {
-            "type": "prometheus",
+            "type": "victoriametrics-metrics-datasource",
             "uid": "$datasource"
           },
           "editorMode": "code",
@@ -3374,7 +3374,7 @@
         },
         {
           "datasource": {
-            "type": "prometheus",
+            "type": "victoriametrics-metrics-datasource",
             "uid": "$datasource"
           },
           "editorMode": "code",
@@ -3394,7 +3394,7 @@
     },
     {
       "datasource": {
-        "type": "prometheus",
+        "type": "victoriametrics-metrics-datasource",
         "uid": "$datasource"
       },
       "description": "Total CPU user and system time in percentage",
@@ -3551,7 +3551,7 @@
       "targets": [
         {
           "datasource": {
-            "type": "prometheus",
+            "type": "victoriametrics-metrics-datasource",
             "uid": "$datasource"
           },
           "editorMode": "code",
@@ -3567,7 +3567,7 @@
         },
         {
           "datasource": {
-            "type": "prometheus",
+            "type": "victoriametrics-metrics-datasource",
             "uid": "$datasource"
           },
           "editorMode": "code",
@@ -3583,7 +3583,7 @@
         },
         {
           "datasource": {
-            "type": "prometheus",
+            "type": "victoriametrics-metrics-datasource",
             "uid": "$datasource"
           },
           "editorMode": "code",
@@ -3603,7 +3603,7 @@
     },
     {
       "datasource": {
-        "type": "prometheus",
+        "type": "victoriametrics-metrics-datasource",
         "uid": "$datasource"
       },
       "description": "Number of service instances, which are reporting metrics",
@@ -3695,7 +3695,7 @@
       "targets": [
         {
           "datasource": {
-            "type": "prometheus",
+            "type": "victoriametrics-metrics-datasource",
             "uid": "$datasource"
           },
           "editorMode": "code",
@@ -3715,7 +3715,7 @@
     },
     {
       "datasource": {
-        "type": "prometheus",
+        "type": "victoriametrics-metrics-datasource",
         "uid": "$datasource"
       },
       "description": "",
@@ -3806,7 +3806,7 @@
       "targets": [
         {
           "datasource": {
-            "type": "prometheus",
+            "type": "victoriametrics-metrics-datasource",
             "uid": "$datasource"
           },
           "editorMode": "code",
@@ -3826,7 +3826,7 @@
     },
     {
       "datasource": {
-        "type": "prometheus",
+        "type": "victoriametrics-metrics-datasource",
         "uid": "$datasource"
       },
       "description": "",
@@ -3886,7 +3886,7 @@
       "targets": [
         {
           "datasource": {
-            "type": "prometheus",
+            "type": "victoriametrics-metrics-datasource",
             "uid": "$datasource"
           },
           "editorMode": "code",
@@ -3933,7 +3933,7 @@
     },
     {
       "datasource": {
-        "type": "prometheus",
+        "type": "victoriametrics-metrics-datasource",
         "uid": "$datasource"
       },
       "description": "Receivers -> Processor(s) -> Exporters (Node Graph panel is beta, so this panel may not show data correctly).",
@@ -3959,7 +3959,7 @@
       "targets": [
         {
           "datasource": {
-            "type": "prometheus",
+            "type": "victoriametrics-metrics-datasource",
             "uid": "$datasource"
           },
           "editorMode": "code",
@@ -3974,7 +3974,7 @@
         },
         {
           "datasource": {
-            "type": "prometheus",
+            "type": "victoriametrics-metrics-datasource",
             "uid": "$datasource"
           },
           "editorMode": "code",
@@ -4016,7 +4016,7 @@
     },
     {
       "datasource": {
-        "type": "prometheus",
+        "type": "victoriametrics-metrics-datasource",
         "uid": "$datasource"
       },
       "description": "Receivers -> Processor(s) -> Exporters (Node Graph panel is beta, so this panel may not show data correctly).",
@@ -4042,7 +4042,7 @@
       "targets": [
         {
           "datasource": {
-            "type": "prometheus",
+            "type": "victoriametrics-metrics-datasource",
             "uid": "$datasource"
           },
           "editorMode": "code",
@@ -4057,7 +4057,7 @@
         },
         {
           "datasource": {
-            "type": "prometheus",
+            "type": "victoriametrics-metrics-datasource",
             "uid": "$datasource"
           },
           "editorMode": "code",
@@ -4099,7 +4099,7 @@
     },
     {
       "datasource": {
-        "type": "prometheus",
+        "type": "victoriametrics-metrics-datasource",
         "uid": "$datasource"
       },
       "description": "Receivers -> Processor(s) -> Exporters (Node Graph panel is beta, so this panel may not show data correctly).",
@@ -4125,7 +4125,7 @@
       "targets": [
         {
           "datasource": {
-            "type": "prometheus",
+            "type": "victoriametrics-metrics-datasource",
             "uid": "$datasource"
           },
           "editorMode": "code",
@@ -4140,7 +4140,7 @@
         },
         {
           "datasource": {
-            "type": "prometheus",
+            "type": "victoriametrics-metrics-datasource",
             "uid": "$datasource"
           },
           "editorMode": "code",
@@ -4192,7 +4192,7 @@
       "panels": [
         {
           "datasource": {
-            "type": "prometheus",
+            "type": "victoriametrics-metrics-datasource",
             "uid": "$datasource"
           },
           "description": "",
@@ -4281,7 +4281,7 @@
           "targets": [
             {
               "datasource": {
-                "type": "prometheus",
+                "type": "victoriametrics-metrics-datasource",
                 "uid": "$datasource"
               },
               "editorMode": "code",
@@ -4300,7 +4300,7 @@
         },
         {
           "datasource": {
-            "type": "prometheus",
+            "type": "victoriametrics-metrics-datasource",
             "uid": "$datasource"
           },
           "description": "",
@@ -4389,7 +4389,7 @@
           "targets": [
             {
               "datasource": {
-                "type": "prometheus",
+                "type": "victoriametrics-metrics-datasource",
                 "uid": "$datasource"
               },
               "editorMode": "code",
@@ -4408,7 +4408,7 @@
         },
         {
           "datasource": {
-            "type": "prometheus",
+            "type": "victoriametrics-metrics-datasource",
             "uid": "$datasource"
           },
           "description": "",
@@ -4497,7 +4497,7 @@
           "targets": [
             {
               "datasource": {
-                "type": "prometheus",
+                "type": "victoriametrics-metrics-datasource",
                 "uid": "$datasource"
               },
               "editorMode": "code",
@@ -4530,7 +4530,7 @@
       "panels": [
         {
           "datasource": {
-            "type": "prometheus",
+            "type": "victoriametrics-metrics-datasource",
             "uid": "$datasource"
           },
           "description": "Measures the number of messages received per RPC. Should be 1 for all non-streaming RPCs. GRPC status codes: https://grpc.github.io/grpc/core/md_doc_statuscodes.html",
@@ -4825,7 +4825,7 @@
           "targets": [
             {
               "datasource": {
-                "type": "prometheus",
+                "type": "victoriametrics-metrics-datasource",
                 "uid": "$datasource"
               },
               "editorMode": "code",
@@ -4841,7 +4841,7 @@
         },
         {
           "datasource": {
-            "type": "prometheus",
+            "type": "victoriametrics-metrics-datasource",
             "uid": "$datasource"
           },
           "description": "Measures the number of messages received per RPC. Should be 1 for all non-streaming RPCs. GRPC status codes: https://grpc.github.io/grpc/core/md_doc_statuscodes.html",
@@ -5136,7 +5136,7 @@
           "targets": [
             {
               "datasource": {
-                "type": "prometheus",
+                "type": "victoriametrics-metrics-datasource",
                 "uid": "$datasource"
               },
               "editorMode": "code",
@@ -5152,7 +5152,7 @@
         },
         {
           "datasource": {
-            "type": "prometheus",
+            "type": "victoriametrics-metrics-datasource",
             "uid": "$datasource"
           },
           "description": "",
@@ -5220,7 +5220,7 @@
           "targets": [
             {
               "datasource": {
-                "type": "prometheus",
+                "type": "victoriametrics-metrics-datasource",
                 "uid": "$datasource"
               },
               "editorMode": "code",
@@ -5240,7 +5240,7 @@
         },
         {
           "datasource": {
-            "type": "prometheus",
+            "type": "victoriametrics-metrics-datasource",
             "uid": "$datasource"
           },
           "description": "",
@@ -5308,7 +5308,7 @@
           "targets": [
             {
               "datasource": {
-                "type": "prometheus",
+                "type": "victoriametrics-metrics-datasource",
                 "uid": "$datasource"
               },
               "editorMode": "code",
@@ -5328,7 +5328,7 @@
         },
         {
           "datasource": {
-            "type": "prometheus",
+            "type": "victoriametrics-metrics-datasource",
             "uid": "$datasource"
           },
           "description": "",
@@ -5396,7 +5396,7 @@
           "targets": [
             {
               "datasource": {
-                "type": "prometheus",
+                "type": "victoriametrics-metrics-datasource",
                 "uid": "$datasource"
               },
               "editorMode": "code",
@@ -5416,7 +5416,7 @@
         },
         {
           "datasource": {
-            "type": "prometheus",
+            "type": "victoriametrics-metrics-datasource",
             "uid": "$datasource"
           },
           "description": "",
@@ -5484,7 +5484,7 @@
           "targets": [
             {
               "datasource": {
-                "type": "prometheus",
+                "type": "victoriametrics-metrics-datasource",
                 "uid": "$datasource"
               },
               "editorMode": "code",
@@ -5518,7 +5518,7 @@
       "panels": [
         {
           "datasource": {
-            "type": "prometheus",
+            "type": "victoriametrics-metrics-datasource",
             "uid": "$datasource"
           },
           "description": "",
@@ -5586,7 +5586,7 @@
           "targets": [
             {
               "datasource": {
-                "type": "prometheus",
+                "type": "victoriametrics-metrics-datasource",
                 "uid": "$datasource"
               },
               "editorMode": "code",
@@ -5606,7 +5606,7 @@
         },
         {
           "datasource": {
-            "type": "prometheus",
+            "type": "victoriametrics-metrics-datasource",
             "uid": "$datasource"
           },
           "description": "",
@@ -5674,7 +5674,7 @@
           "targets": [
             {
               "datasource": {
-                "type": "prometheus",
+                "type": "victoriametrics-metrics-datasource",
                 "uid": "$datasource"
               },
               "editorMode": "code",
@@ -5708,7 +5708,7 @@
       "panels": [
         {
           "datasource": {
-            "type": "prometheus",
+            "type": "victoriametrics-metrics-datasource",
             "uid": "$datasource"
           },
           "description": "Added: Number of namespace add events received.\nUpdated: Number of namespace update events received.",
@@ -5817,7 +5817,7 @@
           "targets": [
             {
               "datasource": {
-                "type": "prometheus",
+                "type": "victoriametrics-metrics-datasource",
                 "uid": "$datasource"
               },
               "editorMode": "code",
@@ -5833,7 +5833,7 @@
             },
             {
               "datasource": {
-                "type": "prometheus",
+                "type": "victoriametrics-metrics-datasource",
                 "uid": "$datasource"
               },
               "editorMode": "code",
@@ -5853,7 +5853,7 @@
         },
         {
           "datasource": {
-            "type": "prometheus",
+            "type": "victoriametrics-metrics-datasource",
             "uid": "$datasource"
           },
           "description": "Added: Number of pod add events received.\nUpdated: Number of pod update events received.\nDeleted: Number of pod delete events received.",
@@ -5942,7 +5942,7 @@
           "targets": [
             {
               "datasource": {
-                "type": "prometheus",
+                "type": "victoriametrics-metrics-datasource",
                 "uid": "$datasource"
               },
               "editorMode": "code",
@@ -5958,7 +5958,7 @@
             },
             {
               "datasource": {
-                "type": "prometheus",
+                "type": "victoriametrics-metrics-datasource",
                 "uid": "$datasource"
               },
               "editorMode": "code",
@@ -5974,7 +5974,7 @@
             },
             {
               "datasource": {
-                "type": "prometheus",
+                "type": "victoriametrics-metrics-datasource",
                 "uid": "$datasource"
               },
               "editorMode": "code",
@@ -6024,7 +6024,7 @@
         "label": "Datasource",
         "name": "datasource",
         "options": [],
-        "query": "prometheus",
+        "query": "victoriametrics-metrics-datasource",
         "refresh": 1,
         "regex": "",
         "type": "datasource"
@@ -6032,7 +6032,7 @@
       {
         "current": {},
         "datasource": {
-          "type": "prometheus",
+          "type": "victoriametrics-metrics-datasource",
           "uid": "$datasource"
         },
         "definition": "query_result({__name__=~\"otelcol_process_uptime.*\"})",
@@ -6113,7 +6113,7 @@
         "allValue": ".*",
         "current": {},
         "datasource": {
-          "type": "prometheus",
+          "type": "victoriametrics-metrics-datasource",
           "uid": "$datasource"
         },
         "definition": "query_result(avg by (receiver) ({__name__=~\"otelcol_receiver_.+\",job=\"$job\"}))",
@@ -6135,7 +6135,7 @@
         "allValue": ".*",
         "current": {},
         "datasource": {
-          "type": "prometheus",
+          "type": "victoriametrics-metrics-datasource",
           "uid": "$datasource"
         },
         "definition": "query_result(avg by (processor) ({__name__=~\"otelcol_processor_.+\",job=\"$job\"}))",
@@ -6157,7 +6157,7 @@
         "allValue": ".*",
         "current": {},
         "datasource": {
-          "type": "prometheus",
+          "type": "victoriametrics-metrics-datasource",
           "uid": "$datasource"
         },
         "definition": "query_result(avg by (exporter) ({__name__=~\"otelcol_exporter_.+\",job=\"$job\"}))",
@@ -6207,7 +6207,7 @@
       {
         "current": {},
         "datasource": {
-          "type": "prometheus",
+          "type": "victoriametrics-metrics-datasource",
           "uid": "$datasource"
         },
         "definition": "query_result({__name__=~\"otelcol_process_uptime.+\",job=\"$job\"})",
@@ -6229,7 +6229,7 @@
       {
         "current": {},
         "datasource": {
-          "type": "prometheus",
+          "type": "victoriametrics-metrics-datasource",
           "uid": "$datasource"
         },
         "definition": "query_result({__name__=~\"otelcol_process_uptime.+\",job=\"$job\"})",
@@ -6251,7 +6251,7 @@
       {
         "current": {},
         "datasource": {
-          "type": "prometheus",
+          "type": "victoriametrics-metrics-datasource",
           "uid": "$datasource"
         },
         "definition": "query_result({__name__=~\"otelcol_process_memory_rss.+\",job=\"$job\"})",
@@ -6273,7 +6273,7 @@
       {
         "current": {},
         "datasource": {
-          "type": "prometheus",
+          "type": "victoriametrics-metrics-datasource",
           "uid": "$datasource"
         },
         "definition": "query_result({__name__=~\".*.*rpc_server_duration_bucket|.*rpc_client_duration_bucket|.*http_server_duration_bucket|.*http_client_duration_bucket.*\",job=\"$job\"})",
@@ -6295,7 +6295,7 @@
       {
         "baseFilters": [],
         "datasource": {
-          "type": "prometheus",
+          "type": "victoriametrics-metrics-datasource",
           "uid": "$datasource"
         },
         "filters": [],

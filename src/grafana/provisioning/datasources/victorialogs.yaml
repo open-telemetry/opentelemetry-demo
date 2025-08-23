@@ -1,0 +1,13 @@
+# Copyright The OpenTelemetry Authors
+# SPDX-License-Identifier: Apache-2.0
+
+apiVersion: 1
+
+datasources:
+  - name: VictoriaLogs
+    uid: webstore-logs
+    type: victoriametrics-logs-datasource
+    url: http://victorialogs:9428/
+    access: proxy
+    editable: true
+    isDefault: false

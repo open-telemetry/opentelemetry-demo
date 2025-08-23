@@ -7,23 +7,6 @@ kind: Namespace
 metadata:
   name: otel-demo
 ---
-# Source: opentelemetry-demo/charts/opensearch/templates/poddisruptionbudget.yaml
-apiVersion: policy/v1
-kind: PodDisruptionBudget
-metadata:
-  name: "opensearch-pdb"
-  labels:
-    app.kubernetes.io/name: opensearch
-    app.kubernetes.io/instance: opentelemetry-demo
-    app.kubernetes.io/version: "2.19.0"
-    app.kubernetes.io/component: opensearch
-spec:
-  maxUnavailable: 1
-  selector:
-    matchLabels:
-      app.kubernetes.io/name: opensearch
-      app.kubernetes.io/instance: opentelemetry-demo
----
 # Source: opentelemetry-demo/charts/grafana/templates/serviceaccount.yaml
 apiVersion: v1
 kind: ServiceAccount
@@ -60,17 +43,16 @@ metadata:
     app.kubernetes.io/version: "0.120.0"
     app.kubernetes.io/component: standalone-collector
 ---
-# Source: opentelemetry-demo/charts/prometheus/templates/serviceaccount.yaml
 apiVersion: v1
 kind: ServiceAccount
 metadata:
   labels:
     app.kubernetes.io/component: server
-    app.kubernetes.io/name: prometheus
+    app.kubernetes.io/name: victoriametrics
     app.kubernetes.io/instance: opentelemetry-demo
-    app.kubernetes.io/version: v3.1.0
-    app.kubernetes.io/part-of: prometheus
-  name: prometheus
+    app.kubernetes.io/version: v1.124.0
+    app.kubernetes.io/part-of: victoriametrics
+  name: victoriametrics
   namespace: otel-demo
   annotations:
     {}
@@ -115,7 +97,7 @@ metadata:
     app.kubernetes.io/version: "11.5.2"
 data:
   
-  plugins: grafana-opensearch-datasource
+  plugins: victoriametrics-metrics-datasource,victoriametrics-logs-datasource
   grafana.ini: |
     [analytics]
     check_for_updates = true
@@ -141,40 +123,40 @@ data:
   datasources.yaml: |
     apiVersion: 1
     datasources:
-    - editable: true
-      isDefault: true
-      jsonData:
-        exemplarTraceIdDestinations:
-        - datasourceUid: webstore-traces
-          name: trace_id
-        - name: trace_id
-          url: http://localhost:8080/jaeger/ui/trace/$${__value.raw}
-          urlDisplayLabel: View in Jaeger UI
-      name: Prometheus
-      type: prometheus
+    - name: VictoriaMetrics
       uid: webstore-metrics
-      url: http://prometheus:9090
-    - editable: true
+      type: victoriametrics-metrics-datasource
+      url: http://victoriametrics:8428
+      editable: true
+      isDefault: true
+    - name: VictoriaMetrics
+      uid: webstore-metrics-prom
+      type: prometheus
+      url: http://victoriametrics:8428
+      editable: true
       isDefault: false
-      name: Jaeger
-      type: jaeger
+    - name: VictoriaTraces
       uid: webstore-traces
-      url: http://jaeger-query:16686/jaeger/ui
-    - access: proxy
+      type: jaeger
+      url: http://victoriatraces:10428/select/jaeger
       editable: true
       isDefault: false
       jsonData:
-        database: otel
-        flavor: opensearch
-        logLevelField: severity.text.keyword
-        logMessageField: body
-        pplEnabled: true
-        timeField: observedTimestamp
-        version: 2.18.0
-      name: OpenSearch
-      type: grafana-opensearch-datasource
+        tracesToLogsV2:
+          datasourceUid: webstore-logs
+          spanStartTimeShift: "-20m"
+          spanEndTimeShift: "20m"
+          filterByTraceID: true
+          filterBySpanID: true
+          customQuery: true
+          query: traceId:"$${__trace.traceId}" AND spanId:"$${__span.spanId}"
+    - name: VictoriaLogs
       uid: webstore-logs
-      url: http://opensearch:9200/
+      type: victoriametrics-logs-datasource
+      url: http://victorialogs:9428/
+      access: proxy
+      editable: true
+      isDefault: false
   dashboardproviders.yaml: |
     apiVersion: 1
     providers:
@@ -186,69 +168,6 @@ data:
         path: /var/lib/grafana/dashboards/default
       orgId: 1
       type: file
----
-# Source: opentelemetry-demo/charts/opensearch/templates/configmap.yaml
-apiVersion: v1
-kind: ConfigMap
-metadata:
-  name: opensearch-config
-  labels:
-    app.kubernetes.io/name: opensearch
-    app.kubernetes.io/instance: opentelemetry-demo
-    app.kubernetes.io/version: "2.19.0"
-    app.kubernetes.io/component: opensearch
-data:
-  opensearch.yml: |
-    cluster.name: opensearch-cluster
-    
-    # Bind to all interfaces because we don't know what IP address Docker will assign to us.
-    network.host: 0.0.0.0
-    
-    # Setting network.host to a non-loopback address enables the annoying bootstrap checks. "Single-node" mode disables them again.
-    # Implicitly done if ".singleNode" is set to "true".
-    # discovery.type: single-node
-    
-    # Start OpenSearch Security Demo Configuration
-    # WARNING: revise all the lines below before you go into production
-    # plugins:
-    #   security:
-    #     ssl:
-    #       transport:
-    #         pemcert_filepath: esnode.pem
-    #         pemkey_filepath: esnode-key.pem
-    #         pemtrustedcas_filepath: root-ca.pem
-    #         enforce_hostname_verification: false
-    #       http:
-    #         enabled: true
-    #         pemcert_filepath: esnode.pem
-    #         pemkey_filepath: esnode-key.pem
-    #         pemtrustedcas_filepath: root-ca.pem
-    #     allow_unsafe_democertificates: true
-    #     allow_default_init_securityindex: true
-    #     authcz:
-    #       admin_dn:
-    #         - CN=kirk,OU=client,O=client,L=test,C=de
-    #     audit.type: internal_opensearch
-    #     enable_snapshot_restore_privilege: true
-    #     check_snapshot_restore_write_privileges: true
-    #     restapi:
-    #       roles_enabled: ["all_access", "security_rest_api_access"]
-    #     system_indices:
-    #       enabled: true
-    #       indices:
-    #         [
-    #           ".opendistro-alerting-config",
-    #           ".opendistro-alerting-alert*",
-    #           ".opendistro-anomaly-results*",
-    #           ".opendistro-anomaly-detector*",
-    #           ".opendistro-anomaly-checkpoints",
-    #           ".opendistro-anomaly-detection-state",
-    #           ".opendistro-reports-*",
-    #           ".opendistro-notifications-*",
-    #           ".opendistro-notebooks",
-    #           ".opendistro-asynchronous-search-response*",
-    #         ]
-    ######## End OpenSearch Security Demo Configuration ########
 ---
 # Source: opentelemetry-demo/charts/opentelemetry-collector/templates/configmap.yaml
 apiVersion: v1
@@ -267,18 +186,19 @@ data:
       spanmetrics: {}
     exporters:
       debug: {}
-      opensearch:
-        http:
-          endpoint: http://opensearch:9200
-          tls:
-            insecure: true
-        logs_index: otel
+      otlphttp/victorialogs:
+        logs_endpoint: "http://${env:VICTORIALOGS_ADDR}/insert/opentelemetry/v1/logs"
+        headers:
+          VL-Msg-Field: body
+          VL-Time-Field: observedTimestamp
+        tls:
+          insecure: true
       otlp:
         endpoint: jaeger-collector:4317
         tls:
           insecure: true
-      otlphttp/prometheus:
-        endpoint: http://prometheus:9090/api/v1/otlp
+      otlphttp/victoriametrics:
+        endpoint: http://victoriametrics:8428/opentelemetry
         tls:
           insecure: true
     extensions:
@@ -366,7 +286,7 @@ data:
       pipelines:
         logs:
           exporters:
-          - opensearch
+          - otlphttp/victorialogs
           - debug
           processors:
           - k8sattributes
@@ -377,7 +297,7 @@ data:
           - otlp
         metrics:
           exporters:
-          - otlphttp/prometheus
+          - otlphttp/victoriametrics
           - debug
           processors:
           - k8sattributes
@@ -417,42 +337,27 @@ data:
               interval: 10000
               timeout: 5000
 ---
-# Source: opentelemetry-demo/charts/prometheus/templates/cm.yaml
 apiVersion: v1
 kind: ConfigMap
 metadata:
   labels:
     app.kubernetes.io/component: server
-    app.kubernetes.io/name: prometheus
+    app.kubernetes.io/name: victoriametrics
     app.kubernetes.io/instance: opentelemetry-demo
-    app.kubernetes.io/version: v3.1.0
-    app.kubernetes.io/part-of: prometheus
-  name: prometheus
+    app.kubernetes.io/version: v1.124.0
+    app.kubernetes.io/part-of: victoriametrics
+  name: victoriametrics
   namespace: otel-demo
 data:
-  allow-snippet-annotations: "false"
-  alerting_rules.yml: |
-    {}
-  alerts: |
-    {}
-  prometheus.yml: |
+  victoriametrics.yml: |
     global:
-      evaluation_interval: 30s
       scrape_interval: 5s
       scrape_timeout: 3s
-    storage:
-      tsdb:
-        out_of_order_time_window: 30m
-    rule_files:
-    - /etc/config/recording_rules.yml
-    - /etc/config/alerting_rules.yml
-    - /etc/config/rules
-    - /etc/config/alerts
     scrape_configs:
-    - job_name: prometheus
+    - job_name: victoriametrics
       static_configs:
       - targets:
-        - localhost:9090
+        - localhost:8428
     - bearer_token_file: /var/run/secrets/kubernetes.io/serviceaccount/token
       job_name: kubernetes-apiservers
       kubernetes_sd_configs:
@@ -745,10 +650,6 @@ data:
         target_label: node
       scrape_interval: 5m
       scrape_timeout: 30s
-  recording_rules.yml: |
-    {}
-  rules: |
-    {}
 ---
 # Source: opentelemetry-demo/templates/flagd-config.yaml
 apiVersion: v1
@@ -10088,17 +9989,16 @@ rules:
     resources: ["replicasets"]
     verbs: ["get", "list", "watch"]
 ---
-# Source: opentelemetry-demo/charts/prometheus/templates/clusterrole.yaml
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRole
 metadata:
   labels:
     app.kubernetes.io/component: server
-    app.kubernetes.io/name: prometheus
+    app.kubernetes.io/name: victoriametrics
     app.kubernetes.io/instance: opentelemetry-demo
-    app.kubernetes.io/version: v3.1.0
-    app.kubernetes.io/part-of: prometheus
-  name: prometheus
+    app.kubernetes.io/version: v1.124.0
+    app.kubernetes.io/part-of: victoriametrics
+  name: victoriametrics
 rules:
   - apiGroups:
       - ""
@@ -10175,25 +10075,24 @@ subjects:
   name: otel-collector
   namespace: otel-demo
 ---
-# Source: opentelemetry-demo/charts/prometheus/templates/clusterrolebinding.yaml
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRoleBinding
 metadata:
   labels:
     app.kubernetes.io/component: server
-    app.kubernetes.io/name: prometheus
+    app.kubernetes.io/name: victoriametrics
     app.kubernetes.io/instance: opentelemetry-demo
-    app.kubernetes.io/version: v3.1.0
-    app.kubernetes.io/part-of: prometheus
-  name: prometheus
+    app.kubernetes.io/version: v1.124.0
+    app.kubernetes.io/part-of: victoriametrics
+  name: victoriametrics
 subjects:
   - kind: ServiceAccount
-    name: prometheus
+    name: victoriametrics
     namespace: otel-demo
 roleRef:
   apiGroup: rbac.authorization.k8s.io
   kind: ClusterRole
-  name: prometheus
+  name: victoriametrics
 ---
 # Source: opentelemetry-demo/charts/grafana/templates/role.yaml
 apiVersion: rbac.authorization.k8s.io/v1
@@ -10349,56 +10248,23 @@ spec:
 kind: Service
 apiVersion: v1
 metadata:
-  name: opensearch
+  name: victorialogs
   labels:
-    app.kubernetes.io/name: opensearch
+    app.kubernetes.io/name: victorialogs
     app.kubernetes.io/instance: opentelemetry-demo
-    app.kubernetes.io/version: "2.19.0"
-    app.kubernetes.io/component: opensearch
+    app.kubernetes.io/version: "1.29.0"
+    app.kubernetes.io/component: victorialogs
   annotations:
     {}
 spec:
   type: ClusterIP
   selector:
-    app.kubernetes.io/name: opensearch
+    app.kubernetes.io/name: victorialogs
     app.kubernetes.io/instance: opentelemetry-demo
   ports:
   - name: http
     protocol: TCP
-    port: 9200
-  - name: transport
-    protocol: TCP
-    port: 9300
-  - name: metrics
-    protocol: TCP
-    port: 9600
----
-# Source: opentelemetry-demo/charts/opensearch/templates/service.yaml
-kind: Service
-apiVersion: v1
-metadata:
-  name: opensearch-headless
-  labels:
-    app.kubernetes.io/name: opensearch
-    app.kubernetes.io/instance: opentelemetry-demo
-    app.kubernetes.io/version: "2.19.0"
-    app.kubernetes.io/component: opensearch
-  annotations:
-    service.alpha.kubernetes.io/tolerate-unready-endpoints: "true"
-spec:
-  clusterIP: None # This is needed for statefulset hostnames like opensearch-0 to resolve
-  # Create endpoints also if the related pod isn't ready
-  publishNotReadyAddresses: true
-  selector:
-    app.kubernetes.io/name: opensearch
-    app.kubernetes.io/instance: opentelemetry-demo
-  ports:
-  - name: http
-    port: 9200
-  - name: transport
-    port: 9300
-  - name: metrics
-    port: 9600
+    port: 9428
 ---
 # Source: opentelemetry-demo/charts/opentelemetry-collector/templates/service.yaml
 apiVersion: v1
@@ -10451,27 +10317,26 @@ spec:
     component: standalone-collector
   internalTrafficPolicy: Cluster
 ---
-# Source: opentelemetry-demo/charts/prometheus/templates/service.yaml
 apiVersion: v1
 kind: Service
 metadata:
   labels:
     app.kubernetes.io/component: server
-    app.kubernetes.io/name: prometheus
+    app.kubernetes.io/name: victoriametrics
     app.kubernetes.io/instance: opentelemetry-demo
-    app.kubernetes.io/version: v3.1.0
-    app.kubernetes.io/part-of: prometheus
-  name: prometheus
+    app.kubernetes.io/version: v1.124.0
+    app.kubernetes.io/part-of: victoriametrics
+  name: victoriametrics
   namespace: otel-demo
 spec:
   ports:
     - name: http
-      port: 9090
+      port: 8428
       protocol: TCP
-      targetPort: 9090
+      targetPort: 8428
   selector:
     app.kubernetes.io/component: server
-    app.kubernetes.io/name: prometheus
+    app.kubernetes.io/name: victoriametrics
     app.kubernetes.io/instance: opentelemetry-demo
   sessionAffinity: None
   type: "ClusterIP"
@@ -11064,7 +10929,7 @@ spec:
           args:
             - "--memory.max-traces=5000"
             - "--query.base-path=/jaeger/ui"
-            - "--prometheus.server-url=http://prometheus:9090"
+            - "--prometheus.server-url=http://victoriametrics:8428"
             - "--prometheus.query.normalize-calls=true"
             - "--prometheus.query.normalize-duration=true"
           ports:
@@ -11216,23 +11081,22 @@ spec:
                 path: relay.yaml
       hostNetwork: false
 ---
-# Source: opentelemetry-demo/charts/prometheus/templates/deploy.yaml
 apiVersion: apps/v1
 kind: Deployment
 metadata:
   labels:
     app.kubernetes.io/component: server
-    app.kubernetes.io/name: prometheus
+    app.kubernetes.io/name: victoriametrics
     app.kubernetes.io/instance: opentelemetry-demo
-    app.kubernetes.io/version: v3.1.0
-    app.kubernetes.io/part-of: prometheus
-  name: prometheus
+    app.kubernetes.io/version: v1.124.0
+    app.kubernetes.io/part-of: victoriametrics
+  name: victoriametrics
   namespace: otel-demo
 spec:
   selector:
     matchLabels:
       app.kubernetes.io/component: server
-      app.kubernetes.io/name: prometheus
+      app.kubernetes.io/name: victoriametrics
       app.kubernetes.io/instance: opentelemetry-demo
   replicas: 1
   revisionHistoryLimit: 10
@@ -11243,32 +11107,30 @@ spec:
     metadata:
       labels:
         app.kubernetes.io/component: server
-        app.kubernetes.io/name: prometheus
+        app.kubernetes.io/name: victoriametrics
         app.kubernetes.io/instance: opentelemetry-demo
-        app.kubernetes.io/version: v3.1.0
-        app.kubernetes.io/part-of: prometheus
+        app.kubernetes.io/version: v1.124.0
+        app.kubernetes.io/part-of: victoriametrics
     spec:
       enableServiceLinks: true
-      serviceAccountName: prometheus
+      serviceAccountName: victoriametrics
       containers:
 
-        - name: prometheus-server
-          image: "quay.io/prometheus/prometheus:v3.1.0"
+        - name: victoriametrics
+          image: "victoriametrics/victoria-metrics:v1.124.0"
           imagePullPolicy: "IfNotPresent"
           args:
-            - --storage.tsdb.retention.time=15d
-            - --config.file=/etc/config/prometheus.yml
-            - --storage.tsdb.path=/data
-            - --web.console.libraries=/etc/prometheus/console_libraries
-            - --web.console.templates=/etc/prometheus/consoles
-            - --enable-feature=exemplar-storage
-            - --web.enable-otlp-receiver
+            - "--retentionPeriod=1d"
+            - "--storageDataPath=/vm-storage"
+            - "--httpListenAddr=:8428"
+            - "--usePromCompatibleNaming=true"
+            - "--promscrape.config=/etc/config/victoriametrics.yaml"
           ports:
-            - containerPort: 9090
+            - containerPort: 8428
           readinessProbe:
             httpGet:
               path: /-/ready
-              port: 9090
+              port: 8428
               scheme: HTTP
             initialDelaySeconds: 30
             periodSeconds: 5
@@ -11278,7 +11140,7 @@ spec:
           livenessProbe:
             httpGet:
               path: /-/healthy
-              port: 9090
+              port: 8428
               scheme: HTTP
             initialDelaySeconds: 30
             periodSeconds: 15
@@ -11304,7 +11166,7 @@ spec:
       volumes:
         - name: config-volume
           configMap:
-            name: prometheus
+            name: victoriametrics
         - name: storage-volume
           emptyDir:
             {}
@@ -12704,7 +12566,7 @@ spec:
 ---
 # Source: opentelemetry-demo/charts/opensearch/templates/statefulset.yaml
 apiVersion: apps/v1
-kind: StatefulSet
+kind:
 metadata:
   name: opensearch
   labels:

@@ -67,7 +67,7 @@
     },
     {
       "datasource": {
-        "type": "prometheus",
+        "type": "victoriametrics-metrics-datasource",
         "uid": "webstore-metrics"
       },
       "fieldConfig": {
@@ -151,7 +151,7 @@
       "targets": [
         {
           "datasource": {
-            "type": "prometheus",
+            "type": "victoriametrics-metrics-datasource",
             "uid": "webstore-metrics"
           },
           "editorMode": "code",
@@ -166,7 +166,7 @@
     },
     {
       "datasource": {
-        "type": "prometheus",
+        "type": "victoriametrics-metrics-datasource",
         "uid": "webstore-metrics"
       },
       "description": "",
@@ -250,7 +250,7 @@
       "targets": [
         {
           "datasource": {
-            "type": "prometheus",
+            "type": "victoriametrics-metrics-datasource",
             "uid": "webstore-metrics"
           },
           "editorMode": "code",
@@ -266,7 +266,7 @@
     },
     {
       "datasource": {
-        "type": "prometheus",
+        "type": "victoriametrics-metrics-datasource",
         "uid": "webstore-metrics"
       },
       "description": "",
@@ -351,7 +351,7 @@
       "targets": [
         {
           "datasource": {
-            "type": "prometheus",
+            "type": "victoriametrics-metrics-datasource",
             "uid": "webstore-metrics"
           },
           "editorMode": "code",
@@ -380,7 +380,7 @@
     },
     {
       "datasource": {
-        "type": "grafana-opensearch-datasource",
+        "type": "victoriametrics-logs-datasource",
         "uid": "webstore-logs"
       },
       "description": "",
@@ -445,52 +445,37 @@
         },
         "showHeader": true
       },
-      "pluginVersion": "11.5.2",
+      "pluginVersion": "12.0.2",
       "targets": [
         {
-          "alias": "",
-          "bucketAggs": [
-            {
-              "field": "severity.text.keyword",
-              "id": "3",
-              "settings": {
-                "min_doc_count": "1",
-                "order": "desc",
-                "orderBy": "_count",
-                "size": "0"
-              },
-              "type": "terms"
-            }
-          ],
           "datasource": {
-            "type": "grafana-opensearch-datasource",
-            "uid": "webstore-logs"
+            "type": "victoriametrics-logs-datasource",
+            "uid": "webstore-logs-vl"
           },
-          "format": "table",
-          "metrics": [
-            {
-              "id": "1",
-              "type": "count"
-            }
-          ],
-          "query": "search source=otel-logs-*\n| where resource.service.name=\"${service}\"\n| stats count() by severity.text",
-          "queryType": "PPL",
           "refId": "A",
-          "timeField": "observedTimestamp"
+          "editorMode": "code",
+          "expr": "service.name:\"${service}\" | stats by (severity) count()",
+          "queryType": "stats"
         }
       ],
       "title": "Log Records by Severity",
       "transformations": [
         {
+          "id": "joinByLabels",
+          "options": {
+            "value": "__name__"
+          }
+        },
+        {
           "id": "organize",
           "options": {
             "excludeByName": {},
-            "includeByName": {},
             "indexByName": {},
             "renameByName": {
-              "Count": "",
-              "severity.text.keyword": "Severity"
-            }
+              "count(*)": "count()",
+              "severity": "Severity"
+            },
+            "includeByName": {}
           }
         }
       ],
@@ -498,69 +483,18 @@
     },
     {
       "datasource": {
-        "type": "grafana-opensearch-datasource",
+        "type": "victoriametrics-logs-datasource",
         "uid": "webstore-logs"
       },
       "fieldConfig": {
-        "defaults": {
-          "color": {
-            "mode": "thresholds"
-          },
-          "custom": {
-            "align": "auto",
-            "cellOptions": {
-              "type": "auto",
-              "wrapText": false
-            },
-            "filterable": true,
-            "inspect": true
-          },
-          "mappings": [],
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "green",
-                "value": null
-              },
-              {
-                "color": "red",
-                "value": 80
-              }
-            ]
-          }
-        },
+        "defaults": {},
         "overrides": [
           {
             "matcher": {
               "id": "byName",
-              "options": "observedTimestamp"
+              "options": "Time"
             },
             "properties": []
-          },
-          {
-            "matcher": {
-              "id": "byName",
-              "options": "body"
-            },
-            "properties": [
-              {
-                "id": "custom.width",
-                "value": 386
-              }
-            ]
-          },
-          {
-            "matcher": {
-              "id": "byName",
-              "options": "severity.text"
-            },
-            "properties": [
-              {
-                "id": "custom.width",
-                "value": 127
-              }
-            ]
           }
         ]
       },
@@ -572,83 +506,33 @@
       },
       "id": 17,
       "options": {
-        "cellHeight": "sm",
-        "footer": {
-          "countRows": false,
-          "fields": "",
-          "reducer": [
-            "sum"
-          ],
-          "show": false
-        },
-        "showHeader": true,
-        "sortBy": []
+        "showTime": true,
+        "showLabels": false,
+        "showCommonLabels": false,
+        "wrapLogMessage": false,
+        "prettifyLogMessage": false,
+        "enableLogDetails": true,
+        "enableInfiniteScrolling": false,
+        "dedupStrategy": "none",
+        "sortOrder": "Descending"
       },
-      "pluginVersion": "11.5.2",
+      "pluginVersion": "12.0.2",
       "targets": [
         {
-          "alias": "",
-          "bucketAggs": [],
           "datasource": {
-            "type": "grafana-opensearch-datasource",
-            "uid": "webstore-logs"
+            "type": "victoriametrics-logs-datasource",
+            "uid": "webstore-logs-vl"
           },
-          "format": "table",
-          "hide": false,
-          "metrics": [
-            {
-              "id": "1",
-              "settings": {
-                "order": "desc",
-                "size": "100",
-                "useTimeRange": true
-              },
-              "type": "raw_data"
-            }
-          ],
-          "query": "search source=otel-logs-*\n| where resource.service.name=\"${service}\"\n| sort - observedTimestamp \n| head 100",
-          "queryType": "PPL",
           "refId": "A",
-          "timeField": "observedTimestamp"
+          "editorMode": "code",
+          "expr": "service.name:\"${service}\" | sort by (_time desc) | limit 100",
+          "queryType": "instant",
+          "legendFormat": ""
         }
       ],
       "title": "Log Records (100 recent entries)",
-      "transformations": [
-        {
-          "id": "organize",
-          "options": {
-            "excludeByName": {
-              "@timestamp": true
-            },
-            "includeByName": {},
-            "indexByName": {
-              "@timestamp": 1,
-              "attributes.data_stream.dataset": 4,
-              "attributes.data_stream.namespace": 5,
-              "attributes.data_stream.type": 6,
-              "attributes.productId": 7,
-              "attributes.quantity": 8,
-              "attributes.userId": 9,
-              "body": 3,
-              "instrumentationScope.name": 10,
-              "observedTimestamp": 0,
-              "resource.container.id": 11,
-              "resource.docker.cli.cobra.command_path": 12,
-              "resource.host.name": 13,
-              "resource.service.name": 14,
-              "resource.telemetry.sdk.language": 15,
-              "resource.telemetry.sdk.name": 16,
-              "resource.telemetry.sdk.version": 17,
-              "severity.number": 18,
-              "severity.text": 2,
-              "spanId": 19,
-              "traceId": 20
-            },
-            "renameByName": {}
-          }
-        }
-      ],
-      "type": "table"
+      "transformations": [],
+      "type": "logs"
     },
     {
       "collapsed": false,
@@ -665,7 +549,7 @@
     },
     {
       "datasource": {
-        "type": "prometheus",
+        "type": "victoriametrics-metrics-datasource",
         "uid": "webstore-metrics"
       },
       "fieldConfig": {
@@ -748,7 +632,7 @@
       "targets": [
         {
           "datasource": {
-            "type": "prometheus",
+            "type": "victoriametrics-metrics-datasource",
             "uid": "webstore-metrics"
           },
           "editorMode": "code",
@@ -761,7 +645,7 @@
         },
         {
           "datasource": {
-            "type": "prometheus",
+            "type": "victoriametrics-metrics-datasource",
             "uid": "webstore-metrics"
           },
           "editorMode": "code",
@@ -787,7 +671,7 @@
     },
     {
       "datasource": {
-        "type": "prometheus",
+        "type": "victoriametrics-metrics-datasource",
         "uid": "webstore-metrics"
       },
       "fieldConfig": {
@@ -870,7 +754,7 @@
       "targets": [
         {
           "datasource": {
-            "type": "prometheus",
+            "type": "victoriametrics-metrics-datasource",
             "uid": "webstore-metrics"
           },
           "editorMode": "code",
@@ -894,7 +778,7 @@
     },
     {
       "datasource": {
-        "type": "prometheus",
+        "type": "victoriametrics-metrics-datasource",
         "uid": "webstore-metrics"
       },
       "fieldConfig": {
@@ -976,7 +860,7 @@
       "targets": [
         {
           "datasource": {
-            "type": "prometheus",
+            "type": "victoriametrics-metrics-datasource",
             "uid": "webstore-metrics"
           },
           "editorMode": "code",
@@ -992,7 +876,7 @@
     },
     {
       "datasource": {
-        "type": "prometheus",
+        "type": "victoriametrics-metrics-datasource",
         "uid": "webstore-metrics"
       },
       "fieldConfig": {
@@ -1075,7 +959,7 @@
       "targets": [
         {
           "datasource": {
-            "type": "prometheus",
+            "type": "victoriametrics-metrics-datasource",
             "uid": "webstore-metrics"
           },
           "editorMode": "code",
@@ -1155,7 +1039,7 @@
           "value": "frontend"
         },
         "datasource": {
-          "type": "prometheus",
+          "type": "victoriametrics-metrics-datasource",
           "uid": "webstore-metrics"
         },
         "definition": "traces_span_metrics_duration_milliseconds_bucket",

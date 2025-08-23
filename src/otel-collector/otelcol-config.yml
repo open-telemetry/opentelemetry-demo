@@ -119,21 +119,21 @@ receivers:
             enabled: true
 exporters:
   debug:
-  otlp:
-    endpoint: "jaeger:4317"
+  otlphttp/victoriametrics:
+    endpoint: "http://${env:VICTORIAMETRICS_ADDR}/opentelemetry"
     tls:
       insecure: true
-  otlphttp/prometheus:
-    endpoint: "http://prometheus:9090/api/v1/otlp"
+  otlphttp/victorialogs:
+    logs_endpoint: "http://${env:VICTORIALOGS_ADDR}/insert/opentelemetry/v1/logs"
+    headers:
+      VL-Msg-Field: body
+      VL-Time-Field: observedTimestamp
     tls:
       insecure: true
-  opensearch:
-    logs_index: otel-logs
-    logs_index_time_format: "yyyy-MM-dd"
-    http:
-      endpoint: "http://opensearch:9200"
-      tls:
-        insecure: true
+  otlphttp/victoriatraces:
+    traces_endpoint: http://${env:VICTORIATRACES_ADDR}/insert/opentelemetry/v1/traces
+    tls:
+      insecure: true
 processors:
   batch:
   memory_limiter:
@@ -159,15 +159,15 @@ service:
     traces:
       receivers: [otlp]
       processors: [resourcedetection, memory_limiter, transform, batch]
-      exporters: [otlp, debug, spanmetrics]
+      exporters: [otlphttp/victoriatraces, debug, spanmetrics]
     metrics:
       receivers: [docker_stats, httpcheck/frontend-proxy, hostmetrics, nginx, otlp, postgresql, redis, spanmetrics]
       processors: [resourcedetection, memory_limiter, batch]
-      exporters: [otlphttp/prometheus, debug]
+      exporters: [otlphttp/victoriametrics, debug]
     logs:
       receivers: [otlp]
       processors: [resourcedetection, memory_limiter, batch]
-      exporters: [opensearch, debug]
+      exporters: [otlphttp/victorialogs, debug]
   telemetry:
     metrics:
       level: detailed

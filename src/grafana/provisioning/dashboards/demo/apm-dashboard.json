@@ -21,7 +21,7 @@
       }
     ]
   },
-  "description": "APM dashboard for monitoring OpenTelemetry-based services.  \n\nInstrument your applications using OpenTelemetry SDKs and send traces, metrics, and logs to Jaeger for traces, a Prometheus-compatible database for metrics, and OpenSearch for logs. This dashboard provides a centralized view of your application's health and performance. ",
+  "description": "APM dashboard for monitoring OpenTelemetry-based services.  \n\nInstrument your applications using OpenTelemetry SDKs and send traces, metrics, and logs to Jaeger for traces, a VictoriaMetrics database for metrics, and VictoriaLogs for logs. This dashboard provides a centralized view of your application's health and performance. ",
   "editable": true,
   "fiscalYearStartMonth": 0,
   "graphTooltip": 1,
@@ -56,8 +56,8 @@
     },
     {
       "datasource": {
-        "type": "prometheus",
-        "uid": "${prometheus_datasource}"
+        "type": "victoriametrics-metrics-datasource",
+        "uid": "${victoriametrics_datasource}"
       },
       "description": "Shows the timestamp of the latest metrics received in the past 24h.",
       "fieldConfig": {
@@ -111,11 +111,11 @@
       "targets": [
         {
           "datasource": {
-            "type": "prometheus",
+            "type": "victoriametrics-metrics-datasource",
             "uid": "webstore-metrics"
           },
           "editorMode": "code",
-          "expr": "timestamp(sum by (deployment_environment_name, service_namespace, service_name) (target_info{deployment_environment_name=~\"$deployment_environment_name\", service_namespace=~\"$service_namespace\", service_name=\"$service_name\"}) or absent{})\n",
+          "expr": "timestamp(sum by (deployment_environment_name, service_namespace, service_name) ({deployment_environment_name=~\"$deployment_environment_name\", service_namespace=~\"$service_namespace\", service_name=\"$service_name\"}) or absent{})\n",
           "interval": "60s",
           "legendFormat": "__auto",
           "range": true,
@@ -141,8 +141,8 @@
     },
     {
       "datasource": {
-        "type": "prometheus",
-        "uid": "${prometheus_datasource}"
+        "type": "victoriametrics-metrics-datasource",
+        "uid": "${victoriametrics_datasource}"
       },
       "description": "HTTP & RPC endpoints aggregation on the `http.server.request.duration` & `rpc.server.duration` metrics.\n\nSee https://opentelemetry.io/docs/specs/semconv/http/http-metrics/#metric-httpserverrequestduration and https://opentelemetry.io/docs/specs/semconv/rpc/rpc-metrics/#metric-rpcserverduration",
       "fieldConfig": {
@@ -228,8 +228,8 @@
       "targets": [
         {
           "datasource": {
-            "type": "prometheus",
-            "uid": "${prometheus_datasource}"
+            "type": "victoriametrics-metrics-datasource",
+            "uid": "${victoriametrics_datasource}"
           },
           "disableTextWrap": false,
           "editorMode": "code",
@@ -244,7 +244,7 @@
         },
         {
           "datasource": {
-            "type": "prometheus",
+            "type": "victoriametrics-metrics-datasource",
             "uid": "webstore-metrics"
           },
           "disableTextWrap": false,
@@ -261,8 +261,8 @@
         },
         {
           "datasource": {
-            "type": "prometheus",
-            "uid": "${prometheus_datasource}"
+            "type": "victoriametrics-metrics-datasource",
+            "uid": "${victoriametrics_datasource}"
           },
           "editorMode": "code",
           "expr": "histogram_quantile(\n  0.95,\n  sum by (le, deployment_environment_name, service_namespace, service_name) (\n    rate(\n      rpc_server_duration_milliseconds_bucket{\n        deployment_environment_name=~\"$deployment_environment_name\",\n        service_namespace=~\"$service_namespace\",\n        service_name=\"$service_name\"\n      }[$__rate_interval]\n    ) / 1000\n  )\n)",
@@ -275,8 +275,8 @@
         },
         {
           "datasource": {
-            "type": "prometheus",
-            "uid": "${prometheus_datasource}"
+            "type": "victoriametrics-metrics-datasource",
+            "uid": "${victoriametrics_datasource}"
           },
           "editorMode": "code",
           "expr": "avg by (deployment_environment_name, service_namespace, service_name) (\n  rate(\n    rpc_server_duration_milliseconds_sum{\n      deployment_environment_name=~\"$deployment_environment_name\",\n      service_namespace=~\"$service_namespace\",\n      service_name=\"$service_name\"\n    }[$__rate_interval]\n  ) / 1000\n)\n/\navg by (deployment_environment_name, service_namespace, service_name) (\n  rate(\n    rpc_server_duration_milliseconds_count{\n      deployment_environment_name=~\"$deployment_environment_name\",\n      service_namespace=~\"$service_namespace\",\n      service_name=\"$service_name\"\n    }[$__rate_interval]\n  )\n)",
@@ -293,8 +293,8 @@
     },
     {
       "datasource": {
-        "type": "prometheus",
-        "uid": "${prometheus_datasource}"
+        "type": "victoriametrics-metrics-datasource",
+        "uid": "${victoriametrics_datasource}"
       },
       "description": "HTTP and RPC endpoints aggregation on the `http.server.request.duration` and `rpc.server.duration` metrics. \n\nErrors are identified by : \n* `http.response.status_code=~\"5..\"`\n* `rpc.grpc.status_code!=\"0\"`\n\nSee https://opentelemetry.io/docs/specs/semconv/http/http-metrics/#metric-httpserverrequestduration\n",
       "fieldConfig": {
@@ -379,7 +379,7 @@
       "targets": [
         {
           "datasource": {
-            "type": "prometheus",
+            "type": "victoriametrics-metrics-datasource",
             "uid": "webstore-metrics"
           },
           "disableTextWrap": false,
@@ -397,8 +397,8 @@
         },
         {
           "datasource": {
-            "type": "prometheus",
-            "uid": "${prometheus_datasource}"
+            "type": "victoriametrics-metrics-datasource",
+            "uid": "${victoriametrics_datasource}"
           },
           "editorMode": "code",
           "expr": "((sum without (rpc_grpc_status_code, instance) (rate(rpc_server_duration_milliseconds_count{deployment_environment_name=~\"$deployment_environment_name\", service_namespace=~\"$service_namespace\", service_name=\"$service_name\", rpc_grpc_status_code!=\"0\"}[$__rate_interval])) * 100) / sum without (rpc_grpc_status_code, instance) (rate(rpc_server_duration_milliseconds_count{deployment_environment_name=~\"$deployment_environment_name\", service_namespace=~\"$service_namespace\", service_name=\"$service_name\"}[$__rate_interval])))\nor\n(0 * sum without (rpc_grpc_status_code, instance) (rate(rpc_server_duration_milliseconds_count{deployment_environment_name=~\"$deployment_environment_name\", service_namespace=~\"$service_namespace\", service_name=\"$service_name\"}[$__rate_interval])))",
@@ -415,8 +415,8 @@
     },
     {
       "datasource": {
-        "type": "prometheus",
-        "uid": "${prometheus_datasource}"
+        "type": "victoriametrics-metrics-datasource",
+        "uid": "${victoriametrics_datasource}"
       },
       "description": "HTTP & RPC endpoints aggregation on the `http.server.request.duration` & `rpc.server.duration` metrics.\n\nSee https://opentelemetry.io/docs/specs/semconv/http/http-metrics/#metric-httpserverrequestduration",
       "fieldConfig": {
@@ -502,8 +502,8 @@
       "targets": [
         {
           "datasource": {
-            "type": "prometheus",
-            "uid": "${prometheus_datasource}"
+            "type": "victoriametrics-metrics-datasource",
+            "uid": "${victoriametrics_datasource}"
           },
           "editorMode": "code",
           "exemplar": false,
@@ -517,8 +517,8 @@
         },
         {
           "datasource": {
-            "type": "prometheus",
-            "uid": "${prometheus_datasource}"
+            "type": "victoriametrics-metrics-datasource",
+            "uid": "${victoriametrics_datasource}"
           },
           "editorMode": "code",
           "expr": "(sum(rate(rpc_server_duration_milliseconds_count{deployment_environment_name=~\"$deployment_environment_name\", service_namespace=~\"$service_namespace\", service_name=\"$service_name\"}[$__rate_interval])) by (deployment_environment_name, service_namespace, service_name)) * $__interval_ms / 1000",
@@ -570,8 +570,8 @@
     },
     {
       "datasource": {
-        "type": "prometheus",
-        "uid": "${prometheus_datasource}"
+        "type": "victoriametrics-metrics-datasource",
+        "uid": "${victoriametrics_datasource}"
       },
       "description": "Inbound HTTP operations of the service (aka HTTP endpoints) based on the `http.server.request.duration` metric.\n\nErrors are identified by `http.response.status_code=~\"5..\"`.\n\nSee https://opentelemetry.io/docs/specs/semconv/http/http-metrics/#metric-httpserverrequestduration",
       "fieldConfig": {
@@ -673,7 +673,7 @@
       "targets": [
         {
           "datasource": {
-            "type": "prometheus",
+            "type": "victoriametrics-metrics-datasource",
             "uid": "webstore-metrics"
           },
           "disableTextWrap": false,
@@ -689,8 +689,8 @@
         },
         {
           "datasource": {
-            "type": "prometheus",
-            "uid": "${prometheus_datasource}"
+            "type": "victoriametrics-metrics-datasource",
+            "uid": "${victoriametrics_datasource}"
           },
           "editorMode": "code",
           "expr": "(\n        sum by (operation) (\n            label_join(\n                rate(http_server_request_duration_seconds_count{deployment_environment_name=~\"$deployment_environment_name\", service_namespace=~\"$service_namespace\", service_name=\"$service_name\", http_response_status_code=~\"5..\"}[$__rate_interval]),\n                \"operation\",\n                \" \",\n                \"http_request_method\",\n                \"http_route\"\n            )\n        )\n     / \n        sum by (operation) (\n            label_join(\n                rate(http_server_request_duration_seconds_count{deployment_environment_name=~\"$deployment_environment_name\", service_namespace=~\"$service_namespace\", service_name=\"$service_name\"}[$__rate_interval]),\n                \"operation\",\n                \" \",\n                \"http_request_method\",\n                \"http_route\"\n            )\n        )\n    ) or (0 * \n        sum by (operation) (\n            label_join(\n                rate(http_server_request_duration_seconds_count{deployment_environment_name=~\"$deployment_environment_name\", service_namespace=~\"$service_namespace\", service_name=\"$service_name\"}[$__rate_interval]),\n                \"operation\",\n                \" \",\n                \"http_request_method\",\n                \"http_route\"\n            )\n        )\n    )",
@@ -703,7 +703,7 @@
         },
         {
           "datasource": {
-            "type": "prometheus",
+            "type": "victoriametrics-metrics-datasource",
             "uid": "webstore-metrics"
           },
           "editorMode": "code",
@@ -763,8 +763,8 @@
     },
     {
       "datasource": {
-        "type": "prometheus",
-        "uid": "${prometheus_datasource}"
+        "type": "victoriametrics-metrics-datasource",
+        "uid": "${victoriametrics_datasource}"
       },
       "description": "Inbound gRPC operations of the service (aka gRPC endpoints) based on the `rpc.server.request.duration` metric.\n\nErrors are identified by `rpc.grpc.status_code != 0` which make the panel specific to the gRPC protocol.\n\nhttps://opentelemetry.io/docs/specs/semconv/rpc/rpc-metrics/#metric-rpcserverduration",
       "fieldConfig": {
@@ -862,7 +862,7 @@
       "targets": [
         {
           "datasource": {
-            "type": "prometheus",
+            "type": "victoriametrics-metrics-datasource",
             "uid": "webstore-metrics"
           },
           "disableTextWrap": false,
@@ -879,8 +879,8 @@
         },
         {
           "datasource": {
-            "type": "prometheus",
-            "uid": "${prometheus_datasource}"
+            "type": "victoriametrics-metrics-datasource",
+            "uid": "${victoriametrics_datasource}"
           },
           "editorMode": "code",
           "expr": "(\n        sum by (operation) (\n            label_join(\n                rate(rpc_server_duration_milliseconds_count{deployment_environment_name=~\"$deployment_environment_name\", service_namespace=~\"$service_namespace\", service_name=\"$service_name\", rpc_grpc_status_code!=\"0\"}[$__rate_interval]),\n                \"operation\",\n                \"/\",\n                \"rpc_service\",\n                \"rpc_method\"\n            )\n        )\n     / \n        sum by (operation) (\n            label_join(\n                rate(rpc_server_duration_milliseconds_count{deployment_environment_name=~\"$deployment_environment_name\", service_namespace=~\"$service_namespace\", service_name=\"$service_name\"}[$__rate_interval]),\n                \"operation\",\n                \"/\",\n                \"rpc_service\",\n                \"rpc_method\"\n            )\n        )\n    ) or (0 * \n        sum by (operation) (\n            label_join(\n                rate(rpc_server_duration_milliseconds_count{deployment_environment_name=~\"$deployment_environment_name\", service_namespace=~\"$service_namespace\", service_name=\"$service_name\"}[$__rate_interval]),\n                \"operation\",\n                \"/\",\n                \"rpc_service\",\n                \"rpc_method\"\n            )\n        )\n    )\n    ",
@@ -893,7 +893,7 @@
         },
         {
           "datasource": {
-            "type": "prometheus",
+            "type": "victoriametrics-metrics-datasource",
             "uid": "webstore-metrics"
           },
           "editorMode": "code",
@@ -966,8 +966,8 @@
     },
     {
       "datasource": {
-        "type": "prometheus",
-        "uid": "${prometheus_datasource}"
+        "type": "victoriametrics-metrics-datasource",
+        "uid": "${victoriametrics_datasource}"
       },
       "description": "HTTP calls made by the service based on the `http.client.request.duration` metric.\n\nCalls broken done by remote `server.address` and by `http.request.method`.\n\nSee https://opentelemetry.io/docs/specs/semconv/http/http-metrics/#metric-httpclientrequestduration",
       "fieldConfig": {
@@ -1059,7 +1059,7 @@
       "targets": [
         {
           "datasource": {
-            "type": "prometheus",
+            "type": "victoriametrics-metrics-datasource",
             "uid": "webstore-metrics"
           },
           "disableTextWrap": false,
@@ -1075,8 +1075,8 @@
         },
         {
           "datasource": {
-            "type": "prometheus",
-            "uid": "${prometheus_datasource}"
+            "type": "victoriametrics-metrics-datasource",
+            "uid": "${victoriametrics_datasource}"
           },
           "editorMode": "code",
           "expr": "(\n        sum by (outbound_service) (\n            label_join(\n                rate(http_client_request_duration_seconds_count{deployment_environment_name=~\"$deployment_environment_name\", service_namespace=~\"$service_namespace\", service_name=\"$service_name\", http_response_status_code=~\"5..\"}[$__rate_interval]),\n                \"outbound_service\",\n                \" \",\n                \"server_address\",\n                \"http_request_method\",\n                \"url_template\"\n            )\n        )\n     / \n        sum by (outbound_service) (\n            label_join(\n                rate(http_client_request_duration_seconds_count{deployment_environment_name=~\"$deployment_environment_name\", service_namespace=~\"$service_namespace\", service_name=\"$service_name\"}[$__rate_interval]),\n                \"outbound_service\",\n                \" \",\n                \"server_address\",\n                \"http_request_method\",\n                \"url_template\"\n            )\n        )\n    ) or (0 * \n        sum by (outbound_service) (\n            label_join(\n                rate(http_client_request_duration_seconds_count{deployment_environment_name=~\"$deployment_environment_name\", service_namespace=~\"$service_namespace\", service_name=\"$service_name\"}[$__rate_interval]),\n                \"outbound_service\",\n                \" \",\n                \"server_address\",\n                \"http_request_method\",\n                \"url_template\"\n            )\n        )\n    )",
@@ -1089,7 +1089,7 @@
         },
         {
           "datasource": {
-            "type": "prometheus",
+            "type": "victoriametrics-metrics-datasource",
             "uid": "webstore-metrics"
           },
           "editorMode": "code",
@@ -1151,8 +1151,8 @@
     },
     {
       "datasource": {
-        "type": "prometheus",
-        "uid": "${prometheus_datasource}"
+        "type": "victoriametrics-metrics-datasource",
+        "uid": "${victoriametrics_datasource}"
       },
       "description": "DB calls made by the service based on the `db.client.operation.duration` metric.\n\nCalls broken down by `server.address` and `db.namespace`.\n\nSee https://opentelemetry.io/docs/specs/semconv/database/database-metrics/#metric-dbclientoperationduration\n",
       "fieldConfig": {
@@ -1245,7 +1245,7 @@
       "targets": [
         {
           "datasource": {
-            "type": "prometheus",
+            "type": "victoriametrics-metrics-datasource",
             "uid": "webstore-metrics"
           },
           "disableTextWrap": false,
@@ -1262,8 +1262,8 @@
         },
         {
           "datasource": {
-            "type": "prometheus",
-            "uid": "${prometheus_datasource}"
+            "type": "victoriametrics-metrics-datasource",
+            "uid": "${victoriametrics_datasource}"
           },
           "editorMode": "code",
           "expr": "(\n        sum by (database) (\n            label_join(\n                rate(db_client_operation_duration_seconds_count{deployment_environment_name=~\"$deployment_environment_name\", service_namespace=~\"$service_namespace\", service_name=\"$service_name\", http_response_status_code=~\"5..\"}[$__rate_interval]),\n                \"database\",\n                \"/\",\n                \"server_address\",\n                \"db_namespace\"\n            )\n        )\n     / \n        sum by (database) (\n            label_join(\n                rate(db_client_operation_duration_seconds_count{deployment_environment_name=~\"$deployment_environment_name\", service_namespace=~\"$service_namespace\", service_name=\"$service_name\"}[$__rate_interval]),\n                \"database\",\n                \"/\",\n                \"server_address\",\n                \"db_namespace\"\n            )\n        )\n    ) or (0 * \n        sum by (database) (\n            label_join(\n                rate(db_client_operation_duration_seconds_count{deployment_environment_name=~\"$deployment_environment_name\", service_namespace=~\"$service_namespace\", service_name=\"$service_name\"}[$__rate_interval]),\n                \"database\",\n                \"/\",\n                \"server_address\",\n                \"db_namespace\"\n            )\n        )\n    )",
@@ -1276,7 +1276,7 @@
         },
         {
           "datasource": {
-            "type": "prometheus",
+            "type": "victoriametrics-metrics-datasource",
             "uid": "webstore-metrics"
           },
           "editorMode": "code",
@@ -1343,8 +1343,8 @@
     },
     {
       "datasource": {
-        "type": "prometheus",
-        "uid": "${prometheus_datasource}"
+        "type": "victoriametrics-metrics-datasource",
+        "uid": "${victoriametrics_datasource}"
       },
       "description": "gRPC calls made by the service based on the `rpc.client.request.duration` metric.\n\nSpecific to gRPC due to the usage of the `grpc.status.code` attribute to identify errors.\n\nCalls broken down by `server.address`, `rpc.service`, and `rpc.method`.\n\nSee https://opentelemetry.io/docs/specs/semconv/rpc/rpc-metrics/#rpc-client\n\n",
       "fieldConfig": {
@@ -1436,7 +1436,7 @@
       "targets": [
         {
           "datasource": {
-            "type": "prometheus",
+            "type": "victoriametrics-metrics-datasource",
             "uid": "webstore-metrics"
           },
           "disableTextWrap": false,
@@ -1453,8 +1453,8 @@
         },
         {
           "datasource": {
-            "type": "prometheus",
-            "uid": "${prometheus_datasource}"
+            "type": "victoriametrics-metrics-datasource",
+            "uid": "${victoriametrics_datasource}"
           },
           "editorMode": "code",
           "expr": "(\n        sum by (outbound_service) (\n            label_join(\n                rate(rpc_client_duration_milliseconds_count{deployment_environment_name=~\"$deployment_environment_name\", service_namespace=~\"$service_namespace\", service_name=\"$service_name\", http_response_status_code=~\"5..\"}[$__rate_interval]),\n                \"outbound_service\",\n                \"/\",\n                \"server_address\",\n                \"rpc_service\",\n                \"rpc_method\"\n            )\n        )\n     / \n        sum by (outbound_service) (\n            label_join(\n                rate(rpc_client_duration_milliseconds_count{deployment_environment_name=~\"$deployment_environment_name\", service_namespace=~\"$service_namespace\", service_name=\"$service_name\"}[$__rate_interval]),\n                \"outbound_service\",\n                \"/\",\n                \"server_address\",\n                \"rpc_service\",\n                \"rpc_method\"\n            )\n        )\n    ) or (0 * \n        sum by (outbound_service) (\n            label_join(\n                rate(rpc_client_duration_milliseconds_count{deployment_environment_name=~\"$deployment_environment_name\", service_namespace=~\"$service_namespace\", service_name=\"$service_name\"}[$__rate_interval]),\n                \"outbound_service\",\n                \"/\",\n                \"server_address\",\n                \"rpc_service\",\n                \"rpc_method\"\n            )\n        )\n    )",
@@ -1467,7 +1467,7 @@
         },
         {
           "datasource": {
-            "type": "prometheus",
+            "type": "victoriametrics-metrics-datasource",
             "uid": "webstore-metrics"
           },
           "editorMode": "code",
@@ -1542,75 +1542,13 @@
     },
     {
       "datasource": {
-        "type": "grafana-opensearch-datasource",
-        "uid": "${opensearch_datasource}"
+        "type": "victoriametrics-logs-datasource",
+        "uid": "${victorialogs_datasource}"
       },
       "description": "Logs of the service, filtered by `service.name`, `service.namespace`, and `deployment.environment.name`.\n\nTo explore the logs, open the menu clicking on the icon `⋮` of this panel and click on `Explore`.",
       "fieldConfig": {
-        "defaults": {
-          "color": {
-            "mode": "thresholds"
-          },
-          "custom": {
-            "align": "auto",
-            "cellOptions": {
-              "type": "auto"
-            },
-            "inspect": false
-          },
-          "mappings": [],
-          "noValue": "No application logs",
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "green"
-              },
-              {
-                "color": "red",
-                "value": 80
-              }
-            ]
-          }
-        },
-        "overrides": [
-          {
-            "matcher": {
-              "id": "byName",
-              "options": "@timestamp"
-            },
-            "properties": [
-              {
-                "id": "custom.width",
-                "value": 226
-              }
-            ]
-          },
-          {
-            "matcher": {
-              "id": "byName",
-              "options": "severity.text"
-            },
-            "properties": [
-              {
-                "id": "custom.width",
-                "value": 136
-              }
-            ]
-          },
-          {
-            "matcher": {
-              "id": "byName",
-              "options": "instrumentationScope.name"
-            },
-            "properties": [
-              {
-                "id": "custom.width",
-                "value": 246
-              }
-            ]
-          }
-        ]
+        "defaults": {},
+        "overrides": []
       },
       "gridPos": {
         "h": 15,
@@ -1620,49 +1558,27 @@
       },
       "id": 26,
       "options": {
-        "cellHeight": "sm",
-        "footer": {
-          "countRows": false,
-          "fields": "",
-          "reducer": [
-            "sum"
-          ],
-          "show": false
-        },
-        "showHeader": true,
-        "sortBy": []
+        "showTime": true,
+        "showLabels": false,
+        "showCommonLabels": false,
+        "wrapLogMessage": false,
+        "prettifyLogMessage": false,
+        "enableLogDetails": true,
+        "enableInfiniteScrolling": false,
+        "dedupStrategy": "none",
+        "sortOrder": "Descending"
       },
       "pluginVersion": "12.0.2",
       "targets": [
         {
-          "alias": "",
-          "bucketAggs": [
-            {
-              "field": "observedTimestamp",
-              "id": "2",
-              "settings": {
-                "interval": "auto"
-              },
-              "type": "date_histogram"
-            }
-          ],
           "datasource": {
-            "type": "grafana-opensearch-datasource",
-            "uid": "${opensearch_datasource}"
+            "type": "victoriametrics-logs-datasource",
+            "uid": "webstore-logs"
           },
-          "format": "table",
-          "hide": false,
-          "luceneQueryType": "Logs",
-          "metrics": [
-            {
-              "id": "1",
-              "type": "logs"
-            }
-          ],
-          "query": "search source=otel-logs-* | where resource.service.name=\"$service_name\" and resource.service.namespace=\"$service_namespace\" | fields @timestamp, severity.text, body, instrumentationScope.name\n",
-          "queryType": "PPL",
-          "refId": "B",
-          "timeField": "observedTimestamp"
+          "refId": "A",
+          "editorMode": "code",
+          "expr": "service.name:\"$service_name\" and service.namespace:\"$service_namespace\"",
+          "queryType": "instant"
         }
       ],
       "title": "",
@@ -1674,29 +1590,11 @@
             "timeField": "@timestamp",
             "timezone": "browser",
             "useTimezone": true
-          }
-        },
-        {
-          "id": "organize",
-          "options": {
-            "excludeByName": {},
-            "includeByName": {},
-            "indexByName": {
-              "@timestamp": 0,
-              "body": 3,
-              "instrumentationScope.name": 2,
-              "severity.text": 1
-            },
-            "renameByName": {
-              "@timestamp": "Time",
-              "body": "Message",
-              "instrumentationScope.name": "Logger",
-              "severity.text": "Severity"
-            }
-          }
+          },
+          "disabled": true
         }
       ],
-      "type": "table"
+      "type": "logs"
     },
     {
       "collapsed": false,
@@ -1837,7 +1735,7 @@
           "queryType": "search",
           "refId": "A",
           "service": "$service_name",
-          "tags": "service.namespace=\"$service_namespace\""
+          "tags": "resource_attr:service.namespace=\"$service_namespace\""
         }
       ],
       "title": "",
@@ -1853,14 +1751,14 @@
       {
         "allowCustomValue": false,
         "current": {
-          "text": "Prometheus",
+          "text": "VictoriaMetrics",
           "value": "webstore-metrics"
         },
-        "description": "OpenTelemetry metrics. \nSend metrics using the Prometheus OTLP endpoint activating `keep_identifying_resource_attributes` and resource attribute promotion (aka `promote_resource_attributes`) including `service.name`, service.namespace`, `service.instance.id`, and `deployment.environment.name`",
+        "description": "OpenTelemetry metrics. \nSend metrics using the VictoriaMetrics OTLP endpoint activating `keep_identifying_resource_attributes` and resource attribute promotion (aka `promote_resource_attributes`) including `service.name`, service.namespace`, `service.instance.id`, and `deployment.environment.name`",
         "label": "Metrics",
-        "name": "prometheus_datasource",
+        "name": "victoriametrics_datasource",
         "options": [],
-        "query": "prometheus",
+        "query": "victoriametrics-metrics-datasource",
         "refresh": 1,
         "regex": "",
         "type": "datasource"
@@ -1883,14 +1781,14 @@
       {
         "allowCustomValue": false,
         "current": {
-          "text": "OpenSearch",
+          "text": "VictoriaMetrics",
           "value": "webstore-logs"
         },
         "description": "OpenTelemetry logs.",
         "label": "Logs",
-        "name": "opensearch_datasource",
+        "name": "victorialogs_datasource",
         "options": [],
-        "query": "grafana-opensearch-datasource",
+        "query": "victoriametrics-logs-datasource",
         "refresh": 1,
         "regex": "",
         "type": "datasource"
@@ -1900,7 +1798,7 @@
           "text": ".*",
           "value": ".*"
         },
-        "description": "Waiting to implement support of the optional value of `deployment.environment.name` in the OpenSearch and Jager panels, hide variable.",
+        "description": "Waiting to implement support of the optional value of `deployment.environment.name` in the VictoriaLogs and Jager panels, hide variable.",
         "hide": 2,
         "label": "Environment",
         "name": "deployment_environment_name",
@@ -1916,18 +1814,18 @@
           "value": "opentelemetry-demo"
         },
         "datasource": {
-          "type": "prometheus",
-          "uid": "${prometheus_datasource}"
+          "type": "victoriametrics-metrics-datasource",
+          "uid": "${victoriametrics_datasource}"
         },
-        "definition": "label_values(target_info{deployment_environment_name=~\"$deployment_environment_name\"},service_namespace)",
-        "description": "Service namespace.\nResource attribute `service.namespace` via `target_info`",
+        "definition": "label_values({deployment_environment_name=~\"$deployment_environment_name\"},service_namespace)",
+        "description": "Service namespace.\nResource attribute `service.namespace`",
         "includeAll": false,
         "label": "Namespace",
         "name": "service_namespace",
         "options": [],
         "query": {
           "qryType": 1,
-          "query": "label_values(target_info{deployment_environment_name=~\"$deployment_environment_name\"},service_namespace)",
+          "query": "label_values({deployment_environment_name=~\"$deployment_environment_name\"},service_namespace)",
           "refId": "PrometheusVariableQueryEditor-VariableQuery"
         },
         "refresh": 1,
@@ -1941,17 +1839,17 @@
           "value": "checkout"
         },
         "datasource": {
-          "type": "prometheus",
+          "type": "victoriametrics-metrics-datasource",
           "uid": "webstore-metrics"
         },
-        "definition": "label_values(target_info{service_namespace=~\"$service_namespace\", deployment_environment_name=~\"$deployment_environment_name\"},service_name)",
-        "description": "Service name.\nResource attribute `service.name` via `target_info`.",
+        "definition": "label_values({service_namespace=~\"$service_namespace\", deployment_environment_name=~\"$deployment_environment_name\"},service_name)",
+        "description": "Service name.\nResource attribute `service.name`.",
         "label": "Name",
         "name": "service_name",
         "options": [],
         "query": {
           "qryType": 1,
-          "query": "label_values(target_info{service_namespace=~\"$service_namespace\", deployment_environment_name=~\"$deployment_environment_name\"},service_name)",
+          "query": "label_values({service_namespace=~\"$service_namespace\", deployment_environment_name=~\"$deployment_environment_name\"},service_name)",
           "refId": "PrometheusVariableQueryEditor-VariableQuery"
         },
         "refresh": 2,
@@ -1967,7 +1865,7 @@
   },
   "timepicker": {},
   "timezone": "",
-  "title": "APM Dashboard (Jaeger, Prometheus, OpenSearch)",
+  "title": "APM Dashboard (Jaeger, VictoriaMetrics, VictoriaLogs)",
   "uid": "febljk0a32qyoa",
   "version": 1
 }

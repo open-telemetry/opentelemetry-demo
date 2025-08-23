@@ -68,7 +68,7 @@
     },
     {
       "datasource": {
-        "type": "prometheus",
+        "type": "victoriametrics-metrics-datasource",
         "uid": "webstore-metrics"
       },
       "fieldConfig": {
@@ -133,7 +133,7 @@
       "targets": [
         {
           "datasource": {
-            "type": "prometheus",
+            "type": "victoriametrics-metrics-datasource",
             "uid": "webstore-metrics"
           },
           "editorMode": "code",
@@ -149,7 +149,7 @@
         },
         {
           "datasource": {
-            "type": "prometheus",
+            "type": "victoriametrics-metrics-datasource",
             "uid": "webstore-metrics"
           },
           "editorMode": "code",
@@ -164,7 +164,7 @@
         },
         {
           "datasource": {
-            "type": "prometheus",
+            "type": "victoriametrics-metrics-datasource",
             "uid": "webstore-metrics"
           },
           "editorMode": "code",
@@ -178,7 +178,7 @@
         },
         {
           "datasource": {
-            "type": "prometheus",
+            "type": "victoriametrics-metrics-datasource",
             "uid": "webstore-metrics"
           },
           "editorMode": "code",
@@ -196,7 +196,7 @@
     },
     {
       "datasource": {
-        "type": "prometheus",
+        "type": "victoriametrics-metrics-datasource",
         "uid": "webstore-metrics"
       },
       "fieldConfig": {
@@ -268,7 +268,7 @@
       "targets": [
         {
           "datasource": {
-            "type": "prometheus",
+            "type": "victoriametrics-metrics-datasource",
             "uid": "webstore-metrics"
           },
           "editorMode": "code",
@@ -287,7 +287,7 @@
     },
     {
       "datasource": {
-        "type": "prometheus",
+        "type": "victoriametrics-metrics-datasource",
         "uid": "webstore-metrics"
       },
       "fieldConfig": {
@@ -355,7 +355,7 @@
       "targets": [
         {
           "datasource": {
-            "type": "prometheus",
+            "type": "victoriametrics-metrics-datasource",
             "uid": "webstore-metrics"
           },
           "editorMode": "code",
@@ -386,7 +386,7 @@
     },
     {
       "datasource": {
-        "type": "prometheus",
+        "type": "victoriametrics-metrics-datasource",
         "uid": "webstore-metrics"
       },
       "description": "",
@@ -524,7 +524,7 @@
       "targets": [
         {
           "datasource": {
-            "type": "prometheus",
+            "type": "victoriametrics-metrics-datasource",
             "uid": "webstore-metrics"
           },
           "exemplar": false,
@@ -537,7 +537,7 @@
         },
         {
           "datasource": {
-            "type": "prometheus",
+            "type": "victoriametrics-metrics-datasource",
             "uid": "webstore-metrics"
           },
           "exemplar": false,
@@ -655,7 +655,7 @@
     },
     {
       "datasource": {
-        "type": "prometheus",
+        "type": "victoriametrics-metrics-datasource",
         "uid": "webstore-metrics"
       },
       "fieldConfig": {
@@ -719,7 +719,7 @@
       "targets": [
         {
           "datasource": {
-            "type": "prometheus",
+            "type": "victoriametrics-metrics-datasource",
             "uid": "webstore-metrics"
           },
           "editorMode": "code",
@@ -735,7 +735,7 @@
         },
         {
           "datasource": {
-            "type": "prometheus",
+            "type": "victoriametrics-metrics-datasource",
             "uid": "webstore-metrics"
           },
           "editorMode": "code",
@@ -750,7 +750,7 @@
         },
         {
           "datasource": {
-            "type": "prometheus",
+            "type": "victoriametrics-metrics-datasource",
             "uid": "webstore-metrics"
           },
           "editorMode": "code",
@@ -764,7 +764,7 @@
         },
         {
           "datasource": {
-            "type": "prometheus",
+            "type": "victoriametrics-metrics-datasource",
             "uid": "webstore-metrics"
           },
           "editorMode": "code",
@@ -782,7 +782,7 @@
     },
     {
       "datasource": {
-        "type": "prometheus",
+        "type": "victoriametrics-metrics-datasource",
         "uid": "webstore-metrics"
       },
       "fieldConfig": {
@@ -844,7 +844,7 @@
       "targets": [
         {
           "datasource": {
-            "type": "prometheus",
+            "type": "victoriametrics-metrics-datasource",
             "uid": "webstore-metrics"
           },
           "editorMode": "code",
@@ -862,7 +862,7 @@
     },
     {
       "datasource": {
-        "type": "prometheus",
+        "type": "victoriametrics-metrics-datasource",
         "uid": "webstore-metrics"
       },
       "fieldConfig": {
@@ -949,7 +949,7 @@
       "targets": [
         {
           "datasource": {
-            "type": "prometheus",
+            "type": "victoriametrics-metrics-datasource",
             "uid": "webstore-metrics"
           },
           "editorMode": "code",
@@ -979,7 +979,7 @@
           "value": "$__all"
         },
         "datasource": {
-          "type": "prometheus",
+          "type": "victoriametrics-metrics-datasource",
           "uid": "webstore-metrics"
         },
         "definition": "query_result(count by (service_name)(count_over_time(traces_span_metrics_calls_total[$__range])))",
@@ -1003,7 +1003,7 @@
           "value": "$__all"
         },
         "datasource": {
-          "type": "prometheus",
+          "type": "victoriametrics-metrics-datasource",
           "uid": "webstore-metrics"
         },
         "definition": "query_result(sum ({__name__=~\".*traces_span_metrics_calls_total\",service_name=~\"$service\"})  by (span_name))",

@@ -43,8 +43,8 @@
     },
     {
       "datasource": {
-        "type": "prometheus",
-        "uid": "${DS_PROMETHEUS}"
+        "type": "victoriametrics-metrics-datasource",
+        "uid": "${DS_VICTORIAMETRICS}"
       },
       "description": "Busy state of all CPU cores together\n\nhttps://github.com/open-telemetry/opentelemetry-collector-contrib/blob/main/receiver/hostmetricsreceiver/internal/scraper/cpuscraper/documentation.md",
       "fieldConfig": {
@@ -112,8 +112,8 @@
       "targets": [
         {
           "datasource": {
-            "type": "prometheus",
-            "uid": "${DS_PROMETHEUS}"
+            "type": "victoriametrics-metrics-datasource",
+            "uid": "${DS_VICTORIAMETRICS}"
           },
           "editorMode": "code",
           "expr": "sum(system_cpu_utilization_ratio{k8s_cluster_name=~\"$k8s_cluster_name\", k8s_node_name=~\"${node_name}\", host_name=~\"$host_name\", job=\"\", state!=\"idle\"})",
@@ -129,8 +129,8 @@
     },
     {
       "datasource": {
-        "type": "prometheus",
-        "uid": "${DS_PROMETHEUS}"
+        "type": "victoriametrics-metrics-datasource",
+        "uid": "${DS_VICTORIAMETRICS}"
       },
       "description": "Non available RAM memory\n\nhttps://github.com/open-telemetry/opentelemetry-collector-contrib/blob/main/receiver/hostmetricsreceiver/internal/scraper/memoryscraper/documentation.md",
       "fieldConfig": {
@@ -188,8 +188,8 @@
       "targets": [
         {
           "datasource": {
-            "type": "prometheus",
-            "uid": "${DS_PROMETHEUS}"
+            "type": "victoriametrics-metrics-datasource",
+            "uid": "${DS_VICTORIAMETRICS}"
           },
           "disableTextWrap": false,
           "editorMode": "code",
@@ -212,8 +212,8 @@
     },
     {
       "datasource": {
-        "type": "prometheus",
-        "uid": "${DS_PROMETHEUS}"
+        "type": "victoriametrics-metrics-datasource",
+        "uid": "${DS_VICTORIAMETRICS}"
       },
       "description": "Used FS\n\nhttps://github.com/open-telemetry/opentelemetry-collector-contrib/tree/main/receiver/hostmetricsreceiver#collecting-host-metrics-from-inside-a-container-linux-only",
       "fieldConfig": {
@@ -281,8 +281,8 @@
       "targets": [
         {
           "datasource": {
-            "type": "prometheus",
-            "uid": "${DS_PROMETHEUS}"
+            "type": "victoriametrics-metrics-datasource",
+            "uid": "${DS_VICTORIAMETRICS}"
           },
           "editorMode": "code",
           "expr": "1 \n-\nsum(system_filesystem_usage_bytes{k8s_cluster_name=~\"$k8s_cluster_name\", k8s_node_name=~\"${node_name}\", host_name=~\"$host_name\", state=\"free\"}) \n/ \nsum(system_filesystem_usage_bytes{k8s_cluster_name=~\"$k8s_cluster_name\", k8s_node_name=~\"${node_name}\", host_name=~\"$host_name\"})",
@@ -298,8 +298,8 @@
     },
     {
       "datasource": {
-        "type": "prometheus",
-        "uid": "${DS_PROMETHEUS}"
+        "type": "victoriametrics-metrics-datasource",
+        "uid": "${DS_VICTORIAMETRICS}"
       },
       "description": "Busy state of all CPU cores together (5 min average)\n\nhttps://github.com/open-telemetry/opentelemetry-collector-contrib/blob/main/receiver/hostmetricsreceiver/internal/scraper/loadscraper/documentation.md",
       "fieldConfig": {
@@ -367,8 +367,8 @@
       "targets": [
         {
           "datasource": {
-            "type": "prometheus",
-            "uid": "${DS_PROMETHEUS}"
+            "type": "victoriametrics-metrics-datasource",
+            "uid": "${DS_VICTORIAMETRICS}"
           },
           "editorMode": "code",
           "exemplar": false,
@@ -388,8 +388,8 @@
     },
     {
       "datasource": {
-        "type": "prometheus",
-        "uid": "${DS_PROMETHEUS}"
+        "type": "victoriametrics-metrics-datasource",
+        "uid": "${DS_VICTORIAMETRICS}"
       },
       "description": "Busy state of all CPU cores together (15 min average)\n\nhttps://github.com/open-telemetry/opentelemetry-collector-contrib/blob/main/receiver/hostmetricsreceiver/internal/scraper/loadscraper/documentation.md",
       "fieldConfig": {
@@ -457,8 +457,8 @@
       "targets": [
         {
           "datasource": {
-            "type": "prometheus",
-            "uid": "${DS_PROMETHEUS}"
+            "type": "victoriametrics-metrics-datasource",
+            "uid": "${DS_VICTORIAMETRICS}"
           },
           "editorMode": "code",
           "exemplar": false,
@@ -476,8 +476,8 @@
     },
     {
       "datasource": {
-        "type": "prometheus",
-        "uid": "${DS_PROMETHEUS}"
+        "type": "victoriametrics-metrics-datasource",
+        "uid": "${DS_VICTORIAMETRICS}"
       },
       "description": "Used Swap\n\nhttps://github.com/open-telemetry/opentelemetry-collector-contrib/blob/main/receiver/hostmetricsreceiver/internal/scraper/pagingscraper/documentation.md",
       "fieldConfig": {
@@ -545,8 +545,8 @@
       "targets": [
         {
           "datasource": {
-            "type": "prometheus",
-            "uid": "${DS_PROMETHEUS}"
+            "type": "victoriametrics-metrics-datasource",
+            "uid": "${DS_VICTORIAMETRICS}"
           },
           "editorMode": "code",
           "exemplar": false,
@@ -563,7 +563,7 @@
     },
     {
       "datasource": {
-        "type": "prometheus",
+        "type": "victoriametrics-metrics-datasource",
         "uid": "webstore-metrics"
       },
       "description": "Total number of CPU cores",
@@ -628,7 +628,7 @@
       "targets": [
         {
           "datasource": {
-            "type": "prometheus",
+            "type": "victoriametrics-metrics-datasource",
             "uid": "fej9ntb4ninswf"
           },
           "editorMode": "code",
@@ -643,7 +643,7 @@
     },
     {
       "datasource": {
-        "type": "prometheus",
+        "type": "victoriametrics-metrics-datasource",
         "uid": "webstore-metrics"
       },
       "description": "Total RAM",
@@ -709,7 +709,7 @@
       "targets": [
         {
           "datasource": {
-            "type": "prometheus",
+            "type": "victoriametrics-metrics-datasource",
             "uid": "fej9ntb4ninswf"
           },
           "editorMode": "code",
@@ -728,8 +728,8 @@
     },
     {
       "datasource": {
-        "type": "prometheus",
-        "uid": "${DS_PROMETHEUS}"
+        "type": "victoriametrics-metrics-datasource",
+        "uid": "${DS_VICTORIAMETRICS}"
       },
       "description": "Total SWAP",
       "fieldConfig": {
@@ -794,8 +794,8 @@
       "targets": [
         {
           "datasource": {
-            "type": "prometheus",
-            "uid": "${DS_PROMETHEUS}"
+            "type": "victoriametrics-metrics-datasource",
+            "uid": "${DS_VICTORIAMETRICS}"
           },
           "editorMode": "code",
           "exemplar": false,
@@ -809,8 +809,8 @@
         },
         {
           "datasource": {
-            "type": "prometheus",
-            "uid": "${DS_PROMETHEUS}"
+            "type": "victoriametrics-metrics-datasource",
+            "uid": "${DS_VICTORIAMETRICS}"
           },
           "editorMode": "code",
           "expr": "",
@@ -826,7 +826,7 @@
     },
     {
       "datasource": {
-        "type": "prometheus",
+        "type": "victoriametrics-metrics-datasource",
         "uid": "webstore-metrics"
       },
       "description": "Total FS\n\nhttps://github.com/open-telemetry/opentelemetry-collector-contrib/blob/main/receiver/hostmetricsreceiver/internal/scraper/filesystemscraper/documentation.md",
@@ -896,7 +896,7 @@
       "targets": [
         {
           "datasource": {
-            "type": "prometheus",
+            "type": "victoriametrics-metrics-datasource",
             "uid": "fej9ntb4ninswf"
           },
           "editorMode": "code",
@@ -916,8 +916,8 @@
     },
     {
       "datasource": {
-        "type": "prometheus",
-        "uid": "${DS_PROMETHEUS}"
+        "type": "victoriametrics-metrics-datasource",
+        "uid": "${DS_VICTORIAMETRICS}"
       },
       "description": "System uptime",
       "fieldConfig": {
@@ -982,8 +982,8 @@
       "targets": [
         {
           "datasource": {
-            "type": "prometheus",
-            "uid": "${DS_PROMETHEUS}"
+            "type": "victoriametrics-metrics-datasource",
+            "uid": "${DS_VICTORIAMETRICS}"
           },
           "editorMode": "code",
           "exemplar": false,
@@ -997,8 +997,8 @@
         },
         {
           "datasource": {
-            "type": "prometheus",
-            "uid": "${DS_PROMETHEUS}"
+            "type": "victoriametrics-metrics-datasource",
+            "uid": "${DS_VICTORIAMETRICS}"
           },
           "editorMode": "code",
           "expr": "",
@@ -1027,7 +1027,7 @@
     },
     {
       "datasource": {
-        "type": "prometheus",
+        "type": "victoriametrics-metrics-datasource",
         "uid": "webstore-metrics"
       },
       "description": "",
@@ -1219,7 +1219,7 @@
       "targets": [
         {
           "datasource": {
-            "type": "prometheus",
+            "type": "victoriametrics-metrics-datasource",
             "uid": "fej9ntb4ninswf"
           },
           "editorMode": "code",
@@ -1234,7 +1234,7 @@
         },
         {
           "datasource": {
-            "type": "prometheus",
+            "type": "victoriametrics-metrics-datasource",
             "uid": "fej9ntb4ninswf"
           },
           "editorMode": "code",
@@ -1249,7 +1249,7 @@
         },
         {
           "datasource": {
-            "type": "prometheus",
+            "type": "victoriametrics-metrics-datasource",
             "uid": "fej9ntb4ninswf"
           },
           "editorMode": "code",
@@ -1264,7 +1264,7 @@
         },
         {
           "datasource": {
-            "type": "prometheus",
+            "type": "victoriametrics-metrics-datasource",
             "uid": "fej9ntb4ninswf"
           },
           "editorMode": "code",
@@ -1279,7 +1279,7 @@
         },
         {
           "datasource": {
-            "type": "prometheus",
+            "type": "victoriametrics-metrics-datasource",
             "uid": "fej9ntb4ninswf"
           },
           "editorMode": "code",
@@ -1294,7 +1294,7 @@
         },
         {
           "datasource": {
-            "type": "prometheus",
+            "type": "victoriametrics-metrics-datasource",
             "uid": "fej9ntb4ninswf"
           },
           "editorMode": "code",
@@ -1313,8 +1313,8 @@
     },
     {
       "datasource": {
-        "type": "prometheus",
-        "uid": "${DS_PROMETHEUS}"
+        "type": "victoriametrics-metrics-datasource",
+        "uid": "${DS_VICTORIAMETRICS}"
       },
       "description": "",
       "fieldConfig": {
@@ -1767,8 +1767,8 @@
       "targets": [
         {
           "datasource": {
-            "type": "prometheus",
-            "uid": "${DS_PROMETHEUS}"
+            "type": "victoriametrics-metrics-datasource",
+            "uid": "${DS_VICTORIAMETRICS}"
           },
           "editorMode": "code",
           "expr": "sum(system_memory_usage_bytes{k8s_cluster_name=~\"$k8s_cluster_name\", k8s_node_name=~\"${node_name}\", host_name=~\"$host_name\"})",
@@ -1782,8 +1782,8 @@
         },
         {
           "datasource": {
-            "type": "prometheus",
-            "uid": "${DS_PROMETHEUS}"
+            "type": "victoriametrics-metrics-datasource",
+            "uid": "${DS_VICTORIAMETRICS}"
           },
           "editorMode": "code",
           "expr": "sum(system_memory_usage_bytes{k8s_cluster_name=~\"$k8s_cluster_name\", k8s_node_name=~\"${node_name}\", host_name=~\"$host_name\", state=\"free\"})",
@@ -1797,8 +1797,8 @@
         },
         {
           "datasource": {
-            "type": "prometheus",
-            "uid": "${DS_PROMETHEUS}"
+            "type": "victoriametrics-metrics-datasource",
+            "uid": "${DS_VICTORIAMETRICS}"
           },
           "editorMode": "code",
           "expr": "sum(system_memory_usage_bytes{k8s_cluster_name=~\"$k8s_cluster_name\", k8s_node_name=~\"${node_name}\", host_name=~\"$host_name\", state=~\"cached|buffered\"})",
@@ -1811,8 +1811,8 @@
         },
         {
           "datasource": {
-            "type": "prometheus",
-            "uid": "${DS_PROMETHEUS}"
+            "type": "victoriametrics-metrics-datasource",
+            "uid": "${DS_VICTORIAMETRICS}"
           },
           "editorMode": "code",
           "exemplar": false,
@@ -1831,8 +1831,8 @@
     },
     {
       "datasource": {
-        "type": "prometheus",
-        "uid": "${DS_PROMETHEUS}"
+        "type": "victoriametrics-metrics-datasource",
+        "uid": "${DS_VICTORIAMETRICS}"
       },
       "description": "",
       "fieldConfig": {
@@ -1928,8 +1928,8 @@
       "targets": [
         {
           "datasource": {
-            "type": "prometheus",
-            "uid": "${DS_PROMETHEUS}"
+            "type": "victoriametrics-metrics-datasource",
+            "uid": "${DS_VICTORIAMETRICS}"
           },
           "editorMode": "code",
           "expr": "sum (rate(system_network_io_bytes_total{k8s_cluster_name=~\"$k8s_cluster_name\", k8s_node_name=~\"${node_name}\", host_name=~\"$host_name\", direction=\"receive\", job=\"\"}[$__rate_interval]))",
@@ -1943,8 +1943,8 @@
         },
         {
           "datasource": {
-            "type": "prometheus",
-            "uid": "${DS_PROMETHEUS}"
+            "type": "victoriametrics-metrics-datasource",
+            "uid": "${DS_VICTORIAMETRICS}"
           },
           "editorMode": "code",
           "expr": "sum (rate(system_network_io_bytes_total{k8s_cluster_name=~\"$k8s_cluster_name\", k8s_node_name=~\"${node_name}\", host_name=~\"$host_name\", direction=\"transmit\", job=\"\"}[$__rate_interval]))",
@@ -1961,8 +1961,8 @@
     },
     {
       "datasource": {
-        "type": "prometheus",
-        "uid": "${DS_PROMETHEUS}"
+        "type": "victoriametrics-metrics-datasource",
+        "uid": "${DS_VICTORIAMETRICS}"
       },
       "description": "",
       "fieldConfig": {
@@ -2058,8 +2058,8 @@
       "targets": [
         {
           "datasource": {
-            "type": "prometheus",
-            "uid": "${DS_PROMETHEUS}"
+            "type": "victoriametrics-metrics-datasource",
+            "uid": "${DS_VICTORIAMETRICS}"
           },
           "editorMode": "code",
           "expr": "sum(irate(system_disk_io_bytes_total{k8s_cluster_name=~\"$k8s_cluster_name\", k8s_node_name=~\"${node_name}\", host_name=~\"$host_name\", direction=\"read\"}[$__rate_interval]))",
@@ -2073,8 +2073,8 @@
         },
         {
           "datasource": {
-            "type": "prometheus",
-            "uid": "${DS_PROMETHEUS}"
+            "type": "victoriametrics-metrics-datasource",
+            "uid": "${DS_VICTORIAMETRICS}"
           },
           "editorMode": "code",
           "expr": "sum(irate(system_disk_io_bytes_total{k8s_cluster_name=~\"$k8s_cluster_name\", k8s_node_name=~\"${node_name}\", host_name=~\"$host_name\", direction=\"write\"}[$__rate_interval]))",
@@ -2088,8 +2088,8 @@
         },
         {
           "datasource": {
-            "type": "prometheus",
-            "uid": "${DS_PROMETHEUS}"
+            "type": "victoriametrics-metrics-datasource",
+            "uid": "${DS_VICTORIAMETRICS}"
           },
           "editorMode": "code",
           "expr": "",
@@ -2105,7 +2105,7 @@
     },
     {
       "datasource": {
-        "type": "prometheus",
+        "type": "victoriametrics-metrics-datasource",
         "uid": "webstore-metrics"
       },
       "fieldConfig": {
@@ -2232,7 +2232,7 @@
       "targets": [
         {
           "datasource": {
-            "type": "prometheus",
+            "type": "victoriametrics-metrics-datasource",
             "uid": "webstore-metrics"
           },
           "disableTextWrap": false,
@@ -2249,7 +2249,7 @@
         },
         {
           "datasource": {
-            "type": "prometheus",
+            "type": "victoriametrics-metrics-datasource",
             "uid": "webstore-metrics"
           },
           "editorMode": "code",
@@ -2262,7 +2262,7 @@
         },
         {
           "datasource": {
-            "type": "prometheus",
+            "type": "victoriametrics-metrics-datasource",
             "uid": "webstore-metrics"
           },
           "editorMode": "code",
@@ -2275,7 +2275,7 @@
         },
         {
           "datasource": {
-            "type": "prometheus",
+            "type": "victoriametrics-metrics-datasource",
             "uid": "webstore-metrics"
           },
           "editorMode": "code",
@@ -2288,7 +2288,7 @@
         },
         {
           "datasource": {
-            "type": "prometheus",
+            "type": "victoriametrics-metrics-datasource",
             "uid": "webstore-metrics"
           },
           "editorMode": "code",
@@ -2301,7 +2301,7 @@
         },
         {
           "datasource": {
-            "type": "prometheus",
+            "type": "victoriametrics-metrics-datasource",
             "uid": "webstore-metrics"
           },
           "editorMode": "code",
@@ -2386,7 +2386,7 @@
     },
     {
       "datasource": {
-        "type": "prometheus",
+        "type": "victoriametrics-metrics-datasource",
         "uid": "webstore-metrics"
       },
       "fieldConfig": {
@@ -2534,7 +2534,7 @@
         },
         {
           "datasource": {
-            "type": "prometheus",
+            "type": "victoriametrics-metrics-datasource",
             "uid": "webstore-metrics"
           },
           "editorMode": "code",
@@ -2699,14 +2699,14 @@
     "list": [
       {
         "current": {
-          "text": "Prometheus",
+          "text": "VictoriaMetrics",
           "value": "webstore-metrics"
         },
         "includeAll": false,
         "label": "Data Source",
-        "name": "DS_PROMETHEUS",
+        "name": "DS_VICTORIAMETRICS",
         "options": [],
-        "query": "prometheus",
+        "query": "victoriametrics-metrics-datasource",
         "refresh": 1,
         "regex": "(?!grafanacloud-usage|grafanacloud-ml-metrics).+",
         "type": "datasource"
@@ -2719,8 +2719,8 @@
           "value": "$__all"
         },
         "datasource": {
-          "type": "prometheus",
-          "uid": "${DS_PROMETHEUS}"
+          "type": "victoriametrics-metrics-datasource",
+          "uid": "${DS_VICTORIAMETRICS}"
         },
         "definition": "label_values(otelcol_process_uptime,k8s_cluster_name)",
         "description": "When deploying PostgreSQL on Kubernetes, name of the Kubernetes cluster.  \nFor other deployments, select \"All\". ",
@@ -2747,8 +2747,8 @@
           "value": "$__all"
         },
         "datasource": {
-          "type": "prometheus",
-          "uid": "${DS_PROMETHEUS}"
+          "type": "victoriametrics-metrics-datasource",
+          "uid": "${DS_VICTORIAMETRICS}"
         },
         "definition": "label_values(otelcol_process_uptime{k8s_cluster_name=~\"$k8s_cluster_name\"},k8s_node_name)",
         "description": "When monitoring Kubernetes, name of the K8s node.\nFor other deployments, select \"All\". ",
@@ -2773,8 +2773,8 @@
           "value": "docker-desktop"
         },
         "datasource": {
-          "type": "prometheus",
-          "uid": "${DS_PROMETHEUS}"
+          "type": "victoriametrics-metrics-datasource",
+          "uid": "${DS_VICTORIAMETRICS}"
         },
         "definition": "label_values(otelcol_process_uptime_seconds_total,host_name)",
         "includeAll": true,
@@ -2798,8 +2798,8 @@
           "value": ""
         },
         "datasource": {
-          "type": "prometheus",
-          "uid": "${DS_PROMETHEUS}"
+          "type": "victoriametrics-metrics-datasource",
+          "uid": "${DS_VICTORIAMETRICS}"
         },
         "definition": "query_result(count(otelcol_process_uptime{k8s_cluster_name=~\"$k8s_cluster_name\", k8s_node_name=~\"${node_name}\", host_name=~\"$ip\"}))",
         "hide": 2,

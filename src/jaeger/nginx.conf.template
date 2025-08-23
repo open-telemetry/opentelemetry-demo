@@ -1,0 +1,48 @@
+pid /tmp/nginx.pid;
+
+events {
+    worker_connections 1024;
+}
+
+http {
+    include mime.types;
+    sendfile on;
+    server {
+        listen ${JAEGER_PORT};
+        listen [::]:${JAEGER_PORT};
+
+        server_name _;
+
+        location /status {
+            stub_status on;
+            access_log  on;
+            allow all;
+        }
+
+        location /jaeger/api {
+            proxy_pass http://victoriatraces:10428/select/jaeger/api;
+        }
+
+        location /jaeger/static/ {
+            alias /ui/static/;
+        }
+
+        location /api {
+            proxy_pass http://victoriatraces:10428/select/jaeger/api;
+        }
+
+        location /static/ {
+            root /ui;
+        }
+
+        location /jaeger {
+            root /ui;
+            try_files $uri $uri/ /index.html;
+        }
+
+        location / {
+            root /ui;
+            try_files $uri $uri/ /index.html;
+        }
+    }
+}

@@ -61,7 +61,7 @@
     },
     {
       "datasource": {
-        "type": "prometheus",
+        "type": "victoriametrics-metrics-datasource",
         "uid": "webstore-metrics"
       },
       "fieldConfig": {
@@ -143,7 +143,7 @@
     },
     {
       "datasource": {
-        "type": "prometheus",
+        "type": "victoriametrics-metrics-datasource",
         "uid": "webstore-metrics"
       },
       "fieldConfig": {
@@ -225,7 +225,7 @@
       "targets": [
         {
           "datasource": {
-            "type": "prometheus",
+            "type": "victoriametrics-metrics-datasource",
             "uid": "webstore-metrics"
           },
           "disableTextWrap": false,
@@ -258,7 +258,7 @@
     },
     {
       "datasource": {
-        "type": "prometheus",
+        "type": "victoriametrics-metrics-datasource",
         "uid": "webstore-metrics"
       },
       "fieldConfig": {
@@ -340,7 +340,7 @@
     },
     {
       "datasource": {
-        "type": "prometheus",
+        "type": "victoriametrics-metrics-datasource",
         "uid": "webstore-metrics"
       },
       "fieldConfig": {
@@ -422,7 +422,7 @@
       "targets": [
         {
           "datasource": {
-            "type": "prometheus",
+            "type": "victoriametrics-metrics-datasource",
             "uid": "webstore-metrics"
           },
           "disableTextWrap": false,
