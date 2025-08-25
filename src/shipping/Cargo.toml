@@ -8,7 +8,7 @@ path = "src/main.rs"
 
 [dependencies]
 actix-web = "4"
-anyhow = "1.0.98"
+anyhow = "1.0.99"
 awc = { version = "3.7.0", default-features = false, features = ["compress-zstd"] }
 serde = { version = "1.0.219", features = ["derive"] }
 tonic = "0.14.1"
@@ -23,7 +23,7 @@ opentelemetry-appender-tracing = "0.30.1"
 opentelemetry-resource-detectors = "0.9.0"
 
 [dependencies.uuid]
-version = "1.17.0"
+version = "1.18.0"
 features = [
     "v4",                # Lets you generate random UUIDs
     "fast-rng",          # Use a faster (but still sufficiently random) RNG
