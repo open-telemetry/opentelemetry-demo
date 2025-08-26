@@ -94,6 +94,8 @@ the release.
   ([#2477](https://github.com/open-telemetry/opentelemetry-demo/pull/2477))
 * [prometheus / grafana] Add Linux monitoring dashboard
   ([#2395](https://github.com/open-telemetry/opentelemetry-demo/pull/2395))
+* [email] Add memory leak scenario to email service
+  ([#2481](https://github.com/open-telemetry/opentelemetry-demo/pull/2481))
 
 ## 2.0.2
 
