@@ -125,7 +125,7 @@ build-multiplatform-and-push:
 
 .PHONY: clean-images
 clean-images:
-	@docker rmi $(shell docker images --filter=reference="ghcr.io/open-telemetry/demo:latest-*" -q); \
+	@docker rmi $(shell docker images --filter=reference="mezmo/otel-demo/demo:latest-*" -q); \
     if [ $$? -ne 0 ]; \
     then \
     	echo; \
