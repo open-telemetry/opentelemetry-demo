@@ -55,9 +55,7 @@ static_resources:
                           route: { cluster: image-provider, prefix_rewrite: "/" }
                         - match: { prefix: "/flagservice/" }
                           route: { cluster: flagservice, prefix_rewrite: "/", timeout: 0s }
-                        - match: { path: "/feature" }
-                          redirect: { path_redirect: "/feature/" }
-                        - match: { prefix: "/feature/" }
+                        - match: { prefix: "/feature" }
                           route: { cluster: flagd-ui }
                         - match: { prefix: "/" } # Default/catch-all route - keep last since prefix:"/" matches everything
                           route: { cluster: frontend }
