@@ -49,7 +49,7 @@ try {
         SELECT customer_id, company_name, contact_name, email, status
         FROM customers 
         WHERE status = 'active' 
-        ORDER BY RANDOM() 
+        ORDER BY RAND() 
         LIMIT 1
     ", {}, {datasource: "mysql"});
     
@@ -68,7 +68,7 @@ try {
                END as quoted_price
         FROM services s
         WHERE s.active = 1 
-        ORDER BY RANDOM() 
+        ORDER BY RAND() 
         LIMIT :itemCount
     ", {
         itemCount: {value: numberOfItems, cfsqltype: "cf_sql_integer"}
@@ -108,9 +108,9 @@ try {
     quoteInsert = queryExecute("
         INSERT INTO quotes (customer_id, quote_number, quote_date, expiration_date, 
                            status, subtotal, tax_rate, tax_amount, total_amount, notes)
-        SELECT c.customer_id, :quoteNumber, DATE('now'), DATE('now', '+30 days'),
+        SELECT c.customer_id, :quoteNumber, CURDATE(), DATE_ADD(CURDATE(), INTERVAL 30 DAY),
                'draft', :subtotal, :taxRate, :taxAmount, :totalAmount, 
-               'Auto-generated quote for ' || c.company_name || ' - ' || :itemCount || ' services'
+               CONCAT('Auto-generated quote for ', c.company_name, ' - ', :itemCount, ' services')
         FROM customers c 
         WHERE c.customer_id = :customerId
     ", {
@@ -124,7 +124,7 @@ try {
     }, {datasource: "mysql"});
     
     // Get the inserted quote ID
-    quoteIdQuery = queryExecute("SELECT last_insert_rowid() as quote_id", {}, {datasource: "mysql"});
+    quoteIdQuery = queryExecute("SELECT LAST_INSERT_ID() as quote_id", {}, {datasource: "mysql"});
     quoteId = quoteIdQuery.quote_id[1];
     
     // Simulate some processing time

@@ -1,53 +1,32 @@
--- MySQL dump for Quote Management System
--- Host: localhost    Database: quotes
--- ------------------------------------------------------
+-- Database initialization script for Quote Management System
+-- This script will drop existing tables and recreate them with sample data
 
--- Create database if it doesn't exist
-CREATE DATABASE IF NOT EXISTS quotes;
-USE quotes;
+-- Drop tables in reverse dependency order
+DROP TABLE IF EXISTS quote_items;
+DROP TABLE IF EXISTS quotes;
+DROP TABLE IF EXISTS services;
+DROP TABLE IF EXISTS customers;
 
-/*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
-/*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
-/*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
-/*!50503 SET NAMES utf8mb4 */;
-/*!40103 SET @OLD_TIME_ZONE=@@TIME_ZONE */;
-/*!40103 SET TIME_ZONE='+00:00' */;
-/*!40014 SET @OLD_UNIQUE_CHECKS=@@UNIQUE_CHECKS, UNIQUE_CHECKS=0 */;
-/*!40014 SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS=0 */;
-/*!40101 SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='NO_AUTO_VALUE_ON_ZERO' */;
-/*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
+-- Create table for customers
+CREATE TABLE customers (
+  customer_id INT NOT NULL AUTO_INCREMENT,
+  company_name VARCHAR(255) NOT NULL,
+  contact_name VARCHAR(255) NOT NULL,
+  email VARCHAR(255) NOT NULL,
+  phone VARCHAR(50) DEFAULT NULL,
+  address TEXT,
+  city VARCHAR(100) DEFAULT NULL,
+  state VARCHAR(50) DEFAULT NULL,
+  zip_code VARCHAR(20) DEFAULT NULL,
+  country VARCHAR(100) DEFAULT 'USA',
+  created_at TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP,
+  status ENUM('active','inactive','prospect') DEFAULT 'prospect',
+  PRIMARY KEY (customer_id),
+  UNIQUE KEY email (email)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
---
--- Table structure for table `customers`
---
-
-DROP TABLE IF EXISTS `customers`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!50503 SET character_set_client = utf8mb4 */;
-CREATE TABLE `customers` (
-  `customer_id` int NOT NULL AUTO_INCREMENT,
-  `company_name` varchar(255) NOT NULL,
-  `contact_name` varchar(255) NOT NULL,
-  `email` varchar(255) NOT NULL,
-  `phone` varchar(50) DEFAULT NULL,
-  `address` text,
-  `city` varchar(100) DEFAULT NULL,
-  `state` varchar(50) DEFAULT NULL,
-  `zip_code` varchar(20) DEFAULT NULL,
-  `country` varchar(100) DEFAULT 'USA',
-  `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
-  `status` enum('active','inactive','prospect') DEFAULT 'prospect',
-  PRIMARY KEY (`customer_id`),
-  UNIQUE KEY `email` (`email`)
-) ENGINE=InnoDB AUTO_INCREMENT=21 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
-
---
--- Dumping data for table `customers`
---
-
-LOCK TABLES `customers` WRITE;
-/*!40000 ALTER TABLE `customers` DISABLE KEYS */;
-INSERT INTO `customers` VALUES 
+-- Insert data for customers
+INSERT INTO customers VALUES 
 (1,'Acme Corporation','John Smith','john.smith@acme.com','555-0101','123 Business Ave','New York','NY','10001','USA','2024-01-15 10:30:00','active'),
 (2,'Tech Solutions Inc','Sarah Johnson','sarah.j@techsolutions.com','555-0102','456 Innovation Blvd','San Francisco','CA','94105','USA','2024-01-20 14:15:00','active'),
 (3,'Global Enterprises','Mike Wilson','mwilson@globalent.com','555-0103','789 Corporate Dr','Chicago','IL','60601','USA','2024-02-01 09:45:00','active'),
@@ -58,35 +37,22 @@ INSERT INTO `customers` VALUES
 (8,'Financial Partners','Jennifer White','jwhite@finpartners.com','555-0108','258 Banking Blvd','Charlotte','NC','28201','USA','2024-03-10 15:30:00','active'),
 (9,'Education Network','Michael Green','mgreen@edunet.com','555-0109','369 Campus Dr','Denver','CO','80201','USA','2024-03-15 12:00:00','prospect'),
 (10,'Logistics Corp','Amanda Taylor','ataylor@logicorp.com','555-0110','741 Distribution Way','Phoenix','AZ','85001','USA','2024-03-20 10:45:00','active');
-/*!40000 ALTER TABLE `customers` ENABLE KEYS */;
-UNLOCK TABLES;
 
---
--- Table structure for table `services`
---
+-- Create table for services
+CREATE TABLE services (
+  service_id INT NOT NULL AUTO_INCREMENT,
+  service_name VARCHAR(255) NOT NULL,
+  description TEXT,
+  category VARCHAR(100) NOT NULL,
+  base_price DECIMAL(10,2) NOT NULL,
+  unit_type VARCHAR(50) DEFAULT 'each',
+  active TINYINT(1) DEFAULT '1',
+  created_at TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (service_id)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
-DROP TABLE IF EXISTS `services`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!50503 SET character_set_client = utf8mb4 */;
-CREATE TABLE `services` (
-  `service_id` int NOT NULL AUTO_INCREMENT,
-  `service_name` varchar(255) NOT NULL,
-  `description` text,
-  `category` varchar(100) NOT NULL,
-  `base_price` decimal(10,2) NOT NULL,
-  `unit_type` varchar(50) DEFAULT 'each',
-  `active` tinyint(1) DEFAULT '1',
-  `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
-  PRIMARY KEY (`service_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=16 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
-
---
--- Dumping data for table `services`
---
-
-LOCK TABLES `services` WRITE;
-/*!40000 ALTER TABLE `services` DISABLE KEYS */;
-INSERT INTO `services` VALUES 
+-- Insert data for services
+INSERT INTO services VALUES 
 (1,'Web Development','Custom website development','Technology',2500.00,'project',1,'2024-01-01 00:00:00'),
 (2,'Mobile App Development','iOS and Android app development','Technology',5000.00,'project',1,'2024-01-01 00:00:00'),
 (3,'Database Design','Database architecture and implementation','Technology',1500.00,'project',1,'2024-01-01 00:00:00'),
@@ -102,46 +68,33 @@ INSERT INTO `services` VALUES
 (13,'API Development','Custom API creation','Technology',2200.00,'project',1,'2024-01-01 00:00:00'),
 (14,'Quality Assurance','Testing and QA services','Testing',90.00,'hour',1,'2024-01-01 00:00:00'),
 (15,'Documentation','Technical documentation services','Documentation',65.00,'hour',1,'2024-01-01 00:00:00');
-/*!40000 ALTER TABLE `services` ENABLE KEYS */;
-UNLOCK TABLES;
 
---
--- Table structure for table `quotes`
---
+-- Create table for quotes
+CREATE TABLE quotes (
+  quote_id INT NOT NULL AUTO_INCREMENT,
+  customer_id INT NOT NULL,
+  quote_number VARCHAR(50) NOT NULL,
+  quote_date DATE NOT NULL,
+  expiration_date DATE NOT NULL,
+  status ENUM('draft','sent','accepted','rejected','expired') DEFAULT 'draft',
+  subtotal DECIMAL(12,2) NOT NULL DEFAULT '0.00',
+  tax_rate DECIMAL(5,4) DEFAULT '0.0875',
+  tax_amount DECIMAL(12,2) NOT NULL DEFAULT '0.00',
+  total_amount DECIMAL(12,2) NOT NULL DEFAULT '0.00',
+  notes TEXT,
+  created_at TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP,
+  updated_at TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  created_by VARCHAR(100) DEFAULT 'system',
+  PRIMARY KEY (quote_id),
+  UNIQUE KEY quote_number (quote_number),
+  KEY customer_id (customer_id),
+  KEY status (status),
+  KEY quote_date (quote_date),
+  CONSTRAINT quotes_ibfk_1 FOREIGN KEY (customer_id) REFERENCES customers (customer_id)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
-DROP TABLE IF EXISTS `quotes`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!50503 SET character_set_client = utf8mb4 */;
-CREATE TABLE `quotes` (
-  `quote_id` int NOT NULL AUTO_INCREMENT,
-  `customer_id` int NOT NULL,
-  `quote_number` varchar(50) NOT NULL,
-  `quote_date` date NOT NULL,
-  `expiration_date` date NOT NULL,
-  `status` enum('draft','sent','accepted','rejected','expired') DEFAULT 'draft',
-  `subtotal` decimal(12,2) NOT NULL DEFAULT '0.00',
-  `tax_rate` decimal(5,4) DEFAULT '0.0875',
-  `tax_amount` decimal(12,2) NOT NULL DEFAULT '0.00',
-  `total_amount` decimal(12,2) NOT NULL DEFAULT '0.00',
-  `notes` text,
-  `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
-  `updated_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-  `created_by` varchar(100) DEFAULT 'system',
-  PRIMARY KEY (`quote_id`),
-  UNIQUE KEY `quote_number` (`quote_number`),
-  KEY `customer_id` (`customer_id`),
-  KEY `status` (`status`),
-  KEY `quote_date` (`quote_date`),
-  CONSTRAINT `quotes_ibfk_1` FOREIGN KEY (`customer_id`) REFERENCES `customers` (`customer_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=51 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
-
---
--- Dumping data for table `quotes`
---
-
-LOCK TABLES `quotes` WRITE;
-/*!40000 ALTER TABLE `quotes` DISABLE KEYS */;
-INSERT INTO `quotes` VALUES 
+-- Insert data for quotes
+INSERT INTO quotes VALUES 
 (1,1,'Q-2024-001','2024-03-01','2024-03-31','sent',7500.00,0.0875,656.25,8156.25,'Initial web development proposal','2024-03-01 10:00:00','2024-03-01 10:00:00','system'),
 (2,2,'Q-2024-002','2024-03-02','2024-04-01','accepted',12000.00,0.0875,1050.00,13050.00,'Mobile app development for iOS and Android','2024-03-02 11:15:00','2024-03-05 14:30:00','system'),
 (3,3,'Q-2024-003','2024-03-05','2024-04-04','sent',4200.00,0.0875,367.50,4567.50,'Database design and cloud migration','2024-03-05 09:30:00','2024-03-05 09:30:00','system'),
@@ -152,40 +105,27 @@ INSERT INTO `quotes` VALUES
 (8,8,'Q-2024-008','2024-03-18','2024-04-17','accepted',4500.00,0.0875,393.75,4893.75,'Financial API development','2024-03-18 11:30:00','2024-03-20 09:45:00','system'),
 (9,9,'Q-2024-009','2024-03-20','2024-04-19','sent',3200.00,0.0875,280.00,3480.00,'Education platform consulting','2024-03-20 15:15:00','2024-03-20 15:15:00','system'),
 (10,10,'Q-2024-010','2024-03-22','2024-04-21','draft',5500.00,0.0875,481.25,5981.25,'Logistics system optimization','2024-03-22 12:00:00','2024-03-22 12:00:00','system');
-/*!40000 ALTER TABLE `quotes` ENABLE KEYS */;
-UNLOCK TABLES;
 
---
--- Table structure for table `quote_items`
---
+-- Create table for quote_items
+CREATE TABLE quote_items (
+  quote_item_id INT NOT NULL AUTO_INCREMENT,
+  quote_id INT NOT NULL,
+  service_id INT NOT NULL,
+  quantity DECIMAL(8,2) NOT NULL DEFAULT '1.00',
+  unit_price DECIMAL(10,2) NOT NULL,
+  discount_percent DECIMAL(5,2) DEFAULT '0.00',
+  line_total DECIMAL(12,2) NOT NULL,
+  description TEXT,
+  sort_order INT DEFAULT '0',
+  PRIMARY KEY (quote_item_id),
+  KEY quote_id (quote_id),
+  KEY service_id (service_id),
+  CONSTRAINT quote_items_ibfk_1 FOREIGN KEY (quote_id) REFERENCES quotes (quote_id) ON DELETE CASCADE,
+  CONSTRAINT quote_items_ibfk_2 FOREIGN KEY (service_id) REFERENCES services (service_id)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
-DROP TABLE IF EXISTS `quote_items`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!50503 SET character_set_client = utf8mb4 */;
-CREATE TABLE `quote_items` (
-  `quote_item_id` int NOT NULL AUTO_INCREMENT,
-  `quote_id` int NOT NULL,
-  `service_id` int NOT NULL,
-  `quantity` decimal(8,2) NOT NULL DEFAULT '1.00',
-  `unit_price` decimal(10,2) NOT NULL,
-  `discount_percent` decimal(5,2) DEFAULT '0.00',
-  `line_total` decimal(12,2) NOT NULL,
-  `description` text,
-  `sort_order` int DEFAULT '0',
-  PRIMARY KEY (`quote_item_id`),
-  KEY `quote_id` (`quote_id`),
-  KEY `service_id` (`service_id`),
-  CONSTRAINT `quote_items_ibfk_1` FOREIGN KEY (`quote_id`) REFERENCES `quotes` (`quote_id`) ON DELETE CASCADE,
-  CONSTRAINT `quote_items_ibfk_2` FOREIGN KEY (`service_id`) REFERENCES `services` (`service_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=31 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
-
---
--- Dumping data for table `quote_items`
---
-
-LOCK TABLES `quote_items` WRITE;
-/*!40000 ALTER TABLE `quote_items` DISABLE KEYS */;
-INSERT INTO `quote_items` VALUES 
+-- Insert data for quote_items
+INSERT INTO quote_items VALUES 
 (1,1,1,1.00,2500.00,0.00,2500.00,'Custom corporate website',1),
 (2,1,3,1.00,1500.00,0.00,1500.00,'Database design for customer portal',2),
 (3,1,6,24.00,150.00,0.00,3600.00,'Technical consulting hours',3),
@@ -211,14 +151,3 @@ INSERT INTO `quote_items` VALUES
 (23,10,12,1.00,1200.00,0.00,1200.00,'Logistics system optimization',1),
 (24,10,8,1.00,1800.00,0.00,1800.00,'Performance analytics',2),
 (25,10,6,20.00,150.00,0.00,3000.00,'Optimization consulting',3);
-/*!40000 ALTER TABLE `quote_items` ENABLE KEYS */;
-UNLOCK TABLES;
-
-/*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
-/*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
-/*!40014 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS */;
-/*!40014 SET UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS */;
-/*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
-/*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
-/*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
-/*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
