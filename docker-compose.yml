@@ -13,6 +13,9 @@ networks:
     name: opentelemetry-demo
     driver: bridge
 
+volumes:
+  mysql-data:
+
 services:
   # ******************
   # Core Demo Services
@@ -503,23 +506,22 @@ services:
     build:
       context: ./src/quote-cf
       dockerfile: Dockerfile
-      cache_from:
-        - ${IMAGE_NAME}:${IMAGE_VERSION}-quote-cf
+      no_cache: true
     deploy:
       resources:
         limits:
-          memory: 1G
+          memory: 3G
     restart: unless-stopped
     ports:
       - "${QUOTE_PORT}:8888"
       - "8188:8088"
     environment:
       - LUCEE_ADMIN_PASSWORD=password
-      - SQLITE_DB_PATH=/data/quotes.db
       - LUCEE_REQUEST_TIMEOUT=600
+      - mysql-host=mysql
+      - mysql-username=quotes_user
+      - mysql-password=quotes_password
       - EMAIL_ADDR
-    volumes:
-      - ./src/sql/quotes.db:/data/quotes.db
     logging: *logging
 
   # Recommendation service
@@ -693,6 +695,30 @@ services:
       - "${VALKEY_PORT}"
     logging: *logging
 
+  # MySQL database for Quote service
+  mysql:
+    image: mysql:8.0
+    container_name: mysql
+    environment:
+      - MYSQL_ROOT_PASSWORD=root_password
+      - MYSQL_DATABASE=quotes
+      - MYSQL_USER=quotes_user
+      - MYSQL_PASSWORD=quotes_password
+    volumes:
+      - ./src/quote-cf/sql/quotes.sql:/docker-entrypoint-initdb.d/01-schema.sql:ro
+      - mysql-data:/var/lib/mysql
+    deploy:
+      resources:
+        limits:
+          memory: 512M
+    restart: unless-stopped
+    ports:
+      - "3306:3306"
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      timeout: 20s
+      retries: 10
+    logging: *logging
 
 
   # ********************
