@@ -59,9 +59,6 @@ def send_email(data)
     confirmation_content = erb(:confirmation, locals: { order: data.order })
     whitespace_length = [0, confirmation_content.length * (memory_leak_multiplier-1)].max
 
-    puts "Memory leak multiplier: #{memory_leak_multiplier}"
-    puts "Whitespaces length: #{whitespace_length}"
-
     Pony.mail(
       to:       data.email,
       from:     "noreply@example.com",
@@ -73,10 +70,7 @@ def send_email(data)
     # If not clearing the deliveries, the emails will accumulate in the test mailer
     # We use this to create a memory leak.
     if memory_leak_multiplier < 1
-      puts "Clearing deliveries"
       Mail::TestMailer.deliveries.clear
-    else
-      puts "Not clearing deliveries"
     end
 
     span.set_attribute("app.email.recipient", data.email)
