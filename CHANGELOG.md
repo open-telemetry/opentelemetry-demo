@@ -94,6 +94,8 @@ the release.
   ([#2477](https://github.com/open-telemetry/opentelemetry-demo/pull/2477))
 * [prometheus / grafana] Add Linux monitoring dashboard
   ([#2395](https://github.com/open-telemetry/opentelemetry-demo/pull/2395))
+* [checkout] Add graceful shutdown to checkout service
+  ([#2491](https://github.com/open-telemetry/opentelemetry-demo/pull/2480))
 
 ## 2.0.2
 
