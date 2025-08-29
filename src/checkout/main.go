@@ -12,8 +12,10 @@ import (
 	"net"
 	"net/http"
 	"os"
+	"os/signal"
 	"strconv"
 	"sync"
+	"syscall"
 	"time"
 
 	"go.opentelemetry.io/otel/attribute"
@@ -252,6 +254,20 @@ func main() {
 	logger.Info(fmt.Sprintf("starting to listen on tcp: %q", lis.Addr().String()))
 	err = srv.Serve(lis)
 	logger.Error(err.Error())
+
+	ctx, cancel := signal.NotifyContext(context.Background(), os.Interrupt, syscall.SIGTERM, syscall.SIGKILL)
+	defer cancel()
+
+	go func() {
+		if err := srv.Serve(lis); err != nil {
+			logger.Error(err.Error())
+		}
+	}()
+
+	<-ctx.Done()
+
+	srv.GracefulStop()
+	logger.Info("Checkout gRPC server stopped")
 }
 
 func mustMapEnv(target *string, envKey string) {
