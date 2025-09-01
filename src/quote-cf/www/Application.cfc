@@ -15,7 +15,7 @@ this.defaultdatasource="mysql";
 
   this.datasources["mysql"] = {
 	  class: 'com.mysql.cj.jdbc.Driver'
-	, connectionString: 'jdbc:mysql://' & mysqlHost & ':3306/quotes?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC'
+	, connectionString: 'jdbc:mysql://' & mysqlHost & ':3306/quotes?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC&connectTimeout=30000&socketTimeout=30000'
 	, username: mysqlUsername
 	, password: mysqlPassword
 
