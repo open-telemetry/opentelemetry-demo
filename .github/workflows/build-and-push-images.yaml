@@ -46,7 +46,7 @@ jobs:
           echo "${{ secrets.GAR_CREDENTIALS }}" |  docker login -u _json_key_base64 --password-stdin europe-docker.pkg.dev
 
       - name: Build images
-        run: DEMO_VERSION="${{ inputs.version }}" docker compose --env-file .env --env-file .env.override build
+        run: DEMO_VERSION="${{ inputs.version }}" docker compose --env-file .env --env-file .env.override build --build-arg GIT_COMMIT="$(git rev-parse HEAD)" --build-arg GIT_ORIGIN="$(git config --get remote.origin.url)"
 
       - name: List images
         run: docker image ls
