@@ -704,9 +704,6 @@ services:
       - MYSQL_DATABASE=quotes
       - MYSQL_USER=quotes_user
       - MYSQL_PASSWORD=quotes_password
-    volumes:
-      - ./src/quote-cf/sql/quotes.sql:/docker-entrypoint-initdb.d/01-schema.sql:ro
-      - mysql-data:/var/lib/mysql
     deploy:
       resources:
         limits:
