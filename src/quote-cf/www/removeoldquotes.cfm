@@ -15,73 +15,50 @@
         q1.quote_id, q1.quote_number, CAST(q1.quote_date AS CHAR) as quote_date, q1.status, q1.total_amount,
         q2.quote_id as q2_id, q2.quote_number as q2_number, q2.total_amount as q2_total,
         q3.quote_id as q3_id, q3.quote_number as q3_number, q3.total_amount as q3_total,
-        q4.quote_id as q4_id, q4.quote_number as q4_number, q4.total_amount as q4_total,
         c1.company_name, c1.contact_name, c1.email,
         c2.company_name as c2_company, c2.contact_name as c2_contact,
         c3.company_name as c3_company, c3.contact_name as c3_contact,
-        c4.company_name as c4_company, c4.contact_name as c4_contact,
         qi.quote_item_id, qi.quantity, qi.unit_price, qi.line_total,
         s.service_name, s.description, s.category, s.base_price,
-        -- Very expensive string operations - repeat many times
-        REPLACE(REPLACE(REPLACE(REPLACE(REPLACE(
-          CONCAT(q1.quote_number, ' ', c1.company_name, ' ', IFNULL(s.description, ''), ' ',
-          q2.quote_number, ' ', c2.company_name, ' ',
-          q3.quote_number, ' ', c3.company_name, ' ',
-          q4.quote_number, ' ', c4.company_name)
-        , 'Q', 'QUOTE'), 'T', 'TECH'), 'S', 'SERV'), 'C', 'COMP'), 'A', 'ACME') as memory_hog_field,
-        -- Multiple correlated subqueries to force row-by-row processing WITH SLEEP
-        (SELECT COUNT(*) + ABS(RAND() % 100) * 0 FROM quotes q5 WHERE q5.customer_id = q1.customer_id AND q5.quote_date < q1.quote_date AND 1) as prior_quotes_q1,
-        (SELECT COUNT(*) + ABS(RAND() % 100) * 0 FROM quotes q6 WHERE q6.customer_id = q2.customer_id AND q6.total_amount > q2.total_amount AND 1) as higher_value_quotes_q2,
-        (SELECT COUNT(*) + ABS(RAND() % 100) * 0 FROM quotes q7 WHERE q7.customer_id = q3.customer_id AND q7.quote_date > q3.quote_date AND 1) as future_quotes_q3,
-        (SELECT COUNT(*) + ABS(RAND() % 100) * 0 FROM quotes q8 WHERE q8.customer_id = q4.customer_id AND q8.total_amount < q4.total_amount AND 1) as lower_value_quotes_q4,
-        (SELECT AVG(qi2.unit_price) FROM quote_items qi2 WHERE qi2.quote_id = q1.quote_id) as avg_item_price_q1,
-        (SELECT AVG(qi3.unit_price) FROM quote_items qi3 WHERE qi3.quote_id = q2.quote_id) as avg_item_price_q2,
-        (SELECT MAX(qi4.unit_price) FROM quote_items qi4 WHERE qi4.quote_id = q3.quote_id) as max_item_price_q3,
-        (SELECT MIN(qi5.unit_price) FROM quote_items qi5 WHERE qi5.quote_id = q4.quote_id) as min_item_price_q4,
-        -- Expensive LIKE operations on all customers
-        (SELECT COUNT(*) FROM customers cx1 WHERE cx1.company_name LIKE CONCAT('%', SUBSTR(c1.company_name, 1, 2), '%')) as similar_customers_c1,
-        (SELECT COUNT(*) FROM customers cx2 WHERE cx2.company_name LIKE CONCAT('%', SUBSTR(c2.company_name, 1, 2), '%')) as similar_customers_c2,
-        (SELECT COUNT(*) FROM customers cx3 WHERE cx3.company_name LIKE CONCAT('%', SUBSTR(c3.company_name, 1, 2), '%')) as similar_customers_c3,
-        (SELECT COUNT(*) FROM customers cx4 WHERE cx4.company_name LIKE CONCAT('%', SUBSTR(c4.company_name, 1, 2), '%')) as similar_customers_c4,
-        -- More CPU-intensive functions
+        -- Complex string operations for 8-second target
+        REPLACE(REPLACE(REPLACE(CONCAT(q1.quote_number, ' ', c1.company_name, ' ', IFNULL(s.description, ''), ' ', q2.quote_number, ' ', c2.company_name), 'Q', 'QUOTE'), 'T', 'TECH'), 'S', 'SERV') as memory_hog_field,
+        -- Multiple correlated subqueries for controlled slowness
+        (SELECT COUNT(*) FROM quotes q5 CROSS JOIN quotes q51 WHERE q5.customer_id = q1.customer_id AND q5.quote_date < q1.quote_date AND q51.quote_id <= 200) as prior_quotes_q1,
+        (SELECT COUNT(*) FROM quotes q6 CROSS JOIN quotes q61 WHERE q6.customer_id = q2.customer_id AND q6.total_amount > q2.total_amount AND q61.quote_id <= 200) as higher_value_quotes_q2,
+        (SELECT COUNT(*) FROM quotes q7 CROSS JOIN quotes q71 WHERE q7.customer_id = q3.customer_id AND q7.quote_date > q3.quote_date AND q71.quote_id <= 200) as future_quotes_q3,
+        (SELECT AVG(qi2.unit_price) FROM quote_items qi2 CROSS JOIN quote_items qi21 WHERE qi2.quote_id = q1.quote_id AND qi21.quote_item_id <= 100) as avg_item_price_q1,
+        (SELECT AVG(qi3.unit_price) FROM quote_items qi3 CROSS JOIN quote_items qi31 WHERE qi3.quote_id = q2.quote_id AND qi31.quote_item_id <= 100) as avg_item_price_q2,
+        -- Expensive LIKE operations
+        (SELECT COUNT(*) FROM customers cx1 CROSS JOIN customers cx11 WHERE cx1.company_name LIKE CONCAT('%', SUBSTR(c1.company_name, 1, 2), '%') AND cx11.customer_id <= 100) as similar_customers_c1,
+        (SELECT COUNT(*) FROM customers cx2 CROSS JOIN customers cx22 WHERE cx2.company_name LIKE CONCAT('%', SUBSTR(c2.company_name, 1, 2), '%') AND cx22.customer_id <= 100) as similar_customers_c2,
+        -- CPU-intensive functions for controlled delay
         REPLACE(UUID(), '-', '') as computed_hash_1,
         REPLACE(UUID(), '-', '') as computed_hash_2,
         REPLACE(UUID(), '-', '') as computed_hash_3,
-        REPLACE(UUID(), '-', '') as computed_hash_4,
-        -- Force massive string manipulation
-        UPPER(LOWER(UPPER(LOWER(CONCAT(c1.company_name, '_', c2.company_name, '_', c3.company_name, '_', c4.company_name))))) as case_combo,
-        LENGTH(CONCAT(q1.quote_number, q2.quote_number, q3.quote_number, q4.quote_number)) as total_length,
-        SUBSTR(CONCAT(c1.company_name, c2.company_name, c3.company_name, c4.company_name), 1, 50) as company_combo,
-        -- Force extremely expensive operations to simulate 5+ second slow processing
-        (SELECT COUNT(*) * SQRT(POW(q1.quote_id, 2) + POW(q2.quote_id, 2)) FROM quotes qx1 CROSS JOIN quotes qx2 CROSS JOIN quotes qx3 WHERE qx1.quote_id <= 100 AND qx2.quote_id <= 100 AND qx3.quote_id <= 100) as math_delay1,
-        (SELECT SUM(q5.quote_id * SIN(q5.quote_id) * COS(q5.quote_id)) FROM quotes q5 CROSS JOIN quotes q51 CROSS JOIN quotes q52 WHERE q51.quote_id <= 50 AND q52.quote_id <= 50) as trig_delay1,
-        (SELECT AVG(q6.total_amount * SQRT(q6.quote_id) * LOG(q6.quote_id + 1)) FROM quotes q6 CROSS JOIN quotes q61 CROSS JOIN quotes q62 WHERE q61.quote_id <= 50 AND q62.quote_id <= 50) as log_delay1,
-        (SELECT MAX(LENGTH(REPEAT(c5.company_name, 10)) * q7.quote_id * RAND()) FROM quotes q7 JOIN customers c5 ON q7.customer_id = c5.customer_id CROSS JOIN quotes q71 CROSS JOIN quotes q72 WHERE q71.quote_id <= 30 AND q72.quote_id <= 30) as string_delay1,
-        (SELECT MIN(POWER(q8.quote_id, 2) + POWER(c6.customer_id, 2) * RAND()) FROM quotes q8 JOIN customers c6 ON q8.customer_id = c6.customer_id CROSS JOIN quotes q81 CROSS JOIN quotes q82 WHERE q81.quote_id <= 30 AND q82.quote_id <= 30) as power_delay1,
-        (SELECT COUNT(DISTINCT CONCAT(c7.company_name, '_', FLOOR(RAND() * 1000))) FROM customers c7 CROSS JOIN quotes q9 CROSS JOIN quotes q91 CROSS JOIN quotes q92 WHERE q9.quote_id <= 25 AND q91.quote_id <= 25 AND q92.quote_id <= 25) as distinct_delay1
+        -- String manipulation for controlled processing time
+        UPPER(LOWER(UPPER(CONCAT(c1.company_name, '_', c2.company_name, '_', c3.company_name)))) as case_combo,
+        LENGTH(CONCAT(q1.quote_number, q2.quote_number, q3.quote_number)) as total_length,
+        SUBSTR(CONCAT(c1.company_name, c2.company_name, c3.company_name), 1, 75) as company_combo,
+        -- Mathematical operations for 6-8 second target
+        (SELECT COUNT(*) * SQRT(q1.quote_id) FROM quotes qx1 CROSS JOIN quotes qx2 WHERE qx1.quote_id <= 100 AND qx2.quote_id <= 100) as math_delay1,
+        (SELECT AVG(q6.total_amount * SQRT(q6.quote_id + 1)) FROM quotes q6 CROSS JOIN quotes q62 WHERE q6.quote_id <= 150 AND q62.quote_id <= 100) as log_delay1,
+        (SELECT SUM(POWER(c5.customer_id, 2) * RAND()) FROM customers c5 CROSS JOIN customers c51 WHERE c5.customer_id <= 75 AND c51.customer_id <= 75) as power_delay1
       FROM quotes q1
       CROSS JOIN quotes q2 
       CROSS JOIN quotes q3
-      CROSS JOIN quotes q4
       JOIN customers c1 ON q1.customer_id = c1.customer_id
       JOIN customers c2 ON q2.customer_id = c2.customer_id
       JOIN customers c3 ON q3.customer_id = c3.customer_id
-      JOIN customers c4 ON q4.customer_id = c4.customer_id
       LEFT JOIN quote_items qi ON q1.quote_id = qi.quote_id
       LEFT JOIN services s ON qi.service_id = s.service_id
       WHERE date(q1.quote_date) >= DATE_SUB(CURDATE(), INTERVAL 730 DAY)
       AND date(q2.quote_date) >= DATE_SUB(CURDATE(), INTERVAL 730 DAY)
       AND date(q3.quote_date) >= DATE_SUB(CURDATE(), INTERVAL 730 DAY)
-      AND date(q4.quote_date) >= DATE_SUB(CURDATE(), INTERVAL 730 DAY)
       AND q1.quote_id != q2.quote_id
       AND q2.quote_id != q3.quote_id
-      AND q3.quote_id != q4.quote_id
       AND q1.quote_id != q3.quote_id
-      AND q1.quote_id != q4.quote_id
-      AND q2.quote_id != q4.quote_id
-      -- Force sorting on computed expensive fields
       ORDER BY memory_hog_field, case_combo, total_length DESC
-      LIMIT 15
+      LIMIT 10
     ", {}, {datasource: "mysql"});
     
     writeLog(

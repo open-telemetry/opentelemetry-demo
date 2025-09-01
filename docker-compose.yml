@@ -517,7 +517,7 @@ services:
       - "8188:8088"
     environment:
       - LUCEE_ADMIN_PASSWORD=password
-      - LUCEE_REQUEST_TIMEOUT=600
+      - LUCEE_REQUEST_TIMEOUT=300
       - mysql-host=mysql
       - mysql-username=quotes_user
       - mysql-password=quotes_password
