@@ -26,6 +26,20 @@ this.defaultdatasource="mysql";
 	, validate:true // default: false
 };
 
+  // Separate datasource for database initialization with longer timeouts
+  this.datasources["mysql_admin"] = {
+	  class: 'com.mysql.cj.jdbc.Driver'
+	, connectionString: 'jdbc:mysql://' & mysqlHost & ':3306/quotes?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC&connectTimeout=120000&socketTimeout=120000'
+	, username: mysqlUsername
+	, password: mysqlPassword
+
+	// optional settings for admin operations
+	, connectionLimit:10 // fewer connections needed for admin tasks
+	, liveTimeout:120 // longer timeout for admin operations
+	, alwaysSetTimeout:true 
+	, validate:true
+};
+
 public boolean function onApplicationStart() {
     try {
         // Initialize/reinitialize the database on application startup
@@ -42,29 +56,29 @@ private void function initializeDatabase() {
     writeLog("Starting database initialization...");
     
     try {
-        // Drop tables in reverse dependency order
-        query datasource="mysql" {
+        // Drop tables in reverse dependency order using admin datasource
+        query datasource="mysql_admin" {
             writeOutput("DROP TABLE IF EXISTS quote_items");
         }
         writeLog("Dropped table: quote_items");
         
-        query datasource="mysql" {
+        query datasource="mysql_admin" {
             writeOutput("DROP TABLE IF EXISTS quotes");
         }
         writeLog("Dropped table: quotes");
         
-        query datasource="mysql" {
+        query datasource="mysql_admin" {
             writeOutput("DROP TABLE IF EXISTS services");
         }
         writeLog("Dropped table: services");
         
-        query datasource="mysql" {
+        query datasource="mysql_admin" {
             writeOutput("DROP TABLE IF EXISTS customers");
         }
         writeLog("Dropped table: customers");
         
-        // Create customers table
-        query datasource="mysql" {
+        // Create customers table using admin datasource
+        query datasource="mysql_admin" {
             writeOutput("
                 CREATE TABLE customers (
                   customer_id INT NOT NULL AUTO_INCREMENT,
@@ -87,7 +101,7 @@ private void function initializeDatabase() {
         writeLog("Created table: customers");
         
         // Create services table  
-        query datasource="mysql" {
+        query datasource="mysql_admin" {
             writeOutput("
                 CREATE TABLE services (
                   service_id INT NOT NULL AUTO_INCREMENT,
@@ -105,7 +119,7 @@ private void function initializeDatabase() {
         writeLog("Created table: services");
         
         // Create quotes table
-        query datasource="mysql" {
+        query datasource="mysql_admin" {
             writeOutput("
                 CREATE TABLE quotes (
                   quote_id INT NOT NULL AUTO_INCREMENT,
@@ -134,7 +148,7 @@ private void function initializeDatabase() {
         writeLog("Created table: quotes");
         
         // Create quote_items table
-        query datasource="mysql" {
+        query datasource="mysql_admin" {
             writeOutput("
                 CREATE TABLE quote_items (
                   quote_item_id INT NOT NULL AUTO_INCREMENT,
@@ -157,7 +171,7 @@ private void function initializeDatabase() {
         writeLog("Created table: quote_items");
         
         // Insert sample customers (50 rows)
-        query datasource="mysql" {
+        query datasource="mysql_admin" {
             writeOutput("
                 INSERT INTO customers VALUES 
                 (1,'Acme Corporation','John Smith','john.smith@acme.com','555-0101','123 Business Ave','New York','NY','10001','USA','2024-01-15 10:30:00','active'),
@@ -215,7 +229,7 @@ private void function initializeDatabase() {
         writeLog("Inserted 50 sample customers");
         
         // Insert sample services (50 rows)
-        query datasource="mysql" {
+        query datasource="mysql_admin" {
             writeOutput("
                 INSERT INTO services VALUES 
                 (1,'Web Development','Custom website development','Technology',2500.00,'project',1,'2024-01-01 00:00:00'),
@@ -273,7 +287,7 @@ private void function initializeDatabase() {
         writeLog("Inserted 50 sample services");
         
         // Insert sample quotes (30 rows)
-        query datasource="mysql" {
+        query datasource="mysql_admin" {
             writeOutput("
                 INSERT INTO quotes VALUES 
                 (1,1,'Q-2024-001','2024-03-01','2024-03-31','sent',7500.00,0.0875,656.25,8156.25,'Initial web development proposal','2024-03-01 10:00:00','2024-03-01 10:00:00','system'),
@@ -311,7 +325,7 @@ private void function initializeDatabase() {
         writeLog("Inserted 30 sample quotes");
         
         // Insert sample quote items (50 rows)
-        query datasource="mysql" {
+        query datasource="mysql_admin" {
             writeOutput("
                 INSERT INTO quote_items VALUES 
                 (1,1,1,1.00,2500.00,0.00,2500.00,'Custom corporate website',1),
