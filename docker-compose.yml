@@ -717,10 +717,10 @@ services:
       - "${VALKEY_PORT}"
     logging: *logging
 
-    # ********************
-    # Telemetry Components
-    # ********************
-    # Jaeger
+  # ********************
+  # Telemetry Components
+  # ********************
+  # Jaeger
   jaeger:
     image: ${IMAGE_NAME}:${DEMO_VERSION}-jaeger
     container_name: jaeger

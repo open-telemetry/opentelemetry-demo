@@ -552,7 +552,6 @@ services:
       - "${VALKEY_PORT}"
     logging: *logging
 
-
   # ********************
   # Telemetry Components
   # ********************
