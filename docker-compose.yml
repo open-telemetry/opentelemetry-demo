@@ -8,6 +8,10 @@ x-default-logging: &logging
     max-file: "2"
     tag: "{{.Name}}"
 
+x-go-env: &go-env
+  GOPROXY: direct
+  GOSUMDB: "off"
+
 networks:
   default:
     name: opentelemetry-demo
@@ -60,24 +64,24 @@ services:
     deploy:
       resources:
         limits:
-          memory: 300M
+          memory: 3000M
     restart: unless-stopped
     ports:
       - "${AD_PORT}"
     environment:
       - AD_PORT
-      - FLAGD_HOST
+      - FLAGD_HOST=localhost
       - FLAGD_PORT
-      - OTEL_EXPORTER_OTLP_ENDPOINT=http://${OTEL_COLLECTOR_HOST}:${OTEL_COLLECTOR_PORT_HTTP}
-      - OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE
-      - OTEL_RESOURCE_ATTRIBUTES
-      - OTEL_LOGS_EXPORTER=otlp
+      - OTEL_EXPORTER_OTLP_TRACES_ENDPOINT=http://localhost:4317
+      - OTEL_TRACES_EXPORTER=otlp
       - OTEL_SERVICE_NAME=ad
-      # Workaround on OSX for https://bugs.openjdk.org/browse/JDK-8345296
-      - _JAVA_OPTIONS
+      - ASYNC_PROFILER_EXPORTER_ENDPOINT=http://localhost:4040
+      - _JAVA_OPTIONS=
+    volumes:
+      - ./agent-all.jar:/opt/agent-all.jar
     depends_on:
-      otel-collector:
-        condition: service_started
+      # otel-collector:
+      #   condition: service_started
       flagd:
         condition: service_started
     logging: *logging
@@ -148,6 +152,8 @@ services:
       - OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE
       - OTEL_RESOURCE_ATTRIBUTES
       - OTEL_SERVICE_NAME=checkout
+      - GOPROXY=direct
+      - GOSUMDB=off
     depends_on:
       cart:
         condition: service_started
@@ -244,12 +250,15 @@ services:
       - FLAGD_HOST
       - FLAGD_PORT
       - KAFKA_ADDR
-      - OTEL_EXPORTER_OTLP_ENDPOINT=http://${OTEL_COLLECTOR_HOST}:${OTEL_COLLECTOR_PORT_HTTP}
+      - OTEL_EXPORTER_OTLP_ENDPOINT=http://${OTEL_COLLECTOR_HOST}:${OTEL_COLLECTOR_PORT_GRPC}
       - OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE
       - OTEL_INSTRUMENTATION_KAFKA_EXPERIMENTAL_SPAN_ATTRIBUTES=true
       - OTEL_INSTRUMENTATION_MESSAGING_EXPERIMENTAL_RECEIVE_TELEMETRY_ENABLED=true
       - OTEL_RESOURCE_ATTRIBUTES
       - OTEL_SERVICE_NAME=fraud-detection
+      - _JAVA_OPTIONS
+    volumes:
+      - ./agent-all.jar:/opt/agent-all.jar
     depends_on:
       otel-collector:
         condition: service_started
@@ -360,10 +369,6 @@ services:
       load-generator:
         condition: service_started
       jaeger:
-        condition: service_started
-      grafana:
-        condition: service_started
-      flagd-ui:
         condition: service_started
     dns_search: ""
 
@@ -489,6 +494,8 @@ services:
       - OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE
       - OTEL_RESOURCE_ATTRIBUTES
       - OTEL_SERVICE_NAME=product-catalog
+      - GOPROXY=direct
+      - GOSUMDB=off
     volumes:
       - ./src/product-catalog/products:/usr/src/app/products
     depends_on:
@@ -743,24 +750,6 @@ services:
       - METRICS_STORAGE_TYPE=prometheus
     logging: *logging
 
-  # Grafana
-  grafana:
-    image: ${GRAFANA_IMAGE}
-    container_name: grafana
-    deploy:
-      resources:
-        limits:
-          memory: 120M
-    restart: unless-stopped
-    environment:
-      - "GF_INSTALL_PLUGINS=grafana-opensearch-datasource"
-    volumes:
-      - ./src/grafana/grafana.ini:/etc/grafana/grafana.ini
-      - ./src/grafana/provisioning/:/etc/grafana/provisioning/
-    ports:
-      - "${GRAFANA_PORT}"
-    logging: *logging
-
   # OpenTelemetry Collector
   otel-collector:
     image: ${COLLECTOR_CONTRIB_IMAGE}
@@ -781,8 +770,6 @@ services:
       - "${OTEL_COLLECTOR_PORT_GRPC}"
       - "${OTEL_COLLECTOR_PORT_HTTP}"
     depends_on:
-      jaeger:
-        condition: service_started
       opensearch:
         condition: service_healthy
     logging: *logging
@@ -856,3 +843,4 @@ services:
       timeout: 10s
       retries: 10
     logging: *logging
+

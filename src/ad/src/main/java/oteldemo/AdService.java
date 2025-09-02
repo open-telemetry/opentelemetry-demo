@@ -47,6 +47,11 @@ import dev.openfeature.sdk.MutableContext;
 import dev.openfeature.sdk.OpenFeatureAPI;
 import java.util.UUID;
 
+import tools.profiler.exporter.AsyncProfilerExporter;
+import tools.profiler.exporter.Configuration;
+import tools.profiler.exporter.AsyncProfilerSpanProcessor;
+import io.opentelemetry.sdk.OpenTelemetrySdk;
+import io.opentelemetry.sdk.trace.SdkTracerProvider;
 
 public final class AdService {
 
@@ -59,19 +64,16 @@ public final class AdService {
   private HealthStatusManager healthMgr;
 
   private static final AdService service = new AdService();
-  private static final Tracer tracer = GlobalOpenTelemetry.getTracer("ad");
-  private static final Meter meter = GlobalOpenTelemetry.getMeter("ad");
+  private static Tracer tracer;
+  private static Meter meter;
 
-  private static final LongCounter adRequestsCounter =
-      meter
-          .counterBuilder("app.ads.ad_requests")
-          .setDescription("Counts ad requests by request and response type")
-          .build();
+  private static LongCounter adRequestsCounter;
 
   private static final AttributeKey<String> adRequestTypeKey =
       AttributeKey.stringKey("app.ads.ad_request_type");
   private static final AttributeKey<String> adResponseTypeKey =
       AttributeKey.stringKey("app.ads.ad_response_type");
+  AsyncProfilerExporter exporter = new AsyncProfilerExporter();
 
   private void start() throws IOException {
     int port =
@@ -83,6 +85,26 @@ public final class AdService {
                             "environment vars: AD_PORT must not be null")));
     healthMgr = new HealthStatusManager();
 
+    Configuration config = Configuration.builder()
+      .setEndpoint("localhost:4040")
+      .setProfilerOptions("start,interval=1ms")
+      .setSecure("false")
+      .build();
+
+    try {
+      exporter.start(config);
+    } catch (Exception e) {
+      logger.error("Failed to start AsyncProfilerExporter", e);
+    }
+      
+    System.err.println("AsyncProfilerExporter started");
+    tracer = GlobalOpenTelemetry.getTracer("ad");
+    meter = GlobalOpenTelemetry.getMeter("ad");
+    adRequestsCounter = meter
+      .counterBuilder("app.ads.ad_requests")
+      .setDescription("Counts ad requests by request and response type")
+      .build();
+  
     // Create a flagd instance with OpenTelemetry
     FlagdOptions options =
         FlagdOptions.builder()
@@ -99,7 +121,7 @@ public final class AdService {
             .addService(healthMgr.getHealthService())
             .build()
             .start();
-    logger.info("Ad service started, listening on " + port);
+    System.err.println("Ad service started, listening on " + port);
     Runtime.getRuntime()
         .addShutdownHook(
             new Thread(
@@ -118,6 +140,8 @@ public final class AdService {
       healthMgr.clearStatus("");
       server.shutdown();
     }
+
+    exporter.stop();
   }
 
   private enum AdRequestType {
@@ -152,6 +176,7 @@ public final class AdService {
 
       // get the current span in context
       Span span = Span.current();
+      span.setAttribute(AttributeKey.stringKey("pyroscope.profile.id"), span.getSpanContext().getSpanId());
       try {
         List<Ad> allAds = new ArrayList<>();
         AdRequestType adRequestType;
@@ -162,6 +187,7 @@ public final class AdService {
         if (baggage != null) {
           final String sessionId = baggage.getEntryValue("session.id");
           span.setAttribute("session.id", sessionId);
+        
           evaluationContext.setTargetingKey(sessionId);
           evaluationContext.add("session", sessionId);
         } else {
@@ -231,6 +257,7 @@ public final class AdService {
   private Collection<Ad> getAdsByCategory(@SpanAttribute("app.ads.category") String category) {
     Collection<Ad> ads = adsMap.get(category);
     Span.current().setAttribute("app.ads.count", ads.size());
+    Span.current().setAttribute(AttributeKey.stringKey("pyroscope.profile.id"), Span.current().getSpanContext().getSpanId());
     return ads;
   }
 
@@ -242,6 +269,7 @@ public final class AdService {
 
     // create and start a new span manually
     Span span = tracer.spanBuilder("getRandomAds").startSpan();
+    span.setAttribute(AttributeKey.stringKey("pyroscope.profile.id"), span.getSpanContext().getSpanId());
 
     // put the span into context, so if any child span is started the parent will be set properly
     try (Scope ignored = span.makeCurrent()) {

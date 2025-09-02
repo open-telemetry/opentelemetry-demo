@@ -119,8 +119,8 @@ receivers:
             enabled: true
 exporters:
   debug:
-  otlp:
-    endpoint: "jaeger:4317"
+  otlp/tempo:
+    endpoint: "localhost:4317"
     tls:
       insecure: true
   otlphttp/prometheus:
@@ -159,7 +159,7 @@ service:
     traces:
       receivers: [otlp]
       processors: [resourcedetection, memory_limiter, transform, batch]
-      exporters: [otlp, debug, spanmetrics]
+      exporters: [otlp/tempo, debug, spanmetrics]
     metrics:
       receivers: [docker_stats, httpcheck/frontend-proxy, hostmetrics, nginx, otlp, postgresql, redis, spanmetrics]
       processors: [resourcedetection, memory_limiter, batch]

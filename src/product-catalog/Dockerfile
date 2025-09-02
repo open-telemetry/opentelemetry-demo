@@ -9,6 +9,8 @@ WORKDIR /usr/src/app/
 COPY ./src/product-catalog/go.mod go.mod
 COPY ./src/product-catalog/go.sum go.sum
 
+ENV GOPROXY=direct
+ENV GOSUMDB=off
 RUN go mod download
 
 COPY ./src/product-catalog/genproto/oteldemo/ genproto/oteldemo/

@@ -20,7 +20,7 @@ def opentelemetryVersion = "1.53.0"
 def opentelemetryInstrumentationVersion = "2.19.0"
 def grpcVersion = "1.74.0"
 def jacksonVersion = "2.19.2"
-def protocVersion = "4.32.0"
+def protocVersion = "4.31.0"
 
 tasks.withType(JavaCompile).configureEach {
     sourceCompatibility = JavaVersion.VERSION_21
@@ -49,10 +49,14 @@ dependencies {
                 "io.grpc:grpc-services:${grpcVersion}",
                 "io.opentelemetry:opentelemetry-api",
                 "io.opentelemetry:opentelemetry-sdk",
+                "io.opentelemetry:opentelemetry-sdk-trace",
+                "io.opentelemetry:opentelemetry-sdk-extension-autoconfigure",
                 "io.opentelemetry.instrumentation:opentelemetry-instrumentation-annotations",
                 "org.apache.logging.log4j:log4j-core:2.25.1",
                 "dev.openfeature.contrib.providers:flagd:0.11.14",
                 'dev.openfeature:sdk:1.17.0'
+
+        implementation files('../../agent-all.jar')
 
         runtimeOnly "com.fasterxml.jackson.core:jackson-core:${jacksonVersion}",
                 "com.fasterxml.jackson.core:jackson-databind:${jacksonVersion}",

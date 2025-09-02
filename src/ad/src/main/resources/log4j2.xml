@@ -11,7 +11,7 @@ SPDX-License-Identifier: Apache-2.0
         </Console>
     </Appenders>
     <Loggers>
-        <Root level="INFO">
+        <Root level="TRACE">
             <AppenderRef ref="STDOUT"/>
         </Root>
     </Loggers>
