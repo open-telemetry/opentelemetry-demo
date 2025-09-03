@@ -58,19 +58,19 @@ keeping it up to date for you.
 
 |                           |                |                                  |
 |---------------------------|----------------|----------------------------------|
-| [AlibabaCloud LogService] | [Dynatrace]    | [OpenSearch]                     |
-| [Apache Doris]            | [Elastic]      | [Oracle]                         |
-| [AppDynamics]             | [Google Cloud] | [Parseable]                      |
-| [Aspecto]                 | [Grafana Labs] | [Sentry]                         |
-| [Axiom]                   | [Guance]       | [ServiceNow Cloud Observability] |
-| [Axoflow]                 | [Honeycomb.io] | [SigNoz]                         |
-| [Azure Data Explorer]     | [Instana]      | [Splunk]                         |
-| [Causely]                 | [Kloudfuse]    | [Sumo Logic]                     |
-| [ClickStack]              | [Last9]        | [TelemetryHub]                   |
-| [Coralogix]               | [Liatrio]      | [Teletrace]                      |
-| [Dash0]                   | [Logz.io]      | [Tracetest]                      |
-| [Datadog]                 | [New Relic]    | [Uptrace]                        |
-| [VictoriaMetrics]         |                |                                  |
+| [AlibabaCloud LogService] | [Elastic]      | [Parseable]                      |
+| [Apache Doris]            | [Google Cloud] | [Sentry]                         |
+| [AppDynamics]             | [Grafana Labs] | [ServiceNow Cloud Observability] |
+| [Aspecto]                 | [Guance]       | [SigNoz]                         |
+| [Axiom]                   | [Honeycomb.io] | [Splunk]                         |
+| [Axoflow]                 | [Instana]      | [Sumo Logic]                     |
+| [Azure Data Explorer]     | [Kloudfuse]    | [TelemetryHub]                   |
+| [Causely]                 | [Last9]        | [Teletrace]                      |
+| [ClickStack]              | [Liatrio]      | [Tracetest]                      |
+| [Coralogix]               | [Logz.io]      | [Uptrace]                        |
+| [Dash0]                   | [New Relic]    | [VictoriaMetrics]                |
+| [Datadog]                 | [OpenSearch]   |                                  |
+| [Dynatrace]               | [Oracle]       |                                  |
 
 ## Contributing
 
