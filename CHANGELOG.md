@@ -94,6 +94,9 @@ the release.
   ([#2477](https://github.com/open-telemetry/opentelemetry-demo/pull/2477))
 * [prometheus / grafana] Add Linux monitoring dashboard
   ([#2395](https://github.com/open-telemetry/opentelemetry-demo/pull/2395))
+* [shipping] Use cumulative metrics in shipping service to be consistent
+  with the other services of the demo
+  ([#2503](https://github.com/open-telemetry/opentelemetry-demo/pull/2503))
 
 ## 2.0.2
 
