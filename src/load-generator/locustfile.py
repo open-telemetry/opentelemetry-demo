@@ -228,8 +228,8 @@ class CFStorefrontUser(HttpUser):
     """
     
     # Wait time between requests (converted from JMeter timers)
-    wait_time = between(5, 15)
-    weight = 3  # Moderate weight to ensure CF gets traffic
+    wait_time = between(15, 30)  # Increased from 5-15 to reduce load volume
+    weight = 1  # Reduced from 3 to 1 to decrease overall CF traffic
     
     # Target the quote CF service container
     host = "http://quote:8888"
@@ -240,7 +240,7 @@ class CFStorefrontUser(HttpUser):
             'User-Agent': 'Locust Load Generator (converted from JMeter cfload.jmx)'
         })
 
-    @task(1)
+    @task(3)
     def email_quote(self):
         """Email quote endpoint"""
         with self.client.get("/emailquote.cfm", 
@@ -250,7 +250,7 @@ class CFStorefrontUser(HttpUser):
             if response.status_code == 500 and "Quote 99999 not available" in response.text:
                 response.success()  # Mark intentional errors as success
     
-    @task(1)
+    @task(2)
     def update_quote(self):
         """Update quote endpoint"""
         self.client.get("/updatequote.cfm", 
@@ -259,7 +259,7 @@ class CFStorefrontUser(HttpUser):
     
     @task(1)
     def remove_old_quotes(self):
-        """Remove old quotes endpoint - this may be slow"""
+        """Remove old quotes endpoint - this is the expensive slow query endpoint"""
         self.client.get("/removeoldquotes.cfm", 
                        name="CF Remove Old Quotes",
                        timeout=30)
