@@ -94,6 +94,8 @@ the release.
   ([#2477](https://github.com/open-telemetry/opentelemetry-demo/pull/2477))
 * [prometheus / grafana] Add Linux monitoring dashboard
   ([#2395](https://github.com/open-telemetry/opentelemetry-demo/pull/2395))
+* [grafana] APM dashboard: Add host metrics per service instance
+  ([#2507](https://github.com/open-telemetry/opentelemetry-demo/pull/2507))
 
 ## 2.0.2
 
