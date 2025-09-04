@@ -4,7 +4,7 @@
   sleep(dur);
 
   // Determine quote ID to lookup - use invalid ID if error condition
-  if (dur > 620) {
+  if (dur > 635) {
     quoteId = 99999; // Invalid quote ID that won't be found
   } else {
     // Get a random valid quote ID from database

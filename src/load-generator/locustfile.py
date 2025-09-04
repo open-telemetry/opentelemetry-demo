@@ -105,7 +105,7 @@ people_file = open('people.json')
 people = json.load(people_file)
 
 class WebsiteUser(HttpUser):
-    wait_time = between(1, 10)
+    wait_time = between(2, 20)  # Doubled wait times to reduce throughput by half
     host = "http://frontend-proxy:8080"  # Default frontend host
 
     @task(1)
@@ -228,7 +228,7 @@ class CFStorefrontUser(HttpUser):
     """
     
     # Wait time between requests (converted from JMeter timers)
-    wait_time = between(15, 30)  # Increased from 5-15 to reduce load volume
+    wait_time = between(30, 60)  # Doubled wait times to reduce throughput by half
     weight = 1  # Reduced from 3 to 1 to decrease overall CF traffic
     
     # Target the quote CF service container
