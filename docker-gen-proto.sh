@@ -43,10 +43,24 @@ gen_proto_ts() {
     /build/pb/demo.proto'
 }
 
+gen_proto_swift() {
+  echo "Generating Swift protobuf files for $1"
+  docker build -f "src/$1/genproto/Dockerfile" -t "$1-genproto" .
+  docker run --rm -e SERVICE=$1 -v $(pwd):/build "$1-genproto" /bin/sh -c '
+    mkdir -p /build/src/$SERVICE/Sources/CTL/Generated && \
+    protoc -I /build/pb \
+    --plugin="$(swift build --show-bin-path)/protoc-gen-swift" \
+    --plugin="$(swift build --show-bin-path)/protoc-gen-grpc-swift-2" \
+    --swift_out="/build/src/$SERVICE/Sources/CTL/Generated" \
+    --grpc-swift-2_opt=Client=false \
+    --grpc-swift-2_out="/build/src/$SERVICE/Sources/CTL/Generated" \
+    /build/pb/demo.proto'
+}
+
 if [ -z "$1" ]; then
   #gen_proto_dotnet accounting
   #gen_proto_java ad
-  #gen_proto_dotnet cart
+  gen_proto_swift cart
   gen_proto_go checkout
   gen_proto_cpp currency
   #gen_proto_ruby email

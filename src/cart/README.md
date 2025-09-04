@@ -4,7 +4,7 @@ This service stores user shopping carts in Valkey.
 
 ## Local Build
 
-Run `dotnet restore` and `dotnet build`.
+Run `swift build`.
 
 ## Docker Build
 

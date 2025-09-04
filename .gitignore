@@ -23,6 +23,7 @@ obj/
 .gradle/
 .idea/
 build/
+.build/
 node_modules/
 coverage
 .next/
@@ -42,7 +43,6 @@ test/tracetesting/tracetesting-vars.yaml
 
 # Ignore copied/generated protobuf files
 /src/accounting/src/protos/
-/src/cart/src/protos/
 /src/fraud-detection/src/main/proto
 /src/payment/demo.proto
 /src/shipping/proto/
