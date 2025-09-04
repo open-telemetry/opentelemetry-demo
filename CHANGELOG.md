@@ -111,7 +111,7 @@ the release.
   ([#2135](https://github.com/open-telemetry/opentelemetry-demo/pull/2135))
 * [otel-collector] Fix OTel Collector meta-monitoring, export metrics using
   the HTTP port
-  ([#2502](https://github.com/open-telemetry/opentelemetry-demo/pull/2502)) 
+  ([#2502](https://github.com/open-telemetry/opentelemetry-demo/pull/2502))
 
 ## 2.0.1
 
