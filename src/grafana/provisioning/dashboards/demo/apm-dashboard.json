@@ -1585,7 +1585,7 @@
           {
             "matcher": {
               "id": "byName",
-              "options": "CPU"
+              "options": "Host CPU"
             },
             "properties": [
               {
@@ -1597,7 +1597,7 @@
           {
             "matcher": {
               "id": "byName",
-              "options": "Memory"
+              "options": "Host Memory"
             },
             "properties": [
               {
@@ -1974,7 +1974,7 @@
             "h": 8,
             "w": 15,
             "x": 0,
-            "y": 48
+            "y": 58
           },
           "id": 30,
           "options": {
