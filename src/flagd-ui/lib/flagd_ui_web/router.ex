@@ -22,9 +22,11 @@ defmodule FlagdUiWeb.Router do
   end
 
   # Other scopes may use custom stacks.
-  # scope "/api", FlagdUiWeb do
-  #   pipe_through :api
-  # end
+  scope "/api", FlagdUiWeb do
+    pipe_through :api
+
+    get "/read", FeatureController, :read
+  end
 
   # Enable LiveDashboard and Swoosh mailbox preview in development
   if Application.compile_env(:flagd_ui, :dev_routes) do

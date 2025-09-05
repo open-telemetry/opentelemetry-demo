@@ -18,8 +18,8 @@ defmodule FlagdUi.Application do
       FlagdUiWeb.Endpoint
     ]
 
-    :opentelemetry_cowboy.setup()
-    OpentelemetryPhoenix.setup(adapter: :cowboy2)
+    OpentelemetryBandit.setup()
+    OpentelemetryPhoenix.setup(adapter: :bandit)
 
     # See https://hexdocs.pm/elixir/Supervisor.html
     # for other strategies and supported options
