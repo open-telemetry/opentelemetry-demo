@@ -16,7 +16,7 @@ on:
         type: string
       dockerhub_repo:
         description: Docker Hub repository
-        default: 'mezmo/otel-demo'
+        default: 'mezmohq/otel-demo'
         required: false
         type: string
 
