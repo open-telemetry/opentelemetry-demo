@@ -99,7 +99,6 @@ the release.
 * [checkout] Add graceful shutdown to checkout service
   ([#2491](https://github.com/open-telemetry/opentelemetry-demo/pull/2491))
 
-
 ## 2.0.2
 
 * [frontend] Update OpenTelemetry Browser SDK initialization
