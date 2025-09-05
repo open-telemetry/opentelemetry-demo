@@ -101,6 +101,8 @@ the release.
 * [shipping] Use cumulative metrics in shipping service to be consistent
   with the other services of the demo
   ([#2503](https://github.com/open-telemetry/opentelemetry-demo/pull/2503))
+* [grafana] APM dashboard: Add host metrics per service instance
+  ([#2507](https://github.com/open-telemetry/opentelemetry-demo/pull/2507))
 
 ## 2.0.2
 
