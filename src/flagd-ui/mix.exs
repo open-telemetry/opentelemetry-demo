@@ -65,8 +65,8 @@ defmodule FlagdUi.MixProject do
       {:opentelemetry, "~> 1.5"},
       {:opentelemetry_api, "~> 1.4"},
       {:opentelemetry_exporter, "~> 1.8"},
-      {:opentelemetry_phoenix, "~> 2.0.0-rc.2"},
-      {:opentelemetry_cowboy, "~> 1.0"}
+      {:opentelemetry_phoenix, "~> 2.0.1"},
+      {:opentelemetry_bandit, "~> 0.3.0"}
     ]
   end
 
