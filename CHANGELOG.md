@@ -78,11 +78,13 @@ the release.
   ([#2369](https://github.com/open-telemetry/opentelemetry-demo/pull/2369))
 * [load-generator] Fix Playwright wait until load state error
   ([#2374](https://github.com/open-telemetry/opentelemetry-demo/pull/2374))
-* [grafana] Update OpenSearch logs index in APM Dashboards
-  ([#2419](https://github.com/open-telemetry/opentelemetry-demo/pull/2419))
 * [flagd] Bump Flagd to v0.12.8 and get compliant `http.Server.request.duration`
   OTel metrics that can be used in the APM dashboard
   ([#2392](https://github.com/open-telemetry/opentelemetry-demo/pull/2392))
+* [prometheus / grafana] Add Linux monitoring dashboard
+  ([#2395](https://github.com/open-telemetry/opentelemetry-demo/pull/2395))
+* [grafana] Update OpenSearch logs index in APM Dashboards
+  ([#2419](https://github.com/open-telemetry/opentelemetry-demo/pull/2419))
 * [frontend-proxy] Add redirects for web UI paths to ensure proper asset loading
   ([#2476](https://github.com/open-telemetry/opentelemetry-demo/pull/2476))
 * [cart] Enable automatic generation of `service.instance.id`
@@ -92,10 +94,11 @@ the release.
   ([#2401](https://github.com/open-telemetry/opentelemetry-demo/pull/2401))
 * [chore] Bump dependent images
   ([#2477](https://github.com/open-telemetry/opentelemetry-demo/pull/2477))
-* [prometheus / grafana] Add Linux monitoring dashboard
-  ([#2395](https://github.com/open-telemetry/opentelemetry-demo/pull/2395))
+* [email] Add memory leak scenario to email service
+  ([#2481](https://github.com/open-telemetry/opentelemetry-demo/pull/2481))
 * [checkout] Add graceful shutdown to checkout service
-  ([#2491](https://github.com/open-telemetry/opentelemetry-demo/pull/2480))
+  ([#2491](https://github.com/open-telemetry/opentelemetry-demo/pull/2491))
+
 
 ## 2.0.2
 
