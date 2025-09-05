@@ -259,7 +259,7 @@ GEM
       opentelemetry-api (~> 1.0)
     pony (1.13.1)
       mail (>= 2.0)
-    puma (6.6.1)
+    puma (7.0.0)
       nio4r (~> 2.0)
     rack (3.1.15)
     rack-protection (4.1.1)
@@ -296,7 +296,7 @@ DEPENDENCIES
   opentelemetry-instrumentation-all (~> 0.80.0)
   opentelemetry-sdk (~> 1.8)
   pony (~> 1.13)
-  puma (~> 6.6)
+  puma (~> 7.0)
   rackup (~> 2.2)
   sinatra (~> 4.1)
 
