@@ -83,21 +83,24 @@ the release.
   ([#2392](https://github.com/open-telemetry/opentelemetry-demo/pull/2392))
 * [prometheus / grafana] Add Linux monitoring dashboard
   ([#2395](https://github.com/open-telemetry/opentelemetry-demo/pull/2395))
+* [prometheus /grafana] Add alerting demo through the `CartAddItemHighLatency`
+  alert rule
+  ([#2401](https://github.com/open-telemetry/opentelemetry-demo/pull/2401))
+* [cart] Enable automatic generation of `service.instance.id`
+  ([#2402](https://github.com/open-telemetry/opentelemetry-demo/pull/2402))
 * [grafana] Update OpenSearch logs index in APM Dashboards
   ([#2419](https://github.com/open-telemetry/opentelemetry-demo/pull/2419))
 * [frontend-proxy] Add redirects for web UI paths to ensure proper asset loading
   ([#2476](https://github.com/open-telemetry/opentelemetry-demo/pull/2476))
-* [cart] Enable automatic generation of `service.instance.id`
-  ([#2402](https://github.com/open-telemetry/opentelemetry-demo/pull/2402))
-* [prometheus /grafana] Add alerting demo through the `CartAddItemHighLatency`
-  alert rule
-  ([#2401](https://github.com/open-telemetry/opentelemetry-demo/pull/2401))
 * [chore] Bump dependent images
   ([#2477](https://github.com/open-telemetry/opentelemetry-demo/pull/2477))
 * [email] Add memory leak scenario to email service
   ([#2481](https://github.com/open-telemetry/opentelemetry-demo/pull/2481))
 * [checkout] Add graceful shutdown to checkout service
   ([#2491](https://github.com/open-telemetry/opentelemetry-demo/pull/2491))
+* [shipping] Use cumulative metrics in shipping service to be consistent
+  with the other services of the demo
+  ([#2503](https://github.com/open-telemetry/opentelemetry-demo/pull/2503))
 
 ## 2.0.2
 
