@@ -62,11 +62,11 @@ defmodule FlagdUi.MixProject do
       {:dns_cluster, "~> 0.1.1"},
       {:bandit, "~> 1.5"},
       {:credo, "~> 1.7", only: [:dev, :test], runtime: false},
-      {:opentelemetry, "~> 1.3"},
-      {:opentelemetry_api, "~> 1.2"},
-      {:opentelemetry_exporter, "~> 1.6"},
-      {:opentelemetry_phoenix, "~> 1.1"},
-      {:opentelemetry_cowboy, "~> 0.2"}
+      {:opentelemetry, "~> 1.5"},
+      {:opentelemetry_api, "~> 1.4"},
+      {:opentelemetry_exporter, "~> 1.8"},
+      {:opentelemetry_phoenix, "~> 2.0.0-rc.2"},
+      {:opentelemetry_cowboy, "~> 1.0"}
     ]
   end
 
