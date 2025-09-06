@@ -15,6 +15,9 @@ let package = Package(
         .package(url: "https://github.com/grpc/grpc-swift-nio-transport.git", from: "2.0.0"),
         .package(url: "https://github.com/grpc/grpc-swift-extras.git", from: "2.0.0"),
         .package(url: "https://github.com/swift-otel/swift-otel.git", exact: "1.0.0-alpha.2", traits: ["OTLPHTTP"]),
+        .package(url: "https://github.com/swift-open-feature/swift-open-feature.git", branch: "main"),
+        .package(url: "https://github.com/swift-open-feature/swift-ofrep.git", branch: "main"),
+        .package(url: "https://github.com/slashmo/async-http-client.git", branch: "feature/context-propagation"),
     ],
     targets: [
         .executableTarget(
@@ -28,6 +31,9 @@ let package = Package(
                 .product(name: "GRPCServiceLifecycle", package: "grpc-swift-extras"),
                 .product(name: "GRPCOTelTracingInterceptors", package: "grpc-swift-extras"),
                 .product(name: "OTel", package: "swift-otel"),
+                .product(name: "OpenFeature", package: "swift-open-feature"),
+                .product(name: "OpenFeatureTracing", package: "swift-open-feature"),
+                .product(name: "OFREP", package: "swift-ofrep"),
             ]
         )
     ],

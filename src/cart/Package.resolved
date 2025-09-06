@@ -1,13 +1,13 @@
 {
-  "originHash" : "309208f3add064808a00ca7a8a309137b574e424465ecefa2b26d12b58a87c00",
+  "originHash" : "1f90599c68333521b5c8c01f472e9c1ba998be5e17b7aa633d99188907950d9d",
   "pins" : [
     {
       "identity" : "async-http-client",
       "kind" : "remoteSourceControl",
-      "location" : "https://github.com/swift-server/async-http-client.git",
+      "location" : "https://github.com/slashmo/async-http-client.git",
       "state" : {
-        "revision" : "254d34096123cd5da4f82e69f52f622ac7526d68",
-        "version" : "1.27.0"
+        "branch" : "feature/context-propagation",
+        "revision" : "17883809e29b5d6a79fcda5045069cf288490d63"
       }
     },
     {
@@ -215,6 +215,42 @@
       "state" : {
         "revision" : "bbadd4b853a33fd78c4ae977d17bb2af15eb3f2a",
         "version" : "1.1.0"
+      }
+    },
+    {
+      "identity" : "swift-ofrep",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/swift-open-feature/swift-ofrep.git",
+      "state" : {
+        "branch" : "main",
+        "revision" : "cafc6f407e89bec0c8d474ac369024235ff0b241"
+      }
+    },
+    {
+      "identity" : "swift-open-feature",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/swift-open-feature/swift-open-feature.git",
+      "state" : {
+        "branch" : "main",
+        "revision" : "7fbef4bd2560f1161078312db70237f5c83d4ce8"
+      }
+    },
+    {
+      "identity" : "swift-openapi-async-http-client",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/swift-server/swift-openapi-async-http-client.git",
+      "state" : {
+        "revision" : "915aeff168625b0f88a5810ee7ab8e9c00af671b",
+        "version" : "1.1.0"
+      }
+    },
+    {
+      "identity" : "swift-openapi-runtime",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/apple/swift-openapi-runtime.git",
+      "state" : {
+        "revision" : "8f33cc5dfe81169fb167da73584b9c72c3e8bc23",
+        "version" : "1.8.2"
       }
     },
     {

@@ -7,6 +7,9 @@ import ServiceLifecycle
 import GRPCServiceLifecycle
 import GRPCOTelTracingInterceptors
 import OTel
+import OpenFeature
+import OpenFeatureTracing
+import OFREP
 
 @main
 struct CartCTL: AsyncParsableCommand {
@@ -14,7 +17,15 @@ struct CartCTL: AsyncParsableCommand {
         let observability = try OTel.bootstrap()
         let port = ProcessInfo.processInfo.environment["CART_PORT"].flatMap(Int.init) ?? 8080
 
-        let service = CartService()
+        guard let ofrepHost = ProcessInfo.processInfo.environment["FLAGD_HOST"],
+              let ofrepPort = ProcessInfo.processInfo.environment["FLAGD_OFREP_PORT"] else {
+            Self.exit()
+        }
+        let ofrepProvider = OFREPProvider(serverURL: URL(string: "http://\(ofrepHost):\(ofrepPort)")!)
+        OpenFeatureSystem.setProvider(ofrepProvider)
+        OpenFeatureSystem.addHooks([OpenFeatureTracingHook()])
+
+        let service = CartService(openFeatureClient: OpenFeatureSystem.client())
         let server = GRPCServer(
             transport: .http2NIOPosix(
                 address: .ipv4(host: "0.0.0.0", port: port),
@@ -25,7 +36,7 @@ struct CartCTL: AsyncParsableCommand {
         )
 
         let serviceGroup = ServiceGroup(
-            services: [observability, server],
+            services: [observability, ofrepProvider, server],
             gracefulShutdownSignals: [.sigint, .sigterm],
             logger: Logger(label: "cart")
         )
@@ -35,6 +46,8 @@ struct CartCTL: AsyncParsableCommand {
 }
 
 struct CartService: Oteldemo_CartService.SimpleServiceProtocol {
+    let openFeatureClient: OpenFeatureClient
+
     func addItem(
         request: Oteldemo_AddItemRequest,
         context: ServerContext
@@ -61,6 +74,12 @@ struct CartService: Oteldemo_CartService.SimpleServiceProtocol {
         request: Oteldemo_EmptyCartRequest,
         context: ServerContext
     ) async throws -> Oteldemo_Empty {
-        Oteldemo_Empty()
+        let mockCartFailure = await openFeatureClient.value(for: "cartFailure", defaultingTo: false)
+
+        if mockCartFailure {
+            try await Task.sleep(for: .seconds(5))
+        }
+
+        return Oteldemo_Empty()
     }
 }
