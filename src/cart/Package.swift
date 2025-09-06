@@ -14,6 +14,7 @@ let package = Package(
         .package(url: "https://github.com/grpc/grpc-swift-protobuf.git", from: "2.0.0"),
         .package(url: "https://github.com/grpc/grpc-swift-nio-transport.git", from: "2.0.0"),
         .package(url: "https://github.com/grpc/grpc-swift-extras.git", from: "2.0.0"),
+        .package(url: "https://github.com/swift-otel/swift-otel.git", exact: "1.0.0-alpha.2", traits: ["OTLPHTTP"]),
     ],
     targets: [
         .executableTarget(
@@ -25,6 +26,8 @@ let package = Package(
                 .product(name: "GRPCNIOTransportHTTP2", package: "grpc-swift-nio-transport"),
                 .product(name: "GRPCProtobuf", package: "grpc-swift-protobuf"),
                 .product(name: "GRPCServiceLifecycle", package: "grpc-swift-extras"),
+                .product(name: "GRPCOTelTracingInterceptors", package: "grpc-swift-extras"),
+                .product(name: "OTel", package: "swift-otel"),
             ]
         )
     ],

@@ -1,6 +1,15 @@
 {
-  "originHash" : "842009160bb374b495b4745aba76215ab2e8449fb7cdcdcfb4b02bcfc0a1d758",
+  "originHash" : "309208f3add064808a00ca7a8a309137b574e424465ecefa2b26d12b58a87c00",
   "pins" : [
+    {
+      "identity" : "async-http-client",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/swift-server/async-http-client.git",
+      "state" : {
+        "revision" : "254d34096123cd5da4f82e69f52f622ac7526d68",
+        "version" : "1.27.0"
+      }
+    },
     {
       "identity" : "grpc-swift-2",
       "kind" : "remoteSourceControl",
@@ -146,6 +155,15 @@
       }
     },
     {
+      "identity" : "swift-metrics",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/apple/swift-metrics.git",
+      "state" : {
+        "revision" : "4c83e1cdf4ba538ef6e43a9bbd0bcc33a0ca46e3",
+        "version" : "2.7.0"
+      }
+    },
+    {
       "identity" : "swift-nio",
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/apple/swift-nio.git",
@@ -200,6 +218,15 @@
       }
     },
     {
+      "identity" : "swift-otel",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/swift-otel/swift-otel.git",
+      "state" : {
+        "revision" : "6e908cb34cab2a0b739c4d6db4c1a4faad0a6ec4",
+        "version" : "1.0.0-alpha.2"
+      }
+    },
+    {
       "identity" : "swift-protobuf",
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/apple/swift-protobuf.git",
@@ -233,6 +260,15 @@
       "state" : {
         "revision" : "890830fff1a577dc83134890c7984020c5f6b43b",
         "version" : "1.6.2"
+      }
+    },
+    {
+      "identity" : "swift-w3c-trace-context",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/swift-otel/swift-w3c-trace-context.git",
+      "state" : {
+        "revision" : "3da4b79545b38cf5551f1c525d800756f38cb697",
+        "version" : "1.0.0-beta.3"
       }
     }
   ],

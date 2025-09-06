@@ -5,10 +5,13 @@ import GRPCCore
 import GRPCNIOTransportHTTP2
 import ServiceLifecycle
 import GRPCServiceLifecycle
+import GRPCOTelTracingInterceptors
+import OTel
 
 @main
 struct CartCTL: AsyncParsableCommand {
     func run() async throws {
+        let observability = try OTel.bootstrap()
         let port = ProcessInfo.processInfo.environment["CART_PORT"].flatMap(Int.init) ?? 8080
 
         let service = CartService()
@@ -17,11 +20,12 @@ struct CartCTL: AsyncParsableCommand {
                 address: .ipv4(host: "0.0.0.0", port: port),
                 transportSecurity: .plaintext
             ),
-            services: [service]
+            services: [service],
+            interceptors: [ServerOTelTracingInterceptor(serverHostname: "0.0.0.0", networkTransportMethod: "tcp")]
         )
 
         let serviceGroup = ServiceGroup(
-            services: [server],
+            services: [observability, server],
             gracefulShutdownSignals: [.sigint, .sigterm],
             logger: Logger(label: "cart")
         )
