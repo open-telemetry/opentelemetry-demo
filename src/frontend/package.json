@@ -36,7 +36,7 @@
     "@opentelemetry/sdk-trace-base": "2.1.0",
     "@opentelemetry/sdk-trace-node": "2.1.0",
     "@opentelemetry/sdk-trace-web": "2.1.0",
-    "@tanstack/react-query": "5.86.0",
+    "@tanstack/react-query": "5.87.1",
     "cookies-next": "6.1.0",
     "currency-symbol-map": "5.1.0",
     "dotenv": "17.2.2",
@@ -46,7 +46,7 @@
     "react-dom": "19.1.1",
     "sharp": "0.34.3",
     "styled-components": "6.1.19",
-    "uuid": "11.1.0"
+    "uuid": "12.0.0"
   },
   "devDependencies": {
     "@types/node": "24.3.1",
