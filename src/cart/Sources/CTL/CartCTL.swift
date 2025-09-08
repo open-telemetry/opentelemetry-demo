@@ -10,22 +10,33 @@ import OTel
 import OpenFeature
 import OpenFeatureTracing
 import OFREP
+import Tracing
+import Valkey
 
 @main
 struct CartCTL: AsyncParsableCommand {
     func run() async throws {
         let observability = try OTel.bootstrap()
-        let port = ProcessInfo.processInfo.environment["CART_PORT"].flatMap(Int.init) ?? 8080
+        let logger = Logger(label: "cart")
 
-        guard let ofrepHost = ProcessInfo.processInfo.environment["FLAGD_HOST"],
-              let ofrepPort = ProcessInfo.processInfo.environment["FLAGD_OFREP_PORT"] else {
+        guard let port = ProcessInfo.processInfo.environment["CART_PORT"].flatMap(Int.init),
+              let ofrepHost = ProcessInfo.processInfo.environment["FLAGD_HOST"],
+              let ofrepPort = ProcessInfo.processInfo.environment["FLAGD_OFREP_PORT"],
+              let valkeyHost = ProcessInfo.processInfo.environment["VALKEY_HOST"],
+              let valkeyPort = ProcessInfo.processInfo.environment["VALKEY_PORT"].flatMap(Int.init) else {
             Self.exit()
         }
+
+        let valkeyClient = ValkeyClient(.hostname(valkeyHost, port: valkeyPort), logger: logger)
+
         let ofrepProvider = OFREPProvider(serverURL: URL(string: "http://\(ofrepHost):\(ofrepPort)")!)
         OpenFeatureSystem.setProvider(ofrepProvider)
         OpenFeatureSystem.addHooks([OpenFeatureTracingHook()])
 
-        let service = CartService(openFeatureClient: OpenFeatureSystem.client())
+        let service = CartService(
+            openFeatureClient: OpenFeatureSystem.client(),
+            valkeyClient: valkeyClient
+        )
         let server = GRPCServer(
             transport: .http2NIOPosix(
                 address: .ipv4(host: "0.0.0.0", port: port),
@@ -36,7 +47,7 @@ struct CartCTL: AsyncParsableCommand {
         )
 
         let serviceGroup = ServiceGroup(
-            services: [observability, ofrepProvider, server],
+            services: [observability, valkeyClient, ofrepProvider, server],
             gracefulShutdownSignals: [.sigint, .sigterm],
             logger: Logger(label: "cart")
         )
@@ -47,39 +58,73 @@ struct CartCTL: AsyncParsableCommand {
 
 struct CartService: Oteldemo_CartService.SimpleServiceProtocol {
     let openFeatureClient: OpenFeatureClient
+    let valkeyClient: ValkeyClient
+    private let logger = Logger(label: "CartService")
 
     func addItem(
         request: Oteldemo_AddItemRequest,
         context: ServerContext
     ) async throws -> Oteldemo_Empty {
-        Oteldemo_Empty()
+        var cart = try await cart(userID: request.userID) ?? Oteldemo_Cart.with { $0.userID = request.userID }
+
+        if let existingIndex = cart.items.firstIndex(where: { $0.productID == request.item.productID }) {
+            cart.items[existingIndex].quantity += request.item.quantity
+        } else {
+            cart.items.append(request.item)
+        }
+
+        let serializedCart: [UInt8] = try cart.serializedBytes()
+        try await valkeyClient.hset(ValkeyKey(request.userID), data: [.init(field: "cart", value: serializedCart)])
+        try await valkeyClient.expire(ValkeyKey(request.userID), seconds: 60 * 60)
+
+        return Oteldemo_Empty()
     }
 
     func getCart(
         request: Oteldemo_GetCartRequest,
         context: ServerContext
     ) async throws -> Oteldemo_Cart {
-        var cart = Oteldemo_Cart()
-        cart.userID = request.userID
-        cart.items = [
-            .with {
-                $0.productID = "OLJCESPC7Z"
-                $0.quantity = 1
-            }
-        ]
-        return cart
+        logger.info("Fetch cart.", metadata: ["user.id": "\(request.userID)"])
+
+        if let cart = try await cart(userID: request.userID) {
+            return cart
+        } else {
+            // We decided to return empty cart in cases when user wasn't in the cache before
+            return Oteldemo_Cart()
+        }
     }
 
     func emptyCart(
         request: Oteldemo_EmptyCartRequest,
         context: ServerContext
     ) async throws -> Oteldemo_Empty {
-        let mockCartFailure = await openFeatureClient.value(for: "cartFailure", defaultingTo: false)
+        let useExperimentalAlgorithm = await openFeatureClient.value(
+            for: "cartExperimentalClearing",
+            defaultingTo: false
+        )
 
-        if mockCartFailure {
-            try await Task.sleep(for: .seconds(5))
+        if useExperimentalAlgorithm {
+            logger.info("Using experimental algorithm to clear cart.")
+            throw UnimplementedError()
         }
+
+        let emptyCartBytes: [UInt8] = try Oteldemo_Cart().serializedBytes()
+        try await valkeyClient.hset(ValkeyKey(request.userID), data: [.init(field: "cart", value: emptyCartBytes)])
+        try await valkeyClient.expire(ValkeyKey(request.userID), seconds: 60 * 60)
 
         return Oteldemo_Empty()
     }
+
+    private func cart(userID: String) async throws -> Oteldemo_Cart? {
+        try await withSpan("Cart") { span in
+            span.attributes["user.id"] = userID
+
+            guard let buffer = try await valkeyClient.hget(ValkeyKey(userID), field: "cart") else {
+                return nil
+            }
+            return try Oteldemo_Cart(serializedBytes: Array(buffer.readableBytesView))
+        }
+    }
+
+    struct UnimplementedError: Error {}
 }

@@ -18,6 +18,7 @@ let package = Package(
         .package(url: "https://github.com/swift-open-feature/swift-open-feature.git", branch: "main"),
         .package(url: "https://github.com/swift-open-feature/swift-ofrep.git", branch: "main"),
         .package(url: "https://github.com/slashmo/async-http-client.git", branch: "feature/context-propagation"),
+        .package(url: "https://github.com/slashmo/valkey-swift.git", branch: "feature/distributed-tracing"),
     ],
     targets: [
         .executableTarget(
@@ -34,6 +35,7 @@ let package = Package(
                 .product(name: "OpenFeature", package: "swift-open-feature"),
                 .product(name: "OpenFeatureTracing", package: "swift-open-feature"),
                 .product(name: "OFREP", package: "swift-ofrep"),
+                .product(name: "Valkey", package: "valkey-swift"),
             ]
         )
     ],

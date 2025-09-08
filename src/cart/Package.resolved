@@ -1,5 +1,5 @@
 {
-  "originHash" : "1f90599c68333521b5c8c01f472e9c1ba998be5e17b7aa633d99188907950d9d",
+  "originHash" : "4291195db0b1cbe39e2dcf442d07ad9295f392ada40950197bfff511b85879d0",
   "pins" : [
     {
       "identity" : "async-http-client",
@@ -123,8 +123,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/apple/swift-distributed-tracing.git",
       "state" : {
-        "revision" : "149fa4cc7d54c513288108142e7af9ceaf8def8f",
-        "version" : "1.2.2"
+        "branch" : "feature/tracing-test-kit",
+        "revision" : "b80efc1c718e51620c394fedbf4fe644cf71b81f"
       }
     },
     {
@@ -305,6 +305,15 @@
       "state" : {
         "revision" : "3da4b79545b38cf5551f1c525d800756f38cb697",
         "version" : "1.0.0-beta.3"
+      }
+    },
+    {
+      "identity" : "valkey-swift",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/slashmo/valkey-swift.git",
+      "state" : {
+        "branch" : "feature/distributed-tracing",
+        "revision" : "6ca1b36c5e4df39b40d2a732bd599df03c5780ab"
       }
     }
   ],

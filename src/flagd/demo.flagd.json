@@ -56,13 +56,22 @@
       "defaultVariant": "off"
     },
     "cartFailure": {
-      "description": "Fail cart service",
+      "description": "Fail cart service by turning on the non-implemented experimental empty cart algorithm.",
       "state": "ENABLED",
       "variants": {
         "on": true,
         "off": false
       },
       "defaultVariant": "off"
+    },
+    "cartExperimentalClearing": {
+      "description": "Fail cart service by turning on the non-implemented experimental empty cart algorithm.",
+      "state": "ENABLED",
+      "variants": {
+        "on": true,
+        "off": false
+      },
+      "defaultVariant": "on"
     },
     "paymentFailure": {
       "description": "Fail payment service charge requests n%",
