@@ -11341,7 +11341,7 @@ spec:
       serviceAccountName: opentelemetry-demo
       containers:
         - name: accounting
-          image: 'mezmohq/otel-demo:2.0.2-accounting'
+          image: 'mezmo/otel-demo:2.0.2-accounting'
           imagePullPolicy: IfNotPresent
           env:
             - name: OTEL_SERVICE_NAME
@@ -11404,7 +11404,7 @@ spec:
       serviceAccountName: opentelemetry-demo
       containers:
         - name: ad
-          image: 'mezmohq/otel-demo:2.0.2-ad'
+          image: 'mezmo/otel-demo:2.0.2-ad'
           imagePullPolicy: IfNotPresent
           ports:
             
@@ -11470,7 +11470,7 @@ spec:
       serviceAccountName: opentelemetry-demo
       containers:
         - name: cart
-          image: 'mezmohq/otel-demo:2.0.2-cart'
+          image: 'mezmo/otel-demo:2.0.2-cart'
           imagePullPolicy: IfNotPresent
           ports:
             
@@ -11546,7 +11546,7 @@ spec:
       serviceAccountName: opentelemetry-demo
       containers:
         - name: checkout
-          image: 'mezmohq/otel-demo:2.0.2-checkout'
+          image: 'mezmo/otel-demo:2.0.2-checkout'
           imagePullPolicy: IfNotPresent
           ports:
             
@@ -11631,7 +11631,7 @@ spec:
       serviceAccountName: opentelemetry-demo
       containers:
         - name: currency
-          image: 'mezmohq/otel-demo:2.0.2-currency'
+          image: 'mezmo/otel-demo:2.0.2-currency'
           imagePullPolicy: IfNotPresent
           ports:
             
@@ -11693,7 +11693,7 @@ spec:
       serviceAccountName: opentelemetry-demo
       containers:
         - name: email
-          image: 'mezmohq/otel-demo:2.0.2-email'
+          image: 'mezmo/otel-demo:2.0.2-email'
           imagePullPolicy: IfNotPresent
           ports:
             
@@ -11795,7 +11795,7 @@ spec:
             - name: config-rw
               mountPath: /etc/flagd
         - name: flagd-ui
-          image: 'mezmohq/otel-demo:2.0.2-flagd-ui'
+          image: 'mezmo/otel-demo:2.0.2-flagd-ui'
           imagePullPolicy: IfNotPresent
           ports:
             
@@ -11874,7 +11874,7 @@ spec:
       serviceAccountName: opentelemetry-demo
       containers:
         - name: fraud-detection
-          image: 'mezmohq/otel-demo:2.0.2-fraud-detection'
+          image: 'mezmo/otel-demo:2.0.2-fraud-detection'
           imagePullPolicy: IfNotPresent
           env:
             - name: OTEL_SERVICE_NAME
@@ -11941,7 +11941,7 @@ spec:
       serviceAccountName: opentelemetry-demo
       containers:
         - name: frontend
-          image: 'mezmohq/otel-demo:2.0.2-frontend'
+          image: 'mezmo/otel-demo:2.0.2-frontend'
           imagePullPolicy: IfNotPresent
           ports:
             
@@ -12031,7 +12031,7 @@ spec:
       serviceAccountName: opentelemetry-demo
       containers:
         - name: frontend-proxy
-          image: 'mezmohq/otel-demo:2.0.2-frontend-proxy'
+          image: 'mezmo/otel-demo:2.0.2-frontend-proxy'
           imagePullPolicy: IfNotPresent
           ports:
             
@@ -12127,7 +12127,7 @@ spec:
       serviceAccountName: opentelemetry-demo
       containers:
         - name: image-provider
-          image: 'mezmohq/otel-demo:2.0.2-image-provider'
+          image: 'mezmo/otel-demo:2.0.2-image-provider'
           imagePullPolicy: IfNotPresent
           ports:
             
@@ -12189,7 +12189,7 @@ spec:
       serviceAccountName: opentelemetry-demo
       containers:
         - name: kafka
-          image: 'mezmohq/otel-demo:2.0.2-kafka'
+          image: 'mezmo/otel-demo:2.0.2-kafka'
           imagePullPolicy: IfNotPresent
           ports:
             
@@ -12257,7 +12257,7 @@ spec:
       serviceAccountName: opentelemetry-demo
       containers:
         - name: load-generator
-          image: 'mezmohq/otel-demo:2.0.2-load-generator'
+          image: 'mezmo/otel-demo:2.0.2-load-generator'
           imagePullPolicy: IfNotPresent
           ports:
             
@@ -12337,7 +12337,7 @@ spec:
       serviceAccountName: opentelemetry-demo
       containers:
         - name: payment
-          image: 'mezmohq/otel-demo:2.0.2-payment'
+          image: 'mezmo/otel-demo:2.0.2-payment'
           imagePullPolicy: IfNotPresent
           ports:
             
@@ -12405,7 +12405,7 @@ spec:
       serviceAccountName: opentelemetry-demo
       containers:
         - name: product-catalog
-          image: 'mezmohq/otel-demo:2.0.2-product-catalog'
+          image: 'mezmo/otel-demo:2.0.2-product-catalog'
           imagePullPolicy: IfNotPresent
           ports:
             
@@ -12476,7 +12476,7 @@ spec:
       serviceAccountName: opentelemetry-demo
       containers:
         - name: quote
-          image: 'mezmohq/otel-demo:2.0.2-quote'
+          image: 'mezmo/otel-demo:2.0.2-quote'
           imagePullPolicy: IfNotPresent
           ports:
             
@@ -12542,7 +12542,7 @@ spec:
       serviceAccountName: opentelemetry-demo
       containers:
         - name: recommendation
-          image: 'mezmohq/otel-demo:2.0.2-recommendation'
+          image: 'mezmo/otel-demo:2.0.2-recommendation'
           imagePullPolicy: IfNotPresent
           ports:
             
@@ -12612,7 +12612,7 @@ spec:
       serviceAccountName: opentelemetry-demo
       containers:
         - name: shipping
-          image: 'mezmohq/otel-demo:2.0.2-shipping'
+          image: 'mezmo/otel-demo:2.0.2-shipping'
           imagePullPolicy: IfNotPresent
           ports:
             

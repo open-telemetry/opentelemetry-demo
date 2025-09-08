@@ -105,6 +105,19 @@
         "off": 0
       },
       "defaultVariant": "off"
+    },
+    "emailMemoryLeak": {
+      "description": "Memory leak in the email service.",
+      "state": "ENABLED",
+      "variants": {
+        "off": 0,
+        "1x": 1,
+        "10x": 10,
+        "100x": 100,
+        "1000x": 1000,
+        "10000x": 10000
+      },
+      "defaultVariant": "off"
     }
   }
 }

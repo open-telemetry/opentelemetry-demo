@@ -216,6 +216,8 @@ services:
     environment:
       - APP_ENV=production
       - EMAIL_PORT
+      - FLAGD_HOST
+      - FLAGD_PORT
       - OTEL_EXPORTER_OTLP_TRACES_ENDPOINT=http://${OTEL_COLLECTOR_HOST}:${OTEL_COLLECTOR_PORT_HTTP}/v1/traces
       - OTEL_RESOURCE_ATTRIBUTES
       - OTEL_SERVICE_NAME=email
@@ -584,6 +586,7 @@ services:
       - OTEL_EXPORTER_OTLP_ENDPOINT
       - OTEL_RESOURCE_ATTRIBUTES
       - OTEL_SERVICE_NAME=shipping
+      - OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE
     healthcheck:
       test: ["CMD-SHELL", "timeout 1 bash -c '>/dev/tcp/localhost/${SHIPPING_PORT}'"]
       start_period: 10s
