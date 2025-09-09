@@ -18,6 +18,12 @@ USER node
 WORKDIR /usr/src/app/
 ENV NODE_ENV=production
 
+ARG GIT_COMMIT=unspecified
+ENV DT_LIVEDEBUGGER_COMMIT=$GIT_COMMIT
+
+ARG GIT_ORIGIN=unspecified
+ENV DT_LIVEDEBUGGER_REMOTE_ORIGIN=$GIT_ORIGIN
+
 COPY --chown=node:node --from=build /usr/src/app/node_modules/ ./node_modules/
 COPY ./src/payment/ ./
 COPY ./pb/demo.proto ./
