@@ -104,7 +104,7 @@ can drag and drop this file onto the emulator's window in order to install it.
 
 By default, the app will point to `EXPO_PUBLIC_FRONTEND_PROXY_PORT` on
 localhost to interact with the demo APIs. This can be changed in the Settings
-tab when running the app to point to a demo environments running on a
+tab when running the app to point to a demo environment running on a
 different server.
 
 ## Troubleshooting
