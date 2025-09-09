@@ -6,10 +6,10 @@
 import { Product } from "@/protos/demo";
 import { ThemedView } from "@/components/ThemedView";
 import { useState, useEffect, useMemo } from "react";
-import getLocalhost from "@/utils/Localhost";
 import { Image, Pressable, StyleSheet } from "react-native";
 import { ThemedText } from "@/components/ThemedText";
 import { useThemeColor } from "@/hooks/useThemeColor";
+import getFrontendProxyURL from "@/utils/Settings";
 
 interface IProps {
   product: Product;
@@ -17,8 +17,8 @@ interface IProps {
 }
 
 async function getImageURL(picture: string) {
-  const localhost = await getLocalhost();
-  return `http://${localhost}:${process.env.EXPO_PUBLIC_FRONTEND_PROXY_PORT}/images/products/${picture}`;
+  const proxyURL = await getFrontendProxyURL();
+  return `${proxyURL}/images/products/${picture}`;
 }
 
 const ProductCard = ({
