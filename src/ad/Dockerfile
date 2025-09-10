@@ -1,35 +1,25 @@
-# Copyright The OpenTelemetry Authors
-# SPDX-License-Identifier: Apache-2.0
+FROM eclipse-temurin:21-jdk AS builder
 
+WORKDIR /usr/src/app
 
-FROM --platform=${BUILDPLATFORM} eclipse-temurin:21-jdk AS builder
-ARG _JAVA_OPTIONS
-WORKDIR /usr/src/app/
-
-COPY ./src/ad/gradlew* ./src/ad/settings.gradle* ./src/ad/build.gradle ./
-COPY ./src/ad/gradle ./gradle
-
+COPY *.gradle gradlew* .
+COPY ./gradle ./gradle
+COPY ./pb ./proto
 RUN chmod +x ./gradlew
-RUN ./gradlew
-RUN ./gradlew downloadRepos
 
-COPY ./src/ad/ ./
-COPY ./pb/ ./proto
-RUN chmod +x ./gradlew
+RUN ./gradlew downloadRepos             ## Downloading the dependencies
+
+COPY . .
+
 RUN ./gradlew installDist -PprotoSourceDir=./proto
 
-# -----------------------------------------------------------------------------
+FROM eclipse-temurin:21-jre AS release
 
-FROM eclipse-temurin:21-jre
+WORKDIR /usr/src/app
 
-ARG OTEL_JAVA_AGENT_VERSION
-ARG _JAVA_OPTIONS
+COPY --from=builder /usr/src/app/build/install/opentelemetry-demo-ad ./opentelemetry-demo-ad
 
-WORKDIR /usr/src/app/
+ENV AD_PORT=8080
+ENV FEATURE_FLAG_GRPC_SERVICE_ADDR=featureflagservice:50053
 
-COPY --from=builder /usr/src/app/ ./
-ADD --chmod=644 https://github.com/open-telemetry/opentelemetry-java-instrumentation/releases/download/v$OTEL_JAVA_AGENT_VERSION/opentelemetry-javaagent.jar /usr/src/app/opentelemetry-javaagent.jar
-ENV JAVA_TOOL_OPTIONS=-javaagent:/usr/src/app/opentelemetry-javaagent.jar
-
-EXPOSE ${AD_PORT}
-ENTRYPOINT [ "./build/install/opentelemetry-demo-ad/bin/Ad" ]
+ENTRYPOINT ["./opentelemetry-demo-ad/bin/Ad"]
