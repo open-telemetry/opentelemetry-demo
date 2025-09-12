@@ -4,7 +4,7 @@ import com.google.protobuf.gradle.*
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 
 plugins {
-    kotlin("jvm") version "2.2.10"
+    kotlin("jvm") version "2.2.20"
     application
     id("java")
     id("idea")
@@ -17,7 +17,7 @@ version = "1.0"
 
 
 val grpcVersion = "1.75.0"
-val protobufVersion = "4.32.0"
+val protobufVersion = "4.32.1"
 
 
 repositories {
