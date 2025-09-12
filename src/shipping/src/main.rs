@@ -26,7 +26,19 @@ async fn main() -> std::io::Result<()> {
         .expect("$SHIPPING_PORT is not set")
         .parse()
         .expect("$SHIPPING_PORT is not a valid port");
-    let addr = format!("0.0.0.0:{}", port);
+    
+    let ipv6_enabled = env::var("IPV6_ENABLED")
+        .unwrap_or_default()
+        .to_lowercase() == "true" || env::var("IPV6_ENABLED").unwrap_or_default() == "1";
+    
+    let addr = if ipv6_enabled {
+        format!("[::]:{}", port)  // IPv6 all interfaces
+    } else {
+        format!("0.0.0.0:{}", port)  // IPv4 all interfaces
+    };
+    
+    println!("DEBUG: IPV6_ENABLED = {}", env::var("IPV6_ENABLED").unwrap_or_default());
+    println!("DEBUG: Binding to {} (IPv6 {})", addr, if ipv6_enabled { "ENABLED" } else { "DISABLED" });
     info!(
         name = "ServerStartedSuccessfully",
         addr = addr.as_str(),
