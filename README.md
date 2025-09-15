@@ -67,9 +67,9 @@ keeping it up to date for you.
 | [Azure Data Explorer]     | [Kloudfuse]    | [TelemetryHub]                   |
 | [Causely]                 | [Last9]        | [Teletrace]                      |
 | [ClickStack]              | [Liatrio]      | [Tracetest]                      |
-| [Coralogix]               | [Logz.io]      | [Uptrace]                        |
-| [Dash0]                   | [New Relic]    | [VictoriaMetrics]                |
-| [Datadog]                 | [OpenSearch]   |                                  |
+| [Coralogix]               | [Logz.io]      | [Tinybird]                       |
+| [Dash0]                   | [New Relic]    | [Uptrace]                        |
+| [Datadog]                 | [OpenSearch]   | [VictoriaMetrics]                |
 | [Dynatrace]               | [Oracle]       |                                  |
 
 ## Contributing
@@ -149,5 +149,6 @@ For more information about the emeritus role, see the [community repository](htt
 [TelemetryHub]: https://github.com/TelemetryHub/opentelemetry-demo/tree/telemetryhub-backend
 [Teletrace]: https://github.com/teletrace/opentelemetry-demo
 [Tracetest]: https://github.com/kubeshop/opentelemetry-demo
+[Tinybird]: https://github.com/tinybirdco/opentelemetry-demo
 [Uptrace]: https://github.com/uptrace/uptrace/tree/master/example/opentelemetry-demo
 [VictoriaMetrics]: https://github.com/VictoriaMetrics-Community/opentelemetry-demo
