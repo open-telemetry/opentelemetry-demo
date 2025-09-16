@@ -108,9 +108,35 @@ func initMeterProvider() *sdkmetric.MeterProvider {
 		logger.Error(fmt.Sprintf("new otlp metric grpc exporter failed: %v", err))
 	}
 
+	// Get histogram preference from environment variable
+	histogramPreference := os.Getenv("OTEL_METRICS_HISTOGRAM_PREFERENCE")
+	if histogramPreference == "" {
+		histogramPreference = "explicit" // Default to explicit bucket histograms
+	}
+
+	var view sdkmetric.View
+	if histogramPreference == "exponential" {
+		view = sdkmetric.NewView(sdkmetric.Instrument{
+			Kind: sdkmetric.InstrumentKindHistogram,
+		}, sdkmetric.Stream{
+			Aggregation: sdkmetric.AggregationBase2ExponentialHistogram{},
+		})
+	} else {
+		view = sdkmetric.NewView(sdkmetric.Instrument{
+			Kind: sdkmetric.InstrumentKindHistogram,
+		}, sdkmetric.Stream{
+			Aggregation: sdkmetric.AggregationExplicitBucketHistogram{
+				Boundaries: []float64{0, 5, 10, 25, 50, 75, 100, 250, 500, 750, 1000, 2500, 5000, 7500, 10000},
+			},
+		})
+	}
+
 	mp := sdkmetric.NewMeterProvider(
 		sdkmetric.WithReader(sdkmetric.NewPeriodicReader(exporter)),
 		sdkmetric.WithResource(initResource()),
+
+		// Add the histogram view
+		sdkmetric.WithView(view),
 	)
 	otel.SetMeterProvider(mp)
 	return mp
