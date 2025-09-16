@@ -18,6 +18,7 @@ using OpenTelemetry.Trace;
 using OpenFeature;
 using OpenFeature.Contrib.Providers.Flagd;
 using OpenFeature.Hooks;
+using Azure.Monitor.OpenTelemetry.AspNetCore;
 
 var builder = WebApplication.CreateBuilder(args);
 string valkeyAddress = builder.Configuration["VALKEY_ADDR"];
@@ -28,7 +29,7 @@ if (string.IsNullOrEmpty(valkeyAddress))
 }
 
 builder.Logging
-    .AddOpenTelemetry(options => options.AddOtlpExporter())
+    .AddOpenTelemetry(options => options.AddAzureMonitorLogExporter())
     .AddConsole();
 
 builder.Services.AddSingleton<ICartStore>(x =>
@@ -62,6 +63,7 @@ Action<ResourceBuilder> appResourceBuilder =
         .AddHostDetector();
 
 builder.Services.AddOpenTelemetry()
+    .UseAzureMonitor() // Enable this line to export to Azure Monitor
     .ConfigureResource(appResourceBuilder)
     .WithTracing(tracerBuilder => tracerBuilder
         .AddSource("OpenTelemetry.Demo.Cart")
@@ -69,16 +71,16 @@ builder.Services.AddOpenTelemetry()
             options => options.SetVerboseDatabaseStatements = true)
         .AddAspNetCoreInstrumentation()
         .AddGrpcClientInstrumentation()
-        .AddHttpClientInstrumentation()
-        .AddOtlpExporter())
+        .AddHttpClientInstrumentation())
+//        .AddOtlpExporter())
     .WithMetrics(meterBuilder => meterBuilder
         .AddMeter("OpenTelemetry.Demo.Cart")
         .AddMeter("OpenFeature")
         .AddProcessInstrumentation()
         .AddRuntimeInstrumentation()
         .AddAspNetCoreInstrumentation()
-        .SetExemplarFilter(ExemplarFilterType.TraceBased)
-        .AddOtlpExporter());
+        .SetExemplarFilter(ExemplarFilterType.TraceBased));
+//        .AddOtlpExporter());
 builder.Services.AddGrpc();
 builder.Services.AddGrpcHealthChecks()
     .AddCheck("Sample", () => HealthCheckResult.Healthy());
