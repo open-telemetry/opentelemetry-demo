@@ -13,9 +13,12 @@ use tracing::info;
 use super::shipping_types::Quote;
 
 pub async fn create_quote_from_count(count: u32) -> Result<Quote, tonic::Status> {
+    // stdout debugging
+    println!("[shipping][quote] create_quote_from_count called with count={}", count);
     let f = match request_quote(count).await {
         Ok(float) => float,
         Err(err) => {
+            println!("[shipping][quote][ERROR] request_quote failed: {}", err);
             let msg = format!("{}", err);
             return Err(tonic::Status::unknown(msg));
         }
@@ -27,6 +30,10 @@ pub async fn create_quote_from_count(count: u32) -> Result<Quote, tonic::Status>
 
     Ok(get_active_span(|span| {
         let q = create_quote_from_float(f);
+        println!(
+            "[shipping][quote] calculated quote: dollars={}, cents={}",
+            q.dollars, q.cents
+        );
         span.add_event(
             "Received Quote".to_string(),
             vec![KeyValue::new("app.shipping.cost.total", format!("{}", q))],
@@ -53,8 +60,12 @@ async fn request_quote(count: u32) -> Result<f64, anyhow::Error> {
         message = "Requesting quote"
     );
 
+    // stdout debugging
+    println!("[shipping][quote] request_quote: count={} -> URL={}", count, quote_service_addr);
+
     let mut reqbody = HashMap::new();
     reqbody.insert("numberOfItems", count);
+    println!("[shipping][quote] request body: numberOfItems={}", count);
 
     let mut response = client
         .post(quote_service_addr)
@@ -62,6 +73,9 @@ async fn request_quote(count: u32) -> Result<f64, anyhow::Error> {
         .send_json(&reqbody)
         .await
         .map_err(|err| anyhow::anyhow!("Failed to call quote service: {err}"))?;
+
+    let status = response.status();
+    println!("[shipping][quote] quote service responded with status={}", status);
 
     let bytes = response
         .body()
@@ -71,10 +85,12 @@ async fn request_quote(count: u32) -> Result<f64, anyhow::Error> {
     let resp = std::str::from_utf8(&bytes)
         .context("Failed to parse quote service response as UTF-8")?
         .to_owned();
+    println!("[shipping][quote] quote service response body='{}'", resp);
 
     let f = resp
         .parse::<f64>()
         .context("Failed to parse quote value as f64")?;
+    println!("[shipping][quote] parsed quote value as f64={}", f);
 
     Ok(f)
 }
