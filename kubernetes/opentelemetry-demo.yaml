@@ -267,6 +267,8 @@ data:
       spanmetrics: {}
     exporters:
       debug: {}
+      azuremonitor:
+        connection_string: InstrumentationKey=bdf84783-c0d0-4964-8ff8-d4b85bf1c4a3;IngestionEndpoint=https://eastus2euap-1.in.applicationinsights.azure.com/;LiveEndpoint=https://eastus2euap.livediagnostics.monitor.azure.com/;ApplicationId=4e19adb0-1047-4692-988d-3b4fb42abcf4
       opensearch:
         http:
           endpoint: http://opensearch:9200
@@ -281,12 +283,26 @@ data:
         endpoint: http://prometheus:9090/api/v1/otlp
         tls:
           insecure: true
+      otlphttp/amw:
+        endpoint: http://aad-auth-proxy.proxy-observability.svc.cluster.local/dataCollectionRules/dcr-b06beaef18ce49fca691bcf3a2ea6f15/streams/Custom-Metrics-Direct-DataSource/otlp
+        tls:
+          insecure: true
+      otlphttp/amw-otel-demo:
+        endpoint: http://aad-auth-proxy-otel-demo.proxy-observability.svc.cluster.local/dataCollectionRules/dcr-34c6ab8e890047f8a8fa92d5b2af80f5/streams/Microsoft-OtelMetrics/otlp
+        tls:
+          insecure: true
     extensions:
       health_check:
         endpoint: ${env:MY_POD_IP}:13133
     processors:
       batch: {}
+      attributes:
+        actions:
+        - action: insert
+          key: metric.type.description
+          value: checkout-cumulative-exponential
       k8sattributes:
+        auth_type: "serviceAccount"
         extract:
           metadata:
           - k8s.namespace.name
@@ -299,6 +315,8 @@ data:
           - k8s.pod.name
           - k8s.pod.uid
           - k8s.pod.start_time
+          - k8s.container.name
+          - k8s.replicaset.name
         passthrough: false
         pod_association:
         - sources:
@@ -307,6 +325,9 @@ data:
         - sources:
           - from: resource_attribute
             name: k8s.pod.uid
+        - sources:
+          - from: resource_attribute
+            name: k8s.pod.name
         - sources:
           - from: connection
       memory_limiter:
@@ -366,6 +387,7 @@ data:
       pipelines:
         logs:
           exporters:
+          - azuremonitor
           - opensearch
           - debug
           processors:
@@ -377,12 +399,16 @@ data:
           - otlp
         metrics:
           exporters:
+          - azuremonitor
+          - otlphttp/amw
+          - otlphttp/amw-otel-demo
           - otlphttp/prometheus
           - debug
           processors:
           - k8sattributes
           - memory_limiter
           - resource
+          - attributes
           - batch
           receivers:
           - httpcheck/frontend-proxy
@@ -391,6 +417,7 @@ data:
           - spanmetrics
         traces:
           exporters:
+          - azuremonitor
           - otlp
           - debug
           - spanmetrics
@@ -10079,13 +10106,16 @@ metadata:
     app.kubernetes.io/component: standalone-collector
 rules:
   - apiGroups: [""]
-    resources: ["pods", "namespaces"]
+    resources: ["pods", "namespaces", "nodes"]
     verbs: ["get", "watch", "list"]
   - apiGroups: ["apps"]
-    resources: ["replicasets"]
+    resources: ["replicasets", "deployments", "daemonsets", "statefulsets"]
     verbs: ["get", "list", "watch"]
   - apiGroups: ["extensions"]
     resources: ["replicasets"]
+    verbs: ["get", "list", "watch"]
+  - apiGroups: ["batch"]
+    resources: ["jobs", "cronjobs"]
     verbs: ["get", "list", "watch"]
 ---
 # Source: opentelemetry-demo/charts/prometheus/templates/clusterrole.yaml
@@ -11191,6 +11221,21 @@ spec:
                 fieldRef:
                   apiVersion: v1
                   fieldPath: status.podIP
+            - name: KUBE_NODE_NAME
+              valueFrom:
+                fieldRef:
+                  apiVersion: v1
+                  fieldPath: spec.nodeName
+            - name: MY_POD_NAME
+              valueFrom:
+                fieldRef:
+                  apiVersion: v1
+                  fieldPath: metadata.name
+            - name: MY_POD_NAMESPACE
+              valueFrom:
+                fieldRef:
+                  apiVersion: v1
+                  fieldPath: metadata.namespace
             - name: GOMEMLIMIT
               value: "160MiB"
           livenessProbe:
@@ -11546,7 +11591,7 @@ spec:
       serviceAccountName: opentelemetry-demo
       containers:
         - name: checkout
-          image: 'ghcr.io/open-telemetry/demo:2.0.2-checkout'
+          image: 'nagaoteldemoacr-fbewdbd6f3gnbqg5.azurecr.io/nasundar/oteldemo-checkout:v2'
           imagePullPolicy: IfNotPresent
           ports:
             
@@ -11562,6 +11607,8 @@ spec:
               value: otel-collector
             - name: OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE
               value: cumulative
+            - name: OTEL_METRICS_HISTOGRAM_PREFERENCE
+              value: exponential
             - name: CHECKOUT_PORT
               value: "8080"
             - name: CART_ADDR
@@ -12405,7 +12452,7 @@ spec:
       serviceAccountName: opentelemetry-demo
       containers:
         - name: product-catalog
-          image: 'ghcr.io/open-telemetry/demo:2.0.2-product-catalog'
+          image: 'nagaoteldemoacr-fbewdbd6f3gnbqg5.azurecr.io/nasundar/oteldemo-product-catalog:v2'
           imagePullPolicy: IfNotPresent
           ports:
             
@@ -12421,6 +12468,8 @@ spec:
               value: otel-collector
             - name: OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE
               value: cumulative
+            - name: OTEL_METRICS_HISTOGRAM_PREFERENCE
+              value: exponential
             - name: PRODUCT_CATALOG_PORT
               value: "8080"
             - name: PRODUCT_CATALOG_RELOAD_INTERVAL
