@@ -10,7 +10,7 @@ path = "src/main.rs"
 actix-web = "4"
 anyhow = "1.0.99"
 awc = { version = "3.8.0", default-features = false, features = ["compress-zstd"] }
-serde = { version = "1.0.219", features = ["derive"] }
+serde = { version = "1.0.225", features = ["derive"] }
 tonic = "0.14.2"
 tracing = "0.1.41"
 tracing-subscriber = { version = "0.3.20", features = ["env-filter"] }
