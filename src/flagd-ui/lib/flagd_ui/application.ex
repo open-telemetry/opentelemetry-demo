@@ -1,3 +1,6 @@
+# Copyright The OpenTelemetry Authors
+# SPDX-License-Identifier: Apache-2.0
+
 defmodule FlagdUi.Application do
   # See https://hexdocs.pm/elixir/Application.html
   # for more information on OTP Applications

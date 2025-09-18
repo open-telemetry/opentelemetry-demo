@@ -1,3 +1,6 @@
+# Copyright The OpenTelemetry Authors
+# SPDX-License-Identifier: Apache-2.0
+
 defmodule FlagdUiWeb.Layouts do
   @moduledoc """
   This module holds different layouts used by your application.

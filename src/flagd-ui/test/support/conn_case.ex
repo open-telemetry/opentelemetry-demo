@@ -1,3 +1,6 @@
+# Copyright The OpenTelemetry Authors
+# SPDX-License-Identifier: Apache-2.0
+
 defmodule FlagdUiWeb.ConnCase do
   @moduledoc """
   This module defines the test case to be used by

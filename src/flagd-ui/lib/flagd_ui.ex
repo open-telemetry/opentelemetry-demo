@@ -1,3 +1,6 @@
+# Copyright The OpenTelemetry Authors
+# SPDX-License-Identifier: Apache-2.0
+
 defmodule FlagdUi do
   @moduledoc """
   FlagdUi keeps the contexts that define your domain

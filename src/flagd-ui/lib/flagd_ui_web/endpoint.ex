@@ -1,3 +1,6 @@
+# Copyright The OpenTelemetry Authors
+# SPDX-License-Identifier: Apache-2.0
+
 defmodule FlagdUiWeb.Endpoint do
   use Phoenix.Endpoint, otp_app: :flagd_ui
 

@@ -1,3 +1,6 @@
+# Copyright The OpenTelemetry Authors
+# SPDX-License-Identifier: Apache-2.0
+
 defmodule FlagdUi.Storage do
   @moduledoc """
   Storage module. This module initializes a process as a separate GenServer
