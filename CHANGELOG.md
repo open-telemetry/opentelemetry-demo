@@ -90,6 +90,8 @@ the release.
   ([#2402](https://github.com/open-telemetry/opentelemetry-demo/pull/2402))
 * [grafana] Update OpenSearch logs index in APM Dashboards
   ([#2419](https://github.com/open-telemetry/opentelemetry-demo/pull/2419))
+* [flagd-ui] Rewrite Flagd UI in Elixir
+  ([#2427](https://github.com/open-telemetry/opentelemetry-demo/pull/2427))
 * [frontend-proxy] Add redirects for web UI paths to ensure proper asset loading
   ([#2476](https://github.com/open-telemetry/opentelemetry-demo/pull/2476))
 * [chore] Bump dependent images
