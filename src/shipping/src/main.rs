@@ -1,7 +1,7 @@
 // Copyright The OpenTelemetry Authors
 // SPDX-License-Identifier: Apache-2.0
 
-use actix_web::{App, HttpServer};
+use actix_web::{web, App, HttpRequest, HttpResponse, HttpServer, Responder};
 use opentelemetry_instrumentation_actix_web::{RequestMetrics, RequestTracing};
 use std::env;
 use tracing::info;
@@ -10,6 +10,26 @@ mod telemetry_conf;
 use telemetry_conf::init_otel;
 mod shipping_service;
 use shipping_service::{get_quote, ship_order};
+
+// Catch-all handler to log any unmatched requests
+async fn catch_all_handler(req: HttpRequest) -> impl Responder {
+    println!("=== [SHIPPING] UNMATCHED REQUEST ===");
+    println!("[shipping][catch-all] Method: {}", req.method());
+    println!("[shipping][catch-all] Path: {}", req.path());
+    println!("[shipping][catch-all] Query: {}", req.query_string());
+    println!("[shipping][catch-all] Headers:");
+    for (name, value) in req.headers() {
+        println!("  {}: {:?}", name, value);
+    }
+    println!("=== [SHIPPING] UNMATCHED REQUEST END ===");
+    
+    HttpResponse::NotFound().json(serde_json::json!({
+        "error": "Endpoint not found",
+        "method": req.method().to_string(),
+        "path": req.path(),
+        "available_endpoints": ["/get-quote", "/ship-order"]
+    }))
+}
 
 #[actix_web::main]
 async fn main() -> std::io::Result<()> {
@@ -49,8 +69,12 @@ async fn main() -> std::io::Result<()> {
         App::new()
             .wrap(RequestTracing::new())
             .wrap(RequestMetrics::default())
+            .wrap(actix_web::middleware::Logger::new(
+                "[SHIPPING-ACCESS] %a \"%r\" %s %b \"%{Referer}i\" \"%{User-Agent}i\" %T"
+            ))
             .service(get_quote)
             .service(ship_order)
+            .default_service(web::route().to(catch_all_handler))
     })
     .bind(&addr)?
     .run()

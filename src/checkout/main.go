@@ -275,6 +275,7 @@ func mustMapEnv(target *string, envKey string) {
 	if v == "" {
 		panic(fmt.Sprintf("environment variable %q not set", envKey))
 	}
+	fmt.Printf("Environment variable %s = %s\n", envKey, v)
 	*target = v
 }
 
@@ -440,6 +441,7 @@ func (cs *checkout) prepareOrderItemsAndShippingQuoteFromCart(ctx context.Contex
 }
 
 func mustCreateClient(svcAddr string) *grpc.ClientConn {
+	logger.Info(fmt.Sprintf("Creating gRPC client for address: %s", svcAddr))
 	c, err := grpc.NewClient(svcAddr,
 		grpc.WithTransportCredentials(insecure.NewCredentials()),
 		grpc.WithStatsHandler(otelgrpc.NewClientHandler()),

@@ -17,8 +17,23 @@ const NANOS_MULTIPLE: u32 = 10000000u32;
 
 #[post("/get-quote")]
 pub async fn get_quote(req: web::Json<GetQuoteRequest>) -> impl Responder {
-    // stdout debugging
-    println!("[shipping][get-quote] received request with {} item(s)", req.items.len());
+    // Enhanced debugging - log raw request details
+    println!("=== [SHIPPING] GET-QUOTE REQUEST START ===");
+    println!("[shipping][get-quote] RECEIVED REQUEST - timestamp: {}", chrono::Utc::now().format("%Y-%m-%d %H:%M:%S%.3f UTC"));
+    println!("[shipping][get-quote] Request body size: {} bytes", std::mem::size_of_val(&*req));
+    println!("[shipping][get-quote] Items count: {}", req.items.len());
+    
+    // Log address details if present
+    if let Some(ref address) = req.address {
+        println!("[shipping][get-quote] Address: zip_code='{}'", address.zip_code);
+    } else {
+        println!("[shipping][get-quote] No address provided");
+    }
+    
+    // Log each item
+    for (i, item) in req.items.iter().enumerate() {
+        println!("[shipping][get-quote] Item {}: quantity={}", i, item.quantity);
+    }
     if !req.items.is_empty() {
         println!(
             "[shipping][get-quote] first item: quantity={}",
