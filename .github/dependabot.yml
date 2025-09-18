@@ -81,3 +81,11 @@ updates:
         dependency-type: "development"
     schedule:
       interval: "daily"
+  - package-ecosystem: "mix"
+    directories:
+      - "/src/flagd-ui/*"
+    groups:
+      mix-production-dependencies:
+        dependency-type: "production"
+    schedule:
+      interval: "daily"
