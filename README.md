@@ -66,10 +66,10 @@ keeping it up to date for you.
 | [Axoflow]                 | [Instana]      | [Sumo Logic]                     |
 | [Azure Data Explorer]     | [Kloudfuse]    | [TelemetryHub]                   |
 | [Causely]                 | [Last9]        | [Teletrace]                      |
-| [ClickStack]              | [Liatrio]      | [Tracetest]                      |
-| [Coralogix]               | [Logz.io]      | [Uptrace]                        |
-| [Dash0]                   | [New Relic]    | [VictoriaMetrics]                |
-| [Datadog]                 | [OpenSearch]   |                                  |
+| [ClickStack]              | [Liatrio]      | [Tinybird]                       |
+| [Coralogix]               | [Logz.io]      | [Tracetest]                      |
+| [Dash0]                   | [New Relic]    | [Uptrace]                        |
+| [Datadog]                 | [OpenSearch]   | [VictoriaMetrics]                |
 | [Dynatrace]               | [Oracle]       |                                  |
 
 ## Contributing
@@ -148,6 +148,7 @@ For more information about the emeritus role, see the [community repository](htt
 [Sumo Logic]: https://www.sumologic.com/blog/common-opentelemetry-demo-application/
 [TelemetryHub]: https://github.com/TelemetryHub/opentelemetry-demo/tree/telemetryhub-backend
 [Teletrace]: https://github.com/teletrace/opentelemetry-demo
+[Tinybird]: https://github.com/tinybirdco/opentelemetry-demo
 [Tracetest]: https://github.com/kubeshop/opentelemetry-demo
 [Uptrace]: https://github.com/uptrace/uptrace/tree/master/example/opentelemetry-demo
 [VictoriaMetrics]: https://github.com/VictoriaMetrics-Community/opentelemetry-demo
