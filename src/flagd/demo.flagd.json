@@ -87,6 +87,15 @@
       },
       "defaultVariant": "off"
     },
+    "paymentCacheLeak": {
+      "description": "Causes payment cache to leak memory and overflow",
+      "state": "ENABLED",
+      "variants": {
+        "on": true,
+        "off": false
+      },
+      "defaultVariant": "off"
+    },
     "loadGeneratorFloodHomepage": {
       "description": "Flood the frontend with a large amount of requests.",
       "state": "ENABLED",

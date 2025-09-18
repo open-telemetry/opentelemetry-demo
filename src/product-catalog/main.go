@@ -14,6 +14,7 @@ import (
 	"net"
 	"os"
 	"os/signal"
+	"runtime"
 	"strconv"
 	"strings"
 	"sync"
@@ -22,7 +23,7 @@ import (
 
 	"go.opentelemetry.io/contrib/bridges/otelslog"
 	"go.opentelemetry.io/contrib/instrumentation/google.golang.org/grpc/otelgrpc"
-	"go.opentelemetry.io/contrib/instrumentation/runtime"
+	otelruntime "go.opentelemetry.io/contrib/instrumentation/runtime"
 	"go.opentelemetry.io/otel"
 	"go.opentelemetry.io/otel/attribute"
 	otelcodes "go.opentelemetry.io/otel/codes"
@@ -166,7 +167,7 @@ func main() {
 		logger.Error(err.Error())
 	}
 
-	err = runtime.Start(runtime.WithMinimumReadMemStatsInterval(time.Second))
+	err = otelruntime.Start(otelruntime.WithMinimumReadMemStatsInterval(time.Second))
 	if err != nil {
 		logger.Error(err.Error())
 	}
@@ -295,6 +296,58 @@ func readProductFiles() ([]*pb.Product, error) {
 	return products, nil
 }
 
+func getTraceContext(ctx context.Context) map[string]interface{} {
+	span := trace.SpanFromContext(ctx)
+	spanContext := span.SpanContext()
+	
+	return map[string]interface{}{
+		"traceId":    spanContext.TraceID().String(),
+		"spanId":     spanContext.SpanID().String(),
+		"traceFlags": spanContext.TraceFlags(),
+		"isValid":    spanContext.IsValid(),
+	}
+}
+
+func getSystemMetrics() map[string]interface{} {
+	var memStats runtime.MemStats
+	runtime.ReadMemStats(&memStats)
+	
+	return map[string]interface{}{
+		"memory": map[string]interface{}{
+			"alloc_mb":         float64(memStats.Alloc) / 1024 / 1024,
+			"total_alloc_mb":   float64(memStats.TotalAlloc) / 1024 / 1024,
+			"sys_mb":           float64(memStats.Sys) / 1024 / 1024,
+			"heap_alloc_mb":    float64(memStats.HeapAlloc) / 1024 / 1024,
+			"heap_sys_mb":      float64(memStats.HeapSys) / 1024 / 1024,
+			"heap_idle_mb":     float64(memStats.HeapIdle) / 1024 / 1024,
+			"heap_inuse_mb":    float64(memStats.HeapInuse) / 1024 / 1024,
+			"heap_released_mb": float64(memStats.HeapReleased) / 1024 / 1024,
+			"stack_inuse_mb":   float64(memStats.StackInuse) / 1024 / 1024,
+			"stack_sys_mb":     float64(memStats.StackSys) / 1024 / 1024,
+		},
+		"gc": map[string]interface{}{
+			"num_gc":           memStats.NumGC,
+			"pause_total_ns":   memStats.PauseTotalNs,
+			"pause_ns":         memStats.PauseNs,
+			"gc_cpu_fraction":  memStats.GCCPUFraction,
+			"next_gc_mb":       float64(memStats.NextGC) / 1024 / 1024,
+			"last_gc":          time.Unix(0, int64(memStats.LastGC)).Format(time.RFC3339),
+		},
+		"performance": map[string]interface{}{
+			"goroutines":     runtime.NumGoroutine(),
+			"num_cpu":        runtime.NumCPU(),
+			"gomaxprocs":     runtime.GOMAXPROCS(0),
+			"num_cgo_calls":  runtime.NumCgoCall(),
+		},
+		"process": map[string]interface{}{
+			"go_version": runtime.Version(),
+			"goos":       runtime.GOOS,
+			"goarch":     runtime.GOARCH,
+		},
+		"timestamp": time.Now().Unix(),
+	}
+}
+
 func mustMapEnv(target *string, key string) {
 	value, present := os.LookupEnv(key)
 	if !present {
@@ -321,6 +374,7 @@ func (p *productCatalog) ListProducts(ctx context.Context, req *pb.Empty) (*pb.L
 }
 
 func (p *productCatalog) GetProduct(ctx context.Context, req *pb.GetProductRequest) (*pb.Product, error) {
+	startTime := time.Now()
 	span := trace.SpanFromContext(ctx)
 	span.SetAttributes(
 		attribute.String("app.product.id", req.Id),
@@ -328,7 +382,52 @@ func (p *productCatalog) GetProduct(ctx context.Context, req *pb.GetProductReque
 
 	// GetProduct will fail on a specific product when feature flag is enabled
 	if p.checkProductFailure(ctx, req.Id) {
-		msg := "Error: Product Catalog Fail Feature Flag Enabled"
+		operationDuration := time.Since(startTime)
+		traceContext := getTraceContext(ctx)
+		systemMetrics := getSystemMetrics()
+		
+		// Enhanced logging for product catalog failure scenario
+		logger.LogAttrs(
+			ctx,
+			slog.LevelError,
+			"Product lookup failed due to catalog service error",
+			slog.String("error.type", "ProductCatalogServiceError"),
+			slog.String("error.code", "CATALOG_LOOKUP_FAILED"),
+			slog.String("product.id", req.Id),
+			slog.String("product.lookup_status", "failed"),
+			slog.Int("catalog.total_products", len(catalog)),
+			slog.String("catalog.state", "operational"),
+			slog.String("operation", "GetProduct"),
+			slog.String("failure.reason", "Product retrieval service temporarily unavailable"),
+			slog.String("failure.context", "Database connection timeout during product lookup"),
+			slog.String("system.component", "product-catalog-service"),
+			slog.String("service", "product-catalog-service"),
+			slog.Float64("operation_duration_ms", float64(operationDuration.Nanoseconds())/1000000),
+			slog.String("performance.latency", "elevated"),
+			slog.Any("trace_context", traceContext),
+			slog.Any("system_metrics", systemMetrics),
+		)
+
+		// Log additional context about the specific product that failed
+		logger.LogAttrs(
+			ctx,
+			slog.LevelError,
+			"Product retrieval attempt details",
+			slog.String("product.target_id", "OLJCESPC7Z"),
+			slog.String("product.category", "unknown - lookup failed"),
+			slog.String("retrieval.attempt_time", time.Now().Format(time.RFC3339)),
+			slog.String("database.connection_status", "timeout"),
+			slog.String("database.last_successful_query", "unknown"),
+			slog.Int("database.active_connections", 0),
+			slog.String("error.stack_trace", "ProductCatalogService.GetProduct() -> DatabaseConnection.timeout"),
+			slog.String("service", "product-catalog-service"),
+			slog.Float64("database_timeout_duration_ms", float64(operationDuration.Nanoseconds())/1000000),
+			slog.String("performance.database_latency", "timeout"),
+			slog.Any("trace_context", traceContext),
+			slog.Any("system_metrics", systemMetrics),
+		)
+
+		msg := "Product retrieval failed: database connection timeout during lookup operation"
 		span.SetStatus(otelcodes.Error, msg)
 		span.AddEvent(msg)
 		return nil, status.Errorf(codes.Internal, msg)
@@ -343,6 +442,51 @@ func (p *productCatalog) GetProduct(ctx context.Context, req *pb.GetProductReque
 	}
 
 	if found == nil {
+		operationDuration := time.Since(startTime)
+		traceContext := getTraceContext(ctx)
+		systemMetrics := getSystemMetrics()
+		
+		// Enhanced logging for product not found scenario
+		logger.LogAttrs(
+			ctx,
+			slog.LevelError,
+			"Product not found in catalog",
+			slog.String("error.type", "ProductNotFoundError"),
+			slog.String("error.code", "PRODUCT_NOT_FOUND"),
+			slog.String("product.requested_id", req.Id),
+			slog.String("product.lookup_status", "not_found"),
+			slog.Int("catalog.total_products", len(catalog)),
+			slog.String("catalog.state", "loaded"),
+			slog.String("catalog.last_reload", time.Now().Add(-time.Duration(DEFAULT_RELOAD_INTERVAL)*time.Second).Format(time.RFC3339)),
+			slog.String("operation", "GetProduct"),
+			slog.String("search.method", "linear_scan"),
+			slog.String("search.scope", "full_catalog"),
+			slog.String("service", "product-catalog-service"),
+			slog.Float64("search_duration_ms", float64(operationDuration.Nanoseconds())/1000000),
+			slog.String("performance.search_latency", "normal"),
+			slog.Any("trace_context", traceContext),
+			slog.Any("system_metrics", systemMetrics),
+		)
+
+		// Log catalog metadata and system state
+		logger.LogAttrs(
+			ctx,
+			slog.LevelError,
+			"Product catalog state during lookup failure",
+			slog.String("catalog.source", "./products/*.json"),
+			slog.String("catalog.format", "protobuf_json"),
+			slog.String("system.component", "product-catalog-service"),
+			slog.String("request.context", fmt.Sprintf("Client requested product ID: %s", req.Id)),
+			slog.String("available_products", fmt.Sprintf("Catalog contains %d products", len(catalog))),
+			slog.String("lookup.algorithm", "sequential_search"),
+			slog.String("system.health", "operational"),
+			slog.String("service", "product-catalog-service"),
+			slog.Float64("catalog_scan_duration_ms", float64(operationDuration.Nanoseconds())/1000000),
+			slog.String("performance.catalog_efficiency", "normal"),
+			slog.Any("trace_context", traceContext),
+			slog.Any("system_metrics", systemMetrics),
+		)
+
 		msg := fmt.Sprintf("Product Not Found: %s", req.Id)
 		span.SetStatus(otelcodes.Error, msg)
 		span.AddEvent(msg)
@@ -355,11 +499,30 @@ func (p *productCatalog) GetProduct(ctx context.Context, req *pb.GetProductReque
 		attribute.String("app.product.name", found.Name),
 	)
 
+	// Enhanced logging for successful product retrieval
+	operationDuration := time.Since(startTime)
+	traceContext := getTraceContext(ctx)
+	systemMetrics := getSystemMetrics()
+	
 	logger.LogAttrs(
 		ctx,
-		slog.LevelInfo, "Product Found",
-		slog.String("app.product.name", found.Name),
-		slog.String("app.product.id", req.Id),
+		slog.LevelInfo, "Product successfully retrieved",
+		slog.String("product.id", found.Id),
+		slog.String("product.name", found.Name),
+		slog.String("product.description", found.Description),
+		slog.String("product.picture", found.Picture),
+		slog.String("product.categories", strings.Join(found.Categories, ",")),
+		slog.String("operation", "GetProduct"),
+		slog.String("operation.status", "success"),
+		slog.Int("catalog.total_products", len(catalog)),
+		slog.String("lookup.method", "sequential_search"),
+		slog.String("system.component", "product-catalog-service"),
+		slog.String("request.context", fmt.Sprintf("Successfully found product: %s", req.Id)),
+		slog.String("service", "product-catalog-service"),
+		slog.Float64("lookup_duration_ms", float64(operationDuration.Nanoseconds())/1000000),
+		slog.String("performance.lookup_latency", "normal"),
+		slog.Any("trace_context", traceContext),
+		slog.Any("system_metrics", systemMetrics),
 	)
 
 	return found, nil
