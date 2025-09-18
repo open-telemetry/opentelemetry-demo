@@ -45,6 +45,7 @@
         "src/cart/tests/obj/",
         "src/currency/build/",
         "src/checkout/genproto/",
+        "src/flagd-ui/assets/vendor/",
         "src/product-catalog/genproto/",
         "src/react-native-app/ios/Pods/",
         "src/react-native-app/ios/build/",

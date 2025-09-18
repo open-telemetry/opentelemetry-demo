@@ -7,9 +7,6 @@ dirs:
 excludedFiles:
   - ./CHANGELOG.md
 
-excludedDirs:
-  - ./src/flagd-ui/assets/vendor
-
 ignorePatterns:
   - pattern: "^http://localhost:8080"
   - pattern: "^https://calendar.google.com/calendar"
