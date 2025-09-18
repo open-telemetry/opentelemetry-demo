@@ -25,7 +25,7 @@ defmodule FlagdUiWeb.AdvancedEditor do
       <CoreComponents.flash kind={:error} flash={@flash} />
       <CoreComponents.flash kind={:info} flash={@flash} />
 
-      <div>
+      <div class="container mx-auto px-4 py-8">
         <.form for={%{}}>
           <textarea
             name="content"
@@ -36,17 +36,17 @@ defmodule FlagdUiWeb.AdvancedEditor do
           >
             {Phoenix.HTML.Form.normalize_value("textarea", @content)}
           </textarea>
-          <div class="p-2 pl-8 text-gray-300 shadow-md">
-            <div class="mb-8 flex flex-auto items-center gap-2">
-              <button
-                type="button"
-                class="rounded bg-blue-500 px-8 py-4 font-medium text-white transition-colors duration-200 hover:bg-blue-600"
-                phx-click="save"
-              >
-                Save
-              </button>
-              <p :if={@unsaved_changes} class="text-red-600">Unsaved changes</p>
-            </div>
+          <div>
+
+            <button
+              type="button"
+              class="rounded bg-blue-500 px-8 py-4 font-medium text-white transition-colors duration-200 hover:bg-blue-600"
+              phx-click="save"
+            >
+              Save
+            </button>
+            <p :if={@unsaved_changes} class="text-red-600">Unsaved changes</p>
+
           </div>
         </.form>
       </div>
