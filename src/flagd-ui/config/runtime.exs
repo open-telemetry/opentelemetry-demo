@@ -60,13 +60,10 @@ if config_env() == :prod do
     check_origin: false,
     secret_key_base: secret_key_base
 
-  config :opentelemetry,
-    span_processor: :batch,
-    traces_exporter: :otlp
-
-  config :opentelemetry_exporter,
-    otlp_protocol: :http_protobuf,
-    otlp_endpoint: otel_endpoint
+  config :opentelemetry, :processors,
+    otel_batch_processor: %{
+      exporter: {:opentelemetry_exporter, %{endpoints: [otel_endpoint]}}
+    }
 
   # ## SSL Support
   #
