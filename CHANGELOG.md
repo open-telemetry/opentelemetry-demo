@@ -105,6 +105,8 @@ the release.
   ([#2503](https://github.com/open-telemetry/opentelemetry-demo/pull/2503))
 * [grafana] APM dashboard: Add host metrics per service instance
   ([#2507](https://github.com/open-telemetry/opentelemetry-demo/pull/2507))
+* add GOMEMLIMIT for Go services in kubernetes config
+  ([#2564](https://github.com/open-telemetry/opentelemetry-demo/pull/2564))
 
 ## 2.0.2
 
