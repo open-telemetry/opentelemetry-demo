@@ -11582,6 +11582,8 @@ spec:
               value: flagd
             - name: FLAGD_PORT
               value: "8013"
+            - name: GOMEMLIMIT
+              value: 16MiB
             - name: OTEL_EXPORTER_OTLP_ENDPOINT
               value: http://$(OTEL_COLLECTOR_NAME):4317
             - name: OTEL_RESOURCE_ATTRIBUTES
@@ -11786,6 +11788,8 @@ spec:
               value: otel
             - name: FLAGD_OTEL_COLLECTOR_URI
               value: $(OTEL_COLLECTOR_NAME):4317
+            - name: GOMEMLIMIT
+              value: 60MiB
             - name: OTEL_RESOURCE_ATTRIBUTES
               value: service.name=$(OTEL_SERVICE_NAME),service.namespace=opentelemetry-demo,service.version=2.0.2
           resources:
@@ -11819,7 +11823,7 @@ spec:
               value: service.name=$(OTEL_SERVICE_NAME),service.namespace=opentelemetry-demo,service.version=2.0.2
           resources:
             limits:
-              memory: 100Mi
+              memory: 300Mi
           volumeMounts:
             - mountPath: /app/data
               name: config-rw
@@ -12429,6 +12433,8 @@ spec:
               value: flagd
             - name: FLAGD_PORT
               value: "8013"
+            - name: GOMEMLIMIT
+              value: 16MiB
             - name: OTEL_EXPORTER_OTLP_ENDPOINT
               value: http://$(OTEL_COLLECTOR_NAME):4317
             - name: OTEL_RESOURCE_ATTRIBUTES
