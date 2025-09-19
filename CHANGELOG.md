@@ -77,7 +77,7 @@ the release.
 * [image-provider] Update to latest version of nginx and alpine
   ([#2369](https://github.com/open-telemetry/opentelemetry-demo/pull/2369))
 * [chore] Upgrade Jaeger to v2
-  ([#2369](https://github.com/open-telemetry/opentelemetry-demo/pull/2389))
+  ([#2389](https://github.com/open-telemetry/opentelemetry-demo/pull/2389))
 * [load-generator] Fix Playwright wait until load state error
   ([#2374](https://github.com/open-telemetry/opentelemetry-demo/pull/2374))
 * [flagd] Bump Flagd to v0.12.8 and get compliant `http.Server.request.duration`
