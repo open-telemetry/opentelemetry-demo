@@ -241,7 +241,7 @@ static_resources:
                   address:
                     socket_address:
                       address: ${JAEGER_HOST}
-                      port_value: ${JAEGER_PORT}
+                      port_value: ${JAEGER_UI_PORT}
 admin:
   address:
     socket_address:
