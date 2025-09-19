@@ -10,6 +10,9 @@ defmodule FlagdUi.Application do
 
   @impl true
   def start(_type, _args) do
+    # Ensure inets is started before OpenTelemetry initialization
+    :ok = Application.ensure_started(:inets)
+
     children = [
       FlagdUiWeb.Telemetry,
       {DNSCluster, query: Application.get_env(:flagd_ui, :dns_cluster_query) || :ignore},
