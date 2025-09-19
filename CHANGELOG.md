@@ -80,18 +80,35 @@ the release.
   ([#2369](https://github.com/open-telemetry/opentelemetry-demo/pull/2389))
 * [load-generator] Fix Playwright wait until load state error
   ([#2374](https://github.com/open-telemetry/opentelemetry-demo/pull/2374))
-* [grafana] Update OpenSearch logs index in APM Dashboards
-  ([#2419](https://github.com/open-telemetry/opentelemetry-demo/pull/2419))
 * [flagd] Bump Flagd to v0.12.8 and get compliant `http.Server.request.duration`
   OTel metrics that can be used in the APM dashboard
   ([#2392](https://github.com/open-telemetry/opentelemetry-demo/pull/2392))
-* [cart] Enable automatic generation of `service.instance.id`
-  ([#2402](https://github.com/open-telemetry/opentelemetry-demo/pull/2402))
+* [prometheus / grafana] Add Linux monitoring dashboard
+  ([#2395](https://github.com/open-telemetry/opentelemetry-demo/pull/2395))
 * [prometheus /grafana] Add alerting demo through the `CartAddItemHighLatency`
   alert rule
-  [#2401](https://github.com/open-telemetry/opentelemetry-demo/pull/2401)
-* [prometheus / grafana] Add Linux monitoring dashboard
-  [#2395](https://github.com/open-telemetry/opentelemetry-demo/pull/2395)
+  ([#2401](https://github.com/open-telemetry/opentelemetry-demo/pull/2401))
+* [cart] Enable automatic generation of `service.instance.id`
+  ([#2402](https://github.com/open-telemetry/opentelemetry-demo/pull/2402))
+* [grafana] Update OpenSearch logs index in APM Dashboards
+  ([#2419](https://github.com/open-telemetry/opentelemetry-demo/pull/2419))
+* [flagd-ui] Rewrite Flagd UI in Elixir
+  ([#2427](https://github.com/open-telemetry/opentelemetry-demo/pull/2427))
+* [frontend-proxy] Add redirects for web UI paths to ensure proper asset loading
+  ([#2476](https://github.com/open-telemetry/opentelemetry-demo/pull/2476))
+* [chore] Bump dependent images
+  ([#2477](https://github.com/open-telemetry/opentelemetry-demo/pull/2477))
+* [email] Add memory leak scenario to email service
+  ([#2481](https://github.com/open-telemetry/opentelemetry-demo/pull/2481))
+* [checkout] Add graceful shutdown to checkout service
+  ([#2491](https://github.com/open-telemetry/opentelemetry-demo/pull/2491))
+* [shipping] Use cumulative metrics in shipping service to be consistent
+  with the other services of the demo
+  ([#2503](https://github.com/open-telemetry/opentelemetry-demo/pull/2503))
+* [grafana] APM dashboard: Add host metrics per service instance
+  ([#2507](https://github.com/open-telemetry/opentelemetry-demo/pull/2507))
+* [react-native-app] Make frontend proxy URL configurable through app settings
+  ([#2531](https://github.com/open-telemetry/opentelemetry-demo/pull/2531))
 
 ## 2.0.2
 
@@ -107,6 +124,9 @@ the release.
   ([#2120](https://github.com/open-telemetry/opentelemetry-demo/pull/2120))
 * [cartservice] change custom metrics to use seconds
   ([#2135](https://github.com/open-telemetry/opentelemetry-demo/pull/2135))
+* [otel-collector] Fix OTel Collector meta-monitoring, export metrics using
+  the HTTP port
+  ([#2502](https://github.com/open-telemetry/opentelemetry-demo/pull/2502))
 
 ## 2.0.1
 
