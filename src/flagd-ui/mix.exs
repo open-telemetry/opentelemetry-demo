@@ -17,8 +17,7 @@ defmodule FlagdUi.MixProject do
         flagd_ui: [
           applications: [opentelemetry: :temporary]
         ]
-      ],
-      listeners: [Phoenix.CodeReloader]
+      ]
     ]
   end
 

@@ -105,6 +105,8 @@ the release.
   ([#2503](https://github.com/open-telemetry/opentelemetry-demo/pull/2503))
 * [grafana] APM dashboard: Add host metrics per service instance
   ([#2507](https://github.com/open-telemetry/opentelemetry-demo/pull/2507))
+* [react-native-app] Make frontend proxy URL configurable through app settings
+  ([#2531](https://github.com/open-telemetry/opentelemetry-demo/pull/2531))
 * add GOMEMLIMIT for Go services in kubernetes config
   ([#2564](https://github.com/open-telemetry/opentelemetry-demo/pull/2564))
 

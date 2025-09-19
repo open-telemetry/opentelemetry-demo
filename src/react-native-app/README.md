@@ -100,6 +100,13 @@ This will create a `react-native-app.apk` file in the directory where you ran
 the command. If you have an Android emulator running on your machine then you
 can drag and drop this file onto the emulator's window in order to install it.
 
+## Pointing to another demo environment
+
+By default, the app will point to `EXPO_PUBLIC_FRONTEND_PROXY_PORT` on
+localhost to interact with the demo APIs. This can be changed in the Settings
+tab when running the app to point to a demo environment running on a
+different server.
+
 ## Troubleshooting
 
 ### JS Bundle: build issues
