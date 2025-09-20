@@ -1,0 +1,62 @@
+---
+# Source: opentelemetry-demo/templates/component.yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: opentelemetry-demo-emailservice
+  labels:
+    
+    opentelemetry.io/name: opentelemetry-demo-emailservice
+    app.kubernetes.io/instance: opentelemetry-demo
+    app.kubernetes.io/component: emailservice
+    app.kubernetes.io/name: opentelemetry-demo-emailservice
+    app.kubernetes.io/version: "1.12.0"
+    app.kubernetes.io/part-of: opentelemetry-demo
+spec:
+  replicas: 1
+  revisionHistoryLimit: 10
+  selector:
+    matchLabels:
+      
+      opentelemetry.io/name: opentelemetry-demo-emailservice
+  template:
+    metadata:
+      labels:
+        
+        opentelemetry.io/name: opentelemetry-demo-emailservice
+        app.kubernetes.io/instance: opentelemetry-demo
+        app.kubernetes.io/component: emailservice
+        app.kubernetes.io/name: opentelemetry-demo-emailservice
+    spec:
+      serviceAccountName: opentelemetry-demo
+      containers:
+        - name: emailservice
+          image: 'ghcr.io/open-telemetry/demo:1.12.0-emailservice'
+          imagePullPolicy: IfNotPresent
+          ports:
+            
+            - containerPort: 8080
+              name: service
+          env:
+            - name: OTEL_SERVICE_NAME
+              valueFrom:
+                fieldRef:
+                  apiVersion: v1
+                  fieldPath: metadata.labels['app.kubernetes.io/component']
+            - name: OTEL_COLLECTOR_NAME
+              value: 'opentelemetry-demo-otelcol'
+            - name: OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE
+              value: cumulative
+            - name: EMAIL_SERVICE_PORT
+              value: "8080"
+            - name: APP_ENV
+              value: production
+            - name: OTEL_EXPORTER_OTLP_TRACES_ENDPOINT
+              value: http://$(OTEL_COLLECTOR_NAME):4318/v1/traces
+            - name: OTEL_RESOURCE_ATTRIBUTES
+              value: service.name=$(OTEL_SERVICE_NAME),service.namespace=opentelemetry-demo,service.version=1.12.0
+          resources:
+            limits:
+              memory: 100Mi
+          volumeMounts:
+      volumes:

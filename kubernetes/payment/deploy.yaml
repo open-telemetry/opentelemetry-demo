@@ -1,0 +1,68 @@
+---
+# Source: opentelemetry-demo/templates/component.yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: opentelemetry-demo-paymentservice
+  labels:
+    
+    opentelemetry.io/name: opentelemetry-demo-paymentservice
+    app.kubernetes.io/instance: opentelemetry-demo
+    app.kubernetes.io/component: paymentservice
+    app.kubernetes.io/name: opentelemetry-demo-paymentservice
+    app.kubernetes.io/version: "1.12.0"
+    app.kubernetes.io/part-of: opentelemetry-demo
+spec:
+  replicas: 1
+  revisionHistoryLimit: 10
+  selector:
+    matchLabels:
+      
+      opentelemetry.io/name: opentelemetry-demo-paymentservice
+  template:
+    metadata:
+      labels:
+        
+        opentelemetry.io/name: opentelemetry-demo-paymentservice
+        app.kubernetes.io/instance: opentelemetry-demo
+        app.kubernetes.io/component: paymentservice
+        app.kubernetes.io/name: opentelemetry-demo-paymentservice
+    spec:
+      serviceAccountName: opentelemetry-demo
+      containers:
+        - name: paymentservice
+          image: 'ghcr.io/open-telemetry/demo:1.12.0-paymentservice'
+          imagePullPolicy: IfNotPresent
+          ports:
+            
+            - containerPort: 8080
+              name: service
+          env:
+            - name: OTEL_SERVICE_NAME
+              valueFrom:
+                fieldRef:
+                  apiVersion: v1
+                  fieldPath: metadata.labels['app.kubernetes.io/component']
+            - name: OTEL_COLLECTOR_NAME
+              value: 'opentelemetry-demo-otelcol'
+            - name: OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE
+              value: cumulative
+            - name: PAYMENT_SERVICE_PORT
+              value: "8080"
+            - name: FLAGD_HOST
+              value: 'opentelemetry-demo-flagd'
+            - name: FLAGD_PORT
+              value: "8013"
+            - name: OTEL_EXPORTER_OTLP_ENDPOINT
+              value: http://$(OTEL_COLLECTOR_NAME):4317
+            - name: OTEL_RESOURCE_ATTRIBUTES
+              value: service.name=$(OTEL_SERVICE_NAME),service.namespace=opentelemetry-demo,service.version=1.12.0
+          resources:
+            limits:
+              memory: 120Mi
+          securityContext:
+            runAsGroup: 1000
+            runAsNonRoot: true
+            runAsUser: 1000
+          volumeMounts:
+      volumes:

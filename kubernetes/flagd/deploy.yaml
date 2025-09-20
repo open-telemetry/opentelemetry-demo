@@ -1,0 +1,113 @@
+---
+# Source: opentelemetry-demo/templates/component.yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: opentelemetry-demo-flagd
+  labels:
+    
+    opentelemetry.io/name: opentelemetry-demo-flagd
+    app.kubernetes.io/instance: opentelemetry-demo
+    app.kubernetes.io/component: flagd
+    app.kubernetes.io/name: opentelemetry-demo-flagd
+    app.kubernetes.io/version: "1.12.0"
+    app.kubernetes.io/part-of: opentelemetry-demo
+spec:
+  replicas: 1
+  revisionHistoryLimit: 10
+  selector:
+    matchLabels:
+      
+      opentelemetry.io/name: opentelemetry-demo-flagd
+  template:
+    metadata:
+      labels:
+        
+        opentelemetry.io/name: opentelemetry-demo-flagd
+        app.kubernetes.io/instance: opentelemetry-demo
+        app.kubernetes.io/component: flagd
+        app.kubernetes.io/name: opentelemetry-demo-flagd
+    spec:
+      serviceAccountName: opentelemetry-demo
+      containers:
+        - name: flagd
+          image: 'ghcr.io/open-feature/flagd:v0.11.1'
+          imagePullPolicy: IfNotPresent
+          command:
+            - /flagd-build
+            - start
+            - --uri
+            - file:./etc/flagd/demo.flagd.json
+          ports:
+            
+            - containerPort: 8013
+              name: service
+          env:
+            - name: OTEL_SERVICE_NAME
+              valueFrom:
+                fieldRef:
+                  apiVersion: v1
+                  fieldPath: metadata.labels['app.kubernetes.io/component']
+            - name: OTEL_COLLECTOR_NAME
+              value: 'opentelemetry-demo-otelcol'
+            - name: OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE
+              value: cumulative
+            - name: FLAGD_METRICS_EXPORTER
+              value: otel
+            - name: FLAGD_OTEL_COLLECTOR_URI
+              value: $(OTEL_COLLECTOR_NAME):4317
+            - name: OTEL_RESOURCE_ATTRIBUTES
+              value: service.name=$(OTEL_SERVICE_NAME),service.namespace=opentelemetry-demo,service.version=1.12.0
+          resources:
+            limits:
+              memory: 75Mi
+          volumeMounts:
+            - name: config-rw
+              mountPath: /etc/flagd
+        - name: flagdui
+          image: 'ghcr.io/open-telemetry/demo:1.12.0-flagdui'
+          imagePullPolicy: IfNotPresent
+          ports:
+            
+            - containerPort: 4000
+              name: service
+          env:
+            - name: OTEL_SERVICE_NAME
+              valueFrom:
+                fieldRef:
+                  apiVersion: v1
+                  fieldPath: metadata.labels['app.kubernetes.io/component']
+            - name: OTEL_COLLECTOR_NAME
+              value: 'opentelemetry-demo-otelcol'
+            - name: OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE
+              value: cumulative
+            - name: FLAGD_METRICS_EXPORTER
+              value: otel
+            - name: OTEL_EXPORTER_OTLP_ENDPOINT
+              value: http://$(OTEL_COLLECTOR_NAME):4318
+            - name: OTEL_RESOURCE_ATTRIBUTES
+              value: service.name=$(OTEL_SERVICE_NAME),service.namespace=opentelemetry-demo,service.version=1.12.0
+          resources:
+            limits:
+              memory: 75Mi
+          volumeMounts:
+            - mountPath: /app/data
+              name: config-rw
+      initContainers:
+        - command:
+          - sh
+          - -c
+          - cp /config-ro/demo.flagd.json /config-rw/demo.flagd.json && cat /config-rw/demo.flagd.json
+          image: busybox
+          name: init-config
+          volumeMounts:
+          - mountPath: /config-ro
+            name: config-ro
+          - mountPath: /config-rw
+            name: config-rw
+      volumes:
+        - name: config-rw
+          emptyDir: {}
+        - configMap:
+            name: 'opentelemetry-demo-flagd-config'
+          name: config-ro

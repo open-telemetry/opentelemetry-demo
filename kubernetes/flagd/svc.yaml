@@ -1,0 +1,26 @@
+---
+# Source: opentelemetry-demo/templates/component.yaml
+apiVersion: v1
+kind: Service
+metadata:
+  name: opentelemetry-demo-flagd
+  labels:
+    
+    opentelemetry.io/name: opentelemetry-demo-flagd
+    app.kubernetes.io/instance: opentelemetry-demo
+    app.kubernetes.io/component: flagd
+    app.kubernetes.io/name: opentelemetry-demo-flagd
+    app.kubernetes.io/version: "1.12.0"
+    app.kubernetes.io/part-of: opentelemetry-demo
+spec:
+  type: ClusterIP
+  ports:
+    - port: 8013
+      name: tcp-service
+      targetPort: 8013
+    - port: 4000
+      name: tcp-service-0
+      targetPort: 4000
+  selector:
+    
+    opentelemetry.io/name: opentelemetry-demo-flagd

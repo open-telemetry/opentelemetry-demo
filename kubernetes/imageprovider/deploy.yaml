@@ -1,0 +1,62 @@
+---
+# Source: opentelemetry-demo/templates/component.yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: opentelemetry-demo-imageprovider
+  labels:
+    
+    opentelemetry.io/name: opentelemetry-demo-imageprovider
+    app.kubernetes.io/instance: opentelemetry-demo
+    app.kubernetes.io/component: imageprovider
+    app.kubernetes.io/name: opentelemetry-demo-imageprovider
+    app.kubernetes.io/version: "1.12.0"
+    app.kubernetes.io/part-of: opentelemetry-demo
+spec:
+  replicas: 1
+  revisionHistoryLimit: 10
+  selector:
+    matchLabels:
+      
+      opentelemetry.io/name: opentelemetry-demo-imageprovider
+  template:
+    metadata:
+      labels:
+        
+        opentelemetry.io/name: opentelemetry-demo-imageprovider
+        app.kubernetes.io/instance: opentelemetry-demo
+        app.kubernetes.io/component: imageprovider
+        app.kubernetes.io/name: opentelemetry-demo-imageprovider
+    spec:
+      serviceAccountName: opentelemetry-demo
+      containers:
+        - name: imageprovider
+          image: 'ghcr.io/open-telemetry/demo:1.12.0-imageprovider'
+          imagePullPolicy: IfNotPresent
+          ports:
+            
+            - containerPort: 8081
+              name: service
+          env:
+            - name: OTEL_SERVICE_NAME
+              valueFrom:
+                fieldRef:
+                  apiVersion: v1
+                  fieldPath: metadata.labels['app.kubernetes.io/component']
+            - name: OTEL_COLLECTOR_NAME
+              value: 'opentelemetry-demo-otelcol'
+            - name: OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE
+              value: cumulative
+            - name: IMAGE_PROVIDER_PORT
+              value: "8081"
+            - name: OTEL_COLLECTOR_PORT_GRPC
+              value: "4317"
+            - name: OTEL_COLLECTOR_HOST
+              value: $(OTEL_COLLECTOR_NAME)
+            - name: OTEL_RESOURCE_ATTRIBUTES
+              value: service.name=$(OTEL_SERVICE_NAME),service.namespace=opentelemetry-demo,service.version=1.12.0
+          resources:
+            limits:
+              memory: 50Mi
+          volumeMounts:
+      volumes:
