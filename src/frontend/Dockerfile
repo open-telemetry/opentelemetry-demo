@@ -46,8 +46,6 @@ FROM gcr.io/distroless/nodejs22-debian12:nonroot
 
 WORKDIR /app
 
-ENV PORT=8080
-
 COPY --from=builder /app/.next/standalone/ ./
 COPY --from=builder /app/.next/static/ .next/static/
 
@@ -57,6 +55,6 @@ COPY ./src/frontend/public/ public/
 
 COPY ./src/frontend/utils/telemetry/Instrumentation.js Instrumentation.js
 
-EXPOSE ${PORT}
+EXPOSE ${FRONTEND_PORT}
 
 CMD ["--require=./Instrumentation.js", "server.js"]
