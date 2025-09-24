@@ -7,6 +7,9 @@ the release.
 
 ## Unreleased
 
+* [opensearch] Reduce OpenSearch container memory footprint
+  ([#2587](https://github.com/open-telemetry/opentelemetry-demo/pull/2587))
+
 ## 2.1.0
 
 * [chore] add GOMEMLIMIT to all Go services
