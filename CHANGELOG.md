@@ -7,6 +7,9 @@ the release.
 
 ## Unreleased
 
+* Align env vars
+  ([#2582](https://github.com/open-telemetry/opentelemetry-demo/pull/2582))
+
 ## 2.1.0
 
 * [chore] add GOMEMLIMIT to all Go services
