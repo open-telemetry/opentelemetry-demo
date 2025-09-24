@@ -37,7 +37,7 @@ services:
       - OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE
       - OTEL_RESOURCE_ATTRIBUTES
       - OTEL_SERVICE_NAME=accounting
-      - DB_CONNECTION_STRING=Host=postgresql;Username=otelu;Password=otelp;Database=otel
+      - DB_CONNECTION_STRING=Host=${POSTGRES_HOST};Username=otelu;Password=otelp;Database=${POSTGRES_DB}
       - OTEL_DOTNET_AUTO_TRACES_ENTITYFRAMEWORKCORE_INSTRUMENTATION_ENABLED=false
     depends_on:
       otel-collector:
@@ -701,17 +701,24 @@ services:
 
   # Postgresql used by Accounting service
   postgresql:
-    image: ${POSTGRES_IMAGE}
+    image: ${IMAGE_NAME}:${DEMO_VERSION}-postgresql
     container_name: postgresql
+    build:
+      context: ./
+      dockerfile: ${POSTGRES_DOCKERFILE}
+      cache_from:
+        - ${IMAGE_NAME}:${IMAGE_VERSION}-postgresql
+    deploy:
+      resources:
+        limits:
+          memory: 35M
     restart: unless-stopped
     ports:
-      - "5432"
+      - ${POSTGRES_PORT}
     environment:
-      POSTGRES_USER: root
-      POSTGRES_PASSWORD: otel
-      POSTGRES_DB: otel
-    volumes:
-      - ${PWD}/src/postgres/init.sql:/docker-entrypoint-initdb.d/init.sql
+      - POSTGRES_USER=root
+      - POSTGRES_PASSWORD
+      - POSTGRES_DB
     logging: *logging
 
   # Valkey used by Cart service
@@ -808,6 +815,9 @@ services:
       - OTEL_COLLECTOR_HOST
       - OTEL_COLLECTOR_PORT_GRPC
       - OTEL_COLLECTOR_PORT_HTTP
+      - POSTGRES_HOST
+      - POSTGRES_PORT
+      - POSTGRES_PASSWORD
       - GOMEMLIMIT=160MiB
 
   # Prometheus
