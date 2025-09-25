@@ -6,6 +6,7 @@ process content of "Unreleased" section content will generate release notes for
 the release.
 
 ## Unreleased
+* add ipv6 support
 
 ## 2.1.1
 
