@@ -644,7 +644,7 @@ services:
     deploy:
       resources:
         limits:
-          memory: 100M
+          memory: 200M
     restart: always
     environment:
       - FLAGD_UI_PORT
