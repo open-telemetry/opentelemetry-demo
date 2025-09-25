@@ -21,9 +21,9 @@ receivers:
   docker_stats:
     endpoint: unix:///var/run/docker.sock
   postgresql:
-    endpoint: "postgresql:5432"
-    username: "root"
-    password: "otel"
+    endpoint: ${POSTGRES_HOST}:${POSTGRES_PORT}
+    username: root
+    password: ${POSTGRES_PASSWORD}
     metrics:
       postgresql.blks_hit:
         enabled: true
