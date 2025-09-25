@@ -43,7 +43,7 @@ if config_env() == :prod do
       """
 
   host = System.get_env("PHX_HOST") || "example.com"
-  port = String.to_integer(System.get_env("PORT") || "4000")
+  port = String.to_integer(System.get_env("FLAGD_UI_PORT") || "4000")
 
   config :flagd_ui, :dns_cluster_query, System.get_env("DNS_CLUSTER_QUERY")
 
@@ -60,13 +60,10 @@ if config_env() == :prod do
     check_origin: false,
     secret_key_base: secret_key_base
 
-  config :opentelemetry,
-    span_processor: :batch,
-    traces_exporter: :otlp
-
-  config :opentelemetry_exporter,
-    otlp_protocol: :http_protobuf,
-    otlp_endpoint: otel_endpoint
+  config :opentelemetry, :processors,
+    otel_batch_processor: %{
+      exporter: {:opentelemetry_exporter, %{endpoints: [otel_endpoint]}}
+    }
 
   # ## SSL Support
   #

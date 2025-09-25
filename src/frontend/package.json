@@ -11,7 +11,7 @@
     "grpc:generate": "mkdir -p ./protos && protoc -I ./pb  --plugin=./node_modules/.bin/protoc-gen-ts_proto --ts_proto_opt=esModuleInterop=true --ts_proto_out=./protos --ts_proto_opt=outputServices=grpc-js demo.proto"
   },
   "dependencies": {
-    "@bufbuild/protobuf": "^2.8.0",
+    "@bufbuild/protobuf": "^2.9.0",
     "@grpc/grpc-js": "1.12.6",
     "@openfeature/flagd-provider": "0.13.3",
     "@openfeature/flagd-web-provider": "0.7.3",
@@ -36,7 +36,7 @@
     "@opentelemetry/sdk-trace-base": "2.1.0",
     "@opentelemetry/sdk-trace-node": "2.1.0",
     "@opentelemetry/sdk-trace-web": "2.1.0",
-    "@tanstack/react-query": "5.87.4",
+    "@tanstack/react-query": "5.89.0",
     "cookies-next": "6.1.0",
     "currency-symbol-map": "5.1.0",
     "dotenv": "17.2.2",
@@ -44,7 +44,7 @@
     "next": "15.5.3",
     "react": "19.1.1",
     "react-dom": "19.1.1",
-    "sharp": "0.34.3",
+    "sharp": "0.34.4",
     "styled-components": "6.1.19",
     "uuid": "13.0.0"
   },

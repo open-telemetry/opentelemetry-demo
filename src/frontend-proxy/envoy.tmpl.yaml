@@ -241,12 +241,12 @@ static_resources:
                   address:
                     socket_address:
                       address: ${JAEGER_HOST}
-                      port_value: ${JAEGER_PORT}
+                      port_value: ${JAEGER_UI_PORT}
 admin:
   address:
     socket_address:
       address: 0.0.0.0
-      port_value: 10000
+      port_value: ${ENVOY_ADMIN_PORT}
 layered_runtime:
   layers:
     - name: static_layer_0

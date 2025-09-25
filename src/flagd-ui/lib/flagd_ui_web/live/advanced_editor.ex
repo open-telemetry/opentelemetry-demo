@@ -37,7 +37,6 @@ defmodule FlagdUiWeb.AdvancedEditor do
             {Phoenix.HTML.Form.normalize_value("textarea", @content)}
           </textarea>
           <div>
-
             <button
               type="button"
               class="rounded bg-blue-500 px-8 py-4 font-medium text-white transition-colors duration-200 hover:bg-blue-600"
@@ -46,7 +45,6 @@ defmodule FlagdUiWeb.AdvancedEditor do
               Save
             </button>
             <p :if={@unsaved_changes} class="text-red-600">Unsaved changes</p>
-
           </div>
         </.form>
       </div>
