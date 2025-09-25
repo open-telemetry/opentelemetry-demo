@@ -192,6 +192,7 @@ services:
       - VERSION=${IMAGE_VERSION}
       - OTEL_EXPORTER_OTLP_ENDPOINT
       - OTEL_RESOURCE_ATTRIBUTES=${OTEL_RESOURCE_ATTRIBUTES},service.name=currency   # The C++ SDK does not support OTEL_SERVICE_NAME
+      - IPV6_ENABLED
     depends_on:
       otel-collector:
         condition: service_started
@@ -352,6 +353,7 @@ services:
       - OTEL_RESOURCE_ATTRIBUTES
       - OTEL_SERVICE_NAME=frontend-proxy
       - ENVOY_PORT
+      - ENVOY_ADDR
       - FLAGD_HOST
       - FLAGD_PORT
       - FLAGD_UI_HOST
@@ -458,6 +460,7 @@ services:
       - OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE
       - OTEL_RESOURCE_ATTRIBUTES
       - OTEL_SERVICE_NAME=payment
+      - IPV6_ENABLED
     depends_on:
       otel-collector:
         condition: service_started
@@ -523,6 +526,7 @@ services:
       - OTEL_RESOURCE_ATTRIBUTES
       - OTEL_SERVICE_NAME=quote
       - OTEL_PHP_INTERNAL_METRICS_ENABLED=true
+      - IPV6_ENABLED
     depends_on:
       otel-collector:
         condition: service_started
@@ -587,6 +591,7 @@ services:
       - OTEL_RESOURCE_ATTRIBUTES
       - OTEL_SERVICE_NAME=shipping
       - OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE
+      - IPV6_ENABLED
     healthcheck:
       test: ["CMD-SHELL", "timeout 1 bash -c '>/dev/tcp/localhost/${SHIPPING_PORT}'"]
       start_period: 10s
