@@ -358,6 +358,7 @@ services:
       - OTEL_RESOURCE_ATTRIBUTES
       - OTEL_SERVICE_NAME=frontend-proxy
       - ENVOY_PORT
+      - ENVOY_ADDR
       - ENVOY_ADMIN_PORT
       - FLAGD_HOST
       - FLAGD_PORT
