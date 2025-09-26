@@ -119,7 +119,7 @@ jobs:
             context: ./
             setup-qemu: true
           - file: ./src/postgres/Dockerfile
-            tag_suffix: postgres
+            tag_suffix: postgresql
             context: ./
             setup-qemu: true
           - file: ./src/product-catalog/Dockerfile
