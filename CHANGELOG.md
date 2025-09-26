@@ -7,6 +7,11 @@ the release.
 
 ## Unreleased
 
+## 2.1.2
+
+* [chore] add postgresql and opensearch containers to build workflow
+  ([#2595](https://github.com/open-telemetry/opentelemetry-demo/pull/2595))
+
 ## 2.1.1
 
 * Align env vars
