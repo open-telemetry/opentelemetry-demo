@@ -711,7 +711,7 @@ services:
     deploy:
       resources:
         limits:
-          memory: 35M
+          memory: 80M
     restart: unless-stopped
     ports:
       - ${POSTGRES_PORT}
