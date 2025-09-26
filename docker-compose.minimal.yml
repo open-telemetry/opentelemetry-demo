@@ -680,19 +680,23 @@ services:
 
   # OpenSearch
   opensearch:
-    image: ${OPENSEARCH_IMAGE}
     container_name: opensearch
+    build:
+      context: ./
+      dockerfile: ${OPENSEARCH_DOCKERFILE}
+      cache_from:
+        - ${IMAGE_NAME}:${IMAGE_VERSION}-opensearch
     deploy:
       resources:
         limits:
-          memory: 1.1G
+          memory: 800M
     restart: unless-stopped
     environment:
       - cluster.name=demo-cluster
       - node.name=demo-node
       - bootstrap.memory_lock=true
       - discovery.type=single-node
-      - OPENSEARCH_JAVA_OPTS=-Xms300m -Xmx300m
+      - OPENSEARCH_JAVA_OPTS=-Xms400m -Xmx400m
       - DISABLE_INSTALL_DEMO_CONFIG=true
       - DISABLE_SECURITY_PLUGIN=true
       # Workaround on OSX for https://bugs.openjdk.org/browse/JDK-8345296
