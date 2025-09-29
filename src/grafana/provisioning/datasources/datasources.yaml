@@ -1,0 +1,44 @@
+apiVersion: 1
+
+datasources:
+  - name: Prometheus
+    type: prometheus
+    url: http://prometheus:9090
+    isDefault: true
+    jsonData:
+        httpMethod: GET
+    
+  - name: Loki
+    type: loki
+    url: http://loki:3100
+    jsonData:
+      derivedFields:
+        - datasourceUid: Tempo
+          matcherRegex: "trace_id=(\\w+)"
+          name: TraceID
+          url: '$${__value.raw}'
+          urlDisplayLabel: 'View Trace'
+
+  - name: Tempo
+    type: tempo
+    url: http://tempo:3200
+    jsonData:
+      httpMethod: GET
+      serviceMap:
+        datasourceUid: 'Prometheus'
+        enableNodeGraph: true
+      tracesToLogs:
+        datasourceUid: 'Loki'
+        tags: ['service_name', 'service_namespace', 'k8s_pod_name', 'k8s_namespace_name']
+        spanStartTimeShift: '-1h'
+        spanEndTimeShift: '1h'
+        filterByTraceID: true
+        filterBySpanID: false
+      tracesToMetrics:
+        datasourceUid: 'Prometheus'
+        tags: ['service_name', 'service_namespace', 'k8s_pod_name', 'k8s_namespace_name']
+        spanStartTimeShift: '-1h'
+        spanEndTimeShift: '1h'
+        queries:
+          - name: 'Sample query'
+            query: 'sum(rate(traces_spanmetrics_latency_bucket{$$__tags}[5m]))'

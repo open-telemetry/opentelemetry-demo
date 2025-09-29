@@ -228,6 +228,24 @@ else
 	@echo "Please provide a service name using `service=[service name]` or `SERVICE=[service name]`"
 endif
 
+# Use to restart a single service component in bare mode
+# Example: make restart-bare service=alloy
+.PHONY: restart-bare
+restart-bare:
+# work with `service` or `SERVICE` as input
+ifdef SERVICE
+	service := $(SERVICE)
+endif
+
+ifdef service
+	$(DOCKER_COMPOSE_CMD) $(DOCKER_COMPOSE_ENV) -f docker-compose.bare.yml stop $(service)
+	$(DOCKER_COMPOSE_CMD) $(DOCKER_COMPOSE_ENV) -f docker-compose.bare.yml rm --force $(service)
+	$(DOCKER_COMPOSE_CMD) $(DOCKER_COMPOSE_ENV) -f docker-compose.bare.yml create $(service)
+	$(DOCKER_COMPOSE_CMD) $(DOCKER_COMPOSE_ENV) -f docker-compose.bare.yml start $(service)
+else
+	@echo "Please provide a service name using `service=[service name]` or `SERVICE=[service name]`"
+endif
+
 # Use to rebuild and restart (redeploy) a single service component
 # Example: make redeploy service=frontend
 .PHONY: redeploy
@@ -250,3 +268,12 @@ endif
 .PHONY: build-react-native-android
 build-react-native-android:
 	docker build -f src/react-native-app/android.Dockerfile --platform=linux/amd64 --output=. src/react-native-app
+
+.PHONY: start-bare
+start-bare:
+	$(DOCKER_COMPOSE_CMD) $(DOCKER_COMPOSE_ENV) -f docker-compose.bare.yml up --force-recreate --remove-orphans --detach
+	@echo ""
+	@echo "OpenTelemetry Demo in bare mode is running (no opensearch/grafana)."
+	@echo "Go to http://localhost:8080 for the demo UI."
+	@echo "Go to http://localhost:8080/jaeger/ui for the Jaeger UI."
+	@echo "Go to http://localhost:8080/loadgen/ for the Load Generator UI."

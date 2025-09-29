@@ -117,23 +117,29 @@ receivers:
         metrics:
           system.uptime:
             enabled: true
+
+# extensions:
+#   basicauth/loki:
+#     client_auth:
+#       username: "6914"
+#       password: "glc_dev_eyJvIjoiMSIsIm4iOiJzdGFjay02OTE0LW90bHAtd3JpdGUtb3RscC13cml0ZSIsImsiOiJWNlg5S0h2TjAyMVg5NTAzUHRjOGd6THYiLCJtIjp7InIiOiJkZXYtdXMtY2VudHJhbCJ9fQ=="
+
 exporters:
   debug:
-  otlp:
-    endpoint: "jaeger:4317"
+  # OTLP exporter for traces to Tempo
+  otlp/tempo:
+    endpoint: "tempo:4317"
     tls:
       insecure: true
+  # OTLP HTTP exporter for metrics to Prometheus
   otlphttp/prometheus:
     endpoint: "http://prometheus:9090/api/v1/otlp"
     tls:
       insecure: true
-  opensearch:
-    logs_index: otel-logs
-    logs_index_time_format: "yyyy-MM-dd"
-    http:
-      endpoint: "http://opensearch:9200"
-      tls:
-        insecure: true
+  # OTLP HTTP exporter for logs to Loki
+  otlphttp/loki:
+    endpoint: "http://loki:3100/otlp"
+
 processors:
   batch:
   memory_limiter:
@@ -150,7 +156,6 @@ processors:
           # could be removed when https://github.com/vercel/next.js/pull/64852 is fixed upstream
           - replace_pattern(name, "\\?.*", "")
           - replace_match(name, "GET /api/products/*", "GET /api/products/{productId}")
-
 connectors:
   spanmetrics:
 
@@ -159,7 +164,7 @@ service:
     traces:
       receivers: [otlp]
       processors: [resourcedetection, memory_limiter, transform, batch]
-      exporters: [otlp, debug, spanmetrics]
+      exporters: [otlp/tempo, debug, spanmetrics]
     metrics:
       receivers: [docker_stats, httpcheck/frontend-proxy, hostmetrics, nginx, otlp, postgresql, redis, spanmetrics]
       processors: [resourcedetection, memory_limiter, batch]
@@ -167,7 +172,7 @@ service:
     logs:
       receivers: [otlp]
       processors: [resourcedetection, memory_limiter, batch]
-      exporters: [opensearch, debug]
+      exporters: [otlphttp/loki]
   telemetry:
     metrics:
       level: detailed
