@@ -5,7 +5,7 @@ go 1.24.2
 require (
 	github.com/IBM/sarama v1.46.1
 	github.com/google/uuid v1.6.0
-	github.com/open-feature/go-sdk v1.15.1
+	github.com/open-feature/go-sdk v1.16.0
 	github.com/open-feature/go-sdk-contrib/hooks/open-telemetry v0.3.6
 	github.com/open-feature/go-sdk-contrib/providers/flagd v0.3.0
 	go.opentelemetry.io/contrib/bridges/otelslog v0.13.0
@@ -66,7 +66,7 @@ require (
 	go.opentelemetry.io/otel/exporters/otlp/otlptrace v1.38.0 // indirect
 	go.opentelemetry.io/otel/metric v1.38.0 // indirect
 	go.opentelemetry.io/proto/otlp v1.7.1 // indirect
-	go.uber.org/mock v0.5.2 // indirect
+	go.uber.org/mock v0.6.0 // indirect
 	go.uber.org/multierr v1.11.0 // indirect
 	go.uber.org/zap v1.27.0 // indirect
 	golang.org/x/crypto v0.42.0 // indirect
