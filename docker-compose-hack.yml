@@ -572,6 +572,7 @@ services:
       - "mimir.k3d.localhost:host-gateway"
       - "loki.k3d.localhost:host-gateway"
       - "tallycat.k3d.localhost:host-gateway"
+      - "pyroscope.k3d.localhost:host-gateway"
     logging: *logging
     environment:
       - ENVOY_PORT

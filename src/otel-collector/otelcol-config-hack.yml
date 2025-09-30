@@ -107,6 +107,11 @@ exporters:
   otlphttp/loki:
     endpoint: "http://loki.k3d.localhost:3100/otlp"
 
+  otlp/pyroscope:
+    endpoint: "pyroscope.k3d.localhost:4040"
+    tls:
+      insecure: true
+
   otlp/tallycat:
     endpoint: "tallycat.k3d.localhost:4317"
     tls:
@@ -146,6 +151,10 @@ service:
       receivers: [otlp]
       processors: [resourcedetection, memory_limiter, batch]
       exporters: [otlphttp/loki, otlp/tallycat]
+    profiles:
+      receivers: [otlp]
+      processors: [resourcedetection, transform]
+      exporters: [otlp/pyroscope, otlp/tallycat]
   telemetry:
     metrics:
       level: detailed
