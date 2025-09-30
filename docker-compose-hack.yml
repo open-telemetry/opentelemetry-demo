@@ -549,6 +549,21 @@ services:
       - "${VALKEY_PORT}"
     logging: *logging
 
+  otel-ebpf-profiler:
+    build: ./otel-ebpf-profiler
+    command: ["-collection-agent", "otel-collector:4317", "-no-kernel-version-check", "-disable-tls"]
+    hostname: ebpf-profiler
+    privileged: true
+    pid: host
+    logging: *logging
+    volumes:
+      - /sys/kernel/debug:/sys/kernel/debug
+      - /sys/fs/cgroup:/sys/fs/cgroup
+      - /proc:/proc
+    depends_on:
+      otel-collector:
+        condition: service_started
+
   # OpenTelemetry Collector
   otel-collector:
     image: ${COLLECTOR_CONTRIB_IMAGE}
@@ -558,7 +573,7 @@ services:
         limits:
           memory: 200M
     restart: unless-stopped
-    command: [ "--config=/etc/otelcol-config.yml" ]
+    command: [ "--config=/etc/otelcol-config.yml", "--feature-gates=service.profilesSupport" ]
     user: 0:0
     volumes:
       - ${HOST_FILESYSTEM}:/hostfs:ro
@@ -583,24 +598,3 @@ services:
       - FRONTEND_PROXY_ADDR
       - IMAGE_PROVIDER_HOST
       - IMAGE_PROVIDER_PORT
-
-
-  # Beyla eBPF Auto-instrumentation
-  beyla:
-    image: grafana/beyla:latest
-    container_name: beyla
-    privileged: true
-    pid: host
-    network_mode: host
-    volumes:
-      - ./src/beyla/beyla-config.yml:/etc/beyla/beyla-config.yml:ro
-      - /sys/fs/cgroup:/sys/fs/cgroup:ro
-      - /proc:/proc:ro
-    environment:
-      - BEYLA_CONFIG_FILE=/etc/beyla/beyla-config.yml
-      - OTEL_EXPORTER_OTLP_ENDPOINT=http://${OTEL_COLLECTOR_HOST}:${OTEL_COLLECTOR_PORT_GRPC}
-    depends_on:
-      otel-collector:
-        condition: service_started
-    restart: unless-stopped
-    logging: *logging
