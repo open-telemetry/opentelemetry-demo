@@ -20,33 +20,6 @@ receivers:
     collection_interval: 10s
   docker_stats:
     endpoint: unix:///var/run/docker.sock
-  postgresql:
-    endpoint: ${POSTGRES_HOST}:${POSTGRES_PORT}
-    username: root
-    password: ${POSTGRES_PASSWORD}
-    metrics:
-      postgresql.blks_hit:
-        enabled: true
-      postgresql.blks_read:
-        enabled: true
-      postgresql.tup_fetched:
-        enabled: true
-      postgresql.tup_returned:
-        enabled: true
-      postgresql.tup_inserted:
-        enabled: true
-      postgresql.tup_updated:
-        enabled: true
-      postgresql.tup_deleted:
-        enabled: true
-      postgresql.deadlocks:
-        enabled: true
-    tls:
-      insecure: true
-  redis:
-    endpoint: "valkey-cart:6379"
-    username: "valkey"
-    collection_interval: 10s
   # Host metrics
   hostmetrics:
     root_path: /hostfs
@@ -120,19 +93,19 @@ receivers:
 
 exporters:
   debug:
-  # OTLP exporter for traces to Tempo
+  # OTLP gRPC exporter for traces to Tempo
   otlp/tempo:
-    endpoint: "tempo:4317"
+    endpoint: "tempo.k3d.localhost:9999"
     tls:
       insecure: true
-  # OTLP HTTP exporter for metrics to Prometheus
-  otlphttp/prometheus:
-    endpoint: "http://prometheus:9090/api/v1/otlp"
+  # OTLP HTTP exporter for metrics to Mimir
+  otlphttp/mimir:
+    endpoint: "http://mimir.k3d.localhost:9999/otlp" 
     tls:
       insecure: true
   # OTLP HTTP exporter for logs to Loki
   otlphttp/loki:
-    endpoint: "http://loki:3100/otlp"
+    endpoint: "http://loki.k3d.localhost:9999/otlp"
 
 processors:
   batch:
@@ -160,9 +133,9 @@ service:
       processors: [resourcedetection, memory_limiter, transform, batch]
       exporters: [otlp/tempo, debug, spanmetrics]
     metrics:
-      receivers: [docker_stats, httpcheck/frontend-proxy, hostmetrics, nginx, otlp, postgresql, redis, spanmetrics]
+      receivers: [docker_stats, httpcheck/frontend-proxy, hostmetrics, nginx, otlp, spanmetrics]
       processors: [resourcedetection, memory_limiter, batch]
-      exporters: [otlphttp/prometheus, debug]
+      exporters: [otlphttp/mimir, debug]
     logs:
       receivers: [otlp]
       processors: [resourcedetection, memory_limiter, batch]

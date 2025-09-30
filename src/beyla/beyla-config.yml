@@ -1,0 +1,74 @@
+# Copyright The OpenTelemetry Authors
+# SPDX-License-Identifier: Apache-2.0
+
+# Beyla Configuration for OpenTelemetry Demo
+# This configuration enables eBPF-based auto-instrumentation for services
+
+# Service discovery configuration
+discovery:
+  # Enable automatic service discovery
+  services:
+    # Go services
+    - name: "checkout"
+      executable_paths:
+        - "/usr/local/bin/checkout"
+      open_ports:
+        - 3550
+      protocol: "http"
+      
+    - name: "product-catalog"
+      executable_paths:
+        - "/usr/local/bin/product-catalog"
+      open_ports:
+        - 3551
+      protocol: "http"
+      
+    - name: "shipping"
+      executable_paths:
+        - "/usr/local/bin/shipping"
+      open_ports:
+        - 3552
+      protocol: "http"
+
+# Export configuration
+export:
+  # Export to OpenTelemetry Collector
+  otel:
+    endpoint: "http://otel-collector:4317"
+    protocol: "grpc"
+    insecure: true
+    
+  # Export metrics to Prometheus (optional)
+  prometheus:
+    endpoint: "http://prometheus:9090"
+    port: 8999
+
+# Instrumentation settings
+instrumentation:
+  # Enable HTTP instrumentation
+  http:
+    enabled: true
+    
+  # Enable gRPC instrumentation  
+  grpc:
+    enabled: true
+    
+  # Enable database instrumentation
+  database:
+    enabled: true
+    
+  # Enable system metrics
+  system:
+    enabled: true
+
+# Resource attributes
+resource:
+  attributes:
+    - key: "service.name"
+      value: "beyla-instrumentation"
+    - key: "service.version"
+      value: "1.0.0"
+    - key: "instrumentation.name"
+      value: "beyla"
+    - key: "instrumentation.version"
+      value: "latest"

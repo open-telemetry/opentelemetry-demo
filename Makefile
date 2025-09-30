@@ -277,3 +277,11 @@ start-bare:
 	@echo "Go to http://localhost:8080 for the demo UI."
 	@echo "Go to http://localhost:8080/jaeger/ui for the Jaeger UI."
 	@echo "Go to http://localhost:8080/loadgen/ for the Load Generator UI."
+
+
+# Start OTel demo services without additional Grafana services
+.PHONY: hack
+hack:
+	$(DOCKER_COMPOSE_CMD) $(DOCKER_COMPOSE_ENV) -f docker-compose-hack.yml up --force-recreate --remove-orphans --detach
+	@echo ""
+	@echo "OpenTelemetry Demo in hack mode is running (with opensearch/grafana)."

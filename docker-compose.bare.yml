@@ -481,38 +481,6 @@ services:
         condition: service_started
     logging: *logging
 
-  # # Reviews service
-  # reviews:
-  #   image: ${IMAGE_NAME}:${DEMO_VERSION}-reviews
-  #   container_name: reviews
-  #   build:
-  #     context: ./
-  #     dockerfile: ${REVIEWS_DOCKERFILE}
-  #     cache_from:
-  #       - ${IMAGE_NAME}:${IMAGE_VERSION}-reviews
-  #     args:
-  #       OTEL_JAVA_AGENT_VERSION: ${OTEL_JAVA_AGENT_VERSION}
-  #   deploy:
-  #     resources:
-  #       limits:
-  #         memory: 200M
-  #   restart: unless-stopped
-  #   ports:
-  #     - "${REVIEWS_PORT}"
-  #   environment:
-  #     - REVIEWS_PORT
-  #     - FLAGD_HOST
-  #     - OTEL_EXPORTER_OTLP_ENDPOINT=http://${OTEL_COLLECTOR_HOST}:${OTEL_COLLECTOR_PORT_HTTP}
-  #     - OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE
-  #     # - OTEL_RESOURCE_ATTRIBUTES
-  #     - OTEL_SERVICE_NAME=reviews
-  #     # Workaround on OSX for https://bugs.openjdk.org/browse/JDK-8345296
-  #     - _JAVA_OPTIONS
-  #   depends_on:
-  #     otel-collector:
-  #       condition: service_started
-  #   logging: *logging
-
   # Shipping service
   shipping:
     image: ${IMAGE_NAME}:${DEMO_VERSION}-shipping
@@ -721,4 +689,23 @@ services:
     restart: unless-stopped
     ports:
       - "${PROMETHEUS_PORT}:${PROMETHEUS_PORT}"
+    logging: *logging
+  # Beyla eBPF Auto-instrumentation
+  beyla:
+    image: grafana/beyla:latest
+    container_name: beyla
+    privileged: true
+    pid: host
+    network_mode: host
+    volumes:
+      - ./src/beyla/beyla-config.yml:/etc/beyla/beyla-config.yml:ro
+      - /sys/fs/cgroup:/sys/fs/cgroup:ro
+      - /proc:/proc:ro
+    environment:
+      - BEYLA_CONFIG_FILE=/etc/beyla/beyla-config.yml
+      - OTEL_EXPORTER_OTLP_ENDPOINT=http://${OTEL_COLLECTOR_HOST}:${OTEL_COLLECTOR_PORT_GRPC}
+    depends_on:
+      otel-collector:
+        condition: service_started
+    restart: unless-stopped
     logging: *logging
