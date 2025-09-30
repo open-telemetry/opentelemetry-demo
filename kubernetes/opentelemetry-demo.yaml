@@ -148,7 +148,7 @@ data:
         - datasourceUid: webstore-traces
           name: trace_id
         - name: trace_id
-          url: http://localhost:8080/jaeger/ui/trace/$${__value.raw}
+          url: http://localhost:8085/jaeger/ui/trace/$${__value.raw}
           urlDisplayLabel: View in Jaeger UI
       name: Prometheus
       type: prometheus
@@ -328,7 +328,7 @@ data:
     receivers:
       httpcheck/frontend-proxy:
         targets:
-        - endpoint: http://frontend-proxy:8080
+        - endpoint: http://frontend-proxy:8085
       jaeger:
         protocols:
           grpc:
