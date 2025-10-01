@@ -568,10 +568,8 @@ services:
       - "${OTEL_COLLECTOR_PORT_GRPC}"
       - "${OTEL_COLLECTOR_PORT_HTTP}"
     extra_hosts:
-      - "tempo.k3d.localhost:host-gateway"
       - "mimir.k3d.localhost:host-gateway"
       - "loki.k3d.localhost:host-gateway"
-      - "tallycat.k3d.localhost:host-gateway"
     logging: *logging
     environment:
       - ENVOY_PORT
@@ -597,7 +595,6 @@ services:
       - /proc:/proc:ro
     environment:
       - BEYLA_CONFIG_FILE=/etc/beyla/beyla-config.yml
-      - OTEL_EXPORTER_OTLP_ENDPOINT=http://${OTEL_COLLECTOR_HOST}:${OTEL_COLLECTOR_PORT_GRPC}
     depends_on:
       otel-collector:
         condition: service_started
