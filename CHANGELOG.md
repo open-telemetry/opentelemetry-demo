@@ -7,7 +7,7 @@ the release.
 
 ## Unreleased
 
-- [chore] Use pre-built nginx otel image
+* [chore] Use pre-built nginx otel image
   ([#2614](https://github.com/open-telemetry/opentelemetry-demo/pull/2614))
 
 ## 2.1.3
