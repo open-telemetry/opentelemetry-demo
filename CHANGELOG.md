@@ -6,7 +6,9 @@ process content of "Unreleased" section content will generate release notes for
 the release.
 
 ## Unreleased
-* add ipv6 support
+
+* [feat] add ipv6 support
+  ([#2594](https://github.com/open-telemetry/opentelemetry-demo/pull/2594))
 
 ## 2.1.3
 
