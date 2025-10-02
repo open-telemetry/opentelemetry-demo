@@ -712,7 +712,7 @@ services:
     deploy:
       resources:
         limits:
-          memory: 35M
+          memory: 80M
     restart: unless-stopped
     ports:
       - ${POSTGRES_PORT}
@@ -852,6 +852,8 @@ services:
     build:
       context: ./
       dockerfile: ${OPENSEARCH_DOCKERFILE}
+      cache_from:
+        - ${IMAGE_NAME}:${IMAGE_VERSION}-opensearch
     deploy:
       resources:
         limits:

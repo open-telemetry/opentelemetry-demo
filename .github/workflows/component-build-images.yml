@@ -78,6 +78,10 @@ jobs:
             tag_suffix: email
             context: ./
             setup-qemu: true
+          - file: ./src/flagd-ui/Dockerfile
+            tag_suffix: flagd-ui
+            context: ./
+            setup-qemu: true
           - file: ./src/fraud-detection/Dockerfile
             tag_suffix: fraud-detection
             context: ./
@@ -106,8 +110,16 @@ jobs:
             tag_suffix: load-generator
             context: ./
             setup-qemu: true
+          - file: ./src/opensearch/Dockerfile
+            tag_suffix: opensearch
+            context: ./
+            setup-qemu: true
           - file: ./src/payment/Dockerfile
             tag_suffix: payment
+            context: ./
+            setup-qemu: true
+          - file: ./src/postgres/Dockerfile
+            tag_suffix: postgresql
             context: ./
             setup-qemu: true
           - file: ./src/product-catalog/Dockerfile
@@ -124,10 +136,6 @@ jobs:
             setup-qemu: true
           - file: ./src/shipping/Dockerfile
             tag_suffix: shipping
-            context: ./
-            setup-qemu: true
-          - file: ./src/flagd-ui/Dockerfile
-            tag_suffix: flagd-ui
             context: ./
             setup-qemu: true
           - file: ./test/tracetesting/Dockerfile
