@@ -7,6 +7,8 @@
 import json
 import os
 import random
+import sys
+import traceback
 import uuid
 import logging
 
@@ -108,7 +110,7 @@ class WebsiteBrowserUser(PlaywrightUser):
     weight = 2
     headless = True  # to use a headless browser, without a GUI
 
-    @task(2)
+    @task(1)
     @pw
     async def open_cart_page_and_change_currency(self, page: PageWithRetry):
         try:
@@ -130,7 +132,7 @@ class WebsiteBrowserUser(PlaywrightUser):
             traceback.print_exc(file=sys.stdout)
             raise RescheduleTask(e)
 
-    @task(2)
+    @task(1)
     @pw
     async def add_product_to_cart(self, page: PageWithRetry):
         try:
@@ -159,12 +161,12 @@ class WebsiteBrowserUser(PlaywrightUser):
             # Click the go to shopping cart button
             await page.click('button:has-text("Go to Shopping Cart")')
 
-            await page.wait_for_timeout(2000)  # giving the browser time to export the traces
+            await page.wait_for_timeout(8000)  # giving the browser time to export the traces
         except Exception as e:
             traceback.print_exc(file=sys.stdout)
             raise RescheduleTask(e)
 
-    @task(4)
+    @task(3)
     @pw
     async def add_product_to_cart_and_checkout(self, page: PageWithRetry):
         try:
@@ -210,10 +212,141 @@ class WebsiteBrowserUser(PlaywrightUser):
 
             # Complete the order
             await page.click('button:has-text("Place Order")')
-            await page.wait_for_timeout(2000)  # giving the browser time to export the traces
+            await page.wait_for_timeout(8000)  # giving the browser time to export the traces
         except Exception as e:
             traceback.print_exc(file=sys.stdout)
             raise RescheduleTask(e)
+        
+    @task(1)
+    @pw
+    async def add_product_to_cart(self, page: PageWithRetry):
+        try:
+            page.on("console", lambda msg: print(msg.text))
+            await page.route('**/*', add_baggage_header)
+            await page.goto("/", wait_until="domcontentloaded")
+
+            # Add 1-4 products to the cart
+            for i in range(random.choice([1, 2, 3, 4])):
+                # Get a random product link and click on it
+                product_id = random.choice(products)
+                await page.click(f"a[href='/product/{product_id}']")
+
+                # Add a random number of products to the cart
+                product_count = random.choice([1, 2, 3, 4, 5, 10])
+                await page.select_option('select[data-cy="product-quantity"]', value=str(product_count))
+
+                # add the product to our cart
+                await page.click('button:has-text("Add To Cart")')
+
+                # Continue Shopping
+                await page.click('button:has-text("Continue Shopping")')
+
+            # Open the Shopping cart flyout
+            await page.click('a[data-cy="cart-icon"]')
+            # Click the go to shopping cart button
+            await page.click('button:has-text("Go to Shopping Cart")')
+
+            await page.wait_for_timeout(8000)  # giving the browser time to export the traces
+        except Exception as e:
+            traceback.print_exc(file=sys.stdout)
+            raise RescheduleTask(e)
+
+        @task(3)
+        @pw
+        async def view_product_page_and_add_to_cart(self, page: PageWithRetry):
+            """
+            Navigates directly to the product UI page (/product/<id>) so Dynatrace can compute LCP/INP.
+            Falls back to clicking from "/" if deep-linking fails. Keeps waits so RUM beacons flush.
+            """
+            try:
+                page.on("console", lambda msg: print(msg.text))
+                await page.route('**/*', add_baggage_header)
+
+                # Pick a product you already use in API load
+                product_id = random.choice(products)
+
+                # --- Attempt 1: Deep-link directly to the UI route (Next.js dynamic route)
+                # Upstream route file: src/frontend/pages/product/[productId]/index.tsx
+                # URL shape confirmed as /product/<productId>
+                resp = await page.goto(f"/product/{product_id}", wait_until="domcontentloaded")
+                on_product = bool(resp and 200 <= resp.status <= 299)
+
+                # --- Attempt 2: Click-through from "/" if deep-link didn't render the page
+                if not on_product:
+                    await page.goto("/", wait_until="domcontentloaded")
+                    # Try a few selector patterns likely present in the catalog grid
+                    for sel in [
+                        f"a[href='/product/{product_id}']",
+                        f"a[href^='/product/']",
+                        f"[data-product-id='{product_id}']",
+                        "[data-cy='product-card'], .product-card, a[href^='/product/']",
+                    ]:
+                        try:
+                            loc = page.locator(sel).first
+                            if await loc.count() > 0:
+                                await loc.click()
+                                break
+                        except Exception:
+                            pass
+
+                    # Works for SPA route changes and full navigations
+                    try:
+                        await page.wait_for_url("**/product/**", timeout=8000)
+                        on_product = True
+                    except Exception:
+                        on_product = False  # e.g., modal on "/"
+
+                # --- Interact: set quantity (if available), Add to Cart (INP), then continue
+                # Quantity selector used in many astroshop forks; tweak if your DOM differs
+                try:
+                    await page.select_option('select[data-cy="product-quantity"]',
+                                            value=str(random.choice([1,2,3,4,5,10])))
+                except Exception:
+                    pass  # selector may not exist
+
+                await page.click('button:has-text("Add To Cart")', timeout=4000)
+
+                # Some UIs show a "Continue Shopping" button; handle both cases
+                try:
+                    await page.click('button:has-text("Continue Shopping")', timeout=8000)
+                except Exception:
+                    pass
+
+                # Open cart and navigate to full cart page (optional but useful)
+                try:
+                    await page.click('a[data-cy="cart-icon"]', timeout=8000)
+                    try:
+                        with page.expect_navigation(timeout=8000):
+                            await page.click('button:has-text("Go to Shopping Cart")', timeout=8000)
+                    except Exception:
+                        # SPA route change fallback
+                        try:
+                            await page.wait_for_url("**/cart**", timeout=8000)
+                        except Exception:
+                            pass
+                except Exception:
+                    pass
+
+                # Allow time for RUM beacons (LCP/INP) to flush
+                await page.wait_for_timeout(8000)
+
+                # Optional: log final URL for debugging
+                print("Final URL:", page.url, "on_product:", on_product)
+
+            except Exception as e:
+                traceback.print_exc(file=sys.stdout)
+                # Reschedule to keep the user alive even if a selector fails intermittently
+                raise RescheduleTask(e)        
+
+        @task(2)
+        @pw
+        async def view_product_page(self, page: PageWithRetry):
+            await page.route('**/*', add_baggage_header)
+            product = random.choice([
+                "0PUK6V6EV0","1YMWWN1N4O","2ZYFJ3GM2N","66VCHSJNUP"
+            ])
+            await page.goto(f"/product/{product}", wait_until="domcontentloaded")
+            await page.wait_for_timeout(8000)            
 
 
 async def add_baggage_header(route: Route, request: Request):
