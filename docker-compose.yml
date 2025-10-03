@@ -343,7 +343,6 @@ services:
       - "${ENVOY_PORT}:${ENVOY_PORT}"
       - "${ENVOY_ADMIN_PORT}:${ENVOY_ADMIN_PORT}"
     environment:
-      - IPV6_ENABLED
       - FRONTEND_PORT
       - FRONTEND_HOST
       - LOCUST_WEB_HOST
