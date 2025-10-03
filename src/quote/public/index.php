@@ -87,7 +87,18 @@ $server = new HttpServer(function (ServerRequestInterface $request) use ($app) {
 
     return $response;
 });
-$address = '0.0.0.0:' . getenv('QUOTE_PORT');
+
+$ip = "0.0.0.0";
+
+$ipv6_enabled = getenv('IPV6_ENABLED');
+
+if ($ipv6_enabled == "true") {
+    $ip = "[::]";
+    echo "Overwriting Localhost IP: {$ip}" . PHP_EOL;
+} 
+
+$address = $ip . ':' . getenv('QUOTE_PORT');
+
 $socket = new SocketServer($address);
 $server->listen($socket);
 

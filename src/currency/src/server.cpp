@@ -238,7 +238,17 @@ class CurrencyService final : public oteldemo::CurrencyService::Service
 
 void RunServer(uint16_t port)
 {
-  std::string address("0.0.0.0:" + std::to_string(port));
+  std::string ip("0.0.0.0");
+
+  const char* ipv6_enabled = std::getenv("IPV6_ENABLED");
+  
+  if (ipv6_enabled == "true") {
+    ip = "[::]";
+    logger->Info("Overwriting Localhost IP: " + ip);
+  }
+
+  std::string address(ip + ":" +  std::to_string(port));
+
   CurrencyService currencyService;
   HealthServer healthService;
   ServerBuilder builder;
