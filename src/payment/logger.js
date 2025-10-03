@@ -26,7 +26,7 @@ const transport = pino.transport({
 const logger = pino(transport, {
   mixin() {
     return {
-      'service.name': process.env['OTEL_SERVICE_NAME'],
+      'service.name': process.env['OTEL_SERVICE_NAME'] || 'payment',
     }
   },
   formatters: {

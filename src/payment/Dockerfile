@@ -26,9 +26,6 @@ COPY ./src/payment/index.js index.js
 COPY ./src/payment/logger.js logger.js
 COPY ./src/payment/opentelemetry.js opentelemetry.js
 
-# Set default value for OTEL_* config if not provided by Docker Compose or K8s
-ENV OTEL_SERVICE_NAME="payment"
-
 EXPOSE ${PAYMENT_PORT}
 
 CMD ["--require=./opentelemetry.js", "index.js"]
