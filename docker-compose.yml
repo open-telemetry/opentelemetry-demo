@@ -190,6 +190,7 @@ services:
       - "${CURRENCY_PORT}"
     environment:
       - CURRENCY_PORT
+      - IPV6_ENABLED
       - VERSION=${IMAGE_VERSION}
       - OTEL_EXPORTER_OTLP_ENDPOINT
       - OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE
@@ -342,6 +343,7 @@ services:
       - "${ENVOY_PORT}:${ENVOY_PORT}"
       - "${ENVOY_ADMIN_PORT}:${ENVOY_ADMIN_PORT}"
     environment:
+      - IPV6_ENABLED
       - FRONTEND_PORT
       - FRONTEND_HOST
       - LOCUST_WEB_HOST
@@ -460,6 +462,7 @@ services:
     ports:
       - "${PAYMENT_PORT}"
     environment:
+      - IPV6_ENABLED
       - PAYMENT_PORT
       - FLAGD_HOST
       - FLAGD_PORT
@@ -526,6 +529,7 @@ services:
     ports:
       - "${QUOTE_PORT}"
     environment:
+      - IPV6_ENABLED
       - OTEL_EXPORTER_OTLP_ENDPOINT=http://${OTEL_COLLECTOR_HOST}:${OTEL_COLLECTOR_PORT_HTTP}
       - OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE
       - OTEL_PHP_AUTOLOAD_ENABLED=true
@@ -591,6 +595,7 @@ services:
     ports:
       - "${SHIPPING_PORT}"
     environment:
+      - IPV6_ENABLED
       - SHIPPING_PORT
       - QUOTE_ADDR
       - OTEL_EXPORTER_OTLP_ENDPOINT
