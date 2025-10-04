@@ -1,39 +1,35 @@
-# Contributing to OpenTelemetry Demo Webstore
+# Contributing
 
-Welcome to the OpenTelemetry Demo repository! We appreciate your interest in
-contributing. Whether you're fixing a bug, improving documentation, or adding a
-new feature, we value your contribution.
+Welcome to OpenTelemetry Demo Webstore repository!
 
-Before getting started, please review the
-[OpenTelemetry Contributor Guide](https://github.com/open-telemetry/community/blob/main/guides/contributor/README.md)
-for details on code attribution and best practices.
+Before you start - see OpenTelemetry
+ [Contributor Guide](https://github.com/open-telemetry/community/blob/main/guides/contributor/README.md)
+ for details on code attribution.
 
-## Getting Started
+## Join a SIG Call
 
-### Join a SIG Call
+We meet every other week on Wednesday's at 8:00 PT. The meeting is subject to change
+depending on contributors' availability. Check the [OpenTelemetry community
+calendar](https://github.com/open-telemetry/community?tab=readme-ov-file#special-interest-groups)
+for specific dates and Zoom meeting links.
 
-We meet every other Wednesday at 8:00 PT. The schedule may change based on
-contributors' availability. Check the [OpenTelemetry Community Calendar](https://github.com/open-telemetry/community?tab=readme-ov-file#special-interest-groups)
-for specific dates and Zoom links.
+Meeting notes are available as a public [Google
+doc](https://docs.google.com/document/d/16f-JOjKzLgWxULRxY8TmpM_FjlI1sthvKurnqFz9x98/edit).
+For edit access, get in touch on
+[Slack](https://cloud-native.slack.com/archives/C03B4CWV4DA).
 
-See the
-[public meeting notes](https://docs.google.com/document/d/16f-JOjKzLgWxULRxY8TmpM_FjlI1sthvKurnqFz9x98/edit)
-for a summary description of past meetings.
-For edit access, ask in our
-[Slack channel](https://cloud-native.slack.com/archives/C03B4CWV4DA).
+## Sign the CLA
 
-### Sign the Contributor License Agreement (CLA)
+Before you can contribute, you will need to sign the [Contributor License
+Agreement](https://identity.linuxfoundation.org/projects/cncf).
 
-Before contributing, sign the [CLA](https://identity.linuxfoundation.org/projects/cncf)
+## Find a Buddy and Get Started Quickly
 
-### Find a Mentor (Buddy System)
+If you are looking for someone to help you find a starting point and be a
+resource for your first contribution, join our Slack channel and find a buddy!
 
-New to OpenTelemetry? We encourage you to find a mentor who can guide you
-through your first contribution.
-
-1. Create your [CNCF Slack account](https://slack.cncf.io/) and join the
-   [otel-community-demo](https://app.slack.com/client/T08PSQ7BQ/C03B4CWV4DA)
-   channel.
+1. Create your [CNCF Slack account](http://slack.cncf.io/) and join the
+   [otel-community-demo](https://app.slack.com/client/T08PSQ7BQ/C03B4CWV4DA) channel.
 2. Post in the room with an introduction to yourself, what area you are
    interested in (check issues marked with [help
    wanted](https://github.com/open-telemetry/opentelemetry-demo/labels/help%20wanted)),
@@ -45,97 +41,60 @@ contributing to OpenTelemetry: providing context, reviewing PRs, and helping
 those get merged. Buddies will not be available 24/7, but is committed to
 responding during their normal contribution hours.
 
-## Setting Up Your Development Environment
+## Development Environment
 
-### Prerequisites
+You can contribute to this project from a Windows, macOS or Linux machine. The
+first step to contributing is ensuring you can run the demo successfully from
+your local machine.
 
-Ensure you have the following installed:
+On all platforms, the minimum requirements are:
 
-- [Git](https://git-scm.com/book/en/v2/Getting-Started-Installing-Git)
-- [Make](https://www.gnu.org/software/make/)
-- [Docker](https://www.docker.com/get-started/)
+- Docker
 - [Docker Compose](https://docs.docker.com/compose/install/#install-compose) v2.0.0+
 
-### Clone the Repository
+### Clone Repo
 
-```sh
+- Clone the Webstore Demo repository:
+
+```shell
 git clone https://github.com/open-telemetry/opentelemetry-demo.git
+```
+
+### Open Folder
+
+- Navigate to the cloned folder:
+
+```shell
 cd opentelemetry-demo/
 ```
 
-### Run the Demo
+### Gradle Update [Windows Only]
 
-```sh
+- Navigate to the Java Ad Service folder to install and update Gradle:
+
+```shell
+cd .\src\ad\
+.\gradlew installDist
+.\gradlew wrapper --gradle-version 7.4.2
+```
+
+### Run Docker Compose
+
+- Start the demo:
+
+```shell
 make start
 ```
 
-### Verify the Webstore & Telemetry
+### Verify the Webstore & the Telemetry
 
-Once the images are built and containers are started, visit:
+Once the images are built and containers are started you can access:
 
-- **Webstore**: [http://localhost:8080/](http://localhost:8080/)
-- **Jaeger**: [http://localhost:8080/jaeger/ui/](http://localhost:8080/jaeger/ui/)
-- **Grafana**: [http://localhost:8080/grafana/](http://localhost:8080/grafana/)
-- **Feature Flags UI**: [http://localhost:8080/feature/](http://localhost:8080/feature/)
-- **Load Generator UI**: [http://localhost:8080/loadgen/](http://localhost:8080/loadgen/)
-
-## Troubleshooting Common Issues
-
-### Docker Not Running
-
-**Error:** `Error response from daemon: Docker daemon is not running.`
-
-**Solution:**
-
-- **Windows/macOS**: Open Docker Desktop and ensure it's running.
-- **Linux**: Check Docker status:
-
-```sh
-systemctl status docker
-```
-
-If inactive, start it:
-
-```sh
-sudo systemctl start docker
-  ```
-
-### Gradle Issues (Windows)
-
-If you encounter Gradle issues, run:
-
-```sh
-cd src/ad/
-./gradlew installDist
-./gradlew wrapper --gradle-version 7.4.2
-```
-
-### Docker build cache issues
-
-While developing, you may encounter issues with Docker build cache. To clear the
-cache:
-
-```sh
-docker system prune -a
-```
-
-Warning: This removes all unused Docker data, including images, containers,
-volumes, and networks. Use with caution.
-
-### Debugging Tips
-
-- Use `docker ps` to check running containers.
-- View logs for services:
-
-```sh
-docker logs <container_id>
-```
-
-- Restart containers if needed:
-
-```sh
-docker-compose restart
-```
+- Webstore: <http://localhost:8080/>
+- Jaeger: <http://localhost:8080/jaeger/ui/>
+- Grafana: <http://localhost:8080/grafana/>
+- Feature Flags UI: <http://localhost:8080/feature/>
+- Load Generator UI: <http://localhost:8080/loadgen//>
 
 ### Review the Documentation
 
@@ -146,8 +105,8 @@ documentation can be found on the OTel website under [Demo docs][docs].
 
 ### Running the React Native example
 
-If you are interested in running the React Native example app in this repo
-please review [these instructions](src/react-native-app/README.md).
+If you are interested in running the React Native example app in this repo please
+review [these instructions](src/react-native-app/README.md).
 
 ## Create Your First Pull Request
 
@@ -287,29 +246,19 @@ make build-multiplatform-and-push
 
 Maintainers can create a new release when desired by following these steps.
 
-1. Create a Pull Request that updates the `IMAGE_VERSION` environment variable
-   in `.env` to the _new_ version number based on the format `x.x.x` and merge
-   it.
-2. [Create a new
-   release](https://github.com/open-telemetry/opentelemetry-demo/releases/new),
-   creating a new tag for the _new_ version number based on main. Automatically
-   generate release notes. Prepend a summary of the major changes to the release
-   notes.
-3. After images for the new release are built and published, create a new Pull
-   Request that updates the `CHANGELOG.md` with the new version leaving the
-   `Unreleased` section for the next release. Merge the Pull Request.
-4. Create a new Pull Request to update the deployment of the demo in the
-   [OpenTelemetry Helm
-   Charts](https://github.com/open-telemetry/opentelemetry-helm-charts) repo.
-   Merge the Pull Request.
-5. After the Helm chart is released, create a new Pull Request which updates the
-   Demo's Kubernetes manifest by running `make generate-kubernetes-manifests`.
-   Merge the Pull Request.
-6. Create a new Tag for the _new_ version with a suffix of `-k8s`. This tag
-   will be used to deploy the new version of the demo to Kubernetes using the
-   supplied manifests.
+- [Create a new
+  release](https://github.com/open-telemetry/opentelemetry-demo/releases/new),
+  creating a new tag in the format `x.x.x` based on main. Automatically generate
+  release notes. Prepend a summary of the major changes to the release notes.
+- After images for the new release are built and published, create a new Pull
+  Request that updates the `IMAGE_VERSION` environment variable in `.env` to the
+  _new_ version number, and update the `CHANGELOG.md` with the new version
+  leaving the `Unreleased` section for the next release.
+- Create a new Pull Request to update the deployment of the demo in the
+  [OpenTelemetry Helm
+  Charts](https://github.com/open-telemetry/opentelemetry-helm-charts) repo.
+- After the Helm chart is released, create a new Pull Request which updates the
+  Demo's Kubernetes manifest by running `make generate-kubernetes-manifests` and
+  committing the changes.
 
 [docs]: https://opentelemetry.io/docs/demo/
-
-By following this guide, you'll have a smoother onboarding experience as a
-contributor. Happy coding!

@@ -1,0 +1,137 @@
+{
+  "$schema": "https://docs.renovatebot.com/renovate-schema.json",
+
+  "schedule": "every weekend",
+
+  // double PR and branch limits
+  prConcurrentLimit: 20,
+  branchConcurrentLimit: 20,
+  labels: ['dependencies'],
+
+  // put by default dependency update all in one group
+  groupName: "config-no-service",
+
+  "assigneesFromCodeOwners": true,
+
+  "packageRules": [
+    {
+      "matchFileNames": ["src/accounting/**"],
+      "groupName": "accounting",
+    },
+    {
+      "matchFileNames": ["src/ad/**"],
+      "groupName": "ad",
+    },
+    {
+      "matchFileNames": ["src/cart/**"],
+      "groupName": "cart",
+    },
+    {
+      "matchFileNames": ["src/checkout/**"],
+      "groupName": "checkout",
+    },
+    {
+      "matchFileNames": ["src/currency/**"],
+      "groupName": "currency",
+    },
+    {
+      "matchFileNames": ["src/email/**"],
+      "groupName": "email",
+    },
+    {
+      "matchFileNames": ["src/featureflagservice/**"],
+      "groupName": "featureflagservice",
+    },
+    {
+      "matchFileNames": ["src/fraud-detection/**"],
+      "groupName": "fraud-detection",
+    },
+    {
+      "matchFileNames": ["src/frontend/**"],
+      "groupName": "frontend",
+    },
+    {
+      "matchFileNames": ["src/frontend-proxy/**"],
+      "groupName": "frontend-proxy",
+    },
+    {
+      "matchFileNames": ["src/grafana/**"],
+      "groupName": "grafana",
+    },
+    {
+      "matchFileNames": ["src/kafka/**"],
+      "groupName": "kafka",
+    },
+    {
+      "matchFileNames": ["src/load-generator/**"],
+      "groupName": "load-generator",
+    },
+    {
+      "matchFileNames": ["src/otel-collector/**"],
+      "groupName": "otel-collector",
+    },
+    {
+      "matchFileNames": ["src/payment/**"],
+      "groupName": "payment",
+    },
+    {
+      "matchFileNames": ["src/product-catalog/**"],
+      "groupName": "product-catalog",
+    },
+    {
+      "matchFileNames": ["src/prometheus/**"],
+      "groupName": "prometheus",
+    },
+    {
+      "matchFileNames": ["src/quote/**"],
+      "groupName": "quote",
+    },
+    {
+      "matchFileNames": ["src/recommendation/**"],
+      "groupName": "recommendation",
+    },
+    {
+      "matchFileNames": ["src/shipping/**"],
+      "groupName": "shipping",
+    },
+    {
+      // intentionally using Java 11 in some examples
+      // not using matchUpdateTypes "major", because renovate wants to bump "11-jre" to "11.0.19_7-jre"
+      "matchPackageNames": ["eclipse-temurin"],
+      "enabled": false
+    }
+  ],
+
+  "regexManagers": [
+    {
+      // Parse image version from .env file.
+      "fileMatch": [
+        ".env$"
+      ],
+      "datasourceTemplate": "docker",
+      "matchStrings": [
+        "IMAGE=(?<depName>.+):(?<currentValue>.+)"
+      ]
+    },
+    {
+      "fileMatch": [
+        "test/tracetesting/Dockerfile$"
+      ],
+      "datasourceTemplate": "docker",
+      "depNameTemplate": "kubeshop/tracetest",
+      "matchStrings": [
+        "IMAGE_VERSION=(?<currentValue>.+)"
+      ]
+    },
+    {
+      "fileMatch": [
+        "src/grafana/provisioning/datasources/opensearch.yaml$"
+      ],
+      "datasourceTemplate": "docker",
+      "depNameTemplate": "opensearchproject/opensearch",
+      "matchStrings": [
+        "version: (?<currentValue>.+)"
+      ]
+    }
+  ]
+}

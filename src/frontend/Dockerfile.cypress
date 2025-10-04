@@ -1,9 +1,6 @@
-FROM cypress/included:14.5.0
-
+FROM cypress/included:10.3.1-typescript
 WORKDIR /app
-
 COPY ./src/frontend .
-
 RUN npm clean-install
 
 ENTRYPOINT ["cypress", "run"]

@@ -27,19 +27,17 @@ public class ValkeyCartStore : ICartStore
 
     private static readonly ActivitySource CartActivitySource = new("OpenTelemetry.Demo.Cart");
     private static readonly Meter CartMeter = new Meter("OpenTelemetry.Demo.Cart");
-    private static readonly Histogram<double> addItemHistogram = CartMeter.CreateHistogram(
+    private static readonly Histogram<long> addItemHistogram = CartMeter.CreateHistogram<long>(
         "app.cart.add_item.latency",
-        unit: "s",
-        advice: new InstrumentAdvice<double>
+        advice: new InstrumentAdvice<long>
         {
-            HistogramBucketBoundaries = [ 0.005, 0.01, 0.025, 0.05, 0.075, 0.1, 0.25, 0.5, 0.75, 1, 2.5, 5, 7.5, 10 ]
+            HistogramBucketBoundaries = [ 500000, 600000, 700000, 800000, 900000, 1000000, 1100000 ]
         });
-    private static readonly Histogram<double> getCartHistogram = CartMeter.CreateHistogram(
+    private static readonly Histogram<long> getCartHistogram = CartMeter.CreateHistogram<long>(
         "app.cart.get_cart.latency",
-        unit: "s",
-        advice: new InstrumentAdvice<double>
+        advice: new InstrumentAdvice<long>
         {
-            HistogramBucketBoundaries = [ 0.005, 0.01, 0.025, 0.05, 0.075, 0.1, 0.25, 0.5, 0.75, 1, 2.5, 5, 7.5, 10 ]
+            HistogramBucketBoundaries = [ 300000, 400000, 500000, 600000, 700000, 800000, 900000 ]
         });
     private readonly ConfigurationOptions _redisConnectionOptions;
 
@@ -124,7 +122,7 @@ public class ValkeyCartStore : ICartStore
     public async Task AddItemAsync(string userId, string productId, int quantity)
     {
         var stopwatch = Stopwatch.StartNew();
-        _logger.LogInformation($"AddItemAsync called with userId={userId}, productId={productId}, quantity={quantity}");
+        _logger.LogInformation("AddItemAsync called with userId={userId}, productId={productId}, quantity={quantity}", userId, productId, quantity);
 
         try
         {
@@ -167,13 +165,13 @@ public class ValkeyCartStore : ICartStore
         }
         finally
         {
-            addItemHistogram.Record(stopwatch.Elapsed.TotalSeconds);
+            addItemHistogram.Record(stopwatch.ElapsedTicks);
         }
     }
 
     public async Task EmptyCartAsync(string userId)
     {
-        _logger.LogInformation($"EmptyCartAsync called with userId={userId}");
+        _logger.LogInformation("EmptyCartAsync called with userId={userId}", userId);
 
         try
         {
@@ -193,7 +191,7 @@ public class ValkeyCartStore : ICartStore
     public async Task<Oteldemo.Cart> GetCartAsync(string userId)
     {
         var stopwatch = Stopwatch.StartNew();
-        _logger.LogInformation($"GetCartAsync called with userId={userId}");
+        _logger.LogInformation("GetCartAsync called with userId={userId}", userId);
 
         try
         {
@@ -218,7 +216,7 @@ public class ValkeyCartStore : ICartStore
         }
         finally
         {
-            getCartHistogram.Record(stopwatch.Elapsed.TotalSeconds);
+            getCartHistogram.Record(stopwatch.ElapsedTicks);
         }
     }
 

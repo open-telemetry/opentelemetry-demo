@@ -25,41 +25,16 @@
   "editable": true,
   "fiscalYearStartMonth": 0,
   "graphTooltip": 0,
-  "id": 3,
+  "id": 5,
   "links": [],
   "panels": [
-    {
-      "fieldConfig": {
-        "defaults": {},
-        "overrides": []
-      },
-      "gridPos": {
-        "h": 2,
-        "w": 24,
-        "x": 0,
-        "y": 0
-      },
-      "id": 26,
-      "options": {
-        "code": {
-          "language": "plaintext",
-          "showLineNumbers": false,
-          "showMiniMap": false
-        },
-        "content": "This dashboard uses RED metrics generated for all services by the spanmetrics connector configured in the OpenTelemetry Collector.\n<br>\nChart panels may require 5 minutes after the Demo is started before rendering data.",
-        "mode": "html"
-      },
-      "pluginVersion": "11.4.0",
-      "title": "",
-      "type": "text"
-    },
     {
       "collapsed": false,
       "gridPos": {
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 2
+        "y": 0
       },
       "id": 24,
       "panels": [],
@@ -110,7 +85,7 @@
         "h": 20,
         "w": 12,
         "x": 0,
-        "y": 3
+        "y": 1
       },
       "id": 2,
       "interval": "5m",
@@ -129,7 +104,7 @@
         "showThresholdMarkers": true,
         "sizing": "auto"
       },
-      "pluginVersion": "11.4.0",
+      "pluginVersion": "11.3.0",
       "targets": [
         {
           "datasource": {
@@ -235,7 +210,7 @@
         "h": 13,
         "w": 12,
         "x": 12,
-        "y": 3
+        "y": 1
       },
       "id": 4,
       "interval": "5m",
@@ -264,7 +239,7 @@
         "text": {},
         "valueMode": "color"
       },
-      "pluginVersion": "11.4.0",
+      "pluginVersion": "11.3.0",
       "targets": [
         {
           "datasource": {
@@ -322,7 +297,7 @@
         "h": 7,
         "w": 12,
         "x": 12,
-        "y": 16
+        "y": 14
       },
       "id": 15,
       "interval": "5m",
@@ -351,7 +326,7 @@
         "text": {},
         "valueMode": "color"
       },
-      "pluginVersion": "11.4.0",
+      "pluginVersion": "11.3.0",
       "targets": [
         {
           "datasource": {
@@ -377,7 +352,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 23
+        "y": 21
       },
       "id": 14,
       "panels": [],
@@ -503,7 +478,7 @@
         "h": 11,
         "w": 24,
         "x": 0,
-        "y": 24
+        "y": 22
       },
       "id": 22,
       "interval": "5m",
@@ -520,7 +495,7 @@
         "showHeader": true,
         "sortBy": []
       },
-      "pluginVersion": "11.4.0",
+      "pluginVersion": "11.3.0",
       "targets": [
         {
           "datasource": {
@@ -646,7 +621,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 35
+        "y": 33
       },
       "id": 20,
       "panels": [],
@@ -668,7 +643,8 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "blue"
+                "color": "blue",
+                "value": null
               },
               {
                 "color": "green",
@@ -696,7 +672,7 @@
         "h": 13,
         "w": 12,
         "x": 0,
-        "y": 36
+        "y": 34
       },
       "id": 25,
       "interval": "5m",
@@ -796,7 +772,8 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green"
+                "color": "green",
+                "value": null
               },
               {
                 "color": "red",
@@ -812,7 +789,7 @@
         "h": 13,
         "w": 12,
         "x": 12,
-        "y": 36
+        "y": 34
       },
       "id": 10,
       "interval": "5m",
@@ -849,7 +826,7 @@
           },
           "editorMode": "code",
           "exemplar": false,
-          "expr": "topk(7, sum by (span_name,service_name)(increase(traces_span_metrics_duration_milliseconds_sum{service_name=~\"${service}\", span_name=~\"$span_name\"}[5m]) / increase(traces_span_metrics_duration_milliseconds_count{service_name=~\"${service}\",span_name=~\"$span_name\"}[5m\n])))",
+          "expr": "topk(7, sum by (span_name,service_name)(increase(duration_milliseconds_sum{service_name=~\"${service}\", span_name=~\"$span_name\"}[5m]) / increase(traces_span_metrics_duration_milliseconds_count{service_name=~\"${service}\",span_name=~\"$span_name\"}[5m\n])))",
           "instant": true,
           "interval": "",
           "legendFormat": "{{span_name}} [{{service_name}}]",
@@ -908,7 +885,8 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green"
+                "color": "green",
+                "value": null
               },
               {
                 "color": "red",
@@ -924,7 +902,7 @@
         "h": 12,
         "w": 24,
         "x": 0,
-        "y": 49
+        "y": 47
       },
       "id": 16,
       "interval": "5m",
@@ -1022,13 +1000,13 @@
     ]
   },
   "time": {
-    "from": "now-15m",
+    "from": "now-1h",
     "to": "now"
   },
   "timepicker": {},
   "timezone": "",
   "title": "Spanmetrics Demo Dashboard",
   "uid": "W2gX2zHVk48",
-  "version": 2,
+  "version": 1,
   "weekStart": ""
 }

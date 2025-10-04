@@ -3,7 +3,7 @@
 /**
  * Copied with modification from src/frontend/utils/Request.ts
  */
-import getFrontendProxyURL from "@/utils/Settings";
+import getLocalhost from "@/utils/Localhost";
 
 interface IRequestParams {
   url: string;
@@ -22,8 +22,9 @@ const request = async <T>({
     "content-type": "application/json",
   },
 }: IRequestParams): Promise<T> => {
-  const proxyURL = await getFrontendProxyURL();
-  const requestURL = `${proxyURL}${url}?${new URLSearchParams(queryParams).toString()}`;
+  const localhost = await getLocalhost();
+  const API_URL = `http://${localhost}:${process.env.EXPO_PUBLIC_FRONTEND_PROXY_PORT}`;
+  const requestURL = `${API_URL}${url}?${new URLSearchParams(queryParams).toString()}`;
   const requestBody = body ? JSON.stringify(body) : undefined;
   const response = await fetch(requestURL, {
     method,

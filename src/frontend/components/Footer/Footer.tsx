@@ -4,7 +4,7 @@
 import { useEffect, useState } from 'react';
 import * as S from './Footer.styled';
 import SessionGateway from '../../gateways/Session.gateway';
-import { CypressFields } from '../../utils/enums/CypressFields';
+import { CypressFields } from '../../utils/Cypress';
 import PlatformFlag from '../PlatformFlag';
 
 const currentYear = new Date().getFullYear();

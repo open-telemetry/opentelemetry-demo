@@ -2,7 +2,6 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import { NextPage } from 'next';
-import Head from 'next/head';
 import Image from 'next/image';
 import { useRouter } from 'next/router';
 import { useCallback, useState, useEffect } from 'react';
@@ -13,7 +12,7 @@ import Layout from '../../../components/Layout';
 import ProductPrice from '../../../components/ProductPrice';
 import Recommendations from '../../../components/Recommendations';
 import Select from '../../../components/Select';
-import { CypressFields } from '../../../utils/enums/CypressFields';
+import { CypressFields } from '../../../utils/Cypress';
 import ApiGateway from '../../../gateways/Api.gateway';
 import { Product } from '../../../protos/demo';
 import AdProvider from '../../../providers/Ad.provider';
@@ -65,9 +64,6 @@ const ProductDetail: NextPage = () => {
       productIds={[productId, ...items.map(({ productId }) => productId)]}
       contextKeys={[...new Set(categories)]}
     >
-      <Head>
-        <title>Otel Demo - Product</title>
-      </Head>
       <Layout>
         <S.ProductDetail data-cy={CypressFields.ProductDetail}>
           <S.Container>

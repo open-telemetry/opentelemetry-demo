@@ -1,0 +1,32 @@
+{
+  "name": "flagd-ui",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev -p 4000 -H 0.0.0.0",
+    "build": "next build",
+    "start": "next start -p 4000 -H 0.0.0.0",
+    "lint": "next lint"
+  },
+  "dependencies": {
+    "@vercel/otel": "^1.10.0",
+    "ajv": "^8.17.1",
+    "next": "15.1.4",
+    "react": "^19",
+    "react-dom": "^19"
+  },
+  "devDependencies": {
+    "@types/json5": "^2.2.0",
+    "@types/node": "^22",
+    "@types/react": "^19.0.7",
+    "@types/react-dom": "^19.0.3",
+    "autoprefixer": "^10.4.20",
+    "eslint": "^9",
+    "eslint-config-next": "15.1.5",
+    "postcss": "^8.5.1",
+    "prettier": "^3.4.2",
+    "prettier-plugin-tailwindcss": "^0.6.10",
+    "tailwindcss": "^3.4.17",
+    "typescript": "^5"
+  }
+}

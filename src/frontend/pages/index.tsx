@@ -2,7 +2,6 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import { NextPage } from 'next';
-import Head from 'next/head';
 import Footer from '../components/Footer';
 import Layout from '../components/Layout';
 import ProductList from '../components/ProductList';
@@ -10,7 +9,7 @@ import * as S from '../styles/Home.styled';
 import { useQuery } from '@tanstack/react-query';
 import ApiGateway from '../gateways/Api.gateway';
 import Banner from '../components/Banner';
-import { CypressFields } from '../utils/enums/CypressFields';
+import { CypressFields } from '../utils/Cypress';
 import { useCurrency } from '../providers/Currency.provider';
 
 const Home: NextPage = () => {
@@ -22,9 +21,6 @@ const Home: NextPage = () => {
 
   return (
     <Layout>
-      <Head>
-        <title>Otel Demo - Home</title>
-      </Head>
       <S.Home data-cy={CypressFields.HomePage}>
         <Banner />
         <S.Container>

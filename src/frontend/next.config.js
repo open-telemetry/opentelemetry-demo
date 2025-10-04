@@ -29,6 +29,7 @@ const {
 const nextConfig = {
   reactStrictMode: true,
   output: 'standalone',
+  swcMinify: true,
   compiler: {
     styledComponents: true,
   },

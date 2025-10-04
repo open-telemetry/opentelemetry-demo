@@ -4,4 +4,3 @@ build
 dist
 .husky
 node_modules
-protos/

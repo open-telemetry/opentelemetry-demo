@@ -38,14 +38,11 @@
     ],
     "ignore": [
         "node_modules/",
-        "src/accounting/bin/",
-        "src/accounting/obj/",
         "/src/accounting/src/protos/",
         "src/cart/src/obj/",
         "src/cart/tests/obj/",
         "src/currency/build/",
         "src/checkout/genproto/",
-        "src/flagd-ui/assets/vendor/",
         "src/product-catalog/genproto/",
         "src/react-native-app/ios/Pods/",
         "src/react-native-app/ios/build/",
@@ -55,7 +52,6 @@
         "src/react-native-app/expo-env.d.ts",
         "src/recommendation/demo_pb2.py",
         "src/recommendation/demo_pb2_grpc.py",
-        "src/frontend/protos/demo.ts",
         "internal/tools/"
     ]
   }

@@ -62,24 +62,16 @@ yamllint: install-yamllint
 .PHONY: checklicense
 checklicense:
 	@echo "Checking license headers..."
-	@if ! npm ls @kt3k/license-checker; then npm install; fi
 	npx @kt3k/license-checker -q
 
 .PHONY: addlicense
 addlicense:
 	@echo "Adding license headers..."
-	@if ! npm ls @kt3k/license-checker; then npm install; fi
 	npx @kt3k/license-checker -q -i
-
-.PHONY: checklinks
-checklinks:
-	@echo "Checking links..."
-	@if ! npm ls @umbrelladocs/linkspector; then npm install; fi
-	linkspector check
 
 # Run all checks in order of speed / likely failure.
 .PHONY: check
-check: misspell markdownlint checklicense checklinks
+check: misspell markdownlint checklicense
 	@echo "All checks complete"
 
 # Attempt to fix issues / regenerate tables.
@@ -94,7 +86,7 @@ install-tools: $(MISSPELL)
 
 .PHONY: build
 build:
-	$(DOCKER_COMPOSE_CMD) $(DOCKER_COMPOSE_ENV) build $(DOCKER_COMPOSE_BUILD_ARGS)
+	$(DOCKER_COMPOSE_CMD) build $(DOCKER_COMPOSE_BUILD_ARGS)
 
 .PHONY: build-and-push
 build-and-push:
@@ -122,17 +114,6 @@ build-multiplatform:
 build-multiplatform-and-push:
     # Because buildx bake does not support --env-file yet, we need to load it into the environment first.
 	set -a; . ./.env.override; set +a && docker buildx bake -f docker-compose.yml --push --set "*.platform=linux/amd64,linux/arm64"
-
-.PHONY: clean-images
-clean-images:
-	@docker rmi $(shell docker images --filter=reference="ghcr.io/open-telemetry/demo:latest-*" -q); \
-    if [ $$? -ne 0 ]; \
-    then \
-    	echo; \
-        echo "Failed to removed 1 or more OpenTelemetry Demo images."; \
-        echo "Check to ensure the Demo is not running by executing: make stop"; \
-        false; \
-    fi
 
 .PHONY: run-tests
 run-tests:
@@ -169,7 +150,6 @@ docker-generate-protobuf:
 clean:
 	rm -rf ./src/{checkout,product-catalog}/genproto/oteldemo/
 	rm -rf ./src/recommendation/{demo_pb2,demo_pb2_grpc}.py
-	rm -rf ./src/frontend/protos/demo.ts
 
 .PHONY: check-clean-work-tree
 check-clean-work-tree:
@@ -190,7 +170,7 @@ start:
 	@echo "Go to http://localhost:8080/jaeger/ui for the Jaeger UI."
 	@echo "Go to http://localhost:8080/grafana/ for the Grafana UI."
 	@echo "Go to http://localhost:8080/loadgen/ for the Load Generator UI."
-	@echo "Go to http://localhost:8080/feature/ to change feature flags."
+	@echo "Go to http://localhost:8080/feature/ to to change feature flags."
 
 .PHONY: start-minimal
 start-minimal:

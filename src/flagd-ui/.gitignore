@@ -1,39 +1,36 @@
-# The directory Mix will write compiled artifacts to.
-/_build/
+# See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
 
-# If you run "mix test --cover", coverage assets end up here.
-/cover/
+# dependencies
+/node_modules
+/.pnp
+.pnp.js
+.yarn/install-state.gz
 
-# The directory Mix downloads your dependencies sources to.
-/deps/
+# testing
+/coverage
 
-# Where 3rd-party dependencies like ExDoc output generated docs.
-/doc/
+# next.js
+/.next/
+/out/
 
-# Ignore .fetch files in case you like to edit your project deps locally.
-/.fetch
+# production
+/build
 
-# If the VM crashes, it generates a dump, let's ignore it too.
-erl_crash.dump
+# misc
+.DS_Store
+*.pem
 
-# Also ignore archive artifacts (built via "mix archive.build").
-*.ez
+# debug
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
 
-# Temporary files, for example, from tests.
-/tmp/
+# local env files
+.env*.local
 
-# Ignore package tarball (built via "mix hex.build").
-flagd_ui-*.tar
+# vercel
+.vercel
 
-# Ignore assets that are produced by build tools.
-/priv/static/assets/
-
-# Ignore digested assets cache.
-/priv/static/cache_manifest.json
-
-# In case you use Node.js/npm, you want to ignore these.
-npm-debug.log
-/assets/node_modules/
-
-demo.flagd.json
-/data
+# typescript
+*.tsbuildinfo
+next-env.d.ts

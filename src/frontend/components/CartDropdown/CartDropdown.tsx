@@ -3,7 +3,7 @@
 
 import Link from 'next/link';
 import { useEffect, useRef } from 'react';
-import { CypressFields } from '../../utils/enums/CypressFields';
+import { CypressFields } from '../../utils/Cypress';
 import { IProductCartItem } from '../../types/Cart';
 import ProductPrice from '../ProductPrice';
 import * as S from './CartDropdown.styled';
@@ -30,7 +30,7 @@ const CartDropdown = ({ productList, isOpen, onClose }: IProps) => {
       // Unbind the event listener on clean up
       document.removeEventListener('mousedown', handleClickOutside);
     };
-  }, [ref, onClose]);
+  }, [ref]);
 
   return isOpen ? (
     <S.CartDropdown ref={ref} data-cy={CypressFields.CartDropdown}>

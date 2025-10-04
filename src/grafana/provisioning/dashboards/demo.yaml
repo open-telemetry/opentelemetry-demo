@@ -7,7 +7,6 @@ providers:
   - name: 'OpenTelemetry Demo'
     orgId: 1
     folder: 'Demo'
-    folderUid: 'demo'
     type: file
     disableDeletion: false
     editable: true
