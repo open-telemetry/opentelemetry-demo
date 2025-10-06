@@ -23,22 +23,37 @@ datasources:
     type: tempo
     url: http://tempo:3200
     jsonData:
-      httpMethod: GET
-      serviceMap:
-        datasourceUid: 'Prometheus'
-        enableNodeGraph: true
-      tracesToLogs:
+      tracesToLogsV2:
         datasourceUid: 'Loki'
-        tags: ['service_name', 'service_namespace', 'k8s_pod_name', 'k8s_namespace_name']
         spanStartTimeShift: '-1h'
         spanEndTimeShift: '1h'
-        filterByTraceID: true
+        tags: ['job', 'instance', 'pod', 'namespace']
+        filterByTraceID: false
         filterBySpanID: false
+        customQuery: true
+        query: 'method="$${__span.tags.method}"'
       tracesToMetrics:
         datasourceUid: 'Prometheus'
-        tags: ['service_name', 'service_namespace', 'k8s_pod_name', 'k8s_namespace_name']
         spanStartTimeShift: '-1h'
         spanEndTimeShift: '1h'
-        queries:
-          - name: 'Sample query'
-            query: 'sum(rate(traces_spanmetrics_latency_bucket{$$__tags}[5m]))'
+        tags: [{ key: 'service.name', value: 'service' }, { key: 'job' }]
+      tracesToProfiles:
+        datasourceUid: 'Tempo'
+        tags: ['job', 'instance', 'pod', 'namespace']
+        profileTypeId: 'process_cpu:cpu:nanoseconds:cpu:nanoseconds'
+      serviceMap:
+        datasourceUid: 'Prometheus'
+      nodeGraph:
+        enabled: true
+      search:
+        hide: false
+      traceQuery:
+        timeShiftEnabled: true
+        spanStartTimeShift: '-1h'
+        spanEndTimeShift: '1h'
+      spanBar:
+        type: 'Tag'
+        tag: 'http.path'
+      streamingEnabled:
+          search: false
+      httpMethod: GET
