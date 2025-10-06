@@ -95,17 +95,17 @@ exporters:
   debug:
   # OTLP gRPC exporter for traces to Tempo
   otlp/tempo:
-    endpoint: "tempo.k3d.localhost:4317"
+    endpoint: "host.docker.internal:31317"
     tls:
       insecure: true
   # OTLP HTTP exporter for metrics to Mimir
   otlphttp/mimir:
-    endpoint: "http://mimir.k3d.localhost:9009/otlp" 
+    endpoint: "http://mimir.k3d.localhost:9999/otlp" 
     tls:
       insecure: true
   # OTLP HTTP exporter for logs to Loki
   otlphttp/loki:
-    endpoint: "http://loki.k3d.localhost:3100/otlp"
+    endpoint: "http://loki.k3d.localhost:9999/otlp"
 
   otlp/pyroscope:
     endpoint: "pyroscope.k3d.localhost:4040"
@@ -113,7 +113,7 @@ exporters:
       insecure: true
 
   otlp/tallycat:
-    endpoint: "tallycat.k3d.localhost:4317"
+    endpoint: "host.docker.internal:30417"
     tls:
       insecure: true
     compression: none
@@ -142,11 +142,11 @@ service:
     traces:
       receivers: [otlp]
       processors: [resourcedetection, memory_limiter, transform, batch]
-      exporters: [otlp/tempo, debug, spanmetrics, otlp/tallycat]
+      exporters: [otlp/tempo, spanmetrics, otlp/tallycat]
     metrics:
       receivers: [docker_stats, httpcheck/frontend-proxy, hostmetrics, nginx, otlp, spanmetrics]
       processors: [resourcedetection, memory_limiter, batch]
-      exporters: [otlphttp/mimir, debug, otlp/tallycat]
+      exporters: [otlphttp/mimir, otlp/tallycat]
     logs:
       receivers: [otlp]
       processors: [resourcedetection, memory_limiter, batch]
