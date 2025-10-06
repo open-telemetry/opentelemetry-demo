@@ -47,6 +47,7 @@ test/tracetesting/tracetesting-vars.yaml
 /src/payment/demo.proto
 /src/shipping/proto/
 /src/currency/proto
+/src/frontend/pb
 
 # Android
 *.apk

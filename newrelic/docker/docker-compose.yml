@@ -35,7 +35,7 @@ services:
       - OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE
       - OTEL_RESOURCE_ATTRIBUTES
       - OTEL_SERVICE_NAME=accounting
-      - DB_CONNECTION_STRING=Host=postgresql;Username=otelu;Password=otelp;Database=otel
+      - DB_CONNECTION_STRING=Host=${POSTGRES_HOST};Username=otelu;Password=otelp;Database=${POSTGRES_DB}
       - OTEL_DOTNET_AUTO_TRACES_ENTITYFRAMEWORKCORE_INSTRUMENTATION_ENABLED=false
     depends_on:
       otel-collector:
@@ -100,6 +100,7 @@ services:
       - FLAGD_PORT
       - VALKEY_ADDR
       - OTEL_EXPORTER_OTLP_ENDPOINT
+      - OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE
       - OTEL_RESOURCE_ATTRIBUTES
       - OTEL_SERVICE_NAME=cart
       - ASPNETCORE_URLS=http://*:${CART_PORT}
@@ -185,7 +186,9 @@ services:
       - CURRENCY_PORT
       - VERSION=${IMAGE_VERSION}
       - OTEL_EXPORTER_OTLP_ENDPOINT
-      - OTEL_RESOURCE_ATTRIBUTES=${OTEL_RESOURCE_ATTRIBUTES},service.name=currency # The C++ SDK does not support OTEL_SERVICE_NAME
+      - OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE
+      - OTEL_RESOURCE_ATTRIBUTES
+      - OTEL_SERVICE_NAME=currency
     depends_on:
       otel-collector:
         condition: service_started
@@ -209,7 +212,10 @@ services:
     environment:
       - APP_ENV=production
       - EMAIL_PORT
-      - OTEL_EXPORTER_OTLP_TRACES_ENDPOINT=http://${OTEL_COLLECTOR_HOST}:${OTEL_COLLECTOR_PORT_HTTP}/v1/traces
+      - FLAGD_HOST
+      - FLAGD_PORT
+      - OTEL_EXPORTER_OTLP_ENDPOINT=http://${OTEL_COLLECTOR_HOST}:${OTEL_COLLECTOR_PORT_HTTP}
+      - OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE
       - OTEL_RESOURCE_ATTRIBUTES
       - OTEL_SERVICE_NAME=email
     depends_on:
@@ -275,7 +281,7 @@ services:
       - RECOMMENDATION_ADDR
       - SHIPPING_ADDR
       - OTEL_EXPORTER_OTLP_ENDPOINT
-      - OTEL_RESOURCE_ATTRIBUTES=${OTEL_RESOURCE_ATTRIBUTES}
+      - OTEL_RESOURCE_ATTRIBUTES
       - ENV_PLATFORM
       - OTEL_SERVICE_NAME=frontend
       - PUBLIC_OTEL_EXPORTER_OTLP_TRACES_ENDPOINT
@@ -315,6 +321,8 @@ services:
     build:
       context: ./
       dockerfile: ${FRONTEND_PROXY_DOCKERFILE}
+      cache_from:
+        - ${IMAGE_NAME}:${IMAGE_VERSION}-frontend-proxy
     deploy:
       resources:
         limits:
@@ -322,7 +330,7 @@ services:
     restart: unless-stopped
     ports:
       - "${ENVOY_PORT}:${ENVOY_PORT}"
-      - 10000:10000
+      - "${ENVOY_ADMIN_PORT}:${ENVOY_ADMIN_PORT}"
     environment:
       - FRONTEND_PORT
       - FRONTEND_HOST
@@ -330,7 +338,7 @@ services:
       - LOCUST_WEB_PORT
       - GRAFANA_PORT
       - GRAFANA_HOST
-      - JAEGER_PORT
+      - JAEGER_UI_PORT
       - JAEGER_HOST
       - OTEL_COLLECTOR_HOST
       - IMAGE_PROVIDER_HOST
@@ -340,6 +348,7 @@ services:
       - OTEL_RESOURCE_ATTRIBUTES
       - OTEL_SERVICE_NAME=frontend-proxy
       - ENVOY_PORT
+      - ENVOY_ADMIN_PORT
       - FLAGD_HOST
       - FLAGD_PORT
       - FLAGD_UI_HOST
@@ -372,8 +381,8 @@ services:
       - IMAGE_PROVIDER_PORT
       - OTEL_COLLECTOR_HOST
       - OTEL_COLLECTOR_PORT_GRPC
-      - OTEL_SERVICE_NAME=image-provider
       - OTEL_RESOURCE_ATTRIBUTES
+      - OTEL_SERVICE_NAME=image-provider
     depends_on:
       otel-collector:
         condition: service_started
@@ -408,6 +417,7 @@ services:
       - PROTOCOL_BUFFERS_PYTHON_IMPLEMENTATION=python
       - LOCUST_WEB_HOST=0.0.0.0
       - FLAGD_HOST
+      - FLAGD_PORT
       - FLAGD_OFREP_PORT
     depends_on:
       frontend:
@@ -497,11 +507,12 @@ services:
       - "${QUOTE_PORT}"
     environment:
       - OTEL_EXPORTER_OTLP_ENDPOINT=http://${OTEL_COLLECTOR_HOST}:${OTEL_COLLECTOR_PORT_HTTP}
+      - OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE
       - OTEL_PHP_AUTOLOAD_ENABLED=true
       - QUOTE_PORT
+      - OTEL_PHP_INTERNAL_METRICS_ENABLED=true
       - OTEL_RESOURCE_ATTRIBUTES
       - OTEL_SERVICE_NAME=quote
-      - OTEL_PHP_INTERNAL_METRICS_ENABLED=true
     depends_on:
       otel-collector:
         condition: service_started
@@ -518,7 +529,8 @@ services:
     deploy:
       resources:
         limits:
-          memory: 500M # This is high to enable supporting the recommendationCache feature flag use case
+          # This is high to enable supporting the recommendationCache feature flag use case
+          memory: 500M
     restart: unless-stopped
     ports:
       - "${RECOMMENDATION_PORT}"
@@ -563,12 +575,7 @@ services:
       - OTEL_EXPORTER_OTLP_ENDPOINT
       - OTEL_RESOURCE_ATTRIBUTES
       - OTEL_SERVICE_NAME=shipping
-    healthcheck:
-      test: ["CMD-SHELL", "timeout 1 bash -c '>/dev/tcp/localhost/${SHIPPING_PORT}'"]
-      start_period: 10s
-      interval: 5s
-      timeout: 10s
-      retries: 10
+      - OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE
     depends_on:
       otel-collector:
         condition: service_started
@@ -605,16 +612,21 @@ services:
     build:
       context: ./
       dockerfile: ${FLAGD_UI_DOCKERFILE}
+      cache_from:
+        - ${IMAGE_NAME}:${IMAGE_VERSION}-flagd-ui
     deploy:
       resources:
         limits:
-          memory: 100M
-    restart: unless-stopped
+          memory: 200M
+    restart: always
     environment:
+      - FLAGD_UI_PORT
       - OTEL_EXPORTER_OTLP_ENDPOINT=http://${OTEL_COLLECTOR_HOST}:${OTEL_COLLECTOR_PORT_HTTP}
       - OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE
       - OTEL_RESOURCE_ATTRIBUTES
       - OTEL_SERVICE_NAME=flagd-ui
+      - SECRET_KEY_BASE=yYrECL4qbNwleYInGJYvVnSkwJuSQJ4ijPTx5tirGUXrbznFIBFVJdPl5t6O9ASw
+      - PHX_HOST=localhost
     ports:
       - "${FLAGD_UI_PORT}"
     depends_on:
@@ -660,17 +672,24 @@ services:
     logging: *logging
   # Postgresql used by Accounting service
   postgresql:
-    image: ${POSTGRES_IMAGE}
+    image: ${IMAGE_NAME}:${DEMO_VERSION}-postgresql
     container_name: postgresql
+    build:
+      context: ./
+      dockerfile: ${POSTGRES_DOCKERFILE}
+      cache_from:
+        - ${IMAGE_NAME}:${IMAGE_VERSION}-postgresql
+    deploy:
+      resources:
+        limits:
+          memory: 80M
     restart: unless-stopped
     ports:
-      - "5432"
+      - ${POSTGRES_PORT}
     environment:
-      POSTGRES_USER: root
-      POSTGRES_PASSWORD: otel
-      POSTGRES_DB: otel
-    volumes:
-      - ${PWD}/src/postgres/init.sql:/docker-entrypoint-initdb.d/init.sql
+      - POSTGRES_USER=root
+      - POSTGRES_PASSWORD
+      - POSTGRES_DB
     logging: *logging
   # Valkey used by Cart service
   valkey-cart:
@@ -716,5 +735,8 @@ services:
       - OTEL_COLLECTOR_HOST
       - OTEL_COLLECTOR_PORT_GRPC
       - OTEL_COLLECTOR_PORT_HTTP
+      - POSTGRES_HOST
+      - POSTGRES_PORT
+      - POSTGRES_PASSWORD
       - GOMEMLIMIT=160MiB
       - NEW_RELIC_LICENSE_KEY=${NEW_RELIC_LICENSE_KEY}

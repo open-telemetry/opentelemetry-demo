@@ -1,6 +1,6 @@
 #!/bin/bash
 
-OTEL_DEMO_CHART_VERSION="0.37.1"
+OTEL_DEMO_CHART_VERSION="0.38.1"
 
 # Check if helm is installed
 if ! command -v helm &> /dev/null; then
