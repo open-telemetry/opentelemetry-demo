@@ -17,7 +17,7 @@ jobs:
     if: github.event.review.state == 'APPROVED'
     steps:
       - name: check out code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
       - name: run tracetesting
         run: |
           make build && docker system prune -f && make run-tracetesting

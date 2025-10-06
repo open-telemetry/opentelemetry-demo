@@ -473,7 +473,7 @@
               "type": "count"
             }
           ],
-          "query": "search source=otel\n| where resource.service.name=\"${service}\"\n| stats count() by severity.text",
+          "query": "search source=otel-logs-*\n| where resource.service.name=\"${service}\"\n| stats count() by severity.text",
           "queryType": "PPL",
           "refId": "A",
           "timeField": "observedTimestamp"
@@ -606,7 +606,7 @@
               "type": "raw_data"
             }
           ],
-          "query": "search source=otel\n| where resource.service.name=\"${service}\"\n| sort - observedTimestamp \n| head 100",
+          "query": "search source=otel-logs-*\n| where resource.service.name=\"${service}\"\n| sort - observedTimestamp \n| head 100",
           "queryType": "PPL",
           "refId": "A",
           "timeField": "observedTimestamp"
