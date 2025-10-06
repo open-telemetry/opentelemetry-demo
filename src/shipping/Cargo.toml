@@ -9,7 +9,7 @@ path = "src/main.rs"
 [dependencies]
 actix-web = "4"
 anyhow = "1.0.100"
-awc = { version = "3.8.0", default-features = false, features = ["compress-zstd"] }
+awc = { version = "3.8.1", default-features = false, features = ["compress-zstd"] }
 serde = { version = "1.0.228", features = ["derive"] }
 tonic = "0.14.2"
 tracing = "0.1.41"
@@ -19,7 +19,7 @@ opentelemetry = "0.31.0"
 opentelemetry_sdk = "0.31.0"
 opentelemetry-otlp = { version = "0.31.0", features = ["grpc-tonic"] }
 opentelemetry-instrumentation-actix-web = { version = "0.23.0", features = ["sync-middleware", "awc", "metrics"] }
-opentelemetry-appender-tracing = "0.31.0"
+opentelemetry-appender-tracing = "0.31.1"
 opentelemetry-resource-detectors = "0.10.0"
 
 [dependencies.uuid]
