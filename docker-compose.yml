@@ -508,6 +508,39 @@ services:
         condition: service_started
     logging: *logging
 
+  # Product reviews service
+  product-reviews:
+    image: ${IMAGE_NAME}:${DEMO_VERSION}-product-reviews
+    container_name: product-reviews
+    build:
+      context: ./
+      dockerfile: ${PRODUCT_REVIEWS_DOCKERFILE}
+      cache_from:
+        - ${IMAGE_NAME}:${IMAGE_VERSION}-product-reviews
+    deploy:
+      resources:
+        limits:
+          memory: 500M
+    restart: unless-stopped
+    ports:
+      - "${PRODUCT_REVIEWS_PORT}:${PRODUCT_REVIEWS_PORT}"
+    environment:
+      - PRODUCT_REVIEWS_PORT
+      - OTEL_PYTHON_LOG_CORRELATION=true
+      - OTEL_EXPORTER_OTLP_ENDPOINT
+      - OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE
+      - OTEL_RESOURCE_ATTRIBUTES
+      - OTEL_SERVICE_NAME=product-reviews
+      - PROTOCOL_BUFFERS_PYTHON_IMPLEMENTATION=python
+    depends_on:
+      product-catalog:
+        condition: service_started
+      otel-collector:
+        condition: service_started
+      flagd:
+        condition: service_started
+    logging: *logging
+
   # Quote service
   quote:
     image: ${IMAGE_NAME}:${DEMO_VERSION}-quote

@@ -102,6 +102,35 @@ message SearchProductsResponse {
     repeated Product results = 1;
 }
 
+// ---------------Product Review service----------
+
+service ProductReviewService {
+  rpc GetProductReviews(GetProductReviewsRequest) returns (GetProductReviewsResponse){}
+  rpc GetProductReviewSummary(GetProductReviewSummaryRequest) returns (GetProductReviewSummaryResponse){}
+}
+
+message ProductReview {
+    string username = 1;
+    string description = 2;
+    int32 score = 3;
+}
+
+message GetProductReviewsRequest {
+    string product_id = 1;
+}
+
+message GetProductReviewsResponse {
+    repeated ProductReview product_reviews = 1;
+}
+
+message GetProductReviewSummaryRequest {
+    string product_id = 1;
+}
+
+message GetProductReviewSummaryResponse {
+    string product_review_summary = 1;
+}
+
 // ---------------Shipping Service----------
 
 service ShippingService {
