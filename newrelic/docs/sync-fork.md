@@ -29,7 +29,7 @@ If `upstream` or `official` are missing, add them with:
 
 ```bash
 git remote add upstream git@github.com:newrelic/opentelemetry-demo.git
-git remote add official git@github.com:newrelic/opentelemetry-demo.git
+git remote add official git@github.com:open-telemetry/opentelemetry-demo.git
 ```
 
 

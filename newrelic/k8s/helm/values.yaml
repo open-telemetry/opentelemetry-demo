@@ -279,7 +279,7 @@ opentelemetry-collector:
           - otlp
       telemetry:
         metrics:
-          address: ${env:MY_POD_IP}:8888
+          # address: ${env:MY_POD_IP}:8888
           level: basic
           readers:
           - periodic:
