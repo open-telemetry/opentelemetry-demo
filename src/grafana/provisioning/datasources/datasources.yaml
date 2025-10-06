@@ -14,10 +14,11 @@ datasources:
     jsonData:
       derivedFields:
         - datasourceUid: Tempo
-          matcherRegex: "trace_id=(\\w+)"
-          name: TraceID
+          matcherRegex: "trace_id"
+          name: Trace ID
           url: '$${__value.raw}'
           urlDisplayLabel: 'View Trace'
+          matcherType: "label"
 
   - name: Tempo
     type: tempo
