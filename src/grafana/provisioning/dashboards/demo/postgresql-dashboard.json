@@ -121,7 +121,7 @@
           },
           "dsType": "prometheus",
           "editorMode": "code",
-          "expr": "sum(irate(postgresql_commits_total{postgresql_database_name=~\"$db\",k8s_cluster_name=~\"$k8s_cluster_name\", k8s_statefulset_name=~\"$k8s_statefulset_name\",host_name=~\"$host_name\"}[$__rate_interval])) + sum(irate(postgresql_rollbacks_total{postgresql_database_name=~\"$db\",k8s_cluster_name=~\"$k8s_cluster_name\", k8s_statefulset_name=~\"$k8s_statefulset_name\",host_name=~\"$host_name\"}[$__rate_interval]))",
+          "expr": "sum(irate({\"postgresql.commits\", postgresql_database_name=~\"$db\",k8s_cluster_name=~\"$k8s_cluster_name\", k8s_statefulset_name=~\"$k8s_statefulset_name\",host_name=~\"$host_name\"}[$__rate_interval])) + sum(irate({\"postgresql.rollbacks\", postgresql_database_name=~\"$db\",k8s_cluster_name=~\"$k8s_cluster_name\", k8s_statefulset_name=~\"$k8s_statefulset_name\",host_name=~\"$host_name\"}[$__rate_interval]))",
           "format": "time_series",
           "groupBy": [
             {
@@ -266,7 +266,7 @@
           },
           "dsType": "prometheus",
           "editorMode": "code",
-          "expr": "sum(irate(postgresql_tup_fetched_total{postgresql_database_name=~\"$db\",k8s_cluster_name=~\"$k8s_cluster_name\", k8s_statefulset_name=~\"$k8s_statefulset_name\",host_name=~\"$host_name\"}[$__rate_interval]))",
+          "expr": "sum(irate({\"postgresql.tup.fetched\", postgresql_database_name=~\"$db\",k8s_cluster_name=~\"$k8s_cluster_name\", k8s_statefulset_name=~\"$k8s_statefulset_name\",host_name=~\"$host_name\"}[$__rate_interval]))",
           "format": "time_series",
           "groupBy": [
             {
@@ -325,7 +325,7 @@
           },
           "dsType": "prometheus",
           "editorMode": "code",
-          "expr": "sum(irate(postgresql_tup_returned_total{postgresql_database_name=~\"$db\",k8s_cluster_name=~\"$k8s_cluster_name\", k8s_statefulset_name=~\"$k8s_statefulset_name\",host_name=~\"$host_name\"}[$__rate_interval]))",
+          "expr": "sum(irate({\"postgresql.tup.returned\", postgresql_database_name=~\"$db\",k8s_cluster_name=~\"$k8s_cluster_name\", k8s_statefulset_name=~\"$k8s_statefulset_name\",host_name=~\"$host_name\"}[$__rate_interval]))",
           "format": "time_series",
           "groupBy": [
             {
@@ -385,7 +385,7 @@
           },
           "dsType": "prometheus",
           "editorMode": "code",
-          "expr": "sum(irate(postgresql_tup_inserted_total{postgresql_database_name=~\"$db\",k8s_cluster_name=~\"$k8s_cluster_name\", k8s_statefulset_name=~\"$k8s_statefulset_name\",host_name=~\"$host_name\"}[$__rate_interval]))",
+          "expr": "sum(irate({\"postgresql.tup.inserted\", postgresql_database_name=~\"$db\",k8s_cluster_name=~\"$k8s_cluster_name\", k8s_statefulset_name=~\"$k8s_statefulset_name\",host_name=~\"$host_name\"}[$__rate_interval]))",
           "format": "time_series",
           "groupBy": [
             {
@@ -445,7 +445,7 @@
           },
           "dsType": "prometheus",
           "editorMode": "code",
-          "expr": "sum(irate(postgresql_tup_updated_total{dpostgresql_database_name=~\"$db\",k8s_cluster_name=~\"$k8s_cluster_name\", k8s_statefulset_name=~\"$k8s_statefulset_name\",host_name=~\"$host_name\"}[$__rate_interval]))",
+          "expr": "sum(irate({\"postgresql.tup.updated\", postgresql_database_name=~\"$db\",k8s_cluster_name=~\"$k8s_cluster_name\", k8s_statefulset_name=~\"$k8s_statefulset_name\",host_name=~\"$host_name\"}[$__rate_interval]))",
           "format": "time_series",
           "groupBy": [
             {
@@ -506,7 +506,7 @@
           },
           "dsType": "prometheus",
           "editorMode": "code",
-          "expr": "sum(irate(postgresql_tup_deleted_total{postgresql_database_name=~\"$db\",k8s_cluster_name=~\"$k8s_cluster_name\", k8s_statefulset_name=~\"$k8s_statefulset_name\",host_name=~\"$host_name\"}[$__rate_interval]))",
+          "expr": "sum(irate({\"postgresql.tup.deleted\", postgresql_database_name=~\"$db\",k8s_cluster_name=~\"$k8s_cluster_name\", k8s_statefulset_name=~\"$k8s_statefulset_name\",host_name=~\"$host_name\"}[$__rate_interval]))",
           "format": "time_series",
           "groupBy": [
             {
