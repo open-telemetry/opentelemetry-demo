@@ -116,7 +116,7 @@
             "uid": "${DS_PROMETHEUS}"
           },
           "editorMode": "code",
-          "expr": "sum(system_cpu_utilization_ratio{k8s_cluster_name=~\"$k8s_cluster_name\", k8s_node_name=~\"${node_name}\", host_name=~\"$host_name\", job=\"\", state!=\"idle\"})",
+          "expr": "sum({\"system.cpu.utilization\", k8s_cluster_name=~\"$k8s_cluster_name\", k8s_node_name=~\"${node_name}\", host_name=~\"$host_name\", job=\"\", state!=\"idle\"})",
           "hide": false,
           "instant": false,
           "legendFormat": "__auto",
@@ -194,7 +194,7 @@
           "disableTextWrap": false,
           "editorMode": "code",
           "exemplar": false,
-          "expr": "system_memory_utilization_ratio{k8s_cluster_name=~\"$k8s_cluster_name\", k8s_node_name=~\"$node_name\", host_name=~\"$host_name\", job=\"\", state=\"used\"}",
+          "expr": "{\"system.memory.utilization\", k8s_cluster_name=~\"$k8s_cluster_name\", k8s_node_name=~\"$node_name\", host_name=~\"$host_name\", job=\"\", state=\"used\"}",
           "format": "time_series",
           "fullMetaSearch": false,
           "hide": false,
@@ -285,7 +285,7 @@
             "uid": "${DS_PROMETHEUS}"
           },
           "editorMode": "code",
-          "expr": "1 \n-\nsum(system_filesystem_usage_bytes{k8s_cluster_name=~\"$k8s_cluster_name\", k8s_node_name=~\"${node_name}\", host_name=~\"$host_name\", state=\"free\"}) \n/ \nsum(system_filesystem_usage_bytes{k8s_cluster_name=~\"$k8s_cluster_name\", k8s_node_name=~\"${node_name}\", host_name=~\"$host_name\"})",
+          "expr": "1 \n-\nsum({\"system.filesystem.usage\", k8s_cluster_name=~\"$k8s_cluster_name\", k8s_node_name=~\"${node_name}\", host_name=~\"$host_name\", state=\"free\"}) \n/ \nsum({\"system.filesystem.usage\", k8s_cluster_name=~\"$k8s_cluster_name\", k8s_node_name=~\"${node_name}\", host_name=~\"$host_name\"})",
           "hide": false,
           "instant": false,
           "legendFormat": "__auto",
@@ -372,7 +372,7 @@
           },
           "editorMode": "code",
           "exemplar": false,
-          "expr": "system_cpu_load_average_5m{k8s_cluster_name=~\"$k8s_cluster_name\", k8s_node_name=~\"${node_name}\", host_name=~\"$host_name\"} ",
+          "expr": "{\"system.cpu.load_average.5m\", k8s_cluster_name=~\"$k8s_cluster_name\", k8s_node_name=~\"${node_name}\", host_name=~\"$host_name\"} ",
           "format": "time_series",
           "hide": false,
           "instant": true,
@@ -462,7 +462,7 @@
           },
           "editorMode": "code",
           "exemplar": false,
-          "expr": "system_cpu_load_average_15m{k8s_cluster_name=~\"$k8s_cluster_name\", k8s_node_name=~\"${node_name}\", host_name=~\"$host_name\"} ",
+          "expr": "{\"system.cpu.load_average.15m\", k8s_cluster_name=~\"$k8s_cluster_name\", k8s_node_name=~\"${node_name}\", host_name=~\"$host_name\"} ",
           "hide": false,
           "instant": true,
           "intervalFactor": 1,
@@ -550,7 +550,7 @@
           },
           "editorMode": "code",
           "exemplar": false,
-          "expr": "sum(system_paging_usage_bytes { k8s_cluster_name=~\"$k8s_cluster_name\", k8s_node_name=~\"${node_name}\", host_name=~\"$host_name\", state=\"used\" })\n/\nsum(system_paging_usage_bytes { k8s_cluster_name=~\"$k8s_cluster_name\", k8s_node_name=~\"${node_name}\", host_name=~\"$host_name\"})",
+          "expr": "sum( {\"system.paging.usage\", k8s_cluster_name=~\"$k8s_cluster_name\", k8s_node_name=~\"${node_name}\", host_name=~\"$host_name\", state=\"used\" })\n/\nsum(\"system.paging.usage\", k8s_cluster_name=~\"$k8s_cluster_name\", k8s_node_name=~\"${node_name}\", host_name=~\"$host_name\"})",
           "instant": true,
           "intervalFactor": 1,
           "range": false,
@@ -632,7 +632,7 @@
             "uid": "fej9ntb4ninswf"
           },
           "editorMode": "code",
-          "expr": "system_cpu_logical_count{ k8s_cluster_name=~\"$k8s_cluster_name\", k8s_node_name=~\"${node_name}\", host_name=~\"$host_name\", state=\"used\" }",
+          "expr": "{\"system.cpu.logical.count\", k8s_cluster_name=~\"$k8s_cluster_name\", k8s_node_name=~\"${node_name}\", host_name=~\"$host_name\", state=\"used\" }",
           "legendFormat": "__auto",
           "range": true,
           "refId": "A"
@@ -714,7 +714,7 @@
           },
           "editorMode": "code",
           "exemplar": false,
-          "expr": "system_memory_limit_bytes{k8s_cluster_name=~\"$k8s_cluster_name\", k8s_node_name=~\"${node_name}\", host_name=~\"$host_name\"}",
+          "expr": "{\"system.memory.limit\", k8s_cluster_name=~\"$k8s_cluster_name\", k8s_node_name=~\"${node_name}\", host_name=~\"$host_name\"}",
           "instant": true,
           "intervalFactor": 1,
           "legendFormat": "__auto",
@@ -799,7 +799,7 @@
           },
           "editorMode": "code",
           "exemplar": false,
-          "expr": "sum(system_paging_usage_bytes{k8s_cluster_name=~\"$k8s_cluster_name\", k8s_node_name=~\"${node_name}\", host_name=~\"$host_name\"})",
+          "expr": "sum({\"system.paging.usage\", k8s_cluster_name=~\"$k8s_cluster_name\", k8s_node_name=~\"${node_name}\", host_name=~\"$host_name\"})",
           "instant": true,
           "intervalFactor": 1,
           "legendFormat": "__auto",
@@ -901,7 +901,7 @@
           },
           "editorMode": "code",
           "exemplar": false,
-          "expr": "sum(system_filesystem_usage_bytes{k8s_cluster_name=~\"$k8s_cluster_name\", k8s_node_name=~\"${node_name}\", host_name=~\"$host_name\"})",
+          "expr": "sum({\"system.filesystem.usage\", k8s_cluster_name=~\"$k8s_cluster_name\", k8s_node_name=~\"${node_name}\", host_name=~\"$host_name\"})",
           "format": "time_series",
           "hide": false,
           "instant": true,
@@ -987,7 +987,7 @@
           },
           "editorMode": "code",
           "exemplar": false,
-          "expr": "system_uptime_seconds{k8s_cluster_name=~\"$k8s_cluster_name\", k8s_node_name=~\"${node_name}\", host_name=~\"$host_name\"}",
+          "expr": "{\"system.uptime\", k8s_cluster_name=~\"$k8s_cluster_name\", k8s_node_name=~\"${node_name}\", host_name=~\"$host_name\"}",
           "instant": true,
           "intervalFactor": 1,
           "legendFormat": "__auto",
@@ -1223,7 +1223,7 @@
             "uid": "fej9ntb4ninswf"
           },
           "editorMode": "code",
-          "expr": "sum (irate(system_cpu_time_seconds_total{k8s_cluster_name=~\"$k8s_cluster_name\", k8s_node_name=~\"${node_name}\", host_name=~\"$host_name\", state=\"system\"}[$__rate_interval])) \n/\nsum ((irate(system_cpu_time_seconds_total{k8s_cluster_name=~\"$k8s_cluster_name\", k8s_node_name=~\"${node_name}\", host_name=~\"$host_name\"}[$__rate_interval])))",
+          "expr": "sum (irate({\"system.cpu.time\", k8s_cluster_name=~\"$k8s_cluster_name\", k8s_node_name=~\"${node_name}\", host_name=~\"$host_name\", state=\"system\"}[$__rate_interval])) \n/\nsum ((irate({\"system.cpu.time\", k8s_cluster_name=~\"$k8s_cluster_name\", k8s_node_name=~\"${node_name}\", host_name=~\"$host_name\"}[$__rate_interval])))",
           "format": "time_series",
           "hide": false,
           "intervalFactor": 1,
@@ -1238,7 +1238,7 @@
             "uid": "fej9ntb4ninswf"
           },
           "editorMode": "code",
-          "expr": "sum (irate(system_cpu_time_seconds_total{kk8s_cluster_name=~\"$k8s_cluster_name\", k8s_node_name=~\"${node_name}\", host_name=~\"$host_name\", state=\"user\"}[$__rate_interval])) \n/ \nsum ((irate(system_cpu_time_seconds_total{k8s_cluster_name=~\"$k8s_cluster_name\", k8s_node_name=~\"${node_name}\", host_name=~\"$host_name\"}[$__rate_interval])))",
+          "expr": "sum (irate({\"system.cpu.time\",kk8s_cluster_name=~\"$k8s_cluster_name\", k8s_node_name=~\"${node_name}\", host_name=~\"$host_name\", state=\"user\"}[$__rate_interval])) \n/ \nsum ((irate({\"system.cpu.time\", k8s_cluster_name=~\"$k8s_cluster_name\", k8s_node_name=~\"${node_name}\", host_name=~\"$host_name\"}[$__rate_interval])))",
           "format": "time_series",
           "hide": false,
           "intervalFactor": 1,
@@ -1253,7 +1253,7 @@
             "uid": "fej9ntb4ninswf"
           },
           "editorMode": "code",
-          "expr": "sum(irate(system_cpu_time_seconds_total{k8s_cluster_name=~\"$k8s_cluster_name\", k8s_node_name=~\"${node_name}\", host_name=~\"$host_name\", state=\"wait\"}[$__rate_interval])) \n/ \nsum ((irate(system_cpu_time_seconds_total{k8s_cluster_name=~\"$k8s_cluster_name\", k8s_node_name=~\"${node_name}\", host_name=~\"$host_name\"}[$__rate_interval])))",
+          "expr": "sum(irate({\"system.cpu.time\", k8s_cluster_name=~\"$k8s_cluster_name\", k8s_node_name=~\"${node_name}\", host_name=~\"$host_name\", state=\"wait\"}[$__rate_interval])) \n/ \nsum ((irate({\"system.cpu.time\", k8s_cluster_name=~\"$k8s_cluster_name\", k8s_node_name=~\"${node_name}\", host_name=~\"$host_name\"}[$__rate_interval])))",
           "format": "time_series",
           "hide": false,
           "intervalFactor": 1,
@@ -1268,7 +1268,7 @@
             "uid": "fej9ntb4ninswf"
           },
           "editorMode": "code",
-          "expr": "sum (irate(system_cpu_time_seconds_total{k8s_cluster_name=~\"$k8s_cluster_name\", k8s_node_name=~\"${node_name}\", host_name=~\"$host_name\", state=~\".*irq\"}[$__rate_interval])) \n/\nsum((irate(system_cpu_time_seconds_total{k8s_cluster_name=~\"$k8s_cluster_name\", k8s_node_name=~\"${node_name}\", host_name=~\"$host_name\"}[$__rate_interval])))",
+          "expr": "sum (irate({\"system.cpu.time\", k8s_cluster_name=~\"$k8s_cluster_name\", k8s_node_name=~\"${node_name}\", host_name=~\"$host_name\", state=~\".*irq\"}[$__rate_interval])) \n/\nsum((irate({\"system.cpu.time\", k8s_cluster_name=~\"$k8s_cluster_name\", k8s_node_name=~\"${node_name}\", host_name=~\"$host_name\"}[$__rate_interval])))",
           "format": "time_series",
           "hide": false,
           "intervalFactor": 1,
@@ -1283,7 +1283,7 @@
             "uid": "fej9ntb4ninswf"
           },
           "editorMode": "code",
-          "expr": "sum(irate(system_cpu_time_seconds_total{k8s_cluster_name=~\"$k8s_cluster_name\", k8s_node_name=~\"${node_name}\", host_name=~\"$host_name\", state!~\".*irq\", state!=\"idle\", state!=\"user\", state!=\"wait\", state!=\"system\"}[$__rate_interval]))\n/\nsum ((irate(system_cpu_time_seconds_total{k8s_cluster_name=~\"$k8s_cluster_name\", k8s_node_name=~\"${node_name}\", host_name=~\"$host_name\"}[$__rate_interval])))",
+          "expr": "sum(irate({\"system.cpu.time\", k8s_cluster_name=~\"$k8s_cluster_name\", k8s_node_name=~\"${node_name}\", host_name=~\"$host_name\", state!~\".*irq\", state!=\"idle\", state!=\"user\", state!=\"wait\", state!=\"system\"}[$__rate_interval]))\n/\nsum ((irate({\"system.cpu.time\", k8s_cluster_name=~\"$k8s_cluster_name\", k8s_node_name=~\"${node_name}\", host_name=~\"$host_name\"}[$__rate_interval])))",
           "format": "time_series",
           "hide": false,
           "intervalFactor": 1,
@@ -1298,7 +1298,7 @@
             "uid": "fej9ntb4ninswf"
           },
           "editorMode": "code",
-          "expr": "sum by(host_name) (irate(system_cpu_time_seconds_total{k8s_cluster_name=~\"$k8s_cluster_name\", k8s_node_name=~\"${node_name}\", host_name=~\"$host_name\", state=\"idle\"}[$__rate_interval])) \n/ \non(host_name) group_left sum by (host_name)((irate(system_cpu_time_seconds_total{k8s_cluster_name=~\"$k8s_cluster_name\", k8s_node_name=~\"${node_name}\", host_name=~\"$host_name\"}[$__rate_interval])))",
+          "expr": "sum by(host_name) (irate({\"system.cpu.time\", k8s_cluster_name=~\"$k8s_cluster_name\", k8s_node_name=~\"${node_name}\", host_name=~\"$host_name\", state=\"idle\"}[$__rate_interval])) \n/ \non(host_name) group_left sum by (host_name)((irate({\"system.cpu.time\", k8s_cluster_name=~\"$k8s_cluster_name\", k8s_node_name=~\"${node_name}\", host_name=~\"$host_name\"}[$__rate_interval])))",
           "format": "time_series",
           "hide": false,
           "intervalFactor": 1,
@@ -1771,7 +1771,7 @@
             "uid": "${DS_PROMETHEUS}"
           },
           "editorMode": "code",
-          "expr": "sum(system_memory_usage_bytes{k8s_cluster_name=~\"$k8s_cluster_name\", k8s_node_name=~\"${node_name}\", host_name=~\"$host_name\"})",
+          "expr": "sum({\"system.memory.usage\", k8s_cluster_name=~\"$k8s_cluster_name\", k8s_node_name=~\"${node_name}\", host_name=~\"$host_name\"})",
           "format": "time_series",
           "hide": false,
           "intervalFactor": 1,
@@ -1786,7 +1786,7 @@
             "uid": "${DS_PROMETHEUS}"
           },
           "editorMode": "code",
-          "expr": "sum(system_memory_usage_bytes{k8s_cluster_name=~\"$k8s_cluster_name\", k8s_node_name=~\"${node_name}\", host_name=~\"$host_name\", state=\"free\"})",
+          "expr": "sum({\"system.memory.usage\", k8s_cluster_name=~\"$k8s_cluster_name\", k8s_node_name=~\"${node_name}\", host_name=~\"$host_name\", state=\"free\"})",
           "format": "time_series",
           "hide": false,
           "intervalFactor": 1,
@@ -1801,7 +1801,7 @@
             "uid": "${DS_PROMETHEUS}"
           },
           "editorMode": "code",
-          "expr": "sum(system_memory_usage_bytes{k8s_cluster_name=~\"$k8s_cluster_name\", k8s_node_name=~\"${node_name}\", host_name=~\"$host_name\", state=~\"cached|buffered\"})",
+          "expr": "sum({\"system.memory.usage\", k8s_cluster_name=~\"$k8s_cluster_name\", k8s_node_name=~\"${node_name}\", host_name=~\"$host_name\", state=~\"cached|buffered\"})",
           "format": "time_series",
           "intervalFactor": 1,
           "legendFormat": "RAM Cache + Buffer",
@@ -1816,7 +1816,7 @@
           },
           "editorMode": "code",
           "exemplar": false,
-          "expr": "sum(system_memory_usage_bytes{k8s_cluster_name=~\"$k8s_cluster_name\", k8s_node_name=~\"${node_name}\", host_name=~\"$host_name\", state=\"used\"})",
+          "expr": "sum({\"system.memory.usage\", k8s_cluster_name=~\"$k8s_cluster_name\", k8s_node_name=~\"${node_name}\", host_name=~\"$host_name\", state=\"used\"})",
           "format": "time_series",
           "instant": false,
           "intervalFactor": 1,
@@ -1932,7 +1932,7 @@
             "uid": "${DS_PROMETHEUS}"
           },
           "editorMode": "code",
-          "expr": "sum (rate(system_network_io_bytes_total{k8s_cluster_name=~\"$k8s_cluster_name\", k8s_node_name=~\"${node_name}\", host_name=~\"$host_name\", direction=\"receive\", job=\"\"}[$__rate_interval]))",
+          "expr": "sum (rate({\"system.network.io\", k8s_cluster_name=~\"$k8s_cluster_name\", k8s_node_name=~\"${node_name}\", host_name=~\"$host_name\", direction=\"receive\", job=\"\"}[$__rate_interval]))",
           "format": "time_series",
           "hide": false,
           "intervalFactor": 1,
@@ -1947,7 +1947,7 @@
             "uid": "${DS_PROMETHEUS}"
           },
           "editorMode": "code",
-          "expr": "sum (rate(system_network_io_bytes_total{k8s_cluster_name=~\"$k8s_cluster_name\", k8s_node_name=~\"${node_name}\", host_name=~\"$host_name\", direction=\"transmit\", job=\"\"}[$__rate_interval]))",
+          "expr": "sum (rate({\"system.network.io\", k8s_cluster_name=~\"$k8s_cluster_name\", k8s_node_name=~\"${node_name}\", host_name=~\"$host_name\", direction=\"transmit\", job=\"\"}[$__rate_interval]))",
           "format": "time_series",
           "intervalFactor": 1,
           "legendFormat": "Transmit",
@@ -2062,7 +2062,7 @@
             "uid": "${DS_PROMETHEUS}"
           },
           "editorMode": "code",
-          "expr": "sum(irate(system_disk_io_bytes_total{k8s_cluster_name=~\"$k8s_cluster_name\", k8s_node_name=~\"${node_name}\", host_name=~\"$host_name\", direction=\"read\"}[$__rate_interval]))",
+          "expr": "sum(irate({\"system.disk.io\", k8s_cluster_name=~\"$k8s_cluster_name\", k8s_node_name=~\"${node_name}\", host_name=~\"$host_name\", direction=\"read\"}[$__rate_interval]))",
           "format": "time_series",
           "hide": false,
           "intervalFactor": 1,
@@ -2077,7 +2077,7 @@
             "uid": "${DS_PROMETHEUS}"
           },
           "editorMode": "code",
-          "expr": "sum(irate(system_disk_io_bytes_total{k8s_cluster_name=~\"$k8s_cluster_name\", k8s_node_name=~\"${node_name}\", host_name=~\"$host_name\", direction=\"write\"}[$__rate_interval]))",
+          "expr": "sum(irate({\"system.disk.io\", k8s_cluster_name=~\"$k8s_cluster_name\", k8s_node_name=~\"${node_name}\", host_name=~\"$host_name\", direction=\"write\"}[$__rate_interval]))",
           "format": "time_series",
           "hide": false,
           "intervalFactor": 1,
@@ -2237,7 +2237,7 @@
           },
           "disableTextWrap": false,
           "editorMode": "code",
-          "expr": "sum by(device) (rate(system_network_io_bytes_total{k8s_cluster_name=~\"$k8s_cluster_name\", k8s_node_name=~\"${node_name}\", host_name=~\"$host_name\", job=\"\", direction=\"transmit\"}[$__rate_interval]))",
+          "expr": "sum by(device) (rate({\"system.network.io\", k8s_cluster_name=~\"$k8s_cluster_name\", k8s_node_name=~\"${node_name}\", host_name=~\"$host_name\", job=\"\", direction=\"transmit\"}[$__rate_interval]))",
           "fullMetaSearch": false,
           "hide": false,
           "includeNullMetadata": true,
@@ -2253,7 +2253,7 @@
             "uid": "webstore-metrics"
           },
           "editorMode": "code",
-          "expr": "sum by(device) (rate(system_network_io_bytes_total{k8s_cluster_name=~\"$k8s_cluster_name\", k8s_node_name=~\"${node_name}\", host_name=~\"$host_name\", job=\"\", direction=\"receive\"}[$__rate_interval]))",
+          "expr": "sum by(device) (rate({\"system.network.io\", k8s_cluster_name=~\"$k8s_cluster_name\", k8s_node_name=~\"${node_name}\", host_name=~\"$host_name\", job=\"\", direction=\"receive\"}[$__rate_interval]))",
           "hide": false,
           "instant": false,
           "legendFormat": "__auto",
@@ -2266,7 +2266,7 @@
             "uid": "webstore-metrics"
           },
           "editorMode": "code",
-          "expr": "sum by(device) (rate(system_network_dropped_total{k8s_cluster_name=~\"$k8s_cluster_name\", k8s_node_name=~\"${node_name}\", host_name=~\"$host_name\", job=\"\",direction=\"receive\"}[$__rate_interval]))",
+          "expr": "sum by(device) (rate({\"system.network.dropped\", k8s_cluster_name=~\"$k8s_cluster_name\", k8s_node_name=~\"${node_name}\", host_name=~\"$host_name\", job=\"\",direction=\"receive\"}[$__rate_interval]))",
           "hide": false,
           "instant": false,
           "legendFormat": "__auto",
@@ -2279,7 +2279,7 @@
             "uid": "webstore-metrics"
           },
           "editorMode": "code",
-          "expr": "sum by(device) (rate(system_network_dropped_total{k8s_cluster_name=~\"$k8s_cluster_name\", k8s_node_name=~\"${node_name}\", host_name=~\"$host_name\", job=\"\",direction=\"transmit\"}[$__rate_interval]))",
+          "expr": "sum by(device) (rate({\"system.network.dropped\", k8s_cluster_name=~\"$k8s_cluster_name\", k8s_node_name=~\"${node_name}\", host_name=~\"$host_name\", job=\"\",direction=\"transmit\"}[$__rate_interval]))",
           "hide": false,
           "instant": false,
           "legendFormat": "__auto",
@@ -2292,7 +2292,7 @@
             "uid": "webstore-metrics"
           },
           "editorMode": "code",
-          "expr": "sum by(device) (rate(system_network_errors_total{k8s_cluster_name=~\"$k8s_cluster_name\", k8s_node_name=~\"${node_name}\", host_name=~\"$host_name\", job=\"\",direction=\"receive\"}[$__rate_interval]))",
+          "expr": "sum by(device) (rate({\"system.network.errors\", k8s_cluster_name=~\"$k8s_cluster_name\", k8s_node_name=~\"${node_name}\", host_name=~\"$host_name\", job=\"\",direction=\"receive\"}[$__rate_interval]))",
           "hide": false,
           "instant": false,
           "legendFormat": "__auto",
@@ -2305,7 +2305,7 @@
             "uid": "webstore-metrics"
           },
           "editorMode": "code",
-          "expr": "sum by(device) (rate(system_network_errors_total{k8s_cluster_name=~\"$k8s_cluster_name\", k8s_node_name=~\"${node_name}\", host_name=~\"$host_name\", job=\"\",direction=\"transmit\"}[$__rate_interval]))",
+          "expr": "sum by(device) (rate({\"system.network.errors\", k8s_cluster_name=~\"$k8s_cluster_name\", k8s_node_name=~\"${node_name}\", host_name=~\"$host_name\", job=\"\",direction=\"transmit\"}[$__rate_interval]))",
           "hide": false,
           "instant": false,
           "legendFormat": "__auto",
@@ -2522,7 +2522,7 @@
           "disableTextWrap": false,
           "editorMode": "code",
           "exemplar": false,
-          "expr": "sum by(mountpoint) (system_filesystem_usage_bytes{k8s_cluster_name=~\"$k8s_cluster_name\", k8s_node_name=~\"${node_name}\", host_name=~\"$host_name\", state=\"free\"})",
+          "expr": "sum by(mountpoint) ({\"system.filesystem.usage\", k8s_cluster_name=~\"$k8s_cluster_name\", k8s_node_name=~\"${node_name}\", host_name=~\"$host_name\", state=\"free\"})",
           "format": "table",
           "fullMetaSearch": false,
           "includeNullMetadata": true,
@@ -2539,7 +2539,7 @@
           },
           "editorMode": "code",
           "exemplar": false,
-          "expr": "sum by(mountpoint) (system_filesystem_usage_bytes{k8s_cluster_name=~\"$k8s_cluster_name\", k8s_node_name=~\"${node_name}\", host_name=~\"$host_name\"})",
+          "expr": "sum by(mountpoint) ({\"system.filesystem.usage\", k8s_cluster_name=~\"$k8s_cluster_name\", k8s_node_name=~\"${node_name}\", host_name=~\"$host_name\"})",
           "format": "table",
           "hide": false,
           "instant": true,
@@ -2722,7 +2722,7 @@
           "type": "prometheus",
           "uid": "${DS_PROMETHEUS}"
         },
-        "definition": "label_values(otelcol_process_uptime,k8s_cluster_name)",
+        "definition": "label_values(process.uptime,k8s_cluster_name)",
         "description": "When deploying PostgreSQL on Kubernetes, name of the Kubernetes cluster.  \nFor other deployments, select \"All\". ",
         "includeAll": true,
         "label": "K8s Cluster",
@@ -2731,7 +2731,7 @@
         "options": [],
         "query": {
           "qryType": 1,
-          "query": "label_values(otelcol_process_uptime,k8s_cluster_name)",
+          "query": "label_values(process.uptime,k8s_cluster_name)",
           "refId": "PrometheusVariableQueryEditor-VariableQuery"
         },
         "refresh": 2,
@@ -2750,7 +2750,7 @@
           "type": "prometheus",
           "uid": "${DS_PROMETHEUS}"
         },
-        "definition": "label_values(otelcol_process_uptime{k8s_cluster_name=~\"$k8s_cluster_name\"},k8s_node_name)",
+        "definition": "label_values({\"process.uptime\", k8s_cluster_name=~\"$k8s_cluster_name\"},k8s_node_name)",
         "description": "When monitoring Kubernetes, name of the K8s node.\nFor other deployments, select \"All\". ",
         "includeAll": true,
         "label": "K8s node",
@@ -2758,7 +2758,7 @@
         "options": [],
         "query": {
           "qryType": 1,
-          "query": "label_values(otelcol_process_uptime{k8s_cluster_name=~\"$k8s_cluster_name\"},k8s_node_name)",
+          "query": "label_values({\"process.uptime\", k8s_cluster_name=~\"$k8s_cluster_name\"},k8s_node_name)",
           "refId": "PrometheusVariableQueryEditor-VariableQuery"
         },
         "refresh": 2,
@@ -2776,14 +2776,14 @@
           "type": "prometheus",
           "uid": "${DS_PROMETHEUS}"
         },
-        "definition": "label_values(otelcol_process_uptime_seconds_total,host_name)",
+        "definition": "label_values(process.uptime,host_name)",
         "includeAll": true,
         "label": "Host",
         "name": "host_name",
         "options": [],
         "query": {
           "qryType": 1,
-          "query": "label_values(otelcol_process_uptime_seconds_total,host_name)",
+          "query": "label_values(process.uptime,host_name)",
           "refId": "PrometheusVariableQueryEditor-VariableQuery"
         },
         "refresh": 2,
@@ -2801,14 +2801,14 @@
           "type": "prometheus",
           "uid": "${DS_PROMETHEUS}"
         },
-        "definition": "query_result(count(otelcol_process_uptime{k8s_cluster_name=~\"$k8s_cluster_name\", k8s_node_name=~\"${node_name}\", host_name=~\"$ip\"}))",
+        "definition": "query_result(count({\"process.uptime\", k8s_cluster_name=~\"$k8s_cluster_name\", k8s_node_name=~\"${node_name}\", host_name=~\"$ip\"}))",
         "hide": 2,
         "label": "host count",
         "name": "host_count",
         "options": [],
         "query": {
           "qryType": 3,
-          "query": "query_result(count(otelcol_process_uptime{k8s_cluster_name=~\"$k8s_cluster_name\", k8s_node_name=~\"${node_name}\", host_name=~\"$ip\"}))",
+          "query": "query_result(count({\"process.uptime\", k8s_cluster_name=~\"$k8s_cluster_name\", k8s_node_name=~\"${node_name}\", host_name=~\"$ip\"}))",
           "refId": "PrometheusVariableQueryEditor-VariableQuery"
         },
         "refresh": 2,
