@@ -49,7 +49,7 @@
     "uuid": "13.0.0"
   },
   "devDependencies": {
-    "@types/node": "24.6.2",
+    "@types/node": "24.7.0",
     "@types/react": "19.2.0",
     "@types/react-dom": "19.2.0",
     "@types/styled-components": "5.1.34",
@@ -57,10 +57,10 @@
     "@typescript-eslint/eslint-plugin": "8.45.0",
     "@typescript-eslint/parser": "8.45.0",
     "cypress": "15.3.0",
-    "eslint": "9.36.0",
+    "eslint": "9.37.0",
     "eslint-config-next": "15.5.4",
     "eslint-plugin-react": "7.37.5",
-    "eslint-plugin-react-hooks": "6.1.0",
+    "eslint-plugin-react-hooks": "6.1.1",
     "openapi-typescript": "7.9.1",
     "ts-proto": "2.7.7",
     "typescript": "5.9.3"
