@@ -112,7 +112,7 @@ service ProductReviewService {
 message ProductReview {
     string username = 1;
     string description = 2;
-    int32 score = 3;
+    float score = 3;
 }
 
 message GetProductReviewsRequest {

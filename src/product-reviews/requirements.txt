@@ -6,3 +6,4 @@ opentelemetry-exporter-otlp-proto-grpc==1.37.0
 psutil==7.0.0 # Importing this will also import opentelemetry-instrumentation-system-metrics when running opentelemetry-bootstrap
 python-dotenv==1.1.1
 python-json-logger==4.0.0
+mysql-connector-python==9.4.0

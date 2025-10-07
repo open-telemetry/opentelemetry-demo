@@ -27,6 +27,16 @@ import demo_pb2_grpc
 from grpc_health.v1 import health_pb2
 from grpc_health.v1 import health_pb2_grpc
 
+# MySQL
+import mysql.connector
+from mysql.connector import Error
+
+db_host = None
+db_port = None
+db_user = None
+db_password = None
+db_name = None
+
 class ProductReviewService(demo_pb2_grpc.ProductReviewServiceServicer):
     def GetProductReviews(self, request, context):
         logger.info(f"Receive GetProductReviews for product id:{request.product_id}")
@@ -51,19 +61,45 @@ class ProductReviewService(demo_pb2_grpc.ProductReviewServiceServicer):
 def get_product_reviews(request_product_id):
 
     product_reviews = demo_pb2.GetProductReviewsResponse()
-
-    first_review = product_reviews.product_reviews.add()
-    first_review.username = "Tom"
-    first_review.description = "I love this product, 10 out of 10!"
-    first_review.score = 5
-
-    product_reviews.product_reviews.add(
-        username="Joe",
-        description="It's okay, I prefer another brand.",
-        score=3
-    )
+    fetch_product_reviews_from_db(request_product_id, product_reviews)
 
     return product_reviews
+
+def fetch_product_reviews_from_db(request_product_id, product_reviews):
+    logger.info("Received a request to fetch product reviews from the database.")
+    try:
+        with mysql.connector.connect(
+            host=db_host,
+            port=db_port,
+            user=db_user,
+            password=db_password,
+            database=db_name
+        ) as connection:
+            logger.info("Successfully connected to the database.")
+
+            with connection.cursor() as cursor:
+                # Define the SQL query
+                query = "SELECT username, description, score FROM productreviews WHERE product_id= %s"
+
+                # Execute the query
+                cursor.execute(query, (request_product_id, ))
+
+                # Fetch all the rows from the query result
+                records = cursor.fetchall()
+
+                logger.info(f"Found {cursor.rowcount} product reviews(s):")
+
+                # Add each row to the list of product reviews
+                for row in records:
+                    logger.info(f"  username: {row[0]}, description: {row[1]}, score: {row[2]}")
+                    review = product_reviews.product_reviews.add(
+                            username=row[0],
+                            description=row[1],
+                            score=row[2]
+                    )
+
+    except Error as e:
+        logger.error(f"Error connecting to MySQL or executing query: {e}")
 
 def get_product_review_summary(request_product_id):
 
@@ -110,6 +146,13 @@ if __name__ == "__main__":
     service = ProductReviewService()
     demo_pb2_grpc.add_ProductReviewServiceServicer_to_server(service, server)
     health_pb2_grpc.add_HealthServicer_to_server(service, server)
+
+    # Retrieve MySQL environment variables
+    db_host = must_map_env('MYSQL_HOST')
+    db_port = must_map_env('MYSQL_PORT')
+    db_user = must_map_env('MYSQL_USER')
+    db_password = must_map_env('MYSQL_PASSWORD')
+    db_name = must_map_env('MYSQL_DATABASE')
 
     # Start server
     port = must_map_env('PRODUCT_REVIEWS_PORT')
