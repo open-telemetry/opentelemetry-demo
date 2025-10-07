@@ -550,7 +550,7 @@
           },
           "editorMode": "code",
           "exemplar": false,
-          "expr": "sum( {\"system.paging.usage\", k8s_cluster_name=~\"$k8s_cluster_name\", k8s_node_name=~\"${node_name}\", host_name=~\"$host_name\", state=\"used\" })\n/\nsum(\"system.paging.usage\", k8s_cluster_name=~\"$k8s_cluster_name\", k8s_node_name=~\"${node_name}\", host_name=~\"$host_name\"})",
+          "expr": "sum( {\"system.paging.usage\", k8s_cluster_name=~\"$k8s_cluster_name\", k8s_node_name=~\"${node_name}\", host_name=~\"$host_name\", state=\"used\" })\n/\nsum( {\"system.paging.usage\", k8s_cluster_name=~\"$k8s_cluster_name\", k8s_node_name=~\"${node_name}\", host_name=~\"$host_name\"})",
           "instant": true,
           "intervalFactor": 1,
           "range": false,

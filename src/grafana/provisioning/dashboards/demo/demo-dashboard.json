@@ -155,7 +155,7 @@
             "uid": "webstore-metrics"
           },
           "editorMode": "code",
-          "expr": "sum by (span_name) (rate({\"traces.span.metrics.duration.milliseconds.count\"{service_name=\"${service}\"}[$__rate_interval]))",
+          "expr": "sum by (span_name) (rate({\"traces.span.metrics.duration.milliseconds.count\", service_name=\"${service}\"}[$__rate_interval]))",
           "legendFormat": "{{ span_name }}",
           "range": true,
           "refId": "A"
@@ -254,7 +254,7 @@
             "uid": "webstore-metrics"
           },
           "editorMode": "code",
-          "expr": "sum by (span_name) (rate({\"traces.span.metrics.calls\"{status_code=\"STATUS_CODE_ERROR\", service_name=\"${service}\"}[$__rate_interval]))",
+          "expr": "sum by (span_name) (rate({\"traces.span.metrics.calls\", status_code=\"STATUS_CODE_ERROR\", service_name=\"${service}\"}[$__rate_interval]))",
           "interval": "",
           "legendFormat": "{{ span_name }}",
           "range": true,
