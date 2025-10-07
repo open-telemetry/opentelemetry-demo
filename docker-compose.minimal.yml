@@ -79,27 +79,10 @@ services:
       - OTEL_SERVICE_NAME=cart
       - ASPNETCORE_URLS=http://*:${CART_PORT}
     depends_on:
-
       otel-collector:
         condition: service_started
     logging: *logging
-  cart-dapr:
-    image: "daprio/daprd:edge"
-    container_name: cart-dapr
-    command: [ "./daprd",
-               "-app-id", "cart",
-               "-app-port", "${CART_PORT}",
-               "-placement-host-address", "dapr-placement:50006",
-               "-components-path", "/components", "-components-path", "/components",
-               "-config", "/configuration/config.yaml" ]
-    volumes:
-      - "./src/dapr/components/:/components"
-      - "./src/dapr/:/configuration"
-    depends_on:
-      - cart
-      - valkey-cart
-      - dapr-placement
-    network_mode: "service:cart"
+
   # Checkout service
   checkout:
     image: ${IMAGE_NAME}:${DEMO_VERSION}-checkout
@@ -452,7 +435,7 @@ services:
     depends_on:
       otel-collector:
         condition: service_started
-      product_db:   
+      product_db:
         condition: service_started
     logging: *logging
 
@@ -543,7 +526,11 @@ services:
       - OTEL_SERVICE_NAME=shipping
       - OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE
     healthcheck:
-      test: ["CMD-SHELL", "timeout 1 bash -c '>/dev/tcp/localhost/${SHIPPING_PORT}'"]
+      test:
+        [
+          "CMD-SHELL",
+          "timeout 1 bash -c '>/dev/tcp/localhost/${SHIPPING_PORT}'",
+        ]
       start_period: 10s
       interval: 5s
       timeout: 10s
@@ -570,18 +557,13 @@ services:
       - GOMEMLIMIT=60MiB
       - OTEL_RESOURCE_ATTRIBUTES
       - OTEL_SERVICE_NAME=flagd
-    command: [
-      "start",
-      "--uri",
-      "file:./etc/flagd/demo.flagd.json"
-    ]
+    command: ["start", "--uri", "file:./etc/flagd/demo.flagd.json"]
     ports:
       - "${FLAGD_PORT}"
       - "${FLAGD_OFREP_PORT}"
     volumes:
       - ./src/flagd:/etc/flagd
-    logging:
-      *logging
+    logging: *logging
 
   # Valkey used by Cart service
   valkey-cart:
@@ -597,15 +579,6 @@ services:
       - "${VALKEY_PORT}"
     logging: *logging
 
-  # ********************
-  # Dapr Components
-  # ********************
-  dapr-placement:
-    image: "daprio/dapr"
-    container_name: dapr-placement
-    command: [ "./placement", "-port", "50006" ]
-    ports:
-      - "50006:50006"
   # ********************
   # Telemetry Components
   # ********************
@@ -661,7 +634,11 @@ services:
         limits:
           memory: 200M
     restart: unless-stopped
-    command: [ "--config=/etc/otelcol-config.yml", "--config=/etc/otelcol-config-extras.yml" ]
+    command:
+      [
+        "--config=/etc/otelcol-config.yml",
+        "--config=/etc/otelcol-config-extras.yml",
+      ]
     user: 0:0
     volumes:
       - ${HOST_FILESYSTEM}:/hostfs:ro
@@ -758,4 +735,3 @@ services:
 volumes:
   pgdata:
     driver: local
-
