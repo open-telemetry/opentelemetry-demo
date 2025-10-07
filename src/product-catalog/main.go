@@ -37,6 +37,7 @@ import (
 	sdktrace "go.opentelemetry.io/otel/sdk/trace"
 	"go.opentelemetry.io/otel/trace"
 
+	"github.com/jackc/pgx/v5/pgxpool"
 	otelhooks "github.com/open-feature/go-sdk-contrib/hooks/open-telemetry/pkg"
 	flagd "github.com/open-feature/go-sdk-contrib/providers/flagd/pkg"
 	"github.com/open-feature/go-sdk/openfeature"
@@ -56,14 +57,22 @@ var (
 	catalog           []*pb.Product
 	resource          *sdkresource.Resource
 	initResourcesOnce sync.Once
+	connPool *pgxpool.Pool
 )
 
 const DEFAULT_RELOAD_INTERVAL = 10
+const PGX_MAX_CONNS = 5
+const PGS_MAX_CONN_LIFE_TIME = 2 * time.Minute
+const CTX_QUERY_TIMEOUT = 10 * time.Second
 
 func init() {
+<<<<<<< HEAD
 	logger = otelslog.NewLogger("product-catalog")
 
 	loadProductCatalog()
+=======
+	log = logrus.New()
+>>>>>>> dynatrace
 }
 
 func initResource() *sdkresource.Resource {
@@ -116,6 +125,7 @@ func initMeterProvider() *sdkmetric.MeterProvider {
 	return mp
 }
 
+<<<<<<< HEAD
 func initLoggerProvider() *sdklog.LoggerProvider {
 	ctx := context.Background()
 
@@ -140,6 +150,37 @@ func main() {
 		}
 		logger.Info("Shutdown logger provider")
 	}()
+=======
+func initPostgresConnectionPool() *pgxpool.Pool {
+	var dbhost, dbport, dbuser, dbpassword, dbname string
+	mustMapEnv(&dbhost, "POSTGRES_HOST")
+	mustMapEnv(&dbport, "POSTGRES_PORT")
+	mustMapEnv(&dbuser, "POSTGRES_USER")
+	mustMapEnv(&dbpassword, "POSTGRES_PASSWORD")
+	mustMapEnv(&dbname, "POSTGRES_DB")
+
+	connStr := fmt.Sprintf("postgres://%s:%s@%s:%s/%s", dbuser, dbpassword,  dbhost, dbport, dbname)
+
+	config, err := pgxpool.ParseConfig(connStr)
+	if err != nil {
+		log.Fatalf("Cannot crate database config: %v", err)
+	}
+	config.MaxConns = PGX_MAX_CONNS
+	config.MaxConnLifetime = PGS_MAX_CONN_LIFE_TIME
+
+	var pool *pgxpool.Pool
+	pool, err = pgxpool.NewWithConfig(context.Background(), config)
+    if err != nil {
+        log.Fatalf("Unable to connect to database: %v", err)
+    }
+
+	return pool
+}
+
+func main() {
+	connPool = initPostgresConnectionPool()
+	defer connPool.Close()
+>>>>>>> dynatrace
 
 	tp := initTracerProvider()
 	defer func() {
@@ -212,6 +253,7 @@ type productCatalog struct {
 	pb.UnimplementedProductCatalogServiceServer
 }
 
+//This function is not used when we are using Postgres
 func loadProductCatalog() {
 	logger.Info("Loading Product Catalog...")
 	var err error
@@ -249,8 +291,8 @@ func loadProductCatalog() {
 	}()
 }
 
+//This function is not used when we are using Postgres
 func readProductFiles() ([]*pb.Product, error) {
-
 	// find all .json files in the products directory
 	entries, err := os.ReadDir("./products")
 	if err != nil {
@@ -295,6 +337,60 @@ func readProductFiles() ([]*pb.Product, error) {
 	return products, nil
 }
 
+func readProducts() ([]*pb.Product, error) {
+    var products []*pb.Product
+    
+	ctx, cancelf := context.WithTimeout(context.Background(), CTX_QUERY_TIMEOUT)
+	defer cancelf()
+	rows, err := connPool.Query(ctx, "select value from productstate")
+	if err != nil {
+		log.Errorf("error executing query: %v", err)
+		return nil, status.Errorf(codes.Internal, "impossible to get products from storage") 
+	}
+	defer rows.Close()
+
+	for rows.Next() {
+		var value []byte
+		var jsonData pb.Product
+
+		err := rows.Scan(&value)
+		if err != nil {
+			log.Errorf("error parsing row: %v", err)
+			return nil, status.Errorf(codes.Internal, "error getting data from row")
+		}
+
+		err = protojson.Unmarshal(value, &jsonData)		
+		if err != nil {
+			log.Errorf("error unmarshal: %v", err)
+			return nil, status.Errorf(codes.Internal, "error parsing the data")
+		}
+
+		products = append(products, &jsonData)
+	}
+	return products, nil
+}
+
+func readProduct(productId string) (*pb.Product, error) {
+	var value []byte 
+	var jsonData pb.Product
+
+	ctx, cancelf := context.WithTimeout(context.Background(), CTX_QUERY_TIMEOUT)
+	defer cancelf()
+	err := connPool.QueryRow(ctx, "select value from productstate where key = $1", productId).Scan(&value)
+	if err != nil {
+		log.Errorf("error executing query: %v", err)
+		return nil, status.Errorf(codes.Internal, "impossible to get product for id %s", productId) 
+	}
+	
+	err = protojson.Unmarshal(value, &jsonData)		
+	if err != nil {
+		log.Errorf("error unmarshal: %v", err)
+		return nil, status.Errorf(codes.Internal, "error parsing the data")
+	}
+
+	return &jsonData, nil
+}
+
 func mustMapEnv(target *string, key string) {
 	value, present := os.LookupEnv(key)
 	if !present {
@@ -317,7 +413,17 @@ func (p *productCatalog) ListProducts(ctx context.Context, req *pb.Empty) (*pb.L
 	span.SetAttributes(
 		attribute.Int("app.products.count", len(catalog)),
 	)
-	return &pb.ListProductsResponse{Products: catalog}, nil
+
+	log.Infof("List products")
+	startTime := time.Now()
+	products, err := readProducts()
+	if err != nil {
+		log.Errorf("Can't get products in ListProducts, %v", err)
+		return nil, err
+	}
+	log.Infof("Number of products read: %v in: %s", len(products), time.Since(startTime))
+
+	return &pb.ListProductsResponse{Products: products}, nil
 }
 
 func (p *productCatalog) GetProduct(ctx context.Context, req *pb.GetProductRequest) (*pb.Product, error) {
@@ -326,6 +432,8 @@ func (p *productCatalog) GetProduct(ctx context.Context, req *pb.GetProductReque
 		attribute.String("app.product.id", req.Id),
 	)
 
+	log.Infof("[GetProduct] product.id=%qq", req.Id)
+
 	// GetProduct will fail on a specific product when feature flag is enabled
 	if p.checkProductFailure(ctx, req.Id) {
 		msg := "Error: Product Catalog Fail Feature Flag Enabled"
@@ -333,14 +441,14 @@ func (p *productCatalog) GetProduct(ctx context.Context, req *pb.GetProductReque
 		span.AddEvent(msg)
 		return nil, status.Errorf(codes.Internal, msg)
 	}
-
-	var found *pb.Product
-	for _, product := range catalog {
-		if req.Id == product.Id {
-			found = product
-			break
-		}
+	
+	startTime := time.Now()
+	found, err := readProduct(req.Id)
+	if err != nil {
+		log.Errorf("Can't get product in GetProduct for id: %s, %v", req.Id, err)
+		return nil, err
 	}
+	log.Infof("Product details read in: %s", time.Since(startTime))
 
 	if found == nil {
 		msg := fmt.Sprintf("Product Not Found: %s", req.Id)

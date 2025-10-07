@@ -1,0 +1,56 @@
+# Copyright The OpenTelemetry Authors
+# SPDX-License-Identifier: Apache-2.0
+
+name: build-and-push-images
+
+on:
+  workflow_call:
+    inputs:
+      push:
+        description: Should the images be pushed
+        default: false
+        required: false
+        type: boolean
+      version:
+        description: The version added to image tag
+        default: latest
+        required: false
+        type: string
+
+jobs:
+  protobufcheck:
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Generate
+        run: make clean docker-generate-protobuf
+      - name: Check Clean Work Tree
+        run: make check-clean-work-tree
+
+  build:
+    needs: protobufcheck
+    runs-on: ubuntu-24.04
+
+    env:
+      COMPOSE_DOCKER_CLI_BUILD: "1"
+      DOCKER_BUILDKIT: "1"
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Retrieve GAR credentials
+        if: ${{ inputs.push }}
+        run: |
+          echo "${{ secrets.GAR_CREDENTIALS }}" |  docker login -u _json_key_base64 --password-stdin europe-docker.pkg.dev
+
+      - name: Build images
+        run: DEMO_VERSION="${{ inputs.version }}" docker compose --env-file .env --env-file .env.override build --build-arg GIT_COMMIT="$(git rev-parse HEAD)" --build-arg GIT_ORIGIN="$(git config --get remote.origin.url)"
+
+      - name: List images
+        run: docker image ls
+
+      - name: Push images
+        if: ${{ inputs.push }}
+        run: DEMO_VERSION="${{ inputs.version }}" docker compose --env-file .env --env-file .env.override push

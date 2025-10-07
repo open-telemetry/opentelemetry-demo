@@ -14,6 +14,7 @@ var (
 	ProtocolVersion = sarama.V3_0_0_0
 )
 
+<<<<<<< HEAD
 type saramaLogger struct {
 	logger *slog.Logger
 }
@@ -31,24 +32,25 @@ func (l *saramaLogger) Print(v ...interface{}) {
 func CreateKafkaProducer(brokers []string, logger *slog.Logger) (sarama.AsyncProducer, error) {
 	// Set the logger for sarama to use.
 	sarama.Logger = &saramaLogger{logger: logger}
+=======
+func CreateClient(brokers []string, log *logrus.Logger) (sarama.Client, error) {
+	sarama.Logger = log
+>>>>>>> dynatrace
 
-	saramaConfig := sarama.NewConfig()
-	saramaConfig.Producer.Return.Successes = true
-	saramaConfig.Producer.Return.Errors = true
-
+	config := sarama.NewConfig()
+	config.Producer.Return.Successes = true
+	config.Producer.Return.Errors = true
 	// Sarama has an issue in a single broker kafka if the kafka broker is restarted.
 	// This setting is to prevent that issue from manifesting itself, but may swallow failed messages.
-	saramaConfig.Producer.RequiredAcks = sarama.NoResponse
+	config.Producer.RequiredAcks = sarama.NoResponse
+	config.Version = ProtocolVersion
 
-	saramaConfig.Version = ProtocolVersion
-
-	// So we can know the partition and offset of messages.
-	saramaConfig.Producer.Return.Successes = true
-
-	producer, err := sarama.NewAsyncProducer(brokers, saramaConfig)
+	client, err := sarama.NewClient(brokers, config)
 	if err != nil {
+		log.Warnln("Failed to create sarama client:", err)
 		return nil, err
 	}
+<<<<<<< HEAD
 
 	// We will log to STDOUT if we're not able to produce messages.
 	go func() {
@@ -58,4 +60,7 @@ func CreateKafkaProducer(brokers []string, logger *slog.Logger) (sarama.AsyncPro
 		}
 	}()
 	return producer, nil
+=======
+	return client, nil
+>>>>>>> dynatrace
 }

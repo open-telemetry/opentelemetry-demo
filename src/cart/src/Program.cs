@@ -20,12 +20,7 @@ using OpenFeature.Contrib.Providers.Flagd;
 using OpenFeature.Hooks;
 
 var builder = WebApplication.CreateBuilder(args);
-string valkeyAddress = builder.Configuration["VALKEY_ADDR"];
-if (string.IsNullOrEmpty(valkeyAddress))
-{
-    Console.WriteLine("VALKEY_ADDR environment variable is required.");
-    Environment.Exit(1);
-}
+
 
 builder.Logging
     .AddOpenTelemetry(options => options.AddOtlpExporter())
@@ -33,7 +28,8 @@ builder.Logging
 
 builder.Services.AddSingleton<ICartStore>(x =>
 {
-    var store = new ValkeyCartStore(x.GetRequiredService<ILogger<ValkeyCartStore>>(), valkeyAddress);
+    var store = new DaprStateManagementCartStore(x.GetRequiredService<ILogger<DaprStateManagementCartStore>>(), "cart-state-store");
+
     store.Initialize();
     return store;
 });
@@ -50,7 +46,7 @@ builder.Services.AddOpenFeature(openFeatureBuilder =>
 builder.Services.AddSingleton(x =>
     new CartService(
         x.GetRequiredService<ICartStore>(),
-        new ValkeyCartStore(x.GetRequiredService<ILogger<ValkeyCartStore>>(), "badhost:1234"),
+        new DaprStateManagementCartStore(x.GetRequiredService<ILogger<DaprStateManagementCartStore>>(), "bad-state-store"),
         x.GetRequiredService<IFeatureClient>()
 ));
 
@@ -85,8 +81,7 @@ builder.Services.AddGrpcHealthChecks()
 
 var app = builder.Build();
 
-var ValkeyCartStore = (ValkeyCartStore)app.Services.GetRequiredService<ICartStore>();
-app.Services.GetRequiredService<StackExchangeRedisInstrumentation>().AddConnection(ValkeyCartStore.GetConnection());
+
 
 app.MapGrpcService<CartService>();
 app.MapGrpcHealthChecksService();

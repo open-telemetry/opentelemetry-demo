@@ -5,7 +5,15 @@ description of your change into "Unreleased" section. As part of release
 process content of "Unreleased" section content will generate release notes for
 the release.
 
-## Unreleased
+## Unreleased  
+   
+* [product-catalog] change product catalog to use Postgres database directly   
+
+## 2.0.3
+
+* [product catalog] use it with a Dapr client
+* [cartservice] Using Dapr to connect to valkey
+* [postgresl] added postgresql for product
 
 * [chore] Use pre-built nginx otel image
   ([#2614](https://github.com/open-telemetry/opentelemetry-demo/pull/2614))
@@ -142,15 +150,18 @@ the release.
   fix for `IS_REMOTE` flag feature
   ([#2112](https://github.com/open-telemetry/opentelemetry-demo/pull/2112))
 * [load-generator] Change OpenFeature Evaluation to Remote Evaluation Protocol,
-  based on [this issue in OpenFeature/python-sdk-contrib](https://github.com/open-feature/python-sdk-contrib/issues/198)
+  ([this issue in OpenFeature/python-sdk-contrib](https://github.com/open-feature/python-sdk-contrib/issues/198))
   ([#2114](https://github.com/open-telemetry/opentelemetry-demo/pull/2114))
 * [flagd-ui] increase memory to 100MB
   ([#2120](https://github.com/open-telemetry/opentelemetry-demo/pull/2120))
+<<<<<<< HEAD
 * [cartservice] change custom metrics to use seconds
   ([#2135](https://github.com/open-telemetry/opentelemetry-demo/pull/2135))
 * [otel-collector] Fix OTel Collector meta-monitoring, export metrics using
   the HTTP port
   ([#2502](https://github.com/open-telemetry/opentelemetry-demo/pull/2502))
+=======
+>>>>>>> dynatrace
 
 ## 2.0.1
 

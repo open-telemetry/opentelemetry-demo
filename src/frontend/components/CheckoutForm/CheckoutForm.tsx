@@ -138,7 +138,7 @@ const CheckoutForm = ({ onSubmit }: IProps) => {
         value={creditCardNumber}
         onChange={handleChange}
         required
-        pattern="\d{4}-\d{4}-\d{4}-\d{4}"
+        pattern="\d{4}-\d{4}-\d{4}-\d{4}|\d{4}-\d{6}-\d{5}"
       />
 
       <S.CardRow>

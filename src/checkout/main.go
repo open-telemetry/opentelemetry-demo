@@ -141,7 +141,8 @@ type checkout struct {
 	paymentSvcAddr        string
 	kafkaBrokerSvcAddr    string
 	pb.UnimplementedCheckoutServiceServer
-	KafkaProducerClient     sarama.AsyncProducer
+	KafkaAsyncProducer      sarama.AsyncProducer
+	KafkaSyncProducer       sarama.SyncProducer
 	shippingSvcClient       pb.ShippingServiceClient
 	productCatalogSvcClient pb.ProductCatalogServiceClient
 	cartSvcClient           pb.CartServiceClient
@@ -231,10 +232,37 @@ func main() {
 	svc.kafkaBrokerSvcAddr = os.Getenv("KAFKA_ADDR")
 
 	if svc.kafkaBrokerSvcAddr != "" {
+<<<<<<< HEAD
 		svc.KafkaProducerClient, err = kafka.CreateKafkaProducer([]string{svc.kafkaBrokerSvcAddr}, logger)
+=======
+		kafkaClient, err := kafka.CreateClient([]string{svc.kafkaBrokerSvcAddr}, log)
+>>>>>>> dynatrace
 		if err != nil {
 			logger.Error(err.Error())
 		}
+		defer func() {
+			if err = kafkaClient.Close(); err != nil {
+				log.Fatalln(err)
+			}
+		}()
+		svc.KafkaSyncProducer, err = sarama.NewSyncProducerFromClient(kafkaClient)
+		if err != nil {
+			log.Fatalln(err)
+		}
+		defer func() {
+			if err = svc.KafkaSyncProducer.Close(); err != nil {
+				log.Fatalln(err)
+			}
+		}()
+		svc.KafkaAsyncProducer, err = sarama.NewAsyncProducerFromClient(kafkaClient)
+		if err != nil {
+			log.Fatalln(err)
+		}
+		defer func() {
+			if err = svc.KafkaAsyncProducer.Close(); err != nil {
+				log.Fatalln(err)
+			}
+		}()
 	}
 
 	logger.Info(fmt.Sprintf("service config: %+v", svc))
@@ -626,6 +654,7 @@ func (cs *checkout) sendToPostProcessor(ctx context.Context, result *pb.OrderRes
 
 	// Send message and handle response
 	startTime := time.Now()
+<<<<<<< HEAD
 	select {
 	case cs.KafkaProducerClient.Input() <- &msg:
 		select {
@@ -652,22 +681,46 @@ func (cs *checkout) sendToPostProcessor(ctx context.Context, result *pb.OrderRes
 			logger.Warn(fmt.Sprintf("Context canceled before success message received: %v", ctx.Err()))
 		}
 	case <-ctx.Done():
+=======
+
+	log.Infof("Message sent to Kafka: %v", msg)
+	_, offset, err := cs.KafkaSyncProducer.SendMessage(&msg)
+
+	if err != nil {
+>>>>>>> dynatrace
 		span.SetAttributes(
 			attribute.Bool("messaging.kafka.producer.success", false),
 			attribute.Int("messaging.kafka.producer.duration_ms", int(time.Since(startTime).Milliseconds())),
 		)
+<<<<<<< HEAD
 		span.SetStatus(otelcodes.Error, "Failed to send: "+ctx.Err().Error())
 		logger.Error(fmt.Sprintf("Failed to send message to Kafka within context deadline: %v", ctx.Err()))
 		return
+=======
+		span.SetStatus(otelcodes.Error, err.Error())
+		log.Errorf("Failed to write message: %v", err)
+	} else {
+		span.SetAttributes(
+			attribute.Bool("messaging.kafka.producer.success", true),
+			attribute.Int("messaging.kafka.producer.duration_ms", int(time.Since(startTime).Milliseconds())),
+			attribute.KeyValue(semconv.MessagingKafkaMessageOffset(int(offset))),
+		)
+		log.Infof("Successful to write message. offset: %v, duration: %v", offset, time.Since(startTime))
+>>>>>>> dynatrace
 	}
 
 	ffValue := cs.getIntFeatureFlag(ctx, "kafkaQueueProblems")
 	if ffValue > 0 {
+<<<<<<< HEAD
 		logger.Info("Warning: FeatureFlag 'kafkaQueueProblems' is activated, overloading queue now.")
 		for i := 0; i < ffValue; i++ {
+=======
+		log.Infof("Warning: FeatureFlag 'kafkaQueueProblems' is activated, overloading queue now.")
+		for i := range ffValue {
+>>>>>>> dynatrace
 			go func(i int) {
-				cs.KafkaProducerClient.Input() <- &msg
-				_ = <-cs.KafkaProducerClient.Successes()
+				cs.KafkaAsyncProducer.Input() <- &msg
+				_ = <-cs.KafkaAsyncProducer.Successes()
 			}(i)
 		}
 		logger.Info(fmt.Sprintf("Done with #%d messages for overload simulation.", ffValue))

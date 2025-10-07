@@ -14,16 +14,20 @@ permissions:
 
 jobs:
   build_images:
+<<<<<<< HEAD
     permissions: # required by the reusable workflow
       contents: read
       packages: write
     uses: ./.github/workflows/component-build-images.yml
+=======
+    uses: ./.github/workflows/build-and-push-images.yaml
+>>>>>>> dynatrace
     with:
       push: false
-      version: 'dev'
+      version: "dev"
 
   markdownlint:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     steps:
       - name: check out code
         uses: actions/checkout@v5
@@ -33,20 +37,20 @@ jobs:
         run: make markdownlint
 
   yamllint:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     steps:
       - name: check out code
         uses: actions/checkout@v5
       - uses: actions/setup-python@v6
         with:
-          python-version: '3.x'
+          python-version: "3.13"
       - name: install yamllint
         run: make install-yamllint
       - name: run yamllint
         run: yamllint . -f github
 
   misspell:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     steps:
       - name: check out code
         uses: actions/checkout@v5
@@ -55,7 +59,7 @@ jobs:
 
   checklinks:
     name: linkspector
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@v5
       - name: Run linkspector
@@ -63,14 +67,15 @@ jobs:
         with:
           level: info
           fail_level: any
-          config_file: '.linkspector.yml'
+          config_file: ".linkspector.yml"
 
   sanity:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@v5
       - name: run sanitycheck.py
         run: python3 ./internal/tools/sanitycheck.py
+<<<<<<< HEAD
 
   checklicense:
     runs-on: ubuntu-latest
@@ -81,3 +86,5 @@ jobs:
         run: make install-tools
       - name: run checklicense
         run: make checklicense
+=======
+>>>>>>> dynatrace

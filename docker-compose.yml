@@ -82,6 +82,7 @@ services:
         condition: service_started
     logging: *logging
 
+
   # Cart service
   cart:
     image: ${IMAGE_NAME}:${DEMO_VERSION}-cart
@@ -102,20 +103,35 @@ services:
       - CART_PORT
       - FLAGD_HOST
       - FLAGD_PORT
-      - VALKEY_ADDR
       - OTEL_EXPORTER_OTLP_ENDPOINT
       - OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE
       - OTEL_RESOURCE_ATTRIBUTES
       - OTEL_SERVICE_NAME=cart
       - ASPNETCORE_URLS=http://*:${CART_PORT}
     depends_on:
-      valkey-cart:
-        condition: service_started
+
       otel-collector:
         condition: service_started
       flagd:
         condition: service_started
     logging: *logging
+  cart-dapr:
+    image: "daprio/daprd:edge"
+    container_name: cart-dapr
+    command: [ "./daprd",
+               "-app-id", "cart",
+               "-app-port", "${CART_PORT}",
+               "-placement-host-address", "dapr-placement:50006",
+               "-components-path", "/components", "-components-path", "/components",
+               "-config", "/configuration/config.yaml" ]
+    volumes:
+      - "./src/dapr/components/:/components"
+      - "./src/dapr/:/configuration"
+    depends_on:
+      - cart
+      - valkey-cart
+      - dapr-placement
+    network_mode: "service:cart"
 
   # Checkout service
   checkout:
@@ -473,6 +489,19 @@ services:
         condition: service_started
     logging: *logging
 
+  product_db:
+    image: postgres:15.3-alpine3.18
+    restart: always
+    environment:
+      - POSTGRES_USER
+      - POSTGRES_PASSWORD
+    volumes:
+      - ./src/postgresql/product/init.sql:/docker-entrypoint-initdb.d/init.sql
+      - pgdata:/container/path:/var/lib/postgresql/data
+    ports:
+      - "$POSTGRES_PORT"
+
+
   # Product Catalog service
   product-catalog:
     image: ${IMAGE_NAME}:${DEMO_VERSION}-product-catalog
@@ -498,13 +527,20 @@ services:
       - OTEL_EXPORTER_OTLP_ENDPOINT
       - OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE
       - OTEL_RESOURCE_ATTRIBUTES
-      - OTEL_SERVICE_NAME=product-catalog
+      - OTEL_SERVICE_NAME
+      - POSTGRES_HOST
+      - POSTGRES_USER
+      - POSTGRES_PASSWORD
+      - POSTGRES_PORT
+      - POSTGRES_DB
     volumes:
       - ./src/product-catalog/products:/usr/src/app/products
     depends_on:
       otel-collector:
         condition: service_started
       flagd:
+        condition: service_started
+      product_db:   
         condition: service_started
     logging: *logging
 
@@ -735,7 +771,15 @@ services:
       - "${VALKEY_PORT}"
     logging: *logging
 
-
+  # ********************
+  # Dapr Components
+  # ********************
+  dapr-placement:
+    image: "daprio/dapr"
+    container_name: dapr-placement
+    command: [ "./placement", "-port", "50006" ]
+    ports:
+      - "50006:50006"
   # ********************
   # Telemetry Components
   # ********************
@@ -884,3 +928,9 @@ services:
       timeout: 10s
       retries: 10
     logging: *logging
+
+volumes:
+  pgdata:
+    driver: local
+
+
