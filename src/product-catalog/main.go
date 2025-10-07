@@ -9,12 +9,10 @@ package main
 import (
 	"context"
 	"fmt"
-	"io/fs"
 	"log/slog"
 	"net"
 	"os"
 	"os/signal"
-	"strconv"
 	"strings"
 	"sync"
 	"syscall"
@@ -57,7 +55,7 @@ var (
 	catalog           []*pb.Product
 	resource          *sdkresource.Resource
 	initResourcesOnce sync.Once
-	connPool *pgxpool.Pool
+	connPool          *pgxpool.Pool
 )
 
 const DEFAULT_RELOAD_INTERVAL = 10
@@ -66,13 +64,7 @@ const PGS_MAX_CONN_LIFE_TIME = 2 * time.Minute
 const CTX_QUERY_TIMEOUT = 10 * time.Second
 
 func init() {
-<<<<<<< HEAD
 	logger = otelslog.NewLogger("product-catalog")
-
-	loadProductCatalog()
-=======
-	log = logrus.New()
->>>>>>> dynatrace
 }
 
 func initResource() *sdkresource.Resource {
@@ -125,7 +117,6 @@ func initMeterProvider() *sdkmetric.MeterProvider {
 	return mp
 }
 
-<<<<<<< HEAD
 func initLoggerProvider() *sdklog.LoggerProvider {
 	ctx := context.Background()
 
@@ -142,15 +133,6 @@ func initLoggerProvider() *sdklog.LoggerProvider {
 	return loggerProvider
 }
 
-func main() {
-	lp := initLoggerProvider()
-	defer func() {
-		if err := lp.Shutdown(context.Background()); err != nil {
-			logger.Error(fmt.Sprintf("Logger Provider Shutdown: %v", err))
-		}
-		logger.Info("Shutdown logger provider")
-	}()
-=======
 func initPostgresConnectionPool() *pgxpool.Pool {
 	var dbhost, dbport, dbuser, dbpassword, dbname string
 	mustMapEnv(&dbhost, "POSTGRES_HOST")
@@ -159,28 +141,34 @@ func initPostgresConnectionPool() *pgxpool.Pool {
 	mustMapEnv(&dbpassword, "POSTGRES_PASSWORD")
 	mustMapEnv(&dbname, "POSTGRES_DB")
 
-	connStr := fmt.Sprintf("postgres://%s:%s@%s:%s/%s", dbuser, dbpassword,  dbhost, dbport, dbname)
+	connStr := fmt.Sprintf("postgres://%s:%s@%s:%s/%s", dbuser, dbpassword, dbhost, dbport, dbname)
 
 	config, err := pgxpool.ParseConfig(connStr)
 	if err != nil {
-		log.Fatalf("Cannot crate database config: %v", err)
+		logger.Error(fmt.Sprintf("Cannot crate database config: %v", err))
+		os.Exit(1)
 	}
 	config.MaxConns = PGX_MAX_CONNS
 	config.MaxConnLifetime = PGS_MAX_CONN_LIFE_TIME
 
 	var pool *pgxpool.Pool
 	pool, err = pgxpool.NewWithConfig(context.Background(), config)
-    if err != nil {
-        log.Fatalf("Unable to connect to database: %v", err)
-    }
+	if err != nil {
+		logger.Error(fmt.Sprintf("Unable to connect to database: %v", err))
+		os.Exit(1)
+	}
 
 	return pool
 }
 
 func main() {
-	connPool = initPostgresConnectionPool()
-	defer connPool.Close()
->>>>>>> dynatrace
+	lp := initLoggerProvider()
+	defer func() {
+		if err := lp.Shutdown(context.Background()); err != nil {
+			logger.Error(fmt.Sprintf("Logger Provider Shutdown: %v", err))
+		}
+		logger.Info("Shutdown logger provider")
+	}()
 
 	tp := initTracerProvider()
 	defer func() {
@@ -206,6 +194,9 @@ func main() {
 	if err != nil {
 		logger.Error(err.Error())
 	}
+
+	connPool = initPostgresConnectionPool()
+	defer connPool.Close()
 
 	err = runtime.Start(runtime.WithMinimumReadMemStatsInterval(time.Second))
 	if err != nil {
@@ -253,99 +244,15 @@ type productCatalog struct {
 	pb.UnimplementedProductCatalogServiceServer
 }
 
-//This function is not used when we are using Postgres
-func loadProductCatalog() {
-	logger.Info("Loading Product Catalog...")
-	var err error
-	catalog, err = readProductFiles()
-	if err != nil {
-		logger.Error(fmt.Sprintf("Error reading product files: %v\n", err))
-		os.Exit(1)
-	}
-
-	// Default reload interval is 10 seconds
-	interval := DEFAULT_RELOAD_INTERVAL
-	si := os.Getenv("PRODUCT_CATALOG_RELOAD_INTERVAL")
-	if si != "" {
-		interval, _ = strconv.Atoi(si)
-		if interval <= 0 {
-			interval = DEFAULT_RELOAD_INTERVAL
-		}
-	}
-	logger.Info(fmt.Sprintf("Product Catalog reload interval: %d", interval))
-
-	ticker := time.NewTicker(time.Duration(interval) * time.Second)
-
-	go func() {
-		for {
-			select {
-			case <-ticker.C:
-				logger.Info("Reloading Product Catalog...")
-				catalog, err = readProductFiles()
-				if err != nil {
-					logger.Error(fmt.Sprintf("Error reading product files: %v", err))
-					continue
-				}
-			}
-		}
-	}()
-}
-
-//This function is not used when we are using Postgres
-func readProductFiles() ([]*pb.Product, error) {
-	// find all .json files in the products directory
-	entries, err := os.ReadDir("./products")
-	if err != nil {
-		return nil, err
-	}
-
-	jsonFiles := make([]fs.FileInfo, 0, len(entries))
-	for _, entry := range entries {
-		if strings.HasSuffix(entry.Name(), ".json") {
-			info, err := entry.Info()
-			if err != nil {
-				return nil, err
-			}
-			jsonFiles = append(jsonFiles, info)
-		}
-	}
-
-	// read the contents of each .json file and unmarshal into a ListProductsResponse
-	// then append the products to the catalog
-	var products []*pb.Product
-	for _, f := range jsonFiles {
-		jsonData, err := os.ReadFile("./products/" + f.Name())
-		if err != nil {
-			return nil, err
-		}
-
-		var res pb.ListProductsResponse
-		if err := protojson.Unmarshal(jsonData, &res); err != nil {
-			return nil, err
-		}
-
-		products = append(products, res.Products...)
-	}
-
-	logger.LogAttrs(
-		context.Background(),
-		slog.LevelInfo,
-		fmt.Sprintf("Loaded %d products\n", len(products)),
-		slog.Int("products", len(products)),
-	)
-
-	return products, nil
-}
-
 func readProducts() ([]*pb.Product, error) {
-    var products []*pb.Product
-    
+	var products []*pb.Product
+
 	ctx, cancelf := context.WithTimeout(context.Background(), CTX_QUERY_TIMEOUT)
 	defer cancelf()
 	rows, err := connPool.Query(ctx, "select value from productstate")
 	if err != nil {
-		log.Errorf("error executing query: %v", err)
-		return nil, status.Errorf(codes.Internal, "impossible to get products from storage") 
+		logger.Error(fmt.Sprintf("error executing query: %v", err))
+		return nil, status.Errorf(codes.Internal, "impossible to get products from storage")
 	}
 	defer rows.Close()
 
@@ -355,13 +262,13 @@ func readProducts() ([]*pb.Product, error) {
 
 		err := rows.Scan(&value)
 		if err != nil {
-			log.Errorf("error parsing row: %v", err)
+			logger.Error(fmt.Sprintf("error parsing row: %v", err))
 			return nil, status.Errorf(codes.Internal, "error getting data from row")
 		}
 
-		err = protojson.Unmarshal(value, &jsonData)		
+		err = protojson.Unmarshal(value, &jsonData)
 		if err != nil {
-			log.Errorf("error unmarshal: %v", err)
+			logger.Error(fmt.Sprintf("error unmarshal: %v", err))
 			return nil, status.Errorf(codes.Internal, "error parsing the data")
 		}
 
@@ -371,20 +278,20 @@ func readProducts() ([]*pb.Product, error) {
 }
 
 func readProduct(productId string) (*pb.Product, error) {
-	var value []byte 
+	var value []byte
 	var jsonData pb.Product
 
 	ctx, cancelf := context.WithTimeout(context.Background(), CTX_QUERY_TIMEOUT)
 	defer cancelf()
 	err := connPool.QueryRow(ctx, "select value from productstate where key = $1", productId).Scan(&value)
 	if err != nil {
-		log.Errorf("error executing query: %v", err)
-		return nil, status.Errorf(codes.Internal, "impossible to get product for id %s", productId) 
+		logger.Error(fmt.Sprintf("error executing query: %v", err))
+		return nil, status.Errorf(codes.Internal, "impossible to get product for id %s", productId)
 	}
-	
-	err = protojson.Unmarshal(value, &jsonData)		
+
+	err = protojson.Unmarshal(value, &jsonData)
 	if err != nil {
-		log.Errorf("error unmarshal: %v", err)
+		logger.Error(fmt.Sprintf("error unmarshal: %v", err))
 		return nil, status.Errorf(codes.Internal, "error parsing the data")
 	}
 
@@ -414,14 +321,14 @@ func (p *productCatalog) ListProducts(ctx context.Context, req *pb.Empty) (*pb.L
 		attribute.Int("app.products.count", len(catalog)),
 	)
 
-	log.Infof("List products")
+	logger.Info("List products")
 	startTime := time.Now()
 	products, err := readProducts()
 	if err != nil {
-		log.Errorf("Can't get products in ListProducts, %v", err)
+		logger.Error(fmt.Sprintf("Can't get products in ListProducts, %v", err))
 		return nil, err
 	}
-	log.Infof("Number of products read: %v in: %s", len(products), time.Since(startTime))
+	logger.Info(fmt.Sprintf("Number of products read: %v in: %s", len(products), time.Since(startTime)))
 
 	return &pb.ListProductsResponse{Products: products}, nil
 }
@@ -432,7 +339,7 @@ func (p *productCatalog) GetProduct(ctx context.Context, req *pb.GetProductReque
 		attribute.String("app.product.id", req.Id),
 	)
 
-	log.Infof("[GetProduct] product.id=%qq", req.Id)
+	logger.Info(fmt.Sprintf("[GetProduct] product.id=%qq", req.Id))
 
 	// GetProduct will fail on a specific product when feature flag is enabled
 	if p.checkProductFailure(ctx, req.Id) {
@@ -441,14 +348,14 @@ func (p *productCatalog) GetProduct(ctx context.Context, req *pb.GetProductReque
 		span.AddEvent(msg)
 		return nil, status.Errorf(codes.Internal, msg)
 	}
-	
+
 	startTime := time.Now()
 	found, err := readProduct(req.Id)
 	if err != nil {
-		log.Errorf("Can't get product in GetProduct for id: %s, %v", req.Id, err)
+		logger.Error(fmt.Sprintf("Can't get product in GetProduct for id: %s, %v", req.Id, err))
 		return nil, err
 	}
-	log.Infof("Product details read in: %s", time.Since(startTime))
+	logger.Info(fmt.Sprintf("Product details read in: %s", time.Since(startTime)))
 
 	if found == nil {
 		msg := fmt.Sprintf("Product Not Found: %s", req.Id)
