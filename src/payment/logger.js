@@ -11,16 +11,16 @@ const transport = pino.transport({
         recordProcessorType: 'batch',
         exporterOptions: {
           protocol: 'grpc',
-        }
+        },
       },
       {
         recordProcessorType: 'simple',
-        exporterOptions: { protocol: 'console' }
-      }
+        exporterOptions: { protocol: 'console' },
+      },
     ],
     loggerName: 'payment-logger',
-    serviceVersion: '1.0.0'
-  }
+    serviceVersion: '1.0.0',
+  },
 })
 
 const logger = pino(transport, {
@@ -31,9 +31,9 @@ const logger = pino(transport, {
   },
   formatters: {
     level: (label) => {
-      return { 'level': label };
+      return { level: label }
     },
   },
-});
+})
 
-module.exports = logger;
+module.exports = logger
