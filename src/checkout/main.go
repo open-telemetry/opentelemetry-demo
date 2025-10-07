@@ -8,6 +8,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"io"
+	"log"
 	"log/slog"
 	"net"
 	"net/http"
@@ -232,11 +233,7 @@ func main() {
 	svc.kafkaBrokerSvcAddr = os.Getenv("KAFKA_ADDR")
 
 	if svc.kafkaBrokerSvcAddr != "" {
-<<<<<<< HEAD
-		svc.KafkaProducerClient, err = kafka.CreateKafkaProducer([]string{svc.kafkaBrokerSvcAddr}, logger)
-=======
-		kafkaClient, err := kafka.CreateClient([]string{svc.kafkaBrokerSvcAddr}, log)
->>>>>>> dynatrace
+		kafkaClient, err := kafka.CreateClient([]string{svc.kafkaBrokerSvcAddr}, logger)
 		if err != nil {
 			logger.Error(err.Error())
 		}
@@ -654,70 +651,30 @@ func (cs *checkout) sendToPostProcessor(ctx context.Context, result *pb.OrderRes
 
 	// Send message and handle response
 	startTime := time.Now()
-<<<<<<< HEAD
-	select {
-	case cs.KafkaProducerClient.Input() <- &msg:
-		select {
-		case successMsg := <-cs.KafkaProducerClient.Successes():
-			span.SetAttributes(
-				attribute.Bool("messaging.kafka.producer.success", true),
-				attribute.Int("messaging.kafka.producer.duration_ms", int(time.Since(startTime).Milliseconds())),
-				attribute.KeyValue(semconv.MessagingKafkaMessageOffset(int(successMsg.Offset))),
-			)
-			logger.Info(fmt.Sprintf("Successful to write message. offset: %v, duration: %v", successMsg.Offset, time.Since(startTime)))
-		case errMsg := <-cs.KafkaProducerClient.Errors():
-			span.SetAttributes(
-				attribute.Bool("messaging.kafka.producer.success", false),
-				attribute.Int("messaging.kafka.producer.duration_ms", int(time.Since(startTime).Milliseconds())),
-			)
-			span.SetStatus(otelcodes.Error, errMsg.Err.Error())
-			logger.Error(fmt.Sprintf("Failed to write message: %v", errMsg.Err))
-		case <-ctx.Done():
-			span.SetAttributes(
-				attribute.Bool("messaging.kafka.producer.success", false),
-				attribute.Int("messaging.kafka.producer.duration_ms", int(time.Since(startTime).Milliseconds())),
-			)
-			span.SetStatus(otelcodes.Error, "Context cancelled: "+ctx.Err().Error())
-			logger.Warn(fmt.Sprintf("Context canceled before success message received: %v", ctx.Err()))
-		}
-	case <-ctx.Done():
-=======
 
-	log.Infof("Message sent to Kafka: %v", msg)
+	logger.Info(fmt.Sprintf("Message sent to Kafka: %v", msg))
 	_, offset, err := cs.KafkaSyncProducer.SendMessage(&msg)
 
 	if err != nil {
->>>>>>> dynatrace
 		span.SetAttributes(
 			attribute.Bool("messaging.kafka.producer.success", false),
 			attribute.Int("messaging.kafka.producer.duration_ms", int(time.Since(startTime).Milliseconds())),
 		)
-<<<<<<< HEAD
-		span.SetStatus(otelcodes.Error, "Failed to send: "+ctx.Err().Error())
-		logger.Error(fmt.Sprintf("Failed to send message to Kafka within context deadline: %v", ctx.Err()))
-		return
-=======
 		span.SetStatus(otelcodes.Error, err.Error())
-		log.Errorf("Failed to write message: %v", err)
+		logger.Error(fmt.Sprintf("Failed to write message: %v", err))
 	} else {
 		span.SetAttributes(
 			attribute.Bool("messaging.kafka.producer.success", true),
 			attribute.Int("messaging.kafka.producer.duration_ms", int(time.Since(startTime).Milliseconds())),
 			attribute.KeyValue(semconv.MessagingKafkaMessageOffset(int(offset))),
 		)
-		log.Infof("Successful to write message. offset: %v, duration: %v", offset, time.Since(startTime))
->>>>>>> dynatrace
+		logger.Info(fmt.Sprintf("Successful to write message. offset: %v, duration: %v", offset, time.Since(startTime)))
 	}
 
 	ffValue := cs.getIntFeatureFlag(ctx, "kafkaQueueProblems")
 	if ffValue > 0 {
-<<<<<<< HEAD
 		logger.Info("Warning: FeatureFlag 'kafkaQueueProblems' is activated, overloading queue now.")
-		for i := 0; i < ffValue; i++ {
-=======
-		log.Infof("Warning: FeatureFlag 'kafkaQueueProblems' is activated, overloading queue now.")
 		for i := range ffValue {
->>>>>>> dynatrace
 			go func(i int) {
 				cs.KafkaAsyncProducer.Input() <- &msg
 				_ = <-cs.KafkaAsyncProducer.Successes()

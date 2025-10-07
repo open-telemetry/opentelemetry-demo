@@ -14,7 +14,6 @@ var (
 	ProtocolVersion = sarama.V3_0_0_0
 )
 
-<<<<<<< HEAD
 type saramaLogger struct {
 	logger *slog.Logger
 }
@@ -29,13 +28,9 @@ func (l *saramaLogger) Print(v ...interface{}) {
 	l.logger.Info(fmt.Sprint(v...))
 }
 
-func CreateKafkaProducer(brokers []string, logger *slog.Logger) (sarama.AsyncProducer, error) {
+func CreateClient(brokers []string, logger *slog.Logger) (sarama.Client, error) {
 	// Set the logger for sarama to use.
 	sarama.Logger = &saramaLogger{logger: logger}
-=======
-func CreateClient(brokers []string, log *logrus.Logger) (sarama.Client, error) {
-	sarama.Logger = log
->>>>>>> dynatrace
 
 	config := sarama.NewConfig()
 	config.Producer.Return.Successes = true
@@ -47,20 +42,8 @@ func CreateClient(brokers []string, log *logrus.Logger) (sarama.Client, error) {
 
 	client, err := sarama.NewClient(brokers, config)
 	if err != nil {
-		log.Warnln("Failed to create sarama client:", err)
+		logger.Warn(fmt.Sprintf("Failed to create sarama client: %+v", err))
 		return nil, err
 	}
-<<<<<<< HEAD
-
-	// We will log to STDOUT if we're not able to produce messages.
-	go func() {
-		for err := range producer.Errors() {
-			logger.Error(fmt.Sprintf("Failed to write message: %+v", err))
-
-		}
-	}()
-	return producer, nil
-=======
 	return client, nil
->>>>>>> dynatrace
 }
