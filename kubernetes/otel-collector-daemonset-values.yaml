@@ -4,6 +4,21 @@ image:
   repository: otel/opentelemetry-collector-contrib
 
 extraEnvs:
+  - name: AWS_ACCESS_KEY_ID
+    valueFrom:
+      secretKeyRef:
+        name: aws-secrets
+        key: access_key_id
+  - name: AWS_SECRET_ACCESS_KEY
+    valueFrom:
+      secretKeyRef:
+        name: aws-secrets
+        key: secret_access_key
+  - name: AWS_REGION
+    valueFrom:
+      secretKeyRef:
+        name: aws-secrets
+        key: region
   - name: DD_API_KEY
     valueFrom:
       secretKeyRef:
@@ -19,6 +34,16 @@ extraEnvs:
       secretKeyRef:
         name: prometheus
         key: endpoint
+  - name: BETTERSTACK_INGESTING_HOST
+    valueFrom:
+      secretKeyRef:
+        name: betterstack
+        key: ingesting_host
+  - name: BETTERSTACK_SOURCE_TOKEN
+    valueFrom:
+      secretKeyRef:
+        name: betterstack
+        key: source_token
   - name: OBSERVEINC_COLLECTION_ENDPOINT
     valueFrom:
       secretKeyRef:
@@ -28,6 +53,11 @@ extraEnvs:
     valueFrom:
       secretKeyRef:
         name: observeinc
+        key: token
+  - name: ELASTIC_TOKEN
+    valueFrom:
+      secretKeyRef:
+        name: elastic
         key: token
   - name: ELASTIC_PASSWORD
     valueFrom:
@@ -44,6 +74,11 @@ extraEnvs:
       secretKeyRef:
         name: elastic
         key: endpoint
+  - name: NEWRELIC_API_KEY
+    valueFrom:
+      secretKeyRef:
+        name: newrelic
+        key: api_key
 presets:
   # enables the k8sattributesprocessor and adds it to the traces, metrics, and logs pipelines
   kubernetesAttributes:
@@ -93,6 +128,10 @@ config:
       traces:
         span_name_as_resource_name: true
   exporters:
+    otlphttp/betterstack:
+      endpoint: "${BETTERSTACK_INGESTING_HOST}"
+      headers:
+        Authorization: "Bearer ${BETTERSTACK_SOURCE_TOKEN}"
     datadog/exporter:
       api:
         site: ${env:DD_SITE}
@@ -101,31 +140,46 @@ config:
       endpoint: "${OBSERVEINC_COLLECTION_ENDPOINT}/v2/otel"
       headers:
         authorization: "Bearer ${OBSERVEINC_TOKEN}"
+    otlphttp/newrelic:
+      endpoint: "https://otlp.nr-data.net"
+      headers:
+        api-key: ${env:NEWRELIC_API_KEY}
+    otlphttp/cloudwatch:
+      compression: gzip
+      logs_endpoint: "https://logs.${env:AWS_REGION}.amazonaws.com/v1/logs"
+      headers:
+        x-aws-log-group: OtelDemoLogs
+        x-aws-log-stream: default
+      auth:
+        authenticator: sigv4auth/logs
     prometheusremotewrite:
       endpoint: ${env:PROMETHEUS_ENDPOINT}/api/v1/write
       namespace: "default"
       timeout: 60s
       tls:
         insecure: true
-    elasticsearch:
+    otlphttp/elasticsearch:
       endpoint: ${env:ELASTIC_ENDPOINT}
-      auth:
-        authenticator: basicauth
+      headers:
+        authorization: "Bearer ${ELASTIC_TOKEN}"
   extensions:
+    sigv4auth/logs:
+      region: ${env:AWS_REGION}
+      service: logs
     basicauth:
       client_auth:
         username: ${env:ELASTIC_USERNAME}
         password: ${env:ELASTIC_PASSWORD}
   service:
-    extensions: [health_check, basicauth]
+    extensions: [health_check, basicauth, sigv4auth/logs]
     pipelines:
       traces:
         processors: [resource]
-        exporters: [ datadog/connector, datadog/exporter, spanmetrics, elasticsearch ]
+        exporters: [ datadog/connector, datadog/exporter, spanmetrics, otlphttp/elasticsearch, otlphttp/newrelic ]
       metrics:
         receivers: [ otlp, hostmetrics, datadog/connector, spanmetrics ]
         processors: [resource]
-        exporters: [ prometheusremotewrite, datadog/exporter ]
+        exporters: [ prometheusremotewrite, datadog/exporter, otlphttp/elasticsearch, otlphttp/newrelic ]
       logs:
         processors: [resource]
-        exporters: [ datadog/exporter, otlphttp/observeinclogs, elasticsearch ]
+        exporters: [ datadog/exporter, otlphttp/observeinclogs, otlphttp/elasticsearch, otlphttp/newrelic, otlphttp/cloudwatch ]
