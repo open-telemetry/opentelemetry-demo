@@ -116,7 +116,7 @@
             "uid": "webstore-metrics"
           },
           "editorMode": "code",
-          "expr": "timestamp(sum by (deployment_environment_name, service_namespace, service_name) (target_info{deployment_environment_name=~\"$deployment_environment_name\", service_namespace=~\"$service_namespace\", service_name=\"$service_name\"}) or absent{})\n",
+          "expr": "timestamp(sum by (deployment_environment_name, \"service.namespace\", \"service.name\") (target_info{deployment_environment_name=~\"$deployment_environment_name\", \"service.namespace\"=~\"$service_namespace\", \"service.name\"=\"$\"service.name\"\"}) or absent{})\n",
           "interval": "60s",
           "legendFormat": "__auto",
           "range": true,
@@ -235,7 +235,7 @@
           },
           "disableTextWrap": false,
           "editorMode": "code",
-          "expr": "histogram_quantile(\n  0.95,\n  sum by (le, deployment_environment_name, service_namespace, service_name) (\n    rate(\n      {\"http.server.request.duration.bucket\", \n        deployment_environment_name=~\"$deployment_environment_name\",\n        service_namespace=~\"$service_namespace\",\n        service_name=\"$service_name\"\n      }[$__rate_interval]\n    )\n  )\n)",
+          "expr": "histogram_quantile(\n  0.95,\n  sum by (le, deployment_environment_name, \"service.namespace\", \"service.name\") (\n    rate(\n      {\"http.server.request.duration.bucket\", \n        deployment_environment_name=~\"$deployment_environment_name\",\n        \"service.namespace\"=~\"$service_namespace\",\n        \"service.name\"=\"$\"service.name\"\"\n      }[$__rate_interval]\n    )\n  )\n)",
           "fullMetaSearch": false,
           "includeNullMetadata": true,
           "interval": "60s",
@@ -251,7 +251,7 @@
           },
           "disableTextWrap": false,
           "editorMode": "code",
-          "expr": "avg by (deployment_environment_name, service_namespace, service_name) (\n  rate(\n    {\"http.server.request.duration.sum\",\n      deployment_environment_name=~\"$deployment_environment_name\",\n      service_namespace=~\"$service_namespace\",\n      service_name=\"$service_name\"\n    }[$__rate_interval]\n  )\n)\n/\navg by (deployment_environment_name, service_namespace, service_name) (\n  rate(\n    {\"http.server.request.duration.count\",\n      deployment_environment_name=~\"$deployment_environment_name\",\n      service_namespace=~\"$service_namespace\",\n      service_name=\"$service_name\"\n    }[$__rate_interval]\n  )\n)",
+          "expr": "avg by (deployment_environment_name, \"service.namespace\", \"service.name\") (\n  rate(\n    {\"http.server.request.duration.sum\",\n      deployment_environment_name=~\"$deployment_environment_name\",\n      \"service.namespace\"=~\"$service_namespace\",\n      \"service.name\"=\"$\"service.name\"\"\n    }[$__rate_interval]\n  )\n)\n/\navg by (deployment_environment_name, \"service.namespace\", \"service.name\") (\n  rate(\n    {\"http.server.request.duration.count\",\n      deployment_environment_name=~\"$deployment_environment_name\",\n      \"service.namespace\"=~\"$service_namespace\",\n      \"service.name\"=\"$\"service.name\"\"\n    }[$__rate_interval]\n  )\n)",
           "fullMetaSearch": false,
           "hide": false,
           "includeNullMetadata": true,
@@ -267,7 +267,7 @@
             "uid": "${prometheus_datasource}"
           },
           "editorMode": "code",
-          "expr": "histogram_quantile(\n  0.95,\n  sum by (le, deployment_environment_name, service_namespace, service_name) (\n    rate(\n      {\"rpc.server.duration.bucket\",\n        deployment_environment_name=~\"$deployment_environment_name\",\n        service_namespace=~\"$service_namespace\",\n        service_name=\"$service_name\"\n      }[$__rate_interval]\n    ) / 1000\n  )\n)",
+          "expr": "histogram_quantile(\n  0.95,\n  sum by (le, deployment_environment_name, \"service.namespace\", \"service.name\") (\n    rate(\n      {\"rpc.server.duration.bucket\",\n        deployment_environment_name=~\"$deployment_environment_name\",\n        \"service.namespace\"=~\"$service_namespace\",\n        \"service.name\"=\"$\"service.name\"\"\n      }[$__rate_interval]\n    ) / 1000\n  )\n)",
           "hide": false,
           "instant": false,
           "interval": "60",
@@ -281,7 +281,7 @@
             "uid": "${prometheus_datasource}"
           },
           "editorMode": "code",
-          "expr": "avg by (deployment_environment_name, service_namespace, service_name) (\n  rate(\n    {\"rpc.server.duration.sum\",\n      deployment_environment_name=~\"$deployment_environment_name\",\n      service_namespace=~\"$service_namespace\",\n      service_name=\"$service_name\"\n    }[$__rate_interval]\n  ) / 1000\n)\n/\navg by (deployment_environment_name, service_namespace, service_name) (\n  rate(\n    {\"rpc.server.duration.count\",\n      deployment_environment_name=~\"$deployment_environment_name\",\n      service_namespace=~\"$service_namespace\",\n      service_name=\"$service_name\"\n    }[$__rate_interval]\n  )\n)",
+          "expr": "avg by (deployment_environment_name, \"service.namespace\", \"service.name\") (\n  rate(\n    {\"rpc.server.duration.sum\",\n      deployment_environment_name=~\"$deployment_environment_name\",\n      \"service.namespace\"=~\"$service_namespace\",\n      \"service.name\"=\"$\"service.name\"\"\n    }[$__rate_interval]\n  ) / 1000\n)\n/\navg by (deployment_environment_name, \"service.namespace\", \"service.name\") (\n  rate(\n    {\"rpc.server.duration.count\",\n      deployment_environment_name=~\"$deployment_environment_name\",\n      \"service.namespace\"=~\"$service_namespace\",\n      \"service.name\"=\"$\"service.name\"\"\n    }[$__rate_interval]\n  )\n)",
           "hide": false,
           "instant": false,
           "interval": "60",
@@ -387,7 +387,7 @@
           },
           "disableTextWrap": false,
           "editorMode": "code",
-          "expr": "(\n    (sum by(deployment_environment_name, service_namespace, service_name) (rate({\"http.server.request.duration.count\", deployment_environment_name=~\"$deployment_environment_name\", service_namespace=~\"$service_namespace\", service_name=\"$service_name\", http_response_status_code=~\"5..\"}[$__rate_interval])) * 100) \n    / \n    sum by(deployment_environment_name, service_namespace, service_name) (rate({\"http.server.request.duration.count\", deployment_environment_name=~\"$deployment_environment_name\", service_namespace=~\"$service_namespace\", service_name=\"$service_name\"}[$__rate_interval]))\n)\nor\n(\n    0\n    * \n    sum by(deployment_environment_name, service_namespace, service_name) (rate({\"http.server.request.duration.count\", deployment_environment_name=~\"$deployment_environment_name\", service_namespace=~\"$service_namespace\", service_name=\"$service_name\"}[$__rate_interval]))\n)",
+          "expr": "(\n    (sum by(deployment_environment_name, \"service.namespace\", \"service.name\") (rate({\"http.server.request.duration.count\", deployment_environment_name=~\"$deployment_environment_name\", \"service.namespace\"=~\"$service_namespace\", \"service.name\"=\"$\"service.name\"\", http_response_status_code=~\"5..\"}[$__rate_interval])) * 100) \n    / \n    sum by(deployment_environment_name, \"service.namespace\", \"service.name\") (rate({\"http.server.request.duration.count\", deployment_environment_name=~\"$deployment_environment_name\", \"service.namespace\"=~\"$service_namespace\", \"service.name\"=\"$\"service.name\"\"}[$__rate_interval]))\n)\nor\n(\n    0\n    * \n    sum by(deployment_environment_name, \"service.namespace\", \"service.name\") (rate({\"http.server.request.duration.count\", deployment_environment_name=~\"$deployment_environment_name\", \"service.namespace\"=~\"$service_namespace\", \"service.name\"=\"$\"service.name\"\"}[$__rate_interval]))\n)",
           "fullMetaSearch": false,
           "hide": false,
           "includeNullMetadata": true,
@@ -404,7 +404,7 @@
             "uid": "${prometheus_datasource}"
           },
           "editorMode": "code",
-          "expr": "((sum without (rpc_grpc_status_code, instance) (rate({\"rpc.server.duration.count\", deployment_environment_name=~\"$deployment_environment_name\", service_namespace=~\"$service_namespace\", service_name=\"$service_name\", rpc_grpc_status_code!=\"0\"}[$__rate_interval])) * 100) / sum without (rpc_grpc_status_code, instance) (rate({\"rpc.server.duration.count\", deployment_environment_name=~\"$deployment_environment_name\", service_namespace=~\"$service_namespace\", service_name=\"$service_name\"}[$__rate_interval])))\nor\n(0 * sum without (rpc_grpc_status_code, instance) (rate({\"rpc.server.duration.count\", deployment_environment_name=~\"$deployment_environment_name\", service_namespace=~\"$service_namespace\", service_name=\"$service_name\"}[$__rate_interval])))",
+          "expr": "((sum without (rpc_grpc_status_code, instance) (rate({\"rpc.server.duration.count\", deployment_environment_name=~\"$deployment_environment_name\", \"service.namespace\"=~\"$service_namespace\", \"service.name\"=\"$\"service.name\"\", rpc_grpc_status_code!=\"0\"}[$__rate_interval])) * 100) / sum without (rpc_grpc_status_code, instance) (rate({\"rpc.server.duration.count\", deployment_environment_name=~\"$deployment_environment_name\", \"service.namespace\"=~\"$service_namespace\", \"service.name\"=\"$\"service.name\"\"}[$__rate_interval])))\nor\n(0 * sum without (rpc_grpc_status_code, instance) (rate({\"rpc.server.duration.count\", deployment_environment_name=~\"$deployment_environment_name\", \"service.namespace\"=~\"$service_namespace\", \"service.name\"=\"$\"service.name\"\"}[$__rate_interval])))",
           "hide": false,
           "instant": false,
           "interval": "60",
@@ -511,7 +511,7 @@
           },
           "editorMode": "code",
           "exemplar": false,
-          "expr": "(sum(rate({\"http.server.request.duration.count\", deployment_environment_name=~\"$deployment_environment_name\", service_namespace=~\"$service_namespace\", service_name=\"$service_name\"}[$__rate_interval])) by (deployment_environment_name, service_namespace, service_name)) ",
+          "expr": "(sum(rate({\"http.server.request.duration.count\", deployment_environment_name=~\"$deployment_environment_name\", \"service.namespace\"=~\"$service_namespace\", \"service.name\"=\"$\"service.name\"\"}[$__rate_interval])) by (deployment_environment_name, \"service.namespace\", \"service.name\")) ",
           "hide": false,
           "instant": false,
           "interval": "60s",
@@ -525,7 +525,7 @@
             "uid": "${prometheus_datasource}"
           },
           "editorMode": "code",
-          "expr": "(sum(rate({\"rpc.server.duration.count\", deployment_environment_name=~\"$deployment_environment_name\", service_namespace=~\"$service_namespace\", service_name=\"$service_name\"}[$__rate_interval])) by (deployment_environment_name, service_namespace, service_name)) * $__interval_ms / 1000",
+          "expr": "(sum(rate({\"rpc.server.duration.count\", deployment_environment_name=~\"$deployment_environment_name\", \"service.namespace\"=~\"$service_namespace\", \"service.name\"=\"$\"service.name\"\"}[$__rate_interval])) by (deployment_environment_name, \"service.namespace\", \"service.name\")) * $__interval_ms / 1000",
           "hide": false,
           "instant": false,
           "interval": "60",
@@ -550,7 +550,7 @@
       },
       "id": 40,
       "options": {
-        "alertInstanceLabelFilter": "{service_name=\"$service_name\", service_namespace=\"$service_namespace\"}",
+        "alertInstanceLabelFilter": "{\"service.name\"=\"$\"service.name\"\", \"service.namespace\"=\"$service_namespace\"}",
         "alertName": "",
         "dashboardAlerts": false,
         "groupBy": [],
@@ -683,7 +683,7 @@
           },
           "disableTextWrap": false,
           "editorMode": "code",
-          "expr": "\n        sum by (operation) (\n            label_join(\n                rate({\"http.server.request.duration.count\", deployment_environment_name=~\"$deployment_environment_name\", service_namespace=~\"$service_namespace\", service_name=\"$service_name\"}[$__rate_interval]),\n                \"operation\",\n                \" \",\n                \"http_request_method\",\n                \"http_route\"\n            )\n        )\n    ",
+          "expr": "\n        sum by (operation) (\n            label_join(\n                rate({\"http.server.request.duration.count\", deployment_environment_name=~\"$deployment_environment_name\", \"service.namespace\"=~\"$service_namespace\", \"service.name\"=\"$\"service.name\"\"}[$__rate_interval]),\n                \"operation\",\n                \" \",\n                \"http_request_method\",\n                \"http_route\"\n            )\n        )\n    ",
           "fullMetaSearch": false,
           "includeNullMetadata": true,
           "interval": "60s",
@@ -698,7 +698,7 @@
             "uid": "${prometheus_datasource}"
           },
           "editorMode": "code",
-          "expr": "(\n        sum by (operation) (\n            label_join(\n                rate({\"http.server.request.duration.count\", deployment_environment_name=~\"$deployment_environment_name\", service_namespace=~\"$service_namespace\", service_name=\"$service_name\", http_response_status_code=~\"5..\"}[$__rate_interval]),\n                \"operation\",\n                \" \",\n                \"http_request_method\",\n                \"http_route\"\n            )\n        )\n     / \n        sum by (operation) (\n            label_join(\n                rate({\"http.server.request.duration.count\", deployment_environment_name=~\"$deployment_environment_name\", service_namespace=~\"$service_namespace\", service_name=\"$service_name\"}[$__rate_interval]),\n                \"operation\",\n                \" \",\n                \"http_request_method\",\n                \"http_route\"\n            )\n        )\n    ) or (0 * \n        sum by (operation) (\n            label_join(\n                rate({\"http.server.request.duration.count\", deployment_environment_name=~\"$deployment_environment_name\", service_namespace=~\"$service_namespace\", service_name=\"$service_name\"}[$__rate_interval]),\n                \"operation\",\n                \" \",\n                \"http_request_method\",\n                \"http_route\"\n            )\n        )\n    )",
+          "expr": "(\n        sum by (operation) (\n            label_join(\n                rate({\"http.server.request.duration.count\", deployment_environment_name=~\"$deployment_environment_name\", \"service.namespace\"=~\"$service_namespace\", \"service.name\"=\"$\"service.name\"\", http_response_status_code=~\"5..\"}[$__rate_interval]),\n                \"operation\",\n                \" \",\n                \"http_request_method\",\n                \"http_route\"\n            )\n        )\n     / \n        sum by (operation) (\n            label_join(\n                rate({\"http.server.request.duration.count\", deployment_environment_name=~\"$deployment_environment_name\", \"service.namespace\"=~\"$service_namespace\", \"service.name\"=\"$\"service.name\"\"}[$__rate_interval]),\n                \"operation\",\n                \" \",\n                \"http_request_method\",\n                \"http_route\"\n            )\n        )\n    ) or (0 * \n        sum by (operation) (\n            label_join(\n                rate({\"http.server.request.duration.count\", deployment_environment_name=~\"$deployment_environment_name\", \"service.namespace\"=~\"$service_namespace\", \"service.name\"=\"$\"service.name\"\"}[$__rate_interval]),\n                \"operation\",\n                \" \",\n                \"http_request_method\",\n                \"http_route\"\n            )\n        )\n    )",
           "hide": false,
           "instant": false,
           "interval": "60s",
@@ -712,7 +712,7 @@
             "uid": "webstore-metrics"
           },
           "editorMode": "code",
-          "expr": "\n        histogram_quantile(\n            0.99,\n            sum by (le, operation) (\n                label_join(\n                rate({\"http.server.request.duration.bucket\", deployment_environment_name=~\"$deployment_environment_name\", service_namespace=~\"$service_namespace\", service_name=\"$service_name\"}[5m]),\n                \"operation\",\n                \" \",\n                \"http_request_method\",\n                \"http_route\"\n                )\n            )\n        )\n    ",
+          "expr": "\n        histogram_quantile(\n            0.99,\n            sum by (le, operation) (\n                label_join(\n                rate({\"http.server.request.duration.bucket\", deployment_environment_name=~\"$deployment_environment_name\", \"service.namespace\"=~\"$service_namespace\", \"service.name\"=\"$\"service.name\"\"}[5m]),\n                \"operation\",\n                \" \",\n                \"http_request_method\",\n                \"http_route\"\n                )\n            )\n        )\n    ",
           "hide": false,
           "instant": false,
           "interval": "60s",
@@ -873,7 +873,7 @@
           },
           "disableTextWrap": false,
           "editorMode": "code",
-          "expr": "\nsum by (operation) (\n    label_join(\n        rate({\"rpc.server.duration.count\", deployment_environment_name=~\"$deployment_environment_name\", service_namespace=~\"$service_namespace\", service_name=\"$service_name\"}[$__rate_interval]),\n        \"operation\",\n        \"/\",\n        \"rpc_service\",\n        \"rpc_method\"\n    )\n)\n    ",
+          "expr": "\nsum by (operation) (\n    label_join(\n        rate({\"rpc.server.duration.count\", deployment_environment_name=~\"$deployment_environment_name\", \"service.namespace\"=~\"$service_namespace\", \"service.name\"=\"$\"service.name\"\"}[$__rate_interval]),\n        \"operation\",\n        \"/\",\n        \"rpc_service\",\n        \"rpc_method\"\n    )\n)\n    ",
           "fullMetaSearch": false,
           "hide": false,
           "includeNullMetadata": true,
@@ -889,7 +889,7 @@
             "uid": "${prometheus_datasource}"
           },
           "editorMode": "code",
-          "expr": "(\n        sum by (operation) (\n            label_join(\n                rate({\"rpc.server.duration.count\", deployment_environment_name=~\"$deployment_environment_name\", service_namespace=~\"$service_namespace\", service_name=\"$service_name\", rpc_grpc_status_code!=\"0\"}[$__rate_interval]),\n                \"operation\",\n                \"/\",\n                \"rpc_service\",\n                \"rpc_method\"\n            )\n        )\n     / \n        sum by (operation) (\n            label_join(\n                rate({\"rpc.server.duration.count\", deployment_environment_name=~\"$deployment_environment_name\", service_namespace=~\"$service_namespace\", service_name=\"$service_name\"}[$__rate_interval]),\n                \"operation\",\n                \"/\",\n                \"rpc_service\",\n                \"rpc_method\"\n            )\n        )\n    ) or (0 * \n        sum by (operation) (\n            label_join(\n                rate({\"rpc.server.duration.count\", deployment_environment_name=~\"$deployment_environment_name\", service_namespace=~\"$service_namespace\", service_name=\"$service_name\"}[$__rate_interval]),\n                \"operation\",\n                \"/\",\n                \"rpc_service\",\n                \"rpc_method\"\n            )\n        )\n    )\n    ",
+          "expr": "(\n        sum by (operation) (\n            label_join(\n                rate({\"rpc.server.duration.count\", deployment_environment_name=~\"$deployment_environment_name\", \"service.namespace\"=~\"$service_namespace\", \"service.name\"=\"$\"service.name\"\", rpc_grpc_status_code!=\"0\"}[$__rate_interval]),\n                \"operation\",\n                \"/\",\n                \"rpc_service\",\n                \"rpc_method\"\n            )\n        )\n     / \n        sum by (operation) (\n            label_join(\n                rate({\"rpc.server.duration.count\", deployment_environment_name=~\"$deployment_environment_name\", \"service.namespace\"=~\"$service_namespace\", \"service.name\"=\"$\"service.name\"\"}[$__rate_interval]),\n                \"operation\",\n                \"/\",\n                \"rpc_service\",\n                \"rpc_method\"\n            )\n        )\n    ) or (0 * \n        sum by (operation) (\n            label_join(\n                rate({\"rpc.server.duration.count\", deployment_environment_name=~\"$deployment_environment_name\", \"service.namespace\"=~\"$service_namespace\", \"service.name\"=\"$\"service.name\"\"}[$__rate_interval]),\n                \"operation\",\n                \"/\",\n                \"rpc_service\",\n                \"rpc_method\"\n            )\n        )\n    )\n    ",
           "hide": false,
           "instant": false,
           "interval": "60s",
@@ -903,7 +903,7 @@
             "uid": "webstore-metrics"
           },
           "editorMode": "code",
-          "expr": "\n        histogram_quantile(\n            0.99,\n            sum by (le, operation) (\n                label_join(\n                rate({\"rpc.server.duration.bucket\", deployment_environment_name=~\"$deployment_environment_name\", service_namespace=~\"$service_namespace\", service_name=\"$service_name\"}[5m]),\n                \"operation\",\n                \"/\",\n                \"rpc_service\",\n                \"rpc_method\"\n                )\n            )\n        )\n    ",
+          "expr": "\n        histogram_quantile(\n            0.99,\n            sum by (le, operation) (\n                label_join(\n                rate({\"rpc.server.duration.bucket\", deployment_environment_name=~\"$deployment_environment_name\", \"service.namespace\"=~\"$service_namespace\", \"service.name\"=\"$\"service.name\"\"}[5m]),\n                \"operation\",\n                \"/\",\n                \"rpc_service\",\n                \"rpc_method\"\n                )\n            )\n        )\n    ",
           "hide": false,
           "instant": false,
           "interval": "60s",
@@ -1071,7 +1071,7 @@
           },
           "disableTextWrap": false,
           "editorMode": "code",
-          "expr": "\n        sum by (outbound_service) (\n            label_join(\n                rate(http_client_request_duration_seconds_count{deployment_environment_name=~\"$deployment_environment_name\", service_namespace=~\"$service_namespace\", service_name=\"$service_name\"}[$__rate_interval]),\n                \"outbound_service\",\n                \" \",\n                \"server_address\",\n                \"http_request_method\",\n                \"url_template\"\n            )\n        )\n    ",
+          "expr": "\n        sum by (outbound_service) (\n            label_join(\n                rate(http_client_request_duration_seconds_count{deployment_environment_name=~\"$deployment_environment_name\", \"service.namespace\"=~\"$service_namespace\", \"service.name\"=\"$\"service.name\"\"}[$__rate_interval]),\n                \"outbound_service\",\n                \" \",\n                \"server_address\",\n                \"http_request_method\",\n                \"url_template\"\n            )\n        )\n    ",
           "fullMetaSearch": false,
           "includeNullMetadata": true,
           "interval": "60s",
@@ -1086,7 +1086,7 @@
             "uid": "${prometheus_datasource}"
           },
           "editorMode": "code",
-          "expr": "(\n        sum by (outbound_service) (\n            label_join(\n                rate(http_client_request_duration_seconds_count{deployment_environment_name=~\"$deployment_environment_name\", service_namespace=~\"$service_namespace\", service_name=\"$service_name\", http_response_status_code=~\"5..\"}[$__rate_interval]),\n                \"outbound_service\",\n                \" \",\n                \"server_address\",\n                \"http_request_method\",\n                \"url_template\"\n            )\n        )\n     / \n        sum by (outbound_service) (\n            label_join(\n                rate(http_client_request_duration_seconds_count{deployment_environment_name=~\"$deployment_environment_name\", service_namespace=~\"$service_namespace\", service_name=\"$service_name\"}[$__rate_interval]),\n                \"outbound_service\",\n                \" \",\n                \"server_address\",\n                \"http_request_method\",\n                \"url_template\"\n            )\n        )\n    ) or (0 * \n        sum by (outbound_service) (\n            label_join(\n                rate(http_client_request_duration_seconds_count{deployment_environment_name=~\"$deployment_environment_name\", service_namespace=~\"$service_namespace\", service_name=\"$service_name\"}[$__rate_interval]),\n                \"outbound_service\",\n                \" \",\n                \"server_address\",\n                \"http_request_method\",\n                \"url_template\"\n            )\n        )\n    )",
+          "expr": "(\n        sum by (outbound_service) (\n            label_join(\n                rate(http_client_request_duration_seconds_count{deployment_environment_name=~\"$deployment_environment_name\", \"service.namespace\"=~\"$service_namespace\", \"service.name\"=\"$\"service.name\"\", http_response_status_code=~\"5..\"}[$__rate_interval]),\n                \"outbound_service\",\n                \" \",\n                \"server_address\",\n                \"http_request_method\",\n                \"url_template\"\n            )\n        )\n     / \n        sum by (outbound_service) (\n            label_join(\n                rate(http_client_request_duration_seconds_count{deployment_environment_name=~\"$deployment_environment_name\", \"service.namespace\"=~\"$service_namespace\", \"service.name\"=\"$\"service.name\"\"}[$__rate_interval]),\n                \"outbound_service\",\n                \" \",\n                \"server_address\",\n                \"http_request_method\",\n                \"url_template\"\n            )\n        )\n    ) or (0 * \n        sum by (outbound_service) (\n            label_join(\n                rate(http_client_request_duration_seconds_count{deployment_environment_name=~\"$deployment_environment_name\", \"service.namespace\"=~\"$service_namespace\", \"service.name\"=\"$\"service.name\"\"}[$__rate_interval]),\n                \"outbound_service\",\n                \" \",\n                \"server_address\",\n                \"http_request_method\",\n                \"url_template\"\n            )\n        )\n    )",
           "hide": false,
           "instant": false,
           "interval": "60s",
@@ -1100,7 +1100,7 @@
             "uid": "webstore-metrics"
           },
           "editorMode": "code",
-          "expr": "\nhistogram_quantile(\n    0.99,\n    sum by (le, outbound_service) (\n        label_join(\n        rate(http_client_request_duration_seconds_bucket{deployment_environment_name=~\"$deployment_environment_name\", service_namespace=~\"$service_namespace\", service_name=\"$service_name\"}[5m]),\n        \"outbound_service\",\n        \" \",\n        \"server_address\",\n        \"http_request_method\",\n        \"url_template\"\n        )\n    )\n)",
+          "expr": "\nhistogram_quantile(\n    0.99,\n    sum by (le, outbound_service) (\n        label_join(\n        rate(http_client_request_duration_seconds_bucket{deployment_environment_name=~\"$deployment_environment_name\", \"service.namespace\"=~\"$service_namespace\", \"service.name\"=\"$\"service.name\"\"}[5m]),\n        \"outbound_service\",\n        \" \",\n        \"server_address\",\n        \"http_request_method\",\n        \"url_template\"\n        )\n    )\n)",
           "hide": false,
           "instant": false,
           "interval": "60s",
@@ -1258,7 +1258,7 @@
           },
           "disableTextWrap": false,
           "editorMode": "code",
-          "expr": "sum by (database) (\n    label_join(\n        rate(db_client_operation_duration_seconds_count{deployment_environment_name=~\"$deployment_environment_name\", service_namespace=~\"$service_namespace\", service_name=\"$service_name\"}[$__rate_interval]),\n        \"database\",\n        \"/\",\n        \"server_address\",\n        \"db_namespace\"\n    )\n)\n    ",
+          "expr": "sum by (database) (\n    label_join(\n        rate(db_client_operation_duration_seconds_count{deployment_environment_name=~\"$deployment_environment_name\", \"service.namespace\"=~\"$service_namespace\", \"service.name\"=\"$\"service.name\"\"}[$__rate_interval]),\n        \"database\",\n        \"/\",\n        \"server_address\",\n        \"db_namespace\"\n    )\n)\n    ",
           "fullMetaSearch": false,
           "hide": false,
           "includeNullMetadata": true,
@@ -1274,7 +1274,7 @@
             "uid": "${prometheus_datasource}"
           },
           "editorMode": "code",
-          "expr": "(\n        sum by (database) (\n            label_join(\n                rate(db_client_operation_duration_seconds_count{deployment_environment_name=~\"$deployment_environment_name\", service_namespace=~\"$service_namespace\", service_name=\"$service_name\", http_response_status_code=~\"5..\"}[$__rate_interval]),\n                \"database\",\n                \"/\",\n                \"server_address\",\n                \"db_namespace\"\n            )\n        )\n     / \n        sum by (database) (\n            label_join(\n                rate(db_client_operation_duration_seconds_count{deployment_environment_name=~\"$deployment_environment_name\", service_namespace=~\"$service_namespace\", service_name=\"$service_name\"}[$__rate_interval]),\n                \"database\",\n                \"/\",\n                \"server_address\",\n                \"db_namespace\"\n            )\n        )\n    ) or (0 * \n        sum by (database) (\n            label_join(\n                rate(db_client_operation_duration_seconds_count{deployment_environment_name=~\"$deployment_environment_name\", service_namespace=~\"$service_namespace\", service_name=\"$service_name\"}[$__rate_interval]),\n                \"database\",\n                \"/\",\n                \"server_address\",\n                \"db_namespace\"\n            )\n        )\n    )",
+          "expr": "(\n        sum by (database) (\n            label_join(\n                rate(db_client_operation_duration_seconds_count{deployment_environment_name=~\"$deployment_environment_name\", \"service.namespace\"=~\"$service_namespace\", \"service.name\"=\"$\"service.name\"\", http_response_status_code=~\"5..\"}[$__rate_interval]),\n                \"database\",\n                \"/\",\n                \"server_address\",\n                \"db_namespace\"\n            )\n        )\n     / \n        sum by (database) (\n            label_join(\n                rate(db_client_operation_duration_seconds_count{deployment_environment_name=~\"$deployment_environment_name\", \"service.namespace\"=~\"$service_namespace\", \"service.name\"=\"$\"service.name\"\"}[$__rate_interval]),\n                \"database\",\n                \"/\",\n                \"server_address\",\n                \"db_namespace\"\n            )\n        )\n    ) or (0 * \n        sum by (database) (\n            label_join(\n                rate(db_client_operation_duration_seconds_count{deployment_environment_name=~\"$deployment_environment_name\", \"service.namespace\"=~\"$service_namespace\", \"service.name\"=\"$\"service.name\"\"}[$__rate_interval]),\n                \"database\",\n                \"/\",\n                \"server_address\",\n                \"db_namespace\"\n            )\n        )\n    )",
           "hide": false,
           "instant": false,
           "interval": "60s",
@@ -1288,7 +1288,7 @@
             "uid": "webstore-metrics"
           },
           "editorMode": "code",
-          "expr": "\nhistogram_quantile(\n    0.99,\n    sum by (le, database) (\n        label_join(\n        rate(db_client_operation_duration_seconds_bucket{deployment_environment_name=~\"$deployment_environment_name\", service_namespace=~\"$service_namespace\", service_name=\"$service_name\"}[5m]),\n            \"database\",\n            \"/\",\n            \"server_address\",\n            \"db_namespace\"\n        )\n    )\n)",
+          "expr": "\nhistogram_quantile(\n    0.99,\n    sum by (le, database) (\n        label_join(\n        rate(db_client_operation_duration_seconds_bucket{deployment_environment_name=~\"$deployment_environment_name\", \"service.namespace\"=~\"$service_namespace\", \"service.name\"=\"$\"service.name\"\"}[5m]),\n            \"database\",\n            \"/\",\n            \"server_address\",\n            \"db_namespace\"\n        )\n    )\n)",
           "hide": false,
           "instant": false,
           "interval": "60s",
@@ -1450,7 +1450,7 @@
           },
           "disableTextWrap": false,
           "editorMode": "code",
-          "expr": "\n        sum by (outbound_service) (\n            label_join(\n                rate(rpc_client_duration_milliseconds_count{deployment_environment_name=~\"$deployment_environment_name\", service_namespace=~\"$service_namespace\", service_name=\"$service_name\"}[$__rate_interval]),\n                \"outbound_service\",\n                \"/\",\n                \"server_address\",\n                \"rpc_service\",\n                \"rpc_method\"\n            )\n        )\n    ",
+          "expr": "\n        sum by (outbound_service) (\n            label_join(\n                rate(rpc_client_duration_milliseconds_count{deployment_environment_name=~\"$deployment_environment_name\", \"service.namespace\"=~\"$service_namespace\", \"service.name\"=\"$\"service.name\"\"}[$__rate_interval]),\n                \"outbound_service\",\n                \"/\",\n                \"server_address\",\n                \"rpc_service\",\n                \"rpc_method\"\n            )\n        )\n    ",
           "fullMetaSearch": false,
           "hide": false,
           "includeNullMetadata": true,
@@ -1466,7 +1466,7 @@
             "uid": "${prometheus_datasource}"
           },
           "editorMode": "code",
-          "expr": "(\n        sum by (outbound_service) (\n            label_join(\n                rate(rpc_client_duration_milliseconds_count{deployment_environment_name=~\"$deployment_environment_name\", service_namespace=~\"$service_namespace\", service_name=\"$service_name\", http_response_status_code=~\"5..\"}[$__rate_interval]),\n                \"outbound_service\",\n                \"/\",\n                \"server_address\",\n                \"rpc_service\",\n                \"rpc_method\"\n            )\n        )\n     / \n        sum by (outbound_service) (\n            label_join(\n                rate(rpc_client_duration_milliseconds_count{deployment_environment_name=~\"$deployment_environment_name\", service_namespace=~\"$service_namespace\", service_name=\"$service_name\"}[$__rate_interval]),\n                \"outbound_service\",\n                \"/\",\n                \"server_address\",\n                \"rpc_service\",\n                \"rpc_method\"\n            )\n        )\n    ) or (0 * \n        sum by (outbound_service) (\n            label_join(\n                rate(rpc_client_duration_milliseconds_count{deployment_environment_name=~\"$deployment_environment_name\", service_namespace=~\"$service_namespace\", service_name=\"$service_name\"}[$__rate_interval]),\n                \"outbound_service\",\n                \"/\",\n                \"server_address\",\n                \"rpc_service\",\n                \"rpc_method\"\n            )\n        )\n    )",
+          "expr": "(\n        sum by (outbound_service) (\n            label_join(\n                rate(rpc_client_duration_milliseconds_count{deployment_environment_name=~\"$deployment_environment_name\", \"service.namespace\"=~\"$service_namespace\", \"service.name\"=\"$\"service.name\"\", http_response_status_code=~\"5..\"}[$__rate_interval]),\n                \"outbound_service\",\n                \"/\",\n                \"server_address\",\n                \"rpc_service\",\n                \"rpc_method\"\n            )\n        )\n     / \n        sum by (outbound_service) (\n            label_join(\n                rate(rpc_client_duration_milliseconds_count{deployment_environment_name=~\"$deployment_environment_name\", \"service.namespace\"=~\"$service_namespace\", \"service.name\"=\"$\"service.name\"\"}[$__rate_interval]),\n                \"outbound_service\",\n                \"/\",\n                \"server_address\",\n                \"rpc_service\",\n                \"rpc_method\"\n            )\n        )\n    ) or (0 * \n        sum by (outbound_service) (\n            label_join(\n                rate(rpc_client_duration_milliseconds_count{deployment_environment_name=~\"$deployment_environment_name\", \"service.namespace\"=~\"$service_namespace\", \"service.name\"=\"$\"service.name\"\"}[$__rate_interval]),\n                \"outbound_service\",\n                \"/\",\n                \"server_address\",\n                \"rpc_service\",\n                \"rpc_method\"\n            )\n        )\n    )",
           "hide": false,
           "instant": false,
           "interval": "60s",
@@ -1480,7 +1480,7 @@
             "uid": "webstore-metrics"
           },
           "editorMode": "code",
-          "expr": "\nhistogram_quantile(\n    0.99,\n    sum by (le, outbound_service) (\n        label_join(\n        rate(rpc_client_duration_milliseconds_bucket{deployment_environment_name=~\"$deployment_environment_name\", service_namespace=~\"$service_namespace\", service_name=\"$service_name\"}[5m]),\n        \"outbound_service\",\n        \"/\",\n        \"server_address\",\n        \"rpc_service\",\n        \"rpc_method\"\n        )\n    )\n)",
+          "expr": "\nhistogram_quantile(\n    0.99,\n    sum by (le, outbound_service) (\n        label_join(\n        rate(rpc_client_duration_milliseconds_bucket{deployment_environment_name=~\"$deployment_environment_name\", \"service.namespace\"=~\"$service_namespace\", \"service.name\"=\"$\"service.name\"\"}[5m]),\n        \"outbound_service\",\n        \"/\",\n        \"server_address\",\n        \"rpc_service\",\n        \"rpc_method\"\n        )\n    )\n)",
           "hide": false,
           "instant": false,
           "interval": "60s",
@@ -1632,7 +1632,7 @@
       "targets": [
         {
           "editorMode": "code",
-          "expr": "sum by (service_instance_id_host_name) (\n  label_join(\n    (\n      sum by (service_instance_id, host_name) (\n         rate(system_cpu_time_seconds_total{job=\"\", state!=\"idle\"}[$__rate_interval])\n      )\n      * on(host_name) group_left(service_instance_id)\n      target_info{service_name=\"${service_name}\"}\n    ),\n    \"service_instance_id_host_name\",\n    \" / \",\n    \"service_instance_id\",\n    \"host_name\"\n  )\n)",
+          "expr": "sum by (service_instance_id_host_name) (\n  label_join(\n    (\n      sum by (service_instance_id, host_name) (\n         rate(system_cpu_time_seconds_total{job=\"\", state!=\"idle\"}[$__rate_interval])\n      )\n      * on(host_name) group_left(service_instance_id)\n      target_info{\"service.name\"=\"${service_name}\"}\n    ),\n    \"service_instance_id_host_name\",\n    \" / \",\n    \"service_instance_id\",\n    \"host_name\"\n  )\n)",
           "hide": false,
           "legendFormat": "__auto",
           "range": true,
@@ -1644,7 +1644,7 @@
             "uid": "webstore-metrics"
           },
           "editorMode": "code",
-          "expr": "sum by (service_instance_id_host_name) (\n  label_join(\n    (\n      (\n        sum by (service_instance_id, host_name) (\n          system_memory_usage_bytes{job=\"\", state!=\"free\"}\n        )\n        /\n        sum by (service_instance_id, host_name) (\n          system_memory_usage_bytes{job=\"\"}\n        )\n      )\n      * on(host_name) group_left(service_instance_id) (\n        target_info{service_name=\"${service_name}\"}\n      )\n    ),\n    \"service_instance_id_host_name\",\n    \" / \",\n    \"service_instance_id\",\n    \"host_name\"\n  )\n)",
+          "expr": "sum by (service_instance_id_host_name) (\n  label_join(\n    (\n      (\n        sum by (service_instance_id, host_name) (\n          system_memory_usage_bytes{job=\"\", state!=\"free\"}\n        )\n        /\n        sum by (service_instance_id, host_name) (\n          system_memory_usage_bytes{job=\"\"}\n        )\n      )\n      * on(host_name) group_left(service_instance_id) (\n        target_info{\"service.name\"=\"${service_name}\"}\n      )\n    ),\n    \"service_instance_id_host_name\",\n    \" / \",\n    \"service_instance_id\",\n    \"host_name\"\n  )\n)",
           "hide": false,
           "instant": false,
           "legendFormat": "__auto",
@@ -1999,7 +1999,7 @@
               },
               "queryType": "search",
               "refId": "A",
-              "service": "$service_name",
+              "service": "$\"service.name\"",
               "tags": "service.namespace=\"$service_namespace\""
             }
           ],
@@ -2086,7 +2086,7 @@
           "type": "prometheus",
           "uid": "${prometheus_datasource}"
         },
-        "definition": "label_values(target_info{deployment_environment_name=~\"$deployment_environment_name\"},service_namespace)",
+        "definition": "label_values(target_info{deployment_environment_name=~\"$deployment_environment_name\"},\"service.namespace\")",
         "description": "Service namespace.\nResource attribute `service.namespace` via `target_info`",
         "includeAll": false,
         "label": "Namespace",
@@ -2094,7 +2094,7 @@
         "options": [],
         "query": {
           "qryType": 1,
-          "query": "label_values(target_info{deployment_environment_name=~\"$deployment_environment_name\"},service_namespace)",
+          "query": "label_values(target_info{deployment_environment_name=~\"$deployment_environment_name\"},service.namespace)",
           "refId": "PrometheusVariableQueryEditor-VariableQuery"
         },
         "refresh": 1,
@@ -2111,14 +2111,14 @@
           "type": "prometheus",
           "uid": "webstore-metrics"
         },
-        "definition": "label_values(target_info{service_namespace=~\"$service_namespace\", deployment_environment_name=~\"$deployment_environment_name\"},service_name)",
+        "definition": "label_values(target_info{\"service.namespace\"=~\"$service_namespace\", deployment_environment_name=~\"$deployment_environment_name\"},\"service.namespace\")",
         "description": "Service name.\nResource attribute `service.name` via `target_info`.",
         "label": "Name",
         "name": "service_name",
         "options": [],
         "query": {
           "qryType": 1,
-          "query": "label_values(target_info{service_namespace=~\"$service_namespace\", deployment_environment_name=~\"$deployment_environment_name\"},service_name)",
+          "query": "label_values(target_info{\"service.namespace\"=~\"$service_namespace\", deployment_environment_name=~\"$deployment_environment_name\"},service.name)",
           "refId": "PrometheusVariableQueryEditor-VariableQuery"
         },
         "refresh": 2,

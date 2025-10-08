@@ -155,7 +155,7 @@
             "uid": "webstore-metrics"
           },
           "editorMode": "code",
-          "expr": "sum by (span_name) (rate({\"traces.span.metrics.duration.milliseconds.count\", service_name=\"${service}\"}[$__rate_interval]))",
+          "expr": "sum by (span_name) (rate({\"traces.span.metrics.duration.milliseconds.count\", \"service.name\"=\"${service}\"}[$__rate_interval]))",
           "legendFormat": "{{ span_name }}",
           "range": true,
           "refId": "A"
@@ -254,7 +254,7 @@
             "uid": "webstore-metrics"
           },
           "editorMode": "code",
-          "expr": "sum by (span_name) (rate({\"traces.span.metrics.calls\", status_code=\"STATUS_CODE_ERROR\", service_name=\"${service}\"}[$__rate_interval]))",
+          "expr": "sum by (span_name) (rate({\"traces.span.metrics.calls\", status_code=\"STATUS_CODE_ERROR\", \"service.name\"=\"${service}\"}[$__rate_interval]))",
           "interval": "",
           "legendFormat": "{{ span_name }}",
           "range": true,
@@ -356,7 +356,7 @@
           },
           "editorMode": "code",
           "exemplar": false,
-          "expr": "histogram_quantile(0.50, sum(rate(traces_span_metrics_duration_milliseconds_bucket{service_name=\"${service}\"}[$__rate_interval])) by (le, span_name))",
+          "expr": "histogram_quantile(0.50, sum(rate(traces_span_metrics_duration_milliseconds_bucket{\"service.name\"=\"${service}\"}[$__rate_interval])) by (le, span_name))",
           "legendFormat": "{{span_name}}",
           "range": true,
           "refId": "A"

@@ -23,14 +23,14 @@ groups:
               expr: |-
                 histogram_quantile(
                   0.95,
-                  sum by (deployment_environment_name, service_namespace, service_name, service_instance_id, http_route, http_request_method, le) (
+                  sum by (deployment_environment_name, "service.namespace", "service.name", "service.instance.id", "http.route", "http.request.method", le) (
                     rate(
-                      http_server_request_duration_seconds_bucket{
+                      {"http.server.request.duration_bucket",
                         deployment_environment_name="",
-                        service_namespace="opentelemetry-demo",
-                        service_name="cart",
-                        http_request_method="POST",
-                        http_route="/oteldemo.CartService/AddItem"
+                        "service.namespace"="opentelemetry-demo",
+                        "service.name"="cart",
+                        "http.request.method"="POST",
+                        "http.route"="/oteldemo.CartService/AddItem"
                       }[5m]
                     )
                   )
@@ -75,17 +75,17 @@ groups:
         keepFiringFor: 2m
         annotations:
           description: |-
-            The 95th percentile response time for operation {{ $labels.service_namespace
-                }}/{{ $labels.service_name }} "{{ $labels.http_request_method }} {{
-                $labels.http_route }}" has been
-                above xxx seconds for 2 minutes on {{ $labels.service_instance_id}}. Current
+            The 95th percentile response time for operation {{ index $labels "service.namespace"
+                }}/{{ index $labels "service.name" }} "{{ index $labels "http.request.method" }} {{
+                index $labels "http.route" }}" has been
+                above xxx seconds for 2 minutes on {{ index $labels "service.instance.id"}}. Current
                 value: {{ .Value | humanizeDuration }}.
           summary: |-
-            High P95 for {{ $labels.service_namespace }}/{{ $labels.service_name }} "{{
-                $labels.http_request_method }} {{ $labels.http_route }}"
+            High P95 for {{ index $labels "service.namespace" }}/{{ index $labels "service.name" }} "{{
+                index $labels "http.request.method" }} {{ $labels "http.route" }}"
         labels:
-          service_name: cart
-          service_namespace: opentelemetry-demo
+          "service.name": cart
+          "service.namespace": opentelemetry-demo
           severity: warning
           team_name: webstore
         isPaused: false

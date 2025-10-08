@@ -3891,7 +3891,7 @@
           },
           "editorMode": "code",
           "exemplar": false,
-          "expr": "max(otelcol_process_uptime${suffix_seconds}${suffix_total}{service_instance_id=~\".*\",job=\"$job\",service_version=\".+\"}) by (service_instance_id,service_name,service_version)\r\nor\r\nmax(\r\n  otelcol_process_uptime${suffix_seconds}${suffix_total}{service_instance_id=~\".*\",job=\"$job\"} \r\n  * on(job, instance) \r\n  group_left(service_version) \r\n  (\r\n    target_info \r\n    * on(job, instance) \r\n    group_left \r\n    label_replace(target_info{}, \"service_instance_id\", \"$1\", \"instance\", \"(.*)\")\r\n  )\r\n) by (service_instance_id, service_name, service_version)",
+          "expr": "max(otelcol_process_uptime${suffix_seconds}${suffix_total}{service_instance_id=~\".*\",job=\"$job\",service_version=\".+\"}) by (service_instance_id,\"service.name\",service_version)\r\nor\r\nmax(\r\n  otelcol_process_uptime${suffix_seconds}${suffix_total}{service_instance_id=~\".*\",job=\"$job\"} \r\n  * on(job, instance) \r\n  group_left(service_version) \r\n  (\r\n    target_info \r\n    * on(job, instance) \r\n    group_left \r\n    label_replace(target_info{}, \"service_instance_id\", \"$1\", \"instance\", \"(.*)\")\r\n  )\r\n) by (service_instance_id, \"service.name\", service_version)",
           "format": "table",
           "hide": false,
           "instant": true,
