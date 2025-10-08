@@ -473,18 +473,6 @@ services:
         condition: service_started
     logging: *logging
 
-  product_db:
-    image: postgres:15.3-alpine3.18
-    restart: always
-    environment:
-      - POSTGRES_USER
-      - POSTGRES_PASSWORD
-    volumes:
-      - ./src/postgresql/product/init.sql:/docker-entrypoint-initdb.d/init.sql
-      - pgdata:/container/path:/var/lib/postgresql/data
-    ports:
-      - "$POSTGRES_PORT"
-
   # Product Catalog service
   product-catalog:
     image: ${IMAGE_NAME}:${DEMO_VERSION}-product-catalog
@@ -511,19 +499,13 @@ services:
       - OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE
       - OTEL_RESOURCE_ATTRIBUTES
       - OTEL_SERVICE_NAME
-      - POSTGRES_HOST
-      - POSTGRES_USER
-      - POSTGRES_PASSWORD
-      - POSTGRES_PORT
-      - POSTGRES_DB
-    volumes:
-      - ./src/product-catalog/products:/usr/src/app/products
+      - PRODUCT_CATALOG_DB_CONNECTION
     depends_on:
       otel-collector:
         condition: service_started
       flagd:
         condition: service_started
-      product_db:
+      postgresql:
         condition: service_started
     logging: *logging
 
@@ -864,6 +846,7 @@ services:
 
   # OpenSearch
   opensearch:
+    image: ${IMAGE_NAME}:${DEMO_VERSION}-opensearch
     container_name: opensearch
     build:
       context: ./
@@ -901,7 +884,3 @@ services:
       timeout: 10s
       retries: 10
     logging: *logging
-
-volumes:
-  pgdata:
-    driver: local
