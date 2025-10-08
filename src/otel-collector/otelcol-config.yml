@@ -125,9 +125,9 @@ exporters:
     endpoint: "tempo:4317"
     tls:
       insecure: true
-  # OTLP HTTP exporter for metrics to Prometheus
-  otlphttp/prometheus:
-    endpoint: "http://prometheus:9090/api/v1/otlp"
+  # Prometheus remote write exporter for metrics to Mimir
+  prometheusremotewrite/mimir:
+    endpoint: "http://mimir:9009/api/v1/push"
     tls:
       insecure: true
   # OTLP HTTP exporter for logs to Loki
@@ -162,7 +162,7 @@ service:
     metrics:
       receivers: [docker_stats, httpcheck/frontend-proxy, hostmetrics, nginx, otlp, postgresql, redis, spanmetrics]
       processors: [resourcedetection, memory_limiter, batch]
-      exporters: [otlphttp/prometheus, debug]
+      exporters: [prometheusremotewrite/mimir, debug]
     logs:
       receivers: [otlp]
       processors: [resourcedetection, memory_limiter, batch]

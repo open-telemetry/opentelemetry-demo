@@ -589,7 +589,7 @@ services:
     environment:
       - JAEGER_HOST
       - JAEGER_GRPC_PORT
-      - PROMETHEUS_ADDR
+      - MIMIR_ADDR
       - OTEL_COLLECTOR_HOST
       - OTEL_COLLECTOR_PORT_HTTP
       - MEMORY_MAX_TRACES=5000
@@ -653,29 +653,37 @@ services:
       - POSTGRES_PASSWORD
       - GOMEMLIMIT=160MiB
 
-  # Prometheus
-  prometheus:
-    image: ${PROMETHEUS_IMAGE}
-    container_name: prometheus
+  # Mimir
+  mimir:
+    image: grafana/mimir:latest
+    container_name: mimir
     command:
-      - --web.console.templates=/etc/prometheus/consoles
-      - --web.console.libraries=/etc/prometheus/console_libraries
-      - --storage.tsdb.retention.time=1h
-      - --config.file=/etc/prometheus/prometheus-config.yaml
-      - --storage.tsdb.path=/prometheus
-      - --web.enable-lifecycle
-      - --web.route-prefix=/
-      - --web.enable-otlp-receiver
-      - --enable-feature=exemplar-storage
+      - -config.file=/etc/mimir/mimir.yaml
+      - -server.http-listen-port=9009
+      - -server.grpc-listen-port=9095
+      - -distributor.ring.instance-addr=127.0.0.1
+      - -ingester.ring.instance-addr=127.0.0.1
+      - -store-gateway.sharding-ring.instance-addr=127.0.0.1
+      - -compactor.ring.instance-addr=127.0.0.1
+      - -ruler.ring.instance-addr=127.0.0.1
+      - -query-scheduler.instance-addr=127.0.0.1
+      - -query-frontend.instance-addr=127.0.0.1
+      - -memberlist.join-members=127.0.0.1
+      - -blocks-storage.backend=filesystem
+      - -blocks-storage.filesystem.dir=/tmp/mimir/tsdb
+      - -blocks-storage.tsdb.dir=/tmp/mimir/tsdb
+      - -ingester.max-transfer-retries=0
+      - -querier.max-concurrent=20
+      - -server.log-level=info
     volumes:
-      - ./src/prometheus/prometheus-config.yaml:/etc/prometheus/prometheus-config.yaml
+      - ./src/mimir/mimir.yaml:/etc/mimir/mimir.yaml:ro
     deploy:
       resources:
         limits:
           memory: 300M
     restart: unless-stopped
     ports:
-      - "${PROMETHEUS_PORT}:${PROMETHEUS_PORT}"
+      - "9009:9009"   # Mimir HTTP
     logging: *logging
 
   # OpenSearch

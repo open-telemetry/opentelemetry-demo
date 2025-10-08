@@ -1,9 +1,9 @@
 apiVersion: 1
 
 datasources:
-  - name: Prometheus
+  - name: Mimir
     type: prometheus
-    url: http://prometheus:9090
+    url: http://mimir:9009
     isDefault: true
     jsonData:
         httpMethod: GET
@@ -34,7 +34,7 @@ datasources:
         customQuery: true
         query: 'method="$${__span.tags.method}"'
       tracesToMetrics:
-        datasourceUid: 'Prometheus'
+        datasourceUid: 'Mimir'
         spanStartTimeShift: '-1h'
         spanEndTimeShift: '1h'
         tags: [{ key: 'service.name', value: 'service' }, { key: 'job' }]
@@ -43,7 +43,7 @@ datasources:
         tags: ['job', 'instance', 'pod', 'namespace']
         profileTypeId: 'process_cpu:cpu:nanoseconds:cpu:nanoseconds'
       serviceMap:
-        datasourceUid: 'Prometheus'
+        datasourceUid: 'Mimir'
       nodeGraph:
         enabled: true
       search:
