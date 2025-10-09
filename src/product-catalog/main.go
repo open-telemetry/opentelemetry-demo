@@ -27,6 +27,7 @@ import (
 	"go.opentelemetry.io/otel/exporters/otlp/otlplog/otlploggrpc"
 	"go.opentelemetry.io/otel/exporters/otlp/otlpmetric/otlpmetricgrpc"
 	"go.opentelemetry.io/otel/exporters/otlp/otlptrace/otlptracegrpc"
+	"go.opentelemetry.io/otel/exporters/stdout/stdoutlog"
 	"go.opentelemetry.io/otel/log/global"
 	"go.opentelemetry.io/otel/propagation"
 	sdklog "go.opentelemetry.io/otel/sdk/log"
@@ -125,8 +126,14 @@ func initLoggerProvider() *sdklog.LoggerProvider {
 		return nil
 	}
 
+	consoleExporter, err := stdoutlog.New()
+	if err != nil {
+		return nil
+	}
+
 	loggerProvider := sdklog.NewLoggerProvider(
 		sdklog.WithProcessor(sdklog.NewBatchProcessor(logExporter)),
+		sdklog.WithProcessor(sdklog.NewSimpleProcessor(consoleExporter)),
 	)
 	global.SetLoggerProvider(loggerProvider)
 
@@ -134,14 +141,12 @@ func initLoggerProvider() *sdklog.LoggerProvider {
 }
 
 func initPostgresConnectionPool() *pgxpool.Pool {
-	var dbhost, dbport, dbuser, dbpassword, dbname string
-	mustMapEnv(&dbhost, "POSTGRES_HOST")
-	mustMapEnv(&dbport, "POSTGRES_PORT")
-	mustMapEnv(&dbuser, "POSTGRES_USER")
-	mustMapEnv(&dbpassword, "POSTGRES_PASSWORD")
-	mustMapEnv(&dbname, "POSTGRES_DB")
+	var connStr string
+	mustMapEnv(&connStr, "PRODUCT_CATALOG_DB_CONNECTION")
 
-	connStr := fmt.Sprintf("postgres://%s:%s@%s:%s/%s", dbuser, dbpassword, dbhost, dbport, dbname)
+	if connStr == "" {
+		os.Exit(1)
+	}
 
 	config, err := pgxpool.ParseConfig(connStr)
 	if err != nil {
@@ -177,7 +182,6 @@ func main() {
 		}
 		logger.Info("Shutdown tracer provider")
 	}()
-
 	mp := initMeterProvider()
 	defer func() {
 		if err := mp.Shutdown(context.Background()); err != nil {
