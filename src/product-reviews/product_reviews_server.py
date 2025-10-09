@@ -6,7 +6,7 @@
 
 # Python
 import os
-import random
+import json
 from concurrent import futures
 
 # Pip
@@ -26,16 +26,34 @@ import demo_pb2
 import demo_pb2_grpc
 from grpc_health.v1 import health_pb2
 from grpc_health.v1 import health_pb2_grpc
+from database import fetch_product_reviews, fetch_product_reviews_from_db
 
-# MySQL
-import mysql.connector
-from mysql.connector import Error
+# OpenAI
+from openai import OpenAI
 
-db_host = None
-db_port = None
-db_user = None
-db_password = None
-db_name = None
+llm_host = None
+llm_port = None
+
+# --- Define the tool for the OpenAI API ---
+tools = [
+    {
+        "type": "function",
+        "function": {
+            "name": "fetch_product_reviews",
+            "description": "Executes a SQL query to retrieve reviews for a particular product.",
+            "parameters": {
+                "type": "object",
+                "properties": {
+                    "product_id": {
+                        "type": "string",
+                        "description": "The product ID to fetch product reviews for.",
+                    }
+                },
+                "required": ["product_id"],
+            },
+        }
+    }
+]
 
 class ProductReviewService(demo_pb2_grpc.ProductReviewServiceServicer):
     def GetProductReviews(self, request, context):
@@ -61,50 +79,85 @@ class ProductReviewService(demo_pb2_grpc.ProductReviewServiceServicer):
 def get_product_reviews(request_product_id):
 
     product_reviews = demo_pb2.GetProductReviewsResponse()
-    fetch_product_reviews_from_db(request_product_id, product_reviews)
+    records = fetch_product_reviews_from_db(request_product_id)
+
+    for row in records:
+        logger.info(f"  username: {row[0]}, description: {row[1]}, score: {row[2]}")
+        product_reviews.product_reviews.add(
+                username=row[0],
+                description=row[1],
+                score=row[2]
+        )
 
     return product_reviews
-
-def fetch_product_reviews_from_db(request_product_id, product_reviews):
-    logger.info("Received a request to fetch product reviews from the database.")
-    try:
-        with mysql.connector.connect(
-            host=db_host,
-            port=db_port,
-            user=db_user,
-            password=db_password,
-            database=db_name
-        ) as connection:
-            logger.info("Successfully connected to the database.")
-
-            with connection.cursor() as cursor:
-                # Define the SQL query
-                query = "SELECT username, description, score FROM productreviews WHERE product_id= %s"
-
-                # Execute the query
-                cursor.execute(query, (request_product_id, ))
-
-                # Fetch all the rows from the query result
-                records = cursor.fetchall()
-
-                logger.info(f"Found {cursor.rowcount} product reviews(s):")
-
-                # Add each row to the list of product reviews
-                for row in records:
-                    logger.info(f"  username: {row[0]}, description: {row[1]}, score: {row[2]}")
-                    review = product_reviews.product_reviews.add(
-                            username=row[0],
-                            description=row[1],
-                            score=row[2]
-                    )
-
-    except Error as e:
-        logger.error(f"Error connecting to MySQL or executing query: {e}")
 
 def get_product_review_summary(request_product_id):
 
     product_review_summary = demo_pb2.GetProductReviewSummaryResponse()
-    product_review_summary.product_review_summary = "This is an AI-generated summary"
+
+    client = OpenAI(
+        base_url=f"http://{llm_host}:{llm_port}/v1",
+        # The OpenAI API requires an api_key to be present, but
+        # our LLM doesn't use it
+        api_key="dummy"
+    )
+
+    user_prompt = f"Summarize the reviews for product ID:{request_product_id}. Use the database tool as needed to fetch the existing reviews."
+    messages = [
+       {"role": "system", "content": "You are a helpful assistant that creates a summary of product reviews."},
+       {"role": "user", "content": user_prompt}
+    ]
+
+    # use the LLM to summarize the product reviews
+    initial_response = client.chat.completions.create(
+        model="astronomy-llm",
+        messages=messages,
+        tools=tools,
+        tool_choice="auto"
+    )
+
+    response_message = initial_response.choices[0].message
+    tool_calls = response_message.tool_calls
+
+    logger.info(f"Response message: {response_message}")
+
+    # Check if the model wants to call a tool
+    if tool_calls:
+        tool_call = tool_calls[0]
+        function_name = tool_call.function.name
+        function_args = json.loads(tool_call.function.arguments)
+
+        logger.info(f"Model wants to call function: '{function_name}' with arguments: {function_args}")
+
+        # --- Your application's logic to call the correct function ---
+        if function_name == "fetch_product_reviews":
+            function_response = fetch_product_reviews(
+                product_id=function_args.get("product_id")
+            )
+
+            logger.info(f"Function response is: '{function_response}'")
+
+            # Append the tool call and its result to the message history
+            messages.append(response_message)  # Append the assistant's reply
+            messages.append(
+                {
+                    "tool_call_id": tool_call.id,
+                    "role": "tool",
+                    "name": function_name,
+                    "content": function_response,
+                }
+            )
+
+            logger.info(f"Invoking the LLM with the following messages: '{messages}'")
+
+            final_response = client.chat.completions.create(
+                model="astronomy-llm",
+                messages=messages,
+            )
+
+            product_review_summary.product_review_summary = final_response.choices[0].message.content
+        else:
+            product_review_summary.product_review_summary = initial_response.choices[0].message.content
 
     return product_review_summary
 
@@ -147,12 +200,8 @@ if __name__ == "__main__":
     demo_pb2_grpc.add_ProductReviewServiceServicer_to_server(service, server)
     health_pb2_grpc.add_HealthServicer_to_server(service, server)
 
-    # Retrieve MySQL environment variables
-    db_host = must_map_env('MYSQL_HOST')
-    db_port = must_map_env('MYSQL_PORT')
-    db_user = must_map_env('MYSQL_USER')
-    db_password = must_map_env('MYSQL_PASSWORD')
-    db_name = must_map_env('MYSQL_DATABASE')
+    llm_host = must_map_env('LLM_HOST')
+    llm_port = must_map_env('LLM_PORT')
 
     # Start server
     port = must_map_env('PRODUCT_REVIEWS_PORT')

@@ -534,12 +534,15 @@ services:
       - OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE
       - OTEL_RESOURCE_ATTRIBUTES
       - OTEL_SERVICE_NAME=product-reviews
+      - OTEL_INSTRUMENTATION_GENAI_CAPTURE_MESSAGE_CONTENT=true
       - PROTOCOL_BUFFERS_PYTHON_IMPLEMENTATION=python
       - MYSQL_HOST
       - MYSQL_PORT
       - MYSQL_DATABASE
       - MYSQL_USER=otelu
       - MYSQL_PASSWORD=otelp
+      - LLM_HOST
+      - LLM_PORT
     depends_on:
       product-catalog:
         condition: service_started
@@ -738,6 +741,24 @@ services:
       interval: 5s
       timeout: 10s
       retries: 10
+    logging: *logging
+
+  # LLM used by Product Review service
+  llm:
+    image: ${IMAGE_NAME}:${DEMO_VERSION}-llm
+    container_name: llm
+    build:
+      context: ./
+      dockerfile: ${LLM_DOCKERFILE}
+      cache_from:
+        - ${IMAGE_NAME}:${IMAGE_VERSION}-llm
+    deploy:
+      resources:
+        limits:
+          memory: 50M
+    restart: unless-stopped
+    ports:
+      - "${LLM_PORT}:${LLM_PORT}"
     logging: *logging
 
   # MySQL database used by Product Review service
