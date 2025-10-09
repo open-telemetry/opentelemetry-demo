@@ -43,14 +43,14 @@ static_resources:
                           route: { cluster: loadgen, prefix_rewrite: "/" }
                         - match: { prefix: "/otlp-http/" }
                           route: { cluster: opentelemetry_collector_http, prefix_rewrite: "/" }
-                        - match: { path: "/jaeger" }
-                          redirect: { path_redirect: "/jaeger/" }
-                        - match: { prefix: "/jaeger/" }
-                          route: { cluster: jaeger }
-                        - match: { path: "/grafana" }
-                          redirect: { path_redirect: "/grafana/" }
-                        - match: { prefix: "/grafana/" }
-                          route: { cluster: grafana }
+                        # - match: { path: "/jaeger" }
+                        #   redirect: { path_redirect: "/jaeger/" }
+                        # - match: { prefix: "/jaeger/" }
+                        #   route: { cluster: jaeger }
+                        # - match: { path: "/grafana" }
+                        #   redirect: { path_redirect: "/grafana/" }
+                        # - match: { prefix: "/grafana/" }
+                        #   route: { cluster: grafana }
                         - match: { prefix: "/images/" }
                           route: { cluster: image-provider, prefix_rewrite: "/" }
                         - match: { prefix: "/flagservice/" }
@@ -292,30 +292,30 @@ static_resources:
                     socket_address:
                       address: ${LOCUST_WEB_HOST}
                       port_value: ${LOCUST_WEB_PORT}
-    - name: grafana
-      type: STRICT_DNS
-      lb_policy: ROUND_ROBIN
-      load_assignment:
-        cluster_name: grafana
-        endpoints:
-          - lb_endpoints:
-              - endpoint:
-                  address:
-                    socket_address:
-                      address: ${GRAFANA_HOST}
-                      port_value: ${GRAFANA_PORT}
-    - name: jaeger
-      type: STRICT_DNS
-      lb_policy: ROUND_ROBIN
-      load_assignment:
-        cluster_name: jaeger
-        endpoints:
-          - lb_endpoints:
-              - endpoint:
-                  address:
-                    socket_address:
-                      address: ${JAEGER_HOST}
-                      port_value: ${JAEGER_UI_PORT}
+    # - name: grafana
+    #   type: STRICT_DNS
+    #   lb_policy: ROUND_ROBIN
+    #   load_assignment:
+    #     cluster_name: grafana
+    #     endpoints:
+    #       - lb_endpoints:
+    #           - endpoint:
+    #               address:
+    #                 socket_address:
+    #                   address: ${GRAFANA_HOST}
+    #                   port_value: ${GRAFANA_PORT}
+    # - name: jaeger
+    #   type: STRICT_DNS
+    #   lb_policy: ROUND_ROBIN
+    #   load_assignment:
+    #     cluster_name: jaeger
+    #     endpoints:
+    #       - lb_endpoints:
+    #           - endpoint:
+    #               address:
+    #                 socket_address:
+    #                   address: ${JAEGER_HOST}
+    #                   port_value: ${JAEGER_UI_PORT}
 admin:
   address:
     socket_address:
