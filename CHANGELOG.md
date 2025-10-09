@@ -7,6 +7,8 @@ the release.
 
 ## Unreleased
 
+* [feat] add ipv6 support
+  ([#2594](https://github.com/open-telemetry/opentelemetry-demo/pull/2594))
 * [chore] Use pre-built nginx otel image
   ([#2614](https://github.com/open-telemetry/opentelemetry-demo/pull/2614))
 * [grafana] Update grafana version to 12.2.0
