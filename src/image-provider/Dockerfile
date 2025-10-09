@@ -8,6 +8,11 @@ USER 101
 COPY src/image-provider/static/ /static/
 COPY src/image-provider/nginx.conf.template /nginx.conf.template
 
+# Set default value for OTEL_* config if not provided by Docker Compose or K8s
+ENV OTEL_SERVICE_NAME="image-provider"
+ENV OTEL_COLLECTOR_HOST=localhost
+ENV OTEL_COLLECTOR_PORT_GRPC=4317
+
 EXPOSE ${IMAGE_PROVIDER_PORT}
 
 STOPSIGNAL SIGQUIT
