@@ -16,7 +16,7 @@ group = "io.opentelemetry"
 version = "1.0"
 
 
-val grpcVersion = "1.75.0"
+val grpcVersion = "1.76.0"
 val protobufVersion = "4.32.1"
 
 
@@ -32,7 +32,7 @@ dependencies {
     testImplementation(kotlin("test"))
     implementation(kotlin("script-runtime"))
     implementation("org.apache.kafka:kafka-clients:4.1.0")
-    implementation("com.google.api.grpc:proto-google-common-protos:2.61.2")
+    implementation("com.google.api.grpc:proto-google-common-protos:2.61.3")
     implementation("io.grpc:grpc-protobuf:${grpcVersion}")
     implementation("io.grpc:grpc-stub:${grpcVersion}")
     implementation("io.grpc:grpc-netty:${grpcVersion}")
@@ -43,7 +43,7 @@ dependencies {
     implementation("org.apache.logging.log4j:log4j-core:2.25.2")
     implementation("org.slf4j:slf4j-api:2.0.17")
     implementation("com.google.protobuf:protobuf-kotlin:${protobufVersion}")
-    implementation("dev.openfeature:sdk:1.18.1")
+    implementation("dev.openfeature:sdk:1.18.2")
     implementation("dev.openfeature.contrib.providers:flagd:0.11.15")
 
     if (JavaVersion.current().isJava9Compatible) {
