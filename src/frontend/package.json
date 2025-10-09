@@ -60,7 +60,7 @@
     "eslint": "9.37.0",
     "eslint-config-next": "15.5.4",
     "eslint-plugin-react": "7.37.5",
-    "eslint-plugin-react-hooks": "6.1.1",
+    "eslint-plugin-react-hooks": "7.0.0",
     "openapi-typescript": "7.9.1",
     "ts-proto": "2.7.7",
     "typescript": "5.9.3"
