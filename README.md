@@ -69,8 +69,9 @@ keeping it up to date for you.
 | [ClickStack]              | [Liatrio]      | [Tinybird]                       |
 | [Coralogix]               | [Logz.io]      | [Tracetest]                      |
 | [Dash0]                   | [New Relic]    | [Uptrace]                        |
-| [Datadog]                 | [OpenSearch]   | [VictoriaMetrics]                |
-| [Dynatrace]               | [Oracle]       |                                  |
+| [Datadog]                 | [OpenObserve]  | [VictoriaMetrics]                |
+| [Dynatrace]               | [OpenSearch]   |                                  |
+| [Elastic]                 | [Oracle]       |                                  |
 
 ## Contributing
 
@@ -139,6 +140,7 @@ For more information about the emeritus role, see the [community repository](htt
 [Logz.io]: https://logz.io/learn/how-to-run-opentelemetry-demo-with-logz-io/
 [New Relic]: https://github.com/newrelic/opentelemetry-demo
 [OpenSearch]: https://github.com/opensearch-project/opentelemetry-demo
+[OpenObserve]: https://github.com/openobserve/opentelemetry-demo
 [Oracle]: https://github.com/oracle-quickstart/oci-o11y-solutions/blob/main/knowledge-content/opentelemetry-demo
 [Parseable]: https://www.parseable.com/blog/open-telemetry-demo-with-parseable-a-complete-observability-setup
 [Sentry]: https://github.com/getsentry/opentelemetry-demo
