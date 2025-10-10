@@ -404,9 +404,7 @@ kind: Service
 metadata:
   name: ad
   labels:
-    
-    opentelemetry.io/name: ad
-    
+    opentelemetry.io/name: ad 
     app.kubernetes.io/component: ad
     app.kubernetes.io/name: ad
     app.kubernetes.io/version: "2.1.3"
@@ -934,7 +932,6 @@ metadata:
   name: cart
   labels: 
     opentelemetry.io/name: cart
-    
     app.kubernetes.io/component: cart
     app.kubernetes.io/name: cart
     app.kubernetes.io/version: "2.1.3"
@@ -1047,15 +1044,12 @@ spec:
                 fieldRef:
                   apiVersion: v1
                   fieldPath: metadata.labels['app.kubernetes.io/component']
-            # for testing I leave the orignal in place. see how this works on multi cluster
-            # - name: NODE_IP
-            #   valueFrom:
-            #     fieldRef:
-            #       fieldPath: status.hostIP
-            # - name: OTEL_COLLECTOR_NAME
-            #   value: $(NODE_IP)      
+            - name: NODE_IP
+              valueFrom:
+                 fieldRef:
+                  fieldPath: status.hostIP
             - name: OTEL_COLLECTOR_NAME
-              value: otel-collector
+              value: $(NODE_IP)
             - name: OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE
               value: cumulative
             - name: CHECKOUT_PORT
@@ -1135,15 +1129,12 @@ spec:
                 fieldRef:
                   apiVersion: v1
                   fieldPath: metadata.labels['app.kubernetes.io/component']
-            # for testing I leave the orignal in place. see how this works on multi cluster
-            # - name: NODE_IP
-            #   valueFrom:
-            #     fieldRef:
-            #       fieldPath: status.hostIP
-            # - name: OTEL_COLLECTOR_NAME
-            #   value: $(NODE_IP) 
+            - name: NODE_IP
+              valueFrom:
+                 fieldRef:
+                  fieldPath: status.hostIP
             - name: OTEL_COLLECTOR_NAME
-              value: otel-collector
+              value: $(NODE_IP)
             - name: OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE
               value: cumulative
             - name: CURRENCY_PORT
@@ -1198,15 +1189,12 @@ spec:
                 fieldRef:
                   apiVersion: v1
                   fieldPath: metadata.labels['app.kubernetes.io/component']
-            # for testing I leave the orignal in place. see how this works on multi cluster
-            # - name: NODE_IP
-            #   valueFrom:
-            #     fieldRef:
-            #       fieldPath: status.hostIP
-            # - name: OTEL_COLLECTOR_NAME
-            #   value: $(NODE_IP)       
+            - name: NODE_IP
+              valueFrom:
+                 fieldRef:
+                  fieldPath: status.hostIP
             - name: OTEL_COLLECTOR_NAME
-              value: otel-collector
+              value: $(NODE_IP)
             - name: OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE
               value: cumulative
             - name: EMAIL_PORT
@@ -1308,8 +1296,12 @@ spec:
             #     fieldRef:
             #       apiVersion: v1
             #       fieldPath: metadata.labels['app.kubernetes.io/component']
+            - name: NODE_IP
+              valueFrom:
+                 fieldRef:
+                  fieldPath: status.hostIP
             - name: OTEL_COLLECTOR_NAME
-              value: otel-collector
+              value: $(NODE_IP)
             # - name: OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE
             #   value: cumulative
             # - name: FLAGD_METRICS_EXPORTER
@@ -1666,8 +1658,12 @@ spec:
                 fieldRef:
                   apiVersion: v1
                   fieldPath: metadata.labels['app.kubernetes.io/component']
+            - name: NODE_IP
+              valueFrom:
+                 fieldRef:
+                  fieldPath: status.hostIP
             - name: OTEL_COLLECTOR_NAME
-              value: otel-collector
+              value: $(NODE_IP)
             - name: OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE
               value: cumulative
             - name: IMAGE_PROVIDER_PORT
@@ -1724,8 +1720,12 @@ spec:
                 fieldRef:
                   apiVersion: v1
                   fieldPath: metadata.labels['app.kubernetes.io/component']
+            - name: NODE_IP
+              valueFrom:
+                 fieldRef:
+                  fieldPath: status.hostIP
             - name: OTEL_COLLECTOR_NAME
-              value: otel-collector
+              value: $(NODE_IP)
             - name: OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE
               value: cumulative
             - name: KAFKA_ADVERTISED_LISTENERS
@@ -1790,8 +1790,12 @@ spec:
 #                 fieldRef:
 #                   apiVersion: v1
 #                   fieldPath: metadata.labels['app.kubernetes.io/component']
-#             - name: OTEL_COLLECTOR_NAME
-#               value: otel-collector
+            # - name: NODE_IP
+            #   valueFrom:
+            #      fieldRef:
+            #       fieldPath: status.hostIP
+            # - name: OTEL_COLLECTOR_NAME
+            #   value: $(NODE_IP)
 #             - name: OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE
 #               value: cumulative
 #             - name: LOCUST_WEB_HOST
@@ -1867,8 +1871,12 @@ spec:
                 fieldRef:
                   apiVersion: v1
                   fieldPath: metadata.labels['app.kubernetes.io/component']
+            - name: NODE_IP
+              valueFrom:
+                 fieldRef:
+                  fieldPath: status.hostIP
             - name: OTEL_COLLECTOR_NAME
-              value: otel-collector
+              value: $(NODE_IP)
             - name: OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE
               value: cumulative
             - name: PAYMENT_PORT
@@ -1937,8 +1945,12 @@ spec:
                 fieldRef:
                   apiVersion: v1
                   fieldPath: metadata.labels['app.kubernetes.io/component']
+            - name: NODE_IP
+              valueFrom:
+                 fieldRef:
+                  fieldPath: status.hostIP
             - name: OTEL_COLLECTOR_NAME
-              value: otel-collector
+              value: $(NODE_IP)
             - name: OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE
               value: cumulative
             - name: POSTGRES_USER
@@ -1993,8 +2005,12 @@ spec:
                 fieldRef:
                   apiVersion: v1
                   fieldPath: metadata.labels['app.kubernetes.io/component']
+            - name: NODE_IP
+              valueFrom:
+                 fieldRef:
+                  fieldPath: status.hostIP
             - name: OTEL_COLLECTOR_NAME
-              value: otel-collector
+              value: $(NODE_IP) 
             - name: OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE
               value: cumulative
             - name: PRODUCT_CATALOG_PORT
@@ -2060,8 +2076,12 @@ spec:
                 fieldRef:
                   apiVersion: v1
                   fieldPath: metadata.labels['app.kubernetes.io/component']
+            - name: NODE_IP
+              valueFrom:
+                 fieldRef:
+                  fieldPath: status.hostIP
             - name: OTEL_COLLECTOR_NAME
-              value: otel-collector
+              value: $(NODE_IP)
             - name: OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE
               value: cumulative
             - name: QUOTE_PORT
@@ -2123,8 +2143,12 @@ spec:
                 fieldRef:
                   apiVersion: v1
                   fieldPath: metadata.labels['app.kubernetes.io/component']
+            - name: NODE_IP
+              valueFrom:
+                 fieldRef:
+                  fieldPath: status.hostIP
             - name: OTEL_COLLECTOR_NAME
-              value: otel-collector
+              value: $(NODE_IP)
             - name: OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE
               value: cumulative
             - name: RECOMMENDATION_PORT
@@ -2193,8 +2217,12 @@ spec:
                 fieldRef:
                   apiVersion: v1
                   fieldPath: metadata.labels['app.kubernetes.io/component']
+            - name: NODE_IP
+              valueFrom:
+                 fieldRef:
+                  fieldPath: status.hostIP
             - name: OTEL_COLLECTOR_NAME
-              value: otel-collector
+              value: $(NODE_IP) 
             - name: OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE
               value: cumulative
             - name: SHIPPING_PORT
@@ -2249,8 +2277,12 @@ spec:
                 fieldRef:
                   apiVersion: v1
                   fieldPath: metadata.labels['app.kubernetes.io/component']
+            - name: NODE_IP
+              valueFrom:
+                 fieldRef:
+                  fieldPath: status.hostIP
             - name: OTEL_COLLECTOR_NAME
-              value: otel-collector
+              value: $(NODE_IP)
             - name: OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE
               value: cumulative
             - name: OTEL_RESOURCE_ATTRIBUTES
