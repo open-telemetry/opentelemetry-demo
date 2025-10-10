@@ -799,7 +799,7 @@ services:
         condition: service_started
       tempo:
         condition: service_started
-      prometheus:
+      mimir:
         condition: service_started
     healthcheck:
       test: ["CMD-SHELL", "curl -f http://localhost:3000/api/health || exit 1"]
@@ -848,47 +848,56 @@ services:
       - IMAGE_PROVIDER_HOST
       - IMAGE_PROVIDER_PORT
 
-  # Prometheus
-  prometheus:
-    image: ${PROMETHEUS_IMAGE}
-    container_name: prometheus
+  # Mimir
+  mimir:
+    image: grafana/mimir:latest
+    container_name: mimir
     command:
-      - --web.console.templates=/etc/prometheus/consoles
-      - --web.console.libraries=/etc/prometheus/console_libraries
-      - --storage.tsdb.retention.time=1h
-      - --config.file=/etc/prometheus/prometheus-config.yaml
-      - --storage.tsdb.path=/prometheus
-      - --web.enable-lifecycle
-      - --web.route-prefix=/
-      - --web.enable-otlp-receiver
-      - --enable-feature=exemplar-storage
+      - -config.file=/etc/mimir/mimir.yaml
+      - -server.http-listen-port=9009
+      - -server.grpc-listen-port=9095
+      - -distributor.ring.instance-addr=127.0.0.1
+      - -ingester.ring.instance-addr=127.0.0.1
+      - -store-gateway.sharding-ring.instance-addr=127.0.0.1
+      - -compactor.ring.instance-addr=127.0.0.1
+      - -ruler.ring.instance-addr=127.0.0.1
+      - -query-scheduler.instance-addr=127.0.0.1
+      - -query-frontend.instance-addr=127.0.0.1
+      - -memberlist.join-members=127.0.0.1
+      - -blocks-storage.backend=filesystem
+      - -blocks-storage.filesystem.dir=/tmp/mimir/tsdb
+      - -blocks-storage.tsdb.dir=/tmp/mimir/tsdb
+      - -ingester.max-transfer-retries=0
+      - -querier.max-concurrent=20
+      - -server.log-level=info
     volumes:
-      - ./src/prometheus/prometheus-config.yaml:/etc/prometheus/prometheus-config.yaml
+      - ./src/mimir/mimir.yaml:/etc/mimir/mimir.yaml:ro
     deploy:
       resources:
         limits:
           memory: 300M
     restart: unless-stopped
     ports:
-      - "${PROMETHEUS_PORT}:${PROMETHEUS_PORT}"
+      - "9009:9009"   # Mimir HTTP
     logging: *logging
 
-  # Beyla eBPF Auto-instrumentation
-  beyla:
-    image: grafana/beyla:latest
-    container_name: beyla
-    privileged: true
-    pid: host
-    network_mode: host
-    volumes:
-      - ./src/beyla/beyla-config.yml:/etc/beyla/beyla-config.yml:ro
-      - /sys/fs/cgroup:/sys/fs/cgroup:ro
-      - /proc:/proc:ro
-    environment:
-      - BEYLA_CONFIG_FILE=/etc/beyla/beyla-config.yml
-      - OTEL_EXPORTER_OTLP_ENDPOINT=http://${OTEL_COLLECTOR_HOST}:${OTEL_COLLECTOR_PORT_GRPC}
-    depends_on:
-      otel-collector:
-        condition: service_started
-    restart: unless-stopped
-    logging: *logging
+  # # Beyla eBPF Auto-instrumentation
+  # beyla:
+  #   image: grafana/beyla:latest
+  #   container_name: beyla
+  #   privileged: true
+  #   pid: host
+  #   network_mode: host
+  #   volumes:
+  #     - ./src/beyla/beyla-config.yml:/etc/beyla/beyla-config.yml:ro
+  #     - /sys/fs/cgroup:/sys/fs/cgroup:ro
+  #     - /proc:/proc:ro
+  #   environment:
+  #     - BEYLA_CONFIG_FILE=/etc/beyla/beyla-config.yml
+  #     - BEYLA_OPEN_PORT=8080,8081,8082,8083,8084,8085,8086,8087,8088,8089,8090,9555
+  #     - OTEL_EXPORTER_OTLP_ENDPOINT=http://${OTEL_COLLECTOR_HOST}:${OTEL_COLLECTOR_PORT_GRPC}
+  #   depends_on:
+  #     otel-collector:
+  #       condition: service_started
+  #   restart: unless-stopped
+  #   logging: *logging

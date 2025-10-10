@@ -25,3 +25,22 @@ storage:
     pool:
       max_workers: 100
       queue_depth: 10000
+
+metrics_generator:
+  registry:
+    external_labels:
+      source: tempo
+      cluster: docker-compose
+  storage:
+    path: /var/tempo/generator/wal
+    remote_write:
+      - url: http://prometheus:9009/otlp
+        send_exemplars: true
+  traces_storage:
+    path: /var/tempo/generator/traces
+        
+overrides:
+  defaults:
+    metrics_generator:
+      generate_native_histograms: both # 'classic' or 'native' or 'both'
+      processors: [local-blocks, service-graphs, span-metrics]
