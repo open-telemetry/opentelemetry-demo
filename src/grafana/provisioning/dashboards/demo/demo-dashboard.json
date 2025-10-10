@@ -155,7 +155,7 @@
             "uid": "webstore-metrics"
           },
           "editorMode": "code",
-          "expr": "sum by (span_name) (rate({\"traces.span.metrics.duration.milliseconds.count\", \"service.name\"=\"${service}\"}[$__rate_interval]))",
+          "expr": "sum by (span_name) (rate({\"traces.span.metrics.duration_count\", \"service.name\"=\"${service}\"}[$__rate_interval]))",
           "legendFormat": "{{ span_name }}",
           "range": true,
           "refId": "A"
@@ -356,7 +356,7 @@
           },
           "editorMode": "code",
           "exemplar": false,
-          "expr": "histogram_quantile(0.50, sum(rate(traces_span_metrics_duration_milliseconds_bucket{\"service.name\"=\"${service}\"}[$__rate_interval])) by (le, span_name))",
+          "expr": "histogram_quantile(0.50, sum(rate({\"traces.span.metrics.duration_bucket\", \"service.name\"=\"${service}\"}[$__rate_interval])) by (le, span_name))",
           "legendFormat": "{{span_name}}",
           "range": true,
           "refId": "A"
@@ -752,7 +752,7 @@
             "uid": "webstore-metrics"
           },
           "editorMode": "code",
-          "expr": "rate(process_runtime_cpython_cpu_time_seconds_total{type=~\"system\"}[$__rate_interval])*100",
+          "expr": "rate({\"process.runtime.cpython.cpu_time\", type=~\"system\"}[$__rate_interval])*100",
           "hide": false,
           "interval": "2m",
           "legendFormat": "{{job}} ({{type}})",
@@ -765,7 +765,7 @@
             "uid": "webstore-metrics"
           },
           "editorMode": "code",
-          "expr": "rate(process_runtime_cpython_cpu_time_seconds_total{type=~\"user\"}[$__rate_interval])*100",
+          "expr": "rate({\"process.runtime.cpython.cpu_time\", type=~\"user\"}[$__rate_interval])*100",
           "hide": false,
           "interval": "2m",
           "legendFormat": "{{job}} ({{type}})",
@@ -874,7 +874,7 @@
             "uid": "webstore-metrics"
           },
           "editorMode": "code",
-          "expr": "process_runtime_cpython_memory_bytes{type=\"rss\"}",
+          "expr": "{\"process.runtime.cpython.memory\", type=\"rss\"}",
           "legendFormat": "{{job}}",
           "range": true,
           "refId": "A"
@@ -980,7 +980,7 @@
             "uid": "webstore-metrics"
           },
           "editorMode": "code",
-          "expr": "rate(app_recommendations_counter_total{recommendation_type=\"catalog\"}[$__rate_interval])",
+          "expr": "rate(app_recommendations_counter{recommendation_type=\"catalog\"}[$__rate_interval])",
           "interval": "2m",
           "legendFormat": "recommendations",
           "range": true,
@@ -1079,7 +1079,7 @@
             "uid": "webstore-metrics"
           },
           "editorMode": "code",
-          "expr": "rate(otel_trace_span_processor_spans{job=\"quote\"}[2m])*120",
+          "expr": "rate({\"otel.trace.span_processor.spans\", job=\"quote\"}[2m])*120",
           "interval": "2m",
           "legendFormat": "{{state}}",
           "range": true,
@@ -1158,13 +1158,13 @@
           "type": "prometheus",
           "uid": "webstore-metrics"
         },
-        "definition": "traces_span_metrics_duration_milliseconds_bucket",
+        "definition": "{\"traces.span.metrics.duration_bucket\"}",
         "includeAll": false,
         "label": "Service",
         "name": "service",
         "options": [],
         "query": {
-          "query": "traces_span_metrics_duration_milliseconds_bucket",
+          "query": "{\"traces.span.metrics.duration_bucket\"}",
           "refId": "PrometheusVariableQueryEditor-VariableQuery"
         },
         "refresh": 1,

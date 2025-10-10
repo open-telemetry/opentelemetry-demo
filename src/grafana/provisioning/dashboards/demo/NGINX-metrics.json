@@ -81,7 +81,7 @@
           },
           "disableTextWrap": false,
           "editorMode": "builder",
-          "expr": "{\"nginx.connections.accepted\", k8s_cluster_name=~\"$k8s_cluster_name\", k8s_node_name=~\"${node_name}\", host_name=~\"$host_name\"}",
+          "expr": "{\"nginx.connections_accepted\"}",
           "fullMetaSearch": false,
           "includeNullMetadata": true,
           "legendFormat": "__auto",
@@ -149,7 +149,7 @@
         {
           "disableTextWrap": false,
           "editorMode": "builder",
-          "expr": "{\"nginx.connections.handled\", k8s_cluster_name=~\"$k8s_cluster_name\", k8s_node_name=~\"${node_name}\", host_name=~\"$host_name\"}",
+          "expr": "{\"nginx.connections_handled\"}",
           "fullMetaSearch": false,
           "includeNullMetadata": true,
           "legendFormat": "{{__name__}}",
@@ -213,7 +213,7 @@
         {
           "disableTextWrap": false,
           "editorMode": "builder",
-          "expr": "{\"nginx.requests\", k8s_cluster_name=~\"$k8s_cluster_name\", k8s_node_name=~\"${node_name}\", host_name=~\"$host_name\"}",
+          "expr": "{\"nginx.requests\"}",
           "fullMetaSearch": false,
           "includeNullMetadata": true,
           "legendFormat": "{{__name__}}",
@@ -310,7 +310,7 @@
         {
           "disableTextWrap": false,
           "editorMode": "builder",
-          "expr": "{\"nginx.connections.current\", k8s_cluster_name=~\"$k8s_cluster_name\", k8s_node_name=~\"${node_name}\", host_name=~\"$host_name\"}",
+          "expr": "{\"nginx.connections.current\"}",
           "fullMetaSearch": false,
           "includeNullMetadata": true,
           "legendFormat": "{{state}}",

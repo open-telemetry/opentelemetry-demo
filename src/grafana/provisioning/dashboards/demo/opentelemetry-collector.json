@@ -4829,7 +4829,7 @@
                 "uid": "$datasource"
               },
               "editorMode": "code",
-              "expr": "sum by(rpc_grpc_status_code) (${metric:value}(${prefix:raw}rpc_server_responses_per_rpc_count{job=\"$job\"}[$__rate_interval]))",
+              "expr": "sum by(\"rpc.grpc.status_code\") (${metric:value}(${prefix:raw}rpc_server_responses_per_rpc_count{job=\"$job\"}[$__rate_interval]))",
               "instant": false,
               "legendFormat": "__auto",
               "range": true,
@@ -5140,7 +5140,7 @@
                 "uid": "$datasource"
               },
               "editorMode": "code",
-              "expr": "sum by(rpc_grpc_status_code) (${metric:value}(${prefix:raw}rpc_client_responses_per_rpc_count{job=\"$job\"}[$__rate_interval]))",
+              "expr": "sum by(\"rpc.grpc.status_code\") (${metric:value}(${prefix:raw}rpc_client_responses_per_rpc_count{job=\"$job\"}[$__rate_interval]))",
               "instant": false,
               "legendFormat": "__auto",
               "range": true,
@@ -5225,7 +5225,7 @@
               },
               "editorMode": "code",
               "exemplar": false,
-              "expr": "sum(increase(${prefix:raw}rpc_server_duration_bucket{job=\"$job\"}[$__rate_interval])) by (le)",
+              "expr": "sum(increase(${prefix:raw}{\"rpc.server.duration_bucket\", job=\"$job\"}[$__rate_interval])) by (le)",
               "format": "heatmap",
               "hide": false,
               "instant": false,
@@ -5313,7 +5313,7 @@
               },
               "editorMode": "code",
               "exemplar": false,
-              "expr": "sum(increase(${prefix:raw}rpc_client_duration_bucket{job=\"$job\"}[$__rate_interval])) by (le)",
+              "expr": "sum(increase(${prefix:raw}{\"rpc.server.duration_bucket\", job=\"$job\"}[$__rate_interval])) by (le)",
               "format": "heatmap",
               "hide": false,
               "instant": false,
@@ -5591,7 +5591,7 @@
               },
               "editorMode": "code",
               "exemplar": false,
-              "expr": "sum(increase(${prefix:raw}http_server_duration_bucket{job=\"$job\"}[$__rate_interval])) by (le)",
+              "expr": "sum(increase(${prefix:raw}{\"http.server.duration_bucket\", {job=\"$job\"}[$__rate_interval])) by (le)",
               "format": "heatmap",
               "hide": false,
               "instant": false,
@@ -5679,7 +5679,7 @@
               },
               "editorMode": "code",
               "exemplar": false,
-              "expr": "sum(increase(${prefix:raw}http_client_duration_bucket{job=\"$job\"}[$__rate_interval])) by (le)",
+              "expr": "sum(increase(${prefix:raw}{\"http.client.duration_bucket\", job=\"$job\"}[$__rate_interval])) by (le)",
               "format": "heatmap",
               "hide": false,
               "instant": false,
@@ -6276,7 +6276,7 @@
           "type": "prometheus",
           "uid": "$datasource"
         },
-        "definition": "query_result({__name__=~\".*.*rpc_server_duration_bucket|.*rpc_client_duration_bucket|.*http_server_duration_bucket|.*http_client_duration_bucket.*\",job=\"$job\"})",
+        "definition": "query_result({__name__=~\".*.*{\"rpc.server.duration_bucket.*\",job=\"$job\"})",
         "description": "Some metrics (e.g., RPC, HTTP) may no longer have the otelcol_ prefix. This will detect it. See https://github.com/open-telemetry/opentelemetry-collector/pull/9759",
         "hide": 2,
         "includeAll": false,
@@ -6285,11 +6285,11 @@
         "options": [],
         "query": {
           "qryType": 3,
-          "query": "query_result({__name__=~\".*.*rpc_server_duration_bucket|.*rpc_client_duration_bucket|.*http_server_duration_bucket|.*http_client_duration_bucket.*\",job=\"$job\"})",
+          "query": "query_result({__name__=~\".*.*{\"rpc.server.duration_bucket.*\",job=\"$job\"})",
           "refId": "PrometheusVariableQueryEditor-VariableQuery"
         },
         "refresh": 1,
-        "regex": "/(.*)(rpc|http)_(server|client)_duration_bucket.*{.*/",
+        "regex": "/(.*){\"(rpc|http).(server|client).duration_bucket\".*/",
         "type": "query"
       },
       {

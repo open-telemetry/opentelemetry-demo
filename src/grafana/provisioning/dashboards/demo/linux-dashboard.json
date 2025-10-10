@@ -632,7 +632,7 @@
             "uid": "fej9ntb4ninswf"
           },
           "editorMode": "code",
-          "expr": "{\"system.cpu.logical.count\", k8s_cluster_name=~\"$k8s_cluster_name\", k8s_node_name=~\"${node_name}\", host_name=~\"$host_name\", state=\"used\" }",
+          "expr": "{\"system.cpu.logical_count\", k8s_cluster_name=~\"$k8s_cluster_name\", k8s_node_name=~\"${node_name}\", host_name=~\"$host_name\", state=\"used\" }",
           "legendFormat": "__auto",
           "range": true,
           "refId": "A"
@@ -2722,7 +2722,7 @@
           "type": "prometheus",
           "uid": "${DS_PROMETHEUS}"
         },
-        "definition": "label_values(process.uptime,k8s_cluster_name)",
+        "definition": "label_values({\"process.uptime\"},k8s_cluster_name)",
         "description": "When deploying PostgreSQL on Kubernetes, name of the Kubernetes cluster.  \nFor other deployments, select \"All\". ",
         "includeAll": true,
         "label": "K8s Cluster",
@@ -2731,7 +2731,7 @@
         "options": [],
         "query": {
           "qryType": 1,
-          "query": "label_values(process.uptime,k8s_cluster_name)",
+          "query": "label_values({\"process.uptime\"},k8s_cluster_name)",
           "refId": "PrometheusVariableQueryEditor-VariableQuery"
         },
         "refresh": 2,
@@ -2776,14 +2776,14 @@
           "type": "prometheus",
           "uid": "${DS_PROMETHEUS}"
         },
-        "definition": "label_values(process.uptime,host_name)",
+        "definition": "label_values({\"process.uptime\"},host_name)",
         "includeAll": true,
         "label": "Host",
         "name": "host_name",
         "options": [],
         "query": {
           "qryType": 1,
-          "query": "label_values(process.uptime,host_name)",
+          "query": "label_values({\"process.uptime\"},host_name)",
           "refId": "PrometheusVariableQueryEditor-VariableQuery"
         },
         "refresh": 2,
