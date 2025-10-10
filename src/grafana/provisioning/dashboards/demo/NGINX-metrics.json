@@ -81,7 +81,7 @@
           },
           "disableTextWrap": false,
           "editorMode": "builder",
-          "expr": "nginx_connections_accepted_total",
+          "expr": "{\"nginx.connections_accepted\"}",
           "fullMetaSearch": false,
           "includeNullMetadata": true,
           "legendFormat": "__auto",
@@ -149,7 +149,7 @@
         {
           "disableTextWrap": false,
           "editorMode": "builder",
-          "expr": "nginx_connections_handled_total",
+          "expr": "{\"nginx.connections_handled\"}",
           "fullMetaSearch": false,
           "includeNullMetadata": true,
           "legendFormat": "{{__name__}}",
@@ -213,7 +213,7 @@
         {
           "disableTextWrap": false,
           "editorMode": "builder",
-          "expr": "nginx_requests_total",
+          "expr": "{\"nginx.requests\"}",
           "fullMetaSearch": false,
           "includeNullMetadata": true,
           "legendFormat": "{{__name__}}",
@@ -310,7 +310,7 @@
         {
           "disableTextWrap": false,
           "editorMode": "builder",
-          "expr": "nginx_connections_current",
+          "expr": "{\"nginx.connections.current\"}",
           "fullMetaSearch": false,
           "includeNullMetadata": true,
           "legendFormat": "{{state}}",
