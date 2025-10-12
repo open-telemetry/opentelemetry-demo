@@ -11,20 +11,52 @@ import re
 import logging
 
 app = Flask(__name__)
-logging.getLogger().setLevel(logging.INFO)
+app.logger.setLevel(logging.INFO)
 
-def generate_mock_response(messages):
-    """Generate a simple mock response based on the conversation"""
-    last_message = messages[-1]["content"] if messages else "Hello"
+product_review_summaries = None
+product_review_summaries_file_path = "./product-review-summaries.json"
 
-    # Simple mock responses
-    responses = [
-        f"I understand you said: '{last_message}'. This is a mock LLM response.",
-        f"That's an interesting point about '{last_message}'. Let me elaborate...",
-        f"Based on your message about '{last_message}', here's my simulated response.",
-    ]
+def load_product_review_summaries():
+    try:
+        with open(product_review_summaries_file_path, 'r') as file:
 
-    return random.choice(responses)
+            """
+            Converts a JSON string into an internal dictionary optimized for quick lookups.
+            The keys of the internal dictionary will be product_ids.
+            """
+            try:
+                data = json.load(file)
+                summaries = data.get("product-review-summaries", [])
+
+                # Create a dictionary where product_id is the key
+                # and the value is a dictionary of its details (score, summary)
+                product_review_summaries = {}
+                for product in summaries:
+                    product_id = product.get("product_id")
+                    if product_id: # Ensure product_id exists before adding
+                        product_review_summaries[product_id] = {
+                            "average_score": product.get("average_score"),
+                            "product_review_summary": product.get("product_review_summary")
+                        }
+                return product_review_summaries
+            except json.JSONDecodeError:
+                print("Error: Invalid JSON string provided during initialization.")
+                return {}
+
+    except FileNotFoundError:
+        app.logger.error(f"Error: The file '{product_review_summaries_file_path}' was not found.")
+    except json.JSONDecodeError:
+        app.logger.error(f"Error: Failed to decode JSON from the file '{product_review_summaries_file_path}'. Check for malformed JSON.")
+    except Exception as e:
+        app.logger.error(f"An unexpected error occurred: {e}")
+
+
+def generate_response(product_id):
+
+    """Generate a response by providing the pre-generated summary for the specified product"""
+    product_review_summary = product_review_summaries.get(product_id)
+
+    return str(product_review_summary)
 
 def parse_product_id(messages):
     last_message = messages[-1]["content"]
@@ -42,16 +74,15 @@ def chat_completions():
     model = data.get('model', 'astronomy-llm')
     tools = data.get('tools', None)
 
-    logging.getLogger().info(f"Received a chat completion request: '{messages}'")
+    app.logger.info(f"Received a chat completion request: '{messages}'")
 
-    response_text = generate_mock_response(messages)
+    product_id = parse_product_id(messages)
 
     if tools is not None:
 
-        product_id = parse_product_id(messages)
         tool_args = f"{{\"product_id\": \"{product_id}\"}}"
 
-        logging.getLogger().info(f"Processing a tool call with args: '{tool_args}'")
+        app.logger.info(f"Processing a tool call with args: '{tool_args}'")
 
         # Non-streaming response
         response = {
@@ -77,72 +108,38 @@ def chat_completions():
             }],
             "usage": {
                 "prompt_tokens": sum(len(m.get("content", "").split()) for m in messages),
+                "completion_tokens": "0",
+                "total_tokens": sum(len(m.get("content", "").split()) for m in messages)
+            }
+        }
+        return jsonify(response)
+
+    else:
+        # Non-streaming response
+        response_text = generate_response(product_id)
+
+        app.logger.info(f"Processing a response: '{response_text}'")
+
+        response = {
+            "id": f"chatcmpl-mock-{int(time.time())}",
+            "object": "chat.completion",
+            "created": int(time.time()),
+            "model": model,
+            "choices": [{
+                "index": 0,
+                "message": {
+                    "role": "assistant",
+                    "content": response_text
+                },
+                "finish_reason": "stop"
+            }],
+            "usage": {
+                "prompt_tokens": sum(len(m.get("content", "").split()) for m in messages),
                 "completion_tokens": len(response_text.split()),
                 "total_tokens": sum(len(m.get("content", "").split()) for m in messages) + len(response_text.split())
             }
         }
         return jsonify(response)
-    else:
-        if stream:
-            def generate():
-                # Simulate streaming
-                words = response_text.split()
-                for i, word in enumerate(words):
-                    chunk = {
-                        "id": f"chatcmpl-mock-{int(time.time())}",
-                        "object": "chat.completion.chunk",
-                        "created": int(time.time()),
-                        "model": model,
-                        "choices": [{
-                            "index": 0,
-                            "delta": {"content": word + " "} if i > 0 else {"role": "assistant", "content": word + " "},
-                            "finish_reason": None
-                        }]
-                    }
-                    yield f"data: {json.dumps(chunk)}\n\n"
-                    time.sleep(0.05)  # Simulate typing delay
-
-                # Final chunk
-                final_chunk = {
-                    "id": f"chatcmpl-mock-{int(time.time())}",
-                    "object": "chat.completion.chunk",
-                    "created": int(time.time()),
-                    "model": model,
-                    "choices": [{
-                        "index": 0,
-                        "delta": {},
-                        "finish_reason": "stop"
-                    }]
-                }
-                yield f"data: {json.dumps(final_chunk)}\n\n"
-                yield "data: [DONE]\n\n"
-
-            return Response(generate(), mimetype='text/event-stream')
-
-        else:
-            # Non-streaming response
-            logging.getLogger().info(f"Processing a response: '{response_text}'")
-
-            response = {
-                "id": f"chatcmpl-mock-{int(time.time())}",
-                "object": "chat.completion",
-                "created": int(time.time()),
-                "model": model,
-                "choices": [{
-                    "index": 0,
-                    "message": {
-                        "role": "assistant",
-                        "content": response_text
-                    },
-                    "finish_reason": "stop"
-                }],
-                "usage": {
-                    "prompt_tokens": sum(len(m.get("content", "").split()) for m in messages),
-                    "completion_tokens": len(response_text.split()),
-                    "total_tokens": sum(len(m.get("content", "").split()) for m in messages) + len(response_text.split())
-                }
-            }
-            return jsonify(response)
 
 @app.route('/v1/models', methods=['GET'])
 def list_models():
@@ -160,6 +157,11 @@ def list_models():
     })
 
 if __name__ == '__main__':
-    print("Mock OpenAI API server starting on http://localhost:8000")
+
+    product_review_summaries = load_product_review_summaries()
+
+    app.logger.info(product_review_summaries)
+
+    print("OpenAI API server starting on http://localhost:8000")
     print("Set your OpenAI base URL to: http://localhost:8000/v1")
     app.run(host='0.0.0.0', port=8000, debug=True)

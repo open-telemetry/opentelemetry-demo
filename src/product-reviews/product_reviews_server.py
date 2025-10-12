@@ -148,6 +148,13 @@ def get_product_review_summary(request_product_id):
                 }
             )
 
+            messages.append(
+                {
+                    "role": "user",
+                    "content": f"Summarize the reviews for product ID:{request_product_id} and avoid calling tools again."
+                }
+            )
+
             logger.info(f"Invoking the LLM with the following messages: '{messages}'")
 
             final_response = client.chat.completions.create(
