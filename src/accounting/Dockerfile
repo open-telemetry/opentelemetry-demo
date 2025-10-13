@@ -27,6 +27,14 @@ WORKDIR /app
 COPY --from=publish /app/publish .
 
 USER root
+
+# ADDED: Install MySQL-compatible native client libraries.
+# The package is named 'mariadb-client' in Debian 12 (Bookworm).
+# We also clean up the apt cache to keep the image size small.
+RUN apt-get update \
+    && apt-get install -y --no-install-recommends mariadb-client \
+    && rm -rf /var/lib/apt/lists/*
+
 RUN mkdir -p "/var/log/opentelemetry/dotnet"
 RUN chown app "/var/log/opentelemetry/dotnet"
 RUN chown app "/app/instrument.sh"

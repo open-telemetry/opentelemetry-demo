@@ -1,0 +1,58 @@
+# This is a Docker Compose override file to switch the demo from PostgreSQL to MySQL.
+# To use it, run:
+# docker compose -f docker-compose.yml -f docker-compose-mysql.yml up
+
+# Use the same default logging as the base file
+x-default-logging: &logging
+  driver: "json-file"
+  options:
+    max-size: "5m"
+    max-file: "2"
+    tag: "{{.Name}}"
+
+services:
+  # 1. Remove the Postgres service defined in the base file.
+  # The `!reset null` syntax completely removes the service.
+  postgresql: !reset null
+
+  # 2. Add the MySQL service.
+  mysql:
+    image: mysql:8
+    # The platform is important for users on ARM-based machines (e.g., Apple M1/M2).
+    # For x86/amd64 machines, you can remove this line.
+    platform: linux/arm64
+    container_name: mysql
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: otelp
+      MYSQL_DATABASE: otel
+      MYSQL_USER: otelu
+      MYSQL_PASSWORD: otelp
+    ports:
+      - "3306:3306"
+    # A healthcheck ensures other services only start after MySQL is ready.
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    logging: *logging
+    networks:
+      - default
+
+  # 3. Override the 'accounting' service to use MySQL.
+  accounting:
+    environment:
+      # Set the DB_TYPE to trigger the MySQL logic in your code.
+      - DB_TYPE=mysql
+      # IMPORTANT: Use the correct key-value pair format for the Pomelo driver.
+      - DB_CONNECTION_STRING=Server=mysql;Port=3306;Database=otel;User=otelu;Password=otelp;
+    depends_on:
+      postgresql: !reset []
+      otel-collector:
+        condition: service_started
+      kafka:
+        condition: service_healthy
+      # Add a dependency on the new mysql service and wait for it to be healthy.
+      mysql:
+        condition: service_healthy
