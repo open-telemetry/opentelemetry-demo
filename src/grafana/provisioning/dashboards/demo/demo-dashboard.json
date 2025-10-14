@@ -980,7 +980,7 @@
             "uid": "webstore-metrics"
           },
           "editorMode": "code",
-          "expr": "rate(app_recommendations_counter{recommendation_type=\"catalog\"}[$__rate_interval])",
+          "expr": "rate(app_recommendations_counter{\"recommendation.type\"=\"catalog\"}[$__rate_interval])",
           "interval": "2m",
           "legendFormat": "recommendations",
           "range": true,
@@ -1079,7 +1079,7 @@
             "uid": "webstore-metrics"
           },
           "editorMode": "code",
-          "expr": "rate({\"otel.trace.span_processor.spans\", job=\"quote\"}[2m])*120",
+          "expr": "rate({\"otel.trace.span_processor.spans\", job=\"opentelemetry-demo/quote\"}[2m])*120",
           "interval": "2m",
           "legendFormat": "{{state}}",
           "range": true,
