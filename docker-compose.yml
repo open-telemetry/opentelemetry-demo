@@ -552,8 +552,6 @@ services:
         condition: service_started
       otel-collector:
         condition: service_started
-      flagd:
-        condition: service_started
     logging: *logging
 
   # Quote service
