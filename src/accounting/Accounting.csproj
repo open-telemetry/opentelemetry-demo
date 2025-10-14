@@ -6,39 +6,29 @@
 		<ImplicitUsings>enable</ImplicitUsings>
 		<Nullable>enable</Nullable>
 		<DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
-
-
-	 <!-- Don't fail builds on transitive audit warnings -->
-    <RestoreAuditMode>direct</RestoreAuditMode>
-    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
-    <WarningsNotAsErrors>$(WarningsNotAsErrors);NU1900;NU1901;NU1902;NU1903;NU1904</WarningsNotAsErrors>
-  </PropertyGroup>
-
+	</PropertyGroup>
 
 	<ItemGroup>
-		<PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="8.0.19" />
-  		<PackageReference Include="Microsoft.Data.SqlClient" Version="5.2.3" />
 		<PackageReference Include="Confluent.Kafka" Version="2.11.0" />
-		<PackageReference Include="EFCore.NamingConventions" Version="8.0.0" />
+		<PackageReference Include="EFCore.NamingConventions" Version="9.0.0" />
 		<PackageReference Include="Google.Protobuf" Version="3.31.1" />
 		<PackageReference Include="Grpc.Tools" Version="2.68.1">
 			<PrivateAssets>all</PrivateAssets>
 			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
 		</PackageReference>
-		<!-- <PackageReference Include="Microsoft.Extensions.Logging" Version="9.0.7" /> -->
-		<!-- <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.22.1" /> -->
-		<!-- <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="9.0.4" /> -->
-		<PackageReference Include="Splunk.OpenTelemetry.AutoInstrumentation" Version="1.11.0" />
-		<PackageReference Include="OpenTelemetry.Api" Version="1.12.0" />
+		<PackageReference Include="Microsoft.Extensions.Logging" Version="9.0.7" />
+		<PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.22.1" />
+		<PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="9.0.4" />
+		<PackageReference Include="OpenTelemetry.AutoInstrumentation" Version="1.12.0" />
 	</ItemGroup>
 
 	<ItemGroup>
 		<!-- GrpcServices is 'none' so that we do not need to depend on the grpc nuget package, and we only need protobuf support. -->
-		<Protobuf Include="src/protos/demo.proto" GrpcServices="none" />
+		<Protobuf Include="src\protos\demo.proto" GrpcServices="none" />
 	</ItemGroup>
 
 	<ItemGroup>
-	  <Folder Include="src/protos/" />
+	  <Folder Include="src\protos\" />
 	</ItemGroup>
 
 </Project>
