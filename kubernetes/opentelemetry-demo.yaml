@@ -1439,7 +1439,7 @@ spec:
       containers:
         - name: frontend
           #image: 'ghcr.io/open-telemetry/demo:2.1.3-frontend'
-          image: ghcr.io/splunk/opentelemetry-demo/otel-frontend:0.0.1
+          image: ghcr.io/splunk/opentelemetry-demo/otel-frontend:2.1.3
           imagePullPolicy: Always
           ports:        
             - containerPort: 8080
@@ -1860,7 +1860,7 @@ spec:
       containers:
         - name: payment
           #image: 'ghcr.io/open-telemetry/demo:2.1.3-payment'
-          image: ghcr.io/splunk/opentelemetry-demo/otel-payment:0.2.2
+          image: ghcr.io/splunk/opentelemetry-demo/otel-payment:2.1.3
           imagePullPolicy: Always
           ports:        
             - containerPort: 8080
@@ -2132,7 +2132,7 @@ spec:
       containers:
         - name: recommendation
           #mage: 'ghcr.io/open-telemetry/demo:2.1.3-recommendation'
-          image: ghcr.io/splunk/opentelemetry-demo/otel-recommendation:0.0.1
+          image: ghcr.io/splunk/opentelemetry-demo/otel-recommendation:2.1.3
           imagePullPolicy: Always
           ports:            
             - containerPort: 8080
