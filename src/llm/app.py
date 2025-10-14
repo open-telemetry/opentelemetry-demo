@@ -56,7 +56,10 @@ def generate_response(product_id):
     """Generate a response by providing the pre-generated summary for the specified product"""
     product_review_summary = product_review_summaries.get(product_id)
 
-    return str(product_review_summary)
+    # Convert the dictionary to a JSON string
+    json_string = json.dumps(product_review_summary)
+
+    return json_string
 
 def parse_product_id(messages):
     last_message = messages[-1]["content"]

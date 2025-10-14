@@ -112,7 +112,7 @@ service ProductReviewService {
 message ProductReview {
     string username = 1;
     string description = 2;
-    float score = 3;
+    string score = 3;
 }
 
 message GetProductReviewsRequest {
@@ -128,7 +128,8 @@ message GetProductReviewSummaryRequest {
 }
 
 message GetProductReviewSummaryResponse {
-    string product_review_summary = 1;
+    string average_score = 1;
+    string product_review_summary = 2;
 }
 
 // ---------------Shipping Service----------

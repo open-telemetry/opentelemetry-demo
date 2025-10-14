@@ -78,95 +78,113 @@ class ProductReviewService(demo_pb2_grpc.ProductReviewServiceServicer):
 
 def get_product_reviews(request_product_id):
 
-    product_reviews = demo_pb2.GetProductReviewsResponse()
-    records = fetch_product_reviews_from_db(request_product_id)
+    with tracer.start_as_current_span("get_product_reviews") as span:
 
-    for row in records:
-        logger.info(f"  username: {row[0]}, description: {row[1]}, score: {row[2]}")
-        product_reviews.product_reviews.add(
-                username=row[0],
-                description=row[1],
-                score=row[2]
-        )
+        span.set_attribute("app.product.id", request_product_id)
 
-    return product_reviews
+        product_reviews = demo_pb2.GetProductReviewsResponse()
+        records = fetch_product_reviews_from_db(request_product_id)
+
+        for row in records:
+            logger.info(f"  username: {row[0]}, description: {row[1]}, score: {str(row[2])}")
+            product_reviews.product_reviews.add(
+                    username=row[0],
+                    description=row[1],
+                    score=str(row[2])
+            )
+
+        span.set_attribute("app.product_reviews.count", len(product_reviews.product_reviews))
+
+        return product_reviews
 
 def get_product_review_summary(request_product_id):
 
-    product_review_summary = demo_pb2.GetProductReviewSummaryResponse()
+    with tracer.start_as_current_span("get_product_review_summary") as span:
 
-    client = OpenAI(
-        base_url=f"http://{llm_host}:{llm_port}/v1",
-        # The OpenAI API requires an api_key to be present, but
-        # our LLM doesn't use it
-        api_key="dummy"
-    )
+        span.set_attribute("app.product.id", request_product_id)
+        product_review_summary = demo_pb2.GetProductReviewSummaryResponse()
 
-    user_prompt = f"Summarize the reviews for product ID:{request_product_id}. Use the database tool as needed to fetch the existing reviews."
-    messages = [
-       {"role": "system", "content": "You are a helpful assistant that creates a summary of product reviews."},
-       {"role": "user", "content": user_prompt}
-    ]
+        client = OpenAI(
+            base_url=f"http://{llm_host}:{llm_port}/v1",
+            # The OpenAI API requires an api_key to be present, but
+            # our LLM doesn't use it
+            api_key="dummy"
+        )
 
-    # use the LLM to summarize the product reviews
-    initial_response = client.chat.completions.create(
-        model="astronomy-llm",
-        messages=messages,
-        tools=tools,
-        tool_choice="auto"
-    )
+        user_prompt = f"Summarize the reviews for product ID:{request_product_id}. Use the database tool as needed to fetch the existing reviews."
+        messages = [
+           {"role": "system", "content": "You are a helpful assistant that creates a summary of product reviews."},
+           {"role": "user", "content": user_prompt}
+        ]
 
-    response_message = initial_response.choices[0].message
-    tool_calls = response_message.tool_calls
+        # use the LLM to summarize the product reviews
+        initial_response = client.chat.completions.create(
+            model="astronomy-llm",
+            messages=messages,
+            tools=tools,
+            tool_choice="auto"
+        )
 
-    logger.info(f"Response message: {response_message}")
+        response_message = initial_response.choices[0].message
+        tool_calls = response_message.tool_calls
 
-    # Check if the model wants to call a tool
-    if tool_calls:
-        tool_call = tool_calls[0]
-        function_name = tool_call.function.name
-        function_args = json.loads(tool_call.function.arguments)
+        logger.info(f"Response message: {response_message}")
 
-        logger.info(f"Model wants to call function: '{function_name}' with arguments: {function_args}")
+        # Check if the model wants to call a tool
+        if tool_calls:
+            tool_call = tool_calls[0]
+            function_name = tool_call.function.name
+            function_args = json.loads(tool_call.function.arguments)
 
-        # --- Your application's logic to call the correct function ---
-        if function_name == "fetch_product_reviews":
-            function_response = fetch_product_reviews(
-                product_id=function_args.get("product_id")
-            )
+            logger.info(f"Model wants to call function: '{function_name}' with arguments: {function_args}")
 
-            logger.info(f"Function response is: '{function_response}'")
+            if function_name == "fetch_product_reviews":
+                function_response = fetch_product_reviews(
+                    product_id=function_args.get("product_id")
+                )
 
-            # Append the tool call and its result to the message history
-            messages.append(response_message)  # Append the assistant's reply
-            messages.append(
-                {
-                    "tool_call_id": tool_call.id,
-                    "role": "tool",
-                    "name": function_name,
-                    "content": function_response,
-                }
-            )
+                logger.info(f"Function response is: '{function_response}'")
 
-            messages.append(
-                {
-                    "role": "user",
-                    "content": f"Summarize the reviews for product ID:{request_product_id} and avoid calling tools again."
-                }
-            )
+                # Append the tool call and its result to the message history
+                messages.append(response_message)  # Append the assistant's reply
+                messages.append(
+                    {
+                        "tool_call_id": tool_call.id,
+                        "role": "tool",
+                        "name": function_name,
+                        "content": function_response,
+                    }
+                )
 
-            logger.info(f"Invoking the LLM with the following messages: '{messages}'")
+                messages.append(
+                    {
+                        "role": "user",
+                        "content": f"Summarize the reviews for product ID:{request_product_id} and avoid calling tools again."
+                    }
+                )
 
-            final_response = client.chat.completions.create(
-                model="astronomy-llm",
-                messages=messages,
-            )
+                logger.info(f"Invoking the LLM with the following messages: '{messages}'")
 
-            product_review_summary.product_review_summary = final_response.choices[0].message.content
-        else:
-            product_review_summary.product_review_summary = initial_response.choices[0].message.content
+                final_response = client.chat.completions.create(
+                    model="astronomy-llm",
+                    messages=messages,
+                )
 
-    return product_review_summary
+                result = final_response.choices[0].message.content
+
+                # Load the result as a dictionary, then extract the average score
+                result_dict = json.loads(result)
+                average_score = str(result_dict['average_score'])
+                summary = result_dict['product_review_summary']
+                span.set_attribute("app.product_review.average_score", average_score)
+
+                product_review_summary.average_score = average_score
+                product_review_summary.product_review_summary = summary
+
+            else:
+                raise Exception(f'Received unexpected tool call request: {function_name}')
+
+        return product_review_summary
 
 def must_map_env(key: str):
     value = os.environ.get(key)
