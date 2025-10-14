@@ -1,0 +1,24 @@
+# Copyright The OpenTelemetry Authors
+# SPDX-License-Identifier: Apache-2.0
+
+type: Test
+spec:
+  id: product-review-summary
+  name: 'Product Review Summary: Get a summary of the product reviews for product'
+  description: Get a summary of product reviews for the specified product
+  trigger:
+    type: grpc
+    grpc:
+      protobufFile: ../../../pb/demo.proto
+      address: ${var:PRODUCT_REVIEWS_ADDR}
+      method: oteldemo.ProductReviewService.GetProductReviewSummary
+      request: |-
+        {
+          "product_id": "66VCHSJNUP"
+        }
+  specs:
+    - name: It called GetProductReviewSummary correctly and got 5 product reviews
+      selector: span[name="get_product_review_summary"]
+      assertions:
+        - attr:app.product.id  =  "66VCHSJNUP"
+        - attr:app.product_review.average_score = 4.6

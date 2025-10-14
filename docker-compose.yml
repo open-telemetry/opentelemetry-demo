@@ -766,6 +766,9 @@ services:
       - FLAGD_PORT
     ports:
       - "${LLM_PORT}"
+    depends_on:
+      flagd:
+        condition: service_started
     logging: *logging
 
   # MySQL database used by Product Review service
