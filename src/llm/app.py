@@ -8,7 +8,11 @@ import json
 import time
 import random
 import re
+import os
 import logging
+
+from openfeature import api
+from openfeature.contrib.provider.flagd import FlagdProvider
 
 app = Flask(__name__)
 app.logger.setLevel(logging.INFO)
@@ -16,9 +20,12 @@ app.logger.setLevel(logging.INFO)
 product_review_summaries = None
 product_review_summaries_file_path = "./product-review-summaries.json"
 
-def load_product_review_summaries():
+inaccurate_product_review_summaries = None
+inaccurate_product_review_summaries_file_path = "./inaccurate-product-review-summaries.json"
+
+def load_product_review_summaries(file_path):
     try:
-        with open(product_review_summaries_file_path, 'r') as file:
+        with open(file_path, 'r') as file:
 
             """
             Converts a JSON string into an internal dictionary optimized for quick lookups.
@@ -54,7 +61,15 @@ def load_product_review_summaries():
 def generate_response(product_id):
 
     """Generate a response by providing the pre-generated summary for the specified product"""
-    product_review_summary = product_review_summaries.get(product_id)
+    product_review_summary = None
+
+    llm_inaccurate_response = check_feature_flag("llmInaccurateResponse")
+    app.logger.info(f"llmInaccurateResponse feature flag: {llm_inaccurate_response}")
+    if llm_inaccurate_response and product_id == "L9ECAV7KIM":
+        app.logger.info(f"Returning an inaccurate response for product_id: {product_id}")
+        product_review_summary = inaccurate_product_review_summaries.get(product_id)
+    else:
+        product_review_summary = product_review_summaries.get(product_id)
 
     # Convert the dictionary to a JSON string
     json_string = json.dumps(product_review_summary)
@@ -118,7 +133,24 @@ def chat_completions():
         return jsonify(response)
 
     else:
-        # Non-streaming response
+        llm_rate_limit_error = check_feature_flag("llmRateLimitError")
+        app.logger.info(f"llmRateLimitError feature flag: {llm_rate_limit_error}")
+        if llm_rate_limit_error:
+            random_number = random.random()
+            app.logger.info(f"Generated a random number: {str(random_number)}")
+            # return a rate limit error 20% of the time
+            if random_number < 0.5:
+                response = {
+                    "error": {
+                        "message": "Rate limit reached. Please try again later.",
+                        "type": "rate_limit_exceeded",
+                        "param": "null",
+                        "code": "null"
+                    }
+                }
+                return jsonify(response), 429
+
+        # Otherwise, return a normal response
         response_text = generate_response(product_id)
 
         app.logger.info(f"Processing a response: '{response_text}'")
@@ -159,9 +191,16 @@ def list_models():
         ]
     })
 
+def check_feature_flag(flag_name: str):
+    # Initialize OpenFeature
+    client = api.get_client()
+    return client.get_boolean_value(flag_name, False)
+
 if __name__ == '__main__':
 
-    product_review_summaries = load_product_review_summaries()
+    api.set_provider(FlagdProvider(host=os.environ.get('FLAGD_HOST', 'flagd'), port=os.environ.get('FLAGD_PORT', 8013)))
+    product_review_summaries = load_product_review_summaries(product_review_summaries_file_path)
+    inaccurate_product_review_summaries = load_product_review_summaries(inaccurate_product_review_summaries_file_path)
 
     app.logger.info(product_review_summaries)
 

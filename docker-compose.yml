@@ -761,6 +761,9 @@ services:
         limits:
           memory: 50M
     restart: unless-stopped
+    environment:
+      - FLAGD_HOST
+      - FLAGD_PORT
     ports:
       - "${LLM_PORT}"
     logging: *logging

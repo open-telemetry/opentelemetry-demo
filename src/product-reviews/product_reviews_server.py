@@ -181,6 +181,8 @@ def get_product_review_summary(request_product_id):
                 product_review_summary.average_score = average_score
                 product_review_summary.product_review_summary = summary
 
+                logger.info(f"Returning a product review summary: '{product_review_summary}'")
+
             else:
                 raise Exception(f'Received unexpected tool call request: {function_name}')
 
