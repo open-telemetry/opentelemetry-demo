@@ -28,6 +28,10 @@ from grpc_health.v1 import health_pb2
 from grpc_health.v1 import health_pb2_grpc
 from database import fetch_product_reviews, fetch_product_reviews_from_db
 
+from metrics import (
+    init_metrics
+)
+
 # OpenAI
 from openai import OpenAI
 
@@ -94,6 +98,9 @@ def get_product_reviews(request_product_id):
             )
 
         span.set_attribute("app.product_reviews.count", len(product_reviews.product_reviews))
+
+        # Collect metrics for this service
+        product_review_svc_metrics["app_product_review_counter"].add(len(product_reviews.product_reviews), {'product.id': request_product_id})
 
         return product_reviews
 
@@ -186,6 +193,9 @@ def get_product_review_summary(request_product_id):
             else:
                 raise Exception(f'Received unexpected tool call request: {function_name}')
 
+        # Collect metrics for this service
+        product_review_svc_metrics["app_product_review_summaries_counter"].add(1, {'product.id': request_product_id})
+
         return product_review_summary
 
 def must_map_env(key: str):
@@ -201,6 +211,8 @@ if __name__ == "__main__":
     # Initialize Traces and Metrics
     tracer = trace.get_tracer_provider().get_tracer(service_name)
     meter = metrics.get_meter_provider().get_meter(service_name)
+
+    product_review_svc_metrics = init_metrics(meter)
 
     # Initialize Logs
     logger_provider = LoggerProvider(
