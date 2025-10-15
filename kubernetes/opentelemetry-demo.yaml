@@ -767,6 +767,24 @@ data:
     {
       "$schema": "https://flagd.dev/schema/v0/flags.json",
       "flags": {
+        "llmInaccurateResponse": {
+            "defaultVariant": "on",
+            "description": "LLM returns an inaccurate product summary for product ID L9ECAV7KIM",
+            "state": "ENABLED",
+            "variants": {
+              "off": false,
+              "on": true
+            }
+          },
+        "llmRateLimitError": {
+          "defaultVariant": "off",
+          "description": "LLM intermittently returns a rate limit error",
+          "state": "ENABLED",
+          "variants": {
+            "off": false,
+            "on": true
+          }
+        },
         "productCatalogFailure": {
           "description": "Fail product catalog service on a specific product",
           "state": "ENABLED",
@@ -10226,6 +10244,33 @@ subjects:
   name: grafana
   namespace: otel-demo
 ---
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: mysql-pv-volume
+  labels:
+    type: local
+spec:
+  storageClassName: manual
+  capacity:
+    storage: 500Mi
+  accessModes:
+    - ReadWriteOnce
+  hostPath:
+    path: "/mnt/data"
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: mysql-pv-claim
+spec:
+  storageClassName: manual
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 100Mi
+---
 # Source: opentelemetry-demo/charts/grafana/templates/service.yaml
 apiVersion: v1
 kind: Service
@@ -10719,6 +10764,29 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
+  name: llm
+  labels:
+
+    opentelemetry.io/name: llm
+    app.kubernetes.io/instance: opentelemetry-demo
+    app.kubernetes.io/component: llm
+    app.kubernetes.io/name: llm
+    app.kubernetes.io/version: "2.0.2"
+    app.kubernetes.io/part-of: opentelemetry-demo
+spec:
+  type: ClusterIP
+  ports:
+    - port: 8000
+      name: tcp-service
+      targetPort: 8000
+  selector:
+
+    opentelemetry.io/name: llm
+---
+# Source: opentelemetry-demo/templates/component.yaml
+apiVersion: v1
+kind: Service
+metadata:
   name: load-generator
   labels:
     
@@ -10737,6 +10805,29 @@ spec:
   selector:
     
     opentelemetry.io/name: load-generator
+---
+# Source: opentelemetry-demo/templates/component.yaml
+apiVersion: v1
+kind: Service
+metadata:
+  name: mysql
+  labels:
+
+    opentelemetry.io/name: mysql
+    app.kubernetes.io/instance: opentelemetry-demo
+    app.kubernetes.io/component: mysql
+    app.kubernetes.io/name: mysql
+    app.kubernetes.io/version: "2.0.2"
+    app.kubernetes.io/part-of: opentelemetry-demo
+spec:
+  type: ClusterIP
+  ports:
+    - port: 3551
+      name: tcp-service
+      targetPort: 3306
+  selector:
+
+    opentelemetry.io/name: mysql
 ---
 # Source: opentelemetry-demo/templates/component.yaml
 apiVersion: v1
@@ -10783,6 +10874,29 @@ spec:
   selector:
     
     opentelemetry.io/name: product-catalog
+---
+# Source: opentelemetry-demo/templates/component.yaml
+apiVersion: v1
+kind: Service
+metadata:
+  name: product-reviews
+  labels:
+
+    opentelemetry.io/name: product-reviews
+    app.kubernetes.io/instance: opentelemetry-demo
+    app.kubernetes.io/component: product-reviews
+    app.kubernetes.io/name: product-reviews
+    app.kubernetes.io/version: "2.0.2"
+    app.kubernetes.io/part-of: opentelemetry-demo
+spec:
+  type: ClusterIP
+  ports:
+    - port: 3551
+      name: tcp-service
+      targetPort: 3551
+  selector:
+
+    opentelemetry.io/name: product-reviews
 ---
 # Source: opentelemetry-demo/templates/component.yaml
 apiVersion: v1
@@ -11971,6 +12085,8 @@ spec:
               value: currency:8080
             - name: PRODUCT_CATALOG_ADDR
               value: product-catalog:8080
+            - name: PRODUCT_REVIEWS_ADDR
+              value: product-reviews:3551
             - name: RECOMMENDATION_ADDR
               value: recommendation:8080
             - name: SHIPPING_ADDR
@@ -12229,6 +12345,52 @@ spec:
 apiVersion: apps/v1
 kind: Deployment
 metadata:
+  name: llm
+  labels:
+    opentelemetry.io/name: llm
+    app.kubernetes.io/instance: opentelemetry-demo
+    app.kubernetes.io/component: llm
+    app.kubernetes.io/name: llm
+    app.kubernetes.io/version: "2.0.2"
+    app.kubernetes.io/part-of: opentelemetry-demo
+spec:
+  replicas: 1
+  revisionHistoryLimit: 10
+  selector:
+    matchLabels:
+      opentelemetry.io/name: llm
+  template:
+    metadata:
+      labels:
+        opentelemetry.io/name: llm
+        app.kubernetes.io/instance: opentelemetry-demo
+        app.kubernetes.io/component: llm
+        app.kubernetes.io/name: llm
+    spec:
+      serviceAccountName: opentelemetry-demo
+      containers:
+        - name: llm
+          #image: 'ghcr.io/open-telemetry/demo:2.0.2-llm'
+          image: 'docker.io/derekmitchell399/demo:latest-llm'
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 8000
+              name: service
+          env:
+            - name: FLAGD_HOST
+              value: flagd
+            - name: FLAGD_PORT
+              value: "8013"
+          resources:
+            limits:
+              memory: 100Mi
+          volumeMounts:
+      volumes:
+---
+# Source: opentelemetry-demo/templates/component.yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
   name: load-generator
   labels:
     
@@ -12304,6 +12466,57 @@ spec:
               memory: 1500Mi
           volumeMounts:
       volumes:
+---
+# Source: opentelemetry-demo/templates/component.yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: mysql
+  labels:
+    opentelemetry.io/name: mysql
+    app.kubernetes.io/instance: opentelemetry-demo
+    app.kubernetes.io/component: mysql
+    app.kubernetes.io/name: mysql
+    app.kubernetes.io/version: "2.0.2"
+    app.kubernetes.io/part-of: opentelemetry-demo
+spec:
+  replicas: 1
+  revisionHistoryLimit: 10
+  selector:
+    matchLabels:
+      opentelemetry.io/name: mysql
+  template:
+    metadata:
+      labels:
+        opentelemetry.io/name: mysql
+        app.kubernetes.io/instance: opentelemetry-demo
+        app.kubernetes.io/component: mysql
+        app.kubernetes.io/name: mysql
+    spec:
+      serviceAccountName: opentelemetry-demo
+      containers:
+        - name: mysql
+          #image: 'ghcr.io/open-telemetry/demo:2.0.2-mysql'
+          image: 'docker.io/derekmitchell399/demo:latest-mysql'
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 3306
+              name: service
+          env:
+            - name: MYSQL_DATABASE
+              value: "reviews"
+            - name: MYSQL_ROOT_PASSWORD
+              value: "otel"
+          resources:
+            limits:
+              memory: 1000Mi
+          volumeMounts:
+            - name: mysql-persistent-storage
+              mountPath: /var/lib/mysql
+      volumes:
+        - name: mysql-persistent-storage
+          persistentVolumeClaim:
+            claimName: mysql-pv-claim
 ---
 # Source: opentelemetry-demo/templates/component.yaml
 apiVersion: apps/v1
@@ -12443,6 +12656,87 @@ spec:
         - name: product-catalog-products
           configMap:
             name: product-catalog-products
+---
+# Source: opentelemetry-demo/templates/component.yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: product-reviews
+  labels:
+    opentelemetry.io/name: product-reviews
+    app.kubernetes.io/instance: opentelemetry-demo
+    app.kubernetes.io/component: product-reviews
+    app.kubernetes.io/name: product-reviews
+    app.kubernetes.io/version: "2.0.2"
+    app.kubernetes.io/part-of: opentelemetry-demo
+spec:
+  replicas: 1
+  revisionHistoryLimit: 10
+  selector:
+    matchLabels:
+      opentelemetry.io/name: product-reviews
+  template:
+    metadata:
+      labels:
+        opentelemetry.io/name: product-reviews
+        app.kubernetes.io/instance: opentelemetry-demo
+        app.kubernetes.io/component: product-reviews
+        app.kubernetes.io/name: product-reviews
+    spec:
+      serviceAccountName: opentelemetry-demo
+      containers:
+        - name: product-reviews
+          #image: 'ghcr.io/open-telemetry/demo:2.0.2-product-reviews'
+          image: 'docker.io/derekmitchell399/demo:latest-product-reviews'
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 3551
+              name: service
+          env:
+            - name: OTEL_SERVICE_NAME
+              valueFrom:
+                fieldRef:
+                  apiVersion: v1
+                  fieldPath: metadata.labels['app.kubernetes.io/component']
+            - name: OTEL_COLLECTOR_NAME
+              value: otel-collector
+            - name: OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE
+              value: cumulative
+            - name: PRODUCT_REVIEWS_PORT
+              value: "3551"
+            - name: OTEL_PYTHON_LOG_CORRELATION
+              value: "true"
+            - name: OTEL_INSTRUMENTATION_GENAI_CAPTURE_MESSAGE_CONTENT
+              value: "true"
+            - name: PROTOCOL_BUFFERS_PYTHON_IMPLEMENTATION
+              value: python
+            - name: FLAGD_HOST
+              value: flagd
+            - name: FLAGD_PORT
+              value: "8013"
+            - name: MYSQL_HOST
+              value: "mysql"
+            - name: MYSQL_PORT
+              value: "3306"
+            - name: MYSQL_DATABASE
+              value: "reviews"
+            - name: MYSQL_USER
+              value: "otelu"
+            - name: MYSQL_PASSWORD
+              value: "otelp"
+            - name: LLM_HOST
+              value: "llm"
+            - name: LLM_PORT
+              value: "8000"
+            - name: OTEL_EXPORTER_OTLP_ENDPOINT
+              value: http://$(OTEL_COLLECTOR_NAME):4317
+            - name: OTEL_RESOURCE_ATTRIBUTES
+              value: service.name=$(OTEL_SERVICE_NAME),service.namespace=opentelemetry-demo,service.version=2.0.2
+          resources:
+            limits:
+              memory: 100Mi
+          volumeMounts:
+      volumes:
 ---
 # Source: opentelemetry-demo/templates/component.yaml
 apiVersion: apps/v1
