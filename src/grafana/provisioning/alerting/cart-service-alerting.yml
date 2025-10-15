@@ -78,11 +78,11 @@ groups:
             The 95th percentile response time for operation {{ index $labels "service.namespace"
                 }}/{{ index $labels "service.name" }} "{{ index $labels "http.request.method" }} {{
                 index $labels "http.route" }}" has been
-                above xxx seconds for 2 minutes on {{ index $labels "service.instance.id"}}. Current
+                above 0.0001 seconds for 2 minutes on {{ index $labels "service.instance.id"}}. Current
                 value: {{ .Value | humanizeDuration }}.
           summary: |-
             High P95 for {{ index $labels "service.namespace" }}/{{ index $labels "service.name" }} "{{
-                index $labels "http.request.method" }} {{ $labels "http.route" }}"
+                index $labels "http.request.method" }} {{ index $labels "http.route" }}"
         labels:
           "service.name": cart
           "service.namespace": opentelemetry-demo
