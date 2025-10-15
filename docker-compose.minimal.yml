@@ -155,6 +155,7 @@ services:
     ports:
       - "${CURRENCY_PORT}"
     environment:
+      - IPV6_ENABLED
       - CURRENCY_PORT
       - VERSION=${IMAGE_VERSION}
       - OTEL_EXPORTER_OTLP_ENDPOINT
@@ -287,6 +288,7 @@ services:
       - OTEL_SERVICE_NAME=frontend-proxy
       - ENVOY_PORT
       - ENVOY_ADMIN_PORT
+      - ENVOY_ADDR
       - FLAGD_HOST
       - FLAGD_PORT
       - FLAGD_UI_HOST
@@ -385,6 +387,7 @@ services:
     ports:
       - "${PAYMENT_PORT}"
     environment:
+      - IPV6_ENABLED
       - FLAGD_HOST
       - FLAGD_PORT
       - PAYMENT_PORT
@@ -490,6 +493,7 @@ services:
     ports:
       - "${QUOTE_PORT}"
     environment:
+      - IPV6_ENABLED
       - OTEL_EXPORTER_OTLP_ENDPOINT=http://${OTEL_COLLECTOR_HOST}:${OTEL_COLLECTOR_PORT_HTTP}
       - OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE
       - OTEL_PHP_AUTOLOAD_ENABLED=true
@@ -553,6 +557,7 @@ services:
     ports:
       - "${SHIPPING_PORT}"
     environment:
+      - IPV6_ENABLED
       - SHIPPING_PORT
       - QUOTE_ADDR
       - OTEL_EXPORTER_OTLP_ENDPOINT
