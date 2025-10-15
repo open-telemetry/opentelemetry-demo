@@ -1632,7 +1632,7 @@
       "targets": [
         {
           "editorMode": "code",
-          "expr": "sum by (service_instance_id_host_name) (\n  label_join(\n    (\n      sum by (service_instance_id, host_name) (\n         rate(system_cpu_time_seconds_total{job=\"\", state!=\"idle\"}[$__rate_interval])\n      )\n      * on(host_name) group_left(service_instance_id)\n      target_info{\"service.name\"=\"${service_name}\"}\n    ),\n    \"service_instance_id_host_name\",\n    \" / \",\n    \"service_instance_id\",\n    \"host_name\"\n  )\n)",
+          "expr": "sum by (service_instance_id_host_name) (\n  label_join(\n    (\n      sum by (service_instance_id, host_name) (\n         rate({\"system.cpu.time\",job=\"\", state!=\"idle\"}[$__rate_interval])\n      )\n      * on(host_name) group_left(service_instance_id)\n      target_info{\"service.name\"=\"${service_name}\"}\n    ),\n    \"service_instance_id_host_name\",\n    \" / \",\n    \"service_instance_id\",\n    \"host_name\"\n  )\n)",
           "hide": false,
           "legendFormat": "__auto",
           "range": true,
@@ -1644,7 +1644,7 @@
             "uid": "webstore-metrics"
           },
           "editorMode": "code",
-          "expr": "sum by (service_instance_id_host_name) (\n  label_join(\n    (\n      (\n        sum by (service_instance_id, host_name) (\n          system_memory_usage_bytes{job=\"\", state!=\"free\"}\n        )\n        /\n        sum by (service_instance_id, host_name) (\n          system_memory_usage_bytes{job=\"\"}\n        )\n      )\n      * on(host_name) group_left(service_instance_id) (\n        target_info{\"service.name\"=\"${service_name}\"}\n      )\n    ),\n    \"service_instance_id_host_name\",\n    \" / \",\n    \"service_instance_id\",\n    \"host_name\"\n  )\n)",
+          "expr": "sum by (service_instance_id_host_name) (\n  label_join(\n    (\n      (\n        sum by (service_instance_id, host_name) (\n          {\"system.memory.usage\", job=\"\", state!=\"free\"}\n        )\n        /\n        sum by (service_instance_id, host_name) (\n          {\"system.memory.usage\", job=\"\"}\n        )\n      )\n      * on(host_name) group_left(service_instance_id) (\n        target_info{\"service.name\"=\"${service_name}\"}\n      )\n    ),\n    \"service_instance_id_host_name\",\n    \" / \",\n    \"service_instance_id\",\n    \"host_name\"\n  )\n)",
           "hide": false,
           "instant": false,
           "legendFormat": "__auto",

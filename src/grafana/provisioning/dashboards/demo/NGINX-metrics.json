@@ -310,7 +310,7 @@
         {
           "disableTextWrap": false,
           "editorMode": "builder",
-          "expr": "{\"nginx.connections.current\"}",
+          "expr": "{\"nginx.connections_current\"}",
           "fullMetaSearch": false,
           "includeNullMetadata": true,
           "legendFormat": "{{state}}",
