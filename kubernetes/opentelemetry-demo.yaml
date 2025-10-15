@@ -17805,7 +17805,7 @@ metadata:
     app.kubernetes.io/instance: opentelemetry-demo
     app.kubernetes.io/component: llm
     app.kubernetes.io/name: llm
-    app.kubernetes.io/version: "2.0.2"
+    app.kubernetes.io/version: "2.1.3"
     app.kubernetes.io/part-of: opentelemetry-demo
 spec:
   type: ClusterIP
@@ -17851,7 +17851,7 @@ metadata:
     app.kubernetes.io/instance: opentelemetry-demo
     app.kubernetes.io/component: mysql
     app.kubernetes.io/name: mysql
-    app.kubernetes.io/version: "2.0.2"
+    app.kubernetes.io/version: "2.1.3"
     app.kubernetes.io/part-of: opentelemetry-demo
 spec:
   type: ClusterIP
@@ -17943,7 +17943,7 @@ metadata:
     app.kubernetes.io/instance: opentelemetry-demo
     app.kubernetes.io/component: product-reviews
     app.kubernetes.io/name: product-reviews
-    app.kubernetes.io/version: "2.0.2"
+    app.kubernetes.io/version: "2.1.3"
     app.kubernetes.io/part-of: opentelemetry-demo
 spec:
   type: ClusterIP
@@ -19576,7 +19576,7 @@ metadata:
     app.kubernetes.io/instance: opentelemetry-demo
     app.kubernetes.io/component: llm
     app.kubernetes.io/name: llm
-    app.kubernetes.io/version: "2.0.2"
+    app.kubernetes.io/version: "2.1.3"
     app.kubernetes.io/part-of: opentelemetry-demo
 spec:
   replicas: 1
@@ -19595,7 +19595,7 @@ spec:
       serviceAccountName: opentelemetry-demo
       containers:
         - name: llm
-          #image: 'ghcr.io/open-telemetry/demo:2.0.2-llm'
+          #image: 'ghcr.io/open-telemetry/demo:2.1.3-llm'
           image: 'docker.io/derekmitchell399/demo:latest-llm'
           imagePullPolicy: IfNotPresent
           ports:
@@ -19704,7 +19704,7 @@ metadata:
     app.kubernetes.io/instance: opentelemetry-demo
     app.kubernetes.io/component: mysql
     app.kubernetes.io/name: mysql
-    app.kubernetes.io/version: "2.0.2"
+    app.kubernetes.io/version: "2.1.3"
     app.kubernetes.io/part-of: opentelemetry-demo
 spec:
   replicas: 1
@@ -19723,7 +19723,7 @@ spec:
       serviceAccountName: opentelemetry-demo
       containers:
         - name: mysql
-          #image: 'ghcr.io/open-telemetry/demo:2.0.2-mysql'
+          #image: 'ghcr.io/open-telemetry/demo:2.1.3-mysql'
           image: 'docker.io/derekmitchell399/demo:latest-mysql'
           imagePullPolicy: IfNotPresent
           ports:
@@ -19958,7 +19958,7 @@ metadata:
     app.kubernetes.io/instance: opentelemetry-demo
     app.kubernetes.io/component: product-reviews
     app.kubernetes.io/name: product-reviews
-    app.kubernetes.io/version: "2.0.2"
+    app.kubernetes.io/version: "2.1.3"
     app.kubernetes.io/part-of: opentelemetry-demo
 spec:
   replicas: 1
@@ -19977,7 +19977,7 @@ spec:
       serviceAccountName: opentelemetry-demo
       containers:
         - name: product-reviews
-          #image: 'ghcr.io/open-telemetry/demo:2.0.2-product-reviews'
+          #image: 'ghcr.io/open-telemetry/demo:2.1.3-product-reviews'
           image: 'docker.io/derekmitchell399/demo:latest-product-reviews'
           imagePullPolicy: IfNotPresent
           ports:
