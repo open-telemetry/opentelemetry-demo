@@ -12,7 +12,7 @@ export const Image = styled.div<{ $src: string }>`
   width: 100%;
   height: 150px;
   background: url(${({ $src }) => $src}) no-repeat center;
-  background-size: 100% auto;
+  background-size: contain;
 
   ${({ theme }) => theme.breakpoints.desktop} {
     height: 300px;
