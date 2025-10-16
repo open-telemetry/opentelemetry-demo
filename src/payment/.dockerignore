@@ -1,6 +1,4 @@
 node_modules/
 .dockerignore
-Dockerfile
-package.json
-package-lock.json
+Dockerfiledok
 README.md

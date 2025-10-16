@@ -1877,6 +1877,14 @@ spec:
                   fieldPath: status.hostIP
             - name: OTEL_COLLECTOR_NAME
               value: $(NODE_IP)
+            - name: OTEL_TRACES_EXPORTER
+              value: otlp
+            - name: OTEL_METRICS_EXPORTER
+              value: otlp
+            - name: OTEL_LOGS_EXPORTER
+              value: otlp
+            - name: SPLUNK_OTEL_LOG_CORRELATION_ENABLED
+              value: "true"
             - name: OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE
               value: cumulative
             - name: PAYMENT_PORT

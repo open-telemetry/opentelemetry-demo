@@ -63,3 +63,5 @@ src/payment/charge.js.original
 src/payment/logger.js.not sure
 src/payment/logger.js.original
 src/payment.zip
+src/payment-old
+src/payment/*.bak

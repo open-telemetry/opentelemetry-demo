@@ -1,6 +1,5 @@
 // Copyright The OpenTelemetry Authors
 // SPDX-License-Identifier: Apache-2.0
-///Update Tghis !!!
 const { context, propagation, trace, metrics, SpanKind, SpanStatusCode } = require('@opentelemetry/api');
 const cardValidator = require('simple-card-validator');
 const { v4: uuidv4 } = require('uuid');
@@ -295,7 +294,7 @@ module.exports.charge = async request => {
       'http.status_code': finalCode,
     });
 
-    // set explicit error status on the root span so it doesn’t show as “unknown”
+    // set explicit error status on the root span so it doesn't show as "unknown"
     span.setStatus({ code: SpanStatusCode.ERROR, message: String(finalCode) });
 
     // keep baggage handling as you have it
