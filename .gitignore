@@ -11,6 +11,9 @@
 
 docker-compose.override.yml
 
+todos.txt
+.terraform
+
 # Eclipse
 .classpath
 .project
