@@ -9,9 +9,7 @@ const ProductReviewService = () => ({
     async getProductReviews(id: string) {
         const productReviews = await ProductReviewGateway.getProductReviews(id);
 
-        return {
-            ...productReviews
-        };
+        return productReviews;
     },
 });
 

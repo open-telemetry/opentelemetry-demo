@@ -46,7 +46,7 @@ const ProductReviewProvider = ({ children, productId }: IProps) => {
 
     // Use a sentinel: null while loading, [] if loaded but empty, array when loaded with data.
     const productReviews: ProductReview[] | null =
-        isSuccess ? (data?.productReviews ?? []) : null;
+        isSuccess ? data : null;
 
     const loading = isLoading || isFetching;
 

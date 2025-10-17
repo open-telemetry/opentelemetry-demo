@@ -6,7 +6,7 @@ import InstrumentationMiddleware from '../../../../utils/telemetry/Instrumentati
 import { Empty, ProductReview } from '../../../../protos/demo';
 import ProductReviewService from '../../../../services/ProductReview.service';
 
-type TResponse = ProductReview | Empty;
+type TResponse = ProductReview[] | Empty;
 
 const handler = async ({ method, query }: NextApiRequest, res: NextApiResponse<TResponse>) => {
 

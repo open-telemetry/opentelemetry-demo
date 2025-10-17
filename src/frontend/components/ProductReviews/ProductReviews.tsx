@@ -7,13 +7,6 @@ import { useEffect } from 'react';
 
 const ProductReviews = () => {
     const { productReviews, loading, error } = useProductReview();
-    console.log('productReviews:', productReviews);
-    console.log('typeof(productReviews):', typeof(productReviews));
-    console.log('Array.isArray(productReviews):', Array.isArray(productReviews));
-
-    if (productReviews != null) {
-        console.log('productReviews.length:', productReviews.length);
-    }
 
     useEffect(() => {
         console.log('productReviews changed:', productReviews);
