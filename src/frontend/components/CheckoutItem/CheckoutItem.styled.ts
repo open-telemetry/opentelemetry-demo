@@ -83,6 +83,7 @@ export const ItemImage = styled(Image).attrs({
   height: '80',
 })`
   border-radius: 5px;
+  object-fit: contain;
 `;
 
 export const SeeMore = styled.a`

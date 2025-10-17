@@ -9,6 +9,10 @@ import * as S from './Recommendations.styled';
 const Recommendations = () => {
   const { recommendedProductList } = useAd();
 
+  if (!recommendedProductList || recommendedProductList.length === 0) {
+    return null;
+  }
+
   return (
     <S.Recommendations data-cy={CypressFields.RecommendationList}>
       <S.TitleContainer>

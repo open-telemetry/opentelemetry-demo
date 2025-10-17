@@ -12,10 +12,10 @@ export const CartDropdown = styled.div`
   width: 100%;
   height: 100%;
   max-height: 100%;
-  padding: 25px;
+  padding: 5px;
   display: flex;
   flex-direction: column;
-  justify-content: space-between;
+  align-items: center;
   gap: 24px;
   background: ${({ theme }) => theme.colors.white};
   z-index: 1000;
@@ -27,7 +27,7 @@ export const CartDropdown = styled.div`
     width: 400px;
     top: 95px;
     right: 17px;
-    max-height: 650px;
+    max-height: 600px;
   }
 `;
 
@@ -43,7 +43,7 @@ export const Title = styled.h5`
 export const ItemList = styled.div`
   ${({ theme }) => theme.breakpoints.desktop} {
     max-height: 450px;
-    overflow-y: scroll;
+    overflow-y: auto;
   }
 `;
 
@@ -60,6 +60,7 @@ export const ItemImage = styled(Image).attrs({
   height: '80',
 })`
   border-radius: 5px;
+  object-fit: contain;
 `;
 
 export const ItemName = styled.p`
@@ -80,10 +81,29 @@ export const ItemQuantity = styled(ItemName)`
 
 export const CartButton = styled(Button)``;
 
+export const ContentWrapper = styled.div`
+  width: 100%;
+  overflow-y: auto;
+  flex: 1;
+  min-height: 0;
+
+  ${({ theme }) => theme.breakpoints.desktop} {
+    overflow-y: visible;
+    flex: 0 1 auto;
+    min-height: auto;
+  }
+`;
+
 export const Header = styled.div`
   display: flex;
-  justify-content: space-between;
+  justify-content: center;
   align-items: center;
+  width: 100%;
+
+  span {
+    position: absolute;
+    right: 25px;
+  }
 
   ${({ theme }) => theme.breakpoints.desktop} {
     span {
@@ -97,4 +117,5 @@ export const EmptyCart = styled.h3`
   margin-top: 25px;
   font-size: ${({ theme }) => theme.sizes.mLarge};
   color: ${({ theme }) => theme.colors.textLightGray};
+  text-align: center;
 `;

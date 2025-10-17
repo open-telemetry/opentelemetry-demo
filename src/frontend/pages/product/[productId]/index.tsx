@@ -8,7 +8,6 @@ import { useRouter } from 'next/router';
 import { useCallback, useState, useEffect } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import Ad from '../../../components/Ad';
-import Footer from '../../../components/Footer';
 import Layout from '../../../components/Layout';
 import ProductPrice from '../../../components/ProductPrice';
 import Recommendations from '../../../components/Recommendations';
@@ -98,7 +97,6 @@ const ProductDetail: NextPage = () => {
           <Recommendations />
         </S.ProductDetail>
         <Ad />
-        <Footer />
       </Layout>
     </AdProvider>
   );
