@@ -106,8 +106,16 @@ jobs:
             tag_suffix: kafka
             context: ./
             setup-qemu: true
+          - file: ./src/llm/Dockerfile
+            tag_suffix: llm
+            context: ./
+            setup-qemu: true
           - file: ./src/load-generator/Dockerfile
             tag_suffix: load-generator
+            context: ./
+            setup-qemu: true
+          - file: ./src/mysql/Dockerfile
+            tag_suffix: mysql
             context: ./
             setup-qemu: true
           - file: ./src/opensearch/Dockerfile
@@ -124,6 +132,10 @@ jobs:
             setup-qemu: true
           - file: ./src/product-catalog/Dockerfile
             tag_suffix: product-catalog
+            context: ./
+            setup-qemu: true
+          - file: ./src/product-reviews/Dockerfile
+            tag_suffix: product-reviews
             context: ./
             setup-qemu: true
           - file: ./src/quote/Dockerfile

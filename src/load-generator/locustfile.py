@@ -140,6 +140,20 @@ class WebsiteUser(HttpUser):
             }
             self.client.get("/api/recommendations", params=params)
 
+    @task(2)
+    def get_product_reviews(self):
+        product = random.choice(products)
+        with self.tracer.start_as_current_span("user_get_product_reviews", context=Context(), attributes={"product.id": product}):
+            logging.info(f"User getting product reviews for product: {product}")
+            self.client.get("/api/product-reviews/" + product)
+
+    @task(2)
+    def get_product_review_summary(self):
+        product = random.choice(products)
+        with self.tracer.start_as_current_span("user_get_product_review_summary", context=Context(), attributes={"product.id": product}):
+            logging.info(f"User getting product review summary for product: {product}")
+            self.client.get("/api/product-review-summary/" + product)
+
     @task(3)
     def get_ads(self):
         category = random.choice(categories)

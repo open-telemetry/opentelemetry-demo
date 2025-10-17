@@ -54,6 +54,7 @@ if [ -z "$1" ]; then
   #gen_proto_js payment
   gen_proto_go product-catalog
   #gen_proto_php quote
+  gen_proto_python product-reviews
   gen_proto_python recommendation
   #gen_proto_rust shipping
 else
