@@ -6,7 +6,7 @@ import { useProductReview } from '../../providers/ProductReview.provider';
 import { useEffect } from 'react';
 
 const ProductReviews = () => {
-    const { productReviews, loading, error } = useProductReview();
+    const { productReviews, loading, error, productReviewSummary } = useProductReview();
 
     useEffect(() => {
         console.log('productReviews changed:', productReviews);
@@ -24,8 +24,21 @@ const ProductReviews = () => {
                 <p>Could not load product reviews.</p>
             )}
 
-            {!loading && !error && productReviews != null && (
+            {!loading && !error && Array.isArray(productReviews) && productReviews.length === 0 && (
+                <p>No reviews yet.</p>
+            )}
+
+            {productReviewSummary != null && (
+                <p>Average Score: {productReviewSummary.averageScore}</p>
+            )}
+
+            {productReviewSummary != null && (
+                <p>Summary: {productReviewSummary.productReviewSummary}</p>
+            )}
+
+            {!loading && !error && Array.isArray(productReviews) && productReviews.length > 0 && (
                 <S.ProductReviewList>
+
                     {productReviews.map((review) => (
                         <li key={review.username}>
                             <p><strong>{review.username}</strong></p>
@@ -33,6 +46,7 @@ const ProductReviews = () => {
                             <p>Score: {review.score}</p>
                         </li>
                     ))}
+
                 </S.ProductReviewList>
             )}
         </S.ProductReviews>
