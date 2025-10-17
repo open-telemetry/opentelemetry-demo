@@ -19595,8 +19595,7 @@ spec:
       serviceAccountName: opentelemetry-demo
       containers:
         - name: llm
-          #image: 'ghcr.io/open-telemetry/demo:2.1.3-llm'
-          image: 'docker.io/derekmitchell399/demo:latest-llm'
+          image: 'ghcr.io/open-telemetry/demo:2.1.3-llm'
           imagePullPolicy: IfNotPresent
           ports:
             - containerPort: 8000
@@ -19723,8 +19722,7 @@ spec:
       serviceAccountName: opentelemetry-demo
       containers:
         - name: mysql
-          #image: 'ghcr.io/open-telemetry/demo:2.1.3-mysql'
-          image: 'docker.io/derekmitchell399/demo:latest-mysql'
+          image: 'ghcr.io/open-telemetry/demo:2.1.3-mysql'
           imagePullPolicy: IfNotPresent
           ports:
             - containerPort: 3306
@@ -19977,8 +19975,7 @@ spec:
       serviceAccountName: opentelemetry-demo
       containers:
         - name: product-reviews
-          #image: 'ghcr.io/open-telemetry/demo:2.1.3-product-reviews'
-          image: 'docker.io/derekmitchell399/demo:latest-product-reviews'
+          image: 'ghcr.io/open-telemetry/demo:2.1.3-product-reviews'
           imagePullPolicy: IfNotPresent
           ports:
             - containerPort: 3551
