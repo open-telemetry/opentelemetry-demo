@@ -1,0 +1,48 @@
+# docker-compose-mongo.yml
+# Use: docker compose -f docker-compose.yml -f docker-compose-mongo.yml up
+
+x-default-logging: &logging
+  driver: "json-file"
+  options:
+    max-size: "5m"
+    max-file: "2"
+    tag: "{{.Name}}"
+
+services:
+  # 1. Remove the Postgres service
+  postgresql: !reset null
+
+  # 2. Add the MongoDB service
+  mongo:
+    image: mongo:7
+    container_name: mongo
+    restart: unless-stopped
+    environment:
+      MONGO_INITDB_DATABASE: otel
+      MONGO_INITDB_ROOT_USERNAME: otelu
+      MONGO_INITDB_ROOT_PASSWORD: otelp
+      OTEL_DOTNET_AUTO_INSTRUMENTATION_MONGODB_ENABLED: true
+    ports:
+      - "27017:27017"
+    healthcheck:
+      test: ["CMD", "mongosh", "--eval", "db.adminCommand('ping')"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    logging: *logging
+    networks:
+      - default
+
+  # 3. Configure 'accounting' service for MongoDB
+  accounting:
+    environment:
+      - DB_TYPE=mongo
+      - DB_CONNECTION_STRING=mongodb://otelu:otelp@mongo:27017/otel?authSource=admin
+    depends_on:
+      postgresql: !reset []
+      otel-collector:
+        condition: service_started
+      kafka:
+        condition: service_healthy
+      mongo:
+        condition: service_healthy

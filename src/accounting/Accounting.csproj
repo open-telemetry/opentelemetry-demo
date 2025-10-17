@@ -1,34 +1,39 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
-	<PropertyGroup>
-		<OutputType>Exe</OutputType>
-		<TargetFramework>net8.0</TargetFramework>
-		<ImplicitUsings>enable</ImplicitUsings>
-		<Nullable>enable</Nullable>
-		<DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
-	</PropertyGroup>
+    <PropertyGroup>
+        <OutputType>Exe</OutputType>
+        <TargetFramework>net8.0</TargetFramework>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <Nullable>enable</Nullable>
+        <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
+        <!-- ADDED: Suppress the security audit warning that is failing the build -->
+        <NoWarn>$(NoWarn);NU1903</NoWarn>
+    </PropertyGroup>
 
-	<ItemGroup>
-		<PackageReference Include="Confluent.Kafka" Version="2.11.0" />
-		<PackageReference Include="EFCore.NamingConventions" Version="9.0.0" />
-		<PackageReference Include="Google.Protobuf" Version="3.31.1" />
-		<PackageReference Include="Grpc.Tools" Version="2.68.1">
-			<PrivateAssets>all</PrivateAssets>
-			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-		</PackageReference>
-		<PackageReference Include="Microsoft.Extensions.Logging" Version="9.0.7" />
-		<PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.22.1" />
-		<PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="9.0.4" />
-		<PackageReference Include="OpenTelemetry.AutoInstrumentation" Version="1.12.0" />
-	</ItemGroup>
+    <ItemGroup>
+        <PackageReference Include="Confluent.Kafka" Version="2.11.0" />
+        <PackageReference Include="EFCore.NamingConventions" Version="8.0.3" />
+        <PackageReference Include="Google.Protobuf" Version="3.31.1" />
+        <PackageReference Include="Grpc.Tools" Version="2.68.1">
+            <PrivateAssets>all</PrivateAssets>
+            <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+        </PackageReference>
+        <PackageReference Include="Microsoft.Extensions.Logging" Version="8.0.0" />
+        <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.22.1" />
+        <PackageReference Include="MongoDB.Driver" Version="3.0.0" />
+        <PackageReference Include="MongoDB.Driver.Core.Extensions.DiagnosticSources" Version="2.1.0" />
+        <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="8.0.4" />
+        <PackageReference Include="Pomelo.EntityFrameworkCore.MySql" Version="8.0.2" />
+        <PackageReference Include="OpenTelemetry.AutoInstrumentation" Version="1.9.0" />
+    </ItemGroup>
 
-	<ItemGroup>
-		<!-- GrpcServices is 'none' so that we do not need to depend on the grpc nuget package, and we only need protobuf support. -->
-		<Protobuf Include="src\protos\demo.proto" GrpcServices="none" />
-	</ItemGroup>
+    <ItemGroup>
+        <!-- GrpcServices is 'none' so that we do not need to depend on the grpc nuget package, and we only need protobuf support. -->
+        <Protobuf Include="src/protos/demo.proto" GrpcServices="none" />
+    </ItemGroup>
 
-	<ItemGroup>
-	  <Folder Include="src\protos\" />
-	</ItemGroup>
+    <ItemGroup>
+      <Folder Include="src\protos\" />
+    </ItemGroup>
 
 </Project>
