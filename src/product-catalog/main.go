@@ -171,6 +171,8 @@ func main() {
 		logger.Error(err.Error())
 	}
 
+	// hello
+
 	svc := &productCatalog{}
 	var port string
 	mustMapEnv(&port, "PRODUCT_CATALOG_PORT")
