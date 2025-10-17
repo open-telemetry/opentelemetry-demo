@@ -8,7 +8,6 @@ import { useRouter } from 'next/router';
 import { useMemo } from 'react';
 import Ad from '../../../../components/Ad';
 import Button from '../../../../components/Button';
-import Footer from '../../../../components/Footer';
 import Layout from '../../../../components/Layout';
 import ProductPrice from '../../../../components/ProductPrice';
 import Recommendations from '../../../../components/Recommendations';
@@ -119,7 +118,6 @@ const Checkout: NextPage = () => {
           <Recommendations />
         </S.Checkout>
         <Ad />
-        <Footer />
       </Layout>
     </AdProvider>
   );
