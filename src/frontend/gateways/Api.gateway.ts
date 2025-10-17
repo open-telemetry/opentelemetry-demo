@@ -1,7 +1,7 @@
 // Copyright The OpenTelemetry Authors
 // SPDX-License-Identifier: Apache-2.0
 
-import { Ad, Address, Cart, CartItem, Money, PlaceOrderRequest, Product } from '../protos/demo';
+import { Ad, Address, Cart, CartItem, Money, PlaceOrderRequest, Product, ProductReview } from '../protos/demo';
 import { IProductCart, IProductCartItem, IProductCheckout } from '../types/Cart';
 import request from '../utils/Request';
 import { AttributeNames } from '../utils/enums/AttributeNames';
@@ -71,6 +71,11 @@ const Apis = () => ({
     return request<Product>({
       url: `${basePath}/products/${productId}`,
       queryParams: { currencyCode },
+    });
+  },
+  getProductReviews(productId: string) {
+    return request<ProductReview[]>({
+      url: `${basePath}/product-reviews/${productId}`
     });
   },
   listRecommendations(productIds: string[], currencyCode: string) {
