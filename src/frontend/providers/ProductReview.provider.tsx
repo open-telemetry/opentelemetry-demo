@@ -62,10 +62,6 @@ const ProductReviewProvider = ({ children, productId }: IProps) => {
             : new Error('Unknown error')
         : null;
 
-    useEffect(() => {
-        console.log('ProductReviewProvider productReviews changed:', productReviews);
-    }, [productReviews]);
-
     const { data: productReviewSummary = { averageScore: '', productReviewSummary: '' } } = useQuery({
         queryKey: ['productReviewSummary', productId],
         queryFn: () => ApiGateway.getProductReviewSummary(productId),

@@ -530,7 +530,7 @@ services:
           memory: 100M
     restart: unless-stopped
     ports:
-      - "${PRODUCT_REVIEWS_PORT}:${PRODUCT_REVIEWS_PORT}"
+      - "${PRODUCT_REVIEWS_PORT}"
     environment:
       - PRODUCT_REVIEWS_PORT
       - OTEL_PYTHON_LOG_CORRELATION=true

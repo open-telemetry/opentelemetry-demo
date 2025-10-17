@@ -3,7 +3,8 @@
 
 import * as S from './ProductReviews.styled';
 import { useProductReview } from '../../providers/ProductReview.provider';
-import { useEffect, useMemo } from 'react';
+import { useMemo } from 'react';
+import { CypressFields } from '../../utils/enums/CypressFields';
 
 const clamp = (n: number, min = 0, max = 5) => Math.max(min, Math.min(max, n));
 
@@ -15,10 +16,6 @@ const StarRating = ({ value, max = 5 }: { value: number; max?: number }) => {
 
 const ProductReviews = () => {
     const { productReviews, loading, error, productReviewSummary } = useProductReview();
-
-    useEffect(() => {
-    console.log('productReviews changed:', productReviews);
-    }, [productReviews]);
 
     const summaryText =
     productReviewSummary?.productReviewSummary ??
@@ -59,7 +56,7 @@ const ProductReviews = () => {
     }, [distribution, productReviews]);
 
   return (
-    <S.ProductReviews aria-live="polite">
+    <S.ProductReviews aria-live="polite" data-cy={CypressFields.ProductReviews}>
       <S.TitleContainer>
         <S.Title>Customer Reviews</S.Title>
       </S.TitleContainer>
