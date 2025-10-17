@@ -1,6 +1,6 @@
 aws eks update-kubeconfig --name my-project-cluster --region us-east-1
 
-kubectl create -f opentelemetry-demo.yaml -n otel-demo
+kubectl create -f opentelemetry-complete.yaml -n otel-demo
 
 eksctl utils associate-iam-oidc-provider --region us-east-1 --cluster my-project-cluster --approve
 
