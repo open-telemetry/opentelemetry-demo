@@ -3,54 +3,119 @@
 
 import * as S from './ProductReviews.styled';
 import { useProductReview } from '../../providers/ProductReview.provider';
-import { useEffect } from 'react';
+import { useEffect, useMemo } from 'react';
+
+const clamp = (n: number, min = 0, max = 5) => Math.max(min, Math.min(max, n));
+
+const StarRating = ({ value, max = 5 }: { value: number; max?: number }) => {
+  const rounded = clamp(Math.round(value), 0, max);
+  const stars = Array.from({ length: max }, (_, i) => (i < rounded ? '★' : '☆')).join(' ');
+  return <S.StarRating aria-label={`${value.toFixed(1)} out of ${max} stars`}>{stars}</S.StarRating>;
+};
 
 const ProductReviews = () => {
-    const { productReviews, loading, error, productReviewSummary } = useProductReview();
+  const { productReviews, loading, error, productReviewSummary } = useProductReview();
 
-    useEffect(() => {
-        console.log('productReviews changed:', productReviews);
-    }, [productReviews]);
+  useEffect(() => {
+    console.log('productReviews changed:', productReviews);
+  }, [productReviews]);
 
-    return (
-        <S.ProductReviews>
-            <S.TitleContainer>
-                <S.Title>Product Reviews</S.Title>
-            </S.TitleContainer>
+  const summaryText =
+    productReviewSummary?.productReviewSummary ??
+    '';
 
-            {loading && <p>Loading product reviews…</p>}
+  const average = useMemo(() => {
+    if (!productReviewSummary?.averageScore) return null;
+    return clamp(Number(productReviewSummary.averageScore));
+  }, [productReviewSummary]);
 
-            {!loading && error && (
-                <p>Could not load product reviews.</p>
-            )}
+  const distribution = useMemo(() => {
+    if (!Array.isArray(productReviews)) return [0, 0, 0, 0, 0];
+    const counts = [0, 0, 0, 0, 0];
+    for (const r of productReviews) {
+      const s = clamp(Number(r.score));
+      if (s >= 1 && s <= 5) counts[s - 1] += 1;
+    }
+    return counts;
+  }, [productReviews]);
 
-            {!loading && !error && Array.isArray(productReviews) && productReviews.length === 0 && (
-                <p>No reviews yet.</p>
-            )}
+  return (
+    <S.ProductReviews aria-live="polite">
+      <S.TitleContainer>
+        <S.Title>Product Reviews</S.Title>
+      </S.TitleContainer>
 
-            {productReviewSummary != null && (
-                <p>Average Score: {productReviewSummary.averageScore}</p>
-            )}
+        {loading && <p>Loading product reviews…</p>}
 
-            {productReviewSummary != null && (
-                <p>Summary: {productReviewSummary.productReviewSummary}</p>
-            )}
+        {!loading && error && <p>Could not load product reviews.</p>}
 
-            {!loading && !error && Array.isArray(productReviews) && productReviews.length > 0 && (
-                <S.ProductReviewList>
+        {!loading && !error && Array.isArray(productReviews) && productReviews.length === 0 && (
+        <p>No reviews yet.</p>
+        )}
 
-                    {productReviews.map((review) => (
-                        <li key={review.username}>
-                            <p><strong>{review.username}</strong></p>
-                            <p>{review.description}</p>
-                            <p>Score: {review.score}</p>
-                        </li>
-                    ))}
+        {!loading && !error && (
+            <>
+                {(average != null || summaryText) && (
+                    <S.SummaryCard>
+                        {average != null && (
+                            <>
+                                <S.AverageBlock>
+                                    <S.AverageScoreBadge>{average.toFixed(1)}</S.AverageScoreBadge>
+                                    <StarRating value={average} />
+                                    <S.ScoreCount>
+                                        {Array.isArray(productReviews) ? `${productReviews.length} reviews` : ''}
+                                    </S.ScoreCount>
+                                </S.AverageBlock>
 
-                </S.ProductReviewList>
-            )}
-        </S.ProductReviews>
-    );
+                                {Array.isArray(productReviews) && productReviews.length > 0 && (
+                                    <S.ScoreDistribution>
+                                        {[1, 2, 3, 4, 5].map((score, idx) => {
+                                            const count = distribution[idx];
+                                            const pct = Math.round((count / productReviews.length) * 100);
+                                            return (
+                                                <S.ScoreRow key={`score-${score}`}>
+                                                    <S.ScoreLabel>
+                                                        {score} star{score > 1 ? 's' : ''}
+                                                    </S.ScoreLabel>
+                                                    <S.ScoreBar aria-label={`${score} stars: ${pct}%`}>
+                                                        <S.ScoreBarFill style={{ width: `${pct}%` }} />
+                                                    </S.ScoreBar>
+                                                    <S.ScorePct>{pct}%</S.ScorePct>
+                                                </S.ScoreRow>
+                                            );
+                                        })}
+                                    </S.ScoreDistribution>
+                                )}
+                            </>
+                        )}
+
+                        {summaryText && (
+                            <S.SummaryText>
+                                <strong>AI Summary:</strong> {summaryText}
+                            </S.SummaryText>
+                        )}
+                    </S.SummaryCard>
+                )}
+
+          {Array.isArray(productReviews) && productReviews.length > 0 && (
+            <S.ReviewsGrid as="ul">
+              {productReviews.map((review, idx) => (
+                <S.ReviewCard as="li" key={`${review.username}-${review.score}-${idx}`}>
+                  <S.ReviewHeader>
+                    <S.ReviewerName>{review.username}</S.ReviewerName>
+                    <StarRating value={Number(review.score) || 0} />
+                  </S.ReviewHeader>
+                  <S.ReviewBody>
+                    {review.description || 'No description provided.'}
+                  </S.ReviewBody>
+                </S.ReviewCard>
+              ))}
+            </S.ReviewsGrid>
+          )}
+        </>
+      )}
+    </S.ProductReviews>
+  );
 };
 
 export default ProductReviews;

@@ -10,19 +10,6 @@ export const ProductReviews = styled.section`
   flex-direction: column;
 `;
 
-export const ProductReviewList = styled.div`
-  display: flex;
-  width: 100%;
-  padding: 0 20px;
-  flex-direction: column;
-  gap: 24px;
-
-  ${({ theme }) => theme.breakpoints.desktop} {
-    display: grid;
-    grid-template-columns: 1fr 1fr 1fr 1fr;
-  }
-`;
-
 export const TitleContainer = styled.div`
   border-top: 1px dashed;
   padding: 40px 0;
@@ -37,3 +24,135 @@ export const Title = styled.h3`
     font-size: ${({ theme }) => theme.sizes.dLarge};
   }
 `;
+
+/* Summary card at the top */
+export const SummaryCard = styled.section`
+  width: 100%;
+  padding: 20px;
+  margin: 0 20px 24px;
+  border: 1px solid ${({ theme }) => theme.colors.borderGray};
+  border-radius: 8px;
+  background: ${({ theme }) => theme.colors.white};
+  display: grid;
+  gap: 16px;
+
+  ${({ theme }) => theme.breakpoints.desktop} {
+    grid-template-columns: 280px 1fr;
+    align-items: center;
+  }
+`;
+
+export const AverageBlock = styled.div`
+  display: grid;
+  grid-template-columns: auto 1fr;
+  align-items: center;
+  gap: 12px;
+`;
+
+export const AverageScoreBadge = styled.div`
+  min-width: 64px;
+  height: 64px;
+  border-radius: 8px;
+  background: ${({ theme }) => theme.colors.otelBlue};
+  color: ${({ theme }) => theme.colors.white};
+  font-weight: 700;
+  font-size: 24px;
+  display: grid;
+  place-items: center;
+`;
+
+export const StarRating = styled.span`
+  color: ${({ theme }) => theme.colors.otelYellow};
+  font-size: 18px;
+`;
+
+export const ScoreCount = styled.span`
+  grid-column: 1 / -1;
+  color: ${({ theme }) => theme.colors.textLightGray};
+  font-size: 14px;
+`;
+
+export const ScoreDistribution = styled.div`
+  display: grid;
+  gap: 8px;
+`;
+
+export const ScoreRow = styled.div`
+  display: grid;
+  grid-template-columns: 80px 1fr 48px;
+  align-items: center;
+  gap: 8px;
+`;
+
+export const ScoreLabel = styled.span`
+  font-size: 14px;
+  color: ${({ theme }) => theme.colors.textLightGray};
+`;
+
+export const ScoreBar = styled.div`
+  position: relative;
+  height: 10px;
+  border-radius: 6px;
+  background: ${({ theme }) => theme.colors.lightBorderGray};
+  overflow: hidden;
+`;
+
+export const ScoreBarFill = styled.div`
+  position: absolute;
+  left: 0;
+  top: 0;
+  height: 100%;
+  background: ${({ theme }) => theme.colors.otelBlue};
+`;
+
+export const ScorePct = styled.span`
+  font-size: 12px;
+  color: ${({ theme }) => theme.colors.otelGray};
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+`;
+
+export const SummaryText = styled.p`
+  margin: 0;
+  line-height: 1.5;
+`;
+
+/* Reviews grid: 1 column mobile, 5 desktop (since there are always 5 reviews) */
+export const ReviewsGrid = styled.ul`
+  display: grid;
+  width: 100%;
+  padding: 0 20px;
+  margin: 0;
+  list-style: none;
+  gap: 24px;
+  grid-template-columns: 1fr;
+
+  ${({ theme }) => theme.breakpoints.desktop} {
+    grid-template-columns: repeat(5, 1fr);
+  }
+`;
+
+export const ReviewCard = styled.li`
+  border: 1px solid ${({ theme }) => theme.colors.borderGray};
+  border-radius: 8px;
+  background: ${({ theme }) => theme.colors.white};
+  padding: 16px;
+  display: grid;
+  gap: 12px;
+`;
+
+export const ReviewHeader = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+`;
+
+export const ReviewerName = styled.strong`
+  font-weight: 600;
+`;
+
+export const ReviewBody = styled.p`
+  margin: 0;
+  line-height: 1.6;
+`;
+
