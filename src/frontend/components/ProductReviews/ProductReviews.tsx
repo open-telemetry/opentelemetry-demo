@@ -14,35 +14,54 @@ const StarRating = ({ value, max = 5 }: { value: number; max?: number }) => {
 };
 
 const ProductReviews = () => {
-  const { productReviews, loading, error, productReviewSummary } = useProductReview();
+    const { productReviews, loading, error, productReviewSummary } = useProductReview();
 
-  useEffect(() => {
+    useEffect(() => {
     console.log('productReviews changed:', productReviews);
-  }, [productReviews]);
+    }, [productReviews]);
 
-  const summaryText =
+    const summaryText =
     productReviewSummary?.productReviewSummary ??
     '';
 
-  const average = useMemo(() => {
+    const average = useMemo(() => {
     if (!productReviewSummary?.averageScore) return null;
     return clamp(Number(productReviewSummary.averageScore));
-  }, [productReviewSummary]);
+    }, [productReviewSummary]);
 
-  const distribution = useMemo(() => {
-    if (!Array.isArray(productReviews)) return [0, 0, 0, 0, 0];
-    const counts = [0, 0, 0, 0, 0];
-    for (const r of productReviews) {
-      const s = clamp(Number(r.score));
-      if (s >= 1 && s <= 5) counts[s - 1] += 1;
-    }
-    return counts;
-  }, [productReviews]);
+    const distribution = useMemo(() => {
+        if (!Array.isArray(productReviews)) return [0, 0, 0, 0, 0];
+        const counts = [0, 0, 0, 0, 0];
+        for (const r of productReviews) {
+            const s = clamp(Math.round(Number(r.score)), 1, 5); // round first, clamp to [1,5]
+            counts[s - 1] += 1;
+        }
+        return counts;
+    }, [productReviews]);
+
+    const normalizedPercents = useMemo(() => {
+        if (!Array.isArray(productReviews) || productReviews.length === 0) return [0, 0, 0, 0, 0];
+
+        const raw = distribution.map(c => (c / productReviews.length) * 100);
+        const floored = raw.map(p => Math.floor(p));
+        const sumFloors = floored.reduce((a, b) => a + b, 0);
+        let remainder = 100 - sumFloors;
+
+        const order = raw
+            .map((p, i) => ({ i, frac: p - Math.floor(p) }))
+            .sort((a, b) => b.frac - a.frac);
+
+        const final = floored.slice();
+        for (let k = 0; k < remainder; k++) {
+            final[order[k].i] += 1;
+        }
+        return final;
+    }, [distribution, productReviews]);
 
   return (
     <S.ProductReviews aria-live="polite">
       <S.TitleContainer>
-        <S.Title>Product Reviews</S.Title>
+        <S.Title>Customer Reviews</S.Title>
       </S.TitleContainer>
 
         {loading && <p>Loading product reviews…</p>}
@@ -70,8 +89,7 @@ const ProductReviews = () => {
                                 {Array.isArray(productReviews) && productReviews.length > 0 && (
                                     <S.ScoreDistribution>
                                         {[1, 2, 3, 4, 5].map((score, idx) => {
-                                            const count = distribution[idx];
-                                            const pct = Math.round((count / productReviews.length) * 100);
+                                            const pct = normalizedPercents[idx];
                                             return (
                                                 <S.ScoreRow key={`score-${score}`}>
                                                     <S.ScoreLabel>
