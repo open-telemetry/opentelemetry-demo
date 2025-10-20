@@ -1,12 +1,12 @@
 #!/bin/bash -e
 
 # Usage:
-#   ./build.sh <version> [-cc] 
+#   ./build-proxy.sh <version> [-cc]
 
 if [ -z "$1" ]; then
   echo "❌ Error: No version provided."
-  echo "Usage: $0 <version> [-cc] "
-  exit 
+  echo "Usage: $0 <version> [-cc]"
+  exit 1
 fi
 
 VERSION="$1"
@@ -15,28 +15,47 @@ CACHE_OPTION=""
 # Check if the second arg is -cc
 if [[ "$2" == "-cc" ]]; then
   CACHE_OPTION="--no-cache"
-  # Shift all remaining args so $2 becomes RUM_TOKEN
-  shift
 fi
-URL_PREFIX="$6"
 
-
-# Move two directories up from src/recomndation
+# Move two directories up from src/frontend-proxy
 cd "$(dirname "$0")/../.."
 
-# Build command
+echo "Building frontend-proxy service version: $VERSION"
+echo "Build options: ${CACHE_OPTION:-default caching enabled}"
+
+# Build without push first
 DOCKER_CMD=(
   docker buildx build
   --platform=linux/amd64,linux/arm64
   $CACHE_OPTION
   --build-arg VERSION="$VERSION"
   -t ghcr.io/splunk/opentelemetry-demo/otel-frontend-proxy:"$VERSION"
-  --push
+  --load
   -f src/frontend-proxy/Dockerfile
+  .
 )
 
-# Add build context
-DOCKER_CMD+=( . )
+echo "Executing build command..."
+if ! "${DOCKER_CMD[@]}"; then
+  echo "❌ Error: Docker build failed"
+  exit 1
+fi
 
-# Execute the build
-"${DOCKER_CMD[@]}"
+echo "✅ Build successful"
+
+# Verify image exists locally
+if ! docker image inspect ghcr.io/splunk/opentelemetry-demo/otel-frontend-proxy:"$VERSION" > /dev/null 2>&1; then
+  echo "❌ Error: Built image not found locally"
+  exit 1
+fi
+
+echo "✅ Image verified locally"
+
+# Push the image
+echo "Pushing image to registry..."
+if ! docker push ghcr.io/splunk/opentelemetry-demo/otel-frontend-proxy:"$VERSION"; then
+  echo "❌ Error: Push failed. Check your registry authentication."
+  exit 1
+fi
+
+echo "✅ Successfully pushed ghcr.io/splunk/opentelemetry-demo/otel-frontend-proxy:$VERSION"

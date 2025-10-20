@@ -29,6 +29,7 @@ repositories {
 
 dependencies {
     implementation("com.google.protobuf:protobuf-java:${protobufVersion}")
+    implementation("com.google.protobuf:protobuf-java-util:${protobufVersion}")
     testImplementation(kotlin("test"))
     implementation(kotlin("script-runtime"))
     implementation("org.apache.kafka:kafka-clients:4.1.0")
@@ -42,9 +43,12 @@ dependencies {
     implementation("io.opentelemetry:opentelemetry-extension-annotations:1.18.0")
     implementation("org.apache.logging.log4j:log4j-core:2.25.2")
     implementation("org.slf4j:slf4j-api:2.0.17")
+    implementation("org.apache.logging.log4j:log4j-slf4j2-impl:2.25.2")
     implementation("com.google.protobuf:protobuf-kotlin:${protobufVersion}")
     implementation("dev.openfeature:sdk:1.18.2")
     implementation("dev.openfeature.contrib.providers:flagd:0.11.15")
+    implementation("com.microsoft.sqlserver:mssql-jdbc:12.8.1.jre11")
+    implementation("com.zaxxer:HikariCP:5.1.0")
 
     if (JavaVersion.current().isJava9Compatible) {
         // Workaround for @javax.annotation.Generated
