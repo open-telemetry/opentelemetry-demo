@@ -2491,10 +2491,18 @@ data:
 
     function buildBaseUrl() {
       const raw = (process.env.RUM_FRONTEND_IP || '').trim();
-      const base = raw ? (/^https?:\/\//i.test(raw) ? raw : `http://${raw}`) : 'http://localhost';
-      return base.replace(/\/+$/, '') + '/';
-    }
 
+      // If it's empty, default to localhost
+      if (!raw) return 'https://localhost/';
+
+      // If it already starts with http:// or https://, keep it exactly as-is
+      if (/^https?:\/\//i.test(raw)) {
+        return raw.replace(/\/+$/, '') + '/';
+      }
+
+      // Otherwise, prepend https://
+      return `https://${raw.replace(/\/+$/, '')}/`;
+    }
     function delay(ms) { return new Promise(res => setTimeout(res, ms)); }
 
     /** Wait until innerText of the page contains a substring */
