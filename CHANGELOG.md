@@ -13,6 +13,11 @@ the release.
   ([#2614](https://github.com/open-telemetry/opentelemetry-demo/pull/2614))
 * [grafana] Update grafana version to 12.2.0
   ([#2615](https://github.com/open-telemetry/opentelemetry-demo/pull/2615))
+* [postgres] Showcase Postgresql monitoring using a dedicated monitoring
+  user and the role `pg_monitor`
+  ([#2665](https://github.com/open-telemetry/opentelemetry-demo/pull/2665))
+* [postgres] More realistic database name `otel` -> `shop_db`
+  ([#2665](https://github.com/open-telemetry/opentelemetry-demo/pull/2665))
 
 ## 2.1.3
 
