@@ -39,6 +39,7 @@ import (
 	"go.opentelemetry.io/otel/exporters/otlp/otlplog/otlploggrpc"
 	"go.opentelemetry.io/otel/exporters/otlp/otlpmetric/otlpmetricgrpc"
 	"go.opentelemetry.io/otel/exporters/otlp/otlptrace/otlptracegrpc"
+	"go.opentelemetry.io/otel/exporters/stdout/stdoutlog"
 	"go.opentelemetry.io/otel/propagation"
 
 	sdklog "go.opentelemetry.io/otel/sdk/log"
@@ -125,8 +126,14 @@ func initLoggerProvider() *sdklog.LoggerProvider {
 		return nil
 	}
 
+	consoleExporter, err := stdoutlog.New()
+	if err != nil {
+		return nil
+	}
+
 	loggerProvider := sdklog.NewLoggerProvider(
 		sdklog.WithProcessor(sdklog.NewBatchProcessor(logExporter)),
+		sdklog.WithProcessor(sdklog.NewSimpleProcessor(consoleExporter)),
 	)
 	global.SetLoggerProvider(loggerProvider)
 
