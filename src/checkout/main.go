@@ -8,7 +8,6 @@ import (
 	"encoding/json"
 	"fmt"
 	"io"
-	"log"
 	"log/slog"
 	"net"
 	"net/http"
@@ -246,25 +245,25 @@ func main() {
 		}
 		defer func() {
 			if err = kafkaClient.Close(); err != nil {
-				log.Fatalln(err)
+				logger.Error(err.Error())
 			}
 		}()
 		svc.KafkaSyncProducer, err = sarama.NewSyncProducerFromClient(kafkaClient)
 		if err != nil {
-			log.Fatalln(err)
+			logger.Error(err.Error())
 		}
 		defer func() {
 			if err = svc.KafkaSyncProducer.Close(); err != nil {
-				log.Fatalln(err)
+				logger.Error(err.Error())
 			}
 		}()
 		svc.KafkaAsyncProducer, err = sarama.NewAsyncProducerFromClient(kafkaClient)
 		if err != nil {
-			log.Fatalln(err)
+			logger.Error(err.Error())
 		}
 		defer func() {
 			if err = svc.KafkaAsyncProducer.Close(); err != nil {
-				log.Fatalln(err)
+				logger.Error(err.Error())
 			}
 		}()
 	}
