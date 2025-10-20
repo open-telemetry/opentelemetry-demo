@@ -37,7 +37,7 @@ services:
       - OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE
       - OTEL_RESOURCE_ATTRIBUTES
       - OTEL_SERVICE_NAME=accounting
-      - DB_CONNECTION_STRING=Host=${POSTGRES_HOST};Username=otelu;Password=otelp;Database=${POSTGRES_DB}
+      - DB_CONNECTION_STRING=Host=${POSTGRES_HOST};Username=shop_user;Password=shop_password;Database=shop_db
       - OTEL_DOTNET_AUTO_TRACES_ENTITYFRAMEWORKCORE_INSTRUMENTATION_ENABLED=false
     depends_on:
       otel-collector:
@@ -721,9 +721,7 @@ services:
     ports:
       - ${POSTGRES_PORT}
     environment:
-      - POSTGRES_USER=root
       - POSTGRES_PASSWORD
-      - POSTGRES_DB
     logging: *logging
 
   # Valkey used by Cart service
@@ -822,6 +820,7 @@ services:
       - OTEL_COLLECTOR_PORT_HTTP
       - POSTGRES_HOST
       - POSTGRES_PORT
+      - POSTGRES_USER
       - POSTGRES_PASSWORD
       - GOMEMLIMIT=160MiB
 

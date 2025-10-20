@@ -22,8 +22,8 @@ receivers:
     endpoint: unix:///var/run/docker.sock
   postgresql:
     endpoint: ${POSTGRES_HOST}:${POSTGRES_PORT}
-    username: root
-    password: ${POSTGRES_PASSWORD}
+    username: monitoring_user
+    password: monitoring_password
     metrics:
       postgresql.blks_hit:
         enabled: true

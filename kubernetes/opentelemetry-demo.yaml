@@ -18549,7 +18549,7 @@ spec:
             - name: OTEL_EXPORTER_OTLP_ENDPOINT
               value: http://$(OTEL_COLLECTOR_NAME):4318
             - name: DB_CONNECTION_STRING
-              value: Host=postgresql;Username=otelu;Password=otelp;Database=otel
+              value: Host=postgresql;Username=shop_db;Password=shop_db_p;Database=shop_db
             - name: OTEL_DOTNET_AUTO_TRACES_ENTITYFRAMEWORKCORE_INSTRUMENTATION_ENABLED
               value: "false"
             - name: OTEL_RESOURCE_ATTRIBUTES
