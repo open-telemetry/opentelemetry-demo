@@ -21,7 +21,7 @@ async function chargeServiceHandler(call, callback) {
     const response = await charge.charge(call.request)
     callback(null, response)
   } catch (err) {
-    logger.warn({ err })
+    logger.error({ err })
 
     span?.recordException(err)
     span?.setStatus({ code: opentelemetry.SpanStatusCode.ERROR })
