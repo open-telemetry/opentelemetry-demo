@@ -346,7 +346,20 @@ type: Opaque
 stringData:
   SA_PASSWORD: "ChangeMe_SuperStrong123!"
   # Optional: full connection string if you want to inject as a single env var.
-  DB_CONNECTION_STRING: "Server=tcp:sql-server-fraud.sql.svc.cluster.local,1433;Database=MyDb;User Id=sa;Password=ChangeMe_SuperStrong123!;Encrypt=True;TrustServerCertificate=True"
+  DB_CONNECTION_STRING: "Server=tcp:sql-server-fraud.sql.svc.cluster.local,1433;Database=FraudDetection;User Id=sa;Password=ChangeMe_SuperStrong123!;Encrypt=True;TrustServerCertificate=True"
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: mssql-init-script
+  namespace: sql
+data:
+  init-db.sql: |
+    IF NOT EXISTS (SELECT name FROM sys.databases WHERE name = 'FraudDetection')
+    BEGIN
+      CREATE DATABASE FraudDetection;
+    END
+    GO
 ---
 apiVersion: v1
 kind: Service
@@ -382,10 +395,6 @@ spec:
       labels:
         app: sql-server-fraud
     spec:
-      securityContext:
-        fsGroup: 10001        # mssql user can write PV
-        runAsUser: 10001      # run container as mssql user
-        runAsGroup: 0
       containers:
         - name: mssql
           image: mcr.microsoft.com/mssql/server:2022-latest
@@ -406,6 +415,17 @@ spec:
           volumeMounts:
             - name: data
               mountPath: /var/opt/mssql
+            - name: init-script
+              mountPath: /docker-entrypoint-initdb.d
+          lifecycle:
+            postStart:
+              exec:
+                command:
+                  - /bin/bash
+                  - -c
+                  - |
+                    sleep 30
+                    /opt/mssql-tools18/bin/sqlcmd -S localhost -U sa -P "${SA_PASSWORD}" -C -i /docker-entrypoint-initdb.d/init-db.sql
           resources:
             requests:
               cpu: "250m"
@@ -423,6 +443,10 @@ spec:
               port: 1433
             initialDelaySeconds: 30
             periodSeconds: 20
+      volumes:
+        - name: init-script
+          configMap:
+            name: mssql-init-script
   volumeClaimTemplates:
     - metadata:
         name: data
@@ -940,8 +964,10 @@ spec:
               value: "true"
             - name: SPLUNK_METRICS_ENABLED
               value: "true"
-            - name: SPLUNK_METRICS_ENDPOINT
-              value: "http://$(NODE_IP):9943"
+            - name: SPLUNK_SNAPSHOT_PROFILE_ENABLED
+              value: "true"
+            - name: SPLUNK_SNAPSHOT_SELECTION_PROBABILITY 
+              value: "0.1"
             - name: OTEL_TRACE_EXPORTER
               value: otlp
             - name: OTEL_TRACES_SAMPLER
