@@ -15,6 +15,9 @@ the release.
   ([#2615](https://github.com/open-telemetry/opentelemetry-demo/pull/2615))
 * [frontend] Fix navigation and cart math
   ([#2660](https://github.com/open-telemetry/opentelemetry-demo/pull/2660))
+* [chore] Upgrade OpenFeature and add fix deprecation warnings for dependency
+  injection
+  ([#2644](https://github.com/open-telemetry/opentelemetry-demo/pull/2644))
 
 ## 2.1.3
 
