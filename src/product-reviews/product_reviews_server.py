@@ -60,6 +60,17 @@ tools = [
     }
 ]
 
+# --- Define the structured output schema for the LLM to use
+product_review_summary_schema = {
+    "type": "object",
+    "properties": {
+        "average_score": {"type": "number", "minimum": 0, "maximum": 5},
+        "product_review_summary": {"type": "string", "minLength": 1, "maxLength": 2000}
+    },
+    "required": ["average_score", "product_review_summary"],
+    "additionalProperties": False
+}
+
 class ProductReviewService(demo_pb2_grpc.ProductReviewServiceServicer):
     def GetProductReviews(self, request, context):
         logger.info(f"Receive GetProductReviews for product id:{request.product_id}")
@@ -176,6 +187,14 @@ def get_product_review_summary(request_product_id):
                 final_response = client.chat.completions.create(
                     model=llm_model,
                     messages=messages,
+                    response_format={
+                        "type": "json_schema",
+                        "json_schema": {
+                            "name": "product_review",
+                            "strict": True,
+                            "schema": product_review_summary_schema
+                        }
+                    }
                 )
 
                 result = final_response.choices[0].message.content
