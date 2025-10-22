@@ -8,7 +8,9 @@ WORKDIR /usr/src/app/
 
 COPY ./src/payment/package.json package.json
 COPY ./src/payment/package-lock.json package-lock.json
-
+RUN rm -rf node_modules/@splunk/otel/prebuilds \
+ && export npm_config_build_from_source=true NODE_GYP_BUILD_FORCE=true \
+ && npm rebuild @splunk/otel --build-from-source
 RUN npm ci --omit=dev && chmod -R go+r node_modules/@splunk/otel
 
 # -----------------------------------------------------------------------------
@@ -19,7 +21,9 @@ WORKDIR /usr/src/app/
 
 # Create non-root user for security
 RUN groupadd -r appuser && useradd -r -g appuser appuser
-
+RUN rm -rf node_modules/@splunk/otel/prebuilds \
+ && export npm_config_build_from_source=true NODE_GYP_BUILD_FORCE=true \
+ && npm rebuild @splunk/otel --build-from-source
 COPY --from=builder /usr/src/app/node_modules/ node_modules/
 
 COPY ./pb/demo.proto demo.proto

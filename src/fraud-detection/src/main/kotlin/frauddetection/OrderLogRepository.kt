@@ -15,6 +15,10 @@ import java.time.Instant
 class OrderLogRepository {
     private val logger: Logger = LogManager.getLogger(OrderLogRepository::class.java)
     private val jsonPrinter = JsonFormat.printer()
+    private val fraudDetection = FraudDetectionQueries()
+
+    // Configurable fraud detection execution rate (0-100%)
+    private val fraudDetectionRate = System.getenv("FRAUD_DETECTION_RATE")?.toIntOrNull() ?: 80
 
     fun saveOrder(orderResult: OrderResult): Boolean {
         return try {
@@ -80,6 +84,22 @@ class OrderLogRepository {
                     val rowsAffected = stmt.executeUpdate()
                     if (rowsAffected > 0) {
                         logger.info("Successfully saved order ${orderResult.orderId} to database")
+
+                        // Run fraud detection analysis after successful insert
+                        if (kotlin.random.Random.nextInt(100) < fraudDetectionRate) {
+                            try {
+                                logger.info("🔍 Running fraud detection analysis for order ${orderResult.orderId}")
+                                val fraudDetected = fraudDetection.analyzeOrder(orderResult.orderId)
+                                if (fraudDetected) {
+                                    logger.warn("⚠️ Fraud indicators detected for order ${orderResult.orderId}")
+                                } else {
+                                    logger.info("✓ No fraud indicators found for order ${orderResult.orderId}")
+                                }
+                            } catch (e: Exception) {
+                                logger.error("Error running fraud detection for order ${orderResult.orderId}", e)
+                            }
+                        }
+
                         true
                     } else {
                         logger.warn("Failed to save order ${orderResult.orderId} - no rows affected")
