@@ -7,6 +7,10 @@ the release.
 
 ## Unreleased
 
+* [fraud-detection] Add automatic SQL Server database initialization for FraudDetection database
+  - Added ConfigMap with database initialization script
+  - Added postStart lifecycle hook to execute init script on SQL Server startup
+  - Fixed connection string to use correct database name (FraudDetection)
 * [chore] Use pre-built nginx otel image
   ([#2614](https://github.com/open-telemetry/opentelemetry-demo/pull/2614))
 * [grafana] Update grafana version to 12.2.0

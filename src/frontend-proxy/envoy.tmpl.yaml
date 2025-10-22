@@ -56,7 +56,7 @@ static_resources:
                         - match: { prefix: "/flagservice/" }
                           route: { cluster: flagservice, prefix_rewrite: "/", timeout: 0s }
                         - match: { prefix: "/feature" }
-                          route: { cluster: flagd-ui }
+                          route: { cluster: flagd-ui, prefix_rewrite: "/" }
                           typed_per_filter_config:
                             envoy.filters.http.lua:
                               "@type": type.googleapis.com/envoy.extensions.filters.http.lua.v3.LuaPerRoute
