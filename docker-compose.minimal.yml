@@ -13,9 +13,6 @@ networks:
     name: opentelemetry-demo
     driver: bridge
 
-volumes:
-  mysql-data:
-
 services:
   # ******************
   # Core Demo Services
@@ -458,19 +455,16 @@ services:
       - OTEL_SERVICE_NAME=product-reviews
       - OTEL_INSTRUMENTATION_GENAI_CAPTURE_MESSAGE_CONTENT=true
       - PROTOCOL_BUFFERS_PYTHON_IMPLEMENTATION=python
-      - MYSQL_HOST
-      - MYSQL_PORT
-      - MYSQL_DATABASE
-      - MYSQL_USER=otelu
-      - MYSQL_PASSWORD=otelp
-      - LLM_HOST
-      - LLM_PORT
+      - DB_CONNECTION_STRING=host=${POSTGRES_HOST} user=otelu password=otelp dbname=${POSTGRES_DB}
+      - LLM_BASE_URL
+      - OPENAI_API_KEY
+      - LLM_MODEL
     depends_on:
       product-catalog:
         condition: service_started
       llm:
         condition: service_started
-      mysql:
+      postgresql:
         condition: service_started
       otel-collector:
         condition: service_started
@@ -624,29 +618,6 @@ services:
       - FLAGD_PORT
     ports:
       - "${LLM_PORT}"
-    logging: *logging
-
-  # MySQL database used by Product Review service
-  mysql:
-    image: ${IMAGE_NAME}:${DEMO_VERSION}-mysql
-    container_name: mysql
-    build:
-      context: ./
-      dockerfile: ${MYSQL_DOCKERFILE}
-      cache_from:
-        - ${IMAGE_NAME}:${IMAGE_VERSION}-mysql
-    deploy:
-      resources:
-        limits:
-          memory: 500M
-    restart: unless-stopped
-    ports:
-      - ${MYSQL_PORT}
-    environment:
-      - MYSQL_ROOT_PASSWORD
-      - MYSQL_DATABASE
-    volumes:
-      - mysql-data:/var/lib/mysql
     logging: *logging
 
   # Valkey used by Cart service

@@ -76,8 +76,6 @@ services:
         condition: service_started
       llm:
         condition: service_started
-      mysql:
-        condition: service_started
       payment:
         condition: service_started
       product-catalog:

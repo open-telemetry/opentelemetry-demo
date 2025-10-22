@@ -7,9 +7,8 @@
 import os
 import simplejson as json
 
-# MySQL
-import mysql.connector
-from mysql.connector import Error
+# Postgres
+import psycopg2
 
 def must_map_env(key: str):
     value = os.environ.get(key)
@@ -17,12 +16,8 @@ def must_map_env(key: str):
         raise Exception(f'{key} environment variable must be set')
     return value
 
-# Retrieve MySQL environment variables
-db_host = must_map_env('MYSQL_HOST')
-db_port = must_map_env('MYSQL_PORT')
-db_user = must_map_env('MYSQL_USER')
-db_password = must_map_env('MYSQL_PASSWORD')
-db_name = must_map_env('MYSQL_DATABASE')
+# Retrieve Postgres environment variables
+db_connection_str = must_map_env('DB_CONNECTION_STRING')
 
 def fetch_product_reviews(product_id):
     try:
@@ -35,17 +30,11 @@ def fetch_product_reviews_from_db(request_product_id):
     connection = None
 
     try:
-        with mysql.connector.connect(
-            host=db_host,
-            port=db_port,
-            user=db_user,
-            password=db_password,
-            database=db_name
-        ) as connection:
+        with psycopg2.connect(db_connection_str) as connection:
 
             with connection.cursor() as cursor:
                 # Define the SQL query
-                query = "SELECT username, description, score FROM productreviews WHERE product_id= %s"
+                query = "SELECT username, description, score FROM reviews.productreviews WHERE product_id= %s"
 
                 # Execute the query
                 cursor.execute(query, (request_product_id, ))
@@ -54,11 +43,11 @@ def fetch_product_reviews_from_db(request_product_id):
                 records = cursor.fetchall()
                 return records
 
-    except Error as e:
+    except Exception as e:
         raise e
     finally:
         if connection is not None:
             try:
                 connection.close()
-            except Error as e:
+            except Exception as e:
                 pass

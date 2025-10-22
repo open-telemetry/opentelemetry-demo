@@ -35,8 +35,9 @@ from metrics import (
 # OpenAI
 from openai import OpenAI
 
-llm_host = None
-llm_port = None
+llm_base_url = None
+llm_api_key = None
+llm_model = None
 
 # --- Define the tool for the OpenAI API ---
 tools = [
@@ -112,10 +113,10 @@ def get_product_review_summary(request_product_id):
         product_review_summary = demo_pb2.GetProductReviewSummaryResponse()
 
         client = OpenAI(
-            base_url=f"http://{llm_host}:{llm_port}/v1",
+            base_url=f"{llm_base_url}",
             # The OpenAI API requires an api_key to be present, but
             # our LLM doesn't use it
-            api_key="dummy"
+            api_key=f"{llm_api_key}"
         )
 
         user_prompt = f"Summarize the reviews for product ID:{request_product_id}. Use the database tool as needed to fetch the existing reviews."
@@ -126,7 +127,7 @@ def get_product_review_summary(request_product_id):
 
         # use the LLM to summarize the product reviews
         initial_response = client.chat.completions.create(
-            model="astronomy-llm",
+            model=llm_model,
             messages=messages,
             tools=tools,
             tool_choice="auto"
@@ -173,7 +174,7 @@ def get_product_review_summary(request_product_id):
                 logger.info(f"Invoking the LLM with the following messages: '{messages}'")
 
                 final_response = client.chat.completions.create(
-                    model="astronomy-llm",
+                    model=llm_model,
                     messages=messages,
                 )
 
@@ -239,8 +240,9 @@ if __name__ == "__main__":
     demo_pb2_grpc.add_ProductReviewServiceServicer_to_server(service, server)
     health_pb2_grpc.add_HealthServicer_to_server(service, server)
 
-    llm_host = must_map_env('LLM_HOST')
-    llm_port = must_map_env('LLM_PORT')
+    llm_base_url = must_map_env('LLM_BASE_URL')
+    llm_api_key = must_map_env('OPENAI_API_KEY')
+    llm_model = must_map_env('LLM_MODEL')
 
     # Start server
     port = must_map_env('PRODUCT_REVIEWS_PORT')

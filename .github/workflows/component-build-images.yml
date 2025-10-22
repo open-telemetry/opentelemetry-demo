@@ -114,10 +114,6 @@ jobs:
             tag_suffix: load-generator
             context: ./
             setup-qemu: true
-          - file: ./src/mysql/Dockerfile
-            tag_suffix: mysql
-            context: ./
-            setup-qemu: true
           - file: ./src/opensearch/Dockerfile
             tag_suffix: opensearch
             context: ./
