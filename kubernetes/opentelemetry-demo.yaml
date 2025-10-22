@@ -82,8 +82,8 @@ kind: ServiceAccount
 metadata:
   name: opentelemetry-demo
   labels:
-
-
+    
+    
     app.kubernetes.io/version: "2.1.3"
     app.kubernetes.io/part-of: opentelemetry-demo
 ---
@@ -99,7 +99,7 @@ metadata:
     app.kubernetes.io/version: "12.1.1"
 type: Opaque
 data:
-
+  
   admin-user: "YWRtaW4="
   admin-password: "YWRtaW4="
   ldap-toml: ""
@@ -141,7 +141,7 @@ metadata:
     app.kubernetes.io/instance: opentelemetry-demo
     app.kubernetes.io/version: "12.1.1"
 data:
-
+  
   plugins: grafana-opensearch-datasource
   grafana.ini: |
     [analytics]
@@ -800,12 +800,12 @@ metadata:
   name: flagd-config
   namespace: otel-demo
   labels:
-
-
+    
+    
     app.kubernetes.io/version: "2.1.3"
     app.kubernetes.io/part-of: opentelemetry-demo
 data:
-
+  
   demo.flagd.json: |
     {
       "$schema": "https://flagd.dev/schema/v0/flags.json",
@@ -925,13 +925,13 @@ metadata:
   name: grafana-alerting
   namespace: otel-demo
   labels:
-
-
+    
+    
     app.kubernetes.io/version: "2.1.3"
     app.kubernetes.io/part-of: opentelemetry-demo
     grafana_alert: "1"
 data:
-
+  
   {}
 ---
 # Source: opentelemetry-demo/templates/grafana-config.yaml
@@ -941,8 +941,8 @@ metadata:
   name: grafana-dashboard-nginx-metrics
   namespace: otel-demo
   labels:
-
-
+    
+    
     app.kubernetes.io/version: "2.1.3"
     app.kubernetes.io/part-of: opentelemetry-demo
     grafana_dashboard: "1"
@@ -1297,8 +1297,8 @@ metadata:
   name: grafana-dashboard-apm-dashboard
   namespace: otel-demo
   labels:
-
-
+    
+    
     app.kubernetes.io/version: "2.1.3"
     app.kubernetes.io/part-of: opentelemetry-demo
     grafana_dashboard: "1"
@@ -3452,8 +3452,8 @@ metadata:
   name: grafana-dashboard-demo-dashboard
   namespace: otel-demo
   labels:
-
-
+    
+    
     app.kubernetes.io/version: "2.1.3"
     app.kubernetes.io/part-of: opentelemetry-demo
     grafana_dashboard: "1"
@@ -4654,8 +4654,8 @@ metadata:
   name: grafana-dashboard-exemplars-dashboard
   namespace: otel-demo
   labels:
-
-
+    
+    
     app.kubernetes.io/version: "2.1.3"
     app.kubernetes.io/part-of: opentelemetry-demo
     grafana_dashboard: "1"
@@ -5128,8 +5128,8 @@ metadata:
   name: grafana-dashboard-linux-dashboard
   namespace: otel-demo
   labels:
-
-
+    
+    
     app.kubernetes.io/version: "2.1.3"
     app.kubernetes.io/part-of: opentelemetry-demo
     grafana_dashboard: "1"
@@ -7972,8 +7972,8 @@ metadata:
   name: grafana-dashboard-opentelemetry-collector
   namespace: otel-demo
   labels:
-
-
+    
+    
     app.kubernetes.io/version: "2.1.3"
     app.kubernetes.io/part-of: opentelemetry-demo
     grafana_dashboard: "1"
@@ -14305,8 +14305,8 @@ metadata:
   name: grafana-dashboard-postgresql-dashboard
   namespace: otel-demo
   labels:
-
-
+    
+    
     app.kubernetes.io/version: "2.1.3"
     app.kubernetes.io/part-of: opentelemetry-demo
     grafana_dashboard: "1"
@@ -15794,8 +15794,8 @@ metadata:
   name: grafana-dashboard-spanmetrics-dashboard
   namespace: otel-demo
   labels:
-
-
+    
+    
     app.kubernetes.io/version: "2.1.3"
     app.kubernetes.io/part-of: opentelemetry-demo
     grafana_dashboard: "1"
@@ -16843,20 +16843,20 @@ metadata:
   name: grafana-datasources
   namespace: otel-demo
   labels:
-
-
+    
+    
     app.kubernetes.io/version: "2.1.3"
     app.kubernetes.io/part-of: opentelemetry-demo
     grafana_datasource: "1"
 data:
-
+  
   default.yaml: |
     # Copyright The OpenTelemetry Authors
     # SPDX-License-Identifier: Apache-2.0
-    
-    
+  
+  
     apiVersion: 1
-    
+  
     datasources:
       - name: Prometheus
         uid: webstore-metrics
@@ -16870,17 +16870,17 @@ data:
           exemplarTraceIdDestinations:
             - datasourceUid: webstore-traces
               name: trace_id
-    
+  
             - url: http://localhost:8080/jaeger/ui/trace/$${__value.raw}
               name: trace_id
               urlDisplayLabel: View in Jaeger UI
   jaeger.yaml: |
     # Copyright The OpenTelemetry Authors
     # SPDX-License-Identifier: Apache-2.0
-    
-    
+  
+  
     apiVersion: 1
-    
+  
     datasources:
       - name: Jaeger
         uid: webstore-traces
@@ -16900,9 +16900,9 @@ data:
   opensearch.yaml: |
     # Copyright The OpenTelemetry Authors
     # SPDX-License-Identifier: Apache-2.0
-    
+  
     apiVersion: 1
-    
+  
     datasources:
       - name: OpenSearch
         uid: webstore-logs
@@ -16927,12 +16927,12 @@ metadata:
   name: product-catalog-products
   namespace: otel-demo
   labels:
-
-
+    
+    
     app.kubernetes.io/version: "2.1.3"
     app.kubernetes.io/part-of: opentelemetry-demo
 data:
-
+  
   products.json: |
     {
       "products": [
@@ -17204,9 +17204,9 @@ roleRef:
   kind: ClusterRole
   name: otel-collector
 subjects:
-  - kind: ServiceAccount
-    name: otel-collector
-    namespace: otel-demo
+- kind: ServiceAccount
+  name: otel-collector
+  namespace: otel-demo
 ---
 # Source: opentelemetry-demo/charts/prometheus/templates/clusterrolebinding.yaml
 apiVersion: rbac.authorization.k8s.io/v1
@@ -17255,9 +17255,9 @@ roleRef:
   kind: Role
   name: grafana
 subjects:
-  - kind: ServiceAccount
-    name: grafana
-    namespace: otel-demo
+- kind: ServiceAccount
+  name: grafana
+  namespace: otel-demo
 ---
 # Source: opentelemetry-demo/charts/grafana/templates/service.yaml
 apiVersion: v1
@@ -17396,15 +17396,15 @@ spec:
     app.kubernetes.io/name: opensearch
     app.kubernetes.io/instance: opentelemetry-demo
   ports:
-    - name: http
-      protocol: TCP
-      port: 9200
-    - name: transport
-      protocol: TCP
-      port: 9300
-    - name: metrics
-      protocol: TCP
-      port: 9600
+  - name: http
+    protocol: TCP
+    port: 9200
+  - name: transport
+    protocol: TCP
+    port: 9300
+  - name: metrics
+    protocol: TCP
+    port: 9600
 ---
 # Source: opentelemetry-demo/charts/opensearch/templates/service.yaml
 kind: Service
@@ -17426,12 +17426,12 @@ spec:
     app.kubernetes.io/name: opensearch
     app.kubernetes.io/instance: opentelemetry-demo
   ports:
-    - name: http
-      port: 9200
-    - name: transport
-      port: 9300
-    - name: metrics
-      port: 9600
+  - name: http
+    port: 9200
+  - name: transport
+    port: 9300
+  - name: metrics
+    port: 9600
 ---
 # Source: opentelemetry-demo/charts/opentelemetry-collector/templates/service.yaml
 apiVersion: v1
@@ -17449,7 +17449,7 @@ metadata:
 spec:
   type: ClusterIP
   ports:
-
+    
     - name: jaeger-compact
       port: 6831
       targetPort: 6831
@@ -17516,9 +17516,9 @@ kind: Service
 metadata:
   name: ad
   labels:
-
+    
     opentelemetry.io/name: ad
-
+    
     app.kubernetes.io/component: ad
     app.kubernetes.io/name: ad
     app.kubernetes.io/version: "2.1.3"
@@ -17530,7 +17530,7 @@ spec:
       name: tcp-service
       targetPort: 8080
   selector:
-
+    
     opentelemetry.io/name: ad
 ---
 # Source: opentelemetry-demo/templates/component.yaml
@@ -17539,9 +17539,9 @@ kind: Service
 metadata:
   name: cart
   labels:
-
+    
     opentelemetry.io/name: cart
-
+    
     app.kubernetes.io/component: cart
     app.kubernetes.io/name: cart
     app.kubernetes.io/version: "2.1.3"
@@ -17553,7 +17553,7 @@ spec:
       name: tcp-service
       targetPort: 8080
   selector:
-
+    
     opentelemetry.io/name: cart
 ---
 # Source: opentelemetry-demo/templates/component.yaml
@@ -17562,9 +17562,9 @@ kind: Service
 metadata:
   name: checkout
   labels:
-
+    
     opentelemetry.io/name: checkout
-
+    
     app.kubernetes.io/component: checkout
     app.kubernetes.io/name: checkout
     app.kubernetes.io/version: "2.1.3"
@@ -17576,7 +17576,7 @@ spec:
       name: tcp-service
       targetPort: 8080
   selector:
-
+    
     opentelemetry.io/name: checkout
 ---
 # Source: opentelemetry-demo/templates/component.yaml
@@ -17585,9 +17585,9 @@ kind: Service
 metadata:
   name: currency
   labels:
-
+    
     opentelemetry.io/name: currency
-
+    
     app.kubernetes.io/component: currency
     app.kubernetes.io/name: currency
     app.kubernetes.io/version: "2.1.3"
@@ -17599,7 +17599,7 @@ spec:
       name: tcp-service
       targetPort: 8080
   selector:
-
+    
     opentelemetry.io/name: currency
 ---
 # Source: opentelemetry-demo/templates/component.yaml
@@ -17608,9 +17608,9 @@ kind: Service
 metadata:
   name: email
   labels:
-
+    
     opentelemetry.io/name: email
-
+    
     app.kubernetes.io/component: email
     app.kubernetes.io/name: email
     app.kubernetes.io/version: "2.1.3"
@@ -17622,7 +17622,7 @@ spec:
       name: tcp-service
       targetPort: 8080
   selector:
-
+    
     opentelemetry.io/name: email
 ---
 # Source: opentelemetry-demo/templates/component.yaml
@@ -17631,9 +17631,9 @@ kind: Service
 metadata:
   name: flagd
   labels:
-
+    
     opentelemetry.io/name: flagd
-
+    
     app.kubernetes.io/component: flagd
     app.kubernetes.io/name: flagd
     app.kubernetes.io/version: "2.1.3"
@@ -17651,7 +17651,7 @@ spec:
       name: tcp-service-0
       targetPort: 4000
   selector:
-
+    
     opentelemetry.io/name: flagd
 ---
 # Source: opentelemetry-demo/templates/component.yaml
@@ -17660,9 +17660,9 @@ kind: Service
 metadata:
   name: frontend
   labels:
-
+    
     opentelemetry.io/name: frontend
-
+    
     app.kubernetes.io/component: frontend
     app.kubernetes.io/name: frontend
     app.kubernetes.io/version: "2.1.3"
@@ -17674,7 +17674,7 @@ spec:
       name: tcp-service
       targetPort: 8080
   selector:
-
+    
     opentelemetry.io/name: frontend
 ---
 # Source: opentelemetry-demo/templates/component.yaml
@@ -17683,9 +17683,9 @@ kind: Service
 metadata:
   name: frontend-proxy
   labels:
-
+    
     opentelemetry.io/name: frontend-proxy
-
+    
     app.kubernetes.io/component: frontend-proxy
     app.kubernetes.io/name: frontend-proxy
     app.kubernetes.io/version: "2.1.3"
@@ -17697,7 +17697,7 @@ spec:
       name: tcp-service
       targetPort: 8080
   selector:
-
+    
     opentelemetry.io/name: frontend-proxy
 ---
 # Source: opentelemetry-demo/templates/component.yaml
@@ -17706,9 +17706,9 @@ kind: Service
 metadata:
   name: image-provider
   labels:
-
+    
     opentelemetry.io/name: image-provider
-
+    
     app.kubernetes.io/component: image-provider
     app.kubernetes.io/name: image-provider
     app.kubernetes.io/version: "2.1.3"
@@ -17720,7 +17720,7 @@ spec:
       name: tcp-service
       targetPort: 8081
   selector:
-
+    
     opentelemetry.io/name: image-provider
 ---
 # Source: opentelemetry-demo/templates/component.yaml
@@ -17729,9 +17729,9 @@ kind: Service
 metadata:
   name: kafka
   labels:
-
+    
     opentelemetry.io/name: kafka
-
+    
     app.kubernetes.io/component: kafka
     app.kubernetes.io/name: kafka
     app.kubernetes.io/version: "2.1.3"
@@ -17746,7 +17746,7 @@ spec:
       name: controller
       targetPort: 9093
   selector:
-
+    
     opentelemetry.io/name: kafka
 ---
 # Source: opentelemetry-demo/templates/component.yaml
@@ -17755,9 +17755,9 @@ kind: Service
 metadata:
   name: load-generator
   labels:
-
+    
     opentelemetry.io/name: load-generator
-
+    
     app.kubernetes.io/component: load-generator
     app.kubernetes.io/name: load-generator
     app.kubernetes.io/version: "2.1.3"
@@ -17769,7 +17769,7 @@ spec:
       name: tcp-service
       targetPort: 8089
   selector:
-
+    
     opentelemetry.io/name: load-generator
 ---
 # Source: opentelemetry-demo/templates/component.yaml
@@ -17778,9 +17778,9 @@ kind: Service
 metadata:
   name: payment
   labels:
-
+    
     opentelemetry.io/name: payment
-
+    
     app.kubernetes.io/component: payment
     app.kubernetes.io/name: payment
     app.kubernetes.io/version: "2.1.3"
@@ -17792,7 +17792,7 @@ spec:
       name: tcp-service
       targetPort: 8080
   selector:
-
+    
     opentelemetry.io/name: payment
 ---
 # Source: opentelemetry-demo/templates/component.yaml
@@ -17801,9 +17801,9 @@ kind: Service
 metadata:
   name: postgresql
   labels:
-
+    
     opentelemetry.io/name: postgresql
-
+    
     app.kubernetes.io/component: postgresql
     app.kubernetes.io/name: postgresql
     app.kubernetes.io/version: "2.1.3"
@@ -17815,7 +17815,7 @@ spec:
       name: tcp-service
       targetPort: 5432
   selector:
-
+    
     opentelemetry.io/name: postgresql
 ---
 # Source: opentelemetry-demo/templates/component.yaml
@@ -17824,9 +17824,9 @@ kind: Service
 metadata:
   name: product-catalog
   labels:
-
+    
     opentelemetry.io/name: product-catalog
-
+    
     app.kubernetes.io/component: product-catalog
     app.kubernetes.io/name: product-catalog
     app.kubernetes.io/version: "2.1.3"
@@ -17838,7 +17838,7 @@ spec:
       name: tcp-service
       targetPort: 8080
   selector:
-
+    
     opentelemetry.io/name: product-catalog
 ---
 # Source: opentelemetry-demo/templates/component.yaml
@@ -17847,9 +17847,9 @@ kind: Service
 metadata:
   name: quote
   labels:
-
+    
     opentelemetry.io/name: quote
-
+    
     app.kubernetes.io/component: quote
     app.kubernetes.io/name: quote
     app.kubernetes.io/version: "2.1.3"
@@ -17861,7 +17861,7 @@ spec:
       name: tcp-service
       targetPort: 8080
   selector:
-
+    
     opentelemetry.io/name: quote
 ---
 # Source: opentelemetry-demo/templates/component.yaml
@@ -17870,9 +17870,9 @@ kind: Service
 metadata:
   name: recommendation
   labels:
-
+    
     opentelemetry.io/name: recommendation
-
+    
     app.kubernetes.io/component: recommendation
     app.kubernetes.io/name: recommendation
     app.kubernetes.io/version: "2.1.3"
@@ -17884,7 +17884,7 @@ spec:
       name: tcp-service
       targetPort: 8080
   selector:
-
+    
     opentelemetry.io/name: recommendation
 ---
 # Source: opentelemetry-demo/templates/component.yaml
@@ -17893,9 +17893,9 @@ kind: Service
 metadata:
   name: shipping
   labels:
-
+    
     opentelemetry.io/name: shipping
-
+    
     app.kubernetes.io/component: shipping
     app.kubernetes.io/name: shipping
     app.kubernetes.io/version: "2.1.3"
@@ -17907,7 +17907,7 @@ spec:
       name: tcp-service
       targetPort: 8080
   selector:
-
+    
     opentelemetry.io/name: shipping
 ---
 # Source: opentelemetry-demo/templates/component.yaml
@@ -17916,9 +17916,9 @@ kind: Service
 metadata:
   name: valkey-cart
   labels:
-
+    
     opentelemetry.io/name: valkey-cart
-
+    
     app.kubernetes.io/component: valkey-cart
     app.kubernetes.io/name: valkey-cart
     app.kubernetes.io/version: "2.1.3"
@@ -17930,7 +17930,7 @@ spec:
       name: valkey-cart
       targetPort: 6379
   selector:
-
+    
     opentelemetry.io/name: valkey-cart
 ---
 # Source: opentelemetry-demo/charts/grafana/templates/deployment.yaml
@@ -17964,7 +17964,7 @@ spec:
         checksum/secret: bed677784356b2af7fb0d87455db21f077853059b594101a4f6532bfbd962a7f
         kubectl.kubernetes.io/default-container: grafana
     spec:
-
+      
       serviceAccountName: grafana
       automountServiceAccountToken: true
       shareProcessNamespace: false
@@ -18009,7 +18009,7 @@ spec:
             allowPrivilegeEscalation: false
             capabilities:
               drop:
-                - ALL
+              - ALL
             seccompProfile:
               type: RuntimeDefault
           volumeMounts:
@@ -18049,7 +18049,7 @@ spec:
             allowPrivilegeEscalation: false
             capabilities:
               drop:
-                - ALL
+              - ALL
             seccompProfile:
               type: RuntimeDefault
           volumeMounts:
@@ -18089,7 +18089,7 @@ spec:
             allowPrivilegeEscalation: false
             capabilities:
               drop:
-                - ALL
+              - ALL
             seccompProfile:
               type: RuntimeDefault
           volumeMounts:
@@ -18102,7 +18102,7 @@ spec:
             allowPrivilegeEscalation: false
             capabilities:
               drop:
-                - ALL
+              - ALL
             seccompProfile:
               type: RuntimeDefault
           volumeMounts:
@@ -18227,7 +18227,7 @@ spec:
         prometheus.io/port: "14269"
         prometheus.io/scrape: "true"
     spec:
-
+      
       containers:
         - env:
             - name: METRICS_STORAGE_TYPE
@@ -18238,7 +18238,7 @@ spec:
               value: 0.0.0.0:4318
             - name: SPAN_STORAGE_TYPE
               value: memory
-
+            
             - name: COLLECTOR_ZIPKIN_HOST_PORT
               value: :9411
             - name: JAEGER_DISABLED
@@ -18338,9 +18338,9 @@ spec:
         app.kubernetes.io/name: opentelemetry-collector
         app.kubernetes.io/instance: opentelemetry-demo
         component: standalone-collector
-
+        
     spec:
-
+      
       serviceAccountName: otel-collector
       automountServiceAccountToken: true
       securityContext:
@@ -18354,7 +18354,7 @@ spec:
           image: "otel/opentelemetry-collector-contrib:0.135.0"
           imagePullPolicy: IfNotPresent
           ports:
-
+            
             - name: jaeger-compact
               containerPort: 6831
               protocol: UDP
@@ -18506,9 +18506,9 @@ kind: Deployment
 metadata:
   name: accounting
   labels:
-
+    
     opentelemetry.io/name: accounting
-
+    
     app.kubernetes.io/component: accounting
     app.kubernetes.io/name: accounting
     app.kubernetes.io/version: "2.1.3"
@@ -18518,14 +18518,14 @@ spec:
   revisionHistoryLimit: 10
   selector:
     matchLabels:
-
+      
       opentelemetry.io/name: accounting
   template:
     metadata:
       labels:
-
+        
         opentelemetry.io/name: accounting
-
+        
         app.kubernetes.io/component: accounting
         app.kubernetes.io/name: accounting
     spec:
@@ -18560,9 +18560,9 @@ spec:
           volumeMounts:
       initContainers:
         - command:
-            - sh
-            - -c
-            - until nc -z -v -w30 kafka 9092; do echo waiting for kafka; sleep 2; done;
+          - sh
+          - -c
+          - until nc -z -v -w30 kafka 9092; do echo waiting for kafka; sleep 2; done;
           image: busybox:latest
           name: wait-for-kafka
       volumes:
@@ -18573,9 +18573,9 @@ kind: Deployment
 metadata:
   name: ad
   labels:
-
+    
     opentelemetry.io/name: ad
-
+    
     app.kubernetes.io/component: ad
     app.kubernetes.io/name: ad
     app.kubernetes.io/version: "2.1.3"
@@ -18585,14 +18585,14 @@ spec:
   revisionHistoryLimit: 10
   selector:
     matchLabels:
-
+      
       opentelemetry.io/name: ad
   template:
     metadata:
       labels:
-
+        
         opentelemetry.io/name: ad
-
+        
         app.kubernetes.io/component: ad
         app.kubernetes.io/name: ad
     spec:
@@ -18602,7 +18602,7 @@ spec:
           image: 'ghcr.io/open-telemetry/demo:2.1.3-ad'
           imagePullPolicy: IfNotPresent
           ports:
-
+            
             - containerPort: 8080
               name: service
           env:
@@ -18639,9 +18639,9 @@ kind: Deployment
 metadata:
   name: cart
   labels:
-
+    
     opentelemetry.io/name: cart
-
+    
     app.kubernetes.io/component: cart
     app.kubernetes.io/name: cart
     app.kubernetes.io/version: "2.1.3"
@@ -18651,14 +18651,14 @@ spec:
   revisionHistoryLimit: 10
   selector:
     matchLabels:
-
+      
       opentelemetry.io/name: cart
   template:
     metadata:
       labels:
-
+        
         opentelemetry.io/name: cart
-
+        
         app.kubernetes.io/component: cart
         app.kubernetes.io/name: cart
     spec:
@@ -18668,7 +18668,7 @@ spec:
           image: 'ghcr.io/open-telemetry/demo:2.1.3-cart'
           imagePullPolicy: IfNotPresent
           ports:
-
+            
             - containerPort: 8080
               name: service
           env:
@@ -18701,10 +18701,10 @@ spec:
           volumeMounts:
       initContainers:
         - command:
-            - sh
-            - -c
-            - until nc -z -v -w30 valkey-cart 6379; do echo waiting for valkey-cart; sleep 2;
-              done;
+          - sh
+          - -c
+          - until nc -z -v -w30 valkey-cart 6379; do echo waiting for valkey-cart; sleep 2;
+            done;
           image: busybox:latest
           name: wait-for-valkey-cart
       volumes:
@@ -18715,9 +18715,9 @@ kind: Deployment
 metadata:
   name: checkout
   labels:
-
+    
     opentelemetry.io/name: checkout
-
+    
     app.kubernetes.io/component: checkout
     app.kubernetes.io/name: checkout
     app.kubernetes.io/version: "2.1.3"
@@ -18727,14 +18727,14 @@ spec:
   revisionHistoryLimit: 10
   selector:
     matchLabels:
-
+      
       opentelemetry.io/name: checkout
   template:
     metadata:
       labels:
-
+        
         opentelemetry.io/name: checkout
-
+        
         app.kubernetes.io/component: checkout
         app.kubernetes.io/name: checkout
     spec:
@@ -18744,7 +18744,7 @@ spec:
           image: 'ghcr.io/open-telemetry/demo:2.1.3-checkout'
           imagePullPolicy: IfNotPresent
           ports:
-
+            
             - containerPort: 8080
               name: service
           env:
@@ -18789,9 +18789,9 @@ spec:
           volumeMounts:
       initContainers:
         - command:
-            - sh
-            - -c
-            - until nc -z -v -w30 kafka 9092; do echo waiting for kafka; sleep 2; done;
+          - sh
+          - -c
+          - until nc -z -v -w30 kafka 9092; do echo waiting for kafka; sleep 2; done;
           image: busybox:latest
           name: wait-for-kafka
       volumes:
@@ -18802,9 +18802,9 @@ kind: Deployment
 metadata:
   name: currency
   labels:
-
+    
     opentelemetry.io/name: currency
-
+    
     app.kubernetes.io/component: currency
     app.kubernetes.io/name: currency
     app.kubernetes.io/version: "2.1.3"
@@ -18814,14 +18814,14 @@ spec:
   revisionHistoryLimit: 10
   selector:
     matchLabels:
-
+      
       opentelemetry.io/name: currency
   template:
     metadata:
       labels:
-
+        
         opentelemetry.io/name: currency
-
+        
         app.kubernetes.io/component: currency
         app.kubernetes.io/name: currency
     spec:
@@ -18831,7 +18831,7 @@ spec:
           image: 'ghcr.io/open-telemetry/demo:2.1.3-currency'
           imagePullPolicy: IfNotPresent
           ports:
-
+            
             - containerPort: 8080
               name: service
           env:
@@ -18864,9 +18864,9 @@ kind: Deployment
 metadata:
   name: email
   labels:
-
+    
     opentelemetry.io/name: email
-
+    
     app.kubernetes.io/component: email
     app.kubernetes.io/name: email
     app.kubernetes.io/version: "2.1.3"
@@ -18876,14 +18876,14 @@ spec:
   revisionHistoryLimit: 10
   selector:
     matchLabels:
-
+      
       opentelemetry.io/name: email
   template:
     metadata:
       labels:
-
+        
         opentelemetry.io/name: email
-
+        
         app.kubernetes.io/component: email
         app.kubernetes.io/name: email
     spec:
@@ -18893,7 +18893,7 @@ spec:
           image: 'ghcr.io/open-telemetry/demo:2.1.3-email'
           imagePullPolicy: IfNotPresent
           ports:
-
+            
             - containerPort: 8080
               name: service
           env:
@@ -18930,9 +18930,9 @@ kind: Deployment
 metadata:
   name: flagd
   labels:
-
+    
     opentelemetry.io/name: flagd
-
+    
     app.kubernetes.io/component: flagd
     app.kubernetes.io/name: flagd
     app.kubernetes.io/version: "2.1.3"
@@ -18942,14 +18942,14 @@ spec:
   revisionHistoryLimit: 10
   selector:
     matchLabels:
-
+      
       opentelemetry.io/name: flagd
   template:
     metadata:
       labels:
-
+        
         opentelemetry.io/name: flagd
-
+        
         app.kubernetes.io/component: flagd
         app.kubernetes.io/name: flagd
     spec:
@@ -18968,7 +18968,7 @@ spec:
             - --uri
             - file:./etc/flagd/demo.flagd.json
           ports:
-
+            
             - containerPort: 8013
               name: rpc
             - containerPort: 8016
@@ -19001,7 +19001,7 @@ spec:
           image: 'ghcr.io/open-telemetry/demo:2.1.3-flagd-ui'
           imagePullPolicy: IfNotPresent
           ports:
-
+            
             - containerPort: 4000
               name: service
           env:
@@ -19034,16 +19034,16 @@ spec:
               name: config-rw
       initContainers:
         - command:
-            - sh
-            - -c
-            - cp /config-ro/demo.flagd.json /config-rw/demo.flagd.json && cat /config-rw/demo.flagd.json
+          - sh
+          - -c
+          - cp /config-ro/demo.flagd.json /config-rw/demo.flagd.json && cat /config-rw/demo.flagd.json
           image: busybox
           name: init-config
           volumeMounts:
-            - mountPath: /config-ro
-              name: config-ro
-            - mountPath: /config-rw
-              name: config-rw
+          - mountPath: /config-ro
+            name: config-ro
+          - mountPath: /config-rw
+            name: config-rw
       volumes:
         - name: config-rw
           emptyDir: {}
@@ -19057,9 +19057,9 @@ kind: Deployment
 metadata:
   name: fraud-detection
   labels:
-
+    
     opentelemetry.io/name: fraud-detection
-
+    
     app.kubernetes.io/component: fraud-detection
     app.kubernetes.io/name: fraud-detection
     app.kubernetes.io/version: "2.1.3"
@@ -19069,14 +19069,14 @@ spec:
   revisionHistoryLimit: 10
   selector:
     matchLabels:
-
+      
       opentelemetry.io/name: fraud-detection
   template:
     metadata:
       labels:
-
+        
         opentelemetry.io/name: fraud-detection
-
+        
         app.kubernetes.io/component: fraud-detection
         app.kubernetes.io/name: fraud-detection
     spec:
@@ -19115,9 +19115,9 @@ spec:
           volumeMounts:
       initContainers:
         - command:
-            - sh
-            - -c
-            - until nc -z -v -w30 kafka 9092; do echo waiting for kafka; sleep 2; done;
+          - sh
+          - -c
+          - until nc -z -v -w30 kafka 9092; do echo waiting for kafka; sleep 2; done;
           image: busybox:latest
           name: wait-for-kafka
       volumes:
@@ -19128,9 +19128,9 @@ kind: Deployment
 metadata:
   name: frontend
   labels:
-
+    
     opentelemetry.io/name: frontend
-
+    
     app.kubernetes.io/component: frontend
     app.kubernetes.io/name: frontend
     app.kubernetes.io/version: "2.1.3"
@@ -19140,14 +19140,14 @@ spec:
   revisionHistoryLimit: 10
   selector:
     matchLabels:
-
+      
       opentelemetry.io/name: frontend
   template:
     metadata:
       labels:
-
+        
         opentelemetry.io/name: frontend
-
+        
         app.kubernetes.io/component: frontend
         app.kubernetes.io/name: frontend
     spec:
@@ -19157,7 +19157,7 @@ spec:
           image: 'ghcr.io/open-telemetry/demo:2.1.3-frontend'
           imagePullPolicy: IfNotPresent
           ports:
-
+            
             - containerPort: 8080
               name: service
           env:
@@ -19222,9 +19222,9 @@ kind: Deployment
 metadata:
   name: frontend-proxy
   labels:
-
+    
     opentelemetry.io/name: frontend-proxy
-
+    
     app.kubernetes.io/component: frontend-proxy
     app.kubernetes.io/name: frontend-proxy
     app.kubernetes.io/version: "2.1.3"
@@ -19234,14 +19234,14 @@ spec:
   revisionHistoryLimit: 10
   selector:
     matchLabels:
-
+      
       opentelemetry.io/name: frontend-proxy
   template:
     metadata:
       labels:
-
+        
         opentelemetry.io/name: frontend-proxy
-
+        
         app.kubernetes.io/component: frontend-proxy
         app.kubernetes.io/name: frontend-proxy
     spec:
@@ -19251,7 +19251,7 @@ spec:
           image: 'ghcr.io/open-telemetry/demo:2.1.3-frontend-proxy'
           imagePullPolicy: IfNotPresent
           ports:
-
+            
             - containerPort: 8080
               name: service
           env:
@@ -19320,9 +19320,9 @@ kind: Deployment
 metadata:
   name: image-provider
   labels:
-
+    
     opentelemetry.io/name: image-provider
-
+    
     app.kubernetes.io/component: image-provider
     app.kubernetes.io/name: image-provider
     app.kubernetes.io/version: "2.1.3"
@@ -19332,14 +19332,14 @@ spec:
   revisionHistoryLimit: 10
   selector:
     matchLabels:
-
+      
       opentelemetry.io/name: image-provider
   template:
     metadata:
       labels:
-
+        
         opentelemetry.io/name: image-provider
-
+        
         app.kubernetes.io/component: image-provider
         app.kubernetes.io/name: image-provider
     spec:
@@ -19349,7 +19349,7 @@ spec:
           image: 'ghcr.io/open-telemetry/demo:2.1.3-image-provider'
           imagePullPolicy: IfNotPresent
           ports:
-
+            
             - containerPort: 8081
               name: service
           env:
@@ -19382,9 +19382,9 @@ kind: Deployment
 metadata:
   name: kafka
   labels:
-
+    
     opentelemetry.io/name: kafka
-
+    
     app.kubernetes.io/component: kafka
     app.kubernetes.io/name: kafka
     app.kubernetes.io/version: "2.1.3"
@@ -19394,14 +19394,14 @@ spec:
   revisionHistoryLimit: 10
   selector:
     matchLabels:
-
+      
       opentelemetry.io/name: kafka
   template:
     metadata:
       labels:
-
+        
         opentelemetry.io/name: kafka
-
+        
         app.kubernetes.io/component: kafka
         app.kubernetes.io/name: kafka
     spec:
@@ -19411,7 +19411,7 @@ spec:
           image: 'ghcr.io/open-telemetry/demo:2.1.3-kafka'
           imagePullPolicy: IfNotPresent
           ports:
-
+            
             - containerPort: 9092
               name: plaintext
             - containerPort: 9093
@@ -19456,9 +19456,9 @@ kind: Deployment
 metadata:
   name: load-generator
   labels:
-
+    
     opentelemetry.io/name: load-generator
-
+    
     app.kubernetes.io/component: load-generator
     app.kubernetes.io/name: load-generator
     app.kubernetes.io/version: "2.1.3"
@@ -19468,14 +19468,14 @@ spec:
   revisionHistoryLimit: 10
   selector:
     matchLabels:
-
+      
       opentelemetry.io/name: load-generator
   template:
     metadata:
       labels:
-
+        
         opentelemetry.io/name: load-generator
-
+        
         app.kubernetes.io/component: load-generator
         app.kubernetes.io/name: load-generator
     spec:
@@ -19485,7 +19485,7 @@ spec:
           image: 'ghcr.io/open-telemetry/demo:2.1.3-load-generator'
           imagePullPolicy: IfNotPresent
           ports:
-
+            
             - containerPort: 8089
               name: service
           env:
@@ -19538,9 +19538,9 @@ kind: Deployment
 metadata:
   name: payment
   labels:
-
+    
     opentelemetry.io/name: payment
-
+    
     app.kubernetes.io/component: payment
     app.kubernetes.io/name: payment
     app.kubernetes.io/version: "2.1.3"
@@ -19550,14 +19550,14 @@ spec:
   revisionHistoryLimit: 10
   selector:
     matchLabels:
-
+      
       opentelemetry.io/name: payment
   template:
     metadata:
       labels:
-
+        
         opentelemetry.io/name: payment
-
+        
         app.kubernetes.io/component: payment
         app.kubernetes.io/name: payment
     spec:
@@ -19567,7 +19567,7 @@ spec:
           image: 'ghcr.io/open-telemetry/demo:2.1.3-payment'
           imagePullPolicy: IfNotPresent
           ports:
-
+            
             - containerPort: 8080
               name: service
           env:
@@ -19606,9 +19606,9 @@ kind: Deployment
 metadata:
   name: postgresql
   labels:
-
+    
     opentelemetry.io/name: postgresql
-
+    
     app.kubernetes.io/component: postgresql
     app.kubernetes.io/name: postgresql
     app.kubernetes.io/version: "2.1.3"
@@ -19618,14 +19618,14 @@ spec:
   revisionHistoryLimit: 10
   selector:
     matchLabels:
-
+      
       opentelemetry.io/name: postgresql
   template:
     metadata:
       labels:
-
+        
         opentelemetry.io/name: postgresql
-
+        
         app.kubernetes.io/component: postgresql
         app.kubernetes.io/name: postgresql
     spec:
@@ -19635,7 +19635,7 @@ spec:
           image: 'ghcr.io/open-telemetry/demo:2.1.3-postgresql'
           imagePullPolicy: IfNotPresent
           ports:
-
+            
             - containerPort: 5432
               name: service
           env:
@@ -19668,9 +19668,9 @@ kind: Deployment
 metadata:
   name: product-catalog
   labels:
-
+    
     opentelemetry.io/name: product-catalog
-
+    
     app.kubernetes.io/component: product-catalog
     app.kubernetes.io/name: product-catalog
     app.kubernetes.io/version: "2.1.3"
@@ -19680,14 +19680,14 @@ spec:
   revisionHistoryLimit: 10
   selector:
     matchLabels:
-
+      
       opentelemetry.io/name: product-catalog
   template:
     metadata:
       labels:
-
+        
         opentelemetry.io/name: product-catalog
-
+        
         app.kubernetes.io/component: product-catalog
         app.kubernetes.io/name: product-catalog
     spec:
@@ -19697,7 +19697,7 @@ spec:
           image: 'ghcr.io/open-telemetry/demo:2.1.3-product-catalog'
           imagePullPolicy: IfNotPresent
           ports:
-
+            
             - containerPort: 8080
               name: service
           env:
@@ -19741,9 +19741,9 @@ kind: Deployment
 metadata:
   name: quote
   labels:
-
+    
     opentelemetry.io/name: quote
-
+    
     app.kubernetes.io/component: quote
     app.kubernetes.io/name: quote
     app.kubernetes.io/version: "2.1.3"
@@ -19753,14 +19753,14 @@ spec:
   revisionHistoryLimit: 10
   selector:
     matchLabels:
-
+      
       opentelemetry.io/name: quote
   template:
     metadata:
       labels:
-
+        
         opentelemetry.io/name: quote
-
+        
         app.kubernetes.io/component: quote
         app.kubernetes.io/name: quote
     spec:
@@ -19770,7 +19770,7 @@ spec:
           image: 'ghcr.io/open-telemetry/demo:2.1.3-quote'
           imagePullPolicy: IfNotPresent
           ports:
-
+            
             - containerPort: 8080
               name: service
           env:
@@ -19809,9 +19809,9 @@ kind: Deployment
 metadata:
   name: recommendation
   labels:
-
+    
     opentelemetry.io/name: recommendation
-
+    
     app.kubernetes.io/component: recommendation
     app.kubernetes.io/name: recommendation
     app.kubernetes.io/version: "2.1.3"
@@ -19821,14 +19821,14 @@ spec:
   revisionHistoryLimit: 10
   selector:
     matchLabels:
-
+      
       opentelemetry.io/name: recommendation
   template:
     metadata:
       labels:
-
+        
         opentelemetry.io/name: recommendation
-
+        
         app.kubernetes.io/component: recommendation
         app.kubernetes.io/name: recommendation
     spec:
@@ -19838,7 +19838,7 @@ spec:
           image: 'ghcr.io/open-telemetry/demo:2.1.3-recommendation'
           imagePullPolicy: IfNotPresent
           ports:
-
+            
             - containerPort: 8080
               name: service
           env:
@@ -19879,9 +19879,9 @@ kind: Deployment
 metadata:
   name: shipping
   labels:
-
+    
     opentelemetry.io/name: shipping
-
+    
     app.kubernetes.io/component: shipping
     app.kubernetes.io/name: shipping
     app.kubernetes.io/version: "2.1.3"
@@ -19891,14 +19891,14 @@ spec:
   revisionHistoryLimit: 10
   selector:
     matchLabels:
-
+      
       opentelemetry.io/name: shipping
   template:
     metadata:
       labels:
-
+        
         opentelemetry.io/name: shipping
-
+        
         app.kubernetes.io/component: shipping
         app.kubernetes.io/name: shipping
     spec:
@@ -19908,7 +19908,7 @@ spec:
           image: 'ghcr.io/open-telemetry/demo:2.1.3-shipping'
           imagePullPolicy: IfNotPresent
           ports:
-
+            
             - containerPort: 8080
               name: service
           env:
@@ -19941,9 +19941,9 @@ kind: Deployment
 metadata:
   name: valkey-cart
   labels:
-
+    
     opentelemetry.io/name: valkey-cart
-
+    
     app.kubernetes.io/component: valkey-cart
     app.kubernetes.io/name: valkey-cart
     app.kubernetes.io/version: "2.1.3"
@@ -19953,14 +19953,14 @@ spec:
   revisionHistoryLimit: 10
   selector:
     matchLabels:
-
+      
       opentelemetry.io/name: valkey-cart
   template:
     metadata:
       labels:
-
+        
         opentelemetry.io/name: valkey-cart
-
+        
         app.kubernetes.io/component: valkey-cart
         app.kubernetes.io/name: valkey-cart
     spec:
@@ -19970,7 +19970,7 @@ spec:
           image: 'valkey/valkey:8.1.3-alpine'
           imagePullPolicy: IfNotPresent
           ports:
-
+            
             - containerPort: 6379
               name: valkey-cart
           env:
@@ -20035,112 +20035,112 @@ spec:
       affinity:
         podAntiAffinity:
           preferredDuringSchedulingIgnoredDuringExecution:
-            - weight: 1
-              podAffinityTerm:
-                topologyKey: kubernetes.io/hostname
-                labelSelector:
-                  matchExpressions:
-                    - key: app.kubernetes.io/instance
-                      operator: In
-                      values:
-                        - opentelemetry-demo
-                    - key: app.kubernetes.io/name
-                      operator: In
-                      values:
-                        - opensearch
+          - weight: 1
+            podAffinityTerm:
+              topologyKey: kubernetes.io/hostname
+              labelSelector:
+                matchExpressions:
+                - key: app.kubernetes.io/instance
+                  operator: In
+                  values:
+                  - opentelemetry-demo
+                - key: app.kubernetes.io/name
+                  operator: In
+                  values:
+                  - opensearch
       terminationGracePeriodSeconds: 120
       volumes:
-        - name: config
-          configMap:
-            name: opensearch-config
-        - emptyDir: {}
-          name: config-emptydir
+      - name: config
+        configMap:
+          name: opensearch-config
+      - emptyDir: {}
+        name: config-emptydir
       enableServiceLinks: true
       initContainers:
-        - name: configfile
-          image: "opensearchproject/opensearch:3.2.0"
-          imagePullPolicy: "IfNotPresent"
-          command:
-            - sh
-            - -c
-            - |
-              #!/usr/bin/env bash
-              cp -r /tmp/configfolder/*  /tmp/config/
-          securityContext:
-            capabilities:
-              drop:
-                - ALL
-            runAsNonRoot: true
-            runAsUser: 1000
-          resources:
-            {}
-          volumeMounts:
-            - mountPath: /tmp/config/
-              name: config-emptydir
-            - name: config
-              mountPath: /tmp/configfolder/opensearch.yml
-              subPath: opensearch.yml
+      - name: configfile
+        image: "opensearchproject/opensearch:3.2.0"
+        imagePullPolicy: "IfNotPresent"
+        command:
+        - sh
+        - -c
+        - |
+          #!/usr/bin/env bash
+          cp -r /tmp/configfolder/*  /tmp/config/
+        securityContext:
+          capabilities:
+            drop:
+            - ALL
+          runAsNonRoot: true
+          runAsUser: 1000
+        resources:
+          {}
+        volumeMounts:
+          - mountPath: /tmp/config/
+            name: config-emptydir
+          - name: config
+            mountPath: /tmp/configfolder/opensearch.yml
+            subPath: opensearch.yml
       containers:
-        - name: "opensearch"
-          securityContext:
-            capabilities:
-              drop:
-                - ALL
-            runAsNonRoot: true
-            runAsUser: 1000
+      - name: "opensearch"
+        securityContext:
+          capabilities:
+            drop:
+            - ALL
+          runAsNonRoot: true
+          runAsUser: 1000
 
-          image: "opensearchproject/opensearch:3.2.0"
-          imagePullPolicy: "IfNotPresent"
-          readinessProbe:
-            failureThreshold: 3
-            periodSeconds: 5
-            tcpSocket:
-              port: 9200
-            timeoutSeconds: 3
-          startupProbe:
-            failureThreshold: 30
-            initialDelaySeconds: 5
-            periodSeconds: 10
-            tcpSocket:
-              port: 9200
-            timeoutSeconds: 3
-          ports:
-            - name: http
-              containerPort: 9200
-            - name: transport
-              containerPort: 9300
-            - name: metrics
-              containerPort: 9600
-          resources:
-            limits:
-              memory: 1100Mi
-            requests:
-              cpu: 1000m
-              memory: 100Mi
-          env:
-            - name: node.name
-              valueFrom:
-                fieldRef:
-                  fieldPath: metadata.name
-            - name: discovery.seed_hosts
-              value: "opensearch-cluster-master-headless"
-            - name: cluster.name
-              value: "demo-cluster"
-            - name: network.host
-              value: "0.0.0.0"
-            - name: OPENSEARCH_JAVA_OPTS
-              value: "-Xms400m -Xmx400m"
-            - name: node.roles
-              value: "master,ingest,data,remote_cluster_client,"
-            - name: discovery.type
-              value: "single-node"
-            - name: bootstrap.memory_lock
-              value: "true"
-            - name: DISABLE_INSTALL_DEMO_CONFIG
-              value: "true"
-            - name: DISABLE_SECURITY_PLUGIN
-              value: "true"
-          volumeMounts:
-            - name: config-emptydir
-              mountPath: /usr/share/opensearch/config/opensearch.yml
-              subPath: opensearch.yml
+        image: "opensearchproject/opensearch:3.2.0"
+        imagePullPolicy: "IfNotPresent"
+        readinessProbe:
+          failureThreshold: 3
+          periodSeconds: 5
+          tcpSocket:
+            port: 9200
+          timeoutSeconds: 3
+        startupProbe:
+          failureThreshold: 30
+          initialDelaySeconds: 5
+          periodSeconds: 10
+          tcpSocket:
+            port: 9200
+          timeoutSeconds: 3
+        ports:
+        - name: http
+          containerPort: 9200
+        - name: transport
+          containerPort: 9300
+        - name: metrics
+          containerPort: 9600
+        resources:
+          limits:
+            memory: 1100Mi
+          requests:
+            cpu: 1000m
+            memory: 100Mi
+        env:
+        - name: node.name
+          valueFrom:
+            fieldRef:
+              fieldPath: metadata.name
+        - name: discovery.seed_hosts
+          value: "opensearch-cluster-master-headless"
+        - name: cluster.name
+          value: "demo-cluster"
+        - name: network.host
+          value: "0.0.0.0"
+        - name: OPENSEARCH_JAVA_OPTS
+          value: "-Xms400m -Xmx400m"
+        - name: node.roles
+          value: "master,ingest,data,remote_cluster_client,"
+        - name: discovery.type
+          value: "single-node"
+        - name: bootstrap.memory_lock
+          value: "true"
+        - name: DISABLE_INSTALL_DEMO_CONFIG
+          value: "true"
+        - name: DISABLE_SECURITY_PLUGIN
+          value: "true"
+        volumeMounts:
+        - name: config-emptydir
+          mountPath: /usr/share/opensearch/config/opensearch.yml
+          subPath: opensearch.yml
