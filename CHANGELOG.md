@@ -13,6 +13,9 @@ the release.
   ([#2614](https://github.com/open-telemetry/opentelemetry-demo/pull/2614))
 * [grafana] Update grafana version to 12.2.0
   ([#2615](https://github.com/open-telemetry/opentelemetry-demo/pull/2615))
+* [chore] Upgrade OpenFeature and add fix deprecation warnings for dependency
+  injection
+  ([#2644](https://github.com/open-telemetry/opentelemetry-demo/pull/2644))
 
 ## 2.1.3
 
