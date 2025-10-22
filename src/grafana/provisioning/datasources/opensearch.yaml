@@ -12,10 +12,10 @@ datasources:
     editable: true
     isDefault: false
     jsonData:
-      database: otel
+      database: otel-logs-*
       flavor: opensearch
       logLevelField: severity.text.keyword
       logMessageField: body
       pplEnabled: true
       timeField: observedTimestamp
-      version: 2.19.0
+      version: 3.2.0

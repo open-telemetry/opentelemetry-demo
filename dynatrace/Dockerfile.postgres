@@ -1,0 +1,6 @@
+FROM postgres:17.6
+
+COPY ["./src/postgres/init.sql", "/docker-entrypoint-initdb.d/01-init-otel.sql"]
+COPY ["./dynatrace/init.sql", "/docker-entrypoint-initdb.d/02-init-products.sql"]
+
+EXPOSE ${POSTGRES_PORT}

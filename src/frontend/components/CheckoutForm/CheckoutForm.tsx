@@ -3,7 +3,7 @@
 
 import Link from 'next/link';
 import { useCallback, useState } from 'react';
-import { CypressFields } from '../../utils/Cypress';
+import { CypressFields } from '../../utils/enums/CypressFields';
 import Input from '../Input';
 import * as S from './CheckoutForm.styled';
 
@@ -138,7 +138,7 @@ const CheckoutForm = ({ onSubmit }: IProps) => {
         value={creditCardNumber}
         onChange={handleChange}
         required
-        pattern="\d{4}-\d{4}-\d{4}-\d{4}"
+        pattern="\d{4}-\d{4}-\d{4}-\d{4}|\d{4}-\d{6}-\d{5}"
       />
 
       <S.CardRow>

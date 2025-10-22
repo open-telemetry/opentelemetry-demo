@@ -5,7 +5,7 @@ import { useMemo } from 'react';
 import getSymbolFromCurrency from 'currency-symbol-map';
 import { Money } from '../../protos/demo';
 import { useCurrency } from '../../providers/Currency.provider';
-import { CypressFields } from '../../utils/Cypress';
+import { CypressFields } from '../../utils/enums/CypressFields';
 
 interface IProps {
   price: Money;

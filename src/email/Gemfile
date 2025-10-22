@@ -2,11 +2,17 @@
 
 source "https://rubygems.org"
 
-gem "net-smtp", "~> 0.3"
+gem "net-smtp", "~> 0.5.1"
 gem "pony",     "~> 1.13"
-gem "puma",     "~> 6.3"
-gem "sinatra",  "~> 3.0"
+gem "puma",     "~> 7.0"
+gem "sinatra",  "~> 4.1"
+gem "rackup",   "~> 2.2"
 
-gem "opentelemetry-sdk", "~> 1.4.1"
-gem "opentelemetry-exporter-otlp", "~> 0.26.3"
-gem "opentelemetry-instrumentation-all", "~> 0.60.0"
+gem "google-protobuf", "~> 4.32.0"
+
+gem "opentelemetry-sdk",                 "~> 1.8"
+gem "opentelemetry-exporter-otlp",       "~> 0.30.0"
+gem "opentelemetry-instrumentation-all", "~> 0.80.0"
+
+gem "openfeature-sdk", "~> 0.4"
+gem "openfeature-flagd-provider", "~> 0.1"

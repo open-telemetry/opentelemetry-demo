@@ -3,14 +3,29 @@
 name: "Build and Publish"
 
 on:
-  release:
-    types: [published]
+  push:
+    branches:
+      - "main"
+
+permissions:
+  contents: read
 
 jobs:
+  tag-from-commit:
+    runs-on: ubuntu-24.04
+    steps:
+      - id: commit
+        uses: prompt/actions-commit-hash@v3
+    outputs:
+      image-tag: ${{ steps.commit.outputs.short }}
+
   build_and_push_images:
-    uses: ./.github/workflows/component-build-images.yml
-    if: github.repository == 'open-telemetry/opentelemetry-demo'
+    permissions: # required by the reusable workflow
+      contents: read
+      packages: write
+    needs: tag-from-commit
+    uses: ./.github/workflows/build-and-push-images.yaml
     with:
       push: true
-      version: ${{ github.event.release.tag_name }}
+      version: ${{ needs.tag-from-commit.outputs.image-tag }}
     secrets: inherit

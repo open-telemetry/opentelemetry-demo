@@ -1,7 +1,7 @@
 // Copyright The OpenTelemetry Authors
 // SPDX-License-Identifier: Apache-2.0
 
-import { CypressFields } from '../../utils/Cypress';
+import { CypressFields } from '../../utils/enums/CypressFields';
 import { Product } from '../../protos/demo';
 import ProductPrice from '../ProductPrice';
 import * as S from './ProductCard.styled';
@@ -20,7 +20,6 @@ async function getImageWithHeaders(requestInfo: Request) {
 const ProductCard = ({
   product: {
     id,
-    picture,
     name,
     priceUsd = {
       currencyCode: 'USD',
@@ -32,20 +31,22 @@ const ProductCard = ({
   const imageSlowLoad = useNumberFlagValue('imageSlowLoad', 0);
   const [imageSrc, setImageSrc] = useState<string>('');
 
+  console.log('Feature Flag - imageSlowLoad:', imageSlowLoad);
+
   useEffect(() => {
     const headers = new Headers();
     headers.append('x-envoy-fault-delay-request', imageSlowLoad.toString());
-    headers.append('Cache-Control', 'no-cache')
+    headers.append('Cache-Control', 'no-cache');
     const requestInit = {
-      method: "GET",
-      headers: headers
+      method: 'GET',
+      headers: headers,
     };
-    const image_url ='/images/products/' + picture
+    const image_url = `/api/images/${id}`;
     const requestInfo = new Request(image_url, requestInit);
     getImageWithHeaders(requestInfo).then(blob => {
       setImageSrc(URL.createObjectURL(blob));
     });
-  }, [imageSlowLoad, picture]);
+  }, [imageSlowLoad, id]);
 
   return (
     <S.Link href={`/product/${id}`}>

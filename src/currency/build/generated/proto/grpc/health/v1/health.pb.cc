@@ -4,117 +4,153 @@
 #include "grpc/health/v1/health.pb.h"
 
 #include <algorithm>
-
-#include <google/protobuf/io/coded_stream.h>
-#include <google/protobuf/extension_set.h>
-#include <google/protobuf/wire_format_lite.h>
-#include <google/protobuf/descriptor.h>
-#include <google/protobuf/generated_message_reflection.h>
-#include <google/protobuf/reflection_ops.h>
-#include <google/protobuf/wire_format.h>
+#include "google/protobuf/io/coded_stream.h"
+#include "google/protobuf/extension_set.h"
+#include "google/protobuf/wire_format_lite.h"
+#include "google/protobuf/descriptor.h"
+#include "google/protobuf/generated_message_reflection.h"
+#include "google/protobuf/reflection_ops.h"
+#include "google/protobuf/wire_format.h"
+#include "google/protobuf/generated_message_tctable_impl.h"
 // @@protoc_insertion_point(includes)
-#include <google/protobuf/port_def.inc>
 
+// Must be included last.
+#include "google/protobuf/port_def.inc"
 PROTOBUF_PRAGMA_INIT_SEG
-
-namespace _pb = ::PROTOBUF_NAMESPACE_ID;
-namespace _pbi = _pb::internal;
-
+namespace _pb = ::google::protobuf;
+namespace _pbi = ::google::protobuf::internal;
+namespace _fl = ::google::protobuf::internal::field_layout;
 namespace grpc {
 namespace health {
 namespace v1 {
-PROTOBUF_CONSTEXPR HealthCheckRequest::HealthCheckRequest(
-    ::_pbi::ConstantInitialized): _impl_{
-    /*decltype(_impl_.service_)*/{&::_pbi::fixed_address_empty_string, ::_pbi::ConstantInitialized{}}
-  , /*decltype(_impl_._cached_size_)*/{}} {}
+        template <typename>
+PROTOBUF_CONSTEXPR HealthCheckRequest::HealthCheckRequest(::_pbi::ConstantInitialized)
+    : _impl_{
+      /*decltype(_impl_.service_)*/ {
+          &::_pbi::fixed_address_empty_string,
+          ::_pbi::ConstantInitialized{},
+      },
+      /*decltype(_impl_._cached_size_)*/ {},
+    } {}
 struct HealthCheckRequestDefaultTypeInternal {
-  PROTOBUF_CONSTEXPR HealthCheckRequestDefaultTypeInternal()
-      : _instance(::_pbi::ConstantInitialized{}) {}
+  PROTOBUF_CONSTEXPR HealthCheckRequestDefaultTypeInternal() : _instance(::_pbi::ConstantInitialized{}) {}
   ~HealthCheckRequestDefaultTypeInternal() {}
   union {
     HealthCheckRequest _instance;
   };
 };
-PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT PROTOBUF_ATTRIBUTE_INIT_PRIORITY1 HealthCheckRequestDefaultTypeInternal _HealthCheckRequest_default_instance_;
-PROTOBUF_CONSTEXPR HealthCheckResponse::HealthCheckResponse(
-    ::_pbi::ConstantInitialized): _impl_{
-    /*decltype(_impl_.status_)*/0
-  , /*decltype(_impl_._cached_size_)*/{}} {}
+
+PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT
+    PROTOBUF_ATTRIBUTE_INIT_PRIORITY1 HealthCheckRequestDefaultTypeInternal _HealthCheckRequest_default_instance_;
+        template <typename>
+PROTOBUF_CONSTEXPR HealthCheckResponse::HealthCheckResponse(::_pbi::ConstantInitialized)
+    : _impl_{
+      /*decltype(_impl_.status_)*/ 0,
+      /*decltype(_impl_._cached_size_)*/ {},
+    } {}
 struct HealthCheckResponseDefaultTypeInternal {
-  PROTOBUF_CONSTEXPR HealthCheckResponseDefaultTypeInternal()
-      : _instance(::_pbi::ConstantInitialized{}) {}
+  PROTOBUF_CONSTEXPR HealthCheckResponseDefaultTypeInternal() : _instance(::_pbi::ConstantInitialized{}) {}
   ~HealthCheckResponseDefaultTypeInternal() {}
   union {
     HealthCheckResponse _instance;
   };
 };
-PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT PROTOBUF_ATTRIBUTE_INIT_PRIORITY1 HealthCheckResponseDefaultTypeInternal _HealthCheckResponse_default_instance_;
+
+PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT
+    PROTOBUF_ATTRIBUTE_INIT_PRIORITY1 HealthCheckResponseDefaultTypeInternal _HealthCheckResponse_default_instance_;
 }  // namespace v1
 }  // namespace health
 }  // namespace grpc
 static ::_pb::Metadata file_level_metadata_grpc_2fhealth_2fv1_2fhealth_2eproto[2];
 static const ::_pb::EnumDescriptor* file_level_enum_descriptors_grpc_2fhealth_2fv1_2fhealth_2eproto[1];
-static constexpr ::_pb::ServiceDescriptor const** file_level_service_descriptors_grpc_2fhealth_2fv1_2fhealth_2eproto = nullptr;
-
-const uint32_t TableStruct_grpc_2fhealth_2fv1_2fhealth_2eproto::offsets[] PROTOBUF_SECTION_VARIABLE(protodesc_cold) = {
-  ~0u,  // no _has_bits_
-  PROTOBUF_FIELD_OFFSET(::grpc::health::v1::HealthCheckRequest, _internal_metadata_),
-  ~0u,  // no _extensions_
-  ~0u,  // no _oneof_case_
-  ~0u,  // no _weak_field_map_
-  ~0u,  // no _inlined_string_donated_
-  PROTOBUF_FIELD_OFFSET(::grpc::health::v1::HealthCheckRequest, _impl_.service_),
-  ~0u,  // no _has_bits_
-  PROTOBUF_FIELD_OFFSET(::grpc::health::v1::HealthCheckResponse, _internal_metadata_),
-  ~0u,  // no _extensions_
-  ~0u,  // no _oneof_case_
-  ~0u,  // no _weak_field_map_
-  ~0u,  // no _inlined_string_donated_
-  PROTOBUF_FIELD_OFFSET(::grpc::health::v1::HealthCheckResponse, _impl_.status_),
+static constexpr const ::_pb::ServiceDescriptor**
+    file_level_service_descriptors_grpc_2fhealth_2fv1_2fhealth_2eproto = nullptr;
+const ::uint32_t TableStruct_grpc_2fhealth_2fv1_2fhealth_2eproto::offsets[] PROTOBUF_SECTION_VARIABLE(
+    protodesc_cold) = {
+    ~0u,  // no _has_bits_
+    PROTOBUF_FIELD_OFFSET(::grpc::health::v1::HealthCheckRequest, _internal_metadata_),
+    ~0u,  // no _extensions_
+    ~0u,  // no _oneof_case_
+    ~0u,  // no _weak_field_map_
+    ~0u,  // no _inlined_string_donated_
+    ~0u,  // no _split_
+    ~0u,  // no sizeof(Split)
+    PROTOBUF_FIELD_OFFSET(::grpc::health::v1::HealthCheckRequest, _impl_.service_),
+    ~0u,  // no _has_bits_
+    PROTOBUF_FIELD_OFFSET(::grpc::health::v1::HealthCheckResponse, _internal_metadata_),
+    ~0u,  // no _extensions_
+    ~0u,  // no _oneof_case_
+    ~0u,  // no _weak_field_map_
+    ~0u,  // no _inlined_string_donated_
+    ~0u,  // no _split_
+    ~0u,  // no sizeof(Split)
+    PROTOBUF_FIELD_OFFSET(::grpc::health::v1::HealthCheckResponse, _impl_.status_),
 };
-static const ::_pbi::MigrationSchema schemas[] PROTOBUF_SECTION_VARIABLE(protodesc_cold) = {
-  { 0, -1, -1, sizeof(::grpc::health::v1::HealthCheckRequest)},
-  { 7, -1, -1, sizeof(::grpc::health::v1::HealthCheckResponse)},
+
+static const ::_pbi::MigrationSchema
+    schemas[] PROTOBUF_SECTION_VARIABLE(protodesc_cold) = {
+        {0, -1, -1, sizeof(::grpc::health::v1::HealthCheckRequest)},
+        {9, -1, -1, sizeof(::grpc::health::v1::HealthCheckResponse)},
 };
 
 static const ::_pb::Message* const file_default_instances[] = {
-  &::grpc::health::v1::_HealthCheckRequest_default_instance_._instance,
-  &::grpc::health::v1::_HealthCheckResponse_default_instance_._instance,
+    &::grpc::health::v1::_HealthCheckRequest_default_instance_._instance,
+    &::grpc::health::v1::_HealthCheckResponse_default_instance_._instance,
 };
-
-const char descriptor_table_protodef_grpc_2fhealth_2fv1_2fhealth_2eproto[] PROTOBUF_SECTION_VARIABLE(protodesc_cold) =
-  "\n\033grpc/health/v1/health.proto\022\016grpc.heal"
-  "th.v1\"%\n\022HealthCheckRequest\022\017\n\007service\030\001"
-  " \001(\t\"\224\001\n\023HealthCheckResponse\022A\n\006status\030\001"
-  " \001(\01621.grpc.health.v1.HealthCheckRespons"
-  "e.ServingStatus\":\n\rServingStatus\022\013\n\007UNKN"
-  "OWN\020\000\022\013\n\007SERVING\020\001\022\017\n\013NOT_SERVING\020\0022Z\n\006H"
-  "ealth\022P\n\005Check\022\".grpc.health.v1.HealthCh"
-  "eckRequest\032#.grpc.health.v1.HealthCheckR"
-  "esponseBa\n\021io.grpc.health.v1B\013HealthProt"
-  "oP\001Z,google.golang.org/grpc/health/grpc_"
-  "health_v1\252\002\016Grpc.Health.V1b\006proto3"
-  ;
-static ::_pbi::once_flag descriptor_table_grpc_2fhealth_2fv1_2fhealth_2eproto_once;
+const char descriptor_table_protodef_grpc_2fhealth_2fv1_2fhealth_2eproto[] PROTOBUF_SECTION_VARIABLE(protodesc_cold) = {
+    "\n\033grpc/health/v1/health.proto\022\016grpc.heal"
+    "th.v1\"%\n\022HealthCheckRequest\022\017\n\007service\030\001"
+    " \001(\t\"\224\001\n\023HealthCheckResponse\022A\n\006status\030\001"
+    " \001(\01621.grpc.health.v1.HealthCheckRespons"
+    "e.ServingStatus\":\n\rServingStatus\022\013\n\007UNKN"
+    "OWN\020\000\022\013\n\007SERVING\020\001\022\017\n\013NOT_SERVING\020\0022Z\n\006H"
+    "ealth\022P\n\005Check\022\".grpc.health.v1.HealthCh"
+    "eckRequest\032#.grpc.health.v1.HealthCheckR"
+    "esponseBa\n\021io.grpc.health.v1B\013HealthProt"
+    "oP\001Z,google.golang.org/grpc/health/grpc_"
+    "health_v1\252\002\016Grpc.Health.V1b\006proto3"
+};
+static ::absl::once_flag descriptor_table_grpc_2fhealth_2fv1_2fhealth_2eproto_once;
 const ::_pbi::DescriptorTable descriptor_table_grpc_2fhealth_2fv1_2fhealth_2eproto = {
-    false, false, 434, descriptor_table_protodef_grpc_2fhealth_2fv1_2fhealth_2eproto,
+    false,
+    false,
+    434,
+    descriptor_table_protodef_grpc_2fhealth_2fv1_2fhealth_2eproto,
     "grpc/health/v1/health.proto",
-    &descriptor_table_grpc_2fhealth_2fv1_2fhealth_2eproto_once, nullptr, 0, 2,
-    schemas, file_default_instances, TableStruct_grpc_2fhealth_2fv1_2fhealth_2eproto::offsets,
-    file_level_metadata_grpc_2fhealth_2fv1_2fhealth_2eproto, file_level_enum_descriptors_grpc_2fhealth_2fv1_2fhealth_2eproto,
+    &descriptor_table_grpc_2fhealth_2fv1_2fhealth_2eproto_once,
+    nullptr,
+    0,
+    2,
+    schemas,
+    file_default_instances,
+    TableStruct_grpc_2fhealth_2fv1_2fhealth_2eproto::offsets,
+    file_level_metadata_grpc_2fhealth_2fv1_2fhealth_2eproto,
+    file_level_enum_descriptors_grpc_2fhealth_2fv1_2fhealth_2eproto,
     file_level_service_descriptors_grpc_2fhealth_2fv1_2fhealth_2eproto,
 };
+
+// This function exists to be marked as weak.
+// It can significantly speed up compilation by breaking up LLVM's SCC
+// in the .pb.cc translation units. Large translation units see a
+// reduction of more than 35% of walltime for optimized builds. Without
+// the weak attribute all the messages in the file, including all the
+// vtables and everything they use become part of the same SCC through
+// a cycle like:
+// GetMetadata -> descriptor table -> default instances ->
+//   vtables -> GetMetadata
+// By adding a weak function here we break the connection from the
+// individual vtables back into the descriptor table.
 PROTOBUF_ATTRIBUTE_WEAK const ::_pbi::DescriptorTable* descriptor_table_grpc_2fhealth_2fv1_2fhealth_2eproto_getter() {
   return &descriptor_table_grpc_2fhealth_2fv1_2fhealth_2eproto;
 }
-
 // Force running AddDescriptors() at dynamic initialization time.
-PROTOBUF_ATTRIBUTE_INIT_PRIORITY2 static ::_pbi::AddDescriptorsRunner dynamic_init_dummy_grpc_2fhealth_2fv1_2fhealth_2eproto(&descriptor_table_grpc_2fhealth_2fv1_2fhealth_2eproto);
+PROTOBUF_ATTRIBUTE_INIT_PRIORITY2
+static ::_pbi::AddDescriptorsRunner dynamic_init_dummy_grpc_2fhealth_2fv1_2fhealth_2eproto(&descriptor_table_grpc_2fhealth_2fv1_2fhealth_2eproto);
 namespace grpc {
 namespace health {
 namespace v1 {
-const ::PROTOBUF_NAMESPACE_ID::EnumDescriptor* HealthCheckResponse_ServingStatus_descriptor() {
-  ::PROTOBUF_NAMESPACE_ID::internal::AssignDescriptors(&descriptor_table_grpc_2fhealth_2fv1_2fhealth_2eproto);
+const ::google::protobuf::EnumDescriptor* HealthCheckResponse_ServingStatus_descriptor() {
+  ::google::protobuf::internal::AssignDescriptors(&descriptor_table_grpc_2fhealth_2fv1_2fhealth_2eproto);
   return file_level_enum_descriptors_grpc_2fhealth_2fv1_2fhealth_2eproto[0];
 }
 bool HealthCheckResponse_ServingStatus_IsValid(int value) {
@@ -127,189 +163,182 @@ bool HealthCheckResponse_ServingStatus_IsValid(int value) {
       return false;
   }
 }
+#if (__cplusplus < 201703) && \
+  (!defined(_MSC_VER) || (_MSC_VER >= 1900 && _MSC_VER < 1912))
 
-#if (__cplusplus < 201703) && (!defined(_MSC_VER) || (_MSC_VER >= 1900 && _MSC_VER < 1912))
 constexpr HealthCheckResponse_ServingStatus HealthCheckResponse::UNKNOWN;
 constexpr HealthCheckResponse_ServingStatus HealthCheckResponse::SERVING;
 constexpr HealthCheckResponse_ServingStatus HealthCheckResponse::NOT_SERVING;
 constexpr HealthCheckResponse_ServingStatus HealthCheckResponse::ServingStatus_MIN;
 constexpr HealthCheckResponse_ServingStatus HealthCheckResponse::ServingStatus_MAX;
 constexpr int HealthCheckResponse::ServingStatus_ARRAYSIZE;
-#endif  // (__cplusplus < 201703) && (!defined(_MSC_VER) || (_MSC_VER >= 1900 && _MSC_VER < 1912))
 
+#endif  // (__cplusplus < 201703) &&
+        // (!defined(_MSC_VER) || (_MSC_VER >= 1900 && _MSC_VER < 1912))
 // ===================================================================
 
 class HealthCheckRequest::_Internal {
  public:
 };
 
-HealthCheckRequest::HealthCheckRequest(::PROTOBUF_NAMESPACE_ID::Arena* arena,
-                         bool is_message_owned)
-  : ::PROTOBUF_NAMESPACE_ID::Message(arena, is_message_owned) {
-  SharedCtor(arena, is_message_owned);
+HealthCheckRequest::HealthCheckRequest(::google::protobuf::Arena* arena)
+    : ::google::protobuf::Message(arena) {
+  SharedCtor(arena);
   // @@protoc_insertion_point(arena_constructor:grpc.health.v1.HealthCheckRequest)
 }
-HealthCheckRequest::HealthCheckRequest(const HealthCheckRequest& from)
-  : ::PROTOBUF_NAMESPACE_ID::Message() {
-  HealthCheckRequest* const _this = this; (void)_this;
+HealthCheckRequest::HealthCheckRequest(const HealthCheckRequest& from) : ::google::protobuf::Message() {
+  HealthCheckRequest* const _this = this;
+  (void)_this;
   new (&_impl_) Impl_{
-      decltype(_impl_.service_){}
-    , /*decltype(_impl_._cached_size_)*/{}};
-
-  _internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
+      decltype(_impl_.service_){},
+      /*decltype(_impl_._cached_size_)*/ {},
+  };
+  _internal_metadata_.MergeFrom<::google::protobuf::UnknownFieldSet>(
+      from._internal_metadata_);
   _impl_.service_.InitDefault();
   #ifdef PROTOBUF_FORCE_COPY_DEFAULT_STRING
-    _impl_.service_.Set("", GetArenaForAllocation());
-  #endif // PROTOBUF_FORCE_COPY_DEFAULT_STRING
+        _impl_.service_.Set("", GetArenaForAllocation());
+  #endif  // PROTOBUF_FORCE_COPY_DEFAULT_STRING
   if (!from._internal_service().empty()) {
-    _this->_impl_.service_.Set(from._internal_service(), 
-      _this->GetArenaForAllocation());
+    _this->_impl_.service_.Set(from._internal_service(), _this->GetArenaForAllocation());
   }
+
   // @@protoc_insertion_point(copy_constructor:grpc.health.v1.HealthCheckRequest)
 }
-
-inline void HealthCheckRequest::SharedCtor(
-    ::_pb::Arena* arena, bool is_message_owned) {
+inline void HealthCheckRequest::SharedCtor(::_pb::Arena* arena) {
   (void)arena;
-  (void)is_message_owned;
   new (&_impl_) Impl_{
-      decltype(_impl_.service_){}
-    , /*decltype(_impl_._cached_size_)*/{}
+      decltype(_impl_.service_){},
+      /*decltype(_impl_._cached_size_)*/ {},
   };
   _impl_.service_.InitDefault();
   #ifdef PROTOBUF_FORCE_COPY_DEFAULT_STRING
-    _impl_.service_.Set("", GetArenaForAllocation());
-  #endif // PROTOBUF_FORCE_COPY_DEFAULT_STRING
+        _impl_.service_.Set("", GetArenaForAllocation());
+  #endif  // PROTOBUF_FORCE_COPY_DEFAULT_STRING
 }
-
 HealthCheckRequest::~HealthCheckRequest() {
   // @@protoc_insertion_point(destructor:grpc.health.v1.HealthCheckRequest)
-  if (auto *arena = _internal_metadata_.DeleteReturnArena<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>()) {
-  (void)arena;
-    return;
-  }
+  _internal_metadata_.Delete<::google::protobuf::UnknownFieldSet>();
   SharedDtor();
 }
-
 inline void HealthCheckRequest::SharedDtor() {
-  GOOGLE_DCHECK(GetArenaForAllocation() == nullptr);
+  ABSL_DCHECK(GetArenaForAllocation() == nullptr);
   _impl_.service_.Destroy();
 }
-
 void HealthCheckRequest::SetCachedSize(int size) const {
   _impl_._cached_size_.Set(size);
 }
 
-void HealthCheckRequest::Clear() {
+PROTOBUF_NOINLINE void HealthCheckRequest::Clear() {
 // @@protoc_insertion_point(message_clear_start:grpc.health.v1.HealthCheckRequest)
-  uint32_t cached_has_bits = 0;
+  ::uint32_t cached_has_bits = 0;
   // Prevent compiler warnings about cached_has_bits being unused
   (void) cached_has_bits;
 
   _impl_.service_.ClearToEmpty();
-  _internal_metadata_.Clear<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>();
+  _internal_metadata_.Clear<::google::protobuf::UnknownFieldSet>();
 }
 
-const char* HealthCheckRequest::_InternalParse(const char* ptr, ::_pbi::ParseContext* ctx) {
-#define CHK_(x) if (PROTOBUF_PREDICT_FALSE(!(x))) goto failure
-  while (!ctx->Done(&ptr)) {
-    uint32_t tag;
-    ptr = ::_pbi::ReadTag(ptr, &tag);
-    switch (tag >> 3) {
-      // string service = 1;
-      case 1:
-        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 10)) {
-          auto str = _internal_mutable_service();
-          ptr = ::_pbi::InlineGreedyStringParser(str, ptr, ctx);
-          CHK_(ptr);
-          CHK_(::_pbi::VerifyUTF8(str, "grpc.health.v1.HealthCheckRequest.service"));
-        } else
-          goto handle_unusual;
-        continue;
-      default:
-        goto handle_unusual;
-    }  // switch
-  handle_unusual:
-    if ((tag == 0) || ((tag & 7) == 4)) {
-      CHK_(ptr);
-      ctx->SetLastTag(tag);
-      goto message_done;
-    }
-    ptr = UnknownFieldParse(
-        tag,
-        _internal_metadata_.mutable_unknown_fields<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(),
-        ptr, ctx);
-    CHK_(ptr != nullptr);
-  }  // while
-message_done:
+const char* HealthCheckRequest::_InternalParse(
+    const char* ptr, ::_pbi::ParseContext* ctx) {
+  ptr = ::_pbi::TcParser::ParseLoop(this, ptr, ctx, &_table_.header);
   return ptr;
-failure:
-  ptr = nullptr;
-  goto message_done;
-#undef CHK_
 }
 
-uint8_t* HealthCheckRequest::_InternalSerialize(
-    uint8_t* target, ::PROTOBUF_NAMESPACE_ID::io::EpsCopyOutputStream* stream) const {
+
+PROTOBUF_CONSTINIT PROTOBUF_ATTRIBUTE_INIT_PRIORITY1
+const ::_pbi::TcParseTable<0, 1, 0, 49, 2> HealthCheckRequest::_table_ = {
+  {
+    0,  // no _has_bits_
+    0, // no _extensions_
+    1, 0,  // max_field_number, fast_idx_mask
+    offsetof(decltype(_table_), field_lookup_table),
+    4294967294,  // skipmap
+    offsetof(decltype(_table_), field_entries),
+    1,  // num_field_entries
+    0,  // num_aux_entries
+    offsetof(decltype(_table_), field_names),  // no aux_entries
+    &_HealthCheckRequest_default_instance_._instance,
+    ::_pbi::TcParser::GenericFallback,  // fallback
+  }, {{
+    // string service = 1;
+    {::_pbi::TcParser::FastUS1,
+     {10, 63, 0, PROTOBUF_FIELD_OFFSET(HealthCheckRequest, _impl_.service_)}},
+  }}, {{
+    65535, 65535
+  }}, {{
+    // string service = 1;
+    {PROTOBUF_FIELD_OFFSET(HealthCheckRequest, _impl_.service_), 0, 0,
+    (0 | ::_fl::kFcSingular | ::_fl::kUtf8String | ::_fl::kRepAString)},
+  }},
+  // no aux_entries
+  {{
+    "\41\7\0\0\0\0\0\0"
+    "grpc.health.v1.HealthCheckRequest"
+    "service"
+  }},
+};
+
+::uint8_t* HealthCheckRequest::_InternalSerialize(
+    ::uint8_t* target,
+    ::google::protobuf::io::EpsCopyOutputStream* stream) const {
   // @@protoc_insertion_point(serialize_to_array_start:grpc.health.v1.HealthCheckRequest)
-  uint32_t cached_has_bits = 0;
-  (void) cached_has_bits;
+  ::uint32_t cached_has_bits = 0;
+  (void)cached_has_bits;
 
   // string service = 1;
   if (!this->_internal_service().empty()) {
-    ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::VerifyUtf8String(
-      this->_internal_service().data(), static_cast<int>(this->_internal_service().length()),
-      ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::SERIALIZE,
-      "grpc.health.v1.HealthCheckRequest.service");
-    target = stream->WriteStringMaybeAliased(
-        1, this->_internal_service(), target);
+    const std::string& _s = this->_internal_service();
+    ::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
+        _s.data(), static_cast<int>(_s.length()), ::google::protobuf::internal::WireFormatLite::SERIALIZE, "grpc.health.v1.HealthCheckRequest.service");
+    target = stream->WriteStringMaybeAliased(1, _s, target);
   }
 
   if (PROTOBUF_PREDICT_FALSE(_internal_metadata_.have_unknown_fields())) {
-    target = ::_pbi::WireFormat::InternalSerializeUnknownFieldsToArray(
-        _internal_metadata_.unknown_fields<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(::PROTOBUF_NAMESPACE_ID::UnknownFieldSet::default_instance), target, stream);
+    target =
+        ::_pbi::WireFormat::InternalSerializeUnknownFieldsToArray(
+            _internal_metadata_.unknown_fields<::google::protobuf::UnknownFieldSet>(::google::protobuf::UnknownFieldSet::default_instance), target, stream);
   }
   // @@protoc_insertion_point(serialize_to_array_end:grpc.health.v1.HealthCheckRequest)
   return target;
 }
 
-size_t HealthCheckRequest::ByteSizeLong() const {
+::size_t HealthCheckRequest::ByteSizeLong() const {
 // @@protoc_insertion_point(message_byte_size_start:grpc.health.v1.HealthCheckRequest)
-  size_t total_size = 0;
+  ::size_t total_size = 0;
 
-  uint32_t cached_has_bits = 0;
+  ::uint32_t cached_has_bits = 0;
   // Prevent compiler warnings about cached_has_bits being unused
   (void) cached_has_bits;
 
   // string service = 1;
   if (!this->_internal_service().empty()) {
-    total_size += 1 +
-      ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::StringSize(
-        this->_internal_service());
+    total_size += 1 + ::google::protobuf::internal::WireFormatLite::StringSize(
+                                    this->_internal_service());
   }
 
   return MaybeComputeUnknownFieldsSize(total_size, &_impl_._cached_size_);
 }
 
-const ::PROTOBUF_NAMESPACE_ID::Message::ClassData HealthCheckRequest::_class_data_ = {
-    ::PROTOBUF_NAMESPACE_ID::Message::CopyWithSourceCheck,
+const ::google::protobuf::Message::ClassData HealthCheckRequest::_class_data_ = {
+    ::google::protobuf::Message::CopyWithSourceCheck,
     HealthCheckRequest::MergeImpl
 };
-const ::PROTOBUF_NAMESPACE_ID::Message::ClassData*HealthCheckRequest::GetClassData() const { return &_class_data_; }
+const ::google::protobuf::Message::ClassData*HealthCheckRequest::GetClassData() const { return &_class_data_; }
 
 
-void HealthCheckRequest::MergeImpl(::PROTOBUF_NAMESPACE_ID::Message& to_msg, const ::PROTOBUF_NAMESPACE_ID::Message& from_msg) {
+void HealthCheckRequest::MergeImpl(::google::protobuf::Message& to_msg, const ::google::protobuf::Message& from_msg) {
   auto* const _this = static_cast<HealthCheckRequest*>(&to_msg);
   auto& from = static_cast<const HealthCheckRequest&>(from_msg);
   // @@protoc_insertion_point(class_specific_merge_from_start:grpc.health.v1.HealthCheckRequest)
-  GOOGLE_DCHECK_NE(&from, _this);
-  uint32_t cached_has_bits = 0;
+  ABSL_DCHECK_NE(&from, _this);
+  ::uint32_t cached_has_bits = 0;
   (void) cached_has_bits;
 
   if (!from._internal_service().empty()) {
     _this->_internal_set_service(from._internal_service());
   }
-  _this->_internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
+  _this->_internal_metadata_.MergeFrom<::google::protobuf::UnknownFieldSet>(from._internal_metadata_);
 }
 
 void HealthCheckRequest::CopyFrom(const HealthCheckRequest& from) {
@@ -319,7 +348,7 @@ void HealthCheckRequest::CopyFrom(const HealthCheckRequest& from) {
   MergeFrom(from);
 }
 
-bool HealthCheckRequest::IsInitialized() const {
+PROTOBUF_NOINLINE bool HealthCheckRequest::IsInitialized() const {
   return true;
 }
 
@@ -328,174 +357,157 @@ void HealthCheckRequest::InternalSwap(HealthCheckRequest* other) {
   auto* lhs_arena = GetArenaForAllocation();
   auto* rhs_arena = other->GetArenaForAllocation();
   _internal_metadata_.InternalSwap(&other->_internal_metadata_);
-  ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr::InternalSwap(
-      &_impl_.service_, lhs_arena,
-      &other->_impl_.service_, rhs_arena
-  );
+  ::_pbi::ArenaStringPtr::InternalSwap(&_impl_.service_, lhs_arena,
+                                       &other->_impl_.service_, rhs_arena);
 }
 
-::PROTOBUF_NAMESPACE_ID::Metadata HealthCheckRequest::GetMetadata() const {
+::google::protobuf::Metadata HealthCheckRequest::GetMetadata() const {
   return ::_pbi::AssignDescriptors(
       &descriptor_table_grpc_2fhealth_2fv1_2fhealth_2eproto_getter, &descriptor_table_grpc_2fhealth_2fv1_2fhealth_2eproto_once,
       file_level_metadata_grpc_2fhealth_2fv1_2fhealth_2eproto[0]);
 }
-
 // ===================================================================
 
 class HealthCheckResponse::_Internal {
  public:
 };
 
-HealthCheckResponse::HealthCheckResponse(::PROTOBUF_NAMESPACE_ID::Arena* arena,
-                         bool is_message_owned)
-  : ::PROTOBUF_NAMESPACE_ID::Message(arena, is_message_owned) {
-  SharedCtor(arena, is_message_owned);
+HealthCheckResponse::HealthCheckResponse(::google::protobuf::Arena* arena)
+    : ::google::protobuf::Message(arena) {
+  SharedCtor(arena);
   // @@protoc_insertion_point(arena_constructor:grpc.health.v1.HealthCheckResponse)
 }
 HealthCheckResponse::HealthCheckResponse(const HealthCheckResponse& from)
-  : ::PROTOBUF_NAMESPACE_ID::Message() {
-  HealthCheckResponse* const _this = this; (void)_this;
-  new (&_impl_) Impl_{
-      decltype(_impl_.status_){}
-    , /*decltype(_impl_._cached_size_)*/{}};
-
-  _internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
-  _this->_impl_.status_ = from._impl_.status_;
+    : ::google::protobuf::Message(), _impl_(from._impl_) {
+  _internal_metadata_.MergeFrom<::google::protobuf::UnknownFieldSet>(
+      from._internal_metadata_);
   // @@protoc_insertion_point(copy_constructor:grpc.health.v1.HealthCheckResponse)
 }
-
-inline void HealthCheckResponse::SharedCtor(
-    ::_pb::Arena* arena, bool is_message_owned) {
+inline void HealthCheckResponse::SharedCtor(::_pb::Arena* arena) {
   (void)arena;
-  (void)is_message_owned;
   new (&_impl_) Impl_{
-      decltype(_impl_.status_){0}
-    , /*decltype(_impl_._cached_size_)*/{}
+      decltype(_impl_.status_){0},
+      /*decltype(_impl_._cached_size_)*/ {},
   };
 }
-
 HealthCheckResponse::~HealthCheckResponse() {
   // @@protoc_insertion_point(destructor:grpc.health.v1.HealthCheckResponse)
-  if (auto *arena = _internal_metadata_.DeleteReturnArena<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>()) {
-  (void)arena;
-    return;
-  }
+  _internal_metadata_.Delete<::google::protobuf::UnknownFieldSet>();
   SharedDtor();
 }
-
 inline void HealthCheckResponse::SharedDtor() {
-  GOOGLE_DCHECK(GetArenaForAllocation() == nullptr);
+  ABSL_DCHECK(GetArenaForAllocation() == nullptr);
 }
-
 void HealthCheckResponse::SetCachedSize(int size) const {
   _impl_._cached_size_.Set(size);
 }
 
-void HealthCheckResponse::Clear() {
+PROTOBUF_NOINLINE void HealthCheckResponse::Clear() {
 // @@protoc_insertion_point(message_clear_start:grpc.health.v1.HealthCheckResponse)
-  uint32_t cached_has_bits = 0;
+  ::uint32_t cached_has_bits = 0;
   // Prevent compiler warnings about cached_has_bits being unused
   (void) cached_has_bits;
 
   _impl_.status_ = 0;
-  _internal_metadata_.Clear<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>();
+  _internal_metadata_.Clear<::google::protobuf::UnknownFieldSet>();
 }
 
-const char* HealthCheckResponse::_InternalParse(const char* ptr, ::_pbi::ParseContext* ctx) {
-#define CHK_(x) if (PROTOBUF_PREDICT_FALSE(!(x))) goto failure
-  while (!ctx->Done(&ptr)) {
-    uint32_t tag;
-    ptr = ::_pbi::ReadTag(ptr, &tag);
-    switch (tag >> 3) {
-      // .grpc.health.v1.HealthCheckResponse.ServingStatus status = 1;
-      case 1:
-        if (PROTOBUF_PREDICT_TRUE(static_cast<uint8_t>(tag) == 8)) {
-          uint64_t val = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint64(&ptr);
-          CHK_(ptr);
-          _internal_set_status(static_cast<::grpc::health::v1::HealthCheckResponse_ServingStatus>(val));
-        } else
-          goto handle_unusual;
-        continue;
-      default:
-        goto handle_unusual;
-    }  // switch
-  handle_unusual:
-    if ((tag == 0) || ((tag & 7) == 4)) {
-      CHK_(ptr);
-      ctx->SetLastTag(tag);
-      goto message_done;
-    }
-    ptr = UnknownFieldParse(
-        tag,
-        _internal_metadata_.mutable_unknown_fields<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(),
-        ptr, ctx);
-    CHK_(ptr != nullptr);
-  }  // while
-message_done:
+const char* HealthCheckResponse::_InternalParse(
+    const char* ptr, ::_pbi::ParseContext* ctx) {
+  ptr = ::_pbi::TcParser::ParseLoop(this, ptr, ctx, &_table_.header);
   return ptr;
-failure:
-  ptr = nullptr;
-  goto message_done;
-#undef CHK_
 }
 
-uint8_t* HealthCheckResponse::_InternalSerialize(
-    uint8_t* target, ::PROTOBUF_NAMESPACE_ID::io::EpsCopyOutputStream* stream) const {
+
+PROTOBUF_CONSTINIT PROTOBUF_ATTRIBUTE_INIT_PRIORITY1
+const ::_pbi::TcParseTable<0, 1, 0, 0, 2> HealthCheckResponse::_table_ = {
+  {
+    0,  // no _has_bits_
+    0, // no _extensions_
+    1, 0,  // max_field_number, fast_idx_mask
+    offsetof(decltype(_table_), field_lookup_table),
+    4294967294,  // skipmap
+    offsetof(decltype(_table_), field_entries),
+    1,  // num_field_entries
+    0,  // num_aux_entries
+    offsetof(decltype(_table_), field_names),  // no aux_entries
+    &_HealthCheckResponse_default_instance_._instance,
+    ::_pbi::TcParser::GenericFallback,  // fallback
+  }, {{
+    // .grpc.health.v1.HealthCheckResponse.ServingStatus status = 1;
+    {::_pbi::TcParser::SingularVarintNoZag1<::uint32_t, offsetof(HealthCheckResponse, _impl_.status_), 63>(),
+     {8, 63, 0, PROTOBUF_FIELD_OFFSET(HealthCheckResponse, _impl_.status_)}},
+  }}, {{
+    65535, 65535
+  }}, {{
+    // .grpc.health.v1.HealthCheckResponse.ServingStatus status = 1;
+    {PROTOBUF_FIELD_OFFSET(HealthCheckResponse, _impl_.status_), 0, 0,
+    (0 | ::_fl::kFcSingular | ::_fl::kOpenEnum)},
+  }},
+  // no aux_entries
+  {{
+  }},
+};
+
+::uint8_t* HealthCheckResponse::_InternalSerialize(
+    ::uint8_t* target,
+    ::google::protobuf::io::EpsCopyOutputStream* stream) const {
   // @@protoc_insertion_point(serialize_to_array_start:grpc.health.v1.HealthCheckResponse)
-  uint32_t cached_has_bits = 0;
-  (void) cached_has_bits;
+  ::uint32_t cached_has_bits = 0;
+  (void)cached_has_bits;
 
   // .grpc.health.v1.HealthCheckResponse.ServingStatus status = 1;
   if (this->_internal_status() != 0) {
     target = stream->EnsureSpace(target);
     target = ::_pbi::WireFormatLite::WriteEnumToArray(
-      1, this->_internal_status(), target);
+        1, this->_internal_status(), target);
   }
 
   if (PROTOBUF_PREDICT_FALSE(_internal_metadata_.have_unknown_fields())) {
-    target = ::_pbi::WireFormat::InternalSerializeUnknownFieldsToArray(
-        _internal_metadata_.unknown_fields<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(::PROTOBUF_NAMESPACE_ID::UnknownFieldSet::default_instance), target, stream);
+    target =
+        ::_pbi::WireFormat::InternalSerializeUnknownFieldsToArray(
+            _internal_metadata_.unknown_fields<::google::protobuf::UnknownFieldSet>(::google::protobuf::UnknownFieldSet::default_instance), target, stream);
   }
   // @@protoc_insertion_point(serialize_to_array_end:grpc.health.v1.HealthCheckResponse)
   return target;
 }
 
-size_t HealthCheckResponse::ByteSizeLong() const {
+::size_t HealthCheckResponse::ByteSizeLong() const {
 // @@protoc_insertion_point(message_byte_size_start:grpc.health.v1.HealthCheckResponse)
-  size_t total_size = 0;
+  ::size_t total_size = 0;
 
-  uint32_t cached_has_bits = 0;
+  ::uint32_t cached_has_bits = 0;
   // Prevent compiler warnings about cached_has_bits being unused
   (void) cached_has_bits;
 
   // .grpc.health.v1.HealthCheckResponse.ServingStatus status = 1;
   if (this->_internal_status() != 0) {
     total_size += 1 +
-      ::_pbi::WireFormatLite::EnumSize(this->_internal_status());
+                  ::_pbi::WireFormatLite::EnumSize(this->_internal_status());
   }
 
   return MaybeComputeUnknownFieldsSize(total_size, &_impl_._cached_size_);
 }
 
-const ::PROTOBUF_NAMESPACE_ID::Message::ClassData HealthCheckResponse::_class_data_ = {
-    ::PROTOBUF_NAMESPACE_ID::Message::CopyWithSourceCheck,
+const ::google::protobuf::Message::ClassData HealthCheckResponse::_class_data_ = {
+    ::google::protobuf::Message::CopyWithSourceCheck,
     HealthCheckResponse::MergeImpl
 };
-const ::PROTOBUF_NAMESPACE_ID::Message::ClassData*HealthCheckResponse::GetClassData() const { return &_class_data_; }
+const ::google::protobuf::Message::ClassData*HealthCheckResponse::GetClassData() const { return &_class_data_; }
 
 
-void HealthCheckResponse::MergeImpl(::PROTOBUF_NAMESPACE_ID::Message& to_msg, const ::PROTOBUF_NAMESPACE_ID::Message& from_msg) {
+void HealthCheckResponse::MergeImpl(::google::protobuf::Message& to_msg, const ::google::protobuf::Message& from_msg) {
   auto* const _this = static_cast<HealthCheckResponse*>(&to_msg);
   auto& from = static_cast<const HealthCheckResponse&>(from_msg);
   // @@protoc_insertion_point(class_specific_merge_from_start:grpc.health.v1.HealthCheckResponse)
-  GOOGLE_DCHECK_NE(&from, _this);
-  uint32_t cached_has_bits = 0;
+  ABSL_DCHECK_NE(&from, _this);
+  ::uint32_t cached_has_bits = 0;
   (void) cached_has_bits;
 
   if (from._internal_status() != 0) {
     _this->_internal_set_status(from._internal_status());
   }
-  _this->_internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
+  _this->_internal_metadata_.MergeFrom<::google::protobuf::UnknownFieldSet>(from._internal_metadata_);
 }
 
 void HealthCheckResponse::CopyFrom(const HealthCheckResponse& from) {
@@ -505,7 +517,7 @@ void HealthCheckResponse::CopyFrom(const HealthCheckResponse& from) {
   MergeFrom(from);
 }
 
-bool HealthCheckResponse::IsInitialized() const {
+PROTOBUF_NOINLINE bool HealthCheckResponse::IsInitialized() const {
   return true;
 }
 
@@ -515,26 +527,18 @@ void HealthCheckResponse::InternalSwap(HealthCheckResponse* other) {
   swap(_impl_.status_, other->_impl_.status_);
 }
 
-::PROTOBUF_NAMESPACE_ID::Metadata HealthCheckResponse::GetMetadata() const {
+::google::protobuf::Metadata HealthCheckResponse::GetMetadata() const {
   return ::_pbi::AssignDescriptors(
       &descriptor_table_grpc_2fhealth_2fv1_2fhealth_2eproto_getter, &descriptor_table_grpc_2fhealth_2fv1_2fhealth_2eproto_once,
       file_level_metadata_grpc_2fhealth_2fv1_2fhealth_2eproto[1]);
 }
-
 // @@protoc_insertion_point(namespace_scope)
 }  // namespace v1
 }  // namespace health
 }  // namespace grpc
-PROTOBUF_NAMESPACE_OPEN
-template<> PROTOBUF_NOINLINE ::grpc::health::v1::HealthCheckRequest*
-Arena::CreateMaybeMessage< ::grpc::health::v1::HealthCheckRequest >(Arena* arena) {
-  return Arena::CreateMessageInternal< ::grpc::health::v1::HealthCheckRequest >(arena);
-}
-template<> PROTOBUF_NOINLINE ::grpc::health::v1::HealthCheckResponse*
-Arena::CreateMaybeMessage< ::grpc::health::v1::HealthCheckResponse >(Arena* arena) {
-  return Arena::CreateMessageInternal< ::grpc::health::v1::HealthCheckResponse >(arena);
-}
-PROTOBUF_NAMESPACE_CLOSE
-
+namespace google {
+namespace protobuf {
+}  // namespace protobuf
+}  // namespace google
 // @@protoc_insertion_point(global_scope)
-#include <google/protobuf/port_undef.inc>
+#include "google/protobuf/port_undef.inc"

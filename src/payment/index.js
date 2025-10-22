@@ -9,24 +9,22 @@ const charge = require('./charge')
 const logger = require('./logger')
 
 async function chargeServiceHandler(call, callback) {
-  const span = opentelemetry.trace.getActiveSpan();
+  const span = opentelemetry.trace.getActiveSpan()
 
   try {
     const amount = call.request.amount
-    span.setAttributes({
-      'app.payment.amount': parseFloat(`${amount.units}.${amount.nanos}`).toFixed(2)
+    span?.setAttributes({
+      'app.payment.amount': parseFloat(`${amount.units}.${amount.nanos}`).toFixed(2),
     })
-    logger.info({ request: call.request }, "Charge request received.")
+    logger.info({ request: call.request }, 'Charge request received.')
 
     const response = await charge.charge(call.request)
     callback(null, response)
-
   } catch (err) {
-    logger.warn({ err })
+    logger.error({ err })
 
-    span.recordException(err)
-    span.setStatus({ code: opentelemetry.SpanStatusCode.ERROR })
-
+    span?.recordException(err)
+    span?.setStatus({ code: opentelemetry.SpanStatusCode.ERROR })
     callback(err)
   }
 }
@@ -39,9 +37,12 @@ async function closeGracefully(signal) {
 const otelDemoPackage = grpc.loadPackageDefinition(protoLoader.loadSync('demo.proto'))
 const server = new grpc.Server()
 
-server.addService(health.service, new health.Implementation({
-  '': health.servingStatus.SERVING
-}))
+server.addService(
+  health.service,
+  new health.Implementation({
+    '': health.servingStatus.SERVING,
+  })
+)
 
 server.addService(otelDemoPackage.oteldemo.PaymentService.service, { charge: chargeServiceHandler })
 

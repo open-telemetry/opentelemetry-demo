@@ -7,6 +7,135 @@ the release.
 
 ## Unreleased
 
+* [chore] Use pre-built nginx otel image
+  ([#2614](https://github.com/open-telemetry/opentelemetry-demo/pull/2614))
+* [grafana] Update grafana version to 12.2.0
+  ([#2615](https://github.com/open-telemetry/opentelemetry-demo/pull/2615))
+
+## 2.1.3
+
+* [chore] Fix postgresql container
+  ([#2597](https://github.com/open-telemetry/opentelemetry-demo/pull/2597))
+
+## 2.1.2
+
+* [chore] add postgresql and opensearch containers to build workflow
+  ([#2595](https://github.com/open-telemetry/opentelemetry-demo/pull/2595))
+
+## 2.1.1
+
+* Align env vars
+  ([#2582](https://github.com/open-telemetry/opentelemetry-demo/pull/2582))
+* [opensearch] Reduce OpenSearch container memory footprint
+  ([#2587](https://github.com/open-telemetry/opentelemetry-demo/pull/2587))
+
+## 2.1.0
+
+* [chore] add GOMEMLIMIT to all Go services
+  ([#2148](https://github.com/open-telemetry/opentelemetry-demo/pull/2148))
+* [product-catalog] Simplify span event name
+  ([#2150](https://github.com/open-telemetry/opentelemetry-demo/pull/2150))
+* [cart] Refactor OpenFeature integration and add Dependency Injection support
+  ([#2160](https://github.com/open-telemetry/opentelemetry-demo/pull/2160))
+* [checkout]: change image from alpine to distroless to reduce size
+  ([#2161](https://github.com/open-telemetry/opentelemetry-demo/pull/2161))
+* [product-catalog]: change image from alpine to distroless to reduce size
+  ([#2161](https://github.com/open-telemetry/opentelemetry-demo/pull/2161))
+* [grafana] configure `traceToLogs` integration
+  ([#2162](https://github.com/open-telemetry/opentelemetry-demo/pull/2162))
+* [recommendation] change image from bookworm to alpine to reduce size
+  ([#2164](https://github.com/open-telemetry/opentelemetry-demo/pull/2164))
+* [fraud-detection] update distroless to debian12
+  ([#2170](https://github.com/open-telemetry/opentelemetry-demo/pull/2170))
+* [chore] bump dependent images
+  ([#2179](https://github.com/open-telemetry/opentelemetry-demo/pull/2179))
+* [image-provider]: replace bookworm image with nonroot alpine image
+  ([#2193](https://github.com/open-telemetry/opentelemetry-demo/pull/2193))
+* [kafka] update image to latest
+  ([#2194](https://github.com/open-telemetry/opentelemetry-demo/pull/2194))
+* [email] bump ruby and dependencies to latest and switch to alpine
+  ([#2196](https://github.com/open-telemetry/opentelemetry-demo/pull/2196))
+* [cart] Upgrade OpenFeature version and change Hooks integration
+  ([#2199](https://github.com/open-telemetry/opentelemetry-demo/pull/2199))
+* [shipping] refactor service to use actix-web and demo instrumentation library
+  ([#2214](https://github.com/open-telemetry/opentelemetry-demo/pull/2214))
+* [quote] replace debian image with latest alpine image
+  ([#2216](https://github.com/open-telemetry/opentelemetry-demo/pull/2216))
+* [payment] change image from alpine to distroless to reduce size
+  ([#2224](https://github.com/open-telemetry/opentelemetry-demo/pull/2224))
+* [frontend] change image from alpine to distroless to reduce size
+  ([#2224](https://github.com/open-telemetry/opentelemetry-demo/pull/2224))
+* [flagd-ui] change image from alpine to distroless to reduce size
+  ([#2224](https://github.com/open-telemetry/opentelemetry-demo/pull/2224))
+* [load-generator] Update locustfile for logging with TraceContext
+  ([#2265](https://github.com/open-telemetry/opentelemetry-demo/pull/2265))
+* [product-catalog] Add OTel grpc Logs to Product Catalog
+  ([#2285](https://github.com/open-telemetry/opentelemetry-demo/pull/2285))
+* [currency] update alpine to 3.21
+  ([#2291](https://github.com/open-telemetry/opentelemetry-demo/pull/2291))
+* [shipping]: replace debian image with distroless image
+  ([#2294](https://github.com/open-telemetry/opentelemetry-demo/pull/2294))
+* [currency] update alpine to 3.21
+  ([#2291](https://github.com/open-telemetry/opentelemetry-demo/pull/2291))
+* [currency] Update code to use new semconv and remove unused file
+  ([#2319](https://github.com/open-telemetry/opentelemetry-demo/pull/2319))
+* [load-generator] Split trace grouping based on workflow context
+  ([#2321](https://github.com/open-telemetry/opentelemetry-demo/pull/2321))
+* [image-provider] Add nginx metrics receiver and dashboard
+  ([#2330](https://github.com/open-telemetry/opentelemetry-demo/pull/2330))
+* [react-native-app] Update how resource attributes are set up
+  ([#2331](https://github.com/open-telemetry/opentelemetry-demo/pull/2331))
+* [cart] Upgrade OpenFeature and add new telemetry Hooks
+  ([#2332](https://github.com/open-telemetry/opentelemetry-demo/pull/2332))
+* [otel-collector] Add support for OpenSearch dynamic index
+  ([#2363](https://github.com/open-telemetry/opentelemetry-demo/pull/2363))
+* [checkout] Add OTel grpc Logs to checkout
+  ([#2336](https://github.com/open-telemetry/opentelemetry-demo/pull/2336))
+* [prometheus] Activate `keep_identifying_resource_attributes` and promote
+  Kubernetes resource attributes as metric labels
+  ([#2340](https://github.com/open-telemetry/opentelemetry-demo/pull/2340))
+* [grafana] Add APM dashboard including service metrics, traces, and logs
+  ([#2340](https://github.com/open-telemetry/opentelemetry-demo/pull/2340))
+* [payment] Send logs to otel-collector via pino-opentelemetry-transport
+  ([#2352]((https://github.com/open-telemetry/opentelemetry-demo/pull/2352)))
+* [image-provider] Update to latest version of nginx and alpine
+  ([#2369](https://github.com/open-telemetry/opentelemetry-demo/pull/2369))
+* [chore] Upgrade Jaeger to v2
+  ([#2389](https://github.com/open-telemetry/opentelemetry-demo/pull/2389))
+* [load-generator] Fix Playwright wait until load state error
+  ([#2374](https://github.com/open-telemetry/opentelemetry-demo/pull/2374))
+* [flagd] Bump Flagd to v0.12.8 and get compliant `http.Server.request.duration`
+  OTel metrics that can be used in the APM dashboard
+  ([#2392](https://github.com/open-telemetry/opentelemetry-demo/pull/2392))
+* [prometheus / grafana] Add Linux monitoring dashboard
+  ([#2395](https://github.com/open-telemetry/opentelemetry-demo/pull/2395))
+* [prometheus /grafana] Add alerting demo through the `CartAddItemHighLatency`
+  alert rule
+  ([#2401](https://github.com/open-telemetry/opentelemetry-demo/pull/2401))
+* [cart] Enable automatic generation of `service.instance.id`
+  ([#2402](https://github.com/open-telemetry/opentelemetry-demo/pull/2402))
+* [grafana] Update OpenSearch logs index in APM Dashboards
+  ([#2419](https://github.com/open-telemetry/opentelemetry-demo/pull/2419))
+* [flagd-ui] Rewrite Flagd UI in Elixir
+  ([#2427](https://github.com/open-telemetry/opentelemetry-demo/pull/2427))
+* [frontend-proxy] Add redirects for web UI paths to ensure proper asset loading
+  ([#2476](https://github.com/open-telemetry/opentelemetry-demo/pull/2476))
+* [chore] Bump dependent images
+  ([#2477](https://github.com/open-telemetry/opentelemetry-demo/pull/2477))
+* [email] Add memory leak scenario to email service
+  ([#2481](https://github.com/open-telemetry/opentelemetry-demo/pull/2481))
+* [checkout] Add graceful shutdown to checkout service
+  ([#2491](https://github.com/open-telemetry/opentelemetry-demo/pull/2491))
+* [shipping] Use cumulative metrics in shipping service to be consistent
+  with the other services of the demo
+  ([#2503](https://github.com/open-telemetry/opentelemetry-demo/pull/2503))
+* [grafana] APM dashboard: Add host metrics per service instance
+  ([#2507](https://github.com/open-telemetry/opentelemetry-demo/pull/2507))
+* [react-native-app] Make frontend proxy URL configurable through app settings
+  ([#2531](https://github.com/open-telemetry/opentelemetry-demo/pull/2531))
+
+## 2.0.2
+
 * [frontend] Update OpenTelemetry Browser SDK initialization
   ([#2092](https://github.com/open-telemetry/opentelemetry-demo/pull/2092))
 * [quote] Updated open-telemetry/exporter-otlp to 1.2.1 which includes the
@@ -17,6 +146,11 @@ the release.
   ([#2114](https://github.com/open-telemetry/opentelemetry-demo/pull/2114))
 * [flagd-ui] increase memory to 100MB
   ([#2120](https://github.com/open-telemetry/opentelemetry-demo/pull/2120))
+* [cartservice] change custom metrics to use seconds
+  ([#2135](https://github.com/open-telemetry/opentelemetry-demo/pull/2135))
+* [otel-collector] Fix OTel Collector meta-monitoring, export metrics using
+  the HTTP port
+  ([#2502](https://github.com/open-telemetry/opentelemetry-demo/pull/2502))
 
 ## 2.0.1
 

@@ -1,8 +1,0 @@
-# Copyright The OpenTelemetry Authors
-# SPDX-License-Identifier: Apache-2.0
-# this file is used by .github/workflows/assign-reviewers.yml
-components:
-  src/ad:
-    - jack-berg
-    - mateuszrzeszutek
-    - trask

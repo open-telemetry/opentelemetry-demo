@@ -14,9 +14,35 @@ receivers:
             - "https://*"
   httpcheck/frontend-proxy:
     targets:
-      - endpoint: http://frontend-proxy:${env:ENVOY_PORT}
+      - endpoint: http://${env:FRONTEND_PROXY_ADDR}
+  nginx:
+    endpoint: http://${env:IMAGE_PROVIDER_HOST}:${env:IMAGE_PROVIDER_PORT}/status
+    collection_interval: 10s
   docker_stats:
     endpoint: unix:///var/run/docker.sock
+  postgresql:
+    endpoint: ${POSTGRES_HOST}:${POSTGRES_PORT}
+    username: root
+    password: ${POSTGRES_PASSWORD}
+    metrics:
+      postgresql.blks_hit:
+        enabled: true
+      postgresql.blks_read:
+        enabled: true
+      postgresql.tup_fetched:
+        enabled: true
+      postgresql.tup_returned:
+        enabled: true
+      postgresql.tup_inserted:
+        enabled: true
+      postgresql.tup_updated:
+        enabled: true
+      postgresql.tup_deleted:
+        enabled: true
+      postgresql.deadlocks:
+        enabled: true
+    tls:
+      insecure: true
   redis:
     endpoint: "valkey-cart:6379"
     username: "valkey"
@@ -28,6 +54,8 @@ receivers:
       cpu:
         metrics:
           system.cpu.utilization:
+            enabled: true
+          system.cpu.logical.count:
             enabled: true
       disk:
       load:
@@ -72,14 +100,23 @@ receivers:
         metrics:
           system.memory.utilization:
             enabled: true
+          system.memory.limit:
+            enabled: true
       network:
       paging:
+        metrics:
+          system.paging.usage:
+            enabled: true
+
       processes:
       process:
         mute_process_exe_error: true
         mute_process_io_error: true
         mute_process_user_error: true
-
+      system:
+        metrics:
+          system.uptime:
+            enabled: true
 exporters:
   debug:
   otlp:
@@ -91,18 +128,20 @@ exporters:
     tls:
       insecure: true
   opensearch:
-    logs_index: otel
+    logs_index: otel-logs
+    logs_index_time_format: "yyyy-MM-dd"
     http:
       endpoint: "http://opensearch:9200"
       tls:
         insecure: true
-
 processors:
   batch:
   memory_limiter:
     check_interval: 5s
     limit_percentage: 80
     spike_limit_percentage: 25
+  resourcedetection:
+    detectors: [env, docker, system]
   transform:
     error_mode: ignore
     trace_statements:
@@ -119,15 +158,15 @@ service:
   pipelines:
     traces:
       receivers: [otlp]
-      processors: [memory_limiter, transform, batch]
+      processors: [resourcedetection, memory_limiter, transform, batch]
       exporters: [otlp, debug, spanmetrics]
     metrics:
-      receivers: [hostmetrics, docker_stats, httpcheck/frontend-proxy, otlp, redis, spanmetrics]
-      processors: [memory_limiter, batch]
+      receivers: [docker_stats, httpcheck/frontend-proxy, hostmetrics, nginx, otlp, postgresql, redis, spanmetrics]
+      processors: [resourcedetection, memory_limiter, batch]
       exporters: [otlphttp/prometheus, debug]
     logs:
       receivers: [otlp]
-      processors: [memory_limiter, batch]
+      processors: [resourcedetection, memory_limiter, batch]
       exporters: [opensearch, debug]
   telemetry:
     metrics:
@@ -138,5 +177,5 @@ service:
             timeout: 5000
             exporter:
               otlp:
-                protocol: grpc
-                endpoint: ${env:OTEL_COLLECTOR_HOST}:${env:OTEL_COLLECTOR_PORT_GRPC}
+                protocol: http/protobuf
+                endpoint: http://${env:OTEL_COLLECTOR_HOST}:${env:OTEL_COLLECTOR_PORT_HTTP}

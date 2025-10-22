@@ -2,6 +2,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import { v4 } from 'uuid';
+import { getCookie } from "cookies-next";
 
 interface ISession {
   userId: string;
@@ -9,8 +10,8 @@ interface ISession {
 }
 
 const sessionKey = 'session';
-const defaultSession = {
-  userId: v4(),
+const defaultSession: ISession = {
+  userId: getCookie('USERID') as string || v4(),
   currencyCode: 'USD',
 };
 

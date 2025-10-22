@@ -2,25 +2,30 @@
 # SPDX-License-Identifier: Apache-2.0
 
 
-FROM node:22-alpine AS build
+FROM docker.io/library/node:22-slim AS builder
 
 WORKDIR /usr/src/app/
 
-COPY ./src/payment/package*.json ./
+COPY ./src/payment/package.json package.json
+COPY ./src/payment/package-lock.json package-lock.json
 
-RUN apk add --no-cache python3 make g++ && npm ci --omit=dev
+RUN npm ci --omit=dev
 
 # -----------------------------------------------------------------------------
 
-FROM node:22-alpine
+FROM gcr.io/distroless/nodejs22-debian12:nonroot
 
-USER node
 WORKDIR /usr/src/app/
-ENV NODE_ENV=production
 
-COPY --chown=node:node --from=build /usr/src/app/node_modules/ ./node_modules/
-COPY ./src/payment/ ./
-COPY ./pb/demo.proto ./
+COPY --from=builder /usr/src/app/node_modules/ node_modules/
+
+COPY ./pb/demo.proto demo.proto
+
+COPY ./src/payment/charge.js charge.js
+COPY ./src/payment/index.js index.js
+COPY ./src/payment/logger.js logger.js
+COPY ./src/payment/opentelemetry.js opentelemetry.js
 
 EXPOSE ${PAYMENT_PORT}
-ENTRYPOINT [ "npm", "run", "start" ]
+
+CMD ["--require=./opentelemetry.js", "index.js"]

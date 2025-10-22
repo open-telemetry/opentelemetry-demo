@@ -37,21 +37,31 @@ static_resources:
                       domains:
                         - "*"
                       routes:
-                        - match: { prefix: "/loadgen" }
+                        - match: { path: "/loadgen" }
+                          redirect: { path_redirect: "/loadgen/" }
+                        - match: { prefix: "/loadgen/" }
                           route: { cluster: loadgen, prefix_rewrite: "/" }
                         - match: { prefix: "/otlp-http/" }
                           route: { cluster: opentelemetry_collector_http, prefix_rewrite: "/" }
-                        - match: { prefix: "/jaeger" }
+                        - match: { path: "/jaeger" }
+                          redirect: { path_redirect: "/jaeger/" }
+                        - match: { prefix: "/jaeger/" }
                           route: { cluster: jaeger }
-                        - match: { prefix: "/grafana" }
+                        - match: { path: "/grafana" }
+                          redirect: { path_redirect: "/grafana/" }
+                        - match: { prefix: "/grafana/" }
                           route: { cluster: grafana }
                         - match: { prefix: "/images/" }
                           route: { cluster: image-provider, prefix_rewrite: "/" }
                         - match: { prefix: "/flagservice/" }
                           route: { cluster: flagservice, prefix_rewrite: "/", timeout: 0s }
                         - match: { prefix: "/feature" }
-                          route: { cluster: flagd-ui }
-                        - match: { prefix: "/" }
+                          route:
+                            cluster: flagd-ui
+                            prefix_rewrite: "/"
+                            upgrade_configs:
+                              - upgrade_type: websocket
+                        - match: { prefix: "/" } # Default/catch-all route - keep last since prefix:"/" matches everything
                           route: { cluster: frontend }
                 http_filters:
                   - name: envoy.filters.http.fault
@@ -231,12 +241,12 @@ static_resources:
                   address:
                     socket_address:
                       address: ${JAEGER_HOST}
-                      port_value: ${JAEGER_PORT}
+                      port_value: ${JAEGER_UI_PORT}
 admin:
   address:
     socket_address:
       address: 0.0.0.0
-      port_value: 10000
+      port_value: ${ENVOY_ADMIN_PORT}
 layered_runtime:
   layers:
     - name: static_layer_0

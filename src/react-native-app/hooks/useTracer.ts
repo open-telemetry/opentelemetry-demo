@@ -12,7 +12,7 @@ import {
 import { XMLHttpRequestInstrumentation } from "@opentelemetry/instrumentation-xml-http-request";
 import { FetchInstrumentation } from "@opentelemetry/instrumentation-fetch";
 import { registerInstrumentations } from "@opentelemetry/instrumentation";
-import { Resource } from "@opentelemetry/resources";
+import { resourceFromAttributes } from "@opentelemetry/resources";
 import {
   ATTR_DEVICE_ID,
   ATTR_OS_NAME,
@@ -21,7 +21,6 @@ import {
   ATTR_SERVICE_VERSION,
 } from "@opentelemetry/semantic-conventions/incubating";
 import { OTLPTraceExporter } from "@opentelemetry/exporter-trace-otlp-http";
-import getLocalhost from "@/utils/Localhost";
 import { useEffect, useState } from "react";
 import {
   getDeviceId,
@@ -30,12 +29,11 @@ import {
 } from "react-native-device-info";
 import { Platform } from "react-native";
 import { SessionIdProcessor } from "@/utils/SessionIdProcessor";
+import getFrontendProxyURL from "@/utils/Settings";
 
-const Tracer = async () => {
-  const localhost = await getLocalhost();
-
+export const setupTracerProvider = (proxyURL: string) => {
   // TODO Should add a resource detector for React Native that provides this automatically
-  const resource = new Resource({
+  const resource = resourceFromAttributes({
     [ATTR_SERVICE_NAME]: "react-native-app",
     [ATTR_OS_NAME]: Platform.OS,
     [ATTR_OS_VERSION]: getSystemVersion(),
@@ -49,23 +47,27 @@ const Tracer = async () => {
   //  for React Native.
   //  Alternatively could offer a TracerProvider that exposed a JS interface on top of the OTEL Android and Swift SDKS,
   //  giving developers the option of collecting telemetry at the native mobile layer
-  const provider = new WebTracerProvider({
+  return new WebTracerProvider({
     resource,
     spanProcessors: [
       new BatchSpanProcessor(
         new OTLPTraceExporter({
-          url: `http://${localhost}:${process.env.EXPO_PUBLIC_FRONTEND_PROXY_PORT}/otlp-http/v1/traces`,
+          url: `${proxyURL}/otlp-http/v1/traces`,
         }),
         {
           scheduledDelayMillis: 500,
         },
       ),
-
       // TODO introduce a React Native session processor package that could be used here, taking into account mobile
       // specific considerations for the session such as putting the app into the background
       new SessionIdProcessor(),
     ],
   });
+}
+
+const Tracer = async () => {
+  const proxyURL = await getFrontendProxyURL();
+  const provider = setupTracerProvider(proxyURL);
 
   provider.register({
     propagator: new CompositePropagator({

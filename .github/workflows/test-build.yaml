@@ -1,0 +1,21 @@
+name: test-build
+
+on:
+  push:
+    branches:
+      - '**'
+      - '!main'
+    paths:
+      - 'src/**'
+      - '!src/**.md'
+      - 'test/**'
+      - 'dynatrace/**'
+      - 'docker-compose.yml'
+      - '.env.override'
+
+jobs:
+  build:
+    uses: ./.github/workflows/build-and-push-images.yaml
+    with:
+      push: false
+    secrets: inherit

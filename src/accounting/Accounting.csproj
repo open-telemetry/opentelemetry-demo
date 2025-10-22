@@ -9,24 +9,26 @@
 	</PropertyGroup>
 
 	<ItemGroup>
-		<PackageReference Include="Confluent.Kafka" Version="2.8.0" />
-		<PackageReference Include="Google.Protobuf" Version="3.30.0" />
+		<PackageReference Include="Confluent.Kafka" Version="2.11.0" />
+		<PackageReference Include="EFCore.NamingConventions" Version="9.0.0" />
+		<PackageReference Include="Google.Protobuf" Version="3.31.1" />
 		<PackageReference Include="Grpc.Tools" Version="2.68.1">
 			<PrivateAssets>all</PrivateAssets>
 			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
 		</PackageReference>
-		<PackageReference Include="Microsoft.Extensions.Logging" Version="9.0.2" />
-		<PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.21.2" />
-		<PackageReference Include="OpenTelemetry.AutoInstrumentation" Version="1.11.0" />
+		<PackageReference Include="Microsoft.Extensions.Logging" Version="9.0.7" />
+		<PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.22.1" />
+		<PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="9.0.4" />
+		<PackageReference Include="OpenTelemetry.AutoInstrumentation" Version="1.12.0" />
 	</ItemGroup>
 
 	<ItemGroup>
 		<!-- GrpcServices is 'none' so that we do not need to depend on the grpc nuget package, and we only need protobuf support. -->
-		<Protobuf Include="proto\demo.proto" GrpcServices="none" />
+		<Protobuf Include="src\protos\demo.proto" GrpcServices="none" />
 	</ItemGroup>
 
 	<ItemGroup>
-	  <Folder Include="proto\" />
+	  <Folder Include="src\protos\" />
 	</ItemGroup>
 
 </Project>
