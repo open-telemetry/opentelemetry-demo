@@ -346,12 +346,12 @@ type: Opaque
 stringData:
   SA_PASSWORD: "ChangeMe_SuperStrong123!"
   # Optional: full connection string if you want to inject as a single env var.
-  DB_CONNECTION_STRING: "Server=tcp:sql-express.sql.svc.cluster.local,1433;Database=MyDb;User Id=sa;Password=ChangeMe_SuperStrong123!;Encrypt=True;TrustServerCertificate=True"
+  DB_CONNECTION_STRING: "Server=tcp:sql-server-fraud.sql.svc.cluster.local,1433;Database=MyDb;User Id=sa;Password=ChangeMe_SuperStrong123!;Encrypt=True;TrustServerCertificate=True"
 ---
 apiVersion: v1
 kind: Service
 metadata:
-  name: sql-express
+  name: sql-server-fraud
   namespace: sql
 spec:
   type: ClusterIP
@@ -361,26 +361,26 @@ spec:
       protocol: TCP
       name: tds
   selector:
-    app: sql-express
+    app: sql-server-fraud
 ---
 apiVersion: apps/v1
 kind: StatefulSet
 metadata:
-  name: sql-express
+  name: sql-server-fraud
   namespace: sql
 spec:
-  serviceName: sql-express
+  serviceName: sql-server-fraud
   replicas: 1
   persistentVolumeClaimRetentionPolicy:
     whenDeleted: Delete
     whenScaled: Delete
   selector:
     matchLabels:
-      app: sql-express
+      app: sql-server-fraud
   template:
     metadata:
       labels:
-        app: sql-express
+        app: sql-server-fraud
     spec:
       securityContext:
         fsGroup: 10001        # mssql user can write PV
@@ -1434,7 +1434,7 @@ spec:
             - name: OTEL_RESOURCE_ATTRIBUTES
               value: service.name=$(OTEL_SERVICE_NAME),service.namespace=opentelemetry-demo,service.version=2.1.3,service.kafka=spanlink
             - name: SQL_SERVER_HOST
-              value: sql-express.sql.svc.cluster.local
+              value: sql-server-fraud.sql.svc.cluster.local
             - name: SQL_SERVER_PORT
               value: "1433"
             - name: SQL_SERVER_DATABASE
@@ -1461,7 +1461,7 @@ spec:
         - command:
           - sh
           - -c
-          - until nc -z -v -w30 sql-express.sql.svc.cluster.local 1433; do echo waiting for sql-express; sleep 2; done;
+          - until nc -z -v -w30 sql-server-fraud.sql.svc.cluster.local 1433; do echo waiting for sql-server-fraud; sleep 2; done;
           image: busybox:latest
           name: wait-for-sqlserver
       volumes:
