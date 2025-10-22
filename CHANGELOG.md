@@ -16,6 +16,8 @@ the release.
 * [chore] Upgrade OpenFeature and add fix deprecation warnings for dependency
   injection
   ([#2644](https://github.com/open-telemetry/opentelemetry-demo/pull/2644))
+* [chore] Fix flagd-ui span error
+  ([#2615](https://github.com/open-telemetry/opentelemetry-demo/pull/2677))
 
 ## 2.1.3
 
