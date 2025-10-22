@@ -15,6 +15,9 @@ the release.
   ([#2615](https://github.com/open-telemetry/opentelemetry-demo/pull/2615))
 * [feat] Add Product Review service with AI-generated summaries
   ([#2663](https://github.com/open-telemetry/opentelemetry-demo/pull/2663))
+* [chore] Upgrade OpenFeature and add fix deprecation warnings for dependency
+  injection
+  ([#2644](https://github.com/open-telemetry/opentelemetry-demo/pull/2644))
 
 ## 2.1.3
 
