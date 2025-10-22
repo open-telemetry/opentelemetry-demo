@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.1)
+cmake_minimum_required(VERSION 3.26)
 project(currency-proto)
 
 find_package(Protobuf REQUIRED)
@@ -42,18 +42,21 @@ add_custom_command(
       "--proto_path=${PROTO_PATH}" ${PROTOBUF_INCLUDE_FLAGS}
       "--cpp_out=${GENERATED_PROTOBUF_PATH}"
       "--grpc_out=generate_mock_code=true:${GENERATED_PROTOBUF_PATH}"
-      --plugin=protoc-gen-grpc="${gRPC_CPP_PLUGIN_EXECUTABLE}" ${DEMO_PROTO} ${HEALTH_PROTO})
+      --plugin=protoc-gen-grpc="${gRPC_CPP_PLUGIN_EXECUTABLE}" ${DEMO_PROTO} ${HEALTH_PROTO}
+)
 
 message(STATUS "gRPC_CPP_PLUGIN_EXECUTABLE=${gRPC_CPP_PLUGIN_EXECUTABLE}")
 
-add_library(demo-proto ${DEMO_PB_H_FILE}
-           ${DEMO_PB_CPP_FILE}
-           ${DEMO_GRPC_PB_CPP_FILE}
-           ${DEMO_GRPC_PB_H_FILE}
-           ${HEALTH_PB_H_FILE}
-           ${HEALTH_PB_CPP_FILE}
-           ${HEALTH_GRPC_PB_CPP_FILE}
-           ${HEALTH_GRPC_PB_H_FILE})
+add_library(
+    demo-proto ${DEMO_PB_H_FILE}
+               ${DEMO_PB_CPP_FILE}
+               ${DEMO_GRPC_PB_CPP_FILE}
+               ${DEMO_GRPC_PB_H_FILE}
+               ${HEALTH_PB_H_FILE}
+               ${HEALTH_PB_CPP_FILE}
+               ${HEALTH_GRPC_PB_CPP_FILE}
+               ${HEALTH_GRPC_PB_H_FILE}
+)
 
 target_link_libraries(demo-proto gRPC::grpc++ protobuf::libprotobuf)
-include_directories("${GENERATED_PROTOBUF_PATH}" )
+include_directories("${GENERATED_PROTOBUF_PATH}")

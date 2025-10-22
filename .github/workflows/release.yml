@@ -5,7 +5,10 @@ name: "Build and Publish"
 on:
   push:
     branches:
-      - 'dynatrace'
+      - "main"
+
+permissions:
+  contents: read
 
 jobs:
   tag-from-commit:
@@ -17,6 +20,9 @@ jobs:
       image-tag: ${{ steps.commit.outputs.short }}
 
   build_and_push_images:
+    permissions: # required by the reusable workflow
+      contents: read
+      packages: write
     needs: tag-from-commit
     uses: ./.github/workflows/build-and-push-images.yaml
     with:

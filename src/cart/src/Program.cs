@@ -17,10 +17,15 @@ using OpenTelemetry.Resources;
 using OpenTelemetry.Trace;
 using OpenFeature;
 using OpenFeature.Contrib.Providers.Flagd;
-using OpenFeature.Contrib.Hooks.Otel;
+using OpenFeature.Hooks;
 
 var builder = WebApplication.CreateBuilder(args);
-
+string valkeyAddress = builder.Configuration["VALKEY_ADDR"];
+if (string.IsNullOrEmpty(valkeyAddress))
+{
+    Console.WriteLine("VALKEY_ADDR environment variable is required.");
+    Environment.Exit(1);
+}
 
 builder.Logging
     .AddOpenTelemetry(options => options.AddOtlpExporter())
@@ -28,8 +33,7 @@ builder.Logging
 
 builder.Services.AddSingleton<ICartStore>(x =>
 {
-    var store = new DaprStateManagementCartStore(x.GetRequiredService<ILogger<DaprStateManagementCartStore>>(), "cart-state-store");
-
+    var store = new ValkeyCartStore(x.GetRequiredService<ILogger<ValkeyCartStore>>(), valkeyAddress);
     store.Initialize();
     return store;
 });
@@ -38,19 +42,22 @@ builder.Services.AddOpenFeature(openFeatureBuilder =>
 {
     openFeatureBuilder
         .AddHostedFeatureLifecycle()
-        .AddProvider(_ => new FlagdProvider());
+        .AddProvider(_ => new FlagdProvider())
+        .AddHook<MetricsHook>()
+        .AddHook<TraceEnricherHook>();
 });
 
 builder.Services.AddSingleton(x =>
     new CartService(
         x.GetRequiredService<ICartStore>(),
-        new DaprStateManagementCartStore(x.GetRequiredService<ILogger<DaprStateManagementCartStore>>(), "bad-state-store"),
+        new ValkeyCartStore(x.GetRequiredService<ILogger<ValkeyCartStore>>(), "badhost:1234"),
         x.GetRequiredService<IFeatureClient>()
 ));
 
 
 Action<ResourceBuilder> appResourceBuilder =
     resource => resource
+        .AddService(builder.Environment.ApplicationName)
         .AddContainerDetector()
         .AddHostDetector();
 
@@ -66,19 +73,20 @@ builder.Services.AddOpenTelemetry()
         .AddOtlpExporter())
     .WithMetrics(meterBuilder => meterBuilder
         .AddMeter("OpenTelemetry.Demo.Cart")
+        .AddMeter("OpenFeature")
         .AddProcessInstrumentation()
         .AddRuntimeInstrumentation()
         .AddAspNetCoreInstrumentation()
         .SetExemplarFilter(ExemplarFilterType.TraceBased)
         .AddOtlpExporter());
-OpenFeature.Api.Instance.AddHooks(new TracingHook());
 builder.Services.AddGrpc();
 builder.Services.AddGrpcHealthChecks()
     .AddCheck("Sample", () => HealthCheckResult.Healthy());
 
 var app = builder.Build();
 
-
+var ValkeyCartStore = (ValkeyCartStore)app.Services.GetRequiredService<ICartStore>();
+app.Services.GetRequiredService<StackExchangeRedisInstrumentation>().AddConnection(ValkeyCartStore.GetConnection());
 
 app.MapGrpcService<CartService>();
 app.MapGrpcHealthChecksService();

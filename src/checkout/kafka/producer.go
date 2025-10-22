@@ -3,8 +3,10 @@
 package kafka
 
 import (
+	"fmt"
+	"log/slog"
+
 	"github.com/IBM/sarama"
-	"github.com/sirupsen/logrus"
 )
 
 var (
@@ -12,8 +14,23 @@ var (
 	ProtocolVersion = sarama.V3_0_0_0
 )
 
-func CreateClient(brokers []string, log *logrus.Logger) (sarama.Client, error) {
-	sarama.Logger = log
+type saramaLogger struct {
+	logger *slog.Logger
+}
+
+func (l *saramaLogger) Printf(format string, v ...interface{}) {
+	l.logger.Info(fmt.Sprintf(format, v...))
+}
+func (l *saramaLogger) Println(v ...interface{}) {
+	l.logger.Info(fmt.Sprint(v...))
+}
+func (l *saramaLogger) Print(v ...interface{}) {
+	l.logger.Info(fmt.Sprint(v...))
+}
+
+func CreateClient(brokers []string, logger *slog.Logger) (sarama.Client, error) {
+	// Set the logger for sarama to use.
+	sarama.Logger = &saramaLogger{logger: logger}
 
 	config := sarama.NewConfig()
 	config.Producer.Return.Successes = true
@@ -25,7 +42,7 @@ func CreateClient(brokers []string, log *logrus.Logger) (sarama.Client, error) {
 
 	client, err := sarama.NewClient(brokers, config)
 	if err != nil {
-		log.Warnln("Failed to create sarama client:", err)
+		logger.Warn(fmt.Sprintf("Failed to create sarama client: %+v", err))
 		return nil, err
 	}
 	return client, nil

@@ -58,17 +58,19 @@ keeping it up to date for you.
 
 |                           |                |                                  |
 |---------------------------|----------------|----------------------------------|
-| [AlibabaCloud LogService] | [Google Cloud] |  [Oracle]                        |
-| [AppDynamics]             | [Grafana Labs] |  [Sentry]                        |
-| [Aspecto]                 | [Guance]       |  [ServiceNow Cloud Observability]|
-| [Axiom]                   | [Honeycomb.io] |  [SigNoz]                        |
-| [Axoflow]                 | [Instana]      |  [Splunk]                        |
-| [Azure Data Explorer]     | [Kloudfuse]    |  [Sumo Logic]                    |
-| [Coralogix]               | [Last9]        |  [TelemetryHub]                  |
-| [Dash0]                   | [Liatrio]      |  [Teletrace]                     |
-| [Datadog]                 | [Logz.io]      |  [Tracetest]                     |
-| [Dynatrace]               | [New Relic]    |  [Uptrace]                       |
-| [Elastic]                 | [OpenSearch]   |                                  |
+| [AlibabaCloud LogService] | [Elastic]      | [Parseable]                      |
+| [Apache Doris]            | [Google Cloud] | [Sentry]                         |
+| [AppDynamics]             | [Grafana Labs] | [ServiceNow Cloud Observability] |
+| [Aspecto]                 | [Guance]       | [SigNoz]                         |
+| [Axiom]                   | [Honeycomb.io] | [Splunk]                         |
+| [Axoflow]                 | [Instana]      | [Sumo Logic]                     |
+| [Azure Data Explorer]     | [Kloudfuse]    | [TelemetryHub]                   |
+| [Causely]                 | [Last9]        | [Teletrace]                      |
+| [ClickStack]              | [Liatrio]      | [Tinybird]                       |
+| [Coralogix]               | [Logz.io]      | [Tracetest]                      |
+| [Dash0]                   | [New Relic]    | [Uptrace]                        |
+| [Datadog]                 | [OpenSearch]   | [VictoriaMetrics]                |
+| [Dynatrace]               | [Oracle]       |                                  |
 
 ## Contributing
 
@@ -76,30 +78,33 @@ To get involved with the project see our [CONTRIBUTING](CONTRIBUTING.md)
 documentation. Our [SIG Calls](CONTRIBUTING.md#join-a-sig-call) are every other
 Wednesday at 8:30 AM PST and anyone is welcome.
 
-## Project leadership
-
-[Maintainers](https://github.com/open-telemetry/community/blob/main/guides/contributor/membership.md#maintainer)
-([@open-telemetry/demo-maintainers](https://github.com/orgs/open-telemetry/teams/demo-maintainers)):
+### Maintainers
 
 - [Juliano Costa](https://github.com/julianocosta89), Datadog
 - [Mikko Viitanen](https://github.com/mviitane), Dynatrace
 - [Pierre Tessier](https://github.com/puckpuck), Honeycomb
-
-[Approvers](https://github.com/open-telemetry/community/blob/main/guides/contributor/membership.md#approver)
-([@open-telemetry/demo-approvers](https://github.com/orgs/open-telemetry/teams/demo-approvers)):
-
-- [Cedric Ziel](https://github.com/cedricziel) Grafana Labs
-- [Penghan Wang](https://github.com/wph95), AppDynamics
-- [Reiley Yang](https://github.com/reyang), Microsoft
 - [Roger Coll](https://github.com/rogercoll), Elastic
-- [Ziqi Zhao](https://github.com/fatsheep9146), Alibaba
 
-Emeritus:
+For more information about the maintainer role, see the [community repository](https://github.com/open-telemetry/community/blob/main/guides/contributor/membership.md#maintainer).
+
+### Approvers
+
+- [Cedric Ziel](https://github.com/cedricziel), Grafana Labs
+- [Shenoy Pratik](https://github.com/ps48), AWS OpenSearch
+
+For more information about the approver role, see the [community repository](https://github.com/open-telemetry/community/blob/main/guides/contributor/membership.md#approver).
+
+### Emeritus
 
 - [Austin Parker](https://github.com/austinlparker)
 - [Carter Socha](https://github.com/cartersocha)
 - [Michael Maxwell](https://github.com/mic-max)
 - [Morgan McLean](https://github.com/mtwo)
+- [Penghan Wang](https://github.com/wph95)
+- [Reiley Yang](https://github.com/reyang)
+- [Ziqi Zhao](https://github.com/fatsheep9146)
+
+For more information about the emeritus role, see the [community repository](https://github.com/open-telemetry/community/blob/main/guides/contributor/membership.md#emeritus-maintainerapprovertriager).
 
 ### Thanks to all the people who have contributed
 
@@ -111,10 +116,13 @@ Emeritus:
 
 [AlibabaCloud LogService]: https://github.com/aliyun-sls/opentelemetry-demo
 [AppDynamics]: https://community.splunk.com/t5/AppDynamics-Knowledge-Base/How-to-observe-Kubernetes-deployment-of-OpenTelemetry-demo-app/ta-p/741454
+[Apache Doris]: https://github.com/apache/doris-opentelemetry-demo
 [Aspecto]: https://github.com/aspecto-io/opentelemetry-demo
 [Axiom]: https://play.axiom.co/axiom-play-qf1k/dashboards/otel.traces.otel-demo-traces
 [Axoflow]: https://axoflow.com/opentelemetry-support-in-more-detail-in-axosyslog-and-syslog-ng/
 [Azure Data Explorer]: https://github.com/Azure/Azure-kusto-opentelemetry-demo
+[Causely]: https://github.com/causely-oss/otel-demo
+[ClickStack]: https://github.com/ClickHouse/opentelemetry-demo
 [Coralogix]: https://coralogix.com/blog/configure-otel-demo-send-telemetry-data-coralogix
 [Dash0]: https://github.com/dash0hq/opentelemetry-demo
 [Datadog]: https://docs.datadoghq.com/opentelemetry/guide/otel_demo_to_datadog
@@ -132,6 +140,7 @@ Emeritus:
 [New Relic]: https://github.com/newrelic/opentelemetry-demo
 [OpenSearch]: https://github.com/opensearch-project/opentelemetry-demo
 [Oracle]: https://github.com/oracle-quickstart/oci-o11y-solutions/blob/main/knowledge-content/opentelemetry-demo
+[Parseable]: https://www.parseable.com/blog/open-telemetry-demo-with-parseable-a-complete-observability-setup
 [Sentry]: https://github.com/getsentry/opentelemetry-demo
 [ServiceNow Cloud Observability]: https://docs.lightstep.com/otel/quick-start-operator#send-data-from-the-opentelemetry-demo
 [SigNoz]: https://signoz.io/blog/opentelemetry-demo/
@@ -139,5 +148,7 @@ Emeritus:
 [Sumo Logic]: https://www.sumologic.com/blog/common-opentelemetry-demo-application/
 [TelemetryHub]: https://github.com/TelemetryHub/opentelemetry-demo/tree/telemetryhub-backend
 [Teletrace]: https://github.com/teletrace/opentelemetry-demo
+[Tinybird]: https://github.com/tinybirdco/opentelemetry-demo
 [Tracetest]: https://github.com/kubeshop/opentelemetry-demo
 [Uptrace]: https://github.com/uptrace/uptrace/tree/master/example/opentelemetry-demo
+[VictoriaMetrics]: https://github.com/VictoriaMetrics-Community/opentelemetry-demo

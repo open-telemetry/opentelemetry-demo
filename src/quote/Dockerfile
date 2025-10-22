@@ -2,25 +2,13 @@
 # SPDX-License-Identifier: Apache-2.0
 
 
-FROM php:8.3-cli AS base
+FROM ghcr.io/mlocati/php-extension-installer:2.9.11 AS installer
 
-ADD https://github.com/mlocati/docker-php-extension-installer/releases/latest/download/install-php-extensions /usr/local/bin/
-RUN chmod +x /usr/local/bin/install-php-extensions \
-  && install-php-extensions \
-    opcache \
-    pcntl \
-    protobuf \
-    opentelemetry
-
-WORKDIR /var/www
-CMD ["php", "public/index.php"]
-USER www-data
-EXPOSE ${QUOTE_PORT}
-
-FROM composer:2.7 AS vendor
+FROM docker.io/library/composer:2.8.12 AS vendor
 
 WORKDIR /tmp/
-COPY ./src/quote/composer.json .
+
+COPY ./src/quote/composer.json composer.json
 
 RUN composer install \
     --ignore-platform-reqs \
@@ -30,6 +18,22 @@ RUN composer install \
     --no-dev \
     --prefer-dist
 
-FROM base AS final
-COPY --from=vendor /tmp/vendor/ ./vendor/
-COPY ./src/quote/ /var/www
+FROM docker.io/library/php:8.4-cli-alpine3.22
+
+COPY --from=installer /usr/bin/install-php-extensions /usr/local/bin/
+
+RUN install-php-extensions opcache pcntl protobuf opentelemetry
+
+WORKDIR /var/www
+
+USER www-data
+
+COPY --from=vendor /tmp/vendor/ vendor/
+
+COPY ./src/quote/app/ app/
+COPY ./src/quote/public/ public/
+COPY ./src/quote/src/ src/
+
+EXPOSE ${QUOTE_PORT}
+
+CMD ["php", "public/index.php"]

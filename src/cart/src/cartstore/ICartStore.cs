@@ -13,5 +13,5 @@ public interface ICartStore
 
     Task<Oteldemo.Cart> GetCartAsync(string userId);
 
-     Task<bool> PingAsync();
+    bool Ping();
 }
