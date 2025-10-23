@@ -1,3 +1,5 @@
+### Expects a deployment of Astronomy Shop Demo in the same cluster
+### Uses checkout service from that demo
 ---
 apiVersion: v1
 kind: Service
