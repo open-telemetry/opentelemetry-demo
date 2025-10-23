@@ -2,7 +2,7 @@
   "$schema": "https://flagd.dev/schema/v0/flags.json",
   "flags": {
     "llmInaccurateResponse": {
-      "defaultVariant": "on",
+      "defaultVariant": "off",
       "description": "LLM returns an inaccurate product summary for product ID L9ECAV7KIM",
       "state": "ENABLED",
       "variants": {

@@ -1,7 +1,7 @@
 # Product Reviews Service
 
-This service returns product reviews for a specific product, along with an AI-generated 
-summary of the product reviews. 
+This service returns product reviews for a specific product, along with an
+AI-generated summary of the product reviews.
 
 ## Local Build
 
@@ -19,9 +19,10 @@ From the root directory, run:
 docker compose build product-reviews
 ```
 
-## LLM Configuration 
+## LLM Configuration
 
-By default, this service uses a mock LLM service, as configured in the `.env` file: 
+By default, this service uses a mock LLM service, as configured in
+the `.env` file:
 
 ``` yaml
 LLM_BASE_URL=http://${LLM_HOST}:${LLM_PORT}/v1
@@ -29,8 +30,9 @@ LLM_MODEL=astronomy-llm
 OPENAI_API_KEY=dummy
 ```
 
-If desired, the configuration can be changed to point to a real, OpenAI API compatible LLM. 
-For example, the following configuration can be used to utilize OpenAI's gpt-4o-mini model: 
+If desired, the configuration can be changed to point to a real, OpenAI API
+compatible LLM. For example, the following configuration can be used to
+utilize OpenAI's gpt-4o-mini model:
 
 ``` yaml
 LLM_BASE_URL=https://api.openai.com/v1
