@@ -10,6 +10,7 @@ set -e
 echo "Starting Shop Datacenter Shim Service with dual instrumentation..."
 
 # AppDynamics Configuration (with fallback defaults)
+# We should pull APPDYNAMICS_AGENT_ACCOUNT_ACCESS_KEY from swipe
 export APPDYNAMICS_AGENT_ACCOUNT_ACCESS_KEY=${APPDYNAMICS_AGENT_ACCOUNT_ACCESS_KEY:-replace-appd-token}
 export APPDYNAMICS_AGENT_ACCOUNT_NAME=${APPDYNAMICS_AGENT_ACCOUNT_NAME:-se-lab}
 export APPDYNAMICS_CONTROLLER_HOST_NAME=${APPDYNAMICS_CONTROLLER_HOST_NAME:-se-lab.saas.appdynamics.com}

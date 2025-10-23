@@ -4,6 +4,7 @@
 
 """
 Shop Datacenter Load Generator
+YeetCoded (locust may have been simpler but hey...)
 
 This generates realistic on-premises shop purchase traffic to simulate:
 - Physical store transactions 
