@@ -197,6 +197,7 @@ static_resources:
     - name: flagd-ui
       type: STRICT_DNS
       lb_policy: ROUND_ROBIN
+      timeout: 0s
       load_assignment:
         cluster_name: flagd-ui
         endpoints:
