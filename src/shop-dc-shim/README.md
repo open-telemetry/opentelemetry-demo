@@ -51,6 +51,8 @@ The service includes **intentional Jackson serialization errors** on the transac
 - Reference that new image in `k8s-addition.yaml` and copy to your instance
 - `kubectl apply -f k8s-addition.yaml` will add the `shop-dc-shim-db`, `shop-dc-shim`, and `shop-dc-load-generator` pods to your cluster
 - Once `shop-dc-shim` finishes spinning up (5-7min) the load generator will start sending traffic
+- **For DBMon** upgrade splunk-otel-collector helm chart with `dbmon-values.yaml`
+  - E.G. `helm upgrade splunk-otel-collector-1760534477 --values /home/splunk/dbmon-values.yaml splunk-otel-collector-chart/splunk-otel-collector --reuse-values`
 - To delete `kubectl delete -f k8s-addition.yaml` will remove all shop-dc related resources
 
 ### Bare Metal (thar may be dragons)
