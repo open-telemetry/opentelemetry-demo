@@ -117,10 +117,10 @@ def chat_completions():
                         "id": "call",
                         "type": "function",
                         "function": {
-                          "name": "fetch_product_reviews",
-                          "arguments": tool_args
+                            "name": "fetch_product_reviews",
+                            "arguments": tool_args
                         }
-                      }]
+                    }]
                 },
                 "finish_reason": "tool_calls"
             }],

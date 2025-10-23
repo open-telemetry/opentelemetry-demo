@@ -1297,6 +1297,372 @@ class ProductCatalogService final {
   typedef WithStreamedUnaryMethod_ListProducts<WithStreamedUnaryMethod_GetProduct<WithStreamedUnaryMethod_SearchProducts<Service > > > StreamedService;
 };
 
+// ---------------Product Review service----------
+//
+class ProductReviewService final {
+ public:
+  static constexpr char const* service_full_name() {
+    return "oteldemo.ProductReviewService";
+  }
+  class StubInterface {
+   public:
+    virtual ~StubInterface() {}
+    virtual ::grpc::Status GetProductReviews(::grpc::ClientContext* context, const ::oteldemo::GetProductReviewsRequest& request, ::oteldemo::GetProductReviewsResponse* response) = 0;
+    std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::oteldemo::GetProductReviewsResponse>> AsyncGetProductReviews(::grpc::ClientContext* context, const ::oteldemo::GetProductReviewsRequest& request, ::grpc::CompletionQueue* cq) {
+      return std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::oteldemo::GetProductReviewsResponse>>(AsyncGetProductReviewsRaw(context, request, cq));
+    }
+    std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::oteldemo::GetProductReviewsResponse>> PrepareAsyncGetProductReviews(::grpc::ClientContext* context, const ::oteldemo::GetProductReviewsRequest& request, ::grpc::CompletionQueue* cq) {
+      return std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::oteldemo::GetProductReviewsResponse>>(PrepareAsyncGetProductReviewsRaw(context, request, cq));
+    }
+    virtual ::grpc::Status GetProductReviewSummary(::grpc::ClientContext* context, const ::oteldemo::GetProductReviewSummaryRequest& request, ::oteldemo::GetProductReviewSummaryResponse* response) = 0;
+    std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::oteldemo::GetProductReviewSummaryResponse>> AsyncGetProductReviewSummary(::grpc::ClientContext* context, const ::oteldemo::GetProductReviewSummaryRequest& request, ::grpc::CompletionQueue* cq) {
+      return std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::oteldemo::GetProductReviewSummaryResponse>>(AsyncGetProductReviewSummaryRaw(context, request, cq));
+    }
+    std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::oteldemo::GetProductReviewSummaryResponse>> PrepareAsyncGetProductReviewSummary(::grpc::ClientContext* context, const ::oteldemo::GetProductReviewSummaryRequest& request, ::grpc::CompletionQueue* cq) {
+      return std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::oteldemo::GetProductReviewSummaryResponse>>(PrepareAsyncGetProductReviewSummaryRaw(context, request, cq));
+    }
+    class async_interface {
+     public:
+      virtual ~async_interface() {}
+      virtual void GetProductReviews(::grpc::ClientContext* context, const ::oteldemo::GetProductReviewsRequest* request, ::oteldemo::GetProductReviewsResponse* response, std::function<void(::grpc::Status)>) = 0;
+      virtual void GetProductReviews(::grpc::ClientContext* context, const ::oteldemo::GetProductReviewsRequest* request, ::oteldemo::GetProductReviewsResponse* response, ::grpc::ClientUnaryReactor* reactor) = 0;
+      virtual void GetProductReviewSummary(::grpc::ClientContext* context, const ::oteldemo::GetProductReviewSummaryRequest* request, ::oteldemo::GetProductReviewSummaryResponse* response, std::function<void(::grpc::Status)>) = 0;
+      virtual void GetProductReviewSummary(::grpc::ClientContext* context, const ::oteldemo::GetProductReviewSummaryRequest* request, ::oteldemo::GetProductReviewSummaryResponse* response, ::grpc::ClientUnaryReactor* reactor) = 0;
+    };
+    typedef class async_interface experimental_async_interface;
+    virtual class async_interface* async() { return nullptr; }
+    class async_interface* experimental_async() { return async(); }
+   private:
+    virtual ::grpc::ClientAsyncResponseReaderInterface< ::oteldemo::GetProductReviewsResponse>* AsyncGetProductReviewsRaw(::grpc::ClientContext* context, const ::oteldemo::GetProductReviewsRequest& request, ::grpc::CompletionQueue* cq) = 0;
+    virtual ::grpc::ClientAsyncResponseReaderInterface< ::oteldemo::GetProductReviewsResponse>* PrepareAsyncGetProductReviewsRaw(::grpc::ClientContext* context, const ::oteldemo::GetProductReviewsRequest& request, ::grpc::CompletionQueue* cq) = 0;
+    virtual ::grpc::ClientAsyncResponseReaderInterface< ::oteldemo::GetProductReviewSummaryResponse>* AsyncGetProductReviewSummaryRaw(::grpc::ClientContext* context, const ::oteldemo::GetProductReviewSummaryRequest& request, ::grpc::CompletionQueue* cq) = 0;
+    virtual ::grpc::ClientAsyncResponseReaderInterface< ::oteldemo::GetProductReviewSummaryResponse>* PrepareAsyncGetProductReviewSummaryRaw(::grpc::ClientContext* context, const ::oteldemo::GetProductReviewSummaryRequest& request, ::grpc::CompletionQueue* cq) = 0;
+  };
+  class Stub final : public StubInterface {
+   public:
+    Stub(const std::shared_ptr< ::grpc::ChannelInterface>& channel, const ::grpc::StubOptions& options = ::grpc::StubOptions());
+    ::grpc::Status GetProductReviews(::grpc::ClientContext* context, const ::oteldemo::GetProductReviewsRequest& request, ::oteldemo::GetProductReviewsResponse* response) override;
+    std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::oteldemo::GetProductReviewsResponse>> AsyncGetProductReviews(::grpc::ClientContext* context, const ::oteldemo::GetProductReviewsRequest& request, ::grpc::CompletionQueue* cq) {
+      return std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::oteldemo::GetProductReviewsResponse>>(AsyncGetProductReviewsRaw(context, request, cq));
+    }
+    std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::oteldemo::GetProductReviewsResponse>> PrepareAsyncGetProductReviews(::grpc::ClientContext* context, const ::oteldemo::GetProductReviewsRequest& request, ::grpc::CompletionQueue* cq) {
+      return std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::oteldemo::GetProductReviewsResponse>>(PrepareAsyncGetProductReviewsRaw(context, request, cq));
+    }
+    ::grpc::Status GetProductReviewSummary(::grpc::ClientContext* context, const ::oteldemo::GetProductReviewSummaryRequest& request, ::oteldemo::GetProductReviewSummaryResponse* response) override;
+    std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::oteldemo::GetProductReviewSummaryResponse>> AsyncGetProductReviewSummary(::grpc::ClientContext* context, const ::oteldemo::GetProductReviewSummaryRequest& request, ::grpc::CompletionQueue* cq) {
+      return std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::oteldemo::GetProductReviewSummaryResponse>>(AsyncGetProductReviewSummaryRaw(context, request, cq));
+    }
+    std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::oteldemo::GetProductReviewSummaryResponse>> PrepareAsyncGetProductReviewSummary(::grpc::ClientContext* context, const ::oteldemo::GetProductReviewSummaryRequest& request, ::grpc::CompletionQueue* cq) {
+      return std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::oteldemo::GetProductReviewSummaryResponse>>(PrepareAsyncGetProductReviewSummaryRaw(context, request, cq));
+    }
+    class async final :
+      public StubInterface::async_interface {
+     public:
+      void GetProductReviews(::grpc::ClientContext* context, const ::oteldemo::GetProductReviewsRequest* request, ::oteldemo::GetProductReviewsResponse* response, std::function<void(::grpc::Status)>) override;
+      void GetProductReviews(::grpc::ClientContext* context, const ::oteldemo::GetProductReviewsRequest* request, ::oteldemo::GetProductReviewsResponse* response, ::grpc::ClientUnaryReactor* reactor) override;
+      void GetProductReviewSummary(::grpc::ClientContext* context, const ::oteldemo::GetProductReviewSummaryRequest* request, ::oteldemo::GetProductReviewSummaryResponse* response, std::function<void(::grpc::Status)>) override;
+      void GetProductReviewSummary(::grpc::ClientContext* context, const ::oteldemo::GetProductReviewSummaryRequest* request, ::oteldemo::GetProductReviewSummaryResponse* response, ::grpc::ClientUnaryReactor* reactor) override;
+     private:
+      friend class Stub;
+      explicit async(Stub* stub): stub_(stub) { }
+      Stub* stub() { return stub_; }
+      Stub* stub_;
+    };
+    class async* async() override { return &async_stub_; }
+
+   private:
+    std::shared_ptr< ::grpc::ChannelInterface> channel_;
+    class async async_stub_{this};
+    ::grpc::ClientAsyncResponseReader< ::oteldemo::GetProductReviewsResponse>* AsyncGetProductReviewsRaw(::grpc::ClientContext* context, const ::oteldemo::GetProductReviewsRequest& request, ::grpc::CompletionQueue* cq) override;
+    ::grpc::ClientAsyncResponseReader< ::oteldemo::GetProductReviewsResponse>* PrepareAsyncGetProductReviewsRaw(::grpc::ClientContext* context, const ::oteldemo::GetProductReviewsRequest& request, ::grpc::CompletionQueue* cq) override;
+    ::grpc::ClientAsyncResponseReader< ::oteldemo::GetProductReviewSummaryResponse>* AsyncGetProductReviewSummaryRaw(::grpc::ClientContext* context, const ::oteldemo::GetProductReviewSummaryRequest& request, ::grpc::CompletionQueue* cq) override;
+    ::grpc::ClientAsyncResponseReader< ::oteldemo::GetProductReviewSummaryResponse>* PrepareAsyncGetProductReviewSummaryRaw(::grpc::ClientContext* context, const ::oteldemo::GetProductReviewSummaryRequest& request, ::grpc::CompletionQueue* cq) override;
+    const ::grpc::internal::RpcMethod rpcmethod_GetProductReviews_;
+    const ::grpc::internal::RpcMethod rpcmethod_GetProductReviewSummary_;
+  };
+  static std::unique_ptr<Stub> NewStub(const std::shared_ptr< ::grpc::ChannelInterface>& channel, const ::grpc::StubOptions& options = ::grpc::StubOptions());
+
+  class Service : public ::grpc::Service {
+   public:
+    Service();
+    virtual ~Service();
+    virtual ::grpc::Status GetProductReviews(::grpc::ServerContext* context, const ::oteldemo::GetProductReviewsRequest* request, ::oteldemo::GetProductReviewsResponse* response);
+    virtual ::grpc::Status GetProductReviewSummary(::grpc::ServerContext* context, const ::oteldemo::GetProductReviewSummaryRequest* request, ::oteldemo::GetProductReviewSummaryResponse* response);
+  };
+  template <class BaseClass>
+  class WithAsyncMethod_GetProductReviews : public BaseClass {
+   private:
+    void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
+   public:
+    WithAsyncMethod_GetProductReviews() {
+      ::grpc::Service::MarkMethodAsync(0);
+    }
+    ~WithAsyncMethod_GetProductReviews() override {
+      BaseClassMustBeDerivedFromService(this);
+    }
+    // disable synchronous version of this method
+    ::grpc::Status GetProductReviews(::grpc::ServerContext* /*context*/, const ::oteldemo::GetProductReviewsRequest* /*request*/, ::oteldemo::GetProductReviewsResponse* /*response*/) override {
+      abort();
+      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+    }
+    void RequestGetProductReviews(::grpc::ServerContext* context, ::oteldemo::GetProductReviewsRequest* request, ::grpc::ServerAsyncResponseWriter< ::oteldemo::GetProductReviewsResponse>* response, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag) {
+      ::grpc::Service::RequestAsyncUnary(0, context, request, response, new_call_cq, notification_cq, tag);
+    }
+  };
+  template <class BaseClass>
+  class WithAsyncMethod_GetProductReviewSummary : public BaseClass {
+   private:
+    void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
+   public:
+    WithAsyncMethod_GetProductReviewSummary() {
+      ::grpc::Service::MarkMethodAsync(1);
+    }
+    ~WithAsyncMethod_GetProductReviewSummary() override {
+      BaseClassMustBeDerivedFromService(this);
+    }
+    // disable synchronous version of this method
+    ::grpc::Status GetProductReviewSummary(::grpc::ServerContext* /*context*/, const ::oteldemo::GetProductReviewSummaryRequest* /*request*/, ::oteldemo::GetProductReviewSummaryResponse* /*response*/) override {
+      abort();
+      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+    }
+    void RequestGetProductReviewSummary(::grpc::ServerContext* context, ::oteldemo::GetProductReviewSummaryRequest* request, ::grpc::ServerAsyncResponseWriter< ::oteldemo::GetProductReviewSummaryResponse>* response, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag) {
+      ::grpc::Service::RequestAsyncUnary(1, context, request, response, new_call_cq, notification_cq, tag);
+    }
+  };
+  typedef WithAsyncMethod_GetProductReviews<WithAsyncMethod_GetProductReviewSummary<Service > > AsyncService;
+  template <class BaseClass>
+  class WithCallbackMethod_GetProductReviews : public BaseClass {
+   private:
+    void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
+   public:
+    WithCallbackMethod_GetProductReviews() {
+      ::grpc::Service::MarkMethodCallback(0,
+          new ::grpc::internal::CallbackUnaryHandler< ::oteldemo::GetProductReviewsRequest, ::oteldemo::GetProductReviewsResponse>(
+            [this](
+                   ::grpc::CallbackServerContext* context, const ::oteldemo::GetProductReviewsRequest* request, ::oteldemo::GetProductReviewsResponse* response) { return this->GetProductReviews(context, request, response); }));}
+    void SetMessageAllocatorFor_GetProductReviews(
+        ::grpc::MessageAllocator< ::oteldemo::GetProductReviewsRequest, ::oteldemo::GetProductReviewsResponse>* allocator) {
+      ::grpc::internal::MethodHandler* const handler = ::grpc::Service::GetHandler(0);
+      static_cast<::grpc::internal::CallbackUnaryHandler< ::oteldemo::GetProductReviewsRequest, ::oteldemo::GetProductReviewsResponse>*>(handler)
+              ->SetMessageAllocator(allocator);
+    }
+    ~WithCallbackMethod_GetProductReviews() override {
+      BaseClassMustBeDerivedFromService(this);
+    }
+    // disable synchronous version of this method
+    ::grpc::Status GetProductReviews(::grpc::ServerContext* /*context*/, const ::oteldemo::GetProductReviewsRequest* /*request*/, ::oteldemo::GetProductReviewsResponse* /*response*/) override {
+      abort();
+      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+    }
+    virtual ::grpc::ServerUnaryReactor* GetProductReviews(
+      ::grpc::CallbackServerContext* /*context*/, const ::oteldemo::GetProductReviewsRequest* /*request*/, ::oteldemo::GetProductReviewsResponse* /*response*/)  { return nullptr; }
+  };
+  template <class BaseClass>
+  class WithCallbackMethod_GetProductReviewSummary : public BaseClass {
+   private:
+    void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
+   public:
+    WithCallbackMethod_GetProductReviewSummary() {
+      ::grpc::Service::MarkMethodCallback(1,
+          new ::grpc::internal::CallbackUnaryHandler< ::oteldemo::GetProductReviewSummaryRequest, ::oteldemo::GetProductReviewSummaryResponse>(
+            [this](
+                   ::grpc::CallbackServerContext* context, const ::oteldemo::GetProductReviewSummaryRequest* request, ::oteldemo::GetProductReviewSummaryResponse* response) { return this->GetProductReviewSummary(context, request, response); }));}
+    void SetMessageAllocatorFor_GetProductReviewSummary(
+        ::grpc::MessageAllocator< ::oteldemo::GetProductReviewSummaryRequest, ::oteldemo::GetProductReviewSummaryResponse>* allocator) {
+      ::grpc::internal::MethodHandler* const handler = ::grpc::Service::GetHandler(1);
+      static_cast<::grpc::internal::CallbackUnaryHandler< ::oteldemo::GetProductReviewSummaryRequest, ::oteldemo::GetProductReviewSummaryResponse>*>(handler)
+              ->SetMessageAllocator(allocator);
+    }
+    ~WithCallbackMethod_GetProductReviewSummary() override {
+      BaseClassMustBeDerivedFromService(this);
+    }
+    // disable synchronous version of this method
+    ::grpc::Status GetProductReviewSummary(::grpc::ServerContext* /*context*/, const ::oteldemo::GetProductReviewSummaryRequest* /*request*/, ::oteldemo::GetProductReviewSummaryResponse* /*response*/) override {
+      abort();
+      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+    }
+    virtual ::grpc::ServerUnaryReactor* GetProductReviewSummary(
+      ::grpc::CallbackServerContext* /*context*/, const ::oteldemo::GetProductReviewSummaryRequest* /*request*/, ::oteldemo::GetProductReviewSummaryResponse* /*response*/)  { return nullptr; }
+  };
+  typedef WithCallbackMethod_GetProductReviews<WithCallbackMethod_GetProductReviewSummary<Service > > CallbackService;
+  typedef CallbackService ExperimentalCallbackService;
+  template <class BaseClass>
+  class WithGenericMethod_GetProductReviews : public BaseClass {
+   private:
+    void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
+   public:
+    WithGenericMethod_GetProductReviews() {
+      ::grpc::Service::MarkMethodGeneric(0);
+    }
+    ~WithGenericMethod_GetProductReviews() override {
+      BaseClassMustBeDerivedFromService(this);
+    }
+    // disable synchronous version of this method
+    ::grpc::Status GetProductReviews(::grpc::ServerContext* /*context*/, const ::oteldemo::GetProductReviewsRequest* /*request*/, ::oteldemo::GetProductReviewsResponse* /*response*/) override {
+      abort();
+      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+    }
+  };
+  template <class BaseClass>
+  class WithGenericMethod_GetProductReviewSummary : public BaseClass {
+   private:
+    void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
+   public:
+    WithGenericMethod_GetProductReviewSummary() {
+      ::grpc::Service::MarkMethodGeneric(1);
+    }
+    ~WithGenericMethod_GetProductReviewSummary() override {
+      BaseClassMustBeDerivedFromService(this);
+    }
+    // disable synchronous version of this method
+    ::grpc::Status GetProductReviewSummary(::grpc::ServerContext* /*context*/, const ::oteldemo::GetProductReviewSummaryRequest* /*request*/, ::oteldemo::GetProductReviewSummaryResponse* /*response*/) override {
+      abort();
+      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+    }
+  };
+  template <class BaseClass>
+  class WithRawMethod_GetProductReviews : public BaseClass {
+   private:
+    void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
+   public:
+    WithRawMethod_GetProductReviews() {
+      ::grpc::Service::MarkMethodRaw(0);
+    }
+    ~WithRawMethod_GetProductReviews() override {
+      BaseClassMustBeDerivedFromService(this);
+    }
+    // disable synchronous version of this method
+    ::grpc::Status GetProductReviews(::grpc::ServerContext* /*context*/, const ::oteldemo::GetProductReviewsRequest* /*request*/, ::oteldemo::GetProductReviewsResponse* /*response*/) override {
+      abort();
+      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+    }
+    void RequestGetProductReviews(::grpc::ServerContext* context, ::grpc::ByteBuffer* request, ::grpc::ServerAsyncResponseWriter< ::grpc::ByteBuffer>* response, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag) {
+      ::grpc::Service::RequestAsyncUnary(0, context, request, response, new_call_cq, notification_cq, tag);
+    }
+  };
+  template <class BaseClass>
+  class WithRawMethod_GetProductReviewSummary : public BaseClass {
+   private:
+    void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
+   public:
+    WithRawMethod_GetProductReviewSummary() {
+      ::grpc::Service::MarkMethodRaw(1);
+    }
+    ~WithRawMethod_GetProductReviewSummary() override {
+      BaseClassMustBeDerivedFromService(this);
+    }
+    // disable synchronous version of this method
+    ::grpc::Status GetProductReviewSummary(::grpc::ServerContext* /*context*/, const ::oteldemo::GetProductReviewSummaryRequest* /*request*/, ::oteldemo::GetProductReviewSummaryResponse* /*response*/) override {
+      abort();
+      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+    }
+    void RequestGetProductReviewSummary(::grpc::ServerContext* context, ::grpc::ByteBuffer* request, ::grpc::ServerAsyncResponseWriter< ::grpc::ByteBuffer>* response, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag) {
+      ::grpc::Service::RequestAsyncUnary(1, context, request, response, new_call_cq, notification_cq, tag);
+    }
+  };
+  template <class BaseClass>
+  class WithRawCallbackMethod_GetProductReviews : public BaseClass {
+   private:
+    void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
+   public:
+    WithRawCallbackMethod_GetProductReviews() {
+      ::grpc::Service::MarkMethodRawCallback(0,
+          new ::grpc::internal::CallbackUnaryHandler< ::grpc::ByteBuffer, ::grpc::ByteBuffer>(
+            [this](
+                   ::grpc::CallbackServerContext* context, const ::grpc::ByteBuffer* request, ::grpc::ByteBuffer* response) { return this->GetProductReviews(context, request, response); }));
+    }
+    ~WithRawCallbackMethod_GetProductReviews() override {
+      BaseClassMustBeDerivedFromService(this);
+    }
+    // disable synchronous version of this method
+    ::grpc::Status GetProductReviews(::grpc::ServerContext* /*context*/, const ::oteldemo::GetProductReviewsRequest* /*request*/, ::oteldemo::GetProductReviewsResponse* /*response*/) override {
+      abort();
+      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+    }
+    virtual ::grpc::ServerUnaryReactor* GetProductReviews(
+      ::grpc::CallbackServerContext* /*context*/, const ::grpc::ByteBuffer* /*request*/, ::grpc::ByteBuffer* /*response*/)  { return nullptr; }
+  };
+  template <class BaseClass>
+  class WithRawCallbackMethod_GetProductReviewSummary : public BaseClass {
+   private:
+    void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
+   public:
+    WithRawCallbackMethod_GetProductReviewSummary() {
+      ::grpc::Service::MarkMethodRawCallback(1,
+          new ::grpc::internal::CallbackUnaryHandler< ::grpc::ByteBuffer, ::grpc::ByteBuffer>(
+            [this](
+                   ::grpc::CallbackServerContext* context, const ::grpc::ByteBuffer* request, ::grpc::ByteBuffer* response) { return this->GetProductReviewSummary(context, request, response); }));
+    }
+    ~WithRawCallbackMethod_GetProductReviewSummary() override {
+      BaseClassMustBeDerivedFromService(this);
+    }
+    // disable synchronous version of this method
+    ::grpc::Status GetProductReviewSummary(::grpc::ServerContext* /*context*/, const ::oteldemo::GetProductReviewSummaryRequest* /*request*/, ::oteldemo::GetProductReviewSummaryResponse* /*response*/) override {
+      abort();
+      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+    }
+    virtual ::grpc::ServerUnaryReactor* GetProductReviewSummary(
+      ::grpc::CallbackServerContext* /*context*/, const ::grpc::ByteBuffer* /*request*/, ::grpc::ByteBuffer* /*response*/)  { return nullptr; }
+  };
+  template <class BaseClass>
+  class WithStreamedUnaryMethod_GetProductReviews : public BaseClass {
+   private:
+    void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
+   public:
+    WithStreamedUnaryMethod_GetProductReviews() {
+      ::grpc::Service::MarkMethodStreamed(0,
+        new ::grpc::internal::StreamedUnaryHandler<
+          ::oteldemo::GetProductReviewsRequest, ::oteldemo::GetProductReviewsResponse>(
+            [this](::grpc::ServerContext* context,
+                   ::grpc::ServerUnaryStreamer<
+                     ::oteldemo::GetProductReviewsRequest, ::oteldemo::GetProductReviewsResponse>* streamer) {
+                       return this->StreamedGetProductReviews(context,
+                         streamer);
+                  }));
+    }
+    ~WithStreamedUnaryMethod_GetProductReviews() override {
+      BaseClassMustBeDerivedFromService(this);
+    }
+    // disable regular version of this method
+    ::grpc::Status GetProductReviews(::grpc::ServerContext* /*context*/, const ::oteldemo::GetProductReviewsRequest* /*request*/, ::oteldemo::GetProductReviewsResponse* /*response*/) override {
+      abort();
+      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+    }
+    // replace default version of method with streamed unary
+    virtual ::grpc::Status StreamedGetProductReviews(::grpc::ServerContext* context, ::grpc::ServerUnaryStreamer< ::oteldemo::GetProductReviewsRequest,::oteldemo::GetProductReviewsResponse>* server_unary_streamer) = 0;
+  };
+  template <class BaseClass>
+  class WithStreamedUnaryMethod_GetProductReviewSummary : public BaseClass {
+   private:
+    void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
+   public:
+    WithStreamedUnaryMethod_GetProductReviewSummary() {
+      ::grpc::Service::MarkMethodStreamed(1,
+        new ::grpc::internal::StreamedUnaryHandler<
+          ::oteldemo::GetProductReviewSummaryRequest, ::oteldemo::GetProductReviewSummaryResponse>(
+            [this](::grpc::ServerContext* context,
+                   ::grpc::ServerUnaryStreamer<
+                     ::oteldemo::GetProductReviewSummaryRequest, ::oteldemo::GetProductReviewSummaryResponse>* streamer) {
+                       return this->StreamedGetProductReviewSummary(context,
+                         streamer);
+                  }));
+    }
+    ~WithStreamedUnaryMethod_GetProductReviewSummary() override {
+      BaseClassMustBeDerivedFromService(this);
+    }
+    // disable regular version of this method
+    ::grpc::Status GetProductReviewSummary(::grpc::ServerContext* /*context*/, const ::oteldemo::GetProductReviewSummaryRequest* /*request*/, ::oteldemo::GetProductReviewSummaryResponse* /*response*/) override {
+      abort();
+      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+    }
+    // replace default version of method with streamed unary
+    virtual ::grpc::Status StreamedGetProductReviewSummary(::grpc::ServerContext* context, ::grpc::ServerUnaryStreamer< ::oteldemo::GetProductReviewSummaryRequest,::oteldemo::GetProductReviewSummaryResponse>* server_unary_streamer) = 0;
+  };
+  typedef WithStreamedUnaryMethod_GetProductReviews<WithStreamedUnaryMethod_GetProductReviewSummary<Service > > StreamedUnaryService;
+  typedef Service SplitStreamedService;
+  typedef WithStreamedUnaryMethod_GetProductReviews<WithStreamedUnaryMethod_GetProductReviewSummary<Service > > StreamedService;
+};
+
 // ---------------Shipping Service----------
 //
 class ShippingService final {

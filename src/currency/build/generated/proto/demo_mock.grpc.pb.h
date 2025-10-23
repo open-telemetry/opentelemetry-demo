@@ -46,6 +46,16 @@ class MockProductCatalogServiceStub : public ProductCatalogService::StubInterfac
   MOCK_METHOD3(PrepareAsyncSearchProductsRaw, ::grpc::ClientAsyncResponseReaderInterface< ::oteldemo::SearchProductsResponse>*(::grpc::ClientContext* context, const ::oteldemo::SearchProductsRequest& request, ::grpc::CompletionQueue* cq));
 };
 
+class MockProductReviewServiceStub : public ProductReviewService::StubInterface {
+ public:
+  MOCK_METHOD3(GetProductReviews, ::grpc::Status(::grpc::ClientContext* context, const ::oteldemo::GetProductReviewsRequest& request, ::oteldemo::GetProductReviewsResponse* response));
+  MOCK_METHOD3(AsyncGetProductReviewsRaw, ::grpc::ClientAsyncResponseReaderInterface< ::oteldemo::GetProductReviewsResponse>*(::grpc::ClientContext* context, const ::oteldemo::GetProductReviewsRequest& request, ::grpc::CompletionQueue* cq));
+  MOCK_METHOD3(PrepareAsyncGetProductReviewsRaw, ::grpc::ClientAsyncResponseReaderInterface< ::oteldemo::GetProductReviewsResponse>*(::grpc::ClientContext* context, const ::oteldemo::GetProductReviewsRequest& request, ::grpc::CompletionQueue* cq));
+  MOCK_METHOD3(GetProductReviewSummary, ::grpc::Status(::grpc::ClientContext* context, const ::oteldemo::GetProductReviewSummaryRequest& request, ::oteldemo::GetProductReviewSummaryResponse* response));
+  MOCK_METHOD3(AsyncGetProductReviewSummaryRaw, ::grpc::ClientAsyncResponseReaderInterface< ::oteldemo::GetProductReviewSummaryResponse>*(::grpc::ClientContext* context, const ::oteldemo::GetProductReviewSummaryRequest& request, ::grpc::CompletionQueue* cq));
+  MOCK_METHOD3(PrepareAsyncGetProductReviewSummaryRaw, ::grpc::ClientAsyncResponseReaderInterface< ::oteldemo::GetProductReviewSummaryResponse>*(::grpc::ClientContext* context, const ::oteldemo::GetProductReviewSummaryRequest& request, ::grpc::CompletionQueue* cq));
+};
+
 class MockShippingServiceStub : public ShippingService::StubInterface {
  public:
   MOCK_METHOD3(GetQuote, ::grpc::Status(::grpc::ClientContext* context, const ::oteldemo::GetQuoteRequest& request, ::oteldemo::GetQuoteResponse* response));

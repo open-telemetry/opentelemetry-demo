@@ -338,6 +338,106 @@ class ProductCatalogService(object):
             insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
 
 
+class ProductReviewServiceStub(object):
+    """---------------Product Review service----------
+
+    """
+
+    def __init__(self, channel):
+        """Constructor.
+
+        Args:
+            channel: A grpc.Channel.
+        """
+        self.GetProductReviews = channel.unary_unary(
+                '/oteldemo.ProductReviewService/GetProductReviews',
+                request_serializer=demo__pb2.GetProductReviewsRequest.SerializeToString,
+                response_deserializer=demo__pb2.GetProductReviewsResponse.FromString,
+                )
+        self.GetProductReviewSummary = channel.unary_unary(
+                '/oteldemo.ProductReviewService/GetProductReviewSummary',
+                request_serializer=demo__pb2.GetProductReviewSummaryRequest.SerializeToString,
+                response_deserializer=demo__pb2.GetProductReviewSummaryResponse.FromString,
+                )
+
+
+class ProductReviewServiceServicer(object):
+    """---------------Product Review service----------
+
+    """
+
+    def GetProductReviews(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
+    def GetProductReviewSummary(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
+
+def add_ProductReviewServiceServicer_to_server(servicer, server):
+    rpc_method_handlers = {
+            'GetProductReviews': grpc.unary_unary_rpc_method_handler(
+                    servicer.GetProductReviews,
+                    request_deserializer=demo__pb2.GetProductReviewsRequest.FromString,
+                    response_serializer=demo__pb2.GetProductReviewsResponse.SerializeToString,
+            ),
+            'GetProductReviewSummary': grpc.unary_unary_rpc_method_handler(
+                    servicer.GetProductReviewSummary,
+                    request_deserializer=demo__pb2.GetProductReviewSummaryRequest.FromString,
+                    response_serializer=demo__pb2.GetProductReviewSummaryResponse.SerializeToString,
+            ),
+    }
+    generic_handler = grpc.method_handlers_generic_handler(
+            'oteldemo.ProductReviewService', rpc_method_handlers)
+    server.add_generic_rpc_handlers((generic_handler,))
+
+
+ # This class is part of an EXPERIMENTAL API.
+class ProductReviewService(object):
+    """---------------Product Review service----------
+
+    """
+
+    @staticmethod
+    def GetProductReviews(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(request, target, '/oteldemo.ProductReviewService/GetProductReviews',
+            demo__pb2.GetProductReviewsRequest.SerializeToString,
+            demo__pb2.GetProductReviewsResponse.FromString,
+            options, channel_credentials,
+            insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
+
+    @staticmethod
+    def GetProductReviewSummary(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(request, target, '/oteldemo.ProductReviewService/GetProductReviewSummary',
+            demo__pb2.GetProductReviewSummaryRequest.SerializeToString,
+            demo__pb2.GetProductReviewSummaryResponse.FromString,
+            options, channel_credentials,
+            insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
+
+
 class ShippingServiceStub(object):
     """---------------Shipping Service----------
 

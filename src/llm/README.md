@@ -9,7 +9,7 @@ by following the [OpenAI API format for chat completions](https://platform.opena
 The Product Review service is then instrumented with the
 [opentelemetry-instrumentation-openai-v2](https://pypi.org/project/opentelemetry-instrumentation-openai-v2/)
 package, allowing us to capture Generative AI related span attributes when
-it interacts with the LLM service.  
+it interacts with the LLM service.
 
 The first request to the `/v1/chat/completions` endpoint should include a
 database tool. The LLM service then responds with a request to execute the
