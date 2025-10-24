@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import { ChannelCredentials } from '@grpc/grpc-js';
-import {ProductReview, ProductReviewServiceClient, GetProductReviewSummaryResponse} from '../../protos/demo';
+import {ProductReview, ProductReviewServiceClient} from '../../protos/demo';
 
 const { PRODUCT_REVIEWS_ADDR = '' } = process.env;
 
@@ -15,9 +15,14 @@ const ProductReviewGateway = () => ({
             client.getProductReviews({ productId }, (error, response) => (error ? reject(error) : resolve(response.productReviews)))
         );
     },
-    getProductReviewSummary(productId: string) {
-        return new Promise<GetProductReviewSummaryResponse>((resolve, reject) =>
-            client.getProductReviewSummary({ productId }, (error, response) => (error ? reject(error) : resolve(response)))
+    getAverageProductReviewScore(productId: string) {
+        return new Promise<string>((resolve, reject) =>
+            client.getAverageProductReviewScore({ productId }, (error, response) => (error ? reject(error) : resolve(response.averageScore)))
+        );
+    },
+    askProductAIAssistant(productId: string, question: string) {
+        return new Promise<string>((resolve, reject) =>
+            client.askProductAiAssistant({ productId, question }, (error, response) => (error ? reject(error) : resolve(response.response)))
         );
     },
 });

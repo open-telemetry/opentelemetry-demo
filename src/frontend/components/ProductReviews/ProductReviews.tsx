@@ -15,16 +15,12 @@ const StarRating = ({ value, max = 5 }: { value: number; max?: number }) => {
 };
 
 const ProductReviews = () => {
-    const { productReviews, loading, error, productReviewSummary } = useProductReview();
-
-    const summaryText =
-    productReviewSummary?.productReviewSummary ??
-    '';
+    const { productReviews, loading, error, averageScore } = useProductReview();
 
     const average = useMemo(() => {
-    if (!productReviewSummary?.averageScore) return null;
-    return clamp(Number(productReviewSummary.averageScore));
-    }, [productReviewSummary]);
+        if (!averageScore) return null;
+        return clamp(Number(averageScore));
+    }, [averageScore]);
 
     const distribution = useMemo(() => {
         if (!Array.isArray(productReviews)) return [0, 0, 0, 0, 0];
@@ -67,7 +63,7 @@ const ProductReviews = () => {
         // return await onAskAI(question)
         //await new Promise((r) => setTimeout(r, 800));
         if (question === 'Can you summarize the product reviews?')
-            return summaryText;
+            return 'TBD';
         return `I don't know.`;
     };
 
@@ -179,7 +175,7 @@ const ProductReviews = () => {
 
         {!loading && !error && (
             <>
-                {(average != null || summaryText) && (
+                {(average != null) && (
                     <S.SummaryCard>
                         {average != null && (
                             <>

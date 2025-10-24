@@ -3,20 +3,20 @@
 
 import type { NextApiRequest, NextApiResponse } from 'next';
 import InstrumentationMiddleware from '../../../../utils/telemetry/InstrumentationMiddleware';
-import { Empty, GetProductReviewSummaryResponse } from '../../../../protos/demo';
+import { Empty } from '../../../../protos/demo';
 import ProductReviewService from '../../../../services/ProductReview.service';
 
-type TResponse = GetProductReviewSummaryResponse | Empty;
+type TResponse = string | Empty;
 
 const handler = async ({ method, query }: NextApiRequest, res: NextApiResponse<TResponse>) => {
 
     switch (method) {
         case 'GET': {
-            const { productId = '' } = query;
+            const { productId = '', question = '' } = query;
 
-            const productReviewSummary = await ProductReviewService.getProductReviewSummary(productId as string);
+            const response = await ProductReviewService.askProductAIAssistant(productId as string, question as string);
 
-            return res.status(200).json(productReviewSummary);
+            return res.status(200).json(response);
         }
 
         default: {

@@ -354,10 +354,15 @@ class ProductReviewServiceStub(object):
                 request_serializer=demo__pb2.GetProductReviewsRequest.SerializeToString,
                 response_deserializer=demo__pb2.GetProductReviewsResponse.FromString,
                 )
-        self.GetProductReviewSummary = channel.unary_unary(
-                '/oteldemo.ProductReviewService/GetProductReviewSummary',
-                request_serializer=demo__pb2.GetProductReviewSummaryRequest.SerializeToString,
-                response_deserializer=demo__pb2.GetProductReviewSummaryResponse.FromString,
+        self.GetAverageProductReviewScore = channel.unary_unary(
+                '/oteldemo.ProductReviewService/GetAverageProductReviewScore',
+                request_serializer=demo__pb2.GetAverageProductReviewScoreRequest.SerializeToString,
+                response_deserializer=demo__pb2.GetAverageProductReviewScoreResponse.FromString,
+                )
+        self.AskProductAIAssistant = channel.unary_unary(
+                '/oteldemo.ProductReviewService/AskProductAIAssistant',
+                request_serializer=demo__pb2.AskProductAIAssistantRequest.SerializeToString,
+                response_deserializer=demo__pb2.AskProductAIAssistantResponse.FromString,
                 )
 
 
@@ -372,7 +377,13 @@ class ProductReviewServiceServicer(object):
         context.set_details('Method not implemented!')
         raise NotImplementedError('Method not implemented!')
 
-    def GetProductReviewSummary(self, request, context):
+    def GetAverageProductReviewScore(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
+    def AskProductAIAssistant(self, request, context):
         """Missing associated documentation comment in .proto file."""
         context.set_code(grpc.StatusCode.UNIMPLEMENTED)
         context.set_details('Method not implemented!')
@@ -386,10 +397,15 @@ def add_ProductReviewServiceServicer_to_server(servicer, server):
                     request_deserializer=demo__pb2.GetProductReviewsRequest.FromString,
                     response_serializer=demo__pb2.GetProductReviewsResponse.SerializeToString,
             ),
-            'GetProductReviewSummary': grpc.unary_unary_rpc_method_handler(
-                    servicer.GetProductReviewSummary,
-                    request_deserializer=demo__pb2.GetProductReviewSummaryRequest.FromString,
-                    response_serializer=demo__pb2.GetProductReviewSummaryResponse.SerializeToString,
+            'GetAverageProductReviewScore': grpc.unary_unary_rpc_method_handler(
+                    servicer.GetAverageProductReviewScore,
+                    request_deserializer=demo__pb2.GetAverageProductReviewScoreRequest.FromString,
+                    response_serializer=demo__pb2.GetAverageProductReviewScoreResponse.SerializeToString,
+            ),
+            'AskProductAIAssistant': grpc.unary_unary_rpc_method_handler(
+                    servicer.AskProductAIAssistant,
+                    request_deserializer=demo__pb2.AskProductAIAssistantRequest.FromString,
+                    response_serializer=demo__pb2.AskProductAIAssistantResponse.SerializeToString,
             ),
     }
     generic_handler = grpc.method_handlers_generic_handler(
@@ -421,7 +437,7 @@ class ProductReviewService(object):
             insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
 
     @staticmethod
-    def GetProductReviewSummary(request,
+    def GetAverageProductReviewScore(request,
             target,
             options=(),
             channel_credentials=None,
@@ -431,9 +447,26 @@ class ProductReviewService(object):
             wait_for_ready=None,
             timeout=None,
             metadata=None):
-        return grpc.experimental.unary_unary(request, target, '/oteldemo.ProductReviewService/GetProductReviewSummary',
-            demo__pb2.GetProductReviewSummaryRequest.SerializeToString,
-            demo__pb2.GetProductReviewSummaryResponse.FromString,
+        return grpc.experimental.unary_unary(request, target, '/oteldemo.ProductReviewService/GetAverageProductReviewScore',
+            demo__pb2.GetAverageProductReviewScoreRequest.SerializeToString,
+            demo__pb2.GetAverageProductReviewScoreResponse.FromString,
+            options, channel_credentials,
+            insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
+
+    @staticmethod
+    def AskProductAIAssistant(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(request, target, '/oteldemo.ProductReviewService/AskProductAIAssistant',
+            demo__pb2.AskProductAIAssistantRequest.SerializeToString,
+            demo__pb2.AskProductAIAssistantResponse.FromString,
             options, channel_credentials,
             insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
 

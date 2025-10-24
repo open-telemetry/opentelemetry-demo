@@ -374,7 +374,8 @@ ProductCatalogService::Service::~Service() {
 
 static const char* ProductReviewService_method_names[] = {
   "/oteldemo.ProductReviewService/GetProductReviews",
-  "/oteldemo.ProductReviewService/GetProductReviewSummary",
+  "/oteldemo.ProductReviewService/GetAverageProductReviewScore",
+  "/oteldemo.ProductReviewService/AskProductAIAssistant",
 };
 
 std::unique_ptr< ProductReviewService::Stub> ProductReviewService::NewStub(const std::shared_ptr< ::grpc::ChannelInterface>& channel, const ::grpc::StubOptions& options) {
@@ -385,7 +386,8 @@ std::unique_ptr< ProductReviewService::Stub> ProductReviewService::NewStub(const
 
 ProductReviewService::Stub::Stub(const std::shared_ptr< ::grpc::ChannelInterface>& channel, const ::grpc::StubOptions& options)
   : channel_(channel), rpcmethod_GetProductReviews_(ProductReviewService_method_names[0], options.suffix_for_stats(),::grpc::internal::RpcMethod::NORMAL_RPC, channel)
-  , rpcmethod_GetProductReviewSummary_(ProductReviewService_method_names[1], options.suffix_for_stats(),::grpc::internal::RpcMethod::NORMAL_RPC, channel)
+  , rpcmethod_GetAverageProductReviewScore_(ProductReviewService_method_names[1], options.suffix_for_stats(),::grpc::internal::RpcMethod::NORMAL_RPC, channel)
+  , rpcmethod_AskProductAIAssistant_(ProductReviewService_method_names[2], options.suffix_for_stats(),::grpc::internal::RpcMethod::NORMAL_RPC, channel)
   {}
 
 ::grpc::Status ProductReviewService::Stub::GetProductReviews(::grpc::ClientContext* context, const ::oteldemo::GetProductReviewsRequest& request, ::oteldemo::GetProductReviewsResponse* response) {
@@ -411,25 +413,48 @@ void ProductReviewService::Stub::async::GetProductReviews(::grpc::ClientContext*
   return result;
 }
 
-::grpc::Status ProductReviewService::Stub::GetProductReviewSummary(::grpc::ClientContext* context, const ::oteldemo::GetProductReviewSummaryRequest& request, ::oteldemo::GetProductReviewSummaryResponse* response) {
-  return ::grpc::internal::BlockingUnaryCall< ::oteldemo::GetProductReviewSummaryRequest, ::oteldemo::GetProductReviewSummaryResponse, ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(channel_.get(), rpcmethod_GetProductReviewSummary_, context, request, response);
+::grpc::Status ProductReviewService::Stub::GetAverageProductReviewScore(::grpc::ClientContext* context, const ::oteldemo::GetAverageProductReviewScoreRequest& request, ::oteldemo::GetAverageProductReviewScoreResponse* response) {
+  return ::grpc::internal::BlockingUnaryCall< ::oteldemo::GetAverageProductReviewScoreRequest, ::oteldemo::GetAverageProductReviewScoreResponse, ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(channel_.get(), rpcmethod_GetAverageProductReviewScore_, context, request, response);
 }
 
-void ProductReviewService::Stub::async::GetProductReviewSummary(::grpc::ClientContext* context, const ::oteldemo::GetProductReviewSummaryRequest* request, ::oteldemo::GetProductReviewSummaryResponse* response, std::function<void(::grpc::Status)> f) {
-  ::grpc::internal::CallbackUnaryCall< ::oteldemo::GetProductReviewSummaryRequest, ::oteldemo::GetProductReviewSummaryResponse, ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(stub_->channel_.get(), stub_->rpcmethod_GetProductReviewSummary_, context, request, response, std::move(f));
+void ProductReviewService::Stub::async::GetAverageProductReviewScore(::grpc::ClientContext* context, const ::oteldemo::GetAverageProductReviewScoreRequest* request, ::oteldemo::GetAverageProductReviewScoreResponse* response, std::function<void(::grpc::Status)> f) {
+  ::grpc::internal::CallbackUnaryCall< ::oteldemo::GetAverageProductReviewScoreRequest, ::oteldemo::GetAverageProductReviewScoreResponse, ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(stub_->channel_.get(), stub_->rpcmethod_GetAverageProductReviewScore_, context, request, response, std::move(f));
 }
 
-void ProductReviewService::Stub::async::GetProductReviewSummary(::grpc::ClientContext* context, const ::oteldemo::GetProductReviewSummaryRequest* request, ::oteldemo::GetProductReviewSummaryResponse* response, ::grpc::ClientUnaryReactor* reactor) {
-  ::grpc::internal::ClientCallbackUnaryFactory::Create< ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(stub_->channel_.get(), stub_->rpcmethod_GetProductReviewSummary_, context, request, response, reactor);
+void ProductReviewService::Stub::async::GetAverageProductReviewScore(::grpc::ClientContext* context, const ::oteldemo::GetAverageProductReviewScoreRequest* request, ::oteldemo::GetAverageProductReviewScoreResponse* response, ::grpc::ClientUnaryReactor* reactor) {
+  ::grpc::internal::ClientCallbackUnaryFactory::Create< ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(stub_->channel_.get(), stub_->rpcmethod_GetAverageProductReviewScore_, context, request, response, reactor);
 }
 
-::grpc::ClientAsyncResponseReader< ::oteldemo::GetProductReviewSummaryResponse>* ProductReviewService::Stub::PrepareAsyncGetProductReviewSummaryRaw(::grpc::ClientContext* context, const ::oteldemo::GetProductReviewSummaryRequest& request, ::grpc::CompletionQueue* cq) {
-  return ::grpc::internal::ClientAsyncResponseReaderHelper::Create< ::oteldemo::GetProductReviewSummaryResponse, ::oteldemo::GetProductReviewSummaryRequest, ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(channel_.get(), cq, rpcmethod_GetProductReviewSummary_, context, request);
+::grpc::ClientAsyncResponseReader< ::oteldemo::GetAverageProductReviewScoreResponse>* ProductReviewService::Stub::PrepareAsyncGetAverageProductReviewScoreRaw(::grpc::ClientContext* context, const ::oteldemo::GetAverageProductReviewScoreRequest& request, ::grpc::CompletionQueue* cq) {
+  return ::grpc::internal::ClientAsyncResponseReaderHelper::Create< ::oteldemo::GetAverageProductReviewScoreResponse, ::oteldemo::GetAverageProductReviewScoreRequest, ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(channel_.get(), cq, rpcmethod_GetAverageProductReviewScore_, context, request);
 }
 
-::grpc::ClientAsyncResponseReader< ::oteldemo::GetProductReviewSummaryResponse>* ProductReviewService::Stub::AsyncGetProductReviewSummaryRaw(::grpc::ClientContext* context, const ::oteldemo::GetProductReviewSummaryRequest& request, ::grpc::CompletionQueue* cq) {
+::grpc::ClientAsyncResponseReader< ::oteldemo::GetAverageProductReviewScoreResponse>* ProductReviewService::Stub::AsyncGetAverageProductReviewScoreRaw(::grpc::ClientContext* context, const ::oteldemo::GetAverageProductReviewScoreRequest& request, ::grpc::CompletionQueue* cq) {
   auto* result =
-    this->PrepareAsyncGetProductReviewSummaryRaw(context, request, cq);
+    this->PrepareAsyncGetAverageProductReviewScoreRaw(context, request, cq);
+  result->StartCall();
+  return result;
+}
+
+::grpc::Status ProductReviewService::Stub::AskProductAIAssistant(::grpc::ClientContext* context, const ::oteldemo::AskProductAIAssistantRequest& request, ::oteldemo::AskProductAIAssistantResponse* response) {
+  return ::grpc::internal::BlockingUnaryCall< ::oteldemo::AskProductAIAssistantRequest, ::oteldemo::AskProductAIAssistantResponse, ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(channel_.get(), rpcmethod_AskProductAIAssistant_, context, request, response);
+}
+
+void ProductReviewService::Stub::async::AskProductAIAssistant(::grpc::ClientContext* context, const ::oteldemo::AskProductAIAssistantRequest* request, ::oteldemo::AskProductAIAssistantResponse* response, std::function<void(::grpc::Status)> f) {
+  ::grpc::internal::CallbackUnaryCall< ::oteldemo::AskProductAIAssistantRequest, ::oteldemo::AskProductAIAssistantResponse, ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(stub_->channel_.get(), stub_->rpcmethod_AskProductAIAssistant_, context, request, response, std::move(f));
+}
+
+void ProductReviewService::Stub::async::AskProductAIAssistant(::grpc::ClientContext* context, const ::oteldemo::AskProductAIAssistantRequest* request, ::oteldemo::AskProductAIAssistantResponse* response, ::grpc::ClientUnaryReactor* reactor) {
+  ::grpc::internal::ClientCallbackUnaryFactory::Create< ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(stub_->channel_.get(), stub_->rpcmethod_AskProductAIAssistant_, context, request, response, reactor);
+}
+
+::grpc::ClientAsyncResponseReader< ::oteldemo::AskProductAIAssistantResponse>* ProductReviewService::Stub::PrepareAsyncAskProductAIAssistantRaw(::grpc::ClientContext* context, const ::oteldemo::AskProductAIAssistantRequest& request, ::grpc::CompletionQueue* cq) {
+  return ::grpc::internal::ClientAsyncResponseReaderHelper::Create< ::oteldemo::AskProductAIAssistantResponse, ::oteldemo::AskProductAIAssistantRequest, ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(channel_.get(), cq, rpcmethod_AskProductAIAssistant_, context, request);
+}
+
+::grpc::ClientAsyncResponseReader< ::oteldemo::AskProductAIAssistantResponse>* ProductReviewService::Stub::AsyncAskProductAIAssistantRaw(::grpc::ClientContext* context, const ::oteldemo::AskProductAIAssistantRequest& request, ::grpc::CompletionQueue* cq) {
+  auto* result =
+    this->PrepareAsyncAskProductAIAssistantRaw(context, request, cq);
   result->StartCall();
   return result;
 }
@@ -448,12 +473,22 @@ ProductReviewService::Service::Service() {
   AddMethod(new ::grpc::internal::RpcServiceMethod(
       ProductReviewService_method_names[1],
       ::grpc::internal::RpcMethod::NORMAL_RPC,
-      new ::grpc::internal::RpcMethodHandler< ProductReviewService::Service, ::oteldemo::GetProductReviewSummaryRequest, ::oteldemo::GetProductReviewSummaryResponse, ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(
+      new ::grpc::internal::RpcMethodHandler< ProductReviewService::Service, ::oteldemo::GetAverageProductReviewScoreRequest, ::oteldemo::GetAverageProductReviewScoreResponse, ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(
           [](ProductReviewService::Service* service,
              ::grpc::ServerContext* ctx,
-             const ::oteldemo::GetProductReviewSummaryRequest* req,
-             ::oteldemo::GetProductReviewSummaryResponse* resp) {
-               return service->GetProductReviewSummary(ctx, req, resp);
+             const ::oteldemo::GetAverageProductReviewScoreRequest* req,
+             ::oteldemo::GetAverageProductReviewScoreResponse* resp) {
+               return service->GetAverageProductReviewScore(ctx, req, resp);
+             }, this)));
+  AddMethod(new ::grpc::internal::RpcServiceMethod(
+      ProductReviewService_method_names[2],
+      ::grpc::internal::RpcMethod::NORMAL_RPC,
+      new ::grpc::internal::RpcMethodHandler< ProductReviewService::Service, ::oteldemo::AskProductAIAssistantRequest, ::oteldemo::AskProductAIAssistantResponse, ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(
+          [](ProductReviewService::Service* service,
+             ::grpc::ServerContext* ctx,
+             const ::oteldemo::AskProductAIAssistantRequest* req,
+             ::oteldemo::AskProductAIAssistantResponse* resp) {
+               return service->AskProductAIAssistant(ctx, req, resp);
              }, this)));
 }
 
@@ -467,7 +502,14 @@ ProductReviewService::Service::~Service() {
   return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
 }
 
-::grpc::Status ProductReviewService::Service::GetProductReviewSummary(::grpc::ServerContext* context, const ::oteldemo::GetProductReviewSummaryRequest* request, ::oteldemo::GetProductReviewSummaryResponse* response) {
+::grpc::Status ProductReviewService::Service::GetAverageProductReviewScore(::grpc::ServerContext* context, const ::oteldemo::GetAverageProductReviewScoreRequest* request, ::oteldemo::GetAverageProductReviewScoreResponse* response) {
+  (void) context;
+  (void) request;
+  (void) response;
+  return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+}
+
+::grpc::Status ProductReviewService::Service::AskProductAIAssistant(::grpc::ServerContext* context, const ::oteldemo::AskProductAIAssistantRequest* request, ::oteldemo::AskProductAIAssistantResponse* response) {
   (void) context;
   (void) request;
   (void) response;

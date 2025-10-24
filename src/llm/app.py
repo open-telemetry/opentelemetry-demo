@@ -36,15 +36,12 @@ def load_product_review_summaries(file_path):
                 summaries = data.get("product-review-summaries", [])
 
                 # Create a dictionary where product_id is the key
-                # and the value is a dictionary of its details (score, summary)
+                # and the value is the summary
                 product_review_summaries = {}
                 for product in summaries:
                     product_id = product.get("product_id")
                     if product_id: # Ensure product_id exists before adding
-                        product_review_summaries[product_id] = {
-                            "average_score": product.get("average_score"),
-                            "product_review_summary": product.get("product_review_summary")
-                        }
+                        product_review_summaries[product_id] = product.get("product_review_summary")
                 return product_review_summaries
             except json.JSONDecodeError:
                 print("Error: Invalid JSON string provided during initialization.")
@@ -71,14 +68,11 @@ def generate_response(product_id):
     else:
         product_review_summary = product_review_summaries.get(product_id)
 
-    # Convert the dictionary to a JSON string
-    json_string = json.dumps(product_review_summary)
+    app.logger.info(f"product_review_summary is: {product_review_summary}")
 
-    return json_string
+    return product_review_summary
 
-def parse_product_id(messages):
-    last_message = messages[-1]["content"]
-
+def parse_product_id(last_message):
     match = re.search(r"product ID:([A-Z0-9]+)", last_message)
     if match:
         return match.group(1).strip()
@@ -94,7 +88,22 @@ def chat_completions():
 
     app.logger.info(f"Received a chat completion request: '{messages}'")
 
-    product_id = parse_product_id(messages)
+    last_message = messages[-1]["content"]
+
+    app.logger.info(f"last_message is: '{last_message}'")
+
+    if 'What age(s) is this recommended for?' in last_message:
+        response_text = 'This product is recommended for ages 7 and above.'
+        return build_response(model, messages, response_text)
+    elif 'Were there any negative reviews?' in last_message:
+        response_text = 'No, there were no reviews less than three stars for this product.'
+        return build_response(model, messages, response_text)
+    elif not ('Can you summarize the product reviews?' in last_message or 'Summarize the reviews for product ID' in last_message):
+        response_text = 'Sorry, I\'m not able to answer that question.'
+        return build_response(model, messages, response_text)
+
+    # otherwise, process the product review summary
+    product_id = parse_product_id(last_message)
 
     if tools is not None:
 
@@ -153,28 +162,31 @@ def chat_completions():
         # Otherwise, return a normal response
         response_text = generate_response(product_id)
 
-        app.logger.info(f"Processing a response: '{response_text}'")
+        return build_response(model, messages, response_text)
 
-        response = {
-            "id": f"chatcmpl-mock-{int(time.time())}",
-            "object": "chat.completion",
-            "created": int(time.time()),
-            "model": model,
-            "choices": [{
-                "index": 0,
-                "message": {
-                    "role": "assistant",
-                    "content": response_text
-                },
-                "finish_reason": "stop"
-            }],
-            "usage": {
-                "prompt_tokens": sum(len(m.get("content", "").split()) for m in messages),
-                "completion_tokens": len(response_text.split()),
-                "total_tokens": sum(len(m.get("content", "").split()) for m in messages) + len(response_text.split())
-            }
+def build_response(model, messages, response_text):
+    app.logger.info(f"Processing a response: '{response_text}'")
+
+    response = {
+        "id": f"chatcmpl-mock-{int(time.time())}",
+        "object": "chat.completion",
+        "created": int(time.time()),
+        "model": model,
+        "choices": [{
+            "index": 0,
+            "message": {
+                "role": "assistant",
+                "content": response_text
+            },
+            "finish_reason": "stop"
+        }],
+        "usage": {
+            "prompt_tokens": sum(len(m.get("content", "").split()) for m in messages),
+            "completion_tokens": len(response_text.split()),
+            "total_tokens": sum(len(m.get("content", "").split()) for m in messages) + len(response_text.split())
         }
-        return jsonify(response)
+    }
+    return jsonify(response)
 
 @app.route('/v1/models', methods=['GET'])
 def list_models():

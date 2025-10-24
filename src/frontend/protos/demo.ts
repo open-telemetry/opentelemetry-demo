@@ -101,13 +101,21 @@ export interface GetProductReviewsResponse {
   productReviews: ProductReview[];
 }
 
-export interface GetProductReviewSummaryRequest {
+export interface GetAverageProductReviewScoreRequest {
   productId: string;
 }
 
-export interface GetProductReviewSummaryResponse {
+export interface GetAverageProductReviewScoreResponse {
   averageScore: string;
-  productReviewSummary: string;
+}
+
+export interface AskProductAIAssistantRequest {
+  productId: string;
+  question: string;
+}
+
+export interface AskProductAIAssistantResponse {
+  response: string;
 }
 
 export interface GetQuoteRequest {
@@ -1396,22 +1404,22 @@ export const GetProductReviewsResponse: MessageFns<GetProductReviewsResponse> = 
   },
 };
 
-function createBaseGetProductReviewSummaryRequest(): GetProductReviewSummaryRequest {
+function createBaseGetAverageProductReviewScoreRequest(): GetAverageProductReviewScoreRequest {
   return { productId: "" };
 }
 
-export const GetProductReviewSummaryRequest: MessageFns<GetProductReviewSummaryRequest> = {
-  encode(message: GetProductReviewSummaryRequest, writer: BinaryWriter = new BinaryWriter()): BinaryWriter {
+export const GetAverageProductReviewScoreRequest: MessageFns<GetAverageProductReviewScoreRequest> = {
+  encode(message: GetAverageProductReviewScoreRequest, writer: BinaryWriter = new BinaryWriter()): BinaryWriter {
     if (message.productId !== "") {
       writer.uint32(10).string(message.productId);
     }
     return writer;
   },
 
-  decode(input: BinaryReader | Uint8Array, length?: number): GetProductReviewSummaryRequest {
+  decode(input: BinaryReader | Uint8Array, length?: number): GetAverageProductReviewScoreRequest {
     const reader = input instanceof BinaryReader ? input : new BinaryReader(input);
     const end = length === undefined ? reader.len : reader.pos + length;
-    const message = createBaseGetProductReviewSummaryRequest();
+    const message = createBaseGetAverageProductReviewScoreRequest();
     while (reader.pos < end) {
       const tag = reader.uint32();
       switch (tag >>> 3) {
@@ -1432,11 +1440,11 @@ export const GetProductReviewSummaryRequest: MessageFns<GetProductReviewSummaryR
     return message;
   },
 
-  fromJSON(object: any): GetProductReviewSummaryRequest {
+  fromJSON(object: any): GetAverageProductReviewScoreRequest {
     return { productId: isSet(object.productId) ? globalThis.String(object.productId) : "" };
   },
 
-  toJSON(message: GetProductReviewSummaryRequest): unknown {
+  toJSON(message: GetAverageProductReviewScoreRequest): unknown {
     const obj: any = {};
     if (message.productId !== "") {
       obj.productId = message.productId;
@@ -1444,37 +1452,36 @@ export const GetProductReviewSummaryRequest: MessageFns<GetProductReviewSummaryR
     return obj;
   },
 
-  create<I extends Exact<DeepPartial<GetProductReviewSummaryRequest>, I>>(base?: I): GetProductReviewSummaryRequest {
-    return GetProductReviewSummaryRequest.fromPartial(base ?? ({} as any));
+  create<I extends Exact<DeepPartial<GetAverageProductReviewScoreRequest>, I>>(
+    base?: I,
+  ): GetAverageProductReviewScoreRequest {
+    return GetAverageProductReviewScoreRequest.fromPartial(base ?? ({} as any));
   },
-  fromPartial<I extends Exact<DeepPartial<GetProductReviewSummaryRequest>, I>>(
+  fromPartial<I extends Exact<DeepPartial<GetAverageProductReviewScoreRequest>, I>>(
     object: I,
-  ): GetProductReviewSummaryRequest {
-    const message = createBaseGetProductReviewSummaryRequest();
+  ): GetAverageProductReviewScoreRequest {
+    const message = createBaseGetAverageProductReviewScoreRequest();
     message.productId = object.productId ?? "";
     return message;
   },
 };
 
-function createBaseGetProductReviewSummaryResponse(): GetProductReviewSummaryResponse {
-  return { averageScore: "", productReviewSummary: "" };
+function createBaseGetAverageProductReviewScoreResponse(): GetAverageProductReviewScoreResponse {
+  return { averageScore: "" };
 }
 
-export const GetProductReviewSummaryResponse: MessageFns<GetProductReviewSummaryResponse> = {
-  encode(message: GetProductReviewSummaryResponse, writer: BinaryWriter = new BinaryWriter()): BinaryWriter {
+export const GetAverageProductReviewScoreResponse: MessageFns<GetAverageProductReviewScoreResponse> = {
+  encode(message: GetAverageProductReviewScoreResponse, writer: BinaryWriter = new BinaryWriter()): BinaryWriter {
     if (message.averageScore !== "") {
       writer.uint32(10).string(message.averageScore);
-    }
-    if (message.productReviewSummary !== "") {
-      writer.uint32(18).string(message.productReviewSummary);
     }
     return writer;
   },
 
-  decode(input: BinaryReader | Uint8Array, length?: number): GetProductReviewSummaryResponse {
+  decode(input: BinaryReader | Uint8Array, length?: number): GetAverageProductReviewScoreResponse {
     const reader = input instanceof BinaryReader ? input : new BinaryReader(input);
     const end = length === undefined ? reader.len : reader.pos + length;
-    const message = createBaseGetProductReviewSummaryResponse();
+    const message = createBaseGetAverageProductReviewScoreResponse();
     while (reader.pos < end) {
       const tag = reader.uint32();
       switch (tag >>> 3) {
@@ -1486,12 +1493,77 @@ export const GetProductReviewSummaryResponse: MessageFns<GetProductReviewSummary
           message.averageScore = reader.string();
           continue;
         }
+      }
+      if ((tag & 7) === 4 || tag === 0) {
+        break;
+      }
+      reader.skip(tag & 7);
+    }
+    return message;
+  },
+
+  fromJSON(object: any): GetAverageProductReviewScoreResponse {
+    return { averageScore: isSet(object.averageScore) ? globalThis.String(object.averageScore) : "" };
+  },
+
+  toJSON(message: GetAverageProductReviewScoreResponse): unknown {
+    const obj: any = {};
+    if (message.averageScore !== "") {
+      obj.averageScore = message.averageScore;
+    }
+    return obj;
+  },
+
+  create<I extends Exact<DeepPartial<GetAverageProductReviewScoreResponse>, I>>(
+    base?: I,
+  ): GetAverageProductReviewScoreResponse {
+    return GetAverageProductReviewScoreResponse.fromPartial(base ?? ({} as any));
+  },
+  fromPartial<I extends Exact<DeepPartial<GetAverageProductReviewScoreResponse>, I>>(
+    object: I,
+  ): GetAverageProductReviewScoreResponse {
+    const message = createBaseGetAverageProductReviewScoreResponse();
+    message.averageScore = object.averageScore ?? "";
+    return message;
+  },
+};
+
+function createBaseAskProductAIAssistantRequest(): AskProductAIAssistantRequest {
+  return { productId: "", question: "" };
+}
+
+export const AskProductAIAssistantRequest: MessageFns<AskProductAIAssistantRequest> = {
+  encode(message: AskProductAIAssistantRequest, writer: BinaryWriter = new BinaryWriter()): BinaryWriter {
+    if (message.productId !== "") {
+      writer.uint32(10).string(message.productId);
+    }
+    if (message.question !== "") {
+      writer.uint32(18).string(message.question);
+    }
+    return writer;
+  },
+
+  decode(input: BinaryReader | Uint8Array, length?: number): AskProductAIAssistantRequest {
+    const reader = input instanceof BinaryReader ? input : new BinaryReader(input);
+    const end = length === undefined ? reader.len : reader.pos + length;
+    const message = createBaseAskProductAIAssistantRequest();
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        case 1: {
+          if (tag !== 10) {
+            break;
+          }
+
+          message.productId = reader.string();
+          continue;
+        }
         case 2: {
           if (tag !== 18) {
             break;
           }
 
-          message.productReviewSummary = reader.string();
+          message.question = reader.string();
           continue;
         }
       }
@@ -1503,33 +1575,91 @@ export const GetProductReviewSummaryResponse: MessageFns<GetProductReviewSummary
     return message;
   },
 
-  fromJSON(object: any): GetProductReviewSummaryResponse {
+  fromJSON(object: any): AskProductAIAssistantRequest {
     return {
-      averageScore: isSet(object.averageScore) ? globalThis.String(object.averageScore) : "",
-      productReviewSummary: isSet(object.productReviewSummary) ? globalThis.String(object.productReviewSummary) : "",
+      productId: isSet(object.productId) ? globalThis.String(object.productId) : "",
+      question: isSet(object.question) ? globalThis.String(object.question) : "",
     };
   },
 
-  toJSON(message: GetProductReviewSummaryResponse): unknown {
+  toJSON(message: AskProductAIAssistantRequest): unknown {
     const obj: any = {};
-    if (message.averageScore !== "") {
-      obj.averageScore = message.averageScore;
+    if (message.productId !== "") {
+      obj.productId = message.productId;
     }
-    if (message.productReviewSummary !== "") {
-      obj.productReviewSummary = message.productReviewSummary;
+    if (message.question !== "") {
+      obj.question = message.question;
     }
     return obj;
   },
 
-  create<I extends Exact<DeepPartial<GetProductReviewSummaryResponse>, I>>(base?: I): GetProductReviewSummaryResponse {
-    return GetProductReviewSummaryResponse.fromPartial(base ?? ({} as any));
+  create<I extends Exact<DeepPartial<AskProductAIAssistantRequest>, I>>(base?: I): AskProductAIAssistantRequest {
+    return AskProductAIAssistantRequest.fromPartial(base ?? ({} as any));
   },
-  fromPartial<I extends Exact<DeepPartial<GetProductReviewSummaryResponse>, I>>(
+  fromPartial<I extends Exact<DeepPartial<AskProductAIAssistantRequest>, I>>(object: I): AskProductAIAssistantRequest {
+    const message = createBaseAskProductAIAssistantRequest();
+    message.productId = object.productId ?? "";
+    message.question = object.question ?? "";
+    return message;
+  },
+};
+
+function createBaseAskProductAIAssistantResponse(): AskProductAIAssistantResponse {
+  return { response: "" };
+}
+
+export const AskProductAIAssistantResponse: MessageFns<AskProductAIAssistantResponse> = {
+  encode(message: AskProductAIAssistantResponse, writer: BinaryWriter = new BinaryWriter()): BinaryWriter {
+    if (message.response !== "") {
+      writer.uint32(10).string(message.response);
+    }
+    return writer;
+  },
+
+  decode(input: BinaryReader | Uint8Array, length?: number): AskProductAIAssistantResponse {
+    const reader = input instanceof BinaryReader ? input : new BinaryReader(input);
+    const end = length === undefined ? reader.len : reader.pos + length;
+    const message = createBaseAskProductAIAssistantResponse();
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        case 1: {
+          if (tag !== 10) {
+            break;
+          }
+
+          message.response = reader.string();
+          continue;
+        }
+      }
+      if ((tag & 7) === 4 || tag === 0) {
+        break;
+      }
+      reader.skip(tag & 7);
+    }
+    return message;
+  },
+
+  fromJSON(object: any): AskProductAIAssistantResponse {
+    return { response: isSet(object.response) ? globalThis.String(object.response) : "" };
+  },
+
+  toJSON(message: AskProductAIAssistantResponse): unknown {
+    const obj: any = {};
+    if (message.response !== "") {
+      obj.response = message.response;
+    }
+    return obj;
+  },
+
+  create<I extends Exact<DeepPartial<AskProductAIAssistantResponse>, I>>(base?: I): AskProductAIAssistantResponse {
+    return AskProductAIAssistantResponse.fromPartial(base ?? ({} as any));
+  },
+  fromPartial<I extends Exact<DeepPartial<AskProductAIAssistantResponse>, I>>(
     object: I,
-  ): GetProductReviewSummaryResponse {
-    const message = createBaseGetProductReviewSummaryResponse();
-    message.averageScore = object.averageScore ?? "";
-    message.productReviewSummary = object.productReviewSummary ?? "";
+  ): AskProductAIAssistantResponse {
+    const message = createBaseAskProductAIAssistantResponse();
+    message.response = object.response ?? "";
     return message;
   },
 };
@@ -4003,23 +4133,39 @@ export const ProductReviewServiceService = {
       Buffer.from(GetProductReviewsResponse.encode(value).finish()),
     responseDeserialize: (value: Buffer): GetProductReviewsResponse => GetProductReviewsResponse.decode(value),
   },
-  getProductReviewSummary: {
-    path: "/oteldemo.ProductReviewService/GetProductReviewSummary",
+  getAverageProductReviewScore: {
+    path: "/oteldemo.ProductReviewService/GetAverageProductReviewScore",
     requestStream: false,
     responseStream: false,
-    requestSerialize: (value: GetProductReviewSummaryRequest): Buffer =>
-      Buffer.from(GetProductReviewSummaryRequest.encode(value).finish()),
-    requestDeserialize: (value: Buffer): GetProductReviewSummaryRequest => GetProductReviewSummaryRequest.decode(value),
-    responseSerialize: (value: GetProductReviewSummaryResponse): Buffer =>
-      Buffer.from(GetProductReviewSummaryResponse.encode(value).finish()),
-    responseDeserialize: (value: Buffer): GetProductReviewSummaryResponse =>
-      GetProductReviewSummaryResponse.decode(value),
+    requestSerialize: (value: GetAverageProductReviewScoreRequest): Buffer =>
+      Buffer.from(GetAverageProductReviewScoreRequest.encode(value).finish()),
+    requestDeserialize: (value: Buffer): GetAverageProductReviewScoreRequest =>
+      GetAverageProductReviewScoreRequest.decode(value),
+    responseSerialize: (value: GetAverageProductReviewScoreResponse): Buffer =>
+      Buffer.from(GetAverageProductReviewScoreResponse.encode(value).finish()),
+    responseDeserialize: (value: Buffer): GetAverageProductReviewScoreResponse =>
+      GetAverageProductReviewScoreResponse.decode(value),
+  },
+  askProductAiAssistant: {
+    path: "/oteldemo.ProductReviewService/AskProductAIAssistant",
+    requestStream: false,
+    responseStream: false,
+    requestSerialize: (value: AskProductAIAssistantRequest): Buffer =>
+      Buffer.from(AskProductAIAssistantRequest.encode(value).finish()),
+    requestDeserialize: (value: Buffer): AskProductAIAssistantRequest => AskProductAIAssistantRequest.decode(value),
+    responseSerialize: (value: AskProductAIAssistantResponse): Buffer =>
+      Buffer.from(AskProductAIAssistantResponse.encode(value).finish()),
+    responseDeserialize: (value: Buffer): AskProductAIAssistantResponse => AskProductAIAssistantResponse.decode(value),
   },
 } as const;
 
 export interface ProductReviewServiceServer extends UntypedServiceImplementation {
   getProductReviews: handleUnaryCall<GetProductReviewsRequest, GetProductReviewsResponse>;
-  getProductReviewSummary: handleUnaryCall<GetProductReviewSummaryRequest, GetProductReviewSummaryResponse>;
+  getAverageProductReviewScore: handleUnaryCall<
+    GetAverageProductReviewScoreRequest,
+    GetAverageProductReviewScoreResponse
+  >;
+  askProductAiAssistant: handleUnaryCall<AskProductAIAssistantRequest, AskProductAIAssistantResponse>;
 }
 
 export interface ProductReviewServiceClient extends Client {
@@ -4038,20 +4184,35 @@ export interface ProductReviewServiceClient extends Client {
     options: Partial<CallOptions>,
     callback: (error: ServiceError | null, response: GetProductReviewsResponse) => void,
   ): ClientUnaryCall;
-  getProductReviewSummary(
-    request: GetProductReviewSummaryRequest,
-    callback: (error: ServiceError | null, response: GetProductReviewSummaryResponse) => void,
+  getAverageProductReviewScore(
+    request: GetAverageProductReviewScoreRequest,
+    callback: (error: ServiceError | null, response: GetAverageProductReviewScoreResponse) => void,
   ): ClientUnaryCall;
-  getProductReviewSummary(
-    request: GetProductReviewSummaryRequest,
+  getAverageProductReviewScore(
+    request: GetAverageProductReviewScoreRequest,
     metadata: Metadata,
-    callback: (error: ServiceError | null, response: GetProductReviewSummaryResponse) => void,
+    callback: (error: ServiceError | null, response: GetAverageProductReviewScoreResponse) => void,
   ): ClientUnaryCall;
-  getProductReviewSummary(
-    request: GetProductReviewSummaryRequest,
+  getAverageProductReviewScore(
+    request: GetAverageProductReviewScoreRequest,
     metadata: Metadata,
     options: Partial<CallOptions>,
-    callback: (error: ServiceError | null, response: GetProductReviewSummaryResponse) => void,
+    callback: (error: ServiceError | null, response: GetAverageProductReviewScoreResponse) => void,
+  ): ClientUnaryCall;
+  askProductAiAssistant(
+    request: AskProductAIAssistantRequest,
+    callback: (error: ServiceError | null, response: AskProductAIAssistantResponse) => void,
+  ): ClientUnaryCall;
+  askProductAiAssistant(
+    request: AskProductAIAssistantRequest,
+    metadata: Metadata,
+    callback: (error: ServiceError | null, response: AskProductAIAssistantResponse) => void,
+  ): ClientUnaryCall;
+  askProductAiAssistant(
+    request: AskProductAIAssistantRequest,
+    metadata: Metadata,
+    options: Partial<CallOptions>,
+    callback: (error: ServiceError | null, response: AskProductAIAssistantResponse) => void,
   ): ClientUnaryCall;
 }
 

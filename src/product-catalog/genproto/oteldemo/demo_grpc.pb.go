@@ -491,8 +491,9 @@ var ProductCatalogService_ServiceDesc = grpc.ServiceDesc{
 }
 
 const (
-	ProductReviewService_GetProductReviews_FullMethodName       = "/oteldemo.ProductReviewService/GetProductReviews"
-	ProductReviewService_GetProductReviewSummary_FullMethodName = "/oteldemo.ProductReviewService/GetProductReviewSummary"
+	ProductReviewService_GetProductReviews_FullMethodName            = "/oteldemo.ProductReviewService/GetProductReviews"
+	ProductReviewService_GetAverageProductReviewScore_FullMethodName = "/oteldemo.ProductReviewService/GetAverageProductReviewScore"
+	ProductReviewService_AskProductAIAssistant_FullMethodName        = "/oteldemo.ProductReviewService/AskProductAIAssistant"
 )
 
 // ProductReviewServiceClient is the client API for ProductReviewService service.
@@ -500,7 +501,8 @@ const (
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type ProductReviewServiceClient interface {
 	GetProductReviews(ctx context.Context, in *GetProductReviewsRequest, opts ...grpc.CallOption) (*GetProductReviewsResponse, error)
-	GetProductReviewSummary(ctx context.Context, in *GetProductReviewSummaryRequest, opts ...grpc.CallOption) (*GetProductReviewSummaryResponse, error)
+	GetAverageProductReviewScore(ctx context.Context, in *GetAverageProductReviewScoreRequest, opts ...grpc.CallOption) (*GetAverageProductReviewScoreResponse, error)
+	AskProductAIAssistant(ctx context.Context, in *AskProductAIAssistantRequest, opts ...grpc.CallOption) (*AskProductAIAssistantResponse, error)
 }
 
 type productReviewServiceClient struct {
@@ -521,10 +523,20 @@ func (c *productReviewServiceClient) GetProductReviews(ctx context.Context, in *
 	return out, nil
 }
 
-func (c *productReviewServiceClient) GetProductReviewSummary(ctx context.Context, in *GetProductReviewSummaryRequest, opts ...grpc.CallOption) (*GetProductReviewSummaryResponse, error) {
+func (c *productReviewServiceClient) GetAverageProductReviewScore(ctx context.Context, in *GetAverageProductReviewScoreRequest, opts ...grpc.CallOption) (*GetAverageProductReviewScoreResponse, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(GetProductReviewSummaryResponse)
-	err := c.cc.Invoke(ctx, ProductReviewService_GetProductReviewSummary_FullMethodName, in, out, cOpts...)
+	out := new(GetAverageProductReviewScoreResponse)
+	err := c.cc.Invoke(ctx, ProductReviewService_GetAverageProductReviewScore_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *productReviewServiceClient) AskProductAIAssistant(ctx context.Context, in *AskProductAIAssistantRequest, opts ...grpc.CallOption) (*AskProductAIAssistantResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(AskProductAIAssistantResponse)
+	err := c.cc.Invoke(ctx, ProductReviewService_AskProductAIAssistant_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
@@ -536,7 +548,8 @@ func (c *productReviewServiceClient) GetProductReviewSummary(ctx context.Context
 // for forward compatibility.
 type ProductReviewServiceServer interface {
 	GetProductReviews(context.Context, *GetProductReviewsRequest) (*GetProductReviewsResponse, error)
-	GetProductReviewSummary(context.Context, *GetProductReviewSummaryRequest) (*GetProductReviewSummaryResponse, error)
+	GetAverageProductReviewScore(context.Context, *GetAverageProductReviewScoreRequest) (*GetAverageProductReviewScoreResponse, error)
+	AskProductAIAssistant(context.Context, *AskProductAIAssistantRequest) (*AskProductAIAssistantResponse, error)
 	mustEmbedUnimplementedProductReviewServiceServer()
 }
 
@@ -550,8 +563,11 @@ type UnimplementedProductReviewServiceServer struct{}
 func (UnimplementedProductReviewServiceServer) GetProductReviews(context.Context, *GetProductReviewsRequest) (*GetProductReviewsResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetProductReviews not implemented")
 }
-func (UnimplementedProductReviewServiceServer) GetProductReviewSummary(context.Context, *GetProductReviewSummaryRequest) (*GetProductReviewSummaryResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method GetProductReviewSummary not implemented")
+func (UnimplementedProductReviewServiceServer) GetAverageProductReviewScore(context.Context, *GetAverageProductReviewScoreRequest) (*GetAverageProductReviewScoreResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetAverageProductReviewScore not implemented")
+}
+func (UnimplementedProductReviewServiceServer) AskProductAIAssistant(context.Context, *AskProductAIAssistantRequest) (*AskProductAIAssistantResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method AskProductAIAssistant not implemented")
 }
 func (UnimplementedProductReviewServiceServer) mustEmbedUnimplementedProductReviewServiceServer() {}
 func (UnimplementedProductReviewServiceServer) testEmbeddedByValue()                              {}
@@ -592,20 +608,38 @@ func _ProductReviewService_GetProductReviews_Handler(srv interface{}, ctx contex
 	return interceptor(ctx, in, info, handler)
 }
 
-func _ProductReviewService_GetProductReviewSummary_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(GetProductReviewSummaryRequest)
+func _ProductReviewService_GetAverageProductReviewScore_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetAverageProductReviewScoreRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(ProductReviewServiceServer).GetProductReviewSummary(ctx, in)
+		return srv.(ProductReviewServiceServer).GetAverageProductReviewScore(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: ProductReviewService_GetProductReviewSummary_FullMethodName,
+		FullMethod: ProductReviewService_GetAverageProductReviewScore_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(ProductReviewServiceServer).GetProductReviewSummary(ctx, req.(*GetProductReviewSummaryRequest))
+		return srv.(ProductReviewServiceServer).GetAverageProductReviewScore(ctx, req.(*GetAverageProductReviewScoreRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _ProductReviewService_AskProductAIAssistant_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(AskProductAIAssistantRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ProductReviewServiceServer).AskProductAIAssistant(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: ProductReviewService_AskProductAIAssistant_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ProductReviewServiceServer).AskProductAIAssistant(ctx, req.(*AskProductAIAssistantRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -622,8 +656,12 @@ var ProductReviewService_ServiceDesc = grpc.ServiceDesc{
 			Handler:    _ProductReviewService_GetProductReviews_Handler,
 		},
 		{
-			MethodName: "GetProductReviewSummary",
-			Handler:    _ProductReviewService_GetProductReviewSummary_Handler,
+			MethodName: "GetAverageProductReviewScore",
+			Handler:    _ProductReviewService_GetAverageProductReviewScore_Handler,
+		},
+		{
+			MethodName: "AskProductAIAssistant",
+			Handler:    _ProductReviewService_AskProductAIAssistant_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

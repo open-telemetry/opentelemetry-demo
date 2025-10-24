@@ -26,7 +26,7 @@ import demo_pb2
 import demo_pb2_grpc
 from grpc_health.v1 import health_pb2
 from grpc_health.v1 import health_pb2_grpc
-from database import fetch_product_reviews, fetch_product_reviews_from_db
+from database import fetch_product_reviews, fetch_product_reviews_from_db, fetch_avg_product_review_score_from_db
 
 from metrics import (
     init_metrics
@@ -60,16 +60,6 @@ tools = [
     }
 ]
 
-# --- Define the structured output schema for the LLM to use
-product_review_summary_schema = {
-    "type": "object",
-    "properties": {
-        "average_score": {"type": "number", "minimum": 0, "maximum": 5},
-        "product_review_summary": {"type": "string", "minLength": 1, "maxLength": 2000}
-    },
-    "required": ["average_score", "product_review_summary"],
-    "additionalProperties": False
-}
 
 class ProductReviewService(demo_pb2_grpc.ProductReviewServiceServicer):
     def GetProductReviews(self, request, context):
@@ -78,11 +68,17 @@ class ProductReviewService(demo_pb2_grpc.ProductReviewServiceServicer):
 
         return product_reviews
 
-    def GetProductReviewSummary(self, request, context):
-        logger.info(f"Receive GetProductReviewSummary for product id:{request.product_id}")
-        product_review_summary = get_product_review_summary(request.product_id)
+    def GetAverageProductReviewScore(self, request, context):
+        logger.info(f"Receive GetAverageProductReviewScore for product id:{request.product_id}")
+        product_reviews = get_average_product_review_score(request.product_id)
 
-        return product_review_summary
+        return product_reviews
+
+    def AskProductAIAssistant(self, request, context):
+        logger.info(f"Receive AskProductAIAssistant for product id:{request.product_id}, question: {request.question}")
+        ai_assistant_response = get_ai_assistant_response(request.product_id, request.question)
+
+        return ai_assistant_response
 
     def Check(self, request, context):
         return health_pb2.HealthCheckResponse(
@@ -116,12 +112,27 @@ def get_product_reviews(request_product_id):
 
         return product_reviews
 
-def get_product_review_summary(request_product_id):
+def get_average_product_review_score(request_product_id):
 
-    with tracer.start_as_current_span("get_product_review_summary") as span:
+    with tracer.start_as_current_span("get_average_product_review_score") as span:
 
         span.set_attribute("app.product.id", request_product_id)
-        product_review_summary = demo_pb2.GetProductReviewSummaryResponse()
+
+        product_review_score = demo_pb2.GetAverageProductReviewScoreResponse()
+        avg_score = fetch_avg_product_review_score_from_db(request_product_id)
+        product_review_score.average_score = avg_score
+
+        span.set_attribute("app.product_reviews.average_score", avg_score)
+
+        return product_review_score
+
+def get_ai_assistant_response(request_product_id, question):
+
+    with tracer.start_as_current_span("get_ai_assistant_response") as span:
+
+        span.set_attribute("app.product.id", request_product_id)
+        span.set_attribute("app.product.question", question)
+        ai_assistant_response = demo_pb2.AskProductAIAssistantResponse()
 
         client = OpenAI(
             base_url=f"{llm_base_url}",
@@ -130,9 +141,9 @@ def get_product_review_summary(request_product_id):
             api_key=f"{llm_api_key}"
         )
 
-        user_prompt = f"Summarize the reviews for product ID:{request_product_id}. Use the database tool as needed to fetch the existing reviews."
+        user_prompt = f"Answer the following question about product ID:{request_product_id}: {question}"
         messages = [
-           {"role": "system", "content": "You are a helpful assistant that creates a summary of product reviews."},
+           {"role": "system", "content": "You are a helpful assistant that answers related to a specific product. Use tools as needed to fetch the product reviews and product information."},
            {"role": "user", "content": user_prompt}
         ]
 
@@ -186,37 +197,26 @@ def get_product_review_summary(request_product_id):
 
                 final_response = client.chat.completions.create(
                     model=llm_model,
-                    messages=messages,
-                    response_format={
-                        "type": "json_schema",
-                        "json_schema": {
-                            "name": "product_review",
-                            "strict": True,
-                            "schema": product_review_summary_schema
-                        }
-                    }
+                    messages=messages
                 )
 
                 result = final_response.choices[0].message.content
 
-                # Load the result as a dictionary, then extract the average score
-                result_dict = json.loads(result)
-                average_score = str(result_dict['average_score'])
-                summary = result_dict['product_review_summary']
-                span.set_attribute("app.product_review.average_score", average_score)
+                ai_assistant_response.response = result
 
-                product_review_summary.average_score = average_score
-                product_review_summary.product_review_summary = summary
-
-                logger.info(f"Returning a product review summary: '{product_review_summary}'")
+                logger.info(f"Returning an AI assistant response: '{result}'")
 
             else:
                 raise Exception(f'Received unexpected tool call request: {function_name}')
 
-        # Collect metrics for this service
-        product_review_svc_metrics["app_product_review_summaries_counter"].add(1, {'product.id': request_product_id})
+        else:
+            logger.info(f"Returning an AI assistant response: '{response_message}'")
+            ai_assistant_response.response = response_message.content
 
-        return product_review_summary
+        # Collect metrics for this service
+        product_review_svc_metrics["app_ai_assistant_counter"].add(1, {'product.id': request_product_id})
+
+        return ai_assistant_response
 
 def must_map_env(key: str):
     value = os.environ.get(key)

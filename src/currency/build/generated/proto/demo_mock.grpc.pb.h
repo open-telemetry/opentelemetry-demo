@@ -51,9 +51,12 @@ class MockProductReviewServiceStub : public ProductReviewService::StubInterface 
   MOCK_METHOD3(GetProductReviews, ::grpc::Status(::grpc::ClientContext* context, const ::oteldemo::GetProductReviewsRequest& request, ::oteldemo::GetProductReviewsResponse* response));
   MOCK_METHOD3(AsyncGetProductReviewsRaw, ::grpc::ClientAsyncResponseReaderInterface< ::oteldemo::GetProductReviewsResponse>*(::grpc::ClientContext* context, const ::oteldemo::GetProductReviewsRequest& request, ::grpc::CompletionQueue* cq));
   MOCK_METHOD3(PrepareAsyncGetProductReviewsRaw, ::grpc::ClientAsyncResponseReaderInterface< ::oteldemo::GetProductReviewsResponse>*(::grpc::ClientContext* context, const ::oteldemo::GetProductReviewsRequest& request, ::grpc::CompletionQueue* cq));
-  MOCK_METHOD3(GetProductReviewSummary, ::grpc::Status(::grpc::ClientContext* context, const ::oteldemo::GetProductReviewSummaryRequest& request, ::oteldemo::GetProductReviewSummaryResponse* response));
-  MOCK_METHOD3(AsyncGetProductReviewSummaryRaw, ::grpc::ClientAsyncResponseReaderInterface< ::oteldemo::GetProductReviewSummaryResponse>*(::grpc::ClientContext* context, const ::oteldemo::GetProductReviewSummaryRequest& request, ::grpc::CompletionQueue* cq));
-  MOCK_METHOD3(PrepareAsyncGetProductReviewSummaryRaw, ::grpc::ClientAsyncResponseReaderInterface< ::oteldemo::GetProductReviewSummaryResponse>*(::grpc::ClientContext* context, const ::oteldemo::GetProductReviewSummaryRequest& request, ::grpc::CompletionQueue* cq));
+  MOCK_METHOD3(GetAverageProductReviewScore, ::grpc::Status(::grpc::ClientContext* context, const ::oteldemo::GetAverageProductReviewScoreRequest& request, ::oteldemo::GetAverageProductReviewScoreResponse* response));
+  MOCK_METHOD3(AsyncGetAverageProductReviewScoreRaw, ::grpc::ClientAsyncResponseReaderInterface< ::oteldemo::GetAverageProductReviewScoreResponse>*(::grpc::ClientContext* context, const ::oteldemo::GetAverageProductReviewScoreRequest& request, ::grpc::CompletionQueue* cq));
+  MOCK_METHOD3(PrepareAsyncGetAverageProductReviewScoreRaw, ::grpc::ClientAsyncResponseReaderInterface< ::oteldemo::GetAverageProductReviewScoreResponse>*(::grpc::ClientContext* context, const ::oteldemo::GetAverageProductReviewScoreRequest& request, ::grpc::CompletionQueue* cq));
+  MOCK_METHOD3(AskProductAIAssistant, ::grpc::Status(::grpc::ClientContext* context, const ::oteldemo::AskProductAIAssistantRequest& request, ::oteldemo::AskProductAIAssistantResponse* response));
+  MOCK_METHOD3(AsyncAskProductAIAssistantRaw, ::grpc::ClientAsyncResponseReaderInterface< ::oteldemo::AskProductAIAssistantResponse>*(::grpc::ClientContext* context, const ::oteldemo::AskProductAIAssistantRequest& request, ::grpc::CompletionQueue* cq));
+  MOCK_METHOD3(PrepareAsyncAskProductAIAssistantRaw, ::grpc::ClientAsyncResponseReaderInterface< ::oteldemo::AskProductAIAssistantResponse>*(::grpc::ClientContext* context, const ::oteldemo::AskProductAIAssistantRequest& request, ::grpc::CompletionQueue* cq));
 };
 
 class MockShippingServiceStub : public ShippingService::StubInterface {

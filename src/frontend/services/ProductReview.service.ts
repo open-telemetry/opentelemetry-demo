@@ -10,10 +10,15 @@ const ProductReviewService = () => ({
 
         return productReviews;
     },
-    async getProductReviewSummary(id: string) {
-        const productReviewSummary = await ProductReviewGateway.getProductReviewSummary(id);
+    async getAverageProductReviewScore(id: string) {
+        const averageScore = await ProductReviewGateway.getAverageProductReviewScore(id);
 
-        return productReviewSummary;
+        return averageScore;
+    },
+    async askProductAIAssistant(id: string, question: string) {
+        const response = await ProductReviewGateway.askProductAIAssistant(id, question);
+
+        return response;
     },
 });
 

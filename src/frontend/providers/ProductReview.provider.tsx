@@ -4,21 +4,21 @@
 import { createContext, useContext, useEffect, useMemo } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import ApiGateway from '../gateways/Api.gateway';
-import { ProductReview, GetProductReviewSummaryResponse } from '../protos/demo';
+import { ProductReview } from '../protos/demo';
 
 interface IContext {
     // null = not loaded yet; [] = loaded with no reviews; array = loaded with reviews.
     productReviews: ProductReview[] | null;
     loading: boolean;
     error: Error | null;
-    productReviewSummary: GetProductReviewSummaryResponse | null;
+    averageScore: string | null;
 }
 
 export const Context = createContext<IContext>({
     productReviews: null,
     loading: false,
     error: null,
-    productReviewSummary: null,
+    averageScore: null,
 });
 
 interface IProps {
@@ -62,9 +62,9 @@ const ProductReviewProvider = ({ children, productId }: IProps) => {
             : new Error('Unknown error')
         : null;
 
-    const { data: productReviewSummary = { averageScore: '', productReviewSummary: '' } } = useQuery({
-        queryKey: ['productReviewSummary', productId],
-        queryFn: () => ApiGateway.getProductReviewSummary(productId),
+    const { data: averageScore = '' } = useQuery({
+        queryKey: ['productReviewAvgScore', productId],
+        queryFn: () => ApiGateway.getAverageProductReviewScore(productId),
     });
 
     const value = useMemo(
@@ -72,9 +72,9 @@ const ProductReviewProvider = ({ children, productId }: IProps) => {
             productReviews,
             loading,
             error: currentError,
-            productReviewSummary,
+            averageScore,
         }),
-        [productReviews, loading, currentError, productReviewSummary]
+        [productReviews, loading, currentError, averageScore]
     );
 
     return <Context.Provider value={value}>{children}</Context.Provider>;

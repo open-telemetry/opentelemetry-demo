@@ -1314,20 +1314,29 @@ class ProductReviewService final {
     std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::oteldemo::GetProductReviewsResponse>> PrepareAsyncGetProductReviews(::grpc::ClientContext* context, const ::oteldemo::GetProductReviewsRequest& request, ::grpc::CompletionQueue* cq) {
       return std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::oteldemo::GetProductReviewsResponse>>(PrepareAsyncGetProductReviewsRaw(context, request, cq));
     }
-    virtual ::grpc::Status GetProductReviewSummary(::grpc::ClientContext* context, const ::oteldemo::GetProductReviewSummaryRequest& request, ::oteldemo::GetProductReviewSummaryResponse* response) = 0;
-    std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::oteldemo::GetProductReviewSummaryResponse>> AsyncGetProductReviewSummary(::grpc::ClientContext* context, const ::oteldemo::GetProductReviewSummaryRequest& request, ::grpc::CompletionQueue* cq) {
-      return std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::oteldemo::GetProductReviewSummaryResponse>>(AsyncGetProductReviewSummaryRaw(context, request, cq));
+    virtual ::grpc::Status GetAverageProductReviewScore(::grpc::ClientContext* context, const ::oteldemo::GetAverageProductReviewScoreRequest& request, ::oteldemo::GetAverageProductReviewScoreResponse* response) = 0;
+    std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::oteldemo::GetAverageProductReviewScoreResponse>> AsyncGetAverageProductReviewScore(::grpc::ClientContext* context, const ::oteldemo::GetAverageProductReviewScoreRequest& request, ::grpc::CompletionQueue* cq) {
+      return std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::oteldemo::GetAverageProductReviewScoreResponse>>(AsyncGetAverageProductReviewScoreRaw(context, request, cq));
     }
-    std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::oteldemo::GetProductReviewSummaryResponse>> PrepareAsyncGetProductReviewSummary(::grpc::ClientContext* context, const ::oteldemo::GetProductReviewSummaryRequest& request, ::grpc::CompletionQueue* cq) {
-      return std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::oteldemo::GetProductReviewSummaryResponse>>(PrepareAsyncGetProductReviewSummaryRaw(context, request, cq));
+    std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::oteldemo::GetAverageProductReviewScoreResponse>> PrepareAsyncGetAverageProductReviewScore(::grpc::ClientContext* context, const ::oteldemo::GetAverageProductReviewScoreRequest& request, ::grpc::CompletionQueue* cq) {
+      return std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::oteldemo::GetAverageProductReviewScoreResponse>>(PrepareAsyncGetAverageProductReviewScoreRaw(context, request, cq));
+    }
+    virtual ::grpc::Status AskProductAIAssistant(::grpc::ClientContext* context, const ::oteldemo::AskProductAIAssistantRequest& request, ::oteldemo::AskProductAIAssistantResponse* response) = 0;
+    std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::oteldemo::AskProductAIAssistantResponse>> AsyncAskProductAIAssistant(::grpc::ClientContext* context, const ::oteldemo::AskProductAIAssistantRequest& request, ::grpc::CompletionQueue* cq) {
+      return std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::oteldemo::AskProductAIAssistantResponse>>(AsyncAskProductAIAssistantRaw(context, request, cq));
+    }
+    std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::oteldemo::AskProductAIAssistantResponse>> PrepareAsyncAskProductAIAssistant(::grpc::ClientContext* context, const ::oteldemo::AskProductAIAssistantRequest& request, ::grpc::CompletionQueue* cq) {
+      return std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::oteldemo::AskProductAIAssistantResponse>>(PrepareAsyncAskProductAIAssistantRaw(context, request, cq));
     }
     class async_interface {
      public:
       virtual ~async_interface() {}
       virtual void GetProductReviews(::grpc::ClientContext* context, const ::oteldemo::GetProductReviewsRequest* request, ::oteldemo::GetProductReviewsResponse* response, std::function<void(::grpc::Status)>) = 0;
       virtual void GetProductReviews(::grpc::ClientContext* context, const ::oteldemo::GetProductReviewsRequest* request, ::oteldemo::GetProductReviewsResponse* response, ::grpc::ClientUnaryReactor* reactor) = 0;
-      virtual void GetProductReviewSummary(::grpc::ClientContext* context, const ::oteldemo::GetProductReviewSummaryRequest* request, ::oteldemo::GetProductReviewSummaryResponse* response, std::function<void(::grpc::Status)>) = 0;
-      virtual void GetProductReviewSummary(::grpc::ClientContext* context, const ::oteldemo::GetProductReviewSummaryRequest* request, ::oteldemo::GetProductReviewSummaryResponse* response, ::grpc::ClientUnaryReactor* reactor) = 0;
+      virtual void GetAverageProductReviewScore(::grpc::ClientContext* context, const ::oteldemo::GetAverageProductReviewScoreRequest* request, ::oteldemo::GetAverageProductReviewScoreResponse* response, std::function<void(::grpc::Status)>) = 0;
+      virtual void GetAverageProductReviewScore(::grpc::ClientContext* context, const ::oteldemo::GetAverageProductReviewScoreRequest* request, ::oteldemo::GetAverageProductReviewScoreResponse* response, ::grpc::ClientUnaryReactor* reactor) = 0;
+      virtual void AskProductAIAssistant(::grpc::ClientContext* context, const ::oteldemo::AskProductAIAssistantRequest* request, ::oteldemo::AskProductAIAssistantResponse* response, std::function<void(::grpc::Status)>) = 0;
+      virtual void AskProductAIAssistant(::grpc::ClientContext* context, const ::oteldemo::AskProductAIAssistantRequest* request, ::oteldemo::AskProductAIAssistantResponse* response, ::grpc::ClientUnaryReactor* reactor) = 0;
     };
     typedef class async_interface experimental_async_interface;
     virtual class async_interface* async() { return nullptr; }
@@ -1335,8 +1344,10 @@ class ProductReviewService final {
    private:
     virtual ::grpc::ClientAsyncResponseReaderInterface< ::oteldemo::GetProductReviewsResponse>* AsyncGetProductReviewsRaw(::grpc::ClientContext* context, const ::oteldemo::GetProductReviewsRequest& request, ::grpc::CompletionQueue* cq) = 0;
     virtual ::grpc::ClientAsyncResponseReaderInterface< ::oteldemo::GetProductReviewsResponse>* PrepareAsyncGetProductReviewsRaw(::grpc::ClientContext* context, const ::oteldemo::GetProductReviewsRequest& request, ::grpc::CompletionQueue* cq) = 0;
-    virtual ::grpc::ClientAsyncResponseReaderInterface< ::oteldemo::GetProductReviewSummaryResponse>* AsyncGetProductReviewSummaryRaw(::grpc::ClientContext* context, const ::oteldemo::GetProductReviewSummaryRequest& request, ::grpc::CompletionQueue* cq) = 0;
-    virtual ::grpc::ClientAsyncResponseReaderInterface< ::oteldemo::GetProductReviewSummaryResponse>* PrepareAsyncGetProductReviewSummaryRaw(::grpc::ClientContext* context, const ::oteldemo::GetProductReviewSummaryRequest& request, ::grpc::CompletionQueue* cq) = 0;
+    virtual ::grpc::ClientAsyncResponseReaderInterface< ::oteldemo::GetAverageProductReviewScoreResponse>* AsyncGetAverageProductReviewScoreRaw(::grpc::ClientContext* context, const ::oteldemo::GetAverageProductReviewScoreRequest& request, ::grpc::CompletionQueue* cq) = 0;
+    virtual ::grpc::ClientAsyncResponseReaderInterface< ::oteldemo::GetAverageProductReviewScoreResponse>* PrepareAsyncGetAverageProductReviewScoreRaw(::grpc::ClientContext* context, const ::oteldemo::GetAverageProductReviewScoreRequest& request, ::grpc::CompletionQueue* cq) = 0;
+    virtual ::grpc::ClientAsyncResponseReaderInterface< ::oteldemo::AskProductAIAssistantResponse>* AsyncAskProductAIAssistantRaw(::grpc::ClientContext* context, const ::oteldemo::AskProductAIAssistantRequest& request, ::grpc::CompletionQueue* cq) = 0;
+    virtual ::grpc::ClientAsyncResponseReaderInterface< ::oteldemo::AskProductAIAssistantResponse>* PrepareAsyncAskProductAIAssistantRaw(::grpc::ClientContext* context, const ::oteldemo::AskProductAIAssistantRequest& request, ::grpc::CompletionQueue* cq) = 0;
   };
   class Stub final : public StubInterface {
    public:
@@ -1348,20 +1359,29 @@ class ProductReviewService final {
     std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::oteldemo::GetProductReviewsResponse>> PrepareAsyncGetProductReviews(::grpc::ClientContext* context, const ::oteldemo::GetProductReviewsRequest& request, ::grpc::CompletionQueue* cq) {
       return std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::oteldemo::GetProductReviewsResponse>>(PrepareAsyncGetProductReviewsRaw(context, request, cq));
     }
-    ::grpc::Status GetProductReviewSummary(::grpc::ClientContext* context, const ::oteldemo::GetProductReviewSummaryRequest& request, ::oteldemo::GetProductReviewSummaryResponse* response) override;
-    std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::oteldemo::GetProductReviewSummaryResponse>> AsyncGetProductReviewSummary(::grpc::ClientContext* context, const ::oteldemo::GetProductReviewSummaryRequest& request, ::grpc::CompletionQueue* cq) {
-      return std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::oteldemo::GetProductReviewSummaryResponse>>(AsyncGetProductReviewSummaryRaw(context, request, cq));
+    ::grpc::Status GetAverageProductReviewScore(::grpc::ClientContext* context, const ::oteldemo::GetAverageProductReviewScoreRequest& request, ::oteldemo::GetAverageProductReviewScoreResponse* response) override;
+    std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::oteldemo::GetAverageProductReviewScoreResponse>> AsyncGetAverageProductReviewScore(::grpc::ClientContext* context, const ::oteldemo::GetAverageProductReviewScoreRequest& request, ::grpc::CompletionQueue* cq) {
+      return std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::oteldemo::GetAverageProductReviewScoreResponse>>(AsyncGetAverageProductReviewScoreRaw(context, request, cq));
     }
-    std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::oteldemo::GetProductReviewSummaryResponse>> PrepareAsyncGetProductReviewSummary(::grpc::ClientContext* context, const ::oteldemo::GetProductReviewSummaryRequest& request, ::grpc::CompletionQueue* cq) {
-      return std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::oteldemo::GetProductReviewSummaryResponse>>(PrepareAsyncGetProductReviewSummaryRaw(context, request, cq));
+    std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::oteldemo::GetAverageProductReviewScoreResponse>> PrepareAsyncGetAverageProductReviewScore(::grpc::ClientContext* context, const ::oteldemo::GetAverageProductReviewScoreRequest& request, ::grpc::CompletionQueue* cq) {
+      return std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::oteldemo::GetAverageProductReviewScoreResponse>>(PrepareAsyncGetAverageProductReviewScoreRaw(context, request, cq));
+    }
+    ::grpc::Status AskProductAIAssistant(::grpc::ClientContext* context, const ::oteldemo::AskProductAIAssistantRequest& request, ::oteldemo::AskProductAIAssistantResponse* response) override;
+    std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::oteldemo::AskProductAIAssistantResponse>> AsyncAskProductAIAssistant(::grpc::ClientContext* context, const ::oteldemo::AskProductAIAssistantRequest& request, ::grpc::CompletionQueue* cq) {
+      return std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::oteldemo::AskProductAIAssistantResponse>>(AsyncAskProductAIAssistantRaw(context, request, cq));
+    }
+    std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::oteldemo::AskProductAIAssistantResponse>> PrepareAsyncAskProductAIAssistant(::grpc::ClientContext* context, const ::oteldemo::AskProductAIAssistantRequest& request, ::grpc::CompletionQueue* cq) {
+      return std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::oteldemo::AskProductAIAssistantResponse>>(PrepareAsyncAskProductAIAssistantRaw(context, request, cq));
     }
     class async final :
       public StubInterface::async_interface {
      public:
       void GetProductReviews(::grpc::ClientContext* context, const ::oteldemo::GetProductReviewsRequest* request, ::oteldemo::GetProductReviewsResponse* response, std::function<void(::grpc::Status)>) override;
       void GetProductReviews(::grpc::ClientContext* context, const ::oteldemo::GetProductReviewsRequest* request, ::oteldemo::GetProductReviewsResponse* response, ::grpc::ClientUnaryReactor* reactor) override;
-      void GetProductReviewSummary(::grpc::ClientContext* context, const ::oteldemo::GetProductReviewSummaryRequest* request, ::oteldemo::GetProductReviewSummaryResponse* response, std::function<void(::grpc::Status)>) override;
-      void GetProductReviewSummary(::grpc::ClientContext* context, const ::oteldemo::GetProductReviewSummaryRequest* request, ::oteldemo::GetProductReviewSummaryResponse* response, ::grpc::ClientUnaryReactor* reactor) override;
+      void GetAverageProductReviewScore(::grpc::ClientContext* context, const ::oteldemo::GetAverageProductReviewScoreRequest* request, ::oteldemo::GetAverageProductReviewScoreResponse* response, std::function<void(::grpc::Status)>) override;
+      void GetAverageProductReviewScore(::grpc::ClientContext* context, const ::oteldemo::GetAverageProductReviewScoreRequest* request, ::oteldemo::GetAverageProductReviewScoreResponse* response, ::grpc::ClientUnaryReactor* reactor) override;
+      void AskProductAIAssistant(::grpc::ClientContext* context, const ::oteldemo::AskProductAIAssistantRequest* request, ::oteldemo::AskProductAIAssistantResponse* response, std::function<void(::grpc::Status)>) override;
+      void AskProductAIAssistant(::grpc::ClientContext* context, const ::oteldemo::AskProductAIAssistantRequest* request, ::oteldemo::AskProductAIAssistantResponse* response, ::grpc::ClientUnaryReactor* reactor) override;
      private:
       friend class Stub;
       explicit async(Stub* stub): stub_(stub) { }
@@ -1375,10 +1395,13 @@ class ProductReviewService final {
     class async async_stub_{this};
     ::grpc::ClientAsyncResponseReader< ::oteldemo::GetProductReviewsResponse>* AsyncGetProductReviewsRaw(::grpc::ClientContext* context, const ::oteldemo::GetProductReviewsRequest& request, ::grpc::CompletionQueue* cq) override;
     ::grpc::ClientAsyncResponseReader< ::oteldemo::GetProductReviewsResponse>* PrepareAsyncGetProductReviewsRaw(::grpc::ClientContext* context, const ::oteldemo::GetProductReviewsRequest& request, ::grpc::CompletionQueue* cq) override;
-    ::grpc::ClientAsyncResponseReader< ::oteldemo::GetProductReviewSummaryResponse>* AsyncGetProductReviewSummaryRaw(::grpc::ClientContext* context, const ::oteldemo::GetProductReviewSummaryRequest& request, ::grpc::CompletionQueue* cq) override;
-    ::grpc::ClientAsyncResponseReader< ::oteldemo::GetProductReviewSummaryResponse>* PrepareAsyncGetProductReviewSummaryRaw(::grpc::ClientContext* context, const ::oteldemo::GetProductReviewSummaryRequest& request, ::grpc::CompletionQueue* cq) override;
+    ::grpc::ClientAsyncResponseReader< ::oteldemo::GetAverageProductReviewScoreResponse>* AsyncGetAverageProductReviewScoreRaw(::grpc::ClientContext* context, const ::oteldemo::GetAverageProductReviewScoreRequest& request, ::grpc::CompletionQueue* cq) override;
+    ::grpc::ClientAsyncResponseReader< ::oteldemo::GetAverageProductReviewScoreResponse>* PrepareAsyncGetAverageProductReviewScoreRaw(::grpc::ClientContext* context, const ::oteldemo::GetAverageProductReviewScoreRequest& request, ::grpc::CompletionQueue* cq) override;
+    ::grpc::ClientAsyncResponseReader< ::oteldemo::AskProductAIAssistantResponse>* AsyncAskProductAIAssistantRaw(::grpc::ClientContext* context, const ::oteldemo::AskProductAIAssistantRequest& request, ::grpc::CompletionQueue* cq) override;
+    ::grpc::ClientAsyncResponseReader< ::oteldemo::AskProductAIAssistantResponse>* PrepareAsyncAskProductAIAssistantRaw(::grpc::ClientContext* context, const ::oteldemo::AskProductAIAssistantRequest& request, ::grpc::CompletionQueue* cq) override;
     const ::grpc::internal::RpcMethod rpcmethod_GetProductReviews_;
-    const ::grpc::internal::RpcMethod rpcmethod_GetProductReviewSummary_;
+    const ::grpc::internal::RpcMethod rpcmethod_GetAverageProductReviewScore_;
+    const ::grpc::internal::RpcMethod rpcmethod_AskProductAIAssistant_;
   };
   static std::unique_ptr<Stub> NewStub(const std::shared_ptr< ::grpc::ChannelInterface>& channel, const ::grpc::StubOptions& options = ::grpc::StubOptions());
 
@@ -1387,7 +1410,8 @@ class ProductReviewService final {
     Service();
     virtual ~Service();
     virtual ::grpc::Status GetProductReviews(::grpc::ServerContext* context, const ::oteldemo::GetProductReviewsRequest* request, ::oteldemo::GetProductReviewsResponse* response);
-    virtual ::grpc::Status GetProductReviewSummary(::grpc::ServerContext* context, const ::oteldemo::GetProductReviewSummaryRequest* request, ::oteldemo::GetProductReviewSummaryResponse* response);
+    virtual ::grpc::Status GetAverageProductReviewScore(::grpc::ServerContext* context, const ::oteldemo::GetAverageProductReviewScoreRequest* request, ::oteldemo::GetAverageProductReviewScoreResponse* response);
+    virtual ::grpc::Status AskProductAIAssistant(::grpc::ServerContext* context, const ::oteldemo::AskProductAIAssistantRequest* request, ::oteldemo::AskProductAIAssistantResponse* response);
   };
   template <class BaseClass>
   class WithAsyncMethod_GetProductReviews : public BaseClass {
@@ -1410,26 +1434,46 @@ class ProductReviewService final {
     }
   };
   template <class BaseClass>
-  class WithAsyncMethod_GetProductReviewSummary : public BaseClass {
+  class WithAsyncMethod_GetAverageProductReviewScore : public BaseClass {
    private:
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
-    WithAsyncMethod_GetProductReviewSummary() {
+    WithAsyncMethod_GetAverageProductReviewScore() {
       ::grpc::Service::MarkMethodAsync(1);
     }
-    ~WithAsyncMethod_GetProductReviewSummary() override {
+    ~WithAsyncMethod_GetAverageProductReviewScore() override {
       BaseClassMustBeDerivedFromService(this);
     }
     // disable synchronous version of this method
-    ::grpc::Status GetProductReviewSummary(::grpc::ServerContext* /*context*/, const ::oteldemo::GetProductReviewSummaryRequest* /*request*/, ::oteldemo::GetProductReviewSummaryResponse* /*response*/) override {
+    ::grpc::Status GetAverageProductReviewScore(::grpc::ServerContext* /*context*/, const ::oteldemo::GetAverageProductReviewScoreRequest* /*request*/, ::oteldemo::GetAverageProductReviewScoreResponse* /*response*/) override {
       abort();
       return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
     }
-    void RequestGetProductReviewSummary(::grpc::ServerContext* context, ::oteldemo::GetProductReviewSummaryRequest* request, ::grpc::ServerAsyncResponseWriter< ::oteldemo::GetProductReviewSummaryResponse>* response, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag) {
+    void RequestGetAverageProductReviewScore(::grpc::ServerContext* context, ::oteldemo::GetAverageProductReviewScoreRequest* request, ::grpc::ServerAsyncResponseWriter< ::oteldemo::GetAverageProductReviewScoreResponse>* response, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag) {
       ::grpc::Service::RequestAsyncUnary(1, context, request, response, new_call_cq, notification_cq, tag);
     }
   };
-  typedef WithAsyncMethod_GetProductReviews<WithAsyncMethod_GetProductReviewSummary<Service > > AsyncService;
+  template <class BaseClass>
+  class WithAsyncMethod_AskProductAIAssistant : public BaseClass {
+   private:
+    void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
+   public:
+    WithAsyncMethod_AskProductAIAssistant() {
+      ::grpc::Service::MarkMethodAsync(2);
+    }
+    ~WithAsyncMethod_AskProductAIAssistant() override {
+      BaseClassMustBeDerivedFromService(this);
+    }
+    // disable synchronous version of this method
+    ::grpc::Status AskProductAIAssistant(::grpc::ServerContext* /*context*/, const ::oteldemo::AskProductAIAssistantRequest* /*request*/, ::oteldemo::AskProductAIAssistantResponse* /*response*/) override {
+      abort();
+      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+    }
+    void RequestAskProductAIAssistant(::grpc::ServerContext* context, ::oteldemo::AskProductAIAssistantRequest* request, ::grpc::ServerAsyncResponseWriter< ::oteldemo::AskProductAIAssistantResponse>* response, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag) {
+      ::grpc::Service::RequestAsyncUnary(2, context, request, response, new_call_cq, notification_cq, tag);
+    }
+  };
+  typedef WithAsyncMethod_GetProductReviews<WithAsyncMethod_GetAverageProductReviewScore<WithAsyncMethod_AskProductAIAssistant<Service > > > AsyncService;
   template <class BaseClass>
   class WithCallbackMethod_GetProductReviews : public BaseClass {
    private:
@@ -1458,33 +1502,60 @@ class ProductReviewService final {
       ::grpc::CallbackServerContext* /*context*/, const ::oteldemo::GetProductReviewsRequest* /*request*/, ::oteldemo::GetProductReviewsResponse* /*response*/)  { return nullptr; }
   };
   template <class BaseClass>
-  class WithCallbackMethod_GetProductReviewSummary : public BaseClass {
+  class WithCallbackMethod_GetAverageProductReviewScore : public BaseClass {
    private:
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
-    WithCallbackMethod_GetProductReviewSummary() {
+    WithCallbackMethod_GetAverageProductReviewScore() {
       ::grpc::Service::MarkMethodCallback(1,
-          new ::grpc::internal::CallbackUnaryHandler< ::oteldemo::GetProductReviewSummaryRequest, ::oteldemo::GetProductReviewSummaryResponse>(
+          new ::grpc::internal::CallbackUnaryHandler< ::oteldemo::GetAverageProductReviewScoreRequest, ::oteldemo::GetAverageProductReviewScoreResponse>(
             [this](
-                   ::grpc::CallbackServerContext* context, const ::oteldemo::GetProductReviewSummaryRequest* request, ::oteldemo::GetProductReviewSummaryResponse* response) { return this->GetProductReviewSummary(context, request, response); }));}
-    void SetMessageAllocatorFor_GetProductReviewSummary(
-        ::grpc::MessageAllocator< ::oteldemo::GetProductReviewSummaryRequest, ::oteldemo::GetProductReviewSummaryResponse>* allocator) {
+                   ::grpc::CallbackServerContext* context, const ::oteldemo::GetAverageProductReviewScoreRequest* request, ::oteldemo::GetAverageProductReviewScoreResponse* response) { return this->GetAverageProductReviewScore(context, request, response); }));}
+    void SetMessageAllocatorFor_GetAverageProductReviewScore(
+        ::grpc::MessageAllocator< ::oteldemo::GetAverageProductReviewScoreRequest, ::oteldemo::GetAverageProductReviewScoreResponse>* allocator) {
       ::grpc::internal::MethodHandler* const handler = ::grpc::Service::GetHandler(1);
-      static_cast<::grpc::internal::CallbackUnaryHandler< ::oteldemo::GetProductReviewSummaryRequest, ::oteldemo::GetProductReviewSummaryResponse>*>(handler)
+      static_cast<::grpc::internal::CallbackUnaryHandler< ::oteldemo::GetAverageProductReviewScoreRequest, ::oteldemo::GetAverageProductReviewScoreResponse>*>(handler)
               ->SetMessageAllocator(allocator);
     }
-    ~WithCallbackMethod_GetProductReviewSummary() override {
+    ~WithCallbackMethod_GetAverageProductReviewScore() override {
       BaseClassMustBeDerivedFromService(this);
     }
     // disable synchronous version of this method
-    ::grpc::Status GetProductReviewSummary(::grpc::ServerContext* /*context*/, const ::oteldemo::GetProductReviewSummaryRequest* /*request*/, ::oteldemo::GetProductReviewSummaryResponse* /*response*/) override {
+    ::grpc::Status GetAverageProductReviewScore(::grpc::ServerContext* /*context*/, const ::oteldemo::GetAverageProductReviewScoreRequest* /*request*/, ::oteldemo::GetAverageProductReviewScoreResponse* /*response*/) override {
       abort();
       return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
     }
-    virtual ::grpc::ServerUnaryReactor* GetProductReviewSummary(
-      ::grpc::CallbackServerContext* /*context*/, const ::oteldemo::GetProductReviewSummaryRequest* /*request*/, ::oteldemo::GetProductReviewSummaryResponse* /*response*/)  { return nullptr; }
+    virtual ::grpc::ServerUnaryReactor* GetAverageProductReviewScore(
+      ::grpc::CallbackServerContext* /*context*/, const ::oteldemo::GetAverageProductReviewScoreRequest* /*request*/, ::oteldemo::GetAverageProductReviewScoreResponse* /*response*/)  { return nullptr; }
   };
-  typedef WithCallbackMethod_GetProductReviews<WithCallbackMethod_GetProductReviewSummary<Service > > CallbackService;
+  template <class BaseClass>
+  class WithCallbackMethod_AskProductAIAssistant : public BaseClass {
+   private:
+    void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
+   public:
+    WithCallbackMethod_AskProductAIAssistant() {
+      ::grpc::Service::MarkMethodCallback(2,
+          new ::grpc::internal::CallbackUnaryHandler< ::oteldemo::AskProductAIAssistantRequest, ::oteldemo::AskProductAIAssistantResponse>(
+            [this](
+                   ::grpc::CallbackServerContext* context, const ::oteldemo::AskProductAIAssistantRequest* request, ::oteldemo::AskProductAIAssistantResponse* response) { return this->AskProductAIAssistant(context, request, response); }));}
+    void SetMessageAllocatorFor_AskProductAIAssistant(
+        ::grpc::MessageAllocator< ::oteldemo::AskProductAIAssistantRequest, ::oteldemo::AskProductAIAssistantResponse>* allocator) {
+      ::grpc::internal::MethodHandler* const handler = ::grpc::Service::GetHandler(2);
+      static_cast<::grpc::internal::CallbackUnaryHandler< ::oteldemo::AskProductAIAssistantRequest, ::oteldemo::AskProductAIAssistantResponse>*>(handler)
+              ->SetMessageAllocator(allocator);
+    }
+    ~WithCallbackMethod_AskProductAIAssistant() override {
+      BaseClassMustBeDerivedFromService(this);
+    }
+    // disable synchronous version of this method
+    ::grpc::Status AskProductAIAssistant(::grpc::ServerContext* /*context*/, const ::oteldemo::AskProductAIAssistantRequest* /*request*/, ::oteldemo::AskProductAIAssistantResponse* /*response*/) override {
+      abort();
+      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+    }
+    virtual ::grpc::ServerUnaryReactor* AskProductAIAssistant(
+      ::grpc::CallbackServerContext* /*context*/, const ::oteldemo::AskProductAIAssistantRequest* /*request*/, ::oteldemo::AskProductAIAssistantResponse* /*response*/)  { return nullptr; }
+  };
+  typedef WithCallbackMethod_GetProductReviews<WithCallbackMethod_GetAverageProductReviewScore<WithCallbackMethod_AskProductAIAssistant<Service > > > CallbackService;
   typedef CallbackService ExperimentalCallbackService;
   template <class BaseClass>
   class WithGenericMethod_GetProductReviews : public BaseClass {
@@ -1504,18 +1575,35 @@ class ProductReviewService final {
     }
   };
   template <class BaseClass>
-  class WithGenericMethod_GetProductReviewSummary : public BaseClass {
+  class WithGenericMethod_GetAverageProductReviewScore : public BaseClass {
    private:
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
-    WithGenericMethod_GetProductReviewSummary() {
+    WithGenericMethod_GetAverageProductReviewScore() {
       ::grpc::Service::MarkMethodGeneric(1);
     }
-    ~WithGenericMethod_GetProductReviewSummary() override {
+    ~WithGenericMethod_GetAverageProductReviewScore() override {
       BaseClassMustBeDerivedFromService(this);
     }
     // disable synchronous version of this method
-    ::grpc::Status GetProductReviewSummary(::grpc::ServerContext* /*context*/, const ::oteldemo::GetProductReviewSummaryRequest* /*request*/, ::oteldemo::GetProductReviewSummaryResponse* /*response*/) override {
+    ::grpc::Status GetAverageProductReviewScore(::grpc::ServerContext* /*context*/, const ::oteldemo::GetAverageProductReviewScoreRequest* /*request*/, ::oteldemo::GetAverageProductReviewScoreResponse* /*response*/) override {
+      abort();
+      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+    }
+  };
+  template <class BaseClass>
+  class WithGenericMethod_AskProductAIAssistant : public BaseClass {
+   private:
+    void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
+   public:
+    WithGenericMethod_AskProductAIAssistant() {
+      ::grpc::Service::MarkMethodGeneric(2);
+    }
+    ~WithGenericMethod_AskProductAIAssistant() override {
+      BaseClassMustBeDerivedFromService(this);
+    }
+    // disable synchronous version of this method
+    ::grpc::Status AskProductAIAssistant(::grpc::ServerContext* /*context*/, const ::oteldemo::AskProductAIAssistantRequest* /*request*/, ::oteldemo::AskProductAIAssistantResponse* /*response*/) override {
       abort();
       return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
     }
@@ -1541,23 +1629,43 @@ class ProductReviewService final {
     }
   };
   template <class BaseClass>
-  class WithRawMethod_GetProductReviewSummary : public BaseClass {
+  class WithRawMethod_GetAverageProductReviewScore : public BaseClass {
    private:
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
-    WithRawMethod_GetProductReviewSummary() {
+    WithRawMethod_GetAverageProductReviewScore() {
       ::grpc::Service::MarkMethodRaw(1);
     }
-    ~WithRawMethod_GetProductReviewSummary() override {
+    ~WithRawMethod_GetAverageProductReviewScore() override {
       BaseClassMustBeDerivedFromService(this);
     }
     // disable synchronous version of this method
-    ::grpc::Status GetProductReviewSummary(::grpc::ServerContext* /*context*/, const ::oteldemo::GetProductReviewSummaryRequest* /*request*/, ::oteldemo::GetProductReviewSummaryResponse* /*response*/) override {
+    ::grpc::Status GetAverageProductReviewScore(::grpc::ServerContext* /*context*/, const ::oteldemo::GetAverageProductReviewScoreRequest* /*request*/, ::oteldemo::GetAverageProductReviewScoreResponse* /*response*/) override {
       abort();
       return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
     }
-    void RequestGetProductReviewSummary(::grpc::ServerContext* context, ::grpc::ByteBuffer* request, ::grpc::ServerAsyncResponseWriter< ::grpc::ByteBuffer>* response, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag) {
+    void RequestGetAverageProductReviewScore(::grpc::ServerContext* context, ::grpc::ByteBuffer* request, ::grpc::ServerAsyncResponseWriter< ::grpc::ByteBuffer>* response, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag) {
       ::grpc::Service::RequestAsyncUnary(1, context, request, response, new_call_cq, notification_cq, tag);
+    }
+  };
+  template <class BaseClass>
+  class WithRawMethod_AskProductAIAssistant : public BaseClass {
+   private:
+    void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
+   public:
+    WithRawMethod_AskProductAIAssistant() {
+      ::grpc::Service::MarkMethodRaw(2);
+    }
+    ~WithRawMethod_AskProductAIAssistant() override {
+      BaseClassMustBeDerivedFromService(this);
+    }
+    // disable synchronous version of this method
+    ::grpc::Status AskProductAIAssistant(::grpc::ServerContext* /*context*/, const ::oteldemo::AskProductAIAssistantRequest* /*request*/, ::oteldemo::AskProductAIAssistantResponse* /*response*/) override {
+      abort();
+      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+    }
+    void RequestAskProductAIAssistant(::grpc::ServerContext* context, ::grpc::ByteBuffer* request, ::grpc::ServerAsyncResponseWriter< ::grpc::ByteBuffer>* response, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag) {
+      ::grpc::Service::RequestAsyncUnary(2, context, request, response, new_call_cq, notification_cq, tag);
     }
   };
   template <class BaseClass>
@@ -1583,25 +1691,47 @@ class ProductReviewService final {
       ::grpc::CallbackServerContext* /*context*/, const ::grpc::ByteBuffer* /*request*/, ::grpc::ByteBuffer* /*response*/)  { return nullptr; }
   };
   template <class BaseClass>
-  class WithRawCallbackMethod_GetProductReviewSummary : public BaseClass {
+  class WithRawCallbackMethod_GetAverageProductReviewScore : public BaseClass {
    private:
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
-    WithRawCallbackMethod_GetProductReviewSummary() {
+    WithRawCallbackMethod_GetAverageProductReviewScore() {
       ::grpc::Service::MarkMethodRawCallback(1,
           new ::grpc::internal::CallbackUnaryHandler< ::grpc::ByteBuffer, ::grpc::ByteBuffer>(
             [this](
-                   ::grpc::CallbackServerContext* context, const ::grpc::ByteBuffer* request, ::grpc::ByteBuffer* response) { return this->GetProductReviewSummary(context, request, response); }));
+                   ::grpc::CallbackServerContext* context, const ::grpc::ByteBuffer* request, ::grpc::ByteBuffer* response) { return this->GetAverageProductReviewScore(context, request, response); }));
     }
-    ~WithRawCallbackMethod_GetProductReviewSummary() override {
+    ~WithRawCallbackMethod_GetAverageProductReviewScore() override {
       BaseClassMustBeDerivedFromService(this);
     }
     // disable synchronous version of this method
-    ::grpc::Status GetProductReviewSummary(::grpc::ServerContext* /*context*/, const ::oteldemo::GetProductReviewSummaryRequest* /*request*/, ::oteldemo::GetProductReviewSummaryResponse* /*response*/) override {
+    ::grpc::Status GetAverageProductReviewScore(::grpc::ServerContext* /*context*/, const ::oteldemo::GetAverageProductReviewScoreRequest* /*request*/, ::oteldemo::GetAverageProductReviewScoreResponse* /*response*/) override {
       abort();
       return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
     }
-    virtual ::grpc::ServerUnaryReactor* GetProductReviewSummary(
+    virtual ::grpc::ServerUnaryReactor* GetAverageProductReviewScore(
+      ::grpc::CallbackServerContext* /*context*/, const ::grpc::ByteBuffer* /*request*/, ::grpc::ByteBuffer* /*response*/)  { return nullptr; }
+  };
+  template <class BaseClass>
+  class WithRawCallbackMethod_AskProductAIAssistant : public BaseClass {
+   private:
+    void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
+   public:
+    WithRawCallbackMethod_AskProductAIAssistant() {
+      ::grpc::Service::MarkMethodRawCallback(2,
+          new ::grpc::internal::CallbackUnaryHandler< ::grpc::ByteBuffer, ::grpc::ByteBuffer>(
+            [this](
+                   ::grpc::CallbackServerContext* context, const ::grpc::ByteBuffer* request, ::grpc::ByteBuffer* response) { return this->AskProductAIAssistant(context, request, response); }));
+    }
+    ~WithRawCallbackMethod_AskProductAIAssistant() override {
+      BaseClassMustBeDerivedFromService(this);
+    }
+    // disable synchronous version of this method
+    ::grpc::Status AskProductAIAssistant(::grpc::ServerContext* /*context*/, const ::oteldemo::AskProductAIAssistantRequest* /*request*/, ::oteldemo::AskProductAIAssistantResponse* /*response*/) override {
+      abort();
+      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+    }
+    virtual ::grpc::ServerUnaryReactor* AskProductAIAssistant(
       ::grpc::CallbackServerContext* /*context*/, const ::grpc::ByteBuffer* /*request*/, ::grpc::ByteBuffer* /*response*/)  { return nullptr; }
   };
   template <class BaseClass>
@@ -1632,35 +1762,62 @@ class ProductReviewService final {
     virtual ::grpc::Status StreamedGetProductReviews(::grpc::ServerContext* context, ::grpc::ServerUnaryStreamer< ::oteldemo::GetProductReviewsRequest,::oteldemo::GetProductReviewsResponse>* server_unary_streamer) = 0;
   };
   template <class BaseClass>
-  class WithStreamedUnaryMethod_GetProductReviewSummary : public BaseClass {
+  class WithStreamedUnaryMethod_GetAverageProductReviewScore : public BaseClass {
    private:
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
-    WithStreamedUnaryMethod_GetProductReviewSummary() {
+    WithStreamedUnaryMethod_GetAverageProductReviewScore() {
       ::grpc::Service::MarkMethodStreamed(1,
         new ::grpc::internal::StreamedUnaryHandler<
-          ::oteldemo::GetProductReviewSummaryRequest, ::oteldemo::GetProductReviewSummaryResponse>(
+          ::oteldemo::GetAverageProductReviewScoreRequest, ::oteldemo::GetAverageProductReviewScoreResponse>(
             [this](::grpc::ServerContext* context,
                    ::grpc::ServerUnaryStreamer<
-                     ::oteldemo::GetProductReviewSummaryRequest, ::oteldemo::GetProductReviewSummaryResponse>* streamer) {
-                       return this->StreamedGetProductReviewSummary(context,
+                     ::oteldemo::GetAverageProductReviewScoreRequest, ::oteldemo::GetAverageProductReviewScoreResponse>* streamer) {
+                       return this->StreamedGetAverageProductReviewScore(context,
                          streamer);
                   }));
     }
-    ~WithStreamedUnaryMethod_GetProductReviewSummary() override {
+    ~WithStreamedUnaryMethod_GetAverageProductReviewScore() override {
       BaseClassMustBeDerivedFromService(this);
     }
     // disable regular version of this method
-    ::grpc::Status GetProductReviewSummary(::grpc::ServerContext* /*context*/, const ::oteldemo::GetProductReviewSummaryRequest* /*request*/, ::oteldemo::GetProductReviewSummaryResponse* /*response*/) override {
+    ::grpc::Status GetAverageProductReviewScore(::grpc::ServerContext* /*context*/, const ::oteldemo::GetAverageProductReviewScoreRequest* /*request*/, ::oteldemo::GetAverageProductReviewScoreResponse* /*response*/) override {
       abort();
       return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
     }
     // replace default version of method with streamed unary
-    virtual ::grpc::Status StreamedGetProductReviewSummary(::grpc::ServerContext* context, ::grpc::ServerUnaryStreamer< ::oteldemo::GetProductReviewSummaryRequest,::oteldemo::GetProductReviewSummaryResponse>* server_unary_streamer) = 0;
+    virtual ::grpc::Status StreamedGetAverageProductReviewScore(::grpc::ServerContext* context, ::grpc::ServerUnaryStreamer< ::oteldemo::GetAverageProductReviewScoreRequest,::oteldemo::GetAverageProductReviewScoreResponse>* server_unary_streamer) = 0;
   };
-  typedef WithStreamedUnaryMethod_GetProductReviews<WithStreamedUnaryMethod_GetProductReviewSummary<Service > > StreamedUnaryService;
+  template <class BaseClass>
+  class WithStreamedUnaryMethod_AskProductAIAssistant : public BaseClass {
+   private:
+    void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
+   public:
+    WithStreamedUnaryMethod_AskProductAIAssistant() {
+      ::grpc::Service::MarkMethodStreamed(2,
+        new ::grpc::internal::StreamedUnaryHandler<
+          ::oteldemo::AskProductAIAssistantRequest, ::oteldemo::AskProductAIAssistantResponse>(
+            [this](::grpc::ServerContext* context,
+                   ::grpc::ServerUnaryStreamer<
+                     ::oteldemo::AskProductAIAssistantRequest, ::oteldemo::AskProductAIAssistantResponse>* streamer) {
+                       return this->StreamedAskProductAIAssistant(context,
+                         streamer);
+                  }));
+    }
+    ~WithStreamedUnaryMethod_AskProductAIAssistant() override {
+      BaseClassMustBeDerivedFromService(this);
+    }
+    // disable regular version of this method
+    ::grpc::Status AskProductAIAssistant(::grpc::ServerContext* /*context*/, const ::oteldemo::AskProductAIAssistantRequest* /*request*/, ::oteldemo::AskProductAIAssistantResponse* /*response*/) override {
+      abort();
+      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+    }
+    // replace default version of method with streamed unary
+    virtual ::grpc::Status StreamedAskProductAIAssistant(::grpc::ServerContext* context, ::grpc::ServerUnaryStreamer< ::oteldemo::AskProductAIAssistantRequest,::oteldemo::AskProductAIAssistantResponse>* server_unary_streamer) = 0;
+  };
+  typedef WithStreamedUnaryMethod_GetProductReviews<WithStreamedUnaryMethod_GetAverageProductReviewScore<WithStreamedUnaryMethod_AskProductAIAssistant<Service > > > StreamedUnaryService;
   typedef Service SplitStreamedService;
-  typedef WithStreamedUnaryMethod_GetProductReviews<WithStreamedUnaryMethod_GetProductReviewSummary<Service > > StreamedService;
+  typedef WithStreamedUnaryMethod_GetProductReviews<WithStreamedUnaryMethod_GetAverageProductReviewScore<WithStreamedUnaryMethod_AskProductAIAssistant<Service > > > StreamedService;
 };
 
 // ---------------Shipping Service----------

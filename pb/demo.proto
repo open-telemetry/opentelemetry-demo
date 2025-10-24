@@ -106,7 +106,8 @@ message SearchProductsResponse {
 
 service ProductReviewService {
   rpc GetProductReviews(GetProductReviewsRequest) returns (GetProductReviewsResponse){}
-  rpc GetProductReviewSummary(GetProductReviewSummaryRequest) returns (GetProductReviewSummaryResponse){}
+  rpc GetAverageProductReviewScore(GetAverageProductReviewScoreRequest) returns (GetAverageProductReviewScoreResponse){}
+  rpc AskProductAIAssistant(AskProductAIAssistantRequest) returns (AskProductAIAssistantResponse){}
 }
 
 message ProductReview {
@@ -123,13 +124,21 @@ message GetProductReviewsResponse {
     repeated ProductReview product_reviews = 1;
 }
 
-message GetProductReviewSummaryRequest {
+message GetAverageProductReviewScoreRequest {
     string product_id = 1;
 }
 
-message GetProductReviewSummaryResponse {
+message GetAverageProductReviewScoreResponse {
     string average_score = 1;
-    string product_review_summary = 2;
+}
+
+message AskProductAIAssistantRequest {
+    string product_id = 1;
+    string question = 2;
+}
+
+message AskProductAIAssistantResponse {
+    string response = 1;
 }
 
 // ---------------Shipping Service----------
