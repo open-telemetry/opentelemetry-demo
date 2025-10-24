@@ -3,6 +3,7 @@
 
 import * as S from './ProductReviews.styled';
 import { useProductReview } from '../../providers/ProductReview.provider';
+import { useAiAssistant } from '../../providers/ProductAIAssistant.provider';
 import React, { useState, useMemo } from 'react';
 import { CypressFields } from '../../utils/enums/CypressFields';
 
@@ -51,36 +52,15 @@ const ProductReviews = () => {
         return final;
     }, [distribution, productReviews]);
 
-    // AI ask state
+    // AI Assistant (provider-driven)
     const [aiQuestion, setAiQuestion] = useState('');
-    const [aiLoading, setAiLoading] = useState(false);
-    const [aiError, setAiError] = useState<string | null>(null);
-    const [aiAnswer, setAiAnswer] = useState<string | null>(null);
+    const { sendAiRequest, aiResponse, aiLoading, aiError, reset } = useAiAssistant();
 
-    // Replace this with your real AI call (e.g., a prop, context, or API endpoint).
-    const askAI = async (question: string): Promise<string> => {
-        // Example placeholder: integrate your backend/service here.
-        // return await onAskAI(question)
-        //await new Promise((r) => setTimeout(r, 800));
-        if (question === 'Can you summarize the product reviews?')
-            return 'TBD';
-        return `I don't know.`;
-    };
-
-    const handleAskAI = async (questionOverride?: string) => {
+    const handleAskAI = (questionOverride?: string) => {
         const q = (questionOverride ?? aiQuestion).trim();
         if (!q) return;
-        setAiLoading(true);
-        setAiError(null);
-        setAiAnswer(null);
-        try {
-            const result = await askAI(q);
-            setAiAnswer(result);
-        } catch (e) {
-            setAiError('Sorry, something went wrong while asking AI.');
-        } finally {
-            setAiLoading(false);
-        }
+        reset(); // optional: clears previous result
+        sendAiRequest({ question: q });
     };
 
     const handleQuickPrompt = (prompt: string) => {
@@ -144,18 +124,18 @@ const ProductReviews = () => {
                 >
                     Were there any negative reviews?
                 </S.QuickPromptButton>
-
             </S.AskAIControls>
 
             {aiError && (
                 <S.AIMessage role="alert" data-cy="AIError">
-                    {aiError}
+                    {aiError.message ?? 'Sorry, something went wrong while asking AI.'}
                 </S.AIMessage>
             )}
 
-            {aiAnswer && (
+            {aiResponse && (
                 <S.AIMessage aria-live="polite" data-cy="AIAnswer">
-                    <strong>AI Response:</strong> {aiAnswer}
+                    <strong>AI Response:</strong>{' '}
+                    {typeof aiResponse === 'string' ? aiResponse : aiResponse.text}
                 </S.AIMessage>
             )}
         </S.AskAISection>

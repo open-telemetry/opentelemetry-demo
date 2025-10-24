@@ -21,6 +21,7 @@ import { useCart } from '../../../providers/Cart.provider';
 import * as S from '../../../styles/ProductDetail.styled';
 import { useCurrency } from '../../../providers/Currency.provider';
 import ProductReviewProvider from '../../../providers/ProductReview.provider';
+import ProductAIAssistantProvider from '../../../providers/ProductAIAssistant.provider';
 
 const quantityOptions = new Array(10).fill(0).map((_, i) => i + 1);
 
@@ -97,9 +98,11 @@ const ProductDetail: NextPage = () => {
             </S.Details>
           </S.Container>
           {productId && (
-              <ProductReviewProvider productId={productId}>
-                <ProductReviews />
-              </ProductReviewProvider>
+              <ProductAIAssistantProvider productId={productId}>
+                <ProductReviewProvider productId={productId}>
+                  <ProductReviews />
+                </ProductReviewProvider>
+              </ProductAIAssistantProvider>
           )}
           <Recommendations />
         </S.ProductDetail>
