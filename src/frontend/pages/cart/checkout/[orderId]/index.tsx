@@ -21,10 +21,10 @@ const Checkout: NextPage = () => {
   const { orderId, items = [], shippingAddress, shippingCost = { units: 0, currencyCode: 'USD', nanos: 0 } } = JSON.parse((query.order || '{}') as string) as IProductCheckout;
 
   const orderTotal = useMemo<Money>(() => {
-    const itemsTotal = items.reduce((acc, { cost = { units: 0, nanos: 0, currencyCode: 'USD' } }) => {
+    const itemsTotal = items.reduce((acc, { item, cost = { units: 0, nanos: 0, currencyCode: 'USD' } }) => {
       return {
-        units: acc.units + (cost.units || 0),
-        nanos: acc.nanos + (cost.nanos || 0),
+        units: acc.units + (cost.units || 0) * item.quantity,
+        nanos: acc.nanos + (cost.nanos || 0) * item.quantity,
         currencyCode: cost.currencyCode || 'USD',
       };
     }, { units: 0, nanos: 0, currencyCode: 'USD' });
