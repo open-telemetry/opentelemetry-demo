@@ -150,6 +150,7 @@ processors:
           # could be removed when https://github.com/vercel/next.js/pull/64852 is fixed upstream
           - replace_pattern(name, "\\?.*", "")
           - replace_match(name, "GET /api/products/*", "GET /api/products/{productId}")
+          - set(span.status.code, STATUS_CODE_UNSET) where span.attributes["http.status_code"] == 101
 
 connectors:
   spanmetrics:
