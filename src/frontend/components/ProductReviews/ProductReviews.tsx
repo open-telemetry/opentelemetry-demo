@@ -3,7 +3,7 @@
 
 import * as S from './ProductReviews.styled';
 import { useProductReview } from '../../providers/ProductReview.provider';
-import { useMemo } from 'react';
+import React, { useState, useMemo } from 'react';
 import { CypressFields } from '../../utils/enums/CypressFields';
 
 const clamp = (n: number, min = 0, max = 5) => Math.max(min, Math.min(max, n));
@@ -55,8 +55,116 @@ const ProductReviews = () => {
         return final;
     }, [distribution, productReviews]);
 
+    // AI ask state
+    const [aiQuestion, setAiQuestion] = useState('');
+    const [aiLoading, setAiLoading] = useState(false);
+    const [aiError, setAiError] = useState<string | null>(null);
+    const [aiAnswer, setAiAnswer] = useState<string | null>(null);
+
+    // Replace this with your real AI call (e.g., a prop, context, or API endpoint).
+    const askAI = async (question: string): Promise<string> => {
+        // Example placeholder: integrate your backend/service here.
+        // return await onAskAI(question)
+        //await new Promise((r) => setTimeout(r, 800));
+        if (question === 'Can you summarize the product reviews?')
+            return summaryText;
+        return `I don't know.`;
+    };
+
+    const handleAskAI = async (questionOverride?: string) => {
+        const q = (questionOverride ?? aiQuestion).trim();
+        if (!q) return;
+        setAiLoading(true);
+        setAiError(null);
+        setAiAnswer(null);
+        try {
+            const result = await askAI(q);
+            setAiAnswer(result);
+        } catch (e) {
+            setAiError('Sorry, something went wrong while asking AI.');
+        } finally {
+            setAiLoading(false);
+        }
+    };
+
+    const handleQuickPrompt = (prompt: string) => {
+        setAiQuestion(prompt);
+        handleAskAI(prompt);
+    };
+
   return (
     <S.ProductReviews aria-live="polite" data-cy={CypressFields.ProductReviews}>
+
+        <S.AskAISection aria-label="Ask AI about this product" data-cy="AskAISection">
+            <S.AskAIHeader>Ask AI About This Product</S.AskAIHeader>
+
+            <S.AskAIInputRow>
+                <S.AskAIInput
+                    id="ask-ai-input"
+                    type="text"
+                    placeholder="Type a question about the product…"
+                    value={aiQuestion}
+                    onChange={(e) => setAiQuestion(e.target.value)}
+                    onKeyDown={(e) => {
+                        if (e.key === 'Enter' && !aiLoading && aiQuestion.trim()) {
+                            handleAskAI();
+                        }
+                    }}
+                    aria-label="Question to AI"
+                    data-cy="AskAIInput"
+                />
+                <S.AskAIButton
+                    type="button"
+                    onClick={() => handleAskAI()}
+                    disabled={aiLoading || !aiQuestion.trim()}
+                    aria-busy={aiLoading ? 'true' : 'false'}
+                    data-cy="AskAIButton"
+                >
+                    {aiLoading ? 'Asking AI…' : 'Ask'}
+                </S.AskAIButton>
+            </S.AskAIInputRow>
+
+            <S.AskAIControls>
+                <S.QuickPromptButton
+                    type="button"
+                    onClick={() => handleQuickPrompt('Can you summarize the product reviews?')}
+                    data-cy="QuickPromptSummarize"
+                >
+                    Can you summarize the product reviews?
+                </S.QuickPromptButton>
+
+                <S.QuickPromptButton
+                    type="button"
+                    onClick={() => handleQuickPrompt('What age(s) is this recommended for?')}
+                    data-cy="QuickPromptAges"
+                >
+                    What age(s) is this recommended for?
+                </S.QuickPromptButton>
+
+                <S.QuickPromptButton
+                    type="button"
+                    onClick={() => handleQuickPrompt('Were there any negative reviews?')}
+                    data-cy="QuickPromptNegative"
+                >
+                    Were there any negative reviews?
+                </S.QuickPromptButton>
+
+            </S.AskAIControls>
+
+            {aiError && (
+                <S.AIMessage role="alert" data-cy="AIError">
+                    {aiError}
+                </S.AIMessage>
+            )}
+
+            {aiAnswer && (
+                <S.AIMessage aria-live="polite" data-cy="AIAnswer">
+                    <strong>AI Response:</strong> {aiAnswer}
+                </S.AIMessage>
+            )}
+        </S.AskAISection>
+
+
       <S.TitleContainer>
         <S.Title>Customer Reviews</S.Title>
       </S.TitleContainer>
@@ -102,12 +210,6 @@ const ProductReviews = () => {
                                     </S.ScoreDistribution>
                                 )}
                             </>
-                        )}
-
-                        {summaryText && (
-                            <S.SummaryText>
-                                <strong>AI Summary:</strong> {summaryText}
-                            </S.SummaryText>
                         )}
                     </S.SummaryCard>
                 )}

@@ -156,3 +156,100 @@ export const ReviewBody = styled.p`
   line-height: 1.6;
 `;
 
+export const AskAISection = styled.section`
+  width: 100%;
+  padding: 20px;
+  margin: 0 20px 24px;
+  border: 1px solid ${({ theme }) => theme.colors.borderGray};
+  border-radius: 8px;
+  background: ${({ theme }) => theme.colors.white};
+  display: grid;
+  gap: 12px;
+`;
+
+export const AskAIHeader = styled.h4`
+  margin: 0;
+  font-size: ${({ theme }) => theme.sizes.mLarge};
+  color: ${({ theme }) => theme.colors.otelGray};
+
+  ${({ theme }) => theme.breakpoints.desktop} {
+    font-size: ${({ theme }) => theme.sizes.dMedium};
+  }
+`;
+
+export const AskAIInputRow = styled.div`
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  width: 100%;
+`;
+
+export const AskAIInput = styled.input`
+  width: 100%;
+  flex: 1;
+  min-width: 0;
+  padding: 10px 12px;
+  border: 1px solid ${({ theme }) => theme.colors.borderGray};
+  border-radius: 6px;
+  font-size: 16px;
+  outline: none;
+  background: ${({ theme }) => theme.colors.white};
+  color: ${({ theme }) => theme.colors.otelGray};
+
+  &:focus {
+    border-color: ${({ theme }) => theme.colors.otelBlue};
+    box-shadow: 0 0 0 3px rgba(0, 112, 201, 0.15);
+  }
+`;
+
+export const AskAIControls = styled.div`
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  align-items: center;
+`;
+
+export const QuickPromptButton = styled.button`
+  padding: 8px 12px;
+  border: 1px solid ${({ theme }) => theme.colors.borderGray};
+  border-radius: 6px;
+  background: ${({ theme }) => theme.colors.white};
+  color: ${({ theme }) => theme.colors.otelGray};
+  font-size: 14px;
+  cursor: pointer;
+
+  &:hover {
+    border-color: ${({ theme }) => theme.colors.otelBlue};
+  }
+
+  &:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+  }
+`;
+
+export const AskAIButton = styled.button`
+  padding: 8px 16px;
+  border: none;
+  border-radius: 6px;
+  background: ${({ theme }) => theme.colors.otelBlue};
+  color: ${({ theme }) => theme.colors.white};
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+
+  &:hover {
+    filter: brightness(1.05);
+  }
+
+  &:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+  }
+`;
+
+export const AIMessage = styled.p`
+  margin: 0;
+  line-height: 1.5;
+  color: ${({ theme }) => theme.colors.otelGray};
+`;
