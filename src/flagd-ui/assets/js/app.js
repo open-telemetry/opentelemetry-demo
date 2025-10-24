@@ -10,8 +10,7 @@ import topbar from "../vendor/topbar"
 
 const csrfToken = document.querySelector("meta[name='csrf-token']").getAttribute("content")
 const rootPath = document.querySelector("meta[name='root-path']").getAttribute("content")
-const livePath = rootPath === '/' ? '/live' : `${rootPath}/live`
-const liveSocket = new LiveSocket(livePath, Socket, {
+const liveSocket = new LiveSocket(rootPath === '/' ? '/live' : `${rootPath}live`, Socket, {
   longPollFallbackMs: 2500,
   params: {_csrf_token: csrfToken}
 })
@@ -64,4 +63,3 @@ if (process.env.NODE_ENV === "development") {
     window.liveReloader = reloader
   })
 }
-
