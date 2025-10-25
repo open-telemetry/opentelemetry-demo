@@ -1,9 +1,10 @@
 // Copyright The OpenTelemetry Authors
 // SPDX-License-Identifier: Apache-2.0
 
-import { CypressFields, getElementByField } from '../../utils/Cypress';
+import { getElementByField } from '../../utils/Cypress';
+import { CypressFields } from '../../utils/enums/CypressFields';
 
-describe.skip('Checkout Flow', () => {
+describe('Checkout Flow', () => {
   before(() => {
     cy.intercept('POST', '/api/cart*').as('addToCart');
     cy.intercept('GET', '/api/cart*').as('getCart');

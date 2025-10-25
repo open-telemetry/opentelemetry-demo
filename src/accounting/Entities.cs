@@ -6,7 +6,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Accounting;
 
-[Table("shipping")]
+[Table("shipping", Schema = "accounting")]
 [PrimaryKey(nameof(ShippingTrackingId))]
 internal class ShippingEntity
 {
@@ -32,7 +32,7 @@ internal class ShippingEntity
     public required string OrderId { get; set; }
 }
 
-[Table("orderitem")]
+[Table("orderitem", Schema = "accounting")]
 [PrimaryKey(nameof(ProductId), nameof(OrderId))]
 internal class OrderItemEntity
 {
@@ -49,7 +49,7 @@ internal class OrderItemEntity
     public required string OrderId { get; set; }
 }
 
-[Table("order")]
+[Table("order", Schema = "accounting")]
 [PrimaryKey(nameof(Id))]
 internal class OrderEntity
 {

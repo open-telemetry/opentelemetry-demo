@@ -1,0 +1,24 @@
+# Copyright The OpenTelemetry Authors
+# SPDX-License-Identifier: Apache-2.0
+
+type: Test
+spec:
+  id: product-reviews-get
+  name: 'Product Reviews: Get product reviews for product'
+  description: Get all product reviews for the specified product
+  trigger:
+    type: grpc
+    grpc:
+      protobufFile: ../../../pb/demo.proto
+      address: ${var:PRODUCT_REVIEWS_ADDR}
+      method: oteldemo.ProductReviewService.GetProductReviews
+      request: |-
+        {
+          "product_id": "L9ECAV7KIM"
+        }
+  specs:
+    - name: It called GetProductReviews correctly and got 5 product reviews
+      selector: span[name="get_product_reviews"]
+      assertions:
+        - attr:app.product.id  =  "L9ECAV7KIM"
+        - attr:app.product_reviews.count = 5
