@@ -35,6 +35,8 @@ from metrics import (
 # OpenAI
 from openai import OpenAI
 
+from google.protobuf.json_format import MessageToJson, MessageToDict
+
 llm_base_url = None
 llm_api_key = None
 llm_model = None
@@ -57,7 +59,24 @@ tools = [
                 "required": ["product_id"],
             },
         }
-    }
+    },
+      {
+          "type": "function",
+          "function": {
+              "name": "fetch_product_info",
+              "description": "Retrieves information for a particular product.",
+              "parameters": {
+                  "type": "object",
+                  "properties": {
+                      "product_id": {
+                          "type": "string",
+                          "description": "The product ID to fetch information for.",
+                      }
+                  },
+                  "required": ["product_id"],
+              },
+          }
+      }
 ]
 
 
@@ -143,7 +162,7 @@ def get_ai_assistant_response(request_product_id, question):
 
         user_prompt = f"Answer the following question about product ID:{request_product_id}: {question}"
         messages = [
-           {"role": "system", "content": "You are a helpful assistant that answers related to a specific product. Use tools as needed to fetch the product reviews and product information."},
+           {"role": "system", "content": "You are a helpful assistant that answers related to a specific product. Use tools as needed to fetch the product reviews and product information. Keep the response brief with no more than 1-2 sentences. If you don't know the answer, just say you don't know."},
            {"role": "user", "content": user_prompt}
         ]
 
@@ -189,7 +208,7 @@ def get_ai_assistant_response(request_product_id, question):
                 messages.append(
                     {
                         "role": "user",
-                        "content": f"Summarize the reviews for product ID:{request_product_id} and avoid calling tools again."
+                        "content": f"Summarize the reviews for product ID:{request_product_id} and avoid calling tools again. Keep the response brief with no more than 1-2 sentences."
                     }
                 )
 
@@ -206,6 +225,43 @@ def get_ai_assistant_response(request_product_id, question):
 
                 logger.info(f"Returning an AI assistant response: '{result}'")
 
+            elif function_name == "fetch_product_info":
+                function_response = fetch_product_info(
+                    product_id=function_args.get("product_id")
+                )
+
+                logger.info(f"Function response is: '{function_response}'")
+
+                # Append the tool call and its result to the message history
+                messages.append(response_message)  # Append the assistant's reply
+                messages.append(
+                    {
+                        "tool_call_id": tool_call.id,
+                        "role": "tool",
+                        "name": function_name,
+                        "content": function_response,
+                    }
+                )
+
+                messages.append(
+                    {
+                        "role": "user",
+                        "content": f"Answer the question for product ID:{request_product_id} and avoid calling tools again. Keep the response brief with no more than 1-2 sentences."
+                    }
+                )
+
+                logger.info(f"Invoking the LLM with the following messages: '{messages}'")
+
+                final_response = client.chat.completions.create(
+                    model=llm_model,
+                    messages=messages
+                )
+
+                result = final_response.choices[0].message.content
+
+                ai_assistant_response.response = result
+
+                logger.info(f"Returning an AI assistant response: '{result}'")
             else:
                 raise Exception(f'Received unexpected tool call request: {function_name}')
 
@@ -217,6 +273,15 @@ def get_ai_assistant_response(request_product_id, question):
         product_review_svc_metrics["app_ai_assistant_counter"].add(1, {'product.id': request_product_id})
 
         return ai_assistant_response
+
+def fetch_product_info(product_id):
+    try:
+        product = product_catalog_stub.GetProduct(demo_pb2.GetProductRequest(id=product_id))
+        logger.info(f"product_catalog_stub.GetProduct returned: '{product}'")
+        json_str = MessageToJson(product)
+        return json_str
+    except Exception as e:
+        return json.dumps({"error": str(e)})
 
 def must_map_env(key: str):
     value = os.environ.get(key)
@@ -262,6 +327,10 @@ if __name__ == "__main__":
     llm_base_url = must_map_env('LLM_BASE_URL')
     llm_api_key = must_map_env('OPENAI_API_KEY')
     llm_model = must_map_env('LLM_MODEL')
+
+    catalog_addr = must_map_env('PRODUCT_CATALOG_ADDR')
+    pc_channel = grpc.insecure_channel(catalog_addr)
+    product_catalog_stub = demo_pb2_grpc.ProductCatalogServiceStub(pc_channel)
 
     # Start server
     port = must_map_env('PRODUCT_REVIEWS_PORT')

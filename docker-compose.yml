@@ -541,6 +541,7 @@ services:
       - LLM_BASE_URL
       - OPENAI_API_KEY
       - LLM_MODEL
+      - PRODUCT_CATALOG_ADDR
     depends_on:
       product-catalog:
         condition: service_started
