@@ -32,13 +32,14 @@ ADD --chmod=644 https://github.com/open-telemetry/opentelemetry-java-instrumenta
 #ENV JAVA_TOOL_OPTIONS=-javaagent:/usr/src/app/opentelemetry-javaagent.jar
 
 # Download FusionReactor jar (architecture-independent)
-ADD --chmod=644 https://download.fusionreactor.io/FR/Latest/fusionreactor.jar /usr/src/app/fusionreactor.jar
+#ADD --chmod=644 https://download.fusionreactor.io/FR/Latest/fusionreactor.jar /usr/src/app/fusionreactor.jar
+ADD --chmod=644 https://download.fusionreactor.io/FR/FusionReactor-2025.2.0-SNAPSHOT/fusionreactor.jar /usr/src/app/fusionreactor.jar
 
 # Copy FusionReactor native library from builder stage
 COPY --from=builder /usr/src/app/libfrjvmti.so /usr/src/app/libfrjvmti.so
 
 # Set FusionReactor Java options with additional JAVA_OPTS support
-ENV JAVA_TOOL_OPTIONS="-javaagent:/usr/src/app/opentelemetry-javaagent.jar -javaagent:/usr/src/app/fusionreactor.jar=name=otlp-fraud-detection-fr,address=8088 -agentpath:/usr/src/app/libfrjvmti.so"
+ENV JAVA_TOOL_OPTIONS="-javaagent:/usr/src/app/opentelemetry-javaagent.jar -javaagent:/usr/src/app/fusionreactor.jar=name=otlp-fraud-detection-fr,address=8088 -agentpath:/usr/src/app/libfrjvmti.so -Dotel.javaagent.exclude-classes=com.intergral.*,org.apache.felix.*,org.eclipse.jetty.* -Dotel.instrumentation.opentelemetry-api.enabled=false"
 
 COPY --from=builder /usr/src/app/build/libs/fraud-detection-1.0-all.jar fraud-detection-1.0-all.jar
 
