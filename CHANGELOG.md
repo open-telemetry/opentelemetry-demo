@@ -20,6 +20,8 @@ the release.
 * [chore] Upgrade OpenFeature and add fix deprecation warnings for dependency
   injection
   ([#2644](https://github.com/open-telemetry/opentelemetry-demo/pull/2644))
+* [frontend] fix item calculation and shipping
+  ([#2684](https://github.com/open-telemetry/opentelemetry-demo/pull/2684))
 
 ## 2.1.3
 
