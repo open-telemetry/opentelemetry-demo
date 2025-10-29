@@ -1,0 +1,3 @@
+cluster: "opentelemetry-demo"
+customSecretName: "newrelic-license-key"
+customSecretLicenseKey: "license-key"

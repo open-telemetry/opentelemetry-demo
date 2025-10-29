@@ -1,23 +1,29 @@
 #!/bin/bash
+# -----------------------------------------------------------------------------
+# install-docker.sh
+#
+# Purpose:
+#   Installs and starts the OpenTelemetry Demo using Docker Compose.
+#
+# How to run:
+#   ./install-docker.sh
+#   (Run from the newrelic/scripts directory)
+#
+# Dependencies:
+#   - Docker
+#   - Docker Compose v2+
+#   - .env and .env.override files in the project root
+#   - NEW_RELIC_LICENSE_KEY (will prompt if not set)
+# -----------------------------------------------------------------------------
+set -euo pipefail
 
-# Check if helm is installed
-if ! command -v docker &> /dev/null; then
-    echo "Error: docker is not installed or not in PATH. Please install docker and try again."
-    exit 1
-fi
+source "$(dirname "$0")/common.sh"
+check_tool_installed docker
 
-# Prompt the user for input
-echo -n "Please enter your New Relic License Key: "
-read user_input
-
-# Check if input is empty
-if [ -z "$user_input" ]; then
-    echo "Error: Empty key. Please enter your New Relic License Key."
-    exit 1
-fi
+prompt_for_license_key
 
 # Export the New Relic license key 
-if ! export NEW_RELIC_LICENSE_KEY=$user_input; then
+if ! export NEW_RELIC_LICENSE_KEY; then
     echo "Error: Failed to export NEW_RELIC_LICENSE_KEY environment variable."
     exit 1
 fi
@@ -32,5 +38,3 @@ if ! docker compose --env-file ../../.env --env-file ../../.env.override --file 
     echo "  - Docker daemon not running"
     exit 1
 fi
-
-# export NEW_RELIC_LICENSE_KEY=$user_input && docker compose --env-file ../../.env --env-file ../../.env.override --file ../docker/docker-compose.yml up --force-recreate --remove-orphans --detach

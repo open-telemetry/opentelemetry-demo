@@ -58,6 +58,8 @@ cd opentelemetry-demo/newrelic/scripts
 - [Kubernetes](#kubernetes-installation)
 - [Docker](./)
 
+**Note**: both methods will require you to pint your New Relic Ingest License key. If you want to avoid inputting your key every time you run the script, you can also export a `NR_LICENSE_KEY` variable, which will take precedence if present.
+
 ## Kubernetes Installation
 
 Run the `install-k8s.sh` script to install the Astronomy Shop Demo into your cluster.  This script uses `helm` to perform the install so if you'd rather use `kubectl` and manifests, you can find them [here](./k8s/rendered).  
@@ -107,6 +109,11 @@ NOTES:
 ```
 
 > **_NOTE:_** It can take anywhere from 2 - 5 minutes for Pods to start up and telemetry to flow through the OTel Collector and on to New Relic.  Please have patience.  If you want to check on the status of the OTel collector, you can run `kubectl logs deployment/otel-collector -n opentelemetry-demo`
+
+### Customize Kubernetes installation
+You can apply changes to the deployed OpenTelemetry Demo by modifying any values in `newrelic/k8s/helm/opentelemetry-demo.yaml`. See supported values in the official OpenTelemetry Demo Helm Chart [here](https://github.com/open-telemetry/opentelemetry-helm-charts/tree/main/charts/opentelemetry-demo#chart-parameters).
+
+After you save changes, you can re-run `install-k8s.sh` to apply changes and redeploy the modified components.
 
 ### Cleanup Kubernetes
 
