@@ -119,7 +119,7 @@ spec:
       serviceAccountName: opentelemetry-demo
       containers:
         - name: shop-dc-shim
-          image: quay.io/jeremyh/shop-dc-shim:0.0.1
+          image: quay.io/jeremyh/shop-dc-shim:latest
           ports:
             - containerPort: 8070
               name: http
@@ -144,6 +144,10 @@ spec:
               value: "service.name=shop-dc-shim,deployment.environment=datacenter-b01,service.version=2.1.3"
             - name: OTEL_JAVAAGENT_ENABLED
               value: "true"
+            - name: APPDYNAMICS_AGENT_ACCOUNT_ACCESS_KEY
+              value: "${APPDYNAMICS_AGENT_ACCOUNT_ACCESS_KEY}"
+            - name: OTEL_INSTRUMENTATION_SPLUNK_JDBC_ENABLED
+              value: "true"
           resources:
             requests:
               memory: "512Mi"
@@ -155,16 +159,15 @@ spec:
             httpGet:
               path: /actuator/health
               port: 8070
-            initialDelaySeconds: 360    
+            initialDelaySeconds: 360
             periodSeconds: 10
             timeoutSeconds: 5
             failureThreshold: 3
-
           livenessProbe:
             httpGet:
               path: /actuator/health
               port: 8070
-            initialDelaySeconds: 480   
+            initialDelaySeconds: 480
             periodSeconds: 30
             timeoutSeconds: 10
             failureThreshold: 3

@@ -35,7 +35,7 @@ RUN mkdir -p $APPDYNAMICS_AGENT_BASE_DIR $OPENTELEMETRY_AGENT_DIR && \
     chown -R shopdc:shopdc $APPDYNAMICS_AGENT_BASE_DIR $OPENTELEMETRY_AGENT_DIR
 
 # Download OpenTelemetry Java agent for Splunk Observability andlatest AppDynamics Java agent
-ADD --chown=shopdc:shopdc https://github.com/open-telemetry/opentelemetry-java-instrumentation/releases/latest/download/opentelemetry-javaagent.jar $OPENTELEMETRY_AGENT_DIR/opentelemetry-javaagent.jar
+ADD --chown=shopdc:shopdc https://github.com/signalfx/splunk-otel-java/releases/latest/download/splunk-otel-javaagent.jar $OPENTELEMETRY_AGENT_DIR/opentelemetry-javaagent.jar
 
 RUN cd /tmp && \
     echo "Fetching latest AppDynamics Java agent..." && \

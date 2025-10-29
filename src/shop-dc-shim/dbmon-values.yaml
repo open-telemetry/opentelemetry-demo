@@ -1,122 +1,71 @@
 ### VALUES FOR DBSHIM DBMon
 agent:
   config:
-    exporters:
-     debug:
-        verbosity: detailed
-     otlphttp/dbmon:
-      headers:
-        X-SF-Token: ${SPLUNK_OBSERVABILITY_ACCESS_TOKEN}
-        X-splunk-instrumentation-library: dbmon
-      logs_endpoint: https://ingest.us1.signalfx.com/v3/event
-      sending_queue:
-        batch:
-          flush_timeout: 15s
-          max_size: 10485760 # 10 MiB
-          sizer: bytes
-    receivers:
-      sqlserver:
-        collection_interval: 10s
-        username: sa
-        password: ShopPass123!
-        server: shop-dc-shim-db
-        port: 1433
-        resource_attributes:
-          sqlserver.computer.name:
-            enabled: true
-          sqlserver.instance.name:
-            enabled: true
-        events:
-          db.server.query_sample:
-            enabled: true
-          db.server.top_query:
-            enabled: true
-        metrics:
-          # Enable all OOTB dashboard default metrics
-          sqlserver.batch.request.rate:
-              enabled: true
-          sqlserver.batch.sql_compilation.rate:
-              enabled: true
-          sqlserver.batch.sql_recompilation.rate:
-              enabled: true
-          sqlserver.database.count:
-              enabled: true
-          sqlserver.database.io:
-              enabled: true
-          sqlserver.database.latency:
-              enabled: true
-          sqlserver.database.operations:
-              enabled: true
-          sqlserver.deadlock.rate:
-              enabled: true
-          sqlserver.lock.wait.count:
-              enabled: true
-          sqlserver.lock.wait.rate:
-              enabled: true
-          sqlserver.os.wait.duration:
-              enabled: true
-          sqlserver.page.buffer_cache.hit_ratio:
-              enabled: true
-          sqlserver.processes.blocked:
-              enabled: true
-          sqlserver.resource_pool.disk.operations:
-              enabled: true
-          sqlserver.resource_pool.disk.throttled.read.rate:
-              enabled: true
-          sqlserver.resource_pool.disk.throttled.write.rate:
-              enabled: true
-          sqlserver.user.connection.count:
-              enabled: true
-          # Disable upstream default metrics that OOTB dashboards don't use
-          sqlserver.lock.wait_time.avg:
-              enabled: false
-          sqlserver.page.checkpoint.flush.rate:
-              enabled: false
-          sqlserver.page.lazy_write.rate:
-              enabled: false
-          sqlserver.page.life_expectancy:
-              enabled: false
-          sqlserver.page.operation.rate:
-              enabled: false
-          sqlserver.page.split.rate:
-              enabled: false
-          sqlserver.transaction.rate:
-              enabled: false
-          sqlserver.transaction.write.rate:
-              enabled: false
-          sqlserver.transaction_log.flush.data.rate:
-              enabled: false
-          sqlserver.transaction_log.flush.rate:
-              enabled: false
-          sqlserver.transaction_log.flush.wait.rate:
-              enabled: false
-          sqlserver.transaction_log.growth.count:
-              enabled: false
-          sqlserver.transaction_log.shrink.count:
-              enabled: false
-          sqlserver.transaction_log.usage:
-              enabled: false
     service:
       pipelines:
-        logs/dbmon:
+        metrics:
           exporters:
-            - otlphttp/dbmon
-            - debug
-          processors:
-            - memory_limiter
-            - batch
-            - resourcedetection
-          receivers:
-            - sqlserver
-        metrics/mssql:
-          exporters:
-          - otlphttp
           - signalfx
-          - debug
           processors:
           - memory_limiter
           - batch
           - resourcedetection
           - resource
           receivers:
-          - sqlserver
+          - hostmetrics
+          - kubeletstats
+          - otlp
+          - receiver_creator
+clusterReceiver:
+    enabled: true
+    config:
+      exporters:
+        signalfx:
+          api_url: https://app.us1.signalfx.com
+        # Exports dbmon events as logs
+        otlphttp/dbmon:
+          headers:
+            X-SF-Token: ${SPLUNK_OBSERVABILITY_ACCESS_TOKEN}
+            X-splunk-instrumentation-library: dbmon
+          logs_endpoint: https://ingest.us1.signalfx.com/v3/event
+          sending_queue:
+            batch:
+              flush_timeout: 15s
+              max_size: 10485760 # 10 MiB
+              sizer: bytes
+      receivers:
+        sqlserver:
+          collection_interval: 1s
+          username: sa
+          password: ShopPass123!
+          server: shop-dc-shim-db
+          port: 1433
+          resource_attributes:
+            sqlserver.instance.name:
+              enabled: true
+          events:
+            db.server.query_sample:
+              enabled: true
+            db.server.top_query:
+              enabled: true
+      service:
+        pipelines:
+          metrics/sqlserver:
+            receivers:
+              - sqlserver
+            processors:
+              - memory_limiter
+              - batch
+              - resourcedetection
+              - resource
+            exporters:
+              - signalfx
+          logs/dbmon:
+            receivers:
+              - sqlserver
+            processors:
+              - memory_limiter
+              - batch
+              - resourcedetection
+            exporters:
+              - otlphttp/dbmon
