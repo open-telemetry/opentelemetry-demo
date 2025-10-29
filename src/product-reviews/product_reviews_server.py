@@ -181,21 +181,34 @@ def get_ai_assistant_response(request_product_id, question):
 
         # Check if the model wants to call a tool
         if tool_calls:
-            tool_call = tool_calls[0]
-            function_name = tool_call.function.name
-            function_args = json.loads(tool_call.function.arguments)
+            logger.info(f"Model wants to call {len(tool_calls)} tool(s)")
 
-            logger.info(f"Model wants to call function: '{function_name}' with arguments: {function_args}")
+            # Append the assistant's message with tool calls
+            messages.append(response_message)
 
-            if function_name == "fetch_product_reviews":
-                function_response = fetch_product_reviews(
-                    product_id=function_args.get("product_id")
-                )
+            # Process all tool calls
+            for tool_call in tool_calls:
+                function_name = tool_call.function.name
+                function_args = json.loads(tool_call.function.arguments)
 
-                logger.info(f"Function response is: '{function_response}'")
+                logger.info(f"Processing tool call: '{function_name}' with arguments: {function_args}")
 
-                # Append the tool call and its result to the message history
-                messages.append(response_message)  # Append the assistant's reply
+                if function_name == "fetch_product_reviews":
+                    function_response = fetch_product_reviews(
+                        product_id=function_args.get("product_id")
+                    )
+                    logger.info(f"Function response for fetch_product_reviews: '{function_response}'")
+
+                elif function_name == "fetch_product_info":
+                    function_response = fetch_product_info(
+                        product_id=function_args.get("product_id")
+                    )
+                    logger.info(f"Function response for fetch_product_info: '{function_response}'")
+
+                else:
+                    raise Exception(f'Received unexpected tool call request: {function_name}')
+
+                # Append the tool response
                 messages.append(
                     {
                         "tool_call_id": tool_call.id,
@@ -205,65 +218,26 @@ def get_ai_assistant_response(request_product_id, question):
                     }
                 )
 
-                messages.append(
-                    {
-                        "role": "user",
-                        "content": f"Summarize the reviews for product ID:{request_product_id} and avoid calling tools again. Keep the response brief with no more than 1-2 sentences."
-                    }
-                )
+            # Add a final user message to guide the LLM to synthesize the response
+            messages.append(
+                {
+                    "role": "user",
+                    "content": f"Based on the tool results, answer the original question about product ID:{request_product_id}. Keep the response brief with no more than 1-2 sentences."
+                }
+            )
 
-                logger.info(f"Invoking the LLM with the following messages: '{messages}'")
+            logger.info(f"Invoking the LLM with the following messages: '{messages}'")
 
-                final_response = client.chat.completions.create(
-                    model=llm_model,
-                    messages=messages
-                )
+            final_response = client.chat.completions.create(
+                model=llm_model,
+                messages=messages
+            )
 
-                result = final_response.choices[0].message.content
+            result = final_response.choices[0].message.content
 
-                ai_assistant_response.response = result
+            ai_assistant_response.response = result
 
-                logger.info(f"Returning an AI assistant response: '{result}'")
-
-            elif function_name == "fetch_product_info":
-                function_response = fetch_product_info(
-                    product_id=function_args.get("product_id")
-                )
-
-                logger.info(f"Function response is: '{function_response}'")
-
-                # Append the tool call and its result to the message history
-                messages.append(response_message)  # Append the assistant's reply
-                messages.append(
-                    {
-                        "tool_call_id": tool_call.id,
-                        "role": "tool",
-                        "name": function_name,
-                        "content": function_response,
-                    }
-                )
-
-                messages.append(
-                    {
-                        "role": "user",
-                        "content": f"Answer the question for product ID:{request_product_id} and avoid calling tools again. Keep the response brief with no more than 1-2 sentences."
-                    }
-                )
-
-                logger.info(f"Invoking the LLM with the following messages: '{messages}'")
-
-                final_response = client.chat.completions.create(
-                    model=llm_model,
-                    messages=messages
-                )
-
-                result = final_response.choices[0].message.content
-
-                ai_assistant_response.response = result
-
-                logger.info(f"Returning an AI assistant response: '{result}'")
-            else:
-                raise Exception(f'Received unexpected tool call request: {function_name}')
+            logger.info(f"Returning an AI assistant response: '{result}'")
 
         else:
             logger.info(f"Returning an AI assistant response: '{response_message}'")
