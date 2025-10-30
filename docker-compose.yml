@@ -513,7 +513,6 @@ services:
     build:
       context: ./src/quote-cf
       dockerfile: Dockerfile
-      no_cache: true
     deploy:
       resources:
         limits:
