@@ -107,9 +107,13 @@ module.exports.charge = async request => {
 
   // Store transaction in MySQL database
   try {
+    // Convert gRPC Long types to numbers for MySQL
+    const unitsValue = typeof units === 'object' && units.toNumber ? units.toNumber() : Number(units);
+    const nanosValue = typeof nanos === 'object' && nanos.toNumber ? nanos.toNumber() : Number(nanos);
+
     await pool.execute(
       'INSERT INTO payment_transactions (transaction_id, card_type, last_four_digits, amount_units, amount_nanos, currency_code, loyalty_level, charged) VALUES (?, ?, ?, ?, ?, ?, ?, ?)',
-      [transactionId, cardType, lastFourDigits, units, nanos, currencyCode, loyalty_level, charged]
+      [transactionId, cardType, lastFourDigits, unitsValue, nanosValue, currencyCode, loyalty_level, charged]
     );
     logger.info({ transactionId, cardType, lastFourDigits, amount: { units, nanos, currencyCode }, loyalty_level }, 'Transaction complete and stored in database.');
   } catch (err) {
