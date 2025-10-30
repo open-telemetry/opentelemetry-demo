@@ -49,6 +49,8 @@ jaeger:
 opentelemetry-collector:
   enabled: true
   extraEnvs:
+    - name: INTERNAL_TELEMETRY_SERVICE_NAME
+      value: astroshop-otel-collector
     - name: KUBE_NODE_NAME
       valueFrom:
         fieldRef:
@@ -73,6 +75,12 @@ opentelemetry-collector:
   service:
     type: ClusterIP
   ports:
+    healthcheck:
+      enabled: true
+      containerPort: 13133
+      servicePort: 13133
+      hostPort: 13133
+      protocol: TCP
     jaeger-compact:
       enabled: false
     jaeger-thrift:
@@ -96,7 +104,7 @@ opentelemetry-collector:
 
     extensions:
       health_check:
-        endpoint: ${env:MY_POD_IP}:13133
+        endpoint: 0.0.0.0:13133
 
     processors:
       batch: {}
@@ -277,15 +285,3 @@ opentelemetry-collector:
           - batch
           receivers:
           - otlp
-      telemetry:
-        metrics:
-          # address: ${env:MY_POD_IP}:8888
-          level: basic
-          readers:
-          - periodic:
-              exporter:
-                otlp:
-                  endpoint: http://${env:MY_POD_IP}:4318
-                  protocol: http/protobuf
-              interval: 30000
-              timeout: 5000
