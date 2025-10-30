@@ -18,6 +18,7 @@ using OpenTelemetry.Trace;
 using OpenFeature;
 using OpenFeature.Hooks;
 using OpenFeature.Contrib.Providers.Flagd;
+using OpenTelemetry;
 
 var builder = WebApplication.CreateBuilder(args);
 string valkeyAddress = builder.Configuration["VALKEY_ADDR"];
@@ -27,9 +28,7 @@ if (string.IsNullOrEmpty(valkeyAddress))
     Environment.Exit(1);
 }
 
-builder.Logging
-    .AddOpenTelemetry(options => options.AddOtlpExporter())
-    .AddConsole();
+builder.Logging.AddConsole();
 
 builder.Services.AddSingleton<ICartStore>(x =>
 {
@@ -61,6 +60,7 @@ Action<ResourceBuilder> appResourceBuilder =
         .AddHostDetector();
 
 builder.Services.AddOpenTelemetry()
+    .UseOtlpExporter()
     .ConfigureResource(appResourceBuilder)
     .WithTracing(tracerBuilder => tracerBuilder
         .AddSource("OpenTelemetry.Demo.Cart")
@@ -68,16 +68,14 @@ builder.Services.AddOpenTelemetry()
             options => options.SetVerboseDatabaseStatements = true)
         .AddAspNetCoreInstrumentation()
         .AddGrpcClientInstrumentation()
-        .AddHttpClientInstrumentation()
-        .AddOtlpExporter())
+        .AddHttpClientInstrumentation())
     .WithMetrics(meterBuilder => meterBuilder
         .AddMeter("OpenTelemetry.Demo.Cart")
         .AddMeter("OpenFeature")
         .AddProcessInstrumentation()
         .AddRuntimeInstrumentation()
         .AddAspNetCoreInstrumentation()
-        .SetExemplarFilter(ExemplarFilterType.TraceBased)
-        .AddOtlpExporter());
+        .SetExemplarFilter(ExemplarFilterType.TraceBased));
 builder.Services.AddGrpc();
 builder.Services.AddGrpcHealthChecks()
     .AddCheck("Sample", () => HealthCheckResult.Healthy());

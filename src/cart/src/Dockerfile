@@ -1,3 +1,6 @@
+# run from repo root
+# docker buildx build --platform linux/amd64,linux/arm64 -t appmonitoring.azurecr.io/demo-cart:1.0.0 --push -f ./src/cart/src/Dockerfile .
+
 # Copyright The OpenTelemetry Authors
 # SPDX-License-Identifier: Apache-2.0
 # Copyright 2021 Google LLC
