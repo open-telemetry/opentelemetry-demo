@@ -285,3 +285,15 @@ opentelemetry-collector:
           - batch
           receivers:
           - otlp
+      telemetry:
+        metrics:
+          # address: ${env:MY_POD_IP}:8888
+          level: basic
+          readers:
+          - periodic:
+              exporter:
+                otlp:
+                  endpoint: http://${env:MY_POD_IP}:4318
+                  protocol: http/protobuf
+              interval: 30000
+              timeout: 5000
