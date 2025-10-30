@@ -9,6 +9,7 @@ const { FlagdProvider } = require('@openfeature/flagd-provider');
 const flagProvider = new FlagdProvider();
 
 const logger = require('./logger');
+const pool = require('./database');
 const tracer = trace.getTracer('payment');
 const meter = metrics.getMeter('payment');
 const transactionsCounter = meter.createCounter('app.payment.transactions');
@@ -73,14 +74,51 @@ module.exports.charge = async request => {
 
   // Check baggage for synthetic_request=true, and add charged attribute accordingly
   const baggage = propagation.getBaggage(context.active());
+  let charged = true;
   if (baggage && baggage.getEntry('synthetic_request') && baggage.getEntry('synthetic_request').value === 'true') {
     span.setAttribute('app.payment.charged', false);
+    charged = false;
   } else {
     span.setAttribute('app.payment.charged', true);
+    charged = true;
   }
 
   const { units, nanos, currencyCode } = request.amount;
-  logger.info({ transactionId, cardType, lastFourDigits, amount: { units, nanos, currencyCode }, loyalty_level }, 'Transaction complete.');
+
+  // Check for database error injection via feature flag
+  const dbErrorRate = await OpenFeature.getClient().getNumberValue("paymentDatabaseError", 0);
+
+  if (dbErrorRate > 0 && Math.random() < dbErrorRate) {
+    // Simulate realistic database errors
+    const errorTypes = [
+      { code: 'ECONNREFUSED', message: 'Database connection refused' },
+      { code: 'ETIMEDOUT', message: 'Database connection timeout' },
+      { code: 'ER_LOCK_WAIT_TIMEOUT', message: 'Lock wait timeout exceeded; try restarting transaction' },
+      { code: 'ER_LOCK_DEADLOCK', message: 'Deadlock found when trying to get lock; try restarting transaction' }
+    ];
+    const error = errorTypes[Math.floor(Math.random() * errorTypes.length)];
+    span.recordException(error);
+    span.end();
+
+    const dbError = new Error(`Database error: ${error.message}`);
+    dbError.code = error.code;
+    throw dbError;
+  }
+
+  // Store transaction in MySQL database
+  try {
+    await pool.execute(
+      'INSERT INTO payment_transactions (transaction_id, card_type, last_four_digits, amount_units, amount_nanos, currency_code, loyalty_level, charged) VALUES (?, ?, ?, ?, ?, ?, ?, ?)',
+      [transactionId, cardType, lastFourDigits, units, nanos, currencyCode, loyalty_level, charged]
+    );
+    logger.info({ transactionId, cardType, lastFourDigits, amount: { units, nanos, currencyCode }, loyalty_level }, 'Transaction complete and stored in database.');
+  } catch (err) {
+    logger.error({ err, transactionId }, 'Failed to store transaction in database');
+    span.recordException(err);
+    span.end();
+    throw new Error(`Failed to store transaction: ${err.message}`);
+  }
+
   transactionsCounter.add(1, { 'app.payment.currency': currencyCode });
   span.end();
 

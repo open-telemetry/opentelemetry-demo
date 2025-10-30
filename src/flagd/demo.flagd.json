@@ -8,7 +8,7 @@
         "on": true,
         "off": false
       },
-      "defaultVariant": "off"
+      "defaultVariant": "on"
     },
     "recommendationCacheFailure": {
       "description": "Fail recommendation service cache",
@@ -26,7 +26,7 @@
         "on": true,
         "off": false
       },
-      "defaultVariant": "off"
+      "defaultVariant": "on"
     },
     "adHighCpu": {
       "description": "Triggers high cpu load in the ad service",
@@ -35,7 +35,7 @@
         "on": true,
         "off": false
       },
-      "defaultVariant": "off"
+      "defaultVariant": "on"
     },
     "adFailure": {
       "description": "Fail ad service",
@@ -44,7 +44,7 @@
         "on": true,
         "off": false
       },
-      "defaultVariant": "off"
+      "defaultVariant": "on"
     },
     "kafkaQueueProblems": {
       "description": "Overloads Kafka queue while simultaneously introducing a consumer side delay leading to a lag spike",
@@ -53,7 +53,7 @@
         "on": 100,
         "off": 0
       },
-      "defaultVariant": "off"
+      "defaultVariant": "on"
     },
     "cartFailure": {
       "description": "Fail cart service",
@@ -62,7 +62,7 @@
         "on": true,
         "off": false
       },
-      "defaultVariant": "off"
+      "defaultVariant": "on"
     },
     "paymentFailure": {
       "description": "Fail payment service charge requests n%",
@@ -76,7 +76,21 @@
         "10%": 0.1,
         "off": 0
       },
-      "defaultVariant": "off"
+      "defaultVariant": "25%"
+    },
+    "paymentDatabaseError": {
+      "description": "Fail payment service database operations n%",
+      "state": "ENABLED",
+      "variants": {
+        "30%": 0.3,
+        "25%": 0.25,
+        "20%": 0.2,
+        "15%": 0.15,
+        "10%": 0.1,
+        "5%": 0.05,
+        "off": 0
+      },
+      "defaultVariant": "15%"
     },
     "paymentUnreachable": {
       "description": "Payment service is unavailable",
@@ -104,7 +118,7 @@
         "5sec": 5000,
         "off": 0
       },
-      "defaultVariant": "off"
+      "defaultVariant": "5sec"
     }
   }
 }
