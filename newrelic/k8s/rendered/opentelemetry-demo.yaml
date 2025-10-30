@@ -229,6 +229,17 @@ data:
           - batch
           receivers:
           - otlp
+      telemetry:
+        metrics:
+          level: basic
+          readers:
+          - periodic:
+              exporter:
+                otlp:
+                  endpoint: http://${env:MY_POD_IP}:4318
+                  protocol: http/protobuf
+              interval: 30000
+              timeout: 5000
 ---
 # Source: opentelemetry-demo/templates/flagd-config.yaml
 apiVersion: v1
@@ -1098,7 +1109,7 @@ spec:
   template:
     metadata:
       annotations:
-        checksum/config: 4aeb9cba666c0b605d968ffffedb2e6154982c980210c4ce1571686aa31f9f52
+        checksum/config: 4d55a7017198a026cb666b0b3b98f12fe1424f49b4aada3edc7ebca6c5d78ebd
         opentelemetry_community_demo: "true"
         prometheus.io/scrape: "true"
       labels:
