@@ -98,7 +98,7 @@ def chat_completions():
     elif 'Were there any negative reviews?' in last_message:
         response_text = 'No, there were no reviews less than three stars for this product.'
         return build_response(model, messages, response_text)
-    elif not ('Can you summarize the product reviews?' in last_message or 'Summarize the reviews for product ID' in last_message):
+    elif not ('Can you summarize the product reviews?' in last_message or 'Based on the tool results, answer the original question about product ID' in last_message):
         response_text = 'Sorry, I\'m not able to answer that question.'
         return build_response(model, messages, response_text)
 
