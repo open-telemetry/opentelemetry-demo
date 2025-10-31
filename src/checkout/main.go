@@ -57,6 +57,7 @@ import (
 	pb "github.com/open-telemetry/opentelemetry-demo/src/checkout/genproto/oteldemo"
 	"github.com/open-telemetry/opentelemetry-demo/src/checkout/kafka"
 	"github.com/open-telemetry/opentelemetry-demo/src/checkout/money"
+	"github.com/open-telemetry/opentelemetry-demo/src/checkout/sqs"
 )
 
 //go:generate go install google.golang.org/protobuf/cmd/protoc-gen-go
@@ -156,6 +157,7 @@ type checkout struct {
 	currencySvcClient       pb.CurrencyServiceClient
 	emailSvcClient          pb.EmailServiceClient
 	paymentSvcClient        pb.PaymentServiceClient
+	sqsClient               *sqs.SQSQueue
 }
 
 func main() {
@@ -266,6 +268,17 @@ func main() {
 				logger.Error(err.Error())
 			}
 		}()
+	}
+
+	sqs_url := os.Getenv("SQS_QUEUE_URL")
+	if sqs_url == "" {
+		logger.Info("[SQS_QUEUE_URL] was not set, the sqs functionality will be disabled")
+	} else {
+		c, err := sqs.NewSQSQueue(context.Background(), sqs_url)
+		if err != nil {
+			logger.Error(err.Error())
+		}
+		svc.sqsClient = c
 	}
 
 	logger.Info(fmt.Sprintf("service config: %+v", svc))
@@ -417,6 +430,19 @@ func (cs *checkout) PlaceOrder(ctx context.Context, req *pb.PlaceOrderRequest) (
 	if cs.kafkaBrokerSvcAddr != "" {
 		logger.Info("sending to postProcessor")
 		cs.sendToPostProcessor(ctx, orderResult)
+	}
+
+	// send msg to sqs if the client was created
+	if cs.sqsClient != nil {
+		logger.Info("sending data to sqs")
+		r, err := cs.sqsClient.SendMessage(ctx, sqs.Payload{
+			CustomerID: req.UserId,
+			OrderID:    orderID.String(),
+		})
+		if err != nil {
+			logger.Error(fmt.Sprintf("failed to send message to sqs, err: %+v", err))
+		}
+		logger.Info(fmt.Sprintf("sqs message id [%s]", r))
 	}
 
 	resp := &pb.PlaceOrderResponse{Order: orderResult}
