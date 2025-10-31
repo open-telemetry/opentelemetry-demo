@@ -159,7 +159,7 @@ spec:
             httpGet:
               path: /actuator/health
               port: 8070
-            initialDelaySeconds: 360
+            initialDelaySeconds: 300
             periodSeconds: 10
             timeoutSeconds: 5
             failureThreshold: 3
@@ -167,7 +167,7 @@ spec:
             httpGet:
               path: /actuator/health
               port: 8070
-            initialDelaySeconds: 480
+            initialDelaySeconds: 420
             periodSeconds: 30
             timeoutSeconds: 10
             failureThreshold: 3
@@ -218,7 +218,7 @@ spec:
       containers:
         - name: load-generator
           image: quay.io/jeremyh/shop-dc-load-generator:0.0.1
-          args: ["--url", "http://shop-dc-shim:8070", "--mode", "continuous", "--tpm", "4", "--duration", "0"]
+          args: ["--url", "http://shop-dc-shim:8070", "--mode", "continuous", "--tpm", "65", "--duration", "0"]
           resources:
             limits:
               memory: "128Mi"

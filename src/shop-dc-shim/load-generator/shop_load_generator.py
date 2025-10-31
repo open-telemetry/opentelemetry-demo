@@ -356,8 +356,8 @@ class ShopLoadGenerator:
                             "store": result["store_location"]
                         })
                 
-                # Periodically check status of pending transactions (every 10 transactions)
-                if transaction_count % 10 == 0 and pending_transactions:
+                # Periodically check status of pending transactions (every 50 transactions)
+                if transaction_count % 50 == 0 and pending_transactions:
                     self._check_pending_transactions(pending_transactions)
                 
                 # Print progress every minute
