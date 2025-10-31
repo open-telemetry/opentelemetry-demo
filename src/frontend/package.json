@@ -3,9 +3,9 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "NODE_OPTIONS='--require ./utils/telemetry/Instrumentation.js' next dev",
+    "dev": "next dev",
     "build": "next build",
-    "start": "node --require ./Instrumentation.js server.js",
+    "start": "node server.js",
     "lint": "next lint",
     "cy:open": "cypress open",
     "grpc:generate": "mkdir -p ./protos && protoc -I ./pb  --plugin=./node_modules/.bin/protoc-gen-ts_proto --ts_proto_opt=esModuleInterop=true --ts_proto_out=./protos --ts_proto_opt=outputServices=grpc-js demo.proto"
