@@ -1,0 +1,11 @@
+# Copyright The OpenTelemetry Authors
+# SPDX-License-Identifier: Apache-2.0
+
+type: TestSuite
+spec:
+  id: product-reviews-all
+  name: 'Product Review Service'
+  description: Run all Product Review Service tests enabled in sequence
+  steps:
+    - ./reviews.yaml
+    - ./summary.yaml

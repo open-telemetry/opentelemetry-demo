@@ -47,6 +47,8 @@
         "src/checkout/genproto/",
         "src/flagd-ui/assets/vendor/",
         "src/product-catalog/genproto/",
+        "src/product-reviews/demo_pb2.py",
+        "src/product-reviews/demo_pb2_grpc.py",
         "src/react-native-app/ios/Pods/",
         "src/react-native-app/ios/build/",
         "src/react-native-app/android/app/build/",

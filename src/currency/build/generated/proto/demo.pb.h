@@ -70,6 +70,12 @@ extern AddItemRequestDefaultTypeInternal _AddItemRequest_default_instance_;
 class Address;
 struct AddressDefaultTypeInternal;
 extern AddressDefaultTypeInternal _Address_default_instance_;
+class AskProductAIAssistantRequest;
+struct AskProductAIAssistantRequestDefaultTypeInternal;
+extern AskProductAIAssistantRequestDefaultTypeInternal _AskProductAIAssistantRequest_default_instance_;
+class AskProductAIAssistantResponse;
+struct AskProductAIAssistantResponseDefaultTypeInternal;
+extern AskProductAIAssistantResponseDefaultTypeInternal _AskProductAIAssistantResponse_default_instance_;
 class Cart;
 struct CartDefaultTypeInternal;
 extern CartDefaultTypeInternal _Cart_default_instance_;
@@ -109,6 +115,12 @@ extern EmptyCartRequestDefaultTypeInternal _EmptyCartRequest_default_instance_;
 class Flag;
 struct FlagDefaultTypeInternal;
 extern FlagDefaultTypeInternal _Flag_default_instance_;
+class GetAverageProductReviewScoreRequest;
+struct GetAverageProductReviewScoreRequestDefaultTypeInternal;
+extern GetAverageProductReviewScoreRequestDefaultTypeInternal _GetAverageProductReviewScoreRequest_default_instance_;
+class GetAverageProductReviewScoreResponse;
+struct GetAverageProductReviewScoreResponseDefaultTypeInternal;
+extern GetAverageProductReviewScoreResponseDefaultTypeInternal _GetAverageProductReviewScoreResponse_default_instance_;
 class GetCartRequest;
 struct GetCartRequestDefaultTypeInternal;
 extern GetCartRequestDefaultTypeInternal _GetCartRequest_default_instance_;
@@ -121,6 +133,12 @@ extern GetFlagResponseDefaultTypeInternal _GetFlagResponse_default_instance_;
 class GetProductRequest;
 struct GetProductRequestDefaultTypeInternal;
 extern GetProductRequestDefaultTypeInternal _GetProductRequest_default_instance_;
+class GetProductReviewsRequest;
+struct GetProductReviewsRequestDefaultTypeInternal;
+extern GetProductReviewsRequestDefaultTypeInternal _GetProductReviewsRequest_default_instance_;
+class GetProductReviewsResponse;
+struct GetProductReviewsResponseDefaultTypeInternal;
+extern GetProductReviewsResponseDefaultTypeInternal _GetProductReviewsResponse_default_instance_;
 class GetQuoteRequest;
 struct GetQuoteRequestDefaultTypeInternal;
 extern GetQuoteRequestDefaultTypeInternal _GetQuoteRequest_default_instance_;
@@ -163,6 +181,9 @@ extern PlaceOrderResponseDefaultTypeInternal _PlaceOrderResponse_default_instanc
 class Product;
 struct ProductDefaultTypeInternal;
 extern ProductDefaultTypeInternal _Product_default_instance_;
+class ProductReview;
+struct ProductReviewDefaultTypeInternal;
+extern ProductReviewDefaultTypeInternal _ProductReview_default_instance_;
 class SearchProductsRequest;
 struct SearchProductsRequestDefaultTypeInternal;
 extern SearchProductsRequestDefaultTypeInternal _SearchProductsRequest_default_instance_;
@@ -2488,6 +2509,1210 @@ class SearchProductsResponse final :
   friend struct ::TableStruct_demo_2eproto;
 };// -------------------------------------------------------------------
 
+class ProductReview final :
+    public ::google::protobuf::Message /* @@protoc_insertion_point(class_definition:oteldemo.ProductReview) */ {
+ public:
+  inline ProductReview() : ProductReview(nullptr) {}
+  ~ProductReview() override;
+  template<typename = void>
+  explicit PROTOBUF_CONSTEXPR ProductReview(::google::protobuf::internal::ConstantInitialized);
+
+  ProductReview(const ProductReview& from);
+  ProductReview(ProductReview&& from) noexcept
+    : ProductReview() {
+    *this = ::std::move(from);
+  }
+
+  inline ProductReview& operator=(const ProductReview& from) {
+    CopyFrom(from);
+    return *this;
+  }
+  inline ProductReview& operator=(ProductReview&& from) noexcept {
+    if (this == &from) return *this;
+    if (GetOwningArena() == from.GetOwningArena()
+  #ifdef PROTOBUF_FORCE_COPY_IN_MOVE
+        && GetOwningArena() != nullptr
+  #endif  // !PROTOBUF_FORCE_COPY_IN_MOVE
+    ) {
+      InternalSwap(&from);
+    } else {
+      CopyFrom(from);
+    }
+    return *this;
+  }
+
+  inline const ::google::protobuf::UnknownFieldSet& unknown_fields() const {
+    return _internal_metadata_.unknown_fields<::google::protobuf::UnknownFieldSet>(::google::protobuf::UnknownFieldSet::default_instance);
+  }
+  inline ::google::protobuf::UnknownFieldSet* mutable_unknown_fields() {
+    return _internal_metadata_.mutable_unknown_fields<::google::protobuf::UnknownFieldSet>();
+  }
+
+  static const ::google::protobuf::Descriptor* descriptor() {
+    return GetDescriptor();
+  }
+  static const ::google::protobuf::Descriptor* GetDescriptor() {
+    return default_instance().GetMetadata().descriptor;
+  }
+  static const ::google::protobuf::Reflection* GetReflection() {
+    return default_instance().GetMetadata().reflection;
+  }
+  static const ProductReview& default_instance() {
+    return *internal_default_instance();
+  }
+  static inline const ProductReview* internal_default_instance() {
+    return reinterpret_cast<const ProductReview*>(
+               &_ProductReview_default_instance_);
+  }
+  static constexpr int kIndexInFileMessages =
+    13;
+
+  friend void swap(ProductReview& a, ProductReview& b) {
+    a.Swap(&b);
+  }
+  inline void Swap(ProductReview* other) {
+    if (other == this) return;
+  #ifdef PROTOBUF_FORCE_COPY_IN_SWAP
+    if (GetOwningArena() != nullptr &&
+        GetOwningArena() == other->GetOwningArena()) {
+   #else  // PROTOBUF_FORCE_COPY_IN_SWAP
+    if (GetOwningArena() == other->GetOwningArena()) {
+  #endif  // !PROTOBUF_FORCE_COPY_IN_SWAP
+      InternalSwap(other);
+    } else {
+      ::google::protobuf::internal::GenericSwap(this, other);
+    }
+  }
+  void UnsafeArenaSwap(ProductReview* other) {
+    if (other == this) return;
+    ABSL_DCHECK(GetOwningArena() == other->GetOwningArena());
+    InternalSwap(other);
+  }
+
+  // implements Message ----------------------------------------------
+
+  ProductReview* New(::google::protobuf::Arena* arena = nullptr) const final {
+    return CreateMaybeMessage<ProductReview>(arena);
+  }
+  using ::google::protobuf::Message::CopyFrom;
+  void CopyFrom(const ProductReview& from);
+  using ::google::protobuf::Message::MergeFrom;
+  void MergeFrom( const ProductReview& from) {
+    ProductReview::MergeImpl(*this, from);
+  }
+  private:
+  static void MergeImpl(::google::protobuf::Message& to_msg, const ::google::protobuf::Message& from_msg);
+  public:
+  PROTOBUF_ATTRIBUTE_REINITIALIZES void Clear() final;
+  bool IsInitialized() const final;
+
+  ::size_t ByteSizeLong() const final;
+  const char* _InternalParse(const char* ptr, ::google::protobuf::internal::ParseContext* ctx) final;
+  ::uint8_t* _InternalSerialize(
+      ::uint8_t* target, ::google::protobuf::io::EpsCopyOutputStream* stream) const final;
+  int GetCachedSize() const final { return _impl_._cached_size_.Get(); }
+
+  private:
+  void SharedCtor(::google::protobuf::Arena* arena);
+  void SharedDtor();
+  void SetCachedSize(int size) const final;
+  void InternalSwap(ProductReview* other);
+
+  private:
+  friend class ::google::protobuf::internal::AnyMetadata;
+  static ::absl::string_view FullMessageName() {
+    return "oteldemo.ProductReview";
+  }
+  protected:
+  explicit ProductReview(::google::protobuf::Arena* arena);
+  public:
+
+  static const ClassData _class_data_;
+  const ::google::protobuf::Message::ClassData*GetClassData() const final;
+
+  ::google::protobuf::Metadata GetMetadata() const final;
+
+  // nested types ----------------------------------------------------
+
+  // accessors -------------------------------------------------------
+
+  enum : int {
+    kUsernameFieldNumber = 1,
+    kDescriptionFieldNumber = 2,
+    kScoreFieldNumber = 3,
+  };
+  // string username = 1;
+  void clear_username() ;
+  const std::string& username() const;
+  template <typename Arg_ = const std::string&, typename... Args_>
+  void set_username(Arg_&& arg, Args_... args);
+  std::string* mutable_username();
+  PROTOBUF_NODISCARD std::string* release_username();
+  void set_allocated_username(std::string* ptr);
+
+  private:
+  const std::string& _internal_username() const;
+  inline PROTOBUF_ALWAYS_INLINE void _internal_set_username(
+      const std::string& value);
+  std::string* _internal_mutable_username();
+
+  public:
+  // string description = 2;
+  void clear_description() ;
+  const std::string& description() const;
+  template <typename Arg_ = const std::string&, typename... Args_>
+  void set_description(Arg_&& arg, Args_... args);
+  std::string* mutable_description();
+  PROTOBUF_NODISCARD std::string* release_description();
+  void set_allocated_description(std::string* ptr);
+
+  private:
+  const std::string& _internal_description() const;
+  inline PROTOBUF_ALWAYS_INLINE void _internal_set_description(
+      const std::string& value);
+  std::string* _internal_mutable_description();
+
+  public:
+  // string score = 3;
+  void clear_score() ;
+  const std::string& score() const;
+  template <typename Arg_ = const std::string&, typename... Args_>
+  void set_score(Arg_&& arg, Args_... args);
+  std::string* mutable_score();
+  PROTOBUF_NODISCARD std::string* release_score();
+  void set_allocated_score(std::string* ptr);
+
+  private:
+  const std::string& _internal_score() const;
+  inline PROTOBUF_ALWAYS_INLINE void _internal_set_score(
+      const std::string& value);
+  std::string* _internal_mutable_score();
+
+  public:
+  // @@protoc_insertion_point(class_scope:oteldemo.ProductReview)
+ private:
+  class _Internal;
+
+  friend class ::google::protobuf::internal::TcParser;
+  static const ::google::protobuf::internal::TcParseTable<2, 3, 0, 55, 2> _table_;
+  template <typename T> friend class ::google::protobuf::Arena::InternalHelper;
+  typedef void InternalArenaConstructable_;
+  typedef void DestructorSkippable_;
+  struct Impl_ {
+    ::google::protobuf::internal::ArenaStringPtr username_;
+    ::google::protobuf::internal::ArenaStringPtr description_;
+    ::google::protobuf::internal::ArenaStringPtr score_;
+    mutable ::google::protobuf::internal::CachedSize _cached_size_;
+    PROTOBUF_TSAN_DECLARE_MEMBER
+  };
+  union { Impl_ _impl_; };
+  friend struct ::TableStruct_demo_2eproto;
+};// -------------------------------------------------------------------
+
+class GetProductReviewsRequest final :
+    public ::google::protobuf::Message /* @@protoc_insertion_point(class_definition:oteldemo.GetProductReviewsRequest) */ {
+ public:
+  inline GetProductReviewsRequest() : GetProductReviewsRequest(nullptr) {}
+  ~GetProductReviewsRequest() override;
+  template<typename = void>
+  explicit PROTOBUF_CONSTEXPR GetProductReviewsRequest(::google::protobuf::internal::ConstantInitialized);
+
+  GetProductReviewsRequest(const GetProductReviewsRequest& from);
+  GetProductReviewsRequest(GetProductReviewsRequest&& from) noexcept
+    : GetProductReviewsRequest() {
+    *this = ::std::move(from);
+  }
+
+  inline GetProductReviewsRequest& operator=(const GetProductReviewsRequest& from) {
+    CopyFrom(from);
+    return *this;
+  }
+  inline GetProductReviewsRequest& operator=(GetProductReviewsRequest&& from) noexcept {
+    if (this == &from) return *this;
+    if (GetOwningArena() == from.GetOwningArena()
+  #ifdef PROTOBUF_FORCE_COPY_IN_MOVE
+        && GetOwningArena() != nullptr
+  #endif  // !PROTOBUF_FORCE_COPY_IN_MOVE
+    ) {
+      InternalSwap(&from);
+    } else {
+      CopyFrom(from);
+    }
+    return *this;
+  }
+
+  inline const ::google::protobuf::UnknownFieldSet& unknown_fields() const {
+    return _internal_metadata_.unknown_fields<::google::protobuf::UnknownFieldSet>(::google::protobuf::UnknownFieldSet::default_instance);
+  }
+  inline ::google::protobuf::UnknownFieldSet* mutable_unknown_fields() {
+    return _internal_metadata_.mutable_unknown_fields<::google::protobuf::UnknownFieldSet>();
+  }
+
+  static const ::google::protobuf::Descriptor* descriptor() {
+    return GetDescriptor();
+  }
+  static const ::google::protobuf::Descriptor* GetDescriptor() {
+    return default_instance().GetMetadata().descriptor;
+  }
+  static const ::google::protobuf::Reflection* GetReflection() {
+    return default_instance().GetMetadata().reflection;
+  }
+  static const GetProductReviewsRequest& default_instance() {
+    return *internal_default_instance();
+  }
+  static inline const GetProductReviewsRequest* internal_default_instance() {
+    return reinterpret_cast<const GetProductReviewsRequest*>(
+               &_GetProductReviewsRequest_default_instance_);
+  }
+  static constexpr int kIndexInFileMessages =
+    14;
+
+  friend void swap(GetProductReviewsRequest& a, GetProductReviewsRequest& b) {
+    a.Swap(&b);
+  }
+  inline void Swap(GetProductReviewsRequest* other) {
+    if (other == this) return;
+  #ifdef PROTOBUF_FORCE_COPY_IN_SWAP
+    if (GetOwningArena() != nullptr &&
+        GetOwningArena() == other->GetOwningArena()) {
+   #else  // PROTOBUF_FORCE_COPY_IN_SWAP
+    if (GetOwningArena() == other->GetOwningArena()) {
+  #endif  // !PROTOBUF_FORCE_COPY_IN_SWAP
+      InternalSwap(other);
+    } else {
+      ::google::protobuf::internal::GenericSwap(this, other);
+    }
+  }
+  void UnsafeArenaSwap(GetProductReviewsRequest* other) {
+    if (other == this) return;
+    ABSL_DCHECK(GetOwningArena() == other->GetOwningArena());
+    InternalSwap(other);
+  }
+
+  // implements Message ----------------------------------------------
+
+  GetProductReviewsRequest* New(::google::protobuf::Arena* arena = nullptr) const final {
+    return CreateMaybeMessage<GetProductReviewsRequest>(arena);
+  }
+  using ::google::protobuf::Message::CopyFrom;
+  void CopyFrom(const GetProductReviewsRequest& from);
+  using ::google::protobuf::Message::MergeFrom;
+  void MergeFrom( const GetProductReviewsRequest& from) {
+    GetProductReviewsRequest::MergeImpl(*this, from);
+  }
+  private:
+  static void MergeImpl(::google::protobuf::Message& to_msg, const ::google::protobuf::Message& from_msg);
+  public:
+  PROTOBUF_ATTRIBUTE_REINITIALIZES void Clear() final;
+  bool IsInitialized() const final;
+
+  ::size_t ByteSizeLong() const final;
+  const char* _InternalParse(const char* ptr, ::google::protobuf::internal::ParseContext* ctx) final;
+  ::uint8_t* _InternalSerialize(
+      ::uint8_t* target, ::google::protobuf::io::EpsCopyOutputStream* stream) const final;
+  int GetCachedSize() const final { return _impl_._cached_size_.Get(); }
+
+  private:
+  void SharedCtor(::google::protobuf::Arena* arena);
+  void SharedDtor();
+  void SetCachedSize(int size) const final;
+  void InternalSwap(GetProductReviewsRequest* other);
+
+  private:
+  friend class ::google::protobuf::internal::AnyMetadata;
+  static ::absl::string_view FullMessageName() {
+    return "oteldemo.GetProductReviewsRequest";
+  }
+  protected:
+  explicit GetProductReviewsRequest(::google::protobuf::Arena* arena);
+  public:
+
+  static const ClassData _class_data_;
+  const ::google::protobuf::Message::ClassData*GetClassData() const final;
+
+  ::google::protobuf::Metadata GetMetadata() const final;
+
+  // nested types ----------------------------------------------------
+
+  // accessors -------------------------------------------------------
+
+  enum : int {
+    kProductIdFieldNumber = 1,
+  };
+  // string product_id = 1;
+  void clear_product_id() ;
+  const std::string& product_id() const;
+  template <typename Arg_ = const std::string&, typename... Args_>
+  void set_product_id(Arg_&& arg, Args_... args);
+  std::string* mutable_product_id();
+  PROTOBUF_NODISCARD std::string* release_product_id();
+  void set_allocated_product_id(std::string* ptr);
+
+  private:
+  const std::string& _internal_product_id() const;
+  inline PROTOBUF_ALWAYS_INLINE void _internal_set_product_id(
+      const std::string& value);
+  std::string* _internal_mutable_product_id();
+
+  public:
+  // @@protoc_insertion_point(class_scope:oteldemo.GetProductReviewsRequest)
+ private:
+  class _Internal;
+
+  friend class ::google::protobuf::internal::TcParser;
+  static const ::google::protobuf::internal::TcParseTable<0, 1, 0, 52, 2> _table_;
+  template <typename T> friend class ::google::protobuf::Arena::InternalHelper;
+  typedef void InternalArenaConstructable_;
+  typedef void DestructorSkippable_;
+  struct Impl_ {
+    ::google::protobuf::internal::ArenaStringPtr product_id_;
+    mutable ::google::protobuf::internal::CachedSize _cached_size_;
+    PROTOBUF_TSAN_DECLARE_MEMBER
+  };
+  union { Impl_ _impl_; };
+  friend struct ::TableStruct_demo_2eproto;
+};// -------------------------------------------------------------------
+
+class GetProductReviewsResponse final :
+    public ::google::protobuf::Message /* @@protoc_insertion_point(class_definition:oteldemo.GetProductReviewsResponse) */ {
+ public:
+  inline GetProductReviewsResponse() : GetProductReviewsResponse(nullptr) {}
+  ~GetProductReviewsResponse() override;
+  template<typename = void>
+  explicit PROTOBUF_CONSTEXPR GetProductReviewsResponse(::google::protobuf::internal::ConstantInitialized);
+
+  GetProductReviewsResponse(const GetProductReviewsResponse& from);
+  GetProductReviewsResponse(GetProductReviewsResponse&& from) noexcept
+    : GetProductReviewsResponse() {
+    *this = ::std::move(from);
+  }
+
+  inline GetProductReviewsResponse& operator=(const GetProductReviewsResponse& from) {
+    CopyFrom(from);
+    return *this;
+  }
+  inline GetProductReviewsResponse& operator=(GetProductReviewsResponse&& from) noexcept {
+    if (this == &from) return *this;
+    if (GetOwningArena() == from.GetOwningArena()
+  #ifdef PROTOBUF_FORCE_COPY_IN_MOVE
+        && GetOwningArena() != nullptr
+  #endif  // !PROTOBUF_FORCE_COPY_IN_MOVE
+    ) {
+      InternalSwap(&from);
+    } else {
+      CopyFrom(from);
+    }
+    return *this;
+  }
+
+  inline const ::google::protobuf::UnknownFieldSet& unknown_fields() const {
+    return _internal_metadata_.unknown_fields<::google::protobuf::UnknownFieldSet>(::google::protobuf::UnknownFieldSet::default_instance);
+  }
+  inline ::google::protobuf::UnknownFieldSet* mutable_unknown_fields() {
+    return _internal_metadata_.mutable_unknown_fields<::google::protobuf::UnknownFieldSet>();
+  }
+
+  static const ::google::protobuf::Descriptor* descriptor() {
+    return GetDescriptor();
+  }
+  static const ::google::protobuf::Descriptor* GetDescriptor() {
+    return default_instance().GetMetadata().descriptor;
+  }
+  static const ::google::protobuf::Reflection* GetReflection() {
+    return default_instance().GetMetadata().reflection;
+  }
+  static const GetProductReviewsResponse& default_instance() {
+    return *internal_default_instance();
+  }
+  static inline const GetProductReviewsResponse* internal_default_instance() {
+    return reinterpret_cast<const GetProductReviewsResponse*>(
+               &_GetProductReviewsResponse_default_instance_);
+  }
+  static constexpr int kIndexInFileMessages =
+    15;
+
+  friend void swap(GetProductReviewsResponse& a, GetProductReviewsResponse& b) {
+    a.Swap(&b);
+  }
+  inline void Swap(GetProductReviewsResponse* other) {
+    if (other == this) return;
+  #ifdef PROTOBUF_FORCE_COPY_IN_SWAP
+    if (GetOwningArena() != nullptr &&
+        GetOwningArena() == other->GetOwningArena()) {
+   #else  // PROTOBUF_FORCE_COPY_IN_SWAP
+    if (GetOwningArena() == other->GetOwningArena()) {
+  #endif  // !PROTOBUF_FORCE_COPY_IN_SWAP
+      InternalSwap(other);
+    } else {
+      ::google::protobuf::internal::GenericSwap(this, other);
+    }
+  }
+  void UnsafeArenaSwap(GetProductReviewsResponse* other) {
+    if (other == this) return;
+    ABSL_DCHECK(GetOwningArena() == other->GetOwningArena());
+    InternalSwap(other);
+  }
+
+  // implements Message ----------------------------------------------
+
+  GetProductReviewsResponse* New(::google::protobuf::Arena* arena = nullptr) const final {
+    return CreateMaybeMessage<GetProductReviewsResponse>(arena);
+  }
+  using ::google::protobuf::Message::CopyFrom;
+  void CopyFrom(const GetProductReviewsResponse& from);
+  using ::google::protobuf::Message::MergeFrom;
+  void MergeFrom( const GetProductReviewsResponse& from) {
+    GetProductReviewsResponse::MergeImpl(*this, from);
+  }
+  private:
+  static void MergeImpl(::google::protobuf::Message& to_msg, const ::google::protobuf::Message& from_msg);
+  public:
+  PROTOBUF_ATTRIBUTE_REINITIALIZES void Clear() final;
+  bool IsInitialized() const final;
+
+  ::size_t ByteSizeLong() const final;
+  const char* _InternalParse(const char* ptr, ::google::protobuf::internal::ParseContext* ctx) final;
+  ::uint8_t* _InternalSerialize(
+      ::uint8_t* target, ::google::protobuf::io::EpsCopyOutputStream* stream) const final;
+  int GetCachedSize() const final { return _impl_._cached_size_.Get(); }
+
+  private:
+  void SharedCtor(::google::protobuf::Arena* arena);
+  void SharedDtor();
+  void SetCachedSize(int size) const final;
+  void InternalSwap(GetProductReviewsResponse* other);
+
+  private:
+  friend class ::google::protobuf::internal::AnyMetadata;
+  static ::absl::string_view FullMessageName() {
+    return "oteldemo.GetProductReviewsResponse";
+  }
+  protected:
+  explicit GetProductReviewsResponse(::google::protobuf::Arena* arena);
+  public:
+
+  static const ClassData _class_data_;
+  const ::google::protobuf::Message::ClassData*GetClassData() const final;
+
+  ::google::protobuf::Metadata GetMetadata() const final;
+
+  // nested types ----------------------------------------------------
+
+  // accessors -------------------------------------------------------
+
+  enum : int {
+    kProductReviewsFieldNumber = 1,
+  };
+  // repeated .oteldemo.ProductReview product_reviews = 1;
+  int product_reviews_size() const;
+  private:
+  int _internal_product_reviews_size() const;
+
+  public:
+  void clear_product_reviews() ;
+  ::oteldemo::ProductReview* mutable_product_reviews(int index);
+  ::google::protobuf::RepeatedPtrField< ::oteldemo::ProductReview >*
+      mutable_product_reviews();
+  private:
+  const ::google::protobuf::RepeatedPtrField<::oteldemo::ProductReview>& _internal_product_reviews() const;
+  ::google::protobuf::RepeatedPtrField<::oteldemo::ProductReview>* _internal_mutable_product_reviews();
+  public:
+  const ::oteldemo::ProductReview& product_reviews(int index) const;
+  ::oteldemo::ProductReview* add_product_reviews();
+  const ::google::protobuf::RepeatedPtrField< ::oteldemo::ProductReview >&
+      product_reviews() const;
+  // @@protoc_insertion_point(class_scope:oteldemo.GetProductReviewsResponse)
+ private:
+  class _Internal;
+
+  friend class ::google::protobuf::internal::TcParser;
+  static const ::google::protobuf::internal::TcParseTable<0, 1, 1, 0, 2> _table_;
+  template <typename T> friend class ::google::protobuf::Arena::InternalHelper;
+  typedef void InternalArenaConstructable_;
+  typedef void DestructorSkippable_;
+  struct Impl_ {
+    ::google::protobuf::RepeatedPtrField< ::oteldemo::ProductReview > product_reviews_;
+    mutable ::google::protobuf::internal::CachedSize _cached_size_;
+    PROTOBUF_TSAN_DECLARE_MEMBER
+  };
+  union { Impl_ _impl_; };
+  friend struct ::TableStruct_demo_2eproto;
+};// -------------------------------------------------------------------
+
+class GetAverageProductReviewScoreRequest final :
+    public ::google::protobuf::Message /* @@protoc_insertion_point(class_definition:oteldemo.GetAverageProductReviewScoreRequest) */ {
+ public:
+  inline GetAverageProductReviewScoreRequest() : GetAverageProductReviewScoreRequest(nullptr) {}
+  ~GetAverageProductReviewScoreRequest() override;
+  template<typename = void>
+  explicit PROTOBUF_CONSTEXPR GetAverageProductReviewScoreRequest(::google::protobuf::internal::ConstantInitialized);
+
+  GetAverageProductReviewScoreRequest(const GetAverageProductReviewScoreRequest& from);
+  GetAverageProductReviewScoreRequest(GetAverageProductReviewScoreRequest&& from) noexcept
+    : GetAverageProductReviewScoreRequest() {
+    *this = ::std::move(from);
+  }
+
+  inline GetAverageProductReviewScoreRequest& operator=(const GetAverageProductReviewScoreRequest& from) {
+    CopyFrom(from);
+    return *this;
+  }
+  inline GetAverageProductReviewScoreRequest& operator=(GetAverageProductReviewScoreRequest&& from) noexcept {
+    if (this == &from) return *this;
+    if (GetOwningArena() == from.GetOwningArena()
+  #ifdef PROTOBUF_FORCE_COPY_IN_MOVE
+        && GetOwningArena() != nullptr
+  #endif  // !PROTOBUF_FORCE_COPY_IN_MOVE
+    ) {
+      InternalSwap(&from);
+    } else {
+      CopyFrom(from);
+    }
+    return *this;
+  }
+
+  inline const ::google::protobuf::UnknownFieldSet& unknown_fields() const {
+    return _internal_metadata_.unknown_fields<::google::protobuf::UnknownFieldSet>(::google::protobuf::UnknownFieldSet::default_instance);
+  }
+  inline ::google::protobuf::UnknownFieldSet* mutable_unknown_fields() {
+    return _internal_metadata_.mutable_unknown_fields<::google::protobuf::UnknownFieldSet>();
+  }
+
+  static const ::google::protobuf::Descriptor* descriptor() {
+    return GetDescriptor();
+  }
+  static const ::google::protobuf::Descriptor* GetDescriptor() {
+    return default_instance().GetMetadata().descriptor;
+  }
+  static const ::google::protobuf::Reflection* GetReflection() {
+    return default_instance().GetMetadata().reflection;
+  }
+  static const GetAverageProductReviewScoreRequest& default_instance() {
+    return *internal_default_instance();
+  }
+  static inline const GetAverageProductReviewScoreRequest* internal_default_instance() {
+    return reinterpret_cast<const GetAverageProductReviewScoreRequest*>(
+               &_GetAverageProductReviewScoreRequest_default_instance_);
+  }
+  static constexpr int kIndexInFileMessages =
+    16;
+
+  friend void swap(GetAverageProductReviewScoreRequest& a, GetAverageProductReviewScoreRequest& b) {
+    a.Swap(&b);
+  }
+  inline void Swap(GetAverageProductReviewScoreRequest* other) {
+    if (other == this) return;
+  #ifdef PROTOBUF_FORCE_COPY_IN_SWAP
+    if (GetOwningArena() != nullptr &&
+        GetOwningArena() == other->GetOwningArena()) {
+   #else  // PROTOBUF_FORCE_COPY_IN_SWAP
+    if (GetOwningArena() == other->GetOwningArena()) {
+  #endif  // !PROTOBUF_FORCE_COPY_IN_SWAP
+      InternalSwap(other);
+    } else {
+      ::google::protobuf::internal::GenericSwap(this, other);
+    }
+  }
+  void UnsafeArenaSwap(GetAverageProductReviewScoreRequest* other) {
+    if (other == this) return;
+    ABSL_DCHECK(GetOwningArena() == other->GetOwningArena());
+    InternalSwap(other);
+  }
+
+  // implements Message ----------------------------------------------
+
+  GetAverageProductReviewScoreRequest* New(::google::protobuf::Arena* arena = nullptr) const final {
+    return CreateMaybeMessage<GetAverageProductReviewScoreRequest>(arena);
+  }
+  using ::google::protobuf::Message::CopyFrom;
+  void CopyFrom(const GetAverageProductReviewScoreRequest& from);
+  using ::google::protobuf::Message::MergeFrom;
+  void MergeFrom( const GetAverageProductReviewScoreRequest& from) {
+    GetAverageProductReviewScoreRequest::MergeImpl(*this, from);
+  }
+  private:
+  static void MergeImpl(::google::protobuf::Message& to_msg, const ::google::protobuf::Message& from_msg);
+  public:
+  PROTOBUF_ATTRIBUTE_REINITIALIZES void Clear() final;
+  bool IsInitialized() const final;
+
+  ::size_t ByteSizeLong() const final;
+  const char* _InternalParse(const char* ptr, ::google::protobuf::internal::ParseContext* ctx) final;
+  ::uint8_t* _InternalSerialize(
+      ::uint8_t* target, ::google::protobuf::io::EpsCopyOutputStream* stream) const final;
+  int GetCachedSize() const final { return _impl_._cached_size_.Get(); }
+
+  private:
+  void SharedCtor(::google::protobuf::Arena* arena);
+  void SharedDtor();
+  void SetCachedSize(int size) const final;
+  void InternalSwap(GetAverageProductReviewScoreRequest* other);
+
+  private:
+  friend class ::google::protobuf::internal::AnyMetadata;
+  static ::absl::string_view FullMessageName() {
+    return "oteldemo.GetAverageProductReviewScoreRequest";
+  }
+  protected:
+  explicit GetAverageProductReviewScoreRequest(::google::protobuf::Arena* arena);
+  public:
+
+  static const ClassData _class_data_;
+  const ::google::protobuf::Message::ClassData*GetClassData() const final;
+
+  ::google::protobuf::Metadata GetMetadata() const final;
+
+  // nested types ----------------------------------------------------
+
+  // accessors -------------------------------------------------------
+
+  enum : int {
+    kProductIdFieldNumber = 1,
+  };
+  // string product_id = 1;
+  void clear_product_id() ;
+  const std::string& product_id() const;
+  template <typename Arg_ = const std::string&, typename... Args_>
+  void set_product_id(Arg_&& arg, Args_... args);
+  std::string* mutable_product_id();
+  PROTOBUF_NODISCARD std::string* release_product_id();
+  void set_allocated_product_id(std::string* ptr);
+
+  private:
+  const std::string& _internal_product_id() const;
+  inline PROTOBUF_ALWAYS_INLINE void _internal_set_product_id(
+      const std::string& value);
+  std::string* _internal_mutable_product_id();
+
+  public:
+  // @@protoc_insertion_point(class_scope:oteldemo.GetAverageProductReviewScoreRequest)
+ private:
+  class _Internal;
+
+  friend class ::google::protobuf::internal::TcParser;
+  static const ::google::protobuf::internal::TcParseTable<0, 1, 0, 63, 2> _table_;
+  template <typename T> friend class ::google::protobuf::Arena::InternalHelper;
+  typedef void InternalArenaConstructable_;
+  typedef void DestructorSkippable_;
+  struct Impl_ {
+    ::google::protobuf::internal::ArenaStringPtr product_id_;
+    mutable ::google::protobuf::internal::CachedSize _cached_size_;
+    PROTOBUF_TSAN_DECLARE_MEMBER
+  };
+  union { Impl_ _impl_; };
+  friend struct ::TableStruct_demo_2eproto;
+};// -------------------------------------------------------------------
+
+class GetAverageProductReviewScoreResponse final :
+    public ::google::protobuf::Message /* @@protoc_insertion_point(class_definition:oteldemo.GetAverageProductReviewScoreResponse) */ {
+ public:
+  inline GetAverageProductReviewScoreResponse() : GetAverageProductReviewScoreResponse(nullptr) {}
+  ~GetAverageProductReviewScoreResponse() override;
+  template<typename = void>
+  explicit PROTOBUF_CONSTEXPR GetAverageProductReviewScoreResponse(::google::protobuf::internal::ConstantInitialized);
+
+  GetAverageProductReviewScoreResponse(const GetAverageProductReviewScoreResponse& from);
+  GetAverageProductReviewScoreResponse(GetAverageProductReviewScoreResponse&& from) noexcept
+    : GetAverageProductReviewScoreResponse() {
+    *this = ::std::move(from);
+  }
+
+  inline GetAverageProductReviewScoreResponse& operator=(const GetAverageProductReviewScoreResponse& from) {
+    CopyFrom(from);
+    return *this;
+  }
+  inline GetAverageProductReviewScoreResponse& operator=(GetAverageProductReviewScoreResponse&& from) noexcept {
+    if (this == &from) return *this;
+    if (GetOwningArena() == from.GetOwningArena()
+  #ifdef PROTOBUF_FORCE_COPY_IN_MOVE
+        && GetOwningArena() != nullptr
+  #endif  // !PROTOBUF_FORCE_COPY_IN_MOVE
+    ) {
+      InternalSwap(&from);
+    } else {
+      CopyFrom(from);
+    }
+    return *this;
+  }
+
+  inline const ::google::protobuf::UnknownFieldSet& unknown_fields() const {
+    return _internal_metadata_.unknown_fields<::google::protobuf::UnknownFieldSet>(::google::protobuf::UnknownFieldSet::default_instance);
+  }
+  inline ::google::protobuf::UnknownFieldSet* mutable_unknown_fields() {
+    return _internal_metadata_.mutable_unknown_fields<::google::protobuf::UnknownFieldSet>();
+  }
+
+  static const ::google::protobuf::Descriptor* descriptor() {
+    return GetDescriptor();
+  }
+  static const ::google::protobuf::Descriptor* GetDescriptor() {
+    return default_instance().GetMetadata().descriptor;
+  }
+  static const ::google::protobuf::Reflection* GetReflection() {
+    return default_instance().GetMetadata().reflection;
+  }
+  static const GetAverageProductReviewScoreResponse& default_instance() {
+    return *internal_default_instance();
+  }
+  static inline const GetAverageProductReviewScoreResponse* internal_default_instance() {
+    return reinterpret_cast<const GetAverageProductReviewScoreResponse*>(
+               &_GetAverageProductReviewScoreResponse_default_instance_);
+  }
+  static constexpr int kIndexInFileMessages =
+    17;
+
+  friend void swap(GetAverageProductReviewScoreResponse& a, GetAverageProductReviewScoreResponse& b) {
+    a.Swap(&b);
+  }
+  inline void Swap(GetAverageProductReviewScoreResponse* other) {
+    if (other == this) return;
+  #ifdef PROTOBUF_FORCE_COPY_IN_SWAP
+    if (GetOwningArena() != nullptr &&
+        GetOwningArena() == other->GetOwningArena()) {
+   #else  // PROTOBUF_FORCE_COPY_IN_SWAP
+    if (GetOwningArena() == other->GetOwningArena()) {
+  #endif  // !PROTOBUF_FORCE_COPY_IN_SWAP
+      InternalSwap(other);
+    } else {
+      ::google::protobuf::internal::GenericSwap(this, other);
+    }
+  }
+  void UnsafeArenaSwap(GetAverageProductReviewScoreResponse* other) {
+    if (other == this) return;
+    ABSL_DCHECK(GetOwningArena() == other->GetOwningArena());
+    InternalSwap(other);
+  }
+
+  // implements Message ----------------------------------------------
+
+  GetAverageProductReviewScoreResponse* New(::google::protobuf::Arena* arena = nullptr) const final {
+    return CreateMaybeMessage<GetAverageProductReviewScoreResponse>(arena);
+  }
+  using ::google::protobuf::Message::CopyFrom;
+  void CopyFrom(const GetAverageProductReviewScoreResponse& from);
+  using ::google::protobuf::Message::MergeFrom;
+  void MergeFrom( const GetAverageProductReviewScoreResponse& from) {
+    GetAverageProductReviewScoreResponse::MergeImpl(*this, from);
+  }
+  private:
+  static void MergeImpl(::google::protobuf::Message& to_msg, const ::google::protobuf::Message& from_msg);
+  public:
+  PROTOBUF_ATTRIBUTE_REINITIALIZES void Clear() final;
+  bool IsInitialized() const final;
+
+  ::size_t ByteSizeLong() const final;
+  const char* _InternalParse(const char* ptr, ::google::protobuf::internal::ParseContext* ctx) final;
+  ::uint8_t* _InternalSerialize(
+      ::uint8_t* target, ::google::protobuf::io::EpsCopyOutputStream* stream) const final;
+  int GetCachedSize() const final { return _impl_._cached_size_.Get(); }
+
+  private:
+  void SharedCtor(::google::protobuf::Arena* arena);
+  void SharedDtor();
+  void SetCachedSize(int size) const final;
+  void InternalSwap(GetAverageProductReviewScoreResponse* other);
+
+  private:
+  friend class ::google::protobuf::internal::AnyMetadata;
+  static ::absl::string_view FullMessageName() {
+    return "oteldemo.GetAverageProductReviewScoreResponse";
+  }
+  protected:
+  explicit GetAverageProductReviewScoreResponse(::google::protobuf::Arena* arena);
+  public:
+
+  static const ClassData _class_data_;
+  const ::google::protobuf::Message::ClassData*GetClassData() const final;
+
+  ::google::protobuf::Metadata GetMetadata() const final;
+
+  // nested types ----------------------------------------------------
+
+  // accessors -------------------------------------------------------
+
+  enum : int {
+    kAverageScoreFieldNumber = 1,
+  };
+  // string average_score = 1;
+  void clear_average_score() ;
+  const std::string& average_score() const;
+  template <typename Arg_ = const std::string&, typename... Args_>
+  void set_average_score(Arg_&& arg, Args_... args);
+  std::string* mutable_average_score();
+  PROTOBUF_NODISCARD std::string* release_average_score();
+  void set_allocated_average_score(std::string* ptr);
+
+  private:
+  const std::string& _internal_average_score() const;
+  inline PROTOBUF_ALWAYS_INLINE void _internal_set_average_score(
+      const std::string& value);
+  std::string* _internal_mutable_average_score();
+
+  public:
+  // @@protoc_insertion_point(class_scope:oteldemo.GetAverageProductReviewScoreResponse)
+ private:
+  class _Internal;
+
+  friend class ::google::protobuf::internal::TcParser;
+  static const ::google::protobuf::internal::TcParseTable<0, 1, 0, 67, 2> _table_;
+  template <typename T> friend class ::google::protobuf::Arena::InternalHelper;
+  typedef void InternalArenaConstructable_;
+  typedef void DestructorSkippable_;
+  struct Impl_ {
+    ::google::protobuf::internal::ArenaStringPtr average_score_;
+    mutable ::google::protobuf::internal::CachedSize _cached_size_;
+    PROTOBUF_TSAN_DECLARE_MEMBER
+  };
+  union { Impl_ _impl_; };
+  friend struct ::TableStruct_demo_2eproto;
+};// -------------------------------------------------------------------
+
+class AskProductAIAssistantRequest final :
+    public ::google::protobuf::Message /* @@protoc_insertion_point(class_definition:oteldemo.AskProductAIAssistantRequest) */ {
+ public:
+  inline AskProductAIAssistantRequest() : AskProductAIAssistantRequest(nullptr) {}
+  ~AskProductAIAssistantRequest() override;
+  template<typename = void>
+  explicit PROTOBUF_CONSTEXPR AskProductAIAssistantRequest(::google::protobuf::internal::ConstantInitialized);
+
+  AskProductAIAssistantRequest(const AskProductAIAssistantRequest& from);
+  AskProductAIAssistantRequest(AskProductAIAssistantRequest&& from) noexcept
+    : AskProductAIAssistantRequest() {
+    *this = ::std::move(from);
+  }
+
+  inline AskProductAIAssistantRequest& operator=(const AskProductAIAssistantRequest& from) {
+    CopyFrom(from);
+    return *this;
+  }
+  inline AskProductAIAssistantRequest& operator=(AskProductAIAssistantRequest&& from) noexcept {
+    if (this == &from) return *this;
+    if (GetOwningArena() == from.GetOwningArena()
+  #ifdef PROTOBUF_FORCE_COPY_IN_MOVE
+        && GetOwningArena() != nullptr
+  #endif  // !PROTOBUF_FORCE_COPY_IN_MOVE
+    ) {
+      InternalSwap(&from);
+    } else {
+      CopyFrom(from);
+    }
+    return *this;
+  }
+
+  inline const ::google::protobuf::UnknownFieldSet& unknown_fields() const {
+    return _internal_metadata_.unknown_fields<::google::protobuf::UnknownFieldSet>(::google::protobuf::UnknownFieldSet::default_instance);
+  }
+  inline ::google::protobuf::UnknownFieldSet* mutable_unknown_fields() {
+    return _internal_metadata_.mutable_unknown_fields<::google::protobuf::UnknownFieldSet>();
+  }
+
+  static const ::google::protobuf::Descriptor* descriptor() {
+    return GetDescriptor();
+  }
+  static const ::google::protobuf::Descriptor* GetDescriptor() {
+    return default_instance().GetMetadata().descriptor;
+  }
+  static const ::google::protobuf::Reflection* GetReflection() {
+    return default_instance().GetMetadata().reflection;
+  }
+  static const AskProductAIAssistantRequest& default_instance() {
+    return *internal_default_instance();
+  }
+  static inline const AskProductAIAssistantRequest* internal_default_instance() {
+    return reinterpret_cast<const AskProductAIAssistantRequest*>(
+               &_AskProductAIAssistantRequest_default_instance_);
+  }
+  static constexpr int kIndexInFileMessages =
+    18;
+
+  friend void swap(AskProductAIAssistantRequest& a, AskProductAIAssistantRequest& b) {
+    a.Swap(&b);
+  }
+  inline void Swap(AskProductAIAssistantRequest* other) {
+    if (other == this) return;
+  #ifdef PROTOBUF_FORCE_COPY_IN_SWAP
+    if (GetOwningArena() != nullptr &&
+        GetOwningArena() == other->GetOwningArena()) {
+   #else  // PROTOBUF_FORCE_COPY_IN_SWAP
+    if (GetOwningArena() == other->GetOwningArena()) {
+  #endif  // !PROTOBUF_FORCE_COPY_IN_SWAP
+      InternalSwap(other);
+    } else {
+      ::google::protobuf::internal::GenericSwap(this, other);
+    }
+  }
+  void UnsafeArenaSwap(AskProductAIAssistantRequest* other) {
+    if (other == this) return;
+    ABSL_DCHECK(GetOwningArena() == other->GetOwningArena());
+    InternalSwap(other);
+  }
+
+  // implements Message ----------------------------------------------
+
+  AskProductAIAssistantRequest* New(::google::protobuf::Arena* arena = nullptr) const final {
+    return CreateMaybeMessage<AskProductAIAssistantRequest>(arena);
+  }
+  using ::google::protobuf::Message::CopyFrom;
+  void CopyFrom(const AskProductAIAssistantRequest& from);
+  using ::google::protobuf::Message::MergeFrom;
+  void MergeFrom( const AskProductAIAssistantRequest& from) {
+    AskProductAIAssistantRequest::MergeImpl(*this, from);
+  }
+  private:
+  static void MergeImpl(::google::protobuf::Message& to_msg, const ::google::protobuf::Message& from_msg);
+  public:
+  PROTOBUF_ATTRIBUTE_REINITIALIZES void Clear() final;
+  bool IsInitialized() const final;
+
+  ::size_t ByteSizeLong() const final;
+  const char* _InternalParse(const char* ptr, ::google::protobuf::internal::ParseContext* ctx) final;
+  ::uint8_t* _InternalSerialize(
+      ::uint8_t* target, ::google::protobuf::io::EpsCopyOutputStream* stream) const final;
+  int GetCachedSize() const final { return _impl_._cached_size_.Get(); }
+
+  private:
+  void SharedCtor(::google::protobuf::Arena* arena);
+  void SharedDtor();
+  void SetCachedSize(int size) const final;
+  void InternalSwap(AskProductAIAssistantRequest* other);
+
+  private:
+  friend class ::google::protobuf::internal::AnyMetadata;
+  static ::absl::string_view FullMessageName() {
+    return "oteldemo.AskProductAIAssistantRequest";
+  }
+  protected:
+  explicit AskProductAIAssistantRequest(::google::protobuf::Arena* arena);
+  public:
+
+  static const ClassData _class_data_;
+  const ::google::protobuf::Message::ClassData*GetClassData() const final;
+
+  ::google::protobuf::Metadata GetMetadata() const final;
+
+  // nested types ----------------------------------------------------
+
+  // accessors -------------------------------------------------------
+
+  enum : int {
+    kProductIdFieldNumber = 1,
+    kQuestionFieldNumber = 2,
+  };
+  // string product_id = 1;
+  void clear_product_id() ;
+  const std::string& product_id() const;
+  template <typename Arg_ = const std::string&, typename... Args_>
+  void set_product_id(Arg_&& arg, Args_... args);
+  std::string* mutable_product_id();
+  PROTOBUF_NODISCARD std::string* release_product_id();
+  void set_allocated_product_id(std::string* ptr);
+
+  private:
+  const std::string& _internal_product_id() const;
+  inline PROTOBUF_ALWAYS_INLINE void _internal_set_product_id(
+      const std::string& value);
+  std::string* _internal_mutable_product_id();
+
+  public:
+  // string question = 2;
+  void clear_question() ;
+  const std::string& question() const;
+  template <typename Arg_ = const std::string&, typename... Args_>
+  void set_question(Arg_&& arg, Args_... args);
+  std::string* mutable_question();
+  PROTOBUF_NODISCARD std::string* release_question();
+  void set_allocated_question(std::string* ptr);
+
+  private:
+  const std::string& _internal_question() const;
+  inline PROTOBUF_ALWAYS_INLINE void _internal_set_question(
+      const std::string& value);
+  std::string* _internal_mutable_question();
+
+  public:
+  // @@protoc_insertion_point(class_scope:oteldemo.AskProductAIAssistantRequest)
+ private:
+  class _Internal;
+
+  friend class ::google::protobuf::internal::TcParser;
+  static const ::google::protobuf::internal::TcParseTable<1, 2, 0, 64, 2> _table_;
+  template <typename T> friend class ::google::protobuf::Arena::InternalHelper;
+  typedef void InternalArenaConstructable_;
+  typedef void DestructorSkippable_;
+  struct Impl_ {
+    ::google::protobuf::internal::ArenaStringPtr product_id_;
+    ::google::protobuf::internal::ArenaStringPtr question_;
+    mutable ::google::protobuf::internal::CachedSize _cached_size_;
+    PROTOBUF_TSAN_DECLARE_MEMBER
+  };
+  union { Impl_ _impl_; };
+  friend struct ::TableStruct_demo_2eproto;
+};// -------------------------------------------------------------------
+
+class AskProductAIAssistantResponse final :
+    public ::google::protobuf::Message /* @@protoc_insertion_point(class_definition:oteldemo.AskProductAIAssistantResponse) */ {
+ public:
+  inline AskProductAIAssistantResponse() : AskProductAIAssistantResponse(nullptr) {}
+  ~AskProductAIAssistantResponse() override;
+  template<typename = void>
+  explicit PROTOBUF_CONSTEXPR AskProductAIAssistantResponse(::google::protobuf::internal::ConstantInitialized);
+
+  AskProductAIAssistantResponse(const AskProductAIAssistantResponse& from);
+  AskProductAIAssistantResponse(AskProductAIAssistantResponse&& from) noexcept
+    : AskProductAIAssistantResponse() {
+    *this = ::std::move(from);
+  }
+
+  inline AskProductAIAssistantResponse& operator=(const AskProductAIAssistantResponse& from) {
+    CopyFrom(from);
+    return *this;
+  }
+  inline AskProductAIAssistantResponse& operator=(AskProductAIAssistantResponse&& from) noexcept {
+    if (this == &from) return *this;
+    if (GetOwningArena() == from.GetOwningArena()
+  #ifdef PROTOBUF_FORCE_COPY_IN_MOVE
+        && GetOwningArena() != nullptr
+  #endif  // !PROTOBUF_FORCE_COPY_IN_MOVE
+    ) {
+      InternalSwap(&from);
+    } else {
+      CopyFrom(from);
+    }
+    return *this;
+  }
+
+  inline const ::google::protobuf::UnknownFieldSet& unknown_fields() const {
+    return _internal_metadata_.unknown_fields<::google::protobuf::UnknownFieldSet>(::google::protobuf::UnknownFieldSet::default_instance);
+  }
+  inline ::google::protobuf::UnknownFieldSet* mutable_unknown_fields() {
+    return _internal_metadata_.mutable_unknown_fields<::google::protobuf::UnknownFieldSet>();
+  }
+
+  static const ::google::protobuf::Descriptor* descriptor() {
+    return GetDescriptor();
+  }
+  static const ::google::protobuf::Descriptor* GetDescriptor() {
+    return default_instance().GetMetadata().descriptor;
+  }
+  static const ::google::protobuf::Reflection* GetReflection() {
+    return default_instance().GetMetadata().reflection;
+  }
+  static const AskProductAIAssistantResponse& default_instance() {
+    return *internal_default_instance();
+  }
+  static inline const AskProductAIAssistantResponse* internal_default_instance() {
+    return reinterpret_cast<const AskProductAIAssistantResponse*>(
+               &_AskProductAIAssistantResponse_default_instance_);
+  }
+  static constexpr int kIndexInFileMessages =
+    19;
+
+  friend void swap(AskProductAIAssistantResponse& a, AskProductAIAssistantResponse& b) {
+    a.Swap(&b);
+  }
+  inline void Swap(AskProductAIAssistantResponse* other) {
+    if (other == this) return;
+  #ifdef PROTOBUF_FORCE_COPY_IN_SWAP
+    if (GetOwningArena() != nullptr &&
+        GetOwningArena() == other->GetOwningArena()) {
+   #else  // PROTOBUF_FORCE_COPY_IN_SWAP
+    if (GetOwningArena() == other->GetOwningArena()) {
+  #endif  // !PROTOBUF_FORCE_COPY_IN_SWAP
+      InternalSwap(other);
+    } else {
+      ::google::protobuf::internal::GenericSwap(this, other);
+    }
+  }
+  void UnsafeArenaSwap(AskProductAIAssistantResponse* other) {
+    if (other == this) return;
+    ABSL_DCHECK(GetOwningArena() == other->GetOwningArena());
+    InternalSwap(other);
+  }
+
+  // implements Message ----------------------------------------------
+
+  AskProductAIAssistantResponse* New(::google::protobuf::Arena* arena = nullptr) const final {
+    return CreateMaybeMessage<AskProductAIAssistantResponse>(arena);
+  }
+  using ::google::protobuf::Message::CopyFrom;
+  void CopyFrom(const AskProductAIAssistantResponse& from);
+  using ::google::protobuf::Message::MergeFrom;
+  void MergeFrom( const AskProductAIAssistantResponse& from) {
+    AskProductAIAssistantResponse::MergeImpl(*this, from);
+  }
+  private:
+  static void MergeImpl(::google::protobuf::Message& to_msg, const ::google::protobuf::Message& from_msg);
+  public:
+  PROTOBUF_ATTRIBUTE_REINITIALIZES void Clear() final;
+  bool IsInitialized() const final;
+
+  ::size_t ByteSizeLong() const final;
+  const char* _InternalParse(const char* ptr, ::google::protobuf::internal::ParseContext* ctx) final;
+  ::uint8_t* _InternalSerialize(
+      ::uint8_t* target, ::google::protobuf::io::EpsCopyOutputStream* stream) const final;
+  int GetCachedSize() const final { return _impl_._cached_size_.Get(); }
+
+  private:
+  void SharedCtor(::google::protobuf::Arena* arena);
+  void SharedDtor();
+  void SetCachedSize(int size) const final;
+  void InternalSwap(AskProductAIAssistantResponse* other);
+
+  private:
+  friend class ::google::protobuf::internal::AnyMetadata;
+  static ::absl::string_view FullMessageName() {
+    return "oteldemo.AskProductAIAssistantResponse";
+  }
+  protected:
+  explicit AskProductAIAssistantResponse(::google::protobuf::Arena* arena);
+  public:
+
+  static const ClassData _class_data_;
+  const ::google::protobuf::Message::ClassData*GetClassData() const final;
+
+  ::google::protobuf::Metadata GetMetadata() const final;
+
+  // nested types ----------------------------------------------------
+
+  // accessors -------------------------------------------------------
+
+  enum : int {
+    kResponseFieldNumber = 1,
+  };
+  // string response = 1;
+  void clear_response() ;
+  const std::string& response() const;
+  template <typename Arg_ = const std::string&, typename... Args_>
+  void set_response(Arg_&& arg, Args_... args);
+  std::string* mutable_response();
+  PROTOBUF_NODISCARD std::string* release_response();
+  void set_allocated_response(std::string* ptr);
+
+  private:
+  const std::string& _internal_response() const;
+  inline PROTOBUF_ALWAYS_INLINE void _internal_set_response(
+      const std::string& value);
+  std::string* _internal_mutable_response();
+
+  public:
+  // @@protoc_insertion_point(class_scope:oteldemo.AskProductAIAssistantResponse)
+ private:
+  class _Internal;
+
+  friend class ::google::protobuf::internal::TcParser;
+  static const ::google::protobuf::internal::TcParseTable<0, 1, 0, 55, 2> _table_;
+  template <typename T> friend class ::google::protobuf::Arena::InternalHelper;
+  typedef void InternalArenaConstructable_;
+  typedef void DestructorSkippable_;
+  struct Impl_ {
+    ::google::protobuf::internal::ArenaStringPtr response_;
+    mutable ::google::protobuf::internal::CachedSize _cached_size_;
+    PROTOBUF_TSAN_DECLARE_MEMBER
+  };
+  union { Impl_ _impl_; };
+  friend struct ::TableStruct_demo_2eproto;
+};// -------------------------------------------------------------------
+
 class GetQuoteRequest final :
     public ::google::protobuf::Message /* @@protoc_insertion_point(class_definition:oteldemo.GetQuoteRequest) */ {
  public:
@@ -2544,7 +3769,7 @@ class GetQuoteRequest final :
                &_GetQuoteRequest_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    13;
+    20;
 
   friend void swap(GetQuoteRequest& a, GetQuoteRequest& b) {
     a.Swap(&b);
@@ -2728,7 +3953,7 @@ class GetQuoteResponse final :
                &_GetQuoteResponse_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    14;
+    21;
 
   friend void swap(GetQuoteResponse& a, GetQuoteResponse& b) {
     a.Swap(&b);
@@ -2892,7 +4117,7 @@ class ShipOrderRequest final :
                &_ShipOrderRequest_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    15;
+    22;
 
   friend void swap(ShipOrderRequest& a, ShipOrderRequest& b) {
     a.Swap(&b);
@@ -3076,7 +4301,7 @@ class ShipOrderResponse final :
                &_ShipOrderResponse_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    16;
+    23;
 
   friend void swap(ShipOrderResponse& a, ShipOrderResponse& b) {
     a.Swap(&b);
@@ -3240,7 +4465,7 @@ class Address final :
                &_Address_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    17;
+    24;
 
   friend void swap(Address& a, Address& b) {
     a.Swap(&b);
@@ -3476,7 +4701,7 @@ class Money final :
                &_Money_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    18;
+    25;
 
   friend void swap(Money& a, Money& b) {
     a.Swap(&b);
@@ -3664,7 +4889,7 @@ class GetSupportedCurrenciesResponse final :
                &_GetSupportedCurrenciesResponse_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    19;
+    26;
 
   friend void swap(GetSupportedCurrenciesResponse& a, GetSupportedCurrenciesResponse& b) {
     a.Swap(&b);
@@ -3840,7 +5065,7 @@ class CurrencyConversionRequest final :
                &_CurrencyConversionRequest_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    20;
+    27;
 
   friend void swap(CurrencyConversionRequest& a, CurrencyConversionRequest& b) {
     a.Swap(&b);
@@ -4022,7 +5247,7 @@ class CreditCardInfo final :
                &_CreditCardInfo_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    21;
+    28;
 
   friend void swap(CreditCardInfo& a, CreditCardInfo& b) {
     a.Swap(&b);
@@ -4222,7 +5447,7 @@ class ChargeRequest final :
                &_ChargeRequest_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    22;
+    29;
 
   friend void swap(ChargeRequest& a, ChargeRequest& b) {
     a.Swap(&b);
@@ -4403,7 +5628,7 @@ class ChargeResponse final :
                &_ChargeResponse_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    23;
+    30;
 
   friend void swap(ChargeResponse& a, ChargeResponse& b) {
     a.Swap(&b);
@@ -4567,7 +5792,7 @@ class OrderItem final :
                &_OrderItem_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    24;
+    31;
 
   friend void swap(OrderItem& a, OrderItem& b) {
     a.Swap(&b);
@@ -4748,7 +5973,7 @@ class OrderResult final :
                &_OrderResult_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    25;
+    32;
 
   friend void swap(OrderResult& a, OrderResult& b) {
     a.Swap(&b);
@@ -4985,7 +6210,7 @@ class SendOrderConfirmationRequest final :
                &_SendOrderConfirmationRequest_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    26;
+    33;
 
   friend void swap(SendOrderConfirmationRequest& a, SendOrderConfirmationRequest& b) {
     a.Swap(&b);
@@ -5167,7 +6392,7 @@ class PlaceOrderRequest final :
                &_PlaceOrderRequest_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    27;
+    34;
 
   friend void swap(PlaceOrderRequest& a, PlaceOrderRequest& b) {
     a.Swap(&b);
@@ -5402,7 +6627,7 @@ class PlaceOrderResponse final :
                &_PlaceOrderResponse_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    28;
+    35;
 
   friend void swap(PlaceOrderResponse& a, PlaceOrderResponse& b) {
     a.Swap(&b);
@@ -5566,7 +6791,7 @@ class AdRequest final :
                &_AdRequest_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    29;
+    36;
 
   friend void swap(AdRequest& a, AdRequest& b) {
     a.Swap(&b);
@@ -5742,7 +6967,7 @@ class AdResponse final :
                &_AdResponse_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    30;
+    37;
 
   friend void swap(AdResponse& a, AdResponse& b) {
     a.Swap(&b);
@@ -5908,7 +7133,7 @@ class Ad final :
                &_Ad_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    31;
+    38;
 
   friend void swap(Ad& a, Ad& b) {
     a.Swap(&b);
@@ -6090,7 +7315,7 @@ class Flag final :
                &_Flag_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    32;
+    39;
 
   friend void swap(Flag& a, Flag& b) {
     a.Swap(&b);
@@ -6284,7 +7509,7 @@ class GetFlagRequest final :
                &_GetFlagRequest_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    33;
+    40;
 
   friend void swap(GetFlagRequest& a, GetFlagRequest& b) {
     a.Swap(&b);
@@ -6448,7 +7673,7 @@ class GetFlagResponse final :
                &_GetFlagResponse_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    34;
+    41;
 
   friend void swap(GetFlagResponse& a, GetFlagResponse& b) {
     a.Swap(&b);
@@ -6612,7 +7837,7 @@ class CreateFlagRequest final :
                &_CreateFlagRequest_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    35;
+    42;
 
   friend void swap(CreateFlagRequest& a, CreateFlagRequest& b) {
     a.Swap(&b);
@@ -6806,7 +8031,7 @@ class CreateFlagResponse final :
                &_CreateFlagResponse_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    36;
+    43;
 
   friend void swap(CreateFlagResponse& a, CreateFlagResponse& b) {
     a.Swap(&b);
@@ -6970,7 +8195,7 @@ class UpdateFlagRequest final :
                &_UpdateFlagRequest_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    37;
+    44;
 
   friend void swap(UpdateFlagRequest& a, UpdateFlagRequest& b) {
     a.Swap(&b);
@@ -7145,7 +8370,7 @@ class UpdateFlagResponse final :
                &_UpdateFlagResponse_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    38;
+    45;
 
   friend void swap(UpdateFlagResponse& a, UpdateFlagResponse& b) {
     a.Swap(&b);
@@ -7270,7 +8495,7 @@ class ListFlagsRequest final :
                &_ListFlagsRequest_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    39;
+    46;
 
   friend void swap(ListFlagsRequest& a, ListFlagsRequest& b) {
     a.Swap(&b);
@@ -7396,7 +8621,7 @@ class ListFlagsResponse final :
                &_ListFlagsResponse_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    40;
+    47;
 
   friend void swap(ListFlagsResponse& a, ListFlagsResponse& b) {
     a.Swap(&b);
@@ -7562,7 +8787,7 @@ class DeleteFlagRequest final :
                &_DeleteFlagRequest_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    41;
+    48;
 
   friend void swap(DeleteFlagRequest& a, DeleteFlagRequest& b) {
     a.Swap(&b);
@@ -7725,7 +8950,7 @@ class DeleteFlagResponse final :
                &_DeleteFlagResponse_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    42;
+    49;
 
   friend void swap(DeleteFlagResponse& a, DeleteFlagResponse& b) {
     a.Swap(&b);
@@ -9109,6 +10334,539 @@ inline ::google::protobuf::RepeatedPtrField<::oteldemo::Product>*
 SearchProductsResponse::_internal_mutable_results() {
   PROTOBUF_TSAN_READ(&_impl_._tsan_detect_race);
   return &_impl_.results_;
+}
+
+// -------------------------------------------------------------------
+
+// ProductReview
+
+// string username = 1;
+inline void ProductReview::clear_username() {
+  _impl_.username_.ClearToEmpty();
+}
+inline const std::string& ProductReview::username() const {
+  // @@protoc_insertion_point(field_get:oteldemo.ProductReview.username)
+  return _internal_username();
+}
+template <typename Arg_, typename... Args_>
+inline PROTOBUF_ALWAYS_INLINE void ProductReview::set_username(Arg_&& arg,
+                                                     Args_... args) {
+  PROTOBUF_TSAN_WRITE(&_impl_._tsan_detect_race);
+  ;
+  _impl_.username_.Set(static_cast<Arg_&&>(arg), args..., GetArenaForAllocation());
+  // @@protoc_insertion_point(field_set:oteldemo.ProductReview.username)
+}
+inline std::string* ProductReview::mutable_username() {
+  std::string* _s = _internal_mutable_username();
+  // @@protoc_insertion_point(field_mutable:oteldemo.ProductReview.username)
+  return _s;
+}
+inline const std::string& ProductReview::_internal_username() const {
+  PROTOBUF_TSAN_READ(&_impl_._tsan_detect_race);
+  return _impl_.username_.Get();
+}
+inline void ProductReview::_internal_set_username(const std::string& value) {
+  PROTOBUF_TSAN_WRITE(&_impl_._tsan_detect_race);
+  ;
+  _impl_.username_.Set(value, GetArenaForAllocation());
+}
+inline std::string* ProductReview::_internal_mutable_username() {
+  PROTOBUF_TSAN_WRITE(&_impl_._tsan_detect_race);
+  ;
+  return _impl_.username_.Mutable( GetArenaForAllocation());
+}
+inline std::string* ProductReview::release_username() {
+  PROTOBUF_TSAN_WRITE(&_impl_._tsan_detect_race);
+  // @@protoc_insertion_point(field_release:oteldemo.ProductReview.username)
+  return _impl_.username_.Release();
+}
+inline void ProductReview::set_allocated_username(std::string* value) {
+  PROTOBUF_TSAN_WRITE(&_impl_._tsan_detect_race);
+  _impl_.username_.SetAllocated(value, GetArenaForAllocation());
+  #ifdef PROTOBUF_FORCE_COPY_DEFAULT_STRING
+        if (_impl_.username_.IsDefault()) {
+          _impl_.username_.Set("", GetArenaForAllocation());
+        }
+  #endif  // PROTOBUF_FORCE_COPY_DEFAULT_STRING
+  // @@protoc_insertion_point(field_set_allocated:oteldemo.ProductReview.username)
+}
+
+// string description = 2;
+inline void ProductReview::clear_description() {
+  _impl_.description_.ClearToEmpty();
+}
+inline const std::string& ProductReview::description() const {
+  // @@protoc_insertion_point(field_get:oteldemo.ProductReview.description)
+  return _internal_description();
+}
+template <typename Arg_, typename... Args_>
+inline PROTOBUF_ALWAYS_INLINE void ProductReview::set_description(Arg_&& arg,
+                                                     Args_... args) {
+  PROTOBUF_TSAN_WRITE(&_impl_._tsan_detect_race);
+  ;
+  _impl_.description_.Set(static_cast<Arg_&&>(arg), args..., GetArenaForAllocation());
+  // @@protoc_insertion_point(field_set:oteldemo.ProductReview.description)
+}
+inline std::string* ProductReview::mutable_description() {
+  std::string* _s = _internal_mutable_description();
+  // @@protoc_insertion_point(field_mutable:oteldemo.ProductReview.description)
+  return _s;
+}
+inline const std::string& ProductReview::_internal_description() const {
+  PROTOBUF_TSAN_READ(&_impl_._tsan_detect_race);
+  return _impl_.description_.Get();
+}
+inline void ProductReview::_internal_set_description(const std::string& value) {
+  PROTOBUF_TSAN_WRITE(&_impl_._tsan_detect_race);
+  ;
+  _impl_.description_.Set(value, GetArenaForAllocation());
+}
+inline std::string* ProductReview::_internal_mutable_description() {
+  PROTOBUF_TSAN_WRITE(&_impl_._tsan_detect_race);
+  ;
+  return _impl_.description_.Mutable( GetArenaForAllocation());
+}
+inline std::string* ProductReview::release_description() {
+  PROTOBUF_TSAN_WRITE(&_impl_._tsan_detect_race);
+  // @@protoc_insertion_point(field_release:oteldemo.ProductReview.description)
+  return _impl_.description_.Release();
+}
+inline void ProductReview::set_allocated_description(std::string* value) {
+  PROTOBUF_TSAN_WRITE(&_impl_._tsan_detect_race);
+  _impl_.description_.SetAllocated(value, GetArenaForAllocation());
+  #ifdef PROTOBUF_FORCE_COPY_DEFAULT_STRING
+        if (_impl_.description_.IsDefault()) {
+          _impl_.description_.Set("", GetArenaForAllocation());
+        }
+  #endif  // PROTOBUF_FORCE_COPY_DEFAULT_STRING
+  // @@protoc_insertion_point(field_set_allocated:oteldemo.ProductReview.description)
+}
+
+// string score = 3;
+inline void ProductReview::clear_score() {
+  _impl_.score_.ClearToEmpty();
+}
+inline const std::string& ProductReview::score() const {
+  // @@protoc_insertion_point(field_get:oteldemo.ProductReview.score)
+  return _internal_score();
+}
+template <typename Arg_, typename... Args_>
+inline PROTOBUF_ALWAYS_INLINE void ProductReview::set_score(Arg_&& arg,
+                                                     Args_... args) {
+  PROTOBUF_TSAN_WRITE(&_impl_._tsan_detect_race);
+  ;
+  _impl_.score_.Set(static_cast<Arg_&&>(arg), args..., GetArenaForAllocation());
+  // @@protoc_insertion_point(field_set:oteldemo.ProductReview.score)
+}
+inline std::string* ProductReview::mutable_score() {
+  std::string* _s = _internal_mutable_score();
+  // @@protoc_insertion_point(field_mutable:oteldemo.ProductReview.score)
+  return _s;
+}
+inline const std::string& ProductReview::_internal_score() const {
+  PROTOBUF_TSAN_READ(&_impl_._tsan_detect_race);
+  return _impl_.score_.Get();
+}
+inline void ProductReview::_internal_set_score(const std::string& value) {
+  PROTOBUF_TSAN_WRITE(&_impl_._tsan_detect_race);
+  ;
+  _impl_.score_.Set(value, GetArenaForAllocation());
+}
+inline std::string* ProductReview::_internal_mutable_score() {
+  PROTOBUF_TSAN_WRITE(&_impl_._tsan_detect_race);
+  ;
+  return _impl_.score_.Mutable( GetArenaForAllocation());
+}
+inline std::string* ProductReview::release_score() {
+  PROTOBUF_TSAN_WRITE(&_impl_._tsan_detect_race);
+  // @@protoc_insertion_point(field_release:oteldemo.ProductReview.score)
+  return _impl_.score_.Release();
+}
+inline void ProductReview::set_allocated_score(std::string* value) {
+  PROTOBUF_TSAN_WRITE(&_impl_._tsan_detect_race);
+  _impl_.score_.SetAllocated(value, GetArenaForAllocation());
+  #ifdef PROTOBUF_FORCE_COPY_DEFAULT_STRING
+        if (_impl_.score_.IsDefault()) {
+          _impl_.score_.Set("", GetArenaForAllocation());
+        }
+  #endif  // PROTOBUF_FORCE_COPY_DEFAULT_STRING
+  // @@protoc_insertion_point(field_set_allocated:oteldemo.ProductReview.score)
+}
+
+// -------------------------------------------------------------------
+
+// GetProductReviewsRequest
+
+// string product_id = 1;
+inline void GetProductReviewsRequest::clear_product_id() {
+  _impl_.product_id_.ClearToEmpty();
+}
+inline const std::string& GetProductReviewsRequest::product_id() const {
+  // @@protoc_insertion_point(field_get:oteldemo.GetProductReviewsRequest.product_id)
+  return _internal_product_id();
+}
+template <typename Arg_, typename... Args_>
+inline PROTOBUF_ALWAYS_INLINE void GetProductReviewsRequest::set_product_id(Arg_&& arg,
+                                                     Args_... args) {
+  PROTOBUF_TSAN_WRITE(&_impl_._tsan_detect_race);
+  ;
+  _impl_.product_id_.Set(static_cast<Arg_&&>(arg), args..., GetArenaForAllocation());
+  // @@protoc_insertion_point(field_set:oteldemo.GetProductReviewsRequest.product_id)
+}
+inline std::string* GetProductReviewsRequest::mutable_product_id() {
+  std::string* _s = _internal_mutable_product_id();
+  // @@protoc_insertion_point(field_mutable:oteldemo.GetProductReviewsRequest.product_id)
+  return _s;
+}
+inline const std::string& GetProductReviewsRequest::_internal_product_id() const {
+  PROTOBUF_TSAN_READ(&_impl_._tsan_detect_race);
+  return _impl_.product_id_.Get();
+}
+inline void GetProductReviewsRequest::_internal_set_product_id(const std::string& value) {
+  PROTOBUF_TSAN_WRITE(&_impl_._tsan_detect_race);
+  ;
+  _impl_.product_id_.Set(value, GetArenaForAllocation());
+}
+inline std::string* GetProductReviewsRequest::_internal_mutable_product_id() {
+  PROTOBUF_TSAN_WRITE(&_impl_._tsan_detect_race);
+  ;
+  return _impl_.product_id_.Mutable( GetArenaForAllocation());
+}
+inline std::string* GetProductReviewsRequest::release_product_id() {
+  PROTOBUF_TSAN_WRITE(&_impl_._tsan_detect_race);
+  // @@protoc_insertion_point(field_release:oteldemo.GetProductReviewsRequest.product_id)
+  return _impl_.product_id_.Release();
+}
+inline void GetProductReviewsRequest::set_allocated_product_id(std::string* value) {
+  PROTOBUF_TSAN_WRITE(&_impl_._tsan_detect_race);
+  _impl_.product_id_.SetAllocated(value, GetArenaForAllocation());
+  #ifdef PROTOBUF_FORCE_COPY_DEFAULT_STRING
+        if (_impl_.product_id_.IsDefault()) {
+          _impl_.product_id_.Set("", GetArenaForAllocation());
+        }
+  #endif  // PROTOBUF_FORCE_COPY_DEFAULT_STRING
+  // @@protoc_insertion_point(field_set_allocated:oteldemo.GetProductReviewsRequest.product_id)
+}
+
+// -------------------------------------------------------------------
+
+// GetProductReviewsResponse
+
+// repeated .oteldemo.ProductReview product_reviews = 1;
+inline int GetProductReviewsResponse::_internal_product_reviews_size() const {
+  return _internal_product_reviews().size();
+}
+inline int GetProductReviewsResponse::product_reviews_size() const {
+  return _internal_product_reviews_size();
+}
+inline void GetProductReviewsResponse::clear_product_reviews() {
+  _internal_mutable_product_reviews()->Clear();
+}
+inline ::oteldemo::ProductReview* GetProductReviewsResponse::mutable_product_reviews(int index) {
+  // @@protoc_insertion_point(field_mutable:oteldemo.GetProductReviewsResponse.product_reviews)
+  return _internal_mutable_product_reviews()->Mutable(index);
+}
+inline ::google::protobuf::RepeatedPtrField< ::oteldemo::ProductReview >*
+GetProductReviewsResponse::mutable_product_reviews() {
+  // @@protoc_insertion_point(field_mutable_list:oteldemo.GetProductReviewsResponse.product_reviews)
+  PROTOBUF_TSAN_WRITE(&_impl_._tsan_detect_race);
+  return _internal_mutable_product_reviews();
+}
+inline const ::oteldemo::ProductReview& GetProductReviewsResponse::product_reviews(int index) const {
+  // @@protoc_insertion_point(field_get:oteldemo.GetProductReviewsResponse.product_reviews)
+    return _internal_product_reviews().Get(index);
+}
+inline ::oteldemo::ProductReview* GetProductReviewsResponse::add_product_reviews() {
+  PROTOBUF_TSAN_WRITE(&_impl_._tsan_detect_race);
+  ::oteldemo::ProductReview* _add = _internal_mutable_product_reviews()->Add();
+  // @@protoc_insertion_point(field_add:oteldemo.GetProductReviewsResponse.product_reviews)
+  return _add;
+}
+inline const ::google::protobuf::RepeatedPtrField< ::oteldemo::ProductReview >&
+GetProductReviewsResponse::product_reviews() const {
+  // @@protoc_insertion_point(field_list:oteldemo.GetProductReviewsResponse.product_reviews)
+  return _internal_product_reviews();
+}
+inline const ::google::protobuf::RepeatedPtrField<::oteldemo::ProductReview>&
+GetProductReviewsResponse::_internal_product_reviews() const {
+  PROTOBUF_TSAN_READ(&_impl_._tsan_detect_race);
+  return _impl_.product_reviews_;
+}
+inline ::google::protobuf::RepeatedPtrField<::oteldemo::ProductReview>*
+GetProductReviewsResponse::_internal_mutable_product_reviews() {
+  PROTOBUF_TSAN_READ(&_impl_._tsan_detect_race);
+  return &_impl_.product_reviews_;
+}
+
+// -------------------------------------------------------------------
+
+// GetAverageProductReviewScoreRequest
+
+// string product_id = 1;
+inline void GetAverageProductReviewScoreRequest::clear_product_id() {
+  _impl_.product_id_.ClearToEmpty();
+}
+inline const std::string& GetAverageProductReviewScoreRequest::product_id() const {
+  // @@protoc_insertion_point(field_get:oteldemo.GetAverageProductReviewScoreRequest.product_id)
+  return _internal_product_id();
+}
+template <typename Arg_, typename... Args_>
+inline PROTOBUF_ALWAYS_INLINE void GetAverageProductReviewScoreRequest::set_product_id(Arg_&& arg,
+                                                     Args_... args) {
+  PROTOBUF_TSAN_WRITE(&_impl_._tsan_detect_race);
+  ;
+  _impl_.product_id_.Set(static_cast<Arg_&&>(arg), args..., GetArenaForAllocation());
+  // @@protoc_insertion_point(field_set:oteldemo.GetAverageProductReviewScoreRequest.product_id)
+}
+inline std::string* GetAverageProductReviewScoreRequest::mutable_product_id() {
+  std::string* _s = _internal_mutable_product_id();
+  // @@protoc_insertion_point(field_mutable:oteldemo.GetAverageProductReviewScoreRequest.product_id)
+  return _s;
+}
+inline const std::string& GetAverageProductReviewScoreRequest::_internal_product_id() const {
+  PROTOBUF_TSAN_READ(&_impl_._tsan_detect_race);
+  return _impl_.product_id_.Get();
+}
+inline void GetAverageProductReviewScoreRequest::_internal_set_product_id(const std::string& value) {
+  PROTOBUF_TSAN_WRITE(&_impl_._tsan_detect_race);
+  ;
+  _impl_.product_id_.Set(value, GetArenaForAllocation());
+}
+inline std::string* GetAverageProductReviewScoreRequest::_internal_mutable_product_id() {
+  PROTOBUF_TSAN_WRITE(&_impl_._tsan_detect_race);
+  ;
+  return _impl_.product_id_.Mutable( GetArenaForAllocation());
+}
+inline std::string* GetAverageProductReviewScoreRequest::release_product_id() {
+  PROTOBUF_TSAN_WRITE(&_impl_._tsan_detect_race);
+  // @@protoc_insertion_point(field_release:oteldemo.GetAverageProductReviewScoreRequest.product_id)
+  return _impl_.product_id_.Release();
+}
+inline void GetAverageProductReviewScoreRequest::set_allocated_product_id(std::string* value) {
+  PROTOBUF_TSAN_WRITE(&_impl_._tsan_detect_race);
+  _impl_.product_id_.SetAllocated(value, GetArenaForAllocation());
+  #ifdef PROTOBUF_FORCE_COPY_DEFAULT_STRING
+        if (_impl_.product_id_.IsDefault()) {
+          _impl_.product_id_.Set("", GetArenaForAllocation());
+        }
+  #endif  // PROTOBUF_FORCE_COPY_DEFAULT_STRING
+  // @@protoc_insertion_point(field_set_allocated:oteldemo.GetAverageProductReviewScoreRequest.product_id)
+}
+
+// -------------------------------------------------------------------
+
+// GetAverageProductReviewScoreResponse
+
+// string average_score = 1;
+inline void GetAverageProductReviewScoreResponse::clear_average_score() {
+  _impl_.average_score_.ClearToEmpty();
+}
+inline const std::string& GetAverageProductReviewScoreResponse::average_score() const {
+  // @@protoc_insertion_point(field_get:oteldemo.GetAverageProductReviewScoreResponse.average_score)
+  return _internal_average_score();
+}
+template <typename Arg_, typename... Args_>
+inline PROTOBUF_ALWAYS_INLINE void GetAverageProductReviewScoreResponse::set_average_score(Arg_&& arg,
+                                                     Args_... args) {
+  PROTOBUF_TSAN_WRITE(&_impl_._tsan_detect_race);
+  ;
+  _impl_.average_score_.Set(static_cast<Arg_&&>(arg), args..., GetArenaForAllocation());
+  // @@protoc_insertion_point(field_set:oteldemo.GetAverageProductReviewScoreResponse.average_score)
+}
+inline std::string* GetAverageProductReviewScoreResponse::mutable_average_score() {
+  std::string* _s = _internal_mutable_average_score();
+  // @@protoc_insertion_point(field_mutable:oteldemo.GetAverageProductReviewScoreResponse.average_score)
+  return _s;
+}
+inline const std::string& GetAverageProductReviewScoreResponse::_internal_average_score() const {
+  PROTOBUF_TSAN_READ(&_impl_._tsan_detect_race);
+  return _impl_.average_score_.Get();
+}
+inline void GetAverageProductReviewScoreResponse::_internal_set_average_score(const std::string& value) {
+  PROTOBUF_TSAN_WRITE(&_impl_._tsan_detect_race);
+  ;
+  _impl_.average_score_.Set(value, GetArenaForAllocation());
+}
+inline std::string* GetAverageProductReviewScoreResponse::_internal_mutable_average_score() {
+  PROTOBUF_TSAN_WRITE(&_impl_._tsan_detect_race);
+  ;
+  return _impl_.average_score_.Mutable( GetArenaForAllocation());
+}
+inline std::string* GetAverageProductReviewScoreResponse::release_average_score() {
+  PROTOBUF_TSAN_WRITE(&_impl_._tsan_detect_race);
+  // @@protoc_insertion_point(field_release:oteldemo.GetAverageProductReviewScoreResponse.average_score)
+  return _impl_.average_score_.Release();
+}
+inline void GetAverageProductReviewScoreResponse::set_allocated_average_score(std::string* value) {
+  PROTOBUF_TSAN_WRITE(&_impl_._tsan_detect_race);
+  _impl_.average_score_.SetAllocated(value, GetArenaForAllocation());
+  #ifdef PROTOBUF_FORCE_COPY_DEFAULT_STRING
+        if (_impl_.average_score_.IsDefault()) {
+          _impl_.average_score_.Set("", GetArenaForAllocation());
+        }
+  #endif  // PROTOBUF_FORCE_COPY_DEFAULT_STRING
+  // @@protoc_insertion_point(field_set_allocated:oteldemo.GetAverageProductReviewScoreResponse.average_score)
+}
+
+// -------------------------------------------------------------------
+
+// AskProductAIAssistantRequest
+
+// string product_id = 1;
+inline void AskProductAIAssistantRequest::clear_product_id() {
+  _impl_.product_id_.ClearToEmpty();
+}
+inline const std::string& AskProductAIAssistantRequest::product_id() const {
+  // @@protoc_insertion_point(field_get:oteldemo.AskProductAIAssistantRequest.product_id)
+  return _internal_product_id();
+}
+template <typename Arg_, typename... Args_>
+inline PROTOBUF_ALWAYS_INLINE void AskProductAIAssistantRequest::set_product_id(Arg_&& arg,
+                                                     Args_... args) {
+  PROTOBUF_TSAN_WRITE(&_impl_._tsan_detect_race);
+  ;
+  _impl_.product_id_.Set(static_cast<Arg_&&>(arg), args..., GetArenaForAllocation());
+  // @@protoc_insertion_point(field_set:oteldemo.AskProductAIAssistantRequest.product_id)
+}
+inline std::string* AskProductAIAssistantRequest::mutable_product_id() {
+  std::string* _s = _internal_mutable_product_id();
+  // @@protoc_insertion_point(field_mutable:oteldemo.AskProductAIAssistantRequest.product_id)
+  return _s;
+}
+inline const std::string& AskProductAIAssistantRequest::_internal_product_id() const {
+  PROTOBUF_TSAN_READ(&_impl_._tsan_detect_race);
+  return _impl_.product_id_.Get();
+}
+inline void AskProductAIAssistantRequest::_internal_set_product_id(const std::string& value) {
+  PROTOBUF_TSAN_WRITE(&_impl_._tsan_detect_race);
+  ;
+  _impl_.product_id_.Set(value, GetArenaForAllocation());
+}
+inline std::string* AskProductAIAssistantRequest::_internal_mutable_product_id() {
+  PROTOBUF_TSAN_WRITE(&_impl_._tsan_detect_race);
+  ;
+  return _impl_.product_id_.Mutable( GetArenaForAllocation());
+}
+inline std::string* AskProductAIAssistantRequest::release_product_id() {
+  PROTOBUF_TSAN_WRITE(&_impl_._tsan_detect_race);
+  // @@protoc_insertion_point(field_release:oteldemo.AskProductAIAssistantRequest.product_id)
+  return _impl_.product_id_.Release();
+}
+inline void AskProductAIAssistantRequest::set_allocated_product_id(std::string* value) {
+  PROTOBUF_TSAN_WRITE(&_impl_._tsan_detect_race);
+  _impl_.product_id_.SetAllocated(value, GetArenaForAllocation());
+  #ifdef PROTOBUF_FORCE_COPY_DEFAULT_STRING
+        if (_impl_.product_id_.IsDefault()) {
+          _impl_.product_id_.Set("", GetArenaForAllocation());
+        }
+  #endif  // PROTOBUF_FORCE_COPY_DEFAULT_STRING
+  // @@protoc_insertion_point(field_set_allocated:oteldemo.AskProductAIAssistantRequest.product_id)
+}
+
+// string question = 2;
+inline void AskProductAIAssistantRequest::clear_question() {
+  _impl_.question_.ClearToEmpty();
+}
+inline const std::string& AskProductAIAssistantRequest::question() const {
+  // @@protoc_insertion_point(field_get:oteldemo.AskProductAIAssistantRequest.question)
+  return _internal_question();
+}
+template <typename Arg_, typename... Args_>
+inline PROTOBUF_ALWAYS_INLINE void AskProductAIAssistantRequest::set_question(Arg_&& arg,
+                                                     Args_... args) {
+  PROTOBUF_TSAN_WRITE(&_impl_._tsan_detect_race);
+  ;
+  _impl_.question_.Set(static_cast<Arg_&&>(arg), args..., GetArenaForAllocation());
+  // @@protoc_insertion_point(field_set:oteldemo.AskProductAIAssistantRequest.question)
+}
+inline std::string* AskProductAIAssistantRequest::mutable_question() {
+  std::string* _s = _internal_mutable_question();
+  // @@protoc_insertion_point(field_mutable:oteldemo.AskProductAIAssistantRequest.question)
+  return _s;
+}
+inline const std::string& AskProductAIAssistantRequest::_internal_question() const {
+  PROTOBUF_TSAN_READ(&_impl_._tsan_detect_race);
+  return _impl_.question_.Get();
+}
+inline void AskProductAIAssistantRequest::_internal_set_question(const std::string& value) {
+  PROTOBUF_TSAN_WRITE(&_impl_._tsan_detect_race);
+  ;
+  _impl_.question_.Set(value, GetArenaForAllocation());
+}
+inline std::string* AskProductAIAssistantRequest::_internal_mutable_question() {
+  PROTOBUF_TSAN_WRITE(&_impl_._tsan_detect_race);
+  ;
+  return _impl_.question_.Mutable( GetArenaForAllocation());
+}
+inline std::string* AskProductAIAssistantRequest::release_question() {
+  PROTOBUF_TSAN_WRITE(&_impl_._tsan_detect_race);
+  // @@protoc_insertion_point(field_release:oteldemo.AskProductAIAssistantRequest.question)
+  return _impl_.question_.Release();
+}
+inline void AskProductAIAssistantRequest::set_allocated_question(std::string* value) {
+  PROTOBUF_TSAN_WRITE(&_impl_._tsan_detect_race);
+  _impl_.question_.SetAllocated(value, GetArenaForAllocation());
+  #ifdef PROTOBUF_FORCE_COPY_DEFAULT_STRING
+        if (_impl_.question_.IsDefault()) {
+          _impl_.question_.Set("", GetArenaForAllocation());
+        }
+  #endif  // PROTOBUF_FORCE_COPY_DEFAULT_STRING
+  // @@protoc_insertion_point(field_set_allocated:oteldemo.AskProductAIAssistantRequest.question)
+}
+
+// -------------------------------------------------------------------
+
+// AskProductAIAssistantResponse
+
+// string response = 1;
+inline void AskProductAIAssistantResponse::clear_response() {
+  _impl_.response_.ClearToEmpty();
+}
+inline const std::string& AskProductAIAssistantResponse::response() const {
+  // @@protoc_insertion_point(field_get:oteldemo.AskProductAIAssistantResponse.response)
+  return _internal_response();
+}
+template <typename Arg_, typename... Args_>
+inline PROTOBUF_ALWAYS_INLINE void AskProductAIAssistantResponse::set_response(Arg_&& arg,
+                                                     Args_... args) {
+  PROTOBUF_TSAN_WRITE(&_impl_._tsan_detect_race);
+  ;
+  _impl_.response_.Set(static_cast<Arg_&&>(arg), args..., GetArenaForAllocation());
+  // @@protoc_insertion_point(field_set:oteldemo.AskProductAIAssistantResponse.response)
+}
+inline std::string* AskProductAIAssistantResponse::mutable_response() {
+  std::string* _s = _internal_mutable_response();
+  // @@protoc_insertion_point(field_mutable:oteldemo.AskProductAIAssistantResponse.response)
+  return _s;
+}
+inline const std::string& AskProductAIAssistantResponse::_internal_response() const {
+  PROTOBUF_TSAN_READ(&_impl_._tsan_detect_race);
+  return _impl_.response_.Get();
+}
+inline void AskProductAIAssistantResponse::_internal_set_response(const std::string& value) {
+  PROTOBUF_TSAN_WRITE(&_impl_._tsan_detect_race);
+  ;
+  _impl_.response_.Set(value, GetArenaForAllocation());
+}
+inline std::string* AskProductAIAssistantResponse::_internal_mutable_response() {
+  PROTOBUF_TSAN_WRITE(&_impl_._tsan_detect_race);
+  ;
+  return _impl_.response_.Mutable( GetArenaForAllocation());
+}
+inline std::string* AskProductAIAssistantResponse::release_response() {
+  PROTOBUF_TSAN_WRITE(&_impl_._tsan_detect_race);
+  // @@protoc_insertion_point(field_release:oteldemo.AskProductAIAssistantResponse.response)
+  return _impl_.response_.Release();
+}
+inline void AskProductAIAssistantResponse::set_allocated_response(std::string* value) {
+  PROTOBUF_TSAN_WRITE(&_impl_._tsan_detect_race);
+  _impl_.response_.SetAllocated(value, GetArenaForAllocation());
+  #ifdef PROTOBUF_FORCE_COPY_DEFAULT_STRING
+        if (_impl_.response_.IsDefault()) {
+          _impl_.response_.Set("", GetArenaForAllocation());
+        }
+  #endif  // PROTOBUF_FORCE_COPY_DEFAULT_STRING
+  // @@protoc_insertion_point(field_set_allocated:oteldemo.AskProductAIAssistantResponse.response)
 }
 
 // -------------------------------------------------------------------
