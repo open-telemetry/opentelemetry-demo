@@ -1,41 +1,17 @@
 // Copyright The OpenTelemetry Authors
 // SPDX-License-Identifier: Apache-2.0
 
-const opentelemetry = require('@opentelemetry/sdk-node');
-const {getNodeAutoInstrumentations} = require('@opentelemetry/auto-instrumentations-node');
-const {OTLPTraceExporter} = require('@opentelemetry/exporter-trace-otlp-grpc');
-const {OTLPMetricExporter} = require('@opentelemetry/exporter-metrics-otlp-grpc');
-const {PeriodicExportingMetricReader} = require('@opentelemetry/sdk-metrics');
-const {alibabaCloudEcsDetector} = require('@opentelemetry/resource-detector-alibaba-cloud');
-const {awsEc2Detector, awsEksDetector} = require('@opentelemetry/resource-detector-aws');
-const {containerDetector} = require('@opentelemetry/resource-detector-container');
-const {gcpDetector} = require('@opentelemetry/resource-detector-gcp');
-const {envDetector, hostDetector, osDetector, processDetector} = require('@opentelemetry/resources');
+// This file previously initialized the OpenTelemetry SDK for the Node.js server-side (Next.js SSR).
+// It has been removed to allow external SDK attachment at runtime via environment variables.
+// 
+// To enable OpenTelemetry instrumentation, attach an external SDK using one of these methods:
+// 1. Use the OpenTelemetry Node.js auto-instrumentation:
+//    node --require @opentelemetry/auto-instrumentations-node/register server.js
+// 2. Set environment variables to configure OTLP exporters:
+//    OTEL_EXPORTER_OTLP_ENDPOINT=http://otel-collector:4318
+//    OTEL_SERVICE_NAME=frontend
+// 3. Use a vendor-specific SDK or agent
+//
+// The application code uses OpenTelemetry API calls which will emit signals
+// only when an SDK is attached at runtime.
 
-const sdk = new opentelemetry.NodeSDK({
-  traceExporter: new OTLPTraceExporter(),
-  instrumentations: [
-    getNodeAutoInstrumentations({
-      // disable fs instrumentation to reduce noise
-      '@opentelemetry/instrumentation-fs': {
-        enabled: false,
-      },
-    })
-  ],
-  metricReader: new PeriodicExportingMetricReader({
-    exporter: new OTLPMetricExporter(),
-  }),
-  resourceDetectors: [
-    containerDetector,
-    envDetector,
-    hostDetector,
-    osDetector,
-    processDetector,
-    alibabaCloudEcsDetector,
-    awsEksDetector,
-    awsEc2Detector,
-    gcpDetector,
-  ],
-});
-
-sdk.start();

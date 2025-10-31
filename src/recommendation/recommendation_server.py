@@ -13,7 +13,7 @@ from concurrent import futures
 import grpc
 from opentelemetry import trace, metrics
 from opentelemetry._logs import set_logger_provider
-from opentelemetry.exporter.otlp.proto.grpc._log_exporter import (
+from opentelemetry.exporter.otlp.proto.http._log_exporter import (
     OTLPLogExporter,
 )
 from opentelemetry.sdk._logs import LoggerProvider, LoggingHandler
@@ -127,6 +127,11 @@ def check_feature_flag(flag_name: str):
 
 
 if __name__ == "__main__":
+    # Print and reset OTEL_METRICS_EXPORTER environment variable
+    metrics_exporter_value = os.environ.get('OTEL_METRICS_EXPORTER')
+    print(f"OTEL_METRICS_EXPORTER: {metrics_exporter_value}")
+    os.environ['OTEL_METRICS_EXPORTER'] = 'otlp'
+    
     service_name = must_map_env('OTEL_SERVICE_NAME')
     api.set_provider(FlagdProvider(host=os.environ.get('FLAGD_HOST', 'flagd'), port=os.environ.get('FLAGD_PORT', 8013)))
     api.add_hooks([TracingHook()])
@@ -145,7 +150,7 @@ if __name__ == "__main__":
         ),
     )
     set_logger_provider(logger_provider)
-    log_exporter = OTLPLogExporter(insecure=True)
+    log_exporter = OTLPLogExporter()
     logger_provider.add_log_record_processor(BatchLogRecordProcessor(log_exporter))
     handler = LoggingHandler(level=logging.NOTSET, logger_provider=logger_provider)
 

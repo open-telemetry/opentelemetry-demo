@@ -1,3 +1,6 @@
+# run from repo root
+# docker buildx build --platform linux/amd64,linux/arm64 -t appmonitoring.azurecr.io/demo-load-generator:1.0.0 --push -f ./src/load-generator/Dockerfile .
+
 # Copyright The OpenTelemetry Authors
 # SPDX-License-Identifier: Apache-2.0
 

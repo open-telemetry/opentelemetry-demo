@@ -1,3 +1,7 @@
+# run from repo root
+# docker buildx build --platform linux/amd64,linux/arm64 -t appmonitoring.azurecr.io/demo-payment:1.0.0 --push -f ./src/payment/Dockerfile .
+
+
 # Copyright The OpenTelemetry Authors
 # SPDX-License-Identifier: Apache-2.0
 
@@ -24,8 +28,7 @@ COPY ./pb/demo.proto demo.proto
 COPY ./src/payment/charge.js charge.js
 COPY ./src/payment/index.js index.js
 COPY ./src/payment/logger.js logger.js
-COPY ./src/payment/opentelemetry.js opentelemetry.js
 
 EXPOSE ${PAYMENT_PORT}
 
-CMD ["--require=./opentelemetry.js", "index.js"]
+CMD ["index.js"]
