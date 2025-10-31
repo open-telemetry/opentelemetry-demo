@@ -2,15 +2,16 @@
 # Source: nr-k8s-otel-collector/charts/kube-state-metrics/templates/serviceaccount.yaml
 apiVersion: v1
 kind: ServiceAccount
+automountServiceAccountToken: true
 metadata:
-  labels:    
-    helm.sh/chart: kube-state-metrics-5.18.0
+  labels:
+    helm.sh/chart: kube-state-metrics-6.1.5
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/component: metrics
     app.kubernetes.io/part-of: kube-state-metrics
     app.kubernetes.io/name: kube-state-metrics
     app.kubernetes.io/instance: nr-k8s-otel-collector
-    app.kubernetes.io/version: "2.11.0"
+    app.kubernetes.io/version: "2.16.0"
   name: nr-k8s-otel-collector-kube-state-metrics
   namespace: opentelemetry-demo
 ---
@@ -25,7 +26,7 @@ metadata:
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: nr-k8s-otel-collector
     app.kubernetes.io/version: 1.2.0
-    helm.sh/chart: nr-k8s-otel-collector-0.8.37
+    helm.sh/chart: nr-k8s-otel-collector-0.8.53
   annotations:
 ---
 # Source: nr-k8s-otel-collector/templates/daemonset-configmap.yaml
@@ -39,11 +40,11 @@ metadata:
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: nr-k8s-otel-collector
     app.kubernetes.io/version: 1.2.0
-    helm.sh/chart: nr-k8s-otel-collector-0.8.37
+    helm.sh/chart: nr-k8s-otel-collector-0.8.53
 data:
   daemonset-config.yaml: |
     receivers:
-      
+
       hostmetrics:
         # TODO (chris): this is a linux specific configuration
         root_path: /hostfs
@@ -103,6 +104,16 @@ data:
         metrics:
           k8s.container.cpu_limit_utilization:
             enabled: true
+          k8s.pod.cpu_limit_utilization:
+            enabled: true
+          k8s.pod.cpu_request_utilization:
+            enabled: true
+          k8s.pod.memory_limit_utilization:
+            enabled: true
+          k8s.pod.memory_request_utilization:
+            enabled: true
+
+
 
       prometheus:
         config:
@@ -179,8 +190,8 @@ data:
 
 
     processors:
-      
-      
+
+
 
       groupbyattrs:
         keys:
@@ -261,6 +272,14 @@ data:
           - delete_key(resource.attributes, "persistentvolume")
           - delete_key(resource.attributes, "persistentvolumeclaim")
 
+      transform/extract_runtime:
+        metric_statements:
+          - context: datapoint
+            conditions:
+              - IsMatch(attributes["container_id"], ".*://.*")
+            statements:
+              - set(attributes["runtime"], Split(attributes["container_id"], "://")[0])
+              - set(attributes["container_id"], Split(attributes["container_id"], "://")[1])
 
       metricstransform/ldm:
         transforms:
@@ -301,6 +320,27 @@ data:
               value_actions:
               - value: 'false'
                 new_value: 'true'
+
+          - include: k8s\.pod\.(cpu|memory)_(limit|request)_utilization
+            action: update
+            match_type: regexp
+            operations:
+            - action: update_label
+              label: low.data.mode
+              value_actions:
+              - value: 'false'
+                new_value: 'true'
+
+
+      transform/collector:
+        metric_statements:
+          - set(datapoint.attributes["low.data.mode"], "true") where datapoint.attributes["job_label"] == "otel-collector-daemonset"
+
+      metricstransform/k8s_cluster_info:
+        transforms:
+          - include: kubernetes_build_info
+            action: update
+            new_name: k8s.cluster.info
 
       metricstransform/cadvisor:
         transforms:
@@ -370,6 +410,14 @@ data:
               value_actions:
               - value: 'false'
                 new_value: 'true'
+          - include: k8s.cluster.info
+            action: update
+            operations:
+            - action: update_label
+              label: low.data.mode
+              value_actions:
+                - value: 'false'
+                  new_value: 'true'
 
       metricstransform/hostmetrics:
         transforms:
@@ -429,7 +477,7 @@ data:
         log_statements:
           - context: log
             statements:
-              - truncate_all(attributes, 4095)
+              - truncate_all(log.attributes, 4095)
               - truncate_all(resource.attributes, 4095)
 
       # group system.cpu metrics by cpu
@@ -540,7 +588,7 @@ data:
             value: opentelemetry-demo
           - key: "newrelic.chart.version"
             action: upsert
-            value: 0.8.37
+            value: 0.8.53
           - key: newrelic.entity.type
             action: upsert
             value: "k8s"
@@ -549,14 +597,14 @@ data:
         metric_statements:
           - context: metric
             statements:
-              - set(description, "")
-              - set(unit, "")
+              - set(metric.description, "")
+              - set(metric.unit, "")
           - context: datapoint
             statements:
-              - delete_key(attributes, "id")
-              - delete_key(attributes, "name")
-              - delete_key(attributes, "interface")
-              - delete_key(attributes, "cpu")
+              - delete_key(datapoint.attributes, "id")
+              - delete_key(datapoint.attributes, "name")
+              - delete_key(datapoint.attributes, "interface")
+              - delete_key(datapoint.attributes, "cpu")
 
       resource/low_data_mode_inator:
         attributes:
@@ -611,8 +659,8 @@ data:
         send_batch_size : 800
 
     exporters:
-      
-      
+
+
 
       otlphttp/newrelic:
         endpoint: "https://otlp.nr-data.net"
@@ -620,7 +668,7 @@ data:
           api-key: ${env:NR_LICENSE_KEY}
 
     connectors:
-      
+
 
       routing/nr_logs_pipelines:
         default_pipelines: [logs/pipeline]
@@ -677,23 +725,24 @@ data:
 
     service:
       pipelines:
-        
+
         metrics/ingress:
           receivers:
             - hostmetrics
             - kubeletstats
             - prometheus
           processors:
-            
+
           exporters:
             - routing/nr_metrics_pipelines
-            
+
 
         metrics/nr:
           receivers:
             - routing/nr_metrics_pipelines
           processors:
             - memory_limiter
+            - metricstransform/k8s_cluster_info
             - metricstransform/ldm
             - metricstransform/kubeletstats
             - metricstransform/cadvisor
@@ -726,9 +775,11 @@ data:
             - routing/nr_metrics_pipelines
           processors:
             - memory_limiter
+            - metricstransform/k8s_cluster_info
             - metricstransform/ldm
             - metricstransform/cadvisor
             - metricstransform/kubelet
+            - transform/collector
             - filter/exclude_metrics_low_data_mode
             - filter/nr_exclude_container_zero_values
             - transform/truncate
@@ -756,19 +807,20 @@ data:
           receivers:
             - routing/metrics_egress
           processors:
-            
+            - transform/extract_runtime
+
             - batch
           exporters:
             - otlphttp/newrelic
-            
+
         logs/ingress:
           receivers:
             - filelog
           processors:
-            
+
           exporters:
             - routing/nr_logs_pipelines
-            
+
 
         logs/pipeline:
           receivers:
@@ -785,7 +837,7 @@ data:
           receivers:
             - routing/logs_egress
           processors:
-            
+
             - batch
           exporters:
             - otlphttp/newrelic
@@ -801,15 +853,17 @@ metadata:
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: nr-k8s-otel-collector
     app.kubernetes.io/version: 1.2.0
-    helm.sh/chart: nr-k8s-otel-collector-0.8.37
+    helm.sh/chart: nr-k8s-otel-collector-0.8.53
 data:
   deployment-config.yaml: |
     receivers:
-      
+
       otlp:
         protocols:
           http:
             endpoint: ${env:MY_POD_IP}:4318
+          grpc:
+            endpoint: ${env:MY_POD_IP}:4317
       k8s_events:
       prometheus/ksm:
         config:
@@ -934,8 +988,29 @@ data:
                 replacement: scheduler
 
     processors:
-      
-      
+
+
+
+      transform/promote_job_label:
+        metric_statements:
+        - context: datapoint
+          statements:
+          - set(instrumentation_scope.attributes["job_label"], datapoint.attributes["job_label"]) where datapoint.attributes["job_label"] != nil
+
+      transform/remove_routing_metadata:
+        metric_statements:
+          - context: metric
+            statements:
+              - delete_key(instrumentation_scope.attributes, "job_label")
+
+      transform/extract_runtime:
+        metric_statements:
+          - context: datapoint
+            conditions:
+              - IsMatch(attributes["container_id"], ".*://.*")
+            statements:
+              - set(attributes["runtime"], Split(attributes["container_id"], "://")[0])
+              - set(attributes["container_id"], Split(attributes["container_id"], "://")[1])
 
       groupbyattrs:
         keys:
@@ -1073,6 +1148,14 @@ data:
               - value: 'false'
                 new_value: 'true'
 
+      transform/convert_timestamp:
+        metric_statements:
+          - context: datapoint
+            conditions:
+              - IsMatch(metric.name, "kube_pod_container_status_last_terminated_timestamp")
+            statements:
+              - set(datapoint.attributes["kube_pod_container_status_last_terminated_timestamp_formatted"], FormatTime(Unix(Int(datapoint.value_double)), "%Y-%m-%dT%H:%M:%SZ"))
+
       metricstransform/ksm:
         transforms:
           - include: kube_cronjob_(created|spec_suspend|status_(active|last_schedule_time))
@@ -1147,7 +1230,7 @@ data:
               value_actions:
               - value: 'false'
                 new_value: 'true'
-          - include: kube_pod_container_(info|resource_(limits|requests)|status_(phase|ready|restarts_total|waiting_reason))
+          - include: kube_pod_container_(info|resource_(limits|requests)|status_(phase|ready|restarts_total|waiting_reason|last_terminated_timestamp|last_terminated_exitcode|last_terminated_reason))
             action: update
             match_type: regexp
             operations:
@@ -1156,7 +1239,7 @@ data:
               value_actions:
               - value: 'false'
                 new_value: 'true'
-          - include: ^kube_pod_(owner|created|info|status_(phase|ready|scheduled)|start_time)$$
+          - include: ^kube_pod_(owner|created|info|status_(phase|ready|scheduled)|start_time|deletion_timestamp)$$
             action: update
             match_type: regexp
             operations:
@@ -1267,7 +1350,7 @@ data:
             value: opentelemetry-demo
           - key: "newrelic.chart.version"
             action: upsert
-            value: 0.8.37
+            value: 0.8.53
           - key: newrelic.entity.type
             action: upsert
             value: "k8s"
@@ -1285,20 +1368,20 @@ data:
             value: opentelemetry-demo
           - key: "newrelic.chart.version"
             action: upsert
-            value: 0.8.37
+            value: 0.8.53
 
       transform/events:
         log_statements:
           - context: log
             statements:
-              - set(attributes["event.source.host"], resource.attributes["k8s.node.name"])
+              - set(log.attributes["event.source.host"], resource.attributes["k8s.node.name"])
 
       transform/low_data_mode_inator:
         metric_statements:
           - context: metric
             statements:
-              - set(description, "")
-              - set(unit, "")
+              - set(metric.description, "")
+              - set(metric.unit, "")
 
       resource/low_data_mode_inator:
         attributes:
@@ -1314,6 +1397,10 @@ data:
             action: delete
 
       cumulativetodelta:
+        exclude:
+          metrics:
+            - 'kube_pod_container_status_restarts_total'
+          match_type: strict
 
       k8sattributes/ksm:
         # Metadata attached by this processor is reliant on the uid & pod name. This would be sufficient for most types
@@ -1435,15 +1522,15 @@ data:
         send_batch_size : 800
 
     exporters:
-      
-      
+
+
       otlphttp/newrelic:
         endpoint: "https://otlp.nr-data.net"
         headers:
           api-key: ${env:NR_LICENSE_KEY}
 
     connectors:
-      
+
 
       routing/nr_logs_pipelines:
         default_pipelines: [logs/pipeline]
@@ -1462,7 +1549,7 @@ data:
       routing/metrics_egress:
         default_pipelines: [metrics/egress]
         table:
-          - context: datapoint
+          - context: metric
             condition: "true"
             pipelines: [metrics/egress]
 
@@ -1470,31 +1557,32 @@ data:
         default_pipelines: [metrics/default]
         error_mode: propagate
         table:
-          - context: datapoint
-            condition: attributes["job_label"] == "kube-state-metrics"
+          - context: metric
+            condition: instrumentation_scope.attributes["job_label"] == "kube-state-metrics"
             pipelines: [metrics/nr_ksm]
-          - context: datapoint
-            condition: attributes["job_label"] == "apiserver"
+          - context: metric
+            condition: instrumentation_scope.attributes["job_label"] == "apiserver"
             pipelines: [metrics/nr_controlplane]
-          - context: datapoint
-            condition: attributes["job_label"] == "controller-manager"
+          - context: metric
+            condition: instrumentation_scope.attributes["job_label"] == "controller-manager"
             pipelines: [metrics/nr_controlplane]
-          - context: datapoint
-            condition: attributes["job_label"] == "scheduler"
+          - context: metric
+            condition: instrumentation_scope.attributes["job_label"] == "scheduler"
             pipelines: [metrics/nr_controlplane]
 
     service:
       pipelines:
-        
+
         metrics/ingress:
           receivers:
             - prometheus/ksm
             - prometheus/controlplane
           processors:
-            
+
+            - transform/promote_job_label
           exporters:
             - routing/nr_metrics_pipelines
-            
+
 
         metrics/nr_ksm:
           receivers:
@@ -1505,6 +1593,7 @@ data:
             - filter/exclude_zero_value_kube_node_status_condition
             - filter/exclude_zero_value_kube_persistentvolumeclaim_status_phase
             - filter/nr_exclude_zero_value_kube_pod_container_deployment_statuses
+            - transform/convert_timestamp
             - metricstransform/ldm
             - metricstransform/k8s_cluster_info_ldm
             - metricstransform/ksm
@@ -1550,19 +1639,21 @@ data:
           receivers:
             - routing/metrics_egress
           processors:
-            
+            - transform/remove_routing_metadata
+            - transform/extract_runtime
+
             - batch
           exporters:
             - otlphttp/newrelic
-            
+
         logs/ingress:
           receivers:
             - k8s_events
           processors:
-            
+
           exporters:
             - routing/nr_logs_pipelines
-            
+
         logs/pipeline:
           receivers:
             - routing/nr_logs_pipelines
@@ -1577,7 +1668,7 @@ data:
           receivers:
             - routing/logs_egress
           processors:
-            
+
             - batch
           exporters:
             - otlphttp/newrelic
@@ -1586,14 +1677,14 @@ data:
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRole
 metadata:
-  labels:    
-    helm.sh/chart: kube-state-metrics-5.18.0
+  labels:
+    helm.sh/chart: kube-state-metrics-6.1.5
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/component: metrics
     app.kubernetes.io/part-of: kube-state-metrics
     app.kubernetes.io/name: kube-state-metrics
     app.kubernetes.io/instance: nr-k8s-otel-collector
-    app.kubernetes.io/version: "2.11.0"
+    app.kubernetes.io/version: "2.16.0"
   name: nr-k8s-otel-collector-kube-state-metrics
 rules:
 
@@ -1612,12 +1703,12 @@ rules:
   - cronjobs
   verbs: ["list", "watch"]
 
-- apiGroups: ["extensions", "apps"]
+- apiGroups: ["apps"]
   resources:
   - daemonsets
   verbs: ["list", "watch"]
 
-- apiGroups: ["extensions", "apps"]
+- apiGroups: ["apps"]
   resources:
   - deployments
   verbs: ["list", "watch"]
@@ -1632,7 +1723,7 @@ rules:
   - horizontalpodautoscalers
   verbs: ["list", "watch"]
 
-- apiGroups: ["extensions", "networking.k8s.io"]
+- apiGroups: ["networking.k8s.io"]
   resources:
   - ingresses
   verbs: ["list", "watch"]
@@ -1692,7 +1783,7 @@ rules:
   - pods
   verbs: ["list", "watch"]
 
-- apiGroups: ["extensions", "apps"]
+- apiGroups: ["apps"]
   resources:
   - replicasets
   verbs: ["list", "watch"]
@@ -1747,7 +1838,7 @@ metadata:
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: nr-k8s-otel-collector
     app.kubernetes.io/version: 1.2.0
-    helm.sh/chart: nr-k8s-otel-collector-0.8.37
+    helm.sh/chart: nr-k8s-otel-collector-0.8.53
 rules:
   - apiGroups:
     - ""
@@ -1824,14 +1915,14 @@ rules:
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRoleBinding
 metadata:
-  labels:    
-    helm.sh/chart: kube-state-metrics-5.18.0
+  labels:
+    helm.sh/chart: kube-state-metrics-6.1.5
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/component: metrics
     app.kubernetes.io/part-of: kube-state-metrics
     app.kubernetes.io/name: kube-state-metrics
     app.kubernetes.io/instance: nr-k8s-otel-collector
-    app.kubernetes.io/version: "2.11.0"
+    app.kubernetes.io/version: "2.16.0"
   name: nr-k8s-otel-collector-kube-state-metrics
 roleRef:
   apiGroup: rbac.authorization.k8s.io
@@ -1852,7 +1943,7 @@ metadata:
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: nr-k8s-otel-collector
     app.kubernetes.io/version: 1.2.0
-    helm.sh/chart: nr-k8s-otel-collector-0.8.37
+    helm.sh/chart: nr-k8s-otel-collector-0.8.53
 subjects:
   - kind: ServiceAccount
     name: nr-k8s-otel-collector
@@ -1868,14 +1959,14 @@ kind: Service
 metadata:
   name: nr-k8s-otel-collector-kube-state-metrics
   namespace: opentelemetry-demo
-  labels:    
-    helm.sh/chart: kube-state-metrics-5.18.0
+  labels:
+    helm.sh/chart: kube-state-metrics-6.1.5
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/component: metrics
     app.kubernetes.io/part-of: kube-state-metrics
     app.kubernetes.io/name: kube-state-metrics
     app.kubernetes.io/instance: nr-k8s-otel-collector
-    app.kubernetes.io/version: "2.11.0"
+    app.kubernetes.io/version: "2.16.0"
   annotations:
 spec:
   type: "ClusterIP"
@@ -1884,8 +1975,8 @@ spec:
     protocol: TCP
     port: 8080
     targetPort: 8080
-  
-  selector:    
+
+  selector:
     app.kubernetes.io/name: kube-state-metrics
     app.kubernetes.io/instance: nr-k8s-otel-collector
 ---
@@ -1900,7 +1991,7 @@ metadata:
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: nr-k8s-otel-collector
     app.kubernetes.io/version: 1.2.0
-    helm.sh/chart: nr-k8s-otel-collector-0.8.37
+    helm.sh/chart: nr-k8s-otel-collector-0.8.53
 spec:
   type: ClusterIP
   ports:
@@ -1908,6 +1999,10 @@ spec:
       port: 4318
       protocol: TCP
       targetPort: 4318
+    - name: otlp-grpc
+      port: 4317
+      protocol: TCP
+      targetPort: 4317
   selector:
     app.kubernetes.io/instance: nr-k8s-otel-collector
     app.kubernetes.io/name: nr-k8s-otel-collector
@@ -1925,7 +2020,7 @@ metadata:
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: nr-k8s-otel-collector
     app.kubernetes.io/version: 1.2.0
-    helm.sh/chart: nr-k8s-otel-collector-0.8.37
+    helm.sh/chart: nr-k8s-otel-collector-0.8.53
 spec:
   selector:
     matchLabels:
@@ -1939,16 +2034,27 @@ spec:
         app.kubernetes.io/name: nr-k8s-otel-collector
         component: daemonset
       annotations:
-        checksum/config: c36d3028f2cac3a3f6e88c58fa2124486610071860657161bed7998fc77cc5e6
+        checksum/config: 795fdbea98b7bf6577636fc3eba5696c87341be8b7d42d62374b753ef73f659d
     spec:
       serviceAccountName: nr-k8s-otel-collector
       containers:
         - name: otel-collector-daemonset
           securityContext:
-            privileged: true
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+              - ALL
+            privileged: false
+            readOnlyRootFilesystem: true
+            runAsNonRoot: true
+            runAsUser: 1001
           image: "newrelic/nrdot-collector-k8s:1.2.0"
           imagePullPolicy: IfNotPresent
-          args: ["--config", "/config/daemonset-config.yaml", "--feature-gates","receiver.kubeletstats.enableCPUUsageMetrics"]
+          args:
+            - --config
+            - /config/daemonset-config.yaml
+            - --feature-gates
+            - receiver.kubeletstats.enableCPUUsageMetrics
           resources:
             {}
           env:
@@ -2004,17 +2110,17 @@ kind: Deployment
 metadata:
   name: nr-k8s-otel-collector-kube-state-metrics
   namespace: opentelemetry-demo
-  labels:    
-    helm.sh/chart: kube-state-metrics-5.18.0
+  labels:
+    helm.sh/chart: kube-state-metrics-6.1.5
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/component: metrics
     app.kubernetes.io/part-of: kube-state-metrics
     app.kubernetes.io/name: kube-state-metrics
     app.kubernetes.io/instance: nr-k8s-otel-collector
-    app.kubernetes.io/version: "2.11.0"
+    app.kubernetes.io/version: "2.16.0"
 spec:
   selector:
-    matchLabels:      
+    matchLabels:
       app.kubernetes.io/name: kube-state-metrics
       app.kubernetes.io/instance: nr-k8s-otel-collector
   replicas: 1
@@ -2023,15 +2129,16 @@ spec:
   revisionHistoryLimit: 10
   template:
     metadata:
-      labels:        
-        helm.sh/chart: kube-state-metrics-5.18.0
+      labels:
+        helm.sh/chart: kube-state-metrics-6.1.5
         app.kubernetes.io/managed-by: Helm
         app.kubernetes.io/component: metrics
         app.kubernetes.io/part-of: kube-state-metrics
         app.kubernetes.io/name: kube-state-metrics
         app.kubernetes.io/instance: nr-k8s-otel-collector
-        app.kubernetes.io/version: "2.11.0"
+        app.kubernetes.io/version: "2.16.0"
     spec:
+      automountServiceAccountToken: true
       hostNetwork: false
       serviceAccountName: nr-k8s-otel-collector-kube-state-metrics
       securityContext:
@@ -2041,13 +2148,14 @@ spec:
         runAsUser: 65534
         seccompProfile:
           type: RuntimeDefault
+      dnsPolicy: ClusterFirst
       containers:
       - name: kube-state-metrics
         args:
         - --port=8080
         - --resources=certificatesigningrequests,configmaps,cronjobs,daemonsets,deployments,endpoints,horizontalpodautoscalers,ingresses,jobs,leases,limitranges,mutatingwebhookconfigurations,namespaces,networkpolicies,nodes,persistentvolumeclaims,persistentvolumes,poddisruptionbudgets,pods,replicasets,replicationcontrollers,resourcequotas,secrets,services,statefulsets,storageclasses,validatingwebhookconfigurations,volumeattachments
         imagePullPolicy: IfNotPresent
-        image: registry.k8s.io/kube-state-metrics/kube-state-metrics:v2.11.0
+        image: registry.k8s.io/kube-state-metrics/kube-state-metrics:v2.16.0
         ports:
         - containerPort: 8080
           name: "http"
@@ -2055,7 +2163,7 @@ spec:
           failureThreshold: 3
           httpGet:
             httpHeaders:
-            path: /healthz
+            path: /livez
             port: 8080
             scheme: HTTP
           initialDelaySeconds: 5
@@ -2066,13 +2174,15 @@ spec:
           failureThreshold: 3
           httpGet:
             httpHeaders:
-            path: /
-            port: 8080
+            path: /readyz
+            port: 8081
             scheme: HTTP
           initialDelaySeconds: 5
           periodSeconds: 10
           successThreshold: 1
           timeoutSeconds: 5
+        resources:
+          {}
         securityContext:
           allowPrivilegeEscalation: false
           capabilities:
@@ -2091,7 +2201,7 @@ metadata:
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: nr-k8s-otel-collector
     app.kubernetes.io/version: 1.2.0
-    helm.sh/chart: nr-k8s-otel-collector-0.8.37
+    helm.sh/chart: nr-k8s-otel-collector-0.8.53
 spec:
   replicas: 1
   minReadySeconds: 5
@@ -2107,14 +2217,25 @@ spec:
         app.kubernetes.io/name: nr-k8s-otel-collector
         component: deployment
       annotations:
-        checksum/config: 2b8dc41ea60e298c710f23efe6de6da839b330a635320f1677569a9ec9849060
+        checksum/config: 554f547324ebb9c9068b1e9647db72db0b36d802345b4f2a506c2034a9e4bcb2
     spec:
       serviceAccountName: nr-k8s-otel-collector
       containers:
         - name: otel-collector-deployment
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+              - ALL
+            privileged: false
+            readOnlyRootFilesystem: true
+            runAsNonRoot: true
+            runAsUser: 1001
           image: "newrelic/nrdot-collector-k8s:1.2.0"
           imagePullPolicy: IfNotPresent
-          args: ["--config", "/config/deployment-config.yaml"]
+          args:
+            - --config
+            - /config/deployment-config.yaml
           resources:
             {}
           env:
@@ -2136,6 +2257,9 @@ spec:
           ports:
             - name: http
               containerPort: 4318
+              protocol: TCP
+            - name: grpc
+              containerPort: 4317
               protocol: TCP
           volumeMounts:
             - name: deployment-config

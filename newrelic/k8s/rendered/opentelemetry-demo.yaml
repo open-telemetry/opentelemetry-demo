@@ -20,7 +20,7 @@ kind: ServiceAccount
 metadata:
   name: otel-demo
   labels:
-    helm.sh/chart: opentelemetry-demo-0.38.1
+    helm.sh/chart: opentelemetry-demo-0.38.4
 
 
     app.kubernetes.io/version: "2.1.3"
@@ -51,7 +51,7 @@ data:
           api-key: ${env:NR_LICENSE_KEY}
     extensions:
       health_check:
-        endpoint: ${env:MY_POD_IP}:13133
+        endpoint: 0.0.0.0:13133
     processors:
       batch: {}
       cumulativetodelta: {}
@@ -248,7 +248,7 @@ metadata:
   name: flagd-config
   namespace: opentelemetry-demo
   labels:
-    helm.sh/chart: opentelemetry-demo-0.38.1
+    helm.sh/chart: opentelemetry-demo-0.38.4
 
 
     app.kubernetes.io/version: "2.1.3"
@@ -375,7 +375,7 @@ metadata:
   name: product-catalog-products
   namespace: opentelemetry-demo
   labels:
-    helm.sh/chart: opentelemetry-demo-0.38.1
+    helm.sh/chart: opentelemetry-demo-0.38.4
 
 
     app.kubernetes.io/version: "2.1.3"
@@ -600,6 +600,10 @@ spec:
   type: ClusterIP
   ports:
 
+    - name: healthcheck
+      port: 13133
+      targetPort: 13133
+      protocol: TCP
     - name: metrics
       port: 8888
       targetPort: 8888
@@ -625,7 +629,7 @@ kind: Service
 metadata:
   name: ad
   labels:
-    helm.sh/chart: opentelemetry-demo-0.38.1
+    helm.sh/chart: opentelemetry-demo-0.38.4
 
     opentelemetry.io/name: ad
 
@@ -650,7 +654,7 @@ kind: Service
 metadata:
   name: cart
   labels:
-    helm.sh/chart: opentelemetry-demo-0.38.1
+    helm.sh/chart: opentelemetry-demo-0.38.4
 
     opentelemetry.io/name: cart
 
@@ -675,7 +679,7 @@ kind: Service
 metadata:
   name: checkout
   labels:
-    helm.sh/chart: opentelemetry-demo-0.38.1
+    helm.sh/chart: opentelemetry-demo-0.38.4
 
     opentelemetry.io/name: checkout
 
@@ -700,7 +704,7 @@ kind: Service
 metadata:
   name: currency
   labels:
-    helm.sh/chart: opentelemetry-demo-0.38.1
+    helm.sh/chart: opentelemetry-demo-0.38.4
 
     opentelemetry.io/name: currency
 
@@ -725,7 +729,7 @@ kind: Service
 metadata:
   name: email
   labels:
-    helm.sh/chart: opentelemetry-demo-0.38.1
+    helm.sh/chart: opentelemetry-demo-0.38.4
 
     opentelemetry.io/name: email
 
@@ -750,7 +754,7 @@ kind: Service
 metadata:
   name: flagd
   labels:
-    helm.sh/chart: opentelemetry-demo-0.38.1
+    helm.sh/chart: opentelemetry-demo-0.38.4
 
     opentelemetry.io/name: flagd
 
@@ -781,7 +785,7 @@ kind: Service
 metadata:
   name: frontend
   labels:
-    helm.sh/chart: opentelemetry-demo-0.38.1
+    helm.sh/chart: opentelemetry-demo-0.38.4
 
     opentelemetry.io/name: frontend
 
@@ -806,7 +810,7 @@ kind: Service
 metadata:
   name: frontend-proxy
   labels:
-    helm.sh/chart: opentelemetry-demo-0.38.1
+    helm.sh/chart: opentelemetry-demo-0.38.4
 
     opentelemetry.io/name: frontend-proxy
 
@@ -831,7 +835,7 @@ kind: Service
 metadata:
   name: image-provider
   labels:
-    helm.sh/chart: opentelemetry-demo-0.38.1
+    helm.sh/chart: opentelemetry-demo-0.38.4
 
     opentelemetry.io/name: image-provider
 
@@ -856,7 +860,7 @@ kind: Service
 metadata:
   name: kafka
   labels:
-    helm.sh/chart: opentelemetry-demo-0.38.1
+    helm.sh/chart: opentelemetry-demo-0.38.4
 
     opentelemetry.io/name: kafka
 
@@ -884,7 +888,7 @@ kind: Service
 metadata:
   name: load-generator
   labels:
-    helm.sh/chart: opentelemetry-demo-0.38.1
+    helm.sh/chart: opentelemetry-demo-0.38.4
 
     opentelemetry.io/name: load-generator
 
@@ -909,7 +913,7 @@ kind: Service
 metadata:
   name: payment
   labels:
-    helm.sh/chart: opentelemetry-demo-0.38.1
+    helm.sh/chart: opentelemetry-demo-0.38.4
 
     opentelemetry.io/name: payment
 
@@ -934,7 +938,7 @@ kind: Service
 metadata:
   name: postgresql
   labels:
-    helm.sh/chart: opentelemetry-demo-0.38.1
+    helm.sh/chart: opentelemetry-demo-0.38.4
 
     opentelemetry.io/name: postgresql
 
@@ -959,7 +963,7 @@ kind: Service
 metadata:
   name: product-catalog
   labels:
-    helm.sh/chart: opentelemetry-demo-0.38.1
+    helm.sh/chart: opentelemetry-demo-0.38.4
 
     opentelemetry.io/name: product-catalog
 
@@ -984,7 +988,7 @@ kind: Service
 metadata:
   name: quote
   labels:
-    helm.sh/chart: opentelemetry-demo-0.38.1
+    helm.sh/chart: opentelemetry-demo-0.38.4
 
     opentelemetry.io/name: quote
 
@@ -1009,7 +1013,7 @@ kind: Service
 metadata:
   name: recommendation
   labels:
-    helm.sh/chart: opentelemetry-demo-0.38.1
+    helm.sh/chart: opentelemetry-demo-0.38.4
 
     opentelemetry.io/name: recommendation
 
@@ -1034,7 +1038,7 @@ kind: Service
 metadata:
   name: shipping
   labels:
-    helm.sh/chart: opentelemetry-demo-0.38.1
+    helm.sh/chart: opentelemetry-demo-0.38.4
 
     opentelemetry.io/name: shipping
 
@@ -1059,7 +1063,7 @@ kind: Service
 metadata:
   name: valkey-cart
   labels:
-    helm.sh/chart: opentelemetry-demo-0.38.1
+    helm.sh/chart: opentelemetry-demo-0.38.4
 
     opentelemetry.io/name: valkey-cart
 
@@ -1105,7 +1109,7 @@ spec:
   template:
     metadata:
       annotations:
-        checksum/config: 70722cb2a113a443806f9d6c548f5beb8b768127b008824935bbe4c49fd7618f
+        checksum/config: 4d55a7017198a026cb666b0b3b98f12fe1424f49b4aada3edc7ebca6c5d78ebd
         opentelemetry_community_demo: "true"
         prometheus.io/scrape: "true"
       labels:
@@ -1129,6 +1133,9 @@ spec:
           imagePullPolicy: IfNotPresent
           ports:
 
+            - name: healthcheck
+              containerPort: 13133
+              protocol: TCP
             - name: metrics
               containerPort: 8888
               protocol: TCP
@@ -1146,6 +1153,8 @@ spec:
                   fieldPath: status.podIP
             - name: GOMEMLIMIT
               value: "160MiB"
+            - name: INTERNAL_TELEMETRY_SERVICE_NAME
+              value: astroshop-otel-collector
             - name: KUBE_NODE_NAME
               valueFrom:
                 fieldRef:
@@ -1193,7 +1202,7 @@ kind: Deployment
 metadata:
   name: accounting
   labels:
-    helm.sh/chart: opentelemetry-demo-0.38.1
+    helm.sh/chart: opentelemetry-demo-0.38.4
 
     opentelemetry.io/name: accounting
 
@@ -1280,7 +1289,7 @@ kind: Deployment
 metadata:
   name: ad
   labels:
-    helm.sh/chart: opentelemetry-demo-0.38.1
+    helm.sh/chart: opentelemetry-demo-0.38.4
 
     opentelemetry.io/name: ad
 
@@ -1366,7 +1375,7 @@ kind: Deployment
 metadata:
   name: cart
   labels:
-    helm.sh/chart: opentelemetry-demo-0.38.1
+    helm.sh/chart: opentelemetry-demo-0.38.4
 
     opentelemetry.io/name: cart
 
@@ -1462,7 +1471,7 @@ kind: Deployment
 metadata:
   name: checkout
   labels:
-    helm.sh/chart: opentelemetry-demo-0.38.1
+    helm.sh/chart: opentelemetry-demo-0.38.4
 
     opentelemetry.io/name: checkout
 
@@ -1569,7 +1578,7 @@ kind: Deployment
 metadata:
   name: currency
   labels:
-    helm.sh/chart: opentelemetry-demo-0.38.1
+    helm.sh/chart: opentelemetry-demo-0.38.4
 
     opentelemetry.io/name: currency
 
@@ -1651,7 +1660,7 @@ kind: Deployment
 metadata:
   name: email
   labels:
-    helm.sh/chart: opentelemetry-demo-0.38.1
+    helm.sh/chart: opentelemetry-demo-0.38.4
 
     opentelemetry.io/name: email
 
@@ -1737,7 +1746,7 @@ kind: Deployment
 metadata:
   name: flagd
   labels:
-    helm.sh/chart: opentelemetry-demo-0.38.1
+    helm.sh/chart: opentelemetry-demo-0.38.4
 
     opentelemetry.io/name: flagd
 
@@ -1902,7 +1911,7 @@ kind: Deployment
 metadata:
   name: fraud-detection
   labels:
-    helm.sh/chart: opentelemetry-demo-0.38.1
+    helm.sh/chart: opentelemetry-demo-0.38.4
 
     opentelemetry.io/name: fraud-detection
 
@@ -1993,7 +2002,7 @@ kind: Deployment
 metadata:
   name: frontend
   labels:
-    helm.sh/chart: opentelemetry-demo-0.38.1
+    helm.sh/chart: opentelemetry-demo-0.38.4
 
     opentelemetry.io/name: frontend
 
@@ -2107,7 +2116,7 @@ kind: Deployment
 metadata:
   name: frontend-proxy
   labels:
-    helm.sh/chart: opentelemetry-demo-0.38.1
+    helm.sh/chart: opentelemetry-demo-0.38.4
 
     opentelemetry.io/name: frontend-proxy
 
@@ -2175,7 +2184,7 @@ spec:
             - name: FLAGD_PORT
               value: "8013"
             - name: FLAGD_UI_HOST
-              value: flagd-ui
+              value: flagd
             - name: FLAGD_UI_PORT
               value: "4000"
             - name: FRONTEND_HOST
@@ -2225,7 +2234,7 @@ kind: Deployment
 metadata:
   name: image-provider
   labels:
-    helm.sh/chart: opentelemetry-demo-0.38.1
+    helm.sh/chart: opentelemetry-demo-0.38.4
 
     opentelemetry.io/name: image-provider
 
@@ -2307,7 +2316,7 @@ kind: Deployment
 metadata:
   name: kafka
   labels:
-    helm.sh/chart: opentelemetry-demo-0.38.1
+    helm.sh/chart: opentelemetry-demo-0.38.4
 
     opentelemetry.io/name: kafka
 
@@ -2401,7 +2410,7 @@ kind: Deployment
 metadata:
   name: load-generator
   labels:
-    helm.sh/chart: opentelemetry-demo-0.38.1
+    helm.sh/chart: opentelemetry-demo-0.38.4
 
     opentelemetry.io/name: load-generator
 
@@ -2503,7 +2512,7 @@ kind: Deployment
 metadata:
   name: payment
   labels:
-    helm.sh/chart: opentelemetry-demo-0.38.1
+    helm.sh/chart: opentelemetry-demo-0.38.4
 
     opentelemetry.io/name: payment
 
@@ -2591,7 +2600,7 @@ kind: Deployment
 metadata:
   name: postgresql
   labels:
-    helm.sh/chart: opentelemetry-demo-0.38.1
+    helm.sh/chart: opentelemetry-demo-0.38.4
 
     opentelemetry.io/name: postgresql
 
@@ -2673,7 +2682,7 @@ kind: Deployment
 metadata:
   name: product-catalog
   labels:
-    helm.sh/chart: opentelemetry-demo-0.38.1
+    helm.sh/chart: opentelemetry-demo-0.38.4
 
     opentelemetry.io/name: product-catalog
 
@@ -2766,7 +2775,7 @@ kind: Deployment
 metadata:
   name: quote
   labels:
-    helm.sh/chart: opentelemetry-demo-0.38.1
+    helm.sh/chart: opentelemetry-demo-0.38.4
 
     opentelemetry.io/name: quote
 
@@ -2854,7 +2863,7 @@ kind: Deployment
 metadata:
   name: recommendation
   labels:
-    helm.sh/chart: opentelemetry-demo-0.38.1
+    helm.sh/chart: opentelemetry-demo-0.38.4
 
     opentelemetry.io/name: recommendation
 
@@ -2944,7 +2953,7 @@ kind: Deployment
 metadata:
   name: shipping
   labels:
-    helm.sh/chart: opentelemetry-demo-0.38.1
+    helm.sh/chart: opentelemetry-demo-0.38.4
 
     opentelemetry.io/name: shipping
 
@@ -3026,7 +3035,7 @@ kind: Deployment
 metadata:
   name: valkey-cart
   labels:
-    helm.sh/chart: opentelemetry-demo-0.38.1
+    helm.sh/chart: opentelemetry-demo-0.38.4
 
     opentelemetry.io/name: valkey-cart
 
