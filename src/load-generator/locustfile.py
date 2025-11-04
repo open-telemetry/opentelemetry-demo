@@ -10,7 +10,7 @@ import uuid
 import logging
 
 # Override OTEL environment variables
-os.environ["OTEL_METRICS_EXPORTER"] = "otlp"
+#os.environ["OTEL_METRICS_EXPORTER"] = "otlp"
 
 from locust import HttpUser, task, between
 from locust_plugins.users.playwright import PlaywrightUser, pw, PageWithRetry, event
