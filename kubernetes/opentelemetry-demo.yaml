@@ -1056,11 +1056,11 @@ spec:
             - name: FLAGD_PORT
               value: "8013"
             - name: OTEL_EXPORTER_OTLP_ENDPOINT
-              value: http://$(OTEL_COLLECTOR_NAME):4317
+              value: http://$(OTEL_COLLECTOR_NAME):4318
             - name: OTEL_RESOURCE_ATTRIBUTES
               value: service.name=$(OTEL_SERVICE_NAME),service.namespace=opentelemetry-demo,service.version=2.1.3,service.kafka=no
-            - name: OTEL_LOGS_EXPORTER
-              value: otlp
+            - name: SPLUNK_PROFILER_LOGS_ENDPOINT
+              value: http://$(OTEL_COLLECTOR_NAME):4318/v1/logs
             - name: SPLUNK_PROFILER_ENABLED
               value: "true"
             - name: SPLUNK_PROFILER_MEMORY_ENABLED
@@ -1902,16 +1902,6 @@ spec:
                   fieldPath: status.hostIP
             - name: OTEL_COLLECTOR_NAME
               value: $(NODE_IP)
-            # - name: OTEL_EXPORTER_OTLP_PROTOCOL
-            #   value: grpc  
-            # - name: OTEL_TRACES_EXPORTER
-            #   value: otlp
-            # - name: OTEL_METRICS_EXPORTER
-            #   value: otlp
-            - name: OTEL_LOGS_EXPORTER
-              value: otlp
-            - name: SPLUNK_OTEL_LOG_CORRELATION_ENABLED
-              value: "true"  
             - name: OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE
               value: cumulative
             - name: PAYMENT_PORT
@@ -1931,14 +1921,14 @@ spec:
             - name: SPLUNK_PROFILER_ENABLED 
               value: "true"                            
             - name: SPLUNK_PROFILER_MEMORY_ENABLED  
-              value: "true"                            
+              value: "false"                            
             - name: SPLUNK_PROFILER_CALL_STACK_INTERVAL  
-              value: "500"                                                        
+              value: "500"                                                      
             - name: OTEL_LOG_LEVEL
               value: "none"
           resources:
             limits:
-              memory: 520Mi
+              memory: 120Mi
           securityContext:
             runAsGroup: 1001
             runAsNonRoot: true
@@ -2206,7 +2196,7 @@ spec:
               value: http://$(OTEL_COLLECTOR_NAME):4317
             - name: OTEL_RESOURCE_ATTRIBUTES
               value: service.name=$(OTEL_SERVICE_NAME),service.namespace=opentelemetry-demo,service.version=2.1.3,service.kafka=no
-            - name: OTEL_PROFILER_LOGS_ENDPOINT
+            - name: SPLUNK_PROFILER_LOGS_ENDPOINT
               value: http://$(OTEL_COLLECTOR_NAME):4317
             - name: SPLUNK_PROFILER_CALL_STACK_INTERVAL
               value: "750"
@@ -2431,6 +2421,8 @@ data:
     /* eslint-disable no-console */
     const { Console } = require('console');
     const puppeteer = require('puppeteer');
+    const customUserAgent = 'Mozilla/5.0 (X11; Linux x86_64; Splunk RUM_LoadGen) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/142.0.0.0 Safari/537.36';
+    console.log('DEBUG: Using User Agent:', customUserAgent);
 
     async function launchBrowser() {
       console.log('🔹 Starting headless browser...');
@@ -2451,7 +2443,8 @@ data:
           '--disable-background-timer-throttling',
           '--disable-backgrounding-occluded-windows',
           '--disable-renderer-backgrounding',
-          '--memory-pressure-off'
+          '--memory-pressure-off',
+          `--user-agent=${customUserAgent}`
         ]
       });
       console.log('✅ Browser started.');
