@@ -17957,6 +17957,7 @@ metadata:
   namespace: otel-demo
   labels:
     app.kubernetes.io/name: grafana
+    app.kubernetes.io/part-of: grafana
     app.kubernetes.io/instance: opentelemetry-demo
     app.kubernetes.io/version: "12.1.1"
     app.openshift.io/runtime: golang
@@ -18220,6 +18221,7 @@ metadata:
   name: jaeger
   labels:
     app.kubernetes.io/name: jaeger
+    app.kubernetes.io/part-of: jaegger
     app.kubernetes.io/instance: opentelemetry-demo
     app.kubernetes.io/version: "1.53.0"
     app.kubernetes.io/component: all-in-one
