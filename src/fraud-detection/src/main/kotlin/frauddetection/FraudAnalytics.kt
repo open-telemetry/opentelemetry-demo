@@ -31,6 +31,7 @@ class FraudAnalytics {
     }
 
     fun analyzeOrder(order: OrderResult): FraudAlert? {
+        // Enhanced fraud detection with multiple database checks
         val riskScore = calculateRiskScore(order)
 
         if (riskScore > 0.5) {
@@ -73,12 +74,6 @@ class FraudAnalytics {
             score += 0.2
         }
 
-        // Check for high-risk countries
-        val highRiskCountries = setOf("XX", "YY", "ZZ") // Placeholder
-        if (order.hasShippingAddress() && order.shippingAddress.country in highRiskCountries) {
-            score += 0.4
-        }
-
         // Check shipping to known fraud regions (example pattern)
         if (order.hasShippingAddress()) {
             val address = order.shippingAddress
@@ -89,7 +84,301 @@ class FraudAnalytics {
             }
         }
 
+        // DATABASE CHECKS - Enhanced fraud detection with multiple queries
+
+        // 1. Check if country has high fraud rate (DB query)
+        if (order.hasShippingAddress()) {
+            val countryRiskScore = checkCountryRiskScore(order.shippingAddress.country)
+            score += countryRiskScore
+
+            // 2. Check city-specific fraud patterns (DB query)
+            val cityRiskScore = checkCityRiskScore(order.shippingAddress.country, order.shippingAddress.city)
+            score += cityRiskScore
+        }
+
+        // 3. Check if there are recent fraud alerts from this address (DB query)
+        if (order.hasShippingAddress()) {
+            val addressHistoryRisk = checkAddressHistory(order.shippingAddress.streetAddress)
+            score += addressHistoryRisk
+        }
+
+        // 4. Check order velocity - multiple orders in short time (DB query)
+        val velocityRisk = checkOrderVelocity(order)
+        score += velocityRisk
+
+        // 5. Check if shipping cost is unusually high for this country (DB query)
+        if (order.hasShippingCost() && order.hasShippingAddress()) {
+            val shippingAnomalyRisk = checkShippingCostAnomaly(
+                order.shippingAddress.country,
+                order.shippingCost.units.toDouble()
+            )
+            score += shippingAnomalyRisk
+        }
+
+        // 6. Check item count anomalies for this region (DB query)
+        if (order.hasShippingAddress()) {
+            val itemCountAnomalyRisk = checkItemCountAnomaly(
+                order.shippingAddress.country,
+                order.itemsCount
+            )
+            score += itemCountAnomalyRisk
+        }
+
         return score.coerceAtMost(1.0)
+    }
+
+    /**
+     * Query 1: Check if country has historically high fraud rates
+     */
+    private fun checkCountryRiskScore(country: String): Double {
+        return try {
+            DatabaseConfig.getConnection().use { conn ->
+                val sql = """
+                    SELECT
+                        COUNT(*) as fraud_count,
+                        (CAST(COUNT(*) AS FLOAT) / NULLIF(
+                            (SELECT COUNT(*) FROM OrderLogs WHERE shipping_country = ?), 0
+                        )) as fraud_rate
+                    FROM FraudAlerts fa
+                    JOIN OrderLogs o ON fa.order_id = o.order_id
+                    WHERE o.shipping_country = ?
+                    AND fa.detected_at >= DATEADD(DAY, -30, GETDATE())
+                """.trimIndent()
+
+                conn.prepareStatement(sql).use { stmt ->
+                    stmt.setString(1, country)
+                    stmt.setString(2, country)
+                    val rs = stmt.executeQuery()
+
+                    if (rs.next()) {
+                        val fraudCount = rs.getInt("fraud_count")
+                        val fraudRate = rs.getDouble("fraud_rate")
+
+                        when {
+                            fraudCount > 50 && fraudRate > 0.3 -> 0.4 // High risk country
+                            fraudCount > 20 && fraudRate > 0.2 -> 0.25 // Medium risk
+                            fraudCount > 10 && fraudRate > 0.1 -> 0.15 // Low risk
+                            else -> 0.0
+                        }
+                    } else {
+                        0.0
+                    }
+                }
+            }
+        } catch (e: Exception) {
+            logger.error("Error checking country risk score for $country", e)
+            0.0
+        }
+    }
+
+    /**
+     * Query 2: Check city-specific fraud patterns
+     */
+    private fun checkCityRiskScore(country: String, city: String): Double {
+        return try {
+            DatabaseConfig.getConnection().use { conn ->
+                val sql = """
+                    SELECT COUNT(*) as city_fraud_count
+                    FROM FraudAlerts fa
+                    JOIN OrderLogs o ON fa.order_id = o.order_id
+                    WHERE o.shipping_country = ?
+                    AND o.shipping_city = ?
+                    AND fa.detected_at >= DATEADD(DAY, -30, GETDATE())
+                """.trimIndent()
+
+                conn.prepareStatement(sql).use { stmt ->
+                    stmt.setString(1, country)
+                    stmt.setString(2, city)
+                    val rs = stmt.executeQuery()
+
+                    if (rs.next()) {
+                        val cityFraudCount = rs.getInt("city_fraud_count")
+                        when {
+                            cityFraudCount > 20 -> 0.2
+                            cityFraudCount > 10 -> 0.1
+                            else -> 0.0
+                        }
+                    } else {
+                        0.0
+                    }
+                }
+            }
+        } catch (e: Exception) {
+            logger.error("Error checking city risk score for $city, $country", e)
+            0.0
+        }
+    }
+
+    /**
+     * Query 3: Check if this address has history of fraud
+     */
+    private fun checkAddressHistory(streetAddress: String): Double {
+        return try {
+            DatabaseConfig.getConnection().use { conn ->
+                val sql = """
+                    SELECT COUNT(*) as address_fraud_count
+                    FROM FraudAlerts fa
+                    JOIN OrderLogs o ON fa.order_id = o.order_id
+                    WHERE o.shipping_street = ?
+                    AND fa.detected_at >= DATEADD(DAY, -90, GETDATE())
+                """.trimIndent()
+
+                conn.prepareStatement(sql).use { stmt ->
+                    stmt.setString(1, streetAddress)
+                    val rs = stmt.executeQuery()
+
+                    if (rs.next()) {
+                        val addressFraudCount = rs.getInt("address_fraud_count")
+                        when {
+                            addressFraudCount > 5 -> 0.5 // Very suspicious - same address used multiple times
+                            addressFraudCount > 2 -> 0.3
+                            addressFraudCount > 0 -> 0.15
+                            else -> 0.0
+                        }
+                    } else {
+                        0.0
+                    }
+                }
+            }
+        } catch (e: Exception) {
+            logger.error("Error checking address history", e)
+            0.0
+        }
+    }
+
+    /**
+     * Query 4: Check order velocity - detect rapid succession of orders
+     */
+    private fun checkOrderVelocity(order: OrderResult): Double {
+        return try {
+            DatabaseConfig.getConnection().use { conn ->
+                // Check for multiple orders in the last hour with similar characteristics
+                val sql = """
+                    SELECT COUNT(*) as recent_orders
+                    FROM OrderLogs
+                    WHERE created_at >= DATEADD(HOUR, -1, GETDATE())
+                    AND (
+                        shipping_street = ? OR
+                        shipping_city = ? OR
+                        (shipping_cost_units >= ? * 0.8 AND shipping_cost_units <= ? * 1.2)
+                    )
+                """.trimIndent()
+
+                conn.prepareStatement(sql).use { stmt ->
+                    val street = if (order.hasShippingAddress()) order.shippingAddress.streetAddress else ""
+                    val city = if (order.hasShippingAddress()) order.shippingAddress.city else ""
+                    val cost = if (order.hasShippingCost()) order.shippingCost.units else 0L
+
+                    stmt.setString(1, street)
+                    stmt.setString(2, city)
+                    stmt.setLong(3, cost)
+                    stmt.setLong(4, cost)
+
+                    val rs = stmt.executeQuery()
+
+                    if (rs.next()) {
+                        val recentOrders = rs.getInt("recent_orders")
+                        when {
+                            recentOrders > 10 -> 0.4 // Very high velocity
+                            recentOrders > 5 -> 0.25
+                            recentOrders > 3 -> 0.15
+                            else -> 0.0
+                        }
+                    } else {
+                        0.0
+                    }
+                }
+            }
+        } catch (e: Exception) {
+            logger.error("Error checking order velocity", e)
+            0.0
+        }
+    }
+
+    /**
+     * Query 5: Check if shipping cost is anomalously high for this country
+     */
+    private fun checkShippingCostAnomaly(country: String, shippingCost: Double): Double {
+        return try {
+            DatabaseConfig.getConnection().use { conn ->
+                val sql = """
+                    SELECT
+                        AVG(CAST(shipping_cost_units AS FLOAT)) as avg_cost,
+                        STDEV(CAST(shipping_cost_units AS FLOAT)) as stddev_cost
+                    FROM OrderLogs
+                    WHERE shipping_country = ?
+                    AND created_at >= DATEADD(DAY, -30, GETDATE())
+                    AND shipping_cost_units > 0
+                """.trimIndent()
+
+                conn.prepareStatement(sql).use { stmt ->
+                    stmt.setString(1, country)
+                    val rs = stmt.executeQuery()
+
+                    if (rs.next()) {
+                        val avgCost = rs.getDouble("avg_cost")
+                        val stddevCost = rs.getDouble("stddev_cost")
+
+                        if (stddevCost > 0 && avgCost > 0) {
+                            val zScore = (shippingCost - avgCost) / stddevCost
+                            when {
+                                zScore > 3.0 -> 0.3 // 3+ standard deviations above mean
+                                zScore > 2.0 -> 0.2
+                                zScore > 1.5 -> 0.1
+                                else -> 0.0
+                            }
+                        } else {
+                            0.0
+                        }
+                    } else {
+                        0.0
+                    }
+                }
+            }
+        } catch (e: Exception) {
+            logger.error("Error checking shipping cost anomaly for $country", e)
+            0.0
+        }
+    }
+
+    /**
+     * Query 6: Check if item count is unusual for this region
+     */
+    private fun checkItemCountAnomaly(country: String, itemCount: Int): Double {
+        return try {
+            DatabaseConfig.getConnection().use { conn ->
+                val sql = """
+                    SELECT
+                        AVG(CAST(items_count AS FLOAT)) as avg_items,
+                        MAX(items_count) as max_items
+                    FROM OrderLogs
+                    WHERE shipping_country = ?
+                    AND created_at >= DATEADD(DAY, -30, GETDATE())
+                """.trimIndent()
+
+                conn.prepareStatement(sql).use { stmt ->
+                    stmt.setString(1, country)
+                    val rs = stmt.executeQuery()
+
+                    if (rs.next()) {
+                        val avgItems = rs.getDouble("avg_items")
+                        val maxItems = rs.getInt("max_items")
+
+                        when {
+                            itemCount > avgItems * 3 -> 0.25 // 3x the average
+                            itemCount > avgItems * 2 -> 0.15
+                            itemCount > maxItems -> 0.2 // Exceeds historical max
+                            else -> 0.0
+                        }
+                    } else {
+                        0.0
+                    }
+                }
+            }
+        } catch (e: Exception) {
+            logger.error("Error checking item count anomaly for $country", e)
+            0.0
+        }
     }
 
     private fun determineAlertType(order: OrderResult, riskScore: Double): String {

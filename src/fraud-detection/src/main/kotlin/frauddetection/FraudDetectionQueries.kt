@@ -300,15 +300,14 @@ class FraudDetectionQueries {
                     WHERE order_id = ?
                 ),
                 HistoricalFraud AS (
-                    SELECT DISTINCT fa.order_id, ol.shipping_street, ol.shipping_city
+                    SELECT DISTINCT TOP 100 fa.order_id, ol.shipping_street, ol.shipping_city
                     FROM FraudAlerts fa
                     INNER JOIN OrderLogs ol ON fa.order_id = ol.order_id
                     WHERE fa.severity IN ('HIGH', 'CRITICAL')
                         AND fa.detected_at >= DATEADD(DAY, -30, GETDATE())
                 )
                 SELECT
-                    COUNT(DISTINCT hf.order_id) as matching_fraud_patterns,
-                    STRING_AGG(hf.order_id, ', ') as matching_order_ids
+                    COUNT(DISTINCT hf.order_id) as matching_fraud_patterns
                 FROM CurrentOrder co
                 INNER JOIN HistoricalFraud hf ON
                     (co.shipping_street = hf.shipping_street OR co.shipping_city = hf.shipping_city)

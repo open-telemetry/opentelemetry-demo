@@ -17,8 +17,6 @@ import java.util.*
 import kotlin.system.exitProcess
 import dev.openfeature.contrib.providers.flagd.FlagdOptions
 import dev.openfeature.contrib.providers.flagd.FlagdProvider
-import dev.openfeature.sdk.Client
-import dev.openfeature.sdk.EvaluationContext
 import dev.openfeature.sdk.ImmutableContext
 import dev.openfeature.sdk.Value
 import dev.openfeature.sdk.OpenFeatureAPI
@@ -29,9 +27,10 @@ const val groupID = "fraud-detection"
 private val logger: Logger = LogManager.getLogger(groupID)
 
 fun main() {
+    // Initialize flagd for Kafka experiment support
     val options = FlagdOptions.builder()
-    .withGlobalTelemetry(true)
-    .build()
+        .withGlobalTelemetry(true)
+        .build()
     val flagdProvider = FlagdProvider(options)
     OpenFeatureAPI.getInstance().setProvider(flagdProvider)
 
@@ -69,6 +68,13 @@ fun main() {
     val cleanupRetentionDays = System.getenv("CLEANUP_RETENTION_DAYS")?.toIntOrNull() ?: 7
     val cleanupIntervalHours = System.getenv("CLEANUP_INTERVAL_HOURS")?.toLongOrNull() ?: 24
 
+    // Fraud mutation percentage (5-90%)
+    val fraudMutationPercentage = System.getenv("FRAUD_MUTATION_PERCENTAGE")?.toIntOrNull()?.coerceIn(5, 90) ?: 20
+    logger.info("Fraud mutation percentage set to: $fraudMutationPercentage%")
+
+    // Bad query execution percentage (disabled by default)
+    val badQueryPercentage = System.getenv("BAD_QUERY_PERCENTAGE")?.toIntOrNull()?.coerceIn(0, 100) ?: 0
+
     // Start cleanup scheduler
     databaseCleanup.startCleanupScheduler(cleanupRetentionDays, cleanupIntervalHours)
     logger.info("Cleanup scheduler started: retentionDays=$cleanupRetentionDays, intervalHours=$cleanupIntervalHours")
@@ -89,19 +95,17 @@ fun main() {
                 .poll(ofMillis(100))
                 .fold(totalCount) { accumulator, record ->
                     val newCount = accumulator + 1
+
+                    // Kafka experiment: Simulate consumer-side delay for lag spike demo
                     if (getFeatureFlagValue("kafkaQueueProblems") > 0) {
                         logger.info("FeatureFlag 'kafkaQueueProblems' is enabled, sleeping 1 second")
                         Thread.sleep(1000)
                     }
+
                     var orders = OrderResult.parseFrom(record.value())
 
-                    // Mutate orders to trigger fraud alerts if feature flag enabled
-                    if (getFeatureFlagValue("fraudDetectionEnabled") > 0) {
-                        val mutationPercentage = getFeatureFlagValue("mutateFraudOrders")
-                        if (mutationPercentage > 0) {
-                            orders = orderMutator.mutateOrder(orders, mutationPercentage)
-                        }
-                    }
+                    // Mutate orders to trigger fraud alerts based on configured percentage
+                    orders = orderMutator.mutateOrder(orders, fraudMutationPercentage)
 
                     logger.info("Consumed record with orderId: ${orders.orderId}, and updated total count to: $newCount")
 
@@ -117,27 +121,24 @@ fun main() {
                         logger.error("Exception while logging order ${orders.orderId} to database", e)
                     }
 
-                    // Fraud detection (controlled by feature flag)
-                    if (getFeatureFlagValue("fraudDetectionEnabled") > 0) {
-                        try {
-                            val alert = fraudAnalytics.analyzeOrder(orders)
-                            if (alert != null) {
-                                fraudAlertCount++
-                                logger.warn("🚨 FRAUD ALERT #$fraudAlertCount: orderId=${alert.orderId}, severity=${alert.severity}, score=${alert.riskScore}, reason=${alert.reason}")
+                    // Fraud detection (always enabled)
+                    try {
+                        val alert = fraudAnalytics.analyzeOrder(orders)
+                        if (alert != null) {
+                            fraudAlertCount++
+                            logger.warn("🚨 FRAUD ALERT #$fraudAlertCount: orderId=${alert.orderId}, severity=${alert.severity}, score=${alert.riskScore}, reason=${alert.reason}")
 
-                                // Log stats periodically
-                                if (fraudAlertCount % 10L == 0L) {
-                                    val stats = fraudAnalytics.getAlertStats(24)
-                                    logger.info("Fraud stats (24h): $stats")
-                                }
+                            // Log stats periodically
+                            if (fraudAlertCount % 10L == 0L) {
+                                val stats = fraudAnalytics.getAlertStats(24)
+                                logger.info("Fraud stats (24h): $stats")
                             }
-                        } catch (e: Exception) {
-                            logger.error("Error during fraud analysis for order ${orders.orderId}", e)
                         }
+                    } catch (e: Exception) {
+                        logger.error("Error during fraud analysis for order ${orders.orderId}", e)
                     }
 
-                    // Execute bad query patterns for monitoring demo (controlled by feature flag)
-                    val badQueryPercentage = getFeatureFlagValue("executeBadQueries")
+                    // Execute bad query patterns for monitoring demo (optional)
                     if (badQueryPercentage > 0) {
                         try {
                             val executed = badQueryPatterns.maybeExecuteBadQuery(badQueryPercentage)
@@ -156,14 +157,14 @@ fun main() {
 }
 
 /**
-* Retrieves the status of a feature flag from the Feature Flag service.
-*
-* @param ff The name of the feature flag to retrieve.
-* @return `true` if the feature flag is enabled, `false` otherwise or in case of errors.
-*/
+ * Retrieves the status of a feature flag from the Feature Flag service.
+ * Used for Kafka queue problems experiment only.
+ *
+ * @param ff The name of the feature flag to retrieve.
+ * @return The integer value of the feature flag, or 0 if not found or in case of errors.
+ */
 fun getFeatureFlagValue(ff: String): Int {
     val client = OpenFeatureAPI.getInstance().client
-    // TODO: Plumb the actual session ID from the frontend via baggage?
     val uuid = UUID.randomUUID()
 
     val clientAttrs = mutableMapOf<String, Value>()
