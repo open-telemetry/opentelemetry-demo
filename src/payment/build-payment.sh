@@ -26,7 +26,7 @@ echo "Build options: ${CACHE_OPTION:-default caching enabled}"
 # Build without push first
 DOCKER_CMD=(
   docker buildx build
-  --platform=linux/amd64,linux/arm64
+  --platform=linux/amd64
   $CACHE_OPTION
   --build-arg VERSION="$VERSION"
   -t ghcr.io/splunk/opentelemetry-demo/otel-payment:"$VERSION"

@@ -1853,14 +1853,16 @@ spec:
             runAsUser: 1000
           volumeMounts:
       volumes:
----
+---      
 # Source: opentelemetry-demo/templates/component.yaml
 apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: payment
-  labels:    
-    opentelemetry.io/name: payment   
+  labels:
+    
+    opentelemetry.io/name: payment
+    
     app.kubernetes.io/component: payment
     app.kubernetes.io/name: payment
     app.kubernetes.io/version: "2.1.3"
@@ -1869,22 +1871,23 @@ spec:
   replicas: 1
   revisionHistoryLimit: 10
   selector:
-    matchLabels:      
+    matchLabels:
+      
       opentelemetry.io/name: payment
   template:
     metadata:
-      labels:        
-        opentelemetry.io/name: payment        
+      labels:
+        opentelemetry.io/name: payment
         app.kubernetes.io/component: payment
         app.kubernetes.io/name: payment
     spec:
       serviceAccountName: opentelemetry-demo
       containers:
         - name: payment
-          image: 'ghcr.io/open-telemetry/demo:2.1.3-payment'
-          #image: ghcr.io/splunk/opentelemetry-demo/otel-payment:2.1.3-splunk
+          #image: 'ghcr.io/open-telemetry/demo:2.1.3-payment'
+          image: 'ghcr.io/splunk/opentelemetry-demo/otel-payment:2.1.3-profiling'
           imagePullPolicy: Always
-          ports:        
+          ports:
             - containerPort: 8080
               name: service
           env:
@@ -1918,30 +1921,28 @@ spec:
             - name: FLAGD_PORT
               value: "8013"
             - name: OTEL_EXPORTER_OTLP_ENDPOINT
-              value: http://$(NODE_IP):4317
-            # - name: OTEL_EXPORTER_OTLP_METRICS_ENDPOINT
-            #   value: http://$(NODE_IP):4317
-            # - name: OTEL_EXPORTER_OTLP_TRACES_ENDPOINT
-            #   value: http://$(NODE_IP):4317
+              value: http://$(OTEL_COLLECTOR_NAME):4318
             - name: OTEL_RESOURCE_ATTRIBUTES
               value: service.name=$(OTEL_SERVICE_NAME),service.namespace=opentelemetry-demo,service.version=2.1.3,service.kafka=no
-            - name: OTEL_PROFILER_LOGS_ENDPOINT
-              value: http://$(OTEL_COLLECTOR_NAME):4318
-            - name: SPLUNK_PROFILER_CALL_STACK_INTERVAL
-              value: "750"
-            - name: SPLUNK_PROFILER_ENABLED
-              value: "false"
-            - name: SPLUNK_PROFILER_MEMORY_ENABLED
-              value: "false"   
+            - name: SPLUNK_INSTRUMENTATION_METRICS_ENABLED
+              value: "true"
+            - name: SPLUNK_METRICS_ENABLED
+              value: "true"
+            - name: SPLUNK_PROFILER_ENABLED 
+              value: "true"                            
+            - name: SPLUNK_PROFILER_MEMORY_ENABLED  
+              value: "true"                            
+            - name: SPLUNK_PROFILER_CALL_STACK_INTERVAL  
+              value: "500"                                                        
             - name: OTEL_LOG_LEVEL
-              value: "info"  
+              value: "none"
           resources:
             limits:
               memory: 520Mi
           securityContext:
-            runAsGroup: 1000
+            runAsGroup: 1001
             runAsNonRoot: true
-            runAsUser: 1000
+            runAsUser: 1001
           volumeMounts:
       volumes:
 ---

@@ -2,29 +2,22 @@
 # SPDX-License-Identifier: Apache-2.0
 
 
-FROM docker.io/library/node:22 AS builder
+FROM docker.io/library/node:22-slim AS builder
 
-WORKDIR /usr/src/app/
+WORKDIR /app
 
 COPY ./src/payment/package.json package.json
 COPY ./src/payment/package-lock.json package-lock.json
-RUN rm -rf node_modules/@splunk/otel/prebuilds \
- && export npm_config_build_from_source=true NODE_GYP_BUILD_FORCE=true \
- && npm rebuild @splunk/otel --build-from-source
-RUN npm ci --omit=dev && chmod -R go+r node_modules/@splunk/otel
+
+RUN npm ci --omit=dev
 
 # -----------------------------------------------------------------------------
 
-FROM docker.io/library/node:22
+FROM gcr.io/distroless/nodejs22-debian12:nonroot
 
-WORKDIR /usr/src/app/
+WORKDIR /app
 
-# Create non-root user for security
-RUN groupadd -r appuser && useradd -r -g appuser appuser
-RUN rm -rf node_modules/@splunk/otel/prebuilds \
- && export npm_config_build_from_source=true NODE_GYP_BUILD_FORCE=true \
- && npm rebuild @splunk/otel --build-from-source
-COPY --from=builder /usr/src/app/node_modules/ node_modules/
+COPY --from=builder /app/node_modules/ node_modules/
 
 COPY ./pb/demo.proto demo.proto
 
@@ -33,13 +26,6 @@ COPY ./src/payment/index.js index.js
 COPY ./src/payment/logger.js logger.js
 COPY ./src/payment/opentelemetry.js opentelemetry.js
 
-# Set ownership for non-root user
-RUN chown -R appuser:appuser /usr/src/app
-
 EXPOSE ${PAYMENT_PORT}
 
-# Switch to non-root user
-USER appuser
-
-#CMD ["node", "-r @splunk/otel/instrument index.js"]
 CMD ["--require=./opentelemetry.js", "index.js"]

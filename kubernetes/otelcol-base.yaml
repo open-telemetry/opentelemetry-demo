@@ -7,6 +7,91 @@ clusterReceiver:
     - name: pods
       mode: watch
       namespaces: [default, splunk]
+  config:
+    receivers:
+      sqlserver:
+        collection_interval: 1s
+        username: sa
+        password: "ChangeMe_SuperStrong123!"
+        server: sql-server-fraud.sql.svc.cluster.local
+        port: 1433
+        resource_attributes:
+          # sqlserver.computer.name:
+          #   enabled: true
+          sqlserver.instance.name:
+            enabled: true
+        # ADD to ENABLE Database Monitoring
+        events:
+          db.server.query_sample:
+            enabled: true
+          db.server.top_query:
+            enabled: true 
+        metrics:
+          sqlserver.batch.request.rate:
+              enabled: true
+          sqlserver.batch.sql_compilation.rate:
+              enabled: true
+          sqlserver.batch.sql_recompilation.rate:
+              enabled: true
+          sqlserver.database.count:
+              enabled: true
+          sqlserver.database.io:
+              enabled: true
+          sqlserver.database.latency:
+              enabled: true
+          sqlserver.database.operations:
+              enabled: true
+          sqlserver.deadlock.rate:
+              enabled: true
+          sqlserver.lock.wait.count:
+              enabled: true
+          sqlserver.lock.wait.rate:
+              enabled: true
+          sqlserver.os.wait.duration:
+              enabled: true
+          sqlserver.page.buffer_cache.hit_ratio:
+              enabled: true
+          sqlserver.processes.blocked:
+              enabled: true
+          sqlserver.resource_pool.disk.operations:
+              enabled: true
+          sqlserver.resource_pool.disk.throttled.read.rate:
+              enabled: true
+          sqlserver.resource_pool.disk.throttled.write.rate:
+              enabled: true
+          sqlserver.user.connection.count:
+              enabled: true
+          sqlserver.database.latency:
+            enabled: true  
+    exporters:
+      # Exports dbmon events as logs
+      otlphttp/dbmon:
+        headers:
+          X-SF-Token: 3QThm3q899dAU8udj-i4tA
+          X-splunk-instrumentation-library: dbmon
+        logs_endpoint: https://ingest.us1.signalfx.com/v3/event
+        sending_queue:
+          batch:
+            flush_timeout: 15s
+            max_size: 10485760 # 10 MiB
+            sizer: bytes    
+    service:
+      pipelines:
+        metrics:
+          exporters: [signalfx]
+          processors: [memory_limiter, batch, resourcedetection, resource]
+          receivers: [sqlserver]
+        logs/dbmon:
+          receivers:
+            - sqlserver
+          processors:
+            - memory_limiter
+            #- resource/tns
+            - batch
+            - resourcedetection
+            - resource
+          exporters:
+            - otlphttp/dbmon                
 agent:
   extraEnvs:
   - name: WORKSHOP_ENVIRONMENT
@@ -35,24 +120,6 @@ agent:
            config:
              endpoint: "redis-cart:6379"
              collection_interval: 10s
-      sqlserver:
-        collection_interval: 10s
-        username: sa
-        password: "ChangeMe_SuperStrong123!"
-        server: sql-server-fraud.sql.svc.cluster.local
-        port: 1433
-        resource_attributes:
-          sqlserver.computer.name:
-            enabled: true
-          sqlserver.instance.name:
-            enabled: true
-        # ADD to ENABLE Database Monitoring
-        events:
-          db.server.query_sample:
-            enabled: true
-          db.server.top_query:
-            enabled: true
-
     processors:
       filter/drop_flagd:
         traces:
@@ -66,41 +133,18 @@ agent:
           - attributes["url.full"] == "http://flagd:8013/flagd.evaluation.v1.Service/ResolveBoolean"
           - attributes["otel.scope.name"] == "flagd.evaluation.v1"
           - attributes["url.full"] == "http://flagd:8013/flagd.evaluation.v1.Service/EventStream"
-    
-    # Exporters define where the telemetry data is sent to
-    exporters:
-      # Exports dbmon events as logs
-      otlphttp/dbmon:
-        headers:
-          X-SF-Token: 3QThm3q899dAU8udj-i4tA
-          X-splunk-instrumentation-library: dbmon
-        logs_endpoint: https://ingest.us1.signalfx.com/v3/event
-        sending_queue:
-          batch:
-            flush_timeout: 15s
-            max_size: 10485760 # 10 MiB
-            sizer: bytes
 
     service:
       pipelines:
         metrics:
           exporters: [signalfx]
           processors: [memory_limiter, k8sattributes, batch, resourcedetection, resource]
-          receivers: [hostmetrics, kubeletstats, otlp, sqlserver, receiver_creator, signalfx]
+          receivers: [hostmetrics, kubeletstats, otlp, receiver_creator, signalfx]
         traces:
           exporters: [signalfx, otlphttp]
           processors: [memory_limiter,  filter/drop_flagd, k8sattributes, batch, resourcedetection, resource, resource/add_environment]
           receivers: [otlp, jaeger, zipkin]
-        logs/dbmon:
-          receivers:
-            - sqlserver
-          processors:
-            - memory_limiter
-            #- resource/tns
-            - batch
-            - resourcedetection
-          exporters:
-            - otlphttp/dbmon 
+
 logsCollection:
   extraFileLogs:
     filelog/syslog:
