@@ -32,6 +32,9 @@ public class CartService : Oteldemo.CartService.CartServiceBase
         activity?.SetTag("app.product.id", request.Item.ProductId);
         activity?.SetTag("app.product.quantity", request.Item.Quantity);
 
+        // Add random wait between 30-200ms
+        await Task.Delay(random.Next(30, 201));
+
         try
         {
             await _cartStore.AddItemAsync(request.UserId, request.Item.ProductId, request.Item.Quantity);
@@ -51,6 +54,9 @@ public class CartService : Oteldemo.CartService.CartServiceBase
         var activity = Activity.Current;
         activity?.SetTag("app.user.id", request.UserId);
         activity?.AddEvent(new("Fetch cart"));
+
+        // Add random wait between 30-200ms
+        await Task.Delay(random.Next(30, 201));
 
         try
         {
@@ -77,6 +83,9 @@ public class CartService : Oteldemo.CartService.CartServiceBase
         var activity = Activity.Current;
         activity?.SetTag("app.user.id", request.UserId);
         activity?.AddEvent(new("Empty cart"));
+
+        // Add random wait between 30-200ms
+        await Task.Delay(random.Next(30, 201));
 
         try
         {

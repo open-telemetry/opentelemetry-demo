@@ -29,7 +29,8 @@ if (string.IsNullOrEmpty(valkeyAddress))
 
 builder.Logging
     .AddOpenTelemetry(options => options.AddOtlpExporter())
-    .AddConsole();
+    .AddConsole()
+    ;
 
 builder.Services.AddSingleton<ICartStore>(x =>
 {
@@ -69,7 +70,9 @@ builder.Services.AddOpenTelemetry()
         .AddAspNetCoreInstrumentation()
         .AddGrpcClientInstrumentation()
         .AddHttpClientInstrumentation()
-        .AddOtlpExporter())
+        .AddOtlpExporter()
+        .AddProcessor(new Pyroscope.OpenTelemetry.PyroscopeSpanProcessor())
+    )
     .WithMetrics(meterBuilder => meterBuilder
         .AddMeter("OpenTelemetry.Demo.Cart")
         .AddMeter("OpenFeature")
@@ -94,5 +97,25 @@ app.MapGet("/", async context =>
 {
     await context.Response.WriteAsync("Communication with gRPC endpoints must be made through a gRPC client. To learn how to create a client, visit: https://go.microsoft.com/fwlink/?linkid=2086909");
 });
+
+Pyroscope.Profiler.Instance.SetCPUTrackingEnabled(true);
+// Enables or disables allocation profiling dynamically.
+// This function works in conjunction with the PYROSCOPE_PROFILING_ALLOCATION_ENABLED environment variable.
+// If allocation profiling is not configured, this function will have no effect.
+Pyroscope.Profiler.Instance.SetAllocationTrackingEnabled(true);
+// Enables or disables contention profiling dynamically.
+// This function works in conjunction with the PYROSCOPE_PROFILING_LOCK_ENABLED environment variable.
+// If contention profiling is not configured, this function will have no effect.
+Pyroscope.Profiler.Instance.SetContentionTrackingEnabled(true);
+// Enables or disables exception profiling dynamically.
+// This function works in conjunction with the PYROSCOPE_PROFILING_EXCEPTION_ENABLED environment variable.
+// If exception profiling is not configured, this function will have no effect.
+Pyroscope.Profiler.Instance.SetExceptionTrackingEnabled(true);
+
+// app.UsePyroscopeLabels(ctx => new Dictionary<string, string>
+// {
+//     ["pyroscope.label.method"] = ctx.GetEndpoint()?.DisplayName ?? "unknown",
+//     // ["pyroscope.label.env"] = "prod",
+// });
 
 app.Run();

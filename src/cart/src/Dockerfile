@@ -35,6 +35,15 @@ FROM mcr.microsoft.com/dotnet/runtime-deps:8.0-alpine3.20
 WORKDIR /usr/src/app/
 COPY --from=builder /cart/ ./
 
+# COPY Pyroscope.Profiler.Native.so Pyroscope.Profiler.Native.so
+# COPY Pyroscope.Linux.ApiWrapper.x64.so Pyroscope.Linux.ApiWrapper.x64.so
+
+COPY --from=pyroscope/pyroscope-dotnet:0.13.0-musl /Pyroscope.Profiler.Native.so /dotnet/
+COPY --from=pyroscope/pyroscope-dotnet:0.13.0-musl /Pyroscope.Linux.ApiWrapper.x64.so /dotnet/
+
+# COPY --from=pyroscope/pyroscope-dotnet:0.13.0-glibc /Pyroscope.Profiler.Native.so /dotnet/Pyroscope.Profiler.Native.so
+# COPY --from=pyroscope/pyroscope-dotnet:0.13.0-glibc /Pyroscope.Linux.ApiWrapper.x64.so /dotnet/Pyroscope.Linux.ApiWrapper.x64.so
+
 ENV DOTNET_HOSTBUILDER__RELOADCONFIGONCHANGE=false
 
 EXPOSE ${CART_PORT}

@@ -1,0 +1,173 @@
+apiVersion: 1
+
+datasources:
+  - name: Loki
+    type: loki
+    access: proxy
+    uid: loki
+    url: http://loki:3100
+    jsonData:
+      derivedFields:
+        - datasourceUid: tempo
+          matcherRegex: "^.*?traceI[d|D]=(\\w+).*$"
+          name: traceId
+          url: '$${__value.raw}'
+
+  - name: Tempo
+    type: tempo
+    access: proxy
+    uid: tempo
+    url: http://tempo:3200
+    jsonData:
+      streamingEnabled:
+        search: true
+        metrics: true
+      nodeGraph:
+        enabled: true
+      serviceMap:
+        datasourceUid: 'Mimir'
+      tracesToMetrics:
+        datasourceUid: 'Mimir'
+        spanStartTimeShift: '-1h'
+        spanEndTimeShift: '1h'
+        tags: [{ key: 'service.name', value: 'service' }, { key: 'job' }]
+        queries:
+        - name: 'Latency buckets'
+          query: 'sum(rate(traces_spanmetrics_latency_bucket{$$__tags}[5m]))'
+      tracesToProfiles:
+        datasourceUid: 'Pyroscope'
+        tags: [{ key: 'service.name', value: 'service_name' }]
+        # tags: [{ key: 'job' }, { key: 'instance' }, { key: 'pod' }, { key: 'namespace' }]
+        profileTypeId: 'process_cpu:cpu:nanoseconds:cpu:nanoseconds'
+        # customQuery: true
+        # query: 'method="$${__span.tags.method}"'
+      # tracesToLogs:
+      #   datasourceUid: loki
+      #   filterByTraceID: false
+      #   spanEndTimeShift: "500ms"
+      #   spanStartTimeShift: "-500ms"
+      #   tags: ['beast']
+      tracesToLogsV2:
+        # Field with an internal link pointing to a logs data source in Grafana.
+        # datasourceUid value must match the uid value of the logs data source.
+        datasourceUid: 'Loki'
+        spanStartTimeShift: '-1m'
+        spanEndTimeShift: '1m'
+        filterByTraceID: true
+    correlations:
+      - targetUID: postgres
+        label: "Count $$beast in table"
+        description: ''
+        config:
+          type: query
+          field: tags
+          target:
+            editorMode: code
+            format: table
+            rawQuery: true
+            rawSql: "SELECT COUNT(*) FROM $$beast;"
+            refId: A
+            sql:
+              columns:
+              - parameters: []
+                type: function
+              groupBy:
+              - property:
+                  type: string
+                type: groupBy
+              limit: 50
+          transformations:
+          - type: regex
+            expression: .*{"value":"(.*?)","key":"beast".*}
+            mapValue: beast
+      - targetUID: postgres
+        label: "$$statement in Postgres"
+        description: "Runs the found DB statement in the span"
+        config:
+          type: query
+          field: tags
+          target:
+            editorMode: code
+            filters:
+            - operator: "="
+              scope: span
+            format: table
+            limit: 20
+            queryType: traceqlSearch
+            rawQuery: true
+            rawSql: "$$statement;"
+            refId: A
+            sql:
+              columns:
+              - parameters: []
+                type: function
+              groupBy:
+              - property:
+                  type: string
+                type: groupBy
+              limit: 50
+          transformations:
+          - type: regex
+            expression: .*{"value":"(.*?)","key":"db.statement".*}
+            mapValue: statement
+      - targetUID: redis
+        label: "$$statement in Redis"
+        description: "Runs the found Redis statement in the span"
+        config:
+          type: query
+          field: tags
+          target:
+            editorMode: code
+            command: "$$statement"
+            refId: A
+            limit: 20
+            queryType: traceqlSearch
+            rawQuery: true
+          transformations:
+          - type: regex
+            expression: .*{"value":"(.*?)","key":"db.statement".*}
+            mapValue: statement
+
+  - name: Mimir
+    type: prometheus
+    access: proxy
+    uid: mimir
+    url: http://mimir:9009/prometheus
+    jsonData:
+      exemplarTraceIdDestinations:
+        - datasourceUid: tempo
+          name: traceID
+      httpMethod: POST
+      timeInterval: "2s"
+
+  - name: Pyroscope
+    type: phlare
+    access: proxy
+    uid: pyroscope
+    url: http://pyroscope:4040
+    jsonData:
+      backendType: pyroscope
+
+  - name: Postgres
+    type: postgres
+    uid: postgres
+    url: mythical-database:5432
+    user: postgres
+    jsonData:
+      database: postgres
+      sslmode: disable
+      postgresVersion: 1400
+    secureJsonData:
+      password: mythical
+
+  - name: Redis
+    type: redis-datasource
+    access: proxy
+    uid: redis
+    url: redis://valkey-cart:6379
+    jsonData:
+      client: standalone
+      poolSize: 5
+      timeout: 10
+      pingInterval: 0
+      pipelineWindow: 0

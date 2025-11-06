@@ -1,0 +1,5 @@
+apiVersion: 1
+apps:
+  - type: grafana-lokiexplore-app
+    orgId: 1
+    disabled: false

@@ -1,0 +1,33 @@
+{
+    "metrics": {
+        "url": "<metricsUrl>",
+        "basicAuth": {
+            "username": "<metricsUsername>",
+            "password": "<metricsPassword>"
+        }
+    },
+    "logs": {
+        "url": "<logsUrl>",
+        "basicAuth": {
+            "username": "<logsUsername>",
+            "password": "<logsPassword>"
+        }
+    },
+    "traces": {
+        "url": "<tracesUrl>",
+        "basicAuthToken": "<tracesBase64AuthToken>",
+        "tls": {
+            "insecure": false,
+            "insecureSkipVerify": true
+        }
+    },
+    "profiles": {
+        "url": "<profilesUrl>",
+        "basicAuth": {
+            "username": "<profilesUsername>",
+            "password": "<profilesPassword>"
+        }
+    },
+    "add_spanmetric_suffixes" : true,
+    "spanmetrics_namespace": "traces.span.metrics"
+}

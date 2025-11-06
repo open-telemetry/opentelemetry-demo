@@ -1,0 +1,941 @@
+# Copyright The OpenTelemetry Authors
+# SPDX-License-Identifier: Apache-2.0
+
+x-default-logging: &logging
+  driver: "json-file"
+  options:
+    max-size: "5m"
+    max-file: "2"
+    tag: "{{.Name}}"
+
+networks:
+  default:
+    name: opentelemetry-demo
+    driver: bridge
+
+services:
+  # ******************
+  # Core Demo Services
+  # ******************
+
+  # AdService
+  ad:
+    image: ${IMAGE_NAME}:${DEMO_VERSION}-ad
+    container_name: ad
+    build:
+      context: ./
+      dockerfile: ${AD_DOCKERFILE}
+      cache_from:
+        - ${IMAGE_NAME}:${IMAGE_VERSION}-ad
+      args:
+        OTEL_JAVA_AGENT_VERSION: ${OTEL_JAVA_AGENT_VERSION}
+    deploy:
+      resources:
+        limits:
+          memory: 300M
+    restart: unless-stopped
+    ports:
+      - "${AD_PORT}"
+    environment:
+      - AD_PORT
+      - FLAGD_HOST
+      - FLAGD_PORT
+      - OTEL_EXPORTER_OTLP_ENDPOINT=http://${OTEL_COLLECTOR_HOST}:${OTEL_COLLECTOR_PORT_HTTP}
+      - OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE
+      - OTEL_RESOURCE_ATTRIBUTES
+      - OTEL_LOGS_EXPORTER=otlp
+      - OTEL_SERVICE_NAME=ad
+      # Workaround on OSX for https://bugs.openjdk.org/browse/JDK-8345296
+      - _JAVA_OPTIONS
+    depends_on:
+      alloy:
+        condition: service_started
+    logging: *logging
+
+  # Cart service
+  cart:
+    image: ${IMAGE_NAME}:${DEMO_VERSION}-cart
+    container_name: cart
+    build:
+      context: ./
+      dockerfile: ${CART_DOCKERFILE}
+      cache_from:
+        - ${IMAGE_NAME}:${IMAGE_VERSION}-cart
+    deploy:
+      resources:
+        limits:
+          memory: 160M
+    restart: unless-stopped
+    ports:
+      - "${CART_PORT}"
+    environment:
+      - CART_PORT
+      - FLAGD_HOST
+      - FLAGD_PORT
+      - VALKEY_ADDR
+      - OTEL_EXPORTER_OTLP_ENDPOINT
+      - OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE
+      - OTEL_RESOURCE_ATTRIBUTES
+      - OTEL_SERVICE_NAME=cart
+      - ASPNETCORE_URLS=http://*:${CART_PORT}
+      - PYROSCOPE_APPLICATION_NAME=cart
+      - PYROSCOPE_SERVER_ADDRESS=http://pyroscope:4040
+      - PYROSCOPE_PROFILING_ENABLED=1
+      - CORECLR_ENABLE_PROFILING=1
+      - CORECLR_PROFILER={BD1A650D-AC5D-4896-B64F-D6FA25D6B26A}
+      - CORECLR_PROFILER_PATH=/dotnet/Pyroscope.Profiler.Native.so
+      - LD_PRELOAD=/dotnet/Pyroscope.Linux.ApiWrapper.x64.so
+      - LD_LIBRARY_PATH=/dotnet
+      - DOTNET_EnableDiagnostics=1
+      - DOTNET_EnableDiagnostics_IPC=0
+      - DOTNET_EnableDiagnostics_Debugger=0
+      - DOTNET_EnableDiagnostics_Profiler=1
+      # - PYROSCOPE_PROFILER_SAMPLING_INTERVAL=5ms
+      # - PYROSCOPE_PROFILING_EXCEPTION_ENABLED=true
+      # - PYROSCOPE_PROFILING_LOCK_ENABLED=true
+      # - PYROSCOPE_PROFILING_ALLOCATION_ENABLED=true
+      # - PYROSCOPE_PROFILING_WALLTIME_ENABLED=true
+      # - PYROSCOPE_PROFILING_CPU_ENABLED=true
+      # - PYROSCOPE_PROFILING_HEAP_ENABLED=true
+    depends_on:
+      valkey-cart:
+        condition: service_started
+      alloy:
+        condition: service_started
+    logging: *logging
+
+  # Checkout service
+  checkout:
+    image: ${IMAGE_NAME}:${DEMO_VERSION}-checkout
+    container_name: checkout
+    build:
+      context: ./
+      dockerfile: ${CHECKOUT_DOCKERFILE}
+      cache_from:
+        - ${IMAGE_NAME}:${IMAGE_VERSION}-checkout
+    deploy:
+      resources:
+        limits:
+          memory: 20M
+    restart: unless-stopped
+    ports:
+      - "${CHECKOUT_PORT}"
+    environment:
+      - CHECKOUT_PORT
+      - CART_ADDR
+      - CURRENCY_ADDR
+      - EMAIL_ADDR
+      - FLAGD_HOST
+      - FLAGD_PORT
+      - PAYMENT_ADDR
+      - PRODUCT_CATALOG_ADDR
+      - SHIPPING_ADDR
+      - GOMEMLIMIT=16MiB
+      - OTEL_EXPORTER_OTLP_ENDPOINT
+      - OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE
+      - OTEL_RESOURCE_ATTRIBUTES
+      - OTEL_SERVICE_NAME=checkout
+    depends_on:
+      cart:
+        condition: service_started
+      currency:
+        condition: service_started
+      # email:
+      #   condition: service_started
+      payment:
+        condition: service_started
+      product-catalog:
+        condition: service_started
+      shipping:
+        condition: service_started
+      alloy:
+        condition: service_started
+    logging: *logging
+
+  # Currency service
+  currency:
+    image: ${IMAGE_NAME}:${DEMO_VERSION}-currency
+    container_name: currency
+    build:
+      context: ./
+      dockerfile: ${CURRENCY_DOCKERFILE}
+      cache_from:
+        - ${IMAGE_NAME}:${IMAGE_VERSION}-currency
+      args:
+        OPENTELEMETRY_CPP_VERSION: ${OPENTELEMETRY_CPP_VERSION}
+    deploy:
+      resources:
+        limits:
+          memory: 20M
+    restart: unless-stopped
+    ports:
+      - "${CURRENCY_PORT}"
+    environment:
+      - IPV6_ENABLED
+      - CURRENCY_PORT
+      - VERSION=${IMAGE_VERSION}
+      - OTEL_EXPORTER_OTLP_ENDPOINT
+      - OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE
+      - OTEL_RESOURCE_ATTRIBUTES
+      - OTEL_SERVICE_NAME=currency
+    depends_on:
+      alloy:
+        condition: service_started
+    logging: *logging
+
+  # Email service
+  # email:
+  #   image: ${IMAGE_NAME}:${DEMO_VERSION}-email
+  #   container_name: email
+  #   build:
+  #     context: ./src/email
+  #     cache_from:
+  #       - ${IMAGE_NAME}:${IMAGE_VERSION}-email
+  #   deploy:
+  #     resources:
+  #       limits:
+  #         memory: 100M
+  #   restart: unless-stopped
+  #   ports:
+  #     - "${EMAIL_PORT}"
+  #   environment:
+  #     - APP_ENV=production
+  #     - EMAIL_PORT
+  #     - FLAGD_HOST
+  #     - FLAGD_PORT
+  #     - OTEL_EXPORTER_OTLP_ENDPOINT=http://${OTEL_COLLECTOR_HOST}:${OTEL_COLLECTOR_PORT_HTTP}
+  #     - OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE
+  #     - OTEL_RESOURCE_ATTRIBUTES
+  #     - OTEL_SERVICE_NAME=email
+  #   depends_on:
+  #     alloy:
+  #       condition: service_started
+  #   logging: *logging
+
+  # Frontend
+  frontend:
+    image: ${IMAGE_NAME}:${DEMO_VERSION}-frontend
+    container_name: frontend
+    build:
+      context: ./
+      dockerfile: ${FRONTEND_DOCKERFILE}
+      cache_from:
+        - ${IMAGE_NAME}:${IMAGE_VERSION}-frontend
+    deploy:
+      resources:
+        limits:
+          memory: 250M
+    restart: unless-stopped
+    ports:
+      - "${FRONTEND_PORT}"
+    environment:
+      - PORT=${FRONTEND_PORT}
+      - FRONTEND_ADDR
+      - AD_ADDR
+      - CART_ADDR
+      - CHECKOUT_ADDR
+      - CURRENCY_ADDR
+      - PRODUCT_CATALOG_ADDR
+      - RECOMMENDATION_ADDR
+      - SHIPPING_ADDR
+      - OTEL_EXPORTER_OTLP_ENDPOINT
+      - OTEL_RESOURCE_ATTRIBUTES
+      - ENV_PLATFORM
+      - OTEL_SERVICE_NAME=frontend
+      - PUBLIC_OTEL_EXPORTER_OTLP_TRACES_ENDPOINT
+      - OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE
+      - WEB_OTEL_SERVICE_NAME=frontend-web
+      - OTEL_COLLECTOR_HOST
+      - FLAGD_HOST
+      - FLAGD_PORT
+    depends_on:
+      ad:
+        condition: service_started
+      cart:
+        condition: service_started
+      checkout:
+        condition: service_started
+      currency:
+        condition: service_started
+      product-catalog:
+        condition: service_started
+      quote:
+        condition: service_started
+      recommendation:
+        condition: service_started
+      shipping:
+        condition: service_started
+      alloy:
+        condition: service_started
+      image-provider:
+        condition: service_started
+    logging: *logging
+
+  # Frontend Proxy (Envoy)
+  frontend-proxy:
+    image: ${IMAGE_NAME}:${DEMO_VERSION}-frontend-proxy
+    container_name: frontend-proxy
+    build:
+      context: ./
+      dockerfile: ${FRONTEND_PROXY_DOCKERFILE}
+    deploy:
+      resources:
+        limits:
+          memory: 65M
+    restart: unless-stopped
+    ports:
+      - "${ENVOY_PORT}:${ENVOY_PORT}"
+      - "${ENVOY_ADMIN_PORT}:${ENVOY_ADMIN_PORT}"
+    environment:
+      - FRONTEND_PORT
+      - FRONTEND_HOST
+      - LOCUST_WEB_HOST
+      - LOCUST_WEB_PORT
+      - GRAFANA_PORT
+      - GRAFANA_HOST
+      - JAEGER_UI_PORT
+      - JAEGER_HOST
+      - OTEL_COLLECTOR_HOST
+      - IMAGE_PROVIDER_HOST
+      - IMAGE_PROVIDER_PORT
+      - OTEL_COLLECTOR_PORT_GRPC
+      - OTEL_COLLECTOR_PORT_HTTP
+      - OTEL_RESOURCE_ATTRIBUTES
+      - OTEL_SERVICE_NAME=frontend-proxy
+      - ENVOY_PORT
+      - ENVOY_ADMIN_PORT
+      - ENVOY_ADDR
+      - FLAGD_HOST
+      - FLAGD_PORT
+      - FLAGD_UI_HOST
+      - FLAGD_UI_PORT
+    depends_on:
+      frontend:
+        condition: service_started
+      load-generator:
+        condition: service_started
+      grafana:
+        condition: service_started
+    dns_search: ""
+
+  # image-provider
+  image-provider:
+    image: ${IMAGE_NAME}:${DEMO_VERSION}-image-provider
+    container_name: image-provider
+    build:
+      context: ./
+      dockerfile: ${IMAGE_PROVIDER_DOCKERFILE}
+      cache_from:
+        - ${IMAGE_NAME}:${IMAGE_VERSION}-image-provider
+    deploy:
+      resources:
+        limits:
+          memory: 120M
+    restart: unless-stopped
+    ports:
+      - "${IMAGE_PROVIDER_PORT}"
+    environment:
+      - IMAGE_PROVIDER_PORT
+      - OTEL_COLLECTOR_HOST
+      - OTEL_COLLECTOR_PORT_GRPC
+      - OTEL_RESOURCE_ATTRIBUTES
+      - OTEL_SERVICE_NAME=image-provider
+    depends_on:
+      alloy:
+        condition: service_started
+    logging: *logging
+
+  # Load Generator
+  load-generator:
+    image: ${IMAGE_NAME}:${DEMO_VERSION}-load-generator
+    container_name: load-generator
+    build:
+      context: ./
+      dockerfile: ${LOAD_GENERATOR_DOCKERFILE}
+      cache_from:
+        - ${IMAGE_NAME}:${IMAGE_VERSION}-load-generator
+    deploy:
+      resources:
+        limits:
+          memory: 120M
+    restart: unless-stopped
+    ports:
+      - "${LOCUST_WEB_PORT}"
+    environment:
+      - LOCUST_WEB_PORT
+      - LOCUST_USERS
+      - LOCUST_HOST
+      - LOCUST_HEADLESS
+      - LOCUST_AUTOSTART
+      - LOCUST_BROWSER_TRAFFIC_ENABLED=false
+      - OTEL_EXPORTER_OTLP_ENDPOINT
+      - OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE
+      - OTEL_RESOURCE_ATTRIBUTES
+      - OTEL_SERVICE_NAME=load-generator
+      - PROTOCOL_BUFFERS_PYTHON_IMPLEMENTATION=python
+      - LOCUST_WEB_HOST=0.0.0.0
+      - FLAGD_HOST
+      - FLAGD_PORT
+      - FLAGD_OFREP_PORT
+    depends_on:
+      frontend:
+        condition: service_started
+      flagd:
+        condition: service_started
+    logging: *logging
+
+  # Payment service
+  payment:
+    image: ${IMAGE_NAME}:${DEMO_VERSION}-payment
+    container_name: payment
+    build:
+      context: ./
+      dockerfile: ${PAYMENT_DOCKERFILE}
+      cache_from:
+        - ${IMAGE_NAME}:${IMAGE_VERSION}-payment
+    deploy:
+      resources:
+        limits:
+          memory: 120M
+    restart: unless-stopped
+    ports:
+      - "${PAYMENT_PORT}"
+    environment:
+      - IPV6_ENABLED
+      - FLAGD_HOST
+      - FLAGD_PORT
+      - PAYMENT_PORT
+      - OTEL_EXPORTER_OTLP_ENDPOINT
+      - OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE
+      - OTEL_RESOURCE_ATTRIBUTES
+      - OTEL_SERVICE_NAME=payment
+    depends_on:
+      alloy:
+        condition: service_started
+    logging: *logging
+
+  # Product Catalog service
+  product-catalog:
+    image: ${IMAGE_NAME}:${DEMO_VERSION}-product-catalog
+    container_name: product-catalog
+    build:
+      context: ./
+      dockerfile: ${PRODUCT_CATALOG_DOCKERFILE}
+      cache_from:
+        - ${IMAGE_NAME}:${IMAGE_VERSION}-product-catalog
+    deploy:
+      resources:
+        limits:
+          memory: 20M
+    restart: unless-stopped
+    ports:
+      - "${PRODUCT_CATALOG_PORT}"
+    environment:
+      - FLAGD_HOST
+      - FLAGD_PORT
+      - PRODUCT_CATALOG_PORT
+      - PRODUCT_CATALOG_RELOAD_INTERVAL
+      - GOMEMLIMIT=16MiB
+      - OTEL_EXPORTER_OTLP_ENDPOINT
+      - OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE
+      - OTEL_RESOURCE_ATTRIBUTES
+      - OTEL_SERVICE_NAME=product-catalog
+    volumes:
+      - ./src/product-catalog/products:/usr/src/app/products
+    depends_on:
+      alloy:
+        condition: service_started
+    logging: *logging
+
+  # Quote service
+  quote:
+    image: ${IMAGE_NAME}:${DEMO_VERSION}-quote
+    container_name: quote
+    build:
+      context: ./
+      dockerfile: ${QUOTE_DOCKERFILE}
+      cache_from:
+        - ${IMAGE_NAME}:${IMAGE_VERSION}-quote
+    deploy:
+      resources:
+        limits:
+          memory: 40M
+    restart: unless-stopped
+    ports:
+      - "${QUOTE_PORT}"
+    environment:
+      - IPV6_ENABLED
+      - OTEL_EXPORTER_OTLP_ENDPOINT=http://${OTEL_COLLECTOR_HOST}:${OTEL_COLLECTOR_PORT_HTTP}
+      - OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE
+      - OTEL_PHP_AUTOLOAD_ENABLED=true
+      - QUOTE_PORT
+      - OTEL_PHP_INTERNAL_METRICS_ENABLED=true
+      - OTEL_RESOURCE_ATTRIBUTES
+      - OTEL_SERVICE_NAME=quote
+    depends_on:
+      alloy:
+        condition: service_started
+    logging: *logging
+
+  # Recommendation service
+  recommendation:
+    image: ${IMAGE_NAME}:${DEMO_VERSION}-recommendation
+    container_name: recommendation
+    build:
+      context: ./
+      dockerfile: ${RECOMMENDATION_DOCKERFILE}
+      cache_from:
+        - ${IMAGE_NAME}:${IMAGE_VERSION}-recommendation
+    deploy:
+      resources:
+        limits:
+          memory: 50M
+    restart: unless-stopped
+    ports:
+      - "${RECOMMENDATION_PORT}"
+    environment:
+      - FLAGD_HOST
+      - FLAGD_PORT
+      - RECOMMENDATION_PORT
+      - PRODUCT_CATALOG_ADDR
+      - OTEL_PYTHON_LOG_CORRELATION=true
+      - OTEL_EXPORTER_OTLP_ENDPOINT
+      - OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE
+      - OTEL_RESOURCE_ATTRIBUTES
+      - OTEL_SERVICE_NAME=recommendation
+      - PROTOCOL_BUFFERS_PYTHON_IMPLEMENTATION=python
+    depends_on:
+      product-catalog:
+        condition: service_started
+      alloy:
+        condition: service_started
+    logging: *logging
+
+  # Shipping service
+  shipping:
+    image: ${IMAGE_NAME}:${DEMO_VERSION}-shipping
+    container_name: shipping
+    build:
+      context: ./
+      dockerfile: ${SHIPPING_DOCKERFILE}
+      cache_from:
+        - ${IMAGE_NAME}:${IMAGE_VERSION}-shipping
+    deploy:
+      resources:
+        limits:
+          memory: 20M
+    restart: unless-stopped
+    ports:
+      - "${SHIPPING_PORT}"
+    environment:
+      - IPV6_ENABLED
+      - SHIPPING_PORT
+      - QUOTE_ADDR
+      - OTEL_EXPORTER_OTLP_ENDPOINT
+      - OTEL_RESOURCE_ATTRIBUTES
+      - OTEL_SERVICE_NAME=shipping
+      - OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE
+    healthcheck:
+      test: ["CMD-SHELL", "timeout 1 bash -c '>/dev/tcp/localhost/${SHIPPING_PORT}'"]
+      start_period: 10s
+      interval: 5s
+      timeout: 10s
+      retries: 10
+    depends_on:
+      alloy:
+        condition: service_started
+    logging: *logging
+
+  # ******************
+  # Dependent Services
+  # ******************
+  # Flagd, feature flagging service
+  flagd:
+    image: ${FLAGD_IMAGE}
+    container_name: flagd
+    deploy:
+      resources:
+        limits:
+          memory: 75M
+    environment:
+      - FLAGD_OTEL_COLLECTOR_URI=${OTEL_COLLECTOR_HOST}:${OTEL_COLLECTOR_PORT_GRPC}
+      - FLAGD_METRICS_EXPORTER=otel
+      - GOMEMLIMIT=60MiB
+      - OTEL_RESOURCE_ATTRIBUTES
+      - OTEL_SERVICE_NAME=flagd
+    command: [
+      "start",
+      "--uri",
+      "file:./etc/flagd/demo.flagd.json"
+    ]
+    ports:
+      - "${FLAGD_PORT}"
+      - "${FLAGD_OFREP_PORT}"
+    volumes:
+      - ./src/flagd:/etc/flagd
+    logging:
+      *logging
+
+  # Valkey used by Cart service
+  valkey-cart:
+    image: ${VALKEY_IMAGE}
+    container_name: valkey-cart
+    user: valkey
+    deploy:
+      resources:
+        limits:
+          memory: 20M
+    restart: unless-stopped
+    ports:
+      - "${VALKEY_PORT}"
+    logging: *logging
+
+
+  # ********************
+  # Telemetry Components
+  # ********************
+  alloy:
+    image: grafana/alloy:v1.9.1
+    ports:
+      - "12350:12350"
+      - "12347:12345"
+      - "12348:12348"
+      - "6832:6832"
+      - "55679:55679"
+      - "4317:4317"
+      - "4318:4318"
+    volumes:
+      - "./alloy/config.alloy:/etc/alloy/config.alloy"
+      - "./alloy/endpoints.json:/etc/alloy/endpoints.json"
+    command: [
+      "run",
+      "--server.http.listen-addr=0.0.0.0:12345",
+      "--stability.level=public-preview",
+      "/etc/alloy/config.alloy",
+    ]
+
+  # The Grafana dashboarding server.
+  grafana:
+    image: grafana/grafana:12.0.2
+    volumes:
+      - "./grafana/definitions:/var/lib/grafana/dashboards"
+      - "./grafana/provisioning:/etc/grafana/provisioning"
+    ports:
+      - "3000:3000"
+    environment:
+      - GF_FEATURE_TOGGLES_ENABLE=flameGraph traceqlSearch traceQLStreaming correlations metricsSummary traceqlEditor traceToMetrics traceToProfiles datatrails
+      - GF_INSTALL_PLUGINS=grafana-lokiexplore-app,grafana-exploretraces-app,grafana-pyroscope-app,grafana-llm-app,redis-datasource
+      - GF_AUTH_ANONYMOUS_ENABLED=true
+      - GF_AUTH_ANONYMOUS_ORG_ROLE=Admin
+      - GF_AUTH_DISABLE_LOGIN_FORM=true
+      - OPENAI_API_KEY=${OPENAI_API_KEY}
+
+  # A RabbitMQ queue used to send message between the requester and the server microservices.
+  mythical-queue:
+    image: rabbitmq:management
+    restart: always
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    healthcheck:
+      test: rabbitmq-diagnostics check_running
+      interval: 5s
+      timeout: 30s
+      retries: 10
+
+  # A postgres DB used to store data by the API server microservice.
+  mythical-database:
+    image: postgres:14.5
+    restart: always
+    environment:
+      POSTGRES_PASSWORD: "mythical"
+    volumes:
+      - "postgres:/var/lib/postgresql/data"
+    ports:
+      - "5432:5432"
+
+  # A microservice that makes requests to the API server microservice. Requests are also pushed onto the mythical-queue.
+  mythical-requester:
+    #build:
+    #  context: ./source
+    #  dockerfile: docker/Dockerfile
+    #  args:
+    #    SERVICE: mythical-beasts-requester
+    image: grafana/intro-to-mltp:mythical-beasts-requester-latest
+    restart: always
+    depends_on:
+      mythical-queue:
+        condition: service_healthy
+      mythical-server:
+        condition: service_started
+    ports:
+      - "4001:4001"
+    environment:
+      - NAMESPACE=production
+      - LOGS_TARGET=http://alloy:3100/loki/api/v1/push
+      - TRACING_COLLECTOR_HOST=alloy
+      - TRACING_COLLECTOR_PORT=4317
+      - PROFILE_COLLECTOR_HOST=alloy
+      - PROFILE_COLLECTOR_PORT=4040
+      - OTEL_EXPORTER_OTLP_TRACES_INSECURE=true
+      - OTEL_RESOURCE_ATTRIBUTES=ip=1.2.3.4
+      # Uncomment this line to enable timeshift example in the mythical-requester service, which will use timestamps
+      # in the log lines themselves to rewrite the default timestamp to the time specified in the logline.
+      #- TIMESHIFT=true
+
+  # The API server microservice.
+  # It writes logs directly to the Loki service, exposes metrics for the Prometheus
+  # service and sends traces to the Grafana Alloy instance.
+  mythical-server:
+    #build:
+    #  context: ./source
+    #  dockerfile: docker/Dockerfile
+    #  args:
+    #    SERVICE: mythical-beasts-server
+    image: grafana/intro-to-mltp:mythical-beasts-server-latest
+    restart: always
+    ports:
+      - "4000:4000"
+      - "80:80"
+    depends_on:
+      - mythical-database
+    environment:
+      - NAMESPACE=production
+      - LOGS_TARGET=http://alloy:3100/loki/api/v1/push
+      - TRACING_COLLECTOR_HOST=alloy
+      - TRACING_COLLECTOR_PORT=4317
+      - PROFILE_COLLECTOR_HOST=alloy
+      - PROFILE_COLLECTOR_PORT=4040
+      - OTEL_EXPORTER_OTLP_TRACES_INSECURE=true
+      - OTEL_RESOURCE_ATTRIBUTES=ip=1.2.3.5
+      # Faro configuration for the frontend, sends to the local Alloy instance.
+      # You can change this to send to Grafana Cloud, but see the `docker-compose-cloud.yml` compose file instead
+      # to send all data to Grafana Cloud.
+      - FARO_ENDPOINT=http://localhost:12350/collect
+      - USE_GRAFANA_CLOUD=false
+
+  # A microservice that consumes requests from the mythical-queue
+  mythical-recorder:
+    #build:
+    #  context: ./source
+    #  dockerfile: docker/Dockerfile
+    #  args:
+    #    SERVICE: mythical-beasts-recorder
+    image: grafana/intro-to-mltp:mythical-beasts-recorder-latest
+    restart: always
+    depends_on:
+      mythical-queue:
+        condition: service_healthy
+    ports:
+      - "4002:4002"
+    environment:
+      - NAMESPACE=production
+      - LOGS_TARGET=http://alloy:3100/loki/api/v1/push
+      - TRACING_COLLECTOR_HOST=alloy
+      - TRACING_COLLECTOR_PORT=4317
+      - PROFILE_COLLECTOR_HOST=alloy
+      - PROFILE_COLLECTOR_PORT=4040
+      - OTEL_EXPORTER_OTLP_TRACES_INSECURE=true
+      - OTEL_RESOURCE_ATTRIBUTES=ip=1.2.3.5
+
+  # React frontend for the mythical beasts management system
+  mythical-frontend:
+    #build:
+    #  context: ./source/mythical-beasts-frontend
+    #  dockerfile: Dockerfile
+    #  args:
+    #    - REACT_APP_API_URL=/api
+    image: grafana/intro-to-mltp:mythical-beasts-frontend-latest
+    restart: always
+    depends_on:
+      mythical-server:
+        condition: service_started
+      alloy:
+        condition: service_started
+    ports:
+      - "3001:80"
+
+  # The Tempo service stores traces send to it by Grafana Alloy, and takes
+  # queries from Grafana to visualise those traces.
+  tempo:
+    image: grafana/tempo:2.8.1
+    ports:
+      - "3200:3200"
+      - "9411:9411"
+      - "55680:55680"
+      - "55681:55681"
+      - "14250:14250"
+    command: [ "-config.file=/etc/tempo.yaml" ]
+    volumes:
+      - "./tempo/tempo.yaml:/etc/tempo.yaml"
+
+  # The Loki service stores logs sent to it, and takes queries from Grafana
+  # to visualise those logs.
+  loki:
+    image: grafana/loki:3.5.1
+    command: ["--pattern-ingester.enabled=true", "-config.file=/etc/loki/loki.yaml"]
+    ports:
+      - "3100:3100"
+    volumes:
+      - "./loki/loki.yaml:/etc/loki/loki.yaml"
+
+  mimir:
+    image: grafana/mimir:2.16.0
+    command: ["-ingester.native-histograms-ingestion-enabled=true", "-config.file=/etc/mimir.yaml"]
+    ports:
+      - "9009:9009"
+    volumes:
+      - "./mimir/mimir.yaml:/etc/mimir.yaml"
+
+  k6:
+    image: grafana/k6:0.58.0
+    volumes:
+      - "./k6:/scripts"
+    environment:
+      - K6_PROMETHEUS_RW_SERVER_URL=http://mimir:9009/api/v1/push
+      - K6_DURATION=3600s
+      - K6_VUS=4
+      - K6_PROMETHEUS_RW_TREND_AS_NATIVE_HISTOGRAM=true
+    restart: always
+    command: ["run", "-o", "experimental-prometheus-rw", "/scripts/mythical-loadtest.js"]
+
+  pyroscope:
+    image: grafana/pyroscope:1.13.5
+    ports:
+      - "4040:4040"
+    command: ["server"]
+
+  beyla-requester:
+    image: grafana/beyla:2.1.0
+    # Beyla requires to be run in the same process namespace as the process it's watching.
+    # In Docker, we can do this by joining the namespace for the watched process with the Beyla
+    # container watching it by using a specific `pid` label.
+    pid: "service:mythical-requester"
+    # Beyla requires the several system capabilities to run, to add hooks to the underlying kernel.
+    # Note that you should *always* be aware of the security implications of adding capabilities
+    # before you do so.
+    cap_add:
+      - SYS_ADMIN
+      - SYS_RESOURCE
+      - NET_RAW
+      - DAC_READ_SEARCH
+      - SYS_PTRACE
+      - PERFMON
+      - BPF
+      - CHECKPOINT_RESTORE
+    # If using the above capability fails to instrument your service, remove it and uncomment the
+    # line below. Beware that this will allow Beyla to run with full privileges, which may be
+    # undesirable.
+    #privileged: true
+    command:
+      - /beyla
+      - --config=/configs/config.yaml
+    volumes:
+      - ./beyla/:/configs
+    # See the full list of configuration options at
+    # https://grafana.com/docs/grafana-cloud/monitor-applications/beyla/configure/options/ for more details on the
+    # options set below.
+    environment:
+      BEYLA_OPEN_PORT: "4001"                                   # Instrument any service listening on port 4001.
+      BEYLA_SERVICE_NAMESPACE: "mythical"                       # The namespace for the service.
+      BEYLA_PROMETHEUS_PORT: "9090"                             # The port to expose Prometheus metrics on.
+      #BEYLA_BPF_TRACK_REQUEST_HEADERS: "true"
+      OTEL_SERVICE_NAME: "beyla-mythical-requester"             # The service name to use for OpenTelemetry traces.
+      OTEL_EXPORTER_OTLP_TRACES_INSECURE: "true"                # Whether to use an insecure connection to Grafana Alloy.
+      OTEL_EXPORTER_OTLP_PROTOCOL: "grpc"                       # The protocol to use to send traces to Grafana Alloy.
+      OTEL_EXPORTER_OTLP_TRACES_ENDPOINT: "http://alloy:4317"   # The endpoint to send traces to.
+    # The `depends_on` block below ensures that the mythical-requester service is started before Beyla.
+    depends_on:
+      mythical-requester:
+        condition: service_started
+
+  beyla-server:
+    image: grafana/beyla:2.1.0
+    # Beyla requires to be run in the same process namespace as the process it's watching.
+    # In Docker, we can do this by joining the namespace for the watched process with the Beyla
+    # container watching it by using a specific `pid` label.
+    pid: "service:mythical-server"
+    # Beyla requires the several system capabilities to run, to add hooks to the underlying kernel.
+    # Note that you should *always* be aware of the security implications of adding capabilities
+    # before you do so.
+    cap_add:
+      - SYS_ADMIN
+      - SYS_RESOURCE
+      - NET_RAW
+      - DAC_READ_SEARCH
+      - SYS_PTRACE
+      - PERFMON
+      - BPF
+      - CHECKPOINT_RESTORE
+    # If using the above capability fails to instrument your service, remove it and uncomment the
+    # line below. Beware that this will allow Beyla to run with full privileges, which may be
+    # undesirable.
+    #privileged: true
+    command:
+      - /beyla
+      - --config=/configs/config.yaml
+    volumes:
+      - ./beyla/:/configs
+    # See the full list of configuration options at
+    # https://grafana.com/docs/grafana-cloud/monitor-applications/beyla/configure/options/ for more details on the
+    # options set below.
+    environment:
+      BEYLA_OPEN_PORT: "4000"                                   # Instrument any service listening on port 4000.
+      BEYLA_SERVICE_NAMESPACE: "mythical"                       # The namespace for the service.
+      BEYLA_PROMETHEUS_PORT: "9090"                             # The port to expose Prometheus metrics on.
+      #BEYLA_BPF_TRACK_REQUEST_HEADERS: "true"
+      OTEL_SERVICE_NAME: "beyla-mythical-server"                # The service name to use for OpenTelemetry traces.
+      OTEL_EXPORTER_OTLP_TRACES_INSECURE: "true"                # Whether to use an insecure connection to Grafana Alloy.
+      OTEL_EXPORTER_OTLP_PROTOCOL: "grpc"                       # The protocol to use to send traces to Grafana Alloy.
+      OTEL_EXPORTER_OTLP_TRACES_ENDPOINT: "http://alloy:4317"   # The endpoint to send traces to.
+    # The `depends_on` block below ensures that the mythical-server service is started before Beyla.
+    depends_on:
+      mythical-server:
+        condition: service_started
+
+  beyla-recorder:
+    image: grafana/beyla:2.1.0
+    # Beyla requires to be run in the same process namespace as the process it's watching.
+    # In Docker, we can do this by joining the namespace for the watched process with the Beyla
+    # container watching it by using a specific `pid` label.
+    pid: "service:mythical-recorder"
+    # Beyla requires the several system capabilities to run, to add hooks to the underlying kernel.
+    # Note that you should *always* be aware of the security implications of adding capabilities
+    # before you do so.
+    cap_add:
+      - SYS_ADMIN
+      - SYS_RESOURCE
+      - NET_RAW
+      - DAC_READ_SEARCH
+      - SYS_PTRACE
+      - PERFMON
+      - BPF
+      - CHECKPOINT_RESTORE
+    # If using the above capability fails to instrument your service, remove it and uncomment the
+    # line below. Beware that this will allow Beyla to run with full privileges, which may be
+    # undesirable.
+    #privileged: true
+    command:
+      - /beyla
+      - --config=/configs/config.yaml
+    volumes:
+      - ./beyla/:/configs
+    # See the full list of configuration options at
+    # https://grafana.com/docs/grafana-cloud/monitor-applications/beyla/configure/options/ for more details on the
+    # options set below.
+    environment:
+      BEYLA_OPEN_PORT: "4002"                                   # Instrument any service listening on port 4002.
+      BEYLA_SERVICE_NAMESPACE: "mythical"                       # The namespace for the service.
+      BEYLA_PROMETHEUS_PORT: "9090"                             # The port to expose Prometheus metrics on.
+      #BEYLA_BPF_TRACK_REQUEST_HEADERS: "true"
+      OTEL_SERVICE_NAME: "beyla-mythical-recorder"              # The service name to use for OpenTelemetry traces.
+      OTEL_EXPORTER_OTLP_TRACES_INSECURE: "true"                # Whether to use an insecure connection to Grafana Alloy.
+      OTEL_EXPORTER_OTLP_PROTOCOL: "grpc"                       # The protocol to use to send traces to Grafana Alloy.
+      OTEL_EXPORTER_OTLP_TRACES_ENDPOINT: "http://alloy:4317"   # The endpoint to send traces to.
+    # The `depends_on` block below ensures that the mythical-recorder service is started before Beyla.
+    depends_on:
+      mythical-recorder:
+        condition: service_started
+volumes:
+  grafana:
+  postgres:

@@ -1,0 +1,14 @@
+apiVersion: 1
+
+apps:
+  - type: 'grafana-llm-app'
+    disabled: false
+    jsonData:
+      openAI:
+        # provider: openai
+        organizationId: "org-PPLyvqIuICtwCbxTWlemP8Jj"
+        url: "https://api.openai.com/v1"
+      defaultModel: "gpt-4o-mini"
+      largeModel: "gpt-4o"
+    secureJsonData:
+      openAIKey: "${OPENAI_API_KEY}"

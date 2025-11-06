@@ -1,0 +1,33 @@
+{
+    "metrics": {
+        "url": "http://mimir:9009/api/v1/push",
+        "basicAuth": {
+            "username": "",
+            "password": ""
+        }
+    },
+    "logs": {
+        "url": "http://loki:3100/loki/api/v1/push",
+        "basicAuth": {
+            "username": "",
+            "password": ""
+        }
+    },
+    "traces": {
+        "url": "http://tempo:4317",
+        "basicAuthToken": "",
+        "tls": {
+            "insecure": true,
+            "insecureSkipVerify": true
+        }
+    },
+    "profiles": {
+        "url": "http://pyroscope:4040",
+        "basicAuth": {
+            "username": "",
+            "password": ""
+        }
+    },
+    "add_spanmetric_suffixes" : false,
+    "spanmetrics_namespace": "traces.spanmetrics"
+}
