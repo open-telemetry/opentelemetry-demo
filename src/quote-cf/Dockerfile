@@ -17,7 +17,7 @@ COPY extensions/ /opt/lucee/extensions/
 RUN mkdir -p /opt/lucee/server/lucee-server/context/lib
 RUN curl -L https://repo1.maven.org/maven2/mysql/mysql-connector-java/8.0.33/mysql-connector-java-8.0.33.jar -o /opt/lucee/server/lucee-server/context/lib/mysql-connector-java-8.0.33.jar
 
-# add FR
+# add FusionReactor
 RUN mkdir -p /opt/fusionreactor/conf
 
 # Copy FusionReactor configuration
