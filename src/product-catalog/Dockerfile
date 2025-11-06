@@ -1,5 +1,5 @@
 # run from repo root
-# docker buildx build --platform linux/amd64,linux/arm64 -t appmonitoring.azurecr.io/demo-product-catalog:1.0.0 --push -f ./src/product-catalog/Dockerfile .
+# docker buildx build --platform linux/amd64,linux/arm64 -t ghcr.io/tokaplan/demo-product-catalog:1.0.0 --push -f ./src/product-catalog/Dockerfile .
 
 # Copyright The OpenTelemetry Authors
 # SPDX-License-Identifier: Apache-2.0
