@@ -3,7 +3,7 @@ module github.com/open-telemetry/opentelemetry-demo/src/checkout
 go 1.24.2
 
 require (
-	github.com/IBM/sarama v1.46.2
+	github.com/IBM/sarama v1.46.3
 	github.com/google/uuid v1.6.0
 	github.com/open-feature/go-sdk v1.16.0
 	github.com/open-feature/go-sdk-contrib/hooks/open-telemetry v0.3.6
@@ -51,7 +51,7 @@ require (
 	github.com/jcmturner/gofork v1.7.6 // indirect
 	github.com/jcmturner/gokrb5/v8 v8.4.4 // indirect
 	github.com/jcmturner/rpc/v2 v2.0.3 // indirect
-	github.com/klauspost/compress v1.18.0 // indirect
+	github.com/klauspost/compress v1.18.1 // indirect
 	github.com/klauspost/cpuid/v2 v2.2.7 // indirect
 	github.com/open-feature/flagd-schemas v0.2.9-0.20250127221449-bb763438abc5 // indirect
 	github.com/open-feature/flagd/core v0.11.2 // indirect

@@ -36,12 +36,12 @@ const CartItems = ({ productList, shouldShowPrice = true }: IProps) => {
 
   const total = useMemo<Money>(() => {
     const nanoSum =
-      productList.reduce((acc, { product: { priceUsd: { nanos = 0 } = {} } }) => acc + Number(nanos), 0) +
+      productList.reduce((acc, { product: { priceUsd: { nanos = 0 } = {} }, quantity }) => acc + Number(nanos) * quantity, 0) +
         shippingConst?.nanos || 0;
     const nanoExceed = Math.floor(nanoSum / 1000000000);
 
     const unitSum =
-      productList.reduce((acc, { product: { priceUsd: { units = 0 } = {} } }) => acc + Number(units), 0) +
+      productList.reduce((acc, { product: { priceUsd: { units = 0 } = {} }, quantity }) => acc + Number(units) * quantity, 0) +
         (shippingConst?.units || 0) + nanoExceed;
 
     return {
