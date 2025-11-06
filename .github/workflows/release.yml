@@ -3,8 +3,9 @@
 name: "Build and Publish"
 
 on:
-  release:
-    types: [published]
+  push:
+    tags:
+      - '*'
 
 permissions:
   contents: read
@@ -18,5 +19,5 @@ jobs:
     # if: github.repository == 'open-telemetry/opentelemetry-demo'
     with:
       push: true
-      version: ${{ github.event.release.tag_name }}
+      version: ${{ github.ref_name }}
     secrets: inherit
