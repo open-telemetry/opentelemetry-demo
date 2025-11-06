@@ -16,7 +16,7 @@ on:
         type: string
       dockerhub_repo:
         description: Docker Hub repository
-        default: 'otel/demo'
+        default: 'maklipsa/otel-demo'
         required: false
         type: string
       # ghcr_repo:
