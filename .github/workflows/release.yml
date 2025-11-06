@@ -15,7 +15,7 @@ jobs:
       contents: read
       packages: write
     uses: ./.github/workflows/component-build-images.yml
-    if: github.repository == 'open-telemetry/opentelemetry-demo'
+    # if: github.repository == 'open-telemetry/opentelemetry-demo'
     with:
       push: true
       version: ${{ github.event.release.tag_name }}
