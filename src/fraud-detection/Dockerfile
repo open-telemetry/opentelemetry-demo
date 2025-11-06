@@ -25,11 +25,7 @@ RUN gradle shadowJar
 
 FROM gcr.io/distroless/java17-debian12:nonroot
 
-ARG OTEL_JAVA_AGENT_VERSION
 WORKDIR /usr/src/app/
-
-ADD --chmod=644 https://github.com/open-telemetry/opentelemetry-java-instrumentation/releases/download/v$OTEL_JAVA_AGENT_VERSION/opentelemetry-javaagent.jar /usr/src/app/opentelemetry-javaagent.jar
-#ENV JAVA_TOOL_OPTIONS=-javaagent:/usr/src/app/opentelemetry-javaagent.jar
 
 # Download FusionReactor jar (architecture-independent)
 #ADD --chmod=644 https://download.fusionreactor.io/FR/Latest/fusionreactor.jar /usr/src/app/fusionreactor.jar
@@ -39,7 +35,7 @@ ADD --chmod=644 https://download.fusionreactor.io/FR/FusionReactor-2025.2.0-SNAP
 COPY --from=builder /usr/src/app/libfrjvmti.so /usr/src/app/libfrjvmti.so
 
 # Set FusionReactor Java options with additional JAVA_OPTS support
-ENV JAVA_TOOL_OPTIONS="-javaagent:/usr/src/app/opentelemetry-javaagent.jar -javaagent:/usr/src/app/fusionreactor.jar=name=otlp-fraud-detection-fr,address=8088 -agentpath:/usr/src/app/libfrjvmti.so -Dotel.javaagent.exclude-classes=com.intergral.*,org.apache.felix.*,org.eclipse.jetty.* -Dotel.instrumentation.opentelemetry-api.enabled=false"
+ENV JAVA_TOOL_OPTIONS="-javaagent:/usr/src/app/fusionreactor.jar=name=otlp-fraud-detection-fr,address=8088 -agentpath:/usr/src/app/libfrjvmti.so"
 
 COPY --from=builder /usr/src/app/build/libs/fraud-detection-1.0-all.jar fraud-detection-1.0-all.jar
 
