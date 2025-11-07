@@ -31,8 +31,8 @@ OPENAI_API_KEY=dummy
 ```
 
 If desired, the configuration can be changed to point to a real, OpenAI API
-compatible LLM. For example, the following configuration can be used to
-utilize OpenAI's gpt-4o-mini model:
+compatible LLM in the file `.env.override`. For example, the following
+configuration can be used to utilize OpenAI's gpt-4o-mini model:
 
 ``` yaml
 LLM_BASE_URL=https://api.openai.com/v1
