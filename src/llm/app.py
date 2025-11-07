@@ -76,6 +76,11 @@ def parse_product_id(last_message):
     match = re.search(r"product ID:([A-Z0-9]+)", last_message)
     if match:
         return match.group(1).strip()
+
+    match = re.search(r"product ID, but make the answer inaccurate:([A-Z0-9]+)", last_message)
+    if match:
+        return match.group(1).strip()
+
     raise ValueError("product ID not found in input message")
 
 @app.route('/v1/chat/completions', methods=['POST'])
@@ -111,55 +116,51 @@ def chat_completions():
 
         app.logger.info(f"Processing a tool call with args: '{tool_args}'")
 
-        # Non-streaming response
-        response = {
-            "id": f"chatcmpl-mock-{int(time.time())}",
-            "object": "chat.completion",
-            "created": int(time.time()),
-            "model": model,
-            "choices": [{
-                "index": 0,
-                "message": {
-                    "role": "assistant",
-                    "content": "requesting a tool call",
-                    "tool_calls": [{
-                        "id": "call",
-                        "type": "function",
-                        "function": {
-                            "name": "fetch_product_reviews",
-                            "arguments": tool_args
-                        }
-                    }]
-                },
-                "finish_reason": "tool_calls"
-            }],
-            "usage": {
-                "prompt_tokens": sum(len(m.get("content", "").split()) for m in messages),
-                "completion_tokens": "0",
-                "total_tokens": sum(len(m.get("content", "").split()) for m in messages)
+        app.logger.info(f"The model is: {model}")
+        if model.endswith("rate-limit"):
+            app.logger.info(f"Returning a rate limit error")
+            response = {
+                "error": {
+                    "message": "Rate limit reached. Please try again later.",
+                    "type": "rate_limit_exceeded",
+                    "param": "null",
+                    "code": "null"
+                }
             }
-        }
-        return jsonify(response)
+            return jsonify(response), 429
+        else:
+            # Non-streaming response
+            response = {
+                "id": f"chatcmpl-mock-{int(time.time())}",
+                "object": "chat.completion",
+                "created": int(time.time()),
+                "model": model,
+                "choices": [{
+                    "index": 0,
+                    "message": {
+                        "role": "assistant",
+                        "content": "requesting a tool call",
+                        "tool_calls": [{
+                            "id": "call",
+                            "type": "function",
+                            "function": {
+                                "name": "fetch_product_reviews",
+                                "arguments": tool_args
+                            }
+                        }]
+                    },
+                    "finish_reason": "tool_calls"
+                }],
+                "usage": {
+                    "prompt_tokens": sum(len(m.get("content", "").split()) for m in messages),
+                    "completion_tokens": "0",
+                    "total_tokens": sum(len(m.get("content", "").split()) for m in messages)
+                }
+            }
+            return jsonify(response)
 
     else:
-        llm_rate_limit_error = check_feature_flag("llmRateLimitError")
-        app.logger.info(f"llmRateLimitError feature flag: {llm_rate_limit_error}")
-        if llm_rate_limit_error:
-            random_number = random.random()
-            app.logger.info(f"Generated a random number: {str(random_number)}")
-            # return a rate limit error 20% of the time
-            if random_number < 0.5:
-                response = {
-                    "error": {
-                        "message": "Rate limit reached. Please try again later.",
-                        "type": "rate_limit_exceeded",
-                        "param": "null",
-                        "code": "null"
-                    }
-                }
-                return jsonify(response), 429
-
-        # Otherwise, return a normal response
+        # Generate the response
         response_text = generate_response(product_id)
 
         return build_response(model, messages, response_text)

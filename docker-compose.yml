@@ -542,6 +542,10 @@ services:
       - OPENAI_API_KEY
       - LLM_MODEL
       - PRODUCT_CATALOG_ADDR
+      - FLAGD_HOST
+      - FLAGD_PORT
+      - LLM_HOST
+      - LLM_PORT
     depends_on:
       product-catalog:
         condition: service_started

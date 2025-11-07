@@ -8,6 +8,7 @@
 import os
 import json
 from concurrent import futures
+import random
 
 # Pip
 import grpc
@@ -19,6 +20,7 @@ from opentelemetry.exporter.otlp.proto.grpc._log_exporter import (
 from opentelemetry.sdk._logs import LoggerProvider, LoggingHandler
 from opentelemetry.sdk._logs.export import BatchLogRecordProcessor
 from opentelemetry.sdk.resources import Resource
+from opentelemetry.trace import Status, StatusCode
 
 # Local
 import logging
@@ -27,6 +29,9 @@ import demo_pb2_grpc
 from grpc_health.v1 import health_pb2
 from grpc_health.v1 import health_pb2_grpc
 from database import fetch_product_reviews, fetch_product_reviews_from_db, fetch_avg_product_review_score_from_db
+
+from openfeature import api
+from openfeature.contrib.provider.flagd import FlagdProvider
 
 from metrics import (
     init_metrics
@@ -37,6 +42,9 @@ from openai import OpenAI
 
 from google.protobuf.json_format import MessageToJson, MessageToDict
 
+llm_host = None
+llm_port = None
+llm_mock_url = None
 llm_base_url = None
 llm_api_key = None
 llm_model = None
@@ -78,7 +86,6 @@ tools = [
           }
       }
 ]
-
 
 class ProductReviewService(demo_pb2_grpc.ProductReviewServiceServicer):
     def GetProductReviews(self, request, context):
@@ -149,10 +156,51 @@ def get_ai_assistant_response(request_product_id, question):
 
     with tracer.start_as_current_span("get_ai_assistant_response") as span:
 
-        span.set_attribute("app.product.id", request_product_id)
-        span.set_attribute("app.product.question", question)
         ai_assistant_response = demo_pb2.AskProductAIAssistantResponse()
 
+        span.set_attribute("app.product.id", request_product_id)
+        span.set_attribute("app.product.question", question)
+
+        llm_rate_limit_error = check_feature_flag("llmRateLimitError")
+        logger.info(f"llmRateLimitError feature flag: {llm_rate_limit_error}")
+        if llm_rate_limit_error:
+            random_number = random.random()
+            logger.info(f"Generated a random number: {str(random_number)}")
+            # return a rate limit error 50% of the time
+            if random_number < 0.5:
+
+                # ensure the mock LLM is always used, since we want to generate a 429 error
+                client = OpenAI(
+                    base_url=f"{llm_mock_url}",
+                    # The OpenAI API requires an api_key to be present, but
+                    # our LLM doesn't use it
+                    api_key=f"{llm_api_key}"
+                )
+
+                user_prompt = f"Answer the following question about product ID:{request_product_id}: {question}"
+                messages = [
+                   {"role": "system", "content": "You are a helpful assistant that answers related to a specific product. Use tools as needed to fetch the product reviews and product information. Keep the response brief with no more than 1-2 sentences. If you don't know the answer, just say you don't know."},
+                   {"role": "user", "content": user_prompt}
+                ]
+                logger.info(f"Invoking mock LLM with model: astronomy-llm-rate-limit")
+
+                try:
+                    initial_response = client.chat.completions.create(
+                        model="astronomy-llm-rate-limit",
+                        messages=messages,
+                        tools=tools,
+                        tool_choice="auto"
+                    )
+                except Exception as e:
+                    logger.error(f"Caught Exception: {e}")
+                    # Record the exception
+                    span.record_exception(e)
+                    # Set the span status to ERROR
+                    span.set_status(Status(StatusCode.ERROR, description=str(e)))
+                    ai_assistant_response.response = "The system is unable to process your response. Please try again later."
+                    return ai_assistant_response
+
+        # otherwise, continue processing the request as normal
         client = OpenAI(
             base_url=f"{llm_base_url}",
             # The OpenAI API requires an api_key to be present, but
@@ -218,13 +266,26 @@ def get_ai_assistant_response(request_product_id, question):
                     }
                 )
 
-            # Add a final user message to guide the LLM to synthesize the response
-            messages.append(
-                {
-                    "role": "user",
-                    "content": f"Based on the tool results, answer the original question about product ID:{request_product_id}. Keep the response brief with no more than 1-2 sentences."
-                }
-            )
+            llm_inaccurate_response = check_feature_flag("llmInaccurateResponse")
+            logger.info(f"llmInaccurateResponse feature flag: {llm_inaccurate_response}")
+
+            if llm_inaccurate_response and request_product_id == "L9ECAV7KIM":
+                logger.info(f"Returning an inaccurate response for product_id: {request_product_id}")
+                # Add a final user message to ask the LLM to return an inaccurate response
+                messages.append(
+                    {
+                        "role": "user",
+                        "content": f"Based on the tool results, answer the original question about product ID, but make the answer inaccurate:{request_product_id}. Keep the response brief with no more than 1-2 sentences."
+                    }
+                )
+            else:
+                # Add a final user message to guide the LLM to synthesize the response
+                messages.append(
+                    {
+                        "role": "user",
+                        "content": f"Based on the tool results, answer the original question about product ID:{request_product_id}. Keep the response brief with no more than 1-2 sentences."
+                    }
+                )
 
             logger.info(f"Invoking the LLM with the following messages: '{messages}'")
 
@@ -263,9 +324,15 @@ def must_map_env(key: str):
         raise Exception(f'{key} environment variable must be set')
     return value
 
+def check_feature_flag(flag_name: str):
+    # Initialize OpenFeature
+    client = api.get_client()
+    return client.get_boolean_value(flag_name, False)
 
 if __name__ == "__main__":
     service_name = must_map_env('OTEL_SERVICE_NAME')
+
+    api.set_provider(FlagdProvider(host=os.environ.get('FLAGD_HOST', 'flagd'), port=os.environ.get('FLAGD_PORT', 8013)))
 
     # Initialize Traces and Metrics
     tracer = trace.get_tracer_provider().get_tracer(service_name)
@@ -298,6 +365,9 @@ if __name__ == "__main__":
     demo_pb2_grpc.add_ProductReviewServiceServicer_to_server(service, server)
     health_pb2_grpc.add_HealthServicer_to_server(service, server)
 
+    llm_host = must_map_env('LLM_HOST')
+    llm_port = must_map_env('LLM_PORT')
+    llm_mock_url = f"http://{llm_host}:{llm_port}/v1"
     llm_base_url = must_map_env('LLM_BASE_URL')
     llm_api_key = must_map_env('OPENAI_API_KEY')
     llm_model = must_map_env('LLM_MODEL')
