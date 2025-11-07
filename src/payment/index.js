@@ -1,16 +1,26 @@
 // Copyright The OpenTelemetry Authors
 // SPDX-License-Identifier: Apache-2.0
+const { GrpcInstrumentation } = require('@opentelemetry/instrumentation-grpc');
+const { registerInstrumentations } = require('@opentelemetry/instrumentation');
+const opentelemetry = require('@opentelemetry/api')
+
+registerInstrumentations({
+  instrumentations: [new GrpcInstrumentation()]
+});
+
+// Load ALL modules AFTER instrumentation is registered
+// (charge.js uses FlagdProvider which uses gRPC internally)
 const grpc = require('@grpc/grpc-js')
 const protoLoader = require('@grpc/proto-loader')
 const health = require('grpc-js-health-check')
-const opentelemetry = require('@opentelemetry/api')
-
 const charge = require('./charge')
 const logger = require('./logger')
 
 async function chargeServiceHandler(call, callback) {
   const span = opentelemetry.trace.getActiveSpan();
-
+  
+  const tracerProvider = opentelemetry.trace.getTracerProvider();
+  
   try {
     const amount = call.request.amount
     span?.setAttributes({
@@ -20,7 +30,6 @@ async function chargeServiceHandler(call, callback) {
 
     const response = await charge.charge(call.request)
     callback(null, response)
-
   } catch (err) {
     logger.warn({ err })
 

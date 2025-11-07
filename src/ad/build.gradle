@@ -48,7 +48,6 @@ dependencies {
                 "io.grpc:grpc-netty:${grpcVersion}",
                 "io.grpc:grpc-services:${grpcVersion}",
                 "io.opentelemetry:opentelemetry-api",
-                "io.opentelemetry:opentelemetry-sdk",
                 "io.opentelemetry.instrumentation:opentelemetry-instrumentation-annotations",
                 "org.apache.logging.log4j:log4j-core:2.25.2",
                 "dev.openfeature.contrib.providers:flagd:0.11.17",

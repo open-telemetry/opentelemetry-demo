@@ -10,7 +10,7 @@ const transport = pino.transport({
       {
         recordProcessorType: 'batch',
         exporterOptions: {
-          protocol: 'grpc',
+          protocol: 'http/protobuf',
         }
       },
       {

@@ -1,3 +1,6 @@
+# run from repo root
+# docker buildx build --platform linux/amd64,linux/arm64 -t appmonitoring.azurecr.io/demo-frontend:1.0.0 --push -f ./src/frontend/Dockerfile .
+
 # Copyright The OpenTelemetry Authors
 # SPDX-License-Identifier: Apache-2.0
 
@@ -53,8 +56,6 @@ COPY --from=deps /app/node_modules/ node_modules/
 
 COPY ./src/frontend/public/ public/
 
-COPY ./src/frontend/utils/telemetry/Instrumentation.js Instrumentation.js
-
 EXPOSE ${FRONTEND_PORT}
 
-CMD ["--require=./Instrumentation.js", "server.js"]
+CMD ["server.js"]

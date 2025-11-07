@@ -1,3 +1,6 @@
+# run from repo root
+# docker buildx build --platform linux/amd64,linux/arm64 -t ghcr.io/tokaplan/demo-load-generator:1.0.0 --push -f ./src/load-generator/Dockerfile .
+
 # Copyright The OpenTelemetry Authors
 # SPDX-License-Identifier: Apache-2.0
 
@@ -19,4 +22,4 @@ ENV PLAYWRIGHT_BROWSERS_PATH=/opt/pw-browsers
 RUN playwright install --with-deps chromium
 COPY ./src/load-generator/locustfile.py .
 COPY ./src/load-generator/people.json .
-ENTRYPOINT ["locust", "--skip-log-setup"]
+ENTRYPOINT ["locust"]
