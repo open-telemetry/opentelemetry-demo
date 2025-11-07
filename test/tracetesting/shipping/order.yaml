@@ -31,12 +31,12 @@ spec:
           ]
         }
   specs:
-  - name: It called ShipOrder successfully
-    selector: span[tracetest.span.type="http" name="/ship-order" http.request.method="POST"]
-    assertions:
-    - attr:http.response.status_code = 200
-  - name: It returned a tracking ID
-    selector: span[tracetest.span.type="general" name="Tracetest trigger"]
-    assertions:
-    - attr:tracetest.response.status = 200
-    - attr:tracetest.response.body | json_path '$.tracking_id' != ""
+    - name: It called ShipOrder successfully
+      selector: span[tracetest.span.type="http" name="/ship-order" http.request.method="POST"]
+      assertions:
+        - attr:http.response.status_code = 200
+    - name: It returned a tracking ID
+      selector: span[tracetest.span.type="general" name="Tracetest trigger"]
+      assertions:
+        - attr:tracetest.response.status = 200
+        - attr:tracetest.response.body | json_path '$.tracking_id' != ""

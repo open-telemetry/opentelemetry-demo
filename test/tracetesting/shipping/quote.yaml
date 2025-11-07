@@ -31,13 +31,13 @@ spec:
           ]
         }
   specs:
-  - name: It called GetQuote successfully
-    selector: span[tracetest.span.type="http" name="/get-quote" http.request.method="POST"]
-    assertions:
-    - attr:http.response.status_code = 200
-  - name: It returned a valid quote
-    selector: span[tracetest.span.type="general" name="Tracetest trigger"]
-    assertions:
-    - attr:tracetest.response.status = 200
-    - attr:tracetest.response.body | json_path '$.cost_usd.currency_code' = "USD"
-    - attr:tracetest.response.body | json_path '$.cost_usd.units' > 0
+    - name: It called GetQuote successfully
+      selector: span[tracetest.span.type="http" name="/get-quote" http.request.method="POST"]
+      assertions:
+        - attr:http.response.status_code = 200
+    - name: It returned a valid quote
+      selector: span[tracetest.span.type="general" name="Tracetest trigger"]
+      assertions:
+        - attr:tracetest.response.status = 200
+        - attr:tracetest.response.body | json_path '$.cost_usd.currency_code' = "USD"
+        - attr:tracetest.response.body | json_path '$.cost_usd.units' > 0
