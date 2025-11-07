@@ -52,7 +52,6 @@ responding during their normal contribution hours.
 Ensure you have the following installed:
 
 - [Git](https://git-scm.com/book/en/v2/Getting-Started-Installing-Git)
-- [Make](https://www.gnu.org/software/make/)
 - [Docker](https://www.docker.com/get-started/)
 - [Docker Compose](https://docs.docker.com/compose/install/#install-compose) v2.0.0+
 
