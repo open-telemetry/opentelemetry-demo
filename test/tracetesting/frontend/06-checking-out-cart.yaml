@@ -49,10 +49,9 @@ spec:
     - attr:rpc.grpc.status_code  =  0
     - attr:tracetest.selected_spans.count >= 1
   - name: "The product was shipped"
-    selector: span[tracetest.span.type="rpc" name="oteldemo.ShippingService/ShipOrder" rpc.system="grpc" rpc.method="ShipOrder" rpc.service="oteldemo.ShippingService"]
+    selector: span[tracetest.span.type="http" name="/ship-order"]
     assertions:
-    - attr:rpc.grpc.status_code = 0
-    - attr:tracetest.selected_spans.count >= 1
+    - attr:http.response.status_code = 200
   - name: "The cart was emptied"
     selector: span[tracetest.span.type="rpc" name="oteldemo.CartService/EmptyCart" rpc.system="grpc" rpc.method="EmptyCart" rpc.service="oteldemo.CartService"]
     assertions:

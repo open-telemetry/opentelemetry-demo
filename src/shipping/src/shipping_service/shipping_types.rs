@@ -5,11 +5,19 @@ use serde::{Deserialize, Serialize};
 
 #[derive(Debug, Deserialize, Serialize)]
 pub struct CartItem {
+    #[serde(alias = "productId")]
+    pub product_id: String,
     pub quantity: u32,
 }
 
 #[derive(Debug, Deserialize, Serialize)]
 pub struct Address {
+    #[serde(alias = "streetAddress")]
+    pub street_address: String,
+    pub city: String,
+    pub state: String,
+    pub country: String,
+    #[serde(alias = "zipCode")]
     pub zip_code: String,
 }
 
@@ -38,7 +46,10 @@ pub struct Quote {
 }
 
 #[derive(Debug, Deserialize, Serialize)]
-pub struct ShipOrderRequest {}
+pub struct ShipOrderRequest {
+    pub address: Option<Address>,
+    pub items: Vec<CartItem>,
+}
 
 #[derive(Debug, Deserialize, Serialize)]
 pub struct ShipOrderResponse {

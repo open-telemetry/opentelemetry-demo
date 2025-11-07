@@ -13,13 +13,17 @@ the release.
   ([#2614](https://github.com/open-telemetry/opentelemetry-demo/pull/2614))
 * [grafana] Update grafana version to 12.2.0
   ([#2615](https://github.com/open-telemetry/opentelemetry-demo/pull/2615))
-* [frontend] Fix navigation and cart math
-  ([#2660](https://github.com/open-telemetry/opentelemetry-demo/pull/2660))
 * [chore] Upgrade OpenFeature and add fix deprecation warnings for dependency
   injection
   ([#2644](https://github.com/open-telemetry/opentelemetry-demo/pull/2644))
+* [frontend] Fix navigation and cart math
+  ([#2660](https://github.com/open-telemetry/opentelemetry-demo/pull/2660))
+* [feat] Add Product Review service with AI-generated summaries
+  ([#2663](https://github.com/open-telemetry/opentelemetry-demo/pull/2663))
 * [chore] Fix flagd-ui span error
-  ([#2615](https://github.com/open-telemetry/opentelemetry-demo/pull/2677))
+  ([#2677](https://github.com/open-telemetry/opentelemetry-demo/pull/2677))
+* [frontend] fix item calculation and shipping
+  ([#2684](https://github.com/open-telemetry/opentelemetry-demo/pull/2684))
 
 ## 2.1.3
 

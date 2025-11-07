@@ -1,0 +1,27 @@
+# Copyright The OpenTelemetry Authors
+# SPDX-License-Identifier: Apache-2.0
+
+type: Test
+spec:
+  id: checkout-add-item-to-cart
+  name: 'Checkout: add item to cart'
+  description: Add items to the shopping cart before placing an order
+  trigger:
+    type: grpc
+    grpc:
+      protobufFile: ../../../pb/demo.proto
+      address: ${var:CART_ADDR}
+      method: oteldemo.CartService.AddItem
+      request: |-
+        {
+            "userId": "1997",
+            "item": {
+              "productId": "66VCHSJNUP",
+              "quantity": 2
+            }
+          }
+  specs:
+  - name: It added an item correctly into the shopping cart
+    selector: span[name="POST /oteldemo.CartService/AddItem"]
+    assertions:
+    - attr:grpc.status_code = 0

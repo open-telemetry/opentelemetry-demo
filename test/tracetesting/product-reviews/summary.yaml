@@ -1,0 +1,24 @@
+# Copyright The OpenTelemetry Authors
+# SPDX-License-Identifier: Apache-2.0
+
+type: Test
+spec:
+  id: product-review-summary
+  name: 'Product Review Summary: Get a summary of the product reviews for product'
+  description: Get a summary of product reviews for the specified product
+  trigger:
+    type: grpc
+    grpc:
+      protobufFile: ../../../pb/demo.proto
+      address: ${var:PRODUCT_REVIEWS_ADDR}
+      method: oteldemo.ProductReviewService.GetAverageProductReviewScore
+      request: |-
+        {
+          "product_id": "66VCHSJNUP"
+        }
+  specs:
+    - name: It called GetAverageProductReviewScore correctly and got the average score
+      selector: span[name="get_average_product_review_score"]
+      assertions:
+        - attr:app.product.id  =  "66VCHSJNUP"
+        - attr:app.product_reviews.average_score = 4.6
