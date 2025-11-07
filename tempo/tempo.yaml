@@ -79,8 +79,8 @@ metrics_generator:
         - service.version
     # Configure the local blocks processor.
     local_blocks:
-        # Ensure that metrics blocks are flushed to storage so TraceQL metrics queries against historical data.
-        flush_to_storage: true
+      # Ensure that metrics blocks are flushed to storage so TraceQL metrics queries against historical data.
+      flush_to_storage: true
   # The registry configuration determines how to process metrics.
   registry:
     collection_interval: 5s                 # Create new metrics every 5s.
