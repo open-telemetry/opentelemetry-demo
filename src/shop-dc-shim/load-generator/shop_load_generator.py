@@ -97,16 +97,14 @@ class ShopLoadGenerator:
                          ["TERM-001", "TERM-002"])
         ]
         
-        # Product catalog (simulating local inventory)
         self.products = [
-            Product("SKU-TELE-001", "Professional Telescope", 299.99, "telescopes"),
-            Product("SKU-BINO-001", "High-Power Binoculars", 149.99, "binoculars"),
-            Product("SKU-LENS-001", "Camera Lens Set", 199.99, "accessories"),
-            Product("SKU-TRIPOD-001", "Carbon Fiber Tripod", 89.99, "accessories"),
-            Product("SKU-BOOK-001", "Astronomy Guide Book", 24.99, "books"),
-            Product("SKU-COMPASS-001", "Digital Compass", 39.99, "navigation"),
-            Product("SKU-FILTER-001", "Light Pollution Filter", 79.99, "accessories"),
-            Product("SKU-MOUNT-001", "Telescope Mount", 159.99, "accessories")
+            Product("OLJCESPC7Z", "Professional Telescope", 299.99, "telescopes"),
+            Product("2ZYFJ3GM2N", "High-Power Binoculars", 149.99, "binoculars"),
+            Product("L9ECAV7KIM", "Camera Lens Set", 199.99, "accessories"),
+            Product("HQTGWGPNH4", "Astronomy Guide Book", 24.99, "books"),
+            Product("LS4PSXUNUM", "Digital Compass", 39.99, "navigation"),
+            Product("6E92ZMYYFZ", "Light Pollution Filter", 79.99, "accessories"),
+            Product("9SIQT8TOJO", "Telescope Mount", 159.99, "accessories")
         ]
         
         # Customer database (simulating local customer records)
@@ -191,7 +189,7 @@ class ShopLoadGenerator:
                 "creditCardNumber": "4111-1111-1111-1111",  # Test card number
                 "creditCardCvv": random.randint(100, 999),
                 "expirationMonth": random.randint(1, 12),
-                "expirationYear": random.randint(2025, 2030)
+                "expirationYear": random.randint(2030, 2035)
             },
             "items": purchase_items
         }
