@@ -18,33 +18,9 @@ const logger = require('./logger')
 
 async function chargeServiceHandler(call, callback) {
   const span = opentelemetry.trace.getActiveSpan();
-  console.log('Span:', span);
-
-  const newSpan = opentelemetry.trace.getTracer('payment').startSpan('blah123', undefined, opentelemetry.context.active());
-  newSpan.end();
   
   const tracerProvider = opentelemetry.trace.getTracerProvider();
-  console.log('TracerProvider:', tracerProvider);
-  console.log('TracerProvider type:', tracerProvider.constructor.name);
   
-  // Try to access the active span processor and exporter config
-  if (tracerProvider._delegate) {
-    console.log('Delegate TracerProvider:', tracerProvider._delegate.constructor.name);
-    console.log('Active Span Processor:', tracerProvider._delegate.activeSpanProcessor);
-    console.log('Span Processors:', tracerProvider._delegate._spanProcessors);
-    
-    // Log exporters from span processors
-    if (tracerProvider._delegate._spanProcessors) {
-      tracerProvider._delegate._spanProcessors.forEach((processor, index) => {
-        console.log(`Processor ${index}:`, processor.constructor.name);
-        if (processor._exporter) {
-          console.log(`  Exporter:`, processor._exporter.constructor.name);
-          console.log(`  Exporter URL:`, processor._exporter.url || processor._exporter._otlpExporter?.url);
-        }
-      });
-    }
-  }
-
   try {
     const amount = call.request.amount
     span?.setAttributes({
@@ -54,10 +30,6 @@ async function chargeServiceHandler(call, callback) {
 
     const response = await charge.charge(call.request)
     callback(null, response)
-
-    //span?.setStatus({ code: opentelemetry.SpanStatusCode.OK })
-    //span?.end()
-
   } catch (err) {
     logger.warn({ err })
 
