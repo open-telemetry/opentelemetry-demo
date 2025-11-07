@@ -49,7 +49,9 @@ The service includes **intentional Jackson serialization errors** on the transac
 **Note:** This requires the instance to have a k3s/k3d deployment with Astronomy Shop Demo
 - Update and use `build-image-quay-dev.sh` to build a new image with your local changes
 - Reference that new image in `k8s-addition.yaml` and copy to your instance
-- `kubectl apply -f k8s-addition.yaml` will add the `shop-dc-shim-db`, `shop-dc-shim`, and `shop-dc-load-generator` pods to your cluster
+- On your instances with the cluser `export APPDYNAMICS_AGENT_ACCOUNT_ACCESS_KEY=<SE-LABS-TOKEN>`
+- `envsubst < k8s-additions.yaml | kubectl apply -f -` will add the `shop-dc-shim-db`, `shop-dc-shim`, and `shop-dc-load-generator` pods to your cluster
+    - **NOTE:** `envsubst` is important here to pass the appd agent token
 - Once `shop-dc-shim` finishes spinning up (5-7min) the load generator will start sending traffic
 - **For DBMon** upgrade splunk-otel-collector helm chart with `dbmon-values.yaml`
   - E.G. `helm upgrade splunk-otel-collector-1760534477 --values /home/splunk/dbmon-values.yaml splunk-otel-collector-chart/splunk-otel-collector --reuse-values`
