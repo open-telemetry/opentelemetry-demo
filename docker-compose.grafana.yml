@@ -184,33 +184,33 @@ services:
     logging: *logging
 
   # Email service
-  # email:
-  #   image: ${IMAGE_NAME}:${DEMO_VERSION}-email
-  #   container_name: email
-  #   build:
-  #     context: ./src/email
-  #     cache_from:
-  #       - ${IMAGE_NAME}:${IMAGE_VERSION}-email
-  #   deploy:
-  #     resources:
-  #       limits:
-  #         memory: 100M
-  #   restart: unless-stopped
-  #   ports:
-  #     - "${EMAIL_PORT}"
-  #   environment:
-  #     - APP_ENV=production
-  #     - EMAIL_PORT
-  #     - FLAGD_HOST
-  #     - FLAGD_PORT
-  #     - OTEL_EXPORTER_OTLP_ENDPOINT=http://${OTEL_COLLECTOR_HOST}:${OTEL_COLLECTOR_PORT_HTTP}
-  #     - OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE
-  #     - OTEL_RESOURCE_ATTRIBUTES
-  #     - OTEL_SERVICE_NAME=email
-  #   depends_on:
-  #     alloy:
-  #       condition: service_started
-  #   logging: *logging
+  email:
+    image: ${IMAGE_NAME}:${DEMO_VERSION}-email
+    container_name: email
+    build:
+      context: ./src/email
+      cache_from:
+        - ${IMAGE_NAME}:${IMAGE_VERSION}-email
+    deploy:
+      resources:
+        limits:
+          memory: 100M
+    restart: unless-stopped
+    ports:
+      - "${EMAIL_PORT}"
+    environment:
+      - APP_ENV=production
+      - EMAIL_PORT
+      - FLAGD_HOST
+      - FLAGD_PORT
+      - OTEL_EXPORTER_OTLP_ENDPOINT=http://${OTEL_COLLECTOR_HOST}:${OTEL_COLLECTOR_PORT_HTTP}
+      - OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE
+      - OTEL_RESOURCE_ATTRIBUTES
+      - OTEL_SERVICE_NAME=email
+    depends_on:
+      alloy:
+        condition: service_started
+    logging: *logging
 
   # Frontend
   frontend:
@@ -656,7 +656,7 @@ services:
 
   # A microservice that makes requests to the API server microservice. Requests are also pushed onto the mythical-queue.
   mythical-requester:
-    #build:
+    # build:
     #  context: ./source
     #  dockerfile: docker/Dockerfile
     #  args:
@@ -681,17 +681,17 @@ services:
       - OTEL_RESOURCE_ATTRIBUTES=ip=1.2.3.4
       # Uncomment this line to enable timeshift example in the mythical-requester service, which will use timestamps
       # in the log lines themselves to rewrite the default timestamp to the time specified in the logline.
-      #- TIMESHIFT=true
+      # - TIMESHIFT=true
 
   # The API server microservice.
   # It writes logs directly to the Loki service, exposes metrics for the Prometheus
   # service and sends traces to the Grafana Alloy instance.
   mythical-server:
-    #build:
-    #  context: ./source
-    #  dockerfile: docker/Dockerfile
-    #  args:
-    #    SERVICE: mythical-beasts-server
+    # build:
+    #   context: ./source
+    #   dockerfile: docker/Dockerfile
+    #   args:
+    #     SERVICE: mythical-beasts-server
     image: grafana/intro-to-mltp:mythical-beasts-server-latest
     restart: always
     ports:
@@ -716,11 +716,11 @@ services:
 
   # A microservice that consumes requests from the mythical-queue
   mythical-recorder:
-    #build:
-    #  context: ./source
-    #  dockerfile: docker/Dockerfile
-    #  args:
-    #    SERVICE: mythical-beasts-recorder
+    # build:
+    #   context: ./source
+    #   dockerfile: docker/Dockerfile
+    #   args:
+    #     SERVICE: mythical-beasts-recorder
     image: grafana/intro-to-mltp:mythical-beasts-recorder-latest
     restart: always
     depends_on:
@@ -740,7 +740,7 @@ services:
 
   # React frontend for the mythical beasts management system
   mythical-frontend:
-    #build:
+    # build:
     #  context: ./source/mythical-beasts-frontend
     #  dockerfile: Dockerfile
     #  args:

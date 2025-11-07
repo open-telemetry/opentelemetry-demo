@@ -45,7 +45,7 @@ storage:
   trace:
     backend: local                     # Use the local filesystem for block storage. Not recommended for production systems.
     block:
-      bloom_filter_false_positive: .05 # Bloom filter false positive rate.  lower values create larger filters but fewer false positives.
+      bloom_filter_false_positive: .05  # Bloom filter false positive rate.  lower values create larger filters but fewer false positives.
     # Write Ahead Log (WAL) configuration.
     wal:
       path: /tmp/tempo/wal             # Directory to store the the WAL locally.
@@ -63,20 +63,20 @@ metrics_generator:
   processor:
     # Span metrics create metrics based on span type, duration, name and service.
     span_metrics:
-        # Configure extra dimensions to add as metric labels.
-        dimensions:
-          - http.method
-          - http.target
-          - http.status_code
-          - service.version
+      # Configure extra dimensions to add as metric labels.
+      dimensions:
+        - http.method
+        - http.target
+        - http.status_code
+        - service.version
     # Service graph metrics create node and edge metrics for determinng service interactions.
     service_graphs:
-        # Configure extra dimensions to add as metric labels.
-        dimensions:
-          - http.method
-          - http.target
-          - http.status_code
-          - service.version
+      # Configure extra dimensions to add as metric labels.
+      dimensions:
+        - http.method
+        - http.target
+        - http.status_code
+        - service.version
     # Configure the local blocks processor.
     local_blocks:
         # Ensure that metrics blocks are flushed to storage so TraceQL metrics queries against historical data.
@@ -95,7 +95,7 @@ metrics_generator:
     # Where to remote write metrics to.
     remote_write:
       - url: http://mimir:9009/api/v1/push  # URL of locally running Mimir instance.
-        send_exemplars: true # Send exemplars along with their metrics.
+        send_exemplars: true  # Send exemplars along with their metrics.
   traces_storage:
     path: /tmp/tempo/generator/traces
 
@@ -103,5 +103,5 @@ metrics_generator:
 overrides:
   defaults:
     metrics_generator:
-      processors: [service-graphs, span-metrics, local-blocks] # enables metrics generator
+      processors: [service-graphs, span-metrics, local-blocks]  # enables metrics generator
       generate_native_histograms: both

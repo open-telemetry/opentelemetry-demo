@@ -19,11 +19,6 @@ on:
         default: 'maklipsa/otel-demo'
         required: false
         type: string
-      # ghcr_repo:
-      #   description: GHCR repository
-      #   default: 'ghcr.io/open-telemetry/demo'
-      #   required: false
-      #   type: string
 
 permissions:
   contents: read

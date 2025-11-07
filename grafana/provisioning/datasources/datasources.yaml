@@ -32,8 +32,8 @@ datasources:
         spanEndTimeShift: '1h'
         tags: [{ key: 'service.name', value: 'service' }, { key: 'job' }]
         queries:
-        - name: 'Latency buckets'
-          query: 'sum(rate(traces_spanmetrics_latency_bucket{$$__tags}[5m]))'
+          - name: 'Latency buckets'
+            query: 'sum(rate(traces_spanmetrics_latency_bucket{$$__tags}[5m]))'
       tracesToProfiles:
         datasourceUid: 'Pyroscope'
         tags: [{ key: 'service.name', value: 'service_name' }]
@@ -69,17 +69,17 @@ datasources:
             refId: A
             sql:
               columns:
-              - parameters: []
-                type: function
+                - parameters: []
+                  type: function
               groupBy:
-              - property:
-                  type: string
-                type: groupBy
+                - property:
+                    type: string
+                  type: groupBy
               limit: 50
           transformations:
-          - type: regex
-            expression: .*{"value":"(.*?)","key":"beast".*}
-            mapValue: beast
+            - type: regex
+              expression: .*{"value":"(.*?)","key":"beast".*}
+              mapValue: beast
       - targetUID: postgres
         label: "$$statement in Postgres"
         description: "Runs the found DB statement in the span"
@@ -89,8 +89,8 @@ datasources:
           target:
             editorMode: code
             filters:
-            - operator: "="
-              scope: span
+              - operator: "="
+                scope: span
             format: table
             limit: 20
             queryType: traceqlSearch
@@ -99,17 +99,17 @@ datasources:
             refId: A
             sql:
               columns:
-              - parameters: []
-                type: function
+                - parameters: []
+                  type: function
               groupBy:
-              - property:
-                  type: string
-                type: groupBy
+                - property:
+                    type: string
+                  type: groupBy
               limit: 50
           transformations:
-          - type: regex
-            expression: .*{"value":"(.*?)","key":"db.statement".*}
-            mapValue: statement
+            - type: regex
+              expression: .*{"value":"(.*?)","key":"db.statement".*}
+              mapValue: statement
       - targetUID: redis
         label: "$$statement in Redis"
         description: "Runs the found Redis statement in the span"
@@ -124,9 +124,9 @@ datasources:
             queryType: traceqlSearch
             rawQuery: true
           transformations:
-          - type: regex
-            expression: .*{"value":"(.*?)","key":"db.statement".*}
-            mapValue: statement
+            - type: regex
+              expression: .*{"value":"(.*?)","key":"db.statement".*}
+              mapValue: statement
 
   - name: Mimir
     type: prometheus
