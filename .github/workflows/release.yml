@@ -26,5 +26,5 @@ jobs:
     # if: github.repository == 'open-telemetry/opentelemetry-demo'
     with:
       push: true
-      version: ${{ github.ref_name }}
+      version: ${{ github.ref_type == 'tag' && github.ref_name || inputs.tag_name }}
     secrets: inherit
