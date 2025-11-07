@@ -11,14 +11,14 @@ spec:
     grpc:
       protobufFile: ../../../pb/demo.proto
       address: ${var:PRODUCT_REVIEWS_ADDR}
-      method: oteldemo.ProductReviewService.GetProductReviewSummary
+      method: oteldemo.ProductReviewService.GetAverageProductReviewScore
       request: |-
         {
           "product_id": "66VCHSJNUP"
         }
   specs:
-    - name: It called GetProductReviewSummary correctly and got 5 product reviews
-      selector: span[name="get_product_review_summary"]
+    - name: It called GetAverageProductReviewScore correctly and got the average score
+      selector: span[name="get_average_product_review_score"]
       assertions:
         - attr:app.product.id  =  "66VCHSJNUP"
-        - attr:app.product_review.average_score = 4.6
+        - attr:app.product_reviews.average_score = 4.6
