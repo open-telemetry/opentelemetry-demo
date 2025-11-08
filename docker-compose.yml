@@ -849,7 +849,7 @@ services:
           memory: 120M
     restart: unless-stopped
     environment:
-      - "GF_INSTALL_PLUGINS=grafana-opensearch-datasource"
+      - "GF_INSTALL_PLUGINS=grafana-elasticsearch-datasource"
     volumes:
       - ./src/grafana/grafana.ini:/etc/grafana/grafana.ini
       - ./src/grafana/provisioning/:/etc/grafana/provisioning/
@@ -879,7 +879,7 @@ services:
     depends_on:
       jaeger:
         condition: service_started
-      opensearch:
+      elasticsearch:
         condition: service_healthy
     logging: *logging
     environment:
@@ -920,14 +920,14 @@ services:
       - "${PROMETHEUS_PORT}:${PROMETHEUS_PORT}"
     logging: *logging
 
-  # OpenSearch
-  opensearch:
-    container_name: opensearch
+  # Elasticsearch
+  elasticsearch:
+    container_name: elasticsearch
     build:
       context: ./
-      dockerfile: ${OPENSEARCH_DOCKERFILE}
+      dockerfile: ${ELASTICSEARCH_DOCKERFILE}
       cache_from:
-        - ${IMAGE_NAME}:${IMAGE_VERSION}-opensearch
+        - ${IMAGE_NAME}:${IMAGE_VERSION}-elasticsearch
     deploy:
       resources:
         limits:
@@ -938,9 +938,9 @@ services:
       - node.name=demo-node
       - bootstrap.memory_lock=true
       - discovery.type=single-node
-      - OPENSEARCH_JAVA_OPTS=-Xms400m -Xmx400m
-      - DISABLE_INSTALL_DEMO_CONFIG=true
-      - DISABLE_SECURITY_PLUGIN=true
+      - ES_JAVA_OPTS=-Xms400m -Xmx400m
+      - xpack.security.enabled=false
+      - xpack.security.enrollment.enabled=false
       # Workaround on OSX for https://bugs.openjdk.org/browse/JDK-8345296
       - _JAVA_OPTIONS
     ulimits:

@@ -127,11 +127,11 @@ exporters:
     endpoint: "http://prometheus:9090/api/v1/otlp"
     tls:
       insecure: true
-  opensearch:
+  elasticsearch:
     logs_index: otel-logs
     logs_index_time_format: "yyyy-MM-dd"
     http:
-      endpoint: "http://opensearch:9200"
+      endpoint: "http://elasticsearch:9200"
       tls:
         insecure: true
 processors:
@@ -167,7 +167,7 @@ service:
     logs:
       receivers: [otlp]
       processors: [resourcedetection, memory_limiter, batch]
-      exporters: [opensearch, debug]
+      exporters: [elasticsearch, debug]
   telemetry:
     metrics:
       level: detailed

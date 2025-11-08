@@ -114,8 +114,8 @@ jobs:
             tag_suffix: load-generator
             context: ./
             setup-qemu: true
-          - file: ./src/opensearch/Dockerfile
-            tag_suffix: opensearch
+          - file: ./src/elasticsearch/Dockerfile
+            tag_suffix: elasticsearch
             context: ./
             setup-qemu: true
           - file: ./src/payment/Dockerfile

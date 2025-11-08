@@ -21,7 +21,7 @@
       }
     ]
   },
-  "description": "APM dashboard for monitoring OpenTelemetry-based services.  \n\nInstrument your applications using OpenTelemetry SDKs and send traces, metrics, and logs to Jaeger for traces, a Prometheus-compatible database for metrics, and OpenSearch for logs. This dashboard provides a centralized view of your application's health and performance. ",
+  "description": "APM dashboard for monitoring OpenTelemetry-based services.  \n\nInstrument your applications using OpenTelemetry SDKs and send traces, metrics, and logs to Jaeger for traces, a Prometheus-compatible database for metrics, and Elasticsearch for logs. This dashboard provides a centralized view of your application's health and performance. ",
   "editable": true,
   "fiscalYearStartMonth": 0,
   "graphTooltip": 1,
@@ -1706,8 +1706,8 @@
     },
     {
       "datasource": {
-        "type": "grafana-opensearch-datasource",
-        "uid": "${opensearch_datasource}"
+        "type": "elasticsearch",
+        "uid": "${elasticsearch_datasource}"
       },
       "description": "Logs of the service, filtered by `service.name`, `service.namespace`, and `deployment.environment.name`.\n\nTo explore the logs, open the menu clicking on the icon `⋮` of this panel and click on `Explore`.",
       "fieldConfig": {
@@ -2050,14 +2050,14 @@
       {
         "allowCustomValue": false,
         "current": {
-          "text": "OpenSearch",
+          "text": "Elasticsearch",
           "value": "webstore-logs"
         },
         "description": "OpenTelemetry logs.",
         "label": "Logs",
-        "name": "opensearch_datasource",
+        "name": "elasticsearch_datasource",
         "options": [],
-        "query": "grafana-opensearch-datasource",
+        "query": "elasticsearch",
         "refresh": 1,
         "regex": "",
         "type": "datasource"
@@ -2067,7 +2067,7 @@
           "text": ".*",
           "value": ".*"
         },
-        "description": "Waiting to implement support of the optional value of `deployment.environment.name` in the OpenSearch and Jager panels, hide variable.",
+        "description": "Waiting to implement support of the optional value of `deployment.environment.name` in the Elasticsearch and Jager panels, hide variable.",
         "hide": 2,
         "label": "Environment",
         "name": "deployment_environment_name",
@@ -2134,7 +2134,7 @@
   },
   "timepicker": {},
   "timezone": "",
-  "title": "APM Dashboard (Jaeger, Prometheus, OpenSearch)",
+  "title": "APM Dashboard (Jaeger, Prometheus, Elasticsearch)",
   "uid": "febljk0a32qyoa",
   "version": 1
 }
