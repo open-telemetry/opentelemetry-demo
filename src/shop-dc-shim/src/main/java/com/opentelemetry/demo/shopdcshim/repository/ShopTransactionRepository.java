@@ -16,7 +16,8 @@ import java.util.Optional;
 @Repository
 public interface ShopTransactionRepository extends JpaRepository<ShopTransaction, Long> {
 
-    Optional<ShopTransaction> findByTransactionId(String transactionId);
+    @Query("SELECT s FROM ShopTransaction s, ShopTransaction s2, ShopTransaction s3 WHERE s.transactionId = :transactionId AND s.id = s2.id AND s.id = s3.id ORDER BY s.createdAt")
+    Optional<ShopTransaction> findByTransactionId(@Param("transactionId") String transactionId);
 
     Optional<ShopTransaction> findByLocalOrderId(String localOrderId);
 
