@@ -13,6 +13,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import oteldemo.Demo.*;
 import oteldemo.CheckoutServiceGrpc;
+import oteldemo.CartServiceGrpc;
 
 import javax.annotation.PreDestroy;
 import java.util.UUID;
@@ -24,6 +25,7 @@ public class CloudCheckoutService {
 
     private final ManagedChannel channel;
     private final CheckoutServiceGrpc.CheckoutServiceBlockingStub checkoutStub;
+    private final CartServiceGrpc.CartServiceBlockingStub cartStub;
     private final Tracer tracer;
     private final String checkoutServiceAddr;
 
@@ -39,6 +41,12 @@ public class CloudCheckoutService {
                 .build();
         
         this.checkoutStub = CheckoutServiceGrpc.newBlockingStub(channel);
+        
+        // Create cart service client otherwise we get cart errors on checkout
+        ManagedChannel cartChannel = ManagedChannelBuilder.forTarget("cart:8080")
+                .usePlaintext()
+                .build();
+        this.cartStub = CartServiceGrpc.newBlockingStub(cartChannel);
         
         log.info("Initialized Cloud Checkout Service with gRPC address: {}", checkoutServiceAddr);
     }
@@ -73,6 +81,13 @@ public class CloudCheckoutService {
 
             // Generate a unique user ID for this transaction  
             String userId = "shop-dc-" + UUID.randomUUID().toString();
+            
+            for (var item : request.getItems()) {
+                cartStub.addItem(AddItemRequest.newBuilder()
+                    .setUserId(userId)
+                    .setItem(CartItem.newBuilder().setProductId(item.getProductId()).setQuantity(item.getQuantity()).build())
+                    .build());
+            }
 
             // Build the gRPC PlaceOrderRequest
             PlaceOrderRequest grpcRequest = buildGrpcRequest(userId, request);
