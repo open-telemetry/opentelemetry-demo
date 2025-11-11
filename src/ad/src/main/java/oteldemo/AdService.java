@@ -46,6 +46,7 @@ import dev.openfeature.sdk.EvaluationContext;
 import dev.openfeature.sdk.MutableContext;
 import dev.openfeature.sdk.OpenFeatureAPI;
 import java.util.UUID;
+import org.apache.commons.codec.binary.Base64;
 
 
 public final class AdService {
@@ -227,11 +228,57 @@ public final class AdService {
 
   private static final ImmutableListMultimap<String, Ad> adsMap = createAdsMap();
 
+  @WithSpan("photoLicenceCheck")
+  private void photoLicenceCheck(@SpanAttribute("app.ads.product") String productId) {
+    Span span = Span.current();
+    span.setAttribute("app.ads.licence_check", true);
+
+    // NOTE: Uses commons-codec 1.6 which has CVE-2012-5783 (medium severity).
+    // This is intentionally vulnerable for security testing but NOT exploitable from
+    // external inputs as it only encodes internal product IDs (hardcoded in adsMap).
+    // No user-supplied data flows through this function.
+    byte[] encodedBytes = Base64.encodeBase64(productId.getBytes());
+    String encodedProductId = new String(encodedBytes);
+    span.setAttribute("app.ads.product.encoded", encodedProductId);
+
+    logger.info("Performing photo licence check for product: " + productId + " (encoded: " + encodedProductId + ")");
+
+    // CPU-intensive loop for approximately 0.45 seconds
+    long startTime = System.nanoTime();
+    long targetDuration = 450_000_000L; // 0.45 seconds in nanoseconds
+    double result = 0.0;
+
+    while ((System.nanoTime() - startTime) < targetDuration) {
+      // Perform CPU-intensive mathematical operations
+      for (int i = 0; i < 10000; i++) {
+        result += Math.sqrt(i) * Math.sin(i) * Math.cos(i);
+        result = result % 1000000; // Prevent overflow
+      }
+    }
+
+    long actualDuration = (System.nanoTime() - startTime) / 1_000_000; // Convert to ms
+    span.setAttribute("app.ads.licence_check.duration_ms", actualDuration);
+    logger.info("Photo licence check completed for product: " + productId + " in " + actualDuration + "ms");
+  }
+
   @WithSpan("getAdsByCategory")
   private Collection<Ad> getAdsByCategory(@SpanAttribute("app.ads.category") String category) {
     Collection<Ad> ads = adsMap.get(category);
     Span.current().setAttribute("app.ads.count", ads.size());
+
+    // Perform photo licence check for each ad (all ads have product images)
+    for (Ad ad : ads) {
+      String productId = extractProductId(ad.getRedirectUrl());
+      photoLicenceCheck(productId);
+    }
+
     return ads;
+  }
+
+  private String extractProductId(String redirectUrl) {
+    // Extract product ID from URL like "/product/2ZYFJ3GM2N"
+    String[] parts = redirectUrl.split("/");
+    return parts.length > 2 ? parts[2] : "unknown";
   }
 
   private static final Random random = new Random();
@@ -248,7 +295,12 @@ public final class AdService {
 
       Collection<Ad> allAds = adsMap.values();
       for (int i = 0; i < MAX_ADS_TO_SERVE; i++) {
-        ads.add(Iterables.get(allAds, random.nextInt(allAds.size())));
+        Ad ad = Iterables.get(allAds, random.nextInt(allAds.size()));
+        ads.add(ad);
+
+        // Perform photo licence check for each randomly selected ad
+        String productId = extractProductId(ad.getRedirectUrl());
+        photoLicenceCheck(productId);
       }
       span.setAttribute("app.ads.count", ads.size());
 

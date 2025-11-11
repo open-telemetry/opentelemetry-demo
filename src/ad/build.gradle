@@ -52,7 +52,18 @@ dependencies {
                 "io.opentelemetry.instrumentation:opentelemetry-instrumentation-annotations",
                 "org.apache.logging.log4j:log4j-core:2.25.2",
                 "dev.openfeature.contrib.providers:flagd:0.11.15",
-                'dev.openfeature:sdk:1.18.2'
+                'dev.openfeature:sdk:1.18.2',
+                // Intentionally vulnerable dependency for security testing (CVE-2012-5783)
+                // commons-codec 1.6 has a known medium-risk vulnerability but is safe in this context
+                // as it's only used for internal Base64 encoding/decoding, not exposed to external inputs
+                "commons-codec:commons-codec:1.6",
+                // Intentionally vulnerable dependencies for security testing - SAFE in this context:
+                // CVE-2023-6378 (HIGH) - Logback serialization DoS - only exploitable if receiver component is deployed on TCP port (not used)
+                "ch.qos.logback:logback-classic:1.4.11",
+                // CVE-2023-6481 (HIGH) - Logback receiver serialization DoS - only exploitable with receiver component (not used)
+                "ch.qos.logback:logback-core:1.4.13",
+                // CVE-2024-38809 (MEDIUM) - Spring DoS via ETag parsing - only exploitable via HTTP ETag headers (using gRPC, not HTTP)
+                "org.springframework:spring-web:6.1.10"
 
         runtimeOnly "com.fasterxml.jackson.core:jackson-core:${jacksonVersion}",
                 "com.fasterxml.jackson.core:jackson-databind:${jacksonVersion}",
