@@ -681,26 +681,6 @@ spec:
   selector:   
     opentelemetry.io/name: kafka
 ---
-# # Source: opentelemetry-demo/templates/component.yaml
-# apiVersion: v1
-# kind: Service
-# metadata:
-#   name: load-generator
-#   labels:
-#     opentelemetry.io/name: load-generator 
-#     app.kubernetes.io/component: load-generator
-#     app.kubernetes.io/name: load-generator
-#     app.kubernetes.io/version: "2.1.3"
-#     app.kubernetes.io/part-of: opentelemetry-demo
-# spec:
-#   type: ClusterIP
-#   ports:
-#     - port: 8089
-#       name: tcp-service
-#       targetPort: 8089
-#   selector:   
-#    opentelemetry.io/name: load-generator
----
 # Source: opentelemetry-demo/templates/component.yaml
 apiVersion: v1
 kind: Service
@@ -893,6 +873,8 @@ spec:
               value: Host=postgresql;Username=otelu;Password=otelp;Database=otel
             - name: OTEL_DOTNET_AUTO_TRACES_ENTITYFRAMEWORKCORE_INSTRUMENTATION_ENABLED
               value: "false"
+            - name: JAVA_TOOL_OPTIONS
+              value: "-javaagent:/usr/src/app/splunk-otel-javaagent.jar -Dsplunk.snapshot.profiler.enabled=true -Dsplunk.snapshot.profiler.sampling.interval=1 -Dsplunk.snapshot.selection.probability=0.1 -XX:MaxRAMPercentage=70.0 -XX:InitialRAMPercentage=70.0"
             - name: OTEL_RESOURCE_ATTRIBUTES
               value: service.name=$(OTEL_SERVICE_NAME),service.namespace=opentelemetry-demo,service.version=2.1.3,service.kafka=spanlink
             - name: SPLUNK_PROFILER_ENABLED
@@ -940,7 +922,7 @@ spec:
       containers:
         - name: ad
           #image: 'ghcr.io/open-telemetry/demo:2.1.3-ad'
-          image: ghcr.io/splunk/opentelemetry-demo/otel-ad:2.1.3
+          image: ghcr.io/splunk/opentelemetry-demo/otel-ad:2.1.3-profiling-cve
           imagePullPolicy: Always
           ports:            
             - containerPort: 8080
@@ -967,31 +949,33 @@ spec:
               value: "8013"
             - name: OTEL_EXPORTER_OTLP_ENDPOINT
               value: http://$(OTEL_COLLECTOR_NAME):4318
-            - name: OTEL_LOGS_EXPORTER
-              value: otlp
             - name: OTEL_RESOURCE_ATTRIBUTES
-              value: service.name=$(OTEL_SERVICE_NAME),service.namespace=opentelemetry-demo,service.version=2.1.3,service.kafka=no
+              value: service.name=$(OTEL_SERVICE_NAME),service.namespace=opentelemetry-demo,service.version=2.1.3
+            - name: SPLUNK_PROFILER_LOGS_ENDPOINT
+              value: http://$(OTEL_COLLECTOR_NAME):4318/v1/logs
             - name: SPLUNK_PROFILER_ENABLED
               value: "true"
             - name: SPLUNK_PROFILER_MEMORY_ENABLED
               value: "true"
             - name: SPLUNK_METRICS_ENABLED
               value: "true"
-            - name: SPLUNK_SNAPSHOT_PROFILE_ENABLED
-              value: "true"
-            - name: SPLUNK_SNAPSHOT_SELECTION_PROBABILITY 
-              value: "0.1"
-            - name: OTEL_TRACE_EXPORTER
-              value: otlp
+            # - name: SPLUNK_SNAPSHOT_PROFILER_ENABLED
+            #   value: "true"
+            # - name: SPLUNK_SNAPSHOT_PROFILER_SAMPLING_INTERVAL
+            #   value: "1"
+            # - name: SPLUNK_SNAPSHOT_SELECTION_PROBABILITY 
+            #   value: "0.1"
+            # - name: OTEL_TRACE_EXPORTER
+            #   value: otlp
             - name: OTEL_TRACES_SAMPLER
               value: "rules"
             #- name: OTEL_TRACES_SAMPLER_ARG
             #  value: "drop=/grpc.health.v1.Health;fallback=parentbased_always_on"    
             - name: SPLUNK_PROFILER_CALL_STACK_INTERVAL
-              value: "500"
+              value: "100"
             - name: JAVA_TOOL_OPTIONS
-              #  value: "-javaagent:/usr/src/app/splunk-otel-javaagent.jar -Dsplunk.profiler.include.internal.stacks=false -Dsplunk.profiler.cpu.data.format=pprof-gzip-base64 -Xmx640m"
-              value: "-javaagent:/usr/src/app/splunk-otel-javaagent.jar"
+              value: "-javaagent:/usr/src/app/splunk-otel-javaagent-csa.jar -Dsplunk.snapshot.profiler.enabled=true -Dsplunk.snapshot.profiler.sampling.interval=1 -Dsplunk.snapshot.selection.probability=0.1 -Xmx440m"
+              #value: "-javaagent:/usr/src/app/splunk-otel-javaagent.jar"
           resources:
             limits:
               memory: 600Mi
@@ -1885,7 +1869,7 @@ spec:
       containers:
         - name: payment
           #image: 'ghcr.io/open-telemetry/demo:2.1.3-payment'
-          image: 'ghcr.io/splunk/opentelemetry-demo/otel-payment:2.1.3-profiling'
+          image: 'ghcr.io/splunk/opentelemetry-demo/otel-payment:2.1.3-profiling.1'
           imagePullPolicy: Always
           ports:
             - containerPort: 8080
@@ -2357,10 +2341,10 @@ spec:
   ingressClassName: traefik
   tls:
   - hosts:
-    - dev-astronomy.splunko11y.com
+    - astronomy-shop.splunko11y.com
     secretName: splunk-demo-tls
   rules:
-  - host: dev-astronomy.splunko11y.com
+  - host: astronomy-shop.splunko11y.com
     http:
       paths:
       - path: /
@@ -2557,7 +2541,7 @@ spec:
       labels:
         app: thousandeyes
     spec:
-      hostname: dev-astronomy-shop
+      hostname: astronomy-shop-us1-show
       containers:
        - name: thousandeyes
          image: 'thousandeyes/enterprise-agent:latest'
