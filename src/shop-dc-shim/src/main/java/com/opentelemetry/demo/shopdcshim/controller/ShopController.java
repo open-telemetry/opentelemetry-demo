@@ -170,22 +170,10 @@ public class ShopController {
 
     @GetMapping("/health")
     public ResponseEntity<Map<String, Object>> health() {
-        ShopTransactionService.TransactionStats stats = transactionService.getTransactionStats();
-
         return ResponseEntity.ok(Map.of(
                 "status", "healthy",
                 "service", "shop-dc-shim",
-                "environment", "datacenter-b01",
-                "description", "On-premises shop datacenter shim service for cloud checkout integration",
-                "transactions", Map.of(
-                        "initiated", stats.getInitiated(),
-                        "validating", stats.getValidating(),
-                        "submittingCloud", stats.getSubmittingCloud(),
-                        "completed", stats.getCompleted(),
-                        "failed", stats.getFailed(),
-                        "completedLastHour", stats.getCompletedLastHour(),
-                        "avgProcessingTimeSeconds", stats.getAvgProcessingTimeSeconds()
-                )
+                "environment", "datacenter-b01"
         ));
     }
 
