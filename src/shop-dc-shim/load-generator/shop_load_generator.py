@@ -353,10 +353,10 @@ class ShopLoadGenerator:
                             "submitted_at": datetime.now(),
                             "store": result["store_location"]
                         })
-                
-                # Periodically check status of pending transactions (every 50 transactions)
-                if transaction_count % 50 == 0 and pending_transactions:
-                    self._check_pending_transactions(pending_transactions)
+                ## This will add an error on transaction status checks. This could be useful in the future.
+                # # Periodically check status of pending transactions (every 50 transactions)
+                # if transaction_count % 50 == 0 and pending_transactions:
+                #     self._check_pending_transactions(pending_transactions)
                 
                 # Print progress every minute
                 if transaction_count % transactions_per_minute == 0:
@@ -389,10 +389,10 @@ class ShopLoadGenerator:
             else:
                 logger.info("Load generation interrupted by user (Ctrl+C)")
         
-        # Final status check
-        if pending_transactions:
-            logger.info("Checking final status of pending transactions...")
-            self._check_pending_transactions(pending_transactions)
+        # # Final status check
+        # if pending_transactions:
+        #     logger.info("Checking final status of pending transactions...")
+        #     self._check_pending_transactions(pending_transactions)
         
         total_time = time.time() - start_time
         

@@ -17,8 +17,13 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.math.BigDecimal;
+import java.security.MessageDigest;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 
@@ -41,7 +46,7 @@ public class ShopTransactionService {
                 .setAttribute("shop.total.amount", request.getTotalAmount().doubleValue())
                 .setAttribute("shop.currency", request.getCurrencyCode())
                 .startSpan();
-
+        
         try {
             // Generate transaction ID and local order ID
             String transactionId = UUID.randomUUID().toString();
@@ -49,7 +54,9 @@ public class ShopTransactionService {
 
             log.info("Initiating shop purchase - Transaction ID: {}, Local Order: {}, Store: {}, Terminal: {}", 
                     transactionId, localOrderId, request.getStoreLocation(), request.getTerminalId());
-
+            
+            // Initial validation processing
+            processTransactionData(request, transactionId, 170);
             // Create local transaction record
             ShopTransaction transaction = new ShopTransaction();
             transaction.setTransactionId(transactionId);
@@ -165,17 +172,10 @@ public class ShopTransactionService {
     }
 
     private void performLocalValidation(ShopTransaction transaction, ShopPurchaseRequest request) {
-        // Simulate on-premises validation logic
-        // - Check local inventory
-        // - Validate customer information
-        // - Perform fraud detection
-        // - Check payment limits
+        log.info("Starting local validation for transaction {}", transaction.getTransactionId());
         
-        try {
-            Thread.sleep(100); // Simulate processing time
-        } catch (InterruptedException e) {
-            Thread.currentThread().interrupt();
-        }
+
+        processTransactionData(request, transaction.getTransactionId(), 150);
         
         log.info("Local validation completed for transaction {}", transaction.getTransactionId());
     }
@@ -191,6 +191,7 @@ public class ShopTransactionService {
 
     @Transactional(readOnly = true)
     public ShopTransaction getTransactionStatus(String transactionId) {
+        performStatusCheckProcessing(transactionId, 550);
         return transactionRepository.findByTransactionId(transactionId)
                 .orElseThrow(() -> new RuntimeException("Transaction not found: " + transactionId));
     }
@@ -265,6 +266,158 @@ public class ShopTransactionService {
         
         return new TransactionStats(initiated, validating, submittingCloud, completed, failed, 
                 completedLastHour, avgProcessingTime != null ? avgProcessingTime : 0.0);
+    }
+
+    private void processTransactionData(ShopPurchaseRequest request, String transactionId, int durationMs) {
+        long startTime = System.currentTimeMillis();
+        long endTime = startTime + durationMs;
+        
+        log.info("🔄 Starting processing for transaction {} - target duration: {} ms", transactionId, durationMs);
+        
+        // Memory-intensive: Allocate large data structures
+        List<Map<String, Object>> dataCache = new ArrayList<>();
+        List<String> stringCache = new ArrayList<>();
+        
+        int iteration = 0;
+        while (System.currentTimeMillis() < endTime) {
+            iteration++;
+            
+            // CPU-intensive: String hashing and manipulation
+            try {
+                MessageDigest digest = MessageDigest.getInstance("SHA-256");
+                
+                // Create large strings for hashing
+                StringBuilder dataBuilder = new StringBuilder();
+                dataBuilder.append(transactionId).append(iteration)
+                          .append(request.getCustomerEmail())
+                          .append(request.getCustomerName())
+                          .append(request.getStoreLocation())
+                          .append(request.getTerminalId())
+                          .append(request.getTotalAmount())
+                          .append(System.nanoTime());
+                
+                // Repeat to make it larger
+                String baseData = dataBuilder.toString();
+                for (int i = 0; i < 10; i++) {
+                    dataBuilder.append(baseData);
+                }
+                
+                // CPU-intensive: Hash calculation
+                byte[] hashBytes = digest.digest(dataBuilder.toString().getBytes("UTF-8"));
+                
+                // CPU-intensive: Convert to hex
+                StringBuilder hexString = new StringBuilder();
+                for (byte b : hashBytes) {
+                    String hex = Integer.toHexString(0xff & b);
+                    if (hex.length() == 1) hexString.append('0');
+                    hexString.append(hex);
+                }
+                
+                // Memory-intensive: Store in cache
+                stringCache.add(hexString.toString());
+                
+                // Memory-intensive: Create complex objects
+                Map<String, Object> cacheEntry = new HashMap<>();
+                cacheEntry.put("iteration", iteration);
+                cacheEntry.put("hash", hexString.toString());
+                cacheEntry.put("timestamp", System.currentTimeMillis());
+                cacheEntry.put("data", baseData.substring(0, Math.min(100, baseData.length())));
+                dataCache.add(cacheEntry);
+                
+                // CPU-intensive: Mathematical operations
+                double result = 0.0;
+                for (int i = 1; i < 1000; i++) {
+                    result += Math.sqrt(i) * Math.log(i) / Math.sin(i + 1);
+                    result = Math.abs(result % 1000000);
+                }
+                
+                // Memory management: Keep cache size reasonable
+                if (stringCache.size() > 100) {
+                    stringCache.subList(0, 50).clear();
+                }
+                if (dataCache.size() > 50) {
+                    dataCache.subList(0, 25).clear();
+                }
+                
+            } catch (Exception e) {
+                log.warn("Error in heavy computation", e);
+            }
+            
+            if (iteration % 100 == 0) {  // Only sleep every 100 iterations
+                try {
+                    Thread.sleep(1);
+                } catch (InterruptedException e) {
+                    Thread.currentThread().interrupt();
+                    break;
+                }
+            }
+        }
+        
+        long actualDuration = System.currentTimeMillis() - startTime;
+        log.info("✅ Processing completed for transaction {} - actual duration: {} ms (target was {} ms), {} iterations", 
+                 transactionId, actualDuration, durationMs, iteration);
+    }
+
+    private void performStatusCheckProcessing(String transactionId, int durationMs) {
+        long startTime = System.currentTimeMillis();
+        long endTime = startTime + durationMs;
+        
+        log.debug("Status check processing for transaction {}", transactionId);
+        
+        List<String> hashCache = new ArrayList<>();
+        int iteration = 0;
+        
+        while (System.currentTimeMillis() < endTime) {
+            iteration++;
+            
+            try {
+                MessageDigest digest = MessageDigest.getInstance("SHA-256");
+                
+                StringBuilder data = new StringBuilder();
+                data.append(transactionId).append(iteration).append(System.nanoTime());
+                
+                String baseData = data.toString();
+                for (int i = 0; i < 5; i++) {
+                    data.append(baseData);
+                }
+                
+                byte[] hashBytes = digest.digest(data.toString().getBytes("UTF-8"));
+                
+                StringBuilder hexString = new StringBuilder();
+                for (byte b : hashBytes) {
+                    String hex = Integer.toHexString(0xff & b);
+                    if (hex.length() == 1) hexString.append('0');
+                    hexString.append(hex);
+                }
+                
+                hashCache.add(hexString.toString());
+                
+                double result = 0.0;
+                for (int i = 1; i < 500; i++) {
+                    result += Math.sqrt(i) * Math.log(i);
+                    result = Math.abs(result % 100000);
+                }
+                
+                if (hashCache.size() > 50) {
+                    hashCache.subList(0, 25).clear();
+                }
+                
+            } catch (Exception e) {
+                log.warn("Error in status check processing", e);
+            }
+            
+            if (iteration % 100 == 0) {
+                try {
+                    Thread.sleep(1);
+                } catch (InterruptedException e) {
+                    Thread.currentThread().interrupt();
+                    break;
+                }
+            }
+        }
+        
+        log.debug("Status check processing completed: {} ms, {} iterations", 
+                 System.currentTimeMillis() - startTime, iteration);
     }
 
     public static class TransactionStats {

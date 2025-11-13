@@ -77,3 +77,75 @@ ON target.store_code = source.store_code
 WHEN NOT MATCHED THEN
     INSERT (store_code, store_name, address, city, state, country)
     VALUES (source.store_code, source.store_name, source.address, source.city, source.state, source.country);
+
+-- Extra indexes slow down INSERTs and UPDATEs (especially status changes)
+IF NOT EXISTS (SELECT * FROM sys.indexes WHERE name = 'idx_shop_transactions_customer_status_created' AND object_id = OBJECT_ID('shop_transactions'))
+CREATE INDEX idx_shop_transactions_customer_status_created ON shop_transactions(customer_email, status, created_at);
+
+IF NOT EXISTS (SELECT * FROM sys.indexes WHERE name = 'idx_shop_transactions_store_terminal' AND object_id = OBJECT_ID('shop_transactions'))
+CREATE INDEX idx_shop_transactions_store_terminal ON shop_transactions(store_location, terminal_id);
+
+IF NOT EXISTS (SELECT * FROM sys.indexes WHERE name = 'idx_shop_transactions_status_store' AND object_id = OBJECT_ID('shop_transactions'))
+CREATE INDEX idx_shop_transactions_status_store ON shop_transactions(status, store_location, created_at);
+
+IF NOT EXISTS (SELECT * FROM sys.indexes WHERE name = 'idx_shop_transactions_status_customer' AND object_id = OBJECT_ID('shop_transactions'))
+CREATE INDEX idx_shop_transactions_status_customer ON shop_transactions(status, customer_email, total_amount);
+
+IF NOT EXISTS (SELECT * FROM sys.indexes WHERE name = 'idx_shop_transactions_status_amount' AND object_id = OBJECT_ID('shop_transactions'))
+CREATE INDEX idx_shop_transactions_status_amount ON shop_transactions(status, total_amount, processed_at);
+
+-- Check constraint that runs expensive queries on every INSERT
+IF NOT EXISTS (SELECT * FROM sys.check_constraints WHERE name = 'chk_shop_transactions_validation')
+ALTER TABLE shop_transactions
+ADD CONSTRAINT chk_shop_transactions_validation
+CHECK (
+    (SELECT COUNT(*) FROM shop_transactions st 
+     WHERE LOWER(st.customer_email) LIKE '%' + LOWER(customer_email) + '%') >= 0
+    AND (SELECT COUNT(*) FROM shop_transactions st 
+         WHERE REPLACE(st.store_location, ' ', '') = REPLACE(store_location, ' ', '')) >= 0
+    AND (SELECT AVG(CAST(total_amount AS FLOAT)) 
+         FROM shop_transactions 
+         WHERE store_location = store_location) >= 0
+    OR total_amount >= 0
+);
+
+-- Audit table for tracking changes
+IF NOT EXISTS (SELECT * FROM sysobjects WHERE name='shop_transaction_audit' and xtype='U')
+CREATE TABLE shop_transaction_audit (
+    audit_id BIGINT IDENTITY(1,1) PRIMARY KEY,
+    transaction_id NVARCHAR(255),
+    old_status NVARCHAR(20),
+    new_status NVARCHAR(20),
+    customer_count INT,
+    store_avg_amount DECIMAL(10,2),
+    updated_at DATETIME2 DEFAULT GETDATE()
+);
+
+-- Trigger on UPDATE that runs expensive queries
+IF OBJECT_ID('trg_shop_transactions_update', 'TR') IS NOT NULL
+DROP TRIGGER trg_shop_transactions_update;
+GO
+
+CREATE TRIGGER trg_shop_transactions_update
+ON shop_transactions
+AFTER UPDATE
+AS
+BEGIN
+    SET NOCOUNT ON;
+    
+    -- Expensive audit queries on every UPDATE
+    INSERT INTO shop_transaction_audit (transaction_id, old_status, new_status, customer_count, store_avg_amount)
+    SELECT 
+        i.transaction_id,
+        d.status,
+        i.status,
+        (SELECT COUNT(*) FROM shop_transactions t1 
+         CROSS JOIN shop_transactions t2 
+         WHERE t1.customer_email = i.customer_email),
+        (SELECT AVG(CAST(t3.total_amount AS FLOAT)) 
+         FROM shop_transactions t3 
+         WHERE LOWER(t3.store_location) LIKE LOWER('%' + i.store_location + '%'))
+    FROM inserted i
+    INNER JOIN deleted d ON i.id = d.id;
+END;
+GO
