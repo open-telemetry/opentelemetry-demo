@@ -26,6 +26,7 @@ declare global {
       SPLUNK_RUM_REALM?: string;
       DEPLOYMENT_TYPE?: string;
     };
+    tracer?: any; // OpenTelemetry tracer for custom spans
   }
 }
 

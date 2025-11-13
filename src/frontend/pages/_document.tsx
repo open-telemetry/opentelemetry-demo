@@ -91,9 +91,10 @@ export default class MyDocument extends Document<{ envString: string }> {
                     environment: ''
                   });
 
-                  // Initialize tracer for custom spans
+                  // Initialize tracer for custom spans and expose globally
                   const Provider = SplunkRum.provider;
                   var tracer = Provider.getTracer('appModuleLoader');
+                  window.tracer = tracer; // Make tracer available globally for custom spans
 
                   if (typeof SplunkSessionRecorder !== 'undefined') {
                     SplunkSessionRecorder.init({
