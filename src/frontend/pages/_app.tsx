@@ -20,6 +20,11 @@ declare global {
       NEXT_PUBLIC_OTEL_SERVICE_NAME?: string;
       NEXT_PUBLIC_OTEL_EXPORTER_OTLP_TRACES_ENDPOINT?: string;
       IS_SYNTHETIC_REQUEST?: string;
+      SPLUNK_RUM_TOKEN?: string;
+      SPLUNK_APP_NAME?: string;
+      SPLUNK_ENV?: string;
+      SPLUNK_RUM_REALM?: string;
+      DEPLOYMENT_TYPE?: string;
     };
   }
 }

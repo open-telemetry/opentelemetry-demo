@@ -22,7 +22,9 @@ COPY ./src/frontend/types/ types/
 COPY ./src/frontend/utils/enums/ utils/enums/
 COPY ./src/frontend/utils/telemetry/ utils/telemetry/
 COPY ./src/frontend/utils/imageLoader.js utils/imageLoader.js
+COPY ./src/frontend/utils/logger.js utils/logger.js
 COPY ./src/frontend/utils/Request.ts utils/Request.ts
+COPY ./src/frontend/utils/userAttributes.ts utils/userAttributes.ts
 
 COPY ./src/frontend/next.config.js next.config.js
 COPY ./src/frontend/tsconfig.json tsconfig.json
@@ -44,8 +46,8 @@ RUN npm ci --omit=dev
 
 # -----------------------------------------------------------------------------
 
-FROM gcr.io/distroless/nodejs22-debian12:nonroot
-#FROM node:22-slim
+#FROM gcr.io/distroless/nodejs22-debian12:nonroot
+FROM node:22-slim
 
 WORKDIR /app
 
@@ -56,9 +58,15 @@ COPY --from=deps /app/node_modules/ node_modules/
 
 COPY ./src/frontend/public/ public/
 
+# Copy logger utility needed by Instrumentation.js
+COPY ./src/frontend/utils/logger.js utils/logger.js
+
 COPY ./src/frontend/utils/telemetry/Instrumentation.js Instrumentation.js
 
 EXPOSE ${FRONTEND_PORT}
 
-CMD ["--require=./Instrumentation.js", "server.js"]
+# Use NODE_OPTIONS to ensure instrumentation loads before server starts
+ENV NODE_OPTIONS="--require ./Instrumentation.js"
+
+CMD ["node", "server.js"]
 #ENTRYPOINT ["tail", "-f", "/dev/null"] 

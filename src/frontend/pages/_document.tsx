@@ -35,7 +35,8 @@ export default class MyDocument extends Document<{ envString: string }> {
           SPLUNK_RUM_TOKEN: '${process.env.SPLUNK_RUM_TOKEN}',
           SPLUNK_APP_NAME: '${process.env.SPLUNK_APP_NAME}',
           SPLUNK_ENV: '${process.env.SPLUNK_RUM_ENV}',
-          SPLUNK_RUM_REALM: '${process.env.SPLUNK_RUM_REALM}'
+          SPLUNK_RUM_REALM: '${process.env.SPLUNK_RUM_REALM}',
+          DEPLOYMENT_TYPE: '${process.env.DEPLOYMENT_TYPE || 'green'}'
         };`;
       return {
         ...initialProps,
@@ -46,26 +47,6 @@ export default class MyDocument extends Document<{ envString: string }> {
       sheet.seal();
     }
   }
-
-//   render() {
-//     return (
-//       <Html>
-//         <Head>
-//           <link rel="preconnect" href="https://fonts.googleapis.com" />
-//           <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
-//           <link
-//             href="https://fonts.googleapis.com/css2?family=Open+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,300;1,400;1,500;1,600;1,700;1,800&display=swap"
-//             rel="stylesheet"
-//           />
-//         </Head>
-//         <body>
-//           <Main />
-//           <script dangerouslySetInnerHTML={{ __html: this.props.envString }}></script>
-//           <NextScript />
-//         </body>
-//       </Html>
-//     );
-//   }
 
   render() {
     return (
@@ -80,12 +61,14 @@ export default class MyDocument extends Document<{ envString: string }> {
           {/* eslint-disable @next/next/no-sync-scripts */}
           {/* Inject window.ENV first */}
           <script dangerouslySetInnerHTML={{ __html: this.props.envString }}></script>
-          {/* Load Splunk scripts nextt */}
+          {/* Load Splunk scripts */}
           <script src="https://cdn.signalfx.com/o11y-gdi-rum/latest/splunk-otel-web.js"></script>
           <script src="https://cdn.signalfx.com/o11y-gdi-rum/latest/splunk-otel-web-session-recorder.js"></script>
 
-          {/* Inline Splunk RUM initialization directly in raw HTML head */}
+          {/* Load user attributes generator - must load before RUM initialization */}
+          <script src="/global-attributes.js"></script>
 
+          {/* Inline Splunk RUM initialization directly in raw HTML head */}
           <script dangerouslySetInnerHTML={{
             __html: `
               (function initializeSplunkRUM() {
@@ -94,28 +77,23 @@ export default class MyDocument extends Document<{ envString: string }> {
                 const deploymentEnvironment = window.ENV.SPLUNK_ENV;
                 const realm = window.ENV.SPLUNK_RUM_REALM;
 
-                // console.log("Splunk ENV values:", {
-                //   rumAccessToken,
-                //   applicationName,
-                //   deploymentEnvironment,
-                //   realm,
-                //   fullWindowEnv: window.ENV
-                // });
-
                 if (typeof SplunkRum !== 'undefined') {
+                  // Get global attributes from the function defined earlier
+                  const globalAttributes = getSplunkGlobalAttributes();
+
                   SplunkRum.init({
                     realm: realm,
                     rumAccessToken: rumAccessToken,
                     applicationName: applicationName,
                     deploymentEnvironment: deploymentEnvironment,
                     version: '2.0.5',
-                    globalAttributes: {
-                      'enduser.id': '5108',
-                      'enduser.role': 'Member',
-                      'deployment.type': 'pink'
-                    },
+                    globalAttributes: globalAttributes,
                     environment: ''
                   });
+
+                  // Initialize tracer for custom spans
+                  const Provider = SplunkRum.provider;
+                  var tracer = Provider.getTracer('appModuleLoader');
 
                   if (typeof SplunkSessionRecorder !== 'undefined') {
                     SplunkSessionRecorder.init({
