@@ -434,15 +434,28 @@ func (cs *checkout) PlaceOrder(ctx context.Context, req *pb.PlaceOrderRequest) (
 
 	// send msg to sqs if the client was created
 	if cs.sqsClient != nil {
+		ctx, sqsSpan := tracer.Start(ctx, "SendOrderForProcessing")
+		sqsSpan.SetAttributes(
+			attribute.String("aws.sqs.queue.url", cs.sqsClient.QueueURL),
+		)
 		logger.Info("sending data to sqs")
+		sqsSpan.AddEvent("sending data to sqs", trace.WithAttributes(
+			attribute.String("messaging.operation.name", "send"),
+			attribute.String("messaging.operation.type", "send"),
+		))
 		r, err := cs.sqsClient.SendMessage(ctx, sqs.Payload{
 			CustomerID: req.UserId,
 			OrderID:    orderID.String(),
 		})
 		if err != nil {
 			logger.Error(fmt.Sprintf("failed to send message to sqs, err: %+v", err))
+		} else {
+			sqsSpan.SetAttributes(
+				attribute.String("messaging.message.id", r),
+			)
+			logger.Info(fmt.Sprintf("sqs message id [%s]", r))
 		}
-		logger.Info(fmt.Sprintf("sqs message id [%s]", r))
+		sqsSpan.End()
 	}
 
 	resp := &pb.PlaceOrderResponse{Order: orderResult}

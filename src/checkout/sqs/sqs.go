@@ -19,7 +19,7 @@ type Payload struct {
 // SQSQueue wraps an SQS client with a specific queue URL.
 type SQSQueue struct {
 	client   *sqs.Client
-	queueURL string
+	QueueURL string
 }
 
 // NewSQSQueue initializes an SQS client (default config chain) and binds it with the provided queue URL.
@@ -31,7 +31,7 @@ func NewSQSQueue(ctx context.Context, queueURL string) (*SQSQueue, error) {
 
 	return &SQSQueue{
 		client:   sqs.NewFromConfig(cfg),
-		queueURL: queueURL,
+		QueueURL: queueURL,
 	}, nil
 }
 
@@ -43,7 +43,7 @@ func (q *SQSQueue) SendMessage(ctx context.Context, p Payload) (string, error) {
 		return "", fmt.Errorf("marshal payload: %w", err)
 	}
 	out, err := q.client.SendMessage(ctx, &sqs.SendMessageInput{
-		QueueUrl:    aws.String(q.queueURL),
+		QueueUrl:    aws.String(q.QueueURL),
 		MessageBody: aws.String(string(b)),
 	})
 	if err != nil {
