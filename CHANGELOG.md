@@ -22,6 +22,8 @@ the release.
   ([#2644](https://github.com/open-telemetry/opentelemetry-demo/pull/2644))
 * [frontend] fix item calculation and shipping
   ([#2684](https://github.com/open-telemetry/opentelemetry-demo/pull/2684))
+* [collector] Remove batch processor
+  ([#2734](https://github.com/open-telemetry/opentelemetry-demo/pull/2734))
 
 ## 2.1.3
 
