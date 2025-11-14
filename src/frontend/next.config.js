@@ -29,16 +29,22 @@ const {
 const nextConfig = {
   reactStrictMode: true,
   output: 'standalone',
+  productionBrowserSourceMaps: true, // Generate sourcemaps for production
   compiler: {
     styledComponents: true,
   },
-  webpack: (config, { isServer }) => {
+  webpack: (config, { isServer, dev }) => {
     if (!isServer) {
       config.resolve.fallback.http2 = false;
       config.resolve.fallback.tls = false;
       config.resolve.fallback.net = false;
       config.resolve.fallback.dns = false;
       config.resolve.fallback.fs = false;
+    }
+
+    // Enable source maps for all modules including React in production
+    if (!dev && !isServer) {
+      config.devtool = 'source-map';
     }
 
     return config;
