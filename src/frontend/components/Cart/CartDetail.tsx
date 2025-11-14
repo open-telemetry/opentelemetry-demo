@@ -55,7 +55,7 @@ const CartDetail = () => {
       });
 
       push({
-        pathname: `/cart/checkout/${order.orderId}`,
+        pathname: `/order/confirmation/${order.orderId}`,
         query: { order: JSON.stringify(order) },
       });
     },

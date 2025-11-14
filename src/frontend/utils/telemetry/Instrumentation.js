@@ -1,50 +1,36 @@
 // Copyright The OpenTelemetry Authors
 // SPDX-License-Identifier: Apache-2.0
 
-// const opentelemetry = require('@opentelemetry/sdk-node');
-// const {getNodeAutoInstrumentations} = require('@opentelemetry/auto-instrumentations-node');
-// const {OTLPTraceExporter} = require('@opentelemetry/exporter-trace-otlp-grpc');
-// const {OTLPMetricExporter} = require('@opentelemetry/exporter-metrics-otlp-grpc');
-// const {PeriodicExportingMetricReader} = require('@opentelemetry/sdk-metrics');
-// const {alibabaCloudEcsDetector} = require('@opentelemetry/resource-detector-alibaba-cloud');
-// const {awsEc2Detector, awsEksDetector} = require('@opentelemetry/resource-detector-aws');
-// const {containerDetector} = require('@opentelemetry/resource-detector-container');
-// const {gcpDetector} = require('@opentelemetry/resource-detector-gcp');
-// const {envDetector, hostDetector, osDetector, processDetector} = require('@opentelemetry/resources');
+const { start } = require('@splunk/otel');
+const { diag, DiagConsoleLogger, DiagLogLevel } = require('@opentelemetry/api');
 
-// const sdk = new opentelemetry.NodeSDK({
-//   traceExporter: new OTLPTraceExporter(),
-//   instrumentations: [
-//     getNodeAutoInstrumentations({
-//       // disable fs instrumentation to reduce noise
-//       '@opentelemetry/instrumentation-fs': {
-//         enabled: false,
-//       },
-//     })
-//   ],
-//   metricReader: new PeriodicExportingMetricReader({
-//     exporter: new OTLPMetricExporter(),
-//   }),
-//   resourceDetectors: [
-//     containerDetector,
-//     envDetector,
-//     hostDetector,
-//     osDetector,
-//     processDetector,
-//     alibabaCloudEcsDetector,
-//     awsEksDetector,
-//     awsEc2Detector,
-//     gcpDetector,
-//   ],
-// });
+// Log relevant environment variables at startup
+console.log('OpenTelemetry Configuration:', {
+  'OTEL_SERVICE_NAME': process.env.OTEL_SERVICE_NAME || 'frontend',
+  'OTEL_EXPORTER_OTLP_ENDPOINT': process.env.OTEL_EXPORTER_OTLP_ENDPOINT,
+  'OTEL_EXPORTER_OTLP_PROTOCOL': process.env.OTEL_EXPORTER_OTLP_PROTOCOL,
+  'OTEL_RESOURCE_ATTRIBUTES': process.env.OTEL_RESOURCE_ATTRIBUTES,
+  'OTEL_LOG_LEVEL': process.env.OTEL_LOG_LEVEL || 'NONE',
+  'NODE_OPTIONS': process.env.NODE_OPTIONS,
+});
 
-// sdk.start();
-const { startTracing } = require('@splunk/otel');
-startTracing({
+// Enable diagnostic logging based on environment variable
+// OTEL_LOG_LEVEL can be: NONE, ERROR, WARN, INFO, DEBUG, VERBOSE, ALL
+const logLevel = process.env.OTEL_LOG_LEVEL || 'NONE';
+if (logLevel !== 'NONE') {
+  const level = DiagLogLevel[logLevel] || DiagLogLevel.INFO;
+  diag.setLogger(new DiagConsoleLogger(), level);
+}
+
+start({
   serviceName: process.env.OTEL_SERVICE_NAME || 'frontend',
 });
-// start({
-//   serviceName: process.env.OTEL_SERVICE_NAME || 'frontend',
-// //  serviceVersion: process.env.OTEL_SERVICE_VERSION,
-//   // Splunk automatically handles resource detection and instrumentations
-// });
+
+// Initialize Splunk-optimized JSON logger
+const { logger } = require('./utils/logger');
+logger.info('OpenTelemetry instrumentation initialized', {
+  'service.name': process.env.OTEL_SERVICE_NAME || 'frontend',
+  'otel.exporter.endpoint': process.env.OTEL_EXPORTER_OTLP_ENDPOINT,
+  'otel.exporter.protocol': process.env.OTEL_EXPORTER_OTLP_PROTOCOL,
+  'otel.resource.attributes': process.env.OTEL_RESOURCE_ATTRIBUTES,
+});
