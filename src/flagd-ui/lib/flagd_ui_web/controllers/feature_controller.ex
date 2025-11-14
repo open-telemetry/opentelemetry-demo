@@ -9,4 +9,11 @@ defmodule FlagdUiWeb.FeatureController do
 
     json(conn, %{"flags" => flags})
   end
+
+  def write(conn, %{"data" => data}) do
+    payload = Jason.encode!(data)
+    GenServer.cast(Storage, {:replace, payload})
+
+    json(conn, %{})
+  end
 end

@@ -29,6 +29,9 @@ defmodule FlagdUiWeb.Router do
     pipe_through :api
 
     get "/read", FeatureController, :read
+    get "/read-file", FeatureController, :read
+    post "/write", FeatureController, :write
+    post "/write-to-file", FeatureController, :write
   end
 
   # Enable LiveDashboard and Swoosh mailbox preview in development

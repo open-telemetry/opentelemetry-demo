@@ -26,6 +26,7 @@ the release.
   ([#2734](https://github.com/open-telemetry/opentelemetry-demo/pull/2734))
 * [email] Add OTLP metrics and logs
   ([#2737](https://github.com/open-telemetry/opentelemetry-demo/pull/2737))
+* [flagd-ui] add back legacy REST APIs to empower programmatic usage ([#2720](https://github.com/open-telemetry/opentelemetry-demo/pull/2720))
 
 ## 2.1.3
 
