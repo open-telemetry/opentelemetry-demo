@@ -24,6 +24,8 @@ the release.
   ([#2684](https://github.com/open-telemetry/opentelemetry-demo/pull/2684))
 * [collector] Remove batch processor
   ([#2734](https://github.com/open-telemetry/opentelemetry-demo/pull/2734))
+* [email] Add OTLP metrics and logs
+  ([#2737](https://github.com/open-telemetry/opentelemetry-demo/pull/2737))
 
 ## 2.1.3
 
