@@ -17,7 +17,7 @@ version = "1.0"
 
 
 val grpcVersion = "1.76.0"
-val protobufVersion = "4.33.0"
+val protobufVersion = "4.33.1"
 
 
 repositories {
@@ -31,7 +31,7 @@ dependencies {
     implementation("com.google.protobuf:protobuf-java:${protobufVersion}")
     testImplementation(kotlin("test"))
     implementation(kotlin("script-runtime"))
-    implementation("org.apache.kafka:kafka-clients:4.1.0")
+    implementation("org.apache.kafka:kafka-clients:4.1.1")
     implementation("com.google.api.grpc:proto-google-common-protos:2.63.1")
     implementation("io.grpc:grpc-protobuf:${grpcVersion}")
     implementation("io.grpc:grpc-stub:${grpcVersion}")
