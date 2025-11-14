@@ -1525,7 +1525,7 @@ spec:
       containers:
         - name: frontend
           #image: 'ghcr.io/open-telemetry/demo:2.1.3-frontend'
-          image: ghcr.io/splunk/opentelemetry-demo/otel-frontend:2.1.3
+          image: ghcr.io/splunk/opentelemetry-demo/otel-frontend:2.1.3-RUM
           imagePullPolicy: Always
           ports:        
             - containerPort: 8080
@@ -1574,12 +1574,16 @@ spec:
               value: $(OTEL_COLLECTOR_NAME)
             - name: OTEL_EXPORTER_OTLP_ENDPOINT
               value: http://$(OTEL_COLLECTOR_NAME):4317
-            # - name: WEB_OTEL_SERVICE_NAME
-            #   value: frontend-web
-            # - name: PUBLIC_OTEL_EXPORTER_OTLP_TRACES_ENDPOINT
-            #   value: http://localhost:8080/otlp-http/v1/traces
+            - name: OTEL_EXPORTER_OTLP_PROTOCOL
+              value: grpc
             - name: OTEL_RESOURCE_ATTRIBUTES
+            - name: OTEL_LOG_LEVEL
               value: service.name=$(OTEL_SERVICE_NAME),service.namespace=opentelemetry-demo,service.version=2.1.3,service.kafka=no
+            - name: API_TOKEN
+              valueFrom:
+                secretKeyRef:
+                  name: workshop-secret
+                  key: api_token
             - name: SPLUNK_RUM_TOKEN
               valueFrom:
                 secretKeyRef:
@@ -2557,7 +2561,7 @@ spec:
            - name: TEAGENT_ACCOUNT_TOKEN
              valueFrom:
               secretKeyRef:
-                name: te-creds
+                name: workshop-secret
                 key: TEAGENT_ACCOUNT_TOKEN
             # value: xyz
            - name: TEAGENT_INET
