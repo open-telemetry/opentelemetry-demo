@@ -22,6 +22,8 @@ the release.
   ([#2644](https://github.com/open-telemetry/opentelemetry-demo/pull/2644))
 * [frontend] fix item calculation and shipping
   ([#2684](https://github.com/open-telemetry/opentelemetry-demo/pull/2684))
+* [email] Add OTLP metrics and logs
+  ([#2737](https://github.com/open-telemetry/opentelemetry-demo/pull/2737))
 
 ## 2.1.3
 
