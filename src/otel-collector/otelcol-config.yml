@@ -123,10 +123,14 @@ exporters:
     endpoint: "jaeger:4317"
     tls:
       insecure: true
+    sending_queue:
+      batch:
   otlphttp/prometheus:
     endpoint: "http://prometheus:9090/api/v1/otlp"
     tls:
       insecure: true
+    sending_queue:
+      batch:
   opensearch:
     logs_index: otel-logs
     logs_index_time_format: "yyyy-MM-dd"
@@ -134,8 +138,9 @@ exporters:
       endpoint: "http://opensearch:9200"
       tls:
         insecure: true
+    sending_queue:
+      batch:
 processors:
-  batch:
   memory_limiter:
     check_interval: 5s
     limit_percentage: 80
@@ -158,15 +163,15 @@ service:
   pipelines:
     traces:
       receivers: [otlp]
-      processors: [resourcedetection, memory_limiter, transform, batch]
+      processors: [resourcedetection, memory_limiter, transform]
       exporters: [otlp, debug, spanmetrics]
     metrics:
       receivers: [docker_stats, httpcheck/frontend-proxy, hostmetrics, nginx, otlp, postgresql, redis, spanmetrics]
-      processors: [resourcedetection, memory_limiter, batch]
+      processors: [resourcedetection, memory_limiter]
       exporters: [otlphttp/prometheus, debug]
     logs:
       receivers: [otlp]
-      processors: [resourcedetection, memory_limiter, batch]
+      processors: [resourcedetection, memory_limiter]
       exporters: [opensearch, debug]
   telemetry:
     metrics:
