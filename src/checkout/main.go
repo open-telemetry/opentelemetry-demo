@@ -183,7 +183,7 @@ func main() {
 
 	err := runtime.Start(runtime.WithMinimumReadMemStatsInterval(time.Second))
 	if err != nil {
-		logger.Error((err.Error()))
+		logger.Error(err.Error())
 	}
 
 	provider, err := flagd.NewProvider()
