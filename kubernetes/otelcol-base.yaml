@@ -67,7 +67,7 @@ clusterReceiver:
       # Exports dbmon events as logs
       otlphttp/dbmon:
         headers:
-          X-SF-Token: 3QThm3q899dAU8udj-i4tA
+          X-SF-Token: ${SPLUNK_OBSERVABILITY_ACCESS_TOKEN}
           X-splunk-instrumentation-library: dbmon
         logs_endpoint: https://ingest.us1.signalfx.com/v3/event
         sending_queue:
