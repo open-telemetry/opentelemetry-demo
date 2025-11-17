@@ -35,10 +35,9 @@
     <PackageReference Include="System.Diagnostics.DiagnosticSource" Version="9.0.0" />
   	<PackageReference Include="OpenTelemetry.Api" Version="1.12.0" /> 
     <PackageReference Include="StackExchange.Redis" Version="2.8.31" />
-    <PackageReference Include="OpenFeature.Contrib.Providers.Flagd" Version="0.3.2" />
-    <PackageReference Include="OpenFeature" Version="2.7.0" />
-    <PackageReference Include="OpenFeature.DependencyInjection" Version="2.7.0" />
-    <PackageReference Include="OpenFeature.Hosting" Version="2.7.0" />
+    <PackageReference Include="OpenFeature.Contrib.Providers.Flagd" Version="0.3.4" />
+    <PackageReference Include="OpenFeature" Version="2.9.0" />
+    <PackageReference Include="OpenFeature.Hosting" Version="2.9.0" />
   </ItemGroup>
 
   <ItemGroup>
