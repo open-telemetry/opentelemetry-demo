@@ -72,7 +72,7 @@ Bear in mind that _all_ the data will be rewritten by this write operation.
 ```sh
 $ curl --header "Content-Type: application/json" \
   --request POST \
-  --data '{"data": {"productCatalogFailure": {"defaultVariant": "off", "description": "Fail product catalog service on a specific product"}}...' \
+  --data '{"data": {"$schema":"https://flagd.dev/schema/v0/flags.json","flags":{"adFailure":{"defaultVariant":"on","description":"Fail ad service","state":"ENABLED","variants":{"off":false,"on":true}}...' \
   http://localhost:8080/feature/api/write
 ```
 
