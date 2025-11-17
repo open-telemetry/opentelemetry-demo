@@ -959,14 +959,6 @@ spec:
               value: "true"
             - name: SPLUNK_METRICS_ENABLED
               value: "true"
-            # - name: SPLUNK_SNAPSHOT_PROFILER_ENABLED
-            #   value: "true"
-            # - name: SPLUNK_SNAPSHOT_PROFILER_SAMPLING_INTERVAL
-            #   value: "1"
-            # - name: SPLUNK_SNAPSHOT_SELECTION_PROBABILITY 
-            #   value: "0.1"
-            # - name: OTEL_TRACE_EXPORTER
-            #   value: otlp
             - name: OTEL_TRACES_SAMPLER
               value: "rules"
             #- name: OTEL_TRACES_SAMPLER_ARG
