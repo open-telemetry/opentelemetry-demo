@@ -50,7 +50,7 @@
   },
   "devDependencies": {
     "@types/node": "24.10.1",
-    "@types/react": "19.2.4",
+    "@types/react": "19.2.5",
     "@types/react-dom": "19.2.3",
     "@types/styled-components": "5.1.35",
     "@types/uuid": "11.0.0",
