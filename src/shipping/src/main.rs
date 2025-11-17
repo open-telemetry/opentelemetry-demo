@@ -26,16 +26,16 @@ async fn main() -> std::io::Result<()> {
         .expect("$SHIPPING_PORT is not set")
         .parse()
         .expect("$SHIPPING_PORT is not a valid port");
-    
+
     let mut ip = "0.0.0.0".to_string();
-    
+
     if let Ok(ipv6_enabled) = env::var("IPV6_ENABLED") {
         if ipv6_enabled == "true" {
             ip = "[::]".to_string();
             info!("Overwriting Localhost IP:  {ip}");
         }
     }
-    
+
     let addr = format!("{}:{}", ip, port);
     info!(
         name = "ServerStartedSuccessfully",
