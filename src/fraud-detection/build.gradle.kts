@@ -16,7 +16,7 @@ group = "io.opentelemetry"
 version = "1.0"
 
 
-val grpcVersion = "1.76.0"
+val grpcVersion = "1.77.0"
 val protobufVersion = "4.33.1"
 
 
@@ -44,7 +44,7 @@ dependencies {
     implementation("org.slf4j:slf4j-api:2.0.17")
     implementation("com.google.protobuf:protobuf-kotlin:${protobufVersion}")
     implementation("dev.openfeature:sdk:1.18.2")
-    implementation("dev.openfeature.contrib.providers:flagd:0.11.17")
+    implementation("dev.openfeature.contrib.providers:flagd:0.11.18")
 
     if (JavaVersion.current().isJava9Compatible) {
         // Workaround for @javax.annotation.Generated
