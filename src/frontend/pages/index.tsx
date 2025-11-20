@@ -3,6 +3,7 @@
 
 import { NextPage } from 'next';
 import Head from 'next/head';
+import Footer from '../components/Footer';
 import Layout from '../components/Layout';
 import ProductList from '../components/ProductList';
 import * as S from '../styles/Home.styled';
