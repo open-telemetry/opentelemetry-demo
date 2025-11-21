@@ -39,12 +39,12 @@ internal class Consumer : IDisposable
         _logger = logger;
 
         var servers = Environment.GetEnvironmentVariable("KAFKA_ADDR")
-            ?? throw new ArgumentNullException("KAFKA_ADDR");
+            ?? throw new InvalidOperationException("The KAFKA_ADDR environment variable is not set.");
 
         _consumer = BuildConsumer(servers);
         _consumer.Subscribe(TopicName);
 
-        _logger.LogInformation($"Connecting to Kafka: {servers}");
+        _logger.LogInformation("Connecting to Kafka: {servers}", servers);
         _dbContext = Environment.GetEnvironmentVariable("DB_CONNECTION_STRING") == null ? null : new DBContext();
     }
 
@@ -64,7 +64,7 @@ internal class Consumer : IDisposable
                 }
                 catch (ConsumeException e)
                 {
-                    _logger.LogError(e, "Consume error: {0}", e.Error.Reason);
+                    _logger.LogError(e, "Consume error: {reason}", e.Error.Reason);
                 }
             }
         }
@@ -130,7 +130,7 @@ internal class Consumer : IDisposable
         }
     }
 
-    private IConsumer<string, byte[]> BuildConsumer(string servers)
+    private static IConsumer<string, byte[]> BuildConsumer(string servers)
     {
         var conf = new ConsumerConfig
         {
