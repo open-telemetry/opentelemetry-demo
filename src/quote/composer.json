@@ -19,7 +19,7 @@
         "php-http/guzzle7-adapter": "1.1.0",
         "react/http": "v1.11.0",
         "slim/psr7": "1.8.0",
-        "slim/slim": "4.15.0"
+        "slim/slim": "4.15.1"
     },
     "autoload": {
         "psr-4": {
