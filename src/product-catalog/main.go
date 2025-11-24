@@ -151,16 +151,19 @@ func initPostgresConnectionPool() *pgxpool.Pool {
     return pool
 }
 
-// Helper function to enrich logs with trace/span IDs
 func logWithTrace(ctx context.Context, level slog.Level, msg string, attrs ...slog.Attr) {
     span := trace.SpanFromContext(ctx)
     sc := span.SpanContext()
-    traceAttrs := []slog.Attr{
+
+    // Add trace_id and span_id as top-level attributes
+    attrs = append(attrs,
         slog.String("trace_id", sc.TraceID().String()),
         slog.String("span_id", sc.SpanID().String()),
-    }
-    logger.LogAttrs(ctx, level, msg, append(attrs, traceAttrs...)...)
+    )
+
+    logger.LogAttrs(ctx, level, msg, attrs...)
 }
+
 
 func main() {
     lp := initLoggerProvider()
