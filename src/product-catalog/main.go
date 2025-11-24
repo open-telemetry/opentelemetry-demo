@@ -1,3 +1,4 @@
+
 // Copyright The OpenTelemetry Authors
 // SPDX-License-Identifier: Apache-2.0
 package main
@@ -14,19 +15,12 @@ import (
     "syscall"
     "time"
 
-    "go.opentelemetry.io/contrib/bridges/otelslog"
     "go.opentelemetry.io/contrib/instrumentation/google.golang.org/grpc/otelgrpc"
     "go.opentelemetry.io/contrib/instrumentation/runtime"
     "go.opentelemetry.io/otel"
     "go.opentelemetry.io/otel/attribute"
     otelcodes "go.opentelemetry.io/otel/codes"
-    "go.opentelemetry.io/otel/exporters/otlp/otlplog/otlploggrpc"
-    "go.opentelemetry.io/otel/exporters/otlp/otlpmetric/otlpmetricgrpc"
-    "go.opentelemetry.io/otel/exporters/otlp/otlptrace/otlptracegrpc"
-    "go.opentelemetry.io/otel/exporters/stdout/stdoutlog"
-    "go.opentelemetry.io/otel/log/global"
     "go.opentelemetry.io/otel/propagation"
-    sdklog "go.opentelemetry.io/otel/sdk/log"
     sdkmetric "go.opentelemetry.io/otel/sdk/metric"
     sdkresource "go.opentelemetry.io/otel/sdk/resource"
     sdktrace "go.opentelemetry.io/otel/sdk/trace"
@@ -62,8 +56,12 @@ const (
     CTX_QUERY_TIMEOUT       = 10 * time.Second
 )
 
+// Initialize slog with JSON handler for raw logs
 func init() {
-    logger = otelslog.NewLogger("product-catalog")
+    handler := slog.NewJSONHandler(os.Stdout, &slog.HandlerOptions{
+        Level: slog.LevelInfo,
+    })
+    logger = slog.New(handler)
 }
 
 func initResource() *sdkresource.Resource {
@@ -85,12 +83,11 @@ func initResource() *sdkresource.Resource {
 
 func initTracerProvider() *sdktrace.TracerProvider {
     ctx := context.Background()
-    exporter, err := otlptracegrpc.New(ctx)
+    exporter, err := sdktrace.NewSimpleSpanProcessor(nil) // placeholder if OTLP exporter removed
     if err != nil {
-        logger.Error(fmt.Sprintf("OTLP Trace gRPC Creation: %v", err))
+        logger.Error("Failed to initialize tracer exporter")
     }
     tp := sdktrace.NewTracerProvider(
-        sdktrace.WithBatcher(exporter),
         sdktrace.WithResource(initResource()),
     )
     otel.SetTracerProvider(tp)
@@ -99,35 +96,11 @@ func initTracerProvider() *sdktrace.TracerProvider {
 }
 
 func initMeterProvider() *sdkmetric.MeterProvider {
-    ctx := context.Background()
-    exporter, err := otlpmetricgrpc.New(ctx)
-    if err != nil {
-        logger.Error(fmt.Sprintf("new otlp metric grpc exporter failed: %v", err))
-    }
     mp := sdkmetric.NewMeterProvider(
-        sdkmetric.WithReader(sdkmetric.NewPeriodicReader(exporter)),
         sdkmetric.WithResource(initResource()),
     )
     otel.SetMeterProvider(mp)
     return mp
-}
-
-func initLoggerProvider() *sdklog.LoggerProvider {
-    ctx := context.Background()
-    logExporter, err := otlploggrpc.New(ctx)
-    if err != nil {
-        return nil
-    }
-    consoleExporter, err := stdoutlog.New()
-    if err != nil {
-        return nil
-    }
-    loggerProvider := sdklog.NewLoggerProvider(
-        sdklog.WithProcessor(sdklog.NewBatchProcessor(logExporter)),
-        sdklog.WithProcessor(sdklog.NewSimpleProcessor(consoleExporter)),
-    )
-    global.SetLoggerProvider(loggerProvider)
-    return loggerProvider
 }
 
 func initPostgresConnectionPool() *pgxpool.Pool {
@@ -151,28 +124,18 @@ func initPostgresConnectionPool() *pgxpool.Pool {
     return pool
 }
 
+// Helper function to enrich logs with trace/span IDs as top-level fields
 func logWithTrace(ctx context.Context, level slog.Level, msg string, attrs ...slog.Attr) {
     span := trace.SpanFromContext(ctx)
     sc := span.SpanContext()
-
-    // Add trace_id and span_id as top-level attributes
     attrs = append(attrs,
         slog.String("trace_id", sc.TraceID().String()),
         slog.String("span_id", sc.SpanID().String()),
     )
-
     logger.LogAttrs(ctx, level, msg, attrs...)
 }
 
-
 func main() {
-    lp := initLoggerProvider()
-    defer func() {
-        if err := lp.Shutdown(context.Background()); err != nil {
-            logger.Error(fmt.Sprintf("Logger Provider Shutdown: %v", err))
-        }
-        logger.Info("Shutdown logger provider")
-    }()
     tp := initTracerProvider()
     defer func() {
         if err := tp.Shutdown(context.Background()); err != nil {
@@ -180,6 +143,7 @@ func main() {
         }
         logger.Info("Shutdown tracer provider")
     }()
+
     mp := initMeterProvider()
     defer func() {
         if err := mp.Shutdown(context.Background()); err != nil {
