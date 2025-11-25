@@ -20,6 +20,8 @@ receivers:
     collection_interval: 10s
   docker_stats:
     endpoint: unix:///var/run/docker.sock
+    # https://github.com/open-telemetry/opentelemetry-collector-contrib/issues/44511
+    api_version: "1.44"
   postgresql:
     endpoint: ${POSTGRES_HOST}:${POSTGRES_PORT}
     username: root
