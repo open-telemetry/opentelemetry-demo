@@ -22,11 +22,14 @@ the release.
   ([#2644](https://github.com/open-telemetry/opentelemetry-demo/pull/2644))
 * [frontend] fix item calculation and shipping
   ([#2684](https://github.com/open-telemetry/opentelemetry-demo/pull/2684))
+* [flagd-ui] add back legacy REST APIs to empower programmatic usage
+  ([#2720](https://github.com/open-telemetry/opentelemetry-demo/pull/2720))
 * [collector] Remove batch processor
   ([#2734](https://github.com/open-telemetry/opentelemetry-demo/pull/2734))
 * [email] Add OTLP metrics and logs
   ([#2737](https://github.com/open-telemetry/opentelemetry-demo/pull/2737))
-* [flagd-ui] add back legacy REST APIs to empower programmatic usage ([#2720](https://github.com/open-telemetry/opentelemetry-demo/pull/2720))
+* [collector] [dockerstats/receiver] Set API version to 1.44
+  ([#2767](https://github.com/open-telemetry/opentelemetry-demo/pull/2767))
 
 ## 2.1.3
 
