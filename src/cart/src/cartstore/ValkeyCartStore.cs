@@ -88,7 +88,7 @@ public class ValkeyCartStore : ICartStore
 
             if (_logger.IsEnabled(LogLevel.Debug))
             {
-                _logger.LogDebug("Connecting to Redis: {_connectionString}", _connectionString);
+                _logger.LogDebug("Connecting to Redis: {connectionString}", _connectionString);
             }
 
             _redis = ConnectionMultiplexer.Connect(_redisConnectionOptions);
@@ -110,7 +110,7 @@ public class ValkeyCartStore : ICartStore
 
             if (_logger.IsEnabled(LogLevel.Debug))
             {
-                _logger.LogDebug("Small test result: {res}", res);
+                _logger.LogDebug("Small test result: {result}", res);
             }
 
             _redis.InternalError += (_, e) => { Console.WriteLine(e.Exception); };
