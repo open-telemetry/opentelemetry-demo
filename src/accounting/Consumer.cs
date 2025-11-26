@@ -44,7 +44,11 @@ internal class Consumer : IDisposable
         _consumer = BuildConsumer(servers);
         _consumer.Subscribe(TopicName);
 
-        _logger.LogInformation("Connecting to Kafka: {servers}", servers);
+       if (_logger.IsEnabled(LogLevel.Information))
+       {
+           _logger.LogInformation("Connecting to Kafka: {servers}", servers);
+       }
+
         _dbContext = Environment.GetEnvironmentVariable("DB_CONNECTION_STRING") == null ? null : new DBContext();
     }
 
@@ -64,7 +68,10 @@ internal class Consumer : IDisposable
                 }
                 catch (ConsumeException e)
                 {
-                    _logger.LogError(e, "Consume error: {reason}", e.Error.Reason);
+                    if (_logger.IsEnabled(LogLevel.Error))
+                    {
+                        _logger.LogError(e, "Consume error: {reason}", e.Error.Reason);
+                    }
                 }
             }
         }
