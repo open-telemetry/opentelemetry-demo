@@ -1,0 +1,79 @@
+# Kubernetes manifest for valkey-cart
+# Auto-generated from opentelemetry-demo.yaml
+# Contains 2 resource(s)
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: valkey-cart
+  labels:
+    opentelemetry.io/name: valkey-cart
+    app.kubernetes.io/component: valkey-cart
+    app.kubernetes.io/name: valkey-cart
+    app.kubernetes.io/version: 2.1.3
+    app.kubernetes.io/part-of: opentelemetry-demo
+spec:
+  type: ClusterIP
+  ports:
+  - port: 6379
+    name: valkey-cart
+    targetPort: 6379
+  selector:
+    opentelemetry.io/name: valkey-cart
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: valkey-cart
+  labels:
+    opentelemetry.io/name: valkey-cart
+    app.kubernetes.io/component: valkey-cart
+    app.kubernetes.io/name: valkey-cart
+    app.kubernetes.io/version: 2.1.3
+    app.kubernetes.io/part-of: opentelemetry-demo
+spec:
+  replicas: 1
+  revisionHistoryLimit: 10
+  selector:
+    matchLabels:
+      opentelemetry.io/name: valkey-cart
+  template:
+    metadata:
+      labels:
+        opentelemetry.io/name: valkey-cart
+        app.kubernetes.io/component: valkey-cart
+        app.kubernetes.io/name: valkey-cart
+    spec:
+      serviceAccountName: opentelemetry-demo
+      containers:
+      - name: valkey-cart
+        image: valkey/valkey:8.1.3-alpine
+        imagePullPolicy: IfNotPresent
+        ports:
+        - containerPort: 6379
+          name: valkey-cart
+        env:
+        - name: OTEL_SERVICE_NAME
+          valueFrom:
+            fieldRef:
+              apiVersion: v1
+              fieldPath: metadata.labels['app.kubernetes.io/component']
+        - name: NODE_IP
+          valueFrom:
+            fieldRef:
+              fieldPath: status.hostIP
+        - name: OTEL_COLLECTOR_NAME
+          value: $(NODE_IP)
+        - name: OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE
+          value: cumulative
+        - name: OTEL_RESOURCE_ATTRIBUTES
+          value: service.name=$(OTEL_SERVICE_NAME),service.namespace=opentelemetry-demo,service.version=2.1.3,service.kafka=no
+        resources:
+          limits:
+            memory: 20Mi
+        securityContext:
+          runAsGroup: 1000
+          runAsNonRoot: true
+          runAsUser: 999
+        volumeMounts: null
+      volumes: null

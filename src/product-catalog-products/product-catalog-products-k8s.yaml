@@ -1,0 +1,109 @@
+# Kubernetes manifest for product-catalog-products
+# Auto-generated from opentelemetry-demo.yaml
+# Contains 1 resource(s)
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: product-catalog-products
+  labels:
+    app.kubernetes.io/version: 2.1.3
+    app.kubernetes.io/part-of: opentelemetry-demo
+data:
+  products.json: "{\n  \"products\": [\n    {\n      \"id\": \"OLJCESPC7Z\",\n   \
+    \   \"name\": \"National Park Foundation Explorascope\",\n      \"description\"\
+    : \"The National Park Foundation\u2019s (NPF) Explorascope 60AZ is a manual alt-azimuth,\
+    \ refractor telescope perfect for celestial viewing on the go. The NPF Explorascope\
+    \ 60 can view the planets, moon, star clusters and brighter deep sky objects like\
+    \ the Orion Nebula and Andromeda Galaxy.\",\n      \"picture\": \"NationalParkFoundationExplorascope.jpg\"\
+    ,\n      \"priceUsd\": {\n        \"currencyCode\": \"USD\",\n        \"units\"\
+    : 101,\n        \"nanos\": 960000000\n      },\n      \"categories\": [\n    \
+    \    \"telescopes\"\n      ]\n    },\n    {\n      \"id\": \"66VCHSJNUP\",\n \
+    \     \"name\": \"Starsense Explorer Refractor Telescope\",\n      \"description\"\
+    : \"The first telescope that uses your smartphone to analyze the night sky and\
+    \ calculate its position in real time. StarSense Explorer is ideal for beginners\
+    \ thanks to the app\u2019s user-friendly interface and detailed tutorials. It\u2019\
+    s like having your own personal tour guide of the night sky\",\n      \"picture\"\
+    : \"StarsenseExplorer.jpg\",\n      \"priceUsd\": {\n        \"currencyCode\"\
+    : \"USD\",\n        \"units\": 349,\n        \"nanos\": 950000000\n      },\n\
+    \      \"categories\": [\n        \"telescopes\"\n      ]\n    },\n    {\n   \
+    \   \"id\": \"1YMWWN1N4O\",\n      \"name\": \"Eclipsmart Travel Refractor Telescope\"\
+    ,\n      \"description\": \"Dedicated white-light solar scope for the observer\
+    \ on the go. The 50mm refracting solar scope uses Solar Safe, ISO compliant, full-aperture\
+    \ glass filter material to ensure the safest view of solar events.  The kit comes\
+    \ complete with everything you need, including the dedicated travel solar scope,\
+    \ a Solar Safe finderscope, tripod, a high quality 20mm (18x) Kellner eyepiece\
+    \ and a nylon backpack to carry everything in.  This Travel Solar Scope makes\
+    \ it easy to share the Sun as well as partial and total solar eclipses with the\
+    \ whole family and offers much higher magnifications than you would otherwise\
+    \ get using handheld solar viewers or binoculars.\",\n      \"picture\": \"EclipsmartTravelRefractorTelescope.jpg\"\
+    ,\n      \"priceUsd\": {\n        \"currencyCode\": \"USD\",\n        \"units\"\
+    : 129,\n        \"nanos\": 950000000\n      },\n      \"categories\": [\n    \
+    \    \"telescopes\",\n        \"travel\"\n      ]\n    },\n    {\n      \"id\"\
+    : \"L9ECAV7KIM\",\n      \"name\": \"Lens Cleaning Kit\",\n      \"description\"\
+    : \"Wipe away dust, dirt, fingerprints and other particles on your lenses to see\
+    \ clearly with the Lens Cleaning Kit. This cleaning kit works on all glass and\
+    \ optical surfaces, including telescopes, binoculars, spotting scopes, monoculars,\
+    \ microscopes, and even your camera lenses, computer screens, and mobile devices.\
+    \  The kit comes complete with a retractable lens brush to remove dust particles\
+    \ and dirt and two options to clean smudges and fingerprints off of your optics,\
+    \ pre-moistened lens wipes and a bottled lens cleaning fluid with soft cloth.\"\
+    ,\n      \"picture\": \"LensCleaningKit.jpg\",\n      \"priceUsd\": {\n      \
+    \  \"currencyCode\": \"USD\",\n        \"units\": 21,\n        \"nanos\": 950000000\n\
+    \      },\n      \"categories\": [\n        \"accessories\"\n      ]\n    },\n\
+    \    {\n      \"id\": \"2ZYFJ3GM2N\",\n      \"name\": \"Roof Binoculars\",\n\
+    \      \"description\": \"This versatile, all-around binocular is a great choice\
+    \ for the trail, the stadium, the arena, or just about anywhere you want a close-up\
+    \ view of the action without sacrificing brightness or detail. It\u2019s an especially\
+    \ great companion for nature observation and bird watching, with ED glass that\
+    \ helps you spot the subtlest field markings and a close focus of just 6.5 feet.\"\
+    ,\n      \"picture\": \"RoofBinoculars.jpg\",\n      \"priceUsd\": {\n       \
+    \ \"currencyCode\": \"USD\",\n        \"units\": 209,\n        \"nanos\": 950000000\n\
+    \      },\n      \"categories\": [\n        \"binoculars\"\n      ]\n    },\n\
+    \    {\n      \"id\": \"0PUK6V6EV0\",\n      \"name\": \"Solar System Color Imager\"\
+    ,\n      \"description\": \"You have your new telescope and have observed Saturn\
+    \ and Jupiter. Now you're ready to take the next step and start imaging them.\
+    \ But where do you begin? The NexImage 10 Solar System Imager is the perfect solution.\"\
+    ,\n      \"picture\": \"SolarSystemColorImager.jpg\",\n      \"priceUsd\": {\n\
+    \        \"currencyCode\": \"USD\",\n        \"units\": 175,\n        \"nanos\"\
+    : 0\n      },\n      \"categories\": [\n        \"accessories\",\n        \"telescopes\"\
+    \n      ]\n    },\n    {\n      \"id\": \"LS4PSXUNUM\",\n      \"name\": \"Red\
+    \ Flashlight\",\n      \"description\": \"This 3-in-1 device features a 3-mode\
+    \ red flashlight, a hand warmer, and a portable power bank for recharging your\
+    \ personal electronics on the go. Whether you use it to light the way at an astronomy\
+    \ star party, a night walk, or wildlife research, ThermoTorch 3 Astro Red\u2019\
+    s rugged, IPX4-rated design will withstand your everyday activities.\",\n    \
+    \  \"picture\": \"RedFlashlight.jpg\",\n      \"priceUsd\": {\n        \"currencyCode\"\
+    : \"USD\",\n        \"units\": 57,\n        \"nanos\": 80000000\n      },\n  \
+    \    \"categories\": [\n        \"accessories\",\n        \"flashlights\"\n  \
+    \    ]\n    },\n    {\n      \"id\": \"9SIQT8TOJO\",\n      \"name\": \"Optical\
+    \ Tube Assembly\",\n      \"description\": \"Capturing impressive deep-sky astroimages\
+    \ is easier than ever with Rowe-Ackermann Schmidt Astrograph (RASA) V2, the perfect\
+    \ companion to today\u2019s top DSLR or astronomical CCD cameras. This fast, wide-field\
+    \ f/2.2 system allows for shorter exposure times compared to traditional f/10\
+    \ astroimaging, without sacrificing resolution. Because shorter sub-exposure times\
+    \ are possible, your equatorial mount won\u2019t need to accurately track over\
+    \ extended periods. The short focal length also lessens equatorial tracking demands.\
+    \ In many cases, autoguiding will not be required.\",\n      \"picture\": \"OpticalTubeAssembly.jpg\"\
+    ,\n      \"priceUsd\": {\n        \"currencyCode\": \"USD\",\n        \"units\"\
+    : 3599,\n        \"nanos\": 0\n      },\n      \"categories\": [\n        \"accessories\"\
+    ,\n        \"telescopes\",\n        \"assembly\"\n      ]\n    },\n    {\n   \
+    \   \"id\": \"6E92ZMYYFZ\",\n      \"name\": \"Solar Filter\",\n      \"description\"\
+    : \"Enhance your viewing experience with EclipSmart Solar Filter for 8\u201D telescopes.\
+    \ With two Velcro straps and four self-adhesive Velcro pads for added safety,\
+    \ you can be assured that the solar filter cannot be accidentally knocked off\
+    \ and will provide Solar Safe, ISO compliant viewing.\",\n      \"picture\": \"\
+    SolarFilter.jpg\",\n      \"priceUsd\": {\n        \"currencyCode\": \"USD\",\n\
+    \        \"units\": 69,\n        \"nanos\": 950000000\n      },\n      \"categories\"\
+    : [\n        \"accessories\",\n        \"telescopes\"\n      ]\n    },\n    {\n\
+    \      \"id\": \"HQTGWGPNH4\",\n      \"name\": \"The Comet Book\",\n      \"\
+    description\": \"A 16th-century treatise on comets, created anonymously in Flanders\
+    \ (now northern France) and now held at the Universit\xE4tsbibliothek Kassel.\
+    \ Commonly known as The Comet Book (or Kometenbuch in German), its full title\
+    \ translates as \u201CComets and their General and Particular Meanings, According\
+    \ to Ptolome\xE9, Albumasar, Haly, Aliquind and other Astrologers\u201D. The image\
+    \ is from https://publicdomainreview.org/collection/the-comet-book, made available\
+    \ by the Universit\xE4tsbibliothek Kassel under a CC-BY SA 4.0 license (https://creativecommons.org/licenses/by-sa/4.0/)\"\
+    ,\n      \"picture\": \"TheCometBook.jpg\",\n      \"priceUsd\": {\n        \"\
+    currencyCode\": \"USD\",\n        \"units\": 0,\n        \"nanos\": 990000000\n\
+    \      },\n      \"categories\": [\n        \"books\"\n      ]\n    }\n  ]\n}\n"

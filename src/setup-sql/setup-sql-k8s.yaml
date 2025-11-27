@@ -1,0 +1,25 @@
+# Kubernetes manifest for SQL Server setup
+# Includes secrets and initialization script for MSSQL
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: mssql-secrets
+  namespace: sql
+type: Opaque
+stringData:
+  SA_PASSWORD: ChangeMe_SuperStrong123!
+  DB_CONNECTION_STRING: Server=tcp:sql-server-fraud.sql.svc.cluster.local,1433;Database=FraudDetection;User Id=sa;Password=ChangeMe_SuperStrong123!;Encrypt=True;TrustServerCertificate=True
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: mssql-init-script
+  namespace: sql
+data:
+  init-db.sql: |
+    IF NOT EXISTS (SELECT name FROM sys.databases WHERE name = 'FraudDetection')
+    BEGIN
+      CREATE DATABASE FraudDetection;
+    END
+    GO

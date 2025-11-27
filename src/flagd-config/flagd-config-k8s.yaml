@@ -1,0 +1,72 @@
+# Kubernetes manifest for flagd-config
+# Auto-generated from opentelemetry-demo.yaml
+# Contains 1 resource(s)
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: flagd-config
+  labels:
+    app.kubernetes.io/version: 2.1.3
+    app.kubernetes.io/part-of: opentelemetry-demo
+data:
+  demo.flagd.json: "{\n  \"$schema\": \"https://flagd.dev/schema/v0/flags.json\",\n\
+    \  \"flags\": {\n    \"productCatalogFailure\": {\n      \"description\": \"Fail\
+    \ product catalog service on a specific product\",\n      \"state\": \"ENABLED\"\
+    ,\n      \"variants\": {\n        \"on\": true,\n        \"off\": false\n    \
+    \  },\n      \"defaultVariant\": \"off\"\n    },\n    \"recommendationCacheFailure\"\
+    : {\n      \"description\": \"Fail recommendation service cache\",\n      \"state\"\
+    : \"ENABLED\",\n      \"variants\": {\n        \"on\": true,\n        \"off\"\
+    : false\n      },\n      \"defaultVariant\": \"off\"\n    },\n    \"adManualGc\"\
+    : {\n      \"description\": \"Triggers full manual garbage collections in the\
+    \ ad service\",\n      \"state\": \"ENABLED\",\n      \"variants\": {\n      \
+    \  \"on\": true,\n        \"off\": false\n      },\n      \"defaultVariant\":\
+    \ \"off\"\n    },\n    \"adHighCpu\": {\n      \"description\": \"Triggers high\
+    \ cpu load in the ad service\",\n      \"state\": \"ENABLED\",\n      \"variants\"\
+    : {\n        \"on\": true,\n        \"off\": false\n      },\n      \"defaultVariant\"\
+    : \"off\"\n    },\n    \"adFailure\": {\n      \"description\": \"Fail ad service\"\
+    ,\n      \"state\": \"ENABLED\",\n      \"variants\": {\n        \"on\": true,\n\
+    \        \"off\": false\n      },\n      \"defaultVariant\": \"off\"\n    },\n\
+    \    \"kafkaQueueProblems\": {\n      \"description\": \"Overloads Kafka queue\
+    \ while simultaneously introducing a consumer side delay leading to a lag spike\"\
+    ,\n      \"state\": \"ENABLED\",\n      \"variants\": {\n        \"on\": 100,\n\
+    \        \"off\": 0\n      },\n      \"defaultVariant\": \"off\"\n    },\n   \
+    \ \"paymentRetryMax\": {\n      \"description\": \"Maximum number of payment retry\
+    \ attempts\",\n      \"state\": \"ENABLED\",\n      \"variants\": {\n        \"\
+    10\": 10,\n        \"5\": 5,\n        \"4\": 4,\n        \"2\": 2,\n        \"\
+    1\": 1\n      },\n      \"defaultVariant\": \"4\"\n    },\n    \"fraudDetectionEnabled\"\
+    : {\n      \"description\": \"Enable fraud detection analysis on orders\",\n \
+    \     \"state\": \"ENABLED\",\n      \"variants\": {\n        \"on\": 1,\n   \
+    \     \"off\": 0\n      },\n      \"defaultVariant\": \"on\"\n    },\n    \"mutateFraudOrders\"\
+    : {\n      \"description\": \"Percentage of orders to mutate for fraud alerts\
+    \ (0-100%)\",\n      \"state\": \"ENABLED\",\n      \"variants\": {\n        \"\
+    off\": 0,\n        \"medium\": 40,\n        \"high\": 60,\n        \"veryhigh\"\
+    : 90\n      },\n      \"defaultVariant\": \"off\"\n    },\n    \"executeBadQueries\"\
+    : {\n      \"description\": \"Percentage of orders that trigger bad database queries\
+    \ (0-100%)\",\n      \"state\": \"ENABLED\",\n      \"variants\": {\n        \"\
+    off\": 0,\n        \"low\": 20,\n        \"medium\": 40,\n        \"high\": 60\n\
+    \      },\n      \"defaultVariant\": \"off\"\n    },\n    \"cartFailure\": {\n\
+    \      \"description\": \"Fail cart service\",\n      \"state\": \"ENABLED\",\n\
+    \      \"variants\": {\n        \"on\": true,\n        \"off\": false\n      },\n\
+    \      \"defaultVariant\": \"off\"\n    },\n    \"paymentFailure\": {\n      \"\
+    description\": \"Fail payment service charge requests n%\",\n      \"state\":\
+    \ \"ENABLED\",\n      \"variants\": {\n        \"100%\": 1,\n        \"90%\":\
+    \ 0.95,\n        \"75%\": 0.75,\n        \"50%\": 0.5,\n        \"25%\": 0.25,\n\
+    \        \"10%\": 0.1,\n        \"off\": 0\n      },\n      \"defaultVariant\"\
+    : \"off\"\n    },\n    \"paymentUnreachable\": {\n      \"description\": \"Payment\
+    \ service is unavailable\",\n      \"state\": \"ENABLED\",\n      \"variants\"\
+    : {\n        \"on\": true,\n        \"off\": false\n      },\n      \"defaultVariant\"\
+    : \"off\"\n    },\n    \"loadGeneratorFloodHomepage\": {\n      \"description\"\
+    : \"Flood the frontend with a large amount of requests.\",\n      \"state\": \"\
+    ENABLED\",\n      \"variants\": {\n        \"on\": 100,\n        \"off\": 0\n\
+    \      },\n      \"defaultVariant\": \"off\"\n    },\n    \"imageSlowLoad\": {\n\
+    \      \"description\": \"slow loading images in the frontend\",\n      \"state\"\
+    : \"ENABLED\",\n      \"variants\": {\n        \"10sec\": 10000,\n        \"5sec\"\
+    : 5000,\n        \"off\": 0\n      },\n      \"defaultVariant\": \"off\"\n   \
+    \ },\n    \"llmInaccurateResponse\": {\n      \"defaultVariant\": \"off\",\n \
+    \     \"description\": \"LLM returns an inaccurate product summary for product\
+    \ ID L9ECAV7KIM\",\n      \"state\": \"ENABLED\",\n      \"variants\": {\n   \
+    \     \"off\": false,\n        \"on\": true\n      }\n    },\n    \"llmRateLimitError\"\
+    : {\n      \"defaultVariant\": \"off\",\n      \"description\": \"LLM intermittently\
+    \ returns a rate limit error\",\n      \"state\": \"ENABLED\",\n      \"variants\"\
+    : {\n        \"off\": false,\n        \"on\": true\n      }\n    }\n  }\n}\n"

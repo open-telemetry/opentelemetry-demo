@@ -1,0 +1,102 @@
+# Kubernetes manifest for sql-server-fraud
+# Auto-generated from opentelemetry-demo.yaml
+# Contains 2 resource(s)
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: sql-server-fraud
+  namespace: sql
+spec:
+  type: ClusterIP
+  ports:
+  - port: 1433
+    targetPort: 1433
+    protocol: TCP
+    name: tds
+  selector:
+    app: sql-server-fraud
+---
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: sql-server-fraud
+  namespace: sql
+spec:
+  serviceName: sql-server-fraud
+  replicas: 1
+  persistentVolumeClaimRetentionPolicy:
+    whenDeleted: Delete
+    whenScaled: Delete
+  selector:
+    matchLabels:
+      app: sql-server-fraud
+  template:
+    metadata:
+      labels:
+        app: sql-server-fraud
+    spec:
+      containers:
+      - name: mssql
+        image: mcr.microsoft.com/mssql/server:2022-latest
+        imagePullPolicy: IfNotPresent
+        ports:
+        - containerPort: 1433
+          name: tds
+        env:
+        - name: ACCEPT_EULA
+          value: Y
+        - name: MSSQL_PID
+          value: Express
+        - name: SA_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: mssql-secrets
+              key: SA_PASSWORD
+        volumeMounts:
+        - name: data
+          mountPath: /var/opt/mssql
+        - name: init-script
+          mountPath: /docker-entrypoint-initdb.d
+        lifecycle:
+          postStart:
+            exec:
+              command:
+              - /bin/bash
+              - -c
+              - 'sleep 30
+
+                /opt/mssql-tools18/bin/sqlcmd -S localhost -U sa -P "${SA_PASSWORD}"
+                -C -i /docker-entrypoint-initdb.d/init-db.sql
+
+                '
+        resources:
+          requests:
+            cpu: 250m
+            memory: 1Gi
+          limits:
+            cpu: '1'
+            memory: 2Gi
+        readinessProbe:
+          tcpSocket:
+            port: 1433
+          initialDelaySeconds: 10
+          periodSeconds: 10
+        livenessProbe:
+          tcpSocket:
+            port: 1433
+          initialDelaySeconds: 30
+          periodSeconds: 20
+      volumes:
+      - name: init-script
+        configMap:
+          name: mssql-init-script
+  volumeClaimTemplates:
+  - metadata:
+      name: data
+    spec:
+      accessModes:
+      - ReadWriteOnce
+      resources:
+        requests:
+          storage: 5Gi

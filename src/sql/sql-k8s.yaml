@@ -1,0 +1,8 @@
+# Kubernetes manifest for sql
+# Auto-generated from opentelemetry-demo.yaml
+# Contains 1 resource(s)
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: sql

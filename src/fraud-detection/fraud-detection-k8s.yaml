@@ -1,0 +1,101 @@
+# Kubernetes manifest for fraud-detection
+# Auto-generated from opentelemetry-demo.yaml
+# Contains 1 resource(s)
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: fraud-detection
+  labels:
+    opentelemetry.io/name: fraud-detection
+    app.kubernetes.io/component: fraud-detection
+    app.kubernetes.io/name: fraud-detection
+    app.kubernetes.io/version: 2.1.3
+    app.kubernetes.io/part-of: opentelemetry-demo
+spec:
+  replicas: 1
+  revisionHistoryLimit: 10
+  selector:
+    matchLabels:
+      opentelemetry.io/name: fraud-detection
+  template:
+    metadata:
+      labels:
+        opentelemetry.io/name: fraud-detection
+        app.kubernetes.io/component: fraud-detection
+        app.kubernetes.io/name: fraud-detection
+    spec:
+      serviceAccountName: opentelemetry-demo
+      containers:
+      - name: fraud-detection
+        image: ghcr.io/splunk/opentelemetry-demo/otel-fraud-detection:2.1.3-for-jeremy
+        imagePullPolicy: Always
+        env:
+        - name: OTEL_SERVICE_NAME
+          valueFrom:
+            fieldRef:
+              apiVersion: v1
+              fieldPath: metadata.labels['app.kubernetes.io/component']
+        - name: NODE_IP
+          valueFrom:
+            fieldRef:
+              fieldPath: status.hostIP
+        - name: OTEL_COLLECTOR_NAME
+          value: $(NODE_IP)
+        - name: OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE
+          value: cumulative
+        - name: KAFKA_ADDR
+          value: kafka:9092
+        - name: FLAGD_HOST
+          value: flagd
+        - name: FLAGD_PORT
+          value: '8013'
+        - name: OTEL_EXPORTER_OTLP_ENDPOINT
+          value: http://$(OTEL_COLLECTOR_NAME):4318
+        - name: OTEL_INSTRUMENTATION_KAFKA_EXPERIMENTAL_SPAN_ATTRIBUTES
+          value: 'true'
+        - name: OTEL_INSTRUMENTATION_MESSAGING_EXPERIMENTAL_RECEIVE_TELEMETRY_ENABLED
+          value: 'true'
+        - name: OTEL_INSTRUMENTATION_SPLUNK_JDBC_ENABLED
+          value: 'true'
+        - name: OTEL_RESOURCE_ATTRIBUTES
+          value: service.name=$(OTEL_SERVICE_NAME),service.namespace=opentelemetry-demo,service.version=2.1.3,service.kafka=spanlink
+        - name: SQL_SERVER_HOST
+          value: sql-server-fraud.sql.svc.cluster.local
+        - name: SQL_SERVER_PORT
+          value: '1433'
+        - name: SQL_SERVER_DATABASE
+          value: FraudDetection
+        - name: SQL_SERVER_USER
+          value: sa
+        - name: SQL_SERVER_PASSWORD
+          value: ChangeMe_SuperStrong123!
+        - name: FRAUD_DETECTION_RATE
+          value: '80'
+        - name: CLEANUP_RETENTION_DAYS
+          value: '7'
+        - name: CLEANUP_INTERVAL_HOURS
+          value: '24'
+        - name: FRAUD_MUTATION_PERCENTAGE
+          value: '25'
+        - name: BAD_QUERY_PERCENTAGE
+          value: '0'
+        resources:
+          limits:
+            memory: 450Mi
+        volumeMounts: null
+      initContainers:
+      - command:
+        - sh
+        - -c
+        - until nc -z -v -w30 kafka 9092; do echo waiting for kafka; sleep 2; done;
+        image: busybox:latest
+        name: wait-for-kafka
+      - command:
+        - sh
+        - -c
+        - until nc -z -v -w30 sql-server-fraud.sql.svc.cluster.local 1433; do echo
+          waiting for sql-server-fraud; sleep 2; done;
+        image: busybox:latest
+        name: wait-for-sqlserver
+      volumes: null

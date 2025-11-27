@@ -1,0 +1,164 @@
+name: Build and Push Containers
+
+on:
+  workflow_dispatch:
+    inputs:
+      services:
+        description: 'Services to build (comma-separated, or "all")'
+        required: true
+        default: 'all'
+      use_current_version:
+        description: 'Use current SPLUNK-VERSION file (vs bumping)'
+        required: true
+        type: boolean
+        default: true
+      bump_type:
+        description: 'Version bump type (if not using current)'
+        required: false
+        type: choice
+        options:
+          - minor
+          - major
+          - patch
+        default: 'minor'
+      push_to_registry:
+        description: 'Push to container registry'
+        required: true
+        type: boolean
+        default: false
+
+env:
+  REGISTRY: ghcr.io
+  IMAGE_PREFIX: ${{ github.repository }}
+
+jobs:
+  version:
+    runs-on: ubuntu-latest
+    outputs:
+      version: ${{ steps.get_version.outputs.version }}
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Make bump script executable
+        run: chmod +x .github/scripts/bump-version.sh
+
+      - name: Get or bump version
+        id: get_version
+        run: |
+          if [ "${{ inputs.use_current_version }}" = "true" ]; then
+            VERSION=$(cat SPLUNK-VERSION)
+            echo "Using current version: $VERSION"
+          else
+            VERSION=$(.github/scripts/bump-version.sh ${{ inputs.bump_type }})
+            echo "Bumped version to: $VERSION"
+            git config --global user.name "github-actions[bot]"
+            git config --global user.email "github-actions[bot]@users.noreply.github.com"
+            git add SPLUNK-VERSION
+            git commit -m "Bump version to $VERSION for container build"
+            git push
+          fi
+          echo "version=$VERSION" >> $GITHUB_OUTPUT
+
+  build:
+    runs-on: ubuntu-latest
+    needs: version
+    permissions:
+      contents: read
+      packages: write
+    strategy:
+      matrix:
+        service:
+          - accounting
+          - ad
+          - cart
+          - checkout
+          - currency
+          - email
+          - fraud-detection
+          - frontend
+          - frontend-proxy
+          - image-provider
+          - llm
+          - load-generator
+          - payment
+          - product-catalog
+          - product-reviews
+          - quote
+          - recommendation
+          - shipping
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Check if service should be built
+        id: should_build
+        run: |
+          SERVICES="${{ inputs.services }}"
+
+          if [ "$SERVICES" = "all" ]; then
+            echo "build=true" >> $GITHUB_OUTPUT
+          elif echo "$SERVICES" | grep -q "${{ matrix.service }}"; then
+            echo "build=true" >> $GITHUB_OUTPUT
+          else
+            echo "build=false" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Set up Docker Buildx
+        if: steps.should_build.outputs.build == 'true'
+        uses: docker/setup-buildx-action@v3
+
+      - name: Log in to Container Registry
+        if: steps.should_build.outputs.build == 'true' && inputs.push_to_registry
+        uses: docker/login-action@v3
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Extract metadata
+        if: steps.should_build.outputs.build == 'true'
+        id: meta
+        uses: docker/metadata-action@v5
+        with:
+          images: ${{ env.REGISTRY }}/${{ env.IMAGE_PREFIX }}/${{ matrix.service }}
+          tags: |
+            type=raw,value=${{ needs.version.outputs.version }}
+            type=raw,value=latest
+
+      - name: Build and push Docker image
+        if: steps.should_build.outputs.build == 'true'
+        uses: docker/build-push-action@v5
+        with:
+          context: ./src/${{ matrix.service }}
+          push: ${{ inputs.push_to_registry }}
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+          build-args: |
+            VERSION=${{ needs.version.outputs.version }}
+
+  summary:
+    runs-on: ubuntu-latest
+    needs: [version, build]
+    if: always()
+    steps:
+      - name: Generate summary
+        run: |
+          echo "### Container Build Summary" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "**Version:** ${{ needs.version.outputs.version }}" >> $GITHUB_STEP_SUMMARY
+          echo "**Services:** ${{ inputs.services }}" >> $GITHUB_STEP_SUMMARY
+          echo "**Pushed to registry:** ${{ inputs.push_to_registry }}" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+
+          if [ "${{ inputs.push_to_registry }}" = "true" ]; then
+            echo "#### Container Images" >> $GITHUB_STEP_SUMMARY
+            echo "" >> $GITHUB_STEP_SUMMARY
+            echo "Images are available at:" >> $GITHUB_STEP_SUMMARY
+            echo '```' >> $GITHUB_STEP_SUMMARY
+            echo "${{ env.REGISTRY }}/${{ env.IMAGE_PREFIX }}/<service>:${{ needs.version.outputs.version }}" >> $GITHUB_STEP_SUMMARY
+            echo '```' >> $GITHUB_STEP_SUMMARY
+          fi

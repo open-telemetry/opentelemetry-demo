@@ -1,0 +1,164 @@
+# Kubernetes manifest for astronomy-loadgen
+# Includes scriptfile ConfigMap used by the deployment
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: scriptfile
+data:
+  local-file:  |
+    /* eslint-disable no-console */
+    const { Console } = require('console');
+    const puppeteer = require('puppeteer');
+    const customUserAgent = 'Mozilla/5.0 (X11; Linux x86_64; Splunk RUM_LoadGen) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/142.0.0.0 Safari/537.36';
+    console.log('DEBUG: Using User Agent:', customUserAgent);
+
+    async function launchBrowser() {
+      console.log('🔹 Starting headless browser...');
+      const browser = await puppeteer.launch({
+        headless: true,
+        defaultViewport: null,
+        args: [
+          '--no-sandbox',
+          '--disable-setuid-sandbox',
+          '--disable-gpu',
+          '--disable-dev-shm-usage',
+          '--disable-web-security',
+          '--disable-features=VizDisplayCompositor',
+          '--max-old-space-size=256',
+          '--disable-extensions',
+          '--disable-plugins',
+          '--disable-background-networking',
+          '--disable-background-timer-throttling',
+          '--disable-backgrounding-occluded-windows',
+          '--disable-renderer-backgrounding',
+          '--memory-pressure-off',
+          `--user-agent=${customUserAgent}`
+        ]
+      });
+      console.log('✅ Browser started.');
+      return browser;
+    }
+
+    function buildBaseUrl() {
+      const raw = (process.env.RUM_FRONTEND_IP || '').trim();
+
+      // If it's empty, default to localhost
+      if (!raw) return 'https://localhost/';
+
+      // If it already starts with http:// or https://, keep it exactly as-is
+      if (/^https?:\/\//i.test(raw)) {
+        return raw.replace(/\/+$/, '') + '/';
+      }
+
+      // Otherwise, prepend https://
+      return `https://${raw.replace(/\/+$/, '')}/`;
+    }
+    function delay(ms) { return new Promise(res => setTimeout(res, ms)); }
+
+    /** Wait until innerText of the page contains a substring */
+    async function waitForText(page, text, timeoutMs = 30000, pollMs = 200) {
+      const start = Date.now();
+      while (Date.now() - start < timeoutMs) {
+        const found = await page.evaluate(t =>
+          document && document.body && document.body.innerText.includes(t), text
+        );
+        if (found) return true;
+        await delay(pollMs);
+      }
+      throw new Error(`Timed out waiting for text: "${text}"`);
+    }
+
+    async function runOnce() {
+      const browser = await launchBrowser();
+      let page;
+      try {
+        page = await browser.newPage();
+        page.setDefaultNavigationTimeout(45000);
+        page.setDefaultTimeout && page.setDefaultTimeout(30000);
+
+        const base = buildBaseUrl();
+        const url  = new URL('product/66VCHSJNUP', base).toString();
+
+        console.log(`🌐 Navigating to ${url}`);
+        await page.goto(url, { waitUntil: 'domcontentloaded' });
+
+        const addSel = "[data-cy='product-add-to-cart']";
+        await page.waitForSelector(addSel);
+        console.log('🖱️ Clicking "Add To Cart"');
+        await page.click(addSel);
+
+        const placeSel = "[data-cy='checkout-place-order']";
+        await page.waitForSelector(placeSel);
+        console.log('🖱️ Clicking "Place Order"');
+        await page.click(placeSel);
+
+        await waitForText(page, 'Your order is complete!');
+        console.log('🎉 Order completed message detected.');
+      } finally {
+        console.log('🧹 Closing browser...');
+        try {
+          if (page) {
+            page.removeAllListeners();
+            await page.close({ runBeforeUnload: true }).catch(()=>{});
+          }
+        } catch {}
+        try {
+          await browser.close();
+        } catch (e) {
+          // last-resort: nuke the child process if close() fails
+          try { browser.process()?.kill('SIGKILL'); } catch {}
+        }
+        console.log('✅ Browser closed cleanly.');
+      }
+    }
+
+    (async function mainLoop() {
+      let cycle = 1;
+      while (true) {
+        console.log(`=== Starting load generation cycle #${cycle} ===`);
+        try {
+          await runOnce();
+          console.log(`✅ Cycle #${cycle} finished OK`);
+        } catch (e) {
+          console.error(`❌ Cycle #${cycle} failed:`, e && e.stack ? e.stack : e);
+        }
+        cycle += 1;
+        await delay(5000); // wait 5 seconds before next cycle
+      }
+    })();
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: astronomy-loadgen-deployment
+  labels:
+    app: astronomy-loadgen
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: astronomy-loadgen
+  template:
+    metadata:
+      labels:
+        app: astronomy-loadgen
+    spec:
+      containers:
+      - name: astronomy-loadgen
+        image: ghcr.io/splunk/online-boutique/rumloadgen:5.6
+        imagePullPolicy: Always
+        env:
+        - name: RUM_FRONTEND_IP
+          valueFrom:
+            secretKeyRef:
+              name: workshop-secret
+              key: url
+        volumeMounts:
+        - name: puppeteer
+          subPath: local-file
+          mountPath: /puppeteer/touchwebsite.js
+      volumes:
+      - name: puppeteer
+        configMap:
+          name: scriptfile
