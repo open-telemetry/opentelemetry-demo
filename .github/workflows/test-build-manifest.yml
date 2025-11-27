@@ -1,6 +1,6 @@
 name: Test Build Astronomy Shop Manifest
 
-on:
+"on":
   workflow_dispatch:
     inputs:
       test_version_suffix:
