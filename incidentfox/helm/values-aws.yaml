@@ -1,0 +1,175 @@
+# IncidentFox: Helm values for AWS EKS deployment
+#
+# This file contains AWS-specific configurations for the OpenTelemetry Demo
+
+# Global settings
+global:
+  region: us-west-2
+  environment: lab
+
+# Ingress configuration for ALB
+ingress:
+  enabled: true
+  className: alb
+  annotations:
+    alb.ingress.kubernetes.io/scheme: internet-facing
+    alb.ingress.kubernetes.io/target-type: ip
+    alb.ingress.kubernetes.io/healthcheck-path: /
+    alb.ingress.kubernetes.io/listen-ports: '[{"HTTP": 80}]'
+    # For HTTPS, uncomment and provide certificate ARN:
+    # alb.ingress.kubernetes.io/certificate-arn: arn:aws:acm:region:account:certificate/xxx
+    # alb.ingress.kubernetes.io/listen-ports: '[{"HTTP": 80}, {"HTTPS": 443}]'
+    # alb.ingress.kubernetes.io/ssl-redirect: '443'
+  hosts:
+    - host: ""  # Empty for ALB DNS, or provide custom domain
+      paths:
+        - path: /
+          pathType: Prefix
+
+# Storage configuration - use EBS gp3
+persistence:
+  enabled: true
+  storageClassName: gp3
+  
+# Prometheus persistence
+prometheus:
+  server:
+    persistentVolume:
+      enabled: true
+      storageClass: gp3
+      size: 50Gi
+      
+# Grafana with AWS Secrets Manager integration
+grafana:
+  persistence:
+    enabled: true
+    storageClassName: gp3
+    size: 10Gi
+  
+  # Use external secret for admin credentials
+  admin:
+    existingSecret: grafana-credentials
+    userKey: admin-user
+    passwordKey: admin-password
+
+# PostgreSQL with AWS Secrets Manager integration
+postgresql:
+  auth:
+    existingSecret: postgres-credentials
+    secretKeys:
+      adminPasswordKey: password
+      userPasswordKey: password
+  
+  primary:
+    persistence:
+      enabled: true
+      storageClass: gp3
+      size: 20Gi
+
+# OpenSearch/Opensearch persistence
+opensearch:
+  persistence:
+    enabled: true
+    storageClass: gp3
+    size: 50Gi
+
+# Resource limits optimized for t3.large nodes
+# Adjust based on your node instance type
+resources:
+  limits:
+    memory: 500Mi
+  requests:
+    cpu: 100m
+    memory: 256Mi
+
+# Service-specific resource adjustments
+components:
+  # Frontend
+  frontend:
+    resources:
+      limits:
+        memory: 300Mi
+      requests:
+        cpu: 100m
+        memory: 200Mi
+  
+  # Load generator  
+  loadGenerator:
+    resources:
+      limits:
+        memory: 1500Mi
+      requests:
+        cpu: 200m
+        memory: 500Mi
+  
+  # Kafka
+  kafka:
+    resources:
+      limits:
+        memory: 700Mi
+      requests:
+        cpu: 200m
+        memory: 500Mi
+  
+  # Prometheus
+  prometheus:
+    resources:
+      limits:
+        memory: 400Mi
+      requests:
+        cpu: 200m
+        memory: 300Mi
+  
+  # Jaeger
+  jaeger:
+    resources:
+      limits:
+        memory: 1200Mi
+      requests:
+        cpu: 200m
+        memory: 800Mi
+
+# External Secrets Operator configuration
+externalSecrets:
+  enabled: true
+  # ServiceAccount will be annotated with IRSA role ARN by build-all.sh
+  serviceAccount:
+    create: true
+    name: external-secrets-sa
+    annotations: {}  # Will be populated by Terraform
+
+# Node affinity for multi-node deployment
+affinity:
+  podAntiAffinity:
+    preferredDuringSchedulingIgnoredDuringExecution:
+      - weight: 100
+        podAffinityTerm:
+          labelSelector:
+            matchExpressions:
+              - key: app.kubernetes.io/name
+                operator: In
+                values:
+                  - opentelemetry-demo
+          topologyKey: kubernetes.io/hostname
+
+# Pod disruption budget for high availability
+podDisruptionBudget:
+  enabled: true
+  minAvailable: 1
+
+# Security context
+securityContext:
+  runAsNonRoot: true
+  runAsUser: 1000
+  fsGroup: 1000
+  seccompProfile:
+    type: RuntimeDefault
+
+# Network policies (optional, requires CNI support)
+networkPolicy:
+  enabled: false  # Enable if using Calico or other network policy provider
+
+# ServiceMonitor for Prometheus Operator (optional)
+serviceMonitor:
+  enabled: false  # Enable if using Prometheus Operator
+

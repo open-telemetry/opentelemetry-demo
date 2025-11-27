@@ -4,7 +4,7 @@ This directory will contain Helm charts for deploying the OpenTelemetry Demo to 
 
 ## Status
 
-🚧 **Under Development** - Helm charts are planned but not yet implemented.
+✅ **Implemented** - Helm values files for AWS deployment are ready.
 
 The upstream OpenTelemetry Demo has official Helm charts, but we may need to:
 1. Fork and customize them for our needs

@@ -4,7 +4,7 @@ This directory will contain Terraform configurations for deploying the OpenTelem
 
 ## Status
 
-🚧 **Under Development** - Infrastructure code is planned but not yet implemented.
+✅ **Implemented** - Production-grade Terraform infrastructure is ready for deployment.
 
 ## Planned Components
 
@@ -49,7 +49,19 @@ terraform/
     └── monitoring/         # CloudWatch, logging
 ```
 
-## Usage (Planned)
+## Quick Start
+
+Use the idempotent deployment script:
+
+```bash
+# From repo root
+cd incidentfox
+./build-all.sh deploy
+```
+
+Or manually:
+
+## Usage
 
 ```bash
 # Clone and configure

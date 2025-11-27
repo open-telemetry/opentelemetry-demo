@@ -1,0 +1,51 @@
+# IncidentFox: Example Terraform variables
+#
+# Copy this file to terraform.tfvars and customize:
+#   cp terraform.tfvars.example terraform.tfvars
+
+# AWS Configuration
+region      = "us-west-2"
+environment = "lab"
+
+# Cluster Configuration
+cluster_name    = "incidentfox-demo"
+cluster_version = "1.28"
+
+# Network Configuration
+vpc_cidr = "10.0.0.0/16"
+
+# System Node Group (monitoring, control plane)
+system_node_instance_type = "t3.medium"
+system_node_desired_size  = 2
+system_node_min_size      = 1
+system_node_max_size      = 4
+
+# Application Node Group (demo services)
+app_node_instance_type  = "t3.large"
+app_node_desired_size   = 3
+app_node_min_size       = 2
+app_node_max_size       = 10
+app_node_capacity_type  = "ON_DEMAND"  # Use "SPOT" for 50-70% cost savings
+
+# Tags
+tags = {
+  Project     = "incidentfox"
+  Environment = "lab"
+  ManagedBy   = "terraform"
+  Owner       = "sre-team"
+}
+
+# Cost optimization tips:
+# 
+# For development/testing:
+# - Use SPOT instances: app_node_capacity_type = "SPOT"
+# - Reduce node count: app_node_desired_size = 1
+# - Use smaller instances: app_node_instance_type = "t3.medium"
+# - Single NAT Gateway (already configured for dev environment)
+#
+# For production:
+# - Use ON_DEMAND instances
+# - Multiple AZs with sufficient capacity
+# - Enable cluster autoscaler
+# - Monitor costs with Cost Explorer
+

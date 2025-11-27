@@ -1,0 +1,169 @@
+# IncidentFox: Helm values for IncidentFox-specific customizations
+
+# Add IncidentFox annotations to all pods
+podAnnotations:
+  incidentfox.io/monitored: "true"
+  incidentfox.io/environment: "lab"
+  incidentfox.io/project: "ai-sre-demo"
+
+# Labels for IncidentFox agent discovery
+commonLabels:
+  incidentfox.io/managed: "true"
+  environment: "lab"
+
+# Feature flags configuration - default all to off for safe baseline
+featureFlags:
+  flagd:
+    config:
+      # All flags default to "off" unless explicitly triggered via scripts
+      # See: incidentfox/scripts/trigger-incident.sh
+      
+  # Make feature flag UI accessible
+  ui:
+    enabled: true
+    ingress:
+      enabled: true
+      path: /feature
+
+# Enhanced observability for IncidentFox agent
+opentelemetry:
+  # Export to collector with full verbosity
+  collector:
+    config:
+      exporters:
+        otlp:
+          endpoint: otel-collector:4317
+          
+      service:
+        telemetry:
+          logs:
+            level: info
+          metrics:
+            level: detailed
+
+# ServiceMonitor for IncidentFox agent metrics scraping
+serviceMonitor:
+  enabled: true
+  interval: 15s
+  additionalLabels:
+    incidentfox: "true"
+    monitored: "true"
+
+# Grafana dashboards pre-configured for IncidentFox
+grafana:
+  dashboardProviders:
+    dashboardproviders.yaml:
+      apiVersion: 1
+      providers:
+        - name: 'incidentfox'
+          orgId: 1
+          folder: 'IncidentFox'
+          type: file
+          disableDeletion: false
+          updateIntervalSeconds: 30
+          allowUiUpdates: true
+          options:
+            path: /var/lib/grafana/dashboards/incidentfox
+  
+  # Add IncidentFox-specific datasources
+  additionalDataSources:
+    - name: IncidentFox-Prometheus
+      type: prometheus
+      url: http://prometheus:9090
+      access: proxy
+      isDefault: false
+      editable: true
+
+# Load generator configuration for realistic traffic
+loadGenerator:
+  # Auto-start with normal load profile
+  env:
+    - name: LOCUST_AUTOSTART
+      value: "true"
+    - name: LOCUST_USERS
+      value: "10"
+    - name: LOCUST_SPAWN_RATE
+      value: "1"
+    - name: LOCUST_HEADLESS
+      value: "false"
+
+# Alerting configuration for IncidentFox
+prometheus:
+  serverFiles:
+    alerting_rules.yml:
+      groups:
+        - name: incidentfox-alerts
+          interval: 30s
+          rules:
+            - alert: ServiceDown
+              expr: up{job=~".*"} == 0
+              for: 1m
+              labels:
+                severity: critical
+                incidentfox: "true"
+              annotations:
+                summary: "Service {{ $labels.job }} is down"
+                description: "{{ $labels.job }} has been down for more than 1 minute"
+            
+            - alert: HighErrorRate
+              expr: |
+                sum(rate(http_server_requests_total{http_status_code=~"5.."}[5m])) by (service_name)
+                /
+                sum(rate(http_server_requests_total[5m])) by (service_name) > 0.05
+              for: 2m
+              labels:
+                severity: high
+                incidentfox: "true"
+              annotations:
+                summary: "High error rate in {{ $labels.service_name }}"
+                description: "Error rate is {{ $value | humanizePercentage }}"
+            
+            - alert: HighLatency
+              expr: |
+                histogram_quantile(0.99,
+                  sum(rate(http_server_duration_bucket[5m])) by (le, service_name)
+                ) > 5
+              for: 5m
+              labels:
+                severity: medium
+                incidentfox: "true"
+              annotations:
+                summary: "High latency in {{ $labels.service_name }}"
+                description: "P99 latency is {{ $value }}s"
+
+# Jaeger configuration for trace retention
+jaeger:
+  # Store traces for 1 hour (sufficient for demo/testing)
+  collector:
+    env:
+      - name: SPAN_STORAGE_TYPE
+        value: memory
+      - name: MEMORY_MAX_TRACES
+        value: "25000"
+
+# Add documentation ConfigMap
+extraConfigMaps:
+  - name: incidentfox-docs
+    data:
+      README.md: |
+        # IncidentFox Lab Environment
+        
+        This OpenTelemetry Demo is configured for IncidentFox AI SRE agent testing.
+        
+        ## Endpoints
+        - Frontend: http://<ALB-DNS>/
+        - Grafana: http://<ALB-DNS>/grafana
+        - Jaeger: http://<ALB-DNS>/jaeger/ui
+        - Prometheus: http://<ALB-DNS>/prometheus
+        
+        ## Triggering Incidents
+        Use the scripts in incidentfox/scripts/:
+        ```
+        ./trigger-incident.sh high-cpu
+        ./trigger-incident.sh service-failure 50%
+        ./trigger-incident.sh clear-all
+        ```
+        
+        ## Documentation
+        See incidentfox/docs/ for complete documentation.
+
