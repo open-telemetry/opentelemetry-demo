@@ -44,6 +44,15 @@ your preferred deployment method:
 - [Docker](https://opentelemetry.io/docs/demo/docker_deployment/)
 - [Kubernetes](https://opentelemetry.io/docs/demo/kubernetes_deployment/)
 
+### IncidentFox Lab Setup
+
+This fork includes IncidentFox-specific configurations for AI SRE agent development:
+
+- [IncidentFox Documentation](./incidentfox/README.md) - Complete setup guide
+- [Local Setup](./incidentfox/docs/local-setup.md) - Run locally with Docker or Kubernetes
+- [Agent Integration](./incidentfox/docs/agent-integration.md) - Connect your AI agent
+- [Incident Scenarios](./incidentfox/docs/incident-scenarios.md) - Trigger test incidents
+
 ## Documentation
 
 For detailed documentation, see [Demo Documentation][docs]. If you're curious

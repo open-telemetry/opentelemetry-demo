@@ -1,0 +1,231 @@
+# IncidentFox: Observability Endpoints Configuration
+# 
+# This file documents all observability endpoints exposed by the OpenTelemetry Demo.
+# Use this as a reference when configuring your IncidentFox agent.
+
+# Docker Compose Deployment Endpoints
+docker_compose:
+  # Metrics - Prometheus
+  prometheus:
+    query_api: "http://localhost:9090/api/v1"
+    web_ui: "http://localhost:9090"
+    healthcheck: "http://localhost:9090/-/healthy"
+    
+  # Traces - Jaeger
+  jaeger:
+    query_api: "http://localhost:16686/api"
+    ui: "http://localhost:16686"
+    grpc: "localhost:16685"
+    healthcheck: "http://localhost:16686/"
+    
+  # Logs - OpenSearch
+  opensearch:
+    api: "http://localhost:9200"
+    healthcheck: "http://localhost:9200/_cluster/health"
+    index_pattern: "logs-*"
+    
+  # Dashboards - Grafana
+  grafana:
+    api: "http://localhost:3000/grafana/api"
+    ui: "http://localhost:3000/grafana"
+    credentials:
+      username: "admin"
+      password: "admin"
+    
+  # OpenTelemetry Collector (for custom instrumentation)
+  otel_collector:
+    otlp_grpc: "localhost:4317"
+    otlp_http: "http://localhost:4318"
+    metrics_endpoint: "http://localhost:8889/metrics"
+    zpages: "http://localhost:55679/debug"
+    
+  # Feature Flags - flagd (for remediation)
+  flagd:
+    grpc: "localhost:8013"
+    ofrep: "http://localhost:8016"
+    ui: "http://localhost:8080/feature"
+    
+  # Load Generator - Locust
+  load_generator:
+    ui: "http://localhost:8080/loadgen"
+    
+  # Frontend Proxy - Envoy (aggregates all UIs)
+  frontend_proxy:
+    http: "http://localhost:8080"
+    admin: "http://localhost:9901"
+
+# Kubernetes Deployment Endpoints (within cluster)
+kubernetes_in_cluster:
+  namespace: "otel-demo"
+  
+  prometheus:
+    service: "prometheus.otel-demo.svc.cluster.local"
+    port: 9090
+    query_api: "http://prometheus.otel-demo.svc.cluster.local:9090/api/v1"
+    
+  jaeger:
+    service: "jaeger-query.otel-demo.svc.cluster.local"
+    port: 16686
+    query_api: "http://jaeger-query.otel-demo.svc.cluster.local:16686/api"
+    grpc_port: 16685
+    
+  opensearch:
+    service: "opensearch.otel-demo.svc.cluster.local"
+    port: 9200
+    api: "http://opensearch.otel-demo.svc.cluster.local:9200"
+    
+  grafana:
+    service: "grafana.otel-demo.svc.cluster.local"
+    port: 80
+    api: "http://grafana.otel-demo.svc.cluster.local/api"
+    
+  otel_collector:
+    service: "otel-collector.otel-demo.svc.cluster.local"
+    otlp_grpc_port: 4317
+    otlp_http_port: 4318
+    metrics_port: 8889
+    
+  flagd:
+    service: "flagd.otel-demo.svc.cluster.local"
+    grpc_port: 8013
+    ofrep_port: 8016
+
+# Kubernetes Deployment Endpoints (via kubectl port-forward)
+kubernetes_port_forward:
+  # Setup commands:
+  # kubectl port-forward -n otel-demo svc/prometheus 9090:9090
+  # kubectl port-forward -n otel-demo svc/jaeger-query 16686:16686
+  # kubectl port-forward -n otel-demo svc/opensearch 9200:9200
+  # kubectl port-forward -n otel-demo svc/grafana 3000:80
+  
+  prometheus:
+    query_api: "http://localhost:9090/api/v1"
+    
+  jaeger:
+    query_api: "http://localhost:16686/api"
+    
+  opensearch:
+    api: "http://localhost:9200"
+    
+  grafana:
+    api: "http://localhost:3000/api"
+
+# AWS EKS Deployment (via ALB Ingress)
+aws_eks_ingress:
+  # After setting up DNS: demo.incidentfox.io
+  base_url: "http://demo.incidentfox.io"
+  
+  prometheus:
+    query_api: "http://demo.incidentfox.io/prometheus/api/v1"
+    
+  jaeger:
+    query_api: "http://demo.incidentfox.io/jaeger/api"
+    ui: "http://demo.incidentfox.io/jaeger/ui"
+    
+  grafana:
+    api: "http://demo.incidentfox.io/grafana/api"
+    ui: "http://demo.incidentfox.io/grafana"
+    
+  opensearch:
+    # Typically not exposed publicly
+    # Use kubectl port-forward or VPN
+    api: "http://localhost:9200"
+
+# Useful API Queries
+
+prometheus_queries:
+  # Service health
+  service_up: "up{job=~\".*\"}"
+  
+  # HTTP request rate
+  request_rate: "sum(rate(http_server_requests_total[5m])) by (service_name)"
+  
+  # Error rate
+  error_rate: |
+    sum(rate(http_server_requests_total{http_status_code=~"5.."}[5m])) by (service_name)
+    /
+    sum(rate(http_server_requests_total[5m])) by (service_name)
+  
+  # P99 latency
+  p99_latency: |
+    histogram_quantile(0.99,
+      sum(rate(http_server_duration_bucket[5m])) by (le, service_name)
+    )
+  
+  # CPU usage
+  cpu_usage: "rate(process_cpu_seconds_total[1m])"
+  
+  # Memory usage
+  memory_usage: "process_resident_memory_bytes"
+  
+  # Kafka lag
+  kafka_lag: "kafka_consumer_lag"
+
+jaeger_queries:
+  # List all services
+  list_services: "GET /api/services"
+  
+  # Search traces
+  search_traces: "GET /api/traces?service={service}&start={start}&end={end}&limit={limit}"
+  
+  # Get specific trace
+  get_trace: "GET /api/traces/{trace_id}"
+  
+  # Find error traces
+  error_traces: "GET /api/traces?service={service}&tags={\"error\":\"true\"}&limit=20"
+
+opensearch_queries:
+  # Search logs by service
+  logs_by_service:
+    method: "POST"
+    path: "/logs-*/_search"
+    body: |
+      {
+        "query": {
+          "term": {"service.name": "<service_name>"}
+        },
+        "size": 100,
+        "sort": [{"@timestamp": "desc"}]
+      }
+  
+  # Search error logs
+  error_logs:
+    method: "POST"
+    path: "/logs-*/_search"
+    body: |
+      {
+        "query": {
+          "bool": {
+            "must": [
+              {"match": {"severity": "ERROR"}},
+              {"range": {"@timestamp": {"gte": "now-15m"}}}
+            ]
+          }
+        },
+        "size": 100,
+        "sort": [{"@timestamp": "desc"}]
+      }
+  
+  # Aggregate errors by service
+  errors_by_service:
+    method: "POST"
+    path: "/logs-*/_search"
+    body: |
+      {
+        "query": {"match": {"severity": "ERROR"}},
+        "size": 0,
+        "aggs": {
+          "services": {
+            "terms": {"field": "service.name.keyword", "size": 20}
+          }
+        }
+      }
+
+# Service Mesh (if deployed with Istio/Linkerd)
+# Uncomment and configure if using a service mesh
+# service_mesh:
+#   istio:
+#     prometheus: "http://istio-system.prometheus:9090"
+#     grafana: "http://istio-system.grafana:3000"
+#     kiali: "http://istio-system.kiali:20001"
+

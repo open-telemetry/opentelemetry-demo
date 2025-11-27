@@ -1,0 +1,346 @@
+# IncidentFox: Example Agent Configuration
+# 
+# This is a reference configuration for connecting the IncidentFox AI SRE agent
+# to the OpenTelemetry Demo environment.
+#
+# Copy this file and customize for your deployment:
+#   cp example-config.yaml agent-config.yaml
+
+version: "1.0"
+
+agent:
+  name: "incidentfox-agent"
+  environment: "lab"
+  log_level: "info"
+  
+  # Agent behavior
+  behavior:
+    auto_detect: true          # Automatically detect incidents
+    auto_diagnose: true         # Automatically diagnose issues
+    auto_remediate: false       # Require approval for remediation
+    notification_channel: "slack"
+
+# Data source connections
+datasources:
+  # Prometheus - Metrics
+  metrics:
+    type: "prometheus"
+    enabled: true
+    endpoint: "http://localhost:9090"
+    query_api: "http://localhost:9090/api/v1"
+    scrape_interval: "15s"
+    query_timeout: "30s"
+    
+    # Retention and storage
+    retention: "1h"
+    
+    # Authentication (if needed)
+    # auth:
+    #   type: "basic"
+    #   username: ""
+    #   password: ""
+    
+  # Jaeger - Distributed Traces
+  traces:
+    type: "jaeger"
+    enabled: true
+    endpoint: "http://localhost:16686"
+    query_api: "http://localhost:16686/api"
+    
+    # Trace sampling
+    trace_retention: "1h"
+    max_traces_per_query: 100
+    
+    # Authentication (if needed)
+    # auth:
+    #   type: "bearer"
+    #   token: ""
+    
+  # OpenSearch - Logs
+  logs:
+    type: "opensearch"
+    enabled: true
+    endpoint: "http://localhost:9200"
+    index_pattern: "logs-*"
+    
+    # Query settings
+    max_results: 1000
+    time_field: "@timestamp"
+    
+    # Authentication (if needed)
+    # auth:
+    #   type: "basic"
+    #   username: "admin"
+    #   password: "admin"
+    
+  # Grafana - Dashboards (optional)
+  dashboards:
+    type: "grafana"
+    enabled: true
+    endpoint: "http://localhost:3000/grafana"
+    api_endpoint: "http://localhost:3000/grafana/api"
+    
+    # Credentials
+    auth:
+      type: "basic"
+      username: "admin"
+      password: "admin"
+    
+    # Or use API key
+    # auth:
+    #   type: "api_key"
+    #   api_key: ""
+
+# Kubernetes integration (optional, for k8s deployments)
+kubernetes:
+  enabled: false
+  
+  # Connection
+  kubeconfig: "~/.kube/config"
+  context: "kind-incidentfox-lab"
+  
+  # Target namespace
+  namespace: "otel-demo"
+  
+  # Permissions
+  permissions:
+    read_pods: true
+    read_logs: true
+    read_events: true
+    restart_pods: false     # Require elevated permissions
+    scale_deployments: false
+
+# Incident detection configuration
+detection:
+  # Detection interval
+  check_interval: "30s"
+  
+  # Baseline learning
+  baseline_learning_period: "1h"
+  enable_anomaly_detection: true
+  
+  # Key metrics to monitor
+  key_metrics:
+    # Service availability
+    - name: "service_up"
+      query: "up{job=~\".*\"}"
+      threshold:
+        operator: "=="
+        value: 0
+      severity: "critical"
+      
+    # Error rate
+    - name: "error_rate"
+      query: |
+        sum(rate(http_server_requests_total{http_status_code=~"5.."}[5m])) by (service_name)
+        /
+        sum(rate(http_server_requests_total[5m])) by (service_name)
+      threshold:
+        operator: ">"
+        value: 0.05    # 5% error rate
+      severity: "high"
+      
+    # High latency
+    - name: "p99_latency"
+      query: |
+        histogram_quantile(0.99,
+          sum(rate(http_server_duration_bucket[5m])) by (le, service_name)
+        )
+      threshold:
+        operator: ">"
+        value: 5.0     # 5 seconds
+      severity: "medium"
+      
+    # CPU usage
+    - name: "cpu_usage"
+      query: "rate(process_cpu_seconds_total[1m])"
+      threshold:
+        operator: ">"
+        value: 0.90    # 90% CPU
+      severity: "high"
+      
+    # Memory usage
+    - name: "memory_usage_percent"
+      query: |
+        process_resident_memory_bytes
+        /
+        process_virtual_memory_max_bytes
+      threshold:
+        operator: ">"
+        value: 0.90    # 90% memory
+      severity: "high"
+      
+    # Kafka lag
+    - name: "kafka_lag"
+      query: "kafka_consumer_lag"
+      threshold:
+        operator: ">"
+        value: 1000
+      severity: "medium"
+  
+  # Alert aggregation
+  alert_grouping:
+    enabled: true
+    time_window: "5m"
+    group_by: ["service_name", "severity"]
+    
+  # Alert suppression (avoid alert fatigue)
+  suppression:
+    enabled: true
+    # Don't re-alert for same issue within this period
+    cooldown: "15m"
+
+# Diagnosis configuration
+diagnosis:
+  # Enable detailed root cause analysis
+  enable_rca: true
+  
+  # Context gathering
+  context:
+    # How far back to look for related events
+    lookback_window: "15m"
+    
+    # Related traces to fetch
+    trace_samples: 10
+    
+    # Related logs to fetch
+    log_samples: 50
+    
+    # Check upstream/downstream dependencies
+    check_dependencies: true
+  
+  # AI/LLM settings (if using)
+  llm:
+    enabled: false
+    model: "gpt-4"
+    # api_key: ""
+    max_tokens: 2000
+
+# Remediation configuration
+remediation:
+  # Require approval before taking action
+  require_approval: true
+  
+  # Approval timeout
+  approval_timeout: "5m"
+  
+  # Available actions
+  actions:
+    # Feature flag control (via flagd)
+    modify_feature_flags:
+      enabled: true
+      endpoint: "http://localhost:8080/feature"
+      # Only allow disabling problematic flags
+      allowed_operations: ["disable"]
+      
+    # Service restart (via Kubernetes)
+    restart_services:
+      enabled: false  # Dangerous, requires approval
+      allowed_services: []
+      
+    # Service scaling (via Kubernetes)
+    scale_services:
+      enabled: false
+      max_replicas: 10
+      
+    # Traffic routing (if using service mesh)
+    modify_traffic:
+      enabled: false
+    
+  # Automated remediation rules
+  rules:
+    # Auto-disable problematic feature flags
+    - name: "disable_feature_flag_on_high_errors"
+      condition:
+        metric: "error_rate"
+        threshold: 0.20  # 20% error rate
+      action:
+        type: "disable_feature_flag"
+        # Agent will try to identify which flag caused the issue
+        auto_identify: true
+      require_approval: true
+    
+    # Auto-restart crashed pods
+    - name: "restart_crashed_pods"
+      condition:
+        event: "pod_crash_loop"
+        restart_count: ">= 3"
+      action:
+        type: "restart_pod"
+      require_approval: true
+
+# Notification configuration
+notifications:
+  # Slack
+  slack:
+    enabled: false
+    webhook_url: ""
+    channel: "#incidents"
+    mentions: ["@oncall"]
+    
+  # PagerDuty
+  pagerduty:
+    enabled: false
+    integration_key: ""
+    
+  # Email
+  email:
+    enabled: false
+    smtp_host: ""
+    smtp_port: 587
+    from: "incidentfox@example.com"
+    to: ["oncall@example.com"]
+    
+  # Webhook (generic)
+  webhook:
+    enabled: false
+    url: ""
+    headers:
+      Content-Type: "application/json"
+
+# Observability for the agent itself
+agent_telemetry:
+  # Export agent metrics
+  metrics:
+    enabled: true
+    endpoint: "http://localhost:4318/v1/metrics"
+    
+  # Export agent traces
+  traces:
+    enabled: true
+    endpoint: "http://localhost:4318/v1/traces"
+    
+  # Export agent logs
+  logs:
+    enabled: true
+    endpoint: "http://localhost:4318/v1/logs"
+
+# Storage for agent state
+storage:
+  type: "local"  # local, postgres, redis
+  path: "/var/lib/incidentfox"
+  
+  # For postgres
+  # type: "postgres"
+  # connection_string: "postgresql://user:pass@localhost:5432/incidentfox"
+  
+  # For redis
+  # type: "redis"
+  # url: "redis://localhost:6379/0"
+
+# Advanced settings
+advanced:
+  # Concurrency
+  max_concurrent_diagnoses: 5
+  max_concurrent_remediations: 1
+  
+  # Performance
+  query_cache_ttl: "30s"
+  result_cache_size: 1000
+  
+  # Feature flags
+  features:
+    enable_ml_detection: false
+    enable_predictive_remediation: false
+    enable_cost_optimization: false
+
