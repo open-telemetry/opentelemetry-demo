@@ -1,8 +1,0 @@
-# Kubernetes manifest for otel-demo
-# Auto-generated from opentelemetry-demo.yaml
-# Contains 1 resource(s)
----
-apiVersion: v1
-kind: Namespace
-metadata:
-  name: otel-demo

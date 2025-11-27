@@ -1,6 +1,5 @@
 # Kubernetes manifest for flagd-ui
-# Split from combined flagd/flagd-ui deployment
----
+# Split from combined flagd/flagd-ui deployment---
 apiVersion: v1
 kind: Service
 metadata:
@@ -11,6 +10,7 @@ metadata:
     app.kubernetes.io/name: flagd-ui
     app.kubernetes.io/version: 2.1.3
     app.kubernetes.io/part-of: opentelemetry-demo
+  namespace: astronomy-shop
 spec:
   type: ClusterIP
   ports:
@@ -18,8 +18,7 @@ spec:
     name: tcp-service
     targetPort: 4000
   selector:
-    opentelemetry.io/name: flagd-ui
----
+    opentelemetry.io/name: flagd-ui---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -30,6 +29,7 @@ metadata:
     app.kubernetes.io/name: flagd-ui
     app.kubernetes.io/version: 2.1.3
     app.kubernetes.io/part-of: opentelemetry-demo
+  namespace: astronomy-shop
 spec:
   replicas: 1
   revisionHistoryLimit: 10

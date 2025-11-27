@@ -2,51 +2,34 @@
 
 # Script to stitch together Kubernetes manifests from multiple services
 # Usage: ./stitch-manifests.sh
+#
+# This script reads service configuration from services.yaml
+# To add a new service, edit services.yaml instead of this script
 
 set -e
-
-# Define the services to include
-# Note: Services without [service-name]-k8s.yaml files will be skipped with a warning
-SERVICES=(
-    "accounting"
-    "ad"
-    "astronomy-loadgen"
-    "cart"
-    "checkout"
-    "currency"
-    "email"
-    "flagd"
-    "flagd-config"
-    "flagd-ui"
-    "fraud-detection"
-    "frontend"
-    "frontend-proxy"
-    "image-provider"
-    "kafka"
-    "llm"
-    "load-generator"
-    "opentelemetry-demo"
-    "otel-demo"
-    "payment"
-    "postgres"
-    "product-catalog"
-    "product-catalog-products"
-    "product-reviews"
-    "quote"
-    "react-native-app"
-    "recommendation"
-    "setup-sql"
-    "shipping"
-    "shop-dc-shim"
-    "sql"
-    "sql-server-fraud"
-    "thousandeyes"
-    "valkey-cart"
-)
 
 # Get version from SPLUNK-VERSION file
 VERSION=$(cat SPLUNK-VERSION)
 echo "Creating manifest for version: $VERSION"
+
+# Load services from services.yaml
+echo "Reading services from services.yaml..."
+if command -v python3 &> /dev/null; then
+    # Use Python helper to parse YAML
+    SERVICES_LIST=$(python3 .github/scripts/get-services.py --manifest)
+    if [ $? -ne 0 ]; then
+        echo "Error: Failed to read services.yaml"
+        exit 1
+    fi
+    # Convert space-separated list to array
+    read -ra SERVICES <<< "$SERVICES_LIST"
+else
+    echo "Error: python3 is required to parse services.yaml"
+    echo "Please install Python 3 or manually update the SERVICES array in this script"
+    exit 1
+fi
+
+echo "Found ${#SERVICES[@]} services configured for manifest inclusion"
 
 # Output directory and file
 OUTPUT_DIR="kubernetes"
@@ -62,6 +45,7 @@ cat > "$OUTPUT_FILE" << EOF
 # Generated on: $(date -u +"%Y-%m-%dT%H:%M:%SZ")
 #
 # This manifest combines all service deployments for the Splunk Astronomy Shop
+# Services are defined in services.yaml
 ---
 EOF
 
@@ -106,4 +90,4 @@ if [ ${#MISSING[@]} -gt 0 ]; then
 fi
 
 echo ""
-echo "To customize the service list, edit the SERVICES array in this script."
+echo "To add a new service, edit services.yaml in the repository root."

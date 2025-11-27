@@ -1,139 +1,67 @@
 # Kubernetes manifest for astronomy-loadgen
-# Includes scriptfile ConfigMap used by the deployment
----
+# Includes scriptfile ConfigMap used by the deployment---
 apiVersion: v1
 kind: ConfigMap
 metadata:
   name: scriptfile
+  namespace: astronomy-shop
 data:
-  local-file:  |
-    /* eslint-disable no-console */
-    const { Console } = require('console');
-    const puppeteer = require('puppeteer');
-    const customUserAgent = 'Mozilla/5.0 (X11; Linux x86_64; Splunk RUM_LoadGen) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/142.0.0.0 Safari/537.36';
-    console.log('DEBUG: Using User Agent:', customUserAgent);
-
-    async function launchBrowser() {
-      console.log('🔹 Starting headless browser...');
-      const browser = await puppeteer.launch({
-        headless: true,
-        defaultViewport: null,
-        args: [
-          '--no-sandbox',
-          '--disable-setuid-sandbox',
-          '--disable-gpu',
-          '--disable-dev-shm-usage',
-          '--disable-web-security',
-          '--disable-features=VizDisplayCompositor',
-          '--max-old-space-size=256',
-          '--disable-extensions',
-          '--disable-plugins',
-          '--disable-background-networking',
-          '--disable-background-timer-throttling',
-          '--disable-backgrounding-occluded-windows',
-          '--disable-renderer-backgrounding',
-          '--memory-pressure-off',
-          `--user-agent=${customUserAgent}`
-        ]
-      });
-      console.log('✅ Browser started.');
-      return browser;
-    }
-
-    function buildBaseUrl() {
-      const raw = (process.env.RUM_FRONTEND_IP || '').trim();
-
-      // If it's empty, default to localhost
-      if (!raw) return 'https://localhost/';
-
-      // If it already starts with http:// or https://, keep it exactly as-is
-      if (/^https?:\/\//i.test(raw)) {
-        return raw.replace(/\/+$/, '') + '/';
-      }
-
-      // Otherwise, prepend https://
-      return `https://${raw.replace(/\/+$/, '')}/`;
-    }
-    function delay(ms) { return new Promise(res => setTimeout(res, ms)); }
-
-    /** Wait until innerText of the page contains a substring */
-    async function waitForText(page, text, timeoutMs = 30000, pollMs = 200) {
-      const start = Date.now();
-      while (Date.now() - start < timeoutMs) {
-        const found = await page.evaluate(t =>
-          document && document.body && document.body.innerText.includes(t), text
-        );
-        if (found) return true;
-        await delay(pollMs);
-      }
-      throw new Error(`Timed out waiting for text: "${text}"`);
-    }
-
-    async function runOnce() {
-      const browser = await launchBrowser();
-      let page;
-      try {
-        page = await browser.newPage();
-        page.setDefaultNavigationTimeout(45000);
-        page.setDefaultTimeout && page.setDefaultTimeout(30000);
-
-        const base = buildBaseUrl();
-        const url  = new URL('product/66VCHSJNUP', base).toString();
-
-        console.log(`🌐 Navigating to ${url}`);
-        await page.goto(url, { waitUntil: 'domcontentloaded' });
-
-        const addSel = "[data-cy='product-add-to-cart']";
-        await page.waitForSelector(addSel);
-        console.log('🖱️ Clicking "Add To Cart"');
-        await page.click(addSel);
-
-        const placeSel = "[data-cy='checkout-place-order']";
-        await page.waitForSelector(placeSel);
-        console.log('🖱️ Clicking "Place Order"');
-        await page.click(placeSel);
-
-        await waitForText(page, 'Your order is complete!');
-        console.log('🎉 Order completed message detected.');
-      } finally {
-        console.log('🧹 Closing browser...');
-        try {
-          if (page) {
-            page.removeAllListeners();
-            await page.close({ runBeforeUnload: true }).catch(()=>{});
-          }
-        } catch {}
-        try {
-          await browser.close();
-        } catch (e) {
-          // last-resort: nuke the child process if close() fails
-          try { browser.process()?.kill('SIGKILL'); } catch {}
-        }
-        console.log('✅ Browser closed cleanly.');
-      }
-    }
-
-    (async function mainLoop() {
-      let cycle = 1;
-      while (true) {
-        console.log(`=== Starting load generation cycle #${cycle} ===`);
-        try {
-          await runOnce();
-          console.log(`✅ Cycle #${cycle} finished OK`);
-        } catch (e) {
-          console.error(`❌ Cycle #${cycle} failed:`, e && e.stack ? e.stack : e);
-        }
-        cycle += 1;
-        await delay(5000); // wait 5 seconds before next cycle
-      }
-    })();
----
+  local-file: "/* eslint-disable no-console */\nconst { Console } = require('console');\n\
+    const puppeteer = require('puppeteer');\nconst customUserAgent = 'Mozilla/5.0\
+    \ (X11; Linux x86_64; Splunk RUM_LoadGen) AppleWebKit/537.36 (KHTML, like Gecko)\
+    \ Chrome/142.0.0.0 Safari/537.36';\nconsole.log('DEBUG: Using User Agent:', customUserAgent);\n\
+    \nasync function launchBrowser() {\n  console.log('\U0001F539 Starting headless\
+    \ browser...');\n  const browser = await puppeteer.launch({\n    headless: true,\n\
+    \    defaultViewport: null,\n    args: [\n      '--no-sandbox',\n      '--disable-setuid-sandbox',\n\
+    \      '--disable-gpu',\n      '--disable-dev-shm-usage',\n      '--disable-web-security',\n\
+    \      '--disable-features=VizDisplayCompositor',\n      '--max-old-space-size=256',\n\
+    \      '--disable-extensions',\n      '--disable-plugins',\n      '--disable-background-networking',\n\
+    \      '--disable-background-timer-throttling',\n      '--disable-backgrounding-occluded-windows',\n\
+    \      '--disable-renderer-backgrounding',\n      '--memory-pressure-off',\n \
+    \     `--user-agent=${customUserAgent}`\n    ]\n  });\n  console.log('\u2705 Browser\
+    \ started.');\n  return browser;\n}\n\nfunction buildBaseUrl() {\n  const raw\
+    \ = (process.env.RUM_FRONTEND_IP || '').trim();\n\n  // If it's empty, default\
+    \ to localhost\n  if (!raw) return 'https://localhost/';\n\n  // If it already\
+    \ starts with http:// or https://, keep it exactly as-is\n  if (/^https?:\\/\\\
+    //i.test(raw)) {\n    return raw.replace(/\\/+$/, '') + '/';\n  }\n\n  // Otherwise,\
+    \ prepend https://\n  return `https://${raw.replace(/\\/+$/, '')}/`;\n}\nfunction\
+    \ delay(ms) { return new Promise(res => setTimeout(res, ms)); }\n\n/** Wait until\
+    \ innerText of the page contains a substring */\nasync function waitForText(page,\
+    \ text, timeoutMs = 30000, pollMs = 200) {\n  const start = Date.now();\n  while\
+    \ (Date.now() - start < timeoutMs) {\n    const found = await page.evaluate(t\
+    \ =>\n      document && document.body && document.body.innerText.includes(t),\
+    \ text\n    );\n    if (found) return true;\n    await delay(pollMs);\n  }\n \
+    \ throw new Error(`Timed out waiting for text: \"${text}\"`);\n}\n\nasync function\
+    \ runOnce() {\n  const browser = await launchBrowser();\n  let page;\n  try {\n\
+    \    page = await browser.newPage();\n    page.setDefaultNavigationTimeout(45000);\n\
+    \    page.setDefaultTimeout && page.setDefaultTimeout(30000);\n\n    const base\
+    \ = buildBaseUrl();\n    const url  = new URL('product/66VCHSJNUP', base).toString();\n\
+    \n    console.log(`\U0001F310 Navigating to ${url}`);\n    await page.goto(url,\
+    \ { waitUntil: 'domcontentloaded' });\n\n    const addSel = \"[data-cy='product-add-to-cart']\"\
+    ;\n    await page.waitForSelector(addSel);\n    console.log('\U0001F5B1\uFE0F\
+    \ Clicking \"Add To Cart\"');\n    await page.click(addSel);\n\n    const placeSel\
+    \ = \"[data-cy='checkout-place-order']\";\n    await page.waitForSelector(placeSel);\n\
+    \    console.log('\U0001F5B1\uFE0F Clicking \"Place Order\"');\n    await page.click(placeSel);\n\
+    \n    await waitForText(page, 'Your order is complete!');\n    console.log('\U0001F389\
+    \ Order completed message detected.');\n  } finally {\n    console.log('\U0001F9F9\
+    \ Closing browser...');\n    try {\n      if (page) {\n        page.removeAllListeners();\n\
+    \        await page.close({ runBeforeUnload: true }).catch(()=>{});\n      }\n\
+    \    } catch {}\n    try {\n      await browser.close();\n    } catch (e) {\n\
+    \      // last-resort: nuke the child process if close() fails\n      try { browser.process()?.kill('SIGKILL');\
+    \ } catch {}\n    }\n    console.log('\u2705 Browser closed cleanly.');\n  }\n\
+    }\n\n(async function mainLoop() {\n  let cycle = 1;\n  while (true) {\n    console.log(`===\
+    \ Starting load generation cycle #${cycle} ===`);\n    try {\n      await runOnce();\n\
+    \      console.log(`\u2705 Cycle #${cycle} finished OK`);\n    } catch (e) {\n\
+    \      console.error(`\u274C Cycle #${cycle} failed:`, e && e.stack ? e.stack\
+    \ : e);\n    }\n    cycle += 1;\n    await delay(5000); // wait 5 seconds before\
+    \ next cycle\n  }\n})();"---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: astronomy-loadgen-deployment
   labels:
     app: astronomy-loadgen
+  namespace: astronomy-shop
 spec:
   replicas: 1
   selector:

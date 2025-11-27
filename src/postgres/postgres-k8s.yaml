@@ -1,6 +1,5 @@
 # Kubernetes manifest for postgres (PostgreSQL database)
-# Extracted from opentelemetry-demo.yaml
----
+# Extracted from opentelemetry-demo.yaml---
 apiVersion: v1
 kind: Service
 metadata:
@@ -9,17 +8,17 @@ metadata:
     opentelemetry.io/name: postgresql
     app.kubernetes.io/component: postgresql
     app.kubernetes.io/name: postgresql
-    app.kubernetes.io/version: "2.1.3"
+    app.kubernetes.io/version: 2.1.3
     app.kubernetes.io/part-of: opentelemetry-demo
+  namespace: astronomy-shop
 spec:
   type: ClusterIP
   ports:
-    - port: 5432
-      name: tcp-service
-      targetPort: 5432
+  - port: 5432
+    name: tcp-service
+    targetPort: 5432
   selector:
-    opentelemetry.io/name: postgresql
----
+    opentelemetry.io/name: postgresql---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -28,8 +27,9 @@ metadata:
     opentelemetry.io/name: postgresql
     app.kubernetes.io/component: postgresql
     app.kubernetes.io/name: postgresql
-    app.kubernetes.io/version: "2.1.3"
+    app.kubernetes.io/version: 2.1.3
     app.kubernetes.io/part-of: opentelemetry-demo
+  namespace: astronomy-shop
 spec:
   replicas: 1
   revisionHistoryLimit: 10
@@ -45,36 +45,36 @@ spec:
     spec:
       serviceAccountName: opentelemetry-demo
       containers:
-        - name: postgresql
-          image: 'ghcr.io/open-telemetry/demo:2.1.3-postgresql'
-          imagePullPolicy: IfNotPresent
-          ports:
-            - containerPort: 5432
-              name: service
-          env:
-            - name: OTEL_SERVICE_NAME
-              valueFrom:
-                fieldRef:
-                  apiVersion: v1
-                  fieldPath: metadata.labels['app.kubernetes.io/component']
-            - name: NODE_IP
-              valueFrom:
-                 fieldRef:
-                  fieldPath: status.hostIP
-            - name: OTEL_COLLECTOR_NAME
-              value: $(NODE_IP)
-            - name: OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE
-              value: cumulative
-            - name: POSTGRES_USER
-              value: root
-            - name: POSTGRES_PASSWORD
-              value: otel
-            - name: POSTGRES_DB
-              value: otel
-            - name: OTEL_RESOURCE_ATTRIBUTES
-              value: service.name=$(OTEL_SERVICE_NAME),service.namespace=opentelemetry-demo,service.version=2.1.3,service.kafka=no
-          resources:
-            limits:
-              memory: 100Mi
-          volumeMounts:
-      volumes:
+      - name: postgresql
+        image: ghcr.io/open-telemetry/demo:2.1.3-postgresql
+        imagePullPolicy: IfNotPresent
+        ports:
+        - containerPort: 5432
+          name: service
+        env:
+        - name: OTEL_SERVICE_NAME
+          valueFrom:
+            fieldRef:
+              apiVersion: v1
+              fieldPath: metadata.labels['app.kubernetes.io/component']
+        - name: NODE_IP
+          valueFrom:
+            fieldRef:
+              fieldPath: status.hostIP
+        - name: OTEL_COLLECTOR_NAME
+          value: $(NODE_IP)
+        - name: OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE
+          value: cumulative
+        - name: POSTGRES_USER
+          value: root
+        - name: POSTGRES_PASSWORD
+          value: otel
+        - name: POSTGRES_DB
+          value: otel
+        - name: OTEL_RESOURCE_ATTRIBUTES
+          value: service.name=$(OTEL_SERVICE_NAME),service.namespace=opentelemetry-demo,service.version=2.1.3,service.kafka=no
+        resources:
+          limits:
+            memory: 100Mi
+        volumeMounts: null
+      volumes: null

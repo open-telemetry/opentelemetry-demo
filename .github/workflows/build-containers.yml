@@ -60,33 +60,41 @@ jobs:
           fi
           echo "version=$VERSION" >> $GITHUB_OUTPUT
 
+  generate-matrix:
+    runs-on: ubuntu-latest
+    outputs:
+      services: ${{ steps.set-matrix.outputs.services }}
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Generate service matrix from services.yaml
+        id: set-matrix
+        run: |
+          # Install PyYAML if needed
+          pip3 install pyyaml --quiet --break-system-packages 2>/dev/null || pip3 install pyyaml --quiet --user
+
+          # Generate JSON array of services with build=true
+          SERVICES=$(python3 -c "
+          import yaml, json
+          with open('services.yaml') as f:
+              config = yaml.safe_load(f)
+          services = [s['name'] for s in config['services'] if s.get('build', False)]
+          print(json.dumps(services))
+          ")
+
+          echo "services=$SERVICES" >> $GITHUB_OUTPUT
+          echo "Found services for building: $SERVICES"
+
   build:
     runs-on: ubuntu-latest
-    needs: version
+    needs: [version, generate-matrix]
     permissions:
       contents: read
       packages: write
     strategy:
       matrix:
-        service:
-          - accounting
-          - ad
-          - cart
-          - checkout
-          - currency
-          - email
-          - fraud-detection
-          - frontend
-          - frontend-proxy
-          - image-provider
-          - llm
-          - load-generator
-          - payment
-          - product-catalog
-          - product-reviews
-          - quote
-          - recommendation
-          - shipping
+        service: ${{ fromJson(needs.generate-matrix.outputs.services) }}
 
     steps:
       - name: Checkout repository

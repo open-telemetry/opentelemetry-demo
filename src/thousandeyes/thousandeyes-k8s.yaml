@@ -1,12 +1,11 @@
 # Kubernetes manifest for thousandeyes
 # Auto-generated from opentelemetry-demo.yaml
-# Contains 1 resource(s)
----
+# Contains 1 resource(s)---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
   annotations: {}
-  namespace: default
+  namespace: astronomy-shop
   name: thousandeyes
   labels:
     app: thousandeyes

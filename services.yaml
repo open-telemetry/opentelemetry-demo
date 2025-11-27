@@ -1,0 +1,145 @@
+# Splunk Astronomy Shop Services Configuration
+# This file defines all services in the project for manifest stitching and container builds
+#
+# To add a new service:
+# 1. Add an entry to the 'services' list below
+# 2. Ensure your service has a [service-name]-k8s.yaml file in src/[service-name]/
+# 3. Optionally add build configuration if the service needs container builds
+#
+# Format:
+#   name: Service directory name (must match src/ directory)
+#   build: Whether to build containers for this service (true/false)
+#   manifest: Whether to include in manifest stitching (true/false)
+
+services:
+  - name: accounting
+    build: true
+    manifest: true
+
+  - name: ad
+    build: true
+    manifest: true
+
+  - name: astronomy-loadgen
+    build: false
+    manifest: true
+
+  - name: cart
+    build: true
+    manifest: true
+
+  - name: checkout
+    build: true
+    manifest: true
+
+  - name: currency
+    build: true
+    manifest: true
+
+  - name: email
+    build: true
+    manifest: true
+
+  - name: flagd
+    build: false
+    manifest: true
+
+  - name: flagd-config
+    build: false
+    manifest: true
+
+  - name: flagd-ui
+    build: false
+    manifest: true
+
+  - name: fraud-detection
+    build: true
+    manifest: true
+
+  - name: frontend
+    build: true
+    manifest: true
+
+  - name: frontend-proxy
+    build: true
+    manifest: true
+
+  - name: image-provider
+    build: true
+    manifest: true
+
+  - name: kafka
+    build: false
+    manifest: true
+
+  - name: llm
+    build: true
+    manifest: true
+
+  - name: load-generator
+    build: false
+    manifest: true
+
+  - name: demo-namespace
+    build: false
+    manifest: true
+
+  - name: demo-service-account
+    build: false
+    manifest: true
+
+  - name: payment
+    build: true
+    manifest: true
+
+  - name: postgres
+    build: true
+    manifest: true
+
+  - name: product-catalog
+    build: true
+    manifest: true
+
+  - name: product-catalog-products
+    build: false
+    manifest: true
+
+  - name: product-reviews
+    build: true
+    manifest: true
+
+  - name: quote
+    build: true
+    manifest: true
+
+  - name: react-native-app
+    build: false
+    manifest: false
+
+  - name: recommendation
+    build: true
+    manifest: true
+
+  - name: setup-sql
+    build: false
+    manifest: true
+
+  - name: shipping
+    build: true
+    manifest: true
+
+  - name: shop-dc-shim
+    build: true
+    manifest: true
+
+  - name: sql-server-fraud
+    build: false
+    manifest: true
+
+  - name: thousandeyes
+    build: false
+    manifest: true
+
+  - name: valkey-cart
+    build: false
+    manifest: true

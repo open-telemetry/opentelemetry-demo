@@ -1,15 +1,15 @@
 # Splunk Astronomy Shop Kubernetes Manifest
 # Version: 0.0.0
-# Generated on: 2025-11-27T13:23:37Z
+# Generated on: 2025-11-27T16:07:25Z
 #
 # This manifest combines all service deployments for the Splunk Astronomy Shop
+# Services are defined in services.yaml
 ---
 
 # === accounting ===
 # Kubernetes manifest for accounting
 # Auto-generated from opentelemetry-demo.yaml
-# Contains 1 resource(s)
----
+# Contains 1 resource(s)---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -20,6 +20,7 @@ metadata:
     app.kubernetes.io/name: accounting
     app.kubernetes.io/version: 2.1.3
     app.kubernetes.io/part-of: opentelemetry-demo
+  namespace: astronomy-shop
 spec:
   replicas: 1
   revisionHistoryLimit: 10
@@ -84,8 +85,7 @@ spec:
 # === ad ===
 # Kubernetes manifest for ad
 # Auto-generated from opentelemetry-demo.yaml
-# Contains 2 resource(s)
----
+# Contains 2 resource(s)---
 apiVersion: v1
 kind: Service
 metadata:
@@ -96,6 +96,7 @@ metadata:
     app.kubernetes.io/name: ad
     app.kubernetes.io/version: 2.1.3
     app.kubernetes.io/part-of: opentelemetry-demo
+  namespace: astronomy-shop
 spec:
   type: ClusterIP
   ports:
@@ -103,8 +104,7 @@ spec:
     name: tcp-service
     targetPort: 8080
   selector:
-    opentelemetry.io/name: ad
----
+    opentelemetry.io/name: ad---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -115,6 +115,7 @@ metadata:
     app.kubernetes.io/name: ad
     app.kubernetes.io/version: 2.1.3
     app.kubernetes.io/part-of: opentelemetry-demo
+  namespace: astronomy-shop
 spec:
   replicas: 1
   revisionHistoryLimit: 10
@@ -186,141 +187,69 @@ spec:
 
 # === astronomy-loadgen ===
 # Kubernetes manifest for astronomy-loadgen
-# Includes scriptfile ConfigMap used by the deployment
----
+# Includes scriptfile ConfigMap used by the deployment---
 apiVersion: v1
 kind: ConfigMap
 metadata:
   name: scriptfile
+  namespace: astronomy-shop
 data:
-  local-file:  |
-    /* eslint-disable no-console */
-    const { Console } = require('console');
-    const puppeteer = require('puppeteer');
-    const customUserAgent = 'Mozilla/5.0 (X11; Linux x86_64; Splunk RUM_LoadGen) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/142.0.0.0 Safari/537.36';
-    console.log('DEBUG: Using User Agent:', customUserAgent);
-
-    async function launchBrowser() {
-      console.log('🔹 Starting headless browser...');
-      const browser = await puppeteer.launch({
-        headless: true,
-        defaultViewport: null,
-        args: [
-          '--no-sandbox',
-          '--disable-setuid-sandbox',
-          '--disable-gpu',
-          '--disable-dev-shm-usage',
-          '--disable-web-security',
-          '--disable-features=VizDisplayCompositor',
-          '--max-old-space-size=256',
-          '--disable-extensions',
-          '--disable-plugins',
-          '--disable-background-networking',
-          '--disable-background-timer-throttling',
-          '--disable-backgrounding-occluded-windows',
-          '--disable-renderer-backgrounding',
-          '--memory-pressure-off',
-          `--user-agent=${customUserAgent}`
-        ]
-      });
-      console.log('✅ Browser started.');
-      return browser;
-    }
-
-    function buildBaseUrl() {
-      const raw = (process.env.RUM_FRONTEND_IP || '').trim();
-
-      // If it's empty, default to localhost
-      if (!raw) return 'https://localhost/';
-
-      // If it already starts with http:// or https://, keep it exactly as-is
-      if (/^https?:\/\//i.test(raw)) {
-        return raw.replace(/\/+$/, '') + '/';
-      }
-
-      // Otherwise, prepend https://
-      return `https://${raw.replace(/\/+$/, '')}/`;
-    }
-    function delay(ms) { return new Promise(res => setTimeout(res, ms)); }
-
-    /** Wait until innerText of the page contains a substring */
-    async function waitForText(page, text, timeoutMs = 30000, pollMs = 200) {
-      const start = Date.now();
-      while (Date.now() - start < timeoutMs) {
-        const found = await page.evaluate(t =>
-          document && document.body && document.body.innerText.includes(t), text
-        );
-        if (found) return true;
-        await delay(pollMs);
-      }
-      throw new Error(`Timed out waiting for text: "${text}"`);
-    }
-
-    async function runOnce() {
-      const browser = await launchBrowser();
-      let page;
-      try {
-        page = await browser.newPage();
-        page.setDefaultNavigationTimeout(45000);
-        page.setDefaultTimeout && page.setDefaultTimeout(30000);
-
-        const base = buildBaseUrl();
-        const url  = new URL('product/66VCHSJNUP', base).toString();
-
-        console.log(`🌐 Navigating to ${url}`);
-        await page.goto(url, { waitUntil: 'domcontentloaded' });
-
-        const addSel = "[data-cy='product-add-to-cart']";
-        await page.waitForSelector(addSel);
-        console.log('🖱️ Clicking "Add To Cart"');
-        await page.click(addSel);
-
-        const placeSel = "[data-cy='checkout-place-order']";
-        await page.waitForSelector(placeSel);
-        console.log('🖱️ Clicking "Place Order"');
-        await page.click(placeSel);
-
-        await waitForText(page, 'Your order is complete!');
-        console.log('🎉 Order completed message detected.');
-      } finally {
-        console.log('🧹 Closing browser...');
-        try {
-          if (page) {
-            page.removeAllListeners();
-            await page.close({ runBeforeUnload: true }).catch(()=>{});
-          }
-        } catch {}
-        try {
-          await browser.close();
-        } catch (e) {
-          // last-resort: nuke the child process if close() fails
-          try { browser.process()?.kill('SIGKILL'); } catch {}
-        }
-        console.log('✅ Browser closed cleanly.');
-      }
-    }
-
-    (async function mainLoop() {
-      let cycle = 1;
-      while (true) {
-        console.log(`=== Starting load generation cycle #${cycle} ===`);
-        try {
-          await runOnce();
-          console.log(`✅ Cycle #${cycle} finished OK`);
-        } catch (e) {
-          console.error(`❌ Cycle #${cycle} failed:`, e && e.stack ? e.stack : e);
-        }
-        cycle += 1;
-        await delay(5000); // wait 5 seconds before next cycle
-      }
-    })();
----
+  local-file: "/* eslint-disable no-console */\nconst { Console } = require('console');\n\
+    const puppeteer = require('puppeteer');\nconst customUserAgent = 'Mozilla/5.0\
+    \ (X11; Linux x86_64; Splunk RUM_LoadGen) AppleWebKit/537.36 (KHTML, like Gecko)\
+    \ Chrome/142.0.0.0 Safari/537.36';\nconsole.log('DEBUG: Using User Agent:', customUserAgent);\n\
+    \nasync function launchBrowser() {\n  console.log('\U0001F539 Starting headless\
+    \ browser...');\n  const browser = await puppeteer.launch({\n    headless: true,\n\
+    \    defaultViewport: null,\n    args: [\n      '--no-sandbox',\n      '--disable-setuid-sandbox',\n\
+    \      '--disable-gpu',\n      '--disable-dev-shm-usage',\n      '--disable-web-security',\n\
+    \      '--disable-features=VizDisplayCompositor',\n      '--max-old-space-size=256',\n\
+    \      '--disable-extensions',\n      '--disable-plugins',\n      '--disable-background-networking',\n\
+    \      '--disable-background-timer-throttling',\n      '--disable-backgrounding-occluded-windows',\n\
+    \      '--disable-renderer-backgrounding',\n      '--memory-pressure-off',\n \
+    \     `--user-agent=${customUserAgent}`\n    ]\n  });\n  console.log('\u2705 Browser\
+    \ started.');\n  return browser;\n}\n\nfunction buildBaseUrl() {\n  const raw\
+    \ = (process.env.RUM_FRONTEND_IP || '').trim();\n\n  // If it's empty, default\
+    \ to localhost\n  if (!raw) return 'https://localhost/';\n\n  // If it already\
+    \ starts with http:// or https://, keep it exactly as-is\n  if (/^https?:\\/\\\
+    //i.test(raw)) {\n    return raw.replace(/\\/+$/, '') + '/';\n  }\n\n  // Otherwise,\
+    \ prepend https://\n  return `https://${raw.replace(/\\/+$/, '')}/`;\n}\nfunction\
+    \ delay(ms) { return new Promise(res => setTimeout(res, ms)); }\n\n/** Wait until\
+    \ innerText of the page contains a substring */\nasync function waitForText(page,\
+    \ text, timeoutMs = 30000, pollMs = 200) {\n  const start = Date.now();\n  while\
+    \ (Date.now() - start < timeoutMs) {\n    const found = await page.evaluate(t\
+    \ =>\n      document && document.body && document.body.innerText.includes(t),\
+    \ text\n    );\n    if (found) return true;\n    await delay(pollMs);\n  }\n \
+    \ throw new Error(`Timed out waiting for text: \"${text}\"`);\n}\n\nasync function\
+    \ runOnce() {\n  const browser = await launchBrowser();\n  let page;\n  try {\n\
+    \    page = await browser.newPage();\n    page.setDefaultNavigationTimeout(45000);\n\
+    \    page.setDefaultTimeout && page.setDefaultTimeout(30000);\n\n    const base\
+    \ = buildBaseUrl();\n    const url  = new URL('product/66VCHSJNUP', base).toString();\n\
+    \n    console.log(`\U0001F310 Navigating to ${url}`);\n    await page.goto(url,\
+    \ { waitUntil: 'domcontentloaded' });\n\n    const addSel = \"[data-cy='product-add-to-cart']\"\
+    ;\n    await page.waitForSelector(addSel);\n    console.log('\U0001F5B1\uFE0F\
+    \ Clicking \"Add To Cart\"');\n    await page.click(addSel);\n\n    const placeSel\
+    \ = \"[data-cy='checkout-place-order']\";\n    await page.waitForSelector(placeSel);\n\
+    \    console.log('\U0001F5B1\uFE0F Clicking \"Place Order\"');\n    await page.click(placeSel);\n\
+    \n    await waitForText(page, 'Your order is complete!');\n    console.log('\U0001F389\
+    \ Order completed message detected.');\n  } finally {\n    console.log('\U0001F9F9\
+    \ Closing browser...');\n    try {\n      if (page) {\n        page.removeAllListeners();\n\
+    \        await page.close({ runBeforeUnload: true }).catch(()=>{});\n      }\n\
+    \    } catch {}\n    try {\n      await browser.close();\n    } catch (e) {\n\
+    \      // last-resort: nuke the child process if close() fails\n      try { browser.process()?.kill('SIGKILL');\
+    \ } catch {}\n    }\n    console.log('\u2705 Browser closed cleanly.');\n  }\n\
+    }\n\n(async function mainLoop() {\n  let cycle = 1;\n  while (true) {\n    console.log(`===\
+    \ Starting load generation cycle #${cycle} ===`);\n    try {\n      await runOnce();\n\
+    \      console.log(`\u2705 Cycle #${cycle} finished OK`);\n    } catch (e) {\n\
+    \      console.error(`\u274C Cycle #${cycle} failed:`, e && e.stack ? e.stack\
+    \ : e);\n    }\n    cycle += 1;\n    await delay(5000); // wait 5 seconds before\
+    \ next cycle\n  }\n})();"---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: astronomy-loadgen-deployment
   labels:
     app: astronomy-loadgen
+  namespace: astronomy-shop
 spec:
   replicas: 1
   selector:
@@ -355,8 +284,7 @@ spec:
 # === cart ===
 # Kubernetes manifest for cart
 # Auto-generated from opentelemetry-demo.yaml
-# Contains 2 resource(s)
----
+# Contains 2 resource(s)---
 apiVersion: v1
 kind: Service
 metadata:
@@ -367,6 +295,7 @@ metadata:
     app.kubernetes.io/name: cart
     app.kubernetes.io/version: 2.1.3
     app.kubernetes.io/part-of: opentelemetry-demo
+  namespace: astronomy-shop
 spec:
   type: ClusterIP
   ports:
@@ -374,8 +303,7 @@ spec:
     name: tcp-service
     targetPort: 8080
   selector:
-    opentelemetry.io/name: cart
----
+    opentelemetry.io/name: cart---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -386,6 +314,7 @@ metadata:
     app.kubernetes.io/name: cart
     app.kubernetes.io/version: 2.1.3
     app.kubernetes.io/part-of: opentelemetry-demo
+  namespace: astronomy-shop
 spec:
   replicas: 1
   revisionHistoryLimit: 10
@@ -460,8 +389,7 @@ spec:
 # === checkout ===
 # Kubernetes manifest for checkout
 # Auto-generated from opentelemetry-demo.yaml
-# Contains 2 resource(s)
----
+# Contains 2 resource(s)---
 apiVersion: v1
 kind: Service
 metadata:
@@ -472,6 +400,7 @@ metadata:
     app.kubernetes.io/name: checkout
     app.kubernetes.io/version: 2.1.3
     app.kubernetes.io/part-of: opentelemetry-demo
+  namespace: astronomy-shop
 spec:
   type: ClusterIP
   ports:
@@ -479,8 +408,7 @@ spec:
     name: tcp-service
     targetPort: 8080
   selector:
-    opentelemetry.io/name: checkout
----
+    opentelemetry.io/name: checkout---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -491,6 +419,7 @@ metadata:
     app.kubernetes.io/name: checkout
     app.kubernetes.io/version: 2.1.3
     app.kubernetes.io/part-of: opentelemetry-demo
+  namespace: astronomy-shop
 spec:
   replicas: 1
   revisionHistoryLimit: 10
@@ -570,8 +499,7 @@ spec:
 # === currency ===
 # Kubernetes manifest for currency
 # Auto-generated from opentelemetry-demo.yaml
-# Contains 2 resource(s)
----
+# Contains 2 resource(s)---
 apiVersion: v1
 kind: Service
 metadata:
@@ -582,6 +510,7 @@ metadata:
     app.kubernetes.io/name: currency
     app.kubernetes.io/version: 2.1.3
     app.kubernetes.io/part-of: opentelemetry-demo
+  namespace: astronomy-shop
 spec:
   type: ClusterIP
   ports:
@@ -589,8 +518,7 @@ spec:
     name: tcp-service
     targetPort: 8080
   selector:
-    opentelemetry.io/name: currency
----
+    opentelemetry.io/name: currency---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -601,6 +529,7 @@ metadata:
     app.kubernetes.io/name: currency
     app.kubernetes.io/version: 2.1.3
     app.kubernetes.io/part-of: opentelemetry-demo
+  namespace: astronomy-shop
 spec:
   replicas: 1
   revisionHistoryLimit: 10
@@ -655,8 +584,7 @@ spec:
 # === email ===
 # Kubernetes manifest for email
 # Auto-generated from opentelemetry-demo.yaml
-# Contains 2 resource(s)
----
+# Contains 2 resource(s)---
 apiVersion: v1
 kind: Service
 metadata:
@@ -667,6 +595,7 @@ metadata:
     app.kubernetes.io/name: email
     app.kubernetes.io/version: 2.1.3
     app.kubernetes.io/part-of: opentelemetry-demo
+  namespace: astronomy-shop
 spec:
   type: ClusterIP
   ports:
@@ -674,8 +603,7 @@ spec:
     name: tcp-service
     targetPort: 8080
   selector:
-    opentelemetry.io/name: email
----
+    opentelemetry.io/name: email---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -686,6 +614,7 @@ metadata:
     app.kubernetes.io/name: email
     app.kubernetes.io/version: 2.1.3
     app.kubernetes.io/part-of: opentelemetry-demo
+  namespace: astronomy-shop
 spec:
   replicas: 1
   revisionHistoryLimit: 10
@@ -743,8 +672,7 @@ spec:
 
 # === flagd ===
 # Kubernetes manifest for flagd
-# Split from combined flagd/flagd-ui deployment
----
+# Split from combined flagd/flagd-ui deployment---
 apiVersion: v1
 kind: Service
 metadata:
@@ -755,6 +683,7 @@ metadata:
     app.kubernetes.io/name: flagd
     app.kubernetes.io/version: 2.1.3
     app.kubernetes.io/part-of: opentelemetry-demo
+  namespace: astronomy-shop
 spec:
   type: ClusterIP
   ports:
@@ -765,8 +694,7 @@ spec:
     name: ofrep
     targetPort: 8016
   selector:
-    opentelemetry.io/name: flagd
----
+    opentelemetry.io/name: flagd---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -777,6 +705,7 @@ metadata:
     app.kubernetes.io/name: flagd
     app.kubernetes.io/version: 2.1.3
     app.kubernetes.io/part-of: opentelemetry-demo
+  namespace: astronomy-shop
 spec:
   replicas: 1
   revisionHistoryLimit: 10
@@ -842,8 +771,7 @@ spec:
 # === flagd-config ===
 # Kubernetes manifest for flagd-config
 # Auto-generated from opentelemetry-demo.yaml
-# Contains 1 resource(s)
----
+# Contains 1 resource(s)---
 apiVersion: v1
 kind: ConfigMap
 metadata:
@@ -851,6 +779,7 @@ metadata:
   labels:
     app.kubernetes.io/version: 2.1.3
     app.kubernetes.io/part-of: opentelemetry-demo
+  namespace: astronomy-shop
 data:
   demo.flagd.json: "{\n  \"$schema\": \"https://flagd.dev/schema/v0/flags.json\",\n\
     \  \"flags\": {\n    \"productCatalogFailure\": {\n      \"description\": \"Fail\
@@ -917,8 +846,7 @@ data:
 
 # === flagd-ui ===
 # Kubernetes manifest for flagd-ui
-# Split from combined flagd/flagd-ui deployment
----
+# Split from combined flagd/flagd-ui deployment---
 apiVersion: v1
 kind: Service
 metadata:
@@ -929,6 +857,7 @@ metadata:
     app.kubernetes.io/name: flagd-ui
     app.kubernetes.io/version: 2.1.3
     app.kubernetes.io/part-of: opentelemetry-demo
+  namespace: astronomy-shop
 spec:
   type: ClusterIP
   ports:
@@ -936,8 +865,7 @@ spec:
     name: tcp-service
     targetPort: 4000
   selector:
-    opentelemetry.io/name: flagd-ui
----
+    opentelemetry.io/name: flagd-ui---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -948,6 +876,7 @@ metadata:
     app.kubernetes.io/name: flagd-ui
     app.kubernetes.io/version: 2.1.3
     app.kubernetes.io/part-of: opentelemetry-demo
+  namespace: astronomy-shop
 spec:
   replicas: 1
   revisionHistoryLimit: 10
@@ -1018,8 +947,7 @@ spec:
 # === fraud-detection ===
 # Kubernetes manifest for fraud-detection
 # Auto-generated from opentelemetry-demo.yaml
-# Contains 1 resource(s)
----
+# Contains 1 resource(s)---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -1030,6 +958,7 @@ metadata:
     app.kubernetes.io/name: fraud-detection
     app.kubernetes.io/version: 2.1.3
     app.kubernetes.io/part-of: opentelemetry-demo
+  namespace: astronomy-shop
 spec:
   replicas: 1
   revisionHistoryLimit: 10
@@ -1079,7 +1008,7 @@ spec:
         - name: OTEL_RESOURCE_ATTRIBUTES
           value: service.name=$(OTEL_SERVICE_NAME),service.namespace=opentelemetry-demo,service.version=2.1.3,service.kafka=spanlink
         - name: SQL_SERVER_HOST
-          value: sql-server-fraud.sql.svc.cluster.local
+          value: sql-server-fraud.astronomy-shop.svc.cluster.local
         - name: SQL_SERVER_PORT
           value: '1433'
         - name: SQL_SERVER_DATABASE
@@ -1112,7 +1041,7 @@ spec:
       - command:
         - sh
         - -c
-        - until nc -z -v -w30 sql-server-fraud.sql.svc.cluster.local 1433; do echo
+        - until nc -z -v -w30 sql-server-fraud.astronomy-shop.svc.cluster.local 1433; do echo
           waiting for sql-server-fraud; sleep 2; done;
         image: busybox:latest
         name: wait-for-sqlserver
@@ -1123,8 +1052,7 @@ spec:
 # === frontend ===
 # Kubernetes manifest for frontend
 # Auto-generated from opentelemetry-demo.yaml
-# Contains 2 resource(s)
----
+# Contains 2 resource(s)---
 apiVersion: v1
 kind: Service
 metadata:
@@ -1135,6 +1063,7 @@ metadata:
     app.kubernetes.io/name: frontend
     app.kubernetes.io/version: 2.1.3
     app.kubernetes.io/part-of: opentelemetry-demo
+  namespace: astronomy-shop
 spec:
   type: ClusterIP
   ports:
@@ -1142,8 +1071,7 @@ spec:
     name: tcp-service
     targetPort: 8080
   selector:
-    opentelemetry.io/name: frontend
----
+    opentelemetry.io/name: frontend---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -1154,6 +1082,7 @@ metadata:
     app.kubernetes.io/name: frontend
     app.kubernetes.io/version: 2.1.3
     app.kubernetes.io/part-of: opentelemetry-demo
+  namespace: astronomy-shop
 spec:
   replicas: 1
   revisionHistoryLimit: 10
@@ -1266,8 +1195,7 @@ spec:
 # === frontend-proxy ===
 # Kubernetes manifest for frontend-proxy
 # Auto-generated from opentelemetry-demo.yaml
-# Contains 3 resource(s)
----
+# Contains 3 resource(s)---
 apiVersion: v1
 kind: Service
 metadata:
@@ -1278,6 +1206,7 @@ metadata:
     app.kubernetes.io/name: frontend-proxy
     app.kubernetes.io/version: 2.1.3
     app.kubernetes.io/part-of: opentelemetry-demo
+  namespace: astronomy-shop
 spec:
   type: ClusterIP
   ports:
@@ -1285,8 +1214,7 @@ spec:
     name: tcp-service
     targetPort: 8080
   selector:
-    opentelemetry.io/name: frontend-proxy
----
+    opentelemetry.io/name: frontend-proxy---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -1297,6 +1225,7 @@ metadata:
     app.kubernetes.io/name: frontend-proxy
     app.kubernetes.io/version: 2.1.3
     app.kubernetes.io/part-of: opentelemetry-demo
+  namespace: astronomy-shop
 spec:
   replicas: 1
   revisionHistoryLimit: 10
@@ -1378,8 +1307,7 @@ spec:
           runAsNonRoot: true
           runAsUser: 101
         volumeMounts: null
-      volumes: null
----
+      volumes: null---
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
@@ -1387,6 +1315,7 @@ metadata:
   annotations:
     cert-manager.io/cluster-issuer: letsencrypt-prod
     traefik.ingress.kubernetes.io/router.middlewares: default-custom-headers@kubernetescrd
+  namespace: astronomy-shop
 spec:
   ingressClassName: traefik
   tls:
@@ -1410,8 +1339,7 @@ spec:
 # === image-provider ===
 # Kubernetes manifest for image-provider
 # Auto-generated from opentelemetry-demo.yaml
-# Contains 2 resource(s)
----
+# Contains 2 resource(s)---
 apiVersion: v1
 kind: Service
 metadata:
@@ -1422,6 +1350,7 @@ metadata:
     app.kubernetes.io/name: image-provider
     app.kubernetes.io/version: 2.1.3
     app.kubernetes.io/part-of: opentelemetry-demo
+  namespace: astronomy-shop
 spec:
   type: ClusterIP
   ports:
@@ -1429,8 +1358,7 @@ spec:
     name: tcp-service
     targetPort: 8081
   selector:
-    opentelemetry.io/name: image-provider
----
+    opentelemetry.io/name: image-provider---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -1441,6 +1369,7 @@ metadata:
     app.kubernetes.io/name: image-provider
     app.kubernetes.io/version: 2.1.3
     app.kubernetes.io/part-of: opentelemetry-demo
+  namespace: astronomy-shop
 spec:
   replicas: 1
   revisionHistoryLimit: 10
@@ -1495,8 +1424,7 @@ spec:
 # === kafka ===
 # Kubernetes manifest for kafka
 # Auto-generated from opentelemetry-demo.yaml
-# Contains 2 resource(s)
----
+# Contains 2 resource(s)---
 apiVersion: v1
 kind: Service
 metadata:
@@ -1507,6 +1435,7 @@ metadata:
     app.kubernetes.io/name: kafka
     app.kubernetes.io/version: 2.1.3
     app.kubernetes.io/part-of: opentelemetry-demo
+  namespace: astronomy-shop
 spec:
   type: ClusterIP
   ports:
@@ -1517,8 +1446,7 @@ spec:
     name: controller
     targetPort: 9093
   selector:
-    opentelemetry.io/name: kafka
----
+    opentelemetry.io/name: kafka---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -1529,6 +1457,7 @@ metadata:
     app.kubernetes.io/name: kafka
     app.kubernetes.io/version: 2.1.3
     app.kubernetes.io/part-of: opentelemetry-demo
+  namespace: astronomy-shop
 spec:
   replicas: 1
   revisionHistoryLimit: 10
@@ -1595,8 +1524,7 @@ spec:
 # === llm ===
 # Kubernetes manifest for llm
 # Auto-generated from opentelemetry-demo.yaml
-# Contains 2 resource(s)
----
+# Contains 2 resource(s)---
 apiVersion: v1
 kind: Service
 metadata:
@@ -1607,6 +1535,7 @@ metadata:
     app.kubernetes.io/name: llm
     app.kubernetes.io/version: 2.1.3
     app.kubernetes.io/part-of: opentelemetry-demo
+  namespace: astronomy-shop
 spec:
   type: ClusterIP
   ports:
@@ -1614,8 +1543,7 @@ spec:
     name: tcp-service
     targetPort: 8000
   selector:
-    opentelemetry.io/name: llm
----
+    opentelemetry.io/name: llm---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -1626,6 +1554,7 @@ metadata:
     app.kubernetes.io/name: llm
     app.kubernetes.io/version: 2.1.3
     app.kubernetes.io/part-of: opentelemetry-demo
+  namespace: astronomy-shop
 spec:
   replicas: 1
   revisionHistoryLimit: 10
@@ -1680,8 +1609,7 @@ spec:
 # === load-generator ===
 # Kubernetes manifest for load-generator
 # Auto-generated from opentelemetry-demo.yaml
-# Contains 1 resource(s)
----
+# Contains 1 resource(s)---
 apiVersion: v1
 kind: Service
 metadata:
@@ -1692,6 +1620,7 @@ metadata:
     app.kubernetes.io/name: load-generator
     app.kubernetes.io/version: 2.1.3
     app.kubernetes.io/part-of: opentelemetry-demo
+  namespace: astronomy-shop
 spec:
   type: ClusterIP
   ports:
@@ -1703,38 +1632,39 @@ spec:
 
 ---
 
-# === opentelemetry-demo ===
-# Kubernetes manifest for opentelemetry-demo
-# Auto-generated from opentelemetry-demo.yaml
-# Contains 1 resource(s)
+# === demo-namespace ===
+# Kubernetes manifest for namespace
+# Creates the namespace where all Astronomy Shop services will be deployed
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: astronomy-shop
+  labels:
+    app.kubernetes.io/name: astronomy-shop
+    app.kubernetes.io/part-of: opentelemetry-demo
+
+---
+
+# === demo-service-account ===
+# Kubernetes manifest for demo-service-account
+# ServiceAccount used by all Astronomy Shop application pods
 ---
 apiVersion: v1
 kind: ServiceAccount
 metadata:
   name: opentelemetry-demo
+  namespace: astronomy-shop
   labels:
     app.kubernetes.io/version: 2.1.3
     app.kubernetes.io/part-of: opentelemetry-demo
 
 ---
 
-# === otel-demo ===
-# Kubernetes manifest for otel-demo
-# Auto-generated from opentelemetry-demo.yaml
-# Contains 1 resource(s)
----
-apiVersion: v1
-kind: Namespace
-metadata:
-  name: otel-demo
-
----
-
 # === payment ===
 # Kubernetes manifest for payment
 # Auto-generated from opentelemetry-demo.yaml
-# Contains 2 resource(s)
----
+# Contains 2 resource(s)---
 apiVersion: v1
 kind: Service
 metadata:
@@ -1745,6 +1675,7 @@ metadata:
     app.kubernetes.io/name: payment
     app.kubernetes.io/version: 2.1.3
     app.kubernetes.io/part-of: opentelemetry-demo
+  namespace: astronomy-shop
 spec:
   type: ClusterIP
   ports:
@@ -1752,8 +1683,7 @@ spec:
     name: tcp-service
     targetPort: 8080
   selector:
-    opentelemetry.io/name: payment
----
+    opentelemetry.io/name: payment---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -1764,6 +1694,7 @@ metadata:
     app.kubernetes.io/name: payment
     app.kubernetes.io/version: 2.1.3
     app.kubernetes.io/part-of: opentelemetry-demo
+  namespace: astronomy-shop
 spec:
   replicas: 1
   revisionHistoryLimit: 10
@@ -1835,8 +1766,7 @@ spec:
 
 # === postgres ===
 # Kubernetes manifest for postgres (PostgreSQL database)
-# Extracted from opentelemetry-demo.yaml
----
+# Extracted from opentelemetry-demo.yaml---
 apiVersion: v1
 kind: Service
 metadata:
@@ -1845,17 +1775,17 @@ metadata:
     opentelemetry.io/name: postgresql
     app.kubernetes.io/component: postgresql
     app.kubernetes.io/name: postgresql
-    app.kubernetes.io/version: "2.1.3"
+    app.kubernetes.io/version: 2.1.3
     app.kubernetes.io/part-of: opentelemetry-demo
+  namespace: astronomy-shop
 spec:
   type: ClusterIP
   ports:
-    - port: 5432
-      name: tcp-service
-      targetPort: 5432
+  - port: 5432
+    name: tcp-service
+    targetPort: 5432
   selector:
-    opentelemetry.io/name: postgresql
----
+    opentelemetry.io/name: postgresql---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -1864,8 +1794,9 @@ metadata:
     opentelemetry.io/name: postgresql
     app.kubernetes.io/component: postgresql
     app.kubernetes.io/name: postgresql
-    app.kubernetes.io/version: "2.1.3"
+    app.kubernetes.io/version: 2.1.3
     app.kubernetes.io/part-of: opentelemetry-demo
+  namespace: astronomy-shop
 spec:
   replicas: 1
   revisionHistoryLimit: 10
@@ -1881,47 +1812,46 @@ spec:
     spec:
       serviceAccountName: opentelemetry-demo
       containers:
-        - name: postgresql
-          image: 'ghcr.io/open-telemetry/demo:2.1.3-postgresql'
-          imagePullPolicy: IfNotPresent
-          ports:
-            - containerPort: 5432
-              name: service
-          env:
-            - name: OTEL_SERVICE_NAME
-              valueFrom:
-                fieldRef:
-                  apiVersion: v1
-                  fieldPath: metadata.labels['app.kubernetes.io/component']
-            - name: NODE_IP
-              valueFrom:
-                 fieldRef:
-                  fieldPath: status.hostIP
-            - name: OTEL_COLLECTOR_NAME
-              value: $(NODE_IP)
-            - name: OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE
-              value: cumulative
-            - name: POSTGRES_USER
-              value: root
-            - name: POSTGRES_PASSWORD
-              value: otel
-            - name: POSTGRES_DB
-              value: otel
-            - name: OTEL_RESOURCE_ATTRIBUTES
-              value: service.name=$(OTEL_SERVICE_NAME),service.namespace=opentelemetry-demo,service.version=2.1.3,service.kafka=no
-          resources:
-            limits:
-              memory: 100Mi
-          volumeMounts:
-      volumes:
+      - name: postgresql
+        image: ghcr.io/open-telemetry/demo:2.1.3-postgresql
+        imagePullPolicy: IfNotPresent
+        ports:
+        - containerPort: 5432
+          name: service
+        env:
+        - name: OTEL_SERVICE_NAME
+          valueFrom:
+            fieldRef:
+              apiVersion: v1
+              fieldPath: metadata.labels['app.kubernetes.io/component']
+        - name: NODE_IP
+          valueFrom:
+            fieldRef:
+              fieldPath: status.hostIP
+        - name: OTEL_COLLECTOR_NAME
+          value: $(NODE_IP)
+        - name: OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE
+          value: cumulative
+        - name: POSTGRES_USER
+          value: root
+        - name: POSTGRES_PASSWORD
+          value: otel
+        - name: POSTGRES_DB
+          value: otel
+        - name: OTEL_RESOURCE_ATTRIBUTES
+          value: service.name=$(OTEL_SERVICE_NAME),service.namespace=opentelemetry-demo,service.version=2.1.3,service.kafka=no
+        resources:
+          limits:
+            memory: 100Mi
+        volumeMounts: null
+      volumes: null
 
 ---
 
 # === product-catalog ===
 # Kubernetes manifest for product-catalog
 # Auto-generated from opentelemetry-demo.yaml
-# Contains 2 resource(s)
----
+# Contains 2 resource(s)---
 apiVersion: v1
 kind: Service
 metadata:
@@ -1932,6 +1862,7 @@ metadata:
     app.kubernetes.io/name: product-catalog
     app.kubernetes.io/version: 2.1.3
     app.kubernetes.io/part-of: opentelemetry-demo
+  namespace: astronomy-shop
 spec:
   type: ClusterIP
   ports:
@@ -1939,8 +1870,7 @@ spec:
     name: tcp-service
     targetPort: 8080
   selector:
-    opentelemetry.io/name: product-catalog
----
+    opentelemetry.io/name: product-catalog---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -1951,6 +1881,7 @@ metadata:
     app.kubernetes.io/name: product-catalog
     app.kubernetes.io/version: 2.1.3
     app.kubernetes.io/part-of: opentelemetry-demo
+  namespace: astronomy-shop
 spec:
   replicas: 1
   revisionHistoryLimit: 10
@@ -2016,8 +1947,7 @@ spec:
 # === product-catalog-products ===
 # Kubernetes manifest for product-catalog-products
 # Auto-generated from opentelemetry-demo.yaml
-# Contains 1 resource(s)
----
+# Contains 1 resource(s)---
 apiVersion: v1
 kind: ConfigMap
 metadata:
@@ -2025,6 +1955,7 @@ metadata:
   labels:
     app.kubernetes.io/version: 2.1.3
     app.kubernetes.io/part-of: opentelemetry-demo
+  namespace: astronomy-shop
 data:
   products.json: "{\n  \"products\": [\n    {\n      \"id\": \"OLJCESPC7Z\",\n   \
     \   \"name\": \"National Park Foundation Explorascope\",\n      \"description\"\
@@ -2129,8 +2060,7 @@ data:
 # === product-reviews ===
 # Kubernetes manifest for product-reviews
 # Auto-generated from opentelemetry-demo.yaml
-# Contains 2 resource(s)
----
+# Contains 2 resource(s)---
 apiVersion: v1
 kind: Service
 metadata:
@@ -2141,6 +2071,7 @@ metadata:
     app.kubernetes.io/name: product-reviews
     app.kubernetes.io/version: 2.1.3
     app.kubernetes.io/part-of: opentelemetry-demo
+  namespace: astronomy-shop
 spec:
   type: ClusterIP
   ports:
@@ -2148,8 +2079,7 @@ spec:
     name: tcp-service
     targetPort: 3551
   selector:
-    opentelemetry.io/name: product-reviews
----
+    opentelemetry.io/name: product-reviews---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -2160,6 +2090,7 @@ metadata:
     app.kubernetes.io/name: product-reviews
     app.kubernetes.io/version: 2.1.3
     app.kubernetes.io/part-of: opentelemetry-demo
+  namespace: astronomy-shop
 spec:
   replicas: 1
   revisionHistoryLimit: 10
@@ -2236,8 +2167,7 @@ spec:
 # === quote ===
 # Kubernetes manifest for quote
 # Auto-generated from opentelemetry-demo.yaml
-# Contains 2 resource(s)
----
+# Contains 2 resource(s)---
 apiVersion: v1
 kind: Service
 metadata:
@@ -2248,6 +2178,7 @@ metadata:
     app.kubernetes.io/name: quote
     app.kubernetes.io/version: 2.1.3
     app.kubernetes.io/part-of: opentelemetry-demo
+  namespace: astronomy-shop
 spec:
   type: ClusterIP
   ports:
@@ -2255,8 +2186,7 @@ spec:
     name: tcp-service
     targetPort: 8080
   selector:
-    opentelemetry.io/name: quote
----
+    opentelemetry.io/name: quote---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -2267,6 +2197,7 @@ metadata:
     app.kubernetes.io/name: quote
     app.kubernetes.io/version: 2.1.3
     app.kubernetes.io/part-of: opentelemetry-demo
+  namespace: astronomy-shop
 spec:
   replicas: 1
   revisionHistoryLimit: 10
@@ -2327,8 +2258,7 @@ spec:
 # === recommendation ===
 # Kubernetes manifest for recommendation
 # Auto-generated from opentelemetry-demo.yaml
-# Contains 2 resource(s)
----
+# Contains 2 resource(s)---
 apiVersion: v1
 kind: Service
 metadata:
@@ -2339,6 +2269,7 @@ metadata:
     app.kubernetes.io/name: recommendation
     app.kubernetes.io/version: 2.1.3
     app.kubernetes.io/part-of: opentelemetry-demo
+  namespace: astronomy-shop
 spec:
   type: ClusterIP
   ports:
@@ -2346,8 +2277,7 @@ spec:
     name: tcp-service
     targetPort: 8080
   selector:
-    opentelemetry.io/name: recommendation
----
+    opentelemetry.io/name: recommendation---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -2358,6 +2288,7 @@ metadata:
     app.kubernetes.io/name: recommendation
     app.kubernetes.io/version: 2.1.3
     app.kubernetes.io/part-of: opentelemetry-demo
+  namespace: astronomy-shop
 spec:
   replicas: 1
   revisionHistoryLimit: 10
@@ -2425,38 +2356,32 @@ spec:
 
 # === setup-sql ===
 # Kubernetes manifest for SQL Server setup
-# Includes secrets and initialization script for MSSQL
----
+# Includes secrets and initialization script for MSSQL---
 apiVersion: v1
 kind: Secret
 metadata:
   name: mssql-secrets
-  namespace: sql
+  namespace: astronomy-shop
 type: Opaque
 stringData:
   SA_PASSWORD: ChangeMe_SuperStrong123!
-  DB_CONNECTION_STRING: Server=tcp:sql-server-fraud.sql.svc.cluster.local,1433;Database=FraudDetection;User Id=sa;Password=ChangeMe_SuperStrong123!;Encrypt=True;TrustServerCertificate=True
----
+  DB_CONNECTION_STRING: Server=tcp:sql-server-fraud.astronomy-shop.svc.cluster.local,1433;Database=FraudDetection;User
+    Id=sa;Password=ChangeMe_SuperStrong123!;Encrypt=True;TrustServerCertificate=True---
 apiVersion: v1
 kind: ConfigMap
 metadata:
   name: mssql-init-script
-  namespace: sql
+  namespace: astronomy-shop
 data:
-  init-db.sql: |
-    IF NOT EXISTS (SELECT name FROM sys.databases WHERE name = 'FraudDetection')
-    BEGIN
-      CREATE DATABASE FraudDetection;
-    END
-    GO
+  init-db.sql: "IF NOT EXISTS (SELECT name FROM sys.databases WHERE name = 'FraudDetection')\n\
+    BEGIN\n  CREATE DATABASE FraudDetection;\nEND\nGO\n"
 
 ---
 
 # === shipping ===
 # Kubernetes manifest for shipping
 # Auto-generated from opentelemetry-demo.yaml
-# Contains 2 resource(s)
----
+# Contains 2 resource(s)---
 apiVersion: v1
 kind: Service
 metadata:
@@ -2467,6 +2392,7 @@ metadata:
     app.kubernetes.io/name: shipping
     app.kubernetes.io/version: 2.1.3
     app.kubernetes.io/part-of: opentelemetry-demo
+  namespace: astronomy-shop
 spec:
   type: ClusterIP
   ports:
@@ -2474,8 +2400,7 @@ spec:
     name: tcp-service
     targetPort: 8080
   selector:
-    opentelemetry.io/name: shipping
----
+    opentelemetry.io/name: shipping---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -2486,6 +2411,7 @@ metadata:
     app.kubernetes.io/name: shipping
     app.kubernetes.io/version: 2.1.3
     app.kubernetes.io/part-of: opentelemetry-demo
+  namespace: astronomy-shop
 spec:
   replicas: 1
   revisionHistoryLimit: 10
@@ -2539,38 +2465,36 @@ spec:
 
 # === shop-dc-shim ===
 ### Expects a deployment of Astronomy Shop Demo in the same cluster
-### Uses checkout service from that demo
----
+### Uses checkout service from that demo---
 apiVersion: v1
 kind: Service
 metadata:
   name: shop-dc-shim-db
-  namespace: default
+  namespace: astronomy-shop
   labels:
     opentelemetry.io/name: shop-dc-shim-db
     app.kubernetes.io/component: shop-dc-shim-db
     app.kubernetes.io/name: shop-dc-shim-db
-    app.kubernetes.io/version: "2.1.3"
+    app.kubernetes.io/version: 2.1.3
     app.kubernetes.io/part-of: opentelemetry-demo
 spec:
   type: ClusterIP
   ports:
-    - port: 1433
-      name: sqlserver
-      targetPort: 1433
+  - port: 1433
+    name: sqlserver
+    targetPort: 1433
   selector:
-    opentelemetry.io/name: shop-dc-shim-db
----
+    opentelemetry.io/name: shop-dc-shim-db---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: shop-dc-shim-db
-  namespace: default
+  namespace: astronomy-shop
   labels:
     opentelemetry.io/name: shop-dc-shim-db
     app.kubernetes.io/component: shop-dc-shim-db
     app.kubernetes.io/name: shop-dc-shim-db
-    app.kubernetes.io/version: "2.1.3"
+    app.kubernetes.io/version: 2.1.3
     app.kubernetes.io/part-of: opentelemetry-demo
 spec:
   replicas: 1
@@ -2583,64 +2507,61 @@ spec:
         opentelemetry.io/name: shop-dc-shim-db
         app.kubernetes.io/component: shop-dc-shim-db
         app.kubernetes.io/name: shop-dc-shim-db
-        app.kubernetes.io/version: "2.1.3"
+        app.kubernetes.io/version: 2.1.3
         app.kubernetes.io/part-of: opentelemetry-demo
     spec:
       containers:
-        - name: sqlserver
-          image: mcr.microsoft.com/mssql/server:2022-latest
-          ports:
-            - containerPort: 1433
-          env:
-            - name: ACCEPT_EULA
-              value: "Y"
-            - name: MSSQL_SA_PASSWORD
-              value: "ShopPass123!"
-          resources:
-            requests:
-              memory: "2Gi"
-              cpu: "1"
-            limits:
-              memory: "3Gi"
-              cpu: "2"
-          volumeMounts:
-            - name: sqlserver-storage
-              mountPath: /var/opt/mssql/data
-      volumes:
+      - name: sqlserver
+        image: mcr.microsoft.com/mssql/server:2022-latest
+        ports:
+        - containerPort: 1433
+        env:
+        - name: ACCEPT_EULA
+          value: Y
+        - name: MSSQL_SA_PASSWORD
+          value: ShopPass123!
+        resources:
+          requests:
+            memory: 2Gi
+            cpu: '1'
+          limits:
+            memory: 3Gi
+            cpu: '2'
+        volumeMounts:
         - name: sqlserver-storage
-          emptyDir: {}
----
-# Shop DC Shim Service
+          mountPath: /var/opt/mssql/data
+      volumes:
+      - name: sqlserver-storage
+        emptyDir: {}---
 apiVersion: v1
 kind: Service
 metadata:
   name: shop-dc-shim
-  namespace: default
+  namespace: astronomy-shop
   labels:
     opentelemetry.io/name: shop-dc-shim
     app.kubernetes.io/component: shop-dc-shim
     app.kubernetes.io/name: shop-dc-shim
-    app.kubernetes.io/version: "2.1.3"
+    app.kubernetes.io/version: 2.1.3
     app.kubernetes.io/part-of: opentelemetry-demo
 spec:
   type: ClusterIP
   ports:
-    - port: 8070
-      name: tcp-service
-      targetPort: 8070
+  - port: 8070
+    name: tcp-service
+    targetPort: 8070
   selector:
-    opentelemetry.io/name: shop-dc-shim
----
+    opentelemetry.io/name: shop-dc-shim---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: shop-dc-shim
-  namespace: default
+  namespace: astronomy-shop
   labels:
     opentelemetry.io/name: shop-dc-shim
     app.kubernetes.io/component: shop-dc-shim
     app.kubernetes.io/name: shop-dc-shim
-    app.kubernetes.io/version: "2.1.3"
+    app.kubernetes.io/version: 2.1.3
     app.kubernetes.io/part-of: opentelemetry-demo
 spec:
   replicas: 1
@@ -2653,76 +2574,74 @@ spec:
         opentelemetry.io/name: shop-dc-shim
         app.kubernetes.io/component: shop-dc-shim
         app.kubernetes.io/name: shop-dc-shim
-        app.kubernetes.io/version: "2.1.3"
+        app.kubernetes.io/version: 2.1.3
         app.kubernetes.io/part-of: opentelemetry-demo
     spec:
       serviceAccountName: opentelemetry-demo
       containers:
-        - name: shop-dc-shim
-          image: quay.io/jeremyh/shop-dc-shim:latest
-          ports:
-            - containerPort: 8070
-              name: http
-          env:
-            - name: SHOP_DC_SHIM_PORT
-              value: "8070"
-            - name: DB_CONNECTION_STRING
-              value: "jdbc:sqlserver://shop-dc-shim-db:1433;databaseName=master;encrypt=false;trustServerCertificate=true"
-            - name: DB_USERNAME
-              value: "sa"
-            - name: DB_PASSWORD
-              value: "ShopPass123!"
-            - name: CHECKOUT_SERVICE_ADDR
-              value: "checkout:8080"
-            - name: EMAIL_SERVICE_URL
-              value: "http://email:8080"
-            - name: OTEL_EXPORTER_OTLP_ENDPOINT
-              value: "http://splunk-otel-collector-agent:4318"
-            - name: OTEL_SERVICE_NAME
-              value: "shop-dc-shim"
-            - name: OTEL_RESOURCE_ATTRIBUTES
-              value: "service.name=shop-dc-shim,deployment.environment=datacenter-b01,service.version=2.1.3"
-            - name: OTEL_JAVAAGENT_ENABLED
-              value: "true"
-            - name: APPDYNAMICS_AGENT_ACCOUNT_ACCESS_KEY
-              value: "${APPDYNAMICS_AGENT_ACCOUNT_ACCESS_KEY}"
-            - name: OTEL_INSTRUMENTATION_SPLUNK_JDBC_ENABLED
-              value: "true"
-          resources:
-            requests:
-              memory: "512Mi"
-              cpu: "500m"
-            limits:
-              memory: "1Gi"
-              cpu: "1"
-          readinessProbe:
-            httpGet:
-              path: /actuator/health
-              port: 8070
-            initialDelaySeconds: 300
-            periodSeconds: 10
-            timeoutSeconds: 5
-            failureThreshold: 3
-          livenessProbe:
-            httpGet:
-              path: /actuator/health
-              port: 8070
-            initialDelaySeconds: 420
-            periodSeconds: 30
-            timeoutSeconds: 10
-            failureThreshold: 3
----
-# Shop DC Load Generator
+      - name: shop-dc-shim
+        image: quay.io/jeremyh/shop-dc-shim:latest
+        ports:
+        - containerPort: 8070
+          name: http
+        env:
+        - name: SHOP_DC_SHIM_PORT
+          value: '8070'
+        - name: DB_CONNECTION_STRING
+          value: jdbc:sqlserver://shop-dc-shim-db:1433;databaseName=master;encrypt=false;trustServerCertificate=true
+        - name: DB_USERNAME
+          value: sa
+        - name: DB_PASSWORD
+          value: ShopPass123!
+        - name: CHECKOUT_SERVICE_ADDR
+          value: checkout:8080
+        - name: EMAIL_SERVICE_URL
+          value: http://email:8080
+        - name: OTEL_EXPORTER_OTLP_ENDPOINT
+          value: http://splunk-otel-collector-agent:4318
+        - name: OTEL_SERVICE_NAME
+          value: shop-dc-shim
+        - name: OTEL_RESOURCE_ATTRIBUTES
+          value: service.name=shop-dc-shim,deployment.environment=datacenter-b01,service.version=2.1.3
+        - name: OTEL_JAVAAGENT_ENABLED
+          value: 'true'
+        - name: APPDYNAMICS_AGENT_ACCOUNT_ACCESS_KEY
+          value: ${APPDYNAMICS_AGENT_ACCOUNT_ACCESS_KEY}
+        - name: OTEL_INSTRUMENTATION_SPLUNK_JDBC_ENABLED
+          value: 'true'
+        resources:
+          requests:
+            memory: 512Mi
+            cpu: 500m
+          limits:
+            memory: 1Gi
+            cpu: '1'
+        readinessProbe:
+          httpGet:
+            path: /actuator/health
+            port: 8070
+          initialDelaySeconds: 300
+          periodSeconds: 10
+          timeoutSeconds: 5
+          failureThreshold: 3
+        livenessProbe:
+          httpGet:
+            path: /actuator/health
+            port: 8070
+          initialDelaySeconds: 420
+          periodSeconds: 30
+          timeoutSeconds: 10
+          failureThreshold: 3---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: shop-dc-load-generator
-  namespace: default
+  namespace: astronomy-shop
   labels:
     opentelemetry.io/name: shop-dc-load-generator
     app.kubernetes.io/component: shop-dc-load-generator
     app.kubernetes.io/name: shop-dc-load-generator
-    app.kubernetes.io/version: "2.1.3"
+    app.kubernetes.io/version: 2.1.3
     app.kubernetes.io/part-of: opentelemetry-demo
 spec:
   replicas: 1
@@ -2735,58 +2654,53 @@ spec:
         opentelemetry.io/name: shop-dc-load-generator
         app.kubernetes.io/component: shop-dc-load-generator
         app.kubernetes.io/name: shop-dc-load-generator
-        app.kubernetes.io/version: "2.1.3"
+        app.kubernetes.io/version: 2.1.3
         app.kubernetes.io/part-of: opentelemetry-demo
     spec:
       serviceAccountName: opentelemetry-demo
       initContainers:
-        - name: wait-for-shop-dc-shim
-          image: curlimages/curl:8.1.2
-          command: ['sh', '-c']
-          args:
-            - |
-              echo "Waiting for shop-dc-shim service to be ready..."
-              until curl -f --connect-timeout 5 --max-time 20 http://shop-dc-shim:8070/actuator/health; do
-                echo "Shop DC Shim not ready, waiting 20 seconds..."
-                sleep 20
-              done
-              echo "Shop DC Shim is ready, starting load generator..."
-          resources:
-            limits:
-              memory: "64Mi"
-              cpu: "50m"
+      - name: wait-for-shop-dc-shim
+        image: curlimages/curl:8.1.2
+        command:
+        - sh
+        - -c
+        args:
+        - "echo \"Waiting for shop-dc-shim service to be ready...\"\nuntil curl -f\
+          \ --connect-timeout 5 --max-time 20 http://shop-dc-shim:8070/actuator/health;\
+          \ do\n  echo \"Shop DC Shim not ready, waiting 20 seconds...\"\n  sleep\
+          \ 20\ndone\necho \"Shop DC Shim is ready, starting load generator...\"\n"
+        resources:
+          limits:
+            memory: 64Mi
+            cpu: 50m
       containers:
-        - name: load-generator
-          image: quay.io/jeremyh/shop-dc-load-generator:0.0.1
-          args: ["--url", "http://shop-dc-shim:8070", "--mode", "continuous", "--tpm", "65", "--duration", "0"]
-          resources:
-            limits:
-              memory: "128Mi"
-              cpu: "100m"
----
-
-# === sql ===
-# Kubernetes manifest for sql
-# Auto-generated from opentelemetry-demo.yaml
-# Contains 1 resource(s)
----
-apiVersion: v1
-kind: Namespace
-metadata:
-  name: sql
+      - name: load-generator
+        image: quay.io/jeremyh/shop-dc-load-generator:0.0.1
+        args:
+        - --url
+        - http://shop-dc-shim:8070
+        - --mode
+        - continuous
+        - --tpm
+        - '65'
+        - --duration
+        - '0'
+        resources:
+          limits:
+            memory: 128Mi
+            cpu: 100m
 
 ---
 
 # === sql-server-fraud ===
 # Kubernetes manifest for sql-server-fraud
 # Auto-generated from opentelemetry-demo.yaml
-# Contains 2 resource(s)
----
+# Contains 2 resource(s)---
 apiVersion: v1
 kind: Service
 metadata:
   name: sql-server-fraud
-  namespace: sql
+  namespace: astronomy-shop
 spec:
   type: ClusterIP
   ports:
@@ -2795,13 +2709,12 @@ spec:
     protocol: TCP
     name: tds
   selector:
-    app: sql-server-fraud
----
+    app: sql-server-fraud---
 apiVersion: apps/v1
 kind: StatefulSet
 metadata:
   name: sql-server-fraud
-  namespace: sql
+  namespace: astronomy-shop
 spec:
   serviceName: sql-server-fraud
   replicas: 1
@@ -2886,13 +2799,12 @@ spec:
 # === thousandeyes ===
 # Kubernetes manifest for thousandeyes
 # Auto-generated from opentelemetry-demo.yaml
-# Contains 1 resource(s)
----
+# Contains 1 resource(s)---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
   annotations: {}
-  namespace: default
+  namespace: astronomy-shop
   name: thousandeyes
   labels:
     app: thousandeyes
@@ -2938,8 +2850,7 @@ spec:
 # === valkey-cart ===
 # Kubernetes manifest for valkey-cart
 # Auto-generated from opentelemetry-demo.yaml
-# Contains 2 resource(s)
----
+# Contains 2 resource(s)---
 apiVersion: v1
 kind: Service
 metadata:
@@ -2950,6 +2861,7 @@ metadata:
     app.kubernetes.io/name: valkey-cart
     app.kubernetes.io/version: 2.1.3
     app.kubernetes.io/part-of: opentelemetry-demo
+  namespace: astronomy-shop
 spec:
   type: ClusterIP
   ports:
@@ -2957,8 +2869,7 @@ spec:
     name: valkey-cart
     targetPort: 6379
   selector:
-    opentelemetry.io/name: valkey-cart
----
+    opentelemetry.io/name: valkey-cart---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -2969,6 +2880,7 @@ metadata:
     app.kubernetes.io/name: valkey-cart
     app.kubernetes.io/version: 2.1.3
     app.kubernetes.io/part-of: opentelemetry-demo
+  namespace: astronomy-shop
 spec:
   replicas: 1
   revisionHistoryLimit: 10
