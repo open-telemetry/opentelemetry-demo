@@ -7,7 +7,7 @@ Complete guide for deploying the IncidentFox lab to AWS EKS with production-grad
 ```bash
 # One command deployment
 cd incidentfox
-./build-all.sh deploy
+./scripts/build-all.sh deploy
 ```
 
 This idempotently:
@@ -104,7 +104,7 @@ app_node_desired_size  = 2        # Start small
 
 ```bash
 cd incidentfox
-./build-all.sh deploy
+./scripts/build-all.sh deploy
 ```
 
 Or manually:
@@ -247,7 +247,7 @@ environment = "dev"  # Enables single_nat_gateway
 ### Check Deployment Status
 
 ```bash
-./build-all.sh status
+./scripts/build-all.sh status
 ```
 
 ### View Logs
@@ -354,7 +354,7 @@ aws ce get-cost-and-usage \
 ### Full Teardown
 
 ```bash
-./build-all.sh destroy
+./scripts/build-all.sh destroy
 ```
 
 This will:

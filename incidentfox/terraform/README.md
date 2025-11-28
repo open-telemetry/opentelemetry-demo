@@ -56,7 +56,7 @@ Use the idempotent deployment script:
 ```bash
 # From repo root
 cd incidentfox
-./build-all.sh deploy
+./scripts/build-all.sh deploy
 ```
 
 Or manually:

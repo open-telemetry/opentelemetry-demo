@@ -20,8 +20,9 @@ set -euo pipefail
 
 # Configuration
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-TERRAFORM_DIR="${SCRIPT_DIR}/terraform"
-HELM_DIR="${SCRIPT_DIR}/helm"
+INCIDENTFOX_ROOT="$(cd "${SCRIPT_DIR}/.." && pwd)"
+TERRAFORM_DIR="${INCIDENTFOX_ROOT}/terraform"
+HELM_DIR="${INCIDENTFOX_ROOT}/helm"
 
 # AWS Configuration (can be overridden via environment variables)
 AWS_REGION="${AWS_REGION:-us-west-2}"

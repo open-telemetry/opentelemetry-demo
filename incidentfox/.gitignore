@@ -1,0 +1,50 @@
+# IncidentFox: Git ignore for secrets and sensitive files
+
+# Terraform
+.terraform/
+.terraform.lock.hcl
+*.tfstate
+*.tfstate.*
+*.tfstate.backup
+*.tfvars
+!terraform.tfvars.example
+.terraform.tfstate.lock.info
+crash.log
+crash.*.log
+terraform.rc
+.terraformrc
+
+# Secrets and credentials
+*secret*.json
+*secrets*.json
+*credentials*.json
+*-secrets-*.json
+*password*.txt
+*.pem
+*.key
+.env
+.env.local
+.env.*.local
+
+# AWS
+.aws/
+
+# Kubernetes
+kubeconfig
+*.kubeconfig
+.kube/
+
+# Exported secrets backups
+incidentfox-secrets-*.json
+incidentfox-secrets-*.csv
+*-1password.csv
+
+# Backup files
+*.backup
+*.bak
+*~
+
+# OS files
+.DS_Store
+Thumbs.db
+
