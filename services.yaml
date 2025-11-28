@@ -10,6 +10,8 @@
 #   name: Service directory name (must match src/ directory)
 #   build: Whether to build containers for this service (true/false)
 #   manifest: Whether to include in manifest stitching (true/false)
+#   replace_registry: Whether to replace registry URL when using dev/prod (true/false, default: true)
+#                     Set to false to keep the original registry from the service's k8s.yaml
 
 # Container Registry Configuration
 # Used by build and manifest generation workflows
@@ -33,6 +35,7 @@ services:
   - name: astronomy-loadgen
     build: false
     manifest: true
+    replace_registry: false  # Keep original registry (ghcr.io/splunk/online-boutique)
 
   - name: cart
     build: true

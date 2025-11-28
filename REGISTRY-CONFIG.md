@@ -15,6 +15,23 @@ registry:
   dev: "ghcr.io/hagen-p/opentelemetry-demo-splunk"
 ```
 
+### Per-Service Registry Control
+
+Individual services can opt out of registry replacement by setting `replace_registry: false`:
+
+```yaml
+services:
+  - name: my-service
+    build: true
+    manifest: true
+    replace_registry: false  # Keep original registry from k8s.yaml
+```
+
+**Use cases:**
+- External/third-party containers (e.g., `ghcr.io/splunk/online-boutique/rumloadgen`)
+- Services that should always pull from production registry
+- Mixed environments with containers from multiple sources
+
 ## Usage
 
 ### Generate Manifests with Specific Registry
@@ -54,9 +71,14 @@ The `stitch-manifests.sh` script accepts an optional registry environment parame
 
 ## Example Output
 
-**With dev registry:**
+**With dev registry (replace_registry: true - default):**
 ```yaml
 image: ghcr.io/hagen-p/opentelemetry-demo-splunk:2.1.3
+```
+
+**With dev registry (replace_registry: false):**
+```yaml
+image: ghcr.io/splunk/online-boutique/rumloadgen:5.6  # Original URL preserved
 ```
 
 **With prod registry:**
@@ -66,7 +88,30 @@ image: ghcr.io/splunk/opentelemetry-demo:2.1.3
 
 **Without registry parameter:**
 ```yaml
-image: ghcr.io/splunk/opentelemetry-demo/otel-ad:2.1.3
+image: ghcr.io/splunk/opentelemetry-demo/otel-ad:2.1.3  # Original from source
+```
+
+## Complete Example
+
+```yaml
+services:
+  # Regular service - registry will be replaced
+  - name: frontend
+    build: true
+    manifest: true
+    # replace_registry defaults to true
+
+  # Third-party service - keep original registry
+  - name: astronomy-loadgen
+    build: false
+    manifest: true
+    replace_registry: false  # Uses ghcr.io/splunk/online-boutique
+
+  # Production-only service - keep original
+  - name: critical-service
+    build: false
+    manifest: true
+    replace_registry: false  # Always uses prod registry
 ```
 
 ## Updating Registry URLs

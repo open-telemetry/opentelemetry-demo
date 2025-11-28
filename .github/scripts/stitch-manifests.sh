@@ -77,17 +77,33 @@ for SERVICE in "${SERVICES[@]}"; do
     MANIFEST_FILE="src/${SERVICE}/${SERVICE}-k8s.yaml"
 
     if [ -f "$MANIFEST_FILE" ]; then
+        # Check if service has replace_registry flag set to false
+        SHOULD_REPLACE="true"
+        if [ -n "$REGISTRY_URL" ] && command -v python3 &> /dev/null; then
+            SHOULD_REPLACE=$(python3 -c "
+import yaml
+config = yaml.safe_load(open('services.yaml'))
+for svc in config.get('services', []):
+    if svc.get('name') == '$SERVICE':
+        print(str(svc.get('replace_registry', True)).lower())
+        break
+" 2>/dev/null || echo "true")
+        fi
+
         echo "Adding manifest for: $SERVICE"
         echo "" >> "$OUTPUT_FILE"
         echo "# === $SERVICE ===" >> "$OUTPUT_FILE"
 
-        # If registry URL is specified, replace ghcr.io registry references
-        if [ -n "$REGISTRY_URL" ]; then
+        # If registry URL is specified AND service allows replacement, replace registry references
+        if [ -n "$REGISTRY_URL" ] && [ "$SHOULD_REPLACE" = "true" ]; then
             # Replace registry URLs in the manifest
             sed "s|ghcr.io/[^/]*/[^:]*|${REGISTRY_URL}|g" "$MANIFEST_FILE" >> "$OUTPUT_FILE"
         else
             # Use original manifest without modifications
             cat "$MANIFEST_FILE" >> "$OUTPUT_FILE"
+            if [ -n "$REGISTRY_URL" ] && [ "$SHOULD_REPLACE" = "false" ]; then
+                echo "  (using original registry)"
+            fi
         fi
 
         echo "" >> "$OUTPUT_FILE"
