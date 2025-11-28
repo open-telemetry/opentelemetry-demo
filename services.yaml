@@ -156,7 +156,7 @@ services:
     replace_registry: false  # Uses ghcr.io/open-telemetry/demo (standard)
 
   - name: shop-dc-shim
-    build: true
+    build: false
     manifest: true
     replace_registry: false  # Uses mcr.microsoft.com/mssql and quay.io images
 
