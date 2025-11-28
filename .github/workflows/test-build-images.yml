@@ -209,8 +209,46 @@ jobs:
           echo "" >> $GITHUB_STEP_SUMMARY
           echo "Dockerfile not found at: \`${{ matrix.dockerfile }}\`" >> $GITHUB_STEP_SUMMARY
 
-  summary:
+  trigger-manifest-build:
     needs: [prepare-matrix, build-images]
+    if: ${{ success() }}
+    runs-on: ubuntu-latest
+    permissions:
+      actions: write
+      contents: read
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Trigger manifest build
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          echo "### 🚀 Triggering Manifest Build" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "Automatically building manifest with matching version tag..." >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+
+          # Trigger the test manifest build workflow with the same version
+          gh workflow run test-build-manifest.yml \
+            -f version="${{ inputs.version }}" \
+            -f commit_manifest=true \
+            -f validate_manifest=true
+
+          echo "✅ Manifest build workflow triggered" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "| Property | Value |" >> $GITHUB_STEP_SUMMARY
+          echo "|----------|-------|" >> $GITHUB_STEP_SUMMARY
+          echo "| Workflow | \`test-build-manifest.yml\` |" >> $GITHUB_STEP_SUMMARY
+          echo "| Version | \`${{ inputs.version }}\` |" >> $GITHUB_STEP_SUMMARY
+          echo "| Commit | \`true\` |" >> $GITHUB_STEP_SUMMARY
+          echo "| Validate | \`true\` |" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "Check the [Actions tab](../../actions/workflows/test-build-manifest.yml) to monitor the manifest build." >> $GITHUB_STEP_SUMMARY
+
+  summary:
+    needs: [prepare-matrix, build-images, trigger-manifest-build]
     if: always()
     runs-on: ubuntu-latest
 
@@ -224,9 +262,9 @@ jobs:
           echo "- **Registry:** \`${{ needs.prepare-matrix.outputs.registry }}\`" >> $GITHUB_STEP_SUMMARY
           echo "- **Services:** ${{ inputs.services }}" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
-          echo "### Next Steps" >> $GITHUB_STEP_SUMMARY
+          echo "### Automatic Actions" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
-          echo "To use these images, update your manifests or run:" >> $GITHUB_STEP_SUMMARY
-          echo "\`\`\`bash" >> $GITHUB_STEP_SUMMARY
-          echo ".github/scripts/stitch-manifests.sh dev" >> $GITHUB_STEP_SUMMARY
-          echo "\`\`\`" >> $GITHUB_STEP_SUMMARY
+          echo "- ✅ Manifest build triggered automatically" >> $GITHUB_STEP_SUMMARY
+          echo "- 📦 Manifest will use version: \`${{ inputs.version }}\`" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "> The manifest build will automatically match your container image versions." >> $GITHUB_STEP_SUMMARY

@@ -29,6 +29,11 @@ def main():
 
     # Extract service names based on filter
     services = []
+    priority_services = []  # Services that must come first (namespace, RBAC, etc.)
+
+    # Define critical resources that must be created first
+    PRIORITY_ORDER = ['demo-namespace', 'demo-service-account']
+
     for service in config.get('services', []):
         name = service.get('name')
         if not name:
@@ -39,10 +44,20 @@ def main():
             if not service.get(filter_type, False):
                 continue
 
-        services.append(name)
+        # Separate priority services from regular services
+        if name in PRIORITY_ORDER:
+            priority_services.append(name)
+        else:
+            services.append(name)
+
+    # Sort priority services by their defined order
+    priority_services.sort(key=lambda x: PRIORITY_ORDER.index(x) if x in PRIORITY_ORDER else len(PRIORITY_ORDER))
+
+    # Combine priority services first, then regular services
+    all_services = priority_services + services
 
     # Output as space-separated list for shell consumption
-    print(' '.join(services))
+    print(' '.join(all_services))
 
 if __name__ == '__main__':
     main()

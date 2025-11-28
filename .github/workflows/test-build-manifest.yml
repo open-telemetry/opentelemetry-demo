@@ -3,8 +3,13 @@ name: Build Demo Manifest - TEST
 "on":
   workflow_dispatch:
     inputs:
+      version:
+        description: 'Explicit version to use (e.g., "test", "1.2.3-test"). If not provided, uses current version + suffix'
+        required: false
+        type: string
+        default: ''
       test_version_suffix:
-        description: 'Test suffix added to version (current version never bumped)'
+        description: 'Test suffix added to version (only used if version is not provided)'
         required: false
         type: string
         default: '-test'
@@ -49,13 +54,21 @@ jobs:
         id: version
         run: |
           # IMPORTANT: This workflow NEVER bumps the version number
-          # It always uses the current SPLUNK-VERSION and adds a test suffix
+          # It uses either the explicit version input OR current SPLUNK-VERSION + suffix
 
           CURRENT_VERSION=$(cat SPLUNK-VERSION)
           echo "Current version in SPLUNK-VERSION: $CURRENT_VERSION"
 
-          # Add test suffix (e.g., 0.0.0-test)
-          TEST_VERSION="${CURRENT_VERSION}${{ inputs.test_version_suffix }}"
+          # Use explicit version if provided, otherwise use current + suffix
+          if [ -n "${{ inputs.version }}" ]; then
+            TEST_VERSION="${{ inputs.version }}"
+            echo "Using explicit version: $TEST_VERSION"
+            VERSION_SOURCE="explicit input"
+          else
+            TEST_VERSION="${CURRENT_VERSION}${{ inputs.test_version_suffix }}"
+            echo "Using current version + suffix: $TEST_VERSION"
+            VERSION_SOURCE="current + suffix"
+          fi
 
           echo "test_version=$TEST_VERSION" >> $GITHUB_OUTPUT
           echo "current_version=$CURRENT_VERSION" >> $GITHUB_OUTPUT
@@ -64,6 +77,7 @@ jobs:
           echo "" >> $GITHUB_STEP_SUMMARY
           echo "- **Current Version** (unchanged): \`$CURRENT_VERSION\`" >> $GITHUB_STEP_SUMMARY
           echo "- **Test Version** (for manifest): \`$TEST_VERSION\`" >> $GITHUB_STEP_SUMMARY
+          echo "- **Version Source**: $VERSION_SOURCE" >> $GITHUB_STEP_SUMMARY
           echo "- **Output File**: \`kubernetes/splunk-astronomy-shop-${TEST_VERSION}.yaml\`" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
           echo "> ⚠️ **Note**: SPLUNK-VERSION file is NOT modified by this workflow" >> $GITHUB_STEP_SUMMARY
