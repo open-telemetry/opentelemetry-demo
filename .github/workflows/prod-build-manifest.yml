@@ -1,0 +1,251 @@
+name: Build Demo Manifest - PRODUCTION
+
+"on":
+  workflow_dispatch:
+    inputs:
+      version_bump:
+        description: 'Version bump type'
+        required: true
+        type: choice
+        options:
+          - patch
+          - minor
+          - major
+        default: 'minor'
+      validate_manifest:
+        description: 'Run YAML validation on manifest'
+        required: true
+        type: boolean
+        default: true
+      commit_manifest:
+        description: 'Commit the generated manifest and version to repository'
+        required: true
+        type: boolean
+        default: true
+
+jobs:
+  build-production-manifest:
+    # Only run in the main splunk/opentelemetry-demo repo, not in forks
+    if: github.repository == 'splunk/opentelemetry-demo'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Python for validation
+        if: ${{ inputs.validate_manifest }}
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.x'
+
+      - name: Install validation tools
+        if: ${{ inputs.validate_manifest }}
+        run: pip install pyyaml
+
+      - name: Make scripts executable
+        run: |
+          chmod +x .github/scripts/stitch-manifests.sh
+          chmod +x .github/scripts/bump-version.sh
+
+      - name: Get current version
+        id: current_version
+        run: |
+          CURRENT_VERSION=$(cat SPLUNK-VERSION)
+          echo "current_version=$CURRENT_VERSION" >> $GITHUB_OUTPUT
+          echo "### Current Version" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "**Current:** \`$CURRENT_VERSION\`" >> $GITHUB_STEP_SUMMARY
+
+      - name: Bump version
+        id: version
+        run: |
+          # Bump the version
+          NEW_VERSION=$(.github/scripts/bump-version.sh ${{ inputs.version_bump }})
+
+          echo "new_version=$NEW_VERSION" >> $GITHUB_OUTPUT
+
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "### Version Bump (${{ inputs.version_bump }})" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "| Type | Version |" >> $GITHUB_STEP_SUMMARY
+          echo "|------|---------|" >> $GITHUB_STEP_SUMMARY
+          echo "| Previous | \`${{ steps.current_version.outputs.current_version }}\` |" >> $GITHUB_STEP_SUMMARY
+          echo "| **New** | **\`$NEW_VERSION\`** |" >> $GITHUB_STEP_SUMMARY
+          echo "| Bump Type | ${{ inputs.version_bump }} |" >> $GITHUB_STEP_SUMMARY
+
+      - name: Build/Stitch Kubernetes manifest
+        id: stitch
+        run: |
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "### Stitching Manifest" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+
+          # Run stitch script with prod registry
+          .github/scripts/stitch-manifests.sh prod
+
+          MANIFEST_FILE="kubernetes/splunk-astronomy-shop-${{ steps.version.outputs.new_version }}.yaml"
+
+          if [ -f "$MANIFEST_FILE" ]; then
+            FILE_SIZE=$(du -h "$MANIFEST_FILE" | cut -f1)
+            LINE_COUNT=$(wc -l < "$MANIFEST_FILE")
+            RESOURCE_COUNT=$(grep -c "^kind: " "$MANIFEST_FILE" || true)
+            NAMESPACE_COUNT=$(grep -c "namespace: astronomy-shop" "$MANIFEST_FILE" || true)
+
+            echo "✅ **Manifest created successfully**" >> $GITHUB_STEP_SUMMARY
+            echo "" >> $GITHUB_STEP_SUMMARY
+            echo "| Property | Value |" >> $GITHUB_STEP_SUMMARY
+            echo "|----------|-------|" >> $GITHUB_STEP_SUMMARY
+            echo "| File | \`$MANIFEST_FILE\` |" >> $GITHUB_STEP_SUMMARY
+            echo "| Size | $FILE_SIZE |" >> $GITHUB_STEP_SUMMARY
+            echo "| Lines | $LINE_COUNT |" >> $GITHUB_STEP_SUMMARY
+            echo "| Resources | $RESOURCE_COUNT |" >> $GITHUB_STEP_SUMMARY
+            echo "| Namespaced | $NAMESPACE_COUNT |" >> $GITHUB_STEP_SUMMARY
+            echo "| Registry | Production (ghcr.io/splunk/opentelemetry-demo) |" >> $GITHUB_STEP_SUMMARY
+            echo "" >> $GITHUB_STEP_SUMMARY
+
+            echo "manifest_file=$MANIFEST_FILE" >> $GITHUB_OUTPUT
+          else
+            echo "❌ **Manifest file not created**" >> $GITHUB_STEP_SUMMARY
+            exit 1
+          fi
+
+      - name: Validate manifest YAML syntax
+        if: ${{ inputs.validate_manifest }}
+        run: |
+          echo "### Validation Results" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+
+          MANIFEST_FILE="${{ steps.stitch.outputs.manifest_file }}"
+
+          # Validate YAML syntax with Python
+          if python3 -c "import yaml; list(yaml.safe_load_all(open('$MANIFEST_FILE')))" 2> /tmp/validation.log; then
+            echo "✅ **YAML syntax validation passed**" >> $GITHUB_STEP_SUMMARY
+
+            # Count documents
+            DOC_COUNT=$(python3 -c "import yaml; print(len(list(yaml.safe_load_all(open('$MANIFEST_FILE')))))")
+            echo "" >> $GITHUB_STEP_SUMMARY
+            echo "- **YAML Documents:** $DOC_COUNT" >> $GITHUB_STEP_SUMMARY
+          else
+            echo "❌ **YAML syntax validation failed**" >> $GITHUB_STEP_SUMMARY
+            echo "\`\`\`" >> $GITHUB_STEP_SUMMARY
+            cat /tmp/validation.log >> $GITHUB_STEP_SUMMARY
+            echo "\`\`\`" >> $GITHUB_STEP_SUMMARY
+            exit 1
+          fi
+
+          # Show resource breakdown
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "**Resource Types:**" >> $GITHUB_STEP_SUMMARY
+          echo "\`\`\`" >> $GITHUB_STEP_SUMMARY
+          grep "^kind: " "$MANIFEST_FILE" | sort | uniq -c | sort -rn >> $GITHUB_STEP_SUMMARY
+          echo "\`\`\`" >> $GITHUB_STEP_SUMMARY
+
+      - name: Commit production manifest and version
+        if: ${{ inputs.commit_manifest }}
+        run: |
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+
+          MANIFEST_FILE="${{ steps.stitch.outputs.manifest_file }}"
+
+          # Add both the version file and manifest
+          git add SPLUNK-VERSION
+          git add "$MANIFEST_FILE"
+
+          if git diff --staged --quiet; then
+            echo "### No Changes" >> $GITHUB_STEP_SUMMARY
+            echo "No changes to commit." >> $GITHUB_STEP_SUMMARY
+          else
+            git commit -m "Release: ${{ steps.version.outputs.new_version }}" \
+              -m "Production build of Astronomy Shop manifest" \
+              -m "" \
+              -m "- Version: ${{ steps.version.outputs.new_version }}" \
+              -m "- Previous: ${{ steps.current_version.outputs.current_version }}" \
+              -m "- Bump Type: ${{ inputs.version_bump }}" \
+              -m "- Manifest: $MANIFEST_FILE" \
+              -m "- Registry: ghcr.io/splunk/opentelemetry-demo (production)" \
+              -m "- Generated by: GitHub Actions (production build)" \
+              -m "" \
+              -m "🤖 Generated with [Claude Code](https://claude.com/claude-code)"
+
+            git push
+
+            echo "" >> $GITHUB_STEP_SUMMARY
+            echo "### Changes Committed ✅" >> $GITHUB_STEP_SUMMARY
+            echo "" >> $GITHUB_STEP_SUMMARY
+            echo "**Committed:**" >> $GITHUB_STEP_SUMMARY
+            echo "- ✅ SPLUNK-VERSION: \`${{ steps.version.outputs.new_version }}\`" >> $GITHUB_STEP_SUMMARY
+            echo "- ✅ Manifest: \`$MANIFEST_FILE\`" >> $GITHUB_STEP_SUMMARY
+          fi
+
+      - name: Upload manifest as artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: astronomy-shop-manifest-${{ steps.version.outputs.new_version }}
+          path: kubernetes/splunk-astronomy-shop-${{ steps.version.outputs.new_version }}.yaml
+          retention-days: 90
+
+      - name: Generate deployment command
+        run: |
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "---" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "## 🚀 Deploy to Production Cluster" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "### Option 1: Deploy from Repository" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "\`\`\`bash" >> $GITHUB_STEP_SUMMARY
+          echo "# Pull latest changes" >> $GITHUB_STEP_SUMMARY
+          echo "git pull" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "# Deploy to cluster" >> $GITHUB_STEP_SUMMARY
+          echo "kubectl apply -f kubernetes/splunk-astronomy-shop-${{ steps.version.outputs.new_version }}.yaml" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "# Verify deployment" >> $GITHUB_STEP_SUMMARY
+          echo "kubectl get all -n astronomy-shop" >> $GITHUB_STEP_SUMMARY
+          echo "\`\`\`" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "### Option 2: Download Artifact" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "1. Download artifact: \`astronomy-shop-manifest-${{ steps.version.outputs.new_version }}\`" >> $GITHUB_STEP_SUMMARY
+          echo "2. Extract the YAML file" >> $GITHUB_STEP_SUMMARY
+          echo "3. Deploy: \`kubectl apply -f splunk-astronomy-shop-${{ steps.version.outputs.new_version }}.yaml\`" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "---" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "## 📊 Monitor Deployment" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "\`\`\`bash" >> $GITHUB_STEP_SUMMARY
+          echo "# Watch pods come up" >> $GITHUB_STEP_SUMMARY
+          echo "kubectl get pods -n astronomy-shop -w" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "# Check pod status" >> $GITHUB_STEP_SUMMARY
+          echo "kubectl get pods -n astronomy-shop" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "# View logs for a service" >> $GITHUB_STEP_SUMMARY
+          echo "kubectl logs -n astronomy-shop deployment/<service-name>" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "# Check services" >> $GITHUB_STEP_SUMMARY
+          echo "kubectl get svc -n astronomy-shop" >> $GITHUB_STEP_SUMMARY
+          echo "\`\`\`" >> $GITHUB_STEP_SUMMARY
+
+      - name: Summary
+        run: |
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "---" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "### ✨ Production Build Complete!" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "| Item | Value |" >> $GITHUB_STEP_SUMMARY
+          echo "|------|-------|" >> $GITHUB_STEP_SUMMARY
+          echo "| **Previous Version** | \`${{ steps.current_version.outputs.current_version }}\` |" >> $GITHUB_STEP_SUMMARY
+          echo "| **New Version** | **\`${{ steps.version.outputs.new_version }}\`** |" >> $GITHUB_STEP_SUMMARY
+          echo "| **Bump Type** | ${{ inputs.version_bump }} |" >> $GITHUB_STEP_SUMMARY
+          echo "| **Manifest File** | \`kubernetes/splunk-astronomy-shop-${{ steps.version.outputs.new_version }}.yaml\` |" >> $GITHUB_STEP_SUMMARY
+          echo "| **Registry** | Production (ghcr.io/splunk/opentelemetry-demo) |" >> $GITHUB_STEP_SUMMARY
+          echo "| **Validated** | ${{ inputs.validate_manifest }} |" >> $GITHUB_STEP_SUMMARY
+          echo "| **Committed** | ${{ inputs.commit_manifest }} |" >> $GITHUB_STEP_SUMMARY
+          echo "| **Artifact Retention** | 90 days |" >> $GITHUB_STEP_SUMMARY

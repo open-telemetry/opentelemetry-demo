@@ -1,0 +1,10 @@
+# Kubernetes manifest for namespace
+# Creates the namespace where all Astronomy Shop services will be deployed
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: astronomy-shop
+  labels:
+    app.kubernetes.io/name: astronomy-shop
+    app.kubernetes.io/part-of: opentelemetry-demo

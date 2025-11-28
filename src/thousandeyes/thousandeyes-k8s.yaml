@@ -1,0 +1,48 @@
+# Kubernetes manifest for thousandeyes
+# Auto-generated from opentelemetry-demo.yaml
+# Contains 1 resource(s)
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  annotations: {}
+  namespace: astronomy-shop
+  name: thousandeyes
+  labels:
+    app: thousandeyes
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: thousandeyes
+  template:
+    metadata:
+      labels:
+        app: thousandeyes
+    spec:
+      hostname: astronomy-shop-us1-show
+      containers:
+      - name: thousandeyes
+        image: thousandeyes/enterprise-agent:latest
+        imagePullPolicy: Always
+        command:
+        - /sbin/my_init
+        securityContext:
+          capabilities:
+            add:
+            - NET_ADMIN
+            - SYS_ADMIN
+        env:
+        - name: TEAGENT_ACCOUNT_TOKEN
+          valueFrom:
+            secretKeyRef:
+              name: workshop-secret
+              key: TEAGENT_ACCOUNT_TOKEN
+        - name: TEAGENT_INET
+          value: '4'
+        resources:
+          limits:
+            memory: 3584Mi
+          requests:
+            memory: 2000Mi
+      restartPolicy: Always

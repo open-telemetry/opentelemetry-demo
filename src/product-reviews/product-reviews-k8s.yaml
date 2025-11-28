@@ -1,0 +1,105 @@
+# Kubernetes manifest for product-reviews
+# Auto-generated from opentelemetry-demo.yaml
+# Contains 2 resource(s)
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: product-reviews
+  labels:
+    opentelemetry.io/name: product-reviews
+    app.kubernetes.io/component: product-reviews
+    app.kubernetes.io/name: product-reviews
+    app.kubernetes.io/version: 2.1.3
+    app.kubernetes.io/part-of: opentelemetry-demo
+  namespace: astronomy-shop
+spec:
+  type: ClusterIP
+  ports:
+  - port: 3551
+    name: tcp-service
+    targetPort: 3551
+  selector:
+    opentelemetry.io/name: product-reviews
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: product-reviews
+  labels:
+    opentelemetry.io/name: product-reviews
+    app.kubernetes.io/component: product-reviews
+    app.kubernetes.io/name: product-reviews
+    app.kubernetes.io/version: 2.1.3
+    app.kubernetes.io/part-of: opentelemetry-demo
+  namespace: astronomy-shop
+spec:
+  replicas: 1
+  revisionHistoryLimit: 10
+  selector:
+    matchLabels:
+      opentelemetry.io/name: product-reviews
+  template:
+    metadata:
+      labels:
+        opentelemetry.io/name: product-reviews
+        app.kubernetes.io/component: product-reviews
+        app.kubernetes.io/name: product-reviews
+    spec:
+      serviceAccountName: opentelemetry-demo
+      containers:
+      - name: product-reviews
+        image: ghcr.io/open-telemetry/demo:2.1.3-product-reviews
+        imagePullPolicy: IfNotPresent
+        ports:
+        - containerPort: 3551
+          name: service
+        env:
+        - name: OTEL_SERVICE_NAME
+          valueFrom:
+            fieldRef:
+              apiVersion: v1
+              fieldPath: metadata.labels['app.kubernetes.io/component']
+        - name: NODE_IP
+          valueFrom:
+            fieldRef:
+              fieldPath: status.hostIP
+        - name: OTEL_COLLECTOR_NAME
+          value: $(NODE_IP)
+        - name: OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE
+          value: cumulative
+        - name: PRODUCT_REVIEWS_PORT
+          value: '3551'
+        - name: OTEL_PYTHON_LOG_CORRELATION
+          value: 'true'
+        - name: OTEL_INSTRUMENTATION_GENAI_CAPTURE_MESSAGE_CONTENT
+          value: 'true'
+        - name: PROTOCOL_BUFFERS_PYTHON_IMPLEMENTATION
+          value: python
+        - name: FLAGD_HOST
+          value: flagd
+        - name: FLAGD_PORT
+          value: '8013'
+        - name: DB_CONNECTION_STRING
+          value: host=postgresql user=otelu password=otelp dbname=otel
+        - name: LLM_HOST
+          value: llm
+        - name: LLM_PORT
+          value: '8000'
+        - name: LLM_BASE_URL
+          value: http://llm:8000/v1
+        - name: LLM_MODEL
+          value: astronomy-llm
+        - name: OPENAI_API_KEY
+          value: dummy
+        - name: PRODUCT_CATALOG_ADDR
+          value: product-catalog:8080
+        - name: OTEL_EXPORTER_OTLP_ENDPOINT
+          value: http://$(OTEL_COLLECTOR_NAME):4317
+        - name: OTEL_RESOURCE_ATTRIBUTES
+          value: service.name=$(OTEL_SERVICE_NAME),service.namespace=opentelemetry-demo,service.version=2.1.3,service.kafka=no
+        resources:
+          limits:
+            memory: 500Mi
+        volumeMounts: null
+      volumes: null

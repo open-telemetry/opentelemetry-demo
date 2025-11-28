@@ -1,0 +1,184 @@
+# Splunk Astronomy Shop Services Configuration
+# This file defines all services in the project for manifest stitching and container builds
+#
+# To add a new service:
+# 1. Add an entry to the 'services' list below
+# 2. Ensure your service has a [service-name]-k8s.yaml file in src/[service-name]/
+# 3. Optionally add build configuration if the service needs container builds
+#
+# Format:
+#   name: Service directory name (must match src/ directory)
+#   build: Whether to build containers for this service (true/false)
+#   manifest: Whether to include in manifest stitching (true/false)
+#   replace_registry: Whether to replace registry URL when using dev/prod (true/false, default: true)
+#                     Set to false to keep the original registry from the service's k8s.yaml
+#   dockerfile: Custom Dockerfile path (optional, default: src/{name}/Dockerfile)
+#               Use this when the Dockerfile is in a subdirectory
+#               Example: "src/cart/src/Dockerfile"
+#   platform: Docker build platforms (optional, default: linux/amd64,linux/arm64)
+#             Examples: "linux/amd64" or "linux/amd64,linux/arm64"
+
+# Container Registry Configuration
+# Used by build and manifest generation workflows
+registry:
+  # Production registry - used by production workflows
+  prod: "ghcr.io/splunk/opentelemetry-demo"
+
+  # Development/Test registry - used by test workflows
+  # Format: ghcr.io/<your-github-username>/<your-repo-name>
+  # Examples:
+  #   ghcr.io/hagen-p/opentelemetry-demo-splunk
+  #   ghcr.io/yourname/otel-demo-fork
+  # If not set, workflows will auto-detect from repository name
+  dev: "ghcr.io/hagen-p/opentelemetry-demo-splunk"
+
+services:
+  - name: accounting
+    build: true
+    manifest: true
+
+  - name: ad
+    build: true
+    manifest: true
+
+  - name: astronomy-loadgen
+    build: false
+    manifest: true
+    replace_registry: false  # Keep original registry (ghcr.io/splunk/online-boutique)
+
+  - name: cart
+    build: true
+    manifest: true
+    dockerfile: src/cart/src/Dockerfile
+
+  - name: checkout
+    build: false
+    manifest: true
+    replace_registry: false  # Uses ghcr.io/open-telemetry/demo (standard)
+
+  - name: currency
+    build: false
+    manifest: true
+    replace_registry: false  # Uses ghcr.io/open-telemetry/demo (standard)
+
+  - name: email
+    build: false
+    manifest: true
+    replace_registry: false  # Uses ghcr.io/open-telemetry/demo (standard)
+
+  - name: flagd
+    build: false
+    manifest: true
+    replace_registry: false  # Uses ghcr.io/open-feature/flagd
+
+  - name: flagd-config
+    build: false
+    manifest: true
+
+  - name: flagd-ui
+    build: false
+    manifest: true
+    replace_registry: false  # Uses ghcr.io/open-telemetry/demo (standard)
+
+  - name: fraud-detection
+    build: true
+    manifest: true
+
+  - name: frontend
+    build: true
+    manifest: true
+
+  - name: frontend-proxy
+    build: true
+    manifest: true
+
+  - name: image-provider
+    build: true
+    manifest: true
+
+  - name: kafka
+    build: false
+    manifest: true
+    replace_registry: false  # Uses ghcr.io/open-telemetry/demo (standard)
+
+  - name: llm
+    build: false
+    manifest: true
+    replace_registry: false  # Uses ghcr.io/open-telemetry/demo (standard)
+
+  - name: load-generator
+    build: false
+    manifest: true
+
+  - name: demo-namespace
+    build: false
+    manifest: true
+
+  - name: demo-service-account
+    build: false
+    manifest: true
+
+  - name: payment
+    build: true
+    manifest: true
+
+  - name: postgres
+    build: false
+    manifest: true
+    replace_registry: false  # Uses ghcr.io/open-telemetry/demo (standard)
+
+  - name: product-catalog
+    build: false
+    manifest: true
+    replace_registry: false  # Uses ghcr.io/open-telemetry/demo (standard)
+
+  - name: product-catalog-products
+    build: false
+    manifest: true
+
+  - name: product-reviews
+    build: false
+    manifest: true
+    replace_registry: false  # Uses ghcr.io/open-telemetry/demo (standard)
+
+  - name: quote
+    build: false
+    manifest: true
+    replace_registry: false  # Uses ghcr.io/open-telemetry/demo (standard)
+
+  - name: react-native-app
+    build: false
+    manifest: false
+
+  - name: recommendation
+    build: true
+    manifest: true
+
+  - name: setup-sql
+    build: false
+    manifest: true
+
+  - name: shipping
+    build: false
+    manifest: true
+    replace_registry: false  # Uses ghcr.io/open-telemetry/demo (standard)
+
+  - name: shop-dc-shim
+    build: false
+    manifest: true
+    replace_registry: false  # Uses mcr.microsoft.com/mssql and quay.io images
+
+  - name: sql-server-fraud
+    build: false
+    manifest: true
+    replace_registry: false  # Uses mcr.microsoft.com/mssql
+
+  - name: thousandeyes
+    build: false
+    manifest: true
+    replace_registry: false  # Uses thousandeyes/enterprise-agent
+
+  - name: valkey-cart
+    build: false
+    manifest: true
+    replace_registry: false  # Uses valkey/valkey
