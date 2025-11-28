@@ -84,10 +84,13 @@ jobs:
                   # Get platform (default to multi-arch)
                   platform = svc.get('platform', 'linux/amd64,linux/arm64')
 
+                  # Get dockerfile path (default to standard location)
+                  dockerfile = svc.get('dockerfile', f'src/{name}/Dockerfile')
+
                   services_to_build.append({
                       'name': name,
                       'platform': platform,
-                      'dockerfile': f'src/{name}/Dockerfile'
+                      'dockerfile': dockerfile
                   })
 
           # Create matrix

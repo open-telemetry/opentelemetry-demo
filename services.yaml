@@ -12,6 +12,9 @@
 #   manifest: Whether to include in manifest stitching (true/false)
 #   replace_registry: Whether to replace registry URL when using dev/prod (true/false, default: true)
 #                     Set to false to keep the original registry from the service's k8s.yaml
+#   dockerfile: Custom Dockerfile path (optional, default: src/{name}/Dockerfile)
+#               Use this when the Dockerfile is in a subdirectory
+#               Example: "src/cart/src/Dockerfile"
 #   platform: Docker build platforms (optional, default: linux/amd64,linux/arm64)
 #             Examples: "linux/amd64" or "linux/amd64,linux/arm64"
 
@@ -46,6 +49,7 @@ services:
   - name: cart
     build: true
     manifest: true
+    dockerfile: src/cart/src/Dockerfile
 
   - name: checkout
     build: false
