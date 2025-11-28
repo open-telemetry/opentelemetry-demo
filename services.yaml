@@ -56,6 +56,7 @@ services:
   - name: flagd
     build: false
     manifest: true
+    replace_registry: false  # Uses ghcr.io/open-feature/flagd
 
   - name: flagd-config
     build: false
@@ -144,15 +145,19 @@ services:
   - name: shop-dc-shim
     build: true
     manifest: true
+    replace_registry: false  # Uses mcr.microsoft.com/mssql and quay.io images
 
   - name: sql-server-fraud
     build: false
     manifest: true
+    replace_registry: false  # Uses mcr.microsoft.com/mssql
 
   - name: thousandeyes
     build: false
     manifest: true
+    replace_registry: false  # Uses thousandeyes/enterprise-agent
 
   - name: valkey-cart
     build: false
     manifest: true
+    replace_registry: false  # Uses valkey/valkey
