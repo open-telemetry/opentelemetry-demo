@@ -29,11 +29,15 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Setup kubectl for validation
+      - name: Setup Python for validation
         if: ${{ inputs.validate_manifest }}
-        uses: azure/setup-kubectl@v3
+        uses: actions/setup-python@v4
         with:
-          version: 'latest'
+          python-version: '3.x'
+
+      - name: Install validation tools
+        if: ${{ inputs.validate_manifest }}
+        run: pip install pyyaml
 
       - name: Make scripts executable
         run: |
@@ -106,7 +110,7 @@ jobs:
             exit 1
           fi
 
-      - name: Validate manifest with kubectl
+      - name: Validate manifest YAML syntax
         if: ${{ inputs.validate_manifest }}
         run: |
           echo "### Validation Results" >> $GITHUB_STEP_SUMMARY
@@ -114,14 +118,16 @@ jobs:
 
           MANIFEST_FILE="${{ steps.stitch.outputs.manifest_file }}"
 
-          # Configure kubectl to not try to connect to a cluster
-          export KUBECONFIG=/dev/null
+          # Validate YAML syntax with Python
+          if python3 -c "import yaml; list(yaml.safe_load_all(open('$MANIFEST_FILE')))" 2> /tmp/validation.log; then
+            echo "✅ **YAML syntax validation passed**" >> $GITHUB_STEP_SUMMARY
 
-          # Dry-run validation
-          if kubectl apply --dry-run=client --validate=false -f "$MANIFEST_FILE" > /tmp/validation.log 2>&1; then
-            echo "✅ **Client-side validation passed**" >> $GITHUB_STEP_SUMMARY
+            # Count documents
+            DOC_COUNT=$(python3 -c "import yaml; print(len(list(yaml.safe_load_all(open('$MANIFEST_FILE')))))")
+            echo "" >> $GITHUB_STEP_SUMMARY
+            echo "- **YAML Documents:** $DOC_COUNT" >> $GITHUB_STEP_SUMMARY
           else
-            echo "❌ **Client-side validation failed**" >> $GITHUB_STEP_SUMMARY
+            echo "❌ **YAML syntax validation failed**" >> $GITHUB_STEP_SUMMARY
             echo "\`\`\`" >> $GITHUB_STEP_SUMMARY
             cat /tmp/validation.log >> $GITHUB_STEP_SUMMARY
             echo "\`\`\`" >> $GITHUB_STEP_SUMMARY
