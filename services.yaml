@@ -22,7 +22,11 @@ registry:
   prod: "ghcr.io/splunk/opentelemetry-demo"
 
   # Development/Test registry - used by test workflows
-  # Update this to your fork's registry
+  # Format: ghcr.io/<your-github-username>/<your-repo-name>
+  # Examples:
+  #   ghcr.io/hagen-p/opentelemetry-demo-splunk
+  #   ghcr.io/yourname/otel-demo-fork
+  # If not set, workflows will auto-detect from repository name
   dev: "ghcr.io/hagen-p/opentelemetry-demo-splunk"
 
 services:

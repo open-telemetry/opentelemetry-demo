@@ -52,8 +52,15 @@ jobs:
           with open('services.yaml', 'r') as f:
               config = yaml.safe_load(f)
 
-          # Get registry
-          registry = config.get('registry', {}).get('dev', 'ghcr.io/hagen-p/opentelemetry-demo-splunk')
+          # Get registry - use GitHub repository info if dev registry not configured
+          dev_registry = config.get('registry', {}).get('dev')
+          if not dev_registry:
+              # Fallback: construct from GitHub repository owner and name
+              repo_owner = "${{ github.repository_owner }}"
+              repo_name = "${{ github.event.repository.name }}"
+              dev_registry = f"ghcr.io/{repo_owner}/{repo_name}"
+
+          registry = dev_registry
 
           # Get services to build
           requested = "${{ inputs.services }}".strip()
