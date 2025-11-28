@@ -44,16 +44,19 @@ services:
     manifest: true
 
   - name: checkout
-    build: true
+    build: false
     manifest: true
+    replace_registry: false  # Uses ghcr.io/open-telemetry/demo (standard)
 
   - name: currency
-    build: true
+    build: false
     manifest: true
+    replace_registry: false  # Uses ghcr.io/open-telemetry/demo (standard)
 
   - name: email
-    build: true
+    build: false
     manifest: true
+    replace_registry: false  # Uses ghcr.io/open-telemetry/demo (standard)
 
   - name: flagd
     build: false
@@ -67,6 +70,7 @@ services:
   - name: flagd-ui
     build: false
     manifest: true
+    replace_registry: false  # Uses ghcr.io/open-telemetry/demo (standard)
 
   - name: fraud-detection
     build: true
@@ -87,10 +91,12 @@ services:
   - name: kafka
     build: false
     manifest: true
+    replace_registry: false  # Uses ghcr.io/open-telemetry/demo (standard)
 
   - name: llm
-    build: true
+    build: false
     manifest: true
+    replace_registry: false  # Uses ghcr.io/open-telemetry/demo (standard)
 
   - name: load-generator
     build: false
@@ -109,24 +115,28 @@ services:
     manifest: true
 
   - name: postgres
-    build: true
+    build: false
     manifest: true
+    replace_registry: false  # Uses ghcr.io/open-telemetry/demo (standard)
 
   - name: product-catalog
-    build: true
+    build: false
     manifest: true
+    replace_registry: false  # Uses ghcr.io/open-telemetry/demo (standard)
 
   - name: product-catalog-products
     build: false
     manifest: true
 
   - name: product-reviews
-    build: true
+    build: false
     manifest: true
+    replace_registry: false  # Uses ghcr.io/open-telemetry/demo (standard)
 
   - name: quote
-    build: true
+    build: false
     manifest: true
+    replace_registry: false  # Uses ghcr.io/open-telemetry/demo (standard)
 
   - name: react-native-app
     build: false
@@ -141,8 +151,9 @@ services:
     manifest: true
 
   - name: shipping
-    build: true
+    build: false
     manifest: true
+    replace_registry: false  # Uses ghcr.io/open-telemetry/demo (standard)
 
   - name: shop-dc-shim
     build: true
