@@ -1,4 +1,4 @@
-name: Build Demomanifest - TEST
+name: Build Demo Manifest - TEST
 
 "on":
   workflow_dispatch:
