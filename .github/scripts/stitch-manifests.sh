@@ -1,12 +1,17 @@
 #!/bin/bash
 
 # Script to stitch together Kubernetes manifests from multiple services
-# Usage: ./stitch-manifests.sh
+# Usage: ./stitch-manifests.sh [registry_env]
+#   registry_env: Optional - 'dev' or 'prod' to use registry from services.yaml
+#                 If not specified, uses original registry URLs from manifests
 #
 # This script reads service configuration from services.yaml
 # To add a new service, edit services.yaml instead of this script
 
 set -e
+
+# Parse optional registry environment argument
+REGISTRY_ENV="${1:-}"
 
 # Get version from SPLUNK-VERSION file
 VERSION=$(cat SPLUNK-VERSION)
@@ -30,6 +35,20 @@ else
 fi
 
 echo "Found ${#SERVICES[@]} services configured for manifest inclusion"
+
+# Get registry URL if registry environment is specified
+REGISTRY_URL=""
+if [ -n "$REGISTRY_ENV" ]; then
+    if command -v python3 &> /dev/null; then
+        REGISTRY_URL=$(python3 -c "import yaml; config = yaml.safe_load(open('services.yaml')); print(config.get('registry', {}).get('$REGISTRY_ENV', ''))" 2>/dev/null || echo "")
+        if [ -n "$REGISTRY_URL" ]; then
+            echo "Using registry environment: $REGISTRY_ENV"
+            echo "Registry URL: $REGISTRY_URL"
+        else
+            echo "Warning: Registry environment '$REGISTRY_ENV' not found in services.yaml, using default"
+        fi
+    fi
+fi
 
 # Output directory and file
 OUTPUT_DIR="kubernetes"
@@ -61,7 +80,16 @@ for SERVICE in "${SERVICES[@]}"; do
         echo "Adding manifest for: $SERVICE"
         echo "" >> "$OUTPUT_FILE"
         echo "# === $SERVICE ===" >> "$OUTPUT_FILE"
-        cat "$MANIFEST_FILE" >> "$OUTPUT_FILE"
+
+        # If registry URL is specified, replace ghcr.io registry references
+        if [ -n "$REGISTRY_URL" ]; then
+            # Replace registry URLs in the manifest
+            sed "s|ghcr.io/[^/]*/[^:]*|${REGISTRY_URL}|g" "$MANIFEST_FILE" >> "$OUTPUT_FILE"
+        else
+            # Use original manifest without modifications
+            cat "$MANIFEST_FILE" >> "$OUTPUT_FILE"
+        fi
+
         echo "" >> "$OUTPUT_FILE"
         echo "---" >> "$OUTPUT_FILE"
         FOUND=$((FOUND + 1))
@@ -80,6 +108,9 @@ echo "Version: $VERSION"
 echo "Output file: $OUTPUT_FILE"
 echo "Services found: $FOUND"
 echo "Services missing: ${#MISSING[@]}"
+if [ -n "$REGISTRY_URL" ]; then
+    echo "Registry: $REGISTRY_URL ($REGISTRY_ENV)"
+fi
 
 if [ ${#MISSING[@]} -gt 0 ]; then
     echo ""

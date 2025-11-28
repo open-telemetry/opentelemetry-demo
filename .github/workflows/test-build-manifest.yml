@@ -84,8 +84,8 @@ jobs:
           echo "### Stitching Manifest" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
 
-          # Run stitch script
-          .github/scripts/stitch-manifests.sh
+          # Run stitch script with dev registry
+          .github/scripts/stitch-manifests.sh dev
 
           MANIFEST_FILE="kubernetes/splunk-astronomy-shop-${{ steps.version.outputs.test_version }}.yaml"
 

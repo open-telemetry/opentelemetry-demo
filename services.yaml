@@ -11,6 +11,16 @@
 #   build: Whether to build containers for this service (true/false)
 #   manifest: Whether to include in manifest stitching (true/false)
 
+# Container Registry Configuration
+# Used by build and manifest generation workflows
+registry:
+  # Production registry - used by production workflows
+  prod: "ghcr.io/splunk/opentelemetry-demo"
+
+  # Development/Test registry - used by test workflows
+  # Update this to your fork's registry
+  dev: "ghcr.io/hagen-p/opentelemetry-demo-splunk"
+
 services:
   - name: accounting
     build: true
