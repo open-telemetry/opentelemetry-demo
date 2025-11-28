@@ -36,7 +36,7 @@ guidance](./CONTRIBUTING.md).
 If you'd like to extend this demo or maintain a fork of it, read our
 [fork guidance](https://opentelemetry.io/docs/demo/forking/).
 
-## Quick start
+## Quick start 
 
 You can be up and running with the demo in a few minutes. Check out the docs for
 your preferred deployment method:
