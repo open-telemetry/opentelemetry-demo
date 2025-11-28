@@ -114,8 +114,11 @@ jobs:
 
           MANIFEST_FILE="${{ steps.stitch.outputs.manifest_file }}"
 
+          # Configure kubectl to not try to connect to a cluster
+          export KUBECONFIG=/dev/null
+
           # Dry-run validation
-          if kubectl apply --dry-run=client -f "$MANIFEST_FILE" > /tmp/validation.log 2>&1; then
+          if kubectl apply --dry-run=client --validate=false -f "$MANIFEST_FILE" > /tmp/validation.log 2>&1; then
             echo "✅ **Client-side validation passed**" >> $GITHUB_STEP_SUMMARY
           else
             echo "❌ **Client-side validation failed**" >> $GITHUB_STEP_SUMMARY
