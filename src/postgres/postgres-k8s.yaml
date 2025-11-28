@@ -1,5 +1,6 @@
 # Kubernetes manifest for postgres (PostgreSQL database)
-# Extracted from opentelemetry-demo.yaml---
+# Extracted from opentelemetry-demo.yaml
+---
 apiVersion: v1
 kind: Service
 metadata:
@@ -18,7 +19,8 @@ spec:
     name: tcp-service
     targetPort: 5432
   selector:
-    opentelemetry.io/name: postgresql---
+    opentelemetry.io/name: postgresql
+---
 apiVersion: apps/v1
 kind: Deployment
 metadata:

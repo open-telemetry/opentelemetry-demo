@@ -1,6 +1,7 @@
 # Kubernetes manifest for flagd-config
 # Auto-generated from opentelemetry-demo.yaml
-# Contains 1 resource(s)---
+# Contains 1 resource(s)
+---
 apiVersion: v1
 kind: ConfigMap
 metadata:

@@ -1,5 +1,6 @@
 ### Expects a deployment of Astronomy Shop Demo in the same cluster
-### Uses checkout service from that demo---
+### Uses checkout service from that demo
+---
 apiVersion: v1
 kind: Service
 metadata:
@@ -18,7 +19,8 @@ spec:
     name: sqlserver
     targetPort: 1433
   selector:
-    opentelemetry.io/name: shop-dc-shim-db---
+    opentelemetry.io/name: shop-dc-shim-db
+---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -66,7 +68,8 @@ spec:
           mountPath: /var/opt/mssql/data
       volumes:
       - name: sqlserver-storage
-        emptyDir: {}---
+        emptyDir: {}
+---
 apiVersion: v1
 kind: Service
 metadata:
@@ -85,7 +88,8 @@ spec:
     name: tcp-service
     targetPort: 8070
   selector:
-    opentelemetry.io/name: shop-dc-shim---
+    opentelemetry.io/name: shop-dc-shim
+---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -165,7 +169,8 @@ spec:
           initialDelaySeconds: 420
           periodSeconds: 30
           timeoutSeconds: 10
-          failureThreshold: 3---
+          failureThreshold: 3
+---
 apiVersion: apps/v1
 kind: Deployment
 metadata:

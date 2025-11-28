@@ -1,6 +1,7 @@
 # Kubernetes manifest for product-catalog-products
 # Auto-generated from opentelemetry-demo.yaml
-# Contains 1 resource(s)---
+# Contains 1 resource(s)
+---
 apiVersion: v1
 kind: ConfigMap
 metadata:

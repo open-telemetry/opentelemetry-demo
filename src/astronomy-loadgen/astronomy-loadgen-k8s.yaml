@@ -1,5 +1,6 @@
 # Kubernetes manifest for astronomy-loadgen
-# Includes scriptfile ConfigMap used by the deployment---
+# Includes scriptfile ConfigMap used by the deployment
+---
 apiVersion: v1
 kind: ConfigMap
 metadata:
@@ -54,7 +55,8 @@ data:
     \      console.log(`\u2705 Cycle #${cycle} finished OK`);\n    } catch (e) {\n\
     \      console.error(`\u274C Cycle #${cycle} failed:`, e && e.stack ? e.stack\
     \ : e);\n    }\n    cycle += 1;\n    await delay(5000); // wait 5 seconds before\
-    \ next cycle\n  }\n})();"---
+    \ next cycle\n  }\n})();"
+---
 apiVersion: apps/v1
 kind: Deployment
 metadata:

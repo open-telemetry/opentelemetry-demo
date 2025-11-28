@@ -1,6 +1,7 @@
 # Kubernetes manifest for image-provider
 # Auto-generated from opentelemetry-demo.yaml
-# Contains 2 resource(s)---
+# Contains 2 resource(s)
+---
 apiVersion: v1
 kind: Service
 metadata:
@@ -19,7 +20,8 @@ spec:
     name: tcp-service
     targetPort: 8081
   selector:
-    opentelemetry.io/name: image-provider---
+    opentelemetry.io/name: image-provider
+---
 apiVersion: apps/v1
 kind: Deployment
 metadata:

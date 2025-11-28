@@ -1,4 +1,4 @@
-name: Test Build Astronomy Shop Manifest
+name: Build Demomanifest - TEST
 
 "on":
   workflow_dispatch:
@@ -21,6 +21,8 @@ name: Test Build Astronomy Shop Manifest
 
 jobs:
   build-test-manifest:
+    # Only run in forks, not in the main splunk/opentelemetry-demo repo
+    if: github.repository != 'splunk/opentelemetry-demo'
     runs-on: ubuntu-latest
     permissions:
       contents: write

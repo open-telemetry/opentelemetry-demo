@@ -1,5 +1,6 @@
 # Kubernetes manifest for flagd-ui
-# Split from combined flagd/flagd-ui deployment---
+# Split from combined flagd/flagd-ui deployment
+---
 apiVersion: v1
 kind: Service
 metadata:
@@ -18,7 +19,8 @@ spec:
     name: tcp-service
     targetPort: 4000
   selector:
-    opentelemetry.io/name: flagd-ui---
+    opentelemetry.io/name: flagd-ui
+---
 apiVersion: apps/v1
 kind: Deployment
 metadata:

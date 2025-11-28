@@ -1,6 +1,7 @@
 # Kubernetes manifest for frontend-proxy
 # Auto-generated from opentelemetry-demo.yaml
-# Contains 3 resource(s)---
+# Contains 3 resource(s)
+---
 apiVersion: v1
 kind: Service
 metadata:
@@ -19,7 +20,8 @@ spec:
     name: tcp-service
     targetPort: 8080
   selector:
-    opentelemetry.io/name: frontend-proxy---
+    opentelemetry.io/name: frontend-proxy
+---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -112,7 +114,8 @@ spec:
           runAsNonRoot: true
           runAsUser: 101
         volumeMounts: null
-      volumes: null---
+      volumes: null
+---
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:

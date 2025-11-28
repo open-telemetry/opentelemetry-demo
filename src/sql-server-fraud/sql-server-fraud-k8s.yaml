@@ -1,6 +1,7 @@
 # Kubernetes manifest for sql-server-fraud
 # Auto-generated from opentelemetry-demo.yaml
-# Contains 2 resource(s)---
+# Contains 2 resource(s)
+---
 apiVersion: v1
 kind: Service
 metadata:
@@ -14,7 +15,8 @@ spec:
     protocol: TCP
     name: tds
   selector:
-    app: sql-server-fraud---
+    app: sql-server-fraud
+---
 apiVersion: apps/v1
 kind: StatefulSet
 metadata:

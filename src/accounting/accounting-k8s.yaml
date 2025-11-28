@@ -1,6 +1,7 @@
 # Kubernetes manifest for accounting
 # Auto-generated from opentelemetry-demo.yaml
-# Contains 1 resource(s)---
+# Contains 1 resource(s)
+---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
