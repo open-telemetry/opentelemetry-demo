@@ -1,8 +1,98 @@
+# GitHub Actions Workflows
+
+This project has workflows for building container images and Kubernetes manifests.
+
+## Workflows Overview
+
+### Image Build Workflows
+- **Build Images - TEST**: Build and push container images to dev registry (forks only)
+
+### Manifest Build Workflows
+- **Build Demo Manifest - TEST**: Generate test manifests with dev registry (forks only)
+- **Build Demo Manifest - PRODUCTION**: Generate production manifests with version bumping (main repo only)
+
+---
+
+# Image Build Workflows
+
+## Build Images - TEST (Development/Forks)
+
+### Overview
+Builds and pushes container images for services with `build: true` in `services.yaml`.
+
+| Feature | Value |
+|---------|-------|
+| **File** | `.github/workflows/test-build-images.yml` |
+| **Name** | Build Images - TEST |
+| **Repository** | Only runs in **forks** |
+| **Registry** | Dev (`ghcr.io/hagen-p/opentelemetry-demo-splunk`) |
+| **Platforms** | Multi-arch (amd64/arm64) or custom per service |
+
+### When to Use
+- Building custom service images in your fork
+- Testing code changes with new container images
+- Development and experimentation
+
+### Configuration
+```yaml
+on: workflow_dispatch
+  inputs:
+    version: 'test'                    # Version tag for images
+    services: 'all'                    # Services to build (or comma-separated list)
+    no_cache: false                    # Disable build cache
+```
+
+### Usage
+1. Go to: `https://github.com/YOUR-USERNAME/opentelemetry-demo-splunk/actions`
+2. Select: **"Build Images - TEST"**
+3. Click: **"Run workflow"**
+4. Configure:
+   - **version**: `test` or `2.1.3-dev` (custom tag)
+   - **services**: `all` or `frontend,cart,checkout` (specific services)
+   - **no_cache**: ☐ Unchecked (use cache)
+
+### Platform Support
+
+**Default behavior:**
+- All services build for: `linux/amd64,linux/arm64`
+
+**Custom platforms per service** (in `services.yaml`):
+```yaml
+services:
+  - name: my-service
+    build: true
+    platform: linux/amd64  # Single architecture only
+```
+
+### Service Selection
+
+**Build all services with `build: true`:**
+```
+services: all
+```
+
+**Build specific services:**
+```
+services: frontend,cart,checkout
+```
+
+### Output
+- **Images pushed to:** `ghcr.io/hagen-p/opentelemetry-demo-splunk/{service}:{version}`
+- **Naming convention:** Most services use `otel-{service}` prefix
+- **Build cache:** GitHub Actions cache for faster subsequent builds
+
+### Example Images
+```
+ghcr.io/hagen-p/opentelemetry-demo-splunk/otel-frontend:test
+ghcr.io/hagen-p/opentelemetry-demo-splunk/otel-cart:test
+ghcr.io/hagen-p/opentelemetry-demo-splunk/otel-checkout:2.1.3-dev
+```
+
+---
+
 # Manifest Build Workflows
 
-This project has two workflows for building Kubernetes manifests: one for testing (dev) and one for production.
-
-## Overview
+## Manifest Workflows Overview
 
 | Feature | Test Workflow | Production Workflow |
 |---------|--------------|---------------------|
