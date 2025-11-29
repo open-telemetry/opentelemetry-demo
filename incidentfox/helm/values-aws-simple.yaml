@@ -1,0 +1,65 @@
+# IncidentFox: Simplified AWS values for OpenTelemetry Demo
+# This uses the upstream chart's structure
+
+# Default settings applied to all components
+default:
+  # Use smaller resource limits for t3.small nodes
+  resources:
+    limits:
+      memory: 400Mi
+    requests:
+      cpu: 50m
+      memory: 128Mi
+
+# Enable frontendProxy for ingress
+frontendProxy:
+  enabled: true
+  service:
+    type: LoadBalancer
+    annotations:
+      service.beta.kubernetes.io/aws-load-balancer-type: "nlb"
+      service.beta.kubernetes.io/aws-load-balancer-scheme: "internet-facing"
+
+# Adjust resource-intensive components
+components:
+  prometheus:
+    resources:
+      limits:
+        memory: 512Mi
+      requests:
+        cpu: 100m
+        memory: 256Mi
+  
+  jaeger:
+    resources:
+      limits:
+        memory: 1Gi
+      requests:
+        cpu: 100m
+        memory: 512Mi
+  
+  kafka:
+    resources:
+      limits:
+        memory: 800Mi
+      requests:
+        cpu: 100m
+        memory: 400Mi
+  
+  loadGenerator:
+    resources:
+      limits:
+        memory: 1Gi
+      requests:
+        cpu: 100m
+        memory: 300Mi
+
+# Enable OpenSearch with reasonable resources
+opentelemetry-collector:
+  resources:
+    limits:
+      memory: 400Mi
+    requests:
+      cpu: 100m
+      memory: 200Mi
+

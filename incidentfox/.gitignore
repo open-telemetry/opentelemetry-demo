@@ -48,3 +48,6 @@ incidentfox-secrets-*.csv
 .DS_Store
 Thumbs.db
 
+*.log
+tfplan
+*.tfplan
