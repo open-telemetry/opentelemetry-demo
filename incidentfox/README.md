@@ -156,23 +156,30 @@ incidentfox/
     └── values-aws-simple.yaml
 ```
 
+## Cost Estimate (AWS)
+
+**Monthly cost (24/7 operation):**
+- EKS Control Plane: $73
+- 8x t3.small nodes: ~$120
+- 2x NAT Gateways: ~$64
+- 3x Network Load Balancers: ~$48
+- EBS Storage (~100GB): ~$10
+- Secrets Manager (2 secrets): ~$1
+- **Total: ~$316/month** (~$10.50/day)
+
+See [docs/aws-deployment.md](docs/aws-deployment.md) for cost optimization strategies.
+
 ## Upstream Compatibility
 
-This fork maintains compatibility with the upstream OpenTelemetry Demo:
+All customizations are in the `incidentfox/` directory:
+- `main` branch: tracks upstream OpenTelemetry Demo
+- `incidentfox` branch: our additions (this)
+- Minimal changes to upstream code
 
-- `main` branch tracks upstream changes
-- `incidentfox` branch contains our customizations
-- All IncidentFox additions are in the `incidentfox/` directory
-- Minimal changes to upstream files (clearly marked with `# IncidentFox:` comments)
-
-To sync with upstream:
+Sync with upstream:
 ```bash
-git checkout main
-git pull upstream main
-git push origin main
-
-git checkout incidentfox
-git rebase main
+git checkout main && git pull upstream main && git push origin main
+git checkout incidentfox && git rebase main
 ```
 
 ## AWS Deployment

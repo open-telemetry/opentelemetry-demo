@@ -815,7 +815,7 @@ metadata:
 
 ---
 
-## 📊 What Got Deployed - Complete Inventory
+## 📊 Infrastructure Components Summary
 
 ### AWS Resources (45 total)
 
@@ -987,61 +987,29 @@ Incident simulation controller
 
 ---
 
-## 🧪 Testing the Deployment
+## 🎯 Design Principles
 
-### 1. Verify Infrastructure
+**1. Separation of Concerns**
+- Infrastructure (Terraform) vs Application (Helm)
+- System nodes vs Application nodes
+- Public vs Private subnets
 
-```bash
-# Check Terraform state
-cd incidentfox/terraform
-terraform output
+**2. Security by Default**
+- No secrets in Git
+- IRSA over long-lived credentials
+- Private subnets for workloads
+- Least privilege IAM policies
 
-# Check AWS resources
-aws eks describe-cluster --name incidentfox-demo --region us-west-2
-aws ec2 describe-instances --filters "Name=tag:alpha.eksctl.io/cluster-name,Values=incidentfox-demo"
-```
+**3. High Availability**
+- Multi-AZ deployment
+- Multiple NAT Gateways
+- Distributed node placement
+- Pod anti-affinity rules
 
-### 2. Verify Kubernetes
-
-```bash
-# All nodes Ready?
-kubectl get nodes
-
-# All pods Running?
-kubectl get pods -n otel-demo
-
-# Services exposed?
-kubectl get svc -n otel-demo
-```
-
-### 3. Verify Observability
-
-```bash
-# Prometheus has targets
-curl "http://<prometheus-url>/api/v1/targets" | jq '.data.activeTargets | length'
-
-# Jaeger has services
-kubectl port-forward -n otel-demo svc/jaeger-query 16686:16686 &
-curl "http://localhost:16686/api/services" | jq '.data | length'
-
-# Grafana accessible
-curl -s http://<grafana-url>/grafana/api/health
-```
-
-### 4. Test Incident Scenario
-
-```bash
-# Trigger incident
-./scripts/trigger-incident.sh high-cpu
-
-# Verify in metrics
-curl "http://<prometheus-url>/api/v1/query?query=rate(process_cpu_seconds_total{service_name=\"ad\"}[1m])"
-
-# Should see CPU increase
-
-# Clear incident
-./scripts/trigger-incident.sh clear-all
-```
+**4. Upstream Compatibility**
+- All customizations in `incidentfox/` directory
+- Minimal changes to demo code
+- Easy to rebase from upstream
 
 ---
 
@@ -1068,62 +1036,12 @@ curl "http://<prometheus-url>/api/v1/query?query=rate(process_cpu_seconds_total{
 
 ---
 
-## 🎓 Common Operations
-
-### Get Current Status
-```bash
-kubectl get all -n otel-demo
-```
-
-### Scale a Service
-```bash
-kubectl scale deployment frontend -n otel-demo --replicas=3
-```
-
-### View Logs
-```bash
-kubectl logs -n otel-demo -l app.kubernetes.io/component=frontend --tail=100
-```
-
-### Update a Secret
-```bash
-aws secretsmanager update-secret \
-  --secret-id incidentfox-demo/postgres \
-  --secret-string '{"username":"otelu","password":"newpass"}'
-```
-
-### Trigger Incident
-```bash
-./scripts/trigger-incident.sh service-failure 50%
-```
-
-### Export Secrets
-```bash
-./scripts/export-secrets-to-1password.sh
-```
-
 ---
 
-## ✅ Verification Checklist
+## Further Reading
 
-Everything working:
-- [x] VPC created
-- [x] EKS cluster operational
-- [x] 8 nodes Ready
-- [x] 25 pods Running
-- [x] Secrets in AWS Secrets Manager
-- [x] LoadBalancers provisioned
-- [x] Frontend accessible
-- [x] Prometheus accessible
-- [x] Grafana accessible
-- [x] Secrets exportable
-
-Ready for:
-- [ ] Connect IncidentFox agent
-- [ ] Trigger test incidents
-- [ ] Monitor agent responses
-
----
-
-**Ready for the detailed walkthrough? Let me know which parts you want to dive deeper into!**
+- [AWS Deployment Guide](aws-deployment.md) - Deployment steps, operations, troubleshooting
+- [Secrets Management](secrets.md) - Complete secrets guide
+- [Agent Integration](agent-integration.md) - Connect your AI agent
+- [Incident Scenarios](incident-scenarios.md) - Test failures
 

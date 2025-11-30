@@ -118,49 +118,61 @@ kubectl patch svc prometheus -n otel-demo -p '{"spec":{"type":"LoadBalancer"}}'
 kubectl patch svc grafana -n otel-demo -p '{"spec":{"type":"LoadBalancer"}}'
 ```
 
-## Infrastructure Components
+## What Gets Deployed
 
-### 1. VPC Configuration
+### AWS Resources (45 total)
 
-- **CIDR:** 10.0.0.0/16
-- **Public Subnets:** 2 AZs for ALB
-- **Private Subnets:** 2 AZs for EKS nodes
-- **NAT Gateway:** For private subnet internet access
+**Network (15):**
+- 1 VPC (10.0.0.0/16)
+- 2 Public subnets (for LoadBalancers)
+- 2 Private subnets (for EKS nodes)
+- 1 Internet Gateway
+- 2 NAT Gateways
+- 2 Elastic IPs
+- 3 Route tables
+- 4 Route table associations
 
-### 2. EKS Cluster
+**Compute (11):**
+- 1 EKS cluster (Kubernetes 1.28)
+- 2 Node groups (system + application)
+- 8 EC2 instances (t3.small)
 
-- **Version:** 1.28+
-- **Node Groups:**
-  - **System nodes:** t3.medium (2-4 nodes) - Control plane, monitoring
-  - **App nodes:** t3.large (3-10 nodes) - Demo services
-- **Add-ons:**
-  - VPC CNI
-  - CoreDNS
-  - kube-proxy
-  - EBS CSI driver
+**IAM (8):**
+- 2 IAM roles (cluster, nodes)
+- 4 Policy attachments
+- 1 OIDC provider
+- 1 IRSA role (external-secrets)
 
-### 3. Load Balancer
+**Secrets (4):**
+- 2 Secrets in AWS Secrets Manager
+- 2 Secret versions (with random passwords)
 
-- **Type:** Application Load Balancer (ALB)
-- **Ingress Controller:** AWS ALB Controller
-- **SSL/TLS:** ACM certificate (optional)
+**Add-ons (4):**
+- VPC CNI (networking)
+- CoreDNS (DNS)
+- Kube-proxy (service routing)
+- EBS CSI Driver (persistent storage)
 
-### 4. Persistent Storage
+**Load Balancers (3):**
+- Frontend NLB
+- Prometheus NLB
+- Grafana NLB
 
-- **StorageClass:** gp3 EBS volumes
-- **Used for:**
-  - Prometheus data
-  - OpenSearch indices
-  - Grafana dashboards
+### Kubernetes Resources (100+)
 
-### 5. IAM Roles
+**Services (25 pods):**
+- 11 E-commerce services (frontend, cart, checkout, etc.)
+- 3 Backend services (accounting, fraud-detection, image-provider)
+- 4 Infrastructure (kafka, postgresql, valkey, flagd)
+- 6 Observability (prometheus, jaeger, grafana, opensearch, collector, load-generator)
+- 1 Proxy (envoy)
 
-- **EKS Cluster Role:** For cluster management
-- **Node Role:** For EC2 instances
-- **IRSA Roles:** Service accounts for:
-  - ALB Controller
-  - EBS CSI Driver
-  - CloudWatch (optional)
+**System Components (32 pods):**
+- VPC CNI (8 daemonset pods)
+- EBS CSI (2 controllers + 8 node pods)
+- Kube-proxy (8 daemonset pods)
+- CoreDNS (2 replicas)
+- External Secrets (3 pods)
 
 ## Terraform Structure (Planned)
 
