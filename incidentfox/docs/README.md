@@ -8,21 +8,6 @@ Complete documentation for the IncidentFox AI SRE lab environment.
 
 Each document covers a specific topic with no overlap (MECE):
 
-### **[architecture.md](architecture.md)** - System Design
-**What it covers:**
-- Complete directory structure
-- High-level architecture diagrams
-- How each component works (Terraform modules, scripts, etc.)
-- Deep dives on NAT Gateway, Internet Gateway, EKS control plane
-- VPC CNI, CoreDNS, Kube-proxy, EBS CSI Driver explained
-- IRSA (IAM Roles for Service Accounts) complete guide
-- Deployment flow step-by-step
-- Design decisions explained
-
-**Read this to:** Understand how the entire system works
-
----
-
 ### **[aws-deployment.md](aws-deployment.md)** - AWS Production Deployment
 **What it covers:**
 - Deploying to AWS EKS
@@ -111,9 +96,9 @@ Each document covers a specific topic with no overlap (MECE):
 
 ### Path 3: Understanding the System
 ```
-1. README.md (overview)
-2. architecture.md (deep technical dive)
-3. secrets.md (security model)
+1. README.md (complete overview + architecture)
+2. secrets.md (security model)
+3. aws-deployment.md (how deployment works)
 ```
 
 ---
@@ -124,12 +109,11 @@ Each document has a clear scope with no overlap:
 
 | Document | Scope | Excludes |
 |----------|-------|----------|
-| **architecture.md** | How system works internally | Deployment steps, operations |
-| **aws-deployment.md** | Deploying and operating on AWS | Local setup, architecture deep-dives |
-| **local-setup.md** | Running locally | AWS, production concerns |
-| **secrets.md** | Everything about secrets | Other architecture topics |
-| **agent-integration.md** | Connecting external agent | Internal architecture, deployment |
-| **incident-scenarios.md** | Triggering failures | How failures work internally |
+| **aws-deployment.md** | Deploy, operate, troubleshoot AWS | Local setup, agent usage |
+| **local-setup.md** | Run locally (Docker/k8s) | AWS, production |
+| **secrets.md** | Secret management & security | Other topics |
+| **agent-integration.md** | Connect external AI agent | Deployment, incidents |
+| **incident-scenarios.md** | Trigger & test failures | Architecture, deployment |
 
 ---
 
@@ -137,9 +121,9 @@ Each document has a clear scope with no overlap:
 
 **I want to...**
 
+- **Understand the system** → ../README.md (main README)
 - **Deploy to AWS** → aws-deployment.md
 - **Run locally** → local-setup.md
-- **Understand how it works** → architecture.md
 - **Manage passwords** → secrets.md
 - **Connect my agent** → agent-integration.md
 - **Test incidents** → incident-scenarios.md

@@ -45,35 +45,125 @@ See [docs/local-setup.md](docs/local-setup.md) for detailed instructions.
 
 ## Architecture
 
-The demo consists of 15+ microservices implementing an e-commerce application ("Astronomy Shop"):
+### High-Level System Design
 
-**Core Services:**
-- `frontend` - Next.js web application
-- `checkout` - Order processing (Go)
-- `cart` - Shopping cart (C#)
-- `product-catalog` - Product database (Go)
-- `recommendation` - ML recommendations (Python)
-- `payment` - Payment processing (Node.js)
-- `shipping` - Shipping calculation (Rust)
-- `ad` - Advertisement service (Java)
-- `email` - Email notifications (Ruby)
-- `accounting` - Order accounting (C#)
-- `fraud-detection` - Fraud analysis (Kotlin)
-- `currency` - Currency conversion (C++)
-- `quote` - Shipping quotes (PHP)
+```
+┌─────────────────────────────────────────────────────────────┐
+│                      YOUR LAPTOP                             │
+│                                                              │
+│  incidentfox/scripts/build-all.sh                           │
+│              ↓                                               │
+│         Terraform deploys:                                   │
+└──────────────────────────────────────────────────────────────┘
+                     ↓
+┌─────────────────────────────────────────────────────────────┐
+│                      AWS CLOUD                               │
+│                                                              │
+│  ┌────────────────────────────────────────────────────────┐ │
+│  │  VPC (10.0.0.0/16)                                     │ │
+│  │                                                          │ │
+│  │  ┌─────────────┐         ┌─────────────┐              │ │
+│  │  │   Public    │         │   Private   │              │ │
+│  │  │  Subnets    │         │  Subnets    │              │ │
+│  │  │  (2 AZs)    │         │  (2 AZs)    │              │ │
+│  │  │             │         │             │              │ │
+│  │  │ ┌─────┐     │         │  ┌────────┐ │              │ │
+│  │  │ │ NLB │←────┼─────────┼─→│  EKS   │ │              │ │
+│  │  │ └─────┘     │         │  │ Nodes  │ │              │ │
+│  │  │             │         │  │  (8x)  │ │              │ │
+│  │  └─────────────┘         │  └────────┘ │              │ │
+│  │                           │             │              │ │
+│  │                           │  25 services│              │ │
+│  │                           └─────────────┘              │ │
+│  └────────────────────────────────────────────────────────┘ │
+│                                                              │
+│  ┌────────────────────────────────────────────────────────┐ │
+│  │  AWS Secrets Manager                                   │ │
+│  │  • incidentfox-demo/postgres                           │ │
+│  │  • incidentfox-demo/grafana                            │ │
+│  └────────────────────────────────────────────────────────┘ │
+└─────────────────────────────────────────────────────────────┘
+```
+
+### Services Overview
+
+**15+ Microservices:**
+- `frontend`, `cart`, `checkout`, `payment` - E-commerce
+- `product-catalog`, `recommendation` - Product management
+- `shipping`, `ad`, `email`, `quote`, `currency` - Supporting services
+- `accounting`, `fraud-detection` - Backend processing
 
 **Observability Stack:**
-- `otel-collector` - OpenTelemetry Collector (metrics, logs, traces)
-- `prometheus` - Metrics storage and querying
-- `jaeger` - Distributed tracing backend
-- `opensearch` - Log storage and search
-- `grafana` - Visualization dashboards
+- `prometheus` - Metrics storage
+- `jaeger` - Distributed tracing
+- `opensearch` - Log storage
+- `grafana` - Visualization
+- `otel-collector` - Telemetry aggregation
 
 **Infrastructure:**
-- `kafka` - Message queue for async processing
-- `postgresql` - Database for accounting/reviews
-- `valkey` - Redis-compatible cache for cart
-- `flagd` - Feature flag service for triggering failures
+- `kafka` - Message queue
+- `postgresql` - Database
+- `valkey` - Cache
+- `flagd` - Feature flags
+
+### Key Infrastructure Components
+
+**Terraform Modules:**
+- `modules/vpc/` - VPC with public/private subnets, NAT gateways
+- `modules/eks/` - EKS cluster, node groups, OIDC for IRSA
+- `modules/secrets/` - AWS Secrets Manager with random passwords
+- `modules/irsa/` - IAM roles for Kubernetes ServiceAccounts
+
+**Network Design:**
+- **Public subnets** - LoadBalancers (exposed to internet via IGW)
+- **Private subnets** - EKS nodes (outbound only via NAT)
+- **Multi-AZ** - High availability (2 availability zones)
+
+**Compute:**
+- **2 node groups** - System (2x t3.small) vs Application (6x t3.small)
+- **Why separate?** - Isolate stable monitoring from variable workloads
+
+**Security:**
+- **IRSA** - Pods get temporary AWS credentials (no long-lived keys)
+- **AWS Secrets Manager** - Centralized, encrypted secret storage
+- **Private subnets** - Nodes not directly accessible from internet
+
+### Key Components
+
+**Master Scripts:**
+- `scripts/build-all.sh` - One-command deploy/destroy/status
+- `scripts/trigger-incident.sh` - Trigger any of 12 failure scenarios  
+- `scripts/export-secrets-to-1password.sh` - Backup secrets
+
+**Terraform Modules:**
+- `modules/vpc/` - VPC with public/private subnets, NAT gateways
+- `modules/eks/` - EKS cluster, node groups, OIDC
+- `modules/secrets/` - AWS Secrets Manager with random passwords
+- `modules/irsa/` - IAM roles for Kubernetes pods
+
+**Helm Values:**
+- `helm/values-aws-simple.yaml` - Resource limits for t3.small nodes
+
+### Design Decisions
+
+**Network: Public/Private Subnet Split**
+- Public subnets: LoadBalancers (Internet Gateway for inbound)
+- Private subnets: EKS nodes (NAT Gateway for outbound only)
+- Multi-AZ: High availability across 2 zones
+
+**Compute: Two Node Groups**
+- System nodes (2x t3.small): Stable monitoring/DNS workloads
+- Application nodes (6x t3.small): Demo services, can scale independently
+
+**Instance Size: t3.small**
+- Constraint: AWS Free Tier restriction
+- Solution: More smaller nodes (better distribution)
+- Total: 8 nodes = 16 vCPU, 16GB RAM
+
+**Secrets: External Secrets Operator**
+- AWS Secrets Manager is source of truth
+- Automatic sync to Kubernetes (no manual copying)
+- Rotation-ready architecture
 
 ## Observability Endpoints
 
@@ -118,13 +208,14 @@ See [docs/incident-scenarios.md](docs/incident-scenarios.md) for complete catalo
 
 | Document | Purpose |
 |----------|---------|
-| **README.md** | This file - overview and quick start |
-| **[docs/architecture.md](docs/architecture.md)** | Complete system architecture, how everything works |
-| **[docs/aws-deployment.md](docs/aws-deployment.md)** | Deploy to AWS EKS (production) |
+| **README.md** | This file - complete overview, architecture, components |
+| **[docs/aws-deployment.md](docs/aws-deployment.md)** | Deploy to AWS EKS and operate |
 | **[docs/local-setup.md](docs/local-setup.md)** | Run locally with Docker or kind |
 | **[docs/secrets.md](docs/secrets.md)** | Secrets management and security |
 | **[docs/agent-integration.md](docs/agent-integration.md)** | Connect your AI agent |
 | **[docs/incident-scenarios.md](docs/incident-scenarios.md)** | Trigger and test incidents |
+
+See [docs/README.md](docs/README.md) for detailed navigation guide.
 
 ## Repository Structure
 
