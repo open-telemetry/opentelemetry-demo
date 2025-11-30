@@ -41,7 +41,7 @@ kubectl apply -f kubernetes/opentelemetry-demo.yaml
 kubectl port-forward -n otel-demo svc/frontend-proxy 8080:8080
 ```
 
-For detailed setup instructions, see [`docs/local-setup.md`](docs/local-setup.md).
+See [docs/local-setup.md](docs/local-setup.md) for detailed instructions.
 
 ## Architecture
 
@@ -89,7 +89,7 @@ All endpoints documented in [`agent-config/endpoints.yaml`](agent-config/endpoin
 | OTel Collector (OTLP/gRPC) | `http://localhost:4317` | Telemetry ingest |
 | OTel Collector (OTLP/HTTP) | `http://localhost:4318` | Telemetry ingest |
 
-See [`docs/agent-integration.md`](docs/agent-integration.md) for details on connecting the IncidentFox agent.
+See [docs/agent-integration.md](docs/agent-integration.md) for connection details.
 
 ## Incident Scenarios
 
@@ -112,27 +112,48 @@ The demo includes built-in failure scenarios controlled via feature flags. Use o
 - `cache-failure` - Recommendation cache errors
 - `catalog-failure` - Product catalog errors
 
-See [`docs/incident-scenarios.md`](docs/incident-scenarios.md) for detailed descriptions and expected behaviors.
+See [docs/incident-scenarios.md](docs/incident-scenarios.md) for complete catalog.
+
+## Documentation
+
+| Document | Purpose |
+|----------|---------|
+| **README.md** | This file - overview and quick start |
+| **[docs/architecture.md](docs/architecture.md)** | Complete system architecture, how everything works |
+| **[docs/aws-deployment.md](docs/aws-deployment.md)** | Deploy to AWS EKS (production) |
+| **[docs/local-setup.md](docs/local-setup.md)** | Run locally with Docker or kind |
+| **[docs/secrets.md](docs/secrets.md)** | Secrets management and security |
+| **[docs/agent-integration.md](docs/agent-integration.md)** | Connect your AI agent |
+| **[docs/incident-scenarios.md](docs/incident-scenarios.md)** | Trigger and test incidents |
 
 ## Repository Structure
 
 ```
 incidentfox/
-├── README.md                    # This file
-├── docs/
-│   ├── local-setup.md          # Detailed local setup
-│   ├── aws-deployment.md       # AWS deployment guide
-│   ├── agent-integration.md    # Agent connection guide
-│   └── incident-scenarios.md   # Scenario catalog
+├── README.md                        # Overview and navigation
+├── docs/                            # All documentation
+│   ├── architecture.md             # System design and how it works
+│   ├── aws-deployment.md           # AWS EKS deployment
+│   ├── local-setup.md              # Docker/k8s local setup
+│   ├── secrets.md                  # Secrets management
+│   ├── agent-integration.md        # Connect AI agent
+│   └── incident-scenarios.md       # Incident catalog
 ├── scripts/
-│   ├── trigger-incident.sh     # Master incident script
-│   ├── scenarios/              # Individual scenario scripts
-│   └── load/                   # Load generation scripts
+│   ├── build-all.sh                # Master deployment script
+│   ├── trigger-incident.sh         # Incident trigger
+│   ├── export-secrets-to-1password.sh
+│   ├── scenarios/                  # 12 incident scenarios
+│   └── load/                       # Load generation
 ├── agent-config/
-│   ├── example-config.yaml     # Example agent config
-│   └── endpoints.yaml          # All observability endpoints
-├── terraform/                  # AWS infrastructure code
-└── helm/                       # Kubernetes Helm charts
+│   ├── endpoints.yaml              # Observability endpoints
+│   └── example-config.yaml         # Agent config template
+├── terraform/                      # AWS infrastructure (Terraform)
+│   ├── main.tf
+│   ├── variables.tf
+│   ├── terraform.tfvars.example
+│   └── modules/                    # VPC, EKS, Secrets, IRSA
+└── helm/                           # Kubernetes deployment (Helm)
+    └── values-aws-simple.yaml
 ```
 
 ## Upstream Compatibility
@@ -156,7 +177,12 @@ git rebase main
 
 ## AWS Deployment
 
-The demo can be deployed to AWS EKS for production-grade testing. See [`docs/aws-deployment.md`](docs/aws-deployment.md) and the [`terraform/`](terraform/) directory.
+```bash
+cd incidentfox
+./scripts/build-all.sh deploy
+```
+
+Deploys complete lab to AWS EKS with VPC, secrets management, and all 25 services. See [docs/aws-deployment.md](docs/aws-deployment.md) for details.
 
 ## Development Workflow
 

@@ -1,8 +1,21 @@
 # AWS Deployment Guide
 
-This guide covers deploying the OpenTelemetry Demo to AWS EKS for production-grade testing of the IncidentFox agent.
+Complete guide for deploying the IncidentFox lab to AWS EKS with production-grade infrastructure.
 
-> **Note:** The Terraform and Helm configurations are currently under development. This document outlines the planned architecture and will be updated as implementation progresses.
+## Quick Start
+
+```bash
+# One command deployment
+cd incidentfox
+./scripts/build-all.sh deploy
+```
+
+This deploys:
+- VPC with public/private subnets
+- EKS cluster with managed node groups  
+- AWS Secrets Manager with generated passwords
+- OpenTelemetry Demo (25 microservices)
+- LoadBalancers for external access
 
 ## Architecture Overview
 
@@ -38,34 +51,71 @@ This guide covers deploying the OpenTelemetry Demo to AWS EKS for production-gra
 
 ## Prerequisites
 
-- **AWS Account** with appropriate permissions
-- **AWS CLI** (v2.x) configured
-- **Terraform** (1.5+)
-- **kubectl** (1.27+)
-- **Helm** (3.12+)
-- **eksctl** (optional, for quick cluster setup)
+**Required Tools:**
+- AWS CLI v2+
+- Terraform 1.5+
+- kubectl 1.27+
+- Helm 3.12+
+- jq
 
-## Quick Start (Coming Soon)
+**AWS Permissions:**
+- VPC creation
+- EKS cluster management
+- IAM role/policy creation
+- Secrets Manager access
+- EC2 instance management
+
+**Install:**
+```bash
+# macOS
+brew install awscli terraform kubectl helm jq
+
+# Configure AWS
+aws configure --profile playground
+export AWS_PROFILE=playground
+```
+
+## Deployment Steps
+
+### Option 1: Automated (Recommended)
 
 ```bash
-# Navigate to Terraform directory
+cd incidentfox
+
+# Configure (first time only)
+cd terraform
+cp terraform.tfvars.example terraform.tfvars
+# Edit terraform.tfvars with your settings
+cd ..
+
+# Deploy everything
+./scripts/build-all.sh deploy
+```
+
+### Option 2: Manual
+
+```bash
+# 1. Deploy infrastructure
 cd incidentfox/terraform
-
-# Initialize Terraform
 terraform init
+terraform plan -out=tfplan
+terraform apply tfplan
 
-# Review the plan
-terraform plan
-
-# Deploy infrastructure
-terraform apply
-
-# Configure kubectl
+# 2. Configure kubectl
 aws eks update-kubeconfig --name incidentfox-demo --region us-west-2
 
-# Deploy demo via Helm
+# 3. Deploy demo
 cd ../helm
-helm install otel-demo ./opentelemetry-demo -n otel-demo --create-namespace
+helm repo add open-telemetry https://open-telemetry.github.io/opentelemetry-helm-charts
+helm upgrade --install otel-demo open-telemetry/opentelemetry-demo \
+  --namespace otel-demo \
+  --create-namespace \
+  --wait
+
+# 4. Expose services
+kubectl patch svc frontend-proxy -n otel-demo -p '{"spec":{"type":"LoadBalancer"}}'
+kubectl patch svc prometheus -n otel-demo -p '{"spec":{"type":"LoadBalancer"}}'
+kubectl patch svc grafana -n otel-demo -p '{"spec":{"type":"LoadBalancer"}}'
 ```
 
 ## Infrastructure Components
