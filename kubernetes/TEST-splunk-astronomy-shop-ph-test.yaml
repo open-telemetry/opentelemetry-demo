@@ -1,6 +1,6 @@
 # Splunk Astronomy Shop Kubernetes Manifest
-# Version: ph-test
-# Generated on: 2025-12-01T13:11:28Z
+# Version: P-hagen-test-1
+# Generated on: 2025-12-01T12:42:14Z
 #
 # This manifest combines all service deployments for the Splunk Astronomy Shop
 # Services are defined in services.yaml
@@ -30,7 +30,7 @@ metadata:
   name: opentelemetry-demo
   namespace: astronomy-shop
   labels:
-    app.kubernetes.io/version: ph-test
+    app.kubernetes.io/version: P-hagen-test-1
     app.kubernetes.io/part-of: opentelemetry-demo
 
 ---
@@ -48,7 +48,7 @@ metadata:
     opentelemetry.io/name: accounting
     app.kubernetes.io/component: accounting
     app.kubernetes.io/name: accounting
-    app.kubernetes.io/version: ph-test
+    app.kubernetes.io/version: P-hagen-test-1
     app.kubernetes.io/part-of: opentelemetry-demo
   namespace: astronomy-shop
 spec:
@@ -92,7 +92,7 @@ spec:
         - name: OTEL_DOTNET_AUTO_TRACES_ENTITYFRAMEWORKCORE_INSTRUMENTATION_ENABLED
           value: 'false'
         - name: OTEL_RESOURCE_ATTRIBUTES
-          value: service.name=$(OTEL_SERVICE_NAME),service.namespace=opentelemetry-demo,service.version=ph-test,service.kafka=spanlink
+          value: service.name=$(OTEL_SERVICE_NAME),service.namespace=opentelemetry-demo,service.version=P-hagen-test-1,service.kafka=spanlink
         - name: SPLUNK_PROFILER_ENABLED
           value: 'true'
         - name: SPLUNK_PROFILER_MEMORY_ENABLED
@@ -125,7 +125,7 @@ metadata:
     opentelemetry.io/name: ad
     app.kubernetes.io/component: ad
     app.kubernetes.io/name: ad
-    app.kubernetes.io/version: ph-test
+    app.kubernetes.io/version: P-hagen-test-1
     app.kubernetes.io/part-of: opentelemetry-demo
   namespace: astronomy-shop
 spec:
@@ -145,7 +145,7 @@ metadata:
     opentelemetry.io/name: ad
     app.kubernetes.io/component: ad
     app.kubernetes.io/name: ad
-    app.kubernetes.io/version: ph-test
+    app.kubernetes.io/version: P-hagen-test-1
     app.kubernetes.io/part-of: opentelemetry-demo
   namespace: astronomy-shop
 spec:
@@ -192,7 +192,7 @@ spec:
         - name: OTEL_EXPORTER_OTLP_ENDPOINT
           value: http://$(OTEL_COLLECTOR_NAME):4318
         - name: OTEL_RESOURCE_ATTRIBUTES
-          value: service.name=$(OTEL_SERVICE_NAME),service.namespace=opentelemetry-demo,service.version=ph-test
+          value: service.name=$(OTEL_SERVICE_NAME),service.namespace=opentelemetry-demo,service.version=P-hagen-test-1
         - name: SPLUNK_PROFILER_LOGS_ENDPOINT
           value: http://$(OTEL_COLLECTOR_NAME):4318/v1/logs
         - name: SPLUNK_PROFILER_ENABLED
@@ -402,7 +402,7 @@ metadata:
     opentelemetry.io/name: cart
     app.kubernetes.io/component: cart
     app.kubernetes.io/name: cart
-    app.kubernetes.io/version: ph-test
+    app.kubernetes.io/version: P-hagen-test-1
     app.kubernetes.io/part-of: opentelemetry-demo
   namespace: astronomy-shop
 spec:
@@ -422,7 +422,7 @@ metadata:
     opentelemetry.io/name: cart
     app.kubernetes.io/component: cart
     app.kubernetes.io/name: cart
-    app.kubernetes.io/version: ph-test
+    app.kubernetes.io/version: P-hagen-test-1
     app.kubernetes.io/part-of: opentelemetry-demo
   namespace: astronomy-shop
 spec:
@@ -473,7 +473,7 @@ spec:
         - name: OTEL_EXPORTER_OTLP_ENDPOINT
           value: http://$(OTEL_COLLECTOR_NAME):4318
         - name: OTEL_RESOURCE_ATTRIBUTES
-          value: service.name=$(OTEL_SERVICE_NAME),service.namespace=opentelemetry-demo,service.version=ph-test,service.kafka=no
+          value: service.name=$(OTEL_SERVICE_NAME),service.namespace=opentelemetry-demo,service.version=P-hagen-test-1,service.kafka=no
         - name: SPLUNK_PROFILER_LOGS_ENDPOINT
           value: http://$(OTEL_COLLECTOR_NAME):4318/v1/logs
         - name: SPLUNK_PROFILER_ENABLED
@@ -509,7 +509,7 @@ metadata:
     opentelemetry.io/name: checkout
     app.kubernetes.io/component: checkout
     app.kubernetes.io/name: checkout
-    app.kubernetes.io/version: ph-test
+    app.kubernetes.io/version: P-hagen-test-1
     app.kubernetes.io/part-of: opentelemetry-demo
   namespace: astronomy-shop
 spec:
@@ -529,7 +529,7 @@ metadata:
     opentelemetry.io/name: checkout
     app.kubernetes.io/component: checkout
     app.kubernetes.io/name: checkout
-    app.kubernetes.io/version: ph-test
+    app.kubernetes.io/version: P-hagen-test-1
     app.kubernetes.io/part-of: opentelemetry-demo
   namespace: astronomy-shop
 spec:
@@ -592,7 +592,7 @@ spec:
         - name: GOMEMLIMIT
           value: 16MiB
         - name: OTEL_RESOURCE_ATTRIBUTES
-          value: service.name=$(OTEL_SERVICE_NAME),service.namespace=opentelemetry-demo,service.version=ph-test,service.kafka=no
+          value: service.name=$(OTEL_SERVICE_NAME),service.namespace=opentelemetry-demo,service.version=P-hagen-test-1,service.kafka=no
         resources:
           limits:
             memory: 20Mi
@@ -621,7 +621,7 @@ metadata:
     opentelemetry.io/name: currency
     app.kubernetes.io/component: currency
     app.kubernetes.io/name: currency
-    app.kubernetes.io/version: ph-test
+    app.kubernetes.io/version: P-hagen-test-1
     app.kubernetes.io/part-of: opentelemetry-demo
   namespace: astronomy-shop
 spec:
@@ -641,7 +641,7 @@ metadata:
     opentelemetry.io/name: currency
     app.kubernetes.io/component: currency
     app.kubernetes.io/name: currency
-    app.kubernetes.io/version: ph-test
+    app.kubernetes.io/version: P-hagen-test-1
     app.kubernetes.io/part-of: opentelemetry-demo
   namespace: astronomy-shop
 spec:
@@ -686,7 +686,7 @@ spec:
         - name: VERSION
           value: 2.1.3
         - name: OTEL_RESOURCE_ATTRIBUTES
-          value: service.name=$(OTEL_SERVICE_NAME),service.namespace=opentelemetry-demo,service.version=ph-test,service.kafka=no
+          value: service.name=$(OTEL_SERVICE_NAME),service.namespace=opentelemetry-demo,service.version=P-hagen-test-1,service.kafka=no
         resources:
           limits:
             memory: 20Mi
@@ -708,7 +708,7 @@ metadata:
     opentelemetry.io/name: email
     app.kubernetes.io/component: email
     app.kubernetes.io/name: email
-    app.kubernetes.io/version: ph-test
+    app.kubernetes.io/version: P-hagen-test-1
     app.kubernetes.io/part-of: opentelemetry-demo
   namespace: astronomy-shop
 spec:
@@ -728,7 +728,7 @@ metadata:
     opentelemetry.io/name: email
     app.kubernetes.io/component: email
     app.kubernetes.io/name: email
-    app.kubernetes.io/version: ph-test
+    app.kubernetes.io/version: P-hagen-test-1
     app.kubernetes.io/part-of: opentelemetry-demo
   namespace: astronomy-shop
 spec:
@@ -777,7 +777,7 @@ spec:
         - name: FLAGD_PORT
           value: '8013'
         - name: OTEL_RESOURCE_ATTRIBUTES
-          value: service.name=$(OTEL_SERVICE_NAME),service.namespace=opentelemetry-demo,service.version=ph-test,service.kafka=no
+          value: service.name=$(OTEL_SERVICE_NAME),service.namespace=opentelemetry-demo,service.version=P-hagen-test-1,service.kafka=no
         resources:
           limits:
             memory: 100Mi
@@ -798,7 +798,7 @@ metadata:
     opentelemetry.io/name: flagd
     app.kubernetes.io/component: flagd
     app.kubernetes.io/name: flagd
-    app.kubernetes.io/version: ph-test
+    app.kubernetes.io/version: P-hagen-test-1
     app.kubernetes.io/part-of: opentelemetry-demo
   namespace: astronomy-shop
 spec:
@@ -821,7 +821,7 @@ metadata:
     opentelemetry.io/name: flagd
     app.kubernetes.io/component: flagd
     app.kubernetes.io/name: flagd
-    app.kubernetes.io/version: ph-test
+    app.kubernetes.io/version: P-hagen-test-1
     app.kubernetes.io/part-of: opentelemetry-demo
   namespace: astronomy-shop
 spec:
@@ -896,7 +896,7 @@ kind: ConfigMap
 metadata:
   name: flagd-config
   labels:
-    app.kubernetes.io/version: ph-test
+    app.kubernetes.io/version: P-hagen-test-1
     app.kubernetes.io/part-of: opentelemetry-demo
   namespace: astronomy-shop
 data:
@@ -1087,7 +1087,7 @@ metadata:
     opentelemetry.io/name: flagd-ui
     app.kubernetes.io/component: flagd-ui
     app.kubernetes.io/name: flagd-ui
-    app.kubernetes.io/version: ph-test
+    app.kubernetes.io/version: P-hagen-test-1
     app.kubernetes.io/part-of: opentelemetry-demo
   namespace: astronomy-shop
 spec:
@@ -1107,7 +1107,7 @@ metadata:
     opentelemetry.io/name: flagd-ui
     app.kubernetes.io/component: flagd-ui
     app.kubernetes.io/name: flagd-ui
-    app.kubernetes.io/version: ph-test
+    app.kubernetes.io/version: P-hagen-test-1
     app.kubernetes.io/part-of: opentelemetry-demo
   namespace: astronomy-shop
 spec:
@@ -1190,7 +1190,7 @@ metadata:
     opentelemetry.io/name: fraud-detection
     app.kubernetes.io/component: fraud-detection
     app.kubernetes.io/name: fraud-detection
-    app.kubernetes.io/version: ph-test
+    app.kubernetes.io/version: P-hagen-test-1
     app.kubernetes.io/part-of: opentelemetry-demo
   namespace: astronomy-shop
 spec:
@@ -1240,7 +1240,7 @@ spec:
         - name: OTEL_INSTRUMENTATION_SPLUNK_JDBC_ENABLED
           value: 'true'
         - name: OTEL_RESOURCE_ATTRIBUTES
-          value: service.name=$(OTEL_SERVICE_NAME),service.namespace=opentelemetry-demo,service.version=ph-test,service.kafka=spanlink
+          value: service.name=$(OTEL_SERVICE_NAME),service.namespace=opentelemetry-demo,service.version=P-hagen-test-1,service.kafka=spanlink
         - name: SQL_SERVER_HOST
           value: sql-server-fraud.astronomy-shop.svc.cluster.local
         - name: SQL_SERVER_PORT
@@ -1296,7 +1296,7 @@ metadata:
     opentelemetry.io/name: frontend
     app.kubernetes.io/component: frontend
     app.kubernetes.io/name: frontend
-    app.kubernetes.io/version: ph-test
+    app.kubernetes.io/version: P-hagen-test-1
     app.kubernetes.io/part-of: opentelemetry-demo
   namespace: astronomy-shop
 spec:
@@ -1316,7 +1316,7 @@ metadata:
     opentelemetry.io/name: frontend
     app.kubernetes.io/component: frontend
     app.kubernetes.io/name: frontend
-    app.kubernetes.io/version: ph-test
+    app.kubernetes.io/version: P-hagen-test-1
     app.kubernetes.io/part-of: opentelemetry-demo
   namespace: astronomy-shop
 spec:
@@ -1390,7 +1390,7 @@ spec:
           value: grpc
         - name: OTEL_LOG_LEVEL
         - name: OTEL_RESOURCE_ATTRIBUTES
-          value: service.name=$(OTEL_SERVICE_NAME),service.namespace=opentelemetry-demo,service.version=ph-test,service.kafka=no
+          value: service.name=$(OTEL_SERVICE_NAME),service.namespace=opentelemetry-demo,service.version=P-hagen-test-1,service.kafka=no
         - name: API_TOKEN
           valueFrom:
             secretKeyRef:
@@ -1441,7 +1441,7 @@ metadata:
     opentelemetry.io/name: frontend-proxy
     app.kubernetes.io/component: frontend-proxy
     app.kubernetes.io/name: frontend-proxy
-    app.kubernetes.io/version: ph-test
+    app.kubernetes.io/version: P-hagen-test-1
     app.kubernetes.io/part-of: opentelemetry-demo
   namespace: astronomy-shop
 spec:
@@ -1461,7 +1461,7 @@ metadata:
     opentelemetry.io/name: frontend-proxy
     app.kubernetes.io/component: frontend-proxy
     app.kubernetes.io/name: frontend-proxy
-    app.kubernetes.io/version: ph-test
+    app.kubernetes.io/version: P-hagen-test-1
     app.kubernetes.io/part-of: opentelemetry-demo
   namespace: astronomy-shop
 spec:
@@ -1530,7 +1530,7 @@ spec:
         - name: OTEL_COLLECTOR_PORT_HTTP
           value: '4318'
         - name: OTEL_RESOURCE_ATTRIBUTES
-          value: service.name=$(OTEL_SERVICE_NAME),service.namespace=opentelemetry-demo,service.version=ph-test,service.kafka=no
+          value: service.name=$(OTEL_SERVICE_NAME),service.namespace=opentelemetry-demo,service.version=P-hagen-test-1,service.kafka=no
         - name: FEATURE_AUTH_ENABLED
           value: 'true'
         - name: FEATURE_USER
@@ -1588,7 +1588,7 @@ metadata:
     opentelemetry.io/name: image-provider
     app.kubernetes.io/component: image-provider
     app.kubernetes.io/name: image-provider
-    app.kubernetes.io/version: ph-test
+    app.kubernetes.io/version: P-hagen-test-1
     app.kubernetes.io/part-of: opentelemetry-demo
   namespace: astronomy-shop
 spec:
@@ -1608,7 +1608,7 @@ metadata:
     opentelemetry.io/name: image-provider
     app.kubernetes.io/component: image-provider
     app.kubernetes.io/name: image-provider
-    app.kubernetes.io/version: ph-test
+    app.kubernetes.io/version: P-hagen-test-1
     app.kubernetes.io/part-of: opentelemetry-demo
   namespace: astronomy-shop
 spec:
@@ -1653,7 +1653,7 @@ spec:
         - name: OTEL_COLLECTOR_HOST
           value: $(OTEL_COLLECTOR_NAME)
         - name: OTEL_RESOURCE_ATTRIBUTES
-          value: service.name=$(OTEL_SERVICE_NAME),service.namespace=opentelemetry-demo,service.version=ph-test,service.kafka=no
+          value: service.name=$(OTEL_SERVICE_NAME),service.namespace=opentelemetry-demo,service.version=P-hagen-test-1,service.kafka=no
         resources:
           limits:
             memory: 50Mi
@@ -1675,7 +1675,7 @@ metadata:
     opentelemetry.io/name: kafka
     app.kubernetes.io/component: kafka
     app.kubernetes.io/name: kafka
-    app.kubernetes.io/version: ph-test
+    app.kubernetes.io/version: P-hagen-test-1
     app.kubernetes.io/part-of: opentelemetry-demo
   namespace: astronomy-shop
 spec:
@@ -1698,7 +1698,7 @@ metadata:
     opentelemetry.io/name: kafka
     app.kubernetes.io/component: kafka
     app.kubernetes.io/name: kafka
-    app.kubernetes.io/version: ph-test
+    app.kubernetes.io/version: P-hagen-test-1
     app.kubernetes.io/part-of: opentelemetry-demo
   namespace: astronomy-shop
 spec:
@@ -1751,7 +1751,7 @@ spec:
         - name: KAFKA_CONTROLLER_QUORUM_VOTERS
           value: 1@kafka:9093
         - name: OTEL_RESOURCE_ATTRIBUTES
-          value: service.name=$(OTEL_SERVICE_NAME),service.namespace=opentelemetry-demo,service.version=ph-test,service.kafka=no
+          value: service.name=$(OTEL_SERVICE_NAME),service.namespace=opentelemetry-demo,service.version=P-hagen-test-1,service.kafka=no
         resources:
           limits:
             memory: 800Mi
@@ -1777,7 +1777,7 @@ metadata:
     opentelemetry.io/name: llm
     app.kubernetes.io/component: llm
     app.kubernetes.io/name: llm
-    app.kubernetes.io/version: ph-test
+    app.kubernetes.io/version: P-hagen-test-1
     app.kubernetes.io/part-of: opentelemetry-demo
   namespace: astronomy-shop
 spec:
@@ -1797,7 +1797,7 @@ metadata:
     opentelemetry.io/name: llm
     app.kubernetes.io/component: llm
     app.kubernetes.io/name: llm
-    app.kubernetes.io/version: ph-test
+    app.kubernetes.io/version: P-hagen-test-1
     app.kubernetes.io/part-of: opentelemetry-demo
   namespace: astronomy-shop
 spec:
@@ -1842,7 +1842,7 @@ spec:
         - name: OTEL_EXPORTER_OTLP_ENDPOINT
           value: http://$(OTEL_COLLECTOR_NAME):4317
         - name: OTEL_RESOURCE_ATTRIBUTES
-          value: service.name=$(OTEL_SERVICE_NAME),service.namespace=opentelemetry-demo,service.version=ph-test,service.kafka=no
+          value: service.name=$(OTEL_SERVICE_NAME),service.namespace=opentelemetry-demo,service.version=P-hagen-test-1,service.kafka=no
         resources:
           limits:
             memory: 100Mi
@@ -1864,7 +1864,7 @@ metadata:
     opentelemetry.io/name: load-generator
     app.kubernetes.io/component: load-generator
     app.kubernetes.io/name: load-generator
-    app.kubernetes.io/version: ph-test
+    app.kubernetes.io/version: P-hagen-test-1
     app.kubernetes.io/part-of: opentelemetry-demo
   namespace: astronomy-shop
 spec:
@@ -1891,7 +1891,7 @@ metadata:
     opentelemetry.io/name: payment
     app.kubernetes.io/component: payment
     app.kubernetes.io/name: payment
-    app.kubernetes.io/version: ph-test
+    app.kubernetes.io/version: P-hagen-test-1
     app.kubernetes.io/part-of: opentelemetry-demo
   namespace: astronomy-shop
 spec:
@@ -1911,7 +1911,7 @@ metadata:
     opentelemetry.io/name: payment
     app.kubernetes.io/component: payment
     app.kubernetes.io/name: payment
-    app.kubernetes.io/version: ph-test
+    app.kubernetes.io/version: P-hagen-test-1
     app.kubernetes.io/part-of: opentelemetry-demo
   namespace: astronomy-shop
 spec:
@@ -1958,7 +1958,7 @@ spec:
         - name: OTEL_EXPORTER_OTLP_ENDPOINT
           value: http://$(OTEL_COLLECTOR_NAME):4317
         - name: OTEL_RESOURCE_ATTRIBUTES
-          value: service.name=$(OTEL_SERVICE_NAME),service.namespace=opentelemetry-demo,service.version=ph-test,service.kafka=no
+          value: service.name=$(OTEL_SERVICE_NAME),service.namespace=opentelemetry-demo,service.version=P-hagen-test-1,service.kafka=no
         - name: SPLUNK_INSTRUMENTATION_METRICS_ENABLED
           value: 'true'
         - name: SPLUNK_METRICS_ENABLED
@@ -1995,7 +1995,7 @@ metadata:
     opentelemetry.io/name: postgresql
     app.kubernetes.io/component: postgresql
     app.kubernetes.io/name: postgresql
-    app.kubernetes.io/version: ph-test
+    app.kubernetes.io/version: P-hagen-test-1
     app.kubernetes.io/part-of: opentelemetry-demo
   namespace: astronomy-shop
 spec:
@@ -2015,7 +2015,7 @@ metadata:
     opentelemetry.io/name: postgresql
     app.kubernetes.io/component: postgresql
     app.kubernetes.io/name: postgresql
-    app.kubernetes.io/version: ph-test
+    app.kubernetes.io/version: P-hagen-test-1
     app.kubernetes.io/part-of: opentelemetry-demo
   namespace: astronomy-shop
 spec:
@@ -2060,7 +2060,7 @@ spec:
         - name: POSTGRES_DB
           value: otel
         - name: OTEL_RESOURCE_ATTRIBUTES
-          value: service.name=$(OTEL_SERVICE_NAME),service.namespace=opentelemetry-demo,service.version=ph-test,service.kafka=no
+          value: service.name=$(OTEL_SERVICE_NAME),service.namespace=opentelemetry-demo,service.version=P-hagen-test-1,service.kafka=no
         resources:
           limits:
             memory: 100Mi
@@ -2082,7 +2082,7 @@ metadata:
     opentelemetry.io/name: product-catalog
     app.kubernetes.io/component: product-catalog
     app.kubernetes.io/name: product-catalog
-    app.kubernetes.io/version: ph-test
+    app.kubernetes.io/version: P-hagen-test-1
     app.kubernetes.io/part-of: opentelemetry-demo
   namespace: astronomy-shop
 spec:
@@ -2102,7 +2102,7 @@ metadata:
     opentelemetry.io/name: product-catalog
     app.kubernetes.io/component: product-catalog
     app.kubernetes.io/name: product-catalog
-    app.kubernetes.io/version: ph-test
+    app.kubernetes.io/version: P-hagen-test-1
     app.kubernetes.io/part-of: opentelemetry-demo
   namespace: astronomy-shop
 spec:
@@ -2153,7 +2153,7 @@ spec:
         - name: GOMEMLIMIT
           value: 16MiB
         - name: OTEL_RESOURCE_ATTRIBUTES
-          value: service.name=$(OTEL_SERVICE_NAME),service.namespace=opentelemetry-demo,service.version=ph-test,service.kafka=no
+          value: service.name=$(OTEL_SERVICE_NAME),service.namespace=opentelemetry-demo,service.version=P-hagen-test-1,service.kafka=no
         resources:
           limits:
             memory: 20Mi
@@ -2177,7 +2177,7 @@ kind: ConfigMap
 metadata:
   name: product-catalog-products
   labels:
-    app.kubernetes.io/version: ph-test
+    app.kubernetes.io/version: P-hagen-test-1
     app.kubernetes.io/part-of: opentelemetry-demo
   namespace: astronomy-shop
 data:
@@ -2348,7 +2348,7 @@ metadata:
     opentelemetry.io/name: product-reviews
     app.kubernetes.io/component: product-reviews
     app.kubernetes.io/name: product-reviews
-    app.kubernetes.io/version: ph-test
+    app.kubernetes.io/version: P-hagen-test-1
     app.kubernetes.io/part-of: opentelemetry-demo
   namespace: astronomy-shop
 spec:
@@ -2368,7 +2368,7 @@ metadata:
     opentelemetry.io/name: product-reviews
     app.kubernetes.io/component: product-reviews
     app.kubernetes.io/name: product-reviews
-    app.kubernetes.io/version: ph-test
+    app.kubernetes.io/version: P-hagen-test-1
     app.kubernetes.io/part-of: opentelemetry-demo
   namespace: astronomy-shop
 spec:
@@ -2435,7 +2435,7 @@ spec:
         - name: OTEL_EXPORTER_OTLP_ENDPOINT
           value: http://$(OTEL_COLLECTOR_NAME):4317
         - name: OTEL_RESOURCE_ATTRIBUTES
-          value: service.name=$(OTEL_SERVICE_NAME),service.namespace=opentelemetry-demo,service.version=ph-test,service.kafka=no
+          value: service.name=$(OTEL_SERVICE_NAME),service.namespace=opentelemetry-demo,service.version=P-hagen-test-1,service.kafka=no
         resources:
           limits:
             memory: 500Mi
@@ -2457,7 +2457,7 @@ metadata:
     opentelemetry.io/name: quote
     app.kubernetes.io/component: quote
     app.kubernetes.io/name: quote
-    app.kubernetes.io/version: ph-test
+    app.kubernetes.io/version: P-hagen-test-1
     app.kubernetes.io/part-of: opentelemetry-demo
   namespace: astronomy-shop
 spec:
@@ -2477,7 +2477,7 @@ metadata:
     opentelemetry.io/name: quote
     app.kubernetes.io/component: quote
     app.kubernetes.io/name: quote
-    app.kubernetes.io/version: ph-test
+    app.kubernetes.io/version: P-hagen-test-1
     app.kubernetes.io/part-of: opentelemetry-demo
   namespace: astronomy-shop
 spec:
@@ -2524,7 +2524,7 @@ spec:
         - name: OTEL_EXPORTER_OTLP_ENDPOINT
           value: http://$(OTEL_COLLECTOR_NAME):4318
         - name: OTEL_RESOURCE_ATTRIBUTES
-          value: service.name=$(OTEL_SERVICE_NAME),service.namespace=opentelemetry-demo,service.version=ph-test,service.kafka=no
+          value: service.name=$(OTEL_SERVICE_NAME),service.namespace=opentelemetry-demo,service.version=P-hagen-test-1,service.kafka=no
         resources:
           limits:
             memory: 40Mi
@@ -2550,7 +2550,7 @@ metadata:
     opentelemetry.io/name: recommendation
     app.kubernetes.io/component: recommendation
     app.kubernetes.io/name: recommendation
-    app.kubernetes.io/version: ph-test
+    app.kubernetes.io/version: P-hagen-test-1
     app.kubernetes.io/part-of: opentelemetry-demo
   namespace: astronomy-shop
 spec:
@@ -2570,7 +2570,7 @@ metadata:
     opentelemetry.io/name: recommendation
     app.kubernetes.io/component: recommendation
     app.kubernetes.io/name: recommendation
-    app.kubernetes.io/version: ph-test
+    app.kubernetes.io/version: P-hagen-test-1
     app.kubernetes.io/part-of: opentelemetry-demo
   namespace: astronomy-shop
 spec:
@@ -2623,7 +2623,7 @@ spec:
         - name: OTEL_EXPORTER_OTLP_ENDPOINT
           value: http://$(OTEL_COLLECTOR_NAME):4317
         - name: OTEL_RESOURCE_ATTRIBUTES
-          value: service.name=$(OTEL_SERVICE_NAME),service.namespace=opentelemetry-demo,service.version=ph-test,service.kafka=no
+          value: service.name=$(OTEL_SERVICE_NAME),service.namespace=opentelemetry-demo,service.version=P-hagen-test-1,service.kafka=no
         - name: SPLUNK_PROFILER_LOGS_ENDPOINT
           value: http://$(OTEL_COLLECTOR_NAME):4317
         - name: SPLUNK_PROFILER_CALL_STACK_INTERVAL
@@ -2681,7 +2681,7 @@ metadata:
     opentelemetry.io/name: shipping
     app.kubernetes.io/component: shipping
     app.kubernetes.io/name: shipping
-    app.kubernetes.io/version: ph-test
+    app.kubernetes.io/version: P-hagen-test-1
     app.kubernetes.io/part-of: opentelemetry-demo
   namespace: astronomy-shop
 spec:
@@ -2701,7 +2701,7 @@ metadata:
     opentelemetry.io/name: shipping
     app.kubernetes.io/component: shipping
     app.kubernetes.io/name: shipping
-    app.kubernetes.io/version: ph-test
+    app.kubernetes.io/version: P-hagen-test-1
     app.kubernetes.io/part-of: opentelemetry-demo
   namespace: astronomy-shop
 spec:
@@ -2746,7 +2746,7 @@ spec:
         - name: OTEL_EXPORTER_OTLP_ENDPOINT
           value: http://$(OTEL_COLLECTOR_NAME):4317
         - name: OTEL_RESOURCE_ATTRIBUTES
-          value: service.name=$(OTEL_SERVICE_NAME),service.namespace=opentelemetry-demo,service.version=ph-test,service.kafka=no
+          value: service.name=$(OTEL_SERVICE_NAME),service.namespace=opentelemetry-demo,service.version=P-hagen-test-1,service.kafka=no
         resources:
           limits:
             memory: 20Mi
@@ -2768,7 +2768,7 @@ metadata:
     opentelemetry.io/name: shop-dc-shim-db
     app.kubernetes.io/component: shop-dc-shim-db
     app.kubernetes.io/name: shop-dc-shim-db
-    app.kubernetes.io/version: ph-test
+    app.kubernetes.io/version: P-hagen-test-1
     app.kubernetes.io/part-of: opentelemetry-demo
 spec:
   type: ClusterIP
@@ -2788,7 +2788,7 @@ metadata:
     opentelemetry.io/name: shop-dc-shim-db
     app.kubernetes.io/component: shop-dc-shim-db
     app.kubernetes.io/name: shop-dc-shim-db
-    app.kubernetes.io/version: ph-test
+    app.kubernetes.io/version: P-hagen-test-1
     app.kubernetes.io/part-of: opentelemetry-demo
 spec:
   replicas: 1
@@ -2801,7 +2801,7 @@ spec:
         opentelemetry.io/name: shop-dc-shim-db
         app.kubernetes.io/component: shop-dc-shim-db
         app.kubernetes.io/name: shop-dc-shim-db
-        app.kubernetes.io/version: ph-test
+        app.kubernetes.io/version: P-hagen-test-1
         app.kubernetes.io/part-of: opentelemetry-demo
     spec:
       containers:
@@ -2837,7 +2837,7 @@ metadata:
     opentelemetry.io/name: shop-dc-shim
     app.kubernetes.io/component: shop-dc-shim
     app.kubernetes.io/name: shop-dc-shim
-    app.kubernetes.io/version: ph-test
+    app.kubernetes.io/version: P-hagen-test-1
     app.kubernetes.io/part-of: opentelemetry-demo
 spec:
   type: ClusterIP
@@ -2857,7 +2857,7 @@ metadata:
     opentelemetry.io/name: shop-dc-shim
     app.kubernetes.io/component: shop-dc-shim
     app.kubernetes.io/name: shop-dc-shim
-    app.kubernetes.io/version: ph-test
+    app.kubernetes.io/version: P-hagen-test-1
     app.kubernetes.io/part-of: opentelemetry-demo
 spec:
   replicas: 1
@@ -2870,7 +2870,7 @@ spec:
         opentelemetry.io/name: shop-dc-shim
         app.kubernetes.io/component: shop-dc-shim
         app.kubernetes.io/name: shop-dc-shim
-        app.kubernetes.io/version: ph-test
+        app.kubernetes.io/version: P-hagen-test-1
         app.kubernetes.io/part-of: opentelemetry-demo
     spec:
       serviceAccountName: opentelemetry-demo
@@ -2886,7 +2886,7 @@ spec:
         - /bin/bash
         - -c
         - |
-          export OTEL_RESOURCE_ATTRIBUTES="service.name=shop-dc-shim-service,deployment.environment=${ENV_VALUE}-datacenter-b01,service.version=ph-test,service.namespace=shop-dc-shim"
+          export OTEL_RESOURCE_ATTRIBUTES="service.name=shop-dc-shim-service,deployment.environment=${ENV_VALUE}-datacenter-b01,service.version=P-hagen-test-1,service.namespace=shop-dc-shim"
           exec /app/start-app-dual.sh
         env:
         - name: ENV_VALUE
@@ -2949,7 +2949,7 @@ metadata:
     opentelemetry.io/name: shop-dc-load-generator
     app.kubernetes.io/component: shop-dc-load-generator
     app.kubernetes.io/name: shop-dc-load-generator
-    app.kubernetes.io/version: ph-test
+    app.kubernetes.io/version: P-hagen-test-1
     app.kubernetes.io/part-of: opentelemetry-demo
 spec:
   replicas: 1
@@ -2962,7 +2962,7 @@ spec:
         opentelemetry.io/name: shop-dc-load-generator
         app.kubernetes.io/component: shop-dc-load-generator
         app.kubernetes.io/name: shop-dc-load-generator
-        app.kubernetes.io/version: ph-test
+        app.kubernetes.io/version: P-hagen-test-1
         app.kubernetes.io/part-of: opentelemetry-demo
     spec:
       serviceAccountName: opentelemetry-demo
@@ -3173,7 +3173,7 @@ metadata:
     opentelemetry.io/name: valkey-cart
     app.kubernetes.io/component: valkey-cart
     app.kubernetes.io/name: valkey-cart
-    app.kubernetes.io/version: ph-test
+    app.kubernetes.io/version: P-hagen-test-1
     app.kubernetes.io/part-of: opentelemetry-demo
   namespace: astronomy-shop
 spec:
@@ -3193,7 +3193,7 @@ metadata:
     opentelemetry.io/name: valkey-cart
     app.kubernetes.io/component: valkey-cart
     app.kubernetes.io/name: valkey-cart
-    app.kubernetes.io/version: ph-test
+    app.kubernetes.io/version: P-hagen-test-1
     app.kubernetes.io/part-of: opentelemetry-demo
   namespace: astronomy-shop
 spec:
@@ -3232,7 +3232,7 @@ spec:
         - name: OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE
           value: cumulative
         - name: OTEL_RESOURCE_ATTRIBUTES
-          value: service.name=$(OTEL_SERVICE_NAME),service.namespace=opentelemetry-demo,service.version=ph-test,service.kafka=no
+          value: service.name=$(OTEL_SERVICE_NAME),service.namespace=opentelemetry-demo,service.version=P-hagen-test-1,service.kafka=no
         resources:
           limits:
             memory: 20Mi

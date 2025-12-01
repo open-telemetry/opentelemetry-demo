@@ -97,7 +97,9 @@ for svc in config.get('services', []):
         # Process manifest: replace registry URLs (if needed) and version numbers
         if [ -n "$REGISTRY_URL" ] && [ "$SHOULD_REPLACE" = "true" ]; then
             # Replace both registry URLs and version numbers
-            sed -e "s|ghcr.io/[^/]*/[^:]*|${REGISTRY_URL}|g" \
+            # Pattern matches: ghcr.io/{org}/{repo} and replaces with ${REGISTRY_URL}
+            # Preserves: /otel-{service}:{tag}
+            sed -e "s|ghcr.io/[^/]*/[^/]*|${REGISTRY_URL}|g" \
                 -e "s|app.kubernetes.io/version: [0-9][0-9.]*|app.kubernetes.io/version: ${VERSION}|g" \
                 -e "s|service.version=[0-9][0-9.]*|service.version=${VERSION}|g" \
                 "$MANIFEST_FILE" >> "$OUTPUT_FILE"
