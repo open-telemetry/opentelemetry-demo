@@ -7,8 +7,8 @@ SRC_DIR=${SRC_DIR:-"$SCRIPT_DIR/../../src"} #.env.override
 COMMON_SCRIPT_PATH="$SCRIPT_DIR/common.sh"
 
 # Kubernetes variables
-OTEL_DEMO_CHART_VERSION="0.38.4"
-NR_K8S_CHART_VERSION="0.8.53"
+OTEL_DEMO_CHART_VERSION="0.38.6"
+NR_K8S_CHART_VERSION="0.9.4"
 OTEL_DEMO_RELEASE_NAME=otel-demo
 NR_K8S_RELEASE_NAME=nr-k8s-otel-collector
 OTEL_DEMO_NAMESPACE=opentelemetry-demo
