@@ -1,0 +1,331 @@
+name: Build Images - PRODUCTION
+# NOTE: Repository check happens at job level, not at workflow level
+# This workflow is designed for splunk/opentelemetry-demo repository only
+
+"on":
+  workflow_dispatch:
+    inputs:
+      version_bump:
+        description: 'Version bump type (or use existing version)'
+        required: true
+        type: choice
+        options:
+          - none (keep current)
+          - patch
+          - minor
+          - major
+        default: 'minor'
+      services:
+        description: 'Services to build (comma-separated, or "all" for all services with build:true)'
+        required: false
+        type: string
+        default: 'all'
+      no_cache:
+        description: 'Disable build cache'
+        required: false
+        type: boolean
+        default: false
+
+jobs:
+  determine-version:
+    # Only run in the main splunk/opentelemetry-demo repo, not in forks
+    if: github.repository == 'splunk/opentelemetry-demo'
+    runs-on: ubuntu-latest
+    outputs:
+      version: ${{ steps.version.outputs.version }}
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.x'
+
+      - name: Install PyYAML
+        run: pip install pyyaml
+
+      - name: Make scripts executable
+        run: |
+          chmod +x .github/scripts/bump-version.sh
+
+      - name: Determine version
+        id: version
+        run: |
+          CURRENT_VERSION=$(cat SPLUNK-VERSION)
+          BUMP_TYPE="${{ inputs.version_bump }}"
+
+          echo "Current version: $CURRENT_VERSION"
+
+          # Check if we should keep current version or bump
+          if [[ "$BUMP_TYPE" == "none (keep current)" ]]; then
+            VERSION="$CURRENT_VERSION"
+            echo "Keeping current version: $VERSION"
+            VERSION_STATUS="unchanged"
+          else
+            # Bump the version
+            VERSION=$(.github/scripts/bump-version.sh $BUMP_TYPE)
+            echo "Bumped version from $CURRENT_VERSION to $VERSION"
+            VERSION_STATUS="bumped"
+          fi
+
+          echo "version=$VERSION" >> $GITHUB_OUTPUT
+
+          echo "### Version Information" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "| Type | Version |" >> $GITHUB_STEP_SUMMARY
+          echo "|------|---------|" >> $GITHUB_STEP_SUMMARY
+          echo "| Current | \`$CURRENT_VERSION\` |" >> $GITHUB_STEP_SUMMARY
+          if [[ "$VERSION_STATUS" == "unchanged" ]]; then
+            echo "| **Using** | **\`$VERSION\`** (unchanged) |" >> $GITHUB_STEP_SUMMARY
+          else
+            echo "| **New** | **\`$VERSION\`** |" >> $GITHUB_STEP_SUMMARY
+          fi
+          echo "| Action | ${{ inputs.version_bump }} |" >> $GITHUB_STEP_SUMMARY
+
+  prepare-matrix:
+    needs: determine-version
+    runs-on: ubuntu-latest
+    outputs:
+      matrix: ${{ steps.set-matrix.outputs.matrix }}
+      registry: ${{ steps.set-matrix.outputs.registry }}
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.x'
+
+      - name: Install PyYAML
+        run: pip install pyyaml
+
+      - name: Generate build matrix
+        id: set-matrix
+        run: |
+          python3 << 'PYTHON_SCRIPT'
+          import yaml
+          import json
+          import os
+
+          # Read services.yaml
+          with open('services.yaml', 'r') as f:
+              config = yaml.safe_load(f)
+
+          # Get production registry
+          prod_registry = config.get('registry', {}).get('prod', 'ghcr.io/splunk/opentelemetry-demo')
+          registry = prod_registry
+
+          # Get services to build
+          requested = "${{ inputs.services }}".strip()
+          services_to_build = []
+
+          for svc in config.get('services', []):
+              name = svc.get('name')
+              should_build = svc.get('build', False)
+
+              if not should_build:
+                  continue
+
+              # Check if this service should be built
+              if requested == 'all':
+                  include = True
+              else:
+                  requested_list = [s.strip() for s in requested.split(',')]
+                  include = name in requested_list
+
+              if include:
+                  # Get platform (default to multi-arch)
+                  platform = svc.get('platform', 'linux/amd64,linux/arm64')
+
+                  # Get dockerfile path (default to standard location)
+                  dockerfile = svc.get('dockerfile', f'src/{name}/Dockerfile')
+
+                  services_to_build.append({
+                      'name': name,
+                      'platform': platform,
+                      'dockerfile': dockerfile
+                  })
+
+          # Create matrix
+          matrix = {'include': services_to_build}
+
+          # Output to GitHub Actions
+          with open(os.environ['GITHUB_OUTPUT'], 'a') as f:
+              f.write(f'matrix={json.dumps(matrix)}\n')
+              f.write(f'registry={registry}\n')
+
+          print(f"Registry: {registry}")
+          print(f"Services to build: {len(services_to_build)}")
+          for svc in services_to_build:
+              print(f"  - {svc['name']} (platform: {svc['platform']})")
+          PYTHON_SCRIPT
+
+      - name: Summary
+        run: |
+          echo "### Build Configuration" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "- **Version:** \`${{ needs.determine-version.outputs.version }}\`" >> $GITHUB_STEP_SUMMARY
+          echo "- **Registry:** \`${{ steps.set-matrix.outputs.registry }}\` (production)" >> $GITHUB_STEP_SUMMARY
+          echo "- **Services:** \`${{ inputs.services }}\`" >> $GITHUB_STEP_SUMMARY
+          echo "- **No Cache:** ${{ inputs.no_cache }}" >> $GITHUB_STEP_SUMMARY
+
+  build-images:
+    needs: [determine-version, prepare-matrix]
+    if: needs.prepare-matrix.outputs.matrix != '{"include":[]}'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+
+    strategy:
+      fail-fast: false
+      matrix: ${{ fromJson(needs.prepare-matrix.outputs.matrix) }}
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Log in to GitHub Container Registry
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Extract image name
+        id: image
+        run: |
+          SERVICE_NAME="${{ matrix.name }}"
+          REGISTRY="${{ needs.prepare-matrix.outputs.registry }}"
+
+          # Determine image name based on service
+          # Most services use otel-{service} naming convention
+          case "$SERVICE_NAME" in
+            accounting|ad|cart|fraud-detection|frontend|frontend-proxy|image-provider|payment|recommendation)
+              IMAGE_NAME="otel-${SERVICE_NAME}"
+              ;;
+            *)
+              IMAGE_NAME="${SERVICE_NAME}"
+              ;;
+          esac
+
+          FULL_IMAGE="${REGISTRY}/${IMAGE_NAME}:${{ needs.determine-version.outputs.version }}"
+
+          echo "image_name=${IMAGE_NAME}" >> $GITHUB_OUTPUT
+          echo "full_image=${FULL_IMAGE}" >> $GITHUB_OUTPUT
+
+          echo "Building: ${FULL_IMAGE}"
+
+      - name: Check for Dockerfile
+        id: check
+        run: |
+          if [ -f "${{ matrix.dockerfile }}" ]; then
+            echo "exists=true" >> $GITHUB_OUTPUT
+            echo "✅ Dockerfile found: ${{ matrix.dockerfile }}"
+          else
+            echo "exists=false" >> $GITHUB_OUTPUT
+            echo "❌ Dockerfile not found: ${{ matrix.dockerfile }}"
+          fi
+
+      - name: Build and push image
+        if: steps.check.outputs.exists == 'true'
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          file: ${{ matrix.dockerfile }}
+          platforms: ${{ matrix.platform }}
+          push: true
+          tags: ${{ steps.image.outputs.full_image }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+          no-cache: ${{ inputs.no_cache }}
+
+      - name: Image info
+        if: steps.check.outputs.exists == 'true'
+        run: |
+          echo "### ✅ Image Built: ${{ matrix.name }}" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "| Property | Value |" >> $GITHUB_STEP_SUMMARY
+          echo "|----------|-------|" >> $GITHUB_STEP_SUMMARY
+          echo "| Service | \`${{ matrix.name }}\` |" >> $GITHUB_STEP_SUMMARY
+          echo "| Image | \`${{ steps.image.outputs.full_image }}\` |" >> $GITHUB_STEP_SUMMARY
+          echo "| Platform | \`${{ matrix.platform }}\` |" >> $GITHUB_STEP_SUMMARY
+          echo "| Dockerfile | \`${{ matrix.dockerfile }}\` |" >> $GITHUB_STEP_SUMMARY
+
+      - name: Skip notice
+        if: steps.check.outputs.exists == 'false'
+        run: |
+          echo "### ⚠️ Skipped: ${{ matrix.name }}" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "Dockerfile not found at: \`${{ matrix.dockerfile }}\`" >> $GITHUB_STEP_SUMMARY
+
+  trigger-manifest-build:
+    needs: [determine-version, prepare-matrix, build-images]
+    if: ${{ success() }}
+    runs-on: ubuntu-latest
+    permissions:
+      actions: write
+      contents: read
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Trigger manifest build
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          echo "### 🚀 Triggering Production Manifest Build" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "Automatically building production manifest with matching version..." >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+
+          # Trigger the production manifest build workflow with the determined version
+          # Pass the same version_bump to ensure consistency
+          gh workflow run prod-build-manifest.yml \
+            -f version_bump="${{ inputs.version_bump }}" \
+            -f commit_manifest=true \
+            -f validate_manifest=true
+
+          echo "✅ Production manifest build workflow triggered" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "| Property | Value |" >> $GITHUB_STEP_SUMMARY
+          echo "|----------|-------|" >> $GITHUB_STEP_SUMMARY
+          echo "| Workflow | \`prod-build-manifest.yml\` |" >> $GITHUB_STEP_SUMMARY
+          echo "| Version | \`${{ needs.determine-version.outputs.version }}\` |" >> $GITHUB_STEP_SUMMARY
+          echo "| Version Bump | \`${{ inputs.version_bump }}\` |" >> $GITHUB_STEP_SUMMARY
+          echo "| Commit | \`true\` |" >> $GITHUB_STEP_SUMMARY
+          echo "| Validate | \`true\` |" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "Check the [Actions tab](../../actions/workflows/prod-build-manifest.yml) to monitor the manifest build." >> $GITHUB_STEP_SUMMARY
+
+  summary:
+    needs: [determine-version, prepare-matrix, build-images, trigger-manifest-build]
+    if: always()
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Build Summary
+        run: |
+          echo "## 🎉 Production Build Complete" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "### Configuration" >> $GITHUB_STEP_SUMMARY
+          echo "- **Version:** \`${{ needs.determine-version.outputs.version }}\`" >> $GITHUB_STEP_SUMMARY
+          echo "- **Version Bump:** ${{ inputs.version_bump }}" >> $GITHUB_STEP_SUMMARY
+          echo "- **Registry:** \`${{ needs.prepare-matrix.outputs.registry }}\` (production)" >> $GITHUB_STEP_SUMMARY
+          echo "- **Services:** ${{ inputs.services }}" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "### Automatic Actions" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "- ✅ Production manifest build triggered automatically" >> $GITHUB_STEP_SUMMARY
+          echo "- 📦 Manifest will use version: \`${{ needs.determine-version.outputs.version }}\`" >> $GITHUB_STEP_SUMMARY
+          echo "- 🏭 Images published to production registry" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "> The production manifest build will automatically match your container image versions." >> $GITHUB_STEP_SUMMARY
