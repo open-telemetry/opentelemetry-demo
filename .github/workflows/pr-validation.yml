@@ -70,32 +70,35 @@ jobs:
           script: |
             const files = `${{ steps.check_files.outputs.files }}`.split('\n').filter(f => f);
             const fileList = files.map(f => `- \`${f}\``).join('\n');
+            const branchName = context.payload.pull_request.head.ref;
 
-            github.rest.issues.createComment({
+            const body = `## ❌ TEST Splunk Manifest Files Detected
+
+            This PR contains TEST Splunk manifest files that should not be merged to main:
+
+            ` + fileList + `
+
+            ### How to fix this:
+
+            **Option 1: Use the automated workflow**
+            1. Go to [Actions → Remove TEST Manifests](../actions/workflows/remove-test-manifests.yml)
+            2. Click "Run workflow"
+            3. Select branch: \`${branchName}\`
+            4. Type \`CONFIRM\` in the confirmation field
+            5. Click "Run workflow"
+
+            **Option 2: Remove manually**
+            \`\`\`bash
+            git rm kubernetes/TEST-splunk*.yaml
+            git commit -m "chore: remove TEST Splunk manifests"
+            git push
+            \`\`\`
+
+            The PR validation will automatically re-run once the files are removed.`;
+
+            await github.rest.issues.createComment({
               issue_number: context.issue.number,
               owner: context.repo.owner,
               repo: context.repo.repo,
-              body: `## ❌ TEST Splunk Manifest Files Detected
-
-This PR contains TEST Splunk manifest files that should not be merged to main:
-
-${fileList}
-
-### How to fix this:
-
-**Option 1: Use the automated workflow**
-1. Go to [Actions → Remove TEST Manifests](../actions/workflows/remove-test-manifests.yml)
-2. Click "Run workflow"
-3. Select branch: \`${context.payload.pull_request.head.ref}\`
-4. Type \`CONFIRM\` in the confirmation field
-5. Click "Run workflow"
-
-**Option 2: Remove manually**
-\`\`\`bash
-git rm kubernetes/TEST-splunk*.yaml
-git commit -m "chore: remove TEST Splunk manifests"
-git push
-\`\`\`
-
-The PR validation will automatically re-run once the files are removed.`
+              body: body
             });
