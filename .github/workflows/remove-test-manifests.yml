@@ -58,9 +58,8 @@ jobs:
           if git diff --staged --quiet; then
             echo "No changes to commit"
           else
-            git commit -m "chore: remove TEST manifest files
-
-Automatically removed by remove-test-manifests workflow"
+            git commit -m "chore: remove TEST manifest files" \
+              -m "Automatically removed by remove-test-manifests workflow"
             git push
             echo "✓ Changes committed and pushed"
           fi
