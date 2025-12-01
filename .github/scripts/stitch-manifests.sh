@@ -96,20 +96,18 @@ for svc in config.get('services', []):
 
         # Process manifest: replace registry URLs (if needed) and version numbers
         if [ -n "$REGISTRY_URL" ] && [ "$SHOULD_REPLACE" = "true" ]; then
-            # Replace both registry URLs and version numbers
+            # Replace registry URLs, image tags, and version numbers
             # Pattern matches: ghcr.io/{org}/{repo} and replaces with ${REGISTRY_URL}
-            # Preserves: /otel-{service}:{tag}
-            # Also replaces image tags with ${VERSION}
+            # Preserves: /otel-{service} part but replaces :{tag} with :${VERSION}
             sed -e "s|ghcr.io/[^/]*/[^/]*|${REGISTRY_URL}|g" \
+                -e "/image:/s|:[0-9][0-9.][^[:space:]]*|:${VERSION}|" \
                 -e "s|app.kubernetes.io/version: [0-9][0-9.]*|app.kubernetes.io/version: ${VERSION}|g" \
                 -e "s|service.version=[0-9][0-9.]*|service.version=${VERSION}|g" \
-                -e "/image:/s|:[0-9][0-9.][^[:space:]]*|:${VERSION}|" \
                 "$MANIFEST_FILE" >> "$OUTPUT_FILE"
         else
-            # Replace only version numbers (keep original registry)
+            # Replace only version numbers in labels (keep original registry and image tags)
             sed -e "s|app.kubernetes.io/version: [0-9][0-9.]*|app.kubernetes.io/version: ${VERSION}|g" \
                 -e "s|service.version=[0-9][0-9.]*|service.version=${VERSION}|g" \
-                -e "/image:/s|:[0-9][0-9.][^[:space:]]*|:${VERSION}|" \
                 "$MANIFEST_FILE" >> "$OUTPUT_FILE"
             if [ -n "$REGISTRY_URL" ] && [ "$SHOULD_REPLACE" = "false" ]; then
                 echo "  (using original registry)"
