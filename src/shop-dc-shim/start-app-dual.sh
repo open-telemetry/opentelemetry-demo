@@ -26,7 +26,9 @@ export APPDYNAMICS_JAVA_AGENT_REUSE_NODE_NAME="true"
 export OTEL_EXPORTER_OTLP_ENDPOINT=http://splunk-otel-collector-agent:4318
 export OTEL_EXPORTER_OTLP_PROTOCOL=http/protobuf
 export OTEL_SERVICE_NAME=shop-dc-shim-service
-export OTEL_RESOURCE_ATTRIBUTES=service.name=shop-dc-shim-service,deployment.environment=datacenter-b01,service.version=2.1.3,service.namespace=shop-dc-shim
+if [ -n "$WORKSHOP_ENV" ]; then
+            export OTEL_RESOURCE_ATTRIBUTES="service.name=shop-dc-shim-service,deployment.environment=${WORKSHOP_ENV}-datacenter-b01,service.version=2.1.3,deployment.environment.name=${WORKSHOP_ENV}-datacenter-b01,service.namespace=shop-dc-shim"
+fi
 export OTEL_INSTRUMENTATION_SPLUNK_JDBC_ENABLED=true
 
 # Dual instrumentation mode
@@ -34,7 +36,7 @@ export AGENT_DEPLOYMENT_MODE=dual
 
 echo "Configuration:"
 echo "  Service: shop-dc-shim-service"
-echo "  Environment: datacenter-b01"
+echo "  OTEL_RESOURCE_ATTRIBUTES: ${OTEL_RESOURCE_ATTRIBUTES}"
 echo "  AppDynamics Application: ${APPDYNAMICS_AGENT_APPLICATION_NAME}"
 echo "  AppDynamics Controller: ${APPDYNAMICS_CONTROLLER_HOST_NAME}"
 echo "  OpenTelemetry Endpoint: ${OTEL_EXPORTER_OTLP_ENDPOINT}"
@@ -43,6 +45,7 @@ echo "  OpenTelemetry Endpoint: ${OTEL_EXPORTER_OTLP_ENDPOINT}"
 java -javaagent:/opt/appdynamics/javaagent.jar \
      -Dagent.deployment.mode=dual \
      -Dotel.instrumentation.jdbc.enabled=true \
+     -Dotel.resource.attributes=${OTEL_RESOURCE_ATTRIBUTES} \
      -Dsplunk.profiler.enabled=true \
      -Dsplunk.profiler.memory.enabled=true \
      -Dsplunk.snapshot.profiler.enabled=true \
