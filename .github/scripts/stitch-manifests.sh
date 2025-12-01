@@ -94,13 +94,18 @@ for svc in config.get('services', []):
         echo "" >> "$OUTPUT_FILE"
         echo "# === $SERVICE ===" >> "$OUTPUT_FILE"
 
-        # If registry URL is specified AND service allows replacement, replace registry references
+        # Process manifest: replace registry URLs (if needed) and version numbers
         if [ -n "$REGISTRY_URL" ] && [ "$SHOULD_REPLACE" = "true" ]; then
-            # Replace registry URLs in the manifest
-            sed "s|ghcr.io/[^/]*/[^:]*|${REGISTRY_URL}|g" "$MANIFEST_FILE" >> "$OUTPUT_FILE"
+            # Replace both registry URLs and version numbers
+            sed -e "s|ghcr.io/[^/]*/[^:]*|${REGISTRY_URL}|g" \
+                -e "s|app.kubernetes.io/version: [0-9][0-9.]*|app.kubernetes.io/version: ${VERSION}|g" \
+                -e "s|service.version=[0-9][0-9.]*|service.version=${VERSION}|g" \
+                "$MANIFEST_FILE" >> "$OUTPUT_FILE"
         else
-            # Use original manifest without modifications
-            cat "$MANIFEST_FILE" >> "$OUTPUT_FILE"
+            # Replace only version numbers (keep original registry)
+            sed -e "s|app.kubernetes.io/version: [0-9][0-9.]*|app.kubernetes.io/version: ${VERSION}|g" \
+                -e "s|service.version=[0-9][0-9.]*|service.version=${VERSION}|g" \
+                "$MANIFEST_FILE" >> "$OUTPUT_FILE"
             if [ -n "$REGISTRY_URL" ] && [ "$SHOULD_REPLACE" = "false" ]; then
                 echo "  (using original registry)"
             fi
