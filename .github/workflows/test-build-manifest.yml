@@ -181,8 +181,9 @@ jobs:
           # IMPORTANT: We never commit changes to SPLUNK-VERSION in test builds
           mv SPLUNK-VERSION.backup SPLUNK-VERSION
 
-          # Only commit the manifest file
-          git add "$MANIFEST_FILE"
+          # Force-add the manifest file (TEST-* files are in .gitignore by design)
+          # We use -f to explicitly commit test manifests when requested
+          git add -f "$MANIFEST_FILE"
 
           if git diff --staged --quiet; then
             echo "### No Changes" >> $GITHUB_STEP_SUMMARY
