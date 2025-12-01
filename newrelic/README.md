@@ -227,7 +227,13 @@ If you click on the `Frontend` service, you should see data populated in the Sum
 You can enable / disable various feature flags provided by the community using the Flagd UI.  In order to access the Flagd UI, you'll need to set up port-forwarding to your local machine.  Here's an example command you can use:
 
 ```bash
-kubectl port-forward svc/flagd 4000 -n opentelemetry-demo
+kubectl -n opentelemetry-demo port-forward svc/frontend-proxy 8080:8080
+```
+
+If port `8080` is already in use on your local machine, use a different port like `9999` or another that you know will be open.  For example:
+
+```bash
+kubectl -n opentelemetry-demo port-forward svc/frontend-proxy 9999:8080
 ```
 
 After setting up port forwarding, you can access the Flagd UI at [http://localhost:4000/feature](http://localhost:4000/feature).
