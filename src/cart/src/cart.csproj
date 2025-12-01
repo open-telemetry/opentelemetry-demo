@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk.Web">
 
   <PropertyGroup>
-    <TargetFramework>net8.0</TargetFramework>
+    <TargetFramework>net10.0</TargetFramework>
     <ProduceReferenceAssembly>false</ProduceReferenceAssembly>
     <StaticWebAssetsEnabled>false</StaticWebAssetsEnabled>
     <PublishSingleFile>true</PublishSingleFile>
@@ -18,21 +18,20 @@
     <!-- Keeping Grpc.AspNetCore* to 2.67 due to https://github.com/grpc/grpc/issues/38538 -->
     <PackageReference Include="Grpc.AspNetCore" Version="2.67.0" />
     <PackageReference Include="Grpc.AspNetCore.HealthChecks" Version="2.67.0" />
-    <PackageReference Include="OpenTelemetry.Exporter.OpenTelemetryProtocol" Version="1.11.2" />
-    <PackageReference Include="OpenTelemetry.Extensions.Hosting" Version="1.11.2" />
-    <PackageReference Include="OpenTelemetry.Instrumentation.AspNetCore" Version="1.11.1" />
-    <PackageReference Include="OpenTelemetry.Instrumentation.GrpcNetClient" Version="1.11.0-beta.2" />
-    <PackageReference Include="OpenTelemetry.Instrumentation.Http" Version="1.11.1" />
-    <PackageReference Include="OpenTelemetry.Instrumentation.Process" Version="1.11.0-beta.2" />
-    <PackageReference Include="OpenTelemetry.Instrumentation.StackExchangeRedis" Version="1.11.0-beta.2" />
-    <PackageReference Include="OpenTelemetry.Instrumentation.Runtime" Version="1.11.1" />
-    <PackageReference Include="OpenTelemetry.Resources.Container" Version="1.11.0-beta.2" />
-    <PackageReference Include="OpenTelemetry.Resources.Host" Version="1.11.0-beta.2" />
-    <PackageReference Include="StackExchange.Redis" Version="2.8.31" />
-    <PackageReference Include="OpenFeature.Contrib.Providers.Flagd" Version="0.3.2" />
-    <PackageReference Include="OpenFeature" Version="2.7.0" />
-    <PackageReference Include="OpenFeature.DependencyInjection" Version="2.7.0" />
-    <PackageReference Include="OpenFeature.Hosting" Version="2.7.0" />
+    <PackageReference Include="OpenTelemetry.Exporter.OpenTelemetryProtocol" Version="1.14.0" />
+    <PackageReference Include="OpenTelemetry.Extensions.Hosting" Version="1.14.0" />
+    <PackageReference Include="OpenTelemetry.Instrumentation.AspNetCore" Version="1.14.0" />
+    <PackageReference Include="OpenTelemetry.Instrumentation.GrpcNetClient" Version="1.14.0-beta.1" />
+    <PackageReference Include="OpenTelemetry.Instrumentation.Http" Version="1.14.0" />
+    <PackageReference Include="OpenTelemetry.Instrumentation.Process" Version="1.14.0-beta.2" />
+    <PackageReference Include="OpenTelemetry.Instrumentation.StackExchangeRedis" Version="1.14.0-beta.1" />
+    <PackageReference Include="OpenTelemetry.Instrumentation.Runtime" Version="1.14.0" />
+    <PackageReference Include="OpenTelemetry.Resources.Container" Version="1.14.0-beta.1" />
+    <PackageReference Include="OpenTelemetry.Resources.Host" Version="1.14.0-beta.1" />
+    <PackageReference Include="StackExchange.Redis" Version="2.9.32" />
+    <PackageReference Include="OpenFeature.Contrib.Providers.Flagd" Version="0.3.4" />
+    <PackageReference Include="OpenFeature" Version="2.9.0" />
+    <PackageReference Include="OpenFeature.Hosting" Version="2.9.0" />
   </ItemGroup>
 
   <ItemGroup>
