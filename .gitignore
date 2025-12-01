@@ -66,3 +66,4 @@ src/payment.zip
 src/payment-old
 src/payment/*.bak
 kubernetes/splunk-astronomy-shop-0.0.0.yaml
+kubernetes/TEST-*.yaml
