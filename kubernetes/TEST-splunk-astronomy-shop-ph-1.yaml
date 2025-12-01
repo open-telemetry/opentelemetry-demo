@@ -1,6 +1,6 @@
 # Splunk Astronomy Shop Kubernetes Manifest
 # Version: ph-1
-# Generated on: 2025-12-01T16:10:19Z
+# Generated on: 2025-12-01T17:20:57Z
 #
 # This manifest combines all service deployments for the Splunk Astronomy Shop
 # Services are defined in services.yaml
@@ -370,7 +370,7 @@ spec:
     spec:
       containers:
       - name: astronomy-loadgen
-        image: ghcr.io/splunk/online-boutique/rumloadgen:ph-1
+        image: ghcr.io/splunk/online-boutique/rumloadgen:5.6
         imagePullPolicy: Always
         env:
         - name: RUM_FRONTEND_IP
@@ -548,7 +548,7 @@ spec:
       serviceAccountName: opentelemetry-demo
       containers:
       - name: checkout
-        image: ghcr.io/open-telemetry/demo:ph-1
+        image: ghcr.io/open-telemetry/demo:2.1.3-checkout
         imagePullPolicy: IfNotPresent
         ports:
         - containerPort: 8080
@@ -660,7 +660,7 @@ spec:
       serviceAccountName: opentelemetry-demo
       containers:
       - name: currency
-        image: ghcr.io/open-telemetry/demo:ph-1
+        image: ghcr.io/open-telemetry/demo:2.1.3-currency
         imagePullPolicy: IfNotPresent
         ports:
         - containerPort: 8080
@@ -747,7 +747,7 @@ spec:
       serviceAccountName: opentelemetry-demo
       containers:
       - name: email
-        image: ghcr.io/open-telemetry/demo:ph-1
+        image: ghcr.io/open-telemetry/demo:2.1.3-email
         imagePullPolicy: IfNotPresent
         ports:
         - containerPort: 8080
@@ -1126,7 +1126,7 @@ spec:
       serviceAccountName: opentelemetry-demo
       containers:
       - name: flagd-ui
-        image: ghcr.io/open-telemetry/demo:ph-1
+        image: ghcr.io/open-telemetry/demo:2.1.3-flagd-ui
         imagePullPolicy: IfNotPresent
         ports:
         - containerPort: 4000
@@ -1717,7 +1717,7 @@ spec:
       serviceAccountName: opentelemetry-demo
       containers:
       - name: kafka
-        image: ghcr.io/open-telemetry/demo:ph-1
+        image: ghcr.io/open-telemetry/demo:2.1.3-kafka
         imagePullPolicy: IfNotPresent
         ports:
         - containerPort: 9092
@@ -1816,7 +1816,7 @@ spec:
       serviceAccountName: opentelemetry-demo
       containers:
       - name: llm
-        image: ghcr.io/open-telemetry/demo:ph-1
+        image: ghcr.io/open-telemetry/demo:2.1.3-llm
         imagePullPolicy: IfNotPresent
         ports:
         - containerPort: 8000
@@ -2034,7 +2034,7 @@ spec:
       serviceAccountName: opentelemetry-demo
       containers:
       - name: postgresql
-        image: ghcr.io/open-telemetry/demo:ph-1
+        image: ghcr.io/open-telemetry/demo:2.1.3-postgresql
         imagePullPolicy: IfNotPresent
         ports:
         - containerPort: 5432
@@ -2121,7 +2121,7 @@ spec:
       serviceAccountName: opentelemetry-demo
       containers:
       - name: product-catalog
-        image: ghcr.io/open-telemetry/demo:ph-1
+        image: ghcr.io/open-telemetry/demo:2.1.3-product-catalog
         imagePullPolicy: IfNotPresent
         ports:
         - containerPort: 8080
@@ -2387,7 +2387,7 @@ spec:
       serviceAccountName: opentelemetry-demo
       containers:
       - name: product-reviews
-        image: ghcr.io/open-telemetry/demo:ph-1
+        image: ghcr.io/open-telemetry/demo:2.1.3-product-reviews
         imagePullPolicy: IfNotPresent
         ports:
         - containerPort: 3551
@@ -2496,7 +2496,7 @@ spec:
       serviceAccountName: opentelemetry-demo
       containers:
       - name: quote
-        image: ghcr.io/open-telemetry/demo:ph-1
+        image: ghcr.io/open-telemetry/demo:2.1.3-quote
         imagePullPolicy: IfNotPresent
         ports:
         - containerPort: 8080
@@ -2720,7 +2720,7 @@ spec:
       serviceAccountName: opentelemetry-demo
       containers:
       - name: shipping
-        image: ghcr.io/open-telemetry/demo:ph-1
+        image: ghcr.io/open-telemetry/demo:2.1.3-shipping
         imagePullPolicy: IfNotPresent
         ports:
         - containerPort: 8080
@@ -2806,7 +2806,7 @@ spec:
     spec:
       containers:
       - name: sqlserver
-        image: mcr.microsoft.com/mssql/server:ph-1
+        image: mcr.microsoft.com/mssql/server:2022-latest
         ports:
         - containerPort: 1433
         env:
@@ -2968,7 +2968,7 @@ spec:
       serviceAccountName: opentelemetry-demo
       initContainers:
       - name: wait-for-shop-dc-shim
-        image: curlimages/curl:ph-1
+        image: curlimages/curl:8.1.2
         command:
         - sh
         - -c
@@ -2985,7 +2985,7 @@ spec:
             cpu: 50m
       containers:
       - name: load-generator
-        image: quay.io/jeremyh/shop-dc-load-generator:ph-1
+        image: quay.io/jeremyh/shop-dc-load-generator:0.0.1
         args:
         - --url
         - http://shop-dc-shim:8070
@@ -3043,7 +3043,7 @@ spec:
     spec:
       containers:
       - name: mssql
-        image: mcr.microsoft.com/mssql/server:ph-1
+        image: mcr.microsoft.com/mssql/server:2022-latest
         imagePullPolicy: IfNotPresent
         ports:
         - containerPort: 1433
@@ -3212,7 +3212,7 @@ spec:
       serviceAccountName: opentelemetry-demo
       containers:
       - name: valkey-cart
-        image: valkey/valkey:ph-1
+        image: valkey/valkey:8.1.3-alpine
         imagePullPolicy: IfNotPresent
         ports:
         - containerPort: 6379
