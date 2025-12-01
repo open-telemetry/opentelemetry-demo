@@ -34,17 +34,10 @@ ENV OPENTELEMETRY_AGENT_DIR=/opt/opentelemetry
 RUN mkdir -p $APPDYNAMICS_AGENT_BASE_DIR $OPENTELEMETRY_AGENT_DIR && \
     chown -R shopdc:shopdc $APPDYNAMICS_AGENT_BASE_DIR $OPENTELEMETRY_AGENT_DIR
 
-# Download OpenTelemetry Java agent for Splunk Observability andlatest AppDynamics Java agent
-ADD --chown=shopdc:shopdc https://github.com/signalfx/splunk-otel-java/releases/latest/download/splunk-otel-javaagent.jar $OPENTELEMETRY_AGENT_DIR/opentelemetry-javaagent.jar
-
 RUN cd /tmp && \
-    echo "Fetching latest AppDynamics Java agent..." && \
-    DOWNLOAD_BASE_PATH="https://download-files.appdynamics.com/" && \
-    echo "Getting latest version info from AppDynamics API..." && \
-    FILE_PATH=$(curl -s https://download.appdynamics.com/download/downloadfilelatest/ | jq -r '.[].s3_path' | grep java-jdk8 | head -n1) && \
-    DOWNLOAD_URL="${DOWNLOAD_BASE_PATH}${FILE_PATH}" && \
-    echo "Downloading AppDynamics agent from: $DOWNLOAD_URL" && \
-    curl -L -f "$DOWNLOAD_URL" -o JavaAgent.zip && \
+    echo "Downloading specific AppDynamics Java agent..." && \
+    APPD_DOWNLOAD_URL="https://download-files.appdynamics.com/download-file/java-jdk8/25.10.0.37406/AppServerAgent-1.8-25.10.0.37406.zip" && \
+    curl -L -f "$APPD_DOWNLOAD_URL" -o JavaAgent.zip && \
     echo "Downloaded file info:" && \
     ls -la JavaAgent.zip && \
     echo "Extracting AppDynamics agent to $APPDYNAMICS_AGENT_BASE_DIR..." && \
@@ -53,6 +46,28 @@ RUN cd /tmp && \
     ls -la $APPDYNAMICS_AGENT_BASE_DIR/ && \
     chown -R shopdc:shopdc $APPDYNAMICS_AGENT_BASE_DIR && \
     rm -f JavaAgent.zip
+
+# Download the specific Splunk OpenTelemetry Java agent CSA version and replace it within the AppDynamics directory
+RUN cd /tmp && \
+    SPLUNK_OTEL_CSA_URL="https://repo1.maven.org/maven2/com/splunk/splunk-otel-javaagent-csa/2.21.1/splunk-otel-javaagent-csa-2.21.1.jar" && \
+    SPLUNK_OTEL_CSA_FILENAME="splunk-otel-javaagent-csa-2.21.1.jar" && \
+    curl -L -f "$SPLUNK_OTEL_CSA_URL" -o "$SPLUNK_OTEL_CSA_FILENAME" && \
+    echo "Downloaded Splunk OpenTelemetry CSA agent." && \
+    ls -la "$SPLUNK_OTEL_CSA_FILENAME" && \
+    \
+    # Define the target path and ensure the directory exists
+    TARGET_SPLUNK_AGENT_PATH="$APPDYNAMICS_AGENT_BASE_DIR/otel/splunk-otel-javaagent-2.21.0.jar" && \
+    TARGET_SPLUNK_AGENT_DIR=$(dirname "$TARGET_SPLUNK_AGENT_PATH") && \
+    TARGET_SPLUNK_AGENT_NAME=$(basename "$TARGET_SPLUNK_AGENT_PATH") && \
+    \
+    echo "Checking if target directory $TARGET_SPLUNK_AGENT_DIR exists..." && \
+    mkdir -p "$TARGET_SPLUNK_AGENT_DIR" && \
+    \
+    echo "Replacing $TARGET_SPLUNK_AGENT_PATH with the new Splunk OpenTelemetry CSA agent..." && \
+    mv "$SPLUNK_OTEL_CSA_FILENAME" "$TARGET_SPLUNK_AGENT_DIR/$TARGET_SPLUNK_AGENT_NAME" && \
+    chown shopdc:shopdc "$TARGET_SPLUNK_AGENT_DIR/$TARGET_SPLUNK_AGENT_NAME" && \
+    echo "Splunk OpenTelemetry CSA agent replaced successfully at $TARGET_SPLUNK_AGENT_DIR/$TARGET_SPLUNK_AGENT_NAME" && \
+    rm -f "$SPLUNK_OTEL_CSA_FILENAME"
 
 # Copy application JAR and startup script
 COPY --from=builder --chown=shopdc:shopdc /app/build/libs/*.jar app.jar

@@ -3,8 +3,8 @@ set -e
 
 REGISTRY="quay.io"
 NAMESPACE="jeremyh"
-SHOP_IMAGE="${REGISTRY}/${NAMESPACE}/shop-dc-shim:latest"
-LOAD_GEN_IMAGE="${REGISTRY}/${NAMESPACE}/shop-dc-load-generator:latest"
+SHOP_IMAGE="${REGISTRY}/${NAMESPACE}/shop-dc-shim:0.0.9"
+LOAD_GEN_IMAGE="${REGISTRY}/${NAMESPACE}/shop-dc-load-generator:0.0.5"
 
 # Build shop-dc-shim service
 docker buildx build --platform linux/amd64 -t ${SHOP_IMAGE} -f ./Dockerfile --push --progress=plain .

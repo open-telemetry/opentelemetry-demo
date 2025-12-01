@@ -20,8 +20,8 @@ fi
 # Registry and image configuration
 REGISTRY="ghcr.io"
 NAMESPACE="splunk/opentelemetry-demo"
-SHOP_IMAGE="${REGISTRY}/${NAMESPACE}/shop-dc-shim:${VERSION}"
-LOAD_GEN_IMAGE="${REGISTRY}/${NAMESPACE}/shop-dc-load-generator:${VERSION}"
+SHOP_IMAGE="${REGISTRY}/${NAMESPACE}/otel-shop-dc-shim:${VERSION}"
+LOAD_GEN_IMAGE="${REGISTRY}/${NAMESPACE}/otel-shop-dc-load-generator:${VERSION}"
 
 # Build shop-dc-shim service
 SHOP_DOCKER_CMD=(
