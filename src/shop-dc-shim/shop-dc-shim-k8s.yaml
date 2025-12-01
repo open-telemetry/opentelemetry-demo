@@ -53,7 +53,7 @@ spec:
         - containerPort: 1433
         env:
         - name: ACCEPT_EULA
-          value: Y
+          value: "Y"
         - name: MSSQL_SA_PASSWORD
           value: ShopPass123!
         resources:
@@ -203,11 +203,13 @@ spec:
         command:
         - sh
         - -c
-        args:
-        - "echo \"Waiting for shop-dc-shim service to be ready...\"\nuntil curl -f\
-          \ --connect-timeout 5 --max-time 20 http://shop-dc-shim:8070/actuator/health;\
-          \ do\n  echo \"Shop DC Shim not ready, waiting 20 seconds...\"\n  sleep\
-          \ 20\ndone\necho \"Shop DC Shim is ready, starting load generator...\"\n"
+        - |
+          echo "Waiting for shop-dc-shim service to be ready..."
+          until curl -f --connect-timeout 5 --max-time 20 http://shop-dc-shim:8070/actuator/health; do
+            echo "Shop DC Shim not ready, waiting 20 seconds..."
+            sleep 20
+          done
+          echo "Shop DC Shim is ready, starting load generator..."
         resources:
           limits:
             memory: 64Mi

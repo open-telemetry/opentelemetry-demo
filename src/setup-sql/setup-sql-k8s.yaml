@@ -18,5 +18,9 @@ metadata:
   name: mssql-init-script
   namespace: astronomy-shop
 data:
-  init-db.sql: "IF NOT EXISTS (SELECT name FROM sys.databases WHERE name = 'FraudDetection')\n\
-    BEGIN\n  CREATE DATABASE FraudDetection;\nEND\nGO\n"
+  init-db.sql: |
+    IF NOT EXISTS (SELECT name FROM sys.databases WHERE name = 'FraudDetection')
+    BEGIN
+      CREATE DATABASE FraudDetection;
+    END
+    GO
