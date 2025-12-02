@@ -12,5 +12,5 @@ services:
   frontend: ph-2
   frontend-proxy: ph-2
   image-provider: ph-2
-  payment: ph-2
+  payment: payment-fix-1
   recommendation: ph-2
