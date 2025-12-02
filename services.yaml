@@ -112,7 +112,7 @@ services:
 
   - name: demo-namespace
     build: false
-    manifest: true
+    manifest: false  # Disabled - using default namespace instead
 
   - name: demo-service-account
     build: false

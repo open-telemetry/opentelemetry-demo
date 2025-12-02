@@ -5,7 +5,6 @@ apiVersion: v1
 kind: ConfigMap
 metadata:
   name: scriptfile
-  namespace: astronomy-shop
 data:
   local-file: |
     /* eslint-disable no-console */
@@ -137,7 +136,6 @@ metadata:
   name: astronomy-loadgen-deployment
   labels:
     app: astronomy-loadgen
-  namespace: astronomy-shop
 spec:
   replicas: 1
   selector:

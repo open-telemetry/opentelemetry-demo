@@ -6,7 +6,6 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   annotations: {}
-  namespace: astronomy-shop
   name: thousandeyes
   labels:
     app: thousandeyes

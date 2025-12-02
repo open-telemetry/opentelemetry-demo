@@ -5,7 +5,6 @@ apiVersion: v1
 kind: Service
 metadata:
   name: shop-dc-shim-db
-  namespace: astronomy-shop
   labels:
     opentelemetry.io/name: shop-dc-shim-db
     app.kubernetes.io/component: shop-dc-shim-db
@@ -25,7 +24,6 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: shop-dc-shim-db
-  namespace: astronomy-shop
   labels:
     opentelemetry.io/name: shop-dc-shim-db
     app.kubernetes.io/component: shop-dc-shim-db
@@ -74,7 +72,6 @@ apiVersion: v1
 kind: Service
 metadata:
   name: shop-dc-shim
-  namespace: astronomy-shop
   labels:
     opentelemetry.io/name: shop-dc-shim
     app.kubernetes.io/component: shop-dc-shim
@@ -94,7 +91,6 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: shop-dc-shim
-  namespace: astronomy-shop
   labels:
     opentelemetry.io/name: shop-dc-shim
     app.kubernetes.io/component: shop-dc-shim
@@ -186,7 +182,6 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: shop-dc-load-generator
-  namespace: astronomy-shop
   labels:
     opentelemetry.io/name: shop-dc-load-generator
     app.kubernetes.io/component: shop-dc-load-generator
