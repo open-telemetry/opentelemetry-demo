@@ -8,6 +8,9 @@
 [![License](https://img.shields.io/badge/License-Apache_2.0-blue.svg?color=red)](https://github.com/open-telemetry/opentelemetry-demo/blob/main/LICENSE)
 [![Integration Tests](https://github.com/open-telemetry/opentelemetry-demo/actions/workflows/run-integration-tests.yml/badge.svg)](https://github.com/open-telemetry/opentelemetry-demo/actions/workflows/run-integration-tests.yml)
 [![Artifact Hub](https://img.shields.io/endpoint?url=https://artifacthub.io/badge/repository/opentelemetry-demo)](https://artifacthub.io/packages/helm/opentelemetry-helm/opentelemetry-demo)
+[![FOSSA Status](https://app.fossa.com/api/projects/custom%2B162%2Fgithub.com%2Fopen-telemetry%2Fopentelemetry-demo.svg?type=shield&issueType=license)](https://app.fossa.com/projects/custom%2B162%2Fgithub.com%2Fopen-telemetry%2Fopentelemetry-demo?ref=badge_shield&issueType=license)
+[![FOSSA Status](https://app.fossa.com/api/projects/custom%2B162%2Fgithub.com%2Fopen-telemetry%2Fopentelemetry-demo.svg?type=shield&issueType=security)](https://app.fossa.com/projects/custom%2B162%2Fgithub.com%2Fopen-telemetry%2Fopentelemetry-demo?ref=badge_shield&issueType=security)
+[![OpenSSF Scorecard for opentelemetry-demo](https://api.scorecard.dev/projects/github.com/open-telemetry/opentelemetry-demo/badge)](https://scorecard.dev/viewer/?uri=github.com/open-telemetry/opentelemetry-demo)
 [![OpenSSF Best Practices](https://www.bestpractices.dev/projects/9247/badge)](https://www.bestpractices.dev/en/projects/9247)
 
 ## Welcome to the OpenTelemetry Astronomy Shop Demo
@@ -58,19 +61,20 @@ keeping it up to date for you.
 
 |                           |                |                                  |
 |---------------------------|----------------|----------------------------------|
-| [AlibabaCloud LogService] | [Elastic]      | [Oracle]                         |
-| [Apache Doris]            | [Google Cloud] | [Parseable]                      |
-| [AppDynamics]             | [Grafana Labs] | [Sentry]                         |
-| [Aspecto]                 | [Guance]       | [ServiceNow Cloud Observability] |
-| [Axiom]                   | [Honeycomb.io] | [SigNoz]                         |
-| [Axoflow]                 | [Instana]      | [Splunk]                         |
-| [Azure Data Explorer]     | [Kloudfuse]    | [Sumo Logic]                     |
-| [Causely]                 | [Last9]        | [TelemetryHub]                   |
-| [ClickStack]              | [Liatrio]      | [Teletrace]                      |
-| [Coralogix]               | [Logz.io]      | [Tinybird]                       |
-| [Dash0]                   | [New Relic]    | [Tracetest]                      |
-| [Datadog]                 | [OpenObserve]  | [Uptrace]                        |
-| [Dynatrace]               | [OpenSearch]   | [VictoriaMetrics]                |
+| [AlibabaCloud LogService] | [Google Cloud] | [Parseable]                      |
+| [Apache Doris]            | [Grafana Labs] | [Sentry]                         |
+| [AppDynamics]             | [Guance]       | [ServiceNow Cloud Observability] |
+| [Aspecto]                 | [Honeycomb.io] | [SigNoz]                         |
+| [Axiom]                   | [Instana]      | [Splunk]                         |
+| [Axoflow]                 | [Kloudfuse]    | [Sumo Logic]                     |
+| [Azure Data Explorer]     | [Last9]        | [TelemetryHub]                   |
+| [Causely]                 | [Liatrio]      | [Teletrace]                      |
+| [ClickStack]              | [Logz.io]      | [Tinybird]                       |
+| [Coralogix]               | [New Relic]    | [Tracetest]                      |
+| [Dash0]                   | [Oodle]        | [Uptrace]                        |
+| [Datadog]                 | [OpenObserve]  | [VictoriaMetrics]                |
+| [Dynatrace]               | [OpenSearch]   |                                  |
+| [Elastic]                 | [Oracle]       |                                  |
 
 ## Contributing
 
@@ -138,6 +142,7 @@ For more information about the emeritus role, see the [community repository](htt
 [Liatrio]: https://github.com/liatrio/opentelemetry-demo
 [Logz.io]: https://logz.io/learn/how-to-run-opentelemetry-demo-with-logz-io/
 [New Relic]: https://github.com/newrelic/opentelemetry-demo
+[Oodle]: https://blog.oodle.ai/meet-oodle-unified-and-ai-native-observability/
 [OpenSearch]: https://github.com/opensearch-project/opentelemetry-demo
 [OpenObserve]: https://openobserve.ai/blog/opentelemetry-astronomy-shop-demo/
 [Oracle]: https://github.com/oracle-quickstart/oci-o11y-solutions/blob/main/knowledge-content/opentelemetry-demo

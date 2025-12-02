@@ -1,0 +1,11 @@
+grpcio-health-checking==1.71.0
+openfeature-hooks-opentelemetry==0.2.0
+openfeature-provider-flagd==0.2.3
+opentelemetry-distro==0.59b0
+opentelemetry-exporter-otlp-proto-grpc==1.38.0
+psutil==7.0.0 # Importing this will also import opentelemetry-instrumentation-system-metrics when running opentelemetry-bootstrap
+python-dotenv==1.2.1
+python-json-logger==4.0.0
+psycopg2-binary==2.9.11
+openai==2.8.1
+simplejson==3.20.2
