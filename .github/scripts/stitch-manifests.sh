@@ -121,14 +121,15 @@ for svc in config.get('services', []):
                 -e "s|app.kubernetes.io/version: [0-9][0-9.]*|app.kubernetes.io/version: ${SERVICE_VERSION}|g" \
                 -e "s|service.version=[0-9][0-9.]*|service.version=${SERVICE_VERSION}|g" \
                 "$MANIFEST_FILE" >> "$OUTPUT_FILE"
+        elif [ "$SHOULD_REPLACE" = "false" ]; then
+            # Keep manifest completely as-is (no registry replacement, no version replacement)
+            cat "$MANIFEST_FILE" >> "$OUTPUT_FILE"
+            echo "  (using original registry and versions)"
         else
-            # Replace only version numbers in labels (keep original registry and image tags)
+            # No registry specified, but replace version numbers in labels only
             sed -e "s|app.kubernetes.io/version: [0-9][0-9.]*|app.kubernetes.io/version: ${SERVICE_VERSION}|g" \
                 -e "s|service.version=[0-9][0-9.]*|service.version=${SERVICE_VERSION}|g" \
                 "$MANIFEST_FILE" >> "$OUTPUT_FILE"
-            if [ -n "$REGISTRY_URL" ] && [ "$SHOULD_REPLACE" = "false" ]; then
-                echo "  (using original registry)"
-            fi
         fi
 
         echo "" >> "$OUTPUT_FILE"
