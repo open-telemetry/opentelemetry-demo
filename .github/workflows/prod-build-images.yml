@@ -29,7 +29,8 @@ name: Build Images - PRODUCTION
 jobs:
   determine-version:
     # Only run in the main splunk/opentelemetry-demo repo, not in forks
-    if: github.repository == 'splunk/opentelemetry-demo'
+    # TEMPORARY: Commented out for testing in fork - UNCOMMENT BEFORE PR TO PROD
+    # if: github.repository == 'splunk/opentelemetry-demo'
     runs-on: ubuntu-latest
     outputs:
       version: ${{ steps.version.outputs.version }}
@@ -48,29 +49,47 @@ jobs:
 
       - name: Make scripts executable
         run: |
-          chmod +x .github/scripts/bump-version.sh
+          chmod +x .github/scripts/bump-version.py
+          chmod +x .github/scripts/manage-hotfix.py
 
       - name: Determine version
         id: version
         run: |
           CURRENT_VERSION=$(cat SPLUNK-VERSION)
           BUMP_TYPE="${{ inputs.version_bump }}"
+          SERVICES="${{ inputs.services }}"
 
           echo "Current version: $CURRENT_VERSION"
+          echo "Services to build: $SERVICES"
 
-          # Check if we should keep current version or bump
-          if [[ "$BUMP_TYPE" == "none (keep current)" ]]; then
+          # Determine if this is a hotfix build (single service, no full version bump)
+          IS_HOTFIX="false"
+          if [[ "$SERVICES" != "all" ]] && [[ "$BUMP_TYPE" == "none (keep current)" ]]; then
+            IS_HOTFIX="true"
+          fi
+
+          # Calculate version
+          if [[ "$IS_HOTFIX" == "true" ]]; then
+            # Hotfix: use manage-hotfix.py to track and version
+            SERVICE_NAME=$(echo "$SERVICES" | tr ',' '\n' | head -1 | xargs)
+            VERSION=$(python3 .github/scripts/manage-hotfix.py add "$SERVICE_NAME")
+            echo "Creating hotfix version for $SERVICE_NAME: $VERSION"
+            VERSION_STATUS="hotfix"
+          elif [[ "$BUMP_TYPE" == "none (keep current)" ]]; then
+            # Keep current version
             VERSION="$CURRENT_VERSION"
             echo "Keeping current version: $VERSION"
             VERSION_STATUS="unchanged"
           else
-            # Bump the version
-            VERSION=$(.github/scripts/bump-version.sh $BUMP_TYPE)
+            # Bump the version - this is a full release
+            VERSION=$(python3 .github/scripts/bump-version.py "$CURRENT_VERSION" "$BUMP_TYPE")
             echo "Bumped version from $CURRENT_VERSION to $VERSION"
             VERSION_STATUS="bumped"
           fi
 
           echo "version=$VERSION" >> $GITHUB_OUTPUT
+          echo "is_hotfix=$IS_HOTFIX" >> $GITHUB_OUTPUT
+          echo "is_full_release=$([[ "$SERVICES" == "all" && "$VERSION_STATUS" == "bumped" ]] && echo "true" || echo "false")" >> $GITHUB_OUTPUT
 
           echo "### Version Information" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
@@ -79,10 +98,22 @@ jobs:
           echo "| Current | \`$CURRENT_VERSION\` |" >> $GITHUB_STEP_SUMMARY
           if [[ "$VERSION_STATUS" == "unchanged" ]]; then
             echo "| **Using** | **\`$VERSION\`** (unchanged) |" >> $GITHUB_STEP_SUMMARY
+          elif [[ "$VERSION_STATUS" == "hotfix" ]]; then
+            echo "| **Hotfix** | **\`$VERSION\`** |" >> $GITHUB_STEP_SUMMARY
           else
             echo "| **New** | **\`$VERSION\`** |" >> $GITHUB_STEP_SUMMARY
           fi
           echo "| Action | ${{ inputs.version_bump }} |" >> $GITHUB_STEP_SUMMARY
+          echo "| Build Type | $([[ "$IS_HOTFIX" == "true" ]] && echo "Hotfix" || ([[ "$SERVICES" == "all" ]] && echo "Full Release" || echo "Partial")) |" >> $GITHUB_STEP_SUMMARY
+
+          # Show hotfix status if applicable
+          if [[ "$IS_HOTFIX" == "true" ]]; then
+            echo "" >> $GITHUB_STEP_SUMMARY
+            echo "#### Hotfix Status" >> $GITHUB_STEP_SUMMARY
+            echo "\`\`\`" >> $GITHUB_STEP_SUMMARY
+            python3 .github/scripts/manage-hotfix.py status >> $GITHUB_STEP_SUMMARY
+            echo "\`\`\`" >> $GITHUB_STEP_SUMMARY
+          fi
 
   prepare-matrix:
     needs: determine-version
@@ -266,8 +297,131 @@ jobs:
           echo "" >> $GITHUB_STEP_SUMMARY
           echo "Dockerfile not found at: \`${{ matrix.dockerfile }}\`" >> $GITHUB_STEP_SUMMARY
 
-  trigger-manifest-build:
+  update-versions:
     needs: [determine-version, prepare-matrix, build-images]
+    if: ${{ success() }}
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.x'
+
+      - name: Install PyYAML
+        run: pip install pyyaml
+
+      - name: Make scripts executable
+        run: chmod +x .github/scripts/manage-hotfix.py
+
+      - name: Update SPLUNK-VERSION for full releases
+        if: needs.determine-version.outputs.is_full_release == 'true'
+        run: |
+          echo "${{ needs.determine-version.outputs.version }}" > SPLUNK-VERSION
+          echo "✅ SPLUNK-VERSION updated to: ${{ needs.determine-version.outputs.version }}"
+
+      - name: Clear hotfixes on full releases
+        if: needs.determine-version.outputs.is_full_release == 'true'
+        run: |
+          python3 .github/scripts/manage-hotfix.py clear
+          echo "✅ Hotfixes cleared for full release"
+
+      - name: Commit version updates
+        run: |
+          git config --local user.email "github-actions[bot]@users.noreply.github.com"
+          git config --local user.name "github-actions[bot]"
+
+          # For hotfixes, commit .hotfix.yaml
+          if [[ "${{ needs.determine-version.outputs.is_hotfix }}" == "true" ]]; then
+            git add .hotfix.yaml
+          fi
+
+          # For full releases, commit SPLUNK-VERSION (and deletion of .hotfix.yaml if it existed)
+          if [[ "${{ needs.determine-version.outputs.is_full_release }}" == "true" ]]; then
+            git add SPLUNK-VERSION
+            # Stage deletion of .hotfix.yaml if it was removed
+            if ! [ -f .hotfix.yaml ]; then
+              git rm --ignore-unmatch .hotfix.yaml 2>/dev/null || true
+            fi
+          fi
+
+          if git diff --staged --quiet; then
+            echo "No version changes to commit"
+          else
+            if [[ "${{ needs.determine-version.outputs.is_hotfix }}" == "true" ]]; then
+              git commit -m "chore: hotfix build ${{ needs.determine-version.outputs.version }}" \
+                -m "Service: ${{ inputs.services }}" \
+                -m "" \
+                -m "Hotfix applied to service on base version $(cat SPLUNK-VERSION)"
+            elif [[ "${{ needs.determine-version.outputs.is_full_release }}" == "true" ]]; then
+              git commit -m "chore: release version ${{ needs.determine-version.outputs.version }}" \
+                -m "Version bump: ${{ inputs.version_bump }}" \
+                -m "All services updated to version ${{ needs.determine-version.outputs.version }}" \
+                -m "All hotfixes cleared"
+            else
+              git commit -m "chore: production build ${{ needs.determine-version.outputs.version }}" \
+                -m "Services: ${{ inputs.services }}"
+            fi
+            git push
+            echo "✅ Version files committed and pushed"
+          fi
+
+          echo "### 📝 Version Updates" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "Updated to version: \`${{ needs.determine-version.outputs.version }}\`" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          if [[ "${{ needs.determine-version.outputs.is_hotfix }}" == "true" ]]; then
+            echo "> **Note:** Hotfix build. Base version: \`$(cat SPLUNK-VERSION)\`, Hotfix: \`${{ needs.determine-version.outputs.version }}\`" >> $GITHUB_STEP_SUMMARY
+          else
+            echo "> **Note:** Production builds use SPLUNK-VERSION for unified versioning. Hotfixes tracked separately in .hotfix.yaml" >> $GITHUB_STEP_SUMMARY
+          fi
+
+  create-release-tag:
+    needs: [determine-version, update-versions]
+    if: ${{ success() && needs.determine-version.outputs.is_full_release == 'true' }}
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Create and push git tag
+        run: |
+          VERSION="${{ needs.determine-version.outputs.version }}"
+          TAG="v${VERSION}"
+
+          echo "Creating release tag: $TAG"
+
+          git config --local user.email "github-actions[bot]@users.noreply.github.com"
+          git config --local user.name "github-actions[bot]"
+
+          # Create annotated tag
+          git tag -a "$TAG" -m "Release $VERSION" \
+            -m "Full release with all services updated" \
+            -m "Version bump: ${{ inputs.version_bump }}"
+
+          # Push tag
+          git push origin "$TAG"
+
+          echo "✅ Release tag $TAG created and pushed"
+
+          echo "### 🏷️ Release Tag Created" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "- **Tag:** \`$TAG\`" >> $GITHUB_STEP_SUMMARY
+          echo "- **Version:** \`$VERSION\`" >> $GITHUB_STEP_SUMMARY
+          echo "- **Type:** Full Release" >> $GITHUB_STEP_SUMMARY
+
+  trigger-manifest-build:
+    needs: [determine-version, prepare-matrix, build-images, update-versions]
     if: ${{ success() }}
     runs-on: ubuntu-latest
     permissions:
@@ -284,13 +438,12 @@ jobs:
         run: |
           echo "### 🚀 Triggering Production Manifest Build" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
-          echo "Automatically building production manifest with matching version..." >> $GITHUB_STEP_SUMMARY
+          echo "Automatically building production manifest with per-service versions..." >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
 
-          # Trigger the production manifest build workflow with the determined version
-          # Pass the same version_bump to ensure consistency
+          # Trigger the production manifest build workflow
+          # Note: Manifest build now uses .service-versions.yaml instead of single version
           gh workflow run prod-build-manifest.yml \
-            -f version_bump="${{ inputs.version_bump }}" \
             -f commit_manifest=true \
             -f validate_manifest=true
 
@@ -299,15 +452,16 @@ jobs:
           echo "| Property | Value |" >> $GITHUB_STEP_SUMMARY
           echo "|----------|-------|" >> $GITHUB_STEP_SUMMARY
           echo "| Workflow | \`prod-build-manifest.yml\` |" >> $GITHUB_STEP_SUMMARY
-          echo "| Version | \`${{ needs.determine-version.outputs.version }}\` |" >> $GITHUB_STEP_SUMMARY
-          echo "| Version Bump | \`${{ inputs.version_bump }}\` |" >> $GITHUB_STEP_SUMMARY
+          echo "| Version Source | \`.service-versions.yaml\` |" >> $GITHUB_STEP_SUMMARY
+          echo "| Base Version | \`${{ needs.determine-version.outputs.version }}\` |" >> $GITHUB_STEP_SUMMARY
+          echo "| Build Type | ${{ needs.determine-version.outputs.is_hotfix == 'true' && 'Hotfix' || (needs.determine-version.outputs.is_full_release == 'true' && 'Full Release' || 'Partial') }} |" >> $GITHUB_STEP_SUMMARY
           echo "| Commit | \`true\` |" >> $GITHUB_STEP_SUMMARY
           echo "| Validate | \`true\` |" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
           echo "Check the [Actions tab](../../actions/workflows/prod-build-manifest.yml) to monitor the manifest build." >> $GITHUB_STEP_SUMMARY
 
   summary:
-    needs: [determine-version, prepare-matrix, build-images, trigger-manifest-build]
+    needs: [determine-version, prepare-matrix, build-images, update-versions, trigger-manifest-build]
     if: always()
     runs-on: ubuntu-latest
 

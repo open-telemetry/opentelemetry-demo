@@ -7,6 +7,109 @@ on:
     types: [opened, synchronize, reopened]
 
 jobs:
+  check-prod-workflow-restrictions:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Check PROD workflows have repository restrictions
+        id: check_restrictions
+        run: |
+          echo "Checking if PROD workflows have proper repository restrictions..."
+
+          ERRORS=""
+
+          # Check prod-build-images.yml
+          if ! grep -q "^[[:space:]]*if: github.repository == 'splunk/opentelemetry-demo'" .github/workflows/prod-build-images.yml; then
+            ERRORS="${ERRORS}❌ prod-build-images.yml: Missing or commented repository check\n"
+            echo "ERROR: prod-build-images.yml missing repository check"
+          else
+            echo "✓ prod-build-images.yml has repository check"
+          fi
+
+          # Check prod-build-manifest.yml
+          if ! grep -q "^[[:space:]]*if: github.repository == 'splunk/opentelemetry-demo'" .github/workflows/prod-build-manifest.yml; then
+            ERRORS="${ERRORS}❌ prod-build-manifest.yml: Missing or commented repository check\n"
+            echo "ERROR: prod-build-manifest.yml missing repository check"
+          else
+            echo "✓ prod-build-manifest.yml has repository check"
+          fi
+
+          if [ -n "$ERRORS" ]; then
+            echo "has_errors=true" >> $GITHUB_OUTPUT
+            echo "errors<<EOF" >> $GITHUB_OUTPUT
+            echo -e "$ERRORS" >> $GITHUB_OUTPUT
+            echo "EOF" >> $GITHUB_OUTPUT
+          else
+            echo "has_errors=false" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Fail if repository checks are missing
+        if: steps.check_restrictions.outputs.has_errors == 'true'
+        run: |
+          echo "❌ ERROR: PROD workflows must have repository restrictions"
+          echo ""
+          echo "The following issues were found:"
+          echo "${{ steps.check_restrictions.outputs.errors }}"
+          echo ""
+          echo "PROD workflows must include this line (UNCOMMENTED) in the job definition:"
+          echo "  if: github.repository == 'splunk/opentelemetry-demo'"
+          echo ""
+          echo "Files to check:"
+          echo "  - .github/workflows/prod-build-images.yml (determine-version job)"
+          echo "  - .github/workflows/prod-build-manifest.yml (build-production-manifest job)"
+          echo ""
+          echo "This ensures PROD workflows only run in the main splunk/opentelemetry-demo repo."
+          exit 1
+
+      - name: Success
+        if: steps.check_restrictions.outputs.has_errors == 'false'
+        run: |
+          echo "✓ PROD workflows have proper repository restrictions"
+          echo "### ✓ PROD Workflow Restrictions Validated" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "Both PROD workflows have proper repository restrictions." >> $GITHUB_STEP_SUMMARY
+
+      - name: Add PR comment if restrictions missing
+        if: steps.check_restrictions.outputs.has_errors == 'true' && github.event_name == 'pull_request'
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const body = `## ❌ PROD Workflow Repository Restrictions Missing
+
+            This PR modifies PROD workflows but the repository restrictions are commented out or missing.
+
+            ### Issues Found:
+            ${{ steps.check_restrictions.outputs.errors }}
+
+            ### What needs to be fixed:
+
+            Both PROD workflows must include this line (UNCOMMENTED) in their job definition:
+            \`\`\`yaml
+            if: github.repository == 'splunk/opentelemetry-demo'
+            \`\`\`
+
+            ### Files to fix:
+            - \`.github/workflows/prod-build-images.yml\` (line ~33, determine-version job)
+            - \`.github/workflows/prod-build-manifest.yml\` (line ~34, build-production-manifest job)
+
+            ### Why is this required?
+            This check ensures PROD workflows only run in the main \`splunk/opentelemetry-demo\` repository and not in forks. This prevents accidental production builds from fork repositories.
+
+            ### How to fix:
+            1. Uncomment the \`if: github.repository == 'splunk/opentelemetry-demo'\` line in both files
+            2. Ensure the line is NOT preceded by \`#\`
+            3. Push the changes
+
+            The PR validation will automatically re-run once this is fixed.`;
+
+            await github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: body
+            });
+
   check-test-manifests:
     runs-on: ubuntu-latest
     steps:

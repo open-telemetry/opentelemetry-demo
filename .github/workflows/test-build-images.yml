@@ -209,8 +209,103 @@ jobs:
           echo "" >> $GITHUB_STEP_SUMMARY
           echo "Dockerfile not found at: \`${{ matrix.dockerfile }}\`" >> $GITHUB_STEP_SUMMARY
 
-  trigger-manifest-build:
+  update-service-versions:
     needs: [prepare-matrix, build-images]
+    if: ${{ success() }}
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.x'
+
+      - name: Install PyYAML
+        run: pip install pyyaml
+
+      - name: Update service versions
+        run: |
+          python3 << 'PYTHON_SCRIPT'
+          import yaml
+          import os
+
+          # Get version and services from workflow inputs
+          version = "${{ inputs.version }}"
+          services_input = "${{ inputs.services }}".strip()
+
+          print(f"Updating service versions to: {version}")
+          print(f"Services built: {services_input}")
+
+          # Read current version tracking file
+          with open('.service-versions.yaml', 'r') as f:
+              version_config = yaml.safe_load(f)
+
+          # Determine which services to update
+          if services_input == 'all':
+              # Update all buildable services
+              with open('services.yaml', 'r') as f:
+                  config = yaml.safe_load(f)
+              services_to_update = [
+                  svc['name'] for svc in config.get('services', [])
+                  if svc.get('build', False)
+              ]
+          else:
+              # Update only specified services
+              services_to_update = [s.strip() for s in services_input.split(',')]
+
+          # Update versions
+          for service in services_to_update:
+              if service in version_config['services']:
+                  old_version = version_config['services'][service]
+                  version_config['services'][service] = version
+                  print(f"  {service}: {old_version} -> {version}")
+              else:
+                  version_config['services'][service] = version
+                  print(f"  {service}: (new) -> {version}")
+
+          # If updating all services, also update default version
+          if services_input == 'all':
+              version_config['default_version'] = version
+              print(f"  default_version: -> {version}")
+
+          # Write updated file
+          with open('.service-versions.yaml', 'w') as f:
+              f.write('# Service Version Tracking\n')
+              f.write('# This file tracks the last built version for each service\n')
+              f.write('# Updated automatically by build workflows\n')
+              f.write('# DO NOT EDIT MANUALLY\n\n')
+              yaml.dump(version_config, f, default_flow_style=False, sort_keys=False)
+
+          print("\n✅ Service versions updated")
+          PYTHON_SCRIPT
+
+      - name: Commit version updates
+        run: |
+          git config --local user.email "github-actions[bot]@users.noreply.github.com"
+          git config --local user.name "github-actions[bot]"
+
+          git add .service-versions.yaml
+
+          if git diff --staged --quiet; then
+            echo "No version changes to commit"
+          else
+            git commit -m "chore: update service versions to ${{ inputs.version }}" \
+              -m "Services: ${{ inputs.services }}"
+            git push
+            echo "✅ Version file committed and pushed"
+          fi
+
+          echo "### 📝 Service Versions Updated" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "Updated services to version: \`${{ inputs.version }}\`" >> $GITHUB_STEP_SUMMARY
+
+  trigger-manifest-build:
+    needs: [prepare-matrix, build-images, update-service-versions]
     if: ${{ success() }}
     runs-on: ubuntu-latest
     permissions:
@@ -227,12 +322,12 @@ jobs:
         run: |
           echo "### 🚀 Triggering Manifest Build" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
-          echo "Automatically building manifest with matching version tag..." >> $GITHUB_STEP_SUMMARY
+          echo "Automatically building manifest with per-service versions..." >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
 
-          # Trigger the test manifest build workflow with the same version
+          # Trigger the test manifest build workflow
+          # Note: Manifest build now uses .service-versions.yaml instead of single version
           gh workflow run test-build-manifest.yml \
-            -f version="${{ inputs.version }}" \
             -f commit_manifest=true \
             -f validate_manifest=true
 
@@ -241,14 +336,14 @@ jobs:
           echo "| Property | Value |" >> $GITHUB_STEP_SUMMARY
           echo "|----------|-------|" >> $GITHUB_STEP_SUMMARY
           echo "| Workflow | \`test-build-manifest.yml\` |" >> $GITHUB_STEP_SUMMARY
-          echo "| Version | \`${{ inputs.version }}\` |" >> $GITHUB_STEP_SUMMARY
+          echo "| Version Source | \`.service-versions.yaml\` |" >> $GITHUB_STEP_SUMMARY
           echo "| Commit | \`true\` |" >> $GITHUB_STEP_SUMMARY
           echo "| Validate | \`true\` |" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
           echo "Check the [Actions tab](../../actions/workflows/test-build-manifest.yml) to monitor the manifest build." >> $GITHUB_STEP_SUMMARY
 
   summary:
-    needs: [prepare-matrix, build-images, trigger-manifest-build]
+    needs: [prepare-matrix, build-images, update-service-versions, trigger-manifest-build]
     if: always()
     runs-on: ubuntu-latest
 

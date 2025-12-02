@@ -36,25 +36,25 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Setup Python for validation
-        if: ${{ inputs.validate_manifest }}
+      - name: Setup Python
         uses: actions/setup-python@v4
         with:
           python-version: '3.x'
 
-      - name: Install validation tools
-        if: ${{ inputs.validate_manifest }}
+      - name: Install dependencies
         run: pip install pyyaml
 
       - name: Make scripts executable
         run: |
           chmod +x .github/scripts/stitch-manifests.sh
+          chmod +x .github/scripts/get-service-version.py
 
       - name: Get version for testing
         id: version
         run: |
           # IMPORTANT: This workflow NEVER bumps the version number
           # It uses either the explicit version input OR current SPLUNK-VERSION + suffix
+          # Per-service versions from .service-versions.yaml take precedence during stitching
 
           CURRENT_VERSION=$(cat SPLUNK-VERSION)
           echo "Current version in SPLUNK-VERSION: $CURRENT_VERSION"
@@ -76,10 +76,21 @@ jobs:
           echo "### Test Build Configuration" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
           echo "- **Current Version** (unchanged): \`$CURRENT_VERSION\`" >> $GITHUB_STEP_SUMMARY
-          echo "- **Test Version** (for manifest): \`$TEST_VERSION\`" >> $GITHUB_STEP_SUMMARY
+          echo "- **Test Version** (fallback): \`$TEST_VERSION\`" >> $GITHUB_STEP_SUMMARY
           echo "- **Version Source**: $VERSION_SOURCE" >> $GITHUB_STEP_SUMMARY
           echo "- **Output File**: \`kubernetes/TEST-splunk-astronomy-shop-${TEST_VERSION}.yaml\`" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
+
+          # Show per-service versions if available
+          if [ -f ".service-versions.yaml" ]; then
+            echo "#### 📋 Per-Service Versions" >> $GITHUB_STEP_SUMMARY
+            echo "Using specific versions from \`.service-versions.yaml\`:" >> $GITHUB_STEP_SUMMARY
+            echo "\`\`\`" >> $GITHUB_STEP_SUMMARY
+            cat .service-versions.yaml | grep -A 20 "services:" >> $GITHUB_STEP_SUMMARY
+            echo "\`\`\`" >> $GITHUB_STEP_SUMMARY
+            echo "" >> $GITHUB_STEP_SUMMARY
+          fi
+
           echo "> ⚠️ **Note**: SPLUNK-VERSION file is NOT modified by this workflow" >> $GITHUB_STEP_SUMMARY
 
       - name: Create temporary version file

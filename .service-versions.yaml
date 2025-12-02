@@ -1,0 +1,16 @@
+# Service Version Tracking
+# This file tracks the last built version for each service
+# Updated automatically by build workflows
+# DO NOT EDIT MANUALLY
+
+default_version: 0.0.0
+services:
+  accounting: 0.0.0
+  ad: 0.0.0
+  cart: 0.0.0
+  fraud-detection: 0.0.0
+  frontend: 0.0.0
+  frontend-proxy: 0.0.0
+  image-provider: 0.0.0
+  payment: 0.0.0
+  recommendation: 0.0.0
