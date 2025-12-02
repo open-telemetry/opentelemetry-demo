@@ -3,14 +3,14 @@
 # Updated automatically by build workflows
 # DO NOT EDIT MANUALLY
 
-default_version: 0.0.0
+default_version: ph-2
 services:
-  accounting: 0.0.0
-  ad: 0.0.0
-  cart: 0.0.0
-  fraud-detection: 0.0.0
-  frontend: 0.0.0
-  frontend-proxy: 0.0.0
-  image-provider: 0.0.0
-  payment: 0.0.0
-  recommendation: 0.0.0
+  accounting: ph-2
+  ad: ph-2
+  cart: ph-2
+  fraud-detection: ph-2
+  frontend: ph-2
+  frontend-proxy: ph-2
+  image-provider: ph-2
+  payment: ph-2
+  recommendation: ph-2
