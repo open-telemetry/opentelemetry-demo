@@ -382,8 +382,9 @@ jobs:
           echo "" >> $GITHUB_STEP_SUMMARY
 
           # Trigger the test manifest build workflow
-          # Note: Manifest build now uses .service-versions.yaml instead of single version
+          # Pass the version from build to ensure manifest filename matches
           gh workflow run test-build-manifest.yml \
+            -f version="${{ inputs.version }}" \
             -f commit_manifest=true \
             -f validate_manifest=true
 
@@ -392,7 +393,8 @@ jobs:
           echo "| Property | Value |" >> $GITHUB_STEP_SUMMARY
           echo "|----------|-------|" >> $GITHUB_STEP_SUMMARY
           echo "| Workflow | \`test-build-manifest.yml\` |" >> $GITHUB_STEP_SUMMARY
-          echo "| Version Source | \`.service-versions.yaml\` |" >> $GITHUB_STEP_SUMMARY
+          echo "| Version | \`${{ inputs.version }}\` |" >> $GITHUB_STEP_SUMMARY
+          echo "| Version Source | \`.service-versions.yaml\` (per-service) |" >> $GITHUB_STEP_SUMMARY
           echo "| Commit | \`true\` |" >> $GITHUB_STEP_SUMMARY
           echo "| Validate | \`true\` |" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
