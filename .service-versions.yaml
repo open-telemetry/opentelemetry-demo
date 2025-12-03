@@ -3,14 +3,16 @@
 # Updated automatically by build workflows
 # DO NOT EDIT MANUALLY
 
-default_version: ph-2
+default_version: fixing-bug-1
 services:
-  accounting: ph-2
-  ad: ph-2
-  cart: ph-2
-  fraud-detection: ph-2
-  frontend: ph-2
-  frontend-proxy: ph-2
-  image-provider: ph-2
-  payment: payment-fix-1
-  recommendation: ph-2
+  accounting: fixing-bug-1
+  ad: fixing-bug-1
+  cart: fixing-bug-1
+  fraud-detection: fixing-bug-1
+  frontend: fixing-bug-1
+  frontend-proxy: fixing-bug-1
+  image-provider: fixing-bug-1
+  payment: fixing-bug-1
+  recommendation: fixing-bug-1
+  llm: fixing-bug-1
+  product-reviews: fixing-bug-1
