@@ -31,7 +31,7 @@ jobs:
   build-production-manifest:
     # Only run in the main splunk/opentelemetry-demo repo, not in forks
     # TEMPORARY: Commented out for testing in fork - UNCOMMENT BEFORE PR TO PROD
-    # if: github.repository == 'splunk/opentelemetry-demo'
+    if: github.repository == 'splunk/opentelemetry-demo'
     runs-on: ubuntu-latest
     permissions:
       contents: write
