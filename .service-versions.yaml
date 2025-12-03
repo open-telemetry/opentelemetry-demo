@@ -15,4 +15,4 @@ services:
   payment: fixing-bug-1
   recommendation: fixing-bug-1
   llm: llm-e-1
-  product-reviews: fixing-bug-1
+  product-reviews: pr-1
