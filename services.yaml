@@ -104,7 +104,6 @@ services:
   - name: llm
     build: true
     manifest: true
-    #replace_registry: false  # Uses ghcr.io/open-telemetry/demo (standard)
 
   - name: load-generator
     build: false
@@ -132,14 +131,9 @@ services:
     manifest: true
     replace_registry: false  # Uses ghcr.io/open-telemetry/demo (standard)
 
-  - name: product-catalog-products
-    build: false
-    manifest: true
-
   - name: product-reviews
     build: true
     manifest: true
-    #replace_registry: false  # Uses ghcr.io/open-telemetry/demo (standard)
 
   - name: quote
     build: false
