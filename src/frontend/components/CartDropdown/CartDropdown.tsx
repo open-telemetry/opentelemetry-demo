@@ -34,7 +34,7 @@ const CartDropdown = ({ productList, isOpen, onClose }: IProps) => {
 
   return isOpen ? (
     <S.CartDropdown ref={ref} data-cy={CypressFields.CartDropdown}>
-      <div>
+      <S.ContentWrapper>
         <S.Header>
           <S.Title>Shopping Cart</S.Title>
           <span onClick={onClose}>Close</span>
@@ -54,7 +54,7 @@ const CartDropdown = ({ productList, isOpen, onClose }: IProps) => {
             )
           )}
         </S.ItemList>
-      </div>
+      </S.ContentWrapper>
       <Link href="/cart">
         <S.CartButton data-cy={CypressFields.CartGoToShopping}>Go to Shopping Cart</S.CartButton>
       </Link>

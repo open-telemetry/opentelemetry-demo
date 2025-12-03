@@ -44,12 +44,24 @@ server.addService(health.service, new health.Implementation({
 
 server.addService(otelDemoPackage.oteldemo.PaymentService.service, { charge: chargeServiceHandler })
 
-server.bindAsync(`0.0.0.0:${process.env['PAYMENT_PORT']}`, grpc.ServerCredentials.createInsecure(), (err, port) => {
+
+let ip = "0.0.0.0";
+
+const ipv6_enabled = process.env.IPV6_ENABLED;
+
+if (ipv6_enabled == "true") {
+  ip = "[::]";
+  logger.info(`Overwriting Localhost IP: ${ip}`)
+}
+
+const address = ip + `:${process.env['PAYMENT_PORT']}`;
+
+server.bindAsync(address, grpc.ServerCredentials.createInsecure(), (err, port) => {
   if (err) {
     return logger.error({ err })
   }
 
-  logger.info(`payment gRPC server started on port ${port}`)
+  logger.info(`payment gRPC server started on ${address}`)
 })
 
 process.once('SIGINT', closeGracefully)

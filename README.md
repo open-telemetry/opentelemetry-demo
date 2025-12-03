@@ -64,19 +64,20 @@ keeping it up to date for you.
 
 |                           |                |                                  |
 |---------------------------|----------------|----------------------------------|
-| [AlibabaCloud LogService] | [Elastic]      | [Parseable]                      |
-| [Apache Doris]            | [Google Cloud] | [Sentry]                         |
-| [AppDynamics]             | [Grafana Labs] | [ServiceNow Cloud Observability] |
-| [Aspecto]                 | [Guance]       | [SigNoz]                         |
-| [Axiom]                   | [Honeycomb.io] | [Splunk]                         |
-| [Axoflow]                 | [Instana]      | [Sumo Logic]                     |
-| [Azure Data Explorer]     | [Kloudfuse]    | [TelemetryHub]                   |
-| [Causely]                 | [Last9]        | [Teletrace]                      |
-| [ClickStack]              | [Liatrio]      | [Tinybird]                       |
-| [Coralogix]               | [Logz.io]      | [Tracetest]                      |
-| [Dash0]                   | [New Relic]    | [Uptrace]                        |
-| [Datadog]                 | [OpenSearch]   | [VictoriaMetrics]                |
-| [Dynatrace]               | [Oracle]       |                                  |
+| [AlibabaCloud LogService] | [Google Cloud] | [Parseable]                      |
+| [Apache Doris]            | [Grafana Labs] | [Sentry]                         |
+| [AppDynamics]             | [Guance]       | [ServiceNow Cloud Observability] |
+| [Aspecto]                 | [Honeycomb.io] | [SigNoz]                         |
+| [Axiom]                   | [Instana]      | [Splunk]                         |
+| [Axoflow]                 | [Kloudfuse]    | [Sumo Logic]                     |
+| [Azure Data Explorer]     | [Last9]        | [TelemetryHub]                   |
+| [Causely]                 | [Liatrio]      | [Teletrace]                      |
+| [ClickStack]              | [Logz.io]      | [Tinybird]                       |
+| [Coralogix]               | [New Relic]    | [Tracetest]                      |
+| [Dash0]                   | [Oodle]        | [Uptrace]                        |
+| [Datadog]                 | [OpenObserve]  | [VictoriaMetrics]                |
+| [Dynatrace]               | [OpenSearch]   |                                  |
+| [Elastic]                 | [Oracle]       |                                  |
 
 ## Contributing
 
@@ -144,7 +145,9 @@ For more information about the emeritus role, see the [community repository](htt
 [Liatrio]: https://github.com/liatrio/opentelemetry-demo
 [Logz.io]: https://logz.io/learn/how-to-run-opentelemetry-demo-with-logz-io/
 [New Relic]: https://github.com/newrelic/opentelemetry-demo
+[Oodle]: https://blog.oodle.ai/meet-oodle-unified-and-ai-native-observability/
 [OpenSearch]: https://github.com/opensearch-project/opentelemetry-demo
+[OpenObserve]: https://openobserve.ai/blog/opentelemetry-astronomy-shop-demo/
 [Oracle]: https://github.com/oracle-quickstart/oci-o11y-solutions/blob/main/knowledge-content/opentelemetry-demo
 [Parseable]: https://www.parseable.com/blog/open-telemetry-demo-with-parseable-a-complete-observability-setup
 [Sentry]: https://github.com/getsentry/opentelemetry-demo

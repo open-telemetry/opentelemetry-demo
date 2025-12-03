@@ -2,7 +2,7 @@
 # SPDX-License-Identifier: Apache-2.0
 
 
-FROM --platform=${BUILDPLATFORM} docker.io/library/rust:1.88 AS builder
+FROM --platform=${BUILDPLATFORM} docker.io/library/rust:1.91 AS builder
 ARG TARGETARCH
 ARG TARGETPLATFORM
 ARG BUILDPLATFORM
@@ -34,7 +34,7 @@ RUN if [ "${TARGETPLATFORM}" = "linux/arm64" ] && [ "${BUILDPLATFORM}" != "linux
     fi
 
 
-FROM gcr.io/distroless/cc-debian12:nonroot
+FROM gcr.io/distroless/cc-debian13:nonroot
 
 WORKDIR /app
 

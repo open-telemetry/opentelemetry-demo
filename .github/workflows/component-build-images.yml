@@ -33,7 +33,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v5
+        uses: actions/checkout@v6.0.0
       - name: Generate
         run: make clean docker-generate-protobuf
       - name: Check Clean Work Tree
@@ -106,6 +106,10 @@ jobs:
             tag_suffix: kafka
             context: ./
             setup-qemu: true
+          - file: ./src/llm/Dockerfile
+            tag_suffix: llm
+            context: ./
+            setup-qemu: true
           - file: ./src/load-generator/Dockerfile
             tag_suffix: load-generator
             context: ./
@@ -126,6 +130,10 @@ jobs:
             tag_suffix: product-catalog
             context: ./
             setup-qemu: true
+          - file: ./src/product-reviews/Dockerfile
+            tag_suffix: product-reviews
+            context: ./
+            setup-qemu: true
           - file: ./src/quote/Dockerfile
             tag_suffix: quote
             context: ./
@@ -144,7 +152,7 @@ jobs:
             setup-qemu: true
 
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v6.0.0
         with:
           fetch-depth: 0
       - name: Load environment variables from .env file

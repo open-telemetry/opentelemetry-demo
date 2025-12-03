@@ -152,6 +152,7 @@ services:
     ports:
       - "${CURRENCY_PORT}"
     environment:
+      - IPV6_ENABLED
       - CURRENCY_PORT
       - VERSION=${IMAGE_VERSION}
       - OTEL_EXPORTER_OTLP_ENDPOINT
@@ -284,6 +285,7 @@ services:
       - OTEL_SERVICE_NAME=frontend-proxy
       - ENVOY_PORT
       - ENVOY_ADMIN_PORT
+      - ENVOY_ADDR
       - FLAGD_HOST
       - FLAGD_PORT
       - FLAGD_UI_HOST
@@ -382,6 +384,7 @@ services:
     ports:
       - "${PAYMENT_PORT}"
     environment:
+      - IPV6_ENABLED
       - FLAGD_HOST
       - FLAGD_PORT
       - PAYMENT_PORT
@@ -427,6 +430,47 @@ services:
         condition: service_started
     logging: *logging
 
+  # Product reviews service
+  product-reviews:
+    image: ${IMAGE_NAME}:${DEMO_VERSION}-product-reviews
+    container_name: product-reviews
+    build:
+      context: ./
+      dockerfile: ${PRODUCT_REVIEWS_DOCKERFILE}
+      cache_from:
+        - ${IMAGE_NAME}:${IMAGE_VERSION}-product-reviews
+    deploy:
+      resources:
+        limits:
+          memory: 500M
+    restart: unless-stopped
+    ports:
+      - "${PRODUCT_REVIEWS_PORT}"
+    environment:
+      - PRODUCT_REVIEWS_PORT
+      - OTEL_PYTHON_LOG_CORRELATION=true
+      - OTEL_EXPORTER_OTLP_ENDPOINT
+      - OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE
+      - OTEL_RESOURCE_ATTRIBUTES
+      - OTEL_SERVICE_NAME=product-reviews
+      - OTEL_INSTRUMENTATION_GENAI_CAPTURE_MESSAGE_CONTENT=true
+      - PROTOCOL_BUFFERS_PYTHON_IMPLEMENTATION=python
+      - DB_CONNECTION_STRING=host=${POSTGRES_HOST} user=otelu password=otelp dbname=${POSTGRES_DB}
+      - LLM_BASE_URL
+      - OPENAI_API_KEY
+      - LLM_MODEL
+      - PRODUCT_CATALOG_ADDR
+    depends_on:
+      product-catalog:
+        condition: service_started
+      llm:
+        condition: service_started
+      postgresql:
+        condition: service_started
+      otel-collector:
+        condition: service_started
+    logging: *logging
+
   # Quote service
   quote:
     image: ${IMAGE_NAME}:${DEMO_VERSION}-quote
@@ -444,6 +488,7 @@ services:
     ports:
       - "${QUOTE_PORT}"
     environment:
+      - IPV6_ENABLED
       - OTEL_EXPORTER_OTLP_ENDPOINT=http://${OTEL_COLLECTOR_HOST}:${OTEL_COLLECTOR_PORT_HTTP}
       - OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE
       - OTEL_PHP_AUTOLOAD_ENABLED=true
@@ -507,6 +552,7 @@ services:
     ports:
       - "${SHIPPING_PORT}"
     environment:
+      - IPV6_ENABLED
       - SHIPPING_PORT
       - QUOTE_ADDR
       - OTEL_EXPORTER_OTLP_ENDPOINT
@@ -553,6 +599,27 @@ services:
       - ./src/flagd:/etc/flagd
     logging:
       *logging
+
+  # LLM used by Product Review service
+  llm:
+    image: ${IMAGE_NAME}:${DEMO_VERSION}-llm
+    container_name: llm
+    build:
+      context: ./
+      dockerfile: ${LLM_DOCKERFILE}
+      cache_from:
+        - ${IMAGE_NAME}:${IMAGE_VERSION}-llm
+    deploy:
+      resources:
+        limits:
+          memory: 50M
+    restart: unless-stopped
+    environment:
+      - FLAGD_HOST
+      - FLAGD_PORT
+    ports:
+      - "${LLM_PORT}"
+    logging: *logging
 
   # Valkey used by Cart service
   valkey-cart:

@@ -6,7 +6,7 @@ static_resources:
   listeners:
     - address:
         socket_address:
-          address: 0.0.0.0
+          address: "${ENVOY_ADDR}"
           port_value: ${ENVOY_PORT}
       filter_chains:
         - filters:
@@ -61,7 +61,7 @@ static_resources:
                             prefix_rewrite: "/"
                             upgrade_configs:
                               - upgrade_type: websocket
-                        - match: { prefix: "/" } # Default/catch-all route - keep last since prefix:"/" matches everything
+                        - match: { prefix: "/" }  # Default/catch-all route - keep last since prefix:"/" matches everything
                           route: { cluster: frontend }
                 http_filters:
                   - name: envoy.filters.http.fault
