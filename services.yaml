@@ -102,13 +102,13 @@ services:
     replace_registry: false  # Uses ghcr.io/open-telemetry/demo (standard)
 
   - name: llm
-    build: false
+    build: true
     manifest: true
-    replace_registry: false  # Uses ghcr.io/open-telemetry/demo (standard)
+    #replace_registry: false  # Uses ghcr.io/open-telemetry/demo (standard)
 
   - name: load-generator
     build: false
-    manifest: true
+    manifest: false
 
   - name: demo-namespace
     build: false
@@ -137,9 +137,9 @@ services:
     manifest: true
 
   - name: product-reviews
-    build: false
+    build: true
     manifest: true
-    replace_registry: false  # Uses ghcr.io/open-telemetry/demo (standard)
+    #replace_registry: false  # Uses ghcr.io/open-telemetry/demo (standard)
 
   - name: quote
     build: false
@@ -175,7 +175,7 @@ services:
 
   - name: thousandeyes
     build: false
-    manifest: true
+    manifest: false # false till we sorted out thousand eyes instance and secret issue
     replace_registry: false  # Uses thousandeyes/enterprise-agent
 
   - name: valkey-cart

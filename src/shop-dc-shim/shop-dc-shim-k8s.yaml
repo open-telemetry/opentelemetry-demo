@@ -1,22 +1,20 @@
-### Expects a deployment of Astronomy Shop Demo in the same cluster
-### Uses checkout service from that demo
----
 apiVersion: v1
 kind: Service
 metadata:
   name: shop-dc-shim-db
+  namespace: default
   labels:
     opentelemetry.io/name: shop-dc-shim-db
     app.kubernetes.io/component: shop-dc-shim-db
     app.kubernetes.io/name: shop-dc-shim-db
-    app.kubernetes.io/version: 2.1.3
+    app.kubernetes.io/version: "2.1.3"
     app.kubernetes.io/part-of: opentelemetry-demo
 spec:
   type: ClusterIP
   ports:
-  - port: 1433
-    name: sqlserver
-    targetPort: 1433
+    - port: 1433
+      name: sqlserver
+      targetPort: 1433
   selector:
     opentelemetry.io/name: shop-dc-shim-db
 ---
@@ -24,11 +22,12 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: shop-dc-shim-db
+  namespace: default
   labels:
     opentelemetry.io/name: shop-dc-shim-db
     app.kubernetes.io/component: shop-dc-shim-db
     app.kubernetes.io/name: shop-dc-shim-db
-    app.kubernetes.io/version: 2.1.3
+    app.kubernetes.io/version: "2.1.3"
     app.kubernetes.io/part-of: opentelemetry-demo
 spec:
   replicas: 1
@@ -41,49 +40,51 @@ spec:
         opentelemetry.io/name: shop-dc-shim-db
         app.kubernetes.io/component: shop-dc-shim-db
         app.kubernetes.io/name: shop-dc-shim-db
-        app.kubernetes.io/version: 2.1.3
+        app.kubernetes.io/version: "2.1.3"
         app.kubernetes.io/part-of: opentelemetry-demo
     spec:
       containers:
-      - name: sqlserver
-        image: mcr.microsoft.com/mssql/server:2022-latest
-        ports:
-        - containerPort: 1433
-        env:
-        - name: ACCEPT_EULA
-          value: "Y"
-        - name: MSSQL_SA_PASSWORD
-          value: ShopPass123!
-        resources:
-          requests:
-            memory: 2Gi
-            cpu: '1'
-          limits:
-            memory: 3Gi
-            cpu: '2'
-        volumeMounts:
-        - name: sqlserver-storage
-          mountPath: /var/opt/mssql/data
+        - name: sqlserver
+          image: mcr.microsoft.com/mssql/server:2022-latest
+          ports:
+            - containerPort: 1433
+          env:
+            - name: ACCEPT_EULA
+              value: "Y"
+            - name: MSSQL_SA_PASSWORD
+              value: "ShopPass123!"
+          resources:
+            requests:
+              memory: "2Gi"
+              cpu: "1"
+            limits:
+              memory: "3Gi"
+              cpu: "2"
+          volumeMounts:
+            - name: sqlserver-storage
+              mountPath: /var/opt/mssql/data
       volumes:
-      - name: sqlserver-storage
-        emptyDir: {}
+        - name: sqlserver-storage
+          emptyDir: {}
 ---
+# Shop DC Shim Service
 apiVersion: v1
 kind: Service
 metadata:
   name: shop-dc-shim
+  namespace: default
   labels:
     opentelemetry.io/name: shop-dc-shim
     app.kubernetes.io/component: shop-dc-shim
     app.kubernetes.io/name: shop-dc-shim
-    app.kubernetes.io/version: 2.1.3
+    app.kubernetes.io/version: "2.1.3"
     app.kubernetes.io/part-of: opentelemetry-demo
 spec:
   type: ClusterIP
   ports:
-  - port: 8070
-    name: tcp-service
-    targetPort: 8070
+    - port: 8070
+      name: tcp-service
+      targetPort: 8070
   selector:
     opentelemetry.io/name: shop-dc-shim
 ---
@@ -91,11 +92,12 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: shop-dc-shim
+  namespace: default
   labels:
     opentelemetry.io/name: shop-dc-shim
     app.kubernetes.io/component: shop-dc-shim
     app.kubernetes.io/name: shop-dc-shim
-    app.kubernetes.io/version: 2.1.3
+    app.kubernetes.io/version: "2.1.3"
     app.kubernetes.io/part-of: opentelemetry-demo
 spec:
   replicas: 1
@@ -108,85 +110,87 @@ spec:
         opentelemetry.io/name: shop-dc-shim
         app.kubernetes.io/component: shop-dc-shim
         app.kubernetes.io/name: shop-dc-shim
-        app.kubernetes.io/version: 2.1.3
+        app.kubernetes.io/version: "2.1.3"
         app.kubernetes.io/part-of: opentelemetry-demo
     spec:
       serviceAccountName: opentelemetry-demo
       containers:
-      - name: shop-dc-shim
-        image: quay.io/jeremyh/shop-dc-shim:latest
-        ports:
-        - containerPort: 8070
-          name: http
-        command: ["/usr/bin/dumb-init"]
-        args:
-        - --
-        - /bin/bash
-        - -c
-        - |
-          export OTEL_RESOURCE_ATTRIBUTES="service.name=shop-dc-shim-service,deployment.environment=${ENV_VALUE}-datacenter-b01,service.version=2.1.3,service.namespace=shop-dc-shim"
-          exec /app/start-app-dual.sh
-        env:
-        - name: ENV_VALUE
-          valueFrom:
-            secretKeyRef:
-              name: workflow-secret
-              key: env
-        - name: SHOP_DC_SHIM_PORT
-          value: '8070'
-        - name: DB_CONNECTION_STRING
-          value: jdbc:sqlserver://shop-dc-shim-db:1433;databaseName=master;encrypt=false;trustServerCertificate=true
-        - name: DB_USERNAME
-          value: sa
-        - name: DB_PASSWORD
-          value: ShopPass123!
-        - name: CHECKOUT_SERVICE_ADDR
-          value: checkout:8080
-        - name: EMAIL_SERVICE_URL
-          value: http://email:8080
-        - name: OTEL_EXPORTER_OTLP_ENDPOINT
-          value: http://splunk-otel-collector-agent:4318
-        - name: OTEL_SERVICE_NAME
-          value: shop-dc-shim
-        - name: OTEL_JAVAAGENT_ENABLED
-          value: 'true'
-        - name: APPDYNAMICS_AGENT_ACCOUNT_ACCESS_KEY
-          value: ${APPDYNAMICS_AGENT_ACCOUNT_ACCESS_KEY}
-        - name: OTEL_INSTRUMENTATION_SPLUNK_JDBC_ENABLED
-          value: 'true'
-        resources:
-          requests:
-            memory: 512Mi
-            cpu: 500m
-          limits:
-            memory: 1Gi
-            cpu: '1'
-        readinessProbe:
-          httpGet:
-            path: /actuator/health
-            port: 8070
-          initialDelaySeconds: 300
-          periodSeconds: 10
-          timeoutSeconds: 5
-          failureThreshold: 3
-        livenessProbe:
-          httpGet:
-            path: /actuator/health
-            port: 8070
-          initialDelaySeconds: 420
-          periodSeconds: 30
-          timeoutSeconds: 10
-          failureThreshold: 3
+        - name: shop-dc-shim
+          image: ghcr.io/splunk/opentelemetry-demo/otel-shop-dc-shim:0.0.2
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 8070
+              name: http
+          env:
+            - name: SHOP_DC_SHIM_PORT
+              value: "8070"
+            - name: DB_CONNECTION_STRING
+              value: "jdbc:sqlserver://shop-dc-shim-db:1433;databaseName=master;encrypt=false;trustServerCertificate=true"
+            - name: DB_USERNAME
+              value: "sa"
+            - name: DB_PASSWORD
+              value: "ShopPass123!"
+            - name: CHECKOUT_SERVICE_ADDR
+              value: "checkout:8080"
+            - name: EMAIL_SERVICE_URL
+              value: "http://email:8080"
+            - name: OTEL_EXPORTER_OTLP_ENDPOINT
+              value: "http://splunk-otel-collector-agent:4318"
+            - name: OTEL_SERVICE_NAME
+              value: "shop-dc-shim"
+            - name: WORKSHOP_ENV
+              valueFrom:
+                secretKeyRef:
+                  name: workshop-secret
+                  key: env
+            - name: OTEL_JAVAAGENT_ENABLED
+              value: "true"
+            - name: APPDYNAMICS_AGENT_ACCOUNT_NAME
+              value: "se-lab"
+            - name: APPDYNAMICS_JAVAAGENT_ENABLED
+              value: "true"
+            - name: APPDYNAMICS_AGENT_ACCOUNT_ACCESS_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: workshop-secret
+                  key: appd_token
+            - name: OTEL_INSTRUMENTATION_SPLUNK_JDBC_ENABLED
+              value: "true"
+          resources:
+            requests:
+              memory: "512Mi"
+              cpu: "500m"
+            limits:
+              memory: "1Gi"
+              cpu: "1"
+          readinessProbe:
+            httpGet:
+              path: /actuator/health
+              port: 8070
+            initialDelaySeconds: 240
+            periodSeconds: 10
+            timeoutSeconds: 5
+            failureThreshold: 3
+          livenessProbe:
+            httpGet:
+              path: /actuator/health
+              port: 8070
+            initialDelaySeconds: 420
+            periodSeconds: 30
+            timeoutSeconds: 10
+            failureThreshold: 5
 ---
+# Shop DC Load Generator
 apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: shop-dc-load-generator
+  namespace: default
   labels:
     opentelemetry.io/name: shop-dc-load-generator
     app.kubernetes.io/component: shop-dc-load-generator
     app.kubernetes.io/name: shop-dc-load-generator
-    app.kubernetes.io/version: 2.1.3
+    app.kubernetes.io/version: "2.1.3"
     app.kubernetes.io/part-of: opentelemetry-demo
 spec:
   replicas: 1
@@ -199,40 +203,31 @@ spec:
         opentelemetry.io/name: shop-dc-load-generator
         app.kubernetes.io/component: shop-dc-load-generator
         app.kubernetes.io/name: shop-dc-load-generator
-        app.kubernetes.io/version: 2.1.3
+        app.kubernetes.io/version: "2.1.3"
         app.kubernetes.io/part-of: opentelemetry-demo
     spec:
       serviceAccountName: opentelemetry-demo
       initContainers:
-      - name: wait-for-shop-dc-shim
-        image: curlimages/curl:8.1.2
-        command:
-        - sh
-        - -c
-        - |
-          echo "Waiting for shop-dc-shim service to be ready..."
-          until curl -f --connect-timeout 5 --max-time 20 http://shop-dc-shim:8070/actuator/health; do
-            echo "Shop DC Shim not ready, waiting 20 seconds..."
-            sleep 20
-          done
-          echo "Shop DC Shim is ready, starting load generator..."
-        resources:
-          limits:
-            memory: 64Mi
-            cpu: 50m
+        - name: wait-for-shop-dc-shim
+          image: curlimages/curl:8.1.2
+          command: ['sh', '-c']
+          args:
+            - |
+              echo "Waiting for shop-dc-shim service to be ready..."
+              until curl -f --connect-timeout 5 --max-time 20 http://shop-dc-shim:8070/actuator/health; do
+                echo "Shop DC Shim not ready, waiting 20 seconds..."
+                sleep 20
+              done
+              echo "Shop DC Shim is ready, starting load generator..."
+          resources:
+            limits:
+              memory: "64Mi"
+              cpu: "50m"
       containers:
-      - name: load-generator
-        image: quay.io/jeremyh/shop-dc-load-generator:0.0.1
-        args:
-        - --url
-        - http://shop-dc-shim:8070
-        - --mode
-        - continuous
-        - --tpm
-        - '65'
-        - --duration
-        - '0'
-        resources:
-          limits:
-            memory: 128Mi
-            cpu: 100m
+        - name: load-generator
+          image: ghcr.io/splunk/opentelemetry-demo/otel-shop-dc-load-generator:0.0.2
+          args: ["--url", "http://shop-dc-shim:8070", "--mode", "continuous", "--tpm", "25", "--duration", "0"]
+          resources:
+            limits:
+              memory: "128Mi"
+              cpu: "100m"
