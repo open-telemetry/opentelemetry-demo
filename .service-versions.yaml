@@ -14,5 +14,5 @@ services:
   image-provider: fixing-bug-1
   payment: fixing-bug-1
   recommendation: fixing-bug-1
-  llm: fixing-bug-1
+  llm: fix-llm-2
   product-reviews: fixing-bug-1
