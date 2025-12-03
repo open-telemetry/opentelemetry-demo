@@ -317,7 +317,9 @@ jobs:
         run: pip install pyyaml
 
       - name: Make scripts executable
-        run: chmod +x .github/scripts/manage-hotfix.py
+        run: |
+          chmod +x .github/scripts/manage-hotfix.py
+          chmod +x .github/scripts/update-manifest-images.py
 
       - name: Update SPLUNK-VERSION for full releases
         if: needs.determine-version.outputs.is_full_release == 'true'
@@ -331,7 +333,51 @@ jobs:
           python3 .github/scripts/manage-hotfix.py clear
           echo "✅ Hotfixes cleared for full release"
 
-      - name: Commit version updates
+      - name: Update source manifests with new image references
+        run: |
+          # Get registry and version
+          REGISTRY="${{ needs.prepare-matrix.outputs.registry }}"
+          VERSION="${{ needs.determine-version.outputs.version }}"
+          SERVICES_INPUT="${{ inputs.services }}"
+
+          # Determine which services to update
+          if [ "$SERVICES_INPUT" = "all" ]; then
+            # Get all buildable services
+            SERVICES_TO_UPDATE=$(python3 <<'PYTHON_SCRIPT'
+          import yaml
+          with open('services.yaml', 'r') as f:
+              config = yaml.safe_load(f)
+          services = [svc['name'] for svc in config.get('services', []) if svc.get('build', False)]
+          print(' '.join(services))
+          PYTHON_SCRIPT
+          )
+          else
+            SERVICES_TO_UPDATE=$(echo "$SERVICES_INPUT" | tr ',' ' ')
+          fi
+
+          echo "Updating source manifests for: $SERVICES_TO_UPDATE"
+          echo ""
+
+          # Update each service's manifest
+          for SERVICE in $SERVICES_TO_UPDATE; do
+            # Determine image name (same logic as in prepare-matrix)
+            case "$SERVICE" in
+              accounting|ad|cart|fraud-detection|frontend|frontend-proxy|image-provider|llm|payment|product-reviews|recommendation)
+                IMAGE_NAME="otel-${SERVICE}"
+                ;;
+              *)
+                IMAGE_NAME="${SERVICE}"
+                ;;
+            esac
+
+            # Update the manifest
+            python3 .github/scripts/update-manifest-images.py "$SERVICE" "$REGISTRY" "$IMAGE_NAME" "$VERSION"
+          done
+
+          echo ""
+          echo "✅ Source manifests updated with new image references"
+
+      - name: Commit version updates and manifest changes
         run: |
           git config --local user.email "github-actions[bot]@users.noreply.github.com"
           git config --local user.name "github-actions[bot]"
@@ -350,6 +396,9 @@ jobs:
             fi
           fi
 
+          # Always add updated manifests
+          git add src/*//*-k8s.yaml
+
           if git diff --staged --quiet; then
             echo "No version changes to commit"
           else
@@ -357,27 +406,46 @@ jobs:
               git commit -m "chore: hotfix build ${{ needs.determine-version.outputs.version }}" \
                 -m "Service: ${{ inputs.services }}" \
                 -m "" \
-                -m "Hotfix applied to service on base version $(cat SPLUNK-VERSION)"
+                -m "Hotfix applied to service on base version $(cat SPLUNK-VERSION)" \
+                -m "" \
+                -m "Updated:" \
+                -m "- .hotfix.yaml" \
+                -m "- Source k8s manifests with new image references"
             elif [[ "${{ needs.determine-version.outputs.is_full_release }}" == "true" ]]; then
               git commit -m "chore: release version ${{ needs.determine-version.outputs.version }}" \
                 -m "Version bump: ${{ inputs.version_bump }}" \
                 -m "All services updated to version ${{ needs.determine-version.outputs.version }}" \
-                -m "All hotfixes cleared"
+                -m "All hotfixes cleared" \
+                -m "" \
+                -m "Updated:" \
+                -m "- SPLUNK-VERSION" \
+                -m "- Source k8s manifests with new image references"
             else
               git commit -m "chore: production build ${{ needs.determine-version.outputs.version }}" \
-                -m "Services: ${{ inputs.services }}"
+                -m "Services: ${{ inputs.services }}" \
+                -m "" \
+                -m "Updated:" \
+                -m "- Source k8s manifests with new image references"
             fi
             git push
-            echo "✅ Version files committed and pushed"
+            echo "✅ Version files and manifests committed and pushed"
           fi
 
-          echo "### 📝 Version Updates" >> $GITHUB_STEP_SUMMARY
+          echo "### 📝 Version and Manifest Updates" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
           echo "Updated to version: \`${{ needs.determine-version.outputs.version }}\`" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
+          echo "- ✅ Source k8s manifests updated with new image references" >> $GITHUB_STEP_SUMMARY
           if [[ "${{ needs.determine-version.outputs.is_hotfix }}" == "true" ]]; then
+            echo "- ✅ .hotfix.yaml updated" >> $GITHUB_STEP_SUMMARY
+            echo "" >> $GITHUB_STEP_SUMMARY
             echo "> **Note:** Hotfix build. Base version: \`$(cat SPLUNK-VERSION)\`, Hotfix: \`${{ needs.determine-version.outputs.version }}\`" >> $GITHUB_STEP_SUMMARY
+          elif [[ "${{ needs.determine-version.outputs.is_full_release }}" == "true" ]]; then
+            echo "- ✅ SPLUNK-VERSION updated" >> $GITHUB_STEP_SUMMARY
+            echo "" >> $GITHUB_STEP_SUMMARY
+            echo "> **Note:** Full release with unified version for all services" >> $GITHUB_STEP_SUMMARY
           else
+            echo "" >> $GITHUB_STEP_SUMMARY
             echo "> **Note:** Production builds use SPLUNK-VERSION for unified versioning. Hotfixes tracked separately in .hotfix.yaml" >> $GITHUB_STEP_SUMMARY
           fi
 
