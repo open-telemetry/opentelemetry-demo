@@ -1,6 +1,6 @@
 # Splunk Astronomy Shop Kubernetes Manifest
 # Version: 0.0.0-test
-# Generated on: 2025-12-03T10:48:39Z
+# Generated on: 2025-12-03T12:01:01Z
 #
 # This manifest combines all service deployments for the Splunk Astronomy Shop
 # Services are defined in services.yaml
@@ -1734,7 +1734,7 @@ metadata:
     opentelemetry.io/name: llm
     app.kubernetes.io/component: llm
     app.kubernetes.io/name: llm
-    app.kubernetes.io/version: fixing-bug-1
+    app.kubernetes.io/version: fix-llm-2
     app.kubernetes.io/part-of: opentelemetry-demo
 spec:
   type: ClusterIP
@@ -1753,7 +1753,7 @@ metadata:
     opentelemetry.io/name: llm
     app.kubernetes.io/component: llm
     app.kubernetes.io/name: llm
-    app.kubernetes.io/version: fixing-bug-1
+    app.kubernetes.io/version: fix-llm-2
     app.kubernetes.io/part-of: opentelemetry-demo
 spec:
   replicas: 1
@@ -1771,7 +1771,7 @@ spec:
       serviceAccountName: opentelemetry-demo
       containers:
       - name: llm
-        image: ghcr.io/hagen-p/opentelemetry-demo-splunk
+        image: ghcr.io/hagen-p/opentelemetry-demo-splunk/otel-llm:fix-llm-2
         imagePullPolicy: IfNotPresent
         ports:
         - containerPort: 8000
@@ -1797,7 +1797,7 @@ spec:
         - name: OTEL_EXPORTER_OTLP_ENDPOINT
           value: http://$(OTEL_COLLECTOR_NAME):4317
         - name: OTEL_RESOURCE_ATTRIBUTES
-          value: service.name=$(OTEL_SERVICE_NAME),service.namespace=opentelemetry-demo,service.version=fixing-bug-1,service.kafka=no
+          value: service.name=$(OTEL_SERVICE_NAME),service.namespace=opentelemetry-demo,service.version=fix-llm-2,service.kafka=no
         resources:
           limits:
             memory: 100Mi
@@ -2306,7 +2306,7 @@ spec:
       serviceAccountName: opentelemetry-demo
       containers:
       - name: product-reviews
-        image: ghcr.io/hagen-p/opentelemetry-demo-splunk
+        image: ghcr.io/hagen-p/opentelemetry-demo-splunk/otel-product-reviews:fixing-bug-1
         imagePullPolicy: IfNotPresent
         ports:
         - containerPort: 3551
