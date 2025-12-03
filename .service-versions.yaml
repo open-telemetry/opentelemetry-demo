@@ -1,0 +1,18 @@
+# Service Version Tracking
+# This file tracks the last built version for each service
+# Updated automatically by build workflows
+# DO NOT EDIT MANUALLY
+
+default_version: full-build-1
+services:
+  accounting: full-build-1
+  ad: full-build-1
+  cart: full-build-1
+  fraud-detection: full-build-1
+  frontend: full-build-1
+  frontend-proxy: full-build-1
+  image-provider: full-build-1
+  payment: full-build-1
+  recommendation: full-build-1
+  llm: full-build-1
+  product-reviews: full-build-1

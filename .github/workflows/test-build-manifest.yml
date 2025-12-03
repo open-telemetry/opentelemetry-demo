@@ -3,8 +3,13 @@ name: Build Demo Manifest - TEST
 "on":
   workflow_dispatch:
     inputs:
+      version:
+        description: 'Explicit version to use (e.g., "[github-username]", "1.2.3-dev"). If not provided, uses current version + suffix'
+        required: false
+        type: string
+        default: ''
       test_version_suffix:
-        description: 'Test suffix added to version (current version never bumped)'
+        description: 'Test suffix added to version (only used if version is not provided)'
         required: false
         type: string
         default: '-test'
@@ -14,7 +19,7 @@ name: Build Demo Manifest - TEST
         type: boolean
         default: false
       validate_manifest:
-        description: 'Run kubectl validation on manifest'
+        description: 'Validate resulting YAML'
         required: true
         type: boolean
         default: true
@@ -31,31 +36,39 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Setup Python for validation
-        if: ${{ inputs.validate_manifest }}
+      - name: Setup Python
         uses: actions/setup-python@v4
         with:
           python-version: '3.x'
 
-      - name: Install validation tools
-        if: ${{ inputs.validate_manifest }}
+      - name: Install dependencies
         run: pip install pyyaml
 
       - name: Make scripts executable
         run: |
           chmod +x .github/scripts/stitch-manifests.sh
+          chmod +x .github/scripts/get-service-version.py
 
       - name: Get version for testing
         id: version
         run: |
           # IMPORTANT: This workflow NEVER bumps the version number
-          # It always uses the current SPLUNK-VERSION and adds a test suffix
+          # It uses either the explicit version input OR current SPLUNK-VERSION + suffix
+          # Per-service versions from .service-versions.yaml take precedence during stitching
 
           CURRENT_VERSION=$(cat SPLUNK-VERSION)
           echo "Current version in SPLUNK-VERSION: $CURRENT_VERSION"
 
-          # Add test suffix (e.g., 0.0.0-test)
-          TEST_VERSION="${CURRENT_VERSION}${{ inputs.test_version_suffix }}"
+          # Use explicit version if provided, otherwise use current + suffix
+          if [ -n "${{ inputs.version }}" ]; then
+            TEST_VERSION="${{ inputs.version }}"
+            echo "Using explicit version: $TEST_VERSION"
+            VERSION_SOURCE="explicit input"
+          else
+            TEST_VERSION="${CURRENT_VERSION}${{ inputs.test_version_suffix }}"
+            echo "Using current version + suffix: $TEST_VERSION"
+            VERSION_SOURCE="current + suffix"
+          fi
 
           echo "test_version=$TEST_VERSION" >> $GITHUB_OUTPUT
           echo "current_version=$CURRENT_VERSION" >> $GITHUB_OUTPUT
@@ -63,9 +76,21 @@ jobs:
           echo "### Test Build Configuration" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
           echo "- **Current Version** (unchanged): \`$CURRENT_VERSION\`" >> $GITHUB_STEP_SUMMARY
-          echo "- **Test Version** (for manifest): \`$TEST_VERSION\`" >> $GITHUB_STEP_SUMMARY
-          echo "- **Output File**: \`kubernetes/splunk-astronomy-shop-${TEST_VERSION}.yaml\`" >> $GITHUB_STEP_SUMMARY
+          echo "- **Test Version** (fallback): \`$TEST_VERSION\`" >> $GITHUB_STEP_SUMMARY
+          echo "- **Version Source**: $VERSION_SOURCE" >> $GITHUB_STEP_SUMMARY
+          echo "- **Output File**: \`kubernetes/TEST-splunk-astronomy-shop-${TEST_VERSION}.yaml\`" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
+
+          # Show per-service versions if available
+          if [ -f ".service-versions.yaml" ]; then
+            echo "#### 📋 Per-Service Versions" >> $GITHUB_STEP_SUMMARY
+            echo "Using specific versions from \`.service-versions.yaml\`:" >> $GITHUB_STEP_SUMMARY
+            echo "\`\`\`" >> $GITHUB_STEP_SUMMARY
+            cat .service-versions.yaml | grep -A 20 "services:" >> $GITHUB_STEP_SUMMARY
+            echo "\`\`\`" >> $GITHUB_STEP_SUMMARY
+            echo "" >> $GITHUB_STEP_SUMMARY
+          fi
+
           echo "> ⚠️ **Note**: SPLUNK-VERSION file is NOT modified by this workflow" >> $GITHUB_STEP_SUMMARY
 
       - name: Create temporary version file
@@ -83,11 +108,20 @@ jobs:
         run: |
           echo "### Stitching Manifest" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
+          echo "Including all services with manifest: true" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
 
           # Run stitch script with dev registry
+          # Always includes ALL services with manifest: true from services.yaml
           .github/scripts/stitch-manifests.sh dev
 
-          MANIFEST_FILE="kubernetes/splunk-astronomy-shop-${{ steps.version.outputs.test_version }}.yaml"
+          # Rename the generated file to TEST- prefix
+          GENERATED_FILE="kubernetes/splunk-astronomy-shop-${{ steps.version.outputs.test_version }}.yaml"
+          MANIFEST_FILE="kubernetes/TEST-splunk-astronomy-shop-${{ steps.version.outputs.test_version }}.yaml"
+
+          if [ -f "$GENERATED_FILE" ]; then
+            mv "$GENERATED_FILE" "$MANIFEST_FILE"
+          fi
 
           if [ -f "$MANIFEST_FILE" ]; then
             FILE_SIZE=$(du -h "$MANIFEST_FILE" | cut -f1)
@@ -161,8 +195,9 @@ jobs:
           # IMPORTANT: We never commit changes to SPLUNK-VERSION in test builds
           mv SPLUNK-VERSION.backup SPLUNK-VERSION
 
-          # Only commit the manifest file
-          git add "$MANIFEST_FILE"
+          # Force-add the manifest file (TEST-* files are in .gitignore by design)
+          # We use -f to explicitly commit test manifests when requested
+          git add -f "$MANIFEST_FILE"
 
           if git diff --staged --quiet; then
             echo "### No Changes" >> $GITHUB_STEP_SUMMARY
@@ -191,7 +226,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: astronomy-shop-manifest-${{ steps.version.outputs.test_version }}
-          path: kubernetes/splunk-astronomy-shop-${{ steps.version.outputs.test_version }}.yaml
+          path: kubernetes/TEST-splunk-astronomy-shop-${{ steps.version.outputs.test_version }}.yaml
           retention-days: 7
 
       - name: Generate deployment command
@@ -208,7 +243,7 @@ jobs:
           echo "git pull" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
           echo "# Deploy to cluster" >> $GITHUB_STEP_SUMMARY
-          echo "kubectl apply -f kubernetes/splunk-astronomy-shop-${{ steps.version.outputs.test_version }}.yaml" >> $GITHUB_STEP_SUMMARY
+          echo "kubectl apply -f kubernetes/TEST-splunk-astronomy-shop-${{ steps.version.outputs.test_version }}.yaml" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
           echo "# Verify deployment" >> $GITHUB_STEP_SUMMARY
           echo "kubectl get all -n astronomy-shop" >> $GITHUB_STEP_SUMMARY
@@ -218,7 +253,7 @@ jobs:
           echo "" >> $GITHUB_STEP_SUMMARY
           echo "1. Download artifact: \`astronomy-shop-manifest-${{ steps.version.outputs.test_version }}\`" >> $GITHUB_STEP_SUMMARY
           echo "2. Extract the YAML file" >> $GITHUB_STEP_SUMMARY
-          echo "3. Deploy: \`kubectl apply -f splunk-astronomy-shop-${{ steps.version.outputs.test_version }}.yaml\`" >> $GITHUB_STEP_SUMMARY
+          echo "3. Deploy: \`kubectl apply -f TEST-splunk-astronomy-shop-${{ steps.version.outputs.test_version }}.yaml\`" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
           echo "---" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
@@ -249,7 +284,7 @@ jobs:
           echo "|------|-------|" >> $GITHUB_STEP_SUMMARY
           echo "| **Current Version** | \`${{ steps.version.outputs.current_version }}\` (unchanged) |" >> $GITHUB_STEP_SUMMARY
           echo "| **Test Version** | \`${{ steps.version.outputs.test_version }}\` |" >> $GITHUB_STEP_SUMMARY
-          echo "| **Manifest File** | \`kubernetes/splunk-astronomy-shop-${{ steps.version.outputs.test_version }}.yaml\` |" >> $GITHUB_STEP_SUMMARY
+          echo "| **Manifest File** | \`kubernetes/TEST-splunk-astronomy-shop-${{ steps.version.outputs.test_version }}.yaml\` |" >> $GITHUB_STEP_SUMMARY
           echo "| **SPLUNK-VERSION Modified** | ❌ No |" >> $GITHUB_STEP_SUMMARY
           echo "| **Validated** | ${{ inputs.validate_manifest }} |" >> $GITHUB_STEP_SUMMARY
           echo "| **Committed** | ${{ inputs.commit_manifest }} |" >> $GITHUB_STEP_SUMMARY

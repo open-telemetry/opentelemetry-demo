@@ -1,9 +1,23 @@
 # Splunk Astronomy Shop Kubernetes Manifest
-# Version: 0.0.0-test
-# Generated on: 2025-11-28T15:23:41Z
+# Version: 0.0.0
+# Generated on: 2025-12-03T11:44:01Z
 #
 # This manifest combines all service deployments for the Splunk Astronomy Shop
 # Services are defined in services.yaml
+---
+
+# === demo-service-account ===
+# Kubernetes manifest for demo-service-account
+# ServiceAccount used by all Astronomy Shop application pods
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: opentelemetry-demo
+  labels:
+    app.kubernetes.io/version: fixing-bug-1
+    app.kubernetes.io/part-of: opentelemetry-demo
+
 ---
 
 # === accounting ===
@@ -19,9 +33,8 @@ metadata:
     opentelemetry.io/name: accounting
     app.kubernetes.io/component: accounting
     app.kubernetes.io/name: accounting
-    app.kubernetes.io/version: 2.1.3
+    app.kubernetes.io/version: fixing-bug-1
     app.kubernetes.io/part-of: opentelemetry-demo
-  namespace: astronomy-shop
 spec:
   replicas: 1
   revisionHistoryLimit: 10
@@ -38,7 +51,7 @@ spec:
       serviceAccountName: opentelemetry-demo
       containers:
       - name: accounting
-        image: ghcr.io/hagen-p/opentelemetry-demo-splunk:2.1.3
+        image: ghcr.io/hagen-p/opentelemetry-demo-splunk/otel-accounting:fixing-bug-1
         imagePullPolicy: Always
         env:
         - name: OTEL_SERVICE_NAME
@@ -63,7 +76,7 @@ spec:
         - name: OTEL_DOTNET_AUTO_TRACES_ENTITYFRAMEWORKCORE_INSTRUMENTATION_ENABLED
           value: 'false'
         - name: OTEL_RESOURCE_ATTRIBUTES
-          value: service.name=$(OTEL_SERVICE_NAME),service.namespace=opentelemetry-demo,service.version=2.1.3,service.kafka=spanlink
+          value: service.name=$(OTEL_SERVICE_NAME),service.namespace=opentelemetry-demo,service.version=fixing-bug-1,service.kafka=spanlink
         - name: SPLUNK_PROFILER_ENABLED
           value: 'true'
         - name: SPLUNK_PROFILER_MEMORY_ENABLED
@@ -96,9 +109,8 @@ metadata:
     opentelemetry.io/name: ad
     app.kubernetes.io/component: ad
     app.kubernetes.io/name: ad
-    app.kubernetes.io/version: 2.1.3
+    app.kubernetes.io/version: fixing-bug-1
     app.kubernetes.io/part-of: opentelemetry-demo
-  namespace: astronomy-shop
 spec:
   type: ClusterIP
   ports:
@@ -116,9 +128,8 @@ metadata:
     opentelemetry.io/name: ad
     app.kubernetes.io/component: ad
     app.kubernetes.io/name: ad
-    app.kubernetes.io/version: 2.1.3
+    app.kubernetes.io/version: fixing-bug-1
     app.kubernetes.io/part-of: opentelemetry-demo
-  namespace: astronomy-shop
 spec:
   replicas: 1
   revisionHistoryLimit: 10
@@ -135,7 +146,7 @@ spec:
       serviceAccountName: opentelemetry-demo
       containers:
       - name: ad
-        image: ghcr.io/hagen-p/opentelemetry-demo-splunk:2.1.3-profiling-cve
+        image: ghcr.io/hagen-p/opentelemetry-demo-splunk/otel-ad:fixing-bug-1
         imagePullPolicy: Always
         ports:
         - containerPort: 8080
@@ -163,7 +174,7 @@ spec:
         - name: OTEL_EXPORTER_OTLP_ENDPOINT
           value: http://$(OTEL_COLLECTOR_NAME):4318
         - name: OTEL_RESOURCE_ATTRIBUTES
-          value: service.name=$(OTEL_SERVICE_NAME),service.namespace=opentelemetry-demo,service.version=2.1.3
+          value: service.name=$(OTEL_SERVICE_NAME),service.namespace=opentelemetry-demo,service.version=fixing-bug-1
         - name: SPLUNK_PROFILER_LOGS_ENDPOINT
           value: http://$(OTEL_COLLECTOR_NAME):4318/v1/logs
         - name: SPLUNK_PROFILER_ENABLED
@@ -196,7 +207,6 @@ apiVersion: v1
 kind: ConfigMap
 metadata:
   name: scriptfile
-  namespace: astronomy-shop
 data:
   local-file: |
     /* eslint-disable no-console */
@@ -328,7 +338,6 @@ metadata:
   name: astronomy-loadgen-deployment
   labels:
     app: astronomy-loadgen
-  namespace: astronomy-shop
 spec:
   replicas: 1
   selector:
@@ -373,9 +382,8 @@ metadata:
     opentelemetry.io/name: cart
     app.kubernetes.io/component: cart
     app.kubernetes.io/name: cart
-    app.kubernetes.io/version: 2.1.3
+    app.kubernetes.io/version: fixing-bug-1
     app.kubernetes.io/part-of: opentelemetry-demo
-  namespace: astronomy-shop
 spec:
   type: ClusterIP
   ports:
@@ -393,9 +401,8 @@ metadata:
     opentelemetry.io/name: cart
     app.kubernetes.io/component: cart
     app.kubernetes.io/name: cart
-    app.kubernetes.io/version: 2.1.3
+    app.kubernetes.io/version: fixing-bug-1
     app.kubernetes.io/part-of: opentelemetry-demo
-  namespace: astronomy-shop
 spec:
   replicas: 1
   revisionHistoryLimit: 10
@@ -412,7 +419,7 @@ spec:
       serviceAccountName: opentelemetry-demo
       containers:
       - name: cart
-        image: ghcr.io/hagen-p/opentelemetry-demo-splunk:2.1.3
+        image: ghcr.io/hagen-p/opentelemetry-demo-splunk/otel-cart:fixing-bug-1
         imagePullPolicy: Always
         ports:
         - containerPort: 8080
@@ -444,7 +451,7 @@ spec:
         - name: OTEL_EXPORTER_OTLP_ENDPOINT
           value: http://$(OTEL_COLLECTOR_NAME):4318
         - name: OTEL_RESOURCE_ATTRIBUTES
-          value: service.name=$(OTEL_SERVICE_NAME),service.namespace=opentelemetry-demo,service.version=2.1.3,service.kafka=no
+          value: service.name=$(OTEL_SERVICE_NAME),service.namespace=opentelemetry-demo,service.version=fixing-bug-1,service.kafka=no
         - name: SPLUNK_PROFILER_LOGS_ENDPOINT
           value: http://$(OTEL_COLLECTOR_NAME):4318/v1/logs
         - name: SPLUNK_PROFILER_ENABLED
@@ -482,7 +489,6 @@ metadata:
     app.kubernetes.io/name: checkout
     app.kubernetes.io/version: 2.1.3
     app.kubernetes.io/part-of: opentelemetry-demo
-  namespace: astronomy-shop
 spec:
   type: ClusterIP
   ports:
@@ -502,7 +508,6 @@ metadata:
     app.kubernetes.io/name: checkout
     app.kubernetes.io/version: 2.1.3
     app.kubernetes.io/part-of: opentelemetry-demo
-  namespace: astronomy-shop
 spec:
   replicas: 1
   revisionHistoryLimit: 10
@@ -594,7 +599,6 @@ metadata:
     app.kubernetes.io/name: currency
     app.kubernetes.io/version: 2.1.3
     app.kubernetes.io/part-of: opentelemetry-demo
-  namespace: astronomy-shop
 spec:
   type: ClusterIP
   ports:
@@ -614,7 +618,6 @@ metadata:
     app.kubernetes.io/name: currency
     app.kubernetes.io/version: 2.1.3
     app.kubernetes.io/part-of: opentelemetry-demo
-  namespace: astronomy-shop
 spec:
   replicas: 1
   revisionHistoryLimit: 10
@@ -681,7 +684,6 @@ metadata:
     app.kubernetes.io/name: email
     app.kubernetes.io/version: 2.1.3
     app.kubernetes.io/part-of: opentelemetry-demo
-  namespace: astronomy-shop
 spec:
   type: ClusterIP
   ports:
@@ -701,7 +703,6 @@ metadata:
     app.kubernetes.io/name: email
     app.kubernetes.io/version: 2.1.3
     app.kubernetes.io/part-of: opentelemetry-demo
-  namespace: astronomy-shop
 spec:
   replicas: 1
   revisionHistoryLimit: 10
@@ -771,7 +772,6 @@ metadata:
     app.kubernetes.io/name: flagd
     app.kubernetes.io/version: 2.1.3
     app.kubernetes.io/part-of: opentelemetry-demo
-  namespace: astronomy-shop
 spec:
   type: ClusterIP
   ports:
@@ -794,7 +794,6 @@ metadata:
     app.kubernetes.io/name: flagd
     app.kubernetes.io/version: 2.1.3
     app.kubernetes.io/part-of: opentelemetry-demo
-  namespace: astronomy-shop
 spec:
   replicas: 1
   revisionHistoryLimit: 10
@@ -867,70 +866,181 @@ kind: ConfigMap
 metadata:
   name: flagd-config
   labels:
-    app.kubernetes.io/version: 2.1.3
+    app.kubernetes.io/version: fixing-bug-1
     app.kubernetes.io/part-of: opentelemetry-demo
-  namespace: astronomy-shop
 data:
-  demo.flagd.json: "{\n  \"$schema\": \"https://flagd.dev/schema/v0/flags.json\",\n\
-    \  \"flags\": {\n    \"productCatalogFailure\": {\n      \"description\": \"Fail\
-    \ product catalog service on a specific product\",\n      \"state\": \"ENABLED\"\
-    ,\n      \"variants\": {\n        \"on\": true,\n        \"off\": false\n    \
-    \  },\n      \"defaultVariant\": \"off\"\n    },\n    \"recommendationCacheFailure\"\
-    : {\n      \"description\": \"Fail recommendation service cache\",\n      \"state\"\
-    : \"ENABLED\",\n      \"variants\": {\n        \"on\": true,\n        \"off\"\
-    : false\n      },\n      \"defaultVariant\": \"off\"\n    },\n    \"adManualGc\"\
-    : {\n      \"description\": \"Triggers full manual garbage collections in the\
-    \ ad service\",\n      \"state\": \"ENABLED\",\n      \"variants\": {\n      \
-    \  \"on\": true,\n        \"off\": false\n      },\n      \"defaultVariant\":\
-    \ \"off\"\n    },\n    \"adHighCpu\": {\n      \"description\": \"Triggers high\
-    \ cpu load in the ad service\",\n      \"state\": \"ENABLED\",\n      \"variants\"\
-    : {\n        \"on\": true,\n        \"off\": false\n      },\n      \"defaultVariant\"\
-    : \"off\"\n    },\n    \"adFailure\": {\n      \"description\": \"Fail ad service\"\
-    ,\n      \"state\": \"ENABLED\",\n      \"variants\": {\n        \"on\": true,\n\
-    \        \"off\": false\n      },\n      \"defaultVariant\": \"off\"\n    },\n\
-    \    \"kafkaQueueProblems\": {\n      \"description\": \"Overloads Kafka queue\
-    \ while simultaneously introducing a consumer side delay leading to a lag spike\"\
-    ,\n      \"state\": \"ENABLED\",\n      \"variants\": {\n        \"on\": 100,\n\
-    \        \"off\": 0\n      },\n      \"defaultVariant\": \"off\"\n    },\n   \
-    \ \"paymentRetryMax\": {\n      \"description\": \"Maximum number of payment retry\
-    \ attempts\",\n      \"state\": \"ENABLED\",\n      \"variants\": {\n        \"\
-    10\": 10,\n        \"5\": 5,\n        \"4\": 4,\n        \"2\": 2,\n        \"\
-    1\": 1\n      },\n      \"defaultVariant\": \"4\"\n    },\n    \"fraudDetectionEnabled\"\
-    : {\n      \"description\": \"Enable fraud detection analysis on orders\",\n \
-    \     \"state\": \"ENABLED\",\n      \"variants\": {\n        \"on\": 1,\n   \
-    \     \"off\": 0\n      },\n      \"defaultVariant\": \"on\"\n    },\n    \"mutateFraudOrders\"\
-    : {\n      \"description\": \"Percentage of orders to mutate for fraud alerts\
-    \ (0-100%)\",\n      \"state\": \"ENABLED\",\n      \"variants\": {\n        \"\
-    off\": 0,\n        \"medium\": 40,\n        \"high\": 60,\n        \"veryhigh\"\
-    : 90\n      },\n      \"defaultVariant\": \"off\"\n    },\n    \"executeBadQueries\"\
-    : {\n      \"description\": \"Percentage of orders that trigger bad database queries\
-    \ (0-100%)\",\n      \"state\": \"ENABLED\",\n      \"variants\": {\n        \"\
-    off\": 0,\n        \"low\": 20,\n        \"medium\": 40,\n        \"high\": 60\n\
-    \      },\n      \"defaultVariant\": \"off\"\n    },\n    \"cartFailure\": {\n\
-    \      \"description\": \"Fail cart service\",\n      \"state\": \"ENABLED\",\n\
-    \      \"variants\": {\n        \"on\": true,\n        \"off\": false\n      },\n\
-    \      \"defaultVariant\": \"off\"\n    },\n    \"paymentFailure\": {\n      \"\
-    description\": \"Fail payment service charge requests n%\",\n      \"state\":\
-    \ \"ENABLED\",\n      \"variants\": {\n        \"100%\": 1,\n        \"90%\":\
-    \ 0.95,\n        \"75%\": 0.75,\n        \"50%\": 0.5,\n        \"25%\": 0.25,\n\
-    \        \"10%\": 0.1,\n        \"off\": 0\n      },\n      \"defaultVariant\"\
-    : \"off\"\n    },\n    \"paymentUnreachable\": {\n      \"description\": \"Payment\
-    \ service is unavailable\",\n      \"state\": \"ENABLED\",\n      \"variants\"\
-    : {\n        \"on\": true,\n        \"off\": false\n      },\n      \"defaultVariant\"\
-    : \"off\"\n    },\n    \"loadGeneratorFloodHomepage\": {\n      \"description\"\
-    : \"Flood the frontend with a large amount of requests.\",\n      \"state\": \"\
-    ENABLED\",\n      \"variants\": {\n        \"on\": 100,\n        \"off\": 0\n\
-    \      },\n      \"defaultVariant\": \"off\"\n    },\n    \"imageSlowLoad\": {\n\
-    \      \"description\": \"slow loading images in the frontend\",\n      \"state\"\
-    : \"ENABLED\",\n      \"variants\": {\n        \"10sec\": 10000,\n        \"5sec\"\
-    : 5000,\n        \"off\": 0\n      },\n      \"defaultVariant\": \"off\"\n   \
-    \ },\n    \"llmInaccurateResponse\": {\n      \"defaultVariant\": \"off\",\n \
-    \     \"description\": \"LLM returns an inaccurate product summary for product\
-    \ ID L9ECAV7KIM\",\n      \"state\": \"ENABLED\",\n      \"variants\": {\n   \
-    \     \"off\": false,\n        \"on\": true\n      }\n    },\n    \"llmRateLimitError\"\
-    : {\n      \"defaultVariant\": \"off\",\n      \"description\": \"LLM intermittently\
-    \ returns a rate limit error\",\n      \"state\": \"ENABLED\",\n      \"variants\"\
-    : {\n        \"off\": false,\n        \"on\": true\n      }\n    }\n  }\n}\n"
+  demo.flagd.json: |
+    {
+      "$schema": "https://flagd.dev/schema/v0/flags.json",
+      "flags": {
+        "productCatalogFailure": {
+          "description": "Fail product catalog service on a specific product",
+          "state": "ENABLED",
+          "variants": {
+            "on": true,
+            "off": false
+          },
+          "defaultVariant": "off"
+        },
+        "recommendationCacheFailure": {
+          "description": "Fail recommendation service cache",
+          "state": "ENABLED",
+          "variants": {
+            "on": true,
+            "off": false
+          },
+          "defaultVariant": "off"
+        },
+        "adManualGc": {
+          "description": "Triggers full manual garbage collections in the ad service",
+          "state": "ENABLED",
+          "variants": {
+            "on": true,
+            "off": false
+          },
+          "defaultVariant": "off"
+        },
+        "adHighCpu": {
+          "description": "Triggers high cpu load in the ad service",
+          "state": "ENABLED",
+          "variants": {
+            "on": true,
+            "off": false
+          },
+          "defaultVariant": "off"
+        },
+        "adFailure": {
+          "description": "Fail ad service",
+          "state": "ENABLED",
+          "variants": {
+            "on": true,
+            "off": false
+          },
+          "defaultVariant": "off"
+        },
+        "kafkaQueueProblems": {
+          "description": "Overloads Kafka queue while simultaneously introducing a consumer side delay leading to a lag spike",
+          "state": "ENABLED",
+          "variants": {
+            "on": 100,
+            "off": 0
+          },
+          "defaultVariant": "off"
+        },
+        "paymentRetryMax": {
+          "description": "Maximum number of payment retry attempts",
+          "state": "ENABLED",
+          "variants": {
+            "10": 10,
+            "5": 5,
+            "4": 4,
+            "2": 2,
+            "1": 1
+          },
+          "defaultVariant": "4"
+        },
+        "fraudDetectionEnabled": {
+          "description": "Enable fraud detection analysis on orders",
+          "state": "ENABLED",
+          "variants": {
+            "on": 1,
+            "off": 0
+          },
+          "defaultVariant": "on"
+        },
+        "mutateFraudOrders": {
+          "description": "Percentage of orders to mutate for fraud alerts (0-100%)",
+          "state": "ENABLED",
+          "variants": {
+            "off": 0,
+            "medium": 40,
+            "high": 60,
+            "veryhigh": 90
+          },
+          "defaultVariant": "off"
+        },
+        "executeBadQueries": {
+          "description": "Percentage of orders that trigger bad database queries (0-100%)",
+          "state": "ENABLED",
+          "variants": {
+            "off": 0,
+            "low": 20,
+            "medium": 40,
+            "high": 60
+          },
+          "defaultVariant": "off"
+        },
+        "cartFailure": {
+          "description": "Fail cart service",
+          "state": "ENABLED",
+          "variants": {
+            "on": true,
+            "off": false
+          },
+          "defaultVariant": "off"
+        },
+        "paymentFailure": {
+          "description": "Fail payment service charge requests n%",
+          "state": "ENABLED",
+          "variants": {
+            "100%": 1,
+            "90%": 0.95,
+            "75%": 0.75,
+            "50%": 0.5,
+            "25%": 0.25,
+            "10%": 0.1,
+            "off": 0
+          },
+          "defaultVariant": "off"
+        },
+        "paymentUnreachable": {
+          "description": "Payment service is unavailable",
+          "state": "ENABLED",
+          "variants": {
+            "on": true,
+            "off": false
+          },
+          "defaultVariant": "off"
+        },
+        "loadGeneratorFloodHomepage": {
+          "description": "Flood the frontend with a large amount of requests.",
+          "state": "ENABLED",
+          "variants": {
+            "on": 100,
+            "off": 0
+          },
+          "defaultVariant": "off"
+        },
+        "imageSlowLoad": {
+          "description": "slow loading images in the frontend",
+          "state": "ENABLED",
+          "variants": {
+            "10sec": 10000,
+            "5sec": 5000,
+            "off": 0
+          },
+          "defaultVariant": "off"
+        },
+        "llmInaccurateResponse": {
+          "defaultVariant": "off",
+          "description": "LLM returns an inaccurate product summary for product ID L9ECAV7KIM",
+          "state": "ENABLED",
+          "variants": {
+            "off": false,
+            "on": true
+          }
+        },
+        "llmRateLimitError": {
+          "defaultVariant": "off",
+          "description": "LLM intermittently returns a rate limit error",
+          "state": "ENABLED",
+          "variants": {
+            "off": false,
+            "on": true
+          }
+        }
+      }
+    }
 
 ---
 
@@ -948,7 +1058,6 @@ metadata:
     app.kubernetes.io/name: flagd-ui
     app.kubernetes.io/version: 2.1.3
     app.kubernetes.io/part-of: opentelemetry-demo
-  namespace: astronomy-shop
 spec:
   type: ClusterIP
   ports:
@@ -968,7 +1077,6 @@ metadata:
     app.kubernetes.io/name: flagd-ui
     app.kubernetes.io/version: 2.1.3
     app.kubernetes.io/part-of: opentelemetry-demo
-  namespace: astronomy-shop
 spec:
   replicas: 1
   revisionHistoryLimit: 10
@@ -1049,9 +1157,8 @@ metadata:
     opentelemetry.io/name: fraud-detection
     app.kubernetes.io/component: fraud-detection
     app.kubernetes.io/name: fraud-detection
-    app.kubernetes.io/version: 2.1.3
+    app.kubernetes.io/version: fixing-bug-1
     app.kubernetes.io/part-of: opentelemetry-demo
-  namespace: astronomy-shop
 spec:
   replicas: 1
   revisionHistoryLimit: 10
@@ -1068,7 +1175,7 @@ spec:
       serviceAccountName: opentelemetry-demo
       containers:
       - name: fraud-detection
-        image: ghcr.io/hagen-p/opentelemetry-demo-splunk:2.1.3-for-jeremy
+        image: ghcr.io/hagen-p/opentelemetry-demo-splunk/otel-fraud-detection:fixing-bug-1
         imagePullPolicy: Always
         env:
         - name: OTEL_SERVICE_NAME
@@ -1099,9 +1206,9 @@ spec:
         - name: OTEL_INSTRUMENTATION_SPLUNK_JDBC_ENABLED
           value: 'true'
         - name: OTEL_RESOURCE_ATTRIBUTES
-          value: service.name=$(OTEL_SERVICE_NAME),service.namespace=opentelemetry-demo,service.version=2.1.3,service.kafka=spanlink
+          value: service.name=$(OTEL_SERVICE_NAME),service.namespace=opentelemetry-demo,service.version=fixing-bug-1,service.kafka=spanlink
         - name: SQL_SERVER_HOST
-          value: sql-server-fraud.astronomy-shop.svc.cluster.local
+          value: sql-server-fraud.default.svc.cluster.local
         - name: SQL_SERVER_PORT
           value: '1433'
         - name: SQL_SERVER_DATABASE
@@ -1134,7 +1241,7 @@ spec:
       - command:
         - sh
         - -c
-        - until nc -z -v -w30 sql-server-fraud.astronomy-shop.svc.cluster.local 1433; do echo
+        - until nc -z -v -w30 sql-server-fraud.default.svc.cluster.local 1433; do echo
           waiting for sql-server-fraud; sleep 2; done;
         image: busybox:latest
         name: wait-for-sqlserver
@@ -1155,9 +1262,8 @@ metadata:
     opentelemetry.io/name: frontend
     app.kubernetes.io/component: frontend
     app.kubernetes.io/name: frontend
-    app.kubernetes.io/version: 2.1.3
+    app.kubernetes.io/version: fixing-bug-1
     app.kubernetes.io/part-of: opentelemetry-demo
-  namespace: astronomy-shop
 spec:
   type: ClusterIP
   ports:
@@ -1175,9 +1281,8 @@ metadata:
     opentelemetry.io/name: frontend
     app.kubernetes.io/component: frontend
     app.kubernetes.io/name: frontend
-    app.kubernetes.io/version: 2.1.3
+    app.kubernetes.io/version: fixing-bug-1
     app.kubernetes.io/part-of: opentelemetry-demo
-  namespace: astronomy-shop
 spec:
   replicas: 1
   revisionHistoryLimit: 10
@@ -1194,7 +1299,7 @@ spec:
       serviceAccountName: opentelemetry-demo
       containers:
       - name: frontend
-        image: ghcr.io/hagen-p/opentelemetry-demo-splunk:2.1.3-RUM
+        image: ghcr.io/hagen-p/opentelemetry-demo-splunk/otel-frontend:fixing-bug-1
         imagePullPolicy: Always
         ports:
         - containerPort: 8080
@@ -1249,7 +1354,7 @@ spec:
           value: grpc
         - name: OTEL_LOG_LEVEL
         - name: OTEL_RESOURCE_ATTRIBUTES
-          value: service.name=$(OTEL_SERVICE_NAME),service.namespace=opentelemetry-demo,service.version=2.1.3,service.kafka=no
+          value: service.name=$(OTEL_SERVICE_NAME),service.namespace=opentelemetry-demo,service.version=fixing-bug-1,service.kafka=no
         - name: API_TOKEN
           valueFrom:
             secretKeyRef:
@@ -1300,9 +1405,8 @@ metadata:
     opentelemetry.io/name: frontend-proxy
     app.kubernetes.io/component: frontend-proxy
     app.kubernetes.io/name: frontend-proxy
-    app.kubernetes.io/version: 2.1.3
+    app.kubernetes.io/version: fixing-bug-1
     app.kubernetes.io/part-of: opentelemetry-demo
-  namespace: astronomy-shop
 spec:
   type: ClusterIP
   ports:
@@ -1320,9 +1424,8 @@ metadata:
     opentelemetry.io/name: frontend-proxy
     app.kubernetes.io/component: frontend-proxy
     app.kubernetes.io/name: frontend-proxy
-    app.kubernetes.io/version: 2.1.3
+    app.kubernetes.io/version: fixing-bug-1
     app.kubernetes.io/part-of: opentelemetry-demo
-  namespace: astronomy-shop
 spec:
   replicas: 1
   revisionHistoryLimit: 10
@@ -1339,7 +1442,7 @@ spec:
       serviceAccountName: opentelemetry-demo
       containers:
       - name: frontend-proxy
-        image: ghcr.io/hagen-p/opentelemetry-demo-splunk:2.1.3
+        image: ghcr.io/hagen-p/opentelemetry-demo-splunk/otel-frontend-proxy:fixing-bug-1
         imagePullPolicy: Always
         ports:
         - containerPort: 8080
@@ -1389,7 +1492,7 @@ spec:
         - name: OTEL_COLLECTOR_PORT_HTTP
           value: '4318'
         - name: OTEL_RESOURCE_ATTRIBUTES
-          value: service.name=$(OTEL_SERVICE_NAME),service.namespace=opentelemetry-demo,service.version=2.1.3,service.kafka=no
+          value: service.name=$(OTEL_SERVICE_NAME),service.namespace=opentelemetry-demo,service.version=fixing-bug-1,service.kafka=no
         - name: FEATURE_AUTH_ENABLED
           value: 'true'
         - name: FEATURE_USER
@@ -1413,7 +1516,6 @@ metadata:
   annotations:
     cert-manager.io/cluster-issuer: letsencrypt-prod
     traefik.ingress.kubernetes.io/router.middlewares: default-custom-headers@kubernetescrd
-  namespace: astronomy-shop
 spec:
   ingressClassName: traefik
   tls:
@@ -1447,9 +1549,8 @@ metadata:
     opentelemetry.io/name: image-provider
     app.kubernetes.io/component: image-provider
     app.kubernetes.io/name: image-provider
-    app.kubernetes.io/version: 2.1.3
+    app.kubernetes.io/version: fixing-bug-1
     app.kubernetes.io/part-of: opentelemetry-demo
-  namespace: astronomy-shop
 spec:
   type: ClusterIP
   ports:
@@ -1467,9 +1568,8 @@ metadata:
     opentelemetry.io/name: image-provider
     app.kubernetes.io/component: image-provider
     app.kubernetes.io/name: image-provider
-    app.kubernetes.io/version: 2.1.3
+    app.kubernetes.io/version: fixing-bug-1
     app.kubernetes.io/part-of: opentelemetry-demo
-  namespace: astronomy-shop
 spec:
   replicas: 1
   revisionHistoryLimit: 10
@@ -1486,7 +1586,7 @@ spec:
       serviceAccountName: opentelemetry-demo
       containers:
       - name: image-provider
-        image: ghcr.io/hagen-p/opentelemetry-demo-splunk:2.1.3
+        image: ghcr.io/hagen-p/opentelemetry-demo-splunk/otel-image-provider:fixing-bug-1
         imagePullPolicy: IfNotPresent
         ports:
         - containerPort: 8081
@@ -1512,7 +1612,7 @@ spec:
         - name: OTEL_COLLECTOR_HOST
           value: $(OTEL_COLLECTOR_NAME)
         - name: OTEL_RESOURCE_ATTRIBUTES
-          value: service.name=$(OTEL_SERVICE_NAME),service.namespace=opentelemetry-demo,service.version=2.1.3,service.kafka=no
+          value: service.name=$(OTEL_SERVICE_NAME),service.namespace=opentelemetry-demo,service.version=fixing-bug-1,service.kafka=no
         resources:
           limits:
             memory: 50Mi
@@ -1536,7 +1636,6 @@ metadata:
     app.kubernetes.io/name: kafka
     app.kubernetes.io/version: 2.1.3
     app.kubernetes.io/part-of: opentelemetry-demo
-  namespace: astronomy-shop
 spec:
   type: ClusterIP
   ports:
@@ -1559,7 +1658,6 @@ metadata:
     app.kubernetes.io/name: kafka
     app.kubernetes.io/version: 2.1.3
     app.kubernetes.io/part-of: opentelemetry-demo
-  namespace: astronomy-shop
 spec:
   replicas: 1
   revisionHistoryLimit: 10
@@ -1636,9 +1734,8 @@ metadata:
     opentelemetry.io/name: llm
     app.kubernetes.io/component: llm
     app.kubernetes.io/name: llm
-    app.kubernetes.io/version: 2.1.3
+    app.kubernetes.io/version: fixing-bug-1
     app.kubernetes.io/part-of: opentelemetry-demo
-  namespace: astronomy-shop
 spec:
   type: ClusterIP
   ports:
@@ -1656,9 +1753,8 @@ metadata:
     opentelemetry.io/name: llm
     app.kubernetes.io/component: llm
     app.kubernetes.io/name: llm
-    app.kubernetes.io/version: 2.1.3
+    app.kubernetes.io/version: fixing-bug-1
     app.kubernetes.io/part-of: opentelemetry-demo
-  namespace: astronomy-shop
 spec:
   replicas: 1
   revisionHistoryLimit: 10
@@ -1675,7 +1771,7 @@ spec:
       serviceAccountName: opentelemetry-demo
       containers:
       - name: llm
-        image: ghcr.io/open-telemetry/demo:2.1.3-llm
+        image: ghcr.io/hagen-p/opentelemetry-demo-splunk/otel-llm:fixing-bug-1
         imagePullPolicy: IfNotPresent
         ports:
         - containerPort: 8000
@@ -1701,68 +1797,12 @@ spec:
         - name: OTEL_EXPORTER_OTLP_ENDPOINT
           value: http://$(OTEL_COLLECTOR_NAME):4317
         - name: OTEL_RESOURCE_ATTRIBUTES
-          value: service.name=$(OTEL_SERVICE_NAME),service.namespace=opentelemetry-demo,service.version=2.1.3,service.kafka=no
+          value: service.name=$(OTEL_SERVICE_NAME),service.namespace=opentelemetry-demo,service.version=fixing-bug-1,service.kafka=no
         resources:
           limits:
             memory: 100Mi
         volumeMounts: null
       volumes: null
-
----
-
-# === load-generator ===
-# Kubernetes manifest for load-generator
-# Auto-generated from opentelemetry-demo.yaml
-# Contains 1 resource(s)
----
-apiVersion: v1
-kind: Service
-metadata:
-  name: load-generator
-  labels:
-    opentelemetry.io/name: load-generator
-    app.kubernetes.io/component: load-generator
-    app.kubernetes.io/name: load-generator
-    app.kubernetes.io/version: 2.1.3
-    app.kubernetes.io/part-of: opentelemetry-demo
-  namespace: astronomy-shop
-spec:
-  type: ClusterIP
-  ports:
-  - port: 8089
-    name: tcp-service
-    targetPort: 8089
-  selector:
-    opentelemetry.io/name: load-generator
-
----
-
-# === demo-namespace ===
-# Kubernetes manifest for namespace
-# Creates the namespace where all Astronomy Shop services will be deployed
----
-apiVersion: v1
-kind: Namespace
-metadata:
-  name: astronomy-shop
-  labels:
-    app.kubernetes.io/name: astronomy-shop
-    app.kubernetes.io/part-of: opentelemetry-demo
-
----
-
-# === demo-service-account ===
-# Kubernetes manifest for demo-service-account
-# ServiceAccount used by all Astronomy Shop application pods
----
-apiVersion: v1
-kind: ServiceAccount
-metadata:
-  name: opentelemetry-demo
-  namespace: astronomy-shop
-  labels:
-    app.kubernetes.io/version: 2.1.3
-    app.kubernetes.io/part-of: opentelemetry-demo
 
 ---
 
@@ -1779,9 +1819,8 @@ metadata:
     opentelemetry.io/name: payment
     app.kubernetes.io/component: payment
     app.kubernetes.io/name: payment
-    app.kubernetes.io/version: 2.1.3
+    app.kubernetes.io/version: fixing-bug-1
     app.kubernetes.io/part-of: opentelemetry-demo
-  namespace: astronomy-shop
 spec:
   type: ClusterIP
   ports:
@@ -1799,9 +1838,8 @@ metadata:
     opentelemetry.io/name: payment
     app.kubernetes.io/component: payment
     app.kubernetes.io/name: payment
-    app.kubernetes.io/version: 2.1.3
+    app.kubernetes.io/version: fixing-bug-1
     app.kubernetes.io/part-of: opentelemetry-demo
-  namespace: astronomy-shop
 spec:
   replicas: 1
   revisionHistoryLimit: 10
@@ -1818,7 +1856,7 @@ spec:
       serviceAccountName: opentelemetry-demo
       containers:
       - name: payment
-        image: ghcr.io/hagen-p/opentelemetry-demo-splunk:2.1.3-profiling.1
+        image: ghcr.io/hagen-p/opentelemetry-demo-splunk/otel-payment:fixing-bug-1
         imagePullPolicy: Always
         ports:
         - containerPort: 8080
@@ -1846,7 +1884,7 @@ spec:
         - name: OTEL_EXPORTER_OTLP_ENDPOINT
           value: http://$(OTEL_COLLECTOR_NAME):4317
         - name: OTEL_RESOURCE_ATTRIBUTES
-          value: service.name=$(OTEL_SERVICE_NAME),service.namespace=opentelemetry-demo,service.version=2.1.3,service.kafka=no
+          value: service.name=$(OTEL_SERVICE_NAME),service.namespace=opentelemetry-demo,service.version=fixing-bug-1,service.kafka=no
         - name: SPLUNK_INSTRUMENTATION_METRICS_ENABLED
           value: 'true'
         - name: SPLUNK_METRICS_ENABLED
@@ -1885,7 +1923,6 @@ metadata:
     app.kubernetes.io/name: postgresql
     app.kubernetes.io/version: 2.1.3
     app.kubernetes.io/part-of: opentelemetry-demo
-  namespace: astronomy-shop
 spec:
   type: ClusterIP
   ports:
@@ -1905,7 +1942,6 @@ metadata:
     app.kubernetes.io/name: postgresql
     app.kubernetes.io/version: 2.1.3
     app.kubernetes.io/part-of: opentelemetry-demo
-  namespace: astronomy-shop
 spec:
   replicas: 1
   revisionHistoryLimit: 10
@@ -1972,7 +2008,6 @@ metadata:
     app.kubernetes.io/name: product-catalog
     app.kubernetes.io/version: 2.1.3
     app.kubernetes.io/part-of: opentelemetry-demo
-  namespace: astronomy-shop
 spec:
   type: ClusterIP
   ports:
@@ -1992,7 +2027,6 @@ metadata:
     app.kubernetes.io/name: product-catalog
     app.kubernetes.io/version: 2.1.3
     app.kubernetes.io/part-of: opentelemetry-demo
-  namespace: astronomy-shop
 spec:
   replicas: 1
   revisionHistoryLimit: 10
@@ -2065,107 +2099,160 @@ kind: ConfigMap
 metadata:
   name: product-catalog-products
   labels:
-    app.kubernetes.io/version: 2.1.3
+    app.kubernetes.io/version: fixing-bug-1
     app.kubernetes.io/part-of: opentelemetry-demo
-  namespace: astronomy-shop
 data:
-  products.json: "{\n  \"products\": [\n    {\n      \"id\": \"OLJCESPC7Z\",\n   \
-    \   \"name\": \"National Park Foundation Explorascope\",\n      \"description\"\
-    : \"The National Park Foundation\u2019s (NPF) Explorascope 60AZ is a manual alt-azimuth,\
-    \ refractor telescope perfect for celestial viewing on the go. The NPF Explorascope\
-    \ 60 can view the planets, moon, star clusters and brighter deep sky objects like\
-    \ the Orion Nebula and Andromeda Galaxy.\",\n      \"picture\": \"NationalParkFoundationExplorascope.jpg\"\
-    ,\n      \"priceUsd\": {\n        \"currencyCode\": \"USD\",\n        \"units\"\
-    : 101,\n        \"nanos\": 960000000\n      },\n      \"categories\": [\n    \
-    \    \"telescopes\"\n      ]\n    },\n    {\n      \"id\": \"66VCHSJNUP\",\n \
-    \     \"name\": \"Starsense Explorer Refractor Telescope\",\n      \"description\"\
-    : \"The first telescope that uses your smartphone to analyze the night sky and\
-    \ calculate its position in real time. StarSense Explorer is ideal for beginners\
-    \ thanks to the app\u2019s user-friendly interface and detailed tutorials. It\u2019\
-    s like having your own personal tour guide of the night sky\",\n      \"picture\"\
-    : \"StarsenseExplorer.jpg\",\n      \"priceUsd\": {\n        \"currencyCode\"\
-    : \"USD\",\n        \"units\": 349,\n        \"nanos\": 950000000\n      },\n\
-    \      \"categories\": [\n        \"telescopes\"\n      ]\n    },\n    {\n   \
-    \   \"id\": \"1YMWWN1N4O\",\n      \"name\": \"Eclipsmart Travel Refractor Telescope\"\
-    ,\n      \"description\": \"Dedicated white-light solar scope for the observer\
-    \ on the go. The 50mm refracting solar scope uses Solar Safe, ISO compliant, full-aperture\
-    \ glass filter material to ensure the safest view of solar events.  The kit comes\
-    \ complete with everything you need, including the dedicated travel solar scope,\
-    \ a Solar Safe finderscope, tripod, a high quality 20mm (18x) Kellner eyepiece\
-    \ and a nylon backpack to carry everything in.  This Travel Solar Scope makes\
-    \ it easy to share the Sun as well as partial and total solar eclipses with the\
-    \ whole family and offers much higher magnifications than you would otherwise\
-    \ get using handheld solar viewers or binoculars.\",\n      \"picture\": \"EclipsmartTravelRefractorTelescope.jpg\"\
-    ,\n      \"priceUsd\": {\n        \"currencyCode\": \"USD\",\n        \"units\"\
-    : 129,\n        \"nanos\": 950000000\n      },\n      \"categories\": [\n    \
-    \    \"telescopes\",\n        \"travel\"\n      ]\n    },\n    {\n      \"id\"\
-    : \"L9ECAV7KIM\",\n      \"name\": \"Lens Cleaning Kit\",\n      \"description\"\
-    : \"Wipe away dust, dirt, fingerprints and other particles on your lenses to see\
-    \ clearly with the Lens Cleaning Kit. This cleaning kit works on all glass and\
-    \ optical surfaces, including telescopes, binoculars, spotting scopes, monoculars,\
-    \ microscopes, and even your camera lenses, computer screens, and mobile devices.\
-    \  The kit comes complete with a retractable lens brush to remove dust particles\
-    \ and dirt and two options to clean smudges and fingerprints off of your optics,\
-    \ pre-moistened lens wipes and a bottled lens cleaning fluid with soft cloth.\"\
-    ,\n      \"picture\": \"LensCleaningKit.jpg\",\n      \"priceUsd\": {\n      \
-    \  \"currencyCode\": \"USD\",\n        \"units\": 21,\n        \"nanos\": 950000000\n\
-    \      },\n      \"categories\": [\n        \"accessories\"\n      ]\n    },\n\
-    \    {\n      \"id\": \"2ZYFJ3GM2N\",\n      \"name\": \"Roof Binoculars\",\n\
-    \      \"description\": \"This versatile, all-around binocular is a great choice\
-    \ for the trail, the stadium, the arena, or just about anywhere you want a close-up\
-    \ view of the action without sacrificing brightness or detail. It\u2019s an especially\
-    \ great companion for nature observation and bird watching, with ED glass that\
-    \ helps you spot the subtlest field markings and a close focus of just 6.5 feet.\"\
-    ,\n      \"picture\": \"RoofBinoculars.jpg\",\n      \"priceUsd\": {\n       \
-    \ \"currencyCode\": \"USD\",\n        \"units\": 209,\n        \"nanos\": 950000000\n\
-    \      },\n      \"categories\": [\n        \"binoculars\"\n      ]\n    },\n\
-    \    {\n      \"id\": \"0PUK6V6EV0\",\n      \"name\": \"Solar System Color Imager\"\
-    ,\n      \"description\": \"You have your new telescope and have observed Saturn\
-    \ and Jupiter. Now you're ready to take the next step and start imaging them.\
-    \ But where do you begin? The NexImage 10 Solar System Imager is the perfect solution.\"\
-    ,\n      \"picture\": \"SolarSystemColorImager.jpg\",\n      \"priceUsd\": {\n\
-    \        \"currencyCode\": \"USD\",\n        \"units\": 175,\n        \"nanos\"\
-    : 0\n      },\n      \"categories\": [\n        \"accessories\",\n        \"telescopes\"\
-    \n      ]\n    },\n    {\n      \"id\": \"LS4PSXUNUM\",\n      \"name\": \"Red\
-    \ Flashlight\",\n      \"description\": \"This 3-in-1 device features a 3-mode\
-    \ red flashlight, a hand warmer, and a portable power bank for recharging your\
-    \ personal electronics on the go. Whether you use it to light the way at an astronomy\
-    \ star party, a night walk, or wildlife research, ThermoTorch 3 Astro Red\u2019\
-    s rugged, IPX4-rated design will withstand your everyday activities.\",\n    \
-    \  \"picture\": \"RedFlashlight.jpg\",\n      \"priceUsd\": {\n        \"currencyCode\"\
-    : \"USD\",\n        \"units\": 57,\n        \"nanos\": 80000000\n      },\n  \
-    \    \"categories\": [\n        \"accessories\",\n        \"flashlights\"\n  \
-    \    ]\n    },\n    {\n      \"id\": \"9SIQT8TOJO\",\n      \"name\": \"Optical\
-    \ Tube Assembly\",\n      \"description\": \"Capturing impressive deep-sky astroimages\
-    \ is easier than ever with Rowe-Ackermann Schmidt Astrograph (RASA) V2, the perfect\
-    \ companion to today\u2019s top DSLR or astronomical CCD cameras. This fast, wide-field\
-    \ f/2.2 system allows for shorter exposure times compared to traditional f/10\
-    \ astroimaging, without sacrificing resolution. Because shorter sub-exposure times\
-    \ are possible, your equatorial mount won\u2019t need to accurately track over\
-    \ extended periods. The short focal length also lessens equatorial tracking demands.\
-    \ In many cases, autoguiding will not be required.\",\n      \"picture\": \"OpticalTubeAssembly.jpg\"\
-    ,\n      \"priceUsd\": {\n        \"currencyCode\": \"USD\",\n        \"units\"\
-    : 3599,\n        \"nanos\": 0\n      },\n      \"categories\": [\n        \"accessories\"\
-    ,\n        \"telescopes\",\n        \"assembly\"\n      ]\n    },\n    {\n   \
-    \   \"id\": \"6E92ZMYYFZ\",\n      \"name\": \"Solar Filter\",\n      \"description\"\
-    : \"Enhance your viewing experience with EclipSmart Solar Filter for 8\u201D telescopes.\
-    \ With two Velcro straps and four self-adhesive Velcro pads for added safety,\
-    \ you can be assured that the solar filter cannot be accidentally knocked off\
-    \ and will provide Solar Safe, ISO compliant viewing.\",\n      \"picture\": \"\
-    SolarFilter.jpg\",\n      \"priceUsd\": {\n        \"currencyCode\": \"USD\",\n\
-    \        \"units\": 69,\n        \"nanos\": 950000000\n      },\n      \"categories\"\
-    : [\n        \"accessories\",\n        \"telescopes\"\n      ]\n    },\n    {\n\
-    \      \"id\": \"HQTGWGPNH4\",\n      \"name\": \"The Comet Book\",\n      \"\
-    description\": \"A 16th-century treatise on comets, created anonymously in Flanders\
-    \ (now northern France) and now held at the Universit\xE4tsbibliothek Kassel.\
-    \ Commonly known as The Comet Book (or Kometenbuch in German), its full title\
-    \ translates as \u201CComets and their General and Particular Meanings, According\
-    \ to Ptolome\xE9, Albumasar, Haly, Aliquind and other Astrologers\u201D. The image\
-    \ is from https://publicdomainreview.org/collection/the-comet-book, made available\
-    \ by the Universit\xE4tsbibliothek Kassel under a CC-BY SA 4.0 license (https://creativecommons.org/licenses/by-sa/4.0/)\"\
-    ,\n      \"picture\": \"TheCometBook.jpg\",\n      \"priceUsd\": {\n        \"\
-    currencyCode\": \"USD\",\n        \"units\": 0,\n        \"nanos\": 990000000\n\
-    \      },\n      \"categories\": [\n        \"books\"\n      ]\n    }\n  ]\n}\n"
+  products.json: |
+    {
+      "products": [
+        {
+          "id": "OLJCESPC7Z",
+          "name": "National Park Foundation Explorascope",
+          "description": "The National Park Foundation's (NPF) Explorascope 60AZ is a manual alt-azimuth, refractor telescope perfect for celestial viewing on the go. The NPF Explorascope 60 can view the planets, moon, star clusters and brighter deep sky objects like the Orion Nebula and Andromeda Galaxy.",
+          "picture": "NationalParkFoundationExplorascope.jpg",
+          "priceUsd": {
+            "currencyCode": "USD",
+            "units": 101,
+            "nanos": 960000000
+          },
+          "categories": [
+            "telescopes"
+          ]
+        },
+        {
+          "id": "66VCHSJNUP",
+          "name": "Starsense Explorer Refractor Telescope",
+          "description": "The first telescope that uses your smartphone to analyze the night sky and calculate its position in real time. StarSense Explorer is ideal for beginners thanks to the app's user-friendly interface and detailed tutorials. It's like having your own personal tour guide of the night sky",
+          "picture": "StarsenseExplorer.jpg",
+          "priceUsd": {
+            "currencyCode": "USD",
+            "units": 349,
+            "nanos": 950000000
+          },
+          "categories": [
+            "telescopes"
+          ]
+        },
+        {
+          "id": "1YMWWN1N4O",
+          "name": "Eclipsmart Travel Refractor Telescope",
+          "description": "Dedicated white-light solar scope for the observer on the go. The 50mm refracting solar scope uses Solar Safe, ISO compliant, full-aperture glass filter material to ensure the safest view of solar events.  The kit comes complete with everything you need, including the dedicated travel solar scope, a Solar Safe finderscope, tripod, a high quality 20mm (18x) Kellner eyepiece and a nylon backpack to carry everything in.  This Travel Solar Scope makes it easy to share the Sun as well as partial and total solar eclipses with the whole family and offers much higher magnifications than you would otherwise get using handheld solar viewers or binoculars.",
+          "picture": "EclipsmartTravelRefractorTelescope.jpg",
+          "priceUsd": {
+            "currencyCode": "USD",
+            "units": 129,
+            "nanos": 950000000
+          },
+          "categories": [
+            "telescopes",
+            "travel"
+          ]
+        },
+        {
+          "id": "L9ECAV7KIM",
+          "name": "Lens Cleaning Kit",
+          "description": "Wipe away dust, dirt, fingerprints and other particles on your lenses to see clearly with the Lens Cleaning Kit. This cleaning kit works on all glass and optical surfaces, including telescopes, binoculars, spotting scopes, monoculars, microscopes, and even your camera lenses, computer screens, and mobile devices.  The kit comes complete with a retractable lens brush to remove dust particles and dirt and two options to clean smudges and fingerprints off of your optics, pre-moistened lens wipes and a bottled lens cleaning fluid with soft cloth.",
+          "picture": "LensCleaningKit.jpg",
+          "priceUsd": {
+            "currencyCode": "USD",
+            "units": 21,
+            "nanos": 950000000
+          },
+          "categories": [
+            "accessories"
+          ]
+        },
+        {
+          "id": "2ZYFJ3GM2N",
+          "name": "Roof Binoculars",
+          "description": "This versatile, all-around binocular is a great choice for the trail, the stadium, the arena, or just about anywhere you want a close-up view of the action without sacrificing brightness or detail. It's an especially great companion for nature observation and bird watching, with ED glass that helps you spot the subtlest field markings and a close focus of just 6.5 feet.",
+          "picture": "RoofBinoculars.jpg",
+          "priceUsd": {
+            "currencyCode": "USD",
+            "units": 209,
+            "nanos": 950000000
+          },
+          "categories": [
+            "binoculars"
+          ]
+        },
+        {
+          "id": "0PUK6V6EV0",
+          "name": "Solar System Color Imager",
+          "description": "You have your new telescope and have observed Saturn and Jupiter. Now you're ready to take the next step and start imaging them. But where do you begin? The NexImage 10 Solar System Imager is the perfect solution.",
+          "picture": "SolarSystemColorImager.jpg",
+          "priceUsd": {
+            "currencyCode": "USD",
+            "units": 175,
+            "nanos": 0
+          },
+          "categories": [
+            "accessories",
+            "telescopes"
+          ]
+        },
+        {
+          "id": "LS4PSXUNUM",
+          "name": "Red Flashlight",
+          "description": "This 3-in-1 device features a 3-mode red flashlight, a hand warmer, and a portable power bank for recharging your personal electronics on the go. Whether you use it to light the way at an astronomy star party, a night walk, or wildlife research, ThermoTorch 3 Astro Red's rugged, IPX4-rated design will withstand your everyday activities.",
+          "picture": "RedFlashlight.jpg",
+          "priceUsd": {
+            "currencyCode": "USD",
+            "units": 57,
+            "nanos": 80000000
+          },
+          "categories": [
+            "accessories",
+            "flashlights"
+          ]
+        },
+        {
+          "id": "9SIQT8TOJO",
+          "name": "Optical Tube Assembly",
+          "description": "Capturing impressive deep-sky astroimages is easier than ever with Rowe-Ackermann Schmidt Astrograph (RASA) V2, the perfect companion to today's top DSLR or astronomical CCD cameras. This fast, wide-field f/2.2 system allows for shorter exposure times compared to traditional f/10 astroimaging, without sacrificing resolution. Because shorter sub-exposure times are possible, your equatorial mount won't need to accurately track over extended periods. The short focal length also lessens equatorial tracking demands. In many cases, autoguiding will not be required.",
+          "picture": "OpticalTubeAssembly.jpg",
+          "priceUsd": {
+            "currencyCode": "USD",
+            "units": 3599,
+            "nanos": 0
+          },
+          "categories": [
+            "accessories",
+            "telescopes",
+            "assembly"
+          ]
+        },
+        {
+          "id": "6E92ZMYYFZ",
+          "name": "Solar Filter",
+          "description": "Enhance your viewing experience with EclipSmart Solar Filter for 8" telescopes. With two Velcro straps and four self-adhesive Velcro pads for added safety, you can be assured that the solar filter cannot be accidentally knocked off and will provide Solar Safe, ISO compliant viewing.",
+          "picture": "SolarFilter.jpg",
+          "priceUsd": {
+            "currencyCode": "USD",
+            "units": 69,
+            "nanos": 950000000
+          },
+          "categories": [
+            "accessories",
+            "telescopes"
+          ]
+        },
+        {
+          "id": "HQTGWGPNH4",
+          "name": "The Comet Book",
+          "description": "A 16th-century treatise on comets, created anonymously in Flanders (now northern France) and now held at the Universitätsbibliothek Kassel. Commonly known as The Comet Book (or Kometenbuch in German), its full title translates as "Comets and their General and Particular Meanings, According to Ptolomé, Albumasar, Haly, Aliquind and other Astrologers". The image is from https://publicdomainreview.org/collection/the-comet-book, made available by the Universitätsbibliothek Kassel under a CC-BY SA 4.0 license (https://creativecommons.org/licenses/by-sa/4.0/)",
+          "picture": "TheCometBook.jpg",
+          "priceUsd": {
+            "currencyCode": "USD",
+            "units": 0,
+            "nanos": 990000000
+          },
+          "categories": [
+            "books"
+          ]
+        }
+      ]
+    }
 
 ---
 
@@ -2182,9 +2269,8 @@ metadata:
     opentelemetry.io/name: product-reviews
     app.kubernetes.io/component: product-reviews
     app.kubernetes.io/name: product-reviews
-    app.kubernetes.io/version: 2.1.3
+    app.kubernetes.io/version: fixing-bug-1
     app.kubernetes.io/part-of: opentelemetry-demo
-  namespace: astronomy-shop
 spec:
   type: ClusterIP
   ports:
@@ -2202,9 +2288,8 @@ metadata:
     opentelemetry.io/name: product-reviews
     app.kubernetes.io/component: product-reviews
     app.kubernetes.io/name: product-reviews
-    app.kubernetes.io/version: 2.1.3
+    app.kubernetes.io/version: fixing-bug-1
     app.kubernetes.io/part-of: opentelemetry-demo
-  namespace: astronomy-shop
 spec:
   replicas: 1
   revisionHistoryLimit: 10
@@ -2221,7 +2306,7 @@ spec:
       serviceAccountName: opentelemetry-demo
       containers:
       - name: product-reviews
-        image: ghcr.io/open-telemetry/demo:2.1.3-product-reviews
+        image: ghcr.io/hagen-p/opentelemetry-demo-splunk/otel-product-reviews:fixing-bug-1
         imagePullPolicy: IfNotPresent
         ports:
         - containerPort: 3551
@@ -2269,7 +2354,7 @@ spec:
         - name: OTEL_EXPORTER_OTLP_ENDPOINT
           value: http://$(OTEL_COLLECTOR_NAME):4317
         - name: OTEL_RESOURCE_ATTRIBUTES
-          value: service.name=$(OTEL_SERVICE_NAME),service.namespace=opentelemetry-demo,service.version=2.1.3,service.kafka=no
+          value: service.name=$(OTEL_SERVICE_NAME),service.namespace=opentelemetry-demo,service.version=fixing-bug-1,service.kafka=no
         resources:
           limits:
             memory: 500Mi
@@ -2293,7 +2378,6 @@ metadata:
     app.kubernetes.io/name: quote
     app.kubernetes.io/version: 2.1.3
     app.kubernetes.io/part-of: opentelemetry-demo
-  namespace: astronomy-shop
 spec:
   type: ClusterIP
   ports:
@@ -2313,7 +2397,6 @@ metadata:
     app.kubernetes.io/name: quote
     app.kubernetes.io/version: 2.1.3
     app.kubernetes.io/part-of: opentelemetry-demo
-  namespace: astronomy-shop
 spec:
   replicas: 1
   revisionHistoryLimit: 10
@@ -2384,9 +2467,8 @@ metadata:
     opentelemetry.io/name: recommendation
     app.kubernetes.io/component: recommendation
     app.kubernetes.io/name: recommendation
-    app.kubernetes.io/version: 2.1.3
+    app.kubernetes.io/version: fixing-bug-1
     app.kubernetes.io/part-of: opentelemetry-demo
-  namespace: astronomy-shop
 spec:
   type: ClusterIP
   ports:
@@ -2404,9 +2486,8 @@ metadata:
     opentelemetry.io/name: recommendation
     app.kubernetes.io/component: recommendation
     app.kubernetes.io/name: recommendation
-    app.kubernetes.io/version: 2.1.3
+    app.kubernetes.io/version: fixing-bug-1
     app.kubernetes.io/part-of: opentelemetry-demo
-  namespace: astronomy-shop
 spec:
   replicas: 1
   revisionHistoryLimit: 10
@@ -2423,7 +2504,7 @@ spec:
       serviceAccountName: opentelemetry-demo
       containers:
       - name: recommendation
-        image: ghcr.io/hagen-p/opentelemetry-demo-splunk:2.1.3
+        image: ghcr.io/hagen-p/opentelemetry-demo-splunk/otel-recommendation:fixing-bug-1
         imagePullPolicy: Always
         ports:
         - containerPort: 8080
@@ -2457,7 +2538,7 @@ spec:
         - name: OTEL_EXPORTER_OTLP_ENDPOINT
           value: http://$(OTEL_COLLECTOR_NAME):4317
         - name: OTEL_RESOURCE_ATTRIBUTES
-          value: service.name=$(OTEL_SERVICE_NAME),service.namespace=opentelemetry-demo,service.version=2.1.3,service.kafka=no
+          value: service.name=$(OTEL_SERVICE_NAME),service.namespace=opentelemetry-demo,service.version=fixing-bug-1,service.kafka=no
         - name: SPLUNK_PROFILER_LOGS_ENDPOINT
           value: http://$(OTEL_COLLECTOR_NAME):4317
         - name: SPLUNK_PROFILER_CALL_STACK_INTERVAL
@@ -2480,7 +2561,6 @@ apiVersion: v1
 kind: Secret
 metadata:
   name: mssql-secrets
-  namespace: astronomy-shop
 type: Opaque
 stringData:
   SA_PASSWORD: ChangeMe_SuperStrong123!
@@ -2491,10 +2571,13 @@ apiVersion: v1
 kind: ConfigMap
 metadata:
   name: mssql-init-script
-  namespace: astronomy-shop
 data:
-  init-db.sql: "IF NOT EXISTS (SELECT name FROM sys.databases WHERE name = 'FraudDetection')\n\
-    BEGIN\n  CREATE DATABASE FraudDetection;\nEND\nGO\n"
+  init-db.sql: |
+    IF NOT EXISTS (SELECT name FROM sys.databases WHERE name = 'FraudDetection')
+    BEGIN
+      CREATE DATABASE FraudDetection;
+    END
+    GO
 
 ---
 
@@ -2513,7 +2596,6 @@ metadata:
     app.kubernetes.io/name: shipping
     app.kubernetes.io/version: 2.1.3
     app.kubernetes.io/part-of: opentelemetry-demo
-  namespace: astronomy-shop
 spec:
   type: ClusterIP
   ports:
@@ -2533,7 +2615,6 @@ metadata:
     app.kubernetes.io/name: shipping
     app.kubernetes.io/version: 2.1.3
     app.kubernetes.io/part-of: opentelemetry-demo
-  namespace: astronomy-shop
 spec:
   replicas: 1
   revisionHistoryLimit: 10
@@ -2586,26 +2667,23 @@ spec:
 ---
 
 # === shop-dc-shim ===
-### Expects a deployment of Astronomy Shop Demo in the same cluster
-### Uses checkout service from that demo
----
 apiVersion: v1
 kind: Service
 metadata:
   name: shop-dc-shim-db
-  namespace: astronomy-shop
+  namespace: default
   labels:
     opentelemetry.io/name: shop-dc-shim-db
     app.kubernetes.io/component: shop-dc-shim-db
     app.kubernetes.io/name: shop-dc-shim-db
-    app.kubernetes.io/version: 2.1.3
+    app.kubernetes.io/version: "2.1.3"
     app.kubernetes.io/part-of: opentelemetry-demo
 spec:
   type: ClusterIP
   ports:
-  - port: 1433
-    name: sqlserver
-    targetPort: 1433
+    - port: 1433
+      name: sqlserver
+      targetPort: 1433
   selector:
     opentelemetry.io/name: shop-dc-shim-db
 ---
@@ -2613,12 +2691,12 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: shop-dc-shim-db
-  namespace: astronomy-shop
+  namespace: default
   labels:
     opentelemetry.io/name: shop-dc-shim-db
     app.kubernetes.io/component: shop-dc-shim-db
     app.kubernetes.io/name: shop-dc-shim-db
-    app.kubernetes.io/version: 2.1.3
+    app.kubernetes.io/version: "2.1.3"
     app.kubernetes.io/part-of: opentelemetry-demo
 spec:
   replicas: 1
@@ -2631,50 +2709,51 @@ spec:
         opentelemetry.io/name: shop-dc-shim-db
         app.kubernetes.io/component: shop-dc-shim-db
         app.kubernetes.io/name: shop-dc-shim-db
-        app.kubernetes.io/version: 2.1.3
+        app.kubernetes.io/version: "2.1.3"
         app.kubernetes.io/part-of: opentelemetry-demo
     spec:
       containers:
-      - name: sqlserver
-        image: mcr.microsoft.com/mssql/server:2022-latest
-        ports:
-        - containerPort: 1433
-        env:
-        - name: ACCEPT_EULA
-          value: Y
-        - name: MSSQL_SA_PASSWORD
-          value: ShopPass123!
-        resources:
-          requests:
-            memory: 2Gi
-            cpu: '1'
-          limits:
-            memory: 3Gi
-            cpu: '2'
-        volumeMounts:
-        - name: sqlserver-storage
-          mountPath: /var/opt/mssql/data
+        - name: sqlserver
+          image: mcr.microsoft.com/mssql/server:2022-latest
+          ports:
+            - containerPort: 1433
+          env:
+            - name: ACCEPT_EULA
+              value: "Y"
+            - name: MSSQL_SA_PASSWORD
+              value: "ShopPass123!"
+          resources:
+            requests:
+              memory: "2Gi"
+              cpu: "1"
+            limits:
+              memory: "3Gi"
+              cpu: "2"
+          volumeMounts:
+            - name: sqlserver-storage
+              mountPath: /var/opt/mssql/data
       volumes:
-      - name: sqlserver-storage
-        emptyDir: {}
+        - name: sqlserver-storage
+          emptyDir: {}
 ---
+# Shop DC Shim Service
 apiVersion: v1
 kind: Service
 metadata:
   name: shop-dc-shim
-  namespace: astronomy-shop
+  namespace: default
   labels:
     opentelemetry.io/name: shop-dc-shim
     app.kubernetes.io/component: shop-dc-shim
     app.kubernetes.io/name: shop-dc-shim
-    app.kubernetes.io/version: 2.1.3
+    app.kubernetes.io/version: "2.1.3"
     app.kubernetes.io/part-of: opentelemetry-demo
 spec:
   type: ClusterIP
   ports:
-  - port: 8070
-    name: tcp-service
-    targetPort: 8070
+    - port: 8070
+      name: tcp-service
+      targetPort: 8070
   selector:
     opentelemetry.io/name: shop-dc-shim
 ---
@@ -2682,12 +2761,12 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: shop-dc-shim
-  namespace: astronomy-shop
+  namespace: default
   labels:
     opentelemetry.io/name: shop-dc-shim
     app.kubernetes.io/component: shop-dc-shim
     app.kubernetes.io/name: shop-dc-shim
-    app.kubernetes.io/version: 2.1.3
+    app.kubernetes.io/version: "2.1.3"
     app.kubernetes.io/part-of: opentelemetry-demo
 spec:
   replicas: 1
@@ -2700,75 +2779,87 @@ spec:
         opentelemetry.io/name: shop-dc-shim
         app.kubernetes.io/component: shop-dc-shim
         app.kubernetes.io/name: shop-dc-shim
-        app.kubernetes.io/version: 2.1.3
+        app.kubernetes.io/version: "2.1.3"
         app.kubernetes.io/part-of: opentelemetry-demo
     spec:
       serviceAccountName: opentelemetry-demo
       containers:
-      - name: shop-dc-shim
-        image: quay.io/jeremyh/shop-dc-shim:latest
-        ports:
-        - containerPort: 8070
-          name: http
-        env:
-        - name: SHOP_DC_SHIM_PORT
-          value: '8070'
-        - name: DB_CONNECTION_STRING
-          value: jdbc:sqlserver://shop-dc-shim-db:1433;databaseName=master;encrypt=false;trustServerCertificate=true
-        - name: DB_USERNAME
-          value: sa
-        - name: DB_PASSWORD
-          value: ShopPass123!
-        - name: CHECKOUT_SERVICE_ADDR
-          value: checkout:8080
-        - name: EMAIL_SERVICE_URL
-          value: http://email:8080
-        - name: OTEL_EXPORTER_OTLP_ENDPOINT
-          value: http://splunk-otel-collector-agent:4318
-        - name: OTEL_SERVICE_NAME
-          value: shop-dc-shim
-        - name: OTEL_RESOURCE_ATTRIBUTES
-          value: service.name=shop-dc-shim,deployment.environment=datacenter-b01,service.version=2.1.3
-        - name: OTEL_JAVAAGENT_ENABLED
-          value: 'true'
-        - name: APPDYNAMICS_AGENT_ACCOUNT_ACCESS_KEY
-          value: ${APPDYNAMICS_AGENT_ACCOUNT_ACCESS_KEY}
-        - name: OTEL_INSTRUMENTATION_SPLUNK_JDBC_ENABLED
-          value: 'true'
-        resources:
-          requests:
-            memory: 512Mi
-            cpu: 500m
-          limits:
-            memory: 1Gi
-            cpu: '1'
-        readinessProbe:
-          httpGet:
-            path: /actuator/health
-            port: 8070
-          initialDelaySeconds: 300
-          periodSeconds: 10
-          timeoutSeconds: 5
-          failureThreshold: 3
-        livenessProbe:
-          httpGet:
-            path: /actuator/health
-            port: 8070
-          initialDelaySeconds: 420
-          periodSeconds: 30
-          timeoutSeconds: 10
-          failureThreshold: 3
+        - name: shop-dc-shim
+          image: ghcr.io/splunk/opentelemetry-demo/otel-shop-dc-shim:0.0.2
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 8070
+              name: http
+          env:
+            - name: SHOP_DC_SHIM_PORT
+              value: "8070"
+            - name: DB_CONNECTION_STRING
+              value: "jdbc:sqlserver://shop-dc-shim-db:1433;databaseName=master;encrypt=false;trustServerCertificate=true"
+            - name: DB_USERNAME
+              value: "sa"
+            - name: DB_PASSWORD
+              value: "ShopPass123!"
+            - name: CHECKOUT_SERVICE_ADDR
+              value: "checkout:8080"
+            - name: EMAIL_SERVICE_URL
+              value: "http://email:8080"
+            - name: OTEL_EXPORTER_OTLP_ENDPOINT
+              value: "http://splunk-otel-collector-agent:4318"
+            - name: OTEL_SERVICE_NAME
+              value: "shop-dc-shim"
+            - name: WORKSHOP_ENV
+              valueFrom:
+                secretKeyRef:
+                  name: workshop-secret
+                  key: env
+            - name: OTEL_JAVAAGENT_ENABLED
+              value: "true"
+            - name: APPDYNAMICS_AGENT_ACCOUNT_NAME
+              value: "se-lab"
+            - name: APPDYNAMICS_JAVAAGENT_ENABLED
+              value: "true"
+            - name: APPDYNAMICS_AGENT_ACCOUNT_ACCESS_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: workshop-secret
+                  key: appd_token
+            - name: OTEL_INSTRUMENTATION_SPLUNK_JDBC_ENABLED
+              value: "true"
+          resources:
+            requests:
+              memory: "512Mi"
+              cpu: "500m"
+            limits:
+              memory: "1Gi"
+              cpu: "1"
+          readinessProbe:
+            httpGet:
+              path: /actuator/health
+              port: 8070
+            initialDelaySeconds: 240
+            periodSeconds: 10
+            timeoutSeconds: 5
+            failureThreshold: 3
+          livenessProbe:
+            httpGet:
+              path: /actuator/health
+              port: 8070
+            initialDelaySeconds: 420
+            periodSeconds: 30
+            timeoutSeconds: 10
+            failureThreshold: 5
 ---
+# Shop DC Load Generator
 apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: shop-dc-load-generator
-  namespace: astronomy-shop
+  namespace: default
   labels:
     opentelemetry.io/name: shop-dc-load-generator
     app.kubernetes.io/component: shop-dc-load-generator
     app.kubernetes.io/name: shop-dc-load-generator
-    app.kubernetes.io/version: 2.1.3
+    app.kubernetes.io/version: "2.1.3"
     app.kubernetes.io/part-of: opentelemetry-demo
 spec:
   replicas: 1
@@ -2781,42 +2872,34 @@ spec:
         opentelemetry.io/name: shop-dc-load-generator
         app.kubernetes.io/component: shop-dc-load-generator
         app.kubernetes.io/name: shop-dc-load-generator
-        app.kubernetes.io/version: 2.1.3
+        app.kubernetes.io/version: "2.1.3"
         app.kubernetes.io/part-of: opentelemetry-demo
     spec:
       serviceAccountName: opentelemetry-demo
       initContainers:
-      - name: wait-for-shop-dc-shim
-        image: curlimages/curl:8.1.2
-        command:
-        - sh
-        - -c
-        args:
-        - "echo \"Waiting for shop-dc-shim service to be ready...\"\nuntil curl -f\
-          \ --connect-timeout 5 --max-time 20 http://shop-dc-shim:8070/actuator/health;\
-          \ do\n  echo \"Shop DC Shim not ready, waiting 20 seconds...\"\n  sleep\
-          \ 20\ndone\necho \"Shop DC Shim is ready, starting load generator...\"\n"
-        resources:
-          limits:
-            memory: 64Mi
-            cpu: 50m
+        - name: wait-for-shop-dc-shim
+          image: curlimages/curl:8.1.2
+          command: ['sh', '-c']
+          args:
+            - |
+              echo "Waiting for shop-dc-shim service to be ready..."
+              until curl -f --connect-timeout 5 --max-time 20 http://shop-dc-shim:8070/actuator/health; do
+                echo "Shop DC Shim not ready, waiting 20 seconds..."
+                sleep 20
+              done
+              echo "Shop DC Shim is ready, starting load generator..."
+          resources:
+            limits:
+              memory: "64Mi"
+              cpu: "50m"
       containers:
-      - name: load-generator
-        image: quay.io/jeremyh/shop-dc-load-generator:0.0.1
-        args:
-        - --url
-        - http://shop-dc-shim:8070
-        - --mode
-        - continuous
-        - --tpm
-        - '65'
-        - --duration
-        - '0'
-        resources:
-          limits:
-            memory: 128Mi
-            cpu: 100m
-
+        - name: load-generator
+          image: ghcr.io/splunk/opentelemetry-demo/otel-shop-dc-load-generator:0.0.2
+          args: ["--url", "http://shop-dc-shim:8070", "--mode", "continuous", "--tpm", "25", "--duration", "0"]
+          resources:
+            limits:
+              memory: "128Mi"
+              cpu: "100m"
 ---
 
 # === sql-server-fraud ===
@@ -2828,7 +2911,6 @@ apiVersion: v1
 kind: Service
 metadata:
   name: sql-server-fraud
-  namespace: astronomy-shop
 spec:
   type: ClusterIP
   ports:
@@ -2843,7 +2925,6 @@ apiVersion: apps/v1
 kind: StatefulSet
 metadata:
   name: sql-server-fraud
-  namespace: astronomy-shop
 spec:
   serviceName: sql-server-fraud
   replicas: 1
@@ -2867,7 +2948,7 @@ spec:
           name: tds
         env:
         - name: ACCEPT_EULA
-          value: Y
+          value: "Y"
         - name: MSSQL_PID
           value: Express
         - name: SA_PASSWORD
@@ -2925,58 +3006,6 @@ spec:
 
 ---
 
-# === thousandeyes ===
-# Kubernetes manifest for thousandeyes
-# Auto-generated from opentelemetry-demo.yaml
-# Contains 1 resource(s)
----
-apiVersion: apps/v1
-kind: Deployment
-metadata:
-  annotations: {}
-  namespace: astronomy-shop
-  name: thousandeyes
-  labels:
-    app: thousandeyes
-spec:
-  replicas: 1
-  selector:
-    matchLabels:
-      app: thousandeyes
-  template:
-    metadata:
-      labels:
-        app: thousandeyes
-    spec:
-      hostname: astronomy-shop-us1-show
-      containers:
-      - name: thousandeyes
-        image: thousandeyes/enterprise-agent:latest
-        imagePullPolicy: Always
-        command:
-        - /sbin/my_init
-        securityContext:
-          capabilities:
-            add:
-            - NET_ADMIN
-            - SYS_ADMIN
-        env:
-        - name: TEAGENT_ACCOUNT_TOKEN
-          valueFrom:
-            secretKeyRef:
-              name: workshop-secret
-              key: TEAGENT_ACCOUNT_TOKEN
-        - name: TEAGENT_INET
-          value: '4'
-        resources:
-          limits:
-            memory: 3584Mi
-          requests:
-            memory: 2000Mi
-      restartPolicy: Always
-
----
-
 # === valkey-cart ===
 # Kubernetes manifest for valkey-cart
 # Auto-generated from opentelemetry-demo.yaml
@@ -2992,7 +3021,6 @@ metadata:
     app.kubernetes.io/name: valkey-cart
     app.kubernetes.io/version: 2.1.3
     app.kubernetes.io/part-of: opentelemetry-demo
-  namespace: astronomy-shop
 spec:
   type: ClusterIP
   ports:
@@ -3012,7 +3040,6 @@ metadata:
     app.kubernetes.io/name: valkey-cart
     app.kubernetes.io/version: 2.1.3
     app.kubernetes.io/part-of: opentelemetry-demo
-  namespace: astronomy-shop
 spec:
   replicas: 1
   revisionHistoryLimit: 10

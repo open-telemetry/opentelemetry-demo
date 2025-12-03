@@ -6,6 +6,7 @@
 #                 If not specified, uses original registry URLs from manifests
 #
 # This script reads service configuration from services.yaml
+# ALWAYS stitches ALL services with manifest: true
 # To add a new service, edit services.yaml instead of this script
 
 set -e
@@ -18,6 +19,7 @@ VERSION=$(cat SPLUNK-VERSION)
 echo "Creating manifest for version: $VERSION"
 
 # Load services from services.yaml
+# ALWAYS includes ALL services with manifest: true
 echo "Reading services from services.yaml..."
 if command -v python3 &> /dev/null; then
     # Use Python helper to parse YAML
@@ -90,20 +92,46 @@ for svc in config.get('services', []):
 " 2>/dev/null || echo "true")
         fi
 
-        echo "Adding manifest for: $SERVICE"
+        # Get version for this specific service
+        # Priority: .hotfix.yaml > .service-versions.yaml > VERSION (SPLUNK-VERSION)
+        SERVICE_VERSION="${VERSION}"
+
+        # Check for hotfix first (production hotfixes)
+        if command -v python3 &> /dev/null && [ -f ".github/scripts/manage-hotfix.py" ]; then
+            HOTFIX_VERSION=$(python3 .github/scripts/manage-hotfix.py get "$SERVICE" 2>/dev/null || echo "")
+            if [ -n "$HOTFIX_VERSION" ] && [ "$HOTFIX_VERSION" != "$VERSION" ]; then
+                SERVICE_VERSION="$HOTFIX_VERSION"
+            fi
+        fi
+
+        # Check for per-service version (test/dev builds)
+        if [ "$SERVICE_VERSION" == "$VERSION" ] && command -v python3 &> /dev/null && [ -f ".github/scripts/get-service-version.py" ]; then
+            SERVICE_VERSION=$(python3 .github/scripts/get-service-version.py "$SERVICE" "$VERSION")
+        fi
+
+        echo "Adding manifest for: $SERVICE (version: $SERVICE_VERSION)"
         echo "" >> "$OUTPUT_FILE"
         echo "# === $SERVICE ===" >> "$OUTPUT_FILE"
 
-        # If registry URL is specified AND service allows replacement, replace registry references
+        # Process manifest: replace registry URLs (if needed) and version numbers
         if [ -n "$REGISTRY_URL" ] && [ "$SHOULD_REPLACE" = "true" ]; then
-            # Replace registry URLs in the manifest
-            sed "s|ghcr.io/[^/]*/[^:]*|${REGISTRY_URL}|g" "$MANIFEST_FILE" >> "$OUTPUT_FILE"
-        else
-            # Use original manifest without modifications
+            # Replace registry URLs, image tags, and version numbers
+            # Pattern matches: ghcr.io/{org}/{repo} and replaces with ${REGISTRY_URL}
+            # Preserves: /otel-{service} part but replaces :{tag} with :${SERVICE_VERSION}
+            sed -e "s|ghcr.io/[^/]*/[^/]*|${REGISTRY_URL}|g" \
+                -e "/image:/s|:[0-9][0-9.][^[:space:]]*|:${SERVICE_VERSION}|" \
+                -e "s|app.kubernetes.io/version: [0-9][0-9.]*|app.kubernetes.io/version: ${SERVICE_VERSION}|g" \
+                -e "s|service.version=[0-9][0-9.]*|service.version=${SERVICE_VERSION}|g" \
+                "$MANIFEST_FILE" >> "$OUTPUT_FILE"
+        elif [ "$SHOULD_REPLACE" = "false" ]; then
+            # Keep manifest completely as-is (no registry replacement, no version replacement)
             cat "$MANIFEST_FILE" >> "$OUTPUT_FILE"
-            if [ -n "$REGISTRY_URL" ] && [ "$SHOULD_REPLACE" = "false" ]; then
-                echo "  (using original registry)"
-            fi
+            echo "  (using original registry and versions)"
+        else
+            # No registry specified, but replace version numbers in labels only
+            sed -e "s|app.kubernetes.io/version: [0-9][0-9.]*|app.kubernetes.io/version: ${SERVICE_VERSION}|g" \
+                -e "s|service.version=[0-9][0-9.]*|service.version=${SERVICE_VERSION}|g" \
+                "$MANIFEST_FILE" >> "$OUTPUT_FILE"
         fi
 
         echo "" >> "$OUTPUT_FILE"

@@ -4,7 +4,8 @@
 
 static_resources:
   listeners:
-    - address:
+    - name: splunk_opentelemetry_demo
+      address:
         socket_address:
           address: "${ENVOY_ADDR}"
           port_value: ${ENVOY_PORT}

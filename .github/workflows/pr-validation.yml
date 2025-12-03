@@ -1,0 +1,207 @@
+name: PR Validation
+
+on:
+  pull_request:
+    branches:
+      - main
+    types: [opened, synchronize, reopened]
+
+jobs:
+  check-prod-workflow-restrictions:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Check PROD workflows have repository restrictions
+        id: check_restrictions
+        run: |
+          echo "Checking if PROD workflows have proper repository restrictions..."
+
+          ERRORS=""
+
+          # Check prod-build-images.yml
+          if ! grep -q "^[[:space:]]*if: github.repository == 'splunk/opentelemetry-demo'" .github/workflows/prod-build-images.yml; then
+            ERRORS="${ERRORS}❌ prod-build-images.yml: Missing or commented repository check\n"
+            echo "ERROR: prod-build-images.yml missing repository check"
+          else
+            echo "✓ prod-build-images.yml has repository check"
+          fi
+
+          # Check prod-build-manifest.yml
+          if ! grep -q "^[[:space:]]*if: github.repository == 'splunk/opentelemetry-demo'" .github/workflows/prod-build-manifest.yml; then
+            ERRORS="${ERRORS}❌ prod-build-manifest.yml: Missing or commented repository check\n"
+            echo "ERROR: prod-build-manifest.yml missing repository check"
+          else
+            echo "✓ prod-build-manifest.yml has repository check"
+          fi
+
+          if [ -n "$ERRORS" ]; then
+            echo "has_errors=true" >> $GITHUB_OUTPUT
+            echo "errors<<EOF" >> $GITHUB_OUTPUT
+            echo -e "$ERRORS" >> $GITHUB_OUTPUT
+            echo "EOF" >> $GITHUB_OUTPUT
+          else
+            echo "has_errors=false" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Fail if repository checks are missing
+        if: steps.check_restrictions.outputs.has_errors == 'true'
+        run: |
+          echo "❌ ERROR: PROD workflows must have repository restrictions"
+          echo ""
+          echo "The following issues were found:"
+          echo "${{ steps.check_restrictions.outputs.errors }}"
+          echo ""
+          echo "PROD workflows must include this line (UNCOMMENTED) in the job definition:"
+          echo "  if: github.repository == 'splunk/opentelemetry-demo'"
+          echo ""
+          echo "Files to check:"
+          echo "  - .github/workflows/prod-build-images.yml (determine-version job)"
+          echo "  - .github/workflows/prod-build-manifest.yml (build-production-manifest job)"
+          echo ""
+          echo "This ensures PROD workflows only run in the main splunk/opentelemetry-demo repo."
+          exit 1
+
+      - name: Success
+        if: steps.check_restrictions.outputs.has_errors == 'false'
+        run: |
+          echo "✓ PROD workflows have proper repository restrictions"
+          echo "### ✓ PROD Workflow Restrictions Validated" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "Both PROD workflows have proper repository restrictions." >> $GITHUB_STEP_SUMMARY
+
+      - name: Add PR comment if restrictions missing
+        if: steps.check_restrictions.outputs.has_errors == 'true' && github.event_name == 'pull_request'
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const body = `## ❌ PROD Workflow Repository Restrictions Missing
+
+            This PR modifies PROD workflows but the repository restrictions are commented out or missing.
+
+            ### Issues Found:
+            ${{ steps.check_restrictions.outputs.errors }}
+
+            ### What needs to be fixed:
+
+            Both PROD workflows must include this line (UNCOMMENTED) in their job definition:
+            \`\`\`yaml
+            if: github.repository == 'splunk/opentelemetry-demo'
+            \`\`\`
+
+            ### Files to fix:
+            - \`.github/workflows/prod-build-images.yml\` (line ~33, determine-version job)
+            - \`.github/workflows/prod-build-manifest.yml\` (line ~34, build-production-manifest job)
+
+            ### Why is this required?
+            This check ensures PROD workflows only run in the main \`splunk/opentelemetry-demo\` repository and not in forks. This prevents accidental production builds from fork repositories.
+
+            ### How to fix:
+            1. Uncomment the \`if: github.repository == 'splunk/opentelemetry-demo'\` line in both files
+            2. Ensure the line is NOT preceded by \`#\`
+            3. Push the changes
+
+            The PR validation will automatically re-run once this is fixed.`;
+
+            await github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: body
+            });
+
+  check-test-manifests:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Check for TEST manifest files
+        id: check_files
+        run: |
+          echo "Checking for TEST Splunk manifest files in PR (kubernetes/TEST-splunk*.yaml)..."
+
+          # Get the base branch
+          BASE_SHA=$(git merge-base origin/${{ github.base_ref }} HEAD)
+
+          # Check if any TEST Splunk manifest files exist in the PR diff
+          if git diff --name-only $BASE_SHA HEAD | grep -E '^kubernetes/TEST-splunk.*\.yaml$'; then
+            echo "found=true" >> $GITHUB_OUTPUT
+            echo "files<<EOF" >> $GITHUB_OUTPUT
+            git diff --name-only $BASE_SHA HEAD | grep -E '^kubernetes/TEST-splunk.*\.yaml$' >> $GITHUB_OUTPUT
+            echo "EOF" >> $GITHUB_OUTPUT
+          else
+            echo "found=false" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Fail if TEST files found
+        if: steps.check_files.outputs.found == 'true'
+        run: |
+          echo "❌ ERROR: TEST Splunk manifest files detected in this PR"
+          echo ""
+          echo "The following TEST Splunk manifest files were found:"
+          echo "${{ steps.check_files.outputs.files }}"
+          echo ""
+          echo "TEST Splunk manifests should not be merged to the main branch."
+          echo ""
+          echo "To remove these files, run the 'Remove TEST Manifests' workflow:"
+          echo "  1. Go to: Actions → Remove TEST Manifests"
+          echo "  2. Click 'Run workflow'"
+          echo "  3. Select your branch: ${{ github.head_ref }}"
+          echo "  4. Type 'CONFIRM' in the confirmation field"
+          echo "  5. Click 'Run workflow'"
+          echo ""
+          echo "Or manually remove them with:"
+          echo "  git rm kubernetes/TEST-splunk*.yaml"
+          echo "  git commit -m 'chore: remove TEST Splunk manifests'"
+          echo "  git push"
+          exit 1
+
+      - name: Success
+        if: steps.check_files.outputs.found == 'false'
+        run: |
+          echo "✓ No TEST Splunk manifest files found in this PR"
+          echo "### ✓ PR Validation Passed" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "No TEST Splunk manifest files detected." >> $GITHUB_STEP_SUMMARY
+
+      - name: Add PR comment if TEST files found
+        if: steps.check_files.outputs.found == 'true' && github.event_name == 'pull_request'
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const files = `${{ steps.check_files.outputs.files }}`.split('\n').filter(f => f);
+            const fileList = files.map(f => `- \`${f}\``).join('\n');
+            const branchName = context.payload.pull_request.head.ref;
+
+            const body = `## ❌ TEST Splunk Manifest Files Detected
+
+            This PR contains TEST Splunk manifest files that should not be merged to main:
+
+            ` + fileList + `
+
+            ### How to fix this:
+
+            **Option 1: Use the automated workflow**
+            1. Go to [Actions → Remove TEST Manifests](../actions/workflows/remove-test-manifests.yml)
+            2. Click "Run workflow"
+            3. Select branch: \`${branchName}\`
+            4. Type \`CONFIRM\` in the confirmation field
+            5. Click "Run workflow"
+
+            **Option 2: Remove manually**
+            \`\`\`bash
+            git rm kubernetes/TEST-splunk*.yaml
+            git commit -m "chore: remove TEST Splunk manifests"
+            git push
+            \`\`\`
+
+            The PR validation will automatically re-run once the files are removed.`;
+
+            await github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: body
+            });
