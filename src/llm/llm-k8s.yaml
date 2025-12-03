@@ -47,7 +47,7 @@ spec:
       serviceAccountName: opentelemetry-demo
       containers:
       - name: llm
-        image: ghcr.io/hagen-p/opentelemetry-demo-splunk/otel-llm:fix-llm-2
+        image: ghcr.io/hagen-p/opentelemetry-demo-splunk/otel-llm:llm-e-1
         imagePullPolicy: IfNotPresent
         ports:
         - containerPort: 8000
