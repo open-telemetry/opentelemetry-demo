@@ -151,7 +151,7 @@ jobs:
           # Determine image name based on service
           # Most services use otel-{service} naming convention
           case "$SERVICE_NAME" in
-            accounting|ad|cart|fraud-detection|frontend|frontend-proxy|image-provider|payment|recommendation)
+            accounting|ad|cart|fraud-detection|frontend|frontend-proxy|image-provider|llm|payment|product-reviews|recommendation)
               IMAGE_NAME="otel-${SERVICE_NAME}"
               ;;
             *)
@@ -209,8 +209,199 @@ jobs:
           echo "" >> $GITHUB_STEP_SUMMARY
           echo "Dockerfile not found at: \`${{ matrix.dockerfile }}\`" >> $GITHUB_STEP_SUMMARY
 
-  summary:
+  update-service-versions:
     needs: [prepare-matrix, build-images]
+    if: ${{ success() }}
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.x'
+
+      - name: Install PyYAML
+        run: pip install pyyaml
+
+      - name: Update service versions
+        run: |
+          python3 << 'PYTHON_SCRIPT'
+          import yaml
+          import os
+
+          # Get version and services from workflow inputs
+          version = "${{ inputs.version }}"
+          services_input = "${{ inputs.services }}".strip()
+
+          print(f"Updating service versions to: {version}")
+          print(f"Services built: {services_input}")
+
+          # Read current version tracking file
+          with open('.service-versions.yaml', 'r') as f:
+              version_config = yaml.safe_load(f)
+
+          # Determine which services to update
+          if services_input == 'all':
+              # Update all buildable services
+              with open('services.yaml', 'r') as f:
+                  config = yaml.safe_load(f)
+              services_to_update = [
+                  svc['name'] for svc in config.get('services', [])
+                  if svc.get('build', False)
+              ]
+          else:
+              # Update only specified services
+              services_to_update = [s.strip() for s in services_input.split(',')]
+
+          # Update versions
+          for service in services_to_update:
+              if service in version_config['services']:
+                  old_version = version_config['services'][service]
+                  version_config['services'][service] = version
+                  print(f"  {service}: {old_version} -> {version}")
+              else:
+                  version_config['services'][service] = version
+                  print(f"  {service}: (new) -> {version}")
+
+          # If updating all services, also update default version
+          if services_input == 'all':
+              version_config['default_version'] = version
+              print(f"  default_version: -> {version}")
+
+          # Write updated file
+          with open('.service-versions.yaml', 'w') as f:
+              f.write('# Service Version Tracking\n')
+              f.write('# This file tracks the last built version for each service\n')
+              f.write('# Updated automatically by build workflows\n')
+              f.write('# DO NOT EDIT MANUALLY\n\n')
+              yaml.dump(version_config, f, default_flow_style=False, sort_keys=False)
+
+          print("\n✅ Service versions updated")
+          PYTHON_SCRIPT
+
+      - name: Update source manifests with new image references
+        run: |
+          # Make script executable
+          chmod +x .github/scripts/update-manifest-images.py
+
+          # Get registry and version
+          REGISTRY="${{ needs.prepare-matrix.outputs.registry }}"
+          VERSION="${{ inputs.version }}"
+          SERVICES_INPUT="${{ inputs.services }}"
+
+          # Determine which services to update
+          if [ "$SERVICES_INPUT" = "all" ]; then
+            # Get all buildable services
+            SERVICES_TO_UPDATE=$(python3 <<'PYTHON_SCRIPT'
+          import yaml
+          with open('services.yaml', 'r') as f:
+              config = yaml.safe_load(f)
+          services = [svc['name'] for svc in config.get('services', []) if svc.get('build', False)]
+          print(' '.join(services))
+          PYTHON_SCRIPT
+          )
+          else
+            SERVICES_TO_UPDATE=$(echo "$SERVICES_INPUT" | tr ',' ' ')
+          fi
+
+          echo "Updating source manifests for: $SERVICES_TO_UPDATE"
+          echo ""
+
+          # Update each service's manifest
+          for SERVICE in $SERVICES_TO_UPDATE; do
+            # Determine image name (same logic as in prepare-matrix)
+            case "$SERVICE" in
+              accounting|ad|cart|fraud-detection|frontend|frontend-proxy|image-provider|llm|payment|product-reviews|recommendation)
+                IMAGE_NAME="otel-${SERVICE}"
+                ;;
+              *)
+                IMAGE_NAME="${SERVICE}"
+                ;;
+            esac
+
+            # Update the manifest
+            python3 .github/scripts/update-manifest-images.py "$SERVICE" "$REGISTRY" "$IMAGE_NAME" "$VERSION"
+          done
+
+          echo ""
+          echo "✅ Source manifests updated with new image references"
+
+      - name: Commit version updates and manifest changes
+        run: |
+          git config --local user.email "github-actions[bot]@users.noreply.github.com"
+          git config --local user.name "github-actions[bot]"
+
+          # Add version file and any changed manifests
+          git add .service-versions.yaml
+          git add src/*//*-k8s.yaml
+
+          if git diff --staged --quiet; then
+            echo "No changes to commit"
+          else
+            git commit -m "chore: update service versions and manifests to ${{ inputs.version }}" \
+              -m "Services: ${{ inputs.services }}" \
+              -m "" \
+              -m "Updated:" \
+              -m "- .service-versions.yaml" \
+              -m "- Source k8s manifests with new image references"
+            git push
+            echo "✅ Version file and manifests committed and pushed"
+          fi
+
+          echo "### 📝 Service Versions and Manifests Updated" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "Updated services to version: \`${{ inputs.version }}\`" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "- ✅ .service-versions.yaml updated" >> $GITHUB_STEP_SUMMARY
+          echo "- ✅ Source manifests updated with new image references" >> $GITHUB_STEP_SUMMARY
+
+  trigger-manifest-build:
+    needs: [prepare-matrix, build-images, update-service-versions]
+    if: ${{ success() }}
+    runs-on: ubuntu-latest
+    permissions:
+      actions: write
+      contents: read
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Trigger manifest build
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          echo "### 🚀 Triggering Manifest Build" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "Automatically building manifest with per-service versions..." >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+
+          # Trigger the test manifest build workflow
+          # Pass the version from build to ensure manifest filename matches
+          gh workflow run test-build-manifest.yml \
+            -f version="${{ inputs.version }}" \
+            -f commit_manifest=true \
+            -f validate_manifest=true
+
+          echo "✅ Manifest build workflow triggered" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "| Property | Value |" >> $GITHUB_STEP_SUMMARY
+          echo "|----------|-------|" >> $GITHUB_STEP_SUMMARY
+          echo "| Workflow | \`test-build-manifest.yml\` |" >> $GITHUB_STEP_SUMMARY
+          echo "| Version | \`${{ inputs.version }}\` |" >> $GITHUB_STEP_SUMMARY
+          echo "| Version Source | \`.service-versions.yaml\` (per-service) |" >> $GITHUB_STEP_SUMMARY
+          echo "| Commit | \`true\` |" >> $GITHUB_STEP_SUMMARY
+          echo "| Validate | \`true\` |" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "Check the [Actions tab](../../actions/workflows/test-build-manifest.yml) to monitor the manifest build." >> $GITHUB_STEP_SUMMARY
+
+  summary:
+    needs: [prepare-matrix, build-images, update-service-versions, trigger-manifest-build]
     if: always()
     runs-on: ubuntu-latest
 
@@ -224,9 +415,9 @@ jobs:
           echo "- **Registry:** \`${{ needs.prepare-matrix.outputs.registry }}\`" >> $GITHUB_STEP_SUMMARY
           echo "- **Services:** ${{ inputs.services }}" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
-          echo "### Next Steps" >> $GITHUB_STEP_SUMMARY
+          echo "### Automatic Actions" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
-          echo "To use these images, update your manifests or run:" >> $GITHUB_STEP_SUMMARY
-          echo "\`\`\`bash" >> $GITHUB_STEP_SUMMARY
-          echo ".github/scripts/stitch-manifests.sh dev" >> $GITHUB_STEP_SUMMARY
-          echo "\`\`\`" >> $GITHUB_STEP_SUMMARY
+          echo "- ✅ Manifest build triggered automatically" >> $GITHUB_STEP_SUMMARY
+          echo "- 📦 Manifest will use version: \`${{ inputs.version }}\`" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "> The manifest build will automatically match your container image versions." >> $GITHUB_STEP_SUMMARY

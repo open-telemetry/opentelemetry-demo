@@ -1,0 +1,80 @@
+name: Remove TEST Manifests
+
+on:
+  workflow_dispatch:
+    inputs:
+      confirmation:
+        description: 'Type "CONFIRM" to remove all TEST manifest files'
+        required: true
+        type: string
+
+jobs:
+  remove-test-files:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Validate confirmation
+        run: |
+          if [ "${{ github.event.inputs.confirmation }}" != "CONFIRM" ]; then
+            echo "❌ Confirmation failed. You must type 'CONFIRM' to proceed."
+            exit 1
+          fi
+          echo "✓ Confirmation received"
+
+      - uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          fetch-depth: 0
+
+      - name: Find TEST manifest files
+        id: find_files
+        run: |
+          echo "Looking for TEST Splunk manifest files (kubernetes/TEST-splunk*.yaml)..."
+          if ls kubernetes/TEST-splunk*.yaml 2>/dev/null; then
+            echo "found=true" >> $GITHUB_OUTPUT
+            echo "files<<EOF" >> $GITHUB_OUTPUT
+            ls kubernetes/TEST-splunk*.yaml >> $GITHUB_OUTPUT
+            echo "EOF" >> $GITHUB_OUTPUT
+          else
+            echo "found=false" >> $GITHUB_OUTPUT
+            echo "No TEST Splunk manifest files found."
+          fi
+
+      - name: Remove TEST manifest files
+        if: steps.find_files.outputs.found == 'true'
+        run: |
+          echo "Removing TEST Splunk manifest files:"
+          ls kubernetes/TEST-splunk*.yaml
+          rm -f kubernetes/TEST-splunk*.yaml
+          echo "✓ TEST Splunk manifest files removed"
+
+      - name: Commit and push changes
+        if: steps.find_files.outputs.found == 'true'
+        run: |
+          git config --local user.email "github-actions[bot]@users.noreply.github.com"
+          git config --local user.name "github-actions[bot]"
+
+          git add kubernetes/
+
+          if git diff --staged --quiet; then
+            echo "No changes to commit"
+          else
+            git commit -m "chore: remove TEST manifest files" \
+              -m "Automatically removed by remove-test-manifests workflow"
+            git push
+            echo "✓ Changes committed and pushed"
+          fi
+
+      - name: Summary
+        run: |
+          if [ "${{ steps.find_files.outputs.found }}" == "true" ]; then
+            echo "### ✓ TEST Splunk Manifest Cleanup Complete" >> $GITHUB_STEP_SUMMARY
+            echo "" >> $GITHUB_STEP_SUMMARY
+            echo "Removed files:" >> $GITHUB_STEP_SUMMARY
+            echo "\`\`\`" >> $GITHUB_STEP_SUMMARY
+            echo "${{ steps.find_files.outputs.files }}" >> $GITHUB_STEP_SUMMARY
+            echo "\`\`\`" >> $GITHUB_STEP_SUMMARY
+          else
+            echo "### ℹ️ No TEST Splunk Manifest Files Found" >> $GITHUB_STEP_SUMMARY
+            echo "" >> $GITHUB_STEP_SUMMARY
+            echo "No TEST Splunk manifest files (kubernetes/TEST-splunk*.yaml) were found in the repository." >> $GITHUB_STEP_SUMMARY
+          fi
