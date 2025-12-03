@@ -297,13 +297,14 @@ jobs:
           # Determine which services to update
           if [ "$SERVICES_INPUT" = "all" ]; then
             # Get all buildable services
-            SERVICES_TO_UPDATE=$(python3 -c "
-import yaml
-with open('services.yaml', 'r') as f:
-    config = yaml.safe_load(f)
-services = [svc['name'] for svc in config.get('services', []) if svc.get('build', False)]
-print(' '.join(services))
-")
+            SERVICES_TO_UPDATE=$(python3 <<'PYTHON_SCRIPT'
+          import yaml
+          with open('services.yaml', 'r') as f:
+              config = yaml.safe_load(f)
+          services = [svc['name'] for svc in config.get('services', []) if svc.get('build', False)]
+          print(' '.join(services))
+          PYTHON_SCRIPT
+          )
           else
             SERVICES_TO_UPDATE=$(echo "$SERVICES_INPUT" | tr ',' ' ')
           fi
