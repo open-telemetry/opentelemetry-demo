@@ -108,8 +108,11 @@ jobs:
         run: |
           echo "### Stitching Manifest" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
+          echo "Including all services with manifest: true" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
 
           # Run stitch script with dev registry
+          # Always includes ALL services with manifest: true from services.yaml
           .github/scripts/stitch-manifests.sh dev
 
           # Rename the generated file to TEST- prefix

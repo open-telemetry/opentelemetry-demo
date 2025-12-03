@@ -151,7 +151,7 @@ jobs:
           # Determine image name based on service
           # Most services use otel-{service} naming convention
           case "$SERVICE_NAME" in
-            accounting|ad|cart|fraud-detection|frontend|frontend-proxy|image-provider|payment|recommendation)
+            accounting|ad|cart|fraud-detection|frontend|frontend-proxy|image-provider|llm|payment|product-reviews|recommendation)
               IMAGE_NAME="otel-${SERVICE_NAME}"
               ;;
             *)
@@ -284,25 +284,80 @@ jobs:
           print("\n✅ Service versions updated")
           PYTHON_SCRIPT
 
-      - name: Commit version updates
+      - name: Update source manifests with new image references
+        run: |
+          # Make script executable
+          chmod +x .github/scripts/update-manifest-images.py
+
+          # Get registry and version
+          REGISTRY="${{ needs.prepare-matrix.outputs.registry }}"
+          VERSION="${{ inputs.version }}"
+          SERVICES_INPUT="${{ inputs.services }}"
+
+          # Determine which services to update
+          if [ "$SERVICES_INPUT" = "all" ]; then
+            # Get all buildable services
+            SERVICES_TO_UPDATE=$(python3 -c "
+import yaml
+with open('services.yaml', 'r') as f:
+    config = yaml.safe_load(f)
+services = [svc['name'] for svc in config.get('services', []) if svc.get('build', False)]
+print(' '.join(services))
+")
+          else
+            SERVICES_TO_UPDATE=$(echo "$SERVICES_INPUT" | tr ',' ' ')
+          fi
+
+          echo "Updating source manifests for: $SERVICES_TO_UPDATE"
+          echo ""
+
+          # Update each service's manifest
+          for SERVICE in $SERVICES_TO_UPDATE; do
+            # Determine image name (same logic as in prepare-matrix)
+            case "$SERVICE" in
+              accounting|ad|cart|fraud-detection|frontend|frontend-proxy|image-provider|llm|payment|product-reviews|recommendation)
+                IMAGE_NAME="otel-${SERVICE}"
+                ;;
+              *)
+                IMAGE_NAME="${SERVICE}"
+                ;;
+            esac
+
+            # Update the manifest
+            python3 .github/scripts/update-manifest-images.py "$SERVICE" "$REGISTRY" "$IMAGE_NAME" "$VERSION"
+          done
+
+          echo ""
+          echo "✅ Source manifests updated with new image references"
+
+      - name: Commit version updates and manifest changes
         run: |
           git config --local user.email "github-actions[bot]@users.noreply.github.com"
           git config --local user.name "github-actions[bot]"
 
+          # Add version file and any changed manifests
           git add .service-versions.yaml
+          git add src/*//*-k8s.yaml
 
           if git diff --staged --quiet; then
-            echo "No version changes to commit"
+            echo "No changes to commit"
           else
-            git commit -m "chore: update service versions to ${{ inputs.version }}" \
-              -m "Services: ${{ inputs.services }}"
+            git commit -m "chore: update service versions and manifests to ${{ inputs.version }}" \
+              -m "Services: ${{ inputs.services }}" \
+              -m "" \
+              -m "Updated:" \
+              -m "- .service-versions.yaml" \
+              -m "- Source k8s manifests with new image references"
             git push
-            echo "✅ Version file committed and pushed"
+            echo "✅ Version file and manifests committed and pushed"
           fi
 
-          echo "### 📝 Service Versions Updated" >> $GITHUB_STEP_SUMMARY
+          echo "### 📝 Service Versions and Manifests Updated" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
           echo "Updated services to version: \`${{ inputs.version }}\`" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "- ✅ .service-versions.yaml updated" >> $GITHUB_STEP_SUMMARY
+          echo "- ✅ Source manifests updated with new image references" >> $GITHUB_STEP_SUMMARY
 
   trigger-manifest-build:
     needs: [prepare-matrix, build-images, update-service-versions]

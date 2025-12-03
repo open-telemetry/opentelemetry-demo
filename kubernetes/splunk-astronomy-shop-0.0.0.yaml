@@ -1,6 +1,6 @@
 # Splunk Astronomy Shop Kubernetes Manifest
 # Version: 0.0.0
-# Generated on: 2025-12-02T16:52:23Z
+# Generated on: 2025-12-03T11:44:01Z
 #
 # This manifest combines all service deployments for the Splunk Astronomy Shop
 # Services are defined in services.yaml
@@ -15,7 +15,7 @@ kind: ServiceAccount
 metadata:
   name: opentelemetry-demo
   labels:
-    app.kubernetes.io/version: ph-2
+    app.kubernetes.io/version: fixing-bug-1
     app.kubernetes.io/part-of: opentelemetry-demo
 
 ---
@@ -33,7 +33,7 @@ metadata:
     opentelemetry.io/name: accounting
     app.kubernetes.io/component: accounting
     app.kubernetes.io/name: accounting
-    app.kubernetes.io/version: ph-2
+    app.kubernetes.io/version: fixing-bug-1
     app.kubernetes.io/part-of: opentelemetry-demo
 spec:
   replicas: 1
@@ -51,7 +51,7 @@ spec:
       serviceAccountName: opentelemetry-demo
       containers:
       - name: accounting
-        image: ghcr.io/hagen-p/opentelemetry-demo-splunk/otel-accounting:ph-2
+        image: ghcr.io/hagen-p/opentelemetry-demo-splunk/otel-accounting:fixing-bug-1
         imagePullPolicy: Always
         env:
         - name: OTEL_SERVICE_NAME
@@ -76,7 +76,7 @@ spec:
         - name: OTEL_DOTNET_AUTO_TRACES_ENTITYFRAMEWORKCORE_INSTRUMENTATION_ENABLED
           value: 'false'
         - name: OTEL_RESOURCE_ATTRIBUTES
-          value: service.name=$(OTEL_SERVICE_NAME),service.namespace=opentelemetry-demo,service.version=ph-2,service.kafka=spanlink
+          value: service.name=$(OTEL_SERVICE_NAME),service.namespace=opentelemetry-demo,service.version=fixing-bug-1,service.kafka=spanlink
         - name: SPLUNK_PROFILER_ENABLED
           value: 'true'
         - name: SPLUNK_PROFILER_MEMORY_ENABLED
@@ -109,7 +109,7 @@ metadata:
     opentelemetry.io/name: ad
     app.kubernetes.io/component: ad
     app.kubernetes.io/name: ad
-    app.kubernetes.io/version: ph-2
+    app.kubernetes.io/version: fixing-bug-1
     app.kubernetes.io/part-of: opentelemetry-demo
 spec:
   type: ClusterIP
@@ -128,7 +128,7 @@ metadata:
     opentelemetry.io/name: ad
     app.kubernetes.io/component: ad
     app.kubernetes.io/name: ad
-    app.kubernetes.io/version: ph-2
+    app.kubernetes.io/version: fixing-bug-1
     app.kubernetes.io/part-of: opentelemetry-demo
 spec:
   replicas: 1
@@ -146,7 +146,7 @@ spec:
       serviceAccountName: opentelemetry-demo
       containers:
       - name: ad
-        image: ghcr.io/hagen-p/opentelemetry-demo-splunk/otel-ad:ph-2
+        image: ghcr.io/hagen-p/opentelemetry-demo-splunk/otel-ad:fixing-bug-1
         imagePullPolicy: Always
         ports:
         - containerPort: 8080
@@ -174,7 +174,7 @@ spec:
         - name: OTEL_EXPORTER_OTLP_ENDPOINT
           value: http://$(OTEL_COLLECTOR_NAME):4318
         - name: OTEL_RESOURCE_ATTRIBUTES
-          value: service.name=$(OTEL_SERVICE_NAME),service.namespace=opentelemetry-demo,service.version=ph-2
+          value: service.name=$(OTEL_SERVICE_NAME),service.namespace=opentelemetry-demo,service.version=fixing-bug-1
         - name: SPLUNK_PROFILER_LOGS_ENDPOINT
           value: http://$(OTEL_COLLECTOR_NAME):4318/v1/logs
         - name: SPLUNK_PROFILER_ENABLED
@@ -382,7 +382,7 @@ metadata:
     opentelemetry.io/name: cart
     app.kubernetes.io/component: cart
     app.kubernetes.io/name: cart
-    app.kubernetes.io/version: ph-2
+    app.kubernetes.io/version: fixing-bug-1
     app.kubernetes.io/part-of: opentelemetry-demo
 spec:
   type: ClusterIP
@@ -401,7 +401,7 @@ metadata:
     opentelemetry.io/name: cart
     app.kubernetes.io/component: cart
     app.kubernetes.io/name: cart
-    app.kubernetes.io/version: ph-2
+    app.kubernetes.io/version: fixing-bug-1
     app.kubernetes.io/part-of: opentelemetry-demo
 spec:
   replicas: 1
@@ -419,7 +419,7 @@ spec:
       serviceAccountName: opentelemetry-demo
       containers:
       - name: cart
-        image: ghcr.io/hagen-p/opentelemetry-demo-splunk/otel-cart:ph-2
+        image: ghcr.io/hagen-p/opentelemetry-demo-splunk/otel-cart:fixing-bug-1
         imagePullPolicy: Always
         ports:
         - containerPort: 8080
@@ -451,7 +451,7 @@ spec:
         - name: OTEL_EXPORTER_OTLP_ENDPOINT
           value: http://$(OTEL_COLLECTOR_NAME):4318
         - name: OTEL_RESOURCE_ATTRIBUTES
-          value: service.name=$(OTEL_SERVICE_NAME),service.namespace=opentelemetry-demo,service.version=ph-2,service.kafka=no
+          value: service.name=$(OTEL_SERVICE_NAME),service.namespace=opentelemetry-demo,service.version=fixing-bug-1,service.kafka=no
         - name: SPLUNK_PROFILER_LOGS_ENDPOINT
           value: http://$(OTEL_COLLECTOR_NAME):4318/v1/logs
         - name: SPLUNK_PROFILER_ENABLED
@@ -866,7 +866,7 @@ kind: ConfigMap
 metadata:
   name: flagd-config
   labels:
-    app.kubernetes.io/version: ph-2
+    app.kubernetes.io/version: fixing-bug-1
     app.kubernetes.io/part-of: opentelemetry-demo
 data:
   demo.flagd.json: |
@@ -1157,7 +1157,7 @@ metadata:
     opentelemetry.io/name: fraud-detection
     app.kubernetes.io/component: fraud-detection
     app.kubernetes.io/name: fraud-detection
-    app.kubernetes.io/version: ph-2
+    app.kubernetes.io/version: fixing-bug-1
     app.kubernetes.io/part-of: opentelemetry-demo
 spec:
   replicas: 1
@@ -1175,7 +1175,7 @@ spec:
       serviceAccountName: opentelemetry-demo
       containers:
       - name: fraud-detection
-        image: ghcr.io/hagen-p/opentelemetry-demo-splunk/otel-fraud-detection:ph-2
+        image: ghcr.io/hagen-p/opentelemetry-demo-splunk/otel-fraud-detection:fixing-bug-1
         imagePullPolicy: Always
         env:
         - name: OTEL_SERVICE_NAME
@@ -1206,9 +1206,9 @@ spec:
         - name: OTEL_INSTRUMENTATION_SPLUNK_JDBC_ENABLED
           value: 'true'
         - name: OTEL_RESOURCE_ATTRIBUTES
-          value: service.name=$(OTEL_SERVICE_NAME),service.namespace=opentelemetry-demo,service.version=ph-2,service.kafka=spanlink
+          value: service.name=$(OTEL_SERVICE_NAME),service.namespace=opentelemetry-demo,service.version=fixing-bug-1,service.kafka=spanlink
         - name: SQL_SERVER_HOST
-          value: sql-server-fraud.astronomy-shop.svc.cluster.local
+          value: sql-server-fraud.default.svc.cluster.local
         - name: SQL_SERVER_PORT
           value: '1433'
         - name: SQL_SERVER_DATABASE
@@ -1241,7 +1241,7 @@ spec:
       - command:
         - sh
         - -c
-        - until nc -z -v -w30 sql-server-fraud.astronomy-shop.svc.cluster.local 1433; do echo
+        - until nc -z -v -w30 sql-server-fraud.default.svc.cluster.local 1433; do echo
           waiting for sql-server-fraud; sleep 2; done;
         image: busybox:latest
         name: wait-for-sqlserver
@@ -1262,7 +1262,7 @@ metadata:
     opentelemetry.io/name: frontend
     app.kubernetes.io/component: frontend
     app.kubernetes.io/name: frontend
-    app.kubernetes.io/version: ph-2
+    app.kubernetes.io/version: fixing-bug-1
     app.kubernetes.io/part-of: opentelemetry-demo
 spec:
   type: ClusterIP
@@ -1281,7 +1281,7 @@ metadata:
     opentelemetry.io/name: frontend
     app.kubernetes.io/component: frontend
     app.kubernetes.io/name: frontend
-    app.kubernetes.io/version: ph-2
+    app.kubernetes.io/version: fixing-bug-1
     app.kubernetes.io/part-of: opentelemetry-demo
 spec:
   replicas: 1
@@ -1299,7 +1299,7 @@ spec:
       serviceAccountName: opentelemetry-demo
       containers:
       - name: frontend
-        image: ghcr.io/hagen-p/opentelemetry-demo-splunk/otel-frontend:ph-2
+        image: ghcr.io/hagen-p/opentelemetry-demo-splunk/otel-frontend:fixing-bug-1
         imagePullPolicy: Always
         ports:
         - containerPort: 8080
@@ -1354,7 +1354,7 @@ spec:
           value: grpc
         - name: OTEL_LOG_LEVEL
         - name: OTEL_RESOURCE_ATTRIBUTES
-          value: service.name=$(OTEL_SERVICE_NAME),service.namespace=opentelemetry-demo,service.version=ph-2,service.kafka=no
+          value: service.name=$(OTEL_SERVICE_NAME),service.namespace=opentelemetry-demo,service.version=fixing-bug-1,service.kafka=no
         - name: API_TOKEN
           valueFrom:
             secretKeyRef:
@@ -1405,7 +1405,7 @@ metadata:
     opentelemetry.io/name: frontend-proxy
     app.kubernetes.io/component: frontend-proxy
     app.kubernetes.io/name: frontend-proxy
-    app.kubernetes.io/version: ph-2
+    app.kubernetes.io/version: fixing-bug-1
     app.kubernetes.io/part-of: opentelemetry-demo
 spec:
   type: ClusterIP
@@ -1424,7 +1424,7 @@ metadata:
     opentelemetry.io/name: frontend-proxy
     app.kubernetes.io/component: frontend-proxy
     app.kubernetes.io/name: frontend-proxy
-    app.kubernetes.io/version: ph-2
+    app.kubernetes.io/version: fixing-bug-1
     app.kubernetes.io/part-of: opentelemetry-demo
 spec:
   replicas: 1
@@ -1442,7 +1442,7 @@ spec:
       serviceAccountName: opentelemetry-demo
       containers:
       - name: frontend-proxy
-        image: ghcr.io/hagen-p/opentelemetry-demo-splunk/otel-frontend-proxy:ph-2
+        image: ghcr.io/hagen-p/opentelemetry-demo-splunk/otel-frontend-proxy:fixing-bug-1
         imagePullPolicy: Always
         ports:
         - containerPort: 8080
@@ -1492,7 +1492,7 @@ spec:
         - name: OTEL_COLLECTOR_PORT_HTTP
           value: '4318'
         - name: OTEL_RESOURCE_ATTRIBUTES
-          value: service.name=$(OTEL_SERVICE_NAME),service.namespace=opentelemetry-demo,service.version=ph-2,service.kafka=no
+          value: service.name=$(OTEL_SERVICE_NAME),service.namespace=opentelemetry-demo,service.version=fixing-bug-1,service.kafka=no
         - name: FEATURE_AUTH_ENABLED
           value: 'true'
         - name: FEATURE_USER
@@ -1549,7 +1549,7 @@ metadata:
     opentelemetry.io/name: image-provider
     app.kubernetes.io/component: image-provider
     app.kubernetes.io/name: image-provider
-    app.kubernetes.io/version: ph-2
+    app.kubernetes.io/version: fixing-bug-1
     app.kubernetes.io/part-of: opentelemetry-demo
 spec:
   type: ClusterIP
@@ -1568,7 +1568,7 @@ metadata:
     opentelemetry.io/name: image-provider
     app.kubernetes.io/component: image-provider
     app.kubernetes.io/name: image-provider
-    app.kubernetes.io/version: ph-2
+    app.kubernetes.io/version: fixing-bug-1
     app.kubernetes.io/part-of: opentelemetry-demo
 spec:
   replicas: 1
@@ -1586,7 +1586,7 @@ spec:
       serviceAccountName: opentelemetry-demo
       containers:
       - name: image-provider
-        image: ghcr.io/hagen-p/opentelemetry-demo-splunk/otel-image-provider:ph-2
+        image: ghcr.io/hagen-p/opentelemetry-demo-splunk/otel-image-provider:fixing-bug-1
         imagePullPolicy: IfNotPresent
         ports:
         - containerPort: 8081
@@ -1612,7 +1612,7 @@ spec:
         - name: OTEL_COLLECTOR_HOST
           value: $(OTEL_COLLECTOR_NAME)
         - name: OTEL_RESOURCE_ATTRIBUTES
-          value: service.name=$(OTEL_SERVICE_NAME),service.namespace=opentelemetry-demo,service.version=ph-2,service.kafka=no
+          value: service.name=$(OTEL_SERVICE_NAME),service.namespace=opentelemetry-demo,service.version=fixing-bug-1,service.kafka=no
         resources:
           limits:
             memory: 50Mi
@@ -1734,7 +1734,7 @@ metadata:
     opentelemetry.io/name: llm
     app.kubernetes.io/component: llm
     app.kubernetes.io/name: llm
-    app.kubernetes.io/version: 2.1.3
+    app.kubernetes.io/version: fixing-bug-1
     app.kubernetes.io/part-of: opentelemetry-demo
 spec:
   type: ClusterIP
@@ -1753,7 +1753,7 @@ metadata:
     opentelemetry.io/name: llm
     app.kubernetes.io/component: llm
     app.kubernetes.io/name: llm
-    app.kubernetes.io/version: 2.1.3
+    app.kubernetes.io/version: fixing-bug-1
     app.kubernetes.io/part-of: opentelemetry-demo
 spec:
   replicas: 1
@@ -1771,7 +1771,7 @@ spec:
       serviceAccountName: opentelemetry-demo
       containers:
       - name: llm
-        image: ghcr.io/open-telemetry/demo:2.1.3-llm
+        image: ghcr.io/hagen-p/opentelemetry-demo-splunk/otel-llm:fixing-bug-1
         imagePullPolicy: IfNotPresent
         ports:
         - containerPort: 8000
@@ -1797,38 +1797,12 @@ spec:
         - name: OTEL_EXPORTER_OTLP_ENDPOINT
           value: http://$(OTEL_COLLECTOR_NAME):4317
         - name: OTEL_RESOURCE_ATTRIBUTES
-          value: service.name=$(OTEL_SERVICE_NAME),service.namespace=opentelemetry-demo,service.version=2.1.3,service.kafka=no
+          value: service.name=$(OTEL_SERVICE_NAME),service.namespace=opentelemetry-demo,service.version=fixing-bug-1,service.kafka=no
         resources:
           limits:
             memory: 100Mi
         volumeMounts: null
       volumes: null
-
----
-
-# === load-generator ===
-# Kubernetes manifest for load-generator
-# Auto-generated from opentelemetry-demo.yaml
-# Contains 1 resource(s)
----
-apiVersion: v1
-kind: Service
-metadata:
-  name: load-generator
-  labels:
-    opentelemetry.io/name: load-generator
-    app.kubernetes.io/component: load-generator
-    app.kubernetes.io/name: load-generator
-    app.kubernetes.io/version: ph-2
-    app.kubernetes.io/part-of: opentelemetry-demo
-spec:
-  type: ClusterIP
-  ports:
-  - port: 8089
-    name: tcp-service
-    targetPort: 8089
-  selector:
-    opentelemetry.io/name: load-generator
 
 ---
 
@@ -1845,7 +1819,7 @@ metadata:
     opentelemetry.io/name: payment
     app.kubernetes.io/component: payment
     app.kubernetes.io/name: payment
-    app.kubernetes.io/version: ph-2
+    app.kubernetes.io/version: fixing-bug-1
     app.kubernetes.io/part-of: opentelemetry-demo
 spec:
   type: ClusterIP
@@ -1864,7 +1838,7 @@ metadata:
     opentelemetry.io/name: payment
     app.kubernetes.io/component: payment
     app.kubernetes.io/name: payment
-    app.kubernetes.io/version: ph-2
+    app.kubernetes.io/version: fixing-bug-1
     app.kubernetes.io/part-of: opentelemetry-demo
 spec:
   replicas: 1
@@ -1882,7 +1856,7 @@ spec:
       serviceAccountName: opentelemetry-demo
       containers:
       - name: payment
-        image: ghcr.io/hagen-p/opentelemetry-demo-splunk/otel-payment:ph-2
+        image: ghcr.io/hagen-p/opentelemetry-demo-splunk/otel-payment:fixing-bug-1
         imagePullPolicy: Always
         ports:
         - containerPort: 8080
@@ -1910,7 +1884,7 @@ spec:
         - name: OTEL_EXPORTER_OTLP_ENDPOINT
           value: http://$(OTEL_COLLECTOR_NAME):4317
         - name: OTEL_RESOURCE_ATTRIBUTES
-          value: service.name=$(OTEL_SERVICE_NAME),service.namespace=opentelemetry-demo,service.version=ph-2,service.kafka=no
+          value: service.name=$(OTEL_SERVICE_NAME),service.namespace=opentelemetry-demo,service.version=fixing-bug-1,service.kafka=no
         - name: SPLUNK_INSTRUMENTATION_METRICS_ENABLED
           value: 'true'
         - name: SPLUNK_METRICS_ENABLED
@@ -2125,7 +2099,7 @@ kind: ConfigMap
 metadata:
   name: product-catalog-products
   labels:
-    app.kubernetes.io/version: ph-2
+    app.kubernetes.io/version: fixing-bug-1
     app.kubernetes.io/part-of: opentelemetry-demo
 data:
   products.json: |
@@ -2295,7 +2269,7 @@ metadata:
     opentelemetry.io/name: product-reviews
     app.kubernetes.io/component: product-reviews
     app.kubernetes.io/name: product-reviews
-    app.kubernetes.io/version: 2.1.3
+    app.kubernetes.io/version: fixing-bug-1
     app.kubernetes.io/part-of: opentelemetry-demo
 spec:
   type: ClusterIP
@@ -2314,7 +2288,7 @@ metadata:
     opentelemetry.io/name: product-reviews
     app.kubernetes.io/component: product-reviews
     app.kubernetes.io/name: product-reviews
-    app.kubernetes.io/version: 2.1.3
+    app.kubernetes.io/version: fixing-bug-1
     app.kubernetes.io/part-of: opentelemetry-demo
 spec:
   replicas: 1
@@ -2332,7 +2306,7 @@ spec:
       serviceAccountName: opentelemetry-demo
       containers:
       - name: product-reviews
-        image: ghcr.io/open-telemetry/demo:2.1.3-product-reviews
+        image: ghcr.io/hagen-p/opentelemetry-demo-splunk/otel-product-reviews:fixing-bug-1
         imagePullPolicy: IfNotPresent
         ports:
         - containerPort: 3551
@@ -2380,7 +2354,7 @@ spec:
         - name: OTEL_EXPORTER_OTLP_ENDPOINT
           value: http://$(OTEL_COLLECTOR_NAME):4317
         - name: OTEL_RESOURCE_ATTRIBUTES
-          value: service.name=$(OTEL_SERVICE_NAME),service.namespace=opentelemetry-demo,service.version=2.1.3,service.kafka=no
+          value: service.name=$(OTEL_SERVICE_NAME),service.namespace=opentelemetry-demo,service.version=fixing-bug-1,service.kafka=no
         resources:
           limits:
             memory: 500Mi
@@ -2493,7 +2467,7 @@ metadata:
     opentelemetry.io/name: recommendation
     app.kubernetes.io/component: recommendation
     app.kubernetes.io/name: recommendation
-    app.kubernetes.io/version: ph-2
+    app.kubernetes.io/version: fixing-bug-1
     app.kubernetes.io/part-of: opentelemetry-demo
 spec:
   type: ClusterIP
@@ -2512,7 +2486,7 @@ metadata:
     opentelemetry.io/name: recommendation
     app.kubernetes.io/component: recommendation
     app.kubernetes.io/name: recommendation
-    app.kubernetes.io/version: ph-2
+    app.kubernetes.io/version: fixing-bug-1
     app.kubernetes.io/part-of: opentelemetry-demo
 spec:
   replicas: 1
@@ -2530,7 +2504,7 @@ spec:
       serviceAccountName: opentelemetry-demo
       containers:
       - name: recommendation
-        image: ghcr.io/hagen-p/opentelemetry-demo-splunk/otel-recommendation:ph-2
+        image: ghcr.io/hagen-p/opentelemetry-demo-splunk/otel-recommendation:fixing-bug-1
         imagePullPolicy: Always
         ports:
         - containerPort: 8080
@@ -2564,7 +2538,7 @@ spec:
         - name: OTEL_EXPORTER_OTLP_ENDPOINT
           value: http://$(OTEL_COLLECTOR_NAME):4317
         - name: OTEL_RESOURCE_ATTRIBUTES
-          value: service.name=$(OTEL_SERVICE_NAME),service.namespace=opentelemetry-demo,service.version=ph-2,service.kafka=no
+          value: service.name=$(OTEL_SERVICE_NAME),service.namespace=opentelemetry-demo,service.version=fixing-bug-1,service.kafka=no
         - name: SPLUNK_PROFILER_LOGS_ENDPOINT
           value: http://$(OTEL_COLLECTOR_NAME):4317
         - name: SPLUNK_PROFILER_CALL_STACK_INTERVAL
@@ -2693,25 +2667,23 @@ spec:
 ---
 
 # === shop-dc-shim ===
-### Expects a deployment of Astronomy Shop Demo in the same cluster
-### Uses checkout service from that demo
----
 apiVersion: v1
 kind: Service
 metadata:
   name: shop-dc-shim-db
+  namespace: default
   labels:
     opentelemetry.io/name: shop-dc-shim-db
     app.kubernetes.io/component: shop-dc-shim-db
     app.kubernetes.io/name: shop-dc-shim-db
-    app.kubernetes.io/version: 2.1.3
+    app.kubernetes.io/version: "2.1.3"
     app.kubernetes.io/part-of: opentelemetry-demo
 spec:
   type: ClusterIP
   ports:
-  - port: 1433
-    name: sqlserver
-    targetPort: 1433
+    - port: 1433
+      name: sqlserver
+      targetPort: 1433
   selector:
     opentelemetry.io/name: shop-dc-shim-db
 ---
@@ -2719,11 +2691,12 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: shop-dc-shim-db
+  namespace: default
   labels:
     opentelemetry.io/name: shop-dc-shim-db
     app.kubernetes.io/component: shop-dc-shim-db
     app.kubernetes.io/name: shop-dc-shim-db
-    app.kubernetes.io/version: 2.1.3
+    app.kubernetes.io/version: "2.1.3"
     app.kubernetes.io/part-of: opentelemetry-demo
 spec:
   replicas: 1
@@ -2736,49 +2709,51 @@ spec:
         opentelemetry.io/name: shop-dc-shim-db
         app.kubernetes.io/component: shop-dc-shim-db
         app.kubernetes.io/name: shop-dc-shim-db
-        app.kubernetes.io/version: 2.1.3
+        app.kubernetes.io/version: "2.1.3"
         app.kubernetes.io/part-of: opentelemetry-demo
     spec:
       containers:
-      - name: sqlserver
-        image: mcr.microsoft.com/mssql/server:2022-latest
-        ports:
-        - containerPort: 1433
-        env:
-        - name: ACCEPT_EULA
-          value: "Y"
-        - name: MSSQL_SA_PASSWORD
-          value: ShopPass123!
-        resources:
-          requests:
-            memory: 2Gi
-            cpu: '1'
-          limits:
-            memory: 3Gi
-            cpu: '2'
-        volumeMounts:
-        - name: sqlserver-storage
-          mountPath: /var/opt/mssql/data
+        - name: sqlserver
+          image: mcr.microsoft.com/mssql/server:2022-latest
+          ports:
+            - containerPort: 1433
+          env:
+            - name: ACCEPT_EULA
+              value: "Y"
+            - name: MSSQL_SA_PASSWORD
+              value: "ShopPass123!"
+          resources:
+            requests:
+              memory: "2Gi"
+              cpu: "1"
+            limits:
+              memory: "3Gi"
+              cpu: "2"
+          volumeMounts:
+            - name: sqlserver-storage
+              mountPath: /var/opt/mssql/data
       volumes:
-      - name: sqlserver-storage
-        emptyDir: {}
+        - name: sqlserver-storage
+          emptyDir: {}
 ---
+# Shop DC Shim Service
 apiVersion: v1
 kind: Service
 metadata:
   name: shop-dc-shim
+  namespace: default
   labels:
     opentelemetry.io/name: shop-dc-shim
     app.kubernetes.io/component: shop-dc-shim
     app.kubernetes.io/name: shop-dc-shim
-    app.kubernetes.io/version: 2.1.3
+    app.kubernetes.io/version: "2.1.3"
     app.kubernetes.io/part-of: opentelemetry-demo
 spec:
   type: ClusterIP
   ports:
-  - port: 8070
-    name: tcp-service
-    targetPort: 8070
+    - port: 8070
+      name: tcp-service
+      targetPort: 8070
   selector:
     opentelemetry.io/name: shop-dc-shim
 ---
@@ -2786,11 +2761,12 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: shop-dc-shim
+  namespace: default
   labels:
     opentelemetry.io/name: shop-dc-shim
     app.kubernetes.io/component: shop-dc-shim
     app.kubernetes.io/name: shop-dc-shim
-    app.kubernetes.io/version: 2.1.3
+    app.kubernetes.io/version: "2.1.3"
     app.kubernetes.io/part-of: opentelemetry-demo
 spec:
   replicas: 1
@@ -2803,85 +2779,87 @@ spec:
         opentelemetry.io/name: shop-dc-shim
         app.kubernetes.io/component: shop-dc-shim
         app.kubernetes.io/name: shop-dc-shim
-        app.kubernetes.io/version: 2.1.3
+        app.kubernetes.io/version: "2.1.3"
         app.kubernetes.io/part-of: opentelemetry-demo
     spec:
       serviceAccountName: opentelemetry-demo
       containers:
-      - name: shop-dc-shim
-        image: quay.io/jeremyh/shop-dc-shim:latest
-        ports:
-        - containerPort: 8070
-          name: http
-        command: ["/usr/bin/dumb-init"]
-        args:
-        - --
-        - /bin/bash
-        - -c
-        - |
-          export OTEL_RESOURCE_ATTRIBUTES="service.name=shop-dc-shim-service,deployment.environment=${ENV_VALUE}-datacenter-b01,service.version=2.1.3,service.namespace=shop-dc-shim"
-          exec /app/start-app-dual.sh
-        env:
-        - name: ENV_VALUE
-          valueFrom:
-            secretKeyRef:
-              name: workflow-secret
-              key: env
-        - name: SHOP_DC_SHIM_PORT
-          value: '8070'
-        - name: DB_CONNECTION_STRING
-          value: jdbc:sqlserver://shop-dc-shim-db:1433;databaseName=master;encrypt=false;trustServerCertificate=true
-        - name: DB_USERNAME
-          value: sa
-        - name: DB_PASSWORD
-          value: ShopPass123!
-        - name: CHECKOUT_SERVICE_ADDR
-          value: checkout:8080
-        - name: EMAIL_SERVICE_URL
-          value: http://email:8080
-        - name: OTEL_EXPORTER_OTLP_ENDPOINT
-          value: http://splunk-otel-collector-agent:4318
-        - name: OTEL_SERVICE_NAME
-          value: shop-dc-shim
-        - name: OTEL_JAVAAGENT_ENABLED
-          value: 'true'
-        - name: APPDYNAMICS_AGENT_ACCOUNT_ACCESS_KEY
-          value: ${APPDYNAMICS_AGENT_ACCOUNT_ACCESS_KEY}
-        - name: OTEL_INSTRUMENTATION_SPLUNK_JDBC_ENABLED
-          value: 'true'
-        resources:
-          requests:
-            memory: 512Mi
-            cpu: 500m
-          limits:
-            memory: 1Gi
-            cpu: '1'
-        readinessProbe:
-          httpGet:
-            path: /actuator/health
-            port: 8070
-          initialDelaySeconds: 300
-          periodSeconds: 10
-          timeoutSeconds: 5
-          failureThreshold: 3
-        livenessProbe:
-          httpGet:
-            path: /actuator/health
-            port: 8070
-          initialDelaySeconds: 420
-          periodSeconds: 30
-          timeoutSeconds: 10
-          failureThreshold: 3
+        - name: shop-dc-shim
+          image: ghcr.io/splunk/opentelemetry-demo/otel-shop-dc-shim:0.0.2
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 8070
+              name: http
+          env:
+            - name: SHOP_DC_SHIM_PORT
+              value: "8070"
+            - name: DB_CONNECTION_STRING
+              value: "jdbc:sqlserver://shop-dc-shim-db:1433;databaseName=master;encrypt=false;trustServerCertificate=true"
+            - name: DB_USERNAME
+              value: "sa"
+            - name: DB_PASSWORD
+              value: "ShopPass123!"
+            - name: CHECKOUT_SERVICE_ADDR
+              value: "checkout:8080"
+            - name: EMAIL_SERVICE_URL
+              value: "http://email:8080"
+            - name: OTEL_EXPORTER_OTLP_ENDPOINT
+              value: "http://splunk-otel-collector-agent:4318"
+            - name: OTEL_SERVICE_NAME
+              value: "shop-dc-shim"
+            - name: WORKSHOP_ENV
+              valueFrom:
+                secretKeyRef:
+                  name: workshop-secret
+                  key: env
+            - name: OTEL_JAVAAGENT_ENABLED
+              value: "true"
+            - name: APPDYNAMICS_AGENT_ACCOUNT_NAME
+              value: "se-lab"
+            - name: APPDYNAMICS_JAVAAGENT_ENABLED
+              value: "true"
+            - name: APPDYNAMICS_AGENT_ACCOUNT_ACCESS_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: workshop-secret
+                  key: appd_token
+            - name: OTEL_INSTRUMENTATION_SPLUNK_JDBC_ENABLED
+              value: "true"
+          resources:
+            requests:
+              memory: "512Mi"
+              cpu: "500m"
+            limits:
+              memory: "1Gi"
+              cpu: "1"
+          readinessProbe:
+            httpGet:
+              path: /actuator/health
+              port: 8070
+            initialDelaySeconds: 240
+            periodSeconds: 10
+            timeoutSeconds: 5
+            failureThreshold: 3
+          livenessProbe:
+            httpGet:
+              path: /actuator/health
+              port: 8070
+            initialDelaySeconds: 420
+            periodSeconds: 30
+            timeoutSeconds: 10
+            failureThreshold: 5
 ---
+# Shop DC Load Generator
 apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: shop-dc-load-generator
+  namespace: default
   labels:
     opentelemetry.io/name: shop-dc-load-generator
     app.kubernetes.io/component: shop-dc-load-generator
     app.kubernetes.io/name: shop-dc-load-generator
-    app.kubernetes.io/version: 2.1.3
+    app.kubernetes.io/version: "2.1.3"
     app.kubernetes.io/part-of: opentelemetry-demo
 spec:
   replicas: 1
@@ -2894,44 +2872,34 @@ spec:
         opentelemetry.io/name: shop-dc-load-generator
         app.kubernetes.io/component: shop-dc-load-generator
         app.kubernetes.io/name: shop-dc-load-generator
-        app.kubernetes.io/version: 2.1.3
+        app.kubernetes.io/version: "2.1.3"
         app.kubernetes.io/part-of: opentelemetry-demo
     spec:
       serviceAccountName: opentelemetry-demo
       initContainers:
-      - name: wait-for-shop-dc-shim
-        image: curlimages/curl:8.1.2
-        command:
-        - sh
-        - -c
-        - |
-          echo "Waiting for shop-dc-shim service to be ready..."
-          until curl -f --connect-timeout 5 --max-time 20 http://shop-dc-shim:8070/actuator/health; do
-            echo "Shop DC Shim not ready, waiting 20 seconds..."
-            sleep 20
-          done
-          echo "Shop DC Shim is ready, starting load generator..."
-        resources:
-          limits:
-            memory: 64Mi
-            cpu: 50m
+        - name: wait-for-shop-dc-shim
+          image: curlimages/curl:8.1.2
+          command: ['sh', '-c']
+          args:
+            - |
+              echo "Waiting for shop-dc-shim service to be ready..."
+              until curl -f --connect-timeout 5 --max-time 20 http://shop-dc-shim:8070/actuator/health; do
+                echo "Shop DC Shim not ready, waiting 20 seconds..."
+                sleep 20
+              done
+              echo "Shop DC Shim is ready, starting load generator..."
+          resources:
+            limits:
+              memory: "64Mi"
+              cpu: "50m"
       containers:
-      - name: load-generator
-        image: quay.io/jeremyh/shop-dc-load-generator:0.0.1
-        args:
-        - --url
-        - http://shop-dc-shim:8070
-        - --mode
-        - continuous
-        - --tpm
-        - '65'
-        - --duration
-        - '0'
-        resources:
-          limits:
-            memory: 128Mi
-            cpu: 100m
-
+        - name: load-generator
+          image: ghcr.io/splunk/opentelemetry-demo/otel-shop-dc-load-generator:0.0.2
+          args: ["--url", "http://shop-dc-shim:8070", "--mode", "continuous", "--tpm", "25", "--duration", "0"]
+          resources:
+            limits:
+              memory: "128Mi"
+              cpu: "100m"
 ---
 
 # === sql-server-fraud ===
@@ -3035,57 +3003,6 @@ spec:
       resources:
         requests:
           storage: 5Gi
-
----
-
-# === thousandeyes ===
-# Kubernetes manifest for thousandeyes
-# Auto-generated from opentelemetry-demo.yaml
-# Contains 1 resource(s)
----
-apiVersion: apps/v1
-kind: Deployment
-metadata:
-  annotations: {}
-  name: thousandeyes
-  labels:
-    app: thousandeyes
-spec:
-  replicas: 1
-  selector:
-    matchLabels:
-      app: thousandeyes
-  template:
-    metadata:
-      labels:
-        app: thousandeyes
-    spec:
-      hostname: astronomy-shop-us1-show
-      containers:
-      - name: thousandeyes
-        image: thousandeyes/enterprise-agent:latest
-        imagePullPolicy: Always
-        command:
-        - /sbin/my_init
-        securityContext:
-          capabilities:
-            add:
-            - NET_ADMIN
-            - SYS_ADMIN
-        env:
-        - name: TEAGENT_ACCOUNT_TOKEN
-          valueFrom:
-            secretKeyRef:
-              name: workshop-secret
-              key: TEAGENT_ACCOUNT_TOKEN
-        - name: TEAGENT_INET
-          value: '4'
-        resources:
-          limits:
-            memory: 3584Mi
-          requests:
-            memory: 2000Mi
-      restartPolicy: Always
 
 ---
 

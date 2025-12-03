@@ -239,7 +239,7 @@ jobs:
           # Determine image name based on service
           # Most services use otel-{service} naming convention
           case "$SERVICE_NAME" in
-            accounting|ad|cart|fraud-detection|frontend|frontend-proxy|image-provider|payment|recommendation)
+            accounting|ad|cart|fraud-detection|frontend|frontend-proxy|image-provider|llm|payment|product-reviews|recommendation)
               IMAGE_NAME="otel-${SERVICE_NAME}"
               ;;
             *)

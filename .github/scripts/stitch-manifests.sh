@@ -6,6 +6,7 @@
 #                 If not specified, uses original registry URLs from manifests
 #
 # This script reads service configuration from services.yaml
+# ALWAYS stitches ALL services with manifest: true
 # To add a new service, edit services.yaml instead of this script
 
 set -e
@@ -18,6 +19,7 @@ VERSION=$(cat SPLUNK-VERSION)
 echo "Creating manifest for version: $VERSION"
 
 # Load services from services.yaml
+# ALWAYS includes ALL services with manifest: true
 echo "Reading services from services.yaml..."
 if command -v python3 &> /dev/null; then
     # Use Python helper to parse YAML
