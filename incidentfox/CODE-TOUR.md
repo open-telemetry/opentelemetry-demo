@@ -1244,9 +1244,793 @@ while (true) {
 
 ---
 
-# Part 6: Understanding the Deployed System (20 minutes)
+# Part 6: Understanding the 25 Services (30 minutes)
 
-## 6.1 What's Actually Running
+## 6.1 Service Catalog & Dependencies
+
+### E-Commerce Services (Frontend)
+
+#### **1. frontend** (Next.js / TypeScript)
+**What it does:** Web UI for the Astronomy Shop  
+**Port:** 8080  
+**Calls:**
+- `ad` - Get advertisements
+- `cart` - Shopping cart operations
+- `checkout` - Place orders
+- `currency` - Convert prices
+- `product-catalog` - Browse products
+- `recommendation` - Product suggestions
+- `shipping` - Calculate shipping costs
+
+**Code:** `src/frontend/`
+
+---
+
+#### **2. frontend-proxy** (Envoy)
+**What it does:** Reverse proxy, single entry point  
+**Port:** 8080  
+**Routes:**
+- `/` → frontend
+- `/grafana` → grafana
+- `/jaeger` → jaeger
+- `/feature` → flagd-ui
+- `/loadgen` → load-generator
+
+**Why it exists:** Consolidates all UIs under one endpoint
+
+---
+
+#### **3. cart** (C# / ASP.NET Core)
+**What it does:** Shopping cart management  
+**Storage:** Valkey (Redis)  
+**Operations:**
+- Add item to cart
+- Remove item
+- Get cart contents
+- Empty cart
+
+**Called by:** frontend, checkout  
+**Code:** `src/cart/`
+
+---
+
+#### **4. checkout** (Go)
+**What it does:** Order processing orchestrator  
+**Port:** 8080  
+**Workflow:**
+1. Get cart items from `cart`
+2. Calculate shipping via `shipping`
+3. Process payment via `payment`
+4. Send confirmation via `email`
+5. Publish order to Kafka
+
+**Dependencies:**
+- `cart` - Get cart items
+- `currency` - Currency conversion
+- `email` - Send confirmation
+- `payment` - Charge credit card
+- `product-catalog` - Validate products
+- `shipping` - Calculate costs
+- `kafka` - Async order processing
+
+**Code:** `src/checkout/main.go`
+
+---
+
+#### **5. payment** (Node.js)
+**What it does:** Payment processing (mock)  
+**Port:** 8080  
+**Operations:**
+- Charge credit card (simulated)
+- Random failures (via feature flag)
+
+**Called by:** checkout  
+**Feature flags:**
+- `paymentFailure` - Return errors
+- `paymentUnreachable` - Stop responding
+
+**Code:** `src/payment/charge.js`
+
+---
+
+#### **6. shipping** (Rust)
+**What it does:** Shipping cost calculation  
+**Port:** 8080  
+**Dependencies:**
+- `quote` - Get shipping quotes
+
+**Called by:** checkout, frontend  
+**Code:** `src/shipping/src/shipping_service.rs`
+
+---
+
+#### **7. product-catalog** (Go)
+**What it does:** Product database/inventory  
+**Port:** 8080  
+**Data:** JSON file with products  
+**Operations:**
+- List products
+- Get product details
+- Search products
+
+**Called by:** frontend, recommendation, checkout  
+**Feature flag:** `productCatalogFailure`  
+**Code:** `src/product-catalog/main.go`
+
+---
+
+#### **8. recommendation** (Python)
+**What it does:** ML-based product recommendations  
+**Port:** 8080  
+**Algorithm:** Random selection from catalog (mock ML)  
+**Dependencies:**
+- `product-catalog` - Get product details
+
+**Called by:** frontend  
+**Feature flag:** `recommendationCacheFailure`  
+**Code:** `src/recommendation/recommendation_server.py`
+
+---
+
+#### **9. currency** (C++)
+**What it does:** Currency conversion  
+**Port:** 8080  
+**Operations:**
+- Convert between currencies
+- Get supported currencies
+
+**Called by:** frontend, checkout  
+**Code:** `src/currency/src/currency_service.cpp`
+
+---
+
+#### **10. ad** (Java / Spring Boot)
+**What it does:** Serve advertisements  
+**Port:** 8080  
+**Operations:**
+- Get contextual ads based on context
+
+**Called by:** frontend  
+**Feature flags:**
+- `adHighCpu` - CPU spike
+- `adManualGc` - GC pressure
+- `adFailure` - Return errors
+
+**Code:** `src/ad/src/main/java/`
+
+---
+
+#### **11. quote** (PHP)
+**What it does:** Shipping quote provider  
+**Port:** 8080  
+**Operations:**
+- Calculate shipping quotes
+
+**Called by:** shipping  
+**Code:** `src/quote/src/`
+
+---
+
+### Backend Services
+
+#### **12. email** (Ruby / Sinatra)
+**What it does:** Send email confirmations  
+**Port:** 8080  
+**Operations:**
+- Send order confirmation (simulated)
+
+**Called by:** checkout  
+**Feature flag:** `emailMemoryLeak` (1x-10000x)  
+**Code:** `src/email/email_server.rb`
+
+---
+
+#### **13. accounting** (C# / .NET)
+**What it does:** Order accounting and auditing  
+**Storage:** PostgreSQL  
+**Operations:**
+- Consume orders from Kafka
+- Write to database
+- Track revenue
+
+**Dependencies:**
+- `kafka` - Consume orders
+- `postgresql` - Persist data
+
+**Database tables:**
+- `orders` - Order records
+- `orderitem` - Line items
+- `shipping` - Shipping details
+
+**Code:** `src/accounting/Consumer.cs`
+
+---
+
+#### **14. fraud-detection** (Kotlin)
+**What it does:** Fraud analysis on orders  
+**Operations:**
+- Consume orders from Kafka
+- Analyze for fraud patterns (mock)
+- Flag suspicious orders
+
+**Dependencies:**
+- `kafka` - Consume orders
+
+**Code:** `src/fraud-detection/src/FraudDetectionService.kt`
+
+---
+
+#### **15. image-provider** (nginx)
+**What it does:** Serve product images  
+**Port:** 8081  
+**Content:** Static images
+
+**Called by:** frontend  
+**Feature flag:** `imageSlowLoad` (5sec, 10sec delay)  
+**Code:** `src/image-provider/nginx.conf.template`
+
+---
+
+### Infrastructure Services
+
+#### **16. kafka** (Apache Kafka)
+**What it does:** Message queue for async processing  
+**Port:** 9092  
+**Topics:**
+- `orders` - Order events
+
+**Producers:**
+- `checkout` - Publishes orders
+
+**Consumers:**
+- `accounting` - Processes for accounting
+- `fraud-detection` - Analyzes for fraud
+
+**Feature flag:** `kafkaQueueProblems` (lag simulation)  
+**Code:** `src/kafka/`
+
+---
+
+#### **17. postgresql** (PostgreSQL 16)
+**What it does:** Relational database  
+**Port:** 5432  
+**Database:** `otel`  
+**Users:** `root` (superuser), `otelu` (app user)  
+**Credentials:** From AWS Secrets Manager (in production)
+
+**Used by:**
+- `accounting` - Write orders
+- `product-reviews` - Store review data
+
+**Tables:**
+```sql
+orders (order_id, user_id, total, timestamp)
+orderitem (item_id, order_id, product_id, quantity)
+shipping (shipping_id, order_id, address, tracking)
+```
+
+**Code:** `src/postgres/init.sql`
+
+---
+
+#### **18. valkey-cart** (Valkey / Redis-compatible)
+**What it does:** In-memory cache for shopping carts  
+**Port:** 6379  
+**Data structure:**
+```
+Key: userId:abc-123
+Value: {items: [{productId: "XYZ", qty: 2}, ...]}
+TTL: 30 minutes
+```
+
+**Used by:** `cart` service  
+**Code:** Uses official Valkey image
+
+---
+
+#### **19. flagd** (Feature Flag Daemon)
+**What it does:** Feature flag service  
+**Ports:** 8013 (gRPC), 8016 (OFREP REST)  
+**Config:** `src/flagd/demo.flagd.json`
+
+**Clients:** All services query for flags  
+**How it works:**
+- Watches config file
+- Serves flag values via gRPC
+- Updates within 5-10 seconds when file changes
+
+**Code:** Official flagd image
+
+---
+
+### Observability Services
+
+#### **20. otel-collector** (OpenTelemetry Collector)
+**What it does:** Centralized telemetry aggregation  
+**Ports:** 4317 (gRPC), 4318 (HTTP)  
+**Receives:**
+- Metrics from all services
+- Logs from all services
+- Traces from all services
+
+**Exports to:**
+- `prometheus` - Metrics
+- `jaeger` - Traces
+- `opensearch` - Logs
+
+**Pipeline:**
+```
+Services → OTel Collector → Backends
+           (process, filter,
+            enrich, route)
+```
+
+**Code:** `src/otel-collector/otelcol-config.yml`
+
+---
+
+#### **21. prometheus** (Prometheus)
+**What it does:** Metrics storage and querying  
+**Port:** 9090  
+**Scrapes:** All services (via OTel Collector)  
+**Retention:** 1 hour (configurable)
+
+**Metrics collected:**
+- Request counts
+- Error rates
+- Latencies (histograms)
+- Resource usage (CPU, memory)
+- Custom business metrics
+
+**Query examples:**
+```promql
+# Request rate
+rate(http_server_requests_total[5m])
+
+# Error rate
+sum(rate(http_server_requests_total{status_code=~"5.."}[5m]))
+
+# P99 latency
+histogram_quantile(0.99, rate(http_server_duration_bucket[5m]))
+```
+
+**Storage:** EBS volume (persistent)
+
+---
+
+#### **22. jaeger** (Jaeger All-in-One)
+**What it does:** Distributed tracing  
+**Ports:** 16686 (UI), 14268 (collector)  
+**Storage:** In-memory (25,000 traces max)
+
+**Traces collected:**
+- HTTP requests through services
+- gRPC calls
+- Database queries
+- Kafka operations
+
+**Example trace:**
+```
+User request → frontend (20ms)
+  ├─→ product-catalog (5ms)
+  ├─→ recommendation (15ms)
+  │   └─→ product-catalog (4ms)
+  └─→ ad (8ms)
+Total: 52ms
+```
+
+**Code:** Official Jaeger image
+
+---
+
+#### **23. opensearch** (OpenSearch 2.x)
+**What it does:** Log storage and search  
+**Port:** 9200  
+**Indices:**
+- `otel-logs-YYYY-MM-DD` - Daily indices
+- **Current:** ~68,000 log entries
+
+**Logs include:**
+- Timestamp
+- Service name
+- Severity (INFO, WARN, ERROR)
+- Message
+- Trace context (correlation)
+
+**Storage:** EBS volume (persistent, 50GB)
+
+---
+
+#### **24. grafana** (Grafana)
+**What it does:** Visualization and dashboards  
+**Port:** 3000  
+**Datasources:**
+- Prometheus (metrics)
+- Jaeger (traces)
+- OpenSearch (logs)
+
+**Pre-configured dashboards:**
+- Demo dashboard (overall health)
+- Span metrics (trace-based RED metrics)
+- Service dashboards (per-service details)
+
+**Storage:** EBS volume (for dashboards)  
+**Credentials:** From AWS Secrets Manager
+
+---
+
+#### **25. load-generator** (Locust / Python)
+**What it does:** Generate realistic user traffic  
+**Port:** 8089 (UI)  
+**Behavior:**
+- Simulates 10 concurrent users
+- Browses homepage, products, adds to cart, checks out
+- Random behavior (realistic patterns)
+
+**Configuration:**
+```yaml
+LOCUST_AUTOSTART: true
+LOCUST_USERS: 10
+LOCUST_SPAWN_RATE: 1
+LOCUST_HEADLESS: false
+```
+
+**Feature flag:** `loadGeneratorFloodHomepage`  
+**Code:** `src/load-generator/locustfile.py`
+
+---
+
+## 6.2 Service Dependency Map
+
+### Visual Dependency Graph
+
+```
+┌─────────────────────────────────────────────────────────────┐
+│                         User                                 │
+└──────────────────────────┬──────────────────────────────────┘
+                           ↓
+┌──────────────────────────────────────────────────────────────┐
+│                    frontend-proxy (Envoy)                    │
+└──────────────────────────┬──────────────────────────────────┘
+                           ↓
+┌──────────────────────────────────────────────────────────────┐
+│                      frontend                                │
+└──┬────┬────┬─────┬─────┬────────┬─────────┬─────────────────┘
+   │    │    │     │     │        │         │
+   ↓    ↓    ↓     ↓     ↓        ↓         ↓
+  ad  cart checkout prod rec   shipping  currency
+              │      cat
+              │
+       ┌──────┴──────┬──────────┬──────────┐
+       ↓             ↓          ↓          ↓
+    payment      shipping    email     product
+    (quote)                            -catalog
+       │             │
+       ↓             ↓
+     quote      ┌─────────┐
+                │  kafka  │
+                └─────┬───┘
+                      │
+              ┌───────┴────────┐
+              ↓                ↓
+         accounting    fraud-detection
+              ↓
+         postgresql
+```
+
+### Dependency Matrix
+
+| Service | Depends On | Called By |
+|---------|-----------|-----------|
+| **frontend** | ad, cart, checkout, currency, product-catalog, recommendation, shipping | frontend-proxy, load-generator |
+| **cart** | valkey-cart | frontend, checkout |
+| **checkout** | cart, currency, email, payment, product-catalog, shipping, kafka | frontend |
+| **payment** | - | checkout |
+| **shipping** | quote | checkout, frontend |
+| **product-catalog** | - | frontend, recommendation, checkout |
+| **recommendation** | product-catalog | frontend |
+| **currency** | - | frontend, checkout |
+| **ad** | - | frontend |
+| **quote** | - | shipping |
+| **email** | - | checkout |
+| **accounting** | kafka, postgresql | - (async consumer) |
+| **fraud-detection** | kafka | - (async consumer) |
+| **kafka** | - | checkout (producer), accounting & fraud (consumers) |
+| **postgresql** | - | accounting |
+| **valkey-cart** | - | cart |
+
+---
+
+## 6.3 Service Details by Technology
+
+### Go Services (3)
+- **checkout** - Order orchestration
+- **product-catalog** - Product inventory
+- Uses: gRPC, OpenTelemetry Go SDK
+
+### .NET/C# Services (2)
+- **cart** - Shopping cart (ASP.NET Core)
+- **accounting** - Order accounting
+- Uses: gRPC, Entity Framework, OpenTelemetry .NET
+
+### Node.js Services (1)
+- **payment** - Payment processing
+- Uses: Express, OpenTelemetry JS SDK
+
+### Python Services (3)
+- **recommendation** - Product recommendations
+- **load-generator** - Traffic simulation (Locust)
+- **product-reviews** - Product reviews (not in our deployment)
+- Uses: gRPC, OpenTelemetry Python SDK
+
+### Java Services (2)
+- **ad** - Advertisements (Spring Boot)
+- **fraud-detection** - Fraud analysis (Kotlin/Spring Boot)
+- Uses: gRPC, OpenTelemetry Java agent
+
+### Ruby Services (1)
+- **email** - Email notifications (Sinatra)
+- Uses: OpenTelemetry Ruby SDK
+
+### Rust Services (1)
+- **shipping** - Shipping calculation
+- Uses: Tonic (gRPC), OpenTelemetry Rust SDK
+
+### C++ Services (1)
+- **currency** - Currency conversion
+- Uses: gRPC, OpenTelemetry C++ SDK
+
+### PHP Services (1)
+- **quote** - Shipping quotes
+- Uses: OpenTelemetry PHP SDK
+
+---
+
+## 6.4 Request Flow Examples
+
+### Example 1: Browse Homepage
+
+```
+1. User → frontend-proxy:8080/
+   ↓
+2. frontend-proxy → frontend:8080
+   ↓
+3. frontend calls in parallel:
+   ├─→ ad:8080/ads (get ads)
+   ├─→ product-catalog:8080/products (get featured)
+   └─→ currency:8080/convert (if needed)
+   ↓
+4. frontend renders HTML
+   ↓
+5. Browser requests images
+   ↓
+6. image-provider:8081/static/img/products/telescope.jpg
+
+Total services involved: 5
+Traces collected: 1 main trace with 3-4 spans
+```
+
+---
+
+### Example 2: Add to Cart
+
+```
+1. User clicks "Add to Cart"
+   ↓
+2. frontend → cart:8080/cart (POST)
+   ↓
+3. cart → valkey-cart:6379 (Redis)
+   SET user:abc-123 {"items": [...]}
+   ↓
+4. cart returns success
+   ↓
+5. frontend updates UI
+
+Total services: 3
+Traces: 1 trace with 2 spans
+```
+
+---
+
+### Example 3: Complete Checkout (Most Complex)
+
+```
+1. User clicks "Place Order"
+   ↓
+2. frontend → checkout:8080/checkout (POST)
+   ↓
+3. checkout orchestrates (all in parallel where possible):
+   
+   Step 1: Get cart
+   checkout → cart:8080/cart/user-123
+              ↓
+              cart → valkey-cart:6379 (GET)
+   
+   Step 2: Calculate costs
+   checkout → shipping:8080/quote
+              ↓
+              shipping → quote:8080/quote
+   
+   Step 3: Process payment
+   checkout → payment:8080/charge
+   
+   Step 4: Send email
+   checkout → email:8080/send
+   
+   Step 5: Publish to Kafka
+   checkout → kafka:9092 (topic: orders)
+   ↓
+4. checkout returns order confirmation
+   ↓
+5. Async processing (Kafka consumers):
+   
+   kafka → accounting:8080 (consumes order)
+           ↓
+           accounting → postgresql:5432
+           INSERT INTO orders (...)
+   
+   kafka → fraud-detection:8080 (consumes order)
+           Analyzes for fraud
+
+Total services: 10
+Trace: 1 parent span with 8-10 child spans
+Database writes: 3-4 tables
+```
+
+---
+
+## 6.5 Data Stores
+
+### Valkey (Redis) - Shopping Carts
+
+**Type:** In-memory, ephemeral  
+**Data:**
+```
+Key: userId:abc-123
+Value: {"items": [{"productId": "XYZ", "quantity": 2}]}
+TTL: 30 minutes
+```
+
+**Characteristics:**
+- Fast (in-memory)
+- Volatile (restart = data loss)
+- Perfect for temporary cart data
+
+---
+
+### PostgreSQL - Order Records
+
+**Type:** Relational database, persistent  
+**Storage:** EBS volume (survives restarts)  
+**Schema:**
+```sql
+CREATE TABLE orders (
+  order_id VARCHAR PRIMARY KEY,
+  user_id VARCHAR,
+  total DECIMAL,
+  currency VARCHAR,
+  created_at TIMESTAMP
+);
+
+CREATE TABLE orderitem (
+  item_id SERIAL PRIMARY KEY,
+  order_id VARCHAR REFERENCES orders(order_id),
+  product_id VARCHAR,
+  quantity INT,
+  price DECIMAL
+);
+
+CREATE TABLE shipping (
+  shipping_id SERIAL PRIMARY KEY,
+  order_id VARCHAR REFERENCES orders(order_id),
+  address TEXT,
+  tracking_number VARCHAR,
+  carrier VARCHAR
+);
+```
+
+**Current data:** 24+ hours of orders from load generator
+
+**Query example:**
+```bash
+kubectl exec -n otel-demo deployment/postgresql -- \
+  psql -U root -d otel -c "SELECT COUNT(*) FROM orders;"
+```
+
+---
+
+### Kafka Topics - Event Stream
+
+**Type:** Message queue, persistent (short-term)  
+**Topic:** `orders`  
+**Message format:**
+```json
+{
+  "orderId": "abc-123",
+  "userId": "user-456",
+  "items": [...],
+  "total": 99.99,
+  "timestamp": "2024-11-29T10:15:00Z"
+}
+```
+
+**Producers:**
+- checkout (after successful payment)
+
+**Consumers:**
+- accounting (writes to PostgreSQL)
+- fraud-detection (analyzes patterns)
+
+**Retention:** 7 days (default)
+
+---
+
+## 6.6 Critical Paths
+
+### Happy Path: Successful Order
+
+```
+frontend → checkout → [payment, shipping, cart] → email → kafka
+                                                            ↓
+                                                    [accounting, fraud-detection]
+                                                            ↓
+                                                       postgresql
+```
+
+**Services involved:** 9  
+**Time:** ~200-500ms  
+**Database writes:** 1 order + 1-5 items + 1 shipping record
+
+---
+
+### Failure Scenario: Payment Fails
+
+```
+frontend → checkout → payment (returns 500)
+                         ↓
+                     checkout returns error
+                         ↓
+                     No kafka message
+                         ↓
+                     No database write
+                         ↓
+                     User sees error page
+```
+
+**This is what we simulate with `paymentFailure` flag!**
+
+---
+
+## 6.7 Understanding the Demo's Purpose
+
+### Why 25 Services?
+
+**Not just for show - each represents real patterns:**
+
+1. **Polyglot** - 9 languages (Go, C#, Java, Python, Node, Rust, C++, Ruby, PHP)
+2. **Protocols** - HTTP, gRPC, Redis, SQL, Kafka
+3. **Patterns** - Sync, async, caching, queuing
+4. **Failures** - Each has realistic failure modes
+5. **Observability** - Fully instrumented
+
+### Production Parallels
+
+| Demo Service | Real-World Equivalent |
+|--------------|----------------------|
+| frontend | User-facing web app |
+| checkout | Order management system |
+| payment | Payment gateway integration |
+| kafka | Event streaming (Kafka, Kinesis, EventBridge) |
+| postgresql | Primary database (RDS, Aurora) |
+| valkey | Session/cache store (ElastiCache Redis) |
+| otel-collector | Observability pipeline (Collector, Datadog Agent) |
+| prometheus | Metrics backend (Prometheus, CloudWatch) |
+
+---
+
+# Part 7: Understanding the Deployed System (20 minutes)
+
+## 7.1 What's Actually Running
 
 ### Check Current State
 
