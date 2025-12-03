@@ -3,16 +3,16 @@
 # Updated automatically by build workflows
 # DO NOT EDIT MANUALLY
 
-default_version: fixing-bug-1
+default_version: full-build-1
 services:
-  accounting: fixing-bug-1
-  ad: fixing-bug-1
-  cart: fixing-bug-1
-  fraud-detection: fixing-bug-1
-  frontend: fixing-bug-1
-  frontend-proxy: fixing-bug-1
-  image-provider: fixing-bug-1
-  payment: fixing-bug-1
-  recommendation: fixing-bug-1
-  llm: llm-e-1
-  product-reviews: pr-1
+  accounting: full-build-1
+  ad: full-build-1
+  cart: full-build-1
+  fraud-detection: full-build-1
+  frontend: full-build-1
+  frontend-proxy: full-build-1
+  image-provider: full-build-1
+  payment: full-build-1
+  recommendation: full-build-1
+  llm: full-build-1
+  product-reviews: full-build-1

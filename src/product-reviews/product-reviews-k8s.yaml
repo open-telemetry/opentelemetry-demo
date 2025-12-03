@@ -47,7 +47,7 @@ spec:
       serviceAccountName: opentelemetry-demo
       containers:
       - name: product-reviews
-        image: ghcr.io/hagen-p/opentelemetry-demo-splunk/otel-product-reviews:pr-1
+        image: ghcr.io/hagen-p/opentelemetry-demo-splunk/otel-product-reviews:full-build-1
         imagePullPolicy: IfNotPresent
         ports:
         - containerPort: 3551
