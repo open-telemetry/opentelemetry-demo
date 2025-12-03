@@ -56,7 +56,7 @@
     "@types/uuid": "11.0.0",
     "@typescript-eslint/eslint-plugin": "8.48.1",
     "@typescript-eslint/parser": "8.48.1",
-    "cypress": "15.7.0",
+    "cypress": "15.7.1",
     "eslint": "9.39.1",
     "eslint-config-next": "16.0.6",
     "eslint-plugin-react": "7.37.5",
