@@ -17,6 +17,8 @@ clusterReceiver:
     receivers:
       sqlserver/shopshim:
         collection_interval: 10s
+        top_query_collection:
+          lookback_time: 120s
         username: sa
         password: ShopPass123!
         server: shop-dc-shim-db
@@ -65,7 +67,9 @@ clusterReceiver:
           sqlserver.user.connection.count:
               enabled: true
       sqlserver:
-        collection_interval: 1s
+        collection_interval: 10s
+        top_query_collection:
+          lookback_time: 120s
         username: sa
         password: "ChangeMe_SuperStrong123!"
         server: sql-server-fraud.sql.svc.cluster.local
