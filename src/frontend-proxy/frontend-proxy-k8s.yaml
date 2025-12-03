@@ -66,6 +66,8 @@ spec:
           value: $(NODE_IP)
         - name: OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE
           value: cumulative
+        - name: ENVOY_ADDR
+          value: 0.0.0.0
         - name: ENVOY_PORT
           value: '8080'
         - name: ENVOY_ADMIN_PORT
