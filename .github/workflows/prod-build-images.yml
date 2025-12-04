@@ -483,7 +483,8 @@ jobs:
                 -m "" \
                 -m "Updated:" \
                 -m "- SPLUNK-VERSION" \
-                -m "- Source k8s manifests with new image references"
+                -m "- Source k8s manifests with new image references" \
+                -m "- Stitched manifest: kubernetes/splunk-astronomy-shop-${VERSION}.yaml"
 
               PR_BODY="## Release ${VERSION}
 
@@ -494,6 +495,7 @@ jobs:
 - ✅ SPLUNK-VERSION updated to \`${VERSION}\`
 - ✅ All hotfixes cleared
 - ✅ Source k8s manifests updated with new image references
+- ✅ Stitched manifest: \`kubernetes/splunk-astronomy-shop-${VERSION}.yaml\`
 
 ---
 🤖 Generated automatically by GitHub Actions"
@@ -505,7 +507,8 @@ jobs:
                 -m "Services: ${SERVICES}" \
                 -m "" \
                 -m "Updated:" \
-                -m "- Source k8s manifests with new image references"
+                -m "- Source k8s manifests with new image references" \
+                -m "- Stitched manifest: kubernetes/splunk-astronomy-shop-${VERSION}.yaml"
 
               PR_BODY="## Production Build ${VERSION}
 
@@ -513,6 +516,7 @@ jobs:
 
 ### Changes
 - ✅ Source k8s manifests updated with new image references
+- ✅ Stitched manifest: \`kubernetes/splunk-astronomy-shop-${VERSION}.yaml\`
 
 ---
 🤖 Generated automatically by GitHub Actions"
@@ -597,48 +601,8 @@ jobs:
           echo "- **Version:** \`$VERSION\`" >> $GITHUB_STEP_SUMMARY
           echo "- **Type:** Full Release" >> $GITHUB_STEP_SUMMARY
 
-  trigger-manifest-build:
-    needs: [determine-version, prepare-matrix, build-images, update-versions]
-    if: ${{ success() }}
-    runs-on: ubuntu-latest
-    permissions:
-      actions: write
-      contents: read
-
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
-
-      - name: Trigger manifest build
-        env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: |
-          echo "### 🚀 Triggering Production Manifest Build" >> $GITHUB_STEP_SUMMARY
-          echo "" >> $GITHUB_STEP_SUMMARY
-          echo "Automatically building production manifest with per-service versions..." >> $GITHUB_STEP_SUMMARY
-          echo "" >> $GITHUB_STEP_SUMMARY
-
-          # Trigger the production manifest build workflow
-          # Note: Manifest build now uses .service-versions.yaml instead of single version
-          gh workflow run prod-build-manifest.yml \
-            -f commit_manifest=true \
-            -f validate_manifest=true
-
-          echo "✅ Production manifest build workflow triggered" >> $GITHUB_STEP_SUMMARY
-          echo "" >> $GITHUB_STEP_SUMMARY
-          echo "| Property | Value |" >> $GITHUB_STEP_SUMMARY
-          echo "|----------|-------|" >> $GITHUB_STEP_SUMMARY
-          echo "| Workflow | \`prod-build-manifest.yml\` |" >> $GITHUB_STEP_SUMMARY
-          echo "| Version Source | \`.service-versions.yaml\` |" >> $GITHUB_STEP_SUMMARY
-          echo "| Base Version | \`${{ needs.determine-version.outputs.version }}\` |" >> $GITHUB_STEP_SUMMARY
-          echo "| Build Type | ${{ needs.determine-version.outputs.is_hotfix == 'true' && 'Hotfix' || (needs.determine-version.outputs.is_full_release == 'true' && 'Full Release' || 'Partial') }} |" >> $GITHUB_STEP_SUMMARY
-          echo "| Commit | \`true\` |" >> $GITHUB_STEP_SUMMARY
-          echo "| Validate | \`true\` |" >> $GITHUB_STEP_SUMMARY
-          echo "" >> $GITHUB_STEP_SUMMARY
-          echo "Check the [Actions tab](../../actions/workflows/prod-build-manifest.yml) to monitor the manifest build." >> $GITHUB_STEP_SUMMARY
-
   summary:
-    needs: [determine-version, prepare-matrix, build-images, update-versions, trigger-manifest-build]
+    needs: [determine-version, prepare-matrix, build-images, update-versions]
     if: always()
     runs-on: ubuntu-latest
 
