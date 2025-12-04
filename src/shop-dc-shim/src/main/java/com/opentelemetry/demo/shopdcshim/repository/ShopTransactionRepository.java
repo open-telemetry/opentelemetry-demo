@@ -5,6 +5,7 @@ package com.opentelemetry.demo.shopdcshim.repository;
 
 import com.opentelemetry.demo.shopdcshim.entity.ShopTransaction;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
@@ -16,19 +17,23 @@ import java.util.Optional;
 @Repository
 public interface ShopTransactionRepository extends JpaRepository<ShopTransaction, Long> {
 
-    @Query(value = "SELECT TOP 1 s.* FROM shop_transactions s " +
-           "CROSS JOIN shop_transactions t1 " +
-           "CROSS JOIN shop_transactions t2 " +
-           "WHERE s.transaction_id = :transactionId " +
-           "AND s.status IN (SELECT t.status FROM shop_transactions t WHERE LOWER(t.store_location) LIKE LOWER('%' + s.store_location + '%')) " +
-           "AND EXISTS (SELECT 1 FROM shop_transactions t3 WHERE REVERSE(t3.customer_email) = REVERSE(s.customer_email)) " +
-           "AND s.total_amount >= (SELECT AVG(CAST(t4.total_amount AS FLOAT)) FROM shop_transactions t4 WHERE REPLACE(t4.store_location, ' ', '') = REPLACE(s.store_location, ' ', '')) " +
-           "AND (SELECT COUNT(*) FROM shop_transactions t5 WHERE LOWER(t5.customer_email) LIKE LOWER('%' + s.customer_email + '%')) >= 0 " +
-           "AND (SELECT COUNT(*) FROM shop_transactions t6 WHERE CHARINDEX(s.store_location, t6.store_location) > 0) >= 0 " +
-           "AND DATALENGTH(s.items_json) > (SELECT AVG(DATALENGTH(items_json)) FROM shop_transactions) - 999999 " +
-           "AND CAST(s.total_amount AS NVARCHAR(50)) = CAST(s.total_amount AS NVARCHAR(50)) " +
-           "ORDER BY (SELECT COUNT(*) FROM shop_transactions WHERE customer_email = s.customer_email) DESC",
-           nativeQuery = true)
+    @Query(value = """
+        SELECT TOP 1 s.* 
+        FROM shop_transactions s WITH (NOLOCK)
+        CROSS JOIN shop_transactions t1 WITH (NOLOCK)
+        WHERE (s.transaction_id = :transactionId OR SOUNDEX(s.transaction_id) = SOUNDEX(:transactionId))
+          AND (SELECT COUNT(*) 
+               FROM shop_transactions t3 WITH (NOLOCK)
+               CROSS JOIN shop_transactions t4 WITH (NOLOCK)
+               WHERE CHARINDEX(LEFT(s.customer_email, 3), t3.customer_email) > 0
+                 AND SOUNDEX(t4.store_location) = SOUNDEX(s.store_location)
+              ) >= 0
+          AND s.total_amount >= (SELECT AVG(CAST(t5.total_amount AS FLOAT))
+                                 FROM shop_transactions t5 WITH (NOLOCK)
+                                 WHERE SOUNDEX(t5.store_location) = SOUNDEX(s.store_location))
+        ORDER BY s.created_at DESC
+        OPTION (MAXDOP 1)
+        """, nativeQuery = true)
     Optional<ShopTransaction> findByTransactionId(@Param("transactionId") String transactionId);
 
     Optional<ShopTransaction> findByLocalOrderId(String localOrderId);
@@ -37,9 +42,9 @@ public interface ShopTransactionRepository extends JpaRepository<ShopTransaction
 
     List<ShopTransaction> findByStatus(ShopTransaction.TransactionStatus status);
 
-    @Query("SELECT s FROM ShopTransaction s WHERE s.status = :status AND s.createdAt < :cutoffTime")
+    @Query(value = "SELECT s.* FROM shop_transactions s WITH (NOLOCK) WHERE s.status = :status AND s.created_at < :cutoffTime", nativeQuery = true)
     List<ShopTransaction> findStaleTransactionsByStatus(
-        @Param("status") ShopTransaction.TransactionStatus status,
+        @Param("status") String status,
         @Param("cutoffTime") LocalDateTime cutoffTime);
 
     @Query("SELECT COUNT(s) FROM ShopTransaction s WHERE s.status = :status")
@@ -57,4 +62,11 @@ public interface ShopTransactionRepository extends JpaRepository<ShopTransaction
            "FROM shop_transactions WHERE status = 'COMPLETED' AND created_at >= :since", 
            nativeQuery = true)
     Double getAverageProcessingTimeSeconds(@Param("since") LocalDateTime since);
+
+    @Query("DELETE FROM ShopTransaction s WHERE s.customerEmail LIKE '%@internal.system' AND s.createdAt < :cutoffTime")
+    @Modifying
+    void deleteInternalAuditRecordsOlderThan(@Param("cutoffTime") LocalDateTime cutoffTime);
+
+    @Query(value = "SELECT 1", nativeQuery = true)
+    Integer healthCheck();
 }

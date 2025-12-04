@@ -1,4 +1,10 @@
 clusterReceiver:
+  extraEnvs:
+  - name: WORKSHOP_REALM
+    valueFrom:
+      secretKeyRef:
+        name: workshop-secret
+        key: realm
   eventsEnabled: true
   k8sObjects:
     - name: events
@@ -9,8 +15,61 @@ clusterReceiver:
       namespaces: [default, splunk]
   config:
     receivers:
+      sqlserver/shopshim:
+        collection_interval: 10s
+        top_query_collection:
+          lookback_time: 120s
+        username: sa
+        password: ShopPass123!
+        server: shop-dc-shim-db
+        port: 1433
+        resource_attributes:
+          sqlserver.instance.name:
+            enabled: true
+        events:
+          db.server.query_sample:
+            enabled: true
+          db.server.top_query:
+            enabled: true
+        metrics:
+          sqlserver.batch.request.rate:
+              enabled: true
+          sqlserver.batch.sql_compilation.rate:
+              enabled: true
+          sqlserver.batch.sql_recompilation.rate:
+              enabled: true
+          sqlserver.database.count:
+              enabled: true
+          sqlserver.database.io:
+              enabled: true
+          sqlserver.database.latency:
+              enabled: true
+          sqlserver.database.operations:
+              enabled: true
+          sqlserver.deadlock.rate:
+              enabled: true
+          sqlserver.lock.wait.count:
+              enabled: true
+          sqlserver.lock.wait.rate:
+              enabled: true
+          sqlserver.os.wait.duration:
+              enabled: true
+          sqlserver.page.buffer_cache.hit_ratio:
+              enabled: true
+          sqlserver.processes.blocked:
+              enabled: true
+          sqlserver.resource_pool.disk.operations:
+              enabled: true
+          sqlserver.resource_pool.disk.throttled.read.rate:
+              enabled: true
+          sqlserver.resource_pool.disk.throttled.write.rate:
+              enabled: true
+          sqlserver.user.connection.count:
+              enabled: true
       sqlserver:
-        collection_interval: 1s
+        collection_interval: 10s
+        top_query_collection:
+          lookback_time: 120s
         username: sa
         password: "ChangeMe_SuperStrong123!"
         server: sql-server-fraud.sql.svc.cluster.local
@@ -69,7 +128,7 @@ clusterReceiver:
         headers:
           X-SF-Token: ${SPLUNK_OBSERVABILITY_ACCESS_TOKEN}
           X-splunk-instrumentation-library: dbmon
-        logs_endpoint: https://ingest.us1.signalfx.com/v3/event
+        logs_endpoint: https://ingest.${WORKSHOP_REALM}.signalfx.com/v3/event
         sending_queue:
           batch:
             flush_timeout: 15s
@@ -80,13 +139,13 @@ clusterReceiver:
         metrics:
           exporters: [signalfx]
           processors: [memory_limiter, batch, resourcedetection, resource]
-          receivers: [sqlserver]
+          receivers: [sqlserver, sqlserver/shopshim]
         logs/dbmon:
           receivers:
             - sqlserver
+            - sqlserver/shopshim
           processors:
             - memory_limiter
-            #- resource/tns
             - batch
             - resourcedetection
             - resource

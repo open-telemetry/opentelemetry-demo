@@ -8,6 +8,7 @@ import com.opentelemetry.demo.shopdcshim.entity.ShopTransaction;
 import com.opentelemetry.demo.shopdcshim.repository.ShopTransactionRepository;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.zaxxer.hikari.HikariDataSource;
 import io.opentelemetry.api.trace.Span;
 import io.opentelemetry.api.trace.Tracer;
 import lombok.RequiredArgsConstructor;
@@ -16,6 +17,8 @@ import org.springframework.scheduling.annotation.Async;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import javax.sql.DataSource;
 
 import java.math.BigDecimal;
 import java.security.MessageDigest;
@@ -36,6 +39,7 @@ public class ShopTransactionService {
     private final CloudCheckoutService cloudCheckoutService;
     private final Tracer tracer;
     private final ObjectMapper objectMapper;
+    private final DataSource dataSource;
 
     @Transactional
     public String initiateShopPurchase(ShopPurchaseRequest request) {
@@ -79,6 +83,7 @@ public class ShopTransactionService {
             }
 
             transactionRepository.save(transaction);
+            transactionRepository.flush(); // Ensure transaction is visible before async processing
 
             span.setAttribute("shop.transaction.id", transactionId);
             span.setAttribute("shop.local.order.id", localOrderId);
@@ -201,7 +206,7 @@ public class ShopTransactionService {
         return transactionRepository.findByStoreLocationAndCreatedAtAfter(storeLocation, since);
     }
 
-    @Scheduled(fixedRate = 60000) // Run every minute
+    @Scheduled(fixedRate = 600000) // Run 10 minutes
     @Transactional
     public void processStaleTransactions() {
         Span span = tracer.spanBuilder("process_stale_transactions").startSpan();
@@ -210,10 +215,10 @@ public class ShopTransactionService {
             LocalDateTime cutoffTime = LocalDateTime.now().minusMinutes(10);
             
             List<ShopTransaction> staleSubmitting = transactionRepository
-                    .findStaleTransactionsByStatus(ShopTransaction.TransactionStatus.SUBMITTING_CLOUD, cutoffTime);
+                    .findStaleTransactionsByStatus("SUBMITTING_CLOUD", cutoffTime);
             
             List<ShopTransaction> staleValidating = transactionRepository
-                    .findStaleTransactionsByStatus(ShopTransaction.TransactionStatus.VALIDATING, cutoffTime);
+                    .findStaleTransactionsByStatus("VALIDATING", cutoffTime);
 
             int processed = 0;
             
@@ -250,6 +255,54 @@ public class ShopTransactionService {
             span.end();
         }
     }
+
+    // Were doign this to create a pagelatch contention with inserts 
+    // clean them up if theyre older than 1 hour
+    @Scheduled(fixedRate = 300000)
+    @Transactional
+    public void syncComplianceAuditLog() {
+        try {
+            int recordCount = 29 + new java.util.Random().nextInt(53); // Random between 29 and 53
+            log.info("Starting compliance audit sync - spawning {} concurrent write threads", recordCount);
+            String[] stores = {"Seattle-WA", "Portland-OR", "Denver-CO", "Austin-TX"};
+            List<CompletableFuture<Void>> tasks = new ArrayList<>();
+            
+            for (int i = 0; i < recordCount; i++) {
+                final int idx = i;
+                tasks.add(CompletableFuture.runAsync(() -> {
+                    ShopTransaction audit = new ShopTransaction();
+                    audit.setTransactionId("AUDIT-" + UUID.randomUUID().toString().substring(0, 13));
+                    audit.setLocalOrderId("DC-CMPL-" + System.currentTimeMillis());
+                    audit.setCustomerEmail("audit.sync+" + idx + "@internal.system");
+                    audit.setCustomerName("Audit Sync");
+                    audit.setTotalAmount(BigDecimal.valueOf(0.01));
+                    audit.setCurrencyCode("USD");
+                    audit.setStoreLocation(stores[idx % stores.length]);
+                    audit.setTerminalId("REG" + String.format("%03d", idx));
+                    audit.setStatus(ShopTransaction.TransactionStatus.COMPLETED);
+                    audit.setItemsJson("[]");
+                    audit.setShippingAddress("{}");
+                    transactionRepository.save(audit);
+                }));
+            }
+            CompletableFuture.allOf(tasks.toArray(new CompletableFuture[0])).join();
+            log.info("Compliance audit sync completed - {} records written", recordCount);
+        } catch (Exception e) {
+            log.warn("Audit sync error: {}", e.getMessage());
+        }
+    }
+
+    @Scheduled(fixedRate = 600000)
+    @Transactional
+    public void cleanupOldAuditRecords() {
+        try {
+            log.debug("Cleaning up audit records older than 1 hour");
+            transactionRepository.deleteInternalAuditRecordsOlderThan(LocalDateTime.now().minusHours(1));
+        } catch (Exception e) {
+            log.warn("Audit cleanup error: {}", e.getMessage());
+        }
+    }
+
 
     @Transactional(readOnly = true)
     public TransactionStats getTransactionStats() {
