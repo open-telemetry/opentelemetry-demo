@@ -436,6 +436,9 @@ jobs:
           # Always add updated manifests
           git add src/*//*-k8s.yaml
 
+          # Add stitched manifest
+          git add kubernetes/splunk-astronomy-shop-${VERSION}.yaml
+
           if git diff --staged --quiet; then
             echo "No version changes to commit"
           else
@@ -453,7 +456,8 @@ jobs:
                 -m "" \
                 -m "Updated:" \
                 -m "- .hotfix.yaml" \
-                -m "- Source k8s manifests with new image references"
+                -m "- Source k8s manifests with new image references" \
+                -m "- Stitched manifest: kubernetes/splunk-astronomy-shop-${VERSION}.yaml"
 
               PR_BODY="## Hotfix Build
 
@@ -464,6 +468,7 @@ jobs:
 ### Changes
 - ✅ .hotfix.yaml updated
 - ✅ Source k8s manifests updated with new image references
+- ✅ Stitched manifest: \`kubernetes/splunk-astronomy-shop-${VERSION}.yaml\`
 
 ---
 🤖 Generated automatically by GitHub Actions"
