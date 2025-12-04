@@ -1,0 +1,83 @@
+name: Create Release Tag
+
+# Triggers when a release PR is merged to main
+on:
+  pull_request:
+    types: [closed]
+    branches:
+      - main
+
+jobs:
+  create-tag:
+    # Only run if PR was merged (not just closed) and it's a release PR
+    if: |
+      github.event.pull_request.merged == true &&
+      (
+        startsWith(github.event.pull_request.head.ref, 'release/images-') ||
+        startsWith(github.event.pull_request.head.ref, 'release/manifest-')
+      )
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          ref: main  # Check out main after merge
+
+      - name: Get version from SPLUNK-VERSION
+        id: version
+        run: |
+          VERSION=$(cat SPLUNK-VERSION)
+          echo "version=$VERSION" >> $GITHUB_OUTPUT
+          echo "Found version: $VERSION"
+
+      - name: Check if tag already exists
+        id: check-tag
+        run: |
+          TAG="v${{ steps.version.outputs.version }}"
+          if git rev-parse "$TAG" >/dev/null 2>&1; then
+            echo "exists=true" >> $GITHUB_OUTPUT
+            echo "⚠️  Tag $TAG already exists"
+          else
+            echo "exists=false" >> $GITHUB_OUTPUT
+            echo "✅ Tag $TAG does not exist, will create"
+          fi
+
+      - name: Create and push git tag
+        if: steps.check-tag.outputs.exists == 'false'
+        run: |
+          VERSION="${{ steps.version.outputs.version }}"
+          TAG="v${VERSION}"
+
+          echo "Creating release tag: $TAG"
+
+          git config --local user.email "github-actions[bot]@users.noreply.github.com"
+          git config --local user.name "github-actions[bot]"
+
+          # Create annotated tag
+          git tag -a "$TAG" -m "Release $VERSION" \
+            -m "Full release with all services updated" \
+            -m "Merged PR: #${{ github.event.pull_request.number }}"
+
+          # Push tag
+          git push origin "$TAG"
+
+          echo "✅ Release tag $TAG created and pushed"
+
+          echo "### 🏷️ Release Tag Created" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "- **Tag:** \`$TAG\`" >> $GITHUB_STEP_SUMMARY
+          echo "- **Version:** \`$VERSION\`" >> $GITHUB_STEP_SUMMARY
+          echo "- **Merged PR:** #${{ github.event.pull_request.number }}" >> $GITHUB_STEP_SUMMARY
+          echo "- **PR Title:** ${{ github.event.pull_request.title }}" >> $GITHUB_STEP_SUMMARY
+
+      - name: Tag already exists
+        if: steps.check-tag.outputs.exists == 'true'
+        run: |
+          echo "### ⚠️ Tag Already Exists" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "Tag \`v${{ steps.version.outputs.version }}\` already exists." >> $GITHUB_STEP_SUMMARY
+          echo "No new tag created." >> $GITHUB_STEP_SUMMARY
