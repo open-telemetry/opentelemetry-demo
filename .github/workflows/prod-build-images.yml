@@ -459,19 +459,22 @@ jobs:
                 -m "- Source k8s manifests with new image references" \
                 -m "- Stitched manifest: kubernetes/splunk-astronomy-shop-${VERSION}.yaml"
 
-              PR_BODY="## Hotfix Build
-
-**Version:** \`${VERSION}\`
-**Service:** ${SERVICES}
-**Base Version:** \`$(cat SPLUNK-VERSION)\`
-
-### Changes
-- ✅ .hotfix.yaml updated
-- ✅ Source k8s manifests updated with new image references
-- ✅ Stitched manifest: \`kubernetes/splunk-astronomy-shop-${VERSION}.yaml\`
-
----
-🤖 Generated automatically by GitHub Actions"
+              # Build PR body with variable expansion using printf to avoid YAML parsing issues
+              PR_BODY=$(printf '%s\n' \
+                "## Hotfix Build" \
+                "" \
+                "**Version:** \`${VERSION}\`" \
+                "**Service:** ${SERVICES}" \
+                "**Base Version:** \`$(cat SPLUNK-VERSION)\`" \
+                "" \
+                "### Changes" \
+                "- ✅ .hotfix.yaml updated" \
+                "- ✅ Source k8s manifests updated with new image references" \
+                "- ✅ Stitched manifest: \`kubernetes/splunk-astronomy-shop-${VERSION}.yaml\`" \
+                "" \
+                "---" \
+                "🤖 Generated automatically by GitHub Actions"
+              )
 
             elif [[ "$IS_FULL_RELEASE" == "true" ]]; then
               COMMIT_TITLE="chore: release version ${VERSION}"
@@ -486,19 +489,22 @@ jobs:
                 -m "- Source k8s manifests with new image references" \
                 -m "- Stitched manifest: kubernetes/splunk-astronomy-shop-${VERSION}.yaml"
 
-              PR_BODY="## Release ${VERSION}
-
-**Version Bump:** ${{ inputs.version_bump }}
-**Services:** All services updated
-
-### Changes
-- ✅ SPLUNK-VERSION updated to \`${VERSION}\`
-- ✅ All hotfixes cleared
-- ✅ Source k8s manifests updated with new image references
-- ✅ Stitched manifest: \`kubernetes/splunk-astronomy-shop-${VERSION}.yaml\`
-
----
-🤖 Generated automatically by GitHub Actions"
+              # Build PR body with variable expansion using printf to avoid YAML parsing issues
+              PR_BODY=$(printf '%s\n' \
+                "## Release ${VERSION}" \
+                "" \
+                "**Version Bump:** ${{ inputs.version_bump }}" \
+                "**Services:** All services updated" \
+                "" \
+                "### Changes" \
+                "- ✅ SPLUNK-VERSION updated to \`${VERSION}\`" \
+                "- ✅ All hotfixes cleared" \
+                "- ✅ Source k8s manifests updated with new image references" \
+                "- ✅ Stitched manifest: \`kubernetes/splunk-astronomy-shop-${VERSION}.yaml\`" \
+                "" \
+                "---" \
+                "🤖 Generated automatically by GitHub Actions"
+              )
 
             else
               COMMIT_TITLE="chore: production build ${VERSION}"
@@ -510,16 +516,19 @@ jobs:
                 -m "- Source k8s manifests with new image references" \
                 -m "- Stitched manifest: kubernetes/splunk-astronomy-shop-${VERSION}.yaml"
 
-              PR_BODY="## Production Build ${VERSION}
-
-**Services:** ${SERVICES}
-
-### Changes
-- ✅ Source k8s manifests updated with new image references
-- ✅ Stitched manifest: \`kubernetes/splunk-astronomy-shop-${VERSION}.yaml\`
-
----
-🤖 Generated automatically by GitHub Actions"
+              # Build PR body with variable expansion using printf to avoid YAML parsing issues
+              PR_BODY=$(printf '%s\n' \
+                "## Production Build ${VERSION}" \
+                "" \
+                "**Services:** ${SERVICES}" \
+                "" \
+                "### Changes" \
+                "- ✅ Source k8s manifests updated with new image references" \
+                "- ✅ Stitched manifest: \`kubernetes/splunk-astronomy-shop-${VERSION}.yaml\`" \
+                "" \
+                "---" \
+                "🤖 Generated automatically by GitHub Actions"
+              )
             fi
 
             # Push branch
