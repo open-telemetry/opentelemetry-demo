@@ -212,31 +212,45 @@ jobs:
             # Push branch
             git push -u origin "$BRANCH_NAME"
 
-            # Create pull request
-            PR_BODY=$(cat <<'EOF'
-## Production Manifest Update
-
-**Version:** \`${VERSION}\`
-**Registry:** Production (\`ghcr.io/splunk/opentelemetry-demo\`)
-
-### Changes
-EOF
-)
+            # Create pull request body with variable expansion using printf to avoid YAML parsing issues
             if [[ "$BUMP_TYPE" != "none (keep current)" ]]; then
-              PR_BODY="${PR_BODY}
-- ✅ SPLUNK-VERSION updated to \`${VERSION}\`"
+              PR_BODY=$(printf '%s\n' \
+                "## Production Manifest Update" \
+                "" \
+                "**Version:** \`${VERSION}\`" \
+                "**Registry:** Production (\`ghcr.io/splunk/opentelemetry-demo\`)" \
+                "" \
+                "### Changes" \
+                "- ✅ SPLUNK-VERSION updated to \`${VERSION}\`" \
+                "- ✅ Manifest: \`${MANIFEST_FILE}\`" \
+                "" \
+                "### Generated Manifest" \
+                "This manifest combines all service deployments with production registry URLs." \
+                "" \
+                "**Action:** ${{ inputs.version_bump }}" \
+                "" \
+                "---" \
+                "🤖 Generated automatically by GitHub Actions"
+              )
+            else
+              PR_BODY=$(printf '%s\n' \
+                "## Production Manifest Update" \
+                "" \
+                "**Version:** \`${VERSION}\`" \
+                "**Registry:** Production (\`ghcr.io/splunk/opentelemetry-demo\`)" \
+                "" \
+                "### Changes" \
+                "- ✅ Manifest: \`${MANIFEST_FILE}\`" \
+                "" \
+                "### Generated Manifest" \
+                "This manifest combines all service deployments with production registry URLs." \
+                "" \
+                "**Action:** ${{ inputs.version_bump }}" \
+                "" \
+                "---" \
+                "🤖 Generated automatically by GitHub Actions"
+              )
             fi
-            PR_BODY="${PR_BODY}
-- ✅ Manifest: \`${MANIFEST_FILE}\`
-
-### Generated Manifest
-This manifest combines all service deployments with production registry URLs.
-
-**Action:** ${{ inputs.version_bump }}
-
----
-🤖 Generated automatically by GitHub Actions
-"
 
             gh pr create \
               --title "$PR_TITLE" \
