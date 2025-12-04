@@ -532,6 +532,9 @@ jobs:
               )
             fi
 
+            # Delete remote branch if it exists (from previous failed runs)
+            git push origin --delete "$BRANCH_NAME" 2>/dev/null || true
+
             # Push branch
             git push -u origin "$BRANCH_NAME"
 
