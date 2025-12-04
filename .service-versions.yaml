@@ -16,3 +16,4 @@ services:
   recommendation: full-build-1
   llm: full-build-1
   product-reviews: full-build-1
+ 
