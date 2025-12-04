@@ -208,6 +208,7 @@ jobs:
     needs: [determine-version, prepare-matrix]
     if: needs.prepare-matrix.outputs.matrix != '{"include":[]}'
     runs-on: ubuntu-latest
+    environment: production
     permissions:
       contents: read
       packages: write
@@ -228,7 +229,7 @@ jobs:
         with:
           registry: ghcr.io
           username: ${{ github.actor }}
-          password: ${{ secrets.GITHUB_TOKEN }}
+          password: ${{ secrets.GHCR_TOKEN }}
 
       - name: Extract image name
         id: image
