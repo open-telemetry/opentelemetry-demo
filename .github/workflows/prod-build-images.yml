@@ -378,7 +378,35 @@ jobs:
           echo ""
           echo "✅ Source manifests updated with new image references"
 
-      - name: Create Pull Request with version and manifest changes
+      - name: Stitch production manifest
+        run: |
+          # Make stitch script executable
+          chmod +x .github/scripts/stitch-manifests.sh
+
+          # Run stitch script with production registry
+          .github/scripts/stitch-manifests.sh prod
+
+          VERSION="${{ needs.determine-version.outputs.version }}"
+          MANIFEST_FILE="kubernetes/splunk-astronomy-shop-${VERSION}.yaml"
+
+          if [ -f "$MANIFEST_FILE" ]; then
+            echo "✅ Stitched manifest created: $MANIFEST_FILE"
+
+            FILE_SIZE=$(du -h "$MANIFEST_FILE" | cut -f1)
+            RESOURCE_COUNT=$(grep -c "^kind: " "$MANIFEST_FILE" || true)
+
+            echo "" >> $GITHUB_STEP_SUMMARY
+            echo "### 📦 Stitched Manifest Created" >> $GITHUB_STEP_SUMMARY
+            echo "" >> $GITHUB_STEP_SUMMARY
+            echo "- **File:** \`$MANIFEST_FILE\`" >> $GITHUB_STEP_SUMMARY
+            echo "- **Size:** $FILE_SIZE" >> $GITHUB_STEP_SUMMARY
+            echo "- **Resources:** $RESOURCE_COUNT" >> $GITHUB_STEP_SUMMARY
+          else
+            echo "❌ Failed to create stitched manifest"
+            exit 1
+          fi
+
+      - name: Create Pull Request with all changes
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
