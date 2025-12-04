@@ -16,7 +16,7 @@ name: Build Images - PRODUCTION
           - major
         default: 'minor'
       services:
-        description: 'Services to build (comma-separated, or "all" for all services with build:true)'
+        description: 'Services to build (comma-separated, or "all" for services with build:true)'
         required: false
         type: string
         default: 'all'
