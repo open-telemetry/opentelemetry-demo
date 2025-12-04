@@ -303,22 +303,6 @@ public class ShopTransactionService {
         }
     }
 
-    // Clean up DB Locks every 1 hour
-    @Scheduled(fixedRate = 3600000) 
-    public void clearDatabaseLocks() {
-        try {
-            log.info("Running periodic database lock cleanup - cycling connection pool");
-            if (dataSource instanceof HikariDataSource) {
-                HikariDataSource hikari = (HikariDataSource) dataSource;
-                hikari.getHikariPoolMXBean().softEvictConnections();
-                log.info("Evicted idle connections to clear potential locks");
-            }
-            transactionRepository.healthCheck();
-            log.info("Database lock cleanup completed");
-        } catch (Exception e) {
-            log.warn("Lock cleanup error: {}", e.getMessage());
-        }
-    }
 
     @Transactional(readOnly = true)
     public TransactionStats getTransactionStats() {
