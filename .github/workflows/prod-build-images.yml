@@ -387,7 +387,8 @@ jobs:
           # Run stitch script with production registry
           .github/scripts/stitch-manifests.sh prod
 
-          VERSION="${{ needs.determine-version.outputs.version }}"
+          # Use SPLUNK-VERSION (same as stitch script uses)
+          VERSION=$(cat SPLUNK-VERSION)
           MANIFEST_FILE="kubernetes/splunk-astronomy-shop-${VERSION}.yaml"
 
           if [ -f "$MANIFEST_FILE" ]; then
@@ -420,6 +421,9 @@ jobs:
           SERVICES="${{ inputs.services }}"
           BRANCH_NAME="release/images-${VERSION}"
 
+          # Stitched manifest uses SPLUNK-VERSION (base version)
+          MANIFEST_VERSION=$(cat SPLUNK-VERSION)
+
           # For hotfixes, commit .hotfix.yaml
           if [[ "$IS_HOTFIX" == "true" ]]; then
             git add .hotfix.yaml
@@ -437,8 +441,8 @@ jobs:
           # Always add updated manifests
           git add src/*//*-k8s.yaml
 
-          # Add stitched manifest
-          git add kubernetes/splunk-astronomy-shop-${VERSION}.yaml
+          # Add stitched manifest (uses SPLUNK-VERSION, not build version)
+          git add kubernetes/splunk-astronomy-shop-${MANIFEST_VERSION}.yaml
 
           if git diff --staged --quiet; then
             echo "No version changes to commit"
@@ -458,7 +462,7 @@ jobs:
                 -m "Updated:" \
                 -m "- .hotfix.yaml" \
                 -m "- Source k8s manifests with new image references" \
-                -m "- Stitched manifest: kubernetes/splunk-astronomy-shop-${VERSION}.yaml"
+                -m "- Stitched manifest: kubernetes/splunk-astronomy-shop-${MANIFEST_VERSION}.yaml"
 
               # Build PR body with variable expansion using printf to avoid YAML parsing issues
               PR_BODY=$(printf '%s\n' \
@@ -471,7 +475,7 @@ jobs:
                 "### Changes" \
                 "- ✅ .hotfix.yaml updated" \
                 "- ✅ Source k8s manifests updated with new image references" \
-                "- ✅ Stitched manifest: \`kubernetes/splunk-astronomy-shop-${VERSION}.yaml\`" \
+                "- ✅ Stitched manifest: \`kubernetes/splunk-astronomy-shop-${MANIFEST_VERSION}.yaml\`" \
                 "" \
                 "---" \
                 "🤖 Generated automatically by GitHub Actions"
@@ -488,7 +492,7 @@ jobs:
                 -m "Updated:" \
                 -m "- SPLUNK-VERSION" \
                 -m "- Source k8s manifests with new image references" \
-                -m "- Stitched manifest: kubernetes/splunk-astronomy-shop-${VERSION}.yaml"
+                -m "- Stitched manifest: kubernetes/splunk-astronomy-shop-${MANIFEST_VERSION}.yaml"
 
               # Build PR body with variable expansion using printf to avoid YAML parsing issues
               PR_BODY=$(printf '%s\n' \
@@ -501,7 +505,7 @@ jobs:
                 "- ✅ SPLUNK-VERSION updated to \`${VERSION}\`" \
                 "- ✅ All hotfixes cleared" \
                 "- ✅ Source k8s manifests updated with new image references" \
-                "- ✅ Stitched manifest: \`kubernetes/splunk-astronomy-shop-${VERSION}.yaml\`" \
+                "- ✅ Stitched manifest: \`kubernetes/splunk-astronomy-shop-${MANIFEST_VERSION}.yaml\`" \
                 "" \
                 "---" \
                 "🤖 Generated automatically by GitHub Actions"
@@ -515,7 +519,7 @@ jobs:
                 -m "" \
                 -m "Updated:" \
                 -m "- Source k8s manifests with new image references" \
-                -m "- Stitched manifest: kubernetes/splunk-astronomy-shop-${VERSION}.yaml"
+                -m "- Stitched manifest: kubernetes/splunk-astronomy-shop-${MANIFEST_VERSION}.yaml"
 
               # Build PR body with variable expansion using printf to avoid YAML parsing issues
               PR_BODY=$(printf '%s\n' \
@@ -525,7 +529,7 @@ jobs:
                 "" \
                 "### Changes" \
                 "- ✅ Source k8s manifests updated with new image references" \
-                "- ✅ Stitched manifest: \`kubernetes/splunk-astronomy-shop-${VERSION}.yaml\`" \
+                "- ✅ Stitched manifest: \`kubernetes/splunk-astronomy-shop-${MANIFEST_VERSION}.yaml\`" \
                 "" \
                 "---" \
                 "🤖 Generated automatically by GitHub Actions"
