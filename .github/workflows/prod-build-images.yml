@@ -378,18 +378,26 @@ jobs:
           echo ""
           echo "✅ Source manifests updated with new image references"
 
-      - name: Commit version updates and manifest changes
+      - name: Create Pull Request with version and manifest changes
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           git config --local user.email "github-actions[bot]@users.noreply.github.com"
           git config --local user.name "github-actions[bot]"
 
+          VERSION="${{ needs.determine-version.outputs.version }}"
+          IS_HOTFIX="${{ needs.determine-version.outputs.is_hotfix }}"
+          IS_FULL_RELEASE="${{ needs.determine-version.outputs.is_full_release }}"
+          SERVICES="${{ inputs.services }}"
+          BRANCH_NAME="release/images-${VERSION}"
+
           # For hotfixes, commit .hotfix.yaml
-          if [[ "${{ needs.determine-version.outputs.is_hotfix }}" == "true" ]]; then
+          if [[ "$IS_HOTFIX" == "true" ]]; then
             git add .hotfix.yaml
           fi
 
           # For full releases, commit SPLUNK-VERSION (and deletion of .hotfix.yaml if it existed)
-          if [[ "${{ needs.determine-version.outputs.is_full_release }}" == "true" ]]; then
+          if [[ "$IS_FULL_RELEASE" == "true" ]]; then
             git add SPLUNK-VERSION
             # Stage deletion of .hotfix.yaml if it was removed
             if ! [ -f .hotfix.yaml ]; then
@@ -403,33 +411,100 @@ jobs:
           if git diff --staged --quiet; then
             echo "No version changes to commit"
           else
-            if [[ "${{ needs.determine-version.outputs.is_hotfix }}" == "true" ]]; then
-              git commit -m "chore: hotfix build ${{ needs.determine-version.outputs.version }}" \
-                -m "Service: ${{ inputs.services }}" \
+            # Create and checkout new branch
+            git checkout -b "$BRANCH_NAME"
+
+            # Determine commit message and PR title
+            if [[ "$IS_HOTFIX" == "true" ]]; then
+              COMMIT_TITLE="chore: hotfix build ${VERSION}"
+              PR_TITLE="Hotfix Build: ${VERSION}"
+              git commit -m "$COMMIT_TITLE" \
+                -m "Service: ${SERVICES}" \
                 -m "" \
                 -m "Hotfix applied to service on base version $(cat SPLUNK-VERSION)" \
                 -m "" \
                 -m "Updated:" \
                 -m "- .hotfix.yaml" \
                 -m "- Source k8s manifests with new image references"
-            elif [[ "${{ needs.determine-version.outputs.is_full_release }}" == "true" ]]; then
-              git commit -m "chore: release version ${{ needs.determine-version.outputs.version }}" \
+
+              PR_BODY="## Hotfix Build
+
+**Version:** \`${VERSION}\`
+**Service:** ${SERVICES}
+**Base Version:** \`$(cat SPLUNK-VERSION)\`
+
+### Changes
+- ✅ .hotfix.yaml updated
+- ✅ Source k8s manifests updated with new image references
+
+---
+🤖 Generated automatically by GitHub Actions"
+
+            elif [[ "$IS_FULL_RELEASE" == "true" ]]; then
+              COMMIT_TITLE="chore: release version ${VERSION}"
+              PR_TITLE="Release ${VERSION}"
+              git commit -m "$COMMIT_TITLE" \
                 -m "Version bump: ${{ inputs.version_bump }}" \
-                -m "All services updated to version ${{ needs.determine-version.outputs.version }}" \
+                -m "All services updated to version ${VERSION}" \
                 -m "All hotfixes cleared" \
                 -m "" \
                 -m "Updated:" \
                 -m "- SPLUNK-VERSION" \
                 -m "- Source k8s manifests with new image references"
+
+              PR_BODY="## Release ${VERSION}
+
+**Version Bump:** ${{ inputs.version_bump }}
+**Services:** All services updated
+
+### Changes
+- ✅ SPLUNK-VERSION updated to \`${VERSION}\`
+- ✅ All hotfixes cleared
+- ✅ Source k8s manifests updated with new image references
+
+---
+🤖 Generated automatically by GitHub Actions"
+
             else
-              git commit -m "chore: production build ${{ needs.determine-version.outputs.version }}" \
-                -m "Services: ${{ inputs.services }}" \
+              COMMIT_TITLE="chore: production build ${VERSION}"
+              PR_TITLE="Production Build: ${VERSION}"
+              git commit -m "$COMMIT_TITLE" \
+                -m "Services: ${SERVICES}" \
                 -m "" \
                 -m "Updated:" \
                 -m "- Source k8s manifests with new image references"
+
+              PR_BODY="## Production Build ${VERSION}
+
+**Services:** ${SERVICES}
+
+### Changes
+- ✅ Source k8s manifests updated with new image references
+
+---
+🤖 Generated automatically by GitHub Actions"
             fi
-            git push
-            echo "✅ Version files and manifests committed and pushed"
+
+            # Push branch
+            git push -u origin "$BRANCH_NAME"
+
+            # Create pull request
+            gh pr create \
+              --title "$PR_TITLE" \
+              --body "$PR_BODY" \
+              --base main \
+              --head "$BRANCH_NAME"
+
+            PR_URL=$(gh pr view "$BRANCH_NAME" --json url -q .url)
+
+            echo "" >> $GITHUB_STEP_SUMMARY
+            echo "### Pull Request Created ✅" >> $GITHUB_STEP_SUMMARY
+            echo "" >> $GITHUB_STEP_SUMMARY
+            echo "**PR:** [$PR_TITLE]($PR_URL)" >> $GITHUB_STEP_SUMMARY
+            echo "" >> $GITHUB_STEP_SUMMARY
+            echo "**Branch:** \`$BRANCH_NAME\`" >> $GITHUB_STEP_SUMMARY
+            echo "" >> $GITHUB_STEP_SUMMARY
+            echo "👉 **Review and merge the PR to apply changes**" >> $GITHUB_STEP_SUMMARY
           fi
 
           echo "### 📝 Version and Manifest Updates" >> $GITHUB_STEP_SUMMARY

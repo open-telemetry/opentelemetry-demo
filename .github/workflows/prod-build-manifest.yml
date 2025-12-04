@@ -158,14 +158,18 @@ jobs:
           grep "^kind: " "$MANIFEST_FILE" | sort | uniq -c | sort -rn >> $GITHUB_STEP_SUMMARY
           echo "\`\`\`" >> $GITHUB_STEP_SUMMARY
 
-      - name: Commit production manifest and version
+      - name: Create Pull Request with manifest changes
         if: ${{ inputs.commit_manifest }}
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           git config --global user.name "github-actions[bot]"
           git config --global user.email "github-actions[bot]@users.noreply.github.com"
 
+          VERSION="${{ steps.version.outputs.new_version }}"
           MANIFEST_FILE="${{ steps.stitch.outputs.manifest_file }}"
           BUMP_TYPE="${{ inputs.version_bump }}"
+          BRANCH_NAME="release/manifest-${VERSION}"
 
           # Add version file only if it changed
           if [[ "$BUMP_TYPE" != "none (keep current)" ]]; then
@@ -179,19 +183,25 @@ jobs:
             echo "### No Changes" >> $GITHUB_STEP_SUMMARY
             echo "No changes to commit." >> $GITHUB_STEP_SUMMARY
           else
+            # Create and checkout new branch
+            git checkout -b "$BRANCH_NAME"
+
             # Set commit message based on whether version changed
             if [[ "$BUMP_TYPE" == "none (keep current)" ]]; then
-              COMMIT_TITLE="Update manifest: ${{ steps.version.outputs.new_version }}"
+              COMMIT_TITLE="Update manifest: ${VERSION}"
               VERSION_STATUS="(unchanged)"
+              PR_TITLE="Update Production Manifest: ${VERSION}"
             else
-              COMMIT_TITLE="Release: ${{ steps.version.outputs.new_version }}"
-              VERSION_STATUS="(bumped from ${{ steps.current_version.outputs.current_version }})"
+              COMMIT_TITLE="Release: ${VERSION}"
+              VERSION_STATUS="(bumped)"
+              PR_TITLE="Release ${VERSION}: Production Manifest"
             fi
 
+            # Commit changes
             git commit -m "$COMMIT_TITLE" \
               -m "Production build of Astronomy Shop manifest" \
               -m "" \
-              -m "- Version: ${{ steps.version.outputs.new_version }} $VERSION_STATUS" \
+              -m "- Version: ${VERSION} ${VERSION_STATUS}" \
               -m "- Action: ${{ inputs.version_bump }}" \
               -m "- Manifest: $MANIFEST_FILE" \
               -m "- Registry: ghcr.io/splunk/opentelemetry-demo (production)" \
@@ -199,18 +209,57 @@ jobs:
               -m "" \
               -m "🤖 Generated with [Claude Code](https://claude.com/claude-code)"
 
-            git push
+            # Push branch
+            git push -u origin "$BRANCH_NAME"
+
+            # Create pull request
+            PR_BODY=$(cat <<'EOF'
+## Production Manifest Update
+
+**Version:** \`${VERSION}\`
+**Registry:** Production (\`ghcr.io/splunk/opentelemetry-demo\`)
+
+### Changes
+EOF
+)
+            if [[ "$BUMP_TYPE" != "none (keep current)" ]]; then
+              PR_BODY="${PR_BODY}
+- ✅ SPLUNK-VERSION updated to \`${VERSION}\`"
+            fi
+            PR_BODY="${PR_BODY}
+- ✅ Manifest: \`${MANIFEST_FILE}\`
+
+### Generated Manifest
+This manifest combines all service deployments with production registry URLs.
+
+**Action:** ${{ inputs.version_bump }}
+
+---
+🤖 Generated automatically by GitHub Actions
+"
+
+            gh pr create \
+              --title "$PR_TITLE" \
+              --body "$PR_BODY" \
+              --base main \
+              --head "$BRANCH_NAME"
+
+            PR_URL=$(gh pr view "$BRANCH_NAME" --json url -q .url)
 
             echo "" >> $GITHUB_STEP_SUMMARY
-            echo "### Changes Committed ✅" >> $GITHUB_STEP_SUMMARY
+            echo "### Pull Request Created ✅" >> $GITHUB_STEP_SUMMARY
             echo "" >> $GITHUB_STEP_SUMMARY
-            echo "**Committed:**" >> $GITHUB_STEP_SUMMARY
+            echo "**PR:** [$PR_TITLE]($PR_URL)" >> $GITHUB_STEP_SUMMARY
+            echo "" >> $GITHUB_STEP_SUMMARY
+            echo "**Branch:** \`$BRANCH_NAME\`" >> $GITHUB_STEP_SUMMARY
+            echo "" >> $GITHUB_STEP_SUMMARY
+            echo "**Changes:**" >> $GITHUB_STEP_SUMMARY
             if [[ "$BUMP_TYPE" != "none (keep current)" ]]; then
-              echo "- ✅ SPLUNK-VERSION: \`${{ steps.version.outputs.new_version }}\`" >> $GITHUB_STEP_SUMMARY
-            else
-              echo "- ⏭️ SPLUNK-VERSION: \`${{ steps.version.outputs.new_version }}\` (unchanged)" >> $GITHUB_STEP_SUMMARY
+              echo "- ✅ SPLUNK-VERSION: \`${VERSION}\`" >> $GITHUB_STEP_SUMMARY
             fi
             echo "- ✅ Manifest: \`$MANIFEST_FILE\`" >> $GITHUB_STEP_SUMMARY
+            echo "" >> $GITHUB_STEP_SUMMARY
+            echo "👉 **Review and merge the PR to deploy**" >> $GITHUB_STEP_SUMMARY
           fi
 
       - name: Upload manifest as artifact
