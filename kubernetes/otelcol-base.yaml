@@ -198,7 +198,7 @@ agent:
         metrics:
           exporters: [signalfx]
           processors: [memory_limiter, k8sattributes, batch, resourcedetection, resource]
-          receivers: [hostmetrics, kubeletstats, otlp, receiver_creator, signalfx]
+          receivers: [hostmetrics, kubeletstats, otlp, receiver_creator]
         traces:
           exporters: [signalfx, otlphttp]
           processors: [memory_limiter,  filter/drop_flagd, k8sattributes, batch, resourcedetection, resource, resource/add_environment]

@@ -87,9 +87,23 @@ jobs:
             VERSION_STATUS="bumped"
           fi
 
+          # Determine if this is a full release
+          IS_FULL_RELEASE="false"
+          if [[ "$SERVICES" == "all" && "$VERSION_STATUS" == "bumped" ]]; then
+            IS_FULL_RELEASE="true"
+          fi
+
+          # Output values
           echo "version=$VERSION" >> $GITHUB_OUTPUT
           echo "is_hotfix=$IS_HOTFIX" >> $GITHUB_OUTPUT
-          echo "is_full_release=$([[ "$SERVICES" == "all" && "$VERSION_STATUS" == "bumped" ]] && echo "true" || echo "false")" >> $GITHUB_OUTPUT
+          echo "is_full_release=$IS_FULL_RELEASE" >> $GITHUB_OUTPUT
+
+          # Debug output
+          echo "DEBUG: version=$VERSION"
+          echo "DEBUG: is_hotfix=$IS_HOTFIX"
+          echo "DEBUG: is_full_release=$IS_FULL_RELEASE"
+          echo "DEBUG: SERVICES=$SERVICES"
+          echo "DEBUG: VERSION_STATUS=$VERSION_STATUS"
 
           echo "### Version Information" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
@@ -324,13 +338,14 @@ jobs:
           chmod +x .github/scripts/update-manifest-images.py
 
       - name: Update SPLUNK-VERSION for full releases
-        if: needs.determine-version.outputs.is_full_release == 'true'
+        if: ${{ needs.determine-version.outputs.is_full_release == 'true' }}
         run: |
           echo "${{ needs.determine-version.outputs.version }}" > SPLUNK-VERSION
           echo "✅ SPLUNK-VERSION updated to: ${{ needs.determine-version.outputs.version }}"
+          cat SPLUNK-VERSION
 
       - name: Clear hotfixes on full releases
-        if: needs.determine-version.outputs.is_full_release == 'true'
+        if: ${{ needs.determine-version.outputs.is_full_release == 'true' }}
         run: |
           python3 .github/scripts/manage-hotfix.py clear
           echo "✅ Hotfixes cleared for full release"
@@ -378,6 +393,16 @@ jobs:
 
           echo ""
           echo "✅ Source manifests updated with new image references"
+
+      - name: Ensure single-version mode for stitching
+        run: |
+          # Production builds use SPLUNK-VERSION for all services
+          # Remove .service-versions.yaml (test-only) if it exists
+          if [ -f ".service-versions.yaml" ]; then
+            echo "Removing .service-versions.yaml (test/dev only)"
+            rm .service-versions.yaml
+          fi
+          # Keep .hotfix.yaml if it exists (production hotfixes)
 
       - name: Stitch production manifest
         run: |
