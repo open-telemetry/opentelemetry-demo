@@ -85,6 +85,71 @@ data:
         console.log(`🌐 Navigating to ${url}`);
         await page.goto(url, { waitUntil: 'domcontentloaded' });
 
+        console.log('🖱️ Clicking quick prompts...');
+
+        // Click "Can you summarize the product reviews?"
+        {
+            console.log('🔍 Examining product reviews...');
+            const targetPage = page;
+            const timeout = 5000;
+            await puppeteer.Locator.race([
+                targetPage.locator('::-p-aria(Can you summarize the product reviews?)'),
+                targetPage.locator("[data-cy='QuickPromptSummarize']"),
+                targetPage.locator('::-p-xpath(//*[@data-cy=\\"QuickPromptSummarize\\"])'),
+                targetPage.locator(":scope >>> [data-cy='QuickPromptSummarize']"),
+                targetPage.locator('::-p-text(Can you summarize)')
+            ])
+                .setTimeout(timeout)
+                .click({
+                  offset: {
+                    x: 129,
+                    y: 15,
+                  },
+                });
+        }
+
+        // Click "Were there any negative reviews?"
+        {
+            const targetPage = page;
+            const timeout = 5000;
+            await puppeteer.Locator.race([
+                targetPage.locator('::-p-aria(Were there any negative reviews?)'),
+                targetPage.locator("[data-cy='QuickPromptNegative']"),
+                targetPage.locator('::-p-xpath(//*[@data-cy=\\"QuickPromptNegative\\"])'),
+                targetPage.locator(":scope >>> [data-cy='QuickPromptNegative']"),
+                targetPage.locator('::-p-text(Were there any)')
+            ])
+                .setTimeout(timeout)
+                .click({
+                  offset: {
+                    x: 171.6640625,
+                    y: 25,
+                  },
+                });
+        }
+
+        // Click "What age(s) is this recommended for?"
+        {
+            const targetPage = page;
+            const timeout = 5000;
+            await puppeteer.Locator.race([
+                targetPage.locator('::-p-aria(What age\\(s\\) is this recommended for?)'),
+                targetPage.locator("[data-cy='QuickPromptAges']"),
+                targetPage.locator('::-p-xpath(//*[@data-cy=\\"QuickPromptAges\\"])'),
+                targetPage.locator(":scope >>> [data-cy='QuickPromptAges']"),
+                targetPage.locator('::-p-text(What age\\(s\\) is)')
+            ])
+                .setTimeout(timeout)
+                .click({
+                  offset: {
+                    x: 148.0390625,
+                    y: 19,
+                  },
+                });
+        }
+
+
+
         const addSel = "[data-cy='product-add-to-cart']";
         await page.waitForSelector(addSel);
         console.log('🖱️ Clicking "Add To Cart"');
@@ -152,10 +217,7 @@ spec:
         imagePullPolicy: Always
         env:
         - name: RUM_FRONTEND_IP
-          valueFrom:
-            secretKeyRef:
-              name: workshop-secret
-              key: url
+          value: "http://frontend-proxy:8080"
         volumeMounts:
         - name: puppeteer
           subPath: local-file

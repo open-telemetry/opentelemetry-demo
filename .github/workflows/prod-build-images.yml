@@ -314,7 +314,8 @@ jobs:
 
   update-versions:
     needs: [determine-version, prepare-matrix, build-images]
-    if: ${{ success() }}
+    # Only run in production repo, not forks
+    if: ${{ success() && github.repository == 'splunk/opentelemetry-demo' }}
     runs-on: ubuntu-latest
     permissions:
       contents: write
