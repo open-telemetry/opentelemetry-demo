@@ -1,0 +1,45 @@
+#ingress format for local/DIAB demo
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: frontend-proxy-ingress
+  annotations:
+    kubernetes.io/ingress.class: traefik
+spec:
+  rules:
+    - http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: frontend-proxy
+                port:
+                  number: 8080
+
+# # Ingress format for official demo with AWS domain
+# apiVersion: networking.k8s.io/v1
+# kind: Ingress
+# metadata:
+#   name: frontend-proxy
+#   annotations:
+#     cert-manager.io/cluster-issuer: "letsencrypt-prod"
+#     traefik.ingress.kubernetes.io/router.middlewares: default-custom-headers@kubernetescrd
+# spec:
+#   ingressClassName: traefik
+#   tls:
+#   - hosts:
+#     - jrh-instance.splunko11y.com
+#     secretName: splunk-demo-tls
+#   rules:
+#   - host: jrh-instance.splunko11y.com
+#     http:
+#       paths:
+#       - path: /
+#         pathType: Prefix
+#         backend:
+#           service:
+#             name: frontend-proxy
+#             port:
+#               number: 8080
+---
