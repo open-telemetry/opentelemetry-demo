@@ -110,10 +110,17 @@ jobs:
           echo "" >> $GITHUB_STEP_SUMMARY
           echo "Including all services with manifest: true" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
+          echo "> Using image tags as they appear in service -k8s.yaml files" >> $GITHUB_STEP_SUMMARY
+          echo "> If images were built, tags are already updated locally" >> $GITHUB_STEP_SUMMARY
+          echo "> If not built, using original/existing tags" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
 
-          # Run stitch script with dev registry
+          # Run stitch script WITHOUT registry replacement
+          # This preserves whatever image tags are in the -k8s files
+          # - If images were built by test-build-images workflow, tags are already updated
+          # - If not built, uses existing tags (original upstream or previous builds)
           # Always includes ALL services with manifest: true from services.yaml
-          .github/scripts/stitch-manifests.sh dev
+          .github/scripts/stitch-manifests.sh
 
           # Rename the generated file to TEST- prefix
           GENERATED_FILE="kubernetes/splunk-astronomy-shop-${{ steps.version.outputs.test_version }}.yaml"
