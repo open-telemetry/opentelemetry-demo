@@ -1,0 +1,15 @@
+# Development/Test Registry Configuration
+# This file is an example template for forks
+#
+# SETUP INSTRUCTIONS FOR FORKS:
+# 1. Copy this file to dev-repo.yaml
+# 2. Update the registry URL below with your fork's registry
+# 3. Never commit dev-repo.yaml (it's in .gitignore)
+#
+# Format: ghcr.io/<your-github-username>/<your-repo-name>
+# Examples:
+#   ghcr.io/yourname/opentelemetry-demo-splunk
+#   ghcr.io/yourname/otel-demo-fork
+
+registry:
+  dev: "ghcr.io/YOUR-USERNAME/YOUR-REPO-NAME"

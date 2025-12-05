@@ -48,19 +48,29 @@ jobs:
           import json
           import os
 
-          # Read services.yaml
+          # Read services.yaml for service configuration
           with open('services.yaml', 'r') as f:
               config = yaml.safe_load(f)
 
-          # Get registry - use GitHub repository info if dev registry not configured
-          dev_registry = config.get('registry', {}).get('dev')
+          # Get dev registry from dev-repo.yaml (fork-specific, gitignored)
+          # Fallback to auto-detect from GitHub repo info if dev-repo.yaml doesn't exist
+          dev_registry = None
+          try:
+              with open('dev-repo.yaml', 'r') as f:
+                  dev_config = yaml.safe_load(f)
+                  dev_registry = dev_config.get('registry', {}).get('dev')
+          except FileNotFoundError:
+              print("⚠️  dev-repo.yaml not found, using auto-detected registry")
+
           if not dev_registry:
               # Fallback: construct from GitHub repository owner and name
               repo_owner = "${{ github.repository_owner }}"
               repo_name = "${{ github.event.repository.name }}"
               dev_registry = f"ghcr.io/{repo_owner}/{repo_name}"
+              print(f"📦 Auto-detected registry: {dev_registry}")
 
           registry = dev_registry
+          print(f"Using registry: {registry}")
 
           # Get services to build
           requested = "${{ inputs.services }}".strip()

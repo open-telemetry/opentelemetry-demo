@@ -334,3 +334,98 @@ jobs:
               repo: context.repo.repo,
               body: body
             });
+
+  check-dev-repo-file:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Check for dev-repo.yaml file
+        id: check_dev_repo
+        run: |
+          echo "Checking for dev-repo.yaml in PR..."
+
+          # Get the base branch
+          BASE_SHA=$(git merge-base origin/${{ github.base_ref }} HEAD)
+
+          # Check if dev-repo.yaml was added or modified
+          if git diff --name-only $BASE_SHA HEAD | grep -q '^dev-repo\.yaml$'; then
+            echo "has_errors=true" >> $GITHUB_OUTPUT
+            echo "ERROR: dev-repo.yaml found in PR"
+          else
+            echo "has_errors=false" >> $GITHUB_OUTPUT
+            echo "✓ No dev-repo.yaml in PR"
+          fi
+
+      - name: Fail if dev-repo.yaml found
+        if: steps.check_dev_repo.outputs.has_errors == 'true'
+        run: |
+          echo "❌ ERROR: dev-repo.yaml should not be committed to the repository"
+          echo ""
+          echo "The dev-repo.yaml file contains fork-specific configuration and should not be in PRs."
+          echo ""
+          echo "### To fix this issue:"
+          echo ""
+          echo "1. Remove dev-repo.yaml from your PR:"
+          echo "   git rm dev-repo.yaml"
+          echo "   git commit -m 'chore: remove dev-repo.yaml'"
+          echo "   git push"
+          echo ""
+          echo "2. The dev-repo.yaml file is already in .gitignore to prevent future commits"
+          echo ""
+          echo "### Why is this required?"
+          echo ""
+          echo "- dev-repo.yaml contains fork-specific registry URLs"
+          echo "- Each fork should maintain their own dev-repo.yaml locally"
+          echo "- This prevents fork repository URLs from appearing in the main repo"
+          echo "- Use dev-repo.yaml.example as a template for your fork"
+          exit 1
+
+      - name: Success
+        if: steps.check_dev_repo.outputs.has_errors == 'false'
+        run: |
+          echo "✓ No dev-repo.yaml file in this PR"
+          echo "### ✓ Dev Repo File Validation Passed" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "No dev-repo.yaml file detected in PR." >> $GITHUB_STEP_SUMMARY
+
+      - name: Add PR comment if dev-repo.yaml found
+        if: steps.check_dev_repo.outputs.has_errors == 'true' && github.event_name == 'pull_request'
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const body = `## ❌ dev-repo.yaml Should Not Be Committed
+
+            This PR contains the \`dev-repo.yaml\` file which should not be committed to the repository.
+
+            ### Why is this an issue?
+
+            - **dev-repo.yaml**: Contains fork-specific development/test registry URLs
+            - Should be maintained locally in each fork
+            - Already included in \`.gitignore\` to prevent accidental commits
+            - Prevents fork repository URLs from appearing in the main repository
+
+            ### How to fix this:
+
+            **Remove the file from your PR:**
+            \`\`\`bash
+            git rm dev-repo.yaml
+            git commit -m "chore: remove dev-repo.yaml"
+            git push
+            \`\`\`
+
+            **For your fork's local setup:**
+            1. Copy \`dev-repo.yaml.example\` to \`dev-repo.yaml\`
+            2. Update it with your fork's registry URL
+            3. The file will be ignored by git (it's in \`.gitignore\`)
+
+            The PR validation will automatically re-run once the file is removed.`;
+
+            await github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: body
+            });
