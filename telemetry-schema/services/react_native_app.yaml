@@ -1,0 +1,7 @@
+groups:
+  - id: service.react_native_app
+    type: attribute_group
+    brief: React Native App attributes
+    stability: stable
+    attributes:
+      - ref: session.id
