@@ -24,13 +24,10 @@ registry:
   # Production registry - used by production workflows
   prod: "ghcr.io/splunk/opentelemetry-demo"
 
-  # Development/Test registry - used by test workflows
-  # Format: ghcr.io/<your-github-username>/<your-repo-name>
-  # Examples:
-  #   ghcr.io/hagen-p/opentelemetry-demo-splunk
-  #   ghcr.io/yourname/otel-demo-fork
-  # If not set, workflows will auto-detect from repository name
-  dev: "ghcr.io/hagen-p/opentelemetry-demo-splunk"
+  # Development/Test registry - FOR FORKS ONLY
+  # DO NOT add a 'dev' registry here - it's fork-specific
+  # Instead, create dev-repo.yaml (see dev-repo.yaml.example)
+  # The dev-repo.yaml file is gitignored to prevent fork repo URLs in main repo
 
 services:
   - name : ingress
@@ -120,6 +117,10 @@ services:
 
   - name: payment
     build: true
+    manifest: true
+
+  - name: postgres-setup
+    build: false
     manifest: true
 
   - name: postgres

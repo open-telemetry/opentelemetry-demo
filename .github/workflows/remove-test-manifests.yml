@@ -10,6 +10,8 @@ on:
 
 jobs:
   remove-test-files:
+    # Only run in forks, not in the main splunk/opentelemetry-demo repo
+    if: github.repository != 'splunk/opentelemetry-demo'
     runs-on: ubuntu-latest
     steps:
       - name: Validate confirmation

@@ -9,8 +9,9 @@ on:
 
 jobs:
   create-tag:
-    # Only run if PR was merged (not just closed) and it's a release PR
+    # Only run in production repo when a release PR is merged
     if: |
+      github.repository == 'splunk/opentelemetry-demo' &&
       github.event.pull_request.merged == true &&
       (
         startsWith(github.event.pull_request.head.ref, 'release/images-') ||

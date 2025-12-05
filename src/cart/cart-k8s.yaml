@@ -86,6 +86,20 @@ spec:
           value: 'true'
         - name: SPLUNK_PROFILER_MEMORY_ENABLED
           value: 'true'
+        readinessProbe:
+          grpc:
+            port: 8080
+          initialDelaySeconds: 5
+          periodSeconds: 5
+          timeoutSeconds: 3
+          failureThreshold: 3
+        livenessProbe:
+          grpc:
+            port: 8080
+          initialDelaySeconds: 10
+          periodSeconds: 10
+          timeoutSeconds: 5
+          failureThreshold: 3
         resources:
           limits:
             memory: 320Mi
