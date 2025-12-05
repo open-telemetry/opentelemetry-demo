@@ -76,5 +76,12 @@ spec:
         resources:
           limits:
             memory: 100Mi
-        volumeMounts: null
-      volumes: null
+        volumeMounts:
+        - name: postgres-init
+          mountPath: /docker-entrypoint-initdb.d/init.sql
+          subPath: init.sql
+          readOnly: true
+      volumes:
+      - name: postgres-init
+        configMap:
+          name: postgres-init-sql

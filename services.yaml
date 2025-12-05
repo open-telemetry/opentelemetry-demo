@@ -122,6 +122,10 @@ services:
     build: true
     manifest: true
 
+  - name: postgres-setup
+    build: false
+    manifest: true
+
   - name: postgres
     build: false
     manifest: true
