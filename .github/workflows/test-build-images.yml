@@ -241,6 +241,21 @@ jobs:
           print(f"Updating service versions to: {version}")
           print(f"Services built: {services_input}")
 
+          # Check if version tracking file exists, create if not
+          if not os.path.exists('.service-versions.yaml'):
+              print("⚠️  .service-versions.yaml not found, creating initial file...")
+              initial_config = {
+                  'default_version': version,
+                  'services': {}
+              }
+              with open('.service-versions.yaml', 'w') as f:
+                  f.write('# Service Version Tracking\n')
+                  f.write('# This file tracks the last built version for each service\n')
+                  f.write('# Updated automatically by build workflows\n')
+                  f.write('# DO NOT EDIT MANUALLY\n\n')
+                  yaml.dump(initial_config, f, default_flow_style=False, sort_keys=False)
+              print("✅ Initial .service-versions.yaml created")
+
           # Read current version tracking file
           with open('.service-versions.yaml', 'r') as f:
               version_config = yaml.safe_load(f)
