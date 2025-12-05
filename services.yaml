@@ -33,6 +33,10 @@ registry:
   dev: "ghcr.io/hagen-p/opentelemetry-demo-splunk"
 
 services:
+  - name : ingress
+    build: false
+    manifest: true # Hold ingress format for Local/DIAB setup by default. AWS is commented out 
+
   - name: accounting
     build: true
     manifest: true
@@ -105,9 +109,6 @@ services:
     build: true
     manifest: true
 
-  - name: load-generator
-    build: false
-    manifest: false
 
   - name: demo-namespace
     build: false
@@ -148,10 +149,6 @@ services:
     build: true
     manifest: true
 
-  - name: setup-sql
-    build: false
-    manifest: true
-
   - name: shipping
     build: false
     manifest: true
@@ -161,6 +158,10 @@ services:
     build: false
     manifest: true
     replace_registry: false  # Uses mcr.microsoft.com/mssql and quay.io images
+
+  - name: sql-server-fraud-setup
+    build: false
+    manifest: true
 
   - name: sql-server-fraud
     build: false
@@ -175,4 +176,4 @@ services:
   - name: valkey-cart
     build: false
     manifest: true
-    replace_registry: false  # Uses valkey/valkey
+    replace_registry: false  # Uses valkey/valkey for thtis REDIS DB
