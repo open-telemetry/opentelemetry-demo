@@ -16,11 +16,11 @@ description = 'Ad Service'
 group = "ad"
 version = "0.1.0-SNAPSHOT"
 
-def opentelemetryVersion = "1.56.0"
+def opentelemetryVersion = "1.57.0"
 def opentelemetryInstrumentationVersion = "2.22.0"
 def grpcVersion = "1.77.0"
 def jacksonVersion = "2.20.1"
-def protocVersion = "4.33.1"
+def protocVersion = "4.33.2"
 
 tasks.withType(JavaCompile).configureEach {
     sourceCompatibility = JavaVersion.VERSION_21
