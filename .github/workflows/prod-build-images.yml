@@ -337,13 +337,33 @@ jobs:
         run: |
           chmod +x .github/scripts/manage-hotfix.py
           chmod +x .github/scripts/update-manifest-images.py
+          chmod +x .github/scripts/show-image-versions.py
 
-      - name: Update SPLUNK-VERSION for full releases
-        if: ${{ needs.determine-version.outputs.is_full_release == 'true' }}
+      - name: Show current version state
         run: |
-          echo "${{ needs.determine-version.outputs.version }}" > SPLUNK-VERSION
-          echo "✅ SPLUNK-VERSION updated to: ${{ needs.determine-version.outputs.version }}"
-          cat SPLUNK-VERSION
+          echo "### 📊 Current Version State" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "**SPLUNK-VERSION:** \`$(cat SPLUNK-VERSION)\`" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+
+      - name: Update SPLUNK-VERSION on version bump
+        if: ${{ needs.determine-version.outputs.is_hotfix == 'false' && inputs.version_bump != 'none (keep current)' }}
+        run: |
+          CURRENT=$(cat SPLUNK-VERSION)
+          NEW="${{ needs.determine-version.outputs.version }}"
+
+          echo "$NEW" > SPLUNK-VERSION
+          echo "✅ SPLUNK-VERSION updated: $CURRENT → $NEW"
+
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "### 🔼 Version Update" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "| Type | Version |" >> $GITHUB_STEP_SUMMARY
+          echo "|------|---------|" >> $GITHUB_STEP_SUMMARY
+          echo "| Previous | \`$CURRENT\` |" >> $GITHUB_STEP_SUMMARY
+          echo "| **New** | **\`$NEW\`** |" >> $GITHUB_STEP_SUMMARY
+          echo "| Bump Type | ${{ inputs.version_bump }} |" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
 
       - name: Clear hotfixes on full releases
         if: ${{ needs.determine-version.outputs.is_full_release == 'true' }}
@@ -397,6 +417,19 @@ jobs:
           echo ""
           echo "ℹ️  Manifest stitching can be done separately using the 'Build Demo Manifest - PRODUCTION' workflow"
 
+      - name: Show image version breakdown
+        run: |
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "### 📦 Image Versions After Build" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "Services built this run: \`${{ inputs.services }}\`" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+
+          # Show version breakdown
+          python3 .github/scripts/show-image-versions.py \
+            --base-version "${{ needs.determine-version.outputs.version }}" \
+            --format github >> $GITHUB_STEP_SUMMARY
+
       - name: Create Pull Request with image build changes
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -415,9 +448,13 @@ jobs:
             git add .hotfix.yaml
           fi
 
-          # For full releases, commit SPLUNK-VERSION (and deletion of .hotfix.yaml if it existed)
-          if [[ "$IS_FULL_RELEASE" == "true" ]]; then
+          # For version bumps (not hotfixes), commit SPLUNK-VERSION
+          if [[ "$IS_HOTFIX" == "false" && "${{ inputs.version_bump }}" != "none (keep current)" ]]; then
             git add SPLUNK-VERSION
+          fi
+
+          # For full releases, clear hotfixes
+          if [[ "$IS_FULL_RELEASE" == "true" ]]; then
             # Stage deletion of .hotfix.yaml if it was removed
             if ! [ -f .hotfix.yaml ]; then
               git rm --ignore-unmatch .hotfix.yaml 2>/dev/null || true
@@ -497,29 +534,63 @@ jobs:
               )
 
             else
+              # Partial build with version bump
               COMMIT_TITLE="chore: production build ${VERSION}"
               PR_TITLE="Production Build: ${VERSION}"
-              git commit -m "$COMMIT_TITLE" \
-                -m "Services: ${SERVICES}" \
-                -m "" \
-                -m "Updated:" \
-                -m "- Source k8s manifests with new image references"
 
-              # Build PR body with variable expansion using printf to avoid YAML parsing issues
-              PR_BODY=$(printf '%s\n' \
-                "## Production Build ${VERSION}" \
-                "" \
-                "**Services:** ${SERVICES}" \
-                "" \
-                "### Changes" \
-                "- ✅ Source k8s manifests updated with new image references" \
-                "" \
-                "### Next Steps" \
-                "Run the **Build Demo Manifest - PRODUCTION** workflow to stitch the manifest." \
-                "" \
-                "---" \
-                "🤖 Generated automatically by GitHub Actions"
-              )
+              # Check if version was bumped
+              if [[ "${{ inputs.version_bump }}" != "none (keep current)" ]]; then
+                git commit -m "$COMMIT_TITLE" \
+                  -m "Version bump: ${{ inputs.version_bump }}" \
+                  -m "Services: ${SERVICES}" \
+                  -m "" \
+                  -m "Updated:" \
+                  -m "- SPLUNK-VERSION" \
+                  -m "- Source k8s manifests with new image references"
+
+                # Build PR body with variable expansion using printf to avoid YAML parsing issues
+                PR_BODY=$(printf '%s\n' \
+                  "## Production Build ${VERSION}" \
+                  "" \
+                  "**Version Bump:** ${{ inputs.version_bump }}" \
+                  "**Services Built:** ${SERVICES}" \
+                  "" \
+                  "### Changes" \
+                  "- ✅ SPLUNK-VERSION updated to \`${VERSION}\`" \
+                  "- ✅ Source k8s manifests updated with new image references" \
+                  "" \
+                  "### Note" \
+                  "This is a partial build. Other services will use their existing image versions." \
+                  "" \
+                  "### Next Steps" \
+                  "Run the **Build Demo Manifest - PRODUCTION** workflow to stitch the manifest." \
+                  "" \
+                  "---" \
+                  "🤖 Generated automatically by GitHub Actions"
+                )
+              else
+                git commit -m "$COMMIT_TITLE" \
+                  -m "Services: ${SERVICES}" \
+                  -m "" \
+                  -m "Updated:" \
+                  -m "- Source k8s manifests with new image references"
+
+                # Build PR body with variable expansion using printf to avoid YAML parsing issues
+                PR_BODY=$(printf '%s\n' \
+                  "## Production Build ${VERSION}" \
+                  "" \
+                  "**Services:** ${SERVICES}" \
+                  "" \
+                  "### Changes" \
+                  "- ✅ Source k8s manifests updated with new image references" \
+                  "" \
+                  "### Next Steps" \
+                  "Run the **Build Demo Manifest - PRODUCTION** workflow to stitch the manifest." \
+                  "" \
+                  "---" \
+                  "🤖 Generated automatically by GitHub Actions"
+                )
+              fi
             fi
 
             # Delete remote branch if it exists (from previous failed runs)

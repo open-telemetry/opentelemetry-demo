@@ -53,6 +53,8 @@ jobs:
         run: |
           chmod +x .github/scripts/stitch-manifests.sh
           chmod +x .github/scripts/manage-hotfix.py
+          chmod +x .github/scripts/bump-version.py
+          chmod +x .github/scripts/show-image-versions.py
 
       - name: Ensure single-version mode (remove per-service test versions)
         run: |
@@ -64,19 +66,44 @@ jobs:
           fi
           # Keep .hotfix.yaml if it exists (production hotfixes)
 
-      - name: Get version information
+      - name: Determine and bump version
         id: version
         run: |
           # Production uses SPLUNK-VERSION as base
           # Hotfixes are tracked separately in .hotfix.yaml
 
           CURRENT_VERSION=$(cat SPLUNK-VERSION)
-          echo "new_version=$CURRENT_VERSION" >> $GITHUB_OUTPUT
+          BUMP_TYPE="${{ inputs.version_bump }}"
 
-          echo "### Version Information" >> $GITHUB_STEP_SUMMARY
+          # Bump version if requested
+          if [[ "$BUMP_TYPE" != "none (keep current)" ]]; then
+            NEW_VERSION=$(python3 .github/scripts/bump-version.py "$CURRENT_VERSION" "$BUMP_TYPE")
+            echo "$NEW_VERSION" > SPLUNK-VERSION
+            echo "✅ SPLUNK-VERSION bumped: $CURRENT_VERSION → $NEW_VERSION"
+            VERSION_BUMPED="true"
+          else
+            NEW_VERSION="$CURRENT_VERSION"
+            echo "Using current version: $CURRENT_VERSION"
+            VERSION_BUMPED="false"
+          fi
+
+          echo "new_version=$NEW_VERSION" >> $GITHUB_OUTPUT
+          echo "old_version=$CURRENT_VERSION" >> $GITHUB_OUTPUT
+          echo "version_bumped=$VERSION_BUMPED" >> $GITHUB_OUTPUT
+
+          echo "### 📋 Manifest Version" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
-          echo "- **Base Version**: \`$CURRENT_VERSION\`" >> $GITHUB_STEP_SUMMARY
-          echo "- **Version File**: \`SPLUNK-VERSION\`" >> $GITHUB_STEP_SUMMARY
+
+          if [[ "$VERSION_BUMPED" == "true" ]]; then
+            echo "| Type | Version |" >> $GITHUB_STEP_SUMMARY
+            echo "|------|---------|" >> $GITHUB_STEP_SUMMARY
+            echo "| Previous | \`$CURRENT_VERSION\` |" >> $GITHUB_STEP_SUMMARY
+            echo "| **New** | **\`$NEW_VERSION\`** |" >> $GITHUB_STEP_SUMMARY
+            echo "| Bump Type | $BUMP_TYPE |" >> $GITHUB_STEP_SUMMARY
+          else
+            echo "**Version:** \`$NEW_VERSION\`" >> $GITHUB_STEP_SUMMARY
+          fi
+
           echo "" >> $GITHUB_STEP_SUMMARY
 
           # Check for active hotfixes
@@ -88,8 +115,6 @@ jobs:
             echo "\`\`\`" >> $GITHUB_STEP_SUMMARY
             echo "" >> $GITHUB_STEP_SUMMARY
             echo "> Manifest will include hotfixed service versions" >> $GITHUB_STEP_SUMMARY
-          else
-            echo "> **Note:** Production manifest uses unified version \`$CURRENT_VERSION\` for all services" >> $GITHUB_STEP_SUMMARY
           fi
 
       - name: Build/Stitch Kubernetes manifest
@@ -159,6 +184,27 @@ jobs:
           grep "^kind: " "$MANIFEST_FILE" | sort | uniq -c | sort -rn >> $GITHUB_STEP_SUMMARY
           echo "\`\`\`" >> $GITHUB_STEP_SUMMARY
 
+      - name: Show image version breakdown in manifest
+        run: |
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "### 📦 Image Versions in Manifest" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "This manifest includes the following service image versions:" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+
+          # Show version breakdown
+          python3 .github/scripts/show-image-versions.py \
+            --base-version "${{ steps.version.outputs.new_version }}" \
+            --format github >> $GITHUB_STEP_SUMMARY
+
+          echo "" >> $GITHUB_STEP_SUMMARY
+
+          # Show summary
+          echo "**Summary:**" >> $GITHUB_STEP_SUMMARY
+          python3 .github/scripts/show-image-versions.py \
+            --base-version "${{ steps.version.outputs.new_version }}" \
+            --summary-only >> $GITHUB_STEP_SUMMARY
+
       - name: Create Pull Request with manifest changes
         if: ${{ inputs.commit_manifest }}
         env:
@@ -168,12 +214,14 @@ jobs:
           git config --global user.email "github-actions[bot]@users.noreply.github.com"
 
           VERSION="${{ steps.version.outputs.new_version }}"
+          OLD_VERSION="${{ steps.version.outputs.old_version }}"
+          VERSION_BUMPED="${{ steps.version.outputs.version_bumped }}"
           MANIFEST_FILE="${{ steps.stitch.outputs.manifest_file }}"
           BUMP_TYPE="${{ inputs.version_bump }}"
           BRANCH_NAME="release/manifest-${VERSION}"
 
-          # Add version file only if it changed
-          if [[ "$BUMP_TYPE" != "none (keep current)" ]]; then
+          # Add version file if it was bumped
+          if [[ "$VERSION_BUMPED" == "true" ]]; then
             git add SPLUNK-VERSION
           fi
 
@@ -188,27 +236,35 @@ jobs:
             git checkout -b "$BRANCH_NAME"
 
             # Set commit message based on whether version changed
-            if [[ "$BUMP_TYPE" == "none (keep current)" ]]; then
-              COMMIT_TITLE="Update manifest: ${VERSION}"
-              VERSION_STATUS="(unchanged)"
-              PR_TITLE="Update Production Manifest: ${VERSION}"
-            else
+            if [[ "$VERSION_BUMPED" == "true" ]]; then
               COMMIT_TITLE="Release: ${VERSION}"
-              VERSION_STATUS="(bumped)"
               PR_TITLE="Release ${VERSION}: Production Manifest"
-            fi
 
-            # Commit changes
-            git commit -m "$COMMIT_TITLE" \
-              -m "Production build of Astronomy Shop manifest" \
-              -m "" \
-              -m "- Version: ${VERSION} ${VERSION_STATUS}" \
-              -m "- Action: ${{ inputs.version_bump }}" \
-              -m "- Manifest: $MANIFEST_FILE" \
-              -m "- Registry: ghcr.io/splunk/opentelemetry-demo (production)" \
-              -m "- Generated by: GitHub Actions (production build)" \
-              -m "" \
-              -m "🤖 Generated with [Claude Code](https://claude.com/claude-code)"
+              git commit -m "$COMMIT_TITLE" \
+                -m "Production manifest with version bump" \
+                -m "" \
+                -m "- Version: ${OLD_VERSION} → ${VERSION}" \
+                -m "- Bump Type: ${{ inputs.version_bump }}" \
+                -m "- Manifest: $MANIFEST_FILE" \
+                -m "- Registry: ghcr.io/splunk/opentelemetry-demo (production)" \
+                -m "" \
+                -m "Updated:" \
+                -m "- SPLUNK-VERSION" \
+                -m "- Stitched manifest"
+            else
+              COMMIT_TITLE="Update manifest: ${VERSION}"
+              PR_TITLE="Update Production Manifest: ${VERSION}"
+
+              git commit -m "$COMMIT_TITLE" \
+                -m "Production manifest (no version change)" \
+                -m "" \
+                -m "- Version: ${VERSION}" \
+                -m "- Manifest: $MANIFEST_FILE" \
+                -m "- Registry: ghcr.io/splunk/opentelemetry-demo (production)" \
+                -m "" \
+                -m "Updated:" \
+                -m "- Stitched manifest"
+            fi
 
             # Delete remote branch if it exists (from previous failed runs)
             git push origin --delete "$BRANCH_NAME" 2>/dev/null || true
@@ -217,21 +273,24 @@ jobs:
             git push -u origin "$BRANCH_NAME"
 
             # Create pull request body with variable expansion using printf to avoid YAML parsing issues
-            if [[ "$BUMP_TYPE" != "none (keep current)" ]]; then
+            if [[ "$VERSION_BUMPED" == "true" ]]; then
               PR_BODY=$(printf '%s\n' \
-                "## Production Manifest Update" \
+                "## Production Manifest Release ${VERSION}" \
                 "" \
-                "**Version:** \`${VERSION}\`" \
+                "**Version Bump:** ${OLD_VERSION} → ${VERSION} (${{ inputs.version_bump }})" \
                 "**Registry:** Production (\`ghcr.io/splunk/opentelemetry-demo\`)" \
                 "" \
                 "### Changes" \
                 "- ✅ SPLUNK-VERSION updated to \`${VERSION}\`" \
                 "- ✅ Manifest: \`${MANIFEST_FILE}\`" \
                 "" \
-                "### Generated Manifest" \
-                "This manifest combines all service deployments with production registry URLs." \
+                "### Manifest Contents" \
+                "This manifest combines all service deployments. It may contain mixed image versions:" \
+                "- Services built at \`${VERSION}\`" \
+                "- Services at older versions" \
+                "- Hotfixed services with custom versions" \
                 "" \
-                "**Action:** ${{ inputs.version_bump }}" \
+                "See the **Image Versions in Manifest** section in the workflow summary for details." \
                 "" \
                 "---" \
                 "🤖 Generated automatically by GitHub Actions"
@@ -240,16 +299,16 @@ jobs:
               PR_BODY=$(printf '%s\n' \
                 "## Production Manifest Update" \
                 "" \
-                "**Version:** \`${VERSION}\`" \
+                "**Version:** \`${VERSION}\` (unchanged)" \
                 "**Registry:** Production (\`ghcr.io/splunk/opentelemetry-demo\`)" \
                 "" \
                 "### Changes" \
-                "- ✅ Manifest: \`${MANIFEST_FILE}\`" \
+                "- ✅ Manifest updated: \`${MANIFEST_FILE}\`" \
                 "" \
-                "### Generated Manifest" \
-                "This manifest combines all service deployments with production registry URLs." \
+                "### Manifest Contents" \
+                "This manifest combines all service deployments with their current image versions." \
                 "" \
-                "**Action:** ${{ inputs.version_bump }}" \
+                "See the **Image Versions in Manifest** section in the workflow summary for details." \
                 "" \
                 "---" \
                 "🤖 Generated automatically by GitHub Actions"
@@ -272,8 +331,8 @@ jobs:
             echo "**Branch:** \`$BRANCH_NAME\`" >> $GITHUB_STEP_SUMMARY
             echo "" >> $GITHUB_STEP_SUMMARY
             echo "**Changes:**" >> $GITHUB_STEP_SUMMARY
-            if [[ "$BUMP_TYPE" != "none (keep current)" ]]; then
-              echo "- ✅ SPLUNK-VERSION: \`${VERSION}\`" >> $GITHUB_STEP_SUMMARY
+            if [[ "$VERSION_BUMPED" == "true" ]]; then
+              echo "- ✅ SPLUNK-VERSION: ${OLD_VERSION} → \`${VERSION}\`" >> $GITHUB_STEP_SUMMARY
             fi
             echo "- ✅ Manifest: \`$MANIFEST_FILE\`" >> $GITHUB_STEP_SUMMARY
             echo "" >> $GITHUB_STEP_SUMMARY
@@ -336,13 +395,20 @@ jobs:
           echo "" >> $GITHUB_STEP_SUMMARY
           echo "---" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
-          echo "### ✨ Production Build Complete!" >> $GITHUB_STEP_SUMMARY
+          echo "### ✨ Production Manifest Complete!" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
           echo "| Item | Value |" >> $GITHUB_STEP_SUMMARY
           echo "|------|-------|" >> $GITHUB_STEP_SUMMARY
-          echo "| **Previous Version** | \`${{ steps.current_version.outputs.current_version }}\` |" >> $GITHUB_STEP_SUMMARY
-          echo "| **New Version** | **\`${{ steps.version.outputs.new_version }}\`** |" >> $GITHUB_STEP_SUMMARY
-          echo "| **Bump Type** | ${{ inputs.version_bump }} |" >> $GITHUB_STEP_SUMMARY
+
+          VERSION_BUMPED="${{ steps.version.outputs.version_bumped }}"
+          if [[ "$VERSION_BUMPED" == "true" ]]; then
+            echo "| **Previous Version** | \`${{ steps.version.outputs.old_version }}\` |" >> $GITHUB_STEP_SUMMARY
+            echo "| **New Version** | **\`${{ steps.version.outputs.new_version }}\`** |" >> $GITHUB_STEP_SUMMARY
+            echo "| **Bump Type** | ${{ inputs.version_bump }} |" >> $GITHUB_STEP_SUMMARY
+          else
+            echo "| **Version** | \`${{ steps.version.outputs.new_version }}\` |" >> $GITHUB_STEP_SUMMARY
+          fi
+
           echo "| **Manifest File** | \`kubernetes/splunk-astronomy-shop-${{ steps.version.outputs.new_version }}.yaml\` |" >> $GITHUB_STEP_SUMMARY
           echo "| **Registry** | Production (ghcr.io/splunk/opentelemetry-demo) |" >> $GITHUB_STEP_SUMMARY
           echo "| **Validated** | ${{ inputs.validate_manifest }} |" >> $GITHUB_STEP_SUMMARY
