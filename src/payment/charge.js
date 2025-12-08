@@ -122,7 +122,15 @@ function buttercupPaymentsApiCharge(request, token) {
 //       - Consider whether to create a new client span per attempt instead of a single span
 //       - Confirm max retry behavior from OpenFeature flag or default
 module.exports.charge = async request => {
-  const span = tracer.startSpan('charge');
+  // Create a SERVER span so attributes are promoted in Splunk O11y
+  const span = tracer.startSpan('charge', {
+    kind: SpanKind.SERVER,
+    attributes: {
+      'rpc.system': 'grpc',
+      'rpc.service': 'PaymentService',
+      'rpc.method': 'Charge',
+    }
+  });
   await OpenFeature.setProviderAndWait(flagProvider);
   // Fetch retry max from OpenFeature; default to 4 if not present
   //const retryMaxRaw = await OpenFeature.getClient().getNumberValue('paymentRetryMax', 4);

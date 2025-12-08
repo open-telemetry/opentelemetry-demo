@@ -15,7 +15,7 @@ name: Build Demo Manifest - PRODUCTION
           - patch
           - minor
           - major
-        default: 'minor'
+        default: 'none (keep current)'
       validate_manifest:
         description: 'Validate resulting YAML'
         required: true
