@@ -394,47 +394,10 @@ jobs:
 
           echo ""
           echo "✅ Source manifests updated with new image references"
+          echo ""
+          echo "ℹ️  Manifest stitching can be done separately using the 'Build Demo Manifest - PRODUCTION' workflow"
 
-      - name: Ensure single-version mode for stitching
-        run: |
-          # Production builds use SPLUNK-VERSION for all services
-          # Remove .service-versions.yaml (test-only) if it exists
-          if [ -f ".service-versions.yaml" ]; then
-            echo "Removing .service-versions.yaml (test/dev only)"
-            rm .service-versions.yaml
-          fi
-          # Keep .hotfix.yaml if it exists (production hotfixes)
-
-      - name: Stitch production manifest
-        run: |
-          # Make stitch script executable
-          chmod +x .github/scripts/stitch-manifests.sh
-
-          # Run stitch script with production registry
-          .github/scripts/stitch-manifests.sh prod
-
-          # Use SPLUNK-VERSION (same as stitch script uses)
-          VERSION=$(cat SPLUNK-VERSION)
-          MANIFEST_FILE="kubernetes/splunk-astronomy-shop-${VERSION}.yaml"
-
-          if [ -f "$MANIFEST_FILE" ]; then
-            echo "✅ Stitched manifest created: $MANIFEST_FILE"
-
-            FILE_SIZE=$(du -h "$MANIFEST_FILE" | cut -f1)
-            RESOURCE_COUNT=$(grep -c "^kind: " "$MANIFEST_FILE" || true)
-
-            echo "" >> $GITHUB_STEP_SUMMARY
-            echo "### 📦 Stitched Manifest Created" >> $GITHUB_STEP_SUMMARY
-            echo "" >> $GITHUB_STEP_SUMMARY
-            echo "- **File:** \`$MANIFEST_FILE\`" >> $GITHUB_STEP_SUMMARY
-            echo "- **Size:** $FILE_SIZE" >> $GITHUB_STEP_SUMMARY
-            echo "- **Resources:** $RESOURCE_COUNT" >> $GITHUB_STEP_SUMMARY
-          else
-            echo "❌ Failed to create stitched manifest"
-            exit 1
-          fi
-
-      - name: Create Pull Request with all changes
+      - name: Create Pull Request with image build changes
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
@@ -446,9 +409,6 @@ jobs:
           IS_FULL_RELEASE="${{ needs.determine-version.outputs.is_full_release }}"
           SERVICES="${{ inputs.services }}"
           BRANCH_NAME="release/images-${VERSION}"
-
-          # Stitched manifest uses SPLUNK-VERSION (base version)
-          MANIFEST_VERSION=$(cat SPLUNK-VERSION)
 
           # For hotfixes, commit .hotfix.yaml
           if [[ "$IS_HOTFIX" == "true" ]]; then
@@ -464,11 +424,8 @@ jobs:
             fi
           fi
 
-          # Always add updated manifests
+          # Always add updated source manifests
           git add src/*//*-k8s.yaml
-
-          # Add stitched manifest (uses SPLUNK-VERSION, not build version)
-          git add kubernetes/splunk-astronomy-shop-${MANIFEST_VERSION}.yaml
 
           if git diff --staged --quiet; then
             echo "No version changes to commit"
@@ -487,8 +444,7 @@ jobs:
                 -m "" \
                 -m "Updated:" \
                 -m "- .hotfix.yaml" \
-                -m "- Source k8s manifests with new image references" \
-                -m "- Stitched manifest: kubernetes/splunk-astronomy-shop-${MANIFEST_VERSION}.yaml"
+                -m "- Source k8s manifests with new image references"
 
               # Build PR body with variable expansion using printf to avoid YAML parsing issues
               PR_BODY=$(printf '%s\n' \
@@ -501,7 +457,9 @@ jobs:
                 "### Changes" \
                 "- ✅ .hotfix.yaml updated" \
                 "- ✅ Source k8s manifests updated with new image references" \
-                "- ✅ Stitched manifest: \`kubernetes/splunk-astronomy-shop-${MANIFEST_VERSION}.yaml\`" \
+                "" \
+                "### Next Steps" \
+                "Run the **Build Demo Manifest - PRODUCTION** workflow to stitch the manifest." \
                 "" \
                 "---" \
                 "🤖 Generated automatically by GitHub Actions"
@@ -517,8 +475,7 @@ jobs:
                 -m "" \
                 -m "Updated:" \
                 -m "- SPLUNK-VERSION" \
-                -m "- Source k8s manifests with new image references" \
-                -m "- Stitched manifest: kubernetes/splunk-astronomy-shop-${MANIFEST_VERSION}.yaml"
+                -m "- Source k8s manifests with new image references"
 
               # Build PR body with variable expansion using printf to avoid YAML parsing issues
               PR_BODY=$(printf '%s\n' \
@@ -531,7 +488,9 @@ jobs:
                 "- ✅ SPLUNK-VERSION updated to \`${VERSION}\`" \
                 "- ✅ All hotfixes cleared" \
                 "- ✅ Source k8s manifests updated with new image references" \
-                "- ✅ Stitched manifest: \`kubernetes/splunk-astronomy-shop-${MANIFEST_VERSION}.yaml\`" \
+                "" \
+                "### Next Steps" \
+                "Run the **Build Demo Manifest - PRODUCTION** workflow to stitch the manifest." \
                 "" \
                 "---" \
                 "🤖 Generated automatically by GitHub Actions"
@@ -544,8 +503,7 @@ jobs:
                 -m "Services: ${SERVICES}" \
                 -m "" \
                 -m "Updated:" \
-                -m "- Source k8s manifests with new image references" \
-                -m "- Stitched manifest: kubernetes/splunk-astronomy-shop-${MANIFEST_VERSION}.yaml"
+                -m "- Source k8s manifests with new image references"
 
               # Build PR body with variable expansion using printf to avoid YAML parsing issues
               PR_BODY=$(printf '%s\n' \
@@ -555,7 +513,9 @@ jobs:
                 "" \
                 "### Changes" \
                 "- ✅ Source k8s manifests updated with new image references" \
-                "- ✅ Stitched manifest: \`kubernetes/splunk-astronomy-shop-${MANIFEST_VERSION}.yaml\`" \
+                "" \
+                "### Next Steps" \
+                "Run the **Build Demo Manifest - PRODUCTION** workflow to stitch the manifest." \
                 "" \
                 "---" \
                 "🤖 Generated automatically by GitHub Actions"
