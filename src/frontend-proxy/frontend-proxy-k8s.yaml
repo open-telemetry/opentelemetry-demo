@@ -100,12 +100,16 @@ spec:
           value: '4318'
         - name: OTEL_RESOURCE_ATTRIBUTES
           value: service.name=$(OTEL_SERVICE_NAME),service.namespace=opentelemetry-demo,service.version=2.1.3,service.kafka=no
-        - name: FEATURE_AUTH_ENABLED
-          value: 'true'
         - name: FEATURE_USER
-          value: Robert
+          valueFrom:
+            secretKeyRef:
+              name: workshop-secret
+              key: flagd_user
         - name: FEATURE_PASS
-          value: '007'
+          valueFrom:
+            secretKeyRef:
+              name: workshop-secret
+              key: flagd_pw
         resources:
           limits:
             memory: 65Mi
