@@ -158,7 +158,6 @@ services:
   - name: shop-dc-shim
     build: true
     manifest: true
-    replace_registry: false  # Uses mcr.microsoft.com/mssql and quay.io images
 
   - name: shop-dc-shim-db
     build: false
