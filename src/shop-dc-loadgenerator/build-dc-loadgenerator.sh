@@ -20,21 +20,21 @@ fi
 # Registry and image configuration
 REGISTRY="ghcr.io"
 NAMESPACE="splunk/opentelemetry-demo"
-SHOP_IMAGE="${REGISTRY}/${NAMESPACE}/otel-shop-dc-shim:${VERSION}"
+LOAD_GEN_IMAGE="${REGISTRY}/${NAMESPACE}/otel-shop-dc-load-generator:${VERSION}"
 
-# Build shop-dc-shim service
-SHOP_DOCKER_CMD=(
+# Build load generator
+LOAD_GEN_DOCKER_CMD=(
   docker buildx build $CACHE_OPTION
   --platform=linux/amd64,linux/arm64
   --build-arg VERSION="$VERSION"
-  -t "$SHOP_IMAGE"
-  -f ./Dockerfile
+  -t "$LOAD_GEN_IMAGE"
+  -f ./load-generator/Dockerfile
   --push
 )
-SHOP_DOCKER_CMD+=( . )
+LOAD_GEN_DOCKER_CMD+=( . )
 
 # Execute the builds
-echo "Building shop-dc-shim service..."
-"${SHOP_DOCKER_CMD[@]}"
+echo "Building load generator..."
+"${LOAD_GEN_DOCKER_CMD[@]}"
 
-echo "Shop service: ${SHOP_IMAGE}"
+echo "Load generator: ${LOAD_GEN_IMAGE}"
