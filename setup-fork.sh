@@ -69,29 +69,19 @@ else
 fi
 echo ""
 
-# 2. Ignore SPLUNK-VERSION locally
-echo "2. Configuring SPLUNK-VERSION to be ignored locally..."
-# Check if already set
-if git ls-files -v | grep -q "^h.*SPLUNK-VERSION"; then
-    echo "   ✅ SPLUNK-VERSION already set to assume-unchanged"
+# 2. Add SPLUNK-VERSION to .gitignore
+echo "2. Adding SPLUNK-VERSION to .gitignore..."
+if grep -q "^SPLUNK-VERSION$" .gitignore 2>/dev/null; then
+    echo "   ✅ SPLUNK-VERSION already in .gitignore"
 else
-    git update-index --assume-unchanged SPLUNK-VERSION
-    echo "   ✅ SPLUNK-VERSION set to assume-unchanged (local changes ignored)"
+    echo "SPLUNK-VERSION" >> .gitignore
+    echo "   ✅ Added SPLUNK-VERSION to .gitignore"
+    echo "   ⚠️  Remember to commit .gitignore changes"
 fi
 echo ""
 
-# 3. Add SPLUNK-VERSION to local exclude
-echo "3. Adding SPLUNK-VERSION to local git exclude..."
-if grep -q "^SPLUNK-VERSION$" .git/info/exclude 2>/dev/null; then
-    echo "   ✅ SPLUNK-VERSION already in .git/info/exclude"
-else
-    echo "SPLUNK-VERSION" >> .git/info/exclude
-    echo "   ✅ Added SPLUNK-VERSION to .git/info/exclude"
-fi
-echo ""
-
-# 4. Check for .service-versions.yaml
-echo "4. Checking .service-versions.yaml..."
+# 3. Check for .service-versions.yaml
+echo "3. Checking .service-versions.yaml..."
 if [ ! -f .service-versions.yaml ]; then
     echo "   ⚠️  .service-versions.yaml not found (will be auto-created on first build)"
 else
@@ -99,14 +89,14 @@ else
 fi
 echo ""
 
-# 5. Summary
+# 4. Summary
 echo "=========================================="
 echo "  ✅ Fork Setup Complete!"
 echo "=========================================="
 echo ""
 echo "Summary of changes:"
 echo "  ✅ dev-repo.yaml configured (fork-specific registry)"
-echo "  ✅ SPLUNK-VERSION ignored locally (won't be committed)"
+echo "  ✅ SPLUNK-VERSION added to .gitignore (won't be committed)"
 echo "  ✅ Ready for test builds"
 echo ""
 echo "Next steps:"
