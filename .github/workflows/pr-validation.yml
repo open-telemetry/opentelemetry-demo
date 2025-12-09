@@ -373,17 +373,21 @@ jobs:
           echo "   git commit -m 'chore: revert SPLUNK-VERSION changes'"
           echo "   git push"
           echo ""
-          echo "2. Add SPLUNK-VERSION to your .gitignore:"
-          echo "   echo 'SPLUNK-VERSION' >> .gitignore"
-          echo "   git add .gitignore"
-          echo "   git commit -m 'chore: add SPLUNK-VERSION to .gitignore'"
-          echo "   git push"
+          echo "2. Prevent future accidental commits by adding to local exclude:"
+          echo "   echo 'SPLUNK-VERSION' >> .git/info/exclude"
+          echo ""
+          echo "   Or run the fork setup script:"
+          echo "   ./setup-fork.sh"
           echo ""
           echo "### Why is this required?"
           echo ""
           echo "- SPLUNK-VERSION: Managed by PROD workflows, only updated during production releases"
           echo "- This file should not be modified manually to prevent version conflicts"
           echo "- PRs should not include changes to this file"
+          echo ""
+          echo "### Note:"
+          echo "Do NOT add SPLUNK-VERSION to .gitignore (it would break production workflows)"
+          echo "Use .git/info/exclude instead (local-only ignore)"
           exit 1
 
       - name: Success
@@ -417,15 +421,20 @@ jobs:
             git push
             \`\`\`
 
-            **2. Add SPLUNK-VERSION to .gitignore to prevent future commits:**
+            **2. Prevent future accidental commits (local-only ignore):**
             \`\`\`bash
-            echo 'SPLUNK-VERSION' >> .gitignore
-            git add .gitignore
-            git commit -m "chore: add SPLUNK-VERSION to .gitignore"
-            git push
+            # Add to local git exclude (NOT committed to repo)
+            echo 'SPLUNK-VERSION' >> .git/info/exclude
             \`\`\`
 
-            **Note**: SPLUNK-VERSION should be added to .gitignore so it won't be tracked by git. This prevents accidental commits of local changes.
+            Or run the fork setup script:
+            \`\`\`bash
+            ./setup-fork.sh
+            \`\`\`
+
+            ### Important:
+            - ⚠️ **DO NOT add SPLUNK-VERSION to .gitignore** - this would break production workflows
+            - ✅ **Use .git/info/exclude instead** - local-only ignore that won't affect the main repo
 
             The PR validation will automatically re-run once SPLUNK-VERSION is reverted.`;
 

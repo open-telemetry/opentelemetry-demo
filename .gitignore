@@ -67,4 +67,3 @@ src/payment-old
 src/payment/*.bak
 .service-versions.yaml
 dev-repo.yaml
-SPLUNK-VERSION
