@@ -103,8 +103,12 @@ jobs:
                       'dockerfile': dockerfile
                   })
 
-          # Create matrix
-          matrix = {'include': services_to_build}
+          # Create matrix - ensure at least a dummy entry to avoid GitHub Actions error
+          if not services_to_build:
+              # Add dummy entry that will be skipped
+              matrix = {'include': [{'name': '_skip', 'platform': 'linux/amd64', 'dockerfile': 'none'}]}
+          else:
+              matrix = {'include': services_to_build}
 
           # Output to GitHub Actions
           with open(os.environ['GITHUB_OUTPUT'], 'a') as f:
@@ -113,8 +117,11 @@ jobs:
 
           print(f"Registry: {registry}")
           print(f"Services to build: {len(services_to_build)}")
-          for svc in services_to_build:
-              print(f"  - {svc['name']} (platform: {svc['platform']})")
+          if services_to_build:
+              for svc in services_to_build:
+                  print(f"  - {svc['name']} (platform: {svc['platform']})")
+          else:
+              print("  (none - dummy matrix entry added)")
           PYTHON_SCRIPT
 
       - name: Summary
@@ -128,7 +135,6 @@ jobs:
 
   build-images:
     needs: prepare-matrix
-    if: needs.prepare-matrix.outputs.matrix != '{"include":[]}'
     runs-on: ubuntu-latest
     permissions:
       contents: read
@@ -139,13 +145,26 @@ jobs:
       matrix: ${{ fromJson(needs.prepare-matrix.outputs.matrix) }}
 
     steps:
+      - name: Check if this is a dummy run
+        id: check-skip
+        run: |
+          if [[ "${{ matrix.name }}" == "_skip" ]]; then
+            echo "skip=true" >> $GITHUB_OUTPUT
+            echo "This is a dummy matrix entry - skipping all steps"
+          else
+            echo "skip=false" >> $GITHUB_OUTPUT
+          fi
+
       - name: Checkout repository
+        if: steps.check-skip.outputs.skip != 'true'
         uses: actions/checkout@v4
 
       - name: Set up Docker Buildx
+        if: steps.check-skip.outputs.skip != 'true'
         uses: docker/setup-buildx-action@v3
 
       - name: Log in to GitHub Container Registry
+        if: steps.check-skip.outputs.skip != 'true'
         uses: docker/login-action@v3
         with:
           registry: ghcr.io
@@ -153,6 +172,7 @@ jobs:
           password: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Extract image name
+        if: steps.check-skip.outputs.skip != 'true'
         id: image
         run: |
           SERVICE_NAME="${{ matrix.name }}"
@@ -177,6 +197,7 @@ jobs:
           echo "Building: ${FULL_IMAGE}"
 
       - name: Check for Dockerfile
+        if: steps.check-skip.outputs.skip != 'true'
         id: check
         run: |
           if [ -f "${{ matrix.dockerfile }}" ]; then
@@ -188,7 +209,7 @@ jobs:
           fi
 
       - name: Build and push image
-        if: steps.check.outputs.exists == 'true'
+        if: steps.check-skip.outputs.skip != 'true' && steps.check.outputs.exists == 'true'
         uses: docker/build-push-action@v5
         with:
           context: .
@@ -201,7 +222,7 @@ jobs:
           no-cache: ${{ inputs.no_cache }}
 
       - name: Image info
-        if: steps.check.outputs.exists == 'true'
+        if: steps.check-skip.outputs.skip != 'true' && steps.check.outputs.exists == 'true'
         run: |
           echo "### ✅ Image Built: ${{ matrix.name }}" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
@@ -213,7 +234,7 @@ jobs:
           echo "| Dockerfile | \`${{ matrix.dockerfile }}\` |" >> $GITHUB_STEP_SUMMARY
 
       - name: Skip notice
-        if: steps.check.outputs.exists == 'false'
+        if: steps.check-skip.outputs.skip != 'true' && steps.check.outputs.exists == 'false'
         run: |
           echo "### ⚠️ Skipped: ${{ matrix.name }}" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
@@ -356,26 +377,27 @@ jobs:
           echo ""
           echo "✅ Source manifests updated with new image references"
 
-      - name: Commit version updates and manifest changes
+      - name: Commit manifest changes only
         run: |
           git config --local user.email "github-actions[bot]@users.noreply.github.com"
           git config --local user.name "github-actions[bot]"
 
-          # Add version file and any changed manifests
-          git add .service-versions.yaml
+          # Only add changed manifests (NOT .service-versions.yaml)
+          # .service-versions.yaml stays local for tracking but is never committed
           git add src/*//*-k8s.yaml
 
           if git diff --staged --quiet; then
             echo "No changes to commit"
           else
-            git commit -m "chore: update service versions and manifests to ${{ inputs.version }}" \
+            git commit -m "chore: update test manifests to ${{ inputs.version }}" \
               -m "Services: ${{ inputs.services }}" \
               -m "" \
               -m "Updated:" \
-              -m "- .service-versions.yaml" \
-              -m "- Source k8s manifests with new image references"
+              -m "- Source k8s manifests with new image references" \
+              -m "" \
+              -m "Note: .service-versions.yaml updated locally but not committed"
             git push
-            echo "✅ Version file and manifests committed and pushed"
+            echo "✅ Manifests committed and pushed"
           fi
 
           echo "### 📝 Service Versions and Manifests Updated" >> $GITHUB_STEP_SUMMARY
