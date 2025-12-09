@@ -69,14 +69,13 @@ else
 fi
 echo ""
 
-# 2. Add SPLUNK-VERSION to .gitignore
-echo "2. Adding SPLUNK-VERSION to .gitignore..."
-if grep -q "^SPLUNK-VERSION$" .gitignore 2>/dev/null; then
-    echo "   ✅ SPLUNK-VERSION already in .gitignore"
+# 2. Add SPLUNK-VERSION to local git exclude
+echo "2. Adding SPLUNK-VERSION to local git exclude..."
+if grep -q "^SPLUNK-VERSION$" .git/info/exclude 2>/dev/null; then
+    echo "   ✅ SPLUNK-VERSION already in .git/info/exclude"
 else
-    echo "SPLUNK-VERSION" >> .gitignore
-    echo "   ✅ Added SPLUNK-VERSION to .gitignore"
-    echo "   ⚠️  Remember to commit .gitignore changes"
+    echo "SPLUNK-VERSION" >> .git/info/exclude
+    echo "   ✅ Added SPLUNK-VERSION to .git/info/exclude"
 fi
 echo ""
 
@@ -96,7 +95,7 @@ echo "=========================================="
 echo ""
 echo "Summary of changes:"
 echo "  ✅ dev-repo.yaml configured (fork-specific registry)"
-echo "  ✅ SPLUNK-VERSION added to .gitignore (won't be committed)"
+echo "  ✅ SPLUNK-VERSION ignored locally (won't be committed)"
 echo "  ✅ Ready for test builds"
 echo ""
 echo "Next steps:"
