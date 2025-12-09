@@ -1,0 +1,8 @@
+# Service Version Tracking
+# This file tracks the last built version for each service
+# Updated automatically by build workflows
+# DO NOT EDIT MANUALLY
+
+default_version: test-jeremy
+services:
+  payment: test-jeremy
