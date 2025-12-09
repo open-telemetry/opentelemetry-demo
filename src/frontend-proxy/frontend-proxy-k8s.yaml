@@ -77,7 +77,7 @@ spec:
         - name: FLAGD_PORT
           value: '8013'
         - name: FLAGD_UI_HOST
-          value: flagd
+          value: flagd-ui
         - name: FLAGD_UI_PORT
           value: '4000'
         - name: FRONTEND_HOST
@@ -116,27 +116,4 @@ spec:
         volumeMounts: null
       volumes: null
 ---
-apiVersion: networking.k8s.io/v1
-kind: Ingress
-metadata:
-  name: frontend-proxy
-  annotations:
-    cert-manager.io/cluster-issuer: letsencrypt-prod
-    traefik.ingress.kubernetes.io/router.middlewares: default-custom-headers@kubernetescrd
-spec:
-  ingressClassName: traefik
-  tls:
-  - hosts:
-    - astronomy-shop.splunko11y.com
-    secretName: splunk-demo-tls
-  rules:
-  - host: astronomy-shop.splunko11y.com
-    http:
-      paths:
-      - path: /
-        pathType: Prefix
-        backend:
-          service:
-            name: frontend-proxy
-            port:
-              number: 8080
+
