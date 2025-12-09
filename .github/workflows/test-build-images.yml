@@ -377,26 +377,27 @@ jobs:
           echo ""
           echo "✅ Source manifests updated with new image references"
 
-      - name: Commit version updates and manifest changes
+      - name: Commit manifest changes only
         run: |
           git config --local user.email "github-actions[bot]@users.noreply.github.com"
           git config --local user.name "github-actions[bot]"
 
-          # Add version file and any changed manifests
-          git add -f .service-versions.yaml
+          # Only add changed manifests (NOT .service-versions.yaml)
+          # .service-versions.yaml stays local for tracking but is never committed
           git add src/*//*-k8s.yaml
 
           if git diff --staged --quiet; then
             echo "No changes to commit"
           else
-            git commit -m "chore: update service versions and manifests to ${{ inputs.version }}" \
+            git commit -m "chore: update test manifests to ${{ inputs.version }}" \
               -m "Services: ${{ inputs.services }}" \
               -m "" \
               -m "Updated:" \
-              -m "- .service-versions.yaml" \
-              -m "- Source k8s manifests with new image references"
+              -m "- Source k8s manifests with new image references" \
+              -m "" \
+              -m "Note: .service-versions.yaml updated locally but not committed"
             git push
-            echo "✅ Version file and manifests committed and pushed"
+            echo "✅ Manifests committed and pushed"
           fi
 
           echo "### 📝 Service Versions and Manifests Updated" >> $GITHUB_STEP_SUMMARY
