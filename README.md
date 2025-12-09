@@ -36,6 +36,21 @@ guidance](./CONTRIBUTING.md).
 If you'd like to extend this demo or maintain a fork of it, read our
 [fork guidance](https://opentelemetry.io/docs/demo/forking/).
 
+## Forking This Repository (Splunk Version)
+
+**If you're forking this Splunk-specific repository**, run the setup script after cloning:
+
+```bash
+./setup-fork.sh
+```
+
+This script will:
+- Configure your development registry (dev-repo.yaml)
+- Prevent accidental production version file commits
+- Set up your fork for test builds
+
+See [PRODUCTION-WORKFLOW-GUIDE.md](./PRODUCTION-WORKFLOW-GUIDE.md) for workflow documentation.
+
 ## Quick start 
 
 You can be up and running with the demo in a few minutes. Check out the docs for
