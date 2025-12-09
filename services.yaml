@@ -160,6 +160,15 @@ services:
     manifest: true
     replace_registry: false  # Uses mcr.microsoft.com/mssql and quay.io images
 
+  - name: shop-dc-shim-db
+    build: false
+    manifest: true
+    replace_registry: false  # Uses mcr.microsoft.com/mssql
+
+  - name: shop-dc-loadgenerator
+    build: false
+    manifest: true
+
   - name: sql-server-fraud-setup
     build: false
     manifest: true
