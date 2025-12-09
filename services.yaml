@@ -156,9 +156,8 @@ services:
     replace_registry: false  # Uses ghcr.io/open-telemetry/demo (standard)
 
   - name: shop-dc-shim
-    build: false
+    build: true
     manifest: true
-    replace_registry: false  # Uses mcr.microsoft.com/mssql and quay.io images
 
   - name: shop-dc-shim-db
     build: false
@@ -166,7 +165,7 @@ services:
     replace_registry: false  # Uses mcr.microsoft.com/mssql
 
   - name: shop-dc-loadgenerator
-    build: false
+    build: true
     manifest: true
 
   - name: sql-server-fraud-setup
