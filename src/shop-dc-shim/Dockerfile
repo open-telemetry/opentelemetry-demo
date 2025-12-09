@@ -5,11 +5,11 @@
 FROM eclipse-temurin:21-jdk AS builder
 
 WORKDIR /app
-COPY ./build.gradle build.gradle
-COPY ./settings.gradle settings.gradle
-COPY ./gradle gradle
-COPY ./gradlew gradlew
-COPY ./src src
+COPY ./src/shop-dc-shim/build.gradle build.gradle
+COPY ./src/shop-dc-shim/settings.gradle settings.gradle
+COPY ./src/shop-dc-shim/gradle gradle
+COPY ./src/shop-dc-shim/gradlew gradlew
+COPY ./src/shop-dc-shim/src src
 
 # Build the application
 RUN chmod +x ./gradlew
@@ -71,7 +71,7 @@ RUN cd /tmp && \
 
 # Copy application JAR and startup script
 COPY --from=builder --chown=shopdc:shopdc /app/build/libs/*.jar app.jar
-COPY --chown=shopdc:shopdc ./start-app-dual.sh start-app-dual.sh
+COPY --chown=shopdc:shopdc ./src/shop-dc-shim/start-app-dual.sh start-app-dual.sh
 
 RUN chmod +x start-app-dual.sh
 

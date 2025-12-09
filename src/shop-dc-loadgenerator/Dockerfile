@@ -6,11 +6,11 @@ FROM python:3.11-alpine
 WORKDIR /app
 
 # Install dependencies
-COPY ./load-generator/requirements.txt requirements.txt
+COPY ./src/shop-dc-loadgenerator/requirements.txt requirements.txt
 RUN pip install --no-cache-dir -r requirements.txt
 
 # Copy load generator
-COPY ./load-generator/shop_load_generator.py shop_load_generator.py
+COPY ./src/shop-dc-loadgenerator/shop_load_generator.py shop_load_generator.py
 
 # Create non-root user
 RUN addgroup -g 1001 -S loadgen && \
