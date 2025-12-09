@@ -379,19 +379,28 @@ if __name__ == "__main__":
     product_review_svc_metrics = init_metrics(meter)
 
     # Initialize Logs
-    logger_provider = LoggerProvider(
-        resource=Resource.create(
-            {
-                'service.name': service_name,
-            }
-        ),
-    )
-    set_logger_provider(logger_provider)
-    log_exporter = OTLPLogExporter(insecure=True)
-    logger_provider.add_log_record_processor(BatchLogRecordProcessor(log_exporter))
+    # Check if LoggerProvider is already set (by auto-instrumentation)
+    from opentelemetry._logs import get_logger_provider, NoOpLoggerProvider
 
-    # Create OTLP handler (for sending to collector)
-    otlp_handler = LoggingHandler(level=logging.NOTSET, logger_provider=logger_provider)
+    existing_provider = get_logger_provider()
+    if isinstance(existing_provider, NoOpLoggerProvider):
+        # No provider set yet, create one
+        logger_provider = LoggerProvider(
+            resource=Resource.create(
+                {
+                    'service.name': service_name,
+                }
+            ),
+        )
+        set_logger_provider(logger_provider)
+        log_exporter = OTLPLogExporter(insecure=True)
+        logger_provider.add_log_record_processor(BatchLogRecordProcessor(log_exporter))
+
+        # Create OTLP handler (for sending to collector)
+        otlp_handler = LoggingHandler(level=logging.NOTSET, logger_provider=logger_provider)
+    else:
+        # Provider already exists (from auto-instrumentation), use it
+        otlp_handler = LoggingHandler(level=logging.NOTSET, logger_provider=existing_provider)
 
     # Create console handler with JSON formatter (for stdout/Splunk HEC)
     console_handler = logging.StreamHandler(sys.stdout)
@@ -402,11 +411,13 @@ if __name__ == "__main__":
     )
     console_handler.setFormatter(json_formatter)
 
-    # Attach both handlers to logger
+    # Attach handlers to logger
+    # Only add console handler (for JSON output to stdout)
+    # OTLP handler sends to collector via gRPC (not stdout)
     logger = logging.getLogger('main')
     logger.setLevel(logging.INFO)
-    logger.addHandler(otlp_handler)
     logger.addHandler(console_handler)
+    # Note: OTLP handler is attached via opentelemetry auto-instrumentation
 
     # Create gRPC server
     server = grpc.server(futures.ThreadPoolExecutor(max_workers=10))
