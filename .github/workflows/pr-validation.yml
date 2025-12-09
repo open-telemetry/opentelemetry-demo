@@ -335,6 +335,107 @@ jobs:
               body: body
             });
 
+  check-splunk-version:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Check for SPLUNK-VERSION modifications
+        id: check_splunk_version
+        run: |
+          echo "Checking if SPLUNK-VERSION was modified in PR..."
+
+          # Get the base branch
+          BASE_SHA=$(git merge-base origin/${{ github.base_ref }} HEAD)
+
+          # Check if SPLUNK-VERSION was modified
+          if git diff --name-only $BASE_SHA HEAD | grep -q '^SPLUNK-VERSION$'; then
+            echo "has_errors=true" >> $GITHUB_OUTPUT
+            echo "ERROR: SPLUNK-VERSION modified in PR"
+          else
+            echo "has_errors=false" >> $GITHUB_OUTPUT
+            echo "✓ SPLUNK-VERSION not modified"
+          fi
+
+      - name: Fail if SPLUNK-VERSION modified
+        if: steps.check_splunk_version.outputs.has_errors == 'true'
+        run: |
+          echo "❌ ERROR: SPLUNK-VERSION should not be modified in PRs"
+          echo ""
+          echo "SPLUNK-VERSION is managed by production workflows and should not be modified manually."
+          echo ""
+          echo "### To fix this issue:"
+          echo ""
+          echo "1. Revert changes to SPLUNK-VERSION:"
+          echo "   git checkout origin/main -- SPLUNK-VERSION"
+          echo "   git commit -m 'chore: revert SPLUNK-VERSION changes'"
+          echo "   git push"
+          echo ""
+          echo "2. Add SPLUNK-VERSION to your .gitignore:"
+          echo "   echo 'SPLUNK-VERSION' >> .gitignore"
+          echo "   git add .gitignore"
+          echo "   git commit -m 'chore: add SPLUNK-VERSION to .gitignore'"
+          echo "   git push"
+          echo ""
+          echo "### Why is this required?"
+          echo ""
+          echo "- SPLUNK-VERSION: Managed by PROD workflows, only updated during production releases"
+          echo "- This file should not be modified manually to prevent version conflicts"
+          echo "- PRs should not include changes to this file"
+          exit 1
+
+      - name: Success
+        if: steps.check_splunk_version.outputs.has_errors == 'false'
+        run: |
+          echo "✓ SPLUNK-VERSION not modified in this PR"
+          echo "### ✓ SPLUNK-VERSION Validation Passed" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "SPLUNK-VERSION was not modified." >> $GITHUB_STEP_SUMMARY
+
+      - name: Add PR comment if SPLUNK-VERSION modified
+        if: steps.check_splunk_version.outputs.has_errors == 'true' && github.event_name == 'pull_request'
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const body = `## ❌ SPLUNK-VERSION Should Not Be Modified in PRs
+
+            This PR modifies \`SPLUNK-VERSION\` which should not be changed manually.
+
+            ### Why is this an issue?
+
+            - **SPLUNK-VERSION**: Managed by production workflows during releases. Should only be updated via the "Build Images - PRODUCTION" workflow in the main repository.
+            - Manual modifications can cause version conflicts and break production builds.
+
+            ### How to fix this:
+
+            **1. Revert the changes to SPLUNK-VERSION:**
+            \`\`\`bash
+            git checkout origin/main -- SPLUNK-VERSION
+            git commit -m "chore: revert SPLUNK-VERSION changes"
+            git push
+            \`\`\`
+
+            **2. Add SPLUNK-VERSION to .gitignore to prevent future commits:**
+            \`\`\`bash
+            echo 'SPLUNK-VERSION' >> .gitignore
+            git add .gitignore
+            git commit -m "chore: add SPLUNK-VERSION to .gitignore"
+            git push
+            \`\`\`
+
+            **Note**: SPLUNK-VERSION should be added to .gitignore so it won't be tracked by git. This prevents accidental commits of local changes.
+
+            The PR validation will automatically re-run once SPLUNK-VERSION is reverted.`;
+
+            await github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: body
+            });
+
   check-dev-repo-file:
     runs-on: ubuntu-latest
     steps:
