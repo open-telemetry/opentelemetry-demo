@@ -383,7 +383,7 @@ jobs:
           git config --local user.name "github-actions[bot]"
 
           # Add version file and any changed manifests
-          git add .service-versions.yaml
+          git add -f .service-versions.yaml
           git add src/*//*-k8s.yaml
 
           if git diff --staged --quiet; then
