@@ -2,7 +2,7 @@
 # SPDX-License-Identifier: Apache-2.0
 
 on:
-  pull_request:
+  pull_request_target:
     branches: [ main ]
 
 permissions:
