@@ -9,10 +9,11 @@ import os
 import json
 from concurrent import futures
 import random
+import sys
 
 # Pip
 import grpc
-from opentelemetry import trace, metrics
+from opentelemetry import trace, metrics, context
 from opentelemetry._logs import set_logger_provider
 from opentelemetry.exporter.otlp.proto.grpc._log_exporter import (
     OTLPLogExporter,
@@ -329,6 +330,43 @@ def check_feature_flag(flag_name: str):
     client = api.get_client()
     return client.get_boolean_value(flag_name, False)
 
+class SplunkHECJsonFormatter(logging.Formatter):
+    """
+    Custom JSON formatter for Splunk HEC with OpenTelemetry trace context
+    """
+    def format(self, record):
+        # Get trace context from current span
+        span = trace.get_current_span()
+        span_context = span.get_span_context()
+
+        log_data = {
+            'timestamp': self.formatTime(record, self.datefmt),
+            'level': record.levelname,
+            'logger': record.name,
+            'message': record.getMessage(),
+            'source': {
+                'file': record.pathname,
+                'line': record.lineno,
+                'function': record.funcName
+            }
+        }
+
+        # Add trace context if available
+        if span_context.is_valid:
+            log_data['trace_id'] = format(span_context.trace_id, '032x')
+            log_data['span_id'] = format(span_context.span_id, '016x')
+            log_data['trace_flags'] = span_context.trace_flags
+
+        # Add service name from resource
+        if hasattr(record, 'otelServiceName'):
+            log_data['service.name'] = record.otelServiceName
+
+        # Add exception info if present
+        if record.exc_info:
+            log_data['exception'] = self.formatException(record.exc_info)
+
+        return json.dumps(log_data)
+
 if __name__ == "__main__":
     service_name = must_map_env('OTEL_SERVICE_NAME')
 
@@ -351,11 +389,24 @@ if __name__ == "__main__":
     set_logger_provider(logger_provider)
     log_exporter = OTLPLogExporter(insecure=True)
     logger_provider.add_log_record_processor(BatchLogRecordProcessor(log_exporter))
-    handler = LoggingHandler(level=logging.NOTSET, logger_provider=logger_provider)
 
-    # Attach OTLP handler to logger
+    # Create OTLP handler (for sending to collector)
+    otlp_handler = LoggingHandler(level=logging.NOTSET, logger_provider=logger_provider)
+
+    # Create console handler with JSON formatter (for stdout/Splunk HEC)
+    console_handler = logging.StreamHandler(sys.stdout)
+    console_handler.setLevel(logging.INFO)
+    json_formatter = SplunkHECJsonFormatter(
+        fmt='%(asctime)s %(levelname)s %(name)s %(message)s',
+        datefmt='%Y-%m-%dT%H:%M:%S.%fZ'
+    )
+    console_handler.setFormatter(json_formatter)
+
+    # Attach both handlers to logger
     logger = logging.getLogger('main')
-    logger.addHandler(handler)
+    logger.setLevel(logging.INFO)
+    logger.addHandler(otlp_handler)
+    logger.addHandler(console_handler)
 
     # Create gRPC server
     server = grpc.server(futures.ThreadPoolExecutor(max_workers=10))
