@@ -89,12 +89,20 @@ else
 fi
 echo ""
 
-# 4. Check for .service-versions.yaml
-echo "4. Checking .service-versions.yaml..."
+# 4. Create .service-versions.yaml if needed
+echo "4. Setting up .service-versions.yaml..."
 if [ ! -f .service-versions.yaml ]; then
-    echo "   ⚠️  .service-versions.yaml not found (will be auto-created on first build)"
+    cat > .service-versions.yaml << 'EOF'
+# Service-specific versions for test builds
+# This file is auto-generated and updated by test-build-images workflow
+# It tracks which version each service was built with
+# Format: service_name: version
+
+services: {}
+EOF
+    echo "   ✅ Created .service-versions.yaml (tracked locally, never committed)"
 else
-    echo "   ✅ .service-versions.yaml exists"
+    echo "   ✅ .service-versions.yaml already exists"
 fi
 echo ""
 
