@@ -1963,7 +1963,7 @@ spec:
       serviceAccountName: opentelemetry-demo
       containers:
       - name: payment
-        image: ghcr.io/splunk/opentelemetry-demo/otel-payment:test-jeremy
+        image: ghcr.io/splunk/opentelemetry-demo/otel-payment:1.1.0
         imagePullPolicy: Always
         ports:
         - containerPort: 8080
@@ -3125,7 +3125,7 @@ spec:
       serviceAccountName: opentelemetry-demo
       initContainers:
         - name: wait-for-shop-dc-shim
-          image: curlimages/curl:1.0.1
+          image: curlimages/curl:8.1.2
           command: ['sh', '-c']
           args:
             - |
