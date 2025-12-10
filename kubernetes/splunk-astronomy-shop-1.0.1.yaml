@@ -1,6 +1,6 @@
 # Splunk Astronomy Shop Kubernetes Manifest
 # Version: 1.0.1
-# Generated on: 2025-12-09T11:50:40Z
+# Generated on: 2025-12-10T10:42:14Z
 #
 # This manifest combines all service deployments for the Splunk Astronomy Shop
 # Services are defined in services.yaml
@@ -1582,7 +1582,7 @@ spec:
         - name: FLAGD_PORT
           value: '8013'
         - name: FLAGD_UI_HOST
-          value: flagd
+          value: flagd-ui
         - name: FLAGD_UI_PORT
           value: '4000'
         - name: FRONTEND_HOST
@@ -1605,12 +1605,16 @@ spec:
           value: '4318'
         - name: OTEL_RESOURCE_ATTRIBUTES
           value: service.name=$(OTEL_SERVICE_NAME),service.namespace=opentelemetry-demo,service.version=1.0.1,service.kafka=no
-        - name: FEATURE_AUTH_ENABLED
-          value: 'true'
         - name: FEATURE_USER
-          value: Robert
+          valueFrom:
+            secretKeyRef:
+              name: workshop-secret
+              key: flagd_user
         - name: FEATURE_PASS
-          value: '007'
+          valueFrom:
+            secretKeyRef:
+              name: workshop-secret
+              key: flagd_pw
         resources:
           limits:
             memory: 65Mi
@@ -1621,30 +1625,7 @@ spec:
         volumeMounts: null
       volumes: null
 ---
-apiVersion: networking.k8s.io/v1
-kind: Ingress
-metadata:
-  name: frontend-proxy
-  annotations:
-    cert-manager.io/cluster-issuer: letsencrypt-prod
-    traefik.ingress.kubernetes.io/router.middlewares: default-custom-headers@kubernetescrd
-spec:
-  ingressClassName: traefik
-  tls:
-  - hosts:
-    - astronomy-shop.splunko11y.com
-    secretName: splunk-demo-tls
-  rules:
-  - host: astronomy-shop.splunko11y.com
-    http:
-      paths:
-      - path: /
-        pathType: Prefix
-        backend:
-          service:
-            name: frontend-proxy
-            port:
-              number: 8080
+
 
 ---
 
@@ -1982,7 +1963,7 @@ spec:
       serviceAccountName: opentelemetry-demo
       containers:
       - name: payment
-        image: ghcr.io/splunk/opentelemetry-demo/otel-payment:1.0.1
+        image: ghcr.io/splunk/opentelemetry-demo/otel-payment:test-jeremy
         imagePullPolicy: Always
         ports:
         - containerPort: 8080
@@ -2913,6 +2894,133 @@ spec:
 ### Uses checkout service from that demo
 ### Or add this at config at the end of an astronomy shop demo deployment yaml
 ---
+# Shop DC Shim Service
+apiVersion: v1
+kind: Service
+metadata:
+  name: shop-dc-shim
+  namespace: default
+  labels:
+    opentelemetry.io/name: shop-dc-shim
+    app.kubernetes.io/component: shop-dc-shim
+    app.kubernetes.io/name: shop-dc-shim
+    app.kubernetes.io/version: "2.1.3"
+    app.kubernetes.io/part-of: opentelemetry-demo
+spec:
+  type: ClusterIP
+  ports:
+    - port: 8070
+      name: tcp-service
+      targetPort: 8070
+  selector:
+    opentelemetry.io/name: shop-dc-shim
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: shop-dc-shim
+  namespace: default
+  labels:
+    opentelemetry.io/name: shop-dc-shim
+    app.kubernetes.io/component: shop-dc-shim
+    app.kubernetes.io/name: shop-dc-shim
+    app.kubernetes.io/version: "2.1.3"
+    app.kubernetes.io/part-of: opentelemetry-demo
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      opentelemetry.io/name: shop-dc-shim
+  template:
+    metadata:
+      labels:
+        opentelemetry.io/name: shop-dc-shim
+        app.kubernetes.io/component: shop-dc-shim
+        app.kubernetes.io/name: shop-dc-shim
+        app.kubernetes.io/version: "2.1.3"
+        app.kubernetes.io/part-of: opentelemetry-demo
+    spec:
+      serviceAccountName: opentelemetry-demo
+      containers:
+        - name: shop-dc-shim
+          image: ghcr.io/splunk/opentelemetry-demo/shop-dc-shim:1.0.1
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 8070
+              name: http
+          command: ["/usr/bin/dumb-init"]
+          args:
+          - --
+          - /bin/bash
+          - -c
+          - |
+            export OTEL_RESOURCE_ATTRIBUTES="service.name=shop-dc-shim-service,deployment.environment=${ENV_VALUE}-datacenter-b01,service.version=1.0.1,service.namespace=shop-dc-shim"
+            exec /app/start-app-dual.sh    
+          env:
+            - name: WORKSHOP_ENV
+              valueFrom:
+                secretKeyRef:
+                  name: workshop-secret
+                  key: env
+            - name: SHOP_DC_SHIM_PORT
+              value: "8070"
+            - name: DB_CONNECTION_STRING
+              value: "jdbc:sqlserver://shop-dc-shim-db:1433;databaseName=master;encrypt=false;trustServerCertificate=true"
+            - name: DB_USERNAME
+              value: "sa"
+            - name: DB_PASSWORD
+              value: "ShopPass123!"
+            - name: CHECKOUT_SERVICE_ADDR
+              value: "checkout:8080"
+            - name: EMAIL_SERVICE_URL
+              value: "http://email:8080"
+            - name: OTEL_EXPORTER_OTLP_ENDPOINT
+              value: "http://splunk-otel-collector-agent:4318"
+            - name: OTEL_SERVICE_NAME
+              value: "shop-dc-shim"
+            - name: OTEL_JAVAAGENT_ENABLED
+              value: "true"
+            - name: APPDYNAMICS_AGENT_ACCOUNT_NAME
+              value: "se-lab"
+            - name: APPDYNAMICS_JAVAAGENT_ENABLED
+              value: "true"
+            - name: APPDYNAMICS_AGENT_ACCOUNT_ACCESS_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: workshop-secret
+                  key: appd_token
+            - name: OTEL_INSTRUMENTATION_SPLUNK_JDBC_ENABLED
+              value: "true"
+          resources:
+            requests:
+              memory: "512Mi"
+              cpu: "500m"
+            limits:
+              memory: "1Gi"
+              cpu: "1"
+          readinessProbe:
+            httpGet:
+              path: /actuator/health
+              port: 8070
+            initialDelaySeconds: 240
+            periodSeconds: 10
+            timeoutSeconds: 5
+            failureThreshold: 3
+          livenessProbe:
+            httpGet:
+              path: /actuator/health
+              port: 8070
+            initialDelaySeconds: 420
+            periodSeconds: 30
+            timeoutSeconds: 10
+            failureThreshold: 5
+---
+
+# === shop-dc-shim-db ===
+### Expects a deployment of Astronomy Shop Demo in the same cluster
+### Uses checkout service from that demo
+### Or add this at config at the end of an astronomy shop demo deployment yaml
+---
 apiVersion: v1
 kind: Service
 metadata:
@@ -2982,126 +3090,11 @@ spec:
         - name: sqlserver-storage
           emptyDir: {}
 ---
-# Shop DC Shim Service
-apiVersion: v1
-kind: Service
-metadata:
-  name: shop-dc-shim
-  namespace: default
-  labels:
-    opentelemetry.io/name: shop-dc-shim
-    app.kubernetes.io/component: shop-dc-shim
-    app.kubernetes.io/name: shop-dc-shim
-    app.kubernetes.io/version: "2.1.3"
-    app.kubernetes.io/part-of: opentelemetry-demo
-spec:
-  type: ClusterIP
-  ports:
-    - port: 8070
-      name: tcp-service
-      targetPort: 8070
-  selector:
-    opentelemetry.io/name: shop-dc-shim
----
-apiVersion: apps/v1
-kind: Deployment
-metadata:
-  name: shop-dc-shim
-  namespace: default
-  labels:
-    opentelemetry.io/name: shop-dc-shim
-    app.kubernetes.io/component: shop-dc-shim
-    app.kubernetes.io/name: shop-dc-shim
-    app.kubernetes.io/version: "2.1.3"
-    app.kubernetes.io/part-of: opentelemetry-demo
-spec:
-  replicas: 1
-  selector:
-    matchLabels:
-      opentelemetry.io/name: shop-dc-shim
-  template:
-    metadata:
-      labels:
-        opentelemetry.io/name: shop-dc-shim
-        app.kubernetes.io/component: shop-dc-shim
-        app.kubernetes.io/name: shop-dc-shim
-        app.kubernetes.io/version: "2.1.3"
-        app.kubernetes.io/part-of: opentelemetry-demo
-    spec:
-      serviceAccountName: opentelemetry-demo
-      containers:
-        - name: shop-dc-shim
-          image: ghcr.io/splunk/opentelemetry-demo/otel-shop-dc-shim:0.0.2
-          imagePullPolicy: Always
-          ports:
-            - containerPort: 8070
-              name: http
-          command: ["/usr/bin/dumb-init"]
-          args:
-          - --
-          - /bin/bash
-          - -c
-          - |
-            export OTEL_RESOURCE_ATTRIBUTES="service.name=shop-dc-shim-service,deployment.environment=${ENV_VALUE}-datacenter-b01,service.version=2.1.3,service.namespace=shop-dc-shim"
-            exec /app/start-app-dual.sh    
-          env:
-            - name: WORKSHOP_ENV
-              valueFrom:
-                secretKeyRef:
-                  name: workshop-secret
-                  key: env
-            - name: SHOP_DC_SHIM_PORT
-              value: "8070"
-            - name: DB_CONNECTION_STRING
-              value: "jdbc:sqlserver://shop-dc-shim-db:1433;databaseName=master;encrypt=false;trustServerCertificate=true"
-            - name: DB_USERNAME
-              value: "sa"
-            - name: DB_PASSWORD
-              value: "ShopPass123!"
-            - name: CHECKOUT_SERVICE_ADDR
-              value: "checkout:8080"
-            - name: EMAIL_SERVICE_URL
-              value: "http://email:8080"
-            - name: OTEL_EXPORTER_OTLP_ENDPOINT
-              value: "http://splunk-otel-collector-agent:4318"
-            - name: OTEL_SERVICE_NAME
-              value: "shop-dc-shim"
-            - name: OTEL_JAVAAGENT_ENABLED
-              value: "true"
-            - name: APPDYNAMICS_AGENT_ACCOUNT_NAME
-              value: "se-lab"
-            - name: APPDYNAMICS_JAVAAGENT_ENABLED
-              value: "true"
-            - name: APPDYNAMICS_AGENT_ACCOUNT_ACCESS_KEY
-              valueFrom:
-                secretKeyRef:
-                  name: workshop-secret
-                  key: appd_token
-            - name: OTEL_INSTRUMENTATION_SPLUNK_JDBC_ENABLED
-              value: "true"
-          resources:
-            requests:
-              memory: "512Mi"
-              cpu: "500m"
-            limits:
-              memory: "1Gi"
-              cpu: "1"
-          readinessProbe:
-            httpGet:
-              path: /actuator/health
-              port: 8070
-            initialDelaySeconds: 240
-            periodSeconds: 10
-            timeoutSeconds: 5
-            failureThreshold: 3
-          livenessProbe:
-            httpGet:
-              path: /actuator/health
-              port: 8070
-            initialDelaySeconds: 420
-            periodSeconds: 30
-            timeoutSeconds: 10
-            failureThreshold: 5
+
+# === shop-dc-loadgenerator ===
+### Expects a deployment of Astronomy Shop Demo in the same cluster
+### Uses checkout service from that demo
+### Or add this at config at the end of an astronomy shop demo deployment yaml
 ---
 # Shop DC Load Generator
 apiVersion: apps/v1
@@ -3132,7 +3125,7 @@ spec:
       serviceAccountName: opentelemetry-demo
       initContainers:
         - name: wait-for-shop-dc-shim
-          image: curlimages/curl:8.1.2
+          image: curlimages/curl:1.0.1
           command: ['sh', '-c']
           args:
             - |
@@ -3148,7 +3141,7 @@ spec:
               cpu: "50m"
       containers:
         - name: load-generator
-          image: ghcr.io/splunk/opentelemetry-demo/otel-shop-dc-load-generator:0.0.2
+          image: ghcr.io/splunk/opentelemetry-demo/shop-dc-loadgenerator:1.0.1
           args: ["--url", "http://shop-dc-shim:8070", "--mode", "continuous", "--tpm", "25", "--duration", "0"]
           resources:
             limits:
