@@ -1,0 +1,57 @@
+name: merge-upstream
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: '0 0 * * *'
+
+jobs:
+  merge:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v6.0.0
+        with:
+          fetch-depth: 0
+
+      - name: Set up Git
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+
+      - name: Merge upstream main branch
+        run: |
+          TS=$(date +"%y%m%d_%H%M")
+          TS_FULL=$(date +"%Y-%m-%d %H:%M:%S")
+
+          git remote add upstream $UPSTREAM_REPO_URL
+          git checkout main
+          git checkout -b chore/sync-upstream_%TS
+
+          git fetch upstream
+          git merge upstream/main -m "chore: sync with upstream main branch - $TS_FULL"
+
+          if [ $? -eq 1 ]; then
+            echo "::error:: Merge conflicts detected! Please resolve manually."
+            # fail the action
+            exit 1
+          elif [ $? -ne 0 ]; then
+            echo "::error:: An unexpected Git error occurred."
+            # fail the action
+            exit 1
+          fi
+
+          echo "::notice:: Merge successful."
+        env:
+          UPSTREAM_REPO_URL: ${{ vars.UPSTREAM_REPO_URL }}
+
+      - name: Push changes and create pull request
+        run: |
+          TS_FULL=$(date +"%Y-%m-%d %H:%M:%S")
+
+          git push origin head
+          gh pr create --title "chore: sync with upstream main branch - $TS_FULL" \
+            --body "This PR merges the latest changes from the upstream main branch." \
+            --base main
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
