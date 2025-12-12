@@ -25,7 +25,10 @@ jobs:
           TS_FULL=$(date +"%Y-%m-%d %H:%M:%S")
 
           git remote add upstream $UPSTREAM_REPO_URL
+          git fetch upstream
           git checkout main
+
+          git remote -v
 
           AHEAD=$(git rev-list upstream/main..main --count)
           BEHIND=$(git rev-list main..upstream/main --count)
@@ -39,7 +42,6 @@ jobs:
 
           git checkout -b chore/sync-upstream_$TS
 
-          git fetch upstream
           git merge upstream/main -m "chore: sync with upstream main branch - $TS_FULL"
 
           if [ $? -ne 0 ]; then
