@@ -41,9 +41,9 @@
     "currency-symbol-map": "5.1.0",
     "dotenv": "17.2.3",
     "dotenv-expand": "12.0.3",
-    "next": "16.0.8",
-    "react": "19.2.1",
-    "react-dom": "19.2.1",
+    "next": "16.0.10",
+    "react": "19.2.3",
+    "react-dom": "19.2.3",
     "sharp": "0.34.5",
     "styled-components": "6.1.19",
     "uuid": "13.0.0"
