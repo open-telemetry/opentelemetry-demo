@@ -74,7 +74,7 @@ jobs:
           TS_FULL=$(date +"%Y-%m-%d %H:%M:%S")
 
           gh issue create --title "Merge failure when syncing with upstream main branch - $TS_FULL" \
-            --body "The automatic merge with the upstream main branch failed. Please resolve." \
+            --body "The automatic merge with the upstream main branch failed. Please merge manually." \
             --label "merge-failure"
 
           echo "::notice:: Issue created for merge failure"
