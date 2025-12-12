@@ -206,13 +206,20 @@ See [docs/incident-scenarios.md](docs/incident-scenarios.md) for complete catalo
 
 ## Documentation
 
+### For Agent Developers (Start Here!)
+
+**[AGENT-DEV-GUIDE.md](AGENT-DEV-GUIDE.md)** - Quick start for developers using the playground to build AI agents. No infrastructure knowledge needed.
+
+### Complete Documentation
+
 | Document | Purpose |
 |----------|---------|
 | **README.md** | This file - complete overview, architecture, components |
+| **[AGENT-DEV-GUIDE.md](AGENT-DEV-GUIDE.md)** | **For agent developers** - endpoints, incidents, testing |
 | **[docs/aws-deployment.md](docs/aws-deployment.md)** | Deploy to AWS EKS and operate |
 | **[docs/local-setup.md](docs/local-setup.md)** | Run locally with Docker or kind |
 | **[docs/secrets.md](docs/secrets.md)** | Secrets management and security |
-| **[docs/agent-integration.md](docs/agent-integration.md)** | Connect your AI agent |
+| **[docs/agent-integration.md](docs/agent-integration.md)** | Connect your AI agent (technical details) |
 | **[docs/incident-scenarios.md](docs/incident-scenarios.md)** | Trigger and test incidents |
 
 See [docs/README.md](docs/README.md) for detailed navigation guide.

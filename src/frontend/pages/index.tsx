@@ -17,7 +17,7 @@ const Home: NextPage = () => {
   const { data: productList = [] } = useQuery({
     queryKey: ['products', selectedCurrency],
     queryFn: () => ApiGateway.listProducts(selectedCurrency),
-  });
+  });x
 
   return (
     <Layout>
