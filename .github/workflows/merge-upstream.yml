@@ -45,8 +45,8 @@ jobs:
 
           if [ $? -ne 0 ]; then
             echo "::error:: Merge failed; possibly due to merge conflicts"
-            # fail the action
-            exit 1
+            echo "SUCCESS=0" >> $GITHUB_OUTPUT
+            exit 0
           fi
 
           echo "::notice:: Merge successful"
@@ -63,5 +63,20 @@ jobs:
           gh pr create --title "chore: sync with upstream main branch - $TS_FULL" \
             --fill-verbose \
             --base main
+
+          echo "::notice:: Pull request created for merged changes"
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Create issue if merge failed
+        if: steps.merge-upstream.outputs.SUCCESS == '0'
+        run: |
+          TS_FULL=$(date +"%Y-%m-%d %H:%M:%S")
+
+          gh issue create --title "Merge failure when syncing with upstream main branch - $TS_FULL" \
+            --body "The automatic merge with the upstream main branch failed. Please resolve." \
+            --label "merge-failure"
+
+          echo "::notice:: Issue created for merge failure"
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
