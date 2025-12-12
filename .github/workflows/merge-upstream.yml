@@ -21,27 +21,34 @@ jobs:
 
       - name: Merge upstream main branch
         run: |
-          TS=$(date +"%y%m%d_%H%M")
+          TS=$(date +"%Y%m%d_%H%M%S")
           TS_FULL=$(date +"%Y-%m-%d %H:%M:%S")
 
           git remote add upstream $UPSTREAM_REPO_URL
           git checkout main
-          git checkout -b chore/sync-upstream_%TS
+
+          AHEAD=$(git rev-list upstream/main..main --count)
+          BEHIND=$(git rev-list main..upstream/main --count)
+
+          if [ $BEHIND -eq 0 ]; then
+            echo "::notice:: main already up-to-date with upstream/main, no merge needed"
+            exit 0
+          fi
+
+          echo "::notice:: main is behind upstream/main by $BEHIND commits and ahead by $AHEAD commits"
+
+          git checkout -b chore/sync-upstream_$TS
 
           git fetch upstream
           git merge upstream/main -m "chore: sync with upstream main branch - $TS_FULL"
 
-          if [ $? -eq 1 ]; then
-            echo "::error:: Merge conflicts detected! Please resolve manually."
-            # fail the action
-            exit 1
-          elif [ $? -ne 0 ]; then
-            echo "::error:: An unexpected Git error occurred."
+          if [ $? -ne 0 ]; then
+            echo "::error:: Merge failed; possibly due to merge conflicts"
             # fail the action
             exit 1
           fi
 
-          echo "::notice:: Merge successful."
+          echo "::notice:: Merge successful"
         env:
           UPSTREAM_REPO_URL: ${{ vars.UPSTREAM_REPO_URL }}
 
@@ -51,7 +58,7 @@ jobs:
 
           git push origin head
           gh pr create --title "chore: sync with upstream main branch - $TS_FULL" \
-            --body "This PR merges the latest changes from the upstream main branch." \
+            --fill-verbose \
             --base main
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
