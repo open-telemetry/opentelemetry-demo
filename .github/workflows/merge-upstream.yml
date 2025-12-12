@@ -58,6 +58,11 @@ jobs:
         env:
           UPSTREAM_REPO_URL: ${{ vars.UPSTREAM_REPO_URL }}
 
+      - name: Check gh authentication status
+        run: gh auth status
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
       - name: Push changes and create pull request
         if: steps.merge-upstream.outputs.SUCCESS == '1'
         run: |
