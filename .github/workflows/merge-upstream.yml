@@ -20,6 +20,7 @@ jobs:
           git config user.email "github-actions[bot]@users.noreply.github.com"
 
       - name: Merge upstream main branch
+        id: merge-upstream
         run: |
           TS=$(date +"%Y%m%d_%H%M%S")
           TS_FULL=$(date +"%Y-%m-%d %H:%M:%S")
@@ -27,8 +28,6 @@ jobs:
           git remote add upstream $UPSTREAM_REPO_URL
           git fetch upstream
           git checkout main
-
-          git remote -v
 
           AHEAD=$(git rev-list upstream/main..main --count)
           BEHIND=$(git rev-list main..upstream/main --count)
@@ -51,10 +50,12 @@ jobs:
           fi
 
           echo "::notice:: Merge successful"
+          echo "SUCCESS=1" >> $GITHUB_OUTPUT
         env:
           UPSTREAM_REPO_URL: ${{ vars.UPSTREAM_REPO_URL }}
 
       - name: Push changes and create pull request
+        if: steps.merge-upstream.outputs.SUCCESS == '1'
         run: |
           TS_FULL=$(date +"%Y-%m-%d %H:%M:%S")
 
