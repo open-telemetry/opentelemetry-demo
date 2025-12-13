@@ -271,16 +271,8 @@ jobs:
           SERVICE_NAME="${{ matrix.name }}"
           REGISTRY="${{ needs.prepare-matrix.outputs.registry }}"
 
-          # Determine image name based on service
-          # Most services use otel-{service} naming convention
-          case "$SERVICE_NAME" in
-            accounting|ad|cart|fraud-detection|frontend|frontend-proxy|image-provider|llm|payment|product-reviews|recommendation)
-              IMAGE_NAME="otel-${SERVICE_NAME}"
-              ;;
-            *)
-              IMAGE_NAME="${SERVICE_NAME}"
-              ;;
-          esac
+          # All services use otel-{service} naming convention
+          IMAGE_NAME="otel-${SERVICE_NAME}"
 
           FULL_IMAGE="${REGISTRY}/${IMAGE_NAME}:${{ needs.determine-version.outputs.version }}"
 
@@ -419,15 +411,8 @@ jobs:
 
           # Update each service's manifest
           for SERVICE in $SERVICES_TO_UPDATE; do
-            # Determine image name (same logic as in prepare-matrix)
-            case "$SERVICE" in
-              accounting|ad|cart|fraud-detection|frontend|frontend-proxy|image-provider|llm|payment|product-reviews|recommendation)
-                IMAGE_NAME="otel-${SERVICE}"
-                ;;
-              *)
-                IMAGE_NAME="${SERVICE}"
-                ;;
-            esac
+            # All services use otel-{service} naming convention
+            IMAGE_NAME="otel-${SERVICE}"
 
             # Update the manifest
             python3 .github/scripts/update-manifest-images.py "$SERVICE" "$REGISTRY" "$IMAGE_NAME" "$VERSION"

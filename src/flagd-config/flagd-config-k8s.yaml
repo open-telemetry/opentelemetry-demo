@@ -1,6 +1,24 @@
 # Kubernetes manifest for flagd-config
 # Auto-generated from opentelemetry-demo.yaml
-# Contains 1 resource(s)
+# Contains 2 resource(s): PVC and ConfigMap
+---
+# PersistentVolumeClaim for shared flagd configuration
+# This PVC is shared between flagd and flagd-ui to enable dynamic flag updates
+# Using ReadWriteOnce with podAffinity to ensure both pods on same node
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: flagd-shared-config
+  labels:
+    app.kubernetes.io/part-of: opentelemetry-demo
+    app.kubernetes.io/component: flagd
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 100Mi
+  storageClassName: local-path
 ---
 apiVersion: v1
 kind: ConfigMap

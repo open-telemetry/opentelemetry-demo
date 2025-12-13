@@ -51,7 +51,7 @@ spec:
       serviceAccountName: opentelemetry-demo
       containers:
         - name: shop-dc-shim
-          image: ghcr.io/splunk/opentelemetry-demo/shop-dc-shim:1.0.2
+          image: ghcr.io/splunk/opentelemetry-demo/otel-shop-dc-shim:1.0.2
           imagePullPolicy: Always
           ports:
             - containerPort: 8070
