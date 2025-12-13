@@ -6,10 +6,13 @@ require "pony"
 require "sinatra"
 require "open_feature/sdk"
 require "openfeature/flagd/provider"
-# require "open_feature/flagd_provider"
 
 require "opentelemetry/sdk"
+require "opentelemetry-logs-sdk"
+require "opentelemetry-metrics-sdk"
 require "opentelemetry/exporter/otlp"
+require "opentelemetry-exporter-otlp-logs"
+require "opentelemetry-exporter-otlp-metrics"
 require "opentelemetry/instrumentation/sinatra"
 
 set :port, ENV["EMAIL_PORT"]
@@ -30,6 +33,13 @@ OpenTelemetry::SDK.configure do |c|
   c.use "OpenTelemetry::Instrumentation::Sinatra"
 end
 
+$logger = OpenTelemetry.logger_provider.logger(name: 'email')
+
+otlp_metric_exporter = OpenTelemetry::Exporter::OTLP::Metrics::MetricsExporter.new
+OpenTelemetry.meter_provider.add_metric_reader(otlp_metric_exporter)
+meter = OpenTelemetry.meter_provider.meter("email")
+$confirmation_counter = meter.create_counter("app.confirmation.counter", unit: "1", description: "Counts the number of order confirmation emails sent")
+
 post "/send_order_confirmation" do
   data = JSON.parse(request.body.read, object_class: OpenStruct)
 
@@ -39,6 +49,7 @@ post "/send_order_confirmation" do
     "app.order.id" => data.order.order_id,
   })
 
+  $confirmation_counter.add(1)
   send_email(data)
 
 end
@@ -74,6 +85,13 @@ def send_email(data)
     end
 
     span.set_attribute("app.email.recipient", data.email)
+    $logger.on_emit(
+      timestamp: Time.now,
+      severity_text: 'INFO',
+      body: 'Order confirmation email sent',
+      attributes: { 'app.email.recipient' => data.email },
+    )
+
     puts "Order confirmation email sent to: #{data.email}"
   end
   # manually created spans need to be ended

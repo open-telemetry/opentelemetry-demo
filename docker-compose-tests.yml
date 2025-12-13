@@ -45,6 +45,7 @@ services:
       - FRONTEND_ADDR
       - PAYMENT_ADDR
       - PRODUCT_CATALOG_ADDR
+      - PRODUCT_REVIEWS_ADDR
       - RECOMMENDATION_ADDR
       - SHIPPING_ADDR
       - KAFKA_ADDR
@@ -73,9 +74,13 @@ services:
         condition: service_started
       frontend:
         condition: service_started
+      llm:
+        condition: service_started
       payment:
         condition: service_started
       product-catalog:
+        condition: service_started
+      product-reviews:
         condition: service_started
       quote:
         condition: service_started

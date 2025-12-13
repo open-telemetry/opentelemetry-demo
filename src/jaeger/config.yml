@@ -1,0 +1,59 @@
+# Copyright The OpenTelemetry Authors
+# SPDX-License-Identifier: Apache-2.0
+
+service:
+  extensions: [jaeger_storage, jaeger_query, healthcheckv2]
+  pipelines:
+    traces:
+      receivers: [otlp]
+      processors: [batch]
+      exporters: [jaeger_storage_exporter]
+  telemetry:
+    resource:
+      service.name: jaeger-query
+    metrics:
+      level: detailed
+      readers:
+        - periodic:
+            interval: 10000
+            timeout: 5000
+            exporter:
+              otlp:
+                protocol: http/protobuf
+                endpoint: http://${env:OTEL_COLLECTOR_HOST}:${env:OTEL_COLLECTOR_PORT_HTTP}
+    logs:
+      level: info
+extensions:
+  healthcheckv2:
+    use_v2: true
+    http:
+
+  jaeger_query:
+    storage:
+      traces: memory_backend
+      metrics: metrics_backend
+    base_path: /jaeger/ui
+  jaeger_storage:
+    backends:
+      memory_backend:
+        memory:
+          max_traces: ${env:MEMORY_MAX_TRACES}
+    metric_backends:
+      metrics_backend:
+        prometheus:
+          endpoint: "http://${env:PROMETHEUS_ADDR}"
+          normalize_calls: true
+          normalize_duration: true
+
+receivers:
+  otlp:
+    protocols:
+      grpc:
+        endpoint: ${env:JAEGER_HOST}:${env:JAEGER_GRPC_PORT}
+
+processors:
+  batch:
+
+exporters:
+  jaeger_storage_exporter:
+    trace_storage: memory_backend
