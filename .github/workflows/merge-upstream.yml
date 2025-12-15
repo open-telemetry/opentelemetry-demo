@@ -11,6 +11,7 @@ jobs:
       contents: write
       pull-requests: write
       issues: write
+      workflows: write
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
