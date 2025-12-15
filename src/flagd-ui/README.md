@@ -3,23 +3,81 @@
 This application provides a user interface for configuring the feature
 flags of the flagd service.
 
-This is a [Next.js](https://nextjs.org/) project.
+This is a [Phoenix](https://www.phoenixframework.org/) project.
 
 ## Running the application
 
 The application can be run with the rest of the demo using the documented
-docker compose or make commands.
+[docker compose or make commands](https://opentelemetry.io/docs/demo/#running-the-demo).
 
 ## Local development
 
-To run the app locally for development you must copy
-`src/flagd/demo.flagd.json` into `src/flagd-ui/data/demo.flagd.json`
-(create the directory and file if they do not exist yet). Make sure you're
-in the `src/flagd-ui` directory and run
-the following command:
+* Run `mix setup` to install and setup dependencies
+* Create a `data` folder: `mkdir data`.
+* Copy [../flagd/demo.flagd.json](../flagd/demo.flagd.json) to `./data/demo.flagd.json`
+  * `cp ../flagd/demo.flagd.json ./data/demo.flagd.json`
+* Start Phoenix endpoint with `mix phx.server` or inside IEx with `iex -S mix phx.server`
 
-```bash
-npm run dev
+Now you can visit `localhost:4000` from your browser.
+
+## Programmatic use through the API
+
+This service exposes a REST API to ease its usage in a programmatic way for
+power users.
+
+You can read the current configuration using this HTTP call:
+
+```json
+$ curl localhost:8080/feature/api/read | jq
+
+{
+  "flags": {
+    "adFailure": {
+      "defaultVariant": "off",
+      "description": "Fail ad service",
+      "state": "ENABLED",
+      "variants": {
+        "off": false,
+        "on": true
+      }
+    },
+    "adHighCpu": {
+      "defaultVariant": "off",
+      "description": "Triggers high cpu load in the ad service",
+      "state": "ENABLED",
+      "variants": {
+        "off": false,
+        "on": true
+      }
+    },
+    "adManualGc": {
+      "defaultVariant": "off",
+      "description": "Triggers full manual garbage collections in the ad service",
+      "state": "ENABLED",
+      "variants": {
+        "off": false,
+        "on": true
+      }
+    },
+    ...
+  }
+}
 ```
 
-Then you must navigate to `localhost:4000/feature`.
+You can also write a new settings file by sending a new configuration inside
+the `data` field of a POST request body.
+
+Bear in mind that _all_ the data will be rewritten by this write operation.
+
+```sh
+$ curl --header "Content-Type: application/json" \
+  --request POST \
+  --data '{"data": {"$schema":"https://flagd.dev/schema/v0/flags.json","flags":{"adFailure":{"defaultVariant":"on","description":"Fail ad service","state":"ENABLED","variants":{"off":false,"on":true}}...' \
+  http://localhost:8080/feature/api/write
+```
+
+In addition to the `/read` and `/write` endpoint, we also offer these endpoint
+to stay compatible with the old version of Flagd-ui:
+
+* `/read-file` (`GET`)
+* `/write-to-file` (`POST`)

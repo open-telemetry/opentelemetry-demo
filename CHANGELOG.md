@@ -7,6 +7,49 @@ the release.
 
 ## Unreleased
 
+* [feat] add ipv6 support
+  ([#2594](https://github.com/open-telemetry/opentelemetry-demo/pull/2594))
+* [chore] Use pre-built nginx otel image
+  ([#2614](https://github.com/open-telemetry/opentelemetry-demo/pull/2614))
+* [grafana] Update grafana version to 12.2.0
+  ([#2615](https://github.com/open-telemetry/opentelemetry-demo/pull/2615))
+* [frontend] Fix navigation and cart math
+  ([#2660](https://github.com/open-telemetry/opentelemetry-demo/pull/2660))
+* [feat] Add Product Review service with AI-generated summaries
+  ([#2663](https://github.com/open-telemetry/opentelemetry-demo/pull/2663))
+* [chore] Upgrade OpenFeature and add fix deprecation warnings for dependency
+  injection
+  ([#2644](https://github.com/open-telemetry/opentelemetry-demo/pull/2644))
+* [frontend] fix item calculation and shipping
+  ([#2684](https://github.com/open-telemetry/opentelemetry-demo/pull/2684))
+* [flagd-ui] add back legacy REST APIs to empower programmatic usage
+  ([#2720](https://github.com/open-telemetry/opentelemetry-demo/pull/2720))
+* [collector] Remove batch processor
+  ([#2734](https://github.com/open-telemetry/opentelemetry-demo/pull/2734))
+* [email] Add OTLP metrics and logs
+  ([#2737](https://github.com/open-telemetry/opentelemetry-demo/pull/2737))
+* [collector] [dockerstats/receiver] Set API version to 1.44
+  ([#2767](https://github.com/open-telemetry/opentelemetry-demo/pull/2767))
+
+## 2.1.3
+
+* [chore] Fix postgresql container
+  ([#2597](https://github.com/open-telemetry/opentelemetry-demo/pull/2597))
+
+## 2.1.2
+
+* [chore] add postgresql and opensearch containers to build workflow
+  ([#2595](https://github.com/open-telemetry/opentelemetry-demo/pull/2595))
+
+## 2.1.1
+
+* Align env vars
+  ([#2582](https://github.com/open-telemetry/opentelemetry-demo/pull/2582))
+* [opensearch] Reduce OpenSearch container memory footprint
+  ([#2587](https://github.com/open-telemetry/opentelemetry-demo/pull/2587))
+
+## 2.1.0
+
 * [chore] add GOMEMLIMIT to all Go services
   ([#2148](https://github.com/open-telemetry/opentelemetry-demo/pull/2148))
 * [product-catalog] Simplify span event name
@@ -76,6 +119,8 @@ the release.
   ([#2352]((https://github.com/open-telemetry/opentelemetry-demo/pull/2352)))
 * [image-provider] Update to latest version of nginx and alpine
   ([#2369](https://github.com/open-telemetry/opentelemetry-demo/pull/2369))
+* [chore] Upgrade Jaeger to v2
+  ([#2389](https://github.com/open-telemetry/opentelemetry-demo/pull/2389))
 * [load-generator] Fix Playwright wait until load state error
   ([#2374](https://github.com/open-telemetry/opentelemetry-demo/pull/2374))
 * [flagd] Bump Flagd to v0.12.8 and get compliant `http.Server.request.duration`
@@ -90,6 +135,8 @@ the release.
   ([#2402](https://github.com/open-telemetry/opentelemetry-demo/pull/2402))
 * [grafana] Update OpenSearch logs index in APM Dashboards
   ([#2419](https://github.com/open-telemetry/opentelemetry-demo/pull/2419))
+* [flagd-ui] Rewrite Flagd UI in Elixir
+  ([#2427](https://github.com/open-telemetry/opentelemetry-demo/pull/2427))
 * [frontend-proxy] Add redirects for web UI paths to ensure proper asset loading
   ([#2476](https://github.com/open-telemetry/opentelemetry-demo/pull/2476))
 * [chore] Bump dependent images
@@ -103,6 +150,8 @@ the release.
   ([#2503](https://github.com/open-telemetry/opentelemetry-demo/pull/2503))
 * [grafana] APM dashboard: Add host metrics per service instance
   ([#2507](https://github.com/open-telemetry/opentelemetry-demo/pull/2507))
+* [react-native-app] Make frontend proxy URL configurable through app settings
+  ([#2531](https://github.com/open-telemetry/opentelemetry-demo/pull/2531))
 
 ## 2.0.2
 

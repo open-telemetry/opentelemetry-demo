@@ -18,6 +18,7 @@ const {
   CHECKOUT_ADDR = '',
   CURRENCY_ADDR = '',
   PRODUCT_CATALOG_ADDR = '',
+  PRODUCT_REVIEWS_ADDR = '',
   RECOMMENDATION_ADDR = '',
   SHIPPING_ADDR = '',
   ENV_PLATFORM = '',
@@ -32,6 +33,13 @@ const nextConfig = {
   compiler: {
     styledComponents: true,
   },
+  // Turbopack configuration (Next.js 16 default bundler)
+  // Turbopack automatically handles Node.js polyfills for client bundles
+  turbopack: {
+    // Set root to current directory to avoid confusion with parent lockfile
+    root: __dirname,
+  },
+  // Keep webpack config for backwards compatibility if --webpack flag is used
   webpack: (config, { isServer }) => {
     if (!isServer) {
       config.resolve.fallback.http2 = false;
@@ -49,6 +57,7 @@ const nextConfig = {
     CHECKOUT_ADDR,
     CURRENCY_ADDR,
     PRODUCT_CATALOG_ADDR,
+    PRODUCT_REVIEWS_ADDR,
     RECOMMENDATION_ADDR,
     SHIPPING_ADDR,
     OTEL_EXPORTER_OTLP_TRACES_ENDPOINT,

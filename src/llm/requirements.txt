@@ -1,0 +1,4 @@
+python-dotenv==1.2.1
+python-json-logger==4.0.0
+flask==3.1.2
+openfeature-provider-flagd==0.2.3

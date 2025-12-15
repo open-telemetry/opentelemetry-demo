@@ -6,7 +6,7 @@ static_resources:
   listeners:
     - address:
         socket_address:
-          address: 0.0.0.0
+          address: "${ENVOY_ADDR}"
           port_value: ${ENVOY_PORT}
       filter_chains:
         - filters:
@@ -56,8 +56,12 @@ static_resources:
                         - match: { prefix: "/flagservice/" }
                           route: { cluster: flagservice, prefix_rewrite: "/", timeout: 0s }
                         - match: { prefix: "/feature" }
-                          route: { cluster: flagd-ui }
-                        - match: { prefix: "/" } # Default/catch-all route - keep last since prefix:"/" matches everything
+                          route:
+                            cluster: flagd-ui
+                            prefix_rewrite: "/"
+                            upgrade_configs:
+                              - upgrade_type: websocket
+                        - match: { prefix: "/" }  # Default/catch-all route - keep last since prefix:"/" matches everything
                           route: { cluster: frontend }
                 http_filters:
                   - name: envoy.filters.http.fault
@@ -237,12 +241,12 @@ static_resources:
                   address:
                     socket_address:
                       address: ${JAEGER_HOST}
-                      port_value: ${JAEGER_PORT}
+                      port_value: ${JAEGER_UI_PORT}
 admin:
   address:
     socket_address:
       address: 0.0.0.0
-      port_value: 10000
+      port_value: ${ENVOY_ADMIN_PORT}
 layered_runtime:
   layers:
     - name: static_layer_0

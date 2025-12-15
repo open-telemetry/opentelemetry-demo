@@ -8,8 +8,8 @@ by two layers.
 
 ## Build Locally
 
-By running `docker compose up` at the root of the project you'll have access to the
-frontend client by going to <http://localhost:8080/>.
+By running `docker compose up` at the root of the project you'll have access to
+the frontend client by going to <http://localhost:8080/>.
 
 ## Local development
 
