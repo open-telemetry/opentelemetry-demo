@@ -61,9 +61,11 @@ jobs:
       - name: Push changes and create pull request
         if: steps.merge-upstream.outputs.SUCCESS == '1'
         run: |
+          TS=$(date +"%Y%m%d_%H%M%S")
           TS_FULL=$(date +"%Y-%m-%d %H:%M:%S")
 
-          git push origin head
+          git push origin chore/sync-upstream_$TS
+
           gh pr create --title "chore: sync with upstream main branch - $TS_FULL" \
             --fill-verbose \
             --base main
