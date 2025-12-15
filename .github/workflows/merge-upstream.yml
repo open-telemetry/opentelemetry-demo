@@ -23,7 +23,7 @@ jobs:
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
 
-      - name: Merge upstream main branch
+      - name: Merge upstream main branch and create pull request
         id: merge-upstream
         run: |
           TS=$(date +"%Y%m%d_%H%M%S")
@@ -49,32 +49,30 @@ jobs:
 
           if [ $? -ne 0 ]; then
             echo "::error:: Merge failed; possibly due to merge conflicts"
-            echo "SUCCESS=2" >> $GITHUB_OUTPUT
+            echo "SUCCESS=1" >> $GITHUB_OUTPUT
             exit 0
           fi
 
           echo "::notice:: Merge successful"
-          echo "SUCCESS=1" >> $GITHUB_OUTPUT
-        env:
-          UPSTREAM_REPO_URL: ${{ vars.UPSTREAM_REPO_URL }}
-
-      - name: Push changes and create pull request
-        if: steps.merge-upstream.outputs.SUCCESS == '1'
-        run: |
-          TS=$(date +"%Y%m%d_%H%M%S")
-          TS_FULL=$(date +"%Y-%m-%d %H:%M:%S")
 
           gh pr create --head chore/sync-upstream_$TS \
             --title "chore: sync with upstream main branch - $TS_FULL" \
             --fill-verbose \
             --base main
 
+          if [ $? -ne 0 ]; then
+            echo "::error:: Create pull request failed"
+            echo "SUCCESS=2" >> $GITHUB_OUTPUT
+            exit 0
+          fi
+
           echo "::notice:: Pull request created for merged changes"
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          UPSTREAM_REPO_URL: ${{ vars.UPSTREAM_REPO_URL }}
 
       - name: Create issue if merge failed
-        if: steps.merge-upstream.outputs.SUCCESS == '2'
+        if: steps.merge-upstream.outputs.SUCCESS == '1'
         run: |
           TS_FULL=$(date +"%Y-%m-%d %H:%M:%S")
 
@@ -82,5 +80,17 @@ jobs:
             --body='Merge conflict or other issue occurred during upstream merge. Please resolve manually.'
 
           echo "::notice:: Issue created for merge failure"
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Create issue if pull request creation failed
+        if: steps.merge-upstream.outputs.SUCCESS == '2'
+        run: |
+          TS_FULL=$(date +"%Y-%m-%d %H:%M:%S")
+
+          gh issue create --title='Failed to merge upstream main branch - $TS_FULL' \
+            --body='Creation of pull request failed. Please resolve manually.'
+
+          echo "::notice:: Issue created for pull request creation failure"
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
