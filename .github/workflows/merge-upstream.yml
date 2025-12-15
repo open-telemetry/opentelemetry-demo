@@ -8,10 +8,12 @@ on:
 jobs:
   merge:
     permissions:
-      contents: write
-      pull-requests: write
-      issues: write
-      actions: write
+      # These are defensively set to read to ensure that no repository or
+      # organization level permissions can override. The required permissions
+      # are actually granted via the required PAT used with this workflow.
+      contents: read
+      pull-requests: read
+      issues: read
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
@@ -73,17 +75,17 @@ jobs:
 
           echo "::notice:: Pull request created for merged changes"
         env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GH_TOKEN: ${{ secrets.MERGE_UPSTREAM_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.MERGE_UPSTREAM_TOKEN }}
 
       - name: Create issue if merge failed
         if: steps.merge-upstream.outputs.SUCCESS == '2'
         run: |
           TS_FULL=$(date +"%Y-%m-%d %H:%M:%S")
 
-          gh api repos/sdewitt-newrelic/opentelemetry-demo/issues \
-            -f title='Failed to merge upstream main branch - $TS_FULL' \
-            -f body='Merge conflict or other issue occurred during upstream merge. Please resolve manually.'
+          gh issue create --title='Failed to merge upstream main branch - $TS_FULL' \
+            --body='Merge conflict or other issue occurred during upstream merge. Please resolve manually.'
 
           echo "::notice:: Issue created for merge failure"
         env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GH_TOKEN: ${{ secrets.MERGE_UPSTREAM_TOKEN }}
