@@ -68,6 +68,8 @@ jobs:
           TS=$(date +"%Y%m%d_%H%M%S")
           TS_FULL=$(date +"%Y-%m-%d %H:%M:%S")
 
+          git remote -v
+
           git push origin HEAD:chore/sync-upstream_$TS
 
           gh pr create --title "chore: sync with upstream main branch - $TS_FULL" \
