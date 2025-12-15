@@ -70,6 +70,8 @@ jobs:
 
           git push origin HEAD:chore/sync-upstream_$TS
 
+          git fetch origin
+
           gh pr create --title "chore: sync with upstream main branch - $TS_FULL" \
             --fill-verbose \
             --base main
@@ -77,7 +79,6 @@ jobs:
           echo "::notice:: Pull request created for merged changes"
         env:
           GH_TOKEN: ${{ secrets.MERGE_UPSTREAM_TOKEN }}
-          GITHUB_TOKEN: ${{ secrets.MERGE_UPSTREAM_TOKEN }}
 
       - name: Create issue if merge failed
         if: steps.merge-upstream.outputs.SUCCESS == '2'
