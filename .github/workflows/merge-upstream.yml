@@ -8,19 +8,15 @@ on:
 jobs:
   merge:
     permissions:
-      # These are defensively set to read to ensure that no repository or
-      # organization level permissions can override. The required permissions
-      # are actually granted via the required PAT used with this workflow.
-      contents: read
-      pull-requests: read
-      issues: read
+      contents: write
+      pull-requests: write
+      issues: write
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
         uses: actions/checkout@v6.0.0
         with:
           fetch-depth: 0
-          token: ${{ secrets.MERGE_UPSTREAM_TOKEN }}
 
       - name: Set up Git
         run: |
@@ -75,7 +71,7 @@ jobs:
 
           echo "::notice:: Pull request created for merged changes"
         env:
-          GH_TOKEN: ${{ secrets.MERGE_UPSTREAM_TOKEN }}
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Create issue if merge failed
         if: steps.merge-upstream.outputs.SUCCESS == '2'
@@ -87,4 +83,4 @@ jobs:
 
           echo "::notice:: Issue created for merge failure"
         env:
-          GH_TOKEN: ${{ secrets.MERGE_UPSTREAM_TOKEN }}
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
