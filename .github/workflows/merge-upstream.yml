@@ -49,7 +49,7 @@ jobs:
 
           if [ $? -ne 0 ]; then
             echo "::error:: Merge failed; possibly due to merge conflicts"
-            echo "SUCCESS=0" >> $GITHUB_OUTPUT
+            echo "SUCCESS=2" >> $GITHUB_OUTPUT
             exit 0
           fi
 
@@ -57,11 +57,6 @@ jobs:
           echo "SUCCESS=1" >> $GITHUB_OUTPUT
         env:
           UPSTREAM_REPO_URL: ${{ vars.UPSTREAM_REPO_URL }}
-
-      - name: Check gh authentication status
-        run: gh auth status
-        env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Push changes and create pull request
         if: steps.merge-upstream.outputs.SUCCESS == '1'
@@ -78,11 +73,13 @@ jobs:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Create issue if merge failed
-        if: steps.merge-upstream.outputs.SUCCESS == '0'
+        if: steps.merge-upstream.outputs.SUCCESS == '2'
         run: |
           TS_FULL=$(date +"%Y-%m-%d %H:%M:%S")
 
-          gh api repos/sdewitt-newrelic/opentelemetry-demo/issues -f title='bug' -f body='bug'
+          gh api repos/sdewitt-newrelic/opentelemetry-demo/issues \
+            -f title='Failed to merge upstream main branch - $TS_FULL' \
+            -f body='Merge conflict or other issue occurred during upstream merge. Please resolve manually.'
 
           echo "::notice:: Issue created for merge failure"
         env:
