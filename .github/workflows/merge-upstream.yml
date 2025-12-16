@@ -40,8 +40,9 @@ jobs:
           echo "SUCCESS=1" >> $GITHUB_OUTPUT
         working-directory: ./newrelic/scripts
         env:
-          UPSTREAM_REPO_URL: ${{ vars.UPSTREAM_REPO_URL }}
+          UPSTREAM_REPO_URL: ${{ vars.MERGE_UPSTREAM_REPO_URL }}
           UPSTREAM_REMOTE: upstream
+          TARGET_REPO: ${{ vars.MERGE_UPSTREAM_TARGET_REPO }}
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Create issue if merge failed
