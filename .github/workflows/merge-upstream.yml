@@ -26,53 +26,26 @@ jobs:
       - name: Merge upstream main branch and create pull request
         id: merge-upstream
         run: |
-          TS=$(date +"%Y%m%d_%H%M%S")
-          TS_FULL=$(date +"%Y-%m-%d %H:%M:%S")
+          git remote add $UPSTREAM_REMOTE $UPSTREAM_REPO_URL
 
-          git remote add upstream $UPSTREAM_REPO_URL
-          git fetch upstream
-          git checkout main
-
-          AHEAD=$(git rev-list upstream/main..main --count)
-          BEHIND=$(git rev-list main..upstream/main --count)
-
-          if [ $BEHIND -eq 0 ]; then
-            echo "::notice:: main already up-to-date with upstream/main, no merge needed"
-            exit 0
-          fi
-
-          echo "::notice:: main is behind upstream/main by $BEHIND commits and ahead by $AHEAD commits"
-
-          git checkout -b chore/sync-upstream_$TS
-
-          git merge upstream/main -m "chore: sync with upstream main branch - $TS_FULL"
+          ./merge-upstream.sh
 
           if [ $? -ne 0 ]; then
             echo "::error:: Merge failed; possibly due to merge conflicts"
-            echo "SUCCESS=1" >> $GITHUB_OUTPUT
-            exit 0
-          fi
-
-          echo "::notice:: Merge successful"
-
-          gh pr create --head chore/sync-upstream_$TS \
-            --title "chore: sync with upstream main branch - $TS_FULL" \
-            --fill-verbose \
-            --base main
-
-          if [ $? -ne 0 ]; then
-            echo "::error:: Create pull request failed"
             echo "SUCCESS=2" >> $GITHUB_OUTPUT
             exit 0
           fi
 
-          echo "::notice:: Pull request created for merged changes"
+          echo "::notice:: Merge successful"
+          echo "SUCCESS=1" >> $GITHUB_OUTPUT
+        working-directory: ./newrelic/scripts
         env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           UPSTREAM_REPO_URL: ${{ vars.UPSTREAM_REPO_URL }}
+          UPSTREAM_REMOTE: upstream
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Create issue if merge failed
-        if: steps.merge-upstream.outputs.SUCCESS == '1'
+        if: steps.merge-upstream.outputs.SUCCESS == '2'
         run: |
           TS_FULL=$(date +"%Y-%m-%d %H:%M:%S")
 
