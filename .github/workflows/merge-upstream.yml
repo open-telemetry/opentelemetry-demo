@@ -50,21 +50,9 @@ jobs:
         run: |
           TS_FULL=$(date +"%Y-%m-%d %H:%M:%S")
 
-          gh issue create --title='Failed to merge upstream main branch - $TS_FULL' \
+          gh issue create --title='Failed to merge upstream main branch on $TS_FULL' \
             --body='Merge conflict or other issue occurred during upstream merge. Please resolve manually.'
 
           echo "::notice:: Issue created for merge failure"
-        env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: Create issue if pull request creation failed
-        if: steps.merge-upstream.outputs.SUCCESS == '2'
-        run: |
-          TS_FULL=$(date +"%Y-%m-%d %H:%M:%S")
-
-          gh issue create --title='Failed to merge upstream main branch - $TS_FULL' \
-            --body='Creation of pull request failed. Please resolve manually.'
-
-          echo "::notice:: Issue created for pull request creation failure"
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
