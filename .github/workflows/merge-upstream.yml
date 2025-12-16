@@ -43,7 +43,6 @@ jobs:
           UPSTREAM_REPO_URL: ${{ vars.UPSTREAM_REPO_URL }}
           UPSTREAM_REMOTE: upstream
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          UPSTREAM_REPO_URL: ${{ vars.UPSTREAM_REPO_URL }}
 
       - name: Create issue if merge failed
         if: steps.merge-upstream.outputs.SUCCESS == '1'
