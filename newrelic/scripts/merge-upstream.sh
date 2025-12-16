@@ -42,9 +42,13 @@ TARGET_REPO="${TARGET_REPO:-newrelic/opentelemetry-demo}"
 TS=$(date +"%Y%m%d_%H%M%S")
 TS_FULL=$(date +"%Y-%m-%d %H:%M:%S")
 ORIGIN_REPO_URL=$(git config --get remote.origin.url)
-REGEX="^git@github.com:(.*)/(.*).git$"
+SSH_REGEX='^git@github.com:([^/]+)/([^.]+)(\.git)?$'
+HTTPS_REGEX='^https://github.com/([^/]+)/([^.]+)(\.git)?$'
 
-if [[ $ORIGIN_REPO_URL =~ $REGEX ]]; then
+if [[ $ORIGIN_REPO_URL =~ $SSH_REGEX ]]; then
+  REPO_OWNER="${BASH_REMATCH[1]}"
+  REPO_NAME="${BASH_REMATCH[2]}"
+elif [[ $ORIGIN_REPO_URL =~ $HTTPS_REGEX ]]; then
   REPO_OWNER="${BASH_REMATCH[1]}"
   REPO_NAME="${BASH_REMATCH[2]}"
 else
