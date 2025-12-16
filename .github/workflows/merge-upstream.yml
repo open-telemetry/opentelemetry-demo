@@ -23,7 +23,7 @@ jobs:
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
 
-      - name: Merge upstream main branch
+      - name: Merge upstream main branch and create pull request
         id: merge-upstream
         run: |
           git remote add $UPSTREAM_REMOTE $UPSTREAM_REPO_URL
@@ -32,7 +32,7 @@ jobs:
 
           if [ $? -ne 0 ]; then
             echo "::error:: Merge failed; possibly due to merge conflicts"
-            echo "SUCCESS=2" >> $GITHUB_OUTPUT
+            echo "SUCCESS=1" >> $GITHUB_OUTPUT
             exit 0
           fi
 
@@ -43,9 +43,10 @@ jobs:
           UPSTREAM_REPO_URL: ${{ vars.UPSTREAM_REPO_URL }}
           UPSTREAM_REMOTE: upstream
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          UPSTREAM_REPO_URL: ${{ vars.UPSTREAM_REPO_URL }}
 
       - name: Create issue if merge failed
-        if: steps.merge-upstream.outputs.SUCCESS == '2'
+        if: steps.merge-upstream.outputs.SUCCESS == '1'
         run: |
           TS_FULL=$(date +"%Y-%m-%d %H:%M:%S")
 
@@ -53,5 +54,17 @@ jobs:
             --body='Merge conflict or other issue occurred during upstream merge. Please resolve manually.'
 
           echo "::notice:: Issue created for merge failure"
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Create issue if pull request creation failed
+        if: steps.merge-upstream.outputs.SUCCESS == '2'
+        run: |
+          TS_FULL=$(date +"%Y-%m-%d %H:%M:%S")
+
+          gh issue create --title='Failed to merge upstream main branch - $TS_FULL' \
+            --body='Creation of pull request failed. Please resolve manually.'
+
+          echo "::notice:: Issue created for pull request creation failure"
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
