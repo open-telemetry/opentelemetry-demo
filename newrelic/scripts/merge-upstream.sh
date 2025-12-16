@@ -86,6 +86,8 @@ gh pr create --head $REPO_OWNER:chore/sync-upstream_$TS \
 if [ $? -ne 0 ]; then
   echo "create pull request against $TARGET_REPO failed"
   exit 1
+else
+  echo "pull request for merged changes created successfully against $TARGET_REPO"
 fi
 
 echo "merge from upstream repository completed successfully"
