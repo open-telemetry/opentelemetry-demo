@@ -82,7 +82,7 @@ git push -u origin chore/sync-upstream_$TS
 
 gh pr create --head $REPO_OWNER:chore/sync-upstream_$TS \
   --title "chore: sync with upstream main branch on $TS_FULL" \
-  --body "This PR was generated on $TS_FULL by merge-upstream.sh to sync $TARGET_REPO/main with the upstream main branch" \
+  --body "This PR was generated on $TS_FULL by merge-upstream.sh to sync the $TARGET_REPO main branch with the upstream main branch." \
   --base main \
   --repo $TARGET_REPO
 
