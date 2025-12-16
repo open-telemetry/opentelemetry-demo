@@ -71,7 +71,7 @@ echo "main is behind $UPSTREAM_REMOTE/main by $BEHIND commits and ahead by $AHEA
 git checkout -b chore/sync-upstream_$TS
 
 echo "merging changes from $UPSTREAM_REMOTE/main into local main branch"
-git merge $UPSTREAM_REMOTE/main -m "chore: sync with $UPSTREAM_REMOTE main branch on $TS_FULL"
+git merge $UPSTREAM_REMOTE/main -m "chore: sync with upstream main branch on $TS_FULL"
 if [ $? -ne 0 ]; then
   echo "merge failed, possibly due to conflicts"
   exit 1
@@ -82,7 +82,7 @@ git push -u origin chore/sync-upstream_$TS
 
 gh pr create --head $REPO_OWNER:chore/sync-upstream_$TS \
   --title "chore: sync with upstream main branch on $TS_FULL" \
-  --body "Automated sync with upstream main branch on $TS_FULL" \
+  --body "This PR was generated on $TS_FULL by merge-upstream.sh to sync $TARGET_REPO/main with the upstream main branch" \
   --base main \
   --repo $TARGET_REPO
 
