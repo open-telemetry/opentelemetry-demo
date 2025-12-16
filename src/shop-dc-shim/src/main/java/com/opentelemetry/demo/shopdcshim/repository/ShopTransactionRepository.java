@@ -67,6 +67,10 @@ public interface ShopTransactionRepository extends JpaRepository<ShopTransaction
     @Modifying
     void deleteInternalAuditRecordsOlderThan(@Param("cutoffTime") LocalDateTime cutoffTime);
 
+    @Query("DELETE FROM ShopTransaction s WHERE s.createdAt < :cutoffTime")
+    @Modifying
+    int deleteTransactionsOlderThan(@Param("cutoffTime") LocalDateTime cutoffTime);
+
     @Query(value = "SELECT 1", nativeQuery = true)
     Integer healthCheck();
 }
