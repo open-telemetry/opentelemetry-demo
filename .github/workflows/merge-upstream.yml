@@ -46,7 +46,7 @@ jobs:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Create issue if merge failed
-        if: steps.merge-upstream.outputs.SUCCESS == '1'
+        if: steps.merge-upstream.outputs.SUCCESS == '2'
         run: |
           TS_FULL=$(date +"%Y-%m-%d %H:%M:%S")
 
