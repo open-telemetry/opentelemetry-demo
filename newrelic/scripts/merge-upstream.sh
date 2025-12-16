@@ -11,17 +11,17 @@
 #   (Run from the newrelic/scripts directory)
 #
 # Environment variables:
-#   UPSTREAM_REPO_URL - Optional. URL of the upstream repository to sync from.
-#                       Defaults to https://github.com/opentelemetry/opentelemetry-demo.git
 #   UPSTREAM_REMOTE   - Optional. Name of the git remote for the upstream
 #                       repository. Defaults to 'official'.
 #   TARGET_REPO       - Optional. GitHub repository to create the pull request
 #                       against in the format 'owner/repo'. Defaults to
 #                       'newrelic/opentelemetry-demo'.
 #   GH_TOKEN or GITHUB_TOKEN - Required. GitHub token with permissions to create
-#                              pull requests. gh auth login can also be used to
-#                              authenticate the GitHub CLI prior to running this
-#                              script.
+#                              issues and pull requests. gh auth login can also
+#                              be used to authenticate the GitHub CLI prior to
+#                              running this script. When used in GitHub Actions,
+#                              the token should also have permissions to modify
+#                              repository contents.
 #
 # Dependencies:
 #   - git
@@ -35,7 +35,6 @@ source "$(dirname "$0")/common.sh"
 check_tool_installed git
 check_tool_installed gh
 
-UPSTREAM_REPO_URL="${UPSTREAM_REPO_URL:-https://github.com/opentelemetry/opentelemetry-demo.git}"
 UPSTREAM_REMOTE="${UPSTREAM_REMOTE:-official}"
 TARGET_REPO="${TARGET_REPO:-newrelic/opentelemetry-demo}"
 
@@ -56,7 +55,7 @@ else
   exit 1
 fi
 
-echo "starting merge from upstream repository: $UPSTREAM_REPO_URL"
+echo "starting merge from $UPSTREAM_REMOTE/main"
 git fetch $UPSTREAM_REMOTE
 git checkout main
 
