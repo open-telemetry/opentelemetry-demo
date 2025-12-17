@@ -141,6 +141,9 @@ exporters:
       tls:
         insecure: true
     sending_queue:
+      # Explicitly set due to bug: https://github.com/open-telemetry/opentelemetry-collector-contrib/issues/45016
+      num_consumers: 10
+      queue_size: 1000
       batch:
 processors:
   memory_limiter:
