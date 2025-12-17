@@ -1,3 +1,6 @@
+# Copyright The OpenTelemetry Authors
+# SPDX-License-Identifier: Apache-2.0
+
 id: otel-demo
 name: OpenTelemetry Demo Telemetry Schema
 semconv_version: 1.0.0

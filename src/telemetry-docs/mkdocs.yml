@@ -1,3 +1,6 @@
+# Copyright The OpenTelemetry Authors
+# SPDX-License-Identifier: Apache-2.0
+
 site_name: OpenTelemetry Demo Telemetry Schema
 site_description: Semantic conventions and telemetry schema for the OpenTelemetry Demo application
 site_author: OpenTelemetry Demo Contributors

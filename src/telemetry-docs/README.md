@@ -17,11 +17,13 @@ definitions in the `telemetry-schema/` directory.
 The service uses a two-stage Docker build:
 
 ### Stage 1: Weaver Builder
+
 - Uses the official `otel/weaver:latest` image
 - Reads the telemetry schema from `/telemetry-schema` directory
 - Generates Markdown documentation files
 
 ### Stage 2: MkDocs Server
+
 - Uses Python 3.11 slim image
 - Installs MkDocs and Material theme
 - Copies the generated documentation from Stage 1

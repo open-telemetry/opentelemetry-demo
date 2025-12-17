@@ -1,3 +1,6 @@
+# Copyright The OpenTelemetry Authors
+# SPDX-License-Identifier: Apache-2.0
+
 # Weaver configuration for service-centric telemetry documentation
 # This generates one markdown page per service from the telemetry schema
 #
