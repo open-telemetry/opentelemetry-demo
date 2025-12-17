@@ -1,10 +1,16 @@
 # Telemetry Documentation Service
 
-This service generates and hosts comprehensive documentation for the OpenTelemetry Demo's telemetry schema using [OpenTelemetry Weaver](https://github.com/open-telemetry/weaver) and [MkDocs](https://www.mkdocs.org/).
+This service generates and hosts comprehensive documentation for the
+OpenTelemetry Demo's telemetry schema using
+[OpenTelemetry Weaver](https://github.com/open-telemetry/weaver) and
+[MkDocs](https://www.mkdocs.org/).
 
 ## Overview
 
-The telemetry-docs service provides a web-based documentation interface that documents all custom attributes and metrics used across the OpenTelemetry Demo application. The documentation is automatically generated from the YAML schema definitions in the `telemetry-schema/` directory.
+The telemetry-docs service provides a web-based documentation interface that
+documents all custom attributes and metrics used across the OpenTelemetry Demo
+application. The documentation is automatically generated from the YAML schema
+definitions in the `telemetry-schema/` directory.
 
 ## Architecture
 
@@ -23,25 +29,17 @@ The service uses a two-stage Docker build:
 
 ## Usage
 
-### Starting the Service
+### Running the telemetry-docs service
 
-```bash
-# Start just the telemetry-docs service
-docker compose up telemetry-docs
-
-# Or start all services including telemetry-docs
-docker compose up
-```
+The application can be run with the rest of the demo using the documented
+[docker compose or make commands](https://opentelemetry.io/docs/demo/#running-the-demo).
 
 ### Accessing the Documentation
 
 Once the service is running, access the documentation at:
+<http://localhost:8080/telemetry>
 
-```
-http://localhost:8001
-```
-
-### Building the Service
+### Building new telemetry-docs
 
 ```bash
 # Build the telemetry-docs image

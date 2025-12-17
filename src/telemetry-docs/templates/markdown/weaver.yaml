@@ -21,7 +21,8 @@ templates:
     filter: >
       {
         registries: [.groups[] | select(.type == "attribute_group" and (.id | startswith("registry."))) | {name: (.id | split(".") | .[1]), id: .id}] | unique_by(.name) | sort_by(.name),
-        services: ([.groups[] | select(.type == "attribute_group" and (.id | startswith("service."))) | {name: (.id | split(".")| .[1])}] + [.groups[] | select(.type == "metric" and (.id | startswith("metric."))) | {name: (.id | split(".")[1])}]) | unique_by(.name) | sort_by(.name)
+        services: ([.groups[] | select(.type == "attribute_group" and (.id | startswith("service."))) | {name: (.id | split(".")| .[1])}] + [.groups[] |
+          select(.type == "metric" and (.id | startswith("metric."))) | {name: (.id | split(".")[1])}]) | unique_by(.name) | sort_by(.name)
       }
     application_mode: single
     file_name: mkdocs.yml
@@ -78,4 +79,3 @@ acronyms:
   - SQL
   - TLS
   - URL
-

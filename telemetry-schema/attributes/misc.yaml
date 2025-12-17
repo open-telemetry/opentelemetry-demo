@@ -8,7 +8,10 @@ groups:
         type: string
         brief: Whether the request is synthetic/test traffic
         stability: stable
-        note: Indicates whether the request is synthetic traffic generated for testing or monitoring purposes ("true") or real user traffic. This helps distinguish production traffic from test traffic in observability systems. Also propagated as synthetic_request baggage.
+        note: >
+          Indicates whether the request is synthetic traffic generated for testing or monitoring purposes ("true") or real user traffic.
+          This helps distinguish production traffic from test traffic in observability systems.
+          Also propagated as synthetic_request baggage.
         examples: ["true", "false"]
       - id: app.recommendation.cache_enabled
         type: boolean
