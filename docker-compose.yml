@@ -931,7 +931,7 @@ services:
     deploy:
       resources:
         limits:
-          memory: 800M
+          memory: 1G
     restart: unless-stopped
     environment:
       - cluster.name=demo-cluster
