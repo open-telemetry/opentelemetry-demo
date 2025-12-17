@@ -1,0 +1,3395 @@
+# Splunk Astronomy Shop Kubernetes Manifest
+# Version: 1.4.0
+# Generated on: 2025-12-17T15:32:47Z
+#
+# This manifest combines all service deployments for the Splunk Astronomy Shop
+# Services are defined in services.yaml
+---
+
+# === ingress ===
+#ingress format for local/DIAB demo
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: frontend-proxy-ingress
+  annotations:
+    kubernetes.io/ingress.class: traefik
+spec:
+  rules:
+    - http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: frontend-proxy
+                port:
+                  number: 8080
+
+# # Ingress format for official demo with AWS domain
+# apiVersion: networking.k8s.io/v1
+# kind: Ingress
+# metadata:
+#   name: frontend-proxy
+#   annotations:
+#     cert-manager.io/cluster-issuer: "letsencrypt-prod"
+#     traefik.ingress.kubernetes.io/router.middlewares: default-custom-headers@kubernetescrd
+# spec:
+#   ingressClassName: traefik
+#   tls:
+#   - hosts:
+#     - jrh-instance.splunko11y.com
+#     secretName: splunk-demo-tls
+#   rules:
+#   - host: jrh-instance.splunko11y.com
+#     http:
+#       paths:
+#       - path: /
+#         pathType: Prefix
+#         backend:
+#           service:
+#             name: frontend-proxy
+#             port:
+#               number: 8080
+---
+---
+
+# === accounting ===
+# Kubernetes manifest for accounting
+# Auto-generated from opentelemetry-demo.yaml
+# Contains 1 resource(s)
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: accounting
+  labels:
+    opentelemetry.io/name: accounting
+    app.kubernetes.io/component: accounting
+    app.kubernetes.io/name: accounting
+    app.kubernetes.io/version: 1.4.0
+    app.kubernetes.io/part-of: opentelemetry-demo
+spec:
+  replicas: 1
+  revisionHistoryLimit: 10
+  selector:
+    matchLabels:
+      opentelemetry.io/name: accounting
+  template:
+    metadata:
+      labels:
+        opentelemetry.io/name: accounting
+        app.kubernetes.io/component: accounting
+        app.kubernetes.io/name: accounting
+    spec:
+      serviceAccountName: opentelemetry-demo
+      containers:
+      - name: accounting
+        image: ghcr.io/splunk/opentelemetry-demo/otel-accounting:1.4.0
+        imagePullPolicy: Always
+        env:
+        - name: OTEL_SERVICE_NAME
+          valueFrom:
+            fieldRef:
+              apiVersion: v1
+              fieldPath: metadata.labels['app.kubernetes.io/component']
+        - name: NODE_IP
+          valueFrom:
+            fieldRef:
+              fieldPath: status.hostIP
+        - name: OTEL_COLLECTOR_NAME
+          value: $(NODE_IP)
+        - name: OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE
+          value: cumulative
+        - name: KAFKA_ADDR
+          value: kafka:9092
+        - name: OTEL_EXPORTER_OTLP_ENDPOINT
+          value: http://$(OTEL_COLLECTOR_NAME):4318
+        - name: DB_CONNECTION_STRING
+          value: Host=postgresql;Username=otelu;Password=otelp;Database=otel
+        - name: OTEL_DOTNET_AUTO_TRACES_ENTITYFRAMEWORKCORE_INSTRUMENTATION_ENABLED
+          value: 'false'
+        - name: OTEL_RESOURCE_ATTRIBUTES
+          value: service.name=$(OTEL_SERVICE_NAME),service.namespace=opentelemetry-demo,service.version=1.4.0,service.kafka=spanlink
+        - name: SPLUNK_PROFILER_ENABLED
+          value: 'true'
+        - name: SPLUNK_PROFILER_MEMORY_ENABLED
+          value: 'true'
+        resources:
+          limits:
+            memory: 300Mi
+        volumeMounts: null
+      initContainers:
+      - command:
+        - sh
+        - -c
+        - until nc -z -v -w30 kafka 9092; do echo waiting for kafka; sleep 2; done;
+        image: busybox:latest
+        name: wait-for-kafka
+      volumes: null
+
+---
+
+# === ad ===
+# Kubernetes manifest for ad
+# Auto-generated from opentelemetry-demo.yaml
+# Contains 2 resource(s)
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: ad
+  labels:
+    opentelemetry.io/name: ad
+    app.kubernetes.io/component: ad
+    app.kubernetes.io/name: ad
+    app.kubernetes.io/version: 1.4.0
+    app.kubernetes.io/part-of: opentelemetry-demo
+spec:
+  type: ClusterIP
+  ports:
+  - port: 8080
+    name: tcp-service
+    targetPort: 8080
+  selector:
+    opentelemetry.io/name: ad
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ad
+  labels:
+    opentelemetry.io/name: ad
+    app.kubernetes.io/component: ad
+    app.kubernetes.io/name: ad
+    app.kubernetes.io/version: 1.4.0
+    app.kubernetes.io/part-of: opentelemetry-demo
+spec:
+  replicas: 1
+  revisionHistoryLimit: 10
+  selector:
+    matchLabels:
+      opentelemetry.io/name: ad
+  template:
+    metadata:
+      labels:
+        opentelemetry.io/name: ad
+        app.kubernetes.io/component: ad
+        app.kubernetes.io/name: ad
+    spec:
+      serviceAccountName: opentelemetry-demo
+      containers:
+      - name: ad
+        image: ghcr.io/splunk/opentelemetry-demo/otel-ad:1.4.0
+        imagePullPolicy: Always
+        ports:
+        - containerPort: 8080
+          name: service
+        env:
+        - name: OTEL_SERVICE_NAME
+          valueFrom:
+            fieldRef:
+              apiVersion: v1
+              fieldPath: metadata.labels['app.kubernetes.io/component']
+        - name: NODE_IP
+          valueFrom:
+            fieldRef:
+              fieldPath: status.hostIP
+        - name: OTEL_COLLECTOR_NAME
+          value: $(NODE_IP)
+        - name: OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE
+          value: cumulative
+        - name: AD_PORT
+          value: '8080'
+        - name: FLAGD_HOST
+          value: flagd
+        - name: FLAGD_PORT
+          value: '8013'
+        - name: OTEL_EXPORTER_OTLP_ENDPOINT
+          value: http://$(OTEL_COLLECTOR_NAME):4318
+        - name: OTEL_RESOURCE_ATTRIBUTES
+          value: service.name=$(OTEL_SERVICE_NAME),service.namespace=opentelemetry-demo,service.version=1.4.0
+        - name: SPLUNK_PROFILER_LOGS_ENDPOINT
+          value: http://$(OTEL_COLLECTOR_NAME):4318/v1/logs
+        - name: SPLUNK_PROFILER_ENABLED
+          value: 'true'
+        - name: SPLUNK_PROFILER_MEMORY_ENABLED
+          value: 'true'
+        - name: SPLUNK_METRICS_ENABLED
+          value: 'true'
+        - name: OTEL_TRACES_SAMPLER
+          value: rules
+        - name: SPLUNK_PROFILER_CALL_STACK_INTERVAL
+          value: '100'
+        - name: JAVA_TOOL_OPTIONS
+          value: -javaagent:/usr/src/app/splunk-otel-javaagent-csa.jar -Dsplunk.snapshot.profiler.enabled=true
+            -Dsplunk.snapshot.profiler.sampling.interval=1 -Dsplunk.snapshot.selection.probability=0.1
+            -Xmx440m
+        resources:
+          limits:
+            memory: 600Mi
+        volumeMounts: null
+      volumes: null
+
+---
+
+# === astronomy-loadgen ===
+# Kubernetes manifest for astronomy-loadgen
+# Includes scriptfile ConfigMap used by the deployment
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: scriptfile
+data:
+  local-file: |
+    /* eslint-disable no-console */
+    const { Console } = require('console');
+    const puppeteer = require('puppeteer');
+    const customUserAgent = 'Mozilla/5.0 (X11; Linux x86_64; Splunk RUM_LoadGen) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/142.0.0.0 Safari/537.36';
+    console.log('DEBUG: Using User Agent:', customUserAgent);
+
+    async function launchBrowser() {
+      console.log('🔹 Starting headless browser...');
+      const browser = await puppeteer.launch({
+        headless: true,
+        defaultViewport: null,
+        args: [
+          '--no-sandbox',
+          '--disable-setuid-sandbox',
+          '--disable-gpu',
+          '--disable-dev-shm-usage',
+          '--disable-web-security',
+          '--disable-features=VizDisplayCompositor',
+          '--max-old-space-size=256',
+          '--disable-extensions',
+          '--disable-plugins',
+          '--disable-background-networking',
+          '--disable-background-timer-throttling',
+          '--disable-backgrounding-occluded-windows',
+          '--disable-renderer-backgrounding',
+          '--memory-pressure-off',
+          `--user-agent=${customUserAgent}`
+        ]
+      });
+      console.log('✅ Browser started.');
+      return browser;
+    }
+
+    function buildBaseUrl() {
+      const raw = (process.env.RUM_FRONTEND_IP || '').trim();
+
+      // If it's empty, default to localhost
+      if (!raw) return 'https://localhost/';
+
+      // If it already starts with http:// or https://, keep it exactly as-is
+      if (/^https?:\/\//i.test(raw)) {
+        return raw.replace(/\/+$/, '') + '/';
+      }
+
+      // Otherwise, prepend https://
+      return `https://${raw.replace(/\/+$/, '')}/`;
+    }
+
+    function delay(ms) { return new Promise(res => setTimeout(res, ms)); }
+
+    /** Wait until innerText of the page contains a substring */
+    async function waitForText(page, text, timeoutMs = 30000, pollMs = 200) {
+      const start = Date.now();
+      while (Date.now() - start < timeoutMs) {
+        const found = await page.evaluate(t =>
+          document && document.body && document.body.innerText.includes(t),
+          text
+        );
+        if (found) return true;
+        await delay(pollMs);
+      }
+      throw new Error(`Timed out waiting for text: "${text}"`);
+    }
+
+    async function runOnce() {
+      const browser = await launchBrowser();
+      let page;
+      try {
+        page = await browser.newPage();
+        page.setDefaultNavigationTimeout(45000);
+        page.setDefaultTimeout && page.setDefaultTimeout(30000);
+
+        const base = buildBaseUrl();
+        const url  = new URL('product/66VCHSJNUP', base).toString();
+
+        console.log(`🌐 Navigating to ${url}`);
+        await page.goto(url, { waitUntil: 'domcontentloaded' });
+
+        console.log('🖱️ Clicking quick prompts...');
+
+        // Click "Can you summarize the product reviews?"
+        {
+            console.log('🔍 Examining product reviews...');
+            const targetPage = page;
+            const timeout = 5000;
+            await puppeteer.Locator.race([
+                targetPage.locator('::-p-aria(Can you summarize the product reviews?)'),
+                targetPage.locator("[data-cy='QuickPromptSummarize']"),
+                targetPage.locator('::-p-xpath(//*[@data-cy=\\"QuickPromptSummarize\\"])'),
+                targetPage.locator(":scope >>> [data-cy='QuickPromptSummarize']"),
+                targetPage.locator('::-p-text(Can you summarize)')
+            ])
+                .setTimeout(timeout)
+                .click({
+                  offset: {
+                    x: 129,
+                    y: 15,
+                  },
+                });
+        }
+
+        // Click "Were there any negative reviews?"
+        {
+            const targetPage = page;
+            const timeout = 5000;
+            await puppeteer.Locator.race([
+                targetPage.locator('::-p-aria(Were there any negative reviews?)'),
+                targetPage.locator("[data-cy='QuickPromptNegative']"),
+                targetPage.locator('::-p-xpath(//*[@data-cy=\\"QuickPromptNegative\\"])'),
+                targetPage.locator(":scope >>> [data-cy='QuickPromptNegative']"),
+                targetPage.locator('::-p-text(Were there any)')
+            ])
+                .setTimeout(timeout)
+                .click({
+                  offset: {
+                    x: 171.6640625,
+                    y: 25,
+                  },
+                });
+        }
+
+        // Click "What age(s) is this recommended for?"
+        {
+            const targetPage = page;
+            const timeout = 5000;
+            await puppeteer.Locator.race([
+                targetPage.locator('::-p-aria(What age\\(s\\) is this recommended for?)'),
+                targetPage.locator("[data-cy='QuickPromptAges']"),
+                targetPage.locator('::-p-xpath(//*[@data-cy=\\"QuickPromptAges\\"])'),
+                targetPage.locator(":scope >>> [data-cy='QuickPromptAges']"),
+                targetPage.locator('::-p-text(What age\\(s\\) is)')
+            ])
+                .setTimeout(timeout)
+                .click({
+                  offset: {
+                    x: 148.0390625,
+                    y: 19,
+                  },
+                });
+        }
+
+
+
+        const addSel = "[data-cy='product-add-to-cart']";
+        await page.waitForSelector(addSel);
+        console.log('🖱️ Clicking "Add To Cart"');
+        await page.click(addSel);
+
+        const placeSel = "[data-cy='checkout-place-order']";
+        await page.waitForSelector(placeSel);
+        console.log('🖱️ Clicking "Place Order"');
+        await page.click(placeSel);
+
+        await waitForText(page, 'Your order is complete!');
+        console.log('🎉 Order completed message detected.');
+      } finally {
+        console.log('🧹 Closing browser...');
+        try {
+          if (page) {
+            page.removeAllListeners();
+            await page.close({ runBeforeUnload: true }).catch(()=>{});
+          }
+        } catch {}
+        try {
+          await browser.close();
+        } catch (e) {
+          // last-resort: nuke the child process if close() fails
+          try { browser.process()?.kill('SIGKILL'); } catch {}
+        }
+        console.log('✅ Browser closed cleanly.');
+      }
+    }
+
+    (async function mainLoop() {
+      let cycle = 1;
+      while (true) {
+        console.log(`=== Starting load generation cycle #${cycle} ===`);
+        try {
+          await runOnce();
+          console.log(`✅ Cycle #${cycle} finished OK`);
+        } catch (e) {
+          console.error(`❌ Cycle #${cycle} failed:`, e && e.stack ? e.stack : e);
+        }
+        cycle += 1;
+        await delay(5000); // wait 5 seconds before next cycle
+      }
+    })();
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: astronomy-loadgen-deployment
+  labels:
+    app: astronomy-loadgen
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: astronomy-loadgen
+  template:
+    metadata:
+      labels:
+        app: astronomy-loadgen
+    spec:
+      containers:
+      - name: astronomy-loadgen
+        image: ghcr.io/splunk/online-boutique/rumloadgen:5.6
+        imagePullPolicy: Always
+        env:
+        - name: RUM_FRONTEND_IP
+          value: "http://frontend-proxy:8080"
+        volumeMounts:
+        - name: puppeteer
+          subPath: local-file
+          mountPath: /puppeteer/touchwebsite.js
+      volumes:
+      - name: puppeteer
+        configMap:
+          name: scriptfile
+
+---
+
+# === cart ===
+# Kubernetes manifest for cart
+# Auto-generated from opentelemetry-demo.yaml
+# Contains 2 resource(s)
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: cart
+  labels:
+    opentelemetry.io/name: cart
+    app.kubernetes.io/component: cart
+    app.kubernetes.io/name: cart
+    app.kubernetes.io/version: 1.4.0
+    app.kubernetes.io/part-of: opentelemetry-demo
+spec:
+  type: ClusterIP
+  ports:
+  - port: 8080
+    name: tcp-service
+    targetPort: 8080
+  selector:
+    opentelemetry.io/name: cart
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: cart
+  labels:
+    opentelemetry.io/name: cart
+    app.kubernetes.io/component: cart
+    app.kubernetes.io/name: cart
+    app.kubernetes.io/version: 1.4.0
+    app.kubernetes.io/part-of: opentelemetry-demo
+spec:
+  replicas: 1
+  revisionHistoryLimit: 10
+  selector:
+    matchLabels:
+      opentelemetry.io/name: cart
+  template:
+    metadata:
+      labels:
+        opentelemetry.io/name: cart
+        app.kubernetes.io/component: cart
+        app.kubernetes.io/name: cart
+    spec:
+      serviceAccountName: opentelemetry-demo
+      containers:
+      - name: cart
+        image: ghcr.io/splunk/opentelemetry-demo/otel-cart:1.4.0
+        imagePullPolicy: Always
+        ports:
+        - containerPort: 8080
+          name: service
+        env:
+        - name: OTEL_SERVICE_NAME
+          valueFrom:
+            fieldRef:
+              apiVersion: v1
+              fieldPath: metadata.labels['app.kubernetes.io/component']
+        - name: NODE_IP
+          valueFrom:
+            fieldRef:
+              fieldPath: status.hostIP
+        - name: OTEL_COLLECTOR_NAME
+          value: $(NODE_IP)
+        - name: OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE
+          value: cumulative
+        - name: CART_PORT
+          value: '8080'
+        - name: ASPNETCORE_URLS
+          value: http://*:$(CART_PORT)
+        - name: VALKEY_ADDR
+          value: valkey-cart:6379
+        - name: FLAGD_HOST
+          value: flagd
+        - name: FLAGD_PORT
+          value: '8013'
+        - name: OTEL_EXPORTER_OTLP_ENDPOINT
+          value: http://$(OTEL_COLLECTOR_NAME):4318
+        - name: OTEL_RESOURCE_ATTRIBUTES
+          value: service.name=$(OTEL_SERVICE_NAME),service.namespace=opentelemetry-demo,service.version=1.4.0,service.kafka=no
+        - name: SPLUNK_PROFILER_LOGS_ENDPOINT
+          value: http://$(OTEL_COLLECTOR_NAME):4318/v1/logs
+        - name: SPLUNK_PROFILER_ENABLED
+          value: 'true'
+        - name: SPLUNK_PROFILER_MEMORY_ENABLED
+          value: 'true'
+        readinessProbe:
+          grpc:
+            port: 8080
+          initialDelaySeconds: 5
+          periodSeconds: 5
+          timeoutSeconds: 3
+          failureThreshold: 3
+        livenessProbe:
+          grpc:
+            port: 8080
+          initialDelaySeconds: 10
+          periodSeconds: 10
+          timeoutSeconds: 5
+          failureThreshold: 3
+        resources:
+          limits:
+            memory: 320Mi
+        volumeMounts: null
+      initContainers:
+      - command:
+        - sh
+        - -c
+        - until nc -z -v -w30 valkey-cart 6379; do echo waiting for valkey-cart; sleep
+          2; done;
+        image: busybox:latest
+        name: wait-for-valkey-cart
+      volumes: null
+
+---
+
+# === checkout ===
+# Kubernetes manifest for checkout
+# Auto-generated from opentelemetry-demo.yaml
+# Contains 2 resource(s)
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: checkout
+  labels:
+    opentelemetry.io/name: checkout
+    app.kubernetes.io/component: checkout
+    app.kubernetes.io/name: checkout
+    app.kubernetes.io/version: 2.1.3
+    app.kubernetes.io/part-of: opentelemetry-demo
+spec:
+  type: ClusterIP
+  ports:
+  - port: 8080
+    name: tcp-service
+    targetPort: 8080
+  selector:
+    opentelemetry.io/name: checkout
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: checkout
+  labels:
+    opentelemetry.io/name: checkout
+    app.kubernetes.io/component: checkout
+    app.kubernetes.io/name: checkout
+    app.kubernetes.io/version: 2.1.3
+    app.kubernetes.io/part-of: opentelemetry-demo
+spec:
+  replicas: 1
+  revisionHistoryLimit: 10
+  selector:
+    matchLabels:
+      opentelemetry.io/name: checkout
+  template:
+    metadata:
+      labels:
+        opentelemetry.io/name: checkout
+        app.kubernetes.io/component: checkout
+        app.kubernetes.io/name: checkout
+    spec:
+      serviceAccountName: opentelemetry-demo
+      containers:
+      - name: checkout
+        image: ghcr.io/open-telemetry/demo:2.1.3-checkout
+        imagePullPolicy: IfNotPresent
+        ports:
+        - containerPort: 8080
+          name: service
+        env:
+        - name: OTEL_SERVICE_NAME
+          valueFrom:
+            fieldRef:
+              apiVersion: v1
+              fieldPath: metadata.labels['app.kubernetes.io/component']
+        - name: NODE_IP
+          valueFrom:
+            fieldRef:
+              fieldPath: status.hostIP
+        - name: OTEL_COLLECTOR_NAME
+          value: $(NODE_IP)
+        - name: OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE
+          value: cumulative
+        - name: CHECKOUT_PORT
+          value: '8080'
+        - name: CART_ADDR
+          value: cart:8080
+        - name: CURRENCY_ADDR
+          value: currency:8080
+        - name: EMAIL_ADDR
+          value: http://email:8080
+        - name: PAYMENT_ADDR
+          value: payment:8080
+        - name: PRODUCT_CATALOG_ADDR
+          value: product-catalog:8080
+        - name: SHIPPING_ADDR
+          value: http://shipping:8080
+        - name: KAFKA_ADDR
+          value: kafka:9092
+        - name: FLAGD_HOST
+          value: flagd
+        - name: FLAGD_PORT
+          value: '8013'
+        - name: OTEL_EXPORTER_OTLP_ENDPOINT
+          value: http://$(OTEL_COLLECTOR_NAME):4317
+        - name: GOMEMLIMIT
+          value: 16MiB
+        - name: OTEL_RESOURCE_ATTRIBUTES
+          value: service.name=$(OTEL_SERVICE_NAME),service.namespace=opentelemetry-demo,service.version=2.1.3,service.kafka=no
+        resources:
+          limits:
+            memory: 20Mi
+        volumeMounts: null
+      initContainers:
+      - command:
+        - sh
+        - -c
+        - until nc -z -v -w30 kafka 9092; do echo waiting for kafka; sleep 2; done;
+        image: busybox:latest
+        name: wait-for-kafka
+      volumes: null
+
+---
+
+# === currency ===
+# Kubernetes manifest for currency
+# Auto-generated from opentelemetry-demo.yaml
+# Contains 2 resource(s)
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: currency
+  labels:
+    opentelemetry.io/name: currency
+    app.kubernetes.io/component: currency
+    app.kubernetes.io/name: currency
+    app.kubernetes.io/version: 2.1.3
+    app.kubernetes.io/part-of: opentelemetry-demo
+spec:
+  type: ClusterIP
+  ports:
+  - port: 8080
+    name: tcp-service
+    targetPort: 8080
+  selector:
+    opentelemetry.io/name: currency
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: currency
+  labels:
+    opentelemetry.io/name: currency
+    app.kubernetes.io/component: currency
+    app.kubernetes.io/name: currency
+    app.kubernetes.io/version: 2.1.3
+    app.kubernetes.io/part-of: opentelemetry-demo
+spec:
+  replicas: 1
+  revisionHistoryLimit: 10
+  selector:
+    matchLabels:
+      opentelemetry.io/name: currency
+  template:
+    metadata:
+      labels:
+        opentelemetry.io/name: currency
+        app.kubernetes.io/component: currency
+        app.kubernetes.io/name: currency
+    spec:
+      serviceAccountName: opentelemetry-demo
+      containers:
+      - name: currency
+        image: ghcr.io/open-telemetry/demo:2.1.3-currency
+        imagePullPolicy: IfNotPresent
+        ports:
+        - containerPort: 8080
+          name: service
+        env:
+        - name: OTEL_SERVICE_NAME
+          valueFrom:
+            fieldRef:
+              apiVersion: v1
+              fieldPath: metadata.labels['app.kubernetes.io/component']
+        - name: NODE_IP
+          valueFrom:
+            fieldRef:
+              fieldPath: status.hostIP
+        - name: OTEL_COLLECTOR_NAME
+          value: $(NODE_IP)
+        - name: OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE
+          value: cumulative
+        - name: CURRENCY_PORT
+          value: '8080'
+        - name: OTEL_EXPORTER_OTLP_ENDPOINT
+          value: http://$(OTEL_COLLECTOR_NAME):4317
+        - name: VERSION
+          value: 2.1.3
+        - name: OTEL_RESOURCE_ATTRIBUTES
+          value: service.name=$(OTEL_SERVICE_NAME),service.namespace=opentelemetry-demo,service.version=2.1.3,service.kafka=no
+        resources:
+          limits:
+            memory: 20Mi
+        volumeMounts: null
+      volumes: null
+
+---
+
+# === email ===
+# Kubernetes manifest for email
+# Auto-generated from opentelemetry-demo.yaml
+# Contains 2 resource(s)
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: email
+  labels:
+    opentelemetry.io/name: email
+    app.kubernetes.io/component: email
+    app.kubernetes.io/name: email
+    app.kubernetes.io/version: 2.1.3
+    app.kubernetes.io/part-of: opentelemetry-demo
+spec:
+  type: ClusterIP
+  ports:
+  - port: 8080
+    name: tcp-service
+    targetPort: 8080
+  selector:
+    opentelemetry.io/name: email
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: email
+  labels:
+    opentelemetry.io/name: email
+    app.kubernetes.io/component: email
+    app.kubernetes.io/name: email
+    app.kubernetes.io/version: 2.1.3
+    app.kubernetes.io/part-of: opentelemetry-demo
+spec:
+  replicas: 1
+  revisionHistoryLimit: 10
+  selector:
+    matchLabels:
+      opentelemetry.io/name: email
+  template:
+    metadata:
+      labels:
+        opentelemetry.io/name: email
+        app.kubernetes.io/component: email
+        app.kubernetes.io/name: email
+    spec:
+      serviceAccountName: opentelemetry-demo
+      containers:
+      - name: email
+        image: ghcr.io/open-telemetry/demo:2.1.3-email
+        imagePullPolicy: IfNotPresent
+        ports:
+        - containerPort: 8080
+          name: service
+        env:
+        - name: OTEL_SERVICE_NAME
+          valueFrom:
+            fieldRef:
+              apiVersion: v1
+              fieldPath: metadata.labels['app.kubernetes.io/component']
+        - name: NODE_IP
+          valueFrom:
+            fieldRef:
+              fieldPath: status.hostIP
+        - name: OTEL_COLLECTOR_NAME
+          value: $(NODE_IP)
+        - name: OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE
+          value: cumulative
+        - name: EMAIL_PORT
+          value: '8080'
+        - name: APP_ENV
+          value: production
+        - name: OTEL_EXPORTER_OTLP_ENDPOINT
+          value: http://$(OTEL_COLLECTOR_NAME):4318
+        - name: FLAGD_HOST
+          value: flagd
+        - name: FLAGD_PORT
+          value: '8013'
+        - name: OTEL_RESOURCE_ATTRIBUTES
+          value: service.name=$(OTEL_SERVICE_NAME),service.namespace=opentelemetry-demo,service.version=2.1.3,service.kafka=no
+        resources:
+          limits:
+            memory: 100Mi
+        volumeMounts: null
+      volumes: null
+
+---
+
+# === flagd ===
+# Kubernetes manifest for flagd
+# Split from combined flagd/flagd-ui deployment
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: flagd
+  labels:
+    opentelemetry.io/name: flagd
+    app.kubernetes.io/component: flagd
+    app.kubernetes.io/name: flagd
+    app.kubernetes.io/version: 2.1.3
+    app.kubernetes.io/part-of: opentelemetry-demo
+spec:
+  type: ClusterIP
+  ports:
+  - port: 8013
+    name: rpc
+    targetPort: 8013
+  - port: 8016
+    name: ofrep
+    targetPort: 8016
+  selector:
+    opentelemetry.io/name: flagd
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: flagd
+  labels:
+    opentelemetry.io/name: flagd
+    app.kubernetes.io/component: flagd
+    app.kubernetes.io/name: flagd
+    app.kubernetes.io/version: 2.1.3
+    app.kubernetes.io/part-of: opentelemetry-demo
+spec:
+  replicas: 1
+  revisionHistoryLimit: 10
+  selector:
+    matchLabels:
+      opentelemetry.io/name: flagd
+  template:
+    metadata:
+      labels:
+        opentelemetry.io/name: flagd
+        app.kubernetes.io/component: flagd
+        app.kubernetes.io/name: flagd
+    spec:
+      serviceAccountName: opentelemetry-demo
+      containers:
+      - name: flagd
+        image: ghcr.io/open-feature/flagd:v0.12.8
+        imagePullPolicy: IfNotPresent
+        command:
+        - /flagd-build
+        - start
+        - --port
+        - '8013'
+        - --ofrep-port
+        - '8016'
+        - --uri
+        - file:./etc/flagd/demo.flagd.json
+        ports:
+        - containerPort: 8013
+          name: rpc
+        - containerPort: 8016
+          name: ofrep
+        env:
+        - name: GOMEMLIMIT
+          value: 60MiB
+        resources:
+          limits:
+            memory: 75Mi
+        volumeMounts:
+        - name: config-rw
+          mountPath: /etc/flagd
+      initContainers:
+      - command:
+        - sh
+        - -c
+        - cp /config-ro/demo.flagd.json /config-rw/demo.flagd.json && cat /config-rw/demo.flagd.json
+        image: busybox
+        name: init-config
+        volumeMounts:
+        - mountPath: /config-ro
+          name: config-ro
+        - mountPath: /config-rw
+          name: config-rw
+      volumes:
+      - name: config-rw
+        persistentVolumeClaim:
+          claimName: flagd-shared-config
+      - configMap:
+          name: flagd-config
+        name: config-ro
+
+---
+
+# === flagd-config ===
+# Kubernetes manifest for flagd-config
+# Auto-generated from opentelemetry-demo.yaml
+# Contains 2 resource(s): PVC and ConfigMap
+---
+# PersistentVolumeClaim for shared flagd configuration
+# This PVC is shared between flagd and flagd-ui to enable dynamic flag updates
+# Using ReadWriteOnce with podAffinity to ensure both pods on same node
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: flagd-shared-config
+  labels:
+    app.kubernetes.io/part-of: opentelemetry-demo
+    app.kubernetes.io/component: flagd
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 100Mi
+  storageClassName: local-path
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: flagd-config
+  labels:
+    app.kubernetes.io/version: 1.4.0
+    app.kubernetes.io/part-of: opentelemetry-demo
+data:
+  demo.flagd.json: |
+    {
+      "$schema": "https://flagd.dev/schema/v0/flags.json",
+      "flags": {
+        "productCatalogFailure": {
+          "description": "Fail product catalog service on a specific product",
+          "state": "ENABLED",
+          "variants": {
+            "on": true,
+            "off": false
+          },
+          "defaultVariant": "off"
+        },
+        "recommendationCacheFailure": {
+          "description": "Fail recommendation service cache",
+          "state": "ENABLED",
+          "variants": {
+            "on": true,
+            "off": false
+          },
+          "defaultVariant": "off"
+        },
+        "adManualGc": {
+          "description": "Triggers full manual garbage collections in the ad service",
+          "state": "ENABLED",
+          "variants": {
+            "on": true,
+            "off": false
+          },
+          "defaultVariant": "off"
+        },
+        "adHighCpu": {
+          "description": "Triggers high cpu load in the ad service",
+          "state": "ENABLED",
+          "variants": {
+            "on": true,
+            "off": false
+          },
+          "defaultVariant": "off"
+        },
+        "adFailure": {
+          "description": "Fail ad service",
+          "state": "ENABLED",
+          "variants": {
+            "on": true,
+            "off": false
+          },
+          "defaultVariant": "off"
+        },
+        "kafkaQueueProblems": {
+          "description": "Overloads Kafka queue while simultaneously introducing a consumer side delay leading to a lag spike",
+          "state": "ENABLED",
+          "variants": {
+            "on": 100,
+            "off": 0
+          },
+          "defaultVariant": "off"
+        },
+        "paymentRetryMax": {
+          "description": "Maximum number of payment retry attempts",
+          "state": "ENABLED",
+          "variants": {
+            "10": 10,
+            "5": 5,
+            "4": 4,
+            "2": 2,
+            "1": 1
+          },
+          "defaultVariant": "4"
+        },
+        "fraudDetectionEnabled": {
+          "description": "Enable fraud detection analysis on orders",
+          "state": "ENABLED",
+          "variants": {
+            "on": 1,
+            "off": 0
+          },
+          "defaultVariant": "on"
+        },
+        "mutateFraudOrders": {
+          "description": "Percentage of orders to mutate for fraud alerts (0-100%)",
+          "state": "ENABLED",
+          "variants": {
+            "off": 0,
+            "medium": 40,
+            "high": 60,
+            "veryhigh": 90
+          },
+          "defaultVariant": "off"
+        },
+        "executeBadQueries": {
+          "description": "Percentage of orders that trigger bad database queries (0-100%)",
+          "state": "ENABLED",
+          "variants": {
+            "off": 0,
+            "low": 20,
+            "medium": 40,
+            "high": 60
+          },
+          "defaultVariant": "off"
+        },
+        "cartFailure": {
+          "description": "Fail cart service",
+          "state": "ENABLED",
+          "variants": {
+            "on": true,
+            "off": false
+          },
+          "defaultVariant": "off"
+        },
+        "paymentFailure": {
+          "description": "Fail payment service charge requests n%",
+          "state": "ENABLED",
+          "variants": {
+            "100%": 1,
+            "90%": 0.95,
+            "75%": 0.75,
+            "50%": 0.5,
+            "25%": 0.25,
+            "10%": 0.1,
+            "off": 0
+          },
+          "defaultVariant": "off"
+        },
+        "paymentUnreachable": {
+          "description": "Payment service is unavailable",
+          "state": "ENABLED",
+          "variants": {
+            "on": true,
+            "off": false
+          },
+          "defaultVariant": "off"
+        },
+        "loadGeneratorFloodHomepage": {
+          "description": "Flood the frontend with a large amount of requests.",
+          "state": "ENABLED",
+          "variants": {
+            "on": 100,
+            "off": 0
+          },
+          "defaultVariant": "off"
+        },
+        "imageSlowLoad": {
+          "description": "slow loading images in the frontend",
+          "state": "ENABLED",
+          "variants": {
+            "10sec": 10000,
+            "5sec": 5000,
+            "off": 0
+          },
+          "defaultVariant": "off"
+        },
+        "llmInaccurateResponse": {
+          "defaultVariant": "off",
+          "description": "LLM returns an inaccurate product summary for product ID L9ECAV7KIM",
+          "state": "ENABLED",
+          "variants": {
+            "off": false,
+            "on": true
+          }
+        },
+        "llmRateLimitError": {
+          "defaultVariant": "off",
+          "description": "LLM intermittently returns a rate limit error",
+          "state": "ENABLED",
+          "variants": {
+            "off": false,
+            "on": true
+          }
+        }
+      }
+    }
+
+---
+
+# === flagd-ui ===
+# Kubernetes manifest for flagd-ui
+# Split from combined flagd/flagd-ui deployment
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: flagd-ui
+  labels:
+    opentelemetry.io/name: flagd-ui
+    app.kubernetes.io/component: flagd-ui
+    app.kubernetes.io/name: flagd-ui
+    app.kubernetes.io/version: 2.1.3
+    app.kubernetes.io/part-of: opentelemetry-demo
+spec:
+  type: ClusterIP
+  ports:
+  - port: 4000
+    name: tcp-service
+    targetPort: 4000
+  selector:
+    opentelemetry.io/name: flagd-ui
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: flagd-ui
+  labels:
+    opentelemetry.io/name: flagd-ui
+    app.kubernetes.io/component: flagd-ui
+    app.kubernetes.io/name: flagd-ui
+    app.kubernetes.io/version: 2.1.3
+    app.kubernetes.io/part-of: opentelemetry-demo
+spec:
+  replicas: 1
+  revisionHistoryLimit: 10
+  selector:
+    matchLabels:
+      opentelemetry.io/name: flagd-ui
+  template:
+    metadata:
+      labels:
+        opentelemetry.io/name: flagd-ui
+        app.kubernetes.io/component: flagd-ui
+        app.kubernetes.io/name: flagd-ui
+    spec:
+      serviceAccountName: opentelemetry-demo
+      affinity:
+        podAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+          - labelSelector:
+              matchExpressions:
+              - key: opentelemetry.io/name
+                operator: In
+                values:
+                - flagd
+            topologyKey: kubernetes.io/hostname
+      containers:
+      - name: flagd-ui
+        image: ghcr.io/open-telemetry/demo:2.1.3-flagd-ui
+        imagePullPolicy: IfNotPresent
+        ports:
+        - containerPort: 4000
+          name: service
+        env:
+        - name: NODE_IP
+          valueFrom:
+            fieldRef:
+              fieldPath: status.hostIP
+        - name: OTEL_COLLECTOR_NAME
+          value: $(NODE_IP)
+        - name: OTEL_EXPORTER_OTLP_ENDPOINT
+          value: http://$(OTEL_COLLECTOR_NAME):4318
+        - name: FLAGD_UI_PORT
+          value: '4000'
+        - name: SECRET_KEY_BASE
+          value: yYrECL4qbNwleYInGJYvVnSkwJuSQJ4ijPTx5tirGUXrbznFIBFVJdPl5t6O9ASw
+        - name: PHX_HOST
+          value: localhost
+        - name: FLAGD_HOST
+          value: flagd
+        - name: FLAGD_PORT
+          value: '8013'
+        resources:
+          limits:
+            memory: 250Mi
+        volumeMounts:
+        - mountPath: /app/data
+          name: config-rw
+      initContainers:
+      - command:
+        - sh
+        - -c
+        - cp /config-ro/demo.flagd.json /config-rw/demo.flagd.json && cat /config-rw/demo.flagd.json
+        image: busybox
+        name: init-config
+        volumeMounts:
+        - mountPath: /config-ro
+          name: config-ro
+        - mountPath: /config-rw
+          name: config-rw
+      volumes:
+      - name: config-rw
+        persistentVolumeClaim:
+          claimName: flagd-shared-config
+      - configMap:
+          name: flagd-config
+        name: config-ro
+
+---
+
+# === fraud-detection ===
+# Kubernetes manifest for fraud-detection
+# Auto-generated from opentelemetry-demo.yaml
+# Contains 1 resource(s)
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: fraud-detection
+  labels:
+    opentelemetry.io/name: fraud-detection
+    app.kubernetes.io/component: fraud-detection
+    app.kubernetes.io/name: fraud-detection
+    app.kubernetes.io/version: 1.4.0
+    app.kubernetes.io/part-of: opentelemetry-demo
+spec:
+  replicas: 1
+  revisionHistoryLimit: 10
+  selector:
+    matchLabels:
+      opentelemetry.io/name: fraud-detection
+  template:
+    metadata:
+      labels:
+        opentelemetry.io/name: fraud-detection
+        app.kubernetes.io/component: fraud-detection
+        app.kubernetes.io/name: fraud-detection
+    spec:
+      serviceAccountName: opentelemetry-demo
+      containers:
+      - name: fraud-detection
+        image: ghcr.io/splunk/opentelemetry-demo/otel-fraud-detection:1.4.0
+        imagePullPolicy: Always
+        env:
+        - name: OTEL_SERVICE_NAME
+          valueFrom:
+            fieldRef:
+              apiVersion: v1
+              fieldPath: metadata.labels['app.kubernetes.io/component']
+        - name: NODE_IP
+          valueFrom:
+            fieldRef:
+              fieldPath: status.hostIP
+        - name: OTEL_COLLECTOR_NAME
+          value: $(NODE_IP)
+        - name: OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE
+          value: cumulative
+        - name: KAFKA_ADDR
+          value: kafka:9092
+        - name: FLAGD_HOST
+          value: flagd
+        - name: FLAGD_PORT
+          value: '8013'
+        - name: OTEL_EXPORTER_OTLP_ENDPOINT
+          value: http://$(OTEL_COLLECTOR_NAME):4318
+        - name: OTEL_INSTRUMENTATION_KAFKA_EXPERIMENTAL_SPAN_ATTRIBUTES
+          value: 'true'
+        - name: OTEL_INSTRUMENTATION_MESSAGING_EXPERIMENTAL_RECEIVE_TELEMETRY_ENABLED
+          value: 'true'
+        - name: OTEL_INSTRUMENTATION_SPLUNK_JDBC_ENABLED
+          value: 'true'
+        - name: OTEL_RESOURCE_ATTRIBUTES
+          value: service.name=$(OTEL_SERVICE_NAME),service.namespace=opentelemetry-demo,service.version=1.4.0,service.kafka=spanlink
+        - name: SQL_SERVER_HOST
+          value: sql-server-fraud.default.svc.cluster.local
+        - name: SQL_SERVER_PORT
+          value: '1433'
+        - name: SQL_SERVER_DATABASE
+          value: FraudDetection
+        - name: SQL_SERVER_USER
+          value: sa
+        - name: SQL_SERVER_PASSWORD
+          value: ChangeMe_SuperStrong123!
+        - name: FRAUD_DETECTION_RATE
+          value: '80'
+        - name: CLEANUP_RETENTION_DAYS
+          value: '7'
+        - name: CLEANUP_INTERVAL_HOURS
+          value: '24'
+        - name: FRAUD_MUTATION_PERCENTAGE
+          value: '25'
+        - name: BAD_QUERY_PERCENTAGE
+          value: '0'
+        resources:
+          limits:
+            memory: 450Mi
+        volumeMounts: null
+      initContainers:
+      - command:
+        - sh
+        - -c
+        - until nc -z -v -w30 kafka 9092; do echo waiting for kafka; sleep 2; done;
+        image: busybox:latest
+        name: wait-for-kafka
+      - command:
+        - sh
+        - -c
+        - until nc -z -v -w30 sql-server-fraud.default.svc.cluster.local 1433; do echo
+          waiting for sql-server-fraud; sleep 2; done;
+        image: busybox:latest
+        name: wait-for-sqlserver
+      volumes: null
+
+---
+
+# === frontend ===
+# Kubernetes manifest for frontend
+# Auto-generated from opentelemetry-demo.yaml
+# Contains 2 resource(s)
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: frontend
+  labels:
+    opentelemetry.io/name: frontend
+    app.kubernetes.io/component: frontend
+    app.kubernetes.io/name: frontend
+    app.kubernetes.io/version: 1.4.0
+    app.kubernetes.io/part-of: opentelemetry-demo
+spec:
+  type: ClusterIP
+  ports:
+  - port: 8080
+    name: tcp-service
+    targetPort: 8080
+  selector:
+    opentelemetry.io/name: frontend
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: frontend
+  labels:
+    opentelemetry.io/name: frontend
+    app.kubernetes.io/component: frontend
+    app.kubernetes.io/name: frontend
+    app.kubernetes.io/version: 1.4.0
+    app.kubernetes.io/part-of: opentelemetry-demo
+spec:
+  replicas: 1
+  revisionHistoryLimit: 10
+  selector:
+    matchLabels:
+      opentelemetry.io/name: frontend
+  template:
+    metadata:
+      labels:
+        opentelemetry.io/name: frontend
+        app.kubernetes.io/component: frontend
+        app.kubernetes.io/name: frontend
+    spec:
+      serviceAccountName: opentelemetry-demo
+      containers:
+      - name: frontend
+        image: ghcr.io/splunk/opentelemetry-demo/otel-frontend:1.4.0
+        imagePullPolicy: Always
+        ports:
+        - containerPort: 8080
+          name: service
+        env:
+        - name: OTEL_SERVICE_NAME
+          valueFrom:
+            fieldRef:
+              apiVersion: v1
+              fieldPath: metadata.labels['app.kubernetes.io/component']
+        - name: NODE_IP
+          valueFrom:
+            fieldRef:
+              fieldPath: status.hostIP
+        - name: OTEL_COLLECTOR_NAME
+          value: $(NODE_IP)
+        - name: OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE
+          value: cumulative
+        - name: FRONTEND_PORT
+          value: '8080'
+        - name: PORT
+          value: $(FRONTEND_PORT)
+        - name: FRONTEND_ADDR
+          value: :8080
+        - name: AD_ADDR
+          value: ad:8080
+        - name: CART_ADDR
+          value: cart:8080
+        - name: CHECKOUT_ADDR
+          value: checkout:8080
+        - name: CURRENCY_ADDR
+          value: currency:8080
+        - name: PRODUCT_CATALOG_ADDR
+          value: product-catalog:8080
+        - name: PRODUCT_REVIEWS_ADDR
+          value: product-reviews:3551
+        - name: RECOMMENDATION_ADDR
+          value: recommendation:8080
+        - name: SHIPPING_ADDR
+          value: http://shipping:8080
+        - name: FLAGD_HOST
+          value: flagd
+        - name: FLAGD_PORT
+          value: '8013'
+        - name: ENV_PLATFORM
+          value: kubernetes
+        - name: OTEL_COLLECTOR_HOST
+          value: $(OTEL_COLLECTOR_NAME)
+        - name: OTEL_EXPORTER_OTLP_ENDPOINT
+          value: http://$(OTEL_COLLECTOR_NAME):4317
+        - name: OTEL_EXPORTER_OTLP_PROTOCOL
+          value: grpc
+        - name: OTEL_LOG_LEVEL
+        - name: OTEL_RESOURCE_ATTRIBUTES
+          value: service.name=$(OTEL_SERVICE_NAME),service.namespace=opentelemetry-demo,service.version=1.4.0,service.kafka=no
+        - name: API_TOKEN
+          valueFrom:
+            secretKeyRef:
+              name: workshop-secret
+              key: api_token
+        - name: SPLUNK_RUM_TOKEN
+          valueFrom:
+            secretKeyRef:
+              name: workshop-secret
+              key: rum_token
+        - name: SPLUNK_APP_NAME
+          valueFrom:
+            secretKeyRef:
+              name: workshop-secret
+              key: app
+        - name: SPLUNK_RUM_ENV
+          valueFrom:
+            secretKeyRef:
+              name: workshop-secret
+              key: env
+        - name: SPLUNK_RUM_REALM
+          valueFrom:
+            secretKeyRef:
+              name: workshop-secret
+              key: realm
+        resources:
+          limits:
+            memory: 250Mi
+        securityContext:
+          runAsGroup: 1001
+          runAsNonRoot: true
+          runAsUser: 1001
+        volumeMounts: null
+      volumes: null
+
+---
+
+# === frontend-proxy ===
+# Kubernetes manifest for frontend-proxy
+# Auto-generated from opentelemetry-demo.yaml
+# Contains 3 resource(s)
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: frontend-proxy
+  labels:
+    opentelemetry.io/name: frontend-proxy
+    app.kubernetes.io/component: frontend-proxy
+    app.kubernetes.io/name: frontend-proxy
+    app.kubernetes.io/version: 1.4.0
+    app.kubernetes.io/part-of: opentelemetry-demo
+spec:
+  type: ClusterIP
+  ports:
+  - port: 8080
+    name: tcp-service
+    targetPort: 8080
+  selector:
+    opentelemetry.io/name: frontend-proxy
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: frontend-proxy
+  labels:
+    opentelemetry.io/name: frontend-proxy
+    app.kubernetes.io/component: frontend-proxy
+    app.kubernetes.io/name: frontend-proxy
+    app.kubernetes.io/version: 1.4.0
+    app.kubernetes.io/part-of: opentelemetry-demo
+spec:
+  replicas: 1
+  revisionHistoryLimit: 10
+  selector:
+    matchLabels:
+      opentelemetry.io/name: frontend-proxy
+  template:
+    metadata:
+      labels:
+        opentelemetry.io/name: frontend-proxy
+        app.kubernetes.io/component: frontend-proxy
+        app.kubernetes.io/name: frontend-proxy
+    spec:
+      serviceAccountName: opentelemetry-demo
+      containers:
+      - name: frontend-proxy
+        image: ghcr.io/splunk/opentelemetry-demo/otel-frontend-proxy:1.4.0
+        imagePullPolicy: Always
+        ports:
+        - containerPort: 8080
+          name: service
+        env:
+        - name: OTEL_SERVICE_NAME
+          valueFrom:
+            fieldRef:
+              apiVersion: v1
+              fieldPath: metadata.labels['app.kubernetes.io/component']
+        - name: NODE_IP
+          valueFrom:
+            fieldRef:
+              fieldPath: status.hostIP
+        - name: OTEL_COLLECTOR_NAME
+          value: $(NODE_IP)
+        - name: OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE
+          value: cumulative
+        - name: ENVOY_ADDR
+          value: 0.0.0.0
+        - name: ENVOY_PORT
+          value: '8080'
+        - name: ENVOY_ADMIN_PORT
+          value: '10000'
+        - name: FLAGD_HOST
+          value: flagd
+        - name: FLAGD_PORT
+          value: '8013'
+        - name: FLAGD_UI_HOST
+          value: flagd-ui
+        - name: FLAGD_UI_PORT
+          value: '4000'
+        - name: FRONTEND_HOST
+          value: frontend
+        - name: FRONTEND_PORT
+          value: '8080'
+        - name: IMAGE_PROVIDER_HOST
+          value: image-provider
+        - name: IMAGE_PROVIDER_PORT
+          value: '8081'
+        - name: LOCUST_WEB_HOST
+          value: load-generator
+        - name: LOCUST_WEB_PORT
+          value: '8089'
+        - name: OTEL_COLLECTOR_HOST
+          value: $(OTEL_COLLECTOR_NAME)
+        - name: OTEL_COLLECTOR_PORT_GRPC
+          value: '4317'
+        - name: OTEL_COLLECTOR_PORT_HTTP
+          value: '4318'
+        - name: OTEL_RESOURCE_ATTRIBUTES
+          value: service.name=$(OTEL_SERVICE_NAME),service.namespace=opentelemetry-demo,service.version=1.4.0,service.kafka=no
+        - name: FEATURE_USER
+          valueFrom:
+            secretKeyRef:
+              name: workshop-secret
+              key: flagd_user
+        - name: FEATURE_PASS
+          valueFrom:
+            secretKeyRef:
+              name: workshop-secret
+              key: flagd_pw
+        resources:
+          limits:
+            memory: 65Mi
+        securityContext:
+          runAsGroup: 101
+          runAsNonRoot: true
+          runAsUser: 101
+        volumeMounts: null
+      volumes: null
+---
+
+
+---
+
+# === image-provider ===
+# Kubernetes manifest for image-provider
+# Auto-generated from opentelemetry-demo.yaml
+# Contains 2 resource(s)
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: image-provider
+  labels:
+    opentelemetry.io/name: image-provider
+    app.kubernetes.io/component: image-provider
+    app.kubernetes.io/name: image-provider
+    app.kubernetes.io/version: 1.4.0
+    app.kubernetes.io/part-of: opentelemetry-demo
+spec:
+  type: ClusterIP
+  ports:
+  - port: 8081
+    name: tcp-service
+    targetPort: 8081
+  selector:
+    opentelemetry.io/name: image-provider
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: image-provider
+  labels:
+    opentelemetry.io/name: image-provider
+    app.kubernetes.io/component: image-provider
+    app.kubernetes.io/name: image-provider
+    app.kubernetes.io/version: 1.4.0
+    app.kubernetes.io/part-of: opentelemetry-demo
+spec:
+  replicas: 1
+  revisionHistoryLimit: 10
+  selector:
+    matchLabels:
+      opentelemetry.io/name: image-provider
+  template:
+    metadata:
+      labels:
+        opentelemetry.io/name: image-provider
+        app.kubernetes.io/component: image-provider
+        app.kubernetes.io/name: image-provider
+    spec:
+      serviceAccountName: opentelemetry-demo
+      containers:
+      - name: image-provider
+        image: ghcr.io/splunk/opentelemetry-demo/otel-image-provider:1.4.0
+        imagePullPolicy: IfNotPresent
+        ports:
+        - containerPort: 8081
+          name: service
+        env:
+        - name: OTEL_SERVICE_NAME
+          valueFrom:
+            fieldRef:
+              apiVersion: v1
+              fieldPath: metadata.labels['app.kubernetes.io/component']
+        - name: NODE_IP
+          valueFrom:
+            fieldRef:
+              fieldPath: status.hostIP
+        - name: OTEL_COLLECTOR_NAME
+          value: $(NODE_IP)
+        - name: OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE
+          value: cumulative
+        - name: IMAGE_PROVIDER_PORT
+          value: '8081'
+        - name: OTEL_COLLECTOR_PORT_GRPC
+          value: '4317'
+        - name: OTEL_COLLECTOR_HOST
+          value: $(OTEL_COLLECTOR_NAME)
+        - name: OTEL_RESOURCE_ATTRIBUTES
+          value: service.name=$(OTEL_SERVICE_NAME),service.namespace=opentelemetry-demo,service.version=1.4.0,service.kafka=no
+        resources:
+          limits:
+            memory: 50Mi
+        volumeMounts: null
+      volumes: null
+
+---
+
+# === kafka ===
+# Kubernetes manifest for kafka
+# Auto-generated from opentelemetry-demo.yaml
+# Contains 2 resource(s)
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: kafka
+  labels:
+    opentelemetry.io/name: kafka
+    app.kubernetes.io/component: kafka
+    app.kubernetes.io/name: kafka
+    app.kubernetes.io/version: 2.1.3
+    app.kubernetes.io/part-of: opentelemetry-demo
+spec:
+  type: ClusterIP
+  ports:
+  - port: 9092
+    name: plaintext
+    targetPort: 9092
+  - port: 9093
+    name: controller
+    targetPort: 9093
+  selector:
+    opentelemetry.io/name: kafka
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: kafka
+  labels:
+    opentelemetry.io/name: kafka
+    app.kubernetes.io/component: kafka
+    app.kubernetes.io/name: kafka
+    app.kubernetes.io/version: 2.1.3
+    app.kubernetes.io/part-of: opentelemetry-demo
+spec:
+  replicas: 1
+  revisionHistoryLimit: 10
+  selector:
+    matchLabels:
+      opentelemetry.io/name: kafka
+  template:
+    metadata:
+      labels:
+        opentelemetry.io/name: kafka
+        app.kubernetes.io/component: kafka
+        app.kubernetes.io/name: kafka
+    spec:
+      serviceAccountName: opentelemetry-demo
+      containers:
+      - name: kafka
+        image: ghcr.io/open-telemetry/demo:2.1.3-kafka
+        imagePullPolicy: IfNotPresent
+        ports:
+        - containerPort: 9092
+          name: plaintext
+        - containerPort: 9093
+          name: controller
+        env:
+        - name: OTEL_SERVICE_NAME
+          valueFrom:
+            fieldRef:
+              apiVersion: v1
+              fieldPath: metadata.labels['app.kubernetes.io/component']
+        - name: NODE_IP
+          valueFrom:
+            fieldRef:
+              fieldPath: status.hostIP
+        - name: OTEL_COLLECTOR_NAME
+          value: $(NODE_IP)
+        - name: OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE
+          value: cumulative
+        - name: KAFKA_ADVERTISED_LISTENERS
+          value: PLAINTEXT://kafka:9092
+        - name: OTEL_EXPORTER_OTLP_ENDPOINT
+          value: http://$(OTEL_COLLECTOR_NAME):4318
+        - name: KAFKA_HEAP_OPTS
+          value: -Xmx400M -Xms400M
+        - name: KAFKA_LISTENERS
+          value: PLAINTEXT://:9092,CONTROLLER://:9093
+        - name: KAFKA_CONTROLLER_LISTENER_NAMES
+          value: CONTROLLER
+        - name: KAFKA_CONTROLLER_QUORUM_VOTERS
+          value: 1@kafka:9093
+        - name: OTEL_RESOURCE_ATTRIBUTES
+          value: service.name=$(OTEL_SERVICE_NAME),service.namespace=opentelemetry-demo,service.version=2.1.3,service.kafka=no
+        resources:
+          limits:
+            memory: 800Mi
+        securityContext:
+          runAsGroup: 1000
+          runAsNonRoot: true
+          runAsUser: 1000
+        volumeMounts: null
+      volumes: null
+
+---
+
+# === llm ===
+# Kubernetes manifest for llm
+# Auto-generated from opentelemetry-demo.yaml
+# Contains 2 resource(s)
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: llm
+  labels:
+    opentelemetry.io/name: llm
+    app.kubernetes.io/component: llm
+    app.kubernetes.io/name: llm
+    app.kubernetes.io/version: 1.4.0
+    app.kubernetes.io/part-of: opentelemetry-demo
+spec:
+  type: ClusterIP
+  ports:
+  - port: 8000
+    name: tcp-service
+    targetPort: 8000
+  selector:
+    opentelemetry.io/name: llm
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: llm
+  labels:
+    opentelemetry.io/name: llm
+    app.kubernetes.io/component: llm
+    app.kubernetes.io/name: llm
+    app.kubernetes.io/version: 1.4.0
+    app.kubernetes.io/part-of: opentelemetry-demo
+spec:
+  replicas: 1
+  revisionHistoryLimit: 10
+  selector:
+    matchLabels:
+      opentelemetry.io/name: llm
+  template:
+    metadata:
+      labels:
+        opentelemetry.io/name: llm
+        app.kubernetes.io/component: llm
+        app.kubernetes.io/name: llm
+    spec:
+      serviceAccountName: opentelemetry-demo
+      containers:
+      - name: llm
+        image: ghcr.io/splunk/opentelemetry-demo/otel-llm:1.4.0
+        imagePullPolicy: IfNotPresent
+        ports:
+        - containerPort: 8000
+          name: service
+        env:
+        - name: OTEL_SERVICE_NAME
+          valueFrom:
+            fieldRef:
+              apiVersion: v1
+              fieldPath: metadata.labels['app.kubernetes.io/component']
+        - name: NODE_IP
+          valueFrom:
+            fieldRef:
+              fieldPath: status.hostIP
+        - name: OTEL_COLLECTOR_NAME
+          value: $(NODE_IP)
+        - name: OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE
+          value: cumulative
+        - name: FLAGD_HOST
+          value: flagd
+        - name: FLAGD_PORT
+          value: '8013'
+        - name: OTEL_EXPORTER_OTLP_ENDPOINT
+          value: http://$(OTEL_COLLECTOR_NAME):4317
+        - name: OTEL_RESOURCE_ATTRIBUTES
+          value: service.name=$(OTEL_SERVICE_NAME),service.namespace=opentelemetry-demo,service.version=1.4.0,service.kafka=no
+        resources:
+          limits:
+            memory: 100Mi
+        volumeMounts: null
+      volumes: null
+
+---
+
+# === demo-service-account ===
+# Kubernetes manifest for demo-service-account
+# ServiceAccount used by all Astronomy Shop application pods
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: opentelemetry-demo
+  labels:
+    app.kubernetes.io/version: 1.4.0
+    app.kubernetes.io/part-of: opentelemetry-demo
+
+---
+
+# === payment ===
+# Kubernetes manifest for payment
+# Auto-generated from opentelemetry-demo.yaml
+# Contains 2 resource(s)
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: payment
+  labels:
+    opentelemetry.io/name: payment
+    app.kubernetes.io/component: payment
+    app.kubernetes.io/name: payment
+    app.kubernetes.io/version: 1.4.0
+    app.kubernetes.io/part-of: opentelemetry-demo
+spec:
+  type: ClusterIP
+  ports:
+  - port: 8080
+    name: tcp-service
+    targetPort: 8080
+  selector:
+    opentelemetry.io/name: payment
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: payment
+  labels:
+    opentelemetry.io/name: payment
+    app.kubernetes.io/component: payment
+    app.kubernetes.io/name: payment
+    app.kubernetes.io/version: 1.4.0
+    app.kubernetes.io/part-of: opentelemetry-demo
+spec:
+  replicas: 1
+  revisionHistoryLimit: 10
+  selector:
+    matchLabels:
+      opentelemetry.io/name: payment
+  template:
+    metadata:
+      labels:
+        opentelemetry.io/name: payment
+        app.kubernetes.io/component: payment
+        app.kubernetes.io/name: payment
+    spec:
+      serviceAccountName: opentelemetry-demo
+      containers:
+      - name: payment
+        image: ghcr.io/splunk/opentelemetry-demo/otel-payment:1.4.0
+        imagePullPolicy: Always
+        ports:
+        - containerPort: 8080
+          name: service
+        env:
+        - name: OTEL_SERVICE_NAME
+          valueFrom:
+            fieldRef:
+              apiVersion: v1
+              fieldPath: metadata.labels['app.kubernetes.io/component']
+        - name: NODE_IP
+          valueFrom:
+            fieldRef:
+              fieldPath: status.hostIP
+        - name: OTEL_COLLECTOR_NAME
+          value: $(NODE_IP)
+        - name: OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE
+          value: cumulative
+        - name: PAYMENT_PORT
+          value: '8080'
+        - name: FLAGD_HOST
+          value: flagd
+        - name: FLAGD_PORT
+          value: '8013'
+        - name: OTEL_EXPORTER_OTLP_ENDPOINT
+          value: http://$(OTEL_COLLECTOR_NAME):4318
+        - name: OTEL_RESOURCE_ATTRIBUTES
+          value: service.name=$(OTEL_SERVICE_NAME),service.namespace=opentelemetry-demo,service.version=1.4.0,service.kafka=no
+        - name: SPLUNK_INSTRUMENTATION_METRICS_ENABLED
+          value: 'true'
+        - name: SPLUNK_METRICS_ENABLED
+          value: 'true'
+        - name: SPLUNK_PROFILER_ENABLED
+          value: 'true'
+        - name: SPLUNK_PROFILER_MEMORY_ENABLED
+          value: 'false'
+        - name: SPLUNK_PROFILER_CALL_STACK_INTERVAL
+          value: '500'
+        - name: OTEL_LOG_LEVEL
+          value: info
+        resources:
+          limits:
+            memory: 120Mi
+        securityContext:
+          runAsGroup: 1001
+          runAsNonRoot: true
+          runAsUser: 1001
+        volumeMounts: null
+      volumes: null
+
+---
+
+# === postgres-setup ===
+# PostgreSQL Database Initialization ConfigMap
+# This ConfigMap contains the init.sql script that creates schemas and tables
+# for the accounting and product-reviews services
+#
+# The postgres deployment mounts this as /docker-entrypoint-initdb.d/init.sql
+# which PostgreSQL automatically executes on first startup
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: postgres-init-sql
+  labels:
+    app.kubernetes.io/name: postgres-init
+    app.kubernetes.io/component: database
+    app.kubernetes.io/part-of: opentelemetry-demo
+data:
+  init.sql: |
+    -- Copyright The OpenTelemetry Authors
+    -- SPDX-License-Identifier: Apache-2.0
+
+    CREATE USER otelu WITH PASSWORD 'otelp';
+
+    -- Accounting Service: create a schema
+    CREATE SCHEMA accounting;
+    GRANT USAGE ON SCHEMA accounting TO otelu;
+
+    -- Accounting Service: create tables
+    CREATE TABLE accounting."order" (
+        order_id TEXT PRIMARY KEY
+    );
+
+    CREATE TABLE accounting.shipping (
+        shipping_tracking_id TEXT PRIMARY KEY,
+        shipping_cost_currency_code TEXT NOT NULL,
+        shipping_cost_units BIGINT NOT NULL,
+        shipping_cost_nanos INT NOT NULL,
+        street_address TEXT,
+        city TEXT,
+        state TEXT,
+        country TEXT,
+        zip_code TEXT,
+        order_id TEXT NOT NULL,
+        FOREIGN KEY (order_id) REFERENCES accounting."order"(order_id) ON DELETE CASCADE
+    );
+
+    CREATE TABLE accounting.orderitem (
+        item_cost_currency_code TEXT NOT NULL,
+        item_cost_units BIGINT NOT NULL,
+        item_cost_nanos INT NOT NULL,
+        product_id TEXT NOT NULL,
+        quantity INT NOT NULL,
+        order_id TEXT NOT NULL,
+        PRIMARY KEY (order_id, product_id),
+        FOREIGN KEY (order_id) REFERENCES accounting."order"(order_id) ON DELETE CASCADE
+    );
+
+    -- Accounting Service: grant permission to schema
+    GRANT SELECT, INSERT, UPDATE ON ALL TABLES IN SCHEMA accounting TO otelu;
+
+    -- Product Review Service: create a schema
+    CREATE SCHEMA reviews;
+    GRANT USAGE ON SCHEMA reviews TO otelu;
+
+    -- Product Review Service: create tables
+    CREATE TABLE reviews.productreviews (
+        id INTEGER GENERATED BY DEFAULT AS IDENTITY PRIMARY KEY,
+        product_id VARCHAR(16) NOT NULL,
+        username VARCHAR(64) NOT NULL,
+        description VARCHAR(1024),
+        score NUMERIC(2,1) NOT NULL
+    );
+
+    -- Product Review Service: create index for product_id lookups
+    CREATE INDEX product_id_index ON reviews.productreviews (product_id);
+
+    -- Product Review Service: grant permission to schema
+    GRANT SELECT, INSERT, UPDATE ON ALL TABLES IN SCHEMA reviews TO otelu;
+
+    -- Product Review Service:  add product review data
+    INSERT INTO reviews.productreviews (product_id, username, description, score)
+    VALUES
+        ('OLJCESPC7Z', 'stargazer_mike', 'Great entry-level telescope! Easy to set up and provides clear views of the moon and brighter planets. Highly recommend for new astronomers.', '4.5'),
+        ('OLJCESPC7Z', 'nightskylover', 'For the price, this Explorascope delivers excellent performance. I was able to see Jupiter''s moons clearly. A fantastic purchase for casual viewing.', '4.0'),
+        ('OLJCESPC7Z', 'beginner_astro', 'A bit tricky to get used to the manual controls, but once you do, it''s very rewarding. Saw the Orion Nebula for the first time! Good value.', '3.5'),
+        ('OLJCESPC7Z', 'celestial_explorer', 'Perfect for camping trips. It''s lightweight and portable, making it easy to take anywhere. The views are surprisingly good for its size.', '4.0'),
+        ('OLJCESPC7Z', 'telescope_fan', 'Not the most powerful scope, but it''s great for kids and beginners. My children love looking at the moon with it. A solid choice for family fun.', '3.0'),
+
+        ('66VCHSJNUP', 'tech_astro', 'The StarSense app is revolutionary! It made finding celestial objects incredibly easy. This telescope is a game-changer for beginners.', '5.0'),
+        ('66VCHSJNUP', 'app_user', 'Amazing technology, the smartphone integration works flawlessly. I''ve never had so much fun exploring the night sky. Worth every penny.', '4.5'),
+        ('66VCHSJNUP', 'innovator_john', 'Setup was a breeze, and the tutorials in the app are very helpful. The views are crisp and clear. My only minor gripe is battery drain on the phone.', '4.0'),
+        ('66VCHSJNUP', 'clear_skies', 'Finally, a telescope that takes the guesswork out of stargazing. The real-time positioning is incredibly accurate. Highly recommended for anyone new to astronomy.', '5.0'),
+        ('66VCHSJNUP', 'gadget_geek', 'Fantastic product, the app truly guides you. It''s like having a personal astronomer with you. The optical quality is also very good.', '4.5'),
+
+        ('1YMWWN1N4O', 'solar_viewer', 'Perfect for solar observations! The Solar Safe filter gives peace of mind. I used it for the last partial eclipse and it was fantastic.', '5.0'),
+        ('1YMWWN1N4O', 'eclipse_chaser', 'Compact and easy to carry, this telescope is ideal for eclipse events. The included backpack is a nice touch. Views of the sun are incredibly clear and safe.', '4.5'),
+        ('1YMWWN1N4O', 'travel_astro', 'Excellent travel scope for solar viewing. The magnification is much better than binoculars for the sun. A must-have for any solar enthusiast.', '4.0'),
+        ('1YMWWN1N4O', 'sun_gazer', 'Very impressed with the safety features and clarity. Sharing the sun with family has never been easier or safer. Great value for a dedicated solar scope.', '5.0'),
+        ('1YMWWN1N4O', 'safe_viewer', 'The ISO compliant filter is reassuring. It''s a well-designed product for safe solar observation. Highly recommend for educational purposes too.', '4.5'),
+
+        ('L9ECAV7KIM', 'clean_optics', 'This kit is a lifesaver for all my optics. The brush and wipes work perfectly without leaving any residue. My lenses have never been cleaner.', '5.0'),
+        ('L9ECAV7KIM', 'photog_pro', 'Essential for any photographer or telescope owner. It safely removes dust and fingerprints. A high-quality cleaning solution.', '4.5'),
+        ('L9ECAV7KIM', 'daily_cleaner', 'I use this on my binoculars, camera lenses, and even my phone screen. It''s very effective and gentle. A versatile cleaning kit.', '4.0'),
+        ('L9ECAV7KIM', 'tech_maintenance', 'Great value for money. The different cleaning options cover all needs. Keeps my expensive equipment in pristine condition.', '5.0'),
+        ('L9ECAV7KIM', 'sharp_view', 'Works as advertised, my telescope views are much clearer after using this. The fluid and cloth are excellent. Definitely recommend.', '4.5'),
+
+        ('2ZYFJ3GM2N', 'bird_watcher', 'Incredible clarity and brightness, perfect for bird watching. The ED glass really makes a difference. I can spot the subtlest markings.', '5.0'),
+        ('2ZYFJ3GM2N', 'nature_lover', 'These binoculars are fantastic for nature observation. The close focus is a huge advantage for viewing nearby wildlife. Very comfortable to hold.', '4.5'),
+        ('2ZYFJ3GM2N', 'hiker_guy', 'Lightweight and durable, these are my go-to binoculars for hiking. The wide field of view is excellent. Highly recommend for outdoor enthusiasts.', '4.0'),
+        ('2ZYFJ3GM2N', 'stadium_fan', 'Took these to a game and had an amazing view of the action. They perform great in various lighting conditions. A solid all-around binocular.', '4.0'),
+        ('2ZYFJ3GM2N', 'outdoor_adventurer', 'Excellent build quality and optical performance. They feel robust and provide sharp images. A great investment for any outdoor activity.', '4.5'),
+
+        ('0PUK6V6EV0', 'astro_photog', 'This imager is a fantastic step up for planetary photography. The color quality is superb. Easy to use with my existing telescope setup.', '5.0'),
+        ('0PUK6V6EV0', 'planet_shooter', 'Finally capturing stunning images of Saturn and Jupiter! The NexImage 10 makes it so accessible. Great for beginners in astrophotography.', '4.5'),
+        ('0PUK6V6EV0', 'imager_pro', 'Excellent resolution and color rendition for its price point. It''s a perfect solution for those looking to start imaging planets. Highly satisfied.', '4.0'),
+        ('0PUK6V6EV0', 'space_artist', 'The detail I can capture with this imager is incredible. It integrates well with various software. A must-have for serious planetary observers.', '5.0'),
+        ('0PUK6V6EV0', 'digital_sky', 'A solid choice for getting into solar system imaging. The setup was straightforward. Produces beautiful, vibrant planetary images.', '4.5'),
+
+        ('LS4PSXUNUM', 'night_walker', 'The red light is perfect for preserving night vision during astronomy sessions. The hand warmer is an unexpected bonus. Very practical device.', '5.0'),
+        ('LS4PSXUNUM', 'star_party_goer', 'This flashlight is indispensable for star parties. The red mode is gentle on the eyes, and the power bank feature is super handy. Love it!', '4.5'),
+        ('LS4PSXUNUM', 'camper_chris', 'Rugged and versatile, this flashlight is great for camping and night walks. The hand warmer function is a game-changer on cold nights. Highly recommend.', '4.5'),
+        ('LS4PSXUNUM', 'emergency_kit', 'A fantastic multi-tool for my emergency kit. The red light is useful, and the power bank means I can charge my phone. Great design.', '4.0'),
+        ('LS4PSXUNUM', 'astro_accessory', 'Every astronomer needs one of these. The red light is essential, and the hand warmer and power bank make it incredibly useful. A top-tier accessory.', '5.0'),
+
+        ('9SIQT8TOJO', 'deep_sky_master', 'The RASA V2 is a dream come true for deep-sky imaging. The f/2.2 speed drastically cuts down exposure times. My best astrophotography investment yet.', '5.0'),
+        ('9SIQT8TOJO', 'pro_astro', 'Unbelievable performance for wide-field astrophotography. The short focal length makes guiding less critical. Produces stunning, detailed images.', '5.0'),
+        ('9SIQT8TOJO', 'imaging_guru', 'This OTA is a beast! The fast optics mean more data in less time. If you''re serious about deep-sky imaging, this is the one.', '4.5'),
+        ('9SIQT8TOJO', 'advanced_scope', 'Worth every penny for the quality and speed it offers. My images have never been sharper or more vibrant. A truly professional piece of equipment.', '5.0'),
+        ('9SIQT8TOJO', 'precision_optics', 'The engineering behind this RASA is exceptional. It''s incredibly efficient for capturing faint objects. A high-end choice for dedicated imagers.', '4.5'),
+
+        ('6E92ZMYYFZ', 'solar_safety', 'Essential for safe solar viewing with my 8-inch telescope. The Velcro straps ensure it stays securely in place. Peace of mind during solar observations.', '5.0'),
+        ('6E92ZMYYFZ', 'telescope_upgrade', 'This EclipSmart filter is a perfect addition to my setup. The ISO compliance is crucial. Highly recommend for anyone looking to view the sun safely.', '4.5'),
+        ('6E92ZMYYFZ', 'safe_sun_gazer', 'Easy to attach and provides crystal clear, safe views of the sun. The build quality is excellent. A must-have accessory for solar enthusiasts.', '5.0'),
+        ('6E92ZMYYFZ', 'filter_fan', 'Works perfectly with my 8-inch scope. No more worries about accidental dislodgement. Great product for protecting your eyes and equipment.', '4.5'),
+        ('6E92ZMYYFZ', 'eclipse_ready', 'Bought this for the upcoming eclipse, and it fits perfectly. Tested it out, and the views are fantastic and safe. Very happy with this purchase.', '5.0'),
+
+        ('HQTGWGPNH4', 'history_buff', 'A fascinating glimpse into historical astronomical thought. The content is incredibly insightful. A must-read for anyone interested in the history of science.', '5.0'),
+        ('HQTGWGPNH4', 'bookworm_astro', 'Beautifully presented historical document. It''s amazing to see how comets were understood centuries ago. A valuable addition to any astronomy library.', '4.5'),
+        ('HQTGWGPNH4', 'ancient_texts', 'Such a unique and intriguing read. The historical context is captivating. It offers a different perspective on celestial events.', '4.0'),
+        ('HQTGWGPNH4', 'celestial_history', 'I love historical astronomy, and this book delivers. It''s well-researched and provides a window into past beliefs. Highly recommended for scholars.', '5.0'),
+        ('HQTGWGPNH4', 'rare_find', 'A truly special book for enthusiasts of astronomical history. The details about ancient astrologers are very interesting. Great for a deeper understanding.', '4.5');
+
+---
+
+# === postgres ===
+# Kubernetes manifest for postgres (PostgreSQL database)
+# Extracted from opentelemetry-demo.yaml
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: postgresql
+  labels:
+    opentelemetry.io/name: postgresql
+    app.kubernetes.io/component: postgresql
+    app.kubernetes.io/name: postgresql
+    app.kubernetes.io/version: 2.1.3
+    app.kubernetes.io/part-of: opentelemetry-demo
+spec:
+  type: ClusterIP
+  ports:
+  - port: 5432
+    name: tcp-service
+    targetPort: 5432
+  selector:
+    opentelemetry.io/name: postgresql
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: postgresql
+  labels:
+    opentelemetry.io/name: postgresql
+    app.kubernetes.io/component: postgresql
+    app.kubernetes.io/name: postgresql
+    app.kubernetes.io/version: 2.1.3
+    app.kubernetes.io/part-of: opentelemetry-demo
+spec:
+  replicas: 1
+  revisionHistoryLimit: 10
+  selector:
+    matchLabels:
+      opentelemetry.io/name: postgresql
+  template:
+    metadata:
+      labels:
+        opentelemetry.io/name: postgresql
+        app.kubernetes.io/component: postgresql
+        app.kubernetes.io/name: postgresql
+    spec:
+      serviceAccountName: opentelemetry-demo
+      containers:
+      - name: postgresql
+        image: ghcr.io/open-telemetry/demo:2.1.3-postgresql
+        imagePullPolicy: IfNotPresent
+        ports:
+        - containerPort: 5432
+          name: service
+        env:
+        - name: OTEL_SERVICE_NAME
+          valueFrom:
+            fieldRef:
+              apiVersion: v1
+              fieldPath: metadata.labels['app.kubernetes.io/component']
+        - name: NODE_IP
+          valueFrom:
+            fieldRef:
+              fieldPath: status.hostIP
+        - name: OTEL_COLLECTOR_NAME
+          value: $(NODE_IP)
+        - name: OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE
+          value: cumulative
+        - name: POSTGRES_USER
+          value: root
+        - name: POSTGRES_PASSWORD
+          value: otel
+        - name: POSTGRES_DB
+          value: otel
+        - name: OTEL_RESOURCE_ATTRIBUTES
+          value: service.name=$(OTEL_SERVICE_NAME),service.namespace=opentelemetry-demo,service.version=2.1.3,service.kafka=no
+        resources:
+          limits:
+            memory: 100Mi
+        volumeMounts:
+        - name: postgres-init
+          mountPath: /docker-entrypoint-initdb.d/init.sql
+          subPath: init.sql
+          readOnly: true
+      volumes:
+      - name: postgres-init
+        configMap:
+          name: postgres-init-sql
+
+---
+
+# === product-catalog ===
+# Kubernetes manifest for product-catalog
+# Auto-generated from opentelemetry-demo.yaml
+# Contains 3 resource(s): Service, Deployment, and ConfigMap
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: product-catalog
+  labels:
+    opentelemetry.io/name: product-catalog
+    app.kubernetes.io/component: product-catalog
+    app.kubernetes.io/name: product-catalog
+    app.kubernetes.io/version: 2.1.3
+    app.kubernetes.io/part-of: opentelemetry-demo
+spec:
+  type: ClusterIP
+  ports:
+  - port: 8080
+    name: tcp-service
+    targetPort: 8080
+  selector:
+    opentelemetry.io/name: product-catalog
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: product-catalog
+  labels:
+    opentelemetry.io/name: product-catalog
+    app.kubernetes.io/component: product-catalog
+    app.kubernetes.io/name: product-catalog
+    app.kubernetes.io/version: 2.1.3
+    app.kubernetes.io/part-of: opentelemetry-demo
+spec:
+  replicas: 1
+  revisionHistoryLimit: 10
+  selector:
+    matchLabels:
+      opentelemetry.io/name: product-catalog
+  template:
+    metadata:
+      labels:
+        opentelemetry.io/name: product-catalog
+        app.kubernetes.io/component: product-catalog
+        app.kubernetes.io/name: product-catalog
+    spec:
+      serviceAccountName: opentelemetry-demo
+      containers:
+      - name: product-catalog
+        image: ghcr.io/open-telemetry/demo:2.1.3-product-catalog
+        imagePullPolicy: IfNotPresent
+        ports:
+        - containerPort: 8080
+          name: service
+        env:
+        - name: OTEL_SERVICE_NAME
+          valueFrom:
+            fieldRef:
+              apiVersion: v1
+              fieldPath: metadata.labels['app.kubernetes.io/component']
+        - name: NODE_IP
+          valueFrom:
+            fieldRef:
+              fieldPath: status.hostIP
+        - name: OTEL_COLLECTOR_NAME
+          value: $(NODE_IP)
+        - name: OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE
+          value: cumulative
+        - name: PRODUCT_CATALOG_PORT
+          value: '8080'
+        - name: PRODUCT_CATALOG_RELOAD_INTERVAL
+          value: '10'
+        - name: FLAGD_HOST
+          value: flagd
+        - name: FLAGD_PORT
+          value: '8013'
+        - name: OTEL_EXPORTER_OTLP_ENDPOINT
+          value: http://$(OTEL_COLLECTOR_NAME):4317
+        - name: GOMEMLIMIT
+          value: 16MiB
+        - name: OTEL_RESOURCE_ATTRIBUTES
+          value: service.name=$(OTEL_SERVICE_NAME),service.namespace=opentelemetry-demo,service.version=2.1.3,service.kafka=no
+        resources:
+          limits:
+            memory: 20Mi
+        volumeMounts:
+        - name: product-catalog-products
+          mountPath: /usr/src/app/products
+      volumes:
+      - name: product-catalog-products
+        configMap:
+          name: product-catalog-products
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: product-catalog-products
+  labels:
+    app.kubernetes.io/version: 2.1.3
+    app.kubernetes.io/part-of: opentelemetry-demo
+data:
+  products.json: |
+    {
+      "products": [
+        {
+          "id": "OLJCESPC7Z",
+          "name": "National Park Foundation Explorascope",
+          "description": "The National Park Foundation's (NPF) Explorascope 60AZ is a manual alt-azimuth, refractor telescope perfect for celestial viewing on the go. The NPF Explorascope 60 can view the planets, moon, star clusters and brighter deep sky objects like the Orion Nebula and Andromeda Galaxy.",
+          "picture": "NationalParkFoundationExplorascope.jpg",
+          "priceUsd": {
+            "currencyCode": "USD",
+            "units": 101,
+            "nanos": 960000000
+          },
+          "categories": [
+            "telescopes"
+          ]
+        },
+        {
+          "id": "66VCHSJNUP",
+          "name": "Starsense Explorer Refractor Telescope",
+          "description": "The first telescope that uses your smartphone to analyze the night sky and calculate its position in real time. StarSense Explorer is ideal for beginners thanks to the app's user-friendly interface and detailed tutorials. It's like having your own personal tour guide of the night sky",
+          "picture": "StarsenseExplorer.jpg",
+          "priceUsd": {
+            "currencyCode": "USD",
+            "units": 349,
+            "nanos": 950000000
+          },
+          "categories": [
+            "telescopes"
+          ]
+        },
+        {
+          "id": "1YMWWN1N4O",
+          "name": "Eclipsmart Travel Refractor Telescope",
+          "description": "Dedicated white-light solar scope for the observer on the go. The 50mm refracting solar scope uses Solar Safe, ISO compliant, full-aperture glass filter material to ensure the safest view of solar events.  The kit comes complete with everything you need, including the dedicated travel solar scope, a Solar Safe finderscope, tripod, a high quality 20mm (18x) Kellner eyepiece and a nylon backpack to carry everything in.  This Travel Solar Scope makes it easy to share the Sun as well as partial and total solar eclipses with the whole family and offers much higher magnifications than you would otherwise get using handheld solar viewers or binoculars.",
+          "picture": "EclipsmartTravelRefractorTelescope.jpg",
+          "priceUsd": {
+            "currencyCode": "USD",
+            "units": 129,
+            "nanos": 950000000
+          },
+          "categories": [
+            "telescopes",
+            "travel"
+          ]
+        },
+        {
+          "id": "L9ECAV7KIM",
+          "name": "Lens Cleaning Kit",
+          "description": "Wipe away dust, dirt, fingerprints and other particles on your lenses to see clearly with the Lens Cleaning Kit. This cleaning kit works on all glass and optical surfaces, including telescopes, binoculars, spotting scopes, monoculars, microscopes, and even your camera lenses, computer screens, and mobile devices.  The kit comes complete with a retractable lens brush to remove dust particles and dirt and two options to clean smudges and fingerprints off of your optics, pre-moistened lens wipes and a bottled lens cleaning fluid with soft cloth.",
+          "picture": "LensCleaningKit.jpg",
+          "priceUsd": {
+            "currencyCode": "USD",
+            "units": 21,
+            "nanos": 950000000
+          },
+          "categories": [
+            "accessories"
+          ]
+        },
+        {
+          "id": "2ZYFJ3GM2N",
+          "name": "Roof Binoculars",
+          "description": "This versatile, all-around binocular is a great choice for the trail, the stadium, the arena, or just about anywhere you want a close-up view of the action without sacrificing brightness or detail. It's an especially great companion for nature observation and bird watching, with ED glass that helps you spot the subtlest field markings and a close focus of just 6.5 feet.",
+          "picture": "RoofBinoculars.jpg",
+          "priceUsd": {
+            "currencyCode": "USD",
+            "units": 209,
+            "nanos": 950000000
+          },
+          "categories": [
+            "binoculars"
+          ]
+        },
+        {
+          "id": "0PUK6V6EV0",
+          "name": "Solar System Color Imager",
+          "description": "You have your new telescope and have observed Saturn and Jupiter. Now you're ready to take the next step and start imaging them. But where do you begin? The NexImage 10 Solar System Imager is the perfect solution.",
+          "picture": "SolarSystemColorImager.jpg",
+          "priceUsd": {
+            "currencyCode": "USD",
+            "units": 175,
+            "nanos": 0
+          },
+          "categories": [
+            "accessories",
+            "telescopes"
+          ]
+        },
+        {
+          "id": "LS4PSXUNUM",
+          "name": "Red Flashlight",
+          "description": "This 3-in-1 device features a 3-mode red flashlight, a hand warmer, and a portable power bank for recharging your personal electronics on the go. Whether you use it to light the way at an astronomy star party, a night walk, or wildlife research, ThermoTorch 3 Astro Red's rugged, IPX4-rated design will withstand your everyday activities.",
+          "picture": "RedFlashlight.jpg",
+          "priceUsd": {
+            "currencyCode": "USD",
+            "units": 57,
+            "nanos": 80000000
+          },
+          "categories": [
+            "accessories",
+            "flashlights"
+          ]
+        },
+        {
+          "id": "9SIQT8TOJO",
+          "name": "Optical Tube Assembly",
+          "description": "Capturing impressive deep-sky astroimages is easier than ever with Rowe-Ackermann Schmidt Astrograph (RASA) V2, the perfect companion to today's top DSLR or astronomical CCD cameras. This fast, wide-field f/2.2 system allows for shorter exposure times compared to traditional f/10 astroimaging, without sacrificing resolution. Because shorter sub-exposure times are possible, your equatorial mount won't need to accurately track over extended periods. The short focal length also lessens equatorial tracking demands. In many cases, autoguiding will not be required.",
+          "picture": "OpticalTubeAssembly.jpg",
+          "priceUsd": {
+            "currencyCode": "USD",
+            "units": 3599,
+            "nanos": 0
+          },
+          "categories": [
+            "accessories",
+            "telescopes",
+            "assembly"
+          ]
+        },
+        {
+          "id": "6E92ZMYYFZ",
+          "name": "Solar Filter",
+          "description": "Enhance your viewing experience with EclipSmart Solar Filter for 8\" telescopes. With two Velcro straps and four self-adhesive Velcro pads for added safety, you can be assured that the solar filter cannot be accidentally knocked off and will provide Solar Safe, ISO compliant viewing.",
+          "picture": "SolarFilter.jpg",
+          "priceUsd": {
+            "currencyCode": "USD",
+            "units": 69,
+            "nanos": 950000000
+          },
+          "categories": [
+            "accessories",
+            "telescopes"
+          ]
+        },
+        {
+          "id": "HQTGWGPNH4",
+          "name": "The Comet Book",
+          "description": "A 16th-century treatise on comets, created anonymously in Flanders (now northern France) and now held at the Universitätsbibliothek Kassel. Commonly known as The Comet Book (or Kometenbuch in German), its full title translates as \"Comets and their General and Particular Meanings, According to Ptolomé, Albumasar, Haly, Aliquind and other Astrologers\". The image is from https://publicdomainreview.org/collection/the-comet-book, made available by the Universitätsbibliothek Kassel under a CC-BY SA 4.0 license (https://creativecommons.org/licenses/by-sa/4.0/)",
+          "picture": "TheCometBook.jpg",
+          "priceUsd": {
+            "currencyCode": "USD",
+            "units": 0,
+            "nanos": 990000000
+          },
+          "categories": [
+            "books"
+          ]
+        }
+      ]
+    }
+
+---
+
+# === product-reviews ===
+# Kubernetes manifest for product-reviews
+# Auto-generated from opentelemetry-demo.yaml
+# Contains 2 resource(s)
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: product-reviews
+  labels:
+    opentelemetry.io/name: product-reviews
+    app.kubernetes.io/component: product-reviews
+    app.kubernetes.io/name: product-reviews
+    app.kubernetes.io/version: 1.4.0
+    app.kubernetes.io/part-of: opentelemetry-demo
+spec:
+  type: ClusterIP
+  ports:
+  - port: 3551
+    name: tcp-service
+    targetPort: 3551
+  selector:
+    opentelemetry.io/name: product-reviews
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: product-reviews
+  labels:
+    opentelemetry.io/name: product-reviews
+    app.kubernetes.io/component: product-reviews
+    app.kubernetes.io/name: product-reviews
+    app.kubernetes.io/version: 1.4.0
+    app.kubernetes.io/part-of: opentelemetry-demo
+spec:
+  replicas: 1
+  revisionHistoryLimit: 10
+  selector:
+    matchLabels:
+      opentelemetry.io/name: product-reviews
+  template:
+    metadata:
+      labels:
+        opentelemetry.io/name: product-reviews
+        app.kubernetes.io/component: product-reviews
+        app.kubernetes.io/name: product-reviews
+    spec:
+      serviceAccountName: opentelemetry-demo
+      containers:
+      - name: product-reviews
+        image: ghcr.io/splunk/opentelemetry-demo/otel-product-reviews:1.4.0
+        imagePullPolicy: IfNotPresent
+        ports:
+        - containerPort: 3551
+          name: service
+        env:
+        - name: OTEL_SERVICE_NAME
+          valueFrom:
+            fieldRef:
+              apiVersion: v1
+              fieldPath: metadata.labels['app.kubernetes.io/component']
+        - name: NODE_IP
+          valueFrom:
+            fieldRef:
+              fieldPath: status.hostIP
+        - name: OTEL_COLLECTOR_NAME
+          value: $(NODE_IP)
+        - name: OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE
+          value: cumulative
+        - name: PRODUCT_REVIEWS_PORT
+          value: '3551'
+        - name: OTEL_PYTHON_LOG_CORRELATION
+          value: 'true'
+        - name: OTEL_INSTRUMENTATION_GENAI_CAPTURE_MESSAGE_CONTENT
+          value: 'true'
+        - name: PROTOCOL_BUFFERS_PYTHON_IMPLEMENTATION
+          value: python
+        - name: FLAGD_HOST
+          value: flagd
+        - name: FLAGD_PORT
+          value: '8013'
+        - name: DB_CONNECTION_STRING
+          value: host=postgresql user=otelu password=otelp dbname=otel
+        - name: LLM_HOST
+          value: llm
+        - name: LLM_PORT
+          value: '8000'
+        - name: LLM_BASE_URL
+          value: http://llm:8000/v1
+        - name: LLM_MODEL
+          value: astronomy-llm
+        - name: OPENAI_API_KEY
+          value: dummy
+        - name: PRODUCT_CATALOG_ADDR
+          value: product-catalog:8080
+        - name: OTEL_EXPORTER_OTLP_ENDPOINT
+          value: http://$(OTEL_COLLECTOR_NAME):4317
+        - name: OTEL_RESOURCE_ATTRIBUTES
+          value: service.name=$(OTEL_SERVICE_NAME),service.namespace=opentelemetry-demo,service.version=1.4.0,service.kafka=no
+        resources:
+          limits:
+            memory: 500Mi
+        volumeMounts: null
+      volumes: null
+
+---
+
+# === quote ===
+# Kubernetes manifest for quote
+# Auto-generated from opentelemetry-demo.yaml
+# Contains 2 resource(s)
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: quote
+  labels:
+    opentelemetry.io/name: quote
+    app.kubernetes.io/component: quote
+    app.kubernetes.io/name: quote
+    app.kubernetes.io/version: 2.1.3
+    app.kubernetes.io/part-of: opentelemetry-demo
+spec:
+  type: ClusterIP
+  ports:
+  - port: 8080
+    name: tcp-service
+    targetPort: 8080
+  selector:
+    opentelemetry.io/name: quote
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: quote
+  labels:
+    opentelemetry.io/name: quote
+    app.kubernetes.io/component: quote
+    app.kubernetes.io/name: quote
+    app.kubernetes.io/version: 2.1.3
+    app.kubernetes.io/part-of: opentelemetry-demo
+spec:
+  replicas: 1
+  revisionHistoryLimit: 10
+  selector:
+    matchLabels:
+      opentelemetry.io/name: quote
+  template:
+    metadata:
+      labels:
+        opentelemetry.io/name: quote
+        app.kubernetes.io/component: quote
+        app.kubernetes.io/name: quote
+    spec:
+      serviceAccountName: opentelemetry-demo
+      containers:
+      - name: quote
+        image: ghcr.io/open-telemetry/demo:2.1.3-quote
+        imagePullPolicy: IfNotPresent
+        ports:
+        - containerPort: 8080
+          name: service
+        env:
+        - name: OTEL_SERVICE_NAME
+          valueFrom:
+            fieldRef:
+              apiVersion: v1
+              fieldPath: metadata.labels['app.kubernetes.io/component']
+        - name: NODE_IP
+          valueFrom:
+            fieldRef:
+              fieldPath: status.hostIP
+        - name: OTEL_COLLECTOR_NAME
+          value: $(NODE_IP)
+        - name: OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE
+          value: cumulative
+        - name: QUOTE_PORT
+          value: '8080'
+        - name: OTEL_PHP_AUTOLOAD_ENABLED
+          value: 'true'
+        - name: OTEL_PHP_INTERNAL_METRICS_ENABLED
+          value: 'true'
+        - name: OTEL_EXPORTER_OTLP_ENDPOINT
+          value: http://$(OTEL_COLLECTOR_NAME):4318
+        - name: OTEL_RESOURCE_ATTRIBUTES
+          value: service.name=$(OTEL_SERVICE_NAME),service.namespace=opentelemetry-demo,service.version=2.1.3,service.kafka=no
+        resources:
+          limits:
+            memory: 40Mi
+        securityContext:
+          runAsGroup: 33
+          runAsNonRoot: true
+          runAsUser: 33
+        volumeMounts: null
+      volumes: null
+
+---
+
+# === recommendation ===
+# Kubernetes manifest for recommendation
+# Auto-generated from opentelemetry-demo.yaml
+# Contains 2 resource(s)
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: recommendation
+  labels:
+    opentelemetry.io/name: recommendation
+    app.kubernetes.io/component: recommendation
+    app.kubernetes.io/name: recommendation
+    app.kubernetes.io/version: 1.4.0
+    app.kubernetes.io/part-of: opentelemetry-demo
+spec:
+  type: ClusterIP
+  ports:
+  - port: 8080
+    name: tcp-service
+    targetPort: 8080
+  selector:
+    opentelemetry.io/name: recommendation
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: recommendation
+  labels:
+    opentelemetry.io/name: recommendation
+    app.kubernetes.io/component: recommendation
+    app.kubernetes.io/name: recommendation
+    app.kubernetes.io/version: 1.4.0
+    app.kubernetes.io/part-of: opentelemetry-demo
+spec:
+  replicas: 1
+  revisionHistoryLimit: 10
+  selector:
+    matchLabels:
+      opentelemetry.io/name: recommendation
+  template:
+    metadata:
+      labels:
+        opentelemetry.io/name: recommendation
+        app.kubernetes.io/component: recommendation
+        app.kubernetes.io/name: recommendation
+    spec:
+      serviceAccountName: opentelemetry-demo
+      containers:
+      - name: recommendation
+        image: ghcr.io/splunk/opentelemetry-demo/otel-recommendation:1.4.0
+        imagePullPolicy: Always
+        ports:
+        - containerPort: 8080
+          name: service
+        env:
+        - name: OTEL_SERVICE_NAME
+          valueFrom:
+            fieldRef:
+              apiVersion: v1
+              fieldPath: metadata.labels['app.kubernetes.io/component']
+        - name: NODE_IP
+          valueFrom:
+            fieldRef:
+              fieldPath: status.hostIP
+        - name: OTEL_COLLECTOR_NAME
+          value: $(NODE_IP)
+        - name: OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE
+          value: cumulative
+        - name: RECOMMENDATION_PORT
+          value: '8080'
+        - name: PRODUCT_CATALOG_ADDR
+          value: product-catalog:8080
+        - name: OTEL_PYTHON_LOG_CORRELATION
+          value: 'true'
+        - name: PROTOCOL_BUFFERS_PYTHON_IMPLEMENTATION
+          value: python
+        - name: FLAGD_HOST
+          value: flagd
+        - name: FLAGD_PORT
+          value: '8013'
+        - name: OTEL_EXPORTER_OTLP_ENDPOINT
+          value: http://$(OTEL_COLLECTOR_NAME):4317
+        - name: OTEL_RESOURCE_ATTRIBUTES
+          value: service.name=$(OTEL_SERVICE_NAME),service.namespace=opentelemetry-demo,service.version=1.4.0,service.kafka=no
+        - name: SPLUNK_PROFILER_LOGS_ENDPOINT
+          value: http://$(OTEL_COLLECTOR_NAME):4317
+        - name: SPLUNK_PROFILER_CALL_STACK_INTERVAL
+          value: '750'
+        - name: SPLUNK_PROFILER_ENABLED
+          value: 'true'
+        resources:
+          limits:
+            memory: 500Mi
+        volumeMounts: null
+      volumes: null
+
+---
+
+# === shipping ===
+# Kubernetes manifest for shipping
+# Auto-generated from opentelemetry-demo.yaml
+# Contains 2 resource(s)
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: shipping
+  labels:
+    opentelemetry.io/name: shipping
+    app.kubernetes.io/component: shipping
+    app.kubernetes.io/name: shipping
+    app.kubernetes.io/version: 2.1.3
+    app.kubernetes.io/part-of: opentelemetry-demo
+spec:
+  type: ClusterIP
+  ports:
+  - port: 8080
+    name: tcp-service
+    targetPort: 8080
+  selector:
+    opentelemetry.io/name: shipping
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: shipping
+  labels:
+    opentelemetry.io/name: shipping
+    app.kubernetes.io/component: shipping
+    app.kubernetes.io/name: shipping
+    app.kubernetes.io/version: 2.1.3
+    app.kubernetes.io/part-of: opentelemetry-demo
+spec:
+  replicas: 1
+  revisionHistoryLimit: 10
+  selector:
+    matchLabels:
+      opentelemetry.io/name: shipping
+  template:
+    metadata:
+      labels:
+        opentelemetry.io/name: shipping
+        app.kubernetes.io/component: shipping
+        app.kubernetes.io/name: shipping
+    spec:
+      serviceAccountName: opentelemetry-demo
+      containers:
+      - name: shipping
+        image: ghcr.io/open-telemetry/demo:2.1.3-shipping
+        imagePullPolicy: IfNotPresent
+        ports:
+        - containerPort: 8080
+          name: service
+        env:
+        - name: OTEL_SERVICE_NAME
+          valueFrom:
+            fieldRef:
+              apiVersion: v1
+              fieldPath: metadata.labels['app.kubernetes.io/component']
+        - name: NODE_IP
+          valueFrom:
+            fieldRef:
+              fieldPath: status.hostIP
+        - name: OTEL_COLLECTOR_NAME
+          value: $(NODE_IP)
+        - name: OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE
+          value: cumulative
+        - name: SHIPPING_PORT
+          value: '8080'
+        - name: QUOTE_ADDR
+          value: http://quote:8080
+        - name: OTEL_EXPORTER_OTLP_ENDPOINT
+          value: http://$(OTEL_COLLECTOR_NAME):4317
+        - name: OTEL_RESOURCE_ATTRIBUTES
+          value: service.name=$(OTEL_SERVICE_NAME),service.namespace=opentelemetry-demo,service.version=2.1.3,service.kafka=no
+        resources:
+          limits:
+            memory: 20Mi
+        volumeMounts: null
+      volumes: null
+
+---
+
+# === shop-dc-shim ===
+### Expects a deployment of Astronomy Shop Demo in the same cluster
+### Uses checkout service from that demo
+### Or add this at config at the end of an astronomy shop demo deployment yaml
+---
+# Shop DC Shim Service
+apiVersion: v1
+kind: Service
+metadata:
+  name: shop-dc-shim
+  namespace: default
+  labels:
+    opentelemetry.io/name: shop-dc-shim
+    app.kubernetes.io/component: shop-dc-shim
+    app.kubernetes.io/name: shop-dc-shim
+    app.kubernetes.io/version: "2.1.3"
+    app.kubernetes.io/part-of: opentelemetry-demo
+spec:
+  type: ClusterIP
+  ports:
+    - port: 8070
+      name: tcp-service
+      targetPort: 8070
+  selector:
+    opentelemetry.io/name: shop-dc-shim
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: shop-dc-shim
+  namespace: default
+  labels:
+    opentelemetry.io/name: shop-dc-shim
+    app.kubernetes.io/component: shop-dc-shim
+    app.kubernetes.io/name: shop-dc-shim
+    app.kubernetes.io/version: "2.1.3"
+    app.kubernetes.io/part-of: opentelemetry-demo
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      opentelemetry.io/name: shop-dc-shim
+  template:
+    metadata:
+      labels:
+        opentelemetry.io/name: shop-dc-shim
+        app.kubernetes.io/component: shop-dc-shim
+        app.kubernetes.io/name: shop-dc-shim
+        app.kubernetes.io/version: "2.1.3"
+        app.kubernetes.io/part-of: opentelemetry-demo
+    spec:
+      serviceAccountName: opentelemetry-demo
+      containers:
+        - name: shop-dc-shim
+          image: ghcr.io/splunk/opentelemetry-demo/otel-shop-dc-shim:1.4.0
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 8070
+              name: http
+          command: ["/usr/bin/dumb-init"]
+          args:
+          - --
+          - /bin/bash
+          - -c
+          - |
+            export OTEL_RESOURCE_ATTRIBUTES="service.name=shop-dc-shim-service,deployment.environment=${ENV_VALUE}-datacenter-b01,service.version=1.4.0,service.namespace=shop-dc-shim"
+            exec /app/start-app-dual.sh    
+          env:
+            - name: WORKSHOP_ENV
+              valueFrom:
+                secretKeyRef:
+                  name: workshop-secret
+                  key: env
+            - name: SHOP_DC_SHIM_PORT
+              value: "8070"
+            - name: DB_CONNECTION_STRING
+              value: "jdbc:sqlserver://shop-dc-shim-db:1433;databaseName=master;encrypt=false;trustServerCertificate=true"
+            - name: DB_USERNAME
+              value: "sa"
+            - name: DB_PASSWORD
+              value: "ShopPass123!"
+            - name: CHECKOUT_SERVICE_ADDR
+              value: "checkout:8080"
+            - name: EMAIL_SERVICE_URL
+              value: "http://email:8080"
+            - name: OTEL_EXPORTER_OTLP_ENDPOINT
+              value: "http://splunk-otel-collector-agent:4318"
+            - name: OTEL_SERVICE_NAME
+              value: "shop-dc-shim"
+            - name: OTEL_JAVAAGENT_ENABLED
+              value: "true"
+            - name: APPDYNAMICS_AGENT_ACCOUNT_NAME
+              value: "se-lab"
+            - name: APPDYNAMICS_JAVAAGENT_ENABLED
+              value: "true"
+            - name: APPDYNAMICS_AGENT_ACCOUNT_ACCESS_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: workshop-secret
+                  key: appd_token
+            - name: OTEL_INSTRUMENTATION_SPLUNK_JDBC_ENABLED
+              value: "true"
+          resources:
+            requests:
+              memory: "512Mi"
+              cpu: "500m"
+            limits:
+              memory: "1Gi"
+              cpu: "1"
+          readinessProbe:
+            httpGet:
+              path: /actuator/health
+              port: 8070
+            initialDelaySeconds: 240
+            periodSeconds: 10
+            timeoutSeconds: 5
+            failureThreshold: 3
+          livenessProbe:
+            httpGet:
+              path: /actuator/health
+              port: 8070
+            initialDelaySeconds: 420
+            periodSeconds: 30
+            timeoutSeconds: 10
+            failureThreshold: 5
+---
+
+# === shop-dc-shim-db ===
+### Expects a deployment of Astronomy Shop Demo in the same cluster
+### Uses checkout service from that demo
+### Or add this at config at the end of an astronomy shop demo deployment yaml
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: shop-dc-shim-db
+  namespace: default
+  labels:
+    opentelemetry.io/name: shop-dc-shim-db
+    app.kubernetes.io/component: shop-dc-shim-db
+    app.kubernetes.io/name: shop-dc-shim-db
+    app.kubernetes.io/version: "2.1.3"
+    app.kubernetes.io/part-of: opentelemetry-demo
+spec:
+  type: ClusterIP
+  ports:
+    - port: 1433
+      name: sqlserver
+      targetPort: 1433
+  selector:
+    opentelemetry.io/name: shop-dc-shim-db
+---
+apiVersion: apps/v1
+kind: Deployment 
+metadata:
+  name: shop-dc-shim-db
+  namespace: default
+  labels:
+    opentelemetry.io/name: shop-dc-shim-db
+    app.kubernetes.io/component: shop-dc-shim-db
+    app.kubernetes.io/name: shop-dc-shim-db
+    app.kubernetes.io/version: "2.1.3"
+    app.kubernetes.io/part-of: opentelemetry-demo
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      opentelemetry.io/name: shop-dc-shim-db
+  template:
+    metadata:
+      labels:
+        opentelemetry.io/name: shop-dc-shim-db
+        app.kubernetes.io/component: shop-dc-shim-db
+        app.kubernetes.io/name: shop-dc-shim-db
+        app.kubernetes.io/version: "2.1.3"
+        app.kubernetes.io/part-of: opentelemetry-demo
+    spec:
+      containers:
+        - name: sqlserver
+          image: mcr.microsoft.com/mssql/server:2022-latest
+          ports:
+            - containerPort: 1433
+          env:
+            - name: ACCEPT_EULA
+              value: "Y"
+            - name: MSSQL_SA_PASSWORD
+              value: "ShopPass123!"
+          resources:
+            requests:
+              memory: "2Gi"
+              cpu: "1"
+            limits:
+              memory: "3Gi"
+              cpu: "2"
+          volumeMounts:
+            - name: sqlserver-storage
+              mountPath: /var/opt/mssql/data
+      volumes:
+        - name: sqlserver-storage
+          emptyDir: {}
+---
+
+# === shop-dc-loadgenerator ===
+### Expects a deployment of Astronomy Shop Demo in the same cluster
+### Uses checkout service from that demo
+### Or add this at config at the end of an astronomy shop demo deployment yaml
+---
+# Shop DC Load Generator
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: shop-dc-load-generator
+  namespace: default
+  labels:
+    opentelemetry.io/name: shop-dc-load-generator
+    app.kubernetes.io/component: shop-dc-load-generator
+    app.kubernetes.io/name: shop-dc-load-generator
+    app.kubernetes.io/version: "2.1.3"
+    app.kubernetes.io/part-of: opentelemetry-demo
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      opentelemetry.io/name: shop-dc-load-generator
+  template:
+    metadata:
+      labels:
+        opentelemetry.io/name: shop-dc-load-generator
+        app.kubernetes.io/component: shop-dc-load-generator
+        app.kubernetes.io/name: shop-dc-load-generator
+        app.kubernetes.io/version: "2.1.3"
+        app.kubernetes.io/part-of: opentelemetry-demo
+    spec:
+      serviceAccountName: opentelemetry-demo
+      initContainers:
+        - name: wait-for-shop-dc-shim
+          image: curlimages/curl:1.4.0
+          command: ['sh', '-c']
+          args:
+            - |
+              echo "Waiting for shop-dc-shim service to be ready..."
+              until curl -f --connect-timeout 5 --max-time 20 http://shop-dc-shim:8070/actuator/health; do
+                echo "Shop DC Shim not ready, waiting 20 seconds..."
+                sleep 20
+              done
+              echo "Shop DC Shim is ready, starting load generator..."
+          resources:
+            limits:
+              memory: "64Mi"
+              cpu: "50m"
+      containers:
+        - name: load-generator
+          image: ghcr.io/splunk/opentelemetry-demo/otel-shop-dc-loadgenerator:1.4.0
+          args: ["--url", "http://shop-dc-shim:8070", "--mode", "continuous", "--tpm", "25", "--duration", "0"]
+          resources:
+            limits:
+              memory: "128Mi"
+              cpu: "100m"
+---
+
+# === sql-server-fraud-setup ===
+# Kubernetes manifest for SQL Server setup
+# Includes secrets and initialization script for MSSQL
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: mssql-secrets
+type: Opaque
+stringData:
+  SA_PASSWORD: ChangeMe_SuperStrong123!
+  DB_CONNECTION_STRING: Server=tcp:sql-server-fraud.astronomy-shop.svc.cluster.local,1433;Database=FraudDetection;User
+    Id=sa;Password=ChangeMe_SuperStrong123!;Encrypt=True;TrustServerCertificate=True
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: mssql-init-script
+data:
+  init-db.sql: |
+    IF NOT EXISTS (SELECT name FROM sys.databases WHERE name = 'FraudDetection')
+    BEGIN
+      CREATE DATABASE FraudDetection;
+    END
+    GO
+
+---
+
+# === sql-server-fraud ===
+# Kubernetes manifest for sql-server-fraud
+# Auto-generated from opentelemetry-demo.yaml
+# Contains 2 resource(s)
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: sql-server-fraud
+spec:
+  type: ClusterIP
+  ports:
+  - port: 1433
+    targetPort: 1433
+    protocol: TCP
+    name: tds
+  selector:
+    app: sql-server-fraud
+---
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: sql-server-fraud
+spec:
+  serviceName: sql-server-fraud
+  replicas: 1
+  persistentVolumeClaimRetentionPolicy:
+    whenDeleted: Delete
+    whenScaled: Delete
+  selector:
+    matchLabels:
+      app: sql-server-fraud
+  template:
+    metadata:
+      labels:
+        app: sql-server-fraud
+    spec:
+      containers:
+      - name: mssql
+        image: mcr.microsoft.com/mssql/server:2022-latest
+        imagePullPolicy: IfNotPresent
+        ports:
+        - containerPort: 1433
+          name: tds
+        env:
+        - name: ACCEPT_EULA
+          value: "Y"
+        - name: MSSQL_PID
+          value: Express
+        - name: SA_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: mssql-secrets
+              key: SA_PASSWORD
+        volumeMounts:
+        - name: data
+          mountPath: /var/opt/mssql
+        - name: init-script
+          mountPath: /docker-entrypoint-initdb.d
+        lifecycle:
+          postStart:
+            exec:
+              command:
+              - /bin/bash
+              - -c
+              - 'sleep 30
+
+                /opt/mssql-tools18/bin/sqlcmd -S localhost -U sa -P "${SA_PASSWORD}"
+                -C -i /docker-entrypoint-initdb.d/init-db.sql
+
+                '
+        resources:
+          requests:
+            cpu: 250m
+            memory: 1Gi
+          limits:
+            cpu: '1'
+            memory: 2Gi
+        readinessProbe:
+          tcpSocket:
+            port: 1433
+          initialDelaySeconds: 10
+          periodSeconds: 10
+        livenessProbe:
+          tcpSocket:
+            port: 1433
+          initialDelaySeconds: 30
+          periodSeconds: 20
+      volumes:
+      - name: init-script
+        configMap:
+          name: mssql-init-script
+  volumeClaimTemplates:
+  - metadata:
+      name: data
+    spec:
+      accessModes:
+      - ReadWriteOnce
+      resources:
+        requests:
+          storage: 5Gi
+
+---
+
+# === valkey-cart ===
+# Kubernetes manifest for valkey-cart
+# Auto-generated from opentelemetry-demo.yaml
+# Contains 2 resource(s)
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: valkey-cart
+  labels:
+    opentelemetry.io/name: valkey-cart
+    app.kubernetes.io/component: valkey-cart
+    app.kubernetes.io/name: valkey-cart
+    app.kubernetes.io/version: 2.1.3
+    app.kubernetes.io/part-of: opentelemetry-demo
+spec:
+  type: ClusterIP
+  ports:
+  - port: 6379
+    name: valkey-cart
+    targetPort: 6379
+  selector:
+    opentelemetry.io/name: valkey-cart
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: valkey-cart
+  labels:
+    opentelemetry.io/name: valkey-cart
+    app.kubernetes.io/component: valkey-cart
+    app.kubernetes.io/name: valkey-cart
+    app.kubernetes.io/version: 2.1.3
+    app.kubernetes.io/part-of: opentelemetry-demo
+spec:
+  replicas: 1
+  revisionHistoryLimit: 10
+  selector:
+    matchLabels:
+      opentelemetry.io/name: valkey-cart
+  template:
+    metadata:
+      labels:
+        opentelemetry.io/name: valkey-cart
+        app.kubernetes.io/component: valkey-cart
+        app.kubernetes.io/name: valkey-cart
+    spec:
+      serviceAccountName: opentelemetry-demo
+      containers:
+      - name: valkey-cart
+        image: valkey/valkey:8.1.3-alpine
+        imagePullPolicy: IfNotPresent
+        ports:
+        - containerPort: 6379
+          name: valkey-cart
+        env:
+        - name: OTEL_SERVICE_NAME
+          valueFrom:
+            fieldRef:
+              apiVersion: v1
+              fieldPath: metadata.labels['app.kubernetes.io/component']
+        - name: NODE_IP
+          valueFrom:
+            fieldRef:
+              fieldPath: status.hostIP
+        - name: OTEL_COLLECTOR_NAME
+          value: $(NODE_IP)
+        - name: OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE
+          value: cumulative
+        - name: OTEL_RESOURCE_ATTRIBUTES
+          value: service.name=$(OTEL_SERVICE_NAME),service.namespace=opentelemetry-demo,service.version=2.1.3,service.kafka=no
+        resources:
+          limits:
+            memory: 20Mi
+        securityContext:
+          runAsGroup: 1000
+          runAsNonRoot: true
+          runAsUser: 999
+        volumeMounts: null
+      volumes: null
+
+---
