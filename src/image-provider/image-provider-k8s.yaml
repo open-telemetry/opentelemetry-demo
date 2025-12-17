@@ -47,7 +47,7 @@ spec:
       serviceAccountName: opentelemetry-demo
       containers:
       - name: image-provider
-        image: ghcr.io/splunk/opentelemetry-demo/otel-image-provider:1.1.0
+        image: ghcr.io/splunk/opentelemetry-demo/otel-image-provider:1.4.0
         imagePullPolicy: IfNotPresent
         ports:
         - containerPort: 8081
