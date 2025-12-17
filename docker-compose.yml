@@ -928,7 +928,7 @@ services:
     container_name: telemetry-docs
     build:
       context: ./
-      dockerfile: ./src/telemetry-docs/Dockerfile
+      dockerfile: ${TELEMETRY_DOCS_DOCKERFILE}
       cache_from:
         - ${IMAGE_NAME}:${IMAGE_VERSION}-telemetry-docs
     deploy:
@@ -937,7 +937,9 @@ services:
           memory: 100M
     restart: unless-stopped
     ports:
-      - "${TELEMETRY_DOCS_PORT:-8001}:8000"
+      - "${TELEMETRY_DOCS_PORT}"
+    environment:
+      - TELEMETRY_DOCS_PORT
     logging: *logging
 
   # OpenSearch

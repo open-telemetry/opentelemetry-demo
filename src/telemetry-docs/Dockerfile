@@ -42,7 +42,7 @@ COPY --from=registry-builder /workspace/docs /app/docs
 RUN mv /app/docs/mkdocs.yml /app/mkdocs.yml
 
 # Expose port for mkdocs
-EXPOSE 8000
+EXPOSE ${TELEMETRY_DOCS_PORT}
 
 # Serve documentation
-CMD ["mkdocs", "serve", "--dev-addr", "0.0.0.0:8000"]
+CMD ["sh", "-c", "mkdocs serve --dev-addr 0.0.0.0:${TELEMETRY_DOCS_PORT}"]
