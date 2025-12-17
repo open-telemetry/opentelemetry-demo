@@ -29,7 +29,7 @@ services:
     deploy:
       resources:
         limits:
-          memory: 120M
+          memory: 160M
     restart: unless-stopped
     environment:
       - KAFKA_ADDR
@@ -457,7 +457,7 @@ services:
     deploy:
       resources:
         limits:
-          memory: 120M
+          memory: 140M
     restart: unless-stopped
     ports:
       - "${PAYMENT_PORT}"
@@ -846,7 +846,7 @@ services:
     deploy:
       resources:
         limits:
-          memory: 120M
+          memory: 175M
     restart: unless-stopped
     environment:
       - "GF_INSTALL_PLUGINS=grafana-opensearch-datasource"
@@ -902,7 +902,7 @@ services:
     command:
       - --web.console.templates=/etc/prometheus/consoles
       - --web.console.libraries=/etc/prometheus/console_libraries
-      - --storage.tsdb.retention.time=1h
+      - --storage.tsdb.retention.time=7d
       - --config.file=/etc/prometheus/prometheus-config.yaml
       - --storage.tsdb.path=/prometheus
       - --web.enable-lifecycle
@@ -914,7 +914,7 @@ services:
     deploy:
       resources:
         limits:
-          memory: 300M
+          memory: 200M
     restart: unless-stopped
     ports:
       - "${PROMETHEUS_PORT}:${PROMETHEUS_PORT}"
@@ -931,7 +931,7 @@ services:
     deploy:
       resources:
         limits:
-          memory: 800M
+          memory: 1G
     restart: unless-stopped
     environment:
       - cluster.name=demo-cluster
