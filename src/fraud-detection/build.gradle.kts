@@ -4,11 +4,11 @@ import com.google.protobuf.gradle.*
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 
 plugins {
-    kotlin("jvm") version "2.2.21"
+    kotlin("jvm") version "2.3.0"
     application
     id("java")
     id("idea")
-    id("com.google.protobuf") version "0.9.5"
+    id("com.google.protobuf") version "0.9.6"
     id("com.github.johnrengelman.shadow") version "8.1.1"
 }
 
@@ -40,7 +40,7 @@ dependencies {
     implementation("io.opentelemetry:opentelemetry-api:1.57.0")
     implementation("io.opentelemetry:opentelemetry-sdk:1.57.0")
     implementation("io.opentelemetry:opentelemetry-extension-annotations:1.18.0")
-    implementation("org.apache.logging.log4j:log4j-core:2.25.2")
+    implementation("org.apache.logging.log4j:log4j-core:2.25.3")
     implementation("org.slf4j:slf4j-api:2.0.17")
     implementation("com.google.protobuf:protobuf-kotlin:${protobufVersion}")
     implementation("dev.openfeature:sdk:1.19.2")
