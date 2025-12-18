@@ -124,6 +124,16 @@
       },
       "defaultVariant": "off"
     },
+    "failedReadinessProbe": {
+      "description": "readiness probe failure for cart service",
+      "state": "ENABLED",
+      "variants": {
+        "on": true,
+        "off": false
+      },
+      "defaultVariant": "off"
+
+    },
     "emailMemoryLeak": {
       "description": "Memory leak in the email service.",
       "state": "ENABLED",
