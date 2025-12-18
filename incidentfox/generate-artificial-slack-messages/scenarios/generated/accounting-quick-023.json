@@ -1,0 +1,55 @@
+{
+  "scenario_id": "accounting-quick-023",
+  "scenario_type": "quick-alert",
+  "title": "Request failures - accounting",
+  "start_time": "2024-12-11T15:53:00",
+  "services": {
+    "accounting": {
+      "channel": "#accounting-alert",
+      "oncall_group": "@accounting-oncall",
+      "role": "primary"
+    }
+  },
+  "timeline": [
+    {
+      "offset_seconds": 0,
+      "type": "alert",
+      "channel": "#accounting-alert",
+      "severity": "warning",
+      "title": "\ud83d\udfe1 Request failures - Accounting Service",
+      "details": "Metrics show request failures",
+      "metrics": {
+        "current_value": "88%",
+        "threshold": "80%"
+      },
+      "thread_parent": null
+    },
+    {
+      "offset_seconds": 15,
+      "type": "message",
+      "channel": "#accounting-alert",
+      "user": "jack",
+      "content": "This keeps firing",
+      "thread_parent": 0
+    },
+    {
+      "offset_seconds": 35,
+      "type": "message",
+      "channel": "#accounting-alert",
+      "user": "jack",
+      "content": "Need to adjust threshold",
+      "thread_parent": 0
+    }
+  ],
+  "metadata": {
+    "severity": "SEV-4",
+    "duration_seconds": 35,
+    "services_impacted": 1,
+    "root_cause": "threshold_adjust",
+    "tags": [
+      "quick",
+      "threshold_adjust",
+      "low_success_rate"
+    ]
+  }
+}

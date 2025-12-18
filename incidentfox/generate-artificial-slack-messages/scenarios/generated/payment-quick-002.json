@@ -1,0 +1,55 @@
+{
+  "scenario_id": "payment-quick-002",
+  "scenario_type": "quick-alert",
+  "title": "Consumer lag high - payment",
+  "start_time": "2024-12-11T12:28:00",
+  "services": {
+    "payment": {
+      "channel": "#payment-alert",
+      "oncall_group": "@payment-oncall",
+      "role": "primary"
+    }
+  },
+  "timeline": [
+    {
+      "offset_seconds": 0,
+      "type": "alert",
+      "channel": "#payment-alert",
+      "severity": "info",
+      "title": "\ud83d\udfe1 Consumer lag high - Payment Service",
+      "details": "Metrics show consumer lag high",
+      "metrics": {
+        "current_value": "81%",
+        "threshold": "80%"
+      },
+      "thread_parent": null
+    },
+    {
+      "offset_seconds": 15,
+      "type": "message",
+      "channel": "#payment-alert",
+      "user": "grace",
+      "content": "Ack'd",
+      "thread_parent": 0
+    },
+    {
+      "offset_seconds": 35,
+      "type": "message",
+      "channel": "#payment-alert",
+      "user": "grace",
+      "content": "Will check after standup",
+      "thread_parent": 0
+    }
+  ],
+  "metadata": {
+    "severity": "SEV-4",
+    "duration_seconds": 35,
+    "services_impacted": 1,
+    "root_cause": "acknowledged",
+    "tags": [
+      "quick",
+      "acknowledged",
+      "queue_lag"
+    ]
+  }
+}

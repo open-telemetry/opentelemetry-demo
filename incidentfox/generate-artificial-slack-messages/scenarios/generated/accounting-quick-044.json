@@ -1,0 +1,51 @@
+{
+  "scenario_id": "accounting-quick-044",
+  "scenario_type": "quick-alert",
+  "title": "Failed requests - accounting",
+  "start_time": "2024-12-11T12:52:00",
+  "services": {
+    "accounting": {
+      "channel": "#accounting-alert",
+      "oncall_group": "@accounting-oncall",
+      "role": "primary"
+    }
+  },
+  "timeline": [
+    {
+      "offset_seconds": 0,
+      "type": "alert",
+      "channel": "#accounting-alert",
+      "severity": "warning",
+      "title": "\ud83d\udfe1 Failed requests - Accounting Service",
+      "details": "Metrics show failed requests",
+      "metrics": {
+        "current_value": "60%",
+        "threshold": "80%"
+      },
+      "thread_parent": null
+    },
+    {
+      "offset_seconds": 77,
+      "type": "resolution",
+      "channel": "#accounting-alert",
+      "user": "Monitoring Bot",
+      "content": "\u2705 Auto-resolved: Metrics returned to normal",
+      "metrics_after": {
+        "status": "healthy",
+        "value": "normal"
+      },
+      "thread_parent": 0
+    }
+  ],
+  "metadata": {
+    "severity": "SEV-4",
+    "duration_seconds": 77,
+    "services_impacted": 1,
+    "root_cause": "false_positive",
+    "tags": [
+      "quick",
+      "false_positive",
+      "high_error_rate"
+    ]
+  }
+}

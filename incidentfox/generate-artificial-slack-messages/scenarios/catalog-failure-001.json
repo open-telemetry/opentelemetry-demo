@@ -1,0 +1,327 @@
+{
+  "scenario_id": "catalog-failure-001",
+  "scenario_type": "catalog-failure",
+  "title": "Product Catalog Database Connection Failure",
+  "description": "Product catalog loses database connection, causing cascading failures across multiple dependent services",
+  "start_time": "2024-12-11T13:20:00Z",
+  "services": {
+    "product-catalog": {
+      "channel": "#product-catalog-alert",
+      "oncall_group": "@product-catalog-oncall",
+      "role": "primary",
+      "engineers": [
+        "charlie",
+        "diana"
+      ]
+    },
+    "frontend": {
+      "channel": "#frontend-alert",
+      "oncall_group": "@frontend-oncall",
+      "role": "affected",
+      "engineers": [
+        "eve"
+      ]
+    },
+    "recommendation": {
+      "channel": "#recommendation-alert",
+      "oncall_group": "@recommendation-oncall",
+      "role": "affected",
+      "engineers": [
+        "alice",
+        "bob"
+      ]
+    },
+    "checkout": {
+      "channel": "#checkout-alert",
+      "oncall_group": "@checkout-oncall",
+      "role": "affected",
+      "engineers": [
+        "henry"
+      ]
+    }
+  },
+  "timeline": [
+    {
+      "offset_seconds": 0,
+      "type": "alert",
+      "channel": "#product-catalog-alert",
+      "severity": "critical",
+      "title": "\ud83d\udd34 CRITICAL: Database Connection Failures",
+      "details": "Cannot connect to PostgreSQL database\n\n**Current Metrics:**\n\u2022 Error rate: 95%\n\u2022 Connection errors: 450 in last 1 min\n\u2022 Active connections: 0/100\n\u2022 Failed queries: 95%",
+      "metrics": {
+        "error_rate": "95%",
+        "connection_errors_1m": "450",
+        "active_connections": "0/100",
+        "failed_queries": "95%"
+      },
+      "dashboard": "https://grafana.company.com/d/product-catalog",
+      "thread_parent": null
+    },
+    {
+      "offset_seconds": 5,
+      "type": "message",
+      "channel": "#product-catalog-alert",
+      "user": "charlie",
+      "content": "On it. Product catalog can't connect to database",
+      "thread_parent": 0
+    },
+    {
+      "offset_seconds": 15,
+      "type": "alert",
+      "channel": "#frontend-alert",
+      "severity": "critical",
+      "title": "\ud83d\udd34 CRITICAL: Product Pages Failing",
+      "details": "Product detail pages returning errors\n\n**Current Metrics:**\n\u2022 Page error rate: 87%\n\u2022 Users affected: ~450/min\n\u2022 Product API failures: 95%",
+      "metrics": {
+        "page_error_rate": "87%",
+        "users_affected": "~450/min"
+      },
+      "thread_parent": null
+    },
+    {
+      "offset_seconds": 18,
+      "type": "message",
+      "channel": "#frontend-alert",
+      "user": "eve",
+      "content": "Tons of errors on product pages \ud83d\ude31 Users seeing 'Product not found'",
+      "thread_parent": 2
+    },
+    {
+      "offset_seconds": 20,
+      "type": "alert",
+      "channel": "#recommendation-alert",
+      "severity": "warning",
+      "title": "\ud83d\udfe1 High Error Rate - Recommendation Service",
+      "details": "Cannot fetch product details from catalog\n\n**Current Metrics:**\n\u2022 Error rate: 68%\n\u2022 Failed catalog calls: 340 in 1 min",
+      "metrics": {
+        "error_rate": "68%",
+        "failed_calls_1m": "340"
+      },
+      "thread_parent": null
+    },
+    {
+      "offset_seconds": 22,
+      "type": "message",
+      "channel": "#product-catalog-alert",
+      "user": "charlie",
+      "content": "Database connection string looks correct. Testing connectivity...",
+      "thread_parent": 0
+    },
+    {
+      "offset_seconds": 25,
+      "type": "message",
+      "channel": "#frontend-alert",
+      "user": "eve",
+      "content": "This is really bad - basically all product pages are broken",
+      "thread_parent": 2
+    },
+    {
+      "offset_seconds": 28,
+      "type": "message",
+      "channel": "#recommendation-alert",
+      "user": "alice",
+      "content": "Can't get product details. product-catalog returning 500s",
+      "thread_parent": 4
+    },
+    {
+      "offset_seconds": 30,
+      "type": "alert",
+      "channel": "#checkout-alert",
+      "severity": "critical",
+      "title": "\ud83d\udd34 CRITICAL: Checkout Validation Failures",
+      "details": "Cannot validate products in cart\n\n**Current Metrics:**\n\u2022 Checkout failures: 78%\n\u2022 Product validation errors: 92%",
+      "metrics": {
+        "checkout_failure_rate": "78%",
+        "validation_errors": "92%"
+      },
+      "thread_parent": null
+    },
+    {
+      "offset_seconds": 32,
+      "type": "message",
+      "channel": "#checkout-alert",
+      "user": "henry",
+      "content": "Checkout is broken. Can't validate products - catalog service failing",
+      "thread_parent": 8
+    },
+    {
+      "offset_seconds": 35,
+      "type": "message",
+      "channel": "#product-catalog-alert",
+      "user": "charlie",
+      "content": "```\n$ psql -h postgresql-prod -U otelu -d catalog\npsql: error: connection to server at \"postgresql-prod\" failed\n  FATAL: database \"catalog\" does not exist\n```",
+      "thread_parent": 0
+    },
+    {
+      "offset_seconds": 40,
+      "type": "message",
+      "channel": "#product-catalog-alert",
+      "user": "diana",
+      "content": "Wait what? Database doesn't exist?! \ud83d\ude28",
+      "thread_parent": 0
+    },
+    {
+      "offset_seconds": 45,
+      "type": "message",
+      "channel": "#frontend-alert",
+      "user": "eve",
+      "content": "@product-catalog-oncall Seeing massive failures. What's the status?",
+      "mentions": [
+        "@product-catalog-oncall"
+      ],
+      "thread_parent": 2
+    },
+    {
+      "offset_seconds": 50,
+      "type": "message",
+      "channel": "#product-catalog-alert",
+      "user": "charlie",
+      "content": "Checking database pod... it's running but database name is wrong in our connection string!",
+      "thread_parent": 0
+    },
+    {
+      "offset_seconds": 55,
+      "type": "message",
+      "channel": "#product-catalog-alert",
+      "user": "charlie",
+      "content": "Connection string has `database=catalog` but should be `database=otel_demo`",
+      "thread_parent": 0
+    },
+    {
+      "offset_seconds": 60,
+      "type": "message",
+      "channel": "#checkout-alert",
+      "user": "henry",
+      "content": "@product-catalog-oncall Checkout completely broken. Users can't purchase anything",
+      "mentions": [
+        "@product-catalog-oncall"
+      ],
+      "thread_parent": 8
+    },
+    {
+      "offset_seconds": 65,
+      "type": "message",
+      "channel": "#product-catalog-alert",
+      "user": "diana",
+      "content": "How did this happen? Did someone update the config?",
+      "thread_parent": 0
+    },
+    {
+      "offset_seconds": 70,
+      "type": "message",
+      "channel": "#product-catalog-alert",
+      "user": "charlie",
+      "content": "Checking git blame... deployed 20 minutes ago by automated deployment bot",
+      "thread_parent": 0
+    },
+    {
+      "offset_seconds": 75,
+      "type": "message",
+      "channel": "#product-catalog-alert",
+      "user": "charlie",
+      "content": "Found it - PR #847 changed database name but didn't update connection string",
+      "thread_parent": 0
+    },
+    {
+      "offset_seconds": 80,
+      "type": "message",
+      "channel": "#product-catalog-alert",
+      "user": "diana",
+      "content": "Okay fixing now. Updating the configmap",
+      "thread_parent": 0
+    },
+    {
+      "offset_seconds": 85,
+      "type": "action",
+      "channel": "#product-catalog-alert",
+      "user": "diana",
+      "action_type": "manual_fix",
+      "action_details": "Updated database connection string in configmap",
+      "content": "```\n$ kubectl edit configmap product-catalog-config\n# Changed: database: catalog\n# To: database: otel_demo\nconfigmap/product-catalog-config edited\n```",
+      "thread_parent": 0
+    },
+    {
+      "offset_seconds": 90,
+      "type": "message",
+      "channel": "#product-catalog-alert",
+      "user": "diana",
+      "content": "Restarting pods to pick up new config",
+      "thread_parent": 0
+    },
+    {
+      "offset_seconds": 95,
+      "type": "action",
+      "channel": "#product-catalog-alert",
+      "user": "diana",
+      "action_type": "restart",
+      "action_details": "Restarted product-catalog pods",
+      "content": "```\n$ kubectl rollout restart deployment/product-catalog\ndeployment.apps/product-catalog restarted\n```",
+      "thread_parent": 0
+    },
+    {
+      "offset_seconds": 110,
+      "type": "message",
+      "channel": "#product-catalog-alert",
+      "user": "charlie",
+      "content": "Pods coming up... health checks passing now \u2705",
+      "thread_parent": 0
+    },
+    {
+      "offset_seconds": 115,
+      "type": "message",
+      "channel": "#product-catalog-alert",
+      "user": "charlie",
+      "content": "Database connections established. Error rate: 95% \u2192 12% \u2192 0.3%",
+      "thread_parent": 0
+    },
+    {
+      "offset_seconds": 120,
+      "type": "message",
+      "channel": "#frontend-alert",
+      "user": "eve",
+      "content": "Product pages loading now! Error rate dropping fast \ud83d\udcc9",
+      "thread_parent": 2
+    },
+    {
+      "offset_seconds": 125,
+      "type": "message",
+      "channel": "#recommendation-alert",
+      "user": "alice",
+      "content": "\u2705 Catalog calls succeeding. Recommendations working again",
+      "thread_parent": 4
+    },
+    {
+      "offset_seconds": 130,
+      "type": "message",
+      "channel": "#checkout-alert",
+      "user": "henry",
+      "content": "\u2705 Checkout validation working. Success rate back to 98%",
+      "thread_parent": 8
+    },
+    {
+      "offset_seconds": 135,
+      "type": "resolution",
+      "channel": "#product-catalog-alert",
+      "user": "charlie",
+      "content": "\u2705 **RESOLVED** - Product catalog fully recovered\n\n**Root Cause:** Database connection string misconfigured in PR #847. Changed database name but forgot to update connection string in configmap.\n\n**Fix:** Updated configmap and restarted pods\n\n**Impact:**\n\u2022 Duration: ~2 minutes of outage\n\u2022 Services affected: 4 (catalog, frontend, recommendation, checkout)\n\u2022 User impact: HIGH - product pages completely broken\n\u2022 Revenue impact: $5,800 in lost sales\n\n**Follow-up:**\n- [ ] Add integration test for database connectivity\n- [ ] Add pre-deployment validation of connection strings\n- [ ] Review PR #847 - how did this pass CI?\n- [ ] Post-mortem scheduled for tomorrow",
+      "metrics_after": {
+        "error_rate": "0.2%",
+        "db_connections": "25/100"
+      },
+      "thread_parent": 0
+    }
+  ],
+  "metadata": {
+    "severity": "SEV-1",
+    "duration_seconds": 135,
+    "services_impacted": 4,
+    "root_cause": "Misconfigured database connection string",
+    "resolution": "Fixed configmap and restarted pods",
+    "tags": [
+      "database",
+      "config-error",
+      "cascade",
+      "revenue-impact"
+    ]
+  }
+}

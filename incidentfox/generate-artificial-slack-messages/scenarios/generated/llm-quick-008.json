@@ -1,0 +1,63 @@
+{
+  "scenario_id": "llm-quick-008",
+  "scenario_type": "quick-alert",
+  "title": "Request failures - llm",
+  "start_time": "2024-12-11T17:23:00",
+  "services": {
+    "llm": {
+      "channel": "#llm-alert",
+      "oncall_group": "@llm-oncall",
+      "role": "primary"
+    }
+  },
+  "timeline": [
+    {
+      "offset_seconds": 0,
+      "type": "alert",
+      "channel": "#llm-alert",
+      "severity": "info",
+      "title": "\ud83d\udfe1 Request failures - LLM Service",
+      "details": "Metrics show request failures",
+      "metrics": {
+        "current_value": "76%",
+        "threshold": "80%"
+      },
+      "thread_parent": null
+    },
+    {
+      "offset_seconds": 15,
+      "type": "message",
+      "channel": "#llm-alert",
+      "user": "wendy",
+      "content": "Looking at this",
+      "thread_parent": 0
+    },
+    {
+      "offset_seconds": 35,
+      "type": "message",
+      "channel": "#llm-alert",
+      "user": "wendy",
+      "content": "Metrics actually look fine",
+      "thread_parent": 0
+    },
+    {
+      "offset_seconds": 55,
+      "type": "message",
+      "channel": "#llm-alert",
+      "user": "wendy",
+      "content": "False alarm - threshold too sensitive",
+      "thread_parent": 0
+    }
+  ],
+  "metadata": {
+    "severity": "SEV-4",
+    "duration_seconds": 55,
+    "services_impacted": 1,
+    "root_cause": "false_positive",
+    "tags": [
+      "quick",
+      "false_positive",
+      "low_success_rate"
+    ]
+  }
+}

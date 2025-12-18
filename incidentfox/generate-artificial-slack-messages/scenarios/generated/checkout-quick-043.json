@@ -1,0 +1,63 @@
+{
+  "scenario_id": "checkout-quick-043",
+  "scenario_type": "quick-alert",
+  "title": "Message backlog - checkout",
+  "start_time": "2024-12-11T11:54:00",
+  "services": {
+    "checkout": {
+      "channel": "#checkout-alert",
+      "oncall_group": "@checkout-oncall",
+      "role": "primary"
+    }
+  },
+  "timeline": [
+    {
+      "offset_seconds": 0,
+      "type": "alert",
+      "channel": "#checkout-alert",
+      "severity": "info",
+      "title": "\ud83d\udfe1 Message backlog - Checkout Service",
+      "details": "Metrics show message backlog",
+      "metrics": {
+        "current_value": "76%",
+        "threshold": "80%"
+      },
+      "thread_parent": null
+    },
+    {
+      "offset_seconds": 15,
+      "type": "message",
+      "channel": "#checkout-alert",
+      "user": "iris",
+      "content": "This keeps firing",
+      "thread_parent": 0
+    },
+    {
+      "offset_seconds": 35,
+      "type": "message",
+      "channel": "#checkout-alert",
+      "user": "iris",
+      "content": "Need to adjust threshold",
+      "thread_parent": 0
+    },
+    {
+      "offset_seconds": 55,
+      "type": "message",
+      "channel": "#checkout-alert",
+      "user": "iris",
+      "content": "Creating ticket to tune alert",
+      "thread_parent": 0
+    }
+  ],
+  "metadata": {
+    "severity": "SEV-4",
+    "duration_seconds": 55,
+    "services_impacted": 1,
+    "root_cause": "threshold_adjust",
+    "tags": [
+      "quick",
+      "threshold_adjust",
+      "queue_lag"
+    ]
+  }
+}

@@ -1,0 +1,51 @@
+{
+  "scenario_id": "frontend-quick-005",
+  "scenario_type": "quick-alert",
+  "title": "Message backlog - frontend",
+  "start_time": "2024-12-11T13:56:00",
+  "services": {
+    "frontend": {
+      "channel": "#frontend-alert",
+      "oncall_group": "@frontend-oncall",
+      "role": "primary"
+    }
+  },
+  "timeline": [
+    {
+      "offset_seconds": 0,
+      "type": "alert",
+      "channel": "#frontend-alert",
+      "severity": "warning",
+      "title": "\ud83d\udfe1 Message backlog - Frontend Service",
+      "details": "Metrics show message backlog",
+      "metrics": {
+        "current_value": "88%",
+        "threshold": "80%"
+      },
+      "thread_parent": null
+    },
+    {
+      "offset_seconds": 92,
+      "type": "resolution",
+      "channel": "#frontend-alert",
+      "user": "Monitoring Bot",
+      "content": "\u2705 Auto-resolved: Metrics returned to normal",
+      "metrics_after": {
+        "status": "healthy",
+        "value": "normal"
+      },
+      "thread_parent": 0
+    }
+  ],
+  "metadata": {
+    "severity": "SEV-4",
+    "duration_seconds": 92,
+    "services_impacted": 1,
+    "root_cause": "acknowledged",
+    "tags": [
+      "quick",
+      "acknowledged",
+      "queue_lag"
+    ]
+  }
+}

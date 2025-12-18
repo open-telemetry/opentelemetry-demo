@@ -1,0 +1,254 @@
+{
+  "scenario_id": "kafka-lag-001",
+  "scenario_type": "kafka-lag",
+  "title": "Kafka Consumer Lag Causing Processing Delays",
+  "description": "Kafka consumers (accounting, fraud-detection) fall behind, causing delayed order processing and stale financial data",
+  "start_time": "2024-12-11T11:15:00Z",
+  "services": {
+    "kafka": {
+      "channel": "#kafka-alert",
+      "oncall_group": "@kafka-oncall",
+      "role": "primary",
+      "engineers": [
+        "xander",
+        "yuki"
+      ]
+    },
+    "accounting": {
+      "channel": "#accounting-alert",
+      "oncall_group": "@accounting-oncall",
+      "role": "affected",
+      "engineers": [
+        "jack"
+      ]
+    },
+    "fraud-detection": {
+      "channel": "#fraud-alert",
+      "oncall_group": "@fraud-oncall",
+      "role": "affected",
+      "engineers": [
+        "rachel",
+        "sam"
+      ]
+    }
+  },
+  "timeline": [
+    {
+      "offset_seconds": 0,
+      "type": "alert",
+      "channel": "#kafka-alert",
+      "severity": "warning",
+      "title": "\ud83d\udfe1 High Consumer Lag - Kafka Orders Topic",
+      "details": "Consumer lag increased significantly\n\n**Current Metrics:**\n\u2022 Consumer lag (accounting): 1,247 messages\n\u2022 Consumer lag (fraud-detection): 1,189 messages\n\u2022 Produce rate: 85 msg/s (normal)\n\u2022 Consume rate: 15 msg/s (slow)\n\u2022 Lag growth rate: +70 msg/s",
+      "metrics": {
+        "accounting_lag": "1247 messages",
+        "fraud_lag": "1189 messages",
+        "produce_rate": "85 msg/s",
+        "consume_rate": "15 msg/s"
+      },
+      "dashboard": "https://grafana.company.com/d/kafka-overview",
+      "thread_parent": null
+    },
+    {
+      "offset_seconds": 10,
+      "type": "message",
+      "channel": "#kafka-alert",
+      "user": "xander",
+      "content": "Seeing this. Consumer lag building up on orders topic",
+      "thread_parent": 0
+    },
+    {
+      "offset_seconds": 20,
+      "type": "message",
+      "channel": "#kafka-alert",
+      "user": "yuki",
+      "content": "Producer rate looks normal but consumers are way behind. Let me check consumer health",
+      "thread_parent": 0
+    },
+    {
+      "offset_seconds": 35,
+      "type": "message",
+      "channel": "#kafka-alert",
+      "user": "yuki",
+      "content": "Both accounting and fraud-detection consumers are healthy but processing slowly",
+      "thread_parent": 0
+    },
+    {
+      "offset_seconds": 45,
+      "type": "message",
+      "channel": "#kafka-alert",
+      "user": "xander",
+      "content": "Checking if there's a feature flag... yep, `kafkaQueueProblems` is enabled",
+      "thread_parent": 0
+    },
+    {
+      "offset_seconds": 60,
+      "type": "alert",
+      "channel": "#accounting-alert",
+      "severity": "warning",
+      "title": "\ud83d\udfe1 Stale Data - Accounting Dashboard",
+      "details": "Last processed transaction is 8 minutes old\n\n**Current Metrics:**\n\u2022 Last processed: 8 min ago\n\u2022 Pending transactions: 1,247\n\u2022 Processing rate: 15 txn/s (baseline: 85 txn/s)\n\u2022 Data freshness SLO: VIOLATED",
+      "metrics": {
+        "last_processed": "8 min ago",
+        "pending": "1247",
+        "process_rate": "15 txn/s"
+      },
+      "thread_parent": null
+    },
+    {
+      "offset_seconds": 65,
+      "type": "alert",
+      "channel": "#fraud-alert",
+      "severity": "critical",
+      "title": "\ud83d\udd34 CRITICAL: Fraud Detection Lag",
+      "details": "Real-time fraud detection is delayed by 8+ minutes\n\n**Security Risk:**\n\u2022 Detection delay: 8 min (SLO: <30 sec)\n\u2022 Unprocessed transactions: 1,189\n\u2022 Fraudulent orders may go through undetected",
+      "metrics": {
+        "detection_delay": "8 min",
+        "unprocessed": "1189"
+      },
+      "thread_parent": null
+    },
+    {
+      "offset_seconds": 68,
+      "type": "message",
+      "channel": "#accounting-alert",
+      "user": "jack",
+      "content": "Dashboard is showing stale data. Last transaction processed 8 minutes ago \ud83d\ude1f",
+      "thread_parent": 5
+    },
+    {
+      "offset_seconds": 70,
+      "type": "message",
+      "channel": "#fraud-alert",
+      "user": "rachel",
+      "content": "This is bad. We have an 8 minute blind spot for fraud detection",
+      "thread_parent": 6
+    },
+    {
+      "offset_seconds": 55,
+      "type": "message",
+      "channel": "#kafka-alert",
+      "user": "xander",
+      "content": "@accounting-oncall @fraud-oncall Heads up - we have a kafka consumer lag issue. Working on it",
+      "mentions": [
+        "@accounting-oncall",
+        "@fraud-oncall"
+      ],
+      "thread_parent": 0
+    },
+    {
+      "offset_seconds": 75,
+      "type": "message",
+      "channel": "#accounting-alert",
+      "user": "jack",
+      "content": "Let me check kafka... seeing consumer lag of 1200+ messages",
+      "thread_parent": 5
+    },
+    {
+      "offset_seconds": 80,
+      "type": "message",
+      "channel": "#fraud-alert",
+      "user": "sam",
+      "content": "Same here. Kafka lag is huge. @kafka-oncall what's going on?",
+      "mentions": [
+        "@kafka-oncall"
+      ],
+      "thread_parent": 6
+    },
+    {
+      "offset_seconds": 85,
+      "type": "message",
+      "channel": "#kafka-alert",
+      "user": "xander",
+      "content": "Feature flag issue. Disabling kafkaQueueProblems now",
+      "thread_parent": 0
+    },
+    {
+      "offset_seconds": 90,
+      "type": "action",
+      "channel": "#kafka-alert",
+      "user": "xander",
+      "action_type": "flag_toggle",
+      "action_details": "Disabled kafkaQueueProblems feature flag",
+      "content": "```\n$ flagctl set kafkaQueueProblems off\nFlag disabled\n```",
+      "thread_parent": 0
+    },
+    {
+      "offset_seconds": 95,
+      "type": "message",
+      "channel": "#kafka-alert",
+      "user": "yuki",
+      "content": "Consumer throughput increasing... 15 msg/s \u2192 45 msg/s \u2192 85 msg/s",
+      "thread_parent": 0
+    },
+    {
+      "offset_seconds": 100,
+      "type": "message",
+      "channel": "#fraud-alert",
+      "user": "rachel",
+      "content": "Processing rate picking up on our end. Still have 1000+ messages to catch up on though",
+      "thread_parent": 6
+    },
+    {
+      "offset_seconds": 105,
+      "type": "message",
+      "channel": "#accounting-alert",
+      "user": "jack",
+      "content": "Same here. Catching up now. Will take ~10 minutes to clear the backlog",
+      "thread_parent": 5
+    },
+    {
+      "offset_seconds": 110,
+      "type": "message",
+      "channel": "#kafka-alert",
+      "user": "xander",
+      "content": "Consumers should catch up in about 10 minutes. Monitoring lag...",
+      "thread_parent": 0
+    },
+    {
+      "offset_seconds": 300,
+      "type": "message",
+      "channel": "#accounting-alert",
+      "user": "jack",
+      "content": "\u2705 Caught up. Dashboard showing current data. Lag: 0 messages",
+      "thread_parent": 5,
+      "metrics_after": {
+        "lag": "0 messages",
+        "last_processed": "5 sec ago"
+      }
+    },
+    {
+      "offset_seconds": 305,
+      "type": "message",
+      "channel": "#fraud-alert",
+      "user": "rachel",
+      "content": "\u2705 All caught up on our end too. Real-time detection back online",
+      "thread_parent": 6,
+      "metrics_after": {
+        "detection_delay": "2 sec",
+        "unprocessed": "0"
+      }
+    },
+    {
+      "offset_seconds": 310,
+      "type": "resolution",
+      "channel": "#kafka-alert",
+      "user": "xander",
+      "content": "\u2705 **RESOLVED** - Consumer lag cleared\n\n**Root Cause:** Feature flag `kafkaQueueProblems` was enabled, artificially slowing down consumers\n\n**Fix:** Disabled feature flag, consumers caught up in 10 minutes\n\n**Impact:**\n\u2022 Duration: 10 minutes of delayed processing\n\u2022 Max lag: ~1,250 messages\n\u2022 Data freshness: violated SLO for 10 minutes\n\u2022 Security risk: 10 minute fraud detection blind spot\n\n**Follow-up:**\n- [ ] Review why flag was enabled\n- [ ] Add monitoring for consumer lag growth rate\n- [ ] Consider auto-scaling consumers during high lag",
+      "thread_parent": 0
+    }
+  ],
+  "metadata": {
+    "severity": "SEV-2",
+    "duration_seconds": 310,
+    "services_impacted": 3,
+    "root_cause": "Feature flag enabled causing slow consumer processing",
+    "resolution": "Disabled flag, consumers caught up",
+    "tags": [
+      "kafka",
+      "consumer-lag",
+      "async",
+      "data-freshness"
+    ]
+  }
+}

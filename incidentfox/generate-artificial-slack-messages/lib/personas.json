@@ -1,0 +1,574 @@
+{
+  "alice": {
+    "name": "Alice Chen",
+    "slack_id": "U01ALICE",
+    "style": "analytical",
+    "response_time": "fast",
+    "seniority": "senior",
+    "characteristics": [
+      "checks metrics first",
+      "asks clarifying questions",
+      "methodical debugger",
+      "references dashboards frequently"
+    ],
+    "common_phrases": [
+      "Looking at the dashboard...",
+      "Let me check the metrics",
+      "Hmm, interesting...",
+      "Wait, I see something",
+      "That doesn't look right"
+    ],
+    "emoji_usage": "moderate",
+    "uses_code_blocks": true
+  },
+  "bob": {
+    "name": "Bob Smith",
+    "slack_id": "U02BOBXX",
+    "style": "pragmatic",
+    "response_time": "medium",
+    "seniority": "mid",
+    "characteristics": [
+      "suggests quick fixes",
+      "references past incidents",
+      "action-oriented",
+      "good at kubernetes"
+    ],
+    "common_phrases": [
+      "I'm going to try...",
+      "This is similar to...",
+      "Let me restart...",
+      "Good catch",
+      "That should fix it"
+    ],
+    "emoji_usage": "high",
+    "uses_code_blocks": true
+  },
+  "charlie": {
+    "name": "Charlie Rodriguez",
+    "slack_id": "U03CHARL",
+    "style": "cautious",
+    "response_time": "medium",
+    "seniority": "senior",
+    "characteristics": [
+      "checks impact before acting",
+      "coordinates with other teams",
+      "considers downstream effects",
+      "good communicator"
+    ],
+    "common_phrases": [
+      "Let me verify...",
+      "Before we do that...",
+      "Have we considered...?",
+      "Just to confirm...",
+      "Thanks for the heads up"
+    ],
+    "emoji_usage": "low",
+    "uses_code_blocks": false
+  },
+  "diana": {
+    "name": "Diana Park",
+    "slack_id": "U04DIANA",
+    "style": "collaborative",
+    "response_time": "fast",
+    "seniority": "senior",
+    "characteristics": [
+      "helps other teams",
+      "shares context",
+      "remembers similar incidents",
+      "documentation-focused"
+    ],
+    "common_phrases": [
+      "FYI...",
+      "This is similar to...",
+      "For context...",
+      "Let me share...",
+      "Thanks for fixing this"
+    ],
+    "emoji_usage": "moderate",
+    "uses_code_blocks": false
+  },
+  "eve": {
+    "name": "Eve Johnson",
+    "slack_id": "U05EVEXX",
+    "style": "user-focused",
+    "response_time": "fast",
+    "seniority": "mid",
+    "characteristics": [
+      "thinks about user impact",
+      "monitors user experience metrics",
+      "escalates quickly",
+      "customer-centric"
+    ],
+    "common_phrases": [
+      "Users are seeing...",
+      "This is affecting customers",
+      "UX is degraded",
+      "Page load time is...",
+      "We need to fix this ASAP"
+    ],
+    "emoji_usage": "moderate",
+    "uses_code_blocks": false
+  },
+  "frank": {
+    "name": "Frank Martinez",
+    "slack_id": "U06FRANK",
+    "style": "curious",
+    "response_time": "medium",
+    "seniority": "mid",
+    "characteristics": [
+      "asks lots of questions",
+      "digs deep into root causes",
+      "checks recent changes",
+      "thorough investigator"
+    ],
+    "common_phrases": [
+      "Who enabled...?",
+      "When did this start?",
+      "What changed?",
+      "Let me check...",
+      "That's weird..."
+    ],
+    "emoji_usage": "high",
+    "uses_code_blocks": true
+  },
+  "grace": {
+    "name": "Grace Wilson",
+    "slack_id": "U07GRACE",
+    "style": "efficient",
+    "response_time": "very_fast",
+    "seniority": "senior",
+    "characteristics": [
+      "quick to identify issues",
+      "fast at fixing",
+      "good at feature flags",
+      "follows up on action items"
+    ],
+    "common_phrases": [
+      "Found it!",
+      "Disabling now",
+      "Fixed",
+      "I'll create a ticket for...",
+      "Good catch"
+    ],
+    "emoji_usage": "moderate",
+    "uses_code_blocks": true
+  },
+  "henry": {
+    "name": "Henry Kim",
+    "slack_id": "U08HENRY",
+    "style": "thorough",
+    "response_time": "medium",
+    "seniority": "senior",
+    "characteristics": [
+      "checks logs carefully",
+      "validates fixes",
+      "coordinates incidents",
+      "good at communicating status"
+    ],
+    "common_phrases": [
+      "Checking logs...",
+      "Still seeing...",
+      "Let me verify...",
+      "Confirmed",
+      "All good now"
+    ],
+    "emoji_usage": "low",
+    "uses_code_blocks": true
+  },
+  "iris": {
+    "name": "Iris Patel",
+    "slack_id": "U09IRISJ",
+    "style": "direct",
+    "response_time": "fast",
+    "seniority": "mid",
+    "characteristics": [
+      "gets straight to the point",
+      "monitors business metrics",
+      "escalates when needed",
+      "tracks revenue impact"
+    ],
+    "common_phrases": [
+      "This is costing us...",
+      "We need to fix this now",
+      "Success rate is...",
+      "Revenue impact:",
+      "Thanks for the quick fix"
+    ],
+    "emoji_usage": "high",
+    "uses_code_blocks": false
+  },
+  "jack": {
+    "name": "Jack Thompson",
+    "slack_id": "U10JACKM",
+    "style": "systematic",
+    "response_time": "slow",
+    "seniority": "senior",
+    "characteristics": [
+      "focuses on data accuracy",
+      "reconciles transactions",
+      "notices patterns",
+      "writes detailed reports"
+    ],
+    "common_phrases": [
+      "For the record...",
+      "I'll note this in...",
+      "According to the data...",
+      "Just documenting...",
+      "This matches..."
+    ],
+    "emoji_usage": "low",
+    "uses_code_blocks": false
+  },
+  "kate": {
+    "name": "Kate Anderson",
+    "slack_id": "U11KATEW",
+    "style": "proactive",
+    "response_time": "fast",
+    "seniority": "mid",
+    "characteristics": [
+      "monitors proactively",
+      "prevents issues",
+      "shares alerts",
+      "thinks ahead"
+    ],
+    "common_phrases": [
+      "Heads up...",
+      "Just noticed...",
+      "We should watch...",
+      "Might want to...",
+      "In case anyone needs..."
+    ],
+    "emoji_usage": "moderate",
+    "uses_code_blocks": false
+  },
+  "leo": {
+    "name": "Leo Zhang",
+    "slack_id": "U12LEOXZ",
+    "style": "calm",
+    "response_time": "medium",
+    "seniority": "senior",
+    "characteristics": [
+      "stays calm under pressure",
+      "reassures team",
+      "experienced with incidents",
+      "mentors others"
+    ],
+    "common_phrases": [
+      "No worries",
+      "We've seen this before",
+      "Let's take a step back",
+      "This is expected",
+      "Good work team"
+    ],
+    "emoji_usage": "low",
+    "uses_code_blocks": true
+  },
+  "maria": {
+    "name": "Maria Garcia",
+    "slack_id": "U13MARIA",
+    "style": "detail-oriented",
+    "response_time": "medium",
+    "seniority": "mid",
+    "characteristics": [
+      "notices small details",
+      "catches edge cases",
+      "reads documentation",
+      "precise communicator"
+    ],
+    "common_phrases": [
+      "Actually...",
+      "To be precise...",
+      "According to the docs...",
+      "Just to clarify...",
+      "The exact error is..."
+    ],
+    "emoji_usage": "low",
+    "uses_code_blocks": true
+  },
+  "nathan": {
+    "name": "Nathan Lee",
+    "slack_id": "U14NATHN",
+    "style": "technical",
+    "response_time": "slow",
+    "seniority": "senior",
+    "characteristics": [
+      "deep technical knowledge",
+      "explains complex issues",
+      "references architecture",
+      "provides context"
+    ],
+    "common_phrases": [
+      "Technically speaking...",
+      "The issue is...",
+      "From an architecture perspective...",
+      "This happens because...",
+      "The root cause is..."
+    ],
+    "emoji_usage": "low",
+    "uses_code_blocks": true
+  },
+  "olivia": {
+    "name": "Olivia Brown",
+    "slack_id": "U15OLIVA",
+    "style": "energetic",
+    "response_time": "fast",
+    "seniority": "junior",
+    "characteristics": [
+      "eager to help",
+      "asks for guidance",
+      "learns quickly",
+      "enthusiastic"
+    ],
+    "common_phrases": [
+      "I can help with...",
+      "Should I...?",
+      "Learning from this",
+      "Oh interesting!",
+      "Thanks for explaining!"
+    ],
+    "emoji_usage": "high",
+    "uses_code_blocks": false
+  },
+  "peter": {
+    "name": "Peter Davis",
+    "slack_id": "U16PETER",
+    "style": "veteran",
+    "response_time": "slow",
+    "seniority": "staff",
+    "characteristics": [
+      "extensive experience",
+      "seen it all before",
+      "provides historical context",
+      "knows the pitfalls"
+    ],
+    "common_phrases": [
+      "We had this issue in 2021...",
+      "This reminds me of...",
+      "Classic...",
+      "Bet it's...",
+      "Called it"
+    ],
+    "emoji_usage": "low",
+    "uses_code_blocks": false
+  },
+  "quinn": {
+    "name": "Quinn Murphy",
+    "slack_id": "U17QUINN",
+    "style": "independent",
+    "response_time": "medium",
+    "seniority": "senior",
+    "characteristics": [
+      "works independently",
+      "updates when done",
+      "efficient problem solver",
+      "minimal communication"
+    ],
+    "common_phrases": [
+      "On it",
+      "Fixed",
+      "Done",
+      "Resolved",
+      "All set"
+    ],
+    "emoji_usage": "low",
+    "uses_code_blocks": true
+  },
+  "rachel": {
+    "name": "Rachel Cohen",
+    "slack_id": "U18RACHE",
+    "style": "security-focused",
+    "response_time": "fast",
+    "seniority": "senior",
+    "characteristics": [
+      "considers security implications",
+      "monitors fraud patterns",
+      "thinks about abuse",
+      "cautious about changes"
+    ],
+    "common_phrases": [
+      "Security-wise...",
+      "We need to consider...",
+      "This could be exploited...",
+      "Fraud pattern detected",
+      "Let's be careful with..."
+    ],
+    "emoji_usage": "low",
+    "uses_code_blocks": false
+  },
+  "sam": {
+    "name": "Sam Nguyen",
+    "slack_id": "U19SAMXX",
+    "style": "data-driven",
+    "response_time": "medium",
+    "seniority": "mid",
+    "characteristics": [
+      "analyzes patterns",
+      "references statistics",
+      "builds dashboards",
+      "quantifies impact"
+    ],
+    "common_phrases": [
+      "Looking at the data...",
+      "The numbers show...",
+      "Statistically...",
+      "Based on the metrics...",
+      "Here's the breakdown..."
+    ],
+    "emoji_usage": "low",
+    "uses_code_blocks": false
+  },
+  "tina": {
+    "name": "Tina Sato",
+    "slack_id": "U20TINAX",
+    "style": "performance-focused",
+    "response_time": "medium",
+    "seniority": "mid",
+    "characteristics": [
+      "optimizes for speed",
+      "monitors latency",
+      "cares about cache hit rates",
+      "tracks performance metrics"
+    ],
+    "common_phrases": [
+      "Latency is...",
+      "Performance degraded",
+      "Cache hit rate...",
+      "Response time...",
+      "Optimizing..."
+    ],
+    "emoji_usage": "moderate",
+    "uses_code_blocks": true
+  },
+  "uma": {
+    "name": "Uma Sharma",
+    "slack_id": "U21UMAXX",
+    "style": "AI/ML-focused",
+    "response_time": "medium",
+    "seniority": "senior",
+    "characteristics": [
+      "understands ML systems",
+      "monitors model performance",
+      "handles LLM issues",
+      "knows API quotas"
+    ],
+    "common_phrases": [
+      "Model is...",
+      "LLM rate limit...",
+      "API quota...",
+      "Inference latency...",
+      "Training data shows..."
+    ],
+    "emoji_usage": "moderate",
+    "uses_code_blocks": true
+  },
+  "victor": {
+    "name": "Victor Kumar",
+    "slack_id": "U22VICTO",
+    "style": "full-stack",
+    "response_time": "fast",
+    "seniority": "mid",
+    "characteristics": [
+      "understands frontend and backend",
+      "bridges teams",
+      "good at integration issues",
+      "sees the big picture"
+    ],
+    "common_phrases": [
+      "From the frontend perspective...",
+      "On the backend...",
+      "The integration point...",
+      "End-to-end...",
+      "Both sides..."
+    ],
+    "emoji_usage": "moderate",
+    "uses_code_blocks": false
+  },
+  "wendy": {
+    "name": "Wendy Liu",
+    "slack_id": "U23WENDY",
+    "style": "research-oriented",
+    "response_time": "slow",
+    "seniority": "staff",
+    "characteristics": [
+      "deep ML/AI knowledge",
+      "experimental mindset",
+      "references papers",
+      "explains complex topics"
+    ],
+    "common_phrases": [
+      "According to the research...",
+      "We're experimenting with...",
+      "The model architecture...",
+      "From an AI perspective...",
+      "This is a known limitation..."
+    ],
+    "emoji_usage": "low",
+    "uses_code_blocks": true
+  },
+  "xander": {
+    "name": "Xander Jones",
+    "slack_id": "U24XANDE",
+    "style": "infrastructure-focused",
+    "response_time": "medium",
+    "seniority": "senior",
+    "characteristics": [
+      "kafka expert",
+      "understands distributed systems",
+      "monitors queue health",
+      "handles scaling"
+    ],
+    "common_phrases": [
+      "Consumer lag...",
+      "Partition rebalancing...",
+      "Broker health...",
+      "Throughput is...",
+      "Let me check the topics..."
+    ],
+    "emoji_usage": "low",
+    "uses_code_blocks": true
+  },
+  "yuki": {
+    "name": "Yuki Tanaka",
+    "slack_id": "U25YUKIX",
+    "style": "observability-focused",
+    "response_time": "fast",
+    "seniority": "mid",
+    "characteristics": [
+      "monitoring expert",
+      "builds dashboards",
+      "sets up alerts",
+      "traces everything"
+    ],
+    "common_phrases": [
+      "Looking at the traces...",
+      "Dashboard shows...",
+      "The metrics indicate...",
+      "I'll set up an alert for...",
+      "Grafana shows..."
+    ],
+    "emoji_usage": "moderate",
+    "uses_code_blocks": false
+  },
+  "zara": {
+    "name": "Zara Ali",
+    "slack_id": "U26ZARAX",
+    "style": "testing-focused",
+    "response_time": "medium",
+    "seniority": "mid",
+    "characteristics": [
+      "runs load tests",
+      "validates performance",
+      "catches regressions",
+      "systematic tester"
+    ],
+    "common_phrases": [
+      "Load test shows...",
+      "Testing indicates...",
+      "Regression detected",
+      "Running a test...",
+      "Validation complete"
+    ],
+    "emoji_usage": "moderate",
+    "uses_code_blocks": true
+  }
+}

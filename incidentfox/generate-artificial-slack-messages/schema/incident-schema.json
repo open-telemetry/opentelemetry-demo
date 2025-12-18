@@ -1,0 +1,256 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Incident Scenario Schema",
+  "description": "Schema for defining realistic Slack incident scenarios",
+  "type": "object",
+  "required": ["scenario_id", "scenario_type", "title", "start_time", "services", "timeline"],
+  "properties": {
+    "scenario_id": {
+      "type": "string",
+      "description": "Unique identifier for this scenario",
+      "pattern": "^[a-z0-9-]+$",
+      "examples": ["cache-failure-001", "payment-down-002"]
+    },
+    "scenario_type": {
+      "type": "string",
+      "description": "Type of failure scenario",
+      "enum": [
+        "cache-failure",
+        "payment-failure",
+        "high-cpu",
+        "memory-leak",
+        "latency-spike",
+        "kafka-lag",
+        "catalog-failure",
+        "service-unreachable",
+        "ad-gc-pressure",
+        "traffic-spike",
+        "llm-rate-limit",
+        "llm-inaccuracy"
+      ]
+    },
+    "title": {
+      "type": "string",
+      "description": "Human-readable title for the incident",
+      "examples": ["Recommendation Cache Failure", "Payment Service Outage"]
+    },
+    "description": {
+      "type": "string",
+      "description": "Optional detailed description of the incident"
+    },
+    "start_time": {
+      "type": "string",
+      "format": "date-time",
+      "description": "ISO 8601 timestamp when the incident starts"
+    },
+    "services": {
+      "type": "object",
+      "description": "Services involved in this incident",
+      "additionalProperties": {
+        "type": "object",
+        "required": ["channel", "oncall_group", "role"],
+        "properties": {
+          "channel": {
+            "type": "string",
+            "pattern": "^#[a-z0-9-]+$",
+            "description": "Slack channel for this service",
+            "examples": ["#recommendation-oncall", "#checkout-oncall"]
+          },
+          "oncall_group": {
+            "type": "string",
+            "pattern": "^@[a-z0-9-]+$",
+            "description": "Slack user group handle",
+            "examples": ["@recommendation-oncall", "@checkout-oncall"]
+          },
+          "role": {
+            "type": "string",
+            "enum": ["primary", "affected", "upstream", "downstream", "observer"],
+            "description": "Role of this service in the incident"
+          },
+          "engineers": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "List of engineers assigned to this service"
+          }
+        }
+      }
+    },
+    "timeline": {
+      "type": "array",
+      "description": "Chronological list of events (alerts, messages, actions)",
+      "items": {
+        "type": "object",
+        "required": ["offset_seconds", "type", "channel"],
+        "properties": {
+          "offset_seconds": {
+            "type": "number",
+            "minimum": 0,
+            "description": "Seconds from scenario start_time"
+          },
+          "type": {
+            "type": "string",
+            "enum": ["alert", "message", "mention", "resolution", "action"],
+            "description": "Type of event"
+          },
+          "channel": {
+            "type": "string",
+            "pattern": "^#[a-z0-9-]+$",
+            "description": "Slack channel where this event occurs"
+          },
+          "user": {
+            "type": "string",
+            "description": "Username of the person posting (for messages)"
+          },
+          "content": {
+            "type": "string",
+            "description": "Message content"
+          },
+          "thread_parent": {
+            "type": ["number", "null"],
+            "description": "Index of parent message for threading, null for new thread"
+          },
+          "severity": {
+            "type": "string",
+            "enum": ["critical", "warning", "info"],
+            "description": "Alert severity (for alert type)"
+          },
+          "title": {
+            "type": "string",
+            "description": "Alert title (for alert type)"
+          },
+          "details": {
+            "type": "string",
+            "description": "Alert details or description"
+          },
+          "metrics": {
+            "type": "object",
+            "description": "Metrics snapshot",
+            "additionalProperties": {
+              "type": "string"
+            }
+          },
+          "metrics_before": {
+            "type": "object",
+            "description": "Metrics before incident",
+            "additionalProperties": {
+              "type": "string"
+            }
+          },
+          "metrics_after": {
+            "type": "object",
+            "description": "Metrics after resolution",
+            "additionalProperties": {
+              "type": "string"
+            }
+          },
+          "runbook": {
+            "type": "string",
+            "format": "uri",
+            "description": "Link to runbook (for alerts)"
+          },
+          "dashboard": {
+            "type": "string",
+            "format": "uri",
+            "description": "Link to monitoring dashboard"
+          },
+          "mentions": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "pattern": "^@[a-z0-9-]+$"
+            },
+            "description": "User groups or users mentioned"
+          },
+          "reactions": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "emoji": {
+                  "type": "string",
+                  "description": "Emoji name (without colons)"
+                },
+                "users": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                }
+              }
+            },
+            "description": "Emoji reactions to this message"
+          },
+          "action_type": {
+            "type": "string",
+            "enum": ["restart", "scale", "flag_toggle", "rollback", "manual_fix"],
+            "description": "Type of remediation action (for action type)"
+          },
+          "action_details": {
+            "type": "string",
+            "description": "Details of the action taken"
+          }
+        },
+        "allOf": [
+          {
+            "if": {
+              "properties": { "type": { "const": "alert" } }
+            },
+            "then": {
+              "required": ["severity", "title", "details"]
+            }
+          },
+          {
+            "if": {
+              "properties": { "type": { "enum": ["message", "mention", "resolution"] } }
+            },
+            "then": {
+              "required": ["user", "content"]
+            }
+          },
+          {
+            "if": {
+              "properties": { "type": { "const": "action" } }
+            },
+            "then": {
+              "required": ["user", "action_type", "action_details"]
+            }
+          }
+        ]
+      }
+    },
+    "metadata": {
+      "type": "object",
+      "description": "Additional metadata",
+      "properties": {
+        "severity": {
+          "type": "string",
+          "enum": ["SEV-1", "SEV-2", "SEV-3", "SEV-4"]
+        },
+        "duration_seconds": {
+          "type": "number",
+          "description": "Total incident duration"
+        },
+        "services_impacted": {
+          "type": "number",
+          "description": "Number of services affected"
+        },
+        "root_cause": {
+          "type": "string",
+          "description": "Summary of root cause"
+        },
+        "resolution": {
+          "type": "string",
+          "description": "Summary of how it was resolved"
+        },
+        "tags": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    }
+  }
+}

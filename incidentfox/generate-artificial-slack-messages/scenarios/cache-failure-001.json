@@ -1,0 +1,337 @@
+{
+  "scenario_id": "cache-failure-001",
+  "scenario_type": "cache-failure",
+  "title": "Recommendation Service Cache Failure",
+  "description": "Cache failure in recommendation service causes increased latency and downstream load on product-catalog service",
+  "start_time": "2024-12-11T14:30:00Z",
+  "services": {
+    "recommendation": {
+      "channel": "#recommendation-alert",
+      "oncall_group": "@recommendation-oncall",
+      "role": "primary",
+      "engineers": ["alice", "bob"]
+    },
+    "product-catalog": {
+      "channel": "#product-catalog-alert",
+      "oncall_group": "@product-catalog-oncall",
+      "role": "downstream",
+      "engineers": ["charlie", "diana"]
+    },
+    "frontend": {
+      "channel": "#frontend-alert",
+      "oncall_group": "@frontend-oncall",
+      "role": "affected",
+      "engineers": ["eve"]
+    }
+  },
+  "timeline": [
+    {
+      "offset_seconds": 0,
+      "type": "alert",
+      "channel": "#recommendation-alert",
+      "severity": "warning",
+      "title": "🟡 High Latency Detected - Recommendation Service",
+      "details": "P95 latency increased from 50ms to 520ms (10.4x increase)\n\n**Current Metrics:**\n• P50: 480ms (was 45ms)\n• P95: 520ms (was 50ms)\n• P99: 890ms (was 85ms)\n• Error rate: 0.1%\n• Request rate: 150 req/s",
+      "metrics": {
+        "p50_latency": "480ms",
+        "p95_latency": "520ms",
+        "p99_latency": "890ms",
+        "error_rate": "0.1%",
+        "request_rate": "150 req/s"
+      },
+      "runbook": "https://wiki.company.com/runbooks/recommendation-latency",
+      "dashboard": "https://grafana.company.com/d/recommendation-overview",
+      "thread_parent": null
+    },
+    {
+      "offset_seconds": 8,
+      "type": "message",
+      "channel": "#recommendation-alert",
+      "user": "alice",
+      "content": "Looking into this 👀",
+      "thread_parent": 0
+    },
+    {
+      "offset_seconds": 15,
+      "type": "message",
+      "channel": "#recommendation-alert",
+      "user": "bob",
+      "content": "I see it too. Checking the dashboard now",
+      "thread_parent": 0
+    },
+    {
+      "offset_seconds": 25,
+      "type": "message",
+      "channel": "#recommendation-alert",
+      "user": "alice",
+      "content": "Hmm, latency spiked right at 14:30. Looking at what changed...",
+      "thread_parent": 0
+    },
+    {
+      "offset_seconds": 35,
+      "type": "message",
+      "channel": "#recommendation-alert",
+      "user": "bob",
+      "content": "CPU usage also went up from 20% to 60%. Something's making us work harder",
+      "thread_parent": 0
+    },
+    {
+      "offset_seconds": 42,
+      "type": "message",
+      "channel": "#recommendation-alert",
+      "user": "alice",
+      "content": "Wait... cache hit rate just dropped to 0% 😱",
+      "thread_parent": 0,
+      "reactions": [
+        {
+          "emoji": "eyes",
+          "users": ["bob"]
+        }
+      ]
+    },
+    {
+      "offset_seconds": 50,
+      "type": "message",
+      "channel": "#recommendation-alert",
+      "user": "bob",
+      "content": "That would explain it. If cache is down we're hitting product-catalog for every request",
+      "thread_parent": 0
+    },
+    {
+      "offset_seconds": 55,
+      "type": "message",
+      "channel": "#recommendation-alert",
+      "user": "alice",
+      "content": "Checking logs... seeing `CacheConnectionException: Connection refused to redis:6379`",
+      "thread_parent": 0
+    },
+    {
+      "offset_seconds": 60,
+      "type": "alert",
+      "channel": "#product-catalog-alert",
+      "severity": "warning",
+      "title": "🟡 High CPU Usage - Product Catalog Service",
+      "details": "CPU usage increased from 15% to 68%\n\n**Current Metrics:**\n• CPU: 68% (was 15%)\n• Request rate: 980 req/s (was 95 req/s)\n• P95 latency: 125ms (was 22ms)\n• Error rate: 0%",
+      "metrics": {
+        "cpu_usage": "68%",
+        "request_rate": "980 req/s",
+        "p95_latency": "125ms",
+        "error_rate": "0%"
+      },
+      "dashboard": "https://grafana.company.com/d/product-catalog-overview",
+      "thread_parent": null
+    },
+    {
+      "offset_seconds": 63,
+      "type": "message",
+      "channel": "#recommendation-alert",
+      "user": "bob",
+      "content": "Looking at the redis pod status...",
+      "thread_parent": 0
+    },
+    {
+      "offset_seconds": 68,
+      "type": "message",
+      "channel": "#product-catalog-alert",
+      "user": "charlie",
+      "content": "Whoa what's going on? We just got slammed with 10x traffic",
+      "thread_parent": 8
+    },
+    {
+      "offset_seconds": 72,
+      "type": "message",
+      "channel": "#recommendation-alert",
+      "user": "bob",
+      "content": "Redis pod is in CrashLoopBackOff. OOMKilled 3 minutes ago",
+      "thread_parent": 0
+    },
+    {
+      "offset_seconds": 75,
+      "type": "message",
+      "channel": "#product-catalog-alert",
+      "user": "charlie",
+      "content": "Let me check where it's coming from... all from `recommendation` service",
+      "thread_parent": 8
+    },
+    {
+      "offset_seconds": 78,
+      "type": "message",
+      "channel": "#recommendation-alert",
+      "user": "alice",
+      "content": "Memory limit was set to 256Mi, but the pod was using 300Mi before crash",
+      "thread_parent": 0
+    },
+    {
+      "offset_seconds": 85,
+      "type": "message",
+      "channel": "#product-catalog-alert",
+      "user": "charlie",
+      "content": "@recommendation-oncall Hey folks, are you having issues? We're seeing a huge spike in traffic from your service",
+      "mentions": ["@recommendation-oncall"],
+      "thread_parent": 8
+    },
+    {
+      "offset_seconds": 90,
+      "type": "message",
+      "channel": "#recommendation-alert",
+      "user": "bob",
+      "content": "I'm going to bump the memory limit to 512Mi and restart the pod",
+      "thread_parent": 0
+    },
+    {
+      "offset_seconds": 92,
+      "type": "message",
+      "channel": "#product-catalog-alert",
+      "user": "alice",
+      "content": "Yes @charlie! Our cache is down so we're bypassing it and hitting you directly. Working on a fix now",
+      "thread_parent": 8,
+      "reactions": [
+        {
+          "emoji": "+1",
+          "users": ["charlie"]
+        }
+      ]
+    },
+    {
+      "offset_seconds": 95,
+      "type": "message",
+      "channel": "#product-catalog-alert",
+      "user": "charlie",
+      "content": "Ah that makes sense! We're handling it fine, just wanted to make sure it's expected. Let me know when cache is back",
+      "thread_parent": 8
+    },
+    {
+      "offset_seconds": 100,
+      "type": "action",
+      "channel": "#recommendation-alert",
+      "user": "bob",
+      "action_type": "scale",
+      "action_details": "Updated redis deployment memory limit: 256Mi → 512Mi",
+      "content": "```\n$ kubectl set resources deployment/recommendation-redis --limits=memory=512Mi\ndeployment.apps/recommendation-redis resources updated\n```",
+      "thread_parent": 0
+    },
+    {
+      "offset_seconds": 105,
+      "type": "message",
+      "channel": "#recommendation-alert",
+      "user": "bob",
+      "content": "Restarting the pod now...",
+      "thread_parent": 0
+    },
+    {
+      "offset_seconds": 110,
+      "type": "action",
+      "channel": "#recommendation-alert",
+      "user": "bob",
+      "action_type": "restart",
+      "action_details": "Restarted redis pod",
+      "content": "```\n$ kubectl rollout restart deployment/recommendation-redis\ndeployment.apps/recommendation-redis restarted\n```",
+      "thread_parent": 0
+    },
+    {
+      "offset_seconds": 125,
+      "type": "message",
+      "channel": "#recommendation-alert",
+      "user": "bob",
+      "content": "Pod is coming up... status: Running, ready: 1/1",
+      "thread_parent": 0
+    },
+    {
+      "offset_seconds": 130,
+      "type": "message",
+      "channel": "#recommendation-alert",
+      "user": "alice",
+      "content": "Cache hit rate is recovering! Now at 45%... 67%... 85%",
+      "thread_parent": 0,
+      "reactions": [
+        {
+          "emoji": "rocket",
+          "users": ["bob"]
+        }
+      ]
+    },
+    {
+      "offset_seconds": 140,
+      "type": "message",
+      "channel": "#recommendation-alert",
+      "user": "alice",
+      "content": "P95 latency dropping: 520ms → 280ms → 95ms → 52ms ✨",
+      "thread_parent": 0
+    },
+    {
+      "offset_seconds": 145,
+      "type": "message",
+      "channel": "#product-catalog-alert",
+      "user": "diana",
+      "content": "Traffic from recommendation is dropping back to normal levels 📉",
+      "thread_parent": 8
+    },
+    {
+      "offset_seconds": 150,
+      "type": "resolution",
+      "channel": "#recommendation-alert",
+      "user": "alice",
+      "content": "✅ **RESOLVED** - Cache is healthy, latency back to normal\n\n**Root Cause:** Redis pod OOMKilled due to insufficient memory limit (256Mi)\n\n**Fix:** Increased memory limit to 512Mi and restarted pod\n\n**Metrics After:**\n• P95 latency: 48ms (baseline: 50ms) ✓\n• Cache hit rate: 94% ✓\n• CPU usage: 22% (baseline: 20%) ✓\n\n**Follow-up:**\n- [ ] Investigate why redis memory usage grew\n- [ ] Review memory limits for all redis instances\n- [ ] Add alerting for cache hit rate drops",
+      "metrics_after": {
+        "p95_latency": "48ms",
+        "cache_hit_rate": "94%",
+        "cpu_usage": "22%"
+      },
+      "thread_parent": 0,
+      "reactions": [
+        {
+          "emoji": "tada",
+          "users": ["bob", "charlie", "diana"]
+        },
+        {
+          "emoji": "rocket",
+          "users": ["bob"]
+        }
+      ]
+    },
+    {
+      "offset_seconds": 155,
+      "type": "message",
+      "channel": "#product-catalog-alert",
+      "user": "charlie",
+      "content": "✅ Traffic back to normal on our end. CPU dropped from 68% to 18%. All good! 👍",
+      "thread_parent": 8,
+      "metrics_after": {
+        "cpu_usage": "18%",
+        "request_rate": "102 req/s"
+      }
+    },
+    {
+      "offset_seconds": 160,
+      "type": "message",
+      "channel": "#recommendation-alert",
+      "user": "bob",
+      "content": "Good catch @alice! I'll create a post-mortem doc and schedule a review",
+      "thread_parent": 0
+    },
+    {
+      "offset_seconds": 165,
+      "type": "message",
+      "channel": "#product-catalog-alert",
+      "user": "diana",
+      "content": "Thanks for the heads up @alice! FYI this is similar to the issue we had last month with the cart service cache",
+      "thread_parent": 8
+    },
+    {
+      "offset_seconds": 170,
+      "type": "message",
+      "channel": "#recommendation-alert",
+      "user": "alice",
+      "content": "Oh good point @diana. Let me check if we need to adjust other service cache limits too",
+      "thread_parent": 0
+    }
+  ],
+  "metadata": {
+    "severity": "SEV-3",
+    "duration_seconds": 170,
+    "services_impacted": 3,
+    "root_cause": "Redis pod OOMKilled due to insufficient memory limit",
+    "resolution": "Increased memory limit and restarted pod",
+    "tags": ["cache", "redis", "memory", "latency", "cascade"]
+  }
+}

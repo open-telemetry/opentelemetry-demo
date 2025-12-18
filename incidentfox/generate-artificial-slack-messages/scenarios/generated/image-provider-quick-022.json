@@ -1,0 +1,55 @@
+{
+  "scenario_id": "image-provider-quick-022",
+  "scenario_type": "quick-alert",
+  "title": "Disk space low - image-provider",
+  "start_time": "2024-12-11T13:08:00",
+  "services": {
+    "image-provider": {
+      "channel": "#images-alert",
+      "oncall_group": "@images-oncall",
+      "role": "primary"
+    }
+  },
+  "timeline": [
+    {
+      "offset_seconds": 0,
+      "type": "alert",
+      "channel": "#images-alert",
+      "severity": "info",
+      "title": "\ud83d\udfe1 Disk space low - Image Provider Service",
+      "details": "Metrics show disk space low",
+      "metrics": {
+        "current_value": "75%",
+        "threshold": "80%"
+      },
+      "thread_parent": null
+    },
+    {
+      "offset_seconds": 15,
+      "type": "message",
+      "channel": "#images-alert",
+      "user": "tina",
+      "content": "This keeps firing",
+      "thread_parent": 0
+    },
+    {
+      "offset_seconds": 35,
+      "type": "message",
+      "channel": "#images-alert",
+      "user": "tina",
+      "content": "Need to adjust threshold",
+      "thread_parent": 0
+    }
+  ],
+  "metadata": {
+    "severity": "SEV-4",
+    "duration_seconds": 35,
+    "services_impacted": 1,
+    "root_cause": "threshold_adjust",
+    "tags": [
+      "quick",
+      "threshold_adjust",
+      "disk_space"
+    ]
+  }
+}

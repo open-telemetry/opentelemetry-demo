@@ -1,0 +1,47 @@
+{
+  "scenario_id": "fraud-detection-quick-009",
+  "scenario_type": "quick-alert",
+  "title": "Disk usage high - fraud-detection",
+  "start_time": "2024-12-11T12:52:00",
+  "services": {
+    "fraud-detection": {
+      "channel": "#fraud-alert",
+      "oncall_group": "@fraud-oncall",
+      "role": "primary"
+    }
+  },
+  "timeline": [
+    {
+      "offset_seconds": 0,
+      "type": "alert",
+      "channel": "#fraud-alert",
+      "severity": "warning",
+      "title": "\ud83d\udfe1 Disk usage high - Fraud Detection Service",
+      "details": "Metrics show disk usage high",
+      "metrics": {
+        "current_value": "69%",
+        "threshold": "80%"
+      },
+      "thread_parent": null
+    },
+    {
+      "offset_seconds": 15,
+      "type": "message",
+      "channel": "#fraud-alert",
+      "user": "sam",
+      "content": "Ack'd",
+      "thread_parent": 0
+    }
+  ],
+  "metadata": {
+    "severity": "SEV-4",
+    "duration_seconds": 15,
+    "services_impacted": 1,
+    "root_cause": "acknowledged",
+    "tags": [
+      "quick",
+      "acknowledged",
+      "disk_space"
+    ]
+  }
+}

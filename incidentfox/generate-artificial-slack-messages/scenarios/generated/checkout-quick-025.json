@@ -1,0 +1,63 @@
+{
+  "scenario_id": "checkout-quick-025",
+  "scenario_type": "quick-alert",
+  "title": "Disk usage high - checkout",
+  "start_time": "2024-12-11T13:46:00",
+  "services": {
+    "checkout": {
+      "channel": "#checkout-alert",
+      "oncall_group": "@checkout-oncall",
+      "role": "primary"
+    }
+  },
+  "timeline": [
+    {
+      "offset_seconds": 0,
+      "type": "alert",
+      "channel": "#checkout-alert",
+      "severity": "info",
+      "title": "\ud83d\udfe1 Disk usage high - Checkout Service",
+      "details": "Metrics show disk usage high",
+      "metrics": {
+        "current_value": "79%",
+        "threshold": "80%"
+      },
+      "thread_parent": null
+    },
+    {
+      "offset_seconds": 15,
+      "type": "message",
+      "channel": "#checkout-alert",
+      "user": "henry",
+      "content": "Ack'd",
+      "thread_parent": 0
+    },
+    {
+      "offset_seconds": 35,
+      "type": "message",
+      "channel": "#checkout-alert",
+      "user": "henry",
+      "content": "Will check after standup",
+      "thread_parent": 0
+    },
+    {
+      "offset_seconds": 55,
+      "type": "message",
+      "channel": "#checkout-alert",
+      "user": "henry",
+      "content": "Known issue - TICKET-INC-1539",
+      "thread_parent": 0
+    }
+  ],
+  "metadata": {
+    "severity": "SEV-4",
+    "duration_seconds": 55,
+    "services_impacted": 1,
+    "root_cause": "acknowledged",
+    "tags": [
+      "quick",
+      "acknowledged",
+      "disk_space"
+    ]
+  }
+}

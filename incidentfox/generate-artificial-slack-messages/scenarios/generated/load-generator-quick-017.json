@@ -1,0 +1,55 @@
+{
+  "scenario_id": "load-generator-quick-017",
+  "scenario_type": "quick-alert",
+  "title": "Timeout errors - load-generator",
+  "start_time": "2024-12-11T14:11:00",
+  "services": {
+    "load-generator": {
+      "channel": "#load-gen-alert",
+      "oncall_group": "@load-gen-oncall",
+      "role": "primary"
+    }
+  },
+  "timeline": [
+    {
+      "offset_seconds": 0,
+      "type": "alert",
+      "channel": "#load-gen-alert",
+      "severity": "warning",
+      "title": "\ud83d\udfe1 Timeout errors - Load Generator",
+      "details": "Metrics show timeout errors",
+      "metrics": {
+        "current_value": "90%",
+        "threshold": "80%"
+      },
+      "thread_parent": null
+    },
+    {
+      "offset_seconds": 15,
+      "type": "message",
+      "channel": "#load-gen-alert",
+      "user": "zara",
+      "content": "This keeps firing",
+      "thread_parent": 0
+    },
+    {
+      "offset_seconds": 35,
+      "type": "message",
+      "channel": "#load-gen-alert",
+      "user": "zara",
+      "content": "Need to adjust threshold",
+      "thread_parent": 0
+    }
+  ],
+  "metadata": {
+    "severity": "SEV-4",
+    "duration_seconds": 35,
+    "services_impacted": 1,
+    "root_cause": "threshold_adjust",
+    "tags": [
+      "quick",
+      "threshold_adjust",
+      "connection_errors"
+    ]
+  }
+}

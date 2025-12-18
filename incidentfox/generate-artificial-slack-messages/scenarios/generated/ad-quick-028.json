@@ -1,0 +1,47 @@
+{
+  "scenario_id": "ad-quick-028",
+  "scenario_type": "quick-alert",
+  "title": "Storage pressure - ad",
+  "start_time": "2024-12-11T15:46:00",
+  "services": {
+    "ad": {
+      "channel": "#ad-alert",
+      "oncall_group": "@ad-oncall",
+      "role": "primary"
+    }
+  },
+  "timeline": [
+    {
+      "offset_seconds": 0,
+      "type": "alert",
+      "channel": "#ad-alert",
+      "severity": "info",
+      "title": "\ud83d\udfe1 Storage pressure - Advertisement Service",
+      "details": "Metrics show storage pressure",
+      "metrics": {
+        "current_value": "67%",
+        "threshold": "80%"
+      },
+      "thread_parent": null
+    },
+    {
+      "offset_seconds": 15,
+      "type": "message",
+      "channel": "#ad-alert",
+      "user": "peter",
+      "content": "Looking at this",
+      "thread_parent": 0
+    }
+  ],
+  "metadata": {
+    "severity": "SEV-4",
+    "duration_seconds": 15,
+    "services_impacted": 1,
+    "root_cause": "false_positive",
+    "tags": [
+      "quick",
+      "false_positive",
+      "disk_space"
+    ]
+  }
+}

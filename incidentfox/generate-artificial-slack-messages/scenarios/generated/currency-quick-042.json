@@ -1,0 +1,63 @@
+{
+  "scenario_id": "currency-quick-042",
+  "scenario_type": "quick-alert",
+  "title": "Error rate increased - currency",
+  "start_time": "2024-12-11T14:21:00",
+  "services": {
+    "currency": {
+      "channel": "#currency-alert",
+      "oncall_group": "@currency-oncall",
+      "role": "primary"
+    }
+  },
+  "timeline": [
+    {
+      "offset_seconds": 0,
+      "type": "alert",
+      "channel": "#currency-alert",
+      "severity": "info",
+      "title": "\ud83d\udfe1 Error rate increased - Currency Service",
+      "details": "Metrics show error rate increased",
+      "metrics": {
+        "current_value": "84%",
+        "threshold": "80%"
+      },
+      "thread_parent": null
+    },
+    {
+      "offset_seconds": 15,
+      "type": "message",
+      "channel": "#currency-alert",
+      "user": "nathan",
+      "content": "Ack'd",
+      "thread_parent": 0
+    },
+    {
+      "offset_seconds": 35,
+      "type": "message",
+      "channel": "#currency-alert",
+      "user": "nathan",
+      "content": "Will check after standup",
+      "thread_parent": 0
+    },
+    {
+      "offset_seconds": 55,
+      "type": "message",
+      "channel": "#currency-alert",
+      "user": "nathan",
+      "content": "Known issue - TICKET-INC-3350",
+      "thread_parent": 0
+    }
+  ],
+  "metadata": {
+    "severity": "SEV-4",
+    "duration_seconds": 55,
+    "services_impacted": 1,
+    "root_cause": "acknowledged",
+    "tags": [
+      "quick",
+      "acknowledged",
+      "high_error_rate"
+    ]
+  }
+}

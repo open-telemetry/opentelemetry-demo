@@ -1,0 +1,55 @@
+{
+  "scenario_id": "email-quick-011",
+  "scenario_type": "quick-alert",
+  "title": "Storage pressure - email",
+  "start_time": "2024-12-11T17:42:00",
+  "services": {
+    "email": {
+      "channel": "#email-alert",
+      "oncall_group": "@email-oncall",
+      "role": "primary"
+    }
+  },
+  "timeline": [
+    {
+      "offset_seconds": 0,
+      "type": "alert",
+      "channel": "#email-alert",
+      "severity": "warning",
+      "title": "\ud83d\udfe1 Storage pressure - Email Service",
+      "details": "Metrics show storage pressure",
+      "metrics": {
+        "current_value": "76%",
+        "threshold": "80%"
+      },
+      "thread_parent": null
+    },
+    {
+      "offset_seconds": 15,
+      "type": "message",
+      "channel": "#email-alert",
+      "user": "quinn",
+      "content": "Ack'd",
+      "thread_parent": 0
+    },
+    {
+      "offset_seconds": 35,
+      "type": "message",
+      "channel": "#email-alert",
+      "user": "quinn",
+      "content": "Will check after standup",
+      "thread_parent": 0
+    }
+  ],
+  "metadata": {
+    "severity": "SEV-4",
+    "duration_seconds": 35,
+    "services_impacted": 1,
+    "root_cause": "acknowledged",
+    "tags": [
+      "quick",
+      "acknowledged",
+      "disk_space"
+    ]
+  }
+}

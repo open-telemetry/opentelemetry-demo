@@ -1,0 +1,19 @@
+# Slack message generator dependencies
+
+# Slack API
+slack-sdk>=3.23.0
+
+# Environment variables
+python-dotenv>=1.0.0
+
+# JSON schema validation
+jsonschema>=4.20.0
+
+# Date/time handling
+python-dateutil>=2.8.2
+
+# Pretty printing
+rich>=13.7.0
+
+# For random name generation (personas)
+faker>=20.1.0
