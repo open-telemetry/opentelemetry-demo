@@ -3155,7 +3155,7 @@ spec:
       serviceAccountName: opentelemetry-demo
       initContainers:
         - name: wait-for-shop-dc-shim
-          image: curlimages/curl:1.4.0
+          image: curlimages/curl:8.17.0
           command: ['sh', '-c']
           args:
             - |
