@@ -12,7 +12,7 @@ anyhow = "1.0.100"
 awc = { version = "3.8.1", default-features = false, features = ["compress-zstd"] }
 serde = { version = "1.0.228", features = ["derive"] }
 tonic = "0.14.2"
-tracing = "0.1.43"
+tracing = "0.1.44"
 tracing-subscriber = { version = "0.3.22", features = ["env-filter"] }
 
 opentelemetry = "0.31.0"
