@@ -60,12 +60,52 @@ const CartProvider = ({ children }: IProps) => {
   });
 
   const addItem = useCallback(
-    (item: CartItem) => addCartMutation.mutateAsync({ ...item, currencyCode: selectedCurrency }),
+    async (item: CartItem) => {
+      // Create AddToCart workflow span for Splunk RUM
+      let span: any = null;
+      if (typeof window !== 'undefined' && (window as any).tracer) {
+        span = (window as any).tracer.startSpan('AddToCart', {
+          attributes: {
+            'workflow.name': 'AddToCart',
+            'product.id': item.productId,
+            'product.quantity': item.quantity,
+          },
+        });
+      }
+
+      try {
+        const result = await addCartMutation.mutateAsync({ ...item, currencyCode: selectedCurrency });
+        return result;
+      } finally {
+        if (span) {
+          span.end();
+        }
+      }
+    },
     [addCartMutation, selectedCurrency]
   );
   const emptyCart = useCallback(() => emptyCartMutation.mutateAsync(), [emptyCartMutation]);
   const placeOrder = useCallback(
-    (order: PlaceOrderRequest) => placeOrderMutation.mutateAsync({ ...order, currencyCode: selectedCurrency }),
+    async (order: PlaceOrderRequest) => {
+      // Create PlaceOrder workflow span for Splunk RUM
+      let span: any = null;
+      if (typeof window !== 'undefined' && (window as any).tracer) {
+        span = (window as any).tracer.startSpan('PlaceOrder', {
+          attributes: {
+            'workflow.name': 'PlaceOrder',
+          },
+        });
+      }
+
+      try {
+        const result = await placeOrderMutation.mutateAsync({ ...order, currencyCode: selectedCurrency });
+        return result;
+      } finally {
+        if (span) {
+          span.end();
+        }
+      }
+    },
     [placeOrderMutation, selectedCurrency]
   );
 

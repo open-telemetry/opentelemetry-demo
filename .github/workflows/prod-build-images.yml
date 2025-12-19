@@ -14,7 +14,13 @@ name: Build Images - PRODUCTION
           - patch
           - minor
           - major
+          - custom
         default: 'minor'
+      custom_version:
+        description: 'Custom version (only when version_bump=custom, requires single service)'
+        required: false
+        type: string
+        default: ''
       services:
         description: 'Services to build (comma-separated, or "all" for services with build:true)'
         required: false
@@ -58,9 +64,30 @@ jobs:
           CURRENT_VERSION=$(cat SPLUNK-VERSION)
           BUMP_TYPE="${{ inputs.version_bump }}"
           SERVICES="${{ inputs.services }}"
+          CUSTOM_VERSION="${{ inputs.custom_version }}"
 
           echo "Current version: $CURRENT_VERSION"
           echo "Services to build: $SERVICES"
+
+          # Validate custom version usage
+          if [[ "$BUMP_TYPE" == "custom" ]]; then
+            if [[ "$SERVICES" == "all" ]]; then
+              echo "❌ ERROR: Custom version requires a single service, not 'all'"
+              echo "Please specify a single service name when using custom version."
+              exit 1
+            fi
+            if [[ -z "$CUSTOM_VERSION" ]]; then
+              echo "❌ ERROR: Custom version selected but no version provided"
+              echo "Please provide a version in the 'custom_version' field."
+              exit 1
+            fi
+            # Check for multiple services (comma-separated)
+            SERVICE_COUNT=$(echo "$SERVICES" | tr ',' '\n' | wc -l)
+            if [[ "$SERVICE_COUNT" -gt 1 ]]; then
+              echo "❌ ERROR: Custom version requires exactly one service, got: $SERVICES"
+              exit 1
+            fi
+          fi
 
           # Determine if this is a hotfix build (single service, no full version bump)
           IS_HOTFIX="false"
@@ -69,7 +96,12 @@ jobs:
           fi
 
           # Calculate version
-          if [[ "$IS_HOTFIX" == "true" ]]; then
+          if [[ "$BUMP_TYPE" == "custom" ]]; then
+            # Custom version for single service build
+            VERSION="$CUSTOM_VERSION"
+            echo "Using custom version: $VERSION"
+            VERSION_STATUS="custom"
+          elif [[ "$IS_HOTFIX" == "true" ]]; then
             # Hotfix: use manage-hotfix.py to track and version
             SERVICE_NAME=$(echo "$SERVICES" | tr ',' '\n' | head -1 | xargs)
             VERSION=$(python3 .github/scripts/manage-hotfix.py add "$SERVICE_NAME")
@@ -93,10 +125,17 @@ jobs:
             IS_FULL_RELEASE="true"
           fi
 
+          # Determine if this is a custom version build
+          IS_CUSTOM="false"
+          if [[ "$VERSION_STATUS" == "custom" ]]; then
+            IS_CUSTOM="true"
+          fi
+
           # Output values
           echo "version=$VERSION" >> $GITHUB_OUTPUT
           echo "is_hotfix=$IS_HOTFIX" >> $GITHUB_OUTPUT
           echo "is_full_release=$IS_FULL_RELEASE" >> $GITHUB_OUTPUT
+          echo "is_custom=$IS_CUSTOM" >> $GITHUB_OUTPUT
 
           # Debug output
           echo "DEBUG: version=$VERSION"
@@ -114,11 +153,14 @@ jobs:
             echo "| **Using** | **\`$VERSION\`** (unchanged) |" >> $GITHUB_STEP_SUMMARY
           elif [[ "$VERSION_STATUS" == "hotfix" ]]; then
             echo "| **Hotfix** | **\`$VERSION\`** |" >> $GITHUB_STEP_SUMMARY
+          elif [[ "$VERSION_STATUS" == "custom" ]]; then
+            echo "| **Custom** | **\`$VERSION\`** |" >> $GITHUB_STEP_SUMMARY
+            echo "| Service | \`$SERVICES\` |" >> $GITHUB_STEP_SUMMARY
           else
             echo "| **New** | **\`$VERSION\`** |" >> $GITHUB_STEP_SUMMARY
           fi
           echo "| Action | ${{ inputs.version_bump }} |" >> $GITHUB_STEP_SUMMARY
-          echo "| Build Type | $([[ "$IS_HOTFIX" == "true" ]] && echo "Hotfix" || ([[ "$SERVICES" == "all" ]] && echo "Full Release" || echo "Partial")) |" >> $GITHUB_STEP_SUMMARY
+          echo "| Build Type | $([[ "$VERSION_STATUS" == "custom" ]] && echo "Custom Single Service" || ([[ "$IS_HOTFIX" == "true" ]] && echo "Hotfix" || ([[ "$SERVICES" == "all" ]] && echo "Full Release" || echo "Partial"))) |" >> $GITHUB_STEP_SUMMARY
 
           # Show hotfix status if applicable
           if [[ "$IS_HOTFIX" == "true" ]]; then
@@ -360,7 +402,7 @@ jobs:
           echo "" >> $GITHUB_STEP_SUMMARY
 
       - name: Update SPLUNK-VERSION on version bump
-        if: ${{ needs.determine-version.outputs.is_hotfix == 'false' && inputs.version_bump != 'none (keep current)' }}
+        if: ${{ needs.determine-version.outputs.is_hotfix == 'false' && inputs.version_bump != 'none (keep current)' && inputs.version_bump != 'custom' }}
         run: |
           CURRENT=$(cat SPLUNK-VERSION)
           NEW="${{ needs.determine-version.outputs.version }}"
@@ -446,6 +488,7 @@ jobs:
           VERSION="${{ needs.determine-version.outputs.version }}"
           IS_HOTFIX="${{ needs.determine-version.outputs.is_hotfix }}"
           IS_FULL_RELEASE="${{ needs.determine-version.outputs.is_full_release }}"
+          IS_CUSTOM="${{ needs.determine-version.outputs.is_custom }}"
           SERVICES="${{ inputs.services }}"
           BRANCH_NAME="release/images-${VERSION}"
 
@@ -454,8 +497,8 @@ jobs:
             git add .hotfix.yaml
           fi
 
-          # For version bumps (not hotfixes), commit SPLUNK-VERSION
-          if [[ "$IS_HOTFIX" == "false" && "${{ inputs.version_bump }}" != "none (keep current)" ]]; then
+          # For version bumps (not hotfixes or custom), commit SPLUNK-VERSION
+          if [[ "$IS_HOTFIX" == "false" && "$IS_CUSTOM" == "false" && "${{ inputs.version_bump }}" != "none (keep current)" ]]; then
             git add SPLUNK-VERSION
           fi
 
@@ -500,6 +543,37 @@ jobs:
                 "### Changes" \
                 "- ✅ .hotfix.yaml updated" \
                 "- ✅ Source k8s manifests updated with new image references" \
+                "" \
+                "### Next Steps" \
+                "Run the **Build Demo Manifest - PRODUCTION** workflow to stitch the manifest." \
+                "" \
+                "---" \
+                "🤖 Generated automatically by GitHub Actions"
+              )
+
+            elif [[ "$IS_CUSTOM" == "true" ]]; then
+              COMMIT_TITLE="chore: custom build ${SERVICES} @ ${VERSION}"
+              PR_TITLE="Custom Build: ${SERVICES} @ ${VERSION}"
+              git commit -m "$COMMIT_TITLE" \
+                -m "Custom version build for single service" \
+                -m "" \
+                -m "Service: ${SERVICES}" \
+                -m "Version: ${VERSION}" \
+                -m "" \
+                -m "Updated:" \
+                -m "- Source k8s manifests with new image references"
+
+              # Build PR body
+              PR_BODY=$(printf '%s\n' \
+                "## Custom Version Build" \
+                "" \
+                "**Service:** \`${SERVICES}\`" \
+                "**Custom Version:** \`${VERSION}\`" \
+                "**Base Version:** \`$(cat SPLUNK-VERSION)\` (unchanged)" \
+                "" \
+                "### Changes" \
+                "- ✅ Source k8s manifest updated for \`${SERVICES}\` with custom version" \
+                "- ℹ️ SPLUNK-VERSION not modified (custom single-service build)" \
                 "" \
                 "### Next Steps" \
                 "Run the **Build Demo Manifest - PRODUCTION** workflow to stitch the manifest." \

@@ -67,3 +67,5 @@ src/payment-old
 src/payment/*.bak
 .service-versions.yaml
 dev-repo.yaml
+src/frontend copy/
+src/frontend copy/*
