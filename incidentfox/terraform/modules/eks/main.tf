@@ -136,6 +136,22 @@ resource "aws_eks_node_group" "main" {
     max_unavailable = 1
   }
   
+  # SOC2 Compliance: Encryption enabled via KMS key in launch template
+  # Specify ami_type to let EKS select compatible AMI
+  ami_type = "AL2_x86_64"
+  
+  # Only use launch template if encryption is enabled
+  dynamic "launch_template" {
+    for_each = var.enable_ebs_encryption ? [1] : []
+    content {
+      name    = aws_launch_template.node[each.key].name
+      version = "$Latest"
+    }
+  }
+  
+  # Disk size (only used if no launch template)
+  disk_size = var.enable_ebs_encryption ? null : var.disk_size
+  
   labels = each.value.labels
   
   dynamic "taint" {
@@ -157,7 +173,71 @@ resource "aws_eks_node_group" "main" {
   tags = merge(
     var.tags,
     {
-      Name = "${var.cluster_name}-${each.key}"
+      Name            = "${var.cluster_name}-${each.key}"
+      BackupRequired  = "true"  # Tag for AWS Backup selection
+      Compliance      = "SOC2"
+    }
+  )
+}
+
+# SOC2: Launch Template with Encrypted EBS
+# Only create if encryption is enabled
+resource "aws_launch_template" "node" {
+  for_each = var.enable_ebs_encryption ? var.node_groups : {}
+  
+  name_prefix = "${var.cluster_name}-${each.key}-"
+  description = "Launch template for ${each.key} node group with encrypted EBS"
+  
+  # Don't specify image_id - let EKS auto-select the correct AMI
+  
+  block_device_mappings {
+    device_name = "/dev/xvda"
+    
+    ebs {
+      volume_size           = var.disk_size
+      volume_type           = "gp3"
+      iops                  = 3000
+      throughput            = 125
+      encrypted             = true
+      kms_key_id            = var.ebs_kms_key_id
+      delete_on_termination = true
+    }
+  }
+  
+  metadata_options {
+    http_endpoint               = "enabled"
+    http_tokens                 = "required"  # IMDSv2 required (security best practice)
+    http_put_response_hop_limit = 2
+  }
+  
+  tag_specifications {
+    resource_type = "instance"
+    tags = merge(
+      var.tags,
+      {
+        Name       = "${var.cluster_name}-${each.key}-node"
+        Compliance = "SOC2"
+      }
+    )
+  }
+  
+  tag_specifications {
+    resource_type = "volume"
+    tags = merge(
+      var.tags,
+      {
+        Name           = "${var.cluster_name}-${each.key}-volume"
+        BackupRequired = "true"
+        Compliance     = "SOC2"
+        "kubernetes.io/cluster/${var.cluster_name}" = "owned"
+      }
+    )
+  }
+  
+  tags = merge(
+    var.tags,
+    {
+      Name = "${var.cluster_name}-${each.key}-template"
     }
   )
 }

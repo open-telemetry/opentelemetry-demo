@@ -85,7 +85,7 @@ variable "app_node_capacity_type" {
   description = "Capacity type for application nodes (ON_DEMAND or SPOT)"
   type        = string
   default     = "ON_DEMAND"
-  
+
   validation {
     condition     = contains(["ON_DEMAND", "SPOT"], var.app_node_capacity_type)
     error_message = "Capacity type must be ON_DEMAND or SPOT"
