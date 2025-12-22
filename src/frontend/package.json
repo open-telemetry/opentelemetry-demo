@@ -56,13 +56,13 @@
     "@types/uuid": "11.0.0",
     "@typescript-eslint/eslint-plugin": "8.50.0",
     "@typescript-eslint/parser": "8.50.0",
-    "cypress": "15.8.0",
+    "cypress": "15.8.1",
     "eslint": "9.39.2",
-    "eslint-config-next": "16.0.10",
+    "eslint-config-next": "16.1.0",
     "eslint-plugin-react": "7.37.5",
     "eslint-plugin-react-hooks": "7.0.1",
     "openapi-typescript": "7.10.1",
-    "ts-proto": "2.8.3",
+    "ts-proto": "2.10.0",
     "typescript": "5.9.3"
   }
 }
