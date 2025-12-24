@@ -18,7 +18,7 @@ version = "0.1.0-SNAPSHOT"
 
 def opentelemetryVersion = "1.57.0"
 def opentelemetryInstrumentationVersion = "2.23.0"
-def grpcVersion = "1.77.0"
+def grpcVersion = "1.78.0"
 def jacksonVersion = "2.20.1"
 def protocVersion = "4.33.2"
 
