@@ -1,0 +1,13 @@
+# Copyright The OpenTelemetry Authors
+# SPDX-License-Identifier: Apache-2.0
+
+groups:
+  - id: service.cart
+    type: attribute_group
+    brief: Cart service attributes
+    stability: stable
+    attributes:
+      - ref: app.user.id
+      - ref: app.product.id
+      - ref: app.product.quantity
+      - ref: app.cart.items.count
