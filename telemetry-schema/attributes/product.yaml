@@ -1,0 +1,111 @@
+# Copyright The OpenTelemetry Authors
+# SPDX-License-Identifier: Apache-2.0
+
+groups:
+  - id: registry.product
+    type: attribute_group
+    brief: Product-related attributes used across services
+    stability: stable
+    attributes:
+      - id: app.product.id
+        type: string
+        brief: Product identifier
+        stability: stable
+        note: The unique identifier of the product being viewed, reviewed, or added to cart
+        examples: ["66VCHSJNUP", "OLJCESPC7Z", "9SOIN3QJO0"]
+      - id: app.product.name
+        type: string
+        brief: Product name
+        stability: stable
+        note: The name or title of the product
+        examples: ["Wireless Headphones", "Coffee Maker", "Running Shoes"]
+      - id: app.product.quantity
+        type: int
+        brief: Product quantity
+        stability: stable
+        note: The quantity of a product being added to cart or ordered
+        examples: [1, 2, 5]
+      - id: app.product.question
+        type: string
+        brief: Product review question
+        stability: stable
+        note: A question or query related to product reviews, such as a customer inquiry about product features or quality
+        examples: ["Is this product durable?", "What is the warranty?"]
+      - id: app.products.count
+        type: int
+        brief: Total number of products available
+        stability: stable
+        note: The total number of products available in the product catalog
+        examples: [100, 500, 1000]
+      - id: app.products_recommended.count
+        type: int
+        brief: Number of products recommended
+        stability: stable
+        note: The count of products recommended to the user
+        examples: [5, 10, 15]
+      - id: app.filtered_products.count
+        type: int
+        brief: Number of products after filtering
+        stability: stable
+        note: The number of products remaining after applying filters (e.g., availability, category, price range)
+        examples: [5, 20, 50]
+      - id: app.filtered_products.list
+        type: string[]
+        brief: List of filtered product IDs
+        stability: stable
+        note: A list of product IDs that were included in the filtered product set
+        examples: ["OLJCESPC7Z,9SOIN3QJO0,6E92ZMJLZN"]
+      - id: app.products_search.count
+        type: int
+        brief: Number of search results
+        stability: stable
+        note: The count of products matching a search query
+        examples: [0, 10, 50]
+      - id: app.product_reviews.count
+        type: int
+        brief: Number of product reviews
+        stability: stable
+        note: The count of reviews returned or processed for a specific product
+        examples: [5, 10, 25]
+      - id: app.product_reviews.average_score
+        type: double
+        brief: Average review score
+        stability: stable
+        note: The average rating score across all reviews for a product, typically on a scale of 1-5
+        examples: [4.5, 3.2, 4.8]
+      - id: app.ads.category
+        type: string
+        brief: Advertisement category
+        stability: stable
+        note: The category of advertisements being served
+        examples: ["electronics", "clothing", "home"]
+      - id: app.ads.count
+        type: int
+        brief: Number of advertisements served
+        stability: stable
+        note: The count of advertisements returned or served in a request
+        examples: [1, 2, 5]
+      - id: app.ads.contextKeys
+        type: string
+        brief: Context keys for ad targeting
+        stability: stable
+        note: Comma-separated list of context keys used for ad targeting
+        examples: ["electronics,gadgets", "home,kitchen"]
+      - id: app.ads.contextKeys.count
+        type: int
+        brief: Number of context keys
+        stability: stable
+        note: The count of context keys provided for ad targeting
+        examples: [0, 2, 5]
+      - id: app.ads.ad_request_type
+        type: string
+        brief: Type of ad request
+        stability: stable
+        note: Indicates whether the ad request was targeted or not
+        examples: ["TARGETED", "NOT_TARGETED"]
+      - id: app.ads.ad_response_type
+        type: string
+        brief: Type of ad response
+        stability: stable
+        note: Indicates whether the ad response was targeted or random
+        examples: ["TARGETED", "RANDOM"]
