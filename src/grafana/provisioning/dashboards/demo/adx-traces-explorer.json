@@ -1,0 +1,662 @@
+{
+  "annotations": {
+    "list": []
+  },
+  "editable": true,
+  "fiscalYearStartMonth": 0,
+  "graphTooltip": 1,
+  "id": null,
+  "links": [],
+  "liveNow": false,
+  "panels": [
+    {
+      "collapsed": false,
+      "gridPos": { "h": 1, "w": 24, "x": 0, "y": 0 },
+      "id": 1,
+      "panels": [],
+      "title": "Trace Overview",
+      "type": "row"
+    },
+    {
+      "datasource": {
+        "type": "grafana-azure-data-explorer-datasource",
+        "uid": "adx-telemetry"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": { "mode": "palette-classic" },
+          "mappings": [],
+          "thresholds": { "mode": "absolute", "steps": [{ "color": "green", "value": null }] },
+          "unit": "short"
+        },
+        "overrides": []
+      },
+      "gridPos": { "h": 4, "w": 4, "x": 0, "y": 1 },
+      "id": 2,
+      "options": {
+        "colorMode": "value",
+        "graphMode": "area",
+        "justifyMode": "auto",
+        "orientation": "auto",
+        "reduceOptions": { "calcs": ["lastNotNull"], "fields": "", "values": false },
+        "textMode": "auto"
+      },
+      "targets": [
+        {
+          "database": "otel_demo",
+          "datasource": { "type": "grafana-azure-data-explorer-datasource", "uid": "adx-telemetry" },
+          "querySource": "raw",
+          "rawMode": true,
+          "query": "OTelTraces\n| extend Timestamp = ingestion_time()\n| where Timestamp > ago(1h)\n| summarize TotalSpans = count()",
+          "refId": "A",
+          "resultFormat": "table",
+          "queryType": "KQL"
+        }
+      ],
+      "title": "Total Spans",
+      "type": "stat"
+    },
+    {
+      "datasource": {
+        "type": "grafana-azure-data-explorer-datasource",
+        "uid": "adx-telemetry"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": { "mode": "palette-classic" },
+          "mappings": [],
+          "thresholds": { "mode": "absolute", "steps": [{ "color": "green", "value": null }] },
+          "unit": "short"
+        },
+        "overrides": []
+      },
+      "gridPos": { "h": 4, "w": 4, "x": 4, "y": 1 },
+      "id": 3,
+      "options": {
+        "colorMode": "value",
+        "graphMode": "area",
+        "justifyMode": "auto",
+        "orientation": "auto",
+        "reduceOptions": { "calcs": ["lastNotNull"], "fields": "", "values": false },
+        "textMode": "auto"
+      },
+      "targets": [
+        {
+          "database": "otel_demo",
+          "datasource": { "type": "grafana-azure-data-explorer-datasource", "uid": "adx-telemetry" },
+          "querySource": "raw",
+          "rawMode": true,
+          "query": "OTelTraces\n| extend Timestamp = ingestion_time()\n| where Timestamp > ago(1h)\n| summarize dcount(TraceId)",
+          "refId": "A",
+          "resultFormat": "table",
+          "queryType": "KQL"
+        }
+      ],
+      "title": "Unique Traces",
+      "type": "stat"
+    },
+    {
+      "datasource": {
+        "type": "grafana-azure-data-explorer-datasource",
+        "uid": "adx-telemetry"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": { "mode": "palette-classic" },
+          "mappings": [],
+          "thresholds": { "mode": "absolute", "steps": [{ "color": "green", "value": null }, { "color": "red", "value": 1 }] },
+          "unit": "short"
+        },
+        "overrides": []
+      },
+      "gridPos": { "h": 4, "w": 4, "x": 8, "y": 1 },
+      "id": 4,
+      "options": {
+        "colorMode": "value",
+        "graphMode": "area",
+        "justifyMode": "auto",
+        "orientation": "auto",
+        "reduceOptions": { "calcs": ["lastNotNull"], "fields": "", "values": false },
+        "textMode": "auto"
+      },
+      "targets": [
+        {
+          "database": "otel_demo",
+          "datasource": { "type": "grafana-azure-data-explorer-datasource", "uid": "adx-telemetry" },
+          "querySource": "raw",
+          "rawMode": true,
+          "query": "OTelTraces\n| extend Timestamp = ingestion_time()\n| where Timestamp > ago(1h)\n| where StatusCode == 'STATUS_CODE_ERROR'\n| summarize ErrorSpans = count()",
+          "refId": "A",
+          "resultFormat": "table",
+          "queryType": "KQL"
+        }
+      ],
+      "title": "Error Spans",
+      "type": "stat"
+    },
+    {
+      "datasource": {
+        "type": "grafana-azure-data-explorer-datasource",
+        "uid": "adx-telemetry"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": { "mode": "palette-classic" },
+          "mappings": [],
+          "thresholds": { "mode": "absolute", "steps": [{ "color": "green", "value": null }] },
+          "unit": "short"
+        },
+        "overrides": []
+      },
+      "gridPos": { "h": 4, "w": 4, "x": 12, "y": 1 },
+      "id": 5,
+      "options": {
+        "colorMode": "value",
+        "graphMode": "area",
+        "justifyMode": "auto",
+        "orientation": "auto",
+        "reduceOptions": { "calcs": ["lastNotNull"], "fields": "", "values": false },
+        "textMode": "auto"
+      },
+      "targets": [
+        {
+          "database": "otel_demo",
+          "datasource": { "type": "grafana-azure-data-explorer-datasource", "uid": "adx-telemetry" },
+          "querySource": "raw",
+          "rawMode": true,
+          "query": "OTelTraces\n| extend Timestamp = ingestion_time(), ServiceName = tostring(ResourceAttributes[\"service.name\"])\n| where Timestamp > ago(1h)\n| summarize dcount(ServiceName)",
+          "refId": "A",
+          "resultFormat": "table",
+          "queryType": "KQL"
+        }
+      ],
+      "title": "Active Services",
+      "type": "stat"
+    },
+    {
+      "datasource": {
+        "type": "grafana-azure-data-explorer-datasource",
+        "uid": "adx-telemetry"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": { "mode": "palette-classic" },
+          "mappings": [],
+          "thresholds": { "mode": "absolute", "steps": [{ "color": "green", "value": null }] },
+          "unit": "ms"
+        },
+        "overrides": []
+      },
+      "gridPos": { "h": 4, "w": 4, "x": 16, "y": 1 },
+      "id": 6,
+      "options": {
+        "colorMode": "value",
+        "graphMode": "area",
+        "justifyMode": "auto",
+        "orientation": "auto",
+        "reduceOptions": { "calcs": ["lastNotNull"], "fields": "", "values": false },
+        "textMode": "auto"
+      },
+      "targets": [
+        {
+          "database": "otel_demo",
+          "datasource": { "type": "grafana-azure-data-explorer-datasource", "uid": "adx-telemetry" },
+          "querySource": "raw",
+          "rawMode": true,
+          "query": "OTelTraces\n| extend Timestamp = ingestion_time()\n| where Timestamp > ago(1h)\n| summarize AvgLatency = avg(Duration / 1000000)",
+          "refId": "A",
+          "resultFormat": "table",
+          "queryType": "KQL"
+        }
+      ],
+      "title": "Avg Latency",
+      "type": "stat"
+    },
+    {
+      "datasource": {
+        "type": "grafana-azure-data-explorer-datasource",
+        "uid": "adx-telemetry"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": { "mode": "palette-classic" },
+          "mappings": [],
+          "thresholds": { "mode": "absolute", "steps": [{ "color": "green", "value": null }] },
+          "unit": "ms"
+        },
+        "overrides": []
+      },
+      "gridPos": { "h": 4, "w": 4, "x": 20, "y": 1 },
+      "id": 7,
+      "options": {
+        "colorMode": "value",
+        "graphMode": "area",
+        "justifyMode": "auto",
+        "orientation": "auto",
+        "reduceOptions": { "calcs": ["lastNotNull"], "fields": "", "values": false },
+        "textMode": "auto"
+      },
+      "targets": [
+        {
+          "database": "otel_demo",
+          "datasource": { "type": "grafana-azure-data-explorer-datasource", "uid": "adx-telemetry" },
+          "querySource": "raw",
+          "rawMode": true,
+          "query": "OTelTraces\n| extend Timestamp = ingestion_time()\n| where Timestamp > ago(1h)\n| summarize P99Latency = percentile(Duration / 1000000, 99)",
+          "refId": "A",
+          "resultFormat": "table",
+          "queryType": "KQL"
+        }
+      ],
+      "title": "P99 Latency",
+      "type": "stat"
+    },
+    {
+      "collapsed": false,
+      "gridPos": { "h": 1, "w": 24, "x": 0, "y": 5 },
+      "id": 8,
+      "panels": [],
+      "title": "Span Activity Over Time",
+      "type": "row"
+    },
+    {
+      "datasource": {
+        "type": "grafana-azure-data-explorer-datasource",
+        "uid": "adx-telemetry"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": { "mode": "palette-classic" },
+          "custom": {
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "drawStyle": "line",
+            "fillOpacity": 20,
+            "gradientMode": "opacity",
+            "hideFrom": { "legend": false, "tooltip": false, "viz": false },
+            "lineInterpolation": "smooth",
+            "lineWidth": 2,
+            "pointSize": 5,
+            "scaleDistribution": { "type": "linear" },
+            "showPoints": "never",
+            "spanNulls": false,
+            "stacking": { "group": "A", "mode": "none" },
+            "thresholdsStyle": { "mode": "off" }
+          },
+          "mappings": [],
+          "thresholds": { "mode": "absolute", "steps": [{ "color": "green", "value": null }] },
+          "unit": "short"
+        },
+        "overrides": []
+      },
+      "gridPos": { "h": 8, "w": 12, "x": 0, "y": 6 },
+      "id": 9,
+      "options": {
+        "legend": { "calcs": ["mean", "max", "sum"], "displayMode": "table", "placement": "bottom", "showLegend": true },
+        "tooltip": { "mode": "multi", "sort": "desc" }
+      },
+      "targets": [
+        {
+          "database": "otel_demo",
+          "datasource": { "type": "grafana-azure-data-explorer-datasource", "uid": "adx-telemetry" },
+          "querySource": "raw",
+          "rawMode": true,
+          "query": "OTelTraces\n| extend Timestamp = ingestion_time(), ServiceName = tostring(ResourceAttributes[\"service.name\"])\n| where Timestamp > ago(1h)\n| summarize SpanCount = count() by ServiceName, bin(Timestamp, 1m)\n| order by Timestamp asc",
+          "refId": "A",
+          "resultFormat": "time_series",
+          "queryType": "KQL"
+        }
+      ],
+      "title": "Spans by Service Over Time",
+      "type": "timeseries"
+    },
+    {
+      "datasource": {
+        "type": "grafana-azure-data-explorer-datasource",
+        "uid": "adx-telemetry"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": { "mode": "palette-classic" },
+          "custom": {
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "drawStyle": "bars",
+            "fillOpacity": 50,
+            "gradientMode": "none",
+            "hideFrom": { "legend": false, "tooltip": false, "viz": false },
+            "lineInterpolation": "linear",
+            "lineWidth": 1,
+            "pointSize": 5,
+            "scaleDistribution": { "type": "linear" },
+            "showPoints": "never",
+            "spanNulls": false,
+            "stacking": { "group": "A", "mode": "normal" },
+            "thresholdsStyle": { "mode": "off" }
+          },
+          "mappings": [],
+          "thresholds": { "mode": "absolute", "steps": [{ "color": "red", "value": null }] },
+          "unit": "short"
+        },
+        "overrides": []
+      },
+      "gridPos": { "h": 8, "w": 12, "x": 12, "y": 6 },
+      "id": 10,
+      "options": {
+        "legend": { "calcs": ["sum"], "displayMode": "table", "placement": "bottom", "showLegend": true },
+        "tooltip": { "mode": "multi", "sort": "desc" }
+      },
+      "targets": [
+        {
+          "database": "otel_demo",
+          "datasource": { "type": "grafana-azure-data-explorer-datasource", "uid": "adx-telemetry" },
+          "querySource": "raw",
+          "rawMode": true,
+          "query": "OTelTraces\n| extend Timestamp = ingestion_time(), ServiceName = tostring(ResourceAttributes[\"service.name\"])\n| where Timestamp > ago(1h)\n| where StatusCode == 'STATUS_CODE_ERROR'\n| summarize ErrorCount = count() by ServiceName, bin(Timestamp, 5m)\n| order by Timestamp asc",
+          "refId": "A",
+          "resultFormat": "time_series",
+          "queryType": "KQL"
+        }
+      ],
+      "title": "Error Spans Over Time",
+      "type": "timeseries"
+    },
+    {
+      "collapsed": false,
+      "gridPos": { "h": 1, "w": 24, "x": 0, "y": 14 },
+      "id": 11,
+      "panels": [],
+      "title": "Latency Analysis",
+      "type": "row"
+    },
+    {
+      "datasource": {
+        "type": "grafana-azure-data-explorer-datasource",
+        "uid": "adx-telemetry"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": { "mode": "palette-classic" },
+          "custom": {
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "drawStyle": "line",
+            "fillOpacity": 10,
+            "gradientMode": "none",
+            "hideFrom": { "legend": false, "tooltip": false, "viz": false },
+            "lineInterpolation": "smooth",
+            "lineWidth": 2,
+            "pointSize": 5,
+            "scaleDistribution": { "type": "linear" },
+            "showPoints": "never",
+            "spanNulls": false,
+            "stacking": { "group": "A", "mode": "none" },
+            "thresholdsStyle": { "mode": "off" }
+          },
+          "mappings": [],
+          "thresholds": { "mode": "absolute", "steps": [{ "color": "green", "value": null }] },
+          "unit": "ms"
+        },
+        "overrides": []
+      },
+      "gridPos": { "h": 8, "w": 12, "x": 0, "y": 15 },
+      "id": 12,
+      "options": {
+        "legend": { "calcs": ["mean", "max"], "displayMode": "table", "placement": "bottom", "showLegend": true },
+        "tooltip": { "mode": "multi", "sort": "desc" }
+      },
+      "targets": [
+        {
+          "database": "otel_demo",
+          "datasource": { "type": "grafana-azure-data-explorer-datasource", "uid": "adx-telemetry" },
+          "querySource": "raw",
+          "rawMode": true,
+          "query": "OTelTraces\n| extend Timestamp = ingestion_time(), ServiceName = tostring(ResourceAttributes[\"service.name\"])\n| where Timestamp > ago(1h)\n| where SpanKind == 'SPAN_KIND_SERVER'\n| summarize P95 = percentile(Duration / 1000000, 95) by ServiceName, bin(Timestamp, 1m)\n| order by Timestamp asc",
+          "refId": "A",
+          "resultFormat": "time_series",
+          "queryType": "KQL"
+        }
+      ],
+      "title": "P95 Latency by Service",
+      "type": "timeseries"
+    },
+    {
+      "datasource": {
+        "type": "grafana-azure-data-explorer-datasource",
+        "uid": "adx-telemetry"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": { "mode": "thresholds" },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              { "color": "green", "value": null },
+              { "color": "yellow", "value": 100 },
+              { "color": "red", "value": 500 }
+            ]
+          },
+          "unit": "ms"
+        },
+        "overrides": []
+      },
+      "gridPos": { "h": 8, "w": 12, "x": 12, "y": 15 },
+      "id": 13,
+      "options": {
+        "displayMode": "gradient",
+        "minVizHeight": 10,
+        "minVizWidth": 0,
+        "orientation": "horizontal",
+        "reduceOptions": { "calcs": ["lastNotNull"], "fields": "", "values": false },
+        "showUnfilled": true,
+        "valueMode": "color"
+      },
+      "targets": [
+        {
+          "database": "otel_demo",
+          "datasource": { "type": "grafana-azure-data-explorer-datasource", "uid": "adx-telemetry" },
+          "querySource": "raw",
+          "rawMode": true,
+          "query": "OTelTraces\n| extend Timestamp = ingestion_time(), ServiceName = tostring(ResourceAttributes[\"service.name\"])\n| where Timestamp > ago(1h)\n| where SpanKind == 'SPAN_KIND_SERVER'\n| summarize P95Latency = percentile(Duration / 1000000, 95) by ServiceName\n| order by P95Latency desc\n| take 15",
+          "refId": "A",
+          "resultFormat": "table",
+          "queryType": "KQL"
+        }
+      ],
+      "title": "Service Latency Ranking (P95)",
+      "type": "bargauge"
+    },
+    {
+      "collapsed": false,
+      "gridPos": { "h": 1, "w": 24, "x": 0, "y": 23 },
+      "id": 14,
+      "panels": [],
+      "title": "Span Kind Analysis",
+      "type": "row"
+    },
+    {
+      "datasource": {
+        "type": "grafana-azure-data-explorer-datasource",
+        "uid": "adx-telemetry"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": { "mode": "palette-classic" },
+          "mappings": [],
+          "thresholds": { "mode": "absolute", "steps": [{ "color": "green", "value": null }] }
+        },
+        "overrides": []
+      },
+      "gridPos": { "h": 8, "w": 8, "x": 0, "y": 24 },
+      "id": 15,
+      "options": {
+        "legend": { "displayMode": "table", "placement": "right", "showLegend": true, "values": ["value", "percent"] },
+        "pieType": "donut",
+        "reduceOptions": { "calcs": ["lastNotNull"], "fields": "", "values": false },
+        "tooltip": { "mode": "single", "sort": "none" }
+      },
+      "targets": [
+        {
+          "database": "otel_demo",
+          "datasource": { "type": "grafana-azure-data-explorer-datasource", "uid": "adx-telemetry" },
+          "querySource": "raw",
+          "rawMode": true,
+          "query": "OTelTraces\n| extend Timestamp = ingestion_time()\n| where Timestamp > ago(1h)\n| summarize Count = count() by SpanKind\n| order by Count desc",
+          "refId": "A",
+          "resultFormat": "table",
+          "queryType": "KQL"
+        }
+      ],
+      "title": "Spans by Kind",
+      "type": "piechart"
+    },
+    {
+      "datasource": {
+        "type": "grafana-azure-data-explorer-datasource",
+        "uid": "adx-telemetry"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": { "mode": "palette-classic" },
+          "mappings": [],
+          "thresholds": { "mode": "absolute", "steps": [{ "color": "green", "value": null }] }
+        },
+        "overrides": []
+      },
+      "gridPos": { "h": 8, "w": 8, "x": 8, "y": 24 },
+      "id": 16,
+      "options": {
+        "legend": { "displayMode": "table", "placement": "right", "showLegend": true, "values": ["value", "percent"] },
+        "pieType": "donut",
+        "reduceOptions": { "calcs": ["lastNotNull"], "fields": "", "values": false },
+        "tooltip": { "mode": "single", "sort": "none" }
+      },
+      "targets": [
+        {
+          "database": "otel_demo",
+          "datasource": { "type": "grafana-azure-data-explorer-datasource", "uid": "adx-telemetry" },
+          "querySource": "raw",
+          "rawMode": true,
+          "query": "OTelTraces\n| extend Timestamp = ingestion_time()\n| where Timestamp > ago(1h)\n| summarize Count = count() by StatusCode\n| order by Count desc",
+          "refId": "A",
+          "resultFormat": "table",
+          "queryType": "KQL"
+        }
+      ],
+      "title": "Spans by Status Code",
+      "type": "piechart"
+    },
+    {
+      "datasource": {
+        "type": "grafana-azure-data-explorer-datasource",
+        "uid": "adx-telemetry"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": { "mode": "thresholds" },
+          "mappings": [],
+          "thresholds": { "mode": "absolute", "steps": [{ "color": "green", "value": null }] },
+          "unit": "short"
+        },
+        "overrides": []
+      },
+      "gridPos": { "h": 8, "w": 8, "x": 16, "y": 24 },
+      "id": 17,
+      "options": {
+        "displayMode": "gradient",
+        "minVizHeight": 10,
+        "minVizWidth": 0,
+        "orientation": "horizontal",
+        "reduceOptions": { "calcs": ["lastNotNull"], "fields": "", "values": false },
+        "showUnfilled": true,
+        "valueMode": "color"
+      },
+      "targets": [
+        {
+          "database": "otel_demo",
+          "datasource": { "type": "grafana-azure-data-explorer-datasource", "uid": "adx-telemetry" },
+          "querySource": "raw",
+          "rawMode": true,
+          "query": "OTelTraces\n| extend Timestamp = ingestion_time(), ServiceName = tostring(ResourceAttributes[\"service.name\"])\n| where Timestamp > ago(1h)\n| summarize SpanCount = count() by ServiceName\n| order by SpanCount desc\n| take 15",
+          "refId": "A",
+          "resultFormat": "table",
+          "queryType": "KQL"
+        }
+      ],
+      "title": "Top Services by Span Count",
+      "type": "bargauge"
+    },
+    {
+      "collapsed": false,
+      "gridPos": { "h": 1, "w": 24, "x": 0, "y": 32 },
+      "id": 18,
+      "panels": [],
+      "title": "Recent Traces",
+      "type": "row"
+    },
+    {
+      "datasource": {
+        "type": "grafana-azure-data-explorer-datasource",
+        "uid": "adx-telemetry"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": { "mode": "thresholds" },
+          "custom": { "align": "auto", "cellOptions": { "type": "auto" }, "inspect": false },
+          "mappings": [],
+          "thresholds": { "mode": "absolute", "steps": [{ "color": "green", "value": null }] }
+        },
+        "overrides": [
+          {
+            "matcher": { "id": "byName", "options": "Duration" },
+            "properties": [{ "id": "unit", "value": "ms" }]
+          }
+        ]
+      },
+      "gridPos": { "h": 10, "w": 24, "x": 0, "y": 33 },
+      "id": 19,
+      "options": {
+        "cellHeight": "sm",
+        "footer": { "countRows": false, "fields": "", "reducer": ["sum"], "show": false },
+        "showHeader": true,
+        "sortBy": [{ "desc": true, "displayName": "Timestamp" }]
+      },
+      "targets": [
+        {
+          "database": "otel_demo",
+          "datasource": { "type": "grafana-azure-data-explorer-datasource", "uid": "adx-telemetry" },
+          "querySource": "raw",
+          "rawMode": true,
+          "query": "OTelTraces\n| extend Timestamp = ingestion_time(), ServiceName = tostring(ResourceAttributes[\"service.name\"])\n| where Timestamp > ago(15m)\n| project Timestamp, TraceId, SpanId, ServiceName, SpanName, SpanKind, Duration = Duration / 1000000, StatusCode\n| order by Timestamp desc\n| take 100",
+          "refId": "A",
+          "resultFormat": "table",
+          "queryType": "KQL"
+        }
+      ],
+      "title": "Recent Spans (Last 15 min)",
+      "type": "table"
+    }
+  ],
+  "refresh": "30s",
+  "schemaVersion": 38,
+  "style": "dark",
+  "tags": ["opentelemetry", "azure", "adx", "traces"],
+  "templating": { "list": [] },
+  "time": { "from": "now-1h", "to": "now" },
+  "timepicker": {},
+  "timezone": "",
+  "title": "ADX Traces Explorer",
+  "uid": "adx-traces-explorer",
+  "version": 1,
+  "weekStart": ""
+}
