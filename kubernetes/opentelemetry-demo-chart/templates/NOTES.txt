@@ -1,0 +1,46 @@
+Thank you for installing {{ .Chart.Name }}!
+
+Your release is named {{ .Release.Name }}.
+
+To learn more about the release, try:
+
+  $ helm status {{ .Release.Name }} -n {{ .Values.namespace }}
+  $ helm get all {{ .Release.Name }} -n {{ .Values.namespace }}
+
+📊 OpenTelemetry Demo has been deployed to namespace: {{ .Values.namespace }}
+
+🌐 To access the application, run the following port-forward commands:
+
+1. Frontend (Web Store):
+   kubectl port-forward -n {{ .Values.namespace }} svc/frontend-proxy 8080:8080
+   Then open: http://localhost:8080
+
+2. Grafana (Dashboards):
+   kubectl port-forward -n {{ .Values.namespace }} svc/grafana 3000:3000
+   Then open: http://localhost:3000/grafana
+   {{- if .Values.grafana.enabled }}
+   Username: {{ .Values.grafana.adminUser }}
+   Password: {{ .Values.grafana.adminPassword }}
+   {{- end }}
+
+3. Jaeger (Traces):
+   kubectl port-forward -n {{ .Values.namespace }} svc/jaeger 16686:16686
+   Then open: http://localhost:16686
+
+4. Prometheus (Metrics):
+   kubectl port-forward -n {{ .Values.namespace }} svc/prometheus 9090:9090
+   Then open: http://localhost:9090
+
+5. OpenSearch (Logs):
+   kubectl port-forward -n {{ .Values.namespace }} svc/opensearch 9200:9200
+   Then open: http://localhost:9200
+
+📝 Check the status of your pods:
+   kubectl get pods -n {{ .Values.namespace }}
+
+🔍 View logs for a specific pod:
+   kubectl logs -n {{ .Values.namespace }} <pod-name>
+
+⚠️  Note: It may take a few minutes for all services to be ready.
+
+For more information, visit: https://opentelemetry.io/docs/demo/
