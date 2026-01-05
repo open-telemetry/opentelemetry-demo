@@ -1,0 +1,256 @@
+# Copyright The OpenTelemetry Authors
+# SPDX-License-Identifier: Apache-2.0
+
+# Azure Data Explorer Configuration for OpenTelemetry Demo
+# This configuration replaces Jaeger, Prometheus, and OpenSearch with ADX
+
+receivers:
+  otlp:
+    protocols:
+      grpc:
+        endpoint: ${env:OTEL_COLLECTOR_HOST}:${env:OTEL_COLLECTOR_PORT_GRPC}
+      http:
+        endpoint: ${env:OTEL_COLLECTOR_HOST}:${env:OTEL_COLLECTOR_PORT_HTTP}
+        cors:
+          allowed_origins:
+            - "http://*"
+            - "https://*"
+
+  httpcheck/frontend-proxy:
+    targets:
+      - endpoint: http://${env:FRONTEND_PROXY_ADDR}
+
+  nginx:
+    endpoint: http://${env:IMAGE_PROVIDER_HOST}:${env:IMAGE_PROVIDER_PORT}/status
+    collection_interval: 10s
+
+  # Host metrics for Kubernetes nodes
+  hostmetrics:
+    root_path: /hostfs
+    scrapers:
+      cpu:
+        metrics:
+          system.cpu.utilization:
+            enabled: true
+          system.cpu.logical.count:
+            enabled: true
+      disk:
+      load:
+      filesystem:
+        exclude_mount_points:
+          mount_points:
+            - /dev/*
+            - /proc/*
+            - /sys/*
+            - /run/k3s/containerd/*
+            - /var/lib/docker/*
+            - /var/lib/kubelet/*
+            - /snap/*
+          match_type: regexp
+        exclude_fs_types:
+          fs_types:
+            - autofs
+            - binfmt_misc
+            - bpf
+            - cgroup2
+            - configfs
+            - debugfs
+            - devpts
+            - devtmpfs
+            - fusectl
+            - hugetlbfs
+            - iso9660
+            - mqueue
+            - nsfs
+            - overlay
+            - proc
+            - procfs
+            - pstore
+            - rpc_pipefs
+            - securityfs
+            - selinuxfs
+            - squashfs
+            - sysfs
+            - tracefs
+          match_type: strict
+      memory:
+        metrics:
+          system.memory.utilization:
+            enabled: true
+          system.memory.limit:
+            enabled: true
+      network:
+      paging:
+        metrics:
+          system.paging.usage:
+            enabled: true
+      processes:
+      process:
+        mute_process_exe_error: true
+        mute_process_io_error: true
+        mute_process_user_error: true
+      system:
+        metrics:
+          system.uptime:
+            enabled: true
+
+  # PostgreSQL metrics
+  postgresql:
+    endpoint: ${env:POSTGRES_HOST}:${env:POSTGRES_PORT}
+    username: root
+    password: ${env:POSTGRES_PASSWORD}
+    metrics:
+      postgresql.blks_hit:
+        enabled: true
+      postgresql.blks_read:
+        enabled: true
+      postgresql.tup_fetched:
+        enabled: true
+      postgresql.tup_returned:
+        enabled: true
+      postgresql.tup_inserted:
+        enabled: true
+      postgresql.tup_updated:
+        enabled: true
+      postgresql.tup_deleted:
+        enabled: true
+      postgresql.deadlocks:
+        enabled: true
+    tls:
+      insecure: true
+
+  # Redis/Valkey metrics
+  redis:
+    endpoint: "valkey-cart:6379"
+    username: "valkey"
+    collection_interval: 10s
+
+exporters:
+  # Debug exporter for troubleshooting
+  debug:
+    verbosity: basic
+
+  # Azure Data Explorer exporter for all telemetry
+  azuredataexplorer:
+    # Cluster connection settings
+    cluster_uri: ${env:ADX_CLUSTER_URI}
+    application_id: ${env:AZURE_CLIENT_ID}
+    application_key: ${env:AZURE_CLIENT_SECRET}
+    tenant_id: ${env:AZURE_TENANT_ID}
+
+    # Database configuration
+    db_name: ${env:ADX_DATABASE}
+
+    # Table names for each signal type
+    metrics_table_name: "OTelMetrics"
+    logs_table_name: "OTelLogs"
+    traces_table_name: "OTelTraces"
+
+    # JSON ingestion mappings (created by Terraform)
+    metrics_table_json_mapping: "otel_metrics_mapping"
+    logs_table_json_mapping: "otel_logs_mapping"
+    traces_table_json_mapping: "otel_traces_mapping"
+
+    # Ingestion settings
+    # Use "managed" for lower latency, "queued" for higher throughput
+    ingestion_type: managed
+
+    # Sending queue configuration for reliability
+    sending_queue:
+      enabled: true
+      num_consumers: 10
+      queue_size: 5000
+
+    # Retry settings
+    retry_on_failure:
+      enabled: true
+      initial_interval: 5s
+      max_interval: 30s
+      max_elapsed_time: 300s
+
+processors:
+  # Memory limiter to prevent OOM
+  memory_limiter:
+    check_interval: 5s
+    limit_percentage: 80
+    spike_limit_percentage: 25
+
+  # Resource detection for environment attributes
+  resourcedetection:
+    detectors: [env, system]
+    system:
+      hostname_sources: ["os"]
+      resource_attributes:
+        host.id:
+          enabled: true
+
+  # Batch processor for efficient ingestion
+  batch:
+    send_batch_size: 1000
+    send_batch_max_size: 2000
+    timeout: 10s
+
+  # Transform processor for span name cleanup
+  transform:
+    error_mode: ignore
+    trace_statements:
+      - context: span
+        statements:
+          - replace_pattern(name, "\\?.*", "")
+          - replace_match(name, "GET /api/products/*", "GET /api/products/{productId}")
+
+  # Attributes processor to add service name extraction
+  attributes/servicename:
+    actions:
+      - key: service.name
+        from_attribute: service.name
+        action: upsert
+
+connectors:
+  # Generate metrics from spans for service performance monitoring
+  spanmetrics:
+    histogram:
+      explicit:
+        buckets: [5ms, 10ms, 25ms, 50ms, 100ms, 250ms, 500ms, 1s, 2.5s, 5s, 10s]
+    dimensions:
+      - name: http.method
+        default: GET
+      - name: http.status_code
+      - name: http.route
+    exemplars:
+      enabled: true
+    metrics_flush_interval: 15s
+
+service:
+  pipelines:
+    # Traces pipeline - OTLP -> ADX
+    traces:
+      receivers: [otlp]
+      processors: [resourcedetection, memory_limiter, transform, batch]
+      exporters: [azuredataexplorer, debug, spanmetrics]
+
+    # Metrics pipeline - Multiple sources -> ADX
+    metrics:
+      receivers: [httpcheck/frontend-proxy, hostmetrics, nginx, otlp, postgresql, redis, spanmetrics]
+      processors: [resourcedetection, memory_limiter, batch]
+      exporters: [azuredataexplorer, debug]
+
+    # Logs pipeline - OTLP -> ADX
+    logs:
+      receivers: [otlp]
+      processors: [resourcedetection, memory_limiter, batch]
+      exporters: [azuredataexplorer, debug]
+
+  telemetry:
+    logs:
+      level: info
+    metrics:
+      level: detailed
+      readers:
+        - periodic:
+            interval: 10000
+            timeout: 5000
+            exporter:
+              otlp:
+                protocol: http/protobuf
+                endpoint: http://${env:OTEL_COLLECTOR_HOST}:${env:OTEL_COLLECTOR_PORT_HTTP}
