@@ -1,0 +1,8 @@
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  annotations:
+    azure.workload.identity/client-id: "{{ .Values.otelCollector.clientid }}"
+    azure.workload.identity/tenant-id: "{{ .Values.azure_tenant_id }}"
+  name: otel-collector-sa
+  namespace: {{ .Values.namespace }}
