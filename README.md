@@ -1,9 +1,13 @@
+<p align="center">
+  <img src="https://azure.microsoft.com/svghandler/data-explorer/?width=300" alt="Azure Data Explorer" width="300">
+</p>
+
 # OpenTelemetry Demo with Azure Data Explorer
 
 <p align="center">
-  <img src="https://opentelemetry.io/img/logos/opentelemetry-logo-nav.png" alt="OpenTelemetry" width="100">
-  &nbsp;&nbsp;&nbsp;&nbsp;
-  <img src="https://raw.githubusercontent.com/Azure/azure-kusto-docs/main/data-explorer/media/data-explorer-overview/logo.png" alt="Azure Data Explorer" width="100">
+  <img src="https://opentelemetry.io/img/logos/opentelemetry-logo-nav.png" alt="OpenTelemetry" width="80">
+  &nbsp;&nbsp;+&nbsp;&nbsp;
+  <img src="https://azure.microsoft.com/svghandler/data-explorer/?width=80" alt="Azure Data Explorer" width="80">
 </p>
 
 <p align="center">
@@ -12,8 +16,8 @@
 
 <p align="center">
   <a href="#-quick-start">Quick Start</a> &bull;
+  <a href="#grafana-dashboards">Dashboards</a> &bull;
   <a href="#-architecture">Architecture</a> &bull;
-  <a href="#-how-it-differs-from-the-original">How It Differs</a> &bull;
   <a href="#-workload-identity">Workload Identity</a> &bull;
   <a href="#-deployment-guide">Deployment</a>
 </p>
@@ -39,6 +43,32 @@ This is a **fork of the [OpenTelemetry Demo](https://github.com/open-telemetry/o
 | No native Azure integration | Native Azure services with Workload Identity |
 | Data scattered across systems | All telemetry in one place with powerful KQL queries |
 | SaaS observability costs ($$$) | Pay only for Azure resources (~$150/month for dev) |
+
+---
+
+## Grafana Dashboards
+
+All telemetry data flows to Azure Data Explorer and is visualized through Grafana dashboards using KQL queries.
+
+### OpenTelemetry APM Dashboard
+Full application performance monitoring with request rates, latency percentiles, and service health overview.
+
+![APM Dashboard](docs/img/grafana-apm-dashboard.png)
+
+### Traces Explorer
+Distributed tracing with span counts, latency analysis, and service dependency visualization.
+
+![Traces Explorer](docs/img/grafana-traces-explorer.png)
+
+### Logs Analytics
+Centralized log analysis with severity breakdown, service distribution, and trace correlation.
+
+![Logs Analytics](docs/img/grafana-logs-analytics.png)
+
+### Service Health
+Detailed per-service metrics including request rates, latency percentiles (P50/P95/P99), and error tracking.
+
+![Service Health](docs/img/grafana-service-health.png)
 
 ---
 
