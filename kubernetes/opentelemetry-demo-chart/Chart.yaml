@@ -1,0 +1,17 @@
+apiVersion: v2
+name: opentelemetry-demo
+description: A Helm chart for OpenTelemetry Demo
+type: application
+version: 2.1.3
+appVersion: "2.1.3"
+keywords:
+  - opentelemetry
+  - observability
+  - tracing
+  - metrics
+  - logs
+maintainers:
+  - name: OpenTelemetry Demo Team
+home: https://github.com/open-telemetry/opentelemetry-demo
+sources:
+  - https://github.com/open-telemetry/opentelemetry-demo

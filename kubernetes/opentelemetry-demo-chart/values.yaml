@@ -1,0 +1,66 @@
+# Default values for opentelemetry-demo.
+# This is a YAML-formatted file.
+# Declare variables to be passed into your templates.
+
+# Namespace to deploy the demo into
+namespace: otel-demo
+azure_tenant_id: ""
+
+# Global labels applied to all resources
+global:
+  labels:
+    app.kubernetes.io/version: "2.1.3"
+    app.kubernetes.io/part-of: opentelemetry-demo
+
+# Grafana configuration
+grafana:
+  enabled: true
+  adminUser: admin
+  adminPassword: admin
+  plugins: grafana-azure-data-explorer-datasource
+  clientid: ""
+
+# OpenTelemetry Collector configuration
+otelCollector:
+  enabled: true
+  version: "0.135.0"
+  clientid : ""
+
+  # Health check endpoint
+  healthCheck:
+    enabled: true
+    port: 13133
+
+  # Processors configuration
+  processors:
+    memoryLimiter:
+      checkInterval: 5s
+      limitPercentage: 80
+      spikeLimitPercentage: 25
+
+  # Exporters configuration
+  exporters:
+    prometheus:
+      endpoint: http://prometheus:9090/api/v1/otlp
+
+
+
+# Feature flags configuration
+featureFlags:
+  productCatalogFailure: "off"
+  recommendationCacheFailure: "off"
+  adManualGc: "off"
+  adHighCpu: "off"
+  adFailure: "off"
+  kafkaQueueProblems: "off"
+  cartFailure: "off"
+  paymentFailure: "off"
+  paymentUnreachable: "off"
+  loadGeneratorFloodHomepage: "off"
+  imageSlowLoad: "off"
+
+# Service account configuration
+serviceAccount:
+  create: true
+  name: opentelemetry-demo
+  automountServiceAccountToken: false
