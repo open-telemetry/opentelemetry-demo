@@ -77,6 +77,46 @@ spec:
                   fieldPath: status.podIP
             - name: GOMEMLIMIT
               value: "160MiB"
+            {{- if .Values.adx.enabled }}
+            # Azure Data Explorer credentials
+            - name: ADX_CLUSTER_URI
+              value: {{ .Values.adx.clusterUri | quote }}
+            - name: ADX_DATABASE
+              value: {{ .Values.adx.database | quote }}
+            {{- if .Values.azure.existingSecret }}
+            - name: AZURE_TENANT_ID
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.azure.existingSecret }}
+                  key: AZURE_TENANT_ID
+            - name: AZURE_CLIENT_ID
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.azure.existingSecret }}
+                  key: AZURE_CLIENT_ID
+            - name: AZURE_CLIENT_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.azure.existingSecret }}
+                  key: AZURE_CLIENT_SECRET
+            {{- else }}
+            - name: AZURE_TENANT_ID
+              valueFrom:
+                secretKeyRef:
+                  name: adx-credentials
+                  key: AZURE_TENANT_ID
+            - name: AZURE_CLIENT_ID
+              valueFrom:
+                secretKeyRef:
+                  name: adx-credentials
+                  key: AZURE_CLIENT_ID
+            - name: AZURE_CLIENT_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: adx-credentials
+                  key: AZURE_CLIENT_SECRET
+            {{- end }}
+            {{- end }}
           livenessProbe:
             httpGet:
               path: /

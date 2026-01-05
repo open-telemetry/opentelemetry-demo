@@ -1,0 +1,33 @@
+{{- if and .Values.grafana.enabled .Values.adx.enabled }}
+# Grafana Azure Data Explorer datasource configuration
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: grafana-datasource-adx
+  namespace: {{ .Values.namespace }}
+  labels:
+    app.kubernetes.io/name: grafana
+    app.kubernetes.io/instance: opentelemetry-demo
+    app.kubernetes.io/part-of: opentelemetry-demo
+    app.kubernetes.io/component: grafana
+    grafana_datasource: "1"
+data:
+  adx-datasource.yaml: |
+    apiVersion: 1
+    datasources:
+      - name: Azure Data Explorer
+        uid: adx-telemetry
+        type: grafana-azure-data-explorer-datasource
+        access: proxy
+        isDefault: true
+        editable: true
+        jsonData:
+          clusterUrl: {{ .Values.adx.clusterUri | quote }}
+          tenantId: {{ .Values.azure.tenantId | quote }}
+          clientId: {{ .Values.azure.clientId | quote }}
+          defaultDatabase: {{ .Values.adx.database | quote }}
+          dataConsistency: "strongconsistency"
+          cacheMaxAge: "0"
+        secureJsonData:
+          clientSecret: {{ .Values.azure.clientSecret | quote }}
+{{- end }}

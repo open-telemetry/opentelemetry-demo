@@ -4,7 +4,39 @@
 
 # Namespace to deploy the demo into
 namespace: otel-demo
-azure_tenant_id: ""
+
+# =============================================================================
+# Azure Data Explorer Configuration
+# =============================================================================
+# Set these values to enable ADX as the telemetry backend
+adx:
+  enabled: true
+  # ADX cluster URI (e.g., https://mycluster.eastus.kusto.windows.net)
+  clusterUri: ""
+  # ADX database name
+  database: "otel_demo"
+  # Table names for telemetry data
+  tables:
+    traces: "OTelTraces"
+    metrics: "OTelMetrics"
+    logs: "OTelLogs"
+  # Ingestion mappings (must match ADX schema)
+  mappings:
+    traces: "otel_traces_mapping"
+    metrics: "otel_metrics_mapping"
+    logs: "otel_logs_mapping"
+  # Ingestion type: "managed" (low latency) or "queued" (high throughput)
+  ingestionType: "managed"
+
+# =============================================================================
+# Azure Authentication
+# =============================================================================
+azure:
+  tenantId: ""
+  clientId: ""
+  clientSecret: ""
+  # Set to true if using existing secret instead of creating one
+  existingSecret: ""
 
 # Global labels applied to all resources
 global:
@@ -18,13 +50,15 @@ grafana:
   adminUser: admin
   adminPassword: admin
   plugins: grafana-azure-data-explorer-datasource
+  # For workload identity (optional)
   clientid: ""
 
 # OpenTelemetry Collector configuration
 otelCollector:
   enabled: true
   version: "0.135.0"
-  clientid : ""
+  # For workload identity (optional)
+  clientid: ""
 
   # Health check endpoint
   healthCheck:
@@ -38,10 +72,18 @@ otelCollector:
       limitPercentage: 80
       spikeLimitPercentage: 25
 
-  # Exporters configuration
-  exporters:
-    prometheus:
-      endpoint: http://prometheus:9090/api/v1/otlp
+  # Queue settings for ADX exporter
+  queue:
+    enabled: true
+    numConsumers: 10
+    queueSize: 5000
+
+  # Retry settings for ADX exporter
+  retry:
+    enabled: true
+    initialInterval: 5s
+    maxInterval: 30s
+    maxElapsedTime: 300s
 
 
 
