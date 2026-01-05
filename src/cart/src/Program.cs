@@ -173,6 +173,7 @@ public class readinessCheck : IHealthCheck
         {
             return registration.Name == service;
         }
+
         public override async Task Watch(HealthCheckRequest request, IServerStreamWriter<HealthCheckResponse> responseStream, ServerCallContext context)
         {
             _logger.LogInformation("Received health watch request for service: {Service}", request.Service);
