@@ -5,67 +5,46 @@
 # Data Sources
 # =============================================================================
 
-data "azuread_client_config" "current" {}
-
 data "azurerm_client_config" "current" {}
 
 # =============================================================================
-# Azure AD Application for Service Principal
+# User-Assigned Managed Identity for Workload Identity
 # =============================================================================
 
-resource "azuread_application" "otel_collector" {
-  display_name = var.application_name
-  owners       = [data.azuread_client_config.current.object_id]
+resource "azurerm_user_assigned_identity" "otel_collector" {
+  name                = var.identity_name
+  resource_group_name = var.resource_group_name
+  location            = var.location
 
-  # API permissions for ADX
-  required_resource_access {
-    resource_app_id = "2746ea77-4702-4b45-80ca-3c97e680e8b7" # Azure Data Explorer
-
-    resource_access {
-      id   = "f7d6c5e8-5f2e-4f4e-8b3d-3c2a1b0f9e8d" # user_impersonation
-      type = "Scope"
-    }
-  }
-
-  tags = ["OpenTelemetry", "ADX", "Observability"]
+  tags = var.tags
 }
 
 # =============================================================================
-# Service Principal
+# Federated Identity Credential
+# Links the Kubernetes Service Account to the Managed Identity
 # =============================================================================
 
-resource "azuread_service_principal" "otel_collector" {
-  client_id                    = azuread_application.otel_collector.client_id
-  app_role_assignment_required = false
-  owners                       = [data.azuread_client_config.current.object_id]
+resource "azurerm_federated_identity_credential" "otel_collector" {
+  name                = "otel-collector-federated"
+  resource_group_name = var.resource_group_name
+  parent_id           = azurerm_user_assigned_identity.otel_collector.id
 
-  tags = ["OpenTelemetry", "ADX", "Observability"]
-}
+  # The OIDC issuer from AKS cluster
+  issuer = var.oidc_issuer_url
 
-# =============================================================================
-# Service Principal Password (Client Secret)
-# =============================================================================
+  # The subject identifier - must match the K8s service account
+  # Format: system:serviceaccount:<namespace>:<service-account-name>
+  subject = "system:serviceaccount:${var.namespace}:${var.service_account_name}"
 
-resource "time_rotating" "password_rotation" {
-  rotation_days = var.password_rotation_days
-}
-
-resource "azuread_application_password" "otel_collector" {
-  application_id = azuread_application.otel_collector.id
-  display_name   = "otel-collector-secret"
-
-  rotate_when_changed = {
-    rotation = time_rotating.password_rotation.id
-  }
-
-  end_date_relative = "${var.password_rotation_days * 24}h"
+  # The audience for the token
+  audience = ["api://AzureADTokenExchange"]
 }
 
 # =============================================================================
 # ADX Database Principal Assignment
+# Grant the Managed Identity access to the ADX database
 # =============================================================================
 
-# Grant the service principal access to the ADX database
 resource "azurerm_kusto_database_principal_assignment" "otel_ingestor" {
   name                = "otel-collector-ingestor"
   resource_group_name = split("/", var.adx_cluster_id)[4]
@@ -73,7 +52,7 @@ resource "azurerm_kusto_database_principal_assignment" "otel_ingestor" {
   database_name       = var.adx_database_name
 
   tenant_id      = data.azurerm_client_config.current.tenant_id
-  principal_id   = azuread_service_principal.otel_collector.object_id
+  principal_id   = azurerm_user_assigned_identity.otel_collector.principal_id
   principal_type = "App"
   role           = "Ingestor"
 }
@@ -85,7 +64,7 @@ resource "azurerm_kusto_database_principal_assignment" "otel_viewer" {
   database_name       = var.adx_database_name
 
   tenant_id      = data.azurerm_client_config.current.tenant_id
-  principal_id   = azuread_service_principal.otel_collector.object_id
+  principal_id   = azurerm_user_assigned_identity.otel_collector.principal_id
   principal_type = "App"
   role           = "Viewer"
 }

@@ -31,11 +31,34 @@ adx:
 # =============================================================================
 # Azure Authentication
 # =============================================================================
+# Two authentication methods are supported:
+#
+# 1. Workload Identity (RECOMMENDED - no secrets needed!)
+#    Set azure.workloadIdentity.enabled=true and provide clientId
+#
+# 2. Service Principal (legacy - requires client secret)
+#    Set azure.clientSecret or azure.existingSecret
+#
 azure:
   tenantId: ""
+
+  # --------------------------------------------------------------------------
+  # Option 1: Workload Identity (Recommended)
+  # --------------------------------------------------------------------------
+  # Uses Azure AD Workload Identity for secure, secret-less authentication
+  # Requires: AKS with OIDC issuer enabled + Federated Identity Credential
+  workloadIdentity:
+    enabled: false
+    # Client ID of the User-Assigned Managed Identity
+    clientId: ""
+
+  # --------------------------------------------------------------------------
+  # Option 2: Service Principal (Legacy)
+  # --------------------------------------------------------------------------
+  # Uses client ID + client secret stored in Kubernetes Secret
   clientId: ""
   clientSecret: ""
-  # Set to true if using existing secret instead of creating one
+  # Use existing secret instead of creating one from values above
   existingSecret: ""
 
 # Global labels applied to all resources
@@ -50,15 +73,16 @@ grafana:
   adminUser: admin
   adminPassword: admin
   plugins: grafana-azure-data-explorer-datasource
-  # For workload identity (optional)
-  clientid: ""
 
 # OpenTelemetry Collector configuration
 otelCollector:
   enabled: true
   version: "0.135.0"
-  # For workload identity (optional)
-  clientid: ""
+
+  # Service account configuration
+  serviceAccount:
+    name: "otel-collector-sa"
+    # Annotations are auto-set when workloadIdentity.enabled=true
 
   # Health check endpoint
   healthCheck:
@@ -84,8 +108,6 @@ otelCollector:
     initialInterval: 5s
     maxInterval: 30s
     maxElapsedTime: 300s
-
-
 
 # Feature flags configuration
 featureFlags:
