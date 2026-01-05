@@ -70,7 +70,7 @@ adx_auto_stop_enabled = true
 
 # Kubernetes version
 # Check available versions: az aks get-versions --location eastus --output table
-aks_kubernetes_version = "1.29"
+aks_kubernetes_version = "1.32"
 
 # VM size for nodes
 # Standard_DS2_v2: 2 vCPU, 7GB RAM (good for dev)

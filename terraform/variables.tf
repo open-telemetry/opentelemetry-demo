@@ -80,7 +80,7 @@ variable "adx_auto_stop_enabled" {
 variable "aks_kubernetes_version" {
   description = "Kubernetes version for AKS cluster"
   type        = string
-  default     = "1.29"
+  default     = "1.32"
 }
 
 variable "aks_default_node_pool_vm_size" {

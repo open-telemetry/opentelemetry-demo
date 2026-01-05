@@ -43,6 +43,8 @@ resource "azurerm_kubernetes_cluster" "main" {
     network_policy    = "azure"
     load_balancer_sku = "standard"
     outbound_type     = "loadBalancer"
+    service_cidr      = "172.16.0.0/16"
+    dns_service_ip    = "172.16.0.10"
   }
 
   # Azure Monitor integration (optional but recommended)
