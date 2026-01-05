@@ -25,7 +25,7 @@
   "editable": true,
   "fiscalYearStartMonth": 0,
   "graphTooltip": 1,
-  "id": 11,
+  "id": 4,
   "links": [],
   "liveNow": true,
   "panels": [
@@ -36,209 +36,6 @@
         "w": 24,
         "x": 0,
         "y": 0
-      },
-      "id": 55,
-      "panels": [],
-      "title": "Overview",
-      "type": "row"
-    },
-    {
-      "datasource": {
-        "type": "prometheus",
-        "uid": "webstore-metrics"
-      },
-      "description": "OTel Collectors. Derived from the `otelcol.process.uptime` metric.",
-      "fieldConfig": {
-        "defaults": {
-          "custom": {
-            "align": "auto",
-            "cellOptions": {
-              "type": "auto"
-            },
-            "footer": {
-              "reducers": []
-            },
-            "inspect": false
-          },
-          "mappings": [],
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "green",
-                "value": 0
-              },
-              {
-                "color": "red",
-                "value": 80
-              }
-            ]
-          }
-        },
-        "overrides": [
-          {
-            "matcher": {
-              "id": "byName",
-              "options": "Uptime"
-            },
-            "properties": [
-              {
-                "id": "unit",
-                "value": "dtdurations"
-              },
-              {
-                "id": "custom.width",
-                "value": 84
-              }
-            ]
-          },
-          {
-            "matcher": {
-              "id": "byName",
-              "options": "Namespace"
-            },
-            "properties": [
-              {
-                "id": "custom.width",
-                "value": 110
-              }
-            ]
-          },
-          {
-            "matcher": {
-              "id": "byName",
-              "options": "Version"
-            },
-            "properties": [
-              {
-                "id": "custom.width",
-                "value": 85
-              }
-            ]
-          }
-        ]
-      },
-      "gridPos": {
-        "h": 3,
-        "w": 24,
-        "x": 0,
-        "y": 1
-      },
-      "id": 57,
-      "options": {
-        "cellHeight": "sm",
-        "showHeader": true,
-        "sortBy": [
-          {
-            "desc": true,
-            "displayName": "Service Name"
-          }
-        ]
-      },
-      "pluginVersion": "12.3.1",
-      "targets": [
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "grafanacloud-prom"
-          },
-          "editorMode": "code",
-          "expr": "otelcol_process_uptime_seconds_total{deployment_environment_name=~\"$deployment_environment_name\", k8s_cluster_name=~\"$k8s_cluster_name\", k8s_node_name=~\"$k8s_node_name\", host_name=~\"$host_name\", service_instance_id=~\"$service_instance_id\", service_name=~\"$service_name\"}",
-          "format": "table",
-          "instant": true,
-          "legendFormat": "{{service_name}} {{service_instance_id}}",
-          "queryType": "instant",
-          "range": false,
-          "refId": "A"
-        }
-      ],
-      "title": "",
-      "transformations": [
-        {
-          "id": "organize",
-          "options": {
-            "excludeByName": {
-              "Time": true,
-              "Value": false,
-              "__name__": true,
-              "instance": true,
-              "job": true
-            },
-            "includeByName": {},
-            "indexByName": {
-              "Time": 2,
-              "Value": 12,
-              "__name__": 3,
-              "host_name": 4,
-              "instance": 5,
-              "job": 6,
-              "k8s_cluster_name": 7,
-              "k8s_namespace_name": 8,
-              "k8s_node_name": 9,
-              "k8s_pod_name": 10,
-              "service_instance_id": 11,
-              "service_name": 0,
-              "service_version": 1
-            },
-            "orderByMode": "manual",
-            "renameByName": {
-              "Value": "Uptime",
-              "host_name": "Host",
-              "k8s_cluster_name": "K8s cluster",
-              "k8s_namespace_name": "Namespace",
-              "k8s_node_name": "Node",
-              "k8s_pod_name": "Pod",
-              "service_instance_id": "Service Instance Id",
-              "service_name": "Service Name",
-              "service_version": "Version"
-            }
-          }
-        }
-      ],
-      "type": "table"
-    },
-    {
-      "fieldConfig": {
-        "defaults": {},
-        "overrides": []
-      },
-      "gridPos": {
-        "h": 8,
-        "w": 12,
-        "x": 0,
-        "y": 4
-      },
-      "id": 56,
-      "options": {
-        "alertInstanceLabelFilter": "deployment_environment_name=~\"$deployment_environment_name\", k8s_cluster_name=~\"$k8s_cluster_name\", k8s_node_name=~\"$k8s_node_name\", host_name=~\"$host_name\", service_instance_id=~\"$service_instance_id\", service_name=~\"$service_name\"",
-        "alertName": "",
-        "dashboardAlerts": false,
-        "groupBy": [],
-        "groupMode": "default",
-        "maxItems": 20,
-        "showInactiveAlerts": false,
-        "sortOrder": 1,
-        "stateFilter": {
-          "error": true,
-          "firing": true,
-          "noData": true,
-          "normal": true,
-          "pending": true,
-          "recovering": true
-        },
-        "viewMode": "list"
-      },
-      "pluginVersion": "12.3.1",
-      "title": "Alerts",
-      "type": "alertlist"
-    },
-    {
-      "collapsed": false,
-      "gridPos": {
-        "h": 1,
-        "w": 24,
-        "x": 0,
-        "y": 12
       },
       "id": 53,
       "panels": [],
@@ -321,7 +118,7 @@
         "h": 3,
         "w": 24,
         "x": 0,
-        "y": 13
+        "y": 1
       },
       "id": 54,
       "options": {
@@ -429,7 +226,7 @@
         "h": 4,
         "w": 5,
         "x": 0,
-        "y": 16
+        "y": 4
       },
       "id": 50,
       "options": {
@@ -500,7 +297,7 @@
         "h": 4,
         "w": 5,
         "x": 5,
-        "y": 16
+        "y": 4
       },
       "id": 52,
       "options": {
@@ -577,7 +374,7 @@
         "h": 4,
         "w": 11,
         "x": 10,
-        "y": 16
+        "y": 4
       },
       "id": 51,
       "options": {
@@ -622,7 +419,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 20
+        "y": 8
       },
       "id": 23,
       "panels": [
@@ -1139,7 +936,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 21
+        "y": 9
       },
       "id": 48,
       "panels": [],
@@ -1216,7 +1013,7 @@
         "h": 8,
         "w": 12,
         "x": 0,
-        "y": 22
+        "y": 10
       },
       "id": 49,
       "options": {
@@ -1309,7 +1106,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 30
+        "y": 18
       },
       "id": 47,
       "panels": [],
@@ -1395,7 +1192,7 @@
         "h": 3,
         "w": 12,
         "x": 0,
-        "y": 31
+        "y": 19
       },
       "id": 43,
       "options": {
@@ -1541,7 +1338,7 @@
         "h": 3,
         "w": 12,
         "x": 0,
-        "y": 34
+        "y": 22
       },
       "id": 44,
       "options": {
@@ -1677,7 +1474,7 @@
         "h": 10,
         "w": 24,
         "x": 0,
-        "y": 37
+        "y": 25
       },
       "id": 45,
       "options": {
@@ -1786,7 +1583,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 47
+        "y": 35
       },
       "id": 46,
       "panels": [],
@@ -1807,7 +1604,7 @@
         "h": 10,
         "w": 24,
         "x": 0,
-        "y": 48
+        "y": 36
       },
       "id": 42,
       "options": {
