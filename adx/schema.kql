@@ -1,0 +1,192 @@
+// Copyright The OpenTelemetry Authors
+// SPDX-License-Identifier: Apache-2.0
+//
+// Azure Data Explorer Schema for OpenTelemetry Demo
+//
+// Usage:
+//   1. Open Azure Data Explorer Web UI or Kusto Explorer
+//   2. Connect to your ADX cluster
+//   3. Select the target database
+//   4. Run this script to create tables and mappings
+//
+// ============================================================================
+// TRACES TABLE
+// ============================================================================
+
+.create-merge table OTelTraces (
+    Timestamp: datetime,
+    TraceId: string,
+    SpanId: string,
+    ParentSpanId: string,
+    TraceState: string,
+    SpanName: string,
+    SpanKind: string,
+    ServiceName: string,
+    ServiceNamespace: string,
+    ServiceInstanceId: string,
+    ResourceAttributes: dynamic,
+    ScopeName: string,
+    ScopeVersion: string,
+    SpanAttributes: dynamic,
+    Duration: long,
+    StatusCode: string,
+    StatusMessage: string,
+    Events: dynamic,
+    Links: dynamic
+)
+
+// ============================================================================
+// METRICS TABLE
+// ============================================================================
+
+.create-merge table OTelMetrics (
+    Timestamp: datetime,
+    MetricName: string,
+    MetricDescription: string,
+    MetricUnit: string,
+    MetricType: string,
+    ServiceName: string,
+    ServiceNamespace: string,
+    ServiceInstanceId: string,
+    ResourceAttributes: dynamic,
+    ScopeName: string,
+    ScopeVersion: string,
+    MetricAttributes: dynamic,
+    StartTimestamp: datetime,
+    Value: real,
+    Count: long,
+    Sum: real,
+    Min: real,
+    Max: real,
+    Exemplars: dynamic,
+    Buckets: dynamic
+)
+
+// ============================================================================
+// LOGS TABLE
+// ============================================================================
+
+.create-merge table OTelLogs (
+    Timestamp: datetime,
+    ObservedTimestamp: datetime,
+    TraceId: string,
+    SpanId: string,
+    SeverityText: string,
+    SeverityNumber: int,
+    Body: string,
+    ServiceName: string,
+    ServiceNamespace: string,
+    ServiceInstanceId: string,
+    ResourceAttributes: dynamic,
+    ScopeName: string,
+    ScopeVersion: string,
+    LogAttributes: dynamic
+)
+
+// ============================================================================
+// INGESTION MAPPINGS
+// ============================================================================
+
+// Traces JSON mapping
+.create-or-alter table OTelTraces ingestion json mapping 'otel_traces_mapping'
+```
+[
+    {"column":"Timestamp","path":"$.Timestamp","datatype":"datetime"},
+    {"column":"TraceId","path":"$.TraceId","datatype":"string"},
+    {"column":"SpanId","path":"$.SpanId","datatype":"string"},
+    {"column":"ParentSpanId","path":"$.ParentSpanId","datatype":"string"},
+    {"column":"TraceState","path":"$.TraceState","datatype":"string"},
+    {"column":"SpanName","path":"$.SpanName","datatype":"string"},
+    {"column":"SpanKind","path":"$.SpanKind","datatype":"string"},
+    {"column":"ServiceName","path":"$.ServiceName","datatype":"string"},
+    {"column":"ServiceNamespace","path":"$.ServiceNamespace","datatype":"string"},
+    {"column":"ServiceInstanceId","path":"$.ServiceInstanceId","datatype":"string"},
+    {"column":"ResourceAttributes","path":"$.ResourceAttributes","datatype":"dynamic"},
+    {"column":"ScopeName","path":"$.ScopeName","datatype":"string"},
+    {"column":"ScopeVersion","path":"$.ScopeVersion","datatype":"string"},
+    {"column":"SpanAttributes","path":"$.SpanAttributes","datatype":"dynamic"},
+    {"column":"Duration","path":"$.Duration","datatype":"long"},
+    {"column":"StatusCode","path":"$.StatusCode","datatype":"string"},
+    {"column":"StatusMessage","path":"$.StatusMessage","datatype":"string"},
+    {"column":"Events","path":"$.Events","datatype":"dynamic"},
+    {"column":"Links","path":"$.Links","datatype":"dynamic"}
+]
+```
+
+// Metrics JSON mapping
+.create-or-alter table OTelMetrics ingestion json mapping 'otel_metrics_mapping'
+```
+[
+    {"column":"Timestamp","path":"$.Timestamp","datatype":"datetime"},
+    {"column":"MetricName","path":"$.MetricName","datatype":"string"},
+    {"column":"MetricDescription","path":"$.MetricDescription","datatype":"string"},
+    {"column":"MetricUnit","path":"$.MetricUnit","datatype":"string"},
+    {"column":"MetricType","path":"$.MetricType","datatype":"string"},
+    {"column":"ServiceName","path":"$.ServiceName","datatype":"string"},
+    {"column":"ServiceNamespace","path":"$.ServiceNamespace","datatype":"string"},
+    {"column":"ServiceInstanceId","path":"$.ServiceInstanceId","datatype":"string"},
+    {"column":"ResourceAttributes","path":"$.ResourceAttributes","datatype":"dynamic"},
+    {"column":"ScopeName","path":"$.ScopeName","datatype":"string"},
+    {"column":"ScopeVersion","path":"$.ScopeVersion","datatype":"string"},
+    {"column":"MetricAttributes","path":"$.MetricAttributes","datatype":"dynamic"},
+    {"column":"StartTimestamp","path":"$.StartTimestamp","datatype":"datetime"},
+    {"column":"Value","path":"$.Value","datatype":"real"},
+    {"column":"Count","path":"$.Count","datatype":"long"},
+    {"column":"Sum","path":"$.Sum","datatype":"real"},
+    {"column":"Min","path":"$.Min","datatype":"real"},
+    {"column":"Max","path":"$.Max","datatype":"real"},
+    {"column":"Exemplars","path":"$.Exemplars","datatype":"dynamic"},
+    {"column":"Buckets","path":"$.Buckets","datatype":"dynamic"}
+]
+```
+
+// Logs JSON mapping
+.create-or-alter table OTelLogs ingestion json mapping 'otel_logs_mapping'
+```
+[
+    {"column":"Timestamp","path":"$.Timestamp","datatype":"datetime"},
+    {"column":"ObservedTimestamp","path":"$.ObservedTimestamp","datatype":"datetime"},
+    {"column":"TraceId","path":"$.TraceId","datatype":"string"},
+    {"column":"SpanId","path":"$.SpanId","datatype":"string"},
+    {"column":"SeverityText","path":"$.SeverityText","datatype":"string"},
+    {"column":"SeverityNumber","path":"$.SeverityNumber","datatype":"int"},
+    {"column":"Body","path":"$.Body","datatype":"string"},
+    {"column":"ServiceName","path":"$.ServiceName","datatype":"string"},
+    {"column":"ServiceNamespace","path":"$.ServiceNamespace","datatype":"string"},
+    {"column":"ServiceInstanceId","path":"$.ServiceInstanceId","datatype":"string"},
+    {"column":"ResourceAttributes","path":"$.ResourceAttributes","datatype":"dynamic"},
+    {"column":"ScopeName","path":"$.ScopeName","datatype":"string"},
+    {"column":"ScopeVersion","path":"$.ScopeVersion","datatype":"string"},
+    {"column":"LogAttributes","path":"$.LogAttributes","datatype":"dynamic"}
+]
+```
+
+// ============================================================================
+// RETENTION POLICIES (365 days = 1 year)
+// ============================================================================
+
+.alter-merge table OTelTraces policy retention softdelete = 365d
+
+.alter-merge table OTelMetrics policy retention softdelete = 365d
+
+.alter-merge table OTelLogs policy retention softdelete = 365d
+
+// ============================================================================
+// HOT CACHE POLICIES (30 days for fast queries)
+// ============================================================================
+
+.alter table OTelTraces policy caching hot = 30d
+
+.alter table OTelMetrics policy caching hot = 30d
+
+.alter table OTelLogs policy caching hot = 30d
+
+// ============================================================================
+// STREAMING INGESTION (enable for low latency)
+// ============================================================================
+
+.alter table OTelTraces policy streamingingestion enable
+
+.alter table OTelMetrics policy streamingingestion enable
+
+.alter table OTelLogs policy streamingingestion enable

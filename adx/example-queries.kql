@@ -1,0 +1,222 @@
+// Copyright The OpenTelemetry Authors
+// SPDX-License-Identifier: Apache-2.0
+//
+// Example KQL Queries for OpenTelemetry Data in Azure Data Explorer
+//
+// These queries demonstrate common observability use cases.
+// Copy and paste into Azure Data Explorer Web UI or Kusto Explorer.
+//
+
+// ============================================================================
+// SERVICE OVERVIEW
+// ============================================================================
+
+// List all services seen in the last hour
+OTelTraces
+| where Timestamp > ago(1h)
+| summarize
+    SpanCount = count(),
+    FirstSeen = min(Timestamp),
+    LastSeen = max(Timestamp)
+    by ServiceName
+| order by SpanCount desc
+
+// Service health summary (RED metrics)
+OTelTraces
+| where Timestamp > ago(1h)
+| where SpanKind == "Server"
+| summarize
+    Requests = count(),
+    Errors = countif(StatusCode == "Error"),
+    P50 = percentile(Duration / 1000000, 50),
+    P95 = percentile(Duration / 1000000, 95),
+    P99 = percentile(Duration / 1000000, 99)
+    by ServiceName
+| extend ErrorRate = round(100.0 * Errors / Requests, 2)
+| project ServiceName, Requests, Errors, ErrorRate, P50, P95, P99
+| order by Requests desc
+
+// ============================================================================
+// TRACE ANALYSIS
+// ============================================================================
+
+// Find slow traces (>1 second)
+OTelTraces
+| where Timestamp > ago(1h)
+| where Duration > 1000000000  // Duration in nanoseconds
+| project Timestamp, TraceId, SpanName, ServiceName, Duration_ms = Duration / 1000000
+| order by Duration_ms desc
+| take 100
+
+// Trace timeline for a specific trace
+let traceId = "YOUR_TRACE_ID_HERE";
+OTelTraces
+| where TraceId == traceId
+| project Timestamp, SpanId, ParentSpanId, SpanName, ServiceName, Duration_ms = Duration / 1000000, StatusCode
+| order by Timestamp asc
+
+// Find traces with errors
+OTelTraces
+| where Timestamp > ago(1h)
+| where StatusCode == "Error"
+| summarize ErrorCount = count() by TraceId, ServiceName
+| order by ErrorCount desc
+| take 50
+
+// Dependency map (service-to-service calls)
+OTelTraces
+| where Timestamp > ago(1h)
+| where SpanKind == "Client"
+| extend TargetService = tostring(SpanAttributes["peer.service"])
+| where isnotempty(TargetService)
+| summarize CallCount = count() by ServiceName, TargetService
+| order by CallCount desc
+
+// ============================================================================
+// LATENCY ANALYSIS
+// ============================================================================
+
+// Latency percentiles over time (for dashboards)
+OTelTraces
+| where Timestamp > ago(1h)
+| where SpanKind == "Server"
+| summarize
+    P50 = percentile(Duration / 1000000, 50),
+    P95 = percentile(Duration / 1000000, 95),
+    P99 = percentile(Duration / 1000000, 99)
+    by bin(Timestamp, 1m), ServiceName
+| order by Timestamp asc
+
+// Latency histogram for a specific service
+OTelTraces
+| where Timestamp > ago(1h)
+| where ServiceName == "frontend"
+| where SpanKind == "Server"
+| summarize Count = count() by LatencyBucket = bin(Duration / 1000000, 50)
+| order by LatencyBucket asc
+
+// Slowest endpoints
+OTelTraces
+| where Timestamp > ago(1h)
+| where SpanKind == "Server"
+| extend Endpoint = tostring(SpanAttributes["http.route"])
+| where isnotempty(Endpoint)
+| summarize
+    AvgLatency = avg(Duration / 1000000),
+    P95Latency = percentile(Duration / 1000000, 95),
+    RequestCount = count()
+    by ServiceName, Endpoint
+| where RequestCount > 10
+| order by P95Latency desc
+| take 20
+
+// ============================================================================
+// ERROR ANALYSIS
+// ============================================================================
+
+// Error rate over time
+OTelTraces
+| where Timestamp > ago(1h)
+| where SpanKind == "Server"
+| summarize
+    Total = count(),
+    Errors = countif(StatusCode == "Error")
+    by bin(Timestamp, 5m), ServiceName
+| extend ErrorRate = round(100.0 * Errors / Total, 2)
+| order by Timestamp asc
+
+// Most common errors
+OTelTraces
+| where Timestamp > ago(1h)
+| where StatusCode == "Error"
+| extend ErrorMessage = tostring(StatusMessage)
+| summarize Count = count() by ServiceName, SpanName, ErrorMessage
+| order by Count desc
+| take 50
+
+// Correlate errors with logs
+let errorTraces = OTelTraces
+| where Timestamp > ago(1h)
+| where StatusCode == "Error"
+| project TraceId, SpanId, ServiceName, SpanName;
+OTelLogs
+| where Timestamp > ago(1h)
+| where SeverityText in ("ERROR", "FATAL", "Error", "Fatal")
+| join kind=inner errorTraces on TraceId
+| project Timestamp, TraceId, ServiceName, SpanName, Body
+| take 100
+
+// ============================================================================
+// LOG ANALYSIS
+// ============================================================================
+
+// Log volume by severity
+OTelLogs
+| where Timestamp > ago(1h)
+| summarize Count = count() by SeverityText
+| order by Count desc
+
+// Recent error logs
+OTelLogs
+| where Timestamp > ago(1h)
+| where SeverityText in ("ERROR", "FATAL", "Error", "Fatal")
+| project Timestamp, ServiceName, SeverityText, Body
+| order by Timestamp desc
+| take 100
+
+// Logs for a specific trace
+let traceId = "YOUR_TRACE_ID_HERE";
+OTelLogs
+| where TraceId == traceId
+| project Timestamp, ServiceName, SeverityText, Body
+| order by Timestamp asc
+
+// Log patterns (find common messages)
+OTelLogs
+| where Timestamp > ago(1h)
+| extend MessagePattern = replace_regex(Body, @"\d+", "N")
+| summarize Count = count() by ServiceName, MessagePattern
+| order by Count desc
+| take 50
+
+// ============================================================================
+// METRICS ANALYSIS
+// ============================================================================
+
+// Available metrics
+OTelMetrics
+| where Timestamp > ago(1h)
+| summarize by MetricName, MetricType, MetricUnit
+| order by MetricName asc
+
+// HTTP request metrics
+OTelMetrics
+| where Timestamp > ago(1h)
+| where MetricName has "http"
+| summarize AvgValue = avg(Value), MaxValue = max(Value) by MetricName, ServiceName
+| order by MetricName asc
+
+// System metrics (CPU, memory)
+OTelMetrics
+| where Timestamp > ago(1h)
+| where MetricName has "system"
+| summarize AvgValue = avg(Value) by MetricName, bin(Timestamp, 1m)
+| order by Timestamp asc
+
+// ============================================================================
+// INFRASTRUCTURE
+// ============================================================================
+
+// Host/pod statistics
+OTelTraces
+| where Timestamp > ago(1h)
+| extend Host = tostring(ResourceAttributes["host.name"])
+| extend Pod = tostring(ResourceAttributes["k8s.pod.name"])
+| summarize SpanCount = count() by Host, Pod, ServiceName
+| order by SpanCount desc
+
+// Data volume analysis
+union OTelTraces, OTelMetrics, OTelLogs
+| where Timestamp > ago(24h)
+| summarize RecordCount = count() by bin(Timestamp, 1h), Type = gettype(.)
+| render timechart
