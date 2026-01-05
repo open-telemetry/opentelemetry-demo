@@ -1,6 +1,6 @@
 <!-- markdownlint-disable-next-line -->
 # <img src="https://opentelemetry.io/img/logos/opentelemetry-logo-nav.png" alt="OTel logo" width="45"> OpenTelemetry Demo
-
+# <img src="https://redash.io/assets/images/integrations/azure_kusto.png" alt="Adx logo" width="80"> 
 [![Slack](https://img.shields.io/badge/slack-@cncf/otel/demo-brightgreen.svg?logo=slack)](https://cloud-native.slack.com/archives/C03B4CWV4DA)
 [![Version](https://img.shields.io/github/v/release/open-telemetry/opentelemetry-demo?color=blueviolet)](https://github.com/open-telemetry/opentelemetry-demo/releases)
 [![Commits](https://img.shields.io/github/commits-since/open-telemetry/opentelemetry-demo/latest?color=ff69b4&include_prereleases)](https://github.com/open-telemetry/opentelemetry-demo/graphs/commit-activity)
@@ -209,6 +209,8 @@ kubectl port-forward -n otel-demo svc/grafana 3000:3000
 - **Scale**: ADX handles petabytes of data with sub-second queries
 
 For detailed setup instructions, see [Azure Deployment Guide](docs/AZURE_DEPLOYMENT.md).
+
+**Want to integrate your own services?** See [Integrate Your Services Guide](docs/INTEGRATE_YOUR_SERVICES.md) for step-by-step instructions on instrumenting Python, Node.js, Java, .NET, and Go applications.
 
 ## Documentation
 
