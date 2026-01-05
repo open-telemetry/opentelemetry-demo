@@ -28,16 +28,11 @@ jobs:
         run: |
           git remote add $UPSTREAM_REMOTE $UPSTREAM_REPO_URL
 
+          exit 1
+
           ./merge-upstream.sh
 
-          if [ $? -ne 0 ]; then
-            echo "::error:: Merge failed; possibly due to merge conflicts"
-            echo "SUCCESS=2" >> $GITHUB_OUTPUT
-            exit 0
-          fi
-
           echo "::notice:: Merge successful"
-          echo "SUCCESS=1" >> $GITHUB_OUTPUT
         working-directory: ./newrelic/scripts
         env:
           UPSTREAM_REPO_URL: ${{ vars.MERGE_UPSTREAM_REPO_URL }}
@@ -46,19 +41,16 @@ jobs:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Create issue if merge failed
-        if: steps.merge-upstream.outputs.SUCCESS == '2'
+        if: ${{ failure() }}
         run: |
+          echo "::error:: Merge failed; possibly due to merge conflicts"
+
           TS_FULL=$(date +"%Y-%m-%d %H:%M:%S")
 
           gh issue create --title "Failed to merge upstream main branch on $TS_FULL" \
             --body "This issue was generated on $TS_FULL by the Merge Upstream action due to a merge conflict or other issue during the upstream merge. Please resolve manually." \
             --label 'merge-failure' \
             --repo $TARGET_REPO
-
-          if [ $? -ne 0 ]; then
-            echo "::error:: Create merge failure issue failed"
-            exit 1
-          fi
 
           echo "::notice:: Issue created for merge failure"
         env:
