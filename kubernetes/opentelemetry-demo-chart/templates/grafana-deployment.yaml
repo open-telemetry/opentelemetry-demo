@@ -20,6 +20,7 @@ spec:
   template:
     metadata:
       labels:
+        azure.workload.identity/use: "true"
         app.kubernetes.io/name: grafana
         app.kubernetes.io/instance: opentelemetry-demo
         app.kubernetes.io/version: "12.1.1"
@@ -30,7 +31,7 @@ spec:
         kubectl.kubernetes.io/default-container: grafana
     spec:
       
-      serviceAccountName: grafana
+      serviceAccountName: grafana-sa
       automountServiceAccountToken: true
       shareProcessNamespace: false
       securityContext:

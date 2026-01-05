@@ -4,6 +4,7 @@
 
 # Namespace to deploy the demo into
 namespace: otel-demo
+azure_tenant_id: ""
 
 # Global labels applied to all resources
 global:
@@ -16,23 +17,14 @@ grafana:
   enabled: true
   adminUser: admin
   adminPassword: admin
-  plugins: grafana-opensearch-datasource
-
-# OpenSearch configuration
-opensearch:
-  enabled: true
-  clusterName: opensearch-cluster
-  maxUnavailable: 1
-
-# Jaeger configuration
-jaeger:
-  enabled: true
-  version: "1.53.0"
+  plugins: grafana-azure-data-explorer-datasource
+  clientid: ""
 
 # OpenTelemetry Collector configuration
 otelCollector:
   enabled: true
   version: "0.135.0"
+  clientid : ""
 
   # Health check endpoint
   healthCheck:
@@ -48,50 +40,10 @@ otelCollector:
 
   # Exporters configuration
   exporters:
-    opensearch:
-      endpoint: http://opensearch:9200
-      logsIndex: otel-logs
-    jaeger:
-      endpoint: jaeger-collector:4317
     prometheus:
       endpoint: http://prometheus:9090/api/v1/otlp
 
-# Prometheus configuration
-prometheus:
-  enabled: true
-  version: v3.6.0
-  evaluationInterval: 1m
-  scrapeInterval: 1m
-  scrapeTimeout: 10s
 
-  # OTLP configuration
-  otlp:
-    keepIdentifyingResourceAttributes: true
-    promoteResourceAttributes:
-      - service.instance.id
-      - service.name
-      - service.namespace
-      - service.version
-      - cloud.availability_zone
-      - cloud.region
-      - deployment.environment.name
-      - k8s.cluster.name
-      - k8s.container.name
-      - k8s.cronjob.name
-      - k8s.daemonset.name
-      - k8s.deployment.name
-      - k8s.job.name
-      - k8s.namespace.name
-      - k8s.node.name
-      - k8s.pod.name
-      - k8s.replicaset.name
-      - k8s.statefulset.name
-      - container.name
-      - host.name
-      - postgresql.database.name
-      - postgresql.schema.name
-      - postgresql.table.name
-      - postgresql.index.name
 
 # Feature flags configuration
 featureFlags:

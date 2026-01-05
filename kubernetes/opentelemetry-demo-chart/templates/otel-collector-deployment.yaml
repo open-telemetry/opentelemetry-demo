@@ -25,15 +25,16 @@ spec:
       annotations:
         checksum/config: b23c30f9b89a34910edbfdafc7072ff305d9e8bb93ca26ffaed9ac1a8872cefb
         opentelemetry_community_demo: "true"
-        prometheus.io/scrape: "true"
+        
       labels:
+        azure.workload.identity/use: "true"
         app.kubernetes.io/name: opentelemetry-collector
         app.kubernetes.io/instance: opentelemetry-demo
         component: standalone-collector
         
     spec:
       
-      serviceAccountName: otel-collector
+      serviceAccountName: otel-collector-sa
       automountServiceAccountToken: true
       securityContext:
         {}
