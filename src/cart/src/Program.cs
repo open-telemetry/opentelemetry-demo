@@ -99,7 +99,6 @@ var ValkeyCartStore = (ValkeyCartStore)app.Services.GetRequiredService<ICartStor
 app.Services.GetRequiredService<StackExchangeRedisInstrumentation>().AddConnection(ValkeyCartStore.GetConnection());
 
 app.MapGrpcService<CartService>();
-//app.MapGrpcHealthChecksService();
 app.MapGrpcService<HealthServiceImpl>();
 
 app.MapGet("/", async context =>
@@ -118,12 +117,8 @@ public class readinessCheck : IHealthCheck
     }
     public async Task<HealthCheckResult> CheckHealthAsync(HealthCheckContext context, CancellationToken cancellationToken = default)
     {
-        //var httpContext = _httpContextAccessor.HttpContext;
-        // Implement your database connectivity check here
-     // var featureClient = httpContext.RequestServices.GetRequiredService<IFeatureClient>();
     
     // Await the async call instead of blocking
-     //  bool failed = 
         bool isSet = await _featureClient.GetBooleanValueAsync("failedReadinessProbe", false); // Replace with actual check
 
         if (isSet)
