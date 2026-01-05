@@ -1,0 +1,103 @@
+# Copyright The OpenTelemetry Authors
+# SPDX-License-Identifier: Apache-2.0
+
+# =============================================================================
+# OpenTelemetry Demo - Azure Infrastructure Configuration
+# =============================================================================
+#
+# Copy this file to terraform.tfvars and modify the values as needed.
+# Do NOT commit terraform.tfvars to version control as it may contain
+# sensitive information.
+#
+# Usage:
+#   cp terraform.tfvars.example terraform.tfvars
+#   # Edit terraform.tfvars with your values
+#   terraform init
+#   terraform plan
+#   terraform apply
+#
+# =============================================================================
+
+# =============================================================================
+# General Configuration
+# =============================================================================
+
+# Project name - used as prefix for all resources
+project_name = "otel-demo"
+
+# Environment (dev, staging, prod)
+environment = "dev"
+
+# Azure region for all resources
+# See: https://azure.microsoft.com/en-us/explore/global-infrastructure/geographies/
+location = "eastus"
+
+# Tags to apply to all resources
+tags = {
+  Project     = "OpenTelemetry Demo"
+  Purpose     = "ADX Observability Demo"
+  ManagedBy   = "Terraform"
+  Owner       = "your-email@example.com"
+}
+
+# =============================================================================
+# Azure Data Explorer Configuration
+# =============================================================================
+
+# SKU for ADX cluster
+# Dev/Test (cheapest, no SLA): "Dev(No SLA)_Standard_D11_v2"
+# Production: "Standard_D11_v2", "Standard_D12_v2", etc.
+adx_sku_name = "Dev(No SLA)_Standard_D11_v2"
+
+# Number of instances (1 for dev, 2+ for production HA)
+adx_sku_capacity = 1
+
+# Database name for telemetry data
+adx_database_name = "otel_demo"
+
+# Hot cache period (days) - data kept in SSD for fast queries
+adx_hot_cache_days = 30
+
+# Data retention period (days) - 365 = 1 year
+adx_retention_days = 365
+
+# Auto-stop when idle (saves costs in dev environments)
+adx_auto_stop_enabled = true
+
+# =============================================================================
+# Azure Kubernetes Service Configuration
+# =============================================================================
+
+# Kubernetes version
+# Check available versions: az aks get-versions --location eastus --output table
+aks_kubernetes_version = "1.29"
+
+# VM size for nodes
+# Standard_DS2_v2: 2 vCPU, 7GB RAM (good for dev)
+# Standard_D4s_v3: 4 vCPU, 16GB RAM (better for prod)
+aks_default_node_pool_vm_size = "Standard_DS2_v2"
+
+# Node count (if auto-scaling disabled)
+aks_default_node_pool_count = 3
+
+# Auto-scaling configuration
+aks_enable_auto_scaling = true
+aks_default_node_pool_min_count = 2
+aks_default_node_pool_max_count = 5
+
+# =============================================================================
+# Service Principal Configuration
+# =============================================================================
+
+# Password rotation period in days (recommended: 180)
+sp_password_rotation_days = 180
+
+# =============================================================================
+# Networking Configuration
+# =============================================================================
+
+# Virtual network address space
+vnet_address_space = ["10.0.0.0/16"]
+
+# AKS subnet address prefix (must be within vnet_address_space)
+aks_subnet_address_prefix = "10.0.1.0/24"
