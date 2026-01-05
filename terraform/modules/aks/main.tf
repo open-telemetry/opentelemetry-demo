@@ -19,7 +19,7 @@ resource "azurerm_kubernetes_cluster" "main" {
     node_count          = var.enable_auto_scaling ? null : var.default_node_pool_count
     min_count           = var.enable_auto_scaling ? var.default_node_pool_min_count : null
     max_count           = var.enable_auto_scaling ? var.default_node_pool_max_count : null
-    auto_scaling_enabled = var.enable_auto_scaling
+    enable_auto_scaling = var.enable_auto_scaling
     vnet_subnet_id      = var.subnet_id
 
     # Node labels for workload placement
@@ -58,7 +58,7 @@ resource "azurerm_kubernetes_cluster" "main" {
   }
 
   # Automatic upgrade channel
-  automatic_upgrade_channel = "patch"
+  automatic_channel_upgrade = "patch"
 
   # Maintenance window (weekends, off-hours)
   maintenance_window {
