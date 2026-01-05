@@ -83,6 +83,56 @@ flowchart LR
     ADX -->|KQL Queries| Grafana
 ```
 
+### OTel Collector Pipeline
+
+The OpenTelemetry Collector receives telemetry from all microservices and routes everything to Azure Data Explorer:
+
+```mermaid
+flowchart LR
+    subgraph Receivers["Receivers"]
+        OTLP[OTLP<br/>gRPC/HTTP]
+        HM[Host Metrics]
+        PG[PostgreSQL]
+        RD[Redis/Valkey]
+        NG[Nginx]
+    end
+
+    subgraph Processors["Processors"]
+        RD2[Resource<br/>Detection]
+        ML[Memory<br/>Limiter]
+        BT[Batch]
+        TR[Transform]
+    end
+
+    subgraph Exporters["Exporters"]
+        ADX[Azure Data<br/>Explorer]
+        DBG[Debug]
+    end
+
+    subgraph Connector["Connector"]
+        SM[Span Metrics<br/>Traces to Metrics]
+    end
+
+    OTLP --> RD2
+    HM --> RD2
+    PG --> RD2
+    RD --> RD2
+    NG --> RD2
+
+    RD2 --> ML --> BT --> TR --> ADX
+    TR --> DBG
+    TR --> SM
+    SM --> BT
+```
+
+| Component | Purpose |
+|-----------|---------|
+| **OTLP Receiver** | Receives traces, metrics, logs from 17 microservices |
+| **Host Metrics** | Collects CPU, memory, disk, network from K8s nodes |
+| **Batch Processor** | Groups 1000-2000 records for efficient ADX ingestion |
+| **Span Metrics** | Generates latency histograms and request counts from traces |
+| **ADX Exporter** | Sends all telemetry to OTelTraces, OTelMetrics, OTelLogs tables |
+
 ### Repository Structure (Azure-Specific Files)
 
 ```mermaid
