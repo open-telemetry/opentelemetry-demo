@@ -83,6 +83,21 @@ output "tenant_id" {
 }
 
 # =============================================================================
+# Grafana ADX Service Principal Outputs
+# =============================================================================
+
+output "grafana_adx_client_id" {
+  description = "Client ID of the Grafana ADX Service Principal"
+  value       = module.identity.grafana_adx_client_id
+}
+
+output "grafana_adx_client_secret" {
+  description = "Client Secret of the Grafana ADX Service Principal"
+  value       = module.identity.grafana_adx_client_secret
+  sensitive   = true
+}
+
+# =============================================================================
 # Helm Installation Command
 # =============================================================================
 

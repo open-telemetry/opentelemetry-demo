@@ -30,3 +30,15 @@ output "federated_credential_id" {
   description = "ID of the Federated Identity Credential"
   value       = azurerm_federated_identity_credential.otel_collector.id
 }
+
+# Grafana ADX Service Principal outputs
+output "grafana_adx_client_id" {
+  description = "Client ID of the Grafana ADX Service Principal"
+  value       = azuread_application.grafana_adx.client_id
+}
+
+output "grafana_adx_client_secret" {
+  description = "Client Secret of the Grafana ADX Service Principal"
+  value       = azuread_application_password.grafana_adx.value
+  sensitive   = true
+}

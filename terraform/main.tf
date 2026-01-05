@@ -170,6 +170,11 @@ resource "local_file" "helm_values" {
       adminUser: admin
       adminPassword: admin
       plugins: grafana-azure-data-explorer-datasource
+      # ADX Service Principal for Grafana datasource
+      # (ADX plugin v7.2.1 doesn't support Workload Identity)
+      adxDatasource:
+        clientId: "${module.identity.grafana_adx_client_id}"
+        clientSecret: "${module.identity.grafana_adx_client_secret}"
 
     # OpenTelemetry Collector Configuration
     otelCollector:
