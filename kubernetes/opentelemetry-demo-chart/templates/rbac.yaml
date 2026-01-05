@@ -47,7 +47,7 @@ metadata:
     app.kubernetes.io/version: "12.1.1"
 subjects:
   - kind: ServiceAccount
-    name: grafana
+    name: grafana-sa
     namespace: {{ .Values.namespace }}
 roleRef:
   kind: ClusterRole
@@ -105,5 +105,5 @@ roleRef:
   name: grafana
 subjects:
   - kind: ServiceAccount
-    name: grafana
+    name: grafana-sa
     namespace: {{ .Values.namespace }}
