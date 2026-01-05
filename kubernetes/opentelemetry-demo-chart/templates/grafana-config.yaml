@@ -33,3 +33,10 @@ data:
     domain = ''
     root_url = %(protocol)s://%(domain)s:%(http_port)s/grafana
     serve_from_sub_path = true
+    {{- if and .Values.azure .Values.azure.workloadIdentity .Values.azure.workloadIdentity.enabled }}
+    [azure]
+    # Workload Identity authentication - uses AZURE_CLIENT_ID, AZURE_TENANT_ID, AZURE_FEDERATED_TOKEN_FILE env vars
+    workload_identity_enabled = true
+    workload_identity_tenant_id = {{ .Values.azure.tenantId }}
+    workload_identity_client_id = {{ .Values.azure.workloadIdentity.clientId }}
+    {{- end }}

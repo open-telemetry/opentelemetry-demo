@@ -1,9 +1,9 @@
 apiVersion: v1
 kind: ServiceAccount
 metadata:
+  {{- if and .Values.azure .Values.azure.workloadIdentity .Values.azure.workloadIdentity.enabled }}
   annotations:
-    azure.workload.identity/client-id: "{{ .Values.grafana.clientid }}"
-    azure.workload.identity/tenant-id: "{{ .Values.azure_tenant_id }}"
-
+    azure.workload.identity/client-id: "{{ .Values.azure.workloadIdentity.clientId }}"
+  {{- end }}
   name: grafana-sa
   namespace: {{ .Values.namespace }}

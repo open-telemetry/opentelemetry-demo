@@ -19,15 +19,20 @@ data:
         uid: adx-telemetry
         type: grafana-azure-data-explorer-datasource
         access: proxy
-        isDefault: true
+        isDefault: false
         editable: true
         jsonData:
           clusterUrl: {{ .Values.adx.clusterUri | quote }}
-          tenantId: {{ .Values.azure.tenantId | quote }}
-          clientId: {{ .Values.azure.clientId | quote }}
           defaultDatabase: {{ .Values.adx.database | quote }}
           dataConsistency: "strongconsistency"
           cacheMaxAge: "0"
+          # Service Principal authentication
+          azureCloud: "AzureCloud"
+          azureCredentials:
+            authType: clientsecret
+            azureCloud: AzureCloud
+            tenantId: $__env{ADX_TENANT_ID}
+            clientId: $__env{ADX_CLIENT_ID}
         secureJsonData:
-          clientSecret: {{ .Values.azure.clientSecret | quote }}
+          azureClientSecret: $__env{ADX_CLIENT_SECRET}
 {{- end }}

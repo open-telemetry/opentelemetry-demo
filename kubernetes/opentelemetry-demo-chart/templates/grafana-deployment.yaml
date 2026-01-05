@@ -227,6 +227,30 @@ spec:
               value: /var/lib/grafana/plugins
             - name: GF_PATHS_PROVISIONING
               value: /etc/grafana/provisioning
+            {{- if and .Values.azure .Values.azure.workloadIdentity .Values.azure.workloadIdentity.enabled }}
+            # Enable Azure Managed Identity for Grafana plugins (ADX datasource)
+            - name: GF_AZURE_MANAGED_IDENTITY_ENABLED
+              value: "true"
+            {{- end }}
+            # ADX Service Principal credentials for datasource
+            - name: ADX_TENANT_ID
+              valueFrom:
+                secretKeyRef:
+                  name: grafana-adx-credentials
+                  key: tenant-id
+                  optional: true
+            - name: ADX_CLIENT_ID
+              valueFrom:
+                secretKeyRef:
+                  name: grafana-adx-credentials
+                  key: client-id
+                  optional: true
+            - name: ADX_CLIENT_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: grafana-adx-credentials
+                  key: client-secret
+                  optional: true
             - name: GOMEMLIMIT
               valueFrom:
                 resourceFieldRef:

@@ -72,7 +72,9 @@
         "justifyMode": "auto",
         "orientation": "auto",
         "reduceOptions": {
-          "calcs": ["lastNotNull"],
+          "calcs": [
+            "lastNotNull"
+          ],
           "fields": "",
           "values": false
         },
@@ -88,9 +90,10 @@
           },
           "querySource": "raw",
           "rawMode": true,
-          "query": "OTelTraces\n| where Timestamp > ago(1h)\n| summarize TotalSpans = count()",
+          "query": "OTelTraces\n| extend ServiceName = tostring(ResourceAttributes["service.name"]), Timestamp = ingestion_time() | where Timestamp > ago(1h)\n| summarize TotalSpans = count()",
           "refId": "A",
-          "resultFormat": "table"
+          "resultFormat": "table",
+          "queryType": "KQL"
         }
       ],
       "title": "Total Spans (1h)",
@@ -137,7 +140,9 @@
         "justifyMode": "auto",
         "orientation": "auto",
         "reduceOptions": {
-          "calcs": ["lastNotNull"],
+          "calcs": [
+            "lastNotNull"
+          ],
           "fields": "",
           "values": false
         },
@@ -153,9 +158,10 @@
           },
           "querySource": "raw",
           "rawMode": true,
-          "query": "OTelTraces\n| where Timestamp > ago(1h)\n| where StatusCode == 'Error'\n| summarize ErrorSpans = count()",
+          "query": "OTelTraces\n| extend ServiceName = tostring(ResourceAttributes["service.name"]), Timestamp = ingestion_time() | where Timestamp > ago(1h)\n| where StatusCode == 'STATUS_CODE_ERROR'\n| summarize ErrorSpans = count()",
           "refId": "A",
-          "resultFormat": "table"
+          "resultFormat": "table",
+          "queryType": "KQL"
         }
       ],
       "title": "Error Spans (1h)",
@@ -198,7 +204,9 @@
         "justifyMode": "auto",
         "orientation": "auto",
         "reduceOptions": {
-          "calcs": ["lastNotNull"],
+          "calcs": [
+            "lastNotNull"
+          ],
           "fields": "",
           "values": false
         },
@@ -214,9 +222,10 @@
           },
           "querySource": "raw",
           "rawMode": true,
-          "query": "OTelTraces\n| where Timestamp > ago(1h)\n| summarize dcount(ServiceName)",
+          "query": "OTelTraces\n| extend ServiceName = tostring(ResourceAttributes["service.name"]), Timestamp = ingestion_time() | where Timestamp > ago(1h)\n| summarize dcount(ServiceName)",
           "refId": "A",
-          "resultFormat": "table"
+          "resultFormat": "table",
+          "queryType": "KQL"
         }
       ],
       "title": "Active Services",
@@ -259,7 +268,9 @@
         "justifyMode": "auto",
         "orientation": "auto",
         "reduceOptions": {
-          "calcs": ["lastNotNull"],
+          "calcs": [
+            "lastNotNull"
+          ],
           "fields": "",
           "values": false
         },
@@ -275,9 +286,10 @@
           },
           "querySource": "raw",
           "rawMode": true,
-          "query": "OTelTraces\n| where Timestamp > ago(1h)\n| summarize P95Latency = percentile(Duration / 1000000, 95)",
+          "query": "OTelTraces\n| extend ServiceName = tostring(ResourceAttributes["service.name"]), Timestamp = ingestion_time() | where Timestamp > ago(1h)\n| summarize P95Latency = percentile(Duration / 1000000, 95)",
           "refId": "A",
-          "resultFormat": "table"
+          "resultFormat": "table",
+          "queryType": "KQL"
         }
       ],
       "title": "P95 Latency (1h)",
@@ -359,7 +371,10 @@
       "id": 7,
       "options": {
         "legend": {
-          "calcs": ["mean", "max"],
+          "calcs": [
+            "mean",
+            "max"
+          ],
           "displayMode": "table",
           "placement": "bottom",
           "showLegend": true
@@ -379,9 +394,10 @@
           },
           "querySource": "raw",
           "rawMode": true,
-          "query": "OTelTraces\n| where Timestamp > ago(1h)\n| where SpanKind == 'Server'\n| summarize RequestRate = count() / 60.0 by ServiceName, bin(Timestamp, 1m)\n| order by Timestamp asc",
+          "query": "OTelTraces\n| extend ServiceName = tostring(ResourceAttributes["service.name"]), Timestamp = ingestion_time() | where Timestamp > ago(1h)\n| where SpanKind == 'SPAN_KIND_SERVER'\n| summarize RequestRate = count() / 60.0 by ServiceName, bin(Timestamp, 1m)\n| order by Timestamp asc",
           "refId": "A",
-          "resultFormat": "time_series"
+          "resultFormat": "time_series",
+          "queryType": "KQL"
         }
       ],
       "title": "Request Rate by Service",
@@ -450,7 +466,10 @@
       "id": 8,
       "options": {
         "legend": {
-          "calcs": ["mean", "max"],
+          "calcs": [
+            "mean",
+            "max"
+          ],
           "displayMode": "table",
           "placement": "bottom",
           "showLegend": true
@@ -470,9 +489,10 @@
           },
           "querySource": "raw",
           "rawMode": true,
-          "query": "OTelTraces\n| where Timestamp > ago(1h)\n| where SpanKind == 'Server'\n| summarize P95Latency = percentile(Duration / 1000000, 95) by ServiceName, bin(Timestamp, 1m)\n| order by Timestamp asc",
+          "query": "OTelTraces\n| extend ServiceName = tostring(ResourceAttributes["service.name"]), Timestamp = ingestion_time() | where Timestamp > ago(1h)\n| where SpanKind == 'SPAN_KIND_SERVER'\n| summarize P95Latency = percentile(Duration / 1000000, 95) by ServiceName, bin(Timestamp, 1m)\n| order by Timestamp asc",
           "refId": "A",
-          "resultFormat": "time_series"
+          "resultFormat": "time_series",
+          "queryType": "KQL"
         }
       ],
       "title": "P95 Latency by Service",
@@ -554,7 +574,9 @@
       "id": 10,
       "options": {
         "legend": {
-          "calcs": ["sum"],
+          "calcs": [
+            "sum"
+          ],
           "displayMode": "table",
           "placement": "bottom",
           "showLegend": true
@@ -574,9 +596,10 @@
           },
           "querySource": "raw",
           "rawMode": true,
-          "query": "OTelLogs\n| where Timestamp > ago(1h)\n| where SeverityText in ('ERROR', 'FATAL', 'Error', 'Fatal')\n| summarize ErrorCount = count() by ServiceName, bin(Timestamp, 5m)\n| order by Timestamp asc",
+          "query": "OTelLogs\n| extend ServiceName = tostring(ResourceAttributes["service.name"]), Timestamp = ingestion_time() | where Timestamp > ago(1h)\n| where SeverityText in ('ERROR', 'FATAL', 'Error', 'Fatal')\n| summarize ErrorCount = count() by ServiceName, bin(Timestamp, 5m)\n| order by Timestamp asc",
           "refId": "A",
-          "resultFormat": "time_series"
+          "resultFormat": "time_series",
+          "queryType": "KQL"
         }
       ],
       "title": "Error Logs by Service",
@@ -627,7 +650,9 @@
         "minVizWidth": 0,
         "orientation": "horizontal",
         "reduceOptions": {
-          "calcs": ["lastNotNull"],
+          "calcs": [
+            "lastNotNull"
+          ],
           "fields": "",
           "values": false
         },
@@ -644,9 +669,10 @@
           },
           "querySource": "raw",
           "rawMode": true,
-          "query": "OTelTraces\n| where Timestamp > ago(1h)\n| where StatusCode == 'Error'\n| summarize ErrorCount = count() by ServiceName\n| order by ErrorCount desc\n| take 10",
+          "query": "OTelTraces\n| extend ServiceName = tostring(ResourceAttributes["service.name"]), Timestamp = ingestion_time() | where Timestamp > ago(1h)\n| where StatusCode == 'STATUS_CODE_ERROR'\n| summarize ErrorCount = count() by ServiceName\n| order by ErrorCount desc\n| take 10",
           "refId": "A",
-          "resultFormat": "table"
+          "resultFormat": "table",
+          "queryType": "KQL"
         }
       ],
       "title": "Top 10 Services by Error Count",
@@ -759,7 +785,9 @@
         "footer": {
           "countRows": false,
           "fields": "",
-          "reducer": ["sum"],
+          "reducer": [
+            "sum"
+          ],
           "show": false
         },
         "showHeader": true,
@@ -780,9 +808,10 @@
           },
           "querySource": "raw",
           "rawMode": true,
-          "query": "OTelTraces\n| where Timestamp > ago(1h)\n| where SpanKind == 'Server'\n| summarize \n    RequestCount = count(),\n    ErrorCount = countif(StatusCode == 'Error'),\n    P50Latency = percentile(Duration / 1000000, 50),\n    P95Latency = percentile(Duration / 1000000, 95),\n    P99Latency = percentile(Duration / 1000000, 99)\n    by ServiceName\n| extend ErrorRate = toreal(ErrorCount) / toreal(RequestCount)\n| project ServiceName, RequestCount, ErrorCount, ErrorRate, P50Latency, P95Latency, P99Latency\n| order by RequestCount desc",
+          "query": "OTelTraces\n| extend ServiceName = tostring(ResourceAttributes["service.name"]), Timestamp = ingestion_time() | where Timestamp > ago(1h)\n| where SpanKind == 'SPAN_KIND_SERVER'\n| summarize \n    RequestCount = count(),\n    ErrorCount = countif(StatusCode == 'STATUS_CODE_ERROR'),\n    P50Latency = percentile(Duration / 1000000, 50),\n    P95Latency = percentile(Duration / 1000000, 95),\n    P99Latency = percentile(Duration / 1000000, 99)\n    by ServiceName\n| extend ErrorRate = toreal(ErrorCount) / toreal(RequestCount)\n| project ServiceName, RequestCount, ErrorCount, ErrorRate, P50Latency, P95Latency, P99Latency\n| order by RequestCount desc",
           "refId": "A",
-          "resultFormat": "table"
+          "resultFormat": "table",
+          "queryType": "KQL"
         }
       ],
       "title": "Service Performance Summary",
@@ -792,7 +821,12 @@
   "refresh": "30s",
   "schemaVersion": 38,
   "style": "dark",
-  "tags": ["opentelemetry", "azure", "adx", "apm"],
+  "tags": [
+    "opentelemetry",
+    "azure",
+    "adx",
+    "apm"
+  ],
   "templating": {
     "list": []
   },
