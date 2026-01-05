@@ -1,0 +1,84 @@
+# Copyright The OpenTelemetry Authors
+# SPDX-License-Identifier: Apache-2.0
+
+# Weaver configuration for service-centric telemetry documentation
+# This generates one markdown page per service from the telemetry schema
+#
+# Naming conventions:
+# - service.<name>: Service-specific attribute groups (used by individual services)
+# - metric.<name>.*: Service-specific metrics
+# - registry.<domain>: Logical attribute groups (product, user, order, shipping, etc.)
+#
+# The filter uses jq syntax to:
+# 1. Select all attribute_group types
+# 2. Filter to only service.* groups (service-specific usage)
+# 3. Group by service name (the part after "service.")
+# 4. Create context with id, groups, and metrics for each service
+
+templates:
+  # Generate mkdocs.yml with dynamic navigation
+  # Inherits from mkdocs-base.yml for static configuration
+  # The filter extracts registry and service names from group IDs
+  # Uses objects with 'name' field to avoid quoted array elements
+  - pattern: mkdocs_nav.yml.j2
+    filter: >
+      {
+        registries: [.groups[] | select(.type == "attribute_group" and (.id | startswith("registry."))) | {name: (.id | split(".") | .[1]), id: .id}] | unique_by(.name) | sort_by(.name),
+        services: ([.groups[] | select(.type == "attribute_group" and (.id | startswith("service."))) | {name: (.id | split(".")| .[1])}] + [.groups[] |
+          select(.type == "metric" and (.id | startswith("metric."))) | {name: (.id | split(".")[1])}]) | unique_by(.name) | sort_by(.name)
+      }
+    application_mode: single
+    file_name: mkdocs.yml
+
+  # Generate README.md home page with service overview
+  - pattern: readme.md.j2
+    filter: "."
+    application_mode: single
+    file_name: README.md
+
+  # Generate per-service documentation pages
+  # Each service gets its own page with all its attribute groups and metrics
+  # The filter combines service.* attribute groups with metric.* groups by service name
+  - pattern: service.md.j2
+    filter: >
+      [
+        (.groups | map(select(.type == "attribute_group" and (.id | startswith("service."))))),
+        (.groups | map(select(.type == "metric" and (.id | startswith("metric.")))))
+      ] | add | group_by(
+        .id | split(".") | .[1]
+      ) | map({
+        id: .[0].id | split(".") | .[1],
+        groups: [.[] | select(.type == "attribute_group")],
+        metrics: [.[] | select(.type == "metric")]
+      })
+    application_mode: each
+    file_name: services/{{ ctx.id | snake_case }}.md
+
+  # Generate per-registry attribute documentation pages
+  # Each registry (product, user, order, shipping, misc) gets its own page
+  - pattern: registry.md.j2
+    filter: >
+      .groups
+      | map(select(.type == "attribute_group"))
+      | map(select(.id | startswith("registry.")))
+      | group_by(.id | split(".") | .[1])
+      | map({id: .[0].id | split(".") | .[1], groups: .})
+    application_mode: each
+    file_name: attributes/{{ ctx.id | snake_case }}.md
+
+# Acronyms to preserve in title case transformations
+acronyms:
+  - AI
+  - API
+  - CPU
+  - DB
+  - DNS
+  - GCP
+  - HTTP
+  - ID
+  - LLM
+  - OTel
+  - RPC
+  - SQL
+  - TLS
+  - URL
