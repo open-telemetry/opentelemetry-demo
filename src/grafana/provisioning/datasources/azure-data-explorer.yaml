@@ -1,0 +1,82 @@
+# Copyright The OpenTelemetry Authors
+# SPDX-License-Identifier: Apache-2.0
+#
+# Azure Data Explorer Datasource for Grafana
+#
+# This datasource connects Grafana to ADX for querying traces, metrics, and logs.
+# Requires the grafana-azure-data-explorer-datasource plugin.
+#
+apiVersion: 1
+
+datasources:
+  - name: Azure Data Explorer
+    uid: adx-telemetry
+    type: grafana-azure-data-explorer-datasource
+    access: proxy
+    editable: true
+    isDefault: false
+    jsonData:
+      # Azure cloud environment
+      azureCloud: AzureCloud
+
+      # ADX cluster URL (without https://)
+      clusterUrl: ${ADX_CLUSTER_URI}
+
+      # Default database for queries
+      defaultDatabase: ${ADX_DATABASE}
+
+      # Azure AD authentication
+      tenantId: ${AZURE_TENANT_ID}
+      clientId: ${AZURE_CLIENT_ID}
+
+      # Query timeout in seconds
+      queryTimeout: 120s
+
+      # Enable dynamic caching
+      dynamicCaching: true
+
+      # Data consistency level
+      dataConsistency: strongconsistency
+
+      # Cache max age in seconds
+      cacheMaxAge: 300s
+
+    secureJsonData:
+      # Service Principal client secret
+      clientSecret: ${AZURE_CLIENT_SECRET}
+
+  # Traces datasource view (pointing to same ADX but configured for traces)
+  - name: ADX Traces
+    uid: adx-traces
+    type: grafana-azure-data-explorer-datasource
+    access: proxy
+    editable: true
+    isDefault: false
+    jsonData:
+      azureCloud: AzureCloud
+      clusterUrl: ${ADX_CLUSTER_URI}
+      defaultDatabase: ${ADX_DATABASE}
+      tenantId: ${AZURE_TENANT_ID}
+      clientId: ${AZURE_CLIENT_ID}
+      queryTimeout: 120s
+      dynamicCaching: true
+    secureJsonData:
+      clientSecret: ${AZURE_CLIENT_SECRET}
+
+  # Logs datasource view
+  - name: ADX Logs
+    uid: adx-logs
+    type: grafana-azure-data-explorer-datasource
+    access: proxy
+    editable: true
+    isDefault: false
+    jsonData:
+      azureCloud: AzureCloud
+      clusterUrl: ${ADX_CLUSTER_URI}
+      defaultDatabase: ${ADX_DATABASE}
+      tenantId: ${AZURE_TENANT_ID}
+      clientId: ${AZURE_CLIENT_ID}
+      queryTimeout: 120s
+      dynamicCaching: true
+    secureJsonData:
+      clientSecret: ${AZURE_CLIENT_SECRET}
