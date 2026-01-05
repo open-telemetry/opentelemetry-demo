@@ -1,15 +1,36 @@
 # Copyright The OpenTelemetry Authors
 # SPDX-License-Identifier: Apache-2.0
 
-variable "application_name" {
-  description = "Name of the Azure AD application"
+variable "identity_name" {
+  description = "Name of the User-Assigned Managed Identity"
   type        = string
 }
 
-variable "password_rotation_days" {
-  description = "Number of days before the password expires"
-  type        = number
-  default     = 180
+variable "resource_group_name" {
+  description = "Name of the resource group"
+  type        = string
+}
+
+variable "location" {
+  description = "Azure region for the managed identity"
+  type        = string
+}
+
+variable "oidc_issuer_url" {
+  description = "OIDC issuer URL from AKS cluster for workload identity federation"
+  type        = string
+}
+
+variable "namespace" {
+  description = "Kubernetes namespace where the service account is created"
+  type        = string
+  default     = "otel-demo"
+}
+
+variable "service_account_name" {
+  description = "Name of the Kubernetes service account to federate"
+  type        = string
+  default     = "otel-collector-sa"
 }
 
 variable "adx_cluster_id" {
@@ -23,7 +44,7 @@ variable "adx_database_name" {
 }
 
 variable "tags" {
-  description = "Tags to apply (for documentation purposes)"
+  description = "Tags to apply to resources"
   type        = map(string)
   default     = {}
 }

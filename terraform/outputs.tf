@@ -53,72 +53,94 @@ output "aks_cluster_fqdn" {
   value       = module.aks.cluster_fqdn
 }
 
+output "aks_oidc_issuer_url" {
+  description = "OIDC issuer URL for workload identity"
+  value       = module.aks.oidc_issuer_url
+}
+
 output "aks_get_credentials_command" {
   description = "Azure CLI command to get AKS credentials"
   value       = "az aks get-credentials --resource-group ${azurerm_resource_group.main.name} --name ${module.aks.cluster_name}"
 }
 
 # =============================================================================
-# Service Principal Outputs
+# Workload Identity Outputs
 # =============================================================================
 
-output "service_principal_client_id" {
-  description = "Client ID of the service principal"
+output "workload_identity_client_id" {
+  description = "Client ID of the Managed Identity (for workload identity annotation)"
   value       = module.identity.client_id
 }
 
-output "service_principal_tenant_id" {
-  description = "Tenant ID for the service principal"
+output "workload_identity_name" {
+  description = "Name of the User-Assigned Managed Identity"
+  value       = module.identity.identity_name
+}
+
+output "tenant_id" {
+  description = "Azure AD Tenant ID"
   value       = module.identity.tenant_id
 }
 
-output "service_principal_secret_expiry" {
-  description = "Expiry date of the service principal secret"
-  value       = module.identity.password_expiry
-}
+# =============================================================================
+# Helm Installation Command
+# =============================================================================
 
-# =============================================================================
-# Deployment Instructions
-# =============================================================================
+output "helm_install_command" {
+  description = "Helm command to deploy the OpenTelemetry Demo"
+  value       = "helm install otel-demo ./kubernetes/opentelemetry-demo-chart -f ./kubernetes/opentelemetry-demo-chart/values-generated.yaml -n otel-demo --create-namespace"
+}
 
 output "next_steps" {
   description = "Next steps after Terraform deployment"
   value       = <<-EOT
 
     ================================================================================
-    DEPLOYMENT COMPLETE!
+    DEPLOYMENT COMPLETE - WORKLOAD IDENTITY ENABLED!
     ================================================================================
 
-    Next steps:
+    Terraform has created:
+    - AKS cluster with OIDC issuer and Workload Identity enabled
+    - User-Assigned Managed Identity with ADX permissions
+    - Federated Identity Credential linking K8s service account to the identity
+    - values-generated.yaml with Workload Identity configuration
+
+    NO SECRETS REQUIRED! Authentication uses Azure AD Workload Identity.
+
+    DEPLOY WITH HELM
+    ----------------
 
     1. Get AKS credentials:
-       ${module.aks.cluster_name != "" ? "az aks get-credentials --resource-group ${azurerm_resource_group.main.name} --name ${module.aks.cluster_name}" : ""}
+       az aks get-credentials --resource-group ${azurerm_resource_group.main.name} --name ${module.aks.cluster_name}
 
-    2. Create the otel-demo namespace:
-       kubectl create namespace otel-demo
+    2. Deploy with Helm using generated values:
+       helm install otel-demo ./kubernetes/opentelemetry-demo-chart \
+         -f ./kubernetes/opentelemetry-demo-chart/values-generated.yaml \
+         -n otel-demo --create-namespace
 
-    3. Apply the generated secrets:
-       kubectl apply -f kubernetes/azure/secrets.yaml
-
-    4. Deploy the OpenTelemetry Demo:
-       kubectl apply -f kubernetes/opentelemetry-demo-azure.yaml
-
-    5. Verify pods are running:
+    3. Verify pods are running:
        kubectl get pods -n otel-demo
 
-    6. Access Grafana (after port-forward):
-       kubectl port-forward -n otel-demo svc/grafana 3000:3000
-       Open: http://localhost:3000
+    4. Access the demo:
+       kubectl port-forward -n otel-demo svc/frontend-proxy 8080:8080
+       kubectl port-forward -n otel-demo svc/grafana 3000:80
 
     ================================================================================
-    IMPORTANT INFORMATION
+    WORKLOAD IDENTITY CONFIGURATION
     ================================================================================
+
+    Managed Identity Client ID: ${module.identity.client_id}
+    OIDC Issuer URL: ${module.aks.oidc_issuer_url}
+    Federated Service Account: system:serviceaccount:otel-demo:otel-collector-sa
+
+    The OTel Collector pod will automatically authenticate to ADX using:
+    - azure.workload.identity/use: "true" label
+    - azure.workload.identity/client-id annotation on service account
+    - Projected service account token volume (auto-mounted by AKS)
 
     ADX Cluster URI: ${module.adx.cluster_uri}
     ADX Database: ${module.adx.database_name}
-    Service Principal Secret Expires: ${module.identity.password_expiry}
-
-    Remember to rotate the service principal secret before it expires!
+    AKS Cluster: ${module.aks.cluster_name}
 
   EOT
 }

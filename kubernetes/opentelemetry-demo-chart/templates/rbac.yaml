@@ -72,7 +72,7 @@ roleRef:
   name: otel-collector
 subjects:
   - kind: ServiceAccount
-    name: otel-collector
+    name: otel-collector-sa
     namespace: {{ .Values.namespace }}
 
 ---

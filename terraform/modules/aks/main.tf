@@ -37,12 +37,18 @@ resource "azurerm_kubernetes_cluster" "main" {
     type = "SystemAssigned"
   }
 
+  # Enable OIDC Issuer and Workload Identity for secure pod authentication
+  oidc_issuer_enabled       = true
+  workload_identity_enabled = true
+
   # Network configuration
   network_profile {
     network_plugin    = "azure"
     network_policy    = "azure"
     load_balancer_sku = "standard"
     outbound_type     = "loadBalancer"
+    service_cidr      = "172.16.0.0/16"
+    dns_service_ip    = "172.16.0.10"
   }
 
   # Azure Monitor integration (optional but recommended)

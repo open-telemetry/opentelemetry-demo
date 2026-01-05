@@ -320,7 +320,8 @@ kubectl exec -n otel-demo -it <collector-pod> -- wget -qO- https://your-cluster.
 
 ## Next Steps
 
-- Explore [KQL queries](adx/example-queries.kql) for common observability patterns
+- **[Integrate Your Own Services](INTEGRATE_YOUR_SERVICES.md)** - Step-by-step guide to instrument your applications
+- Explore [KQL queries](../adx/example-queries.kql) for common observability patterns
 - Customize dashboards for your use cases
 - Set up alerts in Grafana
 - Configure Azure Monitor integration

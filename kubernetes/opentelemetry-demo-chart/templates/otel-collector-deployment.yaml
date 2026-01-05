@@ -23,17 +23,16 @@ spec:
   template:
     metadata:
       annotations:
-        checksum/config: b23c30f9b89a34910edbfdafc7072ff305d9e8bb93ca26ffaed9ac1a8872cefb
+        checksum/config: {{ include (print $.Template.BasePath "/otel-collector-config.yaml") . | sha256sum }}
         opentelemetry_community_demo: "true"
-        
       labels:
+        {{- if and .Values.azure .Values.azure.workloadIdentity .Values.azure.workloadIdentity.enabled }}
         azure.workload.identity/use: "true"
+        {{- end }}
         app.kubernetes.io/name: opentelemetry-collector
         app.kubernetes.io/instance: opentelemetry-demo
         component: standalone-collector
-        
     spec:
-      
       serviceAccountName: otel-collector-sa
       automountServiceAccountToken: true
       securityContext:
@@ -47,7 +46,6 @@ spec:
           image: "otel/opentelemetry-collector-contrib:0.135.0"
           imagePullPolicy: IfNotPresent
           ports:
-            
             - name: jaeger-compact
               containerPort: 6831
               protocol: UDP
@@ -77,6 +75,58 @@ spec:
                   fieldPath: status.podIP
             - name: GOMEMLIMIT
               value: "160MiB"
+            {{- if .Values.adx.enabled }}
+            # Azure Data Explorer configuration
+            - name: ADX_CLUSTER_URI
+              value: {{ .Values.adx.clusterUri | quote }}
+            - name: ADX_DATABASE
+              value: {{ .Values.adx.database | quote }}
+            {{- if and .Values.azure .Values.azure.workloadIdentity .Values.azure.workloadIdentity.enabled }}
+            # Workload Identity - uses Azure AD token from projected volume
+            # No secrets needed! The Azure SDK automatically picks up the token
+            - name: AZURE_TENANT_ID
+              value: {{ .Values.azure.tenantId | quote }}
+            - name: AZURE_CLIENT_ID
+              value: {{ .Values.azure.workloadIdentity.clientId | quote }}
+            - name: AZURE_FEDERATED_TOKEN_FILE
+              value: "/var/run/secrets/azure/tokens/azure-identity-token"
+            {{- else }}
+            # Service Principal authentication (legacy - uses secrets)
+            {{- if .Values.azure.existingSecret }}
+            - name: AZURE_TENANT_ID
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.azure.existingSecret }}
+                  key: AZURE_TENANT_ID
+            - name: AZURE_CLIENT_ID
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.azure.existingSecret }}
+                  key: AZURE_CLIENT_ID
+            - name: AZURE_CLIENT_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.azure.existingSecret }}
+                  key: AZURE_CLIENT_SECRET
+            {{- else if .Values.azure.clientSecret }}
+            - name: AZURE_TENANT_ID
+              valueFrom:
+                secretKeyRef:
+                  name: adx-credentials
+                  key: AZURE_TENANT_ID
+            - name: AZURE_CLIENT_ID
+              valueFrom:
+                secretKeyRef:
+                  name: adx-credentials
+                  key: AZURE_CLIENT_ID
+            - name: AZURE_CLIENT_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: adx-credentials
+                  key: AZURE_CLIENT_SECRET
+            {{- end }}
+            {{- end }}
+            {{- end }}
           livenessProbe:
             httpGet:
               path: /

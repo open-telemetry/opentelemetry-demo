@@ -1,0 +1,123 @@
+# =============================================================================
+# Azure Data Explorer Deployment Values
+# =============================================================================
+#
+# This is an example values file for deploying the OpenTelemetry Demo
+# with Azure Data Explorer as the telemetry backend.
+#
+# Usage:
+#   helm install otel-demo ./kubernetes/opentelemetry-demo-chart \
+#     -f ./kubernetes/opentelemetry-demo-chart/values-azure.yaml \
+#     --set azure.tenantId=YOUR_TENANT_ID \
+#     --set azure.clientId=YOUR_CLIENT_ID \
+#     --set azure.clientSecret=YOUR_CLIENT_SECRET \
+#     --set adx.clusterUri=https://YOUR_CLUSTER.REGION.kusto.windows.net
+#
+# Or create a local copy and fill in your values:
+#   cp values-azure.yaml my-values.yaml
+#   # Edit my-values.yaml with your Azure credentials
+#   helm install otel-demo ./kubernetes/opentelemetry-demo-chart -f my-values.yaml
+#
+# =============================================================================
+
+# Namespace for the demo
+namespace: otel-demo
+
+# =============================================================================
+# Azure Data Explorer Configuration
+# =============================================================================
+adx:
+  enabled: true
+
+  # REQUIRED: Your ADX cluster URI
+  # Example: https://mycluster.eastus.kusto.windows.net
+  clusterUri: ""
+
+  # Database name (created by Terraform or manually)
+  database: "otel_demo"
+
+  # Table names (must match schema in adx/schema.kql)
+  tables:
+    traces: "OTelTraces"
+    metrics: "OTelMetrics"
+    logs: "OTelLogs"
+
+  # Ingestion mappings (created by schema.kql)
+  mappings:
+    traces: "otel_traces_mapping"
+    metrics: "otel_metrics_mapping"
+    logs: "otel_logs_mapping"
+
+  # Ingestion type:
+  # - "managed": Lower latency (~30s), good for real-time monitoring
+  # - "queued": Higher throughput, better for high-volume production
+  ingestionType: "managed"
+
+# =============================================================================
+# Azure Authentication
+# =============================================================================
+# Option 1: Provide credentials directly (for dev/testing)
+# Option 2: Use existingSecret to reference a pre-created secret
+azure:
+  # REQUIRED: Azure AD tenant ID
+  tenantId: ""
+
+  # REQUIRED: Service Principal application (client) ID
+  clientId: ""
+
+  # REQUIRED: Service Principal client secret
+  clientSecret: ""
+
+  # Optional: Use an existing Kubernetes secret instead of creating one
+  # If set, tenantId/clientId/clientSecret above are ignored
+  # The secret must have keys: AZURE_TENANT_ID, AZURE_CLIENT_ID, AZURE_CLIENT_SECRET
+  existingSecret: ""
+
+# =============================================================================
+# Grafana Configuration
+# =============================================================================
+grafana:
+  enabled: true
+  adminUser: admin
+  adminPassword: admin  # Change this in production!
+  plugins: grafana-azure-data-explorer-datasource
+
+# =============================================================================
+# OpenTelemetry Collector Configuration
+# =============================================================================
+otelCollector:
+  enabled: true
+  version: "0.135.0"
+
+  healthCheck:
+    enabled: true
+    port: 13133
+
+  # Queue settings for ADX exporter (tune for your throughput)
+  queue:
+    enabled: true
+    numConsumers: 10
+    queueSize: 5000
+
+  # Retry settings for ADX exporter
+  retry:
+    enabled: true
+    initialInterval: 5s
+    maxInterval: 30s
+    maxElapsedTime: 300s
+
+# =============================================================================
+# Feature Flags (for demo scenarios)
+# =============================================================================
+featureFlags:
+  productCatalogFailure: "off"
+  recommendationCacheFailure: "off"
+  adManualGc: "off"
+  adHighCpu: "off"
+  adFailure: "off"
+  kafkaQueueProblems: "off"
+  cartFailure: "off"
+  paymentFailure: "off"
+  paymentUnreachable: "off"
+  loadGeneratorFloodHomepage: "off"
+  imageSlowLoad: "off"

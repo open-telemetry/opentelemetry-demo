@@ -44,10 +44,18 @@ data:
       # Azure Data Explorer exporter
       azuredataexplorer:
         cluster_uri: ${env:ADX_CLUSTER_URI}
+        db_name: ${env:ADX_DATABASE}
+        {{- if and .Values.azure .Values.azure.workloadIdentity .Values.azure.workloadIdentity.enabled }}
+        # Workload Identity authentication (recommended)
+        # Uses Azure SDK DefaultAzureCredential which automatically picks up
+        # AZURE_CLIENT_ID, AZURE_TENANT_ID, AZURE_FEDERATED_TOKEN_FILE from env
+        use_azure_auth: true
+        {{- else }}
+        # Service Principal authentication (legacy)
         application_id: ${env:AZURE_CLIENT_ID}
         application_key: ${env:AZURE_CLIENT_SECRET}
         tenant_id: ${env:AZURE_TENANT_ID}
-        db_name: ${env:ADX_DATABASE}
+        {{- end }}
         metrics_table_name: "OTelMetrics"
         logs_table_name: "OTelLogs"
         traces_table_name: "OTelTraces"
@@ -116,6 +124,10 @@ data:
               - replace_pattern(name, "\\?.*", "")
               - replace_match(name, "GET /api/products/*", "GET /api/products/{productId}")
 
+    extensions:
+      health_check:
+        endpoint: 0.0.0.0:13133
+
     connectors:
       spanmetrics:
         histogram:
@@ -131,6 +143,7 @@ data:
         metrics_flush_interval: 15s
 
     service:
+      extensions: [health_check]
       pipelines:
         traces:
           receivers: [otlp]
@@ -150,4 +163,9 @@ data:
           level: info
         metrics:
           level: detailed
-          address: 0.0.0.0:8888
+          readers:
+            - pull:
+                exporter:
+                  prometheus:
+                    host: 0.0.0.0
+                    port: 8888

@@ -1,6 +1,6 @@
 <!-- markdownlint-disable-next-line -->
 # <img src="https://opentelemetry.io/img/logos/opentelemetry-logo-nav.png" alt="OTel logo" width="45"> OpenTelemetry Demo
-
+# <img src="https://redash.io/assets/images/integrations/azure_kusto.png" alt="Adx logo" width="80"> 
 [![Slack](https://img.shields.io/badge/slack-@cncf/otel/demo-brightgreen.svg?logo=slack)](https://cloud-native.slack.com/archives/C03B4CWV4DA)
 [![Version](https://img.shields.io/github/v/release/open-telemetry/opentelemetry-demo?color=blueviolet)](https://github.com/open-telemetry/opentelemetry-demo/releases)
 [![Commits](https://img.shields.io/github/commits-since/open-telemetry/opentelemetry-demo/latest?color=ff69b4&include_prereleases)](https://github.com/open-telemetry/opentelemetry-demo/graphs/commit-activity)
@@ -83,6 +83,56 @@ flowchart LR
     ADX -->|KQL Queries| Grafana
 ```
 
+### OTel Collector Pipeline
+
+The OpenTelemetry Collector receives telemetry from all microservices and routes everything to Azure Data Explorer:
+
+```mermaid
+flowchart LR
+    subgraph Receivers["Receivers"]
+        OTLP[OTLP<br/>gRPC/HTTP]
+        HM[Host Metrics]
+        PG[PostgreSQL]
+        RD[Redis/Valkey]
+        NG[Nginx]
+    end
+
+    subgraph Processors["Processors"]
+        RD2[Resource<br/>Detection]
+        ML[Memory<br/>Limiter]
+        BT[Batch]
+        TR[Transform]
+    end
+
+    subgraph Exporters["Exporters"]
+        ADX[Azure Data<br/>Explorer]
+        DBG[Debug]
+    end
+
+    subgraph Connector["Connector"]
+        SM[Span Metrics<br/>Traces to Metrics]
+    end
+
+    OTLP --> RD2
+    HM --> RD2
+    PG --> RD2
+    RD --> RD2
+    NG --> RD2
+
+    RD2 --> ML --> BT --> TR --> ADX
+    TR --> DBG
+    TR --> SM
+    SM --> BT
+```
+
+| Component | Purpose |
+|-----------|---------|
+| **OTLP Receiver** | Receives traces, metrics, logs from 17 microservices |
+| **Host Metrics** | Collects CPU, memory, disk, network from K8s nodes |
+| **Batch Processor** | Groups 1000-2000 records for efficient ADX ingestion |
+| **Span Metrics** | Generates latency histograms and request counts from traces |
+| **ADX Exporter** | Sends all telemetry to OTelTraces, OTelMetrics, OTelLogs tables |
+
 ### Repository Structure (Azure-Specific Files)
 
 ```mermaid
@@ -131,7 +181,7 @@ cp terraform.tfvars.example terraform.tfvars
 # Edit terraform.tfvars with your preferences
 terraform init && terraform apply
 
-# 2. Deploy to AKS
+# 2. Deploy to AKS using Helm (automatic - uses Terraform-generated values)
 cd ..
 ./scripts/deploy-to-aks.sh
 
@@ -139,6 +189,12 @@ cd ..
 kubectl port-forward -n otel-demo svc/frontend-proxy 8080:8080
 kubectl port-forward -n otel-demo svc/grafana 3000:3000
 ```
+
+**What happens:**
+1. Terraform creates ADX cluster, AKS, and Service Principal
+2. Terraform generates `values-generated.yaml` with all credentials
+3. The deployment script uses Helm to install the chart with generated values
+4. All telemetry flows from microservices -> OTel Collector -> ADX
 
 ### What's Included
 
@@ -159,6 +215,8 @@ kubectl port-forward -n otel-demo svc/grafana 3000:3000
 - **Scale**: ADX handles petabytes of data with sub-second queries
 
 For detailed setup instructions, see [Azure Deployment Guide](docs/AZURE_DEPLOYMENT.md).
+
+**Want to integrate your own services?** See [Integrate Your Services Guide](docs/INTEGRATE_YOUR_SERVICES.md) for step-by-step instructions on instrumenting Python, Node.js, Java, .NET, and Go applications.
 
 ## Documentation
 
