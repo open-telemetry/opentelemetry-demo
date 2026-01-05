@@ -46,6 +46,119 @@ your preferred deployment method:
 
 - [Docker](https://opentelemetry.io/docs/demo/docker_deployment/)
 - [Kubernetes](https://opentelemetry.io/docs/demo/kubernetes_deployment/)
+- **[Azure Data Explorer](#azure-data-explorer-deployment)** (this fork)
+
+## Azure Data Explorer Deployment
+
+This fork integrates **Azure Data Explorer (ADX)** as the telemetry backend,
+providing a cost-effective alternative to tools like Datadog and Coralogix for
+organizations using Azure.
+
+### Service Flow
+
+![Service Flow](assets/service-flow.jpg)
+
+### Architecture
+
+```mermaid
+flowchart LR
+    subgraph AKS["Azure Kubernetes Service"]
+        subgraph Services["Microservices (17)"]
+            FE[Frontend]
+            Cart[Cart]
+            Checkout[Checkout]
+            Other[...]
+        end
+
+        OTel[OTel Collector]
+        Grafana[Grafana]
+    end
+
+    subgraph Azure["Azure Cloud"]
+        ADX[(Azure Data Explorer)]
+    end
+
+    Services -->|OTLP| OTel
+    OTel -->|Traces/Metrics/Logs| ADX
+    ADX -->|KQL Queries| Grafana
+```
+
+### Repository Structure (Azure-Specific Files)
+
+```mermaid
+graph TD
+    Root[adx-opentelemetry-demo]
+
+    Root --> Terraform[terraform/]
+    Root --> K8s[kubernetes/azure/]
+    Root --> OTel[src/otel-collector/]
+    Root --> Graf[src/grafana/provisioning/]
+    Root --> ADX[adx/]
+    Root --> Scripts[scripts/]
+    Root --> Docs[docs/]
+
+    Terraform --> TFMain[main.tf]
+    Terraform --> TFVars[variables.tf]
+    Terraform --> TFMods[modules/]
+    TFMods --> ModADX[adx/]
+    TFMods --> ModAKS[aks/]
+    TFMods --> ModID[identity/]
+
+    K8s --> Secrets[secrets-template.yaml]
+    K8s --> OTelCM[otel-collector-configmap.yaml]
+
+    OTel --> ConfigAzure[otelcol-config-azure.yml]
+
+    Graf --> DS[datasources/]
+    Graf --> Dash[dashboards/demo/]
+    DS --> ADXDS[azure-data-explorer.yaml]
+    Dash --> APMDash[adx-apm-dashboard.json]
+
+    ADX --> Schema[schema.kql]
+    ADX --> Queries[example-queries.kql]
+
+    Scripts --> Deploy[deploy-to-aks.sh]
+
+    Docs --> AzureDoc[AZURE_DEPLOYMENT.md]
+```
+
+### Quick Start (Azure)
+
+```bash
+# 1. Deploy Azure infrastructure with Terraform
+cd terraform
+cp terraform.tfvars.example terraform.tfvars
+# Edit terraform.tfvars with your preferences
+terraform init && terraform apply
+
+# 2. Deploy to AKS
+cd ..
+./scripts/deploy-to-aks.sh
+
+# 3. Access the demo
+kubectl port-forward -n otel-demo svc/frontend-proxy 8080:8080
+kubectl port-forward -n otel-demo svc/grafana 3000:3000
+```
+
+### What's Included
+
+| Component | Description |
+|-----------|-------------|
+| `terraform/` | Infrastructure as Code for ADX, AKS, and Service Principal |
+| `kubernetes/azure/` | Azure-specific Kubernetes manifests |
+| `src/otel-collector/otelcol-config-azure.yml` | OTel Collector config with ADX exporter |
+| `src/grafana/provisioning/datasources/azure-data-explorer.yaml` | Grafana ADX datasource |
+| `adx/` | KQL schema and example queries |
+
+### Benefits vs. SaaS Observability
+
+- **Cost**: Pay only for Azure resources (ADX Dev SKU ~$150/month)
+- **Data Ownership**: All telemetry stays in your Azure tenant
+- **Customization**: Full control over retention, queries, and dashboards
+- **Integration**: Native Azure security (Managed Identity, RBAC)
+- **Scale**: ADX handles petabytes of data with sub-second queries
+
+For detailed setup instructions, see [Azure Deployment Guide](docs/AZURE_DEPLOYMENT.md).
 
 ## Documentation
 
