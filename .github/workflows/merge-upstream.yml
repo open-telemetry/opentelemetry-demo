@@ -28,11 +28,7 @@ jobs:
         run: |
           git remote add $UPSTREAM_REMOTE $UPSTREAM_REPO_URL
 
-          exit 1
-
           ./merge-upstream.sh
-
-          echo "::notice:: Merge successful"
         working-directory: ./newrelic/scripts
         env:
           UPSTREAM_REPO_URL: ${{ vars.MERGE_UPSTREAM_REPO_URL }}
