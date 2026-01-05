@@ -81,6 +81,15 @@ output "service_principal_secret_expiry" {
 # Deployment Instructions
 # =============================================================================
 
+# =============================================================================
+# Helm Installation Command
+# =============================================================================
+
+output "helm_install_command" {
+  description = "Helm command to deploy the OpenTelemetry Demo"
+  value       = "helm install otel-demo ./kubernetes/opentelemetry-demo-chart -f ./kubernetes/opentelemetry-demo-chart/values-generated.yaml"
+}
+
 output "next_steps" {
   description = "Next steps after Terraform deployment"
   value       = <<-EOT
@@ -89,26 +98,41 @@ output "next_steps" {
     DEPLOYMENT COMPLETE!
     ================================================================================
 
-    Next steps:
+    Terraform has generated:
+    - kubernetes/azure/secrets.yaml (K8s secret with ADX credentials)
+    - kubernetes/opentelemetry-demo-chart/values-generated.yaml (Helm values)
+
+    OPTION 1: Deploy with Helm (Recommended)
+    ----------------------------------------
 
     1. Get AKS credentials:
-       ${module.aks.cluster_name != "" ? "az aks get-credentials --resource-group ${azurerm_resource_group.main.name} --name ${module.aks.cluster_name}" : ""}
+       az aks get-credentials --resource-group ${azurerm_resource_group.main.name} --name ${module.aks.cluster_name}
 
-    2. Create the otel-demo namespace:
-       kubectl create namespace otel-demo
+    2. Deploy with Helm using generated values:
+       helm install otel-demo ./kubernetes/opentelemetry-demo-chart \
+         -f ./kubernetes/opentelemetry-demo-chart/values-generated.yaml
 
-    3. Apply the generated secrets:
-       kubectl apply -f kubernetes/azure/secrets.yaml
-
-    4. Deploy the OpenTelemetry Demo:
-       kubectl apply -f kubernetes/opentelemetry-demo-azure.yaml
-
-    5. Verify pods are running:
+    3. Verify pods are running:
        kubectl get pods -n otel-demo
 
-    6. Access Grafana (after port-forward):
+    4. Access the demo:
+       kubectl port-forward -n otel-demo svc/frontend-proxy 8080:8080
        kubectl port-forward -n otel-demo svc/grafana 3000:3000
-       Open: http://localhost:3000
+
+    OPTION 2: Deploy with kubectl
+    -----------------------------
+
+    1. Get AKS credentials:
+       az aks get-credentials --resource-group ${azurerm_resource_group.main.name} --name ${module.aks.cluster_name}
+
+    2. Create namespace and apply secrets:
+       kubectl create namespace otel-demo
+       kubectl apply -f kubernetes/azure/secrets.yaml
+
+    3. Deploy with Helm:
+       helm install otel-demo ./kubernetes/opentelemetry-demo-chart \
+         --set azure.existingSecret=adx-credentials \
+         --set adx.clusterUri=${module.adx.cluster_uri}
 
     ================================================================================
     IMPORTANT INFORMATION
@@ -116,6 +140,7 @@ output "next_steps" {
 
     ADX Cluster URI: ${module.adx.cluster_uri}
     ADX Database: ${module.adx.database_name}
+    AKS Cluster: ${module.aks.cluster_name}
     Service Principal Secret Expires: ${module.identity.password_expiry}
 
     Remember to rotate the service principal secret before it expires!

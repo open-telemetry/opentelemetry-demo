@@ -55,3 +55,16 @@ test/tracetesting/tracetesting-vars.yaml
 *.apk
 
 !src/currency/build
+
+# Terraform
+terraform/.terraform/
+terraform/.terraform.lock.hcl
+terraform/*.tfstate
+terraform/*.tfstate.backup
+terraform/kubeconfig
+terraform/*.tfvars
+!terraform/terraform.tfvars.example
+
+# Azure/ADX Generated Files (contain sensitive credentials)
+kubernetes/azure/secrets.yaml
+kubernetes/opentelemetry-demo-chart/values-generated.yaml

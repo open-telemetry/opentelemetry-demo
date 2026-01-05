@@ -181,7 +181,7 @@ cp terraform.tfvars.example terraform.tfvars
 # Edit terraform.tfvars with your preferences
 terraform init && terraform apply
 
-# 2. Deploy to AKS
+# 2. Deploy to AKS using Helm (automatic - uses Terraform-generated values)
 cd ..
 ./scripts/deploy-to-aks.sh
 
@@ -189,6 +189,12 @@ cd ..
 kubectl port-forward -n otel-demo svc/frontend-proxy 8080:8080
 kubectl port-forward -n otel-demo svc/grafana 3000:3000
 ```
+
+**What happens:**
+1. Terraform creates ADX cluster, AKS, and Service Principal
+2. Terraform generates `values-generated.yaml` with all credentials
+3. The deployment script uses Helm to install the chart with generated values
+4. All telemetry flows from microservices -> OTel Collector -> ADX
 
 ### What's Included
 
