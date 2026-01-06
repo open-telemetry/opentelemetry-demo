@@ -16,61 +16,6 @@ data:
     apiVersion: 1
 
     # =================================================================
-    # Contact Points - Configure notification channels
-    # =================================================================
-    contactPoints:
-      - orgId: 1
-        name: default-notifications
-        receivers:
-          {{- if .Values.grafana.alerting.smtp.enabled }}
-          # Email notifications via SMTP
-          - uid: email-receiver
-            type: email
-            settings:
-              addresses: {{ .Values.grafana.alerting.smtp.toAddresses | quote }}
-              singleEmail: false
-            disableResolveMessage: false
-          {{- end }}
-          {{- if .Values.grafana.alerting.slack.enabled }}
-          # Slack notifications
-          - uid: slack-receiver
-            type: slack
-            settings:
-              url: {{ .Values.grafana.alerting.slack.webhookUrl | quote }}
-              {{- if .Values.grafana.alerting.slack.channel }}
-              recipient: {{ .Values.grafana.alerting.slack.channel | quote }}
-              {{- end }}
-              title: |{{`
-                {{ `}}{{ "{{" }} template "slack.default.title" . {{ "}}" }}{{ `
-              `}}|
-              text: |{{`
-                {{ `}}{{ "{{" }} template "slack.default.text" . {{ "}}" }}{{ `
-              `}}|
-            disableResolveMessage: false
-          {{- end }}
-          {{- if .Values.grafana.alerting.teams.enabled }}
-          # Microsoft Teams notifications
-          - uid: teams-receiver
-            type: teams
-            settings:
-              url: {{ .Values.grafana.alerting.teams.webhookUrl | quote }}
-            disableResolveMessage: false
-          {{- end }}
-
-    # =================================================================
-    # Notification Policies - Route alerts to contact points
-    # =================================================================
-    policies:
-      - orgId: 1
-        receiver: default-notifications
-        group_by:
-          - grafana_folder
-          - alertname
-        group_wait: 30s
-        group_interval: 5m
-        repeat_interval: 4h
-
-    # =================================================================
     # Alert Rules - KQL-based queries against ADX
     # =================================================================
     groups:
@@ -93,15 +38,14 @@ data:
                   to: 0
                 datasourceUid: adx-telemetry
                 model:
-                  format: table
-                  queryType: KQL
-                  rawQuery: true
+                  querySource: raw
+                  resultFormat: table
+                  clusterUri: {{ .Values.adx.clusterUri | quote }}
+                  database: {{ .Values.adx.database | quote }}
                   query: |
                     OTelTraces
                     | where Timestamp > ago(5m)
-                    | summarize
-                        TotalSpans = count(),
-                        ErrorSpans = countif(StatusCode == "Error" or StatusCode == "STATUS_CODE_ERROR")
+                    | summarize TotalSpans = count(), ErrorSpans = countif(StatusCode == "Error" or StatusCode == "STATUS_CODE_ERROR")
                     | extend ErrorRate = round(100.0 * ErrorSpans / TotalSpans, 2)
                     | project ErrorRate
               - refId: error_threshold
@@ -147,9 +91,10 @@ data:
                   to: 0
                 datasourceUid: adx-telemetry
                 model:
-                  format: table
-                  queryType: KQL
-                  rawQuery: true
+                  querySource: raw
+                  resultFormat: table
+                  clusterUri: {{ .Values.adx.clusterUri | quote }}
+                  database: {{ .Values.adx.database | quote }}
                   query: |
                     OTelTraces
                     | where Timestamp > ago(5m)
@@ -199,15 +144,18 @@ data:
                   to: 0
                 datasourceUid: adx-telemetry
                 model:
-                  format: table
-                  queryType: KQL
-                  rawQuery: true
+                  querySource: raw
+                  resultFormat: table
+                  clusterUri: {{ .Values.adx.clusterUri | quote }}
+                  database: {{ .Values.adx.database | quote }}
                   query: |
                     let expected_services = dynamic(["frontend", "cart", "checkout", "payment", "product-catalog", "currency", "shipping", "recommendation", "ad"]);
-                    let active_services = OTelTraces
+                    OTelTraces
                     | where Timestamp > ago(5m)
-                    | distinct ServiceName;
-                    print MissingServices = array_length(set_difference(expected_services, active_services))
+                    | distinct ServiceName
+                    | summarize ActiveCount = count()
+                    | extend MissingServices = 9 - ActiveCount
+                    | project MissingServices
               - refId: no_spans_threshold
                 relativeTimeRange:
                   from: 300
@@ -251,9 +199,10 @@ data:
                   to: 0
                 datasourceUid: adx-telemetry
                 model:
-                  format: table
-                  queryType: KQL
-                  rawQuery: true
+                  querySource: raw
+                  resultFormat: table
+                  clusterUri: {{ .Values.adx.clusterUri | quote }}
+                  database: {{ .Values.adx.database | quote }}
                   query: |
                     OTelLogs
                     | where Timestamp > ago(5m)
