@@ -101,3 +101,24 @@ vnet_address_space = ["10.0.0.0/16"]
 
 # AKS subnet address prefix (must be within vnet_address_space)
 aks_subnet_address_prefix = "10.0.1.0/24"
+
+# =============================================================================
+# Azure Communication Services (Email Alerts)
+# =============================================================================
+
+# Enable Azure Communication Services for email alerts
+# When enabled, Terraform will automatically provision:
+# - Azure Communication Services resource
+# - Email Communication Services with Azure-managed domain
+# - Entra ID app for SMTP authentication
+enable_email_alerts = true
+
+# Data location for Communication Services
+# Options: "Africa", "Asia Pacific", "Australia", "Brazil", "Canada",
+#          "Europe", "France", "Germany", "India", "Japan", "Korea",
+#          "Norway", "Switzerland", "UAE", "UK", "United States"
+communication_data_location = "United States"
+
+# Comma-separated list of email addresses to receive alerts
+# Example: "oncall@company.com,team@company.com"
+alert_recipients = ""

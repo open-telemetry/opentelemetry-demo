@@ -6,11 +6,36 @@ This guide explains how to configure alerting for the OpenTelemetry Demo with Az
 
 The demo includes pre-configured Grafana alert rules that monitor your telemetry data using KQL queries against ADX. You can receive notifications via:
 
-- **Email** (SMTP) - SendGrid, Azure Communication Services, Gmail, etc.
+- **Email** (SMTP) - **Auto-provisioned via Terraform** using Azure Communication Services
 - **Slack** - Incoming webhooks
 - **Microsoft Teams** - Incoming webhooks
 - **PagerDuty** - Integration key
 - **Webhooks** - Any HTTP endpoint
+
+## Quick Start: Email Alerts (Terraform)
+
+When deploying with Terraform, Azure Communication Services is **automatically provisioned** for email alerts:
+
+```bash
+cd terraform
+
+# Set your alert recipients
+export TF_VAR_alert_recipients="team@company.com,oncall@company.com"
+
+# Deploy infrastructure (includes Communication Services)
+terraform apply
+```
+
+That's it! Terraform will:
+1. Create Azure Communication Services resource
+2. Create Email Communication Services with Azure-managed domain
+3. Create Entra ID app for SMTP authentication
+4. Configure Grafana SMTP settings automatically in `values-generated.yaml`
+
+To disable email alerts, set:
+```bash
+export TF_VAR_enable_email_alerts=false
+```
 
 ## Pre-configured Alert Rules
 
@@ -130,25 +155,36 @@ smtp:
   toAddresses: "team@company.com,oncall@company.com"
 ```
 
-### Email via Azure Communication Services
+### Email via Azure Communication Services (Auto-Provisioned)
 
-1. Create an Azure Communication Services resource
-2. Go to **Email** → **Provision Domains**
-3. Add an Azure managed domain or custom domain
-4. Go to **Keys** → Copy connection string
-5. Use SMTP relay endpoint
+When using Terraform, Azure Communication Services is automatically provisioned. The following resources are created:
 
+- **Azure Communication Services** - Core messaging resource
+- **Email Communication Services** - Email capabilities
+- **Azure Managed Domain** - Ready-to-use email domain (format: `xxxxxxxx.azurecomm.net`)
+- **Entra ID Application** - For SMTP authentication
+
+**Terraform automatically configures:**
 ```yaml
+# Generated in values-generated.yaml
 smtp:
   enabled: true
   host: "smtp.azurecomm.net"
   port: 587
   user: "<resource-name>.<entra-app-id>.<tenant-id>"
   password: "<entra-app-secret>"
-  fromAddress: "donotreply@<your-domain>.azurecomm.net"
+  fromAddress: "DoNotReply@<guid>.azurecomm.net"
   fromName: "OTel Demo Alerts"
-  toAddresses: "team@company.com"
+  toAddresses: "<your configured recipients>"
 ```
+
+**Manual Setup (if not using Terraform):**
+
+1. Create an Azure Communication Services resource
+2. Go to **Email** → **Provision Domains**
+3. Add an Azure managed domain or custom domain
+4. Create an Entra ID app with Mail.Send permission
+5. Configure the values above in your `values.yaml`
 
 ## Customizing Alert Rules
 
@@ -273,24 +309,31 @@ kubectl run -it --rm smtp-test --image=busybox --restart=Never -- \
 ## Architecture
 
 ```
-┌─────────────────────────────────────────────────────────────┐
-│                     Grafana Alerting                        │
-├─────────────────────────────────────────────────────────────┤
-│                                                             │
-│  ┌─────────────┐    ┌─────────────┐    ┌─────────────┐     │
-│  │ Alert Rules │───▶│  Evaluation │───▶│   Router    │     │
-│  │   (KQL)     │    │   Engine    │    │  (Policies) │     │
-│  └─────────────┘    └─────────────┘    └──────┬──────┘     │
-│         │                                      │            │
-│         ▼                                      ▼            │
-│  ┌─────────────┐                    ┌─────────────────┐    │
-│  │     ADX     │                    │ Contact Points  │    │
-│  │  Database   │                    ├─────────────────┤    │
-│  └─────────────┘                    │ • Email (SMTP)  │    │
-│                                     │ • Slack         │    │
-│                                     │ • Teams         │    │
-│                                     │ • PagerDuty     │    │
-│                                     │ • Webhooks      │    │
-│                                     └─────────────────┘    │
-└─────────────────────────────────────────────────────────────┘
+┌─────────────────────────────────────────────────────────────────────────┐
+│                         Grafana Alerting                                 │
+├─────────────────────────────────────────────────────────────────────────┤
+│                                                                          │
+│  ┌─────────────┐    ┌─────────────┐    ┌─────────────┐                  │
+│  │ Alert Rules │───▶│  Evaluation │───▶│   Router    │                  │
+│  │   (KQL)     │    │   Engine    │    │  (Policies) │                  │
+│  └─────────────┘    └─────────────┘    └──────┬──────┘                  │
+│         │                                      │                         │
+│         ▼                                      ▼                         │
+│  ┌─────────────┐                    ┌─────────────────┐                 │
+│  │     ADX     │                    │ Contact Points  │                 │
+│  │  Database   │                    ├─────────────────┤                 │
+│  └─────────────┘                    │ • Email (SMTP)  │────┐            │
+│                                     │ • Slack         │    │            │
+│                                     │ • Teams         │    │            │
+│                                     │ • PagerDuty     │    │            │
+│                                     │ • Webhooks      │    │            │
+│                                     └─────────────────┘    │            │
+│                                                            ▼            │
+│                                     ┌─────────────────────────────────┐ │
+│                                     │  Azure Communication Services   │ │
+│                                     │  (Auto-provisioned by Terraform)│ │
+│                                     │  • SMTP: smtp.azurecomm.net     │ │
+│                                     │  • Azure Managed Domain         │ │
+│                                     └─────────────────────────────────┘ │
+└─────────────────────────────────────────────────────────────────────────┘
 ```

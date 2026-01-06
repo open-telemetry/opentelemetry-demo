@@ -98,6 +98,30 @@ output "grafana_adx_client_secret" {
 }
 
 # =============================================================================
+# Azure Communication Services Outputs (Email Alerts)
+# =============================================================================
+
+output "communication_service_name" {
+  description = "Name of the Azure Communication Services resource"
+  value       = var.enable_email_alerts && length(module.communication) > 0 ? module.communication[0].communication_service_name : null
+}
+
+output "email_domain" {
+  description = "Azure managed email domain for alerts"
+  value       = var.enable_email_alerts && length(module.communication) > 0 ? module.communication[0].email_domain : null
+}
+
+output "smtp_host" {
+  description = "SMTP host for Grafana alerts"
+  value       = var.enable_email_alerts && length(module.communication) > 0 ? module.communication[0].smtp_host : null
+}
+
+output "smtp_from_address" {
+  description = "From email address for alerts"
+  value       = var.enable_email_alerts && length(module.communication) > 0 ? module.communication[0].from_email_address : null
+}
+
+# =============================================================================
 # Helm Installation Command
 # =============================================================================
 

@@ -138,3 +138,25 @@ variable "aks_subnet_address_prefix" {
   type        = string
   default     = "10.0.1.0/24"
 }
+
+# =============================================================================
+# Azure Communication Services Configuration
+# =============================================================================
+
+variable "enable_email_alerts" {
+  description = "Enable Azure Communication Services for email alerts"
+  type        = bool
+  default     = true
+}
+
+variable "communication_data_location" {
+  description = "Data location for Azure Communication Services"
+  type        = string
+  default     = "United States"
+}
+
+variable "alert_recipients" {
+  description = "Comma-separated list of email addresses to receive alerts"
+  type        = string
+  default     = ""
+}
