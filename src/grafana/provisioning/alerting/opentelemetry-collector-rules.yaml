@@ -21,8 +21,8 @@ groups:
             datasourceUid: grafanacloud-prom
             model:
               datasource:
-                  type: prometheus
-                  uid: grafanacloud-prom
+                type: prometheus
+                uid: grafanacloud-prom
               expr: rate(otelcol_receiver_refused_spans_total[5m]) > 0
               instant: true
               intervalMs: 1000
@@ -34,25 +34,25 @@ groups:
             datasourceUid: __expr__
             model:
               datasource:
-                  IsPrunable: false
-                  access: ""
-                  apiVersion: ""
-                  basicAuth: false
-                  basicAuthUser: ""
-                  created: "0001-01-01T00:00:00Z"
-                  database: ""
-                  id: -100
-                  isDefault: false
-                  jsonData: {}
-                  name: __expr__
-                  readOnly: false
-                  secureJsonData: {}
-                  type: __expr__
-                  uid: __expr__
-                  updated: "0001-01-01T00:00:00Z"
-                  url: ""
-                  user: ""
-                  withCredentials: false
+                IsPrunable: false
+                access: ""
+                apiVersion: ""
+                basicAuth: false
+                basicAuthUser: ""
+                created: "0001-01-01T00:00:00Z"
+                database: ""
+                id: -100
+                isDefault: false
+                jsonData: {}
+                name: __expr__
+                readOnly: false
+                secureJsonData: {}
+                type: __expr__
+                uid: __expr__
+                updated: "0001-01-01T00:00:00Z"
+                url: ""
+                user: ""
+                withCredentials: false
               expression: is_number($query) || is_nan($query) || is_inf($query)
               intervalMs: 1000
               maxDataPoints: 43200
@@ -63,30 +63,30 @@ groups:
             datasourceUid: __expr__
             model:
               conditions:
-                  - evaluator:
-                      params:
-                          - 0
-                      type: gt
+                - evaluator:
+                    params:
+                      - 0
+                    type: gt
               datasource:
-                  IsPrunable: false
-                  access: ""
-                  apiVersion: ""
-                  basicAuth: false
-                  basicAuthUser: ""
-                  created: "0001-01-01T00:00:00Z"
-                  database: ""
-                  id: -100
-                  isDefault: false
-                  jsonData: {}
-                  name: __expr__
-                  readOnly: false
-                  secureJsonData: {}
-                  type: __expr__
-                  uid: __expr__
-                  updated: "0001-01-01T00:00:00Z"
-                  url: ""
-                  user: ""
-                  withCredentials: false
+                IsPrunable: false
+                access: ""
+                apiVersion: ""
+                basicAuth: false
+                basicAuthUser: ""
+                created: "0001-01-01T00:00:00Z"
+                database: ""
+                id: -100
+                isDefault: false
+                jsonData: {}
+                name: __expr__
+                readOnly: false
+                secureJsonData: {}
+                type: __expr__
+                uid: __expr__
+                updated: "0001-01-01T00:00:00Z"
+                url: ""
+                user: ""
+                withCredentials: false
               expression: prometheus_math
               intervalMs: 1000
               maxDataPoints: 43200
@@ -96,7 +96,7 @@ groups:
         execErrState: OK
         for: 2m
         annotations:
-          description: 'The {{ $labels.receiver }} receiver is dropping spans at a rate of {{ humanize $value }} per second '
+          description: "The {{ $labels.receiver }} receiver is dropping spans at a rate of {{ humanize $value }} per second "
           runbook_url: https://opentelemetry.io/docs/collector/internal-telemetry/#receive-failures
         labels:
           __converted_prometheus_rule__: "true"
@@ -115,8 +115,8 @@ groups:
             datasourceUid: grafanacloud-prom
             model:
               datasource:
-                  type: prometheus
-                  uid: grafanacloud-prom
+                type: prometheus
+                uid: grafanacloud-prom
               expr: rate(otelcol_receiver_refused_metric_points_total[5m]) > 0
               instant: true
               intervalMs: 1000
@@ -128,25 +128,25 @@ groups:
             datasourceUid: __expr__
             model:
               datasource:
-                  IsPrunable: false
-                  access: ""
-                  apiVersion: ""
-                  basicAuth: false
-                  basicAuthUser: ""
-                  created: "0001-01-01T00:00:00Z"
-                  database: ""
-                  id: -100
-                  isDefault: false
-                  jsonData: {}
-                  name: __expr__
-                  readOnly: false
-                  secureJsonData: {}
-                  type: __expr__
-                  uid: __expr__
-                  updated: "0001-01-01T00:00:00Z"
-                  url: ""
-                  user: ""
-                  withCredentials: false
+                IsPrunable: false
+                access: ""
+                apiVersion: ""
+                basicAuth: false
+                basicAuthUser: ""
+                created: "0001-01-01T00:00:00Z"
+                database: ""
+                id: -100
+                isDefault: false
+                jsonData: {}
+                name: __expr__
+                readOnly: false
+                secureJsonData: {}
+                type: __expr__
+                uid: __expr__
+                updated: "0001-01-01T00:00:00Z"
+                url: ""
+                user: ""
+                withCredentials: false
               expression: is_number($query) || is_nan($query) || is_inf($query)
               intervalMs: 1000
               maxDataPoints: 43200
@@ -157,30 +157,30 @@ groups:
             datasourceUid: __expr__
             model:
               conditions:
-                  - evaluator:
-                      params:
-                          - 0
-                      type: gt
+                - evaluator:
+                    params:
+                      - 0
+                    type: gt
               datasource:
-                  IsPrunable: false
-                  access: ""
-                  apiVersion: ""
-                  basicAuth: false
-                  basicAuthUser: ""
-                  created: "0001-01-01T00:00:00Z"
-                  database: ""
-                  id: -100
-                  isDefault: false
-                  jsonData: {}
-                  name: __expr__
-                  readOnly: false
-                  secureJsonData: {}
-                  type: __expr__
-                  uid: __expr__
-                  updated: "0001-01-01T00:00:00Z"
-                  url: ""
-                  user: ""
-                  withCredentials: false
+                IsPrunable: false
+                access: ""
+                apiVersion: ""
+                basicAuth: false
+                basicAuthUser: ""
+                created: "0001-01-01T00:00:00Z"
+                database: ""
+                id: -100
+                isDefault: false
+                jsonData: {}
+                name: __expr__
+                readOnly: false
+                secureJsonData: {}
+                type: __expr__
+                uid: __expr__
+                updated: "0001-01-01T00:00:00Z"
+                url: ""
+                user: ""
+                withCredentials: false
               expression: prometheus_math
               intervalMs: 1000
               maxDataPoints: 43200
@@ -190,7 +190,7 @@ groups:
         execErrState: OK
         for: 2m
         annotations:
-          description: 'The {{ $labels.receiver }} receiver is dropping metrics at a rate of {{ humanize $value }} per second '
+          description: "The {{ $labels.receiver }} receiver is dropping metrics at a rate of {{ humanize $value }} per second "
           runbook_url: https://opentelemetry.io/docs/collector/internal-telemetry/#receive-failures
         labels:
           __converted_prometheus_rule__: "true"
@@ -209,8 +209,8 @@ groups:
             datasourceUid: grafanacloud-prom
             model:
               datasource:
-                  type: prometheus
-                  uid: grafanacloud-prom
+                type: prometheus
+                uid: grafanacloud-prom
               expr: rate(otelcol_receiver_refused_log_records_total[5m]) > 0
               instant: true
               intervalMs: 1000
@@ -222,25 +222,25 @@ groups:
             datasourceUid: __expr__
             model:
               datasource:
-                  IsPrunable: false
-                  access: ""
-                  apiVersion: ""
-                  basicAuth: false
-                  basicAuthUser: ""
-                  created: "0001-01-01T00:00:00Z"
-                  database: ""
-                  id: -100
-                  isDefault: false
-                  jsonData: {}
-                  name: __expr__
-                  readOnly: false
-                  secureJsonData: {}
-                  type: __expr__
-                  uid: __expr__
-                  updated: "0001-01-01T00:00:00Z"
-                  url: ""
-                  user: ""
-                  withCredentials: false
+                IsPrunable: false
+                access: ""
+                apiVersion: ""
+                basicAuth: false
+                basicAuthUser: ""
+                created: "0001-01-01T00:00:00Z"
+                database: ""
+                id: -100
+                isDefault: false
+                jsonData: {}
+                name: __expr__
+                readOnly: false
+                secureJsonData: {}
+                type: __expr__
+                uid: __expr__
+                updated: "0001-01-01T00:00:00Z"
+                url: ""
+                user: ""
+                withCredentials: false
               expression: is_number($query) || is_nan($query) || is_inf($query)
               intervalMs: 1000
               maxDataPoints: 43200
@@ -251,30 +251,30 @@ groups:
             datasourceUid: __expr__
             model:
               conditions:
-                  - evaluator:
-                      params:
-                          - 0
-                      type: gt
+                - evaluator:
+                    params:
+                      - 0
+                    type: gt
               datasource:
-                  IsPrunable: false
-                  access: ""
-                  apiVersion: ""
-                  basicAuth: false
-                  basicAuthUser: ""
-                  created: "0001-01-01T00:00:00Z"
-                  database: ""
-                  id: -100
-                  isDefault: false
-                  jsonData: {}
-                  name: __expr__
-                  readOnly: false
-                  secureJsonData: {}
-                  type: __expr__
-                  uid: __expr__
-                  updated: "0001-01-01T00:00:00Z"
-                  url: ""
-                  user: ""
-                  withCredentials: false
+                IsPrunable: false
+                access: ""
+                apiVersion: ""
+                basicAuth: false
+                basicAuthUser: ""
+                created: "0001-01-01T00:00:00Z"
+                database: ""
+                id: -100
+                isDefault: false
+                jsonData: {}
+                name: __expr__
+                readOnly: false
+                secureJsonData: {}
+                type: __expr__
+                uid: __expr__
+                updated: "0001-01-01T00:00:00Z"
+                url: ""
+                user: ""
+                withCredentials: false
               expression: prometheus_math
               intervalMs: 1000
               maxDataPoints: 43200
@@ -284,7 +284,7 @@ groups:
         execErrState: OK
         for: 5m
         annotations:
-          description: 'The {{ $labels.receiver }} is dropping logs at a rate of {{ humanize $value }} per second '
+          description: "The {{ $labels.receiver }} is dropping logs at a rate of {{ humanize $value }} per second "
           runbook_url: https://opentelemetry.io/docs/collector/internal-telemetry/#receive-failures
         labels:
           __converted_prometheus_rule__: "true"
@@ -303,8 +303,8 @@ groups:
             datasourceUid: grafanacloud-prom
             model:
               datasource:
-                  type: prometheus
-                  uid: grafanacloud-prom
+                type: prometheus
+                uid: grafanacloud-prom
               expr: rate(otelcol_exporter_send_failed_spans_total[5m]) > 0
               instant: true
               intervalMs: 1000
@@ -316,25 +316,25 @@ groups:
             datasourceUid: __expr__
             model:
               datasource:
-                  IsPrunable: false
-                  access: ""
-                  apiVersion: ""
-                  basicAuth: false
-                  basicAuthUser: ""
-                  created: "0001-01-01T00:00:00Z"
-                  database: ""
-                  id: -100
-                  isDefault: false
-                  jsonData: {}
-                  name: __expr__
-                  readOnly: false
-                  secureJsonData: {}
-                  type: __expr__
-                  uid: __expr__
-                  updated: "0001-01-01T00:00:00Z"
-                  url: ""
-                  user: ""
-                  withCredentials: false
+                IsPrunable: false
+                access: ""
+                apiVersion: ""
+                basicAuth: false
+                basicAuthUser: ""
+                created: "0001-01-01T00:00:00Z"
+                database: ""
+                id: -100
+                isDefault: false
+                jsonData: {}
+                name: __expr__
+                readOnly: false
+                secureJsonData: {}
+                type: __expr__
+                uid: __expr__
+                updated: "0001-01-01T00:00:00Z"
+                url: ""
+                user: ""
+                withCredentials: false
               expression: is_number($query) || is_nan($query) || is_inf($query)
               intervalMs: 1000
               maxDataPoints: 43200
@@ -345,30 +345,30 @@ groups:
             datasourceUid: __expr__
             model:
               conditions:
-                  - evaluator:
-                      params:
-                          - 0
-                      type: gt
+                - evaluator:
+                    params:
+                      - 0
+                    type: gt
               datasource:
-                  IsPrunable: false
-                  access: ""
-                  apiVersion: ""
-                  basicAuth: false
-                  basicAuthUser: ""
-                  created: "0001-01-01T00:00:00Z"
-                  database: ""
-                  id: -100
-                  isDefault: false
-                  jsonData: {}
-                  name: __expr__
-                  readOnly: false
-                  secureJsonData: {}
-                  type: __expr__
-                  uid: __expr__
-                  updated: "0001-01-01T00:00:00Z"
-                  url: ""
-                  user: ""
-                  withCredentials: false
+                IsPrunable: false
+                access: ""
+                apiVersion: ""
+                basicAuth: false
+                basicAuthUser: ""
+                created: "0001-01-01T00:00:00Z"
+                database: ""
+                id: -100
+                isDefault: false
+                jsonData: {}
+                name: __expr__
+                readOnly: false
+                secureJsonData: {}
+                type: __expr__
+                uid: __expr__
+                updated: "0001-01-01T00:00:00Z"
+                url: ""
+                user: ""
+                withCredentials: false
               expression: prometheus_math
               intervalMs: 1000
               maxDataPoints: 43200
@@ -378,7 +378,7 @@ groups:
         execErrState: OK
         for: 2m
         annotations:
-          description: 'The {{ $labels.exporter }} exporter is dropping spans at a rate of {{ humanize $value }} per second '
+          description: "The {{ $labels.exporter }} exporter is dropping spans at a rate of {{ humanize $value }} per second "
           runbook_url: https://opentelemetry.io/docs/collector/internal-telemetry/#receive-failures
         labels:
           __converted_prometheus_rule__: "true"
@@ -397,8 +397,8 @@ groups:
             datasourceUid: grafanacloud-prom
             model:
               datasource:
-                  type: prometheus
-                  uid: grafanacloud-prom
+                type: prometheus
+                uid: grafanacloud-prom
               expr: rate(otelcol_exporter_send_failed_metric_points_total[5m]) > 0
               instant: true
               intervalMs: 1000
@@ -410,25 +410,25 @@ groups:
             datasourceUid: __expr__
             model:
               datasource:
-                  IsPrunable: false
-                  access: ""
-                  apiVersion: ""
-                  basicAuth: false
-                  basicAuthUser: ""
-                  created: "0001-01-01T00:00:00Z"
-                  database: ""
-                  id: -100
-                  isDefault: false
-                  jsonData: {}
-                  name: __expr__
-                  readOnly: false
-                  secureJsonData: {}
-                  type: __expr__
-                  uid: __expr__
-                  updated: "0001-01-01T00:00:00Z"
-                  url: ""
-                  user: ""
-                  withCredentials: false
+                IsPrunable: false
+                access: ""
+                apiVersion: ""
+                basicAuth: false
+                basicAuthUser: ""
+                created: "0001-01-01T00:00:00Z"
+                database: ""
+                id: -100
+                isDefault: false
+                jsonData: {}
+                name: __expr__
+                readOnly: false
+                secureJsonData: {}
+                type: __expr__
+                uid: __expr__
+                updated: "0001-01-01T00:00:00Z"
+                url: ""
+                user: ""
+                withCredentials: false
               expression: is_number($query) || is_nan($query) || is_inf($query)
               intervalMs: 1000
               maxDataPoints: 43200
@@ -439,30 +439,30 @@ groups:
             datasourceUid: __expr__
             model:
               conditions:
-                  - evaluator:
-                      params:
-                          - 0
-                      type: gt
+                - evaluator:
+                    params:
+                      - 0
+                    type: gt
               datasource:
-                  IsPrunable: false
-                  access: ""
-                  apiVersion: ""
-                  basicAuth: false
-                  basicAuthUser: ""
-                  created: "0001-01-01T00:00:00Z"
-                  database: ""
-                  id: -100
-                  isDefault: false
-                  jsonData: {}
-                  name: __expr__
-                  readOnly: false
-                  secureJsonData: {}
-                  type: __expr__
-                  uid: __expr__
-                  updated: "0001-01-01T00:00:00Z"
-                  url: ""
-                  user: ""
-                  withCredentials: false
+                IsPrunable: false
+                access: ""
+                apiVersion: ""
+                basicAuth: false
+                basicAuthUser: ""
+                created: "0001-01-01T00:00:00Z"
+                database: ""
+                id: -100
+                isDefault: false
+                jsonData: {}
+                name: __expr__
+                readOnly: false
+                secureJsonData: {}
+                type: __expr__
+                uid: __expr__
+                updated: "0001-01-01T00:00:00Z"
+                url: ""
+                user: ""
+                withCredentials: false
               expression: prometheus_math
               intervalMs: 1000
               maxDataPoints: 43200
@@ -472,7 +472,7 @@ groups:
         execErrState: OK
         for: 2m
         annotations:
-          description: 'The {{ $labels.exporter }} exporter is dropping metrics at a rate of {{ humanize $value }} per second '
+          description: "The {{ $labels.exporter }} exporter is dropping metrics at a rate of {{ humanize $value }} per second "
           runbook_url: https://opentelemetry.io/docs/collector/internal-telemetry/#receive-failures
         labels:
           __converted_prometheus_rule__: "true"
@@ -491,8 +491,8 @@ groups:
             datasourceUid: grafanacloud-prom
             model:
               datasource:
-                  type: prometheus
-                  uid: grafanacloud-prom
+                type: prometheus
+                uid: grafanacloud-prom
               expr: rate(otelcol_exporter_send_failed_log_records_total[5m]) > 0
               instant: true
               intervalMs: 1000
@@ -504,25 +504,25 @@ groups:
             datasourceUid: __expr__
             model:
               datasource:
-                  IsPrunable: false
-                  access: ""
-                  apiVersion: ""
-                  basicAuth: false
-                  basicAuthUser: ""
-                  created: "0001-01-01T00:00:00Z"
-                  database: ""
-                  id: -100
-                  isDefault: false
-                  jsonData: {}
-                  name: __expr__
-                  readOnly: false
-                  secureJsonData: {}
-                  type: __expr__
-                  uid: __expr__
-                  updated: "0001-01-01T00:00:00Z"
-                  url: ""
-                  user: ""
-                  withCredentials: false
+                IsPrunable: false
+                access: ""
+                apiVersion: ""
+                basicAuth: false
+                basicAuthUser: ""
+                created: "0001-01-01T00:00:00Z"
+                database: ""
+                id: -100
+                isDefault: false
+                jsonData: {}
+                name: __expr__
+                readOnly: false
+                secureJsonData: {}
+                type: __expr__
+                uid: __expr__
+                updated: "0001-01-01T00:00:00Z"
+                url: ""
+                user: ""
+                withCredentials: false
               expression: is_number($query) || is_nan($query) || is_inf($query)
               intervalMs: 1000
               maxDataPoints: 43200
@@ -533,30 +533,30 @@ groups:
             datasourceUid: __expr__
             model:
               conditions:
-                  - evaluator:
-                      params:
-                          - 0
-                      type: gt
+                - evaluator:
+                    params:
+                      - 0
+                    type: gt
               datasource:
-                  IsPrunable: false
-                  access: ""
-                  apiVersion: ""
-                  basicAuth: false
-                  basicAuthUser: ""
-                  created: "0001-01-01T00:00:00Z"
-                  database: ""
-                  id: -100
-                  isDefault: false
-                  jsonData: {}
-                  name: __expr__
-                  readOnly: false
-                  secureJsonData: {}
-                  type: __expr__
-                  uid: __expr__
-                  updated: "0001-01-01T00:00:00Z"
-                  url: ""
-                  user: ""
-                  withCredentials: false
+                IsPrunable: false
+                access: ""
+                apiVersion: ""
+                basicAuth: false
+                basicAuthUser: ""
+                created: "0001-01-01T00:00:00Z"
+                database: ""
+                id: -100
+                isDefault: false
+                jsonData: {}
+                name: __expr__
+                readOnly: false
+                secureJsonData: {}
+                type: __expr__
+                uid: __expr__
+                updated: "0001-01-01T00:00:00Z"
+                url: ""
+                user: ""
+                withCredentials: false
               expression: prometheus_math
               intervalMs: 1000
               maxDataPoints: 43200
@@ -566,7 +566,7 @@ groups:
         execErrState: OK
         for: 5m
         annotations:
-          description: ' The {{ $labels.exporter }} is dropping logs at a rate of {{ humanize $value }} per second '
+          description: " The {{ $labels.exporter }} is dropping logs at a rate of {{ humanize $value }} per second "
           runbook_url: https://opentelemetry.io/docs/collector/internal-telemetry/#receive-failures
         labels:
           __converted_prometheus_rule__: "true"
@@ -585,8 +585,8 @@ groups:
             datasourceUid: grafanacloud-prom
             model:
               datasource:
-                  type: prometheus
-                  uid: grafanacloud-prom
+                type: prometheus
+                uid: grafanacloud-prom
               expr: otelcol_exporter_queue_size > otelcol_exporter_queue_capacity * 0.8
               instant: true
               intervalMs: 1000
@@ -598,25 +598,25 @@ groups:
             datasourceUid: __expr__
             model:
               datasource:
-                  IsPrunable: false
-                  access: ""
-                  apiVersion: ""
-                  basicAuth: false
-                  basicAuthUser: ""
-                  created: "0001-01-01T00:00:00Z"
-                  database: ""
-                  id: -100
-                  isDefault: false
-                  jsonData: {}
-                  name: __expr__
-                  readOnly: false
-                  secureJsonData: {}
-                  type: __expr__
-                  uid: __expr__
-                  updated: "0001-01-01T00:00:00Z"
-                  url: ""
-                  user: ""
-                  withCredentials: false
+                IsPrunable: false
+                access: ""
+                apiVersion: ""
+                basicAuth: false
+                basicAuthUser: ""
+                created: "0001-01-01T00:00:00Z"
+                database: ""
+                id: -100
+                isDefault: false
+                jsonData: {}
+                name: __expr__
+                readOnly: false
+                secureJsonData: {}
+                type: __expr__
+                uid: __expr__
+                updated: "0001-01-01T00:00:00Z"
+                url: ""
+                user: ""
+                withCredentials: false
               expression: is_number($query) || is_nan($query) || is_inf($query)
               intervalMs: 1000
               maxDataPoints: 43200
@@ -627,30 +627,30 @@ groups:
             datasourceUid: __expr__
             model:
               conditions:
-                  - evaluator:
-                      params:
-                          - 0
-                      type: gt
+                - evaluator:
+                    params:
+                      - 0
+                    type: gt
               datasource:
-                  IsPrunable: false
-                  access: ""
-                  apiVersion: ""
-                  basicAuth: false
-                  basicAuthUser: ""
-                  created: "0001-01-01T00:00:00Z"
-                  database: ""
-                  id: -100
-                  isDefault: false
-                  jsonData: {}
-                  name: __expr__
-                  readOnly: false
-                  secureJsonData: {}
-                  type: __expr__
-                  uid: __expr__
-                  updated: "0001-01-01T00:00:00Z"
-                  url: ""
-                  user: ""
-                  withCredentials: false
+                IsPrunable: false
+                access: ""
+                apiVersion: ""
+                basicAuth: false
+                basicAuthUser: ""
+                created: "0001-01-01T00:00:00Z"
+                database: ""
+                id: -100
+                isDefault: false
+                jsonData: {}
+                name: __expr__
+                readOnly: false
+                secureJsonData: {}
+                type: __expr__
+                uid: __expr__
+                updated: "0001-01-01T00:00:00Z"
+                url: ""
+                user: ""
+                withCredentials: false
               expression: prometheus_math
               intervalMs: 1000
               maxDataPoints: 43200
@@ -660,7 +660,7 @@ groups:
         execErrState: OK
         for: 1m
         annotations:
-          description: 'The {{ $labels.exporter }} queue has reached a size of {{ $value }} '
+          description: "The {{ $labels.exporter }} queue has reached a size of {{ $value }} "
           runbook_url: https://opentelemetry.io/docs/collector/internal-telemetry/#queue-length
         labels:
           __converted_prometheus_rule__: "true"
@@ -679,8 +679,8 @@ groups:
             datasourceUid: grafanacloud-prom
             model:
               datasource:
-                  type: prometheus
-                  uid: grafanacloud-prom
+                type: prometheus
+                uid: grafanacloud-prom
               expr: rate(otelcol_exporter_enqueue_failed_spans_total[5m]) > 0
               instant: true
               intervalMs: 1000
@@ -692,25 +692,25 @@ groups:
             datasourceUid: __expr__
             model:
               datasource:
-                  IsPrunable: false
-                  access: ""
-                  apiVersion: ""
-                  basicAuth: false
-                  basicAuthUser: ""
-                  created: "0001-01-01T00:00:00Z"
-                  database: ""
-                  id: -100
-                  isDefault: false
-                  jsonData: {}
-                  name: __expr__
-                  readOnly: false
-                  secureJsonData: {}
-                  type: __expr__
-                  uid: __expr__
-                  updated: "0001-01-01T00:00:00Z"
-                  url: ""
-                  user: ""
-                  withCredentials: false
+                IsPrunable: false
+                access: ""
+                apiVersion: ""
+                basicAuth: false
+                basicAuthUser: ""
+                created: "0001-01-01T00:00:00Z"
+                database: ""
+                id: -100
+                isDefault: false
+                jsonData: {}
+                name: __expr__
+                readOnly: false
+                secureJsonData: {}
+                type: __expr__
+                uid: __expr__
+                updated: "0001-01-01T00:00:00Z"
+                url: ""
+                user: ""
+                withCredentials: false
               expression: is_number($query) || is_nan($query) || is_inf($query)
               intervalMs: 1000
               maxDataPoints: 43200
@@ -721,30 +721,30 @@ groups:
             datasourceUid: __expr__
             model:
               conditions:
-                  - evaluator:
-                      params:
-                          - 0
-                      type: gt
+                - evaluator:
+                    params:
+                      - 0
+                    type: gt
               datasource:
-                  IsPrunable: false
-                  access: ""
-                  apiVersion: ""
-                  basicAuth: false
-                  basicAuthUser: ""
-                  created: "0001-01-01T00:00:00Z"
-                  database: ""
-                  id: -100
-                  isDefault: false
-                  jsonData: {}
-                  name: __expr__
-                  readOnly: false
-                  secureJsonData: {}
-                  type: __expr__
-                  uid: __expr__
-                  updated: "0001-01-01T00:00:00Z"
-                  url: ""
-                  user: ""
-                  withCredentials: false
+                IsPrunable: false
+                access: ""
+                apiVersion: ""
+                basicAuth: false
+                basicAuthUser: ""
+                created: "0001-01-01T00:00:00Z"
+                database: ""
+                id: -100
+                isDefault: false
+                jsonData: {}
+                name: __expr__
+                readOnly: false
+                secureJsonData: {}
+                type: __expr__
+                uid: __expr__
+                updated: "0001-01-01T00:00:00Z"
+                url: ""
+                user: ""
+                withCredentials: false
               expression: prometheus_math
               intervalMs: 1000
               maxDataPoints: 43200
@@ -773,8 +773,8 @@ groups:
             datasourceUid: grafanacloud-prom
             model:
               datasource:
-                  type: prometheus
-                  uid: grafanacloud-prom
+                type: prometheus
+                uid: grafanacloud-prom
               expr: rate(otelcol_exporter_enqueue_failed_metric_points_total[5m]) > 0
               instant: true
               intervalMs: 1000
@@ -786,25 +786,25 @@ groups:
             datasourceUid: __expr__
             model:
               datasource:
-                  IsPrunable: false
-                  access: ""
-                  apiVersion: ""
-                  basicAuth: false
-                  basicAuthUser: ""
-                  created: "0001-01-01T00:00:00Z"
-                  database: ""
-                  id: -100
-                  isDefault: false
-                  jsonData: {}
-                  name: __expr__
-                  readOnly: false
-                  secureJsonData: {}
-                  type: __expr__
-                  uid: __expr__
-                  updated: "0001-01-01T00:00:00Z"
-                  url: ""
-                  user: ""
-                  withCredentials: false
+                IsPrunable: false
+                access: ""
+                apiVersion: ""
+                basicAuth: false
+                basicAuthUser: ""
+                created: "0001-01-01T00:00:00Z"
+                database: ""
+                id: -100
+                isDefault: false
+                jsonData: {}
+                name: __expr__
+                readOnly: false
+                secureJsonData: {}
+                type: __expr__
+                uid: __expr__
+                updated: "0001-01-01T00:00:00Z"
+                url: ""
+                user: ""
+                withCredentials: false
               expression: is_number($query) || is_nan($query) || is_inf($query)
               intervalMs: 1000
               maxDataPoints: 43200
@@ -815,30 +815,30 @@ groups:
             datasourceUid: __expr__
             model:
               conditions:
-                  - evaluator:
-                      params:
-                          - 0
-                      type: gt
+                - evaluator:
+                    params:
+                      - 0
+                    type: gt
               datasource:
-                  IsPrunable: false
-                  access: ""
-                  apiVersion: ""
-                  basicAuth: false
-                  basicAuthUser: ""
-                  created: "0001-01-01T00:00:00Z"
-                  database: ""
-                  id: -100
-                  isDefault: false
-                  jsonData: {}
-                  name: __expr__
-                  readOnly: false
-                  secureJsonData: {}
-                  type: __expr__
-                  uid: __expr__
-                  updated: "0001-01-01T00:00:00Z"
-                  url: ""
-                  user: ""
-                  withCredentials: false
+                IsPrunable: false
+                access: ""
+                apiVersion: ""
+                basicAuth: false
+                basicAuthUser: ""
+                created: "0001-01-01T00:00:00Z"
+                database: ""
+                id: -100
+                isDefault: false
+                jsonData: {}
+                name: __expr__
+                readOnly: false
+                secureJsonData: {}
+                type: __expr__
+                uid: __expr__
+                updated: "0001-01-01T00:00:00Z"
+                url: ""
+                user: ""
+                withCredentials: false
               expression: prometheus_math
               intervalMs: 1000
               maxDataPoints: 43200
@@ -867,8 +867,8 @@ groups:
             datasourceUid: grafanacloud-prom
             model:
               datasource:
-                  type: prometheus
-                  uid: grafanacloud-prom
+                type: prometheus
+                uid: grafanacloud-prom
               expr: rate(otelcol_exporter_enqueue_failed_log_records_total[5m]) > 0
               instant: true
               intervalMs: 1000
@@ -880,25 +880,25 @@ groups:
             datasourceUid: __expr__
             model:
               datasource:
-                  IsPrunable: false
-                  access: ""
-                  apiVersion: ""
-                  basicAuth: false
-                  basicAuthUser: ""
-                  created: "0001-01-01T00:00:00Z"
-                  database: ""
-                  id: -100
-                  isDefault: false
-                  jsonData: {}
-                  name: __expr__
-                  readOnly: false
-                  secureJsonData: {}
-                  type: __expr__
-                  uid: __expr__
-                  updated: "0001-01-01T00:00:00Z"
-                  url: ""
-                  user: ""
-                  withCredentials: false
+                IsPrunable: false
+                access: ""
+                apiVersion: ""
+                basicAuth: false
+                basicAuthUser: ""
+                created: "0001-01-01T00:00:00Z"
+                database: ""
+                id: -100
+                isDefault: false
+                jsonData: {}
+                name: __expr__
+                readOnly: false
+                secureJsonData: {}
+                type: __expr__
+                uid: __expr__
+                updated: "0001-01-01T00:00:00Z"
+                url: ""
+                user: ""
+                withCredentials: false
               expression: is_number($query) || is_nan($query) || is_inf($query)
               intervalMs: 1000
               maxDataPoints: 43200
@@ -909,30 +909,30 @@ groups:
             datasourceUid: __expr__
             model:
               conditions:
-                  - evaluator:
-                      params:
-                          - 0
-                      type: gt
+                - evaluator:
+                    params:
+                      - 0
+                    type: gt
               datasource:
-                  IsPrunable: false
-                  access: ""
-                  apiVersion: ""
-                  basicAuth: false
-                  basicAuthUser: ""
-                  created: "0001-01-01T00:00:00Z"
-                  database: ""
-                  id: -100
-                  isDefault: false
-                  jsonData: {}
-                  name: __expr__
-                  readOnly: false
-                  secureJsonData: {}
-                  type: __expr__
-                  uid: __expr__
-                  updated: "0001-01-01T00:00:00Z"
-                  url: ""
-                  user: ""
-                  withCredentials: false
+                IsPrunable: false
+                access: ""
+                apiVersion: ""
+                basicAuth: false
+                basicAuthUser: ""
+                created: "0001-01-01T00:00:00Z"
+                database: ""
+                id: -100
+                isDefault: false
+                jsonData: {}
+                name: __expr__
+                readOnly: false
+                secureJsonData: {}
+                type: __expr__
+                uid: __expr__
+                updated: "0001-01-01T00:00:00Z"
+                url: ""
+                user: ""
+                withCredentials: false
               expression: prometheus_math
               intervalMs: 1000
               maxDataPoints: 43200
