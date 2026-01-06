@@ -74,6 +74,57 @@ grafana:
   adminPassword: admin
   plugins: grafana-azure-data-explorer-datasource
 
+  # -------------------------------------------------------------------------
+  # Alerting Configuration
+  # -------------------------------------------------------------------------
+  # Pre-configured alert rules for ADX observability
+  # Users can add additional contact points via Grafana UI
+  alerting:
+    enabled: true
+
+    # Alert thresholds (customize based on your SLOs)
+    thresholds:
+      # Trigger alert when error rate exceeds this percentage
+      errorRatePercent: 5
+      # Trigger alert when P95 latency exceeds this value (milliseconds)
+      p95LatencyMs: 500
+      # Trigger alert when error log count exceeds this in 5 minutes
+      errorLogsCount: 10
+
+    # -----------------------------------------------------------------------
+    # Email Notifications (SMTP)
+    # -----------------------------------------------------------------------
+    # Configure SMTP to enable email alerts
+    # Supports: SendGrid, Azure Communication Services, Gmail, etc.
+    smtp:
+      enabled: false
+      host: ""           # e.g., smtp.sendgrid.net
+      port: 587
+      user: ""           # e.g., apikey (for SendGrid)
+      password: ""       # e.g., your SendGrid API key
+      fromAddress: ""    # e.g., alerts@yourdomain.com
+      fromName: "Grafana Alerts"
+      toAddresses: ""    # Comma-separated list of recipient emails
+      # Skip TLS verification (not recommended for production)
+      skipVerify: false
+
+    # -----------------------------------------------------------------------
+    # Slack Notifications
+    # -----------------------------------------------------------------------
+    # Get webhook URL from: Slack > Apps > Incoming Webhooks
+    slack:
+      enabled: false
+      webhookUrl: ""     # e.g., https://hooks.slack.com/services/xxx/yyy/zzz
+      channel: ""        # Optional: override default channel
+
+    # -----------------------------------------------------------------------
+    # Microsoft Teams Notifications
+    # -----------------------------------------------------------------------
+    # Get webhook URL from: Teams > Channel > Connectors > Incoming Webhook
+    teams:
+      enabled: false
+      webhookUrl: ""     # e.g., https://outlook.office.com/webhook/xxx
+
 # OpenTelemetry Collector configuration
 otelCollector:
   enabled: true

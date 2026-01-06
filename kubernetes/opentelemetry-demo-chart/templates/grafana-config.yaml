@@ -40,3 +40,17 @@ data:
     workload_identity_tenant_id = {{ .Values.azure.tenantId }}
     workload_identity_client_id = {{ .Values.azure.workloadIdentity.clientId }}
     {{- end }}
+    {{- if and .Values.grafana.alerting .Values.grafana.alerting.smtp .Values.grafana.alerting.smtp.enabled }}
+    [smtp]
+    enabled = true
+    host = {{ .Values.grafana.alerting.smtp.host }}:{{ .Values.grafana.alerting.smtp.port }}
+    user = {{ .Values.grafana.alerting.smtp.user }}
+    password = {{ .Values.grafana.alerting.smtp.password }}
+    from_address = {{ .Values.grafana.alerting.smtp.fromAddress }}
+    from_name = {{ .Values.grafana.alerting.smtp.fromName }}
+    skip_verify = {{ .Values.grafana.alerting.smtp.skipVerify }}
+    {{- end }}
+    [unified_alerting]
+    enabled = true
+    [alerting]
+    enabled = false

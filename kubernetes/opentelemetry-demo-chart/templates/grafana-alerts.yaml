@@ -1,0 +1,291 @@
+{{- if and .Values.grafana.enabled .Values.grafana.alerting.enabled }}
+# Grafana Alert Rules for ADX Observability
+# These alerts use KQL queries against Azure Data Explorer
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: grafana-alerting-rules
+  namespace: {{ .Values.namespace }}
+  labels:
+    grafana_alert: "1"
+    app.kubernetes.io/name: grafana
+    app.kubernetes.io/instance: opentelemetry-demo
+    app.kubernetes.io/component: alerting
+data:
+  alerting.yaml: |
+    apiVersion: 1
+
+    # =================================================================
+    # Contact Points - Configure notification channels
+    # =================================================================
+    contactPoints:
+      - orgId: 1
+        name: default-notifications
+        receivers:
+          {{- if .Values.grafana.alerting.smtp.enabled }}
+          # Email notifications via SMTP
+          - uid: email-receiver
+            type: email
+            settings:
+              addresses: {{ .Values.grafana.alerting.smtp.toAddresses | quote }}
+              singleEmail: false
+            disableResolveMessage: false
+          {{- end }}
+          {{- if .Values.grafana.alerting.slack.enabled }}
+          # Slack notifications
+          - uid: slack-receiver
+            type: slack
+            settings:
+              url: {{ .Values.grafana.alerting.slack.webhookUrl | quote }}
+              {{- if .Values.grafana.alerting.slack.channel }}
+              recipient: {{ .Values.grafana.alerting.slack.channel | quote }}
+              {{- end }}
+              title: |{{`
+                {{ `}}{{ "{{" }} template "slack.default.title" . {{ "}}" }}{{ `
+              `}}|
+              text: |{{`
+                {{ `}}{{ "{{" }} template "slack.default.text" . {{ "}}" }}{{ `
+              `}}|
+            disableResolveMessage: false
+          {{- end }}
+          {{- if .Values.grafana.alerting.teams.enabled }}
+          # Microsoft Teams notifications
+          - uid: teams-receiver
+            type: teams
+            settings:
+              url: {{ .Values.grafana.alerting.teams.webhookUrl | quote }}
+            disableResolveMessage: false
+          {{- end }}
+
+    # =================================================================
+    # Notification Policies - Route alerts to contact points
+    # =================================================================
+    policies:
+      - orgId: 1
+        receiver: default-notifications
+        group_by:
+          - grafana_folder
+          - alertname
+        group_wait: 30s
+        group_interval: 5m
+        repeat_interval: 4h
+
+    # =================================================================
+    # Alert Rules - KQL-based queries against ADX
+    # =================================================================
+    groups:
+      - orgId: 1
+        name: ADX Observability Alerts
+        folder: ADX Alerts
+        interval: 1m
+        rules:
+          # ---------------------------------------------------------
+          # High Error Rate Alert
+          # Triggers when error rate exceeds threshold
+          # ---------------------------------------------------------
+          - uid: adx-high-error-rate
+            title: High Error Rate Detected
+            condition: error_threshold
+            data:
+              - refId: error_rate
+                relativeTimeRange:
+                  from: 300
+                  to: 0
+                datasourceUid: adx-telemetry
+                model:
+                  format: table
+                  queryType: KQL
+                  rawQuery: true
+                  query: |
+                    OTelTraces
+                    | where Timestamp > ago(5m)
+                    | summarize
+                        TotalSpans = count(),
+                        ErrorSpans = countif(StatusCode == "Error" or StatusCode == "STATUS_CODE_ERROR")
+                    | extend ErrorRate = round(100.0 * ErrorSpans / TotalSpans, 2)
+                    | project ErrorRate
+              - refId: error_threshold
+                relativeTimeRange:
+                  from: 300
+                  to: 0
+                datasourceUid: __expr__
+                model:
+                  type: threshold
+                  expression: error_rate
+                  conditions:
+                    - evaluator:
+                        type: gt
+                        params:
+                          - {{ .Values.grafana.alerting.thresholds.errorRatePercent }}
+                      operator:
+                        type: and
+                      reducer:
+                        type: last
+            noDataState: NoData
+            execErrState: Error
+            for: 2m
+            annotations:
+              summary: Error rate is above {{ .Values.grafana.alerting.thresholds.errorRatePercent }}%
+              description: |
+                The overall error rate has exceeded the threshold.
+                Current error rate: {{`{{ $values.error_rate.Value }}`}}%
+            labels:
+              severity: critical
+              category: errors
+
+          # ---------------------------------------------------------
+          # High Latency Alert (P95)
+          # Triggers when P95 latency exceeds threshold
+          # ---------------------------------------------------------
+          - uid: adx-high-latency
+            title: High P95 Latency Detected
+            condition: latency_threshold
+            data:
+              - refId: p95_latency
+                relativeTimeRange:
+                  from: 300
+                  to: 0
+                datasourceUid: adx-telemetry
+                model:
+                  format: table
+                  queryType: KQL
+                  rawQuery: true
+                  query: |
+                    OTelTraces
+                    | where Timestamp > ago(5m)
+                    | where ParentSpanId == ""
+                    | summarize P95Latency = percentile(Duration / 1000000.0, 95)
+                    | project P95Latency
+              - refId: latency_threshold
+                relativeTimeRange:
+                  from: 300
+                  to: 0
+                datasourceUid: __expr__
+                model:
+                  type: threshold
+                  expression: p95_latency
+                  conditions:
+                    - evaluator:
+                        type: gt
+                        params:
+                          - {{ .Values.grafana.alerting.thresholds.p95LatencyMs }}
+                      operator:
+                        type: and
+                      reducer:
+                        type: last
+            noDataState: NoData
+            execErrState: Error
+            for: 3m
+            annotations:
+              summary: P95 latency is above {{ .Values.grafana.alerting.thresholds.p95LatencyMs }}ms
+              description: |
+                The P95 latency for root spans has exceeded the threshold.
+                Current P95 latency: {{`{{ $values.p95_latency.Value }}`}}ms
+            labels:
+              severity: warning
+              category: latency
+
+          # ---------------------------------------------------------
+          # Service Down Alert
+          # Triggers when no spans received from a service
+          # ---------------------------------------------------------
+          - uid: adx-service-down
+            title: Service Not Reporting
+            condition: no_spans_threshold
+            data:
+              - refId: service_spans
+                relativeTimeRange:
+                  from: 300
+                  to: 0
+                datasourceUid: adx-telemetry
+                model:
+                  format: table
+                  queryType: KQL
+                  rawQuery: true
+                  query: |
+                    let expected_services = dynamic(["frontend", "cart", "checkout", "payment", "product-catalog", "currency", "shipping", "recommendation", "ad"]);
+                    let active_services = OTelTraces
+                    | where Timestamp > ago(5m)
+                    | distinct ServiceName;
+                    print MissingServices = array_length(set_difference(expected_services, active_services))
+              - refId: no_spans_threshold
+                relativeTimeRange:
+                  from: 300
+                  to: 0
+                datasourceUid: __expr__
+                model:
+                  type: threshold
+                  expression: service_spans
+                  conditions:
+                    - evaluator:
+                        type: gt
+                        params:
+                          - 0
+                      operator:
+                        type: and
+                      reducer:
+                        type: last
+            noDataState: Alerting
+            execErrState: Error
+            for: 5m
+            annotations:
+              summary: One or more services are not reporting
+              description: |
+                Expected services are not sending telemetry data.
+                Missing services count: {{`{{ $values.service_spans.Value }}`}}
+            labels:
+              severity: critical
+              category: availability
+
+          # ---------------------------------------------------------
+          # Error Logs Spike Alert
+          # Triggers when error logs exceed threshold
+          # ---------------------------------------------------------
+          - uid: adx-error-logs-spike
+            title: Error Logs Spike Detected
+            condition: error_logs_threshold
+            data:
+              - refId: error_logs
+                relativeTimeRange:
+                  from: 300
+                  to: 0
+                datasourceUid: adx-telemetry
+                model:
+                  format: table
+                  queryType: KQL
+                  rawQuery: true
+                  query: |
+                    OTelLogs
+                    | where Timestamp > ago(5m)
+                    | where SeverityText == "ERROR" or SeverityNumber >= 17
+                    | summarize ErrorCount = count()
+                    | project ErrorCount
+              - refId: error_logs_threshold
+                relativeTimeRange:
+                  from: 300
+                  to: 0
+                datasourceUid: __expr__
+                model:
+                  type: threshold
+                  expression: error_logs
+                  conditions:
+                    - evaluator:
+                        type: gt
+                        params:
+                          - {{ .Values.grafana.alerting.thresholds.errorLogsCount }}
+                      operator:
+                        type: and
+                      reducer:
+                        type: last
+            noDataState: NoData
+            execErrState: Error
+            for: 2m
+            annotations:
+              summary: High number of error logs detected
+              description: |
+                Error log count has exceeded the threshold in the last 5 minutes.
+                Current error count: {{`{{ $values.error_logs.Value }}`}}
+            labels:
+              severity: warning
+              category: logs
+{{- end }}
