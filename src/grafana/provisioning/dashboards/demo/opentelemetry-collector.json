@@ -25,6 +25,7 @@
   "editable": true,
   "fiscalYearStartMonth": 0,
   "graphTooltip": 1,
+  "id": 12,
   "links": [],
   "liveNow": true,
   "panels": [
@@ -2375,6 +2376,392 @@
         "x": 0,
         "y": 14
       },
+      "id": 53,
+      "panels": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${prometheus_datasource}"
+          },
+          "description": "OTel Collectors. Derived from the `otelcol.process.uptime` metric.",
+          "fieldConfig": {
+            "defaults": {
+              "custom": {
+                "align": "auto",
+                "cellOptions": {
+                  "type": "auto"
+                },
+                "footer": {
+                  "reducers": []
+                },
+                "inspect": false
+              },
+              "mappings": [],
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green",
+                    "value": 0
+                  },
+                  {
+                    "color": "red",
+                    "value": 80
+                  }
+                ]
+              }
+            },
+            "overrides": [
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "Uptime"
+                },
+                "properties": [
+                  {
+                    "id": "unit",
+                    "value": "dtdurations"
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "Namespace"
+                },
+                "properties": [
+                  {
+                    "id": "custom.width",
+                    "value": 110
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "Version"
+                },
+                "properties": [
+                  {
+                    "id": "custom.width",
+                    "value": 85
+                  }
+                ]
+              }
+            ]
+          },
+          "gridPos": {
+            "h": 3,
+            "w": 24,
+            "x": 0,
+            "y": 16
+          },
+          "id": 54,
+          "options": {
+            "cellHeight": "sm",
+            "showHeader": true,
+            "sortBy": [
+              {
+                "desc": true,
+                "displayName": "Service Name"
+              }
+            ]
+          },
+          "pluginVersion": "12.3.1",
+          "targets": [
+            {
+              "datasource": {
+                "type": "prometheus",
+                "uid": "${prometheus_datasource}"
+              },
+              "editorMode": "code",
+              "expr": "otelcol_process_uptime_seconds_total{deployment_environment_name=~\"$deployment_environment_name\", k8s_cluster_name=~\"$k8s_cluster_name\", k8s_node_name=~\"$k8s_node_name\", host_name=~\"$host_name\", service_instance_id=~\"$service_instance_id\", service_name=~\"$service_name\"}",
+              "format": "table",
+              "instant": true,
+              "legendFormat": "__auto",
+              "queryType": "instant",
+              "range": false,
+              "refId": "A"
+            }
+          ],
+          "title": "",
+          "transformations": [
+            {
+              "id": "organize",
+              "options": {
+                "excludeByName": {
+                  "Time": true,
+                  "Value": false,
+                  "__name__": true,
+                  "instance": true,
+                  "job": true
+                },
+                "includeByName": {},
+                "indexByName": {
+                  "Time": 2,
+                  "Value": 12,
+                  "__name__": 3,
+                  "host_name": 4,
+                  "instance": 5,
+                  "job": 6,
+                  "k8s_cluster_name": 7,
+                  "k8s_namespace_name": 8,
+                  "k8s_node_name": 9,
+                  "k8s_pod_name": 10,
+                  "service_instance_id": 11,
+                  "service_name": 0,
+                  "service_version": 1
+                },
+                "orderByMode": "manual",
+                "renameByName": {
+                  "Value": "Uptime",
+                  "host_name": "Host",
+                  "k8s_cluster_name": "K8s cluster",
+                  "k8s_namespace_name": "Namespace",
+                  "k8s_node_name": "Node",
+                  "k8s_pod_name": "Pod",
+                  "service_instance_id": "Service Instance Id",
+                  "service_name": "Service Name",
+                  "service_version": "Version"
+                }
+              }
+            }
+          ],
+          "type": "table"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${prometheus_datasource}"
+          },
+          "description": "CPU consumption rate of the OpenTelemetry collector process",
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "thresholds"
+              },
+              "mappings": [],
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green",
+                    "value": 0
+                  },
+                  {
+                    "color": "red",
+                    "value": 80
+                  }
+                ]
+              },
+              "unit": "percentunit"
+            },
+            "overrides": []
+          },
+          "gridPos": {
+            "h": 3,
+            "w": 5,
+            "x": 0,
+            "y": 39
+          },
+          "id": 50,
+          "options": {
+            "colorMode": "value",
+            "graphMode": "area",
+            "justifyMode": "auto",
+            "orientation": "auto",
+            "percentChangeColorMode": "standard",
+            "reduceOptions": {
+              "calcs": [
+                "lastNotNull"
+              ],
+              "fields": "",
+              "values": false
+            },
+            "showPercentChange": false,
+            "textMode": "auto",
+            "wideLayout": true
+          },
+          "pluginVersion": "12.3.1",
+          "targets": [
+            {
+              "datasource": {
+                "type": "prometheus",
+                "uid": "${prometheus_datasource}"
+              },
+              "editorMode": "code",
+              "expr": "rate(otelcol_process_cpu_seconds_total{deployment_environment_name=~\"$deployment_environment_name\",k8s_cluster_name=~\"$k8s_cluster_name\",k8s_node_name=~\"$k8s_node_name\",host_name=~\"$host_name\",service_instance_id=~\"$service_instance_id\",service_name=~\"$service_name\"}[$__rate_interval])",
+              "instant": false,
+              "legendFormat": "{{service_name}} {{service_instance_id}}",
+              "queryType": "range",
+              "range": true,
+              "refId": "A"
+            }
+          ],
+          "title": "CPU Usage",
+          "type": "stat"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${prometheus_datasource}"
+          },
+          "description": "Resident memory consumed by the OpenTelemetry collector process",
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "thresholds"
+              },
+              "mappings": [],
+              "min": 0,
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green",
+                    "value": 0
+                  },
+                  {
+                    "color": "red",
+                    "value": 80
+                  }
+                ]
+              },
+              "unit": "bytes"
+            },
+            "overrides": []
+          },
+          "gridPos": {
+            "h": 3,
+            "w": 5,
+            "x": 5,
+            "y": 39
+          },
+          "id": 52,
+          "options": {
+            "colorMode": "value",
+            "graphMode": "area",
+            "justifyMode": "auto",
+            "orientation": "auto",
+            "percentChangeColorMode": "standard",
+            "reduceOptions": {
+              "calcs": [
+                "lastNotNull"
+              ],
+              "fields": "",
+              "values": false
+            },
+            "showPercentChange": false,
+            "textMode": "auto",
+            "wideLayout": true
+          },
+          "pluginVersion": "12.3.1",
+          "targets": [
+            {
+              "datasource": {
+                "type": "prometheus",
+                "uid": "${prometheus_datasource}"
+              },
+              "editorMode": "code",
+              "expr": "otelcol_process_memory_rss_bytes{deployment_environment_name=~\"$deployment_environment_name\",k8s_cluster_name=~\"$k8s_cluster_name\",k8s_node_name=~\"$k8s_node_name\",host_name=~\"$host_name\",service_instance_id=~\"$service_instance_id\",service_name=~\"$service_name\"}",
+              "instant": false,
+              "legendFormat": "{{service_name}} {{service_instance_id}}",
+              "queryType": "range",
+              "range": true,
+              "refId": "A"
+            }
+          ],
+          "title": "Memory Usage (RSS)",
+          "type": "stat"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${prometheus_datasource}"
+          },
+          "description": "Total uptime of the OpenTelemetry collector process",
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "thresholds"
+              },
+              "mappings": [],
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "red",
+                    "value": 0
+                  },
+                  {
+                    "color": "yellow",
+                    "value": 300
+                  },
+                  {
+                    "color": "green",
+                    "value": 3600
+                  }
+                ]
+              },
+              "unit": "s"
+            },
+            "overrides": []
+          },
+          "gridPos": {
+            "h": 3,
+            "w": 2,
+            "x": 10,
+            "y": 39
+          },
+          "id": 51,
+          "options": {
+            "colorMode": "value",
+            "graphMode": "none",
+            "justifyMode": "auto",
+            "orientation": "auto",
+            "percentChangeColorMode": "standard",
+            "reduceOptions": {
+              "calcs": [
+                "lastNotNull"
+              ],
+              "fields": "",
+              "values": false
+            },
+            "showPercentChange": false,
+            "textMode": "auto",
+            "wideLayout": true
+          },
+          "pluginVersion": "12.3.1",
+          "targets": [
+            {
+              "datasource": {
+                "type": "prometheus",
+                "uid": "${prometheus_datasource}"
+              },
+              "editorMode": "code",
+              "expr": "otelcol_process_uptime_seconds_total{deployment_environment_name=~\"$deployment_environment_name\",k8s_cluster_name=~\"$k8s_cluster_name\",k8s_node_name=~\"$k8s_node_name\",host_name=~\"$host_name\",service_instance_id=~\"$service_instance_id\",service_name=~\"$service_name\"}",
+              "instant": false,
+              "legendFormat": "{{service_name}} {{service_instance_id}}",
+              "queryType": "range",
+              "range": true,
+              "refId": "A"
+            }
+          ],
+          "title": "Uptime",
+          "type": "stat"
+        }
+      ],
+      "title": "Collector",
+      "type": "row"
+    },
+    {
+      "collapsed": true,
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 15
+      },
       "id": 23,
       "panels": [
         {
@@ -3123,7 +3510,7 @@
             "h": 10,
             "w": 24,
             "x": 0,
-            "y": 44
+            "y": 54
           },
           "id": 41,
           "options": {
@@ -3274,392 +3661,6 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 15
-      },
-      "id": 53,
-      "panels": [
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "${prometheus_datasource}"
-          },
-          "description": "OTel Collectors. Derived from the `otelcol.process.uptime` metric.",
-          "fieldConfig": {
-            "defaults": {
-              "custom": {
-                "align": "auto",
-                "cellOptions": {
-                  "type": "auto"
-                },
-                "footer": {
-                  "reducers": []
-                },
-                "inspect": false
-              },
-              "mappings": [],
-              "thresholds": {
-                "mode": "absolute",
-                "steps": [
-                  {
-                    "color": "green",
-                    "value": 0
-                  },
-                  {
-                    "color": "red",
-                    "value": 80
-                  }
-                ]
-              }
-            },
-            "overrides": [
-              {
-                "matcher": {
-                  "id": "byName",
-                  "options": "Uptime"
-                },
-                "properties": [
-                  {
-                    "id": "unit",
-                    "value": "dtdurations"
-                  }
-                ]
-              },
-              {
-                "matcher": {
-                  "id": "byName",
-                  "options": "Namespace"
-                },
-                "properties": [
-                  {
-                    "id": "custom.width",
-                    "value": 110
-                  }
-                ]
-              },
-              {
-                "matcher": {
-                  "id": "byName",
-                  "options": "Version"
-                },
-                "properties": [
-                  {
-                    "id": "custom.width",
-                    "value": 85
-                  }
-                ]
-              }
-            ]
-          },
-          "gridPos": {
-            "h": 3,
-            "w": 24,
-            "x": 0,
-            "y": 16
-          },
-          "id": 54,
-          "options": {
-            "cellHeight": "sm",
-            "showHeader": true,
-            "sortBy": [
-              {
-                "desc": true,
-                "displayName": "Service Name"
-              }
-            ]
-          },
-          "pluginVersion": "12.3.1",
-          "targets": [
-            {
-              "datasource": {
-                "type": "prometheus",
-                "uid": "${prometheus_datasource}"
-              },
-              "editorMode": "code",
-              "expr": "otelcol_process_uptime_seconds_total{deployment_environment_name=~\"$deployment_environment_name\", k8s_cluster_name=~\"$k8s_cluster_name\", k8s_node_name=~\"$k8s_node_name\", host_name=~\"$host_name\", service_instance_id=~\"$service_instance_id\", service_name=~\"$service_name\"}",
-              "format": "table",
-              "instant": true,
-              "legendFormat": "__auto",
-              "queryType": "instant",
-              "range": false,
-              "refId": "A"
-            }
-          ],
-          "title": "",
-          "transformations": [
-            {
-              "id": "organize",
-              "options": {
-                "excludeByName": {
-                  "Time": true,
-                  "Value": false,
-                  "__name__": true,
-                  "instance": true,
-                  "job": true
-                },
-                "includeByName": {},
-                "indexByName": {
-                  "Time": 2,
-                  "Value": 12,
-                  "__name__": 3,
-                  "host_name": 4,
-                  "instance": 5,
-                  "job": 6,
-                  "k8s_cluster_name": 7,
-                  "k8s_namespace_name": 8,
-                  "k8s_node_name": 9,
-                  "k8s_pod_name": 10,
-                  "service_instance_id": 11,
-                  "service_name": 0,
-                  "service_version": 1
-                },
-                "orderByMode": "manual",
-                "renameByName": {
-                  "Value": "Uptime",
-                  "host_name": "Host",
-                  "k8s_cluster_name": "K8s cluster",
-                  "k8s_namespace_name": "Namespace",
-                  "k8s_node_name": "Node",
-                  "k8s_pod_name": "Pod",
-                  "service_instance_id": "Service Instance Id",
-                  "service_name": "Service Name",
-                  "service_version": "Version"
-                }
-              }
-            }
-          ],
-          "type": "table"
-        },
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "${prometheus_datasource}"
-          },
-          "description": "CPU consumption rate of the OpenTelemetry collector process",
-          "fieldConfig": {
-            "defaults": {
-              "color": {
-                "mode": "thresholds"
-              },
-              "mappings": [],
-              "thresholds": {
-                "mode": "absolute",
-                "steps": [
-                  {
-                    "color": "green",
-                    "value": 0
-                  },
-                  {
-                    "color": "red",
-                    "value": 80
-                  }
-                ]
-              },
-              "unit": "percentunit"
-            },
-            "overrides": []
-          },
-          "gridPos": {
-            "h": 3,
-            "w": 5,
-            "x": 0,
-            "y": 29
-          },
-          "id": 50,
-          "options": {
-            "colorMode": "value",
-            "graphMode": "area",
-            "justifyMode": "auto",
-            "orientation": "auto",
-            "percentChangeColorMode": "standard",
-            "reduceOptions": {
-              "calcs": [
-                "lastNotNull"
-              ],
-              "fields": "",
-              "values": false
-            },
-            "showPercentChange": false,
-            "textMode": "auto",
-            "wideLayout": true
-          },
-          "pluginVersion": "12.3.1",
-          "targets": [
-            {
-              "datasource": {
-                "type": "prometheus",
-                "uid": "${prometheus_datasource}"
-              },
-              "editorMode": "code",
-              "expr": "rate(otelcol_process_cpu_seconds_total{deployment_environment_name=~\"$deployment_environment_name\",k8s_cluster_name=~\"$k8s_cluster_name\",k8s_node_name=~\"$k8s_node_name\",host_name=~\"$host_name\",service_instance_id=~\"$service_instance_id\",service_name=~\"$service_name\"}[$__rate_interval])",
-              "instant": false,
-              "legendFormat": "{{service_name}} {{service_instance_id}}",
-              "queryType": "range",
-              "range": true,
-              "refId": "A"
-            }
-          ],
-          "title": "CPU Usage",
-          "type": "stat"
-        },
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "${prometheus_datasource}"
-          },
-          "description": "Resident memory consumed by the OpenTelemetry collector process",
-          "fieldConfig": {
-            "defaults": {
-              "color": {
-                "mode": "thresholds"
-              },
-              "mappings": [],
-              "min": 0,
-              "thresholds": {
-                "mode": "absolute",
-                "steps": [
-                  {
-                    "color": "green",
-                    "value": 0
-                  },
-                  {
-                    "color": "red",
-                    "value": 80
-                  }
-                ]
-              },
-              "unit": "bytes"
-            },
-            "overrides": []
-          },
-          "gridPos": {
-            "h": 3,
-            "w": 5,
-            "x": 5,
-            "y": 29
-          },
-          "id": 52,
-          "options": {
-            "colorMode": "value",
-            "graphMode": "area",
-            "justifyMode": "auto",
-            "orientation": "auto",
-            "percentChangeColorMode": "standard",
-            "reduceOptions": {
-              "calcs": [
-                "lastNotNull"
-              ],
-              "fields": "",
-              "values": false
-            },
-            "showPercentChange": false,
-            "textMode": "auto",
-            "wideLayout": true
-          },
-          "pluginVersion": "12.3.1",
-          "targets": [
-            {
-              "datasource": {
-                "type": "prometheus",
-                "uid": "${prometheus_datasource}"
-              },
-              "editorMode": "code",
-              "expr": "otelcol_process_memory_rss_bytes{deployment_environment_name=~\"$deployment_environment_name\",k8s_cluster_name=~\"$k8s_cluster_name\",k8s_node_name=~\"$k8s_node_name\",host_name=~\"$host_name\",service_instance_id=~\"$service_instance_id\",service_name=~\"$service_name\"}",
-              "instant": false,
-              "legendFormat": "{{service_name}} {{service_instance_id}}",
-              "queryType": "range",
-              "range": true,
-              "refId": "A"
-            }
-          ],
-          "title": "Memory Usage (RSS)",
-          "type": "stat"
-        },
-        {
-          "datasource": {
-            "type": "prometheus",
-            "uid": "${prometheus_datasource}"
-          },
-          "description": "Total uptime of the OpenTelemetry collector process",
-          "fieldConfig": {
-            "defaults": {
-              "color": {
-                "mode": "thresholds"
-              },
-              "mappings": [],
-              "thresholds": {
-                "mode": "absolute",
-                "steps": [
-                  {
-                    "color": "red",
-                    "value": 0
-                  },
-                  {
-                    "color": "yellow",
-                    "value": 300
-                  },
-                  {
-                    "color": "green",
-                    "value": 3600
-                  }
-                ]
-              },
-              "unit": "s"
-            },
-            "overrides": []
-          },
-          "gridPos": {
-            "h": 3,
-            "w": 2,
-            "x": 10,
-            "y": 29
-          },
-          "id": 51,
-          "options": {
-            "colorMode": "value",
-            "graphMode": "none",
-            "justifyMode": "auto",
-            "orientation": "auto",
-            "percentChangeColorMode": "standard",
-            "reduceOptions": {
-              "calcs": [
-                "lastNotNull"
-              ],
-              "fields": "",
-              "values": false
-            },
-            "showPercentChange": false,
-            "textMode": "auto",
-            "wideLayout": true
-          },
-          "pluginVersion": "12.3.1",
-          "targets": [
-            {
-              "datasource": {
-                "type": "prometheus",
-                "uid": "${prometheus_datasource}"
-              },
-              "editorMode": "code",
-              "expr": "otelcol_process_uptime_seconds_total{deployment_environment_name=~\"$deployment_environment_name\",k8s_cluster_name=~\"$k8s_cluster_name\",k8s_node_name=~\"$k8s_node_name\",host_name=~\"$host_name\",service_instance_id=~\"$service_instance_id\",service_name=~\"$service_name\"}",
-              "instant": false,
-              "legendFormat": "{{service_name}} {{service_instance_id}}",
-              "queryType": "range",
-              "range": true,
-              "refId": "A"
-            }
-          ],
-          "title": "Uptime",
-          "type": "stat"
-        }
-      ],
-      "title": "Collector",
-      "type": "row"
-    },
-    {
-      "collapsed": true,
-      "gridPos": {
-        "h": 1,
-        "w": 24,
-        "x": 0,
         "y": 16
       },
       "id": 48,
@@ -3744,7 +3745,7 @@
             "h": 3,
             "w": 3,
             "x": 0,
-            "y": 85
+            "y": 95
           },
           "id": 81,
           "options": {
@@ -3863,7 +3864,7 @@
             "h": 3,
             "w": 2,
             "x": 3,
-            "y": 85
+            "y": 95
           },
           "id": 75,
           "options": {
@@ -3980,7 +3981,7 @@
             "h": 3,
             "w": 3,
             "x": 5,
-            "y": 85
+            "y": 95
           },
           "id": 83,
           "options": {
@@ -4099,7 +4100,7 @@
             "h": 3,
             "w": 2,
             "x": 8,
-            "y": 85
+            "y": 95
           },
           "id": 84,
           "options": {
@@ -4216,7 +4217,7 @@
             "h": 3,
             "w": 3,
             "x": 10,
-            "y": 85
+            "y": 95
           },
           "id": 85,
           "options": {
@@ -4335,7 +4336,7 @@
             "h": 3,
             "w": 2,
             "x": 13,
-            "y": 85
+            "y": 95
           },
           "id": 86,
           "options": {
@@ -4442,7 +4443,7 @@
             "h": 8,
             "w": 12,
             "x": 0,
-            "y": 111
+            "y": 121
           },
           "id": 49,
           "options": {
@@ -4624,7 +4625,7 @@
             "h": 3,
             "w": 3,
             "x": 0,
-            "y": 86
+            "y": 96
           },
           "id": 43,
           "options": {
@@ -4743,7 +4744,7 @@
             "h": 3,
             "w": 2,
             "x": 3,
-            "y": 86
+            "y": 96
           },
           "id": 44,
           "options": {
@@ -4859,7 +4860,7 @@
             "h": 3,
             "w": 3,
             "x": 5,
-            "y": 86
+            "y": 96
           },
           "id": 70,
           "options": {
@@ -4978,7 +4979,7 @@
             "h": 3,
             "w": 2,
             "x": 8,
-            "y": 86
+            "y": 96
           },
           "id": 72,
           "options": {
@@ -5094,7 +5095,7 @@
             "h": 3,
             "w": 3,
             "x": 10,
-            "y": 86
+            "y": 96
           },
           "id": 71,
           "options": {
@@ -5213,7 +5214,7 @@
             "h": 3,
             "w": 2,
             "x": 13,
-            "y": 86
+            "y": 96
           },
           "id": 73,
           "options": {
@@ -5321,7 +5322,7 @@
             "h": 10,
             "w": 24,
             "x": 0,
-            "y": 99
+            "y": 109
           },
           "id": 45,
           "options": {
@@ -5520,8 +5521,8 @@
     "list": [
       {
         "current": {
-          "text": "",
-          "value": "${DS_GRAFANACLOUD-XXX-PROM}"
+          "text": "Prometheus",
+          "value": "webstore-metrics"
         },
         "description": "OpenTelemetry metrics. \nSend metrics using the Prometheus OTLP endpoint activating `keep_identifying_resource_attributes` and resource attribute promotion (aka `promote_resource_attributes`) including `service.name`, service.namespace`, `service.instance.id`, and `deployment.environment.name`",
         "label": "Metrics",
@@ -5549,7 +5550,14 @@
       },
       {
         "allValue": ".*",
-        "current": {},
+        "current": {
+          "text": [
+            "All"
+          ],
+          "value": [
+            "$__all"
+          ]
+        },
         "datasource": {
           "type": "prometheus",
           "uid": "${prometheus_datasource}"
@@ -5580,7 +5588,14 @@
       },
       {
         "allValue": ".*",
-        "current": {},
+        "current": {
+          "text": [
+            "All"
+          ],
+          "value": [
+            "$__all"
+          ]
+        },
         "datasource": {
           "type": "prometheus",
           "uid": "${prometheus_datasource}"
@@ -5610,7 +5625,14 @@
       },
       {
         "allValue": ".*",
-        "current": {},
+        "current": {
+          "text": [
+            "All"
+          ],
+          "value": [
+            "$__all"
+          ]
+        },
         "datasource": {
           "type": "prometheus",
           "uid": "${prometheus_datasource}"
@@ -5640,7 +5662,10 @@
       },
       {
         "allValue": ".*",
-        "current": {},
+        "current": {
+          "text": "All",
+          "value": "$__all"
+        },
         "datasource": {
           "type": "prometheus",
           "uid": "${prometheus_datasource}"
@@ -5668,7 +5693,10 @@
       },
       {
         "allValue": ".*",
-        "current": {},
+        "current": {
+          "text": "All",
+          "value": "$__all"
+        },
         "datasource": {
           "type": "prometheus",
           "uid": "${prometheus_datasource}"
@@ -5690,7 +5718,10 @@
       },
       {
         "allValue": ".*",
-        "current": {},
+        "current": {
+          "text": "otelcol-contrib",
+          "value": "otelcol-contrib"
+        },
         "datasource": {
           "type": "prometheus",
           "uid": "${prometheus_datasource}"
@@ -5732,5 +5763,5 @@
   "timezone": "browser",
   "title": "OpenTelemetry Collector",
   "uid": "otel-demo_otel-collector_dashboard",
-  "version": 2
+  "version": 1
 }
