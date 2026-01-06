@@ -50,25 +50,32 @@ This is a **fork of the [OpenTelemetry Demo](https://github.com/open-telemetry/o
 
 All telemetry data flows to Azure Data Explorer and is visualized through Grafana dashboards using KQL queries.
 
-### OpenTelemetry APM Dashboard
-Full application performance monitoring with request rates, latency percentiles, and service health overview.
-
-![APM Dashboard](docs/img/grafana-apm-dashboard.png)
-
-### Traces Explorer
-Distributed tracing with span counts, latency analysis, and service dependency visualization.
-
-![Traces Explorer](docs/img/grafana-traces-explorer.png)
-
-### Logs Analytics
-Centralized log analysis with severity breakdown, service distribution, and trace correlation.
-
-![Logs Analytics](docs/img/grafana-logs-analytics.png)
-
-### Service Health
-Detailed per-service metrics including request rates, latency percentiles (P50/P95/P99), and error tracking.
-
-![Service Health](docs/img/grafana-service-health.png)
+<table>
+  <tr>
+    <td width="50%">
+      <strong>Service Health</strong><br/>
+      <em>Request rates, latency percentiles, error tracking</em><br/><br/>
+      <img src="assets/service-health.png" alt="Service Health Dashboard" width="100%"/>
+    </td>
+    <td width="50%">
+      <strong>Traces Explorer</strong><br/>
+      <em>Distributed tracing, span analysis, service dependencies</em><br/><br/>
+      <img src="assets/trace-explorer.png" alt="Traces Explorer Dashboard" width="100%"/>
+    </td>
+  </tr>
+  <tr>
+    <td width="50%">
+      <strong>Logs Analytics</strong><br/>
+      <em>Log severity breakdown, service distribution</em><br/><br/>
+      <img src="assets/log-analytics.png" alt="Logs Analytics Dashboard" width="100%"/>
+    </td>
+    <td width="50%">
+      <strong>Infrastructure & Collector</strong><br/>
+      <em>OTel Collector metrics, ADX ingestion stats</em><br/><br/>
+      <img src="assets/infra-collector.png" alt="Infrastructure Dashboard" width="100%"/>
+    </td>
+  </tr>
+</table>
 
 ---
 
