@@ -503,12 +503,14 @@ services:
       - OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE
       - OTEL_RESOURCE_ATTRIBUTES
       - OTEL_SERVICE_NAME=product-catalog
-    volumes:
-      - ./src/product-catalog/products:/usr/src/app/products
+      - OTEL_SEMCONV_STABILITY_OPT_IN=database
+      - DB_CONNECTION_STRING=postgres://otelu:otelp@${POSTGRES_HOST}/${POSTGRES_DB}?sslmode=disable
     depends_on:
       otel-collector:
         condition: service_started
       flagd:
+        condition: service_started
+      postgresql:
         condition: service_started
     logging: *logging
 
@@ -776,13 +778,8 @@ services:
 
   # Postgresql used by Accounting service
   postgresql:
-    image: ${IMAGE_NAME}:${DEMO_VERSION}-postgresql
+    image: ${POSTGRES_IMAGE}
     container_name: postgresql
-    build:
-      context: ./
-      dockerfile: ${POSTGRES_DOCKERFILE}
-      cache_from:
-        - ${IMAGE_NAME}:${IMAGE_VERSION}-postgresql
     deploy:
       resources:
         limits:
@@ -794,6 +791,8 @@ services:
       - POSTGRES_USER=root
       - POSTGRES_PASSWORD
       - POSTGRES_DB
+    volumes:
+      - ./src/postgres/init.sql:/docker-entrypoint-initdb.d/init.sql      
     logging: *logging
 
   # Valkey used by Cart service
