@@ -495,7 +495,6 @@ services:
       - "${PRODUCT_CATALOG_PORT}"
     environment:
       - PRODUCT_CATALOG_PORT
-      - PRODUCT_CATALOG_RELOAD_INTERVAL
       - FLAGD_HOST
       - FLAGD_PORT
       - GOMEMLIMIT=16MiB
