@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="https://azure.microsoft.com/svghandler/data-explorer/?width=300" alt="Azure Data Explorer" width="300">
+  <img src="assets/service-flow.jpg" alt="OpenTelemetry to Azure Data Explorer Flow" width="600">
 </p>
 
 # OpenTelemetry Demo with Azure Data Explorer
