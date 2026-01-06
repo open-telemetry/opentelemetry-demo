@@ -119,6 +119,7 @@ module "communication" {
   resource_group_name        = azurerm_resource_group.main.name
   data_location              = var.communication_data_location
   tenant_id                  = data.azurerm_client_config.current.tenant_id
+  create_smtp_entra_app      = var.create_smtp_entra_app
 
   tags = local.common_tags
 }
@@ -186,13 +187,14 @@ resource "local_file" "helm_values" {
           p95LatencyMs: 500
           errorLogsCount: 10
 %{if var.enable_email_alerts && length(module.communication) > 0~}
-        # Azure Communication Services SMTP Configuration
+        # Azure Communication Services - configure SMTP manually in Grafana UI
+        # See: https://learn.microsoft.com/en-us/azure/communication-services/quickstarts/email/send-email-smtp/smtp-authentication
         smtp:
-          enabled: true
-          host: "${module.communication[0].smtp_host}"
-          port: ${module.communication[0].smtp_port}
-          user: "${module.communication[0].smtp_username}"
-          password: "${module.communication[0].smtp_password}"
+          enabled: false
+          host: "smtp.azurecomm.net"
+          port: 587
+          user: ""  # Format: <COMM_SERVICE_NAME>.<ENTRA_APP_ID>.<TENANT_ID>
+          password: ""  # Entra app client secret
           fromAddress: "${module.communication[0].from_email_address}"
           fromName: "OTel Demo Alerts"
           toAddresses: "${var.alert_recipients}"

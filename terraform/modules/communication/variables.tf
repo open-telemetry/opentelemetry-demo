@@ -50,3 +50,9 @@ variable "tenant_id" {
   description = "Azure AD Tenant ID for SMTP authentication"
   type        = string
 }
+
+variable "create_smtp_entra_app" {
+  description = "Create Entra ID app for SMTP authentication. Requires Application Administrator role. Set to false to configure SMTP manually."
+  type        = bool
+  default     = true
+}

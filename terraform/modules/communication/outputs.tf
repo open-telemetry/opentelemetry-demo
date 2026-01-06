@@ -28,14 +28,19 @@ output "smtp_port" {
 
 # SMTP username format: <Azure Communication Services Resource name>.<Entra Application ID>.<Entra Tenant ID>
 output "smtp_username" {
-  description = "SMTP username for authentication"
-  value       = "${azurerm_communication_service.this.name}.${azuread_application.smtp.client_id}.${var.tenant_id}"
+  description = "SMTP username for authentication. Empty if create_smtp_entra_app is false."
+  value       = var.create_smtp_entra_app ? "${azurerm_communication_service.this.name}.${azuread_application.smtp[0].client_id}.${var.tenant_id}" : ""
 }
 
 output "smtp_password" {
-  description = "SMTP password (Entra app secret)"
-  value       = azuread_application_password.smtp.value
+  description = "SMTP password (Entra app secret). Empty if create_smtp_entra_app is false."
+  value       = var.create_smtp_entra_app ? azuread_application_password.smtp[0].value : ""
   sensitive   = true
+}
+
+output "smtp_entra_app_created" {
+  description = "Whether the Entra ID app for SMTP was created"
+  value       = var.create_smtp_entra_app
 }
 
 # -----------------------------------------------------------------------------
@@ -55,13 +60,13 @@ output "from_email_address" {
 # Full SMTP Configuration Object
 # -----------------------------------------------------------------------------
 output "grafana_smtp_config" {
-  description = "Complete SMTP configuration for Grafana helm values"
+  description = "Complete SMTP configuration for Grafana helm values. If Entra app not created, user/password will be empty."
   value = {
-    enabled     = true
+    enabled     = var.create_smtp_entra_app
     host        = "smtp.azurecomm.net"
     port        = 587
-    user        = "${azurerm_communication_service.this.name}.${azuread_application.smtp.client_id}.${var.tenant_id}"
-    password    = azuread_application_password.smtp.value
+    user        = var.create_smtp_entra_app ? "${azurerm_communication_service.this.name}.${azuread_application.smtp[0].client_id}.${var.tenant_id}" : ""
+    password    = var.create_smtp_entra_app ? azuread_application_password.smtp[0].value : ""
     fromAddress = "DoNotReply@${azurerm_email_communication_service_domain.azure_managed.from_sender_domain}"
     fromName    = "OTel Demo Alerts"
     skipVerify  = false

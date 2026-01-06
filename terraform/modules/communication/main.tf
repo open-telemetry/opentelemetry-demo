@@ -28,12 +28,12 @@ resource "azurerm_email_communication_service" "this" {
 # -----------------------------------------------------------------------------
 # Azure Managed Email Domain
 # -----------------------------------------------------------------------------
-# Uses Azure-provided domain (AzureManagedDomain) for quick setup
+# Uses Azure-provided domain (AzureManaged) for quick setup
 # For production, consider using a custom domain
 resource "azurerm_email_communication_service_domain" "azure_managed" {
   name              = "AzureManagedDomain"
   email_service_id  = azurerm_email_communication_service.this.id
-  domain_management = "AzureManagedDomain"
+  domain_management = "AzureManaged"
 
   # Note: Azure managed domains have format: xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx.azurecomm.net
   # The actual domain will be available in outputs after creation
@@ -50,10 +50,14 @@ resource "azurerm_communication_service_email_domain_association" "this" {
 }
 
 # -----------------------------------------------------------------------------
-# Entra ID Application for SMTP Authentication
+# Entra ID Application for SMTP Authentication (Optional)
 # -----------------------------------------------------------------------------
 # Azure Communication Services SMTP requires Entra ID authentication
+# These resources require Application Administrator role in Entra ID
+# Set var.create_smtp_entra_app = false to skip and configure manually
+
 resource "azuread_application" "smtp" {
+  count        = var.create_smtp_entra_app ? 1 : 0
   display_name = "${var.communication_service_name}-smtp-auth"
 
   required_resource_access {
@@ -70,11 +74,13 @@ resource "azuread_application" "smtp" {
 }
 
 resource "azuread_service_principal" "smtp" {
-  client_id = azuread_application.smtp.client_id
+  count     = var.create_smtp_entra_app ? 1 : 0
+  client_id = azuread_application.smtp[0].client_id
 }
 
 resource "azuread_application_password" "smtp" {
-  application_id = azuread_application.smtp.id
+  count          = var.create_smtp_entra_app ? 1 : 0
+  application_id = azuread_application.smtp[0].id
   display_name   = "SMTP Authentication Secret"
   end_date       = timeadd(timestamp(), "8760h") # 1 year
 
@@ -88,7 +94,8 @@ resource "azuread_application_password" "smtp" {
 # -----------------------------------------------------------------------------
 # Grant the Entra app permission to send emails via the Communication Service
 resource "azurerm_role_assignment" "smtp_contributor" {
+  count                = var.create_smtp_entra_app ? 1 : 0
   scope                = azurerm_communication_service.this.id
   role_definition_name = "Contributor"
-  principal_id         = azuread_service_principal.smtp.object_id
+  principal_id         = azuread_service_principal.smtp[0].object_id
 }

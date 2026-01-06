@@ -160,3 +160,9 @@ variable "alert_recipients" {
   type        = string
   default     = ""
 }
+
+variable "create_smtp_entra_app" {
+  description = "Create Entra ID app for SMTP authentication. Requires Application Administrator role. Set to false to configure SMTP manually."
+  type        = bool
+  default     = false
+}
