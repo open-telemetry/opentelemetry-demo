@@ -31,21 +31,21 @@ groups:
             datasourceUid: __expr__
             model:
               conditions:
-                  - evaluator:
-                      params: []
-                      type: gt
-                    operator:
-                      type: and
-                    query:
-                      params:
-                          - B
-                    reducer:
-                      params: []
-                      type: last
-                    type: query
+                - evaluator:
+                    params: []
+                    type: gt
+                  operator:
+                    type: and
+                  query:
+                    params:
+                      - B
+                  reducer:
+                    params: []
+                    type: last
+                  type: query
               datasource:
-                  type: __expr__
-                  uid: __expr__
+                type: __expr__
+                uid: __expr__
               expression: A
               intervalMs: 1000
               maxDataPoints: 43200
@@ -56,22 +56,22 @@ groups:
             datasourceUid: __expr__
             model:
               conditions:
-                  - evaluator:
-                      params:
-                          - 0
-                      type: gt
-                    operator:
-                      type: and
-                    query:
-                      params:
-                          - C
-                    reducer:
-                      params: []
-                      type: last
-                    type: query
+                - evaluator:
+                    params:
+                      - 0
+                    type: gt
+                  operator:
+                    type: and
+                  query:
+                    params:
+                      - C
+                  reducer:
+                    params: []
+                    type: last
+                  type: query
               datasource:
-                  type: __expr__
-                  uid: __expr__
+                type: __expr__
+                uid: __expr__
               expression: B
               intervalMs: 1000
               maxDataPoints: 43200
@@ -109,21 +109,21 @@ groups:
             datasourceUid: __expr__
             model:
               conditions:
-                  - evaluator:
-                      params: []
-                      type: gt
-                    operator:
-                      type: and
-                    query:
-                      params:
-                          - B
-                    reducer:
-                      params: []
-                      type: last
-                    type: query
+                - evaluator:
+                    params: []
+                    type: gt
+                  operator:
+                    type: and
+                  query:
+                    params:
+                      - B
+                  reducer:
+                    params: []
+                    type: last
+                  type: query
               datasource:
-                  type: __expr__
-                  uid: __expr__
+                type: __expr__
+                uid: __expr__
               expression: A
               intervalMs: 1000
               maxDataPoints: 43200
@@ -134,22 +134,22 @@ groups:
             datasourceUid: __expr__
             model:
               conditions:
-                  - evaluator:
-                      params:
-                          - 0
-                      type: gt
-                    operator:
-                      type: and
-                    query:
-                      params:
-                          - C
-                    reducer:
-                      params: []
-                      type: last
-                    type: query
+                - evaluator:
+                    params:
+                      - 0
+                    type: gt
+                  operator:
+                    type: and
+                  query:
+                    params:
+                      - C
+                  reducer:
+                    params: []
+                    type: last
+                  type: query
               datasource:
-                  type: __expr__
-                  uid: __expr__
+                type: __expr__
+                uid: __expr__
               expression: B
               intervalMs: 1000
               maxDataPoints: 43200
@@ -188,21 +188,21 @@ groups:
             datasourceUid: __expr__
             model:
               conditions:
-                  - evaluator:
-                      params: []
-                      type: gt
-                    operator:
-                      type: and
-                    query:
-                      params:
-                          - B
-                    reducer:
-                      params: []
-                      type: last
-                    type: query
+                - evaluator:
+                    params: []
+                    type: gt
+                  operator:
+                    type: and
+                  query:
+                    params:
+                      - B
+                  reducer:
+                    params: []
+                    type: last
+                  type: query
               datasource:
-                  type: __expr__
-                  uid: __expr__
+                type: __expr__
+                uid: __expr__
               expression: A
               intervalMs: 1000
               maxDataPoints: 43200
@@ -213,22 +213,22 @@ groups:
             datasourceUid: __expr__
             model:
               conditions:
-                  - evaluator:
-                      params:
-                          - 0
-                      type: gt
-                    operator:
-                      type: and
-                    query:
-                      params:
-                          - C
-                    reducer:
-                      params: []
-                      type: last
-                    type: query
+                - evaluator:
+                    params:
+                      - 0
+                    type: gt
+                  operator:
+                    type: and
+                  query:
+                    params:
+                      - C
+                  reducer:
+                    params: []
+                    type: last
+                  type: query
               datasource:
-                  type: __expr__
-                  uid: __expr__
+                type: __expr__
+                uid: __expr__
               expression: B
               intervalMs: 1000
               maxDataPoints: 43200
@@ -267,21 +267,21 @@ groups:
             datasourceUid: __expr__
             model:
               conditions:
-                  - evaluator:
-                      params: []
-                      type: gt
-                    operator:
-                      type: and
-                    query:
-                      params:
-                          - B
-                    reducer:
-                      params: []
-                      type: last
-                    type: query
+                - evaluator:
+                    params: []
+                    type: gt
+                  operator:
+                    type: and
+                  query:
+                    params:
+                      - B
+                  reducer:
+                    params: []
+                    type: last
+                  type: query
               datasource:
-                  type: __expr__
-                  uid: __expr__
+                type: __expr__
+                uid: __expr__
               expression: A
               intervalMs: 1000
               maxDataPoints: 43200
@@ -292,22 +292,22 @@ groups:
             datasourceUid: __expr__
             model:
               conditions:
-                  - evaluator:
-                      params:
-                          - 0
-                      type: gt
-                    operator:
-                      type: and
-                    query:
-                      params:
-                          - C
-                    reducer:
-                      params: []
-                      type: last
-                    type: query
+                - evaluator:
+                    params:
+                      - 0
+                    type: gt
+                  operator:
+                    type: and
+                  query:
+                    params:
+                      - C
+                  reducer:
+                    params: []
+                    type: last
+                  type: query
               datasource:
-                  type: __expr__
-                  uid: __expr__
+                type: __expr__
+                uid: __expr__
               expression: B
               intervalMs: 1000
               maxDataPoints: 43200
@@ -346,21 +346,21 @@ groups:
             datasourceUid: __expr__
             model:
               conditions:
-                  - evaluator:
-                      params: []
-                      type: gt
-                    operator:
-                      type: and
-                    query:
-                      params:
-                          - B
-                    reducer:
-                      params: []
-                      type: last
-                    type: query
+                - evaluator:
+                    params: []
+                    type: gt
+                  operator:
+                    type: and
+                  query:
+                    params:
+                      - B
+                  reducer:
+                    params: []
+                    type: last
+                  type: query
               datasource:
-                  type: __expr__
-                  uid: __expr__
+                type: __expr__
+                uid: __expr__
               expression: A
               intervalMs: 1000
               maxDataPoints: 43200
@@ -371,22 +371,22 @@ groups:
             datasourceUid: __expr__
             model:
               conditions:
-                  - evaluator:
-                      params:
-                          - 0
-                      type: gt
-                    operator:
-                      type: and
-                    query:
-                      params:
-                          - C
-                    reducer:
-                      params: []
-                      type: last
-                    type: query
+                - evaluator:
+                    params:
+                      - 0
+                    type: gt
+                  operator:
+                    type: and
+                  query:
+                    params:
+                      - C
+                  reducer:
+                    params: []
+                    type: last
+                  type: query
               datasource:
-                  type: __expr__
-                  uid: __expr__
+                type: __expr__
+                uid: __expr__
               expression: B
               intervalMs: 1000
               maxDataPoints: 43200
@@ -425,21 +425,21 @@ groups:
             datasourceUid: __expr__
             model:
               conditions:
-                  - evaluator:
-                      params: []
-                      type: gt
-                    operator:
-                      type: and
-                    query:
-                      params:
-                          - B
-                    reducer:
-                      params: []
-                      type: last
-                    type: query
+                - evaluator:
+                    params: []
+                    type: gt
+                  operator:
+                    type: and
+                  query:
+                    params:
+                      - B
+                  reducer:
+                    params: []
+                    type: last
+                  type: query
               datasource:
-                  type: __expr__
-                  uid: __expr__
+                type: __expr__
+                uid: __expr__
               expression: A
               intervalMs: 1000
               maxDataPoints: 43200
@@ -450,22 +450,22 @@ groups:
             datasourceUid: __expr__
             model:
               conditions:
-                  - evaluator:
-                      params:
-                          - 0
-                      type: gt
-                    operator:
-                      type: and
-                    query:
-                      params:
-                          - C
-                    reducer:
-                      params: []
-                      type: last
-                    type: query
+                - evaluator:
+                    params:
+                      - 0
+                    type: gt
+                  operator:
+                    type: and
+                  query:
+                    params:
+                      - C
+                  reducer:
+                    params: []
+                    type: last
+                  type: query
               datasource:
-                  type: __expr__
-                  uid: __expr__
+                type: __expr__
+                uid: __expr__
               expression: B
               intervalMs: 1000
               maxDataPoints: 43200
@@ -504,21 +504,21 @@ groups:
             datasourceUid: __expr__
             model:
               conditions:
-                  - evaluator:
-                      params: []
-                      type: gt
-                    operator:
-                      type: and
-                    query:
-                      params:
-                          - B
-                    reducer:
-                      params: []
-                      type: last
-                    type: query
+                - evaluator:
+                    params: []
+                    type: gt
+                  operator:
+                    type: and
+                  query:
+                    params:
+                      - B
+                  reducer:
+                    params: []
+                    type: last
+                  type: query
               datasource:
-                  type: __expr__
-                  uid: __expr__
+                type: __expr__
+                uid: __expr__
               expression: A
               intervalMs: 1000
               maxDataPoints: 43200
@@ -529,22 +529,22 @@ groups:
             datasourceUid: __expr__
             model:
               conditions:
-                  - evaluator:
-                      params:
-                          - 0
-                      type: gt
-                    operator:
-                      type: and
-                    query:
-                      params:
-                          - C
-                    reducer:
-                      params: []
-                      type: last
-                    type: query
+                - evaluator:
+                    params:
+                      - 0
+                    type: gt
+                  operator:
+                    type: and
+                  query:
+                    params:
+                      - C
+                  reducer:
+                    params: []
+                    type: last
+                  type: query
               datasource:
-                  type: __expr__
-                  uid: __expr__
+                type: __expr__
+                uid: __expr__
               expression: B
               intervalMs: 1000
               maxDataPoints: 43200
@@ -583,21 +583,21 @@ groups:
             datasourceUid: __expr__
             model:
               conditions:
-                  - evaluator:
-                      params: []
-                      type: gt
-                    operator:
-                      type: and
-                    query:
-                      params:
-                          - B
-                    reducer:
-                      params: []
-                      type: last
-                    type: query
+                - evaluator:
+                    params: []
+                    type: gt
+                  operator:
+                    type: and
+                  query:
+                    params:
+                      - B
+                  reducer:
+                    params: []
+                    type: last
+                  type: query
               datasource:
-                  type: __expr__
-                  uid: __expr__
+                type: __expr__
+                uid: __expr__
               expression: A
               intervalMs: 1000
               maxDataPoints: 43200
@@ -608,22 +608,22 @@ groups:
             datasourceUid: __expr__
             model:
               conditions:
-                  - evaluator:
-                      params:
-                          - 0
-                      type: gt
-                    operator:
-                      type: and
-                    query:
-                      params:
-                          - C
-                    reducer:
-                      params: []
-                      type: last
-                    type: query
+                - evaluator:
+                    params:
+                      - 0
+                    type: gt
+                  operator:
+                    type: and
+                  query:
+                    params:
+                      - C
+                  reducer:
+                    params: []
+                    type: last
+                  type: query
               datasource:
-                  type: __expr__
-                  uid: __expr__
+                type: __expr__
+                uid: __expr__
               expression: B
               intervalMs: 1000
               maxDataPoints: 43200
@@ -662,21 +662,21 @@ groups:
             datasourceUid: __expr__
             model:
               conditions:
-                  - evaluator:
-                      params: []
-                      type: gt
-                    operator:
-                      type: and
-                    query:
-                      params:
-                          - B
-                    reducer:
-                      params: []
-                      type: last
-                    type: query
+                - evaluator:
+                    params: []
+                    type: gt
+                  operator:
+                    type: and
+                  query:
+                    params:
+                      - B
+                  reducer:
+                    params: []
+                    type: last
+                  type: query
               datasource:
-                  type: __expr__
-                  uid: __expr__
+                type: __expr__
+                uid: __expr__
               expression: A
               intervalMs: 1000
               maxDataPoints: 43200
@@ -687,22 +687,22 @@ groups:
             datasourceUid: __expr__
             model:
               conditions:
-                  - evaluator:
-                      params:
-                          - 0
-                      type: gt
-                    operator:
-                      type: and
-                    query:
-                      params:
-                          - C
-                    reducer:
-                      params: []
-                      type: last
-                    type: query
+                - evaluator:
+                    params:
+                      - 0
+                    type: gt
+                  operator:
+                    type: and
+                  query:
+                    params:
+                      - C
+                  reducer:
+                    params: []
+                    type: last
+                  type: query
               datasource:
-                  type: __expr__
-                  uid: __expr__
+                type: __expr__
+                uid: __expr__
               expression: B
               intervalMs: 1000
               maxDataPoints: 43200
@@ -741,21 +741,21 @@ groups:
             datasourceUid: __expr__
             model:
               conditions:
-                  - evaluator:
-                      params: []
-                      type: gt
-                    operator:
-                      type: and
-                    query:
-                      params:
-                          - B
-                    reducer:
-                      params: []
-                      type: last
-                    type: query
+                - evaluator:
+                    params: []
+                    type: gt
+                  operator:
+                    type: and
+                  query:
+                    params:
+                      - B
+                  reducer:
+                    params: []
+                    type: last
+                  type: query
               datasource:
-                  type: __expr__
-                  uid: __expr__
+                type: __expr__
+                uid: __expr__
               expression: A
               intervalMs: 1000
               maxDataPoints: 43200
@@ -766,22 +766,22 @@ groups:
             datasourceUid: __expr__
             model:
               conditions:
-                  - evaluator:
-                      params:
-                          - 0
-                      type: gt
-                    operator:
-                      type: and
-                    query:
-                      params:
-                          - C
-                    reducer:
-                      params: []
-                      type: last
-                    type: query
+                - evaluator:
+                    params:
+                      - 0
+                    type: gt
+                  operator:
+                    type: and
+                  query:
+                    params:
+                      - C
+                  reducer:
+                    params: []
+                    type: last
+                  type: query
               datasource:
-                  type: __expr__
-                  uid: __expr__
+                type: __expr__
+                uid: __expr__
               expression: B
               intervalMs: 1000
               maxDataPoints: 43200
