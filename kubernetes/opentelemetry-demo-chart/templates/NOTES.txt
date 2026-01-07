@@ -23,18 +23,6 @@ To learn more about the release, try:
    Password: {{ .Values.grafana.adminPassword }}
    {{- end }}
 
-3. Jaeger (Traces):
-   kubectl port-forward -n {{ .Values.namespace }} svc/jaeger 16686:16686
-   Then open: http://localhost:16686
-
-4. Prometheus (Metrics):
-   kubectl port-forward -n {{ .Values.namespace }} svc/prometheus 9090:9090
-   Then open: http://localhost:9090
-
-5. OpenSearch (Logs):
-   kubectl port-forward -n {{ .Values.namespace }} svc/opensearch 9200:9200
-   Then open: http://localhost:9200
-
 📝 Check the status of your pods:
    kubectl get pods -n {{ .Values.namespace }}
 
@@ -43,4 +31,3 @@ To learn more about the release, try:
 
 ⚠️  Note: It may take a few minutes for all services to be ready.
 
-For more information, visit: https://opentelemetry.io/docs/demo/
