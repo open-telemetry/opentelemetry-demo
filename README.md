@@ -18,6 +18,7 @@
   <a href="#-quick-start">Quick Start</a> &bull;
   <a href="#grafana-dashboards">Dashboards</a> &bull;
   <a href="#-architecture">Architecture</a> &bull;
+  <a href="#alerting">Alerting</a> &bull;
   <a href="#-workload-identity">Workload Identity</a> &bull;
   <a href="#-deployment-guide">Deployment</a>
 </p>
@@ -528,6 +529,200 @@ OTelMetrics
 
 ---
 
+## Alerting
+
+This fork includes **Grafana-based alerting** with KQL queries against Azure Data Explorer and email notifications via **Azure Communication Services**.
+
+### Alert Rules
+
+The following alert rules are pre-configured:
+
+| Alert | Description | Severity | Threshold |
+|-------|-------------|----------|-----------|
+| **Service Not Reporting** | Detects when services stop sending telemetry | Critical | < expected services in 5min |
+| **High Error Rate** | Triggers when error rate exceeds threshold | Warning | > 5% errors |
+| **High Latency (P95)** | Triggers when P95 latency exceeds threshold | Warning | > 500ms |
+
+### Email Notifications with Azure Communication Services
+
+Email alerts are sent via Azure Communication Services SMTP. Terraform provisions the infrastructure automatically.
+
+#### How It Works
+
+```mermaid
+flowchart LR
+    GF[Grafana Alert] --> SMTP[Azure Comm Services SMTP]
+    SMTP --> EMAIL[Email Notification]
+```
+
+#### Configuration
+
+**1. Enable in Terraform** (`terraform/terraform.tfvars`):
+
+```hcl
+# Enable Azure Communication Services for email alerts
+enable_email_alerts = true
+
+# Email recipients (comma-separated)
+alert_recipients = "team@example.com,oncall@example.com"
+
+# Create Entra ID app for SMTP auth (requires Application Administrator role)
+# Set to false if you lack permissions - use az CLI workaround instead
+create_smtp_entra_app = false
+```
+
+**2. Run Terraform:**
+
+```bash
+cd terraform
+terraform apply
+```
+
+This creates:
+- Azure Communication Service
+- Email Communication Service with Azure-managed domain
+- (Optional) Entra ID app for SMTP authentication
+
+**3. Create Service Principal for SMTP (if `create_smtp_entra_app = false`):**
+
+```bash
+# Create service principal for SMTP authentication
+az ad sp create-for-rbac --name "otel-demo-smtp-auth" --skip-assignment
+
+# Output:
+# {
+#   "appId": "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx",
+#   "password": "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+#   "tenant": "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx"
+# }
+```
+
+**4. Configure SMTP in Helm values:**
+
+Create a file `smtp-values.yaml`:
+
+```yaml
+grafana:
+  alerting:
+    smtp:
+      enabled: true
+      host: "smtp.azurecomm.net"
+      port: 587
+      # Format: <COMM_SERVICE_NAME>.<APP_ID>.<TENANT_ID>
+      user: "otel-demo-dev-comm.xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx.xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx"
+      password: "your-service-principal-password"
+      fromAddress: "DoNotReply@xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx.azurecomm.net"
+      fromName: "OTel Demo Alerts"
+      toAddresses: "your-email@example.com"
+      skipVerify: false
+```
+
+> **Note:** Get the `fromAddress` domain from the Azure Portal:
+> Communication Services → Your Service → Email → Domains → Azure Managed Domain
+
+**5. Deploy with SMTP configuration:**
+
+```bash
+helm upgrade otel-demo ./kubernetes/opentelemetry-demo-chart \
+  -f ./kubernetes/opentelemetry-demo-chart/values-generated.yaml \
+  -f smtp-values.yaml \
+  -n otel-demo
+```
+
+### Configuring Contact Points in Grafana
+
+After deploying, configure the email contact point in Grafana:
+
+1. **Access Grafana:**
+   ```bash
+   kubectl port-forward -n otel-demo svc/grafana 3000:80
+   ```
+   Open http://localhost:3000/grafana
+
+2. **Navigate to:** Alerting → Contact Points → Add contact point
+
+3. **Configure email contact point:**
+   - **Name:** `alerts`
+   - **Type:** `Email`
+   - **Addresses:** `your-email@example.com`
+   - Click **Test** to verify, then **Save**
+
+4. **Configure notification policy:**
+   - Go to: Alerting → Notification policies
+   - Edit default policy → Set receiver to your contact point
+   - Save
+
+### Testing Alerts
+
+**Option 1: Test Contact Point**
+
+In Grafana UI: Alerting → Contact Points → Click "Test" on your contact point
+
+**Option 2: Trigger Real Alert with Feature Flags**
+
+The demo includes feature flags to simulate failures:
+
+```bash
+# Enable payment service failure (triggers errors)
+kubectl patch configmap flagd-config -n otel-demo --type merge -p '{
+  "data": {
+    "demo.flagd.json": "{\"flags\":{\"paymentFailure\":{\"state\":\"ENABLED\",\"defaultVariant\":\"on\",\"variants\":{\"on\":1,\"off\":0}}}}"
+  }
+}'
+
+# Restart flagd to pick up changes
+kubectl rollout restart deployment/flagd -n otel-demo
+```
+
+This will cause payment failures, triggering error rate alerts.
+
+**Option 3: Via Grafana API**
+
+```bash
+# Send test notification via API
+kubectl exec -n otel-demo deployment/grafana -c grafana -- \
+  curl -s -X POST 'http://localhost:3000/api/alertmanager/grafana/config/api/v1/receivers/test' \
+  -H 'Content-Type: application/json' \
+  -d '{
+    "receivers": [{"name": "your-contact-point-name", "grafana_managed_receiver_configs": [{"uid": "your-uid", "name": "your-contact-point-name", "type": "email", "settings": {"addresses": "your-email@example.com"}}]}],
+    "alert": {"labels": {"alertname": "Test"}, "annotations": {"summary": "Test alert"}}
+  }'
+```
+
+### Alert Configuration Reference
+
+| Setting | Location | Description |
+|---------|----------|-------------|
+| Alert rules | Grafana UI or `values.yaml` | KQL-based alert conditions |
+| Contact points | Grafana UI | Email addresses, Slack webhooks, etc. |
+| Notification policies | Grafana UI | Routing rules for alerts |
+| SMTP settings | `values.yaml` or `smtp-values.yaml` | Azure Communication Services config |
+| Thresholds | `values.yaml` → `grafana.alerting.thresholds` | Error rate %, latency ms |
+
+### SMTP Troubleshooting
+
+**Check SMTP is configured:**
+```bash
+kubectl exec -n otel-demo deployment/grafana -c grafana -- \
+  cat /etc/grafana/grafana.ini | grep -A 10 "\[smtp\]"
+```
+
+**Check Grafana logs for email errors:**
+```bash
+kubectl logs -n otel-demo deployment/grafana -c grafana | grep -i "smtp\|email\|mail"
+```
+
+**Common issues:**
+
+| Error | Cause | Fix |
+|-------|-------|-----|
+| "SMTP not configured" | Missing `[smtp]` section | Helm upgrade with `smtp-values.yaml` |
+| "Authentication failed" | Wrong SMTP credentials | Verify service principal password |
+| "Connection refused" | Wrong host/port | Use `smtp.azurecomm.net:587` |
+| No email received | Spam filter | Check spam/junk folder |
+
+---
+
 ## Repository Structure
 
 ```
@@ -540,7 +735,8 @@ adx-opentelemetry-demo/
 │   └── modules/
 │       ├── adx/                       # ADX cluster, database, tables
 │       ├── aks/                       # AKS with OIDC + Workload Identity
-│       └── identity/                  # Managed Identity + Federation
+│       ├── identity/                  # Managed Identity + Federation
+│       └── communication/             # Azure Communication Services (email alerts)
 │
 ├── kubernetes/
 │   └── opentelemetry-demo-chart/      # Helm chart
@@ -562,6 +758,7 @@ adx-opentelemetry-demo/
 │
 ├── docs/
 │   ├── AZURE_DEPLOYMENT.md            # Detailed deployment guide
+│   ├── ALERTING.md                    # Alerting configuration guide
 │   └── INTEGRATE_YOUR_SERVICES.md     # Add your own services
 │
 └── adx/
