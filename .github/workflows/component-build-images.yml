@@ -122,10 +122,6 @@ jobs:
             tag_suffix: payment
             context: ./
             setup-qemu: true
-          - file: ./src/postgres/Dockerfile
-            tag_suffix: postgresql
-            context: ./
-            setup-qemu: true
           - file: ./src/product-catalog/Dockerfile
             tag_suffix: product-catalog
             context: ./
