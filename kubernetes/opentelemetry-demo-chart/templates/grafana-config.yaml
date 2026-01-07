@@ -40,15 +40,15 @@ data:
     workload_identity_tenant_id = {{ .Values.azure.tenantId }}
     workload_identity_client_id = {{ .Values.azure.workloadIdentity.clientId }}
     {{- end }}
-    {{- if and .Values.grafana.alerting .Values.grafana.alerting.smtp .Values.grafana.alerting.smtp.enabled }}
+    {{- if and .Values.grafana.alerting .Values.grafana.alerting.smtp }}
     [smtp]
-    enabled = true
-    host = {{ .Values.grafana.alerting.smtp.host }}:{{ .Values.grafana.alerting.smtp.port }}
-    user = {{ .Values.grafana.alerting.smtp.user }}
-    password = {{ .Values.grafana.alerting.smtp.password }}
-    from_address = {{ .Values.grafana.alerting.smtp.fromAddress }}
-    from_name = {{ .Values.grafana.alerting.smtp.fromName }}
-    skip_verify = {{ .Values.grafana.alerting.smtp.skipVerify }}
+    enabled = {{ .Values.grafana.alerting.smtp.enabled | default false }}
+    host = {{ .Values.grafana.alerting.smtp.host | default "smtp.azurecomm.net" }}:{{ .Values.grafana.alerting.smtp.port | default 587 }}
+    user = {{ .Values.grafana.alerting.smtp.user | default "" }}
+    password = {{ .Values.grafana.alerting.smtp.password | default "" }}
+    from_address = {{ .Values.grafana.alerting.smtp.fromAddress | default "" }}
+    from_name = {{ .Values.grafana.alerting.smtp.fromName | default "Grafana Alerts" }}
+    skip_verify = {{ .Values.grafana.alerting.smtp.skipVerify | default false }}
     {{- end }}
     [unified_alerting]
     enabled = true

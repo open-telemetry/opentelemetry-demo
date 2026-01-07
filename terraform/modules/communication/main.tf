@@ -60,16 +60,6 @@ resource "azuread_application" "smtp" {
   count        = var.create_smtp_entra_app ? 1 : 0
   display_name = "${var.communication_service_name}-smtp-auth"
 
-  required_resource_access {
-    # Azure Communication Services
-    resource_app_id = "1fd5118e-2576-4263-8130-9503064c837a"
-
-    resource_access {
-      id   = "5b89695c-b5cb-4fc5-9f9a-8b43db5bfa33" # Mail.Send
-      type = "Scope"
-    }
-  }
-
   tags = ["terraform", "otel-demo", "smtp-auth"]
 }
 
