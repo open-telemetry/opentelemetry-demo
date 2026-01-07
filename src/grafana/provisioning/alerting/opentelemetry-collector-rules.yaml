@@ -18,11 +18,11 @@ groups:
             relativeTimeRange:
               from: 660
               to: 60
-            datasourceUid: grafanacloud-prom
+            datasourceUid: webstore-metrics
             model:
               datasource:
                 type: prometheus
-                uid: grafanacloud-prom
+                uid: webstore-metrics
               expr: rate(otelcol_receiver_refused_spans_total[5m]) > 0
               instant: true
               intervalMs: 1000
@@ -112,11 +112,11 @@ groups:
             relativeTimeRange:
               from: 660
               to: 60
-            datasourceUid: grafanacloud-prom
+            datasourceUid: webstore-metrics
             model:
               datasource:
                 type: prometheus
-                uid: grafanacloud-prom
+                uid: webstore-metrics
               expr: rate(otelcol_receiver_refused_metric_points_total[5m]) > 0
               instant: true
               intervalMs: 1000
@@ -206,11 +206,11 @@ groups:
             relativeTimeRange:
               from: 660
               to: 60
-            datasourceUid: grafanacloud-prom
+            datasourceUid: webstore-metrics
             model:
               datasource:
                 type: prometheus
-                uid: grafanacloud-prom
+                uid: webstore-metrics
               expr: rate(otelcol_receiver_refused_log_records_total[5m]) > 0
               instant: true
               intervalMs: 1000
@@ -300,11 +300,11 @@ groups:
             relativeTimeRange:
               from: 660
               to: 60
-            datasourceUid: grafanacloud-prom
+            datasourceUid: webstore-metrics
             model:
               datasource:
                 type: prometheus
-                uid: grafanacloud-prom
+                uid: webstore-metrics
               expr: rate(otelcol_exporter_send_failed_spans_total[5m]) > 0
               instant: true
               intervalMs: 1000
@@ -394,11 +394,11 @@ groups:
             relativeTimeRange:
               from: 660
               to: 60
-            datasourceUid: grafanacloud-prom
+            datasourceUid: webstore-metrics
             model:
               datasource:
                 type: prometheus
-                uid: grafanacloud-prom
+                uid: webstore-metrics
               expr: rate(otelcol_exporter_send_failed_metric_points_total[5m]) > 0
               instant: true
               intervalMs: 1000
@@ -488,11 +488,11 @@ groups:
             relativeTimeRange:
               from: 660
               to: 60
-            datasourceUid: grafanacloud-prom
+            datasourceUid: webstore-metrics
             model:
               datasource:
                 type: prometheus
-                uid: grafanacloud-prom
+                uid: webstore-metrics
               expr: rate(otelcol_exporter_send_failed_log_records_total[5m]) > 0
               instant: true
               intervalMs: 1000
@@ -582,11 +582,11 @@ groups:
             relativeTimeRange:
               from: 660
               to: 60
-            datasourceUid: grafanacloud-prom
+            datasourceUid: webstore-metrics
             model:
               datasource:
                 type: prometheus
-                uid: grafanacloud-prom
+                uid: webstore-metrics
               expr: otelcol_exporter_queue_size > otelcol_exporter_queue_capacity * 0.8
               instant: true
               intervalMs: 1000
@@ -676,11 +676,11 @@ groups:
             relativeTimeRange:
               from: 660
               to: 60
-            datasourceUid: grafanacloud-prom
+            datasourceUid: webstore-metrics
             model:
               datasource:
                 type: prometheus
-                uid: grafanacloud-prom
+                uid: webstore-metrics
               expr: rate(otelcol_exporter_enqueue_failed_spans_total[5m]) > 0
               instant: true
               intervalMs: 1000
@@ -770,11 +770,11 @@ groups:
             relativeTimeRange:
               from: 660
               to: 60
-            datasourceUid: grafanacloud-prom
+            datasourceUid: webstore-metrics
             model:
               datasource:
                 type: prometheus
-                uid: grafanacloud-prom
+                uid: webstore-metrics
               expr: rate(otelcol_exporter_enqueue_failed_metric_points_total[5m]) > 0
               instant: true
               intervalMs: 1000
@@ -864,11 +864,11 @@ groups:
             relativeTimeRange:
               from: 660
               to: 60
-            datasourceUid: grafanacloud-prom
+            datasourceUid: webstore-metrics
             model:
               datasource:
                 type: prometheus
-                uid: grafanacloud-prom
+                uid: webstore-metrics
               expr: rate(otelcol_exporter_enqueue_failed_log_records_total[5m]) > 0
               instant: true
               intervalMs: 1000
