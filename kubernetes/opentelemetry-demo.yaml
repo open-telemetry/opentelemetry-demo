@@ -17961,6 +17961,7 @@ spec:
       annotations:
         checksum/config: 3aef97dc43bb7f320b3d3f00d79efff7580bf83005ec5574a0619b42268584cf
         checksum/sc-dashboard-provider-config: e70bf6a851099d385178a76de9757bb0bef8299da6d8443602590e44f05fdf24
+        # During a security scan with sonarqube, it identified an issue with the checksum secret. Encrypt the secret value 
         checksum/secret: bed677784356b2af7fb0d87455db21f077853059b594101a4f6532bfbd962a7f
         kubectl.kubernetes.io/default-container: grafana
     spec:
