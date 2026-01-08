@@ -152,6 +152,14 @@ processors:
     spike_limit_percentage: 25
   resourcedetection:
     detectors: [env, docker, system]
+  resource/postgresql:
+    attributes:
+      - key: service.name
+        value: postgresql
+        action: upsert
+      - key: service.instance.id
+        value: ${env:POSTGRES_HOST}
+        action: upsert
   transform:
     error_mode: ignore
     trace_statements:
@@ -160,6 +168,11 @@ processors:
           # could be removed when https://github.com/vercel/next.js/pull/64852 is fixed upstream
           - replace_pattern(name, "\\?.*", "")
           - replace_match(name, "GET /api/products/*", "GET /api/products/{productId}")
+    metric_statements:
+      - context: resource
+        statements:
+          # Set service.instance.id to service.name if not already set (needed for Prometheus info() joins)
+          - set(attributes["service.instance.id"], attributes["service.name"]) where attributes["service.instance.id"] == nil and attributes["service.name"] != nil
 
 connectors:
   spanmetrics:
@@ -171,8 +184,12 @@ service:
       processors: [resourcedetection, memory_limiter, transform]
       exporters: [otlp, debug, spanmetrics]
     metrics:
-      receivers: [docker_stats, httpcheck/frontend-proxy, hostmetrics, nginx, otlp, postgresql, redis, spanmetrics]
-      processors: [resourcedetection, memory_limiter]
+      receivers: [docker_stats, httpcheck/frontend-proxy, hostmetrics, nginx, otlp, redis, spanmetrics]
+      processors: [resourcedetection, transform, memory_limiter]
+      exporters: [otlphttp/prometheus, debug]
+    metrics/postgresql:
+      receivers: [postgresql]
+      processors: [resourcedetection, resource/postgresql, memory_limiter]
       exporters: [otlphttp/prometheus, debug]
     logs:
       receivers: [otlp]
