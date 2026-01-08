@@ -33,7 +33,9 @@ jobs:
               - 'docker-compose*.yml'
               - 'src/flagd/**'
               - 'src/grafana/**'
+              - 'src/jaeger/**'
               - 'src/otel-collector/**'
+              - 'src/postgresql/**'
               - 'src/prometheus/**'
 
       - name: "Add Label: docs-update-required"
