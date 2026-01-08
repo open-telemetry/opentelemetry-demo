@@ -180,12 +180,18 @@ service:
       exporters: [opensearch, debug]
   telemetry:
     metrics:
-      level: detailed
       readers:
         - periodic:
-            interval: 10000
-            timeout: 5000
             exporter:
               otlp:
                 protocol: http/protobuf
+                # replace with your observability meta monitoring backend
+                endpoint: http://${env:OTEL_COLLECTOR_HOST}:${env:OTEL_COLLECTOR_PORT_HTTP}
+    logs:
+      processors:
+        - batch:
+            exporter:
+              otlp:
+                protocol: http/protobuf
+                # replace with your observability meta monitoring backend
                 endpoint: http://${env:OTEL_COLLECTOR_HOST}:${env:OTEL_COLLECTOR_PORT_HTTP}
