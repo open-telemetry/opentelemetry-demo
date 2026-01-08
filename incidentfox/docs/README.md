@@ -8,6 +8,17 @@ Complete documentation for the IncidentFox AI SRE lab environment.
 
 Each document covers a specific topic with no overlap (MECE):
 
+### **[coralogix.md](coralogix.md)** - Coralogix Integration
+**What it covers:**
+- Creating Coralogix API keys + identifying your Coralogix domain
+- Installing Coralogix’s Kubernetes integration Helm chart
+- Forwarding demo telemetry (fan-out) into Coralogix for AI-agent analysis
+- Verification + troubleshooting
+
+**Read this to:** Hook the lab up to Coralogix
+
+---
+
 ### **[aws-deployment.md](aws-deployment.md)** - AWS Production Deployment
 **What it covers:**
 - Deploying to AWS EKS
@@ -110,6 +121,7 @@ Each document has a clear scope with no overlap:
 | Document | Scope | Excludes |
 |----------|-------|----------|
 | **aws-deployment.md** | Deploy, operate, troubleshoot AWS | Local setup, agent usage |
+| **coralogix.md** | Connect lab telemetry to Coralogix | Other vendors, agent logic |
 | **local-setup.md** | Run locally (Docker/k8s) | AWS, production |
 | **secrets.md** | Secret management & security | Other topics |
 | **agent-integration.md** | Connect external AI agent | Deployment, incidents |
@@ -123,6 +135,7 @@ Each document has a clear scope with no overlap:
 
 - **Understand the system** → ../README.md (main README)
 - **Deploy to AWS** → aws-deployment.md
+- **Hook up Coralogix** → coralogix.md
 - **Run locally** → local-setup.md
 - **Manage passwords** → secrets.md
 - **Connect my agent** → agent-integration.md

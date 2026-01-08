@@ -28,6 +28,16 @@ HELM_DIR="${INCIDENTFOX_ROOT}/helm"
 AWS_REGION="${AWS_REGION:-us-west-2}"
 CLUSTER_NAME="${CLUSTER_NAME:-incidentfox-demo}"
 ENVIRONMENT="${ENVIRONMENT:-lab}"
+AWS_PROFILE="${AWS_PROFILE:-}"
+
+# Wrapper so we consistently use AWS_PROFILE when provided.
+aws_cli() {
+    if [ -n "${AWS_PROFILE}" ]; then
+        aws --profile "${AWS_PROFILE}" "$@"
+    else
+        aws "$@"
+    fi
+}
 
 # Colors
 RED='\033[0;31m'
@@ -70,13 +80,16 @@ check_prerequisites() {
     done
     
     # AWS credentials
-    if ! aws sts get-caller-identity &> /dev/null; then
+    if ! aws_cli sts get-caller-identity &> /dev/null; then
         log_error "AWS credentials not configured or invalid"
-        log_info "Run: aws configure --profile incidentfox"
+        log_info "If you use named profiles, set AWS_PROFILE (e.g. AWS_PROFILE=incidentfox) and login/configure."
+        log_info "Examples:"
+        log_info "  - Static creds: aws configure --profile incidentfox"
+        log_info "  - SSO:          aws sso login --profile incidentfox"
         missing=1
     else
-        local account=$(aws sts get-caller-identity --query Account --output text)
-        local user=$(aws sts get-caller-identity --query Arn --output text)
+        local account=$(aws_cli sts get-caller-identity --query Account --output text)
+        local user=$(aws_cli sts get-caller-identity --query Arn --output text)
         log_success "AWS credentials valid: $user (Account: $account)"
     fi
     
@@ -139,7 +152,7 @@ deploy_infrastructure() {
 update_kubeconfig() {
     log_info "Updating kubeconfig..."
     
-    aws eks update-kubeconfig \
+    aws_cli eks update-kubeconfig \
         --name "$CLUSTER_NAME" \
         --region "$AWS_REGION" \
         --alias "$CLUSTER_NAME"

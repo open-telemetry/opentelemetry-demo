@@ -16,3 +16,29 @@
 #    pipelines:
 #      traces:
 #        exporters: [spanmetrics, otlphttp/example]
+
+## Coralogix (recommended on Kubernetes): forward to Coralogix "otel-integration" collector
+##
+## Why this pattern?
+## - Coralogix's Helm chart (`coralogix/otel-integration`) runs a pre-configured OTel Collector that
+##   exports to Coralogix. You can keep the demo's local backends (Jaeger/Prometheus/OpenSearch),
+##   and "fan-out" traces/metrics/logs to Coralogix by forwarding OTLP to the integration collector.
+##
+## Setup doc (K8s): incidentfox/docs/coralogix.md
+##
+##  exporters:
+##    otlp/coralogix:
+##      # Replace with the Service DNS name/port created by the Coralogix chart in your cluster.
+##      # Tip: `kubectl get svc -n coralogix` and look for the collector's OTLP gRPC service.
+##      endpoint: "otel-coralogix-integration-opentelemetry-collector.coralogix.svc.cluster.local:4317"
+##      tls:
+##        insecure: true
+##
+##  service:
+##    pipelines:
+##      traces:
+##        exporters: [otlp, debug, spanmetrics, otlp/coralogix]
+##      metrics:
+##        exporters: [otlphttp/prometheus, debug, otlp/coralogix]
+##      logs:
+##        exporters: [opensearch, debug, otlp/coralogix]

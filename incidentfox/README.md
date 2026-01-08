@@ -217,6 +217,7 @@ See [docs/incident-scenarios.md](docs/incident-scenarios.md) for complete catalo
 | **README.md** | This file - complete overview, architecture, components |
 | **[AGENT-DEV-GUIDE.md](AGENT-DEV-GUIDE.md)** | **For agent developers** - endpoints, incidents, testing |
 | **[docs/aws-deployment.md](docs/aws-deployment.md)** | Deploy to AWS EKS and operate |
+| **[docs/coralogix.md](docs/coralogix.md)** | Hook lab telemetry up to Coralogix |
 | **[docs/local-setup.md](docs/local-setup.md)** | Run locally with Docker or kind |
 | **[docs/secrets.md](docs/secrets.md)** | Secrets management and security |
 | **[docs/agent-integration.md](docs/agent-integration.md)** | Connect your AI agent (technical details) |
@@ -232,6 +233,7 @@ incidentfox/
 ├── docs/                            # All documentation
 │   ├── architecture.md             # System design and how it works
 │   ├── aws-deployment.md           # AWS EKS deployment
+│   ├── coralogix.md                # Coralogix integration
 │   ├── local-setup.md              # Docker/k8s local setup
 │   ├── secrets.md                  # Secrets management
 │   ├── agent-integration.md        # Connect AI agent
