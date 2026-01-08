@@ -152,6 +152,14 @@ processors:
     spike_limit_percentage: 25
   resourcedetection:
     detectors: [env, docker, system]
+  resource/postgresql:
+    attributes:
+      - key: service.name
+        value: postgresql
+        action: upsert
+      - key: service.instance.id
+        value: ${env:POSTGRES_HOST}
+        action: upsert
   transform/sanitize_spans:
     error_mode: ignore
     trace_statements:
@@ -197,6 +205,11 @@ processors:
 
           # SANITIZE ALL SPAN NAMES TO PREVENT CARDINALITY EXPLOSION
           - set_semconv_span_name("1.37.0", "original_span_name")
+    metric_statements:
+      - context: resource
+        statements:
+          # Set service.instance.id to service.name if not already set (needed for Prometheus info() joins)
+          - set(attributes["service.instance.id"], attributes["service.name"]) where attributes["service.instance.id"] == nil and attributes["service.name"] != nil
 
 connectors:
   spanmetrics:
@@ -208,8 +221,12 @@ service:
       processors: [resourcedetection, memory_limiter, transform/sanitize_spans]
       exporters: [otlp_grpc/jaeger, debug, spanmetrics]
     metrics:
-      receivers: [docker_stats, httpcheck/frontend-proxy, hostmetrics, nginx, otlp, postgresql, redis, spanmetrics]
-      processors: [resourcedetection, memory_limiter]
+      receivers: [docker_stats, httpcheck/frontend-proxy, hostmetrics, nginx, otlp, redis, spanmetrics]
+      processors: [resourcedetection, transform/sanitize_spans, memory_limiter]
+      exporters: [otlp_http/prometheus, debug]
+    metrics/postgresql:
+      receivers: [postgresql]
+      processors: [resourcedetection, resource/postgresql, memory_limiter]
       exporters: [otlp_http/prometheus, debug]
     logs:
       receivers: [otlp]
