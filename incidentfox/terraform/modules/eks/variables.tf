@@ -56,3 +56,21 @@ variable "tags" {
   default     = {}
 }
 
+variable "enable_ebs_encryption" {
+  description = "Enable encryption at rest for EBS volumes (SOC2 compliance)"
+  type        = bool
+  default     = true
+}
+
+variable "ebs_kms_key_id" {
+  description = "KMS key ID for EBS encryption"
+  type        = string
+  default     = null
+}
+
+variable "disk_size" {
+  description = "Disk size for node groups (GB)"
+  type        = number
+  default     = 50
+}
+
