@@ -21,8 +21,13 @@ otlp:
     - collector.instance.id
 
     # host.name is needed for system/host metrics from the hostmetrics receiver,
-    # which cannot use info() because they lack service.name to match target_info
+    # which cannot use info() because they lack service.name to match target_info.
+    # k8s labels are promoted so PostgreSQL dashboard queries can filter on them
+    # directly on the metric (works around Prometheus info() filtering bug when
+    # filter labels already exist on the input metric).
     - host.name
+    - k8s.cluster.name
+    - k8s.statefulset.name
 storage:
   tsdb:
     out_of_order_time_window: 30m

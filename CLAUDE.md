@@ -94,6 +94,8 @@ test/
 - **Docker Compose**: Main orchestration in `docker-compose.yml`
 - **Feature flags**: Configured in `src/flagd/demo.flagd.json`
 
+**Note:** Do not commit changes to `.env.override` - it is for local customizations only.
+
 ## Development Workflow
 
 1. Make code changes to a service in `src/<service>/`
@@ -130,7 +132,3 @@ sum by (service_name) (
 - The `info()` function joins metrics with `target_info` at query time
 
 **Note:** Requires Prometheus with `--enable-feature=promql-experimental-functions`.
-
-## Forking Notes
-
-This is a Grafana Labs fork of the upstream OpenTelemetry demo. The main branch is `grafana`.
