@@ -3,6 +3,8 @@ module github.com/opentelemetry/opentelemetry-demo/src/product-catalog
 go 1.24.2
 
 require (
+	github.com/XSAM/otelsql v0.41.0
+	github.com/lib/pq v1.10.9
 	github.com/open-feature/go-sdk v1.17.0
 	github.com/open-feature/go-sdk-contrib/hooks/open-telemetry v0.3.6
 	github.com/open-feature/go-sdk-contrib/providers/flagd v0.3.1
@@ -18,7 +20,7 @@ require (
 	go.opentelemetry.io/otel/sdk/log v0.15.0
 	go.opentelemetry.io/otel/sdk/metric v1.39.0
 	go.opentelemetry.io/otel/trace v1.39.0
-	google.golang.org/grpc v1.77.0
+	google.golang.org/grpc v1.78.0
 	google.golang.org/protobuf v1.36.11
 )
 
