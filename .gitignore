@@ -53,3 +53,5 @@ test/tracetesting/tracetesting-vars.yaml
 *.apk
 
 !src/currency/build
+src/cart/src/Program.cs.bak
+src/flagd/demo.flagd.json.bak
