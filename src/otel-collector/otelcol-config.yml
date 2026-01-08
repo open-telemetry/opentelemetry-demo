@@ -157,9 +157,20 @@ processors:
       - key: service.name
         value: postgresql
         action: upsert
-      - key: service.instance.id
-        value: ${env:POSTGRES_HOST}
-        action: upsert
+  transform/postgresql:
+    error_mode: ignore
+    metric_statements:
+      - context: resource
+        statements:
+          # Construct unique service.instance.id based on PostgreSQL resource scope.
+          # The PostgreSQL receiver sets postgresql.database.name, postgresql.table.name,
+          # postgresql.index.name as resource attributes, creating multiple target_info
+          # entries with the same identifying labels. By including these in service.instance.id,
+          # each scope gets a unique target_info, allowing info() to work correctly.
+          - set(attributes["service.instance.id"], Concat([attributes["service.name"], "/", attributes["postgresql.database.name"], "/", attributes["postgresql.table.name"], "/", attributes["postgresql.index.name"]], "")) where attributes["postgresql.index.name"] != nil
+          - set(attributes["service.instance.id"], Concat([attributes["service.name"], "/", attributes["postgresql.database.name"], "/", attributes["postgresql.table.name"]], "")) where attributes["postgresql.table.name"] != nil and attributes["postgresql.index.name"] == nil
+          - set(attributes["service.instance.id"], Concat([attributes["service.name"], "/", attributes["postgresql.database.name"]], "")) where attributes["postgresql.database.name"] != nil and attributes["postgresql.table.name"] == nil
+          - set(attributes["service.instance.id"], attributes["service.name"]) where attributes["postgresql.database.name"] == nil
   transform/sanitize_spans:
     error_mode: ignore
     trace_statements:
@@ -226,7 +237,7 @@ service:
       exporters: [otlp_http/prometheus, debug]
     metrics/postgresql:
       receivers: [postgresql]
-      processors: [resourcedetection, resource/postgresql, memory_limiter]
+      processors: [resourcedetection, resource/postgresql, transform/postgresql, memory_limiter]
       exporters: [otlp_http/prometheus, debug]
     logs:
       receivers: [otlp]
