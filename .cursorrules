@@ -1,0 +1,70 @@
+# Cursor Rules for AWS Playground / IncidentFox Demo
+
+## Project Context
+
+This is an OpenTelemetry Demo deployed on AWS EKS with Coralogix for observability and incident.io for incident management.
+
+**IMPORTANT**: Read `AGENTS.md` at the root of this repository for comprehensive documentation about the architecture, setup, and common operations.
+
+## Key Facts
+
+1. **The demo runs on AWS EKS**, not locally
+   - Cluster: `incidentfox-demo`
+   - Namespace: `otel-demo`
+   - Always use `kubectl -n otel-demo` for operations
+
+2. **Feature flags are in Kubernetes ConfigMap**, not local files
+   - The file `src/flagd/demo.flagd.json` is for LOCAL development only
+   - On EKS, use: `kubectl get configmap flagd-config -n otel-demo`
+   - Use `./incidentfox/scripts/trigger-incident.sh --kube` for flag operations
+
+3. **Telemetry flows to Coralogix**
+   - Coralogix integration runs in `coralogix` namespace
+   - Check traces/logs/metrics in Coralogix UI
+
+4. **incident.io integration uses direct API**
+   - Webhook integration doesn't work (HTTP vs HTTPS issue)
+   - Use `./incidentfox/scripts/trigger_incidentio_incident.sh` to create incidents
+   - Or use `--incidentio` flag with trigger-incident.sh
+
+## Common Commands
+
+```bash
+# Check failure status on EKS
+./incidentfox/scripts/trigger-incident.sh --status --kube
+
+# Trigger payment failure
+./incidentfox/scripts/trigger-incident.sh service-failure 50% --kube
+
+# Clear all failures
+./incidentfox/scripts/trigger-incident.sh clear-all --kube
+
+# Check pods
+kubectl -n otel-demo get pods
+
+# Check payment logs
+kubectl -n otel-demo logs deployment/payment --tail=20
+```
+
+## Known Issues
+
+1. **Original load-generator is disabled** - Replaced by `traffic-generator` (simple curl loops)
+2. **Feature flags may need service restart** - After changing flags, restart flagd and the target service
+3. **Logs may appear under wrong subsystem** in Coralogix (under `otel-collector` instead of service name)
+4. **OpenSearch is disabled** - Removed from otel-collector pipeline, using Coralogix instead
+
+## Current Status (Verified Jan 9, 2026)
+
+- ✅ All 24 services running
+- ✅ Traffic flowing (traffic-generator active)
+- ✅ Telemetry reaching Coralogix
+- ✅ Feature flags working (flagd responsive)
+- ✅ incident.io integration via API (not webhook)
+
+## When Modifying Feature Flags
+
+1. Use the trigger-incident.sh script with `--kube` flag
+2. Verify the ConfigMap was updated
+3. If behavior doesn't change, restart flagd: `kubectl -n otel-demo rollout restart deployment/flagd`
+4. Then restart the target service: `kubectl -n otel-demo rollout restart deployment/payment`
+

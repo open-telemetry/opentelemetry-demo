@@ -1,0 +1,15 @@
+# Example Terraform variables for Coralogix Alerts
+#
+# Copy this file to terraform.tfvars and fill in your values:
+#   cp terraform.tfvars.example terraform.tfvars
+#
+# Or pass variables on command line:
+#   terraform apply -var="notification_group_id=abc123"
+
+# Coralogix notification group ID for incident.io integration
+# Find this in Coralogix → Settings → Notification Center → Your Group
+notification_group_id = "your-notification-group-id-here"
+
+# Environment label
+environment = "lab"
+
