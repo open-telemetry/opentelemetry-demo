@@ -7,6 +7,9 @@ the release.
 
 ## Unreleased
 
+* [accounting] fix memory leak with dbcontext
+  ([#2876](https://github.com/open-telemetry/opentelemetry-demo/pull/2876))
+
 ## 2.2.0
 
 * [feat] add ipv6 support
