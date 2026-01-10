@@ -1,0 +1,800 @@
+# Copyright The OpenTelemetry Authors
+# SPDX-License-Identifier: Apache-2.0
+
+---
+apiVersion: 1
+groups:
+  - orgId: 1
+    name: OpenTelemetryCollector.1m
+    folder: OpenTelemetryCollector
+    interval: 1m
+    rules:
+      - uid: 7fe832d8-ba11-5f4f-8c4b-31e8efc2daa2
+        title: OpenTelemetryCollectorReceiverDroppedSpans
+        condition: C
+        data:
+          - refId: A
+            relativeTimeRange:
+              from: 660
+              to: 60
+            datasourceUid: webstore-metrics
+            model:
+              editormode: code
+              expr: rate(otelcol_receiver_refused_spans_total[5m])
+              instant: true
+              intervalMs: 1000
+              legendFormat: __auto
+              maxDataPoints: 43200
+              range: false
+              refId: A
+          - refId: B
+            datasourceUid: __expr__
+            model:
+              conditions:
+                - evaluator:
+                    params: []
+                    type: gt
+                  operator:
+                    type: and
+                  query:
+                    params:
+                      - B
+                  reducer:
+                    params: []
+                    type: last
+                  type: query
+              datasource:
+                type: __expr__
+                uid: __expr__
+              expression: A
+              intervalMs: 1000
+              maxDataPoints: 43200
+              reducer: last
+              refId: B
+              type: reduce
+          - refId: C
+            datasourceUid: __expr__
+            model:
+              conditions:
+                - evaluator:
+                    params:
+                      - 0
+                    type: gt
+                  operator:
+                    type: and
+                  query:
+                    params:
+                      - C
+                  reducer:
+                    params: []
+                    type: last
+                  type: query
+              datasource:
+                type: __expr__
+                uid: __expr__
+              expression: B
+              intervalMs: 1000
+              maxDataPoints: 43200
+              refId: C
+              type: threshold
+        noDataState: OK
+        execErrState: OK
+        for: 2m
+        annotations:
+          description: "The {{ $labels.receiver }} receiver is dropping spans at a rate of {{ humanize $value }} per second "
+          runbook_url: https://opentelemetry.io/docs/collector/internal-telemetry/#receive-failures
+        labels:
+          __converted_prometheus_rule__: "true"
+          severity: critical
+        isPaused: false
+      - uid: 4efcc094-071e-5c7e-8677-53347eccecdc
+        title: OpenTelemetryCollectorReceiverDroppedMetrics
+        condition: C
+        data:
+          - refId: A
+            relativeTimeRange:
+              from: 660
+              to: 60
+            datasourceUid: webstore-metrics
+            model:
+              editormode: code
+              expr: rate(otelcol_receiver_refused_metric_points_total[5m])
+              instant: true
+              intervalMs: 1000
+              legendFormat: __auto
+              maxDataPoints: 43200
+              range: false
+              refId: A
+          - refId: B
+            datasourceUid: __expr__
+            model:
+              conditions:
+                - evaluator:
+                    params: []
+                    type: gt
+                  operator:
+                    type: and
+                  query:
+                    params:
+                      - B
+                  reducer:
+                    params: []
+                    type: last
+                  type: query
+              datasource:
+                type: __expr__
+                uid: __expr__
+              expression: A
+              intervalMs: 1000
+              maxDataPoints: 43200
+              reducer: last
+              refId: B
+              type: reduce
+          - refId: C
+            datasourceUid: __expr__
+            model:
+              conditions:
+                - evaluator:
+                    params:
+                      - 0
+                    type: gt
+                  operator:
+                    type: and
+                  query:
+                    params:
+                      - C
+                  reducer:
+                    params: []
+                    type: last
+                  type: query
+              datasource:
+                type: __expr__
+                uid: __expr__
+              expression: B
+              intervalMs: 1000
+              maxDataPoints: 43200
+              refId: C
+              type: threshold
+        noDataState: OK
+        execErrState: OK
+        for: 2m
+        annotations:
+          description: "The {{ $labels.receiver }} receiver is dropping metrics at a rate of {{ humanize $value }} per second "
+          runbook_url: https://opentelemetry.io/docs/collector/internal-telemetry/#receive-failures
+        labels:
+          __converted_prometheus_rule__: "true"
+          severity: critical
+        isPaused: false
+        missing_series_evals_to_resolve: 1
+      - uid: 2d159095-d121-54f8-ae1f-f37db15352c6
+        title: OpenTelemetryCollectorReceiverDroppedLogs
+        condition: C
+        data:
+          - refId: A
+            relativeTimeRange:
+              from: 660
+              to: 60
+            datasourceUid: webstore-metrics
+            model:
+              editormode: code
+              expr: rate(otelcol_receiver_refused_log_records_total[5m])
+              instant: true
+              intervalMs: 1000
+              legendFormat: __auto
+              maxDataPoints: 43200
+              range: false
+              refId: A
+          - refId: B
+            datasourceUid: __expr__
+            model:
+              conditions:
+                - evaluator:
+                    params: []
+                    type: gt
+                  operator:
+                    type: and
+                  query:
+                    params:
+                      - B
+                  reducer:
+                    params: []
+                    type: last
+                  type: query
+              datasource:
+                type: __expr__
+                uid: __expr__
+              expression: A
+              intervalMs: 1000
+              maxDataPoints: 43200
+              reducer: last
+              refId: B
+              type: reduce
+          - refId: C
+            datasourceUid: __expr__
+            model:
+              conditions:
+                - evaluator:
+                    params:
+                      - 0
+                    type: gt
+                  operator:
+                    type: and
+                  query:
+                    params:
+                      - C
+                  reducer:
+                    params: []
+                    type: last
+                  type: query
+              datasource:
+                type: __expr__
+                uid: __expr__
+              expression: B
+              intervalMs: 1000
+              maxDataPoints: 43200
+              refId: C
+              type: threshold
+        noDataState: OK
+        execErrState: OK
+        for: 5m
+        annotations:
+          description: "The {{ $labels.receiver }} is dropping logs at a rate of {{ humanize $value }} per second "
+          runbook_url: https://opentelemetry.io/docs/collector/internal-telemetry/#receive-failures
+        labels:
+          __converted_prometheus_rule__: "true"
+          severity: critical
+        isPaused: false
+        missing_series_evals_to_resolve: 1
+      - uid: a7abd0bd-55f1-5b3b-b106-797e1de571cc
+        title: OpenTelemetryCollectorExporterDroppedSpans
+        condition: C
+        data:
+          - refId: A
+            relativeTimeRange:
+              from: 660
+              to: 60
+            datasourceUid: webstore-metrics
+            model:
+              editormode: code
+              expr: rate(otelcol_exporter_send_failed_spans_total[5m])
+              instant: true
+              intervalMs: 1000
+              legendFormat: __auto
+              maxDataPoints: 43200
+              range: false
+              refId: A
+          - refId: B
+            datasourceUid: __expr__
+            model:
+              conditions:
+                - evaluator:
+                    params: []
+                    type: gt
+                  operator:
+                    type: and
+                  query:
+                    params:
+                      - B
+                  reducer:
+                    params: []
+                    type: last
+                  type: query
+              datasource:
+                type: __expr__
+                uid: __expr__
+              expression: A
+              intervalMs: 1000
+              maxDataPoints: 43200
+              reducer: last
+              refId: B
+              type: reduce
+          - refId: C
+            datasourceUid: __expr__
+            model:
+              conditions:
+                - evaluator:
+                    params:
+                      - 0
+                    type: gt
+                  operator:
+                    type: and
+                  query:
+                    params:
+                      - C
+                  reducer:
+                    params: []
+                    type: last
+                  type: query
+              datasource:
+                type: __expr__
+                uid: __expr__
+              expression: B
+              intervalMs: 1000
+              maxDataPoints: 43200
+              refId: C
+              type: threshold
+        noDataState: OK
+        execErrState: OK
+        for: 2m
+        annotations:
+          description: "The {{ $labels.exporter }} exporter is dropping spans at a rate of {{ humanize $value }} per second "
+          runbook_url: https://opentelemetry.io/docs/collector/internal-telemetry/#receive-failures
+        labels:
+          __converted_prometheus_rule__: "true"
+          severity: critical
+        isPaused: false
+        missing_series_evals_to_resolve: 1
+      - uid: 59bb77a7-bac6-5068-9c89-0f04e58a9f37
+        title: OpenTelemetryCollectorExporterDroppedMetrics
+        condition: C
+        data:
+          - refId: A
+            relativeTimeRange:
+              from: 660
+              to: 60
+            datasourceUid: webstore-metrics
+            model:
+              editormode: code
+              expr: rate(otelcol_exporter_send_failed_metric_points_total[5m])
+              instant: true
+              intervalMs: 1000
+              legendFormat: __auto
+              maxDataPoints: 43200
+              range: false
+              refId: A
+          - refId: B
+            datasourceUid: __expr__
+            model:
+              conditions:
+                - evaluator:
+                    params: []
+                    type: gt
+                  operator:
+                    type: and
+                  query:
+                    params:
+                      - B
+                  reducer:
+                    params: []
+                    type: last
+                  type: query
+              datasource:
+                type: __expr__
+                uid: __expr__
+              expression: A
+              intervalMs: 1000
+              maxDataPoints: 43200
+              reducer: last
+              refId: B
+              type: reduce
+          - refId: C
+            datasourceUid: __expr__
+            model:
+              conditions:
+                - evaluator:
+                    params:
+                      - 0
+                    type: gt
+                  operator:
+                    type: and
+                  query:
+                    params:
+                      - C
+                  reducer:
+                    params: []
+                    type: last
+                  type: query
+              datasource:
+                type: __expr__
+                uid: __expr__
+              expression: B
+              intervalMs: 1000
+              maxDataPoints: 43200
+              refId: C
+              type: threshold
+        noDataState: OK
+        execErrState: OK
+        for: 2m
+        annotations:
+          description: "The {{ $labels.exporter }} exporter is dropping metrics at a rate of {{ humanize $value }} per second "
+          runbook_url: https://opentelemetry.io/docs/collector/internal-telemetry/#receive-failures
+        labels:
+          __converted_prometheus_rule__: "true"
+          severity: critical
+        isPaused: false
+        missing_series_evals_to_resolve: 1
+      - uid: 99bdcdeb-f017-503e-9a43-a1b929399877
+        title: OpenTelemetryCollectorExporterDroppedLogs
+        condition: C
+        data:
+          - refId: A
+            relativeTimeRange:
+              from: 660
+              to: 60
+            datasourceUid: webstore-metrics
+            model:
+              editormode: code
+              expr: rate(otelcol_exporter_send_failed_log_records_total[5m])
+              instant: true
+              intervalMs: 1000
+              legendFormat: __auto
+              maxDataPoints: 43200
+              range: false
+              refId: A
+          - refId: B
+            datasourceUid: __expr__
+            model:
+              conditions:
+                - evaluator:
+                    params: []
+                    type: gt
+                  operator:
+                    type: and
+                  query:
+                    params:
+                      - B
+                  reducer:
+                    params: []
+                    type: last
+                  type: query
+              datasource:
+                type: __expr__
+                uid: __expr__
+              expression: A
+              intervalMs: 1000
+              maxDataPoints: 43200
+              reducer: last
+              refId: B
+              type: reduce
+          - refId: C
+            datasourceUid: __expr__
+            model:
+              conditions:
+                - evaluator:
+                    params:
+                      - 0
+                    type: gt
+                  operator:
+                    type: and
+                  query:
+                    params:
+                      - C
+                  reducer:
+                    params: []
+                    type: last
+                  type: query
+              datasource:
+                type: __expr__
+                uid: __expr__
+              expression: B
+              intervalMs: 1000
+              maxDataPoints: 43200
+              refId: C
+              type: threshold
+        noDataState: OK
+        execErrState: OK
+        for: 5m
+        annotations:
+          description: " The {{ $labels.exporter }} is dropping logs at a rate of {{ humanize $value }} per second "
+          runbook_url: https://opentelemetry.io/docs/collector/internal-telemetry/#receive-failures
+        labels:
+          __converted_prometheus_rule__: "true"
+          severity: critical
+        isPaused: false
+        missing_series_evals_to_resolve: 1
+      - uid: e919ff29-166a-591f-8c8d-31a2d073bbb0
+        title: OpenTelemetryCollectorExporterQueueSize
+        condition: C
+        data:
+          - refId: A
+            relativeTimeRange:
+              from: 660
+              to: 60
+            datasourceUid: webstore-metrics
+            model:
+              editormode: code
+              expr: otelcol_exporter_queue_size > otelcol_exporter_queue_capacity * 0.8
+              instant: true
+              intervalMs: 1000
+              legendFormat: __auto
+              maxDataPoints: 43200
+              range: false
+              refId: A
+          - refId: B
+            datasourceUid: __expr__
+            model:
+              conditions:
+                - evaluator:
+                    params: []
+                    type: gt
+                  operator:
+                    type: and
+                  query:
+                    params:
+                      - B
+                  reducer:
+                    params: []
+                    type: last
+                  type: query
+              datasource:
+                type: __expr__
+                uid: __expr__
+              expression: A
+              intervalMs: 1000
+              maxDataPoints: 43200
+              reducer: last
+              refId: B
+              type: reduce
+          - refId: C
+            datasourceUid: __expr__
+            model:
+              conditions:
+                - evaluator:
+                    params:
+                      - 0
+                    type: gt
+                  operator:
+                    type: and
+                  query:
+                    params:
+                      - C
+                  reducer:
+                    params: []
+                    type: last
+                  type: query
+              datasource:
+                type: __expr__
+                uid: __expr__
+              expression: B
+              intervalMs: 1000
+              maxDataPoints: 43200
+              refId: C
+              type: threshold
+        noDataState: OK
+        execErrState: OK
+        for: 1m
+        annotations:
+          description: "The {{ $labels.exporter }} queue has reached a size of {{ $value }} "
+          runbook_url: https://opentelemetry.io/docs/collector/internal-telemetry/#queue-length
+        labels:
+          __converted_prometheus_rule__: "true"
+          severity: warning
+        isPaused: false
+        missing_series_evals_to_resolve: 1
+      - uid: f070a306-e51b-5039-91b0-636719dae15e
+        title: OpenTelemetryCollectorSendQueueFailedspans
+        condition: C
+        data:
+          - refId: A
+            relativeTimeRange:
+              from: 660
+              to: 60
+            datasourceUid: webstore-metrics
+            model:
+              editormode: code
+              expr: rate(otelcol_exporter_enqueue_failed_spans_total[5m])
+              instant: true
+              intervalMs: 1000
+              legendFormat: __auto
+              maxDataPoints: 43200
+              range: false
+              refId: A
+          - refId: B
+            datasourceUid: __expr__
+            model:
+              conditions:
+                - evaluator:
+                    params: []
+                    type: gt
+                  operator:
+                    type: and
+                  query:
+                    params:
+                      - B
+                  reducer:
+                    params: []
+                    type: last
+                  type: query
+              datasource:
+                type: __expr__
+                uid: __expr__
+              expression: A
+              intervalMs: 1000
+              maxDataPoints: 43200
+              reducer: last
+              refId: B
+              type: reduce
+          - refId: C
+            datasourceUid: __expr__
+            model:
+              conditions:
+                - evaluator:
+                    params:
+                      - 0
+                    type: gt
+                  operator:
+                    type: and
+                  query:
+                    params:
+                      - C
+                  reducer:
+                    params: []
+                    type: last
+                  type: query
+              datasource:
+                type: __expr__
+                uid: __expr__
+              expression: B
+              intervalMs: 1000
+              maxDataPoints: 43200
+              refId: C
+              type: threshold
+        noDataState: OK
+        execErrState: OK
+        for: 1m
+        annotations:
+          description: The {{ $labels.exporter }} sending queue failed to accept {{ $value }}  spans
+          runbook_url: https://opentelemetry.io/docs/collector/internal-telemetry/#queue-length
+        labels:
+          __converted_prometheus_rule__: "true"
+          severity: warning
+        isPaused: false
+        missing_series_evals_to_resolve: 1
+      - uid: 45d77b5b-a837-526f-91b8-a5a4125eca40
+        title: OpenTelemetryCollectorSendQueueFailedmetric_points
+        condition: C
+        data:
+          - refId: A
+            relativeTimeRange:
+              from: 660
+              to: 60
+            datasourceUid: webstore-metrics
+            model:
+              editormode: code
+              expr: rate(otelcol_exporter_enqueue_failed_metric_points_total[5m])
+              instant: true
+              intervalMs: 1000
+              legendFormat: __auto
+              maxDataPoints: 43200
+              range: false
+              refId: A
+          - refId: B
+            datasourceUid: __expr__
+            model:
+              conditions:
+                - evaluator:
+                    params: []
+                    type: gt
+                  operator:
+                    type: and
+                  query:
+                    params:
+                      - B
+                  reducer:
+                    params: []
+                    type: last
+                  type: query
+              datasource:
+                type: __expr__
+                uid: __expr__
+              expression: A
+              intervalMs: 1000
+              maxDataPoints: 43200
+              reducer: last
+              refId: B
+              type: reduce
+          - refId: C
+            datasourceUid: __expr__
+            model:
+              conditions:
+                - evaluator:
+                    params:
+                      - 0
+                    type: gt
+                  operator:
+                    type: and
+                  query:
+                    params:
+                      - C
+                  reducer:
+                    params: []
+                    type: last
+                  type: query
+              datasource:
+                type: __expr__
+                uid: __expr__
+              expression: B
+              intervalMs: 1000
+              maxDataPoints: 43200
+              refId: C
+              type: threshold
+        noDataState: OK
+        execErrState: OK
+        for: 1m
+        annotations:
+          description: The {{ $labels.exporter }} sending queue failed to accept {{ $value }}  metric_points
+          runbook_url: https://opentelemetry.io/docs/collector/internal-telemetry/#queue-length
+        labels:
+          __converted_prometheus_rule__: "true"
+          severity: warning
+        isPaused: false
+        missing_series_evals_to_resolve: 1
+      - uid: 6c024628-eb60-5448-b00e-1728a3840099
+        title: OpenTelemetryCollectorSendQueueFailedlog_records
+        condition: C
+        data:
+          - refId: A
+            relativeTimeRange:
+              from: 660
+              to: 60
+            datasourceUid: webstore-metrics
+            model:
+              editormode: code
+              expr: rate(otelcol_exporter_enqueue_failed_log_records_total[5m])
+              instant: true
+              intervalMs: 1000
+              legendFormat: __auto
+              maxDataPoints: 43200
+              range: false
+              refId: A
+          - refId: B
+            datasourceUid: __expr__
+            model:
+              conditions:
+                - evaluator:
+                    params: []
+                    type: gt
+                  operator:
+                    type: and
+                  query:
+                    params:
+                      - B
+                  reducer:
+                    params: []
+                    type: last
+                  type: query
+              datasource:
+                type: __expr__
+                uid: __expr__
+              expression: A
+              intervalMs: 1000
+              maxDataPoints: 43200
+              reducer: last
+              refId: B
+              type: reduce
+          - refId: C
+            datasourceUid: __expr__
+            model:
+              conditions:
+                - evaluator:
+                    params:
+                      - 0
+                    type: gt
+                  operator:
+                    type: and
+                  query:
+                    params:
+                      - C
+                  reducer:
+                    params: []
+                    type: last
+                  type: query
+              datasource:
+                type: __expr__
+                uid: __expr__
+              expression: B
+              intervalMs: 1000
+              maxDataPoints: 43200
+              refId: C
+              type: threshold
+        noDataState: OK
+        execErrState: OK
+        for: 1m
+        annotations:
+          description: The {{ $labels.exporter }} sending queue failed to accept {{ $value }}  log_records
+          runbook_url: https://opentelemetry.io/docs/collector/internal-telemetry/#queue-length
+        labels:
+          __converted_prometheus_rule__: "true"
+          severity: warning
+        isPaused: false
+        missing_series_evals_to_resolve: 1

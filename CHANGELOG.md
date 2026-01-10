@@ -7,6 +7,8 @@ the release.
 
 ## Unreleased
 
+## 2.2.0
+
 * [feat] add ipv6 support
   ([#2594](https://github.com/open-telemetry/opentelemetry-demo/pull/2594))
 * [chore] Use pre-built nginx otel image
@@ -30,6 +32,10 @@ the release.
   ([#2737](https://github.com/open-telemetry/opentelemetry-demo/pull/2737))
 * [collector] [dockerstats/receiver] Set API version to 1.44
   ([#2767](https://github.com/open-telemetry/opentelemetry-demo/pull/2767))
+* [cart] Add health check endpoint
+  ([#2830](https://github.com/open-telemetry/opentelemetry-demo/pull/2830))
+* [product-catalog] Use Postgres database for products
+  ([#2859](https://github.com/open-telemetry/opentelemetry-demo/pull/2859))
 
 ## 2.1.3
 

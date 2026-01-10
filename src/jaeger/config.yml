@@ -10,7 +10,7 @@ service:
       exporters: [jaeger_storage_exporter]
   telemetry:
     resource:
-      service.name: jaeger-query
+      service.name: jaeger
     metrics:
       level: detailed
       readers:
@@ -21,13 +21,14 @@ service:
               otlp:
                 protocol: http/protobuf
                 endpoint: http://${env:OTEL_COLLECTOR_HOST}:${env:OTEL_COLLECTOR_PORT_HTTP}
+                insecure: true
     logs:
       level: info
 extensions:
   healthcheckv2:
     use_v2: true
     http:
-
+      endpoint: 0.0.0.0:13133
   jaeger_query:
     storage:
       traces: memory_backend
