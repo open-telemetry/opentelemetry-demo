@@ -13,6 +13,11 @@ otlp:
   # still allowing access to resource attributes in queries.
   # See https://prometheus.io/blog/2025/12/16/introducing-info-function/
   promote_resource_attributes:
+    # service.name is promoted due to a Prometheus bug where info() filtering
+    # doesn't work when the filter label already exists on the input metric.
+    # TODO: Remove when upgrading to Prometheus >= v3.10.x.
+    - service.name
+
     # Kafka resource attributes produced by the OTel Collector Kafka receiver
     # https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/main/receiver/kafkametricsreceiver
     - kafka.cluster.alias
