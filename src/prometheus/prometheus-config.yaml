@@ -25,6 +25,7 @@ otlp:
     # k8s labels are promoted so PostgreSQL dashboard queries can filter on them
     # directly on the metric (works around Prometheus info() filtering bug when
     # filter labels already exist on the input metric).
+    # TODO: Remove the latter workaround when upgrading to Prometheus >= v3.10.x.
     - host.name
     - k8s.cluster.name
     - k8s.statefulset.name
