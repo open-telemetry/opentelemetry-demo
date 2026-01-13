@@ -63,6 +63,13 @@ helm upgrade --install "$RELEASE_NAME" open-telemetry/opentelemetry-demo \
 echo ""
 echo "Deploying custom Grafana dashboards..."
 
+# Delete conflicting dashboards from Helm chart that don't use info() function.
+# The Helm chart bundles dashboards that query metrics directly with resource
+# attributes as labels. Our custom dashboards use the info() function instead.
+echo "  - Removing default Helm chart dashboards..."
+kubectl delete configmap grafana-dashboard-apm-dashboard --namespace "$NAMESPACE" 2>/dev/null || true
+kubectl delete configmap grafana-dashboard-postgresql-dashboard --namespace "$NAMESPACE" 2>/dev/null || true
+
 echo "  - APM Dashboard"
 kubectl create configmap apm-dashboard \
   --from-file=apm-dashboard.json="$REPO_ROOT/src/grafana/provisioning/dashboards/demo/apm-dashboard.json" \
