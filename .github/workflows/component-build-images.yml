@@ -21,7 +21,7 @@ on:
         type: string
       ghcr_repo:
         description: GHCR repository
-        default: 'ghcr.io/open-telemetry/demo'
+        default: 'ghcr.io/tsuga-dev/otel-demo'
         required: false
         type: string
 
