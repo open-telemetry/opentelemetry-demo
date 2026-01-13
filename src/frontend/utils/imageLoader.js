@@ -1,22 +1,19 @@
 // Copyright The OpenTelemetry Authors
 // SPDX-License-Identifier: Apache-2.0
 /*
-  * We connect to image-provider through the envoy proxy, straight from the browser, for this we need to know the current hostname and port.
-  * During building and serverside rendering, these are undefined so we use some conditionals and default values.
+  * We connect to image-provider through the envoy proxy, straight from the browser.
+  * Using relative URLs ensures images load correctly in all environments:
+  * - Local development
+  * - Kubernetes behind load balancer
+  * - Any reverse proxy setup
+  * The browser automatically resolves relative URLs using the current page's origin.
   */
-let hostname = "localhost";
-let port = 8080;
-let protocol = "http";
-
-if (typeof window !== "undefined" && window.location) {
-  hostname = window.location.hostname;
-  port = window.location.port ? parseInt(window.location.port, 10) : (window.location.protocol === "https:" ? 443 : 80);
-  protocol = window.location.protocol.slice(0, -1); // Remove trailing ':'
-}
 
 export default function imageLoader({ src, width, quality }) {
   // We pass down the optimisation request to the image-provider service here, without this, nextJs would try to use internal optimiser which is not working with the external image-provider.
   // Strip leading slash from src to prevent double slashes in URL
   const cleanSrc = src.startsWith('/') ? src.slice(1) : src;
-  return `${protocol}://${hostname}:${port}/${cleanSrc}?w=${width}&q=${quality || 75}`
+  // Use relative URL - browser will resolve using current page's origin
+  // This works in all environments: localhost, K8s load balancer, reverse proxies, etc.
+  return `/${cleanSrc}?w=${width}&q=${quality || 75}`
 }
