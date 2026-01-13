@@ -12,6 +12,12 @@
 # Note: This requires Prometheus with the experimental info() function fix.
 # See https://github.com/prometheus/prometheus/pull/XXXX
 
+# OTel Collector: Use custom image with PostgreSQL receiver fix
+opentelemetry-collector:
+  image:
+    repository: ghcr.io/aknuds1/otelcontribcol
+    tag: postgresreceiver-uuid-v0.143.0
+
 prometheus:
   server:
     # Custom Prometheus image with info() function bug fix
