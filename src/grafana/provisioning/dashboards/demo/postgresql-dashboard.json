@@ -121,7 +121,7 @@
           },
           "dsType": "prometheus",
           "editorMode": "code",
-          "expr": "sum by (k8s_cluster_name, k8s_statefulset_name, host_name) (info(irate(postgresql_commits_total{service_name=\"postgresql\", k8s_cluster_name=~\"$k8s_cluster_name\", k8s_statefulset_name=~\"$k8s_statefulset_name\", host_name=~\"$host_name\"}[$__rate_interval]), {postgresql_database_name=~\"$db\"})) + sum by (k8s_cluster_name, k8s_statefulset_name, host_name) (info(irate(postgresql_rollbacks_total{service_name=\"postgresql\", k8s_cluster_name=~\"$k8s_cluster_name\", k8s_statefulset_name=~\"$k8s_statefulset_name\", host_name=~\"$host_name\"}[$__rate_interval]), {postgresql_database_name=~\"$db\"}))",
+          "expr": "sum by (k8s_cluster_name, k8s_statefulset_name, host_name) (info(irate(postgresql_commits_total{k8s_cluster_name=~\"$k8s_cluster_name\", k8s_statefulset_name=~\"$k8s_statefulset_name\", host_name=~\"$host_name\"}[$__rate_interval]), {service_name=\"postgresql\", postgresql_database_name=~\"$db\"})) + sum by (k8s_cluster_name, k8s_statefulset_name, host_name) (info(irate(postgresql_rollbacks_total{k8s_cluster_name=~\"$k8s_cluster_name\", k8s_statefulset_name=~\"$k8s_statefulset_name\", host_name=~\"$host_name\"}[$__rate_interval]), {service_name=\"postgresql\", postgresql_database_name=~\"$db\"}))",
           "format": "time_series",
           "groupBy": [
             {
@@ -266,7 +266,7 @@
           },
           "dsType": "prometheus",
           "editorMode": "code",
-          "expr": "sum by (k8s_cluster_name, k8s_statefulset_name, host_name) (info(irate(postgresql_tup_fetched_total{service_name=\"postgresql\", k8s_cluster_name=~\"$k8s_cluster_name\", k8s_statefulset_name=~\"$k8s_statefulset_name\", host_name=~\"$host_name\"}[$__rate_interval]), {postgresql_database_name=~\"$db\"}))",
+          "expr": "sum by (k8s_cluster_name, k8s_statefulset_name, host_name) (info(irate(postgresql_tup_fetched_total{k8s_cluster_name=~\"$k8s_cluster_name\", k8s_statefulset_name=~\"$k8s_statefulset_name\", host_name=~\"$host_name\"}[$__rate_interval]), {service_name=\"postgresql\", postgresql_database_name=~\"$db\"}))",
           "format": "time_series",
           "groupBy": [
             {
@@ -325,7 +325,7 @@
           },
           "dsType": "prometheus",
           "editorMode": "code",
-          "expr": "sum by (k8s_cluster_name, k8s_statefulset_name, host_name) (info(irate(postgresql_tup_returned_total{service_name=\"postgresql\", k8s_cluster_name=~\"$k8s_cluster_name\", k8s_statefulset_name=~\"$k8s_statefulset_name\", host_name=~\"$host_name\"}[$__rate_interval]), {postgresql_database_name=~\"$db\"}))",
+          "expr": "sum by (k8s_cluster_name, k8s_statefulset_name, host_name) (info(irate(postgresql_tup_returned_total{k8s_cluster_name=~\"$k8s_cluster_name\", k8s_statefulset_name=~\"$k8s_statefulset_name\", host_name=~\"$host_name\"}[$__rate_interval]), {service_name=\"postgresql\", postgresql_database_name=~\"$db\"}))",
           "format": "time_series",
           "groupBy": [
             {
@@ -385,7 +385,7 @@
           },
           "dsType": "prometheus",
           "editorMode": "code",
-          "expr": "sum by (k8s_cluster_name, k8s_statefulset_name, host_name) (info(irate(postgresql_tup_inserted_total{service_name=\"postgresql\", k8s_cluster_name=~\"$k8s_cluster_name\", k8s_statefulset_name=~\"$k8s_statefulset_name\", host_name=~\"$host_name\"}[$__rate_interval]), {postgresql_database_name=~\"$db\"}))",
+          "expr": "sum by (k8s_cluster_name, k8s_statefulset_name, host_name) (info(irate(postgresql_tup_inserted_total{k8s_cluster_name=~\"$k8s_cluster_name\", k8s_statefulset_name=~\"$k8s_statefulset_name\", host_name=~\"$host_name\"}[$__rate_interval]), {service_name=\"postgresql\", postgresql_database_name=~\"$db\"}))",
           "format": "time_series",
           "groupBy": [
             {
@@ -445,7 +445,7 @@
           },
           "dsType": "prometheus",
           "editorMode": "code",
-          "expr": "sum by (k8s_cluster_name, k8s_statefulset_name, host_name) (info(irate(postgresql_tup_updated_total{service_name=\"postgresql\", k8s_cluster_name=~\"$k8s_cluster_name\", k8s_statefulset_name=~\"$k8s_statefulset_name\", host_name=~\"$host_name\"}[$__rate_interval]), {postgresql_database_name=~\"$db\"}))",
+          "expr": "sum by (k8s_cluster_name, k8s_statefulset_name, host_name) (info(irate(postgresql_tup_updated_total{k8s_cluster_name=~\"$k8s_cluster_name\", k8s_statefulset_name=~\"$k8s_statefulset_name\", host_name=~\"$host_name\"}[$__rate_interval]), {service_name=\"postgresql\", postgresql_database_name=~\"$db\"}))",
           "format": "time_series",
           "groupBy": [
             {
@@ -506,7 +506,7 @@
           },
           "dsType": "prometheus",
           "editorMode": "code",
-          "expr": "sum by (k8s_cluster_name, k8s_statefulset_name, host_name) (info(irate(postgresql_tup_deleted_total{service_name=\"postgresql\", k8s_cluster_name=~\"$k8s_cluster_name\", k8s_statefulset_name=~\"$k8s_statefulset_name\", host_name=~\"$host_name\"}[$__rate_interval]), {postgresql_database_name=~\"$db\"}))",
+          "expr": "sum by (k8s_cluster_name, k8s_statefulset_name, host_name) (info(irate(postgresql_tup_deleted_total{k8s_cluster_name=~\"$k8s_cluster_name\", k8s_statefulset_name=~\"$k8s_statefulset_name\", host_name=~\"$host_name\"}[$__rate_interval]), {service_name=\"postgresql\", postgresql_database_name=~\"$db\"}))",
           "format": "time_series",
           "groupBy": [
             {
@@ -653,7 +653,7 @@
           },
           "dsType": "prometheus",
           "editorMode": "code",
-          "expr": "info(irate(postgresql_bgwriter_buffers_allocated_total{service_name=\"postgresql\", k8s_cluster_name=~\"$k8s_cluster_name\", k8s_statefulset_name=~\"$k8s_statefulset_name\", host_name=~\"$host_name\"}[$__rate_interval]))",
+          "expr": "info(irate(postgresql_bgwriter_buffers_allocated_total{k8s_cluster_name=~\"$k8s_cluster_name\", k8s_statefulset_name=~\"$k8s_statefulset_name\", host_name=~\"$host_name\"}[$__rate_interval]), {service_name=\"postgresql\"})",
           "format": "time_series",
           "groupBy": [
             {
@@ -710,7 +710,7 @@
           },
           "disableTextWrap": false,
           "editorMode": "code",
-          "expr": "info(irate(postgresql_bgwriter_buffers_writes_total{service_name=\"postgresql\", k8s_cluster_name=~\"$k8s_cluster_name\", k8s_statefulset_name=~\"$k8s_statefulset_name\", host_name=~\"$host_name\"}[$__interval]))",
+          "expr": "info(irate(postgresql_bgwriter_buffers_writes_total{k8s_cluster_name=~\"$k8s_cluster_name\", k8s_statefulset_name=~\"$k8s_statefulset_name\", host_name=~\"$host_name\"}[$__interval]), {service_name=\"postgresql\"})",
           "fullMetaSearch": false,
           "hide": false,
           "includeNullMetadata": true,
@@ -840,7 +840,7 @@
           },
           "dsType": "prometheus",
           "editorMode": "code",
-          "expr": "info(irate(postgresql_bgwriter_checkpoint_count_total{service_name=\"postgresql\", k8s_cluster_name=~\"$k8s_cluster_name\", k8s_statefulset_name=~\"$k8s_statefulset_name\", host_name=~\"$host_name\"}[$__rate_interval]))",
+          "expr": "info(irate(postgresql_bgwriter_checkpoint_count_total{k8s_cluster_name=~\"$k8s_cluster_name\", k8s_statefulset_name=~\"$k8s_statefulset_name\", host_name=~\"$host_name\"}[$__rate_interval]), {service_name=\"postgresql\"})",
           "format": "time_series",
           "groupBy": [
             {
@@ -1025,7 +1025,7 @@
           },
           "dsType": "prometheus",
           "editorMode": "code",
-          "expr": "sum by (k8s_cluster_name, k8s_statefulset_name, host_name) (info(postgresql_deadlocks_total{service_name=\"postgresql\", k8s_cluster_name=~\"$k8s_cluster_name\", k8s_statefulset_name=~\"$k8s_statefulset_name\", host_name=~\"$host_name\"}, {postgresql_database_name=~\"$db\"}))",
+          "expr": "sum by (k8s_cluster_name, k8s_statefulset_name, host_name) (info(postgresql_deadlocks_total{k8s_cluster_name=~\"$k8s_cluster_name\", k8s_statefulset_name=~\"$k8s_statefulset_name\", host_name=~\"$host_name\"}, {service_name=\"postgresql\", postgresql_database_name=~\"$db\"}))",
           "format": "time_series",
           "groupBy": [
             {
@@ -1082,7 +1082,7 @@
           },
           "dsType": "prometheus",
           "editorMode": "code",
-          "expr": "sum by (k8s_cluster_name, k8s_statefulset_name, host_name) (info(postgresql_conflicts_total{service_name=\"postgresql\", k8s_cluster_name=~\"$k8s_cluster_name\", k8s_statefulset_name=~\"$k8s_statefulset_name\", host_name=~\"$host_name\"}, {postgresql_database_name=~\"$db\"}))",
+          "expr": "sum by (k8s_cluster_name, k8s_statefulset_name, host_name) (info(postgresql_conflicts_total{k8s_cluster_name=~\"$k8s_cluster_name\", k8s_statefulset_name=~\"$k8s_statefulset_name\", host_name=~\"$host_name\"}, {service_name=\"postgresql\", postgresql_database_name=~\"$db\"}))",
           "format": "time_series",
           "groupBy": [
             {
@@ -1225,7 +1225,7 @@
             "uid": "$datasource"
           },
           "editorMode": "code",
-          "expr": "round(\n  (sum by (postgresql_database_name, k8s_cluster_name, k8s_statefulset_name, host_name) (info(rate(postgresql_blks_hit_total{service_name=\"postgresql\", k8s_cluster_name=~\"$k8s_cluster_name\", k8s_statefulset_name=~\"$k8s_statefulset_name\", host_name=~\"$host_name\"}[$__rate_interval]), {postgresql_database_name=~\"$db\"})) /\n  (sum by (postgresql_database_name, k8s_cluster_name, k8s_statefulset_name, host_name) (info(rate(postgresql_blks_hit_total{service_name=\"postgresql\", k8s_cluster_name=~\"$k8s_cluster_name\", k8s_statefulset_name=~\"$k8s_statefulset_name\", host_name=~\"$host_name\"}[$__rate_interval]), {postgresql_database_name=~\"$db\"})) +\n   sum by (postgresql_database_name, k8s_cluster_name, k8s_statefulset_name, host_name) (info(rate(postgresql_blks_read_total{service_name=\"postgresql\", k8s_cluster_name=~\"$k8s_cluster_name\", k8s_statefulset_name=~\"$k8s_statefulset_name\", host_name=~\"$host_name\"}[$__rate_interval]), {postgresql_database_name=~\"$db\"})))) * 100,\n  0.001\n)",
+          "expr": "round(\n  (sum by (postgresql_database_name, k8s_cluster_name, k8s_statefulset_name, host_name) (info(rate(postgresql_blks_hit_total{k8s_cluster_name=~\"$k8s_cluster_name\", k8s_statefulset_name=~\"$k8s_statefulset_name\", host_name=~\"$host_name\"}[$__rate_interval]), {service_name=\"postgresql\", postgresql_database_name=~\"$db\"})) /\n  (sum by (postgresql_database_name, k8s_cluster_name, k8s_statefulset_name, host_name) (info(rate(postgresql_blks_hit_total{k8s_cluster_name=~\"$k8s_cluster_name\", k8s_statefulset_name=~\"$k8s_statefulset_name\", host_name=~\"$host_name\"}[$__rate_interval]), {service_name=\"postgresql\", postgresql_database_name=~\"$db\"})) +\n   sum by (postgresql_database_name, k8s_cluster_name, k8s_statefulset_name, host_name) (info(rate(postgresql_blks_read_total{k8s_cluster_name=~\"$k8s_cluster_name\", k8s_statefulset_name=~\"$k8s_statefulset_name\", host_name=~\"$host_name\"}[$__rate_interval]), {service_name=\"postgresql\", postgresql_database_name=~\"$db\"})))) * 100,\n  0.001\n)",
           "format": "time_series",
           "legendFormat": "{{postgresql_database_name}} - cache hit ratio",
           "range": true,
@@ -1323,7 +1323,7 @@
             "uid": "$datasource"
           },
           "editorMode": "code",
-          "expr": "info(postgresql_backends{service_name=\"postgresql\", k8s_cluster_name=~\"$k8s_cluster_name\", k8s_statefulset_name=~\"$k8s_statefulset_name\", host_name=~\"$host_name\"}, {postgresql_database_name=~\"$db\"})",
+          "expr": "info(postgresql_backends{k8s_cluster_name=~\"$k8s_cluster_name\", k8s_statefulset_name=~\"$k8s_statefulset_name\", host_name=~\"$host_name\"}, {service_name=\"postgresql\", postgresql_database_name=~\"$db\"})",
           "format": "time_series",
           "intervalFactor": 2,
           "legendFormat": "{{postgresql_database_name}} - connections",
