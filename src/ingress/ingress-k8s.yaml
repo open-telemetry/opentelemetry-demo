@@ -1,13 +1,25 @@
-#ingress format for local/DIAB demo
+#ingress format for astronomy-shop.splunko11y.com with TLS
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
   name: frontend-proxy-ingress
   annotations:
     kubernetes.io/ingress.class: traefik
+    # Force redirect HTTP to HTTPS
+    traefik.ingress.kubernetes.io/redirect-entry-point: https
+    traefik.ingress.kubernetes.io/redirect-permanent: "true"
+    # Or for newer Traefik versions:
+    # traefik.ingress.kubernetes.io/router.middlewares: default-redirect-https@kubernetescrd
 spec:
+  tls:
+  - hosts:
+    - astronomy-shop.splunko11y.com
+    # Note: secretName only needed if using cert-manager for SSL certs
+    # If AWS LB handles SSL termination, Traefik will still accept HTTPS on 443
+    # secretName: astronomy-shop-tls
   rules:
-    - http:
+    - host: astronomy-shop.splunko11y.com
+      http:
         paths:
           - path: /
             pathType: Prefix
