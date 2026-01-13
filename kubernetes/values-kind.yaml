@@ -18,3 +18,5 @@ components:
     resources:
       limits:
         memory: 500Mi
+    # Disable flagd-ui sidecar - it OOMKills even with 1Gi limit
+    sidecarContainers: []
