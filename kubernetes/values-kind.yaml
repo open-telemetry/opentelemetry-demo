@@ -1,0 +1,10 @@
+# Additional Helm values for Kind deployment
+# Use with: -f values-info-function.yaml -f values-kind.yaml
+#
+# This configures the frontend-proxy service as NodePort for Kind access
+
+components:
+  frontend-proxy:
+    service:
+      type: NodePort
+      nodePort: 30080
