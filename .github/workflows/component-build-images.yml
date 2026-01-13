@@ -11,17 +11,17 @@ on:
         type: boolean
       version:
         description: The version used when tagging the image
-        default: 'dev'
+        default: "dev"
         required: false
         type: string
       dockerhub_repo:
         description: Docker Hub repository
-        default: 'otel/demo'
+        default: "otel/demo"
         required: false
         type: string
       ghcr_repo:
         description: GHCR repository
-        default: 'ghcr.io/tsuga-dev/otel-demo'
+        default: "ghcr.io/tsuga-dev/otel-demo"
         required: false
         type: string
 
@@ -29,8 +29,8 @@ permissions:
   contents: read
 
 env:
-  AWS_REGION: eu-central-1
-  ECR_REPOSITORY: tsuga-dev/otel-demo 
+  AWS_REGION: "eu-central-1"
+  ECR_REPOSITORY: "tsuga-dev/otel-demo"
 
 jobs:
   protobufcheck:
