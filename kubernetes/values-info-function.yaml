@@ -1,0 +1,92 @@
+# Helm values override for testing the experimental Prometheus info() function
+# This configuration uses a custom Prometheus build with the info() bug fix and
+# removes workaround resource attribute promotions.
+#
+# Usage:
+#   helm repo add open-telemetry https://open-telemetry.github.io/opentelemetry-helm-charts
+#   helm repo update
+#   helm install opentelemetry-demo open-telemetry/opentelemetry-demo \
+#     --namespace otel-demo --create-namespace \
+#     -f kubernetes/values-info-function.yaml
+#
+# Note: This requires Prometheus with the experimental info() function fix.
+# See https://github.com/prometheus/prometheus/pull/XXXX
+
+prometheus:
+  server:
+    # Custom Prometheus image with info() function bug fix
+    image:
+      repository: ghcr.io/aknuds1/prometheus
+      # Using digest for reproducibility
+      digest: sha256:5daac9ac954a23b1918d2dca10c0604355b3c2c5dbf0657e5a2358adea917e5c
+
+    # Enable experimental PromQL functions including info()
+    extraFlags:
+      - "enable-feature=exemplar-storage"
+      - "enable-feature=promql-experimental-functions"
+      - "web.enable-otlp-receiver"
+
+    # OTLP receiver configuration
+    # Resource attributes are NOT promoted to labels on metrics.
+    # Instead, use the experimental info() PromQL function to enrich metrics with
+    # labels from target_info at query time. This reduces label cardinality while
+    # still allowing access to resource attributes in queries.
+    otlp:
+      keep_identifying_resource_attributes: true
+      promote_resource_attributes:
+        # Kafka resource attributes produced by the OTel Collector Kafka receiver
+        # https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/main/receiver/kafkametricsreceiver
+        - kafka.cluster.alias
+
+        # See https://github.com/open-telemetry/opentelemetry-collector-contrib/blob/v0.142.0/connector/spanmetricsconnector/README.md#known-limitation-the-single-writer-principle
+        - collector.instance.id
+
+        # host.name is needed for system/host metrics from the hostmetrics receiver,
+        # which cannot use info() because they lack service.name to match target_info.
+        - host.name
+
+    # Allow out-of-order ingestion for metrics that may arrive late
+    tsdb:
+      out_of_order_time_window: 30m
+
+# Grafana configuration with custom dashboards
+grafana:
+  # Enable the sidecar to load dashboards from ConfigMaps
+  sidecar:
+    dashboards:
+      enabled: true
+      # Label that ConfigMaps must have to be picked up
+      label: grafana_dashboard
+      # Search in all namespaces
+      searchNamespace: ALL
+
+  # Dashboard providers configuration
+  dashboardProviders:
+    dashboardproviders.yaml:
+      apiVersion: 1
+      providers:
+        - name: 'custom'
+          orgId: 1
+          folder: 'Custom'
+          type: file
+          disableDeletion: false
+          editable: true
+          options:
+            path: /var/lib/grafana/dashboards/custom
+
+  # Note: The APM and PostgreSQL dashboards with info() function queries
+  # need to be deployed as ConfigMaps. See the dashboards in:
+  # - src/grafana/provisioning/dashboards/demo/apm-dashboard.json
+  # - src/grafana/provisioning/dashboards/demo/postgresql-dashboard.json
+  #
+  # To deploy them, create ConfigMaps like:
+  #
+  # kubectl create configmap apm-dashboard \
+  #   --from-file=apm-dashboard.json=src/grafana/provisioning/dashboards/demo/apm-dashboard.json \
+  #   -n otel-demo
+  # kubectl label configmap apm-dashboard grafana_dashboard=1 -n otel-demo
+  #
+  # kubectl create configmap postgresql-dashboard \
+  #   --from-file=postgresql-dashboard.json=src/grafana/provisioning/dashboards/demo/postgresql-dashboard.json \
+  #   -n otel-demo
+  # kubectl label configmap postgresql-dashboard grafana_dashboard=1 -n otel-demo
