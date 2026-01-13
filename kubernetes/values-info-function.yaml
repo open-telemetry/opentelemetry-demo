@@ -17,6 +17,23 @@ opentelemetry-collector:
   image:
     repository: ghcr.io/aknuds1/otelcontribcol
     tag: postgresreceiver-uuid-v0.143.0
+  config:
+    processors:
+      # Don't override host.name from the original service with the collector's hostname
+      resourcedetection:
+        detectors: [env, system]
+        override: false
+      # Set host.name from k8s.pod.name since the resourcedetection processor
+      # would otherwise set it to the collector's hostname.
+      # Also preserve the existing service.instance.id setting from the chart.
+      resource:
+        attributes:
+          - key: service.instance.id
+            from_attribute: k8s.pod.uid
+            action: insert
+          - key: host.name
+            from_attribute: k8s.pod.name
+            action: upsert
 
 prometheus:
   server:
