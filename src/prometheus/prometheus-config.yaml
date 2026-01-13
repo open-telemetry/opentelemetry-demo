@@ -13,11 +13,6 @@ otlp:
   # still allowing access to resource attributes in queries.
   # See https://prometheus.io/blog/2025/12/16/introducing-info-function/
   promote_resource_attributes:
-    # service.name is promoted due to a Prometheus bug where info() filtering
-    # doesn't work when the filter label already exists on the input metric.
-    # TODO: Remove when upgrading to Prometheus >= v3.10.x.
-    - service.name
-
     # Kafka resource attributes produced by the OTel Collector Kafka receiver
     # https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/main/receiver/kafkametricsreceiver
     - kafka.cluster.alias
@@ -27,13 +22,7 @@ otlp:
 
     # host.name is needed for system/host metrics from the hostmetrics receiver,
     # which cannot use info() because they lack service.name to match target_info.
-    # k8s labels are promoted so PostgreSQL dashboard queries can filter on them
-    # directly on the metric (works around Prometheus info() filtering bug when
-    # filter labels already exist on the input metric).
-    # TODO: Remove the latter workaround when upgrading to Prometheus >= v3.10.x.
     - host.name
-    - k8s.cluster.name
-    - k8s.statefulset.name
 storage:
   tsdb:
     out_of_order_time_window: 30m
