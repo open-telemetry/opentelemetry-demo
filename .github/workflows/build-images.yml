@@ -17,5 +17,6 @@ jobs:
     permissions:
       contents: read
       packages: write
+      id-token: write
     if: github.repository == 'tsuga-dev/opentelemetry-demo'
     uses: ./.github/workflows/component-build-images.yml

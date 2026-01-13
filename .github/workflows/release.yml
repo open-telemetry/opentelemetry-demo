@@ -15,6 +15,7 @@ jobs:
     permissions:  # required by the reusable workflow
       contents: read
       packages: write
+      id-token: write
     uses: ./.github/workflows/component-build-images.yml
     if: github.repository == 'tsuga-dev/opentelemetry-demo'
     with:
