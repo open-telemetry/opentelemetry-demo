@@ -21,7 +21,7 @@ jobs:
       id-token: write
     uses: ./.github/workflows/component-build-images.yml
     with:
-      push: true
+      push: false
       version: 'dev'
 
   markdownlint:
