@@ -28,6 +28,10 @@ on:
 permissions:
   contents: read
 
+env:
+  AWS_REGION: eu-central-1
+  ECR_REPOSITORY: tsuga-dev/otel-demo 
+
 jobs:
   protobufcheck:
     runs-on: ubuntu-latest
@@ -178,6 +182,15 @@ jobs:
             echo "Changes detected in ${{ matrix.file_tag.context }}, proceeding with build."
             echo "skip=false" >> "$GITHUB_OUTPUT"
           fi
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v5.1.1
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ env.AWS_REGION }}
+      - name: Login to Amazon ECR
+        id: login-ecr
+        uses: aws-actions/amazon-ecr-login@v2.0.1
       - name: Log in to the Container registry
         uses: docker/login-action@v3
         with:
@@ -211,5 +224,7 @@ jobs:
           tags: |
             ${{ inputs.ghcr_repo }}:${{ inputs.version }}-${{ matrix.file_tag.tag_suffix }}
             ${{ inputs.ghcr_repo }}:latest-${{ matrix.file_tag.tag_suffix }}
+            ${env.ECR_REPOSITORY}:${{ inputs.version }}-${{ matrix.file_tag.tag_suffix }}
+            ${env.ECR_REPOSITORY}:latest-${{ matrix.file_tag.tag_suffix }}
           cache-from: type=gha
           cache-to: type=gha
