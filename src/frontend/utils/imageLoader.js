@@ -16,5 +16,7 @@ if (typeof window !== "undefined" && window.location) {
 
 export default function imageLoader({ src, width, quality }) {
   // We pass down the optimisation request to the image-provider service here, without this, nextJs would try to use internal optimiser which is not working with the external image-provider.
-  return `${protocol}://${hostname}:${port}/${src}?w=${width}&q=${quality || 75}`
+  // Strip leading slash from src to prevent double slashes in URL
+  const cleanSrc = src.startsWith('/') ? src.slice(1) : src;
+  return `${protocol}://${hostname}:${port}/${cleanSrc}?w=${width}&q=${quality || 75}`
 }
