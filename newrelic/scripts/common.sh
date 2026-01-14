@@ -68,3 +68,30 @@ ensure_helm_repo() {
     exit 1
   fi
 }
+
+# Prompt user to confirm if installation is for an OpenShift cluster
+prompt_for_openshift() {
+  set +u
+  if [ -z "$IS_OPENSHIFT_CLUSTER" ]; then
+    while true; do
+      echo -n "Is this installation for an OpenShift cluster? (y/n): "
+      read -r response
+      case "$response" in
+        [yY]|[yY][eE][sS])
+          IS_OPENSHIFT_CLUSTER="y"
+          break
+          ;;
+        [nN]|[nN][oO])
+          IS_OPENSHIFT_CLUSTER="n"
+          break
+          ;;
+        *)
+          echo "Please enter 'y' or 'n'."
+          ;;
+      esac
+    done
+  else
+    echo "Using OpenShift cluster setting from environment variable (IS_OPENSHIFT_CLUSTER=$IS_OPENSHIFT_CLUSTER)."
+  fi
+  set -u
+}

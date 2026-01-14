@@ -20,6 +20,8 @@ You'll need a New Relic License Key from your New Relic account.  If you don't h
 
 ### Kubernetes
 
+> **NOTE**: If you are installing into an **OpenShift** cluster, please [complete steps 1 - 5 in the OpenTelemetry Demo helm chart README](https://github.com/open-telemetry/opentelemetry-helm-charts/tree/main/charts/opentelemetry-demo#openshift) prior to installation.
+
 For our testing, we used a [Minikube](https://minikube.sigs.k8s.io/docs/start/) cluster with 4 CPUs and 8GB Memory.  The official demo docs state:
 
 - Kubernetes 1.24+
