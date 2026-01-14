@@ -33,7 +33,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v6.0.0
+        uses: actions/checkout@v6.0.1
       - name: Generate
         run: make clean docker-generate-protobuf
       - name: Check Clean Work Tree
@@ -122,10 +122,6 @@ jobs:
             tag_suffix: payment
             context: ./
             setup-qemu: true
-          - file: ./src/postgres/Dockerfile
-            tag_suffix: postgresql
-            context: ./
-            setup-qemu: true
           - file: ./src/product-catalog/Dockerfile
             tag_suffix: product-catalog
             context: ./
@@ -152,7 +148,7 @@ jobs:
             setup-qemu: true
 
     steps:
-      - uses: actions/checkout@v6.0.0
+      - uses: actions/checkout@v6.0.1
         with:
           fetch-depth: 0
       - name: Load environment variables from .env file

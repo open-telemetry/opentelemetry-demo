@@ -43,6 +43,12 @@ otlp:
     - postgresql.table.name
     - postgresql.index.name
 
+    # Kafka resource attributes produced by the OTel Collector Kafka receiver
+    # https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/main/receiver/kafkametricsreceiver
+    - kafka.cluster.alias
+
+    # See https://github.com/open-telemetry/opentelemetry-collector-contrib/blob/v0.142.0/connector/spanmetricsconnector/README.md#known-limitation-the-single-writer-principle
+    - collector.instance.id
 storage:
   tsdb:
     out_of_order_time_window: 30m

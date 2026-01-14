@@ -18,7 +18,7 @@ jobs:
       contents: read
     steps:
       - name: Checkout
-        uses: actions/checkout@v6.0.0
+        uses: actions/checkout@v6.0.1
 
       - name: Check for changed files
         id: file_changes
@@ -33,7 +33,9 @@ jobs:
               - 'docker-compose*.yml'
               - 'src/flagd/**'
               - 'src/grafana/**'
+              - 'src/jaeger/**'
               - 'src/otel-collector/**'
+              - 'src/postgresql/**'
               - 'src/prometheus/**'
 
       - name: "Add Label: docs-update-required"
