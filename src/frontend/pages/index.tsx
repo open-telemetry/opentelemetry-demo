@@ -3,7 +3,6 @@
 
 import { NextPage } from 'next';
 import Head from 'next/head';
-import Footer from '../components/Footer';
 import Layout from '../components/Layout';
 import ProductList from '../components/ProductList';
 import * as S from '../styles/Home.styled';
@@ -72,7 +71,6 @@ const Home: NextPage = () => {
             </S.Content>
           </S.Row>
         </S.Container>
-        <Footer />
         {/* Hidden demo error button - click or use Ctrl/Cmd+Shift+E */}
         <button
           onClick={triggerDemoError}

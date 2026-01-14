@@ -9,7 +9,6 @@ import { useEffect } from 'react';
 import Ad from '../../../../components/Ad';
 import Button from '../../../../components/Button';
 import CheckoutItem from '../../../../components/CheckoutItem';
-import Footer from '../../../../components/Footer';
 import Layout from '../../../../components/Layout';
 import Recommendations from '../../../../components/Recommendations';
 import AdProvider from '../../../../providers/Ad.provider';
@@ -79,7 +78,6 @@ const Checkout: NextPage = () => {
           <Recommendations />
         </S.Checkout>
         <Ad />
-        <Footer />
       </Layout>
     </AdProvider>
   );
