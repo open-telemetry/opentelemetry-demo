@@ -33,15 +33,13 @@ services:
     restart: unless-stopped
     environment:
       - KAFKA_ADDR
-      - OTEL_EXPORTER_OTLP_ENDPOINT=http://${OTEL_COLLECTOR_HOST}:${OTEL_COLLECTOR_PORT_HTTP}
+      - OTEL_EXPORTER_OTLP_ENDPOINT=http://grafana-alloy:4318
       - OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE
       - OTEL_RESOURCE_ATTRIBUTES
       - OTEL_SERVICE_NAME=accounting
       - DB_CONNECTION_STRING=Host=${POSTGRES_HOST};Username=otelu;Password=otelp;Database=${POSTGRES_DB}
       - OTEL_DOTNET_AUTO_TRACES_ENTITYFRAMEWORKCORE_INSTRUMENTATION_ENABLED=false
     depends_on:
-      otel-collector:
-        condition: service_started
       kafka:
         condition: service_healthy
     logging: *logging
@@ -68,7 +66,7 @@ services:
       - AD_PORT
       - FLAGD_HOST
       - FLAGD_PORT
-      - OTEL_EXPORTER_OTLP_ENDPOINT=http://${OTEL_COLLECTOR_HOST}:${OTEL_COLLECTOR_PORT_HTTP}
+      - OTEL_EXPORTER_OTLP_ENDPOINT=http://grafana-alloy:4318
       - OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE
       - OTEL_RESOURCE_ATTRIBUTES
       - OTEL_LOGS_EXPORTER=otlp
@@ -76,8 +74,6 @@ services:
       # Workaround on OSX for https://bugs.openjdk.org/browse/JDK-8345296
       - _JAVA_OPTIONS
     depends_on:
-      otel-collector:
-        condition: service_started
       flagd:
         condition: service_started
     logging: *logging
@@ -103,15 +99,13 @@ services:
       - FLAGD_HOST
       - FLAGD_PORT
       - VALKEY_ADDR
-      - OTEL_EXPORTER_OTLP_ENDPOINT
+      - OTEL_EXPORTER_OTLP_ENDPOINT=http://grafana-alloy:4318
       - OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE
       - OTEL_RESOURCE_ATTRIBUTES
       - OTEL_SERVICE_NAME=cart
       - ASPNETCORE_URLS=http://*:${CART_PORT}
     depends_on:
       valkey-cart:
-        condition: service_started
-      otel-collector:
         condition: service_started
       flagd:
         condition: service_started
@@ -145,7 +139,7 @@ services:
       - SHIPPING_ADDR
       - KAFKA_ADDR
       - GOMEMLIMIT=16MiB
-      - OTEL_EXPORTER_OTLP_ENDPOINT
+      - OTEL_EXPORTER_OTLP_ENDPOINT=http://grafana-alloy:4318
       - OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE
       - OTEL_RESOURCE_ATTRIBUTES
       - OTEL_SERVICE_NAME=checkout
@@ -161,8 +155,6 @@ services:
       product-catalog:
         condition: service_started
       shipping:
-        condition: service_started
-      otel-collector:
         condition: service_started
       kafka:
         condition: service_healthy
@@ -192,13 +184,10 @@ services:
       - CURRENCY_PORT
       - IPV6_ENABLED
       - VERSION=${IMAGE_VERSION}
-      - OTEL_EXPORTER_OTLP_ENDPOINT
+      - OTEL_EXPORTER_OTLP_ENDPOINT=http://grafana-alloy:4318
       - OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE
       - OTEL_RESOURCE_ATTRIBUTES
       - OTEL_SERVICE_NAME=currency
-    depends_on:
-      otel-collector:
-        condition: service_started
     logging: *logging
 
   # Email service
@@ -222,13 +211,10 @@ services:
       - EMAIL_PORT
       - FLAGD_HOST
       - FLAGD_PORT
-      - OTEL_EXPORTER_OTLP_ENDPOINT=http://${OTEL_COLLECTOR_HOST}:${OTEL_COLLECTOR_PORT_HTTP}
+      - OTEL_EXPORTER_OTLP_ENDPOINT=http://grafana-alloy:4318
       - OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE
       - OTEL_RESOURCE_ATTRIBUTES
       - OTEL_SERVICE_NAME=email
-    depends_on:
-      otel-collector:
-        condition: service_started
     logging: *logging
 
   # Fraud Detection service
@@ -251,15 +237,13 @@ services:
       - FLAGD_HOST
       - FLAGD_PORT
       - KAFKA_ADDR
-      - OTEL_EXPORTER_OTLP_ENDPOINT=http://${OTEL_COLLECTOR_HOST}:${OTEL_COLLECTOR_PORT_HTTP}
+      - OTEL_EXPORTER_OTLP_ENDPOINT=http://grafana-alloy:4318
       - OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE
       - OTEL_INSTRUMENTATION_KAFKA_EXPERIMENTAL_SPAN_ATTRIBUTES=true
       - OTEL_INSTRUMENTATION_MESSAGING_EXPERIMENTAL_RECEIVE_TELEMETRY_ENABLED=true
       - OTEL_RESOURCE_ATTRIBUTES
       - OTEL_SERVICE_NAME=fraud-detection
     depends_on:
-      otel-collector:
-        condition: service_started
       kafka:
         condition: service_healthy
     logging: *logging
@@ -291,14 +275,14 @@ services:
       - PRODUCT_REVIEWS_ADDR
       - RECOMMENDATION_ADDR
       - SHIPPING_ADDR
-      - OTEL_EXPORTER_OTLP_ENDPOINT
+      - OTEL_EXPORTER_OTLP_ENDPOINT=http://grafana-alloy:4318
       - OTEL_RESOURCE_ATTRIBUTES
       - ENV_PLATFORM
       - OTEL_SERVICE_NAME=frontend
-      - PUBLIC_OTEL_EXPORTER_OTLP_TRACES_ENDPOINT
+      - PUBLIC_OTEL_EXPORTER_OTLP_TRACES_ENDPOINT=http://localhost:4318/v1/traces
       - OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE
       - WEB_OTEL_SERVICE_NAME=frontend-web
-      - OTEL_COLLECTOR_HOST
+      - OTEL_COLLECTOR_HOST=grafana-alloy
       - FLAGD_HOST
       - FLAGD_PORT
     depends_on:
@@ -317,8 +301,6 @@ services:
       recommendation:
         condition: service_started
       shipping:
-        condition: service_started
-      otel-collector:
         condition: service_started
       image-provider:
         condition: service_started
@@ -371,10 +353,6 @@ services:
         condition: service_started
       load-generator:
         condition: service_started
-      jaeger:
-        condition: service_started
-      grafana:
-        condition: service_started
       flagd-ui:
         condition: service_started
     dns_search: ""
@@ -401,9 +379,6 @@ services:
       - OTEL_COLLECTOR_PORT_GRPC
       - OTEL_RESOURCE_ATTRIBUTES
       - OTEL_SERVICE_NAME=image-provider
-    depends_on:
-      otel-collector:
-        condition: service_started
     logging: *logging
 
   # Load Generator
@@ -429,7 +404,7 @@ services:
       - LOCUST_HEADLESS
       - LOCUST_AUTOSTART
       - LOCUST_BROWSER_TRAFFIC_ENABLED=true
-      - OTEL_EXPORTER_OTLP_ENDPOINT
+      - OTEL_EXPORTER_OTLP_ENDPOINT=http://grafana-alloy:4318
       - OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE
       - OTEL_RESOURCE_ATTRIBUTES
       - OTEL_SERVICE_NAME=load-generator
@@ -466,13 +441,11 @@ services:
       - PAYMENT_PORT
       - FLAGD_HOST
       - FLAGD_PORT
-      - OTEL_EXPORTER_OTLP_ENDPOINT
+      - OTEL_EXPORTER_OTLP_ENDPOINT=http://grafana-alloy:4318
       - OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE
       - OTEL_RESOURCE_ATTRIBUTES
       - OTEL_SERVICE_NAME=payment
     depends_on:
-      otel-collector:
-        condition: service_started
       flagd:
         condition: service_started
     logging: *logging
@@ -498,15 +471,13 @@ services:
       - FLAGD_HOST
       - FLAGD_PORT
       - GOMEMLIMIT=16MiB
-      - OTEL_EXPORTER_OTLP_ENDPOINT
+      - OTEL_EXPORTER_OTLP_ENDPOINT=http://grafana-alloy:4318
       - OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE
       - OTEL_RESOURCE_ATTRIBUTES
       - OTEL_SERVICE_NAME=product-catalog
       - OTEL_SEMCONV_STABILITY_OPT_IN=database
       - DB_CONNECTION_STRING=postgres://otelu:otelp@${POSTGRES_HOST}/${POSTGRES_DB}?sslmode=disable
     depends_on:
-      otel-collector:
-        condition: service_started
       flagd:
         condition: service_started
       postgresql:
@@ -532,7 +503,7 @@ services:
     environment:
       - PRODUCT_REVIEWS_PORT
       - OTEL_PYTHON_LOG_CORRELATION=true
-      - OTEL_EXPORTER_OTLP_ENDPOINT
+      - OTEL_EXPORTER_OTLP_ENDPOINT=http://grafana-alloy:4318
       - OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE
       - OTEL_RESOURCE_ATTRIBUTES
       - OTEL_SERVICE_NAME=product-reviews
@@ -554,8 +525,6 @@ services:
         condition: service_started
       postgresql:
         condition: service_started
-      otel-collector:
-        condition: service_started
     logging: *logging
 
   # Quote service
@@ -576,16 +545,13 @@ services:
       - "${QUOTE_PORT}"
     environment:
       - IPV6_ENABLED
-      - OTEL_EXPORTER_OTLP_ENDPOINT=http://${OTEL_COLLECTOR_HOST}:${OTEL_COLLECTOR_PORT_HTTP}
+      - OTEL_EXPORTER_OTLP_ENDPOINT=http://grafana-alloy:4318
       - OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE
       - OTEL_PHP_AUTOLOAD_ENABLED=true
       - QUOTE_PORT
       - OTEL_PHP_INTERNAL_METRICS_ENABLED=true
       - OTEL_RESOURCE_ATTRIBUTES
       - OTEL_SERVICE_NAME=quote
-    depends_on:
-      otel-collector:
-        condition: service_started
     logging: *logging
 
   # Recommendation service
@@ -610,15 +576,13 @@ services:
       - FLAGD_HOST
       - FLAGD_PORT
       - OTEL_PYTHON_LOG_CORRELATION=true
-      - OTEL_EXPORTER_OTLP_ENDPOINT
+      - OTEL_EXPORTER_OTLP_ENDPOINT=http://grafana-alloy:4318
       - OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE
       - OTEL_RESOURCE_ATTRIBUTES
       - OTEL_SERVICE_NAME=recommendation
       - PROTOCOL_BUFFERS_PYTHON_IMPLEMENTATION=python
     depends_on:
       product-catalog:
-        condition: service_started
-      otel-collector:
         condition: service_started
       flagd:
         condition: service_started
@@ -644,13 +608,10 @@ services:
       - IPV6_ENABLED
       - SHIPPING_PORT
       - QUOTE_ADDR
-      - OTEL_EXPORTER_OTLP_ENDPOINT
+      - OTEL_EXPORTER_OTLP_ENDPOINT=http://grafana-alloy:4318
       - OTEL_RESOURCE_ATTRIBUTES
       - OTEL_SERVICE_NAME=shipping
       - OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE
-    depends_on:
-      otel-collector:
-        condition: service_started
     logging: *logging
 
   # ******************
@@ -700,7 +661,7 @@ services:
     restart: always
     environment:
       - FLAGD_UI_PORT
-      - OTEL_EXPORTER_OTLP_ENDPOINT=http://${OTEL_COLLECTOR_HOST}:${OTEL_COLLECTOR_PORT_HTTP}
+      - OTEL_EXPORTER_OTLP_ENDPOINT=http://grafana-alloy:4318
       - OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE
       - OTEL_RESOURCE_ATTRIBUTES
       - OTEL_SERVICE_NAME=flagd-ui
@@ -709,8 +670,6 @@ services:
     ports:
       - "${FLAGD_UI_PORT}"
     depends_on:
-      otel-collector:
-        condition: service_started
       flagd:
         condition: service_started
     volumes:
@@ -814,6 +773,7 @@ services:
   # ********************
   # Jaeger
   jaeger:
+    profiles: ["telemetry"]
     image: ${JAEGERTRACING_IMAGE}
     container_name: jaeger
     command:
@@ -839,6 +799,7 @@ services:
 
   # Grafana
   grafana:
+    profiles: ["telemetry"]
     image: ${GRAFANA_IMAGE}
     container_name: grafana
     deploy:
@@ -857,6 +818,7 @@ services:
 
   # OpenTelemetry Collector
   otel-collector:
+    profiles: ["telemetry"]
     image: ${COLLECTOR_CONTRIB_IMAGE}
     container_name: otel-collector
     deploy:
@@ -893,8 +855,42 @@ services:
       - POSTGRES_PASSWORD
       - GOMEMLIMIT=160MiB
 
+  # Grafana Alloy
+  grafana-alloy:
+    image: grafana/alloy:latest
+    container_name: grafana-alloy
+    deploy:
+      resources:
+        limits:
+          memory: 200M
+    restart: unless-stopped
+    command: 
+      - run
+      - /etc/alloy/config.alloy
+      - --server.http.listen-addr=0.0.0.0:12345
+      - --storage.path=/var/lib/alloy/data
+    user: 0:0
+    volumes:
+      - ${HOST_FILESYSTEM}:/hostfs:ro
+      - ${DOCKER_SOCK}:/var/run/docker.sock:ro
+      - ./src/grafana-alloy:/etc/alloy
+    ports:
+      - "${OTEL_COLLECTOR_PORT_GRPC}"
+      - "${OTEL_COLLECTOR_PORT_HTTP}"
+      - "12345:12345"
+    logging: *logging
+    environment:
+      - HOST_FILESYSTEM
+      - OTEL_COLLECTOR_HOST
+      - OTEL_COLLECTOR_PORT_GRPC
+      - OTEL_COLLECTOR_PORT_HTTP
+      - GRAFANA_CLOUD_OTLP_ENDPOINT
+      - GRAFANA_CLOUD_INSTANCE_ID
+      - GRAFANA_CLOUD_API_TOKEN
+
   # Prometheus
   prometheus:
+    profiles: ["telemetry"]
     image: ${PROMETHEUS_IMAGE}
     container_name: prometheus
     command:
@@ -920,6 +916,7 @@ services:
 
   # OpenSearch
   opensearch:
+    profiles: ["telemetry"]
     container_name: opensearch
     build:
       context: ./
