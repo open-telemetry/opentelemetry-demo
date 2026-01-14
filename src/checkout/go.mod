@@ -5,7 +5,7 @@ go 1.24.2
 require (
 	github.com/IBM/sarama v1.46.3
 	github.com/google/uuid v1.6.0
-	github.com/open-feature/go-sdk v1.17.0
+	github.com/open-feature/go-sdk v1.17.1
 	github.com/open-feature/go-sdk-contrib/hooks/open-telemetry v0.3.6
 	github.com/open-feature/go-sdk-contrib/providers/flagd v0.3.1
 	go.opentelemetry.io/contrib/bridges/otelslog v0.14.0
