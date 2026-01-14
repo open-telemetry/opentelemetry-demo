@@ -16,11 +16,11 @@ description = 'Ad Service'
 group = "ad"
 version = "0.1.0-SNAPSHOT"
 
-def opentelemetryVersion = "1.57.0"
+def opentelemetryVersion = "1.58.0"
 def opentelemetryInstrumentationVersion = "2.23.0"
 def grpcVersion = "1.78.0"
 def jacksonVersion = "2.20.1"
-def protocVersion = "4.33.2"
+def protocVersion = "4.33.4"
 
 tasks.withType(JavaCompile).configureEach {
     sourceCompatibility = JavaVersion.VERSION_21
@@ -40,7 +40,7 @@ dependencies {
         implementation platform("io.opentelemetry:opentelemetry-bom:${opentelemetryVersion}")
         implementation platform("io.opentelemetry.instrumentation:opentelemetry-instrumentation-bom:${opentelemetryInstrumentationVersion}")
 
-        implementation "com.google.api.grpc:proto-google-common-protos:2.63.2",
+        implementation "com.google.api.grpc:proto-google-common-protos:2.64.1",
                 "com.google.protobuf:protobuf-java:${protocVersion}",
                 "javax.annotation:javax.annotation-api:1.3.2",
                 "io.grpc:grpc-protobuf:${grpcVersion}",
