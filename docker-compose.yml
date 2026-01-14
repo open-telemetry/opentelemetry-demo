@@ -29,7 +29,7 @@ services:
     deploy:
       resources:
         limits:
-          memory: 120M
+          memory: 160M
     restart: unless-stopped
     environment:
       - KAFKA_ADDR
@@ -457,7 +457,7 @@ services:
     deploy:
       resources:
         limits:
-          memory: 120M
+          memory: 140M
     restart: unless-stopped
     ports:
       - "${PAYMENT_PORT}"
@@ -495,7 +495,6 @@ services:
       - "${PRODUCT_CATALOG_PORT}"
     environment:
       - PRODUCT_CATALOG_PORT
-      - PRODUCT_CATALOG_RELOAD_INTERVAL
       - FLAGD_HOST
       - FLAGD_PORT
       - GOMEMLIMIT=16MiB
@@ -503,12 +502,14 @@ services:
       - OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE
       - OTEL_RESOURCE_ATTRIBUTES
       - OTEL_SERVICE_NAME=product-catalog
-    volumes:
-      - ./src/product-catalog/products:/usr/src/app/products
+      - OTEL_SEMCONV_STABILITY_OPT_IN=database
+      - DB_CONNECTION_STRING=postgres://otelu:otelp@${POSTGRES_HOST}/${POSTGRES_DB}?sslmode=disable
     depends_on:
       otel-collector:
         condition: service_started
       flagd:
+        condition: service_started
+      postgresql:
         condition: service_started
     logging: *logging
 
@@ -776,13 +777,8 @@ services:
 
   # Postgresql used by Accounting service
   postgresql:
-    image: ${IMAGE_NAME}:${DEMO_VERSION}-postgresql
+    image: ${POSTGRES_IMAGE}
     container_name: postgresql
-    build:
-      context: ./
-      dockerfile: ${POSTGRES_DOCKERFILE}
-      cache_from:
-        - ${IMAGE_NAME}:${IMAGE_VERSION}-postgresql
     deploy:
       resources:
         limits:
@@ -794,6 +790,8 @@ services:
       - POSTGRES_USER=root
       - POSTGRES_PASSWORD
       - POSTGRES_DB
+    volumes:
+      - ./src/postgresql/init.sql:/docker-entrypoint-initdb.d/init.sql
     logging: *logging
 
   # Valkey used by Cart service
@@ -846,7 +844,7 @@ services:
     deploy:
       resources:
         limits:
-          memory: 120M
+          memory: 175M
     restart: unless-stopped
     environment:
       - "GF_INSTALL_PLUGINS=grafana-opensearch-datasource"
@@ -902,7 +900,7 @@ services:
     command:
       - --web.console.templates=/etc/prometheus/consoles
       - --web.console.libraries=/etc/prometheus/console_libraries
-      - --storage.tsdb.retention.time=1h
+      - --storage.tsdb.retention.time=7d
       - --config.file=/etc/prometheus/prometheus-config.yaml
       - --storage.tsdb.path=/prometheus
       - --web.enable-lifecycle
@@ -914,7 +912,7 @@ services:
     deploy:
       resources:
         limits:
-          memory: 300M
+          memory: 200M
     restart: unless-stopped
     ports:
       - "${PROMETHEUS_PORT}:${PROMETHEUS_PORT}"
@@ -931,7 +929,7 @@ services:
     deploy:
       resources:
         limits:
-          memory: 800M
+          memory: 1G
     restart: unless-stopped
     environment:
       - cluster.name=demo-cluster
