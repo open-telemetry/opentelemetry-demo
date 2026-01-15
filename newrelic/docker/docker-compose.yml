@@ -27,7 +27,7 @@ services:
     deploy:
       resources:
         limits:
-          memory: 120M
+          memory: 160M
     restart: unless-stopped
     environment:
       - KAFKA_ADDR
@@ -184,6 +184,7 @@ services:
       - "${CURRENCY_PORT}"
     environment:
       - CURRENCY_PORT
+      - IPV6_ENABLED
       - VERSION=${IMAGE_VERSION}
       - OTEL_EXPORTER_OTLP_ENDPOINT
       - OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE
@@ -278,6 +279,7 @@ services:
       - CHECKOUT_ADDR
       - CURRENCY_ADDR
       - PRODUCT_CATALOG_ADDR
+      - PRODUCT_REVIEWS_ADDR
       - RECOMMENDATION_ADDR
       - SHIPPING_ADDR
       - OTEL_EXPORTER_OTLP_ENDPOINT
@@ -348,6 +350,7 @@ services:
       - OTEL_RESOURCE_ATTRIBUTES
       - OTEL_SERVICE_NAME=frontend-proxy
       - ENVOY_PORT
+      - ENVOY_ADDR
       - ENVOY_ADMIN_PORT
       - FLAGD_HOST
       - FLAGD_PORT
@@ -437,11 +440,12 @@ services:
     deploy:
       resources:
         limits:
-          memory: 120M
+          memory: 140M
     restart: unless-stopped
     ports:
       - "${PAYMENT_PORT}"
     environment:
+      - IPV6_ENABLED
       - PAYMENT_PORT
       - FLAGD_HOST
       - FLAGD_PORT
@@ -473,7 +477,6 @@ services:
       - "${PRODUCT_CATALOG_PORT}"
     environment:
       - PRODUCT_CATALOG_PORT
-      - PRODUCT_CATALOG_RELOAD_INTERVAL
       - FLAGD_HOST
       - FLAGD_PORT
       - GOMEMLIMIT=16MiB
@@ -481,12 +484,60 @@ services:
       - OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE
       - OTEL_RESOURCE_ATTRIBUTES
       - OTEL_SERVICE_NAME=product-catalog
-    volumes:
-      - ${SRC_DIR}/product-catalog/products:/usr/src/app/products
+      - OTEL_SEMCONV_STABILITY_OPT_IN=database
+      - DB_CONNECTION_STRING=postgres://otelu:otelp@${POSTGRES_HOST}/${POSTGRES_DB}?sslmode=disable
     depends_on:
       otel-collector:
         condition: service_started
       flagd:
+        condition: service_started
+      postgresql:
+        condition: service_started
+    logging: *logging
+    volumes:
+      - ${SRC_DIR}/product-catalog/products:/usr/src/app/products
+  # Product reviews service
+  product-reviews:
+    image: ${IMAGE_NAME}:${DEMO_VERSION}-product-reviews
+    container_name: product-reviews
+    build:
+      context: ./
+      dockerfile: ${PRODUCT_REVIEWS_DOCKERFILE}
+      cache_from:
+        - ${IMAGE_NAME}:${IMAGE_VERSION}-product-reviews
+    deploy:
+      resources:
+        limits:
+          memory: 100M
+    restart: unless-stopped
+    ports:
+      - "${PRODUCT_REVIEWS_PORT}"
+    environment:
+      - PRODUCT_REVIEWS_PORT
+      - OTEL_PYTHON_LOG_CORRELATION=true
+      - OTEL_EXPORTER_OTLP_ENDPOINT
+      - OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE
+      - OTEL_RESOURCE_ATTRIBUTES
+      - OTEL_SERVICE_NAME=product-reviews
+      - OTEL_INSTRUMENTATION_GENAI_CAPTURE_MESSAGE_CONTENT=true
+      - PROTOCOL_BUFFERS_PYTHON_IMPLEMENTATION=python
+      - DB_CONNECTION_STRING=host=${POSTGRES_HOST} user=otelu password=otelp dbname=${POSTGRES_DB}
+      - LLM_BASE_URL
+      - OPENAI_API_KEY
+      - LLM_MODEL
+      - PRODUCT_CATALOG_ADDR
+      - FLAGD_HOST
+      - FLAGD_PORT
+      - LLM_HOST
+      - LLM_PORT
+    depends_on:
+      product-catalog:
+        condition: service_started
+      llm:
+        condition: service_started
+      postgresql:
+        condition: service_started
+      otel-collector:
         condition: service_started
     logging: *logging
   # Quote service
@@ -506,6 +557,7 @@ services:
     ports:
       - "${QUOTE_PORT}"
     environment:
+      - IPV6_ENABLED
       - OTEL_EXPORTER_OTLP_ENDPOINT=http://${OTEL_COLLECTOR_HOST}:${OTEL_COLLECTOR_PORT_HTTP}
       - OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE
       - OTEL_PHP_AUTOLOAD_ENABLED=true
@@ -529,8 +581,7 @@ services:
     deploy:
       resources:
         limits:
-          # This is high to enable supporting the recommendationCache feature flag use case
-          memory: 500M
+          memory: 500M # This is high to enable supporting the recommendationCache feature flag use case
     restart: unless-stopped
     ports:
       - "${RECOMMENDATION_PORT}"
@@ -570,6 +621,7 @@ services:
     ports:
       - "${SHIPPING_PORT}"
     environment:
+      - IPV6_ENABLED
       - SHIPPING_PORT
       - QUOTE_ADDR
       - OTEL_EXPORTER_OTLP_ENDPOINT
@@ -670,15 +722,33 @@ services:
       timeout: 10s
       retries: 10
     logging: *logging
-  # Postgresql used by Accounting service
-  postgresql:
-    image: ${IMAGE_NAME}:${DEMO_VERSION}-postgresql
-    container_name: postgresql
+  # LLM used by Product Review service
+  llm:
+    image: ${IMAGE_NAME}:${DEMO_VERSION}-llm
+    container_name: llm
     build:
       context: ./
-      dockerfile: ${POSTGRES_DOCKERFILE}
+      dockerfile: ${LLM_DOCKERFILE}
       cache_from:
-        - ${IMAGE_NAME}:${IMAGE_VERSION}-postgresql
+        - ${IMAGE_NAME}:${IMAGE_VERSION}-llm
+    deploy:
+      resources:
+        limits:
+          memory: 50M
+    restart: unless-stopped
+    environment:
+      - FLAGD_HOST
+      - FLAGD_PORT
+    ports:
+      - "${LLM_PORT}"
+    depends_on:
+      flagd:
+        condition: service_started
+    logging: *logging
+  # Postgresql used by Accounting service
+  postgresql:
+    image: ${POSTGRES_IMAGE}
+    container_name: postgresql
     deploy:
       resources:
         limits:
@@ -690,6 +760,8 @@ services:
       - POSTGRES_USER=root
       - POSTGRES_PASSWORD
       - POSTGRES_DB
+    volumes:
+      - ./src/postgresql/init.sql:/docker-entrypoint-initdb.d/init.sql
     logging: *logging
   # Valkey used by Cart service
   valkey-cart:
