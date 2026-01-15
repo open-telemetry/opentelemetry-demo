@@ -36,6 +36,14 @@ default:
         k8s.namespace.name=$(OTEL_NAMESPACE_NAME),
         k8s.cluster.name=$(OTEL_CLUSTER_NAME)
 
+components:
+  accounting:
+    resources:
+      limits:
+        memory: 300Mi
+      requests:
+        memory: 200Mi
+
 # Disable non-NR components
 opensearch:
   enabled: false
