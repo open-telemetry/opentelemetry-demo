@@ -24,14 +24,18 @@ groups:
                 histogram_quantile(
                   0.95,
                   sum by (deployment_environment_name, service_namespace, service_name, service_instance_id, http_route, http_request_method, le) (
-                    rate(
-                      http_server_request_duration_seconds_bucket{
+                    info(
+                      rate(
+                        http_server_request_duration_seconds_bucket{
+                          http_request_method="POST",
+                          http_route="/oteldemo.CartService/AddItem"
+                        }[5m]
+                      ),
+                      {
                         deployment_environment_name="",
                         service_namespace="opentelemetry-demo",
-                        service_name="cart",
-                        http_request_method="POST",
-                        http_route="/oteldemo.CartService/AddItem"
-                      }[5m]
+                        service_name="cart"
+                      }
                     )
                   )
                 )
