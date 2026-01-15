@@ -5562,7 +5562,7 @@
           "type": "prometheus",
           "uid": "${prometheus_datasource}"
         },
-        "definition": "label_values(otelcol_process_uptime_seconds_total,deployment_environment)",
+        "definition": "label_values(target_info{job=~\"otelcontribcol|jaeger\"},deployment_environment_name)",
         "description": "Deployment environment (e.g. \"production\").\nResource attribute `deployment.environment.name` via `target_info`",
         "includeAll": true,
         "label": "Environment",
@@ -5571,7 +5571,7 @@
         "options": [],
         "query": {
           "qryType": 1,
-          "query": "label_values(otelcol_process_uptime_seconds_total,deployment_environment)",
+          "query": "label_values(target_info{job=~\"otelcontribcol|jaeger\"},deployment_environment_name)",
           "refId": "PrometheusVariableQueryEditor-VariableQuery"
         },
         "refresh": 2,
@@ -5600,7 +5600,7 @@
           "type": "prometheus",
           "uid": "${prometheus_datasource}"
         },
-        "definition": "label_values(otelcol_process_uptime_seconds_total{deployment_environment_name=~\"$deployment_environment_name\"},k8s_cluster_name)",
+        "definition": "label_values(target_info{job=~\"otelcontribcol|jaeger\", deployment_environment_name=~\"$deployment_environment_name\"},k8s_cluster_name)",
         "description": "Resource attribute `k8s.cluster.name`",
         "includeAll": true,
         "label": "Kubernetes cluster",
@@ -5609,7 +5609,7 @@
         "options": [],
         "query": {
           "qryType": 1,
-          "query": "label_values(otelcol_process_uptime_seconds_total{deployment_environment_name=~\"$deployment_environment_name\"},k8s_cluster_name)",
+          "query": "label_values(target_info{job=~\"otelcontribcol|jaeger\", deployment_environment_name=~\"$deployment_environment_name\"},k8s_cluster_name)",
           "refId": "PrometheusVariableQueryEditor-VariableQuery"
         },
         "refresh": 1,
@@ -5637,7 +5637,7 @@
           "type": "prometheus",
           "uid": "${prometheus_datasource}"
         },
-        "definition": "label_values(otelcol_process_cpu_seconds_total{k8s_cluster_name=~\"$k8s_cluster_name\"},k8s_node_name)",
+        "definition": "label_values(target_info{job=~\"otelcontribcol|jaeger\", k8s_cluster_name=~\"$k8s_cluster_name\"},k8s_node_name)",
         "description": "`k8s.node.name`",
         "includeAll": true,
         "label": "K8s node",
@@ -5646,7 +5646,7 @@
         "options": [],
         "query": {
           "qryType": 1,
-          "query": "label_values(otelcol_process_cpu_seconds_total{k8s_cluster_name=~\"$k8s_cluster_name\"},k8s_node_name)",
+          "query": "label_values(target_info{job=~\"otelcontribcol|jaeger\", k8s_cluster_name=~\"$k8s_cluster_name\"},k8s_node_name)",
           "refId": "PrometheusVariableQueryEditor-VariableQuery"
         },
         "refresh": 1,
@@ -5670,7 +5670,7 @@
           "type": "prometheus",
           "uid": "${prometheus_datasource}"
         },
-        "definition": "label_values(otelcol_process_uptime_seconds_total,host_name)",
+        "definition": "label_values(target_info{job=~\"otelcontribcol|jaeger\", k8s_node_name=~\"$k8s_node_name\"},host_name)",
         "description": "`host.name`",
         "includeAll": true,
         "label": "Host",
@@ -5678,7 +5678,7 @@
         "options": [],
         "query": {
           "qryType": 1,
-          "query": "label_values(otelcol_process_uptime_seconds_total,host_name)",
+          "query": "label_values(target_info{job=~\"otelcontribcol|jaeger\", k8s_node_name=~\"$k8s_node_name\"},host_name)",
           "refId": "PrometheusVariableQueryEditor-VariableQuery"
         },
         "refresh": 1,
@@ -5701,7 +5701,7 @@
           "type": "prometheus",
           "uid": "${prometheus_datasource}"
         },
-        "definition": "label_values(otelcol_process_uptime_seconds_total{deployment_environment_name=~\"$deployment_environment_name\", k8s_cluster_name=~\"$k8s_cluster_name\", k8s_node_name=~\"$k8s_node_name\", host_name=~\"$host_name\"},service_instance_id)",
+        "definition": "label_values(target_info{job=~\"otelcontribcol|jaeger\", host_name=~\"$host_name\"},service_instance_id)",
         "description": "`service.instance.id`",
         "includeAll": true,
         "label": "Instance",
@@ -5709,7 +5709,7 @@
         "options": [],
         "query": {
           "qryType": 1,
-          "query": "label_values(otelcol_process_uptime_seconds_total{deployment_environment_name=~\"$deployment_environment_name\", k8s_cluster_name=~\"$k8s_cluster_name\", k8s_node_name=~\"$k8s_node_name\", host_name=~\"$host_name\"},service_instance_id)",
+          "query": "label_values(target_info{job=~\"otelcontribcol|jaeger\", host_name=~\"$host_name\"},service_instance_id)",
           "refId": "PrometheusVariableQueryEditor-VariableQuery"
         },
         "refresh": 1,
@@ -5726,7 +5726,7 @@
           "type": "prometheus",
           "uid": "${prometheus_datasource}"
         },
-        "definition": "label_values(otelcol_process_uptime_seconds_total{deployment_environment_name=~\"$deployment_environment_name\", k8s_cluster_name=~\"$k8s_cluster_name\", k8s_node_name=~\"$k8s_node_name\", host_name=~\"$host_name\"},service_name)",
+        "definition": "label_values(target_info{job=~\"otelcontribcol|jaeger\", host_name=~\"$host_name\"},service_name)",
         "description": "`service.name`",
         "includeAll": true,
         "label": "Service",
@@ -5734,7 +5734,7 @@
         "options": [],
         "query": {
           "qryType": 1,
-          "query": "label_values(otelcol_process_uptime_seconds_total{deployment_environment_name=~\"$deployment_environment_name\", k8s_cluster_name=~\"$k8s_cluster_name\", k8s_node_name=~\"$k8s_node_name\", host_name=~\"$host_name\"},service_name)",
+          "query": "label_values(target_info{job=~\"otelcontribcol|jaeger\", host_name=~\"$host_name\"},service_name)",
           "refId": "PrometheusVariableQueryEditor-VariableQuery"
         },
         "refresh": 1,
