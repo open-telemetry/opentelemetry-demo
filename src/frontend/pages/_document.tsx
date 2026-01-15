@@ -111,7 +111,6 @@ export default class MyDocument extends Document<{ envString: string }> {
         </Head>
         <body>
           <Main />
-          <script dangerouslySetInnerHTML={{ __html: this.props.envString }}></script>
           <NextScript />
         </body>
       </Html>
