@@ -103,6 +103,15 @@ test/
 3. View traces in Jaeger and logs via `docker logs <container_name>`
 4. For protobuf changes, update `pb/demo.proto` then run `make docker-generate-protobuf`
 
+## Git Conventions
+
+All commits must be signed off using the `-s` flag:
+```bash
+git commit -s -m "Your commit message"
+```
+
+This adds a `Signed-off-by` line to the commit message, certifying that you have the right to submit the code under the project's license (Developer Certificate of Origin).
+
 ## PromQL Conventions
 
 ### Prefer `info()` over Resource Attribute Promotion
