@@ -88,7 +88,18 @@ export default class MyDocument extends Document<{ envString: string }> {
                     deploymentEnvironment: deploymentEnvironment,
                     version: '2.0.5',
                     globalAttributes: globalAttributes,
-                    environment: ''
+                    environment: '',
+                    // Digital Experience Analytics configuration
+                    user: {
+                      trackingMode: 'anonymousTracking'
+                    },
+                    // Privacy controls
+                    maskAllText: true,
+                    sensitivityRules: [
+                      { rule: 'mask', selector: 'p' },
+                      { rule: 'unmask', selector: 'p.item-label' },
+                      { rule: 'exclude', selector: '#user-profile' }
+                    ]
                   });
 
                   // Initialize tracer for custom spans and expose globally
