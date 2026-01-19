@@ -60,7 +60,7 @@ cd opentelemetry-demo/newrelic/scripts
 - [Kubernetes](#kubernetes-installation)
 - [Docker](./)
 
-**Note**: both methods will require you to pint your New Relic Ingest License key. If you want to avoid inputting your key every time you run the script, you can also export a `NR_LICENSE_KEY` variable, which will take precedence if present.
+**Note**: both methods will require you to pint your New Relic Ingest License key. If you want to avoid inputting your key every time you run the script, you can also export a `NEW_RELIC_LICENSE_KEY` variable, which will take precedence if present.
 
 ## Kubernetes Installation
 
