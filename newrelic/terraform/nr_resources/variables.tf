@@ -17,7 +17,7 @@ variable "newrelic_region" {
 }
 
 # Module variables
-variable "account_id" {
+variable "newrelic_account_id" {
   description = "The New Relic account ID where the OpenTelemetry Demo is deployed"
   type        = string
 }

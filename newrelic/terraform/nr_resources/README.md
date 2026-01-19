@@ -24,7 +24,7 @@ cd newrelic/terraform/nr_resources
 # Set Terraform variables (all provider config via TF_VAR_*)
 export TF_VAR_newrelic_api_key="your-user-api-key"
 export TF_VAR_newrelic_region="US"  # or "EU" (optional, defaults to "US")
-export TF_VAR_account_id="1234567"  # Your New Relic account ID
+export TF_VAR_newrelic_account_id="1234567"  # Your New Relic account ID
 export TF_VAR_checkout_service_name="checkout"  # Optional, defaults to "checkout"
 
 # Initialize and apply
@@ -38,13 +38,13 @@ terraform apply
 |------|-------------|------|---------|:--------:|
 | newrelic_api_key | New Relic User API Key | `string` | n/a | yes |
 | newrelic_region | New Relic region (US or EU) | `string` | `"US"` | no |
-| account_id | The New Relic account ID where the demo is deployed | `string` | n/a | yes |
+| newrelic_account_id | The New Relic account ID where the demo is deployed | `string` | n/a | yes |
 | checkout_service_name | Name of the checkout service entity | `string` | `"checkout"` | no |
 
 Set variables using environment variables (recommended):
 - `TF_VAR_newrelic_api_key` - Your User API Key
 - `TF_VAR_newrelic_region` - Region (US or EU, defaults to US)
-- `TF_VAR_account_id` - Your New Relic account ID
+- `TF_VAR_newrelic_account_id` - Your New Relic account ID
 - `TF_VAR_checkout_service_name` - Service name (optional)
 
 Or use a `.tfvars` file:
@@ -53,7 +53,7 @@ Or use a `.tfvars` file:
 # terraform.tfvars
 newrelic_api_key      = "your-api-key"
 newrelic_region       = "US"
-account_id            = "1234567"
+newrelic_account_id   = "1234567"
 checkout_service_name = "checkout"
 ```
 

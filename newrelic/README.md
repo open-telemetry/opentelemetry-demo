@@ -125,7 +125,8 @@ export NEW_RELIC_LICENSE_KEY=$(cd ../terraform/nr_account && terraform output -r
 
 # 3. Wait 2-5 minutes for data to flow to New Relic
 
-# 4. Create New Relic resources to showcase platform capabilities
+# 4. Export account ID and create New Relic resources to showcase platform capabilities
+export TF_VAR_newrelic_account_id=$(cd ../terraform/nr_account && terraform output -raw account_id)
 ./install-nr-resources.sh
 ```
 
@@ -151,7 +152,7 @@ You can set environment variables to avoid interactive prompts. If not set, the 
 | Variable | Required | Description |
 |----------|----------|-------------|
 | `TF_VAR_newrelic_api_key` | Yes | New Relic User API Key |
-| `TF_VAR_account_id` | Yes | New Relic Account ID where resources will be created |
+| `TF_VAR_newrelic_account_id` | Yes | New Relic Account ID where resources will be created |
 | `TF_AUTO_APPROVE` | No | Set to `true` to skip Terraform confirmation prompts |
 
 #### cleanup-nr-account.sh & cleanup-nr-resources.sh

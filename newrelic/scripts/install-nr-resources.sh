@@ -15,7 +15,7 @@ check_prerequisites() {
 # Gather Terraform configuration
 gather_config() {
     prompt_for_env_var "TF_VAR_newrelic_api_key" "Please enter your New Relic API Key" true
-    prompt_for_env_var "TF_VAR_account_id" "Please enter the New Relic Account ID" true
+    prompt_for_env_var "TF_VAR_newrelic_account_id" "Please enter the New Relic Account ID" true
 }
 
 # Create New Relic resources

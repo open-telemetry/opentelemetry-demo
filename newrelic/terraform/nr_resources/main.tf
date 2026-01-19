@@ -1,6 +1,6 @@
 provider "newrelic" {
   api_key    = var.newrelic_api_key
-  account_id = var.account_id
+  account_id = var.newrelic_account_id
   region     = upper(var.newrelic_region)
 }
 
@@ -12,7 +12,7 @@ data "newrelic_entity" "checkout_service" {
 
   tag {
     key   = "accountId"
-    value = var.account_id
+    value = var.newrelic_account_id
   }
 }
 
@@ -23,7 +23,7 @@ resource "newrelic_service_level" "checkout_slo" {
   description = "Availability SLO for the checkout service in the OpenTelemetry Demo"
 
   events {
-    account_id = var.account_id
+    account_id = var.newrelic_account_id
     valid_events {
       from  = "Span"
       where = "entity.guid = '${data.newrelic_entity.checkout_service.guid}' AND span.kind = 'server'"
