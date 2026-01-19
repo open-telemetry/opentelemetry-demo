@@ -16,14 +16,11 @@ This directory contains two independent Terraform modules:
 ```bash
 cd newrelic/terraform/account_management
 
-# Set New Relic provider credentials
-export NEW_RELIC_API_KEY="your-user-api-key"
-export NEW_RELIC_ACCOUNT_ID="your-parent-account-id"
-export NEW_RELIC_REGION="US"
-
-# Set Terraform variables
+# Set all configuration via TF_VAR_* (consistent!)
+export TF_VAR_newrelic_api_key="your-user-api-key"
+export TF_VAR_newrelic_parent_account_id="your-parent-account-id"
+export TF_VAR_newrelic_region="US"  # Used for both provider and sub-account
 export TF_VAR_subaccount_name="OpenTelemetry Demo"
-export TF_VAR_region="us"
 
 # Create sub-account
 terraform init
@@ -57,7 +54,8 @@ kubectl get pods -n opentelemetry-demo
 ```bash
 cd ../terraform/newrelic_demo
 
-# Set account ID from previous step
+# Set variables (reuse API key from before)
+export TF_VAR_newrelic_api_key="your-api-key"  # Same as Step 1
 export TF_VAR_account_id=$(cd ../account_management && terraform output -raw account_id)
 
 # Create SLO
@@ -74,8 +72,10 @@ Creates a New Relic sub-account and generates an ingest license key.
 **Usage:** Navigate to `account_management/` and run `terraform apply` directly.
 
 **Variables (set via TF_VAR_*):**
+- `newrelic_api_key` (required) - New Relic User API Key
+- `newrelic_parent_account_id` (required) - Parent account ID
+- `newrelic_region` (optional) - Region: "US" or "EU" (default: "US")
 - `subaccount_name` (required) - Name for the sub-account
-- `region` (optional) - Region: "us" or "eu" (default: "us")
 
 **Outputs:**
 - `account_id` - The created account ID
@@ -92,6 +92,8 @@ Automatically finds the checkout service and creates an SLO.
 **Usage:** Navigate to `newrelic_demo/` and run `terraform apply` directly.
 
 **Variables (set via TF_VAR_*):**
+- `newrelic_api_key` (required) - New Relic User API Key
+- `newrelic_region` (optional) - Region: "US" or "EU" (default: "US")
 - `account_id` (required) - New Relic account ID where demo is deployed
 - `checkout_service_name` (optional) - Service name (default: "checkout")
 
@@ -117,6 +119,9 @@ Navigate to each module directory and apply directly using `TF_VAR_*` environmen
 ```bash
 # Step 1: Create account
 cd account_management
+export TF_VAR_newrelic_api_key="your-api-key"
+export TF_VAR_newrelic_parent_account_id="your-parent-account-id"
+export TF_VAR_newrelic_region="US"
 export TF_VAR_subaccount_name="OpenTelemetry Demo"
 terraform init && terraform apply
 
@@ -128,6 +133,7 @@ cd ../../scripts && ./install-k8s.sh
 
 # Step 4: Create SLO
 cd ../terraform/newrelic_demo
+export TF_VAR_newrelic_api_key="your-api-key"  # Same as Step 1
 export TF_VAR_account_id=$(cd ../account_management && terraform output -raw account_id)
 terraform init && terraform apply
 ```
@@ -143,8 +149,10 @@ cd account_management
 
 # Create terraform.tfvars
 cat > terraform.tfvars <<EOF
-subaccount_name = "OpenTelemetry Demo"
-region          = "us"
+newrelic_api_key           = "your-api-key"
+newrelic_parent_account_id = "your-parent-account-id"
+newrelic_region            = "US"
+subaccount_name            = "OpenTelemetry Demo"
 EOF
 
 terraform init && terraform apply
@@ -164,6 +172,7 @@ cd scripts
 
 # Create SLO
 cd ../terraform/newrelic_demo
+export TF_VAR_newrelic_api_key="your-api-key"
 export TF_VAR_account_id="your-account-id"
 terraform init && terraform apply
 ```

@@ -1,3 +1,9 @@
+provider "newrelic" {
+  api_key    = var.newrelic_api_key
+  account_id = var.account_id
+  region     = upper(var.newrelic_region)
+}
+
 # Look up the checkout service entity
 data "newrelic_entity" "checkout_service" {
   name   = var.checkout_service_name

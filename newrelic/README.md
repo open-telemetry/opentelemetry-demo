@@ -12,6 +12,7 @@ This repository contains a fork of the OpenTelemetry Astronomy Shop, a microserv
 - [Kubernetes Installation](#kubernetes-installation)
 - [Docker Installation](#docker-installation)
 - [Validating the Install](#validating-the-install)
+- [Terraform Automation (Optional)](#terraform-automation-optional)
 - [Accessing the Flagd UI](#accessing-the-flagd-ui)
 
 ## Prerequisites
@@ -223,6 +224,64 @@ Check the container logs for the OTel Collector to ensure there aren't any error
 If you click on the `Frontend` service, you should see data populated in the Summary page.
 
 ![frontend_service](./images/frontend_service.png)
+
+## Terraform Automation (Optional)
+
+This repository includes Terraform modules to automate New Relic resource creation and showcase observability maturity best practices. Using these modules is completely optional - the demo works perfectly fine without them.
+
+### Why Use Terraform?
+
+The Terraform modules demonstrate how to:
+- **Automate account setup** - Programmatically create dedicated sub-accounts for different environments
+- **Implement Service Level Objectives (SLOs)** - Define and track availability targets for critical services
+- **Follow Infrastructure as Code best practices** - Manage observability resources alongside your application infrastructure
+- **Scale observability practices** - Apply consistent patterns across multiple services and environments
+
+### What's Included
+
+Two independent Terraform modules are provided in the [`terraform/`](./terraform/) directory:
+
+1. **`account_management`** - Automates creation of New Relic sub-accounts and license keys
+   - Perfect for creating isolated demo environments
+   - Generates the license key needed for the install scripts
+   - Configurable region (US or EU)
+
+2. **`newrelic_demo`** - Creates observability resources for the deployed demo
+   - Automatically finds service GUIDs and creates alerts, SLOs, etc
+   - Demonstrates how to programmatically manage resources as code
+
+### Quick Start with Terraform
+
+If you want to use Terraform to automate your setup:
+
+```bash
+# 1. (Optional) Create a sub-account and get a license key
+cd terraform/account_management
+export TF_VAR_newrelic_api_key="your-api-key"
+export TF_VAR_newrelic_parent_account_id="your-parent-account-id"
+export TF_VAR_newrelic_region="US"
+export TF_VAR_subaccount_name="OpenTelemetry Demo"
+terraform init && terraform apply
+
+# 2. Export the license key and deploy the demo
+export NEW_RELIC_LICENSE_KEY=$(terraform output -raw license_key)
+cd ../../scripts
+./install-k8s.sh
+
+# 3. Wait 2-5 minutes for data to flow
+
+# 4. Create Terraform resources
+cd ../terraform/newrelic_demo
+export TF_VAR_newrelic_api_key="your-api-key"  # Same as step 1
+export TF_VAR_account_id=$(cd ../account_management && terraform output -raw account_id)
+terraform init && terraform apply
+```
+
+### Learn More
+
+For complete documentation, usage patterns, and examples, see the [Terraform modules README](./terraform/README.md).
+
+**Note**: Using Terraform is entirely optional. You can run the demo with just your existing New Relic license key without any Terraform configuration. The Terraform modules are provided as examples of observability automation best practices.
 
 ## Accessing the FlagD UI
 

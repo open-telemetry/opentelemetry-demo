@@ -22,14 +22,11 @@ Navigate to this directory and apply directly:
 ```bash
 cd newrelic/terraform/account_management
 
-# Set required environment variables
-export NEW_RELIC_API_KEY="your-user-api-key"
-export NEW_RELIC_ACCOUNT_ID="your-parent-account-id"
-export NEW_RELIC_REGION="US"  # or "EU"
-
-# Set Terraform variables
+# Set Terraform variables (all provider config via TF_VAR_*)
+export TF_VAR_newrelic_api_key="your-user-api-key"
+export TF_VAR_newrelic_parent_account_id="your-parent-account-id"
+export TF_VAR_newrelic_region="US"  # or "EU" (optional, defaults to "US")
 export TF_VAR_subaccount_name="OpenTelemetry Demo Environment"
-export TF_VAR_region="us"  # or "eu" (optional, defaults to "us")
 
 # Initialize and apply
 terraform init
@@ -40,19 +37,25 @@ terraform apply
 
 | Name | Description | Type | Default | Required |
 |------|-------------|------|---------|:--------:|
-| subaccount_name | Name of the New Relic sub-account to create | `string` | n/a | yes |
-| region | Region for the sub-account (us or eu) | `string` | `"us"` | no |
+| newrelic_api_key | New Relic User API Key | `string` | n/a | yes |
+| newrelic_parent_account_id | Parent account ID for creating sub-accounts | `string` | n/a | yes |
+| newrelic_region | New Relic region (US or EU) | `string` | `"US"` | no |
+| subaccount_name | Name of the sub-account to create | `string` | n/a | yes |
 
-Set variables using environment variables:
+Set variables using environment variables (recommended):
+- `TF_VAR_newrelic_api_key` - Your User API Key
+- `TF_VAR_newrelic_parent_account_id` - Your parent account ID
+- `TF_VAR_newrelic_region` - Region (US or EU, defaults to US)
 - `TF_VAR_subaccount_name` - Name for the sub-account
-- `TF_VAR_region` - Region (us or eu)
 
 Or use a `.tfvars` file:
 
 ```hcl
 # terraform.tfvars
-subaccount_name = "OpenTelemetry Demo Environment"
-region          = "us"
+newrelic_api_key           = "your-api-key"
+newrelic_parent_account_id = "1234567"
+newrelic_region            = "US"
+subaccount_name            = "OpenTelemetry Demo Environment"
 ```
 
 ## Outputs
@@ -71,14 +74,11 @@ region          = "us"
 ```bash
 cd newrelic/terraform/account_management
 
-# New Relic provider configuration
-export NEW_RELIC_API_KEY="your-user-api-key"
-export NEW_RELIC_ACCOUNT_ID="your-parent-account-id"
-export NEW_RELIC_REGION="US"
-
-# Terraform variables
+# Set all configuration via TF_VAR_* (consistent!)
+export TF_VAR_newrelic_api_key="your-user-api-key"
+export TF_VAR_newrelic_parent_account_id="your-parent-account-id"
+export TF_VAR_newrelic_region="US"
 export TF_VAR_subaccount_name="OpenTelemetry Demo"
-export TF_VAR_region="us"
 ```
 
 ### Step 2: Apply Terraform

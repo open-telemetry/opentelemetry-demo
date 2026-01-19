@@ -15,11 +15,9 @@ Navigate to this directory and apply directly:
 ```bash
 cd newrelic/terraform/newrelic_demo
 
-# Set required environment variables
-export NEW_RELIC_API_KEY="your-user-api-key"
-export NEW_RELIC_REGION="US"  # or "EU"
-
-# Set Terraform variables
+# Set Terraform variables (all provider config via TF_VAR_*)
+export TF_VAR_newrelic_api_key="your-user-api-key"
+export TF_VAR_newrelic_region="US"  # or "EU" (optional, defaults to "US")
 export TF_VAR_account_id="1234567"  # Your New Relic account ID
 export TF_VAR_checkout_service_name="checkout"  # Optional, defaults to "checkout"
 
@@ -32,10 +30,14 @@ terraform apply
 
 | Name | Description | Type | Default | Required |
 |------|-------------|------|---------|:--------:|
+| newrelic_api_key | New Relic User API Key | `string` | n/a | yes |
+| newrelic_region | New Relic region (US or EU) | `string` | `"US"` | no |
 | account_id | The New Relic account ID where the demo is deployed | `string` | n/a | yes |
 | checkout_service_name | Name of the checkout service entity | `string` | `"checkout"` | no |
 
-Set variables using environment variables:
+Set variables using environment variables (recommended):
+- `TF_VAR_newrelic_api_key` - Your User API Key
+- `TF_VAR_newrelic_region` - Region (US or EU, defaults to US)
 - `TF_VAR_account_id` - Your New Relic account ID
 - `TF_VAR_checkout_service_name` - Service name (optional)
 
@@ -43,6 +45,8 @@ Or use a `.tfvars` file:
 
 ```hcl
 # terraform.tfvars
+newrelic_api_key      = "your-api-key"
+newrelic_region       = "US"
 account_id            = "1234567"
 checkout_service_name = "checkout"
 ```
