@@ -30,22 +30,6 @@ check_tool_installed() {
     fi
 }
 
-# Set NEW_RELIC_LICENSE_KEY variable from environment or prompt user
-prompt_for_license_key() {
-    set +u
-    if [ -z "$NEW_RELIC_LICENSE_KEY" ]; then
-        echo -n "Please enter your New Relic License Key: "
-        read NEW_RELIC_LICENSE_KEY
-    else
-        echo "Using New Relic License Key from environment variable."
-    fi
-    if [ -z "$NEW_RELIC_LICENSE_KEY" ]; then
-        echo "Error: Empty key. Please enter your New Relic License Key."
-        exit 1
-    fi
-    set -u
-}
-
 # Check if a file exists and error out if not
 check_file_exists() {
     if [ ! -f "$1" ]; then
@@ -69,29 +53,63 @@ ensure_helm_repo() {
   fi
 }
 
-# Prompt user to confirm if installation is for an OpenShift cluster
-prompt_for_openshift() {
+# Generic function to prompt for environment variables
+# Usage: prompt_for_env_var VAR_NAME PROMPT_TEXT REQUIRED
+prompt_for_env_var() {
+  local var_name="$1"
+  local prompt_text="$2"
+  local required="${3:-false}"
+
   set +u
-  if [ -z "$IS_OPENSHIFT_CLUSTER" ]; then
-    while true; do
-      echo -n "Is this installation for an OpenShift cluster? (y/n): "
-      read -r response
-      case "$response" in
-        [yY]|[yY][eE][sS])
-          IS_OPENSHIFT_CLUSTER="y"
-          break
-          ;;
-        [nN]|[nN][oO])
-          IS_OPENSHIFT_CLUSTER="n"
-          break
-          ;;
-        *)
-          echo "Please enter 'y' or 'n'."
-          ;;
-      esac
-    done
+  local current_value="${!var_name}"
+
+  if [ -z "$current_value" ]; then
+    echo -n "$prompt_text: "
+    read -r input_value
+    if [ -n "$input_value" ]; then
+      eval "export $var_name=\"$input_value\""
+    fi
   else
-    echo "Using OpenShift cluster setting from environment variable (IS_OPENSHIFT_CLUSTER=$IS_OPENSHIFT_CLUSTER)."
+    echo "Using $var_name from environment variable."
   fi
+
+  # Check if required and empty
+  current_value="${!var_name}"
+  if [ "$required" = "true" ] && [ -z "$current_value" ]; then
+    echo "Error: $var_name is required but empty."
+    exit 1
+  fi
+
+  set -u
+}
+
+# Validate and normalize yes/no answers
+# Usage: validate_yesno_answer VAR_NAME
+validate_yesno_answer() {
+  local var_name="$1"
+
+  set +u
+  local current_value="${!var_name}"
+
+  # If already set to y or n, no validation needed
+  if [ "$current_value" = "y" ] || [ "$current_value" = "n" ]; then
+    set -u
+    return
+  fi
+
+  # Normalize and validate the answer
+  case "$current_value" in
+    [yY]|[yY][eE][sS])
+      eval "export $var_name=\"y\""
+      ;;
+    [nN]|[nN][oO])
+      eval "export $var_name=\"n\""
+      ;;
+    *)
+      echo "Error: Invalid value '$current_value' for $var_name. Must be 'y' or 'n'."
+      exit 1
+      ;;
+  esac
+
   set -u
 }

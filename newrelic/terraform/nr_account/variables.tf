@@ -26,3 +26,20 @@ variable "subaccount_name" {
   description = "Name of the New Relic sub-account to create"
   type        = string
 }
+
+variable "authentication_domain_name" {
+  description = "Name of the authentication domain to use (e.g., 'Default')"
+  type        = string
+  default     = "Default"
+}
+
+variable "admin_group_name" {
+  description = "Name of an existing admin group to grant access to the sub-account. The user running Terraform "
+  type        = string
+}
+
+variable "admin_role_name" {
+  description = "Name of the admin role to grant (e.g., 'all_product_admin')"
+  type        = string
+  default     = "all_product_admin"
+}

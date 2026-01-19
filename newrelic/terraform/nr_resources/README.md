@@ -1,6 +1,12 @@
-# New Relic Demo Module
+# New Relic Resources Module
 
-This Terraform module creates New Relic resources for the OpenTelemetry Demo.
+This Terraform module creates New Relic resources to showcase New Relic capabilities with the OpenTelemetry Demo.
+
+## Purpose
+
+This module demonstrates various New Relic features and capabilities including:
+- **Service Level Objectives (SLOs)** - Currently creates an SLO for the checkout service
+- **Future additions** - Alerts, dashboards, teams, scorecards, and other resources to showcase New Relic's observability platform
 
 ## Prerequisites
 
@@ -13,7 +19,7 @@ This Terraform module creates New Relic resources for the OpenTelemetry Demo.
 Navigate to this directory and apply directly:
 
 ```bash
-cd newrelic/terraform/newrelic_demo
+cd newrelic/terraform/nr_resources
 
 # Set Terraform variables (all provider config via TF_VAR_*)
 export TF_VAR_newrelic_api_key="your-user-api-key"
@@ -51,6 +57,25 @@ account_id            = "1234567"
 checkout_service_name = "checkout"
 ```
 
+## What Gets Created
+
+### Service Level Objectives (SLOs)
+
+Currently, this module creates an SLO for the checkout service with:
+- **Target**: 99.5% availability
+- **Time Window**: 1-day rolling window
+- **Metric**: Server-side spans without errors
+
+### Future Resources
+
+This module will be expanded to include additional New Relic resources such as:
+- Alert policies and conditions
+- Custom dashboards
+- Teams and user management
+- Service scorecards
+- Synthetic monitors
+- And more...
+
 ## Troubleshooting
 
 ### "Entity not found" error
@@ -70,8 +95,8 @@ If you get an error that the entity cannot be found:
 
 4. Verify you're using the correct account ID:
    ```bash
-   # If using account_management module
-   cd ../account_management
+   # If using nr_account module
+   cd ../nr_account
    terraform output account_id
    ```
 

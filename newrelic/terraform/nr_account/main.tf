@@ -10,6 +10,21 @@ resource "newrelic_account_management" "subaccount" {
   region = upper(var.newrelic_region) == "US" ? "us01" : "eu01"
 }
 
+# Get the current user and grant access to the sub-account
+resource "terraform_data" "grant_user_access" {
+  triggers_replace = {
+    account_id = newrelic_account_management.subaccount.id
+  }
+
+  provisioner "local-exec" {
+    command = "${path.module}/grant_access.sh '${var.newrelic_api_key}' '${upper(var.newrelic_region) == "US" ? "newrelic" : "eu.newrelic"}' '${var.authentication_domain_name}' '${var.admin_group_name}' '${var.admin_role_name}' ${newrelic_account_management.subaccount.id}"
+  }
+
+  depends_on = [
+    newrelic_account_management.subaccount
+  ]
+}
+
 # Create a license key for the sub-account
 resource "newrelic_api_access_key" "license_key" {
   account_id  = newrelic_account_management.subaccount.id
@@ -19,6 +34,7 @@ resource "newrelic_api_access_key" "license_key" {
   notes       = "License key for OpenTelemetry Demo deployment"
 
   depends_on = [
-    newrelic_account_management.subaccount
+    newrelic_account_management.subaccount,
+    terraform_data.grant_user_access
   ]
 }
