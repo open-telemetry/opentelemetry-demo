@@ -7,7 +7,7 @@ provider "newrelic" {
 # Create a New Relic sub-account
 resource "newrelic_account_management" "subaccount" {
   name   = var.subaccount_name
-  region = lower(var.newrelic_region)
+  region = upper(var.newrelic_region) == "US" ? "us01" : "eu01"
 }
 
 # Create a license key for the sub-account
