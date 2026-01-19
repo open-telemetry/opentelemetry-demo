@@ -50,8 +50,8 @@ ERROR=$(echo "$GRANT_RESPONSE" | jq -r '.errors // empty')
 echo "Grant created. Waiting for permissions to propagate (up to 5 minutes)..."
 
 # Poll until API key can access the account
-for i in $(seq 1 30); do
-  echo "Checking grant status (attempt $i/30)..."
+for i in $(seq 1 60); do
+  echo "Checking grant status (attempt $i/60)..."
 
   RESPONSE=$(graphql_query "{\"query\": \"{ actor { account(id: $ACCOUNT_ID) { id name } } }\"}")
 
@@ -64,7 +64,7 @@ for i in $(seq 1 30); do
     exit 0
   fi
 
-  [ $i -lt 30 ] && echo "Account not accessible yet, waiting 10 seconds..." && sleep 10
+  [ $i -lt 60 ] && echo "Account not accessible yet, waiting 10 seconds..." && sleep 10
 done
 
 echo "Error: Grant not confirmed after 5 minutes."
