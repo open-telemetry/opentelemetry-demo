@@ -25,10 +25,19 @@ data "newrelic_group" "admin_group" {
 resource "terraform_data" "admin_access_grant" {
   triggers_replace = {
     account_id = newrelic_account_management.subaccount.id
+    api_key    = var.newrelic_api_key
+    region     = upper(var.newrelic_region) == "US" ? "newrelic" : "eu.newrelic"
+    group_id   = data.newrelic_group.admin_group.id
+    role_name  = var.admin_role_name
   }
 
   provisioner "local-exec" {
-    command = "${path.module}/grant_access.sh '${var.newrelic_api_key}' '${upper(var.newrelic_region) == "US" ? "newrelic" : "eu.newrelic"}' '${data.newrelic_group.admin_group.id}' '${var.admin_role_name}' ${newrelic_account_management.subaccount.id}"
+    command = "${path.module}/grant_access.sh '${self.triggers_replace.api_key}' '${self.triggers_replace.region}' '${self.triggers_replace.group_id}' '${self.triggers_replace.role_name}' ${self.triggers_replace.account_id}"
+  }
+
+  provisioner "local-exec" {
+    when    = destroy
+    command = "${path.module}/revoke_access.sh '${self.triggers_replace.api_key}' '${self.triggers_replace.region}' '${self.triggers_replace.group_id}' '${self.triggers_replace.role_name}' ${self.triggers_replace.account_id}"
   }
 }
 
@@ -62,11 +71,19 @@ resource "newrelic_group_management" "readonly_group_membership" {
 resource "terraform_data" "readonly_access_grant" {
   triggers_replace = {
     account_id = newrelic_account_management.subaccount.id
+    api_key    = var.newrelic_api_key
+    region     = upper(var.newrelic_region) == "US" ? "newrelic" : "eu.newrelic"
     group_id   = newrelic_group.readonly_group.id
+    role_name  = var.readonly_role_name
   }
 
   provisioner "local-exec" {
-    command = "${path.module}/grant_access.sh '${var.newrelic_api_key}' '${upper(var.newrelic_region) == "US" ? "newrelic" : "eu.newrelic"}' '${newrelic_group.readonly_group.id}' '${var.readonly_role_name}' ${newrelic_account_management.subaccount.id}"
+    command = "${path.module}/grant_access.sh '${self.triggers_replace.api_key}' '${self.triggers_replace.region}' '${self.triggers_replace.group_id}' '${self.triggers_replace.role_name}' ${self.triggers_replace.account_id}"
+  }
+
+  provisioner "local-exec" {
+    when    = destroy
+    command = "${path.module}/revoke_access.sh '${self.triggers_replace.api_key}' '${self.triggers_replace.region}' '${self.triggers_replace.group_id}' '${self.triggers_replace.role_name}' ${self.triggers_replace.account_id}"
   }
 
   depends_on = [

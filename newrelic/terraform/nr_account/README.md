@@ -186,10 +186,11 @@ This module uses a hybrid approach:
    - License key creation (`newrelic_api_access_key`)
    - Data lookups (authentication domains, groups)
 
-2. **Shell Script** handles operations not available in the Terraform provider:
-   - `grant_access.sh`: Grants group access to the sub-account (used for both admin and readonly groups)
+2. **Shell Scripts** handle operations not available in the Terraform provider:
+   - `grant_access.sh`: Grants group access to the sub-account (called on apply)
+   - `revoke_access.sh`: Revokes group access from the sub-account (called on destroy)
 
-This separation ensures proper resource management while handling provider limitations. Only one script is needed since both admin and readonly groups use the same grant access operation.
+This separation ensures proper resource management while handling provider limitations. Access grants are automatically cleaned up when running `terraform destroy`.
 
 ## Finding Your New Relic Configuration Values
 
