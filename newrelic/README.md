@@ -97,11 +97,12 @@ The Terraform modules demonstrate how to:
 
 Two independent Terraform modules are provided in the [`terraform/`](./terraform/) directory:
 
-1. **[`nr_account`](./terraform/nr_account/)** - Automates creation of New Relic sub-accounts and license keys
-   - Creates isolated environments for demos or testing
+1. **[`nr_account`](./terraform/nr_account/)** - Automates creation of New Relic sub-accounts and user management
+   - Creates isolated sub-accounts for demos or testing
    - Generates the license key needed for installation
    - Configurable region (US or EU)
    - Grants access to specified admin groups
+   - Creates a read-only user with limited access for demos or game days
 
 2. **[`nr_resources`](./terraform/nr_resources/)** - Creates New Relic resources to showcase platform capabilities
    - Currently includes Service Level Objectives (SLOs)
@@ -116,12 +117,14 @@ Automated scripts handle the Terraform workflow for you:
 # Navigate to the scripts directory
 cd opentelemetry-demo/newrelic/scripts
 
-# 1. (Optional) Create a sub-account and license key
+# 1. (Optional) Create a sub-account, readonly user, and license key
 ./install-nr-account.sh
 
 # 2. Export the license key and deploy the demo
 export NEW_RELIC_LICENSE_KEY=$(cd ../terraform/nr_account && terraform output -raw license_key)
 ./install-k8s.sh  # or ./install-docker.sh (see below)
+
+# Note: A read-only user will be created and will receive an email with setup instructions
 
 # 3. Wait 2-5 minutes for data to flow to New Relic
 
@@ -138,13 +141,17 @@ You can set environment variables to avoid interactive prompts. If not set, the 
 
 | Variable | Required | Description |
 |----------|----------|-------------|
-| `TF_VAR_newrelic_api_key` | Yes | New Relic User API Key |
+| `TF_VAR_newrelic_api_key` | Yes | New Relic User API Key with Organization Manager permissions |
 | `TF_VAR_newrelic_parent_account_id` | Yes | Parent account ID for sub-account creation |
 | `TF_VAR_newrelic_region` | No | New Relic region (US or EU, default: US) |
 | `TF_VAR_subaccount_name` | Yes | Name for the new sub-account |
-| `TF_VAR_authentication_domain_name` | No | Authentication domain name (default: Default) |
-| `TF_VAR_admin_group_name` | Yes | Admin group name (must exist in New Relic) |
+| `TF_VAR_admin_authentication_domain_name` | No | Authentication domain for admin group (default: Default) |
+| `TF_VAR_admin_group_name` | Yes | Admin group name (must already exist in New Relic) |
 | `TF_VAR_admin_role_name` | No | Admin role name (default: all_product_admin) |
+| `TF_VAR_readonly_authentication_domain_name` | No | Authentication domain for readonly user (default: Default) |
+| `TF_VAR_readonly_role_name` | No | Role for readonly user (default: read_only) |
+| `TF_VAR_readonly_user_email` | Yes | Email address for readonly user |
+| `TF_VAR_readonly_user_name` | Yes | Display name for readonly user |
 | `TF_AUTO_APPROVE` | No | Set to `true` to skip Terraform confirmation prompts |
 
 #### install-nr-resources.sh
@@ -168,6 +175,8 @@ export TF_VAR_newrelic_api_key="your-api-key"
 export TF_VAR_newrelic_parent_account_id="12345"
 export TF_VAR_subaccount_name="OpenTelemetry Demo"
 export TF_VAR_admin_group_name="Admin"
+export TF_VAR_readonly_user_email="demo@example.com"
+export TF_VAR_readonly_user_name="Demo User"
 export TF_AUTO_APPROVE=true
 
 ./install-nr-account.sh
