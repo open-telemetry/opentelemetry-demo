@@ -109,6 +109,9 @@ Two independent Terraform modules are provided in the [`terraform/`](./terraform
    - Future additions: alerts, dashboards, teams, scorecards, and more
    - Demonstrates programmatic resource management as code
 
+> [!WARNING]
+> The `nr_resources` module is a work in progress. Only SLOs are currently implemented. Additional resources (alerts, dashboards, teams, etc.) will be added in future releases.
+
 ### Quick Start with Terraform
 
 Automated scripts handle the Terraform workflow for you:

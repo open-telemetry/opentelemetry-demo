@@ -2,6 +2,9 @@
 
 This Terraform module creates New Relic resources to showcase New Relic capabilities with the OpenTelemetry Demo.
 
+> [!WARNING]
+> **Work in Progress**: This module is under active development. Resources and functionality may change. Currently only SLOs are implemented, with alerts, dashboards, teams, and other resources planned for future releases.
+
 ## Purpose
 
 This module demonstrates various New Relic features and capabilities including:
