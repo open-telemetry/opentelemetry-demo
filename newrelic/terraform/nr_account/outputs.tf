@@ -8,3 +8,8 @@ output "license_key" {
   value       = newrelic_api_access_key.license_key.key
   sensitive   = true
 }
+
+output "readonly_user_email" {
+  description = "Email address of the created read-only user"
+  value       = newrelic_user.readonly_user.email_id
+}

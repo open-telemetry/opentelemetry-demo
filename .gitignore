@@ -68,3 +68,6 @@ override.tf.json
 *_override.tf.json
 license_key.txt
 .terraform.lock.hcl
+
+#env
+*.env

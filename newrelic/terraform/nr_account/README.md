@@ -6,8 +6,9 @@ This Terraform module creates a New Relic sub-account and generates a license ke
 
 Use this module to:
 1. Create a dedicated New Relic sub-account for the OpenTelemetry Demo
-2. Generate a license key for data ingestion
-3. Get credentials ready for the `install-k8s.sh` script
+2. Grant admin group access to the sub-account
+3. Create a read-only user with limited access to the sub-account
+4. Generate a license key for data ingestion
 
 ## Prerequisites
 
@@ -17,7 +18,13 @@ Use this module to:
 - `jq` command-line JSON processor (used by the access granting script)
 - `curl` (usually pre-installed)
 
-**Important**: The User API Key must belong to a user who is a member of the group specified in `admin_group_name`. The module grants permissions to the group, not directly to the user. If the API key user is not in the group, license key creation will fail with a permission error.
+**Important**:
+- The `newrelic_api_key` must belong to a user with "Organization Manager" permissions
+- The `admin_group_name` must already exist in New Relic
+- The API key user should be a member of the group specified in `admin_group_name`
+- The `readonly_authentication_domain_name` must use basic authentication (SAML/OIDC not yet supported here)
+- A readonly group will be created automatically with the name `"{subaccount_name} - ReadOnly"`
+- A user will be added to this group, and an invitation sent to `readonly_user_email`
 
 ## Usage
 
@@ -26,12 +33,7 @@ Navigate to this directory and apply directly:
 ```bash
 cd newrelic/terraform/account_management
 
-# Set Terraform variables (all provider config via TF_VAR_*)
-export TF_VAR_newrelic_api_key="your-user-api-key"
-export TF_VAR_newrelic_parent_account_id="your-parent-account-id"
-export TF_VAR_newrelic_region="US"  # or "EU" (optional, defaults to "US")
-export TF_VAR_subaccount_name="OpenTelemetry Demo Environment"
-
+# Set variables (see below)
 # Initialize Terraform
 terraform init
 
@@ -46,24 +48,32 @@ terraform apply
 
 ## Variables
 
-| Name | Description | Type | Default               | Required |
-|------|-------------|------|-----------------------|:--------:|
-| newrelic_api_key | New Relic User API Key | `string` | n/a                   | yes |
-| newrelic_parent_account_id | Parent account ID for creating sub-accounts | `string` | n/a                   | yes |
-| newrelic_region | New Relic region (US or EU) | `string` | `"US"`                | no |
-| subaccount_name | Name of the sub-account to create | `string` | n/a                   | yes |
-| authentication_domain_name | Authentication domain name to use | `string` | `"Default"`           | no |
-| admin_group_name | Name of an existing group to grant access | `string` | n/a                   | yes |
-| admin_role_name | Role to grant for admin access | `string` | `"all_product_admin"` | no |
+| Name | Description                                                                                           | Type | Default               | Required |
+|------|-------------------------------------------------------------------------------------------------------|------|-----------------------|:--------:|
+| newrelic_api_key | New Relic User API Key with Organization Manager permissions, and which is part of `admin_group_name` | `string` | n/a                   | yes |
+| newrelic_parent_account_id | Parent account ID for creating sub-accounts                                                           | `string` | n/a                   | yes |
+| newrelic_region | New Relic region (US or EU)                                                                           | `string` | `"US"`                | no |
+| subaccount_name | Name of the sub-account to create                                                                     | `string` | n/a                   | yes |
+| admin_authentication_domain_name | Authentication domain containing `admin_group_name` group                                             | `string` | `"Default"`           | no |
+| admin_group_name | Name of an existing group to grant `admin_role_name` in the new account                               | `string` | n/a                   | yes |
+| admin_role_name | Role to grant `admin_group_name`; must have permissions to create license keys                        | `string` | `"all_product_admin"` | no |
+| readonly_authentication_domain_name | Authentication domain for creating the read-only user (only basic auth supported)                     | `string` | `"Default"`           | no |
+| readonly_role_name | Role to grant the `readonly_group_name` in the new account                                             | `string` | `"read_only"`         | no |
+| readonly_user_email | Email address of the read-only user to create                                                         | `string` | n/a                   | yes |
+| readonly_user_name | Display name of the read-only user                                                                    | `string` | n/a                   | yes |
 
 Set variables using environment variables (recommended):
 - `TF_VAR_newrelic_api_key` - Your User API Key
 - `TF_VAR_newrelic_parent_account_id` - Your parent account ID
 - `TF_VAR_newrelic_region` - Region (US or EU, defaults to US)
 - `TF_VAR_subaccount_name` - Name for the sub-account
-- `TF_VAR_authentication_domain_name` - Auth domain (defaults to "Default")
-- `TF_VAR_admin_group_name` - Existing group name (required)
-- `TF_VAR_admin_role_name` - Role name (defaults to "all_product_admin")
+- `TF_VAR_admin_authentication_domain_name` - Auth domain for admin (defaults to "Default")
+- `TF_VAR_admin_group_name` - Existing admin group name (required)
+- `TF_VAR_admin_role_name` - Admin role name (defaults to "all_product_admin")
+- `TF_VAR_readonly_authentication_domain_name` - Auth domain for readonly user (defaults to "Default")
+- `TF_VAR_readonly_role_name` - Readonly role name (defaults to "read_only")
+- `TF_VAR_readonly_user_email` - Email address for readonly user (required)
+- `TF_VAR_readonly_user_name` - Display name for readonly user (required)
 
 Or use a `.tfvars` file:
 
@@ -74,10 +84,16 @@ newrelic_parent_account_id = "1234567"
 newrelic_region            = "US"
 subaccount_name            = "OpenTelemetry Demo Environment"
 
-# Authentication and access management
-authentication_domain_name = "Default"                           # Your auth domain name
-admin_group_name           = "Admins"                            # Existing group to grant access
-admin_role_name            = "all_product_admin"                 # Role for managing the account
+# Admin authentication and access management
+admin_authentication_domain_name = "Default"                           # Your auth domain name
+admin_group_name                 = "Admins"                            # Existing group to grant access
+admin_role_name                  = "all_product_admin"                 # Role for managing the account
+
+# Read-only user setup
+readonly_authentication_domain_name = "Default"                        # Auth domain for readonly user
+readonly_role_name                  = "read_only"                      # Role for readonly user
+readonly_user_email                 = "readonly@example.com"           # Email for readonly user
+readonly_user_name                  = "ReadOnly User"                  # Display name for readonly user
 ```
 
 ## Outputs
@@ -86,6 +102,17 @@ admin_role_name            = "all_product_admin"                 # Role for mana
 |------|-------------|:---------:|
 | account_id | The ID of the created sub-account | no |
 | license_key | The license key for data ingestion | yes |
+| readonly_user_email | Email address of the created read-only user | no |
+
+## Read-Only User Setup
+
+This module automatically creates a read-only user with full Terraform management:
+
+**Important Notes:**
+- A new group is created for each sub-account automatically
+- All resources (user, group, membership) are managed by Terraform
+- The user **must** check their email and follow the link to set their password
+- Password setup is required before the user can log in
 
 ## Complete Workflow
 
@@ -94,11 +121,22 @@ admin_role_name            = "all_product_admin"                 # Role for mana
 ```bash
 cd newrelic/terraform/account_management
 
-# Set all configuration via TF_VAR_* (consistent!)
+# Set all configuration via TF_VAR_*
 export TF_VAR_newrelic_api_key="your-user-api-key"
 export TF_VAR_newrelic_parent_account_id="your-parent-account-id"
 export TF_VAR_newrelic_region="US"
 export TF_VAR_subaccount_name="OpenTelemetry Demo"
+
+# Admin group access
+export TF_VAR_admin_authentication_domain_name="Default"
+export TF_VAR_admin_group_name="Admins"
+export TF_VAR_admin_role_name="all_product_admin"
+
+# Read-only user (group will be created automatically)
+export TF_VAR_readonly_authentication_domain_name="Default"
+export TF_VAR_readonly_role_name="read_only"
+export TF_VAR_readonly_user_email="readonly@example.com"
+export TF_VAR_readonly_user_name="ReadOnly User"
 ```
 
 ### Step 2: Initialize Terraform
@@ -114,18 +152,44 @@ terraform init
 terraform apply -target=newrelic_account_management.subaccount
 ```
 
-### Step 4: Create License Key
+### Step 4: Create Other Resources
 
 ```bash
 # Now create the license key
 terraform apply
 ```
 
-### Step 5: Export License Key
+### Step 5: View Outputs
 
 ```bash
+# Export the license key
 export NEW_RELIC_LICENSE_KEY=$(terraform output -raw license_key)
+
+# View the account ID
+terraform output account_id
+
+# View readonly user email
+terraform output readonly_user_email
 ```
+
+**Note**: The read-only user will receive an email with instructions to set their password. They must complete this step before they can log in.
+
+## How It Works
+
+This module uses a hybrid approach:
+
+1. **Terraform Resources** manage the lifecycle of:
+   - Sub-account creation (`newrelic_account_management`)
+   - User creation (`newrelic_user`)
+   - Group creation (`newrelic_group`)
+   - Group membership (`newrelic_group_management`)
+   - License key creation (`newrelic_api_access_key`)
+   - Data lookups (authentication domains, groups)
+
+2. **Shell Script** handles operations not available in the Terraform provider:
+   - `grant_access.sh`: Grants group access to the sub-account (used for both admin and readonly groups)
+
+This separation ensures proper resource management while handling provider limitations. Only one script is needed since both admin and readonly groups use the same grant access operation.
 
 ## Finding Your New Relic Configuration Values
 
@@ -137,17 +201,16 @@ export NEW_RELIC_LICENSE_KEY=$(terraform output -raw license_key)
 5. Copy the exact name (case-sensitive) - usually `"Default"` for most accounts
 6. **Example names**: `Default`, `Custom Domain`, `SAML Domain`
 
-### Admin Role Name
+### Role Names
 1. From the same **Administration** page
 2. Click **Access management** → **Roles**
 3. You'll see roles like:
-   - `all_product_admin` ← **Recommended** (full access including API keys)
+   - `all_product_admin` ← (full access including API keys)
    - `standard_user` (limited access)
    - `read_only` (view-only access)
    - Custom roles (if your org has created any)
-4. Use the exact role name as displayed - role names use `snake_case` format
-5. **Default**: `"all_product_admin"` works for most use cases
-6. **Note**: Role names in New Relic's API use snake_case (e.g., `all_product_admin`), not the display names shown in the UI (e.g., "All Product Admin")
+
+**Note**: Role names in New Relic's API use snake_case (e.g., `all_product_admin`), not the display names shown in the UI (e.g., "All Product Admin")
 
 ### Admin Group Name
 1. From the same **Administration** page
@@ -187,27 +250,3 @@ This will show you:
 - All available roles (`.authorizationManagement.roles.roles[]`)
 - All groups in a specific authentication domain
 
-## Troubleshooting
-
-### Error: "You do not have permission to create this key"
-
-This error occurs during license key creation if the User API Key doesn't belong to a user who is a member of the group specified in `admin_group_name`.
-
-**Solution**: Ensure the user associated with your API key is a member of the group you're granting access to. The module grants permissions to the group, not directly to users, so your API key user must be in that group to inherit the permissions.
-
-**Steps to verify**:
-1. Check which groups your user belongs to in New Relic's User Management UI
-2. Ensure you're using a group that your user is already a member of for the `admin_group_name` variable
-3. If needed, add your user to the group before running Terraform
-
-**Alternative**: Use an API key from a user who is already a member of the admin group, or create the license key manually in the New Relic UI after the sub-account is created.
-
-## Notes
-
-- The license key is created with `INGEST` type and `LICENSE` ingest type
-- The sub-account is created in your specified region (US or EU)
-- You need admin-level permissions in your parent account to create sub-accounts
-- The license key output is marked as sensitive, retrieve it with: `terraform output -raw license_key`
-- The specified group will be granted access to the sub-account with the admin role
-- **Important**: You must already be a member of the specified group before running Terraform
-- If authentication domain, group, or role lookup fails, the script will show available options
