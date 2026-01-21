@@ -32,12 +32,12 @@ resource "terraform_data" "admin_access_grant" {
   }
 
   provisioner "local-exec" {
-    command = "${path.module}/grant_access.sh '${self.triggers_replace.api_key}' '${self.triggers_replace.region}' '${self.triggers_replace.group_id}' '${self.triggers_replace.role_name}' ${self.triggers_replace.account_id}"
+    command = "${path.module}/group_role_grant.sh '${self.triggers_replace.api_key}' '${self.triggers_replace.region}' '${self.triggers_replace.group_id}' '${self.triggers_replace.role_name}' ${self.triggers_replace.account_id}"
   }
 
   provisioner "local-exec" {
     when    = destroy
-    command = "${path.module}/revoke_access.sh '${self.triggers_replace.api_key}' '${self.triggers_replace.region}' '${self.triggers_replace.group_id}' '${self.triggers_replace.role_name}' ${self.triggers_replace.account_id}"
+    command = "${path.module}/group_role_revoke.sh '${self.triggers_replace.api_key}' '${self.triggers_replace.region}' '${self.triggers_replace.group_id}' '${self.triggers_replace.role_name}' ${self.triggers_replace.account_id}"
   }
 }
 
@@ -61,10 +61,28 @@ resource "newrelic_group" "readonly_group" {
 }
 
 # Add user to readonly group
-resource "newrelic_group_management" "readonly_group_membership" {
-  authentication_domain_id = data.newrelic_authentication_domain.readonly_auth_domain.id
-  group_id                 = newrelic_group.readonly_group.id
-  user_ids                 = [newrelic_user.readonly_user.id]
+resource "terraform_data" "readonly_group_membership" {
+  triggers_replace = {
+    api_key    = var.newrelic_api_key
+    region     = upper(var.newrelic_region) == "US" ? "newrelic" : "eu.newrelic"
+    auth_domain_id = data.newrelic_authentication_domain.readonly_auth_domain.id
+    group_id   = newrelic_group.readonly_group.id
+    user_id    = newrelic_user.readonly_user.id
+  }
+
+  provisioner "local-exec" {
+    command = "${path.module}/group_member_add.sh '${self.triggers_replace.api_key}' '${self.triggers_replace.region}' '${self.triggers_replace.auth_domain_id}' '${self.triggers_replace.group_id}' '${self.triggers_replace.user_id}'"
+  }
+
+  provisioner "local-exec" {
+    when    = destroy
+    command = "${path.module}/group_member_remove.sh '${self.triggers_replace.api_key}' '${self.triggers_replace.region}' '${self.triggers_replace.auth_domain_id}' '${self.triggers_replace.group_id}' '${self.triggers_replace.user_id}'"
+  }
+
+  depends_on = [
+    newrelic_user.readonly_user,
+    newrelic_group.readonly_group
+  ]
 }
 
 # Grant readonly group access to the sub-account
@@ -78,16 +96,16 @@ resource "terraform_data" "readonly_access_grant" {
   }
 
   provisioner "local-exec" {
-    command = "${path.module}/grant_access.sh '${self.triggers_replace.api_key}' '${self.triggers_replace.region}' '${self.triggers_replace.group_id}' '${self.triggers_replace.role_name}' ${self.triggers_replace.account_id}"
+    command = "${path.module}/group_role_grant.sh '${self.triggers_replace.api_key}' '${self.triggers_replace.region}' '${self.triggers_replace.group_id}' '${self.triggers_replace.role_name}' ${self.triggers_replace.account_id}"
   }
 
   provisioner "local-exec" {
     when    = destroy
-    command = "${path.module}/revoke_access.sh '${self.triggers_replace.api_key}' '${self.triggers_replace.region}' '${self.triggers_replace.group_id}' '${self.triggers_replace.role_name}' ${self.triggers_replace.account_id}"
+    command = "${path.module}/group_role_revoke.sh '${self.triggers_replace.api_key}' '${self.triggers_replace.region}' '${self.triggers_replace.group_id}' '${self.triggers_replace.role_name}' ${self.triggers_replace.account_id}"
   }
 
   depends_on = [
-    newrelic_group_management.readonly_group_membership
+    terraform_data.readonly_group_membership
   ]
 }
 

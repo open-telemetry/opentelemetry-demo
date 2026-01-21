@@ -110,9 +110,11 @@ This module automatically creates a read-only user with full Terraform managemen
 
 **Important Notes:**
 - A new group is created for each sub-account automatically
-- All resources (user, group, membership) are managed by Terraform
+- User and group resources are managed by Terraform
+- Group membership and access grants are managed via scripts (automatically invoked)
 - The user **must** check their email and follow the link to set their password
 - Password setup is required before the user can log in
+- All operations are cleaned up automatically on `terraform destroy`
 
 ## How It Works
 
@@ -122,15 +124,16 @@ This module uses a hybrid approach:
    - Sub-account creation (`newrelic_account_management`)
    - User creation (`newrelic_user`)
    - Group creation (`newrelic_group`)
-   - Group membership (`newrelic_group_management`)
    - License key creation (`newrelic_api_access_key`)
    - Data lookups (authentication domains, groups)
 
 2. **Shell Scripts** handle operations not available in the Terraform provider:
-   - `grant_access.sh`: Grants group access to the sub-account (called on apply)
-   - `revoke_access.sh`: Revokes group access from the sub-account (called on destroy)
+   - `group_role_grant.sh`: Grants group access to the sub-account (called on apply)
+   - `group_role_revoke.sh`: Revokes group access from the sub-account (called on destroy)
+   - `group_member_add.sh`: Adds a user to a group (called on apply)
+   - `group_member_remove.sh`: Removes a user from a group (called on destroy)
 
-This separation ensures proper resource management while handling provider limitations. Access grants are automatically cleaned up when running `terraform destroy`.
+This separation ensures proper resource management while handling provider limitations. All operations are automatically cleaned up in the correct order when running `terraform destroy`.
 
 ## Finding Your New Relic Configuration Values
 
