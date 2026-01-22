@@ -17,9 +17,9 @@ group = "ad"
 version = "0.1.0-SNAPSHOT"
 
 def opentelemetryVersion = "1.58.0"
-def opentelemetryInstrumentationVersion = "2.23.0"
+def opentelemetryInstrumentationVersion = "2.24.0"
 def grpcVersion = "1.78.0"
-def jacksonVersion = "2.20.1"
+def jacksonVersion = "2.21.0"
 def protocVersion = "4.33.4"
 
 tasks.withType(JavaCompile).configureEach {
@@ -52,7 +52,7 @@ dependencies {
                 "io.opentelemetry.instrumentation:opentelemetry-instrumentation-annotations",
                 "org.apache.logging.log4j:log4j-core:2.25.3",
                 "dev.openfeature.contrib.providers:flagd:0.11.19",
-                'dev.openfeature:sdk:1.19.2'
+                'dev.openfeature:sdk:1.20.0'
 
         runtimeOnly "com.fasterxml.jackson.core:jackson-core:${jacksonVersion}",
                 "com.fasterxml.jackson.core:jackson-databind:${jacksonVersion}",
