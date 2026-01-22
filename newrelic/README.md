@@ -138,7 +138,7 @@ export TF_VAR_newrelic_account_id=$(cd ../terraform/nr_account && terraform outp
 
 ### Environment Variables
 
-You can set environment variables to avoid interactive prompts. If not set, the scripts will prompt for values.
+You can set environment variables to avoid Terraform prompts. If not set, Terraform will prompt for required values interactively.
 
 #### install-nr-account.sh
 
@@ -167,11 +167,22 @@ You can set environment variables to avoid interactive prompts. If not set, the 
 
 #### cleanup-nr-account.sh & cleanup-nr-resources.sh
 
+These cleanup scripts use the Terraform state to destroy resources, so no variables are required. However, Terraform may prompt for the API key and region if they're needed for destroy provisioners.
+
 | Variable | Required | Description |
 |----------|----------|-------------|
+| `TF_VAR_newrelic_api_key` | Maybe | May be prompted by Terraform if needed for destroy provisioners |
+| `TF_VAR_newrelic_region` | Maybe | May be prompted by Terraform if needed for destroy provisioners |
 | `TF_AUTO_APPROVE` | No | Set to `true` to skip Terraform confirmation prompts |
 
-**Example with environment variables:**
+**Example - Interactive mode (Terraform prompts for values):**
+
+```bash
+./install-nr-account.sh
+# Terraform will prompt for all required variables
+```
+
+**Example - Automated mode with environment variables:**
 
 ```bash
 export TF_VAR_newrelic_api_key="your-api-key"
@@ -183,6 +194,7 @@ export TF_VAR_readonly_user_name="Demo User"
 export TF_AUTO_APPROVE=true
 
 ./install-nr-account.sh
+# Optional variables not set will use Terraform defaults
 ```
 
 ### Manual Terraform Workflow

@@ -75,6 +75,8 @@ Set variables using environment variables (recommended):
 - `TF_VAR_readonly_user_email` - Email address for readonly user (required)
 - `TF_VAR_readonly_user_name` - Display name for readonly user (required)
 
+**Using the automated scripts**: The repository includes convenience scripts (`install-nr-account.sh`, `cleanup-nr-account.sh`) in the `scripts/` directory that handle the Terraform workflow. Variables not set via environment variables will be prompted for by Terraform interactively.
+
 Or use a `.tfvars` file:
 
 ```hcl

@@ -12,12 +12,6 @@ check_prerequisites() {
     echo "All prerequisites are installed"
 }
 
-# Gather Terraform configuration
-gather_config() {
-    prompt_for_env_var "TF_VAR_newrelic_api_key" "Please enter your New Relic API Key" true
-    prompt_for_env_var "TF_VAR_newrelic_account_id" "Please enter the New Relic Account ID" true
-}
-
 # Create New Relic resources
 create_resources() {
     local terraform_dir="$SCRIPT_DIR/../terraform/nr_resources"
@@ -29,7 +23,7 @@ create_resources() {
 
     echo "Creating New Relic Resources"
     echo "Initializing Terraform..."
-    terraform -chdir="$terraform_dir" init -input=false
+    terraform -chdir="$terraform_dir" init
 
     echo "Creating New Relic resources..."
     terraform -chdir="$terraform_dir" apply $auto_approve_flag
@@ -37,6 +31,5 @@ create_resources() {
 
 # Main
 check_prerequisites
-gather_config
 create_resources
 echo "Resources created successfully!"
