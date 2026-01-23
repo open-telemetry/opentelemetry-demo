@@ -1,0 +1,50 @@
+name: Update Charts
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: '30 0 * * *'
+
+jobs:
+  update-charts:
+    permissions:
+      contents: write
+      pull-requests: write
+      issues: write
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v6.0.1
+        with:
+          fetch-depth: 0
+
+      - name: Set up Git
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+
+      - name: Update charts and create pull request
+        id: update-k8s
+        run: |
+          ./update-k8s.sh
+        working-directory: ./newrelic/scripts
+        env:
+          TARGET_REPO: ${{ vars.MERGE_UPSTREAM_TARGET_REPO }}
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Create issue if update failed
+        if: ${{ failure() }}
+        run: |
+          echo "::error:: Update charts failed"
+
+          TS_FULL=$(date +"%Y-%m-%d %H:%M:%S")
+
+          gh issue create --title "Failed to update charts on $TS_FULL" \
+            --body "This issue was generated on $TS_FULL by the Update Charts action due to a failure during the update process. Please resolve manually." \
+            --label 'update-charts-failure' \
+            --repo $TARGET_REPO
+
+          echo "::notice:: Issue created for update charts failure"
+        env:
+          TARGET_REPO: ${{ vars.MERGE_UPSTREAM_TARGET_REPO }}
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
