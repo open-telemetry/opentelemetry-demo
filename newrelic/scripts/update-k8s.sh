@@ -71,7 +71,7 @@ echo "Current OpenTelemetry Demo chart version: $CURR_OTEL_DEMO_CHART_VERSION"
 OTEL_DEMO_UPDATED=false
 
 if [ "$LATEST_OTEL_DEMO_CHART_VERSION" != "" ] && [ "$LATEST_OTEL_DEMO_CHART_VERSION" != "$CURR_OTEL_DEMO_CHART_VERSION" ]; then
-  echo "Updating opentelemetry-demo chart version to $LATEST_OTEL_DEMO_CHART_VERSION"
+  echo "Updating opentelemetry-demo chart to version $LATEST_OTEL_DEMO_CHART_VERSION"
   template_chart "otel-demo" "open-telemetry/opentelemetry-demo" "$LATEST_OTEL_DEMO_CHART_VERSION" "opentelemetry-demo" "$OTEL_DEMO_VALUES_PATH" "$OTEL_DEMO_RENDER_PATH"
   update_version_in_script "OTEL_DEMO_CHART_VERSION" "$LATEST_OTEL_DEMO_CHART_VERSION" "$COMMON_SCRIPT_PATH"
   echo "Completed updating the OpenTelemetry Demo app!"
@@ -89,7 +89,7 @@ echo "Current New Relic K8s chart version: $CURR_NR_K8S_CHART_VERSION"
 NR_K8S_UPDATED=false
 
 if [ "$LATEST_NR_K8S_CHART_VERSION" != "" ] && [ "$LATEST_NR_K8S_CHART_VERSION" != "$CURR_NR_K8S_CHART_VERSION" ]; then
-  echo "Updating NR K8s chart version to $LATEST_NR_K8S_CHART_VERSION"
+  echo "Updating NR K8s chart to version $LATEST_NR_K8S_CHART_VERSION"
   template_chart "nr-k8s-otel-collector" "newrelic/nr-k8s-otel-collector" "$LATEST_NR_K8S_CHART_VERSION" "opentelemetry-demo" "$NR_K8S_VALUES_PATH" "$NR_K8S_RENDER_PATH"
   update_version_in_script "NR_K8S_CHART_VERSION" "$LATEST_NR_K8S_CHART_VERSION" "$COMMON_SCRIPT_PATH"
   echo "Completed updating the New Relic K8s instrumentation!"
@@ -121,20 +121,20 @@ if [ "$NR_K8S_UPDATED" = true ]; then
   BODY_DESC+="* nr-k8s-otel-collector-$LATEST_NR_K8S_CHART_VERSION"$'\n'
 fi
 
-COMMIT_MSG="chore: update chart versions - $COMMIT_DESC"
+COMMIT_MSG="chore: update charts - $COMMIT_DESC"
 PR_BODY=$(cat <<EOF
-This PR was generated on $TS_FULL by update-k8s.sh to update chart versions.
+This PR was generated on $TS_FULL by update-k8s.sh to update charts.
 
 **Updates:**
 $BODY_DESC
 EOF
 )
 
-git checkout -b chore/update-chart-versions_$TS
+git checkout -b chore/update-charts_$TS
 git commit -a -m "$COMMIT_MSG"
-git push -u origin chore/update-chart-versions_$TS
+git push -u origin chore/update-charts_$TS
 
-gh pr create --head $REPO_OWNER:chore/update-chart-versions_$TS \
+gh pr create --head $REPO_OWNER:chore/update-charts_$TS \
   --title "$COMMIT_MSG" \
   --body "$PR_BODY" \
   --base main \
@@ -144,7 +144,7 @@ if [ $? -ne 0 ]; then
   echo "create pull request against $TARGET_REPO failed"
   exit 1
 else
-  echo "pull request for chart version updates created successfully against $TARGET_REPO"
+  echo "pull request for chart updates created successfully against $TARGET_REPO"
 fi
 
-echo "chart version updates completed successfully"
+echo "chart updates completed successfully"
