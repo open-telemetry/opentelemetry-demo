@@ -51,7 +51,7 @@ update_version_in_script() {
     local version="$2"
     local script="$3"
     if [ -f "$script" ]; then
-        sed -i '' "s/^$var_name=.*/$var_name=\"$version\"/" "$script"
+        sed_i "s/^$var_name=.*/$var_name=\"$version\"/" "$script"
         echo "Updated $var_name in $script to $version"
     fi
 }

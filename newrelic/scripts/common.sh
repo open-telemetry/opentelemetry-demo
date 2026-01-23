@@ -98,6 +98,16 @@ prompt_for_openshift() {
   set -u
 }
 
+function sed_i() {
+  if [[ "$OSTYPE" == "darwin"* ]]; then
+    # macOS/BSD: needs the empty string argument
+    sed -i '' "$@"
+  else
+    # Linux/GNU: standard -i
+    sed -i "$@"
+  fi
+}
+
 function parse_repo_owner() {
   local origin_repo_url=$(git config --get remote.origin.url)
   local ssh_regex='^git@github.com:([^/]+)/([^.]+)(\.git)?$'
