@@ -147,4 +147,4 @@ else
   echo "pull request for chart updates created successfully against $TARGET_REPO"
 fi
 
-echo "chart updates completed successfully"
+echo "Chart updates completed successfully"
