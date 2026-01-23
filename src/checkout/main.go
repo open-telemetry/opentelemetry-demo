@@ -302,7 +302,7 @@ func (cs *checkout) PlaceOrder(ctx context.Context, req *pb.PlaceOrderRequest) (
 	var err error
 	defer func() {
 		if err != nil {
-			span.AddEvent("error", trace.WithAttributes(semconv.ExceptionMessageKey.String(err.Error())))
+			span.RecordError(err)
 		}
 	}()
 
