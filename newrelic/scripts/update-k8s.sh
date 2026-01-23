@@ -89,7 +89,7 @@ echo "Current New Relic K8s chart version: $CURR_NR_K8S_CHART_VERSION"
 NR_K8S_UPDATED=false
 
 if [ "$LATEST_NR_K8S_CHART_VERSION" != "" ] && [ "$LATEST_NR_K8S_CHART_VERSION" != "$CURR_NR_K8S_CHART_VERSION" ]; then
-  echo "Updating NR K8s chart to version $LATEST_NR_K8S_CHART_VERSION"
+  echo "Updating nr-k8s-otel-collector chart to version $LATEST_NR_K8S_CHART_VERSION"
   template_chart "nr-k8s-otel-collector" "newrelic/nr-k8s-otel-collector" "$LATEST_NR_K8S_CHART_VERSION" "opentelemetry-demo" "$NR_K8S_VALUES_PATH" "$NR_K8S_RENDER_PATH"
   update_version_in_script "NR_K8S_CHART_VERSION" "$LATEST_NR_K8S_CHART_VERSION" "$COMMON_SCRIPT_PATH"
   echo "Completed updating the New Relic K8s instrumentation!"
