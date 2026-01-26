@@ -20,7 +20,7 @@ kind: ServiceAccount
 metadata:
   name: otel-demo
   labels:
-    helm.sh/chart: opentelemetry-demo-0.40.0
+    helm.sh/chart: opentelemetry-demo-0.40.2
     
     
     app.kubernetes.io/version: "2.2.0"
@@ -52,6 +52,9 @@ data:
     extensions:
       health_check:
         endpoint: 0.0.0.0:13133
+      k8s_observer:
+        auth_type: serviceAccount
+        node: ${env:K8S_NODE_NAME}
     processors:
       batch: {}
       cumulativetodelta: {}
@@ -165,6 +168,12 @@ data:
       httpcheck/frontend-proxy:
         targets:
         - endpoint: http://frontend-proxy:8080
+      k8s_cluster:
+        collection_interval: 10s
+      kubeletstats:
+        auth_type: serviceAccount
+        collection_interval: 20s
+        endpoint: ${env:K8S_NODE_IP}:10250
       otlp:
         protocols:
           grpc:
@@ -183,12 +192,18 @@ data:
             static_configs:
             - targets:
               - ${env:MY_POD_IP}:8888
+      receiver_creator/metrics:
+        discovery:
+          enabled: true
+        watch_observers:
+        - k8s_observer
       redis:
         collection_interval: 30s
         endpoint: valkey-cart:6379
     service:
       extensions:
       - health_check
+      - k8s_observer
       pipelines:
         logs:
           exporters:
@@ -217,6 +232,9 @@ data:
           - hostmetrics
           - redis
           - otlp
+          - receiver_creator/metrics
+          - kubeletstats
+          - k8s_cluster
         traces:
           exporters:
           - otlphttp/newrelic
@@ -249,7 +267,7 @@ metadata:
   name: flagd-config
   namespace: opentelemetry-demo
   labels:
-    helm.sh/chart: opentelemetry-demo-0.40.0
+    helm.sh/chart: opentelemetry-demo-0.40.2
     
     
     app.kubernetes.io/version: "2.2.0"
@@ -416,7 +434,7 @@ metadata:
   name: postgresql-init
   namespace: opentelemetry-demo
   labels:
-    helm.sh/chart: opentelemetry-demo-0.40.0
+    helm.sh/chart: opentelemetry-demo-0.40.2
     
     
     app.kubernetes.io/version: "2.2.0"
@@ -605,6 +623,27 @@ rules:
   - apiGroups: ["extensions"]
     resources: ["replicasets"]
     verbs: ["get", "list", "watch"]
+  - apiGroups: [""]
+    resources: ["events", "namespaces", "namespaces/status", "nodes", "nodes/spec", "pods", "pods/status", "replicationcontrollers", "replicationcontrollers/status", "resourcequotas", "services" ]
+    verbs: ["get", "list", "watch"]
+  - apiGroups: ["apps"]
+    resources: ["daemonsets", "deployments", "replicasets", "statefulsets"]
+    verbs: ["get", "list", "watch"]
+  - apiGroups: ["extensions"]
+    resources: ["daemonsets", "deployments", "replicasets"]
+    verbs: ["get", "list", "watch"]
+  - apiGroups: ["batch"]
+    resources: ["jobs", "cronjobs"]
+    verbs: ["get", "list", "watch"]
+  - apiGroups: ["autoscaling"]
+    resources: ["horizontalpodautoscalers"]
+    verbs: ["get", "list", "watch"]
+  - apiGroups: [""]
+    resources: ["nodes/stats"]
+    verbs: ["get", "watch", "list"]
+  - apiGroups: [""]
+    resources: ["pods"]
+    verbs: ["get", "list", "watch"]
 ---
 # Source: opentelemetry-demo/charts/opentelemetry-collector/templates/clusterrolebinding.yaml
 apiVersion: rbac.authorization.k8s.io/v1
@@ -676,13 +715,13 @@ kind: Service
 metadata:
   name: ad
   labels:
-    helm.sh/chart: opentelemetry-demo-0.40.0
+    helm.sh/chart: opentelemetry-demo-0.40.2
     
     opentelemetry.io/name: ad
     
+    app.kubernetes.io/version: "2.2.0"
     app.kubernetes.io/component: ad
     app.kubernetes.io/name: ad
-    app.kubernetes.io/version: "2.2.0"
     app.kubernetes.io/part-of: opentelemetry-demo
     app.kubernetes.io/managed-by: Helm
 spec:
@@ -701,13 +740,13 @@ kind: Service
 metadata:
   name: cart
   labels:
-    helm.sh/chart: opentelemetry-demo-0.40.0
+    helm.sh/chart: opentelemetry-demo-0.40.2
     
     opentelemetry.io/name: cart
     
+    app.kubernetes.io/version: "2.2.0"
     app.kubernetes.io/component: cart
     app.kubernetes.io/name: cart
-    app.kubernetes.io/version: "2.2.0"
     app.kubernetes.io/part-of: opentelemetry-demo
     app.kubernetes.io/managed-by: Helm
 spec:
@@ -726,13 +765,13 @@ kind: Service
 metadata:
   name: checkout
   labels:
-    helm.sh/chart: opentelemetry-demo-0.40.0
+    helm.sh/chart: opentelemetry-demo-0.40.2
     
     opentelemetry.io/name: checkout
     
+    app.kubernetes.io/version: "2.2.0"
     app.kubernetes.io/component: checkout
     app.kubernetes.io/name: checkout
-    app.kubernetes.io/version: "2.2.0"
     app.kubernetes.io/part-of: opentelemetry-demo
     app.kubernetes.io/managed-by: Helm
 spec:
@@ -751,13 +790,13 @@ kind: Service
 metadata:
   name: currency
   labels:
-    helm.sh/chart: opentelemetry-demo-0.40.0
+    helm.sh/chart: opentelemetry-demo-0.40.2
     
     opentelemetry.io/name: currency
     
+    app.kubernetes.io/version: "2.2.0"
     app.kubernetes.io/component: currency
     app.kubernetes.io/name: currency
-    app.kubernetes.io/version: "2.2.0"
     app.kubernetes.io/part-of: opentelemetry-demo
     app.kubernetes.io/managed-by: Helm
 spec:
@@ -776,13 +815,13 @@ kind: Service
 metadata:
   name: email
   labels:
-    helm.sh/chart: opentelemetry-demo-0.40.0
+    helm.sh/chart: opentelemetry-demo-0.40.2
     
     opentelemetry.io/name: email
     
+    app.kubernetes.io/version: "2.2.0"
     app.kubernetes.io/component: email
     app.kubernetes.io/name: email
-    app.kubernetes.io/version: "2.2.0"
     app.kubernetes.io/part-of: opentelemetry-demo
     app.kubernetes.io/managed-by: Helm
 spec:
@@ -801,13 +840,13 @@ kind: Service
 metadata:
   name: flagd
   labels:
-    helm.sh/chart: opentelemetry-demo-0.40.0
+    helm.sh/chart: opentelemetry-demo-0.40.2
     
     opentelemetry.io/name: flagd
     
+    app.kubernetes.io/version: "2.2.0"
     app.kubernetes.io/component: flagd
     app.kubernetes.io/name: flagd
-    app.kubernetes.io/version: "2.2.0"
     app.kubernetes.io/part-of: opentelemetry-demo
     app.kubernetes.io/managed-by: Helm
 spec:
@@ -832,13 +871,13 @@ kind: Service
 metadata:
   name: frontend
   labels:
-    helm.sh/chart: opentelemetry-demo-0.40.0
+    helm.sh/chart: opentelemetry-demo-0.40.2
     
     opentelemetry.io/name: frontend
     
+    app.kubernetes.io/version: "2.2.0"
     app.kubernetes.io/component: frontend
     app.kubernetes.io/name: frontend
-    app.kubernetes.io/version: "2.2.0"
     app.kubernetes.io/part-of: opentelemetry-demo
     app.kubernetes.io/managed-by: Helm
 spec:
@@ -857,13 +896,13 @@ kind: Service
 metadata:
   name: frontend-proxy
   labels:
-    helm.sh/chart: opentelemetry-demo-0.40.0
+    helm.sh/chart: opentelemetry-demo-0.40.2
     
     opentelemetry.io/name: frontend-proxy
     
+    app.kubernetes.io/version: "2.2.0"
     app.kubernetes.io/component: frontend-proxy
     app.kubernetes.io/name: frontend-proxy
-    app.kubernetes.io/version: "2.2.0"
     app.kubernetes.io/part-of: opentelemetry-demo
     app.kubernetes.io/managed-by: Helm
 spec:
@@ -882,13 +921,13 @@ kind: Service
 metadata:
   name: image-provider
   labels:
-    helm.sh/chart: opentelemetry-demo-0.40.0
+    helm.sh/chart: opentelemetry-demo-0.40.2
     
     opentelemetry.io/name: image-provider
     
+    app.kubernetes.io/version: "2.2.0"
     app.kubernetes.io/component: image-provider
     app.kubernetes.io/name: image-provider
-    app.kubernetes.io/version: "2.2.0"
     app.kubernetes.io/part-of: opentelemetry-demo
     app.kubernetes.io/managed-by: Helm
 spec:
@@ -907,13 +946,13 @@ kind: Service
 metadata:
   name: kafka
   labels:
-    helm.sh/chart: opentelemetry-demo-0.40.0
+    helm.sh/chart: opentelemetry-demo-0.40.2
     
     opentelemetry.io/name: kafka
     
+    app.kubernetes.io/version: "2.2.0"
     app.kubernetes.io/component: kafka
     app.kubernetes.io/name: kafka
-    app.kubernetes.io/version: "2.2.0"
     app.kubernetes.io/part-of: opentelemetry-demo
     app.kubernetes.io/managed-by: Helm
 spec:
@@ -935,13 +974,13 @@ kind: Service
 metadata:
   name: llm
   labels:
-    helm.sh/chart: opentelemetry-demo-0.40.0
+    helm.sh/chart: opentelemetry-demo-0.40.2
     
     opentelemetry.io/name: llm
     
+    app.kubernetes.io/version: "2.2.0"
     app.kubernetes.io/component: llm
     app.kubernetes.io/name: llm
-    app.kubernetes.io/version: "2.2.0"
     app.kubernetes.io/part-of: opentelemetry-demo
     app.kubernetes.io/managed-by: Helm
 spec:
@@ -960,13 +999,13 @@ kind: Service
 metadata:
   name: load-generator
   labels:
-    helm.sh/chart: opentelemetry-demo-0.40.0
+    helm.sh/chart: opentelemetry-demo-0.40.2
     
     opentelemetry.io/name: load-generator
     
+    app.kubernetes.io/version: "2.2.0"
     app.kubernetes.io/component: load-generator
     app.kubernetes.io/name: load-generator
-    app.kubernetes.io/version: "2.2.0"
     app.kubernetes.io/part-of: opentelemetry-demo
     app.kubernetes.io/managed-by: Helm
 spec:
@@ -985,13 +1024,13 @@ kind: Service
 metadata:
   name: payment
   labels:
-    helm.sh/chart: opentelemetry-demo-0.40.0
+    helm.sh/chart: opentelemetry-demo-0.40.2
     
     opentelemetry.io/name: payment
     
+    app.kubernetes.io/version: "2.2.0"
     app.kubernetes.io/component: payment
     app.kubernetes.io/name: payment
-    app.kubernetes.io/version: "2.2.0"
     app.kubernetes.io/part-of: opentelemetry-demo
     app.kubernetes.io/managed-by: Helm
 spec:
@@ -1010,13 +1049,13 @@ kind: Service
 metadata:
   name: postgresql
   labels:
-    helm.sh/chart: opentelemetry-demo-0.40.0
+    helm.sh/chart: opentelemetry-demo-0.40.2
     
     opentelemetry.io/name: postgresql
     
+    app.kubernetes.io/version: "2.2.0"
     app.kubernetes.io/component: postgresql
     app.kubernetes.io/name: postgresql
-    app.kubernetes.io/version: "2.2.0"
     app.kubernetes.io/part-of: opentelemetry-demo
     app.kubernetes.io/managed-by: Helm
 spec:
@@ -1035,13 +1074,13 @@ kind: Service
 metadata:
   name: product-catalog
   labels:
-    helm.sh/chart: opentelemetry-demo-0.40.0
+    helm.sh/chart: opentelemetry-demo-0.40.2
     
     opentelemetry.io/name: product-catalog
     
+    app.kubernetes.io/version: "2.2.0"
     app.kubernetes.io/component: product-catalog
     app.kubernetes.io/name: product-catalog
-    app.kubernetes.io/version: "2.2.0"
     app.kubernetes.io/part-of: opentelemetry-demo
     app.kubernetes.io/managed-by: Helm
 spec:
@@ -1060,13 +1099,13 @@ kind: Service
 metadata:
   name: product-reviews
   labels:
-    helm.sh/chart: opentelemetry-demo-0.40.0
+    helm.sh/chart: opentelemetry-demo-0.40.2
     
     opentelemetry.io/name: product-reviews
     
+    app.kubernetes.io/version: "2.2.0"
     app.kubernetes.io/component: product-reviews
     app.kubernetes.io/name: product-reviews
-    app.kubernetes.io/version: "2.2.0"
     app.kubernetes.io/part-of: opentelemetry-demo
     app.kubernetes.io/managed-by: Helm
 spec:
@@ -1085,13 +1124,13 @@ kind: Service
 metadata:
   name: quote
   labels:
-    helm.sh/chart: opentelemetry-demo-0.40.0
+    helm.sh/chart: opentelemetry-demo-0.40.2
     
     opentelemetry.io/name: quote
     
+    app.kubernetes.io/version: "2.2.0"
     app.kubernetes.io/component: quote
     app.kubernetes.io/name: quote
-    app.kubernetes.io/version: "2.2.0"
     app.kubernetes.io/part-of: opentelemetry-demo
     app.kubernetes.io/managed-by: Helm
 spec:
@@ -1110,13 +1149,13 @@ kind: Service
 metadata:
   name: recommendation
   labels:
-    helm.sh/chart: opentelemetry-demo-0.40.0
+    helm.sh/chart: opentelemetry-demo-0.40.2
     
     opentelemetry.io/name: recommendation
     
+    app.kubernetes.io/version: "2.2.0"
     app.kubernetes.io/component: recommendation
     app.kubernetes.io/name: recommendation
-    app.kubernetes.io/version: "2.2.0"
     app.kubernetes.io/part-of: opentelemetry-demo
     app.kubernetes.io/managed-by: Helm
 spec:
@@ -1135,13 +1174,13 @@ kind: Service
 metadata:
   name: shipping
   labels:
-    helm.sh/chart: opentelemetry-demo-0.40.0
+    helm.sh/chart: opentelemetry-demo-0.40.2
     
     opentelemetry.io/name: shipping
     
+    app.kubernetes.io/version: "2.2.0"
     app.kubernetes.io/component: shipping
     app.kubernetes.io/name: shipping
-    app.kubernetes.io/version: "2.2.0"
     app.kubernetes.io/part-of: opentelemetry-demo
     app.kubernetes.io/managed-by: Helm
 spec:
@@ -1160,13 +1199,13 @@ kind: Service
 metadata:
   name: valkey-cart
   labels:
-    helm.sh/chart: opentelemetry-demo-0.40.0
+    helm.sh/chart: opentelemetry-demo-0.40.2
     
     opentelemetry.io/name: valkey-cart
     
+    app.kubernetes.io/version: "2.2.0"
     app.kubernetes.io/component: valkey-cart
     app.kubernetes.io/name: valkey-cart
-    app.kubernetes.io/version: "2.2.0"
     app.kubernetes.io/part-of: opentelemetry-demo
     app.kubernetes.io/managed-by: Helm
 spec:
@@ -1206,7 +1245,7 @@ spec:
   template:
     metadata:
       annotations:
-        checksum/config: 29230707c251e564969035a92fc596f9cd010ebb02d991bd9ea63dc87333cacf
+        checksum/config: 442f5efe361c693cf9e14ea32495eb46afeb6a2b4156b5f461cc13318665c813
         opentelemetry_community_demo: "true"
         prometheus.io/scrape: "true"
       labels:
@@ -1248,6 +1287,14 @@ spec:
                 fieldRef:
                   apiVersion: v1
                   fieldPath: status.podIP
+            - name: K8S_NODE_NAME
+              valueFrom:
+                fieldRef:
+                  fieldPath: spec.nodeName
+            - name: K8S_NODE_IP
+              valueFrom:
+                fieldRef:
+                  fieldPath: status.hostIP
             - name: GOMEMLIMIT
               value: "160MiB"
             - name: INTERNAL_TELEMETRY_SERVICE_NAME
@@ -1299,13 +1346,13 @@ kind: Deployment
 metadata:
   name: accounting
   labels:
-    helm.sh/chart: opentelemetry-demo-0.40.0
+    helm.sh/chart: opentelemetry-demo-0.40.2
     
     opentelemetry.io/name: accounting
     
+    app.kubernetes.io/version: "2.2.0"
     app.kubernetes.io/component: accounting
     app.kubernetes.io/name: accounting
-    app.kubernetes.io/version: "2.2.0"
     app.kubernetes.io/part-of: opentelemetry-demo
     app.kubernetes.io/managed-by: Helm
 spec:
@@ -1321,8 +1368,11 @@ spec:
         
         opentelemetry.io/name: accounting
         
+        app.kubernetes.io/version: "2.2.0"
         app.kubernetes.io/component: accounting
         app.kubernetes.io/name: accounting
+      annotations:
+        resource.opentelemetry.io/service.namespace: otel-demo
     spec:
       serviceAccountName: otel-demo
       containers:
@@ -1369,7 +1419,9 @@ spec:
                 k8s.namespace.name=$(OTEL_NAMESPACE_NAME), k8s.cluster.name=$(OTEL_CLUSTER_NAME)
           resources:
             limits:
-              memory: 120Mi
+              memory: 300Mi
+            requests:
+              memory: 200Mi
           volumeMounts:
       initContainers:
         - command:
@@ -1386,13 +1438,13 @@ kind: Deployment
 metadata:
   name: ad
   labels:
-    helm.sh/chart: opentelemetry-demo-0.40.0
+    helm.sh/chart: opentelemetry-demo-0.40.2
     
     opentelemetry.io/name: ad
     
+    app.kubernetes.io/version: "2.2.0"
     app.kubernetes.io/component: ad
     app.kubernetes.io/name: ad
-    app.kubernetes.io/version: "2.2.0"
     app.kubernetes.io/part-of: opentelemetry-demo
     app.kubernetes.io/managed-by: Helm
 spec:
@@ -1408,8 +1460,11 @@ spec:
         
         opentelemetry.io/name: ad
         
+        app.kubernetes.io/version: "2.2.0"
         app.kubernetes.io/component: ad
         app.kubernetes.io/name: ad
+      annotations:
+        resource.opentelemetry.io/service.namespace: otel-demo
     spec:
       serviceAccountName: otel-demo
       containers:
@@ -1472,13 +1527,13 @@ kind: Deployment
 metadata:
   name: cart
   labels:
-    helm.sh/chart: opentelemetry-demo-0.40.0
+    helm.sh/chart: opentelemetry-demo-0.40.2
     
     opentelemetry.io/name: cart
     
+    app.kubernetes.io/version: "2.2.0"
     app.kubernetes.io/component: cart
     app.kubernetes.io/name: cart
-    app.kubernetes.io/version: "2.2.0"
     app.kubernetes.io/part-of: opentelemetry-demo
     app.kubernetes.io/managed-by: Helm
 spec:
@@ -1494,8 +1549,11 @@ spec:
         
         opentelemetry.io/name: cart
         
+        app.kubernetes.io/version: "2.2.0"
         app.kubernetes.io/component: cart
         app.kubernetes.io/name: cart
+      annotations:
+        resource.opentelemetry.io/service.namespace: otel-demo
     spec:
       serviceAccountName: otel-demo
       containers:
@@ -1568,13 +1626,13 @@ kind: Deployment
 metadata:
   name: checkout
   labels:
-    helm.sh/chart: opentelemetry-demo-0.40.0
+    helm.sh/chart: opentelemetry-demo-0.40.2
     
     opentelemetry.io/name: checkout
     
+    app.kubernetes.io/version: "2.2.0"
     app.kubernetes.io/component: checkout
     app.kubernetes.io/name: checkout
-    app.kubernetes.io/version: "2.2.0"
     app.kubernetes.io/part-of: opentelemetry-demo
     app.kubernetes.io/managed-by: Helm
 spec:
@@ -1590,8 +1648,11 @@ spec:
         
         opentelemetry.io/name: checkout
         
+        app.kubernetes.io/version: "2.2.0"
         app.kubernetes.io/component: checkout
         app.kubernetes.io/name: checkout
+      annotations:
+        resource.opentelemetry.io/service.namespace: otel-demo
     spec:
       serviceAccountName: otel-demo
       containers:
@@ -1675,13 +1736,13 @@ kind: Deployment
 metadata:
   name: currency
   labels:
-    helm.sh/chart: opentelemetry-demo-0.40.0
+    helm.sh/chart: opentelemetry-demo-0.40.2
     
     opentelemetry.io/name: currency
     
+    app.kubernetes.io/version: "2.2.0"
     app.kubernetes.io/component: currency
     app.kubernetes.io/name: currency
-    app.kubernetes.io/version: "2.2.0"
     app.kubernetes.io/part-of: opentelemetry-demo
     app.kubernetes.io/managed-by: Helm
 spec:
@@ -1697,8 +1758,11 @@ spec:
         
         opentelemetry.io/name: currency
         
+        app.kubernetes.io/version: "2.2.0"
         app.kubernetes.io/component: currency
         app.kubernetes.io/name: currency
+      annotations:
+        resource.opentelemetry.io/service.namespace: otel-demo
     spec:
       serviceAccountName: otel-demo
       containers:
@@ -1759,13 +1823,13 @@ kind: Deployment
 metadata:
   name: email
   labels:
-    helm.sh/chart: opentelemetry-demo-0.40.0
+    helm.sh/chart: opentelemetry-demo-0.40.2
     
     opentelemetry.io/name: email
     
+    app.kubernetes.io/version: "2.2.0"
     app.kubernetes.io/component: email
     app.kubernetes.io/name: email
-    app.kubernetes.io/version: "2.2.0"
     app.kubernetes.io/part-of: opentelemetry-demo
     app.kubernetes.io/managed-by: Helm
 spec:
@@ -1781,8 +1845,11 @@ spec:
         
         opentelemetry.io/name: email
         
+        app.kubernetes.io/version: "2.2.0"
         app.kubernetes.io/component: email
         app.kubernetes.io/name: email
+      annotations:
+        resource.opentelemetry.io/service.namespace: otel-demo
     spec:
       serviceAccountName: otel-demo
       containers:
@@ -1845,13 +1912,13 @@ kind: Deployment
 metadata:
   name: flagd
   labels:
-    helm.sh/chart: opentelemetry-demo-0.40.0
+    helm.sh/chart: opentelemetry-demo-0.40.2
     
     opentelemetry.io/name: flagd
     
+    app.kubernetes.io/version: "2.2.0"
     app.kubernetes.io/component: flagd
     app.kubernetes.io/name: flagd
-    app.kubernetes.io/version: "2.2.0"
     app.kubernetes.io/part-of: opentelemetry-demo
     app.kubernetes.io/managed-by: Helm
 spec:
@@ -1867,8 +1934,11 @@ spec:
         
         opentelemetry.io/name: flagd
         
+        app.kubernetes.io/version: "2.2.0"
         app.kubernetes.io/component: flagd
         app.kubernetes.io/name: flagd
+      annotations:
+        resource.opentelemetry.io/service.namespace: otel-demo
     spec:
       serviceAccountName: otel-demo
       containers:
@@ -2010,13 +2080,13 @@ kind: Deployment
 metadata:
   name: fraud-detection
   labels:
-    helm.sh/chart: opentelemetry-demo-0.40.0
+    helm.sh/chart: opentelemetry-demo-0.40.2
     
     opentelemetry.io/name: fraud-detection
     
+    app.kubernetes.io/version: "2.2.0"
     app.kubernetes.io/component: fraud-detection
     app.kubernetes.io/name: fraud-detection
-    app.kubernetes.io/version: "2.2.0"
     app.kubernetes.io/part-of: opentelemetry-demo
     app.kubernetes.io/managed-by: Helm
 spec:
@@ -2032,8 +2102,11 @@ spec:
         
         opentelemetry.io/name: fraud-detection
         
+        app.kubernetes.io/version: "2.2.0"
         app.kubernetes.io/component: fraud-detection
         app.kubernetes.io/name: fraud-detection
+      annotations:
+        resource.opentelemetry.io/service.namespace: otel-demo
     spec:
       serviceAccountName: otel-demo
       containers:
@@ -2101,13 +2174,13 @@ kind: Deployment
 metadata:
   name: frontend
   labels:
-    helm.sh/chart: opentelemetry-demo-0.40.0
+    helm.sh/chart: opentelemetry-demo-0.40.2
     
     opentelemetry.io/name: frontend
     
+    app.kubernetes.io/version: "2.2.0"
     app.kubernetes.io/component: frontend
     app.kubernetes.io/name: frontend
-    app.kubernetes.io/version: "2.2.0"
     app.kubernetes.io/part-of: opentelemetry-demo
     app.kubernetes.io/managed-by: Helm
 spec:
@@ -2123,8 +2196,11 @@ spec:
         
         opentelemetry.io/name: frontend
         
+        app.kubernetes.io/version: "2.2.0"
         app.kubernetes.io/component: frontend
         app.kubernetes.io/name: frontend
+      annotations:
+        resource.opentelemetry.io/service.namespace: otel-demo
     spec:
       serviceAccountName: otel-demo
       containers:
@@ -2217,13 +2293,13 @@ kind: Deployment
 metadata:
   name: frontend-proxy
   labels:
-    helm.sh/chart: opentelemetry-demo-0.40.0
+    helm.sh/chart: opentelemetry-demo-0.40.2
     
     opentelemetry.io/name: frontend-proxy
     
+    app.kubernetes.io/version: "2.2.0"
     app.kubernetes.io/component: frontend-proxy
     app.kubernetes.io/name: frontend-proxy
-    app.kubernetes.io/version: "2.2.0"
     app.kubernetes.io/part-of: opentelemetry-demo
     app.kubernetes.io/managed-by: Helm
 spec:
@@ -2239,8 +2315,16 @@ spec:
         
         opentelemetry.io/name: frontend-proxy
         
+        app.kubernetes.io/version: "2.2.0"
         app.kubernetes.io/component: frontend-proxy
         app.kubernetes.io/name: frontend-proxy
+      annotations:
+        io.opentelemetry.discovery.metrics/config: |
+          targets:
+            - endpoint: "http://`endpoint`"
+        io.opentelemetry.discovery.metrics/enabled: "true"
+        io.opentelemetry.discovery.metrics/scraper: httpcheck
+        resource.opentelemetry.io/service.namespace: otel-demo
     spec:
       serviceAccountName: otel-demo
       containers:
@@ -2337,13 +2421,13 @@ kind: Deployment
 metadata:
   name: image-provider
   labels:
-    helm.sh/chart: opentelemetry-demo-0.40.0
+    helm.sh/chart: opentelemetry-demo-0.40.2
     
     opentelemetry.io/name: image-provider
     
+    app.kubernetes.io/version: "2.2.0"
     app.kubernetes.io/component: image-provider
     app.kubernetes.io/name: image-provider
-    app.kubernetes.io/version: "2.2.0"
     app.kubernetes.io/part-of: opentelemetry-demo
     app.kubernetes.io/managed-by: Helm
 spec:
@@ -2359,8 +2443,17 @@ spec:
         
         opentelemetry.io/name: image-provider
         
+        app.kubernetes.io/version: "2.2.0"
         app.kubernetes.io/component: image-provider
         app.kubernetes.io/name: image-provider
+      annotations:
+        io.opentelemetry.discovery.metrics/config: |
+          endpoint: "http://`endpoint`/status"
+          collection_interval: "10s"
+          timeout: "20s"
+        io.opentelemetry.discovery.metrics/enabled: "true"
+        io.opentelemetry.discovery.metrics/scraper: nginx
+        resource.opentelemetry.io/service.namespace: otel-demo
     spec:
       serviceAccountName: otel-demo
       containers:
@@ -2419,13 +2512,13 @@ kind: Deployment
 metadata:
   name: kafka
   labels:
-    helm.sh/chart: opentelemetry-demo-0.40.0
+    helm.sh/chart: opentelemetry-demo-0.40.2
     
     opentelemetry.io/name: kafka
     
+    app.kubernetes.io/version: "2.2.0"
     app.kubernetes.io/component: kafka
     app.kubernetes.io/name: kafka
-    app.kubernetes.io/version: "2.2.0"
     app.kubernetes.io/part-of: opentelemetry-demo
     app.kubernetes.io/managed-by: Helm
 spec:
@@ -2441,8 +2534,11 @@ spec:
         
         opentelemetry.io/name: kafka
         
+        app.kubernetes.io/version: "2.2.0"
         app.kubernetes.io/component: kafka
         app.kubernetes.io/name: kafka
+      annotations:
+        resource.opentelemetry.io/service.namespace: otel-demo
     spec:
       serviceAccountName: otel-demo
       containers:
@@ -2513,13 +2609,13 @@ kind: Deployment
 metadata:
   name: llm
   labels:
-    helm.sh/chart: opentelemetry-demo-0.40.0
+    helm.sh/chart: opentelemetry-demo-0.40.2
     
     opentelemetry.io/name: llm
     
+    app.kubernetes.io/version: "2.2.0"
     app.kubernetes.io/component: llm
     app.kubernetes.io/name: llm
-    app.kubernetes.io/version: "2.2.0"
     app.kubernetes.io/part-of: opentelemetry-demo
     app.kubernetes.io/managed-by: Helm
 spec:
@@ -2535,8 +2631,11 @@ spec:
         
         opentelemetry.io/name: llm
         
+        app.kubernetes.io/version: "2.2.0"
         app.kubernetes.io/component: llm
         app.kubernetes.io/name: llm
+      annotations:
+        resource.opentelemetry.io/service.namespace: otel-demo
     spec:
       serviceAccountName: otel-demo
       containers:
@@ -2592,13 +2691,13 @@ kind: Deployment
 metadata:
   name: load-generator
   labels:
-    helm.sh/chart: opentelemetry-demo-0.40.0
+    helm.sh/chart: opentelemetry-demo-0.40.2
     
     opentelemetry.io/name: load-generator
     
+    app.kubernetes.io/version: "2.2.0"
     app.kubernetes.io/component: load-generator
     app.kubernetes.io/name: load-generator
-    app.kubernetes.io/version: "2.2.0"
     app.kubernetes.io/part-of: opentelemetry-demo
     app.kubernetes.io/managed-by: Helm
 spec:
@@ -2614,8 +2713,11 @@ spec:
         
         opentelemetry.io/name: load-generator
         
+        app.kubernetes.io/version: "2.2.0"
         app.kubernetes.io/component: load-generator
         app.kubernetes.io/name: load-generator
+      annotations:
+        resource.opentelemetry.io/service.namespace: otel-demo
     spec:
       serviceAccountName: otel-demo
       containers:
@@ -2694,13 +2796,13 @@ kind: Deployment
 metadata:
   name: payment
   labels:
-    helm.sh/chart: opentelemetry-demo-0.40.0
+    helm.sh/chart: opentelemetry-demo-0.40.2
     
     opentelemetry.io/name: payment
     
+    app.kubernetes.io/version: "2.2.0"
     app.kubernetes.io/component: payment
     app.kubernetes.io/name: payment
-    app.kubernetes.io/version: "2.2.0"
     app.kubernetes.io/part-of: opentelemetry-demo
     app.kubernetes.io/managed-by: Helm
 spec:
@@ -2716,8 +2818,11 @@ spec:
         
         opentelemetry.io/name: payment
         
+        app.kubernetes.io/version: "2.2.0"
         app.kubernetes.io/component: payment
         app.kubernetes.io/name: payment
+      annotations:
+        resource.opentelemetry.io/service.namespace: otel-demo
     spec:
       serviceAccountName: otel-demo
       containers:
@@ -2784,13 +2889,13 @@ kind: Deployment
 metadata:
   name: postgresql
   labels:
-    helm.sh/chart: opentelemetry-demo-0.40.0
+    helm.sh/chart: opentelemetry-demo-0.40.2
     
     opentelemetry.io/name: postgresql
     
+    app.kubernetes.io/version: "2.2.0"
     app.kubernetes.io/component: postgresql
     app.kubernetes.io/name: postgresql
-    app.kubernetes.io/version: "2.2.0"
     app.kubernetes.io/part-of: opentelemetry-demo
     app.kubernetes.io/managed-by: Helm
 spec:
@@ -2806,8 +2911,35 @@ spec:
         
         opentelemetry.io/name: postgresql
         
+        app.kubernetes.io/version: "2.2.0"
         app.kubernetes.io/component: postgresql
         app.kubernetes.io/name: postgresql
+      annotations:
+        io.opentelemetry.discovery.metrics/config: |
+          username: root
+          password: otel
+          metrics:
+            postgresql.blks_hit:
+              enabled: true
+            postgresql.blks_read:
+              enabled: true
+            postgresql.tup_fetched:
+              enabled: true
+            postgresql.tup_returned:
+              enabled: true
+            postgresql.tup_inserted:
+              enabled: true
+            postgresql.tup_updated:
+              enabled: true
+            postgresql.tup_deleted:
+              enabled: true
+            postgresql.deadlocks:
+              enabled: true
+          tls:
+            insecure: true
+        io.opentelemetry.discovery.metrics/enabled: "true"
+        io.opentelemetry.discovery.metrics/scraper: postgresql
+        resource.opentelemetry.io/service.namespace: otel-demo
     spec:
       serviceAccountName: otel-demo
       containers:
@@ -2842,13 +2974,13 @@ kind: Deployment
 metadata:
   name: product-catalog
   labels:
-    helm.sh/chart: opentelemetry-demo-0.40.0
+    helm.sh/chart: opentelemetry-demo-0.40.2
     
     opentelemetry.io/name: product-catalog
     
+    app.kubernetes.io/version: "2.2.0"
     app.kubernetes.io/component: product-catalog
     app.kubernetes.io/name: product-catalog
-    app.kubernetes.io/version: "2.2.0"
     app.kubernetes.io/part-of: opentelemetry-demo
     app.kubernetes.io/managed-by: Helm
 spec:
@@ -2864,8 +2996,11 @@ spec:
         
         opentelemetry.io/name: product-catalog
         
+        app.kubernetes.io/version: "2.2.0"
         app.kubernetes.io/component: product-catalog
         app.kubernetes.io/name: product-catalog
+      annotations:
+        resource.opentelemetry.io/service.namespace: otel-demo
     spec:
       serviceAccountName: otel-demo
       containers:
@@ -2932,13 +3067,13 @@ kind: Deployment
 metadata:
   name: product-reviews
   labels:
-    helm.sh/chart: opentelemetry-demo-0.40.0
+    helm.sh/chart: opentelemetry-demo-0.40.2
     
     opentelemetry.io/name: product-reviews
     
+    app.kubernetes.io/version: "2.2.0"
     app.kubernetes.io/component: product-reviews
     app.kubernetes.io/name: product-reviews
-    app.kubernetes.io/version: "2.2.0"
     app.kubernetes.io/part-of: opentelemetry-demo
     app.kubernetes.io/managed-by: Helm
 spec:
@@ -2954,8 +3089,11 @@ spec:
         
         opentelemetry.io/name: product-reviews
         
+        app.kubernetes.io/version: "2.2.0"
         app.kubernetes.io/component: product-reviews
         app.kubernetes.io/name: product-reviews
+      annotations:
+        resource.opentelemetry.io/service.namespace: otel-demo
     spec:
       serviceAccountName: otel-demo
       containers:
@@ -3036,13 +3174,13 @@ kind: Deployment
 metadata:
   name: quote
   labels:
-    helm.sh/chart: opentelemetry-demo-0.40.0
+    helm.sh/chart: opentelemetry-demo-0.40.2
     
     opentelemetry.io/name: quote
     
+    app.kubernetes.io/version: "2.2.0"
     app.kubernetes.io/component: quote
     app.kubernetes.io/name: quote
-    app.kubernetes.io/version: "2.2.0"
     app.kubernetes.io/part-of: opentelemetry-demo
     app.kubernetes.io/managed-by: Helm
 spec:
@@ -3058,8 +3196,11 @@ spec:
         
         opentelemetry.io/name: quote
         
+        app.kubernetes.io/version: "2.2.0"
         app.kubernetes.io/component: quote
         app.kubernetes.io/name: quote
+      annotations:
+        resource.opentelemetry.io/service.namespace: otel-demo
     spec:
       serviceAccountName: otel-demo
       containers:
@@ -3126,13 +3267,13 @@ kind: Deployment
 metadata:
   name: recommendation
   labels:
-    helm.sh/chart: opentelemetry-demo-0.40.0
+    helm.sh/chart: opentelemetry-demo-0.40.2
     
     opentelemetry.io/name: recommendation
     
+    app.kubernetes.io/version: "2.2.0"
     app.kubernetes.io/component: recommendation
     app.kubernetes.io/name: recommendation
-    app.kubernetes.io/version: "2.2.0"
     app.kubernetes.io/part-of: opentelemetry-demo
     app.kubernetes.io/managed-by: Helm
 spec:
@@ -3148,8 +3289,11 @@ spec:
         
         opentelemetry.io/name: recommendation
         
+        app.kubernetes.io/version: "2.2.0"
         app.kubernetes.io/component: recommendation
         app.kubernetes.io/name: recommendation
+      annotations:
+        resource.opentelemetry.io/service.namespace: otel-demo
     spec:
       serviceAccountName: otel-demo
       containers:
@@ -3216,13 +3360,13 @@ kind: Deployment
 metadata:
   name: shipping
   labels:
-    helm.sh/chart: opentelemetry-demo-0.40.0
+    helm.sh/chart: opentelemetry-demo-0.40.2
     
     opentelemetry.io/name: shipping
     
+    app.kubernetes.io/version: "2.2.0"
     app.kubernetes.io/component: shipping
     app.kubernetes.io/name: shipping
-    app.kubernetes.io/version: "2.2.0"
     app.kubernetes.io/part-of: opentelemetry-demo
     app.kubernetes.io/managed-by: Helm
 spec:
@@ -3238,8 +3382,11 @@ spec:
         
         opentelemetry.io/name: shipping
         
+        app.kubernetes.io/version: "2.2.0"
         app.kubernetes.io/component: shipping
         app.kubernetes.io/name: shipping
+      annotations:
+        resource.opentelemetry.io/service.namespace: otel-demo
     spec:
       serviceAccountName: otel-demo
       containers:
@@ -3300,13 +3447,13 @@ kind: Deployment
 metadata:
   name: valkey-cart
   labels:
-    helm.sh/chart: opentelemetry-demo-0.40.0
+    helm.sh/chart: opentelemetry-demo-0.40.2
     
     opentelemetry.io/name: valkey-cart
     
+    app.kubernetes.io/version: "2.2.0"
     app.kubernetes.io/component: valkey-cart
     app.kubernetes.io/name: valkey-cart
-    app.kubernetes.io/version: "2.2.0"
     app.kubernetes.io/part-of: opentelemetry-demo
     app.kubernetes.io/managed-by: Helm
 spec:
@@ -3322,8 +3469,16 @@ spec:
         
         opentelemetry.io/name: valkey-cart
         
+        app.kubernetes.io/version: "2.2.0"
         app.kubernetes.io/component: valkey-cart
         app.kubernetes.io/name: valkey-cart
+      annotations:
+        io.opentelemetry.discovery.metrics/config: |
+          username: valkey
+          collection_interval: 10s
+        io.opentelemetry.discovery.metrics/enabled: "true"
+        io.opentelemetry.discovery.metrics/scraper: redis
+        resource.opentelemetry.io/service.namespace: otel-demo
     spec:
       serviceAccountName: otel-demo
       containers:
