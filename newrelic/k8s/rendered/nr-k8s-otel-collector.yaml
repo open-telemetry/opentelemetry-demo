@@ -26,7 +26,7 @@ metadata:
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: nr-k8s-otel-collector
     app.kubernetes.io/version: 1.2.0
-    helm.sh/chart: nr-k8s-otel-collector-0.9.9
+    helm.sh/chart: nr-k8s-otel-collector-0.9.10
   annotations:
 ---
 # Source: nr-k8s-otel-collector/templates/daemonset-configmap.yaml
@@ -40,7 +40,7 @@ metadata:
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: nr-k8s-otel-collector
     app.kubernetes.io/version: 1.2.0
-    helm.sh/chart: nr-k8s-otel-collector-0.9.9
+    helm.sh/chart: nr-k8s-otel-collector-0.9.10
 data:
   daemonset-config.yaml: |
     receivers:
@@ -635,7 +635,7 @@ data:
             value: opentelemetry-demo
           - key: "newrelic.chart.version"
             action: upsert
-            value: 0.9.9
+            value: 0.9.10
           - key: newrelic.entity.type
             action: upsert
             value: "k8s"
@@ -771,6 +771,9 @@ data:
             pipelines: [metrics/nr]
 
     service:
+      telemetry:
+        metrics:
+          readers:
       pipelines:
         
         metrics/ingress:
@@ -902,7 +905,7 @@ metadata:
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: nr-k8s-otel-collector
     app.kubernetes.io/version: 1.2.0
-    helm.sh/chart: nr-k8s-otel-collector-0.9.9
+    helm.sh/chart: nr-k8s-otel-collector-0.9.10
 data:
   deployment-config.yaml: |
     receivers:
@@ -1408,7 +1411,7 @@ data:
             value: opentelemetry-demo
           - key: "newrelic.chart.version"
             action: upsert
-            value: 0.9.9
+            value: 0.9.10
           - key: newrelic.entity.type
             action: upsert
             value: "k8s"
@@ -1426,7 +1429,7 @@ data:
             value: opentelemetry-demo
           - key: "newrelic.chart.version"
             action: upsert
-            value: 0.9.9
+            value: 0.9.10
 
       transform/events:
         log_statements:
@@ -1629,6 +1632,9 @@ data:
             pipelines: [metrics/nr_controlplane]
 
     service:
+      telemetry:
+        metrics:
+          readers:
       pipelines:
         
         metrics/ingress:
@@ -1896,7 +1902,7 @@ metadata:
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: nr-k8s-otel-collector
     app.kubernetes.io/version: 1.2.0
-    helm.sh/chart: nr-k8s-otel-collector-0.9.9
+    helm.sh/chart: nr-k8s-otel-collector-0.9.10
 rules:
   - apiGroups:
     - ""
@@ -2001,7 +2007,7 @@ metadata:
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: nr-k8s-otel-collector
     app.kubernetes.io/version: 1.2.0
-    helm.sh/chart: nr-k8s-otel-collector-0.9.9
+    helm.sh/chart: nr-k8s-otel-collector-0.9.10
 subjects:
   - kind: ServiceAccount
     name: nr-k8s-otel-collector
@@ -2049,7 +2055,7 @@ metadata:
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: nr-k8s-otel-collector
     app.kubernetes.io/version: 1.2.0
-    helm.sh/chart: nr-k8s-otel-collector-0.9.9
+    helm.sh/chart: nr-k8s-otel-collector-0.9.10
 spec:
   type: ClusterIP
   ports:
@@ -2078,7 +2084,7 @@ metadata:
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: nr-k8s-otel-collector
     app.kubernetes.io/version: 1.2.0
-    helm.sh/chart: nr-k8s-otel-collector-0.9.9
+    helm.sh/chart: nr-k8s-otel-collector-0.9.10
 spec:
   selector:
     matchLabels:
@@ -2092,7 +2098,7 @@ spec:
         app.kubernetes.io/name: nr-k8s-otel-collector
         component: daemonset
       annotations:
-        checksum/config: 66053a2c8bee66103272a60d94fd62648fd389105b717bb581c2d9f6c140b3c2
+        checksum/config: cce8229787eaa2594b38a40796df41804511fecb1136ce2553eb33b6225a829c
     spec:
       serviceAccountName: nr-k8s-otel-collector
       initContainers:
@@ -2311,7 +2317,7 @@ metadata:
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/name: nr-k8s-otel-collector
     app.kubernetes.io/version: 1.2.0
-    helm.sh/chart: nr-k8s-otel-collector-0.9.9
+    helm.sh/chart: nr-k8s-otel-collector-0.9.10
 spec:
   replicas: 1
   minReadySeconds: 5
@@ -2327,7 +2333,7 @@ spec:
         app.kubernetes.io/name: nr-k8s-otel-collector
         component: deployment
       annotations:
-        checksum/config: b1c9a8e6608abef0c6961ee1d85f084f836762cd5193ac4881de8b134dce953b
+        checksum/config: 47239ba4324ee914628d0c4e7cd94da97b85113a41990fceb64babda8b98f813
     spec:
       serviceAccountName: nr-k8s-otel-collector
       containers:
