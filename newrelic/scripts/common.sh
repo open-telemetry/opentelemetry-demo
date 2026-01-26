@@ -5,6 +5,8 @@ set -euo pipefail
 SCRIPT_DIR=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" &> /dev/null && pwd)
 SRC_DIR=${SRC_DIR:-"$SCRIPT_DIR/../../src"} #.env.override
 COMMON_SCRIPT_PATH="$SCRIPT_DIR/common.sh"
+TS=$(date +"%Y%m%d_%H%M%S")
+TS_FULL=$(date +"%Y-%m-%d %H:%M:%S")
 
 # Kubernetes variables
 OTEL_DEMO_CHART_VERSION="0.40.0"
@@ -94,4 +96,29 @@ prompt_for_openshift() {
     echo "Using OpenShift cluster setting from environment variable (IS_OPENSHIFT_CLUSTER=$IS_OPENSHIFT_CLUSTER)."
   fi
   set -u
+}
+
+function sed_i() {
+  if [[ "$OSTYPE" == "darwin"* ]]; then
+    # macOS/BSD: needs the empty string argument
+    sed -i '' "$@"
+  else
+    # Linux/GNU: standard -i
+    sed -i "$@"
+  fi
+}
+
+function parse_repo_owner() {
+  local origin_repo_url=$(git config --get remote.origin.url)
+  local ssh_regex='^git@github.com:([^/]+)/([^.]+)(\.git)?$'
+  local https_regex='^https://github.com/([^/]+)/([^.]+)(\.git)?$'
+
+  if [[ $origin_repo_url =~ $ssh_regex ]]; then
+    echo "${BASH_REMATCH[1]}"
+  elif [[ $origin_repo_url =~ $https_regex ]]; then
+    echo "${BASH_REMATCH[1]}"
+  else
+    echo "unable to parse repository owner from URL: $origin_repo_url"
+    exit 1
+  fi
 }

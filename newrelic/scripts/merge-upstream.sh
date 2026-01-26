@@ -38,26 +38,9 @@ check_tool_installed gh
 UPSTREAM_REMOTE="${UPSTREAM_REMOTE:-official}"
 TARGET_REPO="${TARGET_REPO:-newrelic/opentelemetry-demo}"
 MERGE_BASE="${MERGE_BASE:-}"
-
-TS=$(date +"%Y%m%d_%H%M%S")
-TS_FULL=$(date +"%Y-%m-%d %H:%M:%S")
-ORIGIN_REPO_URL=$(git config --get remote.origin.url)
-SSH_REGEX='^git@github.com:([^/]+)/([^.]+)(\.git)?$'
-HTTPS_REGEX='^https://github.com/([^/]+)/([^.]+)(\.git)?$'
-TAG_REGEX='^([0-9a-fA-F]+),refs/tags/([0-9]+\.[0-9]+\.[0-9]+)$'
-
-if [[ $ORIGIN_REPO_URL =~ $SSH_REGEX ]]; then
-  REPO_OWNER="${BASH_REMATCH[1]}"
-  REPO_NAME="${BASH_REMATCH[2]}"
-elif [[ $ORIGIN_REPO_URL =~ $HTTPS_REGEX ]]; then
-  REPO_OWNER="${BASH_REMATCH[1]}"
-  REPO_NAME="${BASH_REMATCH[2]}"
-else
-  echo "unable to parse repository owner/name from URL: $ORIGIN_REPO_URL"
-  exit 1
-fi
-
 DISPLAY_MERGE_BASE=""
+REPO_OWNER=$(parse_repo_owner)
+TAG_REGEX='^([0-9a-fA-F]+),refs/tags/([0-9]+\.[0-9]+\.[0-9]+)$'
 
 if [ "$MERGE_BASE" == "" ]; then
   echo "MERGE_BASE is not set, using latest tag"
