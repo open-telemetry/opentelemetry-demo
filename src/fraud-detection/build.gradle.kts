@@ -32,7 +32,7 @@ dependencies {
     testImplementation(kotlin("test"))
     implementation(kotlin("script-runtime"))
     implementation("org.apache.kafka:kafka-clients:4.1.1")
-    implementation("com.google.api.grpc:proto-google-common-protos:2.64.1")
+    implementation("com.google.api.grpc:proto-google-common-protos:2.65.0")
     implementation("io.grpc:grpc-protobuf:${grpcVersion}")
     implementation("io.grpc:grpc-stub:${grpcVersion}")
     implementation("io.grpc:grpc-netty:${grpcVersion}")
@@ -43,7 +43,7 @@ dependencies {
     implementation("org.apache.logging.log4j:log4j-core:2.25.3")
     implementation("org.slf4j:slf4j-api:2.0.17")
     implementation("com.google.protobuf:protobuf-kotlin:${protobufVersion}")
-    implementation("dev.openfeature:sdk:1.20.0")
+    implementation("dev.openfeature:sdk:1.20.1")
     implementation("dev.openfeature.contrib.providers:flagd:0.11.19")
 
     if (JavaVersion.current().isJava9Compatible) {
