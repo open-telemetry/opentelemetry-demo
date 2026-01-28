@@ -58,7 +58,7 @@ defmodule FlagdUi.MixProject do
        app: false,
        compile: false,
        depth: 1},
-      {:swoosh, "~> 1.20.0"},
+      {:swoosh, "~> 1.21.0"},
       {:req, "~> 0.5.16"},
       {:telemetry_metrics, "~> 1.1.0"},
       {:telemetry_poller, "~> 1.3.0"},
