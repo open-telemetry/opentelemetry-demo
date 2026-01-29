@@ -653,6 +653,93 @@ services:
         condition: service_started
     logging: *logging
 
+  # *************************
+  # VAST Observability Agent
+  # *************************
+  # Web UI + Predictive Alerts + Diagnostic Chat
+  observability-agent:
+    build:
+      context: ./vast
+      dockerfile: Dockerfile
+    container_name: observability-agent
+    deploy:
+      resources:
+        limits:
+          memory: 512M
+    restart: unless-stopped
+    ports:
+      - "${OBSERVABILITY_AGENT_PORT}"
+    environment:
+      - TRINO_HOST
+      - TRINO_PORT
+      - TRINO_USER
+      - TRINO_CATALOG
+      - TRINO_SCHEMA
+      - TRINO_VERIFY
+      - ANTHROPIC_API_KEY
+      - VASTDB_ENDPOINT
+      - VASTDB_ACCESS_KEY
+      - VASTDB_SECRET_KEY
+      - VASTDB_BUCKET
+      - VASTDB_SCHEMA
+      - KAFKA_BOOTSTRAP_SERVERS
+      - POSTGRES_HOST
+      - POSTGRES_PORT
+      - POSTGRES_DB
+      - POSTGRES_PASSWORD
+      - DETECTION_INTERVAL
+      - BASELINE_INTERVAL
+      - BASELINE_WINDOW_HOURS
+      - ANOMALY_THRESHOLD
+      - ERROR_RATE_WARNING
+      - ERROR_RATE_CRITICAL
+      - MAX_INVESTIGATIONS_PER_HOUR
+      - INVESTIGATION_SERVICE_COOLDOWN_MINUTES
+      - INVESTIGATE_CRITICAL_ONLY
+    depends_on:
+      otel-collector:
+        condition: service_started
+    logging: *logging
+
+  # Data ingester: Kafka → VastDB
+  observability-ingester:
+    build:
+      context: ./vast
+      dockerfile: Dockerfile
+    container_name: observability-ingester
+    deploy:
+      resources:
+        limits:
+          memory: 256M
+    restart: unless-stopped
+    command: ["python", "otel_ingester.py"]
+    environment:
+      - VASTDB_ENDPOINT
+      - VASTDB_ACCESS_KEY
+      - VASTDB_SECRET_KEY
+      - VASTDB_BUCKET
+      - VASTDB_SCHEMA
+      - KAFKA_BOOTSTRAP_SERVERS
+    depends_on:
+      otel-collector:
+        condition: service_started
+    logging: *logging
+
+  # PostgreSQL latency proxy for fault injection testing
+  pg-latency-proxy:
+    image: alpine/socat
+    container_name: pg-latency-proxy
+    deploy:
+      resources:
+        limits:
+          memory: 32M
+    cap_add:
+      - NET_ADMIN
+    command: TCP-LISTEN:5432,fork,reuseaddr TCP:postgresql-direct:5432
+    profiles:
+      - fault-injection
+    logging: *logging
+
   # ******************
   # Dependent Services
   # ******************
@@ -891,6 +978,7 @@ services:
       - POSTGRES_HOST
       - POSTGRES_PORT
       - POSTGRES_PASSWORD
+      - KAFKA_BOOTSTRAP_SERVERS
       - GOMEMLIMIT=160MiB
 
   # Prometheus

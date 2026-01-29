@@ -196,9 +196,6 @@ postgres_degrade_slow() {
     log_info "PostgreSQL container: $PG_CONTAINER"
     log_info "Docker network: $PG_NETWORK"
 
-    # Remove existing proxy if any
-    docker rm -f "$PROXY_CONTAINER_NAME" 2>/dev/null || true
-
     # Step 1: Disconnect PostgreSQL from the network and reconnect with a different alias
     # This makes the original 'postgresql' DNS name available for our proxy
     log_info "Rerouting PostgreSQL DNS via proxy..."
@@ -210,17 +207,11 @@ postgres_degrade_slow() {
     docker network disconnect "$PG_NETWORK" "$PG_CONTAINER" 2>/dev/null || true
     docker network connect --alias postgresql-direct "$PG_NETWORK" "$PG_CONTAINER"
 
-    # Step 2: Start the proxy container with alias 'postgresql'
-    # Uses socat to forward TCP traffic, with a delay injected via tc netem on the proxy itself
-    log_info "Starting latency proxy (${PROXY_LATENCY_MS}ms delay)..."
+    # Step 2: Start the pg-latency-proxy service defined in docker-compose.yml
+    # Uses the fault-injection profile to bring up the socat proxy container
+    log_info "Starting latency proxy via docker compose (${PROXY_LATENCY_MS}ms delay)..."
 
-    docker run -d \
-        --name "$PROXY_CONTAINER_NAME" \
-        --network "$PG_NETWORK" \
-        --network-alias postgresql \
-        --cap-add NET_ADMIN \
-        alpine/socat \
-        TCP-LISTEN:5432,fork,reuseaddr TCP:postgresql-direct:5432
+    docker compose --profile fault-injection up -d pg-latency-proxy
 
     # Wait for proxy to start
     sleep 2
@@ -295,8 +286,9 @@ postgres_restore() {
             fi
         done)
 
-        # Stop and remove the proxy container
-        docker rm -f "$PROXY_CONTAINER_NAME" 2>/dev/null || true
+        # Stop the proxy service via docker compose
+        docker compose --profile fault-injection stop pg-latency-proxy 2>/dev/null || true
+        docker compose --profile fault-injection rm -f pg-latency-proxy 2>/dev/null || true
 
         # Reconnect PostgreSQL with its original alias
         if [ -n "$PG_CONTAINER" ] && [ -n "$PG_NETWORK" ]; then

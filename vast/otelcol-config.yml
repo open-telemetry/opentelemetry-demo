@@ -125,17 +125,17 @@ receivers:
 exporters:
   debug:
   kafka/traces:
-    brokers: ["172.200.204.97:9092"]
+    brokers: ["${env:KAFKA_BOOTSTRAP_SERVERS}"]
     protocol_version: 2.0.0
     topic: otel-traces
     encoding: otlp_json
   kafka/metrics:
-    brokers: ["172.200.204.97:9092"]
+    brokers: ["${env:KAFKA_BOOTSTRAP_SERVERS}"]
     protocol_version: 2.0.0
     topic: otel-metrics
     encoding: otlp_json
   kafka/logs:
-    brokers: ["172.200.204.97:9092"]
+    brokers: ["${env:KAFKA_BOOTSTRAP_SERVERS}"]
     protocol_version: 2.0.0
     topic: otel-logs
     encoding: otlp_json
