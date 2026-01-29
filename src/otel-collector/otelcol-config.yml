@@ -160,12 +160,7 @@ processors:
           # Sanitize spans to prevent span metrics cardinality explosion
           # caused by non-compliant high cardinality span names:          
           # 1. Define missing http.route on key HTTP operations for meaningful operation names
-          # 2. Then normalize span names; http operation spans lacking http.route to operations "GET", "POST", etc.
-
-          # Prevent span metrics cardinality explosion by:
-          # 1. Mapping critical operations to http.route for meaningful operation names
-          # 2. Normalizing span names (unmapped HTTP operations default to GET, POST, etc.)
-
+          # 2. Then normalize span names; http server spans lacking http.route default to operations "GET", "POST", etc.
 
           # FRONTEND SERVICE
 
