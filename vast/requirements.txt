@@ -1,0 +1,15 @@
+# Data ingestion
+vastdb>=1.0.0
+kafka-python>=2.0.2
+pyarrow>=14.0.0
+
+# Diagnostic chat tool
+anthropic>=0.40.0
+trino>=0.330.0
+
+# Web UI
+flask>=3.0.0
+
+# Predictive maintenance (optional - statistical methods used if not available)
+scikit-learn>=1.3.0
+numpy>=1.24.0

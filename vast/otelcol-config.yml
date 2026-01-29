@@ -1,0 +1,235 @@
+# Copyright The OpenTelemetry Authors
+# SPDX-License-Identifier: Apache-2.0
+
+receivers:
+  otlp:
+    protocols:
+      grpc:
+        endpoint: ${env:OTEL_COLLECTOR_HOST}:${env:OTEL_COLLECTOR_PORT_GRPC}
+      http:
+        endpoint: ${env:OTEL_COLLECTOR_HOST}:${env:OTEL_COLLECTOR_PORT_HTTP}
+        cors:
+          allowed_origins:
+            - "http://*"
+            - "https://*"
+  httpcheck/frontend-proxy:
+    targets:
+      - endpoint: http://${env:FRONTEND_PROXY_ADDR}
+  nginx:
+    endpoint: http://${env:IMAGE_PROVIDER_HOST}:${env:IMAGE_PROVIDER_PORT}/status
+    collection_interval: 10s
+  docker_stats:
+    endpoint: unix:///var/run/docker.sock
+    # https://github.com/open-telemetry/opentelemetry-collector-contrib/issues/44511
+    api_version: "1.44"
+  postgresql:
+    endpoint: ${POSTGRES_HOST}:${POSTGRES_PORT}
+    username: root
+    password: ${POSTGRES_PASSWORD}
+    metrics:
+      postgresql.blks_hit:
+        enabled: true
+      postgresql.blks_read:
+        enabled: true
+      postgresql.tup_fetched:
+        enabled: true
+      postgresql.tup_returned:
+        enabled: true
+      postgresql.tup_inserted:
+        enabled: true
+      postgresql.tup_updated:
+        enabled: true
+      postgresql.tup_deleted:
+        enabled: true
+      postgresql.deadlocks:
+        enabled: true
+    tls:
+      insecure: true
+  redis:
+    endpoint: "valkey-cart:6379"
+    username: "valkey"
+    collection_interval: 10s
+  # Host metrics
+  hostmetrics:
+    root_path: /hostfs
+    scrapers:
+      cpu:
+        metrics:
+          system.cpu.utilization:
+            enabled: true
+          system.cpu.logical.count:
+            enabled: true
+      disk:
+      load:
+      filesystem:
+        metrics:
+          system.filesystem.utilization:
+            enabled: true
+        exclude_mount_points:
+          mount_points:
+            - /dev/*
+            - /proc/*
+            - /sys/*
+            - /run/k3s/containerd/*
+            - /var/lib/docker/*
+            - /var/lib/kubelet/*
+            - /snap/*
+          match_type: regexp
+        exclude_fs_types:
+          fs_types:
+            - autofs
+            - binfmt_misc
+            - bpf
+            - cgroup2
+            - configfs
+            - debugfs
+            - devpts
+            - devtmpfs
+            - fusectl
+            - hugetlbfs
+            - iso9660
+            - mqueue
+            - nsfs
+            - overlay
+            - proc
+            - procfs
+            - pstore
+            - rpc_pipefs
+            - securityfs
+            - selinuxfs
+            - squashfs
+            - sysfs
+            - tracefs
+          match_type: strict
+      memory:
+        metrics:
+          system.memory.utilization:
+            enabled: true
+          system.memory.limit:
+            enabled: true
+      network:
+      paging:
+        metrics:
+          system.paging.usage:
+            enabled: true
+
+      processes:
+      process:
+        mute_process_exe_error: true
+        mute_process_io_error: true
+        mute_process_user_error: true
+      system:
+        metrics:
+          system.uptime:
+            enabled: true
+exporters:
+  debug:
+  kafka/traces:
+    brokers: ["172.200.204.97:9092"]
+    protocol_version: 2.0.0
+    topic: otel-traces
+    encoding: otlp_json
+  kafka/metrics:
+    brokers: ["172.200.204.97:9092"]
+    protocol_version: 2.0.0
+    topic: otel-metrics
+    encoding: otlp_json
+  kafka/logs:
+    brokers: ["172.200.204.97:9092"]
+    protocol_version: 2.0.0
+    topic: otel-logs
+    encoding: otlp_json
+  otlp:
+    endpoint: "jaeger:4317"
+    tls:
+      insecure: true
+    sending_queue:
+      batch:
+  otlphttp/prometheus:
+    endpoint: "http://prometheus:9090/api/v1/otlp"
+    tls:
+      insecure: true
+    sending_queue:
+      batch:
+  opensearch:
+    logs_index: otel-logs
+    logs_index_time_format: "yyyy-MM-dd"
+    http:
+      endpoint: "http://opensearch:9200"
+      tls:
+        insecure: true
+    sending_queue:
+      # Explicitly set due to bug: https://github.com/open-telemetry/opentelemetry-collector-contrib/issues/45016
+      num_consumers: 10
+      queue_size: 1000
+      batch:
+processors:
+  memory_limiter:
+    check_interval: 5s
+    limit_percentage: 80
+    spike_limit_percentage: 25
+  resourcedetection:
+    detectors: [env, docker, system]
+    system:
+      hostname_sources: ["os"]
+      resource_attributes:
+        host.name:
+          enabled: true
+        host.id:
+          enabled: false
+        os.type:
+          enabled: true
+  # Add host.name to metrics that don't have it (like postgresql, redis)
+  resource/add-host:
+    attributes:
+      - key: host.name
+        value: ${env:HOSTNAME}
+        action: upsert
+  transform:
+    error_mode: ignore
+    trace_statements:
+      - context: span
+        statements:
+          # could be removed when https://github.com/vercel/next.js/pull/64852 is fixed upstream
+          - replace_pattern(name, "\\?.*", "")
+          - replace_match(name, "GET /api/products/*", "GET /api/products/{productId}")
+
+  batch:
+    send_batch_max_size: 100  # <--- Prevents "MESSAGE_TOO_LARGE" error
+    send_batch_size: 100
+    timeout: 1s
+
+connectors:
+  spanmetrics:
+
+service:
+  pipelines:
+    traces:
+      receivers: [otlp]
+      processors: [resourcedetection, memory_limiter, transform, batch]
+      exporters: [otlp, debug, spanmetrics, kafka/traces]
+    metrics:
+      receivers: [docker_stats, httpcheck/frontend-proxy, hostmetrics, nginx, otlp, postgresql, redis, spanmetrics]
+      processors: [resourcedetection, resource/add-host, memory_limiter, batch]
+      exporters: [otlphttp/prometheus, debug, kafka/metrics]
+    logs:
+      receivers: [otlp]
+      processors: [resourcedetection, memory_limiter, batch]
+      exporters: [opensearch, debug, kafka/logs]
+  telemetry:
+    metrics:
+      readers:
+        - periodic:
+            exporter:
+              otlp:
+                protocol: http/protobuf
+                # replace with your observability meta monitoring backend
+                endpoint: http://${env:OTEL_COLLECTOR_HOST}:${env:OTEL_COLLECTOR_PORT_HTTP}
+    logs:
+      processors:
+        - batch:
+            exporter:
+              otlp:
+                protocol: http/protobuf
+                # replace with your observability meta monitoring backend
+                endpoint: http://${env:OTEL_COLLECTOR_HOST}:${env:OTEL_COLLECTOR_PORT_HTTP}
