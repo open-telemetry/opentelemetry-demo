@@ -55,3 +55,19 @@ test/tracetesting/tracetesting-vars.yaml
 !src/currency/build
 src/cart/src/Program.cs.bak
 src/flagd/demo.flagd.json.bak
+
+# Terraform
+.terraform/
+*.tfstate
+*.tfstate.*
+terraform.tfvars
+*.tfvars
+override.tf
+override.tf.json
+*_override.tf
+*_override.tf.json
+license_key.txt
+.terraform.lock.hcl
+
+#env
+*.env

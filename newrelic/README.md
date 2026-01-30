@@ -7,16 +7,32 @@ This repository contains a fork of the OpenTelemetry Astronomy Shop, a microserv
 ## Table of Contents
 
 - [Prerequisites](#prerequisites)
+  - [Terraform (Optional)](#terraform-optional)
+  - [Kubernetes](#kubernetes)
+  - [Docker](#docker)
+
 - [Setup](#setup)
 - [Installation Options](#installation-options)
-- [Kubernetes Installation](#kubernetes-installation)
-- [Docker Installation](#docker-installation)
+  - [Terraform Automation (Optional)](#terraform-automation-optional)
+  - [Kubernetes Installation](#kubernetes-installation)
+  - [Docker Installation](#docker-installation)
 - [Validating the Install](#validating-the-install)
 - [Accessing the Flagd UI](#accessing-the-flagd-ui)
 
 ## Prerequisites
 
-You'll need a New Relic License Key from your New Relic account.  If you don't have an account, you can get one for [free!](https://newrelic.com/signup)
+You'll need a New Relic License Key from your New Relic account. If you don't have an account, you can get one for [free!](https://newrelic.com/signup)
+
+### Terraform (Optional)
+
+If you plan to use the Terraform automation modules to create New Relic resources:
+
+- [Terraform](https://www.terraform.io/downloads) 1.4+
+- [jq](https://stedolan.github.io/jq/) (for JSON processing)
+- curl (typically pre-installed)
+- New Relic User API Key (for managing accounts and resources)
+
+The Terraform modules are completely optional. You can run the demo with just your existing New Relic license key.
 
 ### Kubernetes
 
@@ -57,18 +73,166 @@ cd opentelemetry-demo/newrelic/scripts
 
 ## Installation Options
 
-- [Kubernetes](#kubernetes-installation)
-- [Docker](./)
+Choose the installation method that best fits your environment:
 
-**Note**: both methods will require you to pint your New Relic Ingest License key. If you want to avoid inputting your key every time you run the script, you can also export a `NR_LICENSE_KEY` variable, which will take precedence if present.
+- **[Terraform (Optional)](#terraform-automation-optional)**: Automate New Relic account setup and/or resource creation
+- **[Kubernetes](#kubernetes-installation)**: Deploy to a Kubernetes cluster using Helm
+- **[Docker](#docker-installation)**: Run locally with Docker Compose
+
+**Note**: All installation methods require a New Relic license key (this can be generated via [Terraform](#terraform-automation-optional)). You can input it when prompted, or export a `NEW_RELIC_LICENSE_KEY` environment variable to avoid repeated prompts.
+
+## Terraform Automation (Optional)
+
+This repository includes Terraform modules and automated scripts to simplify New Relic account setup and showcase observability best practices. Using these modules is completely optional - the demo works perfectly fine with your existing New Relic license key.
+
+### Why Use Terraform?
+
+The Terraform modules demonstrate how to:
+- **Automate account setup** - Programmatically create dedicated sub-accounts for isolated demo environments
+- **Showcase New Relic capabilities** - Implement SLOs, alerts, dashboards, teams, and other observability features
+- **Follow Observability as Code best practices** - Manage observability resources alongside your application infrastructure
+- **Scale observability practices** - Apply consistent patterns across multiple services and environments
+
+### What's Included
+
+Two independent Terraform modules are provided in the [`terraform/`](./terraform/) directory:
+
+1. **[`nr_account`](./terraform/nr_account/)** - Automates creation of New Relic sub-accounts and user management
+   - Creates isolated sub-accounts for demos or testing
+   - Generates the license key needed for installation
+   - Configurable region (US or EU)
+   - Grants access to specified admin groups
+   - Creates a read-only user with limited access for demos or game days
+
+2. **[`nr_resources`](./terraform/nr_resources/)** - Creates New Relic resources to showcase platform capabilities
+   - Currently includes Service Level Objectives (SLOs)
+   - Future additions: alerts, dashboards, teams, scorecards, and more
+   - Demonstrates programmatic resource management as code
+
+> [!WARNING]
+> The `nr_resources` module is a work in progress. Only SLOs are currently implemented. Additional resources (alerts, dashboards, teams, etc.) will be added in future releases.
+
+### Quick Start with Terraform
+
+Automated scripts handle the Terraform workflow for you:
+
+```bash
+# Navigate to the scripts directory
+cd opentelemetry-demo/newrelic/scripts
+
+# 1. (Optional) Create a sub-account, readonly user, and license key
+./install-nr-account.sh
+
+# 2. Export the license key and deploy the demo
+export NEW_RELIC_LICENSE_KEY=$(cd ../terraform/nr_account && terraform output -raw license_key)
+./install-k8s.sh  # or ./install-docker.sh (see below)
+
+# Note: A read-only user will be created and will receive an email with setup instructions
+
+# 3. Wait 2-5 minutes for data to flow to New Relic
+
+# 4. Export account ID and create New Relic resources to showcase platform capabilities
+export TF_VAR_newrelic_account_id=$(cd ../terraform/nr_account && terraform output -raw account_id)
+./install-nr-resources.sh
+```
+
+### Environment Variables
+
+You can set environment variables to avoid Terraform prompts. If not set, Terraform will prompt for required values interactively.
+
+#### install-nr-account.sh
+
+| Variable | Required | Description |
+|----------|----------|-------------|
+| `TF_VAR_newrelic_api_key` | Yes | New Relic User API Key with Organization Manager permissions |
+| `TF_VAR_newrelic_parent_account_id` | Yes | Parent account ID for sub-account creation |
+| `TF_VAR_newrelic_region` | No | New Relic region (US or EU, default: US) |
+| `TF_VAR_subaccount_name` | Yes | Name for the new sub-account |
+| `TF_VAR_admin_authentication_domain_name` | No | Authentication domain for admin group (default: Default) |
+| `TF_VAR_admin_group_name` | Yes | Admin group name (must already exist in New Relic) |
+| `TF_VAR_admin_role_name` | No | Admin role name (default: all_product_admin) |
+| `TF_VAR_readonly_authentication_domain_name` | No | Authentication domain for readonly user (default: Default) |
+| `TF_VAR_readonly_role_name` | No | Role for readonly user (default: read_only) |
+| `TF_VAR_readonly_user_email` | Yes | Email address for readonly user |
+| `TF_VAR_readonly_user_name` | Yes | Display name for readonly user |
+| `TF_AUTO_APPROVE` | No | Set to `true` to skip Terraform confirmation prompts |
+
+#### install-nr-resources.sh
+
+| Variable | Required | Description |
+|----------|----------|-------------|
+| `TF_VAR_newrelic_api_key` | Yes | New Relic User API Key |
+| `TF_VAR_newrelic_account_id` | Yes | New Relic Account ID where resources will be created |
+| `TF_AUTO_APPROVE` | No | Set to `true` to skip Terraform confirmation prompts |
+
+#### cleanup-nr-account.sh & cleanup-nr-resources.sh
+
+These cleanup scripts use the Terraform state to destroy resources, so no variables are required. However, Terraform may prompt for the API key and region if they're needed for destroy provisioners.
+
+| Variable | Required | Description |
+|----------|----------|-------------|
+| `TF_VAR_newrelic_api_key` | Maybe | May be prompted by Terraform if needed for destroy provisioners |
+| `TF_VAR_newrelic_region` | Maybe | May be prompted by Terraform if needed for destroy provisioners |
+| `TF_AUTO_APPROVE` | No | Set to `true` to skip Terraform confirmation prompts |
+
+**Example - Interactive mode (Terraform prompts for values):**
+
+```bash
+./install-nr-account.sh
+# Terraform will prompt for all required variables
+```
+
+**Example - Automated mode with environment variables:**
+
+```bash
+export TF_VAR_newrelic_api_key="your-api-key"
+export TF_VAR_newrelic_parent_account_id="12345"
+export TF_VAR_subaccount_name="OpenTelemetry Demo"
+export TF_VAR_admin_group_name="Admin"
+export TF_VAR_readonly_user_email="demo@example.com"
+export TF_VAR_readonly_user_name="Demo User"
+export TF_AUTO_APPROVE=true
+
+./install-nr-account.sh
+# Optional variables not set will use Terraform defaults
+```
+
+### Manual Terraform Workflow
+
+If you prefer to run Terraform commands directly, please see the individual modules under `terraform/` directory.
+
+### Cleanup
+
+To remove Terraform-created resources:
+
+```bash
+cd opentelemetry-demo/newrelic/scripts
+./cleanup-nr-resources.sh  # Remove New Relic resources (SLOs, etc.)
+./cleanup-nr-account.sh     # Remove sub-account and license key
+```
 
 ## Kubernetes Installation
 
-Run the `install-k8s.sh` script to install the Astronomy Shop Demo into your cluster.  This script uses `helm` to perform the install so if you'd rather use `kubectl` and manifests, you can find them [here](./k8s/rendered).  
-
-> **_NOTE:_** You'll be prompted for your New Relic license key so have it ready!
+Run the `install-k8s.sh` script to install the Astronomy Shop Demo into your cluster.  This script uses `helm` to perform the install so if you'd rather use `kubectl` and manifests, you can find them [here](./k8s/rendered).
 
 ```bash
+./install-k8s.sh
+```
+
+### Environment Variables
+
+You can set environment variables to avoid interactive prompts. If not set, the script will prompt for values.
+
+| Variable | Required | Description |
+|----------|----------|-------------|
+| `NEW_RELIC_LICENSE_KEY` | Yes | New Relic Ingest License Key |
+| `IS_OPENSHIFT_CLUSTER` | No | Set to `y` for OpenShift clusters, `n` otherwise (default: n) |
+
+**Example:**
+
+```bash
+export NEW_RELIC_LICENSE_KEY="your-license-key"
+export IS_OPENSHIFT_CLUSTER="n"
 ./install-k8s.sh
 ```
 
@@ -140,11 +304,29 @@ namespace "opentelemetry-demo" deleted
 
 While we recommend running in Kubernetes, the OpenTelemetry Astronomy Shop demo can also run on a Docker machine as well.  Use the `install-docker.sh` script to get up and running quickly.
 
-> **_NOTE:_** You'll be prompted for your New Relic license key so have it ready!
+```bash
+./install-docker.sh
+```
+
+### Environment Variables
+
+You can set environment variables to avoid interactive prompts. If not set, the script will prompt for values.
+
+| Variable | Required | Description |
+|----------|----------|-------------|
+| `NEW_RELIC_LICENSE_KEY` | Yes | New Relic Ingest License Key |
+
+**Example:**
+
+```bash
+export NEW_RELIC_LICENSE_KEY="your-license-key"
+./install-docker.sh
+```
+
+Example output:
 
 ```bash
 $ ./install-docker.sh
-Please enter your New Relic License Key: <REDACTED>
 [+] Running 21/21
  ✔ Container fraud-detection  Started      16.2s 
  ✔ Container accounting       Started      16.2s 
