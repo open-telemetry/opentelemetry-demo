@@ -100,6 +100,7 @@ fi
 
 if [ "$OTEL_DEMO_UPDATED" = false ] && [ "$NR_K8S_UPDATED" = false ]; then
   echo "No updates were necessary. Charts are up to date."
+  exit 0
 fi
 
 TARGET_REPO="${TARGET_REPO:-newrelic/opentelemetry-demo}"
