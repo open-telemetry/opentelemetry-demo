@@ -10,11 +10,13 @@ on:
 
 permissions:
   contents: read
+  id-token: write
 
 jobs:
   build_images:
     permissions:
       contents: read
       packages: write
-    if: github.repository == 'open-telemetry/opentelemetry-demo'
+      id-token: write
+    if: github.repository == 'tsuga-dev/opentelemetry-demo'
     uses: ./.github/workflows/component-build-images.yml

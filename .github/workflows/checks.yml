@@ -11,12 +11,14 @@ on:
 
 permissions:
   contents: read
+  id-token: write
 
 jobs:
   build_images:
     permissions:  # required by the reusable workflow
       contents: read
       packages: write
+      id-token: write
     uses: ./.github/workflows/component-build-images.yml
     with:
       push: false

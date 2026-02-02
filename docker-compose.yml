@@ -792,6 +792,7 @@ services:
       - POSTGRES_DB
     volumes:
       - ./src/postgresql/init.sql:/docker-entrypoint-initdb.d/init.sql
+    command: ["docker-entrypoint.sh", "-c", "log_statement=all", "-c", "log_destination=stderr"]
     logging: *logging
 
   # Valkey used by Cart service
