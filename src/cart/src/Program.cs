@@ -2,8 +2,16 @@
 // SPDX-License-Identifier: Apache-2.0
 using System;
 
+using Grpc.Health.V1;
+using Microsoft.AspNetCore.Diagnostics.HealthChecks;
+using System.Threading.Tasks;
+using System.Threading;
+
+using Grpc.Core;
+
 using cart.cartstore;
 using cart.services;
+using cart.healthcheck;
 
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
@@ -79,8 +87,11 @@ builder.Services.AddOpenTelemetry()
         .SetExemplarFilter(ExemplarFilterType.TraceBased)
         .AddOtlpExporter());
 builder.Services.AddGrpc();
+builder.Services.AddSingleton<readinessCheck>();
 builder.Services.AddGrpcHealthChecks()
-    .AddCheck("Sample", () => HealthCheckResult.Healthy());
+    .AddCheck<readinessCheck>("oteldemo.CartService");
+
+builder.Services.AddSingleton<HealthServiceImpl>();
 
 var app = builder.Build();
 
@@ -88,7 +99,7 @@ var ValkeyCartStore = (ValkeyCartStore)app.Services.GetRequiredService<ICartStor
 app.Services.GetRequiredService<StackExchangeRedisInstrumentation>().AddConnection(ValkeyCartStore.GetConnection());
 
 app.MapGrpcService<CartService>();
-app.MapGrpcHealthChecksService();
+app.MapGrpcService<HealthServiceImpl>();
 
 app.MapGet("/", async context =>
 {
@@ -96,3 +107,5 @@ app.MapGet("/", async context =>
 });
 
 app.Run();
+
+

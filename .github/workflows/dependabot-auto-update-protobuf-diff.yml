@@ -18,7 +18,7 @@ jobs:
     if: github.event.pull_request.user.login == 'dependabot[bot]'
     steps:
       - name: Checkout
-        uses: actions/checkout@v6.0.1
+        uses: actions/checkout@v6.0.2
         with:
           ref: ${{ github.head_ref }}
           token: ${{ secrets.DEPENDABOT_TOKEN }}

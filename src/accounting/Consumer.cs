@@ -31,7 +31,7 @@ internal class Consumer : IDisposable
     private ILogger _logger;
     private IConsumer<string, byte[]> _consumer;
     private bool _isListening;
-    private DBContext? _dbContext;
+    private readonly string? _dbConnectionString;
     private static readonly ActivitySource MyActivitySource = new("Accounting.Consumer");
 
     public Consumer(ILogger<Consumer> logger)
@@ -49,7 +49,7 @@ internal class Consumer : IDisposable
            _logger.LogInformation("Connecting to Kafka: {servers}", servers);
        }
 
-        _dbContext = Environment.GetEnvironmentVariable("DB_CONNECTION_STRING") == null ? null : new DBContext();
+        _dbConnectionString = Environment.GetEnvironmentVariable("DB_CONNECTION_STRING");
     }
 
     public void StartListening()
@@ -90,16 +90,17 @@ internal class Consumer : IDisposable
             var order = OrderResult.Parser.ParseFrom(message.Value);
             Log.OrderReceivedMessage(_logger, order);
 
-            if (_dbContext == null)
+            if (_dbConnectionString == null)
             {
                 return;
             }
 
+            using var dbContext = new DBContext();
             var orderEntity = new OrderEntity
             {
                 Id = order.OrderId
             };
-            _dbContext.Add(orderEntity);
+            dbContext.Add(orderEntity);
             foreach (var item in order.Items)
             {
                 var orderItem = new OrderItemEntity
@@ -112,7 +113,7 @@ internal class Consumer : IDisposable
                     OrderId = order.OrderId
                 };
 
-                _dbContext.Add(orderItem);
+                dbContext.Add(orderItem);
             }
 
             var shipping = new ShippingEntity
@@ -128,8 +129,8 @@ internal class Consumer : IDisposable
                 ZipCode = order.ShippingAddress.ZipCode,
                 OrderId = order.OrderId
             };
-            _dbContext.Add(shipping);
-            _dbContext.SaveChanges();
+            dbContext.Add(shipping);
+            dbContext.SaveChanges();
         }
         catch (Exception ex)
         {
