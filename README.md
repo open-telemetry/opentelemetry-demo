@@ -71,9 +71,9 @@ keeping it up to date for you.
 | [Causely]                 | [Liatrio]      | [Teletrace]                      |
 | [ClickStack]              | [Logz.io]      | [Tinybird]                       |
 | [Coralogix]               | [New Relic]    | [Tracetest]                      |
-| [Dash0]                   | [Oodle]        | [Uptrace]                        |
-| [Datadog]                 | [OpenObserve]  | [VictoriaMetrics]                |
-| [Dynatrace]               | [OpenSearch]   |                                  |
+| [Dash0]                   | [Oodle]        | [Tsuga]                          |
+| [Datadog]                 | [OpenObserve]  | [Uptrace]                        |
+| [Dynatrace]               | [OpenSearch]   | [VictoriaMetrics]                |
 | [Elastic]                 | [Oracle]       |                                  |
 
 ## Contributing
@@ -156,5 +156,6 @@ For more information about the emeritus role, see the [community repository](htt
 [Teletrace]: https://github.com/teletrace/opentelemetry-demo
 [Tinybird]: https://github.com/tinybirdco/opentelemetry-demo
 [Tracetest]: https://github.com/kubeshop/opentelemetry-demo
+[Tsuga]: https://github.com/tsuga-dev/opentelemetry-demo
 [Uptrace]: https://github.com/uptrace/uptrace/tree/master/example/opentelemetry-demo
 [VictoriaMetrics]: https://github.com/VictoriaMetrics-Community/opentelemetry-demo
