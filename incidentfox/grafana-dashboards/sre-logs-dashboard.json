@@ -1,0 +1,165 @@
+{
+  "dashboard": {
+    "id": null,
+    "uid": "sre-logs-dashboard",
+    "title": "SRE Logs Analysis",
+    "description": "Centralized log analysis with volume metrics and log exploration",
+    "tags": ["sre", "logs", "loki"],
+    "timezone": "browser",
+    "schemaVersion": 39,
+    "refresh": "30s",
+    "time": {
+      "from": "now-1h",
+      "to": "now"
+    },
+    "templating": {
+      "list": [
+        {
+          "name": "service",
+          "type": "query",
+          "datasource": { "type": "loki", "uid": "loki" },
+          "query": "label_values(service_name)",
+          "refresh": 2,
+          "includeAll": true,
+          "multi": true,
+          "current": { "text": "All", "value": "$__all" }
+        },
+        {
+          "name": "search",
+          "type": "textbox",
+          "current": { "text": "", "value": "" },
+          "label": "Log Search"
+        }
+      ]
+    },
+    "panels": [
+      {
+        "id": 1,
+        "title": "Log Volume by Service",
+        "type": "timeseries",
+        "gridPos": { "h": 6, "w": 24, "x": 0, "y": 0 },
+        "datasource": { "type": "loki", "uid": "loki" },
+        "fieldConfig": {
+          "defaults": {
+            "custom": {
+              "drawStyle": "bars",
+              "lineWidth": 1,
+              "fillOpacity": 50,
+              "stacking": { "mode": "normal" }
+            },
+            "color": { "mode": "palette-classic" },
+            "unit": "short"
+          }
+        },
+        "options": {
+          "legend": { "displayMode": "table", "placement": "right", "calcs": ["sum"] }
+        },
+        "targets": [{
+          "expr": "sum by (service_name) (count_over_time({service_name=~\"$service\"} [$__interval]))",
+          "legendFormat": "{{service_name}}"
+        }]
+      },
+      {
+        "id": 2,
+        "title": "Error Logs",
+        "type": "logs",
+        "gridPos": { "h": 10, "w": 24, "x": 0, "y": 6 },
+        "datasource": { "type": "loki", "uid": "loki" },
+        "options": {
+          "showTime": true,
+          "showLabels": true,
+          "showCommonLabels": false,
+          "wrapLogMessage": true,
+          "prettifyLogMessage": false,
+          "enableLogDetails": true,
+          "dedupStrategy": "none",
+          "sortOrder": "Descending"
+        },
+        "targets": [{
+          "expr": "{service_name=~\"$service\"} |~ \"(?i)error|exception|fail|fatal\"",
+          "maxLines": 100
+        }]
+      },
+      {
+        "id": 3,
+        "title": "Log Stream (All Logs)",
+        "type": "logs",
+        "gridPos": { "h": 12, "w": 24, "x": 0, "y": 16 },
+        "datasource": { "type": "loki", "uid": "loki" },
+        "options": {
+          "showTime": true,
+          "showLabels": true,
+          "showCommonLabels": false,
+          "wrapLogMessage": true,
+          "prettifyLogMessage": false,
+          "enableLogDetails": true,
+          "dedupStrategy": "none",
+          "sortOrder": "Descending"
+        },
+        "targets": [{
+          "expr": "{service_name=~\"$service\"} |~ \"$search\"",
+          "maxLines": 200
+        }]
+      },
+      {
+        "id": 4,
+        "title": "Log Count by Service (Last Hour)",
+        "type": "piechart",
+        "gridPos": { "h": 8, "w": 8, "x": 0, "y": 28 },
+        "datasource": { "type": "loki", "uid": "loki" },
+        "fieldConfig": {
+          "defaults": {
+            "color": { "mode": "palette-classic" }
+          }
+        },
+        "options": {
+          "legend": { "displayMode": "table", "placement": "right", "values": ["value", "percent"] },
+          "pieType": "donut",
+          "reduceOptions": { "calcs": ["sum"], "fields": "", "values": false }
+        },
+        "targets": [{
+          "expr": "sum by (service_name) (count_over_time({service_name=~\"$service\"}[1h]))",
+          "legendFormat": "{{service_name}}",
+          "instant": true
+        }]
+      },
+      {
+        "id": 5,
+        "title": "Logs by Kubernetes Pod",
+        "type": "table",
+        "gridPos": { "h": 8, "w": 16, "x": 8, "y": 28 },
+        "datasource": { "type": "loki", "uid": "loki" },
+        "fieldConfig": {
+          "defaults": {
+            "color": { "mode": "thresholds" },
+            "thresholds": {
+              "steps": [
+                { "color": "blue", "value": null }
+              ]
+            }
+          },
+          "overrides": [
+            {
+              "matcher": { "id": "byName", "options": "Value" },
+              "properties": [{ "id": "custom.width", "value": 100 }]
+            }
+          ]
+        },
+        "options": {
+          "showHeader": true,
+          "sortBy": [{ "displayName": "Value", "desc": true }]
+        },
+        "targets": [{
+          "expr": "sum by (service_name, k8s_pod_name) (count_over_time({service_name=~\"$service\"}[1h]))",
+          "legendFormat": "",
+          "instant": true
+        }],
+        "transformations": [
+          { "id": "sortBy", "options": { "fields": {}, "sort": [{ "field": "Value", "desc": true }] } }
+        ]
+      }
+    ]
+  },
+  "folderUid": "sre-dashboards",
+  "overwrite": true
+}

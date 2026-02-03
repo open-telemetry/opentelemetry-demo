@@ -1,0 +1,62 @@
+# Datadog Agent - Minimal configuration for testing
+# Avoids features that require higher tier plans
+
+datadog:
+  site: us5.datadoghq.com
+  clusterName: incidentfox-demo
+  
+  # Basic logs collection
+  logs:
+    enabled: true
+    containerCollectAll: true
+  
+  # Enable APM (traces)
+  apm:
+    portEnabled: true
+    socketEnabled: true
+  
+  # DISABLE process monitoring (requires Pro/Enterprise)
+  processAgent:
+    enabled: false
+    processCollection: false
+    containerCollection: false  # Explicitly disable
+  
+  # DISABLE Kubernetes state metrics collection via agent
+  kubeStateMetricsEnabled: false
+  
+  # DISABLE OTLP receiver (conflicts with OTel Collector)
+  otlp:
+    receiver:
+      protocols:
+        grpc:
+          enabled: false
+        http:
+          enabled: false
+
+  # DISABLE orchestrator explorer (requires higher tier)
+  orchestratorExplorer:
+    enabled: false
+
+# Cluster Agent - minimal
+clusterAgent:
+  enabled: true
+  replicas: 1
+  admissionController:
+    enabled: false  # Disable to simplify
+
+# DaemonSet agent resources
+agents:
+  resources:
+    requests:
+      cpu: 100m
+      memory: 256Mi
+    limits:
+      cpu: 300m
+      memory: 512Mi
+  
+  tolerations:
+    - operator: Exists
+
+# Disable Kube State Metrics (use existing one if needed)
+kubeStateMetricsCore:
+  enabled: false

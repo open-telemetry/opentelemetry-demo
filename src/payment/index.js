@@ -16,13 +16,14 @@ async function chargeServiceHandler(call, callback) {
     span?.setAttributes({
       'app.payment.amount': parseFloat(`${amount.units}.${amount.nanos}`).toFixed(2)
     })
-    logger.info({ request: call.request }, "Charge request received.")
+    // Log minimal info instead of full request to reduce log volume
+    logger.info({ amount: `${call.request.amount?.units}.${call.request.amount?.nanos} ${call.request.amount?.currencyCode}` }, "Charge request received.")
 
     const response = await charge.charge(call.request)
     callback(null, response)
 
   } catch (err) {
-    logger.warn({ err })
+    logger.error({ err })
 
     span?.recordException(err)
     span?.setStatus({ code: opentelemetry.SpanStatusCode.ERROR })

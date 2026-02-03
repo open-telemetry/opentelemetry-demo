@@ -516,13 +516,13 @@ trigger_scenario() {
         fi
     else
         # Local mode: run the scenario script
-        local script
-        script=$(get_scenario_script "$scenario") || return 1
-        
-        if [ ! -x "$script" ]; then
-            chmod +x "$script"
-        fi
-        
+    local script
+    script=$(get_scenario_script "$scenario") || return 1
+    
+    if [ ! -x "$script" ]; then
+        chmod +x "$script"
+    fi
+    
         if ! "$script" "${scenario_args[@]:-}"; then
             print_error "Failed to trigger incident"
             return 1
@@ -560,15 +560,15 @@ main() {
     # Pre-parse for global flags
     local args=()
     while [[ $# -gt 0 ]]; do
-        case "$1" in
-            --help|-h)
-                show_help
-                exit 0
-                ;;
-            --list|-l)
-                list_scenarios
-                exit 0
-                ;;
+    case "$1" in
+        --help|-h)
+            show_help
+            exit 0
+            ;;
+        --list|-l)
+            list_scenarios
+            exit 0
+            ;;
             --kube|-k)
                 KUBE_MODE=true
                 shift
@@ -577,16 +577,16 @@ main() {
                 KUBE_NAMESPACE="$2"
                 shift 2
                 ;;
-            --status|-s)
+        --status|-s)
                 # Need to check if --kube was already parsed
                 for arg in "$@"; do
                     if [[ "$arg" == "--kube" || "$arg" == "-k" ]]; then
                         KUBE_MODE=true
                     fi
                 done
-                check_status
-                exit 0
-                ;;
+            check_status
+            exit 0
+            ;;
             --incidentio)
                 TRIGGER_INCIDENTIO=true
                 shift
@@ -594,12 +594,12 @@ main() {
             --incidentio-delay)
                 INCIDENTIO_DELAY="$2"
                 shift 2
-                ;;
-            *)
+            ;;
+        *)
                 args+=("$1")
                 shift
-                ;;
-        esac
+            ;;
+    esac
     done
     
     # Need at least a scenario

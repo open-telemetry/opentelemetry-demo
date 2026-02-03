@@ -11,6 +11,9 @@
 | Clear all failures | `./incidentfox/scripts/trigger-incident.sh clear-all --kube` |
 | Check EKS pods | `kubectl -n otel-demo get pods` |
 | Check flagd config | `kubectl get configmap flagd-config -n otel-demo -o jsonpath='{.data.demo\.flagd\.json}' \| jq .` |
+| **Telemetry URLs** | `./incidentfox/scripts/setup-telemetry.sh --urls` |
+| **Telemetry status** | `./incidentfox/scripts/setup-telemetry.sh --status` |
+| **Setup telemetry** | `./incidentfox/scripts/setup-telemetry.sh` (full setup) |
 
 ---
 
@@ -33,10 +36,14 @@ aws-playground/
 ├── incidentfox/
 │   ├── scripts/
 │   │   ├── trigger-incident.sh   # Master script for failure injection
+│   │   ├── setup-telemetry.sh    # Setup/configure telemetry systems
 │   │   ├── trigger_incidentio_incident.sh  # Direct incident.io API caller
 │   │   └── scenarios/            # Individual failure scenario scripts
 │   ├── docs/
+│   │   ├── CONTEST_RULES.md      # Weekly contest rules and instructions
 │   │   └── coralogix-alerts.md   # Alert definitions documentation
+│   ├── helm/
+│   │   └── values-loki.yaml      # Loki Helm values
 │   └── terraform/
 │       └── coralogix-alerts/     # Terraform for Coralogix alerts (incomplete)
 └── AGENTS.md                     # This file
@@ -76,9 +83,17 @@ The demo runs on **AWS EKS** in `us-west-2`:
 ```
 Services → OTel Collector (otel-demo namespace)
                 ↓
-         Coralogix OTel Integration (coralogix namespace)
-                ↓
-         Coralogix Cloud (logs, traces, metrics)
+         ┌──────────────────────────────────────┐
+         │  Logs → Loki → Grafana               │
+         │  Traces → Jaeger                     │
+         │  Metrics → Prometheus → Grafana      │
+         └──────────────────────────────────────┘
+
+Public Access (no auth required):
+  - Grafana: logs + dashboards
+  - Jaeger: traces
+  - Prometheus: metrics
+  - Loki API: for AI agents
                 ↓
          Coralogix Alerts → incident.io API → Slack
 ```
@@ -216,10 +231,11 @@ curl -X POST "https://api.incident.io/v2/incidents" \
 
 The original `load-generator` has been **scaled to 0** due to a Python/gevent bug that caused constant crashes.
 
-We now use `traffic-generator` - a simple pod running curl loops that generates continuous traffic including checkout flows.
+We now use `traffic-generator` - a **Deployment** running curl loops that generates continuous traffic including checkout flows. As a Deployment, it auto-restarts if it crashes.
 
 ```bash
 # Check traffic generator status
+kubectl -n otel-demo get deployment traffic-generator
 kubectl -n otel-demo get pods | grep traffic
 
 # Verify traffic is flowing (look for recent payment logs)
@@ -228,8 +244,7 @@ kubectl -n otel-demo logs deployment/payment --tail=5
 
 If traffic stops flowing, restart the traffic-generator:
 ```bash
-kubectl -n otel-demo delete pod traffic-generator
-# It will be recreated automatically
+kubectl -n otel-demo rollout restart deployment/traffic-generator
 ```
 
 ### Feature Flag Not Taking Effect
@@ -393,8 +408,8 @@ pkill -f "port-forward.*flagd"
 | Feature flags (flagd) | ✅ Working | All flags off |
 | Coralogix integration | ✅ Working | Logs, traces, metrics flowing |
 | OTel Collector | ✅ Working | Forwarding to Coralogix |
-| traffic-generator | ✅ Running | Generating continuous traffic |
-| load-generator | ⏸️ Scaled to 0 | Replaced by traffic-generator |
+| traffic-generator | ✅ Deployment | Auto-restarts, generates checkout traffic every 2s |
+| load-generator | ⏸️ Scaled to 0 | Disabled (Python/gevent crash bug) |
 | OpenSearch | ⏸️ Disabled | Removed from pipeline, using Coralogix |
 
 ---

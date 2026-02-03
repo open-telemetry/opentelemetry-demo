@@ -12,11 +12,8 @@ const transport = pino.transport({
         exporterOptions: {
           protocol: 'grpc',
         }
-      },
-      {
-        recordProcessorType: 'simple',
-        exporterOptions: { protocol: 'console' }
       }
+      // Console exporter removed to reduce log volume
     ],
     loggerName: 'payment-logger',
     serviceVersion: '1.0.0'

@@ -1,0 +1,43 @@
+# Build and push custom payment image to ECR
+# Trigger manually to build the payment service with custom changes
+
+name: Build Payment Image
+
+on:
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: 'Image tag'
+        required: true
+        default: 'v1'
+
+permissions:
+  id-token: write
+  contents: read
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: arn:aws:iam::103002841599:role/github-actions-ecr
+          aws-region: us-west-2
+      
+      - name: Login to Amazon ECR
+        id: login-ecr
+        uses: aws-actions/amazon-ecr-login@v2
+      
+      - name: Build and push
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          file: ./src/payment/Dockerfile
+          push: true
+          platforms: linux/amd64
+          tags: |
+            103002841599.dkr.ecr.us-west-2.amazonaws.com/otel-demo-payment:${{ inputs.tag }}
+            103002841599.dkr.ecr.us-west-2.amazonaws.com/otel-demo-payment:latest
