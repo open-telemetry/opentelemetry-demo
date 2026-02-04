@@ -20,7 +20,7 @@ set -euo pipefail
 source "$(dirname "$0")/common.sh"
 check_tool_installed docker
 
-prompt_for_env_var "NEW_RELIC_LICENSE_KEY" "Please enter your New Relic License Key" true
+prompt_for_license_key
 
 # Run docker compose with comprehensive error handling
 if ! docker compose --env-file ../../.env --env-file ../../.env.override --file ../docker/docker-compose.yml up --force-recreate --remove-orphans --detach; then

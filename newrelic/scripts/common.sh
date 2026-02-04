@@ -116,6 +116,27 @@ validate_yesno_answer() {
   set -u
 }
 
+# Set NEW_RELIC_LICENSE_KEY variable from environment or prompt user
+prompt_for_license_key() {
+  prompt_for_env_var "NEW_RELIC_LICENSE_KEY" "Please enter your New Relic License Key" true
+}
+
+# Set NEW_RELIC_API_KEY variable from environment or prompt user
+prompt_for_api_key() {
+  prompt_for_env_var "NEW_RELIC_API_KEY" "Please enter your New Relic API Key" true
+}
+
+# Set NEW_RELIC_ACCOUNT_ID variable from environment or prompt user
+prompt_for_account_id() {
+  prompt_for_env_var "NEW_RELIC_ACCOUNT_ID" "Please enter your New Relic Account ID" true
+}
+
+# Prompt user to confirm if installation is for an OpenShift cluster
+prompt_for_openshift() {
+  prompt_for_env_var "IS_OPENSHIFT_CLUSTER" "Is this installation for an OpenShift cluster? (y/n, default: n)" false
+  validate_yesno_answer "IS_OPENSHIFT_CLUSTER"
+}
+
 function sed_i() {
   if [[ "$OSTYPE" == "darwin"* ]]; then
     # macOS/BSD: needs the empty string argument

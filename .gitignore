@@ -70,4 +70,4 @@ license_key.txt
 .terraform.lock.hcl
 
 #env
-*.env
+newrelic/scripts/*.env*

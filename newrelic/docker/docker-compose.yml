@@ -761,7 +761,7 @@ services:
       - POSTGRES_PASSWORD
       - POSTGRES_DB
     volumes:
-      - ./src/postgresql/init.sql:/docker-entrypoint-initdb.d/init.sql
+      - ../../src/postgresql/init.sql:/docker-entrypoint-initdb.d/init.sql
     logging: *logging
   # Valkey used by Cart service
   valkey-cart:
