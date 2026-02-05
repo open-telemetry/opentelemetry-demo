@@ -1,0 +1,11 @@
+# Copyright The OpenTelemetry Authors
+# SPDX-License-Identifier: Apache-2.0
+
+groups:
+  - id: service.load_generator
+    type: attribute_group
+    brief: Load Generator baggage attributes
+    stability: stable
+    attributes:
+      - ref: session.id
+      - ref: app.synthetic_request
