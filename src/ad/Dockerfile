@@ -29,8 +29,7 @@ WORKDIR /usr/src/app/
 COPY --from=builder /usr/src/app/ ./
 
 # Download FusionReactor jar (architecture-independent)
-#ADD --chmod=644 https://download.fusionreactor.io/FR/Latest/fusionreactor.jar /usr/src/app/fusionreactor.jar
-ADD --chmod=644 https://download.fusionreactor.io/FR/FusionReactor-2025.2.0-SNAPSHOT/fusionreactor.jar /usr/src/app/fusionreactor.jar
+ADD --chmod=644 https://download.fusionreactor.io/FR/Latest/fusionreactor.jar /usr/src/app/fusionreactor.jar
 
 # Download architecture-specific FusionReactor native library
 RUN ARCH=$(uname -m) && \
