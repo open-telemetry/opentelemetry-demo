@@ -7,48 +7,22 @@ global:
 
 otlp:
   keep_identifying_resource_attributes: true
+  # Resource attributes are NOT promoted to labels on metrics.
+  # Instead, use the experimental info() PromQL function to enrich metrics with
+  # labels from target_info at query time. This reduces label cardinality while
+  # still allowing access to resource attributes in queries.
+  # See https://prometheus.io/blog/2025/12/16/introducing-info-function/
   promote_resource_attributes:
-    - service.instance.id
-    - service.name
-    - service.namespace
-    - service.version
-    - cloud.availability_zone
-    - cloud.region
-    - deployment.environment.name
-
-    # When deploying on Kubernetes, resource attributes used to identify the
-    # kubernetes resources in dashboards and alerts.
-    - k8s.cluster.name
-    - k8s.container.name
-    - k8s.cronjob.name
-    - k8s.daemonset.name
-    - k8s.deployment.name
-    - k8s.job.name
-    - k8s.namespace.name
-    - k8s.node.name
-    - k8s.pod.name
-    - k8s.replicaset.name
-    - k8s.statefulset.name
-    - container.name
-
-    # When deploying on VMs, resource attributes used to identify
-    # the host in dashboards and alerts.
-    - host.name
-
-    # PostgreSQL resource attributes produced by the OTel Collector PostgreSQL receiver
-    # and used in dashboards and alerts.
-    # See https://github.com/open-telemetry/opentelemetry-collector-contrib/blob/main/receiver/postgresqlreceiver/metadata.yaml
-    - postgresql.database.name
-    - postgresql.schema.name
-    - postgresql.table.name
-    - postgresql.index.name
-
     # Kafka resource attributes produced by the OTel Collector Kafka receiver
     # https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/main/receiver/kafkametricsreceiver
     - kafka.cluster.alias
 
     # See https://github.com/open-telemetry/opentelemetry-collector-contrib/blob/v0.142.0/connector/spanmetricsconnector/README.md#known-limitation-the-single-writer-principle
     - collector.instance.id
+
+    # host.name is needed for system/host metrics from the hostmetrics receiver,
+    # which cannot use info() because they lack service.name to match target_info.
+    - host.name
 storage:
   tsdb:
     out_of_order_time_window: 30m

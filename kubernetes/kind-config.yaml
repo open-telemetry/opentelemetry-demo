@@ -1,0 +1,15 @@
+# Kind cluster configuration for OpenTelemetry Demo
+# Creates a cluster with port mapping for the frontend proxy
+#
+# Usage:
+#   kind create cluster --config kubernetes/kind-config.yaml --name otel-demo
+#
+kind: Cluster
+apiVersion: kind.x-k8s.io/v1alpha4
+nodes:
+  - role: control-plane
+    extraPortMappings:
+      # Frontend proxy (main entry point) - exposed via NodePort
+      - containerPort: 30080
+        hostPort: 8080
+        protocol: TCP
