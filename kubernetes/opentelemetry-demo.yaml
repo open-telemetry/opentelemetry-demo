@@ -254,11 +254,11 @@ data:
             insecure: true
         logs_index: otel-logs
         logs_index_time_format: yyyy-MM-dd
-      otlp_grpc:
+      otlp:
         endpoint: jaeger-collector:4317
         tls:
           insecure: true
-      otlp_http/prometheus:
+      otlphttp/prometheus:
         endpoint: http://prometheus:9090/api/v1/otlp
         tls:
           insecure: true
@@ -390,7 +390,7 @@ data:
           - otlp
         metrics:
           exporters:
-          - otlp_http/prometheus
+          - otlphttp/prometheus
           - debug
           processors:
           - k8sattributes
@@ -407,7 +407,7 @@ data:
           - spanmetrics
         traces:
           exporters:
-          - otlp_grpc
+          - otlp
           - debug
           - spanmetrics
           processors:
@@ -18351,7 +18351,7 @@ spec:
             - --config=/conf/relay.yaml
           securityContext:
             {}
-          image: "otel/opentelemetry-collector-contrib:0.144.0"
+          image: "otel/opentelemetry-collector-contrib:0.135.0"
           imagePullPolicy: IfNotPresent
           ports:
             
