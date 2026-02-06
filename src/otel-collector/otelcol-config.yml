@@ -121,13 +121,13 @@ receivers:
             enabled: true
 exporters:
   debug:
-  otlp:
+  otlp_grpc:
     endpoint: "jaeger:4317"
     tls:
       insecure: true
     sending_queue:
       batch:
-  otlphttp/prometheus:
+  otlp_http/prometheus:
     endpoint: "http://prometheus:9090/api/v1/otlp"
     tls:
       insecure: true
@@ -169,11 +169,11 @@ service:
     traces:
       receivers: [otlp]
       processors: [resourcedetection, memory_limiter, transform]
-      exporters: [otlp, debug, spanmetrics]
+      exporters: [otlp_grpc, debug, spanmetrics]
     metrics:
       receivers: [docker_stats, httpcheck/frontend-proxy, hostmetrics, nginx, otlp, postgresql, redis, spanmetrics]
       processors: [resourcedetection, memory_limiter]
-      exporters: [otlphttp/prometheus, debug]
+      exporters: [otlp_http/prometheus, debug]
     logs:
       receivers: [otlp]
       processors: [resourcedetection, memory_limiter]
