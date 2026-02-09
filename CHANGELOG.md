@@ -9,8 +9,9 @@ the release.
 
 * [accounting] fix memory leak with dbcontext
   ([#2876](https://github.com/open-telemetry/opentelemetry-demo/pull/2876))
-* [chore] Bump OTel Collector to v0.144.0 and rename OTLP exporters
-  `otlp`--> `otlp_grpc` and `otlphttp` --> `otlp_http`
+* [chore] Upgrade OTel Collector to v0.144.0 with :warning: breaking change:
+  OTLP exporters renamed from `otlp` to `otlp_grpc/jaeger` and from
+  `otlphttp/prometheus` to `otlp_http/prometheus`
   [#2942](https://github.com/open-telemetry/opentelemetry-demo/pull/2942)
 * [collector] Use the
   [`set_semconv_span_name()`](https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/main/processor/transformprocessor#set_semconv_span_name)
