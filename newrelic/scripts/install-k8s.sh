@@ -16,6 +16,27 @@
 #   - Access to the target Kubernetes cluster
 #   - NEW_RELIC_LICENSE_KEY (will prompt if not set)
 # -----------------------------------------------------------------------------
+
+echo "Retrieving License Key from Terraform..."
+
+# 1. Define where your Terraform state lives (adjust path if needed)
+TF_DIR="../terraform/nr_account"
+
+# 2. Fetch the key directly from the Terraform output
+# We use -raw so we don't get quotes strings
+NEW_RELIC_LICENSE_KEY=$(cd "$TF_DIR" && terraform output -raw license_key)
+
+# 3. SAFETY CHECK: Stop the script if the key is empty
+if [ -z "$NEW_RELIC_LICENSE_KEY" ]; then
+  echo "Error: Could not retrieve license_key from Terraform. Is the state file created?"
+  exit 1
+fi
+
+echo "Success! License key retrieved."
+# ---------------------------------
+
+# ... rest of your script ...
+
 set -euo pipefail
 
 source "$(dirname "$0")/common.sh"
