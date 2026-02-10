@@ -97,7 +97,7 @@ presets:
 config:
   receivers:
     hostmetrics:
-      collection_interval: 10s
+      collection_interval: 30s
       scrapers:
         paging:
           metrics:
@@ -117,6 +117,8 @@ config:
         network:
         processes:
   processors:
+    probabilistic_sampler:
+      sampling_percentage: 11
     resource:
       attributes:
         - key: deployment.environment
@@ -140,6 +142,7 @@ config:
       endpoint: "${OBSERVEINC_COLLECTION_ENDPOINT}/v2/otel"
       headers:
         authorization: "Bearer ${OBSERVEINC_TOKEN}"
+        x-observe-target-package: "Host Explorer"
     otlphttp/newrelic:
       endpoint: "https://otlp.nr-data.net"
       headers:
@@ -174,12 +177,12 @@ config:
     extensions: [health_check, basicauth, sigv4auth/logs]
     pipelines:
       traces:
-        processors: [resource]
-        exporters: [ datadog/connector, datadog/exporter, spanmetrics, otlphttp/elasticsearch, otlphttp/newrelic ]
+        processors: [probabilistic_sampler, resource]
+        exporters: [ datadog/connector, datadog/exporter, spanmetrics, otlphttp/newrelic ]
       metrics:
         receivers: [ otlp, hostmetrics, datadog/connector, spanmetrics ]
         processors: [resource]
-        exporters: [ prometheusremotewrite, datadog/exporter, otlphttp/elasticsearch, otlphttp/newrelic ]
+        exporters: [ prometheusremotewrite, datadog/exporter, otlphttp/newrelic ]
       logs:
         processors: [resource]
-        exporters: [ datadog/exporter, otlphttp/observeinclogs, otlphttp/elasticsearch, otlphttp/newrelic, otlphttp/cloudwatch ]
+        exporters: [ datadog/exporter, otlphttp/observeinclogs, otlphttp/newrelic, otlphttp/cloudwatch, otlphttp/elasticsearch ]
