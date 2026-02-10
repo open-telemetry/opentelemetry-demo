@@ -43,24 +43,32 @@ The service uses a **3-stage Docker build** for optimal performance and observab
 The service includes production-ready OpenTelemetry tracing with:
 
 ### Batch Configuration
+
 - **Interval**: 5s export frequency
 - **Batch size**: 256 spans per batch (optimized for static content)
 - **Batch count**: 2 pending batches per worker (reduced memory footprint)
 
 ### Low-Cardinality Span Names
+
 Implements route parameterization to avoid high cardinality:
-- `/attributes/*.html` → `GET /attributes/{business_domain}`
-- `/services/*.html` → `GET /services/{service_name}`
-- `/index.html` → `GET /index`
-- `/` → `GET /`
+
+- `/attributes/*.html` -> `GET /attributes/{business_domain}`
+- `/services/*.html` -> `GET /services/{service_name}`
+- `/index.html` -> `GET /index`
+- `/` -> `GET /`
 
 ### Tracing Exclusions
-Static assets and health checks are excluded from tracing for **80-90% span volume reduction**:
+
+Static assets and health checks are excluded from tracing for **80-90%
+span volume reduction**:
+
 - Static files (CSS, JS, images, fonts)
 - Search indexes
 - Health check endpoint (`/status`)
 
-This follows [OpenTelemetry HTTP semantic conventions](https://opentelemetry.io/docs/specs/semconv/http/http-spans/) for optimal observability.
+This follows
+[OpenTelemetry HTTP semantic conventions](https://opentelemetry.io/docs/specs/semconv/http/http-spans/)
+for optimal observability.
 
 ## Usage
 
