@@ -9,7 +9,7 @@ the release.
 
 * [accounting] fix memory leak with dbcontext
   ([#2876](https://github.com/open-telemetry/opentelemetry-demo/pull/2876))
-* [chore] Upgrade OTel Collector to v0.144.0 with :warning: breaking change:
+* [chore] Upgrade OTel Collector to v0.145.0 with :warning: breaking change:
   OTLP exporters renamed from `otlp` to `otlp_grpc/jaeger` and from
   `otlphttp/prometheus` to `otlp_http/prometheus`
   [#2942](https://github.com/open-telemetry/opentelemetry-demo/pull/2942)
