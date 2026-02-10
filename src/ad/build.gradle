@@ -137,7 +137,23 @@ task ad(type: CreateStartScripts) {
     classpath = startScripts.classpath
 }
 
-applicationDistribution.into('bin') {
-    from(ad)
-    fileMode = 0755
+distributions {
+    main {
+        contents {
+            into('bin') {
+                from(ad)
+                filePermissions {
+                    unix(0755)
+                }
+            }
+        }
+    }
+}
+
+// Fix implicit dependency issues in Gradle 9
+tasks.named('distZip') {
+    mustRunAfter('compileTestJava')
+}
+tasks.named('distTar') {
+    mustRunAfter('compileTestJava')
 }
