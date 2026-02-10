@@ -54,7 +54,7 @@ static_resources:
                         - match: { path: "/telemetry" }
                           redirect: { path_redirect: "/telemetry/" }
                         - match: { prefix: "/telemetry/" }
-                          route: { cluster: telemetry-docs }
+                          route: { cluster: telemetry-docs, prefix_rewrite: "/" }
                         - match: { prefix: "/images/" }
                           route: { cluster: image-provider, prefix_rewrite: "/" }
                         - match: { prefix: "/flagservice/" }

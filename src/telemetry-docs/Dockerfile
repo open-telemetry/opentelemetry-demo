@@ -4,7 +4,7 @@
 # Two-stage build: Generate service-centric Markdown with Weaver, then serve with mkdocs
 
 # Stage 1: Generate Markdown files from telemetry schema using Weaver
-FROM otel/weaver:latest AS registry-builder
+FROM docker.io/otel/weaver:v0.21.2 AS registry-builder
 
 WORKDIR /workspace
 
@@ -27,25 +27,30 @@ RUN /weaver/weaver registry resolve \
     --format=json \
     --output=/workspace/docs/schema.json
 
-# Stage 2: Serve documentation with mkdocs
-FROM python:3.11-slim
+# Stage 2: Build static site
+FROM python:3.14-slim-bookworm AS site-builder
 
 WORKDIR /app
 
-# Install mkdocs and theme
 RUN pip install --no-cache-dir mkdocs mkdocs-material
 
-# Copy base mkdocs configuration (inherited by generated mkdocs.yml)
 COPY src/telemetry-docs/mkdocs.yml /app/mkdocs-base.yml
-
-# Copy generated documentation
 COPY --from=registry-builder /workspace/docs /app/docs
 
-# Put mkdocs.yml with dynamic navigation into the app root
-RUN mv /app/docs/mkdocs.yml /app/mkdocs.yml
+RUN mv /app/docs/mkdocs.yml /app/mkdocs.yml && \
+    mkdocs build --clean
 
-# Expose port for mkdocs
+# Stage 3: Serve with nginx (tiny!)
+FROM docker.io/nginxinc/nginx-unprivileged:1.29-alpine3.23-otel
+
+USER 101
+
+COPY --from=site-builder /app/site /static
+COPY src/telemetry-docs/nginx.conf.template /nginx.conf.template
+
 EXPOSE ${TELEMETRY_DOCS_PORT}
 
-# Serve documentation
-CMD ["sh", "-c", "mkdocs serve --dev-addr 0.0.0.0:${TELEMETRY_DOCS_PORT}"]
+STOPSIGNAL SIGQUIT
+
+# Start nginx
+CMD ["/bin/sh" , "-c" , "envsubst '$OTEL_COLLECTOR_HOST $OTEL_COLLECTOR_PORT_GRPC $OTEL_SERVICE_NAME $TELEMETRY_DOCS_PORT' < /nginx.conf.template > /etc/nginx/nginx.conf && exec nginx -g 'daemon off;'"]

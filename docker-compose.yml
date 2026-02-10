@@ -940,6 +940,9 @@ services:
       - "${TELEMETRY_DOCS_PORT}"
     environment:
       - TELEMETRY_DOCS_PORT
+      - OTEL_COLLECTOR_HOST
+      - OTEL_COLLECTOR_PORT_GRPC
+      - OTEL_SERVICE_NAME=telemetry-docs
     logging: *logging
 
   # OpenSearch
