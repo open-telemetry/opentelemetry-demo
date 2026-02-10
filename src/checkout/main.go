@@ -148,6 +148,7 @@ type checkout struct {
 	currencySvcClient       pb.CurrencyServiceClient
 	emailSvcClient          pb.EmailServiceClient
 	paymentSvcClient        pb.PaymentServiceClient
+	httpClient              *http.Client
 }
 
 func main() {
@@ -197,6 +198,9 @@ func main() {
 	tracer = tp.Tracer("checkout")
 
 	svc := new(checkout)
+	svc.httpClient = &http.Client{
+		Transport: otelhttp.NewTransport(http.DefaultTransport),
+	}
 
 	mustMapEnv(&svc.shippingSvcAddr, "SHIPPING_ADDR")
 	c := mustCreateClient(svc.shippingSvcAddr)
@@ -460,7 +464,12 @@ func (cs *checkout) quoteShipping(ctx context.Context, address *pb.Address, item
 		return nil, fmt.Errorf("failed to marshal ship order request: %+v", err)
 	}
 
-	resp, err := otelhttp.Post(ctx, cs.shippingSvcAddr+"/get-quote", "application/json", bytes.NewBuffer(quotePayload))
+	req, err := http.NewRequestWithContext(ctx, "POST", cs.shippingSvcAddr+"/get-quote", bytes.NewBuffer(quotePayload))
+	if err != nil {
+		return nil, fmt.Errorf("failed to create request: %+v", err)
+	}
+	req.Header.Set("Content-Type", "application/json")
+	resp, err := cs.httpClient.Do(req)
 	if err != nil {
 		return nil, fmt.Errorf("failed POST to shipping service: %+v", err)
 	}
@@ -558,7 +567,12 @@ func (cs *checkout) sendOrderConfirmation(ctx context.Context, email string, ord
 		return fmt.Errorf("failed to marshal order to JSON: %+v", err)
 	}
 
-	resp, err := otelhttp.Post(ctx, cs.emailSvcAddr+"/send_order_confirmation", "application/json", bytes.NewBuffer(emailPayload))
+	req, err := http.NewRequestWithContext(ctx, "POST", cs.emailSvcAddr+"/send_order_confirmation", bytes.NewBuffer(emailPayload))
+	if err != nil {
+		return fmt.Errorf("failed to create request: %+v", err)
+	}
+	req.Header.Set("Content-Type", "application/json")
+	resp, err := cs.httpClient.Do(req)
 	if err != nil {
 		return fmt.Errorf("failed POST to email service: %+v", err)
 	}
@@ -580,7 +594,12 @@ func (cs *checkout) shipOrder(ctx context.Context, address *pb.Address, items []
 		return "", fmt.Errorf("failed to marshal ship order request: %+v", err)
 	}
 
-	resp, err := otelhttp.Post(ctx, cs.shippingSvcAddr+"/ship-order", "application/json", bytes.NewBuffer(shipPayload))
+	req, err := http.NewRequestWithContext(ctx, "POST", cs.shippingSvcAddr+"/ship-order", bytes.NewBuffer(shipPayload))
+	if err != nil {
+		return "", fmt.Errorf("failed to create request: %+v", err)
+	}
+	req.Header.Set("Content-Type", "application/json")
+	resp, err := cs.httpClient.Do(req)
 	if err != nil {
 		return "", fmt.Errorf("failed POST to shipping service: %+v", err)
 	}
