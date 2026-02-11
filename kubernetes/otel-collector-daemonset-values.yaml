@@ -161,6 +161,11 @@ config:
       timeout: 60s
       tls:
         insecure: true
+    otlphttp/openobserve:
+      endpoint: http://98.93.225.247:5080/api/default
+      headers:
+        Authorization: "Basic cm9vdEBleGFtcGxlLmNvbTpnMUo2QkVIa2M0Mk4zMHRI"
+        stream-name: default
     otlphttp/elasticsearch:
       endpoint: ${env:ELASTIC_ENDPOINT}
       headers:
@@ -178,11 +183,11 @@ config:
     pipelines:
       traces:
         processors: [probabilistic_sampler, resource]
-        exporters: [ datadog/connector, datadog/exporter, spanmetrics, otlphttp/newrelic ]
+        exporters: [ datadog/connector, datadog/exporter, spanmetrics, otlphttp/newrelic, otlphttp/openobserve ]
       metrics:
         receivers: [ otlp, hostmetrics, datadog/connector, spanmetrics ]
         processors: [resource]
         exporters: [ prometheusremotewrite, datadog/exporter, otlphttp/newrelic ]
       logs:
         processors: [resource]
-        exporters: [ datadog/exporter, otlphttp/observeinclogs, otlphttp/newrelic, otlphttp/cloudwatch, otlphttp/elasticsearch ]
+        exporters: [ datadog/exporter, otlphttp/observeinclogs, otlphttp/newrelic, otlphttp/cloudwatch, otlphttp/elasticsearch, otlphttp/openobserve ]
