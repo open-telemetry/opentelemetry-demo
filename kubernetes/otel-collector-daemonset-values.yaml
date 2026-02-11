@@ -1,0 +1,188 @@
+mode: daemonset
+
+image:
+  repository: otel/opentelemetry-collector-contrib
+
+extraEnvs:
+  - name: AWS_ACCESS_KEY_ID
+    valueFrom:
+      secretKeyRef:
+        name: aws-secrets
+        key: access_key_id
+  - name: AWS_SECRET_ACCESS_KEY
+    valueFrom:
+      secretKeyRef:
+        name: aws-secrets
+        key: secret_access_key
+  - name: AWS_REGION
+    valueFrom:
+      secretKeyRef:
+        name: aws-secrets
+        key: region
+  - name: DD_API_KEY
+    valueFrom:
+      secretKeyRef:
+        name: dd-secrets
+        key: DD_API_KEY
+  - name: DD_SITE
+    valueFrom:
+      secretKeyRef:
+        name: dd-secrets
+        key: DD_SITE
+  - name: PROMETHEUS_ENDPOINT
+    valueFrom:
+      secretKeyRef:
+        name: prometheus
+        key: endpoint
+  - name: BETTERSTACK_INGESTING_HOST
+    valueFrom:
+      secretKeyRef:
+        name: betterstack
+        key: ingesting_host
+  - name: BETTERSTACK_SOURCE_TOKEN
+    valueFrom:
+      secretKeyRef:
+        name: betterstack
+        key: source_token
+  - name: OBSERVEINC_COLLECTION_ENDPOINT
+    valueFrom:
+      secretKeyRef:
+        name: observeinc
+        key: collection_endpoint
+  - name: OBSERVEINC_TOKEN
+    valueFrom:
+      secretKeyRef:
+        name: observeinc
+        key: token
+  - name: ELASTIC_TOKEN
+    valueFrom:
+      secretKeyRef:
+        name: elastic
+        key: token
+  - name: ELASTIC_PASSWORD
+    valueFrom:
+      secretKeyRef:
+        name: elastic
+        key: password
+  - name: ELASTIC_USERNAME
+    valueFrom:
+      secretKeyRef:
+        name: elastic
+        key: username
+  - name: ELASTIC_ENDPOINT
+    valueFrom:
+      secretKeyRef:
+        name: elastic
+        key: endpoint
+  - name: NEWRELIC_API_KEY
+    valueFrom:
+      secretKeyRef:
+        name: newrelic
+        key: api_key
+presets:
+  # enables the k8sattributesprocessor and adds it to the traces, metrics, and logs pipelines
+  kubernetesAttributes:
+    enabled: true
+  # enables the kubeletstatsreceiver and adds it to the metrics pipelines
+  kubeletMetrics:
+    enabled: true
+  # Enables the filelogreceiver and adds it to the logs pipelines
+  logsCollection:
+    enabled: true
+  hostMetrics:
+    enabled: true
+## The chart only includes the loggingexporter by default
+## If you want to send your data somewhere you need to
+## configure an exporter, such as the otlpexporter
+config:
+  receivers:
+    hostmetrics:
+      collection_interval: 30s
+      scrapers:
+        paging:
+          metrics:
+            system.paging.utilization:
+              enabled: true
+        cpu:
+          metrics:
+            system.cpu.utilization:
+              enabled: true
+        disk:
+        filesystem:
+          metrics:
+            system.filesystem.utilization:
+              enabled: true
+        load:
+        memory:
+        network:
+        processes:
+  processors:
+    probabilistic_sampler:
+      sampling_percentage: 11
+    resource:
+      attributes:
+        - key: deployment.environment
+          value: "otel"
+          action: upsert
+  connectors:
+    spanmetrics:
+    datadog/connector:
+      traces:
+        span_name_as_resource_name: true
+  exporters:
+    otlphttp/betterstack:
+      endpoint: "${BETTERSTACK_INGESTING_HOST}"
+      headers:
+        Authorization: "Bearer ${BETTERSTACK_SOURCE_TOKEN}"
+    datadog/exporter:
+      api:
+        site: ${env:DD_SITE}
+        key: ${env:DD_API_KEY}
+    otlphttp/observeinclogs:
+      endpoint: "${OBSERVEINC_COLLECTION_ENDPOINT}/v2/otel"
+      headers:
+        authorization: "Bearer ${OBSERVEINC_TOKEN}"
+        x-observe-target-package: "Host Explorer"
+    otlphttp/newrelic:
+      endpoint: "https://otlp.nr-data.net"
+      headers:
+        api-key: ${env:NEWRELIC_API_KEY}
+    otlphttp/cloudwatch:
+      compression: gzip
+      logs_endpoint: "https://logs.${env:AWS_REGION}.amazonaws.com/v1/logs"
+      headers:
+        x-aws-log-group: OtelDemoLogs
+        x-aws-log-stream: default
+      auth:
+        authenticator: sigv4auth/logs
+    prometheusremotewrite:
+      endpoint: ${env:PROMETHEUS_ENDPOINT}/api/v1/write
+      namespace: "default"
+      timeout: 60s
+      tls:
+        insecure: true
+    otlphttp/elasticsearch:
+      endpoint: ${env:ELASTIC_ENDPOINT}
+      headers:
+        authorization: "Bearer ${ELASTIC_TOKEN}"
+  extensions:
+    sigv4auth/logs:
+      region: ${env:AWS_REGION}
+      service: logs
+    basicauth:
+      client_auth:
+        username: ${env:ELASTIC_USERNAME}
+        password: ${env:ELASTIC_PASSWORD}
+  service:
+    extensions: [health_check, basicauth, sigv4auth/logs]
+    pipelines:
+      traces:
+        processors: [probabilistic_sampler, resource]
+        exporters: [ datadog/connector, datadog/exporter, spanmetrics, otlphttp/newrelic ]
+      metrics:
+        receivers: [ otlp, hostmetrics, datadog/connector, spanmetrics ]
+        processors: [resource]
+        exporters: [ prometheusremotewrite, datadog/exporter, otlphttp/newrelic ]
+      logs:
+        processors: [resource]
+        exporters: [ datadog/exporter, otlphttp/observeinclogs, otlphttp/newrelic, otlphttp/cloudwatch, otlphttp/elasticsearch ]
