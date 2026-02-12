@@ -27,7 +27,7 @@
     "@opentelemetry/sdk-metrics": "2.5.0",
     "@opentelemetry/sdk-node": "0.211.0",
     "grpc-js-health-check": "1.2.2",
-    "pino": "^10.3.0",
+    "pino": "^10.3.1",
     "pino-opentelemetry-transport": "^2.0.0",
     "simple-card-validator": "1.1.0",
     "uuid": "13.0.0"
