@@ -19,8 +19,10 @@ jobs:
       packages: write
     uses: ./.github/workflows/component-build-images.yml
     with:
-      push: false
-      version: 'dev'
+      push: ${{ github.event_name == 'push' }}
+      # Use a non-release tag for PR builds; tags are not pushed when push=false.
+      version: ${{ github.event_name == 'push' && 'main' || 'dev' }}
+    secrets: inherit
 
   markdownlint:
     runs-on: ubuntu-latest
