@@ -1,0 +1,18 @@
+# Copyright The OpenTelemetry Authors
+# SPDX-License-Identifier: Apache-2.0
+
+groups:
+  - id: service.checkout
+    type: attribute_group
+    brief: Checkout service attributes
+    stability: stable
+    attributes:
+      - ref: app.user.id
+      - ref: app.user.currency
+      - ref: app.payment.transaction.id
+      - ref: app.shipping.tracking.id
+      - ref: app.order.id
+      - ref: app.shipping.amount
+      - ref: app.order.amount
+      - ref: app.order.items.count
+      - ref: app.cart.items.count

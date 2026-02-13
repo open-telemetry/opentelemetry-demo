@@ -1,0 +1,28 @@
+# Copyright The OpenTelemetry Authors
+# SPDX-License-Identifier: Apache-2.0
+
+groups:
+  - id: registry.user
+    type: attribute_group
+    brief: User-related attributes
+    stability: stable
+    note: Note that session.id is defined as a dependency in the registry manifest and not included here.
+    attributes:
+      - id: app.user.id
+        type: string
+        brief: User identifier
+        stability: stable
+        note: The unique identifier of the user making the request
+        examples: ["user-123", "customer-456"]
+      - id: app.user.currency
+        type: string
+        brief: User's preferred currency
+        stability: stable
+        note: The currency code preferred by the user for pricing and transactions
+        examples: ["USD", "EUR", "GBP"]
+      - id: app.loyalty.level
+        type: string
+        brief: Customer loyalty level
+        stability: stable
+        note: The loyalty tier or level of the customer making the payment. This can be used to track payment patterns by customer segment.
+        examples: ["gold", "platinum", "silver", "bronze"]

@@ -1,0 +1,10 @@
+{#- Stability badge macros for Weaver templates -#}
+{% macro badge(stability, deprecated) -%}
+{%- if deprecated %}![Deprecated](https://img.shields.io/badge/-deprecated-red)
+{%- elif stability == "stable" %}![Stable](https://img.shields.io/badge/-stable-lightgreen)
+{%- elif stability == "experimental" %}![Experimental](https://img.shields.io/badge/-experimental-blue)
+{%- elif stability == "development" %}![Development](https://img.shields.io/badge/-development-blue)
+{%- else %}![Stable](https://img.shields.io/badge/-stable-lightgreen)
+{%- endif %}
+{%- endmacro %}
+

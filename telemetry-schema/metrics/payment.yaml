@@ -1,0 +1,18 @@
+# Copyright The OpenTelemetry Authors
+# SPDX-License-Identifier: Apache-2.0
+
+groups:
+  - id: metric.payment.transactions
+    type: metric
+    metric_name: app.payment.transactions
+    brief: Payment transaction counter
+    instrument: counter
+    unit: "{transaction}"
+    stability: stable
+    attributes:
+      - id: app.payment.currency
+        type: string
+        brief: Currency code for the transaction
+        examples: ["USD", "EUR", "GBP"]
+        requirement_level: required
+        note: The currency in which the payment transaction was processed

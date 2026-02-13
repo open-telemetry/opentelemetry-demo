@@ -1,0 +1,12 @@
+# Copyright The OpenTelemetry Authors
+# SPDX-License-Identifier: Apache-2.0
+
+groups:
+  - id: metric.shipping.items
+    type: metric
+    metric_name: app.shipping.items_count
+    brief: Shipping items counter
+    instrument: counter
+    unit: "{item}"
+    stability: stable
+    note: Counts the number of items being shipped
