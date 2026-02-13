@@ -20,7 +20,6 @@ the release.
   [#2942](https://github.com/open-telemetry/opentelemetry-demo/pull/2942)
 * add `main` tagged images, drop date suffix for `nightly` ([#2994](https://github.com/open-telemetry/opentelemetry-demo/pull/2994))
 
-
 ## 2.2.0
 
 * [feat] add ipv6 support
