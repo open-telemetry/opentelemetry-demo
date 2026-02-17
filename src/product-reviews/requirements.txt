@@ -7,5 +7,5 @@ psutil==7.0.0 # Importing this will also import opentelemetry-instrumentation-sy
 python-dotenv==1.2.1
 python-json-logger==4.0.0
 psycopg2-binary==2.9.11
-openai==2.17.0
+openai==2.21.0
 simplejson==3.20.2
