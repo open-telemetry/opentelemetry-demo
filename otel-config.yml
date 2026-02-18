@@ -32,6 +32,5 @@ resource:
   detection/development:
     detectors:
       - container:
-      - host:
       - process:
       - service:
