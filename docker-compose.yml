@@ -149,6 +149,7 @@ services:
       - OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE
       - OTEL_RESOURCE_ATTRIBUTES
       - OTEL_SERVICE_NAME=checkout
+      - OTEL_EXPERIMENTAL_CONFIG_FILE=/otel-config.yml
     depends_on:
       cart:
         condition: service_started
@@ -168,6 +169,8 @@ services:
         condition: service_healthy
       flagd:
         condition: service_started
+    volumes:
+      - ./otel-config.yml:/otel-config.yml
     logging: *logging
 
   # Currency service
@@ -502,6 +505,7 @@ services:
       - OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE
       - OTEL_RESOURCE_ATTRIBUTES
       - OTEL_SERVICE_NAME=product-catalog
+      - OTEL_EXPERIMENTAL_CONFIG_FILE=/otel-config.yml
       - OTEL_SEMCONV_STABILITY_OPT_IN=database
       - DB_CONNECTION_STRING=postgres://otelu:otelp@${POSTGRES_HOST}/${POSTGRES_DB}?sslmode=disable
     depends_on:
@@ -511,6 +515,8 @@ services:
         condition: service_started
       postgresql:
         condition: service_started
+    volumes:
+      - ./otel-config.yml:/otel-config.yml
     logging: *logging
 
   # Product reviews service
