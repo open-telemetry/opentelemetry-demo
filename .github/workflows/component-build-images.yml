@@ -142,6 +142,10 @@ jobs:
             tag_suffix: shipping
             context: ./
             setup-qemu: true
+          - file: ./src/telemetry-docs/Dockerfile
+            tag_suffix: telemetry-docs
+            context: ./
+            setup-qemu: true
           - file: ./test/tracetesting/Dockerfile
             tag_suffix: traceBasedTests
             context: ./

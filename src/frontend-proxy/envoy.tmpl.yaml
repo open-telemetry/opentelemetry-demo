@@ -51,6 +51,10 @@ static_resources:
                           redirect: { path_redirect: "/grafana/" }
                         - match: { prefix: "/grafana/" }
                           route: { cluster: grafana }
+                        - match: { path: "/telemetry" }
+                          redirect: { path_redirect: "/telemetry/" }
+                        - match: { prefix: "/telemetry/" }
+                          route: { cluster: telemetry-docs, prefix_rewrite: "/" }
                         - match: { prefix: "/images/" }
                           route: { cluster: image-provider, prefix_rewrite: "/" }
                         - match: { prefix: "/flagservice/" }
@@ -242,6 +246,18 @@ static_resources:
                     socket_address:
                       address: ${JAEGER_HOST}
                       port_value: ${JAEGER_UI_PORT}
+    - name: telemetry-docs
+      type: STRICT_DNS
+      lb_policy: ROUND_ROBIN
+      load_assignment:
+        cluster_name: telemetry-docs
+        endpoints:
+          - lb_endpoints:
+              - endpoint:
+                  address:
+                    socket_address:
+                      address: ${TELEMETRY_DOCS_HOST}
+                      port_value: ${TELEMETRY_DOCS_PORT}
 admin:
   address:
     socket_address:

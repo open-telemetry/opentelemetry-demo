@@ -1,0 +1,33 @@
+# Copyright The OpenTelemetry Authors
+# SPDX-License-Identifier: Apache-2.0
+
+groups:
+  - id: metric.product_reviews.counter
+    type: metric
+    metric_name: app_product_review_counter
+    brief: Product review counter
+    instrument: counter
+    unit: "{review_request}"
+    stability: stable
+    attributes:
+      - id: product.id
+        type: string
+        brief: Product identifier
+        examples: ["66VCHSJNUP", "OLJCESPC7Z"]
+        requirement_level: required
+        note: The unique identifier of the product for which reviews are being retrieved
+
+  - id: metric.product_reviews.ai_assistant
+    type: metric
+    metric_name: app_ai_assistant_counter
+    brief: AI assistant request counter
+    instrument: counter
+    unit: "{ai_request}"
+    stability: stable
+    attributes:
+      - id: product.id
+        type: string
+        brief: Product identifier
+        examples: ["66VCHSJNUP", "OLJCESPC7Z"]
+        requirement_level: required
+        note: The unique identifier of the product for which AI assistance is being requested

@@ -1,0 +1,11 @@
+# Copyright The OpenTelemetry Authors
+# SPDX-License-Identifier: Apache-2.0
+
+groups:
+  - id: service.frontend
+    type: attribute_group
+    brief: Frontend service attributes
+    stability: stable
+    attributes:
+      - ref: app.synthetic_request
+      - ref: session.id

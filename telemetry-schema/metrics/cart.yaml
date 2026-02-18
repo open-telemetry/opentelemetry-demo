@@ -1,0 +1,21 @@
+# Copyright The OpenTelemetry Authors
+# SPDX-License-Identifier: Apache-2.0
+
+groups:
+  - id: metric.cart.add_item_latency
+    type: metric
+    metric_name: app.cart.add_item.latency
+    brief: Cart add item operation latency
+    instrument: histogram
+    unit: "s"
+    stability: stable
+    note: Histogram measuring the latency of cart add item operations with custom bucket boundaries from 5ms to 10s
+
+  - id: metric.cart.get_cart_latency
+    type: metric
+    metric_name: app.cart.get_cart.latency
+    brief: Cart retrieval operation latency
+    instrument: histogram
+    unit: "s"
+    stability: stable
+    note: Histogram measuring the latency of cart retrieval operations with custom bucket boundaries from 5ms to 10s

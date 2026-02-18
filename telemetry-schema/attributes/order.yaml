@@ -1,0 +1,61 @@
+# Copyright The OpenTelemetry Authors
+# SPDX-License-Identifier: Apache-2.0
+
+groups:
+  - id: registry.order
+    type: attribute_group
+    brief: Order, cart, and payment-related attributes
+    stability: stable
+    attributes:
+      - id: app.order.id
+        type: string
+        brief: Order identifier
+        stability: stable
+        note: The unique identifier for an order
+        examples: ["order-123", "ORD-456789"]
+      - id: app.order.amount
+        type: double
+        brief: Total order amount
+        stability: stable
+        note: The total monetary amount of the order
+        examples: [99.99, 150.50]
+      - id: app.order.items.count
+        type: int
+        brief: Number of items in order
+        stability: stable
+        note: The count of distinct items in the order
+        examples: [1, 5, 10]
+      - id: app.cart.items.count
+        type: int
+        brief: Number of items in cart
+        stability: stable
+        note: The count of items currently in the shopping cart
+        examples: [0, 3, 7]
+      - id: app.payment.amount
+        type: string
+        brief: Payment amount
+        stability: stable
+        note: The monetary amount being charged
+        examples: ["29.99", "99.95", "150.00"]
+      - id: app.payment.card_type
+        type: string
+        brief: Credit card type
+        stability: stable
+        note: The type of credit card being used for payment
+        examples: ["visa", "mastercard", "amex"]
+      - id: app.payment.card_valid
+        type: boolean
+        brief: Card validation status
+        stability: stable
+        note: Whether the card passed validation checks
+      - id: app.payment.charged
+        type: boolean
+        brief: Whether payment was successfully charged
+        stability: stable
+        note: Indicates whether the payment transaction was successfully charged to the customer's payment method (true) or not charged (false). For synthetic requests, this is set to false.
+      - id: app.payment.transaction.id
+        type: string
+        brief: Payment transaction identifier
+        stability: stable
+        note: Unique identifier for the payment transaction
+        examples: ["txn-abc123", "PAY-456789"]

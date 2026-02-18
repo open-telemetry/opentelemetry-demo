@@ -1,0 +1,18 @@
+# Copyright The OpenTelemetry Authors
+# SPDX-License-Identifier: Apache-2.0
+
+groups:
+  - id: metric.currency.conversions
+    type: metric
+    metric_name: app.currency
+    brief: Currency conversion counter
+    instrument: counter
+    unit: "{conversion}"
+    stability: stable
+    attributes:
+      - id: currency_code
+        type: string
+        brief: Currency code
+        examples: ["USD", "EUR", "GBP"]
+        requirement_level: required
+        note: The currency code involved in the conversion operation

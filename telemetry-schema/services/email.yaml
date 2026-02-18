@@ -1,0 +1,11 @@
+# Copyright The OpenTelemetry Authors
+# SPDX-License-Identifier: Apache-2.0
+
+groups:
+  - id: service.email
+    type: attribute_group
+    brief: Email service attributes
+    stability: stable
+    attributes:
+      - ref: app.order.id
+      - ref: app.email.recipient

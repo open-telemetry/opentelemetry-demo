@@ -1,0 +1,45 @@
+# Copyright The OpenTelemetry Authors
+# SPDX-License-Identifier: Apache-2.0
+
+groups:
+  - id: registry.shipping
+    type: attribute_group
+    brief: Shipping, quote, and logistics attributes
+    stability: stable
+    attributes:
+      - id: app.shipping.amount
+        type: double
+        brief: Shipping cost amount
+        stability: stable
+        note: The monetary amount charged for shipping
+        examples: [5.99, 15.00]
+      - id: app.shipping.cost.total
+        type: string
+        brief: Total shipping cost
+        stability: stable
+        note: The total cost of shipping for an order (string representation)
+        examples: ["10.50", "25.00"]
+      - id: app.shipping.items_count
+        type: int
+        brief: Number of items being shipped
+        stability: stable
+        note: The count of items included in a shipment
+        examples: [1, 5, 10]
+      - id: app.shipping.tracking.id
+        type: string
+        brief: Shipping tracking identifier
+        stability: stable
+        note: The tracking number or identifier for a shipment
+        examples: ["TRACK-123456", "SHP-789012"]
+      - id: app.quote.items.count
+        type: int
+        brief: Number of items in quote
+        stability: stable
+        note: The count of items included in a pricing quote
+        examples: [1, 5, 10]
+      - id: app.quote.cost.total
+        type: double
+        brief: Total quote cost
+        stability: stable
+        note: The total monetary amount of a quote
+        examples: [89.99, 150.00]
