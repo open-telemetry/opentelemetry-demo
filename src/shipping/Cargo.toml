@@ -9,7 +9,7 @@ path = "src/main.rs"
 [dependencies]
 actix-web = "4"
 anyhow = "1.0.101"
-awc = { version = "3.8.1", default-features = false, features = ["compress-zstd"] }
+awc = { version = "3.8.2", default-features = false, features = ["compress-zstd"] }
 serde = { version = "1.0.228", features = ["derive"] }
 tonic = "0.14.4"
 tracing = "0.1.44"
