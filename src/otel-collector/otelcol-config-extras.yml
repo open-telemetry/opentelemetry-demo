@@ -9,7 +9,7 @@
 ## if overriding the traces pipeline.
 ##
 #  exporters:
-#    otlphttp/example:
+#    otlp_http/example:
 #      endpoint: <your-endpoint-url>
 #
 #  service:
@@ -128,3 +128,4 @@
 #        receivers: [otlp]
 #        processors: [resourcedetection, memory_limiter, transform, tail_sampling]
 #        exporters: [otlp, debug, spanmetrics]
+#        exporters: [spanmetrics, otlp_http/example]
