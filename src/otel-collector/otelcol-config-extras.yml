@@ -15,4 +15,117 @@
 #  service:
 #    pipelines:
 #      traces:
+#        exporters: [spanmetrics, otlphttp/example]
+
+## =============================================================================
+## Example: Tail-Based Sampling using service.criticality
+## =============================================================================
+## This example demonstrates how to use the service.criticality resource
+## attribute for intelligent sampling decisions. The attribute classifies
+## services by their operational importance:
+##   - critical: 100% sampling (payment, checkout, frontend)
+##   - high: 50% sampling (cart, product-catalog, currency, shipping)
+##   - medium: 10% sampling (recommendation, ad, product-reviews, email)
+##   - low: 1% sampling (background jobs, internal tools)
+##
+## To enable tail-sampling, uncomment the sections below and update the
+## traces pipeline to use the tail_sampling processor.
+##
+## Reference: https://github.com/open-telemetry/semantic-conventions/issues/2986
+## =============================================================================
+#
+#  processors:
+#    tail_sampling:
+#      decision_wait: 10s
+#      num_traces: 100000
+#      expected_new_traces_per_sec: 1000
+#      policies:
+#        # Policy 1: Always sample critical services (100%)
+#        - name: critical-services-always-sample
+#          type: string_attribute
+#          string_attribute:
+#            key: service.criticality
+#            values:
+#              - critical
+#            enabled_regex_matching: false
+#            invert_match: false
+#
+#        # Policy 2: Sample 50% of high-criticality services
+#        - name: high-criticality-probabilistic
+#          type: and
+#          and:
+#            and_sub_policy:
+#              - name: is-high-criticality
+#                type: string_attribute
+#                string_attribute:
+#                  key: service.criticality
+#                  values:
+#                    - high
+#              - name: probabilistic-50
+#                type: probabilistic
+#                probabilistic:
+#                  sampling_percentage: 50
+#
+#        # Policy 3: Sample 10% of medium-criticality services
+#        - name: medium-criticality-probabilistic
+#          type: and
+#          and:
+#            and_sub_policy:
+#              - name: is-medium-criticality
+#                type: string_attribute
+#                string_attribute:
+#                  key: service.criticality
+#                  values:
+#                    - medium
+#              - name: probabilistic-10
+#                type: probabilistic
+#                probabilistic:
+#                  sampling_percentage: 10
+#
+#        # Policy 4: Sample 1% of low-criticality services
+#        - name: low-criticality-probabilistic
+#          type: and
+#          and:
+#            and_sub_policy:
+#              - name: is-low-criticality
+#                type: string_attribute
+#                string_attribute:
+#                  key: service.criticality
+#                  values:
+#                    - low
+#              - name: probabilistic-1
+#                type: probabilistic
+#                probabilistic:
+#                  sampling_percentage: 1
+#
+#        # Policy 5: Always sample error traces regardless of criticality
+#        - name: errors-always-sample
+#          type: status_code
+#          status_code:
+#            status_codes:
+#              - ERROR
+#
+#        # Policy 6: Always sample slow traces from critical/high services
+#        - name: slow-critical-traces
+#          type: and
+#          and:
+#            and_sub_policy:
+#              - name: is-critical-or-high
+#                type: string_attribute
+#                string_attribute:
+#                  key: service.criticality
+#                  values:
+#                    - critical
+#                    - high
+#              - name: is-slow
+#                type: latency
+#                latency:
+#                  threshold_ms: 5000
+#
+#  service:
+#    pipelines:
+#      traces:
+#        receivers: [otlp]
+#        processors: [resourcedetection, memory_limiter, transform, tail_sampling]
+#        exporters: [otlp, debug, spanmetrics]
 #        exporters: [spanmetrics, otlp_http/example]

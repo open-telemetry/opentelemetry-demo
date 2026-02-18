@@ -12,6 +12,7 @@ otlp:
     - service.name
     - service.namespace
     - service.version
+    - service.criticality
     - cloud.availability_zone
     - cloud.region
     - deployment.environment.name
