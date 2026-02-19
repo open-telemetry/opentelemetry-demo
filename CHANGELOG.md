@@ -19,6 +19,8 @@ the release.
   [High-cardinality HTTP span names #54694](https://github.com/vercel/next.js/issues/54694)
   [#2942](https://github.com/open-telemetry/opentelemetry-demo/pull/2942)
 * add `main` tagged images, drop date suffix for `nightly` ([#2994](https://github.com/open-telemetry/opentelemetry-demo/pull/2994))
+* [chore] Bump dependent image versions to latest releases
+  ([#3005](https://github.com/open-telemetry/opentelemetry-demo/pull/3005))
 
 ## 2.2.0
 
