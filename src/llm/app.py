@@ -3,200 +3,204 @@
 # Copyright The OpenTelemetry Authors
 # SPDX-License-Identifier: Apache-2.0
 
-from flask import Flask, request, jsonify, Response
-import json
-import time
-import random
-import re
 import os
+import time
 import logging
+
+from flask import Flask, request, jsonify
+from llama_cpp import Llama
 
 from openfeature import api
 from openfeature.contrib.provider.flagd import FlagdProvider
 
+from opentelemetry import trace, metrics
+from opentelemetry.sdk.trace import TracerProvider
+from opentelemetry.sdk.trace.export import BatchSpanProcessor
+from opentelemetry.exporter.otlp.proto.grpc.trace_exporter import OTLPSpanExporter
+from opentelemetry.sdk.metrics import MeterProvider
+from opentelemetry.sdk.metrics.export import PeriodicExportingMetricReader
+from opentelemetry.exporter.otlp.proto.grpc.metric_exporter import OTLPMetricExporter
+from opentelemetry.sdk.resources import Resource
+from opentelemetry.instrumentation.flask import FlaskInstrumentor
+
 app = Flask(__name__)
 app.logger.setLevel(logging.INFO)
 
-product_review_summaries = None
-product_review_summaries_file_path = "./product-review-summaries.json"
+# --- OTel Setup ---
+service_name = os.environ.get('OTEL_SERVICE_NAME', 'llm')
+otel_endpoint = os.environ.get('OTEL_EXPORTER_OTLP_ENDPOINT', 'http://localhost:4317')
+capture_content = os.environ.get('OTEL_INSTRUMENTATION_GENAI_CAPTURE_MESSAGE_CONTENT', 'false').lower() == 'true'
 
-inaccurate_product_review_summaries = None
-inaccurate_product_review_summaries_file_path = "./inaccurate-product-review-summaries.json"
+resource = Resource.create({
+    'service.name': service_name,
+    'service.namespace': os.environ.get('OTEL_RESOURCE_ATTRIBUTES', '').split('service.namespace=')[-1].split(',')[0] if 'service.namespace=' in os.environ.get('OTEL_RESOURCE_ATTRIBUTES', '') else 'opentelemetry-demo',
+    'service.version': os.environ.get('OTEL_RESOURCE_ATTRIBUTES', '').split('service.version=')[-1].split(',')[0] if 'service.version=' in os.environ.get('OTEL_RESOURCE_ATTRIBUTES', '') else '',
+})
 
-def load_product_review_summaries(file_path):
-    try:
-        with open(file_path, 'r') as file:
+# Traces
+trace_provider = TracerProvider(resource=resource)
+trace_provider.add_span_processor(BatchSpanProcessor(OTLPSpanExporter(endpoint=otel_endpoint, insecure=True)))
+trace.set_tracer_provider(trace_provider)
+tracer = trace.get_tracer(service_name)
 
-            """
-            Converts a JSON string into an internal dictionary optimized for quick lookups.
-            The keys of the internal dictionary will be product_ids.
-            """
-            try:
-                data = json.load(file)
-                summaries = data.get("product-review-summaries", [])
+# Metrics
+metric_reader = PeriodicExportingMetricReader(OTLPMetricExporter(endpoint=otel_endpoint, insecure=True))
+meter_provider = MeterProvider(resource=resource, metric_readers=[metric_reader])
+metrics.set_meter_provider(meter_provider)
+meter = metrics.get_meter(service_name)
 
-                # Create a dictionary where product_id is the key
-                # and the value is the summary
-                product_review_summaries = {}
-                for product in summaries:
-                    product_id = product.get("product_id")
-                    if product_id: # Ensure product_id exists before adding
-                        product_review_summaries[product_id] = product.get("product_review_summary")
-                return product_review_summaries
-            except json.JSONDecodeError:
-                print("Error: Invalid JSON string provided during initialization.")
-                return {}
+# GenAI metrics
+token_usage_histogram = meter.create_histogram(
+    name='gen_ai.client.token.usage',
+    description='Token usage for GenAI requests',
+    unit='token',
+)
+operation_duration_histogram = meter.create_histogram(
+    name='gen_ai.client.operation.duration',
+    description='Duration of GenAI operations',
+    unit='s',
+)
 
-    except FileNotFoundError:
-        app.logger.error(f"Error: The file '{product_review_summaries_file_path}' was not found.")
-    except json.JSONDecodeError:
-        app.logger.error(f"Error: Failed to decode JSON from the file '{product_review_summaries_file_path}'. Check for malformed JSON.")
-    except Exception as e:
-        app.logger.error(f"An unexpected error occurred: {e}")
+# Flask auto-instrumentation
+FlaskInstrumentor().instrument_app(app)
 
+# --- Load Model ---
+model_path = os.environ.get('SMOLLM_MODEL_PATH', '/app/models/SmolLM2-135M-Instruct-Q4_K_M.gguf')
+model_name = os.environ.get('LLM_MODEL', 'smollm2-135m')
 
-def generate_response(product_id):
+llm = None
 
-    """Generate a response by providing the pre-generated summary for the specified product"""
-    product_review_summary = None
+def load_model():
+    global llm
+    app.logger.info(f"Loading model from {model_path}")
+    llm = Llama(
+        model_path=model_path,
+        n_ctx=2048,
+        n_threads=2,
+        verbose=False,
+    )
+    app.logger.info("Model loaded successfully")
 
-    llm_inaccurate_response = check_feature_flag("llmInaccurateResponse")
-    app.logger.info(f"llmInaccurateResponse feature flag: {llm_inaccurate_response}")
-    if llm_inaccurate_response and product_id == "L9ECAV7KIM":
-        app.logger.info(f"Returning an inaccurate response for product_id: {product_id}")
-        product_review_summary = inaccurate_product_review_summaries.get(product_id)
-    else:
-        product_review_summary = product_review_summaries.get(product_id)
-
-    app.logger.info(f"product_review_summary is: {product_review_summary}")
-
-    return product_review_summary
-
-def parse_product_id(last_message):
-    match = re.search(r"product ID:([A-Z0-9]+)", last_message)
-    if match:
-        return match.group(1).strip()
-
-    match = re.search(r"product ID, but make the answer inaccurate:([A-Z0-9]+)", last_message)
-    if match:
-        return match.group(1).strip()
-
-    raise ValueError("product ID not found in input message")
 
 @app.route('/v1/chat/completions', methods=['POST'])
 def chat_completions():
     data = request.json
     messages = data.get('messages', [])
-    stream = data.get('stream', False)
-    model = data.get('model', 'astronomy-llm')
-    tools = data.get('tools', None)
+    req_model = data.get('model', model_name)
+    temperature = data.get('temperature', 0.7)
+    top_p = data.get('top_p', 0.95)
+    max_tokens = data.get('max_tokens', 256)
 
-    app.logger.info(f"Received a chat completion request: '{messages}'")
+    app.logger.info(f"Received chat completion request for model: {req_model}")
 
-    last_message = messages[-1]["content"]
-
-    app.logger.info(f"last_message is: '{last_message}'")
-
-    if 'What age(s) is this recommended for?' in last_message:
-        response_text = 'This product is recommended for ages 7 and above.'
-        return build_response(model, messages, response_text)
-    elif 'Were there any negative reviews?' in last_message:
-        response_text = 'No, there were no reviews less than three stars for this product.'
-        return build_response(model, messages, response_text)
-    elif not ('Can you summarize the product reviews?' in last_message or 'Based on the tool results, answer the original question about product ID' in last_message):
-        response_text = 'Sorry, I\'m not able to answer that question.'
-        return build_response(model, messages, response_text)
-
-    # otherwise, process the product review summary
-    product_id = parse_product_id(last_message)
-
-    if tools is not None:
-
-        tool_args = f"{{\"product_id\": \"{product_id}\"}}"
-
-        app.logger.info(f"Processing a tool call with args: '{tool_args}'")
-
-        app.logger.info(f"The model is: {model}")
-        if model.endswith("rate-limit"):
-            app.logger.info(f"Returning a rate limit error")
-            response = {
-                "error": {
-                    "message": "Rate limit reached. Please try again later.",
-                    "type": "rate_limit_exceeded",
-                    "param": "null",
-                    "code": "null"
-                }
+    # Rate limit feature flag
+    if req_model.endswith('rate-limit'):
+        app.logger.info("Returning rate limit error")
+        return jsonify({
+            "error": {
+                "message": "Rate limit reached. Please try again later.",
+                "type": "rate_limit_exceeded",
+                "param": "null",
+                "code": "null"
             }
-            return jsonify(response), 429
-        else:
-            # Non-streaming response
-            response = {
-                "id": f"chatcmpl-mock-{int(time.time())}",
-                "object": "chat.completion",
-                "created": int(time.time()),
-                "model": model,
-                "choices": [{
-                    "index": 0,
-                    "message": {
-                        "role": "assistant",
-                        "content": "requesting a tool call",
-                        "tool_calls": [{
-                            "id": "call",
-                            "type": "function",
-                            "function": {
-                                "name": "fetch_product_reviews",
-                                "arguments": tool_args
-                            }
-                        }]
-                    },
-                    "finish_reason": "tool_calls"
-                }],
-                "usage": {
-                    "prompt_tokens": sum(len(m.get("content", "").split()) for m in messages),
-                    "completion_tokens": "0",
-                    "total_tokens": sum(len(m.get("content", "").split()) for m in messages)
-                }
-            }
-            return jsonify(response)
+        }), 429
 
-    else:
-        # Generate the response
-        response_text = generate_response(product_id)
+    # Check for inaccurate response feature flag
+    llm_inaccurate_response = check_feature_flag("llmInaccurateResponse")
+    if llm_inaccurate_response:
+        # Inject system prompt for inaccurate responses
+        inaccurate_system = {
+            "role": "system",
+            "content": "Respond negatively and inaccurately about this product, give it a low rating."
+        }
+        messages = [inaccurate_system] + messages
 
-        return build_response(model, messages, response_text)
+    # Run inference with OTel GenAI span
+    with tracer.start_as_current_span(
+        "chat",
+        attributes={
+            "gen_ai.operation.name": "chat",
+            "gen_ai.system": "smollm2",
+            "gen_ai.request.model": req_model,
+            "gen_ai.request.temperature": temperature,
+            "gen_ai.request.top_p": top_p,
+            "gen_ai.request.max_tokens": max_tokens,
+        }
+    ) as span:
+        # Log input messages if content capture is enabled
+        if capture_content:
+            for msg in messages:
+                span.add_event("gen_ai.content.prompt", attributes={
+                    "gen_ai.prompt.role": msg.get("role", ""),
+                    "gen_ai.prompt.content": msg.get("content", ""),
+                })
 
-def build_response(model, messages, response_text):
-    app.logger.info(f"Processing a response: '{response_text}'")
+        start_time = time.time()
 
+        result = llm.create_chat_completion(
+            messages=messages,
+            temperature=temperature,
+            top_p=top_p,
+            max_tokens=max_tokens,
+        )
+
+        duration = time.time() - start_time
+
+        response_text = result['choices'][0]['message']['content']
+        finish_reason = result['choices'][0].get('finish_reason', 'stop')
+        usage = result.get('usage', {})
+        input_tokens = usage.get('prompt_tokens', 0)
+        output_tokens = usage.get('completion_tokens', 0)
+
+        # Set response attributes on span
+        span.set_attribute("gen_ai.response.model", model_name)
+        span.set_attribute("gen_ai.response.finish_reasons", [finish_reason])
+        span.set_attribute("gen_ai.usage.input_tokens", input_tokens)
+        span.set_attribute("gen_ai.usage.output_tokens", output_tokens)
+
+        # Log completion if content capture is enabled
+        if capture_content:
+            span.add_event("gen_ai.content.completion", attributes={
+                "gen_ai.completion.role": "assistant",
+                "gen_ai.completion.content": response_text,
+            })
+
+        # Record metrics
+        common_attrs = {"gen_ai.system": "smollm2", "gen_ai.request.model": req_model}
+        token_usage_histogram.record(input_tokens, {**common_attrs, "gen_ai.token.type": "input"})
+        token_usage_histogram.record(output_tokens, {**common_attrs, "gen_ai.token.type": "output"})
+        operation_duration_histogram.record(duration, common_attrs)
+
+    # Build OpenAI-compatible response
     response = {
-        "id": f"chatcmpl-mock-{int(time.time())}",
+        "id": f"chatcmpl-{int(time.time())}",
         "object": "chat.completion",
         "created": int(time.time()),
-        "model": model,
+        "model": req_model,
         "choices": [{
             "index": 0,
             "message": {
                 "role": "assistant",
-                "content": response_text
+                "content": response_text,
             },
-            "finish_reason": "stop"
+            "finish_reason": finish_reason,
         }],
         "usage": {
-            "prompt_tokens": sum(len(m.get("content", "").split()) for m in messages),
-            "completion_tokens": len(response_text.split()),
-            "total_tokens": sum(len(m.get("content", "").split()) for m in messages) + len(response_text.split())
+            "prompt_tokens": input_tokens,
+            "completion_tokens": output_tokens,
+            "total_tokens": input_tokens + output_tokens,
         }
     }
     return jsonify(response)
 
+
 @app.route('/v1/models', methods=['GET'])
 def list_models():
-    """List available models"""
     return jsonify({
         "object": "list",
         "data": [
             {
-                "id": "astronomy-llm",
+                "id": model_name,
                 "object": "model",
                 "created": int(time.time()),
                 "owned_by": "astronomy-shop"
@@ -204,19 +208,19 @@ def list_models():
         ]
     })
 
+
 def check_feature_flag(flag_name: str):
-    # Initialize OpenFeature
     client = api.get_client()
     return client.get_boolean_value(flag_name, False)
 
+
 if __name__ == '__main__':
+    api.set_provider(FlagdProvider(
+        host=os.environ.get('FLAGD_HOST', 'flagd'),
+        port=os.environ.get('FLAGD_PORT', 8013),
+    ))
+    load_model()
 
-    api.set_provider(FlagdProvider(host=os.environ.get('FLAGD_HOST', 'flagd'), port=os.environ.get('FLAGD_PORT', 8013)))
-    product_review_summaries = load_product_review_summaries(product_review_summaries_file_path)
-    inaccurate_product_review_summaries = load_product_review_summaries(inaccurate_product_review_summaries_file_path)
-
-    app.logger.info(product_review_summaries)
-
-    print("OpenAI API server starting on http://localhost:8000")
-    print("Set your OpenAI base URL to: http://localhost:8000/v1")
-    app.run(host='0.0.0.0', port=8000, debug=True)
+    port = int(os.environ.get('LLM_PORT', 8000))
+    app.logger.info(f"LLM service starting on http://0.0.0.0:{port}")
+    app.run(host='0.0.0.0', port=port, debug=False)

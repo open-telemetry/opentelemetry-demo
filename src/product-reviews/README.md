@@ -21,18 +21,20 @@ docker compose build product-reviews
 
 ## LLM Configuration
 
-By default, this service uses a mock LLM service, as configured in
-the `.env` file:
+By default, this service uses the built-in SmolLM2-135M LLM service, as
+configured in the `.env` file:
 
 ``` yaml
 LLM_BASE_URL=http://${LLM_HOST}:${LLM_PORT}/v1
-LLM_MODEL=astronomy-llm
+LLM_MODEL=smollm2-135m
 OPENAI_API_KEY=dummy
 ```
 
 If desired, the configuration can be changed to point to a real, OpenAI API
-compatible LLM in the file `.env.override`. For example, the following
-configuration can be used to utilize OpenAI's gpt-4o-mini model:
+compatible LLM in the file `.env.override`. All three values
+(`LLM_BASE_URL`, `LLM_MODEL`, `OPENAI_API_KEY`) must be overridden together.
+For example, the following configuration can be used to utilize OpenAI's
+gpt-4o-mini model:
 
 ``` yaml
 LLM_BASE_URL=https://api.openai.com/v1

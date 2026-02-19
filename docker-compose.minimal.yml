@@ -612,11 +612,18 @@ services:
     deploy:
       resources:
         limits:
-          memory: 50M
+          memory: 150M
     restart: unless-stopped
     environment:
       - FLAGD_HOST
       - FLAGD_PORT
+      - LLM_PORT
+      - LLM_MODEL
+      - SMOLLM_MODEL_PATH
+      - OTEL_EXPORTER_OTLP_ENDPOINT
+      - OTEL_SERVICE_NAME=llm
+      - OTEL_RESOURCE_ATTRIBUTES
+      - OTEL_INSTRUMENTATION_GENAI_CAPTURE_MESSAGE_CONTENT=true
     ports:
       - "${LLM_PORT}"
     logging: *logging
