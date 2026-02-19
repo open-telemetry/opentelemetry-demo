@@ -7,6 +7,8 @@ the release.
 
 ## Unreleased
 
+* [llm] Replace mock LLM with local SmolLM2-135M inference via llama-cpp-python
+  ([#3014](https://github.com/open-telemetry/opentelemetry-demo/pull/3014))
 * [accounting] fix memory leak with dbcontext
   ([#2876](https://github.com/open-telemetry/opentelemetry-demo/pull/2876))
 * [chore] Upgrade OTel Collector to v0.145.0 with :warning: breaking change:

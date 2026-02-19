@@ -1,4 +1,8 @@
-python-dotenv==1.2.1
-python-json-logger==4.0.0
+llama-cpp-python==0.3.8
 flask==3.1.2
 openfeature-provider-flagd==0.2.3
+python-json-logger==4.0.0
+opentelemetry-api==1.39.1
+opentelemetry-sdk==1.39.1
+opentelemetry-exporter-otlp-proto-grpc==1.39.1
+opentelemetry-instrumentation-flask==0.60b1
