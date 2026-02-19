@@ -924,6 +924,8 @@ services:
     build:
       context: ./
       dockerfile: ${OPENSEARCH_DOCKERFILE}
+      args:
+        - OPENSEARCH_IMAGE
       cache_from:
         - ${IMAGE_NAME}:${IMAGE_VERSION}-opensearch
     deploy:
