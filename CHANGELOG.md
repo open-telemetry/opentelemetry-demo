@@ -19,6 +19,9 @@ the release.
   [High-cardinality HTTP span names #54694](https://github.com/vercel/next.js/issues/54694)
   [#2942](https://github.com/open-telemetry/opentelemetry-demo/pull/2942)
 * add `main` tagged images, drop date suffix for `nightly` ([#2994](https://github.com/open-telemetry/opentelemetry-demo/pull/2994))
+* [docker] fix `docker-compose.minimal.yml` to be able to run by adding missing
+  postgresql service, environment variables, and dependencies
+  ([#3004](https://github.com/open-telemetry/opentelemetry-demo/pull/3004))
 
 ## 2.2.0
 

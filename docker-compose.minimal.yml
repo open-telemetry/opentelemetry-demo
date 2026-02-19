@@ -423,10 +423,12 @@ services:
       - OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE
       - OTEL_RESOURCE_ATTRIBUTES
       - OTEL_SERVICE_NAME=product-catalog
-    volumes:
-      - ./src/product-catalog/products:/usr/src/app/products
+      - OTEL_SEMCONV_STABILITY_OPT_IN=database
+      - DB_CONNECTION_STRING=postgres://otelu:otelp@${POSTGRES_HOST}/${POSTGRES_DB}?sslmode=disable
     depends_on:
       otel-collector:
+        condition: service_started
+      postgresql:
         condition: service_started
     logging: *logging
 
@@ -460,6 +462,8 @@ services:
       - OPENAI_API_KEY
       - LLM_MODEL
       - PRODUCT_CATALOG_ADDR
+      - LLM_HOST
+      - LLM_PORT
     depends_on:
       product-catalog:
         condition: service_started
@@ -599,6 +603,25 @@ services:
       - ./src/flagd:/etc/flagd
     logging:
       *logging
+
+  # Postgresql used by Product Reviews service
+  postgresql:
+    image: ${POSTGRES_IMAGE}
+    container_name: postgresql
+    deploy:
+      resources:
+        limits:
+          memory: 80M
+    restart: unless-stopped
+    ports:
+      - ${POSTGRES_PORT}
+    environment:
+      - POSTGRES_USER=root
+      - POSTGRES_PASSWORD
+      - POSTGRES_DB
+    volumes:
+      - ./src/postgresql/init.sql:/docker-entrypoint-initdb.d/init.sql
+    logging: *logging
 
   # LLM used by Product Review service
   llm:
