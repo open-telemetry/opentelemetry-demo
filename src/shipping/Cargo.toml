@@ -8,10 +8,10 @@ path = "src/main.rs"
 
 [dependencies]
 actix-web = "4"
-anyhow = "1.0.101"
-awc = { version = "3.8.1", default-features = false, features = ["compress-zstd"] }
+anyhow = "1.0.102"
+awc = { version = "3.8.2", default-features = false, features = ["compress-zstd"] }
 serde = { version = "1.0.228", features = ["derive"] }
-tonic = "0.14.4"
+tonic = "0.14.5"
 tracing = "0.1.44"
 tracing-subscriber = { version = "0.3.22", features = ["env-filter"] }
 
