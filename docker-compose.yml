@@ -528,6 +528,7 @@ services:
       - mysql-username=quotes_user
       - mysql-password=quotes_password
       - EMAIL_ADDR
+      - BUGSNAG_API_KEY=${BUGSNAG_API_KEY}
     logging: *logging
 
   # Recommendation service

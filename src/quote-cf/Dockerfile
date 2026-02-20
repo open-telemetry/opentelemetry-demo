@@ -1,3 +1,15 @@
+# --- Bugsnag dependency resolution ---
+FROM maven:3.9-eclipse-temurin-17-alpine AS bugsnag-deps
+WORKDIR /deps
+RUN printf '<project><modelVersion>4.0.0</modelVersion>\
+<groupId>temp</groupId><artifactId>temp</artifactId><version>1</version>\
+<dependencies><dependency><groupId>com.bugsnag</groupId>\
+<artifactId>bugsnag</artifactId><version>3.7.1</version></dependency>\
+</dependencies></project>' > pom.xml
+RUN mvn dependency:copy-dependencies -DoutputDirectory=/bugsnag-jars \
+    -DincludeScope=runtime -q
+
+# --- Lucee stage ---
 FROM lucee/lucee:6.1.0.175-BETA
 
 # Provide test page by creating the directory and copying files
@@ -16,6 +28,8 @@ COPY extensions/ /opt/lucee/extensions/
 # Download MySQL JDBC driver for database connectivity
 RUN mkdir -p /opt/lucee/server/lucee-server/context/lib
 RUN curl -L https://repo1.maven.org/maven2/mysql/mysql-connector-java/8.0.33/mysql-connector-java-8.0.33.jar -o /opt/lucee/server/lucee-server/context/lib/mysql-connector-java-8.0.33.jar
+RUN mkdir -p /var/www/lib
+COPY --from=bugsnag-deps /bugsnag-jars/ /var/www/lib/
 
 # add FusionReactor
 RUN mkdir -p /opt/fusionreactor/conf
