@@ -1,0 +1,21 @@
+# Copyright The OpenTelemetry Authors
+# SPDX-License-Identifier: Apache-2.0
+
+exporters:
+  opensearch:
+    logs_index: otel-logs
+    logs_index_time_format: "yyyy-MM-dd"
+    http:
+      endpoint: "http://opensearch:9200"
+      tls:
+        insecure: true
+    sending_queue:
+      # Explicitly set due to bug: https://github.com/open-telemetry/opentelemetry-collector-contrib/issues/45016
+      num_consumers: 10
+      queue_size: 1000
+      batch:
+
+service:
+  pipelines:
+    logs:
+      exporters: [opensearch]
