@@ -3,3 +3,6 @@
 
 # For anything not explicitly taken by someone else:
 * @open-telemetry/demo-approvers
+
+telemetry/grafana/ @todo-grafana-codowners
+telemetry/opensearch/ @todo-opensearch-codowners
