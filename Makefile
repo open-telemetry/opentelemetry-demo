@@ -10,7 +10,7 @@ TOOLS_DIR := ./internal/tools
 MISSPELL_BINARY=bin/misspell
 MISSPELL = $(TOOLS_DIR)/$(MISSPELL_BINARY)
 
-DOCKER_COMPOSE_CMD ?= docker compose
+DOCKER_COMPOSE_CMD ?= docker compose -f ./docker-compose.yml -f ./telemetry/opensearch/docker-compose.yml -f ./telemetry/grafana/docker-compose.yml
 DOCKER_COMPOSE_ENV=--env-file .env --env-file .env.override
 DOCKER_COMPOSE_BUILD_ARGS=
 

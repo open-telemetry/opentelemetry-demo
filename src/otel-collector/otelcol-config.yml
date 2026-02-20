@@ -133,18 +133,6 @@ exporters:
       insecure: true
     sending_queue:
       batch:
-  opensearch:
-    logs_index: otel-logs
-    logs_index_time_format: "yyyy-MM-dd"
-    http:
-      endpoint: "http://opensearch:9200"
-      tls:
-        insecure: true
-    sending_queue:
-      # Explicitly set due to bug: https://github.com/open-telemetry/opentelemetry-collector-contrib/issues/45016
-      num_consumers: 10
-      queue_size: 1000
-      batch:
 processors:
   memory_limiter:
     check_interval: 5s
@@ -169,31 +157,31 @@ processors:
             span.kind == SPAN_KIND_SERVER and
             resource.attributes["service.name"] == "frontend" and
             span.attributes["http.route"] == nil and
-            IsMatch(span.attributes["http.target"], "\\/api\\/cart")  # e.g. # /api/cart
+            IsMatch(span.attributes["http.target"], "\\/api\\/cart") # e.g. # /api/cart
 
           - set(span.attributes["http.route"], "/api/checkout") where
             span.kind == SPAN_KIND_SERVER and
             resource.attributes["service.name"] == "frontend" and
             span.attributes["http.route"] == nil and
-            IsMatch(span.attributes["http.target"], "\\/api\\/checkout")  # e.g. # /api/checkout
+            IsMatch(span.attributes["http.target"], "\\/api\\/checkout") # e.g. # /api/checkout
 
           - set(span.attributes["http.route"], "/api/products/{productId}") where
             span.kind == SPAN_KIND_SERVER and
             resource.attributes["service.name"] == "frontend" and
             span.attributes["http.route"] == nil and
-            IsMatch(span.attributes["http.target"], "\\/api\\/products\\/.*")  # e.g. /api/products/1YMWWN1N4O
+            IsMatch(span.attributes["http.target"], "\\/api\\/products\\/.*") # e.g. /api/products/1YMWWN1N4O
 
           - set(span.attributes["http.route"], "/api/recommendations") where
             span.kind == SPAN_KIND_SERVER and
             resource.attributes["service.name"] == "frontend" and
             span.attributes["http.route"] == nil and
-            IsMatch(span.attributes["http.target"], "\\/api\\/recommendations")  # e.g. # /api/recommendations?productIds=...
+            IsMatch(span.attributes["http.target"], "\\/api\\/recommendations") # e.g. # /api/recommendations?productIds=...
 
           - set(span.attributes["http.route"], "/api/data") where
             span.kind == SPAN_KIND_SERVER and
             resource.attributes["service.name"] == "frontend" and
             span.attributes["http.route"] == nil and
-            IsMatch(span.attributes["http.target"], "\\/api\\/data.*")  # e.g. # " /api/data?contextKeys=telescopes" or /api/data/?contextKeys=cameras
+            IsMatch(span.attributes["http.target"], "\\/api\\/data.*") # e.g. # " /api/data?contextKeys=telescopes" or /api/data/?contextKeys=cameras
 
           # SANITIZE ALL SPAN NAMES TO PREVENT CARDINALITY EXPLOSION
           - set_semconv_span_name("1.37.0", "original_span_name")
@@ -208,13 +196,23 @@ service:
       processors: [resourcedetection, memory_limiter, transform/sanitize_spans]
       exporters: [otlp_grpc/jaeger, debug, spanmetrics]
     metrics:
-      receivers: [docker_stats, httpcheck/frontend-proxy, hostmetrics, nginx, otlp, postgresql, redis, spanmetrics]
+      receivers:
+        [
+          docker_stats,
+          httpcheck/frontend-proxy,
+          hostmetrics,
+          nginx,
+          otlp,
+          postgresql,
+          redis,
+          spanmetrics,
+        ]
       processors: [resourcedetection, memory_limiter]
       exporters: [otlp_http/prometheus, debug]
     logs:
       receivers: [otlp]
       processors: [resourcedetection, memory_limiter]
-      exporters: [opensearch, debug]
+      exporters: [debug]
   telemetry:
     metrics:
       readers:
