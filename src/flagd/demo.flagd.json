@@ -94,7 +94,7 @@
         "10%": 0.1,
         "off": 0
       },
-      "defaultVariant": "50%"
+      "defaultVariant": "25%"
     },
     "paymentUnreachable": {
       "description": "Payment service is unavailable",
