@@ -1,3 +1,6 @@
+# Copyright The OpenTelemetry Authors
+# SPDX-License-Identifier: Apache-2.0
+
 # Helm values override for testing the experimental Prometheus info() function
 # This configuration uses a custom Prometheus build with the info() bug fix and
 # removes workaround resource attribute promotions.
