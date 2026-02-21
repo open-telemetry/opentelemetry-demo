@@ -1,0 +1,25 @@
+# Copyright The OpenTelemetry Authors
+# SPDX-License-Identifier: Apache-2.0
+
+# Additional Helm values for Kind deployment
+# Use with: -f values-info-function.yaml -f values-kind.yaml
+#
+# This configures the frontend-proxy service as NodePort for Kind access
+# and increases memory limits for services that need more than the defaults
+
+components:
+  frontend-proxy:
+    service:
+      type: NodePort
+      nodePort: 30080
+  # Increase memory limits for services that OOMKill with defaults
+  product-catalog:
+    resources:
+      limits:
+        memory: 100Mi
+  flagd:
+    resources:
+      limits:
+        memory: 500Mi
+    # Disable flagd-ui sidecar - it OOMKills even with 1Gi limit
+    sidecarContainers: []
