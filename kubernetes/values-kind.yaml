@@ -1,3 +1,6 @@
+# Copyright The OpenTelemetry Authors
+# SPDX-License-Identifier: Apache-2.0
+
 # Additional Helm values for Kind deployment
 # Use with: -f values-info-function.yaml -f values-kind.yaml
 #

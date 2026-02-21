@@ -1,4 +1,7 @@
-#!/bin/bash
+#!/bin/sh
+# Copyright The OpenTelemetry Authors
+# SPDX-License-Identifier: Apache-2.0
+
 # Deploy OpenTelemetry Demo to a local Kind cluster
 #
 # This script:
@@ -16,7 +19,7 @@ set -e
 CLUSTER_NAME="${CLUSTER_NAME:-otel-demo}"
 NAMESPACE="${NAMESPACE:-otel-demo}"
 RELEASE_NAME="${RELEASE_NAME:-opentelemetry-demo}"
-SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
 REPO_ROOT="$(dirname "$SCRIPT_DIR")"
 
 echo "=== OpenTelemetry Demo on Kind ==="
