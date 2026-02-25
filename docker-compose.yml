@@ -220,6 +220,7 @@ services:
       - OTEL_EXPORTER_OTLP_TRACES_ENDPOINT=http://${OTEL_COLLECTOR_HOST}:${OTEL_COLLECTOR_PORT_HTTP}/v1/traces
       - OTEL_RESOURCE_ATTRIBUTES
       - OTEL_SERVICE_NAME=email
+      - BUGSNAG_EMAIL_API_KEY=${BUGSNAG_EMAIL_API_KEY}
     depends_on:
       otel-collector:
         condition: service_started
@@ -462,6 +463,7 @@ services:
       - OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE
       - OTEL_RESOURCE_ATTRIBUTES
       - OTEL_SERVICE_NAME=payment
+      - BUGSNAG_PAYMENT_API_KEY=${BUGSNAG_PAYMENT_API_KEY}
     depends_on:
       mysql:
         condition: service_healthy
