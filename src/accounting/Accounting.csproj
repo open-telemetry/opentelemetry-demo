@@ -9,7 +9,7 @@
 	</PropertyGroup>
 
 	<ItemGroup>
-		<PackageReference Include="Confluent.Kafka" Version="2.13.0" />
+		<PackageReference Include="Confluent.Kafka" Version="2.13.1" />
 		<PackageReference Include="EFCore.NamingConventions" Version="10.0.1" />
 		<PackageReference Include="Google.Protobuf" Version="3.33.5" />
 		<PackageReference Include="Grpc.Tools" Version="2.68.1">
