@@ -4,16 +4,24 @@
 require "ostruct"
 require "pony"
 require "sinatra"
+require "bugsnag"
 
 require "opentelemetry/sdk"
 require "opentelemetry/exporter/otlp"
 require "opentelemetry/instrumentation/sinatra"
+
+Bugsnag.configure do |config|
+  config.api_key = ENV["BUGSNAG_EMAIL_API_KEY"]
+end
 
 set :port, ENV["EMAIL_PORT"]
 
 OpenTelemetry::SDK.configure do |c|
   c.use "OpenTelemetry::Instrumentation::Sinatra"
 end
+
+set :raise_errors, true
+use Bugsnag::Rack
 
 post "/send_order_confirmation" do
   data = JSON.parse(request.body.read, object_class: OpenStruct)
@@ -28,9 +36,6 @@ post "/send_order_confirmation" do
 
 end
 
-error do
-  OpenTelemetry::Trace.current_span.record_exception(env['sinatra.error'])
-end
 
 def send_email(data)
   # create and start a manual span

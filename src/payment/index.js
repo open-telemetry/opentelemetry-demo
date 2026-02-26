@@ -1,5 +1,8 @@
 // Copyright The OpenTelemetry Authors
 // SPDX-License-Identifier: Apache-2.0
+const Bugsnag = require('@bugsnag/js')
+Bugsnag.start({ apiKey: process.env.BUGSNAG_PAYMENT_API_KEY || '' })
+
 const grpc = require('@grpc/grpc-js')
 const protoLoader = require('@grpc/proto-loader')
 const health = require('grpc-js-health-check')
@@ -23,6 +26,7 @@ async function chargeServiceHandler(call, callback) {
 
   } catch (err) {
     logger.warn({ err })
+    Bugsnag.notify(err)
 
     span?.recordException(err)
     span?.setStatus({ code: opentelemetry.SpanStatusCode.ERROR })
