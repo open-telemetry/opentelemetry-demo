@@ -28,7 +28,7 @@
     <PackageReference Include="OpenTelemetry.Instrumentation.Runtime" Version="1.15.0" />
     <PackageReference Include="OpenTelemetry.Resources.Container" Version="1.15.0-beta.1" />
     <PackageReference Include="OpenTelemetry.Resources.Host" Version="1.15.0-beta.2" />
-    <PackageReference Include="StackExchange.Redis" Version="2.11.0" />
+    <PackageReference Include="StackExchange.Redis" Version="2.11.3" />
     <PackageReference Include="OpenFeature.Contrib.Providers.Flagd" Version="0.3.5" />
     <PackageReference Include="OpenFeature" Version="2.11.1" />
     <PackageReference Include="OpenFeature.Hosting" Version="2.11.1" />

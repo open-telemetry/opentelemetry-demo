@@ -22,6 +22,9 @@ the release.
 * [docker] fix `docker-compose.minimal.yml` to be able to run by adding missing
   postgresql service, environment variables, and dependencies
   ([#3004](https://github.com/open-telemetry/opentelemetry-demo/pull/3004))
+* [flagd-ui] fix memory issue with BEAM-VM, this reduces flagd-ui memory
+  usage from 2.3GB to 228Mi
+  [#3022](https://github.com/open-telemetry/opentelemetry-demo/pull/3022)
 
 ## 2.2.0
 
