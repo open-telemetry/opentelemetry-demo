@@ -1,6 +1,6 @@
 module github.com/opentelemetry/opentelemetry-demo/src/product-catalog
 
-go 1.24.2
+go 1.25.0
 
 require (
 	github.com/XSAM/otelsql v0.41.0
