@@ -98,4 +98,4 @@ EXPOSE ${FLAGD_UI_PORT}
 # above and adding an entrypoint. See https://github.com/krallin/tini for details
 # ENTRYPOINT ["/tini", "--"]
 
-CMD ["/app/bin/server"]
+CMD ["sh", "-c", "ulimit -n 65536 && exec /app/bin/server"]
