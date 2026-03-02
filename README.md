@@ -61,20 +61,21 @@ keeping it up to date for you.
 
 |                           |                |                                  |
 |---------------------------|----------------|----------------------------------|
-| [AlibabaCloud LogService] | [Google Cloud] | [Oracle]                         |
-| [Apache Doris]            | [Grafana Labs] | [Parseable]                      |
-| [AppDynamics]             | [Guance]       | [Sentry]                         |
-| [Aspecto]                 | [Honeycomb.io] | [ServiceNow Cloud Observability] |
-| [Axiom]                   | [Instana]      | [SigNoz]                         |
-| [Axoflow]                 | [Kloudfuse]    | [Splunk]                         |
-| [Azure Data Explorer]     | [Kopai]        | [Sumo Logic]                     |
-| [Causely]                 | [Last9]        | [TelemetryHub]                   |
-| [ClickStack]              | [Liatrio]      | [Teletrace]                      |
-| [Coralogix]               | [Logz.io]      | [Tinybird]                       |
-| [Dash0]                   | [New Relic]    | [Tracetest]                      |
-| [Datadog]                 | [Oodle]        | [Tsuga]                          |
-| [Dynatrace]               | [OpenObserve]  | [Uptrace]                        |
-| [Elastic]                 | [OpenSearch]   | [VictoriaMetrics]                |
+| [AlibabaCloud LogService] | [Grafana Labs] | [Sentry]                         |
+| [Apache Doris]            | [Guance]       | [ServiceNow Cloud Observability] |
+| [AppDynamics]             | [Honeycomb.io] | [SigNoz]                         |
+| [Aspecto]                 | [Instana]      | [SolarWinds Observability]       |
+| [Axiom]                   | [Kloudfuse]    | [Splunk]                         |
+| [Axoflow]                 | [Kopai]        | [Sumo Logic]                     |
+| [Azure Data Explorer]     | [Last9]        | [TelemetryHub]                   |
+| [Causely]                 | [Liatrio]      | [Teletrace]                      |
+| [ClickStack]              | [Logz.io]      | [Tinybird]                       |
+| [Coralogix]               | [New Relic]    | [Tracetest]                      |
+| [Dash0]                   | [Oodle]        | [Tsuga]                          |
+| [Datadog]                 | [OpenObserve]  | [Uptrace]                        |
+| [Dynatrace]               | [OpenSearch]   | [VictoriaMetrics]                |
+| [Elastic]                 | [Oracle]       |                                  |
+| [Google Cloud]            | [Parseable]    |                                  |
 
 ## Contributing
 
@@ -152,6 +153,7 @@ For more information about the emeritus role, see the [community repository](htt
 [Sentry]: https://github.com/getsentry/opentelemetry-demo
 [ServiceNow Cloud Observability]: https://docs.lightstep.com/otel/quick-start-operator#send-data-from-the-opentelemetry-demo
 [SigNoz]: https://signoz.io/blog/opentelemetry-demo/
+[SolarWinds Observability]: https://github.com/solarwinds/opentelemetry-demo
 [Splunk]: https://github.com/signalfx/opentelemetry-demo
 [Sumo Logic]: https://www.sumologic.com/blog/common-opentelemetry-demo-application/
 [TelemetryHub]: https://github.com/TelemetryHub/opentelemetry-demo/tree/telemetryhub-backend
