@@ -70,6 +70,8 @@ updates:
         dependency-type: "production"
     schedule:
       interval: "daily"
+    allow:
+      - dependency-type: "all"
   - package-ecosystem: "bundler"
     directories:
       - "/src/email/*"
