@@ -16,13 +16,13 @@ meter_provider:
         exporter:
           otlp_grpc:
             endpoint: ${OTEL_EXPORTER_OTLP_ENDPOINT}
+            temporality_preference: ${OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE:-cumulative}
 tracer_provider:
   processors:
     - batch:
         exporter:
           otlp_grpc:
             endpoint: ${OTEL_EXPORTER_OTLP_ENDPOINT}
-            temporality_preference: ${OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE:-cumulative}
 propagator:
   composite:
     - tracecontext:
