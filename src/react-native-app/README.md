@@ -134,7 +134,7 @@ repository, in order to install the precise versions first setup
 commands.
 
 ```bash
-rbenv install 4.0.1 # the version of ruby we've pinned for this app
+rbenv install 2.7.6 # the version of ruby we've pinned for this app
 bundle install
 cd ios
 bundle exec pod install
