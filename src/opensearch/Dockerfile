@@ -1,7 +1,8 @@
 # Copyright The OpenTelemetry Authors
 # SPDX-License-Identifier: Apache-2.0
 
-FROM opensearchproject/opensearch:3.2.0
+ARG OPENSEARCH_IMAGE
+FROM ${OPENSEARCH_IMAGE}
 
 USER 0
 
