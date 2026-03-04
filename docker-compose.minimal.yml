@@ -423,6 +423,7 @@ services:
       - OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE
       - OTEL_RESOURCE_ATTRIBUTES
       - OTEL_SERVICE_NAME=product-catalog
+      - OTEL_EXPERIMENTAL_CONFIG_FILE=/otel-config.yml
       - OTEL_SEMCONV_STABILITY_OPT_IN=database
       - DB_CONNECTION_STRING=postgres://otelu:otelp@${POSTGRES_HOST}/${POSTGRES_DB}?sslmode=disable
     depends_on:
@@ -430,6 +431,8 @@ services:
         condition: service_started
       postgresql:
         condition: service_started
+    volumes:
+      - ./otel-config.yml:/otel-config.yml
     logging: *logging
 
   # Product reviews service
@@ -774,6 +777,8 @@ services:
     build:
       context: ./
       dockerfile: ${OPENSEARCH_DOCKERFILE}
+      args:
+        - OPENSEARCH_IMAGE
       cache_from:
         - ${IMAGE_NAME}:${IMAGE_VERSION}-opensearch
     deploy:

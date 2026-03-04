@@ -25,6 +25,8 @@ the release.
 * [flagd-ui] fix memory issue with BEAM-VM, this reduces flagd-ui memory
   usage from 2.3GB to 228Mi
   [#3022](https://github.com/open-telemetry/opentelemetry-demo/pull/3022)
+* [chore] Bump dependent image versions to latest releases
+  ([#3005](https://github.com/open-telemetry/opentelemetry-demo/pull/3005))
 
 ## 2.2.0
 
