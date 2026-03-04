@@ -28,7 +28,8 @@ FROM gcr.io/distroless/java17-debian12:nonroot
 WORKDIR /usr/src/app/
 
 # Download FusionReactor jar (architecture-independent)
-ADD --chmod=644 https://download.fusionreactor.io/FR/Latest/fusionreactor.jar /usr/src/app/fusionreactor.jar
+#ADD --chmod=644 https://download.fusionreactor.io/FR/Latest/fusionreactor.jar /usr/src/app/fusionreactor.jar
+ADD --chmod=644 https://download.fusionreactor.io/FR/FusionReactor-2026.1.0-SNAPSHOT/fusionreactor.jar /usr/src/app/fusionreactor.jar
 
 # Copy FusionReactor native library from builder stage
 COPY --from=builder /usr/src/app/libfrjvmti.so /usr/src/app/libfrjvmti.so
