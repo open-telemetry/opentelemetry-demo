@@ -53,6 +53,39 @@ export default class MyDocument extends Document<{ envString: string }> {
             href="https://fonts.googleapis.com/css2?family=Open+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,300;1,400;1,500;1,600;1,700;1,800&display=swap"
             rel="stylesheet"
           />
+          <script
+            dangerouslySetInnerHTML={{
+                __html: `
+                (function(n, v, s, x, z) {
+                    x = window.GzRUM = {
+                        q: [],
+                        n: n,
+                        v: v,
+                        s: s,
+                        config: {
+                            genwizid: 'genwiz-global-id-2',
+                            applicationName: 'Astro Commerce',
+                            applicationversion: 'v1.1.0',
+                            environment: 'development',
+                            tenant: 'tenant1'
+                        }
+                    };
+                    window[n] = function(c, p) {
+                        x.q.push({ c: c, p: p });
+                    };
+                    z = document.createElement('script');
+                    z.async = true;
+                    z.src = s;
+                    document.head.insertBefore(z, document.head.getElementsByTagName('script')[0]);
+                })(
+                    'gzRum',
+                    '1.1.0',
+                    'https://__Observability__EndPoint__/RUMPerformanceMetrics.js'
+                );
+                `,
+            }}
+            />
+          <title>OTel demo</title>
         </Head>
         <body>
           <Main />
