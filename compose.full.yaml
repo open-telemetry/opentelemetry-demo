@@ -24,5 +24,6 @@ services:
 
   frontend-proxy:
     depends_on:
-      flagd-ui:
+      load-generator:
         condition: service_started
+

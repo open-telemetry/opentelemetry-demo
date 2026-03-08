@@ -204,8 +204,8 @@ start-minimal:
 
 .PHONY: stop
 stop:
-	$(DOCKER_COMPOSE_CMD) $(DOCKER_COMPOSE_ENV) down --remove-orphans --volumes
-	$(DOCKER_COMPOSE_CMD) $(DOCKER_COMPOSE_ENV) -f docker-compose-tests.yml down --remove-orphans --volumes
+	$(DOCKER_COMPOSE_CMD) $(DOCKER_COMPOSE_ENV) -f compose.yaml -f compose.full.yaml down --remove-orphans --volumes
+	$(DOCKER_COMPOSE_CMD) $(DOCKER_COMPOSE_ENV) -f compose.yaml -f compose.full.yaml -f docker-compose-tests.yml --profile full down --remove-orphans --volumes
 	@echo ""
 	@echo "OpenTelemetry Demo is stopped."
 

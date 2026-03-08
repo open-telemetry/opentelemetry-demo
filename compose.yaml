@@ -390,11 +390,11 @@ services:
     depends_on:
       frontend:
         condition: service_started
-      load-generator:
-        condition: service_started
       jaeger:
         condition: service_started
       grafana:
+        condition: service_started
+      flagd-ui:
         condition: service_started
     dns_search: ""
 
@@ -444,7 +444,6 @@ services:
     restart: unless-stopped
     profiles:
       - full
-      - minimal
     ports:
       - "${LOCUST_WEB_PORT}"
     environment:
@@ -748,6 +747,7 @@ services:
     restart: always
     profiles:
       - full
+      - minimal
     environment:
       - FLAGD_UI_PORT
       - OTEL_EXPORTER_OTLP_ENDPOINT=http://${OTEL_COLLECTOR_HOST}:${OTEL_COLLECTOR_PORT_HTTP}
