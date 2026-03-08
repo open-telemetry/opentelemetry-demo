@@ -136,12 +136,12 @@ clean-images:
 
 .PHONY: run-tests
 run-tests:
-	$(DOCKER_COMPOSE_CMD) $(DOCKER_COMPOSE_ENV) -f docker-compose-tests.yml run frontendTests
-	$(DOCKER_COMPOSE_CMD) $(DOCKER_COMPOSE_ENV) -f docker-compose-tests.yml run traceBasedTests
+	$(DOCKER_COMPOSE_CMD) $(DOCKER_COMPOSE_ENV) -f compose.full.yaml -f docker-compose-tests.yml --profile full run frontendTests
+	$(DOCKER_COMPOSE_CMD) $(DOCKER_COMPOSE_ENV) -f compose.full.yaml -f docker-compose-tests.yml --profile full run traceBasedTests
 
 .PHONY: run-tracetesting
 run-tracetesting:
-	$(DOCKER_COMPOSE_CMD) $(DOCKER_COMPOSE_ENV) -f docker-compose-tests.yml run traceBasedTests ${SERVICES_TO_TEST}
+	$(DOCKER_COMPOSE_CMD) $(DOCKER_COMPOSE_ENV) -f compose.full.yaml -f docker-compose-tests.yml --profile full run traceBasedTests ${SERVICES_TO_TEST}
 
 .PHONY: generate-protobuf
 generate-protobuf:
