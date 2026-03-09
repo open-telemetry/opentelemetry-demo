@@ -1,3 +1,6 @@
+// Copyright The OpenTelemetry Authors
+// SPDX-License-Identifier: Apache-2.0
+
 //
 
 //go:build tools
@@ -12,4 +15,5 @@ package tools
 
 import (
 	_ "github.com/client9/misspell/cmd/misspell"
+	_ "github.com/google/addlicense"
 )

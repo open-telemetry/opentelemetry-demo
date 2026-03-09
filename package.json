@@ -1,6 +1,5 @@
 {
   "devDependencies": {
-    "@kt3k/license-checker": "^3.2.2",
     "@umbrelladocs/linkspector": "^0.4.8",
     "markdownlint-cli": "^0.48.0"
   }
