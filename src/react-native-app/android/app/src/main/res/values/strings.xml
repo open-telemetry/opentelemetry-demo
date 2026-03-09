@@ -1,3 +1,8 @@
+<!--
+Copyright The OpenTelemetry Authors
+SPDX-License-Identifier: Apache-2.0
+-->
+
 <resources>
   <string name="app_name">Astronomy Shop App</string>
   <string name="expo_splash_screen_resize_mode" translatable="false">contain</string>

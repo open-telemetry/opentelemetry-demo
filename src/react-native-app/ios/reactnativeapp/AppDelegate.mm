@@ -1,3 +1,6 @@
+// Copyright The OpenTelemetry Authors
+// SPDX-License-Identifier: Apache-2.0
+
 #import "AppDelegate.h"
 
 #import <React/RCTBundleURLProvider.h>
