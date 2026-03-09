@@ -9,6 +9,8 @@ PWD := $(shell pwd)
 TOOLS_DIR := ./internal/tools
 MISSPELL_BINARY=bin/misspell
 MISSPELL = $(TOOLS_DIR)/$(MISSPELL_BINARY)
+ADDLICENSE_BINARY=bin/addlicense
+ADDLICENSE = $(TOOLS_DIR)/$(ADDLICENSE_BINARY)
 
 DOCKER_COMPOSE_CMD ?= docker compose
 DOCKER_COMPOSE_ENV=--env-file .env --env-file .env.override
@@ -32,6 +34,9 @@ all: install-tools markdownlint misspell yamllint
 
 $(MISSPELL):
 	cd $(TOOLS_DIR) && go build -o $(MISSPELL_BINARY) github.com/client9/misspell/cmd/misspell
+
+$(ADDLICENSE):
+	cd $(TOOLS_DIR) && go build -o $(ADDLICENSE_BINARY) github.com/google/addlicense
 
 .PHONY: misspell
 misspell:	$(MISSPELL)
@@ -60,16 +65,38 @@ yamllint: install-yamllint
 	yamllint .
 
 .PHONY: checklicense
-checklicense:
+checklicense:	$(ADDLICENSE)
 	@echo "Checking license headers..."
-	@if ! npm ls @kt3k/license-checker; then npm install; fi
-	npx @kt3k/license-checker -q
+	$(ADDLICENSE) -check -c "The OpenTelemetry Authors" -l apache -s=only -y "" \
+		-ignore node_modules/** \
+		-ignore .expo/** \
+		-ignore Pods/** \
+		-ignore **/vendor/** \
+		-ignore **/.venv/** \
+		-ignore **/dist/** \
+		-ignore **/build/** \
+		-ignore **/*_pb2.py \
+		-ignore **/*_pb2_grpc.py \
+		-ignore **/genproto/** \
+		-ignore **/protos/*.ts \
+		.
 
 .PHONY: addlicense
-addlicense:
+addlicense:	$(ADDLICENSE)
 	@echo "Adding license headers..."
-	@if ! npm ls @kt3k/license-checker; then npm install; fi
-	npx @kt3k/license-checker -q -i
+	$(ADDLICENSE) -c "The OpenTelemetry Authors" -l apache -s=only -y "" \
+		-ignore node_modules/** \
+		-ignore .expo/** \
+		-ignore Pods/** \
+		-ignore **/vendor/** \
+		-ignore **/.venv/** \
+		-ignore **/dist/** \
+		-ignore **/build/** \
+		-ignore **/*_pb2.py \
+		-ignore **/*_pb2_grpc.py \
+		-ignore **/genproto/** \
+		-ignore **/protos/*.ts \
+		.
 
 .PHONY: checklinks
 checklinks:
@@ -88,7 +115,7 @@ fix: misspell-correction
 	@echo "All autofixes complete"
 
 .PHONY: install-tools
-install-tools: $(MISSPELL)
+install-tools: $(MISSPELL) $(ADDLICENSE)
 	npm install
 	@echo "All tools installed"
 

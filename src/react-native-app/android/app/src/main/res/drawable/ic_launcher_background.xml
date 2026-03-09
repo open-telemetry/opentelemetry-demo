@@ -1,4 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!--
+Copyright The OpenTelemetry Authors
+SPDX-License-Identifier: Apache-2.0
+-->
+
 <vector
     android:height="108dp"
     android:width="108dp"
