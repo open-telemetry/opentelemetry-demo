@@ -13,3 +13,12 @@ providers:
     editable: true
     options:
       path: /etc/grafana/provisioning/dashboards/demo
+  - name: 'Okapi Demo'
+    orgId: 1
+    folder: 'Okapi'
+    folderUid: 'okapi'
+    type: file
+    disableDeletion: false
+    editable: true
+    options:
+      path: /etc/grafana/provisioning/dashboards/okapi

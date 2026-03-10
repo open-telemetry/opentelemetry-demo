@@ -62,7 +62,7 @@
     {
       "datasource": {
         "type": "prometheus",
-        "uid": "webstore-metrics"
+        "uid": "okapi-metrics"
       },
       "fieldConfig": {
         "defaults": {
@@ -144,7 +144,7 @@
     {
       "datasource": {
         "type": "prometheus",
-        "uid": "webstore-metrics"
+        "uid": "okapi-metrics"
       },
       "fieldConfig": {
         "defaults": {
@@ -226,7 +226,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "webstore-metrics"
+            "uid": "okapi-metrics"
           },
           "disableTextWrap": false,
           "editorMode": "builder",
@@ -259,7 +259,7 @@
     {
       "datasource": {
         "type": "prometheus",
-        "uid": "webstore-metrics"
+        "uid": "okapi-metrics"
       },
       "fieldConfig": {
         "defaults": {
@@ -341,7 +341,7 @@
     {
       "datasource": {
         "type": "prometheus",
-        "uid": "webstore-metrics"
+        "uid": "okapi-metrics"
       },
       "fieldConfig": {
         "defaults": {
@@ -423,7 +423,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "webstore-metrics"
+            "uid": "okapi-metrics"
           },
           "disableTextWrap": false,
           "editorMode": "builder",
@@ -454,6 +454,6 @@
   "timepicker": {},
   "timezone": "browser",
   "title": "Cart Service Exemplars",
-  "uid": "ce6sd46kfkglca",
+  "uid": "117d0b2c",
   "version": 1
 }
