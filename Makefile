@@ -29,6 +29,13 @@ endif
 SEMCONVGEN_VERSION=0.11.0
 YAMLLINT_VERSION=1.30.0
 
+.PHONY: rm-okapi
+rm-okapi: 
+	docker rm /okapi-clickhouse
+	docker rm /localstack-main
+	docker rm /okapi-web
+	docker rm /okapi-ingester
+
 .PHONY: all
 all: install-tools markdownlint misspell yamllint
 
@@ -209,25 +216,25 @@ check-clean-work-tree:
 	fi
 
 .PHONY: start
-start:
+start: 
 	$(DOCKER_COMPOSE_CMD) $(DOCKER_COMPOSE_ENV) up --force-recreate --remove-orphans --detach
 	@echo ""
 	@echo "OpenTelemetry Demo is running."
-	@echo "Go to http://localhost:8080 for the demo UI."
-	@echo "Go to http://localhost:8080/jaeger/ui for the Jaeger UI."
+	@echo "⭐  Go to http://localhost:8080 for the demo UI."
+	@echo "⭐  Go to http://localhost:9001 for the Okapi UI."
 	@echo "Go to http://localhost:8080/grafana/ for the Grafana UI."
-	@echo "Go to http://localhost:8080/loadgen/ for the Load Generator UI."
-	@echo "Go to http://localhost:8080/feature/ to change feature flags."
+	@echo "🧨  Go to http://localhost:8080/loadgen/ for the Load Generator UI."
+	@echo "🖍️  Go to http://localhost:8080/feature/ to change feature flags."
 
 .PHONY: start-minimal
 start-minimal:
 	$(DOCKER_COMPOSE_CMD) $(DOCKER_COMPOSE_ENV) -f docker-compose.minimal.yml up --force-recreate --remove-orphans --detach
 	@echo ""
-	@echo "OpenTelemetry Demo in minimal mode is running."
-	@echo "Go to http://localhost:8080 for the demo UI."
-	@echo "Go to http://localhost:8080/jaeger/ui for the Jaeger UI."
+	@echo "OpenTelemetry Demo is running."
+	@echo "⭐  Go to http://localhost:8080 for the demo UI."
+	@echo "⭐  Go to http://localhost:9001 for the Okapi UI."
 	@echo "Go to http://localhost:8080/grafana/ for the Grafana UI."
-	@echo "Go to http://localhost:8080/loadgen/ for the Load Generator UI."
+	@echo "🧨  Go to http://localhost:8080/loadgen/ for the Load Generator UI."
 	@echo "Go to https://opentelemetry.io/docs/demo/feature-flags/ to learn how to change feature flags."
 
 .PHONY: stop
@@ -277,3 +284,18 @@ endif
 .PHONY: build-react-native-android
 build-react-native-android:
 	docker build -f src/react-native-app/android.Dockerfile --platform=linux/amd64 --output=. src/react-native-app
+
+.PHONY: start-okapi-oscar
+start-okapi-oscar:
+	$(DOCKER_COMPOSE_CMD) $(DOCKER_COMPOSE_ENV) up --force-recreate --remove-orphans -d okapi-oscar
+
+.PHONY: start-postgres
+start-postgres:
+	$(DOCKER_COMPOSE_CMD) $(DOCKER_COMPOSE_ENV) up --force-recreate --remove-orphans -d postgresql
+
+create-okapi-secrets:
+	$(DOCKER_COMPOSE_CMD) $(DOCKER_COMPOSE_ENV) up --force-recreate --remove-orphans -d okapi-ops-create-secrets
+
+.PHONY: start-okapi-oscar
+start-okapi-web:
+	$(DOCKER_COMPOSE_CMD) $(DOCKER_COMPOSE_ENV) up --force-recreate --remove-orphans -d okapi-web

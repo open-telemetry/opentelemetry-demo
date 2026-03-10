@@ -568,6 +568,11 @@ services:
           "CMD-SHELL",
           "timeout 1 bash -c '>/dev/tcp/localhost/${SHIPPING_PORT}'",
         ]
+      test:
+        [
+          "CMD-SHELL",
+          "timeout 1 bash -c '>/dev/tcp/localhost/${SHIPPING_PORT}'",
+        ]
       start_period: 10s
       interval: 5s
       timeout: 10s
@@ -595,11 +600,13 @@ services:
       - OTEL_RESOURCE_ATTRIBUTES
       - OTEL_SERVICE_NAME=flagd
     command: ["start", "--uri", "file:./etc/flagd/demo.flagd.json"]
+    command: ["start", "--uri", "file:./etc/flagd/demo.flagd.json"]
     ports:
       - "${FLAGD_PORT}"
       - "${FLAGD_OFREP_PORT}"
     volumes:
       - ./src/flagd:/etc/flagd
+    logging: *logging
     logging: *logging
 
   # Postgresql used by Product Reviews service
@@ -691,6 +698,11 @@ services:
         "--config=/etc/otelcol-config.yml",
         "--config=/etc/otelcol-config-extras.yml",
       ]
+    command:
+      [
+        "--config=/etc/otelcol-config.yml",
+        "--config=/etc/otelcol-config-extras.yml",
+      ]
     user: 0:0
     volumes:
       - ${HOST_FILESYSTEM}:/hostfs:ro
@@ -709,10 +721,169 @@ services:
       - OTEL_COLLECTOR_HOST
       - OTEL_COLLECTOR_PORT_GRPC
       - OTEL_COLLECTOR_PORT_HTTP
+      - OKAPI_OTLP_HTTP_ENDPOINT
       - POSTGRES_HOST
       - POSTGRES_PORT
       - POSTGRES_PASSWORD
       - GOMEMLIMIT=160MiB
+
+  # Okapi LocalStack
+  localstack-main:
+    image: ${OKAPI_LOCALSTACK_IMAGE}
+    container_name: localstack-main
+    restart: unless-stopped
+    ports:
+      - "${OKAPI_LOCALSTACK_PORT}:${OKAPI_LOCALSTACK_PORT}"
+    healthcheck:
+      test:
+        [
+          "CMD-SHELL",
+          "curl -sf http://localhost:4566/_localstack/health > /dev/null",
+        ]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+    logging: *logging
+
+  # Okapi ClickHouse
+  okapi-clickhouse:
+    image: ${OKAPI_CLICKHOUSE_IMAGE}
+    container_name: okapi-clickhouse
+    restart: unless-stopped
+    ports:
+      - "${OKAPI_CLICKHOUSE_HTTP_PORT}:${OKAPI_CLICKHOUSE_HTTP_PORT}"
+      - "${OKAPI_CLICKHOUSE_TCP_PORT}:${OKAPI_CLICKHOUSE_TCP_PORT}"
+    environment:
+      - CLICKHOUSE_PASSWORD=${OKAPI_CLICKHOUSE_PASSWORD}
+    ulimits:
+      nofile:
+        soft: 262144
+        hard: 262144
+    volumes:
+      - okapi-clickhouse-data:/var/lib/clickhouse/
+      - okapi-clickhouse-logs:/var/log/clickhouse-server/
+    healthcheck:
+      test: ["CMD-SHELL", "wget -qO- http://localhost:8123/ping | grep -q 'Ok'"]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+    logging: *logging
+
+  # Okapi Ops - ClickHouse migrations
+  okapi-ops-ch-migrate:
+    image: ${OKAPI_OPS_IMAGE}
+    container_name: okapi-ops-ch-migrate
+    environment:
+      - AWS_ACCESS_KEY_ID=${OKAPI_AWS_ACCESS_KEY_ID}
+      - AWS_SECRET_ACCESS_KEY=${OKAPI_AWS_SECRET_ACCESS_KEY}
+      - AWS_REGION=${OKAPI_AWS_REGION}
+    command:
+      - ch-migrate
+      - --host
+      - ${OKAPI_CLICKHOUSE_HOST}
+      - --port
+      - "${OKAPI_CLICKHOUSE_HTTP_PORT}"
+      - --user
+      - default
+      - --password
+      - ${OKAPI_CLICKHOUSE_PASSWORD}
+    logging: *logging
+
+  # Okapi Ops - DynamoDB migrations (LocalStack)
+  okapi-ops-ddb-migrate:
+    image: ${OKAPI_OPS_IMAGE}
+    container_name: okapi-ops-ddb-migrate
+    depends_on:
+      localstack-main:
+        condition: service_healthy
+    environment:
+      - AWS_ACCESS_KEY_ID=${OKAPI_AWS_ACCESS_KEY_ID}
+      - AWS_SECRET_ACCESS_KEY=${OKAPI_AWS_SECRET_ACCESS_KEY}
+      - AWS_REGION=${OKAPI_AWS_REGION}
+    command:
+      - ddb-migrate
+      - --endpoint
+      - http://${OKAPI_LOCALSTACK_HOST}:${OKAPI_LOCALSTACK_PORT}
+      - --region
+      - ${OKAPI_AWS_REGION}
+    logging: *logging
+
+  # Okapi Ops - Create secrets (LocalStack)
+  okapi-ops-create-secrets:
+    image: ${OKAPI_OPS_IMAGE}
+    container_name: okapi-ops-create-secrets
+    depends_on:
+      localstack-main:
+        condition: service_healthy
+    environment:
+      - AWS_ACCESS_KEY_ID=${OKAPI_AWS_ACCESS_KEY_ID}
+      - AWS_SECRET_ACCESS_KEY=${OKAPI_AWS_SECRET_ACCESS_KEY}
+      - AWS_REGION=${OKAPI_AWS_REGION}
+    command:
+      - create-secrets
+      - --endpoint
+      - http://${OKAPI_LOCALSTACK_HOST}:${OKAPI_LOCALSTACK_PORT}
+      - --region
+      - ${OKAPI_AWS_REGION}
+
+  # Okapi oscar
+  okapi-oscar:
+    image: ${OKAPI_OSCAR_IMAGE}
+    container_name: okapi-oscar
+    restart: unless-stopped
+    ports:
+      - "${OKAPI_OSCAR_PORT}:${OKAPI_OSCAR_PORT}"
+
+    environment:
+      - OPENAI_API_KEY=${OPENAI_API_KEY}
+      - OSCAR_DB_URL=jdbc:postgresql://${POSTGRES_HOST}:${POSTGRES_PORT}/${POSTGRES_DB}?currentSchema=okapi_oscar
+      - OSCAR_DB_USER=okapi_oscar_user
+      - OSCAR_DB_PASSWORD=okapi_oscar_password
+    command:
+      - --okapi.oscar.cluster-endpoint=http://${OKAPI_INGESTER_HOST}:${OKAPI_INGESTER_PORT}
+      - --okapi.oscar.vault.address=
+      - --okapi.oscar.openai.api-key-path=env://OPENAI_API_KEY
+    logging: *logging
+
+  # Okapi Ingester
+  okapi-ingester:
+    image: ${OKAPI_INGESTER_IMAGE}
+    container_name: okapi-ingester
+    restart: unless-stopped
+    ports:
+      - "${OKAPI_INGESTER_PORT}:${OKAPI_INGESTER_PORT}"
+    depends_on:
+      okapi-ops-create-secrets:
+        condition: service_completed_successfully
+      okapi-ops-ch-migrate:
+        condition: service_completed_successfully
+      okapi-ops-ddb-migrate:
+        condition: service_completed_successfully
+    command:
+      - --okapi.clickhouse.host=${OKAPI_CLICKHOUSE_HOST}
+      - --okapi.chMetricsWal=/wal/metrics
+      - --okapi.chLogsWal=/wal/metrics
+      - --okapi.chTracesWal=/wal/metrics
+    logging: *logging
+
+  # Okapi Web
+  okapi-web:
+    image: ${OKAPI_WEB_IMAGE}
+    container_name: okapi-web
+    restart: unless-stopped
+    ports:
+      - "${OKAPI_WEB_PORT}:${OKAPI_WEB_PORT}"
+    depends_on:
+      okapi-ingester:
+        condition: service_started
+    environment:
+      - AWS_ACCESS_KEY_ID=${OKAPI_AWS_ACCESS_KEY_ID}
+      - AWS_SECRET_ACCESS_KEY=${OKAPI_AWS_SECRET_ACCESS_KEY}
+      - AWS_REGION=${OKAPI_AWS_REGION}
+    command:
+      - --clusterEndpoint=http://${OKAPI_INGESTER_HOST}:${OKAPI_INGESTER_PORT}
+      - --okapi.aws.endpoint=http://${OKAPI_LOCALSTACK_HOST}:${OKAPI_LOCALSTACK_PORT}
+    logging: *logging
 
   # Prometheus
   prometheus:
@@ -738,6 +909,10 @@ services:
     ports:
       - "${PROMETHEUS_PORT}:${PROMETHEUS_PORT}"
     logging: *logging
+
+volumes:
+  okapi-clickhouse-data:
+  okapi-clickhouse-logs:
 
   # OpenSearch
   opensearch:

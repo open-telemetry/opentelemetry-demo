@@ -9,8 +9,17 @@
 ## if overriding the traces pipeline.
 ##
 exporters:
+  otlp_http/okapi_prometheus:
+    endpoint: ${env:OKAPI_OTLP_HTTP_ENDPOINT}
+    encoding: proto
+    compression: none
+    tls:
+      insecure: true
+
   otlp_http/okapi:
     endpoint: ${env:OKAPI_OTLP_HTTP_ENDPOINT}
+    encoding: proto
+    compression: none
     tls:
       insecure: true
 
@@ -19,6 +28,6 @@ service:
     traces:
       exporters: [debug, spanmetrics, otlp_http/okapi]
     metrics:
-      exporters: [otlp_http/prometheus, debug, otlp_http/okapi]
+      exporters: [otlp_http/prometheus, debug, otlp_http/okapi_prometheus]
     logs:
       exporters: [debug, otlp_http/okapi]
