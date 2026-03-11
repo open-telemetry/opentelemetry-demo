@@ -81,3 +81,29 @@ jobs:
         uses: actions/checkout@v6.0.2
       - name: run checklicense
         run: make checklicense
+
+  build-test:
+    needs: [
+      build_images,
+      markdownlint,
+      yamllint,
+      misspell,
+      checklinks,
+      sanity,
+      checklicense
+    ]
+    if: always() && !cancelled()
+    runs-on: ubuntu-latest
+    steps:
+      - name: Report CI status
+        shell: bash
+        env:
+          CI_SUCCESS: ${{ !contains(needs.*.result, 'failure') }}
+        run: |
+          if [ "${CI_SUCCESS}" == "true" ]
+          then
+            echo 'Build complete ✓'
+          else
+            echo 'Build failed ✗'
+            exit 1
+          fi
