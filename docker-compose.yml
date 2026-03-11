@@ -976,7 +976,7 @@ services:
       - OSCAR_DB_USER=okapi_oscar_user
       - OSCAR_DB_PASSWORD=okapi_oscar_password
     command:
-      - --okapi.oscar.cluster-endpoint=http://${OKAPI_INGESTER_HOST}:${OKAPI_INGESTER_PORT}
+      - --okapi.oscar.cluster.endpoint=http://${OKAPI_INGESTER_HOST}:${OKAPI_INGESTER_PORT}
       - --okapi.oscar.vault.address=
       - --okapi.oscar.openai.api-key-path=env://OPENAI_API_KEY
     logging: *logging

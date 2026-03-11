@@ -568,11 +568,6 @@ services:
           "CMD-SHELL",
           "timeout 1 bash -c '>/dev/tcp/localhost/${SHIPPING_PORT}'",
         ]
-      test:
-        [
-          "CMD-SHELL",
-          "timeout 1 bash -c '>/dev/tcp/localhost/${SHIPPING_PORT}'",
-        ]
       start_period: 10s
       interval: 5s
       timeout: 10s
@@ -600,13 +595,11 @@ services:
       - OTEL_RESOURCE_ATTRIBUTES
       - OTEL_SERVICE_NAME=flagd
     command: ["start", "--uri", "file:./etc/flagd/demo.flagd.json"]
-    command: ["start", "--uri", "file:./etc/flagd/demo.flagd.json"]
     ports:
       - "${FLAGD_PORT}"
       - "${FLAGD_OFREP_PORT}"
     volumes:
       - ./src/flagd:/etc/flagd
-    logging: *logging
     logging: *logging
 
   # Postgresql used by Product Reviews service
@@ -693,11 +686,6 @@ services:
         limits:
           memory: 200M
     restart: unless-stopped
-    command:
-      [
-        "--config=/etc/otelcol-config.yml",
-        "--config=/etc/otelcol-config-extras.yml",
-      ]
     command:
       [
         "--config=/etc/otelcol-config.yml",
@@ -840,7 +828,7 @@ services:
       - OSCAR_DB_USER=okapi_oscar_user
       - OSCAR_DB_PASSWORD=okapi_oscar_password
     command:
-      - --okapi.oscar.cluster-endpoint=http://${OKAPI_INGESTER_HOST}:${OKAPI_INGESTER_PORT}
+      - --okapi.oscar.cluster.endpoint=http://${OKAPI_INGESTER_HOST}:${OKAPI_INGESTER_PORT}
       - --okapi.oscar.vault.address=
       - --okapi.oscar.openai.api-key-path=env://OPENAI_API_KEY
     logging: *logging
@@ -883,6 +871,7 @@ services:
     command:
       - --clusterEndpoint=http://${OKAPI_INGESTER_HOST}:${OKAPI_INGESTER_PORT}
       - --okapi.aws.endpoint=http://${OKAPI_LOCALSTACK_HOST}:${OKAPI_LOCALSTACK_PORT}
+      - --oscarEndpoint=http://${OKAPI_OSCAR_HOST}:${OKAPI_OSCAR_PORT}
     logging: *logging
 
   # Prometheus
@@ -913,45 +902,3 @@ services:
 volumes:
   okapi-clickhouse-data:
   okapi-clickhouse-logs:
-
-  # OpenSearch
-  opensearch:
-    container_name: opensearch
-    build:
-      context: ./
-      dockerfile: ${OPENSEARCH_DOCKERFILE}
-      args:
-        - OPENSEARCH_IMAGE
-      cache_from:
-        - ${IMAGE_NAME}:${IMAGE_VERSION}-opensearch
-    deploy:
-      resources:
-        limits:
-          memory: 1G
-    restart: unless-stopped
-    environment:
-      - cluster.name=demo-cluster
-      - node.name=demo-node
-      - bootstrap.memory_lock=true
-      - discovery.type=single-node
-      - OPENSEARCH_JAVA_OPTS=-Xms400m -Xmx400m
-      - DISABLE_INSTALL_DEMO_CONFIG=true
-      - DISABLE_SECURITY_PLUGIN=true
-      # Workaround on OSX for https://bugs.openjdk.org/browse/JDK-8345296
-      - _JAVA_OPTIONS
-    ulimits:
-      memlock:
-        soft: -1
-        hard: -1
-      nofile:
-        soft: 65536
-        hard: 65536
-    ports:
-      - "9200"
-    healthcheck:
-      test: curl -s http://localhost:9200/_cluster/health | grep -E '"status":"(green|yellow)"'
-      start_period: 10s
-      interval: 5s
-      timeout: 10s
-      retries: 10
-    logging: *logging
