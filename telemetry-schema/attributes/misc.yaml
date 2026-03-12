@@ -1,0 +1,46 @@
+# Copyright The OpenTelemetry Authors
+# SPDX-License-Identifier: Apache-2.0
+
+groups:
+  - id: registry.misc
+    type: attribute_group
+    brief: Miscellaneous cross-cutting attributes
+    stability: stable
+    attributes:
+      - id: app.synthetic_request
+        type: string
+        brief: Whether the request is synthetic/test traffic
+        stability: stable
+        note: >
+          Indicates whether the request is synthetic traffic generated for testing or monitoring purposes ("true") or real user traffic.
+          This helps distinguish production traffic from test traffic in observability systems.
+          Also propagated as synthetic_request baggage.
+        examples: ["true", "false"]
+      - id: app.recommendation.cache_enabled
+        type: boolean
+        brief: Whether recommendation caching is enabled
+        stability: stable
+        note: Indicates whether the recommendation service has caching enabled for this request (feature flag)
+      - id: app.cache_hit
+        type: boolean
+        brief: Whether the recommendation cache was hit
+        stability: stable
+        note: Indicates whether the recommendation was served from cache (true) or computed fresh (false)
+      - id: app.email.recipient
+        type: string
+        brief: Email recipient address
+        stability: stable
+        note: The email address of the recipient for whom the email is being sent. This is typically used for order confirmation emails and other transactional communications.
+        examples: ["customer@example.com", "user@domain.org"]
+      - id: app.currency.conversion.from
+        type: string
+        brief: Source currency code
+        stability: stable
+        note: The currency code being converted from
+        examples: ["USD", "EUR", "GBP"]
+      - id: app.currency.conversion.to
+        type: string
+        brief: Target currency code
+        stability: stable
+        note: The currency code being converted to
+        examples: ["USD", "EUR", "JPY"]

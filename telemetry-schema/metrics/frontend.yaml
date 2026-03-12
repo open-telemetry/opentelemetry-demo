@@ -1,0 +1,27 @@
+# Copyright The OpenTelemetry Authors
+# SPDX-License-Identifier: Apache-2.0
+
+groups:
+  - id: metric.frontend.requests
+    type: metric
+    metric_name: app.frontend.requests
+    brief: Frontend HTTP request counter
+    instrument: counter
+    unit: "{request}"
+    stability: stable
+    attributes:
+      - id: method
+        type: string
+        brief: HTTP method
+        examples: ["GET", "POST"]
+        requirement_level: required
+      - id: target
+        type: string
+        brief: Request target/path
+        examples: ["/", "/cart", "/checkout"]
+        requirement_level: required
+      - id: status
+        type: int
+        brief: HTTP status code
+        examples: [200, 404, 500]
+        requirement_level: required

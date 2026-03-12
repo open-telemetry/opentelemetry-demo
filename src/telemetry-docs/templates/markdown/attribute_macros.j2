@@ -1,0 +1,45 @@
+{#- Attribute macros for Weaver templates -#}
+
+{#- Renders the type of an attribute -#}
+{% macro type(attribute) -%}
+{%- if attribute.type is mapping -%}
+{%- if attribute.type.members[0].value is string %}string{%- endif -%}
+{%- if attribute.type.members[0].value is int %}int{%- endif -%}
+{%- if attribute.type.members[0].value is float %}double{%- endif -%}
+{%- elif attribute.type == "template[boolean]" %}boolean
+{%- elif attribute.type == "template[int]" %}int
+{%- elif attribute.type == "template[double]" %}double
+{%- elif attribute.type == "template[string]" %}string
+{%- elif attribute.type == "template[boolean[]]" %}boolean[]
+{%- elif attribute.type == "template[int[]]" %}int[]
+{%- elif attribute.type == "template[double[]]" %}double[]
+{%- elif attribute.type == "template[string[]]" %}string[]
+{%- else %}{{ attribute.type | default('string') | trim }}{%- endif -%}
+{%- endmacro %}
+
+{% macro find_lineage(attr_id, lineage) %}{% if attr_id in lineage %}{{lineage[attr_id].source_group}}{% endif %}{% endmacro %}
+{% macro name_with_link(attribute, attribute_registry_base_url, lineage_attributes) %}[`{{name(attribute)}}`]({{attribute_registry_base_url}}/{{ find_lineage(attribute.name, lineage_attributes) | split_id | list | reject("eq", "registry")| first | kebab_case }}.md){% endmacro %}
+
+{#- Renders the name of an attribute -#}
+{% macro name(attribute) -%}
+{%- if attribute.type is startingwith("template[") %}{{ attribute.name }}.<key>
+{%- else %}{{ attribute.name }}{%- endif -%}
+{%- endmacro %}
+
+{#- Converts id to display name -#}
+{% macro display_name(group) -%}
+{%- if 'display_name' in group %}{{ group.display_name }}
+{%- else %}{{ group.id | replace("registry.", "") | replace(".", " ") | replace("_", " ") | title }} Attributes
+{%- endif -%}
+{%- endmacro %}
+
+{#- Humanize text by replacing underscores with spaces -#}
+{% macro humanize(text) -%}
+{{- text | replace('_', ' ') -}}
+{%- endmacro %}
+
+{#- Convert text to sentence case -#}
+{% macro sentence_case(text) -%}
+{{- text[:1] | upper }}{{ text[1:] | lower -}}
+{%- endmacro %}
+

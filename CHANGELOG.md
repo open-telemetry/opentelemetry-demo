@@ -7,6 +7,9 @@ the release.
 
 ## Unreleased
 
+* [telemetry-docs] Add a new service to provide telemetry documentation based
+  on Weaver
+  ([#2794](https://github.com/open-telemetry/opentelemetry-demo/pull/2794))
 * [accounting] fix memory leak with dbcontext
   ([#2876](https://github.com/open-telemetry/opentelemetry-demo/pull/2876))
 * [chore] Upgrade OTel Collector to v0.145.0 with :warning: breaking change:
