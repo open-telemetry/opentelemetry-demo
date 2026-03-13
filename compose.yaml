@@ -218,6 +218,7 @@ services:
     container_name: email
     build:
       context: ./src/email
+      dockerfile: ${EMAIL_DOCKERFILE}
       cache_from:
         - ${IMAGE_NAME}:${IMAGE_VERSION}-email
     deploy:
