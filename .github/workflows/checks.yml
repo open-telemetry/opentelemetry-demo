@@ -3,6 +3,8 @@
 name: Checks
 
 on:
+  merge_group:
+    types: [checks_requested]
   push:
     branches: [main]
   pull_request:
@@ -79,7 +81,31 @@ jobs:
     steps:
       - name: check out code
         uses: actions/checkout@v6.0.2
-      - name: install tools
-        run: make install-tools
       - name: run checklicense
         run: make checklicense
+
+  build-test:
+    needs: [
+      build_images,
+      markdownlint,
+      yamllint,
+      misspell,
+      checklinks,
+      sanity,
+      checklicense
+    ]
+    if: always() && !cancelled()
+    runs-on: ubuntu-latest
+    steps:
+      - name: Report CI status
+        shell: bash
+        env:
+          CI_SUCCESS: ${{ !contains(needs.*.result, 'failure') }}
+        run: |
+          if [ "${CI_SUCCESS}" == "true" ]
+          then
+            echo 'Build complete ✓'
+          else
+            echo 'Build failed ✗'
+            exit 1
+          fi

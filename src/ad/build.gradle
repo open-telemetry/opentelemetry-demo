@@ -1,3 +1,6 @@
+// Copyright The OpenTelemetry Authors
+// SPDX-License-Identifier: Apache-2.0
+
 
 plugins {
     id 'com.google.protobuf' version '0.9.6'
@@ -16,7 +19,7 @@ description = 'Ad Service'
 group = "ad"
 version = "0.1.0-SNAPSHOT"
 
-def opentelemetryVersion = "1.59.0"
+def opentelemetryVersion = "1.60.1"
 def opentelemetryInstrumentationVersion = "2.25.0"
 def grpcVersion = "1.79.0"
 def jacksonVersion = "2.21.1"
