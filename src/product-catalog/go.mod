@@ -7,7 +7,7 @@ require (
 	github.com/lib/pq v1.11.2
 	github.com/open-feature/go-sdk v1.17.1
 	github.com/open-feature/go-sdk-contrib/hooks/open-telemetry v0.3.7
-	github.com/open-feature/go-sdk-contrib/providers/flagd v0.3.2
+	github.com/open-feature/go-sdk-contrib/providers/flagd v0.4.0
 	go.opentelemetry.io/contrib/bridges/otelslog v0.17.0
 	go.opentelemetry.io/contrib/instrumentation/google.golang.org/grpc/otelgrpc v0.67.0
 	go.opentelemetry.io/contrib/instrumentation/runtime v0.67.0
@@ -21,10 +21,10 @@ require (
 )
 
 require (
-	buf.build/gen/go/open-feature/flagd/connectrpc/go v1.18.1-20250529171031-ebdc14163473.1 // indirect
-	buf.build/gen/go/open-feature/flagd/grpc/go v1.5.1-20250529171031-ebdc14163473.2 // indirect
-	buf.build/gen/go/open-feature/flagd/protocolbuffers/go v1.36.6-20250529171031-ebdc14163473.1 // indirect
-	connectrpc.com/connect v1.18.1 // indirect
+	buf.build/gen/go/open-feature/flagd/connectrpc/go v1.19.1-20260217192757-1388a552fc3c.2 // indirect
+	buf.build/gen/go/open-feature/flagd/grpc/go v1.6.1-20260217192757-1388a552fc3c.1 // indirect
+	buf.build/gen/go/open-feature/flagd/protocolbuffers/go v1.36.11-20260217192757-1388a552fc3c.1 // indirect
+	connectrpc.com/connect v1.19.1 // indirect
 	connectrpc.com/otelconnect v0.7.2 // indirect
 	github.com/barkimedes/go-deepcopy v0.0.0-20220514131651-17c30cfc62df // indirect
 	github.com/beorn7/perks v1.0.1 // indirect
@@ -42,7 +42,7 @@ require (
 	github.com/hashicorp/golang-lru/v2 v2.0.7 // indirect
 	github.com/munnerz/goautoneg v0.0.0-20191010083416-a7dc8b61c822 // indirect
 	github.com/open-feature/flagd-schemas v0.2.13 // indirect
-	github.com/open-feature/flagd/core v0.13.2 // indirect
+	github.com/open-feature/flagd/core v0.14.0 // indirect
 	github.com/prometheus/client_golang v1.23.2 // indirect
 	github.com/prometheus/client_model v0.6.2 // indirect
 	github.com/prometheus/common v0.67.5 // indirect
