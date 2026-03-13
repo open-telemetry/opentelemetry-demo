@@ -27,6 +27,10 @@ the release.
   [#3022](https://github.com/open-telemetry/opentelemetry-demo/pull/3022)
 * [chore] Bump dependent image versions to latest releases
   ([#3005](https://github.com/open-telemetry/opentelemetry-demo/pull/3005))
+* [ad] and [fraud-detection] Service JVM heap set to 200m for ad service and
+  180m for fraud-detection to prevent large heap size that causes
+  OOMKills with k8s.
+  ([#3105](https://github.com/open-telemetry/opentelemetry-demo/pull/3105))
 
 ## 2.2.0
 
