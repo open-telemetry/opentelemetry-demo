@@ -3,7 +3,7 @@
 
 include:
   - path:
-      - docker-compose.yml     # depend on the main docker-compose file
+      - compose.yaml     # depend on the main docker-compose file
       - docker-compose-tests_include-override.yml  # include override for tests
 
 services:

@@ -7,6 +7,7 @@ the release.
 
 ## Unreleased
 
+* [docker] add support for "full" and "minimal" docker profiles
 * [accounting] fix memory leak with dbcontext
   ([#2876](https://github.com/open-telemetry/opentelemetry-demo/pull/2876))
 * [chore] Upgrade OTel Collector to v0.145.0 with :warning: breaking change:
