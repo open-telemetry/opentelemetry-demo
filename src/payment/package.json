@@ -11,7 +11,7 @@
   "dependencies": {
     "@grpc/grpc-js": "1.14.3",
     "@grpc/proto-loader": "0.8.0",
-    "@openfeature/flagd-provider": "0.13.4",
+    "@openfeature/flagd-provider": "0.14.0",
     "@openfeature/server-sdk": "1.20.2",
     "@opentelemetry/api": "1.9.0",
     "@opentelemetry/auto-instrumentations-node": "0.71.0",
