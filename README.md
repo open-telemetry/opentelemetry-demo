@@ -47,6 +47,19 @@ your preferred deployment method:
 - [Docker](https://opentelemetry.io/docs/demo/docker_deployment/)
 - [Kubernetes](https://opentelemetry.io/docs/demo/kubernetes_deployment/)
 
+### System Requirements (Local Setup)
+
+To run the OpenTelemetry demo locally (especially with Docker), ensure your system meets the following requirements:
+
+- Minimum 4GB RAM (8GB recommended for smooth performance)
+- Docker and Docker Compose installed
+- Adequate CPU resources (multiple services run simultaneously)
+
+### Notes
+
+- Initial startup may take a few minutes as all services initialize
+- If some services fail to start, try restarting Docker and running the command again
+
 ## Documentation
 
 For detailed documentation, see [Demo Documentation][docs]. If you're curious
