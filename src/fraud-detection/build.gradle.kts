@@ -9,7 +9,7 @@ import com.google.protobuf.gradle.*
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 
 plugins {
-    kotlin("jvm") version "2.3.10"
+    kotlin("jvm") version "2.3.20"
     application
     id("java")
     id("idea")
@@ -21,7 +21,7 @@ group = "io.opentelemetry"
 version = "1.0"
 
 
-val grpcVersion = "1.79.0"
+val grpcVersion = "1.80.0"
 val protobufVersion = "4.34.0"
 
 
@@ -37,7 +37,7 @@ dependencies {
     testImplementation(kotlin("test"))
     implementation(kotlin("script-runtime"))
     implementation("org.apache.kafka:kafka-clients:4.2.0")
-    implementation("com.google.api.grpc:proto-google-common-protos:2.66.0")
+    implementation("com.google.api.grpc:proto-google-common-protos:2.67.0")
     implementation("io.grpc:grpc-protobuf:${grpcVersion}")
     implementation("io.grpc:grpc-stub:${grpcVersion}")
     implementation("io.grpc:grpc-netty:${grpcVersion}")
@@ -49,7 +49,7 @@ dependencies {
     implementation("org.slf4j:slf4j-api:2.0.17")
     implementation("com.google.protobuf:protobuf-kotlin:${protobufVersion}")
     implementation("dev.openfeature:sdk:1.20.1")
-    implementation("dev.openfeature.contrib.providers:flagd:0.11.20")
+    implementation("dev.openfeature.contrib.providers:flagd:0.12.0")
 
     if (JavaVersion.current().isJava9Compatible) {
         // Workaround for @javax.annotation.Generated
