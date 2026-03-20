@@ -22,6 +22,7 @@ import (
 	"go.opentelemetry.io/otel/log/global"
 	semconv "go.opentelemetry.io/otel/semconv/v1.24.0"
 	"go.opentelemetry.io/otel/trace"
+	"go.opentelemetry.io/otel/metric"
 
 	"github.com/IBM/sarama"
 	"github.com/google/uuid"
@@ -66,6 +67,9 @@ var logger *slog.Logger
 var tracer trace.Tracer
 var resource *sdkresource.Resource
 var initResourcesOnce sync.Once
+
+var paymentFailureCounter metric.Int64Counter
+var paymentFailureValue metric.Float64Histogram
 
 func initResource() *sdkresource.Resource {
 	initResourcesOnce.Do(func() {
@@ -181,6 +185,24 @@ func main() {
 	// able to log properly
 	logger = otelslog.NewLogger("checkout")
 	slog.SetDefault(logger)
+	
+	meter := otel.Meter("checkout")
+
+	paymentFailureCounter, err = meter.Int64Counter(
+		"app.payment.failures",
+		metric.WithDescription("Count of failed payment attempts"),
+	)
+	if err != nil {
+		logger.Error(fmt.Sprintf("failed creating app.payment.failures counter: %v", err))
+	}
+
+	paymentFailureValue, err = meter.Float64Histogram(
+		"app.payment.failure_value",
+		metric.WithDescription("Dollar value of carts impacted by payment failures"),
+	)
+	if err != nil {
+		logger.Error(fmt.Sprintf("failed creating app.payment.failure_value histogram: %v", err))
+	}
 
 	err := runtime.Start(runtime.WithMinimumReadMemStatsInterval(time.Second))
 	if err != nil {
@@ -188,7 +210,7 @@ func main() {
 	}
 
 	provider, err := flagd.NewProvider()
-	if err != nil {
+	if err != nil {http.ListenAndServe(":8080", nil)
 		logger.Error(fmt.Sprintf("Error creating flagd provider: %v", err))
 	}
 
@@ -330,9 +352,40 @@ func (cs *checkout) PlaceOrder(ctx context.Context, req *pb.PlaceOrderRequest) (
 		total = money.Must(money.Sum(total, multPrice))
 	}
 
+	totalPriceFloat, _ := strconv.ParseFloat(fmt.Sprintf("%d.%02d", total.GetUnits(), total.GetNanos()/1000000000), 64)
+
 	txID, err := cs.chargeCard(ctx, total, req.CreditCard)
 	if err != nil {
-		return nil, status.Errorf(codes.Internal, "failed to charge card: %+v", err)
+		logger.LogAttrs(
+			ctx,
+			slog.LevelError, "payment failed",
+			slog.String("app.payment.status", "failed"),
+			slog.String("app.user.id", req.UserId),
+			slog.String("app.order.currency", total.GetCurrencyCode()),
+			slog.Float64("app.order.amount", totalPriceFloat),
+			slog.String("error.message", err.Error()),
+		)
+
+		span.SetAttributes(
+			attribute.String("app.payment.status", "failed"),
+			attribute.String("app.order.currency", total.GetCurrencyCode()),
+			attribute.Float64("app.order.amount", totalPriceFloat),
+		)
+		span.RecordError(err)
+
+		paymentFailureCounter.Add(ctx, 1,
+			metric.WithAttributes(
+				attribute.String("currency", total.GetCurrencyCode()),
+			),
+		)
+
+		paymentFailureValue.Record(ctx, totalPriceFloat,
+			metric.WithAttributes(
+				attribute.String("currency", total.GetCurrencyCode()),
+			),
+		)
+
+    return nil, status.Errorf(codes.Internal, "failed to charge card: %+v", err)
 	}
 
 	span.AddEvent("charged",
@@ -361,8 +414,7 @@ func (cs *checkout) PlaceOrder(ctx context.Context, req *pb.PlaceOrderRequest) (
 	}
 
 	shippingCostFloat, _ := strconv.ParseFloat(fmt.Sprintf("%d.%02d", prep.shippingCostLocalized.GetUnits(), prep.shippingCostLocalized.GetNanos()/1000000000), 64)
-	totalPriceFloat, _ := strconv.ParseFloat(fmt.Sprintf("%d.%02d", total.GetUnits(), total.GetNanos()/1000000000), 64)
-
+	
 	span.SetAttributes(
 		attribute.String("app.order.id", orderID.String()),
 		attribute.Float64("app.shipping.amount", shippingCostFloat),
