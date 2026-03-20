@@ -2,7 +2,7 @@ name: Cleanup GHCR Images
 
 on:
   schedule:
-    - cron: '0 3 * * *'
+    - cron: '0 3 * * 0'
   workflow_dispatch:
 
 jobs:
@@ -17,6 +17,6 @@ jobs:
         uses: actions/delete-package-versions@v4
         with:
           package-type: container
-          min-versions-to-keep: 5
+          min-versions-to-keep: 20
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
