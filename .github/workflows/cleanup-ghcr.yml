@@ -1,0 +1,22 @@
+name: Cleanup GHCR Images
+
+on:
+  schedule:
+    - cron: '0 3 * * *'
+  workflow_dispatch:
+
+jobs:
+  cleanup:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Delete old container images
+        uses: actions/delete-package-versions@v4
+        with:
+          package-type: container
+          min-versions-to-keep: 5
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
