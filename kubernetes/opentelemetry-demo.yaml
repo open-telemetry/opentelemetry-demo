@@ -9208,7 +9208,7 @@ spec:
           - name: OTEL_EXPORTER_OTLP_ENDPOINT
             value: http://$(OTEL_COLLECTOR_NAME):4317
           - name: OTEL_RESOURCE_ATTRIBUTES
-            value: service.name=$(OTEL_SERVICE_NAME),service.namespace=opentelemetry-demo
+            value: service.name=$(OTEL_SERVICE_NAME),service.namespace=opentelemetry-demo,vcs.repository.url.full=https://github.com/dash0hq/opentelemetry-demo
           resources:
             limits:
               cpu: 100m
@@ -9278,7 +9278,7 @@ spec:
           - name: OTEL_LOGS_EXPORTER
             value: otlp
           - name: OTEL_RESOURCE_ATTRIBUTES
-            value: service.name=$(OTEL_SERVICE_NAME),service.namespace=opentelemetry-demo
+            value: service.name=$(OTEL_SERVICE_NAME),service.namespace=opentelemetry-demo,vcs.repository.url.full=https://github.com/dash0hq/opentelemetry-demo
           resources:
             limits:
               cpu: 200m
@@ -9342,7 +9342,7 @@ spec:
           - name: OTEL_EXPORTER_OTLP_ENDPOINT
             value: http://$(OTEL_COLLECTOR_NAME):4317
           - name: OTEL_RESOURCE_ATTRIBUTES
-            value: service.name=$(OTEL_SERVICE_NAME),service.namespace=opentelemetry-demo
+            value: service.name=$(OTEL_SERVICE_NAME),service.namespace=opentelemetry-demo,vcs.repository.url.full=https://github.com/dash0hq/opentelemetry-demo
           resources:
             limits:
               cpu: 200m
@@ -9422,7 +9422,7 @@ spec:
           - name: OTEL_EXPORTER_OTLP_ENDPOINT
             value: http://$(OTEL_COLLECTOR_NAME):4317
           - name: OTEL_RESOURCE_ATTRIBUTES
-            value: service.name=$(OTEL_SERVICE_NAME),service.namespace=opentelemetry-demo
+            value: service.name=$(OTEL_SERVICE_NAME),service.namespace=opentelemetry-demo,vcs.repository.url.full=https://github.com/dash0hq/opentelemetry-demo
           resources:
             limits:
               cpu: 200m
@@ -9488,7 +9488,7 @@ spec:
           - name: OTEL_EXPORTER_OTLP_ENDPOINT
             value: http://$(OTEL_COLLECTOR_NAME):4317
           - name: OTEL_RESOURCE_ATTRIBUTES
-            value: service.name=$(OTEL_SERVICE_NAME),service.namespace=opentelemetry-demo
+            value: service.name=$(OTEL_SERVICE_NAME),service.namespace=opentelemetry-demo,vcs.repository.url.full=https://github.com/dash0hq/opentelemetry-demo
           resources:
             limits:
               cpu: 200m
@@ -9548,7 +9548,7 @@ spec:
           - name: OTEL_EXPORTER_OTLP_TRACES_ENDPOINT
             value: http://$(OTEL_COLLECTOR_NAME):4318/v1/traces
           - name: OTEL_RESOURCE_ATTRIBUTES
-            value: service.name=$(OTEL_SERVICE_NAME),service.namespace=opentelemetry-demo
+            value: service.name=$(OTEL_SERVICE_NAME),service.namespace=opentelemetry-demo,vcs.repository.url.full=https://github.com/dash0hq/opentelemetry-demo
           resources:
             limits:
               cpu: 100m
@@ -9614,7 +9614,7 @@ spec:
           - name: OTEL_EXPORTER_OTLP_TRACES_PROTOCOL
             value: grpc
           - name: OTEL_RESOURCE_ATTRIBUTES
-            value: service.name=$(OTEL_SERVICE_NAME),service.namespace=opentelemetry-demo
+            value: service.name=$(OTEL_SERVICE_NAME),service.namespace=opentelemetry-demo,vcs.repository.url.full=https://github.com/dash0hq/opentelemetry-demo
           resources:
             limits:
               memory: 175Mi
@@ -9687,7 +9687,7 @@ spec:
           - name: POSTGRES_PASSWORD
             value: ffs
           - name: OTEL_RESOURCE_ATTRIBUTES
-            value: service.name=$(OTEL_SERVICE_NAME),service.namespace=opentelemetry-demo
+            value: service.name=$(OTEL_SERVICE_NAME),service.namespace=opentelemetry-demo,vcs.repository.url.full=https://github.com/dash0hq/opentelemetry-demo
           resources:
             limits:
               memory: 120Mi
@@ -9744,7 +9744,7 @@ spec:
           - name: OTEL_EXPORTER_OTLP_ENDPOINT
             value: http://$(OTEL_COLLECTOR_NAME):4317
           - name: OTEL_RESOURCE_ATTRIBUTES
-            value: service.name=$(OTEL_SERVICE_NAME),service.namespace=opentelemetry-demo
+            value: service.name=$(OTEL_SERVICE_NAME),service.namespace=opentelemetry-demo,vcs.repository.url.full=https://github.com/dash0hq/opentelemetry-demo
           resources:
             limits:
               cput: 100m
@@ -9830,7 +9830,7 @@ spec:
           - name: PUBLIC_OTEL_EXPORTER_OTLP_TRACES_ENDPOINT
             value: http://localhost:8080/otlp-http/v1/traces
           - name: OTEL_RESOURCE_ATTRIBUTES
-            value: service.name=$(OTEL_SERVICE_NAME),service.namespace=opentelemetry-demo
+            value: service.name=$(OTEL_SERVICE_NAME),service.namespace=opentelemetry-demo,vcs.repository.url.full=https://github.com/dash0hq/opentelemetry-demo
           resources:
             limits:
               memory: 200Mi
@@ -9915,7 +9915,7 @@ spec:
           - name: OTEL_COLLECTOR_HOST
             value: $(OTEL_COLLECTOR_NAME)
           - name: OTEL_RESOURCE_ATTRIBUTES
-            value: service.name=$(OTEL_SERVICE_NAME),service.namespace=opentelemetry-demo
+            value: service.name=$(OTEL_SERVICE_NAME),service.namespace=opentelemetry-demo,vcs.repository.url.full=https://github.com/dash0hq/opentelemetry-demo
           resources:
             limits:
               memory: 50Mi
@@ -9980,7 +9980,7 @@ spec:
           - name: KAFKA_HEAP_OPTS
             value: -Xmx200M -Xms200M
           - name: OTEL_RESOURCE_ATTRIBUTES
-            value: service.name=$(OTEL_SERVICE_NAME),service.namespace=opentelemetry-demo
+            value: service.name=$(OTEL_SERVICE_NAME),service.namespace=opentelemetry-demo,vcs.repository.url.full=https://github.com/dash0hq/opentelemetry-demo
           resources:
             limits:
               memory: 500Mi
@@ -10053,7 +10053,7 @@ spec:
           - name: OTEL_EXPORTER_OTLP_ENDPOINT
             value: http://$(OTEL_COLLECTOR_NAME):4317
           - name: OTEL_RESOURCE_ATTRIBUTES
-            value: service.name=$(OTEL_SERVICE_NAME),service.namespace=opentelemetry-demo
+            value: service.name=$(OTEL_SERVICE_NAME),service.namespace=opentelemetry-demo,vcs.repository.url.full=https://github.com/dash0hq/opentelemetry-demo
           resources:
             limits:
               memory: 120Mi
@@ -10110,7 +10110,7 @@ spec:
           - name: OTEL_EXPORTER_OTLP_ENDPOINT
             value: http://$(OTEL_COLLECTOR_NAME):4317
           - name: OTEL_RESOURCE_ATTRIBUTES
-            value: service.name=$(OTEL_SERVICE_NAME),service.namespace=opentelemetry-demo
+            value: service.name=$(OTEL_SERVICE_NAME),service.namespace=opentelemetry-demo,vcs.repository.url.full=https://github.com/dash0hq/opentelemetry-demo
           resources:
             limits:
               cpu: 100m
@@ -10174,7 +10174,7 @@ spec:
           - name: OTEL_EXPORTER_OTLP_ENDPOINT
             value: http://$(OTEL_COLLECTOR_NAME):4317
           - name: OTEL_RESOURCE_ATTRIBUTES
-            value: service.name=$(OTEL_SERVICE_NAME),service.namespace=opentelemetry-demo
+            value: service.name=$(OTEL_SERVICE_NAME),service.namespace=opentelemetry-demo,vcs.repository.url.full=https://github.com/dash0hq/opentelemetry-demo
           resources:
             limits:
               cpu: 100m
@@ -10234,7 +10234,7 @@ spec:
           - name: OTEL_EXPORTER_OTLP_ENDPOINT
             value: http://$(OTEL_COLLECTOR_NAME):4318
           - name: OTEL_RESOURCE_ATTRIBUTES
-            value: service.name=$(OTEL_SERVICE_NAME),service.namespace=opentelemetry-demo
+            value: service.name=$(OTEL_SERVICE_NAME),service.namespace=opentelemetry-demo,vcs.repository.url.full=https://github.com/dash0hq/opentelemetry-demo
           resources:
             limits:
               cpu: 100m
@@ -10304,7 +10304,7 @@ spec:
           - name: OTEL_EXPORTER_OTLP_ENDPOINT
             value: http://$(OTEL_COLLECTOR_NAME):4317
           - name: OTEL_RESOURCE_ATTRIBUTES
-            value: service.name=$(OTEL_SERVICE_NAME),service.namespace=opentelemetry-demo
+            value: service.name=$(OTEL_SERVICE_NAME),service.namespace=opentelemetry-demo,vcs.repository.url.full=https://github.com/dash0hq/opentelemetry-demo
           resources:
             limits:
               cpu: 200m
@@ -10358,7 +10358,7 @@ spec:
           - name: OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE
             value: cumulative
           - name: OTEL_RESOURCE_ATTRIBUTES
-            value: service.name=$(OTEL_SERVICE_NAME),service.namespace=opentelemetry-demo
+            value: service.name=$(OTEL_SERVICE_NAME),service.namespace=opentelemetry-demo,vcs.repository.url.full=https://github.com/dash0hq/opentelemetry-demo
           resources:
             limits:
               memory: 20Mi
@@ -10421,7 +10421,7 @@ spec:
           - name: OTEL_EXPORTER_OTLP_TRACES_ENDPOINT
             value: http://$(OTEL_COLLECTOR_NAME):4317/v1/traces
           - name: OTEL_RESOURCE_ATTRIBUTES
-            value: service.name=$(OTEL_SERVICE_NAME),service.namespace=opentelemetry-demo
+            value: service.name=$(OTEL_SERVICE_NAME),service.namespace=opentelemetry-demo,vcs.repository.url.full=https://github.com/dash0hq/opentelemetry-demo
           resources:
             limits:
               cpu: 100m
