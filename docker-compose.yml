@@ -603,7 +603,7 @@ services:
     deploy:
       resources:
         limits:
-          memory: 500M               # This is high to enable supporting the recommendationCache feature flag use case
+          memory: 500M # This is high to enable supporting the recommendationCache feature flag use case
     restart: unless-stopped
     ports:
       - "${RECOMMENDATION_PORT}"
@@ -674,18 +674,13 @@ services:
       - GOMEMLIMIT=60MiB
       - OTEL_RESOURCE_ATTRIBUTES
       - OTEL_SERVICE_NAME=flagd
-    command: [
-      "start",
-      "--uri",
-      "file:./etc/flagd/demo.flagd.json"
-    ]
+    command: ["start", "--uri", "file:./etc/flagd/demo.flagd.json"]
     ports:
       - "${FLAGD_PORT}"
       - "${FLAGD_OFREP_PORT}"
     volumes:
       - ./src/flagd:/etc/flagd
-    logging:
-      *logging
+    logging: *logging
 
   # Flagd UI for configuring the feature flag service
   flagd-ui:
@@ -778,6 +773,45 @@ services:
         condition: service_started
     logging: *logging
 
+  agent:
+    image: ${IMAGE_NAME}:${DEMO_VERSION}-agent
+    container_name: agent
+    build:
+      context: ./
+      dockerfile: ${AGENT_DOCKERFILE}
+      cache_from:
+        - ${IMAGE_NAME}:${IMAGE_VERSION}-agent
+    deploy:
+      resources:
+        limits:
+          memory: 500M
+    restart: unless-stopped
+    ports:
+      - "${AGENT_PORT}"
+      - "${CHATBOT_PORT}"
+    environment:
+      - AGENT_PORT
+      - OTEL_EXPORTER_OTLP_ENDPOINT=${OTEL_COLLECTOR_HOST}:${OTEL_COLLECTOR_PORT_GRPC}
+      - GRAPH_RECURSION_LIMIT
+      - MCP_ENDPOINT
+      - MCP_PORT
+      - MCP_ENABLED
+      - AGENT_ENDPOINT
+      - AGENT_PORT
+      - LLM_BASE_URL
+      - LLM_MODEL
+      - OPENAI_API_KEY
+      - CHATBOT_PORT
+      - APPLICATION_ENDPOINT=frontend:8080
+    depends_on:
+      jaeger:
+        condition: service_started
+      otel-collector:
+        condition: service_started
+      product-catalog:
+        condition: service_started
+    logging: *logging
+
   # Postgresql used by Accounting service
   postgresql:
     image: ${POSTGRES_IMAGE}
@@ -810,7 +844,6 @@ services:
     ports:
       - "${VALKEY_PORT}"
     logging: *logging
-
 
   # ********************
   # Telemetry Components
@@ -867,7 +900,11 @@ services:
         limits:
           memory: 200M
     restart: unless-stopped
-    command: [ "--config=/etc/otelcol-config.yml", "--config=/etc/otelcol-config-extras.yml" ]
+    command:
+      [
+        "--config=/etc/otelcol-config.yml",
+        "--config=/etc/otelcol-config-extras.yml",
+      ]
     user: 0:0
     volumes:
       - ${HOST_FILESYSTEM}:/hostfs:ro
