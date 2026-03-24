@@ -37,7 +37,7 @@ services:
       - OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE
       - OTEL_RESOURCE_ATTRIBUTES
       - OTEL_SERVICE_NAME=accounting
-      - DB_CONNECTION_STRING=Host=${POSTGRES_HOST};Username=otelu;Password=otelp;Database=${POSTGRES_DB}
+      - DB_CONNECTION_STRING=Host=${POSTGRES_HOST};Username=astronomy_user;Password=astronomy_password;Database=astronomy_db
       - OTEL_DOTNET_AUTO_TRACES_ENTITYFRAMEWORKCORE_INSTRUMENTATION_ENABLED=false
     depends_on:
       otel-collector:
@@ -504,13 +504,13 @@ services:
       - OTEL_SERVICE_NAME=product-catalog
       - OTEL_CONFIG_FILE=/otel-config.yml
       - OTEL_SEMCONV_STABILITY_OPT_IN=database
-      - DB_CONNECTION_STRING=postgres://otelu:otelp@${POSTGRES_HOST}/${POSTGRES_DB}?sslmode=disable
+      - DB_CONNECTION_STRING=postgres://astronomy_user:astronomy_password@${POSTGRES_HOST}/astronomy_db?sslmode=disable
     depends_on:
       otel-collector:
         condition: service_started
       flagd:
         condition: service_started
-      postgresql:
+      astronomy-db:
         condition: service_started
     volumes:
       - ./otel-config.yml:/otel-config.yml
@@ -541,7 +541,7 @@ services:
       - OTEL_SERVICE_NAME=product-reviews
       - OTEL_INSTRUMENTATION_GENAI_CAPTURE_MESSAGE_CONTENT=true
       - PROTOCOL_BUFFERS_PYTHON_IMPLEMENTATION=python
-      - DB_CONNECTION_STRING=host=${POSTGRES_HOST} user=otelu password=otelp dbname=${POSTGRES_DB}
+      - DB_CONNECTION_STRING=host=${POSTGRES_HOST} user=astronomy_user password=astronomy_password dbname=astronomy_db
       - LLM_BASE_URL
       - OPENAI_API_KEY
       - LLM_MODEL
@@ -555,7 +555,7 @@ services:
         condition: service_started
       llm:
         condition: service_started
-      postgresql:
+      astronomy-db:
         condition: service_started
       otel-collector:
         condition: service_started
@@ -778,10 +778,10 @@ services:
         condition: service_started
     logging: *logging
 
-  # Postgresql used by Accounting service
-  postgresql:
+  # PostgreSQL database for the astronomy demo
+  astronomy-db:
     image: ${POSTGRES_IMAGE}
-    container_name: postgresql
+    container_name: astronomy-db
     deploy:
       resources:
         limits:
@@ -789,10 +789,9 @@ services:
     restart: unless-stopped
     ports:
       - ${POSTGRES_PORT}
+    command: postgres -c shared_preload_libraries=pg_stat_statements
     environment:
-      - POSTGRES_USER=root
       - POSTGRES_PASSWORD
-      - POSTGRES_DB
     volumes:
       - ./src/postgresql/init.sql:/docker-entrypoint-initdb.d/init.sql
     logging: *logging
