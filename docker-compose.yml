@@ -980,5 +980,3 @@ services:
     ports:
       - "9308"
     logging: *logging
-
-

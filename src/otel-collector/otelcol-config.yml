@@ -28,8 +28,8 @@ receivers:
         - job_name: kafka-exporter
           scrape_interval: 30s
           static_configs:
-            - targets: 
-                - kafka-exporter:9308
+            - targets:
+                - prometheus-kafka-exporter:9308
   postgresql:
     endpoint: ${POSTGRES_HOST}:${POSTGRES_PORT}
     username: root
