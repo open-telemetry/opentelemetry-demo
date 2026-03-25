@@ -13,7 +13,7 @@ from src.agents.patch_vcr import VCR
 class ChatLLM(ChatOpenAI):
     def __init__(self, **kwargs):
         model_name = os.getenv("LLM_MODEL", "default")
-        use_vcr = os.getenv("use_vcr", False)
+        use_vcr = os.getenv("USE_VCR", False) == "True"
         cassette_name = ""
         if use_vcr:
             cassette_name = f"{model_name.replace('/', '_')}_casette.yaml"
@@ -34,6 +34,6 @@ class ChatLLM(ChatOpenAI):
 
     async def _agenerate(self, messages, stop=None, run_manager=None, **kwargs):
         if getattr(self, "_use_vcr", False):
-            if getattr(self, "_use_vcr", False):
+            with VCR.use_cassette(self._cassette_name):
                 return await super()._agenerate(messages, stop, run_manager, **kwargs)
         return await super()._agenerate(messages, stop, run_manager, **kwargs)
