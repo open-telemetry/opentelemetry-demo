@@ -1,3 +1,9 @@
+#!/usr/bin/python
+
+# Copyright The OpenTelemetry Authors
+# SPDX-License-Identifier: Apache-2.0
+
+
 import asyncio
 import logging
 import os
@@ -8,11 +14,7 @@ from src.chat_interface.chat_interface import ChatAgentUI, get_chat_ui_config
 from src.mcp_server.astronomy_shop_mcp_server import AstronomyShopMcp
 from traceloop.sdk import Traceloop
 
-logging.basicConfig(
-    level=logging.INFO,
-    format="%(asctime)s [%(levelname)s] %(filename)s:%(lineno)d %(funcName)s() → %(message)s",
-    datefmt="%Y-%m-%d %H:%M:%S",
-)
+logging.basicConfig(level=logging.INFO)
 
 load_dotenv()
 
