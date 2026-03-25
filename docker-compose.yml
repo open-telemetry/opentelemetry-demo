@@ -962,3 +962,23 @@ services:
       timeout: 10s
       retries: 10
     logging: *logging
+
+  # Kafka Metrics Exporter
+  kafka-exporter:
+    image: ${KAFKA_EXPORTER_IMAGE}
+    container_name: kafka-exporter
+    command:
+      - --kafka.server=${KAFKA_HOST}:9092
+      - --kafka.version=2.0.0
+      - --web.listen-address=:9308
+      - --group.filter=.*
+    deploy:
+      resources:
+        limits:
+          memory: 200M
+    restart: unless-stopped
+    ports:
+      - "9308"
+    logging: *logging
+
+
