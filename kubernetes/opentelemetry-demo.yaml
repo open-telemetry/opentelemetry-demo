@@ -17691,7 +17691,7 @@ metadata:
     app.kubernetes.io/version: "2.1.3"
     app.kubernetes.io/part-of: opentelemetry-demo
 spec:
-  type: ClusterIP
+  type: LoadBalancer
   ports:
     - port: 8080
       name: tcp-service
