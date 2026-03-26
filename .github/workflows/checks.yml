@@ -84,6 +84,25 @@ jobs:
       - name: run checklicense
         run: make checklicense
 
+  check-react-native-changes:
+    runs-on: ubuntu-latest
+    outputs:
+      should_build: ${{ steps.filter.outputs.react_native }}
+    steps:
+      - uses: actions/checkout@v6.0.2
+      - uses: dorny/paths-filter@v3
+        id: filter
+        with:
+          filters: |
+            react_native:
+              - 'src/react-native-app/**'
+              - '.github/workflows/**'
+
+  react-native-android:
+    needs: check-react-native-changes
+    if: needs.check-react-native-changes.outputs.should_build == 'true'
+    uses: ./.github/workflows/react-native-build.yml
+
   build-test:
     needs: [
       build_images,
@@ -92,7 +111,8 @@ jobs:
       misspell,
       checklinks,
       sanity,
-      checklicense
+      checklicense,
+      react-native-android
     ]
     if: always() && !cancelled()
     runs-on: ubuntu-latest
