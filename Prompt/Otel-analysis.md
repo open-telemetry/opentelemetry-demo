@@ -1,0 +1,11 @@
+Read the repo, specifically folder src/otel-collector and identify the OTEL setup for applications.
+
+The output should be called otel_setup.md
+
+You are SRE. Your task is to find out how to setup application to send information to OTEL gateway.
+Thus your output should include
+1. Otel architecture
+2. connectivity information
+3. requirements for connection
+
+Draw the diagram in mermaid
