@@ -1,0 +1,44 @@
+repo_name,critical_user_path
+frontend-proxy,Checkout & Payment
+frontend,Checkout & Payment
+checkout,Checkout & Payment
+payment,Checkout & Payment
+cart,Checkout & Payment
+currency,Checkout & Payment
+quote,Checkout & Payment
+shipping,Checkout & Payment
+email,Checkout & Payment
+kafka,Checkout & Payment
+accounting,Checkout & Payment
+fraud-detection,Checkout & Payment
+frontend-proxy,Product Browse & Discovery
+frontend,Product Browse & Discovery
+product-catalog,Product Browse & Discovery
+currency,Product Browse & Discovery
+recommendation,Product Browse & Discovery
+ad,Product Browse & Discovery
+image-provider,Product Browse & Discovery
+frontend-proxy,Shopping Cart Management
+frontend,Shopping Cart Management
+cart,Shopping Cart Management
+checkout,Order Fulfillment & Fraud Detection
+kafka,Order Fulfillment & Fraud Detection
+accounting,Order Fulfillment & Fraud Detection
+fraud-detection,Order Fulfillment & Fraud Detection
+shipping,Order Fulfillment & Fraud Detection
+email,Order Fulfillment & Fraud Detection
+frontend-proxy,Shipping Quote
+frontend,Shipping Quote
+quote,Shipping Quote
+shipping,Shipping Quote
+frontend-proxy,Currency Selection & Price Display
+frontend,Currency Selection & Price Display
+currency,Currency Selection & Price Display
+frontend-proxy,AI Product Assistant
+frontend,AI Product Assistant
+llm,AI Product Assistant
+product-catalog,AI Product Assistant
+frontend-proxy,Product Reviews
+frontend,Product Reviews
+product-reviews,Product Reviews
+postgresql,Product Reviews
