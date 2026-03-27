@@ -3,9 +3,10 @@
 name: Integration Tests
 
 on:
-  pull_request_review:
-    types:
-      - submitted
+#  pull_request_review:
+#    types:
+#      - submitted
+  workflow_dispatch:
 
 permissions:
   contents: read

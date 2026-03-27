@@ -7,6 +7,7 @@ on:
     paths:
       - 'src/**'
       - 'test/**'
+  workflow_dispatch:
 
 permissions:
   contents: read
@@ -16,5 +17,4 @@ jobs:
     permissions:
       contents: read
       packages: write
-    if: github.repository == 'open-telemetry/opentelemetry-demo'
     uses: ./.github/workflows/component-build-images.yml

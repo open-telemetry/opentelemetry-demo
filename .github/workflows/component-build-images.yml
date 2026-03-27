@@ -14,14 +14,14 @@ on:
         default: 'dev'
         required: false
         type: string
-      dockerhub_repo:
-        description: Docker Hub repository
-        default: 'otel/demo'
-        required: false
-        type: string
+#      dockerhub_repo:
+#        description: Docker Hub repository
+#        default: 'otel/demo'
+#        required: false
+#        type: string
       ghcr_repo:
         description: GHCR repository
-        default: 'ghcr.io/open-telemetry/demo'
+        default: 'ghcr.io/${{ github.repository_owner }}/${{ github.repository }}'
         required: false
         type: string
 
@@ -55,95 +55,95 @@ jobs:
       matrix:
         file_tag:
           - file: ./src/accounting/Dockerfile
-            tag_suffix: accounting
+            image_name: accounting
             context: ./
             setup-qemu: true
           - file: ./src/ad/Dockerfile
-            tag_suffix: ad
+            image_name: ad
             context: ./
             setup-qemu: true
           - file: ./src/cart/src/Dockerfile
-            tag_suffix: cart
+            image_name: cart
             context: ./
             setup-qemu: false
           - file: ./src/checkout/Dockerfile
-            tag_suffix: checkout
+            image_name: checkout
             context: ./
             setup-qemu: true
           - file: ./src/currency/Dockerfile
-            tag_suffix: currency
+            image_name: currency
             context: ./
             setup-qemu: true
           - file: ./src/email/Dockerfile
-            tag_suffix: email
+            image_name: email
             context: ./
             setup-qemu: true
           - file: ./src/flagd-ui/Dockerfile
-            tag_suffix: flagd-ui
+            image_name: flagd-ui
             context: ./
             setup-qemu: true
           - file: ./src/fraud-detection/Dockerfile
-            tag_suffix: fraud-detection
+            image_name: fraud-detection
             context: ./
             setup-qemu: true
           - file: ./src/frontend/Dockerfile
-            tag_suffix: frontend
+            image_name: frontend
             context: ./
             setup-qemu: true
           - file: ./src/frontend-proxy/Dockerfile
-            tag_suffix: frontend-proxy
+            image_name: frontend-proxy
             context: ./
             setup-qemu: true
           - file: ./src/frontend/Dockerfile.cypress
-            tag_suffix: frontend-tests
+            image_name: frontend-tests
             context: ./
             setup-qemu: true
           - file: ./src/image-provider/Dockerfile
-            tag_suffix: image-provider
+            image_name: image-provider
             context: ./
             setup-qemu: true
           - file: ./src/kafka/Dockerfile
-            tag_suffix: kafka
+            image_name: kafka
             context: ./
             setup-qemu: true
           - file: ./src/llm/Dockerfile
-            tag_suffix: llm
+            image_name: llm
             context: ./
             setup-qemu: true
           - file: ./src/load-generator/Dockerfile
-            tag_suffix: load-generator
+            image_name: load-generator
             context: ./
             setup-qemu: true
           - file: ./src/opensearch/Dockerfile
-            tag_suffix: opensearch
+            image_name: opensearch
             context: ./
             setup-qemu: true
           - file: ./src/payment/Dockerfile
-            tag_suffix: payment
+            image_name: payment
             context: ./
             setup-qemu: true
           - file: ./src/product-catalog/Dockerfile
-            tag_suffix: product-catalog
+            image_name: product-catalog
             context: ./
             setup-qemu: true
           - file: ./src/product-reviews/Dockerfile
-            tag_suffix: product-reviews
+            image_name: product-reviews
             context: ./
             setup-qemu: true
           - file: ./src/quote/Dockerfile
-            tag_suffix: quote
+            image_name: quote
             context: ./
             setup-qemu: true
           - file: ./src/recommendation/Dockerfile
-            tag_suffix: recommendation
+            image_name: recommendation
             context: ./
             setup-qemu: true
           - file: ./src/shipping/Dockerfile
-            tag_suffix: shipping
+            image_name: shipping
             context: ./
             setup-qemu: true
           - file: ./test/tracetesting/Dockerfile
-            tag_suffix: traceBasedTests
+            image_name: traceBasedTests
             context: ./
             setup-qemu: true
 
@@ -185,12 +185,12 @@ jobs:
           username: ${{ github.repository_owner }}
           password: ${{ secrets.GITHUB_TOKEN }}
         if: ${{ inputs.push }}
-      - name: Log in to Docker Hub
-        uses: docker/login-action@v4
-        with:
-          username: ${{ secrets.DOCKER_USERNAME }}
-          password: ${{ secrets.DOCKER_PASSWORD }}
-        if: ${{ inputs.push }}
+#      - name: Log in to Docker Hub
+#        uses: docker/login-action@v4
+#        with:
+#          username: ${{ secrets.DOCKER_USERNAME }}
+#          password: ${{ secrets.DOCKER_PASSWORD }}
+#        if: ${{ inputs.push }}
       - name: Set up QEMU
         if: ${{ matrix.file_tag.setup-qemu }}
         uses: docker/setup-qemu-action@v4
@@ -208,7 +208,7 @@ jobs:
         with:
           context: ${{ matrix.file_tag.context }}
           file: ${{ matrix.file_tag.file }}
-          platforms: linux/amd64,linux/arm64
+          platforms: linux/amd64
           push: ${{ inputs.push }}
           build-args: |
             OTEL_JAVA_AGENT_VERSION=${{ env.OTEL_JAVA_AGENT_VERSION }}
@@ -216,9 +216,12 @@ jobs:
             TRACETEST_IMAGE_VERSION=${{ env.TRACETEST_IMAGE_VERSION }}
             OPENSEARCH_IMAGE=${{ env.OPENSEARCH_IMAGE }}
           tags: |
-            ${{ inputs.dockerhub_repo }}:${{ inputs.version }}-${{matrix.file_tag.tag_suffix }}
-            ${{ inputs.dockerhub_repo }}:latest-${{matrix.file_tag.tag_suffix }}
-            ${{ inputs.ghcr_repo }}:${{ inputs.version }}-${{ matrix.file_tag.tag_suffix }}
-            ${{ inputs.ghcr_repo }}:latest-${{ matrix.file_tag.tag_suffix }}
+            ${{ inputs.ghcr_repo }}/${{ matrix.file_tag.image_name }}:${{ inputs.version }}
+            ${{ inputs.ghcr_repo }}/${{ matrix.file_tag.image_name }}:latest
+#          tags: |
+#            ${{ inputs.dockerhub_repo }}:${{ inputs.version }}-${{matrix.file_tag.tag_suffix }}
+#            ${{ inputs.dockerhub_repo }}:latest-${{matrix.file_tag.tag_suffix }}
+#            ${{ inputs.ghcr_repo }}:${{ inputs.version }}-${{ matrix.file_tag.tag_suffix }}
+#            ${{ inputs.ghcr_repo }}:latest-${{ matrix.file_tag.tag_suffix }}
           cache-from: type=gha
           cache-to: type=gha
