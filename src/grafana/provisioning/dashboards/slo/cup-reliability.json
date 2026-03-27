@@ -1,0 +1,422 @@
+{
+  "__inputs": [],
+  "__requires": [
+    { "type": "grafana", "id": "grafana", "name": "Grafana", "version": "10.0.0" },
+    { "type": "datasource", "id": "prometheus", "name": "Prometheus", "version": "1.0.0" }
+  ],
+  "uid": "cup-reliability",
+  "title": "Astronomy Shop — CUP Reliability & Canary Status",
+  "description": "SLI availability SLOs, error budgets, and synthetic canary probe results for all 8 CUPs.",
+  "tags": ["slo", "cup", "reliability", "canary", "astronomy-shop"],
+  "schemaVersion": 39,
+  "version": 1,
+  "refresh": "1m",
+  "time": { "from": "now-24h", "to": "now" },
+  "timepicker": {},
+  "graphTooltip": 1,
+  "panels": [
+    {
+      "id": 1,
+      "type": "text",
+      "title": "",
+      "gridPos": { "x": 0, "y": 0, "w": 24, "h": 2 },
+      "options": {
+        "mode": "markdown",
+        "content": "## Reliability — Availability SLIs, Error Budgets & Canary Health\nSLI = ratio of good requests to total requests. Error budget = proportion of failure tolerance remaining in the 28-day window."
+      }
+    },
+    {
+      "id": 10,
+      "type": "timeseries",
+      "title": "CUP 1 — Checkout Availability SLI (5m rolling)",
+      "description": "SLO target: 99.95%. Red line at SLO threshold. Any sustained dip below threshold triggers a critical alert.",
+      "gridPos": { "x": 0, "y": 2, "w": 12, "h": 7 },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "percentunit",
+          "min": 0.98,
+          "max": 1.0,
+          "custom": { "lineWidth": 2, "fillOpacity": 10 },
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              { "color": "red", "value": null },
+              { "color": "yellow", "value": 0.999 },
+              { "color": "green", "value": 0.9995 }
+            ]
+          }
+        }
+      },
+      "targets": [
+        {
+          "datasource": { "type": "prometheus", "uid": "webstore-metrics" },
+          "expr": "sum(rate(http_server_request_duration_seconds_count{http_route=\"/api/checkout\",http_response_status_code!~\"5..\"}[5m])) / sum(rate(http_server_request_duration_seconds_count{http_route=\"/api/checkout\"}[5m]))",
+          "legendFormat": "Checkout Availability",
+          "refId": "A"
+        }
+      ],
+      "options": { "legend": { "displayMode": "list", "placement": "bottom" } }
+    },
+    {
+      "id": 11,
+      "type": "timeseries",
+      "title": "CUP 3 — Cart Availability SLI (5m rolling)",
+      "description": "SLO target: 99.95%. Cart outage directly blocks checkout completion.",
+      "gridPos": { "x": 12, "y": 2, "w": 12, "h": 7 },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "percentunit",
+          "min": 0.98,
+          "max": 1.0,
+          "custom": { "lineWidth": 2, "fillOpacity": 10 }
+        }
+      },
+      "targets": [
+        {
+          "datasource": { "type": "prometheus", "uid": "webstore-metrics" },
+          "expr": "sum(rate(http_server_request_duration_seconds_count{http_route=\"/api/cart\",http_response_status_code!~\"5..\"}[5m])) / sum(rate(http_server_request_duration_seconds_count{http_route=\"/api/cart\"}[5m]))",
+          "legendFormat": "Cart Availability",
+          "refId": "A"
+        }
+      ],
+      "options": { "legend": { "displayMode": "list", "placement": "bottom" } }
+    },
+    {
+      "id": 12,
+      "type": "timeseries",
+      "title": "CUP 2 — Browse Availability SLI (5m rolling)",
+      "description": "SLO target: 99.9%.",
+      "gridPos": { "x": 0, "y": 9, "w": 8, "h": 6 },
+      "fieldConfig": {
+        "defaults": { "unit": "percentunit", "min": 0.98, "max": 1.0, "custom": { "lineWidth": 2 } }
+      },
+      "targets": [
+        {
+          "datasource": { "type": "prometheus", "uid": "webstore-metrics" },
+          "expr": "sum(rate(http_server_request_duration_seconds_count{http_route=~\"/api/products.*\",http_response_status_code!~\"5..\"}[5m])) / sum(rate(http_server_request_duration_seconds_count{http_route=~\"/api/products.*\"}[5m]))",
+          "legendFormat": "Browse Availability",
+          "refId": "A"
+        }
+      ]
+    },
+    {
+      "id": 13,
+      "type": "timeseries",
+      "title": "CUP 6 — Currency Availability SLI (5m rolling)",
+      "description": "SLO target: 99.95%. gRPC status code 0 = OK.",
+      "gridPos": { "x": 8, "y": 9, "w": 8, "h": 6 },
+      "fieldConfig": {
+        "defaults": { "unit": "percentunit", "min": 0.98, "max": 1.0, "custom": { "lineWidth": 2 } }
+      },
+      "targets": [
+        {
+          "datasource": { "type": "prometheus", "uid": "webstore-metrics" },
+          "expr": "sum(rate(rpc_server_duration_count{rpc_service=\"hipstershop.CurrencyService\",rpc_grpc_status_code=\"0\"}[5m])) / sum(rate(rpc_server_duration_count{rpc_service=\"hipstershop.CurrencyService\"}[5m]))",
+          "legendFormat": "Currency Availability",
+          "refId": "A"
+        }
+      ]
+    },
+    {
+      "id": 14,
+      "type": "timeseries",
+      "title": "CUP 7 — AI Assistant Availability SLI (5m rolling)",
+      "description": "SLO target: 99.0%. Degrades gracefully; non-blocking for purchase.",
+      "gridPos": { "x": 16, "y": 9, "w": 8, "h": 6 },
+      "fieldConfig": {
+        "defaults": { "unit": "percentunit", "min": 0.95, "max": 1.0, "custom": { "lineWidth": 2 } }
+      },
+      "targets": [
+        {
+          "datasource": { "type": "prometheus", "uid": "webstore-metrics" },
+          "expr": "sum(rate(http_server_request_duration_seconds_count{http_route=\"/v1/chat/completions\",http_response_status_code!~\"5..\"}[5m])) / sum(rate(http_server_request_duration_seconds_count{http_route=\"/v1/chat/completions\"}[5m]))",
+          "legendFormat": "AI Availability",
+          "refId": "A"
+        }
+      ]
+    },
+    {
+      "id": 20,
+      "type": "gauge",
+      "title": "Error Budget — CUP 1 Checkout (28d)",
+      "description": "Remaining error budget. Green ≥ 50%, Yellow 25–50%, Red < 25%.",
+      "gridPos": { "x": 0, "y": 15, "w": 6, "h": 4 },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "percent",
+          "min": 0,
+          "max": 100,
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              { "color": "red", "value": 0 },
+              { "color": "yellow", "value": 25 },
+              { "color": "green", "value": 50 }
+            ]
+          }
+        }
+      },
+      "targets": [
+        {
+          "datasource": { "type": "prometheus", "uid": "webstore-metrics" },
+          "expr": "100 * clamp_min(1 - (sum(increase(http_server_request_duration_seconds_count{http_route=\"/api/checkout\",http_response_status_code=~\"5..\"}[28d])) / (sum(increase(http_server_request_duration_seconds_count{http_route=\"/api/checkout\"}[28d])) * 0.0005)), 0)",
+          "legendFormat": "CUP1 Budget",
+          "refId": "A",
+          "instant": true
+        }
+      ],
+      "options": { "reduceOptions": { "calcs": ["lastNotNull"] }, "showThresholdLabels": true, "showThresholdMarkers": true }
+    },
+    {
+      "id": 21,
+      "type": "gauge",
+      "title": "Error Budget — CUP 2 Browse (28d)",
+      "gridPos": { "x": 6, "y": 15, "w": 6, "h": 4 },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "percent", "min": 0, "max": 100,
+          "thresholds": { "mode": "absolute", "steps": [{ "color": "red", "value": 0 }, { "color": "yellow", "value": 25 }, { "color": "green", "value": 50 }] }
+        }
+      },
+      "targets": [
+        {
+          "datasource": { "type": "prometheus", "uid": "webstore-metrics" },
+          "expr": "100 * clamp_min(1 - (sum(increase(http_server_request_duration_seconds_count{http_route=~\"/api/products.*\",http_response_status_code=~\"5..\"}[28d])) / (sum(increase(http_server_request_duration_seconds_count{http_route=~\"/api/products.*\"}[28d])) * 0.001)), 0)",
+          "legendFormat": "CUP2 Budget",
+          "refId": "A",
+          "instant": true
+        }
+      ],
+      "options": { "reduceOptions": { "calcs": ["lastNotNull"] }, "showThresholdLabels": true, "showThresholdMarkers": true }
+    },
+    {
+      "id": 22,
+      "type": "gauge",
+      "title": "Error Budget — CUP 3 Cart (28d)",
+      "gridPos": { "x": 12, "y": 15, "w": 6, "h": 4 },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "percent", "min": 0, "max": 100,
+          "thresholds": { "mode": "absolute", "steps": [{ "color": "red", "value": 0 }, { "color": "yellow", "value": 25 }, { "color": "green", "value": 50 }] }
+        }
+      },
+      "targets": [
+        {
+          "datasource": { "type": "prometheus", "uid": "webstore-metrics" },
+          "expr": "100 * clamp_min(1 - (sum(increase(http_server_request_duration_seconds_count{http_route=\"/api/cart\",http_response_status_code=~\"5..\"}[28d])) / (sum(increase(http_server_request_duration_seconds_count{http_route=\"/api/cart\"}[28d])) * 0.0005)), 0)",
+          "legendFormat": "CUP3 Budget",
+          "refId": "A",
+          "instant": true
+        }
+      ],
+      "options": { "reduceOptions": { "calcs": ["lastNotNull"] }, "showThresholdLabels": true, "showThresholdMarkers": true }
+    },
+    {
+      "id": 23,
+      "type": "gauge",
+      "title": "Error Budget — CUP 6 Currency (28d)",
+      "gridPos": { "x": 18, "y": 15, "w": 6, "h": 4 },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "percent", "min": 0, "max": 100,
+          "thresholds": { "mode": "absolute", "steps": [{ "color": "red", "value": 0 }, { "color": "yellow", "value": 25 }, { "color": "green", "value": 50 }] }
+        }
+      },
+      "targets": [
+        {
+          "datasource": { "type": "prometheus", "uid": "webstore-metrics" },
+          "expr": "100 * clamp_min(1 - (sum(increase(rpc_server_duration_count{rpc_service=\"hipstershop.CurrencyService\",rpc_grpc_status_code!=\"0\"}[28d])) / (sum(increase(rpc_server_duration_count{rpc_service=\"hipstershop.CurrencyService\"}[28d])) * 0.0005)), 0)",
+          "legendFormat": "CUP6 Budget",
+          "refId": "A",
+          "instant": true
+        }
+      ],
+      "options": { "reduceOptions": { "calcs": ["lastNotNull"] }, "showThresholdLabels": true, "showThresholdMarkers": true }
+    },
+    {
+      "id": 30,
+      "type": "timeseries",
+      "title": "Canary Probe Success — All CUPs (last 24h)",
+      "description": "Binary success (1) or failure (0) per canary probe. Drops below 1 for sustained periods trigger canary-specific alerts.",
+      "gridPos": { "x": 0, "y": 19, "w": 24, "h": 7 },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "short",
+          "min": 0,
+          "max": 1,
+          "custom": { "lineWidth": 2, "fillOpacity": 5, "drawStyle": "line", "spanNulls": false }
+        }
+      },
+      "targets": [
+        {
+          "datasource": { "type": "prometheus", "uid": "webstore-metrics" },
+          "expr": "probe_success{job=\"cup1-checkout-payment\"}",
+          "legendFormat": "CUP1 Checkout",
+          "refId": "A"
+        },
+        {
+          "datasource": { "type": "prometheus", "uid": "webstore-metrics" },
+          "expr": "probe_success{job=\"cup2-browse-discovery\"}",
+          "legendFormat": "CUP2 Browse",
+          "refId": "B"
+        },
+        {
+          "datasource": { "type": "prometheus", "uid": "webstore-metrics" },
+          "expr": "probe_success{job=\"cup3-cart-management\"}",
+          "legendFormat": "CUP3 Cart",
+          "refId": "C"
+        },
+        {
+          "datasource": { "type": "prometheus", "uid": "webstore-metrics" },
+          "expr": "probe_success{job=\"cup4-order-fulfillment\"}",
+          "legendFormat": "CUP4 Order Fulfillment",
+          "refId": "D"
+        },
+        {
+          "datasource": { "type": "prometheus", "uid": "webstore-metrics" },
+          "expr": "probe_success{job=\"cup5-shipping-quote\"}",
+          "legendFormat": "CUP5 Shipping Quote",
+          "refId": "E"
+        },
+        {
+          "datasource": { "type": "prometheus", "uid": "webstore-metrics" },
+          "expr": "probe_success{job=\"cup6-currency\"}",
+          "legendFormat": "CUP6 Currency",
+          "refId": "F"
+        },
+        {
+          "datasource": { "type": "prometheus", "uid": "webstore-metrics" },
+          "expr": "probe_success{job=\"cup7-ai-assistant\"}",
+          "legendFormat": "CUP7 AI Assistant",
+          "refId": "G"
+        },
+        {
+          "datasource": { "type": "prometheus", "uid": "webstore-metrics" },
+          "expr": "probe_success{job=\"cup8-product-reviews\"}",
+          "legendFormat": "CUP8 Reviews",
+          "refId": "H"
+        }
+      ],
+      "options": {
+        "tooltip": { "mode": "multi", "sort": "none" },
+        "legend": { "displayMode": "list", "placement": "bottom" }
+      }
+    },
+    {
+      "id": 31,
+      "type": "timeseries",
+      "title": "Canary Probe Latency — CUP 1 & CUP 3 (ms)",
+      "description": "End-to-end probe duration from the synthetic check. Compare against SLO thresholds.",
+      "gridPos": { "x": 0, "y": 26, "w": 12, "h": 6 },
+      "fieldConfig": {
+        "defaults": { "unit": "ms", "custom": { "lineWidth": 2 } }
+      },
+      "targets": [
+        {
+          "datasource": { "type": "prometheus", "uid": "webstore-metrics" },
+          "expr": "probe_duration_seconds{job=\"cup1-checkout-payment\"} * 1000",
+          "legendFormat": "CUP1 Probe ms",
+          "refId": "A"
+        },
+        {
+          "datasource": { "type": "prometheus", "uid": "webstore-metrics" },
+          "expr": "probe_duration_seconds{job=\"cup3-cart-management\"} * 1000",
+          "legendFormat": "CUP3 Probe ms",
+          "refId": "B"
+        }
+      ],
+      "options": { "legend": { "displayMode": "list", "placement": "bottom" } }
+    },
+    {
+      "id": 32,
+      "type": "stat",
+      "title": "Canary Uptime % — CUP 1 Checkout (24h)",
+      "description": "Fraction of probe executions that returned success in the last 24 hours.",
+      "gridPos": { "x": 12, "y": 26, "w": 6, "h": 6 },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "percent",
+          "decimals": 2,
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              { "color": "red", "value": null },
+              { "color": "yellow", "value": 95 },
+              { "color": "green", "value": 99 }
+            ]
+          }
+        }
+      },
+      "targets": [
+        {
+          "datasource": { "type": "prometheus", "uid": "webstore-metrics" },
+          "expr": "avg_over_time(probe_success{job=\"cup1-checkout-payment\"}[24h]) * 100",
+          "legendFormat": "CUP1 Canary Uptime",
+          "refId": "A",
+          "instant": true
+        }
+      ],
+      "options": { "reduceOptions": { "calcs": ["lastNotNull"] }, "colorMode": "background", "graphMode": "none", "orientation": "auto" }
+    },
+    {
+      "id": 33,
+      "type": "stat",
+      "title": "Canary Uptime % — CUP 3 Cart (24h)",
+      "gridPos": { "x": 18, "y": 26, "w": 6, "h": 6 },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "percent",
+          "decimals": 2,
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              { "color": "red", "value": null },
+              { "color": "yellow", "value": 95 },
+              { "color": "green", "value": 99 }
+            ]
+          }
+        }
+      },
+      "targets": [
+        {
+          "datasource": { "type": "prometheus", "uid": "webstore-metrics" },
+          "expr": "avg_over_time(probe_success{job=\"cup3-cart-management\"}[24h]) * 100",
+          "legendFormat": "CUP3 Canary Uptime",
+          "refId": "A",
+          "instant": true
+        }
+      ],
+      "options": { "reduceOptions": { "calcs": ["lastNotNull"] }, "colorMode": "background", "graphMode": "none", "orientation": "auto" }
+    }
+  ],
+  "templating": {
+    "list": [
+      {
+        "name": "environment",
+        "label": "Environment",
+        "type": "custom",
+        "options": [
+          { "text": "production", "value": "production", "selected": true },
+          { "text": "staging", "value": "staging", "selected": false }
+        ],
+        "current": { "text": "production", "value": "production" },
+        "hide": 0,
+        "includeAll": false,
+        "multi": false
+      }
+    ]
+  },
+  "annotations": {
+    "list": [
+      {
+        "builtIn": 1,
+        "datasource": { "type": "grafana", "uid": "-- Grafana --" },
+        "enable": true,
+        "hide": true,
+        "iconColor": "rgba(0, 211, 255, 1)",
+        "name": "Annotations & Alerts",
+        "type": "dashboard"
+      }
+    ]
+  }
+}

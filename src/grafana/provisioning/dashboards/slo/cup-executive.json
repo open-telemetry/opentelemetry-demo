@@ -1,0 +1,521 @@
+{
+  "__inputs": [],
+  "__requires": [
+    { "type": "grafana", "id": "grafana", "name": "Grafana", "version": "10.0.0" },
+    { "type": "datasource", "id": "prometheus", "name": "Prometheus", "version": "1.0.0" }
+  ],
+  "uid": "cup-executive",
+  "title": "🔭 Astronomy Shop — Executive SLO View",
+  "description": "Real-time SLO status and error budget for all 8 Critical User Paths.",
+  "tags": ["slo", "cup", "executive", "astronomy-shop"],
+  "schemaVersion": 39,
+  "version": 1,
+  "refresh": "1m",
+  "time": { "from": "now-1h", "to": "now" },
+  "timepicker": {},
+  "fiscalYearStartMonth": 0,
+  "graphTooltip": 1,
+  "panels": [
+    {
+      "id": 1,
+      "type": "text",
+      "title": "",
+      "gridPos": { "x": 0, "y": 0, "w": 24, "h": 2 },
+      "options": {
+        "mode": "markdown",
+        "content": "## 🔭 Mission Control — 8 Critical User Paths\n**Green** = SLO met. **Yellow** = approaching breach. **Red** = SLO breached / error budget burning fast.",
+        "code": { "language": "plaintext", "showLineNumbers": false, "showMiniMap": false }
+      }
+    },
+    {
+      "id": 2,
+      "type": "stat",
+      "title": "CUP 1 — Checkout & Payment",
+      "description": "SLO target: 99.95% availability. Any breach = direct revenue loss.",
+      "gridPos": { "x": 0, "y": 2, "w": 8, "h": 4 },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "percentunit",
+          "decimals": 3,
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              { "color": "red", "value": null },
+              { "color": "yellow", "value": 0.999 },
+              { "color": "green", "value": 0.9995 }
+            ]
+          },
+          "mappings": [],
+          "links": []
+        }
+      },
+      "targets": [
+        {
+          "datasource": { "type": "prometheus", "uid": "webstore-metrics" },
+          "expr": "sum(rate(http_server_request_duration_seconds_count{http_route=\"/api/checkout\",http_response_status_code!~\"5..\"}[5m])) / sum(rate(http_server_request_duration_seconds_count{http_route=\"/api/checkout\"}[5m]))",
+          "legendFormat": "Availability",
+          "refId": "A",
+          "instant": true
+        }
+      ],
+      "options": {
+        "reduceOptions": { "calcs": ["lastNotNull"] },
+        "orientation": "auto",
+        "colorMode": "background",
+        "graphMode": "none",
+        "justifyMode": "auto",
+        "text": {}
+      }
+    },
+    {
+      "id": 3,
+      "type": "stat",
+      "title": "CUP 2 — Product Browse & Discovery",
+      "description": "SLO target: 99.9% availability. Top-of-funnel; broken browse stops all conversions.",
+      "gridPos": { "x": 8, "y": 2, "w": 8, "h": 4 },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "percentunit",
+          "decimals": 3,
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              { "color": "red", "value": null },
+              { "color": "yellow", "value": 0.9985 },
+              { "color": "green", "value": 0.999 }
+            ]
+          }
+        }
+      },
+      "targets": [
+        {
+          "datasource": { "type": "prometheus", "uid": "webstore-metrics" },
+          "expr": "sum(rate(http_server_request_duration_seconds_count{http_route=\"/api/products\",http_response_status_code!~\"5..\"}[5m])) / sum(rate(http_server_request_duration_seconds_count{http_route=\"/api/products\"}[5m]))",
+          "legendFormat": "Availability",
+          "refId": "A",
+          "instant": true
+        }
+      ],
+      "options": {
+        "reduceOptions": { "calcs": ["lastNotNull"] },
+        "colorMode": "background",
+        "graphMode": "none",
+        "orientation": "auto"
+      }
+    },
+    {
+      "id": 4,
+      "type": "stat",
+      "title": "CUP 3 — Shopping Cart Management",
+      "description": "SLO target: 99.95% availability. Cart down = checkout impossible.",
+      "gridPos": { "x": 16, "y": 2, "w": 8, "h": 4 },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "percentunit",
+          "decimals": 3,
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              { "color": "red", "value": null },
+              { "color": "yellow", "value": 0.999 },
+              { "color": "green", "value": 0.9995 }
+            ]
+          }
+        }
+      },
+      "targets": [
+        {
+          "datasource": { "type": "prometheus", "uid": "webstore-metrics" },
+          "expr": "sum(rate(http_server_request_duration_seconds_count{http_route=\"/api/cart\",http_response_status_code!~\"5..\"}[5m])) / sum(rate(http_server_request_duration_seconds_count{http_route=\"/api/cart\"}[5m]))",
+          "legendFormat": "Availability",
+          "refId": "A",
+          "instant": true
+        }
+      ],
+      "options": {
+        "reduceOptions": { "calcs": ["lastNotNull"] },
+        "colorMode": "background",
+        "graphMode": "none",
+        "orientation": "auto"
+      }
+    },
+    {
+      "id": 5,
+      "type": "stat",
+      "title": "CUP 4 — Order Fulfillment (ShipOrder)",
+      "description": "SLO target: 99.9% availability. Post-purchase logistics gate.",
+      "gridPos": { "x": 0, "y": 6, "w": 6, "h": 4 },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "percentunit",
+          "decimals": 3,
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              { "color": "red", "value": null },
+              { "color": "yellow", "value": 0.9985 },
+              { "color": "green", "value": 0.999 }
+            ]
+          }
+        }
+      },
+      "targets": [
+        {
+          "datasource": { "type": "prometheus", "uid": "webstore-metrics" },
+          "expr": "sum(rate(rpc_server_duration_count{rpc_service=\"hipstershop.ShippingService\",rpc_method=\"ShipOrder\",rpc_grpc_status_code=\"0\"}[5m])) / sum(rate(rpc_server_duration_count{rpc_service=\"hipstershop.ShippingService\",rpc_method=\"ShipOrder\"}[5m]))",
+          "legendFormat": "Availability",
+          "refId": "A",
+          "instant": true
+        }
+      ],
+      "options": {
+        "reduceOptions": { "calcs": ["lastNotNull"] },
+        "colorMode": "background",
+        "graphMode": "none",
+        "orientation": "auto"
+      }
+    },
+    {
+      "id": 6,
+      "type": "stat",
+      "title": "CUP 5 — Shipping Quote",
+      "description": "SLO target: 99.9% availability. Blocks checkout synchronously if down.",
+      "gridPos": { "x": 6, "y": 6, "w": 6, "h": 4 },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "percentunit",
+          "decimals": 3,
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              { "color": "red", "value": null },
+              { "color": "yellow", "value": 0.9985 },
+              { "color": "green", "value": 0.999 }
+            ]
+          }
+        }
+      },
+      "targets": [
+        {
+          "datasource": { "type": "prometheus", "uid": "webstore-metrics" },
+          "expr": "sum(rate(http_server_request_duration_seconds_count{http_route=\"/getquote\",http_response_status_code!~\"5..\"}[5m])) / sum(rate(http_server_request_duration_seconds_count{http_route=\"/getquote\"}[5m]))",
+          "legendFormat": "Availability",
+          "refId": "A",
+          "instant": true
+        }
+      ],
+      "options": {
+        "reduceOptions": { "calcs": ["lastNotNull"] },
+        "colorMode": "background",
+        "graphMode": "none",
+        "orientation": "auto"
+      }
+    },
+    {
+      "id": 7,
+      "type": "stat",
+      "title": "CUP 6 — Currency Selection & Price Display",
+      "description": "SLO target: 99.95% availability. All product prices break for non-USD users if down.",
+      "gridPos": { "x": 12, "y": 6, "w": 6, "h": 4 },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "percentunit",
+          "decimals": 3,
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              { "color": "red", "value": null },
+              { "color": "yellow", "value": 0.999 },
+              { "color": "green", "value": 0.9995 }
+            ]
+          }
+        }
+      },
+      "targets": [
+        {
+          "datasource": { "type": "prometheus", "uid": "webstore-metrics" },
+          "expr": "sum(rate(rpc_server_duration_count{rpc_service=\"hipstershop.CurrencyService\",rpc_grpc_status_code=\"0\"}[5m])) / sum(rate(rpc_server_duration_count{rpc_service=\"hipstershop.CurrencyService\"}[5m]))",
+          "legendFormat": "Availability",
+          "refId": "A",
+          "instant": true
+        }
+      ],
+      "options": {
+        "reduceOptions": { "calcs": ["lastNotNull"] },
+        "colorMode": "background",
+        "graphMode": "none",
+        "orientation": "auto"
+      }
+    },
+    {
+      "id": 8,
+      "type": "stat",
+      "title": "CUP 7 — AI Product Assistant",
+      "description": "SLO target: 99.0% availability. Conversion aid; degrades gracefully.",
+      "gridPos": { "x": 18, "y": 6, "w": 6, "h": 4 },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "percentunit",
+          "decimals": 3,
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              { "color": "red", "value": null },
+              { "color": "yellow", "value": 0.985 },
+              { "color": "green", "value": 0.99 }
+            ]
+          }
+        }
+      },
+      "targets": [
+        {
+          "datasource": { "type": "prometheus", "uid": "webstore-metrics" },
+          "expr": "sum(rate(http_server_request_duration_seconds_count{http_route=\"/v1/chat/completions\",http_response_status_code!~\"5..\"}[5m])) / sum(rate(http_server_request_duration_seconds_count{http_route=\"/v1/chat/completions\"}[5m]))",
+          "legendFormat": "Availability",
+          "refId": "A",
+          "instant": true
+        }
+      ],
+      "options": {
+        "reduceOptions": { "calcs": ["lastNotNull"] },
+        "colorMode": "background",
+        "graphMode": "none",
+        "orientation": "auto"
+      }
+    },
+    {
+      "id": 9,
+      "type": "stat",
+      "title": "CUP 8 — Product Reviews",
+      "description": "SLO target: 99.5% availability. Trust signal; does not block purchase.",
+      "gridPos": { "x": 0, "y": 10, "w": 6, "h": 4 },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "percentunit",
+          "decimals": 3,
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              { "color": "red", "value": null },
+              { "color": "yellow", "value": 0.99 },
+              { "color": "green", "value": 0.995 }
+            ]
+          }
+        }
+      },
+      "targets": [
+        {
+          "datasource": { "type": "prometheus", "uid": "webstore-metrics" },
+          "expr": "sum(rate(rpc_server_duration_count{rpc_service=\"oteldemo.ProductReviewService\",rpc_grpc_status_code=\"0\"}[5m])) / sum(rate(rpc_server_duration_count{rpc_service=\"oteldemo.ProductReviewService\"}[5m]))",
+          "legendFormat": "Availability",
+          "refId": "A",
+          "instant": true
+        }
+      ],
+      "options": {
+        "reduceOptions": { "calcs": ["lastNotNull"] },
+        "colorMode": "background",
+        "graphMode": "none",
+        "orientation": "auto"
+      }
+    },
+    {
+      "id": 10,
+      "type": "gauge",
+      "title": "CUP 1 — Checkout Error Budget Remaining (28d)",
+      "description": "Percentage of monthly error budget not yet consumed. Alert at <50%. Budget = 21.6 min / 28d at 99.95% target.",
+      "gridPos": { "x": 6, "y": 10, "w": 9, "h": 4 },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "percent",
+          "decimals": 1,
+          "min": 0,
+          "max": 100,
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              { "color": "red", "value": 0 },
+              { "color": "yellow", "value": 25 },
+              { "color": "green", "value": 50 }
+            ]
+          }
+        }
+      },
+      "targets": [
+        {
+          "datasource": { "type": "prometheus", "uid": "webstore-metrics" },
+          "expr": "100 * clamp_min(1 - (sum(increase(http_server_request_duration_seconds_count{http_route=\"/api/checkout\",http_response_status_code=~\"5..\"}[28d])) / (sum(increase(http_server_request_duration_seconds_count{http_route=\"/api/checkout\"}[28d])) * 0.0005)), 0)",
+          "legendFormat": "Error Budget %",
+          "refId": "A",
+          "instant": true
+        }
+      ],
+      "options": {
+        "reduceOptions": { "calcs": ["lastNotNull"] },
+        "orientation": "auto",
+        "showThresholdLabels": true,
+        "showThresholdMarkers": true
+      }
+    },
+    {
+      "id": 11,
+      "type": "gauge",
+      "title": "CUP 3 — Cart Error Budget Remaining (28d)",
+      "description": "Budget = 21.6 min / 28d at 99.95% target.",
+      "gridPos": { "x": 15, "y": 10, "w": 9, "h": 4 },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "percent",
+          "decimals": 1,
+          "min": 0,
+          "max": 100,
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              { "color": "red", "value": 0 },
+              { "color": "yellow", "value": 25 },
+              { "color": "green", "value": 50 }
+            ]
+          }
+        }
+      },
+      "targets": [
+        {
+          "datasource": { "type": "prometheus", "uid": "webstore-metrics" },
+          "expr": "100 * clamp_min(1 - (sum(increase(http_server_request_duration_seconds_count{http_route=\"/api/cart\",http_response_status_code=~\"5..\"}[28d])) / (sum(increase(http_server_request_duration_seconds_count{http_route=\"/api/cart\"}[28d])) * 0.0005)), 0)",
+          "legendFormat": "Error Budget %",
+          "refId": "A",
+          "instant": true
+        }
+      ],
+      "options": {
+        "reduceOptions": { "calcs": ["lastNotNull"] },
+        "orientation": "auto",
+        "showThresholdLabels": true,
+        "showThresholdMarkers": true
+      }
+    },
+    {
+      "id": 12,
+      "type": "timeseries",
+      "title": "CUP 1 — Checkout 5xx Error Rate (1h window)",
+      "description": "Rate of HTTP 5xx responses on the checkout endpoint. Any sustained spike = revenue impact.",
+      "gridPos": { "x": 0, "y": 14, "w": 12, "h": 6 },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "reqps",
+          "color": { "mode": "fixed", "fixedColor": "red" },
+          "custom": {
+            "lineWidth": 2,
+            "fillOpacity": 20,
+            "spanNulls": false
+          }
+        }
+      },
+      "targets": [
+        {
+          "datasource": { "type": "prometheus", "uid": "webstore-metrics" },
+          "expr": "sum(rate(http_server_request_duration_seconds_count{http_route=\"/api/checkout\",http_response_status_code=~\"5..\"}[5m]))",
+          "legendFormat": "Checkout 5xx / sec",
+          "refId": "A"
+        }
+      ],
+      "options": {
+        "tooltip": { "mode": "single", "sort": "none" },
+        "legend": { "displayMode": "list", "placement": "bottom" }
+      }
+    },
+    {
+      "id": 13,
+      "type": "timeseries",
+      "title": "All CUPs — Canary Probe Success Rate",
+      "description": "Synthetic canary success rate (%) per CUP over the last 1 hour. Drops indicate infrastructure or endpoint failures.",
+      "gridPos": { "x": 12, "y": 14, "w": 12, "h": 6 },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "percent",
+          "min": 0,
+          "max": 100,
+          "custom": {
+            "lineWidth": 2,
+            "spanNulls": false
+          },
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              { "color": "red", "value": 0 },
+              { "color": "yellow", "value": 80 },
+              { "color": "green", "value": 95 }
+            ]
+          }
+        }
+      },
+      "targets": [
+        {
+          "datasource": { "type": "prometheus", "uid": "webstore-metrics" },
+          "expr": "avg_over_time(probe_success{job=\"cup1-checkout-payment\"}[5m]) * 100",
+          "legendFormat": "CUP1 Checkout",
+          "refId": "A"
+        },
+        {
+          "datasource": { "type": "prometheus", "uid": "webstore-metrics" },
+          "expr": "avg_over_time(probe_success{job=\"cup2-browse-discovery\"}[5m]) * 100",
+          "legendFormat": "CUP2 Browse",
+          "refId": "B"
+        },
+        {
+          "datasource": { "type": "prometheus", "uid": "webstore-metrics" },
+          "expr": "avg_over_time(probe_success{job=\"cup3-cart-management\"}[5m]) * 100",
+          "legendFormat": "CUP3 Cart",
+          "refId": "C"
+        },
+        {
+          "datasource": { "type": "prometheus", "uid": "webstore-metrics" },
+          "expr": "avg_over_time(probe_success{job=\"cup5-shipping-quote\"}[5m]) * 100",
+          "legendFormat": "CUP5 Shipping Quote",
+          "refId": "D"
+        },
+        {
+          "datasource": { "type": "prometheus", "uid": "webstore-metrics" },
+          "expr": "avg_over_time(probe_success{job=\"cup6-currency\"}[5m]) * 100",
+          "legendFormat": "CUP6 Currency",
+          "refId": "E"
+        }
+      ],
+      "options": {
+        "tooltip": { "mode": "multi", "sort": "none" },
+        "legend": { "displayMode": "list", "placement": "bottom" }
+      }
+    }
+  ],
+  "templating": {
+    "list": [
+      {
+        "name": "environment",
+        "label": "Environment",
+        "type": "custom",
+        "options": [
+          { "text": "production", "value": "production", "selected": true },
+          { "text": "staging", "value": "staging", "selected": false }
+        ],
+        "current": { "text": "production", "value": "production" },
+        "hide": 0,
+        "includeAll": false,
+        "multi": false
+      }
+    ]
+  },
+  "annotations": {
+    "list": [
+      {
+        "builtIn": 1,
+        "datasource": { "type": "grafana", "uid": "-- Grafana --" },
+        "enable": true,
+        "hide": true,
+        "iconColor": "rgba(0, 211, 255, 1)",
+        "name": "Annotations & Alerts",
+        "type": "dashboard"
+      }
+    ]
+  }
+}

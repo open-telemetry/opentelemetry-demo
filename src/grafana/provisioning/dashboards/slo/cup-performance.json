@@ -1,0 +1,445 @@
+{
+  "__inputs": [],
+  "__requires": [
+    { "type": "grafana", "id": "grafana", "name": "Grafana", "version": "10.0.0" },
+    { "type": "datasource", "id": "prometheus", "name": "Prometheus", "version": "1.0.0" }
+  ],
+  "uid": "cup-performance",
+  "title": "Astronomy Shop — CUP Performance (P95/P99)",
+  "description": "Latency percentiles and throughput for all 8 Critical User Paths. SLO threshold lines shown in red.",
+  "tags": ["slo", "cup", "performance", "latency", "astronomy-shop"],
+  "schemaVersion": 39,
+  "version": 1,
+  "refresh": "30s",
+  "time": { "from": "now-1h", "to": "now" },
+  "timepicker": {},
+  "graphTooltip": 1,
+  "panels": [
+    {
+      "id": 1,
+      "type": "text",
+      "title": "",
+      "gridPos": { "x": 0, "y": 0, "w": 24, "h": 2 },
+      "options": {
+        "mode": "markdown",
+        "content": "## CUP Performance — Latency P50 / P95 / P99\nRed threshold lines represent the SLO P95 latency target per CUP. Sustained breach triggers a warning alert."
+      }
+    },
+    {
+      "id": 20,
+      "type": "timeseries",
+      "title": "CUP 1 — POST /api/checkout Latency (P50 / P95 / P99)",
+      "description": "SLO: P95 < 3,000 ms. Measures the full checkout round-trip from BFF to all downstream services.",
+      "gridPos": { "x": 0, "y": 2, "w": 12, "h": 8 },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "s",
+          "custom": { "lineWidth": 2, "fillOpacity": 5, "spanNulls": false }
+        },
+        "overrides": [
+          {
+            "matcher": { "id": "byName", "options": "P95" },
+            "properties": [{ "id": "color", "value": { "fixedColor": "orange", "mode": "fixed" } }]
+          },
+          {
+            "matcher": { "id": "byName", "options": "P99" },
+            "properties": [{ "id": "color", "value": { "fixedColor": "red", "mode": "fixed" } }]
+          }
+        ]
+      },
+      "targets": [
+        {
+          "datasource": { "type": "prometheus", "uid": "webstore-metrics" },
+          "expr": "histogram_quantile(0.50, sum by (le) (rate(http_server_request_duration_seconds_bucket{http_route=\"/api/checkout\",http_request_method=\"POST\"}[5m])))",
+          "legendFormat": "P50",
+          "refId": "A"
+        },
+        {
+          "datasource": { "type": "prometheus", "uid": "webstore-metrics" },
+          "expr": "histogram_quantile(0.95, sum by (le) (rate(http_server_request_duration_seconds_bucket{http_route=\"/api/checkout\",http_request_method=\"POST\"}[5m])))",
+          "legendFormat": "P95",
+          "refId": "B"
+        },
+        {
+          "datasource": { "type": "prometheus", "uid": "webstore-metrics" },
+          "expr": "histogram_quantile(0.99, sum by (le) (rate(http_server_request_duration_seconds_bucket{http_route=\"/api/checkout\",http_request_method=\"POST\"}[5m])))",
+          "legendFormat": "P99",
+          "refId": "C"
+        }
+      ],
+      "options": {
+        "tooltip": { "mode": "multi", "sort": "none" },
+        "legend": { "displayMode": "list", "placement": "bottom" },
+        "thresholds": {
+          "mode": "absolute",
+          "steps": [
+            { "color": "transparent", "value": null },
+            { "color": "red", "value": 3.0 }
+          ]
+        }
+      }
+    },
+    {
+      "id": 21,
+      "type": "timeseries",
+      "title": "CUP 1 — Downstream Service P95 Latency Breakdown",
+      "description": "Per-service contribution to checkout latency. Identify which downstream call is slowest.",
+      "gridPos": { "x": 12, "y": 2, "w": 12, "h": 8 },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "ms",
+          "custom": { "lineWidth": 2, "fillOpacity": 0, "spanNulls": false }
+        }
+      },
+      "targets": [
+        {
+          "datasource": { "type": "prometheus", "uid": "webstore-metrics" },
+          "expr": "histogram_quantile(0.95, sum by (le) (rate(rpc_server_duration_milliseconds_bucket{rpc_service=\"hipstershop.PaymentService\"}[5m])))",
+          "legendFormat": "Payment gRPC P95",
+          "refId": "A"
+        },
+        {
+          "datasource": { "type": "prometheus", "uid": "webstore-metrics" },
+          "expr": "histogram_quantile(0.95, sum by (le) (rate(rpc_server_duration_milliseconds_bucket{rpc_service=\"hipstershop.CartService\"}[5m])))",
+          "legendFormat": "Cart gRPC P95",
+          "refId": "B"
+        },
+        {
+          "datasource": { "type": "prometheus", "uid": "webstore-metrics" },
+          "expr": "histogram_quantile(0.95, sum by (le) (rate(rpc_server_duration_milliseconds_bucket{rpc_service=\"hipstershop.CurrencyService\"}[5m])))",
+          "legendFormat": "Currency gRPC P95",
+          "refId": "C"
+        },
+        {
+          "datasource": { "type": "prometheus", "uid": "webstore-metrics" },
+          "expr": "histogram_quantile(0.95, sum by (le) (rate(http_server_request_duration_seconds_bucket{http_route=\"/getquote\"}[5m]))) * 1000",
+          "legendFormat": "Quote HTTP P95",
+          "refId": "D"
+        },
+        {
+          "datasource": { "type": "prometheus", "uid": "webstore-metrics" },
+          "expr": "histogram_quantile(0.95, sum by (le) (rate(rpc_server_duration_milliseconds_bucket{rpc_service=\"hipstershop.ShippingService\"}[5m])))",
+          "legendFormat": "Shipping gRPC P95",
+          "refId": "E"
+        }
+      ],
+      "options": {
+        "tooltip": { "mode": "multi", "sort": "desc" },
+        "legend": { "displayMode": "list", "placement": "bottom" }
+      }
+    },
+    {
+      "id": 22,
+      "type": "timeseries",
+      "title": "CUP 2 — GET /api/products P95 Latency",
+      "description": "SLO: P95 < 800 ms. Lists all products with prices; front page load depends on this.",
+      "gridPos": { "x": 0, "y": 10, "w": 8, "h": 6 },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "s",
+          "custom": { "lineWidth": 2, "fillOpacity": 5 }
+        }
+      },
+      "targets": [
+        {
+          "datasource": { "type": "prometheus", "uid": "webstore-metrics" },
+          "expr": "histogram_quantile(0.95, sum by (le) (rate(http_server_request_duration_seconds_bucket{http_route=~\"/api/products.*\",http_request_method=\"GET\"}[5m])))",
+          "legendFormat": "P95",
+          "refId": "A"
+        },
+        {
+          "datasource": { "type": "prometheus", "uid": "webstore-metrics" },
+          "expr": "histogram_quantile(0.99, sum by (le) (rate(http_server_request_duration_seconds_bucket{http_route=~\"/api/products.*\",http_request_method=\"GET\"}[5m])))",
+          "legendFormat": "P99",
+          "refId": "B"
+        }
+      ],
+      "options": {
+        "thresholds": {
+          "mode": "absolute",
+          "steps": [{ "color": "transparent", "value": null }, { "color": "red", "value": 0.8 }]
+        },
+        "legend": { "displayMode": "list", "placement": "bottom" }
+      }
+    },
+    {
+      "id": 23,
+      "type": "timeseries",
+      "title": "CUP 3 — POST /api/cart P95 Latency",
+      "description": "SLO: P95 < 300 ms. Cart add/get/delete; backed by Valkey (Redis).",
+      "gridPos": { "x": 8, "y": 10, "w": 8, "h": 6 },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "s",
+          "custom": { "lineWidth": 2, "fillOpacity": 5 }
+        }
+      },
+      "targets": [
+        {
+          "datasource": { "type": "prometheus", "uid": "webstore-metrics" },
+          "expr": "histogram_quantile(0.95, sum by (le) (rate(http_server_request_duration_seconds_bucket{http_route=\"/api/cart\"}[5m])))",
+          "legendFormat": "P95",
+          "refId": "A"
+        },
+        {
+          "datasource": { "type": "prometheus", "uid": "webstore-metrics" },
+          "expr": "histogram_quantile(0.99, sum by (le) (rate(http_server_request_duration_seconds_bucket{http_route=\"/api/cart\"}[5m])))",
+          "legendFormat": "P99",
+          "refId": "B"
+        }
+      ],
+      "options": {
+        "thresholds": {
+          "mode": "absolute",
+          "steps": [{ "color": "transparent", "value": null }, { "color": "red", "value": 0.3 }]
+        },
+        "legend": { "displayMode": "list", "placement": "bottom" }
+      }
+    },
+    {
+      "id": 24,
+      "type": "timeseries",
+      "title": "CUP 6 — Currency Convert P95 Latency",
+      "description": "SLO: P95 < 100 ms. Called on every page load for price display.",
+      "gridPos": { "x": 16, "y": 10, "w": 8, "h": 6 },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "ms",
+          "custom": { "lineWidth": 2, "fillOpacity": 5 }
+        }
+      },
+      "targets": [
+        {
+          "datasource": { "type": "prometheus", "uid": "webstore-metrics" },
+          "expr": "histogram_quantile(0.95, sum by (le) (rate(rpc_server_duration_milliseconds_bucket{rpc_service=\"hipstershop.CurrencyService\",rpc_method=\"Convert\"}[5m])))",
+          "legendFormat": "Convert P95",
+          "refId": "A"
+        },
+        {
+          "datasource": { "type": "prometheus", "uid": "webstore-metrics" },
+          "expr": "histogram_quantile(0.95, sum by (le) (rate(rpc_server_duration_milliseconds_bucket{rpc_service=\"hipstershop.CurrencyService\",rpc_method=\"GetSupportedCurrencies\"}[5m])))",
+          "legendFormat": "GetSupportedCurrencies P95",
+          "refId": "B"
+        }
+      ],
+      "options": {
+        "thresholds": {
+          "mode": "absolute",
+          "steps": [{ "color": "transparent", "value": null }, { "color": "red", "value": 100 }]
+        },
+        "legend": { "displayMode": "list", "placement": "bottom" }
+      }
+    },
+    {
+      "id": 25,
+      "type": "timeseries",
+      "title": "CUP 4 — Kafka Consumer Lag (orders topic)",
+      "description": "SLO: Accounting lag < 1,000 msgs; Fraud lag < 2,000 msgs over 30s window. High lag = async consumers falling behind.",
+      "gridPos": { "x": 0, "y": 16, "w": 12, "h": 6 },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "short",
+          "custom": { "lineWidth": 2, "fillOpacity": 10 }
+        }
+      },
+      "targets": [
+        {
+          "datasource": { "type": "prometheus", "uid": "webstore-metrics" },
+          "expr": "kafka_consumer_group_lag{group=\"accounting-service\",topic=\"orders\"}",
+          "legendFormat": "Accounting Consumer Lag",
+          "refId": "A"
+        },
+        {
+          "datasource": { "type": "prometheus", "uid": "webstore-metrics" },
+          "expr": "kafka_consumer_group_lag{group=\"fraud-detection-service\",topic=\"orders\"}",
+          "legendFormat": "Fraud Detection Lag",
+          "refId": "B"
+        }
+      ],
+      "options": {
+        "thresholds": {
+          "mode": "absolute",
+          "steps": [
+            { "color": "transparent", "value": null },
+            { "color": "yellow", "value": 1000 },
+            { "color": "red", "value": 2000 }
+          ]
+        },
+        "legend": { "displayMode": "list", "placement": "bottom" }
+      }
+    },
+    {
+      "id": 26,
+      "type": "timeseries",
+      "title": "CUP 7 — LLM Inference Latency (P50 / P95)",
+      "description": "SLO: P95 < 10,000 ms. LLM inference is naturally slow; alert only on extreme outliers.",
+      "gridPos": { "x": 12, "y": 16, "w": 12, "h": 6 },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "s",
+          "custom": { "lineWidth": 2, "fillOpacity": 5 }
+        }
+      },
+      "targets": [
+        {
+          "datasource": { "type": "prometheus", "uid": "webstore-metrics" },
+          "expr": "histogram_quantile(0.50, sum by (le) (rate(http_server_request_duration_seconds_bucket{http_route=\"/v1/chat/completions\"}[5m])))",
+          "legendFormat": "P50",
+          "refId": "A"
+        },
+        {
+          "datasource": { "type": "prometheus", "uid": "webstore-metrics" },
+          "expr": "histogram_quantile(0.95, sum by (le) (rate(http_server_request_duration_seconds_bucket{http_route=\"/v1/chat/completions\"}[5m])))",
+          "legendFormat": "P95",
+          "refId": "B"
+        },
+        {
+          "datasource": { "type": "prometheus", "uid": "webstore-metrics" },
+          "expr": "histogram_quantile(0.99, sum by (le) (rate(http_server_request_duration_seconds_bucket{http_route=\"/v1/chat/completions\"}[5m])))",
+          "legendFormat": "P99",
+          "refId": "C"
+        }
+      ],
+      "options": {
+        "thresholds": {
+          "mode": "absolute",
+          "steps": [{ "color": "transparent", "value": null }, { "color": "red", "value": 10.0 }]
+        },
+        "legend": { "displayMode": "list", "placement": "bottom" }
+      }
+    },
+    {
+      "id": 27,
+      "type": "timeseries",
+      "title": "CUP 5 — Shipping Quote P95 Latency",
+      "description": "SLO: P95 < 600 ms. Called synchronously during checkout; any slowness delays PlaceOrder.",
+      "gridPos": { "x": 0, "y": 22, "w": 8, "h": 6 },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "s",
+          "custom": { "lineWidth": 2, "fillOpacity": 5 }
+        }
+      },
+      "targets": [
+        {
+          "datasource": { "type": "prometheus", "uid": "webstore-metrics" },
+          "expr": "histogram_quantile(0.95, sum by (le) (rate(http_server_request_duration_seconds_bucket{http_route=\"/getquote\"}[5m])))",
+          "legendFormat": "P95",
+          "refId": "A"
+        }
+      ],
+      "options": {
+        "thresholds": {
+          "mode": "absolute",
+          "steps": [{ "color": "transparent", "value": null }, { "color": "red", "value": 0.6 }]
+        }
+      }
+    },
+    {
+      "id": 28,
+      "type": "timeseries",
+      "title": "CUP 8 — Product Reviews gRPC P95 Latency",
+      "description": "SLO: P95 < 500 ms. Reads from PostgreSQL; includes ListProductReviews and GetAvgScore.",
+      "gridPos": { "x": 8, "y": 22, "w": 8, "h": 6 },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "ms",
+          "custom": { "lineWidth": 2, "fillOpacity": 5 }
+        }
+      },
+      "targets": [
+        {
+          "datasource": { "type": "prometheus", "uid": "webstore-metrics" },
+          "expr": "histogram_quantile(0.95, sum by (le, rpc_method) (rate(rpc_server_duration_milliseconds_bucket{rpc_service=\"oteldemo.ProductReviewService\"}[5m])))",
+          "legendFormat": "{{rpc_method}} P95",
+          "refId": "A"
+        }
+      ],
+      "options": {
+        "thresholds": {
+          "mode": "absolute",
+          "steps": [{ "color": "transparent", "value": null }, { "color": "red", "value": 500 }]
+        },
+        "legend": { "displayMode": "list", "placement": "bottom" }
+      }
+    },
+    {
+      "id": 29,
+      "type": "timeseries",
+      "title": "CUP 1 — Checkout Throughput (requests/sec)",
+      "description": "Total checkout request rate: successful + failed. Compare with 5xx rate panel.",
+      "gridPos": { "x": 16, "y": 22, "w": 8, "h": 6 },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "reqps",
+          "custom": { "lineWidth": 2, "fillOpacity": 10 }
+        }
+      },
+      "targets": [
+        {
+          "datasource": { "type": "prometheus", "uid": "webstore-metrics" },
+          "expr": "sum(rate(http_server_request_duration_seconds_count{http_route=\"/api/checkout\"}[5m]))",
+          "legendFormat": "Total Req/s",
+          "refId": "A"
+        },
+        {
+          "datasource": { "type": "prometheus", "uid": "webstore-metrics" },
+          "expr": "sum(rate(http_server_request_duration_seconds_count{http_route=\"/api/checkout\",http_response_status_code=~\"5..\"}[5m]))",
+          "legendFormat": "5xx Req/s",
+          "refId": "B"
+        }
+      ],
+      "options": { "legend": { "displayMode": "list", "placement": "bottom" } }
+    }
+  ],
+  "templating": {
+    "list": [
+      {
+        "name": "environment",
+        "label": "Environment",
+        "type": "custom",
+        "options": [
+          { "text": "production", "value": "production", "selected": true },
+          { "text": "staging", "value": "staging", "selected": false }
+        ],
+        "current": { "text": "production", "value": "production" },
+        "hide": 0,
+        "includeAll": false,
+        "multi": false
+      },
+      {
+        "name": "cup_name",
+        "label": "CUP Filter",
+        "type": "custom",
+        "options": [
+          { "text": "All", "value": ".*", "selected": true },
+          { "text": "Checkout", "value": "checkout_payment" },
+          { "text": "Browse", "value": "browse_discovery" },
+          { "text": "Cart", "value": "cart_management" },
+          { "text": "Fulfillment", "value": "order_fulfillment" },
+          { "text": "Shipping Quote", "value": "shipping_quote" },
+          { "text": "Currency", "value": "currency_display" },
+          { "text": "AI Assistant", "value": "ai_assistant" },
+          { "text": "Reviews", "value": "product_reviews" }
+        ],
+        "current": { "text": "All", "value": ".*" },
+        "hide": 0,
+        "includeAll": false,
+        "multi": false
+      }
+    ]
+  },
+  "annotations": {
+    "list": [
+      {
+        "builtIn": 1,
+        "datasource": { "type": "grafana", "uid": "-- Grafana --" },
+        "enable": true,
+        "hide": true,
+        "iconColor": "rgba(0, 211, 255, 1)",
+        "name": "Annotations & Alerts",
+        "type": "dashboard"
+      }
+    ]
+  }
+}

@@ -1,0 +1,18 @@
+# Copyright The OpenTelemetry Authors
+# SPDX-License-Identifier: Apache-2.0
+#
+# Dashboard provider for Critical User Path SLO dashboards.
+# Dashboards are loaded from the slo/ sub-directory.
+
+apiVersion: 1
+providers:
+  - name: 'CUP SLO — Astronomy Shop'
+    orgId: 1
+    folder: 'CUP SLO'
+    folderUid: 'cup-slo'
+    type: file
+    disableDeletion: false
+    editable: true
+    allowUiUpdates: true
+    options:
+      path: /etc/grafana/provisioning/dashboards/slo

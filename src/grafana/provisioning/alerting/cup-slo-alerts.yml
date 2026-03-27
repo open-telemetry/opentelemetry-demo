@@ -1,0 +1,914 @@
+# Copyright The OpenTelemetry Authors
+# SPDX-License-Identifier: Apache-2.0
+#
+# CUP SLO Alert Rules — Astronomy Shop
+# Covers all 8 Critical User Paths defined in doc/CRITICAL_USER_PATHS_ANALYSIS.md
+# Severity: critical = page immediately | warning = ticket / Slack
+# All rules evaluate on a 1-minute interval.
+
+---
+apiVersion: 1
+groups:
+  # ─────────────────────────────────────────────────────────────────────────────
+  # CUP 1 — Checkout & Payment (Priority P0 — 99.95% availability, P95 < 3,000 ms)
+  # ─────────────────────────────────────────────────────────────────────────────
+  - orgId: 1
+    name: CUP1.CheckoutPayment
+    folder: CUP SLO
+    interval: 1m
+    rules:
+      - uid: cup1-avail-critical
+        title: "CUP1 Checkout Availability < 99.95% (critical)"
+        condition: threshold
+        data:
+          - refId: availability
+            relativeTimeRange: { from: 300, to: 0 }
+            datasourceUid: webstore-metrics
+            model:
+              expr: >-
+                sum(rate(http_server_request_duration_seconds_count{http_route="/api/checkout",http_response_status_code!~"5.."}[5m]))
+                / sum(rate(http_server_request_duration_seconds_count{http_route="/api/checkout"}[5m]))
+              instant: true
+              refId: availability
+          - refId: threshold
+            datasourceUid: __expr__
+            model:
+              refId: threshold
+              type: threshold
+              expression: availability
+              conditions:
+                - evaluator: { type: lt, params: [0.9995] }
+                  operator: { type: and }
+                  query: { params: [availability] }
+                  reducer: { type: last, params: [] }
+                  type: query
+        noDataState: NoData
+        execErrState: Error
+        for: 2m
+        keepFiringFor: 5m
+        labels:
+          severity: critical
+          cup: "1"
+          cup_name: checkout_payment
+          team_name: webstore
+        annotations:
+          summary: "CUP1 Checkout availability below 99.95% SLO"
+          description: >-
+            The checkout endpoint /api/checkout availability has dropped below
+            99.95% for >2 minutes. This is a direct revenue-impacting event.
+            Current value: {{ $values.availability.Value | humanizePercentage }}.
+          runbook: "https://runbooks/cup1-checkout-availability"
+        isPaused: false
+        notification_settings:
+          receiver: grafana-default-email
+
+      - uid: cup1-latency-p95-warning
+        title: "CUP1 Checkout P95 Latency > 3s (warning)"
+        condition: threshold
+        data:
+          - refId: latency_p95
+            relativeTimeRange: { from: 300, to: 0 }
+            datasourceUid: webstore-metrics
+            model:
+              expr: >-
+                histogram_quantile(0.95, sum by (le) (
+                  rate(http_server_request_duration_seconds_bucket{
+                    http_route="/api/checkout",
+                    http_request_method="POST"
+                  }[5m])
+                ))
+              instant: true
+              refId: latency_p95
+          - refId: threshold
+            datasourceUid: __expr__
+            model:
+              refId: threshold
+              type: threshold
+              expression: latency_p95
+              conditions:
+                - evaluator: { type: gt, params: [3.0] }
+                  operator: { type: and }
+                  query: { params: [latency_p95] }
+                  reducer: { type: last, params: [] }
+                  type: query
+        noDataState: NoData
+        execErrState: Error
+        for: 5m
+        keepFiringFor: 5m
+        labels:
+          severity: warning
+          cup: "1"
+          cup_name: checkout_payment
+          team_name: webstore
+        annotations:
+          summary: "CUP1 Checkout P95 latency exceeds 3s SLO"
+          description: >-
+            The P95 latency for POST /api/checkout has been above 3,000 ms for
+            >5 minutes. Current value: {{ $values.latency_p95.Value | humanizeDuration }}.
+          runbook: "https://runbooks/cup1-checkout-latency"
+        isPaused: false
+        notification_settings:
+          receiver: grafana-default-email
+
+      - uid: cup1-error-budget-warning
+        title: "CUP1 Checkout Error Budget Burn Rate > 5× (warning)"
+        condition: threshold
+        data:
+          - refId: burn_rate
+            relativeTimeRange: { from: 3600, to: 0 }
+            datasourceUid: webstore-metrics
+            model:
+              expr: >-
+                (
+                  sum(rate(http_server_request_duration_seconds_count{http_route="/api/checkout",http_response_status_code=~"5.."}[1h]))
+                  / sum(rate(http_server_request_duration_seconds_count{http_route="/api/checkout"}[1h]))
+                ) / 0.0005
+              instant: true
+              refId: burn_rate
+          - refId: threshold
+            datasourceUid: __expr__
+            model:
+              refId: threshold
+              type: threshold
+              expression: burn_rate
+              conditions:
+                - evaluator: { type: gt, params: [5.0] }
+                  operator: { type: and }
+                  query: { params: [burn_rate] }
+                  reducer: { type: last, params: [] }
+                  type: query
+        noDataState: NoData
+        execErrState: Error
+        for: 5m
+        labels:
+          severity: warning
+          cup: "1"
+          cup_name: checkout_payment
+          team_name: webstore
+        annotations:
+          summary: "CUP1 Checkout error budget burning >5× nominal rate"
+          description: >-
+            The error budget for the checkout SLO is burning at more than 5×
+            the nominal rate over the last 1 hour. At this rate the monthly
+            budget will be exhausted in < 6 days.
+          runbook: "https://runbooks/cup1-error-budget"
+        isPaused: false
+        notification_settings:
+          receiver: grafana-default-email
+
+  # ─────────────────────────────────────────────────────────────────────────────
+  # CUP 2 — Product Browse & Discovery (Priority P1 — 99.9%, P95 < 800 ms)
+  # ─────────────────────────────────────────────────────────────────────────────
+  - orgId: 1
+    name: CUP2.BrowseDiscovery
+    folder: CUP SLO
+    interval: 1m
+    rules:
+      - uid: cup2-avail-warning
+        title: "CUP2 Browse Availability < 99.9% (warning)"
+        condition: threshold
+        data:
+          - refId: availability
+            relativeTimeRange: { from: 300, to: 0 }
+            datasourceUid: webstore-metrics
+            model:
+              expr: >-
+                sum(rate(http_server_request_duration_seconds_count{http_route=~"/api/products.*",http_response_status_code!~"5.."}[5m]))
+                / sum(rate(http_server_request_duration_seconds_count{http_route=~"/api/products.*"}[5m]))
+              instant: true
+              refId: availability
+          - refId: threshold
+            datasourceUid: __expr__
+            model:
+              refId: threshold
+              type: threshold
+              expression: availability
+              conditions:
+                - evaluator: { type: lt, params: [0.999] }
+                  operator: { type: and }
+                  query: { params: [availability] }
+                  reducer: { type: last, params: [] }
+                  type: query
+        noDataState: NoData
+        execErrState: Error
+        for: 3m
+        labels:
+          severity: warning
+          cup: "2"
+          cup_name: browse_discovery
+          team_name: webstore
+        annotations:
+          summary: "CUP2 Product browse availability below 99.9%"
+          description: >-
+            The product listing endpoints availability has dropped below 99.9%
+            for >3 minutes. Broken browse prevents all conversions.
+          runbook: "https://runbooks/cup2-browse"
+        isPaused: false
+        notification_settings:
+          receiver: grafana-default-email
+
+      - uid: cup2-latency-p95-warning
+        title: "CUP2 Browse P95 Latency > 800ms (warning)"
+        condition: threshold
+        data:
+          - refId: latency_p95
+            relativeTimeRange: { from: 300, to: 0 }
+            datasourceUid: webstore-metrics
+            model:
+              expr: >-
+                histogram_quantile(0.95, sum by (le) (
+                  rate(http_server_request_duration_seconds_bucket{http_route=~"/api/products.*",http_request_method="GET"}[5m])
+                ))
+              instant: true
+              refId: latency_p95
+          - refId: threshold
+            datasourceUid: __expr__
+            model:
+              refId: threshold
+              type: threshold
+              expression: latency_p95
+              conditions:
+                - evaluator: { type: gt, params: [0.8] }
+                  operator: { type: and }
+                  query: { params: [latency_p95] }
+                  reducer: { type: last, params: [] }
+                  type: query
+        noDataState: NoData
+        execErrState: Error
+        for: 5m
+        labels:
+          severity: warning
+          cup: "2"
+          cup_name: browse_discovery
+          team_name: webstore
+        annotations:
+          summary: "CUP2 Browse P95 latency exceeds 800ms"
+          description: >-
+            P95 latency for GET /api/products* has exceeded 800ms for >5 min.
+            Current: {{ $values.latency_p95.Value | humanizeDuration }}.
+          runbook: "https://runbooks/cup2-browse-latency"
+        isPaused: false
+        notification_settings:
+          receiver: grafana-default-email
+
+  # ─────────────────────────────────────────────────────────────────────────────
+  # CUP 3 — Shopping Cart Management (Priority P0 — 99.95%, P95 < 300 ms)
+  # ─────────────────────────────────────────────────────────────────────────────
+  - orgId: 1
+    name: CUP3.CartManagement
+    folder: CUP SLO
+    interval: 1m
+    rules:
+      - uid: cup3-avail-critical
+        title: "CUP3 Cart Availability < 99.95% (critical)"
+        condition: threshold
+        data:
+          - refId: availability
+            relativeTimeRange: { from: 300, to: 0 }
+            datasourceUid: webstore-metrics
+            model:
+              expr: >-
+                sum(rate(http_server_request_duration_seconds_count{http_route="/api/cart",http_response_status_code!~"5.."}[5m]))
+                / sum(rate(http_server_request_duration_seconds_count{http_route="/api/cart"}[5m]))
+              instant: true
+              refId: availability
+          - refId: threshold
+            datasourceUid: __expr__
+            model:
+              refId: threshold
+              type: threshold
+              expression: availability
+              conditions:
+                - evaluator: { type: lt, params: [0.9995] }
+                  operator: { type: and }
+                  query: { params: [availability] }
+                  reducer: { type: last, params: [] }
+                  type: query
+        noDataState: NoData
+        execErrState: Error
+        for: 2m
+        keepFiringFor: 5m
+        labels:
+          severity: critical
+          cup: "3"
+          cup_name: cart_management
+          team_name: webstore
+        annotations:
+          summary: "CUP3 Cart availability below 99.95% — checkout blocked"
+          description: >-
+            The cart endpoint /api/cart availability has dropped below 99.95%.
+            Cart down = no user can complete checkout. Page on-call immediately.
+          runbook: "https://runbooks/cup3-cart"
+        isPaused: false
+        notification_settings:
+          receiver: grafana-default-email
+
+      - uid: cup3-latency-p95-warning
+        title: "CUP3 Cart P95 Latency > 300ms (warning)"
+        condition: threshold
+        data:
+          - refId: latency_p95
+            relativeTimeRange: { from: 300, to: 0 }
+            datasourceUid: webstore-metrics
+            model:
+              expr: >-
+                histogram_quantile(0.95, sum by (le) (
+                  rate(http_server_request_duration_seconds_bucket{http_route="/api/cart"}[5m])
+                ))
+              instant: true
+              refId: latency_p95
+          - refId: threshold
+            datasourceUid: __expr__
+            model:
+              refId: threshold
+              type: threshold
+              expression: latency_p95
+              conditions:
+                - evaluator: { type: gt, params: [0.3] }
+                  operator: { type: and }
+                  query: { params: [latency_p95] }
+                  reducer: { type: last, params: [] }
+                  type: query
+        noDataState: NoData
+        execErrState: Error
+        for: 5m
+        labels:
+          severity: warning
+          cup: "3"
+          cup_name: cart_management
+          team_name: webstore
+        annotations:
+          summary: "CUP3 Cart P95 latency > 300ms"
+          description: >-
+            Cart gRPC P95 latency has exceeded 300ms for >5 min.
+            Valkey (Redis) may be under load or network degraded.
+          runbook: "https://runbooks/cup3-cart-latency"
+        isPaused: false
+        notification_settings:
+          receiver: grafana-default-email
+
+  # ─────────────────────────────────────────────────────────────────────────────
+  # CUP 4 — Order Fulfillment / Async Post-Purchase (Priority P1)
+  # ─────────────────────────────────────────────────────────────────────────────
+  - orgId: 1
+    name: CUP4.OrderFulfillment
+    folder: CUP SLO
+    interval: 1m
+    rules:
+      - uid: cup4-kafka-lag-warning
+        title: "CUP4 Accounting Kafka Consumer Lag > 1,000 (warning)"
+        condition: threshold
+        data:
+          - refId: lag
+            relativeTimeRange: { from: 300, to: 0 }
+            datasourceUid: webstore-metrics
+            model:
+              expr: >-
+                kafka_consumer_group_lag{group="accounting-service",topic="orders"}
+              instant: true
+              refId: lag
+          - refId: threshold
+            datasourceUid: __expr__
+            model:
+              refId: threshold
+              type: threshold
+              expression: lag
+              conditions:
+                - evaluator: { type: gt, params: [1000] }
+                  operator: { type: and }
+                  query: { params: [lag] }
+                  reducer: { type: last, params: [] }
+                  type: query
+        noDataState: NoData
+        execErrState: Error
+        for: 5m
+        labels:
+          severity: warning
+          cup: "4"
+          cup_name: order_fulfillment
+          team_name: webstore
+        annotations:
+          summary: "CUP4 Accounting consumer lag > 1,000 messages"
+          description: >-
+            The accounting-service Kafka consumer lag on topic 'orders' has
+            exceeded 1,000 messages for >5 minutes. Order accounting will be delayed.
+          runbook: "https://runbooks/cup4-kafka-lag"
+        isPaused: false
+        notification_settings:
+          receiver: grafana-default-email
+
+      - uid: cup4-shiporder-avail-warning
+        title: "CUP4 ShipOrder gRPC Availability < 99.9% (warning)"
+        condition: threshold
+        data:
+          - refId: availability
+            relativeTimeRange: { from: 300, to: 0 }
+            datasourceUid: webstore-metrics
+            model:
+              expr: >-
+                sum(rate(rpc_server_duration_count{rpc_service="hipstershop.ShippingService",rpc_method="ShipOrder",rpc_grpc_status_code="0"}[5m]))
+                / sum(rate(rpc_server_duration_count{rpc_service="hipstershop.ShippingService",rpc_method="ShipOrder"}[5m]))
+              instant: true
+              refId: availability
+          - refId: threshold
+            datasourceUid: __expr__
+            model:
+              refId: threshold
+              type: threshold
+              expression: availability
+              conditions:
+                - evaluator: { type: lt, params: [0.999] }
+                  operator: { type: and }
+                  query: { params: [availability] }
+                  reducer: { type: last, params: [] }
+                  type: query
+        noDataState: NoData
+        execErrState: Error
+        for: 3m
+        labels:
+          severity: warning
+          cup: "4"
+          cup_name: order_fulfillment
+          team_name: webstore
+        annotations:
+          summary: "CUP4 ShipOrder availability below 99.9%"
+          description: >-
+            hipstershop.ShippingService/ShipOrder availability has dropped
+            below 99.9%. Shipping confirmation emails will not be sent.
+          runbook: "https://runbooks/cup4-shiporder"
+        isPaused: false
+        notification_settings:
+          receiver: grafana-default-email
+
+  # ─────────────────────────────────────────────────────────────────────────────
+  # CUP 5 — Shipping Quote (Priority P1 — 99.9%, P95 < 600 ms)
+  # ─────────────────────────────────────────────────────────────────────────────
+  - orgId: 1
+    name: CUP5.ShippingQuote
+    folder: CUP SLO
+    interval: 1m
+    rules:
+      - uid: cup5-avail-warning
+        title: "CUP5 Shipping Quote Availability < 99.9% (warning)"
+        condition: threshold
+        data:
+          - refId: availability
+            relativeTimeRange: { from: 300, to: 0 }
+            datasourceUid: webstore-metrics
+            model:
+              expr: >-
+                sum(rate(http_server_request_duration_seconds_count{http_route="/getquote",http_response_status_code!~"5.."}[5m]))
+                / sum(rate(http_server_request_duration_seconds_count{http_route="/getquote"}[5m]))
+              instant: true
+              refId: availability
+          - refId: threshold
+            datasourceUid: __expr__
+            model:
+              refId: threshold
+              type: threshold
+              expression: availability
+              conditions:
+                - evaluator: { type: lt, params: [0.999] }
+                  operator: { type: and }
+                  query: { params: [availability] }
+                  reducer: { type: last, params: [] }
+                  type: query
+        noDataState: NoData
+        execErrState: Error
+        for: 3m
+        labels:
+          severity: warning
+          cup: "5"
+          cup_name: shipping_quote
+          team_name: webstore
+        annotations:
+          summary: "CUP5 Shipping quote availability below 99.9%"
+          description: >-
+            The quote service /getquote endpoint is returning errors. Checkout
+            calls GetQuote synchronously — failures will propagate to CUP 1.
+          runbook: "https://runbooks/cup5-shipping-quote"
+        isPaused: false
+        notification_settings:
+          receiver: grafana-default-email
+
+      - uid: cup5-latency-p95-warning
+        title: "CUP5 Shipping Quote P95 > 600ms (warning)"
+        condition: threshold
+        data:
+          - refId: latency_p95
+            relativeTimeRange: { from: 300, to: 0 }
+            datasourceUid: webstore-metrics
+            model:
+              expr: >-
+                histogram_quantile(0.95, sum by (le) (
+                  rate(http_server_request_duration_seconds_bucket{http_route="/getquote"}[5m])
+                ))
+              instant: true
+              refId: latency_p95
+          - refId: threshold
+            datasourceUid: __expr__
+            model:
+              refId: threshold
+              type: threshold
+              expression: latency_p95
+              conditions:
+                - evaluator: { type: gt, params: [0.6] }
+                  operator: { type: and }
+                  query: { params: [latency_p95] }
+                  reducer: { type: last, params: [] }
+                  type: query
+        noDataState: NoData
+        execErrState: Error
+        for: 5m
+        labels:
+          severity: warning
+          cup: "5"
+          cup_name: shipping_quote
+          team_name: webstore
+        annotations:
+          summary: "CUP5 Shipping quote P95 latency > 600ms"
+          description: >-
+            GetQuote latency P95 > 600ms for >5 min. This adds directly to
+            checkout latency (CUP1 P95 SLO of 3s).
+          runbook: "https://runbooks/cup5-quote-latency"
+        isPaused: false
+        notification_settings:
+          receiver: grafana-default-email
+
+  # ─────────────────────────────────────────────────────────────────────────────
+  # CUP 6 — Currency Selection & Price Display (Priority P0 — 99.95%, P95 < 100ms)
+  # ─────────────────────────────────────────────────────────────────────────────
+  - orgId: 1
+    name: CUP6.CurrencyDisplay
+    folder: CUP SLO
+    interval: 1m
+    rules:
+      - uid: cup6-avail-critical
+        title: "CUP6 Currency Availability < 99.95% (critical)"
+        condition: threshold
+        data:
+          - refId: availability
+            relativeTimeRange: { from: 300, to: 0 }
+            datasourceUid: webstore-metrics
+            model:
+              expr: >-
+                sum(rate(rpc_server_duration_count{rpc_service="hipstershop.CurrencyService",rpc_grpc_status_code="0"}[5m]))
+                / sum(rate(rpc_server_duration_count{rpc_service="hipstershop.CurrencyService"}[5m]))
+              instant: true
+              refId: availability
+          - refId: threshold
+            datasourceUid: __expr__
+            model:
+              refId: threshold
+              type: threshold
+              expression: availability
+              conditions:
+                - evaluator: { type: lt, params: [0.9995] }
+                  operator: { type: and }
+                  query: { params: [availability] }
+                  reducer: { type: last, params: [] }
+                  type: query
+        noDataState: NoData
+        execErrState: Error
+        for: 2m
+        keepFiringFor: 5m
+        labels:
+          severity: critical
+          cup: "6"
+          cup_name: currency_display
+          team_name: webstore
+        annotations:
+          summary: "CUP6 Currency service below 99.95% — prices broken for all non-USD users"
+          description: >-
+            hipstershop.CurrencyService availability is below 99.95%. Every
+            product page for non-USD users shows broken prices.
+          runbook: "https://runbooks/cup6-currency"
+        isPaused: false
+        notification_settings:
+          receiver: grafana-default-email
+
+      - uid: cup6-latency-p95-warning
+        title: "CUP6 Currency Convert P95 > 100ms (warning)"
+        condition: threshold
+        data:
+          - refId: latency_p95
+            relativeTimeRange: { from: 300, to: 0 }
+            datasourceUid: webstore-metrics
+            model:
+              expr: >-
+                histogram_quantile(0.95, sum by (le) (
+                  rate(rpc_server_duration_milliseconds_bucket{rpc_service="hipstershop.CurrencyService",rpc_method="Convert"}[5m])
+                ))
+              instant: true
+              refId: latency_p95
+          - refId: threshold
+            datasourceUid: __expr__
+            model:
+              refId: threshold
+              type: threshold
+              expression: latency_p95
+              conditions:
+                - evaluator: { type: gt, params: [100] }
+                  operator: { type: and }
+                  query: { params: [latency_p95] }
+                  reducer: { type: last, params: [] }
+                  type: query
+        noDataState: NoData
+        execErrState: Error
+        for: 5m
+        labels:
+          severity: warning
+          cup: "6"
+          cup_name: currency_display
+          team_name: webstore
+        annotations:
+          summary: "CUP6 Currency Convert P95 > 100ms"
+          description: >-
+            CurrencyService/Convert P95 latency > 100ms. Called on every page
+            load; slow currency adds directly to browse and checkout latency.
+          runbook: "https://runbooks/cup6-currency-latency"
+        isPaused: false
+        notification_settings:
+          receiver: grafana-default-email
+
+  # ─────────────────────────────────────────────────────────────────────────────
+  # CUP 7 — AI Product Assistant (Priority P2 — 99.0%, P95 < 10,000 ms)
+  # ─────────────────────────────────────────────────────────────────────────────
+  - orgId: 1
+    name: CUP7.AIAssistant
+    folder: CUP SLO
+    interval: 1m
+    rules:
+      - uid: cup7-avail-warning
+        title: "CUP7 AI Assistant Availability < 99.0% (warning)"
+        condition: threshold
+        data:
+          - refId: availability
+            relativeTimeRange: { from: 300, to: 0 }
+            datasourceUid: webstore-metrics
+            model:
+              expr: >-
+                sum(rate(http_server_request_duration_seconds_count{http_route="/v1/chat/completions",http_response_status_code!~"5.."}[5m]))
+                / sum(rate(http_server_request_duration_seconds_count{http_route="/v1/chat/completions"}[5m]))
+              instant: true
+              refId: availability
+          - refId: threshold
+            datasourceUid: __expr__
+            model:
+              refId: threshold
+              type: threshold
+              expression: availability
+              conditions:
+                - evaluator: { type: lt, params: [0.99] }
+                  operator: { type: and }
+                  query: { params: [availability] }
+                  reducer: { type: last, params: [] }
+                  type: query
+        noDataState: NoData
+        execErrState: Error
+        for: 5m
+        labels:
+          severity: warning
+          cup: "7"
+          cup_name: ai_assistant
+          team_name: webstore
+        annotations:
+          summary: "CUP7 AI assistant availability below 99%"
+          description: >-
+            LLM /v1/chat/completions endpoint availability < 99%. Feature
+            degrades gracefully; does not block checkout. Investigate LLM
+            service health.
+          runbook: "https://runbooks/cup7-ai"
+        isPaused: false
+        notification_settings:
+          receiver: grafana-default-email
+
+      - uid: cup7-latency-p95-warning
+        title: "CUP7 AI Assistant P95 Latency > 10s (warning)"
+        condition: threshold
+        data:
+          - refId: latency_p95
+            relativeTimeRange: { from: 300, to: 0 }
+            datasourceUid: webstore-metrics
+            model:
+              expr: >-
+                histogram_quantile(0.95, sum by (le) (
+                  rate(http_server_request_duration_seconds_bucket{http_route="/v1/chat/completions"}[5m])
+                ))
+              instant: true
+              refId: latency_p95
+          - refId: threshold
+            datasourceUid: __expr__
+            model:
+              refId: threshold
+              type: threshold
+              expression: latency_p95
+              conditions:
+                - evaluator: { type: gt, params: [10.0] }
+                  operator: { type: and }
+                  query: { params: [latency_p95] }
+                  reducer: { type: last, params: [] }
+                  type: query
+        noDataState: NoData
+        execErrState: Error
+        for: 5m
+        labels:
+          severity: warning
+          cup: "7"
+          cup_name: ai_assistant
+          team_name: webstore
+        annotations:
+          summary: "CUP7 AI assistant P95 latency > 10s"
+          description: >-
+            LLM inference P95 > 10s for >5 min. Consider circuit-breaking or
+            reducing model complexity. Current: {{ $values.latency_p95.Value | humanizeDuration }}.
+          runbook: "https://runbooks/cup7-ai-latency"
+        isPaused: false
+        notification_settings:
+          receiver: grafana-default-email
+
+  # ─────────────────────────────────────────────────────────────────────────────
+  # CUP 8 — Product Reviews (Priority P2 — 99.5%, P95 < 500 ms)
+  # ─────────────────────────────────────────────────────────────────────────────
+  - orgId: 1
+    name: CUP8.ProductReviews
+    folder: CUP SLO
+    interval: 1m
+    rules:
+      - uid: cup8-avail-warning
+        title: "CUP8 Product Reviews Availability < 99.5% (warning)"
+        condition: threshold
+        data:
+          - refId: availability
+            relativeTimeRange: { from: 300, to: 0 }
+            datasourceUid: webstore-metrics
+            model:
+              expr: >-
+                sum(rate(rpc_server_duration_count{rpc_service="oteldemo.ProductReviewService",rpc_grpc_status_code="0"}[5m]))
+                / sum(rate(rpc_server_duration_count{rpc_service="oteldemo.ProductReviewService"}[5m]))
+              instant: true
+              refId: availability
+          - refId: threshold
+            datasourceUid: __expr__
+            model:
+              refId: threshold
+              type: threshold
+              expression: availability
+              conditions:
+                - evaluator: { type: lt, params: [0.995] }
+                  operator: { type: and }
+                  query: { params: [availability] }
+                  reducer: { type: last, params: [] }
+                  type: query
+        noDataState: NoData
+        execErrState: Error
+        for: 5m
+        labels:
+          severity: warning
+          cup: "8"
+          cup_name: product_reviews
+          team_name: webstore
+        annotations:
+          summary: "CUP8 Product reviews availability below 99.5%"
+          description: >-
+            oteldemo.ProductReviewService availability < 99.5%. Review panels
+            will fail to load on product detail pages. Does not block purchase.
+          runbook: "https://runbooks/cup8-reviews"
+        isPaused: false
+        notification_settings:
+          receiver: grafana-default-email
+
+  # ─────────────────────────────────────────────────────────────────────────────
+  # Canary Probe Alerts — all CUPs
+  # ─────────────────────────────────────────────────────────────────────────────
+  - orgId: 1
+    name: CUP.CanaryProbes
+    folder: CUP SLO
+    interval: 1m
+    rules:
+      - uid: canary-cup1-down
+        title: "Canary CUP1 Checkout probe failing (critical)"
+        condition: threshold
+        data:
+          - refId: probe
+            relativeTimeRange: { from: 300, to: 0 }
+            datasourceUid: webstore-metrics
+            model:
+              expr: avg_over_time(probe_success{job="cup1-checkout-payment"}[5m])
+              instant: true
+              refId: probe
+          - refId: threshold
+            datasourceUid: __expr__
+            model:
+              refId: threshold
+              type: threshold
+              expression: probe
+              conditions:
+                - evaluator: { type: lt, params: [0.8] }
+                  operator: { type: and }
+                  query: { params: [probe] }
+                  reducer: { type: last, params: [] }
+                  type: query
+        noDataState: Alerting
+        execErrState: Alerting
+        for: 2m
+        labels:
+          severity: critical
+          cup: "1"
+          cup_name: checkout_payment
+          source: canary
+          team_name: webstore
+        annotations:
+          summary: "Canary: CUP1 Checkout probe < 80% success over 5 min"
+          description: >-
+            The synthetic canary for the checkout workflow is failing. This
+            may be an early indicator of a production issue before real-user
+            metrics degrade. Investigate immediately.
+          runbook: "https://runbooks/canary-cup1"
+        isPaused: false
+        notification_settings:
+          receiver: grafana-default-email
+
+      - uid: canary-cup3-down
+        title: "Canary CUP3 Cart probe failing (critical)"
+        condition: threshold
+        data:
+          - refId: probe
+            relativeTimeRange: { from: 300, to: 0 }
+            datasourceUid: webstore-metrics
+            model:
+              expr: avg_over_time(probe_success{job="cup3-cart-management"}[5m])
+              instant: true
+              refId: probe
+          - refId: threshold
+            datasourceUid: __expr__
+            model:
+              refId: threshold
+              type: threshold
+              expression: probe
+              conditions:
+                - evaluator: { type: lt, params: [0.8] }
+                  operator: { type: and }
+                  query: { params: [probe] }
+                  reducer: { type: last, params: [] }
+                  type: query
+        noDataState: Alerting
+        execErrState: Alerting
+        for: 2m
+        labels:
+          severity: critical
+          cup: "3"
+          cup_name: cart_management
+          source: canary
+          team_name: webstore
+        annotations:
+          summary: "Canary: CUP3 Cart probe < 80% success over 5 min"
+          description: >-
+            The synthetic canary for the cart workflow is failing. This
+            may indicate Valkey (Redis) or Cart service degradation.
+          runbook: "https://runbooks/canary-cup3"
+        isPaused: false
+        notification_settings:
+          receiver: grafana-default-email
+
+      - uid: canary-cup6-down
+        title: "Canary CUP6 Currency probe failing (warning)"
+        condition: threshold
+        data:
+          - refId: probe
+            relativeTimeRange: { from: 300, to: 0 }
+            datasourceUid: webstore-metrics
+            model:
+              expr: avg_over_time(probe_success{job="cup6-currency"}[5m])
+              instant: true
+              refId: probe
+          - refId: threshold
+            datasourceUid: __expr__
+            model:
+              refId: threshold
+              type: threshold
+              expression: probe
+              conditions:
+                - evaluator: { type: lt, params: [0.8] }
+                  operator: { type: and }
+                  query: { params: [probe] }
+                  reducer: { type: last, params: [] }
+                  type: query
+        noDataState: Alerting
+        execErrState: Alerting
+        for: 2m
+        labels:
+          severity: warning
+          cup: "6"
+          cup_name: currency_display
+          source: canary
+          team_name: webstore
+        annotations:
+          summary: "Canary: CUP6 Currency probe < 80% success"
+          description: >-
+            The currency service canary is failing. Non-USD users will see
+            broken prices on all product pages.
+          runbook: "https://runbooks/canary-cup6"
+        isPaused: false
+        notification_settings:
+          receiver: grafana-default-email

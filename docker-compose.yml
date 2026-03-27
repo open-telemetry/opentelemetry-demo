@@ -489,7 +489,7 @@ services:
     deploy:
       resources:
         limits:
-          memory: 20M
+          memory: 200M
     restart: unless-stopped
     ports:
       - "${PRODUCT_CATALOG_PORT}"
@@ -844,6 +844,7 @@ services:
   grafana:
     image: ${GRAFANA_IMAGE}
     container_name: grafana
+    user: root
     deploy:
       resources:
         limits:
@@ -851,6 +852,10 @@ services:
     restart: unless-stopped
     environment:
       - "GF_INSTALL_PLUGINS=grafana-opensearch-datasource"
+      - "GF_PLUGINS_PLUGIN_ADMIN_ENABLED=true"
+      - "GF_SECURITY_ADMIN_USER=admin"
+      - "GF_SECURITY_ADMIN_PASSWORD=admin"
+      - "GF_AUTH_DISABLE_LOGIN_FORM=false"
     volumes:
       - ./src/grafana/grafana.ini:/etc/grafana/grafana.ini
       - ./src/grafana/provisioning/:/etc/grafana/provisioning/
