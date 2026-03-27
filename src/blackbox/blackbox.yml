@@ -1,0 +1,121 @@
+# Copyright The OpenTelemetry Authors
+# SPDX-License-Identifier: Apache-2.0
+#
+# Blackbox Exporter configuration for CUP synthetic probes.
+# Equivalent to Grafana Synthetic Monitoring HTTP checks.
+# Metrics produced: probe_success, probe_duration_seconds, probe_http_status_code, etc.
+
+modules:
+
+  # ── GET endpoints expecting HTTP 2xx ──────────────────────────────────────
+  http_get_2xx:
+    prober: http
+    timeout: 10s
+    http:
+      valid_http_versions: ["HTTP/1.1", "HTTP/2.0"]
+      valid_status_codes: [200, 201, 204]
+      method: GET
+      follow_redirects: true
+      preferred_ip_protocol: ip4
+      ip_protocol_fallback: true
+
+  # ── GET /api/products — assert "id" appears in body ───────────────────────
+  http_get_products:
+    prober: http
+    timeout: 10s
+    http:
+      valid_http_versions: ["HTTP/1.1", "HTTP/2.0"]
+      valid_status_codes: [200]
+      method: GET
+      follow_redirects: true
+      preferred_ip_protocol: ip4
+      fail_if_body_not_matches_regexp:
+        - '"id"'
+
+  # ── GET /api/currencies — assert "USD" appears in body ───────────────────
+  http_get_currencies:
+    prober: http
+    timeout: 5s
+    http:
+      valid_http_versions: ["HTTP/1.1", "HTTP/2.0"]
+      valid_status_codes: [200]
+      method: GET
+      follow_redirects: true
+      preferred_ip_protocol: ip4
+      fail_if_body_not_matches_regexp:
+        - "USD"
+
+  # ── GET /api/reviews — assert "reviews" appears in body ──────────────────
+  http_get_reviews:
+    prober: http
+    timeout: 10s
+    http:
+      valid_http_versions: ["HTTP/1.1", "HTTP/2.0"]
+      valid_status_codes: [200]
+      method: GET
+      follow_redirects: true
+      preferred_ip_protocol: ip4
+      fail_if_body_not_matches_regexp:
+        - "reviews"
+
+  # ── POST /api/cart — add item to cart ─────────────────────────────────────
+  http_post_cart:
+    prober: http
+    timeout: 10s
+    http:
+      valid_http_versions: ["HTTP/1.1", "HTTP/2.0"]
+      valid_status_codes: [200, 201]
+      method: POST
+      headers:
+        Content-Type: application/json
+      body: '{"userId":"canary-probe","item":{"productId":"OLJCESPC7Z","quantity":1}}'
+      follow_redirects: true
+      preferred_ip_protocol: ip4
+
+  # ── POST /getquote — shipping quote ───────────────────────────────────────
+  http_post_quote:
+    prober: http
+    timeout: 10s
+    http:
+      valid_http_versions: ["HTTP/1.1", "HTTP/2.0"]
+      valid_status_codes: [200]
+      method: POST
+      headers:
+        Content-Type: application/json
+      body: '{"address":{"streetAddress":"1600 Amphitheatre Pkwy","city":"Mountain View","state":"CA","country":"USA","zipCode":"94043"},"numberOfItems":3}'
+      follow_redirects: true
+      preferred_ip_protocol: ip4
+      fail_if_body_not_matches_regexp:
+        - "costUsd"
+
+  # ── POST /api/checkout — lightweight probe (no real order) ────────────────
+  # Sends minimal payload; expects 400 (bad request) rather than 500 (server error)
+  # probe_success = 1 as long as the service responds (not a 5xx)
+  http_post_checkout_probe:
+    prober: http
+    timeout: 15s
+    http:
+      valid_http_versions: ["HTTP/1.1", "HTTP/2.0"]
+      valid_status_codes: [200, 201, 400, 422]
+      method: POST
+      headers:
+        Content-Type: application/json
+      body: '{"userId":"canary-probe","userCurrency":"USD","address":{"streetAddress":"1 Canary St","city":"Sydney","state":"NSW","country":"AU","zipCode":"2000"},"email":"canary@probe.local","creditCard":{"creditCardNumber":"4432-8015-6152-0454","creditCardCvv":672,"creditCardExpirationYear":2030,"creditCardExpirationMonth":1}}'
+      follow_redirects: true
+      preferred_ip_protocol: ip4
+
+  # ── POST /v1/chat/completions — AI assistant ──────────────────────────────
+  http_post_ai:
+    prober: http
+    timeout: 30s
+    http:
+      valid_http_versions: ["HTTP/1.1", "HTTP/2.0"]
+      valid_status_codes: [200]
+      method: POST
+      headers:
+        Content-Type: application/json
+      body: '{"model":"gpt-3.5-turbo","messages":[{"role":"user","content":"What telescope would you recommend for a beginner?"}]}'
+      follow_redirects: true
+      preferred_ip_protocol: ip4
+      fail_if_body_not_matches_regexp:
+        - "choices"

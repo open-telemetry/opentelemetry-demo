@@ -1,5 +1,47 @@
 # Critical User Paths — SLO, Canaries & Dashboard Implementation Summary
 
+## Revision: Blackbox Exporter (Local Synthetic Monitoring)
+
+> **Update:** The Grafana Cloud Synthetic Monitoring plugin (`grafana-synthetic-monitoring-app`)
+> requires a Grafana Cloud backend API and cannot run probes locally. This implementation
+> replaces that approach with **Prometheus Blackbox Exporter** — the same underlying engine
+> that Grafana SM uses — producing identical `probe_*` metrics, fully self-contained within
+> the Docker Compose stack.
+
+### Files Changed (Blackbox Exporter Phase)
+
+| File | Change |
+|------|--------|
+| `src/blackbox/blackbox.yml` | **New** — 8 probe modules (GET/POST) per CUP |
+| `docker-compose.yml` | **Added** `blackbox-exporter` service (`prom/blackbox-exporter:latest`, 50M) |
+| `src/prometheus/prometheus-config.yaml` | **Added** 8 `scrape_configs` jobs (cup1–cup8) targeting blackbox |
+| `src/grafana/provisioning/synthetic-monitoring/cup-canaries.yaml` | **Updated** — replaced plugin config with CUP→job mapping reference |
+| `src/grafana/provisioning/dashboards/slo/cup-canary-probes.json` | **New** — Grafana dashboard: status, availability gauges, latency timeseries |
+
+### Blackbox Probe → CUP Mapping
+
+| CUP | Name | Priority | Prometheus Job | Module | Interval |
+|-----|------|----------|---------------|--------|----------|
+| 1 | Checkout & Payment | P0 | `cup1-checkout-payment` | `http_post_checkout_probe` | 60s |
+| 2 | Browse & Discovery | P1 | `cup2-browse-discovery` | `http_get_products` | 60s |
+| 3 | Cart Management | P0 | `cup3-cart-management` | `http_post_cart` | 60s |
+| 4 | Order Fulfillment | P0 | `cup4-order-fulfillment` | `http_post_checkout_probe` | 120s |
+| 5 | Shipping Quote | P1 | `cup5-shipping-quote` | `http_post_quote` | 60s |
+| 6 | Currency Display | P1 | `cup6-currency` | `http_get_currencies` | 60s |
+| 7 | AI Assistant | P2 | `cup7-ai-assistant` | `http_post_ai` | 300s |
+| 8 | Product Reviews | P2 | `cup8-product-reviews` | `http_get_reviews` | 60s |
+
+### Key Metrics Available
+
+```promql
+probe_success{job="cup1-checkout-payment"}              # 1=up, 0=down
+probe_duration_seconds{job="cup2-browse-discovery"}     # end-to-end latency
+probe_http_status_code{job="cup3-cart-management"}      # HTTP status returned
+100 * avg_over_time(probe_success{job=~"cup.*"}[30d])  # 30-day availability %
+```
+
+---
+
 ## Overview
 
 This document summarises all actions taken to implement SLOs, synthetic canaries, and Grafana dashboards for the Astronomy Shop's 8 Critical User Paths (CUPs), as specified in:

@@ -926,6 +926,23 @@ services:
       - "${PROMETHEUS_PORT}:${PROMETHEUS_PORT}"
     logging: *logging
 
+  # Blackbox Exporter — synthetic HTTP probes for CUP canaries
+  blackbox-exporter:
+    image: prom/blackbox-exporter:latest
+    container_name: blackbox-exporter
+    deploy:
+      resources:
+        limits:
+          memory: 50M
+    restart: unless-stopped
+    ports:
+      - "9115"
+    command:
+      - "--config.file=/etc/blackbox/blackbox.yml"
+    volumes:
+      - ./src/blackbox/blackbox.yml:/etc/blackbox/blackbox.yml:ro
+    logging: *logging
+
   # OpenSearch
   opensearch:
     container_name: opensearch

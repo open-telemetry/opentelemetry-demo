@@ -52,3 +52,174 @@ otlp:
 storage:
   tsdb:
     out_of_order_time_window: 30m
+
+# ── CUP Synthetic Probes via Blackbox Exporter ────────────────────────────────
+scrape_configs:
+
+  # CUP 1 — Checkout & Payment (P0)
+  - job_name: cup1-checkout-payment
+    scrape_interval: 60s
+    metrics_path: /probe
+    params:
+      module: [http_post_checkout_probe]
+    static_configs:
+      - targets:
+          - http://frontend-proxy:8080/api/checkout
+        labels:
+          cup: "1"
+          cup_name: "Checkout & Payment"
+          cup_priority: "P0"
+    relabel_configs:
+      - source_labels: [__address__]
+        target_label: __param_target
+      - source_labels: [__param_target]
+        target_label: target
+      - target_label: __address__
+        replacement: blackbox-exporter:9115
+
+  # CUP 2 — Product Browse & Discovery (P1)
+  - job_name: cup2-browse-discovery
+    scrape_interval: 60s
+    metrics_path: /probe
+    params:
+      module: [http_get_products]
+    static_configs:
+      - targets:
+          - http://frontend-proxy:8080/api/products
+        labels:
+          cup: "2"
+          cup_name: "Browse & Discovery"
+          cup_priority: "P1"
+    relabel_configs:
+      - source_labels: [__address__]
+        target_label: __param_target
+      - source_labels: [__param_target]
+        target_label: target
+      - target_label: __address__
+        replacement: blackbox-exporter:9115
+
+  # CUP 3 — Shopping Cart Management (P0)
+  - job_name: cup3-cart-management
+    scrape_interval: 60s
+    metrics_path: /probe
+    params:
+      module: [http_post_cart]
+    static_configs:
+      - targets:
+          - http://frontend-proxy:8080/api/cart
+        labels:
+          cup: "3"
+          cup_name: "Cart Management"
+          cup_priority: "P0"
+    relabel_configs:
+      - source_labels: [__address__]
+        target_label: __param_target
+      - source_labels: [__param_target]
+        target_label: target
+      - target_label: __address__
+        replacement: blackbox-exporter:9115
+
+  # CUP 4 — Order Fulfillment (P0) — heavier probe, 120s interval
+  - job_name: cup4-order-fulfillment
+    scrape_interval: 120s
+    metrics_path: /probe
+    params:
+      module: [http_post_checkout_probe]
+    static_configs:
+      - targets:
+          - http://frontend-proxy:8080/api/checkout
+        labels:
+          cup: "4"
+          cup_name: "Order Fulfillment"
+          cup_priority: "P0"
+    relabel_configs:
+      - source_labels: [__address__]
+        target_label: __param_target
+      - source_labels: [__param_target]
+        target_label: target
+      - target_label: __address__
+        replacement: blackbox-exporter:9115
+
+  # CUP 5 — Shipping Quote (P1)
+  - job_name: cup5-shipping-quote
+    scrape_interval: 60s
+    metrics_path: /probe
+    params:
+      module: [http_post_quote]
+    static_configs:
+      - targets:
+          - http://frontend-proxy:8080/getquote
+        labels:
+          cup: "5"
+          cup_name: "Shipping Quote"
+          cup_priority: "P1"
+    relabel_configs:
+      - source_labels: [__address__]
+        target_label: __param_target
+      - source_labels: [__param_target]
+        target_label: target
+      - target_label: __address__
+        replacement: blackbox-exporter:9115
+
+  # CUP 6 — Currency Selection (P1)
+  - job_name: cup6-currency
+    scrape_interval: 60s
+    metrics_path: /probe
+    params:
+      module: [http_get_currencies]
+    static_configs:
+      - targets:
+          - http://frontend-proxy:8080/api/currencies
+        labels:
+          cup: "6"
+          cup_name: "Currency Display"
+          cup_priority: "P1"
+    relabel_configs:
+      - source_labels: [__address__]
+        target_label: __param_target
+      - source_labels: [__param_target]
+        target_label: target
+      - target_label: __address__
+        replacement: blackbox-exporter:9115
+
+  # CUP 7 — AI Assistant (P2) — cost-limited 300s interval
+  - job_name: cup7-ai-assistant
+    scrape_interval: 300s
+    metrics_path: /probe
+    params:
+      module: [http_post_ai]
+    static_configs:
+      - targets:
+          - http://llm:${LLM_PORT:-8080}/v1/chat/completions
+        labels:
+          cup: "7"
+          cup_name: "AI Assistant"
+          cup_priority: "P2"
+    relabel_configs:
+      - source_labels: [__address__]
+        target_label: __param_target
+      - source_labels: [__param_target]
+        target_label: target
+      - target_label: __address__
+        replacement: blackbox-exporter:9115
+
+  # CUP 8 — Product Reviews (P2)
+  - job_name: cup8-product-reviews
+    scrape_interval: 60s
+    metrics_path: /probe
+    params:
+      module: [http_get_reviews]
+    static_configs:
+      - targets:
+          - http://frontend-proxy:8080/api/reviews/OLJCESPC7Z
+        labels:
+          cup: "8"
+          cup_name: "Product Reviews"
+          cup_priority: "P2"
+    relabel_configs:
+      - source_labels: [__address__]
+        target_label: __param_target
+      - source_labels: [__param_target]
+        target_label: target
+      - target_label: __address__
+        replacement: blackbox-exporter:9115
