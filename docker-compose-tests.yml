@@ -29,8 +29,8 @@ services:
 
   # Tracebased Tests
   traceBasedTests:
-    image: ${IMAGE_NAME}:${DEMO_VERSION}-traceBasedTests
-    container_name: traceBasedTests
+    image: ${IMAGE_NAME}:${DEMO_VERSION}-trace-based-tests
+    container_name: trace-based-tests
     build:
       context: ./
       dockerfile: ./test/tracetesting/Dockerfile
