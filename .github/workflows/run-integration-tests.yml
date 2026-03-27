@@ -3,9 +3,10 @@
 name: Integration Tests
 
 on:
-  pull_request_review:
-    types:
-      - submitted
+#  pull_request_review:
+#    types:
+#      - submitted
+  workflow_dispatch:
 
 permissions:
   contents: read
@@ -14,8 +15,7 @@ jobs:
   run_tests:
     runs-on: ubuntu-latest
     name: "Run CI"
-    if : false
-#    if: github.event.review.state == 'APPROVED'
+    if: github.event.review.state == 'APPROVED'
     steps:
       - name: check out code
         uses: actions/checkout@v6.0.2
