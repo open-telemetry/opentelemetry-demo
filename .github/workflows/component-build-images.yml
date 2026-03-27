@@ -21,7 +21,7 @@ on:
 #        type: string
       ghcr_repo:
         description: GHCR repository
-        default: 'ghcr.io/${{ github.repository_owner }}/${{ github.repository }}'
+        default: 'ghcr.io/${{ github.repository }}'
         required: false
         type: string
 
