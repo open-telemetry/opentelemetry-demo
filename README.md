@@ -1,5 +1,8 @@
-# Note:
-This project is a fork of `opentelemetry-demo`. Thanks to the team and contributors for opensourcing this wonderful demo project. I use it to demonstrate DevOps related skills only.
+# Note
+
+This project is a fork of `opentelemetry-demo`. 
+Thanks to the team and contributors for opensourcing this wonderful demo project. 
+I use it to demonstrate DevOps related skills only.
 
 <!-- markdownlint-disable-next-line -->
 # <img src="https://opentelemetry.io/img/logos/opentelemetry-logo-nav.png" alt="OTel logo" width="45"> OpenTelemetry Demo
