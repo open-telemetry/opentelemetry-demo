@@ -143,7 +143,7 @@ jobs:
             context: ./
             setup-qemu: true
           - file: ./test/tracetesting/Dockerfile
-            image_name: traceBasedTests
+            image_name: trace-based-tests
             context: ./
             setup-qemu: true
 
