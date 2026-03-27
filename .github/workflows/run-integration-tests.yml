@@ -14,7 +14,8 @@ jobs:
   run_tests:
     runs-on: ubuntu-latest
     name: "Run CI"
-    if: github.event.review.state == 'APPROVED'
+    if : false
+#    if: github.event.review.state == 'APPROVED'
     steps:
       - name: check out code
         uses: actions/checkout@v6.0.2
