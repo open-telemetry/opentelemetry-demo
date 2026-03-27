@@ -266,6 +266,12 @@ if browser_traffic_enabled:
                     page.on("console", lambda msg: print(msg.text))
                     await page.route('**/*', add_baggage_header)
                     await page.goto("/", wait_until="domcontentloaded")
+                    # Wait for Roof Binoculars image to load (awaiting successful XHR response in less than 15 seconds)
+                    await page.wait_for_event(
+                        "response",
+                        predicate=lambda r: '/images/products/RoofBinoculars.jpg' in r.url and r.status == 200,
+                        timeout=15000
+                    )
                     await page.click('p:has-text("Roof Binoculars")')
                     await page.wait_for_load_state("domcontentloaded")
                     await page.click('button:has-text("Add To Cart")')
