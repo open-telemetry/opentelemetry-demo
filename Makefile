@@ -152,7 +152,7 @@ build-multiplatform-and-push:
 
 .PHONY: clean-images
 clean-images:
-	@docker rmi $(shell docker images --filter=reference="ghcr.io/open-telemetry/demo:latest-*" -q); \
+	@docker rmi $(shell docker images --filter=reference="ghcr.io/felixngwhuk/opentelemetry-devops-demo/*:latest" -q); \
     if [ $$? -ne 0 ]; \
     then \
     	echo; \
@@ -186,7 +186,7 @@ generate-kubernetes-manifests:
 	echo "kind: Namespace" >> kubernetes/opentelemetry-demo.yaml
 	echo "metadata:" >> kubernetes/opentelemetry-demo.yaml
 	echo "  name: otel-demo" >> kubernetes/opentelemetry-demo.yaml
-	helm template opentelemetry-demo open-telemetry/opentelemetry-demo --namespace otel-demo | sed '/helm.sh\/chart\:/d' | sed '/helm.sh\/hook/d' | sed '/managed-by\: Helm/d' >> kubernetes/opentelemetry-demo.yaml
+	helm template opentelemetry-demo open-telemetry/opentelemetry-demo --namespace otel-demo | sed '/helm.sh\/chart\:/d' | sed '/helm.sh\/hook/d' | sed '/managed-by\: Helm/d' | sed -E "s#'ghcr.io/open-telemetry/demo:([A-Za-z0-9._]+)-([^']+)'#'ghcr.io/felixngwhuk/opentelemetry-devops-demo/\2:\1'#g" >> kubernetes/opentelemetry-demo.yaml
 
 .PHONY: docker-generate-protobuf
 docker-generate-protobuf:
