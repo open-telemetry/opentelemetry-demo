@@ -12,6 +12,14 @@ const logger = require('./logger');
 const tracer = trace.getTracer('payment');
 const meter = metrics.getMeter('payment');
 const transactionsCounter = meter.createCounter('app.payment.transactions');
+// CUP-1: charge latency histogram — drives P95/P99 SLO measurement
+const chargeDurationHistogram = meter.createHistogram('app.payment.charge.duration', {
+  description: 'Duration of the charge operation in milliseconds',
+  unit: 'ms',
+  advice: {
+    explicitBucketBoundaries: [10, 25, 50, 100, 200, 500, 1000, 2000, 5000],
+  },
+});
 
 const LOYALTY_LEVEL = ['platinum', 'gold', 'silver', 'bronze'];
 
@@ -22,6 +30,7 @@ function random(arr) {
 }
 
 module.exports.charge = async request => {
+  const chargeStartTime = Date.now();
   const span = tracer.startSpan('charge');
 
   await OpenFeature.setProviderAndWait(flagProvider);
@@ -82,6 +91,11 @@ module.exports.charge = async request => {
   const { units, nanos, currencyCode } = request.amount;
   logger.info({ transactionId, cardType, lastFourDigits, amount: { units, nanos, currencyCode }, loyalty_level }, 'Transaction complete.');
   transactionsCounter.add(1, { 'app.payment.currency': currencyCode });
+  // Record charge duration for P95/P99 SLO
+  chargeDurationHistogram.record(Date.now() - chargeStartTime, {
+    'app.payment.currency': currencyCode,
+    'app.payment.card_type': cardType,
+  });
   span.end();
 
   return { transactionId };

@@ -6,6 +6,9 @@ using Microsoft.Extensions.Logging;
 using Oteldemo;
 using Microsoft.EntityFrameworkCore;
 using System.Diagnostics;
+using System.Diagnostics.Metrics;
+using OpenTelemetry;
+using OpenTelemetry.Context.Propagation;
 
 namespace Accounting;
 
@@ -33,6 +36,16 @@ internal class Consumer : IDisposable
     private bool _isListening;
     private readonly string? _dbConnectionString;
     private static readonly ActivitySource MyActivitySource = new("Accounting.Consumer");
+
+    // CUP-1: OTel metrics — orders processed counter
+    private static readonly Meter AccountingMeter = new("Accounting.Consumer", "1.0");
+    private static readonly Counter<long> OrdersProcessedCounter = AccountingMeter.CreateCounter<long>(
+        "app.orders.processed",
+        unit: "{order}",
+        description: "Number of orders successfully processed by the accounting service");
+
+    // W3C trace context propagator for Kafka header extraction
+    private static readonly TextMapPropagator Propagator = Propagators.DefaultTextMapPropagator;
 
     public Consumer(ILogger<Consumer> logger)
     {
@@ -62,9 +75,33 @@ internal class Consumer : IDisposable
             {
                 try
                 {
-                    using var activity = MyActivitySource.StartActivity("order-consumed",  ActivityKind.Internal);
                     var consumeResult = _consumer.Consume();
-                    ProcessMessage(consumeResult.Message);
+
+                    // CUP-1: Extract W3C trace context (traceparent/tracestate) from Kafka headers
+                    // so this consumer span is a child of the checkout producer span.
+                    var parentContext = Propagator.Extract(
+                        default,
+                        consumeResult.Message,
+                        static (msg, key) =>
+                        {
+                            var header = msg.Headers.FirstOrDefault(h => h.Key == key);
+                            return header != null
+                                ? new[] { System.Text.Encoding.UTF8.GetString(header.GetValueBytes()) }
+                                : Enumerable.Empty<string>();
+                        });
+
+                    Baggage.Current = parentContext.Baggage;
+
+                    using var activity = MyActivitySource.StartActivity(
+                        "orders process",
+                        ActivityKind.Consumer,
+                        parentContext.ActivityContext);
+
+                    activity?.SetTag("messaging.system", "kafka");
+                    activity?.SetTag("messaging.operation", "process");
+                    activity?.SetTag("messaging.destination.name", TopicName);
+
+                    ProcessMessage(consumeResult.Message, activity);
                 }
                 catch (ConsumeException e)
                 {
@@ -83,12 +120,17 @@ internal class Consumer : IDisposable
         }
     }
 
-    private void ProcessMessage(Message<string, byte[]> message)
+    private void ProcessMessage(Message<string, byte[]> message, Activity? activity = null)
     {
         try
         {
             var order = OrderResult.Parser.ParseFrom(message.Value);
             Log.OrderReceivedMessage(_logger, order);
+
+            // CUP-1: tag span with business-critical order identifiers
+            activity?.SetTag("app.order.id", order.OrderId);
+            activity?.SetTag("app.order.items.count", order.Items.Count);
+            activity?.SetTag("app.order.shipping.tracking_id", order.ShippingTrackingId);
 
             if (_dbConnectionString == null)
             {
@@ -131,10 +173,18 @@ internal class Consumer : IDisposable
             };
             dbContext.Add(shipping);
             dbContext.SaveChanges();
+
+            // CUP-1: increment processed counter after successful DB write
+            OrdersProcessedCounter.Add(1,
+                new KeyValuePair<string, object?>("app.order.currency", order.ShippingCost.CurrencyCode));
+            activity?.SetStatus(ActivityStatusCode.Ok);
         }
         catch (Exception ex)
         {
             _logger.LogError(ex, "Order parsing failed:");
+            activity?.SetStatus(ActivityStatusCode.Error, ex.Message);
+            activity?.SetTag("exception.type", ex.GetType().FullName);
+            activity?.SetTag("exception.message", ex.Message);
         }
     }
 

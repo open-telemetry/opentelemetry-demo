@@ -55,6 +55,13 @@ var (
 	reg    metric.Registration
 )
 
+// CUP-2 business metrics — initialised after SDK is ready in main().
+var (
+	productsListedCounter metric.Int64Counter
+	productLookupDuration metric.Float64Histogram
+	productSearchCounter  metric.Int64Counter
+)
+
 func init() {
 	logger = otelslog.NewLogger("product-catalog")
 }
@@ -147,6 +154,34 @@ func main() {
 	err = runtime.Start(runtime.WithMinimumReadMemStatsInterval(time.Second))
 	if err != nil {
 		logger.Error(err.Error())
+	}
+
+	// Initialise CUP-2 business metrics
+	catalogMeter := otel.GetMeterProvider().Meter("product-catalog")
+	productsListedCounter, err = catalogMeter.Int64Counter(
+		"app.products.listed",
+		metric.WithDescription("Number of times the product catalog was listed"),
+		metric.WithUnit("{request}"),
+	)
+	if err != nil {
+		logger.Error(fmt.Sprintf("failed to create app.products.listed counter: %v", err))
+	}
+	productLookupDuration, err = catalogMeter.Float64Histogram(
+		"app.product.lookup.duration",
+		metric.WithDescription("Duration of individual product lookup from DB in milliseconds"),
+		metric.WithUnit("ms"),
+		metric.WithExplicitBucketBoundaries(1, 5, 10, 25, 50, 100, 250, 500, 1000),
+	)
+	if err != nil {
+		logger.Error(fmt.Sprintf("failed to create app.product.lookup.duration histogram: %v", err))
+	}
+	productSearchCounter, err = catalogMeter.Int64Counter(
+		"app.products.searched",
+		metric.WithDescription("Number of product search requests"),
+		metric.WithUnit("{request}"),
+	)
+	if err != nil {
+		logger.Error(fmt.Sprintf("failed to create app.products.searched counter: %v", err))
 	}
 
 	svc := &productCatalog{}
@@ -347,10 +382,13 @@ func (p *productCatalog) ListProducts(ctx context.Context, req *pb.Empty) (*pb.L
 	span.SetAttributes(
 		attribute.Int("app.products.count", len(products)),
 	)
+	// CUP-2: count catalog browse requests
+	productsListedCounter.Add(ctx, 1)
 	return &pb.ListProductsResponse{Products: products}, nil
 }
 
 func (p *productCatalog) GetProduct(ctx context.Context, req *pb.GetProductRequest) (*pb.Product, error) {
+	start := time.Now()
 	span := trace.SpanFromContext(ctx)
 	span.SetAttributes(
 		attribute.String("app.product.id", req.Id),
@@ -361,6 +399,8 @@ func (p *productCatalog) GetProduct(ctx context.Context, req *pb.GetProductReque
 		msg := "Error: Product Catalog Fail Feature Flag Enabled"
 		span.SetStatus(otelcodes.Error, msg)
 		span.AddEvent(msg)
+		productLookupDuration.Record(ctx, float64(time.Since(start).Milliseconds()),
+			metric.WithAttributes(attribute.Bool("app.product.found", false)))
 		return nil, status.Errorf(codes.Internal, msg)
 	}
 
@@ -369,6 +409,8 @@ func (p *productCatalog) GetProduct(ctx context.Context, req *pb.GetProductReque
 		msg := fmt.Sprintf("Product Not Found: %s", req.Id)
 		span.SetStatus(otelcodes.Error, msg)
 		span.AddEvent(msg)
+		productLookupDuration.Record(ctx, float64(time.Since(start).Milliseconds()),
+			metric.WithAttributes(attribute.Bool("app.product.found", false)))
 		return nil, status.Errorf(codes.NotFound, msg)
 	}
 
@@ -385,6 +427,9 @@ func (p *productCatalog) GetProduct(ctx context.Context, req *pb.GetProductReque
 		slog.String("app.product.id", req.Id),
 	)
 
+	// CUP-2: record product lookup latency for SLO
+	productLookupDuration.Record(ctx, float64(time.Since(start).Milliseconds()),
+		metric.WithAttributes(attribute.Bool("app.product.found", true)))
 	return found, nil
 }
 
@@ -400,6 +445,10 @@ func (p *productCatalog) SearchProducts(ctx context.Context, req *pb.SearchProdu
 	span.SetAttributes(
 		attribute.Int("app.products_search.count", len(result)),
 	)
+	// CUP-2: count search requests
+	productSearchCounter.Add(ctx, 1, metric.WithAttributes(
+		attribute.Int("app.products_search.count", len(result)),
+	))
 	return &pb.SearchProductsResponse{Results: result}, nil
 }
 

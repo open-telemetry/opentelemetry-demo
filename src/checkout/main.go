@@ -20,6 +20,7 @@ import (
 
 	"go.opentelemetry.io/otel/attribute"
 	"go.opentelemetry.io/otel/log/global"
+	"go.opentelemetry.io/otel/metric"
 	semconv "go.opentelemetry.io/otel/semconv/v1.24.0"
 	"go.opentelemetry.io/otel/trace"
 
@@ -66,6 +67,12 @@ var logger *slog.Logger
 var tracer trace.Tracer
 var resource *sdkresource.Resource
 var initResourcesOnce sync.Once
+
+// CUP-1 business metrics — initialised once in main(), used in PlaceOrder.
+var (
+	ordersPlacedCounter  metric.Int64Counter
+	orderAmountHistogram metric.Float64Histogram
+)
 
 func initResource() *sdkresource.Resource {
 	initResourcesOnce.Do(func() {
@@ -196,6 +203,27 @@ func main() {
 	openfeature.AddHooks(otelhooks.NewTracesHook())
 
 	tracer = tp.Tracer("checkout")
+
+	// Initialise CUP-1 business metrics
+	meter := otel.GetMeterProvider().Meter("checkout")
+	var metricErr error
+	ordersPlacedCounter, metricErr = meter.Int64Counter(
+		"app.orders.placed",
+		metric.WithDescription("Total number of orders successfully placed"),
+		metric.WithUnit("{order}"),
+	)
+	if metricErr != nil {
+		logger.Error(fmt.Sprintf("failed to create app.orders.placed counter: %v", metricErr))
+	}
+	orderAmountHistogram, metricErr = meter.Float64Histogram(
+		"app.order.amount",
+		metric.WithDescription("Distribution of order totals in the user's selected currency"),
+		metric.WithUnit("{currency_unit}"),
+		metric.WithExplicitBucketBoundaries(5, 10, 25, 50, 100, 200, 500, 1000, 2000),
+	)
+	if metricErr != nil {
+		logger.Error(fmt.Sprintf("failed to create app.order.amount histogram: %v", metricErr))
+	}
 
 	svc := new(checkout)
 	svc.httpClient = &http.Client{
@@ -391,6 +419,13 @@ func (cs *checkout) PlaceOrder(ctx context.Context, req *pb.PlaceOrderRequest) (
 		logger.Info("sending to postProcessor")
 		cs.sendToPostProcessor(ctx, orderResult)
 	}
+
+	// --- CUP-1 business metrics ---
+	metricAttrs := []attribute.KeyValue{
+		attribute.String("app.user.currency", req.UserCurrency),
+	}
+	ordersPlacedCounter.Add(ctx, 1, metric.WithAttributes(metricAttrs...))
+	orderAmountHistogram.Record(ctx, totalPriceFloat, metric.WithAttributes(metricAttrs...))
 
 	resp := &pb.PlaceOrderResponse{Order: orderResult}
 	return resp, nil

@@ -15,6 +15,9 @@ use Slim\App;
 function calculateQuote($jsonObject): float
 {
     $quote = 0.0;
+    // CUP-3: start latency timer for P95/P99 SLO measurement
+    $startTime = hrtime(true);
+
     $childSpan = Globals::tracerProvider()->getTracer('manual-instrumentation')
         ->spanBuilder('calculate-quote')
         ->setSpanKind(SpanKind::KIND_INTERNAL)
@@ -40,6 +43,14 @@ function calculateQuote($jsonObject): float
             ->getMeter('quotes')
             ->createCounter('quotes', 'quotes', 'number of quotes calculated');
         $counter->add(1, ['number_of_items' => $numberOfItems]);
+
+        // CUP-3: record quote latency histogram for SLO
+        static $histogram;
+        $histogram ??= Globals::meterProvider()
+            ->getMeter('quotes')
+            ->createHistogram('app.quote.duration', 'ms', 'Duration of the calculateQuote operation in milliseconds');
+        $elapsedMs = (hrtime(true) - $startTime) / 1e6;
+        $histogram->record($elapsedMs, ['app.quote.items.count' => $numberOfItems]);
     } catch (\Exception $exception) {
         $childSpan->recordException($exception);
     } finally {
