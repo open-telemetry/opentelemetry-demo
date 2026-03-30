@@ -12,7 +12,7 @@ services:
   # *****
   # Frontend Tests
   frontendTests:
-    image: ${IMAGE_NAME}:${DEMO_VERSION}-frontend-tests
+    image: ${IMAGE_NAME}/frontend-tests:${DEMO_VERSION}
     container_name: frontend-tests
     build:
       context: ./
@@ -29,7 +29,7 @@ services:
 
   # Tracebased Tests
   traceBasedTests:
-    image: ${IMAGE_NAME}:${DEMO_VERSION}-trace-based-tests
+    image: ${IMAGE_NAME}/trace-based-tests:${DEMO_VERSION}
     container_name: trace-based-tests
     build:
       context: ./
