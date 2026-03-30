@@ -7,7 +7,7 @@ the release.
 
 ## Unreleased
 
-* [kafka exporter] add kafka metrics exporter ([#3158](https://github.com/open-telemetry/opentelemetry-demo/pull/3158))
+* [otelcollector] add kafkametricsreceiver ([#3158](https://github.com/open-telemetry/opentelemetry-demo/pull/3158))
 * [accounting] fix memory leak with dbcontext
   ([#2876](https://github.com/open-telemetry/opentelemetry-demo/pull/2876))
 * [chore] Upgrade OTel Collector to v0.145.0 with :warning: breaking change:
