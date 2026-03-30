@@ -19635,7 +19635,7 @@ spec:
       serviceAccountName: opentelemetry-demo
       containers:
         - name: postgresql
-          image: 'ghcr.io/felixngwhuk/opentelemetry-devops-demo/postgresql:latest'
+          image: 'ghcr.io/open-telemetry/demo:2.1.3-postgresql'
           imagePullPolicy: IfNotPresent
           ports:
             
