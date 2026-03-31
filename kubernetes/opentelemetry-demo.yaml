@@ -18956,7 +18956,7 @@ spec:
       serviceAccountName: opentelemetry-demo
       containers:
         - name: flagd
-          image: 'ghcr.io/open-feature/flagd:v0.14.2'
+          image: 'ghcr.io/open-feature/flagd:v0.12.8'
           imagePullPolicy: IfNotPresent
           command:
             - /flagd-build
