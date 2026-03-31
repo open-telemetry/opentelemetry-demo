@@ -47,7 +47,7 @@ jobs:
       - name: install yamllint
         run: make install-yamllint
       - name: run yamllint
-        run: yamllint . -f github
+        run: yamllint . -f github --strict
 
   misspell:
     runs-on: ubuntu-latest
