@@ -7,6 +7,9 @@ the release.
 
 ## Unreleased
 
+* [product-catalog] Enrich DB spans and metrics with `server.address` and `server.port`
+  attributes extracted from the DSN via `otelsql.AttributesFromDSN`
+  ([#3154](https://github.com/open-telemetry/opentelemetry-demo/pull/3154))
 * [accounting] fix memory leak with dbcontext
   ([#2876](https://github.com/open-telemetry/opentelemetry-demo/pull/2876))
 * [chore] Upgrade OTel Collector to v0.145.0 with :warning: breaking change:
