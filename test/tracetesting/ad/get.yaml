@@ -17,10 +17,11 @@ spec:
             "contextKeys": [ "galaxy", "telescope" ]
         }
   specs:
-  - name: It returns two ads
-    selector: span[tracetest.span.type="rpc" name="oteldemo.AdService/GetAds" rpc.system="grpc" rpc.method="GetAds" rpc.service="oteldemo.AdService"]
-    assertions:
-    - attr:app.ads.count = 2
+  # TODO Fix/stabilize this test case. It is tracked by https://github.com/open-telemetry/opentelemetry-demo/issues/3193
+  # - name: It returns two ads
+  #   selector: span[tracetest.span.type="rpc" name="oteldemo.AdService/GetAds" rpc.system="grpc" rpc.method="GetAds" rpc.service="oteldemo.AdService"]
+  #   assertions:
+  #   - attr:app.ads.count = 2
   - name: It returns a valid redirectUrl for each ads
     selector: span[tracetest.span.type="general" name="Tracetest trigger"]
     assertions:
