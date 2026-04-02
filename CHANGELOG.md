@@ -7,6 +7,8 @@ the release.
 
 ## Unreleased
 
+* [checkout] Add app.payment.service.address span attribute to chargeCard for improved payment routing observability
+  ([#3203](https://github.com/open-telemetry/opentelemetry-demo/pull/3203))
 * [product-catalog] Enrich DB spans and metrics with `server.address` and `server.port`
   attributes extracted from the DSN via `otelsql.AttributesFromDSN`
   ([#3154](https://github.com/open-telemetry/opentelemetry-demo/pull/3154))
