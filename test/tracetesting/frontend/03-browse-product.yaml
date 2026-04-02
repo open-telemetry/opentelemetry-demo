@@ -25,7 +25,7 @@ spec:
     - attr:tracetest.response.body | json_path '$.priceUsd' != "{}"
     - attr:tracetest.response.body | json_path '$.categories' != "[]"
   - name: It queried the product catalog correctly for a specific product
-    selector: span[tracetest.span.type="rpc" name="oteldemo.ProductCatalogService/GetProduct" rpc.system="grpc" rpc.method="GetProduct" rpc.service="oteldemo.ProductCatalogService"]
+    selector: span[tracetest.span.type="rpc" name="oteldemo.ProductCatalogService/GetProduct" rpc.system.name="grpc" rpc.method="oteldemo.ProductCatalogService/GetProduct"]
     assertions:
-    - attr:rpc.grpc.status_code  =  0
+    - attr:rpc.response.status_code  =  "OK"
     - attr:app.product.id  =  "0PUK6V6EV0"
