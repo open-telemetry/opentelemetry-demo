@@ -34,6 +34,9 @@ the release.
   180m for fraud-detection to prevent large heap size that causes
   OOMKills with k8s.
   ([#3105](https://github.com/open-telemetry/opentelemetry-demo/pull/3105))
+* [load-generator] Wait for Roof Binoculars image to load in web tasks, and fix
+  task failures due to missing `tracer` attribute
+  ([#3171](https://github.com/open-telemetry/opentelemetry-demo/pull/3171))
 
 ## 2.2.0
 
