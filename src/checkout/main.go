@@ -543,11 +543,14 @@ func (cs *checkout) convertCurrency(ctx context.Context, from *pb.Money, toCurre
 
 func (cs *checkout) chargeCard(ctx context.Context, amount *pb.Money, paymentInfo *pb.CreditCardInfo) (string, error) {
 	paymentService := cs.paymentSvcClient
+	paymentAddr := cs.paymentSvcAddr
 	if cs.isFeatureFlagEnabled(ctx, "paymentUnreachable") {
-		badAddress := "badAddress:50051"
-		c := mustCreateClient(badAddress)
+		paymentAddr = "badAddress:50051"
+		c := mustCreateClient(paymentAddr)
 		paymentService = pb.NewPaymentServiceClient(c)
 	}
+	span := trace.SpanFromContext(ctx)
+	span.SetAttributes(attribute.String("app.payment.service.address", paymentAddr))
 
 	paymentResp, err := paymentService.Charge(ctx, &pb.ChargeRequest{
 		Amount:     amount,
