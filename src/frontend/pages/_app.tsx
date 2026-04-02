@@ -4,6 +4,7 @@
 import '../styles/globals.css';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import App, { AppContext, AppProps } from 'next/app';
+import { useEffect } from 'react';
 import CurrencyProvider from '../providers/Currency.provider';
 import CartProvider from '../providers/Cart.provider';
 import { ThemeProvider } from 'styled-components';
@@ -24,41 +25,46 @@ declare global {
   }
 }
 
-if (typeof window !== 'undefined') {
-  FrontendTracer();
-  if (window.location) {
-    const session = SessionGateway.getSession();
+const queryClient = new QueryClient();
+let appInitialized = false;
 
-    // Set context prior to provider init to avoid multiple http calls
-    OpenFeature.setContext({ targetingKey: session.userId, ...session }).then(() => {
-      /**
-       * We connect to flagd through the envoy proxy, straight from the browser,
-       * for this we need to know the current hostname and port.
-       */
+function MyApp({ Component, pageProps }: AppProps) {
+  useEffect(() => {
+    if (appInitialized || typeof window === 'undefined' || !window.location) {
+      return;
+    }
+
+    appInitialized = true;
+
+    const initializeApp = async () => {
+      await FrontendTracer();
+
+      const session = SessionGateway.getSession();
+
+      // Set context prior to provider init to avoid multiple HTTP calls.
+      await OpenFeature.setContext({ targetingKey: session.userId, ...session });
 
       const useTLS = window.location.protocol === 'https:';
-      let port = useTLS ? 443 : 80;
-      if (window.location.port) {
-          port = parseInt(window.location.port, 10);
-      }
+      const port = window.location.port ? parseInt(window.location.port, 10) : useTLS ? 443 : 80;
 
-      OpenFeature.setProvider(
+      await OpenFeature.setProvider(
         new FlagdWebProvider({
           host: window.location.hostname,
           pathPrefix: 'flagservice',
-          port: port,
+          port,
           tls: useTLS,
           maxRetries: 3,
           maxDelay: 10000,
         })
       );
+    };
+
+    initializeApp().catch(error => {
+      appInitialized = false;
+      console.error('Failed to initialize frontend telemetry and feature flags', error);
     });
-  }
-}
+  }, []);
 
-const queryClient = new QueryClient();
-
-function MyApp({ Component, pageProps }: AppProps) {
   return (
     <ThemeProvider theme={Theme}>
       <OpenFeatureProvider>

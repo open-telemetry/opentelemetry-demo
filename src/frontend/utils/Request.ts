@@ -18,17 +18,28 @@ const request = async <T>({
     'content-type': 'application/json',
   },
 }: IRequestParams): Promise<T> => {
-  const response = await fetch(`${url}?${new URLSearchParams(queryParams).toString()}`, {
+  const queryString = new URLSearchParams(queryParams).toString();
+  const requestUrl = queryString ? `${url}?${queryString}` : url;
+  const response = await fetch(requestUrl, {
     method,
     body: body ? JSON.stringify(body) : undefined,
     headers,
   });
 
   const responseText = await response.text();
+  const contentType = response.headers.get('content-type') || '';
 
-  if (!!responseText) return JSON.parse(responseText);
+  if (!response.ok) {
+    throw new Error(responseText || `Request to ${requestUrl} failed with status ${response.status}`);
+  }
 
-  return undefined as unknown as T;
+  if (!responseText) return undefined as unknown as T;
+
+  if (contentType.includes('application/json')) {
+    return JSON.parse(responseText) as T;
+  }
+
+  return responseText as T;
 };
 
 export default request;

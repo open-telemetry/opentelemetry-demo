@@ -12,13 +12,12 @@ import { ATTR_SERVICE_NAME } from '@opentelemetry/semantic-conventions';
 import { OTLPTraceExporter } from '@opentelemetry/exporter-trace-otlp-http';
 import { SessionIdProcessor } from './SessionIdProcessor';
 
-const {
-  NEXT_PUBLIC_OTEL_SERVICE_NAME = '',
-  NEXT_PUBLIC_OTEL_EXPORTER_OTLP_TRACES_ENDPOINT = '',
-  IS_SYNTHETIC_REQUEST = '',
-} = typeof window !== 'undefined' ? window.ENV : {};
-
 const FrontendTracer = async () => {
+  const {
+    NEXT_PUBLIC_OTEL_SERVICE_NAME = '',
+    NEXT_PUBLIC_OTEL_EXPORTER_OTLP_TRACES_ENDPOINT = '',
+    IS_SYNTHETIC_REQUEST = '',
+  } = typeof window !== 'undefined' ? window.ENV : {};
   const { ZoneContextManager } = await import('@opentelemetry/context-zone');
 
   let resource = resourceFromAttributes({

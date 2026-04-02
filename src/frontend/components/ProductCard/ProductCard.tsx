@@ -14,6 +14,11 @@ interface IProps {
 
 async function getImageWithHeaders(requestInfo: Request) {
   const res = await fetch(requestInfo);
+
+  if (!res.ok) {
+    throw new Error(`Failed to fetch product image: ${res.status}`);
+  }
+
   return await res.blob();
 }
 
@@ -33,18 +38,39 @@ const ProductCard = ({
   const [imageSrc, setImageSrc] = useState<string>('');
 
   useEffect(() => {
+    let objectUrl = '';
+    let cancelled = false;
     const headers = new Headers();
     headers.append('x-envoy-fault-delay-request', imageSlowLoad.toString());
-    headers.append('Cache-Control', 'no-cache')
+    headers.append('Cache-Control', 'no-cache');
     const requestInit = {
-      method: "GET",
-      headers: headers
+      method: 'GET',
+      headers,
     };
-    const image_url ='/images/products/' + picture
+    const image_url = '/images/products/' + picture;
     const requestInfo = new Request(image_url, requestInit);
-    getImageWithHeaders(requestInfo).then(blob => {
-      setImageSrc(URL.createObjectURL(blob));
-    });
+    getImageWithHeaders(requestInfo)
+      .then(blob => {
+        if (cancelled) {
+          return;
+        }
+
+        objectUrl = URL.createObjectURL(blob);
+        setImageSrc(objectUrl);
+      })
+      .catch(() => {
+        if (!cancelled) {
+          setImageSrc(image_url);
+        }
+      });
+
+    return () => {
+      cancelled = true;
+
+      if (objectUrl) {
+        URL.revokeObjectURL(objectUrl);
+      }
+    };
   }, [imageSlowLoad, picture]);
 
   return (

@@ -8,21 +8,20 @@ import { AttributeNames } from '../utils/enums/AttributeNames';
 import SessionGateway from './Session.gateway';
 import { context, propagation } from "@opentelemetry/api";
 
-const { userId } = SessionGateway.getSession();
-
 const basePath = '/api';
+const getUserId = () => SessionGateway.getSession().userId;
 
 const Apis = () => ({
   getCart(currencyCode: string) {
     return request<IProductCart>({
       url: `${basePath}/cart`,
-      queryParams: { sessionId: userId, currencyCode },
+      queryParams: { sessionId: getUserId(), currencyCode },
     });
   },
   addCartItem({ currencyCode, ...item }: CartItem & { currencyCode: string }) {
     return request<Cart>({
       url: `${basePath}/cart`,
-      body: { item, userId },
+      body: { item, userId: getUserId() },
       queryParams: { currencyCode },
       method: 'POST',
     });
@@ -31,7 +30,7 @@ const Apis = () => ({
     return request<undefined>({
       url: `${basePath}/cart`,
       method: 'DELETE',
-      body: { userId },
+      body: { userId: getUserId() },
     });
   },
 
@@ -95,7 +94,7 @@ const Apis = () => ({
       url: `${basePath}/recommendations`,
       queryParams: {
         productIds,
-        sessionId: userId,
+        sessionId: getUserId(),
         currencyCode,
       },
     });
@@ -124,7 +123,7 @@ const ApiGateway = new Proxy(Apis(), {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     return function (...args: any[]) {
       const baggage = propagation.getActiveBaggage() || propagation.createBaggage();
-      const newBaggage = baggage.setEntry(AttributeNames.SESSION_ID, { value: userId });
+      const newBaggage = baggage.setEntry(AttributeNames.SESSION_ID, { value: getUserId() });
       const newContext = propagation.setBaggage(context.active(), newBaggage);
       return context.with(newContext, () => {
         return Reflect.apply(originalFunction, undefined, args);
