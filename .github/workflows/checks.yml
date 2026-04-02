@@ -103,6 +103,9 @@ jobs:
     if: needs.check-react-native-changes.outputs.should_build == 'true'
     uses: ./.github/workflows/react-native-build.yml
 
+  integration-tests:
+    uses: ./.github/workflows/run-integration-tests.yml
+
   build-test:
     needs: [
       build_images,
@@ -112,7 +115,8 @@ jobs:
       checklinks,
       sanity,
       checklicense,
-      react-native-android
+      react-native-android,
+      integration-tests
     ]
     if: always() && !cancelled()
     runs-on: ubuntu-latest
