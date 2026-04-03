@@ -49,19 +49,19 @@
     "uuid": "13.0.0"
   },
   "devDependencies": {
-    "@types/node": "25.3.3",
+    "@types/node": "25.5.2",
     "@types/react": "19.2.14",
     "@types/react-dom": "19.2.3",
     "@types/styled-components": "5.1.36",
-    "@typescript-eslint/eslint-plugin": "8.56.1",
-    "@typescript-eslint/parser": "8.56.1",
-    "cypress": "15.11.0",
-    "eslint": "9.39.3",
-    "eslint-config-next": "16.1.6",
+    "@typescript-eslint/eslint-plugin": "8.58.0",
+    "@typescript-eslint/parser": "8.58.0",
+    "cypress": "15.13.0",
+    "eslint": "9.39.4",
+    "eslint-config-next": "16.2.2",
     "eslint-plugin-react": "7.37.5",
     "eslint-plugin-react-hooks": "7.0.1",
     "openapi-typescript": "7.13.0",
-    "ts-proto": "2.11.4",
-    "typescript": "5.9.3"
+    "ts-proto": "2.11.6",
+    "typescript": "6.0.2"
   }
 }
