@@ -7,7 +7,6 @@ the release.
 
 ## Unreleased
 
-* [otelcollector] add kafkametricsreceiver ([#3158](https://github.com/open-telemetry/opentelemetry-demo/pull/3158))
 * [accounting] fix memory leak with dbcontext
   ([#2876](https://github.com/open-telemetry/opentelemetry-demo/pull/2876))
 * [chore] Upgrade OTel Collector to v0.145.0 with :warning: breaking change:
@@ -32,6 +31,14 @@ the release.
   180m for fraud-detection to prevent large heap size that causes
   OOMKills with k8s.
   ([#3105](https://github.com/open-telemetry/opentelemetry-demo/pull/3105))
+* [product-catalog] Enrich DB spans and metrics with `server.address` and `server.port`
+  attributes extracted from the DSN via `otelsql.AttributesFromDSN`
+  ([#3154](https://github.com/open-telemetry/opentelemetry-demo/pull/3154))
+* [otelcollector] add kafkametricsreceiver
+  ([#3158](https://github.com/open-telemetry/opentelemetry-demo/pull/3158))
+* [load-generator] Wait for Roof Binoculars image to load in web tasks, and fix
+  task failures due to missing `tracer` attribute
+  ([#3171](https://github.com/open-telemetry/opentelemetry-demo/pull/3171))
 
 ## 2.2.0
 
