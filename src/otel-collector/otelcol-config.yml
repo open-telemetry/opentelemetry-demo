@@ -25,7 +25,7 @@ receivers:
   postgresql:
     endpoint: ${POSTGRES_HOST}:${POSTGRES_PORT}
     username: monitoring_user
-    password: monitoring_password
+    password: ${env:POSTGRES_MONITORING_PASSWORD}
     metrics:
       postgresql.blks_hit:
         enabled: true
