@@ -18,5 +18,6 @@ jobs:
         with:
           package-type: container
           min-versions-to-keep: 20
+          ignore-versions: '^v\d+\.\d+\.\d+$'
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
