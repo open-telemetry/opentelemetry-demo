@@ -49,7 +49,7 @@ spec:
     - attr:rpc.response.status_code  =  "OK"
     - attr:tracetest.selected_spans.count >= 1
   - name: "The product was shipped"
-    selector: span[tracetest.span.type="http" name="/ship-order"]
+    selector: span[name="/ship-order"]
     assertions:
     - attr:http.response.status_code = 200
   - name: "The cart was emptied"
