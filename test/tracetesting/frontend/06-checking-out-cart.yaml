@@ -44,7 +44,7 @@ spec:
     - attr:app.user.id = "2491f868-88f1-4345-8836-d5d8511a9f83"
     - attr:app.order.items.count = 1
   - name: "The user was charged"
-    selector:   span[tracetest.span.type="rpc" name="oteldemo.PaymentService/Charge" rpc.system.name="grpc" rpc.method="oteldemo.PaymentService/Charge"]
+    selector: span[tracetest.span.type="rpc" name="oteldemo.PaymentService/Charge" rpc.system.name="grpc" rpc.method="oteldemo.PaymentService/Charge"]
     assertions:
     - attr:rpc.response.status_code  =  "OK"
     - attr:tracetest.selected_spans.count >= 1
