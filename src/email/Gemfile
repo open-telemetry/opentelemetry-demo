@@ -1,25 +1,28 @@
+# Copyright The OpenTelemetry Authors
+# SPDX-License-Identifier: Apache-2.0
+
 
 
 source "https://rubygems.org"
 
 gem "net-smtp", "~> 0.5.1"
 gem "pony",     "~> 1.13"
-gem "puma",     "~> 7.1"
+gem "puma",     "~> 7.2"
 gem "sinatra",  "~> 4.2"
-gem "rackup",   "~> 2.2"
+gem "rackup",   "~> 2.3"
 
-gem "google-protobuf", "~> 4.33.0"
+gem "google-protobuf", "~> 4.34.0"
 
 gem "ostruct"
 
 gem "opentelemetry-sdk",                   "~> 1.10"
 gem "opentelemetry-common",                "~> 0.23"
 gem "opentelemetry-logs-sdk",              "~> 0.4"
-gem 'opentelemetry-metrics-sdk',           "~> 0.11"
+gem 'opentelemetry-metrics-sdk',           "~> 0.12"
 gem "opentelemetry-exporter-otlp",         "~> 0.31"
 gem 'opentelemetry-exporter-otlp-metrics', "~> 0.6"
 gem 'opentelemetry-exporter-otlp-logs',    "~> 0.2"
-gem "opentelemetry-instrumentation-all",   "~> 0.87"
+gem "opentelemetry-instrumentation-all",   "~> 0.90"
 
-gem "openfeature-sdk", "~> 0.4"
+gem "openfeature-sdk", "~> 0.6"
 gem "openfeature-flagd-provider", "~> 0.1"

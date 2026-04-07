@@ -1,3 +1,6 @@
+# Copyright The OpenTelemetry Authors
+# SPDX-License-Identifier: Apache-2.0
+
 [package]
 name = "shipping"
 edition = "2021"
@@ -8,10 +11,10 @@ path = "src/main.rs"
 
 [dependencies]
 actix-web = "4"
-anyhow = "1.0.101"
-awc = { version = "3.8.1", default-features = false, features = ["compress-zstd"] }
+anyhow = "1.0.102"
+awc = { version = "3.8.2", default-features = false, features = ["compress-zstd"] }
 serde = { version = "1.0.228", features = ["derive"] }
-tonic = "0.14.4"
+tonic = "0.14.5"
 tracing = "0.1.44"
 tracing-subscriber = { version = "0.3.22", features = ["env-filter"] }
 
@@ -23,7 +26,7 @@ opentelemetry-appender-tracing = "0.31.1"
 opentelemetry-resource-detectors = "0.10.0"
 
 [dependencies.uuid]
-version = "1.21.0"
+version = "1.22.0"
 features = [
     "v4",                # Lets you generate random UUIDs
     "fast-rng",          # Use a faster (but still sufficiently random) RNG
