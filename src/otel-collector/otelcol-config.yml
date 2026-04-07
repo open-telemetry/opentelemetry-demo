@@ -208,6 +208,13 @@ processors:
 
 connectors:
   spanmetrics:
+    namespace: traces.span.metrics
+    dimensions:
+      - name: data.category
+    histogram:
+      explicit:
+        buckets: [2ms, 4ms, 6ms, 8ms, 10ms, 50ms, 100ms, 200ms, 400ms, 800ms, 1s, 1400ms, 2s, 5s, 10s, 15s]
+    aggregation_temporality: "AGGREGATION_TEMPORALITY_CUMULATIVE"
 
 service:
   pipelines:

@@ -11,6 +11,7 @@ import org.apache.kafka.common.serialization.ByteArrayDeserializer
 import org.apache.kafka.common.serialization.StringDeserializer
 import org.apache.logging.log4j.LogManager
 import org.apache.logging.log4j.Logger
+import io.opentelemetry.api.trace.Span
 import oteldemo.Demo.*
 import java.time.Duration.ofMillis
 import java.util.*
@@ -62,6 +63,8 @@ fun main() {
                         Thread.sleep(1000)
                     }
                     val orders = OrderResult.parseFrom(record.value())
+                    val span = Span.current()
+                    span.setAttribute("data.category", "financial")
                     logger.info("Consumed record with orderId: ${orders.orderId}, and updated total count to: $newCount")
                     newCount
                 }

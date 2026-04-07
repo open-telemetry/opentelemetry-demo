@@ -49,7 +49,7 @@ post "/send_order_confirmation" do
     "app.order.id" => data.order.order_id,
   })
 
-  $confirmation_counter.add(1)
+  $confirmation_counter.add(1, attributes: { "data.category" => "pii" })
   send_email(data)
 
 end
@@ -85,6 +85,7 @@ def send_email(data)
     end
 
     span.set_attribute("app.email.recipient", data.email)
+    span.set_attribute("data.category", "pii")
     $logger.on_emit(
       timestamp: Time.now,
       severity_text: 'INFO',

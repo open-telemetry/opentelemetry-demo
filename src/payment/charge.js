@@ -56,7 +56,8 @@ module.exports.charge = async request => {
   span.setAttributes({
     'app.payment.card_type': cardType,
     'app.payment.card_valid': valid,
-    'app.loyalty.level': loyalty_level
+    'app.loyalty.level': loyalty_level,
+    'data.category': 'financial'
   });
 
   if (!valid) {
@@ -81,7 +82,7 @@ module.exports.charge = async request => {
 
   const { units, nanos, currencyCode } = request.amount;
   logger.info({ transactionId, cardType, lastFourDigits, amount: { units, nanos, currencyCode }, loyalty_level }, 'Transaction complete.');
-  transactionsCounter.add(1, { 'app.payment.currency': currencyCode });
+  transactionsCounter.add(1, { 'app.payment.currency': currencyCode, 'data.category': 'financial' });
   span.end();
 
   return { transactionId };

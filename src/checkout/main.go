@@ -295,6 +295,7 @@ func (cs *checkout) PlaceOrder(ctx context.Context, req *pb.PlaceOrderRequest) (
 	span.SetAttributes(
 		attribute.String("app.user.id", req.UserId),
 		attribute.String("app.user.currency", req.UserCurrency),
+		attribute.String("data.category", "financial"),
 	)
 	logger.LogAttrs(
 		ctx,
@@ -542,6 +543,10 @@ func (cs *checkout) convertCurrency(ctx context.Context, from *pb.Money, toCurre
 }
 
 func (cs *checkout) chargeCard(ctx context.Context, amount *pb.Money, paymentInfo *pb.CreditCardInfo) (string, error) {
+	ctx, span := tracer.Start(ctx, "chargeCard")
+	defer span.End()
+	span.SetAttributes(attribute.String("data.category", "financial"))
+
 	paymentService := cs.paymentSvcClient
 	if cs.isFeatureFlagEnabled(ctx, "paymentUnreachable") {
 		badAddress := "badAddress:50051"
@@ -586,6 +591,10 @@ func (cs *checkout) sendOrderConfirmation(ctx context.Context, email string, ord
 }
 
 func (cs *checkout) shipOrder(ctx context.Context, address *pb.Address, items []*pb.CartItem) (string, error) {
+	ctx, span := tracer.Start(ctx, "shipOrder")
+	defer span.End()
+	span.SetAttributes(attribute.String("data.category", "pii"))
+
 	shipPayload, err := json.Marshal(map[string]interface{}{
 		"address": address,
 		"items":   items,
