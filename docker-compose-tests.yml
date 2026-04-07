@@ -7,6 +7,102 @@ include:
       - docker-compose-tests_include-override.yml  # include override for tests
 
 services:
+  ad:
+    healthcheck:
+      test: ["CMD-SHELL", "bash -c 'echo > /dev/tcp/localhost/9555'"]
+      start_period: 20s
+      interval: 5s
+      timeout: 5s
+      retries: 20
+
+  cart:
+    healthcheck:
+      test: ["CMD-SHELL", "nc -z localhost 7070"]
+      start_period: 10s
+      interval: 5s
+      timeout: 5s
+      retries: 20
+
+  currency:
+    healthcheck:
+      test: ["CMD-SHELL", "nc -z localhost 7001"]
+      start_period: 10s
+      interval: 5s
+      timeout: 5s
+      retries: 20
+
+  email:
+    healthcheck:
+      test: ["CMD", "ruby", "-e", "require 'socket'; TCPSocket.new('localhost', 6060).close"]
+      start_period: 10s
+      interval: 5s
+      timeout: 5s
+      retries: 20
+
+  frontend:
+    healthcheck:
+      test: ["CMD", "/nodejs/bin/node", "-e", "require('http').get('http://frontend:8080/',(r)=>{process.exit(0)}).on('error',()=>process.exit(1))"]
+      start_period: 15s
+      interval: 5s
+      timeout: 5s
+      retries: 20
+
+  llm:
+    healthcheck:
+      test: ["CMD", "python3", "-c", "import socket; s=socket.create_connection(('localhost',8000),2); s.close()"]
+      start_period: 10s
+      interval: 5s
+      timeout: 5s
+      retries: 20
+
+  payment:
+    healthcheck:
+      test: ["CMD", "/nodejs/bin/node", "-e", "const net=require('net');const c=new net.Socket();c.setTimeout(2000);c.connect(50051,'127.0.0.1',()=>{c.destroy();process.exit(0)});c.on('error',()=>process.exit(1));c.on('timeout',()=>process.exit(1))"]
+      start_period: 10s
+      interval: 5s
+      timeout: 5s
+      retries: 20
+
+  product-reviews:
+    healthcheck:
+      test: ["CMD-SHELL", "nc -z localhost 3551"]
+      start_period: 10s
+      interval: 5s
+      timeout: 5s
+      retries: 20
+
+  quote:
+    healthcheck:
+      test: ["CMD", "php", "-r", "fsockopen('localhost', 8090) or die('fail');"]
+      start_period: 10s
+      interval: 5s
+      timeout: 5s
+      retries: 20
+
+  recommendation:
+    healthcheck:
+      test: ["CMD-SHELL", "nc -z localhost 9001"]
+      start_period: 10s
+      interval: 5s
+      timeout: 5s
+      retries: 20
+
+  postgresql:
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U root"]
+      start_period: 10s
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  valkey-cart:
+    healthcheck:
+      test: ["CMD-SHELL", "valkey-cli ping"]
+      start_period: 5s
+      interval: 5s
+      timeout: 3s
+      retries: 10
+
   # *****
   # Tests
   # *****
@@ -61,36 +157,68 @@ services:
       accounting:
         condition: service_started
       ad:
-        condition: service_started
+        condition: service_healthy
       cart:
-        condition: service_started
+        condition: service_healthy
       checkout:
         condition: service_started
       currency:
-        condition: service_started
+        condition: service_healthy
       email:
-        condition: service_started
+        condition: service_healthy
       fraud-detection:
         condition: service_started
       frontend:
-        condition: service_started
+        condition: service_healthy
       llm:
-        condition: service_started
+        condition: service_healthy
       payment:
-        condition: service_started
+        condition: service_healthy
       product-catalog:
         condition: service_started
       product-reviews:
-        condition: service_started
+        condition: service_healthy
       quote:
-        condition: service_started
+        condition: service_healthy
       recommendation:
-        condition: service_started
+        condition: service_healthy
       shipping:
         condition: service_started
       flagd:
         condition: service_started
       kafka:
+        condition: service_healthy
+      checkout-ready:
+        condition: service_completed_successfully
+      product-catalog-ready:
+        condition: service_completed_successfully
+      shipping-ready:
+        condition: service_completed_successfully
+
+  # Wait-for sidecar: polls gRPC health for checkout (distroless image, no tools)
+  checkout-ready:
+    image: ghcr.io/grpc-ecosystem/grpc-health-probe:v0.4.39
+    command: ["-addr=checkout:5050", "-connect-timeout=5s", "-rpc-timeout=5s"]
+    restart: on-failure
+    depends_on:
+      checkout:
+        condition: service_started
+
+  # Wait-for sidecar: polls gRPC health for product-catalog (distroless image, no tools)
+  product-catalog-ready:
+    image: ghcr.io/grpc-ecosystem/grpc-health-probe:v0.4.39
+    command: ["-addr=product-catalog:3550", "-connect-timeout=5s", "-rpc-timeout=5s"]
+    restart: on-failure
+    depends_on:
+      product-catalog:
+        condition: service_started
+
+  # Wait-for sidecar: polls TCP for shipping (distroless image, no tools)
+  shipping-ready:
+    image: busybox:1.37
+    command: ["/bin/sh", "-c", "until nc -z shipping 50050; do sleep 2; done"]
+    depends_on:
+      shipping:
         condition: service_started
 
   tracetest-server:
