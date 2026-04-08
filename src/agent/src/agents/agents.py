@@ -15,6 +15,7 @@ from langchain.tools import tool
 from langchain_mcp_adapters.tools import load_mcp_tools
 from pydantic import BaseModel
 from src.agents.llm import ChatLLM
+from src.agents.mcp_client import MCPClient
 from src.agents.tools import (
     add_to_cart,
     checkout,
@@ -28,7 +29,6 @@ from src.agents.tools import (
     get_supported_currencies,
     list_products,
 )
-from src.mcp_server.mcp_client import MCPClient
 from traceloop.sdk.decorators import workflow
 
 
@@ -101,7 +101,7 @@ class Agent:
         agent_port = int(os.getenv("AGENT_PORT", "8010"))
         agent_config = uvicorn.Config(
             app=self.app,
-            host=os.getenv("AGENT_ENDPOINT", "0.0.0.0"),
+            host="0.0.0.0",
             port=agent_port,
             log_level="info",
         )

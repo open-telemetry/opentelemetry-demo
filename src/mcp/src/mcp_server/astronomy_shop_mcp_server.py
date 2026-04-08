@@ -7,7 +7,7 @@ import logging
 import os
 
 from fastmcp import FastMCP
-from src.agents import tools
+from src.mcp_server import tools
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
@@ -15,7 +15,7 @@ logger = logging.getLogger(__name__)
 
 class AstronomyShopMcp:
     def __init__(self) -> None:
-        self.host = os.getenv("MCP_ENDPOINT", "127.0.0.1")
+        self.host = "0.0.0.0"
         self.port = int(os.getenv("MCP_PORT", "8011"))
         self.mcp = FastMCP("astronomy-shop-mcp")
 

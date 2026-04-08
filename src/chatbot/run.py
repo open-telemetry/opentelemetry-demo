@@ -6,27 +6,23 @@
 
 import asyncio
 import logging
-import os
 
 from dotenv import load_dotenv
-from src.agents.agents import Agent
-from traceloop.sdk import Traceloop
+from src.chat_interface.chat_interface import ChatAgentUI, get_chat_ui_config
 
 logging.basicConfig(level=logging.INFO)
 
 load_dotenv()
 
-Traceloop.init(
-    app_name="AstronomyShopAgent",
-    api_endpoint=os.getenv("OTEL_EXPORTER_OTLP_ENDPOINT", "localhost:4317"),
-)
-
 
 async def start_servers():
     """Run both the LangGraph Agent and the MCP server concurrently."""
     tasks = []
-    agent = Agent()
-    tasks.append(agent.launch())
+
+    chat_ui_config = get_chat_ui_config()
+    chat_interface = ChatAgentUI(chat_ui_config)
+    tasks.append(asyncio.to_thread(chat_interface.launch))
+
     await asyncio.gather(*tasks)
 
 

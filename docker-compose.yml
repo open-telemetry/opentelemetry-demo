@@ -788,9 +788,7 @@ services:
     restart: unless-stopped
     ports:
       - "${AGENT_PORT}"
-      - "${CHATBOT_PORT}"
     environment:
-      - AGENT_PORT
       - OTEL_EXPORTER_OTLP_ENDPOINT=${OTEL_COLLECTOR_HOST}:${OTEL_COLLECTOR_PORT_GRPC}
       - GRAPH_RECURSION_LIMIT
       - MCP_ENDPOINT
@@ -800,9 +798,68 @@ services:
       - AGENT_PORT
       - LLM_BASE_URL
       - LLM_MODEL
+      - USE_VCR=True
       - OPENAI_API_KEY
-      - CHATBOT_PORT
       - APPLICATION_ENDPOINT=frontend:8080
+      - OTEL_EXPORTER_OTLP_INSECURE=true
+    depends_on:
+      jaeger:
+        condition: service_started
+      otel-collector:
+        condition: service_started
+      product-catalog:
+        condition: service_started
+    logging: *logging
+
+  mcp:
+    image: ${IMAGE_NAME}:${DEMO_VERSION}-mcp
+    container_name: mcp
+    build:
+      context: ./
+      dockerfile: ${MCP_DOCKERFILE}
+      cache_from:
+        - ${IMAGE_NAME}:${IMAGE_VERSION}-mcp
+    deploy:
+      resources:
+        limits:
+          memory: 500M
+    restart: unless-stopped
+    ports:
+      - "${MCP_PORT}"
+    environment:
+      - OTEL_EXPORTER_OTLP_ENDPOINT=${OTEL_COLLECTOR_HOST}:${OTEL_COLLECTOR_PORT_GRPC}
+      - MCP_ENDPOINT
+      - MCP_PORT
+      - OTEL_EXPORTER_OTLP_INSECURE=true
+      - APPLICATION_ENDPOINT=frontend:8080
+    depends_on:
+      jaeger:
+        condition: service_started
+      otel-collector:
+        condition: service_started
+      product-catalog:
+        condition: service_started
+    logging: *logging
+
+  chatbot:
+    image: ${IMAGE_NAME}:${DEMO_VERSION}-chatbot
+    container_name: chatbot
+    build:
+      context: ./
+      dockerfile: ${CHATBOT_DOCKERFILE}
+      cache_from:
+        - ${IMAGE_NAME}:${IMAGE_VERSION}-chatbot
+    deploy:
+      resources:
+        limits:
+          memory: 500M
+    restart: unless-stopped
+    ports:
+      - "${CHATBOT_PORT}"
+    environment:
+      - AGENT_PORT
+      - AGENT_ENDPOINT
+      - CHATBOT_PORT
     depends_on:
       jaeger:
         condition: service_started

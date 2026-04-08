@@ -15,9 +15,9 @@ COPY src/agent/requirements.txt .
 
 RUN pip install --no-cache-dir -r requirements.txt
 
-COPY src/agent/src src
-COPY src/agent/run.py .
+COPY src/mcp/src src
+COPY src/mcp/run.py .
 
-EXPOSE ${AGENT_PORT}
+EXPOSE ${MCP_PORT}
 
 CMD ["python", "run.py"]

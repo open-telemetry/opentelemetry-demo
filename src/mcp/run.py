@@ -9,7 +9,7 @@ import logging
 import os
 
 from dotenv import load_dotenv
-from src.agents.agents import Agent
+from src.mcp_server.astronomy_shop_mcp_server import AstronomyShopMcp
 from traceloop.sdk import Traceloop
 
 logging.basicConfig(level=logging.INFO)
@@ -17,7 +17,7 @@ logging.basicConfig(level=logging.INFO)
 load_dotenv()
 
 Traceloop.init(
-    app_name="AstronomyShopAgent",
+    app_name="AstronomyShopAgentMCP",
     api_endpoint=os.getenv("OTEL_EXPORTER_OTLP_ENDPOINT", "localhost:4317"),
 )
 
@@ -25,8 +25,11 @@ Traceloop.init(
 async def start_servers():
     """Run both the LangGraph Agent and the MCP server concurrently."""
     tasks = []
-    agent = Agent()
-    tasks.append(agent.launch())
+    mcp = AstronomyShopMcp()
+    mcp_server_task = asyncio.to_thread(mcp.run)
+    tasks.append(mcp_server_task)
+    logging.info("MCP Server should be up, launching Agent...")
+
     await asyncio.gather(*tasks)
 
 

@@ -3,6 +3,7 @@
 # Copyright The OpenTelemetry Authors
 # SPDX-License-Identifier: Apache-2.0
 
+import logging
 import os
 import uuid
 
@@ -30,6 +31,7 @@ class ChatAgentUI:
                 "session_id": self.config.sessionId,
                 "history": history,
             }
+            logging.info(f"Sending request {payload} to Agent")
             response = requests.post(
                 self.config.agentBaseUrl, json=payload, timeout=self.config.timeout
             )
@@ -44,6 +46,7 @@ class ChatAgentUI:
             return "Error: Received an unexpected response format from the agent."
 
         except Exception as e:
+            logging.error(f"Error : {e}")
             return f"Error: {e}"
 
     def launch(self, agent_config=None):
@@ -80,7 +83,7 @@ class ChatAgentUI:
 
 def get_chat_ui_config():
     chat_ui_config = ChatUiConfig(
-        uiBaseUrl=os.getenv("AGENT_CHAT_INTERFACE_BASE_URL", "0.0.0.0"),
+        uiBaseUrl=os.getenv("CHATBOT_ENDPOINT", "0.0.0.0"),
         uiPort=int(os.getenv("CHATBOT_PORT", "7860")),
         sessionId=str(uuid.uuid4()),
         timeout=int(os.getenv("AGENT_CHAT_INTERFACE_TIMEOUT", "300")),
