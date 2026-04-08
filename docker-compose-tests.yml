@@ -124,10 +124,9 @@ services:
     image: ${POSTGRES_IMAGE}
     container_name: tracetest-postgres
     environment:
-      POSTGRES_PASSWORD: postgres
-      POSTGRES_USER: postgres
+      - POSTGRES_PASSWORD
     healthcheck:
-      test: pg_isready -U "$$POSTGRES_USER" -d "$$POSTGRES_DB"
+      test: pg_isready
       interval: 1s
       timeout: 5s
       retries: 60
