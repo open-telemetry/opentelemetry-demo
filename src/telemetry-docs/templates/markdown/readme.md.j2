@@ -1,3 +1,5 @@
+{#- Copyright The OpenTelemetry Authors -#}
+{#- SPDX-License-Identifier: Apache-2.0 -#}
 {#- Home page template - generates README.md for mkdocs -#}
 {#- Context: Full registry data from Weaver -#}
 
@@ -20,17 +22,17 @@ The demo application consists of multiple microservices, each with its own telem
 
 The telemetry schema is organized by:
 
-1. **Logical Attribute Groups** - Semantic domain-focused attribute definitions in `common.yaml`
-2. **Service Registries** - Service-specific attribute and metric definitions
+1. **Logical Attribute Groups** - Semantic domain-focused attribute definitions (product, user, order, shipping, misc)
+2. **Service Definitions** - Service-specific attribute references and metric definitions
 
 Each service references logical attribute groups using the `ref` syntax, creating a separation between logical groupings and service-specific usage patterns.
 
 ## Schema Files
 
-- `telemetry-schema/registry_manifest.yaml` - Registry metadata
-- `telemetry-schema/attributes/common.yaml` - Logical attribute group definitions
-- `telemetry-schema/attributes/{service}.yaml` - Service-specific attribute registries
-- `telemetry-schema/metrics/{service}.yaml` - Service-specific metric definitions
+- `telemetry-schema/manifest.yaml` - Registry metadata
+- `telemetry-schema/attributes/*.yaml` - Logical attribute group definitions by domain
+- `telemetry-schema/services/*.yaml` - Service-specific attribute references
+- `telemetry-schema/metrics/*.yaml` - Service-specific metric definitions
 
 ## Getting Started
 

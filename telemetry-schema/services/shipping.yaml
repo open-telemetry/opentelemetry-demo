@@ -1,9 +1,10 @@
 # Copyright The OpenTelemetry Authors
 # SPDX-License-Identifier: Apache-2.0
 
-groups:
+file_format: definition/2
+attribute_groups:
   - id: service.shipping
-    type: attribute_group
+    visibility: public
     brief: Shipping service attributes
     stability: stable
     attributes:

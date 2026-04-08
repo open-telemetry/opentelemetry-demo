@@ -1,3 +1,5 @@
+{#- Copyright The OpenTelemetry Authors -#}
+{#- SPDX-License-Identifier: Apache-2.0 -#}
 {#- This template is rendered per registry attribute group. -#}
 {#- Context variables provided by Weaver: -#}
 {#- - ctx.id: The registry id (e.g., "product", "user") -#}
@@ -11,7 +13,9 @@
 # {{ ctx.id | replace("_", " ") | title }} Attributes
 
 {% for group in ctx.groups | sort(attribute="id") %}
+{%- if group.brief and not group.brief.startswith("<synthetic") %}
 {{ group.brief }}
+{%- endif %}
 
 ## Quick Reference
 

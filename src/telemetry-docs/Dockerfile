@@ -4,7 +4,7 @@
 # Two-stage build: Generate service-centric Markdown with Weaver, then serve with mkdocs
 
 # Stage 1: Generate Markdown files from telemetry schema using Weaver
-FROM docker.io/otel/weaver:v0.21.2 AS registry-builder
+FROM docker.io/otel/weaver:v0.22.1 AS registry-builder
 
 WORKDIR /workspace
 
@@ -21,11 +21,12 @@ RUN /weaver/weaver registry generate \
     markdown \
     /workspace/docs
 
-# Generate fully resolved schema as JSON
-RUN /weaver/weaver registry resolve \
+# Generate packaged resolved schema
+RUN /weaver/weaver registry package \
     --registry=/workspace/telemetry-schema \
-    --format=json \
-    --output=/workspace/docs/schema.json
+    --resolved-schema-uri=https://opentelemetry.io/schemas/1.40.0 \
+    --output=/workspace/docs/schema \
+    --v2
 
 # Stage 2: Build static site
 FROM python:3.14-slim-bookworm AS site-builder

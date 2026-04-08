@@ -4,7 +4,7 @@
 site_name: OpenTelemetry Demo Telemetry Schema
 site_description: Semantic conventions and telemetry schema for the OpenTelemetry Demo application
 site_author: OpenTelemetry Demo Contributors
-site_url: https://opentelemetry-demo.example.com/telemetry/
+site_url: http://localhost:8080/telemetry/
 
 theme:
   name: material

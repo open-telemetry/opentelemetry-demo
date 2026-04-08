@@ -23,9 +23,9 @@ templates:
   - pattern: mkdocs_nav.yml.j2
     filter: >
       {
-        registries: [.groups[] | select(.type == "attribute_group" and (.id | startswith("registry."))) | {name: (.id | split(".") | .[1]), id: .id}] | unique_by(.name) | sort_by(.name),
-        services: ([.groups[] | select(.type == "attribute_group" and (.id | startswith("service."))) | {name: (.id | split(".")| .[1])}] + [.groups[] |
-          select(.type == "metric" and (.id | startswith("metric."))) | {name: (.id | split(".")[1])}]) | unique_by(.name) | sort_by(.name)
+        registries: [.groups[] | select(.type == "attribute_group" and (.id | startswith("registry."))) | {name: (.id | split(".") | last), id: .id}] | unique_by(.name) | sort_by(.name),
+        services: ([.groups[] | select(.type == "attribute_group" and (.id | startswith("service."))) | {name: (.id | split(".") | .[1])}] + [.groups[] |
+          select(.type == "metric" and .annotations.service != null) | {name: .annotations.service}]) | unique_by(.name) | sort_by(.name)
       }
     application_mode: single
     file_name: mkdocs.yml
@@ -38,19 +38,20 @@ templates:
 
   # Generate per-service documentation pages
   # Each service gets its own page with all its attribute groups and metrics
-  # The filter combines service.* attribute groups with metric.* groups by service name
+  # Services are identified by service.* attribute groups
+  # Metrics are associated with services via annotations.service
   - pattern: service.md.j2
     filter: >
-      [
-        (.groups | map(select(.type == "attribute_group" and (.id | startswith("service."))))),
-        (.groups | map(select(.type == "metric" and (.id | startswith("metric.")))))
-      ] | add | group_by(
-        .id | split(".") | .[1]
-      ) | map({
-        id: .[0].id | split(".") | .[1],
-        groups: [.[] | select(.type == "attribute_group")],
-        metrics: [.[] | select(.type == "metric")]
-      })
+      (.groups | map(select(.type == "attribute_group" and (.id | startswith("service."))))) as $services |
+      (.groups | map(select(.type == "metric"))) as $metrics |
+      $services | map(
+        (.id | split(".") | .[1]) as $svc_name |
+        {
+          id: $svc_name,
+          groups: [.],
+          metrics: [$metrics[] | select(.annotations.service == $svc_name)]
+        }
+      )
     application_mode: each
     file_name: services/{{ ctx.id | snake_case }}.md
 
@@ -61,8 +62,8 @@ templates:
       .groups
       | map(select(.type == "attribute_group"))
       | map(select(.id | startswith("registry.")))
-      | group_by(.id | split(".") | .[1])
-      | map({id: .[0].id | split(".") | .[1], groups: .})
+      | group_by(.id | split(".") | last)
+      | map({id: .[0].id | split(".") | last, groups: .})
     application_mode: each
     file_name: attributes/{{ ctx.id | snake_case }}.md
 

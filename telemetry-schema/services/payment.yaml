@@ -1,9 +1,10 @@
 # Copyright The OpenTelemetry Authors
 # SPDX-License-Identifier: Apache-2.0
 
-groups:
+file_format: definition/2
+attribute_groups:
   - id: service.payment
-    type: attribute_group
+    visibility: public
     brief: Payment service attributes
     stability: stable
     attributes:

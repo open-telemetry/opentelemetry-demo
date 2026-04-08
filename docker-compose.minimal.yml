@@ -290,6 +290,8 @@ services:
       - FLAGD_PORT
       - FLAGD_UI_HOST
       - FLAGD_UI_PORT
+      - TELEMETRY_DOCS_HOST
+      - TELEMETRY_DOCS_PORT
     depends_on:
       frontend:
         condition: service_started

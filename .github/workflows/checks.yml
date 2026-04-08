@@ -84,6 +84,17 @@ jobs:
       - name: run checklicense
         run: make checklicense
 
+  weaver-check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd  # v6.0.2
+      - name: run weaver registry check
+        run: |
+          docker run --rm \
+            --mount "type=bind,source=${{ github.workspace }}/telemetry-schema,target=/home/weaver/source,readonly" \
+            otel/weaver:v0.22.1 \
+            registry check -r source
+
   check-react-native-changes:
     runs-on: ubuntu-latest
     outputs:
@@ -112,6 +123,7 @@ jobs:
       checklinks,
       sanity,
       checklicense,
+      weaver-check,
       react-native-android
     ]
     if: always() && !cancelled()
