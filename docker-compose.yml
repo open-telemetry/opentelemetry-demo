@@ -885,9 +885,10 @@ services:
     logging: *logging
     environment:
       - FRONTEND_PROXY_ADDR
+      - HOST_FILESYSTEM
       - IMAGE_PROVIDER_HOST
       - IMAGE_PROVIDER_PORT
-      - HOST_FILESYSTEM
+      - KAFKA_ADDR
       - OTEL_COLLECTOR_HOST
       - OTEL_COLLECTOR_PORT_GRPC
       - OTEL_COLLECTOR_PORT_HTTP
