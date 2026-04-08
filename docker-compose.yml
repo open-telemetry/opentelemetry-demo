@@ -603,7 +603,7 @@ services:
     deploy:
       resources:
         limits:
-          memory: 500M # This is high to enable supporting the recommendationCache feature flag use case
+          memory: 500M  # This is high to enable supporting the recommendationCache feature flag use case
     restart: unless-stopped
     ports:
       - "${RECOMMENDATION_PORT}"
@@ -773,6 +773,7 @@ services:
         condition: service_started
     logging: *logging
 
+  # Agent
   agent:
     image: ${IMAGE_NAME}:${DEMO_VERSION}-agent
     container_name: agent
@@ -811,6 +812,7 @@ services:
         condition: service_started
     logging: *logging
 
+  # MCP
   mcp:
     image: ${IMAGE_NAME}:${DEMO_VERSION}-mcp
     container_name: mcp
@@ -841,6 +843,7 @@ services:
         condition: service_started
     logging: *logging
 
+  # ChatBot
   chatbot:
     image: ${IMAGE_NAME}:${DEMO_VERSION}-chatbot
     container_name: chatbot
