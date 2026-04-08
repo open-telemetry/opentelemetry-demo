@@ -22,6 +22,14 @@ receivers:
     endpoint: unix:///var/run/docker.sock
     # https://github.com/open-telemetry/opentelemetry-collector-contrib/issues/44511
     api_version: "1.44"
+  kafkametrics:
+    scrapers:
+      - brokers
+      - topics
+      - consumers
+    brokers:
+      - ${KAFKA_ADDR}
+    collection_interval: 10s
   postgresql:
     endpoint: ${POSTGRES_HOST}:${POSTGRES_PORT}
     username: root
@@ -208,7 +216,7 @@ service:
       processors: [resourcedetection, memory_limiter, transform/sanitize_spans]
       exporters: [otlp_grpc/jaeger, debug, spanmetrics]
     metrics:
-      receivers: [docker_stats, httpcheck/frontend-proxy, hostmetrics, nginx, otlp, postgresql, redis, spanmetrics]
+      receivers: [docker_stats, httpcheck/frontend-proxy, hostmetrics, nginx, otlp, postgresql, redis, spanmetrics, kafkametrics]
       processors: [resourcedetection, memory_limiter]
       exporters: [otlp_http/prometheus, debug]
     logs:
