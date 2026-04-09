@@ -134,7 +134,7 @@ docker logs <container_id>
 - Restart containers if needed:
 
 ```sh
-docker-compose restart
+make restart service=<service-name>
 ```
 
 ### Review the Documentation

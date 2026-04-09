@@ -7,6 +7,8 @@ the release.
 
 ## Unreleased
 
+* [docker] Refactor Docker Compose to use layered `-f` files with `start`, `start-minimal`, `start-no-o11y`, and `start-minimal-no-o11y` make targets ([#NNNN](https://github.com/open-telemetry/opentelemetry-demo/pull/NNNN))
+
 * [postgresql] More realistic PostgreSQL setup: replace generic `root`/`otelu` users
   and `otel` database with dedicated `astronomy_db` owned by `astronomy_user`;
   add `monitoring_user` with `pg_monitor` role for the OTel Collector receiver;

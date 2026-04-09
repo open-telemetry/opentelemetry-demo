@@ -1,0 +1,51 @@
+# Copyright The OpenTelemetry Authors
+# SPDX-License-Identifier: Apache-2.0
+
+# Observability stack collector additions: Jaeger, Prometheus, and OpenSearch exporters.
+# Loaded when running with compose.observability.yaml.
+#
+# IMPORTANT: The OTel Collector merges config files but REPLACES arrays, not appends.
+# The pipeline exporters below must repeat all exporters from earlier config layers
+# (e.g. debug, spanmetrics) to keep them active alongside the observability exporters.
+#
+# Exporter name reference (these are the stable names forks should reference):
+#   traces:  otlp_grpc/jaeger
+#   metrics: otlp_http/prometheus
+#   logs:    opensearch
+#
+# If you are running with compose.full.yaml, also repeat the full receivers in metrics.
+
+exporters:
+  otlp_grpc/jaeger:
+    endpoint: "jaeger:4317"
+    tls:
+      insecure: true
+    sending_queue:
+      batch:
+  otlp_http/prometheus:
+    endpoint: "http://prometheus:9090/api/v1/otlp"
+    tls:
+      insecure: true
+    sending_queue:
+      batch:
+  opensearch:
+    logs_index: otel-logs
+    logs_index_time_format: "yyyy-MM-dd"
+    http:
+      endpoint: "http://opensearch:9200"
+      tls:
+        insecure: true
+    sending_queue:
+      # Explicitly set due to bug: https://github.com/open-telemetry/opentelemetry-collector-contrib/issues/45016
+      num_consumers: 10
+      queue_size: 1000
+      batch:
+
+service:
+  pipelines:
+    traces:
+      exporters: [debug, otlp_grpc/jaeger, spanmetrics]
+    metrics:
+      exporters: [debug, otlp_http/prometheus]
+    logs:
+      exporters: [debug, opensearch]

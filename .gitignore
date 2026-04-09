@@ -1,27 +1,33 @@
+# IDEs / local files
 *~
+.idea/
 *.iml
 *.ipr
 *.iws
 *.pyc
-.nb-gradle
-.nb-gradle-properties
 .swp
 .DS_Store
 \#*\#
-
-docker-compose.override.yml
-
-# Eclipse
 .classpath
 .project
 .settings
-
-bin/
-obj/
 .vs/
 .vscode
+
+# AI Agents
+.claude/
+.codex/
+.cursor/
+.cursorrules
+AGENTS.md
+CLAUDE.md
+
+# Build artifacts
+bin/
+obj/
 .gradle/
-.idea/
+.nb-gradle
+.nb-gradle-properties
 build/
 node_modules/
 coverage
@@ -34,11 +40,7 @@ composer.lock
 .venv
 .dockerhub.env
 .ghcr.env
-
-src/frontend/cypress/videos
-src/frontend/cypress/screenshots
-src/shipping/target/
-test/tracetesting/tracetesting-vars.yaml
+*.apk
 
 # Ignore copied/generated protobuf files
 /src/accounting/src/protos/
@@ -49,9 +51,12 @@ test/tracetesting/tracetesting-vars.yaml
 /src/currency/proto
 /src/frontend/pb
 
-# Android
-*.apk
+# Otel Demo specific
+docker-compose.override.yml
+
+src/frontend/cypress/videos
+src/frontend/cypress/screenshots
+src/shipping/target/
+test/tracetesting/tracetesting-vars.yaml
 
 !src/currency/build
-src/cart/src/Program.cs.bak
-src/flagd/demo.flagd.json.bak
