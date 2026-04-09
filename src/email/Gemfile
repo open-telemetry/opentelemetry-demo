@@ -7,7 +7,7 @@ source "https://rubygems.org"
 
 gem "net-smtp", "~> 0.5.1"
 gem "pony",     "~> 1.13"
-gem "puma",     "~> 7.2"
+gem "puma",     "~> 8.0"
 gem "sinatra",  "~> 4.2"
 gem "rackup",   "~> 2.3"
 
