@@ -45,6 +45,14 @@ the release.
 * [load-generator] Wait for Roof Binoculars image to load in web tasks, and fix
   task failures due to missing `tracer` attribute
   ([#3171](https://github.com/open-telemetry/opentelemetry-demo/pull/3171))
+* [prometheus] Use PromQL `info()` function instead of resource attribute
+  promotion. Resource attributes are now accessed via `target_info` at query
+  time, reducing metric cardinality. Requires Prometheus v3.10.0+ with
+  `--enable-feature=promql-experimental-functions`. Grafana dashboards (APM,
+  PostgreSQL, OpenTelemetry Collector) and the cart service alert are updated
+  to use `info()`. Adds Kubernetes deployment support with Helm values and
+  deploy scripts.
+  ([#2869](https://github.com/open-telemetry/opentelemetry-demo/pull/2869))
 
 ## 2.2.0
 
