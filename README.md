@@ -47,6 +47,31 @@ your preferred deployment method:
 - [Docker](https://opentelemetry.io/docs/demo/docker_deployment/)
 - [Kubernetes](https://opentelemetry.io/docs/demo/kubernetes_deployment/)
 
+## Running in minimal mode
+
+The demo can be run with a reduced set of services, consuming significantly
+less memory (~3 GB instead of ~6 GB). Minimal mode excludes Kafka and its
+dependent services (Accounting, Fraud Detection) as well as the Flagd UI,
+while keeping all core demo functionality intact.
+
+To start the demo in minimal mode:
+
+```shell
+make start-minimal
+```
+
+Or using Docker Compose directly:
+
+```shell
+docker compose -f docker-compose.minimal.yml up --force-recreate --remove-orphans --detach
+```
+
+To stop the demo (works for both full and minimal mode):
+
+```shell
+make stop
+```
+
 ## Documentation
 
 For detailed documentation, see [Demo Documentation][docs]. If you're curious
