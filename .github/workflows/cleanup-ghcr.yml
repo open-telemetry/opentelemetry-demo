@@ -4,6 +4,11 @@ on:
   schedule:
     - cron: '0 3 * * 0'
   workflow_dispatch:
+    inputs:
+      dry_run:   #  changed from dry-run → dry_run
+        description: "Run in dry-run mode (no deletion)"
+        required: false
+        default: "true"
 
 jobs:
   cleanup:
@@ -13,11 +18,45 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v3
 
-      - name: Delete old container images
-        uses: actions/delete-package-versions@v4
-        with:
-          package-type: container
-          min-versions-to-keep: 20
-          ignore-versions: '^v\d+\.\d+\.\d+$'
+      - name: Install GitHub CLI
+        run: sudo apt-get update && sudo apt-get install gh -y
+
+      - name: Authenticate GitHub CLI
+        run: echo "${{ secrets.GITHUB_TOKEN }}" | gh auth login --with-token
+
+      - name: List and clean nightly images
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          DRY_RUN: ${{ github.event.inputs.dry_run || 'true' }}   # ✅ fixed
+        run: |
+          echo "Dry run mode: $DRY_RUN"
+
+          versions=$(gh api \
+            -H "Accept: application/vnd.github+json" \
+            /orgs/open-telemetry/packages/container/otel-demo/versions \
+            --jq '.[].id')
+
+          for version in $versions; do
+            tags=$(gh api \
+              -H "Accept: application/vnd.github+json" \
+              /orgs/open-telemetry/packages/container/otel-demo/versions/$version \
+              --jq '.metadata.container.tags[]')
+
+            for tag in $tags; do
+              if [[ "$tag" == nightly-* ]]; then
+                echo "Found nightly image: $tag (version: $version)"
+
+                if [ "$DRY_RUN" = "true" ]; then
+                  echo "[DRY RUN] Would delete version ID: $version"
+                else
+                  echo "Deleting version ID: $version"
+                  gh api --method DELETE \
+                    -H "Accept: application/vnd.github+json" \
+                    /orgs/open-telemetry/packages/container/otel-demo/versions/$version
+                fi
+              else
+                echo "Skipping non-nightly tag: $tag"
+              fi
+            done
+          done
+
