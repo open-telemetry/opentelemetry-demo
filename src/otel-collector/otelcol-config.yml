@@ -32,8 +32,8 @@ receivers:
     collection_interval: 10s
   postgresql:
     endpoint: ${POSTGRES_HOST}:${POSTGRES_PORT}
-    username: root
-    password: ${POSTGRES_PASSWORD}
+    username: monitoring_user
+    password: ${env:POSTGRES_MONITORING_PASSWORD}
     metrics:
       postgresql.blks_hit:
         enabled: true

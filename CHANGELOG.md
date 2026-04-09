@@ -7,6 +7,12 @@ the release.
 
 ## Unreleased
 
+* [postgresql] More realistic PostgreSQL setup: replace generic `root`/`otelu` users
+  and `otel` database with dedicated `astronomy_db` owned by `astronomy_user`;
+  add `monitoring_user` with `pg_monitor` role for the OTel Collector receiver;
+  enable `pg_stat_statements` on all databases; rename Compose service and
+  container to `astronomy-db`
+  ([#3153](https://github.com/open-telemetry/opentelemetry-demo/pull/3153))
 * [accounting] fix memory leak with dbcontext
   ([#2876](https://github.com/open-telemetry/opentelemetry-demo/pull/2876))
 * [chore] Upgrade OTel Collector to v0.145.0 with :warning: breaking change:
