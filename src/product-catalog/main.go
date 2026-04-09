@@ -65,9 +65,13 @@ func initDatabase() error {
 		return fmt.Errorf("DB_CONNECTION_STRING environment variable not set")
 	}
 
+	dbAttrs := otelsql.WithAttributes(
+		append(otelsql.AttributesFromDSN(connStr), semconv.DBSystemNamePostgreSQL)...,
+	)
+
 	var err error
 	db, err = otelsql.Open("postgres", connStr,
-		otelsql.WithAttributes(semconv.DBSystemNamePostgreSQL),
+		dbAttrs,
 		otelsql.WithSpanOptions(otelsql.SpanOptions{
 			OmitConnResetSession: true,
 			OmitRows:             true,
@@ -76,7 +80,7 @@ func initDatabase() error {
 		return fmt.Errorf("failed to open database connection: %w", err)
 	}
 
-	reg, err = otelsql.RegisterDBStatsMetrics(db, otelsql.WithAttributes(semconv.DBSystemNamePostgreSQL))
+	reg, err = otelsql.RegisterDBStatsMetrics(db, dbAttrs)
 	if err != nil {
 		return fmt.Errorf("failed to register database metrics: %w", err)
 	}

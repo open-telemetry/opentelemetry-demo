@@ -1,11 +1,28 @@
 -- Copyright The OpenTelemetry Authors
 -- SPDX-License-Identifier: Apache-2.0
 
-CREATE USER otelu WITH PASSWORD 'otelp';
+-- Enable pg_stat_statements in the default postgres database
+CREATE EXTENSION IF NOT EXISTS pg_stat_statements;
+
+-- Create application user
+CREATE USER astronomy_user WITH PASSWORD 'astronomy_password';
+
+-- Create application database
+CREATE DATABASE astronomy_db OWNER astronomy_user;
+
+-- Create monitoring user with pg_monitor role (visibility on all databases and schemas)
+CREATE USER monitoring_user WITH PASSWORD 'monitoring_password';
+GRANT pg_monitor TO monitoring_user;
+
+-- Switch to the application database
+\connect astronomy_db
+
+-- Enable pg_stat_statements in the application database
+CREATE EXTENSION IF NOT EXISTS pg_stat_statements;
 
 -- Accounting Service: create a schema
 CREATE SCHEMA accounting;
-GRANT USAGE ON SCHEMA accounting TO otelu;
+GRANT USAGE ON SCHEMA accounting TO astronomy_user;
 
 -- Accounting Service: create tables
 CREATE TABLE accounting."order" (
@@ -38,11 +55,11 @@ CREATE TABLE accounting.orderitem (
 );
 
 -- Accounting Service: grant permission to schema
-GRANT SELECT, INSERT, UPDATE ON ALL TABLES IN SCHEMA accounting TO otelu;
+GRANT SELECT, INSERT, UPDATE ON ALL TABLES IN SCHEMA accounting TO astronomy_user;
 
 -- Product Review Service: create a schema
 CREATE SCHEMA reviews;
-GRANT USAGE ON SCHEMA reviews TO otelu;
+GRANT USAGE ON SCHEMA reviews TO astronomy_user;
 
 -- Product Review Service: create tables
 CREATE TABLE reviews.productreviews (
@@ -57,7 +74,7 @@ CREATE TABLE reviews.productreviews (
 CREATE INDEX product_id_index ON reviews.productreviews (product_id);
 
 -- Product Review Service: grant permission to schema
-GRANT SELECT, INSERT, UPDATE ON ALL TABLES IN SCHEMA reviews TO otelu;
+GRANT SELECT, INSERT, UPDATE ON ALL TABLES IN SCHEMA reviews TO astronomy_user;
 
 -- Product Review Service:  add product review data
 INSERT INTO reviews.productreviews (product_id, username, description, score)
@@ -124,7 +141,7 @@ VALUES
 
 -- Product Catalog Service: create a schema
 CREATE SCHEMA catalog;
-GRANT USAGE ON SCHEMA catalog TO otelu;
+GRANT USAGE ON SCHEMA catalog TO astronomy_user;
 
 -- Product Catalog Service: create tables
 CREATE TABLE catalog.products (
@@ -139,7 +156,7 @@ CREATE TABLE catalog.products (
 );
 
 -- Product Catalog Service: grant permission to schema
-GRANT SELECT ON ALL TABLES IN SCHEMA catalog TO otelu;
+GRANT SELECT ON ALL TABLES IN SCHEMA catalog TO astronomy_user;
 
 -- Product Catalog Service: add product data
 INSERT INTO catalog.products (id, name, description, picture, price_currency_code, price_units, price_nanos, categories)

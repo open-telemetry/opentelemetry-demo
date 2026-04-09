@@ -1,0 +1,31 @@
+# Copyright The OpenTelemetry Authors
+# SPDX-License-Identifier: Apache-2.0
+
+on:
+  workflow_call:
+
+permissions:
+  contents: read
+
+jobs:
+  build-android:
+    name: Build Android APK
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd  # v6.0.2
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@4d04d5d9486b7bd6fa91e7baf45bbb4f8b9deedd  # v4.0.0
+
+      - name: Build Android APK
+        run: make build-react-native-android
+
+      - name: Verify APK was created
+        run: |
+          if [ ! -f reactnativeapp.apk ]; then
+            echo "APK build failed"
+            exit 1
+          fi
+          echo "APK size: $(du -h reactnativeapp.apk | cut -f1)"
