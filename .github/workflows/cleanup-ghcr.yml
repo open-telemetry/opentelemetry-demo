@@ -30,7 +30,7 @@ jobs:
       - name: List and clean nightly images
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          DRY_RUN: ${{ github.event.inputs.dry_run || 'true' }}
+          DRY_RUN: ${{ github.event_name == 'schedule' && 'false' || github.event.inputs.dry_run || 'true' }}
         run: |
           echo "Dry run mode: $DRY_RUN"
 
