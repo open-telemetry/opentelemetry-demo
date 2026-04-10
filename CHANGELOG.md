@@ -7,6 +7,8 @@ the release.
 
 ## Unreleased
 
+* [cart] Swap the deprecated `OpenFeature.Contrib.Providers.Flagd` package
+  provider with the new `OpenFeature.Providers.Flagd` package. ([#3247](https://github.com/open-telemetry/opentelemetry-demo/pull/3247))
 * [postgresql] More realistic PostgreSQL setup: replace generic `root`/`otelu` users
   and `otel` database with dedicated `astronomy_db` owned by `astronomy_user`;
   add `monitoring_user` with `pg_monitor` role for the OTel Collector receiver;
