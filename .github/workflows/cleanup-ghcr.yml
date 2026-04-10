@@ -1,3 +1,6 @@
+# Copyright The OpenTelemetry Authors
+# SPDX-License-Identifier: Apache-2.0
+
 name: Cleanup GHCR Images
 
 on:
@@ -5,7 +8,7 @@ on:
     - cron: '0 3 * * 0'
   workflow_dispatch:
     inputs:
-      dry_run:   #  changed from dry-run → dry_run
+      dry_run:
         description: "Run in dry-run mode (no deletion)"
         required: false
         default: "true"
@@ -27,7 +30,7 @@ jobs:
       - name: List and clean nightly images
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          DRY_RUN: ${{ github.event.inputs.dry_run || 'true' }}   # ✅ fixed
+          DRY_RUN: ${{ github.event.inputs.dry_run || 'true' }}
         run: |
           echo "Dry run mode: $DRY_RUN"
 
@@ -40,7 +43,7 @@ jobs:
             tags=$(gh api \
               -H "Accept: application/vnd.github+json" \
               /orgs/open-telemetry/packages/container/otel-demo/versions/$version \
-              --jq '.metadata.container.tags[]')
+              --jq '.metadata.container.tags[]?')
 
             for tag in $tags; do
               if [[ "$tag" == nightly-* ]]; then
@@ -59,4 +62,3 @@ jobs:
               fi
             done
           done
-
