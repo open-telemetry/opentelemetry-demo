@@ -2,14 +2,6 @@
 # SPDX-License-Identifier: Apache-2.0
 
 file_format: definition/2
-attributes:
-  - key: product.id
-    type: string
-    brief: Product identifier
-    stability: stable
-    examples: ["66VCHSJNUP", "OLJCESPC7Z"]
-    note: The unique identifier of the product
-
 metrics:
   - name: app_product_review_counter
     brief: Product review counter
@@ -19,7 +11,7 @@ metrics:
     annotations:
       service: product_reviews
     attributes:
-      - ref: product.id
+      - ref: app.product.id
         requirement_level: required
         note: The unique identifier of the product for which reviews are being retrieved
 
@@ -31,6 +23,6 @@ metrics:
     annotations:
       service: product_reviews
     attributes:
-      - ref: product.id
+      - ref: app.product.id
         requirement_level: required
         note: The unique identifier of the product for which AI assistance is being requested

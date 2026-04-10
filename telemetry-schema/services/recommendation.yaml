@@ -9,6 +9,7 @@ attribute_groups:
     stability: stable
     attributes:
       - ref: app.products_recommended.count
+      - ref: app.recommendation.type
       - ref: app.recommendation.cache_enabled
       - ref: app.cache_hit
       - ref: app.products.count

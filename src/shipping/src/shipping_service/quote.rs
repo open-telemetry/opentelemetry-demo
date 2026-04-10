@@ -27,11 +27,12 @@ pub async fn create_quote_from_count(count: u32) -> Result<Quote, tonic::Status>
 
     Ok(get_active_span(|span| {
         let q = create_quote_from_float(f);
+        let cost_total = q.dollars as f64 + q.cents as f64 / 100.0;
         span.add_event(
             "Received Quote".to_string(),
-            vec![KeyValue::new("app.shipping.cost.total", format!("{}", q))],
+            vec![KeyValue::new("app.shipping.cost.total", cost_total)],
         );
-        span.set_attribute(KeyValue::new("app.shipping.cost.total", format!("{}", q)));
+        span.set_attribute(KeyValue::new("app.shipping.cost.total", cost_total));
         q
     }))
 }

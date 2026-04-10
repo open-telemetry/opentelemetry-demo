@@ -980,7 +980,7 @@
             "uid": "webstore-metrics"
           },
           "editorMode": "code",
-          "expr": "rate(app_recommendations_counter_total{recommendation_type=\"catalog\"}[$__rate_interval])",
+          "expr": "rate(app_recommendations_counter_total{app_recommendation_type=\"catalog\"}[$__rate_interval])",
           "interval": "2m",
           "legendFormat": "recommendations",
           "range": true,

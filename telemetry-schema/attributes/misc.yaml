@@ -12,6 +12,12 @@ attributes:
       This helps distinguish production traffic from test traffic in observability systems.
       Also propagated as synthetic_request baggage.
     examples: ["true", "false"]
+  - key: app.recommendation.type
+    type: string
+    brief: Type of recommendation
+    stability: stable
+    note: Categorizes the type of recommendation being made
+    examples: ["catalog"]
   - key: app.recommendation.cache_enabled
     type: boolean
     brief: Whether recommendation caching is enabled

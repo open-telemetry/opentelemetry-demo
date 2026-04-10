@@ -134,7 +134,7 @@ def get_product_reviews(request_product_id):
         span.set_attribute("app.product_reviews.count", len(product_reviews.product_reviews))
 
         # Collect metrics for this service
-        product_review_svc_metrics["app_product_review_counter"].add(len(product_reviews.product_reviews), {'product.id': request_product_id})
+        product_review_svc_metrics["app_product_review_counter"].add(len(product_reviews.product_reviews), {'app.product.id': request_product_id})
 
         return product_reviews
 
@@ -305,7 +305,7 @@ def get_ai_assistant_response(request_product_id, question):
             ai_assistant_response.response = response_message.content
 
         # Collect metrics for this service
-        product_review_svc_metrics["app_ai_assistant_counter"].add(1, {'product.id': request_product_id})
+        product_review_svc_metrics["app_ai_assistant_counter"].add(1, {'app.product.id': request_product_id})
 
         return ai_assistant_response
 
