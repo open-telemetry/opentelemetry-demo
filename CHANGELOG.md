@@ -45,6 +45,8 @@ the release.
 * [load-generator] Wait for Roof Binoculars image to load in web tasks, and fix
   task failures due to missing `tracer` attribute
   ([#3171](https://github.com/open-telemetry/opentelemetry-demo/pull/3171))
+* [kubernetes] Removed generated Kubernetes manifests in favor of docs
+  ([#3236](https://github.com/open-telemetry/opentelemetry-demo/pull/3236))
 
 ## 2.2.0
 
