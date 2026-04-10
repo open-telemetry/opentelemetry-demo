@@ -54,6 +54,8 @@ composer.lock
 # Otel Demo specific
 docker-compose.override.yml
 
+kubernetes/opentelemetry-demo.yaml
+
 src/frontend/cypress/videos
 src/frontend/cypress/screenshots
 src/shipping/target/
