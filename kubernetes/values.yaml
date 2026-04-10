@@ -87,7 +87,7 @@ opentelemetry-collector:
     service:
       pipelines:
         metrics:
-          processors: [k8sattributes, memory_limiter, resourcedetection, resource, transform, batch]
+          processors: [memory_limiter, k8sattributes, resourcedetection, resource, transform, batch]
 
 prometheus:
   server:

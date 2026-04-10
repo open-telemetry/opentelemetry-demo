@@ -160,44 +160,6 @@ processors:
     spike_limit_percentage: 25
   resourcedetection:
     detectors: [env, docker, system]
-  resource/postgresql:
-    attributes:
-      - key: service.name
-        value: postgresql
-        action: upsert
-  transform/postgresql:
-    error_mode: ignore
-    metric_statements:
-      - context: resource
-        statements:
-          # Construct unique service.instance.id per PostgreSQL resource scope.
-          # The PostgreSQL receiver creates multiple resource scopes with attributes
-          # like postgresql.database.name, postgresql.table.name, postgresql.index.name.
-          # Without unique service.instance.id, these produce duplicate target_info entries.
-          - >-
-            set(attributes["service.instance.id"],
-            Concat([attributes["service.name"], "/",
-            attributes["postgresql.database.name"], "/",
-            attributes["postgresql.table.name"], "/",
-            attributes["postgresql.index.name"]], ""))
-            where attributes["postgresql.index.name"] != nil
-          - >-
-            set(attributes["service.instance.id"],
-            Concat([attributes["service.name"], "/",
-            attributes["postgresql.database.name"], "/",
-            attributes["postgresql.table.name"]], ""))
-            where attributes["postgresql.table.name"] != nil
-            and attributes["postgresql.index.name"] == nil
-          - >-
-            set(attributes["service.instance.id"],
-            Concat([attributes["service.name"], "/",
-            attributes["postgresql.database.name"]], ""))
-            where attributes["postgresql.database.name"] != nil
-            and attributes["postgresql.table.name"] == nil
-          - >-
-            set(attributes["service.instance.id"],
-            attributes["service.name"])
-            where attributes["postgresql.database.name"] == nil
   transform/sanitize_spans:
     error_mode: ignore
     trace_statements:
@@ -246,6 +208,39 @@ processors:
     metric_statements:
       - context: resource
         statements:
+          # Set service.name for PostgreSQL receiver metrics (which lack it)
+          - >-
+            set(attributes["service.name"], "postgresql")
+            where attributes["service.name"] == nil
+            and (attributes["postgresql.database.name"] != nil
+            or attributes["postgresql.table.name"] != nil
+            or attributes["postgresql.index.name"] != nil)
+
+          # Construct unique service.instance.id per PostgreSQL resource scope.
+          # The PostgreSQL receiver creates multiple resource scopes with attributes
+          # like postgresql.database.name, postgresql.table.name, postgresql.index.name.
+          # Without unique service.instance.id, these produce duplicate target_info entries.
+          - >-
+            set(attributes["service.instance.id"],
+            Concat([attributes["service.name"], "/",
+            attributes["postgresql.database.name"], "/",
+            attributes["postgresql.table.name"], "/",
+            attributes["postgresql.index.name"]], ""))
+            where attributes["postgresql.index.name"] != nil
+          - >-
+            set(attributes["service.instance.id"],
+            Concat([attributes["service.name"], "/",
+            attributes["postgresql.database.name"], "/",
+            attributes["postgresql.table.name"]], ""))
+            where attributes["postgresql.table.name"] != nil
+            and attributes["postgresql.index.name"] == nil
+          - >-
+            set(attributes["service.instance.id"],
+            Concat([attributes["service.name"], "/",
+            attributes["postgresql.database.name"]], ""))
+            where attributes["postgresql.database.name"] != nil
+            and attributes["postgresql.table.name"] == nil
+
           # Set service.instance.id to service.name if not already set (needed for Prometheus target_info)
           - set(attributes["service.instance.id"], attributes["service.name"]) where attributes["service.instance.id"] == nil and attributes["service.name"] != nil
 
@@ -256,19 +251,15 @@ service:
   pipelines:
     traces:
       receivers: [otlp]
-      processors: [resourcedetection, memory_limiter, transform/sanitize_spans]
+      processors: [memory_limiter, resourcedetection, transform/sanitize_spans]
       exporters: [otlp_grpc/jaeger, debug, spanmetrics]
     metrics:
-      receivers: [docker_stats, httpcheck/frontend-proxy, hostmetrics, nginx, otlp, redis, spanmetrics, kafkametrics]
-      processors: [resourcedetection, transform/sanitize_spans, memory_limiter]
-      exporters: [otlp_http/prometheus, debug]
-    metrics/postgresql:
-      receivers: [postgresql]
-      processors: [resourcedetection, resource/postgresql, transform/postgresql, transform/sanitize_spans, memory_limiter]
+      receivers: [docker_stats, httpcheck/frontend-proxy, hostmetrics, nginx, otlp, postgresql, redis, spanmetrics, kafkametrics]
+      processors: [memory_limiter, resourcedetection, transform/sanitize_spans]
       exporters: [otlp_http/prometheus, debug]
     logs:
       receivers: [otlp]
-      processors: [resourcedetection, memory_limiter]
+      processors: [memory_limiter, resourcedetection]
       exporters: [opensearch, debug]
   telemetry:
     metrics:
