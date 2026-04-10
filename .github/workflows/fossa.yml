@@ -13,6 +13,7 @@ permissions:
 
 jobs:
   fossa:
+    if: github.repository == 'open-telemetry/opentelemetry-demo'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@0c366fd6a839edf440554fa01a7085ccba70ac98  # v5.0.1
