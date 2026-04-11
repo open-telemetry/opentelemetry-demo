@@ -25,7 +25,7 @@ using OpenTelemetry.Resources;
 using OpenTelemetry.Trace;
 using OpenFeature;
 using OpenFeature.Hooks;
-using OpenFeature.Contrib.Providers.Flagd;
+using OpenFeature.Providers.Flagd;
 
 var builder = WebApplication.CreateBuilder(args);
 string valkeyAddress = builder.Configuration["VALKEY_ADDR"];
