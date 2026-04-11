@@ -10,11 +10,11 @@ attributes:
     note: The monetary amount charged for shipping
     examples: [5.99, 15.00]
   - key: app.shipping.cost.total
-    type: string
+    type: double
     brief: Total shipping cost
     stability: stable
-    note: The total cost of shipping for an order (string representation)
-    examples: ["10.50", "25.00"]
+    note: The total cost of shipping for an order
+    examples: [10.50, 25.00]
   - key: app.shipping.items_count
     type: int
     brief: Number of items being shipped

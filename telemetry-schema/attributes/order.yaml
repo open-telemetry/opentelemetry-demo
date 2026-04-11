@@ -28,11 +28,11 @@ attributes:
     note: The count of items currently in the shopping cart
     examples: [0, 3, 7]
   - key: app.payment.amount
-    type: string
+    type: double
     brief: Payment amount
     stability: stable
     note: The monetary amount being charged
-    examples: ["29.99", "99.95", "150.00"]
+    examples: [29.99, 99.95, 150.00]
   - key: app.payment.card_type
     type: string
     brief: Credit card type
