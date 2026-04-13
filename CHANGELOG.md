@@ -48,6 +48,10 @@ the release.
 * [load-generator] Wait for Roof Binoculars image to load in web tasks, and fix
   task failures due to missing `tracer` attribute
   ([#3171](https://github.com/open-telemetry/opentelemetry-demo/pull/3171))
+* [kubernetes] Removed generated Kubernetes manifests in favor of docs
+  ([#3236](https://github.com/open-telemetry/opentelemetry-demo/pull/3236))
+* [cart] Swap the deprecated `OpenFeature.Contrib.Providers.Flagd` package
+  provider with the new `OpenFeature.Providers.Flagd` package. ([#3247](https://github.com/open-telemetry/opentelemetry-demo/pull/3247))
 
 ## 2.2.0
 

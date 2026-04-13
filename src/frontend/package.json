@@ -45,11 +45,11 @@
     "react": "19.2.5",
     "react-dom": "19.2.5",
     "sharp": "0.34.5",
-    "styled-components": "6.3.12",
+    "styled-components": "6.4.0",
     "uuid": "13.0.0"
   },
   "devDependencies": {
-    "@types/node": "25.5.2",
+    "@types/node": "25.6.0",
     "@types/react": "19.2.14",
     "@types/react-dom": "19.2.3",
     "@types/styled-components": "5.1.36",
