@@ -1,0 +1,13 @@
+# Copyright The OpenTelemetry Authors
+# SPDX-License-Identifier: Apache-2.0
+
+file_format: definition/2
+metrics:
+  - name: app.confirmation.counter
+    brief: Email confirmation counter
+    instrument: counter
+    unit: "1"
+    stability: stable
+    note: Counts the number of confirmation emails sent
+    annotations:
+      service: email

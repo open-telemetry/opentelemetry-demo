@@ -1,0 +1,13 @@
+# Copyright The OpenTelemetry Authors
+# SPDX-License-Identifier: Apache-2.0
+
+file_format: definition/2
+metrics:
+  - name: app.shipping.items_count
+    brief: Shipping items counter
+    instrument: counter
+    unit: "{item}"
+    stability: stable
+    note: Counts the number of items being shipped
+    annotations:
+      service: shipping

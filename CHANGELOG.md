@@ -7,14 +7,9 @@ the release.
 
 ## Unreleased
 
-* [cart] Swap the deprecated `OpenFeature.Contrib.Providers.Flagd` package
-  provider with the new `OpenFeature.Providers.Flagd` package. ([#3247](https://github.com/open-telemetry/opentelemetry-demo/pull/3247))
-* [postgresql] More realistic PostgreSQL setup: replace generic `root`/`otelu` users
-  and `otel` database with dedicated `astronomy_db` owned by `astronomy_user`;
-  add `monitoring_user` with `pg_monitor` role for the OTel Collector receiver;
-  enable `pg_stat_statements` on all databases; rename Compose service and
-  container to `astronomy-db`
-  ([#3153](https://github.com/open-telemetry/opentelemetry-demo/pull/3153))
+* [telemetry-docs] Add a new service to provide telemetry documentation based
+  on Weaver
+  ([#2794](https://github.com/open-telemetry/opentelemetry-demo/pull/2794))
 * [accounting] fix memory leak with dbcontext
   ([#2876](https://github.com/open-telemetry/opentelemetry-demo/pull/2876))
 * [chore] Upgrade OTel Collector to v0.145.0 with :warning: breaking change:
@@ -39,6 +34,12 @@ the release.
   180m for fraud-detection to prevent large heap size that causes
   OOMKills with k8s.
   ([#3105](https://github.com/open-telemetry/opentelemetry-demo/pull/3105))
+* [postgresql] More realistic PostgreSQL setup: replace generic `root`/`otelu` users
+  and `otel` database with dedicated `astronomy_db` owned by `astronomy_user`;
+  add `monitoring_user` with `pg_monitor` role for the OTel Collector receiver;
+  enable `pg_stat_statements` on all databases; rename Compose service and
+  container to `astronomy-db`
+  ([#3153](https://github.com/open-telemetry/opentelemetry-demo/pull/3153))
 * [product-catalog] Enrich DB spans and metrics with `server.address` and `server.port`
   attributes extracted from the DSN via `otelsql.AttributesFromDSN`
   ([#3154](https://github.com/open-telemetry/opentelemetry-demo/pull/3154))
@@ -49,6 +50,8 @@ the release.
   ([#3171](https://github.com/open-telemetry/opentelemetry-demo/pull/3171))
 * [kubernetes] Removed generated Kubernetes manifests in favor of docs
   ([#3236](https://github.com/open-telemetry/opentelemetry-demo/pull/3236))
+* [cart] Swap the deprecated `OpenFeature.Contrib.Providers.Flagd` package
+  provider with the new `OpenFeature.Providers.Flagd` package. ([#3247](https://github.com/open-telemetry/opentelemetry-demo/pull/3247))
 
 ## 2.2.0
 

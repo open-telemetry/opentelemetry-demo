@@ -1,0 +1,23 @@
+# Copyright The OpenTelemetry Authors
+# SPDX-License-Identifier: Apache-2.0
+
+file_format: definition/2
+attributes:
+  - key: app.payment.currency
+    type: string
+    brief: Currency code for the transaction
+    stability: stable
+    examples: ["USD", "EUR", "GBP"]
+    note: The currency in which the payment transaction was processed
+
+metrics:
+  - name: app.payment.transactions
+    brief: Payment transaction counter
+    instrument: counter
+    unit: "{transaction}"
+    stability: stable
+    annotations:
+      service: payment
+    attributes:
+      - ref: app.payment.currency
+        requirement_level: required

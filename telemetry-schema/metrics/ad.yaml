@@ -1,0 +1,19 @@
+# Copyright The OpenTelemetry Authors
+# SPDX-License-Identifier: Apache-2.0
+
+file_format: definition/2
+metrics:
+  - name: app.ads.ad_requests
+    brief: Ad request counter
+    instrument: counter
+    unit: "{ad_request}"
+    stability: stable
+    annotations:
+      service: ad
+    attributes:
+      - ref: app.ads.ad_request_type
+        requirement_level: required
+        note: Indicates whether the ad request was targeted based on context keys
+      - ref: app.ads.ad_response_type
+        requirement_level: required
+        note: Indicates whether targeted ads were returned or random ads were used
