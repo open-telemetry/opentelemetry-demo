@@ -41,9 +41,9 @@ spec:
     - attr:tracetest.response.body | json_path '$.order.shippingCost.currencyCode' = "USD"
   - name: It calls the PlaceOrder method successfuly
     selector: span[tracetest.span.type="rpc" name="oteldemo.CheckoutService/PlaceOrder"
-      rpc.system="grpc" rpc.method="PlaceOrder" rpc.service="oteldemo.CheckoutService"]
+      rpc.system.name="grpc" rpc.method="oteldemo.CheckoutService/PlaceOrder"]
     assertions:
-    - attr:rpc.grpc.status_code = 0
+    - attr:rpc.response.status_code = "OK"
   - name: It sends an order to be processed asyncronously
     selector: span[tracetest.span.type="messaging" name="orders publish" kind="producer" messaging.system="kafka" messaging.destination.name="orders" messaging.operation="publish"]
     assertions:

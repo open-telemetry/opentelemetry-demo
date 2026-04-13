@@ -65,7 +65,7 @@ run_tracetest() {
   service_name=$1
   testsuite_file=./$service_name/all.yaml
 
-  tracetest --config ./cli-config.yml run testsuite --file $testsuite_file --vars ./tracetesting-vars.yaml &
+  tracetest --config ./cli-config.yml run testsuite --file $testsuite_file --vars ./tracetesting-vars.yaml --output json &
   pids+=($!)
 }
 

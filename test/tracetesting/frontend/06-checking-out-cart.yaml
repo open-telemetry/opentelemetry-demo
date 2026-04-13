@@ -39,23 +39,23 @@ spec:
     assertions:
     - attr:tracetest.response.status = 200
   - name: "The order was placed"
-    selector: span[tracetest.span.type="rpc" name="oteldemo.CheckoutService/PlaceOrder" rpc.system="grpc" rpc.method="PlaceOrder" rpc.service="oteldemo.CheckoutService"]
+    selector: span[tracetest.span.type="rpc" name="oteldemo.CheckoutService/PlaceOrder" rpc.system.name="grpc" rpc.method="oteldemo.CheckoutService/PlaceOrder"]
     assertions:
     - attr:app.user.id = "2491f868-88f1-4345-8836-d5d8511a9f83"
     - attr:app.order.items.count = 1
   - name: "The user was charged"
-    selector: span[tracetest.span.type="rpc" name="oteldemo.PaymentService/Charge" rpc.system="grpc" rpc.method="Charge" rpc.service="oteldemo.PaymentService"]
+    selector: span[tracetest.span.type="rpc" name="oteldemo.PaymentService/Charge" rpc.system.name="grpc" rpc.method="oteldemo.PaymentService/Charge"]
     assertions:
-    - attr:rpc.grpc.status_code  =  0
+    - attr:rpc.response.status_code  =  "OK"
     - attr:tracetest.selected_spans.count >= 1
   - name: "The product was shipped"
-    selector: span[tracetest.span.type="http" name="/ship-order"]
+    selector: span[name="/ship-order"]
     assertions:
     - attr:http.response.status_code = 200
   - name: "The cart was emptied"
-    selector: span[tracetest.span.type="rpc" name="oteldemo.CartService/EmptyCart" rpc.system="grpc" rpc.method="EmptyCart" rpc.service="oteldemo.CartService"]
+    selector: span[tracetest.span.type="rpc" name="oteldemo.CartService/EmptyCart" rpc.system.name="grpc" rpc.method="oteldemo.CartService/EmptyCart"]
     assertions:
-    - attr:rpc.grpc.status_code = 0
+    - attr:rpc.response.status_code  =  "OK"
     - attr:tracetest.selected_spans.count >= 1
   - name: The order was sent to be processed asyncronously
     selector: span[tracetest.span.type="messaging" name="orders publish" messaging.system="kafka" messaging.destination.name="orders" messaging.operation="publish"]

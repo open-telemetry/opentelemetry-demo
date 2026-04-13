@@ -31,8 +31,12 @@ spec:
           ]
         }
   specs:
-    - name: It called GetQuote successfully
+    - name: It called GetQuote successfully 1
       selector: span[tracetest.span.type="http" name="/get-quote" http.request.method="POST"]
+      assertions:
+        - attr:http.response.status_code = 200
+    - name: It called GetQuote successfully 2
+      selector: span[tracetest.span.type="http" name="POST /getquote" http.request.method="POST"]
       assertions:
         - attr:http.response.status_code = 200
     - name: It returned a valid quote

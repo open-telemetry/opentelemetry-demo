@@ -90,7 +90,7 @@ jobs:
       should_build: ${{ steps.filter.outputs.react_native }}
     steps:
       - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd  # v6.0.2
-      - uses: dorny/paths-filter@v4
+      - uses: dorny/paths-filter@fbd0ab8f3e69293af611ebaee6363fc25e6d187d  # v4.0.1
         id: filter
         with:
           filters: |
@@ -103,6 +103,9 @@ jobs:
     if: needs.check-react-native-changes.outputs.should_build == 'true'
     uses: ./.github/workflows/react-native-build.yml
 
+  integration-tests:
+    uses: ./.github/workflows/run-integration-tests.yml
+
   build-test:
     needs: [
       build_images,
@@ -112,7 +115,8 @@ jobs:
       checklinks,
       sanity,
       checklicense,
-      react-native-android
+      react-native-android,
+      integration-tests
     ]
     if: always() && !cancelled()
     runs-on: ubuntu-latest

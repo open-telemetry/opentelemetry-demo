@@ -61,36 +61,68 @@ services:
       accounting:
         condition: service_started
       ad:
-        condition: service_started
+        condition: service_healthy
       cart:
-        condition: service_started
+        condition: service_healthy
       checkout:
         condition: service_started
       currency:
-        condition: service_started
+        condition: service_healthy
       email:
-        condition: service_started
+        condition: service_healthy
       fraud-detection:
         condition: service_started
       frontend:
-        condition: service_started
+        condition: service_healthy
       llm:
-        condition: service_started
+        condition: service_healthy
       payment:
-        condition: service_started
+        condition: service_healthy
       product-catalog:
         condition: service_started
       product-reviews:
-        condition: service_started
+        condition: service_healthy
       quote:
-        condition: service_started
+        condition: service_healthy
       recommendation:
-        condition: service_started
+        condition: service_healthy
       shipping:
         condition: service_started
       flagd:
         condition: service_started
       kafka:
+        condition: service_healthy
+      checkout-ready:
+        condition: service_completed_successfully
+      product-catalog-ready:
+        condition: service_completed_successfully
+      shipping-ready:
+        condition: service_completed_successfully
+
+  # Wait-for sidecar: polls gRPC health for checkout (distroless image, no tools)
+  checkout-ready:
+    image: ghcr.io/grpc-ecosystem/grpc-health-probe:v0.4.39
+    command: ["-addr=checkout:5050", "-connect-timeout=5s", "-rpc-timeout=5s"]
+    restart: on-failure
+    depends_on:
+      checkout:
+        condition: service_started
+
+  # Wait-for sidecar: polls gRPC health for product-catalog (distroless image, no tools)
+  product-catalog-ready:
+    image: ghcr.io/grpc-ecosystem/grpc-health-probe:v0.4.39
+    command: ["-addr=product-catalog:3550", "-connect-timeout=5s", "-rpc-timeout=5s"]
+    restart: on-failure
+    depends_on:
+      product-catalog:
+        condition: service_started
+
+  # Wait-for sidecar: polls TCP for shipping (distroless image, no tools)
+  shipping-ready:
+    image: busybox:1.37
+    command: ["/bin/sh", "-c", "until nc -z shipping 50050; do sleep 2; done"]
+    depends_on:
+      shipping:
         condition: service_started
 
   tracetest-server:

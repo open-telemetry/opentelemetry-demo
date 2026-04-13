@@ -32,7 +32,7 @@ spec:
         }
   specs:
     - name: It called ShipOrder successfully
-      selector: span[tracetest.span.type="http" name="/ship-order" http.request.method="POST"]
+      selector: span[name="/ship-order" http.request.method="POST"]
       assertions:
         - attr:http.response.status_code = 200
     - name: It returned a tracking ID
