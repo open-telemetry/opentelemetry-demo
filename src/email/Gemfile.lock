@@ -38,8 +38,7 @@ GEM
       net-pop
       net-smtp
     mini_mime (1.1.5)
-    mustermann (3.0.4)
-      ruby2_keywords (~> 0.0.1)
+    mustermann (3.1.0)
     net-imap (0.6.3)
       date
       net-protocol
@@ -274,8 +273,7 @@ GEM
       rack (>= 3.0.0)
     rackup (2.3.1)
       rack (>= 3)
-    rake (13.3.1)
-    ruby2_keywords (0.0.5)
+    rake (13.4.1)
     sinatra (4.2.1)
       logger (>= 1.6.0)
       mustermann (~> 3.0)
