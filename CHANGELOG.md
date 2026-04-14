@@ -7,6 +7,8 @@ the release.
 
 ## Unreleased
 
+* [recommendation] Fix `recommendationCacheFailure` feature flag by using `ListProducts` instead of `GetProduct`
+  ([#3260](https://github.com/open-telemetry/opentelemetry-demo/pull/3260))
 * [telemetry-docs] Add a new service to provide telemetry documentation based
   on Weaver
   ([#2794](https://github.com/open-telemetry/opentelemetry-demo/pull/2794))
