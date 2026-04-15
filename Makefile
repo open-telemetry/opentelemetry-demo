@@ -92,8 +92,7 @@ addlicense:	$(ADDLICENSE)
 .PHONY: checklinks
 checklinks:
 	@echo "Checking links..."
-	@if ! npm ls @umbrelladocs/linkspector; then npm install; fi
-	linkspector check
+	lychee --config .lychee.toml .
 
 # Run all checks in order of speed / likely failure.
 .PHONY: check

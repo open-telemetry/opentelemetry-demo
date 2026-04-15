@@ -58,16 +58,15 @@ jobs:
         run: make misspell
 
   checklinks:
-    name: linkspector
+    name: lychee
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd  # v6.0.2
-      - name: Run linkspector
-        uses: umbrelladocs/action-linkspector@37c85bcde51b30bf929936502bac6bfb7e8f0a4d  # v1.4.1
+      - name: Run lychee
+        uses: lycheeverse/lychee-action@8646ba30535128ac92d33dfc9133794bfdd9b411  # v2.8.0
         with:
-          level: info
-          fail_level: any
-          config_file: '.linkspector.yml'
+          args: --config .lychee.toml .
+          fail: true
 
   sanity:
     runs-on: ubuntu-latest
