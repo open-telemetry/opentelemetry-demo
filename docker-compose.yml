@@ -949,6 +949,7 @@ services:
 
   # OpenSearch
   opensearch:
+    image: ${IMAGE_NAME}:${DEMO_VERSION}-opensearch
     container_name: opensearch
     build:
       context: ./
