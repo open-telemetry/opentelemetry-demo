@@ -1,0 +1,23 @@
+# Copyright The OpenTelemetry Authors
+# SPDX-License-Identifier: Apache-2.0
+
+file_format: definition/2
+attributes:
+  - key: recommendation.type
+    type: string
+    brief: Type of recommendation
+    stability: stable
+    examples: ["catalog"]
+    note: Categorizes the type of recommendation being made
+
+metrics:
+  - name: app_recommendations_counter
+    brief: Recommendation request counter
+    instrument: counter
+    unit: "{recommendation}"
+    stability: stable
+    annotations:
+      service: recommendation
+    attributes:
+      - ref: recommendation.type
+        requirement_level: required

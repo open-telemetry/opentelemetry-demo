@@ -1,0 +1,12 @@
+# Copyright The OpenTelemetry Authors
+# SPDX-License-Identifier: Apache-2.0
+
+file_format: definition/2
+attribute_groups:
+  - id: service.quote
+    visibility: public
+    brief: Quote service attributes
+    stability: stable
+    attributes:
+      - ref: app.quote.items.count
+      - ref: app.quote.cost.total

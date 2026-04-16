@@ -40,7 +40,7 @@ jobs:
 
       - name: "Add Label: docs-update-required"
         if: steps.file_changes.outputs.docsUpdateRequired == 'true'
-        uses: actions/github-script@ed597411d8f924073f98dfc5c65a23a2325f34cd  # v8.0.0
+        uses: actions/github-script@3a2844b7e9c422d3c10d287c895573f7108da1b3  # v9.0.0
         with:
           script: |
             const issue_number = context.issue.number;
@@ -53,7 +53,7 @@ jobs:
 
       - name: "Add Label: helm-update-required"
         if: steps.file_changes.outputs.helmUpdateRequired == 'true'
-        uses: actions/github-script@ed597411d8f924073f98dfc5c65a23a2325f34cd  # v8.0.0
+        uses: actions/github-script@3a2844b7e9c422d3c10d287c895573f7108da1b3  # v9.0.0
         with:
           script: |
             const issue_number = context.issue.number;

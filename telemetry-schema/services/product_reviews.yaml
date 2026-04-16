@@ -1,0 +1,14 @@
+# Copyright The OpenTelemetry Authors
+# SPDX-License-Identifier: Apache-2.0
+
+file_format: definition/2
+attribute_groups:
+  - id: service.product_reviews
+    visibility: public
+    brief: Product Reviews service attributes
+    stability: stable
+    attributes:
+      - ref: app.product.id
+      - ref: app.product_reviews.count
+      - ref: app.product_reviews.average_score
+      - ref: app.product.question

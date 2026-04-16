@@ -1,0 +1,14 @@
+# Copyright The OpenTelemetry Authors
+# SPDX-License-Identifier: Apache-2.0
+
+file_format: definition/2
+attribute_groups:
+  - id: service.product_catalog
+    visibility: public
+    brief: Product Catalog service attributes
+    stability: stable
+    attributes:
+      - ref: app.products.count
+      - ref: app.product.id
+      - ref: app.product.name
+      - ref: app.products_search.count

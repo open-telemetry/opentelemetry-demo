@@ -73,8 +73,7 @@ services:
       - OTEL_RESOURCE_ATTRIBUTES=${OTEL_RESOURCE_ATTRIBUTES},service.criticality=medium
       - OTEL_LOGS_EXPORTER=otlp
       - OTEL_SERVICE_NAME=ad
-      # Workaround on OSX for https://bugs.openjdk.org/browse/JDK-8345296
-      - _JAVA_OPTIONS
+
     depends_on:
       otel-collector:
         condition: service_started
@@ -366,6 +365,8 @@ services:
       - FLAGD_PORT
       - FLAGD_UI_HOST
       - FLAGD_UI_PORT
+      - TELEMETRY_DOCS_HOST
+      - TELEMETRY_DOCS_PORT
     depends_on:
       frontend:
         condition: service_started
@@ -376,6 +377,8 @@ services:
       grafana:
         condition: service_started
       flagd-ui:
+        condition: service_started
+      telemetry-docs:
         condition: service_started
     dns_search: ""
 
@@ -744,8 +747,7 @@ services:
       - OTEL_RESOURCE_ATTRIBUTES=${OTEL_RESOURCE_ATTRIBUTES},service.criticality=low
       - OTEL_SERVICE_NAME=kafka
       - KAFKA_HEAP_OPTS=-Xmx400m -Xms400m
-      # Workaround on OSX for https://bugs.openjdk.org/browse/JDK-8345296
-      - _JAVA_OPTIONS
+
     healthcheck:
       test: nc -z kafka 9092
       start_period: 10s
@@ -922,6 +924,29 @@ services:
       - "${PROMETHEUS_PORT}:${PROMETHEUS_PORT}"
     logging: *logging
 
+  # Telemetry Documentation
+  telemetry-docs:
+    image: ${IMAGE_NAME}:${DEMO_VERSION}-telemetry-docs
+    container_name: telemetry-docs
+    build:
+      context: ./
+      dockerfile: ${TELEMETRY_DOCS_DOCKERFILE}
+      cache_from:
+        - ${IMAGE_NAME}:${IMAGE_VERSION}-telemetry-docs
+    deploy:
+      resources:
+        limits:
+          memory: 100M
+    restart: unless-stopped
+    ports:
+      - "${TELEMETRY_DOCS_PORT}"
+    environment:
+      - TELEMETRY_DOCS_PORT
+      - OTEL_COLLECTOR_HOST
+      - OTEL_COLLECTOR_PORT_GRPC
+      - OTEL_SERVICE_NAME=telemetry-docs
+    logging: *logging
+
   # OpenSearch
   opensearch:
     container_name: opensearch
@@ -945,8 +970,7 @@ services:
       - OPENSEARCH_JAVA_OPTS=-Xms400m -Xmx400m
       - DISABLE_INSTALL_DEMO_CONFIG=true
       - DISABLE_SECURITY_PLUGIN=true
-      # Workaround on OSX for https://bugs.openjdk.org/browse/JDK-8345296
-      - _JAVA_OPTIONS
+
     ulimits:
       memlock:
         soft: -1

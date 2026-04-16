@@ -142,6 +142,10 @@ jobs:
             tag_suffix: shipping
             context: ./
             setup-qemu: true
+          - file: ./src/telemetry-docs/Dockerfile
+            tag_suffix: telemetry-docs
+            context: ./
+            setup-qemu: true
           - file: ./test/tracetesting/Dockerfile
             tag_suffix: traceBasedTests
             context: ./
@@ -184,13 +188,13 @@ jobs:
           registry: ghcr.io
           username: ${{ github.repository_owner }}
           password: ${{ secrets.GITHUB_TOKEN }}
-        if: ${{ inputs.push }}
+        if: ${{ inputs.push && !github.event.repository.fork }}
       - name: Log in to Docker Hub
         uses: docker/login-action@4907a6ddec9925e35a0a9e82d7399ccc52663121  # v4.1.0
         with:
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_PASSWORD }}
-        if: ${{ inputs.push }}
+        if: ${{ inputs.push && !github.event.repository.fork }}
       - name: Set up QEMU
         if: ${{ matrix.file_tag.setup-qemu }}
         uses: docker/setup-qemu-action@ce360397dd3f832beb865e1373c09c0e9f86d70a  # v4.0.0
@@ -204,12 +208,12 @@ jobs:
             max-parallelism = 2
       - name: Matrix Build and push demo images
         if: steps.check_changes.outputs.skip == 'false'
-        uses: docker/build-push-action@d08e5c354a6adb9ed34480a06d141179aa583294  # v7.0.0
+        uses: docker/build-push-action@bcafcacb16a39f128d818304e6c9c0c18556b85f  # v7.1.0
         with:
           context: ${{ matrix.file_tag.context }}
           file: ${{ matrix.file_tag.file }}
           platforms: linux/amd64,linux/arm64
-          push: ${{ inputs.push }}
+          push: ${{ inputs.push && !github.event.repository.fork }}
           build-args: |
             OTEL_JAVA_AGENT_VERSION=${{ env.OTEL_JAVA_AGENT_VERSION }}
             OPENTELEMETRY_CPP_VERSION=${{ env.OPENTELEMETRY_CPP_VERSION }}
