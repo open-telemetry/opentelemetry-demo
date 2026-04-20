@@ -3,6 +3,7 @@
 # Copyright The OpenTelemetry Authors
 # SPDX-License-Identifier: Apache-2.0
 
+import json
 import os
 
 import requests
@@ -11,7 +12,8 @@ BASE_URL = os.getenv("APPLICATION_ENDPOINT", "localhost:8080")
 
 
 def get_ads(category: str):
-    """Fetch promotional ads for Astronomy Shop homepage."""
+    """Fetch promotional ads for Astronomy Shop homepage.
+    Eg : category: `telescopes` or `travel`"""
     url = f"http://{BASE_URL}/api/data"
     params = {"contextKeys": category}
     try:
@@ -22,15 +24,15 @@ def get_ads(category: str):
         return f"Error fetching ads: {e}"
 
 
-def add_to_cart(userId: str, productId: str, quantity: int = 1):
-    """Add a product (productId) to the shopping cart for a user (userId)."""
+def add_to_cart(user_id: str, product_id: str, quantity: int = 1):
+    """Add a product (product_id) to the shopping cart for a user (user_id)."""
     url = f"http://{BASE_URL}/api/cart"
     data = {
         "item": {
-            "productId": productId,
+            "productId": product_id,
             "quantity": quantity,
         },
-        "userId": userId,
+        "userId": user_id,
     }
     try:
         res = requests.post(url, json=data)
@@ -40,20 +42,20 @@ def add_to_cart(userId: str, productId: str, quantity: int = 1):
         return f"Error while adding product to cart: {e}"
 
 
-def get_cart():
+def get_cart(user_id: str):
     """Retrieve the current contents of a user's cart."""
     url = f"http://{BASE_URL}/api/cart"
     try:
-        res = requests.get(url)
+        res = requests.get(url, params={"user_id": user_id})
         res.raise_for_status()
         return res.json()
     except Exception as e:
         return f"Error while fetching cart: {e}"
 
 
-def empty_cart(uuid: str):
+def empty_cart(user_id: str):
     """Empty the shopping cart for a user."""
-    url = f"http://{BASE_URL}/api/cart/empty/{uuid}"
+    url = f"http://{BASE_URL}/api/cart/empty/{user_id}"
     try:
         res = requests.get(url)
         res.raise_for_status()
@@ -85,7 +87,11 @@ def get_product(product_id: str):
 
 
 def checkout(checkout_person):
-    """Checkout the user's cart and create an order."""
+    """Checkout the user's cart and create an order.
+       Takes request in the format {string user_id, string userCurrency, Address address, string email, CreditCardInfo creditCard}
+       Where Address is {string streetAddress, string city, string state, string country, string zipCode} and 
+       CreditCardInfo is {string creditCardNumber, int32 creditCardCvv, int32 creditCardExpirationYear, int32 creditCardExpirationMonth}
+    """
     url = f"http://{BASE_URL}/api/checkout"
     try:
         res = requests.post(url, json=checkout_person)
@@ -106,21 +112,10 @@ def get_supported_currencies():
         return f"Error while fetching currency list: {e}"
 
 
-def convert_currency(from_currency: str, to_currency: str, amount: float):
-    """Convert between currencies."""
-    url = f"http://{BASE_URL}/api/currency/convert?from={from_currency}&to={to_currency}&amount={amount}"
-    try:
-        res = requests.get(url)
-        res.raise_for_status()
-        return res.json()
-    except Exception as e:
-        return f"Error converting currency: {e}"
-
-
-def get_recommendations(productId: str):
+def get_recommendations(product_id: str):
     """Get product recommendations for a user."""
     url = f"http://{BASE_URL}/api/recommendations"
-    params = {"productIds": productId}
+    params = {"productIds": product_id}
     try:
         res = requests.get(url, params=params)
         res.raise_for_status()
@@ -129,11 +124,16 @@ def get_recommendations(productId: str):
         return f"Error fetching recommendations: {e}"
 
 
-def get_shipping_quote(address_id: str):
-    """Get estimated shipping cost for a given address."""
-    url = f"http://{BASE_URL}/api/shipping/quote/{address_id}"
+def get_shipping_quote(items, currency_code, address):
+    """Get estimated shipping cost for a given address.
+    Items is {string product_id, int32  quantity}
+    CurrencyCode is currency identifier Eg: `USD`
+    Address is {string streetAddress, string city, string state, string country, string zipCode}
+    """
+    url = f"http://{BASE_URL}/api/shipping"
+    params = {"itemList": json.dumps(items), "currencyCode": currency_code, "address": json.dumps(address)}
     try:
-        res = requests.get(url)
+        res = requests.get(url, params)
         res.raise_for_status()
         return res.json()
     except Exception as e:

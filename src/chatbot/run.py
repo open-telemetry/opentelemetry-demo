@@ -16,7 +16,7 @@ load_dotenv()
 
 
 async def start_servers():
-    """Run both the LangGraph Agent and the MCP server concurrently."""
+    """Runs chatbot server"""
     tasks = []
 
     chat_ui_config = get_chat_ui_config()

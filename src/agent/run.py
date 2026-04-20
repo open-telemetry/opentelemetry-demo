@@ -23,7 +23,7 @@ Traceloop.init(
 
 
 async def start_servers():
-    """Run both the LangGraph Agent and the MCP server concurrently."""
+    """Run the LangGraph Agent server"""
     tasks = []
     agent = Agent()
     tasks.append(agent.launch())

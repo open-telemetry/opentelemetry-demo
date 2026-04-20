@@ -25,7 +25,6 @@ class AstronomyShopMcp:
         """Programmatically register static methods as MCP tools."""
         self.mcp.tool("add_to_cart")(tools.add_to_cart)
         self.mcp.tool("checkout")(tools.checkout)
-        self.mcp.tool("convert_currency")(tools.convert_currency)
         self.mcp.tool("empty_cart")(tools.empty_cart)
         self.mcp.tool("get_ads")(tools.get_ads)
         self.mcp.tool("get_cart")(tools.get_cart)

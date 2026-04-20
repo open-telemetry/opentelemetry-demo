@@ -14,11 +14,12 @@ class ChatLLM(ChatOpenAI):
     def __init__(self, **kwargs):
         model_name = os.getenv("LLM_MODEL", "default")
         use_vcr = os.getenv("USE_VCR", False) == "True"
+        llm_tls_verify = os.getenv("LLM_TLS_VERIFY", True) == "True"
         cassette_name = ""
         if use_vcr:
             cassette_name = f"{model_name.replace('/', '_')}_casette.yaml"
         if "http_async_client" not in kwargs:
-            kwargs["http_async_client"] = httpx.AsyncClient(verify=False)
+            kwargs["http_async_client"] = httpx.AsyncClient(verify=llm_tls_verify)
         kwargs.setdefault("openai_api_base", os.getenv("LLM_BASE_URL"))
         kwargs.setdefault("model", model_name)
         super().__init__(**kwargs)

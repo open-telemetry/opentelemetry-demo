@@ -23,7 +23,7 @@ Traceloop.init(
 
 
 async def start_servers():
-    """Run both the LangGraph Agent and the MCP server concurrently."""
+    """Runs the MCP server."""
     tasks = []
     mcp = AstronomyShopMcp()
     mcp_server_task = asyncio.to_thread(mcp.run)

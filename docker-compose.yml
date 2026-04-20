@@ -794,9 +794,9 @@ services:
     environment:
       - OTEL_EXPORTER_OTLP_ENDPOINT=${OTEL_COLLECTOR_HOST}:${OTEL_COLLECTOR_PORT_GRPC}
       - GRAPH_RECURSION_LIMIT
-      - MCP_ENDPOINT
-      - MCP_PORT
-      - MCP_ENABLED
+      - MCP_ENDPOINT=mcp
+      - MCP_PORT=8011
+      - MCP_ENABLED=True
       - AGENT_ENDPOINT
       - AGENT_PORT
       - LLM_BASE_URL
@@ -805,6 +805,8 @@ services:
       - OPENAI_API_KEY
       - APPLICATION_ENDPOINT=frontend:8080
       - OTEL_EXPORTER_OTLP_INSECURE=true
+      - OTEL_RESOURCE_ATTRIBUTES=${OTEL_RESOURCE_ATTRIBUTES},service.criticality=low
+      - OTEL_SERVICE_NAME=agent
     depends_on:
       jaeger:
         condition: service_started
@@ -836,12 +838,10 @@ services:
       - MCP_PORT
       - OTEL_EXPORTER_OTLP_INSECURE=true
       - APPLICATION_ENDPOINT=frontend:8080
+      - OTEL_RESOURCE_ATTRIBUTES=${OTEL_RESOURCE_ATTRIBUTES},service.criticality=low
+      - OTEL_SERVICE_NAME=mcp
     depends_on:
-      jaeger:
-        condition: service_started
-      otel-collector:
-        condition: service_started
-      product-catalog:
+      agent:
         condition: service_started
     logging: *logging
 
@@ -865,12 +865,10 @@ services:
       - AGENT_PORT
       - AGENT_ENDPOINT
       - CHATBOT_PORT
+      - OTEL_RESOURCE_ATTRIBUTES=${OTEL_RESOURCE_ATTRIBUTES},service.criticality=low
+      - OTEL_SERVICE_NAME=chatbot
     depends_on:
-      jaeger:
-        condition: service_started
-      otel-collector:
-        condition: service_started
-      product-catalog:
+      agent:
         condition: service_started
     logging: *logging
 

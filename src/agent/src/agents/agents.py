@@ -19,7 +19,6 @@ from src.agents.mcp_client import MCPClient
 from src.agents.tools import (
     add_to_cart,
     checkout,
-    convert_currency,
     empty_cart,
     get_ads,
     get_cart,
@@ -42,7 +41,7 @@ class Agent:
         self.app = FastAPI(lifespan=self.lifespan)
         self.app.post("/prompt")(self.handle_prompt)
         self.agentRecursionLimit = int(os.getenv("GRAPH_RECURSION_LIMIT", "25"))
-        self.mcp_server_url = f"http://{os.getenv('MCP_ENDPOINT', '127.0.0.1')}:{os.getenv('MCP_PORT', '8011')}/mcp"
+        self.mcp_server_url = f"http://{os.getenv('MCP_ENDPOINT', '0.0.0.0')}:{os.getenv('MCP_PORT', '8011')}/mcp"
 
         self.mcp_server = None
 
@@ -52,6 +51,7 @@ class Agent:
         if mcp_enabled:
             logging.info("MCP tools enabled")
             self.mcp_server = MCPClient()
+            await self.mcp_server.connect_to_mcp_server(self.mcp_server_url)
         yield
         if self.mcp_server:
             await self.mcp_server.cleanup()
@@ -62,7 +62,6 @@ class Agent:
     async def get_tool_list(self):
         mcp_enabled = os.getenv("MCP_ENABLED", "False") == "True"
         if mcp_enabled and self.mcp_server is not None:
-            await self.mcp_server.connect_to_mcp_server(self.mcp_server_url)
             return await load_mcp_tools(self.mcp_server.session)
         else:
             tool_list = [

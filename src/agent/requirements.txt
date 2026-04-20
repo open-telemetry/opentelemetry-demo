@@ -14,6 +14,5 @@ opentelemetry-api==1.38.0
 opentelemetry-sdk==1.38.0
 opentelemetry-semantic-conventions==0.59b0
 opentelemetry-instrumentation-langchain<0.53.0
-fastmcp==2.13.1
 gradio==6.0.1
 vcrpy==7.0.0
