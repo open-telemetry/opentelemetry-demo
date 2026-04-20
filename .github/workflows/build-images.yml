@@ -16,5 +16,5 @@ jobs:
     permissions:
       contents: read
       packages: write
-    if: github.repository == 'open-telemetry/opentelemetry-demo'
+    if: ${{ !github.event.repository.fork }}
     uses: ./.github/workflows/component-build-images.yml

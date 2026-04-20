@@ -61,7 +61,8 @@ keeping it up to date for you.
 
 |                           |                |                                  |
 |---------------------------|----------------|----------------------------------|
-| [AlibabaCloud LogService] | [Grafana Labs] | [Sentry]                         |
+| [AlibabaCloud LogService] | [Google Cloud] | [Parseable]                      |
+| [Amazon Web Services]     | [Grafana Labs] | [Sentry]                         |
 | [Apache Doris]            | [Guance]       | [ServiceNow Cloud Observability] |
 | [AppDynamics]             | [Honeycomb.io] | [SigNoz]                         |
 | [Aspecto]                 | [Instana]      | [SolarWinds Observability]       |
@@ -75,7 +76,6 @@ keeping it up to date for you.
 | [Datadog]                 | [OpenObserve]  | [Uptrace]                        |
 | [Dynatrace]               | [OpenSearch]   | [VictoriaMetrics]                |
 | [Elastic]                 | [Oracle]       |                                  |
-| [Google Cloud]            | [Parseable]    |                                  |
 
 ## Contributing
 
@@ -122,6 +122,7 @@ For more information about the emeritus role, see the [community repository](htt
 <!-- Links for Demos featuring the Astronomy Shop section -->
 
 [AlibabaCloud LogService]: https://github.com/aliyun-sls/opentelemetry-demo
+[Amazon Web Services]: https://github.com/aws-observability/observability-best-practices/blob/main/sandbox/otel-demo-thegame/README.md
 [AppDynamics]: https://community.splunk.com/t5/AppDynamics-Knowledge-Base/How-to-observe-Kubernetes-deployment-of-OpenTelemetry-demo-app/ta-p/741454
 [Apache Doris]: https://github.com/apache/doris-opentelemetry-demo
 [Aspecto]: https://github.com/aspecto-io/opentelemetry-demo

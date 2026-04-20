@@ -1,0 +1,16 @@
+# Copyright The OpenTelemetry Authors
+# SPDX-License-Identifier: Apache-2.0
+
+# Need this to avoid getting "bot denied"
+user_agent = "Mozilla/5.0 (compatible; lychee link checker)"
+
+exclude = [
+  "^http://localhost",
+  "^https://calendar\\.google\\.com/calendar",
+]
+
+exclude_path = [
+  "CHANGELOG\\.md",
+]
+
+accept = ["200", "429"]

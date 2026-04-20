@@ -1,0 +1,11 @@
+# Copyright The OpenTelemetry Authors
+# SPDX-License-Identifier: Apache-2.0
+
+file_format: definition/2
+attribute_groups:
+  - id: service.react_native_app
+    visibility: public
+    brief: React Native App attributes
+    stability: stable
+    attributes:
+      - ref: session.id

@@ -84,15 +84,15 @@ def send_email(data)
       Mail::TestMailer.deliveries.clear
     end
 
-    span.set_attribute("app.email.recipient", data.email)
+    span.set_attribute("app.order.id", data.order.order_id)
     $logger.on_emit(
       timestamp: Time.now,
       severity_text: 'INFO',
       body: 'Order confirmation email sent',
-      attributes: { 'app.email.recipient' => data.email },
+      attributes: { 'app.order.id' => data.order.order_id },
     )
 
-    puts "Order confirmation email sent to: #{data.email}"
+    puts "Order confirmation email sent for order #{data.order.order_id}"
   end
   # manually created spans need to be ended
   # in Ruby, the method `in_span` ends it automatically

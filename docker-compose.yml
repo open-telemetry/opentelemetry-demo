@@ -37,7 +37,7 @@ services:
       - OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE
       - OTEL_RESOURCE_ATTRIBUTES=${OTEL_RESOURCE_ATTRIBUTES},service.criticality=low
       - OTEL_SERVICE_NAME=accounting
-      - DB_CONNECTION_STRING=Host=${POSTGRES_HOST};Username=otelu;Password=otelp;Database=${POSTGRES_DB}
+      - DB_CONNECTION_STRING=Host=${POSTGRES_HOST};Username=astronomy_user;Password=${POSTGRES_ASTRONOMY_PASSWORD};Database=astronomy_db
       - OTEL_DOTNET_AUTO_TRACES_ENTITYFRAMEWORKCORE_INSTRUMENTATION_ENABLED=false
     depends_on:
       otel-collector:
@@ -73,8 +73,7 @@ services:
       - OTEL_RESOURCE_ATTRIBUTES=${OTEL_RESOURCE_ATTRIBUTES},service.criticality=medium
       - OTEL_LOGS_EXPORTER=otlp
       - OTEL_SERVICE_NAME=ad
-      # Workaround on OSX for https://bugs.openjdk.org/browse/JDK-8345296
-      - _JAVA_OPTIONS
+
     depends_on:
       otel-collector:
         condition: service_started
@@ -366,6 +365,8 @@ services:
       - FLAGD_PORT
       - FLAGD_UI_HOST
       - FLAGD_UI_PORT
+      - TELEMETRY_DOCS_HOST
+      - TELEMETRY_DOCS_PORT
     depends_on:
       frontend:
         condition: service_started
@@ -376,6 +377,8 @@ services:
       grafana:
         condition: service_started
       flagd-ui:
+        condition: service_started
+      telemetry-docs:
         condition: service_started
     dns_search: ""
 
@@ -504,13 +507,13 @@ services:
       - OTEL_SERVICE_NAME=product-catalog
       - OTEL_CONFIG_FILE=/otel-config.yml
       - OTEL_SEMCONV_STABILITY_OPT_IN=database
-      - DB_CONNECTION_STRING=postgres://otelu:otelp@${POSTGRES_HOST}/${POSTGRES_DB}?sslmode=disable
+      - DB_CONNECTION_STRING=postgres://astronomy_user:${POSTGRES_ASTRONOMY_PASSWORD}@${POSTGRES_HOST}/astronomy_db?sslmode=disable
     depends_on:
       otel-collector:
         condition: service_started
       flagd:
         condition: service_started
-      postgresql:
+      astronomy-db:
         condition: service_started
     volumes:
       - ./otel-config.yml:/otel-config.yml
@@ -541,7 +544,7 @@ services:
       - OTEL_SERVICE_NAME=product-reviews
       - OTEL_INSTRUMENTATION_GENAI_CAPTURE_MESSAGE_CONTENT=true
       - PROTOCOL_BUFFERS_PYTHON_IMPLEMENTATION=python
-      - DB_CONNECTION_STRING=host=${POSTGRES_HOST} user=otelu password=otelp dbname=${POSTGRES_DB}
+      - DB_CONNECTION_STRING=host=${POSTGRES_HOST} user=astronomy_user password=${POSTGRES_ASTRONOMY_PASSWORD} dbname=astronomy_db
       - LLM_BASE_URL
       - OPENAI_API_KEY
       - LLM_MODEL
@@ -555,7 +558,7 @@ services:
         condition: service_started
       llm:
         condition: service_started
-      postgresql:
+      astronomy-db:
         condition: service_started
       otel-collector:
         condition: service_started
@@ -739,8 +742,7 @@ services:
       - OTEL_RESOURCE_ATTRIBUTES=${OTEL_RESOURCE_ATTRIBUTES},service.criticality=low
       - OTEL_SERVICE_NAME=kafka
       - KAFKA_HEAP_OPTS=-Xmx400m -Xms400m
-      # Workaround on OSX for https://bugs.openjdk.org/browse/JDK-8345296
-      - _JAVA_OPTIONS
+
     healthcheck:
       test: nc -z kafka 9092
       start_period: 10s
@@ -874,8 +876,10 @@ services:
 
   # Postgresql used by Accounting service
   postgresql:
+  # PostgreSQL database for the astronomy demo
+  astronomy-db:
     image: ${POSTGRES_IMAGE}
-    container_name: postgresql
+    container_name: astronomy-db
     deploy:
       resources:
         limits:
@@ -883,10 +887,9 @@ services:
     restart: unless-stopped
     ports:
       - ${POSTGRES_PORT}
+    command: postgres -c shared_preload_libraries=pg_stat_statements
     environment:
-      - POSTGRES_USER=root
       - POSTGRES_PASSWORD
-      - POSTGRES_DB
     volumes:
       - ./src/postgresql/init.sql:/docker-entrypoint-initdb.d/init.sql
     logging: *logging
@@ -992,6 +995,7 @@ services:
       - POSTGRES_HOST
       - POSTGRES_PORT
       - POSTGRES_PASSWORD
+      - POSTGRES_MONITORING_PASSWORD
       - GOMEMLIMIT=160MiB
 
   # Prometheus
@@ -1019,8 +1023,32 @@ services:
       - "${PROMETHEUS_PORT}:${PROMETHEUS_PORT}"
     logging: *logging
 
+  # Telemetry Documentation
+  telemetry-docs:
+    image: ${IMAGE_NAME}:${DEMO_VERSION}-telemetry-docs
+    container_name: telemetry-docs
+    build:
+      context: ./
+      dockerfile: ${TELEMETRY_DOCS_DOCKERFILE}
+      cache_from:
+        - ${IMAGE_NAME}:${IMAGE_VERSION}-telemetry-docs
+    deploy:
+      resources:
+        limits:
+          memory: 100M
+    restart: unless-stopped
+    ports:
+      - "${TELEMETRY_DOCS_PORT}"
+    environment:
+      - TELEMETRY_DOCS_PORT
+      - OTEL_COLLECTOR_HOST
+      - OTEL_COLLECTOR_PORT_GRPC
+      - OTEL_SERVICE_NAME=telemetry-docs
+    logging: *logging
+
   # OpenSearch
   opensearch:
+    image: ${IMAGE_NAME}:${DEMO_VERSION}-opensearch
     container_name: opensearch
     build:
       context: ./
@@ -1042,8 +1070,7 @@ services:
       - OPENSEARCH_JAVA_OPTS=-Xms400m -Xmx400m
       - DISABLE_INSTALL_DEMO_CONFIG=true
       - DISABLE_SECURITY_PLUGIN=true
-      # Workaround on OSX for https://bugs.openjdk.org/browse/JDK-8345296
-      - _JAVA_OPTIONS
+
     ulimits:
       memlock:
         soft: -1

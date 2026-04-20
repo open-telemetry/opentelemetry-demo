@@ -1,0 +1,17 @@
+# Copyright The OpenTelemetry Authors
+# SPDX-License-Identifier: Apache-2.0
+
+file_format: definition/2
+attribute_groups:
+  - id: service.ad
+    visibility: public
+    brief: Ad service attributes
+    stability: stable
+    attributes:
+      - ref: app.ads.contextKeys
+      - ref: app.ads.contextKeys.count
+      - ref: app.ads.count
+      - ref: app.ads.ad_request_type
+      - ref: app.ads.ad_response_type
+      - ref: app.ads.category
+      - ref: session.id
