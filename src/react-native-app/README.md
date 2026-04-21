@@ -67,7 +67,7 @@ npm run start
 ```
 
 Then open XCode, open this as an existing project by opening
-`src/react-native-app/ios/react-native-app.xcworkspace` then trigger the build
+`src/react-native-app/ios/reactnativeapp.xcworkspace` then trigger the build
 by hitting the Play button or from the menu using Product->Run.
 
 #### iOS: Build and run from the command-line
@@ -96,7 +96,7 @@ Or directly from this folder using.
 docker build -f android.Dockerfile --platform=linux/amd64 --output=. .
 ```
 
-This will create a `react-native-app.apk` file in the directory where you ran
+This will create a `reactnativeapp.apk` file in the directory where you ran
 the command. If you have an Android emulator running on your machine then you
 can drag and drop this file onto the emulator's window in order to install it.
 

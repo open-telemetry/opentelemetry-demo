@@ -1,8 +1,3 @@
-<!--
-Copyright The OpenTelemetry Authors
-SPDX-License-Identifier: Apache-2.0
--->
-
 <resources>
   <color name="splashscreen_background">#ffffff</color>
   <color name="iconBackground">#ffffff</color>
