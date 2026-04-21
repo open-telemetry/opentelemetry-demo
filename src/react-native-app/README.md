@@ -47,13 +47,18 @@ npm run android
 
 #### iOS: Setup dependencies
 
-Before building for iOS you will need to setup the iOS dependency management
-using CocoaPods. This command only needs to be run the first time before
-building the app for iOS.
+The `ios/` folder is not committed to the repo — it is generated from `app.json`
+by [Expo's continuous native generation](https://docs.expo.dev/workflow/continuous-native-generation/).
+Generate it, then install the CocoaPods dependencies:
 
 ```bash
+npx expo prebuild --platform ios
 cd ios && pod install && cd ..
 ```
+
+The `expo run:ios` and `expo run:android` scripts under `npm run ios` /
+`npm run android` run prebuild automatically, so you only need these commands
+for the manual XCode workflow below.
 
 #### iOS: Build and run with XCode
 
