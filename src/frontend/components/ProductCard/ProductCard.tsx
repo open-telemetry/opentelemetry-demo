@@ -33,6 +33,7 @@ const ProductCard = ({
   const [imageSrc, setImageSrc] = useState<string>('');
 
   useEffect(() => {
+    if (!picture) return;
     const headers = new Headers();
     headers.append('x-envoy-fault-delay-request', imageSlowLoad.toString());
     headers.append('Cache-Control', 'no-cache')
