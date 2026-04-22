@@ -57,7 +57,7 @@ const ProductCard = ({
         setImageSrc(objectUrl);
       })
       .catch(err => {
-        if (err.name !== 'AbortError') {
+        if (!cancelled && err.name !== 'AbortError') {
           setImageSrc('');
         }
       });
