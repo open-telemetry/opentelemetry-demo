@@ -35,7 +35,7 @@ cd src/react-native-app
 npm install
 ```
 
-#### Android: Build and run app
+#### Android: Build and run from the command-line
 
 To run on Android, the following command will compile the Android app and deploy
 it to a running Android simulator or connected device. It will also start a
@@ -45,20 +45,15 @@ a server to provide the JS Bundle required by the app.
 npm run android
 ```
 
-#### iOS: Setup dependencies
+#### iOS: Build and run from the command-line
 
-The `ios/` folder is not committed to the repo — it is generated from `app.json`
-by [Expo's continuous native generation](https://docs.expo.dev/workflow/continuous-native-generation/).
-Generate it, then install the CocoaPods dependencies:
+You can build and run the app using the command line with the following
+command. This will compile the iOS app and deploy it to a running iOS simulator
+and start a server to provide the JS Bundle.
 
 ```bash
-npx expo prebuild --platform ios
-cd ios && pod install && cd ..
+npm run ios
 ```
-
-The `expo run:ios` and `expo run:android` scripts under `npm run ios` /
-`npm run android` run prebuild automatically, so you only need these commands
-for the manual XCode workflow below.
 
 #### iOS: Build and run with XCode
 
@@ -71,19 +66,22 @@ that directly through XCode in the next step).
 npm run start
 ```
 
+The `ios/` folder is not committed to the repo — it is generated from `app.json`
+by [Expo's continuous native generation](https://docs.expo.dev/workflow/continuous-native-generation/).
+Generate it, then install the CocoaPods dependencies:
+
+```bash
+npx expo prebuild --platform ios
+cd ios && pod install && cd ..
+```
+
+The `expo run:ios` and `expo run:android` scripts under `npm run ios` /
+`npm run android` run prebuild automatically, so you only need these commands
+for this manual XCode workflow.
+
 Then open XCode, open this as an existing project by opening
 `src/react-native-app/ios/reactnativeapp.xcworkspace` then trigger the build
 by hitting the Play button or from the menu using Product->Run.
-
-#### iOS: Build and run from the command-line
-
-You can build and run the app using the command line with the following
-command. This will compile the iOS app and deploy it to a running iOS simulator
-and start a server to provide the JS Bundle.
-
-```bash
-npm run ios
-```
 
 ### Build within a container
 
