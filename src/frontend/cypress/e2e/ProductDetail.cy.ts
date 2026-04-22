@@ -39,7 +39,7 @@ describe('Product Detail Page', () => {
   it('should not render product picture or request undefined image when picture is missing', () => {
     cy.intercept('GET', '/api/products/*', req => {
       req.continue(res => {
-        res.body.picture = '';
+        delete res.body.picture;
       });
     }).as('getProduct');
 

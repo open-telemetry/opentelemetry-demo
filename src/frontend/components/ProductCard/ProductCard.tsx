@@ -44,17 +44,23 @@ const ProductCard = ({
     headers.append('x-envoy-fault-delay-request', imageSlowLoad.toString());
     headers.append('Cache-Control', 'no-cache');
     const requestInit = {
-      method: "GET",
+      method: 'GET',
       headers: headers,
       signal: controller.signal,
     };
-    const image_url = '/images/products/' + picture;
-    const requestInfo = new Request(image_url, requestInit);
-    getImageWithHeaders(requestInfo).then(blob => {
-      if (cancelled) return;
-      objectUrl = URL.createObjectURL(blob);
-      setImageSrc(objectUrl);
-    }).catch(() => {});
+    const imageUrl = '/images/products/' + picture;
+    const requestInfo = new Request(imageUrl, requestInit);
+    getImageWithHeaders(requestInfo)
+      .then(blob => {
+        if (cancelled) return;
+        objectUrl = URL.createObjectURL(blob);
+        setImageSrc(objectUrl);
+      })
+      .catch(err => {
+        if (err.name !== 'AbortError') {
+          setImageSrc('');
+        }
+      });
     return () => {
       cancelled = true;
       controller.abort();
