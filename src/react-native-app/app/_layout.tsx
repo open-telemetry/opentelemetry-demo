@@ -45,10 +45,6 @@ export default function RootLayout() {
     <ThemeProvider value={colorScheme === "dark" ? DarkTheme : DefaultTheme}>
       <QueryClientProvider client={queryClient}>
         <CartProvider>
-          {/*
-            TODO Once https://github.com/open-telemetry/opentelemetry-js-contrib/pull/2359 is available it can
-            be used here to provide telemetry for navigation between tabs
-            */}
           <Stack>
             <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
           </Stack>
