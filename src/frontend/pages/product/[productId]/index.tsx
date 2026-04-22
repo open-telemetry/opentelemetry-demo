@@ -73,11 +73,13 @@ const ProductDetail: NextPage = () => {
       <Layout>
         <S.ProductDetail data-cy={CypressFields.ProductDetail}>
           <S.Container>
-            {picture && (
+            {picture ? (
               <S.Image
                 $src={`/images/products/${picture}`}
                 data-cy={CypressFields.ProductPicture}
               />
+            ) : (
+              <div aria-hidden="true" />
             )}
             <S.Details>
               <S.Name data-cy={CypressFields.ProductName}>{name}</S.Name>

@@ -37,18 +37,29 @@ const ProductCard = ({
       setImageSrc('');
       return;
     }
+    const controller = new AbortController();
+    let objectUrl: string | null = null;
+    let cancelled = false;
     const headers = new Headers();
     headers.append('x-envoy-fault-delay-request', imageSlowLoad.toString());
-    headers.append('Cache-Control', 'no-cache')
+    headers.append('Cache-Control', 'no-cache');
     const requestInit = {
       method: "GET",
-      headers: headers
+      headers: headers,
+      signal: controller.signal,
     };
-    const image_url ='/images/products/' + picture
+    const image_url = '/images/products/' + picture;
     const requestInfo = new Request(image_url, requestInit);
     getImageWithHeaders(requestInfo).then(blob => {
-      setImageSrc(URL.createObjectURL(blob));
-    });
+      if (cancelled) return;
+      objectUrl = URL.createObjectURL(blob);
+      setImageSrc(objectUrl);
+    }).catch(() => {});
+    return () => {
+      cancelled = true;
+      controller.abort();
+      if (objectUrl) URL.revokeObjectURL(objectUrl);
+    };
   }, [imageSlowLoad, picture]);
 
   return (
