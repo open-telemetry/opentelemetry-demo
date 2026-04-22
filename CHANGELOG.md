@@ -55,6 +55,9 @@ the release.
   ([#3236](https://github.com/open-telemetry/opentelemetry-demo/pull/3236))
 * [cart] Swap the deprecated `OpenFeature.Contrib.Providers.Flagd` package
   provider with the new `OpenFeature.Providers.Flagd` package. ([#3247](https://github.com/open-telemetry/opentelemetry-demo/pull/3247))
+* [grafana] Bump Grafana image to 13.0.1 and provision the
+  `grafana-default-email` contact point explicitly, since Grafana no longer
+  auto-seeds it (removed in 12.4+)
 
 ## 2.2.0
 
