@@ -10,6 +10,14 @@ the release.
 * [docker] Podman doesn't support the tag feature of docker logs,
   for the otel-demo to support podman we need to remove the tag from docker logs.
   [#3304](https://github.com/open-telemetry/opentelemetry-demo/pull/3304)
+* [payment] Fix `charge` span lifecycle and exception attribution: wrap charge
+  logic in `try/catch/finally` to ensure the span is always ended, record
+  exceptions on the `charge` span where they originate, and remove duplicate
+  `recordException` from the gRPC handler
+  ([#3276](https://github.com/open-telemetry/opentelemetry-demo/pull/3276))
+* [recommendation] Fix `recommendationCacheFailure` feature flag by
+  using `ListProducts` instead of `GetProduct`
+  ([#3260](https://github.com/open-telemetry/opentelemetry-demo/pull/3260))
 * [telemetry-docs] Add a new service to provide telemetry documentation based
   on Weaver
   ([#2794](https://github.com/open-telemetry/opentelemetry-demo/pull/2794))
