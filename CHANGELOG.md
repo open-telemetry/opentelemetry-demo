@@ -69,7 +69,7 @@ the release.
 * [grafana] Bump Grafana image to 13.0.1 and provision the
   `grafana-default-email` contact point explicitly, since Grafana no longer
   auto-seeds it (removed in 12.4+)
-  
+
 ## 2.2.0
 
 * [feat] add ipv6 support
