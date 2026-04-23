@@ -7,6 +7,9 @@ the release.
 
 ## Unreleased
 
+* [docker] Podman doesn't support the tag feature of docker logs,
+  for the otel-demo to support podman we need to remove the tag from docker logs.
+  [#3304](https://github.com/open-telemetry/opentelemetry-demo/pull/3304)
 * [telemetry-docs] Add a new service to provide telemetry documentation based
   on Weaver
   ([#2794](https://github.com/open-telemetry/opentelemetry-demo/pull/2794))
