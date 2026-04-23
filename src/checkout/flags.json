@@ -1,0 +1,16 @@
+{
+  "$schema": "https://raw.githubusercontent.com/open-feature/cli/refs/heads/main/schema/v0/flag-manifest.json",
+  "flags": {
+    "kafkaQueueProblems": {
+      "defaultValue": 0,
+      "description": "simulates kafka queue problems",
+      "flagType": "integer"
+    },
+    "paymentUnreachable": {
+      "defaultValue": false,
+      "description": "simulates payment unreachable issue",
+      "flagType": "boolean"
+    }
+  }
+}
+
