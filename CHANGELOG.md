@@ -7,12 +7,6 @@ the release.
 
 ## Unreleased
 
-* [docker] Refactor Docker Compose to use layered `-f` files with `start`,
-  `start-minimal`, `start-no-o11y`, and `start-minimal-no-o11y` make targets
-  ([#3229](https://github.com/open-telemetry/opentelemetry-demo/pull/3229))
-* [recommendation] Fix `recommendationCacheFailure` feature flag by
-  using `ListProducts` instead of `GetProduct`
-  ([#3260](https://github.com/open-telemetry/opentelemetry-demo/pull/3260))
 * [telemetry-docs] Add a new service to provide telemetry documentation based
   on Weaver
   ([#2794](https://github.com/open-telemetry/opentelemetry-demo/pull/2794))
@@ -54,10 +48,19 @@ the release.
 * [load-generator] Wait for Roof Binoculars image to load in web tasks, and fix
   task failures due to missing `tracer` attribute
   ([#3171](https://github.com/open-telemetry/opentelemetry-demo/pull/3171))
+* [docker] Refactor Docker Compose to use layered `-f` files with `start`,
+  `start-minimal`, `start-no-o11y`, and `start-minimal-no-o11y` make targets
+  ([#3229](https://github.com/open-telemetry/opentelemetry-demo/pull/3229))
 * [kubernetes] Removed generated Kubernetes manifests in favor of docs
   ([#3236](https://github.com/open-telemetry/opentelemetry-demo/pull/3236))
 * [cart] Swap the deprecated `OpenFeature.Contrib.Providers.Flagd` package
-  provider with the new `OpenFeature.Providers.Flagd` package. ([#3247](https://github.com/open-telemetry/opentelemetry-demo/pull/3247))
+  provider with the new `OpenFeature.Providers.Flagd` package.
+  ([#3247](https://github.com/open-telemetry/opentelemetry-demo/pull/3247))
+* [recommendation] Fix `recommendationCacheFailure` feature flag by
+  using `ListProducts` instead of `GetProduct`
+  ([#3260](https://github.com/open-telemetry/opentelemetry-demo/pull/3260))
+* [frontend] fix: handle undefined product images across multiple components
+  ([#3291](https://github.com/open-telemetry/opentelemetry-demo/pull/3291))
 
 ## 2.2.0
 

@@ -19,7 +19,7 @@ const CartItem = ({
     <S.CartItem>
       <Link href={`/product/${id}`}>
         <S.NameContainer>
-          <S.CartItemImage alt={name} src={"/images/products/" + picture} />
+          <S.CartItemImage alt={name} src={picture ? "/images/products/" + picture : undefined} />
           <p>{name}</p>
         </S.NameContainer>
       </Link>
