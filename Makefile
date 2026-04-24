@@ -12,7 +12,19 @@ MISSPELL = $(TOOLS_DIR)/$(MISSPELL_BINARY)
 ADDLICENSE_BINARY=bin/addlicense
 ADDLICENSE = $(TOOLS_DIR)/$(ADDLICENSE_BINARY)
 
-DOCKER_COMPOSE_CMD ?= docker compose
+# Autodetect container runtime: prefer podman if available
+ifeq ($(shell command -v podman 2>/dev/null),)
+	DOCKER_CMD ?= docker
+	DOCKER_COMPOSE_CMD ?= docker compose
+else
+	DOCKER_CMD ?= podman
+	DOCKER_COMPOSE_CMD ?= podman compose
+	# Set podman socket path for Linux only; macOS/Windows handle it differently
+	ifdef XDG_RUNTIME_DIR
+		DOCKER_SOCK ?= $(XDG_RUNTIME_DIR)/podman/podman.sock
+		export DOCKER_SOCK
+	endif
+endif
 DOCKER_COMPOSE_ENV=--env-file .env --env-file .env.override
 
 # see https://github.com/open-telemetry/build-tools/releases for semconvgen updates
@@ -142,7 +154,7 @@ build-multiplatform-and-push:
 
 .PHONY: clean-images
 clean-images:
-	@docker rmi $(shell docker images --filter=reference="ghcr.io/open-telemetry/demo:latest-*" -q); \
+	$(DOCKER_CMD) rmi $(shell $(DOCKER_CMD) images --filter=reference="ghcr.io/open-telemetry/demo:latest-*" -q); \
     if [ $$? -ne 0 ]; \
     then \
     	echo; \
@@ -253,4 +265,4 @@ endif
 
 .PHONY: build-react-native-android
 build-react-native-android:
-	docker build -f src/react-native-app/android.Dockerfile --platform=linux/amd64 --output=. src/react-native-app
+	$(DOCKER_CMD) build -f src/react-native-app/android.Dockerfile --platform=linux/amd64 --output=. src/react-native-app
