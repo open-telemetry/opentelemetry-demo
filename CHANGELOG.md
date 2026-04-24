@@ -7,6 +7,9 @@ the release.
 
 ## Unreleased
 
+* [podman] Add podman support to run the demo. The makefile has been updated
+  to detect what container runtime is installed.
+  [#3307](https://github.com/open-telemetry/opentelemetry-demo/pull/3307)
 * [docker] Podman doesn't support the tag feature of docker logs,
   for the otel-demo to support podman we need to remove the tag from docker logs.
   [#3304](https://github.com/open-telemetry/opentelemetry-demo/pull/3304)

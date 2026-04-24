@@ -12,7 +12,7 @@ MISSPELL = $(TOOLS_DIR)/$(MISSPELL_BINARY)
 ADDLICENSE_BINARY=bin/addlicense
 ADDLICENSE = $(TOOLS_DIR)/$(ADDLICENSE_BINARY)
 
-# Autodetect container runtime: prefer podman if available
+# Autodetect container runtime
 ifeq ($(shell command -v podman 2>/dev/null),)
 	DOCKER_CMD ?= docker
 	DOCKER_COMPOSE_CMD ?= docker compose
