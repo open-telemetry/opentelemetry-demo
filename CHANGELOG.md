@@ -69,6 +69,9 @@ the release.
   ([#3260](https://github.com/open-telemetry/opentelemetry-demo/pull/3260))
 * [frontend] fix: handle undefined product images across multiple components
   ([#3291](https://github.com/open-telemetry/opentelemetry-demo/pull/3291))
+* [grafana] Bump Grafana image to 13.0.1 and provision the
+  `grafana-default-email` contact point explicitly, since Grafana no longer
+  auto-seeds it (removed in 12.4+)
 
 ## 2.2.0
 
