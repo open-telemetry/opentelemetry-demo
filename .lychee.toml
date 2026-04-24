@@ -7,7 +7,7 @@ user_agent = "Mozilla/5.0 (compatible; lychee link checker)"
 max_retries = 3
 retry_wait_time = 10
 timeout = 30
-max_concurrency = 16
+max_concurrency = 1
 
 exclude = [
   "^http://localhost",
