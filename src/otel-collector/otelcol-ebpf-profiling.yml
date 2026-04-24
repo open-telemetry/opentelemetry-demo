@@ -1,0 +1,18 @@
+receivers:
+  profiling:
+
+processors:
+  resourcedetection:
+    detectors: [docker]
+
+exporters:
+  otlphttp/pyroscope:
+    endpoint: http://pyroscope:4040
+
+service:
+  pipelines:
+    profiles:
+      receivers: [profiling]
+      processors: [resourcedetection]
+      exporters: [otlphttp/pyroscope]
+
