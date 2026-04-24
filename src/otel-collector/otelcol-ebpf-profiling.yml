@@ -15,4 +15,3 @@ service:
       receivers: [profiling]
       processors: [resourcedetection]
       exporters: [otlphttp/pyroscope]
-

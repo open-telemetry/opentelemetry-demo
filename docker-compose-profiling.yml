@@ -1,30 +1,30 @@
 services:
-    otel-ebpf-profiler:
-      image: otel/opentelemetry-collector-ebpf-profiler:0.147.0
-      container_name: otel-ebpf-profiler
-      command:
-        - --config=/etc/ebpf-profiler-config.yaml
-        - --feature-gates=service.profilesSupport
-      privileged: true
-      pid: "host"
-      volumes:
-        - /var/run/docker.sock:/var/run/docker.sock:ro
-        - ./src/otel-collector/otelcol-ebpf-profiling.yml:/etc/ebpf-profiler-config.yaml:ro
-        - /sys/kernel/debug:/sys/kernel/debug
-        - /sys/kernel/tracing:/sys/kernel/tracing
-        - /sys/fs/cgroup:/sys/fs/cgroup:ro
-        - /proc:/proc:ro
-      depends_on:
-        - pyroscope
-    pyroscope:
-      image: grafana/pyroscope:1.18.1
-      container_name: pyroscope
-      command:
-        - -config.file=/etc/pyroscope.yaml
-      volumes:
-        - ./src/pyroscope/config.yaml:/etc/pyroscope.yaml:ro
-      ports:
-        - "${PYROSCOPE_PORT:-4040}:4040"
-    grafana:
-      environment:
-        - "GF_INSTALL_PLUGINS=grafana-opensearch-datasource,grafana-pyroscope-app"
+  otel-ebpf-profiler:
+    image: otel/opentelemetry-collector-ebpf-profiler:0.147.0
+    container_name: otel-ebpf-profiler
+    command:
+      - --config=/etc/ebpf-profiler-config.yaml
+      - --feature-gates=service.profilesSupport
+    privileged: true
+    pid: "host"
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+      - ./src/otel-collector/otelcol-ebpf-profiling.yml:/etc/ebpf-profiler-config.yaml:ro
+      - /sys/kernel/debug:/sys/kernel/debug
+      - /sys/kernel/tracing:/sys/kernel/tracing
+      - /sys/fs/cgroup:/sys/fs/cgroup:ro
+      - /proc:/proc:ro
+    depends_on:
+      - pyroscope
+  pyroscope:
+    image: grafana/pyroscope:1.18.1
+    container_name: pyroscope
+    command:
+      - -config.file=/etc/pyroscope.yaml
+    volumes:
+      - ./src/pyroscope/config.yaml:/etc/pyroscope.yaml:ro
+    ports:
+      - "${PYROSCOPE_PORT:-4040}:4040"
+  grafana:
+    environment:
+      - "GF_INSTALL_PLUGINS=grafana-opensearch-datasource,grafana-pyroscope-app"
