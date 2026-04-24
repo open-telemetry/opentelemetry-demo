@@ -7,6 +7,9 @@ the release.
 
 ## Unreleased
 
+* [docker] Podman doesn't support the tag feature of docker logs,
+  for the otel-demo to support podman we need to remove the tag from docker logs.
+  [#3304](https://github.com/open-telemetry/opentelemetry-demo/pull/3304)
 * [payment] Fix `charge` span lifecycle and exception attribution: wrap charge
   logic in `try/catch/finally` to ensure the span is always ended, record
   exceptions on the `charge` span where they originate, and remove duplicate
