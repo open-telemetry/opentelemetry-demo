@@ -19,9 +19,19 @@ const SessionGateway = () => ({
     if (typeof window === 'undefined') return defaultSession;
     const sessionString = localStorage.getItem(sessionKey);
 
-    if (!sessionString) localStorage.setItem(sessionKey, JSON.stringify(defaultSession));
-
-    return JSON.parse(sessionString || JSON.stringify(defaultSession)) as ISession;
+    let session: ISession | null = null;
+    if (sessionString) {
+      try {
+        session = JSON.parse(sessionString);
+      } catch {
+        session = null;
+      }
+    }
+    if (!session || !isValid(session)) {
+      session = { ...defaultSession };
+      localStorage.setItem(sessionKey, JSON.stringify(session));
+    }
+    return session;
   },
   setSessionValue<K extends keyof ISession>(key: K, value: ISession[K]) {
     const session = this.getSession();
@@ -29,5 +39,14 @@ const SessionGateway = () => ({
     localStorage.setItem(sessionKey, JSON.stringify({ ...session, [key]: value }));
   },
 });
+
+const isValid = (session: any): boolean => {
+  return (
+    typeof session === 'object' &&
+    session !== null &&
+    typeof (session as ISession).userId === 'string' &&
+    typeof (session as ISession).currencyCode === 'string'
+  );
+};
 
 export default SessionGateway();
