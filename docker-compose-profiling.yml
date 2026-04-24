@@ -1,3 +1,6 @@
+# Copyright The OpenTelemetry Authors
+# SPDX-License-Identifier: Apache-2.0
+
 services:
   otel-ebpf-profiler:
     image: otel/opentelemetry-collector-ebpf-profiler:0.147.0
