@@ -8,4 +8,4 @@ python-dotenv==1.2.2
 python-json-logger==4.1.0
 psycopg2-binary==2.9.12
 openai==2.32.0
-simplejson==4.0.1
+simplejson==4.1.0
