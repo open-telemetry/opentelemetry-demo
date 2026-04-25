@@ -4,6 +4,8 @@
 use actix_web::{post, web, HttpResponse, Responder};
 use tracing::info;
 
+mod feature_flag;
+
 mod quote;
 use quote::create_quote_from_count;
 
@@ -14,6 +16,7 @@ mod shipping_types;
 pub use shipping_types::*;
 
 const NANOS_MULTIPLE: u32 = 10000000u32;
+const SLOWDOWN_SECS: u64 = 10;
 
 #[post("/get-quote")]
 pub async fn get_quote(req: web::Json<GetQuoteRequest>) -> impl Responder {
@@ -45,7 +48,21 @@ pub async fn get_quote(req: web::Json<GetQuoteRequest>) -> impl Responder {
 }
 
 #[post("/ship-order")]
-pub async fn ship_order(_req: web::Json<ShipOrderRequest>) -> impl Responder {
+pub async fn ship_order(req: web::Json<ShipOrderRequest>) -> impl Responder {
+    let is_outside_us = req
+        .address
+        .as_ref()
+        .map(|addr| addr.country.to_uppercase() != "US")
+        .unwrap_or(false);
+
+    if is_outside_us && feature_flag::is_feature_flag_enabled("shippingSlowdown").await {
+        info!(
+            name = "ShippingSlowdown",
+            message = "Delaying international shipment due to shippingSlowdown feature flag"
+        );
+        actix_web::rt::time::sleep(std::time::Duration::from_secs(SLOWDOWN_SECS)).await;
+    }
+
     let tid = create_tracking_id();
     info!(
         name = "CreatingTrackingId",
