@@ -66,7 +66,7 @@ that directly through XCode in the next step).
 npm run start
 ```
 
-The `ios/` folder is not committed to the repo — it is generated from `app.json`
+The `ios/` folder is not committed to the repo it is generated from `app.json`
 by [Expo's continuous native generation](https://docs.expo.dev/workflow/continuous-native-generation/).
 Generate it, then install the CocoaPods dependencies:
 
@@ -80,7 +80,7 @@ The `expo run:ios` and `expo run:android` scripts under `npm run ios` /
 for this manual XCode workflow.
 
 Then open XCode, open this as an existing project by opening
-`src/react-native-app/ios/reactnativeapp.xcworkspace` then trigger the build
+`src/react-native-app/ios/AstronomyShopApp.xcworkspace` then trigger the build
 by hitting the Play button or from the menu using Product->Run.
 
 ### Build within a container
@@ -126,21 +126,6 @@ related to the start of the app).
 cd src/react-native-app/android
 ./gradlew --stop  // stop daemons
 rm -rf ~/.gradle/caches/
-```
-
-### iOS: pod install issues
-
-Note that the above is the quickest way to get going but you may end up with
-slightly different versions of the Pods than what has been committed to this
-repository, in order to install the precise versions first setup
-[rbenv](https://github.com/rbenv/rbenv#installation) followed by the following
-commands.
-
-```bash
-rbenv install 2.7.6 # the version of ruby we've pinned for this app
-bundle install
-cd ios
-bundle exec pod install
 ```
 
 ### iOS: build app issues

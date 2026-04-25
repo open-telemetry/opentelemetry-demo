@@ -7,6 +7,8 @@ the release.
 
 ## Unreleased
 
+* [react-native-app] Update to Expo 55.0.16
+  ([#3296](https://github.com/open-telemetry/opentelemetry-demo/pull/3296))
 * [recommendation] Fix `recommendationCacheFailure` feature flag by
   using `ListProducts` instead of `GetProduct`
   ([#3260](https://github.com/open-telemetry/opentelemetry-demo/pull/3260))
