@@ -1,18 +1,16 @@
-# Copyright The OpenTelemetry Authors
-# SPDX-License-Identifier: Apache-2.0
+exporters:
+  otlp_grpc/mybackend:
+    endpoint: http://host.docker.internal:4317
+    headers:
+      x-api-key: "85ec9b0cd77c764562eac862f233b2337db624c32509f575bceb51ba827285ed"
+    tls:
+      insecure: true
 
-# extra settings to be merged into OpenTelemetry Collector configuration
-# do not delete this file
-
-## Example configuration for sending data to your own OTLP HTTP backend
-## Note: the spanmetrics exporter must be included in the exporters array
-## if overriding the traces pipeline.
-##
-#  exporters:
-#    otlp_http/example:
-#      endpoint: <your-endpoint-url>
-#
-#  service:
-#    pipelines:
-#      traces:
-#        exporters: [spanmetrics, otlp_http/example]
+service:
+  pipelines:
+    traces:
+      exporters: [spanmetrics, otlp_grpc/mybackend]
+    metrics:
+      exporters: [otlp_grpc/mybackend]
+    logs:
+      exporters: [otlp_grpc/mybackend]
