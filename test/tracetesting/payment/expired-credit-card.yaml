@@ -35,3 +35,8 @@ spec:
     selector: span[tracetest.span.type="general" name="Tracetest trigger"]
     assertions:
     - attr:tracetest.response.status = 2
+  - name: It recorded an ERROR status on the charge span
+    selector: span[tracetest.span.type="general" name="charge"]
+    assertions:
+    - attr:tracetest.span.status_description = "The credit card (ending 0454) expired on 1/2021."
+    - attr:tracetest.span.status_code = "STATUS_CODE_ERROR"

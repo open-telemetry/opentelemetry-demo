@@ -33,18 +33,39 @@ const ProductCard = ({
   const [imageSrc, setImageSrc] = useState<string>('');
 
   useEffect(() => {
+    if (!picture) {
+      setImageSrc('');
+      return;
+    }
+    const controller = new AbortController();
+    let objectUrl: string | null = null;
+    let cancelled = false;
     const headers = new Headers();
     headers.append('x-envoy-fault-delay-request', imageSlowLoad.toString());
-    headers.append('Cache-Control', 'no-cache')
+    headers.append('Cache-Control', 'no-cache');
     const requestInit = {
-      method: "GET",
-      headers: headers
+      method: 'GET',
+      headers: headers,
+      signal: controller.signal,
     };
-    const image_url ='/images/products/' + picture
-    const requestInfo = new Request(image_url, requestInit);
-    getImageWithHeaders(requestInfo).then(blob => {
-      setImageSrc(URL.createObjectURL(blob));
-    });
+    const imageUrl = '/images/products/' + picture;
+    const requestInfo = new Request(imageUrl, requestInit);
+    getImageWithHeaders(requestInfo)
+      .then(blob => {
+        if (cancelled) return;
+        objectUrl = URL.createObjectURL(blob);
+        setImageSrc(objectUrl);
+      })
+      .catch(err => {
+        if (!cancelled && err.name !== 'AbortError') {
+          setImageSrc('');
+        }
+      });
+    return () => {
+      cancelled = true;
+      controller.abort();
+      if (objectUrl) URL.revokeObjectURL(objectUrl);
+    };
   }, [imageSlowLoad, picture]);
 
   return (

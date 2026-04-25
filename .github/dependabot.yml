@@ -23,7 +23,7 @@ updates:
     directories:
       - "/src/**/*"
     exclude-paths:
-      - "/src/react-native-app/**"
+      - "src/react-native-app/**"
     groups:
       gradle-production-dependencies:
         dependency-type: "production"
