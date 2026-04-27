@@ -19,11 +19,8 @@ ifeq ($(shell command -v podman 2>/dev/null),)
 else
 	DOCKER_CMD ?= podman
 	DOCKER_COMPOSE_CMD ?= podman compose
-	# Set podman socket path for Linux only; macOS/Windows handle it differently
-	ifdef XDG_RUNTIME_DIR
-		DOCKER_SOCK ?= $(XDG_RUNTIME_DIR)/podman/podman.sock
-		export DOCKER_SOCK
-	endif
+	DOCKER_SOCK ?= $(shell podman info --format '{{.Host.RemoteSocket.Path}}' 2>/dev/null)
+	export DOCKER_SOCK
 endif
 DOCKER_COMPOSE_ENV=--env-file .env --env-file .env.override
 
