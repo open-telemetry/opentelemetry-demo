@@ -2,6 +2,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 use actix_web::{post, web, HttpResponse, Responder};
+use std::{future::Future, pin::Pin, sync::Arc};
 use tracing::info;
 
 mod feature_flag;
@@ -15,8 +16,17 @@ use tracking::create_tracking_id;
 mod shipping_types;
 pub use shipping_types::*;
 
+pub type FlagChecker =
+    Arc<dyn Fn(String) -> Pin<Box<dyn Future<Output = bool>>> + Send + Sync>;
+
+pub fn default_flag_checker() -> FlagChecker {
+    Arc::new(|flag: String| {
+        Box::pin(async move { feature_flag::is_feature_flag_enabled(&flag).await })
+    })
+}
+
 const NANOS_MULTIPLE: u32 = 10000000u32;
-const SLOWDOWN_SECS: u64 = 10;
+pub const DEFAULT_SLOWDOWN: std::time::Duration = std::time::Duration::from_secs(10);
 
 #[post("/get-quote")]
 pub async fn get_quote(req: web::Json<GetQuoteRequest>) -> impl Responder {
@@ -48,19 +58,23 @@ pub async fn get_quote(req: web::Json<GetQuoteRequest>) -> impl Responder {
 }
 
 #[post("/ship-order")]
-pub async fn ship_order(req: web::Json<ShipOrderRequest>) -> impl Responder {
+pub async fn ship_order(
+    req: web::Json<ShipOrderRequest>,
+    flag_checker: web::Data<FlagChecker>,
+    slowdown: web::Data<std::time::Duration>,
+) -> impl Responder {
     let is_outside_us = req
         .address
         .as_ref()
         .map(|addr| addr.country.to_uppercase() != "US")
         .unwrap_or(false);
 
-    if is_outside_us && feature_flag::is_feature_flag_enabled("shippingSlowdown").await {
+    if is_outside_us && flag_checker("shippingSlowdown".to_string()).await {
         info!(
             name = "ShippingSlowdown",
             message = "Delaying international shipment due to shippingSlowdown feature flag"
         );
-        actix_web::rt::time::sleep(std::time::Duration::from_secs(SLOWDOWN_SECS)).await;
+        actix_web::rt::time::sleep(**slowdown).await;
     }
 
     let tid = create_tracking_id();
@@ -78,21 +92,81 @@ mod tests {
 
     use super::*;
 
-    #[actix_web::test]
-    async fn test_ship_order() {
-        let app = test::init_service(App::new().service(ship_order)).await;
+    fn mock_checker(enabled: bool) -> web::Data<FlagChecker> {
+        let checker: FlagChecker = if enabled {
+            Arc::new(|_| Box::pin(async { true }))
+        } else {
+            Arc::new(|_| Box::pin(async { false }))
+        };
+        web::Data::new(checker)
+    }
+
+    async fn call_ship_order(
+        address: Option<Address>,
+        flag_enabled: bool,
+        slowdown: std::time::Duration,
+    ) -> ShipOrderResponse {
+        let app = test::init_service(
+            App::new()
+                .app_data(mock_checker(flag_enabled))
+                .app_data(web::Data::new(slowdown))
+                .service(ship_order),
+        )
+        .await;
         let req = test::TestRequest::post()
             .uri("/ship-order")
             .insert_header(ContentType::json())
-            .set_json(&ShipOrderRequest {
-                    address: None,
-                    items: vec![],
-                })
+            .set_json(&ShipOrderRequest { address, items: vec![] })
             .to_request();
         let resp = test::call_service(&app, req).await;
         assert!(resp.status().is_success());
+        test::read_body_json(resp).await
+    }
 
-        let order: ShipOrderResponse = test::read_body_json(resp).await;
+    fn make_address(country: &str) -> Address {
+        Address {
+            street_address: "123 Main St".into(),
+            city: "Anytown".into(),
+            state: "CA".into(),
+            country: country.into(),
+            zip_code: "00000".into(),
+        }
+    }
+
+    #[actix_web::test]
+    async fn test_ship_order_no_address() {
+        let order = call_ship_order(None, false, std::time::Duration::ZERO).await;
+        assert!(!order.tracking_id.is_empty());
+    }
+
+    #[actix_web::test]
+    async fn test_ship_order_us_address() {
+        let order = call_ship_order(Some(make_address("US")), false, std::time::Duration::ZERO).await;
+        assert!(!order.tracking_id.is_empty());
+    }
+
+    #[actix_web::test]
+    async fn test_ship_order_international_flag_off() {
+        let order = call_ship_order(Some(make_address("CA")), false, std::time::Duration::ZERO).await;
+        assert!(!order.tracking_id.is_empty());
+    }
+
+    #[actix_web::test]
+    async fn test_ship_order_international_flag_on() {
+        let slowdown = std::time::Duration::from_millis(50);
+        let start = std::time::Instant::now();
+        let order = call_ship_order(Some(make_address("CA")), true, slowdown).await;
+        assert!(start.elapsed() >= slowdown);
+        assert!(!order.tracking_id.is_empty());
+    }
+
+    #[actix_web::test]
+    async fn test_ship_order_us_flag_on() {
+        // US addresses must not be delayed even when the flag is on
+        let slowdown = std::time::Duration::from_millis(50);
+        let start = std::time::Instant::now();
+        let order = call_ship_order(Some(make_address("US")), true, slowdown).await;
+        assert!(start.elapsed() < slowdown);
         assert!(!order.tracking_id.is_empty());
     }
 }
