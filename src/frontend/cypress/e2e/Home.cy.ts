@@ -26,4 +26,13 @@ describe('Home Page', () => {
 
     getElementByField(CypressFields.ProductCard).should('contain', getSymbolFromCurrency('EUR'));
   });
+
+  it('should recover corrupted stored session', () => {
+    cy.visit('/', {
+      onBeforeLoad(win) {
+        win.localStorage.setItem('session', 'not}{valid-json');
+      },
+    });
+    getElementByField(CypressFields.SessionId).should('contain', SessionGateway.getSession().userId);
+  });
 });

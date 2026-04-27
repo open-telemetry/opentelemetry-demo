@@ -9,29 +9,28 @@ interface ISession {
 }
 
 const sessionKey = 'session';
-const defaultSession = {
+const defaultSession: ISession = Object.freeze({
   userId: v4(),
   currencyCode: 'USD',
-};
+});
 
 const SessionGateway = () => ({
   getSession(): ISession {
     if (typeof window === 'undefined') return defaultSession;
     const sessionString = localStorage.getItem(sessionKey);
 
-    let session: ISession | null = null;
     if (sessionString) {
       try {
-        session = JSON.parse(sessionString);
-      } catch {
-        session = null;
+        const parsed: unknown = JSON.parse(sessionString);
+        if (isValid(parsed)) {
+          return parsed;
+        }
+      } catch (e) {
+        console.warn('Failed to parse session from localStorage', e);
       }
     }
-    if (!session || !isValid(session)) {
-      session = { ...defaultSession };
-      localStorage.setItem(sessionKey, JSON.stringify(session));
-    }
-    return session;
+    localStorage.setItem(sessionKey, JSON.stringify(defaultSession));
+    return defaultSession;
   },
   setSessionValue<K extends keyof ISession>(key: K, value: ISession[K]) {
     const session = this.getSession();
@@ -40,7 +39,7 @@ const SessionGateway = () => ({
   },
 });
 
-const isValid = (session: any): boolean => {
+const isValid = (session: unknown): session is ISession => {
   return (
     typeof session === 'object' &&
     session !== null &&
