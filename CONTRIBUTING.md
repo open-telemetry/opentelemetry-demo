@@ -53,8 +53,11 @@ Ensure you have the following installed:
 
 - [Git](https://git-scm.com/book/en/v2/Getting-Started-Installing-Git)
 - [Make](https://www.gnu.org/software/make/)
-- [Docker](https://www.docker.com/get-started/)
-- [Docker Compose](https://docs.docker.com/compose/install/#install-compose) v2.0.0+
+- One of the following container runtimes:
+  - [Docker](https://www.docker.com/get-started/) with [Docker Compose](https://docs.docker.com/compose/install/#install-compose) v2.0.0+
+  - [Podman](https://podman.io/getting-started/installation) 4.7.0+ (includes `podman compose` subcommand)
+
+The Makefile automatically detects which container runtime is available and uses it.
 
 ### Clone the Repository
 
@@ -68,6 +71,24 @@ cd opentelemetry-demo/
 ```sh
 make start
 ```
+
+### Using Podman Instead of Docker
+
+The demo supports both Docker and Podman. The Makefile automatically detects which
+container runtime is installed and uses it. If both are installed, Podman takes
+precedence.
+
+To explicitly use Docker when both are installed, you can override the detection:
+
+```sh
+DOCKER_CMD=docker DOCKER_COMPOSE_CMD="docker compose" make start
+```
+
+#### Podman-specific Notes
+
+- Podman runs rootless by default, which may require adjusting some system settings
+- The `DOCKER_SOCK` environment variable is automatically set to Podman's socket path
+- If you encounter permission issues, ensure your user is in the appropriate groups
 
 ### Verify the Webstore & Telemetry
 
@@ -98,7 +119,33 @@ If inactive, start it:
 
 ```sh
 sudo systemctl start docker
-  ```
+```
+
+### Podman Not Running or Socket Issues
+
+**Error:** `Cannot connect to Podman` or socket-related errors
+
+**Solution:**
+
+- Ensure the Podman socket is running:
+
+```sh
+systemctl --user start podman.socket
+```
+
+- Verify the socket is active:
+
+```sh 
+systemctl --user status podman.socket
+```
+
+- Verify the socket exists:
+
+```sh
+podman info --format '{{.Host.RemoteSocket.Path}}'
+```
+
+- If using rootless Podman, ensure `XDG_RUNTIME_DIR` is set correctly.
 
 ### Gradle Issues (Windows)
 
@@ -110,31 +157,39 @@ cd src/ad/
 ./gradlew wrapper --gradle-version 7.4.2
 ```
 
-### Docker build cache issues
+### Build Cache Issues
 
-While developing, you may encounter issues with Docker build cache. To clear the
+While developing, you may encounter issues with container build cache. To clear the
 cache:
 
 ```sh
-docker system prune -a
+docker system prune -a   # For Docker
+podman system prune -a   # For Podman
 ```
 
-Warning: This removes all unused Docker data, including images, containers,
+Warning: This removes all unused container data, including images, containers,
 volumes, and networks. Use with caution.
 
 ### Debugging Tips
 
-- Use `docker ps` to check running containers.
+- Check running containers:
+
+```sh
+docker ps       # For Docker
+podman ps       # For Podman
+```
+
 - View logs for services:
 
 ```sh
-docker logs <container_id>
+docker logs <container_id>   # For Docker
+podman logs <container_id>   # For Podman
 ```
 
 - Restart containers if needed:
 
 ```sh
-docker-compose restart
+make restart service=<service_name>
 ```
 
 ### Review the Documentation
@@ -185,8 +240,8 @@ Check out a new branch, make modifications and push the branch to your fork:
 $ git checkout -b feature
 # change files
 # Test your changes locally.
-$ docker compose up -d --build
-# Go to Webstore, Jaeger or docker container logs etc. as appropriate to make sure your changes are working correctly.
+$ make build && make start
+# Go to Webstore, Jaeger or container logs etc. as appropriate to make sure your changes are working correctly.
 $ git add my/changed/files
 $ git commit -m "short description of the change"
 $ git push fork feature
