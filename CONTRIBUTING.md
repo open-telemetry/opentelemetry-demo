@@ -54,10 +54,15 @@ Ensure you have the following installed:
 - [Git](https://git-scm.com/book/en/v2/Getting-Started-Installing-Git)
 - [Make](https://www.gnu.org/software/make/)
 - One of the following container runtimes:
-  - [Docker](https://www.docker.com/get-started/) with [Docker Compose](https://docs.docker.com/compose/install/#install-compose) v2.0.0+
-  - [Podman](https://podman.io/getting-started/installation) 4.7.0+ (includes `podman compose` subcommand)
+  - [Docker][docker] with [Docker Compose][docker-compose] v2.0.0+
+  - [Podman][podman] 4.7.0+ (includes `podman compose`)
 
-The Makefile automatically detects which container runtime is available and uses it.
+The Makefile automatically detects which container runtime is available and
+uses it.
+
+[docker]: https://www.docker.com/get-started/
+[docker-compose]: https://docs.docker.com/compose/install/#install-compose
+[podman]: https://podman.io/getting-started/installation
 
 ### Clone the Repository
 
@@ -86,9 +91,12 @@ DOCKER_CMD=docker DOCKER_COMPOSE_CMD="docker compose" make start
 
 #### Podman-specific Notes
 
-- Podman runs rootless by default, which may require adjusting some system settings
-- The `DOCKER_SOCK` environment variable is automatically set to Podman's socket path
-- If you encounter permission issues, ensure your user is in the appropriate groups
+- Podman runs rootless by default, which may require adjusting some
+  system settings
+- The `DOCKER_SOCK` environment variable is automatically set to
+  Podman's socket path
+- If you encounter permission issues, ensure your user is in the
+  appropriate groups
 
 ### Verify the Webstore & Telemetry
 
@@ -135,7 +143,7 @@ systemctl --user start podman.socket
 
 - Verify the socket is active:
 
-```sh 
+```sh
 systemctl --user status podman.socket
 ```
 
@@ -159,8 +167,8 @@ cd src/ad/
 
 ### Build Cache Issues
 
-While developing, you may encounter issues with container build cache. To clear the
-cache:
+While developing, you may encounter issues with container build cache.
+To clear the cache:
 
 ```sh
 docker system prune -a   # For Docker
