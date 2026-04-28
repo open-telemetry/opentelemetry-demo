@@ -39,7 +39,7 @@ GEM
       net-smtp
     mini_mime (1.1.5)
     mustermann (3.1.1)
-    net-imap (0.6.3)
+    net-imap (0.6.4)
       date
       net-protocol
     net-pop (0.1.2)
@@ -261,7 +261,7 @@ GEM
     ostruct (0.6.3)
     pony (1.13.1)
       mail (>= 2.0)
-    puma (8.0.0)
+    puma (8.0.1)
       nio4r (~> 2.0)
     rack (3.2.6)
     rack-protection (4.2.1)
