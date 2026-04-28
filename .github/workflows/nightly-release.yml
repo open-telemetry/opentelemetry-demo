@@ -19,5 +19,5 @@ jobs:
     if: ${{ !github.event.repository.fork }}
     with:
       push: true
-      version: nightly
-    secrets: inherit
+      version: nightly-${{ github.run_number }}
+    secrets: inherit 
