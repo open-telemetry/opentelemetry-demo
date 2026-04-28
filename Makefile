@@ -12,16 +12,8 @@ MISSPELL = $(TOOLS_DIR)/$(MISSPELL_BINARY)
 ADDLICENSE_BINARY=bin/addlicense
 ADDLICENSE = $(TOOLS_DIR)/$(ADDLICENSE_BINARY)
 
-# Autodetect container runtime
-ifeq ($(shell command -v podman 2>/dev/null),)
-	DOCKER_CMD ?= docker
-	DOCKER_COMPOSE_CMD ?= docker compose
-else
-	DOCKER_CMD ?= podman
-	DOCKER_COMPOSE_CMD ?= podman compose
-	DOCKER_SOCK ?= $(shell podman info --format '{{.Host.RemoteSocket.Path}}' 2>/dev/null)
-	export DOCKER_SOCK
-endif
+DOCKER_CMD ?= docker
+DOCKER_COMPOSE_CMD ?= docker compose
 DOCKER_COMPOSE_ENV=--env-file .env --env-file .env.override
 
 # see https://github.com/open-telemetry/build-tools/releases for semconvgen updates

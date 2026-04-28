@@ -53,12 +53,11 @@ Ensure you have the following installed:
 
 - [Git](https://git-scm.com/book/en/v2/Getting-Started-Installing-Git)
 - [Make](https://www.gnu.org/software/make/)
-- One of the following container runtimes:
-  - [Docker][docker] with [Docker Compose][docker-compose] v2.0.0+
-  - [Podman][podman] 4.7.0+ (includes `podman compose`)
+- [Docker][docker] with [Docker Compose][docker-compose] v2.0.0+
 
-The Makefile automatically detects which container runtime is available and
-uses it.
+Alternatively, [Podman][podman] 4.7.0+ can be used instead of Docker. See
+[Using Podman Instead of Docker](#using-podman-instead-of-docker) for setup
+instructions.
 
 [docker]: https://www.docker.com/get-started/
 [docker-compose]: https://docs.docker.com/compose/install/#install-compose
@@ -79,24 +78,30 @@ make start
 
 ### Using Podman Instead of Docker
 
-The demo supports both Docker and Podman. The Makefile automatically detects which
-container runtime is installed and uses it. If both are installed, Podman takes
-precedence.
-
-To explicitly use Docker when both are installed, you can override the detection:
+The demo supports both Docker and Podman. Docker is the default container
+runtime. To use Podman instead, set the following environment variables:
 
 ```sh
-DOCKER_CMD=docker DOCKER_COMPOSE_CMD="docker compose" make start
+DOCKER_COMPOSE_CMD="podman compose" make start
 ```
+
+To persist this setting, add it to your shell profile (e.g., `~/.bashrc`):
+
+```sh
+export DOCKER_CMD=podman
+export DOCKER_COMPOSE_CMD="podman compose"
+```
+
+Then you can simply run `make start` and it will use Podman.
 
 #### Podman-specific Notes
 
 - Podman runs rootless by default, which may require adjusting some
   system settings
-- The `DOCKER_SOCK` environment variable is automatically set to
-  Podman's socket path
 - If you encounter permission issues, ensure your user is in the
   appropriate groups
+- Ensure the Podman socket is running: `systemctl --user start podman.socket`
+- You can check the Podman socket status with: `systemctl --user status podman.socket`
 
 ### Verify the Webstore & Telemetry
 
