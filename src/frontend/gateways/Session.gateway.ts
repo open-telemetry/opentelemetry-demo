@@ -9,7 +9,7 @@ interface ISession {
 }
 
 const sessionKey = 'session';
-const defaultSession: ISession = Object.freeze({
+const defaultSession: Readonly<ISession> = Object.freeze({
   userId: v4(),
   currencyCode: 'USD',
 });

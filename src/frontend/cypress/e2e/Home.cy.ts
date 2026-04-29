@@ -7,11 +7,8 @@ import { getElementByField } from '../../utils/Cypress';
 import { CypressFields } from '../../utils/enums/CypressFields';
 
 describe('Home Page', () => {
-  beforeEach(() => {
-    cy.visit('/');
-  });
-
   it('should validate the home page', () => {
+    cy.visit('/');
     getElementByField(CypressFields.HomePage).should('exist');
     getElementByField(CypressFields.ProductCard, getElementByField(CypressFields.ProductList)).should('have.length', 10);
 
@@ -19,6 +16,7 @@ describe('Home Page', () => {
   });
 
   it('should change currency', () => {
+    cy.visit('/');
     getElementByField(CypressFields.CurrencySwitcher).select('EUR');
     getElementByField(CypressFields.ProductCard, getElementByField(CypressFields.ProductList)).should('have.length', 10);
 
