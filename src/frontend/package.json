@@ -55,7 +55,7 @@
     "@types/styled-components": "5.1.36",
     "@typescript-eslint/eslint-plugin": "8.59.1",
     "@typescript-eslint/parser": "8.59.1",
-    "cypress": "15.14.1",
+    "cypress": "15.14.2",
     "eslint": "9.39.4",
     "eslint-config-next": "16.2.4",
     "eslint-plugin-react": "7.37.5",
