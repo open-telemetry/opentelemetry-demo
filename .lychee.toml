@@ -19,5 +19,3 @@ exclude = [
 exclude_path = [
   "CHANGELOG\\.md",
 ]
-
-accept = ["200", "429"]
