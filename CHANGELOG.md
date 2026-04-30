@@ -7,6 +7,8 @@ the release.
 
 ## Unreleased
 
+* [frontend] fix: handle corrupted session data in localStorage
+  ([#3313](https://github.com/open-telemetry/opentelemetry-demo/pull/3313))
 * [docker] Podman doesn't support the tag feature of docker logs,
   for the otel-demo to support podman we need to remove the tag from docker logs.
   [#3304](https://github.com/open-telemetry/opentelemetry-demo/pull/3304)
