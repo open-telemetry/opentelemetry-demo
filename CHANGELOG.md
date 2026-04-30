@@ -7,8 +7,8 @@ the release.
 
 ## Unreleased
 
-* [profiling] Add profiling and use Pyroscope as the backend to ingest profiles.
-  This allows us to view profiles in Grafana.
+* [profiling] Add profiling and use firepit as the backend to ingest profiles.
+  This allows us to view profiles in the firepit webui.
   [#3312](https://github.com/open-telemetry/opentelemetry-demo/pull/3312)
 * [docker] Podman doesn't support the tag feature of docker logs,
   for the otel-demo to support podman we need to remove the tag from docker logs.
