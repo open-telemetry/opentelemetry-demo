@@ -40,7 +40,6 @@ services:
       options:
         max-size: "5m"
         max-file: "2"
-        tag: "{{.Name}}"
 
   # Fraud Detection service (Kafka consumer)
   fraud-detection:
@@ -80,7 +79,6 @@ services:
       options:
         max-size: "5m"
         max-file: "2"
-        tag: "{{.Name}}"
 
   # Kafka used by Checkout, Accounting, and Fraud Detection services
   kafka:
@@ -120,7 +118,6 @@ services:
       options:
         max-size: "5m"
         max-file: "2"
-        tag: "{{.Name}}"
 
   # Patch checkout to add Kafka dependency in full mode
   checkout:
