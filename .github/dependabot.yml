@@ -9,7 +9,9 @@ updates:
       actions-production-dependencies:
         dependency-type: "production"
     schedule:
-      interval: "daily"
+      interval: "weekly"
+      day: "tuesday"
+      time: "03:00"
   - package-ecosystem: "gomod"
     directories:
       - "/src/**/*"
@@ -18,7 +20,9 @@ updates:
       go-production-dependencies:
         dependency-type: "production"
     schedule:
-      interval: "daily"
+      interval: "weekly"
+      day: "tuesday"
+      time: "03:05"
   - package-ecosystem: "gradle"
     directories:
       - "/src/**/*"
@@ -28,7 +32,9 @@ updates:
       gradle-production-dependencies:
         dependency-type: "production"
     schedule:
-      interval: "daily"
+      interval: "weekly"
+      day: "tuesday"
+      time: "03:10"
   - package-ecosystem: "pip"
     directories:
       - "/src/**/*"
@@ -36,7 +42,9 @@ updates:
       pip-production-dependencies:
         dependency-type: "production"
     schedule:
-      interval: "daily"
+      interval: "weekly"
+      day: "tuesday"
+      time: "03:15"
   - package-ecosystem: "nuget"
     directories:
       - "/src/**/*"
@@ -44,7 +52,9 @@ updates:
       nuget-production-dependencies:
         dependency-type: "production"
     schedule:
-      interval: "daily"
+      interval: "weekly"
+      day: "tuesday"
+      time: "03:20"
   - package-ecosystem: "composer"
     directories:
       - "/src/**/*"
@@ -52,7 +62,9 @@ updates:
       composer-production-dependencies:
         dependency-type: "production"
     schedule:
-      interval: "daily"
+      interval: "weekly"
+      day: "tuesday"
+      time: "03:25"
   - package-ecosystem: "npm"
     directories:
       - "/"
@@ -64,7 +76,9 @@ updates:
       npm-development-dependencies:
         dependency-type: "development"
     schedule:
-      interval: "daily"
+      interval: "weekly"
+      day: "tuesday"
+      time: "03:30"
   - package-ecosystem: "cargo"
     directories:
       - "/src/shipping/*"
@@ -72,7 +86,9 @@ updates:
       cargo-production-dependencies:
         dependency-type: "production"
     schedule:
-      interval: "daily"
+      interval: "weekly"
+      day: "tuesday"
+      time: "03:35"
     allow:
       - dependency-type: "all"
   - package-ecosystem: "bundler"
@@ -84,7 +100,9 @@ updates:
       bundler-development-dependencies:
         dependency-type: "development"
     schedule:
-      interval: "daily"
+      interval: "weekly"
+      day: "tuesday"
+      time: "03:40"
     allow:
       - dependency-type: "all"
   - package-ecosystem: "mix"
@@ -94,4 +112,6 @@ updates:
       mix-production-dependencies:
         dependency-type: "production"
     schedule:
-      interval: "daily"
+      interval: "weekly"
+      day: "tuesday"
+      time: "03:45"

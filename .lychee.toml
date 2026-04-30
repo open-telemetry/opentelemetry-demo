@@ -4,6 +4,11 @@
 # Need this to avoid getting "bot denied"
 user_agent = "Mozilla/5.0 (compatible; lychee link checker)"
 
+max_retries = 3
+retry_wait_time = 10
+timeout = 30
+max_concurrency = 1
+
 exclude = [
   "^http://localhost",
   "^https://calendar\\.google\\.com/calendar",
@@ -14,5 +19,3 @@ exclude = [
 exclude_path = [
   "CHANGELOG\\.md",
 ]
-
-accept = ["200", "429"]
