@@ -18,16 +18,11 @@ services:
       - /sys/fs/cgroup:/sys/fs/cgroup:ro
       - /proc:/proc:ro
     depends_on:
-      - pyroscope
-  pyroscope:
-    image: grafana/pyroscope:1.18.1
-    container_name: pyroscope
-    command:
-      - -config.file=/etc/pyroscope.yaml
-    volumes:
-      - ./src/pyroscope/config.yaml:/etc/pyroscope.yaml:ro
+      - firepit
+  firepit:
+    image: ghcr.io/florianl/firepit:latest
+    build:
+      context: https://github.com/florianl/firepit.git
+    container_name: firepit
     ports:
-      - "${PYROSCOPE_PORT:-4040}:4040"
-  grafana:
-    environment:
-      - "GF_INSTALL_PLUGINS=grafana-opensearch-datasource,grafana-pyroscope-app"
+      - "${FIREPIT_PORT:-4040}:8080"

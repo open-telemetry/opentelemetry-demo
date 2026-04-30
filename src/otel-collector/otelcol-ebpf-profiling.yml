@@ -3,18 +3,29 @@
 
 receivers:
   profiling:
+    samples_per_second: 10
+    reporter_interval: 10s
+    monitor_interval: 5s
+    off_cpu_threshold: 1.0
 
 processors:
   resourcedetection:
     detectors: [docker]
+  resource:
+    attributes:
+      - key: service.name
+        from_attribute: container.name
+        action: upsert
 
 exporters:
-  otlphttp/pyroscope:
-    endpoint: http://pyroscope:4040
+  otlp/firepit:
+    endpoint: firepit:4317
+    tls:
+      insecure: true
 
 service:
   pipelines:
     profiles:
       receivers: [profiling]
       processors: [resourcedetection]
-      exporters: [otlphttp/pyroscope]
+      exporters: [otlp/firepit]
