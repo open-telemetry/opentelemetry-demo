@@ -10,6 +10,9 @@ services:
       - --feature-gates=service.profilesSupport
     privileged: true
     pid: "host"
+    environment:
+      - OTEL_COLLECTOR_HOST
+      - OTEL_COLLECTOR_PORT_GRPC
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock:ro
       - ./src/otel-collector/otelcol-ebpf-profiling.yml:/etc/ebpf-profiler-config.yaml:ro
@@ -18,7 +21,7 @@ services:
       - /sys/fs/cgroup:/sys/fs/cgroup:ro
       - /proc:/proc:ro
     depends_on:
-      - firepit
+      - otel-collector
   firepit:
     image: ghcr.io/florianl/firepit:latest
     build:

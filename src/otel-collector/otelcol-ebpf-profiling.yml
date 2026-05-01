@@ -4,9 +4,6 @@
 receivers:
   profiling:
     samples_per_second: 10
-    reporter_interval: 10s
-    monitor_interval: 5s
-    off_cpu_threshold: 1.0
 
 processors:
   resourcedetection:
@@ -18,8 +15,8 @@ processors:
         action: upsert
 
 exporters:
-  otlp/firepit:
-    endpoint: firepit:4317
+  otlp/collector:
+    endpoint: ${env:OTEL_COLLECTOR_HOST}:${env:OTEL_COLLECTOR_PORT_GRPC}
     tls:
       insecure: true
 
@@ -28,4 +25,4 @@ service:
     profiles:
       receivers: [profiling]
       processors: [resourcedetection]
-      exporters: [otlp/firepit]
+      exporters: [otlp/collector]

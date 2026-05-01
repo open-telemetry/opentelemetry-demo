@@ -257,4 +257,4 @@ build-react-native-android:
 
 .PHONY: start-profiling
 start-profiling:
-	$(DOCKER_COMPOSE_CMD) $(DOCKER_COMPOSE_ENV) -f docker-compose.yml -f docker-compose-profiling.yml up --force-recreate --remove-orphans --detach
+	$(DOCKER_COMPOSE_CMD) $(DOCKER_COMPOSE_ENV) -f docker-compose.yml -f compose-profiling.yml up --force-recreate --remove-orphans --detach

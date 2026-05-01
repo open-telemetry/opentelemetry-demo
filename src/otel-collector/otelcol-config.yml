@@ -153,6 +153,10 @@ exporters:
       num_consumers: 10
       queue_size: 1000
       batch:
+  otlp/firepit:
+    endpoint: "firepit:4317"
+    tls:
+      insecure: true
 processors:
   memory_limiter:
     check_interval: 5s
@@ -223,6 +227,10 @@ service:
       receivers: [otlp]
       processors: [resourcedetection, memory_limiter]
       exporters: [opensearch, debug]
+    profiles:
+      receivers: [otlp]
+      processors: [resourcedetection, memory_limiter]
+      exporters: [otlp/firepit]
   telemetry:
     metrics:
       readers:
