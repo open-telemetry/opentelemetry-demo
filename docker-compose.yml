@@ -868,7 +868,7 @@ services:
           memory: 200M
     restart: unless-stopped
     command:
-      - --config=/etc/otelcol-config.yml 
+      - --config=/etc/otelcol-config.yml
       - --config=/etc/otelcol-config-extras.yml
       - --feature-gates=service.profilesSupport
     user: 0:0
