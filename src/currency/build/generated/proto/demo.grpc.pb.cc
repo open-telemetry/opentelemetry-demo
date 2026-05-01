@@ -725,6 +725,7 @@ CurrencyService::Service::~Service() {
 
 static const char* PaymentService_method_names[] = {
   "/oteldemo.PaymentService/Charge",
+  "/oteldemo.PaymentService/Refund",
 };
 
 std::unique_ptr< PaymentService::Stub> PaymentService::NewStub(const std::shared_ptr< ::grpc::ChannelInterface>& channel, const ::grpc::StubOptions& options) {
@@ -735,6 +736,7 @@ std::unique_ptr< PaymentService::Stub> PaymentService::NewStub(const std::shared
 
 PaymentService::Stub::Stub(const std::shared_ptr< ::grpc::ChannelInterface>& channel, const ::grpc::StubOptions& options)
   : channel_(channel), rpcmethod_Charge_(PaymentService_method_names[0], options.suffix_for_stats(),::grpc::internal::RpcMethod::NORMAL_RPC, channel)
+  , rpcmethod_Refund_(PaymentService_method_names[1], options.suffix_for_stats(),::grpc::internal::RpcMethod::NORMAL_RPC, channel)
   {}
 
 ::grpc::Status PaymentService::Stub::Charge(::grpc::ClientContext* context, const ::oteldemo::ChargeRequest& request, ::oteldemo::ChargeResponse* response) {
@@ -760,6 +762,29 @@ void PaymentService::Stub::async::Charge(::grpc::ClientContext* context, const :
   return result;
 }
 
+::grpc::Status PaymentService::Stub::Refund(::grpc::ClientContext* context, const ::oteldemo::RefundRequest& request, ::oteldemo::RefundResponse* response) {
+  return ::grpc::internal::BlockingUnaryCall< ::oteldemo::RefundRequest, ::oteldemo::RefundResponse, ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(channel_.get(), rpcmethod_Refund_, context, request, response);
+}
+
+void PaymentService::Stub::async::Refund(::grpc::ClientContext* context, const ::oteldemo::RefundRequest* request, ::oteldemo::RefundResponse* response, std::function<void(::grpc::Status)> f) {
+  ::grpc::internal::CallbackUnaryCall< ::oteldemo::RefundRequest, ::oteldemo::RefundResponse, ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(stub_->channel_.get(), stub_->rpcmethod_Refund_, context, request, response, std::move(f));
+}
+
+void PaymentService::Stub::async::Refund(::grpc::ClientContext* context, const ::oteldemo::RefundRequest* request, ::oteldemo::RefundResponse* response, ::grpc::ClientUnaryReactor* reactor) {
+  ::grpc::internal::ClientCallbackUnaryFactory::Create< ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(stub_->channel_.get(), stub_->rpcmethod_Refund_, context, request, response, reactor);
+}
+
+::grpc::ClientAsyncResponseReader< ::oteldemo::RefundResponse>* PaymentService::Stub::PrepareAsyncRefundRaw(::grpc::ClientContext* context, const ::oteldemo::RefundRequest& request, ::grpc::CompletionQueue* cq) {
+  return ::grpc::internal::ClientAsyncResponseReaderHelper::Create< ::oteldemo::RefundResponse, ::oteldemo::RefundRequest, ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(channel_.get(), cq, rpcmethod_Refund_, context, request);
+}
+
+::grpc::ClientAsyncResponseReader< ::oteldemo::RefundResponse>* PaymentService::Stub::AsyncRefundRaw(::grpc::ClientContext* context, const ::oteldemo::RefundRequest& request, ::grpc::CompletionQueue* cq) {
+  auto* result =
+    this->PrepareAsyncRefundRaw(context, request, cq);
+  result->StartCall();
+  return result;
+}
+
 PaymentService::Service::Service() {
   AddMethod(new ::grpc::internal::RpcServiceMethod(
       PaymentService_method_names[0],
@@ -771,12 +796,29 @@ PaymentService::Service::Service() {
              ::oteldemo::ChargeResponse* resp) {
                return service->Charge(ctx, req, resp);
              }, this)));
+  AddMethod(new ::grpc::internal::RpcServiceMethod(
+      PaymentService_method_names[1],
+      ::grpc::internal::RpcMethod::NORMAL_RPC,
+      new ::grpc::internal::RpcMethodHandler< PaymentService::Service, ::oteldemo::RefundRequest, ::oteldemo::RefundResponse, ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(
+          [](PaymentService::Service* service,
+             ::grpc::ServerContext* ctx,
+             const ::oteldemo::RefundRequest* req,
+             ::oteldemo::RefundResponse* resp) {
+               return service->Refund(ctx, req, resp);
+             }, this)));
 }
 
 PaymentService::Service::~Service() {
 }
 
 ::grpc::Status PaymentService::Service::Charge(::grpc::ServerContext* context, const ::oteldemo::ChargeRequest* request, ::oteldemo::ChargeResponse* response) {
+  (void) context;
+  (void) request;
+  (void) response;
+  return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+}
+
+::grpc::Status PaymentService::Service::Refund(::grpc::ServerContext* context, const ::oteldemo::RefundRequest* request, ::oteldemo::RefundResponse* response) {
   (void) context;
   (void) request;
   (void) response;
@@ -899,6 +941,109 @@ CheckoutService::Service::~Service() {
 }
 
 ::grpc::Status CheckoutService::Service::PlaceOrder(::grpc::ServerContext* context, const ::oteldemo::PlaceOrderRequest* request, ::oteldemo::PlaceOrderResponse* response) {
+  (void) context;
+  (void) request;
+  (void) response;
+  return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+}
+
+
+static const char* OrderService_method_names[] = {
+  "/oteldemo.OrderService/GetOrdersByEmail",
+  "/oteldemo.OrderService/GetOrder",
+};
+
+std::unique_ptr< OrderService::Stub> OrderService::NewStub(const std::shared_ptr< ::grpc::ChannelInterface>& channel, const ::grpc::StubOptions& options) {
+  (void)options;
+  std::unique_ptr< OrderService::Stub> stub(new OrderService::Stub(channel, options));
+  return stub;
+}
+
+OrderService::Stub::Stub(const std::shared_ptr< ::grpc::ChannelInterface>& channel, const ::grpc::StubOptions& options)
+  : channel_(channel), rpcmethod_GetOrdersByEmail_(OrderService_method_names[0], options.suffix_for_stats(),::grpc::internal::RpcMethod::NORMAL_RPC, channel)
+  , rpcmethod_GetOrder_(OrderService_method_names[1], options.suffix_for_stats(),::grpc::internal::RpcMethod::NORMAL_RPC, channel)
+  {}
+
+::grpc::Status OrderService::Stub::GetOrdersByEmail(::grpc::ClientContext* context, const ::oteldemo::GetOrdersByEmailRequest& request, ::oteldemo::GetOrdersByEmailResponse* response) {
+  return ::grpc::internal::BlockingUnaryCall< ::oteldemo::GetOrdersByEmailRequest, ::oteldemo::GetOrdersByEmailResponse, ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(channel_.get(), rpcmethod_GetOrdersByEmail_, context, request, response);
+}
+
+void OrderService::Stub::async::GetOrdersByEmail(::grpc::ClientContext* context, const ::oteldemo::GetOrdersByEmailRequest* request, ::oteldemo::GetOrdersByEmailResponse* response, std::function<void(::grpc::Status)> f) {
+  ::grpc::internal::CallbackUnaryCall< ::oteldemo::GetOrdersByEmailRequest, ::oteldemo::GetOrdersByEmailResponse, ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(stub_->channel_.get(), stub_->rpcmethod_GetOrdersByEmail_, context, request, response, std::move(f));
+}
+
+void OrderService::Stub::async::GetOrdersByEmail(::grpc::ClientContext* context, const ::oteldemo::GetOrdersByEmailRequest* request, ::oteldemo::GetOrdersByEmailResponse* response, ::grpc::ClientUnaryReactor* reactor) {
+  ::grpc::internal::ClientCallbackUnaryFactory::Create< ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(stub_->channel_.get(), stub_->rpcmethod_GetOrdersByEmail_, context, request, response, reactor);
+}
+
+::grpc::ClientAsyncResponseReader< ::oteldemo::GetOrdersByEmailResponse>* OrderService::Stub::PrepareAsyncGetOrdersByEmailRaw(::grpc::ClientContext* context, const ::oteldemo::GetOrdersByEmailRequest& request, ::grpc::CompletionQueue* cq) {
+  return ::grpc::internal::ClientAsyncResponseReaderHelper::Create< ::oteldemo::GetOrdersByEmailResponse, ::oteldemo::GetOrdersByEmailRequest, ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(channel_.get(), cq, rpcmethod_GetOrdersByEmail_, context, request);
+}
+
+::grpc::ClientAsyncResponseReader< ::oteldemo::GetOrdersByEmailResponse>* OrderService::Stub::AsyncGetOrdersByEmailRaw(::grpc::ClientContext* context, const ::oteldemo::GetOrdersByEmailRequest& request, ::grpc::CompletionQueue* cq) {
+  auto* result =
+    this->PrepareAsyncGetOrdersByEmailRaw(context, request, cq);
+  result->StartCall();
+  return result;
+}
+
+::grpc::Status OrderService::Stub::GetOrder(::grpc::ClientContext* context, const ::oteldemo::GetOrderRequest& request, ::oteldemo::OrderDetail* response) {
+  return ::grpc::internal::BlockingUnaryCall< ::oteldemo::GetOrderRequest, ::oteldemo::OrderDetail, ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(channel_.get(), rpcmethod_GetOrder_, context, request, response);
+}
+
+void OrderService::Stub::async::GetOrder(::grpc::ClientContext* context, const ::oteldemo::GetOrderRequest* request, ::oteldemo::OrderDetail* response, std::function<void(::grpc::Status)> f) {
+  ::grpc::internal::CallbackUnaryCall< ::oteldemo::GetOrderRequest, ::oteldemo::OrderDetail, ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(stub_->channel_.get(), stub_->rpcmethod_GetOrder_, context, request, response, std::move(f));
+}
+
+void OrderService::Stub::async::GetOrder(::grpc::ClientContext* context, const ::oteldemo::GetOrderRequest* request, ::oteldemo::OrderDetail* response, ::grpc::ClientUnaryReactor* reactor) {
+  ::grpc::internal::ClientCallbackUnaryFactory::Create< ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(stub_->channel_.get(), stub_->rpcmethod_GetOrder_, context, request, response, reactor);
+}
+
+::grpc::ClientAsyncResponseReader< ::oteldemo::OrderDetail>* OrderService::Stub::PrepareAsyncGetOrderRaw(::grpc::ClientContext* context, const ::oteldemo::GetOrderRequest& request, ::grpc::CompletionQueue* cq) {
+  return ::grpc::internal::ClientAsyncResponseReaderHelper::Create< ::oteldemo::OrderDetail, ::oteldemo::GetOrderRequest, ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(channel_.get(), cq, rpcmethod_GetOrder_, context, request);
+}
+
+::grpc::ClientAsyncResponseReader< ::oteldemo::OrderDetail>* OrderService::Stub::AsyncGetOrderRaw(::grpc::ClientContext* context, const ::oteldemo::GetOrderRequest& request, ::grpc::CompletionQueue* cq) {
+  auto* result =
+    this->PrepareAsyncGetOrderRaw(context, request, cq);
+  result->StartCall();
+  return result;
+}
+
+OrderService::Service::Service() {
+  AddMethod(new ::grpc::internal::RpcServiceMethod(
+      OrderService_method_names[0],
+      ::grpc::internal::RpcMethod::NORMAL_RPC,
+      new ::grpc::internal::RpcMethodHandler< OrderService::Service, ::oteldemo::GetOrdersByEmailRequest, ::oteldemo::GetOrdersByEmailResponse, ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(
+          [](OrderService::Service* service,
+             ::grpc::ServerContext* ctx,
+             const ::oteldemo::GetOrdersByEmailRequest* req,
+             ::oteldemo::GetOrdersByEmailResponse* resp) {
+               return service->GetOrdersByEmail(ctx, req, resp);
+             }, this)));
+  AddMethod(new ::grpc::internal::RpcServiceMethod(
+      OrderService_method_names[1],
+      ::grpc::internal::RpcMethod::NORMAL_RPC,
+      new ::grpc::internal::RpcMethodHandler< OrderService::Service, ::oteldemo::GetOrderRequest, ::oteldemo::OrderDetail, ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(
+          [](OrderService::Service* service,
+             ::grpc::ServerContext* ctx,
+             const ::oteldemo::GetOrderRequest* req,
+             ::oteldemo::OrderDetail* resp) {
+               return service->GetOrder(ctx, req, resp);
+             }, this)));
+}
+
+OrderService::Service::~Service() {
+}
+
+::grpc::Status OrderService::Service::GetOrdersByEmail(::grpc::ServerContext* context, const ::oteldemo::GetOrdersByEmailRequest* request, ::oteldemo::GetOrdersByEmailResponse* response) {
+  (void) context;
+  (void) request;
+  (void) response;
+  return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+}
+
+::grpc::Status OrderService::Service::GetOrder(::grpc::ServerContext* context, const ::oteldemo::GetOrderRequest* request, ::oteldemo::OrderDetail* response) {
   (void) context;
   (void) request;
   (void) response;

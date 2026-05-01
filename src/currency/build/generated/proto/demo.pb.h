@@ -130,6 +130,15 @@ extern GetFlagRequestDefaultTypeInternal _GetFlagRequest_default_instance_;
 class GetFlagResponse;
 struct GetFlagResponseDefaultTypeInternal;
 extern GetFlagResponseDefaultTypeInternal _GetFlagResponse_default_instance_;
+class GetOrderRequest;
+struct GetOrderRequestDefaultTypeInternal;
+extern GetOrderRequestDefaultTypeInternal _GetOrderRequest_default_instance_;
+class GetOrdersByEmailRequest;
+struct GetOrdersByEmailRequestDefaultTypeInternal;
+extern GetOrdersByEmailRequestDefaultTypeInternal _GetOrdersByEmailRequest_default_instance_;
+class GetOrdersByEmailResponse;
+struct GetOrdersByEmailResponseDefaultTypeInternal;
+extern GetOrdersByEmailResponseDefaultTypeInternal _GetOrdersByEmailResponse_default_instance_;
 class GetProductRequest;
 struct GetProductRequestDefaultTypeInternal;
 extern GetProductRequestDefaultTypeInternal _GetProductRequest_default_instance_;
@@ -166,6 +175,9 @@ extern ListRecommendationsResponseDefaultTypeInternal _ListRecommendationsRespon
 class Money;
 struct MoneyDefaultTypeInternal;
 extern MoneyDefaultTypeInternal _Money_default_instance_;
+class OrderDetail;
+struct OrderDetailDefaultTypeInternal;
+extern OrderDetailDefaultTypeInternal _OrderDetail_default_instance_;
 class OrderItem;
 struct OrderItemDefaultTypeInternal;
 extern OrderItemDefaultTypeInternal _OrderItem_default_instance_;
@@ -184,6 +196,15 @@ extern ProductDefaultTypeInternal _Product_default_instance_;
 class ProductReview;
 struct ProductReviewDefaultTypeInternal;
 extern ProductReviewDefaultTypeInternal _ProductReview_default_instance_;
+class RefundRequest;
+struct RefundRequestDefaultTypeInternal;
+extern RefundRequestDefaultTypeInternal _RefundRequest_default_instance_;
+class RefundResponse;
+struct RefundResponseDefaultTypeInternal;
+extern RefundResponseDefaultTypeInternal _RefundResponse_default_instance_;
+class RefundResult;
+struct RefundResultDefaultTypeInternal;
+extern RefundResultDefaultTypeInternal _RefundResult_default_instance_;
 class SearchProductsRequest;
 struct SearchProductsRequestDefaultTypeInternal;
 extern SearchProductsRequestDefaultTypeInternal _SearchProductsRequest_default_instance_;
@@ -5736,6 +5757,636 @@ class ChargeResponse final :
   friend struct ::TableStruct_demo_2eproto;
 };// -------------------------------------------------------------------
 
+class RefundRequest final :
+    public ::google::protobuf::Message /* @@protoc_insertion_point(class_definition:oteldemo.RefundRequest) */ {
+ public:
+  inline RefundRequest() : RefundRequest(nullptr) {}
+  ~RefundRequest() override;
+  template<typename = void>
+  explicit PROTOBUF_CONSTEXPR RefundRequest(::google::protobuf::internal::ConstantInitialized);
+
+  RefundRequest(const RefundRequest& from);
+  RefundRequest(RefundRequest&& from) noexcept
+    : RefundRequest() {
+    *this = ::std::move(from);
+  }
+
+  inline RefundRequest& operator=(const RefundRequest& from) {
+    CopyFrom(from);
+    return *this;
+  }
+  inline RefundRequest& operator=(RefundRequest&& from) noexcept {
+    if (this == &from) return *this;
+    if (GetOwningArena() == from.GetOwningArena()
+  #ifdef PROTOBUF_FORCE_COPY_IN_MOVE
+        && GetOwningArena() != nullptr
+  #endif  // !PROTOBUF_FORCE_COPY_IN_MOVE
+    ) {
+      InternalSwap(&from);
+    } else {
+      CopyFrom(from);
+    }
+    return *this;
+  }
+
+  inline const ::google::protobuf::UnknownFieldSet& unknown_fields() const {
+    return _internal_metadata_.unknown_fields<::google::protobuf::UnknownFieldSet>(::google::protobuf::UnknownFieldSet::default_instance);
+  }
+  inline ::google::protobuf::UnknownFieldSet* mutable_unknown_fields() {
+    return _internal_metadata_.mutable_unknown_fields<::google::protobuf::UnknownFieldSet>();
+  }
+
+  static const ::google::protobuf::Descriptor* descriptor() {
+    return GetDescriptor();
+  }
+  static const ::google::protobuf::Descriptor* GetDescriptor() {
+    return default_instance().GetMetadata().descriptor;
+  }
+  static const ::google::protobuf::Reflection* GetReflection() {
+    return default_instance().GetMetadata().reflection;
+  }
+  static const RefundRequest& default_instance() {
+    return *internal_default_instance();
+  }
+  static inline const RefundRequest* internal_default_instance() {
+    return reinterpret_cast<const RefundRequest*>(
+               &_RefundRequest_default_instance_);
+  }
+  static constexpr int kIndexInFileMessages =
+    31;
+
+  friend void swap(RefundRequest& a, RefundRequest& b) {
+    a.Swap(&b);
+  }
+  inline void Swap(RefundRequest* other) {
+    if (other == this) return;
+  #ifdef PROTOBUF_FORCE_COPY_IN_SWAP
+    if (GetOwningArena() != nullptr &&
+        GetOwningArena() == other->GetOwningArena()) {
+   #else  // PROTOBUF_FORCE_COPY_IN_SWAP
+    if (GetOwningArena() == other->GetOwningArena()) {
+  #endif  // !PROTOBUF_FORCE_COPY_IN_SWAP
+      InternalSwap(other);
+    } else {
+      ::google::protobuf::internal::GenericSwap(this, other);
+    }
+  }
+  void UnsafeArenaSwap(RefundRequest* other) {
+    if (other == this) return;
+    ABSL_DCHECK(GetOwningArena() == other->GetOwningArena());
+    InternalSwap(other);
+  }
+
+  // implements Message ----------------------------------------------
+
+  RefundRequest* New(::google::protobuf::Arena* arena = nullptr) const final {
+    return CreateMaybeMessage<RefundRequest>(arena);
+  }
+  using ::google::protobuf::Message::CopyFrom;
+  void CopyFrom(const RefundRequest& from);
+  using ::google::protobuf::Message::MergeFrom;
+  void MergeFrom( const RefundRequest& from) {
+    RefundRequest::MergeImpl(*this, from);
+  }
+  private:
+  static void MergeImpl(::google::protobuf::Message& to_msg, const ::google::protobuf::Message& from_msg);
+  public:
+  PROTOBUF_ATTRIBUTE_REINITIALIZES void Clear() final;
+  bool IsInitialized() const final;
+
+  ::size_t ByteSizeLong() const final;
+  const char* _InternalParse(const char* ptr, ::google::protobuf::internal::ParseContext* ctx) final;
+  ::uint8_t* _InternalSerialize(
+      ::uint8_t* target, ::google::protobuf::io::EpsCopyOutputStream* stream) const final;
+  int GetCachedSize() const final { return _impl_._cached_size_.Get(); }
+
+  private:
+  void SharedCtor(::google::protobuf::Arena* arena);
+  void SharedDtor();
+  void SetCachedSize(int size) const final;
+  void InternalSwap(RefundRequest* other);
+
+  private:
+  friend class ::google::protobuf::internal::AnyMetadata;
+  static ::absl::string_view FullMessageName() {
+    return "oteldemo.RefundRequest";
+  }
+  protected:
+  explicit RefundRequest(::google::protobuf::Arena* arena);
+  public:
+
+  static const ClassData _class_data_;
+  const ::google::protobuf::Message::ClassData*GetClassData() const final;
+
+  ::google::protobuf::Metadata GetMetadata() const final;
+
+  // nested types ----------------------------------------------------
+
+  // accessors -------------------------------------------------------
+
+  enum : int {
+    kOrderIdFieldNumber = 1,
+    kTransactionIdFieldNumber = 2,
+    kEmailFieldNumber = 4,
+    kAmountFieldNumber = 3,
+  };
+  // string order_id = 1;
+  void clear_order_id() ;
+  const std::string& order_id() const;
+  template <typename Arg_ = const std::string&, typename... Args_>
+  void set_order_id(Arg_&& arg, Args_... args);
+  std::string* mutable_order_id();
+  PROTOBUF_NODISCARD std::string* release_order_id();
+  void set_allocated_order_id(std::string* ptr);
+
+  private:
+  const std::string& _internal_order_id() const;
+  inline PROTOBUF_ALWAYS_INLINE void _internal_set_order_id(
+      const std::string& value);
+  std::string* _internal_mutable_order_id();
+
+  public:
+  // string transaction_id = 2;
+  void clear_transaction_id() ;
+  const std::string& transaction_id() const;
+  template <typename Arg_ = const std::string&, typename... Args_>
+  void set_transaction_id(Arg_&& arg, Args_... args);
+  std::string* mutable_transaction_id();
+  PROTOBUF_NODISCARD std::string* release_transaction_id();
+  void set_allocated_transaction_id(std::string* ptr);
+
+  private:
+  const std::string& _internal_transaction_id() const;
+  inline PROTOBUF_ALWAYS_INLINE void _internal_set_transaction_id(
+      const std::string& value);
+  std::string* _internal_mutable_transaction_id();
+
+  public:
+  // string email = 4;
+  void clear_email() ;
+  const std::string& email() const;
+  template <typename Arg_ = const std::string&, typename... Args_>
+  void set_email(Arg_&& arg, Args_... args);
+  std::string* mutable_email();
+  PROTOBUF_NODISCARD std::string* release_email();
+  void set_allocated_email(std::string* ptr);
+
+  private:
+  const std::string& _internal_email() const;
+  inline PROTOBUF_ALWAYS_INLINE void _internal_set_email(
+      const std::string& value);
+  std::string* _internal_mutable_email();
+
+  public:
+  // .oteldemo.Money amount = 3;
+  bool has_amount() const;
+  void clear_amount() ;
+  const ::oteldemo::Money& amount() const;
+  PROTOBUF_NODISCARD ::oteldemo::Money* release_amount();
+  ::oteldemo::Money* mutable_amount();
+  void set_allocated_amount(::oteldemo::Money* value);
+  void unsafe_arena_set_allocated_amount(::oteldemo::Money* value);
+  ::oteldemo::Money* unsafe_arena_release_amount();
+
+  private:
+  const ::oteldemo::Money& _internal_amount() const;
+  ::oteldemo::Money* _internal_mutable_amount();
+
+  public:
+  // @@protoc_insertion_point(class_scope:oteldemo.RefundRequest)
+ private:
+  class _Internal;
+
+  friend class ::google::protobuf::internal::TcParser;
+  static const ::google::protobuf::internal::TcParseTable<2, 4, 1, 58, 2> _table_;
+  template <typename T> friend class ::google::protobuf::Arena::InternalHelper;
+  typedef void InternalArenaConstructable_;
+  typedef void DestructorSkippable_;
+  struct Impl_ {
+    ::google::protobuf::internal::HasBits<1> _has_bits_;
+    mutable ::google::protobuf::internal::CachedSize _cached_size_;
+    ::google::protobuf::internal::ArenaStringPtr order_id_;
+    ::google::protobuf::internal::ArenaStringPtr transaction_id_;
+    ::google::protobuf::internal::ArenaStringPtr email_;
+    ::oteldemo::Money* amount_;
+    PROTOBUF_TSAN_DECLARE_MEMBER
+  };
+  union { Impl_ _impl_; };
+  friend struct ::TableStruct_demo_2eproto;
+};// -------------------------------------------------------------------
+
+class RefundResponse final :
+    public ::google::protobuf::Message /* @@protoc_insertion_point(class_definition:oteldemo.RefundResponse) */ {
+ public:
+  inline RefundResponse() : RefundResponse(nullptr) {}
+  ~RefundResponse() override;
+  template<typename = void>
+  explicit PROTOBUF_CONSTEXPR RefundResponse(::google::protobuf::internal::ConstantInitialized);
+
+  RefundResponse(const RefundResponse& from);
+  RefundResponse(RefundResponse&& from) noexcept
+    : RefundResponse() {
+    *this = ::std::move(from);
+  }
+
+  inline RefundResponse& operator=(const RefundResponse& from) {
+    CopyFrom(from);
+    return *this;
+  }
+  inline RefundResponse& operator=(RefundResponse&& from) noexcept {
+    if (this == &from) return *this;
+    if (GetOwningArena() == from.GetOwningArena()
+  #ifdef PROTOBUF_FORCE_COPY_IN_MOVE
+        && GetOwningArena() != nullptr
+  #endif  // !PROTOBUF_FORCE_COPY_IN_MOVE
+    ) {
+      InternalSwap(&from);
+    } else {
+      CopyFrom(from);
+    }
+    return *this;
+  }
+
+  inline const ::google::protobuf::UnknownFieldSet& unknown_fields() const {
+    return _internal_metadata_.unknown_fields<::google::protobuf::UnknownFieldSet>(::google::protobuf::UnknownFieldSet::default_instance);
+  }
+  inline ::google::protobuf::UnknownFieldSet* mutable_unknown_fields() {
+    return _internal_metadata_.mutable_unknown_fields<::google::protobuf::UnknownFieldSet>();
+  }
+
+  static const ::google::protobuf::Descriptor* descriptor() {
+    return GetDescriptor();
+  }
+  static const ::google::protobuf::Descriptor* GetDescriptor() {
+    return default_instance().GetMetadata().descriptor;
+  }
+  static const ::google::protobuf::Reflection* GetReflection() {
+    return default_instance().GetMetadata().reflection;
+  }
+  static const RefundResponse& default_instance() {
+    return *internal_default_instance();
+  }
+  static inline const RefundResponse* internal_default_instance() {
+    return reinterpret_cast<const RefundResponse*>(
+               &_RefundResponse_default_instance_);
+  }
+  static constexpr int kIndexInFileMessages =
+    32;
+
+  friend void swap(RefundResponse& a, RefundResponse& b) {
+    a.Swap(&b);
+  }
+  inline void Swap(RefundResponse* other) {
+    if (other == this) return;
+  #ifdef PROTOBUF_FORCE_COPY_IN_SWAP
+    if (GetOwningArena() != nullptr &&
+        GetOwningArena() == other->GetOwningArena()) {
+   #else  // PROTOBUF_FORCE_COPY_IN_SWAP
+    if (GetOwningArena() == other->GetOwningArena()) {
+  #endif  // !PROTOBUF_FORCE_COPY_IN_SWAP
+      InternalSwap(other);
+    } else {
+      ::google::protobuf::internal::GenericSwap(this, other);
+    }
+  }
+  void UnsafeArenaSwap(RefundResponse* other) {
+    if (other == this) return;
+    ABSL_DCHECK(GetOwningArena() == other->GetOwningArena());
+    InternalSwap(other);
+  }
+
+  // implements Message ----------------------------------------------
+
+  RefundResponse* New(::google::protobuf::Arena* arena = nullptr) const final {
+    return CreateMaybeMessage<RefundResponse>(arena);
+  }
+  using ::google::protobuf::Message::CopyFrom;
+  void CopyFrom(const RefundResponse& from);
+  using ::google::protobuf::Message::MergeFrom;
+  void MergeFrom( const RefundResponse& from) {
+    RefundResponse::MergeImpl(*this, from);
+  }
+  private:
+  static void MergeImpl(::google::protobuf::Message& to_msg, const ::google::protobuf::Message& from_msg);
+  public:
+  PROTOBUF_ATTRIBUTE_REINITIALIZES void Clear() final;
+  bool IsInitialized() const final;
+
+  ::size_t ByteSizeLong() const final;
+  const char* _InternalParse(const char* ptr, ::google::protobuf::internal::ParseContext* ctx) final;
+  ::uint8_t* _InternalSerialize(
+      ::uint8_t* target, ::google::protobuf::io::EpsCopyOutputStream* stream) const final;
+  int GetCachedSize() const final { return _impl_._cached_size_.Get(); }
+
+  private:
+  void SharedCtor(::google::protobuf::Arena* arena);
+  void SharedDtor();
+  void SetCachedSize(int size) const final;
+  void InternalSwap(RefundResponse* other);
+
+  private:
+  friend class ::google::protobuf::internal::AnyMetadata;
+  static ::absl::string_view FullMessageName() {
+    return "oteldemo.RefundResponse";
+  }
+  protected:
+  explicit RefundResponse(::google::protobuf::Arena* arena);
+  public:
+
+  static const ClassData _class_data_;
+  const ::google::protobuf::Message::ClassData*GetClassData() const final;
+
+  ::google::protobuf::Metadata GetMetadata() const final;
+
+  // nested types ----------------------------------------------------
+
+  // accessors -------------------------------------------------------
+
+  enum : int {
+    kRefundTransactionIdFieldNumber = 1,
+    kSuccessFieldNumber = 2,
+  };
+  // string refund_transaction_id = 1;
+  void clear_refund_transaction_id() ;
+  const std::string& refund_transaction_id() const;
+  template <typename Arg_ = const std::string&, typename... Args_>
+  void set_refund_transaction_id(Arg_&& arg, Args_... args);
+  std::string* mutable_refund_transaction_id();
+  PROTOBUF_NODISCARD std::string* release_refund_transaction_id();
+  void set_allocated_refund_transaction_id(std::string* ptr);
+
+  private:
+  const std::string& _internal_refund_transaction_id() const;
+  inline PROTOBUF_ALWAYS_INLINE void _internal_set_refund_transaction_id(
+      const std::string& value);
+  std::string* _internal_mutable_refund_transaction_id();
+
+  public:
+  // bool success = 2;
+  void clear_success() ;
+  bool success() const;
+  void set_success(bool value);
+
+  private:
+  bool _internal_success() const;
+  void _internal_set_success(bool value);
+
+  public:
+  // @@protoc_insertion_point(class_scope:oteldemo.RefundResponse)
+ private:
+  class _Internal;
+
+  friend class ::google::protobuf::internal::TcParser;
+  static const ::google::protobuf::internal::TcParseTable<1, 2, 0, 53, 2> _table_;
+  template <typename T> friend class ::google::protobuf::Arena::InternalHelper;
+  typedef void InternalArenaConstructable_;
+  typedef void DestructorSkippable_;
+  struct Impl_ {
+    ::google::protobuf::internal::ArenaStringPtr refund_transaction_id_;
+    bool success_;
+    mutable ::google::protobuf::internal::CachedSize _cached_size_;
+    PROTOBUF_TSAN_DECLARE_MEMBER
+  };
+  union { Impl_ _impl_; };
+  friend struct ::TableStruct_demo_2eproto;
+};// -------------------------------------------------------------------
+
+class RefundResult final :
+    public ::google::protobuf::Message /* @@protoc_insertion_point(class_definition:oteldemo.RefundResult) */ {
+ public:
+  inline RefundResult() : RefundResult(nullptr) {}
+  ~RefundResult() override;
+  template<typename = void>
+  explicit PROTOBUF_CONSTEXPR RefundResult(::google::protobuf::internal::ConstantInitialized);
+
+  RefundResult(const RefundResult& from);
+  RefundResult(RefundResult&& from) noexcept
+    : RefundResult() {
+    *this = ::std::move(from);
+  }
+
+  inline RefundResult& operator=(const RefundResult& from) {
+    CopyFrom(from);
+    return *this;
+  }
+  inline RefundResult& operator=(RefundResult&& from) noexcept {
+    if (this == &from) return *this;
+    if (GetOwningArena() == from.GetOwningArena()
+  #ifdef PROTOBUF_FORCE_COPY_IN_MOVE
+        && GetOwningArena() != nullptr
+  #endif  // !PROTOBUF_FORCE_COPY_IN_MOVE
+    ) {
+      InternalSwap(&from);
+    } else {
+      CopyFrom(from);
+    }
+    return *this;
+  }
+
+  inline const ::google::protobuf::UnknownFieldSet& unknown_fields() const {
+    return _internal_metadata_.unknown_fields<::google::protobuf::UnknownFieldSet>(::google::protobuf::UnknownFieldSet::default_instance);
+  }
+  inline ::google::protobuf::UnknownFieldSet* mutable_unknown_fields() {
+    return _internal_metadata_.mutable_unknown_fields<::google::protobuf::UnknownFieldSet>();
+  }
+
+  static const ::google::protobuf::Descriptor* descriptor() {
+    return GetDescriptor();
+  }
+  static const ::google::protobuf::Descriptor* GetDescriptor() {
+    return default_instance().GetMetadata().descriptor;
+  }
+  static const ::google::protobuf::Reflection* GetReflection() {
+    return default_instance().GetMetadata().reflection;
+  }
+  static const RefundResult& default_instance() {
+    return *internal_default_instance();
+  }
+  static inline const RefundResult* internal_default_instance() {
+    return reinterpret_cast<const RefundResult*>(
+               &_RefundResult_default_instance_);
+  }
+  static constexpr int kIndexInFileMessages =
+    33;
+
+  friend void swap(RefundResult& a, RefundResult& b) {
+    a.Swap(&b);
+  }
+  inline void Swap(RefundResult* other) {
+    if (other == this) return;
+  #ifdef PROTOBUF_FORCE_COPY_IN_SWAP
+    if (GetOwningArena() != nullptr &&
+        GetOwningArena() == other->GetOwningArena()) {
+   #else  // PROTOBUF_FORCE_COPY_IN_SWAP
+    if (GetOwningArena() == other->GetOwningArena()) {
+  #endif  // !PROTOBUF_FORCE_COPY_IN_SWAP
+      InternalSwap(other);
+    } else {
+      ::google::protobuf::internal::GenericSwap(this, other);
+    }
+  }
+  void UnsafeArenaSwap(RefundResult* other) {
+    if (other == this) return;
+    ABSL_DCHECK(GetOwningArena() == other->GetOwningArena());
+    InternalSwap(other);
+  }
+
+  // implements Message ----------------------------------------------
+
+  RefundResult* New(::google::protobuf::Arena* arena = nullptr) const final {
+    return CreateMaybeMessage<RefundResult>(arena);
+  }
+  using ::google::protobuf::Message::CopyFrom;
+  void CopyFrom(const RefundResult& from);
+  using ::google::protobuf::Message::MergeFrom;
+  void MergeFrom( const RefundResult& from) {
+    RefundResult::MergeImpl(*this, from);
+  }
+  private:
+  static void MergeImpl(::google::protobuf::Message& to_msg, const ::google::protobuf::Message& from_msg);
+  public:
+  PROTOBUF_ATTRIBUTE_REINITIALIZES void Clear() final;
+  bool IsInitialized() const final;
+
+  ::size_t ByteSizeLong() const final;
+  const char* _InternalParse(const char* ptr, ::google::protobuf::internal::ParseContext* ctx) final;
+  ::uint8_t* _InternalSerialize(
+      ::uint8_t* target, ::google::protobuf::io::EpsCopyOutputStream* stream) const final;
+  int GetCachedSize() const final { return _impl_._cached_size_.Get(); }
+
+  private:
+  void SharedCtor(::google::protobuf::Arena* arena);
+  void SharedDtor();
+  void SetCachedSize(int size) const final;
+  void InternalSwap(RefundResult* other);
+
+  private:
+  friend class ::google::protobuf::internal::AnyMetadata;
+  static ::absl::string_view FullMessageName() {
+    return "oteldemo.RefundResult";
+  }
+  protected:
+  explicit RefundResult(::google::protobuf::Arena* arena);
+  public:
+
+  static const ClassData _class_data_;
+  const ::google::protobuf::Message::ClassData*GetClassData() const final;
+
+  ::google::protobuf::Metadata GetMetadata() const final;
+
+  // nested types ----------------------------------------------------
+
+  // accessors -------------------------------------------------------
+
+  enum : int {
+    kOrderIdFieldNumber = 1,
+    kTransactionIdFieldNumber = 2,
+    kRefundTransactionIdFieldNumber = 3,
+    kEmailFieldNumber = 5,
+    kAmountFieldNumber = 4,
+  };
+  // string order_id = 1;
+  void clear_order_id() ;
+  const std::string& order_id() const;
+  template <typename Arg_ = const std::string&, typename... Args_>
+  void set_order_id(Arg_&& arg, Args_... args);
+  std::string* mutable_order_id();
+  PROTOBUF_NODISCARD std::string* release_order_id();
+  void set_allocated_order_id(std::string* ptr);
+
+  private:
+  const std::string& _internal_order_id() const;
+  inline PROTOBUF_ALWAYS_INLINE void _internal_set_order_id(
+      const std::string& value);
+  std::string* _internal_mutable_order_id();
+
+  public:
+  // string transaction_id = 2;
+  void clear_transaction_id() ;
+  const std::string& transaction_id() const;
+  template <typename Arg_ = const std::string&, typename... Args_>
+  void set_transaction_id(Arg_&& arg, Args_... args);
+  std::string* mutable_transaction_id();
+  PROTOBUF_NODISCARD std::string* release_transaction_id();
+  void set_allocated_transaction_id(std::string* ptr);
+
+  private:
+  const std::string& _internal_transaction_id() const;
+  inline PROTOBUF_ALWAYS_INLINE void _internal_set_transaction_id(
+      const std::string& value);
+  std::string* _internal_mutable_transaction_id();
+
+  public:
+  // string refund_transaction_id = 3;
+  void clear_refund_transaction_id() ;
+  const std::string& refund_transaction_id() const;
+  template <typename Arg_ = const std::string&, typename... Args_>
+  void set_refund_transaction_id(Arg_&& arg, Args_... args);
+  std::string* mutable_refund_transaction_id();
+  PROTOBUF_NODISCARD std::string* release_refund_transaction_id();
+  void set_allocated_refund_transaction_id(std::string* ptr);
+
+  private:
+  const std::string& _internal_refund_transaction_id() const;
+  inline PROTOBUF_ALWAYS_INLINE void _internal_set_refund_transaction_id(
+      const std::string& value);
+  std::string* _internal_mutable_refund_transaction_id();
+
+  public:
+  // string email = 5;
+  void clear_email() ;
+  const std::string& email() const;
+  template <typename Arg_ = const std::string&, typename... Args_>
+  void set_email(Arg_&& arg, Args_... args);
+  std::string* mutable_email();
+  PROTOBUF_NODISCARD std::string* release_email();
+  void set_allocated_email(std::string* ptr);
+
+  private:
+  const std::string& _internal_email() const;
+  inline PROTOBUF_ALWAYS_INLINE void _internal_set_email(
+      const std::string& value);
+  std::string* _internal_mutable_email();
+
+  public:
+  // .oteldemo.Money amount = 4;
+  bool has_amount() const;
+  void clear_amount() ;
+  const ::oteldemo::Money& amount() const;
+  PROTOBUF_NODISCARD ::oteldemo::Money* release_amount();
+  ::oteldemo::Money* mutable_amount();
+  void set_allocated_amount(::oteldemo::Money* value);
+  void unsafe_arena_set_allocated_amount(::oteldemo::Money* value);
+  ::oteldemo::Money* unsafe_arena_release_amount();
+
+  private:
+  const ::oteldemo::Money& _internal_amount() const;
+  ::oteldemo::Money* _internal_mutable_amount();
+
+  public:
+  // @@protoc_insertion_point(class_scope:oteldemo.RefundResult)
+ private:
+  class _Internal;
+
+  friend class ::google::protobuf::internal::TcParser;
+  static const ::google::protobuf::internal::TcParseTable<3, 5, 1, 78, 2> _table_;
+  template <typename T> friend class ::google::protobuf::Arena::InternalHelper;
+  typedef void InternalArenaConstructable_;
+  typedef void DestructorSkippable_;
+  struct Impl_ {
+    ::google::protobuf::internal::HasBits<1> _has_bits_;
+    mutable ::google::protobuf::internal::CachedSize _cached_size_;
+    ::google::protobuf::internal::ArenaStringPtr order_id_;
+    ::google::protobuf::internal::ArenaStringPtr transaction_id_;
+    ::google::protobuf::internal::ArenaStringPtr refund_transaction_id_;
+    ::google::protobuf::internal::ArenaStringPtr email_;
+    ::oteldemo::Money* amount_;
+    PROTOBUF_TSAN_DECLARE_MEMBER
+  };
+  union { Impl_ _impl_; };
+  friend struct ::TableStruct_demo_2eproto;
+};// -------------------------------------------------------------------
+
 class OrderItem final :
     public ::google::protobuf::Message /* @@protoc_insertion_point(class_definition:oteldemo.OrderItem) */ {
  public:
@@ -5792,7 +6443,7 @@ class OrderItem final :
                &_OrderItem_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    31;
+    34;
 
   friend void swap(OrderItem& a, OrderItem& b) {
     a.Swap(&b);
@@ -5973,7 +6624,7 @@ class OrderResult final :
                &_OrderResult_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    32;
+    35;
 
   friend void swap(OrderResult& a, OrderResult& b) {
     a.Swap(&b);
@@ -6048,8 +6699,12 @@ class OrderResult final :
     kItemsFieldNumber = 5,
     kOrderIdFieldNumber = 1,
     kShippingTrackingIdFieldNumber = 2,
+    kUserIdFieldNumber = 6,
+    kEmailFieldNumber = 7,
+    kTransactionIdFieldNumber = 8,
     kShippingCostFieldNumber = 3,
     kShippingAddressFieldNumber = 4,
+    kTotalCostFieldNumber = 9,
   };
   // repeated .oteldemo.OrderItem items = 5;
   int items_size() const;
@@ -6101,6 +6756,54 @@ class OrderResult final :
   std::string* _internal_mutable_shipping_tracking_id();
 
   public:
+  // string user_id = 6;
+  void clear_user_id() ;
+  const std::string& user_id() const;
+  template <typename Arg_ = const std::string&, typename... Args_>
+  void set_user_id(Arg_&& arg, Args_... args);
+  std::string* mutable_user_id();
+  PROTOBUF_NODISCARD std::string* release_user_id();
+  void set_allocated_user_id(std::string* ptr);
+
+  private:
+  const std::string& _internal_user_id() const;
+  inline PROTOBUF_ALWAYS_INLINE void _internal_set_user_id(
+      const std::string& value);
+  std::string* _internal_mutable_user_id();
+
+  public:
+  // string email = 7;
+  void clear_email() ;
+  const std::string& email() const;
+  template <typename Arg_ = const std::string&, typename... Args_>
+  void set_email(Arg_&& arg, Args_... args);
+  std::string* mutable_email();
+  PROTOBUF_NODISCARD std::string* release_email();
+  void set_allocated_email(std::string* ptr);
+
+  private:
+  const std::string& _internal_email() const;
+  inline PROTOBUF_ALWAYS_INLINE void _internal_set_email(
+      const std::string& value);
+  std::string* _internal_mutable_email();
+
+  public:
+  // string transaction_id = 8;
+  void clear_transaction_id() ;
+  const std::string& transaction_id() const;
+  template <typename Arg_ = const std::string&, typename... Args_>
+  void set_transaction_id(Arg_&& arg, Args_... args);
+  std::string* mutable_transaction_id();
+  PROTOBUF_NODISCARD std::string* release_transaction_id();
+  void set_allocated_transaction_id(std::string* ptr);
+
+  private:
+  const std::string& _internal_transaction_id() const;
+  inline PROTOBUF_ALWAYS_INLINE void _internal_set_transaction_id(
+      const std::string& value);
+  std::string* _internal_mutable_transaction_id();
+
+  public:
   // .oteldemo.Money shipping_cost = 3;
   bool has_shipping_cost() const;
   void clear_shipping_cost() ;
@@ -6131,12 +6834,27 @@ class OrderResult final :
   ::oteldemo::Address* _internal_mutable_shipping_address();
 
   public:
+  // .oteldemo.Money total_cost = 9;
+  bool has_total_cost() const;
+  void clear_total_cost() ;
+  const ::oteldemo::Money& total_cost() const;
+  PROTOBUF_NODISCARD ::oteldemo::Money* release_total_cost();
+  ::oteldemo::Money* mutable_total_cost();
+  void set_allocated_total_cost(::oteldemo::Money* value);
+  void unsafe_arena_set_allocated_total_cost(::oteldemo::Money* value);
+  ::oteldemo::Money* unsafe_arena_release_total_cost();
+
+  private:
+  const ::oteldemo::Money& _internal_total_cost() const;
+  ::oteldemo::Money* _internal_mutable_total_cost();
+
+  public:
   // @@protoc_insertion_point(class_scope:oteldemo.OrderResult)
  private:
   class _Internal;
 
   friend class ::google::protobuf::internal::TcParser;
-  static const ::google::protobuf::internal::TcParseTable<3, 5, 3, 57, 2> _table_;
+  static const ::google::protobuf::internal::TcParseTable<4, 9, 4, 91, 2> _table_;
   template <typename T> friend class ::google::protobuf::Arena::InternalHelper;
   typedef void InternalArenaConstructable_;
   typedef void DestructorSkippable_;
@@ -6146,8 +6864,12 @@ class OrderResult final :
     ::google::protobuf::RepeatedPtrField< ::oteldemo::OrderItem > items_;
     ::google::protobuf::internal::ArenaStringPtr order_id_;
     ::google::protobuf::internal::ArenaStringPtr shipping_tracking_id_;
+    ::google::protobuf::internal::ArenaStringPtr user_id_;
+    ::google::protobuf::internal::ArenaStringPtr email_;
+    ::google::protobuf::internal::ArenaStringPtr transaction_id_;
     ::oteldemo::Money* shipping_cost_;
     ::oteldemo::Address* shipping_address_;
+    ::oteldemo::Money* total_cost_;
     PROTOBUF_TSAN_DECLARE_MEMBER
   };
   union { Impl_ _impl_; };
@@ -6210,7 +6932,7 @@ class SendOrderConfirmationRequest final :
                &_SendOrderConfirmationRequest_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    33;
+    36;
 
   friend void swap(SendOrderConfirmationRequest& a, SendOrderConfirmationRequest& b) {
     a.Swap(&b);
@@ -6392,7 +7114,7 @@ class PlaceOrderRequest final :
                &_PlaceOrderRequest_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    34;
+    37;
 
   friend void swap(PlaceOrderRequest& a, PlaceOrderRequest& b) {
     a.Swap(&b);
@@ -6627,7 +7349,7 @@ class PlaceOrderResponse final :
                &_PlaceOrderResponse_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    35;
+    38;
 
   friend void swap(PlaceOrderResponse& a, PlaceOrderResponse& b) {
     a.Swap(&b);
@@ -6735,6 +7457,827 @@ class PlaceOrderResponse final :
   friend struct ::TableStruct_demo_2eproto;
 };// -------------------------------------------------------------------
 
+class GetOrdersByEmailRequest final :
+    public ::google::protobuf::Message /* @@protoc_insertion_point(class_definition:oteldemo.GetOrdersByEmailRequest) */ {
+ public:
+  inline GetOrdersByEmailRequest() : GetOrdersByEmailRequest(nullptr) {}
+  ~GetOrdersByEmailRequest() override;
+  template<typename = void>
+  explicit PROTOBUF_CONSTEXPR GetOrdersByEmailRequest(::google::protobuf::internal::ConstantInitialized);
+
+  GetOrdersByEmailRequest(const GetOrdersByEmailRequest& from);
+  GetOrdersByEmailRequest(GetOrdersByEmailRequest&& from) noexcept
+    : GetOrdersByEmailRequest() {
+    *this = ::std::move(from);
+  }
+
+  inline GetOrdersByEmailRequest& operator=(const GetOrdersByEmailRequest& from) {
+    CopyFrom(from);
+    return *this;
+  }
+  inline GetOrdersByEmailRequest& operator=(GetOrdersByEmailRequest&& from) noexcept {
+    if (this == &from) return *this;
+    if (GetOwningArena() == from.GetOwningArena()
+  #ifdef PROTOBUF_FORCE_COPY_IN_MOVE
+        && GetOwningArena() != nullptr
+  #endif  // !PROTOBUF_FORCE_COPY_IN_MOVE
+    ) {
+      InternalSwap(&from);
+    } else {
+      CopyFrom(from);
+    }
+    return *this;
+  }
+
+  inline const ::google::protobuf::UnknownFieldSet& unknown_fields() const {
+    return _internal_metadata_.unknown_fields<::google::protobuf::UnknownFieldSet>(::google::protobuf::UnknownFieldSet::default_instance);
+  }
+  inline ::google::protobuf::UnknownFieldSet* mutable_unknown_fields() {
+    return _internal_metadata_.mutable_unknown_fields<::google::protobuf::UnknownFieldSet>();
+  }
+
+  static const ::google::protobuf::Descriptor* descriptor() {
+    return GetDescriptor();
+  }
+  static const ::google::protobuf::Descriptor* GetDescriptor() {
+    return default_instance().GetMetadata().descriptor;
+  }
+  static const ::google::protobuf::Reflection* GetReflection() {
+    return default_instance().GetMetadata().reflection;
+  }
+  static const GetOrdersByEmailRequest& default_instance() {
+    return *internal_default_instance();
+  }
+  static inline const GetOrdersByEmailRequest* internal_default_instance() {
+    return reinterpret_cast<const GetOrdersByEmailRequest*>(
+               &_GetOrdersByEmailRequest_default_instance_);
+  }
+  static constexpr int kIndexInFileMessages =
+    39;
+
+  friend void swap(GetOrdersByEmailRequest& a, GetOrdersByEmailRequest& b) {
+    a.Swap(&b);
+  }
+  inline void Swap(GetOrdersByEmailRequest* other) {
+    if (other == this) return;
+  #ifdef PROTOBUF_FORCE_COPY_IN_SWAP
+    if (GetOwningArena() != nullptr &&
+        GetOwningArena() == other->GetOwningArena()) {
+   #else  // PROTOBUF_FORCE_COPY_IN_SWAP
+    if (GetOwningArena() == other->GetOwningArena()) {
+  #endif  // !PROTOBUF_FORCE_COPY_IN_SWAP
+      InternalSwap(other);
+    } else {
+      ::google::protobuf::internal::GenericSwap(this, other);
+    }
+  }
+  void UnsafeArenaSwap(GetOrdersByEmailRequest* other) {
+    if (other == this) return;
+    ABSL_DCHECK(GetOwningArena() == other->GetOwningArena());
+    InternalSwap(other);
+  }
+
+  // implements Message ----------------------------------------------
+
+  GetOrdersByEmailRequest* New(::google::protobuf::Arena* arena = nullptr) const final {
+    return CreateMaybeMessage<GetOrdersByEmailRequest>(arena);
+  }
+  using ::google::protobuf::Message::CopyFrom;
+  void CopyFrom(const GetOrdersByEmailRequest& from);
+  using ::google::protobuf::Message::MergeFrom;
+  void MergeFrom( const GetOrdersByEmailRequest& from) {
+    GetOrdersByEmailRequest::MergeImpl(*this, from);
+  }
+  private:
+  static void MergeImpl(::google::protobuf::Message& to_msg, const ::google::protobuf::Message& from_msg);
+  public:
+  PROTOBUF_ATTRIBUTE_REINITIALIZES void Clear() final;
+  bool IsInitialized() const final;
+
+  ::size_t ByteSizeLong() const final;
+  const char* _InternalParse(const char* ptr, ::google::protobuf::internal::ParseContext* ctx) final;
+  ::uint8_t* _InternalSerialize(
+      ::uint8_t* target, ::google::protobuf::io::EpsCopyOutputStream* stream) const final;
+  int GetCachedSize() const final { return _impl_._cached_size_.Get(); }
+
+  private:
+  void SharedCtor(::google::protobuf::Arena* arena);
+  void SharedDtor();
+  void SetCachedSize(int size) const final;
+  void InternalSwap(GetOrdersByEmailRequest* other);
+
+  private:
+  friend class ::google::protobuf::internal::AnyMetadata;
+  static ::absl::string_view FullMessageName() {
+    return "oteldemo.GetOrdersByEmailRequest";
+  }
+  protected:
+  explicit GetOrdersByEmailRequest(::google::protobuf::Arena* arena);
+  public:
+
+  static const ClassData _class_data_;
+  const ::google::protobuf::Message::ClassData*GetClassData() const final;
+
+  ::google::protobuf::Metadata GetMetadata() const final;
+
+  // nested types ----------------------------------------------------
+
+  // accessors -------------------------------------------------------
+
+  enum : int {
+    kEmailFieldNumber = 1,
+  };
+  // string email = 1;
+  void clear_email() ;
+  const std::string& email() const;
+  template <typename Arg_ = const std::string&, typename... Args_>
+  void set_email(Arg_&& arg, Args_... args);
+  std::string* mutable_email();
+  PROTOBUF_NODISCARD std::string* release_email();
+  void set_allocated_email(std::string* ptr);
+
+  private:
+  const std::string& _internal_email() const;
+  inline PROTOBUF_ALWAYS_INLINE void _internal_set_email(
+      const std::string& value);
+  std::string* _internal_mutable_email();
+
+  public:
+  // @@protoc_insertion_point(class_scope:oteldemo.GetOrdersByEmailRequest)
+ private:
+  class _Internal;
+
+  friend class ::google::protobuf::internal::TcParser;
+  static const ::google::protobuf::internal::TcParseTable<0, 1, 0, 46, 2> _table_;
+  template <typename T> friend class ::google::protobuf::Arena::InternalHelper;
+  typedef void InternalArenaConstructable_;
+  typedef void DestructorSkippable_;
+  struct Impl_ {
+    ::google::protobuf::internal::ArenaStringPtr email_;
+    mutable ::google::protobuf::internal::CachedSize _cached_size_;
+    PROTOBUF_TSAN_DECLARE_MEMBER
+  };
+  union { Impl_ _impl_; };
+  friend struct ::TableStruct_demo_2eproto;
+};// -------------------------------------------------------------------
+
+class GetOrdersByEmailResponse final :
+    public ::google::protobuf::Message /* @@protoc_insertion_point(class_definition:oteldemo.GetOrdersByEmailResponse) */ {
+ public:
+  inline GetOrdersByEmailResponse() : GetOrdersByEmailResponse(nullptr) {}
+  ~GetOrdersByEmailResponse() override;
+  template<typename = void>
+  explicit PROTOBUF_CONSTEXPR GetOrdersByEmailResponse(::google::protobuf::internal::ConstantInitialized);
+
+  GetOrdersByEmailResponse(const GetOrdersByEmailResponse& from);
+  GetOrdersByEmailResponse(GetOrdersByEmailResponse&& from) noexcept
+    : GetOrdersByEmailResponse() {
+    *this = ::std::move(from);
+  }
+
+  inline GetOrdersByEmailResponse& operator=(const GetOrdersByEmailResponse& from) {
+    CopyFrom(from);
+    return *this;
+  }
+  inline GetOrdersByEmailResponse& operator=(GetOrdersByEmailResponse&& from) noexcept {
+    if (this == &from) return *this;
+    if (GetOwningArena() == from.GetOwningArena()
+  #ifdef PROTOBUF_FORCE_COPY_IN_MOVE
+        && GetOwningArena() != nullptr
+  #endif  // !PROTOBUF_FORCE_COPY_IN_MOVE
+    ) {
+      InternalSwap(&from);
+    } else {
+      CopyFrom(from);
+    }
+    return *this;
+  }
+
+  inline const ::google::protobuf::UnknownFieldSet& unknown_fields() const {
+    return _internal_metadata_.unknown_fields<::google::protobuf::UnknownFieldSet>(::google::protobuf::UnknownFieldSet::default_instance);
+  }
+  inline ::google::protobuf::UnknownFieldSet* mutable_unknown_fields() {
+    return _internal_metadata_.mutable_unknown_fields<::google::protobuf::UnknownFieldSet>();
+  }
+
+  static const ::google::protobuf::Descriptor* descriptor() {
+    return GetDescriptor();
+  }
+  static const ::google::protobuf::Descriptor* GetDescriptor() {
+    return default_instance().GetMetadata().descriptor;
+  }
+  static const ::google::protobuf::Reflection* GetReflection() {
+    return default_instance().GetMetadata().reflection;
+  }
+  static const GetOrdersByEmailResponse& default_instance() {
+    return *internal_default_instance();
+  }
+  static inline const GetOrdersByEmailResponse* internal_default_instance() {
+    return reinterpret_cast<const GetOrdersByEmailResponse*>(
+               &_GetOrdersByEmailResponse_default_instance_);
+  }
+  static constexpr int kIndexInFileMessages =
+    40;
+
+  friend void swap(GetOrdersByEmailResponse& a, GetOrdersByEmailResponse& b) {
+    a.Swap(&b);
+  }
+  inline void Swap(GetOrdersByEmailResponse* other) {
+    if (other == this) return;
+  #ifdef PROTOBUF_FORCE_COPY_IN_SWAP
+    if (GetOwningArena() != nullptr &&
+        GetOwningArena() == other->GetOwningArena()) {
+   #else  // PROTOBUF_FORCE_COPY_IN_SWAP
+    if (GetOwningArena() == other->GetOwningArena()) {
+  #endif  // !PROTOBUF_FORCE_COPY_IN_SWAP
+      InternalSwap(other);
+    } else {
+      ::google::protobuf::internal::GenericSwap(this, other);
+    }
+  }
+  void UnsafeArenaSwap(GetOrdersByEmailResponse* other) {
+    if (other == this) return;
+    ABSL_DCHECK(GetOwningArena() == other->GetOwningArena());
+    InternalSwap(other);
+  }
+
+  // implements Message ----------------------------------------------
+
+  GetOrdersByEmailResponse* New(::google::protobuf::Arena* arena = nullptr) const final {
+    return CreateMaybeMessage<GetOrdersByEmailResponse>(arena);
+  }
+  using ::google::protobuf::Message::CopyFrom;
+  void CopyFrom(const GetOrdersByEmailResponse& from);
+  using ::google::protobuf::Message::MergeFrom;
+  void MergeFrom( const GetOrdersByEmailResponse& from) {
+    GetOrdersByEmailResponse::MergeImpl(*this, from);
+  }
+  private:
+  static void MergeImpl(::google::protobuf::Message& to_msg, const ::google::protobuf::Message& from_msg);
+  public:
+  PROTOBUF_ATTRIBUTE_REINITIALIZES void Clear() final;
+  bool IsInitialized() const final;
+
+  ::size_t ByteSizeLong() const final;
+  const char* _InternalParse(const char* ptr, ::google::protobuf::internal::ParseContext* ctx) final;
+  ::uint8_t* _InternalSerialize(
+      ::uint8_t* target, ::google::protobuf::io::EpsCopyOutputStream* stream) const final;
+  int GetCachedSize() const final { return _impl_._cached_size_.Get(); }
+
+  private:
+  void SharedCtor(::google::protobuf::Arena* arena);
+  void SharedDtor();
+  void SetCachedSize(int size) const final;
+  void InternalSwap(GetOrdersByEmailResponse* other);
+
+  private:
+  friend class ::google::protobuf::internal::AnyMetadata;
+  static ::absl::string_view FullMessageName() {
+    return "oteldemo.GetOrdersByEmailResponse";
+  }
+  protected:
+  explicit GetOrdersByEmailResponse(::google::protobuf::Arena* arena);
+  public:
+
+  static const ClassData _class_data_;
+  const ::google::protobuf::Message::ClassData*GetClassData() const final;
+
+  ::google::protobuf::Metadata GetMetadata() const final;
+
+  // nested types ----------------------------------------------------
+
+  // accessors -------------------------------------------------------
+
+  enum : int {
+    kOrdersFieldNumber = 1,
+  };
+  // repeated .oteldemo.OrderDetail orders = 1;
+  int orders_size() const;
+  private:
+  int _internal_orders_size() const;
+
+  public:
+  void clear_orders() ;
+  ::oteldemo::OrderDetail* mutable_orders(int index);
+  ::google::protobuf::RepeatedPtrField< ::oteldemo::OrderDetail >*
+      mutable_orders();
+  private:
+  const ::google::protobuf::RepeatedPtrField<::oteldemo::OrderDetail>& _internal_orders() const;
+  ::google::protobuf::RepeatedPtrField<::oteldemo::OrderDetail>* _internal_mutable_orders();
+  public:
+  const ::oteldemo::OrderDetail& orders(int index) const;
+  ::oteldemo::OrderDetail* add_orders();
+  const ::google::protobuf::RepeatedPtrField< ::oteldemo::OrderDetail >&
+      orders() const;
+  // @@protoc_insertion_point(class_scope:oteldemo.GetOrdersByEmailResponse)
+ private:
+  class _Internal;
+
+  friend class ::google::protobuf::internal::TcParser;
+  static const ::google::protobuf::internal::TcParseTable<0, 1, 1, 0, 2> _table_;
+  template <typename T> friend class ::google::protobuf::Arena::InternalHelper;
+  typedef void InternalArenaConstructable_;
+  typedef void DestructorSkippable_;
+  struct Impl_ {
+    ::google::protobuf::RepeatedPtrField< ::oteldemo::OrderDetail > orders_;
+    mutable ::google::protobuf::internal::CachedSize _cached_size_;
+    PROTOBUF_TSAN_DECLARE_MEMBER
+  };
+  union { Impl_ _impl_; };
+  friend struct ::TableStruct_demo_2eproto;
+};// -------------------------------------------------------------------
+
+class GetOrderRequest final :
+    public ::google::protobuf::Message /* @@protoc_insertion_point(class_definition:oteldemo.GetOrderRequest) */ {
+ public:
+  inline GetOrderRequest() : GetOrderRequest(nullptr) {}
+  ~GetOrderRequest() override;
+  template<typename = void>
+  explicit PROTOBUF_CONSTEXPR GetOrderRequest(::google::protobuf::internal::ConstantInitialized);
+
+  GetOrderRequest(const GetOrderRequest& from);
+  GetOrderRequest(GetOrderRequest&& from) noexcept
+    : GetOrderRequest() {
+    *this = ::std::move(from);
+  }
+
+  inline GetOrderRequest& operator=(const GetOrderRequest& from) {
+    CopyFrom(from);
+    return *this;
+  }
+  inline GetOrderRequest& operator=(GetOrderRequest&& from) noexcept {
+    if (this == &from) return *this;
+    if (GetOwningArena() == from.GetOwningArena()
+  #ifdef PROTOBUF_FORCE_COPY_IN_MOVE
+        && GetOwningArena() != nullptr
+  #endif  // !PROTOBUF_FORCE_COPY_IN_MOVE
+    ) {
+      InternalSwap(&from);
+    } else {
+      CopyFrom(from);
+    }
+    return *this;
+  }
+
+  inline const ::google::protobuf::UnknownFieldSet& unknown_fields() const {
+    return _internal_metadata_.unknown_fields<::google::protobuf::UnknownFieldSet>(::google::protobuf::UnknownFieldSet::default_instance);
+  }
+  inline ::google::protobuf::UnknownFieldSet* mutable_unknown_fields() {
+    return _internal_metadata_.mutable_unknown_fields<::google::protobuf::UnknownFieldSet>();
+  }
+
+  static const ::google::protobuf::Descriptor* descriptor() {
+    return GetDescriptor();
+  }
+  static const ::google::protobuf::Descriptor* GetDescriptor() {
+    return default_instance().GetMetadata().descriptor;
+  }
+  static const ::google::protobuf::Reflection* GetReflection() {
+    return default_instance().GetMetadata().reflection;
+  }
+  static const GetOrderRequest& default_instance() {
+    return *internal_default_instance();
+  }
+  static inline const GetOrderRequest* internal_default_instance() {
+    return reinterpret_cast<const GetOrderRequest*>(
+               &_GetOrderRequest_default_instance_);
+  }
+  static constexpr int kIndexInFileMessages =
+    41;
+
+  friend void swap(GetOrderRequest& a, GetOrderRequest& b) {
+    a.Swap(&b);
+  }
+  inline void Swap(GetOrderRequest* other) {
+    if (other == this) return;
+  #ifdef PROTOBUF_FORCE_COPY_IN_SWAP
+    if (GetOwningArena() != nullptr &&
+        GetOwningArena() == other->GetOwningArena()) {
+   #else  // PROTOBUF_FORCE_COPY_IN_SWAP
+    if (GetOwningArena() == other->GetOwningArena()) {
+  #endif  // !PROTOBUF_FORCE_COPY_IN_SWAP
+      InternalSwap(other);
+    } else {
+      ::google::protobuf::internal::GenericSwap(this, other);
+    }
+  }
+  void UnsafeArenaSwap(GetOrderRequest* other) {
+    if (other == this) return;
+    ABSL_DCHECK(GetOwningArena() == other->GetOwningArena());
+    InternalSwap(other);
+  }
+
+  // implements Message ----------------------------------------------
+
+  GetOrderRequest* New(::google::protobuf::Arena* arena = nullptr) const final {
+    return CreateMaybeMessage<GetOrderRequest>(arena);
+  }
+  using ::google::protobuf::Message::CopyFrom;
+  void CopyFrom(const GetOrderRequest& from);
+  using ::google::protobuf::Message::MergeFrom;
+  void MergeFrom( const GetOrderRequest& from) {
+    GetOrderRequest::MergeImpl(*this, from);
+  }
+  private:
+  static void MergeImpl(::google::protobuf::Message& to_msg, const ::google::protobuf::Message& from_msg);
+  public:
+  PROTOBUF_ATTRIBUTE_REINITIALIZES void Clear() final;
+  bool IsInitialized() const final;
+
+  ::size_t ByteSizeLong() const final;
+  const char* _InternalParse(const char* ptr, ::google::protobuf::internal::ParseContext* ctx) final;
+  ::uint8_t* _InternalSerialize(
+      ::uint8_t* target, ::google::protobuf::io::EpsCopyOutputStream* stream) const final;
+  int GetCachedSize() const final { return _impl_._cached_size_.Get(); }
+
+  private:
+  void SharedCtor(::google::protobuf::Arena* arena);
+  void SharedDtor();
+  void SetCachedSize(int size) const final;
+  void InternalSwap(GetOrderRequest* other);
+
+  private:
+  friend class ::google::protobuf::internal::AnyMetadata;
+  static ::absl::string_view FullMessageName() {
+    return "oteldemo.GetOrderRequest";
+  }
+  protected:
+  explicit GetOrderRequest(::google::protobuf::Arena* arena);
+  public:
+
+  static const ClassData _class_data_;
+  const ::google::protobuf::Message::ClassData*GetClassData() const final;
+
+  ::google::protobuf::Metadata GetMetadata() const final;
+
+  // nested types ----------------------------------------------------
+
+  // accessors -------------------------------------------------------
+
+  enum : int {
+    kOrderIdFieldNumber = 1,
+  };
+  // string order_id = 1;
+  void clear_order_id() ;
+  const std::string& order_id() const;
+  template <typename Arg_ = const std::string&, typename... Args_>
+  void set_order_id(Arg_&& arg, Args_... args);
+  std::string* mutable_order_id();
+  PROTOBUF_NODISCARD std::string* release_order_id();
+  void set_allocated_order_id(std::string* ptr);
+
+  private:
+  const std::string& _internal_order_id() const;
+  inline PROTOBUF_ALWAYS_INLINE void _internal_set_order_id(
+      const std::string& value);
+  std::string* _internal_mutable_order_id();
+
+  public:
+  // @@protoc_insertion_point(class_scope:oteldemo.GetOrderRequest)
+ private:
+  class _Internal;
+
+  friend class ::google::protobuf::internal::TcParser;
+  static const ::google::protobuf::internal::TcParseTable<0, 1, 0, 41, 2> _table_;
+  template <typename T> friend class ::google::protobuf::Arena::InternalHelper;
+  typedef void InternalArenaConstructable_;
+  typedef void DestructorSkippable_;
+  struct Impl_ {
+    ::google::protobuf::internal::ArenaStringPtr order_id_;
+    mutable ::google::protobuf::internal::CachedSize _cached_size_;
+    PROTOBUF_TSAN_DECLARE_MEMBER
+  };
+  union { Impl_ _impl_; };
+  friend struct ::TableStruct_demo_2eproto;
+};// -------------------------------------------------------------------
+
+class OrderDetail final :
+    public ::google::protobuf::Message /* @@protoc_insertion_point(class_definition:oteldemo.OrderDetail) */ {
+ public:
+  inline OrderDetail() : OrderDetail(nullptr) {}
+  ~OrderDetail() override;
+  template<typename = void>
+  explicit PROTOBUF_CONSTEXPR OrderDetail(::google::protobuf::internal::ConstantInitialized);
+
+  OrderDetail(const OrderDetail& from);
+  OrderDetail(OrderDetail&& from) noexcept
+    : OrderDetail() {
+    *this = ::std::move(from);
+  }
+
+  inline OrderDetail& operator=(const OrderDetail& from) {
+    CopyFrom(from);
+    return *this;
+  }
+  inline OrderDetail& operator=(OrderDetail&& from) noexcept {
+    if (this == &from) return *this;
+    if (GetOwningArena() == from.GetOwningArena()
+  #ifdef PROTOBUF_FORCE_COPY_IN_MOVE
+        && GetOwningArena() != nullptr
+  #endif  // !PROTOBUF_FORCE_COPY_IN_MOVE
+    ) {
+      InternalSwap(&from);
+    } else {
+      CopyFrom(from);
+    }
+    return *this;
+  }
+
+  inline const ::google::protobuf::UnknownFieldSet& unknown_fields() const {
+    return _internal_metadata_.unknown_fields<::google::protobuf::UnknownFieldSet>(::google::protobuf::UnknownFieldSet::default_instance);
+  }
+  inline ::google::protobuf::UnknownFieldSet* mutable_unknown_fields() {
+    return _internal_metadata_.mutable_unknown_fields<::google::protobuf::UnknownFieldSet>();
+  }
+
+  static const ::google::protobuf::Descriptor* descriptor() {
+    return GetDescriptor();
+  }
+  static const ::google::protobuf::Descriptor* GetDescriptor() {
+    return default_instance().GetMetadata().descriptor;
+  }
+  static const ::google::protobuf::Reflection* GetReflection() {
+    return default_instance().GetMetadata().reflection;
+  }
+  static const OrderDetail& default_instance() {
+    return *internal_default_instance();
+  }
+  static inline const OrderDetail* internal_default_instance() {
+    return reinterpret_cast<const OrderDetail*>(
+               &_OrderDetail_default_instance_);
+  }
+  static constexpr int kIndexInFileMessages =
+    42;
+
+  friend void swap(OrderDetail& a, OrderDetail& b) {
+    a.Swap(&b);
+  }
+  inline void Swap(OrderDetail* other) {
+    if (other == this) return;
+  #ifdef PROTOBUF_FORCE_COPY_IN_SWAP
+    if (GetOwningArena() != nullptr &&
+        GetOwningArena() == other->GetOwningArena()) {
+   #else  // PROTOBUF_FORCE_COPY_IN_SWAP
+    if (GetOwningArena() == other->GetOwningArena()) {
+  #endif  // !PROTOBUF_FORCE_COPY_IN_SWAP
+      InternalSwap(other);
+    } else {
+      ::google::protobuf::internal::GenericSwap(this, other);
+    }
+  }
+  void UnsafeArenaSwap(OrderDetail* other) {
+    if (other == this) return;
+    ABSL_DCHECK(GetOwningArena() == other->GetOwningArena());
+    InternalSwap(other);
+  }
+
+  // implements Message ----------------------------------------------
+
+  OrderDetail* New(::google::protobuf::Arena* arena = nullptr) const final {
+    return CreateMaybeMessage<OrderDetail>(arena);
+  }
+  using ::google::protobuf::Message::CopyFrom;
+  void CopyFrom(const OrderDetail& from);
+  using ::google::protobuf::Message::MergeFrom;
+  void MergeFrom( const OrderDetail& from) {
+    OrderDetail::MergeImpl(*this, from);
+  }
+  private:
+  static void MergeImpl(::google::protobuf::Message& to_msg, const ::google::protobuf::Message& from_msg);
+  public:
+  PROTOBUF_ATTRIBUTE_REINITIALIZES void Clear() final;
+  bool IsInitialized() const final;
+
+  ::size_t ByteSizeLong() const final;
+  const char* _InternalParse(const char* ptr, ::google::protobuf::internal::ParseContext* ctx) final;
+  ::uint8_t* _InternalSerialize(
+      ::uint8_t* target, ::google::protobuf::io::EpsCopyOutputStream* stream) const final;
+  int GetCachedSize() const final { return _impl_._cached_size_.Get(); }
+
+  private:
+  void SharedCtor(::google::protobuf::Arena* arena);
+  void SharedDtor();
+  void SetCachedSize(int size) const final;
+  void InternalSwap(OrderDetail* other);
+
+  private:
+  friend class ::google::protobuf::internal::AnyMetadata;
+  static ::absl::string_view FullMessageName() {
+    return "oteldemo.OrderDetail";
+  }
+  protected:
+  explicit OrderDetail(::google::protobuf::Arena* arena);
+  public:
+
+  static const ClassData _class_data_;
+  const ::google::protobuf::Message::ClassData*GetClassData() const final;
+
+  ::google::protobuf::Metadata GetMetadata() const final;
+
+  // nested types ----------------------------------------------------
+
+  // accessors -------------------------------------------------------
+
+  enum : int {
+    kItemsFieldNumber = 7,
+    kOrderIdFieldNumber = 1,
+    kEmailFieldNumber = 2,
+    kStatusFieldNumber = 3,
+    kShippingTrackingIdFieldNumber = 5,
+    kCreatedAtFieldNumber = 8,
+    kTransactionIdFieldNumber = 9,
+    kRefundTransactionIdFieldNumber = 10,
+    kTotalCostFieldNumber = 4,
+    kShippingAddressFieldNumber = 6,
+  };
+  // repeated .oteldemo.OrderItem items = 7;
+  int items_size() const;
+  private:
+  int _internal_items_size() const;
+
+  public:
+  void clear_items() ;
+  ::oteldemo::OrderItem* mutable_items(int index);
+  ::google::protobuf::RepeatedPtrField< ::oteldemo::OrderItem >*
+      mutable_items();
+  private:
+  const ::google::protobuf::RepeatedPtrField<::oteldemo::OrderItem>& _internal_items() const;
+  ::google::protobuf::RepeatedPtrField<::oteldemo::OrderItem>* _internal_mutable_items();
+  public:
+  const ::oteldemo::OrderItem& items(int index) const;
+  ::oteldemo::OrderItem* add_items();
+  const ::google::protobuf::RepeatedPtrField< ::oteldemo::OrderItem >&
+      items() const;
+  // string order_id = 1;
+  void clear_order_id() ;
+  const std::string& order_id() const;
+  template <typename Arg_ = const std::string&, typename... Args_>
+  void set_order_id(Arg_&& arg, Args_... args);
+  std::string* mutable_order_id();
+  PROTOBUF_NODISCARD std::string* release_order_id();
+  void set_allocated_order_id(std::string* ptr);
+
+  private:
+  const std::string& _internal_order_id() const;
+  inline PROTOBUF_ALWAYS_INLINE void _internal_set_order_id(
+      const std::string& value);
+  std::string* _internal_mutable_order_id();
+
+  public:
+  // string email = 2;
+  void clear_email() ;
+  const std::string& email() const;
+  template <typename Arg_ = const std::string&, typename... Args_>
+  void set_email(Arg_&& arg, Args_... args);
+  std::string* mutable_email();
+  PROTOBUF_NODISCARD std::string* release_email();
+  void set_allocated_email(std::string* ptr);
+
+  private:
+  const std::string& _internal_email() const;
+  inline PROTOBUF_ALWAYS_INLINE void _internal_set_email(
+      const std::string& value);
+  std::string* _internal_mutable_email();
+
+  public:
+  // string status = 3;
+  void clear_status() ;
+  const std::string& status() const;
+  template <typename Arg_ = const std::string&, typename... Args_>
+  void set_status(Arg_&& arg, Args_... args);
+  std::string* mutable_status();
+  PROTOBUF_NODISCARD std::string* release_status();
+  void set_allocated_status(std::string* ptr);
+
+  private:
+  const std::string& _internal_status() const;
+  inline PROTOBUF_ALWAYS_INLINE void _internal_set_status(
+      const std::string& value);
+  std::string* _internal_mutable_status();
+
+  public:
+  // string shipping_tracking_id = 5;
+  void clear_shipping_tracking_id() ;
+  const std::string& shipping_tracking_id() const;
+  template <typename Arg_ = const std::string&, typename... Args_>
+  void set_shipping_tracking_id(Arg_&& arg, Args_... args);
+  std::string* mutable_shipping_tracking_id();
+  PROTOBUF_NODISCARD std::string* release_shipping_tracking_id();
+  void set_allocated_shipping_tracking_id(std::string* ptr);
+
+  private:
+  const std::string& _internal_shipping_tracking_id() const;
+  inline PROTOBUF_ALWAYS_INLINE void _internal_set_shipping_tracking_id(
+      const std::string& value);
+  std::string* _internal_mutable_shipping_tracking_id();
+
+  public:
+  // string created_at = 8;
+  void clear_created_at() ;
+  const std::string& created_at() const;
+  template <typename Arg_ = const std::string&, typename... Args_>
+  void set_created_at(Arg_&& arg, Args_... args);
+  std::string* mutable_created_at();
+  PROTOBUF_NODISCARD std::string* release_created_at();
+  void set_allocated_created_at(std::string* ptr);
+
+  private:
+  const std::string& _internal_created_at() const;
+  inline PROTOBUF_ALWAYS_INLINE void _internal_set_created_at(
+      const std::string& value);
+  std::string* _internal_mutable_created_at();
+
+  public:
+  // string transaction_id = 9;
+  void clear_transaction_id() ;
+  const std::string& transaction_id() const;
+  template <typename Arg_ = const std::string&, typename... Args_>
+  void set_transaction_id(Arg_&& arg, Args_... args);
+  std::string* mutable_transaction_id();
+  PROTOBUF_NODISCARD std::string* release_transaction_id();
+  void set_allocated_transaction_id(std::string* ptr);
+
+  private:
+  const std::string& _internal_transaction_id() const;
+  inline PROTOBUF_ALWAYS_INLINE void _internal_set_transaction_id(
+      const std::string& value);
+  std::string* _internal_mutable_transaction_id();
+
+  public:
+  // string refund_transaction_id = 10;
+  void clear_refund_transaction_id() ;
+  const std::string& refund_transaction_id() const;
+  template <typename Arg_ = const std::string&, typename... Args_>
+  void set_refund_transaction_id(Arg_&& arg, Args_... args);
+  std::string* mutable_refund_transaction_id();
+  PROTOBUF_NODISCARD std::string* release_refund_transaction_id();
+  void set_allocated_refund_transaction_id(std::string* ptr);
+
+  private:
+  const std::string& _internal_refund_transaction_id() const;
+  inline PROTOBUF_ALWAYS_INLINE void _internal_set_refund_transaction_id(
+      const std::string& value);
+  std::string* _internal_mutable_refund_transaction_id();
+
+  public:
+  // .oteldemo.Money total_cost = 4;
+  bool has_total_cost() const;
+  void clear_total_cost() ;
+  const ::oteldemo::Money& total_cost() const;
+  PROTOBUF_NODISCARD ::oteldemo::Money* release_total_cost();
+  ::oteldemo::Money* mutable_total_cost();
+  void set_allocated_total_cost(::oteldemo::Money* value);
+  void unsafe_arena_set_allocated_total_cost(::oteldemo::Money* value);
+  ::oteldemo::Money* unsafe_arena_release_total_cost();
+
+  private:
+  const ::oteldemo::Money& _internal_total_cost() const;
+  ::oteldemo::Money* _internal_mutable_total_cost();
+
+  public:
+  // .oteldemo.Address shipping_address = 6;
+  bool has_shipping_address() const;
+  void clear_shipping_address() ;
+  const ::oteldemo::Address& shipping_address() const;
+  PROTOBUF_NODISCARD ::oteldemo::Address* release_shipping_address();
+  ::oteldemo::Address* mutable_shipping_address();
+  void set_allocated_shipping_address(::oteldemo::Address* value);
+  void unsafe_arena_set_allocated_shipping_address(::oteldemo::Address* value);
+  ::oteldemo::Address* unsafe_arena_release_shipping_address();
+
+  private:
+  const ::oteldemo::Address& _internal_shipping_address() const;
+  ::oteldemo::Address* _internal_mutable_shipping_address();
+
+  public:
+  // @@protoc_insertion_point(class_scope:oteldemo.OrderDetail)
+ private:
+  class _Internal;
+
+  friend class ::google::protobuf::internal::TcParser;
+  static const ::google::protobuf::internal::TcParseTable<4, 10, 3, 121, 2> _table_;
+  template <typename T> friend class ::google::protobuf::Arena::InternalHelper;
+  typedef void InternalArenaConstructable_;
+  typedef void DestructorSkippable_;
+  struct Impl_ {
+    ::google::protobuf::internal::HasBits<1> _has_bits_;
+    mutable ::google::protobuf::internal::CachedSize _cached_size_;
+    ::google::protobuf::RepeatedPtrField< ::oteldemo::OrderItem > items_;
+    ::google::protobuf::internal::ArenaStringPtr order_id_;
+    ::google::protobuf::internal::ArenaStringPtr email_;
+    ::google::protobuf::internal::ArenaStringPtr status_;
+    ::google::protobuf::internal::ArenaStringPtr shipping_tracking_id_;
+    ::google::protobuf::internal::ArenaStringPtr created_at_;
+    ::google::protobuf::internal::ArenaStringPtr transaction_id_;
+    ::google::protobuf::internal::ArenaStringPtr refund_transaction_id_;
+    ::oteldemo::Money* total_cost_;
+    ::oteldemo::Address* shipping_address_;
+    PROTOBUF_TSAN_DECLARE_MEMBER
+  };
+  union { Impl_ _impl_; };
+  friend struct ::TableStruct_demo_2eproto;
+};// -------------------------------------------------------------------
+
 class AdRequest final :
     public ::google::protobuf::Message /* @@protoc_insertion_point(class_definition:oteldemo.AdRequest) */ {
  public:
@@ -6791,7 +8334,7 @@ class AdRequest final :
                &_AdRequest_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    36;
+    43;
 
   friend void swap(AdRequest& a, AdRequest& b) {
     a.Swap(&b);
@@ -6967,7 +8510,7 @@ class AdResponse final :
                &_AdResponse_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    37;
+    44;
 
   friend void swap(AdResponse& a, AdResponse& b) {
     a.Swap(&b);
@@ -7133,7 +8676,7 @@ class Ad final :
                &_Ad_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    38;
+    45;
 
   friend void swap(Ad& a, Ad& b) {
     a.Swap(&b);
@@ -7315,7 +8858,7 @@ class Flag final :
                &_Flag_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    39;
+    46;
 
   friend void swap(Flag& a, Flag& b) {
     a.Swap(&b);
@@ -7509,7 +9052,7 @@ class GetFlagRequest final :
                &_GetFlagRequest_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    40;
+    47;
 
   friend void swap(GetFlagRequest& a, GetFlagRequest& b) {
     a.Swap(&b);
@@ -7673,7 +9216,7 @@ class GetFlagResponse final :
                &_GetFlagResponse_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    41;
+    48;
 
   friend void swap(GetFlagResponse& a, GetFlagResponse& b) {
     a.Swap(&b);
@@ -7837,7 +9380,7 @@ class CreateFlagRequest final :
                &_CreateFlagRequest_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    42;
+    49;
 
   friend void swap(CreateFlagRequest& a, CreateFlagRequest& b) {
     a.Swap(&b);
@@ -8031,7 +9574,7 @@ class CreateFlagResponse final :
                &_CreateFlagResponse_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    43;
+    50;
 
   friend void swap(CreateFlagResponse& a, CreateFlagResponse& b) {
     a.Swap(&b);
@@ -8195,7 +9738,7 @@ class UpdateFlagRequest final :
                &_UpdateFlagRequest_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    44;
+    51;
 
   friend void swap(UpdateFlagRequest& a, UpdateFlagRequest& b) {
     a.Swap(&b);
@@ -8370,7 +9913,7 @@ class UpdateFlagResponse final :
                &_UpdateFlagResponse_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    45;
+    52;
 
   friend void swap(UpdateFlagResponse& a, UpdateFlagResponse& b) {
     a.Swap(&b);
@@ -8495,7 +10038,7 @@ class ListFlagsRequest final :
                &_ListFlagsRequest_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    46;
+    53;
 
   friend void swap(ListFlagsRequest& a, ListFlagsRequest& b) {
     a.Swap(&b);
@@ -8621,7 +10164,7 @@ class ListFlagsResponse final :
                &_ListFlagsResponse_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    47;
+    54;
 
   friend void swap(ListFlagsResponse& a, ListFlagsResponse& b) {
     a.Swap(&b);
@@ -8787,7 +10330,7 @@ class DeleteFlagRequest final :
                &_DeleteFlagRequest_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    48;
+    55;
 
   friend void swap(DeleteFlagRequest& a, DeleteFlagRequest& b) {
     a.Swap(&b);
@@ -8950,7 +10493,7 @@ class DeleteFlagResponse final :
                &_DeleteFlagResponse_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    49;
+    56;
 
   friend void swap(DeleteFlagResponse& a, DeleteFlagResponse& b) {
     a.Swap(&b);
@@ -12299,6 +13842,640 @@ inline void ChargeResponse::set_allocated_transaction_id(std::string* value) {
 
 // -------------------------------------------------------------------
 
+// RefundRequest
+
+// string order_id = 1;
+inline void RefundRequest::clear_order_id() {
+  _impl_.order_id_.ClearToEmpty();
+}
+inline const std::string& RefundRequest::order_id() const {
+  // @@protoc_insertion_point(field_get:oteldemo.RefundRequest.order_id)
+  return _internal_order_id();
+}
+template <typename Arg_, typename... Args_>
+inline PROTOBUF_ALWAYS_INLINE void RefundRequest::set_order_id(Arg_&& arg,
+                                                     Args_... args) {
+  PROTOBUF_TSAN_WRITE(&_impl_._tsan_detect_race);
+  ;
+  _impl_.order_id_.Set(static_cast<Arg_&&>(arg), args..., GetArenaForAllocation());
+  // @@protoc_insertion_point(field_set:oteldemo.RefundRequest.order_id)
+}
+inline std::string* RefundRequest::mutable_order_id() {
+  std::string* _s = _internal_mutable_order_id();
+  // @@protoc_insertion_point(field_mutable:oteldemo.RefundRequest.order_id)
+  return _s;
+}
+inline const std::string& RefundRequest::_internal_order_id() const {
+  PROTOBUF_TSAN_READ(&_impl_._tsan_detect_race);
+  return _impl_.order_id_.Get();
+}
+inline void RefundRequest::_internal_set_order_id(const std::string& value) {
+  PROTOBUF_TSAN_WRITE(&_impl_._tsan_detect_race);
+  ;
+  _impl_.order_id_.Set(value, GetArenaForAllocation());
+}
+inline std::string* RefundRequest::_internal_mutable_order_id() {
+  PROTOBUF_TSAN_WRITE(&_impl_._tsan_detect_race);
+  ;
+  return _impl_.order_id_.Mutable( GetArenaForAllocation());
+}
+inline std::string* RefundRequest::release_order_id() {
+  PROTOBUF_TSAN_WRITE(&_impl_._tsan_detect_race);
+  // @@protoc_insertion_point(field_release:oteldemo.RefundRequest.order_id)
+  return _impl_.order_id_.Release();
+}
+inline void RefundRequest::set_allocated_order_id(std::string* value) {
+  PROTOBUF_TSAN_WRITE(&_impl_._tsan_detect_race);
+  _impl_.order_id_.SetAllocated(value, GetArenaForAllocation());
+  #ifdef PROTOBUF_FORCE_COPY_DEFAULT_STRING
+        if (_impl_.order_id_.IsDefault()) {
+          _impl_.order_id_.Set("", GetArenaForAllocation());
+        }
+  #endif  // PROTOBUF_FORCE_COPY_DEFAULT_STRING
+  // @@protoc_insertion_point(field_set_allocated:oteldemo.RefundRequest.order_id)
+}
+
+// string transaction_id = 2;
+inline void RefundRequest::clear_transaction_id() {
+  _impl_.transaction_id_.ClearToEmpty();
+}
+inline const std::string& RefundRequest::transaction_id() const {
+  // @@protoc_insertion_point(field_get:oteldemo.RefundRequest.transaction_id)
+  return _internal_transaction_id();
+}
+template <typename Arg_, typename... Args_>
+inline PROTOBUF_ALWAYS_INLINE void RefundRequest::set_transaction_id(Arg_&& arg,
+                                                     Args_... args) {
+  PROTOBUF_TSAN_WRITE(&_impl_._tsan_detect_race);
+  ;
+  _impl_.transaction_id_.Set(static_cast<Arg_&&>(arg), args..., GetArenaForAllocation());
+  // @@protoc_insertion_point(field_set:oteldemo.RefundRequest.transaction_id)
+}
+inline std::string* RefundRequest::mutable_transaction_id() {
+  std::string* _s = _internal_mutable_transaction_id();
+  // @@protoc_insertion_point(field_mutable:oteldemo.RefundRequest.transaction_id)
+  return _s;
+}
+inline const std::string& RefundRequest::_internal_transaction_id() const {
+  PROTOBUF_TSAN_READ(&_impl_._tsan_detect_race);
+  return _impl_.transaction_id_.Get();
+}
+inline void RefundRequest::_internal_set_transaction_id(const std::string& value) {
+  PROTOBUF_TSAN_WRITE(&_impl_._tsan_detect_race);
+  ;
+  _impl_.transaction_id_.Set(value, GetArenaForAllocation());
+}
+inline std::string* RefundRequest::_internal_mutable_transaction_id() {
+  PROTOBUF_TSAN_WRITE(&_impl_._tsan_detect_race);
+  ;
+  return _impl_.transaction_id_.Mutable( GetArenaForAllocation());
+}
+inline std::string* RefundRequest::release_transaction_id() {
+  PROTOBUF_TSAN_WRITE(&_impl_._tsan_detect_race);
+  // @@protoc_insertion_point(field_release:oteldemo.RefundRequest.transaction_id)
+  return _impl_.transaction_id_.Release();
+}
+inline void RefundRequest::set_allocated_transaction_id(std::string* value) {
+  PROTOBUF_TSAN_WRITE(&_impl_._tsan_detect_race);
+  _impl_.transaction_id_.SetAllocated(value, GetArenaForAllocation());
+  #ifdef PROTOBUF_FORCE_COPY_DEFAULT_STRING
+        if (_impl_.transaction_id_.IsDefault()) {
+          _impl_.transaction_id_.Set("", GetArenaForAllocation());
+        }
+  #endif  // PROTOBUF_FORCE_COPY_DEFAULT_STRING
+  // @@protoc_insertion_point(field_set_allocated:oteldemo.RefundRequest.transaction_id)
+}
+
+// .oteldemo.Money amount = 3;
+inline bool RefundRequest::has_amount() const {
+  bool value = (_impl_._has_bits_[0] & 0x00000001u) != 0;
+  PROTOBUF_ASSUME(!value || _impl_.amount_ != nullptr);
+  return value;
+}
+inline void RefundRequest::clear_amount() {
+  if (_impl_.amount_ != nullptr) _impl_.amount_->Clear();
+  _impl_._has_bits_[0] &= ~0x00000001u;
+}
+inline const ::oteldemo::Money& RefundRequest::_internal_amount() const {
+  PROTOBUF_TSAN_READ(&_impl_._tsan_detect_race);
+  const ::oteldemo::Money* p = _impl_.amount_;
+  return p != nullptr ? *p : reinterpret_cast<const ::oteldemo::Money&>(::oteldemo::_Money_default_instance_);
+}
+inline const ::oteldemo::Money& RefundRequest::amount() const {
+  // @@protoc_insertion_point(field_get:oteldemo.RefundRequest.amount)
+  return _internal_amount();
+}
+inline void RefundRequest::unsafe_arena_set_allocated_amount(::oteldemo::Money* value) {
+  PROTOBUF_TSAN_WRITE(&_impl_._tsan_detect_race);
+  if (GetArenaForAllocation() == nullptr) {
+    delete reinterpret_cast<::google::protobuf::MessageLite*>(_impl_.amount_);
+  }
+  _impl_.amount_ = reinterpret_cast<::oteldemo::Money*>(value);
+  if (value != nullptr) {
+    _impl_._has_bits_[0] |= 0x00000001u;
+  } else {
+    _impl_._has_bits_[0] &= ~0x00000001u;
+  }
+  // @@protoc_insertion_point(field_unsafe_arena_set_allocated:oteldemo.RefundRequest.amount)
+}
+inline ::oteldemo::Money* RefundRequest::release_amount() {
+  PROTOBUF_TSAN_WRITE(&_impl_._tsan_detect_race);
+
+  _impl_._has_bits_[0] &= ~0x00000001u;
+  ::oteldemo::Money* released = _impl_.amount_;
+  _impl_.amount_ = nullptr;
+#ifdef PROTOBUF_FORCE_COPY_IN_RELEASE
+  auto* old = reinterpret_cast<::google::protobuf::MessageLite*>(released);
+  released = ::google::protobuf::internal::DuplicateIfNonNull(released);
+  if (GetArenaForAllocation() == nullptr) {
+    delete old;
+  }
+#else   // PROTOBUF_FORCE_COPY_IN_RELEASE
+  if (GetArenaForAllocation() != nullptr) {
+    released = ::google::protobuf::internal::DuplicateIfNonNull(released);
+  }
+#endif  // !PROTOBUF_FORCE_COPY_IN_RELEASE
+  return released;
+}
+inline ::oteldemo::Money* RefundRequest::unsafe_arena_release_amount() {
+  PROTOBUF_TSAN_WRITE(&_impl_._tsan_detect_race);
+  // @@protoc_insertion_point(field_release:oteldemo.RefundRequest.amount)
+
+  _impl_._has_bits_[0] &= ~0x00000001u;
+  ::oteldemo::Money* temp = _impl_.amount_;
+  _impl_.amount_ = nullptr;
+  return temp;
+}
+inline ::oteldemo::Money* RefundRequest::_internal_mutable_amount() {
+  PROTOBUF_TSAN_WRITE(&_impl_._tsan_detect_race);
+  _impl_._has_bits_[0] |= 0x00000001u;
+  if (_impl_.amount_ == nullptr) {
+    auto* p = CreateMaybeMessage<::oteldemo::Money>(GetArenaForAllocation());
+    _impl_.amount_ = reinterpret_cast<::oteldemo::Money*>(p);
+  }
+  return _impl_.amount_;
+}
+inline ::oteldemo::Money* RefundRequest::mutable_amount() {
+  ::oteldemo::Money* _msg = _internal_mutable_amount();
+  // @@protoc_insertion_point(field_mutable:oteldemo.RefundRequest.amount)
+  return _msg;
+}
+inline void RefundRequest::set_allocated_amount(::oteldemo::Money* value) {
+  ::google::protobuf::Arena* message_arena = GetArenaForAllocation();
+  PROTOBUF_TSAN_WRITE(&_impl_._tsan_detect_race);
+  if (message_arena == nullptr) {
+    delete reinterpret_cast<::oteldemo::Money*>(_impl_.amount_);
+  }
+
+  if (value != nullptr) {
+    ::google::protobuf::Arena* submessage_arena =
+        ::google::protobuf::Arena::InternalGetOwningArena(reinterpret_cast<::oteldemo::Money*>(value));
+    if (message_arena != submessage_arena) {
+      value = ::google::protobuf::internal::GetOwnedMessage(message_arena, value, submessage_arena);
+    }
+    _impl_._has_bits_[0] |= 0x00000001u;
+  } else {
+    _impl_._has_bits_[0] &= ~0x00000001u;
+  }
+
+  _impl_.amount_ = reinterpret_cast<::oteldemo::Money*>(value);
+  // @@protoc_insertion_point(field_set_allocated:oteldemo.RefundRequest.amount)
+}
+
+// string email = 4;
+inline void RefundRequest::clear_email() {
+  _impl_.email_.ClearToEmpty();
+}
+inline const std::string& RefundRequest::email() const {
+  // @@protoc_insertion_point(field_get:oteldemo.RefundRequest.email)
+  return _internal_email();
+}
+template <typename Arg_, typename... Args_>
+inline PROTOBUF_ALWAYS_INLINE void RefundRequest::set_email(Arg_&& arg,
+                                                     Args_... args) {
+  PROTOBUF_TSAN_WRITE(&_impl_._tsan_detect_race);
+  ;
+  _impl_.email_.Set(static_cast<Arg_&&>(arg), args..., GetArenaForAllocation());
+  // @@protoc_insertion_point(field_set:oteldemo.RefundRequest.email)
+}
+inline std::string* RefundRequest::mutable_email() {
+  std::string* _s = _internal_mutable_email();
+  // @@protoc_insertion_point(field_mutable:oteldemo.RefundRequest.email)
+  return _s;
+}
+inline const std::string& RefundRequest::_internal_email() const {
+  PROTOBUF_TSAN_READ(&_impl_._tsan_detect_race);
+  return _impl_.email_.Get();
+}
+inline void RefundRequest::_internal_set_email(const std::string& value) {
+  PROTOBUF_TSAN_WRITE(&_impl_._tsan_detect_race);
+  ;
+  _impl_.email_.Set(value, GetArenaForAllocation());
+}
+inline std::string* RefundRequest::_internal_mutable_email() {
+  PROTOBUF_TSAN_WRITE(&_impl_._tsan_detect_race);
+  ;
+  return _impl_.email_.Mutable( GetArenaForAllocation());
+}
+inline std::string* RefundRequest::release_email() {
+  PROTOBUF_TSAN_WRITE(&_impl_._tsan_detect_race);
+  // @@protoc_insertion_point(field_release:oteldemo.RefundRequest.email)
+  return _impl_.email_.Release();
+}
+inline void RefundRequest::set_allocated_email(std::string* value) {
+  PROTOBUF_TSAN_WRITE(&_impl_._tsan_detect_race);
+  _impl_.email_.SetAllocated(value, GetArenaForAllocation());
+  #ifdef PROTOBUF_FORCE_COPY_DEFAULT_STRING
+        if (_impl_.email_.IsDefault()) {
+          _impl_.email_.Set("", GetArenaForAllocation());
+        }
+  #endif  // PROTOBUF_FORCE_COPY_DEFAULT_STRING
+  // @@protoc_insertion_point(field_set_allocated:oteldemo.RefundRequest.email)
+}
+
+// -------------------------------------------------------------------
+
+// RefundResponse
+
+// string refund_transaction_id = 1;
+inline void RefundResponse::clear_refund_transaction_id() {
+  _impl_.refund_transaction_id_.ClearToEmpty();
+}
+inline const std::string& RefundResponse::refund_transaction_id() const {
+  // @@protoc_insertion_point(field_get:oteldemo.RefundResponse.refund_transaction_id)
+  return _internal_refund_transaction_id();
+}
+template <typename Arg_, typename... Args_>
+inline PROTOBUF_ALWAYS_INLINE void RefundResponse::set_refund_transaction_id(Arg_&& arg,
+                                                     Args_... args) {
+  PROTOBUF_TSAN_WRITE(&_impl_._tsan_detect_race);
+  ;
+  _impl_.refund_transaction_id_.Set(static_cast<Arg_&&>(arg), args..., GetArenaForAllocation());
+  // @@protoc_insertion_point(field_set:oteldemo.RefundResponse.refund_transaction_id)
+}
+inline std::string* RefundResponse::mutable_refund_transaction_id() {
+  std::string* _s = _internal_mutable_refund_transaction_id();
+  // @@protoc_insertion_point(field_mutable:oteldemo.RefundResponse.refund_transaction_id)
+  return _s;
+}
+inline const std::string& RefundResponse::_internal_refund_transaction_id() const {
+  PROTOBUF_TSAN_READ(&_impl_._tsan_detect_race);
+  return _impl_.refund_transaction_id_.Get();
+}
+inline void RefundResponse::_internal_set_refund_transaction_id(const std::string& value) {
+  PROTOBUF_TSAN_WRITE(&_impl_._tsan_detect_race);
+  ;
+  _impl_.refund_transaction_id_.Set(value, GetArenaForAllocation());
+}
+inline std::string* RefundResponse::_internal_mutable_refund_transaction_id() {
+  PROTOBUF_TSAN_WRITE(&_impl_._tsan_detect_race);
+  ;
+  return _impl_.refund_transaction_id_.Mutable( GetArenaForAllocation());
+}
+inline std::string* RefundResponse::release_refund_transaction_id() {
+  PROTOBUF_TSAN_WRITE(&_impl_._tsan_detect_race);
+  // @@protoc_insertion_point(field_release:oteldemo.RefundResponse.refund_transaction_id)
+  return _impl_.refund_transaction_id_.Release();
+}
+inline void RefundResponse::set_allocated_refund_transaction_id(std::string* value) {
+  PROTOBUF_TSAN_WRITE(&_impl_._tsan_detect_race);
+  _impl_.refund_transaction_id_.SetAllocated(value, GetArenaForAllocation());
+  #ifdef PROTOBUF_FORCE_COPY_DEFAULT_STRING
+        if (_impl_.refund_transaction_id_.IsDefault()) {
+          _impl_.refund_transaction_id_.Set("", GetArenaForAllocation());
+        }
+  #endif  // PROTOBUF_FORCE_COPY_DEFAULT_STRING
+  // @@protoc_insertion_point(field_set_allocated:oteldemo.RefundResponse.refund_transaction_id)
+}
+
+// bool success = 2;
+inline void RefundResponse::clear_success() {
+  _impl_.success_ = false;
+}
+inline bool RefundResponse::success() const {
+  // @@protoc_insertion_point(field_get:oteldemo.RefundResponse.success)
+  return _internal_success();
+}
+inline void RefundResponse::set_success(bool value) {
+  _internal_set_success(value);
+  // @@protoc_insertion_point(field_set:oteldemo.RefundResponse.success)
+}
+inline bool RefundResponse::_internal_success() const {
+  PROTOBUF_TSAN_READ(&_impl_._tsan_detect_race);
+  return _impl_.success_;
+}
+inline void RefundResponse::_internal_set_success(bool value) {
+  PROTOBUF_TSAN_WRITE(&_impl_._tsan_detect_race);
+  ;
+  _impl_.success_ = value;
+}
+
+// -------------------------------------------------------------------
+
+// RefundResult
+
+// string order_id = 1;
+inline void RefundResult::clear_order_id() {
+  _impl_.order_id_.ClearToEmpty();
+}
+inline const std::string& RefundResult::order_id() const {
+  // @@protoc_insertion_point(field_get:oteldemo.RefundResult.order_id)
+  return _internal_order_id();
+}
+template <typename Arg_, typename... Args_>
+inline PROTOBUF_ALWAYS_INLINE void RefundResult::set_order_id(Arg_&& arg,
+                                                     Args_... args) {
+  PROTOBUF_TSAN_WRITE(&_impl_._tsan_detect_race);
+  ;
+  _impl_.order_id_.Set(static_cast<Arg_&&>(arg), args..., GetArenaForAllocation());
+  // @@protoc_insertion_point(field_set:oteldemo.RefundResult.order_id)
+}
+inline std::string* RefundResult::mutable_order_id() {
+  std::string* _s = _internal_mutable_order_id();
+  // @@protoc_insertion_point(field_mutable:oteldemo.RefundResult.order_id)
+  return _s;
+}
+inline const std::string& RefundResult::_internal_order_id() const {
+  PROTOBUF_TSAN_READ(&_impl_._tsan_detect_race);
+  return _impl_.order_id_.Get();
+}
+inline void RefundResult::_internal_set_order_id(const std::string& value) {
+  PROTOBUF_TSAN_WRITE(&_impl_._tsan_detect_race);
+  ;
+  _impl_.order_id_.Set(value, GetArenaForAllocation());
+}
+inline std::string* RefundResult::_internal_mutable_order_id() {
+  PROTOBUF_TSAN_WRITE(&_impl_._tsan_detect_race);
+  ;
+  return _impl_.order_id_.Mutable( GetArenaForAllocation());
+}
+inline std::string* RefundResult::release_order_id() {
+  PROTOBUF_TSAN_WRITE(&_impl_._tsan_detect_race);
+  // @@protoc_insertion_point(field_release:oteldemo.RefundResult.order_id)
+  return _impl_.order_id_.Release();
+}
+inline void RefundResult::set_allocated_order_id(std::string* value) {
+  PROTOBUF_TSAN_WRITE(&_impl_._tsan_detect_race);
+  _impl_.order_id_.SetAllocated(value, GetArenaForAllocation());
+  #ifdef PROTOBUF_FORCE_COPY_DEFAULT_STRING
+        if (_impl_.order_id_.IsDefault()) {
+          _impl_.order_id_.Set("", GetArenaForAllocation());
+        }
+  #endif  // PROTOBUF_FORCE_COPY_DEFAULT_STRING
+  // @@protoc_insertion_point(field_set_allocated:oteldemo.RefundResult.order_id)
+}
+
+// string transaction_id = 2;
+inline void RefundResult::clear_transaction_id() {
+  _impl_.transaction_id_.ClearToEmpty();
+}
+inline const std::string& RefundResult::transaction_id() const {
+  // @@protoc_insertion_point(field_get:oteldemo.RefundResult.transaction_id)
+  return _internal_transaction_id();
+}
+template <typename Arg_, typename... Args_>
+inline PROTOBUF_ALWAYS_INLINE void RefundResult::set_transaction_id(Arg_&& arg,
+                                                     Args_... args) {
+  PROTOBUF_TSAN_WRITE(&_impl_._tsan_detect_race);
+  ;
+  _impl_.transaction_id_.Set(static_cast<Arg_&&>(arg), args..., GetArenaForAllocation());
+  // @@protoc_insertion_point(field_set:oteldemo.RefundResult.transaction_id)
+}
+inline std::string* RefundResult::mutable_transaction_id() {
+  std::string* _s = _internal_mutable_transaction_id();
+  // @@protoc_insertion_point(field_mutable:oteldemo.RefundResult.transaction_id)
+  return _s;
+}
+inline const std::string& RefundResult::_internal_transaction_id() const {
+  PROTOBUF_TSAN_READ(&_impl_._tsan_detect_race);
+  return _impl_.transaction_id_.Get();
+}
+inline void RefundResult::_internal_set_transaction_id(const std::string& value) {
+  PROTOBUF_TSAN_WRITE(&_impl_._tsan_detect_race);
+  ;
+  _impl_.transaction_id_.Set(value, GetArenaForAllocation());
+}
+inline std::string* RefundResult::_internal_mutable_transaction_id() {
+  PROTOBUF_TSAN_WRITE(&_impl_._tsan_detect_race);
+  ;
+  return _impl_.transaction_id_.Mutable( GetArenaForAllocation());
+}
+inline std::string* RefundResult::release_transaction_id() {
+  PROTOBUF_TSAN_WRITE(&_impl_._tsan_detect_race);
+  // @@protoc_insertion_point(field_release:oteldemo.RefundResult.transaction_id)
+  return _impl_.transaction_id_.Release();
+}
+inline void RefundResult::set_allocated_transaction_id(std::string* value) {
+  PROTOBUF_TSAN_WRITE(&_impl_._tsan_detect_race);
+  _impl_.transaction_id_.SetAllocated(value, GetArenaForAllocation());
+  #ifdef PROTOBUF_FORCE_COPY_DEFAULT_STRING
+        if (_impl_.transaction_id_.IsDefault()) {
+          _impl_.transaction_id_.Set("", GetArenaForAllocation());
+        }
+  #endif  // PROTOBUF_FORCE_COPY_DEFAULT_STRING
+  // @@protoc_insertion_point(field_set_allocated:oteldemo.RefundResult.transaction_id)
+}
+
+// string refund_transaction_id = 3;
+inline void RefundResult::clear_refund_transaction_id() {
+  _impl_.refund_transaction_id_.ClearToEmpty();
+}
+inline const std::string& RefundResult::refund_transaction_id() const {
+  // @@protoc_insertion_point(field_get:oteldemo.RefundResult.refund_transaction_id)
+  return _internal_refund_transaction_id();
+}
+template <typename Arg_, typename... Args_>
+inline PROTOBUF_ALWAYS_INLINE void RefundResult::set_refund_transaction_id(Arg_&& arg,
+                                                     Args_... args) {
+  PROTOBUF_TSAN_WRITE(&_impl_._tsan_detect_race);
+  ;
+  _impl_.refund_transaction_id_.Set(static_cast<Arg_&&>(arg), args..., GetArenaForAllocation());
+  // @@protoc_insertion_point(field_set:oteldemo.RefundResult.refund_transaction_id)
+}
+inline std::string* RefundResult::mutable_refund_transaction_id() {
+  std::string* _s = _internal_mutable_refund_transaction_id();
+  // @@protoc_insertion_point(field_mutable:oteldemo.RefundResult.refund_transaction_id)
+  return _s;
+}
+inline const std::string& RefundResult::_internal_refund_transaction_id() const {
+  PROTOBUF_TSAN_READ(&_impl_._tsan_detect_race);
+  return _impl_.refund_transaction_id_.Get();
+}
+inline void RefundResult::_internal_set_refund_transaction_id(const std::string& value) {
+  PROTOBUF_TSAN_WRITE(&_impl_._tsan_detect_race);
+  ;
+  _impl_.refund_transaction_id_.Set(value, GetArenaForAllocation());
+}
+inline std::string* RefundResult::_internal_mutable_refund_transaction_id() {
+  PROTOBUF_TSAN_WRITE(&_impl_._tsan_detect_race);
+  ;
+  return _impl_.refund_transaction_id_.Mutable( GetArenaForAllocation());
+}
+inline std::string* RefundResult::release_refund_transaction_id() {
+  PROTOBUF_TSAN_WRITE(&_impl_._tsan_detect_race);
+  // @@protoc_insertion_point(field_release:oteldemo.RefundResult.refund_transaction_id)
+  return _impl_.refund_transaction_id_.Release();
+}
+inline void RefundResult::set_allocated_refund_transaction_id(std::string* value) {
+  PROTOBUF_TSAN_WRITE(&_impl_._tsan_detect_race);
+  _impl_.refund_transaction_id_.SetAllocated(value, GetArenaForAllocation());
+  #ifdef PROTOBUF_FORCE_COPY_DEFAULT_STRING
+        if (_impl_.refund_transaction_id_.IsDefault()) {
+          _impl_.refund_transaction_id_.Set("", GetArenaForAllocation());
+        }
+  #endif  // PROTOBUF_FORCE_COPY_DEFAULT_STRING
+  // @@protoc_insertion_point(field_set_allocated:oteldemo.RefundResult.refund_transaction_id)
+}
+
+// .oteldemo.Money amount = 4;
+inline bool RefundResult::has_amount() const {
+  bool value = (_impl_._has_bits_[0] & 0x00000001u) != 0;
+  PROTOBUF_ASSUME(!value || _impl_.amount_ != nullptr);
+  return value;
+}
+inline void RefundResult::clear_amount() {
+  if (_impl_.amount_ != nullptr) _impl_.amount_->Clear();
+  _impl_._has_bits_[0] &= ~0x00000001u;
+}
+inline const ::oteldemo::Money& RefundResult::_internal_amount() const {
+  PROTOBUF_TSAN_READ(&_impl_._tsan_detect_race);
+  const ::oteldemo::Money* p = _impl_.amount_;
+  return p != nullptr ? *p : reinterpret_cast<const ::oteldemo::Money&>(::oteldemo::_Money_default_instance_);
+}
+inline const ::oteldemo::Money& RefundResult::amount() const {
+  // @@protoc_insertion_point(field_get:oteldemo.RefundResult.amount)
+  return _internal_amount();
+}
+inline void RefundResult::unsafe_arena_set_allocated_amount(::oteldemo::Money* value) {
+  PROTOBUF_TSAN_WRITE(&_impl_._tsan_detect_race);
+  if (GetArenaForAllocation() == nullptr) {
+    delete reinterpret_cast<::google::protobuf::MessageLite*>(_impl_.amount_);
+  }
+  _impl_.amount_ = reinterpret_cast<::oteldemo::Money*>(value);
+  if (value != nullptr) {
+    _impl_._has_bits_[0] |= 0x00000001u;
+  } else {
+    _impl_._has_bits_[0] &= ~0x00000001u;
+  }
+  // @@protoc_insertion_point(field_unsafe_arena_set_allocated:oteldemo.RefundResult.amount)
+}
+inline ::oteldemo::Money* RefundResult::release_amount() {
+  PROTOBUF_TSAN_WRITE(&_impl_._tsan_detect_race);
+
+  _impl_._has_bits_[0] &= ~0x00000001u;
+  ::oteldemo::Money* released = _impl_.amount_;
+  _impl_.amount_ = nullptr;
+#ifdef PROTOBUF_FORCE_COPY_IN_RELEASE
+  auto* old = reinterpret_cast<::google::protobuf::MessageLite*>(released);
+  released = ::google::protobuf::internal::DuplicateIfNonNull(released);
+  if (GetArenaForAllocation() == nullptr) {
+    delete old;
+  }
+#else   // PROTOBUF_FORCE_COPY_IN_RELEASE
+  if (GetArenaForAllocation() != nullptr) {
+    released = ::google::protobuf::internal::DuplicateIfNonNull(released);
+  }
+#endif  // !PROTOBUF_FORCE_COPY_IN_RELEASE
+  return released;
+}
+inline ::oteldemo::Money* RefundResult::unsafe_arena_release_amount() {
+  PROTOBUF_TSAN_WRITE(&_impl_._tsan_detect_race);
+  // @@protoc_insertion_point(field_release:oteldemo.RefundResult.amount)
+
+  _impl_._has_bits_[0] &= ~0x00000001u;
+  ::oteldemo::Money* temp = _impl_.amount_;
+  _impl_.amount_ = nullptr;
+  return temp;
+}
+inline ::oteldemo::Money* RefundResult::_internal_mutable_amount() {
+  PROTOBUF_TSAN_WRITE(&_impl_._tsan_detect_race);
+  _impl_._has_bits_[0] |= 0x00000001u;
+  if (_impl_.amount_ == nullptr) {
+    auto* p = CreateMaybeMessage<::oteldemo::Money>(GetArenaForAllocation());
+    _impl_.amount_ = reinterpret_cast<::oteldemo::Money*>(p);
+  }
+  return _impl_.amount_;
+}
+inline ::oteldemo::Money* RefundResult::mutable_amount() {
+  ::oteldemo::Money* _msg = _internal_mutable_amount();
+  // @@protoc_insertion_point(field_mutable:oteldemo.RefundResult.amount)
+  return _msg;
+}
+inline void RefundResult::set_allocated_amount(::oteldemo::Money* value) {
+  ::google::protobuf::Arena* message_arena = GetArenaForAllocation();
+  PROTOBUF_TSAN_WRITE(&_impl_._tsan_detect_race);
+  if (message_arena == nullptr) {
+    delete reinterpret_cast<::oteldemo::Money*>(_impl_.amount_);
+  }
+
+  if (value != nullptr) {
+    ::google::protobuf::Arena* submessage_arena =
+        ::google::protobuf::Arena::InternalGetOwningArena(reinterpret_cast<::oteldemo::Money*>(value));
+    if (message_arena != submessage_arena) {
+      value = ::google::protobuf::internal::GetOwnedMessage(message_arena, value, submessage_arena);
+    }
+    _impl_._has_bits_[0] |= 0x00000001u;
+  } else {
+    _impl_._has_bits_[0] &= ~0x00000001u;
+  }
+
+  _impl_.amount_ = reinterpret_cast<::oteldemo::Money*>(value);
+  // @@protoc_insertion_point(field_set_allocated:oteldemo.RefundResult.amount)
+}
+
+// string email = 5;
+inline void RefundResult::clear_email() {
+  _impl_.email_.ClearToEmpty();
+}
+inline const std::string& RefundResult::email() const {
+  // @@protoc_insertion_point(field_get:oteldemo.RefundResult.email)
+  return _internal_email();
+}
+template <typename Arg_, typename... Args_>
+inline PROTOBUF_ALWAYS_INLINE void RefundResult::set_email(Arg_&& arg,
+                                                     Args_... args) {
+  PROTOBUF_TSAN_WRITE(&_impl_._tsan_detect_race);
+  ;
+  _impl_.email_.Set(static_cast<Arg_&&>(arg), args..., GetArenaForAllocation());
+  // @@protoc_insertion_point(field_set:oteldemo.RefundResult.email)
+}
+inline std::string* RefundResult::mutable_email() {
+  std::string* _s = _internal_mutable_email();
+  // @@protoc_insertion_point(field_mutable:oteldemo.RefundResult.email)
+  return _s;
+}
+inline const std::string& RefundResult::_internal_email() const {
+  PROTOBUF_TSAN_READ(&_impl_._tsan_detect_race);
+  return _impl_.email_.Get();
+}
+inline void RefundResult::_internal_set_email(const std::string& value) {
+  PROTOBUF_TSAN_WRITE(&_impl_._tsan_detect_race);
+  ;
+  _impl_.email_.Set(value, GetArenaForAllocation());
+}
+inline std::string* RefundResult::_internal_mutable_email() {
+  PROTOBUF_TSAN_WRITE(&_impl_._tsan_detect_race);
+  ;
+  return _impl_.email_.Mutable( GetArenaForAllocation());
+}
+inline std::string* RefundResult::release_email() {
+  PROTOBUF_TSAN_WRITE(&_impl_._tsan_detect_race);
+  // @@protoc_insertion_point(field_release:oteldemo.RefundResult.email)
+  return _impl_.email_.Release();
+}
+inline void RefundResult::set_allocated_email(std::string* value) {
+  PROTOBUF_TSAN_WRITE(&_impl_._tsan_detect_race);
+  _impl_.email_.SetAllocated(value, GetArenaForAllocation());
+  #ifdef PROTOBUF_FORCE_COPY_DEFAULT_STRING
+        if (_impl_.email_.IsDefault()) {
+          _impl_.email_.Set("", GetArenaForAllocation());
+        }
+  #endif  // PROTOBUF_FORCE_COPY_DEFAULT_STRING
+  // @@protoc_insertion_point(field_set_allocated:oteldemo.RefundResult.email)
+}
+
+// -------------------------------------------------------------------
+
 // OrderItem
 
 // .oteldemo.CartItem item = 1;
@@ -12835,6 +15012,255 @@ inline ::google::protobuf::RepeatedPtrField<::oteldemo::OrderItem>*
 OrderResult::_internal_mutable_items() {
   PROTOBUF_TSAN_READ(&_impl_._tsan_detect_race);
   return &_impl_.items_;
+}
+
+// string user_id = 6;
+inline void OrderResult::clear_user_id() {
+  _impl_.user_id_.ClearToEmpty();
+}
+inline const std::string& OrderResult::user_id() const {
+  // @@protoc_insertion_point(field_get:oteldemo.OrderResult.user_id)
+  return _internal_user_id();
+}
+template <typename Arg_, typename... Args_>
+inline PROTOBUF_ALWAYS_INLINE void OrderResult::set_user_id(Arg_&& arg,
+                                                     Args_... args) {
+  PROTOBUF_TSAN_WRITE(&_impl_._tsan_detect_race);
+  ;
+  _impl_.user_id_.Set(static_cast<Arg_&&>(arg), args..., GetArenaForAllocation());
+  // @@protoc_insertion_point(field_set:oteldemo.OrderResult.user_id)
+}
+inline std::string* OrderResult::mutable_user_id() {
+  std::string* _s = _internal_mutable_user_id();
+  // @@protoc_insertion_point(field_mutable:oteldemo.OrderResult.user_id)
+  return _s;
+}
+inline const std::string& OrderResult::_internal_user_id() const {
+  PROTOBUF_TSAN_READ(&_impl_._tsan_detect_race);
+  return _impl_.user_id_.Get();
+}
+inline void OrderResult::_internal_set_user_id(const std::string& value) {
+  PROTOBUF_TSAN_WRITE(&_impl_._tsan_detect_race);
+  ;
+  _impl_.user_id_.Set(value, GetArenaForAllocation());
+}
+inline std::string* OrderResult::_internal_mutable_user_id() {
+  PROTOBUF_TSAN_WRITE(&_impl_._tsan_detect_race);
+  ;
+  return _impl_.user_id_.Mutable( GetArenaForAllocation());
+}
+inline std::string* OrderResult::release_user_id() {
+  PROTOBUF_TSAN_WRITE(&_impl_._tsan_detect_race);
+  // @@protoc_insertion_point(field_release:oteldemo.OrderResult.user_id)
+  return _impl_.user_id_.Release();
+}
+inline void OrderResult::set_allocated_user_id(std::string* value) {
+  PROTOBUF_TSAN_WRITE(&_impl_._tsan_detect_race);
+  _impl_.user_id_.SetAllocated(value, GetArenaForAllocation());
+  #ifdef PROTOBUF_FORCE_COPY_DEFAULT_STRING
+        if (_impl_.user_id_.IsDefault()) {
+          _impl_.user_id_.Set("", GetArenaForAllocation());
+        }
+  #endif  // PROTOBUF_FORCE_COPY_DEFAULT_STRING
+  // @@protoc_insertion_point(field_set_allocated:oteldemo.OrderResult.user_id)
+}
+
+// string email = 7;
+inline void OrderResult::clear_email() {
+  _impl_.email_.ClearToEmpty();
+}
+inline const std::string& OrderResult::email() const {
+  // @@protoc_insertion_point(field_get:oteldemo.OrderResult.email)
+  return _internal_email();
+}
+template <typename Arg_, typename... Args_>
+inline PROTOBUF_ALWAYS_INLINE void OrderResult::set_email(Arg_&& arg,
+                                                     Args_... args) {
+  PROTOBUF_TSAN_WRITE(&_impl_._tsan_detect_race);
+  ;
+  _impl_.email_.Set(static_cast<Arg_&&>(arg), args..., GetArenaForAllocation());
+  // @@protoc_insertion_point(field_set:oteldemo.OrderResult.email)
+}
+inline std::string* OrderResult::mutable_email() {
+  std::string* _s = _internal_mutable_email();
+  // @@protoc_insertion_point(field_mutable:oteldemo.OrderResult.email)
+  return _s;
+}
+inline const std::string& OrderResult::_internal_email() const {
+  PROTOBUF_TSAN_READ(&_impl_._tsan_detect_race);
+  return _impl_.email_.Get();
+}
+inline void OrderResult::_internal_set_email(const std::string& value) {
+  PROTOBUF_TSAN_WRITE(&_impl_._tsan_detect_race);
+  ;
+  _impl_.email_.Set(value, GetArenaForAllocation());
+}
+inline std::string* OrderResult::_internal_mutable_email() {
+  PROTOBUF_TSAN_WRITE(&_impl_._tsan_detect_race);
+  ;
+  return _impl_.email_.Mutable( GetArenaForAllocation());
+}
+inline std::string* OrderResult::release_email() {
+  PROTOBUF_TSAN_WRITE(&_impl_._tsan_detect_race);
+  // @@protoc_insertion_point(field_release:oteldemo.OrderResult.email)
+  return _impl_.email_.Release();
+}
+inline void OrderResult::set_allocated_email(std::string* value) {
+  PROTOBUF_TSAN_WRITE(&_impl_._tsan_detect_race);
+  _impl_.email_.SetAllocated(value, GetArenaForAllocation());
+  #ifdef PROTOBUF_FORCE_COPY_DEFAULT_STRING
+        if (_impl_.email_.IsDefault()) {
+          _impl_.email_.Set("", GetArenaForAllocation());
+        }
+  #endif  // PROTOBUF_FORCE_COPY_DEFAULT_STRING
+  // @@protoc_insertion_point(field_set_allocated:oteldemo.OrderResult.email)
+}
+
+// string transaction_id = 8;
+inline void OrderResult::clear_transaction_id() {
+  _impl_.transaction_id_.ClearToEmpty();
+}
+inline const std::string& OrderResult::transaction_id() const {
+  // @@protoc_insertion_point(field_get:oteldemo.OrderResult.transaction_id)
+  return _internal_transaction_id();
+}
+template <typename Arg_, typename... Args_>
+inline PROTOBUF_ALWAYS_INLINE void OrderResult::set_transaction_id(Arg_&& arg,
+                                                     Args_... args) {
+  PROTOBUF_TSAN_WRITE(&_impl_._tsan_detect_race);
+  ;
+  _impl_.transaction_id_.Set(static_cast<Arg_&&>(arg), args..., GetArenaForAllocation());
+  // @@protoc_insertion_point(field_set:oteldemo.OrderResult.transaction_id)
+}
+inline std::string* OrderResult::mutable_transaction_id() {
+  std::string* _s = _internal_mutable_transaction_id();
+  // @@protoc_insertion_point(field_mutable:oteldemo.OrderResult.transaction_id)
+  return _s;
+}
+inline const std::string& OrderResult::_internal_transaction_id() const {
+  PROTOBUF_TSAN_READ(&_impl_._tsan_detect_race);
+  return _impl_.transaction_id_.Get();
+}
+inline void OrderResult::_internal_set_transaction_id(const std::string& value) {
+  PROTOBUF_TSAN_WRITE(&_impl_._tsan_detect_race);
+  ;
+  _impl_.transaction_id_.Set(value, GetArenaForAllocation());
+}
+inline std::string* OrderResult::_internal_mutable_transaction_id() {
+  PROTOBUF_TSAN_WRITE(&_impl_._tsan_detect_race);
+  ;
+  return _impl_.transaction_id_.Mutable( GetArenaForAllocation());
+}
+inline std::string* OrderResult::release_transaction_id() {
+  PROTOBUF_TSAN_WRITE(&_impl_._tsan_detect_race);
+  // @@protoc_insertion_point(field_release:oteldemo.OrderResult.transaction_id)
+  return _impl_.transaction_id_.Release();
+}
+inline void OrderResult::set_allocated_transaction_id(std::string* value) {
+  PROTOBUF_TSAN_WRITE(&_impl_._tsan_detect_race);
+  _impl_.transaction_id_.SetAllocated(value, GetArenaForAllocation());
+  #ifdef PROTOBUF_FORCE_COPY_DEFAULT_STRING
+        if (_impl_.transaction_id_.IsDefault()) {
+          _impl_.transaction_id_.Set("", GetArenaForAllocation());
+        }
+  #endif  // PROTOBUF_FORCE_COPY_DEFAULT_STRING
+  // @@protoc_insertion_point(field_set_allocated:oteldemo.OrderResult.transaction_id)
+}
+
+// .oteldemo.Money total_cost = 9;
+inline bool OrderResult::has_total_cost() const {
+  bool value = (_impl_._has_bits_[0] & 0x00000004u) != 0;
+  PROTOBUF_ASSUME(!value || _impl_.total_cost_ != nullptr);
+  return value;
+}
+inline void OrderResult::clear_total_cost() {
+  if (_impl_.total_cost_ != nullptr) _impl_.total_cost_->Clear();
+  _impl_._has_bits_[0] &= ~0x00000004u;
+}
+inline const ::oteldemo::Money& OrderResult::_internal_total_cost() const {
+  PROTOBUF_TSAN_READ(&_impl_._tsan_detect_race);
+  const ::oteldemo::Money* p = _impl_.total_cost_;
+  return p != nullptr ? *p : reinterpret_cast<const ::oteldemo::Money&>(::oteldemo::_Money_default_instance_);
+}
+inline const ::oteldemo::Money& OrderResult::total_cost() const {
+  // @@protoc_insertion_point(field_get:oteldemo.OrderResult.total_cost)
+  return _internal_total_cost();
+}
+inline void OrderResult::unsafe_arena_set_allocated_total_cost(::oteldemo::Money* value) {
+  PROTOBUF_TSAN_WRITE(&_impl_._tsan_detect_race);
+  if (GetArenaForAllocation() == nullptr) {
+    delete reinterpret_cast<::google::protobuf::MessageLite*>(_impl_.total_cost_);
+  }
+  _impl_.total_cost_ = reinterpret_cast<::oteldemo::Money*>(value);
+  if (value != nullptr) {
+    _impl_._has_bits_[0] |= 0x00000004u;
+  } else {
+    _impl_._has_bits_[0] &= ~0x00000004u;
+  }
+  // @@protoc_insertion_point(field_unsafe_arena_set_allocated:oteldemo.OrderResult.total_cost)
+}
+inline ::oteldemo::Money* OrderResult::release_total_cost() {
+  PROTOBUF_TSAN_WRITE(&_impl_._tsan_detect_race);
+
+  _impl_._has_bits_[0] &= ~0x00000004u;
+  ::oteldemo::Money* released = _impl_.total_cost_;
+  _impl_.total_cost_ = nullptr;
+#ifdef PROTOBUF_FORCE_COPY_IN_RELEASE
+  auto* old = reinterpret_cast<::google::protobuf::MessageLite*>(released);
+  released = ::google::protobuf::internal::DuplicateIfNonNull(released);
+  if (GetArenaForAllocation() == nullptr) {
+    delete old;
+  }
+#else   // PROTOBUF_FORCE_COPY_IN_RELEASE
+  if (GetArenaForAllocation() != nullptr) {
+    released = ::google::protobuf::internal::DuplicateIfNonNull(released);
+  }
+#endif  // !PROTOBUF_FORCE_COPY_IN_RELEASE
+  return released;
+}
+inline ::oteldemo::Money* OrderResult::unsafe_arena_release_total_cost() {
+  PROTOBUF_TSAN_WRITE(&_impl_._tsan_detect_race);
+  // @@protoc_insertion_point(field_release:oteldemo.OrderResult.total_cost)
+
+  _impl_._has_bits_[0] &= ~0x00000004u;
+  ::oteldemo::Money* temp = _impl_.total_cost_;
+  _impl_.total_cost_ = nullptr;
+  return temp;
+}
+inline ::oteldemo::Money* OrderResult::_internal_mutable_total_cost() {
+  PROTOBUF_TSAN_WRITE(&_impl_._tsan_detect_race);
+  _impl_._has_bits_[0] |= 0x00000004u;
+  if (_impl_.total_cost_ == nullptr) {
+    auto* p = CreateMaybeMessage<::oteldemo::Money>(GetArenaForAllocation());
+    _impl_.total_cost_ = reinterpret_cast<::oteldemo::Money*>(p);
+  }
+  return _impl_.total_cost_;
+}
+inline ::oteldemo::Money* OrderResult::mutable_total_cost() {
+  ::oteldemo::Money* _msg = _internal_mutable_total_cost();
+  // @@protoc_insertion_point(field_mutable:oteldemo.OrderResult.total_cost)
+  return _msg;
+}
+inline void OrderResult::set_allocated_total_cost(::oteldemo::Money* value) {
+  ::google::protobuf::Arena* message_arena = GetArenaForAllocation();
+  PROTOBUF_TSAN_WRITE(&_impl_._tsan_detect_race);
+  if (message_arena == nullptr) {
+    delete reinterpret_cast<::oteldemo::Money*>(_impl_.total_cost_);
+  }
+
+  if (value != nullptr) {
+    ::google::protobuf::Arena* submessage_arena =
+        ::google::protobuf::Arena::InternalGetOwningArena(reinterpret_cast<::oteldemo::Money*>(value));
+    if (message_arena != submessage_arena) {
+      value = ::google::protobuf::internal::GetOwnedMessage(message_arena, value, submessage_arena);
+    }
+    _impl_._has_bits_[0] |= 0x00000004u;
+  } else {
+    _impl_._has_bits_[0] &= ~0x00000004u;
+  }
+
+  _impl_.total_cost_ = reinterpret_cast<::oteldemo::Money*>(value);
+  // @@protoc_insertion_point(field_set_allocated:oteldemo.OrderResult.total_cost)
 }
 
 // -------------------------------------------------------------------
@@ -13435,6 +15861,765 @@ inline void PlaceOrderResponse::set_allocated_order(::oteldemo::OrderResult* val
 
   _impl_.order_ = reinterpret_cast<::oteldemo::OrderResult*>(value);
   // @@protoc_insertion_point(field_set_allocated:oteldemo.PlaceOrderResponse.order)
+}
+
+// -------------------------------------------------------------------
+
+// GetOrdersByEmailRequest
+
+// string email = 1;
+inline void GetOrdersByEmailRequest::clear_email() {
+  _impl_.email_.ClearToEmpty();
+}
+inline const std::string& GetOrdersByEmailRequest::email() const {
+  // @@protoc_insertion_point(field_get:oteldemo.GetOrdersByEmailRequest.email)
+  return _internal_email();
+}
+template <typename Arg_, typename... Args_>
+inline PROTOBUF_ALWAYS_INLINE void GetOrdersByEmailRequest::set_email(Arg_&& arg,
+                                                     Args_... args) {
+  PROTOBUF_TSAN_WRITE(&_impl_._tsan_detect_race);
+  ;
+  _impl_.email_.Set(static_cast<Arg_&&>(arg), args..., GetArenaForAllocation());
+  // @@protoc_insertion_point(field_set:oteldemo.GetOrdersByEmailRequest.email)
+}
+inline std::string* GetOrdersByEmailRequest::mutable_email() {
+  std::string* _s = _internal_mutable_email();
+  // @@protoc_insertion_point(field_mutable:oteldemo.GetOrdersByEmailRequest.email)
+  return _s;
+}
+inline const std::string& GetOrdersByEmailRequest::_internal_email() const {
+  PROTOBUF_TSAN_READ(&_impl_._tsan_detect_race);
+  return _impl_.email_.Get();
+}
+inline void GetOrdersByEmailRequest::_internal_set_email(const std::string& value) {
+  PROTOBUF_TSAN_WRITE(&_impl_._tsan_detect_race);
+  ;
+  _impl_.email_.Set(value, GetArenaForAllocation());
+}
+inline std::string* GetOrdersByEmailRequest::_internal_mutable_email() {
+  PROTOBUF_TSAN_WRITE(&_impl_._tsan_detect_race);
+  ;
+  return _impl_.email_.Mutable( GetArenaForAllocation());
+}
+inline std::string* GetOrdersByEmailRequest::release_email() {
+  PROTOBUF_TSAN_WRITE(&_impl_._tsan_detect_race);
+  // @@protoc_insertion_point(field_release:oteldemo.GetOrdersByEmailRequest.email)
+  return _impl_.email_.Release();
+}
+inline void GetOrdersByEmailRequest::set_allocated_email(std::string* value) {
+  PROTOBUF_TSAN_WRITE(&_impl_._tsan_detect_race);
+  _impl_.email_.SetAllocated(value, GetArenaForAllocation());
+  #ifdef PROTOBUF_FORCE_COPY_DEFAULT_STRING
+        if (_impl_.email_.IsDefault()) {
+          _impl_.email_.Set("", GetArenaForAllocation());
+        }
+  #endif  // PROTOBUF_FORCE_COPY_DEFAULT_STRING
+  // @@protoc_insertion_point(field_set_allocated:oteldemo.GetOrdersByEmailRequest.email)
+}
+
+// -------------------------------------------------------------------
+
+// GetOrdersByEmailResponse
+
+// repeated .oteldemo.OrderDetail orders = 1;
+inline int GetOrdersByEmailResponse::_internal_orders_size() const {
+  return _internal_orders().size();
+}
+inline int GetOrdersByEmailResponse::orders_size() const {
+  return _internal_orders_size();
+}
+inline void GetOrdersByEmailResponse::clear_orders() {
+  _internal_mutable_orders()->Clear();
+}
+inline ::oteldemo::OrderDetail* GetOrdersByEmailResponse::mutable_orders(int index) {
+  // @@protoc_insertion_point(field_mutable:oteldemo.GetOrdersByEmailResponse.orders)
+  return _internal_mutable_orders()->Mutable(index);
+}
+inline ::google::protobuf::RepeatedPtrField< ::oteldemo::OrderDetail >*
+GetOrdersByEmailResponse::mutable_orders() {
+  // @@protoc_insertion_point(field_mutable_list:oteldemo.GetOrdersByEmailResponse.orders)
+  PROTOBUF_TSAN_WRITE(&_impl_._tsan_detect_race);
+  return _internal_mutable_orders();
+}
+inline const ::oteldemo::OrderDetail& GetOrdersByEmailResponse::orders(int index) const {
+  // @@protoc_insertion_point(field_get:oteldemo.GetOrdersByEmailResponse.orders)
+    return _internal_orders().Get(index);
+}
+inline ::oteldemo::OrderDetail* GetOrdersByEmailResponse::add_orders() {
+  PROTOBUF_TSAN_WRITE(&_impl_._tsan_detect_race);
+  ::oteldemo::OrderDetail* _add = _internal_mutable_orders()->Add();
+  // @@protoc_insertion_point(field_add:oteldemo.GetOrdersByEmailResponse.orders)
+  return _add;
+}
+inline const ::google::protobuf::RepeatedPtrField< ::oteldemo::OrderDetail >&
+GetOrdersByEmailResponse::orders() const {
+  // @@protoc_insertion_point(field_list:oteldemo.GetOrdersByEmailResponse.orders)
+  return _internal_orders();
+}
+inline const ::google::protobuf::RepeatedPtrField<::oteldemo::OrderDetail>&
+GetOrdersByEmailResponse::_internal_orders() const {
+  PROTOBUF_TSAN_READ(&_impl_._tsan_detect_race);
+  return _impl_.orders_;
+}
+inline ::google::protobuf::RepeatedPtrField<::oteldemo::OrderDetail>*
+GetOrdersByEmailResponse::_internal_mutable_orders() {
+  PROTOBUF_TSAN_READ(&_impl_._tsan_detect_race);
+  return &_impl_.orders_;
+}
+
+// -------------------------------------------------------------------
+
+// GetOrderRequest
+
+// string order_id = 1;
+inline void GetOrderRequest::clear_order_id() {
+  _impl_.order_id_.ClearToEmpty();
+}
+inline const std::string& GetOrderRequest::order_id() const {
+  // @@protoc_insertion_point(field_get:oteldemo.GetOrderRequest.order_id)
+  return _internal_order_id();
+}
+template <typename Arg_, typename... Args_>
+inline PROTOBUF_ALWAYS_INLINE void GetOrderRequest::set_order_id(Arg_&& arg,
+                                                     Args_... args) {
+  PROTOBUF_TSAN_WRITE(&_impl_._tsan_detect_race);
+  ;
+  _impl_.order_id_.Set(static_cast<Arg_&&>(arg), args..., GetArenaForAllocation());
+  // @@protoc_insertion_point(field_set:oteldemo.GetOrderRequest.order_id)
+}
+inline std::string* GetOrderRequest::mutable_order_id() {
+  std::string* _s = _internal_mutable_order_id();
+  // @@protoc_insertion_point(field_mutable:oteldemo.GetOrderRequest.order_id)
+  return _s;
+}
+inline const std::string& GetOrderRequest::_internal_order_id() const {
+  PROTOBUF_TSAN_READ(&_impl_._tsan_detect_race);
+  return _impl_.order_id_.Get();
+}
+inline void GetOrderRequest::_internal_set_order_id(const std::string& value) {
+  PROTOBUF_TSAN_WRITE(&_impl_._tsan_detect_race);
+  ;
+  _impl_.order_id_.Set(value, GetArenaForAllocation());
+}
+inline std::string* GetOrderRequest::_internal_mutable_order_id() {
+  PROTOBUF_TSAN_WRITE(&_impl_._tsan_detect_race);
+  ;
+  return _impl_.order_id_.Mutable( GetArenaForAllocation());
+}
+inline std::string* GetOrderRequest::release_order_id() {
+  PROTOBUF_TSAN_WRITE(&_impl_._tsan_detect_race);
+  // @@protoc_insertion_point(field_release:oteldemo.GetOrderRequest.order_id)
+  return _impl_.order_id_.Release();
+}
+inline void GetOrderRequest::set_allocated_order_id(std::string* value) {
+  PROTOBUF_TSAN_WRITE(&_impl_._tsan_detect_race);
+  _impl_.order_id_.SetAllocated(value, GetArenaForAllocation());
+  #ifdef PROTOBUF_FORCE_COPY_DEFAULT_STRING
+        if (_impl_.order_id_.IsDefault()) {
+          _impl_.order_id_.Set("", GetArenaForAllocation());
+        }
+  #endif  // PROTOBUF_FORCE_COPY_DEFAULT_STRING
+  // @@protoc_insertion_point(field_set_allocated:oteldemo.GetOrderRequest.order_id)
+}
+
+// -------------------------------------------------------------------
+
+// OrderDetail
+
+// string order_id = 1;
+inline void OrderDetail::clear_order_id() {
+  _impl_.order_id_.ClearToEmpty();
+}
+inline const std::string& OrderDetail::order_id() const {
+  // @@protoc_insertion_point(field_get:oteldemo.OrderDetail.order_id)
+  return _internal_order_id();
+}
+template <typename Arg_, typename... Args_>
+inline PROTOBUF_ALWAYS_INLINE void OrderDetail::set_order_id(Arg_&& arg,
+                                                     Args_... args) {
+  PROTOBUF_TSAN_WRITE(&_impl_._tsan_detect_race);
+  ;
+  _impl_.order_id_.Set(static_cast<Arg_&&>(arg), args..., GetArenaForAllocation());
+  // @@protoc_insertion_point(field_set:oteldemo.OrderDetail.order_id)
+}
+inline std::string* OrderDetail::mutable_order_id() {
+  std::string* _s = _internal_mutable_order_id();
+  // @@protoc_insertion_point(field_mutable:oteldemo.OrderDetail.order_id)
+  return _s;
+}
+inline const std::string& OrderDetail::_internal_order_id() const {
+  PROTOBUF_TSAN_READ(&_impl_._tsan_detect_race);
+  return _impl_.order_id_.Get();
+}
+inline void OrderDetail::_internal_set_order_id(const std::string& value) {
+  PROTOBUF_TSAN_WRITE(&_impl_._tsan_detect_race);
+  ;
+  _impl_.order_id_.Set(value, GetArenaForAllocation());
+}
+inline std::string* OrderDetail::_internal_mutable_order_id() {
+  PROTOBUF_TSAN_WRITE(&_impl_._tsan_detect_race);
+  ;
+  return _impl_.order_id_.Mutable( GetArenaForAllocation());
+}
+inline std::string* OrderDetail::release_order_id() {
+  PROTOBUF_TSAN_WRITE(&_impl_._tsan_detect_race);
+  // @@protoc_insertion_point(field_release:oteldemo.OrderDetail.order_id)
+  return _impl_.order_id_.Release();
+}
+inline void OrderDetail::set_allocated_order_id(std::string* value) {
+  PROTOBUF_TSAN_WRITE(&_impl_._tsan_detect_race);
+  _impl_.order_id_.SetAllocated(value, GetArenaForAllocation());
+  #ifdef PROTOBUF_FORCE_COPY_DEFAULT_STRING
+        if (_impl_.order_id_.IsDefault()) {
+          _impl_.order_id_.Set("", GetArenaForAllocation());
+        }
+  #endif  // PROTOBUF_FORCE_COPY_DEFAULT_STRING
+  // @@protoc_insertion_point(field_set_allocated:oteldemo.OrderDetail.order_id)
+}
+
+// string email = 2;
+inline void OrderDetail::clear_email() {
+  _impl_.email_.ClearToEmpty();
+}
+inline const std::string& OrderDetail::email() const {
+  // @@protoc_insertion_point(field_get:oteldemo.OrderDetail.email)
+  return _internal_email();
+}
+template <typename Arg_, typename... Args_>
+inline PROTOBUF_ALWAYS_INLINE void OrderDetail::set_email(Arg_&& arg,
+                                                     Args_... args) {
+  PROTOBUF_TSAN_WRITE(&_impl_._tsan_detect_race);
+  ;
+  _impl_.email_.Set(static_cast<Arg_&&>(arg), args..., GetArenaForAllocation());
+  // @@protoc_insertion_point(field_set:oteldemo.OrderDetail.email)
+}
+inline std::string* OrderDetail::mutable_email() {
+  std::string* _s = _internal_mutable_email();
+  // @@protoc_insertion_point(field_mutable:oteldemo.OrderDetail.email)
+  return _s;
+}
+inline const std::string& OrderDetail::_internal_email() const {
+  PROTOBUF_TSAN_READ(&_impl_._tsan_detect_race);
+  return _impl_.email_.Get();
+}
+inline void OrderDetail::_internal_set_email(const std::string& value) {
+  PROTOBUF_TSAN_WRITE(&_impl_._tsan_detect_race);
+  ;
+  _impl_.email_.Set(value, GetArenaForAllocation());
+}
+inline std::string* OrderDetail::_internal_mutable_email() {
+  PROTOBUF_TSAN_WRITE(&_impl_._tsan_detect_race);
+  ;
+  return _impl_.email_.Mutable( GetArenaForAllocation());
+}
+inline std::string* OrderDetail::release_email() {
+  PROTOBUF_TSAN_WRITE(&_impl_._tsan_detect_race);
+  // @@protoc_insertion_point(field_release:oteldemo.OrderDetail.email)
+  return _impl_.email_.Release();
+}
+inline void OrderDetail::set_allocated_email(std::string* value) {
+  PROTOBUF_TSAN_WRITE(&_impl_._tsan_detect_race);
+  _impl_.email_.SetAllocated(value, GetArenaForAllocation());
+  #ifdef PROTOBUF_FORCE_COPY_DEFAULT_STRING
+        if (_impl_.email_.IsDefault()) {
+          _impl_.email_.Set("", GetArenaForAllocation());
+        }
+  #endif  // PROTOBUF_FORCE_COPY_DEFAULT_STRING
+  // @@protoc_insertion_point(field_set_allocated:oteldemo.OrderDetail.email)
+}
+
+// string status = 3;
+inline void OrderDetail::clear_status() {
+  _impl_.status_.ClearToEmpty();
+}
+inline const std::string& OrderDetail::status() const {
+  // @@protoc_insertion_point(field_get:oteldemo.OrderDetail.status)
+  return _internal_status();
+}
+template <typename Arg_, typename... Args_>
+inline PROTOBUF_ALWAYS_INLINE void OrderDetail::set_status(Arg_&& arg,
+                                                     Args_... args) {
+  PROTOBUF_TSAN_WRITE(&_impl_._tsan_detect_race);
+  ;
+  _impl_.status_.Set(static_cast<Arg_&&>(arg), args..., GetArenaForAllocation());
+  // @@protoc_insertion_point(field_set:oteldemo.OrderDetail.status)
+}
+inline std::string* OrderDetail::mutable_status() {
+  std::string* _s = _internal_mutable_status();
+  // @@protoc_insertion_point(field_mutable:oteldemo.OrderDetail.status)
+  return _s;
+}
+inline const std::string& OrderDetail::_internal_status() const {
+  PROTOBUF_TSAN_READ(&_impl_._tsan_detect_race);
+  return _impl_.status_.Get();
+}
+inline void OrderDetail::_internal_set_status(const std::string& value) {
+  PROTOBUF_TSAN_WRITE(&_impl_._tsan_detect_race);
+  ;
+  _impl_.status_.Set(value, GetArenaForAllocation());
+}
+inline std::string* OrderDetail::_internal_mutable_status() {
+  PROTOBUF_TSAN_WRITE(&_impl_._tsan_detect_race);
+  ;
+  return _impl_.status_.Mutable( GetArenaForAllocation());
+}
+inline std::string* OrderDetail::release_status() {
+  PROTOBUF_TSAN_WRITE(&_impl_._tsan_detect_race);
+  // @@protoc_insertion_point(field_release:oteldemo.OrderDetail.status)
+  return _impl_.status_.Release();
+}
+inline void OrderDetail::set_allocated_status(std::string* value) {
+  PROTOBUF_TSAN_WRITE(&_impl_._tsan_detect_race);
+  _impl_.status_.SetAllocated(value, GetArenaForAllocation());
+  #ifdef PROTOBUF_FORCE_COPY_DEFAULT_STRING
+        if (_impl_.status_.IsDefault()) {
+          _impl_.status_.Set("", GetArenaForAllocation());
+        }
+  #endif  // PROTOBUF_FORCE_COPY_DEFAULT_STRING
+  // @@protoc_insertion_point(field_set_allocated:oteldemo.OrderDetail.status)
+}
+
+// .oteldemo.Money total_cost = 4;
+inline bool OrderDetail::has_total_cost() const {
+  bool value = (_impl_._has_bits_[0] & 0x00000001u) != 0;
+  PROTOBUF_ASSUME(!value || _impl_.total_cost_ != nullptr);
+  return value;
+}
+inline void OrderDetail::clear_total_cost() {
+  if (_impl_.total_cost_ != nullptr) _impl_.total_cost_->Clear();
+  _impl_._has_bits_[0] &= ~0x00000001u;
+}
+inline const ::oteldemo::Money& OrderDetail::_internal_total_cost() const {
+  PROTOBUF_TSAN_READ(&_impl_._tsan_detect_race);
+  const ::oteldemo::Money* p = _impl_.total_cost_;
+  return p != nullptr ? *p : reinterpret_cast<const ::oteldemo::Money&>(::oteldemo::_Money_default_instance_);
+}
+inline const ::oteldemo::Money& OrderDetail::total_cost() const {
+  // @@protoc_insertion_point(field_get:oteldemo.OrderDetail.total_cost)
+  return _internal_total_cost();
+}
+inline void OrderDetail::unsafe_arena_set_allocated_total_cost(::oteldemo::Money* value) {
+  PROTOBUF_TSAN_WRITE(&_impl_._tsan_detect_race);
+  if (GetArenaForAllocation() == nullptr) {
+    delete reinterpret_cast<::google::protobuf::MessageLite*>(_impl_.total_cost_);
+  }
+  _impl_.total_cost_ = reinterpret_cast<::oteldemo::Money*>(value);
+  if (value != nullptr) {
+    _impl_._has_bits_[0] |= 0x00000001u;
+  } else {
+    _impl_._has_bits_[0] &= ~0x00000001u;
+  }
+  // @@protoc_insertion_point(field_unsafe_arena_set_allocated:oteldemo.OrderDetail.total_cost)
+}
+inline ::oteldemo::Money* OrderDetail::release_total_cost() {
+  PROTOBUF_TSAN_WRITE(&_impl_._tsan_detect_race);
+
+  _impl_._has_bits_[0] &= ~0x00000001u;
+  ::oteldemo::Money* released = _impl_.total_cost_;
+  _impl_.total_cost_ = nullptr;
+#ifdef PROTOBUF_FORCE_COPY_IN_RELEASE
+  auto* old = reinterpret_cast<::google::protobuf::MessageLite*>(released);
+  released = ::google::protobuf::internal::DuplicateIfNonNull(released);
+  if (GetArenaForAllocation() == nullptr) {
+    delete old;
+  }
+#else   // PROTOBUF_FORCE_COPY_IN_RELEASE
+  if (GetArenaForAllocation() != nullptr) {
+    released = ::google::protobuf::internal::DuplicateIfNonNull(released);
+  }
+#endif  // !PROTOBUF_FORCE_COPY_IN_RELEASE
+  return released;
+}
+inline ::oteldemo::Money* OrderDetail::unsafe_arena_release_total_cost() {
+  PROTOBUF_TSAN_WRITE(&_impl_._tsan_detect_race);
+  // @@protoc_insertion_point(field_release:oteldemo.OrderDetail.total_cost)
+
+  _impl_._has_bits_[0] &= ~0x00000001u;
+  ::oteldemo::Money* temp = _impl_.total_cost_;
+  _impl_.total_cost_ = nullptr;
+  return temp;
+}
+inline ::oteldemo::Money* OrderDetail::_internal_mutable_total_cost() {
+  PROTOBUF_TSAN_WRITE(&_impl_._tsan_detect_race);
+  _impl_._has_bits_[0] |= 0x00000001u;
+  if (_impl_.total_cost_ == nullptr) {
+    auto* p = CreateMaybeMessage<::oteldemo::Money>(GetArenaForAllocation());
+    _impl_.total_cost_ = reinterpret_cast<::oteldemo::Money*>(p);
+  }
+  return _impl_.total_cost_;
+}
+inline ::oteldemo::Money* OrderDetail::mutable_total_cost() {
+  ::oteldemo::Money* _msg = _internal_mutable_total_cost();
+  // @@protoc_insertion_point(field_mutable:oteldemo.OrderDetail.total_cost)
+  return _msg;
+}
+inline void OrderDetail::set_allocated_total_cost(::oteldemo::Money* value) {
+  ::google::protobuf::Arena* message_arena = GetArenaForAllocation();
+  PROTOBUF_TSAN_WRITE(&_impl_._tsan_detect_race);
+  if (message_arena == nullptr) {
+    delete reinterpret_cast<::oteldemo::Money*>(_impl_.total_cost_);
+  }
+
+  if (value != nullptr) {
+    ::google::protobuf::Arena* submessage_arena =
+        ::google::protobuf::Arena::InternalGetOwningArena(reinterpret_cast<::oteldemo::Money*>(value));
+    if (message_arena != submessage_arena) {
+      value = ::google::protobuf::internal::GetOwnedMessage(message_arena, value, submessage_arena);
+    }
+    _impl_._has_bits_[0] |= 0x00000001u;
+  } else {
+    _impl_._has_bits_[0] &= ~0x00000001u;
+  }
+
+  _impl_.total_cost_ = reinterpret_cast<::oteldemo::Money*>(value);
+  // @@protoc_insertion_point(field_set_allocated:oteldemo.OrderDetail.total_cost)
+}
+
+// string shipping_tracking_id = 5;
+inline void OrderDetail::clear_shipping_tracking_id() {
+  _impl_.shipping_tracking_id_.ClearToEmpty();
+}
+inline const std::string& OrderDetail::shipping_tracking_id() const {
+  // @@protoc_insertion_point(field_get:oteldemo.OrderDetail.shipping_tracking_id)
+  return _internal_shipping_tracking_id();
+}
+template <typename Arg_, typename... Args_>
+inline PROTOBUF_ALWAYS_INLINE void OrderDetail::set_shipping_tracking_id(Arg_&& arg,
+                                                     Args_... args) {
+  PROTOBUF_TSAN_WRITE(&_impl_._tsan_detect_race);
+  ;
+  _impl_.shipping_tracking_id_.Set(static_cast<Arg_&&>(arg), args..., GetArenaForAllocation());
+  // @@protoc_insertion_point(field_set:oteldemo.OrderDetail.shipping_tracking_id)
+}
+inline std::string* OrderDetail::mutable_shipping_tracking_id() {
+  std::string* _s = _internal_mutable_shipping_tracking_id();
+  // @@protoc_insertion_point(field_mutable:oteldemo.OrderDetail.shipping_tracking_id)
+  return _s;
+}
+inline const std::string& OrderDetail::_internal_shipping_tracking_id() const {
+  PROTOBUF_TSAN_READ(&_impl_._tsan_detect_race);
+  return _impl_.shipping_tracking_id_.Get();
+}
+inline void OrderDetail::_internal_set_shipping_tracking_id(const std::string& value) {
+  PROTOBUF_TSAN_WRITE(&_impl_._tsan_detect_race);
+  ;
+  _impl_.shipping_tracking_id_.Set(value, GetArenaForAllocation());
+}
+inline std::string* OrderDetail::_internal_mutable_shipping_tracking_id() {
+  PROTOBUF_TSAN_WRITE(&_impl_._tsan_detect_race);
+  ;
+  return _impl_.shipping_tracking_id_.Mutable( GetArenaForAllocation());
+}
+inline std::string* OrderDetail::release_shipping_tracking_id() {
+  PROTOBUF_TSAN_WRITE(&_impl_._tsan_detect_race);
+  // @@protoc_insertion_point(field_release:oteldemo.OrderDetail.shipping_tracking_id)
+  return _impl_.shipping_tracking_id_.Release();
+}
+inline void OrderDetail::set_allocated_shipping_tracking_id(std::string* value) {
+  PROTOBUF_TSAN_WRITE(&_impl_._tsan_detect_race);
+  _impl_.shipping_tracking_id_.SetAllocated(value, GetArenaForAllocation());
+  #ifdef PROTOBUF_FORCE_COPY_DEFAULT_STRING
+        if (_impl_.shipping_tracking_id_.IsDefault()) {
+          _impl_.shipping_tracking_id_.Set("", GetArenaForAllocation());
+        }
+  #endif  // PROTOBUF_FORCE_COPY_DEFAULT_STRING
+  // @@protoc_insertion_point(field_set_allocated:oteldemo.OrderDetail.shipping_tracking_id)
+}
+
+// .oteldemo.Address shipping_address = 6;
+inline bool OrderDetail::has_shipping_address() const {
+  bool value = (_impl_._has_bits_[0] & 0x00000002u) != 0;
+  PROTOBUF_ASSUME(!value || _impl_.shipping_address_ != nullptr);
+  return value;
+}
+inline void OrderDetail::clear_shipping_address() {
+  if (_impl_.shipping_address_ != nullptr) _impl_.shipping_address_->Clear();
+  _impl_._has_bits_[0] &= ~0x00000002u;
+}
+inline const ::oteldemo::Address& OrderDetail::_internal_shipping_address() const {
+  PROTOBUF_TSAN_READ(&_impl_._tsan_detect_race);
+  const ::oteldemo::Address* p = _impl_.shipping_address_;
+  return p != nullptr ? *p : reinterpret_cast<const ::oteldemo::Address&>(::oteldemo::_Address_default_instance_);
+}
+inline const ::oteldemo::Address& OrderDetail::shipping_address() const {
+  // @@protoc_insertion_point(field_get:oteldemo.OrderDetail.shipping_address)
+  return _internal_shipping_address();
+}
+inline void OrderDetail::unsafe_arena_set_allocated_shipping_address(::oteldemo::Address* value) {
+  PROTOBUF_TSAN_WRITE(&_impl_._tsan_detect_race);
+  if (GetArenaForAllocation() == nullptr) {
+    delete reinterpret_cast<::google::protobuf::MessageLite*>(_impl_.shipping_address_);
+  }
+  _impl_.shipping_address_ = reinterpret_cast<::oteldemo::Address*>(value);
+  if (value != nullptr) {
+    _impl_._has_bits_[0] |= 0x00000002u;
+  } else {
+    _impl_._has_bits_[0] &= ~0x00000002u;
+  }
+  // @@protoc_insertion_point(field_unsafe_arena_set_allocated:oteldemo.OrderDetail.shipping_address)
+}
+inline ::oteldemo::Address* OrderDetail::release_shipping_address() {
+  PROTOBUF_TSAN_WRITE(&_impl_._tsan_detect_race);
+
+  _impl_._has_bits_[0] &= ~0x00000002u;
+  ::oteldemo::Address* released = _impl_.shipping_address_;
+  _impl_.shipping_address_ = nullptr;
+#ifdef PROTOBUF_FORCE_COPY_IN_RELEASE
+  auto* old = reinterpret_cast<::google::protobuf::MessageLite*>(released);
+  released = ::google::protobuf::internal::DuplicateIfNonNull(released);
+  if (GetArenaForAllocation() == nullptr) {
+    delete old;
+  }
+#else   // PROTOBUF_FORCE_COPY_IN_RELEASE
+  if (GetArenaForAllocation() != nullptr) {
+    released = ::google::protobuf::internal::DuplicateIfNonNull(released);
+  }
+#endif  // !PROTOBUF_FORCE_COPY_IN_RELEASE
+  return released;
+}
+inline ::oteldemo::Address* OrderDetail::unsafe_arena_release_shipping_address() {
+  PROTOBUF_TSAN_WRITE(&_impl_._tsan_detect_race);
+  // @@protoc_insertion_point(field_release:oteldemo.OrderDetail.shipping_address)
+
+  _impl_._has_bits_[0] &= ~0x00000002u;
+  ::oteldemo::Address* temp = _impl_.shipping_address_;
+  _impl_.shipping_address_ = nullptr;
+  return temp;
+}
+inline ::oteldemo::Address* OrderDetail::_internal_mutable_shipping_address() {
+  PROTOBUF_TSAN_WRITE(&_impl_._tsan_detect_race);
+  _impl_._has_bits_[0] |= 0x00000002u;
+  if (_impl_.shipping_address_ == nullptr) {
+    auto* p = CreateMaybeMessage<::oteldemo::Address>(GetArenaForAllocation());
+    _impl_.shipping_address_ = reinterpret_cast<::oteldemo::Address*>(p);
+  }
+  return _impl_.shipping_address_;
+}
+inline ::oteldemo::Address* OrderDetail::mutable_shipping_address() {
+  ::oteldemo::Address* _msg = _internal_mutable_shipping_address();
+  // @@protoc_insertion_point(field_mutable:oteldemo.OrderDetail.shipping_address)
+  return _msg;
+}
+inline void OrderDetail::set_allocated_shipping_address(::oteldemo::Address* value) {
+  ::google::protobuf::Arena* message_arena = GetArenaForAllocation();
+  PROTOBUF_TSAN_WRITE(&_impl_._tsan_detect_race);
+  if (message_arena == nullptr) {
+    delete reinterpret_cast<::oteldemo::Address*>(_impl_.shipping_address_);
+  }
+
+  if (value != nullptr) {
+    ::google::protobuf::Arena* submessage_arena =
+        ::google::protobuf::Arena::InternalGetOwningArena(reinterpret_cast<::oteldemo::Address*>(value));
+    if (message_arena != submessage_arena) {
+      value = ::google::protobuf::internal::GetOwnedMessage(message_arena, value, submessage_arena);
+    }
+    _impl_._has_bits_[0] |= 0x00000002u;
+  } else {
+    _impl_._has_bits_[0] &= ~0x00000002u;
+  }
+
+  _impl_.shipping_address_ = reinterpret_cast<::oteldemo::Address*>(value);
+  // @@protoc_insertion_point(field_set_allocated:oteldemo.OrderDetail.shipping_address)
+}
+
+// repeated .oteldemo.OrderItem items = 7;
+inline int OrderDetail::_internal_items_size() const {
+  return _internal_items().size();
+}
+inline int OrderDetail::items_size() const {
+  return _internal_items_size();
+}
+inline void OrderDetail::clear_items() {
+  _internal_mutable_items()->Clear();
+}
+inline ::oteldemo::OrderItem* OrderDetail::mutable_items(int index) {
+  // @@protoc_insertion_point(field_mutable:oteldemo.OrderDetail.items)
+  return _internal_mutable_items()->Mutable(index);
+}
+inline ::google::protobuf::RepeatedPtrField< ::oteldemo::OrderItem >*
+OrderDetail::mutable_items() {
+  // @@protoc_insertion_point(field_mutable_list:oteldemo.OrderDetail.items)
+  PROTOBUF_TSAN_WRITE(&_impl_._tsan_detect_race);
+  return _internal_mutable_items();
+}
+inline const ::oteldemo::OrderItem& OrderDetail::items(int index) const {
+  // @@protoc_insertion_point(field_get:oteldemo.OrderDetail.items)
+    return _internal_items().Get(index);
+}
+inline ::oteldemo::OrderItem* OrderDetail::add_items() {
+  PROTOBUF_TSAN_WRITE(&_impl_._tsan_detect_race);
+  ::oteldemo::OrderItem* _add = _internal_mutable_items()->Add();
+  // @@protoc_insertion_point(field_add:oteldemo.OrderDetail.items)
+  return _add;
+}
+inline const ::google::protobuf::RepeatedPtrField< ::oteldemo::OrderItem >&
+OrderDetail::items() const {
+  // @@protoc_insertion_point(field_list:oteldemo.OrderDetail.items)
+  return _internal_items();
+}
+inline const ::google::protobuf::RepeatedPtrField<::oteldemo::OrderItem>&
+OrderDetail::_internal_items() const {
+  PROTOBUF_TSAN_READ(&_impl_._tsan_detect_race);
+  return _impl_.items_;
+}
+inline ::google::protobuf::RepeatedPtrField<::oteldemo::OrderItem>*
+OrderDetail::_internal_mutable_items() {
+  PROTOBUF_TSAN_READ(&_impl_._tsan_detect_race);
+  return &_impl_.items_;
+}
+
+// string created_at = 8;
+inline void OrderDetail::clear_created_at() {
+  _impl_.created_at_.ClearToEmpty();
+}
+inline const std::string& OrderDetail::created_at() const {
+  // @@protoc_insertion_point(field_get:oteldemo.OrderDetail.created_at)
+  return _internal_created_at();
+}
+template <typename Arg_, typename... Args_>
+inline PROTOBUF_ALWAYS_INLINE void OrderDetail::set_created_at(Arg_&& arg,
+                                                     Args_... args) {
+  PROTOBUF_TSAN_WRITE(&_impl_._tsan_detect_race);
+  ;
+  _impl_.created_at_.Set(static_cast<Arg_&&>(arg), args..., GetArenaForAllocation());
+  // @@protoc_insertion_point(field_set:oteldemo.OrderDetail.created_at)
+}
+inline std::string* OrderDetail::mutable_created_at() {
+  std::string* _s = _internal_mutable_created_at();
+  // @@protoc_insertion_point(field_mutable:oteldemo.OrderDetail.created_at)
+  return _s;
+}
+inline const std::string& OrderDetail::_internal_created_at() const {
+  PROTOBUF_TSAN_READ(&_impl_._tsan_detect_race);
+  return _impl_.created_at_.Get();
+}
+inline void OrderDetail::_internal_set_created_at(const std::string& value) {
+  PROTOBUF_TSAN_WRITE(&_impl_._tsan_detect_race);
+  ;
+  _impl_.created_at_.Set(value, GetArenaForAllocation());
+}
+inline std::string* OrderDetail::_internal_mutable_created_at() {
+  PROTOBUF_TSAN_WRITE(&_impl_._tsan_detect_race);
+  ;
+  return _impl_.created_at_.Mutable( GetArenaForAllocation());
+}
+inline std::string* OrderDetail::release_created_at() {
+  PROTOBUF_TSAN_WRITE(&_impl_._tsan_detect_race);
+  // @@protoc_insertion_point(field_release:oteldemo.OrderDetail.created_at)
+  return _impl_.created_at_.Release();
+}
+inline void OrderDetail::set_allocated_created_at(std::string* value) {
+  PROTOBUF_TSAN_WRITE(&_impl_._tsan_detect_race);
+  _impl_.created_at_.SetAllocated(value, GetArenaForAllocation());
+  #ifdef PROTOBUF_FORCE_COPY_DEFAULT_STRING
+        if (_impl_.created_at_.IsDefault()) {
+          _impl_.created_at_.Set("", GetArenaForAllocation());
+        }
+  #endif  // PROTOBUF_FORCE_COPY_DEFAULT_STRING
+  // @@protoc_insertion_point(field_set_allocated:oteldemo.OrderDetail.created_at)
+}
+
+// string transaction_id = 9;
+inline void OrderDetail::clear_transaction_id() {
+  _impl_.transaction_id_.ClearToEmpty();
+}
+inline const std::string& OrderDetail::transaction_id() const {
+  // @@protoc_insertion_point(field_get:oteldemo.OrderDetail.transaction_id)
+  return _internal_transaction_id();
+}
+template <typename Arg_, typename... Args_>
+inline PROTOBUF_ALWAYS_INLINE void OrderDetail::set_transaction_id(Arg_&& arg,
+                                                     Args_... args) {
+  PROTOBUF_TSAN_WRITE(&_impl_._tsan_detect_race);
+  ;
+  _impl_.transaction_id_.Set(static_cast<Arg_&&>(arg), args..., GetArenaForAllocation());
+  // @@protoc_insertion_point(field_set:oteldemo.OrderDetail.transaction_id)
+}
+inline std::string* OrderDetail::mutable_transaction_id() {
+  std::string* _s = _internal_mutable_transaction_id();
+  // @@protoc_insertion_point(field_mutable:oteldemo.OrderDetail.transaction_id)
+  return _s;
+}
+inline const std::string& OrderDetail::_internal_transaction_id() const {
+  PROTOBUF_TSAN_READ(&_impl_._tsan_detect_race);
+  return _impl_.transaction_id_.Get();
+}
+inline void OrderDetail::_internal_set_transaction_id(const std::string& value) {
+  PROTOBUF_TSAN_WRITE(&_impl_._tsan_detect_race);
+  ;
+  _impl_.transaction_id_.Set(value, GetArenaForAllocation());
+}
+inline std::string* OrderDetail::_internal_mutable_transaction_id() {
+  PROTOBUF_TSAN_WRITE(&_impl_._tsan_detect_race);
+  ;
+  return _impl_.transaction_id_.Mutable( GetArenaForAllocation());
+}
+inline std::string* OrderDetail::release_transaction_id() {
+  PROTOBUF_TSAN_WRITE(&_impl_._tsan_detect_race);
+  // @@protoc_insertion_point(field_release:oteldemo.OrderDetail.transaction_id)
+  return _impl_.transaction_id_.Release();
+}
+inline void OrderDetail::set_allocated_transaction_id(std::string* value) {
+  PROTOBUF_TSAN_WRITE(&_impl_._tsan_detect_race);
+  _impl_.transaction_id_.SetAllocated(value, GetArenaForAllocation());
+  #ifdef PROTOBUF_FORCE_COPY_DEFAULT_STRING
+        if (_impl_.transaction_id_.IsDefault()) {
+          _impl_.transaction_id_.Set("", GetArenaForAllocation());
+        }
+  #endif  // PROTOBUF_FORCE_COPY_DEFAULT_STRING
+  // @@protoc_insertion_point(field_set_allocated:oteldemo.OrderDetail.transaction_id)
+}
+
+// string refund_transaction_id = 10;
+inline void OrderDetail::clear_refund_transaction_id() {
+  _impl_.refund_transaction_id_.ClearToEmpty();
+}
+inline const std::string& OrderDetail::refund_transaction_id() const {
+  // @@protoc_insertion_point(field_get:oteldemo.OrderDetail.refund_transaction_id)
+  return _internal_refund_transaction_id();
+}
+template <typename Arg_, typename... Args_>
+inline PROTOBUF_ALWAYS_INLINE void OrderDetail::set_refund_transaction_id(Arg_&& arg,
+                                                     Args_... args) {
+  PROTOBUF_TSAN_WRITE(&_impl_._tsan_detect_race);
+  ;
+  _impl_.refund_transaction_id_.Set(static_cast<Arg_&&>(arg), args..., GetArenaForAllocation());
+  // @@protoc_insertion_point(field_set:oteldemo.OrderDetail.refund_transaction_id)
+}
+inline std::string* OrderDetail::mutable_refund_transaction_id() {
+  std::string* _s = _internal_mutable_refund_transaction_id();
+  // @@protoc_insertion_point(field_mutable:oteldemo.OrderDetail.refund_transaction_id)
+  return _s;
+}
+inline const std::string& OrderDetail::_internal_refund_transaction_id() const {
+  PROTOBUF_TSAN_READ(&_impl_._tsan_detect_race);
+  return _impl_.refund_transaction_id_.Get();
+}
+inline void OrderDetail::_internal_set_refund_transaction_id(const std::string& value) {
+  PROTOBUF_TSAN_WRITE(&_impl_._tsan_detect_race);
+  ;
+  _impl_.refund_transaction_id_.Set(value, GetArenaForAllocation());
+}
+inline std::string* OrderDetail::_internal_mutable_refund_transaction_id() {
+  PROTOBUF_TSAN_WRITE(&_impl_._tsan_detect_race);
+  ;
+  return _impl_.refund_transaction_id_.Mutable( GetArenaForAllocation());
+}
+inline std::string* OrderDetail::release_refund_transaction_id() {
+  PROTOBUF_TSAN_WRITE(&_impl_._tsan_detect_race);
+  // @@protoc_insertion_point(field_release:oteldemo.OrderDetail.refund_transaction_id)
+  return _impl_.refund_transaction_id_.Release();
+}
+inline void OrderDetail::set_allocated_refund_transaction_id(std::string* value) {
+  PROTOBUF_TSAN_WRITE(&_impl_._tsan_detect_race);
+  _impl_.refund_transaction_id_.SetAllocated(value, GetArenaForAllocation());
+  #ifdef PROTOBUF_FORCE_COPY_DEFAULT_STRING
+        if (_impl_.refund_transaction_id_.IsDefault()) {
+          _impl_.refund_transaction_id_.Set("", GetArenaForAllocation());
+        }
+  #endif  // PROTOBUF_FORCE_COPY_DEFAULT_STRING
+  // @@protoc_insertion_point(field_set_allocated:oteldemo.OrderDetail.refund_transaction_id)
 }
 
 // -------------------------------------------------------------------

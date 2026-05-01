@@ -7,6 +7,10 @@ the release.
 
 ## Unreleased
 
+* [accounting][payment] Add `OrderService` for order lookup and a
+  refund flow on `payment`, with refund completion propagated to
+  `accounting` via a new `refunds` Kafka topic; lays the groundwork
+  for an order-management UX.
 * [frontend] fix: handle corrupted session data in localStorage
   ([#3313](https://github.com/open-telemetry/opentelemetry-demo/pull/3313))
 * [docker] Podman doesn't support the tag feature of docker logs,

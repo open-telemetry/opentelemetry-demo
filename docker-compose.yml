@@ -30,7 +30,10 @@ services:
         limits:
           memory: 160M
     restart: unless-stopped
+    ports:
+      - "${ACCOUNTING_SERVICE_PORT}"
     environment:
+      - ACCOUNTING_SERVICE_PORT
       - KAFKA_ADDR
       - OTEL_EXPORTER_OTLP_ENDPOINT=http://${OTEL_COLLECTOR_HOST}:${OTEL_COLLECTOR_PORT_HTTP}
       - OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE
@@ -38,11 +41,46 @@ services:
       - OTEL_SERVICE_NAME=accounting
       - DB_CONNECTION_STRING=Host=${POSTGRES_HOST};Username=astronomy_user;Password=${POSTGRES_ASTRONOMY_PASSWORD};Database=astronomy_db
       - OTEL_DOTNET_AUTO_TRACES_ENTITYFRAMEWORKCORE_INSTRUMENTATION_ENABLED=false
+      - ASPNETCORE_URLS=http://*:${ACCOUNTING_SERVICE_PORT}
     depends_on:
       otel-collector:
         condition: service_started
       kafka:
         condition: service_healthy
+      astronomy-db:
+        condition: service_started
+    logging: *logging
+
+  # Order Expiry sidecar — periodically deletes orders older than ORDER_TTL_HOURS.
+  # Reuses ${POSTGRES_IMAGE} (already pulled for astronomy-db) so there is no
+  # extra image to build or publish. The Helm chart mirrors this with a CronJob
+  # running the same psql one-liner.
+  order-expiry:
+    image: ${POSTGRES_IMAGE}
+    container_name: order-expiry
+    deploy:
+      resources:
+        limits:
+          memory: 40M
+    restart: unless-stopped
+    environment:
+      - PGHOST=${POSTGRES_HOST}
+      - PGUSER=astronomy_user
+      - PGPASSWORD=${POSTGRES_ASTRONOMY_PASSWORD}
+      - PGDATABASE=astronomy_db
+      - ORDER_EXPIRY_INTERVAL_SECONDS
+      - ORDER_TTL_HOURS
+    command:
+      - sh
+      - -c
+      - |
+        while true; do
+          psql -c "DELETE FROM accounting.\"order\" WHERE created_at < NOW() - make_interval(hours => $$ORDER_TTL_HOURS)" || true
+          sleep "$$ORDER_EXPIRY_INTERVAL_SECONDS"
+        done
+    depends_on:
+      astronomy-db:
+        condition: service_started
     logging: *logging
 
   # AdService
@@ -289,6 +327,8 @@ services:
       - PRODUCT_REVIEWS_ADDR
       - RECOMMENDATION_ADDR
       - SHIPPING_ADDR
+      - ACCOUNTING_ADDR
+      - PAYMENT_ADDR
       - OTEL_EXPORTER_OTLP_ENDPOINT
       - OTEL_RESOURCE_ATTRIBUTES=${OTEL_RESOURCE_ATTRIBUTES},service.criticality=critical
       - ENV_PLATFORM
@@ -315,6 +355,10 @@ services:
       recommendation:
         condition: service_started
       shipping:
+        condition: service_started
+      accounting:
+        condition: service_started
+      payment:
         condition: service_started
       otel-collector:
         condition: service_started
@@ -468,6 +512,7 @@ services:
       - PAYMENT_PORT
       - FLAGD_HOST
       - FLAGD_PORT
+      - KAFKA_ADDR
       - OTEL_EXPORTER_OTLP_ENDPOINT
       - OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE
       - OTEL_RESOURCE_ATTRIBUTES=${OTEL_RESOURCE_ATTRIBUTES},service.criticality=critical
@@ -477,6 +522,8 @@ services:
         condition: service_started
       flagd:
         condition: service_started
+      kafka:
+        condition: service_healthy
     logging: *logging
 
   # Product Catalog service

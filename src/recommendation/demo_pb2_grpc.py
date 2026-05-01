@@ -853,6 +853,11 @@ class PaymentServiceStub(object):
                 request_serializer=demo__pb2.ChargeRequest.SerializeToString,
                 response_deserializer=demo__pb2.ChargeResponse.FromString,
                 _registered_method=True)
+        self.Refund = channel.unary_unary(
+                '/oteldemo.PaymentService/Refund',
+                request_serializer=demo__pb2.RefundRequest.SerializeToString,
+                response_deserializer=demo__pb2.RefundResponse.FromString,
+                _registered_method=True)
 
 
 class PaymentServiceServicer(object):
@@ -866,6 +871,12 @@ class PaymentServiceServicer(object):
         context.set_details('Method not implemented!')
         raise NotImplementedError('Method not implemented!')
 
+    def Refund(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
 
 def add_PaymentServiceServicer_to_server(servicer, server):
     rpc_method_handlers = {
@@ -873,6 +884,11 @@ def add_PaymentServiceServicer_to_server(servicer, server):
                     servicer.Charge,
                     request_deserializer=demo__pb2.ChargeRequest.FromString,
                     response_serializer=demo__pb2.ChargeResponse.SerializeToString,
+            ),
+            'Refund': grpc.unary_unary_rpc_method_handler(
+                    servicer.Refund,
+                    request_deserializer=demo__pb2.RefundRequest.FromString,
+                    response_serializer=demo__pb2.RefundResponse.SerializeToString,
             ),
     }
     generic_handler = grpc.method_handlers_generic_handler(
@@ -904,6 +920,33 @@ class PaymentService(object):
             '/oteldemo.PaymentService/Charge',
             demo__pb2.ChargeRequest.SerializeToString,
             demo__pb2.ChargeResponse.FromString,
+            options,
+            channel_credentials,
+            insecure,
+            call_credentials,
+            compression,
+            wait_for_ready,
+            timeout,
+            metadata,
+            _registered_method=True)
+
+    @staticmethod
+    def Refund(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(
+            request,
+            target,
+            '/oteldemo.PaymentService/Refund',
+            demo__pb2.RefundRequest.SerializeToString,
+            demo__pb2.RefundResponse.FromString,
             options,
             channel_credentials,
             insecure,
@@ -1060,6 +1103,127 @@ class CheckoutService(object):
             '/oteldemo.CheckoutService/PlaceOrder',
             demo__pb2.PlaceOrderRequest.SerializeToString,
             demo__pb2.PlaceOrderResponse.FromString,
+            options,
+            channel_credentials,
+            insecure,
+            call_credentials,
+            compression,
+            wait_for_ready,
+            timeout,
+            metadata,
+            _registered_method=True)
+
+
+class OrderServiceStub(object):
+    """-------------Order service-----------------
+
+    """
+
+    def __init__(self, channel):
+        """Constructor.
+
+        Args:
+            channel: A grpc.Channel.
+        """
+        self.GetOrdersByEmail = channel.unary_unary(
+                '/oteldemo.OrderService/GetOrdersByEmail',
+                request_serializer=demo__pb2.GetOrdersByEmailRequest.SerializeToString,
+                response_deserializer=demo__pb2.GetOrdersByEmailResponse.FromString,
+                _registered_method=True)
+        self.GetOrder = channel.unary_unary(
+                '/oteldemo.OrderService/GetOrder',
+                request_serializer=demo__pb2.GetOrderRequest.SerializeToString,
+                response_deserializer=demo__pb2.OrderDetail.FromString,
+                _registered_method=True)
+
+
+class OrderServiceServicer(object):
+    """-------------Order service-----------------
+
+    """
+
+    def GetOrdersByEmail(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
+    def GetOrder(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
+
+def add_OrderServiceServicer_to_server(servicer, server):
+    rpc_method_handlers = {
+            'GetOrdersByEmail': grpc.unary_unary_rpc_method_handler(
+                    servicer.GetOrdersByEmail,
+                    request_deserializer=demo__pb2.GetOrdersByEmailRequest.FromString,
+                    response_serializer=demo__pb2.GetOrdersByEmailResponse.SerializeToString,
+            ),
+            'GetOrder': grpc.unary_unary_rpc_method_handler(
+                    servicer.GetOrder,
+                    request_deserializer=demo__pb2.GetOrderRequest.FromString,
+                    response_serializer=demo__pb2.OrderDetail.SerializeToString,
+            ),
+    }
+    generic_handler = grpc.method_handlers_generic_handler(
+            'oteldemo.OrderService', rpc_method_handlers)
+    server.add_generic_rpc_handlers((generic_handler,))
+    server.add_registered_method_handlers('oteldemo.OrderService', rpc_method_handlers)
+
+
+ # This class is part of an EXPERIMENTAL API.
+class OrderService(object):
+    """-------------Order service-----------------
+
+    """
+
+    @staticmethod
+    def GetOrdersByEmail(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(
+            request,
+            target,
+            '/oteldemo.OrderService/GetOrdersByEmail',
+            demo__pb2.GetOrdersByEmailRequest.SerializeToString,
+            demo__pb2.GetOrdersByEmailResponse.FromString,
+            options,
+            channel_credentials,
+            insecure,
+            call_credentials,
+            compression,
+            wait_for_ready,
+            timeout,
+            metadata,
+            _registered_method=True)
+
+    @staticmethod
+    def GetOrder(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(
+            request,
+            target,
+            '/oteldemo.OrderService/GetOrder',
+            demo__pb2.GetOrderRequest.SerializeToString,
+            demo__pb2.OrderDetail.FromString,
             options,
             channel_credentials,
             insecure,

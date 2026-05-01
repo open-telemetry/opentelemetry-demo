@@ -26,8 +26,19 @@ GRANT USAGE ON SCHEMA accounting TO astronomy_user;
 
 -- Accounting Service: create tables
 CREATE TABLE accounting."order" (
-    order_id TEXT PRIMARY KEY
+    order_id TEXT PRIMARY KEY,
+    email TEXT,                              -- optional, from checkout
+    user_id TEXT,                            -- session UUID
+    transaction_id TEXT,                     -- from payment service charge
+    total_cost_currency_code TEXT,
+    total_cost_units BIGINT,
+    total_cost_nanos INT,
+    order_status TEXT NOT NULL DEFAULT 'completed',  -- completed | refunded
+    created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+    refunded_at TIMESTAMPTZ,
+    refund_transaction_id TEXT               -- from payment service refund
 );
+CREATE INDEX idx_order_email ON accounting."order"(email);
 
 CREATE TABLE accounting.shipping (
     shipping_tracking_id TEXT PRIMARY KEY,
