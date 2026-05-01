@@ -1,0 +1,86 @@
+---
+# Source: opentelemetry-demo/templates/component.yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: opentelemetry-demo-checkoutservice
+  labels:
+    
+    opentelemetry.io/name: opentelemetry-demo-checkoutservice
+    app.kubernetes.io/instance: opentelemetry-demo
+    app.kubernetes.io/component: checkoutservice
+    app.kubernetes.io/name: opentelemetry-demo-checkoutservice
+    app.kubernetes.io/version: "1.12.0"
+    app.kubernetes.io/part-of: opentelemetry-demo
+spec:
+  replicas: 1
+  revisionHistoryLimit: 10
+  selector:
+    matchLabels:
+      
+      opentelemetry.io/name: opentelemetry-demo-checkoutservice
+  template:
+    metadata:
+      labels:
+        
+        opentelemetry.io/name: opentelemetry-demo-checkoutservice
+        app.kubernetes.io/instance: opentelemetry-demo
+        app.kubernetes.io/component: checkoutservice
+        app.kubernetes.io/name: opentelemetry-demo-checkoutservice
+    spec:
+      serviceAccountName: opentelemetry-demo
+      containers:
+        - name: checkoutservice
+          image: 'ghcr.io/open-telemetry/demo:1.12.0-checkoutservice'
+          imagePullPolicy: IfNotPresent
+          ports:
+            
+            - containerPort: 8080
+              name: service
+          env:
+            - name: OTEL_SERVICE_NAME
+              valueFrom:
+                fieldRef:
+                  apiVersion: v1
+                  fieldPath: metadata.labels['app.kubernetes.io/component']
+            - name: OTEL_COLLECTOR_NAME
+              value: 'opentelemetry-demo-otelcol'
+            - name: OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE
+              value: cumulative
+            - name: CHECKOUT_SERVICE_PORT
+              value: "8080"
+            - name: CART_SERVICE_ADDR
+              value: 'opentelemetry-demo-cartservice:8080'
+            - name: CURRENCY_SERVICE_ADDR
+              value: 'opentelemetry-demo-currencyservice:8080'
+            - name: EMAIL_SERVICE_ADDR
+              value: http://opentelemetry-demo-emailservice:8080
+            - name: PAYMENT_SERVICE_ADDR
+              value: 'opentelemetry-demo-paymentservice:8080'
+            - name: PRODUCT_CATALOG_SERVICE_ADDR
+              value: 'opentelemetry-demo-productcatalogservice:8080'
+            - name: SHIPPING_SERVICE_ADDR
+              value: 'opentelemetry-demo-shippingservice:8080'
+            - name: KAFKA_SERVICE_ADDR
+              value: 'opentelemetry-demo-kafka:9092'
+            - name: FLAGD_HOST
+              value: 'opentelemetry-demo-flagd'
+            - name: FLAGD_PORT
+              value: "8013"
+            - name: OTEL_EXPORTER_OTLP_ENDPOINT
+              value: http://$(OTEL_COLLECTOR_NAME):4317
+            - name: OTEL_RESOURCE_ATTRIBUTES
+              value: service.name=$(OTEL_SERVICE_NAME),service.namespace=opentelemetry-demo,service.version=1.12.0
+          resources:
+            limits:
+              memory: 20Mi
+          volumeMounts:
+      initContainers:
+        - command:
+          - sh
+          - -c
+          - until nc -z -v -w30 opentelemetry-demo-kafka 9092; do echo waiting
+            for kafka; sleep 2; done;
+          image: busybox:latest
+          name: wait-for-kafka
+      volumes:
