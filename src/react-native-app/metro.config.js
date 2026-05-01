@@ -6,7 +6,7 @@
 
 const { getDefaultConfig } = require("expo/metro-config");
 
-// Expo SDK 54 enables `resolver.unstable_enablePackageExports` by default, which
+// Expo SDK 54+ enables `resolver.unstable_enablePackageExports` by default, which
 // is required for `@opentelemetry/semantic-conventions/incubating` to resolve.
 // See: https://reactnative.dev/blog/2023/06/21/package-exports-support
 

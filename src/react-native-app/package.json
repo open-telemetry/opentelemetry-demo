@@ -30,7 +30,6 @@
     "expo-linking": "~55.0.14",
     "expo-router": "~55.0.13",
     "expo-splash-screen": "~55.0.19",
-    "expo-status-bar": "~55.0.5",
     "expo-web-browser": "~55.0.14",
     "react": "19.2.0",
     "react-dom": "19.2.0",
@@ -52,10 +51,6 @@
     "@types/uuid": "^10.0.0",
     "eslint": "^9.0.0",
     "eslint-config-expo": "~55.0.0",
-    "eslint-config-prettier": "^10.1.8",
-    "eslint-plugin-prettier": "^5.5.5",
-    "prettier": "^3.8.3",
-    "react-test-renderer": "19.1.0",
     "ts-proto": "^2.11.6",
     "typescript": "~5.9.2"
   },
