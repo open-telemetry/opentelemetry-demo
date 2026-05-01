@@ -2,8 +2,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 using Accounting;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Hosting;
+using Microsoft.EntityFrameworkCore;
 
 Console.WriteLine("Accounting service started");
 
@@ -11,14 +10,20 @@ Environment.GetEnvironmentVariables()
     .FilterRelevant()
     .OutputInOrder();
 
-var host = Host.CreateDefaultBuilder(args)
-    .ConfigureServices(services =>
-    {
-        services.AddSingleton<Consumer>();
-    })
-    .Build();
+var builder = WebApplication.CreateBuilder(args);
 
-var consumer = host.Services.GetRequiredService<Consumer>();
-consumer.StartListening();
+builder.Services.AddGrpc();
+builder.Services.AddHostedService<Consumer>();
 
-host.Run();
+var connectionString = Environment.GetEnvironmentVariable("DB_CONNECTION_STRING");
+if (connectionString != null)
+{
+    builder.Services.AddDbContextFactory<AccountingDbContext>(options =>
+        options.UseNpgsql(connectionString).UseSnakeCaseNamingConvention());
+}
+
+var app = builder.Build();
+
+app.MapGrpcService<OrderServiceImpl>();
+
+app.Run();

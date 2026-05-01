@@ -215,6 +215,7 @@ message CurrencyConversionRequest {
 
 service PaymentService {
     rpc Charge(ChargeRequest) returns (ChargeResponse) {}
+    rpc Refund(RefundRequest) returns (RefundResponse) {}
 }
 
 message CreditCardInfo {
@@ -231,6 +232,28 @@ message ChargeRequest {
 
 message ChargeResponse {
     string transaction_id = 1;
+}
+
+message RefundRequest {
+    string order_id = 1;
+    string transaction_id = 2;
+    Money amount = 3;
+    string email = 4;
+}
+
+message RefundResponse {
+    string refund_transaction_id = 1;
+    bool success = 2;
+}
+
+// Published to the "refunds" Kafka topic by the payment service after a
+// successful refund, so the accounting consumer can mark the order refunded.
+message RefundResult {
+    string order_id = 1;
+    string transaction_id = 2;
+    string refund_transaction_id = 3;
+    Money amount = 4;
+    string email = 5;
 }
 
 // -------------Email service-----------------
@@ -250,6 +273,10 @@ message OrderResult {
     Money shipping_cost = 3;
     Address  shipping_address = 4;
     repeated OrderItem items = 5;
+    string   user_id = 6;
+    string   email = 7;
+    string   transaction_id = 8;
+    Money    total_cost = 9;
 }
 
 message SendOrderConfirmationRequest {
@@ -275,6 +302,38 @@ message PlaceOrderRequest {
 
 message PlaceOrderResponse {
     OrderResult order = 1;
+}
+
+// -------------Order service-----------------
+
+service OrderService {
+    rpc GetOrdersByEmail(GetOrdersByEmailRequest) returns (GetOrdersByEmailResponse) {}
+    rpc GetOrder(GetOrderRequest) returns (OrderDetail) {}
+}
+
+message GetOrdersByEmailRequest {
+    string email = 1;
+}
+
+message GetOrdersByEmailResponse {
+    repeated OrderDetail orders = 1;
+}
+
+message GetOrderRequest {
+    string order_id = 1;
+}
+
+message OrderDetail {
+    string order_id = 1;
+    string email = 2;
+    string status = 3;
+    Money total_cost = 4;
+    string shipping_tracking_id = 5;
+    Address shipping_address = 6;
+    repeated OrderItem items = 7;
+    string created_at = 8;
+    string transaction_id = 9;
+    string refund_transaction_id = 10;
 }
 
 // ------------Ad service------------------

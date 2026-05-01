@@ -31,6 +31,7 @@ RUN mkdir -p "/var/log/opentelemetry/dotnet"
 RUN chown app "/var/log/opentelemetry/dotnet"
 RUN chown app "/app/instrument.sh"
 USER app
-ENV OTEL_DOTNET_AUTO_TRACES_ADDITIONAL_SOURCES=Accounting.Consumer
+EXPOSE ${ACCOUNTING_SERVICE_PORT}
+ENV OTEL_DOTNET_AUTO_TRACES_ADDITIONAL_SOURCES=Accounting.Consumer,Accounting.OrderService
 
 ENTRYPOINT ["./instrument.sh", "dotnet", "Accounting.dll"]

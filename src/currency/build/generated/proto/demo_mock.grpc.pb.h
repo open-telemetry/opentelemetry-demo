@@ -84,6 +84,9 @@ class MockPaymentServiceStub : public PaymentService::StubInterface {
   MOCK_METHOD3(Charge, ::grpc::Status(::grpc::ClientContext* context, const ::oteldemo::ChargeRequest& request, ::oteldemo::ChargeResponse* response));
   MOCK_METHOD3(AsyncChargeRaw, ::grpc::ClientAsyncResponseReaderInterface< ::oteldemo::ChargeResponse>*(::grpc::ClientContext* context, const ::oteldemo::ChargeRequest& request, ::grpc::CompletionQueue* cq));
   MOCK_METHOD3(PrepareAsyncChargeRaw, ::grpc::ClientAsyncResponseReaderInterface< ::oteldemo::ChargeResponse>*(::grpc::ClientContext* context, const ::oteldemo::ChargeRequest& request, ::grpc::CompletionQueue* cq));
+  MOCK_METHOD3(Refund, ::grpc::Status(::grpc::ClientContext* context, const ::oteldemo::RefundRequest& request, ::oteldemo::RefundResponse* response));
+  MOCK_METHOD3(AsyncRefundRaw, ::grpc::ClientAsyncResponseReaderInterface< ::oteldemo::RefundResponse>*(::grpc::ClientContext* context, const ::oteldemo::RefundRequest& request, ::grpc::CompletionQueue* cq));
+  MOCK_METHOD3(PrepareAsyncRefundRaw, ::grpc::ClientAsyncResponseReaderInterface< ::oteldemo::RefundResponse>*(::grpc::ClientContext* context, const ::oteldemo::RefundRequest& request, ::grpc::CompletionQueue* cq));
 };
 
 class MockEmailServiceStub : public EmailService::StubInterface {
@@ -98,6 +101,16 @@ class MockCheckoutServiceStub : public CheckoutService::StubInterface {
   MOCK_METHOD3(PlaceOrder, ::grpc::Status(::grpc::ClientContext* context, const ::oteldemo::PlaceOrderRequest& request, ::oteldemo::PlaceOrderResponse* response));
   MOCK_METHOD3(AsyncPlaceOrderRaw, ::grpc::ClientAsyncResponseReaderInterface< ::oteldemo::PlaceOrderResponse>*(::grpc::ClientContext* context, const ::oteldemo::PlaceOrderRequest& request, ::grpc::CompletionQueue* cq));
   MOCK_METHOD3(PrepareAsyncPlaceOrderRaw, ::grpc::ClientAsyncResponseReaderInterface< ::oteldemo::PlaceOrderResponse>*(::grpc::ClientContext* context, const ::oteldemo::PlaceOrderRequest& request, ::grpc::CompletionQueue* cq));
+};
+
+class MockOrderServiceStub : public OrderService::StubInterface {
+ public:
+  MOCK_METHOD3(GetOrdersByEmail, ::grpc::Status(::grpc::ClientContext* context, const ::oteldemo::GetOrdersByEmailRequest& request, ::oteldemo::GetOrdersByEmailResponse* response));
+  MOCK_METHOD3(AsyncGetOrdersByEmailRaw, ::grpc::ClientAsyncResponseReaderInterface< ::oteldemo::GetOrdersByEmailResponse>*(::grpc::ClientContext* context, const ::oteldemo::GetOrdersByEmailRequest& request, ::grpc::CompletionQueue* cq));
+  MOCK_METHOD3(PrepareAsyncGetOrdersByEmailRaw, ::grpc::ClientAsyncResponseReaderInterface< ::oteldemo::GetOrdersByEmailResponse>*(::grpc::ClientContext* context, const ::oteldemo::GetOrdersByEmailRequest& request, ::grpc::CompletionQueue* cq));
+  MOCK_METHOD3(GetOrder, ::grpc::Status(::grpc::ClientContext* context, const ::oteldemo::GetOrderRequest& request, ::oteldemo::OrderDetail* response));
+  MOCK_METHOD3(AsyncGetOrderRaw, ::grpc::ClientAsyncResponseReaderInterface< ::oteldemo::OrderDetail>*(::grpc::ClientContext* context, const ::oteldemo::GetOrderRequest& request, ::grpc::CompletionQueue* cq));
+  MOCK_METHOD3(PrepareAsyncGetOrderRaw, ::grpc::ClientAsyncResponseReaderInterface< ::oteldemo::OrderDetail>*(::grpc::ClientContext* context, const ::oteldemo::GetOrderRequest& request, ::grpc::CompletionQueue* cq));
 };
 
 class MockAdServiceStub : public AdService::StubInterface {

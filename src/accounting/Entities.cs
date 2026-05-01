@@ -56,4 +56,34 @@ internal class OrderEntity
     [Column("order_id")]
     public required string Id { get; set; }
 
+    [Column("email")]
+    public string? Email { get; set; }
+
+    [Column("user_id")]
+    public string? UserId { get; set; }
+
+    [Column("transaction_id")]
+    public string? TransactionId { get; set; }
+
+    [Column("total_cost_currency_code")]
+    public string? TotalCostCurrencyCode { get; set; }
+
+    [Column("total_cost_units")]
+    public long? TotalCostUnits { get; set; }
+
+    [Column("total_cost_nanos")]
+    public int? TotalCostNanos { get; set; }
+
+    [Column("order_status")]
+    public string OrderStatus { get; set; } = "completed";
+
+    [Column("created_at")]
+    public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
+
+    [Column("refunded_at")]
+    public DateTime? RefundedAt { get; set; }
+
+    [Column("refund_transaction_id")]
+    public string? RefundTransactionId { get; set; }
+
 }

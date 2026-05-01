@@ -193,6 +193,30 @@ export interface ChargeResponse {
   transactionId: string;
 }
 
+export interface RefundRequest {
+  orderId: string;
+  transactionId: string;
+  amount: Money | undefined;
+  email: string;
+}
+
+export interface RefundResponse {
+  refundTransactionId: string;
+  success: boolean;
+}
+
+/**
+ * Published to the "refunds" Kafka topic by the payment service after a
+ * successful refund, so the accounting consumer can mark the order refunded.
+ */
+export interface RefundResult {
+  orderId: string;
+  transactionId: string;
+  refundTransactionId: string;
+  amount: Money | undefined;
+  email: string;
+}
+
 export interface OrderItem {
   item: CartItem | undefined;
   cost: Money | undefined;
@@ -204,6 +228,10 @@ export interface OrderResult {
   shippingCost: Money | undefined;
   shippingAddress: Address | undefined;
   items: OrderItem[];
+  userId: string;
+  email: string;
+  transactionId: string;
+  totalCost: Money | undefined;
 }
 
 export interface SendOrderConfirmationRequest {
@@ -221,6 +249,31 @@ export interface PlaceOrderRequest {
 
 export interface PlaceOrderResponse {
   order: OrderResult | undefined;
+}
+
+export interface GetOrdersByEmailRequest {
+  email: string;
+}
+
+export interface GetOrdersByEmailResponse {
+  orders: OrderDetail[];
+}
+
+export interface GetOrderRequest {
+  orderId: string;
+}
+
+export interface OrderDetail {
+  orderId: string;
+  email: string;
+  status: string;
+  totalCost: Money | undefined;
+  shippingTrackingId: string;
+  shippingAddress: Address | undefined;
+  items: OrderItem[];
+  createdAt: string;
+  transactionId: string;
+  refundTransactionId: string;
 }
 
 export interface AdRequest {
@@ -2656,6 +2709,342 @@ export const ChargeResponse: MessageFns<ChargeResponse> = {
   },
 };
 
+function createBaseRefundRequest(): RefundRequest {
+  return { orderId: "", transactionId: "", amount: undefined, email: "" };
+}
+
+export const RefundRequest: MessageFns<RefundRequest> = {
+  encode(message: RefundRequest, writer: BinaryWriter = new BinaryWriter()): BinaryWriter {
+    if (message.orderId !== "") {
+      writer.uint32(10).string(message.orderId);
+    }
+    if (message.transactionId !== "") {
+      writer.uint32(18).string(message.transactionId);
+    }
+    if (message.amount !== undefined) {
+      Money.encode(message.amount, writer.uint32(26).fork()).join();
+    }
+    if (message.email !== "") {
+      writer.uint32(34).string(message.email);
+    }
+    return writer;
+  },
+
+  decode(input: BinaryReader | Uint8Array, length?: number): RefundRequest {
+    const reader = input instanceof BinaryReader ? input : new BinaryReader(input);
+    const end = length === undefined ? reader.len : reader.pos + length;
+    const message = createBaseRefundRequest();
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        case 1: {
+          if (tag !== 10) {
+            break;
+          }
+
+          message.orderId = reader.string();
+          continue;
+        }
+        case 2: {
+          if (tag !== 18) {
+            break;
+          }
+
+          message.transactionId = reader.string();
+          continue;
+        }
+        case 3: {
+          if (tag !== 26) {
+            break;
+          }
+
+          message.amount = Money.decode(reader, reader.uint32());
+          continue;
+        }
+        case 4: {
+          if (tag !== 34) {
+            break;
+          }
+
+          message.email = reader.string();
+          continue;
+        }
+      }
+      if ((tag & 7) === 4 || tag === 0) {
+        break;
+      }
+      reader.skip(tag & 7);
+    }
+    return message;
+  },
+
+  fromJSON(object: any): RefundRequest {
+    return {
+      orderId: isSet(object.orderId)
+        ? globalThis.String(object.orderId)
+        : isSet(object.order_id)
+        ? globalThis.String(object.order_id)
+        : "",
+      transactionId: isSet(object.transactionId)
+        ? globalThis.String(object.transactionId)
+        : isSet(object.transaction_id)
+        ? globalThis.String(object.transaction_id)
+        : "",
+      amount: isSet(object.amount) ? Money.fromJSON(object.amount) : undefined,
+      email: isSet(object.email) ? globalThis.String(object.email) : "",
+    };
+  },
+
+  toJSON(message: RefundRequest): unknown {
+    const obj: any = {};
+    if (message.orderId !== "") {
+      obj.orderId = message.orderId;
+    }
+    if (message.transactionId !== "") {
+      obj.transactionId = message.transactionId;
+    }
+    if (message.amount !== undefined) {
+      obj.amount = Money.toJSON(message.amount);
+    }
+    if (message.email !== "") {
+      obj.email = message.email;
+    }
+    return obj;
+  },
+
+  create<I extends Exact<DeepPartial<RefundRequest>, I>>(base?: I): RefundRequest {
+    return RefundRequest.fromPartial(base ?? ({} as any));
+  },
+  fromPartial<I extends Exact<DeepPartial<RefundRequest>, I>>(object: I): RefundRequest {
+    const message = createBaseRefundRequest();
+    message.orderId = object.orderId ?? "";
+    message.transactionId = object.transactionId ?? "";
+    message.amount = (object.amount !== undefined && object.amount !== null)
+      ? Money.fromPartial(object.amount)
+      : undefined;
+    message.email = object.email ?? "";
+    return message;
+  },
+};
+
+function createBaseRefundResponse(): RefundResponse {
+  return { refundTransactionId: "", success: false };
+}
+
+export const RefundResponse: MessageFns<RefundResponse> = {
+  encode(message: RefundResponse, writer: BinaryWriter = new BinaryWriter()): BinaryWriter {
+    if (message.refundTransactionId !== "") {
+      writer.uint32(10).string(message.refundTransactionId);
+    }
+    if (message.success !== false) {
+      writer.uint32(16).bool(message.success);
+    }
+    return writer;
+  },
+
+  decode(input: BinaryReader | Uint8Array, length?: number): RefundResponse {
+    const reader = input instanceof BinaryReader ? input : new BinaryReader(input);
+    const end = length === undefined ? reader.len : reader.pos + length;
+    const message = createBaseRefundResponse();
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        case 1: {
+          if (tag !== 10) {
+            break;
+          }
+
+          message.refundTransactionId = reader.string();
+          continue;
+        }
+        case 2: {
+          if (tag !== 16) {
+            break;
+          }
+
+          message.success = reader.bool();
+          continue;
+        }
+      }
+      if ((tag & 7) === 4 || tag === 0) {
+        break;
+      }
+      reader.skip(tag & 7);
+    }
+    return message;
+  },
+
+  fromJSON(object: any): RefundResponse {
+    return {
+      refundTransactionId: isSet(object.refundTransactionId)
+        ? globalThis.String(object.refundTransactionId)
+        : isSet(object.refund_transaction_id)
+        ? globalThis.String(object.refund_transaction_id)
+        : "",
+      success: isSet(object.success) ? globalThis.Boolean(object.success) : false,
+    };
+  },
+
+  toJSON(message: RefundResponse): unknown {
+    const obj: any = {};
+    if (message.refundTransactionId !== "") {
+      obj.refundTransactionId = message.refundTransactionId;
+    }
+    if (message.success !== false) {
+      obj.success = message.success;
+    }
+    return obj;
+  },
+
+  create<I extends Exact<DeepPartial<RefundResponse>, I>>(base?: I): RefundResponse {
+    return RefundResponse.fromPartial(base ?? ({} as any));
+  },
+  fromPartial<I extends Exact<DeepPartial<RefundResponse>, I>>(object: I): RefundResponse {
+    const message = createBaseRefundResponse();
+    message.refundTransactionId = object.refundTransactionId ?? "";
+    message.success = object.success ?? false;
+    return message;
+  },
+};
+
+function createBaseRefundResult(): RefundResult {
+  return { orderId: "", transactionId: "", refundTransactionId: "", amount: undefined, email: "" };
+}
+
+export const RefundResult: MessageFns<RefundResult> = {
+  encode(message: RefundResult, writer: BinaryWriter = new BinaryWriter()): BinaryWriter {
+    if (message.orderId !== "") {
+      writer.uint32(10).string(message.orderId);
+    }
+    if (message.transactionId !== "") {
+      writer.uint32(18).string(message.transactionId);
+    }
+    if (message.refundTransactionId !== "") {
+      writer.uint32(26).string(message.refundTransactionId);
+    }
+    if (message.amount !== undefined) {
+      Money.encode(message.amount, writer.uint32(34).fork()).join();
+    }
+    if (message.email !== "") {
+      writer.uint32(42).string(message.email);
+    }
+    return writer;
+  },
+
+  decode(input: BinaryReader | Uint8Array, length?: number): RefundResult {
+    const reader = input instanceof BinaryReader ? input : new BinaryReader(input);
+    const end = length === undefined ? reader.len : reader.pos + length;
+    const message = createBaseRefundResult();
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        case 1: {
+          if (tag !== 10) {
+            break;
+          }
+
+          message.orderId = reader.string();
+          continue;
+        }
+        case 2: {
+          if (tag !== 18) {
+            break;
+          }
+
+          message.transactionId = reader.string();
+          continue;
+        }
+        case 3: {
+          if (tag !== 26) {
+            break;
+          }
+
+          message.refundTransactionId = reader.string();
+          continue;
+        }
+        case 4: {
+          if (tag !== 34) {
+            break;
+          }
+
+          message.amount = Money.decode(reader, reader.uint32());
+          continue;
+        }
+        case 5: {
+          if (tag !== 42) {
+            break;
+          }
+
+          message.email = reader.string();
+          continue;
+        }
+      }
+      if ((tag & 7) === 4 || tag === 0) {
+        break;
+      }
+      reader.skip(tag & 7);
+    }
+    return message;
+  },
+
+  fromJSON(object: any): RefundResult {
+    return {
+      orderId: isSet(object.orderId)
+        ? globalThis.String(object.orderId)
+        : isSet(object.order_id)
+        ? globalThis.String(object.order_id)
+        : "",
+      transactionId: isSet(object.transactionId)
+        ? globalThis.String(object.transactionId)
+        : isSet(object.transaction_id)
+        ? globalThis.String(object.transaction_id)
+        : "",
+      refundTransactionId: isSet(object.refundTransactionId)
+        ? globalThis.String(object.refundTransactionId)
+        : isSet(object.refund_transaction_id)
+        ? globalThis.String(object.refund_transaction_id)
+        : "",
+      amount: isSet(object.amount) ? Money.fromJSON(object.amount) : undefined,
+      email: isSet(object.email) ? globalThis.String(object.email) : "",
+    };
+  },
+
+  toJSON(message: RefundResult): unknown {
+    const obj: any = {};
+    if (message.orderId !== "") {
+      obj.orderId = message.orderId;
+    }
+    if (message.transactionId !== "") {
+      obj.transactionId = message.transactionId;
+    }
+    if (message.refundTransactionId !== "") {
+      obj.refundTransactionId = message.refundTransactionId;
+    }
+    if (message.amount !== undefined) {
+      obj.amount = Money.toJSON(message.amount);
+    }
+    if (message.email !== "") {
+      obj.email = message.email;
+    }
+    return obj;
+  },
+
+  create<I extends Exact<DeepPartial<RefundResult>, I>>(base?: I): RefundResult {
+    return RefundResult.fromPartial(base ?? ({} as any));
+  },
+  fromPartial<I extends Exact<DeepPartial<RefundResult>, I>>(object: I): RefundResult {
+    const message = createBaseRefundResult();
+    message.orderId = object.orderId ?? "";
+    message.transactionId = object.transactionId ?? "";
+    message.refundTransactionId = object.refundTransactionId ?? "";
+    message.amount = (object.amount !== undefined && object.amount !== null)
+      ? Money.fromPartial(object.amount)
+      : undefined;
+    message.email = object.email ?? "";
+    return message;
+  },
+};
+
 function createBaseOrderItem(): OrderItem {
   return { item: undefined, cost: undefined };
 }
@@ -2733,7 +3122,17 @@ export const OrderItem: MessageFns<OrderItem> = {
 };
 
 function createBaseOrderResult(): OrderResult {
-  return { orderId: "", shippingTrackingId: "", shippingCost: undefined, shippingAddress: undefined, items: [] };
+  return {
+    orderId: "",
+    shippingTrackingId: "",
+    shippingCost: undefined,
+    shippingAddress: undefined,
+    items: [],
+    userId: "",
+    email: "",
+    transactionId: "",
+    totalCost: undefined,
+  };
 }
 
 export const OrderResult: MessageFns<OrderResult> = {
@@ -2752,6 +3151,18 @@ export const OrderResult: MessageFns<OrderResult> = {
     }
     for (const v of message.items) {
       OrderItem.encode(v!, writer.uint32(42).fork()).join();
+    }
+    if (message.userId !== "") {
+      writer.uint32(50).string(message.userId);
+    }
+    if (message.email !== "") {
+      writer.uint32(58).string(message.email);
+    }
+    if (message.transactionId !== "") {
+      writer.uint32(66).string(message.transactionId);
+    }
+    if (message.totalCost !== undefined) {
+      Money.encode(message.totalCost, writer.uint32(74).fork()).join();
     }
     return writer;
   },
@@ -2803,6 +3214,38 @@ export const OrderResult: MessageFns<OrderResult> = {
           message.items.push(OrderItem.decode(reader, reader.uint32()));
           continue;
         }
+        case 6: {
+          if (tag !== 50) {
+            break;
+          }
+
+          message.userId = reader.string();
+          continue;
+        }
+        case 7: {
+          if (tag !== 58) {
+            break;
+          }
+
+          message.email = reader.string();
+          continue;
+        }
+        case 8: {
+          if (tag !== 66) {
+            break;
+          }
+
+          message.transactionId = reader.string();
+          continue;
+        }
+        case 9: {
+          if (tag !== 74) {
+            break;
+          }
+
+          message.totalCost = Money.decode(reader, reader.uint32());
+          continue;
+        }
       }
       if ((tag & 7) === 4 || tag === 0) {
         break;
@@ -2837,6 +3280,22 @@ export const OrderResult: MessageFns<OrderResult> = {
       items: globalThis.Array.isArray(object?.items)
         ? object.items.map((e: any) => OrderItem.fromJSON(e))
         : [],
+      userId: isSet(object.userId)
+        ? globalThis.String(object.userId)
+        : isSet(object.user_id)
+        ? globalThis.String(object.user_id)
+        : "",
+      email: isSet(object.email) ? globalThis.String(object.email) : "",
+      transactionId: isSet(object.transactionId)
+        ? globalThis.String(object.transactionId)
+        : isSet(object.transaction_id)
+        ? globalThis.String(object.transaction_id)
+        : "",
+      totalCost: isSet(object.totalCost)
+        ? Money.fromJSON(object.totalCost)
+        : isSet(object.total_cost)
+        ? Money.fromJSON(object.total_cost)
+        : undefined,
     };
   },
 
@@ -2857,6 +3316,18 @@ export const OrderResult: MessageFns<OrderResult> = {
     if (message.items?.length) {
       obj.items = message.items.map((e) => OrderItem.toJSON(e));
     }
+    if (message.userId !== "") {
+      obj.userId = message.userId;
+    }
+    if (message.email !== "") {
+      obj.email = message.email;
+    }
+    if (message.transactionId !== "") {
+      obj.transactionId = message.transactionId;
+    }
+    if (message.totalCost !== undefined) {
+      obj.totalCost = Money.toJSON(message.totalCost);
+    }
     return obj;
   },
 
@@ -2874,6 +3345,12 @@ export const OrderResult: MessageFns<OrderResult> = {
       ? Address.fromPartial(object.shippingAddress)
       : undefined;
     message.items = object.items?.map((e) => OrderItem.fromPartial(e)) || [];
+    message.userId = object.userId ?? "";
+    message.email = object.email ?? "";
+    message.transactionId = object.transactionId ?? "";
+    message.totalCost = (object.totalCost !== undefined && object.totalCost !== null)
+      ? Money.fromPartial(object.totalCost)
+      : undefined;
     return message;
   },
 };
@@ -3152,6 +3629,437 @@ export const PlaceOrderResponse: MessageFns<PlaceOrderResponse> = {
     message.order = (object.order !== undefined && object.order !== null)
       ? OrderResult.fromPartial(object.order)
       : undefined;
+    return message;
+  },
+};
+
+function createBaseGetOrdersByEmailRequest(): GetOrdersByEmailRequest {
+  return { email: "" };
+}
+
+export const GetOrdersByEmailRequest: MessageFns<GetOrdersByEmailRequest> = {
+  encode(message: GetOrdersByEmailRequest, writer: BinaryWriter = new BinaryWriter()): BinaryWriter {
+    if (message.email !== "") {
+      writer.uint32(10).string(message.email);
+    }
+    return writer;
+  },
+
+  decode(input: BinaryReader | Uint8Array, length?: number): GetOrdersByEmailRequest {
+    const reader = input instanceof BinaryReader ? input : new BinaryReader(input);
+    const end = length === undefined ? reader.len : reader.pos + length;
+    const message = createBaseGetOrdersByEmailRequest();
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        case 1: {
+          if (tag !== 10) {
+            break;
+          }
+
+          message.email = reader.string();
+          continue;
+        }
+      }
+      if ((tag & 7) === 4 || tag === 0) {
+        break;
+      }
+      reader.skip(tag & 7);
+    }
+    return message;
+  },
+
+  fromJSON(object: any): GetOrdersByEmailRequest {
+    return { email: isSet(object.email) ? globalThis.String(object.email) : "" };
+  },
+
+  toJSON(message: GetOrdersByEmailRequest): unknown {
+    const obj: any = {};
+    if (message.email !== "") {
+      obj.email = message.email;
+    }
+    return obj;
+  },
+
+  create<I extends Exact<DeepPartial<GetOrdersByEmailRequest>, I>>(base?: I): GetOrdersByEmailRequest {
+    return GetOrdersByEmailRequest.fromPartial(base ?? ({} as any));
+  },
+  fromPartial<I extends Exact<DeepPartial<GetOrdersByEmailRequest>, I>>(object: I): GetOrdersByEmailRequest {
+    const message = createBaseGetOrdersByEmailRequest();
+    message.email = object.email ?? "";
+    return message;
+  },
+};
+
+function createBaseGetOrdersByEmailResponse(): GetOrdersByEmailResponse {
+  return { orders: [] };
+}
+
+export const GetOrdersByEmailResponse: MessageFns<GetOrdersByEmailResponse> = {
+  encode(message: GetOrdersByEmailResponse, writer: BinaryWriter = new BinaryWriter()): BinaryWriter {
+    for (const v of message.orders) {
+      OrderDetail.encode(v!, writer.uint32(10).fork()).join();
+    }
+    return writer;
+  },
+
+  decode(input: BinaryReader | Uint8Array, length?: number): GetOrdersByEmailResponse {
+    const reader = input instanceof BinaryReader ? input : new BinaryReader(input);
+    const end = length === undefined ? reader.len : reader.pos + length;
+    const message = createBaseGetOrdersByEmailResponse();
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        case 1: {
+          if (tag !== 10) {
+            break;
+          }
+
+          message.orders.push(OrderDetail.decode(reader, reader.uint32()));
+          continue;
+        }
+      }
+      if ((tag & 7) === 4 || tag === 0) {
+        break;
+      }
+      reader.skip(tag & 7);
+    }
+    return message;
+  },
+
+  fromJSON(object: any): GetOrdersByEmailResponse {
+    return {
+      orders: globalThis.Array.isArray(object?.orders) ? object.orders.map((e: any) => OrderDetail.fromJSON(e)) : [],
+    };
+  },
+
+  toJSON(message: GetOrdersByEmailResponse): unknown {
+    const obj: any = {};
+    if (message.orders?.length) {
+      obj.orders = message.orders.map((e) => OrderDetail.toJSON(e));
+    }
+    return obj;
+  },
+
+  create<I extends Exact<DeepPartial<GetOrdersByEmailResponse>, I>>(base?: I): GetOrdersByEmailResponse {
+    return GetOrdersByEmailResponse.fromPartial(base ?? ({} as any));
+  },
+  fromPartial<I extends Exact<DeepPartial<GetOrdersByEmailResponse>, I>>(object: I): GetOrdersByEmailResponse {
+    const message = createBaseGetOrdersByEmailResponse();
+    message.orders = object.orders?.map((e) => OrderDetail.fromPartial(e)) || [];
+    return message;
+  },
+};
+
+function createBaseGetOrderRequest(): GetOrderRequest {
+  return { orderId: "" };
+}
+
+export const GetOrderRequest: MessageFns<GetOrderRequest> = {
+  encode(message: GetOrderRequest, writer: BinaryWriter = new BinaryWriter()): BinaryWriter {
+    if (message.orderId !== "") {
+      writer.uint32(10).string(message.orderId);
+    }
+    return writer;
+  },
+
+  decode(input: BinaryReader | Uint8Array, length?: number): GetOrderRequest {
+    const reader = input instanceof BinaryReader ? input : new BinaryReader(input);
+    const end = length === undefined ? reader.len : reader.pos + length;
+    const message = createBaseGetOrderRequest();
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        case 1: {
+          if (tag !== 10) {
+            break;
+          }
+
+          message.orderId = reader.string();
+          continue;
+        }
+      }
+      if ((tag & 7) === 4 || tag === 0) {
+        break;
+      }
+      reader.skip(tag & 7);
+    }
+    return message;
+  },
+
+  fromJSON(object: any): GetOrderRequest {
+    return {
+      orderId: isSet(object.orderId)
+        ? globalThis.String(object.orderId)
+        : isSet(object.order_id)
+        ? globalThis.String(object.order_id)
+        : "",
+    };
+  },
+
+  toJSON(message: GetOrderRequest): unknown {
+    const obj: any = {};
+    if (message.orderId !== "") {
+      obj.orderId = message.orderId;
+    }
+    return obj;
+  },
+
+  create<I extends Exact<DeepPartial<GetOrderRequest>, I>>(base?: I): GetOrderRequest {
+    return GetOrderRequest.fromPartial(base ?? ({} as any));
+  },
+  fromPartial<I extends Exact<DeepPartial<GetOrderRequest>, I>>(object: I): GetOrderRequest {
+    const message = createBaseGetOrderRequest();
+    message.orderId = object.orderId ?? "";
+    return message;
+  },
+};
+
+function createBaseOrderDetail(): OrderDetail {
+  return {
+    orderId: "",
+    email: "",
+    status: "",
+    totalCost: undefined,
+    shippingTrackingId: "",
+    shippingAddress: undefined,
+    items: [],
+    createdAt: "",
+    transactionId: "",
+    refundTransactionId: "",
+  };
+}
+
+export const OrderDetail: MessageFns<OrderDetail> = {
+  encode(message: OrderDetail, writer: BinaryWriter = new BinaryWriter()): BinaryWriter {
+    if (message.orderId !== "") {
+      writer.uint32(10).string(message.orderId);
+    }
+    if (message.email !== "") {
+      writer.uint32(18).string(message.email);
+    }
+    if (message.status !== "") {
+      writer.uint32(26).string(message.status);
+    }
+    if (message.totalCost !== undefined) {
+      Money.encode(message.totalCost, writer.uint32(34).fork()).join();
+    }
+    if (message.shippingTrackingId !== "") {
+      writer.uint32(42).string(message.shippingTrackingId);
+    }
+    if (message.shippingAddress !== undefined) {
+      Address.encode(message.shippingAddress, writer.uint32(50).fork()).join();
+    }
+    for (const v of message.items) {
+      OrderItem.encode(v!, writer.uint32(58).fork()).join();
+    }
+    if (message.createdAt !== "") {
+      writer.uint32(66).string(message.createdAt);
+    }
+    if (message.transactionId !== "") {
+      writer.uint32(74).string(message.transactionId);
+    }
+    if (message.refundTransactionId !== "") {
+      writer.uint32(82).string(message.refundTransactionId);
+    }
+    return writer;
+  },
+
+  decode(input: BinaryReader | Uint8Array, length?: number): OrderDetail {
+    const reader = input instanceof BinaryReader ? input : new BinaryReader(input);
+    const end = length === undefined ? reader.len : reader.pos + length;
+    const message = createBaseOrderDetail();
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        case 1: {
+          if (tag !== 10) {
+            break;
+          }
+
+          message.orderId = reader.string();
+          continue;
+        }
+        case 2: {
+          if (tag !== 18) {
+            break;
+          }
+
+          message.email = reader.string();
+          continue;
+        }
+        case 3: {
+          if (tag !== 26) {
+            break;
+          }
+
+          message.status = reader.string();
+          continue;
+        }
+        case 4: {
+          if (tag !== 34) {
+            break;
+          }
+
+          message.totalCost = Money.decode(reader, reader.uint32());
+          continue;
+        }
+        case 5: {
+          if (tag !== 42) {
+            break;
+          }
+
+          message.shippingTrackingId = reader.string();
+          continue;
+        }
+        case 6: {
+          if (tag !== 50) {
+            break;
+          }
+
+          message.shippingAddress = Address.decode(reader, reader.uint32());
+          continue;
+        }
+        case 7: {
+          if (tag !== 58) {
+            break;
+          }
+
+          message.items.push(OrderItem.decode(reader, reader.uint32()));
+          continue;
+        }
+        case 8: {
+          if (tag !== 66) {
+            break;
+          }
+
+          message.createdAt = reader.string();
+          continue;
+        }
+        case 9: {
+          if (tag !== 74) {
+            break;
+          }
+
+          message.transactionId = reader.string();
+          continue;
+        }
+        case 10: {
+          if (tag !== 82) {
+            break;
+          }
+
+          message.refundTransactionId = reader.string();
+          continue;
+        }
+      }
+      if ((tag & 7) === 4 || tag === 0) {
+        break;
+      }
+      reader.skip(tag & 7);
+    }
+    return message;
+  },
+
+  fromJSON(object: any): OrderDetail {
+    return {
+      orderId: isSet(object.orderId)
+        ? globalThis.String(object.orderId)
+        : isSet(object.order_id)
+        ? globalThis.String(object.order_id)
+        : "",
+      email: isSet(object.email) ? globalThis.String(object.email) : "",
+      status: isSet(object.status) ? globalThis.String(object.status) : "",
+      totalCost: isSet(object.totalCost)
+        ? Money.fromJSON(object.totalCost)
+        : isSet(object.total_cost)
+        ? Money.fromJSON(object.total_cost)
+        : undefined,
+      shippingTrackingId: isSet(object.shippingTrackingId)
+        ? globalThis.String(object.shippingTrackingId)
+        : isSet(object.shipping_tracking_id)
+        ? globalThis.String(object.shipping_tracking_id)
+        : "",
+      shippingAddress: isSet(object.shippingAddress)
+        ? Address.fromJSON(object.shippingAddress)
+        : isSet(object.shipping_address)
+        ? Address.fromJSON(object.shipping_address)
+        : undefined,
+      items: globalThis.Array.isArray(object?.items)
+        ? object.items.map((e: any) => OrderItem.fromJSON(e))
+        : [],
+      createdAt: isSet(object.createdAt)
+        ? globalThis.String(object.createdAt)
+        : isSet(object.created_at)
+        ? globalThis.String(object.created_at)
+        : "",
+      transactionId: isSet(object.transactionId)
+        ? globalThis.String(object.transactionId)
+        : isSet(object.transaction_id)
+        ? globalThis.String(object.transaction_id)
+        : "",
+      refundTransactionId: isSet(object.refundTransactionId)
+        ? globalThis.String(object.refundTransactionId)
+        : isSet(object.refund_transaction_id)
+        ? globalThis.String(object.refund_transaction_id)
+        : "",
+    };
+  },
+
+  toJSON(message: OrderDetail): unknown {
+    const obj: any = {};
+    if (message.orderId !== "") {
+      obj.orderId = message.orderId;
+    }
+    if (message.email !== "") {
+      obj.email = message.email;
+    }
+    if (message.status !== "") {
+      obj.status = message.status;
+    }
+    if (message.totalCost !== undefined) {
+      obj.totalCost = Money.toJSON(message.totalCost);
+    }
+    if (message.shippingTrackingId !== "") {
+      obj.shippingTrackingId = message.shippingTrackingId;
+    }
+    if (message.shippingAddress !== undefined) {
+      obj.shippingAddress = Address.toJSON(message.shippingAddress);
+    }
+    if (message.items?.length) {
+      obj.items = message.items.map((e) => OrderItem.toJSON(e));
+    }
+    if (message.createdAt !== "") {
+      obj.createdAt = message.createdAt;
+    }
+    if (message.transactionId !== "") {
+      obj.transactionId = message.transactionId;
+    }
+    if (message.refundTransactionId !== "") {
+      obj.refundTransactionId = message.refundTransactionId;
+    }
+    return obj;
+  },
+
+  create<I extends Exact<DeepPartial<OrderDetail>, I>>(base?: I): OrderDetail {
+    return OrderDetail.fromPartial(base ?? ({} as any));
+  },
+  fromPartial<I extends Exact<DeepPartial<OrderDetail>, I>>(object: I): OrderDetail {
+    const message = createBaseOrderDetail();
+    message.orderId = object.orderId ?? "";
+    message.email = object.email ?? "";
+    message.status = object.status ?? "";
+    message.totalCost = (object.totalCost !== undefined && object.totalCost !== null)
+      ? Money.fromPartial(object.totalCost)
+      : undefined;
+    message.shippingTrackingId = object.shippingTrackingId ?? "";
+    message.shippingAddress = (object.shippingAddress !== undefined && object.shippingAddress !== null)
+      ? Address.fromPartial(object.shippingAddress)
+      : undefined;
+    message.items = object.items?.map((e) => OrderItem.fromPartial(e)) || [];
+    message.createdAt = object.createdAt ?? "";
+    message.transactionId = object.transactionId ?? "";
+    message.refundTransactionId = object.refundTransactionId ?? "";
     return message;
   },
 };
@@ -4525,10 +5433,20 @@ export const PaymentServiceService = {
     responseSerialize: (value: ChargeResponse): Buffer => Buffer.from(ChargeResponse.encode(value).finish()),
     responseDeserialize: (value: Buffer): ChargeResponse => ChargeResponse.decode(value),
   },
+  refund: {
+    path: "/oteldemo.PaymentService/Refund" as const,
+    requestStream: false as const,
+    responseStream: false as const,
+    requestSerialize: (value: RefundRequest): Buffer => Buffer.from(RefundRequest.encode(value).finish()),
+    requestDeserialize: (value: Buffer): RefundRequest => RefundRequest.decode(value),
+    responseSerialize: (value: RefundResponse): Buffer => Buffer.from(RefundResponse.encode(value).finish()),
+    responseDeserialize: (value: Buffer): RefundResponse => RefundResponse.decode(value),
+  },
 } as const;
 
 export interface PaymentServiceServer extends UntypedServiceImplementation {
   charge: handleUnaryCall<ChargeRequest, ChargeResponse>;
+  refund: handleUnaryCall<RefundRequest, RefundResponse>;
 }
 
 export interface PaymentServiceClient extends Client {
@@ -4546,6 +5464,21 @@ export interface PaymentServiceClient extends Client {
     metadata: Metadata,
     options: Partial<CallOptions>,
     callback: (error: ServiceError | null, response: ChargeResponse) => void,
+  ): ClientUnaryCall;
+  refund(
+    request: RefundRequest,
+    callback: (error: ServiceError | null, response: RefundResponse) => void,
+  ): ClientUnaryCall;
+  refund(
+    request: RefundRequest,
+    metadata: Metadata,
+    callback: (error: ServiceError | null, response: RefundResponse) => void,
+  ): ClientUnaryCall;
+  refund(
+    request: RefundRequest,
+    metadata: Metadata,
+    options: Partial<CallOptions>,
+    callback: (error: ServiceError | null, response: RefundResponse) => void,
   ): ClientUnaryCall;
 }
 
@@ -4644,6 +5577,77 @@ export const CheckoutServiceClient = makeGenericClientConstructor(
 ) as unknown as {
   new (address: string, credentials: ChannelCredentials, options?: Partial<ClientOptions>): CheckoutServiceClient;
   service: typeof CheckoutServiceService;
+  serviceName: string;
+};
+
+export type OrderServiceService = typeof OrderServiceService;
+export const OrderServiceService = {
+  getOrdersByEmail: {
+    path: "/oteldemo.OrderService/GetOrdersByEmail" as const,
+    requestStream: false as const,
+    responseStream: false as const,
+    requestSerialize: (value: GetOrdersByEmailRequest): Buffer =>
+      Buffer.from(GetOrdersByEmailRequest.encode(value).finish()),
+    requestDeserialize: (value: Buffer): GetOrdersByEmailRequest => GetOrdersByEmailRequest.decode(value),
+    responseSerialize: (value: GetOrdersByEmailResponse): Buffer =>
+      Buffer.from(GetOrdersByEmailResponse.encode(value).finish()),
+    responseDeserialize: (value: Buffer): GetOrdersByEmailResponse => GetOrdersByEmailResponse.decode(value),
+  },
+  getOrder: {
+    path: "/oteldemo.OrderService/GetOrder" as const,
+    requestStream: false as const,
+    responseStream: false as const,
+    requestSerialize: (value: GetOrderRequest): Buffer => Buffer.from(GetOrderRequest.encode(value).finish()),
+    requestDeserialize: (value: Buffer): GetOrderRequest => GetOrderRequest.decode(value),
+    responseSerialize: (value: OrderDetail): Buffer => Buffer.from(OrderDetail.encode(value).finish()),
+    responseDeserialize: (value: Buffer): OrderDetail => OrderDetail.decode(value),
+  },
+} as const;
+
+export interface OrderServiceServer extends UntypedServiceImplementation {
+  getOrdersByEmail: handleUnaryCall<GetOrdersByEmailRequest, GetOrdersByEmailResponse>;
+  getOrder: handleUnaryCall<GetOrderRequest, OrderDetail>;
+}
+
+export interface OrderServiceClient extends Client {
+  getOrdersByEmail(
+    request: GetOrdersByEmailRequest,
+    callback: (error: ServiceError | null, response: GetOrdersByEmailResponse) => void,
+  ): ClientUnaryCall;
+  getOrdersByEmail(
+    request: GetOrdersByEmailRequest,
+    metadata: Metadata,
+    callback: (error: ServiceError | null, response: GetOrdersByEmailResponse) => void,
+  ): ClientUnaryCall;
+  getOrdersByEmail(
+    request: GetOrdersByEmailRequest,
+    metadata: Metadata,
+    options: Partial<CallOptions>,
+    callback: (error: ServiceError | null, response: GetOrdersByEmailResponse) => void,
+  ): ClientUnaryCall;
+  getOrder(
+    request: GetOrderRequest,
+    callback: (error: ServiceError | null, response: OrderDetail) => void,
+  ): ClientUnaryCall;
+  getOrder(
+    request: GetOrderRequest,
+    metadata: Metadata,
+    callback: (error: ServiceError | null, response: OrderDetail) => void,
+  ): ClientUnaryCall;
+  getOrder(
+    request: GetOrderRequest,
+    metadata: Metadata,
+    options: Partial<CallOptions>,
+    callback: (error: ServiceError | null, response: OrderDetail) => void,
+  ): ClientUnaryCall;
+}
+
+export const OrderServiceClient = makeGenericClientConstructor(
+  OrderServiceService,
+  "oteldemo.OrderService",
+) as unknown as {
+  new (address: string, credentials: ChannelCredentials, options?: Partial<ClientOptions>): OrderServiceClient;
+  service: typeof OrderServiceService;
   serviceName: string;
 };
 
