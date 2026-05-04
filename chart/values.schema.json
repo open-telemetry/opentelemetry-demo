@@ -2,7 +2,7 @@
   "$schema": "http://json-schema.org/schema#",
   "type": "object",
   "title": "Values",
-  "additionalProperties": false,
+  "additionalProperties": true,
   "properties": {
     "enabled": {
       "description": "Usually used when using Opentelemetry-demo as a subchart.",
@@ -12,7 +12,8 @@
       "type": "object"
     },
     "default": {
-      "$ref": "#/definitions/Default"
+      "$ref": "#/definitions/Default",
+      "additionalProperties": true
     },
     "serviceAccount": {
       "type": "object",
@@ -49,6 +50,23 @@
     },
     "opensearch": {
       "type": "object"
+    },
+    "customer": {
+      "type": "object",
+      "description": "Sureops per-customer attribution. Stamped at provision time.",
+      "properties": {
+        "slug": {
+          "type": "string"
+        },
+        "orgId": {
+          "type": "string"
+        }
+      },
+      "additionalProperties": true
+    },
+    "env": {
+      "type": "string",
+      "description": "Sureops deployment environment (uat | prod)."
     }
   },
   "required": [
@@ -58,7 +76,7 @@
   "definitions": {
     "Components": {
       "type": "object",
-      "additionalProperties": false,
+      "additionalProperties": true,
       "properties": {
         "accounting": {
           "$ref": "#/definitions/Component"
@@ -131,7 +149,7 @@
     },
     "Component": {
       "type": "object",
-      "additionalProperties": false,
+      "additionalProperties": true,
       "properties": {
         "enabled": {
           "type": "boolean"
@@ -280,7 +298,7 @@
     },
     "Default": {
       "type": "object",
-      "additionalProperties": false,
+      "additionalProperties": true,
       "properties": {
         "enabled": {
           "type": "boolean"
