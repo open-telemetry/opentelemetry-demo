@@ -1,0 +1,33 @@
+global:
+  test: templated-value
+
+mode: deployment
+
+image:
+  repository: "ghcr.io/open-telemetry/opentelemetry-collector-releases/opentelemetry-collector-k8s"
+
+command:
+  name: "otelcol-k8s"
+
+resources:
+  limits:
+    cpu: 100m
+    memory: 200M
+
+# Tests `tpl` function reference used in pod labels and
+# ingress.hosts[*]
+podLabels:
+  testLabel: "{{ .Values.global.test }}"
+
+additionalLabels:
+  testLabel: "{{ .Values.global.test }}"
+  someLabel: "someValue"
+
+ingress:
+  enabled: true
+  hosts:
+    - host: "{{ .Values.global.test }}"
+      paths:
+        - path: /
+          pathType: Prefix
+          port: 4318

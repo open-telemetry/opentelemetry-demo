@@ -1,0 +1,88 @@
+# Pulls changes from upstream open-telemetry/opentelemetry-demo into THIS
+# template fork monthly. Only runs in the template fork (NOT in customer
+# forks — they sync from this template via customer-sync.yml).
+#
+# Sureops-staff CODEOWNERS gating means each upstream-sync PR requires
+# manual review before landing on main. This is the chokepoint where
+# we re-apply our strip-outs against any upstream churn.
+
+name: upstream-sync (open-telemetry/opentelemetry-demo → template)
+
+on:
+  schedule:
+    - cron: '0 14 1 * *'   # 1st of every month at 2pm UTC
+  workflow_dispatch: {}
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    # Guard: only run in the template fork itself, not in customer forks
+    # (which inherit this workflow file via the fork-of-fork)
+    if: github.repository == 'sureops-private-beta/sample-app-otel-demo'
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Configure git
+        run: |
+          git config user.name "sureops-bot"
+          git config user.email "bot@sureops.ai"
+
+      - name: Add upstream remote + fetch
+        run: |
+          git remote add upstream https://github.com/open-telemetry/opentelemetry-demo
+          git fetch upstream main
+
+      - name: Compute merge into a sync branch
+        id: merge
+        run: |
+          BRANCH="sync/upstream-$(date +%Y%m%d)"
+          git checkout -b "$BRANCH"
+          if git merge upstream/main --no-commit --no-ff --allow-unrelated-histories; then
+            echo "merge_status=clean" >> $GITHUB_OUTPUT
+          else
+            echo "merge_status=conflicts" >> $GITHUB_OUTPUT
+          fi
+          echo "branch=$BRANCH" >> $GITHUB_OUTPUT
+
+      - name: Open PR (clean)
+        if: steps.merge.outputs.merge_status == 'clean'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          if git diff --cached --quiet && git diff --quiet; then
+            echo "No upstream changes; nothing to sync."
+            exit 0
+          fi
+          git add -A
+          git commit -m "chore(sync): pull from upstream OTel Demo $(date +%Y-%m-%d)"
+          git push origin "${{ steps.merge.outputs.branch }}"
+          gh pr create \
+            --title "chore(sync): pull from upstream OTel Demo — $(date +%Y-%m-%d)" \
+            --body "Monthly sync from \`open-telemetry/opentelemetry-demo\`.
+
+**Reviewer checklist** (sureops staff):
+1. Verify our strip-outs (jaeger, prometheus, grafana, opensearch) are still applied
+2. Check chart/values-sureops.yaml overrides still align with upstream chart structure
+3. If any service src/ added or removed, update .sureops/service-map.yaml
+4. If any new failure flag added in chart/flagd/demo.flagd.json, add an entry to .sureops-internal/failure-modes.yaml + appropriate runbook coverage
+5. If any runbook section becomes stale, update it" \
+            --label "upstream-sync" \
+            --base main \
+            --head "${{ steps.merge.outputs.branch }}"
+
+      - name: Open issue (conflicts)
+        if: steps.merge.outputs.merge_status == 'conflicts'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          gh issue create \
+            --title "Upstream sync has conflicts ($(date +%Y-%m-%d))" \
+            --body "Monthly upstream sync hit conflicts. Resolve manually." \
+            --label "sync-conflict"

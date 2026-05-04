@@ -1,0 +1,15 @@
+apiVersion: v2
+appVersion: 0.142.0
+description: OpenTelemetry Collector Helm chart for Kubernetes
+home: https://opentelemetry.io/
+icon: https://opentelemetry.io/img/logos/opentelemetry-logo-nav.png
+maintainers:
+- name: dmitryax
+- name: jaronoff97
+- name: TylerHelmuth
+name: opentelemetry-collector
+sources:
+- https://github.com/open-telemetry/opentelemetry-collector
+- https://github.com/open-telemetry/opentelemetry-collector-contrib
+type: application
+version: 0.142.2

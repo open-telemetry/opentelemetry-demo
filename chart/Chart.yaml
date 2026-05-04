@@ -1,0 +1,23 @@
+apiVersion: v2
+appVersion: 2.2.0
+# Sureops-stripped vendor of open-telemetry/opentelemetry-helm-charts:opentelemetry-demo v0.40.7.
+# Removed subchart deps for jaeger, prometheus, grafana, opensearch — sureops provides
+# its own multi-tenant Tempo/Prometheus/Grafana/Loki stack. Only opentelemetry-collector
+# subchart kept; sureops overrides its exporter config in chart/values-sureops.yaml.
+dependencies:
+  - condition: opentelemetry-collector.enabled
+    name: opentelemetry-collector
+    repository: https://open-telemetry.github.io/opentelemetry-helm-charts
+    version: 0.142.2
+description: Sureops-flavored OpenTelemetry Demo (Astronomy Shop) — sample stack for sureops private beta customers
+home: https://opentelemetry.io/
+icon: https://opentelemetry.io/img/logos/opentelemetry-logo-nav.png
+maintainers:
+  - name: sureops-staff
+    email: hello@sureops.ai
+name: opentelemetry-demo
+sources:
+  - https://github.com/sureops-private-beta/sample-app-otel-demo
+  - https://github.com/open-telemetry/opentelemetry-demo
+type: application
+version: 0.40.7-sureops.1

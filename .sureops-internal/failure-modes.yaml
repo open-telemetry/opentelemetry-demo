@@ -1,0 +1,384 @@
+# THE ANSWER KEY. NEVER synced to customer forks.
+#
+# Maps demo failure flags (defined in chart/flagd/demo.flagd.json) to:
+#   - the service they affect
+#   - the in-code mechanism (file + line range)
+#   - expected observable symptoms (metrics, traces, logs)
+#   - the expected sureops-agent fix path (what we want to see the agent propose)
+#
+# Used by:
+#   1. Sureops staff during guided demos — "I want to show the agent fix
+#      a payment bug → I flip paymentFailure"
+#   2. Sureops admin UI ("Inject Demo Failure" picker) — backend reads this
+#      file via github-mcp using sureops-staff PAT (NOT customer's OAuth token)
+#   3. Demo evaluation: comparing agent's actual fix PR vs sureops_agent_expected_fix
+#
+# Reference: docs/backend/22-sample-stack-otel-demo-spec.md section 6.5 (sureops repo)
+
+schema_version: "1.0"
+chart_flagd_config_path: chart/flagd/demo.flagd.json
+runtime_configmap: flagd-config
+
+failures:
+  # ===========================================================================
+  # PAYMENT FAILURES (most demo-worthy — direct revenue impact)
+  # ===========================================================================
+  - flag: paymentFailure
+    service: payment
+    mechanism_file: src/payment/charge.js
+    description: |
+      Wraps charge() so it throws on every call when the flag is enabled.
+      Customer sees: every checkout fails with "Payment failed."
+    expected_symptoms:
+      metrics:
+        - name: http_server_request_duration_seconds_count
+          labels: { service: payment, status_code: "500" }
+          direction: increase
+        - name: app_orders_failed_total
+          direction: increase
+      traces:
+        - service: payment
+          span: charge
+          status: ERROR
+      logs:
+        - level: error
+          service: payment
+          contains_pattern: "Payment failed|feature flag"
+    sureops_agent_expected_fix: |
+      Diagnosis: identifies payment as failing service via 5xx + trace ERROR
+      on charge span. Reads src/payment/charge.js, sees if-flag-throw block,
+      reasons that production payment code shouldn't have a kill switch.
+      Opens PR removing the if-block.
+      PR title format: "fix(payment): remove malicious throw branch from charge()"
+      Should NOT recognize this as flag-driven; reasons as if it's a kill switch
+      left in production code.
+
+  - flag: paymentUnreachable
+    service: payment
+    mechanism_file: src/payment/charge.js
+    description: |
+      Causes payment to fail to dial the loyalty service (gRPC client error).
+      Customer sees: checkouts fail with "loyalty service unreachable" (or
+      similar transitive error).
+    expected_symptoms:
+      metrics:
+        - name: http_server_request_duration_seconds_count
+          labels: { service: payment, status_code: "500" }
+          direction: increase
+      traces:
+        - service: payment
+          span: charge
+          attributes: { error.message: "*loyalty*unreachable*" }
+    sureops_agent_expected_fix: |
+      Diagnosis identifies payment 5xx with "loyalty unreachable" error.
+      Reads code, sees if-flag-conditional changing the loyalty endpoint
+      to an invalid value. Proposes removing the conditional.
+      PR title: "fix(payment): remove unreachable-endpoint override"
+
+  # ===========================================================================
+  # RECOMMENDATION FAILURES (memory leak — interesting because the symptom
+  # builds gradually; agent has to recognize a leak pattern, not a sudden break)
+  # ===========================================================================
+  - flag: recommendationCacheFailure
+    service: recommendation
+    mechanism_file: src/recommendation/recommendation_server.py
+    description: |
+      Causes recommendation service to append large arrays to an in-memory
+      cache on every request without bounding it. Memory grows linearly
+      until OOMKill.
+    expected_symptoms:
+      metrics:
+        - name: process_resident_memory_bytes
+          labels: { service: recommendation }
+          direction: monotonic_increase
+        - name: kube_pod_container_status_restarts_total
+          labels: { container: recommendation }
+          direction: increase
+      events:
+        - type: OOMKilled
+          pod_label: app=recommendation
+    sureops_agent_expected_fix: |
+      Diagnosis identifies recommendation as OOMing repeatedly. Reads
+      recommendation_server.py, sees the if-flag-conditional appending
+      to an unbounded list. Proposes removing the if-block (or bounding
+      the cache).
+      PR title: "fix(recommendation): remove unbounded cache growth in cache layer"
+
+  # ===========================================================================
+  # AD FAILURES
+  # ===========================================================================
+  - flag: adFailure
+    service: ad
+    mechanism_file: src/ad/src/main/java/oteldemo/AdService.java
+    description: |
+      AdService throws on every getAds call when flag is enabled.
+    expected_symptoms:
+      metrics:
+        - name: http_server_request_duration_seconds_count
+          labels: { service: ad, status_code: "500" }
+          direction: increase
+      traces:
+        - service: ad
+          span: getAds
+          status: ERROR
+    sureops_agent_expected_fix: |
+      Diagnosis identifies ad service 5xx. Reads AdService.java, sees
+      throw-on-flag block. Proposes removal.
+      PR title: "fix(ad): remove debug-throw branch from getAds"
+
+  - flag: adManualGc
+    service: ad
+    mechanism_file: src/ad/src/main/java/oteldemo/AdService.java
+    description: |
+      Triggers System.gc() on every getAds call → JVM GC pause storms,
+      latency spikes, eventually CPU saturation.
+    expected_symptoms:
+      metrics:
+        - name: jvm_gc_pause_seconds
+          direction: increase
+        - name: container_cpu_usage_seconds_total
+          labels: { container: ad }
+          direction: increase
+      traces:
+        - service: ad
+          span: getAds
+          duration: spike
+    sureops_agent_expected_fix: |
+      Diagnosis identifies ad latency spike + high CPU. Reads code, sees
+      explicit System.gc() call. Proposes removal. PR title:
+      "fix(ad): remove manual GC trigger from request hot path"
+
+  - flag: adHighCpu
+    service: ad
+    mechanism_file: src/ad/src/main/java/oteldemo/AdService.java
+    description: |
+      Spawns a CPU-burning loop on every getAds call.
+    expected_symptoms:
+      metrics:
+        - name: container_cpu_usage_seconds_total
+          labels: { container: ad }
+          direction: spike
+      traces:
+        - service: ad
+          span: getAds
+          duration: spike
+    sureops_agent_expected_fix: |
+      Diagnosis identifies CPU spike. Reads code, sees while loop or
+      similar burn pattern. Proposes removal.
+      PR title: "fix(ad): remove CPU-burning loop from request handler"
+
+  # ===========================================================================
+  # CART FAILURES
+  # ===========================================================================
+  - flag: cartFailure
+    service: cart
+    mechanism_file: src/cart/src/services/CartService.cs
+    description: |
+      cart service Redis writes fail (returns error from EmptyCart RPC).
+    expected_symptoms:
+      metrics:
+        - name: http_server_request_duration_seconds_count
+          labels: { service: cart, status_code: "500" }
+          direction: increase
+      traces:
+        - service: cart
+          span: EmptyCart
+          status: ERROR
+    sureops_agent_expected_fix: |
+      Diagnosis identifies cart 5xx on specific RPC. Reads CartService.cs,
+      sees if-flag-throw. Proposes removal.
+      PR title: "fix(cart): remove debug-throw branch from EmptyCart"
+
+  # ===========================================================================
+  # PRODUCT-CATALOG FAILURES
+  # ===========================================================================
+  - flag: productCatalogFailure
+    service: product-catalog
+    mechanism_file: src/product-catalog/product_catalog.go
+    description: |
+      Returns error on GetProduct for a SPECIFIC product ID (typically
+      "OLJCESPC7Z"). Other product IDs work fine — this is the "one bad
+      product" scenario.
+    expected_symptoms:
+      metrics:
+        - name: http_server_request_duration_seconds_count
+          labels: { service: product-catalog, status_code: "500" }
+          direction: increase_concentrated_on_one_id
+      traces:
+        - service: product-catalog
+          span: GetProduct
+          status: ERROR
+          attributes: { product.id: "OLJCESPC7Z" }
+    sureops_agent_expected_fix: |
+      Diagnosis identifies that errors are concentrated on one product ID.
+      Reads product_catalog.go, sees if-flag-and-id-match block that throws.
+      Proposes removing the conditional.
+      PR title: "fix(product-catalog): remove product-id-specific failure branch"
+
+  # ===========================================================================
+  # KAFKA FAILURE
+  # ===========================================================================
+  - flag: kafkaQueueProblems
+    service: shipping
+    mechanism_file: src/shipping/src/main.rs
+    description: |
+      Causes shipping service to slow down its kafka producer (artificial
+      delay before send). Backpressure builds; checkout latencies grow.
+    expected_symptoms:
+      metrics:
+        - name: kafka_producer_send_latency
+          direction: increase
+        - name: kafka_producer_record_send_rate
+          direction: decrease
+      traces:
+        - service: shipping
+          span: ShipOrder
+          duration: increase
+    sureops_agent_expected_fix: |
+      Diagnosis identifies kafka producer slowness in shipping service.
+      Reads main.rs, sees if-flag-conditional sleep/delay before send call.
+      Proposes removal.
+      PR title: "fix(shipping): remove artificial delay before kafka publish"
+
+  # ===========================================================================
+  # IMAGE-PROVIDER FAILURE
+  # ===========================================================================
+  - flag: imageSlowLoad
+    service: image-provider
+    mechanism_file: src/image-provider/nginx.conf
+    description: |
+      nginx adds artificial delay (echo_sleep or similar) before serving
+      images. Symptom: extremely slow page renders due to image load times.
+    expected_symptoms:
+      metrics:
+        - name: http_server_request_duration_seconds
+          labels: { service: image-provider }
+          direction: increase
+      traces:
+        - service: image-provider
+          duration: increase_dramatically
+    sureops_agent_expected_fix: |
+      Diagnosis identifies image-provider as the latency root cause via
+      RUM or trace timing. Reads nginx.conf, sees the artificial delay
+      directive. Proposes removing it.
+      PR title: "fix(image-provider): remove artificial delay from request handling"
+
+  # ===========================================================================
+  # FRONTEND FAILURES
+  # ===========================================================================
+  - flag: failedReadinessProbe
+    service: frontend
+    mechanism_file: src/frontend/pages/api/ready.ts
+    description: |
+      Frontend's readiness probe endpoint returns 503 when flag is enabled.
+      Pod gets removed from service rotation. Customer sees: site appears
+      down (no pods serving traffic).
+    expected_symptoms:
+      events:
+        - type: NotReady
+          pod_label: app=frontend
+      metrics:
+        - name: kube_pod_status_ready
+          labels: { pod: frontend, condition: "false" }
+    sureops_agent_expected_fix: |
+      Diagnosis identifies frontend pod is failing readiness. Reads
+      ready.ts, sees if-flag-conditional returning 503. Proposes removal.
+      PR title: "fix(frontend): remove conditional 503 from readiness probe"
+
+  # ===========================================================================
+  # EMAIL FAILURE
+  # ===========================================================================
+  - flag: emailMemoryLeak
+    service: email
+    mechanism_file: src/email/email_server.rb
+    description: |
+      Email service caches every sent email in memory unboundedly when
+      flag is enabled. Pod OOMs after enough orders.
+    expected_symptoms:
+      metrics:
+        - name: process_resident_memory_bytes
+          labels: { service: email }
+          direction: monotonic_increase
+      events:
+        - type: OOMKilled
+          pod_label: app=email
+    sureops_agent_expected_fix: |
+      Diagnosis identifies email OOMing repeatedly. Reads email_server.rb,
+      sees unbounded array append in the send path. Proposes bounded LRU
+      or removing the cache entirely.
+      PR title: "fix(email): bound the in-memory sent-email cache"
+
+  # ===========================================================================
+  # LOAD-GENERATOR FAILURE
+  # ===========================================================================
+  - flag: loadGeneratorFloodHomepage
+    service: load-generator
+    mechanism_file: src/load-generator/locustfile.py
+    description: |
+      Spawns extra concurrent users hitting the homepage path. Useful for
+      driving load-induced failures elsewhere.
+    expected_symptoms:
+      metrics:
+        - name: http_server_requests_per_second
+          labels: { path: "/" }
+          direction: spike
+    sureops_agent_expected_fix: |
+      This one's tricky — load-generator isn't a customer-facing service,
+      so the agent shouldn't open a fix PR against it. Instead, the
+      DOWNSTREAM service that breaks under the flood is the one the
+      agent should fix. Use this flag to test the agent's reasoning
+      about scaling / capacity / load shedding in downstream services.
+
+  # ===========================================================================
+  # LLM FAILURES
+  # ===========================================================================
+  - flag: llmInaccurateResponse
+    service: recommendation  # (or wherever LLM is integrated)
+    mechanism_file: src/recommendation/recommendation_server.py
+    description: |
+      Causes the LLM-backed recommendation logic to return random/wrong
+      recommendations. Symptom: poor recommendation quality, lower CTR.
+    expected_symptoms:
+      metrics:
+        - name: app_recommendations_clicked_total
+          direction: decrease
+    sureops_agent_expected_fix: |
+      Hard to detect from telemetry alone. Agent might need additional
+      product-quality signals (CTR, conversion). Defer until LLM-eval
+      hooks are in place.
+
+  - flag: llmRateLimitError
+    service: recommendation
+    mechanism_file: src/recommendation/recommendation_server.py
+    description: |
+      LLM call returns rate-limit errors. Symptom: 429 from upstream,
+      recommendation 5xx if not handled gracefully.
+    expected_symptoms:
+      metrics:
+        - name: external_http_requests_total
+          labels: { status_code: "429" }
+          direction: increase
+    sureops_agent_expected_fix: |
+      Diagnosis identifies upstream 429s. Reads code, sees missing
+      retry-with-backoff or fallback. Proposes adding circuit breaker
+      / fallback to non-LLM recommendations.
+      PR title: "fix(recommendation): add fallback for LLM rate-limit errors"
+
+# ===========================================================================
+# Demo guidance
+# ===========================================================================
+# When running a guided demo for a prospect, the recommended flag flips are:
+#
+# 1. paymentFailure — clearest revenue impact, most dramatic.
+#    Agent fix is satisfying ("removed kill switch from production payment code").
+#
+# 2. recommendationCacheFailure — shows the agent recognizing a leak
+#    pattern over time, not a sudden break.
+#
+# 3. productCatalogFailure — shows the agent identifying a SPECIFIC
+#    product ID as the failure pattern (concentration analysis).
+#
+# Avoid flipping multiple flags simultaneously during a demo unless
+# specifically showing cascade analysis (e.g., paymentFailure +
+# loadGeneratorFloodHomepage to show how a partial outage worsens
+# under load).

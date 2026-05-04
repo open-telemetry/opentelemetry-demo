@@ -1,0 +1,39 @@
+{{- if .Values.networkPolicy.enabled }}
+kind: NetworkPolicy
+apiVersion: networking.k8s.io/v1
+metadata:
+  name: {{ include "opentelemetry-collector.fullname" . }}
+  namespace: {{ template "opentelemetry-collector.namespace" . }}
+  labels:
+    {{- include "opentelemetry-collector.labels" . | nindent 4 }}
+  {{- if .Values.networkPolicy.annotations }}
+  annotations:
+    {{- range $key, $value := .Values.networkPolicy.annotations }}
+    {{- printf "%s: %s" $key (tpl $value $ | quote) | nindent 4 }}
+    {{- end }}
+  {{- end }}
+spec:
+  podSelector:
+    matchLabels:
+      {{- include "opentelemetry-collector.selectorLabels" . | nindent 6 }}
+      {{- include "opentelemetry-collector.component" . | nindent 6 }}
+  ingress:
+    - ports:
+        {{- range $port := .Values.ports }}
+        {{- if $port.enabled }}
+        - port: {{ $port.containerPort }}
+          protocol: {{ $port.protocol }}
+        {{- end }}
+        {{- end }}
+      {{- if .Values.networkPolicy.allowIngressFrom }}
+      from:
+        {{- toYaml .Values.networkPolicy.allowIngressFrom | nindent 8 }}
+      {{- end }}
+    {{- if .Values.networkPolicy.extraIngressRules }}
+    {{- toYaml .Values.networkPolicy.extraIngressRules | nindent 4 }}
+    {{- end }}
+  {{- if .Values.networkPolicy.egressRules }}
+  egress:
+    {{- toYaml .Values.networkPolicy.egressRules | nindent 4 }}
+  {{- end }}
+{{- end }}

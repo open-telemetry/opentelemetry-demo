@@ -1,5 +1,15 @@
-# Code owners file.
-# This file controls who is tagged for review for any given pull request.
+# Sureops-owned: chart, agent contract, internal docs, CI workflows.
+# Customer can PR these but sureops staff must approve before merge.
+/chart/                 @sureops-private-beta/sureops-staff
+/.sureops/              @sureops-private-beta/sureops-staff
+/.sureops-internal/     @sureops-private-beta/sureops-staff
+/.github/workflows/     @sureops-private-beta/sureops-staff
+/.github/CODEOWNERS     @sureops-private-beta/sureops-staff
 
-# For anything not explicitly taken by someone else:
-* @open-telemetry/demo-approvers
+# Customer-owned: source code. Customer's team is the implicit owner;
+# they can merge PRs against src/ without sureops approval.
+# (No CODEOWNERS line for /src/ — defaults to "anyone with write access can merge".)
+
+# Docs: shared. Both sureops staff and customer can edit.
+/docs/                  @sureops-private-beta/sureops-staff
+README.md               @sureops-private-beta/sureops-staff

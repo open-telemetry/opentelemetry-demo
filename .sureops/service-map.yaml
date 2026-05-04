@@ -1,0 +1,331 @@
+# Sureops agent contract: service → src dir → image → chart values path → runbook.
+#
+# Read by sureops's diagnosis and fix-PR agents when investigating incidents
+# in this customer environment. Agents use this as the routing table from
+# "incident on service X" → "edit src/X, bump chart/values for X".
+#
+# IMPORTANT: this file is intentionally PURELY STRUCTURAL. It does NOT contain
+# any information about feature flags, demo failure mechanisms, or chaos
+# scenarios — that information lives in .sureops-internal/ which is
+# sureops-staff-only and never synced into customer forks. Keeping the
+# answer key out of this file is what makes the chaos-invisibility contract
+# work (see docs/backend/22-sample-stack-otel-demo-spec.md section 4).
+#
+# Schema documentation: docs/backend/22-sample-stack-otel-demo-spec.md section 6.4
+
+schema_version: "1.0"
+chart_path: chart                      # where the chart lives in this repo
+
+services:
+  # =========================================================================
+  # Customer-facing edge
+  # =========================================================================
+  - name: frontend
+    src_path: src/frontend/
+    language: typescript
+    runbook: .sureops/runbooks/frontend.md
+    image:
+      registry: ghcr.io
+      repository_template: "sureops-private-beta/{customer_slug}/frontend"
+      default_tag: 2.2.0
+      chart_value_path: components.frontend.image
+    chart:
+      component_path: components.frontend
+    health:
+      port: 8080
+      protocol: http
+      path: /
+    owners: { team: customer-experience }
+
+  - name: frontend-proxy
+    src_path: src/frontend-proxy/
+    language: nginx
+    runbook: .sureops/runbooks/frontend-proxy.md
+    image:
+      registry: ghcr.io
+      repository_template: "sureops-private-beta/{customer_slug}/frontend-proxy"
+      default_tag: 2.2.0
+      chart_value_path: components.frontend-proxy.image
+    chart:
+      component_path: components.frontend-proxy
+    health:
+      port: 8080
+      protocol: http
+    owners: { team: platform }
+
+  # =========================================================================
+  # Order funnel
+  # =========================================================================
+  - name: checkout
+    src_path: src/checkout/
+    language: go
+    runbook: .sureops/runbooks/checkout.md
+    image:
+      registry: ghcr.io
+      repository_template: "sureops-private-beta/{customer_slug}/checkout"
+      default_tag: 2.2.0
+      chart_value_path: components.checkout.image
+    chart:
+      component_path: components.checkout
+    health:
+      port: 5050
+      protocol: grpc
+    depends_on: [cart, payment, shipping, currency, email, accounting]
+    owners: { team: orders }
+
+  - name: cart
+    src_path: src/cart/
+    language: dotnet
+    runbook: .sureops/runbooks/cart.md
+    image:
+      registry: ghcr.io
+      repository_template: "sureops-private-beta/{customer_slug}/cart"
+      default_tag: 2.2.0
+      chart_value_path: components.cart.image
+    chart:
+      component_path: components.cart
+    health:
+      port: 7070
+      protocol: grpc
+    depends_on: [valkey-cart]
+    owners: { team: orders }
+
+  - name: payment
+    src_path: src/payment/
+    language: javascript
+    runbook: .sureops/runbooks/payment.md
+    image:
+      registry: ghcr.io
+      repository_template: "sureops-private-beta/{customer_slug}/payment"
+      default_tag: 2.2.0
+      chart_value_path: components.payment.image
+    chart:
+      component_path: components.payment
+    health:
+      port: 50051
+      protocol: grpc
+    owners: { team: payments }
+
+  - name: shipping
+    src_path: src/shipping/
+    language: rust
+    runbook: .sureops/runbooks/shipping.md
+    image:
+      registry: ghcr.io
+      repository_template: "sureops-private-beta/{customer_slug}/shipping"
+      default_tag: 2.2.0
+      chart_value_path: components.shipping.image
+    chart:
+      component_path: components.shipping
+    health:
+      port: 50050
+      protocol: grpc
+    depends_on: [kafka, quote]
+    owners: { team: fulfillment }
+
+  - name: email
+    src_path: src/email/
+    language: ruby
+    runbook: .sureops/runbooks/email.md
+    image:
+      registry: ghcr.io
+      repository_template: "sureops-private-beta/{customer_slug}/email"
+      default_tag: 2.2.0
+      chart_value_path: components.email.image
+    chart:
+      component_path: components.email
+    health:
+      port: 6060
+      protocol: http
+    owners: { team: customer-experience }
+
+  # =========================================================================
+  # Catalog + recommendations
+  # =========================================================================
+  - name: product-catalog
+    src_path: src/product-catalog/
+    language: go
+    runbook: .sureops/runbooks/product-catalog.md
+    image:
+      registry: ghcr.io
+      repository_template: "sureops-private-beta/{customer_slug}/product-catalog"
+      default_tag: 2.2.0
+      chart_value_path: components.product-catalog.image
+    chart:
+      component_path: components.product-catalog
+    health:
+      port: 3550
+      protocol: grpc
+    owners: { team: catalog }
+
+  - name: recommendation
+    src_path: src/recommendation/
+    language: python
+    runbook: .sureops/runbooks/recommendation.md
+    image:
+      registry: ghcr.io
+      repository_template: "sureops-private-beta/{customer_slug}/recommendation"
+      default_tag: 2.2.0
+      chart_value_path: components.recommendation.image
+    chart:
+      component_path: components.recommendation
+    health:
+      port: 9001
+      protocol: http
+    depends_on: [product-catalog]
+    owners: { team: ml-platform }
+
+  - name: ad
+    src_path: src/ad/
+    language: java
+    runbook: .sureops/runbooks/ad.md
+    image:
+      registry: ghcr.io
+      repository_template: "sureops-private-beta/{customer_slug}/ad"
+      default_tag: 2.2.0
+      chart_value_path: components.ad.image
+    chart:
+      component_path: components.ad
+    health:
+      port: 9555
+      protocol: grpc
+    owners: { team: ads }
+
+  - name: product-reviews
+    src_path: src/product-reviews/
+    language: go
+    runbook: .sureops/runbooks/product-reviews.md
+    image:
+      registry: ghcr.io
+      repository_template: "sureops-private-beta/{customer_slug}/product-reviews"
+      default_tag: 2.2.0
+      chart_value_path: components.product-reviews.image
+    chart:
+      component_path: components.product-reviews
+    health:
+      port: 8080
+      protocol: http
+    owners: { team: catalog }
+
+  # =========================================================================
+  # Pricing + quotes
+  # =========================================================================
+  - name: currency
+    src_path: src/currency/
+    language: cpp
+    runbook: .sureops/runbooks/currency.md
+    image:
+      registry: ghcr.io
+      repository_template: "sureops-private-beta/{customer_slug}/currency"
+      default_tag: 2.2.0
+      chart_value_path: components.currency.image
+    chart:
+      component_path: components.currency
+    health:
+      port: 7000
+      protocol: grpc
+    owners: { team: pricing }
+
+  - name: quote
+    src_path: src/quote/
+    language: php
+    runbook: .sureops/runbooks/quote.md
+    image:
+      registry: ghcr.io
+      repository_template: "sureops-private-beta/{customer_slug}/quote"
+      default_tag: 2.2.0
+      chart_value_path: components.quote.image
+    chart:
+      component_path: components.quote
+    health:
+      port: 8090
+      protocol: http
+    owners: { team: pricing }
+
+  # =========================================================================
+  # Backoffice
+  # =========================================================================
+  - name: accounting
+    src_path: src/accounting/
+    language: dotnet
+    runbook: .sureops/runbooks/accounting.md
+    image:
+      registry: ghcr.io
+      repository_template: "sureops-private-beta/{customer_slug}/accounting"
+      default_tag: 2.2.0
+      chart_value_path: components.accounting.image
+    chart:
+      component_path: components.accounting
+    depends_on: [kafka, postgresql]
+    owners: { team: finance }
+
+  - name: fraud-detection
+    src_path: src/fraud-detection/
+    language: kotlin
+    runbook: .sureops/runbooks/fraud-detection.md
+    image:
+      registry: ghcr.io
+      repository_template: "sureops-private-beta/{customer_slug}/fraud-detection"
+      default_tag: 2.2.0
+      chart_value_path: components.fraud-detection.image
+    chart:
+      component_path: components.fraud-detection
+    depends_on: [kafka]
+    owners: { team: trust-and-safety }
+
+  # =========================================================================
+  # Image serving
+  # =========================================================================
+  - name: image-provider
+    src_path: src/image-provider/
+    language: nginx
+    runbook: .sureops/runbooks/image-provider.md
+    image:
+      registry: ghcr.io
+      repository_template: "sureops-private-beta/{customer_slug}/image-provider"
+      default_tag: 2.2.0
+      chart_value_path: components.image-provider.image
+    chart:
+      component_path: components.image-provider
+    health:
+      port: 8081
+      protocol: http
+    owners: { team: customer-experience }
+
+  # =========================================================================
+  # Load testing
+  # =========================================================================
+  - name: load-generator
+    src_path: src/load-generator/
+    language: python
+    runbook: .sureops/runbooks/load-generator.md
+    image:
+      registry: ghcr.io
+      repository_template: "sureops-private-beta/{customer_slug}/load-generator"
+      default_tag: 2.2.0
+      chart_value_path: components.load-generator.image
+    chart:
+      component_path: components.load-generator
+    owners: { team: platform }
+
+# ===========================================================================
+# Infrastructure components — included for completeness but agents typically
+# don't open PRs against these (they're just deployed dependencies).
+# ===========================================================================
+infrastructure:
+  - name: flagd
+    description: "OpenFeature reference implementation — feature flag service."
+    chart_value_path: components.flagd
+    runbook: .sureops/runbooks/_infrastructure.md
+  - name: kafka
+    description: "Event streaming platform used by checkout → accounting/fraud-detection."
+    chart_value_path: components.kafka
+    runbook: .sureops/runbooks/_infrastructure.md
+  - name: valkey-cart
+    description: "Redis-compatible store for cart state."
+    chart_value_path: components.valkey-cart
+    runbook: .sureops/runbooks/_infrastructure.md
+  - name: postgresql
+    description: "Used by accounting service."
+    chart_value_path: components.postgresql
+    runbook: .sureops/runbooks/_infrastructure.md

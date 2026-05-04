@@ -1,0 +1,26 @@
+mode: daemonset
+
+image:
+  repository: "ghcr.io/open-telemetry/opentelemetry-collector-releases/opentelemetry-collector-k8s"
+
+command:
+  name: "otelcol-k8s"
+
+config:
+  receivers:
+    jaeger: null
+    otlp: null
+    zipkin: null
+    hostmetrics:
+      scrapers:
+        cpu:
+        disk:
+        filesystem:
+  service:
+    pipelines:
+      metrics:
+        receivers:
+          - prometheus
+          - hostmetrics
+      traces: null
+      logs: null

@@ -1,0 +1,69 @@
+{{- if or (.Values.clusterRole.create) (.Values.presets.kubernetesAttributes.enabled) (.Values.presets.clusterMetrics.enabled) (.Values.presets.kubeletMetrics.enabled) (.Values.presets.kubernetesEvents.enabled) (.Values.presets.annotationDiscovery.logs.enabled) (.Values.presets.annotationDiscovery.metrics.enabled) -}}
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: {{ include "opentelemetry-collector.clusterRoleName" . }}
+  labels:
+    {{- include "opentelemetry-collector.labels" . | nindent 4 }}
+  {{- if .Values.clusterRole.annotations }}
+  annotations:
+    {{- range $key, $value := .Values.clusterRole.annotations }}
+    {{- printf "%s: %s" $key (tpl $value $ | quote) | nindent 4 }}
+    {{- end }}
+  {{- end }}
+rules:
+{{- $clusterMetricsEnabled := .Values.presets.clusterMetrics.enabled }}
+{{- $disableLeaderElectionForClusterMetrics := .Values.presets.clusterMetrics.disableLeaderElection}}
+{{- $useLeaderElectionForClusterMetrics := and (eq .Values.mode "daemonset") ( $clusterMetricsEnabled ) (not $disableLeaderElectionForClusterMetrics) }}
+{{- if $useLeaderElectionForClusterMetrics }}
+  - apiGroups: ["coordination.k8s.io"]
+    resources: ["leases"]
+    verbs: ["get","list","watch","create","update","patch","delete"]
+{{- end }}
+  {{- if .Values.clusterRole.rules -}}
+  {{ toYaml .Values.clusterRole.rules | nindent 2 -}}
+  {{- end }}
+  {{- if .Values.presets.kubernetesAttributes.enabled}}
+  - apiGroups: [""]
+    resources: ["pods", "namespaces"]
+    verbs: ["get", "watch", "list"]
+  - apiGroups: ["apps"]
+    resources: ["replicasets"]
+    verbs: ["get", "list", "watch"]
+  - apiGroups: ["extensions"]
+    resources: ["replicasets"]
+    verbs: ["get", "list", "watch"]
+  {{- end }}
+  {{- if .Values.presets.clusterMetrics.enabled}}
+  - apiGroups: [""]
+    resources: ["events", "namespaces", "namespaces/status", "nodes", "nodes/spec", "pods", "pods/status", "replicationcontrollers", "replicationcontrollers/status", "resourcequotas", "services" ]
+    verbs: ["get", "list", "watch"]
+  - apiGroups: ["apps"]
+    resources: ["daemonsets", "deployments", "replicasets", "statefulsets"]
+    verbs: ["get", "list", "watch"]
+  - apiGroups: ["extensions"]
+    resources: ["daemonsets", "deployments", "replicasets"]
+    verbs: ["get", "list", "watch"]
+  - apiGroups: ["batch"]
+    resources: ["jobs", "cronjobs"]
+    verbs: ["get", "list", "watch"]
+  - apiGroups: ["autoscaling"]
+    resources: ["horizontalpodautoscalers"]
+    verbs: ["get", "list", "watch"]
+  {{- end}}
+  {{- if .Values.presets.kubeletMetrics.enabled}}
+  - apiGroups: [""]
+    resources: ["nodes/stats"]
+    verbs: ["get", "watch", "list"]
+  {{- end }}
+  {{- if .Values.presets.kubernetesEvents.enabled }}
+  - apiGroups: ["events.k8s.io"]
+    resources: ["events"]
+    verbs: ["watch", "list"]
+  {{- end }}
+  {{- if or .Values.presets.annotationDiscovery.logs.enabled .Values.presets.annotationDiscovery.metrics.enabled }}
+  - apiGroups: [""]
+    resources: ["pods"]
+    verbs: ["get", "list", "watch"]
+  {{- end }}
+{{- end }}

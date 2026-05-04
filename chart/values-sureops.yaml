@@ -1,0 +1,128 @@
+# Sureops-flavored OTel Demo overrides.
+#
+# Applied via Helm value-file precedence at deploy time:
+#   values.yaml < values-sureops.yaml < values-customer.yaml
+#
+# This file is checked into the template fork and inherited by every
+# customer fork. Do NOT put per-customer values here — those go in
+# values-customer.yaml which coord stamps at fork time.
+#
+# Reference: docs/backend/22-sample-stack-otel-demo-spec.md (sureops repo)
+
+# ===========================================================================
+# Customer attribution (default values; overridden in values-customer.yaml)
+# ===========================================================================
+customer:
+  slug: ""
+  orgId: ""
+env: uat
+
+# ===========================================================================
+# Bundled observability subcharts: DISABLED.
+# Sureops provides multi-tenant Tempo, Prometheus, Grafana, and Loki.
+# (Also set in values.yaml; doubly-set here so an upstream-sync that
+# resets values.yaml doesn't accidentally re-enable them.)
+# ===========================================================================
+jaeger:        { enabled: false }
+prometheus:    { enabled: false }
+grafana:       { enabled: false }
+opensearch:    { enabled: false }
+
+# ===========================================================================
+# OTel Collector — override exporters to send signals to sureops's
+# multi-tenant backends instead of the demo's defaults (which would
+# send to the disabled bundled Jaeger/Prometheus/OpenSearch).
+#
+# Tenancy: X-Scope-OrgID header per customer slug routes signals to
+# the right tenant in shared Tempo/Loki.
+# ===========================================================================
+opentelemetry-collector:
+  config:
+    exporters:
+      # Traces → sureops shared Tempo
+      otlphttp/sureops_tempo:
+        endpoint: https://tempo.shared-uat.sureops.ai
+        headers:
+          X-Scope-OrgID: ${env:CUSTOMER_SLUG}
+        tls:
+          insecure: false
+
+      # Logs → sureops shared Loki via OTLP
+      otlphttp/sureops_loki:
+        endpoint: https://loki.shared-uat.sureops.ai/otlp
+        headers:
+          X-Scope-OrgID: ${env:CUSTOMER_SLUG}
+
+      # Metrics: keep prometheus exporter on :9464 — per-customer
+      # Prometheus scrapes services directly via their /metrics endpoints,
+      # but the collector also exposes its own metrics here for completeness.
+      prometheus:
+        endpoint: 0.0.0.0:9464
+        resource_to_telemetry_conversion:
+          enabled: true
+
+      # Drop the demo's default debug + otlp/jaeger + bundled opensearch exporters
+      debug: null
+      otlp/jaeger: null
+      opensearch: null
+
+    processors:
+      # Stamp customer.slug + deployment.environment as resource attrs on every signal
+      resource/sureops:
+        attributes:
+          - key: customer.slug
+            value: ${env:CUSTOMER_SLUG}
+            action: upsert
+          - key: deployment.environment
+            value: ${env:DEPLOYMENT_ENV}
+            action: upsert
+
+    service:
+      pipelines:
+        traces:
+          receivers: [otlp]
+          processors: [memory_limiter, resource/sureops, batch]
+          exporters: [otlphttp/sureops_tempo]
+        logs:
+          receivers: [otlp]
+          processors: [memory_limiter, resource/sureops, batch]
+          exporters: [otlphttp/sureops_loki]
+        metrics:
+          receivers: [otlp]
+          processors: [memory_limiter, resource/sureops, batch]
+          exporters: [prometheus]
+
+  # Inject the customer slug + env as collector pod env vars so the
+  # ${env:...} substitutions above resolve at runtime
+  extraEnvs:
+    - name: CUSTOMER_SLUG
+      valueFrom:
+        configMapKeyRef:
+          name: sureops-customer-config
+          key: customer.slug
+    - name: DEPLOYMENT_ENV
+      valueFrom:
+        configMapKeyRef:
+          name: sureops-customer-config
+          key: env
+
+# ===========================================================================
+# Resource sizing — tuned for sureops demo cluster (Hetzner CX42/CX52).
+# Most demo customers run with low traffic; default resources are conservative.
+# ===========================================================================
+default:
+  resources:
+    requests: { cpu: 50m, memory: 64Mi }
+    limits:   { cpu: 200m, memory: 256Mi }
+
+components:
+  # flagd is critical (every service queries it) — give it slightly more
+  flagd:
+    resources:
+      requests: { cpu: 50m, memory: 64Mi }
+      limits:   { cpu: 200m, memory: 128Mi }
+  # load-generator can spike under loadGeneratorFloodHomepage flag
+  load-generator:
+    resources:
+      requests: { cpu: 100m, memory: 128Mi }
+      limits:   { cpu: 500m, memory: 256Mi }
