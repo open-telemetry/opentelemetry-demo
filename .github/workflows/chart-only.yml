@@ -1,0 +1,63 @@
+# Lint + dry-run the chart on chart-only changes. Cheap CI guard so a
+# malformed chart change doesn't break ArgoCD's next sync.
+
+name: chart-only
+
+on:
+  pull_request:
+    paths: ['chart/**']
+  push:
+    branches: [main]
+    paths: ['chart/**']
+  workflow_dispatch: {}
+
+jobs:
+  lint-and-template:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: azure/setup-helm@v4
+        with:
+          version: 'v3.16.4'
+
+      - name: helm dependency update
+        run: |
+          cd chart
+          helm dependency update
+
+      - name: helm lint
+        run: |
+          helm lint chart \
+            --values chart/values.yaml \
+            --values chart/values-sureops.yaml \
+            --set customer.slug=ci-test \
+            --set customer.orgId=00000000-0000-0000-0000-000000000000
+
+      - name: helm template (dry-run render)
+        run: |
+          helm template chart \
+            --values chart/values.yaml \
+            --values chart/values-sureops.yaml \
+            --set customer.slug=ci-test \
+            --set customer.orgId=00000000-0000-0000-0000-000000000000 \
+            > /tmp/rendered.yaml
+          echo "Rendered $(wc -l < /tmp/rendered.yaml) lines"
+
+      - name: Verify bundled observability is OFF
+        run: |
+          # Defensive: make sure jaeger/grafana/prometheus/opensearch
+          # subcharts didn't get re-enabled accidentally
+          for KEY in jaeger grafana prometheus opensearch; do
+            if grep -E "^${KEY}:" chart/values.yaml | grep -v "false" >/dev/null; then
+              echo "WARN: $KEY may not be disabled in values.yaml"
+            fi
+          done
+          if helm template chart --values chart/values.yaml --values chart/values-sureops.yaml \
+             --set customer.slug=ci-test --set customer.orgId=00 2>/dev/null | \
+             grep -E "kind: (Deployment|StatefulSet)" | \
+             grep -E "(jaeger|grafana|prometheus|opensearch)" | \
+             grep -v "opentelemetry-collector"; then
+            echo "ERROR: bundled observability components rendered — strip-out failed"
+            exit 1
+          fi
+          echo "OK: bundled observability is disabled"

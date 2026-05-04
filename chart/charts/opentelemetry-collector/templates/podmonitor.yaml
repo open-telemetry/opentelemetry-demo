@@ -1,0 +1,19 @@
+{{- if and .Values.podMonitor.enabled .Values.podMonitor.metricsEndpoints }}
+apiVersion: monitoring.coreos.com/v1
+kind: PodMonitor
+metadata:
+  name: {{ include "opentelemetry-collector.fullname" . }}-agent
+  namespace: {{ template "opentelemetry-collector.namespace" . }}
+  labels:
+    {{- include "opentelemetry-collector.labels" . | nindent 4 }}
+    {{- range $key, $value := .Values.podMonitor.extraLabels }}
+    {{- printf "%s: %s" $key (tpl $value $ | quote) | nindent 4 }}
+    {{- end }}
+spec:
+  selector:
+    matchLabels:
+      {{- include "opentelemetry-collector.selectorLabels" . | nindent 6 }}
+      {{- include "opentelemetry-collector.component" . | nindent 6 }}
+  podMetricsEndpoints:
+  {{- toYaml .Values.podMonitor.metricsEndpoints | nindent 2 }}
+{{- end }}

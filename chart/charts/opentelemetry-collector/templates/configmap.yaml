@@ -1,0 +1,12 @@
+{{- if and (eq .Values.mode "deployment") (.Values.configMap.create) (not .Values.configMap.existingName) -}}
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ include "opentelemetry-collector.fullname" . }}
+  namespace: {{ template "opentelemetry-collector.namespace" . }}
+  labels:
+    {{- include "opentelemetry-collector.labels" . | nindent 4 }}
+data:
+  relay: |
+    {{- include "opentelemetry-collector.deploymentConfig" . | nindent 4 -}}
+{{- end }}

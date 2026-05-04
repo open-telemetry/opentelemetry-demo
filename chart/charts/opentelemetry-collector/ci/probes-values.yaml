@@ -1,0 +1,37 @@
+mode: daemonset
+
+image:
+  repository: "ghcr.io/open-telemetry/opentelemetry-collector-releases/opentelemetry-collector-k8s"
+
+command:
+  name: "otelcol-k8s"
+
+livenessProbe:
+  initialDelaySeconds: 10
+  periodSeconds: 5
+  timeoutSeconds: 3
+  failureThreshold: 2
+  terminationGracePeriodSeconds: 40
+  httpGet:
+    port: 8989
+    path: /healthz
+
+readinessProbe:
+  initialDelaySeconds: 10
+  periodSeconds: 5
+  timeoutSeconds: 3
+  successThreshold: 2
+  failureThreshold: 2
+  httpGet:
+    port: 8989
+    path: /healthz
+
+startupProbe:
+  initialDelaySeconds: 10
+  periodSeconds: 5
+  timeoutSeconds: 3
+  failureThreshold: 10
+  terminationGracePeriodSeconds: 40
+  httpGet:
+    port: 8989
+    path: /healthz

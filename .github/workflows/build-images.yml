@@ -1,20 +1,153 @@
-# Copyright The OpenTelemetry Authors
-# SPDX-License-Identifier: Apache-2.0
-name: Test image generation
+# Per-service image build on src/{service}/** changes.
+#
+# Triggers:
+#   - PR opened/updated touching src/** → build affected service(s)
+#     and push to GHCR with PR-specific tag (so chart can deploy this build
+#     to a preview env if desired)
+#   - push to main touching src/** → build affected service(s) and push
+#     with the SHA tag, then bump chart/values.yaml to point at the new tag
+#
+# Image registry: ghcr.io/{repo-namespace}/{service}:{sha}
+# (e.g., ghcr.io/sureops-private-beta/uat-acme-otel-demo/payment:abc1234)
+#
+# After main push: this workflow also commits a chart/values.yaml bump
+# pointing at the new tag, with `[skip ci]` to avoid recursion. ArgoCD
+# picks up the chart change and syncs.
+
+name: build-images
 
 on:
+  pull_request:
+    paths: ['src/**']
   push:
-    paths:
-      - 'src/**'
-      - 'test/**'
+    branches: [main]
+    paths: ['src/**']
+  workflow_dispatch:
+    inputs:
+      services:
+        description: 'Comma-separated services to rebuild (e.g. payment,cart). Empty = all from diff.'
+        required: false
+        default: ''
 
 permissions:
-  contents: read
+  contents: write     # to commit chart bump
+  packages: write     # to push to GHCR
+
+env:
+  REGISTRY: ghcr.io
 
 jobs:
-  build_images:
-    permissions:
-      contents: read
-      packages: write
-    if: ${{ !github.event.repository.fork }}
-    uses: ./.github/workflows/component-build-images.yml
+  detect-changes:
+    runs-on: ubuntu-latest
+    outputs:
+      services: ${{ steps.filter.outputs.services }}
+      run: ${{ steps.filter.outputs.run }}
+    steps:
+      - uses: actions/checkout@v4
+        with: { fetch-depth: 2 }
+      - name: Detect changed services
+        id: filter
+        run: |
+          if [ -n "${{ github.event.inputs.services }}" ]; then
+            SERVICES=$(echo "${{ github.event.inputs.services }}" | tr ',' '\n' | jq -R . | jq -s -c .)
+            echo "services=$SERVICES" >> $GITHUB_OUTPUT
+            echo "run=true" >> $GITHUB_OUTPUT
+            exit 0
+          fi
+          if [ "${{ github.event_name }}" == "pull_request" ]; then
+            BASE="origin/${{ github.base_ref }}"
+            git fetch origin ${{ github.base_ref }}
+          else
+            BASE="HEAD~1"
+          fi
+          CHANGED=$(git diff --name-only "$BASE" HEAD | grep '^src/' | cut -d/ -f2 | sort -u | jq -R . | jq -s -c .)
+          if [ "$CHANGED" == "[]" ] || [ -z "$CHANGED" ]; then
+            echo "run=false" >> $GITHUB_OUTPUT
+            echo "No src/ changes; skipping."
+          else
+            echo "services=$CHANGED" >> $GITHUB_OUTPUT
+            echo "run=true" >> $GITHUB_OUTPUT
+            echo "Will build: $CHANGED"
+          fi
+
+  build:
+    needs: detect-changes
+    if: needs.detect-changes.outputs.run == 'true'
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        service: ${{ fromJson(needs.detect-changes.outputs.services) }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: docker/setup-buildx-action@v3
+      - uses: docker/login-action@v3
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+      - name: Compute image name + tag
+        id: meta
+        run: |
+          REPO_NAMESPACE="${GITHUB_REPOSITORY,,}"
+          IMAGE="${{ env.REGISTRY }}/${REPO_NAMESPACE}/${{ matrix.service }}"
+          TAG="${GITHUB_SHA::7}"
+          echo "image=$IMAGE" >> $GITHUB_OUTPUT
+          echo "tag=$TAG" >> $GITHUB_OUTPUT
+      - name: Find Dockerfile
+        id: dockerfile
+        run: |
+          if [ -f "src/${{ matrix.service }}/Dockerfile" ]; then
+            echo "path=src/${{ matrix.service }}/Dockerfile" >> $GITHUB_OUTPUT
+            echo "context=src/${{ matrix.service }}" >> $GITHUB_OUTPUT
+          else
+            DOCKERFILE=$(find "src/${{ matrix.service }}" -maxdepth 2 -name "Dockerfile*" -type f | head -1)
+            if [ -z "$DOCKERFILE" ]; then
+              echo "ERROR: no Dockerfile for ${{ matrix.service }}"; exit 1
+            fi
+            echo "path=$DOCKERFILE" >> $GITHUB_OUTPUT
+            echo "context=$(dirname $DOCKERFILE)" >> $GITHUB_OUTPUT
+          fi
+      - name: Build + push
+        uses: docker/build-push-action@v5
+        with:
+          context: ${{ steps.dockerfile.outputs.context }}
+          file: ${{ steps.dockerfile.outputs.path }}
+          push: true
+          tags: |
+            ${{ steps.meta.outputs.image }}:${{ steps.meta.outputs.tag }}
+            ${{ steps.meta.outputs.image }}:latest
+          cache-from: type=gha,scope=${{ matrix.service }}
+          cache-to: type=gha,mode=max,scope=${{ matrix.service }}
+
+  bump-chart:
+    needs: [detect-changes, build]
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main' && needs.detect-changes.outputs.run == 'true'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+      - name: Install yq
+        run: |
+          sudo wget -qO /usr/local/bin/yq https://github.com/mikefarah/yq/releases/latest/download/yq_linux_amd64
+          sudo chmod +x /usr/local/bin/yq
+      - name: Bump image tags in chart/values.yaml
+        run: |
+          TAG="${GITHUB_SHA::7}"
+          SERVICES='${{ needs.detect-changes.outputs.services }}'
+          for SERVICE in $(echo "$SERVICES" | jq -r '.[]'); do
+            yq -i ".components[\"$SERVICE\"].image.tag = \"$TAG\"" chart/values.yaml || \
+              echo "WARN: failed to bump $SERVICE in chart/values.yaml"
+          done
+      - name: Commit + push
+        run: |
+          git config user.name "sureops-bot"
+          git config user.email "bot@sureops.ai"
+          if git diff --quiet chart/values.yaml; then
+            echo "No chart changes."
+            exit 0
+          fi
+          git add chart/values.yaml
+          git commit -m "chore(chart): bump image tags after src/** rebuild [skip ci]"
+          git push

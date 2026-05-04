@@ -1,0 +1,42 @@
+{{- if .Values.grafana.enabled -}}
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: grafana-alerting
+  namespace: {{ .Release.Namespace }}
+  labels:
+    {{- include "otel-demo.labels" . | nindent 4 }}
+    grafana_alert: "1"
+data:
+  {{ (.Files.Glob "grafana/provisioning/alerting/*.yaml").AsConfig | nindent 2 }}
+
+{{- range $path, $_ := .Files.Glob "grafana/provisioning/dashboards/*.json" }}
+{{- $name := base $path | trimSuffix ".json" }}
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: grafana-dashboard-{{ $name | lower }}
+  namespace: {{ $.Release.Namespace }}
+  labels:
+    {{- include "otel-demo.labels" $ | nindent 4 }}
+    grafana_dashboard: "1"
+data:
+  {{ $name }}.json: |-
+{{ $.Files.Get $path | indent 4 }}
+{{- end }}
+
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: grafana-datasources
+  namespace: {{ .Release.Namespace }}
+  labels:
+    {{- include "otel-demo.labels" . | nindent 4 }}
+    grafana_datasource: "1"
+data:
+  {{ (.Files.Glob "grafana/provisioning/datasources/*.yaml").AsConfig | nindent 2 }}
+
+{{- end }}

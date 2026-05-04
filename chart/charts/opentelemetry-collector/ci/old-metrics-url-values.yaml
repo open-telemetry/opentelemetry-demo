@@ -1,0 +1,17 @@
+mode: deployment
+
+image:
+  repository: "ghcr.io/open-telemetry/opentelemetry-collector-releases/opentelemetry-collector-k8s"
+
+resources:
+  limits:
+    cpu: 100m
+    memory: 200M
+
+config:
+  service:
+    telemetry:
+      metrics:
+        address: 0.0.0.0:8888
+      resource:
+        "k8s.namespace.name": "default"

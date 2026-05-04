@@ -1,0 +1,55 @@
+{{- if .Values.ingress.enabled -}}
+{{- $ingresses := prepend .Values.ingress.additionalIngresses .Values.ingress -}}
+{{- range $ingresses }}
+apiVersion: "networking.k8s.io/v1"
+kind: Ingress
+metadata:
+  {{- if .name }}
+  name: {{ printf "%s-%s" (include "opentelemetry-collector.fullname" $) .name }}
+  {{- else }}
+  name: {{ include "opentelemetry-collector.fullname" $ }}
+  {{- end }}
+  namespace: {{ template "opentelemetry-collector.namespace" $ }}
+  labels:
+    {{- include "opentelemetry-collector.labels" $ | nindent 4 }}
+    {{- include "opentelemetry-collector.component" $ | nindent 4 }}
+  {{- if .annotations }}
+  annotations:
+    {{- range $key, $value := .annotations }}
+    {{- printf "%s: %s" $key (tpl $value $ | quote) | nindent 4 }}
+    {{- end }}
+  {{- end }}
+spec:
+  {{- if .ingressClassName }}
+  ingressClassName: {{ .ingressClassName }}
+  {{- end -}}
+  {{- if .tls }}
+  tls:
+    {{- range .tls }}
+    - hosts:
+        {{- range .hosts }}
+        - {{ tpl . $ | quote }}
+        {{- end }}
+      {{- with .secretName }}
+      secretName: {{ . }}
+      {{- end }}
+    {{- end }}
+  {{- end }}
+  rules:
+    {{- range .hosts }}
+    - host: {{ tpl .host $ | quote }}
+      http:
+        paths:
+          {{- range .paths }}
+          - path: {{ .path }}
+            pathType: {{ .pathType }}
+            backend:
+              service:
+                name: {{ include "opentelemetry-collector.fullname" $ }}
+                port:
+                  number: {{ .port }}
+          {{- end }}
+    {{- end }}
+---
+{{- end }}
+{{- end }}

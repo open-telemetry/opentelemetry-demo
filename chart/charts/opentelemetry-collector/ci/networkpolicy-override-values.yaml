@@ -1,0 +1,37 @@
+mode: daemonset
+
+image:
+  repository: "ghcr.io/open-telemetry/opentelemetry-collector-releases/opentelemetry-collector-k8s"
+
+command:
+  name: "otelcol-k8s"
+
+resources:
+  limits:
+    cpu: 100m
+    memory: 200M
+
+networkPolicy:
+  enabled: true
+
+  allowIngressFrom:
+    - namespaceSelector: {}
+    - ipBlock:
+        cidr: 127.0.0.1/32
+
+  extraIngressRules:
+    - ports:
+      - port: metrics
+        protocol: TCP
+      from:
+        - ipBlock:
+            cidr: 127.0.0.1/32
+
+  egressRules:
+    - to:
+        - podSelector:
+            matchLabels:
+              app: jaeger
+      ports:
+        - port: 4317
+          protocol: TCP

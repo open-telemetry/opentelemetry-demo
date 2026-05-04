@@ -1,0 +1,21 @@
+mode: deployment
+
+image:
+  repository: "ghcr.io/open-telemetry/opentelemetry-collector-releases/opentelemetry-collector-k8s"
+
+resources:
+  limits:
+    cpu: 100m
+    memory: 200M
+
+internalTelemetryViaOTLP:
+  endpoint: "http://localhost:4318"
+  headers:
+    - name: "x-opentelemetry-customer"
+      value: "a value"
+  traces:
+    enabled: true
+  metrics:
+    enabled: true
+  logs:
+    enabled: true

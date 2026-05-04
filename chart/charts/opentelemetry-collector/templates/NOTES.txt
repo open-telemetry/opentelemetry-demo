@@ -1,0 +1,66 @@
+{{- if not .Values.image.repository }}
+{{ fail "[ERROR] 'image.repository' must be set. See https://github.com/open-telemetry/opentelemetry-helm-charts/blob/main/charts/opentelemetry-collector/UPGRADING.md for instructions." }}
+{{ end }}
+
+{{- if and (not (eq .Values.mode "daemonset")) (not (eq .Values.mode "deployment")) (not (eq .Values.mode "statefulset")) }}
+{{ fail "[ERROR] 'mode' must be set. See https://github.com/open-telemetry/opentelemetry-helm-charts/blob/main/charts/opentelemetry-collector/UPGRADING.md for instructions." }}
+{{ end }}
+
+{{- if and (eq .Values.dnsPolicy "None") (not .Values.dnsConfig) }}
+{{- fail "[ERROR] dnsConfig should be provided when dnsPolicy is None" }}
+{{ end }}
+
+{{- if .Values.presets.clusterMetrics.enabled }}
+{{- if gt (int .Values.replicaCount) 1 }}
+{{- fail "Cluster Metrics preset is not suitable for replicaCount greater than one. Please change replica count to one." }}
+{{ end }}
+{{ end }}
+
+{{/* validate extensions must include health_check */}}
+{{- if and (not (has "health_check" .Values.config.service.extensions)) (not (has "healthcheckv2" .Values.config.service.extensions)) }}
+{{ fail "[ERROR] The opentelemetry-collector chart requires that the health_check extension or the healthcheckv2 extension to be included in the extension list." }}
+{{- end}}
+
+{{- if not .Values.configMap.create }}
+[WARNING] "configMap" wil not be created and "config" will not take effect.
+{{ end }}
+
+{{- if and .Values.configMap.create .Values.configMap.existingName }}
+{{ fail "[ERROR] Cannot set configMap.existingName when configMap.create is true" }}
+{{ end }}
+
+{{- if and .Values.configMap.create .Values.configMap.existingPath }}
+{{ fail "[ERROR] Cannot set configMap.existingPath when configMap.create is true" }}
+{{ end }}
+
+{{- if not .Values.resources }}
+[WARNING] No resource limits or requests were set. Consider setting resource requests and limits for your collector(s) via the `resources` field.
+{{ end }}
+
+{{- if and (eq .Values.mode "daemonset") (eq .Values.service.internalTrafficPolicy "Cluster") }}
+[WARNING] Setting internalTrafficPolicy to 'Cluster' on Daemonset is not recommended. Consider using 'Local' instead.
+{{ end }}
+
+{{- if and (.Values.useGOMEMLIMIT) (not ((((.Values.resources).limits).memory))) }}
+[WARNING] "useGOMEMLIMIT" is enabled but memory limits have not been supplied so the GOMEMLIMIT env var could not be added. Solve this problem by setting resources.limits.memory or disabling useGOMEMLIMIT
+{{ end }}
+
+{{- if or (and (.Values.internalTelemetryViaOTLP.traces.enabled) (not (or .Values.internalTelemetryViaOTLP.endpoint .Values.internalTelemetryViaOTLP.traces.endpoint))) }}
+{{ fail "[ERROR] internalTelemetryViaOTLP.endpoint or .Values.internalTelemetryViaOTLP.traces.endpoint must be set when internalTelemetryViaOTLP.traces.enabled is true" }}
+{{ end }}
+
+{{- if or (and (.Values.internalTelemetryViaOTLP.metrics.enabled) (not (or .Values.internalTelemetryViaOTLP.endpoint .Values.internalTelemetryViaOTLP.metrics.endpoint))) }}
+{{ fail "[ERROR] internalTelemetryViaOTLP.endpoint or .Values.internalTelemetryViaOTLP.metrics.endpoint must be set when internalTelemetryViaOTLP.metrics.enabled is true" }}
+{{ end }}
+
+{{- if or (and (.Values.internalTelemetryViaOTLP.logs.enabled) (not (or .Values.internalTelemetryViaOTLP.endpoint .Values.internalTelemetryViaOTLP.logs.endpoint))) }}
+{{ fail "[ERROR] internalTelemetryViaOTLP.endpoint or .Values.internalTelemetryViaOTLP.logs.endpoint must be set when internalTelemetryViaOTLP.logs.enabled is true" }}
+{{ end }}
+
+{{- if .Values.config.service.telemetry.metrics.address }}
+[WARNING] config.service.telemetry.metrics.address should not be used and will be removed in the future. Use internalTelemetryViaOTLP or config.service.telemetry.metrics.readers  instead"
+{{ end }}
+
+{{- if and .Values.presets.logsCollection.enabled .Values.presets.annotationDiscovery.logs.enabled }}
+{{- fail "[ERROR] logsCollection and annotationDiscovery.logs are mutually exclusive" }}
+{{- end }}
