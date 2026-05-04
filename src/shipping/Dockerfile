@@ -34,13 +34,10 @@ RUN if [ "${TARGETPLATFORM}" = "linux/arm64" ] && [ "${BUILDPLATFORM}" != "linux
     fi
 
 
-FROM busybox:musl AS busybox
-
 FROM gcr.io/distroless/cc-debian13:nonroot
 
 WORKDIR /app
 
-COPY --from=busybox /bin/wget /bin/wget
 COPY --from=builder /app/target/release/shipping shipping
 
 EXPOSE ${SHIPPING_PORT}

@@ -656,12 +656,6 @@ services:
       - OTEL_RESOURCE_ATTRIBUTES=${OTEL_RESOURCE_ATTRIBUTES},service.criticality=high
       - OTEL_SERVICE_NAME=shipping
       - OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE
-    healthcheck:
-      test: ["CMD", "/bin/wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:${SHIPPING_PORT}/health"]
-      start_period: 10s
-      interval: 5s
-      timeout: 5s
-      retries: 3
     depends_on:
       otel-collector:
         condition: service_started

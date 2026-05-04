@@ -1,15 +1,10 @@
 // Copyright The OpenTelemetry Authors
 // SPDX-License-Identifier: Apache-2.0
 
-use actix_web::{get, App, HttpResponse, HttpServer, Responder};
+use actix_web::{App, HttpServer};
 use opentelemetry_instrumentation_actix_web::{RequestMetrics, RequestTracing};
 use std::env;
 use tracing::info;
-
-#[get("/health")]
-async fn health() -> impl Responder {
-    HttpResponse::Ok().finish()
-}
 
 mod telemetry_conf;
 use telemetry_conf::init_otel;
@@ -56,7 +51,6 @@ async fn main() -> std::io::Result<()> {
             .wrap(RequestMetrics::default())
             .service(get_quote)
             .service(ship_order)
-            .service(health)
     })
     .bind(&addr)?
     .run()
