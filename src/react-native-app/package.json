@@ -54,5 +54,11 @@
     "ts-proto": "^2.11.6",
     "typescript": "~5.9.2"
   },
+  "overrides": {
+    "postcss": "8.5.14",
+    "xcode": {
+      "uuid": "14.0.0"
+    }
+  },
   "private": true
 }
