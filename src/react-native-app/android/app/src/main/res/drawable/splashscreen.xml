@@ -1,8 +1,0 @@
-<!--
-Copyright The OpenTelemetry Authors
-SPDX-License-Identifier: Apache-2.0
--->
-
-<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
-  <item android:drawable="@color/splashscreen_background"/>
-</layer-list>
