@@ -62,5 +62,9 @@
     "eslint-plugin-react-hooks": "7.1.1",
     "ts-proto": "2.11.6",
     "typescript": "6.0.3"
+  },
+  "overrides": {
+    "@cypress/request": "4.0.0",
+    "postcss": "8.5.14"
   }
 }
