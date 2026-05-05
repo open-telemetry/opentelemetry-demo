@@ -67,7 +67,10 @@ mod tests {
         let req = test::TestRequest::post()
             .uri("/ship-order")
             .insert_header(ContentType::json())
-            .set_json(&ShipOrderRequest {})
+            .set_json(&ShipOrderRequest {
+                address: None,
+                items: vec![],
+            })
             .to_request();
         let resp = test::call_service(&app, req).await;
         assert!(resp.status().is_success());
