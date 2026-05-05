@@ -94,7 +94,7 @@ For more information about the maintainer role, see the [community repository](h
 
 ### Approvers
 
-- [Dónal O'Sullivan](https://github.com/osullivandonal), Elastic
+- [D&#xF3;nal O'Sullivan](https://github.com/osullivandonal), Elastic
 - [Piotr Kie&#x142;kowicz](https://github.com/Kielek), Splunk
 - [Shenoy Pratik](https://github.com/ps48), AWS OpenSearch
 
