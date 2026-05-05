@@ -29,29 +29,58 @@ grafana:       { enabled: false }
 opensearch:    { enabled: false }
 
 # ===========================================================================
-# OTel Collector — override exporters to send signals to sureops's
-# multi-tenant backends instead of the demo's defaults (which would
-# send to the disabled bundled Jaeger/Prometheus/OpenSearch).
+# OTel Collector — sends every signal to a sureops-managed backend.
 #
-# Tenancy: X-Scope-OrgID header per customer slug routes signals to
-# the right tenant in shared Tempo/Loki.
+# Defaults below assume the sureops shared cluster: collector and
+# Tempo/Loki are co-located, so we use in-cluster Service URLs (no
+# DNS, no public ingress, no TLS termination needed). Tempo's OTLP
+# HTTP receiver listens on :4318; Loki's mounts the OTLP path
+# under /otlp. Tenancy uses the X-Scope-OrgID header (per customer
+# slug) routed by the receiving backend.
+#
+# REAL CUSTOMERS OVERRIDE in values-customer.yaml when they:
+#   * run their own Tempo / Loki (or Tempo Cloud, Honeycomb, etc.)
+#   * run sureops in their cluster (different service DNS)
+# Example values-customer.yaml override:
+#   opentelemetry-collector:
+#     config:
+#       exporters:
+#         otlphttp/sureops_tempo:
+#           endpoint: https://tempo.example-corp.com
+#           headers: { Authorization: "Bearer ..." }
 # ===========================================================================
 opentelemetry-collector:
   config:
+    connectors:
+      # OTel servicegraph connector: derives RED metrics + a
+      # client→server topology graph from spans, exposed as Prometheus
+      # series (traces_service_graph_request_total{client, server, ...}).
+      # Sureops's landscape ingestor consumes these to build the call
+      # graph without parsing individual traces.
+      servicegraph:
+        latency_histogram_buckets: [100us, 1ms, 10ms, 100ms, 1s, 5s]
+        store:
+          ttl: 2s
+          max_items: 1000
+        cache_loop: 1m
+        store_expiration_loop: 2s
+
     exporters:
-      # Traces → sureops shared Tempo
+      # Traces → sureops Tempo (in-cluster default, override per-customer)
       otlphttp/sureops_tempo:
-        endpoint: https://tempo.shared-uat.sureops.ai
+        endpoint: http://tempo.tempo.svc.cluster.local:4318
         headers:
           X-Scope-OrgID: ${env:CUSTOMER_SLUG}
         tls:
-          insecure: false
+          insecure: true
 
-      # Logs → sureops shared Loki via OTLP
+      # Logs → sureops Loki via OTLP (in-cluster default, override per-customer)
       otlphttp/sureops_loki:
-        endpoint: https://loki.shared-uat.sureops.ai/otlp
+        endpoint: http://loki.loki.svc.cluster.local:3100/otlp
         headers:
           X-Scope-OrgID: ${env:CUSTOMER_SLUG}
+        tls:
+          insecure: true
 
       # Metrics: keep prometheus exporter on :9464 — per-customer
       # Prometheus scrapes services directly via their /metrics endpoints,
@@ -82,13 +111,18 @@ opentelemetry-collector:
         traces:
           receivers: [otlp]
           processors: [memory_limiter, resource/sureops, batch]
-          exporters: [otlphttp/sureops_tempo]
+          # Fan out: persist to Tempo AND feed the servicegraph connector
+          # (the connector then emits metrics into the metrics pipeline).
+          exporters: [otlphttp/sureops_tempo, servicegraph]
         logs:
           receivers: [otlp]
           processors: [memory_limiter, resource/sureops, batch]
           exporters: [otlphttp/sureops_loki]
         metrics:
-          receivers: [otlp]
+          # servicegraph appears as both an exporter (above) and a
+          # receiver (here): its connector role is to consume traces
+          # and emit the derived metrics.
+          receivers: [otlp, servicegraph]
           processors: [memory_limiter, resource/sureops, batch]
           exporters: [prometheus]
 
