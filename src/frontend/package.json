@@ -53,14 +53,14 @@
     "@types/react": "19.2.14",
     "@types/react-dom": "19.2.3",
     "@types/styled-components": "5.1.36",
-    "@typescript-eslint/eslint-plugin": "8.59.1",
-    "@typescript-eslint/parser": "8.59.1",
-    "cypress": "15.14.1",
+    "@typescript-eslint/eslint-plugin": "8.59.2",
+    "@typescript-eslint/parser": "8.59.2",
+    "cypress": "15.14.2",
     "eslint": "9.39.4",
     "eslint-config-next": "16.2.4",
     "eslint-plugin-react": "7.37.5",
     "eslint-plugin-react-hooks": "7.1.1",
-    "ts-proto": "2.11.6",
+    "ts-proto": "2.11.7",
     "typescript": "6.0.3"
   },
   "overrides": {
