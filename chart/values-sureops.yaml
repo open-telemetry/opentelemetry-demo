@@ -50,6 +50,22 @@ opensearch:    { enabled: false }
 #           headers: { Authorization: "Bearer ..." }
 # ===========================================================================
 opentelemetry-collector:
+  # Expose the prometheus exporter on its own named port so the
+  # shared kube-prometheus-stack Prometheus operator (via the
+  # PodMonitor in deploy/k3s/per-customer/templates/) can scrape
+  # ``traces_service_graph_*`` and any other ``prometheus`` exporter
+  # output. The OTel collector helm subchart's default ``ports``
+  # block only exposes the standard receivers (otlp, jaeger, zipkin)
+  # and the collector's own self-metrics on :8888 — it doesn't add
+  # a port for arbitrary exporters defined in ``config.exporters``,
+  # so we declare it here.
+  ports:
+    prom-exporter:
+      enabled: true
+      containerPort: 9464
+      servicePort: 9464
+      protocol: TCP
+
   config:
     connectors:
       # OTel servicegraph connector: derives RED metrics + a
