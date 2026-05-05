@@ -1,0 +1,24 @@
+{{/*
+sureops-customer-config: customer-context ConfigMap consumed by the
+otel-collector (see values-sureops.yaml `extraEnvs`). Provides
+customer.slug + deployment env so the collector can stamp every
+exported signal with the right tenant/env attributes.
+
+Without this template the otel-collector pod fails to start with
+"configmap sureops-customer-config not found" because the pod env
+references a nonexistent ConfigMap.
+*/}}
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: sureops-customer-config
+  labels:
+    app.kubernetes.io/managed-by: sureops
+    app.kubernetes.io/part-of: sureops-customer-context
+    {{- with .Values.customer }}
+    sureops.ai/customer-slug: {{ .slug | quote }}
+    {{- end }}
+data:
+  customer.slug: {{ required "customer.slug is required" .Values.customer.slug | quote }}
+  env: {{ required "env is required" .Values.env | quote }}
+  org.id: {{ default "" .Values.customer.orgId | quote }}
