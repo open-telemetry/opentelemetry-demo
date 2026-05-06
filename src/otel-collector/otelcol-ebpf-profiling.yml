@@ -3,7 +3,7 @@
 
 receivers:
   profiling:
-    samples_per_second: 10
+    samples_per_second: 19
 
 processors:
   resourcedetection:
