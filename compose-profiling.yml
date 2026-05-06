@@ -1,0 +1,31 @@
+# Copyright The OpenTelemetry Authors
+# SPDX-License-Identifier: Apache-2.0
+
+services:
+  otel-ebpf-profiler:
+    image: otel/opentelemetry-collector-ebpf-profiler:0.147.0
+    container_name: otel-ebpf-profiler
+    command:
+      - --config=/etc/ebpf-profiler-config.yaml
+      - --feature-gates=service.profilesSupport
+    privileged: true
+    pid: "host"
+    environment:
+      - OTEL_COLLECTOR_HOST
+      - OTEL_COLLECTOR_PORT_GRPC
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+      - ./src/otel-collector/otelcol-ebpf-profiling.yml:/etc/ebpf-profiler-config.yaml:ro
+      - /sys/kernel/debug:/sys/kernel/debug
+      - /sys/kernel/tracing:/sys/kernel/tracing
+      - /sys/fs/cgroup:/sys/fs/cgroup:ro
+      - /proc:/proc:ro
+    depends_on:
+      - otel-collector
+  firepit:
+    image: ghcr.io/florianl/firepit:6ea852a
+    build:
+      context: https://github.com/florianl/firepit.git
+    container_name: firepit
+    ports:
+      - "${FIREPIT_PORT:-4040}:8080"

@@ -7,6 +7,9 @@ the release.
 
 ## Unreleased
 
+* [profiling] Add profiling and use firepit as the backend to ingest profiles.
+  This allows us to view profiles in the firepit webui.
+  [#3333](https://github.com/open-telemetry/opentelemetry-demo/pull/3333)
 * [telemetry-docs] Add a new service to provide telemetry documentation based
   on Weaver
   ([#2794](https://github.com/open-telemetry/opentelemetry-demo/pull/2794))

@@ -1,0 +1,28 @@
+# Copyright The OpenTelemetry Authors
+# SPDX-License-Identifier: Apache-2.0
+
+receivers:
+  profiling:
+    samples_per_second: 19
+
+processors:
+  resourcedetection:
+    detectors: [docker]
+  resource:
+    attributes:
+      - key: service.name
+        from_attribute: container.name
+        action: upsert
+
+exporters:
+  otlp/collector:
+    endpoint: ${env:OTEL_COLLECTOR_HOST}:${env:OTEL_COLLECTOR_PORT_GRPC}
+    tls:
+      insecure: true
+
+service:
+  pipelines:
+    profiles:
+      receivers: [profiling]
+      processors: [resourcedetection]
+      exporters: [otlp/collector]
