@@ -23,7 +23,7 @@ services:
     depends_on:
       - otel-collector
   firepit:
-    image: ghcr.io/florianl/firepit:latest
+    image: ghcr.io/florianl/firepit:6ea852a
     build:
       context: https://github.com/florianl/firepit.git
     container_name: firepit
