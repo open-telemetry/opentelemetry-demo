@@ -11,17 +11,17 @@ on:
         type: boolean
       version:
         description: The version used when tagging the image
-        default: 'dev'
+        default: "dev"
         required: false
         type: string
       dockerhub_repo:
         description: Docker Hub repository
-        default: 'otel/demo'
+        default: "otel/demo"
         required: false
         type: string
       ghcr_repo:
         description: GHCR repository
-        default: 'ghcr.io/open-telemetry/demo'
+        default: "ghcr.io/open-telemetry/demo"
         required: false
         type: string
 
@@ -152,9 +152,11 @@ jobs:
             setup-qemu: true
 
     steps:
-      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd  # v6.0.2
+      - name: Checkout
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd  # v6.0.2
         with:
           fetch-depth: 0
+
       - name: Load environment variables from .env file
         run: |
           if [ -f .env ]; then
@@ -166,6 +168,7 @@ jobs:
             echo ".env file not found!"
             exit 1
           fi
+
       - name: Check for changes and set push options
         id: check_changes
         run: |
@@ -182,6 +185,7 @@ jobs:
             echo "Changes detected in ${{ matrix.file_tag.context }}, proceeding with build."
             echo "skip=false" >> "$GITHUB_OUTPUT"
           fi
+
       - name: Log in to the Container registry
         uses: docker/login-action@4907a6ddec9925e35a0a9e82d7399ccc52663121  # v4.1.0
         with:
@@ -189,23 +193,30 @@ jobs:
           username: ${{ github.repository_owner }}
           password: ${{ secrets.GITHUB_TOKEN }}
         if: ${{ inputs.push && !github.event.repository.fork }}
+
       - name: Log in to Docker Hub
         uses: docker/login-action@4907a6ddec9925e35a0a9e82d7399ccc52663121  # v4.1.0
         with:
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_PASSWORD }}
         if: ${{ inputs.push && !github.event.repository.fork }}
+
       - name: Set up QEMU
         if: ${{ matrix.file_tag.setup-qemu }}
         uses: docker/setup-qemu-action@ce360397dd3f832beb865e1373c09c0e9f86d70a  # v4.0.0
         with:
           image: tonistiigi/binfmt:master
+
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@4d04d5d9486b7bd6fa91e7baf45bbb4f8b9deedd  # v4.0.0
         with:
           buildkitd-config-inline: |
             [worker.oci]
             max-parallelism = 2
+
+      - name: Set weekday tag
+        run: echo "DAY=$(date +%A)" >> $GITHUB_ENV
+
       - name: Matrix Build and push demo images
         if: steps.check_changes.outputs.skip == 'false'
         uses: docker/build-push-action@bcafcacb16a39f128d818304e6c9c0c18556b85f  # v7.1.0
@@ -215,14 +226,17 @@ jobs:
           platforms: linux/amd64,linux/arm64
           push: ${{ inputs.push && !github.event.repository.fork }}
           build-args: |
-            OTEL_JAVA_AGENT_VERSION=${{ env.OTEL_JAVA_AGENT_VERSION }}
-            OPENTELEMETRY_CPP_VERSION=${{ env.OPENTELEMETRY_CPP_VERSION }}
-            TRACETEST_IMAGE_VERSION=${{ env.TRACETEST_IMAGE_VERSION }}
-            OPENSEARCH_IMAGE=${{ env.OPENSEARCH_IMAGE }}
+            OTEL_JAVA_AGENT_VERSION="${{ env.OTEL_JAVA_AGENT_VERSION }}"
+            OPENTELEMETRY_CPP_VERSION="${{ env.OPENTELEMETRY_CPP_VERSION }}"
+            TRACETEST_IMAGE_VERSION="${{ env.TRACETEST_IMAGE_VERSION }}"
+            OPENSEARCH_IMAGE="${{ env.OPENSEARCH_IMAGE }}"
           tags: |
-            ${{ inputs.dockerhub_repo }}:${{ inputs.version }}-${{matrix.file_tag.tag_suffix }}
-            ${{ inputs.dockerhub_repo }}:latest-${{matrix.file_tag.tag_suffix }}
+            ${{ inputs.dockerhub_repo }}:${{ inputs.version }}-${{ matrix.file_tag.tag_suffix }}
+            ${{ inputs.dockerhub_repo }}:latest-${{ matrix.file_tag.tag_suffix }}
+            ${{ inputs.dockerhub_repo }}:nightly-${{ env.DAY }}-${{ matrix.file_tag.tag_suffix }}
+
             ${{ inputs.ghcr_repo }}:${{ inputs.version }}-${{ matrix.file_tag.tag_suffix }}
             ${{ inputs.ghcr_repo }}:latest-${{ matrix.file_tag.tag_suffix }}
+            ${{ inputs.ghcr_repo }}:nightly-${{ env.DAY }}-${{ matrix.file_tag.tag_suffix }}
           cache-from: type=gha
           cache-to: type=gha
