@@ -160,6 +160,16 @@ processors:
     spike_limit_percentage: 25
   resourcedetection:
     detectors: [env, docker, system]
+  transform/sanitize_logs:
+    error_mode: ignore
+    log_statements:
+      - context: scope
+        statements:
+          # Rename flat "otelcol.signal" scope attribute to prevent mapping
+          # conflict with the dotted "otelcol.signal.output" attribute.
+          # Upstream Issue: https://github.com/open-telemetry/opentelemetry-collector/issues/15221
+          - set(attributes["otelcol_signal"], attributes["otelcol.signal"]) where attributes["otelcol.signal"] != nil and not IsMap(attributes["otelcol.signal"])
+          - delete_key(attributes, "otelcol.signal") where attributes["otelcol_signal"] != nil
   transform/sanitize_spans:
     error_mode: ignore
     trace_statements:
@@ -221,7 +231,7 @@ service:
       exporters: [otlp_http/prometheus, debug]
     logs:
       receivers: [otlp]
-      processors: [resourcedetection, memory_limiter]
+      processors: [resourcedetection, memory_limiter, transform/sanitize_logs]
       exporters: [opensearch, debug]
   telemetry:
     metrics:
