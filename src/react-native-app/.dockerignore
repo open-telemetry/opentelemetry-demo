@@ -1,6 +1,7 @@
 node_modules/
 .expo/
 dist/
-android/build/
-ios/build/
-ios/Pods/
+# Generated native folders — the Docker build runs `expo prebuild` so these are
+# always regenerated fresh inside the container.
+android/
+ios/

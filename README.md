@@ -94,8 +94,7 @@ For more information about the maintainer role, see the [community repository](h
 
 ### Approvers
 
-- [Cedric Ziel](https://github.com/cedricziel), Grafana Labs
-- [Mikko Viitanen](https://github.com/mviitane), Dynatrace
+- [D&#xF3;nal O'Sullivan](https://github.com/osullivandonal), Elastic
 - [Piotr Kie&#x142;kowicz](https://github.com/Kielek), Splunk
 - [Shenoy Pratik](https://github.com/ps48), AWS OpenSearch
 
@@ -103,13 +102,15 @@ For more information about the approver role, see the [community repository](htt
 
 ### Emeritus
 
-- [Austin Parker](https://github.com/austinlparker)
-- [Carter Socha](https://github.com/cartersocha)
-- [Michael Maxwell](https://github.com/mic-max)
-- [Morgan McLean](https://github.com/mtwo)
-- [Penghan Wang](https://github.com/wph95)
-- [Reiley Yang](https://github.com/reyang)
-- [Ziqi Zhao](https://github.com/fatsheep9146)
+- [Austin Parker](https://github.com/austinlparker), Maintainer
+- [Carter Socha](https://github.com/cartersocha), Maintainer
+- [Cedric Ziel](https://github.com/cedricziel), Approver
+- [Michael Maxwell](https://github.com/mic-max), Approver
+- [Mikko Viitanen](https://github.com/mviitane), Maintainer
+- [Morgan McLean](https://github.com/mtwo), Approver
+- [Penghan Wang](https://github.com/wph95), Approver
+- [Reiley Yang](https://github.com/reyang), Approver
+- [Ziqi Zhao](https://github.com/fatsheep9146), Approver
 
 For more information about the emeritus role, see the [community repository](https://github.com/open-telemetry/community/blob/main/guides/contributor/membership.md#emeritus-maintainerapprovertriager).
 

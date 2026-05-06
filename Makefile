@@ -12,6 +12,7 @@ MISSPELL = $(TOOLS_DIR)/$(MISSPELL_BINARY)
 ADDLICENSE_BINARY=bin/addlicense
 ADDLICENSE = $(TOOLS_DIR)/$(ADDLICENSE_BINARY)
 
+DOCKER_CMD ?= docker
 DOCKER_COMPOSE_CMD ?= docker compose
 DOCKER_COMPOSE_ENV=--env-file .env --env-file .env.override
 
@@ -142,7 +143,7 @@ build-multiplatform-and-push:
 
 .PHONY: clean-images
 clean-images:
-	@docker rmi $(shell docker images --filter=reference="ghcr.io/open-telemetry/demo:latest-*" -q); \
+	$(DOCKER_CMD) rmi $(shell $(DOCKER_CMD) images --filter=reference="ghcr.io/open-telemetry/demo:latest-*" -q); \
     if [ $$? -ne 0 ]; \
     then \
     	echo; \
@@ -253,7 +254,7 @@ endif
 
 .PHONY: build-react-native-android
 build-react-native-android:
-	docker build -f src/react-native-app/android.Dockerfile --platform=linux/amd64 --output=. src/react-native-app
+	$(DOCKER_CMD) build -f src/react-native-app/android.Dockerfile --platform=linux/amd64 --output=. src/react-native-app
 
 .PHONY: start-profiling
 start-profiling:
