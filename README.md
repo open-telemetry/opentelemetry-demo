@@ -75,7 +75,7 @@ keeping it up to date for you.
 | [Dash0]                   | [Oodle]        | [Tsuga]                          |
 | [Datadog]                 | [OpenObserve]  | [Uptrace]                        |
 | [Dynatrace]               | [OpenSearch]   | [VictoriaMetrics]                |
-| [Elastic]                 | [Oracle]       |                                  |
+| [Elastic]                 | [Oracle]       | [Middleware]                                 |
 
 ## Contributing
 
@@ -166,3 +166,4 @@ For more information about the emeritus role, see the [community repository](htt
 [Tsuga]: https://github.com/tsuga-dev/opentelemetry-demo
 [Uptrace]: https://github.com/uptrace/uptrace/tree/master/example/opentelemetry-demo
 [VictoriaMetrics]: https://github.com/VictoriaMetrics-Community/opentelemetry-demo
+[Middleware]: https://docs.middleware.io/open-telemetry/otel-getting-started
