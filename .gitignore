@@ -61,8 +61,5 @@ src/shipping/target/
 test/tracetesting/tracetesting-vars.yaml
 
 !src/currency/build
-src/cart/src/Program.cs.bak
-src/flagd/demo.flagd.json.bak
 
 src/agent/fixtures/*
-

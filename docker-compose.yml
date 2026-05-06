@@ -366,6 +366,8 @@ services:
       - FLAGD_UI_PORT
       - TELEMETRY_DOCS_HOST
       - TELEMETRY_DOCS_PORT
+      - CHATBOT_HOST
+      - CHATBOT_PORT
     depends_on:
       frontend:
         condition: service_started
@@ -378,6 +380,8 @@ services:
       flagd-ui:
         condition: service_started
       telemetry-docs:
+        condition: service_started
+      chatbot:
         condition: service_started
     dns_search: ""
 
@@ -605,7 +609,7 @@ services:
     deploy:
       resources:
         limits:
-          memory: 500M  # This is high to enable supporting the recommendationCache feature flag use case
+          memory: 500M # This is high to enable supporting the recommendationCache feature flag use case
     restart: unless-stopped
     ports:
       - "${RECOMMENDATION_PORT}"
@@ -864,6 +868,7 @@ services:
       - AGENT_PORT
       - AGENT_ENDPOINT
       - CHATBOT_PORT
+      - CHATBOT_ROOT_PATH
       - OTEL_RESOURCE_ATTRIBUTES=${OTEL_RESOURCE_ATTRIBUTES},service.criticality=low
       - OTEL_SERVICE_NAME=chatbot
     depends_on:
@@ -871,8 +876,6 @@ services:
         condition: service_started
     logging: *logging
 
-  # Postgresql used by Accounting service
-  postgresql:
   # PostgreSQL database for the astronomy demo
   astronomy-db:
     image: ${POSTGRES_IMAGE}

@@ -18,6 +18,7 @@ class ChatUiConfig(BaseModel):
     sessionId: str
     timeout: int
     agentBaseUrl: str
+    rootPath: str = ""
 
 
 class ChatAgentUI:
@@ -78,6 +79,7 @@ class ChatAgentUI:
         chatbot_ui.launch(
             server_name=self.config.uiBaseUrl,
             server_port=self.config.uiPort,
+            root_path=self.config.rootPath,
         )
 
 
@@ -88,5 +90,6 @@ def get_chat_ui_config():
         sessionId=str(uuid.uuid4()),
         timeout=int(os.getenv("AGENT_CHAT_INTERFACE_TIMEOUT", "300")),
         agentBaseUrl=f"http://{os.getenv('AGENT_ENDPOINT', '0.0.0.0')}:{os.getenv('AGENT_PORT', '8010')}/prompt",
+        rootPath=os.getenv("CHATBOT_ROOT_PATH", ""),
     )
     return chat_ui_config

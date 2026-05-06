@@ -67,7 +67,6 @@ class Agent:
             tool_list = [
                 add_to_cart,
                 checkout,
-                convert_currency,
                 empty_cart,
                 get_ads,
                 get_cart,
