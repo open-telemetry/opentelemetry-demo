@@ -12,9 +12,9 @@ MISSPELL = $(TOOLS_DIR)/$(MISSPELL_BINARY)
 ADDLICENSE_BINARY=bin/addlicense
 ADDLICENSE = $(TOOLS_DIR)/$(ADDLICENSE_BINARY)
 
+DOCKER_CMD ?= docker
 DOCKER_COMPOSE_CMD ?= docker compose
 DOCKER_COMPOSE_ENV=--env-file .env --env-file .env.override
-DOCKER_COMPOSE_BUILD_ARGS=
 
 # Compose file layers — combine with -f flags for the desired configuration:
 #   Core (minimal):             compose.yaml
@@ -29,13 +29,6 @@ DOCKER_COMPOSE_FILES_EXTRAS=-f compose.extras.yaml
 # Default: full demo + observability stack + extras stub
 DOCKER_COMPOSE_FILES=$(DOCKER_COMPOSE_FILES_FULL) $(DOCKER_COMPOSE_FILES_OBSERVABILITY) $(DOCKER_COMPOSE_FILES_EXTRAS)
 
-# Java Workaround for macOS 15.2+ and M4 chips (see https://bugs.openjdk.org/browse/JDK-8345296)
-ifeq ($(shell uname -m),arm64)
-	ifeq ($(shell uname -s),Darwin)
-		DOCKER_COMPOSE_ENV+= --env-file .env.arm64
-		DOCKER_COMPOSE_BUILD_ARGS+= --build-arg=_JAVA_OPTIONS=-XX:UseSVE=0
-	endif
-endif
 
 # see https://github.com/open-telemetry/build-tools/releases for semconvgen updates
 # Keep links in semantic_conventions/README.md and .vscode/settings.json in sync!
@@ -135,11 +128,11 @@ install-tools: $(MISSPELL) $(ADDLICENSE)
 
 .PHONY: build
 build:
-	$(DOCKER_COMPOSE_CMD) $(DOCKER_COMPOSE_ENV) $(DOCKER_COMPOSE_FILES) build $(DOCKER_COMPOSE_BUILD_ARGS)
+	$(DOCKER_COMPOSE_CMD) $(DOCKER_COMPOSE_ENV) $(DOCKER_COMPOSE_FILES) build
 
 .PHONY: build-and-push
 build-and-push:
-	$(DOCKER_COMPOSE_CMD) $(DOCKER_COMPOSE_ENV) $(DOCKER_COMPOSE_FILES) build $(DOCKER_COMPOSE_BUILD_ARGS) --push
+	$(DOCKER_COMPOSE_CMD) $(DOCKER_COMPOSE_ENV) $(DOCKER_COMPOSE_FILES) build --push
 
 # Create multiplatform builder for buildx
 .PHONY: create-multiplatform-builder
@@ -284,7 +277,7 @@ ifdef SERVICE
 endif
 
 ifdef service
-	$(DOCKER_COMPOSE_CMD) $(DOCKER_COMPOSE_ENV) $(DOCKER_COMPOSE_FILES) build $(DOCKER_COMPOSE_BUILD_ARGS) $(service)
+	$(DOCKER_COMPOSE_CMD) $(DOCKER_COMPOSE_ENV) $(DOCKER_COMPOSE_FILES) build $(service)
 	$(DOCKER_COMPOSE_CMD) $(DOCKER_COMPOSE_ENV) $(DOCKER_COMPOSE_FILES) stop $(service)
 	$(DOCKER_COMPOSE_CMD) $(DOCKER_COMPOSE_ENV) $(DOCKER_COMPOSE_FILES) rm --force $(service)
 	$(DOCKER_COMPOSE_CMD) $(DOCKER_COMPOSE_ENV) $(DOCKER_COMPOSE_FILES) create $(service)
@@ -295,4 +288,4 @@ endif
 
 .PHONY: build-react-native-android
 build-react-native-android:
-	docker build -f src/react-native-app/android.Dockerfile --platform=linux/amd64 --output=. src/react-native-app
+	$(DOCKER_CMD) build -f src/react-native-app/android.Dockerfile --platform=linux/amd64 --output=. src/react-native-app
