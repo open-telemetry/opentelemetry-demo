@@ -84,7 +84,7 @@ static_resources:
                             timeout: 0s
                             upgrade_configs:
                               - upgrade_type: websocket
-                        - match: { prefix: "/" } # Default/catch-all route - keep last since prefix:"/" matches everything
+                        - match: { prefix: "/" }
                           route: { cluster: frontend }
                 http_filters:
                   - name: envoy.filters.http.fault

@@ -609,7 +609,7 @@ services:
     deploy:
       resources:
         limits:
-          memory: 500M # This is high to enable supporting the recommendationCache feature flag use case
+          memory: 500M  # This is high to enable supporting the recommendationCache feature flag use case
     restart: unless-stopped
     ports:
       - "${RECOMMENDATION_PORT}"
