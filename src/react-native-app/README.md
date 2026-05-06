@@ -35,7 +35,7 @@ cd src/react-native-app
 npm install
 ```
 
-#### Android: Build and run app
+#### Android: Build and run from the command-line
 
 To run on Android, the following command will compile the Android app and deploy
 it to a running Android simulator or connected device. It will also start a
@@ -45,14 +45,14 @@ a server to provide the JS Bundle required by the app.
 npm run android
 ```
 
-#### iOS: Setup dependencies
+#### iOS: Build and run from the command-line
 
-Before building for iOS you will need to setup the iOS dependency management
-using CocoaPods. This command only needs to be run the first time before
-building the app for iOS.
+You can build and run the app using the command line with the following
+command. This will compile the iOS app and deploy it to a running iOS simulator
+and start a server to provide the JS Bundle.
 
 ```bash
-cd ios && pod install && cd ..
+npm run ios
 ```
 
 #### iOS: Build and run with XCode
@@ -66,19 +66,22 @@ that directly through XCode in the next step).
 npm run start
 ```
 
-Then open XCode, open this as an existing project by opening
-`src/react-native-app/ios/react-native-app.xcworkspace` then trigger the build
-by hitting the Play button or from the menu using Product->Run.
-
-#### iOS: Build and run from the command-line
-
-You can build and run the app using the command line with the following
-command. This will compile the iOS app and deploy it to a running iOS simulator
-and start a server to provide the JS Bundle.
+The `ios/` folder is not committed to the repo it is generated from `app.json`
+by [Expo's continuous native generation](https://docs.expo.dev/workflow/continuous-native-generation/).
+Generate it, then install the CocoaPods dependencies:
 
 ```bash
-npm run ios
+npx expo prebuild --platform ios
+cd ios && pod install && cd ..
 ```
+
+The `expo run:ios` and `expo run:android` scripts under `npm run ios` /
+`npm run android` run prebuild automatically, so you only need these commands
+for this manual XCode workflow.
+
+Then open XCode, open this as an existing project by opening
+`src/react-native-app/ios/AstronomyShopApp.xcworkspace` then trigger the build
+by hitting the Play button or from the menu using Product->Run.
 
 ### Build within a container
 
@@ -96,7 +99,7 @@ Or directly from this folder using.
 docker build -f android.Dockerfile --platform=linux/amd64 --output=. .
 ```
 
-This will create a `react-native-app.apk` file in the directory where you ran
+This will create a `reactnativeapp.apk` file in the directory where you ran
 the command. If you have an Android emulator running on your machine then you
 can drag and drop this file onto the emulator's window in order to install it.
 
@@ -123,21 +126,6 @@ related to the start of the app).
 cd src/react-native-app/android
 ./gradlew --stop  // stop daemons
 rm -rf ~/.gradle/caches/
-```
-
-### iOS: pod install issues
-
-Note that the above is the quickest way to get going but you may end up with
-slightly different versions of the Pods than what has been committed to this
-repository, in order to install the precise versions first setup
-[rbenv](https://github.com/rbenv/rbenv#installation) followed by the following
-commands.
-
-```bash
-rbenv install 2.7.6 # the version of ruby we've pinned for this app
-bundle install
-cd ios
-bundle exec pod install
 ```
 
 ### iOS: build app issues

@@ -7,19 +7,10 @@ the release.
 
 ## Unreleased
 
-* [frontend] fix: handle corrupted session data in localStorage
-  ([#3313](https://github.com/open-telemetry/opentelemetry-demo/pull/3313))
-* [docker] Podman doesn't support the tag feature of docker logs,
-  for the otel-demo to support podman we need to remove the tag from docker logs.
-  [#3304](https://github.com/open-telemetry/opentelemetry-demo/pull/3304)
-* [payment] Fix `charge` span lifecycle and exception attribution: wrap charge
-  logic in `try/catch/finally` to ensure the span is always ended, record
-  exceptions on the `charge` span where they originate, and remove duplicate
-  `recordException` from the gRPC handler
-  ([#3276](https://github.com/open-telemetry/opentelemetry-demo/pull/3276))
-* [recommendation] Fix `recommendationCacheFailure` feature flag by
-  using `ListProducts` instead of `GetProduct`
-  ([#3260](https://github.com/open-telemetry/opentelemetry-demo/pull/3260))
+* [collector] Add `transform/sanitize_logs` processor to work around
+  `otelcol.signal` scope attribute conflict with `otelcol.signal.output`
+  that causes OpenSearch/Elasticsearch mapping failures
+  ([#3321](https://github.com/open-telemetry/opentelemetry-demo/pull/3321))
 * [telemetry-docs] Add a new service to provide telemetry documentation based
   on Weaver
   ([#2794](https://github.com/open-telemetry/opentelemetry-demo/pull/2794))
@@ -72,11 +63,26 @@ the release.
 * [recommendation] Fix `recommendationCacheFailure` feature flag by
   using `ListProducts` instead of `GetProduct`
   ([#3260](https://github.com/open-telemetry/opentelemetry-demo/pull/3260))
+* [payment] Fix `charge` span lifecycle and exception attribution: wrap charge
+  logic in `try/catch/finally` to ensure the span is always ended, record
+  exceptions on the `charge` span where they originate, and remove duplicate
+  `recordException` from the gRPC handler
+  ([#3276](https://github.com/open-telemetry/opentelemetry-demo/pull/3276))
 * [frontend] fix: handle undefined product images across multiple components
   ([#3291](https://github.com/open-telemetry/opentelemetry-demo/pull/3291))
 * [grafana] Bump Grafana image to 13.0.1 and provision the
   `grafana-default-email` contact point explicitly, since Grafana no longer
   auto-seeds it (removed in 12.4+)
+* [react-native-app] Update to Expo 55.0.16
+  ([#3296](https://github.com/open-telemetry/opentelemetry-demo/pull/3296))
+* [docker] Podman doesn't support the tag feature of docker logs,
+  for the otel-demo to support podman we need to remove the tag from docker logs.
+  [#3304](https://github.com/open-telemetry/opentelemetry-demo/pull/3304)
+* [podman] Add podman support to run the demo. The makefile has been updated
+  to detect what container runtime is installed.
+  [#3307](https://github.com/open-telemetry/opentelemetry-demo/pull/3307)
+* [frontend] fix: handle corrupted session data in localStorage
+  ([#3313](https://github.com/open-telemetry/opentelemetry-demo/pull/3313))
 
 ## 2.2.0
 
