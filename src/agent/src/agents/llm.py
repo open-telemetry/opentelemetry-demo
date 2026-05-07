@@ -22,6 +22,7 @@ class ChatLLM(ChatOpenAI):
             kwargs["http_async_client"] = httpx.AsyncClient(verify=llm_tls_verify)
         kwargs.setdefault("openai_api_base", os.getenv("LLM_BASE_URL"))
         kwargs.setdefault("model", model_name)
+        kwargs.setdefault("api_key", os.getenv("API_KEY"))
         super().__init__(**kwargs)
 
         object.__setattr__(self, "_use_vcr", use_vcr)

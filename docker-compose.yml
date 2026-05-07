@@ -805,7 +805,7 @@ services:
       - LLM_BASE_URL
       - LLM_MODEL
       - USE_VCR=True
-      - OPENAI_API_KEY
+      - API_KEY
       - APPLICATION_ENDPOINT=frontend:8080
       - OTEL_EXPORTER_OTLP_INSECURE=true
       - OTEL_RESOURCE_ATTRIBUTES=${OTEL_RESOURCE_ATTRIBUTES},service.criticality=low
