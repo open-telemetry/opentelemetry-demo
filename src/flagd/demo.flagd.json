@@ -146,6 +146,15 @@
         "10000x": 10000
       },
       "defaultVariant": "off"
+    },
+    "shippingSlowdown": {
+      "description": "Delays international shipping responses to simulate overseas shipping delay",
+      "state": "ENABLED",
+      "variants": {
+        "on": true,
+        "off": false
+      },
+      "defaultVariant": "off"
     }
   }
 }
