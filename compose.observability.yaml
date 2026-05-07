@@ -1,0 +1,171 @@
+# Copyright The OpenTelemetry Authors
+# SPDX-License-Identifier: Apache-2.0
+
+# Observability stack layer: adds Jaeger, Prometheus, OpenSearch, and Grafana,
+# and patches the otel-collector to export to them.
+#
+# Usage:
+#   docker compose -f compose.yaml -f compose.observability.yaml up
+#   docker compose -f compose.yaml -f compose.full.yaml -f compose.observability.yaml up
+
+services:
+  # Jaeger
+  jaeger:
+    image: ${JAEGERTRACING_IMAGE}
+    container_name: jaeger
+    command:
+      - "--config=file:/etc/jaeger/config.yml"
+    deploy:
+      resources:
+        limits:
+          memory: 1200M
+    restart: unless-stopped
+    ports:
+      - "${JAEGER_UI_PORT}"
+      - "${JAEGER_GRPC_PORT}"
+    environment:
+      - JAEGER_HOST
+      - JAEGER_GRPC_PORT
+      - PROMETHEUS_ADDR
+      - OTEL_COLLECTOR_HOST
+      - OTEL_COLLECTOR_PORT_HTTP
+      - MEMORY_MAX_TRACES=25000
+    volumes:
+      - ./src/jaeger/config.yml:/etc/jaeger/config.yml
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "5m"
+        max-file: "2"
+
+  # Grafana
+  grafana:
+    image: ${GRAFANA_IMAGE}
+    container_name: grafana
+    deploy:
+      resources:
+        limits:
+          memory: 175M
+    restart: unless-stopped
+    environment:
+      - "GF_INSTALL_PLUGINS=grafana-opensearch-datasource"
+    volumes:
+      - ./src/grafana/grafana.ini:/etc/grafana/grafana.ini
+      - ./src/grafana/provisioning/:/etc/grafana/provisioning/
+    ports:
+      - "${GRAFANA_PORT}"
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "5m"
+        max-file: "2"
+
+  # Prometheus
+  prometheus:
+    image: ${PROMETHEUS_IMAGE}
+    container_name: prometheus
+    command:
+      - --web.console.templates=/etc/prometheus/consoles
+      - --web.console.libraries=/etc/prometheus/console_libraries
+      - --storage.tsdb.retention.time=7d
+      - --config.file=/etc/prometheus/prometheus-config.yaml
+      - --storage.tsdb.path=/prometheus
+      - --web.enable-lifecycle
+      - --web.route-prefix=/
+      - --web.enable-otlp-receiver
+      - --enable-feature=exemplar-storage
+    volumes:
+      - ./src/prometheus/prometheus-config.yaml:/etc/prometheus/prometheus-config.yaml
+    deploy:
+      resources:
+        limits:
+          memory: 200M
+    restart: unless-stopped
+    ports:
+      - "${PROMETHEUS_PORT}:${PROMETHEUS_PORT}"
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "5m"
+        max-file: "2"
+
+  # OpenSearch
+  opensearch:
+    container_name: opensearch
+    build:
+      context: ./
+      dockerfile: ${OPENSEARCH_DOCKERFILE}
+      args:
+        - OPENSEARCH_IMAGE
+      cache_from:
+        - ${IMAGE_NAME}:${IMAGE_VERSION}-opensearch
+    deploy:
+      resources:
+        limits:
+          memory: 1G
+    restart: unless-stopped
+    environment:
+      - cluster.name=demo-cluster
+      - node.name=demo-node
+      - bootstrap.memory_lock=true
+      - discovery.type=single-node
+      - OPENSEARCH_JAVA_OPTS=-Xms400m -Xmx400m
+      - DISABLE_INSTALL_DEMO_CONFIG=true
+      - DISABLE_SECURITY_PLUGIN=true
+      # Workaround on OSX for https://bugs.openjdk.org/browse/JDK-8345296
+      - _JAVA_OPTIONS
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+      nofile:
+        soft: 65536
+        hard: 65536
+    ports:
+      - "9200"
+    healthcheck:
+      test: curl -s http://localhost:9200/_cluster/health | grep -E '"status":"(green|yellow)"'
+      start_period: 10s
+      interval: 5s
+      timeout: 10s
+      retries: 10
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "5m"
+        max-file: "2"
+
+  # Patch frontend-proxy to wait for observability UIs
+  frontend-proxy:
+    depends_on:
+      jaeger:
+        condition: service_started
+      grafana:
+        condition: service_started
+
+  # Patch otel-collector to add observability exporters and wait for backends.
+  # Note: otelcol-config-full.yml is included here to maintain correct config ordering
+  # (core → full → observability → extras). When running minimal+observability without
+  # compose.full.yaml, the Kafka/PostgreSQL receivers in the full config are harmless —
+  # they will simply fail to scrape since those services are not running.
+  otel-collector:
+    command:
+      - "--config=/etc/otelcol-config.yml"
+      - "--config=/etc/otelcol-config-full.yml"
+      - "--config=/etc/otelcol-config-observability.yml"
+      - "--config=/etc/otelcol-config-extras.yml"
+    volumes:
+      - ${OTEL_COLLECTOR_CONFIG}:/etc/otelcol-config.yml
+      - ${OTEL_COLLECTOR_CONFIG_FULL}:/etc/otelcol-config-full.yml
+      - ${OTEL_COLLECTOR_CONFIG_OBSERVABILITY}:/etc/otelcol-config-observability.yml
+      - ${OTEL_COLLECTOR_CONFIG_EXTRAS}:/etc/otelcol-config-extras.yml
+    environment:
+      - KAFKA_ADDR
+      - POSTGRES_HOST
+      - POSTGRES_PORT
+      - POSTGRES_MONITORING_PASSWORD
+    depends_on:
+      jaeger:
+        condition: service_started
+      opensearch:
+        condition: service_healthy

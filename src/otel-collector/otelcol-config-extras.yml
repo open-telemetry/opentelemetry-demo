@@ -1,18 +1,33 @@
 # Copyright The OpenTelemetry Authors
 # SPDX-License-Identifier: Apache-2.0
 
-# extra settings to be merged into OpenTelemetry Collector configuration
-# do not delete this file
-
-## Example configuration for sending data to your own OTLP HTTP backend
-## Note: the spanmetrics exporter must be included in the exporters array
-## if overriding the traces pipeline.
-##
-#  exporters:
-#    otlp_http/example:
-#      endpoint: <your-endpoint-url>
+# Extras/customization layer for the OTel Collector.
+# Override this file in your fork to add exporters for your own observability backend.
 #
-#  service:
-#    pipelines:
-#      traces:
-#        exporters: [spanmetrics, otlp_http/example]
+# This file is intentionally empty. It is always loaded last, giving forks
+# a stable, well-defined seam to customize without touching upstream files.
+#
+# IMPORTANT: The OTel Collector merges config files but REPLACES arrays, not appends.
+# If you want to keep the default observability stack alongside your own exporters,
+# you must explicitly repeat the upstream exporter names in your pipeline definitions.
+#
+# Upstream exporter names (repeat these to keep them active):
+#   traces:  otlp_grpc/jaeger, debug, spanmetrics
+#   metrics: otlp_http/prometheus, debug
+#   logs:    opensearch, debug
+#
+# Example:
+#
+# exporters:
+#   otlp/mybackend:
+#     endpoint: https://ingest.mybackend.com
+#
+# service:
+#   pipelines:
+#     traces:
+#       exporters: [otlp_grpc/jaeger, debug, spanmetrics, otlp/mybackend]  # repeat upstream exporters
+#     metrics:
+#       receivers: [docker_stats, httpcheck/frontend-proxy, hostmetrics, nginx, otlp, redis, spanmetrics]
+#       exporters: [otlp_http/prometheus, debug, otlp/mybackend]           # repeat upstream exporters
+#     logs:
+#       exporters: [opensearch, debug, otlp/mybackend]                     # repeat upstream exporters

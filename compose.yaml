@@ -1,6 +1,17 @@
 # Copyright The OpenTelemetry Authors
 # SPDX-License-Identifier: Apache-2.0
 
+# Core/minimal demo services. Run alone for the smallest footprint.
+# Layer additional files on top with -f:
+#   Full demo (adds Kafka, accounting, fraud-detection):
+#     docker compose -f compose.yaml -f compose.full.yaml up
+#   With observability stack (Jaeger, Prometheus, OpenSearch, Grafana):
+#     docker compose -f compose.yaml -f compose.observability.yaml up
+#   Default (full + observability):
+#     docker compose -f compose.yaml -f compose.full.yaml -f compose.observability.yaml up
+#   With extras (vendor customizations, additional components):
+#     docker compose -f compose.yaml [-f compose.full.yaml] -f compose.observability.yaml -f compose.extras.yaml up
+
 x-default-logging: &logging
   driver: "json-file"
   options:
@@ -16,34 +27,6 @@ services:
   # ******************
   # Core Demo Services
   # ******************
-  # Accounting service
-  accounting:
-    image: ${IMAGE_NAME}:${DEMO_VERSION}-accounting
-    container_name: accounting
-    build:
-      context: ./
-      dockerfile: ${ACCOUNTING_DOCKERFILE}
-      cache_from:
-        - ${IMAGE_NAME}:${IMAGE_VERSION}-accounting
-    deploy:
-      resources:
-        limits:
-          memory: 160M
-    restart: unless-stopped
-    environment:
-      - KAFKA_ADDR
-      - OTEL_EXPORTER_OTLP_ENDPOINT=http://${OTEL_COLLECTOR_HOST}:${OTEL_COLLECTOR_PORT_HTTP}
-      - OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE
-      - OTEL_RESOURCE_ATTRIBUTES=${OTEL_RESOURCE_ATTRIBUTES},service.criticality=low
-      - OTEL_SERVICE_NAME=accounting
-      - DB_CONNECTION_STRING=Host=${POSTGRES_HOST};Username=astronomy_user;Password=${POSTGRES_ASTRONOMY_PASSWORD};Database=astronomy_db
-      - OTEL_DOTNET_AUTO_TRACES_ENTITYFRAMEWORKCORE_INSTRUMENTATION_ENABLED=false
-    depends_on:
-      otel-collector:
-        condition: service_started
-      kafka:
-        condition: service_healthy
-    logging: *logging
 
   # AdService
   ad:
@@ -72,7 +55,8 @@ services:
       - OTEL_RESOURCE_ATTRIBUTES=${OTEL_RESOURCE_ATTRIBUTES},service.criticality=medium
       - OTEL_LOGS_EXPORTER=otlp
       - OTEL_SERVICE_NAME=ad
-
+      # Workaround on OSX for https://bugs.openjdk.org/browse/JDK-8345296
+      - _JAVA_OPTIONS
     depends_on:
       otel-collector:
         condition: service_started
@@ -141,7 +125,6 @@ services:
       - PAYMENT_ADDR
       - PRODUCT_CATALOG_ADDR
       - SHIPPING_ADDR
-      - KAFKA_ADDR
       - GOMEMLIMIT=16MiB
       - OTEL_EXPORTER_OTLP_ENDPOINT
       - OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE
@@ -162,8 +145,6 @@ services:
         condition: service_started
       otel-collector:
         condition: service_started
-      kafka:
-        condition: service_healthy
       flagd:
         condition: service_started
     logging: *logging
@@ -227,39 +208,6 @@ services:
     depends_on:
       otel-collector:
         condition: service_started
-    logging: *logging
-
-  # Fraud Detection service
-  fraud-detection:
-    image: ${IMAGE_NAME}:${DEMO_VERSION}-fraud-detection
-    container_name: fraud-detection
-    build:
-      context: ./
-      dockerfile: ${FRAUD_DOCKERFILE}
-      cache_from:
-        - ${IMAGE_NAME}:${IMAGE_VERSION}-fraud-detection
-      args:
-        OTEL_JAVA_AGENT_VERSION: ${OTEL_JAVA_AGENT_VERSION}
-    deploy:
-      resources:
-        limits:
-          memory: 300M
-    restart: unless-stopped
-    environment:
-      - FLAGD_HOST
-      - FLAGD_PORT
-      - KAFKA_ADDR
-      - OTEL_EXPORTER_OTLP_ENDPOINT=http://${OTEL_COLLECTOR_HOST}:${OTEL_COLLECTOR_PORT_HTTP}
-      - OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE
-      - OTEL_INSTRUMENTATION_KAFKA_EXPERIMENTAL_SPAN_ATTRIBUTES=true
-      - OTEL_INSTRUMENTATION_MESSAGING_EXPERIMENTAL_RECEIVE_TELEMETRY_ENABLED=true
-      - OTEL_RESOURCE_ATTRIBUTES=${OTEL_RESOURCE_ATTRIBUTES},service.criticality=low
-      - OTEL_SERVICE_NAME=fraud-detection
-    depends_on:
-      otel-collector:
-        condition: service_started
-      kafka:
-        condition: service_healthy
     logging: *logging
 
   # Frontend
@@ -371,13 +319,7 @@ services:
         condition: service_started
       load-generator:
         condition: service_started
-      jaeger:
-        condition: service_started
-      grafana:
-        condition: service_started
       flagd-ui:
-        condition: service_started
-      telemetry-docs:
         condition: service_started
     dns_search: ""
 
@@ -661,6 +603,7 @@ services:
   # ******************
   # Dependent Services
   # ******************
+
   # Flagd, feature flagging service
   flagd:
     image: ${FLAGD_IMAGE}
@@ -686,8 +629,7 @@ services:
       - "${FLAGD_OFREP_PORT}"
     volumes:
       - ./src/flagd:/etc/flagd
-    logging:
-      *logging
+    logging: *logging
 
   # Flagd UI for configuring the feature flag service
   flagd-ui:
@@ -720,40 +662,6 @@ services:
         condition: service_started
     volumes:
       - ./src/flagd:/app/data
-
-  # Kafka used by Checkout, Accounting, and Fraud Detection services
-  kafka:
-    image: ${IMAGE_NAME}:${DEMO_VERSION}-kafka
-    container_name: kafka
-    build:
-      context: ./
-      dockerfile: ${KAFKA_DOCKERFILE}
-      cache_from:
-        - ${IMAGE_NAME}:${IMAGE_VERSION}-kafka
-      args:
-        OTEL_JAVA_AGENT_VERSION: ${OTEL_JAVA_AGENT_VERSION}
-    deploy:
-      resources:
-        limits:
-          memory: 620M
-    restart: unless-stopped
-    environment:
-      - KAFKA_ADVERTISED_LISTENERS=PLAINTEXT://${KAFKA_HOST}:9092
-      - KAFKA_LISTENERS=PLAINTEXT://${KAFKA_HOST}:9092,CONTROLLER://${KAFKA_HOST}:9093
-      - KAFKA_CONTROLLER_QUORUM_VOTERS=1@${KAFKA_HOST}:9093
-      - OTEL_EXPORTER_OTLP_ENDPOINT=http://${OTEL_COLLECTOR_HOST}:${OTEL_COLLECTOR_PORT_HTTP}
-      - OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE
-      - OTEL_RESOURCE_ATTRIBUTES=${OTEL_RESOURCE_ATTRIBUTES},service.criticality=low
-      - OTEL_SERVICE_NAME=kafka
-      - KAFKA_HEAP_OPTS=-Xmx400m -Xms400m
-
-    healthcheck:
-      test: nc -z kafka 9092
-      start_period: 10s
-      interval: 5s
-      timeout: 10s
-      retries: 10
-    logging: *logging
 
   # LLM used by Product Review service
   llm:
@@ -811,54 +719,13 @@ services:
       - "${VALKEY_PORT}"
     logging: *logging
 
-
   # ********************
   # Telemetry Components
   # ********************
-  # Jaeger
-  jaeger:
-    image: ${JAEGERTRACING_IMAGE}
-    container_name: jaeger
-    command:
-      - "--config=file:/etc/jaeger/config.yml"
-    deploy:
-      resources:
-        limits:
-          memory: 1200M
-    restart: unless-stopped
-    ports:
-      - "${JAEGER_UI_PORT}"
-      - "${JAEGER_GRPC_PORT}"
-    environment:
-      - JAEGER_HOST
-      - JAEGER_GRPC_PORT
-      - PROMETHEUS_ADDR
-      - OTEL_COLLECTOR_HOST
-      - OTEL_COLLECTOR_PORT_HTTP
-      - MEMORY_MAX_TRACES=25000
-    volumes:
-      - ./src/jaeger/config.yml:/etc/jaeger/config.yml
-    logging: *logging
-
-  # Grafana
-  grafana:
-    image: ${GRAFANA_IMAGE}
-    container_name: grafana
-    deploy:
-      resources:
-        limits:
-          memory: 175M
-    restart: unless-stopped
-    environment:
-      - "GF_INSTALL_PLUGINS=grafana-opensearch-datasource"
-    volumes:
-      - ./src/grafana/grafana.ini:/etc/grafana/grafana.ini
-      - ./src/grafana/provisioning/:/etc/grafana/provisioning/
-    ports:
-      - "${GRAFANA_PORT}"
-    logging: *logging
 
   # OpenTelemetry Collector
+  # Base configuration: receives and processes telemetry, exports to debug only.
+  # Add compose.observability.yaml to enable Jaeger, Prometheus, OpenSearch, and Grafana.
   otel-collector:
     image: ${COLLECTOR_CONTRIB_IMAGE}
     container_name: otel-collector
@@ -867,7 +734,9 @@ services:
         limits:
           memory: 200M
     restart: unless-stopped
-    command: [ "--config=/etc/otelcol-config.yml", "--config=/etc/otelcol-config-extras.yml" ]
+    command:
+      - "--config=/etc/otelcol-config.yml"
+      - "--config=/etc/otelcol-config-extras.yml"
     user: 0:0
     volumes:
       - ${HOST_FILESYSTEM}:/hostfs:ro
@@ -877,113 +746,13 @@ services:
     ports:
       - "${OTEL_COLLECTOR_PORT_GRPC}"
       - "${OTEL_COLLECTOR_PORT_HTTP}"
-    depends_on:
-      jaeger:
-        condition: service_started
-      opensearch:
-        condition: service_healthy
     logging: *logging
     environment:
       - FRONTEND_PROXY_ADDR
       - HOST_FILESYSTEM
       - IMAGE_PROVIDER_HOST
       - IMAGE_PROVIDER_PORT
-      - KAFKA_ADDR
       - OTEL_COLLECTOR_HOST
       - OTEL_COLLECTOR_PORT_GRPC
       - OTEL_COLLECTOR_PORT_HTTP
-      - POSTGRES_HOST
-      - POSTGRES_PORT
-      - POSTGRES_PASSWORD
-      - POSTGRES_MONITORING_PASSWORD
       - GOMEMLIMIT=160MiB
-
-  # Prometheus
-  prometheus:
-    image: ${PROMETHEUS_IMAGE}
-    container_name: prometheus
-    command:
-      - --web.console.templates=/etc/prometheus/consoles
-      - --web.console.libraries=/etc/prometheus/console_libraries
-      - --storage.tsdb.retention.time=7d
-      - --config.file=/etc/prometheus/prometheus-config.yaml
-      - --storage.tsdb.path=/prometheus
-      - --web.enable-lifecycle
-      - --web.route-prefix=/
-      - --web.enable-otlp-receiver
-      - --enable-feature=exemplar-storage
-    volumes:
-      - ./src/prometheus/prometheus-config.yaml:/etc/prometheus/prometheus-config.yaml
-    deploy:
-      resources:
-        limits:
-          memory: 200M
-    restart: unless-stopped
-    ports:
-      - "${PROMETHEUS_PORT}:${PROMETHEUS_PORT}"
-    logging: *logging
-
-  # Telemetry Documentation
-  telemetry-docs:
-    image: ${IMAGE_NAME}:${DEMO_VERSION}-telemetry-docs
-    container_name: telemetry-docs
-    build:
-      context: ./
-      dockerfile: ${TELEMETRY_DOCS_DOCKERFILE}
-      cache_from:
-        - ${IMAGE_NAME}:${IMAGE_VERSION}-telemetry-docs
-    deploy:
-      resources:
-        limits:
-          memory: 100M
-    restart: unless-stopped
-    ports:
-      - "${TELEMETRY_DOCS_PORT}"
-    environment:
-      - TELEMETRY_DOCS_PORT
-      - OTEL_COLLECTOR_HOST
-      - OTEL_COLLECTOR_PORT_GRPC
-      - OTEL_SERVICE_NAME=telemetry-docs
-    logging: *logging
-
-  # OpenSearch
-  opensearch:
-    image: ${IMAGE_NAME}:${DEMO_VERSION}-opensearch
-    container_name: opensearch
-    build:
-      context: ./
-      dockerfile: ${OPENSEARCH_DOCKERFILE}
-      args:
-        - OPENSEARCH_IMAGE
-      cache_from:
-        - ${IMAGE_NAME}:${IMAGE_VERSION}-opensearch
-    deploy:
-      resources:
-        limits:
-          memory: 1G
-    restart: unless-stopped
-    environment:
-      - cluster.name=demo-cluster
-      - node.name=demo-node
-      - bootstrap.memory_lock=true
-      - discovery.type=single-node
-      - OPENSEARCH_JAVA_OPTS=-Xms400m -Xmx400m
-      - DISABLE_INSTALL_DEMO_CONFIG=true
-      - DISABLE_SECURITY_PLUGIN=true
-
-    ulimits:
-      memlock:
-        soft: -1
-        hard: -1
-      nofile:
-        soft: 65536
-        hard: 65536
-    ports:
-      - "9200"
-    healthcheck:
-      test: curl -s http://localhost:9200/_cluster/health | grep -E '"status":"(green|yellow)"'
-      start_period: 10s
-      interval: 5s
-      timeout: 10s
-      retries: 10
-    logging: *logging

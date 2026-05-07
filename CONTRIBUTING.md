@@ -202,7 +202,7 @@ podman logs <container_id>   # For Podman
 - Restart containers if needed:
 
 ```sh
-make restart service=<service_name>
+make restart service=<service-name>
 ```
 
 ### Review the Documentation
