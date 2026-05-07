@@ -517,8 +517,24 @@ components:
         value: "false"
       - name: LOCUST_AUTOSTART
         value: "true"
+      # Disabled: browser traffic mode spawns headless Chromium per
+      # virtual user (~150-300MB each). With LOCUST_USERS=10 the pod
+      # peaks 1.5-3GB and OOMKills against the chart's 256Mi default
+      # limit, leaving the load-generator in CrashLoopBackOff
+      # indefinitely on sureops's CCX23 (16GB) UAT cluster.
+      #
+      # Sureops's diagnosis pipeline ingests server-side OTel signals
+      # (traces from instrumented services, metrics, logs) — no RUM/
+      # browser-side telemetry. Browser-traffic mode produces no
+      # additional signal we use, only memory pressure. Pure HTTP
+      # load is sufficient to drive the flagd-driven failure scenarios
+      # that the chaos demo relies on.
+      #
+      # Bumping the limit instead would consume ~1GB per customer
+      # namespace at scale; flipping the flag is the right architectural
+      # call for sureops's deployment topology.
       - name: LOCUST_BROWSER_TRAFFIC_ENABLED
-        value: "true"
+        value: "false"
       - name: PROTOCOL_BUFFERS_PYTHON_IMPLEMENTATION
         value: python
       - name: FLAGD_HOST
