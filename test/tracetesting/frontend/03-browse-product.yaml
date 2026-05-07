@@ -28,4 +28,4 @@ spec:
     selector: span[tracetest.span.type="rpc" name="oteldemo.ProductCatalogService/GetProduct" rpc.system="grpc" rpc.method="GetProduct" rpc.service="oteldemo.ProductCatalogService"]
     assertions:
     - attr:rpc.grpc.status_code  =  0
-    - attr:app.product.id  =  "0PUK6V6EV0"
+    - attr:demo.product.id  =  "0PUK6V6EV0"
