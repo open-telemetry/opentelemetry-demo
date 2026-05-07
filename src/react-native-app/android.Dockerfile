@@ -4,14 +4,17 @@
 # SPDX-License-Identifier: Apache-2.0
 
 # https://github.com/react-native-community/docker-android
-# Choosing a tag where the Android build tools match what we have in android/build.gradle to avoid the
-# container having to download them
-FROM reactnativecommunity/react-native-android:v13.2.1 AS builder
+# Pick a tag whose Android build tools match what Expo's version catalog
+# generates in android/build.gradle so the container doesn't re-download them.
+FROM reactnativecommunity/react-native-android:v20.1 AS builder
 
 WORKDIR /reactnativesrc/
 COPY . .
 
 RUN npm install
+# Regenerate the android/ project from app.json using Expo's continuous native
+# generation. `--no-install` skips a redundant `npm install` since we just ran it.
+RUN npx expo prebuild --platform android --no-install
 WORKDIR android/
 RUN chmod +x gradlew
 RUN ./gradlew assembleRelease

@@ -31,6 +31,23 @@ import { Platform } from "react-native";
 import { SessionIdProcessor } from "@/utils/SessionIdProcessor";
 import getFrontendProxyURL from "@/utils/Settings";
 
+// React Native 0.83's Performance API only supports the "mark" and "measure"
+// entry types; any other call to `performance.getEntriesByType()` emits a
+// "Deprecated API for given entry type" warning. `@opentelemetry/instrumentation-fetch`
+// falls back to `performance.getEntriesByType("resource")` for every request,
+// which makes the warning fire on every fetch even though the return value is
+// unused on mobile. Wrap the method so unsupported types return [] silently
+// while "mark"/"measure" continue to work.
+const originalGetEntriesByType = performance.getEntriesByType?.bind(performance);
+if (originalGetEntriesByType) {
+  performance.getEntriesByType = (entryType: string) => {
+    if (entryType !== "mark" && entryType !== "measure") {
+      return [];
+    }
+    return originalGetEntriesByType(entryType);
+  };
+}
+
 export const setupTracerProvider = (proxyURL: string) => {
   // TODO Should add a resource detector for React Native that provides this automatically
   const resource = resourceFromAttributes({
