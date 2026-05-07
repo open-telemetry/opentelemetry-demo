@@ -12,6 +12,7 @@ COPY ./src/checkout/go.sum go.sum
 RUN go mod download
 
 COPY ./src/checkout/genproto/oteldemo/ genproto/oteldemo/
+COPY ./src/checkout/flags/ flags/
 COPY ./src/checkout/kafka/ kafka/
 COPY ./src/checkout/money/ money/
 COPY ./src/checkout/main.go main.go
