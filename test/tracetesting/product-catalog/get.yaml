@@ -21,7 +21,7 @@ spec:
     selector: span[tracetest.span.type="rpc" name="oteldemo.ProductCatalogService/GetProduct" rpc.system="grpc" rpc.method="GetProduct" rpc.service="oteldemo.ProductCatalogService"]
     assertions:
     - attr:rpc.grpc.status_code  =  0
-    - attr:app.product.id  =  "OLJCESPC7Z"
+    - attr:demo.product.id  =  "OLJCESPC7Z"
   - name: It returned a product with valid attributes
     selector: span[tracetest.span.type="general" name="Tracetest trigger"]
     assertions:

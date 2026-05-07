@@ -20,5 +20,5 @@ spec:
     - name: It called GetAverageProductReviewScore correctly and got the average score
       selector: span[name="get_average_product_review_score"]
       assertions:
-        - attr:app.product.id  =  "66VCHSJNUP"
+        - attr:demo.product.id  =  "66VCHSJNUP"
         - attr:app.product_reviews.average_score = 4.6

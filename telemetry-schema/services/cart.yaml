@@ -9,6 +9,6 @@ attribute_groups:
     stability: stable
     attributes:
       - ref: app.user.id
-      - ref: app.product.id
+      - ref: demo.product.id
       - ref: app.product.quantity
       - ref: app.cart.items.count

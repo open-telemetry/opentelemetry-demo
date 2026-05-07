@@ -8,7 +8,7 @@ attribute_groups:
     brief: Product Reviews service attributes
     stability: stable
     attributes:
-      - ref: app.product.id
+      - ref: demo.product.id
       - ref: app.product_reviews.count
       - ref: app.product_reviews.average_score
       - ref: app.product.question
