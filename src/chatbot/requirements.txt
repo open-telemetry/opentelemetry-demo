@@ -1,5 +1,5 @@
 requests==2.32.5
-python-dotenv==0.9.9
+python-dotenv==1.2.2
 httpx==0.28.1
 fastapi==0.120.4
 gradio==6.0.1

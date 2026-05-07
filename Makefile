@@ -112,7 +112,7 @@ install-tools: $(MISSPELL) $(ADDLICENSE)
 
 .PHONY: build
 build:
-	$(DOCKER_COMPOSE_CMD) $(DOCKER_COMPOSE_ENV)
+	$(DOCKER_COMPOSE_CMD) $(DOCKER_COMPOSE_ENV) build
 
 .PHONY: build-and-push
 build-and-push:

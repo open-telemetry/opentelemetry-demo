@@ -1,6 +1,6 @@
 requests==2.32.5
 traceloop-sdk==0.47.5
-python-dotenv==0.9.9
+python-dotenv==1.2.2
 httpx==0.28.1
 langchain==1.0.3
 mcp==1.22.0
