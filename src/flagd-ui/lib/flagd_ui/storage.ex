@@ -57,6 +57,20 @@ defmodule FlagdUi.Storage do
   defp update_flag(flags, flag_name, value) do
     flags
     |> Enum.map(fn
+      {flag, data} when flag == flag_name ->
+        updated_data =
+          case get_in(data, ["targeting", "if"]) do
+            [_cond, _on, _off] ->
+              put_in(
+                data,
+                ["targeting", "if", Access.at(1)],
+                value
+              )
+            _ ->
+              Map.replace(data, "defaultVariant", value)
+          end
+
+        {flag, updated_data}
       {flag, data} when flag == flag_name -> {flag, Map.replace(data, "defaultVariant", value)}
       {flag, data} -> {flag, data}
     end)
