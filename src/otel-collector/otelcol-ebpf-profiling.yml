@@ -4,18 +4,19 @@
 receivers:
   profiling:
     samples_per_second: 19
+    include_env_vars: "OTEL_SERVICE_NAME"
 
 processors:
-  resourcedetection:
-    detectors: [docker]
-  resource:
-    attributes:
-      - key: service.name
-        from_attribute: container.name
-        action: upsert
+  transform/set_service_name:
+    error_mode: ignore
+    profile_statements:
+      - context: resource
+        statements:
+          - set(attributes["service.name"], attributes["process.environment_variable.OTEL_SERVICE_NAME"]) where attributes["process.environment_variable.OTEL_SERVICE_NAME"] != nil
+          - delete_key(attributes, "process.environment_variable.OTEL_SERVICE_NAME")
 
 exporters:
-  otlp/collector:
+  otlp_grpc/collector:
     endpoint: ${env:OTEL_COLLECTOR_HOST}:${env:OTEL_COLLECTOR_PORT_GRPC}
     tls:
       insecure: true
@@ -24,5 +25,5 @@ service:
   pipelines:
     profiles:
       receivers: [profiling]
-      processors: [resourcedetection]
-      exporters: [otlp/collector]
+      processors: [transform/set_service_name]
+      exporters: [otlp_grpc/collector]

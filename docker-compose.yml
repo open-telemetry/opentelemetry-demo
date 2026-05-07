@@ -360,6 +360,8 @@ services:
       - ENVOY_PORT
       - ENVOY_ADDR
       - ENVOY_ADMIN_PORT
+      - FIREPIT_HOST
+      - FIREPIT_PORT
       - FLAGD_HOST
       - FLAGD_PORT
       - FLAGD_UI_HOST

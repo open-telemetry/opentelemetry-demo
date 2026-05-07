@@ -1,9 +1,14 @@
 # Copyright The OpenTelemetry Authors
 # SPDX-License-Identifier: Apache-2.0
 
+networks:
+  default:
+    name: opentelemetry-demo
+    driver: bridge
+
 services:
   otel-ebpf-profiler:
-    image: otel/opentelemetry-collector-ebpf-profiler:0.147.0
+    image: otel/opentelemetry-collector-ebpf-profiler:0.151.0
     container_name: otel-ebpf-profiler
     command:
       - --config=/etc/ebpf-profiler-config.yaml
@@ -24,8 +29,8 @@ services:
       - otel-collector
   firepit:
     image: ghcr.io/florianl/firepit:6ea852a
-    build:
-      context: https://github.com/florianl/firepit.git
     container_name: firepit
     ports:
-      - "${FIREPIT_PORT:-4040}:8080"
+      - "${FIREPIT_PORT}"
+    environment:
+      - BASE_PATH=/profiles

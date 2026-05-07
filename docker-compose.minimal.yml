@@ -284,6 +284,8 @@ services:
       - ENVOY_PORT
       - ENVOY_ADMIN_PORT
       - ENVOY_ADDR
+      - FIREPIT_HOST
+      - FIREPIT_PORT
       - FLAGD_HOST
       - FLAGD_PORT
       - FLAGD_UI_HOST
