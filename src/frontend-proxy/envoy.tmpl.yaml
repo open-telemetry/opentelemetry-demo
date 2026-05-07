@@ -1,7 +1,6 @@
 # Copyright The OpenTelemetry Authors
 # SPDX-License-Identifier: Apache-2.0
 
-
 static_resources:
   listeners:
     - address:
@@ -42,7 +41,11 @@ static_resources:
                         - match: { prefix: "/loadgen/" }
                           route: { cluster: loadgen, prefix_rewrite: "/" }
                         - match: { prefix: "/otlp-http/" }
-                          route: { cluster: opentelemetry_collector_http, prefix_rewrite: "/" }
+                          route:
+                            {
+                              cluster: opentelemetry_collector_http,
+                              prefix_rewrite: "/",
+                            }
                         - match: { path: "/jaeger" }
                           redirect: { path_redirect: "/jaeger/" }
                         - match: { prefix: "/jaeger/" }
@@ -54,18 +57,34 @@ static_resources:
                         - match: { path: "/telemetry" }
                           redirect: { path_redirect: "/telemetry/" }
                         - match: { prefix: "/telemetry/" }
-                          route: { cluster: telemetry-docs, prefix_rewrite: "/" }
+                          route:
+                            { cluster: telemetry-docs, prefix_rewrite: "/" }
                         - match: { prefix: "/images/" }
-                          route: { cluster: image-provider, prefix_rewrite: "/" }
+                          route:
+                            { cluster: image-provider, prefix_rewrite: "/" }
                         - match: { prefix: "/flagservice/" }
-                          route: { cluster: flagservice, prefix_rewrite: "/", timeout: 0s }
+                          route:
+                            {
+                              cluster: flagservice,
+                              prefix_rewrite: "/",
+                              timeout: 0s,
+                            }
                         - match: { prefix: "/feature" }
                           route:
                             cluster: flagd-ui
                             prefix_rewrite: "/"
                             upgrade_configs:
                               - upgrade_type: websocket
-                        - match: { prefix: "/" }  # Default/catch-all route - keep last since prefix:"/" matches everything
+                        - match: { path: "/chatbot" }
+                          redirect: { path_redirect: "/chatbot/" }
+                        - match: { prefix: "/chatbot/" }
+                          route:
+                            cluster: chatbot
+                            prefix_rewrite: "/"
+                            timeout: 0s
+                            upgrade_configs:
+                              - upgrade_type: websocket
+                        - match: { prefix: "/" }
                           route: { cluster: frontend }
                 http_filters:
                   - name: envoy.filters.http.fault
@@ -258,6 +277,18 @@ static_resources:
                     socket_address:
                       address: ${TELEMETRY_DOCS_HOST}
                       port_value: ${TELEMETRY_DOCS_PORT}
+    - name: chatbot
+      type: STRICT_DNS
+      lb_policy: ROUND_ROBIN
+      load_assignment:
+        cluster_name: chatbot
+        endpoints:
+          - lb_endpoints:
+              - endpoint:
+                  address:
+                    socket_address:
+                      address: ${CHATBOT_HOST}
+                      port_value: ${CHATBOT_PORT}
 admin:
   address:
     socket_address:

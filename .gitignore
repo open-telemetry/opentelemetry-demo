@@ -62,3 +62,4 @@ test/tracetesting/tracetesting-vars.yaml
 
 !src/currency/build
 
+src/agent/fixtures/*

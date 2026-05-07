@@ -366,6 +366,8 @@ services:
       - FLAGD_UI_PORT
       - TELEMETRY_DOCS_HOST
       - TELEMETRY_DOCS_PORT
+      - CHATBOT_HOST
+      - CHATBOT_PORT
     depends_on:
       frontend:
         condition: service_started
@@ -378,6 +380,8 @@ services:
       flagd-ui:
         condition: service_started
       telemetry-docs:
+        condition: service_started
+      chatbot:
         condition: service_started
     dns_search: ""
 
@@ -605,7 +609,7 @@ services:
     deploy:
       resources:
         limits:
-          memory: 500M               # This is high to enable supporting the recommendationCache feature flag use case
+          memory: 500M  # This is high to enable supporting the recommendationCache feature flag use case
     restart: unless-stopped
     ports:
       - "${RECOMMENDATION_PORT}"
@@ -676,18 +680,13 @@ services:
       - GOMEMLIMIT=60MiB
       - OTEL_RESOURCE_ATTRIBUTES=${OTEL_RESOURCE_ATTRIBUTES},service.criticality=low
       - OTEL_SERVICE_NAME=flagd
-    command: [
-      "start",
-      "--uri",
-      "file:./etc/flagd/demo.flagd.json"
-    ]
+    command: ["start", "--uri", "file:./etc/flagd/demo.flagd.json"]
     ports:
       - "${FLAGD_PORT}"
       - "${FLAGD_OFREP_PORT}"
     volumes:
       - ./src/flagd:/etc/flagd
-    logging:
-      *logging
+    logging: *logging
 
   # Flagd UI for configuring the feature flag service
   flagd-ui:
@@ -779,6 +778,104 @@ services:
         condition: service_started
     logging: *logging
 
+  # Agent
+  agent:
+    image: ${IMAGE_NAME}:${DEMO_VERSION}-agent
+    container_name: agent
+    build:
+      context: ./
+      dockerfile: ${AGENT_DOCKERFILE}
+      cache_from:
+        - ${IMAGE_NAME}:${IMAGE_VERSION}-agent
+    deploy:
+      resources:
+        limits:
+          memory: 500M
+    restart: unless-stopped
+    ports:
+      - "${AGENT_PORT}"
+    environment:
+      - OTEL_EXPORTER_OTLP_ENDPOINT=${OTEL_COLLECTOR_HOST}:${OTEL_COLLECTOR_PORT_GRPC}
+      - GRAPH_RECURSION_LIMIT
+      - MCP_ENDPOINT=mcp
+      - MCP_PORT=8011
+      - MCP_ENABLED=True
+      - AGENT_ENDPOINT
+      - AGENT_PORT
+      - LLM_BASE_URL
+      - LLM_MODEL
+      - USE_VCR=True
+      - API_KEY
+      - APPLICATION_ENDPOINT=frontend:8080
+      - OTEL_EXPORTER_OTLP_INSECURE=true
+      - OTEL_RESOURCE_ATTRIBUTES=${OTEL_RESOURCE_ATTRIBUTES},service.criticality=low
+      - OTEL_SERVICE_NAME=agent
+    depends_on:
+      jaeger:
+        condition: service_started
+      otel-collector:
+        condition: service_started
+      product-catalog:
+        condition: service_started
+    logging: *logging
+
+  # MCP
+  mcp:
+    image: ${IMAGE_NAME}:${DEMO_VERSION}-mcp
+    container_name: mcp
+    build:
+      context: ./
+      dockerfile: ${MCP_DOCKERFILE}
+      cache_from:
+        - ${IMAGE_NAME}:${IMAGE_VERSION}-mcp
+    deploy:
+      resources:
+        limits:
+          memory: 500M
+    restart: unless-stopped
+    ports:
+      - "${MCP_PORT}"
+    environment:
+      - OTEL_EXPORTER_OTLP_ENDPOINT=${OTEL_COLLECTOR_HOST}:${OTEL_COLLECTOR_PORT_GRPC}
+      - MCP_ENDPOINT
+      - MCP_PORT
+      - OTEL_EXPORTER_OTLP_INSECURE=true
+      - APPLICATION_ENDPOINT=frontend:8080
+      - OTEL_RESOURCE_ATTRIBUTES=${OTEL_RESOURCE_ATTRIBUTES},service.criticality=low
+      - OTEL_SERVICE_NAME=mcp
+    depends_on:
+      agent:
+        condition: service_started
+    logging: *logging
+
+  # ChatBot
+  chatbot:
+    image: ${IMAGE_NAME}:${DEMO_VERSION}-chatbot
+    container_name: chatbot
+    build:
+      context: ./
+      dockerfile: ${CHATBOT_DOCKERFILE}
+      cache_from:
+        - ${IMAGE_NAME}:${IMAGE_VERSION}-chatbot
+    deploy:
+      resources:
+        limits:
+          memory: 500M
+    restart: unless-stopped
+    ports:
+      - "${CHATBOT_PORT}"
+    environment:
+      - AGENT_PORT
+      - AGENT_ENDPOINT
+      - CHATBOT_PORT
+      - CHATBOT_ROOT_PATH
+      - OTEL_RESOURCE_ATTRIBUTES=${OTEL_RESOURCE_ATTRIBUTES},service.criticality=low
+      - OTEL_SERVICE_NAME=chatbot
+    depends_on:
+      agent:
+        condition: service_started
+    logging: *logging
+
   # PostgreSQL database for the astronomy demo
   astronomy-db:
     image: ${POSTGRES_IMAGE}
@@ -810,7 +907,6 @@ services:
     ports:
       - "${VALKEY_PORT}"
     logging: *logging
-
 
   # ********************
   # Telemetry Components
@@ -867,7 +963,11 @@ services:
         limits:
           memory: 200M
     restart: unless-stopped
-    command: [ "--config=/etc/otelcol-config.yml", "--config=/etc/otelcol-config-extras.yml" ]
+    command:
+      [
+        "--config=/etc/otelcol-config.yml",
+        "--config=/etc/otelcol-config-extras.yml",
+      ]
     user: 0:0
     volumes:
       - ${HOST_FILESYSTEM}:/hostfs:ro
