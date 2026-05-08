@@ -7,6 +7,10 @@ the release.
 
 ## Unreleased
 
+* [telemetry] Rename the product identifier telemetry attribute from
+  `app.product.id` to `demo.product.id` across cart, product-catalog,
+  product-reviews, telemetry schema, and trace tests.
+  ([#3355](https://github.com/open-telemetry/opentelemetry-demo/pull/3355))
 * [collector] Add `transform/sanitize_logs` processor to work around
   `otelcol.signal` scope attribute conflict with `otelcol.signal.output`
   that causes OpenSearch/Elasticsearch mapping failures
