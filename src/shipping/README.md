@@ -21,3 +21,16 @@ docker compose build shipping
 ```sh
 cargo test
 ```
+
+## Feature Flags
+
+* `shippingSlowdown`: when enabled, non-US shipping requests are delayed by 10
+  seconds to simulate overseas shipping latency. US addresses are never affected.
+  The flag is evaluated via the flagd OFREP REST API.
+
+## Environment Variables
+
+| Variable | Default | Description |
+|----------|---------|-------------|
+| `FLAGD_HOST` | `flagd` | Hostname of the flagd service |
+| `FLAGD_OFREP_PORT` | `8016` | Port for the flagd OFREP API |
