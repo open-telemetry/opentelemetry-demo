@@ -4,8 +4,23 @@
 use awc::Client;
 use opentelemetry_instrumentation_actix_web::ClientExt;
 use serde::Deserialize;
+use std::cell::RefCell;
 use std::env;
 use tracing::{instrument, warn, Span};
+
+thread_local! {
+    static HTTP_CLIENT: RefCell<Option<Client>> = const { RefCell::new(None) };
+}
+
+fn get_client() -> Client {
+    HTTP_CLIENT.with(|cell| {
+        let mut opt = cell.borrow_mut();
+        if opt.is_none() {
+            *opt = Some(Client::default());
+        }
+        opt.as_ref().unwrap().clone()
+    })
+}
 
 #[derive(Debug, Deserialize)]
 struct OFREPResponse {
@@ -40,7 +55,7 @@ impl FlagdClient {
     pub async fn is_enabled(&self, flag_name: &str) -> bool {
         let url = format!("{}/{}", self.base_url, flag_name);
 
-        let result = Client::default()
+        let result = get_client()
             .post(&url)
             .insert_header(("Content-Type", "application/json"))
             .trace_request()
@@ -73,4 +88,3 @@ impl FlagdClient {
         }
     }
 }
-
