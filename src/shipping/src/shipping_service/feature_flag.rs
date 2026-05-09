@@ -5,7 +5,10 @@ use awc::Client;
 use opentelemetry_instrumentation_actix_web::ClientExt;
 use serde::Deserialize;
 use std::env;
+use std::sync::LazyLock;
 use tracing::{instrument, warn, Span};
+
+static HTTP_CLIENT: LazyLock<Client> = LazyLock::new(Client::default);
 
 #[derive(Debug, Deserialize)]
 struct OFREPResponse {
@@ -31,8 +34,7 @@ pub async fn is_feature_flag_enabled(flag_name: &str) -> bool {
         host, port, flag_name
     );
 
-    let client = Client::default();
-    let result = client
+    let result = HTTP_CLIENT
         .post(&url)
         .insert_header(("Content-Type", "application/json"))
         .trace_request()
