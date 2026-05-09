@@ -5,7 +5,6 @@ use awc::Client;
 use opentelemetry_instrumentation_actix_web::ClientExt;
 use serde::Deserialize;
 use std::env;
-use std::sync::LazyLock;
 use tracing::{instrument, warn, Span};
 
 #[derive(Debug, Deserialize)]
@@ -14,12 +13,13 @@ struct OFREPResponse {
     variant: Option<String>,
 }
 
-struct FlagdClient {
+#[derive(Clone)]
+pub struct FlagdClient {
     base_url: String,
 }
 
 impl FlagdClient {
-    fn from_env() -> Self {
+    pub fn from_env() -> Self {
         let host = env::var("FLAGD_HOST").unwrap_or_else(|_| "flagd".to_string());
         let port = env::var("FLAGD_OFREP_PORT")
             .ok()
@@ -37,7 +37,7 @@ impl FlagdClient {
         feature_flag.provider_name = "flagd",
         feature_flag.variant = tracing::field::Empty,
     ))]
-    async fn is_enabled(&self, flag_name: &str) -> bool {
+    pub async fn is_enabled(&self, flag_name: &str) -> bool {
         let url = format!("{}/{}", self.base_url, flag_name);
 
         let result = Client::default()
@@ -74,8 +74,3 @@ impl FlagdClient {
     }
 }
 
-static FLAGD: LazyLock<FlagdClient> = LazyLock::new(FlagdClient::from_env);
-
-pub async fn is_feature_flag_enabled(flag_name: &str) -> bool {
-    FLAGD.is_enabled(flag_name).await
-}

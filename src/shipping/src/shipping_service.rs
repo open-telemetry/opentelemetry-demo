@@ -6,6 +6,7 @@ use std::{future::Future, pin::Pin, sync::Arc};
 use tracing::info;
 
 mod feature_flag;
+pub use feature_flag::FlagdClient;
 
 mod quote;
 use quote::create_quote_from_count;
@@ -19,10 +20,21 @@ pub use shipping_types::*;
 pub type FlagChecker =
     Arc<dyn Fn(String) -> Pin<Box<dyn Future<Output = bool>>> + Send + Sync>;
 
-pub fn default_flag_checker() -> FlagChecker {
-    Arc::new(|flag: String| {
-        Box::pin(async move { feature_flag::is_feature_flag_enabled(&flag).await })
-    })
+pub struct DefaultFlagChecker {
+    client: FlagdClient,
+}
+
+impl DefaultFlagChecker {
+    pub fn new() -> Self {
+        Self { client: FlagdClient::from_env() }
+    }
+
+    pub fn build(self) -> FlagChecker {
+        Arc::new(move |flag: String| {
+            let client = self.client.clone();
+            Box::pin(async move { client.is_enabled(&flag).await })
+        })
+    }
 }
 
 const NANOS_MULTIPLE: u32 = 10000000u32;
