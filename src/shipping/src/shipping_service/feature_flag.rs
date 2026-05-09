@@ -50,7 +50,7 @@ pub async fn is_feature_flag_enabled(flag_name: &str) -> bool {
         .await;
 
     match result {
-        Ok(mut resp) => match resp.json::<OFREPResponse>().await {
+        Ok(mut resp) if resp.status().is_success() => match resp.json::<OFREPResponse>().await {
             Ok(data) => {
                 if let Some(variant) = &data.variant {
                     span.set_attribute(KeyValue::new(
@@ -68,6 +68,12 @@ pub async fn is_feature_flag_enabled(flag_name: &str) -> bool {
                 false
             }
         },
+        Ok(resp) => {
+            warn!(
+                "Feature flag {} returned HTTP {}", flag_name, resp.status()
+            );
+            false
+        }
         Err(e) => {
             warn!("Failed to check feature flag {}: {}", flag_name, e);
             false
