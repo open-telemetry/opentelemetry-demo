@@ -66,7 +66,12 @@ pub async fn ship_order(
     let is_outside_us = req
         .address
         .as_ref()
-        .map(|addr| addr.country.to_uppercase() != "US")
+        .map(|addr| {
+            !matches!(
+                addr.country.to_uppercase().trim(),
+                "US" | "USA" | "UNITED STATES" | "UNITED STATES OF AMERICA"
+            )
+        })
         .unwrap_or(false);
 
     if is_outside_us && flag_checker("shippingSlowdown".to_string()).await {
@@ -177,11 +182,30 @@ mod tests {
 
     #[actix_web::test]
     async fn test_ship_order_us_flag_on() {
-        // US addresses must not be delayed even when the flag is on
         let slowdown = std::time::Duration::from_millis(50);
-        let start = std::time::Instant::now();
         let checker = MockFlagChecker::new().with_flag("shippingSlowdown", true).build();
+        let start = std::time::Instant::now();
         let order = call_ship_order(Some(make_address("US")), checker, slowdown).await;
+        assert!(start.elapsed() < slowdown);
+        assert!(!order.tracking_id.is_empty());
+    }
+
+    #[actix_web::test]
+    async fn test_ship_order_united_states_flag_on() {
+        let slowdown = std::time::Duration::from_millis(50);
+        let checker = MockFlagChecker::new().with_flag("shippingSlowdown", true).build();
+        let start = std::time::Instant::now();
+        let order = call_ship_order(Some(make_address("United States")), checker, slowdown).await;
+        assert!(start.elapsed() < slowdown);
+        assert!(!order.tracking_id.is_empty());
+    }
+
+    #[actix_web::test]
+    async fn test_ship_order_usa_flag_on() {
+        let slowdown = std::time::Duration::from_millis(50);
+        let checker = MockFlagChecker::new().with_flag("shippingSlowdown", true).build();
+        let start = std::time::Instant::now();
+        let order = call_ship_order(Some(make_address("USA")), checker, slowdown).await;
         assert!(start.elapsed() < slowdown);
         assert!(!order.tracking_id.is_empty());
     }
