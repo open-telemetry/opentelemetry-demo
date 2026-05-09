@@ -2,15 +2,10 @@
 // SPDX-License-Identifier: Apache-2.0
 
 use awc::Client;
-use opentelemetry::{
-    global,
-    trace::{Span, SpanKind, Tracer},
-    KeyValue,
-};
 use opentelemetry_instrumentation_actix_web::ClientExt;
 use serde::Deserialize;
 use std::env;
-use tracing::warn;
+use tracing::{instrument, warn, Span};
 
 #[derive(Debug, Deserialize)]
 struct OFREPResponse {
@@ -18,18 +13,13 @@ struct OFREPResponse {
     variant: Option<String>,
 }
 
-/// Checks whether a boolean feature flag is enabled via the flagd OFREP REST API.
-/// Returns `false` on any error so the service degrades gracefully.
+#[instrument(fields(
+    otel.kind = "client",
+    feature_flag.key = flag_name,
+    feature_flag.provider_name = "flagd",
+    feature_flag.variant = tracing::field::Empty,
+))]
 pub async fn is_feature_flag_enabled(flag_name: &str) -> bool {
-    let tracer = global::tracer("otel_demo.shipping.feature_flag");
-    let mut span = tracer
-        .span_builder(format!("feature_flag {}", flag_name))
-        .with_kind(SpanKind::Client)
-        .start(&tracer);
-
-    span.set_attribute(KeyValue::new("feature_flag.key", flag_name.to_string()));
-    span.set_attribute(KeyValue::new("feature_flag.provider_name", "flagd"));
-
     let host = env::var("FLAGD_HOST").unwrap_or_else(|_| "flagd".to_string());
     let port = env::var("FLAGD_OFREP_PORT")
         .ok()
@@ -53,25 +43,17 @@ pub async fn is_feature_flag_enabled(flag_name: &str) -> bool {
         Ok(mut resp) if resp.status().is_success() => match resp.json::<OFREPResponse>().await {
             Ok(data) => {
                 if let Some(variant) = &data.variant {
-                    span.set_attribute(KeyValue::new(
-                        "feature_flag.variant",
-                        variant.clone(),
-                    ));
+                    Span::current().record("feature_flag.variant", variant.as_str());
                 }
                 data.value
             }
             Err(e) => {
-                warn!(
-                    "Failed to parse feature flag response for {}: {}",
-                    flag_name, e
-                );
+                warn!("Failed to parse feature flag response for {}: {}", flag_name, e);
                 false
             }
         },
         Ok(resp) => {
-            warn!(
-                "Feature flag {} returned HTTP {}", flag_name, resp.status()
-            );
+            warn!("Feature flag {} returned HTTP {}", flag_name, resp.status());
             false
         }
         Err(e) => {
