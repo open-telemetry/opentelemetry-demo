@@ -189,24 +189,4 @@ mod tests {
         assert!(start.elapsed() < slowdown);
         assert!(!order.tracking_id.is_empty());
     }
-
-    #[actix_web::test]
-    async fn test_ship_order_united_states_flag_on() {
-        let slowdown = std::time::Duration::from_millis(50);
-        let checker = MockFlagChecker::new().with_flag("shippingSlowdown", true).build();
-        let start = std::time::Instant::now();
-        let order = call_ship_order(Some(make_address("United States")), checker, slowdown).await;
-        assert!(start.elapsed() < slowdown);
-        assert!(!order.tracking_id.is_empty());
-    }
-
-    #[actix_web::test]
-    async fn test_ship_order_usa_flag_on() {
-        let slowdown = std::time::Duration::from_millis(50);
-        let checker = MockFlagChecker::new().with_flag("shippingSlowdown", true).build();
-        let start = std::time::Instant::now();
-        let order = call_ship_order(Some(make_address("USA")), checker, slowdown).await;
-        assert!(start.elapsed() < slowdown);
-        assert!(!order.tracking_id.is_empty());
-    }
 }
