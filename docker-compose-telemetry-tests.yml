@@ -1,0 +1,28 @@
+include:
+  - docker-compose.yml
+
+services:
+  telemetry-tests:
+    image: opentelemetry-demo-telemetry-tests
+    depends_on:
+      otel-collector:
+        condition: service_started
+      jaeger:
+        condition: service_started
+      prometheus:
+        condition: service_started
+      opensearch:
+        condition: service_healthy
+      load-generator:
+        condition: service_started
+    environment:
+      - JAEGER_HOST
+      - JAEGER_UI_PORT
+      - PROMETHEUS_HOST
+      - PROMETHEUS_PORT
+      - OPENSEARCH_HOST
+      - OPENSEARCH_PORT
+      - OTEL_COLLECTOR_HOST
+      - OTEL_COLLECTOR_PORT_GRPC
+      - TEST_SCOPE=${TEST_SCOPE:-minimal}
+      - WARMUP_SECONDS=${WARMUP_SECONDS:-90}
