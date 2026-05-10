@@ -1,4 +1,7 @@
-# Telemetry Sanity Tests — Design Document
+<!-- Copyright The OpenTelemetry Authors -->
+<!-- SPDX-License-Identifier: Apache-2.0 -->
+
+# Telemetry Sanity Tests - Design Document
 
 ## Problem
 
@@ -26,41 +29,32 @@ Dockerized Python (pytest) container running on the same Docker network as the d
 ## Architecture
 
 ```
-┌─────────────────────────────────────────────────────────┐
-│  Docker Compose Network (opentelemetry-demo)            │
-│                                                         │
-│  ┌──────────┐   OTLP    ┌───────────────┐              │
-│  │ Services │ ─────────▶│ OTel Collector │              │
-│  └──────────┘            └───────┬───────┘              │
-│                                  │                      │
-│              ┌───────────────────┼───────────────┐      │
-│              ▼                   ▼               ▼      │
-│     ┌────────────┐     ┌────────────┐   ┌───────────┐  │
-│     │   Jaeger   │     │ Prometheus │   │ OpenSearch │  │
-│     │  (traces)  │     │ (metrics)  │   │  (logs)   │  │
-│     └─────┬──────┘     └─────┬──────┘   └─────┬─────┘  │
-│           │                   │                 │        │
-│           ▼                   ▼                 ▼        │
-│     ┌─────────────────────────────────────────────────┐ │
-│     │         telemetry-tests (pytest container)      │ │
-│     │   Queries each backend API to verify telemetry  │ │
-│     └─────────────────────────────────────────────────┘ │
-└─────────────────────────────────────────────────────────┘
+Services --> [OTLP] --> OTel Collector
+                            |
+              +-------------+-------------+
+              |             |             |
+              v             v             v
+           Jaeger      Prometheus    OpenSearch
+          (traces)     (metrics)      (logs)
+              |             |             |
+              v             v             v
+         telemetry-tests (pytest container)
+         Queries each backend API to verify telemetry
 ```
 
 ## File Structure
 
 ```
 test/telemetry/
-├── DESIGN.md              # This file
-├── Dockerfile             # Lightweight Python container
-├── requirements.txt       # pytest + requests
-├── conftest.py            # Fixtures, polling helpers, parametrization
-├── services.py            # Service-signal matrix (single source of truth)
-├── test_collector.py      # OTel Collector health check
-├── test_traces.py         # Jaeger trace verification
-├── test_metrics.py        # Prometheus metrics verification
-└── test_logs.py           # OpenSearch log verification
+|-- DESIGN.md              # This file
+|-- Dockerfile             # Lightweight Python container
+|-- requirements.txt       # pytest + requests
+|-- conftest.py            # Fixtures, polling helpers, parametrization
+|-- services.py            # Service-signal matrix (single source of truth)
+|-- test_collector.py      # OTel Collector health check
+|-- test_traces.py         # Jaeger trace verification
+|-- test_metrics.py        # Prometheus metrics verification
++-- test_logs.py           # OpenSearch log verification
 ```
 
 ## Service-Signal Matrix
@@ -148,7 +142,7 @@ New job in `.github/workflows/checks.yml`:
 
 ## Relationship to Weaver
 
-Weaver (`weaver-check` in CI) validates the telemetry schema registry — correct attribute names, types, and semantic conventions. These telemetry sanity tests validate that telemetry *flows* end-to-end. They are complementary:
+Weaver (`weaver-check` in CI) validates the telemetry schema registry - correct attribute names, types, and semantic conventions. These telemetry sanity tests validate that telemetry *flows* end-to-end. They are complementary:
 
 - **Weaver**: "Are the attribute definitions correct?" (static analysis)
 - **Telemetry tests**: "Is each service actually sending data to backends?" (runtime validation)
