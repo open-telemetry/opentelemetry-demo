@@ -1,148 +1,143 @@
 <!-- Copyright The OpenTelemetry Authors -->
 <!-- SPDX-License-Identifier: Apache-2.0 -->
 
-# Telemetry Sanity Tests - Design Document
+# Telemetry Sanity Tests
 
 ## Problem
 
-The demo previously used Tracetest for trace-based integration testing, but that project went defunct and was removed. There's no holistic replacement that validates telemetry is flowing across all three pillars (traces, metrics, logs) to the observability backends. Services can silently stop emitting telemetry without CI catching it.
+The demo previously used Tracetest for trace-based integration
+testing, but that project went defunct and was removed. There is no
+holistic replacement that validates telemetry is flowing across all
+three pillars (traces, metrics, logs) to the observability backends.
 
 ## Goals
 
-- Sanity-check that each service sends expected telemetry to the correct backends
+- Sanity-check that each service sends expected telemetry to the
+  correct backends
 - Run on every PR in CI
 - Run locally via `make` (same as other demo workflows)
 - OS-agnostic (Dockerized test runner)
 - Easy to extend: adding a service = adding one line to a config dict
-- Does NOT validate semantic conventions or attribute correctness (that's weaver's job)
-
-## Non-Goals
-
-- Full trace-path validation (span parent-child relationships)
-- Attribute/semconv correctness (covered by `weaver-check`)
-- Performance/load testing
+- Does NOT validate semantic conventions or attributes (weaver's job)
 
 ## Approach
 
-Dockerized Python (pytest) container running on the same Docker network as the demo. Queries backend APIs to verify services are producing telemetry.
+Dockerized Python (pytest) container running on the same Docker
+network as the demo. Queries backend APIs to verify services are
+producing telemetry.
 
-## Architecture
-
-```
-Services --> [OTLP] --> OTel Collector
-                            |
-              +-------------+-------------+
-              |             |             |
-              v             v             v
-           Jaeger      Prometheus    OpenSearch
-          (traces)     (metrics)      (logs)
-              |             |             |
-              v             v             v
-         telemetry-tests (pytest container)
-         Queries each backend API to verify telemetry
+```mermaid
+graph TD
+    A[Services] -->|OTLP| B[OTel Collector]
+    B --> C[Jaeger - traces]
+    B --> D[Prometheus - metrics]
+    B --> E[OpenSearch - logs]
+    F[telemetry-tests] -->|query| C
+    F -->|query| D
+    F -->|query| E
 ```
 
 ## File Structure
 
-```
+```text
 test/telemetry/
-|-- DESIGN.md              # This file
-|-- Dockerfile             # Lightweight Python container
-|-- requirements.txt       # pytest + requests
-|-- conftest.py            # Fixtures, polling helpers, parametrization
-|-- services.py            # Service-signal matrix (single source of truth)
-|-- test_collector.py      # OTel Collector health check
-|-- test_traces.py         # Jaeger trace verification
-|-- test_metrics.py        # Prometheus metrics verification
-+-- test_logs.py           # OpenSearch log verification
+|-- Dockerfile
+|-- requirements.txt
+|-- conftest.py
+|-- services.py
+|-- test_collector.py
+|-- test_traces.py
+|-- test_metrics.py
++-- test_logs.py
 ```
 
 ## Service-Signal Matrix
 
-Single source of truth in `services.py`. Each service declares which signals it emits:
+Single source of truth in `services.py`. Each service declares which
+signals it emits:
 
-| Service | Traces | Metrics | Logs | Scope |
-|---------|--------|---------|------|-------|
-| ad | yes | yes | yes | minimal |
-| cart | yes | yes | no | minimal |
-| checkout | yes | no | no | minimal |
-| currency | yes | yes | no | minimal |
-| email | yes | yes | no | minimal |
-| frontend | yes | yes | no | minimal |
-| payment | yes | yes | no | minimal |
-| product-catalog | yes | no | no | minimal |
-| product-reviews | yes | yes | yes | minimal |
-| quote | yes | no | no | minimal |
-| recommendation | yes | yes | yes | minimal |
-| shipping | yes | yes | no | minimal |
-| accounting | yes | no | yes | full |
-| fraud-detection | yes | no | no | full |
-| load-generator | yes | no | yes | minimal |
+| Service          | Traces | Metrics | Logs  | Scope   |
+| ---------------- | ------ | ------- | ----- | ------- |
+| ad               | yes    | yes     | yes   | minimal |
+| cart             | yes    | yes     | yes   | minimal |
+| checkout         | yes    | yes     | yes   | minimal |
+| currency         | yes    | yes     | yes   | minimal |
+| email            | yes    | yes     | yes   | minimal |
+| frontend         | yes    | yes     | no    | minimal |
+| frontend-proxy   | yes    | yes     | yes   | minimal |
+| frontend-web     | yes    | yes     | no    | full    |
+| image-provider   | yes    | yes     | no    | minimal |
+| kafka            | no     | yes     | yes   | full    |
+| payment          | yes    | yes     | yes   | minimal |
+| product-catalog  | yes    | yes     | yes   | minimal |
+| product-reviews  | yes    | yes     | yes   | full    |
+| quote            | yes    | yes     | yes   | minimal |
+| recommendation   | yes    | yes     | yes   | minimal |
+| shipping         | yes    | yes     | yes   | minimal |
+| accounting       | yes    | yes     | yes   | full    |
+| fraud-detection  | yes    | yes     | yes   | full    |
+| load-generator   | yes    | yes     | yes   | minimal |
 
 ## Backend API Queries
 
 **Jaeger (traces):**
-- List services: `GET http://jaeger:16686/jaeger/ui/api/services`
-- Find traces: `GET http://jaeger:16686/jaeger/ui/api/traces?service={name}&limit=1&lookback=1h`
+
+- List services: `GET /jaeger/ui/api/services`
+- Find traces: `GET /jaeger/ui/api/traces?service={name}&limit=1`
 
 **Prometheus (metrics):**
-- Check service presence: `GET http://prometheus:9090/api/v1/query?query=target_info{service_name="{name}"}`
+
+- Check service presence:
+  `GET /api/v1/query?query=target_info{service_name="{name}"}`
 
 **OpenSearch (logs):**
-- Search by service: `POST http://opensearch:9200/otel-logs-*/_search`
-  ```json
-  {"query": {"match_phrase": {"resource.service.name": "{name}"}}, "size": 1}
-  ```
+
+- PPL query:
+  `source=otel-logs-* | where resource.service.name = '{name}'
+  | stats count()`
 
 **OTel Collector (health):**
+
 - TCP connect to `otel-collector:4317` (gRPC OTLP port)
-
-## Test Execution Flow
-
-1. Demo starts (all services + backends + load-generator)
-2. Load-generator produces traffic for ~90s (configurable `WARMUP_SECONDS`)
-3. Test container starts, waits for warmup
-4. Tests query each backend with retries (poll every 5s, timeout 60s per check)
-5. Each test is parametrized: `test_traces[checkout]`, `test_metrics[payment]`, `test_logs[ad]`
-6. pytest exits 0 (pass) or non-zero (per-service/signal failure messages)
 
 ## Makefile Targets
 
 ```bash
-make run-telemetry-tests           # Full scope (all services including Kafka-dependent)
-make run-telemetry-tests-minimal   # Minimal scope (excludes Kafka-dependent services)
+make run-telemetry-tests           # Full scope (all services)
+make run-telemetry-tests-minimal   # Minimal scope
 ```
 
 ## Environment Variables
 
-| Variable | Default | Description |
-|----------|---------|-------------|
-| `JAEGER_URL` | `http://jaeger:16686` | Jaeger query endpoint |
-| `PROMETHEUS_URL` | `http://prometheus:9090` | Prometheus query endpoint |
-| `OPENSEARCH_URL` | `http://opensearch:9200` | OpenSearch endpoint |
-| `COLLECTOR_URL` | `http://otel-collector:13133` | Collector health endpoint |
-| `TEST_SCOPE` | `minimal` | `minimal` or `full` |
-| `WARMUP_SECONDS` | `90` | Seconds to wait before testing |
+| Variable           | Default         | Description               |
+| ------------------ | --------------- | ------------------------- |
+| `JAEGER_HOST`      | `jaeger`        | Jaeger hostname           |
+| `JAEGER_UI_PORT`   | `16686`         | Jaeger query port         |
+| `PROMETHEUS_HOST`  | `prometheus`    | Prometheus hostname       |
+| `PROMETHEUS_PORT`  | `9090`          | Prometheus query port     |
+| `OPENSEARCH_HOST`  | `opensearch`    | OpenSearch hostname       |
+| `OPENSEARCH_PORT`  | `9200`          | OpenSearch port           |
+| `TEST_SCOPE`       | `minimal`       | `minimal` or `full`       |
+| `WARMUP_SECONDS`   | `120`           | Seconds before testing    |
 
 ## CI Integration
 
-New job in `.github/workflows/checks.yml`:
-- Depends on `build_images` (uses pre-built images)
-- Starts demo, waits for warmup
-- Runs `make run-telemetry-tests`
-- Uploads JUnit XML as artifact
+Separate workflow (`.github/workflows/run-telemetry-tests.yml`)
+with two parallel jobs: full and minimal. Triggered on PRs
+touching `src/`, `test/telemetry/`, or compose files.
 
 ## Extending
 
 - **New service**: Add one entry to `SIGNAL_MATRIX` in `services.py`
-- **New backend/signal type**: Add a new `test_*.py` file following the same pattern
-- **New check for existing signal**: Add a test function in the appropriate file
+- **New backend**: Add a new `test_*.py` file
 - **Adjust timeouts**: Set `WARMUP_SECONDS` or `POLL_TIMEOUT` env vars
 - **Run single test**: `pytest test_traces.py -k "checkout" -v`
 
 ## Relationship to Weaver
 
-Weaver (`weaver-check` in CI) validates the telemetry schema registry - correct attribute names, types, and semantic conventions. These telemetry sanity tests validate that telemetry *flows* end-to-end. They are complementary:
+Weaver validates the telemetry schema registry (correct attribute
+names, types, semantic conventions). These tests validate that
+telemetry flows end-to-end. They are complementary:
 
-- **Weaver**: "Are the attribute definitions correct?" (static analysis)
-- **Telemetry tests**: "Is each service actually sending data to backends?" (runtime validation)
+- **Weaver**: "Are the attribute definitions correct?" (static)
+- **Telemetry tests**: "Is each service sending data?" (runtime)
