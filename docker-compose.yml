@@ -279,7 +279,7 @@ services:
     ports:
       - "${FRONTEND_PORT}"
     healthcheck:
-      test: ["CMD", "/nodejs/bin/node", "-e", "const http=require('http');const h=require('os').hostname();http.get('http://'+h+':8080/',r=>{process.exit(r.statusCode===200?0:1)}).on('error',()=>process.exit(1))"]
+      test: ["CMD", "/nodejs/bin/node", "-e", "require('net').connect(${FRONTEND_PORT},require('os').hostname(),function(){process.exit(0)}).on('error',function(){process.exit(1)})"]
       start_period: 60s
       interval: 10s
       timeout: 10s
