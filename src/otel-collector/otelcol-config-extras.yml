@@ -8,11 +8,37 @@
 ## Note: the spanmetrics exporter must be included in the exporters array
 ## if overriding the traces pipeline.
 ##
-#  exporters:
-#    otlp_http/example:
-#      endpoint: <your-endpoint-url>
+# https://docs.honeycomb.io/send-data/opentelemetry/collector
+exporters:
+  otlp_http:
+    endpoint: "https://api.honeycomb.io:443"
+    headers:
+      "x-honeycomb-team": "${env:HONEYCOMB_API_KEY}"
+  # otlp_http/metrics:
+  #   endpoint: "https://api.honeycomb.io:443"
+  #   headers:
+  #     "x-honeycomb-team": "${env:HONEYCOMB_API_KEY}"
+
+receivers:
+  docker_stats:
+    api_version: "1.44"
+
+processors:
+  batch:
+    timeout: 2s
+    send_batch_max_size: 8192
 #
-#  service:
-#    pipelines:
-#      traces:
-#        exporters: [spanmetrics, otlp_http/example]
+service:
+  pipelines:
+    traces:
+      receivers: [otlp]
+      processors: [batch]
+      exporters: [spanmetrics, otlp_http]
+    # metrics:
+    #   receivers: [otlp]
+    #   processors: [batch]
+    #   exporters: [otlp_http/metrics]
+    # logs:
+    #   receivers: [otlp]
+    #   processors: [batch]
+    #   exporters: [otlp_http]

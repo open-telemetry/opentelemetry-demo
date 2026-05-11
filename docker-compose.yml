@@ -862,6 +862,8 @@ services:
   otel-collector:
     image: ${COLLECTOR_CONTRIB_IMAGE}
     container_name: otel-collector
+    env_file:
+      - .env.secrets
     deploy:
       resources:
         limits:
