@@ -149,9 +149,6 @@ exporters:
       tls:
         insecure: true
     sending_queue:
-      # Explicitly set due to bug: https://github.com/open-telemetry/opentelemetry-collector-contrib/issues/45016
-      num_consumers: 10
-      queue_size: 1000
       batch:
   otlp_grpc/firepit:
     endpoint: "firepit:4317"
@@ -164,18 +161,11 @@ processors:
     spike_limit_percentage: 25
   resourcedetection:
     detectors: [env, docker, system]
-  filter/profiles_exclude_system_processes:
+  filter/sanitize_profiles:
     error_mode: ignore
     profiles:
       profile:
         - 'IsMatch(resource.attributes["service.name"], "containerd-shim-.*")'
-  transform/sanitize_profiles:
-    error_mode: ignore
-    profile_statements:
-      - context: resource
-        statements:
-          - delete_key(attributes, "process.executable.path")
-          - delete_key(attributes, "container.id")
   transform/sanitize_logs:
     error_mode: ignore
     log_statements:
@@ -186,6 +176,7 @@ processors:
           # Upstream Issue: https://github.com/open-telemetry/opentelemetry-collector/issues/15221
           - set(attributes["otelcol_signal"], attributes["otelcol.signal"]) where attributes["otelcol.signal"] != nil and not IsMap(attributes["otelcol.signal"])
           - delete_key(attributes, "otelcol.signal") where attributes["otelcol_signal"] != nil
+  
   transform/sanitize_spans:
     error_mode: ignore
     trace_statements:
@@ -251,7 +242,7 @@ service:
       exporters: [opensearch, debug]
     profiles:
       receivers: [otlp]
-      processors: [filter/profiles_exclude_system_processes, transform/sanitize_profiles, memory_limiter]
+      processors: [filter/sanitize_profiles, memory_limiter]
       exporters: [otlp_grpc/firepit, debug]
   telemetry:
     metrics:

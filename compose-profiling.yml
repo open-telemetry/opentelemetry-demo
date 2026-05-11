@@ -28,7 +28,7 @@ services:
     depends_on:
       - otel-collector
   firepit:
-    image: ghcr.io/florianl/firepit:6ea852a
+    image: ghcr.io/florianl/firepit:df1dcbe
     container_name: firepit
     ports:
       - "${FIREPIT_PORT}"
