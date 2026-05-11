@@ -176,7 +176,6 @@ processors:
           # Upstream Issue: https://github.com/open-telemetry/opentelemetry-collector/issues/15221
           - set(attributes["otelcol_signal"], attributes["otelcol.signal"]) where attributes["otelcol.signal"] != nil and not IsMap(attributes["otelcol.signal"])
           - delete_key(attributes, "otelcol.signal") where attributes["otelcol_signal"] != nil
-  
   transform/sanitize_spans:
     error_mode: ignore
     trace_statements:
