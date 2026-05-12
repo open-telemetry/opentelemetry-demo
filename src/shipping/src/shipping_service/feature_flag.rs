@@ -6,7 +6,7 @@ use opentelemetry_instrumentation_actix_web::ClientExt;
 use serde::Deserialize;
 use std::cell::RefCell;
 use std::env;
-use tracing::{instrument, warn, Span};
+use tracing::warn;
 
 thread_local! {
     static HTTP_CLIENT: RefCell<Option<Client>> = const { RefCell::new(None) };
@@ -46,12 +46,6 @@ impl FlagdClient {
         }
     }
 
-    #[instrument(skip(self), fields(
-        otel.kind = "client",
-        feature_flag.key = flag_name,
-        feature_flag.provider_name = "flagd",
-        feature_flag.variant = tracing::field::Empty,
-    ))]
     pub async fn is_enabled(&self, flag_name: &str) -> bool {
         let url = format!("{}/{}", self.base_url, flag_name);
 
@@ -65,12 +59,7 @@ impl FlagdClient {
         match result {
             Ok(mut resp) if resp.status().is_success() => {
                 match resp.json::<OFREPResponse>().await {
-                    Ok(data) => {
-                        if let Some(variant) = &data.variant {
-                            Span::current().record("feature_flag.variant", variant.as_str());
-                        }
-                        data.value
-                    }
+                    Ok(data) => data.value,
                     Err(e) => {
                         warn!("Failed to parse feature flag response for {}: {}", flag_name, e);
                         false
