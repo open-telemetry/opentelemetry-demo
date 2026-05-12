@@ -29,6 +29,19 @@ impl FlagChecker {
         Self::Real(FlagdClient::from_env())
     }
 
+    #[cfg(test)]
+    fn mock() -> Self {
+        Self::Mock(std::collections::HashMap::new())
+    }
+
+    #[cfg(test)]
+    fn with(mut self, flag: &str, value: impl Any + Send + Sync + 'static) -> Self {
+        if let Self::Mock(ref mut map) = self {
+            map.insert(flag.to_string(), Box::new(value) as Box<dyn Any + Send + Sync>);
+        }
+        self
+    }
+
     pub async fn evaluate<T: DeserializeOwned + Default + Clone + Any + Send + 'static>(
         &self,
         flag_name: &str,
@@ -117,16 +130,6 @@ mod tests {
 
     use super::*;
 
-    fn mock_checker() -> FlagChecker {
-        FlagChecker::Mock(std::collections::HashMap::new())
-    }
-
-    fn mock_checker_with(flag: &str, value: impl Any + Send + Sync + 'static) -> FlagChecker {
-        let mut map = std::collections::HashMap::new();
-        map.insert(flag.to_string(), Box::new(value) as Box<dyn Any + Send + Sync>);
-        FlagChecker::Mock(map)
-    }
-
     async fn call_ship_order(
         address: Option<Address>,
         checker: FlagChecker,
@@ -162,19 +165,19 @@ mod tests {
 
     #[actix_web::test]
     async fn test_ship_order_no_address() {
-        let order = call_ship_order(None, mock_checker(), std::time::Duration::ZERO).await;
+        let order = call_ship_order(None, FlagChecker::mock(), std::time::Duration::ZERO).await;
         assert!(!order.tracking_id.is_empty());
     }
 
     #[actix_web::test]
     async fn test_ship_order_us_address() {
-        let order = call_ship_order(Some(make_address("US")), mock_checker(), std::time::Duration::ZERO).await;
+        let order = call_ship_order(Some(make_address("US")), FlagChecker::mock(), std::time::Duration::ZERO).await;
         assert!(!order.tracking_id.is_empty());
     }
 
     #[actix_web::test]
     async fn test_ship_order_international_flag_off() {
-        let order = call_ship_order(Some(make_address("CA")), mock_checker(), std::time::Duration::ZERO).await;
+        let order = call_ship_order(Some(make_address("CA")), FlagChecker::mock(), std::time::Duration::ZERO).await;
         assert!(!order.tracking_id.is_empty());
     }
 
@@ -182,7 +185,7 @@ mod tests {
     async fn test_ship_order_international_flag_on() {
         let slowdown = std::time::Duration::from_millis(50);
         let start = std::time::Instant::now();
-        let checker = mock_checker_with("shippingSlowdown", true);
+        let checker = FlagChecker::mock().with("shippingSlowdown", true);
         let order = call_ship_order(Some(make_address("CA")), checker, slowdown).await;
         assert!(start.elapsed() >= slowdown);
         assert!(!order.tracking_id.is_empty());
@@ -191,7 +194,7 @@ mod tests {
     #[actix_web::test]
     async fn test_ship_order_us_flag_on() {
         let slowdown = std::time::Duration::from_millis(50);
-        let checker = mock_checker_with("shippingSlowdown", true);
+        let checker = FlagChecker::mock().with("shippingSlowdown", true);
         let start = std::time::Instant::now();
         let order = call_ship_order(Some(make_address("US")), checker, slowdown).await;
         assert!(start.elapsed() < slowdown);
