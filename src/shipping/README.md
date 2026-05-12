@@ -30,7 +30,7 @@ cargo test
 
 ## Environment Variables
 
-| Variable | Default | Description |
-|----------|---------|-------------|
-| `FLAGD_HOST` | `flagd` | Hostname of the flagd service |
-| `FLAGD_OFREP_PORT` | `8016` | Port for the flagd OFREP API |
+| Variable           | Default | Description                   |
+|--------------------|---------|-------------------------------|
+| `FLAGD_HOST`       | `flagd` | Hostname of the flagd service |
+| `FLAGD_OFREP_PORT` | `8016`  | Port for the flagd OFREP API  |
