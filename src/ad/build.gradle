@@ -105,6 +105,7 @@ afterEvaluate {
     // Ensure protos are copy before classes are generated
     tasks.getByName('processResources').dependsOn 'copyProtos'
     tasks.getByName('generateProto').dependsOn 'copyProtos'
+    tasks.getByName('processProtoResources').dependsOn 'copyProtos'
 }
 
 googleJavaFormat {
