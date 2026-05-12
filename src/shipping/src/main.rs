@@ -9,7 +9,7 @@ use tracing::info;
 mod telemetry_conf;
 use telemetry_conf::init_otel;
 mod shipping_service;
-use shipping_service::{DefaultFlagChecker, get_quote, ship_order, DEFAULT_SLOWDOWN};
+use shipping_service::{FlagChecker, get_quote, ship_order, DEFAULT_SLOWDOWN};
 
 #[actix_web::main]
 async fn main() -> std::io::Result<()> {
@@ -45,7 +45,7 @@ async fn main() -> std::io::Result<()> {
 
     HttpServer::new(|| {
         App::new()
-            .app_data(actix_web::web::Data::new(DefaultFlagChecker::new().build()))
+            .app_data(actix_web::web::Data::new(FlagChecker::from_env()))
             .app_data(actix_web::web::Data::new(DEFAULT_SLOWDOWN))
             .wrap(RequestTracing::new())
             .wrap(RequestMetrics::default())

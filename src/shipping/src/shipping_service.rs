@@ -2,11 +2,12 @@
 // SPDX-License-Identifier: Apache-2.0
 
 use actix_web::{post, web, HttpResponse, Responder};
-use std::{future::Future, pin::Pin, sync::Arc};
+use serde::de::DeserializeOwned;
+use std::any::Any;
 use tracing::info;
 
 mod feature_flag;
-pub use feature_flag::FlagdClient;
+use feature_flag::FlagdClient;
 
 mod quote;
 use quote::create_quote_from_count;
@@ -17,23 +18,30 @@ use tracking::create_tracking_id;
 mod shipping_types;
 pub use shipping_types::*;
 
-pub type FlagChecker =
-    Arc<dyn Fn(String) -> Pin<Box<dyn Future<Output = bool>>> + Send + Sync>;
-
-pub struct DefaultFlagChecker {
-    client: FlagdClient,
+pub enum FlagChecker {
+    Real(FlagdClient),
+    #[cfg(test)]
+    Mock(std::collections::HashMap<String, Box<dyn Any + Send + Sync>>),
 }
 
-impl DefaultFlagChecker {
-    pub fn new() -> Self {
-        Self { client: FlagdClient::from_env() }
+impl FlagChecker {
+    pub fn from_env() -> Self {
+        Self::Real(FlagdClient::from_env())
     }
 
-    pub fn build(self) -> FlagChecker {
-        Arc::new(move |flag: String| {
-            let client = self.client.clone();
-            Box::pin(async move { client.is_enabled(&flag).await })
-        })
+    pub async fn evaluate<T: DeserializeOwned + Default + Clone + Any + Send + 'static>(
+        &self,
+        flag_name: &str,
+    ) -> T {
+        match self {
+            Self::Real(client) => client.evaluate(flag_name).await,
+            #[cfg(test)]
+            Self::Mock(flags) => flags
+                .get(flag_name)
+                .and_then(|v| v.downcast_ref::<T>())
+                .cloned()
+                .unwrap_or_default(),
+        }
     }
 }
 
@@ -86,7 +94,7 @@ pub async fn ship_order(
         })
         .unwrap_or(false);
 
-    if is_outside_us && flag_checker("shippingSlowdown".to_string()).await {
+    if is_outside_us && flag_checker.evaluate::<bool>("shippingSlowdown").await {
         info!(
             name = "ShippingSlowdown",
             message = "Delaying international shipment due to shippingSlowdown feature flag"
@@ -109,34 +117,22 @@ mod tests {
 
     use super::*;
 
-    struct MockFlagChecker {
-        flags: std::collections::HashMap<&'static str, bool>,
+    fn mock_checker() -> FlagChecker {
+        FlagChecker::Mock(std::collections::HashMap::new())
     }
 
-    impl MockFlagChecker {
-        fn new() -> Self {
-            Self { flags: std::collections::HashMap::new() }
-        }
-
-        fn with_flag(mut self, flag: &'static str, enabled: bool) -> Self {
-            self.flags.insert(flag, enabled);
-            self
-        }
-
-        fn build(self) -> web::Data<FlagChecker> {
-            let map = self.flags;
-            web::Data::new(Arc::new(move |flag: String| {
-                let value = map.get(flag.as_str()).copied().unwrap_or(false);
-                Box::pin(async move { value }) as Pin<Box<dyn Future<Output = bool>>>
-            }) as FlagChecker)
-        }
+    fn mock_checker_with(flag: &str, value: impl Any + Send + Sync + 'static) -> FlagChecker {
+        let mut map = std::collections::HashMap::new();
+        map.insert(flag.to_string(), Box::new(value) as Box<dyn Any + Send + Sync>);
+        FlagChecker::Mock(map)
     }
 
     async fn call_ship_order(
         address: Option<Address>,
-        checker: web::Data<FlagChecker>,
+        checker: FlagChecker,
         slowdown: std::time::Duration,
     ) -> ShipOrderResponse {
+        let checker = web::Data::new(checker);
         let app = test::init_service(
             App::new()
                 .app_data(checker)
@@ -166,19 +162,19 @@ mod tests {
 
     #[actix_web::test]
     async fn test_ship_order_no_address() {
-        let order = call_ship_order(None, MockFlagChecker::new().build(), std::time::Duration::ZERO).await;
+        let order = call_ship_order(None, mock_checker(), std::time::Duration::ZERO).await;
         assert!(!order.tracking_id.is_empty());
     }
 
     #[actix_web::test]
     async fn test_ship_order_us_address() {
-        let order = call_ship_order(Some(make_address("US")), MockFlagChecker::new().build(), std::time::Duration::ZERO).await;
+        let order = call_ship_order(Some(make_address("US")), mock_checker(), std::time::Duration::ZERO).await;
         assert!(!order.tracking_id.is_empty());
     }
 
     #[actix_web::test]
     async fn test_ship_order_international_flag_off() {
-        let order = call_ship_order(Some(make_address("CA")), MockFlagChecker::new().build(), std::time::Duration::ZERO).await;
+        let order = call_ship_order(Some(make_address("CA")), mock_checker(), std::time::Duration::ZERO).await;
         assert!(!order.tracking_id.is_empty());
     }
 
@@ -186,7 +182,7 @@ mod tests {
     async fn test_ship_order_international_flag_on() {
         let slowdown = std::time::Duration::from_millis(50);
         let start = std::time::Instant::now();
-        let checker = MockFlagChecker::new().with_flag("shippingSlowdown", true).build();
+        let checker = mock_checker_with("shippingSlowdown", true);
         let order = call_ship_order(Some(make_address("CA")), checker, slowdown).await;
         assert!(start.elapsed() >= slowdown);
         assert!(!order.tracking_id.is_empty());
@@ -195,7 +191,7 @@ mod tests {
     #[actix_web::test]
     async fn test_ship_order_us_flag_on() {
         let slowdown = std::time::Duration::from_millis(50);
-        let checker = MockFlagChecker::new().with_flag("shippingSlowdown", true).build();
+        let checker = mock_checker_with("shippingSlowdown", true);
         let start = std::time::Instant::now();
         let order = call_ship_order(Some(make_address("US")), checker, slowdown).await;
         assert!(start.elapsed() < slowdown);
