@@ -6,7 +6,7 @@ use opentelemetry_instrumentation_actix_web::ClientExt;
 use serde::Deserialize;
 use std::cell::RefCell;
 use std::env;
-use tracing::warn;
+use tracing::{info, warn};
 
 thread_local! {
     static HTTP_CLIENT: RefCell<Option<Client>> = const { RefCell::new(None) };
@@ -59,7 +59,15 @@ impl FlagdClient {
         match result {
             Ok(mut resp) if resp.status().is_success() => {
                 match resp.json::<OFREPResponse>().await {
-                    Ok(data) => data.value,
+                    Ok(data) => {
+                        info!(
+                            feature_flag.key = flag_name,
+                            feature_flag.provider_name = "flagd",
+                            feature_flag.variant = data.variant.as_deref().unwrap_or("unknown"),
+                            "feature flag evaluated"
+                        );
+                        data.value
+                    }
                     Err(e) => {
                         warn!("Failed to parse feature flag response for {}: {}", flag_name, e);
                         false
