@@ -4,6 +4,7 @@
 # SPDX-License-Identifier: Apache-2.0
 
 from contextlib import AsyncExitStack
+import logging
 
 from mcp import ClientSession
 from mcp.client.streamable_http import streamablehttp_client
@@ -25,4 +26,4 @@ class MCPClient:
         try:
             await self.exit_stack.aclose()
         except Exception as e:
-            print(f"Error closing connection : {e}")
+            logging.error(f"Error closing connection : {e}")

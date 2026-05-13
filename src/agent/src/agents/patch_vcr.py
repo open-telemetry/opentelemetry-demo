@@ -5,6 +5,7 @@
 
 import json
 import logging
+import os
 
 import vcr
 import vcr.stubs.httpx_stubs
@@ -27,8 +28,9 @@ async def patched_to_serialized_response(response, aread=False):
         "body": {"string": content},
     }
 
-
-vcr.stubs.httpx_stubs._to_serialized_response = patched_to_serialized_response
+use_vcr = os.getenv("USE_VCR", False) == "True"
+if use_vcr:
+    vcr.stubs.httpx_stubs._to_serialized_response = patched_to_serialized_response
 
 
 def normalize_body(request):

@@ -785,8 +785,6 @@ services:
     build:
       context: ./
       dockerfile: ${AGENT_DOCKERFILE}
-      cache_from:
-        - ${IMAGE_NAME}:${IMAGE_VERSION}-agent
     deploy:
       resources:
         limits:
@@ -794,18 +792,21 @@ services:
     restart: unless-stopped
     ports:
       - "${AGENT_PORT}"
+    volumes:
+      - ./src/agent/fixtures:/app/fixtures
     environment:
       - OTEL_EXPORTER_OTLP_ENDPOINT=${OTEL_COLLECTOR_HOST}:${OTEL_COLLECTOR_PORT_GRPC}
       - GRAPH_RECURSION_LIMIT
       - MCP_ENDPOINT=mcp
       - MCP_PORT=8011
-      - MCP_ENABLED=True
+      - MCP_ENABLED=${MCP_ENABLED}
       - AGENT_ENDPOINT
       - AGENT_PORT
       - LLM_BASE_URL
       - LLM_MODEL
-      - USE_VCR=True
+      - USE_VCR=${USE_VCR}
       - API_KEY
+      - OPENAI_API_KEY=${API_KEY}
       - APPLICATION_ENDPOINT=frontend:8080
       - OTEL_EXPORTER_OTLP_INSECURE=true
       - OTEL_RESOURCE_ATTRIBUTES=${OTEL_RESOURCE_ATTRIBUTES},service.criticality=low
@@ -826,8 +827,6 @@ services:
     build:
       context: ./
       dockerfile: ${MCP_DOCKERFILE}
-      cache_from:
-        - ${IMAGE_NAME}:${IMAGE_VERSION}-mcp
     deploy:
       resources:
         limits:
@@ -855,8 +854,6 @@ services:
     build:
       context: ./
       dockerfile: ${CHATBOT_DOCKERFILE}
-      cache_from:
-        - ${IMAGE_NAME}:${IMAGE_VERSION}-chatbot
     deploy:
       resources:
         limits:

@@ -57,7 +57,7 @@ class Agent:
             await self.mcp_server.cleanup()
 
     async def handle_prompt(self, request: ChatRequest):
-        return await self.run_agent(request.message)
+        return await self.run_agent(request.message, request.history)
 
     async def get_tool_list(self):
         mcp_enabled = os.getenv("MCP_ENABLED", "False") == "True"
@@ -79,7 +79,7 @@ class Agent:
             return [tool(t) for t in tool_list]
 
     @workflow(name="astronomy_shop_agent_workflow")
-    async def run_agent(self, input_prompt):
+    async def run_agent(self, input_prompt, history=[]):
         model = ChatLLM()
         tools = await self.get_tool_list()
         agent = create_agent(
@@ -88,8 +88,9 @@ class Agent:
             system_prompt="You are a helpful assistant. Be concise and accurate.",
         )
         try:
+            history.append({"role": "user", "content": input_prompt})
             result = await agent.ainvoke(
-                {"messages": [{"role": "user", "content": input_prompt}]}
+                {"messages": history}
             )
             return {"response": result}
         except Exception as e:

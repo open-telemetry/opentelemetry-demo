@@ -25,11 +25,12 @@ class ChatAgentUI:
     def __init__(self, chat_ui_config: ChatUiConfig):
         self.config = chat_ui_config
 
-    def chat_with_agent(self, message, history):
+    def chat_with_agent(self, message, history, request: gr.Request):
         try:
+            session_id = request.session_hash or self.config.sessionId
             payload = {
                 "message": message,
-                "session_id": self.config.sessionId,
+                "session_id": session_id,
                 "history": history,
             }
             logging.info(f"Sending request {payload} to Agent")

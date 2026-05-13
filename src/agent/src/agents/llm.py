@@ -17,7 +17,7 @@ class ChatLLM(ChatOpenAI):
         llm_tls_verify = os.getenv("LLM_TLS_VERIFY", True) == "True"
         cassette_name = ""
         if use_vcr:
-            cassette_name = f"{model_name.replace('/', '_')}_casette.yaml"
+            cassette_name = f"{model_name.replace('/', '_')}_cassette.yaml"
         if "http_async_client" not in kwargs:
             kwargs["http_async_client"] = httpx.AsyncClient(verify=llm_tls_verify)
         kwargs.setdefault("openai_api_base", os.getenv("LLM_BASE_URL"))

@@ -9,6 +9,7 @@ import logging
 import os
 
 from dotenv import load_dotenv
+from opentelemetry.instrumentation.httpx import HTTPXClientInstrumentor
 from src.mcp_server.astronomy_shop_mcp_server import AstronomyShopMcp
 from traceloop.sdk import Traceloop
 
@@ -20,6 +21,8 @@ Traceloop.init(
     app_name="AstronomyShopAgentMCP",
     api_endpoint=os.getenv("OTEL_EXPORTER_OTLP_ENDPOINT", "localhost:4317"),
 )
+
+HTTPXClientInstrumentor().instrument()
 
 
 async def start_servers():

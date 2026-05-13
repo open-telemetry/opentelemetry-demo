@@ -6,13 +6,38 @@
 
 import asyncio
 import logging
+import os
 
 from dotenv import load_dotenv
+from opentelemetry import trace
+from opentelemetry.exporter.otlp.proto.grpc.trace_exporter import OTLPSpanExporter
+from opentelemetry.instrumentation.httpx import HTTPXClientInstrumentor
+from opentelemetry.instrumentation.requests import RequestsInstrumentor
+from opentelemetry.sdk.resources import Resource
+from opentelemetry.sdk.trace import TracerProvider
+from opentelemetry.sdk.trace.export import BatchSpanProcessor
 from src.chat_interface.chat_interface import ChatAgentUI, get_chat_ui_config
 
 logging.basicConfig(level=logging.INFO)
 
 load_dotenv()
+
+
+def _configure_tracing() -> None:
+    resource = Resource.create(
+        {
+            "service.name": os.getenv("OTEL_SERVICE_NAME", "chatbot"),
+        }
+    )
+    provider = TracerProvider(resource=resource)
+    provider.add_span_processor(BatchSpanProcessor(OTLPSpanExporter()))
+    trace.set_tracer_provider(provider)
+
+    RequestsInstrumentor().instrument()
+    HTTPXClientInstrumentor().instrument()
+
+
+_configure_tracing()
 
 
 async def start_servers():
