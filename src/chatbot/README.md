@@ -127,13 +127,13 @@ docker compose up chatbot
 
 ```text
 src/chatbot/
-├── Dockerfile
-├── README.md
-├── requirements.txt
-├── run.py
-└── src/
-  └── chat_interface/
-    └── chat_interface.py  # Gradio UI and Agent service client
+|-- Dockerfile
+|-- README.md
+|-- requirements.txt
+|-- run.py
+`-- src/
+  `-- chat_interface/
+    `-- chat_interface.py  # Gradio UI and Agent service client
 ```
 
 ## Troubleshooting

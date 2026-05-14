@@ -156,12 +156,12 @@ A 4xx response with MCP-specific headers indicates the server is up; full
 
 ```text
 src/mcp/
-├── Dockerfile
-├── README.md
-├── requirements.txt
-├── run.py                              # Entry point: Traceloop init + FastMCP server
-└── src/
-    └── mcp_server/
-        ├── astronomy_shop_mcp_server.py  # FastMCP server and tool registration
-        └── tools.py                      # Copied from src/agent/src/agents/tools.py at build time
+|-- Dockerfile
+|-- README.md
+|-- requirements.txt
+|-- run.py                              # Entry point: Traceloop init + FastMCP server
+`-- src/
+    `-- mcp_server/
+        |-- astronomy_shop_mcp_server.py  # FastMCP server and tool registration
+        `-- tools.py                      # Copied from src/agent/src/agents/tools.py at build time
 ```

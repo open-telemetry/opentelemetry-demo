@@ -206,19 +206,19 @@ call the live LLM API.
 
 ```text
 src/agent/
-├── Dockerfile
-├── README.md
-├── requirements.txt
-├── run.py
-├── fixtures/
-│   └── vcr_cassettes/*_cassette.yaml
-└── src/
-    └── agents/
-        ├── agents.py       # FastAPI app and LangChain agent orchestration
-        ├── llm.py          # OpenAI-compatible LLM wrapper and VCR integration
-        ├── mcp_client.py   # MCP streamable HTTP client
-        ├── patch_vcr.py    # VCR helper integration
-        └── tools.py        # Built-in Astronomy Shop tools
+|-- Dockerfile
+|-- README.md
+|-- requirements.txt
+|-- run.py
+|-- fixtures/
+|   `-- vcr_cassettes/*_cassette.yaml
+`-- src/
+    `-- agents/
+        |-- agents.py       # FastAPI app and LangChain agent orchestration
+        |-- llm.py          # OpenAI-compatible LLM wrapper and VCR integration
+        |-- mcp_client.py   # MCP streamable HTTP client
+        |-- patch_vcr.py    # VCR helper integration
+        `-- tools.py        # Built-in Astronomy Shop tools
 ```
 
 ## Troubleshooting
