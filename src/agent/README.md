@@ -1,18 +1,23 @@
 # Agent Service
 
-The Agent service provides an AI assistant for the OpenTelemetry Astronomy Shop demo. It exposes a FastAPI HTTP endpoint that accepts user prompts, routes them through a LangGraph ReAct agent, and uses either built-in shop tools or MCP-provided tools to interact with the demo application.
+The Agent service provides an AI assistant for the OpenTelemetry Astronomy Shop
+  demo. It exposes a FastAPI HTTP endpoint that accepts user prompts, routes them
+  through a LangGraph ReAct agent, and uses either built-in shop tools or
+  MCP-provided tools to interact with the demo application.
 
 ## Overview
 
 - Runtime: Python 3.11
 - Web framework: FastAPI served by Uvicorn
 - Agent framework: LangChain and LangGraph prebuilt components
-- LLM client: `langchain_openai.ChatOpenAI` and support non OpenAI models via LiteLLM Client
+- LLM client: `langchain_openai.ChatOpenAI` and support non OpenAI models via
+LiteLLM Client
 - Observability: Traceloop SDK and OpenTelemetry OTLP export
 - Optional tool source: Model Context Protocol (MCP)
 - Default port: `8010`
 
-The service starts from `run.py`, initializes Traceloop instrumentation, creates an `Agent`, and launches a FastAPI server.
+The service starts from `run.py`, initializes Traceloop instrumentation, creates
+ an `Agent`, and launches a FastAPI server.
 
 ## Service API
 
@@ -43,7 +48,8 @@ The exact response shape is produced by the Langgraph agent invocation.
 
 ## Configuration
 
-The service is configured with environment variables. Values can be supplied through Docker Compose, `.env`, `.env.override`, or the local shell environment.
+The service is configured with environment variables. Values can be supplied
+through Docker Compose, `.env`, `.env.override`, or the local shell environment.
 
 | Variable | Default | Description |
 | --- | --- | --- |
@@ -116,7 +122,8 @@ When `MCP_ENABLED=True`, the service connects to:
 http://${MCP_ENDPOINT}:${MCP_PORT}/mcp
 ```
 
-Tools are loaded dynamically using `langchain_mcp_adapters.tools.load_mcp_tools`. In this mode, the built-in tools are not used.
+Tools are loaded dynamically using `langchain_mcp_adapters.tools.load_mcp_tools`.
+ In this mode, the built-in tools are not used.
 
 ## Observability
 
@@ -131,11 +138,13 @@ The `run_agent` method is decorated as a Traceloop workflow named:
 astronomy_shop_agent_workflow
 ```
 
-In Docker Compose, telemetry is sent to the local OpenTelemetry Collector and the service name is set to `agent`.
+In Docker Compose, telemetry is sent to the local OpenTelemetry Collector and
+ the service name is set to `agent`.
 
 ## Local Development
 
-From the repository root, create or activate a Python environment, then install dependencies:
+From the repository root, create or activate a Python environment, then
+install dependencies:
 
 ```sh
 pip install -r src/agent/requirements.txt
@@ -153,7 +162,7 @@ API_KEY=<api-key> \
 python run.py
 ```
 
-If you want to use agent in MCP mode with `MCP_ENABLED=True`, follow [Link](../mcp/README.md)
+If you want to use agent in MCP mode with `MCP_ENABLED=True`, follow [mcp readme](../mcp/README.md)
 
 ## Docker Build and Run
 
@@ -163,7 +172,7 @@ From the repository root, build the service image:
 make build
 ```
 
-or build only `agent` using 
+or build only `agent` using
 
 ```sh
 docker compose build agent
@@ -180,13 +189,18 @@ curl -X POST http://localhost:8010/prompt \
   -d '{"message":"List products in the shop","history":[]}'
 ```
 
-If running through Docker Compose and the `8080` port is not published to the host, call it from another container or adjust Compose port publishing for local testing.
+If running through Docker Compose and the `8080` port is not published to the
+host, call it from another container or adjust Compose port publishing for local
+ testing.
 
 ## VCR Fixtures
 
-The `fixtures/vcr_cassettes` directory is used when `USE_VCR=True`. Cassette names are derived from the configured model name by replacing `/` with `_` and appending `_cassette.yaml`.
+The `fixtures/vcr_cassettes` directory is used when `USE_VCR=True`. Cassette
+ names are derived from the configured model name by replacing `/` with `_` and
+ appending `_cassette.yaml`.
 
-This mode is useful for deterministic development and tests that should not call the live LLM API.
+This mode is useful for deterministic development and tests that should not
+call the live LLM API.
 
 ## File Layout
 
@@ -209,8 +223,14 @@ src/agent/
 
 ## Troubleshooting
 
-- **`/prompt` returns HTTP 500**: Check LLM configuration (`LLM_BASE_URL`, `LLM_MODEL`, `API_KEY`) and MCP availability if MCP is enabled.
-- **MCP connection fails**: Verify `MCP_ENDPOINT`, `MCP_PORT`, and that the `mcp` service is running.
-- **Built-in tools cannot reach the shop API**: Verify `APPLICATION_ENDPOINT`. Use `frontend:8080` in Docker Compose and `localhost:8080` for local host-based development.
-- **No telemetry appears**: Verify `OTEL_EXPORTER_OTLP_ENDPOINT`, collector availability, and `OTEL_SERVICE_NAME`.
-- **TLS errors from the LLM provider**: Check certificates and `LLM_TLS_VERIFY`. Avoid disabling TLS verification outside local trusted environments.
+- **`/prompt` returns HTTP 500**: Check LLM configuration
+(`LLM_BASE_URL`, `LLM_MODEL`, `API_KEY`) and MCP availability if MCP is enabled.
+- **MCP connection fails**: Verify `MCP_ENDPOINT`, `MCP_PORT`,
+and that the `mcp` service is running.
+- **Built-in tools cannot reach the shop API**: Verify `APPLICATION_ENDPOINT`.
+ Use `frontend:8080` in Docker Compose and `localhost:8080` for local
+  host-based development.
+- **No telemetry appears**: Verify `OTEL_EXPORTER_OTLP_ENDPOINT`,
+collector availability, and `OTEL_SERVICE_NAME`.
+- **TLS errors from the LLM provider**: Check certificates and `LLM_TLS_VERIFY`.
+ Avoid disabling TLS verification outside local trusted environments.

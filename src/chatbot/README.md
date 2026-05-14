@@ -1,6 +1,8 @@
 # Chatbot Service
 
-The Chatbot service provides a browser-based chat UI for the OpenTelemetry Astronomy Shop demo. It uses [Gradio](https://www.gradio.app/) to render the interface and forwards user messages to the Agent service.
+The Chatbot service provides a browser-based chat UI for the OpenTelemetry
+Astronomy Shop demo. It uses [Gradio](https://www.gradio.app/) to render the
+ interface and forwards user messages to the Agent service.
 
 ## Overview
 
@@ -9,18 +11,19 @@ The Chatbot service provides a browser-based chat UI for the OpenTelemetry Astro
 - HTTP client: Requests
 - Observability: OpenTelemetry traces exported with OTLP/gRPC
 - Default port: `7860` exposed outside docker via `http://localhost:8080/chatbot/`
-- If chatbot service is running access chatbot UI from [Link](http://localhost:8080/chatbot/)
+- If chatbot service is running access chatbot UI from [Chatbot UI](http://localhost:8080/chatbot/)
 
-The service starts from `run.py`, configures OpenTelemetry tracing, creates a `ChatAgentUI`, and launches a Gradio `ChatInterface`.
+The service starts from `run.py`, configures OpenTelemetry tracing, creates
+a `ChatAgentUI`, and launches a Gradio `ChatInterface`.
 
 ## How It Works
 
 1. A user submits a message in the Gradio chat UI.
 2. The chatbot sends a request to the Agent service at:
 
-	 ```text
-	 http://${AGENT_ENDPOINT}:${AGENT_PORT}/prompt
-	 ```
+   ```text
+   http://${AGENT_ENDPOINT}:${AGENT_PORT}/prompt
+   ```
 
 3. The Agent service returns a response object.
 4. The chatbot displays the final message from the response in the UI.
@@ -29,15 +32,16 @@ Request body sent to the Agent service:
 
 ```json
 {
-	"message": "List available products",
-	"session_id": "<gradio-session-id>",
-	"history": [<Past interactions with agent in the same session. Empty list for the first request>]
+    "message": "List available products",
+    "session_id": "<gradio-session-id>",
+    "history": [<Past interactions with agent in the same session. Empty list for the first request>]
 }
 ```
 
 ## Configuration
 
-The service is configured with environment variables. Values can be supplied through Docker Compose, `.env`, `.env.override`, or the local shell environment.
+The service is configured with environment variables. Values can be supplied
+ through Docker Compose, `.env`, `.env.override`, or the local shell environment.
 
 | Variable | Default | Description |
 | --- | --- | --- |
@@ -65,24 +69,28 @@ Important Compose settings:
 - Restart policy: `unless-stopped`
 - Exposed port: `${CHATBOT_PORT}`
 - Depends on:
-	- `agent`
+  - `agent`
 
-The frontend proxy receives `CHATBOT_HOST` and `CHATBOT_PORT`, so the chatbot can be exposed through the demo UI, usually under `/chatbot`.
+The frontend proxy receives `CHATBOT_HOST` and `CHATBOT_PORT`, so the chatbot
+ can be exposed through the demo UI, usually under `/chatbot`.
 
 ## Observability
 
-`run.py` configures a `TracerProvider` with the service name from `OTEL_SERVICE_NAME`, defaulting to `chatbot`.
+`run.py` configures a `TracerProvider` with the service name from
+ `OTEL_SERVICE_NAME`, defaulting to `chatbot`.
 
 The service instruments outbound HTTP calls made with:
 
 - `requests`
 - `httpx`
 
-Spans are exported through `opentelemetry-exporter-otlp-proto-grpc` to the configured OTLP endpoint.
+Spans are exported through `opentelemetry-exporter-otlp-proto-grpc` to the
+configured OTLP endpoint.
 
 ## Local Development
 
-From the repository root, create or activate a Python environment, then install dependencies:
+From the repository root, create or activate a Python environment, then install
+ dependencies:
 
 ```sh
 pip install -r src/chatbot/requirements.txt
@@ -124,14 +132,19 @@ src/chatbot/
 ├── requirements.txt
 ├── run.py
 └── src/
-		└── chat_interface/
-				└── chat_interface.py  # Gradio UI and Agent service client
+  └── chat_interface/
+    └── chat_interface.py  # Gradio UI and Agent service client
 ```
 
 ## Troubleshooting
 
-- **The UI loads but responses fail**: Verify `AGENT_ENDPOINT`, `AGENT_PORT`, and that the Agent service is running.
-- **Requests time out**: Increase `AGENT_CHAT_INTERFACE_TIMEOUT` or check the LLM/Agent backend configuration.
-- **The UI does not load behind the proxy**: Verify `CHATBOT_ROOT_PATH`, `CHATBOT_HOST`, and `CHATBOT_PORT`.
-- **No telemetry appears**: Verify `OTEL_EXPORTER_OTLP_ENDPOINT`, collector availability, and `OTEL_SERVICE_NAME`.
-- **Port conflicts locally**: Change `CHATBOT_PORT` or stop the process already using port `7860`.
+- **The UI loads but responses fail**: Verify `AGENT_ENDPOINT`, `AGENT_PORT`, and
+ that the Agent service is running.
+- **Requests time out**: Increase `AGENT_CHAT_INTERFACE_TIMEOUT` or check the
+ LLM/Agent backend configuration.
+- **The UI does not load behind the proxy**: Verify `CHATBOT_ROOT_PATH`,
+ `CHATBOT_HOST`, and `CHATBOT_PORT`.
+- **No telemetry appears**: Verify `OTEL_EXPORTER_OTLP_ENDPOINT`, collector
+ availability, and `OTEL_SERVICE_NAME`.
+- **Port conflicts locally**: Change `CHATBOT_PORT` or stop the process already
+using port `7860`.

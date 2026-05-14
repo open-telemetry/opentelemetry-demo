@@ -1,6 +1,10 @@
 # MCP Service
 
-The MCP service exposes the OpenTelemetry Astronomy Shop demo's tools over the [Model Context Protocol](https://modelcontextprotocol.io/). It runs a [FastMCP](https://github.com/jlowin/fastmcp) server that lets the `agent` service (or any other MCP-compatible client) discover and invoke shop operations such as listing products, managing carts, checking out.... etc
+The MCP service exposes the OpenTelemetry Astronomy Shop demo's tools over the
+ [Model Context Protocol](https://modelcontextprotocol.io/). It runs a
+ [FastMCP](https://github.com/jlowin/fastmcp) server that lets the `agent`
+  service (or any other MCP-compatible client) discover and invoke shop
+   operations such as listing products, managing carts, checking out.... etc
 
 ## Overview
 
@@ -10,11 +14,15 @@ The MCP service exposes the OpenTelemetry Astronomy Shop demo's tools over the [
 - Observability: Traceloop SDK and OpenTelemetry OTLP export, with `httpx` auto-instrumentation
 - Default port: `8011`
 
-The service starts from `run.py`, initializes Traceloop instrumentation, instruments the `httpx` client, and launches the `AstronomyShopMcp` FastMCP server in a worker thread.
+The service starts from `run.py`, initializes Traceloop instrumentation,
+instruments the `httpx` client, and launches the `AstronomyShopMcp` FastMCP
+ server in a worker thread.
 
 ## Exposed MCP Tools
 
-The MCP server registers the Astronomy Shop tools defined in `src/agent/src/agents/tools.py` (copied into the image at build time). Each tool calls the frontend HTTP API through `APPLICATION_ENDPOINT`.
+The MCP server registers the Astronomy Shop tools defined in
+ `src/agent/src/agents/tools.py` (copied into the image at build time).
+  Each tool calls the frontend HTTP API through `APPLICATION_ENDPOINT`.
 
 | Tool | Description |
 | --- | --- |
@@ -37,7 +45,8 @@ http://${MCP_ENDPOINT}:${MCP_PORT}/mcp
 
 ## Configuration
 
-The service is configured with environment variables. Values can be supplied through Docker Compose, `.env`, `.env.override`, or the local shell environment.
+The service is configured with environment variables. Values can be supplied
+ through Docker Compose, `.env`, `.env.override`, or the local shell environment.
 
 | Variable | Default | Description |
 | --- | --- | --- |
@@ -72,7 +81,8 @@ MCP_ENDPOINT=mcp
 MCP_PORT=8011
 ```
 
-When `MCP_ENABLED=True` on the agent side, the agent loads its tools from this MCP service instead of using its own built-in tools.
+When `MCP_ENABLED=True` on the agent side, the agent loads its tools from this
+ MCP service instead of using its own built-in tools.
 
 ## Observability
 
@@ -81,17 +91,22 @@ When `MCP_ENABLED=True` on the agent side, the agent loads its tools from this M
 - Application name: `AstronomyShopAgentMCP`
 - API endpoint: `OTEL_EXPORTER_OTLP_ENDPOINT`, defaulting to `localhost:4317`
 
-The `HTTPXClientInstrumentor` is enabled so that outbound calls to the frontend (made by the shop tools) are traced. In Docker Compose, telemetry is sent to the local OpenTelemetry Collector and the service name is set to `mcp`.
+The `HTTPXClientInstrumentor` is enabled so that outbound calls to the frontend
+ (made by the shop tools) are traced. In Docker Compose, telemetry is sent to
+  the local OpenTelemetry Collector and the service name is set to `mcp`.
 
 ## Local Development
 
-From the repository root, create or activate a Python environment, then install dependencies:
+From the repository root, create or activate a Python environment, then
+install dependencies:
 
 ```sh
 pip install -r src/mcp/requirements.txt
 ```
 
-Because the service imports the shop tools from the `agent` source tree (the Dockerfile copies `src/agent/src/agents/tools.py` into `src/mcp_server/`), make the same file available locally before running:
+Because the service imports the shop tools from the `agent` source tree
+ (the Dockerfile copies `src/agent/src/agents/tools.py` into `src/mcp_server/`),
+  make the same file available locally before running:
 
 ```sh
 cp src/agent/src/agents/tools.py src/mcp/src/mcp_server/tools.py
@@ -126,13 +141,16 @@ docker compose up mcp
 
 ## Testing the Endpoint
 
-You can verify the MCP server is reachable with any MCP client. A quick smoke test using `curl` against the streamable HTTP transport:
+You can verify the MCP server is reachable with any MCP client. A quick smoke
+ test using `curl` against the streamable HTTP transport:
 
 ```sh
 curl -i http://localhost:8011/mcp
 ```
 
-A 4xx response with MCP-specific headers indicates the server is up; full interaction requires a proper MCP client (such as the `agent` service with `MCP_ENABLED=True`, or `langchain_mcp_adapters`).
+A 4xx response with MCP-specific headers indicates the server is up; full
+ interaction requires a proper MCP client (such as the `agent` service
+  with `MCP_ENABLED=True`, or `langchain_mcp_adapters`).
 
 ## File Layout
 
