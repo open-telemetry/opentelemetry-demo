@@ -164,6 +164,10 @@ public final class AdService {
           span.setAttribute("session.id", sessionId);
           evaluationContext.setTargetingKey(sessionId);
           evaluationContext.add("session", sessionId);
+          final String enduserId = baggage.getEntryValue("enduser.id");
+          if (enduserId != null) {
+            span.setAttribute("enduser.id", enduserId);
+          }
         } else {
           logger.info("no baggage found in context");
         }
