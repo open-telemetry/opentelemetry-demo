@@ -40,6 +40,7 @@ WORKDIR /app
 
 COPY --from=builder /app/target/release/shipping shipping
 
+ARG SHIPPING_PORT
 EXPOSE ${SHIPPING_PORT}
 
 CMD ["./shipping"]

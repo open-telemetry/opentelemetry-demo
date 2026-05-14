@@ -8,6 +8,7 @@ USER 101
 COPY src/image-provider/static/ /static/
 COPY src/image-provider/nginx.conf.template /nginx.conf.template
 
+ARG IMAGE_PROVIDER_PORT
 EXPOSE ${IMAGE_PROVIDER_PORT}
 
 STOPSIGNAL SIGQUIT

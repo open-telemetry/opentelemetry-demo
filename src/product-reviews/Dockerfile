@@ -26,6 +26,7 @@ COPY ./src/product-reviews/product_reviews_server.py product_reviews_server.py
 COPY ./src/product-reviews/database.py database.py
 COPY ./src/product-reviews/metrics.py metrics.py
 
-
+ARG PRODUCT_REVIEWS_PORT
 EXPOSE ${PRODUCT_REVIEWS_PORT}
+
 ENTRYPOINT [ "/venv/bin/opentelemetry-instrument", "/venv/bin/python", "product_reviews_server.py" ]

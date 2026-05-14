@@ -26,6 +26,7 @@ COPY ./src/payment/index.js index.js
 COPY ./src/payment/logger.js logger.js
 COPY ./src/payment/opentelemetry.js opentelemetry.js
 
+ARG PAYMENT_PORT
 EXPOSE ${PAYMENT_PORT}
 
 CMD ["--require=./opentelemetry.js", "index.js"]

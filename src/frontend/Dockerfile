@@ -55,6 +55,7 @@ COPY ./src/frontend/public/ public/
 
 COPY ./src/frontend/utils/telemetry/Instrumentation.js Instrumentation.js
 
+ARG FRONTEND_PORT
 EXPOSE ${FRONTEND_PORT}
 
 CMD ["--require=./Instrumentation.js", "server.js"]

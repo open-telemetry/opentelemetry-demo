@@ -53,6 +53,7 @@ FROM base AS release
 
 COPY --from=builder /usr/local /usr/local
 
+ARG CURRENCY_PORT
 EXPOSE ${CURRENCY_PORT}
 
 ENTRYPOINT ["sh", "-c", "./usr/local/bin/currency ${CURRENCY_PORT}"]

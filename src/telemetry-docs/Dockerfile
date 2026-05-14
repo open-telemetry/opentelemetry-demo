@@ -49,6 +49,7 @@ USER 101
 COPY --from=site-builder /app/site /static
 COPY src/telemetry-docs/nginx.conf.template /nginx.conf.template
 
+ARG TELEMETRY_DOCS_PORT
 EXPOSE ${TELEMETRY_DOCS_PORT}
 
 STOPSIGNAL SIGQUIT

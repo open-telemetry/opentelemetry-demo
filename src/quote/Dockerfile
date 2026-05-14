@@ -34,6 +34,7 @@ COPY ./src/quote/app/ app/
 COPY ./src/quote/public/ public/
 COPY ./src/quote/src/ src/
 
+ARG QUOTE_PORT
 EXPOSE ${QUOTE_PORT}
 
 CMD ["php", "public/index.php"]
