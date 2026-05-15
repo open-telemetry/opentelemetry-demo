@@ -6,6 +6,10 @@
 # Stage 1: Generate Markdown files from telemetry schema using Weaver
 FROM docker.io/otel/weaver:v0.22.1 AS registry-builder
 
+USER root
+RUN mkdir -p /workspace && chown -R weaver:weaver /workspace
+USER weaver
+
 WORKDIR /workspace
 
 # Copy the telemetry schema

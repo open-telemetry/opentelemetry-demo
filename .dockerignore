@@ -22,3 +22,5 @@ src/*/*/Dockerfile
 ./src/shipping/target
 ###################################
 
+.claude
+.git
