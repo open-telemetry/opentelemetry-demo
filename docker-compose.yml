@@ -897,6 +897,8 @@ services:
       - POSTGRES_PASSWORD
       - POSTGRES_MONITORING_PASSWORD
       - GOMEMLIMIT=160MiB
+      - DT_ENDPOINT
+      - DT_API_TOKEN
 
   # Prometheus
   prometheus:
