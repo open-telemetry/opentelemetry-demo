@@ -3,7 +3,7 @@
 
 use actix_web::{web, App, HttpServer};
 use open_feature::provider::FeatureProvider;
-use open_feature_flagd::{FlagdOptions, FlagdProvider, ResolverType};
+use open_feature_flagd::{FlagdOptions, FlagdProvider};
 use opentelemetry_instrumentation_actix_web::{RequestMetrics, RequestTracing};
 use std::env;
 use std::sync::Arc;
@@ -47,15 +47,14 @@ async fn main() -> std::io::Result<()> {
     );
 
     let host = env::var("FLAGD_HOST").unwrap_or_else(|_| "flagd".to_string());
-    let flagd_port = env::var("FLAGD_OFREP_PORT")
+    let flagd_port = env::var("FLAGD_PORT")
         .ok()
         .and_then(|p| p.parse::<u16>().ok())
-        .unwrap_or(8016);
+        .unwrap_or(8013);
 
     let provider = FlagdProvider::new(FlagdOptions {
         host,
         port: flagd_port,
-        resolver_type: ResolverType::Rest,
         ..Default::default()
     })
     .await
