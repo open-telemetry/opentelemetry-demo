@@ -55,6 +55,7 @@ async fn main() -> std::io::Result<()> {
     let provider = FlagdProvider::new(FlagdOptions {
         host,
         port: flagd_port,
+        cache_settings: None,
         ..Default::default()
     })
     .await
