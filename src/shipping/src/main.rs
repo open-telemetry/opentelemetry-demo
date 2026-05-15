@@ -1,15 +1,18 @@
 // Copyright The OpenTelemetry Authors
 // SPDX-License-Identifier: Apache-2.0
 
-use actix_web::{App, HttpServer};
+use actix_web::{web, App, HttpServer};
+use open_feature::provider::FeatureProvider;
+use open_feature_flagd::{FlagdOptions, FlagdProvider, ResolverType};
 use opentelemetry_instrumentation_actix_web::{RequestMetrics, RequestTracing};
 use std::env;
+use std::sync::Arc;
 use tracing::info;
 
 mod telemetry_conf;
 use telemetry_conf::init_otel;
 mod shipping_service;
-use shipping_service::{FlagChecker, get_quote, ship_order, DEFAULT_SLOWDOWN};
+use shipping_service::{get_quote, ship_order, DEFAULT_SLOWDOWN};
 
 #[actix_web::main]
 async fn main() -> std::io::Result<()> {
@@ -43,10 +46,27 @@ async fn main() -> std::io::Result<()> {
         message = "Shipping service is running"
     );
 
-    HttpServer::new(|| {
+    let host = env::var("FLAGD_HOST").unwrap_or_else(|_| "flagd".to_string());
+    let flagd_port = env::var("FLAGD_OFREP_PORT")
+        .ok()
+        .and_then(|p| p.parse::<u16>().ok())
+        .unwrap_or(8016);
+
+    let provider = FlagdProvider::new(FlagdOptions {
+        host,
+        port: flagd_port,
+        resolver_type: ResolverType::Rest,
+        ..Default::default()
+    })
+    .await
+    .expect("Failed to initialize flagd provider");
+
+    let flag_provider = web::Data::from(Arc::new(provider) as Arc<dyn FeatureProvider>);
+
+    HttpServer::new(move || {
         App::new()
-            .app_data(actix_web::web::Data::new(FlagChecker::from_env()))
-            .app_data(actix_web::web::Data::new(DEFAULT_SLOWDOWN))
+            .app_data(flag_provider.clone())
+            .app_data(web::Data::new(DEFAULT_SLOWDOWN))
             .wrap(RequestTracing::new())
             .wrap(RequestMetrics::default())
             .service(get_quote)
