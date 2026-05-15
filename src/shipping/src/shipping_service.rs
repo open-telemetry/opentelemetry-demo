@@ -64,9 +64,8 @@ pub async fn ship_order(
         })
         .unwrap_or(false);
 
-    let context = EvaluationContext::default();
-    let slowdown_enabled = flag_provider
-        .resolve_bool_value("shippingSlowdown", &context)
+    if is_outside_us && flag_provider
+        .resolve_bool_value("shippingSlowdown", &EvaluationContext::default())
         .await
         .map(|res| {
             info!(
@@ -80,9 +79,8 @@ pub async fn ship_order(
         .unwrap_or_else(|e| {
             warn!("Failed to evaluate feature flag shippingSlowdown: {:?}", e);
             false
-        });
-
-    if is_outside_us && slowdown_enabled {
+        })
+    {
         info!(
             name = "ShippingSlowdown",
             message = "Delaying international shipment due to shippingSlowdown feature flag"
