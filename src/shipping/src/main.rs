@@ -46,15 +46,7 @@ async fn main() -> std::io::Result<()> {
         message = "Shipping service is running"
     );
 
-    let host = env::var("FLAGD_HOST").unwrap_or_else(|_| "flagd".to_string());
-    let flagd_port = env::var("FLAGD_PORT")
-        .ok()
-        .and_then(|p| p.parse::<u16>().ok())
-        .unwrap_or(8013);
-
     let provider = FlagdProvider::new(FlagdOptions {
-        host,
-        port: flagd_port,
         cache_settings: None,
         ..Default::default()
     })
