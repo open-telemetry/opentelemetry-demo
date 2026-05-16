@@ -10,10 +10,6 @@ the release.
 * [shipping] Add `shippingSlowdown` feature flag to delay international (non-US)
   shipments via flagd OFREP integration with OpenTelemetry tracing
   ([#346](https://github.com/open-telemetry/opentelemetry-demo/issues/346))
-* [collector] Add `transform/sanitize_logs` processor to work around
-  `otelcol.signal` scope attribute conflict with `otelcol.signal.output`
-  that causes OpenSearch/Elasticsearch mapping failures
-  ([#3321](https://github.com/open-telemetry/opentelemetry-demo/pull/3321))
 * [telemetry-docs] Add a new service to provide telemetry documentation based
   on Weaver
   ([#2794](https://github.com/open-telemetry/opentelemetry-demo/pull/2794))
@@ -83,6 +79,13 @@ the release.
   [#3307](https://github.com/open-telemetry/opentelemetry-demo/pull/3307)
 * [frontend] fix: handle corrupted session data in localStorage
   ([#3313](https://github.com/open-telemetry/opentelemetry-demo/pull/3313))
+* [collector] Add `transform/sanitize_logs` processor to work around
+  `otelcol.signal` scope attribute conflict with `otelcol.signal.output`
+  that causes OpenSearch/Elasticsearch mapping failures
+  ([#3321](https://github.com/open-telemetry/opentelemetry-demo/pull/3321))
+* [profiling] Add profiling and use firepit as the backend to ingest profiles.
+  This allows us to view profiles in the firepit webui.
+  [#3333](https://github.com/open-telemetry/opentelemetry-demo/pull/3333)
 
 ## 2.2.0
 
