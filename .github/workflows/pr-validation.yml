@@ -1,0 +1,24 @@
+name: PR Validation
+
+on:
+  pull_request:
+    branches:
+      - develop
+      - main
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Show files
+        run: ls -la
+
+      - name: Simulate Build
+        run: echo "Building application..."
+
+      - name: Simulate Unit Tests
+        run: echo "Running tests..."
