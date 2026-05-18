@@ -86,6 +86,22 @@ the release.
 * [profiling] Add profiling and use firepit as the backend to ingest profiles.
   This allows us to view profiles in the firepit webui.
   [#3333](https://github.com/open-telemetry/opentelemetry-demo/pull/3333)
+* [telemetry] Rename the product identifier telemetry attribute from
+  `app.product.id` to `demo.product.id` across cart, product-catalog,
+  product-reviews, telemetry schema, and trace tests.
+  ([#3355](https://github.com/open-telemetry/opentelemetry-demo/pull/3355))
+* [telemetry] Rename the product name telemetry attribute from
+  `app.product.name` to `demo.product.name` across product-catalog and
+  telemetry schema.
+  ([#3370](https://github.com/open-telemetry/opentelemetry-demo/pull/3370))
+* [telemetry] Rename the product quantity telemetry attribute from
+  `app.product.quantity` to `demo.product.quantity` across cart and
+  telemetry schema.
+  ([#3371](https://github.com/open-telemetry/opentelemetry-demo/pull/3371))
+* [telemetry] Rename the product review question telemetry attribute from
+  `app.product.question` to `demo.product.review.question` across
+  product-reviews and telemetry schema.
+  ([#3372](https://github.com/open-telemetry/opentelemetry-demo/pull/3372))
 
 ## 2.2.0
 
