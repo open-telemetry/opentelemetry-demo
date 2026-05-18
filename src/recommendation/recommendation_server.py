@@ -43,7 +43,7 @@ class RecommendationService(demo_pb2_grpc.RecommendationServiceServicer):
     def ListRecommendations(self, request, context):
         prod_list = get_product_list(request.product_ids)
         span = trace.get_current_span()
-        span.set_attribute("app.products_recommended.count", len(prod_list))
+        span.set_attribute("demo.product.recommended.count", len(prod_list))
         logger.info(f"Receive ListRecommendations for product ids:{prod_list}")
 
         # build and return response

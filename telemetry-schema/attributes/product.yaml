@@ -33,7 +33,7 @@ attributes:
     stability: stable
     note: The total number of products available in the product catalog
     examples: [100, 500, 1000]
-  - key: app.products_recommended.count
+  - key: demo.product.recommended.count
     type: int
     brief: Number of products recommended
     stability: stable
