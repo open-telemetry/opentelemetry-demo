@@ -11,4 +11,4 @@ attribute_groups:
       - ref: demo.product.id
       - ref: app.product_reviews.count
       - ref: app.product_reviews.average_score
-      - ref: app.product.question
+      - ref: demo.product.review.question

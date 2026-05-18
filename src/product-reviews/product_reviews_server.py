@@ -159,7 +159,7 @@ def get_ai_assistant_response(request_product_id, question):
         ai_assistant_response = demo_pb2.AskProductAIAssistantResponse()
 
         span.set_attribute("demo.product.id", request_product_id)
-        span.set_attribute("app.product.question", question)
+        span.set_attribute("demo.product.review.question", question)
 
         llm_rate_limit_error = check_feature_flag("llmRateLimitError")
         logger.info(f"llmRateLimitError feature flag: {llm_rate_limit_error}")
