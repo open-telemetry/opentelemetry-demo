@@ -71,6 +71,7 @@ checklicense:	$(ADDLICENSE)
 		-ignore **/*_pb2_grpc.py \
 		-ignore **/genproto/** \
 		-ignore **/protos/*.ts \
+		-ignore scripts/** \
 		.
 
 .PHONY: addlicense
@@ -88,6 +89,7 @@ addlicense:	$(ADDLICENSE)
 		-ignore **/*_pb2_grpc.py \
 		-ignore **/genproto/** \
 		-ignore **/protos/*.ts \
+		-ignore scripts/** \
 		.
 
 .PHONY: checklinks
