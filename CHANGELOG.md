@@ -87,6 +87,10 @@ the release.
   `app.product.id` to `demo.product.id` across cart, product-catalog,
   product-reviews, telemetry schema, and trace tests.
   ([#3355](https://github.com/open-telemetry/opentelemetry-demo/pull/3355))
+* [telemetry] Rename the product name telemetry attribute from
+  `app.product.name` to `demo.product.name` across product-catalog and
+  telemetry schema.
+  ([#3370](https://github.com/open-telemetry/opentelemetry-demo/pull/3370))
 * [telemetry] Rename the product quantity telemetry attribute from
   `app.product.quantity` to `demo.product.quantity` across cart and
   telemetry schema.
