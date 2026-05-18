@@ -11,6 +11,6 @@ attribute_groups:
       - ref: app.products_recommended.count
       - ref: app.recommendation.cache_enabled
       - ref: app.cache_hit
-      - ref: app.products.count
+      - ref: demo.product.count
       - ref: app.filtered_products.count
       - ref: app.filtered_products.list
