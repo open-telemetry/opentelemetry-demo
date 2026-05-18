@@ -14,16 +14,16 @@ actix-web = "4"
 anyhow = "1.0.102"
 awc = { version = "3.8.2", default-features = false, features = ["compress-zstd"] }
 serde = { version = "1.0.228", features = ["derive"] }
-tonic = "0.14.5"
+tonic = "0.14.6"
 tracing = "0.1.44"
 tracing-subscriber = { version = "0.3.23", features = ["env-filter"] }
 
-opentelemetry = "0.31.0"
-opentelemetry_sdk = "0.31.0"
-opentelemetry-otlp = { version = "0.31.1", features = ["grpc-tonic"] }
-opentelemetry-instrumentation-actix-web = { version = "0.23.0", features = ["sync-middleware", "awc", "metrics"] }
-opentelemetry-appender-tracing = "0.31.1"
-opentelemetry-resource-detectors = "0.10.0"
+opentelemetry = "0.32.0"
+opentelemetry_sdk = "0.32.0"
+opentelemetry-otlp = { version = "0.32.0", features = ["grpc-tonic"] }
+opentelemetry-instrumentation-actix-web = { version = "0.24.0", features = ["sync-middleware", "awc", "metrics"] }
+opentelemetry-appender-tracing = "0.32.0"
+opentelemetry-resource-detectors = "0.11.0"
 
 [dependencies.uuid]
 version = "1.23.1"
