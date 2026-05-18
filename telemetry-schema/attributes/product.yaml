@@ -15,7 +15,7 @@ attributes:
     stability: stable
     note: The name or title of the product
     examples: ["Wireless Headphones", "Coffee Maker", "Running Shoes"]
-  - key: app.product.quantity
+  - key: demo.product.quantity
     type: int
     brief: Product quantity
     stability: stable
