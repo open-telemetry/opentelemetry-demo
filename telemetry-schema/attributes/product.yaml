@@ -9,7 +9,7 @@ attributes:
     stability: stable
     note: The unique identifier of the product being viewed, reviewed, or added to cart
     examples: ["66VCHSJNUP", "OLJCESPC7Z", "9SOIN3QJO0"]
-  - key: app.product.name
+  - key: demo.product.name
     type: string
     brief: Product name
     stability: stable
