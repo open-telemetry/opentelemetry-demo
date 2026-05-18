@@ -1,0 +1,23 @@
+# Copyright The OpenTelemetry Authors
+# SPDX-License-Identifier: Apache-2.0
+name: "Build and Publish"
+
+on:
+  release:
+    types: [published]
+
+permissions:
+  contents: read
+  id-token: write
+
+jobs:
+  build_and_push_images:
+    permissions:  # required by the reusable workflow
+      contents: read
+      packages: write
+      id-token: write
+    uses: ./.github/workflows/tsuga-component-build-images.yml
+    with:
+      push: true
+      version: ${{ github.event.release.tag_name }}
+    secrets: inherit
