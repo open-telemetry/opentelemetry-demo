@@ -29,7 +29,7 @@ public class CartService : Oteldemo.CartService.CartServiceBase
     {
         var activity = Activity.Current;
         activity?.SetTag("app.user.id", request.UserId);
-        activity?.SetTag("app.product.id", request.Item.ProductId);
+        activity?.SetTag("demo.product.id", request.Item.ProductId);
         activity?.SetTag("app.product.quantity", request.Item.Quantity);
 
         try

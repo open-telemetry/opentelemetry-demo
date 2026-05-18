@@ -3,7 +3,7 @@
 
 file_format: definition/2
 attributes:
-  - key: app.product.id
+  - key: demo.product.id
     type: string
     brief: Product identifier
     stability: stable

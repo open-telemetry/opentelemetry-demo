@@ -118,7 +118,7 @@ def get_product_reviews(request_product_id):
 
     with tracer.start_as_current_span("get_product_reviews") as span:
 
-        span.set_attribute("app.product.id", request_product_id)
+        span.set_attribute("demo.product.id", request_product_id)
 
         product_reviews = demo_pb2.GetProductReviewsResponse()
         records = fetch_product_reviews_from_db(request_product_id)
@@ -142,7 +142,7 @@ def get_average_product_review_score(request_product_id):
 
     with tracer.start_as_current_span("get_average_product_review_score") as span:
 
-        span.set_attribute("app.product.id", request_product_id)
+        span.set_attribute("demo.product.id", request_product_id)
 
         product_review_score = demo_pb2.GetAverageProductReviewScoreResponse()
         avg_score = fetch_avg_product_review_score_from_db(request_product_id)
@@ -158,7 +158,7 @@ def get_ai_assistant_response(request_product_id, question):
 
         ai_assistant_response = demo_pb2.AskProductAIAssistantResponse()
 
-        span.set_attribute("app.product.id", request_product_id)
+        span.set_attribute("demo.product.id", request_product_id)
         span.set_attribute("app.product.question", question)
 
         llm_rate_limit_error = check_feature_flag("llmRateLimitError")
