@@ -21,7 +21,7 @@ attributes:
     stability: stable
     note: The quantity of a product being added to cart or ordered
     examples: [1, 2, 5]
-  - key: app.product.question
+  - key: demo.product.review.question
     type: string
     brief: Product review question
     stability: stable
