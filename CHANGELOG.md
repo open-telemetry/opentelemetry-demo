@@ -99,6 +99,10 @@ the release.
   `app.product.question` to `demo.product.review.question` across
   product-reviews and telemetry schema.
   ([#3372](https://github.com/open-telemetry/opentelemetry-demo/pull/3372))
+* [telemetry] Rename product count telemetry attributes from
+  `app.products.count` to `demo.product.count` and from
+  `app.products_recommended.count` to `demo.product.recommended.count` across
+  recommendation, telemetry schema, and trace tests.
 
 ## 2.2.0
 
