@@ -379,13 +379,13 @@ func (p *productCatalog) GetProduct(ctx context.Context, req *pb.GetProductReque
 	span.AddEvent("Product Found")
 	span.SetAttributes(
 		attribute.String("demo.product.id", req.Id),
-		attribute.String("app.product.name", found.Name),
+		attribute.String("demo.product.name", found.Name),
 	)
 
 	logger.LogAttrs(
 		ctx,
 		slog.LevelInfo, "Product Found",
-		slog.String("app.product.name", found.Name),
+		slog.String("demo.product.name", found.Name),
 		slog.String("demo.product.id", req.Id),
 	)
 
