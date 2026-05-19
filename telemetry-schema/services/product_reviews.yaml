@@ -9,6 +9,6 @@ attribute_groups:
     stability: stable
     attributes:
       - ref: demo.product.id
-      - ref: app.product_reviews.count
-      - ref: app.product_reviews.average_score
+      - ref: demo.product.review.count
+      - ref: demo.product.review.average_score
       - ref: demo.product.review.question

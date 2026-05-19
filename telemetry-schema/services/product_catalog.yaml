@@ -11,4 +11,4 @@ attribute_groups:
       - ref: demo.product.count
       - ref: demo.product.id
       - ref: demo.product.name
-      - ref: app.products_search.count
+      - ref: demo.product.search.count

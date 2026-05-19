@@ -39,31 +39,31 @@ attributes:
     stability: stable
     note: The count of products recommended to the user
     examples: [5, 10, 15]
-  - key: app.filtered_products.count
+  - key: demo.product.filtered.count
     type: int
     brief: Number of products after filtering
     stability: stable
     note: The number of products remaining after applying filters (e.g., availability, category, price range)
     examples: [5, 20, 50]
-  - key: app.filtered_products.list
+  - key: demo.product.filtered.list
     type: string[]
     brief: List of filtered product IDs
     stability: stable
     note: A list of product IDs that were included in the filtered product set
     examples: ["OLJCESPC7Z,9SOIN3QJO0,6E92ZMJLZN"]
-  - key: app.products_search.count
+  - key: demo.product.search.count
     type: int
     brief: Number of search results
     stability: stable
     note: The count of products matching a search query
     examples: [0, 10, 50]
-  - key: app.product_reviews.count
+  - key: demo.product.review.count
     type: int
     brief: Number of product reviews
     stability: stable
     note: The count of reviews returned or processed for a specific product
     examples: [5, 10, 25]
-  - key: app.product_reviews.average_score
+  - key: demo.product.review.average_score
     type: double
     brief: Average review score
     stability: stable
