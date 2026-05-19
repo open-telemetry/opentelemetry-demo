@@ -131,7 +131,7 @@ def get_product_reviews(request_product_id):
                     score=str(row[2])
             )
 
-        span.set_attribute("app.product_reviews.count", len(product_reviews.product_reviews))
+        span.set_attribute("demo.product.review.count", len(product_reviews.product_reviews))
 
         # Collect metrics for this service
         product_review_svc_metrics["app_product_review_counter"].add(len(product_reviews.product_reviews), {'product.id': request_product_id})
