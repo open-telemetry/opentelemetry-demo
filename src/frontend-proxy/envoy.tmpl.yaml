@@ -85,6 +85,11 @@ static_resources:
                             upgrade_configs:
                               - upgrade_type: websocket
                         - match: { prefix: "/" }
+                        - match: { path: "/profiles" }
+                          redirect: { path_redirect: "/profiles/" }
+                        - match: { prefix: "/profiles/" }
+                          route: { cluster: profiles }
+                        - match: { prefix: "/" }  # Default/catch-all route - keep last since prefix:"/" matches everything
                           route: { cluster: frontend }
                 http_filters:
                   - name: envoy.filters.http.fault
@@ -282,6 +287,11 @@ static_resources:
       lb_policy: ROUND_ROBIN
       load_assignment:
         cluster_name: chatbot
+    - name: profiles
+      type: STRICT_DNS
+      lb_policy: ROUND_ROBIN
+      load_assignment:
+        cluster_name: profiles
         endpoints:
           - lb_endpoints:
               - endpoint:
@@ -289,6 +299,8 @@ static_resources:
                     socket_address:
                       address: ${CHATBOT_HOST}
                       port_value: ${CHATBOT_PORT}
+                      address: ${FIREPIT_HOST}
+                      port_value: ${FIREPIT_PORT}
 admin:
   address:
     socket_address:

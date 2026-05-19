@@ -3,25 +3,25 @@
 
 file_format: definition/2
 attributes:
-  - key: app.product.id
+  - key: demo.product.id
     type: string
     brief: Product identifier
     stability: stable
     note: The unique identifier of the product being viewed, reviewed, or added to cart
     examples: ["66VCHSJNUP", "OLJCESPC7Z", "9SOIN3QJO0"]
-  - key: app.product.name
+  - key: demo.product.name
     type: string
     brief: Product name
     stability: stable
     note: The name or title of the product
     examples: ["Wireless Headphones", "Coffee Maker", "Running Shoes"]
-  - key: app.product.quantity
+  - key: demo.product.quantity
     type: int
     brief: Product quantity
     stability: stable
     note: The quantity of a product being added to cart or ordered
     examples: [1, 2, 5]
-  - key: app.product.question
+  - key: demo.product.review.question
     type: string
     brief: Product review question
     stability: stable
