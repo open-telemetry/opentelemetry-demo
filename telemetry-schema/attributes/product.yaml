@@ -3,37 +3,37 @@
 
 file_format: definition/2
 attributes:
-  - key: app.product.id
+  - key: demo.product.id
     type: string
     brief: Product identifier
     stability: stable
     note: The unique identifier of the product being viewed, reviewed, or added to cart
     examples: ["66VCHSJNUP", "OLJCESPC7Z", "9SOIN3QJO0"]
-  - key: app.product.name
+  - key: demo.product.name
     type: string
     brief: Product name
     stability: stable
     note: The name or title of the product
     examples: ["Wireless Headphones", "Coffee Maker", "Running Shoes"]
-  - key: app.product.quantity
+  - key: demo.product.quantity
     type: int
     brief: Product quantity
     stability: stable
     note: The quantity of a product being added to cart or ordered
     examples: [1, 2, 5]
-  - key: app.product.question
+  - key: demo.product.review.question
     type: string
     brief: Product review question
     stability: stable
     note: A question or query related to product reviews, such as a customer inquiry about product features or quality
     examples: ["Is this product durable?", "What is the warranty?"]
-  - key: app.products.count
+  - key: demo.product.count
     type: int
     brief: Total number of products available
     stability: stable
     note: The total number of products available in the product catalog
     examples: [100, 500, 1000]
-  - key: app.products_recommended.count
+  - key: demo.product.recommended.count
     type: int
     brief: Number of products recommended
     stability: stable

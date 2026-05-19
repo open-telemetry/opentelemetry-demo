@@ -31,7 +31,7 @@ spec:
     selector: span[name="POST /oteldemo.CartService/AddItem"]
     assertions:
     - attr:grpc.status_code = 0
-    - attr:app.product.id = "0PUK6V6EV0"
+    - attr:demo.product.id = "0PUK6V6EV0"
   - name: It set the cart item correctly on the database
     selector: span[tracetest.span.type="database" name="HMSET" db.system="redis" db.redis.database_index="0"]
     assertions:
