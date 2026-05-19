@@ -13,4 +13,4 @@ attribute_groups:
       - ref: app.cache_hit
       - ref: demo.product.count
       - ref: demo.product.filtered.count
-      - ref: app.filtered_products.list
+      - ref: demo.product.filtered.list
