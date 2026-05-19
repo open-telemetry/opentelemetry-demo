@@ -402,7 +402,7 @@ func (p *productCatalog) SearchProducts(ctx context.Context, req *pb.SearchProdu
 	}
 
 	span.SetAttributes(
-		attribute.Int("app.products_search.count", len(result)),
+		attribute.Int("demo.product.search.count", len(result)),
 	)
 	return &pb.SearchProductsResponse{Results: result}, nil
 }

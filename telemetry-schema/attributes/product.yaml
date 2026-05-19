@@ -51,7 +51,7 @@ attributes:
     stability: stable
     note: A list of product IDs that were included in the filtered product set
     examples: ["OLJCESPC7Z,9SOIN3QJO0,6E92ZMJLZN"]
-  - key: app.products_search.count
+  - key: demo.product.search.count
     type: int
     brief: Number of search results
     stability: stable
