@@ -228,7 +228,7 @@ public final class AdService {
   private static final ImmutableListMultimap<String, Ad> adsMap = createAdsMap();
 
   @WithSpan("getAdsByCategory")
-  private Collection<Ad> getAdsByCategory(@SpanAttribute("app.ads.category") String category) {
+  private Collection<Ad> getAdsByCategory(@SpanAttribute("demo.ad.category") String category) {
     Collection<Ad> ads = adsMap.get(category);
     Span.current().setAttribute("app.ads.count", ads.size());
     return ads;

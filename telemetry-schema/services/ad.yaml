@@ -13,5 +13,5 @@ attribute_groups:
       - ref: app.ads.count
       - ref: app.ads.ad_request_type
       - ref: app.ads.ad_response_type
-      - ref: app.ads.category
+      - ref: demo.ad.category
       - ref: session.id
