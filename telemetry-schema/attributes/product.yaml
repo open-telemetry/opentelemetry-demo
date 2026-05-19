@@ -27,13 +27,13 @@ attributes:
     stability: stable
     note: A question or query related to product reviews, such as a customer inquiry about product features or quality
     examples: ["Is this product durable?", "What is the warranty?"]
-  - key: app.products.count
+  - key: demo.product.count
     type: int
     brief: Total number of products available
     stability: stable
     note: The total number of products available in the product catalog
     examples: [100, 500, 1000]
-  - key: app.products_recommended.count
+  - key: demo.product.recommended.count
     type: int
     brief: Number of products recommended
     stability: stable
