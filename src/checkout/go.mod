@@ -3,7 +3,7 @@ module github.com/open-telemetry/opentelemetry-demo/src/checkout
 go 1.25.0
 
 require (
-	github.com/IBM/sarama v1.48.1
+	github.com/IBM/sarama v1.49.0
 	github.com/google/uuid v1.6.0
 	github.com/open-feature/go-sdk v1.17.2
 	github.com/open-feature/go-sdk-contrib/hooks/open-telemetry v0.3.7
@@ -21,7 +21,7 @@ require (
 	go.opentelemetry.io/otel/sdk/log v0.19.0
 	go.opentelemetry.io/otel/sdk/metric v1.43.0
 	go.opentelemetry.io/otel/trace v1.43.0
-	google.golang.org/grpc v1.81.0
+	google.golang.org/grpc v1.81.1
 	google.golang.org/protobuf v1.36.11
 )
 
