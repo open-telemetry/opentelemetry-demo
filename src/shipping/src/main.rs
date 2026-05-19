@@ -12,7 +12,7 @@ use tracing::info;
 mod telemetry_conf;
 use telemetry_conf::init_otel;
 mod shipping_service;
-use shipping_service::{get_quote, ship_order, DEFAULT_SLOWDOWN};
+use shipping_service::{get_quote, ship_order};
 
 #[actix_web::main]
 async fn main() -> std::io::Result<()> {
@@ -58,7 +58,6 @@ async fn main() -> std::io::Result<()> {
     HttpServer::new(move || {
         App::new()
             .app_data(flag_provider.clone())
-            .app_data(web::Data::new(DEFAULT_SLOWDOWN))
             .wrap(RequestTracing::new())
             .wrap(RequestMetrics::default())
             .service(get_quote)

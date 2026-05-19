@@ -147,12 +147,13 @@
       },
       "defaultVariant": "off"
     },
-    "shippingSlowdown": {
+    "intlShippingSlowdown": {
       "description": "Delays international shipping responses to simulate overseas shipping delay",
       "state": "ENABLED",
       "variants": {
-        "on": true,
-        "off": false
+        "10sec": 10,
+        "5sec": 5,
+        "off": 0
       },
       "defaultVariant": "off"
     }
