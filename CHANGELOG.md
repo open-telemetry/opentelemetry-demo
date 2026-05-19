@@ -112,6 +112,7 @@ the release.
   `app.product_reviews.average_score` to `demo.product.review.average_score`
   across product-catalog, product-reviews, recommendation, telemetry schema,
   and trace tests.
+  ([#3376](https://github.com/open-telemetry/opentelemetry-demo/pull/3376))
 
 ## 2.2.0
 
