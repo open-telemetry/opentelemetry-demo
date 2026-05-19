@@ -122,6 +122,7 @@ the release.
   `app.ads.ad_response_type` to `demo.ad.response_type` across ad,
   product-catalog, product-reviews, recommendation, telemetry schema, and trace
   tests.
+  ([#3377](https://github.com/open-telemetry/opentelemetry-demo/pull/3387))
 
 ## 2.2.0
 
