@@ -99,7 +99,7 @@ attributes:
     stability: stable
     note: Indicates whether the ad request was targeted or not
     examples: ["TARGETED", "NOT_TARGETED"]
-  - key: app.ads.ad_response_type
+  - key: demo.ad.response_type
     type: string
     brief: Type of ad response
     stability: stable

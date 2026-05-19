@@ -71,7 +71,7 @@ public final class AdService {
   private static final AttributeKey<String> adRequestTypeKey =
       AttributeKey.stringKey("demo.ad.request_type");
   private static final AttributeKey<String> adResponseTypeKey =
-      AttributeKey.stringKey("app.ads.ad_response_type");
+      AttributeKey.stringKey("demo.ad.response_type");
 
   private void start() throws IOException {
     int port =
@@ -194,7 +194,7 @@ public final class AdService {
         }
         span.setAttribute("demo.ad.count", allAds.size());
         span.setAttribute("demo.ad.request_type", adRequestType.name());
-        span.setAttribute("app.ads.ad_response_type", adResponseType.name());
+        span.setAttribute("demo.ad.response_type", adResponseType.name());
 
         adRequestsCounter.add(
             1,
