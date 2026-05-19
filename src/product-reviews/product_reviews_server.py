@@ -148,7 +148,7 @@ def get_average_product_review_score(request_product_id):
         avg_score = fetch_avg_product_review_score_from_db(request_product_id)
         product_review_score.average_score = avg_score
 
-        span.set_attribute("app.product_reviews.average_score", avg_score)
+        span.set_attribute("demo.product.review.average_score", avg_score)
 
         return product_review_score
 

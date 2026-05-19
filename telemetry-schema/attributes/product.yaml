@@ -63,7 +63,7 @@ attributes:
     stability: stable
     note: The count of reviews returned or processed for a specific product
     examples: [5, 10, 25]
-  - key: app.product_reviews.average_score
+  - key: demo.product.review.average_score
     type: double
     brief: Average review score
     stability: stable
