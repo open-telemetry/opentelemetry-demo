@@ -24,9 +24,9 @@ cargo test
 
 ## Feature Flags
 
-* `shippingSlowdown`: when enabled, non-US shipping requests are delayed by 10
-  seconds to simulate overseas shipping latency. US addresses are never affected.
-  The flag is evaluated via the flagd OFREP REST API.
+* `intlShippingSlowdown`: integer flag (default 0). When non-zero, non-US
+  shipping requests are delayed by the flag's value in seconds to simulate
+  overseas shipping latency. US addresses are never affected.
 
 ## Environment Variables
 

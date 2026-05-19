@@ -7,8 +7,8 @@ the release.
 
 ## Unreleased
 
-* [shipping] Add `shippingSlowdown` feature flag to delay international (non-US)
-  shipments via flagd OFREP integration with OpenTelemetry tracing
+* [shipping] Add `intlShippingSlowdown` integer feature flag to delay
+  international (non-US) shipments by N seconds via flagd with OpenTelemetry tracing
   ([#346](https://github.com/open-telemetry/opentelemetry-demo/issues/346))
 * [collector] Add `transform/sanitize_logs` processor to work around
   `otelcol.signal` scope attribute conflict with `otelcol.signal.output`

@@ -16,7 +16,6 @@ mod shipping_types;
 pub use shipping_types::*;
 
 const NANOS_MULTIPLE: u32 = 10000000u32;
-pub const DEFAULT_SLOWDOWN: std::time::Duration = std::time::Duration::from_secs(10);
 
 #[post("/get-quote")]
 pub async fn get_quote(req: web::Json<GetQuoteRequest>) -> impl Responder {
@@ -51,7 +50,6 @@ pub async fn get_quote(req: web::Json<GetQuoteRequest>) -> impl Responder {
 pub async fn ship_order(
     req: web::Json<ShipOrderRequest>,
     flag_provider: web::Data<dyn FeatureProvider>,
-    slowdown: web::Data<std::time::Duration>,
 ) -> impl Responder {
     let is_outside_us = req
         .address
@@ -64,28 +62,34 @@ pub async fn ship_order(
         })
         .unwrap_or(false);
 
-    if is_outside_us && flag_provider
-        .resolve_bool_value("shippingSlowdown", &EvaluationContext::default())
-        .await
-        .map(|res| {
-            info!(
-                feature_flag.key = "shippingSlowdown",
-                feature_flag.provider_name = "flagd",
-                feature_flag.variant = res.variant.as_deref().unwrap_or("unknown"),
-                "feature flag evaluated"
-            );
-            res.value
-        })
-        .unwrap_or_else(|e| {
-            warn!("Failed to evaluate feature flag shippingSlowdown: {:?}", e);
-            false
-        })
-    {
+    let slowdown_secs = if is_outside_us {
+        flag_provider
+            .resolve_int_value("intlShippingSlowdown", &EvaluationContext::default())
+            .await
+            .map(|res| {
+                info!(
+                    feature_flag.key = "intlShippingSlowdown",
+                    feature_flag.provider_name = "flagd",
+                    feature_flag.variant = res.variant.as_deref().unwrap_or("unknown"),
+                    message = "feature flag evaluated"
+                );
+                res.value
+            })
+            .unwrap_or_else(|e| {
+                warn!("Failed to evaluate feature flag intlShippingSlowdown: {:?}", e);
+                0
+            })
+    } else {
+        0
+    };
+
+    if slowdown_secs > 0 {
         info!(
-            name = "ShippingSlowdown",
-            message = "Delaying international shipment due to shippingSlowdown feature flag"
+            name = "IntlShippingSlowdown",
+            shipping.delay_secs = slowdown_secs,
+            message = "Delaying international shipment due to intlShippingSlowdown feature flag"
         );
-        actix_web::rt::time::sleep(**slowdown).await;
+        actix_web::rt::time::sleep(std::time::Duration::from_secs(slowdown_secs as u64)).await;
     }
 
     let tid = create_tracking_id();
@@ -105,9 +109,9 @@ mod tests {
 
     use super::*;
 
-    fn mock_provider(value: bool) -> web::Data<dyn FeatureProvider> {
+    fn mock_provider(value: i64) -> web::Data<dyn FeatureProvider> {
         let mut mock = MockFeatureProvider::new();
-        mock.expect_resolve_bool_value()
+        mock.expect_resolve_int_value()
             .returning(move |_, _| Ok(ResolutionDetails::new(value)));
         web::Data::from(Arc::new(mock) as Arc<dyn FeatureProvider>)
     }
@@ -115,12 +119,10 @@ mod tests {
     async fn call_ship_order(
         address: Option<Address>,
         provider: web::Data<dyn FeatureProvider>,
-        slowdown: std::time::Duration,
     ) -> ShipOrderResponse {
         let app = test::init_service(
             App::new()
                 .app_data(provider)
-                .app_data(web::Data::new(slowdown))
                 .service(ship_order),
         )
         .await;
@@ -146,37 +148,35 @@ mod tests {
 
     #[actix_web::test]
     async fn test_ship_order_no_address() {
-        let order = call_ship_order(None, mock_provider(false), std::time::Duration::ZERO).await;
+        let order = call_ship_order(None, mock_provider(0)).await;
         assert!(!order.tracking_id.is_empty());
     }
 
     #[actix_web::test]
     async fn test_ship_order_us_address() {
-        let order = call_ship_order(Some(make_address("US")), mock_provider(false), std::time::Duration::ZERO).await;
+        let order = call_ship_order(Some(make_address("US")), mock_provider(0)).await;
         assert!(!order.tracking_id.is_empty());
     }
 
     #[actix_web::test]
     async fn test_ship_order_international_flag_off() {
-        let order = call_ship_order(Some(make_address("CA")), mock_provider(false), std::time::Duration::ZERO).await;
+        let order = call_ship_order(Some(make_address("FR")), mock_provider(0)).await;
         assert!(!order.tracking_id.is_empty());
     }
 
     #[actix_web::test]
     async fn test_ship_order_international_flag_on() {
-        let slowdown = std::time::Duration::from_millis(50);
         let start = std::time::Instant::now();
-        let order = call_ship_order(Some(make_address("CA")), mock_provider(true), slowdown).await;
-        assert!(start.elapsed() >= slowdown);
+        let order = call_ship_order(Some(make_address("FR")), mock_provider(1)).await;
+        assert!(start.elapsed() >= std::time::Duration::from_secs(1));
         assert!(!order.tracking_id.is_empty());
     }
 
     #[actix_web::test]
     async fn test_ship_order_us_flag_on() {
-        let slowdown = std::time::Duration::from_millis(50);
         let start = std::time::Instant::now();
-        let order = call_ship_order(Some(make_address("US")), mock_provider(true), slowdown).await;
-        assert!(start.elapsed() < slowdown);
+        let order = call_ship_order(Some(make_address("US")), mock_provider(10)).await;
+        assert!(start.elapsed() < std::time::Duration::from_secs(1));
         assert!(!order.tracking_id.is_empty());
     }
 }
