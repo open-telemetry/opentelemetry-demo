@@ -10,7 +10,7 @@ attribute_groups:
     attributes:
       - ref: app.ads.contextKeys
       - ref: app.ads.contextKeys.count
-      - ref: app.ads.count
+      - ref: demo.ad.count
       - ref: app.ads.ad_request_type
       - ref: app.ads.ad_response_type
       - ref: demo.ad.category

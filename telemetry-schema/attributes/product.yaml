@@ -75,7 +75,7 @@ attributes:
     stability: stable
     note: The category of advertisements being served
     examples: ["electronics", "clothing", "home"]
-  - key: app.ads.count
+  - key: demo.ad.count
     type: int
     brief: Number of advertisements served
     stability: stable

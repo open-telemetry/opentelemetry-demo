@@ -192,7 +192,7 @@ public final class AdService {
           allAds = service.getRandomAds();
           adResponseType = AdResponseType.RANDOM;
         }
-        span.setAttribute("app.ads.count", allAds.size());
+        span.setAttribute("demo.ad.count", allAds.size());
         span.setAttribute("app.ads.ad_request_type", adRequestType.name());
         span.setAttribute("app.ads.ad_response_type", adResponseType.name());
 
@@ -230,7 +230,7 @@ public final class AdService {
   @WithSpan("getAdsByCategory")
   private Collection<Ad> getAdsByCategory(@SpanAttribute("demo.ad.category") String category) {
     Collection<Ad> ads = adsMap.get(category);
-    Span.current().setAttribute("app.ads.count", ads.size());
+    Span.current().setAttribute("demo.ad.count", ads.size());
     return ads;
   }
 
@@ -250,7 +250,7 @@ public final class AdService {
       for (int i = 0; i < MAX_ADS_TO_SERVE; i++) {
         ads.add(Iterables.get(allAds, random.nextInt(allAds.size())));
       }
-      span.setAttribute("app.ads.count", ads.size());
+      span.setAttribute("demo.ad.count", ads.size());
 
     } finally {
       span.end();
