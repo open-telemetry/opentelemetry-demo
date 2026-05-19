@@ -104,6 +104,14 @@ the release.
   `app.products_recommended.count` to `demo.product.recommended.count` across
   recommendation, telemetry schema, and trace tests.
   ([#3374](https://github.com/open-telemetry/opentelemetry-demo/pull/3374))
+* [telemetry] Rename product filtering, search, and review telemetry attributes:
+  `app.filtered_products.count` to `demo.product.filtered.count`,
+  `app.filtered_products.list` to `demo.product.filtered.list`,
+  `app.products_search.count` to `demo.product.search.count`,
+  `app.product_reviews.count` to `demo.product.review.count`, and
+  `app.product_reviews.average_score` to `demo.product.review.average_score`
+  across product-catalog, product-reviews, recommendation, telemetry schema,
+  and trace tests.
 
 ## 2.2.0
 
