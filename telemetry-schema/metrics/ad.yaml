@@ -11,7 +11,7 @@ metrics:
     annotations:
       service: ad
     attributes:
-      - ref: app.ads.ad_request_type
+      - ref: demo.ad.request_type
         requirement_level: required
         note: Indicates whether the ad request was targeted based on context keys
       - ref: app.ads.ad_response_type

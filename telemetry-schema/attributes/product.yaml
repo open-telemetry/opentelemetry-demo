@@ -93,7 +93,7 @@ attributes:
     stability: stable
     note: The count of context keys provided for ad targeting
     examples: [0, 2, 5]
-  - key: app.ads.ad_request_type
+  - key: demo.ad.request_type
     type: string
     brief: Type of ad request
     stability: stable
