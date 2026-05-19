@@ -287,6 +287,13 @@ static_resources:
       lb_policy: ROUND_ROBIN
       load_assignment:
         cluster_name: chatbot
+        endpoints:
+          - lb_endpoints:
+              - endpoint:
+                  address:
+                    socket_address:
+                      address: ${CHATBOT_HOST}
+                      port_value: ${CHATBOT_PORT}
     - name: profiles
       type: STRICT_DNS
       lb_policy: ROUND_ROBIN
@@ -297,8 +304,6 @@ static_resources:
               - endpoint:
                   address:
                     socket_address:
-                      address: ${CHATBOT_HOST}
-                      port_value: ${CHATBOT_PORT}
                       address: ${FIREPIT_HOST}
                       port_value: ${FIREPIT_PORT}
 admin:
