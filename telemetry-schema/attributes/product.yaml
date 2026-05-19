@@ -81,13 +81,13 @@ attributes:
     stability: stable
     note: The count of advertisements returned or served in a request
     examples: [1, 2, 5]
-  - key: app.ads.contextKeys
+  - key: demo.ad.context_keys
     type: string
     brief: Context keys for ad targeting
     stability: stable
     note: Comma-separated list of context keys used for ad targeting
     examples: ["electronics,gadgets", "home,kitchen"]
-  - key: app.ads.contextKeys.count
+  - key: demo.ad.context_keys.count
     type: int
     brief: Number of context keys
     stability: stable
