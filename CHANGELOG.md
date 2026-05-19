@@ -113,6 +113,16 @@ the release.
   across product-catalog, product-reviews, recommendation, telemetry schema,
   and trace tests.
   ([#3376](https://github.com/open-telemetry/opentelemetry-demo/pull/3376))
+* [telemetry] Rename advertising telemetry attributes:
+  `app.ads.category` to `demo.ad.category`,
+  `app.ads.count` to `demo.ad.count`,
+  `app.ads.contextKeys` to `demo.ad.context_keys`,
+  `app.ads.contextKeys.count` to `demo.ad.context_keys.count`,
+  `app.ads.ad_request_type` to `demo.ad.request_type`, and
+  `app.ads.ad_response_type` to `demo.ad.response_type` across ad,
+  product-catalog, product-reviews, recommendation, telemetry schema, and trace
+  tests.
+  ([#3377](https://github.com/open-telemetry/opentelemetry-demo/pull/3387))
 
 ## 2.2.0
 
