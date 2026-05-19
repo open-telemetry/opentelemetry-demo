@@ -39,7 +39,7 @@ attributes:
     stability: stable
     note: The count of products recommended to the user
     examples: [5, 10, 15]
-  - key: app.filtered_products.count
+  - key: demo.product.filtered.count
     type: int
     brief: Number of products after filtering
     stability: stable
