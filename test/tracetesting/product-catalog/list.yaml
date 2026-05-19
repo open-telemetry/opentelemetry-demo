@@ -19,7 +19,7 @@ spec:
       rpc.system="grpc" rpc.method="ListProducts" rpc.service="oteldemo.ProductCatalogService"]
     assertions:
     - attr:rpc.grpc.status_code  =  0
-    - attr:app.products.count  =  10
+    - attr:demo.product.count  =  10
   - name: It returned products with IDs
     selector: span[tracetest.span.type="general" name="Tracetest trigger"]
     assertions:

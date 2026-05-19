@@ -20,5 +20,5 @@ spec:
     - name: It called GetProductReviews correctly and got 5 product reviews
       selector: span[name="get_product_reviews"]
       assertions:
-        - attr:app.product.id  =  "L9ECAV7KIM"
+        - attr:demo.product.id  =  "L9ECAV7KIM"
         - attr:app.product_reviews.count = 5
