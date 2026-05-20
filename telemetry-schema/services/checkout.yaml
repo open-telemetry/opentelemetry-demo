@@ -14,6 +14,6 @@ attribute_groups:
       - ref: app.shipping.tracking.id
       - ref: demo.order.id
       - ref: app.shipping.amount
-      - ref: app.order.amount
+      - ref: demo.order.amount
       - ref: app.order.items.count
       - ref: app.cart.items.count

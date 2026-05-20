@@ -366,7 +366,7 @@ func (cs *checkout) PlaceOrder(ctx context.Context, req *pb.PlaceOrderRequest) (
 	span.SetAttributes(
 		attribute.String("demo.order.id", orderID.String()),
 		attribute.Float64("app.shipping.amount", shippingCostFloat),
-		attribute.Float64("app.order.amount", totalPriceFloat),
+		attribute.Float64("demo.order.amount", totalPriceFloat),
 		attribute.Int("app.order.items.count", len(prep.orderItems)),
 		shippingTrackingAttribute,
 	)
@@ -375,7 +375,7 @@ func (cs *checkout) PlaceOrder(ctx context.Context, req *pb.PlaceOrderRequest) (
 		slog.LevelInfo, "order placed",
 		slog.String("demo.order.id", orderID.String()),
 		slog.Float64("app.shipping.amount", shippingCostFloat),
-		slog.Float64("app.order.amount", totalPriceFloat),
+		slog.Float64("demo.order.amount", totalPriceFloat),
 		slog.Int("app.order.items.count", len(prep.orderItems)),
 		slog.String("app.shipping.tracking.id", shippingTrackingID),
 	)

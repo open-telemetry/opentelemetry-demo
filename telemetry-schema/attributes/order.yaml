@@ -9,7 +9,7 @@ attributes:
     stability: stable
     note: The unique identifier for an order
     examples: ["order-123", "ORD-456789"]
-  - key: app.order.amount
+  - key: demo.order.amount
     type: double
     brief: Total order amount
     stability: stable
