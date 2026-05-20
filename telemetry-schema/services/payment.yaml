@@ -9,7 +9,7 @@ attribute_groups:
     stability: stable
     attributes:
       - ref: app.loyalty.level
-      - ref: app.payment.card_type
+      - ref: demo.payment.card_type
       - ref: app.payment.card_valid
       - ref: app.payment.charged
       - ref: demo.payment.amount

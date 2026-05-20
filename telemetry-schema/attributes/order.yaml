@@ -33,7 +33,7 @@ attributes:
     stability: stable
     note: The monetary amount being charged
     examples: ["29.99", "99.95", "150.00"]
-  - key: app.payment.card_type
+  - key: demo.payment.card_type
     type: string
     brief: Credit card type
     stability: stable

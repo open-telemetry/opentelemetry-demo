@@ -54,7 +54,7 @@ module.exports.charge = async request => {
     const loyalty_level = random(LOYALTY_LEVEL);
 
     span.setAttributes({
-      'app.payment.card_type': cardType,
+      'demo.payment.card_type': cardType,
       'app.payment.card_valid': valid,
       'app.loyalty.level': loyalty_level
     });
