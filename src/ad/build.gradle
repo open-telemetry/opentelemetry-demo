@@ -24,6 +24,7 @@ def opentelemetryInstrumentationVersion = "2.27.0"
 def grpcVersion = "1.81.0"
 def jacksonVersion = "2.21.3"
 def protocVersion = "4.34.1"
+def prometheusMetricsVersion = "1.3.6"
 
 tasks.withType(JavaCompile).configureEach {
     sourceCompatibility = JavaVersion.VERSION_21
@@ -55,7 +56,9 @@ dependencies {
                 "io.opentelemetry.instrumentation:opentelemetry-instrumentation-annotations",
                 "org.apache.logging.log4j:log4j-core:2.25.4",
                 "dev.openfeature.contrib.providers:flagd:0.13.1",
-                'dev.openfeature:sdk:1.20.2'
+                'dev.openfeature:sdk:1.20.2',
+                "io.prometheus:prometheus-metrics-core:${prometheusMetricsVersion}",
+                "io.prometheus:prometheus-metrics-exporter-httpserver:${prometheusMetricsVersion}"
 
         runtimeOnly "com.fasterxml.jackson.core:jackson-core:${jacksonVersion}",
                 "com.fasterxml.jackson.core:jackson-databind:${jacksonVersion}",

@@ -25,6 +25,8 @@ import io.opentelemetry.context.Context;
 import io.opentelemetry.context.Scope;
 import io.opentelemetry.instrumentation.annotations.SpanAttribute;
 import io.opentelemetry.instrumentation.annotations.WithSpan;
+import io.prometheus.metrics.core.metrics.Counter;
+import io.prometheus.metrics.exporter.httpserver.HTTPServer;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -57,6 +59,14 @@ public final class AdService {
 
   private Server server;
   private HealthStatusManager healthMgr;
+  private HTTPServer prometheusServer;
+
+  private static final Counter adsServedCounter =
+      Counter.builder()
+          .name("demo_ad_served_total")
+          .help("Total number of ads served, labeled by category")
+          .labelNames("category")
+          .register();
 
   private static final AdService service = new AdService();
   private static final Tracer tracer = GlobalOpenTelemetry.getTracer("ad");
@@ -81,6 +91,11 @@ public final class AdService {
                     () ->
                         new IllegalStateException(
                             "environment vars: AD_PORT must not be null")));
+    int prometheusPort =
+        Integer.parseInt(Optional.ofNullable(System.getenv("AD_PROMETHEUS_PORT")).orElse("9465"));
+    prometheusServer = HTTPServer.builder().port(prometheusPort).buildAndStart();
+    logger.info(
+        "Prometheus metrics endpoint started, listening on " + prometheusServer.getPort() + "/metrics");
     healthMgr = new HealthStatusManager();
 
     // Create a flagd instance with OpenTelemetry
@@ -117,6 +132,9 @@ public final class AdService {
     if (server != null) {
       healthMgr.clearStatus("");
       server.shutdown();
+    }
+    if (prometheusServer != null) {
+      prometheusServer.stop();
     }
   }
 
@@ -231,6 +249,7 @@ public final class AdService {
   private Collection<Ad> getAdsByCategory(@SpanAttribute("demo.ad.category") String category) {
     Collection<Ad> ads = adsMap.get(category);
     Span.current().setAttribute("demo.ad.count", ads.size());
+    adsServedCounter.labelValues(category).inc(ads.size());
     return ads;
   }
 
@@ -251,6 +270,7 @@ public final class AdService {
         ads.add(Iterables.get(allAds, random.nextInt(allAds.size())));
       }
       span.setAttribute("demo.ad.count", ads.size());
+      adsServedCounter.labelValues("random").inc(ads.size());
 
     } finally {
       span.end();
