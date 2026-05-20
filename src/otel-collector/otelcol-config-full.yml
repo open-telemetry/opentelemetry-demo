@@ -43,4 +43,4 @@ receivers:
 service:
   pipelines:
     metrics:
-      receivers: [docker_stats, httpcheck/frontend-proxy, hostmetrics, nginx, otlp, redis, spanmetrics, kafkametrics, postgresql]
+      receivers: [docker_stats, http_check/frontend-proxy, host_metrics, nginx, otlp, redis, span_metrics, kafkametrics, postgresql]
