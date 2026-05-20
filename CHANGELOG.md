@@ -130,6 +130,14 @@ the release.
   `app.cart.items.count` to `demo.cart.items.count` across cart, checkout,
   email, telemetry schema, and trace tests.
   ([#3389](https://github.com/open-telemetry/opentelemetry-demo/pull/3389))
+* [telemetry] Rename payment telemetry attributes:
+  `app.payment.amount` to `demo.payment.amount`,
+  `app.payment.card_type` to `demo.payment.card_type`,
+  `app.payment.card_valid` to `demo.payment.card_valid`,
+  `app.payment.charged` to `demo.payment.charged`,
+  `app.payment.transaction.id` to `demo.payment.transaction.id`, and
+  `app.payment.currency` to `demo.payment.currency` across checkout, payment,
+  and telemetry schema.
 
 ## 2.2.0
 
