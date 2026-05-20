@@ -806,8 +806,8 @@ services:
       - AGENT_PORT
       - LLM_BASE_URL
       - LLM_MODEL
-      - USE_VCR=${USE_VCR}
       - API_KEY
+      - USE_VCR=${USE_VCR}
       - OPENAI_API_KEY=${API_KEY}
       - APPLICATION_ENDPOINT=frontend:8080
       - OTEL_EXPORTER_OTLP_INSECURE=true

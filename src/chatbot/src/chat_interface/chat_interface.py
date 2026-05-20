@@ -56,11 +56,9 @@ class ChatAgentUI:
             "title": "Astronomy Shop agent",
             "description": "Ask me about the astronomy shop application, I will ask for more information if needed.",
             "examples": [
-                [
-                    "What are the categories of products available in Astronomy Shop Application and what are the products in each category"
-                ],
-                ["Get me all shipping codes in Astronomy Shop Application?"],
-                ["Get all the items in the cart for user anonymous-1"],
+                ["Show all available products in the store."],
+                ["What currencies are supported by the Astronomy Shop?"],
+                ["What current promotions are available on binoculars?"],
             ],
         }
 
