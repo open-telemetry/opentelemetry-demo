@@ -3,7 +3,7 @@
 
 file_format: definition/2
 attributes:
-  - key: app.order.id
+  - key: demo.order.id
     type: string
     brief: Order identifier
     stability: stable
