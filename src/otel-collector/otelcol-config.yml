@@ -19,7 +19,7 @@ receivers:
           allowed_origins:
             - "http://*"
             - "https://*"
-  http_check/frontend-proxy:
+  httpcheck/frontend-proxy:
     targets:
       - endpoint: http://${env:FRONTEND_PROXY_ADDR}
   nginx:
@@ -34,7 +34,7 @@ receivers:
     username: "valkey"
     collection_interval: 10s
   # Host metrics
-  host_metrics:
+  hostmetrics:
     root_path: /hostfs
     scrapers:
       cpu:
