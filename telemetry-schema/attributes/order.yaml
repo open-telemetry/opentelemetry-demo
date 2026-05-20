@@ -21,7 +21,7 @@ attributes:
     stability: stable
     note: The count of distinct items in the order
     examples: [1, 5, 10]
-  - key: app.cart.items.count
+  - key: demo.cart.items.count
     type: int
     brief: Number of items in cart
     stability: stable

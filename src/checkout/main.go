@@ -437,7 +437,7 @@ func (cs *checkout) prepareOrderItemsAndShippingQuoteFromCart(ctx context.Contex
 
 	span.SetAttributes(
 		attribute.Float64("app.shipping.amount", shippingCostFloat),
-		attribute.Int("app.cart.items.count", int(totalCart)),
+		attribute.Int("demo.cart.items.count", int(totalCart)),
 		attribute.Int("demo.order.items.count", len(orderItems)),
 	)
 	return out, nil
