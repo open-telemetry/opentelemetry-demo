@@ -55,3 +55,45 @@ def services_with_signal(signal: str, scope: str = "minimal") -> list[str]:
         for svc in services_for_scope(scope)
         if SIGNAL_MATRIX[svc].get(signal, False)
     ]
+
+
+# Directed inter-service edges expected to appear in trace data:
+# `parent` emits a span that has a direct child span belonging to `child`.
+# Edges referencing any FULL_ONLY_SERVICES service run only in the full scope.
+SERVICE_EDGES = [
+    # Frontend fan-out (gRPC)
+    ("frontend", "ad"),
+    ("frontend", "recommendation"),
+    ("frontend", "product-catalog"),
+    ("frontend", "cart"),
+    ("frontend", "checkout"),
+    # frontend->currency intentionally omitted: the only path that triggers it
+    # is the browser-driven currency-change task in load-generator (full scope
+    # only, browser traffic). checkout->currency below covers currency reach.
+    # Checkout fan-out
+    ("checkout", "cart"),
+    ("checkout", "payment"),
+    ("checkout", "shipping"),         # HTTP
+    ("checkout", "email"),            # HTTP
+    ("checkout", "product-catalog"),
+    ("checkout", "currency"),
+    # Other sync
+    ("recommendation", "product-catalog"),
+    ("shipping", "quote"),            # HTTP
+    # Note: async Kafka edges (checkout->accounting, checkout->fraud-detection)
+    # are intentionally excluded. The OTel auto-instrumentation here records
+    # producer spans on `checkout` and consumer spans on accounting /
+    # fraud-detection, but does not link them via parent-child references —
+    # they live in separate traces. Asserting their existence requires a
+    # different pattern than the parent->child walker used here.
+]
+
+
+def edges_for_scope(scope: str) -> list[tuple[str, str]]:
+    """Return the inter-service edges applicable to the given scope."""
+    if scope == "full":
+        return SERVICE_EDGES
+    return [
+        (p, c) for p, c in SERVICE_EDGES
+        if p not in FULL_ONLY_SERVICES and c not in FULL_ONLY_SERVICES
+    ]

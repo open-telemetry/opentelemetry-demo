@@ -7,7 +7,8 @@ the release.
 
 ## Unreleased
 
-* [testing] Add telemetry sanity tests to validate end-to-end observability pipeline
+* [testing] Add telemetry sanity tests to validate end-to-end observability
+  pipeline, including service-to-service edge verification via Jaeger trace walks
   ([#3356](https://github.com/open-telemetry/opentelemetry-demo/pull/3356))
 * [collector] Add `transform/sanitize_logs` processor to work around
   `otelcol.signal` scope attribute conflict with `otelcol.signal.output`

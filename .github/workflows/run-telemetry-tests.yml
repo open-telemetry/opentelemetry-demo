@@ -48,9 +48,6 @@ jobs:
       - name: Create .env.override if missing
         run: touch .env.override
 
-      - name: Build and start demo
-        run: make start
-
       - name: Run telemetry tests
         run: make run-telemetry-tests
 
@@ -80,9 +77,6 @@ jobs:
 
       - name: Create .env.override if missing
         run: touch .env.override
-
-      - name: Build and start minimal demo
-        run: make start-minimal
 
       - name: Run telemetry tests (minimal)
         run: make run-telemetry-tests-minimal

@@ -162,7 +162,7 @@ run-tracetesting:
 	$(DOCKER_COMPOSE_CMD) $(DOCKER_COMPOSE_ENV) -f docker-compose-tests.yml run traceBasedTests ${SERVICES_TO_TEST}
 
 .PHONY: run-telemetry-tests
-run-telemetry-tests:
+run-telemetry-tests: start
 	$(DOCKER_CMD) build -t opentelemetry-demo-telemetry-tests ./test/telemetry
 	@touch .env.override
 	$(DOCKER_CMD) run --rm --network opentelemetry-demo \
@@ -172,7 +172,7 @@ run-telemetry-tests:
 		opentelemetry-demo-telemetry-tests
 
 .PHONY: run-telemetry-tests-minimal
-run-telemetry-tests-minimal:
+run-telemetry-tests-minimal: start-minimal
 	$(DOCKER_CMD) build -t opentelemetry-demo-telemetry-tests ./test/telemetry
 	@touch .env.override
 	$(DOCKER_CMD) run --rm --network opentelemetry-demo \

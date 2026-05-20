@@ -48,7 +48,8 @@ test/telemetry/
 |-- test_collector.py
 |-- test_traces.py
 |-- test_metrics.py
-+-- test_logs.py
+|-- test_logs.py
++-- test_service_edges.py
 ```
 
 ## Service-Signal Matrix
@@ -84,6 +85,13 @@ signals it emits:
 
 - List services: `GET /jaeger/ui/api/services`
 - Find traces: `GET /jaeger/ui/api/traces?service={name}&limit=1`
+- Verify directed inter-service edges: walk traces returned from
+  `GET /jaeger/ui/api/traces?service={parent}&limit=20` and match
+  parent spans to their direct children via `references[CHILD_OF]`
+  (or `parentSpanID`) plus `processes[processID].serviceName`.
+  We do not use `/api/dependencies` because Jaeger's in-memory
+  backend rotates traces and the aggregator output is unreliable
+  within a 120s warmup window.
 
 **Prometheus (metrics):**
 
@@ -129,9 +137,11 @@ touching `src/`, `test/telemetry/`, or compose files.
 ## Extending
 
 - **New service**: Add one entry to `SIGNAL_MATRIX` in `services.py`
+- **New service edge**: Add one tuple to `SERVICE_EDGES` in `services.py`
 - **New backend**: Add a new `test_*.py` file
 - **Adjust timeouts**: Set `WARMUP_SECONDS` or `POLL_TIMEOUT` env vars
 - **Run single test**: `pytest test_traces.py -k "checkout" -v`
+- **Run single edge**: `pytest test_service_edges.py -k "frontend->cart" -v`
 
 ## Relationship to Weaver
 

@@ -7,7 +7,7 @@ import time
 import pytest
 import requests
 
-from services import services_with_signal
+from services import edges_for_scope, services_with_signal
 
 
 JAEGER_HOST = os.environ.get("JAEGER_HOST", "jaeger")
@@ -121,3 +121,11 @@ def pytest_generate_tests(metafunc):
     if "log_service" in metafunc.fixturenames:
         services = services_with_signal("logs", scope)
         metafunc.parametrize("log_service", services)
+
+    if "service_edge" in metafunc.fixturenames:
+        edges = edges_for_scope(scope)
+        metafunc.parametrize(
+            "service_edge",
+            edges,
+            ids=[f"{p}->{c}" for p, c in edges],
+        )
