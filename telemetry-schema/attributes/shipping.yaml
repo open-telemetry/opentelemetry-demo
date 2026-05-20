@@ -21,7 +21,7 @@ attributes:
     stability: stable
     note: The count of items included in a shipment
     examples: [1, 5, 10]
-  - key: app.shipping.tracking.id
+  - key: demo.shipping.tracking.id
     type: string
     brief: Shipping tracking identifier
     stability: stable

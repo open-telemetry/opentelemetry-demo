@@ -347,7 +347,7 @@ func (cs *checkout) PlaceOrder(ctx context.Context, req *pb.PlaceOrderRequest) (
 	if err != nil {
 		return nil, status.Errorf(codes.Unavailable, "shipping error: %+v", err)
 	}
-	shippingTrackingAttribute := attribute.String("app.shipping.tracking.id", shippingTrackingID)
+	shippingTrackingAttribute := attribute.String("demo.shipping.tracking.id", shippingTrackingID)
 	span.AddEvent("shipped", trace.WithAttributes(shippingTrackingAttribute))
 
 	_ = cs.emptyUserCart(ctx, req.UserId)
@@ -377,7 +377,7 @@ func (cs *checkout) PlaceOrder(ctx context.Context, req *pb.PlaceOrderRequest) (
 		slog.Float64("demo.shipping.amount", shippingCostFloat),
 		slog.Float64("demo.order.amount", totalPriceFloat),
 		slog.Int("demo.order.items.count", len(prep.orderItems)),
-		slog.String("app.shipping.tracking.id", shippingTrackingID),
+		slog.String("demo.shipping.tracking.id", shippingTrackingID),
 	)
 
 	if err := cs.sendOrderConfirmation(ctx, req.Email, orderResult); err != nil {
