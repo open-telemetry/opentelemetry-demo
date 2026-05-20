@@ -49,7 +49,7 @@ attributes:
     brief: Whether payment was successfully charged
     stability: stable
     note: Indicates whether the payment transaction was successfully charged to the customer's payment method (true) or not charged (false). For synthetic requests, this is set to false.
-  - key: app.payment.transaction.id
+  - key: demo.payment.transaction.id
     type: string
     brief: Payment transaction identifier
     stability: stable

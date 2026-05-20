@@ -10,7 +10,7 @@ attribute_groups:
     attributes:
       - ref: app.user.id
       - ref: app.user.currency
-      - ref: app.payment.transaction.id
+      - ref: demo.payment.transaction.id
       - ref: app.shipping.tracking.id
       - ref: demo.order.id
       - ref: app.shipping.amount
