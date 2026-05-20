@@ -1,0 +1,149 @@
+# Copyright The OpenTelemetry Authors
+# SPDX-License-Identifier: Apache-2.0
+
+# Test services layer: adds frontend tests, trace-based tests, and Tracetest server.
+#
+# Usage (via make run-tests or make run-tracetesting):
+#   docker compose -f compose.yaml -f compose.full.yaml -f compose.observability.yaml \
+#     -f compose.extras.yaml -f compose.tests.yaml run frontendTests
+#   docker compose -f compose.yaml -f compose.full.yaml -f compose.observability.yaml \
+#     -f compose.extras.yaml -f compose.tests.yaml run traceBasedTests
+
+services:
+  # Frontend Tests
+  frontendTests:
+    image: ${IMAGE_NAME}:${DEMO_VERSION}-frontend-tests
+    container_name: frontend-tests
+    build:
+      context: ./
+      dockerfile: ./src/frontend/Dockerfile.cypress
+    volumes:
+      - ./src/frontend/cypress/videos:/app/cypress/videos
+      - ./src/frontend/cypress/screenshots:/app/cypress/screenshots
+    environment:
+      - CYPRESS_baseUrl=http://${FRONTEND_ADDR}
+      - FRONTEND_ADDR
+      - NODE_ENV=production
+    depends_on:
+      - frontend
+
+  # Tracebased Tests
+  traceBasedTests:
+    image: ${IMAGE_NAME}:${DEMO_VERSION}-traceBasedTests
+    container_name: traceBasedTests
+    build:
+      context: ./
+      dockerfile: ./test/tracetesting/Dockerfile
+      args:
+        TRACETEST_IMAGE_VERSION: ${TRACETEST_IMAGE_VERSION}
+    environment:
+      - AD_ADDR
+      - CART_ADDR
+      - CHECKOUT_ADDR
+      - CURRENCY_ADDR
+      - EMAIL_ADDR
+      - FRONTEND_ADDR
+      - PAYMENT_ADDR
+      - PRODUCT_CATALOG_ADDR
+      - PRODUCT_REVIEWS_ADDR
+      - RECOMMENDATION_ADDR
+      - SHIPPING_ADDR
+      - KAFKA_ADDR
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    volumes:
+      - ./test/tracetesting:/app/test/tracetesting
+      - ./pb:/app/pb
+    depends_on:
+      tracetest-server:
+        condition: service_healthy
+      accounting:
+        condition: service_started
+      ad:
+        condition: service_started
+      cart:
+        condition: service_started
+      checkout:
+        condition: service_started
+      currency:
+        condition: service_started
+      email:
+        condition: service_started
+      fraud-detection:
+        condition: service_started
+      frontend:
+        condition: service_started
+      llm:
+        condition: service_started
+      payment:
+        condition: service_started
+      product-catalog:
+        condition: service_started
+      product-reviews:
+        condition: service_started
+      quote:
+        condition: service_started
+      recommendation:
+        condition: service_started
+      shipping:
+        condition: service_started
+      flagd:
+        condition: service_started
+      kafka:
+        condition: service_started
+
+  tracetest-server:
+    image: ${TRACETEST_IMAGE}
+    platform: linux/amd64
+    container_name: tracetest-server
+    volumes:
+      - type: bind
+        source: ./test/tracetesting/tracetest-config.yaml
+        target: /app/tracetest.yaml
+      - type: bind
+        source: ./test/tracetesting/tracetest-provision.yaml
+        target: /app/provision.yaml
+    command: --provisioning-file /app/provision.yaml
+    ports:
+      - 11633:11633
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    depends_on:
+      tracetest-postgres:
+        condition: service_healthy
+      otel-collector:
+        condition: service_started
+    healthcheck:
+      test: [ "CMD", "wget", "--spider", "localhost:11633" ]
+      interval: 1s
+      timeout: 3s
+      retries: 60
+
+  tracetest-postgres:
+    image: ${POSTGRES_IMAGE}
+    container_name: tracetest-postgres
+    environment:
+      - POSTGRES_PASSWORD
+    healthcheck:
+      test: pg_isready
+      interval: 1s
+      timeout: 5s
+      retries: 60
+    ports:
+      - 5432
+
+  # Patch otel-collector to use tracetest config instead of standard config
+  otel-collector:
+    command:
+      - --config=/etc/otelcol-config.yml
+      - --config=/etc/otelcol-config-tracetest.yml
+    environment:
+      - ENVOY_PORT
+      - OTEL_COLLECTOR_HOST
+      - OTEL_COLLECTOR_PORT_GRPC
+      - OTEL_COLLECTOR_PORT_HTTP
+    volumes:
+      - ${DOCKER_SOCK}:/var/run/docker.sock:ro
+      - ${OTEL_COLLECTOR_CONFIG}:/etc/otelcol-config.yml
+      - ./test/tracetesting/otelcol-config-tracetest.yml:/etc/otelcol-config-tracetest.yml
+    depends_on: []
