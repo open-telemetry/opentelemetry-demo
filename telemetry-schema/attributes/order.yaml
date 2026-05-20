@@ -27,7 +27,7 @@ attributes:
     stability: stable
     note: The count of items currently in the shopping cart
     examples: [0, 3, 7]
-  - key: app.payment.amount
+  - key: demo.payment.amount
     type: string
     brief: Payment amount
     stability: stable
