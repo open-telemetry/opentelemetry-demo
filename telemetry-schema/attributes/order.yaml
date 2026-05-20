@@ -15,7 +15,7 @@ attributes:
     stability: stable
     note: The total monetary amount of the order
     examples: [99.99, 150.50]
-  - key: app.order.items.count
+  - key: demo.order.items.count
     type: int
     brief: Number of items in order
     stability: stable

@@ -367,7 +367,7 @@ func (cs *checkout) PlaceOrder(ctx context.Context, req *pb.PlaceOrderRequest) (
 		attribute.String("demo.order.id", orderID.String()),
 		attribute.Float64("app.shipping.amount", shippingCostFloat),
 		attribute.Float64("demo.order.amount", totalPriceFloat),
-		attribute.Int("app.order.items.count", len(prep.orderItems)),
+		attribute.Int("demo.order.items.count", len(prep.orderItems)),
 		shippingTrackingAttribute,
 	)
 	logger.LogAttrs(
@@ -376,7 +376,7 @@ func (cs *checkout) PlaceOrder(ctx context.Context, req *pb.PlaceOrderRequest) (
 		slog.String("demo.order.id", orderID.String()),
 		slog.Float64("app.shipping.amount", shippingCostFloat),
 		slog.Float64("demo.order.amount", totalPriceFloat),
-		slog.Int("app.order.items.count", len(prep.orderItems)),
+		slog.Int("demo.order.items.count", len(prep.orderItems)),
 		slog.String("app.shipping.tracking.id", shippingTrackingID),
 	)
 
@@ -438,7 +438,7 @@ func (cs *checkout) prepareOrderItemsAndShippingQuoteFromCart(ctx context.Contex
 	span.SetAttributes(
 		attribute.Float64("app.shipping.amount", shippingCostFloat),
 		attribute.Int("app.cart.items.count", int(totalCart)),
-		attribute.Int("app.order.items.count", len(orderItems)),
+		attribute.Int("demo.order.items.count", len(orderItems)),
 	)
 	return out, nil
 }
