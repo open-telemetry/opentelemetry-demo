@@ -242,6 +242,18 @@ start-minimal-no-o11y:
 	@echo "Go to http://localhost:8080/loadgen/ for the Load Generator UI."
 	@echo "Go to http://localhost:8080/feature/ to change feature flags."
 
+.PHONY: start-profiling
+start-profiling:
+	$(DOCKER_COMPOSE_CMD) $(DOCKER_COMPOSE_ENV) $(DOCKER_COMPOSE_FILES) -f compose-profiling.yaml up --force-recreate --remove-orphans --detach
+	@echo ""
+	@echo "OpenTelemetry Demo in profiling mode is running."
+	@echo "Go to http://localhost:8080 for the demo UI."
+	@echo "Go to http://localhost:8080/jaeger/ui for the Jaeger UI."
+	@echo "Go to http://localhost:8080/grafana/ for the Grafana UI."
+	@echo "Go to http://localhost:8080/loadgen/ for the Load Generator UI."
+	@echo "Go to http://localhost:8080/profiles/ for the Firepit UI."
+	@echo "Go to http://localhost:8080/telemetry/ for the Weaver generated telemetry documentation."
+
 .PHONY: stop
 stop:
 	$(DOCKER_COMPOSE_CMD) $(DOCKER_COMPOSE_ENV) $(DOCKER_COMPOSE_FILES) down --remove-orphans --volumes
@@ -289,3 +301,16 @@ endif
 .PHONY: build-react-native-android
 build-react-native-android:
 	$(DOCKER_CMD) build -f src/react-native-app/android.Dockerfile --platform=linux/amd64 --output=. src/react-native-app
+
+.PHONY: start-profiling
+start-profiling:
+	$(DOCKER_COMPOSE_CMD) $(DOCKER_COMPOSE_ENV) -f docker-compose.yml -f compose-profiling.yml up --force-recreate --remove-orphans --detach
+	@echo ""
+	@echo "OpenTelemetry Demo in profiling mode is running."
+	@echo "Go to http://localhost:8080 for the demo UI."
+	@echo "Go to http://localhost:8080/jaeger/ui for the Jaeger UI."
+	@echo "Go to http://localhost:8080/grafana/ for the Grafana UI."
+	@echo "Go to http://localhost:8080/loadgen/ for the Load Generator UI."
+	@echo "Go to http://localhost:8080/profiles/ for the Firepit UI."
+	@echo "Go to http://localhost:8080/telemetry/ for the Weaver generated telemetry documentation."
+	@echo "Go to https://opentelemetry.io/docs/demo/feature-flags/ to learn how to change feature flags."

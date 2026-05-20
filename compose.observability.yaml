@@ -154,6 +154,7 @@ services:
       - "--config=/etc/otelcol-config-full.yml"
       - "--config=/etc/otelcol-config-observability.yml"
       - "--config=/etc/otelcol-config-extras.yml"
+      - "--feature-gates=service.profilesSupport"
     volumes:
       - ${OTEL_COLLECTOR_CONFIG}:/etc/otelcol-config.yml
       - ${OTEL_COLLECTOR_CONFIG_FULL}:/etc/otelcol-config-full.yml

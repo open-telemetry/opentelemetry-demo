@@ -19,7 +19,7 @@ receivers:
           allowed_origins:
             - "http://*"
             - "https://*"
-  httpcheck/frontend-proxy:
+  http_check/frontend-proxy:
     targets:
       - endpoint: http://${env:FRONTEND_PROXY_ADDR}
   nginx:
@@ -34,7 +34,7 @@ receivers:
     username: "valkey"
     collection_interval: 10s
   # Host metrics
-  hostmetrics:
+  host_metrics:
     root_path: /hostfs
     scrapers:
       cpu:
@@ -105,7 +105,10 @@ receivers:
 
 exporters:
   debug:
-
+  otlp_grpc/firepit:
+    endpoint: "firepit:4317"
+    tls:
+      insecure: true
 processors:
   memory_limiter:
     check_interval: 5s
@@ -113,6 +116,11 @@ processors:
     spike_limit_percentage: 25
   resourcedetection:
     detectors: [env, docker, system]
+  filter/sanitize_profiles:
+    error_mode: ignore
+    profiles:
+      profile:
+        - 'IsMatch(resource.attributes["service.name"], "containerd-shim-.*")'
   transform/sanitize_logs:
     error_mode: ignore
     log_statements:
@@ -176,16 +184,20 @@ service:
   pipelines:
     traces:
       receivers: [otlp]
-      processors: [memory_limiter, resourcedetection, transform/sanitize_spans]
+      processors: [resourcedetection, memory_limiter, transform/sanitize_spans]
       exporters: [debug, spanmetrics]
     metrics:
       receivers: [docker_stats, httpcheck/frontend-proxy, hostmetrics, nginx, otlp, redis, spanmetrics]
-      processors: [memory_limiter, resourcedetection]
+      processors: [resourcedetection, memory_limiter]
       exporters: [debug]
     logs:
       receivers: [otlp]
       processors: [resourcedetection, memory_limiter, transform/sanitize_logs]
       exporters: [opensearch, debug]
+    profiles:
+      receivers: [otlp]
+      processors: [filter/sanitize_profiles, memory_limiter]
+      exporters: [otlp_grpc/firepit, debug]
   telemetry:
     metrics:
       readers:
