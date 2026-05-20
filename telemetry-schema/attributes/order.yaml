@@ -39,7 +39,7 @@ attributes:
     stability: stable
     note: The type of credit card being used for payment
     examples: ["visa", "mastercard", "amex"]
-  - key: app.payment.card_valid
+  - key: demo.payment.card_valid
     type: boolean
     brief: Card validation status
     stability: stable

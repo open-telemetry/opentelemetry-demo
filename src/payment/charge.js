@@ -55,7 +55,7 @@ module.exports.charge = async request => {
 
     span.setAttributes({
       'demo.payment.card_type': cardType,
-      'app.payment.card_valid': valid,
+      'demo.payment.card_valid': valid,
       'app.loyalty.level': loyalty_level
     });
 

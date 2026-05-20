@@ -10,6 +10,6 @@ attribute_groups:
     attributes:
       - ref: app.loyalty.level
       - ref: demo.payment.card_type
-      - ref: app.payment.card_valid
+      - ref: demo.payment.card_valid
       - ref: app.payment.charged
       - ref: demo.payment.amount
