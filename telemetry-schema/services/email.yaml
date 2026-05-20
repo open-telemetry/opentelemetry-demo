@@ -8,5 +8,5 @@ attribute_groups:
     brief: Email service attributes
     stability: stable
     attributes:
-      - ref: app.order.id
+      - ref: demo.order.id
       - ref: app.email.recipient
