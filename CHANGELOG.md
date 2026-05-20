@@ -138,6 +138,7 @@ the release.
   `app.payment.transaction.id` to `demo.payment.transaction.id`, and
   `app.payment.currency` to `demo.payment.currency` across checkout, payment,
   and telemetry schema.
+  ([#3390](https://github.com/open-telemetry/opentelemetry-demo/pull/3390))
 
 ## 2.2.0
 
