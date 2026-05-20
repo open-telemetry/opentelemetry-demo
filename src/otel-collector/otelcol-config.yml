@@ -19,7 +19,7 @@ receivers:
           allowed_origins:
             - "http://*"
             - "https://*"
-  httpcheck/frontend-proxy:
+  http_check/frontend-proxy:
     targets:
       - endpoint: http://${env:FRONTEND_PROXY_ADDR}
   nginx:
@@ -34,7 +34,7 @@ receivers:
     username: "valkey"
     collection_interval: 10s
   # Host metrics
-  hostmetrics:
+  host_metrics:
     root_path: /hostfs
     scrapers:
       cpu:
@@ -178,16 +178,16 @@ processors:
           - set_semconv_span_name("1.37.0", "original_span_name")
 
 connectors:
-  spanmetrics:
+  span_metrics:
 
 service:
   pipelines:
     traces:
       receivers: [otlp]
       processors: [resourcedetection, memory_limiter, transform/sanitize_spans]
-      exporters: [debug, spanmetrics]
+      exporters: [debug, span_metrics]
     metrics:
-      receivers: [docker_stats, httpcheck/frontend-proxy, hostmetrics, nginx, otlp, redis, spanmetrics]
+      receivers: [docker_stats, http_check/frontend-proxy, host_metrics, nginx, otlp, redis, span_metrics]
       processors: [resourcedetection, memory_limiter]
       exporters: [debug]
     logs:

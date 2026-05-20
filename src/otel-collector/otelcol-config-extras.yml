@@ -19,15 +19,15 @@
 # Example:
 #
 # exporters:
-#   otlp/mybackend:
+#   otlp_grpc/mybackend:
 #     endpoint: https://ingest.mybackend.com
 #
 # service:
 #   pipelines:
 #     traces:
-#       exporters: [otlp_grpc/jaeger, debug, spanmetrics, otlp/mybackend]  # repeat upstream exporters
+#       exporters: [otlp_grpc/jaeger, debug, span_metrics, otlp_grpc/mybackend]  # repeat upstream exporters
 #     metrics:
-#       receivers: [docker_stats, httpcheck/frontend-proxy, hostmetrics, nginx, otlp, redis, spanmetrics]
-#       exporters: [otlp_http/prometheus, debug, otlp/mybackend]           # repeat upstream exporters
+#       receivers: [docker_stats, http_check/frontend-proxy, host_metrics, nginx, otlp, redis, span_metrics]
+#       exporters: [otlp_http/prometheus, debug, otlp_grpc/mybackend]           # repeat upstream exporters
 #     logs:
-#       exporters: [opensearch, debug, otlp/mybackend]                     # repeat upstream exporters
+#       exporters: [opensearch, debug, otlp_grpc/mybackend]                     # repeat upstream exporters
