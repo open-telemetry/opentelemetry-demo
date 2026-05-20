@@ -15,7 +15,7 @@ attributes:
     stability: stable
     note: The total cost of shipping for an order (string representation)
     examples: ["10.50", "25.00"]
-  - key: app.shipping.items_count
+  - key: demo.shipping.items_count
     type: int
     brief: Number of items being shipped
     stability: stable
