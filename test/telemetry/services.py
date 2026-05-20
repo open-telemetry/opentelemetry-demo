@@ -83,7 +83,7 @@ SERVICE_EDGES = [
     # Note: async Kafka edges (checkout->accounting, checkout->fraud-detection)
     # are intentionally excluded. The OTel auto-instrumentation here records
     # producer spans on `checkout` and consumer spans on accounting /
-    # fraud-detection, but does not link them via parent-child references —
+    # fraud-detection, but does not link them via parent-child references --
     # they live in separate traces. Asserting their existence requires a
     # different pattern than the parent->child walker used here.
 ]

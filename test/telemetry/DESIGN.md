@@ -47,9 +47,9 @@ test/telemetry/
 |-- services.py
 |-- test_collector.py
 |-- test_traces.py
+|-- test_traces_edges.py
 |-- test_metrics.py
-|-- test_logs.py
-+-- test_service_edges.py
++-- test_logs.py
 ```
 
 ## Service-Signal Matrix
@@ -141,7 +141,7 @@ touching `src/`, `test/telemetry/`, or compose files.
 - **New backend**: Add a new `test_*.py` file
 - **Adjust timeouts**: Set `WARMUP_SECONDS` or `POLL_TIMEOUT` env vars
 - **Run single test**: `pytest test_traces.py -k "checkout" -v`
-- **Run single edge**: `pytest test_service_edges.py -k "frontend->cart" -v`
+- **Run single edge**: `pytest test_traces_edges.py -k "frontend->cart" -v`
 
 ## Relationship to Weaver
 
