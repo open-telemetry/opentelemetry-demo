@@ -12,7 +12,7 @@
 # you must explicitly repeat the upstream exporter names in your pipeline definitions.
 #
 # Upstream exporter names (repeat these to keep them active):
-#   traces:  otlp_grpc/jaeger, debug, spanmetrics
+#   traces:  otlp_grpc/jaeger, debug, span_metrics
 #   metrics: otlp_http/prometheus, debug
 #   logs:    opensearch, debug
 #
