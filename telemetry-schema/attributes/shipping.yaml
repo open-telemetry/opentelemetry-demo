@@ -9,7 +9,7 @@ attributes:
     stability: stable
     note: The monetary amount charged for shipping
     examples: [5.99, 15.00]
-  - key: app.shipping.cost.total
+  - key: demo.shipping.cost.total
     type: string
     brief: Total shipping cost
     stability: stable

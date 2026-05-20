@@ -29,9 +29,9 @@ pub async fn create_quote_from_count(count: u32) -> Result<Quote, tonic::Status>
         let q = create_quote_from_float(f);
         span.add_event(
             "Received Quote".to_string(),
-            vec![KeyValue::new("app.shipping.cost.total", format!("{}", q))],
+            vec![KeyValue::new("demo.shipping.cost.total", format!("{}", q))],
         );
-        span.set_attribute(KeyValue::new("app.shipping.cost.total", format!("{}", q)));
+        span.set_attribute(KeyValue::new("demo.shipping.cost.total", format!("{}", q)));
         q
     }))
 }
