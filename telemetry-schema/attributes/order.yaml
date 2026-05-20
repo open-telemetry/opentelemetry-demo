@@ -27,29 +27,29 @@ attributes:
     stability: stable
     note: The count of items currently in the shopping cart
     examples: [0, 3, 7]
-  - key: app.payment.amount
+  - key: demo.payment.amount
     type: string
     brief: Payment amount
     stability: stable
     note: The monetary amount being charged
     examples: ["29.99", "99.95", "150.00"]
-  - key: app.payment.card_type
+  - key: demo.payment.card_type
     type: string
     brief: Credit card type
     stability: stable
     note: The type of credit card being used for payment
     examples: ["visa", "mastercard", "amex"]
-  - key: app.payment.card_valid
+  - key: demo.payment.card_valid
     type: boolean
     brief: Card validation status
     stability: stable
     note: Whether the card passed validation checks
-  - key: app.payment.charged
+  - key: demo.payment.charged
     type: boolean
     brief: Whether payment was successfully charged
     stability: stable
     note: Indicates whether the payment transaction was successfully charged to the customer's payment method (true) or not charged (false). For synthetic requests, this is set to false.
-  - key: app.payment.transaction.id
+  - key: demo.payment.transaction.id
     type: string
     brief: Payment transaction identifier
     stability: stable

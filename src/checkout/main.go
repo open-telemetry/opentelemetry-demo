@@ -336,7 +336,7 @@ func (cs *checkout) PlaceOrder(ctx context.Context, req *pb.PlaceOrderRequest) (
 	}
 
 	span.AddEvent("charged",
-		trace.WithAttributes(attribute.String("app.payment.transaction.id", txID)))
+		trace.WithAttributes(attribute.String("demo.payment.transaction.id", txID)))
 	logger.LogAttrs(
 		ctx,
 		slog.LevelInfo, "payment went through",
