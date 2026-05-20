@@ -123,6 +123,12 @@ the release.
   product-catalog, product-reviews, recommendation, telemetry schema, and trace
   tests.
   ([#3377](https://github.com/open-telemetry/opentelemetry-demo/pull/3387))
+* [telemetry] Rename order and cart telemetry attributes:
+  `app.order.id` to `demo.order.id`,
+  `app.order.amount` to `demo.order.amount`,
+  `app.order.items.count` to `demo.order.items.count`, and
+  `app.cart.items.count` to `demo.cart.items.count` across cart, checkout,
+  email, telemetry schema, and trace tests.
 
 ## 2.2.0
 
