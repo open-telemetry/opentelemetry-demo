@@ -50,6 +50,7 @@ dependencies {
                 "io.grpc:grpc-protobuf:${grpcVersion}",
                 "io.grpc:grpc-stub:${grpcVersion}",
                 "io.grpc:grpc-netty:${grpcVersion}",
+                "io.grpc:grpc-netty-shaded:${grpcVersion}",
                 "io.grpc:grpc-services:${grpcVersion}",
                 "io.opentelemetry:opentelemetry-api",
                 "io.opentelemetry:opentelemetry-sdk",
