@@ -165,6 +165,7 @@ services:
       - KAFKA_ADDR
       - POSTGRES_HOST
       - POSTGRES_PORT
+      - POSTGRES_PASSWORD
       - POSTGRES_MONITORING_PASSWORD
     depends_on:
       jaeger:

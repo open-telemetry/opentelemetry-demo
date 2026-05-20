@@ -323,6 +323,8 @@ services:
         condition: service_started
       flagd-ui:
         condition: service_started
+      telemetry-docs:
+        condition: service_started
     dns_search: ""
 
   # image-provider
@@ -687,6 +689,29 @@ services:
     depends_on:
       flagd:
         condition: service_started
+    logging: *logging
+
+  # Telemetry Documentation service
+  telemetry-docs:
+    image: ${IMAGE_NAME}:${DEMO_VERSION}-telemetry-docs
+    container_name: telemetry-docs
+    build:
+      context: ./
+      dockerfile: ${TELEMETRY_DOCS_DOCKERFILE}
+      cache_from:
+        - ${IMAGE_NAME}:${IMAGE_VERSION}-telemetry-docs
+    deploy:
+      resources:
+        limits:
+          memory: 100M
+    restart: unless-stopped
+    ports:
+      - "${TELEMETRY_DOCS_PORT}"
+    environment:
+      - TELEMETRY_DOCS_PORT
+      - OTEL_COLLECTOR_HOST
+      - OTEL_COLLECTOR_PORT_GRPC
+      - OTEL_SERVICE_NAME=telemetry-docs
     logging: *logging
 
   # PostgreSQL database for the astronomy demo
