@@ -29,7 +29,7 @@ function calculateQuote($jsonObject): float
         $costPerItem = 8.99;
         $quote = round($costPerItem * $numberOfItems, 2);
 
-        $childSpan->setAttribute('app.quote.items.count', $numberOfItems);
+        $childSpan->setAttribute('demo.shipping.quote.items_count', $numberOfItems);
         $childSpan->setAttribute('app.quote.cost.total', $quote);
 
         $childSpan->addEvent('Quote calculated, returning its value');

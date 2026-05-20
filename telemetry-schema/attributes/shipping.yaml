@@ -27,7 +27,7 @@ attributes:
     stability: stable
     note: The tracking number or identifier for a shipment
     examples: ["TRACK-123456", "SHP-789012"]
-  - key: app.quote.items.count
+  - key: demo.shipping.quote.items_count
     type: int
     brief: Number of items in quote
     stability: stable
