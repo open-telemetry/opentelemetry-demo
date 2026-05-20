@@ -46,7 +46,7 @@ post "/send_order_confirmation" do
   # get the current auto-instrumented span
   current_span = OpenTelemetry::Trace.current_span
   current_span.add_attributes({
-    "app.order.id" => data.order.order_id,
+    "demo.order.id" => data.order.order_id,
   })
 
   $confirmation_counter.add(1)
@@ -84,12 +84,12 @@ def send_email(data)
       Mail::TestMailer.deliveries.clear
     end
 
-    span.set_attribute("app.order.id", data.order.order_id)
+    span.set_attribute("demo.order.id", data.order.order_id)
     $logger.on_emit(
       timestamp: Time.now,
       severity_text: 'INFO',
       body: 'Order confirmation email sent',
-      attributes: { 'app.order.id' => data.order.order_id },
+      attributes: { 'demo.order.id' => data.order.order_id },
     )
 
     puts "Order confirmation email sent for order #{data.order.order_id}"

@@ -3,25 +3,25 @@
 
 file_format: definition/2
 attributes:
-  - key: app.order.id
+  - key: demo.order.id
     type: string
     brief: Order identifier
     stability: stable
     note: The unique identifier for an order
     examples: ["order-123", "ORD-456789"]
-  - key: app.order.amount
+  - key: demo.order.amount
     type: double
     brief: Total order amount
     stability: stable
     note: The total monetary amount of the order
     examples: [99.99, 150.50]
-  - key: app.order.items.count
+  - key: demo.order.items.count
     type: int
     brief: Number of items in order
     stability: stable
     note: The count of distinct items in the order
     examples: [1, 5, 10]
-  - key: app.cart.items.count
+  - key: demo.cart.items.count
     type: int
     brief: Number of items in cart
     stability: stable
