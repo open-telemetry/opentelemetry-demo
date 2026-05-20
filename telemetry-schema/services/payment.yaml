@@ -11,5 +11,5 @@ attribute_groups:
       - ref: app.loyalty.level
       - ref: demo.payment.card_type
       - ref: demo.payment.card_valid
-      - ref: app.payment.charged
+      - ref: demo.payment.charged
       - ref: demo.payment.amount

@@ -74,9 +74,9 @@ module.exports.charge = async request => {
     // Check baggage for synthetic_request=true, and add charged attribute accordingly
     const baggage = propagation.getBaggage(context.active());
     if (baggage && baggage.getEntry('synthetic_request') && baggage.getEntry('synthetic_request').value === 'true') {
-      span.setAttribute('app.payment.charged', false);
+      span.setAttribute('demo.payment.charged', false);
     } else {
-      span.setAttribute('app.payment.charged', true);
+      span.setAttribute('demo.payment.charged', true);
     }
 
     const { units, nanos, currencyCode } = request.amount;

@@ -44,7 +44,7 @@ attributes:
     brief: Card validation status
     stability: stable
     note: Whether the card passed validation checks
-  - key: app.payment.charged
+  - key: demo.payment.charged
     type: boolean
     brief: Whether payment was successfully charged
     stability: stable
