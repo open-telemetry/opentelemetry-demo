@@ -29,8 +29,8 @@ public class CartService : Oteldemo.CartService.CartServiceBase
     {
         var activity = Activity.Current;
         activity?.SetTag("app.user.id", request.UserId);
-        activity?.SetTag("app.product.id", request.Item.ProductId);
-        activity?.SetTag("app.product.quantity", request.Item.Quantity);
+        activity?.SetTag("demo.product.id", request.Item.ProductId);
+        activity?.SetTag("demo.product.quantity", request.Item.Quantity);
 
         try
         {
@@ -60,7 +60,7 @@ public class CartService : Oteldemo.CartService.CartServiceBase
             {
                 totalCart += item.Quantity;
             }
-            activity?.SetTag("app.cart.items.count", totalCart);
+            activity?.SetTag("demo.cart.items.count", totalCart);
 
             return cart;
         }

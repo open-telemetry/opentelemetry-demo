@@ -43,7 +43,7 @@ class RecommendationService(demo_pb2_grpc.RecommendationServiceServicer):
     def ListRecommendations(self, request, context):
         prod_list = get_product_list(request.product_ids)
         span = trace.get_current_span()
-        span.set_attribute("app.products_recommended.count", len(prod_list))
+        span.set_attribute("demo.product.recommended.count", len(prod_list))
         logger.info(f"Receive ListRecommendations for product ids:{prod_list}")
 
         # build and return response
@@ -95,12 +95,12 @@ def get_product_list(request_product_ids):
             cat_response = product_catalog_stub.ListProducts(demo_pb2.Empty())
             product_ids = [x.id for x in cat_response.products]
 
-        span.set_attribute("app.products.count", len(product_ids))
+        span.set_attribute("demo.product.count", len(product_ids))
 
         # Create a filtered list of products excluding the products received as input
         filtered_products = list(set(product_ids) - set(request_product_ids))
         num_products = len(filtered_products)
-        span.set_attribute("app.filtered_products.count", num_products)
+        span.set_attribute("demo.product.filtered.count", num_products)
         num_return = min(max_responses, num_products)
 
         # Sample list of indicies to return
@@ -108,7 +108,7 @@ def get_product_list(request_product_ids):
         # Fetch product ids from indices
         prod_list = [filtered_products[i] for i in indices]
 
-        span.set_attribute("app.filtered_products.list", prod_list)
+        span.set_attribute("demo.product.filtered.list", prod_list)
 
         return prod_list
 

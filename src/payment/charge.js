@@ -54,8 +54,8 @@ module.exports.charge = async request => {
     const loyalty_level = random(LOYALTY_LEVEL);
 
     span.setAttributes({
-      'app.payment.card_type': cardType,
-      'app.payment.card_valid': valid,
+      'demo.payment.card_type': cardType,
+      'demo.payment.card_valid': valid,
       'app.loyalty.level': loyalty_level
     });
 
@@ -74,9 +74,9 @@ module.exports.charge = async request => {
     // Check baggage for synthetic_request=true, and add charged attribute accordingly
     const baggage = propagation.getBaggage(context.active());
     if (baggage && baggage.getEntry('synthetic_request') && baggage.getEntry('synthetic_request').value === 'true') {
-      span.setAttribute('app.payment.charged', false);
+      span.setAttribute('demo.payment.charged', false);
     } else {
-      span.setAttribute('app.payment.charged', true);
+      span.setAttribute('demo.payment.charged', true);
     }
 
     const enduserId = baggage?.getEntry('enduser.id')?.value;
@@ -86,7 +86,7 @@ module.exports.charge = async request => {
 
     const { units, nanos, currencyCode } = request.amount;
     logger.info({ transactionId, cardType, lastFourDigits, amount: { units, nanos, currencyCode }, loyalty_level }, 'Transaction complete.');
-    transactionsCounter.add(1, { 'app.payment.currency': currencyCode });
+    transactionsCounter.add(1, { 'demo.payment.currency': currencyCode });
 
     return { transactionId };
   } catch (err) {
