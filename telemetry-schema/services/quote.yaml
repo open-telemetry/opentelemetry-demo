@@ -9,4 +9,4 @@ attribute_groups:
     stability: stable
     attributes:
       - ref: demo.shipping.quote.items_count
-      - ref: demo.shipping.quote.cost_total
+      - ref: demo.shipping.quote.cost.total

@@ -145,7 +145,7 @@ the release.
   `app.shipping.items_count` to `demo.shipping.items_count`,
   `app.shipping.tracking.id` to `demo.shipping.tracking.id`,
   `app.quote.items.count` to `demo.shipping.quote.items_count`, and
-  `app.quote.cost.total` to `demo.shipping.quote.cost_total` across checkout,
+  `app.quote.cost.total` to `demo.shipping.quote.cost.total` across checkout,
   quote, shipping, and telemetry schema.
   ([#3391](https://github.com/open-telemetry/opentelemetry-demo/pull/3391))
 

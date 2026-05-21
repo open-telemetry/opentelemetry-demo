@@ -33,7 +33,7 @@ attributes:
     stability: stable
     note: The count of items included in a pricing quote
     examples: [1, 5, 10]
-  - key: demo.shipping.quote.cost_total
+  - key: demo.shipping.quote.cost.total
     type: double
     brief: Total quote cost
     stability: stable
