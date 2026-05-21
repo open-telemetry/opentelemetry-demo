@@ -3,7 +3,7 @@
 
 file_format: definition/2
 attributes:
-  - key: app.synthetic_request
+  - key: demo.synthetic_request
     type: string
     brief: Whether the request is synthetic/test traffic
     stability: stable
