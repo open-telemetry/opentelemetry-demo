@@ -163,7 +163,7 @@ the release.
   `app.synthetic_request` to `demo.synthetic_request` across currency,
   checkout, recommendation, email, load-generator, frontend, and telemetry
   schema.
-  ([#TBD](https://github.com/open-telemetry/opentelemetry-demo/pull/TBD))
+  ([#3393](https://github.com/open-telemetry/opentelemetry-demo/pull/3393))
 
 ## 2.2.0
 
