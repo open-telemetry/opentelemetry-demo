@@ -278,6 +278,12 @@ services:
     restart: unless-stopped
     ports:
       - "${FRONTEND_PORT}"
+    healthcheck:
+      test: ["CMD", "/nodejs/bin/node", "-e", "require('net').connect(${FRONTEND_PORT},require('os').hostname(),function(){process.exit(0)}).on('error',function(){process.exit(1)})"]
+      start_period: 60s
+      interval: 10s
+      timeout: 10s
+      retries: 5
     environment:
       - PORT=${FRONTEND_PORT}
       - FRONTEND_ADDR
@@ -370,7 +376,7 @@ services:
       - TELEMETRY_DOCS_PORT
     depends_on:
       frontend:
-        condition: service_started
+        condition: service_healthy
       load-generator:
         condition: service_started
       jaeger:

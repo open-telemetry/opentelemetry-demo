@@ -1,0 +1,90 @@
+# Copyright The OpenTelemetry Authors
+# SPDX-License-Identifier: Apache-2.0
+name: Telemetry Tests
+
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - 'src/**'
+      - 'test/telemetry/**'
+      - 'docker-compose.yml'
+      - 'docker-compose.minimal.yml'
+      - 'docker-compose-telemetry-tests.yml'
+      - '.env'
+      - '.github/workflows/run-telemetry-tests.yml'
+  push:
+    branches: [main]
+    paths:
+      - 'src/**'
+      - 'test/telemetry/**'
+      - 'docker-compose.yml'
+      - 'docker-compose.minimal.yml'
+      - 'docker-compose-telemetry-tests.yml'
+      - '.env'
+      - '.github/workflows/run-telemetry-tests.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  telemetry-tests-full:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    name: "Telemetry Tests (full)"
+    steps:
+      - name: check out code
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd  # v6.0.2
+
+      - name: Free disk space
+        run: |
+          sudo rm -rf /usr/local/lib/android /usr/share/dotnet /opt/ghc
+          docker system prune -af
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@4d04d5d9486b7bd6fa91e7baf45bbb4f8b9deedd  # v4.0.0
+
+      - name: Create .env.override if missing
+        run: touch .env.override
+
+      - name: Run telemetry tests
+        run: make run-telemetry-tests
+
+      - name: Print service logs on failure
+        if: failure()
+        run: docker compose logs --tail=50
+
+      - name: Stop demo
+        if: always()
+        run: make stop
+
+  telemetry-tests-minimal:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    name: "Telemetry Tests (minimal)"
+    steps:
+      - name: check out code
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd  # v6.0.2
+
+      - name: Free disk space
+        run: |
+          sudo rm -rf /usr/local/lib/android /usr/share/dotnet /opt/ghc
+          docker system prune -af
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@4d04d5d9486b7bd6fa91e7baf45bbb4f8b9deedd  # v4.0.0
+
+      - name: Create .env.override if missing
+        run: touch .env.override
+
+      - name: Run telemetry tests (minimal)
+        run: make run-telemetry-tests-minimal
+
+      - name: Print service logs on failure
+        if: failure()
+        run: docker compose -f docker-compose.minimal.yml logs --tail=50
+
+      - name: Stop demo
+        if: always()
+        run: make stop
