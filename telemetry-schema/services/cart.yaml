@@ -8,7 +8,7 @@ attribute_groups:
     brief: Cart service attributes
     stability: stable
     attributes:
-      - ref: app.user.id
+      - ref: user.id
       - ref: demo.product.id
       - ref: demo.product.quantity
       - ref: demo.cart.items.count
