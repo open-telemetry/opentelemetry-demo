@@ -7,6 +7,9 @@ the release.
 
 ## Unreleased
 
+* [shipping] Add `intlShippingSlowdown` integer feature flag to delay
+  international (non-US) shipments by N seconds via flagd with OpenTelemetry tracing
+  ([#346](https://github.com/open-telemetry/opentelemetry-demo/issues/346))
 * [telemetry-docs] Add a new service to provide telemetry documentation based
   on Weaver
   ([#2794](https://github.com/open-telemetry/opentelemetry-demo/pull/2794))
