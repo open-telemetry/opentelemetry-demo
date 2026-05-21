@@ -57,6 +57,11 @@ receivers:
     endpoint: "valkey-cart:6379"
     username: "valkey"
     collection_interval: 10s
+  # Demo: scrape a Prometheus `/metrics` endpoint exposed by the ad service
+  # using the Prometheus Java client library. This illustrates a common
+  # OTel-adoption pattern -- bridging existing Prometheus-client
+  # instrumentation into an OTel pipeline. For new custom metrics, prefer
+  # the OpenTelemetry SDK directly. See `src/ad/README.md` for details.
   prometheus/ad:
     config:
       scrape_configs:

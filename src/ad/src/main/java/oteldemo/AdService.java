@@ -61,6 +61,17 @@ public final class AdService {
   private HealthStatusManager healthMgr;
   private HTTPServer prometheusServer;
 
+  // DEMO: this counter and its `/metrics` HTTP exporter use the Prometheus
+  // Java client library rather than the OpenTelemetry SDK. It is here to
+  // illustrate how non-OTel custom metrics (e.g. existing Prometheus
+  // instrumentation that an organization already owns) can be ingested into
+  // an OpenTelemetry pipeline via the Collector's `prometheus` receiver --
+  // a common bridging pattern during OTel adoption.
+  //
+  // Recommendation: this is a *transitional* pattern. New custom metrics
+  // should be created directly with the OpenTelemetry SDK (see the
+  // `adRequestsCounter` below), and existing Prometheus-client metrics
+  // should be migrated over time. See `src/ad/README.md` for details.
   private static final Counter adsServedCounter =
       Counter.builder()
           .name("demo_ad_served_total")
