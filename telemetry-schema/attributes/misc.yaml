@@ -22,7 +22,7 @@ attributes:
     brief: Whether the recommendation cache was hit
     stability: stable
     note: Indicates whether the recommendation was served from cache (true) or computed fresh (false)
-  - key: app.email.recipient
+  - key: demo.notification.recipient
     type: string
     brief: Email recipient address
     stability: stable
