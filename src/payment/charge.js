@@ -30,11 +30,11 @@ module.exports.charge = async request => {
     const numberVariant = await OpenFeature.getClient().getNumberValue("paymentFailure", 0);
 
     if (numberVariant > 0) {
-      // n% chance to fail with app.loyalty.level=gold
+      // n% chance to fail with demo.user_context.loyalty_level=gold
       if (Math.random() < numberVariant) {
-        span.setAttributes({'app.loyalty.level': 'gold' });
+        span.setAttributes({'demo.user_context.loyalty_level': 'gold' });
 
-        throw new Error('Payment request failed. Invalid token. app.loyalty.level=gold');
+        throw new Error('Payment request failed. Invalid token. demo.user_context.loyalty_level=gold');
       }
     }
 
@@ -56,7 +56,7 @@ module.exports.charge = async request => {
     span.setAttributes({
       'demo.payment.card_type': cardType,
       'demo.payment.card_valid': valid,
-      'app.loyalty.level': loyalty_level
+      'demo.user_context.loyalty_level': loyalty_level
     });
 
     if (!valid) {

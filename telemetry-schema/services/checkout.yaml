@@ -9,7 +9,7 @@ attribute_groups:
     stability: stable
     attributes:
       - ref: user.id
-      - ref: app.user.currency
+      - ref: demo.user_context.selected_currency
       - ref: demo.payment.transaction.id
       - ref: demo.shipping.tracking.id
       - ref: demo.order.id

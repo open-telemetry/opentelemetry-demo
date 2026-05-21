@@ -294,7 +294,7 @@ func (cs *checkout) PlaceOrder(ctx context.Context, req *pb.PlaceOrderRequest) (
 	span := trace.SpanFromContext(ctx)
 	span.SetAttributes(
 		attribute.String("user.id", req.UserId),
-		attribute.String("app.user.currency", req.UserCurrency),
+		attribute.String("demo.user_context.selected_currency", req.UserCurrency),
 	)
 	logger.LogAttrs(
 		ctx,
