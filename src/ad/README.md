@@ -62,7 +62,7 @@ OpenTelemetry-native pipeline without rewriting everything up front. The
 Collector's `prometheus` receiver is the bridge that makes this possible.
 
 **Recommendation**: this is a *transitional* pattern. For new custom
-metrics, prefer the OpenTelemetry SDK directly — it gives you a single
+metrics, prefer the OpenTelemetry SDK directly - it gives you a single
 SDK, native context propagation (exemplars linked to traces, resource
 attributes, baggage), and a single configuration surface. Migrate existing
 Prometheus-client metrics to the OTel SDK as you touch the surrounding
