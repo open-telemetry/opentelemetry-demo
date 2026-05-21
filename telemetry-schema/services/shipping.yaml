@@ -8,4 +8,4 @@ attribute_groups:
     brief: Shipping service attributes
     stability: stable
     attributes:
-      - ref: app.shipping.cost.total
+      - ref: demo.shipping.cost.total
