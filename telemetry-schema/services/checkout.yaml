@@ -8,7 +8,7 @@ attribute_groups:
     brief: Checkout service attributes
     stability: stable
     attributes:
-      - ref: app.user.id
+      - ref: user.id
       - ref: app.user.currency
       - ref: demo.payment.transaction.id
       - ref: demo.shipping.tracking.id

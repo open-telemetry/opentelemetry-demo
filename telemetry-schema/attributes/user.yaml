@@ -3,7 +3,7 @@
 
 file_format: definition/2
 attributes:
-  - key: app.user.id
+  - key: user.id
     type: string
     brief: User identifier
     stability: stable
