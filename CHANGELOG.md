@@ -148,6 +148,22 @@ the release.
   `app.quote.cost.total` to `demo.shipping.quote.cost.total` across checkout,
   quote, shipping, and telemetry schema.
   ([#3391](https://github.com/open-telemetry/opentelemetry-demo/pull/3391))
+* [telemetry] Rename exchange, user context, recommendation, notification, and
+  synthetic-request telemetry attributes and metrics:
+  `app.currency.conversion.from` to `demo.exchange.from`,
+  `app.currency.conversion.to` to `demo.exchange.to`,
+  `app.user.id` to the semconv `user.id` (removed from the demo schema),
+  `app.user.currency` to `demo.user_context.selected_currency`,
+  `app.loyalty.level` to `demo.user_context.loyalty_level`,
+  `app.recommendation.cache_enabled` to `demo.feature_flag.recommendation_cache`,
+  `app.cache_hit` to `demo.recommendation.cache_hit`,
+  `app_recommendations_counter` to `demo.recommendation.requests`,
+  `app.email.recipient` to `demo.notification.recipient`,
+  `app.confirmation.counter` to `demo.notification.confirmations`, and
+  `app.synthetic_request` to `demo.synthetic_request` across currency,
+  checkout, recommendation, email, load-generator, frontend, and telemetry
+  schema.
+  ([#TBD](https://github.com/open-telemetry/opentelemetry-demo/pull/TBD))
 
 ## 2.2.0
 
