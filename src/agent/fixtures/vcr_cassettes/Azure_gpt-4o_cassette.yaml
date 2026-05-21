@@ -1,0 +1,263 @@
+# Copyright The OpenTelemetry Authors
+# SPDX-License-Identifier: Apache-2.0
+interactions:
+- request:
+    body: '{"messages": [{"content": "You are a helpful assistant. Be concise and
+      accurate.", "role": "system"}, {"content": "What are the categories of products
+      available in Astronomy Shop Application and what are the products in each category",
+      "role": "user"}], "model": "Azure/gpt-4o", "stream": false, "tools": [{"function":
+      {"description": "Add a product (productId) to the shopping cart for a user (userId).",
+      "name": "add_to_cart", "parameters": {"properties": {"productId": {"type": "string"},
+      "quantity": {"default": 1, "type": "integer"}, "userId": {"type": "string"}},
+      "required": ["userId", "productId"], "type": "object"}}, "type": "function"},
+      {"function": {"description": "Checkout the user''s cart and create an order.",
+      "name": "checkout", "parameters": {"properties": {"checkout_person": {}}, "required":
+      ["checkout_person"], "type": "object"}}, "type": "function"}, {"function": {"description":
+      "Convert between currencies.", "name": "convert_currency", "parameters": {"properties":
+      {"amount": {"type": "number"}, "from_currency": {"type": "string"}, "to_currency":
+      {"type": "string"}}, "required": ["from_currency", "to_currency", "amount"],
+      "type": "object"}}, "type": "function"}, {"function": {"description": "Empty
+      the shopping cart for a user.", "name": "empty_cart", "parameters": {"properties":
+      {"uuid": {"type": "string"}}, "required": ["uuid"], "type": "object"}}, "type":
+      "function"}, {"function": {"description": "Fetch promotional ads for Astronomy
+      Shop homepage.", "name": "get_ads", "parameters": {"properties": {"category":
+      {"type": "string"}}, "required": ["category"], "type": "object"}}, "type": "function"},
+      {"function": {"description": "Retrieve the current contents of a user''s cart.",
+      "name": "get_cart", "parameters": {"properties": {}, "type": "object"}}, "type":
+      "function"}, {"function": {"description": "Get detailed information about a
+      product using its ID.", "name": "get_product", "parameters": {"properties":
+      {"product_id": {"type": "string"}}, "required": ["product_id"], "type": "object"}},
+      "type": "function"}, {"function": {"description": "Get product recommendations
+      for a user.", "name": "get_recommendations", "parameters": {"properties": {"productId":
+      {"type": "string"}}, "required": ["productId"], "type": "object"}}, "type":
+      "function"}, {"function": {"description": "Get estimated shipping cost for a
+      given address.", "name": "get_shipping_quote", "parameters": {"properties":
+      {"address_id": {"type": "string"}}, "required": ["address_id"], "type": "object"}},
+      "type": "function"}, {"function": {"description": "List supported currencies
+      in Astronomy Shop.", "name": "get_supported_currencies", "parameters": {"properties":
+      {}, "type": "object"}}, "type": "function"}, {"function": {"description": "List
+      all products available in the Astronomy Shop.", "name": "list_products", "parameters":
+      {"properties": {}, "type": "object"}}, "type": "function"}]}'
+    headers:
+      accept:
+      - application/json
+      accept-encoding:
+      - gzip, deflate, br, zstd
+      connection:
+      - keep-alive
+      content-length:
+      - '2710'
+      content-type:
+      - application/json
+      host:
+      - ete-litellm.bx.cloud9.ibm.com
+      user-agent:
+      - AsyncOpenAI/Python 2.6.1
+      x-stainless-arch:
+      - arm64
+      x-stainless-async:
+      - async:asyncio
+      x-stainless-lang:
+      - python
+      x-stainless-os:
+      - MacOS
+      x-stainless-package-version:
+      - 2.6.1
+      x-stainless-raw-response:
+      - 'true'
+      x-stainless-retry-count:
+      - '0'
+      x-stainless-runtime:
+      - CPython
+      x-stainless-runtime-version:
+      - 3.12.12
+    method: POST
+    uri: https://ete-litellm.bx.cloud9.ibm.com/chat/completions
+  response:
+    body:
+      string: '{"id":"chatcmpl-DNBAcRkQbxYavdRfKzmC6HaYNmu2o","created":1774416854,"model":"Azure/gpt-4o","object":"chat.completion","system_fingerprint":"fp_af7f7349a4","choices":[{"finish_reason":"tool_calls","index":0,"message":{"role":"assistant","tool_calls":[{"function":{"arguments":"{}","name":"list_products"},"id":"call_2o97YQTbUYbItMbqPPDTQNQp","type":"function"}],"provider_specific_fields":{"refusal":null},"annotations":[],"content":null},"provider_specific_fields":{"content_filter_results":{}}}],"usage":{"completion_tokens":11,"prompt_tokens":323,"total_tokens":334,"completion_tokens_details":{"accepted_prediction_tokens":0,"audio_tokens":0,"reasoning_tokens":0,"rejected_prediction_tokens":0},"prompt_tokens_details":{"audio_tokens":0,"cached_tokens":0}},"prompt_filter_results":[{"prompt_index":0,"content_filter_results":{"hate":{"filtered":false,"severity":"safe"},"self_harm":{"filtered":false,"severity":"safe"},"sexual":{"filtered":false,"severity":"safe"},"violence":{"filtered":false,"severity":"safe"}}}]}'
+    headers:
+      content-length: '1019'
+      content-type: application/json
+      date: Wed, 25 Mar 2026 05:34:13 GMT
+      llm_provider-apim-request-id: 2cc9f224-f5e5-4912-8d01-bf89ade18905
+      llm_provider-azureml-model-session: d20260303172148-48812597e45a
+      llm_provider-content-length: '983'
+      llm_provider-content-type: application/json
+      llm_provider-date: Wed, 25 Mar 2026 05:34:14 GMT
+      llm_provider-strict-transport-security: max-age=31536000; includeSubDomains;
+        preload
+      llm_provider-x-accel-buffering: 'no'
+      llm_provider-x-content-type-options: nosniff
+      llm_provider-x-ms-deployment-name: gpt-4o-2024-11-20
+      llm_provider-x-ms-rai-invoked: 'true'
+      llm_provider-x-ms-region: East US 2
+      llm_provider-x-ratelimit-limit-requests: '1970'
+      llm_provider-x-ratelimit-limit-tokens: '1970000'
+      llm_provider-x-ratelimit-remaining-requests: '1969'
+      llm_provider-x-ratelimit-remaining-tokens: '1969351'
+      llm_provider-x-request-id: 6df29171-22bb-40bc-be1a-9c3ee50951e5
+      server: uvicorn
+      set-cookie: e1e759aff303829b200ec30ba1693c84=a6a6b16445cb28e625703d98491b4803;
+        path=/; HttpOnly; Secure; SameSite=None
+      x-litellm-attempted-fallbacks: '0'
+      x-litellm-attempted-retries: '0'
+      x-litellm-call-id: 4a8d7807-8f5d-43ab-9e5c-92e2f8db0b98
+      x-litellm-callback-duration-ms: '0.0'
+      x-litellm-key-max-budget: '7000.0'
+      x-litellm-key-spend: '0.06376750000000002'
+      x-litellm-model-api-base: https://eastus2.api.cognitive.microsoft.com/
+      x-litellm-model-group: Azure/gpt-4o
+      x-litellm-model-id: 144b3a5396b693b22952faeac6f921a6d1b877189ec51d3d1df784d2e405a478
+      x-litellm-overhead-duration-ms: '2.154'
+      x-litellm-response-cost: '0.0009175'
+      x-litellm-response-cost-discount-amount: '0.0'
+      x-litellm-response-cost-margin-amount: '0.0'
+      x-litellm-response-cost-margin-percent: '0.0'
+      x-litellm-response-cost-original: '0.0009175'
+      x-litellm-response-duration-ms: '1871.251'
+      x-litellm-version: 1.81.14
+      x-ratelimit-limit-requests: '1970'
+      x-ratelimit-limit-tokens: '1970000'
+      x-ratelimit-remaining-requests: '1969'
+      x-ratelimit-remaining-tokens: '1969351'
+      x-ratelimit-team-limit-requests: '100'
+      x-ratelimit-team-remaining-requests: '99'
+    status:
+      code: 200
+      message: OK
+- request:
+    body: '{"messages": [{"content": "You are a helpful assistant. Be concise and
+      accurate.", "role": "system"}, {"content": "What are the categories of products
+      available in Astronomy Shop Application and what are the products in each category",
+      "role": "user"}, {"content": null, "role": "assistant", "tool_calls": [{"function":
+      {"arguments": "{}", "name": "list_products"}, "id": "call_2o97YQTbUYbItMbqPPDTQNQp",
+      "type": "function"}]}, {"content": "Error while fetching product list: HTTPConnectionPool(host=''localhost'',
+      port=8080): Max retries exceeded with url: /api/products (Caused by NewConnectionError(\"HTTPConnection(host=''localhost'',
+      port=8080): Failed to establish a new connection: [Errno 61] Connection refused\"))",
+      "role": "tool", "tool_call_id": "call_2o97YQTbUYbItMbqPPDTQNQp"}], "model":
+      "Azure/gpt-4o", "stream": false, "tools": [{"function": {"description": "Add
+      a product (productId) to the shopping cart for a user (userId).", "name": "add_to_cart",
+      "parameters": {"properties": {"productId": {"type": "string"}, "quantity": {"default":
+      1, "type": "integer"}, "userId": {"type": "string"}}, "required": ["userId",
+      "productId"], "type": "object"}}, "type": "function"}, {"function": {"description":
+      "Checkout the user''s cart and create an order.", "name": "checkout", "parameters":
+      {"properties": {"checkout_person": {}}, "required": ["checkout_person"], "type":
+      "object"}}, "type": "function"}, {"function": {"description": "Convert between
+      currencies.", "name": "convert_currency", "parameters": {"properties": {"amount":
+      {"type": "number"}, "from_currency": {"type": "string"}, "to_currency": {"type":
+      "string"}}, "required": ["from_currency", "to_currency", "amount"], "type":
+      "object"}}, "type": "function"}, {"function": {"description": "Empty the shopping
+      cart for a user.", "name": "empty_cart", "parameters": {"properties": {"uuid":
+      {"type": "string"}}, "required": ["uuid"], "type": "object"}}, "type": "function"},
+      {"function": {"description": "Fetch promotional ads for Astronomy Shop homepage.",
+      "name": "get_ads", "parameters": {"properties": {"category": {"type": "string"}},
+      "required": ["category"], "type": "object"}}, "type": "function"}, {"function":
+      {"description": "Retrieve the current contents of a user''s cart.", "name":
+      "get_cart", "parameters": {"properties": {}, "type": "object"}}, "type": "function"},
+      {"function": {"description": "Get detailed information about a product using
+      its ID.", "name": "get_product", "parameters": {"properties": {"product_id":
+      {"type": "string"}}, "required": ["product_id"], "type": "object"}}, "type":
+      "function"}, {"function": {"description": "Get product recommendations for a
+      user.", "name": "get_recommendations", "parameters": {"properties": {"productId":
+      {"type": "string"}}, "required": ["productId"], "type": "object"}}, "type":
+      "function"}, {"function": {"description": "Get estimated shipping cost for a
+      given address.", "name": "get_shipping_quote", "parameters": {"properties":
+      {"address_id": {"type": "string"}}, "required": ["address_id"], "type": "object"}},
+      "type": "function"}, {"function": {"description": "List supported currencies
+      in Astronomy Shop.", "name": "get_supported_currencies", "parameters": {"properties":
+      {}, "type": "object"}}, "type": "function"}, {"function": {"description": "List
+      all products available in the Astronomy Shop.", "name": "list_products", "parameters":
+      {"properties": {}, "type": "object"}}, "type": "function"}]}'
+    headers:
+      accept:
+      - application/json
+      accept-encoding:
+      - gzip, deflate, br, zstd
+      connection:
+      - keep-alive
+      content-length:
+      - '3224'
+      content-type:
+      - application/json
+      cookie:
+      - e1e759aff303829b200ec30ba1693c84=a6a6b16445cb28e625703d98491b4803
+      host:
+      - ete-litellm.bx.cloud9.ibm.com
+      user-agent:
+      - AsyncOpenAI/Python 2.6.1
+      x-stainless-arch:
+      - arm64
+      x-stainless-async:
+      - async:asyncio
+      x-stainless-lang:
+      - python
+      x-stainless-os:
+      - MacOS
+      x-stainless-package-version:
+      - 2.6.1
+      x-stainless-raw-response:
+      - 'true'
+      x-stainless-retry-count:
+      - '0'
+      x-stainless-runtime:
+      - CPython
+      x-stainless-runtime-version:
+      - 3.12.12
+    method: POST
+    uri: https://ete-litellm.bx.cloud9.ibm.com/chat/completions
+  response:
+    body:
+      string: '{"id":"chatcmpl-DNBAdZHQbfz4xngoJHZnJMm1uwagj","created":1774416855,"model":"Azure/gpt-4o","object":"chat.completion","system_fingerprint":"fp_af7f7349a4","choices":[{"finish_reason":"stop","index":0,"message":{"content":"I
+        am unable to fetch the product categories and details from the Astronomy Shop
+        application due to a connection issue. Please try again later or let me know
+        how else I may assist you.","role":"assistant","provider_specific_fields":{"refusal":null},"annotations":[]},"provider_specific_fields":{"content_filter_results":{"hate":{"filtered":false,"severity":"safe"},"self_harm":{"filtered":false,"severity":"safe"},"sexual":{"filtered":false,"severity":"safe"},"violence":{"filtered":false,"severity":"safe"}}}}],"usage":{"completion_tokens":38,"prompt_tokens":403,"total_tokens":441,"completion_tokens_details":{"accepted_prediction_tokens":0,"audio_tokens":0,"reasoning_tokens":0,"rejected_prediction_tokens":0},"prompt_tokens_details":{"audio_tokens":0,"cached_tokens":0}},"prompt_filter_results":[{"prompt_index":0,"content_filter_results":{}}]}'
+    headers:
+      content-length: '1069'
+      content-type: application/json
+      date: Wed, 25 Mar 2026 05:34:14 GMT
+      llm_provider-apim-request-id: 7c11097f-7e1f-454a-b29f-923f0f113179
+      llm_provider-azureml-model-session: d20260312074403-a36a490e67ba
+      llm_provider-content-length: '1033'
+      llm_provider-content-type: application/json
+      llm_provider-date: Wed, 25 Mar 2026 05:34:16 GMT
+      llm_provider-strict-transport-security: max-age=31536000; includeSubDomains;
+        preload
+      llm_provider-x-accel-buffering: 'no'
+      llm_provider-x-content-type-options: nosniff
+      llm_provider-x-ms-deployment-name: gpt-4o-2024-11-20
+      llm_provider-x-ms-rai-invoked: 'true'
+      llm_provider-x-ms-region: East US 2
+      llm_provider-x-ratelimit-limit-requests: '1970'
+      llm_provider-x-ratelimit-limit-tokens: '1970000'
+      llm_provider-x-ratelimit-remaining-requests: '1968'
+      llm_provider-x-ratelimit-remaining-tokens: '1968633'
+      llm_provider-x-request-id: 09932ede-44fe-4213-92ae-c798afe85b77
+      server: uvicorn
+      x-litellm-attempted-fallbacks: '0'
+      x-litellm-attempted-retries: '0'
+      x-litellm-call-id: c3aa1ff1-a190-41fe-bae3-9c9f999888ff
+      x-litellm-callback-duration-ms: '0.0'
+      x-litellm-key-max-budget: '7000.0'
+      x-litellm-key-spend: '0.06515500000000002'
+      x-litellm-model-api-base: https://eastus2.api.cognitive.microsoft.com/
+      x-litellm-model-group: Azure/gpt-4o
+      x-litellm-model-id: 144b3a5396b693b22952faeac6f921a6d1b877189ec51d3d1df784d2e405a478
+      x-litellm-overhead-duration-ms: '1.844'
+      x-litellm-response-cost: '0.0013875000000000003'
+      x-litellm-response-cost-discount-amount: '0.0'
+      x-litellm-response-cost-margin-amount: '0.0'
+      x-litellm-response-cost-margin-percent: '0.0'
+      x-litellm-response-cost-original: '0.0013875000000000003'
+      x-litellm-response-duration-ms: '1393.139'
+      x-litellm-version: 1.81.14
+      x-ratelimit-limit-requests: '1970'
+      x-ratelimit-limit-tokens: '1970000'
+      x-ratelimit-remaining-requests: '1968'
+      x-ratelimit-remaining-tokens: '1968633'
+      x-ratelimit-team-limit-requests: '100'
+      x-ratelimit-team-remaining-requests: '99'
+    status:
+      code: 200
+      message: OK
+version: 1
