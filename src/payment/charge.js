@@ -79,6 +79,11 @@ module.exports.charge = async request => {
       span.setAttribute('demo.payment.charged', true);
     }
 
+    const enduserId = baggage?.getEntry('enduser.id')?.value;
+    if (enduserId) {
+      span.setAttribute('enduser.id', enduserId);
+    }
+
     const { units, nanos, currencyCode } = request.amount;
     logger.info({ transactionId, cardType, lastFourDigits, amount: { units, nanos, currencyCode }, loyalty_level }, 'Transaction complete.');
     transactionsCounter.add(1, { 'demo.payment.currency': currencyCode });

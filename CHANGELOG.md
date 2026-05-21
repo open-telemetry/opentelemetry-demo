@@ -7,6 +7,15 @@ the release.
 
 ## Unreleased
 
+* [frontend,ad,payment] Propagate `enduser.id` as a span attribute on all
+  browser spans via `SessionIdProcessor`, forward it via W3C Baggage on
+  outgoing API requests through the ApiGateway proxy, and extract it in the
+  ad and payment backend services to stamp their own spans
+  ([#3366](https://github.com/open-telemetry/opentelemetry-demo/pull/3366))
+* [collector] Add `transform/sanitize_logs` processor to work around
+  `otelcol.signal` scope attribute conflict with `otelcol.signal.output`
+  that causes OpenSearch/Elasticsearch mapping failures
+  ([#3321](https://github.com/open-telemetry/opentelemetry-demo/pull/3321))
 * [telemetry-docs] Add a new service to provide telemetry documentation based
   on Weaver
   ([#2794](https://github.com/open-telemetry/opentelemetry-demo/pull/2794))
