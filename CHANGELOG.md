@@ -7,6 +7,13 @@ the release.
 
 ## Unreleased
 
+* [ad] Expose a Prometheus `/metrics` endpoint (default port `9465`) using the
+  Prometheus Java client library, with a custom counter
+  `demo_ad_served_total{category}`, and scrape it from the OTel Collector via a
+  new `prometheus/ad` receiver to demo Prometheus metric ingestion. Also pins
+  `grpc-netty-shaded` to the same version as the rest of the gRPC stack to fix
+  an `AbstractMethodError` caused by the flagd provider pulling an older
+  transitive version.
 * [telemetry-docs] Add a new service to provide telemetry documentation based
   on Weaver
   ([#2794](https://github.com/open-telemetry/opentelemetry-demo/pull/2794))
