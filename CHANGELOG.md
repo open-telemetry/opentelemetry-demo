@@ -139,6 +139,15 @@ the release.
   `app.payment.currency` to `demo.payment.currency` across checkout, payment,
   and telemetry schema.
   ([#3390](https://github.com/open-telemetry/opentelemetry-demo/pull/3390))
+* [telemetry] Rename shipping and quote telemetry attributes:
+  `app.shipping.amount` to `demo.shipping.amount`,
+  `app.shipping.cost.total` to `demo.shipping.cost.total`,
+  `app.shipping.items_count` to `demo.shipping.items_count`,
+  `app.shipping.tracking.id` to `demo.shipping.tracking.id`,
+  `app.quote.items.count` to `demo.shipping.quote.items_count`, and
+  `app.quote.cost.total` to `demo.shipping.quote.cost.total` across checkout,
+  quote, shipping, and telemetry schema.
+  ([#3391](https://github.com/open-telemetry/opentelemetry-demo/pull/3391))
 
 ## 2.2.0
 
