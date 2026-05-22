@@ -5,7 +5,7 @@
 # and patches core services that need Kafka awareness.
 #
 # Usage:
-#   docker compose -f compose.yaml -f compose.full.yaml up
+#   docker compose -f compose.yaml -f compose-full.yaml up
 
 services:
   # Accounting service (Kafka consumer)

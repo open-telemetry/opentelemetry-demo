@@ -18,14 +18,15 @@ DOCKER_COMPOSE_ENV=--env-file .env --env-file .env.override
 
 # Compose file layers — combine with -f flags for the desired configuration:
 #   Core (minimal):             compose.yaml
-#   Full (adds Kafka group):    compose.yaml + compose.full.yaml
-#   With observability stack:   + compose.observability.yaml
-#   With extras customizations: + compose.extras.yaml (always last)
+#   Full (adds Kafka group):    compose.yaml + compose-full.yaml
+#   With observability stack:   + compose-observability.yaml
+#   With extras customizations: + compose-extras.yaml (always last)
 DOCKER_COMPOSE_FILES_CORE=-f compose.yaml
-DOCKER_COMPOSE_FILES_FULL=$(DOCKER_COMPOSE_FILES_CORE) -f compose.full.yaml
-DOCKER_COMPOSE_FILES_OBSERVABILITY=-f compose.observability.yaml
-DOCKER_COMPOSE_FILES_EXTRAS=-f compose.extras.yaml
-DOCKER_COMPOSE_FILES_TESTS=-f compose.tests.yaml
+DOCKER_COMPOSE_FILES_FULL=$(DOCKER_COMPOSE_FILES_CORE) -f compose-full.yaml
+DOCKER_COMPOSE_FILES_OBSERVABILITY=-f compose-observability.yaml
+DOCKER_COMPOSE_FILES_PROFILING=-f compose-profiling.yaml
+DOCKER_COMPOSE_FILES_EXTRAS=-f compose-extras.yaml
+DOCKER_COMPOSE_FILES_TESTS=-f compose-tests.yaml
 
 # Default: full demo + observability stack + extras stub
 DOCKER_COMPOSE_FILES=$(DOCKER_COMPOSE_FILES_FULL) $(DOCKER_COMPOSE_FILES_OBSERVABILITY) $(DOCKER_COMPOSE_FILES_EXTRAS)
@@ -245,7 +246,7 @@ start-minimal-no-o11y:
 
 .PHONY: start-profiling
 start-profiling:
-	$(DOCKER_COMPOSE_CMD) $(DOCKER_COMPOSE_ENV) $(DOCKER_COMPOSE_FILES) -f compose-profiling.yaml up --force-recreate --remove-orphans --detach
+	$(DOCKER_COMPOSE_CMD) $(DOCKER_COMPOSE_ENV) $(DOCKER_COMPOSE_FILES) $(DOCKER_COMPOSE_FILES_PROFILING) up --force-recreate --remove-orphans --detach
 	@echo ""
 	@echo "OpenTelemetry Demo in profiling mode is running."
 	@echo "Go to http://localhost:8080 for the demo UI."
