@@ -16,31 +16,8 @@ receivers:
     brokers:
       - ${KAFKA_ADDR}
     collection_interval: 10s
-  postgresql:
-    endpoint: ${POSTGRES_HOST}:${POSTGRES_PORT}
-    username: monitoring_user
-    password: ${env:POSTGRES_MONITORING_PASSWORD}
-    metrics:
-      postgresql.blks_hit:
-        enabled: true
-      postgresql.blks_read:
-        enabled: true
-      postgresql.tup_fetched:
-        enabled: true
-      postgresql.tup_returned:
-        enabled: true
-      postgresql.tup_inserted:
-        enabled: true
-      postgresql.tup_updated:
-        enabled: true
-      postgresql.tup_deleted:
-        enabled: true
-      postgresql.deadlocks:
-        enabled: true
-    tls:
-      insecure: true
 
 service:
   pipelines:
     metrics:
-      receivers: [docker_stats, http_check/frontend-proxy, host_metrics, nginx, otlp, redis, span_metrics, kafkametrics, postgresql]
+      receivers: [docker_stats, http_check/frontend-proxy, host_metrics, nginx, otlp, redis, postgresql, span_metrics, kafkametrics]

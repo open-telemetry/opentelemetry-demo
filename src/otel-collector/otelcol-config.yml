@@ -33,6 +33,29 @@ receivers:
     endpoint: "valkey-cart:6379"
     username: "valkey"
     collection_interval: 10s
+  postgresql:
+    endpoint: ${POSTGRES_HOST}:${POSTGRES_PORT}
+    username: monitoring_user
+    password: ${env:POSTGRES_MONITORING_PASSWORD}
+    metrics:
+      postgresql.blks_hit:
+        enabled: true
+      postgresql.blks_read:
+        enabled: true
+      postgresql.tup_fetched:
+        enabled: true
+      postgresql.tup_returned:
+        enabled: true
+      postgresql.tup_inserted:
+        enabled: true
+      postgresql.tup_updated:
+        enabled: true
+      postgresql.tup_deleted:
+        enabled: true
+      postgresql.deadlocks:
+        enabled: true
+    tls:
+      insecure: true    
   # Host metrics
   host_metrics:
     root_path: /hostfs
@@ -187,13 +210,13 @@ service:
       processors: [resourcedetection, memory_limiter, transform/sanitize_spans]
       exporters: [debug, span_metrics]
     metrics:
-      receivers: [docker_stats, http_check/frontend-proxy, host_metrics, nginx, otlp, redis, span_metrics]
+      receivers: [docker_stats, http_check/frontend-proxy, host_metrics, nginx, otlp, redis, postgresql, span_metrics]
       processors: [resourcedetection, memory_limiter]
       exporters: [debug]
     logs:
       receivers: [otlp]
       processors: [resourcedetection, memory_limiter, transform/sanitize_logs]
-      exporters: [opensearch, debug]
+      exporters: [debug]
     profiles:
       receivers: [otlp]
       processors: [filter/sanitize_profiles, memory_limiter]
