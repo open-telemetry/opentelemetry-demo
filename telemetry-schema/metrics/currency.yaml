@@ -11,7 +11,7 @@ attributes:
     note: The currency code involved in the conversion operation
 
 metrics:
-  - name: app.currency
+  - name: demo.exchange.conversions
     brief: Currency conversion counter
     instrument: counter
     unit: "{conversion}"
