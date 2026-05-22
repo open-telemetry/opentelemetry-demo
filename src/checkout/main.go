@@ -293,8 +293,8 @@ func (cs *checkout) Watch(req *healthpb.HealthCheckRequest, ws healthpb.Health_W
 func (cs *checkout) PlaceOrder(ctx context.Context, req *pb.PlaceOrderRequest) (*pb.PlaceOrderResponse, error) {
 	span := trace.SpanFromContext(ctx)
 	span.SetAttributes(
-		attribute.String("app.user.id", req.UserId),
-		attribute.String("app.user.currency", req.UserCurrency),
+		attribute.String("user.id", req.UserId),
+		attribute.String("demo.user_context.selected_currency", req.UserCurrency),
 	)
 	logger.LogAttrs(
 		ctx,

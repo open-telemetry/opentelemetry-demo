@@ -9,8 +9,8 @@ attribute_groups:
     stability: stable
     attributes:
       - ref: demo.product.recommended.count
-      - ref: app.recommendation.cache_enabled
-      - ref: app.cache_hit
+      - ref: demo.feature_flag.recommendation_cache
+      - ref: demo.recommendation.cache_hit
       - ref: demo.product.count
       - ref: demo.product.filtered.count
       - ref: demo.product.filtered.list

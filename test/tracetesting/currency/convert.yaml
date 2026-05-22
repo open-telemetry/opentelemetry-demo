@@ -26,8 +26,8 @@ spec:
     selector: span[tracetest.span.type="rpc" name="Currency/Convert" rpc.system="grpc"
       rpc.method="Convert" rpc.service="oteldemo.CurrencyService"]
     assertions:
-    - attr:app.currency.conversion.from = "USD"
-    - attr:app.currency.conversion.to = "CAD"
+    - attr:demo.exchange.from = "USD"
+    - attr:demo.exchange.to = "CAD"
   - name: It has more nanos than expected
     selector: span[tracetest.span.type="general" name="Tracetest trigger"]
     assertions:
