@@ -167,6 +167,8 @@ the release.
   checkout, recommendation, email, load-generator, frontend, and telemetry
   schema.
   ([#3393](https://github.com/open-telemetry/opentelemetry-demo/pull/3393))
+* [telemetry] Remove the duplicate `app.frontend.requests` metric from frontend
+  instrumentation and the telemetry schema.
 
 ## 2.2.0
 
