@@ -43,11 +43,12 @@ def test_service_edge_exists(jaeger_url, service_edge):
     # also contain the parent span context, since the child carries the parent
     # ref. Querying by parent is unreliable because high-volume parent services
     # (e.g. frontend) produce many traces that never reach a given child within
-    # the limit window.
+    # the limit window. Use a generous limit because some parents (e.g. checkout
+    # -> product-catalog) call the child rarely compared to other parents.
     def check():
         resp = requests.get(
             f"{jaeger_url}/jaeger/ui/api/traces",
-            params={"service": child, "limit": 20, "lookback": "1h"},
+            params={"service": child, "limit": 200, "lookback": "1h"},
             timeout=10,
         )
         resp.raise_for_status()
