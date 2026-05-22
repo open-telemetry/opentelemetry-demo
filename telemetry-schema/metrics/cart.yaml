@@ -3,7 +3,7 @@
 
 file_format: definition/2
 metrics:
-  - name: app.cart.add_item.latency
+  - name: demo.cart.add_item.latency
     brief: Cart add item operation latency
     instrument: histogram
     unit: "s"
