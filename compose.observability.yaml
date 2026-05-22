@@ -163,10 +163,6 @@ services:
       - ${OTEL_COLLECTOR_CONFIG_EXTRAS}:/etc/otelcol-config-extras.yml
     environment:
       - KAFKA_ADDR
-      - POSTGRES_HOST
-      - POSTGRES_PORT
-      - POSTGRES_PASSWORD
-      - POSTGRES_MONITORING_PASSWORD
     depends_on:
       jaeger:
         condition: service_started
