@@ -44,7 +44,7 @@ exporters:
 service:
   pipelines:
     traces:
-      exporters: [debug, otlp_grpc/jaeger, spanmetrics]
+      exporters: [debug, otlp_grpc/jaeger, span_metrics]
     metrics:
       exporters: [debug, otlp_http/prometheus]
     logs:
