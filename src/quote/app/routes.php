@@ -29,8 +29,8 @@ function calculateQuote($jsonObject): float
         $costPerItem = 8.99;
         $quote = round($costPerItem * $numberOfItems, 2);
 
-        $childSpan->setAttribute('app.quote.items.count', $numberOfItems);
-        $childSpan->setAttribute('app.quote.cost.total', $quote);
+        $childSpan->setAttribute('demo.shipping.quote.items_count', $numberOfItems);
+        $childSpan->setAttribute('demo.shipping.quote.cost.total', $quote);
 
         $childSpan->addEvent('Quote calculated, returning its value');
 
@@ -61,7 +61,7 @@ return function (App $app) {
         $response->getBody()->write($payload);
 
         $span->addEvent('Quote processed, response sent back', [
-            'app.quote.cost.total' => $data
+            'demo.shipping.quote.cost.total' => $data
         ]);
         //exported as an opentelemetry log (see dependencies.php)
         $logger->info('Calculated quote', [

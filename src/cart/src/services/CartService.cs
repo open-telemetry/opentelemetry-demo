@@ -60,7 +60,7 @@ public class CartService : Oteldemo.CartService.CartServiceBase
             {
                 totalCart += item.Quantity;
             }
-            activity?.SetTag("app.cart.items.count", totalCart);
+            activity?.SetTag("demo.cart.items.count", totalCart);
 
             return cart;
         }

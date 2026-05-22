@@ -11,4 +11,4 @@ attribute_groups:
       - ref: app.user.id
       - ref: demo.product.id
       - ref: demo.product.quantity
-      - ref: app.cart.items.count
+      - ref: demo.cart.items.count

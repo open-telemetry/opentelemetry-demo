@@ -336,7 +336,7 @@ func (cs *checkout) PlaceOrder(ctx context.Context, req *pb.PlaceOrderRequest) (
 	}
 
 	span.AddEvent("charged",
-		trace.WithAttributes(attribute.String("app.payment.transaction.id", txID)))
+		trace.WithAttributes(attribute.String("demo.payment.transaction.id", txID)))
 	logger.LogAttrs(
 		ctx,
 		slog.LevelInfo, "payment went through",
@@ -347,7 +347,7 @@ func (cs *checkout) PlaceOrder(ctx context.Context, req *pb.PlaceOrderRequest) (
 	if err != nil {
 		return nil, status.Errorf(codes.Unavailable, "shipping error: %+v", err)
 	}
-	shippingTrackingAttribute := attribute.String("app.shipping.tracking.id", shippingTrackingID)
+	shippingTrackingAttribute := attribute.String("demo.shipping.tracking.id", shippingTrackingID)
 	span.AddEvent("shipped", trace.WithAttributes(shippingTrackingAttribute))
 
 	_ = cs.emptyUserCart(ctx, req.UserId)
@@ -364,20 +364,20 @@ func (cs *checkout) PlaceOrder(ctx context.Context, req *pb.PlaceOrderRequest) (
 	totalPriceFloat, _ := strconv.ParseFloat(fmt.Sprintf("%d.%02d", total.GetUnits(), total.GetNanos()/1000000000), 64)
 
 	span.SetAttributes(
-		attribute.String("app.order.id", orderID.String()),
-		attribute.Float64("app.shipping.amount", shippingCostFloat),
-		attribute.Float64("app.order.amount", totalPriceFloat),
-		attribute.Int("app.order.items.count", len(prep.orderItems)),
+		attribute.String("demo.order.id", orderID.String()),
+		attribute.Float64("demo.shipping.amount", shippingCostFloat),
+		attribute.Float64("demo.order.amount", totalPriceFloat),
+		attribute.Int("demo.order.items.count", len(prep.orderItems)),
 		shippingTrackingAttribute,
 	)
 	logger.LogAttrs(
 		ctx,
 		slog.LevelInfo, "order placed",
-		slog.String("app.order.id", orderID.String()),
-		slog.Float64("app.shipping.amount", shippingCostFloat),
-		slog.Float64("app.order.amount", totalPriceFloat),
-		slog.Int("app.order.items.count", len(prep.orderItems)),
-		slog.String("app.shipping.tracking.id", shippingTrackingID),
+		slog.String("demo.order.id", orderID.String()),
+		slog.Float64("demo.shipping.amount", shippingCostFloat),
+		slog.Float64("demo.order.amount", totalPriceFloat),
+		slog.Int("demo.order.items.count", len(prep.orderItems)),
+		slog.String("demo.shipping.tracking.id", shippingTrackingID),
 	)
 
 	if err := cs.sendOrderConfirmation(ctx, req.Email, orderResult); err != nil {
@@ -436,9 +436,9 @@ func (cs *checkout) prepareOrderItemsAndShippingQuoteFromCart(ctx context.Contex
 	shippingCostFloat, _ := strconv.ParseFloat(fmt.Sprintf("%d.%02d", shippingPrice.GetUnits(), shippingPrice.GetNanos()/1000000000), 64)
 
 	span.SetAttributes(
-		attribute.Float64("app.shipping.amount", shippingCostFloat),
-		attribute.Int("app.cart.items.count", int(totalCart)),
-		attribute.Int("app.order.items.count", len(orderItems)),
+		attribute.Float64("demo.shipping.amount", shippingCostFloat),
+		attribute.Int("demo.cart.items.count", int(totalCart)),
+		attribute.Int("demo.order.items.count", len(orderItems)),
 	)
 	return out, nil
 }

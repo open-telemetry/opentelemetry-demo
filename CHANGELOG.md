@@ -122,7 +122,32 @@ the release.
   `app.ads.ad_response_type` to `demo.ad.response_type` across ad,
   product-catalog, product-reviews, recommendation, telemetry schema, and trace
   tests.
-  ([#3377](https://github.com/open-telemetry/opentelemetry-demo/pull/3387))
+  ([#3387](https://github.com/open-telemetry/opentelemetry-demo/pull/3387))
+* [telemetry] Rename order and cart telemetry attributes:
+  `app.order.id` to `demo.order.id`,
+  `app.order.amount` to `demo.order.amount`,
+  `app.order.items.count` to `demo.order.items.count`, and
+  `app.cart.items.count` to `demo.cart.items.count` across cart, checkout,
+  email, telemetry schema, and trace tests.
+  ([#3389](https://github.com/open-telemetry/opentelemetry-demo/pull/3389))
+* [telemetry] Rename payment telemetry attributes:
+  `app.payment.amount` to `demo.payment.amount`,
+  `app.payment.card_type` to `demo.payment.card_type`,
+  `app.payment.card_valid` to `demo.payment.card_valid`,
+  `app.payment.charged` to `demo.payment.charged`,
+  `app.payment.transaction.id` to `demo.payment.transaction.id`, and
+  `app.payment.currency` to `demo.payment.currency` across checkout, payment,
+  and telemetry schema.
+  ([#3390](https://github.com/open-telemetry/opentelemetry-demo/pull/3390))
+* [telemetry] Rename shipping and quote telemetry attributes:
+  `app.shipping.amount` to `demo.shipping.amount`,
+  `app.shipping.cost.total` to `demo.shipping.cost.total`,
+  `app.shipping.items_count` to `demo.shipping.items_count`,
+  `app.shipping.tracking.id` to `demo.shipping.tracking.id`,
+  `app.quote.items.count` to `demo.shipping.quote.items_count`, and
+  `app.quote.cost.total` to `demo.shipping.quote.cost.total` across checkout,
+  quote, shipping, and telemetry schema.
+  ([#3391](https://github.com/open-telemetry/opentelemetry-demo/pull/3391))
 
 ## 2.2.0
 
