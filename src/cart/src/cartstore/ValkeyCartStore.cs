@@ -35,7 +35,7 @@ public class ValkeyCartStore : ICartStore
             HistogramBucketBoundaries = [ 0.005, 0.01, 0.025, 0.05, 0.075, 0.1, 0.25, 0.5, 0.75, 1, 2.5, 5, 7.5, 10 ]
         });
     private static readonly Histogram<double> getCartHistogram = CartMeter.CreateHistogram(
-        "app.cart.get_cart.latency",
+        "demo.cart.get_cart.latency",
         unit: "s",
         advice: new InstrumentAdvice<double>
         {
