@@ -3,7 +3,7 @@
 
 file_format: definition/2
 metrics:
-  - name: app.confirmation.counter
+  - name: demo.notification.confirmations
     brief: Email confirmation counter
     instrument: counter
     unit: "1"
