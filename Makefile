@@ -24,6 +24,7 @@ DOCKER_COMPOSE_ENV=--env-file .env --env-file .env.override
 DOCKER_COMPOSE_FILES_CORE=-f compose.yaml
 DOCKER_COMPOSE_FILES_FULL=$(DOCKER_COMPOSE_FILES_CORE) -f compose.full.yaml
 DOCKER_COMPOSE_FILES_OBSERVABILITY=-f compose.observability.yaml
+DOCKER_COMPOSE_FILES_PROFILING=-f compose.profiling.yaml
 DOCKER_COMPOSE_FILES_EXTRAS=-f compose.extras.yaml
 DOCKER_COMPOSE_FILES_TESTS=-f compose.tests.yaml
 
@@ -245,7 +246,7 @@ start-minimal-no-o11y:
 
 .PHONY: start-profiling
 start-profiling:
-	$(DOCKER_COMPOSE_CMD) $(DOCKER_COMPOSE_ENV) $(DOCKER_COMPOSE_FILES) -f compose-profiling.yaml up --force-recreate --remove-orphans --detach
+	$(DOCKER_COMPOSE_CMD) $(DOCKER_COMPOSE_ENV) $(DOCKER_COMPOSE_FILES) $(DOCKER_COMPOSE_FILES_PROFILING) up --force-recreate --remove-orphans --detach
 	@echo ""
 	@echo "OpenTelemetry Demo in profiling mode is running."
 	@echo "Go to http://localhost:8080 for the demo UI."

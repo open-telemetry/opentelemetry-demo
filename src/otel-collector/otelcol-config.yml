@@ -128,10 +128,7 @@ receivers:
 
 exporters:
   debug:
-  otlp_grpc/firepit:
-    endpoint: "firepit:4317"
-    tls:
-      insecure: true
+
 processors:
   memory_limiter:
     check_interval: 5s
@@ -220,7 +217,7 @@ service:
     profiles:
       receivers: [otlp]
       processors: [filter/sanitize_profiles, memory_limiter]
-      exporters: [otlp_grpc/firepit, debug]
+      exporters: [debug]
   telemetry:
     metrics:
       readers:

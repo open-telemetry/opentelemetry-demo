@@ -40,6 +40,10 @@ exporters:
       num_consumers: 10
       queue_size: 1000
       batch:
+  otlp_grpc/firepit:
+    endpoint: "firepit:4317"
+    tls:
+      insecure: true      
 
 service:
   pipelines:
@@ -49,3 +53,5 @@ service:
       exporters: [debug, otlp_http/prometheus]
     logs:
       exporters: [debug, opensearch]
+    profiles:
+      exporters: [debug, otlp_grpc/firepit]
