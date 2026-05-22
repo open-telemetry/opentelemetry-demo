@@ -127,7 +127,7 @@ services:
       kafka:
         condition: service_healthy
 
-  # Patch otel-collector to add Kafka and Postgres metrics receivers
+  # Patch otel-collector to add Kafka metrics receiver
   otel-collector:
     command:
       - "--config=/etc/otelcol-config.yml"
