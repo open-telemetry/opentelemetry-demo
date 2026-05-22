@@ -43,7 +43,7 @@ exporters:
   otlp_grpc/firepit:
     endpoint: "firepit:4317"
     tls:
-      insecure: true      
+      insecure: true
 
 service:
   pipelines:
