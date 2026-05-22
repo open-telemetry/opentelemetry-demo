@@ -164,6 +164,8 @@ the release.
   checkout, recommendation, email, load-generator, frontend, and telemetry
   schema.
   ([#3393](https://github.com/open-telemetry/opentelemetry-demo/pull/3393))
+* [telemetry] Remove the dropped email recipient attribute from the email
+  service telemetry schema.
 
 ## 2.2.0
 
