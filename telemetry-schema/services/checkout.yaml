@@ -11,9 +11,9 @@ attribute_groups:
       - ref: app.user.id
       - ref: app.user.currency
       - ref: demo.payment.transaction.id
-      - ref: app.shipping.tracking.id
+      - ref: demo.shipping.tracking.id
       - ref: demo.order.id
-      - ref: app.shipping.amount
+      - ref: demo.shipping.amount
       - ref: demo.order.amount
       - ref: demo.order.items.count
       - ref: demo.cart.items.count
