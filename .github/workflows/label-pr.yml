@@ -30,7 +30,7 @@ jobs:
               - 'src/flagd/**'
             helmUpdateRequired:
               - '.env'
-              - 'docker-compose*.yml'
+              - 'compose*.yaml'
               - 'src/flagd/**'
               - 'src/grafana/**'
               - 'src/jaeger/**'
