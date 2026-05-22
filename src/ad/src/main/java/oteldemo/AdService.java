@@ -64,7 +64,7 @@ public final class AdService {
 
   private static final LongCounter adRequestsCounter =
       meter
-          .counterBuilder("app.ads.ad_requests")
+          .counterBuilder("demo.ad.requests")
           .setDescription("Counts ad requests by request and response type")
           .build();
 
