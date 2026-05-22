@@ -167,6 +167,9 @@ the release.
   checkout, recommendation, email, load-generator, frontend, and telemetry
   schema.
   ([#3393](https://github.com/open-telemetry/opentelemetry-demo/pull/3393))
+* [telemetry] Rename email confirmation, product review, AI assistant, and
+  recommendation metrics to `demo.*` names and use `demo.product.id` for
+  product review metric attributes.
 
 ## 2.2.0
 
