@@ -4,10 +4,10 @@
 # Test services layer: adds frontend tests, trace-based tests, and Tracetest server.
 #
 # Usage (via make run-tests or make run-tracetesting):
-#   docker compose -f compose.yaml -f compose-full.yaml -f compose-observability.yaml \
-#     -f compose-extras.yaml -f compose-tests.yaml run frontendTests
-#   docker compose -f compose.yaml -f compose-full.yaml -f compose-observability.yaml \
-#     -f compose-extras.yaml -f compose-tests.yaml run traceBasedTests
+#   docker compose -f compose.yaml -f compose.full.yaml -f compose.observability.yaml \
+#     -f compose.extras.yaml -f compose.tests.yaml run frontendTests
+#   docker compose -f compose.yaml -f compose.full.yaml -f compose.observability.yaml \
+#     -f compose.extras.yaml -f compose.tests.yaml run traceBasedTests
 
 services:
   # Frontend Tests

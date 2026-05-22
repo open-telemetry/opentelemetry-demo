@@ -4,13 +4,13 @@
 # Core/minimal demo services. Run alone for the smallest footprint.
 # Layer additional files on top with -f:
 #   Full demo (adds Kafka, accounting, fraud-detection):
-#     docker compose -f compose.yaml -f compose-full.yaml up
+#     docker compose -f compose.yaml -f compose.full.yaml up
 #   With observability stack (Jaeger, Prometheus, OpenSearch, Grafana):
-#     docker compose -f compose.yaml -f compose-observability.yaml up
+#     docker compose -f compose.yaml -f compose.observability.yaml up
 #   Default (full + observability):
-#     docker compose -f compose.yaml -f compose-full.yaml -f compose-observability.yaml up
+#     docker compose -f compose.yaml -f compose.full.yaml -f compose.observability.yaml up
 #   With extras (vendor customizations, additional components):
-#     docker compose -f compose.yaml [-f compose-full.yaml] -f compose-observability.yaml -f compose-extras.yaml up
+#     docker compose -f compose.yaml [-f compose.full.yaml] -f compose.observability.yaml -f compose.extras.yaml up
 
 x-default-logging: &logging
   driver: "json-file"
@@ -752,7 +752,7 @@ services:
 
   # OpenTelemetry Collector
   # Base configuration: receives and processes telemetry, exports to debug only.
-  # Add compose-observability.yaml to enable Jaeger, Prometheus, OpenSearch, and Grafana.
+  # Add compose.observability.yaml to enable Jaeger, Prometheus, OpenSearch, and Grafana.
   otel-collector:
     image: ${COLLECTOR_CONTRIB_IMAGE}
     container_name: otel-collector

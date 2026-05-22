@@ -5,8 +5,8 @@
 # and patches the otel-collector to export to them.
 #
 # Usage:
-#   docker compose -f compose.yaml -f compose-observability.yaml up
-#   docker compose -f compose.yaml -f compose-full.yaml -f compose-observability.yaml up
+#   docker compose -f compose.yaml -f compose.observability.yaml up
+#   docker compose -f compose.yaml -f compose.full.yaml -f compose.observability.yaml up
 
 services:
   # Jaeger
@@ -147,7 +147,7 @@ services:
   # Patch otel-collector to add observability exporters and wait for backends.
   # Note: otelcol-config-full.yml is included here to maintain correct config ordering
   # (core → full → observability → extras). When running minimal+observability without
-  # compose-full.yaml, the Kafka/PostgreSQL receivers in the full config are harmless —
+  # compose.full.yaml, the Kafka/PostgreSQL receivers in the full config are harmless —
   # they will simply fail to scrape since those services are not running.
   otel-collector:
     command:

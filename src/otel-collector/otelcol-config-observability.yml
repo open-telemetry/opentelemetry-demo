@@ -2,7 +2,7 @@
 # SPDX-License-Identifier: Apache-2.0
 
 # Observability stack collector additions: Jaeger, Prometheus, and OpenSearch exporters.
-# Loaded when running with compose-observability.yaml.
+# Loaded when running with compose.observability.yaml.
 #
 # IMPORTANT: The OTel Collector merges config files but REPLACES arrays, not appends.
 # The pipeline exporters below must repeat all exporters from earlier config layers
@@ -13,7 +13,7 @@
 #   metrics: otlp_http/prometheus
 #   logs:    opensearch
 #
-# If you are running with compose-full.yaml, also repeat the full receivers in metrics.
+# If you are running with compose.full.yaml, also repeat the full receivers in metrics.
 
 exporters:
   otlp_grpc/jaeger:
@@ -40,10 +40,6 @@ exporters:
       num_consumers: 10
       queue_size: 1000
       batch:
-  otlp_grpc/firepit:
-    endpoint: "firepit:4317"
-    tls:
-      insecure: true      
 
 service:
   pipelines:
@@ -53,5 +49,3 @@ service:
       exporters: [debug, otlp_http/prometheus]
     logs:
       exporters: [debug, opensearch]
-    profiles:
-      exporters: [debug, otlp_grpc/firepit]

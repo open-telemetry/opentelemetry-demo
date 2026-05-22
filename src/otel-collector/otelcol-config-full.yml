@@ -2,7 +2,7 @@
 # SPDX-License-Identifier: Apache-2.0
 
 # Full demo collector additions: Kafka and PostgreSQL metric receivers.
-# Loaded when running with compose-full.yaml.
+# Loaded when running with compose.full.yaml.
 #
 # IMPORTANT: The OTel Collector merges config files but REPLACES arrays, not appends.
 # The metrics pipeline below must repeat all receivers from otelcol-config.yml.
