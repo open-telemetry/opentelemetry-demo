@@ -55,7 +55,7 @@ receivers:
       postgresql.deadlocks:
         enabled: true
     tls:
-      insecure: true    
+      insecure: true
   # Host metrics
   host_metrics:
     root_path: /hostfs
