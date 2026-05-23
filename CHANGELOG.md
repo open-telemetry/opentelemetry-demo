@@ -167,6 +167,8 @@ the release.
   checkout, recommendation, email, load-generator, frontend, and telemetry
   schema.
   ([#3393](https://github.com/open-telemetry/opentelemetry-demo/pull/3393))
+* [AI Agents] Added guidance for AI Agents
+  ([#3404](https://github.com/open-telemetry/opentelemetry-demo/pull/3404))
 
 ## 2.2.0
 
