@@ -6,18 +6,18 @@
 def init_metrics(meter):
 
     # Product reviews counter
-    app_product_review_counter = meter.create_counter(
-        'app_product_review_counter', unit='reviews', description="Counts the total number of returned product reviews"
+    product_review_requests = meter.create_counter(
+        'demo.product.review.requests', unit='reviews', description="Counts the total number of returned product reviews"
     )
 
     # AI Assistant counter
-    app_ai_assistant_counter = meter.create_counter(
-        'app_ai_assistant_counter', unit='summaries', description="Counts the total number of AI Assistant requests"
+    ai_assistant_requests = meter.create_counter(
+        'demo.product.ai_assistant.requests', unit='summaries', description="Counts the total number of AI Assistant requests"
     )
 
     product_review_svc_metrics = {
-        "app_product_review_counter": app_product_review_counter,
-        "app_ai_assistant_counter": app_ai_assistant_counter,
+        "demo.product.review.requests": product_review_requests,
+        "demo.product.ai_assistant.requests": ai_assistant_requests,
     }
 
     return product_review_svc_metrics
