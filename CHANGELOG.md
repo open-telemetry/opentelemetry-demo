@@ -7,6 +7,13 @@ the release.
 
 ## Unreleased
 
+* [shipping] Add `intlShippingSlowdown` integer feature flag to delay
+  international (non-US) shipments by N seconds via flagd with OpenTelemetry tracing
+  ([#346](https://github.com/open-telemetry/opentelemetry-demo/issues/346))
+* [collector] Add `transform/sanitize_logs` processor to work around
+  `otelcol.signal` scope attribute conflict with `otelcol.signal.output`
+  that causes OpenSearch/Elasticsearch mapping failures
+  ([#3321](https://github.com/open-telemetry/opentelemetry-demo/pull/3321))
 * [telemetry-docs] Add a new service to provide telemetry documentation based
   on Weaver
   ([#2794](https://github.com/open-telemetry/opentelemetry-demo/pull/2794))
@@ -48,6 +55,9 @@ the release.
 * [load-generator] Wait for Roof Binoculars image to load in web tasks, and fix
   task failures due to missing `tracer` attribute
   ([#3171](https://github.com/open-telemetry/opentelemetry-demo/pull/3171))
+* [docker] Refactor Docker Compose to use layered `-f` files with `start`,
+  `start-minimal`, `start-no-o11y`, and `start-minimal-no-o11y` make targets
+  ([#3229](https://github.com/open-telemetry/opentelemetry-demo/pull/3229))
 * [kubernetes] Removed generated Kubernetes manifests in favor of docs
   ([#3236](https://github.com/open-telemetry/opentelemetry-demo/pull/3236))
 * [cart] Swap the deprecated `OpenFeature.Contrib.Providers.Flagd` package
