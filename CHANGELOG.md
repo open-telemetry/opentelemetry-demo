@@ -174,8 +174,14 @@ the release.
   checkout, recommendation, email, load-generator, frontend, and telemetry
   schema.
   ([#3393](https://github.com/open-telemetry/opentelemetry-demo/pull/3393))
-* [telemetry] Remove the dropped email recipient attribute from the email
-  service telemetry schema.
+* [telemetry] Rename remaining notification, product review, and recommendation
+  telemetry metrics:
+  `app.confirmation.counter` to `demo.notification.confirmations`,
+  `app_product_review_counter` to `demo.product.review.requests`,
+  `app_ai_assistant_counter` to `demo.product.ai_assistant.requests`, and
+  `app_recommendations_counter` to `demo.recommendation.requests` across email,
+  product-reviews, recommendation, Grafana, and telemetry schema. Product
+  review metrics now use the canonical `demo.product.id` attribute.
 
 ## 2.2.0
 
