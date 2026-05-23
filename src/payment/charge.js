@@ -11,7 +11,7 @@ const flagProvider = new FlagdProvider();
 const logger = require('./logger');
 const tracer = trace.getTracer('payment');
 const meter = metrics.getMeter('payment');
-const transactionsCounter = meter.createCounter('app.payment.transactions');
+const transactionsCounter = meter.createCounter('demo.payment.transactions');
 
 const LOYALTY_LEVEL = ['platinum', 'gold', 'silver', 'bronze'];
 
