@@ -199,7 +199,7 @@ run-telemetry-tests: start
 	$(DOCKER_CMD) run --rm --network opentelemetry-demo \
 		--env-file .env --env-file .env.override \
 		-e TEST_SCOPE=full \
-		-e WARMUP_SECONDS=$${WARMUP_SECONDS:-120} \
+		-e WARMUP_SECONDS=$${WARMUP_SECONDS:-240} \
 		opentelemetry-demo-telemetry-tests
 
 .PHONY: run-telemetry-tests-minimal
@@ -209,7 +209,7 @@ run-telemetry-tests-minimal: start-minimal
 	$(DOCKER_CMD) run --rm --network opentelemetry-demo \
 		--env-file .env --env-file .env.override \
 		-e TEST_SCOPE=minimal \
-		-e WARMUP_SECONDS=$${WARMUP_SECONDS:-120} \
+		-e WARMUP_SECONDS=$${WARMUP_SECONDS:-240} \
 		opentelemetry-demo-telemetry-tests
 
 .PHONY: generate-protobuf

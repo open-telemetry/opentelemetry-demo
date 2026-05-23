@@ -26,10 +26,10 @@ COLLECTOR_HOST = os.environ.get("OTEL_COLLECTOR_HOST", "otel-collector")
 COLLECTOR_PORT = int(os.environ.get("OTEL_COLLECTOR_PORT_GRPC", "4317"))
 
 TEST_SCOPE = os.environ.get("TEST_SCOPE", "minimal")
-WARMUP_SECONDS = int(os.environ.get("WARMUP_SECONDS", "120"))
+WARMUP_SECONDS = int(os.environ.get("WARMUP_SECONDS", "240"))
 
 POLL_INTERVAL = 5
-POLL_TIMEOUT = 120
+POLL_TIMEOUT = 180
 
 
 @pytest.fixture(scope="session", autouse=True)

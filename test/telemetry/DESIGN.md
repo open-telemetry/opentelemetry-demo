@@ -91,7 +91,7 @@ signals it emits:
   (or `parentSpanID`) plus `processes[processID].serviceName`.
   We do not use `/api/dependencies` because Jaeger's in-memory
   backend rotates traces and the aggregator output is unreliable
-  within a 120s warmup window.
+  within the warmup window.
 
 **Prometheus (metrics):**
 
@@ -126,7 +126,7 @@ make run-telemetry-tests-minimal   # Minimal scope
 | `OPENSEARCH_HOST`  | `opensearch`    | OpenSearch hostname       |
 | `OPENSEARCH_PORT`  | `9200`          | OpenSearch port           |
 | `TEST_SCOPE`       | `minimal`       | `minimal` or `full`       |
-| `WARMUP_SECONDS`   | `120`           | Seconds before testing    |
+| `WARMUP_SECONDS`   | `240`           | Seconds before testing    |
 
 ## CI Integration
 
