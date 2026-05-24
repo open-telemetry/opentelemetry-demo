@@ -174,13 +174,8 @@ the release.
   checkout, recommendation, email, load-generator, frontend, and telemetry
   schema.
   ([#3393](https://github.com/open-telemetry/opentelemetry-demo/pull/3393))
-* [telemetry] Rename remaining demo metrics from the `app` namespace:
-  `app.ads.ad_requests` to `demo.ad.requests`,
-  `app.cart.add_item.latency` to `demo.cart.add_item.latency`,
-  `app.cart.get_cart.latency` to `demo.cart.get_cart.latency`,
-  `app.currency` to `demo.exchange.conversions`, and
-  `app.payment.transactions` to `demo.payment.transactions` across ad, cart,
-  currency, payment, and telemetry schema.
+* [AI Agents] Added guidance for AI Agents
+  ([#3404](https://github.com/open-telemetry/opentelemetry-demo/pull/3404))
 
 ## 2.2.0
 
