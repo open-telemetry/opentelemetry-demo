@@ -128,9 +128,20 @@ install-tools: $(MISSPELL) $(ADDLICENSE)
 	npm install
 	@echo "All tools installed"
 
+# Use to build all services, or a single service component
+# Example: make build service=frontend
 .PHONY: build
 build:
+# work with `service` or `SERVICE` as input
+ifdef SERVICE
+	service := $(SERVICE)
+endif
+
+ifdef service
+	$(DOCKER_COMPOSE_CMD) $(DOCKER_COMPOSE_ENV) $(DOCKER_COMPOSE_FILES) build $(service)
+else
 	$(DOCKER_COMPOSE_CMD) $(DOCKER_COMPOSE_ENV) $(DOCKER_COMPOSE_FILES) build
+endif
 
 .PHONY: build-and-push
 build-and-push:
