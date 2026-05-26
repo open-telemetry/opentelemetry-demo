@@ -5,6 +5,6 @@ FROM python:3.14-slim-bookworm
 
 WORKDIR /build
 
-COPY ./src/product-reviews/genproto/requirements.lock.txt requirements.lock.txt
+COPY ./src/product-reviews/genproto/requirements.txt requirements.txt
 
-RUN python -m pip install --no-cache-dir --require-hashes -r requirements.lock.txt
+RUN python -m pip install --no-cache-dir --require-hashes -r requirements.txt

@@ -7,10 +7,10 @@ FROM docker.io/library/python:3.12-alpine3.22 AS build-venv
 RUN apk update && \
     apk add gcc g++ linux-headers
 
-COPY ./src/llm/requirements.lock.txt requirements.lock.txt
+COPY ./src/llm/requirements.txt requirements.txt
 
 RUN python -m venv venv && \
-    venv/bin/pip install --no-cache-dir --require-hashes -r requirements.lock.txt
+    venv/bin/pip install --no-cache-dir --require-hashes -r requirements.txt
 
 FROM docker.io/library/python:3.12-alpine3.22
 
