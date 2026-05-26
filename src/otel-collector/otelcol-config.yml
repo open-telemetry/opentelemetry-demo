@@ -143,10 +143,6 @@ processors:
           enabled: true
         host.arch:
           enabled: true
-        host.ip:
-          enabled: true
-        host.mac:
-          enabled: true
         host.cpu.vendor.id:
           enabled: true
         host.cpu.family:

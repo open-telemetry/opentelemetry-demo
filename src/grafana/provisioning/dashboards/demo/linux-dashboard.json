@@ -108,7 +108,7 @@
           "id": "filterFieldsByName",
           "options": {
             "include": {
-              "pattern": "host_name|host_arch|host_ip|host_mac|os_type|os_description"
+              "pattern": "host_name|host_arch|os_type|os_description"
             }
           }
         },
@@ -118,8 +118,6 @@
             "renameByName": {
               "host_name": "Hostname",
               "host_arch": "Architecture",
-              "host_ip": "IP Address",
-              "host_mac": "MAC Address",
               "os_type": "OS Type",
               "os_description": "OS Description"
             }
