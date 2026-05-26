@@ -11,9 +11,9 @@ FROM reactnativecommunity/react-native-android:v20.1 AS builder
 WORKDIR /reactnativesrc/
 COPY . .
 
-RUN npm install
+RUN npm ci
 # Regenerate the android/ project from app.json using Expo's continuous native
-# generation. `--no-install` skips a redundant `npm install` since we just ran it.
+# generation. `--no-install` skips a redundant install since dependencies are already present.
 RUN npx expo prebuild --platform android --no-install
 WORKDIR android/
 RUN chmod +x gradlew
