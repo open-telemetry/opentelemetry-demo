@@ -13,7 +13,7 @@ path = "src/main.rs"
 actix-web = "4"
 anyhow = "1.0.102"
 awc = { version = "3.8.2", default-features = false, features = ["compress-zstd"] }
-open-feature = "0.2"
+open-feature = "0.3"
 open-feature-flagd = { version = "0.1", default-features = false, features = ["rpc"] }
 serde = { version = "1.0.228", features = ["derive"] }
 tonic = "0.14.6"
