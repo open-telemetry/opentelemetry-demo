@@ -7,6 +7,8 @@ the release.
 
 ## Unreleased
 
+* [collector] Add resource attributes to `resourcedetection/processor` and updated Grafana dashboards
+  ([#3417](https://github.com/open-telemetry/opentelemetry-demo/pull/3417))
 * [shipping] Add `intlShippingSlowdown` integer feature flag to delay
   international (non-US) shipments by N seconds via flagd with OpenTelemetry tracing
   ([#346](https://github.com/open-telemetry/opentelemetry-demo/issues/346))
