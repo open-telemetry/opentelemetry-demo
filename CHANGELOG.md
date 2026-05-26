@@ -7,7 +7,8 @@ the release.
 
 ## Unreleased
 
-* [collector] Add resource attributes to `resourcedetection/processor` and updated Grafana dashboards
+* [collector] Add resource attributes to `resourcedetection/processor` and
+  updated Grafana dashboards.
   ([#3417](https://github.com/open-telemetry/opentelemetry-demo/pull/3417))
 * [frontend,ad,payment] Propagate `enduser.id` as a span attribute on all
   browser spans via `SessionIdProcessor`, forward it via W3C Baggage on
