@@ -1,0 +1,23 @@
+# Copyright The OpenTelemetry Authors
+# SPDX-License-Identifier: Apache-2.0
+
+# Full demo collector additions: Kafka and PostgreSQL metric receivers.
+# Loaded when running with compose.full.yaml.
+#
+# IMPORTANT: The OTel Collector merges config files but REPLACES arrays, not appends.
+# The metrics pipeline below must repeat all receivers from otelcol-config.yml.
+
+receivers:
+  kafkametrics:
+    scrapers:
+      - brokers
+      - topics
+      - consumers
+    brokers:
+      - ${KAFKA_ADDR}
+    collection_interval: 10s
+
+service:
+  pipelines:
+    metrics:
+      receivers: [docker_stats, http_check/frontend-proxy, host_metrics, nginx, otlp, redis, postgresql, span_metrics, kafkametrics]

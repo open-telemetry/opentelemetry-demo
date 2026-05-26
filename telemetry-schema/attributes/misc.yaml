@@ -3,7 +3,7 @@
 
 file_format: definition/2
 attributes:
-  - key: app.synthetic_request
+  - key: demo.synthetic_request
     type: string
     brief: Whether the request is synthetic/test traffic
     stability: stable
@@ -12,29 +12,23 @@ attributes:
       This helps distinguish production traffic from test traffic in observability systems.
       Also propagated as synthetic_request baggage.
     examples: ["true", "false"]
-  - key: app.recommendation.cache_enabled
+  - key: demo.feature_flag.recommendation_cache
     type: boolean
     brief: Whether recommendation caching is enabled
     stability: stable
     note: Indicates whether the recommendation service has caching enabled for this request (feature flag)
-  - key: app.cache_hit
+  - key: demo.recommendation.cache_hit
     type: boolean
     brief: Whether the recommendation cache was hit
     stability: stable
     note: Indicates whether the recommendation was served from cache (true) or computed fresh (false)
-  - key: app.email.recipient
-    type: string
-    brief: Email recipient address
-    stability: stable
-    note: The email address of the recipient for whom the email is being sent. This is typically used for order confirmation emails and other transactional communications.
-    examples: ["customer@example.com", "user@domain.org"]
-  - key: app.currency.conversion.from
+  - key: demo.exchange.from
     type: string
     brief: Source currency code
     stability: stable
     note: The currency code being converted from
     examples: ["USD", "EUR", "GBP"]
-  - key: app.currency.conversion.to
+  - key: demo.exchange.to
     type: string
     brief: Target currency code
     stability: stable

@@ -61,7 +61,7 @@ const FrontendTracer = async () => {
           propagateTraceHeaderCorsUrls: /.*/,
           clearTimingResources: true,
           applyCustomAttributesOnSpan(span) {
-            span.setAttribute('app.synthetic_request', IS_SYNTHETIC_REQUEST);
+            span.setAttribute('demo.synthetic_request', IS_SYNTHETIC_REQUEST);
           },
         },
       }),

@@ -202,8 +202,8 @@ class CurrencyService final : public oteldemo::CurrencyService::Service
       getUnitsAndNanos(*response, final);
       response->set_currency_code(to_code);
 
-      span->SetAttribute("app.currency.conversion.from", from_code);
-      span->SetAttribute("app.currency.conversion.to", to_code);
+      span->SetAttribute("demo.exchange.from", from_code);
+      span->SetAttribute("demo.exchange.to", to_code);
 
       CurrencyCounter(to_code);
 
@@ -276,7 +276,7 @@ int main(int argc, char **argv) {
   initTracer();
   initMeter();
   initLogger();
-  currency_counter = initIntCounter("app.currency", version);
+  currency_counter = initIntCounter("demo.exchange.conversions", version);
   logger = getLogger(name);
   RunServer(port);
 
