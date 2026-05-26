@@ -8,8 +8,8 @@ attribute_groups:
     brief: Payment service attributes
     stability: stable
     attributes:
-      - ref: app.loyalty.level
-      - ref: app.payment.card_type
-      - ref: app.payment.card_valid
-      - ref: app.payment.charged
-      - ref: app.payment.amount
+      - ref: demo.user_context.loyalty_level
+      - ref: demo.payment.card_type
+      - ref: demo.payment.card_valid
+      - ref: demo.payment.charged
+      - ref: demo.payment.amount

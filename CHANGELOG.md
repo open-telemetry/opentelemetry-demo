@@ -7,6 +7,9 @@ the release.
 
 ## Unreleased
 
+* [shipping] Add `intlShippingSlowdown` integer feature flag to delay
+  international (non-US) shipments by N seconds via flagd with OpenTelemetry tracing
+  ([#346](https://github.com/open-telemetry/opentelemetry-demo/issues/346))
 * [collector] Add `transform/sanitize_logs` processor to work around
   `otelcol.signal` scope attribute conflict with `otelcol.signal.output`
   that causes OpenSearch/Elasticsearch mapping failures
@@ -52,6 +55,9 @@ the release.
 * [load-generator] Wait for Roof Binoculars image to load in web tasks, and fix
   task failures due to missing `tracer` attribute
   ([#3171](https://github.com/open-telemetry/opentelemetry-demo/pull/3171))
+* [docker] Refactor Docker Compose to use layered `-f` files with `start`,
+  `start-minimal`, `start-no-o11y`, and `start-minimal-no-o11y` make targets
+  ([#3229](https://github.com/open-telemetry/opentelemetry-demo/pull/3229))
 * [kubernetes] Removed generated Kubernetes manifests in favor of docs
   ([#3236](https://github.com/open-telemetry/opentelemetry-demo/pull/3236))
 * [cart] Swap the deprecated `OpenFeature.Contrib.Providers.Flagd` package
@@ -80,6 +86,96 @@ the release.
   [#3307](https://github.com/open-telemetry/opentelemetry-demo/pull/3307)
 * [frontend] fix: handle corrupted session data in localStorage
   ([#3313](https://github.com/open-telemetry/opentelemetry-demo/pull/3313))
+* [collector] Add `transform/sanitize_logs` processor to work around
+  `otelcol.signal` scope attribute conflict with `otelcol.signal.output`
+  that causes OpenSearch/Elasticsearch mapping failures
+  ([#3321](https://github.com/open-telemetry/opentelemetry-demo/pull/3321))
+* [profiling] Add profiling and use firepit as the backend to ingest profiles.
+  This allows us to view profiles in the firepit webui.
+  [#3333](https://github.com/open-telemetry/opentelemetry-demo/pull/3333)
+* [telemetry] Rename the product identifier telemetry attribute from
+  `app.product.id` to `demo.product.id` across cart, product-catalog,
+  product-reviews, telemetry schema, and trace tests.
+  ([#3355](https://github.com/open-telemetry/opentelemetry-demo/pull/3355))
+* [telemetry] Rename the product name telemetry attribute from
+  `app.product.name` to `demo.product.name` across product-catalog and
+  telemetry schema.
+  ([#3370](https://github.com/open-telemetry/opentelemetry-demo/pull/3370))
+* [telemetry] Rename the product quantity telemetry attribute from
+  `app.product.quantity` to `demo.product.quantity` across cart and
+  telemetry schema.
+  ([#3371](https://github.com/open-telemetry/opentelemetry-demo/pull/3371))
+* [telemetry] Rename the product review question telemetry attribute from
+  `app.product.question` to `demo.product.review.question` across
+  product-reviews and telemetry schema.
+  ([#3372](https://github.com/open-telemetry/opentelemetry-demo/pull/3372))
+* [telemetry] Rename product count telemetry attributes from
+  `app.products.count` to `demo.product.count` and from
+  `app.products_recommended.count` to `demo.product.recommended.count` across
+  recommendation, telemetry schema, and trace tests.
+  ([#3374](https://github.com/open-telemetry/opentelemetry-demo/pull/3374))
+* [telemetry] Rename product filtering, search, and review telemetry attributes:
+  `app.filtered_products.count` to `demo.product.filtered.count`,
+  `app.filtered_products.list` to `demo.product.filtered.list`,
+  `app.products_search.count` to `demo.product.search.count`,
+  `app.product_reviews.count` to `demo.product.review.count`, and
+  `app.product_reviews.average_score` to `demo.product.review.average_score`
+  across product-catalog, product-reviews, recommendation, telemetry schema,
+  and trace tests.
+  ([#3376](https://github.com/open-telemetry/opentelemetry-demo/pull/3376))
+* [telemetry] Rename advertising telemetry attributes:
+  `app.ads.category` to `demo.ad.category`,
+  `app.ads.count` to `demo.ad.count`,
+  `app.ads.contextKeys` to `demo.ad.context_keys`,
+  `app.ads.contextKeys.count` to `demo.ad.context_keys.count`,
+  `app.ads.ad_request_type` to `demo.ad.request_type`, and
+  `app.ads.ad_response_type` to `demo.ad.response_type` across ad,
+  product-catalog, product-reviews, recommendation, telemetry schema, and trace
+  tests.
+  ([#3387](https://github.com/open-telemetry/opentelemetry-demo/pull/3387))
+* [telemetry] Rename order and cart telemetry attributes:
+  `app.order.id` to `demo.order.id`,
+  `app.order.amount` to `demo.order.amount`,
+  `app.order.items.count` to `demo.order.items.count`, and
+  `app.cart.items.count` to `demo.cart.items.count` across cart, checkout,
+  email, telemetry schema, and trace tests.
+  ([#3389](https://github.com/open-telemetry/opentelemetry-demo/pull/3389))
+* [telemetry] Rename payment telemetry attributes:
+  `app.payment.amount` to `demo.payment.amount`,
+  `app.payment.card_type` to `demo.payment.card_type`,
+  `app.payment.card_valid` to `demo.payment.card_valid`,
+  `app.payment.charged` to `demo.payment.charged`,
+  `app.payment.transaction.id` to `demo.payment.transaction.id`, and
+  `app.payment.currency` to `demo.payment.currency` across checkout, payment,
+  and telemetry schema.
+  ([#3390](https://github.com/open-telemetry/opentelemetry-demo/pull/3390))
+* [telemetry] Rename shipping and quote telemetry attributes:
+  `app.shipping.amount` to `demo.shipping.amount`,
+  `app.shipping.cost.total` to `demo.shipping.cost.total`,
+  `app.shipping.items_count` to `demo.shipping.items_count`,
+  `app.shipping.tracking.id` to `demo.shipping.tracking.id`,
+  `app.quote.items.count` to `demo.shipping.quote.items_count`, and
+  `app.quote.cost.total` to `demo.shipping.quote.cost.total` across checkout,
+  quote, shipping, and telemetry schema.
+  ([#3391](https://github.com/open-telemetry/opentelemetry-demo/pull/3391))
+* [telemetry] Rename exchange, user context, recommendation, notification, and
+  synthetic-request telemetry attributes and metrics:
+  `app.currency.conversion.from` to `demo.exchange.from`,
+  `app.currency.conversion.to` to `demo.exchange.to`,
+  `app.user.id` to the semconv `user.id` (removed from the demo schema),
+  `app.user.currency` to `demo.user_context.selected_currency`,
+  `app.loyalty.level` to `demo.user_context.loyalty_level`,
+  `app.recommendation.cache_enabled` to `demo.feature_flag.recommendation_cache`,
+  `app.cache_hit` to `demo.recommendation.cache_hit`,
+  `app_recommendations_counter` to `demo.recommendation.requests`,
+  `app.email.recipient` to `demo.notification.recipient`,
+  `app.confirmation.counter` to `demo.notification.confirmations`, and
+  `app.synthetic_request` to `demo.synthetic_request` across currency,
+  checkout, recommendation, email, load-generator, frontend, and telemetry
+  schema.
+  ([#3393](https://github.com/open-telemetry/opentelemetry-demo/pull/3393))
+* [AI Agents] Added guidance for AI Agents
+  ([#3404](https://github.com/open-telemetry/opentelemetry-demo/pull/3404))
 
 ## 2.2.0
 

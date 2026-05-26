@@ -41,8 +41,8 @@ spec:
   - name: "The order was placed"
     selector: span[tracetest.span.type="rpc" name="oteldemo.CheckoutService/PlaceOrder" rpc.system="grpc" rpc.method="PlaceOrder" rpc.service="oteldemo.CheckoutService"]
     assertions:
-    - attr:app.user.id = "2491f868-88f1-4345-8836-d5d8511a9f83"
-    - attr:app.order.items.count = 1
+    - attr:user.id = "2491f868-88f1-4345-8836-d5d8511a9f83"
+    - attr:demo.order.items.count = 1
   - name: "The user was charged"
     selector: span[tracetest.span.type="rpc" name="oteldemo.PaymentService/Charge" rpc.system="grpc" rpc.method="Charge" rpc.service="oteldemo.PaymentService"]
     assertions:

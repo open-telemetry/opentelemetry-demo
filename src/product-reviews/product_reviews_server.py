@@ -118,7 +118,7 @@ def get_product_reviews(request_product_id):
 
     with tracer.start_as_current_span("get_product_reviews") as span:
 
-        span.set_attribute("app.product.id", request_product_id)
+        span.set_attribute("demo.product.id", request_product_id)
 
         product_reviews = demo_pb2.GetProductReviewsResponse()
         records = fetch_product_reviews_from_db(request_product_id)
@@ -131,10 +131,10 @@ def get_product_reviews(request_product_id):
                     score=str(row[2])
             )
 
-        span.set_attribute("app.product_reviews.count", len(product_reviews.product_reviews))
+        span.set_attribute("demo.product.review.count", len(product_reviews.product_reviews))
 
         # Collect metrics for this service
-        product_review_svc_metrics["app_product_review_counter"].add(len(product_reviews.product_reviews), {'product.id': request_product_id})
+        product_review_svc_metrics["demo.product.review.requests"].add(len(product_reviews.product_reviews), {'demo.product.id': request_product_id})
 
         return product_reviews
 
@@ -142,13 +142,13 @@ def get_average_product_review_score(request_product_id):
 
     with tracer.start_as_current_span("get_average_product_review_score") as span:
 
-        span.set_attribute("app.product.id", request_product_id)
+        span.set_attribute("demo.product.id", request_product_id)
 
         product_review_score = demo_pb2.GetAverageProductReviewScoreResponse()
         avg_score = fetch_avg_product_review_score_from_db(request_product_id)
         product_review_score.average_score = avg_score
 
-        span.set_attribute("app.product_reviews.average_score", avg_score)
+        span.set_attribute("demo.product.review.average_score", avg_score)
 
         return product_review_score
 
@@ -158,8 +158,8 @@ def get_ai_assistant_response(request_product_id, question):
 
         ai_assistant_response = demo_pb2.AskProductAIAssistantResponse()
 
-        span.set_attribute("app.product.id", request_product_id)
-        span.set_attribute("app.product.question", question)
+        span.set_attribute("demo.product.id", request_product_id)
+        span.set_attribute("demo.product.review.question", question)
 
         llm_rate_limit_error = check_feature_flag("llmRateLimitError")
         logger.info(f"llmRateLimitError feature flag: {llm_rate_limit_error}")
@@ -305,7 +305,7 @@ def get_ai_assistant_response(request_product_id, question):
             ai_assistant_response.response = response_message.content
 
         # Collect metrics for this service
-        product_review_svc_metrics["app_ai_assistant_counter"].add(1, {'product.id': request_product_id})
+        product_review_svc_metrics["demo.product.ai_assistant.requests"].add(1, {'demo.product.id': request_product_id})
 
         return ai_assistant_response
 

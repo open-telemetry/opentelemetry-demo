@@ -8,5 +8,5 @@ attribute_groups:
     brief: Frontend service attributes
     stability: stable
     attributes:
-      - ref: app.synthetic_request
+      - ref: demo.synthetic_request
       - ref: session.id

@@ -3,7 +3,7 @@
 
 file_format: definition/2
 attributes:
-  - key: app.payment.currency
+  - key: demo.payment.currency
     type: string
     brief: Currency code for the transaction
     stability: stable
@@ -11,7 +11,7 @@ attributes:
     note: The currency in which the payment transaction was processed
 
 metrics:
-  - name: app.payment.transactions
+  - name: demo.payment.transactions
     brief: Payment transaction counter
     instrument: counter
     unit: "{transaction}"
@@ -19,5 +19,5 @@ metrics:
     annotations:
       service: payment
     attributes:
-      - ref: app.payment.currency
+      - ref: demo.payment.currency
         requirement_level: required

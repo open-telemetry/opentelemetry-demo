@@ -1,15 +1,15 @@
 # Copyright The OpenTelemetry Authors
 # SPDX-License-Identifier: Apache-2.0
 
-include:
-  - path:
-      - docker-compose.yml     # depend on the main docker-compose file
-      - docker-compose-tests_include-override.yml  # include override for tests
+# Test services layer: adds frontend tests, trace-based tests, and Tracetest server.
+#
+# Usage (via make run-tests or make run-tracetesting):
+#   docker compose -f compose.yaml -f compose.full.yaml -f compose.observability.yaml \
+#     -f compose.extras.yaml -f compose.tests.yaml run frontendTests
+#   docker compose -f compose.yaml -f compose.full.yaml -f compose.observability.yaml \
+#     -f compose.extras.yaml -f compose.tests.yaml run traceBasedTests
 
 services:
-  # *****
-  # Tests
-  # *****
   # Frontend Tests
   frontendTests:
     image: ${IMAGE_NAME}:${DEMO_VERSION}-frontend-tests
@@ -57,7 +57,6 @@ services:
     depends_on:
       tracetest-server:
         condition: service_healthy
-      # adding demo services as dependencies
       accounting:
         condition: service_started
       ad:
@@ -132,3 +131,19 @@ services:
       retries: 60
     ports:
       - 5432
+
+  # Patch otel-collector to use tracetest config instead of standard config
+  otel-collector:
+    command:
+      - --config=/etc/otelcol-config.yml
+      - --config=/etc/otelcol-config-tracetest.yml
+    environment:
+      - ENVOY_PORT
+      - OTEL_COLLECTOR_HOST
+      - OTEL_COLLECTOR_PORT_GRPC
+      - OTEL_COLLECTOR_PORT_HTTP
+    volumes:
+      - ${DOCKER_SOCK}:/var/run/docker.sock:ro
+      - ${OTEL_COLLECTOR_CONFIG}:/etc/otelcol-config.yml
+      - ./test/tracetesting/otelcol-config-tracetest.yml:/etc/otelcol-config-tracetest.yml
+    depends_on: []
