@@ -10,7 +10,7 @@ RUN apt-get -qq update \
     && rm -rf /var/lib/apt/lists/*
 
 COPY ./src/load-generator/requirements.txt .
-RUN pip install --prefix="/reqs" -r requirements.txt
+RUN pip install --prefix="/reqs" --require-hashes -r requirements.txt
 
 FROM base
 WORKDIR /usr/src/app/

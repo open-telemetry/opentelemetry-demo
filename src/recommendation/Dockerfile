@@ -10,7 +10,7 @@ RUN apk update && \
 COPY ./src/recommendation/requirements.txt requirements.txt
 
 RUN python -m venv venv && \
-    venv/bin/pip install --no-cache-dir -r requirements.txt
+    venv/bin/pip install --no-cache-dir --require-hashes -r requirements.txt
 
 RUN venv/bin/opentelemetry-bootstrap -a install
 
