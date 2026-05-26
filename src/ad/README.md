@@ -61,9 +61,8 @@ exporters, or legacy services) and want to ingest those metrics into an
 OpenTelemetry-native pipeline without rewriting everything up front. The
 Collector's `prometheus` receiver is the bridge that makes this possible.
 
-**Recommendation**: this is a *transitional* pattern. For new custom
-metrics, prefer the OpenTelemetry SDK directly - it gives you a single
-SDK, native context propagation (exemplars linked to traces, resource
-attributes, baggage), and a single configuration surface. Migrate existing
-Prometheus-client metrics to the OTel SDK as you touch the surrounding
-code, rather than as a separate, large refactor.
+**Recommendation**: this is a *transitional* pattern. Prefer the
+OpenTelemetry SDK for new custom metrics, and migrate existing
+Prometheus-client metrics to it - incremental migration as you touch
+the surrounding code has proven successful in practice, but a focused
+refactor works too; what matters is that the migration happens.
