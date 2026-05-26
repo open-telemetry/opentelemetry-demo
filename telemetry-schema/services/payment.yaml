@@ -8,6 +8,7 @@ attribute_groups:
     brief: Payment service attributes
     stability: stable
     attributes:
+      - ref: enduser.id
       - ref: app.loyalty.level
       - ref: demo.payment.card_type
       - ref: demo.payment.card_valid
