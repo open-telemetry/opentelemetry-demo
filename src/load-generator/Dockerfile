@@ -9,8 +9,8 @@ RUN apt-get -qq update \
     && apt-get install -y --no-install-recommends g++ \
     && rm -rf /var/lib/apt/lists/*
 
-COPY ./src/load-generator/requirements.txt .
-RUN pip install --prefix="/reqs" -r requirements.txt
+COPY ./src/load-generator/requirements.lock.txt .
+RUN pip install --prefix="/reqs" --require-hashes -r requirements.lock.txt
 
 FROM base
 WORKDIR /usr/src/app/
