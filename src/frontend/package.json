@@ -65,6 +65,7 @@
   },
   "overrides": {
     "@cypress/request": "4.0.0",
-    "postcss": "8.5.14"
+    "postcss": "8.5.14",
+    "qs": "6.15.2"
   }
 }
