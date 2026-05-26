@@ -10,10 +10,20 @@ the release.
 * [ad] Expose a Prometheus `/metrics` endpoint (default port `9465`) using the
   Prometheus Java client library, with a custom counter
   `demo_ad_served_total{category}`, and scrape it from the OTel Collector via a
-  new `prometheus/ad` receiver to demo Prometheus metric ingestion. Also pins
-  `grpc-netty-shaded` to the same version as the rest of the gRPC stack to fix
-  an `AbstractMethodError` caused by the flagd provider pulling an older
-  transitive version.
+  new `prometheus/ad` receiver to demo bridging non-OTel custom metrics into an
+  OpenTelemetry pipeline.
+* [frontend,ad,payment] Propagate `enduser.id` as a span attribute on all
+  browser spans via `SessionIdProcessor`, forward it via W3C Baggage on
+  outgoing API requests through the ApiGateway proxy, and extract it in the
+  ad and payment backend services to stamp their own spans
+  ([#3366](https://github.com/open-telemetry/opentelemetry-demo/pull/3366))
+* [shipping] Add `intlShippingSlowdown` integer feature flag to delay
+  international (non-US) shipments by N seconds via flagd with OpenTelemetry tracing
+  ([#346](https://github.com/open-telemetry/opentelemetry-demo/issues/346))
+* [collector] Add `transform/sanitize_logs` processor to work around
+  `otelcol.signal` scope attribute conflict with `otelcol.signal.output`
+  that causes OpenSearch/Elasticsearch mapping failures
+  ([#3321](https://github.com/open-telemetry/opentelemetry-demo/pull/3321))
 * [telemetry-docs] Add a new service to provide telemetry documentation based
   on Weaver
   ([#2794](https://github.com/open-telemetry/opentelemetry-demo/pull/2794))
@@ -55,6 +65,9 @@ the release.
 * [load-generator] Wait for Roof Binoculars image to load in web tasks, and fix
   task failures due to missing `tracer` attribute
   ([#3171](https://github.com/open-telemetry/opentelemetry-demo/pull/3171))
+* [docker] Refactor Docker Compose to use layered `-f` files with `start`,
+  `start-minimal`, `start-no-o11y`, and `start-minimal-no-o11y` make targets
+  ([#3229](https://github.com/open-telemetry/opentelemetry-demo/pull/3229))
 * [kubernetes] Removed generated Kubernetes manifests in favor of docs
   ([#3236](https://github.com/open-telemetry/opentelemetry-demo/pull/3236))
 * [cart] Swap the deprecated `OpenFeature.Contrib.Providers.Flagd` package
@@ -146,6 +159,33 @@ the release.
   `app.payment.currency` to `demo.payment.currency` across checkout, payment,
   and telemetry schema.
   ([#3390](https://github.com/open-telemetry/opentelemetry-demo/pull/3390))
+* [telemetry] Rename shipping and quote telemetry attributes:
+  `app.shipping.amount` to `demo.shipping.amount`,
+  `app.shipping.cost.total` to `demo.shipping.cost.total`,
+  `app.shipping.items_count` to `demo.shipping.items_count`,
+  `app.shipping.tracking.id` to `demo.shipping.tracking.id`,
+  `app.quote.items.count` to `demo.shipping.quote.items_count`, and
+  `app.quote.cost.total` to `demo.shipping.quote.cost.total` across checkout,
+  quote, shipping, and telemetry schema.
+  ([#3391](https://github.com/open-telemetry/opentelemetry-demo/pull/3391))
+* [telemetry] Rename exchange, user context, recommendation, notification, and
+  synthetic-request telemetry attributes and metrics:
+  `app.currency.conversion.from` to `demo.exchange.from`,
+  `app.currency.conversion.to` to `demo.exchange.to`,
+  `app.user.id` to the semconv `user.id` (removed from the demo schema),
+  `app.user.currency` to `demo.user_context.selected_currency`,
+  `app.loyalty.level` to `demo.user_context.loyalty_level`,
+  `app.recommendation.cache_enabled` to `demo.feature_flag.recommendation_cache`,
+  `app.cache_hit` to `demo.recommendation.cache_hit`,
+  `app_recommendations_counter` to `demo.recommendation.requests`,
+  `app.email.recipient` to `demo.notification.recipient`,
+  `app.confirmation.counter` to `demo.notification.confirmations`, and
+  `app.synthetic_request` to `demo.synthetic_request` across currency,
+  checkout, recommendation, email, load-generator, frontend, and telemetry
+  schema.
+  ([#3393](https://github.com/open-telemetry/opentelemetry-demo/pull/3393))
+* [AI Agents] Added guidance for AI Agents
+  ([#3404](https://github.com/open-telemetry/opentelemetry-demo/pull/3404))
 
 ## 2.2.0
 

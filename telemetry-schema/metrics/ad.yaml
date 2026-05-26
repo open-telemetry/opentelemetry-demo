@@ -3,7 +3,7 @@
 
 file_format: definition/2
 metrics:
-  - name: app.ads.ad_requests
+  - name: demo.ad.requests
     brief: Ad request counter
     instrument: counter
     unit: "{ad_request}"

@@ -11,7 +11,7 @@ attributes:
     note: The currency in which the payment transaction was processed
 
 metrics:
-  - name: app.payment.transactions
+  - name: demo.payment.transactions
     brief: Payment transaction counter
     instrument: counter
     unit: "{transaction}"

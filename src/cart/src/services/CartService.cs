@@ -28,7 +28,7 @@ public class CartService : Oteldemo.CartService.CartServiceBase
     public override async Task<Empty> AddItem(AddItemRequest request, ServerCallContext context)
     {
         var activity = Activity.Current;
-        activity?.SetTag("app.user.id", request.UserId);
+        activity?.SetTag("user.id", request.UserId);
         activity?.SetTag("demo.product.id", request.Item.ProductId);
         activity?.SetTag("demo.product.quantity", request.Item.Quantity);
 
@@ -49,7 +49,7 @@ public class CartService : Oteldemo.CartService.CartServiceBase
     public override async Task<Cart> GetCart(GetCartRequest request, ServerCallContext context)
     {
         var activity = Activity.Current;
-        activity?.SetTag("app.user.id", request.UserId);
+        activity?.SetTag("user.id", request.UserId);
         activity?.AddEvent(new("Fetch cart"));
 
         try
@@ -75,7 +75,7 @@ public class CartService : Oteldemo.CartService.CartServiceBase
     public override async Task<Empty> EmptyCart(EmptyCartRequest request, ServerCallContext context)
     {
         var activity = Activity.Current;
-        activity?.SetTag("app.user.id", request.UserId);
+        activity?.SetTag("user.id", request.UserId);
         activity?.AddEvent(new("Empty cart"));
 
         try

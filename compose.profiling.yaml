@@ -27,6 +27,7 @@ services:
       - /proc:/proc:ro
     depends_on:
       - otel-collector
+
   firepit:
     image: ghcr.io/florianl/firepit:df1dcbe
     container_name: firepit

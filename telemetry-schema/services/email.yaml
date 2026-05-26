@@ -9,4 +9,3 @@ attribute_groups:
     stability: stable
     attributes:
       - ref: demo.order.id
-      - ref: app.email.recipient

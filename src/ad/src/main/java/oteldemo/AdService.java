@@ -85,7 +85,7 @@ public final class AdService {
 
   private static final LongCounter adRequestsCounter =
       meter
-          .counterBuilder("app.ads.ad_requests")
+          .counterBuilder("demo.ad.requests")
           .setDescription("Counts ad requests by request and response type")
           .build();
 
@@ -193,6 +193,10 @@ public final class AdService {
           span.setAttribute("session.id", sessionId);
           evaluationContext.setTargetingKey(sessionId);
           evaluationContext.add("session", sessionId);
+          final String enduserId = baggage.getEntryValue("enduser.id");
+          if (enduserId != null) {
+            span.setAttribute("enduser.id", enduserId);
+          }
         } else {
           logger.info("no baggage found in context");
         }

@@ -5,4 +5,6 @@ FROM python:3.14-slim-bookworm
 
 WORKDIR /build
 
-RUN python -m pip install grpcio-tools==1.78.0 setuptools==82.0.0
+COPY ./src/product-reviews/genproto/requirements.txt requirements.txt
+
+RUN python -m pip install --no-cache-dir --require-hashes -r requirements.txt
