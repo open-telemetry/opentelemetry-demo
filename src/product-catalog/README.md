@@ -33,13 +33,15 @@ make docker-generate-protobuf
 
 ## Generate feature flag types
 
-To regenerate the typed feature flag accessors from `flags.json`, run from the service directory:
+To regenerate the typed feature flag accessors from `flags.json`, run from the
+service directory:
 
 ```sh
 go generate ./...
 ```
 
-This uses the [OpenFeature CLI](https://github.com/open-feature/cli) to produce `flags/flags_gen.go`.
+This uses the [OpenFeature CLI](https://github.com/open-feature/cli) to
+produce `flags/flags_gen.go`.
 
 ## Bump dependencies
 
