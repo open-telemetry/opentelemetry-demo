@@ -4,7 +4,7 @@
 # Two-stage build: Generate service-centric Markdown with Weaver, then serve with mkdocs
 
 # Stage 1: Generate Markdown files from telemetry schema using Weaver
-FROM docker.io/otel/weaver:v0.22.1@sha256:33ae522ae4b71c1c562563c1d81f46aa0f79f088a0873199143a1f11ac30e5c9 AS registry-builder
+FROM docker.io/otel/weaver:v0.23.0@sha256:7984ecb55b859eb3034ae9d836c4eeda137e2bdd0873b7ba2bb6c3d24d6ff457 AS registry-builder
 
 WORKDIR /workspace
 
@@ -44,7 +44,7 @@ RUN mv /app/docs/mkdocs.yml /app/mkdocs.yml && \
     mkdocs build --clean
 
 # Stage 3: Serve with nginx (tiny!)
-FROM docker.io/nginxinc/nginx-unprivileged:1.29.8-alpine3.23-otel@sha256:5aebabed78e4f579f520950bafe0766a21259b51911474307aed03065e1a1042
+FROM docker.io/nginxinc/nginx-unprivileged:1.31.1-alpine3.23-otel@sha256:7661fc21784ac2f0f5a007ea5c960ecb68099ceed8a104bcafbc4b717f284e4c
 
 USER 101
 
