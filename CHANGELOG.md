@@ -7,6 +7,16 @@ the release.
 
 ## Unreleased
 
+* [ad] Expose a Prometheus `/metrics` endpoint (default port `9465`) using the
+  Prometheus Java client library, with a custom counter
+  `demo_ad_served_total{category}`, and scrape it from the OTel Collector via a
+  new `prometheus/ad` receiver to demo bridging non-OTel custom metrics into an
+  OpenTelemetry pipeline.
+* [frontend,ad,payment] Propagate `enduser.id` as a span attribute on all
+  browser spans via `SessionIdProcessor`, forward it via W3C Baggage on
+  outgoing API requests through the ApiGateway proxy, and extract it in the
+  ad and payment backend services to stamp their own spans
+  ([#3366](https://github.com/open-telemetry/opentelemetry-demo/pull/3366))
 * [shipping] Add `intlShippingSlowdown` integer feature flag to delay
   international (non-US) shipments by N seconds via flagd with OpenTelemetry tracing
   ([#346](https://github.com/open-telemetry/opentelemetry-demo/issues/346))
