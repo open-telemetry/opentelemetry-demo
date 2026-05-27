@@ -7,6 +7,9 @@ the release.
 
 ## Unreleased
 
+* [make] Fix `SERVICE=` alias for `build`, `restart`, and `redeploy` targets
+  so the documented uppercase form actually dispatches to a single service,
+  and clean up the no-arg error message that was being mangled by backticks.
 * [frontend,ad,payment] Propagate `enduser.id` as a span attribute on all
   browser spans via `SessionIdProcessor`, forward it via W3C Baggage on
   outgoing API requests through the ApiGateway proxy, and extract it in the
