@@ -46,8 +46,10 @@ services:
     restart: unless-stopped
     ports:
       - "${AD_PORT}"
+      - "${AD_PROMETHEUS_PORT}"
     environment:
       - AD_PORT
+      - AD_PROMETHEUS_PORT
       - FLAGD_HOST
       - FLAGD_PORT
       - OTEL_EXPORTER_OTLP_ENDPOINT=http://${OTEL_COLLECTOR_HOST}:${OTEL_COLLECTOR_PORT_HTTP}
@@ -780,6 +782,7 @@ services:
       - "${OTEL_COLLECTOR_PORT_HTTP}"
     logging: *logging
     environment:
+      - AD_PROMETHEUS_PORT
       - FRONTEND_PROXY_ADDR
       - HOST_FILESYSTEM
       - IMAGE_PROVIDER_HOST

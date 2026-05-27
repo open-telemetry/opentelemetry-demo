@@ -46,6 +46,178 @@
         "type": "prometheus",
         "uid": "${DS_PROMETHEUS}"
       },
+      "description": "Host and OS metadata from resourcedetection processor",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "custom": {
+            "align": "left",
+            "cellOptions": {
+              "type": "auto"
+            },
+            "inspect": false
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green"
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 4,
+        "w": 12,
+        "x": 0,
+        "y": 1
+      },
+      "id": 300,
+      "options": {
+        "cellHeight": "sm",
+        "footer": {
+          "countRows": false,
+          "fields": "",
+          "reducer": ["sum"],
+          "show": false
+        },
+        "showHeader": true
+      },
+      "pluginVersion": "12.0.2",
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_PROMETHEUS}"
+          },
+          "editorMode": "code",
+          "expr": "target_info{service_name=\"otelcol-contrib\", host_name=~\"$host_name\"}",
+          "format": "table",
+          "instant": true,
+          "refId": "A"
+        }
+      ],
+      "title": "Host Metadata",
+      "transformations": [
+        {
+          "id": "filterFieldsByName",
+          "options": {
+            "include": {
+              "pattern": "host_name|host_arch|os_type|os_description"
+            }
+          }
+        },
+        {
+          "id": "organize",
+          "options": {
+            "renameByName": {
+              "host_name": "Hostname",
+              "host_arch": "Architecture",
+              "os_type": "OS Type",
+              "os_description": "OS Description"
+            }
+          }
+        }
+      ],
+      "type": "table"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "${DS_PROMETHEUS}"
+      },
+      "description": "CPU metadata from resourcedetection processor",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "custom": {
+            "align": "left",
+            "cellOptions": {
+              "type": "auto"
+            },
+            "inspect": false
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green"
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 4,
+        "w": 12,
+        "x": 12,
+        "y": 1
+      },
+      "id": 301,
+      "options": {
+        "cellHeight": "sm",
+        "footer": {
+          "countRows": false,
+          "fields": "",
+          "reducer": ["sum"],
+          "show": false
+        },
+        "showHeader": true
+      },
+      "pluginVersion": "12.0.2",
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_PROMETHEUS}"
+          },
+          "editorMode": "code",
+          "expr": "target_info{service_name=\"otelcol-contrib\", host_name=~\"$host_name\"}",
+          "format": "table",
+          "instant": true,
+          "refId": "A"
+        }
+      ],
+      "title": "CPU Metadata",
+      "transformations": [
+        {
+          "id": "filterFieldsByName",
+          "options": {
+            "include": {
+              "pattern": "host_cpu_vendor_id|host_cpu_family|host_cpu_model_id|host_cpu_model_name|host_cpu_cache_l2_size|host_cpu_stepping"
+            }
+          }
+        },
+        {
+          "id": "organize",
+          "options": {
+            "renameByName": {
+              "host_cpu_vendor_id": "CPU Vendor",
+              "host_cpu_family": "CPU Family",
+              "host_cpu_model_id": "Model ID",
+              "host_cpu_model_name": "Model Name",
+              "host_cpu_cache_l2_size": "L2 Cache",
+              "host_cpu_stepping": "Stepping"
+            }
+          }
+        }
+      ],
+      "type": "table"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "${DS_PROMETHEUS}"
+      },
       "description": "Busy state of all CPU cores together\n\nhttps://github.com/open-telemetry/opentelemetry-collector-contrib/blob/main/receiver/hostmetricsreceiver/internal/scraper/cpuscraper/documentation.md",
       "fieldConfig": {
         "defaults": {
@@ -90,7 +262,7 @@
         "h": 4,
         "w": 3,
         "x": 0,
-        "y": 1
+        "y": 5
       },
       "id": 20,
       "options": {
@@ -166,7 +338,7 @@
         "h": 4,
         "w": 3,
         "x": 3,
-        "y": 1
+        "y": 5
       },
       "id": 16,
       "options": {
@@ -259,7 +431,7 @@
         "h": 4,
         "w": 3,
         "x": 6,
-        "y": 1
+        "y": 5
       },
       "id": 154,
       "options": {
@@ -345,7 +517,7 @@
         "h": 4,
         "w": 3,
         "x": 9,
-        "y": 1
+        "y": 5
       },
       "id": 155,
       "options": {
@@ -435,7 +607,7 @@
         "h": 4,
         "w": 3,
         "x": 12,
-        "y": 1
+        "y": 5
       },
       "id": 19,
       "options": {
@@ -523,7 +695,7 @@
         "h": 4,
         "w": 3,
         "x": 15,
-        "y": 1
+        "y": 5
       },
       "id": 21,
       "options": {
@@ -603,7 +775,7 @@
         "h": 2,
         "w": 2,
         "x": 18,
-        "y": 1
+        "y": 5
       },
       "id": 14,
       "maxDataPoints": 100,
@@ -684,7 +856,7 @@
         "h": 2,
         "w": 2,
         "x": 20,
-        "y": 1
+        "y": 5
       },
       "id": 75,
       "maxDataPoints": 100,
@@ -769,7 +941,7 @@
         "h": 2,
         "w": 2,
         "x": 22,
-        "y": 1
+        "y": 5
       },
       "id": 18,
       "maxDataPoints": 100,
@@ -871,7 +1043,7 @@
         "h": 2,
         "w": 2,
         "x": 18,
-        "y": 3
+        "y": 7
       },
       "id": 23,
       "maxDataPoints": 100,
@@ -957,7 +1129,7 @@
         "h": 2,
         "w": 4,
         "x": 20,
-        "y": 3
+        "y": 7
       },
       "id": 15,
       "maxDataPoints": 100,
@@ -1018,7 +1190,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 5
+        "y": 9
       },
       "id": 266,
       "panels": [],
@@ -1198,7 +1370,7 @@
         "h": 7,
         "w": 6,
         "x": 0,
-        "y": 6
+        "y": 10
       },
       "id": 77,
       "options": {
@@ -1746,7 +1918,7 @@
         "h": 7,
         "w": 5,
         "x": 6,
-        "y": 6
+        "y": 10
       },
       "id": 78,
       "options": {
@@ -1908,7 +2080,7 @@
         "h": 7,
         "w": 6,
         "x": 11,
-        "y": 6
+        "y": 10
       },
       "id": 74,
       "options": {
@@ -2038,7 +2210,7 @@
         "h": 7,
         "w": 7,
         "x": 17,
-        "y": 6
+        "y": 10
       },
       "id": 42,
       "options": {
@@ -2213,7 +2385,7 @@
         "h": 8,
         "w": 15,
         "x": 0,
-        "y": 14
+        "y": 18
       },
       "id": 270,
       "options": {
@@ -2499,7 +2671,7 @@
         "h": 8,
         "w": 9,
         "x": 15,
-        "y": 14
+        "y": 18
       },
       "id": 269,
       "options": {
@@ -2680,7 +2852,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 13
+        "y": 17
       },
       "id": 272,
       "panels": [],
