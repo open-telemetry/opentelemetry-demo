@@ -211,7 +211,7 @@ grpcio==1.80.0 \
 grpcio-health-checking==1.78.0 \
     --hash=sha256:309798c098c5de72a9bff7172d788fdf309d246d231db9955b32e7c1c773fbeb \
     --hash=sha256:78526d5c60b9b99fd18954b89f86d70033c702e96ad6ccc9749baf16136979b3
-    # via -r src/product-reviews/requirements.in
+    # via -r requirements.in
 h11==0.16.0 \
     --hash=sha256:4e35b956cf45792e4caa5885e69fba00bdbc6ffafbfa020300e549b208ee5ff1 \
     --hash=sha256:63cf8bbe7522de3bf65932fda1d9c2772064ffb3dae62d55932da54b31cb6c86
@@ -450,18 +450,18 @@ mmh3==5.2.1 \
     --hash=sha256:fceef7fe67c81e1585198215e42ad3fdba3a25644beda8fbdaf85f4d7b93175a \
     --hash=sha256:fd96476f04db5ceba1cfa0f21228f67c1f7402296f0e73fee3513aa680ad237b
     # via openfeature-provider-flagd
-openai==2.37.0 \
-    --hash=sha256:814633888b8f3b1ffd6615697c6e4ef93632d08b7c2e28c8c5ef3556e5a10107 \
-    --hash=sha256:f4bc562cc5f3a43d40d678105572d9d44765f6e0f50c125f63055419b72f4bd9
-    # via -r src/product-reviews/requirements.in
+openai==2.38.0 \
+    --hash=sha256:798694c6cf74145541fda94325b6f8f72d8e1fd0262cc137c8d728177a6a4ce3 \
+    --hash=sha256:ec6661c57b2dcc47414a767e6e3335c7ed3d19c9696999283a3c82e95c756a3c
+    # via -r requirements.in
 openfeature-hooks-opentelemetry==0.3.1 \
     --hash=sha256:6d399244a6f5408f474ae2b0233257e30d8a041d635f71c2727c033dbfe1fe92 \
     --hash=sha256:ef4cddec8d328a9b6b738494de3aed623a9917d3b83b2e6b0377e4d2a21d3b22
-    # via -r src/product-reviews/requirements.in
+    # via -r requirements.in
 openfeature-provider-flagd==0.2.3 \
     --hash=sha256:18f491179aed289cf5cd8c7121ea505755303527b201f9dbe0c4ccf28dd3241c \
     --hash=sha256:6c4ed1d03d08c7f89a7c6050cbade6bf0835611163d0c3bebefb61b941a60acd
-    # via -r src/product-reviews/requirements.in
+    # via -r requirements.in
 openfeature-sdk==0.9.0 \
     --hash=sha256:511fd66fe66807e95ea5a18074b559bc18657fe8294be0de4668201e297e98ad \
     --hash=sha256:d65ca82c3f1abc5005b0b54bb4c729db04d7a70595f05dd373b47477b6b176bf
@@ -481,7 +481,7 @@ opentelemetry-api==1.42.0 \
 opentelemetry-distro==0.63b0 \
     --hash=sha256:4728fcdfe772553cfb596be61c8d071ebde1608f9539cb323e6697e0f4b02c80 \
     --hash=sha256:543c369171900830d8a977445ea23eb956ff27b30ab8fcfbc4a99806a8f1a49b
-    # via -r src/product-reviews/requirements.in
+    # via -r requirements.in
 opentelemetry-exporter-otlp-proto-common==1.42.0 \
     --hash=sha256:92de67f096c9200770f16fbdb63b96fb6061d604b4bc266726d8355caeb864e8 \
     --hash=sha256:c7a1a61f3a4c4dfa83127353edb1c75b873289d9ee42379db46eb835963b72e3
@@ -489,7 +489,7 @@ opentelemetry-exporter-otlp-proto-common==1.42.0 \
 opentelemetry-exporter-otlp-proto-grpc==1.42.0 \
     --hash=sha256:5d6d1691586f2e656fd14187f2f2f5fa06e94834e1acdce71edcbbe35730b31d \
     --hash=sha256:75eac4e9d0bd69bea8199d75dfeb585cce05a9baa8215d1f7aad9e3583bf5ef9
-    # via -r src/product-reviews/requirements.in
+    # via -r requirements.in
 opentelemetry-instrumentation==0.63b0 \
     --hash=sha256:80a339ef030a8d0fd1962375a9801dd31954e5063d74c00bc3d4e6581f43bab1 \
     --hash=sha256:984b18763b652a881ac5a596098d89923f74cf53a658c2dde660387e018147ca
@@ -548,7 +548,7 @@ psutil==7.0.0 \
     --hash=sha256:84df4eb63e16849689f76b1ffcb36db7b8de703d1bc1fe41773db487621b6c17 \
     --hash=sha256:a5f098451abc2828f7dc6b58d44b532b22f2088f4999a937557b603ce72b1993 \
     --hash=sha256:ba3fcef7523064a6c9da440fc4d6bd07da93ac726b5733c29027d7dc95b39d99
-    # via -r src/product-reviews/requirements.in
+    # via -r requirements.in
 psycopg2-binary==2.9.12 \
     --hash=sha256:00814e40fa23c2b37ef0a1e3c749d89982c73a9cb5046137f0752a22d432e82f \
     --hash=sha256:049366c6d884bdcd65d66e6ca1fdbebe670b56c6c9ba46f164e6667e90881964 \
@@ -617,7 +617,7 @@ psycopg2-binary==2.9.12 \
     --hash=sha256:f921f3cd87035ef7df233383011d7a53ea1d346224752c1385f1edfd790ceb6a \
     --hash=sha256:fb1828cf3da68f99e45ebce1355d65d2d12b6a78fb5dfb16247aad6bdef5f5d2 \
     --hash=sha256:ffdd7dc5463ccd61845ac37b7012d0f35a1548df9febe14f8dd549be4a0bc81e
-    # via -r src/product-reviews/requirements.in
+    # via -r requirements.in
 pydantic==2.13.4 \
     --hash=sha256:45a282cde31d808236fd7ea9d919b128653c8b38b393d1c4ab335c62924d9aba \
     --hash=sha256:c40756b57adaa8b1efeeced5c196f3f3b7c435f90e84ea7f443901bec8099ef6
@@ -747,11 +747,11 @@ pydantic-core==2.46.4 \
 python-dotenv==1.2.2 \
     --hash=sha256:1d8214789a24de455a8b8bd8ae6fe3c6b69a5e3d64aa8a8e5d68e694bbcb285a \
     --hash=sha256:2c371a91fbd7ba082c2c1dc1f8bf89ca22564a087c2c287cd9b662adde799cf3
-    # via -r src/product-reviews/requirements.in
+    # via -r requirements.in
 python-json-logger==4.1.0 \
     --hash=sha256:132994765cf75bf44554be9aa49b06ef2345d23661a96720262716438141b6b2 \
     --hash=sha256:b396b9e3ed782b09ff9d6e4f1683d46c83ad0d35d2e407c09a9ebbf038f88195
-    # via -r src/product-reviews/requirements.in
+    # via -r requirements.in
 pyyaml==6.0.3 \
     --hash=sha256:00c4bdeba853cc34e7dd471f16b4114f4162dc03e6b7afcc2128711f0eca823c \
     --hash=sha256:0150219816b6a1fa26fb4699fb7daa9caf09eb1999f3b70fb6e786805e80375a \
@@ -928,7 +928,7 @@ simplejson==4.1.1 \
     --hash=sha256:ed7473602b6625de793b6acba49aa949f144a475f538792067e4cf2fda2071f5 \
     --hash=sha256:f42a7911f64ed8f738ba55480c20d5c685851781d411f9473cafa7a643e52fe4 \
     --hash=sha256:ffd3d82294b47f5ec64050021ace95fd62628a0c1cc8bbf4d06d2d1fb697e055
-    # via -r src/product-reviews/requirements.in
+    # via -r requirements.in
 sniffio==1.3.1 \
     --hash=sha256:2f6da418d1f1e0fddd844478f41680e794e6051915791a034ff65e5f100525a2 \
     --hash=sha256:f4324edc670a0f49750a81b895f35c3adb843cca46f0530f79fc1babb23789dc

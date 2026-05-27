@@ -37,9 +37,16 @@ defmodule FlagdUiWeb.Dashboard do
                     name={name}
                     type="select"
                     options={get_variants(data)}
-                    value={data["defaultVariant"]}
+                    value={ get_in(data, ["targeting", "if"])
+                      |> case do
+                        [_, on_value | _] -> on_value
+                        _ -> data["defaultVariant"]
+                      end}
                     phx-change="flag_changed"
                   />
+                  <%= if Map.has_key?(data, "targeting") do %>
+                  <div class="text-sm mb-2 text-warning">This flag has targeting rules.</div>
+                  <% end %>
                 </div>
               </div>
             </div>
@@ -53,11 +60,8 @@ defmodule FlagdUiWeb.Dashboard do
   def handle_event("flag_changed", payload, socket) do
     %{"_target" => [target]} = payload
     variant = payload[target]
-
     GenServer.cast(Storage, {:write, target, variant})
-
     new_socket = put_flash(socket, :info, "Saved: #{target}")
-
     {:noreply, new_socket}
   end
 
