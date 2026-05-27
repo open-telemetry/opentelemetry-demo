@@ -33,7 +33,9 @@ FROM python:3.14-slim-bookworm AS site-builder
 
 WORKDIR /app
 
-RUN pip install --no-cache-dir mkdocs mkdocs-material
+COPY src/telemetry-docs/requirements.txt /app/requirements.txt
+
+RUN pip install --no-cache-dir --require-hashes -r requirements.txt
 
 COPY src/telemetry-docs/mkdocs.yml /app/mkdocs-base.yml
 COPY --from=registry-builder /workspace/docs /app/docs
