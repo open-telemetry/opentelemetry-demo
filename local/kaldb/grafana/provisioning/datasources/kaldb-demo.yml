@@ -1,0 +1,72 @@
+# Copyright The OpenTelemetry Authors
+# SPDX-License-Identifier: Apache-2.0
+
+apiVersion: 1
+
+deleteDatasources:
+  - name: KalDB Logs
+    orgId: 1
+  - name: KalDB Traces
+    orgId: 1
+  - name: KalDB Trace Docs
+    orgId: 1
+
+datasources:
+  - name: otel-demo-logs
+    uid: otel-demo-logs
+    type: grafana-opensearch-datasource
+    access: proxy
+    url: http://host.docker.internal:8081
+    basicAuth: false
+    editable: true
+    isDefault: false
+    jsonData:
+      flavor: opensearch
+      version: "2.11.0"
+      database: otel-demo-logs
+      timeField: "_timesinceepoch"
+      maxConcurrentShardRequests: 5
+      logMessageField: "body"
+      logLevelField: "severity.text"
+      pplEnabled: false
+      serverless: false
+    version: 1
+
+  - name: otel-demo-traces-waterfall
+    uid: otel-demo-traces-waterfall
+    type: zipkin
+    access: proxy
+    url: http://host.docker.internal:8081
+    basicAuth: false
+    editable: true
+    isDefault: false
+    jsonData:
+      tracesToLogsV2:
+        datasourceUid: otel-demo-logs
+        spanStartTimeShift: "-20m"
+        spanEndTimeShift: "20m"
+        filterByTraceID: true
+        filterBySpanID: false
+        customQuery: true
+        query: 'trace_id:"$${__trace.traceId}"'
+    version: 1
+
+  - name: otel-demo-traces
+    uid: otel-demo-traces
+    type: grafana-opensearch-datasource
+    access: proxy
+    url: http://host.docker.internal:8081
+    basicAuth: false
+    editable: true
+    isDefault: false
+    jsonData:
+      flavor: opensearch
+      version: "2.11.0"
+      database: otel-demo-traces
+      timeField: "_timesinceepoch"
+      maxConcurrentShardRequests: 5
+      logMessageField: "name"
+      logLevelField: ""
+      pplEnabled: false
+      serverless: false
+    version: 1

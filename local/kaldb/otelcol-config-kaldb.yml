@@ -1,0 +1,36 @@
+# Copyright The OpenTelemetry Authors
+# SPDX-License-Identifier: Apache-2.0
+
+# KalDB collector additions.
+#
+# KalDB runs outside this compose project. From Docker Desktop containers,
+# host.docker.internal reaches the KalDB preprocessor on the host.
+#
+# Required KalDB datasets:
+#   otel-demo-logs   serviceNamePattern: otel-demo-logs
+#   otel-demo-traces serviceNamePattern: otel-demo-traces
+
+exporters:
+  otlphttp/kaldb_traces:
+    endpoint: http://host.docker.internal:8086
+    tls:
+      insecure: true
+    sending_queue:
+      batch:
+
+  opensearch/kaldb_logs:
+    logs_index: otel-demo-logs
+    logs_index_time_format: ""
+    http:
+      endpoint: http://host.docker.internal:8086
+      tls:
+        insecure: true
+    sending_queue:
+      batch:
+
+service:
+  pipelines:
+    traces:
+      exporters: [debug, span_metrics, otlphttp/kaldb_traces]
+    logs:
+      exporters: [debug, opensearch/kaldb_logs]

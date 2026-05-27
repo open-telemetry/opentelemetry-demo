@@ -1,0 +1,69 @@
+# Copyright The OpenTelemetry Authors
+# SPDX-License-Identifier: Apache-2.0
+
+# This overlay is used only by the OpenTelemetry Demo KalDB target. It lets the
+# demo allocate one KalDB partition to logs and one separate partition to traces.
+
+services:
+  grafana:
+    environment:
+      GF_DASHBOARDS_DEFAULT_HOME_DASHBOARD_PATH: /var/lib/grafana/dashboards/kaldb-demo/otel-demo-kaldb.json
+    volumes:
+      - "${OTEL_DEMO_HOME:-/Users/suman/Projects/opentelemetry-demo}/local/kaldb/grafana/provisioning/datasources/kaldb-demo.yml:/etc/grafana/provisioning/datasources/kaldb-demo.yml:ro"
+      - "${OTEL_DEMO_HOME:-/Users/suman/Projects/opentelemetry-demo}/local/kaldb/grafana/provisioning/dashboards/kaldb-demo.yml:/etc/grafana/provisioning/dashboards/kaldb-demo.yml:ro"
+      - "${OTEL_DEMO_HOME:-/Users/suman/Projects/opentelemetry-demo}/local/kaldb/grafana/dashboards:/var/lib/grafana/dashboards/kaldb-demo:ro"
+
+  kafka:
+    environment:
+      KAFKA_CREATE_TOPICS: "test-topic:${KALDB_KAFKA_PARTITION_COUNT:-2}:1"
+
+  astra_manager:
+    environment:
+      ASTRA_MANAGER_API_MIN_NUMBER_OF_PARTITIONS: "${ASTRA_MANAGER_API_MIN_NUMBER_OF_PARTITIONS:-1}"
+      S3_ENDPOINT: "http://s3:9090"
+
+  astra_preprocessor:
+    environment:
+      ASTRA_PREPROCESSOR_OTLP_TRACE_DATASET_NAME: "${KALDB_TRACE_DATASET:-otel-demo-traces}"
+      S3_ENDPOINT: "http://s3:9090"
+
+  astra_index:
+    environment:
+      INDEXER_MAX_MESSAGES_PER_CHUNK: "${KALDB_INDEXER_MAX_MESSAGES_PER_CHUNK:-10000000}"
+      INDEXER_MAX_BYTES_PER_CHUNK: "${KALDB_INDEXER_MAX_BYTES_PER_CHUNK:-10000000000}"
+      INDEXER_MAX_TIME_PER_CHUNK_SECONDS: "${KALDB_INDEXER_MAX_TIME_PER_CHUNK_SECONDS:-3600}"
+      S3_ENDPOINT: "http://s3:9090"
+
+  astra_index_1:
+    image: 'slackhq/astra'
+    container_name: astra_index_1
+    environment:
+      NODE_ROLES: INDEX
+      ASTRA_INDEX_SERVER_ADDRESS: astra_index_1
+      KAFKA_TOPIC_PARTITION: "${KALDB_TRACE_INDEX_PARTITION:-1}"
+      INDEXER_MAX_MESSAGES_PER_CHUNK: "${KALDB_INDEXER_MAX_MESSAGES_PER_CHUNK:-10000000}"
+      INDEXER_MAX_BYTES_PER_CHUNK: "${KALDB_INDEXER_MAX_BYTES_PER_CHUNK:-10000000000}"
+      INDEXER_MAX_TIME_PER_CHUNK_SECONDS: "${KALDB_INDEXER_MAX_TIME_PER_CHUNK_SECONDS:-3600}"
+      ASTRA_ZK_CONNECTION_STRING: zookeeper:2181
+      KAFKA_BOOTSTRAP_SERVERS: kafka:29092
+      ZIPKIN_TRACING_ENDPOINT: http://openzipkin:9411/api/v2/spans
+      S3_ENDPOINT: "http://s3:9090"
+      S3_PATH_PREFIX: "${S3_PATH_PREFIX:-}"
+    depends_on:
+      - astra_preprocessor
+    networks:
+      default:
+        aliases:
+          - astra-index-1
+
+  astra_query:
+    environment:
+      S3_ENDPOINT: "http://s3:9090"
+
+  astra_cache:
+    environment:
+      S3_ENDPOINT: "http://s3:9090"
+
+  astra_recovery:
+    environment:
+      S3_ENDPOINT: "http://s3:9090"

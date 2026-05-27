@@ -1,0 +1,30 @@
+# Copyright The OpenTelemetry Authors
+# SPDX-License-Identifier: Apache-2.0
+
+# KalDB layer: patches the OTel Collector to export logs and traces to a
+# separately-running local KalDB stack.
+#
+# Usage:
+#   make start-kaldb
+#
+# This layer is intentionally separate from compose.extras.yaml so the default
+# demo remains unchanged.
+
+services:
+  load-generator:
+    environment:
+      LOCUST_USERS: "1"
+      LOCUST_BROWSER_TRAFFIC_ENABLED: "false"
+
+  otel-collector:
+    command:
+      - "--config=/etc/otelcol-config.yml"
+      - "--config=/etc/otelcol-config-full.yml"
+      - "--config=/etc/otelcol-config-kaldb.yml"
+      - "--config=/etc/otelcol-config-extras.yml"
+      - "--feature-gates=service.profilesSupport"
+    volumes:
+      - ${OTEL_COLLECTOR_CONFIG}:/etc/otelcol-config.yml
+      - ${OTEL_COLLECTOR_CONFIG_FULL}:/etc/otelcol-config-full.yml
+      - ./local/kaldb/otelcol-config-kaldb.yml:/etc/otelcol-config-kaldb.yml
+      - ${OTEL_COLLECTOR_CONFIG_EXTRAS}:/etc/otelcol-config-extras.yml

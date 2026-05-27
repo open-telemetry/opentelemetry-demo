@@ -1,0 +1,217 @@
+{
+  "annotations": {
+    "list": [
+      {
+        "builtIn": 1,
+        "datasource": {
+          "type": "grafana",
+          "uid": "-- Grafana --"
+        },
+        "enable": true,
+        "hide": true,
+        "iconColor": "rgba(0, 211, 255, 1)",
+        "name": "Annotations & Alerts",
+        "target": {
+          "limit": 100,
+          "matchAny": false,
+          "tags": [],
+          "type": "dashboard"
+        },
+        "type": "dashboard"
+      }
+    ]
+  },
+  "editable": true,
+  "fiscalYearStartMonth": 0,
+  "graphTooltip": 0,
+  "id": null,
+  "links": [
+    {
+      "asDropdown": false,
+      "icon": "doc",
+      "includeVars": false,
+      "keepTime": true,
+      "tags": [],
+      "targetBlank": false,
+      "title": "Explore Logs",
+      "type": "link",
+      "url": "/explore?left={\"range\":{\"from\":\"now-1h\",\"to\":\"now\"},\"datasource\":{\"type\":\"grafana-opensearch-datasource\",\"uid\":\"otel-demo-logs\"},\"queries\":[{\"datasource\":{\"type\":\"grafana-opensearch-datasource\",\"uid\":\"otel-demo-logs\"},\"query\":\"*\",\"metrics\":[{\"type\":\"logs\",\"id\":\"1\",\"settings\":{\"limit\":\"100\"}}],\"refId\":\"A\"}]}"
+    },
+    {
+      "asDropdown": false,
+      "icon": "doc",
+      "includeVars": false,
+      "keepTime": true,
+      "tags": [],
+      "targetBlank": false,
+      "title": "Explore Trace Spans",
+      "type": "link",
+      "url": "/explore?left={\"range\":{\"from\":\"now-1h\",\"to\":\"now\"},\"datasource\":{\"type\":\"grafana-opensearch-datasource\",\"uid\":\"otel-demo-traces\"},\"queries\":[{\"datasource\":{\"type\":\"grafana-opensearch-datasource\",\"uid\":\"otel-demo-traces\"},\"query\":\"_exists_:trace_id\",\"metrics\":[{\"type\":\"logs\",\"id\":\"1\",\"settings\":{\"limit\":\"100\"}}],\"refId\":\"A\"}]}"
+    },
+    {
+      "asDropdown": false,
+      "icon": "external link",
+      "includeVars": false,
+      "keepTime": true,
+      "tags": [],
+      "targetBlank": false,
+      "title": "Open Trace Waterfall",
+      "type": "link",
+      "url": "/explore?left={\"range\":{\"from\":\"now-1h\",\"to\":\"now\"},\"datasource\":{\"type\":\"zipkin\",\"uid\":\"otel-demo-traces-waterfall\"},\"queries\":[{\"datasource\":{\"type\":\"zipkin\",\"uid\":\"otel-demo-traces-waterfall\"},\"query\":\"$trace_id\",\"refId\":\"A\"}]}"
+    }
+  ],
+  "liveNow": false,
+  "panels": [
+    {
+      "datasource": {
+        "type": "grafana-opensearch-datasource",
+        "uid": "otel-demo-logs"
+      },
+      "fieldConfig": {
+        "defaults": {},
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 10,
+        "w": 24,
+        "x": 0,
+        "y": 0
+      },
+      "id": 1,
+      "options": {
+        "dedupStrategy": "none",
+        "enableLogDetails": true,
+        "prettifyLogMessage": false,
+        "showCommonLabels": false,
+        "showLabels": false,
+        "showTime": true,
+        "sortOrder": "Descending",
+        "wrapLogMessage": false
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "grafana-opensearch-datasource",
+            "uid": "otel-demo-logs"
+          },
+          "metrics": [
+            {
+              "id": "1",
+              "settings": {
+                "limit": "100"
+              },
+              "type": "logs"
+            }
+          ],
+          "query": "*",
+          "refId": "A",
+          "timeField": "_timesinceepoch"
+        }
+      ],
+      "title": "Recent OTel Logs In KalDB",
+      "type": "logs"
+    },
+    {
+      "datasource": {
+        "type": "grafana-opensearch-datasource",
+        "uid": "otel-demo-traces"
+      },
+      "fieldConfig": {
+        "defaults": {},
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 10,
+        "w": 24,
+        "x": 0,
+        "y": 10
+      },
+      "id": 2,
+      "options": {
+        "dedupStrategy": "none",
+        "enableLogDetails": true,
+        "prettifyLogMessage": false,
+        "showCommonLabels": false,
+        "showLabels": false,
+        "showTime": true,
+        "sortOrder": "Descending",
+        "wrapLogMessage": false
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "grafana-opensearch-datasource",
+            "uid": "otel-demo-traces"
+          },
+          "metrics": [
+            {
+              "id": "1",
+              "settings": {
+                "limit": "100"
+              },
+              "type": "logs"
+            }
+          ],
+          "query": "_exists_:trace_id",
+          "refId": "A",
+          "timeField": "_timesinceepoch"
+        }
+      ],
+      "title": "Recent Trace Spans In KalDB",
+      "type": "logs"
+    },
+    {
+      "fieldConfig": {
+        "defaults": {},
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 5,
+        "w": 24,
+        "x": 0,
+        "y": 20
+      },
+      "id": 3,
+      "options": {
+        "content": "<h2>KalDB OTel Demo</h2><p>The log panels above read directly from KalDB datasets <code>otel-demo-logs</code> and <code>otel-demo-traces</code>. Expand a trace span row to copy <code>trace_id</code>, set the dashboard variable, then open the trace waterfall link.</p><p>The waterfall uses Grafana's Zipkin datasource against KalDB Query API <code>/api/v2/trace/{traceId}</code>. The trace-to-logs link searches <code>otel-demo-logs</code> for the same trace ID.</p>",
+        "mode": "html"
+      },
+      "title": "",
+      "type": "text"
+    }
+  ],
+  "refresh": "10s",
+  "schemaVersion": 30,
+  "style": "dark",
+  "tags": [
+    "kaldb",
+    "otel-demo"
+  ],
+  "templating": {
+    "list": [
+      {
+        "current": {
+          "selected": false,
+          "text": "",
+          "value": ""
+        },
+        "hide": 0,
+        "label": "trace_id",
+        "name": "trace_id",
+        "options": [],
+        "query": "",
+        "skipUrlSync": false,
+        "type": "textbox"
+      }
+    ]
+  },
+  "time": {
+    "from": "now-1h",
+    "to": "now"
+  },
+  "timepicker": {},
+  "timezone": "",
+  "title": "KalDB OTel Demo",
+  "uid": "kaldb-otel-demo",
+  "version": 1
+}
