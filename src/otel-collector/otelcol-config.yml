@@ -56,6 +56,18 @@ receivers:
         enabled: true
     tls:
       insecure: true
+  # Demo: scrape a Prometheus `/metrics` endpoint exposed by the ad service
+  # using the Prometheus Java client library. This illustrates a common
+  # OTel-adoption pattern -- bridging existing Prometheus-client
+  # instrumentation into an OTel pipeline. For new custom metrics, prefer
+  # the OpenTelemetry SDK directly. See `src/ad/README.md` for details.
+  prometheus/ad:
+    config:
+      scrape_configs:
+        - job_name: ad
+          scrape_interval: 10s
+          static_configs:
+            - targets: ["ad:${env:AD_PROMETHEUS_PORT}"]
   # Host metrics
   host_metrics:
     root_path: /hostfs
@@ -231,7 +243,7 @@ service:
       processors: [resourcedetection, memory_limiter, transform/sanitize_spans]
       exporters: [debug, span_metrics]
     metrics:
-      receivers: [docker_stats, http_check/frontend-proxy, host_metrics, nginx, otlp, redis, postgresql, span_metrics]
+      receivers: [docker_stats, http_check/frontend-proxy, host_metrics, nginx, otlp, redis, postgresql, prometheus/ad, span_metrics]
       processors: [resourcedetection, memory_limiter]
       exporters: [debug]
     logs:
