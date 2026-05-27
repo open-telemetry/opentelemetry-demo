@@ -6,7 +6,7 @@
 # https://github.com/react-native-community/docker-android
 # Pick a tag whose Android build tools match what Expo's version catalog
 # generates in android/build.gradle so the container doesn't re-download them.
-FROM reactnativecommunity/react-native-android:v20.1 AS builder
+FROM reactnativecommunity/react-native-android:v20.1@sha256:88d93a9282e0f54f84cec7b979da6c5e3f20d87f5be246b75c231838be852fec AS builder
 
 WORKDIR /reactnativesrc/
 COPY . .

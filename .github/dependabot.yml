@@ -115,3 +115,16 @@ updates:
       interval: "weekly"
       day: "tuesday"
       time: "03:45"
+  - package-ecosystem: "docker"
+    directories:
+      - "/"
+      - "/src/**/*"
+      - "/test/**/*"
+    groups:
+      docker-base-images:
+        patterns:
+          - "*"
+    schedule:
+      interval: "weekly"
+      day: "tuesday"
+      time: "03:50"
