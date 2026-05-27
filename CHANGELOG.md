@@ -7,23 +7,6 @@ the release.
 
 ## Unreleased
 
-* [ad] Expose a Prometheus `/metrics` endpoint (default port `9465`) using the
-  Prometheus Java client library, with a custom counter
-  `demo_ad_served_total{category}`, and scrape it from the OTel Collector via a
-  new `prometheus/ad` receiver to demo bridging non-OTel custom metrics into an
-  OpenTelemetry pipeline.
-* [frontend,ad,payment] Propagate `enduser.id` as a span attribute on all
-  browser spans via `SessionIdProcessor`, forward it via W3C Baggage on
-  outgoing API requests through the ApiGateway proxy, and extract it in the
-  ad and payment backend services to stamp their own spans
-  ([#3366](https://github.com/open-telemetry/opentelemetry-demo/pull/3366))
-* [shipping] Add `intlShippingSlowdown` integer feature flag to delay
-  international (non-US) shipments by N seconds via flagd with OpenTelemetry tracing
-  ([#346](https://github.com/open-telemetry/opentelemetry-demo/issues/346))
-* [collector] Add `transform/sanitize_logs` processor to work around
-  `otelcol.signal` scope attribute conflict with `otelcol.signal.output`
-  that causes OpenSearch/Elasticsearch mapping failures
-  ([#3321](https://github.com/open-telemetry/opentelemetry-demo/pull/3321))
 * [telemetry-docs] Add a new service to provide telemetry documentation based
   on Weaver
   ([#2794](https://github.com/open-telemetry/opentelemetry-demo/pull/2794))
@@ -103,10 +86,18 @@ the release.
 * [profiling] Add profiling and use firepit as the backend to ingest profiles.
   This allows us to view profiles in the firepit webui.
   [#3333](https://github.com/open-telemetry/opentelemetry-demo/pull/3333)
+* [shipping] Add `intlShippingSlowdown` integer feature flag to delay
+  international (non-US) shipments by N seconds via flagd with OpenTelemetry tracing
+  ([#3354](https://github.com/open-telemetry/opentelemetry-demo/issues/3354))
 * [telemetry] Rename the product identifier telemetry attribute from
   `app.product.id` to `demo.product.id` across cart, product-catalog,
   product-reviews, telemetry schema, and trace tests.
   ([#3355](https://github.com/open-telemetry/opentelemetry-demo/pull/3355))
+* [frontend,ad,payment] Propagate `enduser.id` as a span attribute on all
+  browser spans via `SessionIdProcessor`, forward it via W3C Baggage on
+  outgoing API requests through the ApiGateway proxy, and extract it in the
+  ad and payment backend services to stamp their own spans
+  ([#3366](https://github.com/open-telemetry/opentelemetry-demo/pull/3366))
 * [telemetry] Rename the product name telemetry attribute from
   `app.product.name` to `demo.product.name` across product-catalog and
   telemetry schema.
@@ -143,6 +134,12 @@ the release.
   product-catalog, product-reviews, recommendation, telemetry schema, and trace
   tests.
   ([#3387](https://github.com/open-telemetry/opentelemetry-demo/pull/3387))
+* [ad] Expose a Prometheus `/metrics` endpoint (default port `9465`) using the
+  Prometheus Java client library, with a custom counter
+  `demo_ad_served_total{category}`, and scrape it from the OTel Collector via a
+  new `prometheus/ad` receiver to demo bridging non-OTel custom metrics into an
+  OpenTelemetry pipeline.
+  ([#3388](https://github.com/open-telemetry/opentelemetry-demo/pull/3388))
 * [telemetry] Rename order and cart telemetry attributes:
   `app.order.id` to `demo.order.id`,
   `app.order.amount` to `demo.order.amount`,
@@ -186,6 +183,9 @@ the release.
   ([#3393](https://github.com/open-telemetry/opentelemetry-demo/pull/3393))
 * [AI Agents] Added guidance for AI Agents
   ([#3404](https://github.com/open-telemetry/opentelemetry-demo/pull/3404))
+* [collector] Add resource attributes to `resourcedetection/processor` and
+  updated Grafana dashboards.
+  ([#3417](https://github.com/open-telemetry/opentelemetry-demo/pull/3417))
 
 ## 2.2.0
 

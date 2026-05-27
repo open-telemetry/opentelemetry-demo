@@ -148,11 +148,35 @@ processors:
     spike_limit_percentage: 25
   resourcedetection:
     detectors: [env, docker, system]
+    system:
+      hostname_sources: ["os"]
+      resource_attributes:
+        host.name:
+          enabled: true
+        host.arch:
+          enabled: true
+        host.cpu.vendor.id:
+          enabled: true
+        host.cpu.family:
+          enabled: true
+        host.cpu.model.id:
+          enabled: true
+        host.cpu.model.name:
+          enabled: true
+        host.cpu.stepping:
+          enabled: true
+        host.cpu.cache.l2.size:
+          enabled: true
+        os.description:
+          enabled: true
+        os.type:
+          enabled: true
   filter/sanitize_profiles:
     error_mode: ignore
     profiles:
       profile:
         - 'IsMatch(resource.attributes["service.name"], "containerd-shim-.*")'
+
   transform/sanitize_logs:
     error_mode: ignore
     log_statements:
