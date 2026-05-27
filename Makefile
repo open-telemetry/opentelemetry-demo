@@ -31,6 +31,13 @@ DOCKER_COMPOSE_FILES_TESTS=-f compose.tests.yaml
 # Default: full demo + observability stack + extras stub
 DOCKER_COMPOSE_FILES=$(DOCKER_COMPOSE_FILES_FULL) $(DOCKER_COMPOSE_FILES_OBSERVABILITY) $(DOCKER_COMPOSE_FILES_EXTRAS)
 
+# Accept either `service=` or `SERVICE=` for single-service targets (build, restart, redeploy).
+# Must be evaluated at file scope; an `ifdef SERVICE` block inside a recipe is a shell command,
+# not a Make conditional, so the alias never takes effect there.
+ifdef SERVICE
+service := $(SERVICE)
+endif
+
 
 # see https://github.com/open-telemetry/build-tools/releases for semconvgen updates
 # Keep links in semantic_conventions/README.md and .vscode/settings.json in sync!
@@ -132,12 +139,7 @@ install-tools: $(MISSPELL) $(ADDLICENSE)
 # Example: make build service=frontend
 .PHONY: build
 build:
-# work with `service` or `SERVICE` as input
-ifdef SERVICE
-	service := $(SERVICE)
-endif
-
-ifdef service
+ifneq ($(strip $(service)),)
 	$(DOCKER_COMPOSE_CMD) $(DOCKER_COMPOSE_ENV) $(DOCKER_COMPOSE_FILES) build $(service)
 else
 	$(DOCKER_COMPOSE_CMD) $(DOCKER_COMPOSE_ENV) $(DOCKER_COMPOSE_FILES) build
@@ -282,37 +284,27 @@ stop:
 # Example: make restart service=frontend
 .PHONY: restart
 restart:
-# work with `service` or `SERVICE` as input
-ifdef SERVICE
-	service := $(SERVICE)
-endif
-
-ifdef service
+ifneq ($(strip $(service)),)
 	$(DOCKER_COMPOSE_CMD) $(DOCKER_COMPOSE_ENV) $(DOCKER_COMPOSE_FILES) stop $(service)
 	$(DOCKER_COMPOSE_CMD) $(DOCKER_COMPOSE_ENV) $(DOCKER_COMPOSE_FILES) rm --force $(service)
 	$(DOCKER_COMPOSE_CMD) $(DOCKER_COMPOSE_ENV) $(DOCKER_COMPOSE_FILES) create $(service)
 	$(DOCKER_COMPOSE_CMD) $(DOCKER_COMPOSE_ENV) $(DOCKER_COMPOSE_FILES) start $(service)
 else
-	@echo "Please provide a service name using `service=[service name]` or `SERVICE=[service name]`"
+	@echo "Please provide a service name using 'service=<name>' or 'SERVICE=<name>'"
 endif
 
 # Use to rebuild and restart (redeploy) a single service component
 # Example: make redeploy service=frontend
 .PHONY: redeploy
 redeploy:
-# work with `service` or `SERVICE` as input
-ifdef SERVICE
-	service := $(SERVICE)
-endif
-
-ifdef service
+ifneq ($(strip $(service)),)
 	$(DOCKER_COMPOSE_CMD) $(DOCKER_COMPOSE_ENV) $(DOCKER_COMPOSE_FILES) build $(service)
 	$(DOCKER_COMPOSE_CMD) $(DOCKER_COMPOSE_ENV) $(DOCKER_COMPOSE_FILES) stop $(service)
 	$(DOCKER_COMPOSE_CMD) $(DOCKER_COMPOSE_ENV) $(DOCKER_COMPOSE_FILES) rm --force $(service)
 	$(DOCKER_COMPOSE_CMD) $(DOCKER_COMPOSE_ENV) $(DOCKER_COMPOSE_FILES) create $(service)
 	$(DOCKER_COMPOSE_CMD) $(DOCKER_COMPOSE_ENV) $(DOCKER_COMPOSE_FILES) start $(service)
 else
-	@echo "Please provide a service name using `service=[service name]` or `SERVICE=[service name]`"
+	@echo "Please provide a service name using 'service=<name>' or 'SERVICE=<name>'"
 endif
 
 .PHONY: build-react-native-android

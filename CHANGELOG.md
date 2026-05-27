@@ -186,6 +186,10 @@ the release.
 * [collector] Add resource attributes to `resourcedetection/processor` and
   updated Grafana dashboards.
   ([#3417](https://github.com/open-telemetry/opentelemetry-demo/pull/3417))
+* [make] Fix `SERVICE=` alias for `build`, `restart`, and `redeploy` targets
+  so the documented uppercase form actually dispatches to a single service,
+  and clean up the no-arg error message that was being mangled by backticks.
+  ([#3422](https://github.com/open-telemetry/opentelemetry-demo/pull/3422))
 
 ## 2.2.0
 
