@@ -190,6 +190,9 @@ the release.
   so the documented uppercase form actually dispatches to a single service,
   and clean up the no-arg error message that was being mangled by backticks.
   ([#3422](https://github.com/open-telemetry/opentelemetry-demo/pull/3422))
+* [telemetry] Replace `enduser.id` with the semantic convention
+  `user.id` for user identity telemetry and remove the local `user.id`
+  attribute definition from the demo telemetry schema.
 
 ## 2.2.0
 
