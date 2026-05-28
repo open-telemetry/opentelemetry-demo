@@ -15,4 +15,4 @@ attribute_groups:
       - ref: demo.ad.response_type
       - ref: demo.ad.category
       - ref: session.id
-      - ref: enduser.id
+      - ref: user.id

@@ -79,9 +79,9 @@ module.exports.charge = async request => {
       span.setAttribute('demo.payment.charged', true);
     }
 
-    const enduserId = baggage?.getEntry('enduser.id')?.value;
-    if (enduserId) {
-      span.setAttribute('enduser.id', enduserId);
+    const userId = baggage?.getEntry('user.id')?.value;
+    if (userId) {
+      span.setAttribute('user.id', userId);
     }
 
     const { units, nanos, currencyCode } = request.amount;

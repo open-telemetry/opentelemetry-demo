@@ -126,7 +126,7 @@ const ApiGateway = new Proxy(Apis(), {
       const baggage = propagation.getActiveBaggage() || propagation.createBaggage();
       const newBaggage = baggage
         .setEntry(AttributeNames.SESSION_ID, { value: userId })
-        .setEntry(AttributeNames.ENDUSER_ID, { value: userId });
+        .setEntry(AttributeNames.USER_ID, { value: userId });
       const newContext = propagation.setBaggage(context.active(), newBaggage);
       return context.with(newContext, () => {
         return Reflect.apply(originalFunction, undefined, args);

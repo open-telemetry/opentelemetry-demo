@@ -3,5 +3,5 @@
 
 export enum AttributeNames {
     SESSION_ID = 'session.id',
-    ENDUSER_ID = 'enduser.id',
+    USER_ID = 'user.id',
 }

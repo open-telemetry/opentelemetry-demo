@@ -10,4 +10,4 @@ attribute_groups:
     attributes:
       - ref: demo.synthetic_request
       - ref: session.id
-      - ref: enduser.id
+      - ref: user.id
