@@ -45,7 +45,7 @@ docker build --file ./src/ad/Dockerfile ./
 The Ad service intentionally emits custom metrics in **two different ways**:
 
 1. **OpenTelemetry SDK** (recommended): `adRequestsCounter`
-   (`app.ads.ad_requests`) is created via `GlobalOpenTelemetry.getMeter(...)`
+   (`demo.ad.requests`) is created via `GlobalOpenTelemetry.getMeter(...)`
    and exported to the OTel Collector over OTLP.
 2. **Prometheus client library**: `adsServedCounter`
    (`demo_ad_served_total{category}`) is created with the
