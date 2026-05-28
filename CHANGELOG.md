@@ -190,6 +190,8 @@ the release.
   so the documented uppercase form actually dispatches to a single service,
   and clean up the no-arg error message that was being mangled by backticks.
   ([#3422](https://github.com/open-telemetry/opentelemetry-demo/pull/3422))
+* [grafana] Update the cart exemplars dashboard to use the renamed
+  `demo_cart_*` Prometheus metrics.
 
 ## 2.2.0
 
