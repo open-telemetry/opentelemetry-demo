@@ -12,11 +12,13 @@ permissions:
 jobs:
   build_and_push_images:
     permissions:  # required by the reusable workflow
-      contents: read
-      packages: write
+      contents: read  # required by the component-build-images reusable workflow
+      packages: write  # required to push built images to GHCR
     uses: ./.github/workflows/component-build-images.yml
     if: ${{ !github.event.repository.fork }}
     with:
       push: true
       version: ${{ github.event.release.tag_name }}
-    secrets: inherit
+    secrets:
+      DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
+      DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
