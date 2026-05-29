@@ -3,6 +3,11 @@
 name: Telemetry Tests
 
 on:
+  # Run on every approved PR review (covers human-reviewed PRs).
+  pull_request_review:
+    types: [submitted]
+  # Run on dependabot PRs without requiring approval. The `gate` job below
+  # restricts this to dependabot only; other PRs are tested via review approval.
   pull_request:
     branches: [main]
     paths:
@@ -14,6 +19,7 @@ on:
       - 'compose.extras.yaml'
       - '.env'
       - '.github/workflows/run-telemetry-tests.yml'
+  # Post-merge validation on main.
   push:
     branches: [main]
     paths:
@@ -31,13 +37,39 @@ permissions:
   contents: read
 
 jobs:
+  # Single source of truth for when the telemetry test jobs should run:
+  #   - approved PR reviews on open PRs (any author), OR
+  #   - dependabot PRs (no approval needed), OR
+  #   - push to main / manual dispatch
+  gate:
+    runs-on: ubuntu-latest
+    outputs:
+      should_run: ${{ steps.check.outputs.should_run }}
+    steps:
+      - id: check
+        run: |
+          if [[ "${{ github.event_name }}" == "workflow_dispatch" || "${{ github.event_name }}" == "push" ]] \
+            || [[ "${{ github.event_name }}" == "pull_request_review" && "${{ github.event.review.state }}" == "approved" && "${{ github.event.pull_request.state }}" == "open" ]] \
+            || [[ "${{ github.event_name }}" == "pull_request" && "${{ github.event.pull_request.user.login }}" == "dependabot[bot]" ]]; then
+            echo "should_run=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "should_run=false" >> "$GITHUB_OUTPUT"
+          fi
+
   telemetry-tests-full:
+    needs: gate
+    if: ${{ needs.gate.outputs.should_run == 'true' }}
     runs-on: ubuntu-latest
     timeout-minutes: 45
     name: "Telemetry Tests (full)"
     steps:
       - name: check out code
         uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd  # v6.0.2
+        with:
+          # On pull_request_review the default ref is the base branch; check out
+          # the PR head so we test the proposed changes. Falls back to the
+          # default ref for push and workflow_dispatch events.
+          ref: ${{ github.event.pull_request.head.sha || github.ref }}
 
       - name: Free disk space
         run: |
@@ -62,12 +94,16 @@ jobs:
         run: make stop
 
   telemetry-tests-minimal:
+    needs: gate
+    if: ${{ needs.gate.outputs.should_run == 'true' }}
     runs-on: ubuntu-latest
     timeout-minutes: 45
     name: "Telemetry Tests (minimal)"
     steps:
       - name: check out code
         uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd  # v6.0.2
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.ref }}
 
       - name: Free disk space
         run: |
