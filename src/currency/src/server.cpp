@@ -13,6 +13,7 @@
 #include "opentelemetry/baggage/baggage.h"
 #include "opentelemetry/nostd/string_view.h"
 #include "logger_common.h"
+#include "meter_common.h"
 #include "tracer_common.h"
 
 #include <grpcpp/grpcpp.h>
@@ -38,6 +39,7 @@ using grpc::Server;
 using Span            = Span;
 using SpanContext     = SpanContext;
 namespace context     = opentelemetry::context;
+namespace metrics_api = opentelemetry::metrics;
 namespace nostd       = opentelemetry::nostd;
 namespace semconv     = opentelemetry::semconv;
 
@@ -80,8 +82,10 @@ namespace
     {"ZAR", 16.0583},
   };
 
+  std::string version = std::getenv("VERSION"); 
   std::string name{ "currency" };
 
+  nostd::unique_ptr<metrics_api::Counter<uint64_t>> currency_counter;
   nostd::shared_ptr<opentelemetry::logs::Logger> logger;
 
 class HealthServer final : public grpc::health::v1::Health::Service
@@ -201,6 +205,8 @@ class CurrencyService final : public oteldemo::CurrencyService::Service
       span->SetAttribute("demo.exchange.from", from_code);
       span->SetAttribute("demo.exchange.to", to_code);
 
+      CurrencyCounter();
+
       span->AddEvent("Conversion successful, response sent back");
       span->SetStatus(StatusCode::kOk);
 
@@ -220,6 +226,13 @@ class CurrencyService final : public oteldemo::CurrencyService::Service
       return Status::CANCELLED;
     }
     return Status::OK;
+  }
+
+  void CurrencyCounter()
+  {
+      std::map<std::string, std::string> labels = {};
+      auto labelkv = common::KeyValueIterableView<decltype(labels)>{ labels };
+      currency_counter->Add(1, labelkv);
   }
 };
 
@@ -261,7 +274,9 @@ int main(int argc, char **argv) {
   uint16_t port = atoi(argv[1]);
 
   initTracer();
+  initMeter();
   initLogger();
+  currency_counter = initIntCounter("demo.exchange.conversions", version);
   logger = getLogger(name);
   RunServer(port);
 

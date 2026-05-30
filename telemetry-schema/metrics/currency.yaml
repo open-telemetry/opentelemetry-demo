@@ -1,0 +1,12 @@
+# Copyright The OpenTelemetry Authors
+# SPDX-License-Identifier: Apache-2.0
+
+file_format: definition/2
+metrics:
+  - name: demo.exchange.conversions
+    brief: Currency conversion counter
+    instrument: counter
+    unit: "{conversion}"
+    stability: stable
+    annotations:
+      service: currency
