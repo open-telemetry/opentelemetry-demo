@@ -192,6 +192,9 @@ the release.
   ([#3422](https://github.com/open-telemetry/opentelemetry-demo/pull/3422))
 * [grafana] Update the cart exemplars dashboard to use the renamed
   `demo_cart_*` Prometheus metrics.
+* [telemetry-docs] Fix the `attr_category` macro in the service template
+  (`service.md.j2`) to bucket attributes by their current `demo.*` prefixes
+  instead of the old `app.*` ones.
 
 ## 2.2.0
 
