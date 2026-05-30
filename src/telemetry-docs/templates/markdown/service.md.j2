@@ -10,13 +10,13 @@
 
 {#- Helper macro to determine the registry category for an attribute -#}
 {%- macro attr_category(attr_name) -%}
-{%- if attr_name.startswith("app.product") or attr_name.startswith("app.products") or attr_name.startswith("app.filtered_products") or attr_name.startswith("app.ads") or attr_name.startswith("app.product_reviews") -%}
+{%- if attr_name.startswith("demo.product") or attr_name.startswith("demo.ad") -%}
 product
-{%- elif attr_name.startswith("app.user") or attr_name.startswith("session") or attr_name.startswith("app.loyalty") -%}
+{%- elif attr_name.startswith("user.") or attr_name.startswith("demo.user_context") or attr_name.startswith("session") -%}
 user
-{%- elif attr_name.startswith("app.order") or attr_name.startswith("app.cart") or attr_name.startswith("app.payment") -%}
+{%- elif attr_name.startswith("demo.order") or attr_name.startswith("demo.cart") or attr_name.startswith("demo.payment") -%}
 order
-{%- elif attr_name.startswith("app.shipping") or attr_name.startswith("app.quote") -%}
+{%- elif attr_name.startswith("demo.shipping") -%}
 shipping
 {%- else -%}
 misc
