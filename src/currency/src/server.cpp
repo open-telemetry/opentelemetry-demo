@@ -205,7 +205,7 @@ class CurrencyService final : public oteldemo::CurrencyService::Service
       span->SetAttribute("demo.exchange.from", from_code);
       span->SetAttribute("demo.exchange.to", to_code);
 
-      CurrencyCounter();
+      CurrencyCounter(from_code, to_code);
 
       span->AddEvent("Conversion successful, response sent back");
       span->SetStatus(StatusCode::kOk);
@@ -228,9 +228,12 @@ class CurrencyService final : public oteldemo::CurrencyService::Service
     return Status::OK;
   }
 
-  void CurrencyCounter()
+  void CurrencyCounter(const std::string& from_code, const std::string& to_code)
   {
-      std::map<std::string, std::string> labels = {};
+      std::map<std::string, std::string> labels = {
+        {"demo.exchange.from", from_code},
+        {"demo.exchange.to", to_code}
+      };
       auto labelkv = common::KeyValueIterableView<decltype(labels)>{ labels };
       currency_counter->Add(1, labelkv);
   }
