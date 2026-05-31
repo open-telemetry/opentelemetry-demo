@@ -468,8 +468,10 @@ services:
       - PAYMENT_PORT
       - FLAGD_HOST
       - FLAGD_PORT
+      - NODE_OPTIONS=--require @opentelemetry/auto-instrumentations-node/register
       - OTEL_EXPORTER_OTLP_ENDPOINT
       - OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE
+      - OTEL_EXPORTER_OTLP_PROTOCOL=grpc
       - OTEL_RESOURCE_ATTRIBUTES=${OTEL_RESOURCE_ATTRIBUTES},service.criticality=critical
       - OTEL_SERVICE_NAME=payment
     depends_on:
