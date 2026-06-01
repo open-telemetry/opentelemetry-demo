@@ -189,7 +189,7 @@ jobs:
           persona: pedantic
 
   build-test:
-    name: Report CI status
+    name: build-test
     needs: [
       build_images,
       markdownlint,
