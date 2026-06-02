@@ -11,7 +11,5 @@ metrics:
     annotations:
       service: currency
     attributes:
-      - ref: demo.exchange.from
-        requirement_level: required
       - ref: demo.exchange.to
         requirement_level: required
