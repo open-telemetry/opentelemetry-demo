@@ -14,54 +14,74 @@ on:
 permissions:
   contents: read
 
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: false
+
 jobs:
   build_images:
+    name: Build images
     permissions:  # required by the reusable workflow
-      contents: read
-      packages: write
+      contents: read  # required by the component-build-images reusable workflow
+      packages: write  # required to push built images to GHCR
     uses: ./.github/workflows/component-build-images.yml
     with:
       push: ${{ github.event_name == 'push' }}
       # Use a non-release tag for PR builds; tags are not pushed when push=false.
       version: ${{ github.event_name == 'push' && 'main' || 'dev' }}
-    secrets: inherit
+    secrets:
+      DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
+      DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
 
   markdownlint:
+    name: Markdown lint
     runs-on: ubuntu-latest
     steps:
-      - name: check out code
+      - name: Checkout code
         uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd  # v6.0.2
-      - name: install dependencies
+        with:
+          persist-credentials: false
+      - name: Install dependencies
         run: npm ci
-      - name: run markdownlint
+      - name: Run markdownlint
         run: make markdownlint
 
   yamllint:
+    name: YAML lint
     runs-on: ubuntu-latest
     steps:
-      - name: check out code
+      - name: Checkout code
         uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd  # v6.0.2
-      - uses: actions/setup-python@a309ff8b426b58ec0e2a45f0f869d46889d02405  # v6.2.0
+        with:
+          persist-credentials: false
+      - name: Set up Python
+        uses: actions/setup-python@a309ff8b426b58ec0e2a45f0f869d46889d02405  # v6.2.0
         with:
           python-version: '3.x'
-      - name: install yamllint
+      - name: Install yamllint
         run: make install-yamllint
-      - name: run yamllint
+      - name: Run yamllint
         run: yamllint . -f github --strict
 
   misspell:
+    name: Misspell
     runs-on: ubuntu-latest
     steps:
-      - name: check out code
+      - name: Checkout code
         uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd  # v6.0.2
-      - name: run misspell
+        with:
+          persist-credentials: false
+      - name: Run misspell
         run: make misspell
 
   checklinks:
     name: lychee
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd  # v6.0.2
+      - name: Checkout code
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd  # v6.0.2
+        with:
+          persist-credentials: false
       - name: Restore lychee cache
         uses: actions/cache/restore@27d5ce7f107fe9357f9df03efb73ab90386fccae  # v5.0.5
         id: cache-restore
@@ -83,38 +103,56 @@ jobs:
           key: ${{ steps.cache-restore.outputs.cache-primary-key }}
 
   sanity:
+    name: Sanity check
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd  # v6.0.2
-      - name: run sanitycheck.py
+      - name: Checkout code
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd  # v6.0.2
+        with:
+          persist-credentials: false
+      - name: Run sanitycheck.py
         run: python3 ./internal/tools/sanitycheck.py
 
   checklicense:
+    name: Check license
     runs-on: ubuntu-latest
     steps:
-      - name: check out code
+      - name: Checkout code
         uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd  # v6.0.2
-      - name: run checklicense
+        with:
+          persist-credentials: false
+      - name: Run checklicense
         run: make checklicense
 
   weaver-check:
+    name: Weaver check
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd  # v6.0.2
-      - name: run weaver registry check
+      - name: Checkout code
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd  # v6.0.2
+        with:
+          persist-credentials: false
+      - name: Run Weaver registry check
+        env:
+          GITHUB_WORKSPACE_PATH: ${{ github.workspace }}
         run: |
           docker run --rm \
-            --mount "type=bind,source=${{ github.workspace }}/telemetry-schema,target=/home/weaver/source,readonly" \
+            --mount "type=bind,source=${GITHUB_WORKSPACE_PATH}/telemetry-schema,target=/home/weaver/source,readonly" \
             otel/weaver:v0.22.1 \
             registry check -r source
 
   check-react-native-changes:
+    name: Check React Native changes
     runs-on: ubuntu-latest
     outputs:
       should_build: ${{ steps.filter.outputs.react_native }}
     steps:
-      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd  # v6.0.2
-      - uses: dorny/paths-filter@fbd0ab8f3e69293af611ebaee6363fc25e6d187d  # v4.0.1
+      - name: Checkout code
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd  # v6.0.2
+        with:
+          persist-credentials: false
+      - name: Check React Native paths
+        uses: dorny/paths-filter@fbd0ab8f3e69293af611ebaee6363fc25e6d187d  # v4.0.1
         id: filter
         with:
           filters: |
@@ -127,6 +165,14 @@ jobs:
     if: needs.check-react-native-changes.outputs.should_build == 'true'
     uses: ./.github/workflows/react-native-build.yml
 
+  zizmor:
+    name: zizmor scan
+    permissions:
+      actions: read  # required to scan GitHub Actions workflows
+      contents: read  # required to checkout the repository
+      security-events: write  # required to upload zizmor SARIF to code scanning
+    uses: ./.github/workflows/zizmor.yml
+
   codeql-analysis:
     name: CodeQL analysis
     permissions:
@@ -136,6 +182,7 @@ jobs:
     uses: ./.github/workflows/codeql-analysis.yml
 
   build-test:
+    name: build-test
     needs: [
       build_images,
       markdownlint,
@@ -146,7 +193,8 @@ jobs:
       checklicense,
       weaver-check,
       react-native-android,
-      codeql-analysis
+      codeql-analysis,
+      zizmor
     ]
     if: always() && !cancelled()
     runs-on: ubuntu-latest

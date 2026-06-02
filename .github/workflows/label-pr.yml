@@ -4,21 +4,28 @@
 name: Label Pull Requests
 
 on:
-  pull_request_target:
+  pull_request_target:  # zizmor: ignore[dangerous-triggers] needed to label PRs from forks without checking out PR code
     types: [opened, synchronize, reopened]
 
 permissions:
   contents: read
 
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: false
+
 jobs:
   label:
+    name: Label pull request
     runs-on: ubuntu-latest
     permissions:
-      pull-requests: write
-      contents: read
+      pull-requests: write  # required to add PR labels
+      contents: read  # required to inspect repository paths
     steps:
-      - name: Checkout
+      - name: Checkout code
         uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd  # v6.0.2
+        with:
+          persist-credentials: false
 
       - name: Check for changed files
         id: file_changes
@@ -38,7 +45,7 @@ jobs:
               - 'src/postgresql/**'
               - 'src/prometheus/**'
 
-      - name: "Add Label: docs-update-required"
+      - name: Add docs-update-required label
         if: steps.file_changes.outputs.docsUpdateRequired == 'true'
         uses: actions/github-script@3a2844b7e9c422d3c10d287c895573f7108da1b3  # v9.0.0
         with:
@@ -51,7 +58,7 @@ jobs:
               labels: ['docs-update-required']
             })
 
-      - name: "Add Label: helm-update-required"
+      - name: Add helm-update-required label
         if: steps.file_changes.outputs.helmUpdateRequired == 'true'
         uses: actions/github-script@3a2844b7e9c422d3c10d287c895573f7108da1b3  # v9.0.0
         with:
