@@ -188,6 +188,14 @@ jobs:
         with:
           persona: pedantic
 
+  codeql-analysis:
+    name: CodeQL analysis
+    permissions:
+      actions: read  # required to scan GitHub Actions workflows
+      contents: read  # required to checkout the repository
+      security-events: write  # required to upload CodeQL SARIF to code scanning
+    uses: ./.github/workflows/codeql-analysis.yml
+
   build-test:
     name: build-test
     needs: [
@@ -200,6 +208,7 @@ jobs:
       checklicense,
       weaver-check,
       react-native-android,
+      codeql-analysis,
       zizmor
     ]
     if: always() && !cancelled()
