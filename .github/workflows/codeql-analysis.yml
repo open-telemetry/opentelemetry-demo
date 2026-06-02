@@ -13,7 +13,7 @@ permissions:
   contents: read  # required to checkout the repository
 
 concurrency:
-  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  group: codeql-analysis-${{ github.event.pull_request.number || github.ref }}
   cancel-in-progress: false
 
 jobs:
