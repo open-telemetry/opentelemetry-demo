@@ -19,6 +19,7 @@ jobs:
     if: ${{ !github.event.repository.fork }}
     with:
       push: true
+      force_build: true
       version: nightly
     secrets:
       DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}

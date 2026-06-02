@@ -11,6 +11,11 @@ on:
         default: false
         required: false
         type: boolean
+      force_build:
+        description: Build all images regardless of detected changes
+        default: false
+        required: false
+        type: boolean
       version:
         description: The version used when tagging the image
         default: 'dev'
@@ -185,12 +190,12 @@ jobs:
           BASE_SHA: ${{ github.event.pull_request.base.sha || github.event.before }}
           DOCKER_CONTEXT: ${{ matrix.file_tag.context }}
           DOCKERFILE: ${{ matrix.file_tag.file }}
-          FORCE_PUSH: ${{ inputs.push }}
+          FORCE_BUILD: ${{ inputs.force_build }}
           HEAD_SHA: ${{ github.sha }}
         run: |
           DOCKERFILE_DIR=$(dirname "${DOCKERFILE}")
-          if [ "$FORCE_PUSH" = true ]; then
-            echo "Force push is enabled, proceeding with build."
+          if [ "$FORCE_BUILD" = true ]; then
+            echo "Force build is enabled, proceeding with build."
             echo "skip=false" >> "$GITHUB_OUTPUT"
           elif [ -z "$BASE_SHA" ]; then
             echo "No base SHA available, proceeding with build."
