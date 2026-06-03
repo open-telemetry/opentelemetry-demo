@@ -253,10 +253,10 @@ jobs:
 
           FILES_CHANGED=$(git diff --name-only "$BASE_SHA" "$HEAD_SHA" -- "$DOCKERFILE_DIR")
           if [ -z "$FILES_CHANGED" ]; then
-            echo "No changes in ${DOCKER_CONTEXT}, skipping build."
+            echo "No changes in ${DOCKERFILE_DIR}, skipping build for ${DOCKERFILE}."
             echo "skip=true" >> "$GITHUB_OUTPUT"
           else
-            echo "Changes detected in ${DOCKER_CONTEXT}, proceeding with build."
+            echo "Changes detected in ${DOCKERFILE_DIR}, proceeding with build for ${DOCKERFILE}."
             echo "skip=false" >> "$GITHUB_OUTPUT"
           fi
       - name: Log in to container registry
