@@ -1,0 +1,38 @@
+# Copyright The OpenTelemetry Authors
+# SPDX-License-Identifier: Apache-2.0
+
+name: zizmor scan
+
+on:
+  workflow_call:
+
+permissions: {}
+
+concurrency:
+  group: zizmor-workflow-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: false
+
+env:
+  FORCE_COLOR: 3
+  TERM: xterm
+
+jobs:
+  zizmor:
+    name: Scan with zizmor
+    runs-on: ubuntu-24.04
+    permissions:
+      actions: read  # required to scan GitHub Actions workflows
+      contents: read  # required to checkout the repository
+      security-events: write  # required to upload zizmor SARIF to code scanning
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd  # v6.0.2
+        with:
+          filter: "tree:0"
+          persist-credentials: false
+          show-progress: false
+
+      - name: Scan workflows with zizmor
+        uses: zizmorcore/zizmor-action@5f14fd08f7cf1cb1609c1e344975f152c7ee938d  # v0.5.6
+        with:
+          persona: pedantic

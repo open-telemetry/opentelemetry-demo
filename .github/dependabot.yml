@@ -3,6 +3,8 @@
 version: 2
 updates:
   - package-ecosystem: "github-actions"
+    cooldown:
+      default-days: 3
     directories:
       - "/"
     groups:
@@ -13,6 +15,8 @@ updates:
       day: "tuesday"
       time: "03:00"
   - package-ecosystem: "gomod"
+    cooldown:
+      default-days: 3
     directories:
       - "/src/**/*"
       - "/internal/tools/**/*"
@@ -24,6 +28,8 @@ updates:
       day: "tuesday"
       time: "03:05"
   - package-ecosystem: "gradle"
+    cooldown:
+      default-days: 3
     directories:
       - "/src/**/*"
     exclude-paths:
@@ -36,6 +42,8 @@ updates:
       day: "tuesday"
       time: "03:10"
   - package-ecosystem: "pip"
+    cooldown:
+      default-days: 3
     directories:
       - "/src/**/*"
     groups:
@@ -46,6 +54,8 @@ updates:
       day: "tuesday"
       time: "03:15"
   - package-ecosystem: "nuget"
+    cooldown:
+      default-days: 3
     directories:
       - "/src/**/*"
     groups:
@@ -56,6 +66,8 @@ updates:
       day: "tuesday"
       time: "03:20"
   - package-ecosystem: "composer"
+    cooldown:
+      default-days: 3
     directories:
       - "/src/**/*"
     groups:
@@ -66,6 +78,8 @@ updates:
       day: "tuesday"
       time: "03:25"
   - package-ecosystem: "npm"
+    cooldown:
+      default-days: 3
     directories:
       - "/"
       - "/src/frontend/*"
@@ -80,6 +94,8 @@ updates:
       day: "tuesday"
       time: "03:30"
   - package-ecosystem: "cargo"
+    cooldown:
+      default-days: 3
     directories:
       - "/src/shipping/*"
     groups:
@@ -92,6 +108,8 @@ updates:
     allow:
       - dependency-type: "all"
   - package-ecosystem: "bundler"
+    cooldown:
+      default-days: 3
     directories:
       - "/src/email/*"
     groups:
@@ -106,6 +124,8 @@ updates:
     allow:
       - dependency-type: "all"
   - package-ecosystem: "mix"
+    cooldown:
+      default-days: 3
     directories:
       - "/src/flagd-ui/*"
     groups:
@@ -116,6 +136,8 @@ updates:
       day: "tuesday"
       time: "03:45"
   - package-ecosystem: "docker"
+    cooldown:
+      default-days: 3
     directories:
       - "/"
       - "/src/**/*"
