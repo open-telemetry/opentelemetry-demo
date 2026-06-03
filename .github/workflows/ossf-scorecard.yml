@@ -11,22 +11,30 @@ on:
     - cron: "25 11 * * 3"  # once a week
   workflow_dispatch:
 
-permissions: read-all
+permissions:
+  contents: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: false
 
 jobs:
   analysis:
+    name: Analyze repository
     runs-on: ubuntu-latest
     permissions:
-      # Needed for Code scanning upload
-      security-events: write
-      # Needed for GitHub OIDC token if publish_results is true
-      id-token: write
+      actions: read  # required by OSSF Scorecard workflow checks
+      contents: read  # required by OSSF Scorecard repository checks
+      security-events: write  # required to upload Scorecard SARIF to code scanning
+      id-token: write  # required by OSSF Scorecard when publish_results is true
     steps:
-      - uses: actions/checkout@0c366fd6a839edf440554fa01a7085ccba70ac98  # v5.0.1
+      - name: Checkout code
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd  # v6.0.2
         with:
           persist-credentials: false
 
-      - uses: ossf/scorecard-action@4eaacf0543bb3f2c246792bd56e8cdeffafb205a  # v2.4.3
+      - name: Run OSSF Scorecard
+        uses: ossf/scorecard-action@4eaacf0543bb3f2c246792bd56e8cdeffafb205a  # v2.4.3
         with:
           results_file: results.sarif
           results_format: sarif
@@ -35,7 +43,7 @@ jobs:
       # Upload the results as artifacts (optional). Commenting out will disable
       # uploads of run results in SARIF format to the repository Actions tab.
       # https://docs.github.com/en/actions/advanced-guides/storing-workflow-data-as-artifacts
-      - name: "Upload artifact"
+      - name: Upload artifact
         uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a  # v7.0.1
         with:
           name: SARIF file
@@ -44,7 +52,7 @@ jobs:
 
       # Upload the results to GitHub's code scanning dashboard (optional).
       # Commenting out will disable upload of results to your repo's Code Scanning dashboard
-      - name: "Upload to code-scanning"
+      - name: Upload to code scanning
         uses: github/codeql-action/upload-sarif@7211b7c8077ea37d8641b6271f6a365a22a5fbfa  # v4.36.0
         with:
           sarif_file: results.sarif

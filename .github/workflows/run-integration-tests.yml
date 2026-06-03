@@ -10,14 +10,20 @@ on:
 permissions:
   contents: read
 
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: false
+
 jobs:
   run_tests:
     runs-on: ubuntu-latest
     name: "Run CI"
     if: github.event.review.state == 'APPROVED'
     steps:
-      - name: check out code
+      - name: Checkout code
         uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd  # v6.0.2
-      - name: run tracetesting
+        with:
+          persist-credentials: false
+      - name: Run tracetesting
         run: |
           make build && docker system prune -f && make run-tracetesting
