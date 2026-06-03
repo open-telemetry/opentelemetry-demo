@@ -190,11 +190,19 @@ the release.
   so the documented uppercase form actually dispatches to a single service,
   and clean up the no-arg error message that was being mangled by backticks.
   ([#3422](https://github.com/open-telemetry/opentelemetry-demo/pull/3422))
+* [telemetry] Clean up remaining demo telemetry naming leftovers from
+  [#3267](https://github.com/open-telemetry/opentelemetry-demo/issues/3267):
+  document Ad service metric `demo.ad.requests`, rename the shipping items
+  metric to `demo.shipping.items_shipped`, and replace the `currency_code`
+  attribute on `demo.exchange.conversions` with `demo.exchange.to`.
+  ([#3435](https://github.com/open-telemetry/opentelemetry-demo/pull/3435))
 * [grafana] Update the cart exemplars dashboard to use the renamed
   `demo_cart_*` Prometheus metrics.
+  ([#3436](https://github.com/open-telemetry/opentelemetry-demo/pull/3436))
 * [telemetry-docs] Fix the `attr_category` macro in the service template
   (`service.md.j2`) to bucket attributes by their current `demo.*` prefixes
   instead of the old `app.*` ones.
+  ([#3440](https://github.com/open-telemetry/opentelemetry-demo/pull/3440))
 
 ## 2.2.0
 

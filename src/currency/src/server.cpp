@@ -228,9 +228,9 @@ class CurrencyService final : public oteldemo::CurrencyService::Service
     return Status::OK;
   }
 
-  void CurrencyCounter(const std::string& currency_code)
+  void CurrencyCounter(const std::string& to_code)
   {
-      std::map<std::string, std::string> labels = { {"currency_code", currency_code} };
+      std::map<std::string, std::string> labels = { {"demo.exchange.to", to_code} };
       auto labelkv = common::KeyValueIterableView<decltype(labels)>{ labels };
       currency_counter->Add(1, labelkv);
   }
