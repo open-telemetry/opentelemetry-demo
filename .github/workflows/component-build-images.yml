@@ -187,20 +187,43 @@ jobs:
       - name: Check for changes and set push options
         id: check_changes
         env:
-          BASE_SHA: ${{ github.event.pull_request.base.sha || github.event.before }}
+          BASE_SHA: ${{ github.event.pull_request.base.sha || github.event.merge_group.base_sha || github.event.before }}
+          DEFAULT_BRANCH: ${{ github.event.repository.default_branch }}
           DOCKER_CONTEXT: ${{ matrix.file_tag.context }}
           DOCKERFILE: ${{ matrix.file_tag.file }}
           FORCE_BUILD: ${{ inputs.force_build }}
-          HEAD_SHA: ${{ github.sha }}
+          HEAD_SHA: ${{ github.event.merge_group.head_sha || github.sha }}
         run: |
           DOCKERFILE_DIR=$(dirname "${DOCKERFILE}")
+          ZERO_SHA=0000000000000000000000000000000000000000
           if [ "$FORCE_BUILD" = true ]; then
             echo "Force build is enabled, proceeding with build."
             echo "skip=false" >> "$GITHUB_OUTPUT"
-          elif [ -z "$BASE_SHA" ]; then
-            echo "No base SHA available, proceeding with build."
-            echo "skip=false" >> "$GITHUB_OUTPUT"
           else
+            if ! git cat-file -e "${HEAD_SHA}^{commit}" 2>/dev/null; then
+              echo "Head SHA ${HEAD_SHA} is unavailable, using checked out HEAD."
+              HEAD_SHA=$(git rev-parse HEAD)
+            fi
+
+            if [ -z "$BASE_SHA" ] || [ "$BASE_SHA" = "$ZERO_SHA" ] ||
+              ! git cat-file -e "${BASE_SHA}^{commit}" 2>/dev/null; then
+              if [ "${GITHUB_EVENT_NAME}" = "pull_request" ] || [ "${GITHUB_EVENT_NAME}" = "merge_group" ]; then
+                echo "Base SHA unavailable, using merge base with ${DEFAULT_BRANCH}."
+                git fetch --no-tags origin "${DEFAULT_BRANCH}" || true
+                BASE_SHA=$(git merge-base "$HEAD_SHA" "origin/${DEFAULT_BRANCH}" || true)
+              else
+                echo "No usable base SHA available for ${GITHUB_EVENT_NAME}, proceeding with build."
+                echo "skip=false" >> "$GITHUB_OUTPUT"
+                exit 0
+              fi
+            fi
+
+            if [ -z "$BASE_SHA" ] || ! git cat-file -e "${BASE_SHA}^{commit}" 2>/dev/null; then
+              echo "No usable base SHA available, proceeding with build."
+              echo "skip=false" >> "$GITHUB_OUTPUT"
+              exit 0
+            fi
+
             FILES_CHANGED=$(git diff --name-only "$BASE_SHA" "$HEAD_SHA" -- "$DOCKERFILE_DIR")
             if [ -z "$FILES_CHANGED" ]; then
               echo "No changes in ${DOCKER_CONTEXT}, skipping build."
