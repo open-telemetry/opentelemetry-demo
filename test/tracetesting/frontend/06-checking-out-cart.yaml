@@ -57,7 +57,7 @@ spec:
     assertions:
     - attr:rpc.grpc.status_code = 0
     - attr:tracetest.selected_spans.count >= 1
-  - name: The order was sent to be processed asyncronously
+  - name: The order was sent to be processed asynchronously
     selector: span[tracetest.span.type="messaging" name="orders publish" messaging.system="kafka" messaging.destination.name="orders" messaging.operation="publish"]
     assertions:
     - attr:messaging.destination.name = "orders"

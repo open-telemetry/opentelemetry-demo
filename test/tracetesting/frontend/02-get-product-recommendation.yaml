@@ -5,7 +5,7 @@ type: Test
 spec:
   id: frontend-get-recommendation
   name: 'Frontend: Get recommendations'
-  description: Simulate the user seeing recomendations on Astronomy Shop
+  description: Simulate the user seeing recommendations on Astronomy Shop
   trigger:
     type: http
     httpRequest:
