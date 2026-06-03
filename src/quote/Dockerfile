@@ -2,9 +2,9 @@
 # SPDX-License-Identifier: Apache-2.0
 
 
-FROM ghcr.io/mlocati/php-extension-installer:2.9.11@sha256:693f97d7f4c9ea8022bbddeb45abdbd1599714ff1f187fe5d13c12b2e95eb5f9 AS installer
+FROM ghcr.io/mlocati/php-extension-installer:2.11.1@sha256:bd9ea77afcbc8e55e58d55ca9a39153925367e972827d2f648c949fd0e44aaca AS installer
 
-FROM docker.io/library/composer:2.8.12@sha256:5248900ab8b5f7f880c2d62180e40960cd87f60149ec9a1abfd62ac72a02577c AS vendor
+FROM docker.io/library/composer:2.10.0@sha256:1b73755de4f19775ba6087fd5313664493e06fab72b6fc27dc2044e87bb7c4c3 AS vendor
 
 WORKDIR /tmp/
 
@@ -18,7 +18,7 @@ RUN composer install \
     --no-dev \
     --prefer-dist
 
-FROM docker.io/library/php:8.4.21-cli-alpine3.22@sha256:8f3444cd19c2dbb5789bb252d59bf16ca41aa1958a4c913afcf9505bf3f2fc47
+FROM docker.io/library/php:8.5.6-cli-alpine3.22@sha256:9f135d83402526f09952d1d6f2af1365c6beb10be27ce9d0325a3e07f4bdca1f
 
 COPY --from=installer /usr/bin/install-php-extensions /usr/local/bin/
 
