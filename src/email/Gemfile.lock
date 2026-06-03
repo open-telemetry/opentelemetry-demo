@@ -261,7 +261,7 @@ GEM
     ostruct (0.6.3)
     pony (1.13.1)
       mail (>= 2.0)
-    puma (8.0.1)
+    puma (8.0.2)
       nio4r (~> 2.0)
     rack (3.2.6)
     rack-protection (4.2.1)
