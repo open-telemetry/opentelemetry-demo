@@ -207,15 +207,22 @@ jobs:
 
             if [ -z "$BASE_SHA" ] || [ "$BASE_SHA" = "$ZERO_SHA" ] ||
               ! git cat-file -e "${BASE_SHA}^{commit}" 2>/dev/null; then
-              echo "Base SHA unavailable, using merge base with ${DEFAULT_BRANCH}."
-              git fetch --no-tags origin "${DEFAULT_BRANCH}" || true
-              BASE_SHA=$(git merge-base "$HEAD_SHA" "origin/${DEFAULT_BRANCH}" || true)
+              if [ "${GITHUB_EVENT_NAME}" = "pull_request" ] || [ "${GITHUB_EVENT_NAME}" = "merge_group" ]; then
+                echo "Base SHA unavailable, using merge base with ${DEFAULT_BRANCH}."
+                git fetch --no-tags origin "${DEFAULT_BRANCH}" || true
+                BASE_SHA=$(git merge-base "$HEAD_SHA" "origin/${DEFAULT_BRANCH}" || true)
+              else
+                echo "No usable base SHA available for ${GITHUB_EVENT_NAME}, proceeding with build."
+                echo "skip=false" >> "$GITHUB_OUTPUT"
+                exit 0
+              fi
             fi
 
             if [ -z "$BASE_SHA" ] || ! git cat-file -e "${BASE_SHA}^{commit}" 2>/dev/null; then
               echo "No usable base SHA available, proceeding with build."
               echo "skip=false" >> "$GITHUB_OUTPUT"
               exit 0
+            fi
             fi
 
             FILES_CHANGED=$(git diff --name-only "$BASE_SHA" "$HEAD_SHA" -- "$DOCKERFILE_DIR")
