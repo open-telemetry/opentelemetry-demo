@@ -203,6 +203,7 @@ the release.
   (`service.md.j2`) to bucket attributes by their current `demo.*` prefixes
   instead of the old `app.*` ones.
   ([#3440](https://github.com/open-telemetry/opentelemetry-demo/pull/3440))
+* [telemetry-schema] Move ad attributes into a dedicated schema domain.
 
 ## 2.2.0
 
