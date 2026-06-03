@@ -192,6 +192,12 @@ the release.
   ([#3422](https://github.com/open-telemetry/opentelemetry-demo/pull/3422))
 * [grafana] Update the cart exemplars dashboard to use the renamed
   `demo_cart_*` Prometheus metrics.
+* [telemetry] Clean up remaining demo telemetry naming leftovers from
+  [#3267](https://github.com/open-telemetry/opentelemetry-demo/issues/3267):
+  document Ad service metric `demo.ad.requests`, rename the shipping items
+  metric to `demo.shipping.items_shipped`, and replace the `currency_code`
+  attribute on `demo.exchange.conversions` with `demo.exchange.to`.
+  ([#3435](https://github.com/open-telemetry/opentelemetry-demo/pull/3435))
 
 ## 2.2.0
 
