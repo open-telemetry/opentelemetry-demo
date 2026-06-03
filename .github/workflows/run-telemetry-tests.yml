@@ -48,6 +48,7 @@ jobs:
   #   - dependabot PRs (no approval needed), OR
   #   - push to main / manual dispatch
   gate:
+    name: "Telemetry Test Gate"
     runs-on: ubuntu-latest
     outputs:
       should_run: ${{ steps.check.outputs.should_run }}
