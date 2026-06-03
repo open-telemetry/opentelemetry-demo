@@ -223,7 +223,6 @@ jobs:
               echo "skip=false" >> "$GITHUB_OUTPUT"
               exit 0
             fi
-            fi
 
             FILES_CHANGED=$(git diff --name-only "$BASE_SHA" "$HEAD_SHA" -- "$DOCKERFILE_DIR")
             if [ -z "$FILES_CHANGED" ]; then
