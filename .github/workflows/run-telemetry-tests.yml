@@ -36,6 +36,12 @@ on:
 permissions:
   contents: read
 
+# Coalesce concurrent runs on the same PR or branch so an approval right
+# after a push doesn't fire two 45-minute builds in parallel.
+concurrency:
+  group: telemetry-tests-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
 jobs:
   # Single source of truth for when the telemetry test jobs should run:
   #   - approved PR reviews on open PRs (any author), OR
@@ -47,10 +53,18 @@ jobs:
       should_run: ${{ steps.check.outputs.should_run }}
     steps:
       - id: check
+        # Pass GitHub-context values through env: rather than expanding them
+        # directly into the shell command, so a hostile fork can't sneak shell
+        # metacharacters into a context field and break out of the comparison.
+        env:
+          EVENT_NAME: ${{ github.event_name }}
+          REVIEW_STATE: ${{ github.event.review.state }}
+          PR_STATE: ${{ github.event.pull_request.state }}
+          PR_AUTHOR: ${{ github.event.pull_request.user.login }}
         run: |
-          if [[ "${{ github.event_name }}" == "workflow_dispatch" || "${{ github.event_name }}" == "push" ]] \
-            || [[ "${{ github.event_name }}" == "pull_request_review" && "${{ github.event.review.state }}" == "approved" && "${{ github.event.pull_request.state }}" == "open" ]] \
-            || [[ "${{ github.event_name }}" == "pull_request" && "${{ github.event.pull_request.user.login }}" == "dependabot[bot]" ]]; then
+          if [[ "$EVENT_NAME" == "workflow_dispatch" || "$EVENT_NAME" == "push" ]] \
+            || [[ "$EVENT_NAME" == "pull_request_review" && "$REVIEW_STATE" == "approved" && "$PR_STATE" == "open" ]] \
+            || [[ "$EVENT_NAME" == "pull_request" && "$PR_AUTHOR" == "dependabot[bot]" ]]; then
             echo "should_run=true" >> "$GITHUB_OUTPUT"
           else
             echo "should_run=false" >> "$GITHUB_OUTPUT"
@@ -70,6 +84,9 @@ jobs:
           # the PR head so we test the proposed changes. Falls back to the
           # default ref for push and workflow_dispatch events.
           ref: ${{ github.event.pull_request.head.sha || github.ref }}
+          # Don't leave the GITHUB_TOKEN credential helper on disk; the test
+          # jobs only read the repo, they never push back.
+          persist-credentials: false
 
       - name: Free disk space
         run: |
@@ -104,6 +121,7 @@ jobs:
         uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd  # v6.0.2
         with:
           ref: ${{ github.event.pull_request.head.sha || github.ref }}
+          persist-credentials: false
 
       - name: Free disk space
         run: |
