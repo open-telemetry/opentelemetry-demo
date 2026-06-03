@@ -265,19 +265,20 @@ jobs:
           registry: ghcr.io
           username: ${{ github.repository_owner }}
           password: ${{ github.token }}
-        if: ${{ inputs.push && !github.event.repository.fork }}
+        if: ${{ steps.check_changes.outputs.skip == 'false' && inputs.push && !github.event.repository.fork }}
       - name: Log in to Docker Hub
         uses: docker/login-action@650006c6eb7dba73a995cc03b0b2d7f5ca915bee  # v4.2.0
         with:
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_PASSWORD }}
-        if: ${{ inputs.push && !github.event.repository.fork }}
+        if: ${{ steps.check_changes.outputs.skip == 'false' && inputs.push && !github.event.repository.fork }}
       - name: Set up QEMU
-        if: ${{ matrix.file_tag.setup-qemu }}
+        if: ${{ steps.check_changes.outputs.skip == 'false' && matrix.file_tag.setup-qemu }}
         uses: docker/setup-qemu-action@06116385d9baf250c9f4dcb4858b16962ea869c3  # v4.1.0
         with:
           image: tonistiigi/binfmt:master
       - name: Set up Docker Buildx
+        if: steps.check_changes.outputs.skip == 'false'
         uses: docker/setup-buildx-action@d7f5e7f509e45cec5c76c4d5afdd7de93d0b3df5  # v4.1.0
         with:
           buildkitd-config-inline: |
