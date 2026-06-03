@@ -41,10 +41,15 @@ def wait_for_warmup():
     while time.time() < deadline:
         try:
             resp = requests.get(f"{JAEGER_URL}/jaeger/ui/api/services", timeout=5)
-            if resp.status_code == 200 and len(resp.json().get("data", [])) > 3:
-                backends_ready = True
-                break
-        except requests.RequestException:
+            # Jaeger returns {"data": null, ...} until the first span arrives, so
+            # coerce None -> [] before len(). ValueError catches non-JSON bodies
+            # (e.g. an HTML error page from a still-warming proxy).
+            if resp.status_code == 200:
+                services = resp.json().get("data") or []
+                if len(services) > 3:
+                    backends_ready = True
+                    break
+        except (requests.RequestException, ValueError):
             pass
         time.sleep(5)
     if not backends_ready:

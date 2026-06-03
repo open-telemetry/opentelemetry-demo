@@ -196,21 +196,30 @@ run-tracetesting:
 run-telemetry-tests: start
 	$(DOCKER_CMD) build -t opentelemetry-demo-telemetry-tests ./test/telemetry
 	@touch .env.override
+	@# Capture test exit code, always tear down the demo, then propagate the code.
+	@set +e; \
 	$(DOCKER_CMD) run --rm --network opentelemetry-demo \
 		--env-file .env --env-file .env.override \
 		-e TEST_SCOPE=full \
 		-e WARMUP_SECONDS=$${WARMUP_SECONDS:-240} \
-		opentelemetry-demo-telemetry-tests
+		opentelemetry-demo-telemetry-tests; \
+	rc=$$?; \
+	$(MAKE) stop; \
+	exit $$rc
 
 .PHONY: run-telemetry-tests-minimal
 run-telemetry-tests-minimal: start-minimal
 	$(DOCKER_CMD) build -t opentelemetry-demo-telemetry-tests ./test/telemetry
 	@touch .env.override
+	@set +e; \
 	$(DOCKER_CMD) run --rm --network opentelemetry-demo \
 		--env-file .env --env-file .env.override \
 		-e TEST_SCOPE=minimal \
 		-e WARMUP_SECONDS=$${WARMUP_SECONDS:-240} \
-		opentelemetry-demo-telemetry-tests
+		opentelemetry-demo-telemetry-tests; \
+	rc=$$?; \
+	$(MAKE) stop; \
+	exit $$rc
 
 .PHONY: generate-protobuf
 generate-protobuf:
