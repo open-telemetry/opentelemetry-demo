@@ -10,8 +10,10 @@
 
 {#- Helper macro to determine the registry category for an attribute -#}
 {%- macro attr_category(attr_name) -%}
-{%- if attr_name.startswith("demo.product") or attr_name.startswith("demo.ad") -%}
+{%- if attr_name.startswith("demo.product") -%}
 product
+{%- elif attr_name.startswith("demo.ad") -%}
+ad
 {%- elif attr_name.startswith("user.") or attr_name.startswith("demo.user_context") or attr_name.startswith("session") -%}
 user
 {%- elif attr_name.startswith("demo.order") or attr_name.startswith("demo.cart") or attr_name.startswith("demo.payment") -%}
