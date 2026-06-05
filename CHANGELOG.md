@@ -208,6 +208,9 @@ the release.
   ([#3440](https://github.com/open-telemetry/opentelemetry-demo/pull/3440))
 * [telemetry-schema] Move ad attributes into a dedicated schema domain.
   ([#3454](https://github.com/open-telemetry/opentelemetry-demo/pull/3454))
+* [telemetry-schema] Split exchange, feature flag, recommendation, and request
+  attributes into dedicated schema domains.
+  ([#3482](https://github.com/open-telemetry/opentelemetry-demo/pull/3482))
 
 ## 2.2.0
 

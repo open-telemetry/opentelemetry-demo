@@ -56,7 +56,8 @@ templates:
     file_name: services/{{ ctx.id | snake_case }}.md
 
   # Generate per-registry attribute documentation pages
-  # Each registry (ad, misc, order, product, shipping, user) gets its own page
+  # Each registry (ad, exchange, feature flag, order, product, recommendation,
+  # request, shipping, user) gets its own page
   - pattern: registry.md.j2
     filter: >
       .groups

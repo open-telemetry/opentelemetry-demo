@@ -14,14 +14,20 @@
 product
 {%- elif attr_name.startswith("demo.ad") -%}
 ad
-{%- elif attr_name.startswith("user.") or attr_name.startswith("demo.user_context") or attr_name.startswith("session") -%}
+{%- elif attr_name.startswith("user.") or attr_name.startswith("demo.user_context") or attr_name.startswith("session") or attr_name.startswith("enduser.") -%}
 user
 {%- elif attr_name.startswith("demo.order") or attr_name.startswith("demo.cart") or attr_name.startswith("demo.payment") -%}
 order
 {%- elif attr_name.startswith("demo.shipping") -%}
 shipping
-{%- else -%}
-misc
+{%- elif attr_name.startswith("demo.exchange") -%}
+exchange
+{%- elif attr_name.startswith("demo.feature_flag") -%}
+feature_flag
+{%- elif attr_name.startswith("demo.recommendation") or attr_name.startswith("recommendation.") -%}
+recommendation
+{%- elif attr_name.startswith("demo.synthetic_request") -%}
+request
 {%- endif -%}
 {%- endmacro -%}
 

@@ -9,7 +9,8 @@ across the demo services.
 The schema is organized into three directories:
 
 - **`attributes/`** - Attribute definitions organized by business domain
-  (ad, misc, order, product, shipping, user)
+  (ad, exchange, feature flag, order, product, recommendation, request,
+  shipping, user)
 - **`services/`** - Service-specific attribute references (one file per service)
 - **`metrics/`** - Metric definitions (one file per service that produces
   metrics)
