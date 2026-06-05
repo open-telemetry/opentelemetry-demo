@@ -1,0 +1,41 @@
+# Copyright The OpenTelemetry Authors
+# SPDX-License-Identifier: Apache-2.0
+
+file_format: definition/2
+attributes:
+  - key: demo.ad.category
+    type: string
+    brief: Advertisement category
+    stability: stable
+    note: The category of advertisements being served
+    examples: ["electronics", "clothing", "home"]
+  - key: demo.ad.count
+    type: int
+    brief: Number of advertisements served
+    stability: stable
+    note: The count of advertisements returned or served in a request
+    examples: [1, 2, 5]
+  - key: demo.ad.context_keys
+    type: string
+    brief: Context keys for ad targeting
+    stability: stable
+    note: Comma-separated list of context keys used for ad targeting
+    examples: ["electronics,gadgets", "home,kitchen"]
+  - key: demo.ad.context_keys.count
+    type: int
+    brief: Number of context keys
+    stability: stable
+    note: The count of context keys provided for ad targeting
+    examples: [0, 2, 5]
+  - key: demo.ad.request_type
+    type: string
+    brief: Type of ad request
+    stability: stable
+    note: Indicates whether the ad request was targeted or not
+    examples: ["TARGETED", "NOT_TARGETED"]
+  - key: demo.ad.response_type
+    type: string
+    brief: Type of ad response
+    stability: stable
+    note: Indicates whether the ad response was targeted or random
+    examples: ["TARGETED", "RANDOM"]
