@@ -210,6 +210,7 @@ the release.
   ([#3454](https://github.com/open-telemetry/opentelemetry-demo/pull/3454))
 * [telemetry-schema] Split exchange, feature flag, recommendation, and request
   attributes into dedicated schema domains.
+  ([#3482](https://github.com/open-telemetry/opentelemetry-demo/pull/3482))
 
 ## 2.2.0
 
