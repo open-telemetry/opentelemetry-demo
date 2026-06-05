@@ -213,6 +213,7 @@ the release.
   ([#3482](https://github.com/open-telemetry/opentelemetry-demo/pull/3482))
 * [telemetry] Split cart and payment attributes out of the order telemetry
   schema into their own domain files.
+  ([#3484](https://github.com/open-telemetry/opentelemetry-demo/pull/3484))
 
 ## 2.2.0
 
