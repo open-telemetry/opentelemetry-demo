@@ -1,0 +1,147 @@
+# Copyright The OpenTelemetry Authors
+# SPDX-License-Identifier: Apache-2.0
+name: Telemetry Tests
+
+on:
+  # Run on every approved PR review (covers human-reviewed PRs).
+  pull_request_review:
+    types: [submitted]
+  # Run on dependabot PRs without requiring approval. The `gate` job below
+  # restricts this to dependabot only; other PRs are tested via review approval.
+  pull_request:
+    branches: [main]
+    paths:
+      - 'src/**'
+      - 'test/telemetry/**'
+      - 'compose.yaml'
+      - 'compose.full.yaml'
+      - 'compose.observability.yaml'
+      - 'compose.extras.yaml'
+      - '.env'
+      - '.github/workflows/run-telemetry-tests.yml'
+  # Post-merge validation on main.
+  push:
+    branches: [main]
+    paths:
+      - 'src/**'
+      - 'test/telemetry/**'
+      - 'compose.yaml'
+      - 'compose.full.yaml'
+      - 'compose.observability.yaml'
+      - 'compose.extras.yaml'
+      - '.env'
+      - '.github/workflows/run-telemetry-tests.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+# Coalesce concurrent runs on the same PR or branch so an approval right
+# after a push doesn't fire two 45-minute builds in parallel.
+concurrency:
+  group: telemetry-tests-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  # Single source of truth for when the telemetry test jobs should run:
+  #   - approved PR reviews on open PRs (any author), OR
+  #   - dependabot PRs (no approval needed), OR
+  #   - push to main / manual dispatch
+  gate:
+    name: "Telemetry Test Gate"
+    runs-on: ubuntu-latest
+    outputs:
+      should_run: ${{ steps.check.outputs.should_run }}
+    steps:
+      - id: check
+        # Pass GitHub-context values through env: rather than expanding them
+        # directly into the shell command, so a hostile fork can't sneak shell
+        # metacharacters into a context field and break out of the comparison.
+        env:
+          EVENT_NAME: ${{ github.event_name }}
+          REVIEW_STATE: ${{ github.event.review.state }}
+          PR_STATE: ${{ github.event.pull_request.state }}
+          PR_AUTHOR: ${{ github.event.pull_request.user.login }}
+        run: |
+          if [[ "$EVENT_NAME" == "workflow_dispatch" || "$EVENT_NAME" == "push" ]] \
+            || [[ "$EVENT_NAME" == "pull_request_review" && "$REVIEW_STATE" == "approved" && "$PR_STATE" == "open" ]] \
+            || [[ "$EVENT_NAME" == "pull_request" && "$PR_AUTHOR" == "dependabot[bot]" ]]; then
+            echo "should_run=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "should_run=false" >> "$GITHUB_OUTPUT"
+          fi
+
+  telemetry-tests-full:
+    needs: gate
+    if: ${{ needs.gate.outputs.should_run == 'true' }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    name: "Telemetry Tests (full)"
+    steps:
+      - name: check out code
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd  # v6.0.2
+        with:
+          # On pull_request_review the default ref is the base branch; check out
+          # the PR head so we test the proposed changes. Falls back to the
+          # default ref for push and workflow_dispatch events.
+          ref: ${{ github.event.pull_request.head.sha || github.ref }}
+          # Don't leave the GITHUB_TOKEN credential helper on disk; the test
+          # jobs only read the repo, they never push back.
+          persist-credentials: false
+
+      - name: Free disk space
+        run: |
+          sudo rm -rf /usr/local/lib/android /usr/share/dotnet /opt/ghc
+          docker system prune -af
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@4d04d5d9486b7bd6fa91e7baf45bbb4f8b9deedd  # v4.0.0
+
+      - name: Create .env.override if missing
+        run: touch .env.override
+
+      - name: Run telemetry tests
+        run: make run-telemetry-tests
+
+      - name: Print service logs on failure
+        if: failure()
+        run: docker compose logs --tail=50
+
+      - name: Stop demo
+        if: always()
+        run: make stop
+
+  telemetry-tests-minimal:
+    needs: gate
+    if: ${{ needs.gate.outputs.should_run == 'true' }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    name: "Telemetry Tests (minimal)"
+    steps:
+      - name: check out code
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd  # v6.0.2
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.ref }}
+          persist-credentials: false
+
+      - name: Free disk space
+        run: |
+          sudo rm -rf /usr/local/lib/android /usr/share/dotnet /opt/ghc
+          docker system prune -af
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@4d04d5d9486b7bd6fa91e7baf45bbb4f8b9deedd  # v4.0.0
+
+      - name: Create .env.override if missing
+        run: touch .env.override
+
+      - name: Run telemetry tests (minimal)
+        run: make run-telemetry-tests-minimal
+
+      - name: Print service logs on failure
+        if: failure()
+        run: docker compose logs --tail=50
+
+      - name: Stop demo
+        if: always()
+        run: make stop
