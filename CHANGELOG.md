@@ -204,6 +204,7 @@ the release.
   instead of the old `app.*` ones.
   ([#3440](https://github.com/open-telemetry/opentelemetry-demo/pull/3440))
 * [telemetry-schema] Move ad attributes into a dedicated schema domain.
+  ([#3454](https://github.com/open-telemetry/opentelemetry-demo/pull/3454))
 
 ## 2.2.0
 
