@@ -14,6 +14,7 @@ exclude = [
   "^https://calendar\\.google\\.com/calendar",
   "^https://www\\.gnu\\.org",
   "^https://platform\\.openai\\.com",
+  "^https://www\\.robotstxt\\.org",
 ]
 
 exclude_path = [
