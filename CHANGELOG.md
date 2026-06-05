@@ -7,6 +7,9 @@ the release.
 
 ## Unreleased
 
+* [testing] Add telemetry sanity tests to validate end-to-end observability
+  pipeline, including service-to-service edge verification via Jaeger trace walks
+  ([#3356](https://github.com/open-telemetry/opentelemetry-demo/pull/3356))
 * [telemetry-docs] Add a new service to provide telemetry documentation based
   on Weaver
   ([#2794](https://github.com/open-telemetry/opentelemetry-demo/pull/2794))
@@ -203,6 +206,8 @@ the release.
   (`service.md.j2`) to bucket attributes by their current `demo.*` prefixes
   instead of the old `app.*` ones.
   ([#3440](https://github.com/open-telemetry/opentelemetry-demo/pull/3440))
+* [telemetry-schema] Move ad attributes into a dedicated schema domain.
+  ([#3454](https://github.com/open-telemetry/opentelemetry-demo/pull/3454))
 
 ## 2.2.0
 
