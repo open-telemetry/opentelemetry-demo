@@ -145,28 +145,32 @@ updates:
   - package-ecosystem: "nuget"
     cooldown:
       default-days: 3
-    directory: "/src/accounting"
+    directories:
+      - "/src/accounting/**"
     patterns:
       - "*"
     multi-ecosystem-group: "src-accounting"
   - package-ecosystem: "docker"
     cooldown:
       default-days: 3
-    directory: "/src/accounting"
+    directories:
+      - "/src/accounting/**"
     patterns:
       - "*"
     multi-ecosystem-group: "src-accounting"
   - package-ecosystem: "gradle"
     cooldown:
       default-days: 3
-    directory: "/src/ad"
+    directories:
+      - "/src/ad/**"
     patterns:
       - "*"
     multi-ecosystem-group: "src-ad"
   - package-ecosystem: "docker"
     cooldown:
       default-days: 3
-    directory: "/src/ad"
+    directories:
+      - "/src/ad/**"
     patterns:
       - "*"
     multi-ecosystem-group: "src-ad"
@@ -174,22 +178,23 @@ updates:
     cooldown:
       default-days: 3
     directories:
-      - "/src/cart/src"
-      - "/src/cart/tests"
+      - "/src/cart/**"
     patterns:
       - "*"
     multi-ecosystem-group: "src-cart"
   - package-ecosystem: "docker"
     cooldown:
       default-days: 3
-    directory: "/src/cart/src"
+    directories:
+      - "/src/cart/**"
     patterns:
       - "*"
     multi-ecosystem-group: "src-cart"
   - package-ecosystem: "gomod"
     cooldown:
       default-days: 3
-    directory: "/src/checkout"
+    directories:
+      - "/src/checkout/**"
     patterns:
       - "*"
     multi-ecosystem-group: "src-checkout"
@@ -197,8 +202,7 @@ updates:
     cooldown:
       default-days: 3
     directories:
-      - "/src/checkout"
-      - "/src/checkout/genproto"
+      - "/src/checkout/**"
     patterns:
       - "*"
     multi-ecosystem-group: "src-checkout"
@@ -206,8 +210,7 @@ updates:
     cooldown:
       default-days: 3
     directories:
-      - "/src/currency"
-      - "/src/currency/genproto"
+      - "/src/currency/**"
     groups:
       src-currency:
         patterns:
@@ -219,7 +222,8 @@ updates:
   - package-ecosystem: "bundler"
     cooldown:
       default-days: 3
-    directory: "/src/email"
+    directories:
+      - "/src/email/**"
     patterns:
       - "*"
     multi-ecosystem-group: "src-email"
@@ -228,42 +232,48 @@ updates:
   - package-ecosystem: "docker"
     cooldown:
       default-days: 3
-    directory: "/src/email"
+    directories:
+      - "/src/email/**"
     patterns:
       - "*"
     multi-ecosystem-group: "src-email"
   - package-ecosystem: "mix"
     cooldown:
       default-days: 3
-    directory: "/src/flagd-ui"
+    directories:
+      - "/src/flagd-ui/**"
     patterns:
       - "*"
     multi-ecosystem-group: "src-flagd-ui"
   - package-ecosystem: "docker"
     cooldown:
       default-days: 3
-    directory: "/src/flagd-ui"
+    directories:
+      - "/src/flagd-ui/**"
     patterns:
       - "*"
     multi-ecosystem-group: "src-flagd-ui"
   - package-ecosystem: "gradle"
     cooldown:
       default-days: 3
-    directory: "/src/fraud-detection"
+    directories:
+      - "/src/fraud-detection/**"
     patterns:
       - "*"
     multi-ecosystem-group: "src-fraud-detection"
   - package-ecosystem: "docker"
     cooldown:
       default-days: 3
-    directory: "/src/fraud-detection"
+    directories:
+      - "/src/fraud-detection/**"
     patterns:
       - "*"
     multi-ecosystem-group: "src-fraud-detection"
   - package-ecosystem: "npm"
     cooldown:
       default-days: 3
-    directory: "/src/frontend"
+    directories:
+      - "/src/frontend/**"
     patterns:
       - "*"
     multi-ecosystem-group: "src-frontend"
@@ -271,15 +281,15 @@ updates:
     cooldown:
       default-days: 3
     directories:
-      - "/src/frontend"
-      - "/src/frontend/genproto"
+      - "/src/frontend/**"
     patterns:
       - "*"
     multi-ecosystem-group: "src-frontend"
   - package-ecosystem: "docker"
     cooldown:
       default-days: 3
-    directory: "/src/frontend-proxy"
+    directories:
+      - "/src/frontend-proxy/**"
     groups:
       src-frontend-proxy:
         patterns:
@@ -291,7 +301,8 @@ updates:
   - package-ecosystem: "docker"
     cooldown:
       default-days: 3
-    directory: "/src/image-provider"
+    directories:
+      - "/src/image-provider/**"
     groups:
       src-image-provider:
         patterns:
@@ -303,7 +314,8 @@ updates:
   - package-ecosystem: "docker"
     cooldown:
       default-days: 3
-    directory: "/src/kafka"
+    directories:
+      - "/src/kafka/**"
     groups:
       src-kafka:
         patterns:
@@ -315,35 +327,40 @@ updates:
   - package-ecosystem: "pip"
     cooldown:
       default-days: 3
-    directory: "/src/llm"
+    directories:
+      - "/src/llm/**"
     patterns:
       - "*"
     multi-ecosystem-group: "src-llm"
   - package-ecosystem: "docker"
     cooldown:
       default-days: 3
-    directory: "/src/llm"
+    directories:
+      - "/src/llm/**"
     patterns:
       - "*"
     multi-ecosystem-group: "src-llm"
   - package-ecosystem: "pip"
     cooldown:
       default-days: 3
-    directory: "/src/load-generator"
+    directories:
+      - "/src/load-generator/**"
     patterns:
       - "*"
     multi-ecosystem-group: "src-load-generator"
   - package-ecosystem: "docker"
     cooldown:
       default-days: 3
-    directory: "/src/load-generator"
+    directories:
+      - "/src/load-generator/**"
     patterns:
       - "*"
     multi-ecosystem-group: "src-load-generator"
   - package-ecosystem: "docker"
     cooldown:
       default-days: 3
-    directory: "/src/opensearch"
+    directories:
+      - "/src/opensearch/**"
     groups:
       src-opensearch:
         patterns:
@@ -355,21 +372,24 @@ updates:
   - package-ecosystem: "npm"
     cooldown:
       default-days: 3
-    directory: "/src/payment"
+    directories:
+      - "/src/payment/**"
     patterns:
       - "*"
     multi-ecosystem-group: "src-payment"
   - package-ecosystem: "docker"
     cooldown:
       default-days: 3
-    directory: "/src/payment"
+    directories:
+      - "/src/payment/**"
     patterns:
       - "*"
     multi-ecosystem-group: "src-payment"
   - package-ecosystem: "gomod"
     cooldown:
       default-days: 3
-    directory: "/src/product-catalog"
+    directories:
+      - "/src/product-catalog/**"
     patterns:
       - "*"
     multi-ecosystem-group: "src-product-catalog"
@@ -377,8 +397,7 @@ updates:
     cooldown:
       default-days: 3
     directories:
-      - "/src/product-catalog"
-      - "/src/product-catalog/genproto"
+      - "/src/product-catalog/**"
     patterns:
       - "*"
     multi-ecosystem-group: "src-product-catalog"
@@ -386,8 +405,7 @@ updates:
     cooldown:
       default-days: 3
     directories:
-      - "/src/product-reviews"
-      - "/src/product-reviews/genproto"
+      - "/src/product-reviews/**"
     patterns:
       - "*"
     multi-ecosystem-group: "src-product-reviews"
@@ -395,22 +413,23 @@ updates:
     cooldown:
       default-days: 3
     directories:
-      - "/src/product-reviews"
-      - "/src/product-reviews/genproto"
+      - "/src/product-reviews/**"
     patterns:
       - "*"
     multi-ecosystem-group: "src-product-reviews"
   - package-ecosystem: "composer"
     cooldown:
       default-days: 3
-    directory: "/src/quote"
+    directories:
+      - "/src/quote/**"
     patterns:
       - "*"
     multi-ecosystem-group: "src-quote"
   - package-ecosystem: "docker"
     cooldown:
       default-days: 3
-    directory: "/src/quote"
+    directories:
+      - "/src/quote/**"
     patterns:
       - "*"
     multi-ecosystem-group: "src-quote"
@@ -418,8 +437,7 @@ updates:
     cooldown:
       default-days: 3
     directories:
-      - "/src/recommendation"
-      - "/src/recommendation/genproto"
+      - "/src/recommendation/**"
     patterns:
       - "*"
     multi-ecosystem-group: "src-recommendation"
@@ -427,22 +445,23 @@ updates:
     cooldown:
       default-days: 3
     directories:
-      - "/src/recommendation"
-      - "/src/recommendation/genproto"
+      - "/src/recommendation/**"
     patterns:
       - "*"
     multi-ecosystem-group: "src-recommendation"
   - package-ecosystem: "npm"
     cooldown:
       default-days: 3
-    directory: "/src/react-native-app"
+    directories:
+      - "/src/react-native-app/**"
     patterns:
       - "*"
     multi-ecosystem-group: "src-react-native-app"
   - package-ecosystem: "bundler"
     cooldown:
       default-days: 3
-    directory: "/src/react-native-app"
+    directories:
+      - "/src/react-native-app/**"
     patterns:
       - "*"
     multi-ecosystem-group: "src-react-native-app"
@@ -451,14 +470,16 @@ updates:
   - package-ecosystem: "docker"
     cooldown:
       default-days: 3
-    directory: "/src/react-native-app"
+    directories:
+      - "/src/react-native-app/**"
     patterns:
       - "*"
     multi-ecosystem-group: "src-react-native-app"
   - package-ecosystem: "cargo"
     cooldown:
       default-days: 3
-    directory: "/src/shipping"
+    directories:
+      - "/src/shipping/**"
     patterns:
       - "*"
     multi-ecosystem-group: "src-shipping"
@@ -467,21 +488,24 @@ updates:
   - package-ecosystem: "docker"
     cooldown:
       default-days: 3
-    directory: "/src/shipping"
+    directories:
+      - "/src/shipping/**"
     patterns:
       - "*"
     multi-ecosystem-group: "src-shipping"
   - package-ecosystem: "pip"
     cooldown:
       default-days: 3
-    directory: "/src/telemetry-docs"
+    directories:
+      - "/src/telemetry-docs/**"
     patterns:
       - "*"
     multi-ecosystem-group: "src-telemetry-docs"
   - package-ecosystem: "docker"
     cooldown:
       default-days: 3
-    directory: "/src/telemetry-docs"
+    directories:
+      - "/src/telemetry-docs/**"
     patterns:
       - "*"
     multi-ecosystem-group: "src-telemetry-docs"
