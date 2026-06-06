@@ -16,8 +16,12 @@ product
 ad
 {%- elif attr_name.startswith("user.") or attr_name.startswith("demo.user_context") or attr_name.startswith("session") or attr_name.startswith("enduser.") -%}
 user
-{%- elif attr_name.startswith("demo.order") or attr_name.startswith("demo.cart") or attr_name.startswith("demo.payment") -%}
+{%- elif attr_name.startswith("demo.order") -%}
 order
+{%- elif attr_name.startswith("demo.cart") -%}
+cart
+{%- elif attr_name.startswith("demo.payment") -%}
+payment
 {%- elif attr_name.startswith("demo.shipping") -%}
 shipping
 {%- elif attr_name.startswith("demo.exchange") -%}
