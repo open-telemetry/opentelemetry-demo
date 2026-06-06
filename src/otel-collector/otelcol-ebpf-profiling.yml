@@ -1,0 +1,29 @@
+# Copyright The OpenTelemetry Authors
+# SPDX-License-Identifier: Apache-2.0
+
+receivers:
+  profiling:
+    samples_per_second: 19
+    include_env_vars: "OTEL_SERVICE_NAME"
+
+processors:
+  transform/set_service_name:
+    error_mode: ignore
+    profile_statements:
+      - context: resource
+        statements:
+          - set(attributes["service.name"], attributes["process.environment_variable.OTEL_SERVICE_NAME"]) where attributes["process.environment_variable.OTEL_SERVICE_NAME"] != nil
+          - delete_key(attributes, "process.environment_variable.OTEL_SERVICE_NAME")
+
+exporters:
+  otlp_grpc/collector:
+    endpoint: ${env:OTEL_COLLECTOR_HOST}:${env:OTEL_COLLECTOR_PORT_GRPC}
+    tls:
+      insecure: true
+
+service:
+  pipelines:
+    profiles:
+      receivers: [profiling]
+      processors: [transform/set_service_name]
+      exporters: [otlp_grpc/collector]

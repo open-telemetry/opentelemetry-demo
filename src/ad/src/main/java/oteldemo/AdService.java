@@ -25,6 +25,8 @@ import io.opentelemetry.context.Context;
 import io.opentelemetry.context.Scope;
 import io.opentelemetry.instrumentation.annotations.SpanAttribute;
 import io.opentelemetry.instrumentation.annotations.WithSpan;
+import io.prometheus.metrics.core.metrics.Counter;
+import io.prometheus.metrics.exporter.httpserver.HTTPServer;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -57,6 +59,25 @@ public final class AdService {
 
   private Server server;
   private HealthStatusManager healthMgr;
+  private HTTPServer prometheusServer;
+
+  // DEMO: this counter and its `/metrics` HTTP exporter use the Prometheus
+  // Java client library rather than the OpenTelemetry SDK. It is here to
+  // illustrate how non-OTel custom metrics (e.g. existing Prometheus
+  // instrumentation that an organization already owns) can be ingested into
+  // an OpenTelemetry pipeline via the Collector's `prometheus` receiver --
+  // a common bridging pattern during OTel adoption.
+  //
+  // Recommendation: this is a *transitional* pattern. New custom metrics
+  // should be created directly with the OpenTelemetry SDK (see the
+  // `adRequestsCounter` below), and existing Prometheus-client metrics
+  // should be migrated over time. See `src/ad/README.md` for details.
+  private static final Counter adsServedCounter =
+      Counter.builder()
+          .name("demo_ad_served_total")
+          .help("Total number of ads served, labeled by category")
+          .labelNames("category")
+          .register();
 
   private static final AdService service = new AdService();
   private static final Tracer tracer = GlobalOpenTelemetry.getTracer("ad");
@@ -64,14 +85,14 @@ public final class AdService {
 
   private static final LongCounter adRequestsCounter =
       meter
-          .counterBuilder("app.ads.ad_requests")
+          .counterBuilder("demo.ad.requests")
           .setDescription("Counts ad requests by request and response type")
           .build();
 
   private static final AttributeKey<String> adRequestTypeKey =
-      AttributeKey.stringKey("app.ads.ad_request_type");
+      AttributeKey.stringKey("demo.ad.request_type");
   private static final AttributeKey<String> adResponseTypeKey =
-      AttributeKey.stringKey("app.ads.ad_response_type");
+      AttributeKey.stringKey("demo.ad.response_type");
 
   private void start() throws IOException {
     int port =
@@ -81,6 +102,11 @@ public final class AdService {
                     () ->
                         new IllegalStateException(
                             "environment vars: AD_PORT must not be null")));
+    int prometheusPort =
+        Integer.parseInt(Optional.ofNullable(System.getenv("AD_PROMETHEUS_PORT")).orElse("9465"));
+    prometheusServer = HTTPServer.builder().port(prometheusPort).buildAndStart();
+    logger.info(
+        "Prometheus metrics endpoint started, listening on " + prometheusServer.getPort() + "/metrics");
     healthMgr = new HealthStatusManager();
 
     // Create a flagd instance with OpenTelemetry
@@ -117,6 +143,9 @@ public final class AdService {
     if (server != null) {
       healthMgr.clearStatus("");
       server.shutdown();
+    }
+    if (prometheusServer != null) {
+      prometheusServer.stop();
     }
   }
 
@@ -164,6 +193,10 @@ public final class AdService {
           span.setAttribute("session.id", sessionId);
           evaluationContext.setTargetingKey(sessionId);
           evaluationContext.add("session", sessionId);
+          final String enduserId = baggage.getEntryValue("enduser.id");
+          if (enduserId != null) {
+            span.setAttribute("enduser.id", enduserId);
+          }
         } else {
           logger.info("no baggage found in context");
         }
@@ -171,8 +204,8 @@ public final class AdService {
         CPULoad cpuload = CPULoad.getInstance();
         cpuload.execute(ffClient.getBooleanValue(AD_HIGH_CPU_FEATURE_FLAG, false, evaluationContext));
 
-        span.setAttribute("app.ads.contextKeys", req.getContextKeysList().toString());
-        span.setAttribute("app.ads.contextKeys.count", req.getContextKeysCount());
+        span.setAttribute("demo.ad.context_keys", req.getContextKeysList().toString());
+        span.setAttribute("demo.ad.context_keys.count", req.getContextKeysCount());
         if (req.getContextKeysCount() > 0) {
           logger.info("Targeted ad request received for " + req.getContextKeysList());
           for (int i = 0; i < req.getContextKeysCount(); i++) {
@@ -192,9 +225,9 @@ public final class AdService {
           allAds = service.getRandomAds();
           adResponseType = AdResponseType.RANDOM;
         }
-        span.setAttribute("app.ads.count", allAds.size());
-        span.setAttribute("app.ads.ad_request_type", adRequestType.name());
-        span.setAttribute("app.ads.ad_response_type", adResponseType.name());
+        span.setAttribute("demo.ad.count", allAds.size());
+        span.setAttribute("demo.ad.request_type", adRequestType.name());
+        span.setAttribute("demo.ad.response_type", adResponseType.name());
 
         adRequestsCounter.add(
             1,
@@ -228,9 +261,10 @@ public final class AdService {
   private static final ImmutableListMultimap<String, Ad> adsMap = createAdsMap();
 
   @WithSpan("getAdsByCategory")
-  private Collection<Ad> getAdsByCategory(@SpanAttribute("app.ads.category") String category) {
+  private Collection<Ad> getAdsByCategory(@SpanAttribute("demo.ad.category") String category) {
     Collection<Ad> ads = adsMap.get(category);
-    Span.current().setAttribute("app.ads.count", ads.size());
+    Span.current().setAttribute("demo.ad.count", ads.size());
+    adsServedCounter.labelValues(category).inc(ads.size());
     return ads;
   }
 
@@ -250,7 +284,8 @@ public final class AdService {
       for (int i = 0; i < MAX_ADS_TO_SERVE; i++) {
         ads.add(Iterables.get(allAds, random.nextInt(allAds.size())));
       }
-      span.setAttribute("app.ads.count", ads.size());
+      span.setAttribute("demo.ad.count", ads.size());
+      adsServedCounter.labelValues("random").inc(ads.size());
 
     } finally {
       span.end();
