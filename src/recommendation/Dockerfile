@@ -1,30 +1,12 @@
-# Copyright The OpenTelemetry Authors
-# SPDX-License-Identifier: Apache-2.0
+FROM python:3.12-slim-bookworm AS base
 
+WORKDIR /usr/src/app
 
-FROM docker.io/library/python:3.14.5-alpine3.23@sha256:5a824eb82cc75361f98611f3cfc5091ea33f10a6ccea4d4ebdabbc523b9a1614 AS build-venv
+COPY requirements.txt ./
 
-RUN apk update && \
-    apk add gcc g++ linux-headers
+RUN pip install --upgrade pip
+RUN pip install -r requirements.txt
 
-COPY ./src/recommendation/requirements.txt requirements.txt
+COPY . .
 
-RUN python -m venv venv && \
-    venv/bin/pip install --no-cache-dir --require-hashes -r requirements.txt
-
-RUN venv/bin/opentelemetry-bootstrap -a install
-
-FROM docker.io/library/python:3.14.5-alpine3.23@sha256:5a824eb82cc75361f98611f3cfc5091ea33f10a6ccea4d4ebdabbc523b9a1614
-
-COPY --from=build-venv /venv/ /venv/
-
-WORKDIR /app
-
-COPY ./src/recommendation/demo_pb2_grpc.py demo_pb2_grpc.py
-COPY ./src/recommendation/demo_pb2.py demo_pb2.py
-COPY ./src/recommendation/logger.py logger.py
-COPY ./src/recommendation/metrics.py metrics.py
-COPY ./src/recommendation/recommendation_server.py recommendation_server.py
-
-EXPOSE ${RECOMMENDATION_PORT}
-ENTRYPOINT [ "/venv/bin/opentelemetry-instrument", "/venv/bin/python", "recommendation_server.py" ]
+ENTRYPOINT ["python", "recommendation_server.py"]
