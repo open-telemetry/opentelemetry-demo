@@ -111,6 +111,8 @@ services:
         condition: service_started
       flagd:
         condition: service_started
+      flagd-ui:
+        condition: service_healthy
     logging: *logging
 
   # Checkout service
@@ -366,7 +368,7 @@ services:
       load-generator:
         condition: service_started
       flagd-ui:
-        condition: service_started
+        condition: service_healthy
       telemetry-docs:
         condition: service_healthy
     dns_search: ""
