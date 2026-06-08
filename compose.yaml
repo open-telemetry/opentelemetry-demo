@@ -99,7 +99,7 @@ services:
       - OTEL_SERVICE_NAME=cart
       - ASPNETCORE_URLS=http://*:${CART_PORT}
     healthcheck:
-      test: ["CMD-SHELL", "nc -z localhost ${CART_PORT}"]
+      test: ["CMD", "/bin/grpc_health_probe", "-addr=:${CART_PORT}"]
       start_period: 10s
       interval: 5s
       timeout: 5s
@@ -364,7 +364,7 @@ services:
       frontend:
         condition: service_healthy
       load-generator:
-        condition: service_healthy
+        condition: service_started
       flagd-ui:
         condition: service_started
       telemetry-docs:
