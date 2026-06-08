@@ -19,7 +19,6 @@ WORKDIR /email_server
 
 COPY ./src/email/views/ views/
 
-COPY ./src/email/.ruby-version .ruby-version
 COPY ./src/email/Gemfile Gemfile
 COPY ./src/email/Gemfile.lock Gemfile.lock
 COPY ./src/email/email_server.rb email_server.rb
