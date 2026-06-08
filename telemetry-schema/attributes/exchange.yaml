@@ -1,0 +1,17 @@
+# Copyright The OpenTelemetry Authors
+# SPDX-License-Identifier: Apache-2.0
+
+file_format: definition/2
+attributes:
+  - key: demo.exchange.from
+    type: string
+    brief: Source currency code
+    stability: stable
+    note: The currency code being converted from
+    examples: ["USD", "EUR", "GBP"]
+  - key: demo.exchange.to
+    type: string
+    brief: Target currency code
+    stability: stable
+    note: The currency code being converted to
+    examples: ["USD", "EUR", "JPY"]
