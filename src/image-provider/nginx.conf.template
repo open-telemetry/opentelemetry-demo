@@ -33,8 +33,13 @@ http {
 
         location /status {
             stub_status on;
-            access_log  on;           
+            access_log  on;
             allow all;
+        }
+
+        location /health {
+            return 200 'ok';
+            access_log off;
         }
     }
 }

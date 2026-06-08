@@ -17,11 +17,18 @@ COPY ./src/product-catalog/main.go main.go
 
 RUN CGO_ENABLED=0 GOOS=linux GO111MODULE=on go build -ldflags "-s -w" -o product-catalog main.go
 
+ARG GRPC_HEALTH_PROBE_VERSION=v0.4.52
+RUN ARCH=$(dpkg --print-architecture) && \
+    wget -qO /bin/grpc_health_probe \
+      "https://github.com/grpc-ecosystem/grpc-health-probe/releases/download/${GRPC_HEALTH_PROBE_VERSION}/grpc_health_probe-linux-${ARCH}" && \
+    chmod +x /bin/grpc_health_probe
+
 FROM gcr.io/distroless/static-debian12:nonroot@sha256:d093aa3e30dbadd3efe1310db061a14da60299baff8450a17fe0ccc514a16639
 
 WORKDIR /usr/src/app/
 
 COPY --from=builder /usr/src/app/product-catalog/ ./
+COPY --from=builder /bin/grpc_health_probe /bin/grpc_health_probe
 
 EXPOSE ${PRODUCT_CATALOG_PORT}
 ENTRYPOINT [ "./product-catalog" ]
