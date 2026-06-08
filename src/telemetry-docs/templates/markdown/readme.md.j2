@@ -22,7 +22,9 @@ The demo application consists of multiple microservices, each with its own telem
 
 The telemetry schema is organized by:
 
-1. **Logical Attribute Groups** - Semantic domain-focused attribute definitions (ad, misc, order, product, shipping, user)
+1. **Logical Attribute Groups** - Semantic domain-focused attribute definitions
+   (ad, exchange, feature flag, order, product, recommendation, request, shipping,
+   user)
 2. **Service Definitions** - Service-specific attribute references and metric definitions
 
 Each service references logical attribute groups using the `ref` syntax, creating a separation between logical groupings and service-specific usage patterns.
