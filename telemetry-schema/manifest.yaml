@@ -15,7 +15,7 @@ description: |
   not copied from an external source. It reflects the real telemetry instrumentation
   in the demo application.
 
-  Attributes are organized by service in the attributes/ directory.
+  Attributes are organized by business domain in the attributes/ directory.
   Metrics are organized by service in the metrics/ directory.
 dependencies:
   - name: otel
