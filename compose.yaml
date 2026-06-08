@@ -98,12 +98,6 @@ services:
       - OTEL_RESOURCE_ATTRIBUTES=${OTEL_RESOURCE_ATTRIBUTES},service.criticality=high
       - OTEL_SERVICE_NAME=cart
       - ASPNETCORE_URLS=http://*:${CART_PORT}
-    healthcheck:
-      test: ["CMD", "/bin/grpc_health_probe", "-addr=:${CART_PORT}"]
-      start_period: 10s
-      interval: 5s
-      timeout: 5s
-      retries: 20
     depends_on:
       valkey-cart:
         condition: service_healthy
@@ -111,8 +105,6 @@ services:
         condition: service_started
       flagd:
         condition: service_started
-      flagd-ui:
-        condition: service_healthy
     logging: *logging
 
   # Checkout service
@@ -154,7 +146,7 @@ services:
       retries: 20
     depends_on:
       cart:
-        condition: service_healthy
+        condition: service_started
       currency:
         condition: service_healthy
       email:
@@ -291,7 +283,7 @@ services:
       ad:
         condition: service_healthy
       cart:
-        condition: service_healthy
+        condition: service_started
       checkout:
         condition: service_started
       currency:
