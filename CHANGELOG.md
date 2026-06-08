@@ -214,6 +214,8 @@ the release.
 * [telemetry] Split cart and payment attributes out of the order telemetry
   schema into their own domain files.
   ([#3484](https://github.com/open-telemetry/opentelemetry-demo/pull/3484))
+* [chore] Add health check to services
+  ([#3487](https://github.com/open-telemetry/opentelemetry-demo/pull/3487))
 
 ## 2.2.0
 
