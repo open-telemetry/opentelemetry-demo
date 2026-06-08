@@ -36,10 +36,5 @@ http {
             access_log  on;
             allow all;
         }
-
-        location /health {
-            return 200 'ok';
-            access_log off;
-        }
     }
 }
