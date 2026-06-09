@@ -27,6 +27,8 @@ declare global {
             countryCode: string;
             continentCode: string;
             locality: string;
+            lat?: number;
+            lon?: number;
         }
     }
   }

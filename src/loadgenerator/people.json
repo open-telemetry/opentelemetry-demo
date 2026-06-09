@@ -8,7 +8,9 @@
       "state": "CA",
       "country": "United States",
       "countryCode": "US",
-      "continentCode": "NA"
+      "continentCode": "NA",
+      "lat": 37.3861,
+      "lon": -122.0839
     },
     "userCurrency": "USD",
     "creditCard": {
@@ -27,7 +29,9 @@
       "state": "WA",
       "country": "United States",
       "countryCode": "US",
-      "continentCode": "NA"
+      "continentCode": "NA",
+      "lat": 47.6740,
+      "lon": -122.1215
     },
     "userCurrency": "USD",
     "creditCard": {
@@ -46,7 +50,9 @@
       "state": "CA",
       "country": "United States",
       "countryCode": "US",
-      "continentCode": "NA"
+      "continentCode": "NA",
+      "lat": 37.3230,
+      "lon": -122.0322
     },
     "userCurrency": "USD",
     "creditCard": {
@@ -65,7 +71,9 @@
       "state": "CA",
       "country": "United States",
       "countryCode": "US",
-      "continentCode": "NA"
+      "continentCode": "NA",
+      "lat": 37.4530,
+      "lon": -122.1817
     },
     "userCurrency": "USD",
     "creditCard": {
@@ -84,7 +92,9 @@
       "state": "WA",
       "country": "United States",
       "countryCode": "US",
-      "continentCode": "NA"
+      "continentCode": "NA",
+      "lat": 47.6062,
+      "lon": -122.3321
     },
     "userCurrency": "USD",
     "creditCard": {
@@ -103,7 +113,9 @@
       "state": "CA",
       "country": "United States",
       "countryCode": "US",
-      "continentCode": "NA"
+      "continentCode": "NA",
+      "lat": 37.2358,
+      "lon": -121.9624
     },
     "userCurrency": "USD",
     "creditCard": {
@@ -122,7 +134,9 @@
       "state": "ON",
       "country": "Canada",
       "countryCode": "CA",
-      "continentCode": "NA"
+      "continentCode": "NA",
+      "lat": 45.4215,
+      "lon": -75.6972
     },
     "userCurrency": "CAD",
     "creditCard": {
@@ -141,7 +155,9 @@
       "state": "CA",
       "country": "United States",
       "countryCode": "US",
-      "continentCode": "NA"
+      "continentCode": "NA",
+      "lat": 37.7749,
+      "lon": -122.4194
     },
     "userCurrency": "USD",
     "creditCard": {
@@ -160,7 +176,9 @@
       "state": "CA",
       "country": "United States",
       "countryCode": "US",
-      "continentCode": "NA"
+      "continentCode": "NA",
+      "lat": 37.3541,
+      "lon": -121.9552
     },
     "userCurrency": "USD",
     "creditCard": {

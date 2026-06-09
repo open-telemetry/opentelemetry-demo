@@ -234,7 +234,9 @@ async def seed_person(page: PageWithRetry):
         location: {{
             countryCode: '{person['address']['countryCode']}',
             continentCode: '{person['address']['continentCode']}',
-            locality: '{person['address']['city']}'
+            locality: '{person['address']['city']}',
+            lat: {person['address']['lat']},
+            lon: {person['address']['lon']}
         }}
     }}
     """)
