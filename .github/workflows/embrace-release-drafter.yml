@@ -1,0 +1,93 @@
+# Copyright Embrace
+# SPDX-License-Identifier: Apache-2.0
+#
+# Maintains a DRAFT GitHub release for a component, copied from Embrace's
+# component-release-drafter. Computes a CalVer version (`<component>+<date>.<n>`,
+# incrementing <n> while a tag already exists) and runs release-drafter to
+# create/update the draft from merged PRs.
+#
+# Reusable: call it from the build workflow after a merge to `embrace`, e.g.
+#   drafter:
+#     needs: build
+#     uses: ./.github/workflows/embrace-release-drafter.yml
+#     with:
+#       component: frontend
+#     permissions:
+#       contents: write
+#       pull-requests: read
+#
+# Requires a config file at .github/release-drafter/<component>.yml (or
+# .github/release-drafter.yml when no component is given).
+#
+# NOTE: adapted from the source — Embrace `depot-ubuntu-24.04` runners replaced
+# with `ubuntu-latest`.
+name: Embrace - Release drafter
+
+on:
+  workflow_call:
+    inputs:
+      component:
+        required: false
+        type: string
+
+permissions:
+  contents: read
+  pull-requests: read
+
+jobs:
+  next-release:
+    permissions:
+      contents: write
+      pull-requests: read
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6.0.3
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+
+      - name: Generate next version
+        id: calver
+        run: |
+          today=$(date +%Y%m%d)
+          release=1
+
+          component='${{ inputs.component }}'
+          component_name=$(echo "$component" | tr '/' '-')
+
+          if [ -n "$component" ]; then
+              config_name="release-drafter/${component_name}.yml"
+              tag_prefix="${component}+"
+          else
+              config_name="release-drafter.yml"
+              tag_prefix=""
+          fi
+
+          while [ -n "$(git tag -l "${tag_prefix}${today}.${release}")" ]; do
+            release=$((release+1))
+          done
+
+          next_version="${tag_prefix}${today}.${release}"
+
+          {
+            echo "config_name=${config_name}"
+            echo "tag_prefix=${tag_prefix}"
+            echo "version=${next_version}"
+          } >> "$GITHUB_OUTPUT"
+
+          {
+            echo "config_name: ${config_name}"
+            echo "tag_prefix: ${tag_prefix}"
+            echo "next_version: ${next_version}"
+          } >> "$GITHUB_STEP_SUMMARY"
+
+      - uses: embrace-io/release-drafter@v7 # zizmor: ignore[unpinned-uses]
+        with:
+          config-name: ${{ steps.calver.outputs.config_name }}
+          disable-autolabeler: true
+          name: ${{ steps.calver.outputs.version }}
+          tag: ${{ steps.calver.outputs.version }}
+          version: ${{ steps.calver.outputs.version }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
