@@ -37,7 +37,8 @@ services:
       - OTEL_RESOURCE_ATTRIBUTES=${OTEL_RESOURCE_ATTRIBUTES},service.criticality=low
       - OTEL_SERVICE_NAME=accounting
       - DB_CONNECTION_STRING=Host=${POSTGRES_HOST};Username=astronomy_user;Password=${POSTGRES_ASTRONOMY_PASSWORD};Database=astronomy_db
-      - OTEL_DOTNET_AUTO_TRACES_ENTITYFRAMEWORKCORE_INSTRUMENTATION_ENABLED=false
+      - OTEL_DOTNET_AUTO_TRACES_ENTITYFRAMEWORKCORE_INSTRUMENTATION_ENABLED=true
+      - OTEL_DOTNET_AUTO_TRACES_NPGSQL_INSTRUMENTATION_ENABLED=false
     depends_on:
       otel-collector:
         condition: service_started
