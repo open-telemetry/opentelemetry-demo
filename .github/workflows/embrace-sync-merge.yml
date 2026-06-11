@@ -1,0 +1,191 @@
+# Copyright Embrace
+# SPDX-License-Identifier: Apache-2.0
+#
+# Keeps the repo in sync with upstream, using only the default GITHUB_TOKEN
+# (no PAT). On each run:
+#
+#   1. Merge upstream/main into main.
+#        - Clean + pushable  -> main is updated, continue to step 2.
+#        - Conflict, OR push rejected because the change touches
+#          .github/workflows/ (GITHUB_TOKEN cannot push workflow files) ->
+#          open (or refresh) a single manual-intervention PR and stop.
+#   2. Merge main into embrace.
+#        - Clean -> strip upstream metadata (so the push carries no workflow-file
+#          changes), push embrace directly. No PR.
+#        - Conflict -> open (or refresh) a PR with resolution instructions.
+#
+# REQUIREMENTS / LIMITATIONS (no PAT):
+#   * GITHUB_TOKEN cannot push .github/workflows/ changes to any branch. That is
+#     why the embrace push strips upstream workflow files first, and why the
+#     manual-sync branch carries only an EMPTY commit (zero file changes — the
+#     only thing GITHUB_TOKEN can push) as a vehicle for the instructions PR.
+#   * GITHUB_TOKEN pushes do NOT re-trigger `on: push`, so pushing main here does
+#     not cause a self-trigger loop.
+name: Embrace - Sync & merge
+
+on:
+  schedule:
+    - cron: '0 3 * * *'  # nightly at 03:00 UTC
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    env:
+      GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      GH_REPO: ${{ github.repository }}
+      RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+    steps:
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd  # v6.0.2
+        with:
+          fetch-depth: 0
+          ref: embrace
+
+      - name: Configure git identity
+        run: |
+          git config user.name  "embrace-ci"
+          git config user.email "embrace-ci@users.noreply.github.com"
+
+      - name: Sync upstream into main, then main into embrace
+        run: |
+          set -euo pipefail
+
+          echo "==> Fetching upstream/main and origin main + embrace..."
+          git remote add upstream https://github.com/open-telemetry/opentelemetry-demo.git 2>/dev/null \
+            || git remote set-url upstream https://github.com/open-telemetry/opentelemetry-demo.git
+          git fetch upstream main
+          git fetch origin main embrace
+
+          # Opens or refreshes the single manual-intervention PR for a blocked
+          # upstream -> main sync. The branch holds only an empty commit (the
+          # only thing GITHUB_TOKEN can push), and its body explains the manual
+          # steps. Reuses an already-open sync PR instead of piling up new ones.
+          open_or_update_sync_pr() {
+            # Renders the instructions body for a given branch name ($1).
+            sync_body() {
+              printf '%s\n' \
+                "Automatic sync of \`upstream/main\` into \`main\` could not complete — either it conflicted, or the change touches \`.github/workflows/\` which the default GITHUB_TOKEN is not allowed to push." \
+                "" \
+                "This branch (\`$1\`) contains only an **empty commit** so this PR can exist; it does **not** contain the upstream changes. Bring both branches up to date manually:" \
+                "" \
+                "1. Update \`main\` from upstream:" \
+                "   \`\`\`" \
+                "   # configure the upstream remote if you don't have it yet" \
+                "   git remote add upstream https://github.com/open-telemetry/opentelemetry-demo.git" \
+                "   git fetch upstream main" \
+                "   git checkout main" \
+                "   git merge upstream/main      # resolve conflicts" \
+                "   git push origin main" \
+                "   \`\`\`" \
+                "2. Update \`embrace\` from \`main\`:" \
+                "   \`\`\`" \
+                "   git checkout embrace" \
+                "   git merge main               # resolve conflicts" \
+                "   git push origin embrace" \
+                "   \`\`\`" \
+                "3. Drop this empty commit (it carries no changes) — just close this PR, or:" \
+                "   \`\`\`" \
+                "   git push origin --delete $1" \
+                "   \`\`\`" \
+                "" \
+                "Workflow run: ${RUN_URL}"
+            }
+
+            local existing num head
+            existing=$(gh pr list --base main --state open --json number,headRefName \
+                         --jq 'map(select(.headRefName | startswith("sync-")))
+                               | if length > 0 then "\(.[0].number)\t\(.[0].headRefName)" else "" end')
+            if [ -n "$existing" ]; then
+              IFS=$'\t' read -r num head <<<"$existing"
+              echo "Manual-sync PR already open (#${num}, ${head}); refreshing it."
+              gh pr edit "$num" --body "$(sync_body "$head")"
+              return
+            fi
+
+            local subj br
+            subj="chore: manual sync needed — upstream→main blocked ($(date -u +%Y-%m-%d))"
+            br="sync-$(date -u +%Y%m%d-%H%M%S)"
+            git checkout -B "$br" origin/main
+            git commit --allow-empty -m "$subj" -m "$(sync_body "$br")"
+            git push origin "$br"
+            gh pr create --base main --head "$br" --title "$subj" --body "$(sync_body "$br")"
+          }
+
+          # ----- 1) upstream/main -> main -----
+          echo "==> Step 1/2: syncing upstream/main into main"
+          if git merge-base --is-ancestor upstream/main origin/main; then
+            echo "main already up to date with upstream."
+          else
+            git checkout -B main origin/main
+            main_ok=1
+            if git merge --no-edit upstream/main; then
+              if git push origin HEAD:main; then
+                echo "main updated from upstream."
+              else
+                echo "::warning::Push to main was rejected (likely .github/workflows changes that GITHUB_TOKEN cannot push)."
+                main_ok=0
+              fi
+            else
+              git merge --abort || true
+              echo "::warning::Merge of upstream/main into main conflicted."
+              main_ok=0
+            fi
+
+            if [ "$main_ok" -eq 0 ]; then
+              open_or_update_sync_pr
+              echo "main could not be updated automatically; left a manual-intervention PR. Stopping."
+              exit 0
+            fi
+          fi
+
+          # ----- 2) main -> embrace -----
+          echo "==> Step 2/2: merging main into embrace"
+          git fetch origin main
+          if git merge-base --is-ancestor origin/main origin/embrace; then
+            echo "embrace already contains main; nothing to do."
+            exit 0
+          fi
+
+          git checkout -B embrace origin/embrace
+          if git merge --no-commit --no-ff origin/main; then
+            # Strip upstream metadata BEFORE completing the merge, so the single
+            # merge commit introduces no .github/workflows changes — otherwise
+            # GITHUB_TOKEN could not push embrace.
+            find .github/workflows -type f | grep -v embrace | xargs rm -f || true
+            rm -f .github/CODEOWNERS .github/component_owners.yml .github/dependabot.yml || true
+            git add -A
+            git commit --no-edit
+            git push origin HEAD:embrace
+            echo "embrace updated from main (clean merge)."
+          else
+            git merge --abort || true
+            echo "::warning::Merge of main into embrace conflicted; opening/refreshing a PR."
+
+            body=$(printf '%s\n' \
+              "Merging \`main\` into \`embrace\` hit conflicts that need manual resolution." \
+              "" \
+              "Resolve locally on \`embrace\` (do not use GitHub's in-PR conflict editor — it would commit onto \`main\`, which mirrors upstream):" \
+              "" \
+              "\`\`\`" \
+              "git fetch origin" \
+              "git checkout embrace" \
+              "git merge origin/main      # resolve conflicts" \
+              "git push origin embrace    # this PR auto-closes once embrace contains main" \
+              "\`\`\`" \
+              "" \
+              "Workflow run: ${RUN_URL}")
+
+            num=$(gh pr list --base embrace --head main --state open --json number --jq '.[0].number // empty')
+            if [ -n "$num" ]; then
+              echo "Conflict PR already open (#${num}); refreshing it."
+              gh pr edit "$num" --body "$body"
+            else
+              gh pr create --base embrace --head main \
+                --title "Embrace: resolve main → embrace merge conflicts" \
+                --body "$body"
+            fi
+          fi

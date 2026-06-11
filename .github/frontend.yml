@@ -1,0 +1,21 @@
+# Copyright Embrace
+# SPDX-License-Identifier: Apache-2.0
+#
+# release-drafter config for the frontend draft release. name/tag/version are
+# supplied by the workflow (CalVer: frontend+<date>.<n>); the templates below
+# are the fallback and shape the generated notes.
+name-template: 'frontend+$RESOLVED_VERSION'
+tag-template: 'frontend+$RESOLVED_VERSION'
+categories:
+  - title: '🚀 Features'
+    labels: ['feature', 'enhancement']
+  - title: '🐛 Bug Fixes'
+    labels: ['fix', 'bug']
+  - title: '🧰 Maintenance'
+    labels: ['chore', 'dependencies']
+change-template: '- $TITLE @$AUTHOR (#$NUMBER)'
+no-changes-template: '- No changes'
+template: |
+  ## Changes
+
+  $CHANGES

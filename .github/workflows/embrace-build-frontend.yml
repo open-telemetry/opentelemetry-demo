@@ -1,0 +1,129 @@
+# Copyright Embrace
+# SPDX-License-Identifier: Apache-2.0
+#
+# Builds the Embrace-customized frontend image and pushes it to the GitHub
+# Container Registry (ghcr.io/<owner>/<repo>), scoped to this repo's Packages.
+# Build behavior mirrors Embrace's ci-python/ci-golang "merge to master" path
+# (here master == `embrace`):
+#   - version on embrace: embrace-<date>-<sha>; otherwise branch-<ref>
+#   - an immutable sha-<sha> tag is used to skip rebuilds: if it already exists
+#     the existing image is just re-tagged with the new version
+#   - on embrace a `latest` tag is also moved
+# After a successful build it refreshes the draft release via
+# embrace-release-drafter.yml (component: frontend).
+name: Embrace - Build frontend
+
+on:
+  push:
+    branches: [embrace]
+    paths:
+      - 'src/frontend/**'
+  workflow_dispatch:
+
+env:
+  IMAGE_REPO: ghcr.io/${{ github.repository }}
+  COMPONENT: frontend
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+    steps:
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd  # v6.0.2
+        with:
+          persist-credentials: false
+
+      - name: Pick container version
+        id: version
+        run: |
+          if [ "${{ github.ref }}" = "refs/heads/embrace" ]; then
+            version="embrace-$(date +'%Y%m%d.%H%M%S')-${{ github.sha }}"
+          else
+            version="branch-$(echo '${{ github.ref_name }}' | tr '/,' '__')"
+          fi
+          {
+            echo "version=${version}"
+            echo "sha_version=sha-${{ github.sha }}"
+          } >> "$GITHUB_OUTPUT"
+          {
+            echo "Component: ${COMPONENT}"
+            echo "Version tag: ${version}-${COMPONENT}"
+          } >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Log in to GitHub Container Registry
+        uses: docker/login-action@650006c6eb7dba73a995cc03b0b2d7f5ca915bee  # v4.2.0
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Check if this commit was already built
+        id: exists
+        run: |
+          sha_tag="${IMAGE_REPO}:${{ steps.version.outputs.sha_version }}-${COMPONENT}"
+          if docker manifest inspect "$sha_tag" > /dev/null 2>&1; then
+            echo 'exists=true' | tee -a "$GITHUB_OUTPUT"
+          else
+            echo 'exists=false' | tee -a "$GITHUB_OUTPUT"
+          fi
+
+      - name: Re-tag existing image instead of rebuilding
+        if: ${{ steps.exists.outputs.exists == 'true' }}
+        run: |
+          docker buildx imagetools create \
+            "${IMAGE_REPO}:${{ steps.version.outputs.sha_version }}-${COMPONENT}" \
+            --tag "${IMAGE_REPO}:${{ steps.version.outputs.version }}-${COMPONENT}"
+
+      - name: Set up QEMU
+        if: ${{ steps.exists.outputs.exists != 'true' }}
+        uses: docker/setup-qemu-action@ce360397dd3f832beb865e1373c09c0e9f86d70a  # v4.0.0
+        with:
+          image: tonistiigi/binfmt:master
+
+      - name: Set up Docker Buildx
+        if: ${{ steps.exists.outputs.exists != 'true' }}
+        uses: docker/setup-buildx-action@d7f5e7f509e45cec5c76c4d5afdd7de93d0b3df5  # v4.1.0
+
+      - name: Build and push frontend
+        if: ${{ steps.exists.outputs.exists != 'true' }}
+        uses: docker/build-push-action@f9f3042f7e2789586610d6e8b85c8f03e5195baf  # v7.2.0
+        env:
+          DOCKER_BUILD_SUMMARY: false
+        with:
+          context: ./
+          file: ./src/frontend/Dockerfile
+          platforms: linux/amd64,linux/arm64
+          push: true
+          provenance: mode=max
+          sbom: true
+          tags: |
+            ${{ env.IMAGE_REPO }}:${{ steps.version.outputs.version }}-${{ env.COMPONENT }}
+            ${{ env.IMAGE_REPO }}:${{ steps.version.outputs.sha_version }}-${{ env.COMPONENT }}
+          labels: |
+            org.opencontainers.image.authors=@${{ github.actor }}
+            org.opencontainers.image.description=Built by ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+            org.opencontainers.image.revision=${{ github.sha }}
+            org.opencontainers.image.source=${{ github.server_url }}/${{ github.repository }}
+            org.opencontainers.image.title=${{ github.event.repository.name }}-${{ env.COMPONENT }}
+            org.opencontainers.image.version=${{ steps.version.outputs.version }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+
+      - name: Move latest tag (embrace only)
+        if: ${{ github.ref == 'refs/heads/embrace' && steps.exists.outputs.exists != 'true' }}
+        run: |
+          docker buildx imagetools create \
+            "${IMAGE_REPO}:${{ steps.version.outputs.sha_version }}-${COMPONENT}" \
+            --tag "${IMAGE_REPO}:latest-${COMPONENT}"
+
+  draft-release:
+    needs: build
+    if: ${{ github.ref == 'refs/heads/embrace' }}
+    uses: ./.github/workflows/embrace-release-drafter.yml
+    with:
+      component: frontend
+    permissions:
+      contents: write
+      pull-requests: read
