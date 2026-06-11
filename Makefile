@@ -193,6 +193,37 @@ run-tests:
 run-tracetesting:
 	$(DOCKER_COMPOSE_CMD) $(DOCKER_COMPOSE_ENV) $(DOCKER_COMPOSE_FILES) $(DOCKER_COMPOSE_FILES_TESTS) run traceBasedTests ${SERVICES_TO_TEST}
 
+.PHONY: run-telemetry-tests
+run-telemetry-tests: start
+	$(DOCKER_CMD) build -t opentelemetry-demo-telemetry-tests ./test/telemetry
+	@touch .env.override
+	@# Capture test exit code, always tear down the demo, then propagate the code.
+	@set +e; \
+	$(DOCKER_CMD) run --rm --network opentelemetry-demo \
+		--env-file .env --env-file .env.override \
+		-e TEST_SCOPE=full \
+		-e WARMUP_SECONDS=$${WARMUP_SECONDS:-240} \
+		-e POLL_TIMEOUT=$${POLL_TIMEOUT:-180} \
+		opentelemetry-demo-telemetry-tests; \
+	rc=$$?; \
+	$(MAKE) stop; \
+	exit $$rc
+
+.PHONY: run-telemetry-tests-minimal
+run-telemetry-tests-minimal: start-minimal
+	$(DOCKER_CMD) build -t opentelemetry-demo-telemetry-tests ./test/telemetry
+	@touch .env.override
+	@set +e; \
+	$(DOCKER_CMD) run --rm --network opentelemetry-demo \
+		--env-file .env --env-file .env.override \
+		-e TEST_SCOPE=minimal \
+		-e WARMUP_SECONDS=$${WARMUP_SECONDS:-240} \
+		-e POLL_TIMEOUT=$${POLL_TIMEOUT:-180} \
+		opentelemetry-demo-telemetry-tests; \
+	rc=$$?; \
+	$(MAKE) stop; \
+	exit $$rc
+
 .PHONY: generate-protobuf
 generate-protobuf:
 	./ide-gen-proto.sh

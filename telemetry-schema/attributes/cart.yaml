@@ -1,0 +1,11 @@
+# Copyright The OpenTelemetry Authors
+# SPDX-License-Identifier: Apache-2.0
+
+file_format: definition/2
+attributes:
+  - key: demo.cart.items.count
+    type: int
+    brief: Number of items in cart
+    stability: stable
+    note: The count of items currently in the shopping cart
+    examples: [0, 3, 7]

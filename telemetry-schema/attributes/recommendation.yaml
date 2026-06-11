@@ -1,0 +1,10 @@
+# Copyright The OpenTelemetry Authors
+# SPDX-License-Identifier: Apache-2.0
+
+file_format: definition/2
+attributes:
+  - key: demo.recommendation.cache_hit
+    type: boolean
+    brief: Whether the recommendation cache was hit
+    stability: stable
+    note: Indicates whether the recommendation was served from cache (true) or computed fresh (false)
