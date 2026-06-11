@@ -10,6 +10,11 @@ the release.
 * [testing] Add telemetry sanity tests to validate end-to-end observability
   pipeline, including service-to-service edge verification via Jaeger trace walks
   ([#3356](https://github.com/open-telemetry/opentelemetry-demo/pull/3356))
+* [testing] Telemetry tests now build the PR's images and share them across the
+  full/minimal jobs via an artifact (instead of pulling released images), wait
+  for the traces, metrics, and logs backends during warmup to avoid per-test
+  timeouts, and cap the test step at 15 minutes
+  ([#3498](https://github.com/open-telemetry/opentelemetry-demo/pull/3498))
 * [telemetry-docs] Add a new service to provide telemetry documentation based
   on Weaver
   ([#2794](https://github.com/open-telemetry/opentelemetry-demo/pull/2794))
