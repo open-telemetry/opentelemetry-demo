@@ -19,3 +19,4 @@ opentelemetry-instrumentation-requests==0.59b0
 opentelemetry-instrumentation-httpx==0.59b0
 gradio==6.0.1
 vcrpy==7.0.0
+aiohttp<3.13
