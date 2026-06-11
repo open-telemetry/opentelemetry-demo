@@ -1,35 +1,47 @@
 # Copyright The OpenTelemetry Authors
 # SPDX-License-Identifier: Apache-2.0
 
+name: Dependabot auto-update protobuf diff
+
 on:
-  pull_request_target:
+  pull_request_target:  # zizmor: ignore[dangerous-triggers] restricted to Dependabot PRs and pushes only generated protobuf updates
     branches: [ main ]
 
 permissions:
   contents: read
 
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: false
+
 jobs:
   dependabot-auto-update-protobuf-diff:
+    name: Update protobuf diff
     permissions:
-      contents: write
-      pull-requests: write
+      contents: write  # required to push generated protobuf updates
+      pull-requests: write  # required to update Dependabot PR branches
     runs-on: ubuntu-latest
     # Only run this job if the PR is opened by dependabot and the last commit is from dependabot
     if: github.event.pull_request.user.login == 'dependabot[bot]'
     steps:
-      - name: Checkout
-        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd  # v6.0.2
+      - name: Checkout code
+        uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10  # v6.0.3
         with:
           ref: ${{ github.head_ref }}
           token: ${{ secrets.DEPENDABOT_TOKEN }}
+          persist-credentials: false
       - name: Generate
         run: make clean docker-generate-protobuf
       - name: Commit only if there are changes
+        env:
+          BRANCH_NAME: ${{ github.head_ref }}
+          DEPENDABOT_TOKEN: ${{ secrets.DEPENDABOT_TOKEN }}
         run: |
           if ! git diff --quiet; then
             git config user.name "dependabot[bot]"
             git config user.email "49699333+dependabot[bot]@users.noreply.github.com"
             git add .
             git commit -s -m "chore: update protobuf"
-            git push
+            AUTH_HEADER=$(printf 'x-access-token:%s' "${DEPENDABOT_TOKEN}" | base64 -w 0)
+            git -c "http.https://github.com/.extraheader=AUTHORIZATION: basic ${AUTH_HEADER}" push origin "HEAD:${BRANCH_NAME}"
           fi

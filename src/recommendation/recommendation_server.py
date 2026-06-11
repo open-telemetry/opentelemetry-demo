@@ -51,7 +51,7 @@ class RecommendationService(demo_pb2_grpc.RecommendationServiceServicer):
         response.product_ids.extend(prod_list)
 
         # Collect metrics for this service
-        rec_svc_metrics["app_recommendations_counter"].add(len(prod_list), {'recommendation.type': 'catalog'})
+        rec_svc_metrics["demo.recommendation.requests"].add(len(prod_list), {'recommendation.type': 'catalog'})
 
         return response
 
@@ -76,10 +76,10 @@ def get_product_list(request_product_ids):
 
         # Feature flag scenario - Cache Leak
         if check_feature_flag("recommendationCacheFailure"):
-            span.set_attribute("app.recommendation.cache_enabled", True)
+            span.set_attribute("demo.feature_flag.recommendation_cache", True)
             if random.random() < 0.5 or first_run:
                 first_run = False
-                span.set_attribute("app.cache_hit", False)
+                span.set_attribute("demo.recommendation.cache_hit", False)
                 logger.info("get_product_list: cache miss")
                 cat_response = product_catalog_stub.ListProducts(demo_pb2.Empty())
                 response_ids = [x.id for x in cat_response.products]
@@ -87,11 +87,11 @@ def get_product_list(request_product_ids):
                 cached_ids = cached_ids + cached_ids[:len(cached_ids) // 4]
                 product_ids = cached_ids
             else:
-                span.set_attribute("app.cache_hit", True)
+                span.set_attribute("demo.recommendation.cache_hit", True)
                 logger.info("get_product_list: cache hit")
                 product_ids = cached_ids
         else:
-            span.set_attribute("app.recommendation.cache_enabled", False)
+            span.set_attribute("demo.feature_flag.recommendation_cache", False)
             cat_response = product_catalog_stub.ListProducts(demo_pb2.Empty())
             product_ids = [x.id for x in cat_response.products]
 
@@ -100,15 +100,15 @@ def get_product_list(request_product_ids):
         # Create a filtered list of products excluding the products received as input
         filtered_products = list(set(product_ids) - set(request_product_ids))
         num_products = len(filtered_products)
-        span.set_attribute("app.filtered_products.count", num_products)
+        span.set_attribute("demo.product.filtered.count", num_products)
         num_return = min(max_responses, num_products)
 
-        # Sample list of indicies to return
+        # Sample list of indices to return
         indices = random.sample(range(num_products), num_return)
         # Fetch product ids from indices
         prod_list = [filtered_products[i] for i in indices]
 
-        span.set_attribute("app.filtered_products.list", prod_list)
+        span.set_attribute("demo.product.filtered.list", prod_list)
 
         return prod_list
 

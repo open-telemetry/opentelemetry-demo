@@ -3,7 +3,7 @@
 
 file_format: definition/2
 metrics:
-  - name: app.shipping.items_count
+  - name: demo.shipping.items_shipped
     brief: Shipping items counter
     instrument: counter
     unit: "{item}"

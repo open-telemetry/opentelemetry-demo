@@ -18,4 +18,5 @@ datasources:
       logMessageField: body
       pplEnabled: true
       timeField: observedTimestamp
+      # version must be in sync with src\opensearch\Dockerfile
       version: 3.5.0

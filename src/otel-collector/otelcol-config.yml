@@ -1,6 +1,13 @@
 # Copyright The OpenTelemetry Authors
 # SPDX-License-Identifier: Apache-2.0
 
+# Base collector configuration: receivers, processors, and pipelines.
+# Exports only to the debug exporter by default.
+# Layer additional configs on top with --config to add exporters:
+#   otelcol-config-full.yml        adds Kafka and PostgreSQL metric receivers
+#   otelcol-config-observability.yml  adds Jaeger, Prometheus, OpenSearch exporters
+#   otelcol-config-extras.yml      extras/customizations (empty stub)
+
 receivers:
   otlp:
     protocols:
@@ -22,13 +29,9 @@ receivers:
     endpoint: unix:///var/run/docker.sock
     # https://github.com/open-telemetry/opentelemetry-collector-contrib/issues/44511
     api_version: "1.44"
-  kafkametrics:
-    scrapers:
-      - brokers
-      - topics
-      - consumers
-    brokers:
-      - ${KAFKA_ADDR}
+  redis:
+    endpoint: "valkey-cart:6379"
+    username: "valkey"
     collection_interval: 10s
   postgresql:
     endpoint: ${POSTGRES_HOST}:${POSTGRES_PORT}
@@ -53,10 +56,18 @@ receivers:
         enabled: true
     tls:
       insecure: true
-  redis:
-    endpoint: "valkey-cart:6379"
-    username: "valkey"
-    collection_interval: 10s
+  # Demo: scrape a Prometheus `/metrics` endpoint exposed by the ad service
+  # using the Prometheus Java client library. This illustrates a common
+  # OTel-adoption pattern -- bridging existing Prometheus-client
+  # instrumentation into an OTel pipeline. For new custom metrics, prefer
+  # the OpenTelemetry SDK directly. See `src/ad/README.md` for details.
+  prometheus/ad:
+    config:
+      scrape_configs:
+        - job_name: ad
+          scrape_interval: 10s
+          static_configs:
+            - targets: ["ad:${env:AD_PROMETHEUS_PORT}"]
   # Host metrics
   host_metrics:
     root_path: /hostfs
@@ -117,7 +128,6 @@ receivers:
         metrics:
           system.paging.usage:
             enabled: true
-
       processes:
       process:
         mute_process_exe_error: true
@@ -127,33 +137,10 @@ receivers:
         metrics:
           system.uptime:
             enabled: true
+
 exporters:
   debug:
-  otlp_grpc/jaeger:
-    endpoint: "jaeger:4317"
-    tls:
-      insecure: true
-    sending_queue:
-      batch:
-  otlp_http/prometheus:
-    endpoint: "http://prometheus:9090/api/v1/otlp"
-    tls:
-      insecure: true
-    sending_queue:
-      batch:
-  opensearch:
-    logs_index: otel-logs
-    logs_index_time_format: "yyyy-MM-dd"
-    http:
-      endpoint: "http://opensearch:9200"
-      tls:
-        insecure: true
-    sending_queue:
-      batch:
-  otlp_grpc/firepit:
-    endpoint: "firepit:4317"
-    tls:
-      insecure: true
+
 processors:
   memory_limiter:
     check_interval: 5s
@@ -161,11 +148,35 @@ processors:
     spike_limit_percentage: 25
   resourcedetection:
     detectors: [env, docker, system]
+    system:
+      hostname_sources: ["os"]
+      resource_attributes:
+        host.name:
+          enabled: true
+        host.arch:
+          enabled: true
+        host.cpu.vendor.id:
+          enabled: true
+        host.cpu.family:
+          enabled: true
+        host.cpu.model.id:
+          enabled: true
+        host.cpu.model.name:
+          enabled: true
+        host.cpu.stepping:
+          enabled: true
+        host.cpu.cache.l2.size:
+          enabled: true
+        os.description:
+          enabled: true
+        os.type:
+          enabled: true
   filter/sanitize_profiles:
     error_mode: ignore
     profiles:
       profile:
         - 'IsMatch(resource.attributes["service.name"], "containerd-shim-.*")'
+
   transform/sanitize_logs:
     error_mode: ignore
     log_statements:
@@ -230,19 +241,19 @@ service:
     traces:
       receivers: [otlp]
       processors: [resourcedetection, memory_limiter, transform/sanitize_spans]
-      exporters: [otlp_grpc/jaeger, debug, span_metrics]
+      exporters: [debug, span_metrics]
     metrics:
-      receivers: [docker_stats, http_check/frontend-proxy, host_metrics, nginx, otlp, postgresql, redis, span_metrics, kafkametrics]
+      receivers: [docker_stats, http_check/frontend-proxy, host_metrics, nginx, otlp, redis, postgresql, prometheus/ad, span_metrics]
       processors: [resourcedetection, memory_limiter]
-      exporters: [otlp_http/prometheus, debug]
+      exporters: [debug]
     logs:
       receivers: [otlp]
       processors: [resourcedetection, memory_limiter, transform/sanitize_logs]
-      exporters: [opensearch, debug]
+      exporters: [debug]
     profiles:
       receivers: [otlp]
       processors: [filter/sanitize_profiles, memory_limiter]
-      exporters: [otlp_grpc/firepit, debug]
+      exporters: [debug]
   telemetry:
     metrics:
       readers:

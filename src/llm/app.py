@@ -91,11 +91,11 @@ def chat_completions():
     model = data.get('model', 'astronomy-llm')
     tools = data.get('tools', None)
 
-    app.logger.info(f"Received a chat completion request: '{messages}'")
+    app.logger.info("Received a chat completion request")
 
     last_message = messages[-1]["content"]
 
-    app.logger.info(f"last_message is: '{last_message}'")
+    app.logger.info("Processing last chat message")
 
     if 'What age(s) is this recommended for?' in last_message:
         response_text = 'This product is recommended for ages 7 and above.'
@@ -114,11 +114,11 @@ def chat_completions():
 
         tool_args = f"{{\"product_id\": \"{product_id}\"}}"
 
-        app.logger.info(f"Processing a tool call with args: '{tool_args}'")
+        app.logger.info("Processing a tool call")
 
-        app.logger.info(f"The model is: {model}")
+        app.logger.info("Processing requested model")
         if model.endswith("rate-limit"):
-            app.logger.info(f"Returning a rate limit error")
+            app.logger.info("Returning a rate limit error")
             response = {
                 "error": {
                     "message": "Rate limit reached. Please try again later.",
@@ -219,4 +219,4 @@ if __name__ == '__main__':
 
     print("OpenAI API server starting on http://localhost:8000")
     print("Set your OpenAI base URL to: http://localhost:8000/v1")
-    app.run(host='0.0.0.0', port=8000, debug=True)
+    app.run(host='0.0.0.0', port=8000)

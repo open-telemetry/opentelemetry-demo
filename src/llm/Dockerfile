@@ -2,7 +2,7 @@
 # SPDX-License-Identifier: Apache-2.0
 
 
-FROM docker.io/library/python:3.12-alpine3.22 AS build-venv
+FROM docker.io/library/python:3.14.5-alpine3.22@sha256:6b91e66ab2a880ce9ca5a1b91c70f45963ff71ff68268df056336e1a657d5efd AS build-venv
 
 RUN apk update && \
     apk add gcc g++ linux-headers
@@ -10,9 +10,9 @@ RUN apk update && \
 COPY ./src/llm/requirements.txt requirements.txt
 
 RUN python -m venv venv && \
-    venv/bin/pip install --no-cache-dir -r requirements.txt
+    venv/bin/pip install --no-cache-dir --require-hashes -r requirements.txt
 
-FROM docker.io/library/python:3.12-alpine3.22
+FROM docker.io/library/python:3.14.5-alpine3.22@sha256:6b91e66ab2a880ce9ca5a1b91c70f45963ff71ff68268df056336e1a657d5efd
 
 COPY --from=build-venv /venv/ /venv/
 

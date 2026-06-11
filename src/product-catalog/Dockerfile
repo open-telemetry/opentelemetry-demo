@@ -2,7 +2,7 @@
 # SPDX-License-Identifier: Apache-2.0
 
 
-FROM golang:1.25-bookworm AS builder
+FROM docker.io/library/golang:1.26.4-bookworm@sha256:5d2b868674b57c9e48cdd39e891acce4196b6926ca6d11e9c270a8f85106203d AS builder
 
 WORKDIR /usr/src/app/
 
@@ -12,11 +12,12 @@ COPY ./src/product-catalog/go.sum go.sum
 RUN go mod download
 
 COPY ./src/product-catalog/genproto/oteldemo/ genproto/oteldemo/
+COPY ./src/product-catalog/flags/ flags/
 COPY ./src/product-catalog/main.go main.go
 
 RUN CGO_ENABLED=0 GOOS=linux GO111MODULE=on go build -ldflags "-s -w" -o product-catalog main.go
 
-FROM gcr.io/distroless/static-debian12:nonroot
+FROM gcr.io/distroless/static-debian12:nonroot@sha256:d093aa3e30dbadd3efe1310db061a14da60299baff8450a17fe0ccc514a16639
 
 WORKDIR /usr/src/app/
 
