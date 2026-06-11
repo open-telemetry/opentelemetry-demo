@@ -3,37 +3,37 @@
 
 file_format: definition/2
 attributes:
-  - key: app.shipping.amount
+  - key: demo.shipping.amount
     type: double
     brief: Shipping cost amount
     stability: stable
     note: The monetary amount charged for shipping
     examples: [5.99, 15.00]
-  - key: app.shipping.cost.total
+  - key: demo.shipping.cost.total
     type: string
     brief: Total shipping cost
     stability: stable
     note: The total cost of shipping for an order (string representation)
     examples: ["10.50", "25.00"]
-  - key: app.shipping.items_count
+  - key: demo.shipping.items_count
     type: int
     brief: Number of items being shipped
     stability: stable
     note: The count of items included in a shipment
     examples: [1, 5, 10]
-  - key: app.shipping.tracking.id
+  - key: demo.shipping.tracking.id
     type: string
     brief: Shipping tracking identifier
     stability: stable
     note: The tracking number or identifier for a shipment
     examples: ["TRACK-123456", "SHP-789012"]
-  - key: app.quote.items.count
+  - key: demo.shipping.quote.items_count
     type: int
     brief: Number of items in quote
     stability: stable
     note: The count of items included in a pricing quote
     examples: [1, 5, 10]
-  - key: app.quote.cost.total
+  - key: demo.shipping.quote.cost.total
     type: double
     brief: Total quote cost
     stability: stable

@@ -15,7 +15,8 @@ exclude = [
   "^https://www\\.gnu\\.org",
   "^https://platform\\.openai\\.com",
   "^https://dev\\.mysql\\.com",
-  "^https://www\\.npmjs\\.com"
+  "^https://www\\.npmjs\\.com",
+  "^https://www\\.robotstxt\\.org",
 ]
 
 exclude_path = [

@@ -202,8 +202,8 @@ class CurrencyService final : public oteldemo::CurrencyService::Service
       getUnitsAndNanos(*response, final);
       response->set_currency_code(to_code);
 
-      span->SetAttribute("app.currency.conversion.from", from_code);
-      span->SetAttribute("app.currency.conversion.to", to_code);
+      span->SetAttribute("demo.exchange.from", from_code);
+      span->SetAttribute("demo.exchange.to", to_code);
 
       CurrencyCounter(to_code);
 
@@ -228,9 +228,9 @@ class CurrencyService final : public oteldemo::CurrencyService::Service
     return Status::OK;
   }
 
-  void CurrencyCounter(const std::string& currency_code)
+  void CurrencyCounter(const std::string& to_code)
   {
-      std::map<std::string, std::string> labels = { {"currency_code", currency_code} };
+      std::map<std::string, std::string> labels = { {"demo.exchange.to", to_code} };
       auto labelkv = common::KeyValueIterableView<decltype(labels)>{ labels };
       currency_counter->Add(1, labelkv);
   }
@@ -276,7 +276,7 @@ int main(int argc, char **argv) {
   initTracer();
   initMeter();
   initLogger();
-  currency_counter = initIntCounter("app.currency", version);
+  currency_counter = initIntCounter("demo.exchange.conversions", version);
   logger = getLogger(name);
   RunServer(port);
 

@@ -26,7 +26,21 @@
         "on": true,
         "off": false
       },
-      "defaultVariant": "off"
+      "defaultVariant": "off",
+      "targeting": {
+        "if": [
+          {
+            "==": [
+              {
+                "var": "product_id"
+              },
+              "OLJCESPC7Z"
+            ]
+          },
+          "off",
+          "off"
+        ]
+      }
     },
     "recommendationCacheFailure": {
       "description": "Fail recommendation service cache",
@@ -132,7 +146,6 @@
         "off": false
       },
       "defaultVariant": "off"
-
     },
     "emailMemoryLeak": {
       "description": "Memory leak in the email service.",
@@ -144,6 +157,16 @@
         "100x": 100,
         "1000x": 1000,
         "10000x": 10000
+      },
+      "defaultVariant": "off"
+    },
+    "intlShippingSlowdown": {
+      "description": "Delays international shipping responses to simulate overseas shipping delay",
+      "state": "ENABLED",
+      "variants": {
+        "10sec": 10,
+        "5sec": 5,
+        "off": 0
       },
       "defaultVariant": "off"
     }

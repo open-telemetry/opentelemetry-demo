@@ -4,7 +4,7 @@
 cmake_minimum_required(VERSION 3.26)
 project(currency)
 
-find_package(Protobuf REQUIRED)
+find_package(Protobuf CONFIG REQUIRED)
 find_package(gRPC CONFIG REQUIRED)
 find_package(opentelemetry-cpp CONFIG REQUIRED)
 

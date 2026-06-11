@@ -21,4 +21,4 @@ spec:
       selector: span[name="get_average_product_review_score"]
       assertions:
         - attr:demo.product.id  =  "66VCHSJNUP"
-        - attr:app.product_reviews.average_score = 4.6
+        - attr:demo.product.review.average_score = 4.6

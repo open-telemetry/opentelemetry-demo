@@ -8,5 +8,5 @@ attribute_groups:
     brief: Quote service attributes
     stability: stable
     attributes:
-      - ref: app.quote.items.count
-      - ref: app.quote.cost.total
+      - ref: demo.shipping.quote.items_count
+      - ref: demo.shipping.quote.cost.total
