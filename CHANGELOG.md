@@ -13,6 +13,11 @@ the release.
 * [testing] Add telemetry sanity tests to validate end-to-end observability
   pipeline, including service-to-service edge verification via Jaeger trace walks
   ([#3356](https://github.com/open-telemetry/opentelemetry-demo/pull/3356))
+* [testing] Telemetry tests now build the PR's images and share them across the
+  full/minimal jobs via an artifact (instead of pulling released images), wait
+  for the traces, metrics, and logs backends during warmup to avoid per-test
+  timeouts, and cap the test step at 15 minutes
+  ([#3498](https://github.com/open-telemetry/opentelemetry-demo/pull/3498))
 * [telemetry-docs] Add a new service to provide telemetry documentation based
   on Weaver
   ([#2794](https://github.com/open-telemetry/opentelemetry-demo/pull/2794))
@@ -217,6 +222,10 @@ the release.
 * [telemetry] Split cart and payment attributes out of the order telemetry
   schema into their own domain files.
   ([#3484](https://github.com/open-telemetry/opentelemetry-demo/pull/3484))
+* [fraud-detection] fix gRPC service files dropped from the shadow jar by
+  setting `duplicatesStrategy` to `INCLUDE`, restoring the DNS name resolver
+  registration needed to connect to flagd
+  ([#3501](https://github.com/open-telemetry/opentelemetry-demo/pull/3501))
 
 ## 2.2.0
 
