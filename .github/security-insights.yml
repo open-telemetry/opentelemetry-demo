@@ -16,11 +16,11 @@ project:
     - name: Cyrille Le Clerc
       affiliation: Grafana Labs
       social: https://github.com/cyrille-leclerc
-      primary: true
+      primary: false
     - name: Juliano Costa
       affiliation: Datadog
       social: https://github.com/julianocosta89
-      primary: false
+      primary: true
     - name: Pierre Tessier
       affiliation: Honeycomb
       social: https://github.com/puckpuck
@@ -62,7 +62,7 @@ repository:
     - name: Cyrille Le Clerc
       affiliation: Grafana Labs
       social: https://github.com/cyrille-leclerc
-      primary: true
+      primary: false
     - name: "D\u00F3nal O'Sullivan"
       affiliation: Elastic
       social: https://github.com/osullivandonal
@@ -70,7 +70,7 @@ repository:
     - name: Juliano Costa
       affiliation: Datadog
       social: https://github.com/julianocosta89
-      primary: false
+      primary: true
     - name: Pierre Tessier
       affiliation: Honeycomb
       social: https://github.com/puckpuck
