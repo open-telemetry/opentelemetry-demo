@@ -12,7 +12,17 @@ multi-ecosystem-groups:
       interval: "weekly"
       day: "tuesday"
       time: "03:50"
+  src-agent:
+    schedule:
+      interval: "weekly"
+      day: "tuesday"
+      time: "03:50"
   src-cart:
+    schedule:
+      interval: "weekly"
+      day: "tuesday"
+      time: "03:50"
+  src-chatbot:
     schedule:
       interval: "weekly"
       day: "tuesday"
@@ -48,6 +58,11 @@ multi-ecosystem-groups:
       day: "tuesday"
       time: "03:50"
   src-load-generator:
+    schedule:
+      interval: "weekly"
+      day: "tuesday"
+      time: "03:50"
+  src-mcp:
     schedule:
       interval: "weekly"
       day: "tuesday"
