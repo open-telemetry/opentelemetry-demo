@@ -14,7 +14,7 @@ project:
   homepage: https://opentelemetry.io/docs/demo/
   administrators:
     - name: Cyrille Le Clerc
-      affiliation: Grafana Labs
+      affiliation: Datadog
       social: https://github.com/cyrille-leclerc
       primary: false
     - name: Juliano Costa
@@ -60,7 +60,7 @@ repository:
   no-third-party-packages: false
   core-team:
     - name: Cyrille Le Clerc
-      affiliation: Grafana Labs
+      affiliation: Datadog
       social: https://github.com/cyrille-leclerc
       primary: false
     - name: "D\u00F3nal O'Sullivan"

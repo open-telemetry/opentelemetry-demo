@@ -85,7 +85,7 @@ Wednesday at 8:30 AM PST and anyone is welcome.
 
 ### Maintainers
 
-- [Cyrille Le Clerc](https://github.com/cyrille-leclerc), Grafana Labs
+- [Cyrille Le Clerc](https://github.com/cyrille-leclerc), Datadog
 - [Juliano Costa](https://github.com/julianocosta89), Datadog
 - [Pierre Tessier](https://github.com/puckpuck), Honeycomb
 - [Roger Coll](https://github.com/rogercoll), Elastic
