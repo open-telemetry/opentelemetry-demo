@@ -22,7 +22,7 @@ project:
       social: https://github.com/julianocosta89
       primary: true
     - name: Pierre Tessier
-      affiliation: Honeycomb
+      affiliation: Resolve AI
       social: https://github.com/puckpuck
       primary: false
     - name: Roger Coll
@@ -72,7 +72,7 @@ repository:
       social: https://github.com/julianocosta89
       primary: true
     - name: Pierre Tessier
-      affiliation: Honeycomb
+      affiliation: Resolve AI
       social: https://github.com/puckpuck
       primary: false
     - name: "Piotr Kie\u0142kowicz"
