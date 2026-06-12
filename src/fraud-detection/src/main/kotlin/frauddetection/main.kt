@@ -39,6 +39,12 @@ fun main() {
     props[KEY_DESERIALIZER_CLASS_CONFIG] = StringDeserializer::class.java.name
     props[VALUE_DESERIALIZER_CLASS_CONFIG] = ByteArrayDeserializer::class.java.name
     props[GROUP_ID_CONFIG] = groupID
+    // Read from the start of the topic so a freshly-joined consumer group still
+    // processes orders produced before it finished joining, matching the
+    // accounting consumer's behaviour. Without this the Kafka default of
+    // "latest" silently drops those orders, so fraud-detection may emit no
+    // telemetry on a quiet/cold start.
+    props[AUTO_OFFSET_RESET_CONFIG] = "earliest"
     val bootstrapServers = System.getenv("KAFKA_ADDR")
     if (bootstrapServers == null) {
         println("KAFKA_ADDR is not supplied")
