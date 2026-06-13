@@ -5,7 +5,7 @@ import warnings
 
 import demo_pb2 as demo__pb2
 
-GRPC_GENERATED_VERSION = '1.80.0'
+GRPC_GENERATED_VERSION = '1.81.0'
 GRPC_VERSION = grpc.__version__
 _version_not_supported = False
 
@@ -25,7 +25,7 @@ if _version_not_supported:
     )
 
 
-class CartServiceStub(object):
+class CartServiceStub:
     """-----------------Cart service-----------------
 
     """
@@ -53,7 +53,7 @@ class CartServiceStub(object):
                 _registered_method=True)
 
 
-class CartServiceServicer(object):
+class CartServiceServicer:
     """-----------------Cart service-----------------
 
     """
@@ -102,7 +102,7 @@ def add_CartServiceServicer_to_server(servicer, server):
 
 
  # This class is part of an EXPERIMENTAL API.
-class CartService(object):
+class CartService:
     """-----------------Cart service-----------------
 
     """
@@ -189,7 +189,7 @@ class CartService(object):
             _registered_method=True)
 
 
-class RecommendationServiceStub(object):
+class RecommendationServiceStub:
     """---------------Recommendation service----------
 
     """
@@ -207,7 +207,7 @@ class RecommendationServiceStub(object):
                 _registered_method=True)
 
 
-class RecommendationServiceServicer(object):
+class RecommendationServiceServicer:
     """---------------Recommendation service----------
 
     """
@@ -234,7 +234,7 @@ def add_RecommendationServiceServicer_to_server(servicer, server):
 
 
  # This class is part of an EXPERIMENTAL API.
-class RecommendationService(object):
+class RecommendationService:
     """---------------Recommendation service----------
 
     """
@@ -267,7 +267,7 @@ class RecommendationService(object):
             _registered_method=True)
 
 
-class ProductCatalogServiceStub(object):
+class ProductCatalogServiceStub:
     """---------------Product Catalog----------------
 
     """
@@ -295,7 +295,7 @@ class ProductCatalogServiceStub(object):
                 _registered_method=True)
 
 
-class ProductCatalogServiceServicer(object):
+class ProductCatalogServiceServicer:
     """---------------Product Catalog----------------
 
     """
@@ -344,7 +344,7 @@ def add_ProductCatalogServiceServicer_to_server(servicer, server):
 
 
  # This class is part of an EXPERIMENTAL API.
-class ProductCatalogService(object):
+class ProductCatalogService:
     """---------------Product Catalog----------------
 
     """
@@ -431,7 +431,7 @@ class ProductCatalogService(object):
             _registered_method=True)
 
 
-class ProductReviewServiceStub(object):
+class ProductReviewServiceStub:
     """---------------Product Review service----------
 
     """
@@ -459,7 +459,7 @@ class ProductReviewServiceStub(object):
                 _registered_method=True)
 
 
-class ProductReviewServiceServicer(object):
+class ProductReviewServiceServicer:
     """---------------Product Review service----------
 
     """
@@ -508,7 +508,7 @@ def add_ProductReviewServiceServicer_to_server(servicer, server):
 
 
  # This class is part of an EXPERIMENTAL API.
-class ProductReviewService(object):
+class ProductReviewService:
     """---------------Product Review service----------
 
     """
@@ -595,7 +595,7 @@ class ProductReviewService(object):
             _registered_method=True)
 
 
-class ShippingServiceStub(object):
+class ShippingServiceStub:
     """---------------Shipping Service----------
 
     """
@@ -618,7 +618,7 @@ class ShippingServiceStub(object):
                 _registered_method=True)
 
 
-class ShippingServiceServicer(object):
+class ShippingServiceServicer:
     """---------------Shipping Service----------
 
     """
@@ -656,7 +656,7 @@ def add_ShippingServiceServicer_to_server(servicer, server):
 
 
  # This class is part of an EXPERIMENTAL API.
-class ShippingService(object):
+class ShippingService:
     """---------------Shipping Service----------
 
     """
@@ -716,7 +716,7 @@ class ShippingService(object):
             _registered_method=True)
 
 
-class CurrencyServiceStub(object):
+class CurrencyServiceStub:
     """-----------------Currency service-----------------
 
     """
@@ -739,7 +739,7 @@ class CurrencyServiceStub(object):
                 _registered_method=True)
 
 
-class CurrencyServiceServicer(object):
+class CurrencyServiceServicer:
     """-----------------Currency service-----------------
 
     """
@@ -777,7 +777,7 @@ def add_CurrencyServiceServicer_to_server(servicer, server):
 
 
  # This class is part of an EXPERIMENTAL API.
-class CurrencyService(object):
+class CurrencyService:
     """-----------------Currency service-----------------
 
     """
@@ -837,7 +837,7 @@ class CurrencyService(object):
             _registered_method=True)
 
 
-class PaymentServiceStub(object):
+class PaymentServiceStub:
     """-------------Payment service-----------------
 
     """
@@ -855,7 +855,7 @@ class PaymentServiceStub(object):
                 _registered_method=True)
 
 
-class PaymentServiceServicer(object):
+class PaymentServiceServicer:
     """-------------Payment service-----------------
 
     """
@@ -882,7 +882,7 @@ def add_PaymentServiceServicer_to_server(servicer, server):
 
 
  # This class is part of an EXPERIMENTAL API.
-class PaymentService(object):
+class PaymentService:
     """-------------Payment service-----------------
 
     """
@@ -915,7 +915,7 @@ class PaymentService(object):
             _registered_method=True)
 
 
-class EmailServiceStub(object):
+class EmailServiceStub:
     """-------------Email service-----------------
 
     """
@@ -933,7 +933,7 @@ class EmailServiceStub(object):
                 _registered_method=True)
 
 
-class EmailServiceServicer(object):
+class EmailServiceServicer:
     """-------------Email service-----------------
 
     """
@@ -960,7 +960,7 @@ def add_EmailServiceServicer_to_server(servicer, server):
 
 
  # This class is part of an EXPERIMENTAL API.
-class EmailService(object):
+class EmailService:
     """-------------Email service-----------------
 
     """
@@ -993,7 +993,7 @@ class EmailService(object):
             _registered_method=True)
 
 
-class CheckoutServiceStub(object):
+class CheckoutServiceStub:
     """-------------Checkout service-----------------
 
     """
@@ -1011,7 +1011,7 @@ class CheckoutServiceStub(object):
                 _registered_method=True)
 
 
-class CheckoutServiceServicer(object):
+class CheckoutServiceServicer:
     """-------------Checkout service-----------------
 
     """
@@ -1038,7 +1038,7 @@ def add_CheckoutServiceServicer_to_server(servicer, server):
 
 
  # This class is part of an EXPERIMENTAL API.
-class CheckoutService(object):
+class CheckoutService:
     """-------------Checkout service-----------------
 
     """
@@ -1071,7 +1071,7 @@ class CheckoutService(object):
             _registered_method=True)
 
 
-class AdServiceStub(object):
+class AdServiceStub:
     """------------Ad service------------------
 
     """
@@ -1089,7 +1089,7 @@ class AdServiceStub(object):
                 _registered_method=True)
 
 
-class AdServiceServicer(object):
+class AdServiceServicer:
     """------------Ad service------------------
 
     """
@@ -1116,7 +1116,7 @@ def add_AdServiceServicer_to_server(servicer, server):
 
 
  # This class is part of an EXPERIMENTAL API.
-class AdService(object):
+class AdService:
     """------------Ad service------------------
 
     """
@@ -1149,7 +1149,7 @@ class AdService(object):
             _registered_method=True)
 
 
-class FeatureFlagServiceStub(object):
+class FeatureFlagServiceStub:
     """------------Feature flag service------------------
 
     """
@@ -1187,7 +1187,7 @@ class FeatureFlagServiceStub(object):
                 _registered_method=True)
 
 
-class FeatureFlagServiceServicer(object):
+class FeatureFlagServiceServicer:
     """------------Feature flag service------------------
 
     """
@@ -1258,7 +1258,7 @@ def add_FeatureFlagServiceServicer_to_server(servicer, server):
 
 
  # This class is part of an EXPERIMENTAL API.
-class FeatureFlagService(object):
+class FeatureFlagService:
     """------------Feature flag service------------------
 
     """

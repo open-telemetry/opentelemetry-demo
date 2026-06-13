@@ -37,7 +37,7 @@ permissions:
   contents: read
 
 # Coalesce concurrent runs on the same PR or branch so an approval right
-# after a push doesn't fire two 45-minute builds in parallel.
+# after a push doesn't fire two builds in parallel.
 concurrency:
   group: telemetry-tests-${{ github.event.pull_request.number || github.ref }}
   cancel-in-progress: true
@@ -71,22 +71,24 @@ jobs:
             echo "should_run=false" >> "$GITHUB_OUTPUT"
           fi
 
-  telemetry-tests-full:
+  # Build the demo images from the PR's source ONCE, then hand them to the test
+  # jobs as an artifact. Without this the test jobs ran `docker compose up`,
+  # which pulls the released `ghcr.io/open-telemetry/demo:latest-*` images from
+  # the registry — so a PR's own changes were never actually exercised.
+  build-images:
+    name: "Build demo images"
     needs: gate
     if: ${{ needs.gate.outputs.should_run == 'true' }}
     runs-on: ubuntu-latest
-    timeout-minutes: 45
-    name: "Telemetry Tests (full)"
+    timeout-minutes: 30
     steps:
       - name: check out code
         uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10  # v6.0.3
         with:
           # On pull_request_review the default ref is the base branch; check out
-          # the PR head so we test the proposed changes. Falls back to the
+          # the PR head so we build the proposed changes. Falls back to the
           # default ref for push and workflow_dispatch events.
           ref: ${{ github.event.pull_request.head.sha || github.ref }}
-          # Don't leave the GITHUB_TOKEN credential helper on disk; the test
-          # jobs only read the repo, they never push back.
           persist-credentials: false
 
       - name: Free disk space
@@ -100,7 +102,63 @@ jobs:
       - name: Create .env.override if missing
         run: touch .env.override
 
+      - name: Build demo images
+        run: make build
+
+      - name: Save demo images to an artifact tarball
+        run: |
+          # Only the images we build (demo:latest-*) need shipping; third-party
+          # images (jaeger, prometheus, grafana, ...) are pulled from their own
+          # registries by each test job, so leave them out to keep the tarball small.
+          IMAGES=$(docker images 'ghcr.io/open-telemetry/demo:latest-*' --format '{{.Repository}}:{{.Tag}}')
+          echo "Saving images:"; echo "$IMAGES"
+          docker save $IMAGES | zstd -3 -T0 -o demo-images.tar.zst
+          ls -lh demo-images.tar.zst
+
+      - name: Upload demo images artifact
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a  # v7.0.1
+        with:
+          name: demo-images-${{ github.run_id }}
+          path: demo-images.tar.zst
+          retention-days: 1
+          compression-level: 0  # already zstd-compressed
+
+  telemetry-tests-full:
+    needs: [gate, build-images]
+    if: ${{ needs.gate.outputs.should_run == 'true' }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    name: "Telemetry Tests (full)"
+    steps:
+      - name: check out code
+        uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10  # v6.0.3
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.ref }}
+          persist-credentials: false
+
+      - name: Free disk space
+        run: |
+          sudo rm -rf /usr/local/lib/android /usr/share/dotnet /opt/ghc
+          docker system prune -af
+
+      - name: Download demo images artifact
+        uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c  # v8.0.1
+        with:
+          name: demo-images-${{ github.run_id }}
+
+      - name: Load demo images
+        run: zstd -d -c demo-images.tar.zst | docker load
+
+      - name: Create .env.override if missing
+        run: touch .env.override
+
       - name: Run telemetry tests
+        timeout-minutes: 15
+        env:
+          # Give backends more headroom on slow shared runners before the
+          # per-test polls begin; the warmup gate waits for all three backends.
+          WARMUP_SECONDS: "300"
+          POLL_TIMEOUT: "240"
         run: make run-telemetry-tests
 
       - name: Print service logs on failure
@@ -112,10 +170,10 @@ jobs:
         run: make stop
 
   telemetry-tests-minimal:
-    needs: gate
+    needs: [gate, build-images]
     if: ${{ needs.gate.outputs.should_run == 'true' }}
     runs-on: ubuntu-latest
-    timeout-minutes: 45
+    timeout-minutes: 30
     name: "Telemetry Tests (minimal)"
     steps:
       - name: check out code
@@ -129,13 +187,22 @@ jobs:
           sudo rm -rf /usr/local/lib/android /usr/share/dotnet /opt/ghc
           docker system prune -af
 
-      - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@d7f5e7f509e45cec5c76c4d5afdd7de93d0b3df5  # v4.1.0
+      - name: Download demo images artifact
+        uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c  # v8.0.1
+        with:
+          name: demo-images-${{ github.run_id }}
+
+      - name: Load demo images
+        run: zstd -d -c demo-images.tar.zst | docker load
 
       - name: Create .env.override if missing
         run: touch .env.override
 
       - name: Run telemetry tests (minimal)
+        timeout-minutes: 15
+        env:
+          WARMUP_SECONDS: "300"
+          POLL_TIMEOUT: "240"
         run: make run-telemetry-tests-minimal
 
       - name: Print service logs on failure

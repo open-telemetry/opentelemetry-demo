@@ -1,0 +1,144 @@
+# Copyright The OpenTelemetry Authors
+# SPDX-License-Identifier: Apache-2.0
+
+header:
+  last-reviewed: '2026-06-11'
+  last-updated: '2026-06-11'
+  schema-version: 2.0.0
+  url: https://raw.githubusercontent.com/open-telemetry/opentelemetry-demo/main/.github/security-insights.yml
+  comment: |
+    This file contains the minimum information for https://github.com/open-telemetry/opentelemetry-demo.
+
+project:
+  name: OpenTelemetry Demo
+  homepage: https://opentelemetry.io/docs/demo/
+  administrators:
+    - name: Cyrille Le Clerc
+      affiliation: Datadog
+      social: https://github.com/cyrille-leclerc
+      primary: false
+    - name: Juliano Costa
+      affiliation: Datadog
+      social: https://github.com/julianocosta89
+      primary: true
+    - name: Pierre Tessier
+      affiliation: Resolve AI
+      social: https://github.com/puckpuck
+      primary: false
+    - name: Roger Coll
+      affiliation: Elastic
+      social: https://github.com/rogercoll
+      primary: false
+  documentation:
+    code-of-conduct: https://github.com/open-telemetry/.github/blob/main/CODE_OF_CONDUCT.md
+    detailed-guide: https://opentelemetry.io/docs/demo/
+    quickstart-guide: https://opentelemetry.io/docs/demo/docker_deployment/
+    release-process: https://github.com/open-telemetry/opentelemetry-demo/blob/main/CONTRIBUTING.md#making-a-new-release
+  repositories:
+    - name: opentelemetry-demo
+      url: https://github.com/open-telemetry/opentelemetry-demo
+      comment: |
+        Active primary OpenTelemetry Demo repository. It contains the Astronomy Shop microservice demo,
+        examples of OpenTelemetry instrumentation across several languages, and deployment assets for Docker and Kubernetes.
+  vulnerability-reporting:
+    bug-bounty-available: false
+    reports-accepted: true
+    policy: https://opentelemetry.io/docs/security/security-response/
+    contact:
+      name: The OpenTelemetry security team
+      email: security@opentelemetry.io
+      primary: true
+    comment: |
+      Report security vulnerabilities via https://github.com/open-telemetry/opentelemetry-demo/security.
+
+repository:
+  url: https://github.com/open-telemetry/opentelemetry-demo
+  status: active
+  accepts-automated-change-request: true
+  accepts-change-request: true
+  bug-fixes-only: false
+  no-third-party-packages: false
+  core-team:
+    - name: Cyrille Le Clerc
+      affiliation: Datadog
+      social: https://github.com/cyrille-leclerc
+      primary: false
+    - name: "D\u00F3nal O'Sullivan"
+      affiliation: Elastic
+      social: https://github.com/osullivandonal
+      primary: false
+    - name: Juliano Costa
+      affiliation: Datadog
+      social: https://github.com/julianocosta89
+      primary: true
+    - name: Pierre Tessier
+      affiliation: Resolve AI
+      social: https://github.com/puckpuck
+      primary: false
+    - name: "Piotr Kie\u0142kowicz"
+      affiliation: Splunk
+      social: https://github.com/Kielek
+      primary: false
+    - name: Roger Coll
+      affiliation: Elastic
+      social: https://github.com/rogercoll
+      primary: false
+    - name: Shenoy Pratik
+      affiliation: AWS OpenSearch
+      social: https://github.com/ps48
+      primary: false
+  documentation:
+    contributing-guide: https://github.com/open-telemetry/opentelemetry-demo/blob/main/CONTRIBUTING.md
+    dependency-management-policy: https://github.com/open-telemetry/opentelemetry-demo/blob/main/.github/dependabot.yml
+    security-policy: https://opentelemetry.io/docs/security/security-response/
+  license:
+    expression: Apache-2.0
+    url: https://github.com/open-telemetry/opentelemetry-demo/blob/main/LICENSE
+  release:
+    automated-pipeline: true
+    changelog: https://github.com/open-telemetry/opentelemetry-demo/blob/main/CHANGELOG.md
+    distribution-points:
+      - uri: https://hub.docker.com/r/otel/demo
+        comment: Demo component container images are published to Docker Hub with per-component tag suffixes.
+      - uri: https://github.com/open-telemetry/opentelemetry-demo/pkgs/container/demo
+        comment: Demo component container images are published to GitHub Container Registry with per-component tag suffixes.
+      - uri: https://artifacthub.io/packages/helm/opentelemetry-helm/opentelemetry-demo
+        comment: The OpenTelemetry Demo Helm chart is published through the OpenTelemetry Helm charts project.
+    attestations: []
+
+  security:
+    assessments:
+      self:
+        comment: No formal self-assessment yet.
+    tools:
+      - name: CodeQL
+        comment: |
+          Static code analysis.
+        integration:
+          adhoc: true
+          ci: true
+          release: true
+        rulesets:
+          - https://github.com/open-telemetry/opentelemetry-demo/blob/main/.github/workflows/codeql-analysis.yml
+        type: SAST
+      - name: Dependabot
+        comment: |
+          Automated dependency updates across GitHub Actions, Docker, and service package ecosystems.
+        integration:
+          adhoc: true
+          ci: true
+          release: true
+        rulesets:
+          - https://github.com/open-telemetry/opentelemetry-demo/blob/main/.github/dependabot.yml
+        type: SCA
+      - name: zizmor
+        comment: |
+          GitHub Actions workflow security analysis.
+        integration:
+          adhoc: true
+          ci: true
+          release: true
+        rulesets:
+          - https://github.com/open-telemetry/opentelemetry-demo/blob/main/.github/workflows/zizmor.yml
+          - https://github.com/open-telemetry/opentelemetry-demo/blob/main/.github/zizmor.yml
+        type: SAST
