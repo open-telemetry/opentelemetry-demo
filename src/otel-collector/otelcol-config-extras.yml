@@ -2,15 +2,15 @@ exporters:
   otlp_grpc/mybackend:
     endpoint: http://host.docker.internal:4317
     headers:
-      x-api-key: "85ec9b0cd77c764562eac862f233b2337db624c32509f575bceb51ba827285ed"
+      x-api-key: "9b7610fa"
     tls:
       insecure: true
 
 service:
   pipelines:
     traces:
-      exporters: [spanmetrics, otlp_grpc/mybackend]
+      exporters: [spanmetrics, otlp_grpc/jaeger, otlp_grpc/mybackend]
     metrics:
-      exporters: [otlp_grpc/mybackend]
+      exporters: [otlp_http/prometheus, otlp_grpc/mybackend]
     logs:
       exporters: [otlp_grpc/mybackend]
