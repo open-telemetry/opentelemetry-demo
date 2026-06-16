@@ -1,0 +1,119 @@
+# =============================================================================
+# OpenTelemetry Demo - values override
+# =============================================================================
+# Chart:      open-telemetry/opentelemetry-demo  (version 0.40.9, appVersion 2.2.0)
+# Purpose:    Expose the demo UIs through cloud Network Load Balancers (L4),
+#             and prepare the ground for a Grafana Cloud integration that will
+#             be completed later (e.g. via the k8s-monitoring chart + Alloy).
+#
+# This file ONLY contains overrides; everything not listed here keeps the
+# chart's reference defaults.
+#
+# Install / upgrade:
+#   helm repo add open-telemetry https://open-telemetry.github.io/opentelemetry-helm-charts
+#   helm repo update
+#   helm upgrade --install otel-demo open-telemetry/opentelemetry-demo \
+#     --namespace otel-demo --create-namespace \
+#     --version 0.40.9 \
+#     -f otel-demo-values.yaml
+#
+# Get the external addresses once provisioned:
+#   kubectl get svc -n otel-demo \
+#     frontend-proxy load-generator grafana jaeger \
+#     -o wide
+# =============================================================================
+
+# -----------------------------------------------------------------------------
+# Demo first-class components (Envoy frontend-proxy + Locust load generator)
+# -----------------------------------------------------------------------------
+# Platform: generic / on-prem -> plain `type: LoadBalancer`, no cloud-specific
+# annotations. The cloud's default external L4 load balancer will be used.
+#
+# If you later move to a managed cluster and want a *specific* NLB flavor, add
+# annotations under each service, e.g.:
+#   AWS EKS:   service.beta.kubernetes.io/aws-load-balancer-type: "nlb"
+#              service.beta.kubernetes.io/aws-load-balancer-scheme: "internet-facing"
+#   Azure AKS: (Standard LB is L4 by default; for internal add)
+#              service.beta.kubernetes.io/azure-load-balancer-internal: "true"
+#   GCP GKE:   cloud.google.com/l4-rbs: "enabled"
+components:
+  # Main entrypoint (Envoy). Proxies the webstore frontend AND, under sub-paths,
+  # Grafana (/grafana), Jaeger UI (/jaeger/ui) and the Locust UI (/loadgen).
+  # Port 8080 is inherited from the chart defaults.
+  frontend-proxy:
+    service:
+      type: LoadBalancer
+
+  # Locust web UI. Port 8089 is inherited from the chart defaults.
+  load-generator:
+    service:
+      type: LoadBalancer
+
+# -----------------------------------------------------------------------------
+# Grafana subchart (grafana 12.3.0)
+# -----------------------------------------------------------------------------
+# NOTE: Grafana is configured to serve from the sub-path /grafana
+# (serve_from_sub_path + root_url). When reaching it directly through this
+# LoadBalancer, open it at:  http://<grafana-external-ip>/grafana
+grafana:
+  service:
+    type: LoadBalancer
+
+# -----------------------------------------------------------------------------
+# Jaeger subchart (jaeger 4.7.0)
+# -----------------------------------------------------------------------------
+# NOTE: the Jaeger UI listens on port 16686 with base_path /jaeger/ui.
+# Reach it directly through this LoadBalancer at:
+#   http://<jaeger-external-ip>:16686/jaeger/ui
+jaeger:
+  jaeger:
+    service:
+      type: LoadBalancer
+
+# -----------------------------------------------------------------------------
+# Grafana Cloud integration  (TO BE COMPLETED LATER)
+# -----------------------------------------------------------------------------
+# You chose to wire Grafana Cloud yourself afterwards. Two common patterns:
+#
+#  A) Demo collector -> Alloy (k8s-monitoring chart) -> Grafana Cloud  [recommended]
+#     Keep this file as-is. When you install k8s-monitoring/Alloy, point the
+#     demo collector at the Alloy OTLP receiver by adding an exporter + pipeline
+#     here, e.g.:
+#
+#   opentelemetry-collector:
+#     config:
+#       exporters:
+#         otlp/alloy:
+#           endpoint: <alloy-receiver-svc>.<alloy-namespace>.svc.cluster.local:4317
+#           tls:
+#             insecure: true
+#       service:
+#         pipelines:
+#           traces:  { exporters: [otlp/jaeger, debug, spanmetrics, otlp/alloy] }
+#           metrics: { exporters: [otlphttp/prometheus, debug, otlp/alloy] }
+#           logs:    { exporters: [opensearch, debug, otlp/alloy] }
+#
+#  B) Demo collector -> directly to the Grafana Cloud OTLP gateway
+#     Create a secret with your GC token, then add an otlphttp exporter:
+#
+#   opentelemetry-collector:
+#     extraEnvsFrom:
+#       - secretRef:
+#           name: grafana-cloud-otlp
+#     config:
+#       exporters:
+#         otlphttp/grafanacloud:
+#           endpoint: ${env:GRAFANA_CLOUD_OTLP_ENDPOINT}   # https://otlp-gateway-<stack>.grafana.net/otlp
+#           auth:
+#             authenticator: basicauth/grafanacloud
+#       extensions:
+#         basicauth/grafanacloud:
+#           client_auth:
+#             username: ${env:GRAFANA_CLOUD_INSTANCE_ID}
+#             password: ${env:GRAFANA_CLOUD_API_TOKEN}
+#       service:
+#         extensions: [basicauth/grafanacloud]
+#         pipelines:
+#           traces:  { exporters: [otlp/jaeger, debug, spanmetrics, otlphttp/grafanacloud] }
+#           metrics: { exporters: [otlphttp/prometheus, debug, otlphttp/grafanacloud] }
+#           logs:    { exporters: [opensearch, debug, otlphttp/grafanacloud] }

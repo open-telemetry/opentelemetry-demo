@@ -59,3 +59,6 @@ src/shipping/target/
 test/tracetesting/tracetesting-vars.yaml
 
 !src/currency/build
+
+# Local-only Helm chart default values snapshot (reference, not active config)
+otel-demo-values-reference.yaml
