@@ -2,6 +2,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 import '../styles/globals.css';
+import { useEffect } from 'react';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import App, { AppContext, AppProps } from 'next/app';
 import CurrencyProvider from '../providers/Currency.provider';
@@ -17,17 +18,25 @@ declare global {
   interface Window {
     ENV: {
       NEXT_PUBLIC_PLATFORM?: string;
-      NEXT_PUBLIC_OTEL_SERVICE_NAME?: string;
-      NEXT_PUBLIC_OTEL_EXPORTER_OTLP_TRACES_ENDPOINT?: string;
-      IS_SYNTHETIC_REQUEST?: string;
+      NEXT_PUBLIC_FARO_URL?: string;
+      NEXT_PUBLIC_FARO_API_KEY?: string;
+      NEXT_PUBLIC_FARO_APP_NAME?: string;
     };
   }
 }
 
-if (typeof window !== 'undefined') {
-  FrontendTracer();
-  if (window.location) {
+const queryClient = new QueryClient();
+let openFeatureInitialized = false;
+
+function MyApp({ Component, pageProps }: AppProps) {
+  useEffect(() => {
+    if (openFeatureInitialized) {
+      return;
+    }
+
     const session = SessionGateway.getSession();
+
+    FrontendTracer(session);
 
     // Set context prior to provider init to avoid multiple http calls
     OpenFeature.setContext({ targetingKey: session.userId, ...session }).then(() => {
@@ -39,26 +48,24 @@ if (typeof window !== 'undefined') {
       const useTLS = window.location.protocol === 'https:';
       let port = useTLS ? 443 : 80;
       if (window.location.port) {
-          port = parseInt(window.location.port, 10);
+        port = parseInt(window.location.port, 10);
       }
 
       OpenFeature.setProvider(
         new FlagdWebProvider({
           host: window.location.hostname,
           pathPrefix: 'flagservice',
-          port: port,
+          port,
           tls: useTLS,
           maxRetries: 3,
           maxDelay: 10000,
         })
       );
     });
-  }
-}
 
-const queryClient = new QueryClient();
+    openFeatureInitialized = true;
+  }, []);
 
-function MyApp({ Component, pageProps }: AppProps) {
   return (
     <ThemeProvider theme={Theme}>
       <OpenFeatureProvider>
