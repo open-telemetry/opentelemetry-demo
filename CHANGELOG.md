@@ -233,6 +233,8 @@ the release.
 * [telemetry] Split cart and payment attributes out of the order telemetry
   schema into their own domain files.
   ([#3484](https://github.com/open-telemetry/opentelemetry-demo/pull/3484))
+* [chore] Add health check to services
+  ([#3487](https://github.com/open-telemetry/opentelemetry-demo/pull/3487))
 * [fraud-detection] fix gRPC service files dropped from the shadow jar by
   setting `duplicatesStrategy` to `INCLUDE`, restoring the DNS name resolver
   registration needed to connect to flagd
