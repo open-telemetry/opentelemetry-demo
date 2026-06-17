@@ -1,15 +1,30 @@
 // Copyright The OpenTelemetry Authors
 // SPDX-License-Identifier: Apache-2.0
 
+import { useRouter } from 'next/router';
+import { useEffect, useState } from 'react';
 import { CypressFields } from '../../utils/enums/CypressFields';
 import { useAd } from '../../providers/Ad.provider';
 import ProductCard from '../ProductCard';
 import * as S from './Recommendations.styled';
+import { maybeCaptureProductRecommendationError } from '../../utils/controlledIssues';
 
 const Recommendations = () => {
   const { recommendedProductList } = useAd();
+  const { pathname, query } = useRouter();
+  const [hideRecommendations, setHideRecommendations] = useState(false);
 
-  if (!recommendedProductList || recommendedProductList.length === 0) {
+  useEffect(() => {
+    const productId = typeof query.productId === 'string' ? query.productId : undefined;
+    const shouldHide = maybeCaptureProductRecommendationError({
+      page: pathname,
+      productId,
+    });
+
+    if (shouldHide) setHideRecommendations(true);
+  }, [pathname, query.productId]);
+
+  if (hideRecommendations || !recommendedProductList || recommendedProductList.length === 0) {
     return null;
   }
 

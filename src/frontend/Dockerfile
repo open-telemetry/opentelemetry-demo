@@ -21,6 +21,8 @@ COPY ./src/frontend/types/ types/
 
 COPY ./src/frontend/utils/enums/ utils/enums/
 COPY ./src/frontend/utils/telemetry/ utils/telemetry/
+COPY ./src/frontend/utils/controlledIssues.ts utils/controlledIssues.ts
+COPY ./src/frontend/utils/embrace.ts utils/embrace.ts
 COPY ./src/frontend/utils/imageLoader.js utils/imageLoader.js
 COPY ./src/frontend/utils/Request.ts utils/Request.ts
 

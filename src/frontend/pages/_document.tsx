@@ -5,7 +5,19 @@ import Document, { DocumentContext, Html, Head, Main, NextScript } from 'next/do
 import { ServerStyleSheet } from 'styled-components';
 import {context, propagation} from "@opentelemetry/api";
 
-const { ENV_PLATFORM, WEB_OTEL_SERVICE_NAME, PUBLIC_OTEL_EXPORTER_OTLP_TRACES_ENDPOINT, OTEL_COLLECTOR_HOST} = process.env;
+const {
+  ENV_PLATFORM,
+  IMAGE_VERSION,
+  NEXT_PUBLIC_AUTO_DEMO_ISSUES,
+  NEXT_PUBLIC_EMBRACE_APP_ID,
+  NEXT_PUBLIC_EMBRACE_APP_VERSION,
+  NEXT_PUBLIC_EMBRACE_ENVIRONMENT,
+  NEXT_PUBLIC_ENABLE_DEMO_ISSUES,
+  NEXT_PUBLIC_ENVIRONMENT,
+  OTEL_COLLECTOR_HOST,
+  PUBLIC_OTEL_EXPORTER_OTLP_TRACES_ENDPOINT,
+  WEB_OTEL_SERVICE_NAME,
+} = process.env;
 
 export default class MyDocument extends Document<{ envString: string }> {
   static async getInitialProps(ctx: DocumentContext) {
@@ -26,13 +38,19 @@ export default class MyDocument extends Document<{ envString: string }> {
           ? `http://${OTEL_COLLECTOR_HOST}:4318/v1/traces`
           : PUBLIC_OTEL_EXPORTER_OTLP_TRACES_ENDPOINT;
 
-      const envString = `
-        window.ENV = {
-          NEXT_PUBLIC_PLATFORM: '${ENV_PLATFORM}',
-          NEXT_PUBLIC_OTEL_SERVICE_NAME: '${WEB_OTEL_SERVICE_NAME}',
-          NEXT_PUBLIC_OTEL_EXPORTER_OTLP_TRACES_ENDPOINT: '${otlpTracesEndpoint}',
-          IS_SYNTHETIC_REQUEST: '${isSyntheticRequest}',
-        };`;
+      const environment = NEXT_PUBLIC_ENVIRONMENT || NEXT_PUBLIC_EMBRACE_ENVIRONMENT || ENV_PLATFORM;
+      const envString = `window.ENV = ${JSON.stringify({
+        IS_SYNTHETIC_REQUEST: String(isSyntheticRequest),
+        NEXT_PUBLIC_AUTO_DEMO_ISSUES: NEXT_PUBLIC_AUTO_DEMO_ISSUES || '',
+        NEXT_PUBLIC_EMBRACE_APP_ID: NEXT_PUBLIC_EMBRACE_APP_ID || '',
+        NEXT_PUBLIC_EMBRACE_APP_VERSION: NEXT_PUBLIC_EMBRACE_APP_VERSION || IMAGE_VERSION || '',
+        NEXT_PUBLIC_EMBRACE_ENVIRONMENT: NEXT_PUBLIC_EMBRACE_ENVIRONMENT || ENV_PLATFORM || '',
+        NEXT_PUBLIC_ENABLE_DEMO_ISSUES: NEXT_PUBLIC_ENABLE_DEMO_ISSUES || '',
+        NEXT_PUBLIC_ENVIRONMENT: environment || '',
+        NEXT_PUBLIC_OTEL_EXPORTER_OTLP_TRACES_ENDPOINT: otlpTracesEndpoint || '',
+        NEXT_PUBLIC_OTEL_SERVICE_NAME: WEB_OTEL_SERVICE_NAME || '',
+        NEXT_PUBLIC_PLATFORM: ENV_PLATFORM || '',
+      })};`;
       return {
         ...initialProps,
         styles: [initialProps.styles, sheet.getStyleElement()],

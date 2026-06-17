@@ -12,10 +12,18 @@ import FrontendTracer from '../utils/telemetry/FrontendTracer';
 import SessionGateway from '../gateways/Session.gateway';
 import { OpenFeatureProvider, OpenFeature } from '@openfeature/react-sdk';
 import { FlagdWebProvider } from '@openfeature/flagd-web-provider';
+import { initEmbrace } from '../utils/embrace';
+import { maybeCaptureUserPreferencesError } from '../utils/controlledIssues';
 
 declare global {
   interface Window {
     ENV: {
+      NEXT_PUBLIC_AUTO_DEMO_ISSUES?: string;
+      NEXT_PUBLIC_EMBRACE_APP_ID?: string;
+      NEXT_PUBLIC_EMBRACE_APP_VERSION?: string;
+      NEXT_PUBLIC_EMBRACE_ENVIRONMENT?: string;
+      NEXT_PUBLIC_ENABLE_DEMO_ISSUES?: string;
+      NEXT_PUBLIC_ENVIRONMENT?: string;
       NEXT_PUBLIC_PLATFORM?: string;
       NEXT_PUBLIC_OTEL_SERVICE_NAME?: string;
       NEXT_PUBLIC_OTEL_EXPORTER_OTLP_TRACES_ENDPOINT?: string;
@@ -26,6 +34,9 @@ declare global {
 
 if (typeof window !== 'undefined') {
   FrontendTracer();
+  initEmbrace();
+  maybeCaptureUserPreferencesError({ page: window.location.pathname });
+
   if (window.location) {
     const session = SessionGateway.getSession();
 

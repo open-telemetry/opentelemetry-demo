@@ -3,6 +3,7 @@
 
 import { NextPage } from 'next';
 import Head from 'next/head';
+import { useEffect } from 'react';
 import Layout from '../components/Layout';
 import ProductList from '../components/ProductList';
 import * as S from '../styles/Home.styled';
@@ -11,13 +12,29 @@ import ApiGateway from '../gateways/Api.gateway';
 import Banner from '../components/Banner';
 import { CypressFields } from '../utils/enums/CypressFields';
 import { useCurrency } from '../providers/Currency.provider';
+import { addBreadcrumb, endEmbraceSpan, startEmbraceSpan } from '../utils/embrace';
 
 const Home: NextPage = () => {
   const { selectedCurrency } = useCurrency();
-  const { data: productList = [] } = useQuery({
+  const { data: productList = [], isSuccess } = useQuery({
     queryKey: ['products', selectedCurrency],
     queryFn: () => ApiGateway.listProducts(selectedCurrency),
   });
+
+  useEffect(() => {
+    addBreadcrumb('home_viewed');
+    startEmbraceSpan('browse_products_flow', {
+      currency: selectedCurrency,
+      page: '/',
+    });
+  }, [selectedCurrency]);
+
+  useEffect(() => {
+    if (!isSuccess || productList.length === 0) return;
+
+    addBreadcrumb('product_list_viewed');
+    endEmbraceSpan('browse_products_flow', true);
+  }, [isSuccess, productList.length]);
 
   return (
     <Layout>

@@ -5,7 +5,7 @@ import { NextPage } from 'next';
 import Head from 'next/head';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
-import { useMemo } from 'react';
+import { useEffect, useMemo } from 'react';
 import Ad from '../../../../components/Ad';
 import Button from '../../../../components/Button';
 import Layout from '../../../../components/Layout';
@@ -15,10 +15,15 @@ import AdProvider from '../../../../providers/Ad.provider';
 import { Money } from '../../../../protos/demo';
 import * as S from '../../../../styles/Checkout.styled';
 import { IProductCheckout } from '../../../../types/Cart';
+import { addBreadcrumb } from '../../../../utils/embrace';
 
 const Checkout: NextPage = () => {
   const { query } = useRouter();
   const { orderId, items = [], shippingAddress, shippingCost = { units: 0, currencyCode: 'USD', nanos: 0 } } = JSON.parse((query.order || '{}') as string) as IProductCheckout;
+
+  useEffect(() => {
+    if (orderId) addBreadcrumb('order_confirmed');
+  }, [orderId]);
 
   const orderTotal = useMemo<Money>(() => {
     const itemsTotal = items.reduce((acc, { item, cost = { units: 0, nanos: 0, currencyCode: 'USD' } }) => {

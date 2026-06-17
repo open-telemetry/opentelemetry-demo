@@ -7,6 +7,7 @@ import Image from 'next/image';
 import { useRouter } from 'next/router';
 import { useCallback, useState, useEffect } from 'react';
 import { useQuery } from '@tanstack/react-query';
+import { addBreadcrumb, endEmbraceSpan, logError, startEmbraceSpan } from '../../../utils/embrace';
 import Ad from '../../../components/Ad';
 import Layout from '../../../components/Layout';
 import ProductPrice from '../../../components/ProductPrice';
@@ -54,12 +55,35 @@ const ProductDetail: NextPage = () => {
     }
   ) as { data: Product };
 
+  useEffect(() => {
+    if (!productId || !name) return;
+
+    addBreadcrumb('product_viewed');
+  }, [name, productId]);
+
   const onAddItem = useCallback(async () => {
-    await addItem({
-      productId,
+    startEmbraceSpan('add_to_cart_flow', {
+      page: '/product/[productId]',
+      product_id: productId,
       quantity,
     });
-    push('/cart');
+
+    try {
+      await addItem({
+        productId,
+        quantity,
+      });
+      addBreadcrumb('product_added_to_cart');
+      endEmbraceSpan('add_to_cart_flow', true);
+      push('/cart');
+    } catch (error) {
+      logError('cart_update_failed', {
+        page: '/product/[productId]',
+        product_id: productId,
+        quantity,
+      }, error);
+      endEmbraceSpan('add_to_cart_flow', false);
+    }
   }, [addItem, productId, quantity, push]);
 
   return (

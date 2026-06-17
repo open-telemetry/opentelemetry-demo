@@ -24,3 +24,35 @@ from the root folder.
 It will start all of the required backend services
 and within the container simply run `npm run dev`.
 After that the app should be available at <http://localhost:8080/>.
+
+## Embrace Web SDK
+
+The browser frontend initializes the Embrace Web SDK from public Next.js env
+vars. DevOps should provide these values in deployed environments so they can be
+changed without application source changes.
+
+```shell
+NEXT_PUBLIC_EMBRACE_APP_ID=omhea
+NEXT_PUBLIC_EMBRACE_APP_VERSION=2.2.0
+NEXT_PUBLIC_EMBRACE_ENVIRONMENT=demo
+NEXT_PUBLIC_ENABLE_DEMO_ISSUES=true
+NEXT_PUBLIC_AUTO_DEMO_ISSUES=false
+```
+
+`NEXT_PUBLIC_EMBRACE_APP_ID` is not a secret, but real secret tokens should
+never be committed. If the app ID is omitted, the storefront still runs and logs
+a browser warning that Embrace initialization was skipped.
+
+Manual demo issue URLs:
+
+- `/?run_source=manual&user_persona=manual_tester`
+- `/?issue_variant=profile_preferences_error&user_persona=broken_session_user`
+- `/product/OLJCESPC7Z?issue_variant=product_recommendation_error&user_persona=broken_session_user`
+- `/cart?issue_variant=cart_price_mismatch&user_persona=cart_reconciler`
+- `/cart?issue_variant=checkout_validation_error&user_persona=frustrated_buyer`
+
+Demo issues fire at most once per browser session. Automatic issue injection is
+only enabled when `NEXT_PUBLIC_AUTO_DEMO_ISSUES=true` and the Embrace
+environment is `local`, `demo`, or `internal`; it is never automatic in
+`production`. Playwright traffic generation is intentionally deferred to a
+future repo.
