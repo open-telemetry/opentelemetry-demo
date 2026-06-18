@@ -9,9 +9,8 @@ import { IFormData } from '../CheckoutForm/CheckoutForm';
 import SessionGateway from '../../gateways/Session.gateway';
 import { useCart } from '../../providers/Cart.provider';
 import { useCurrency } from '../../providers/Currency.provider';
+import FrontendTracer from '../../utils/telemetry/FrontendTracer';
 import * as S from '../../styles/Cart.styled';
-
-const { userId } = SessionGateway.getSession();
 
 const CartDetail = () => {
   const {
@@ -35,8 +34,11 @@ const CartDetail = () => {
       creditCardExpirationYear,
       creditCardNumber,
     }: IFormData) => {
+      const session = SessionGateway.setUserEmail(email);
+      FrontendTracer(session);
+
       const order = await placeOrder({
-        userId,
+        userId: session.userId,
         email,
         address: {
           streetAddress,

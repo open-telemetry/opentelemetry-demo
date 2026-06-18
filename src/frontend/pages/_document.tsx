@@ -3,9 +3,8 @@
 
 import Document, { DocumentContext, Html, Head, Main, NextScript } from 'next/document';
 import { ServerStyleSheet } from 'styled-components';
-import {context, propagation} from "@opentelemetry/api";
 
-const { ENV_PLATFORM, WEB_OTEL_SERVICE_NAME, PUBLIC_OTEL_EXPORTER_OTLP_TRACES_ENDPOINT, OTEL_COLLECTOR_HOST} = process.env;
+const { ENV_PLATFORM, WEB_OTEL_SERVICE_NAME, PUBLIC_FARO_URL, PUBLIC_FARO_API_KEY } = process.env;
 
 export default class MyDocument extends Document<{ envString: string }> {
   static async getInitialProps(ctx: DocumentContext) {
@@ -19,20 +18,13 @@ export default class MyDocument extends Document<{ envString: string }> {
         });
 
       const initialProps = await Document.getInitialProps(ctx);
-      const baggage = propagation.getBaggage(context.active());
-      const isSyntheticRequest = baggage?.getEntry('synthetic_request')?.value === 'true';
+      const envString = `window.ENV = ${JSON.stringify({
+        NEXT_PUBLIC_PLATFORM: ENV_PLATFORM,
+        NEXT_PUBLIC_FARO_URL: PUBLIC_FARO_URL,
+        NEXT_PUBLIC_FARO_API_KEY: PUBLIC_FARO_API_KEY,
+        NEXT_PUBLIC_FARO_APP_NAME: WEB_OTEL_SERVICE_NAME,
+      })};`;
 
-      const otlpTracesEndpoint = isSyntheticRequest
-          ? `http://${OTEL_COLLECTOR_HOST}:4318/v1/traces`
-          : PUBLIC_OTEL_EXPORTER_OTLP_TRACES_ENDPOINT;
-
-      const envString = `
-        window.ENV = {
-          NEXT_PUBLIC_PLATFORM: '${ENV_PLATFORM}',
-          NEXT_PUBLIC_OTEL_SERVICE_NAME: '${WEB_OTEL_SERVICE_NAME}',
-          NEXT_PUBLIC_OTEL_EXPORTER_OTLP_TRACES_ENDPOINT: '${otlpTracesEndpoint}',
-          IS_SYNTHETIC_REQUEST: '${isSyntheticRequest}',
-        };`;
       return {
         ...initialProps,
         styles: [initialProps.styles, sheet.getStyleElement()],
