@@ -138,11 +138,7 @@ if __name__ == "__main__":
 
     # Initialize Logs
     logger_provider = LoggerProvider(
-        resource=Resource.create(
-            {
-                'service.name': service_name,
-            }
-        ),
+        resource=Resource.create({}),
     )
     set_logger_provider(logger_provider)
     log_exporter = OTLPLogExporter(insecure=True)
