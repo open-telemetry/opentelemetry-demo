@@ -20,3 +20,5 @@ opentelemetry-instrumentation-httpx==0.59b0
 gradio==6.0.1
 vcrpy==7.0.0
 aiohttp<3.13
+# Pinned explicitly so it's always captured in the hashed lockfile.
+greenlet
