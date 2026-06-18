@@ -15,6 +15,13 @@ const CartItem = ({
   product: { id, name, picture, priceUsd = { units: 0, nanos: 0, currencyCode: 'USD' } },
   quantity,
 }: IProps) => {
+  const totalNanos = Number(priceUsd.nanos) * quantity;
+  const linePrice = {
+    units: Number(priceUsd.units) * quantity + Math.floor(totalNanos / 1_000_000_000),
+    nanos: totalNanos % 1_000_000_000,
+    currencyCode: priceUsd.currencyCode,
+  };
+
   return (
     <S.CartItem>
       <Link href={`/product/${id}`}>
@@ -29,7 +36,7 @@ const CartItem = ({
       <S.CartItemDetails>
         <S.PriceContainer>
           <p>
-            <ProductPrice price={priceUsd} />
+            <ProductPrice price={linePrice} />
           </p>
         </S.PriceContainer>
       </S.CartItemDetails>

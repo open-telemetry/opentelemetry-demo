@@ -83,7 +83,11 @@ const ProductDetail: NextPage = () => {
               <S.Name data-cy={CypressFields.ProductName}>{name}</S.Name>
               <S.Description data-cy={CypressFields.ProductDescription}>{description}</S.Description>
               <S.ProductPrice>
-                <ProductPrice price={priceUsd} />
+                <ProductPrice price={{
+                  units: Number(priceUsd.units) * quantity + Math.floor(Number(priceUsd.nanos) * quantity / 1_000_000_000),
+                  nanos: (Number(priceUsd.nanos) * quantity) % 1_000_000_000,
+                  currencyCode: priceUsd.currencyCode,
+                }} />
               </S.ProductPrice>
               <S.Text>Quantity</S.Text>
               <Select
