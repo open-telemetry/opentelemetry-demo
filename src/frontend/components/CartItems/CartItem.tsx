@@ -4,16 +4,21 @@
 import Link from 'next/link';
 import { Product } from '../../protos/demo';
 import ProductPrice from '../ProductPrice';
+import Select from '../Select';
 import * as S from './CartItems.styled';
+
+const quantityOptions = new Array(10).fill(0).map((_, i) => i + 1);
 
 interface IProps {
   product: Product;
   quantity: number;
+  onQuantityChange(productId: string, newQuantity: number): void;
 }
 
 const CartItem = ({
   product: { id, name, picture, priceUsd = { units: 0, nanos: 0, currencyCode: 'USD' } },
   quantity,
+  onQuantityChange,
 }: IProps) => {
   const totalNanos = Number(priceUsd.nanos) * quantity;
   const linePrice = {
@@ -31,7 +36,18 @@ const CartItem = ({
         </S.NameContainer>
       </Link>
       <S.CartItemDetails>
-        <p>{quantity}</p>
+        <Select value={quantity} onChange={e => onQuantityChange(id, +e.target.value)}>
+          {quantityOptions.map(o => (
+            <option key={o} value={o}>{o}</option>
+          ))}
+        </Select>
+      </S.CartItemDetails>
+      <S.CartItemDetails>
+        <S.PriceContainer>
+          <p>
+            <ProductPrice price={priceUsd} />
+          </p>
+        </S.PriceContainer>
       </S.CartItemDetails>
       <S.CartItemDetails>
         <S.PriceContainer>
