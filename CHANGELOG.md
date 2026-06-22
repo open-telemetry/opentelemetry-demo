@@ -7,6 +7,11 @@ the release.
 
 ## Unreleased
 
+* [frontend] Fix cart page showing unit price instead of line total; add
+  per-item quantity selector so users can change quantities directly in the
+  cart, with each row now displaying both the unit price and the line total
+  (unit price × quantity)
+  ([#3521](https://github.com/open-telemetry/opentelemetry-demo/pull/3521))
 * [llm] Increase `llm` service memory limit from 50M to 100M to prevent a
   startup restart loop caused by the container exceeding its memory limit
   ([#2944](https://github.com/open-telemetry/opentelemetry-demo/issues/2944))
