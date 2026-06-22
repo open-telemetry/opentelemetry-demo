@@ -29,7 +29,7 @@ services:
       - otel-collector
 
   firepit:
-    image: ghcr.io/florianl/firepit:df1dcbe
+    image: ghcr.io/florianl/firepit:v0.1.0
     container_name: firepit
     ports:
       - "${FIREPIT_PORT}"

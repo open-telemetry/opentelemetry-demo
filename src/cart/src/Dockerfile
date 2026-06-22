@@ -30,10 +30,13 @@ RUN dotnet publish ./src/cart.csproj -r linux-musl-$TARGETARCH --no-restore -o /
 # -----------------------------------------------------------------------------
 
 # https://mcr.microsoft.com/v2/dotnet/runtime-deps/tags/list
+FROM ghcr.io/grpc-ecosystem/grpc-health-probe:v0.4.52@sha256:0303b506a288d544ed99fef17a55c8c5ce872f498f643c396b532b3595089ac9 AS grpc-health-probe
+
 FROM mcr.microsoft.com/dotnet/runtime-deps:10.0.8-alpine3.23@sha256:f276c0256ffca8fe816d48ba261962b54fea1b0e6f870b6a60b3b705c89e78ac
 
 WORKDIR /usr/src/app/
 COPY --from=builder /cart/ ./
+COPY --from=grpc-health-probe /ko-app/grpc-health-probe /bin/grpc_health_probe
 
 ENV DOTNET_HOSTBUILDER__RELOADCONFIGONCHANGE=false
 

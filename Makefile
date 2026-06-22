@@ -202,6 +202,7 @@ run-telemetry-tests: start
 		--env-file .env --env-file .env.override \
 		-e TEST_SCOPE=full \
 		-e WARMUP_SECONDS=$${WARMUP_SECONDS:-240} \
+		-e POLL_TIMEOUT=$${POLL_TIMEOUT:-180} \
 		opentelemetry-demo-telemetry-tests; \
 	rc=$$?; \
 	$(MAKE) stop; \
@@ -216,6 +217,7 @@ run-telemetry-tests-minimal: start-minimal
 		--env-file .env --env-file .env.override \
 		-e TEST_SCOPE=minimal \
 		-e WARMUP_SECONDS=$${WARMUP_SECONDS:-240} \
+		-e POLL_TIMEOUT=$${POLL_TIMEOUT:-180} \
 		opentelemetry-demo-telemetry-tests; \
 	rc=$$?; \
 	$(MAKE) stop; \
