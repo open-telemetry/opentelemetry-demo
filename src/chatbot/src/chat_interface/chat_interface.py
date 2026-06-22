@@ -77,19 +77,22 @@ class ChatAgentUI:
             if not message:
                 return "", history
             history = list(history or [])
-            history.append({"role": "user", "content": message})
             reply = self.chat_with_agent(message, history, request)
+            history.append({"role": "user", "content": message})
             history.append({"role": "assistant", "content": reply})
             return "", history
 
         def respond_fresh(message, request: gr.Request):
+            # Sample-question clicks start a brand new conversation with
+            # empty history, rather than continuing the current chat.
             message = (message or "").strip()
             if not message:
                 return "", []
-            history = [{"role": "user", "content": message}]
             reply = self.chat_with_agent(message, [], request)
-            history.append({"role": "assistant", "content": reply})
-            return "", history
+            return "", [
+                {"role": "user", "content": message},
+                {"role": "assistant", "content": reply},
+            ]
 
         with gr.Blocks(
             title=config["title"], analytics_enabled=False
@@ -97,7 +100,7 @@ class ChatAgentUI:
             gr.Markdown(f"# {config['title']}")
             gr.Markdown(config["description"])
 
-            chatbot = gr.Chatbot(height="70vh", type="messages")
+            chatbot = gr.Chatbot(height="70vh")
             textbox = gr.Textbox(
                 placeholder="Type a message...",
                 show_label=False,
