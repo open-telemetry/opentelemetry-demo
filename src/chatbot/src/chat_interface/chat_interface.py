@@ -56,9 +56,9 @@ class ChatAgentUI:
             "title": "Astronomy Shop agent",
             "description": "Ask me about the astronomy shop application, I will ask for more information if needed.",
             "examples": [
-                ["Show all available products in the store."],
-                ["What currencies are supported by the Astronomy Shop?"],
-                ["What current promotions are available on binoculars?"],
+                "Show all available products in the store.",
+                "What currencies are supported by the Astronomy Shop?",
+                "What current promotions are available on binoculars?",
             ],
         }
 
@@ -67,14 +67,57 @@ class ChatAgentUI:
                 agent_config[0] if isinstance(agent_config, list) else agent_config
             )
 
-        chatbot_ui = gr.ChatInterface(
-            fn=self.chat_with_agent,
-            title=config["title"],
-            description=config["description"],
-            examples=config["examples"],
-            chatbot=gr.Chatbot(height="70vh"),
-            analytics_enabled=False,
-        )
+        examples = [
+            ex[0] if isinstance(ex, (list, tuple)) else ex
+            for ex in config["examples"]
+        ]
+
+        def respond(message, history, request: gr.Request):
+            message = (message or "").strip()
+            if not message:
+                return "", history
+            history = list(history or [])
+            history.append({"role": "user", "content": message})
+            reply = self.chat_with_agent(message, history, request)
+            history.append({"role": "assistant", "content": reply})
+            return "", history
+
+        def respond_fresh(message, request: gr.Request):
+            message = (message or "").strip()
+            if not message:
+                return "", []
+            history = [{"role": "user", "content": message}]
+            reply = self.chat_with_agent(message, [], request)
+            history.append({"role": "assistant", "content": reply})
+            return "", history
+
+        with gr.Blocks(
+            title=config["title"], analytics_enabled=False
+        ) as chatbot_ui:
+            gr.Markdown(f"# {config['title']}")
+            gr.Markdown(config["description"])
+
+            chatbot = gr.Chatbot(height="70vh", type="messages")
+            textbox = gr.Textbox(
+                placeholder="Type a message...",
+                show_label=False,
+                autofocus=True,
+            )
+
+            gr.Markdown("Sample questions:")
+            with gr.Row():
+                example_buttons = [gr.Button(ex, size="sm") for ex in examples]
+
+            textbox.submit(
+                respond, [textbox, chatbot], [textbox, chatbot]
+            )
+
+            for button, example in zip(example_buttons, examples):
+                button.click(
+                    respond_fresh,
+                    [gr.State(example)],
+                    [textbox, chatbot],
+                )
 
         chatbot_ui.launch(
             server_name=self.config.uiBaseUrl,
