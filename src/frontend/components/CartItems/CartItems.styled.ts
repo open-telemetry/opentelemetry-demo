@@ -16,6 +16,14 @@ export const CardItemsHeader = styled.div`
   ${({ theme }) => theme.breakpoints.desktop} {
     grid-template-columns: 1fr auto auto auto;
   }
+
+  > label:nth-child(2) {
+    text-align: center;
+  }
+
+  > label:nth-child(n+3) {
+    text-align: right;
+  }
 `;
 
 export const CartItemImage = styled.img`
@@ -41,6 +49,15 @@ export const CartItem = styled.div`
   ${({ theme }) => theme.breakpoints.desktop} {
     grid-template-columns: 1fr auto auto auto;
   }
+
+  > :nth-child(2) {
+    display: flex;
+    justify-content: center;
+  }
+
+  > :nth-child(n+3) {
+    align-items: flex-end;
+  }
 `;
 
 export const CartItemDetails = styled.div`
@@ -65,7 +82,7 @@ export const NameContainer = styled.div`
 export const PriceContainer = styled.div`
   display: flex;
   width: 100%;
-  justify-content: space-between;
+  justify-content: flex-end;
 `;
 
 export const DataRow = styled.div`
