@@ -307,6 +307,8 @@ static_resources:
     - name: chatbot
       type: STRICT_DNS
       lb_policy: ROUND_ROBIN
+      dns_failure_refresh_rate: { base_interval: 10s, max_interval: 30s }
+      typed_dns_resolver_config: *dns_resolver
       load_assignment:
         cluster_name: chatbot
         endpoints:
