@@ -29,29 +29,83 @@ TEST_SCOPE = os.environ.get("TEST_SCOPE", "minimal")
 WARMUP_SECONDS = int(os.environ.get("WARMUP_SECONDS", "240"))
 
 POLL_INTERVAL = 5
-POLL_TIMEOUT = 180
+POLL_TIMEOUT = int(os.environ.get("POLL_TIMEOUT", "180"))
+
+
+def _jaeger_service_count():
+    """Number of services Jaeger has seen at least one span from."""
+    resp = requests.get(f"{JAEGER_URL}/jaeger/ui/api/services", timeout=5)
+    if resp.status_code != 200:
+        return 0
+    # Jaeger returns {"data": null, ...} until the first span arrives, so coerce
+    # None -> [] before len().
+    return len(resp.json().get("data") or [])
+
+
+def _prometheus_service_count():
+    """Number of distinct service.name labels Prometheus has received via OTLP push."""
+    resp = requests.get(
+        f"{PROMETHEUS_URL}/api/v1/query",
+        params={"query": "count(group(target_info) by (service_name))"},
+        timeout=5,
+    )
+    if resp.status_code != 200:
+        return 0
+    result = resp.json().get("data", {}).get("result") or []
+    if not result:
+        return 0
+    return int(float(result[0]["value"][1]))
+
+
+def _opensearch_log_count():
+    """Number of log records OpenSearch has indexed in the otel-logs index."""
+    resp = requests.get(f"{OPENSEARCH_URL}/otel-logs*/_count", timeout=5)
+    if resp.status_code != 200:
+        return 0
+    return int(resp.json().get("count", 0))
+
+
+# Minimum distinct services / records each backend must report before we treat
+# warmup as complete. A small floor (rather than the full service count) keeps
+# this robust across the full and minimal scopes while still proving each
+# signal pipeline is actually flowing end to end.
+WARMUP_MIN_SERVICES = 3
+WARMUP_MIN_LOGS = 1
 
 
 @pytest.fixture(scope="session", autouse=True)
 def wait_for_warmup():
-    """Wait for backends to be reachable, then allow time for telemetry to flow."""
+    """Wait for Jaeger, Prometheus, and OpenSearch to all ingest telemetry
+    before starting the individual signal checks.
+
+    Traces (Jaeger), metrics (Prometheus), and logs (OpenSearch) reach their
+    backends on independent paths through the collector, each with its own
+    batching / sending-queue interval, so they do not become queryable at the
+    same moment. Observed on a cold start: Jaeger had 12 services at ~11s while
+    Prometheus still had only 3 (it caught up to 20 by ~39s). If warmup gates on
+    traces alone, the metrics tests start against a near-empty Prometheus and
+    time out at the per-test deadline (one timeout per service, which is how a
+    run ballooned to ~45min). Gating on all three keeps the per-test polls fast
+    because the data is already there when they run.
+    """
     print(f"\nWaiting for backends to be ready (up to {WARMUP_SECONDS}s)...")
     deadline = time.time() + WARMUP_SECONDS
     backends_ready = False
     while time.time() < deadline:
         try:
-            resp = requests.get(f"{JAEGER_URL}/jaeger/ui/api/services", timeout=5)
-            # Jaeger returns {"data": null, ...} until the first span arrives, so
-            # coerce None -> [] before len(). ValueError catches non-JSON bodies
-            # (e.g. an HTML error page from a still-warming proxy).
-            if resp.status_code == 200:
-                services = resp.json().get("data") or []
-                if len(services) > 3:
-                    backends_ready = True
-                    break
+            jaeger = _jaeger_service_count()
+            prom = _prometheus_service_count()
+            logs = _opensearch_log_count()
+            if (
+                jaeger > WARMUP_MIN_SERVICES
+                and prom > WARMUP_MIN_SERVICES
+                and logs >= WARMUP_MIN_LOGS
+            ):
+                backends_ready = True
+                break
         except (requests.RequestException, ValueError):
             pass
-        time.sleep(5)
+        time.sleep(POLL_INTERVAL)
     if not backends_ready:
         remaining = max(0, int(deadline - time.time()))
         print(f"Backends not fully ready after {WARMUP_SECONDS - remaining}s, proceeding with poll-based checks...")
