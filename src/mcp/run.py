@@ -31,7 +31,7 @@ async def start_servers():
     mcp = AstronomyShopMcp()
     mcp_server_task = asyncio.to_thread(mcp.run)
     tasks.append(mcp_server_task)
-    logging.info("MCP Server should be up, launching Agent...")
+    logging.info("Starting MCP server on port %s", mcp.port)
 
     await asyncio.gather(*tasks)
 
