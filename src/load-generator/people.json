@@ -1,5 +1,7 @@
 [
     {
+        "id": "8cb230a9",
+        "name": "Larry & Sergei",
         "email": "larry_sergei@example.com",
         "address": {
             "streetAddress": "1600 Amphitheatre Parkway",
@@ -17,6 +19,8 @@
         }
     },
     {
+        "id": "efd50e82",
+        "name": "Bill",
         "email": "bill@example.com",
         "address": {
             "streetAddress": "One Microsoft Way",
@@ -34,6 +38,8 @@
         }
     },
     {
+        "id": "06fe49fe",
+        "name": "Steve",
         "email": "steve@example.com",
         "address": {
             "streetAddress": "One Apple Park Way",
@@ -51,6 +57,8 @@
         }
     },
     {
+        "id": "88b95176",
+        "name": "Mark",
         "email": "mark@example.com",
         "address": {
             "streetAddress": "1 Hacker Way",
@@ -68,6 +76,8 @@
         }
     },
     {
+        "id": "0bee94ad",
+        "name": "Jeff",
         "email": "jeff@example.com",
         "address": {
             "streetAddress": "410 Terry Ave N",
@@ -85,6 +95,8 @@
         }
     },
     {
+        "id": "2584542b",
+        "name": "Reed",
         "email": "reed@example.com",
         "address": {
             "streetAddress": "100 Winchester Circle",
@@ -102,6 +114,8 @@
         }
     },
     {
+        "id": "de213313",
+        "name": "Tobias",
         "email": "tobias@example.com",
         "address": {
             "streetAddress": "150 Elgin St",
@@ -119,6 +133,8 @@
         }
     },
     {
+        "id": "a9b2bf6d",
+        "name": "Jack",
         "email": "jack@example.com",
         "address": {
             "streetAddress": "1355 Market St",
@@ -136,6 +152,8 @@
         }
     },
     {
+        "id": "8aa31216",
+        "name": "Moore",
         "email": "moore@example.com",
         "address": {
             "streetAddress": "2200 Mission College Blvd",

@@ -175,45 +175,49 @@ class WebsiteUser(HttpUser):
             self.client.get("/api/cart")
 
     @task(2)
-    def add_to_cart(self, user=""):
-        if user == "":
-            user = str(uuid.uuid1())
+    def add_to_cart(self):
         product = random.choice(products)
         quantity = random.choice([1, 2, 3, 4, 5, 10])
-        with self.tracer.start_as_current_span("user_add_to_cart", context=Context(), attributes={"user.id": user, "product.id": product, "quantity": quantity}):
-            logging.info(f"User {user} adding {quantity} of product {product} to cart")
+        with self.tracer.start_as_current_span("user_add_to_cart", context=Context(), attributes={"user.id": self.user_id, "product.id": product, "quantity": quantity}):
+            logging.info(f"User {self.user_id} adding {quantity} of product {product} to cart")
             self.client.get("/api/products/" + product)
             cart_item = {
                 "item": {
                     "productId": product,
                     "quantity": quantity,
                 },
-                "userId": user,
+                "userId": self.session_id,
             }
             self.client.post("/api/cart", json=cart_item)
 
+    def checkout_payload(self):
+        # Build the checkout request from the session's assigned person. The
+        # cart is keyed by the per-session id (self.session_id); the named
+        # identity surfaces via the email and the enduser.id baggage.
+        return {
+            "userId": self.session_id,
+            "email": self.person["email"],
+            "address": self.person["address"],
+            "userCurrency": self.person["userCurrency"],
+            "creditCard": self.person["creditCard"],
+        }
+
     @task(1)
     def checkout(self):
-        user = str(uuid.uuid1())
-        with self.tracer.start_as_current_span("user_checkout_single", context=Context(), attributes={"user.id": user}):
-            self.add_to_cart(user=user)
-            checkout_person = random.choice(people)
-            checkout_person["userId"] = user
-            self.client.post("/api/checkout", json=checkout_person)
-            logging.info(f"Checkout completed for user {user}")
+        with self.tracer.start_as_current_span("user_checkout_single", context=Context(), attributes={"user.id": self.user_id}):
+            self.add_to_cart()
+            self.client.post("/api/checkout", json=self.checkout_payload())
+            logging.info(f"Checkout completed for user {self.user_id}")
 
     @task(1)
     def checkout_multi(self):
-        user = str(uuid.uuid1())
         item_count = random.choice([2, 3, 4])
         with self.tracer.start_as_current_span("user_checkout_multi", context=Context(),
-                                            attributes={"user.id": user, "item.count": item_count}):
+                                            attributes={"user.id": self.user_id, "item.count": item_count}):
             for i in range(item_count):
-                self.add_to_cart(user=user)
-            checkout_person = random.choice(people)
-            checkout_person["userId"] = user
-            self.client.post("/api/checkout", json=checkout_person)
-            logging.info(f"Multi-item checkout completed for user {user}")
+                self.add_to_cart()
+            self.client.post("/api/checkout", json=self.checkout_payload())
+            logging.info(f"Multi-item checkout completed for user {self.user_id}")
 
     @task(5)
     def flood_home(self):
@@ -225,10 +229,17 @@ class WebsiteUser(HttpUser):
                     self.client.get("/")
 
     def on_start(self):
+        # Each simulated session adopts one named user from the roster
+        # (people.json), so synthetic traffic is attributed to a recognizable
+        # set of users. session.id is per-session; enduser.id is the stable
+        # named user id.
+        self.person = random.choice(people)
+        self.user_id = self.person["id"]
+        self.session_id = str(uuid.uuid4())
         with self.tracer.start_as_current_span("user_session_start", context=Context()):
-            session_id = str(uuid.uuid4())
-            logging.info(f"Starting user session: {session_id}")
-            ctx = baggage.set_baggage("session.id", session_id)
+            logging.info(f"Starting session {self.session_id} for user {self.user_id}")
+            ctx = baggage.set_baggage("session.id", self.session_id)
+            ctx = baggage.set_baggage("enduser.id", self.user_id, context=ctx)
             ctx = baggage.set_baggage("synthetic_request", "true", context=ctx)
             context.attach(ctx)
             self.index()
@@ -240,6 +251,23 @@ if browser_traffic_enabled:
     class WebsiteBrowserUser(PlaywrightUser):
         headless = True  # to use a headless browser, without a GUI
 
+        def session_init_script(self):
+            # Adopt one named roster user for this browser session, then seed the
+            # same localStorage 'session' the frontend reads. On load the frontend
+            # hydrates from it, so Faro's setUser reports this user's id/email/name
+            # instead of generating an anonymous user-<hex>. No frontend change
+            # needed. Wrapped in try/catch because init scripts also run on the
+            # opaque about:blank origin where localStorage access is blocked.
+            if not hasattr(self, "person"):
+                self.person = random.choice(people)
+            session = json.dumps({
+                "userId": self.person["id"],
+                "currencyCode": self.person["userCurrency"],
+                "userEmail": self.person["email"],
+                "userName": self.person["name"],
+            })
+            return f"try {{ window.localStorage.setItem('session', {json.dumps(session)}); }} catch (e) {{}}"
+
         @task
         @pw
         async def open_cart_page_and_change_currency(self, page: PageWithRetry):
@@ -247,6 +275,7 @@ if browser_traffic_enabled:
             with tracer.start_as_current_span("browser_change_currency", context=Context()):
                 try:
                     page.on("console", lambda msg: print(msg.text))
+                    await page.add_init_script(self.session_init_script())
                     await page.route('**/*', add_baggage_header)
                     await page.goto("/cart", wait_until="domcontentloaded")
                     await page.select_option('[name="currency_code"]', 'CHF')
@@ -262,6 +291,7 @@ if browser_traffic_enabled:
             with tracer.start_as_current_span("browser_add_to_cart", context=Context()):
                 try:
                     page.on("console", lambda msg: print(msg.text))
+                    await page.add_init_script(self.session_init_script())
                     await page.route('**/*', add_baggage_header)
                     await page.goto("/", wait_until="domcontentloaded")
                     # Wait for Roof Binoculars image to load (awaiting successful XHR response in less than 15 seconds)
