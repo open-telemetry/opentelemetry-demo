@@ -4,7 +4,7 @@
   "repository": "https://github.com/opentelemetry/opentelemetry-demo",
   "main": "index.js",
   "scripts": {
-    "start": "node --require ./opentelemetry.js index.js"
+    "start": "node --require @opentelemetry/auto-instrumentations-node/register index.js"
   },
   "author": "Jonathan Lui",
   "license": "ISC",
