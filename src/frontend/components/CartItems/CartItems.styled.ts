@@ -14,7 +14,7 @@ export const CardItemsHeader = styled.div`
   gap: 24px;
 
   ${({ theme }) => theme.breakpoints.desktop} {
-    grid-template-columns: 1fr auto auto auto;
+    grid-template-columns: 1fr 120px 110px 110px;
   }
 
   > label:nth-child(2) {
@@ -47,7 +47,7 @@ export const CartItem = styled.div`
   border-bottom: 1px solid ${({ theme }) => theme.colors.textLightGray};
 
   ${({ theme }) => theme.breakpoints.desktop} {
-    grid-template-columns: 1fr auto auto auto;
+    grid-template-columns: 1fr 120px 110px 110px;
   }
 
   > :nth-child(2) {
