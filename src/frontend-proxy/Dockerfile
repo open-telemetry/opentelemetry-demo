@@ -1,7 +1,7 @@
 # Copyright The OpenTelemetry Authors
 # SPDX-License-Identifier: Apache-2.0
 
-FROM envoyproxy/envoy:v1.34.14@sha256:cfc0678bc03cca19cbb031688acb31d510bff501ff97e163026a375fe0515d69
+FROM envoyproxy/envoy:v1.38.2@sha256:af7c3dfdbe10de65cb2db5839ce1adf8904ee41c9d372076d62acab43af6ec41
 
 RUN apt-get update && \
     apt-get install -y gettext-base && \

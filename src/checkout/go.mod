@@ -7,7 +7,7 @@ require (
 	github.com/google/uuid v1.6.0
 	github.com/open-feature/go-sdk v1.17.2
 	github.com/open-feature/go-sdk-contrib/hooks/open-telemetry v0.3.7
-	github.com/open-feature/go-sdk-contrib/providers/flagd v0.5.1
+	github.com/open-feature/go-sdk-contrib/providers/flagd v0.6.0
 	go.opentelemetry.io/contrib/bridges/otelslog v0.19.0
 	go.opentelemetry.io/contrib/instrumentation/google.golang.org/grpc/otelgrpc v0.69.0
 	go.opentelemetry.io/contrib/instrumentation/net/http/otelhttp v0.69.0
@@ -53,7 +53,7 @@ require (
 	github.com/jcmturner/rpc/v2 v2.0.3 // indirect
 	github.com/klauspost/compress v1.18.6 // indirect
 	github.com/open-feature/flagd-schemas v0.2.13 // indirect
-	github.com/open-feature/flagd/core v0.15.5 // indirect
+	github.com/open-feature/flagd/core v0.16.0 // indirect
 	github.com/pierrec/lz4/v4 v4.1.26 // indirect
 	github.com/rcrowley/go-metrics v0.0.0-20250401214520-65e299d6c5c9 // indirect
 	github.com/santhosh-tekuri/jsonschema/v6 v6.0.2 // indirect
