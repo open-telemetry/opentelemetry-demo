@@ -19,7 +19,7 @@ logging.basicConfig(level=logging.INFO)
 load_dotenv()
 
 Traceloop.init(
-    app_name="AstronomyShopAgent",
+    app_name=os.getenv("OTEL_SERVICE_NAME", "agent"),
     api_endpoint=os.getenv("OTEL_EXPORTER_OTLP_ENDPOINT", "localhost:4317"),
 )
 
