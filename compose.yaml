@@ -59,6 +59,12 @@ services:
       - OTEL_SERVICE_NAME=ad
       # Workaround on OSX for https://bugs.openjdk.org/browse/JDK-8345296
       - _JAVA_OPTIONS
+    healthcheck:
+      test: ["CMD-SHELL", "bash -c 'echo > /dev/tcp/localhost/${AD_PORT}'"]
+      start_period: 20s
+      interval: 5s
+      timeout: 5s
+      retries: 20
     depends_on:
       otel-collector:
         condition: service_started
@@ -94,7 +100,7 @@ services:
       - ASPNETCORE_URLS=http://*:${CART_PORT}
     depends_on:
       valkey-cart:
-        condition: service_started
+        condition: service_healthy
       otel-collector:
         condition: service_started
       flagd:
@@ -132,15 +138,21 @@ services:
       - OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE
       - OTEL_RESOURCE_ATTRIBUTES=${OTEL_RESOURCE_ATTRIBUTES},service.criticality=critical
       - OTEL_SERVICE_NAME=checkout
+    healthcheck:
+      test: ["CMD", "/bin/grpc_health_probe", "-addr=:${CHECKOUT_PORT}"]
+      start_period: 10s
+      interval: 5s
+      timeout: 5s
+      retries: 20
     depends_on:
       cart:
         condition: service_started
       currency:
-        condition: service_started
+        condition: service_healthy
       email:
-        condition: service_started
+        condition: service_healthy
       payment:
-        condition: service_started
+        condition: service_healthy
       product-catalog:
         condition: service_started
       shipping:
@@ -177,6 +189,12 @@ services:
       - OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE
       - OTEL_RESOURCE_ATTRIBUTES=${OTEL_RESOURCE_ATTRIBUTES},service.criticality=high
       - OTEL_SERVICE_NAME=currency
+    healthcheck:
+      test: ["CMD-SHELL", "nc -z localhost ${CURRENCY_PORT}"]
+      start_period: 10s
+      interval: 5s
+      timeout: 5s
+      retries: 20
     depends_on:
       otel-collector:
         condition: service_started
@@ -207,6 +225,12 @@ services:
       - OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE
       - OTEL_RESOURCE_ATTRIBUTES=${OTEL_RESOURCE_ATTRIBUTES},service.criticality=medium
       - OTEL_SERVICE_NAME=email
+    healthcheck:
+      test: ["CMD", "ruby", "-e", "require 'socket'; TCPSocket.new('localhost', ${EMAIL_PORT}).close"]
+      start_period: 10s
+      interval: 5s
+      timeout: 5s
+      retries: 20
     depends_on:
       otel-collector:
         condition: service_started
@@ -249,27 +273,33 @@ services:
       - OTEL_COLLECTOR_HOST
       - FLAGD_HOST
       - FLAGD_PORT
+    healthcheck:
+      test: ["CMD", "/nodejs/bin/node", "-e", "require('net').connect(${FRONTEND_PORT},require('os').hostname(),function(){process.exit(0)}).on('error',function(){process.exit(1)})"]
+      start_period: 60s
+      interval: 10s
+      timeout: 10s
+      retries: 5
     depends_on:
       ad:
-        condition: service_started
+        condition: service_healthy
       cart:
         condition: service_started
       checkout:
         condition: service_started
       currency:
-        condition: service_started
+        condition: service_healthy
       product-catalog:
         condition: service_started
       quote:
-        condition: service_started
+        condition: service_healthy
       recommendation:
-        condition: service_started
+        condition: service_healthy
       shipping:
         condition: service_started
       otel-collector:
         condition: service_started
       image-provider:
-        condition: service_started
+        condition: service_healthy
       flagd:
         condition: service_started
     logging: *logging
@@ -318,15 +348,21 @@ services:
       - FLAGD_UI_PORT
       - TELEMETRY_DOCS_HOST
       - TELEMETRY_DOCS_PORT
+    healthcheck:
+      test: ["CMD", "bash", "-c", "echo > /dev/tcp/localhost/${ENVOY_PORT}"]
+      start_period: 10s
+      interval: 5s
+      timeout: 5s
+      retries: 20
     depends_on:
       frontend:
-        condition: service_started
+        condition: service_healthy
       load-generator:
         condition: service_started
       flagd-ui:
-        condition: service_started
+        condition: service_healthy
       telemetry-docs:
-        condition: service_started
+        condition: service_healthy
     dns_search: ""
 
   # image-provider
@@ -351,6 +387,12 @@ services:
       - OTEL_COLLECTOR_PORT_GRPC
       - OTEL_RESOURCE_ATTRIBUTES=${OTEL_RESOURCE_ATTRIBUTES},service.criticality=low
       - OTEL_SERVICE_NAME=image-provider
+    healthcheck:
+      test: ["CMD", "wget", "--quiet", "--tries=1", "--spider", "http://localhost:${IMAGE_PROVIDER_PORT}/status"]
+      start_period: 10s
+      interval: 5s
+      timeout: 5s
+      retries: 20
     depends_on:
       otel-collector:
         condition: service_started
@@ -388,9 +430,15 @@ services:
       - FLAGD_HOST
       - FLAGD_PORT
       - FLAGD_OFREP_PORT
+    healthcheck:
+      test: ["CMD", "python3", "-c", "import socket; s=socket.create_connection(('localhost',${LOCUST_WEB_PORT}),2); s.close()"]
+      start_period: 30s
+      interval: 5s
+      timeout: 5s
+      retries: 20
     depends_on:
       frontend:
-        condition: service_started
+        condition: service_healthy
       flagd:
         condition: service_started
     logging: *logging
@@ -420,6 +468,21 @@ services:
       - OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE
       - OTEL_RESOURCE_ATTRIBUTES=${OTEL_RESOURCE_ATTRIBUTES},service.criticality=critical
       - OTEL_SERVICE_NAME=payment
+    healthcheck:
+      test:
+        - "CMD"
+        - "/nodejs/bin/node"
+        - "-e"
+        - >-
+          const net=require('net');const c=new net.Socket();
+          c.setTimeout(2000);
+          c.connect(${PAYMENT_PORT},'127.0.0.1',()=>{c.destroy();process.exit(0)});
+          c.on('error',()=>process.exit(1));
+          c.on('timeout',()=>process.exit(1))
+      start_period: 10s
+      interval: 5s
+      timeout: 5s
+      retries: 20
     depends_on:
       otel-collector:
         condition: service_started
@@ -455,13 +518,19 @@ services:
       - OTEL_CONFIG_FILE=/otel-config.yml
       - OTEL_SEMCONV_STABILITY_OPT_IN=database
       - DB_CONNECTION_STRING=postgres://astronomy_user:${POSTGRES_ASTRONOMY_PASSWORD}@${POSTGRES_HOST}/astronomy_db?sslmode=disable
+    healthcheck:
+      test: ["CMD", "/bin/grpc_health_probe", "-addr=:${PRODUCT_CATALOG_PORT}"]
+      start_period: 10s
+      interval: 5s
+      timeout: 5s
+      retries: 20
     depends_on:
       otel-collector:
         condition: service_started
       flagd:
         condition: service_started
       astronomy-db:
-        condition: service_started
+        condition: service_healthy
     volumes:
       - ./otel-config.yml:/otel-config.yml
     logging: *logging
@@ -500,13 +569,19 @@ services:
       - FLAGD_PORT
       - LLM_HOST
       - LLM_PORT
+    healthcheck:
+      test: ["CMD-SHELL", "nc -z localhost ${PRODUCT_REVIEWS_PORT}"]
+      start_period: 10s
+      interval: 5s
+      timeout: 5s
+      retries: 20
     depends_on:
       product-catalog:
         condition: service_started
       llm:
-        condition: service_started
+        condition: service_healthy
       astronomy-db:
-        condition: service_started
+        condition: service_healthy
       otel-collector:
         condition: service_started
     logging: *logging
@@ -536,6 +611,12 @@ services:
       - OTEL_PHP_INTERNAL_METRICS_ENABLED=true
       - OTEL_RESOURCE_ATTRIBUTES=${OTEL_RESOURCE_ATTRIBUTES},service.criticality=low
       - OTEL_SERVICE_NAME=quote
+    healthcheck:
+      test: ["CMD", "php", "-r", "fsockopen('localhost', ${QUOTE_PORT}) or die('fail');"]
+      start_period: 10s
+      interval: 5s
+      timeout: 5s
+      retries: 20
     depends_on:
       otel-collector:
         condition: service_started
@@ -568,6 +649,12 @@ services:
       - OTEL_RESOURCE_ATTRIBUTES=${OTEL_RESOURCE_ATTRIBUTES},service.criticality=medium
       - OTEL_SERVICE_NAME=recommendation
       - PROTOCOL_BUFFERS_PYTHON_IMPLEMENTATION=python
+    healthcheck:
+      test: ["CMD-SHELL", "nc -z localhost ${RECOMMENDATION_PORT}"]
+      start_period: 10s
+      interval: 5s
+      timeout: 5s
+      retries: 20
     depends_on:
       product-catalog:
         condition: service_started
@@ -603,6 +690,12 @@ services:
       - OTEL_RESOURCE_ATTRIBUTES=${OTEL_RESOURCE_ATTRIBUTES},service.criticality=high
       - OTEL_SERVICE_NAME=shipping
       - OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE
+    healthcheck:
+      test: ["CMD", "/app/healthcheck"]
+      start_period: 10s
+      interval: 5s
+      timeout: 5s
+      retries: 20
     depends_on:
       otel-collector:
         condition: service_started
@@ -665,6 +758,12 @@ services:
       - PHX_HOST=localhost
     ports:
       - "${FLAGD_UI_PORT}"
+    healthcheck:
+      test: ["CMD", "bash", "-c", "echo > /dev/tcp/localhost/${FLAGD_UI_PORT}"]
+      start_period: 10s
+      interval: 5s
+      timeout: 5s
+      retries: 20
     depends_on:
       otel-collector:
         condition: service_started
@@ -685,13 +784,19 @@ services:
     deploy:
       resources:
         limits:
-          memory: 50M
+          memory: 100M
     restart: unless-stopped
     environment:
       - FLAGD_HOST
       - FLAGD_PORT
     ports:
       - "${LLM_PORT}"
+    healthcheck:
+      test: ["CMD", "python3", "-c", "import socket; s=socket.create_connection(('localhost',${LLM_PORT}),2); s.close()"]
+      start_period: 10s
+      interval: 5s
+      timeout: 5s
+      retries: 20
     depends_on:
       flagd:
         condition: service_started
@@ -718,6 +823,12 @@ services:
       - OTEL_COLLECTOR_HOST
       - OTEL_COLLECTOR_PORT_GRPC
       - OTEL_SERVICE_NAME=telemetry-docs
+    healthcheck:
+      test: ["CMD", "wget", "--quiet", "--tries=1", "--spider", "http://localhost:${TELEMETRY_DOCS_PORT}/"]
+      start_period: 10s
+      interval: 5s
+      timeout: 5s
+      retries: 20
     logging: *logging
 
   # PostgreSQL database for the astronomy demo
@@ -734,6 +845,12 @@ services:
     command: postgres -c shared_preload_libraries=pg_stat_statements
     environment:
       - POSTGRES_PASSWORD
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready"]
+      start_period: 10s
+      interval: 5s
+      timeout: 5s
+      retries: 10
     volumes:
       - ./src/postgresql/init.sql:/docker-entrypoint-initdb.d/init.sql
     logging: *logging
@@ -750,6 +867,12 @@ services:
     restart: unless-stopped
     ports:
       - "${VALKEY_PORT}"
+    healthcheck:
+      test: ["CMD-SHELL", "valkey-cli ping"]
+      start_period: 5s
+      interval: 5s
+      timeout: 3s
+      retries: 10
     logging: *logging
 
   # ********************

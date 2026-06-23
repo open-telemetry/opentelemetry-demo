@@ -140,6 +140,11 @@ static_resources:
     - name: opentelemetry_collector_grpc
       type: STRICT_DNS
       lb_policy: ROUND_ROBIN
+      dns_failure_refresh_rate: { base_interval: 10s, max_interval: 30s }
+      typed_dns_resolver_config: &dns_resolver
+        name: envoy.network.dns_resolver.getaddrinfo
+        typed_config:
+          "@type": type.googleapis.com/envoy.extensions.network.dns_resolver.getaddrinfo.v3.GetAddrInfoDnsResolverConfig
       typed_extension_protocol_options:
         envoy.extensions.upstreams.http.v3.HttpProtocolOptions:
           "@type": type.googleapis.com/envoy.extensions.upstreams.http.v3.HttpProtocolOptions
@@ -157,6 +162,8 @@ static_resources:
     - name: opentelemetry_collector_http
       type: STRICT_DNS
       lb_policy: ROUND_ROBIN
+      dns_failure_refresh_rate: { base_interval: 10s, max_interval: 30s }
+      typed_dns_resolver_config: *dns_resolver
       load_assignment:
         cluster_name: opentelemetry_collector_http
         endpoints:
@@ -169,6 +176,8 @@ static_resources:
     - name: frontend
       type: STRICT_DNS
       lb_policy: ROUND_ROBIN
+      dns_failure_refresh_rate: { base_interval: 10s, max_interval: 30s }
+      typed_dns_resolver_config: *dns_resolver
       load_assignment:
         cluster_name: frontend
         endpoints:
@@ -181,6 +190,8 @@ static_resources:
     - name: image-provider
       type: STRICT_DNS
       lb_policy: ROUND_ROBIN
+      dns_failure_refresh_rate: { base_interval: 10s, max_interval: 30s }
+      typed_dns_resolver_config: *dns_resolver
       load_assignment:
         cluster_name: image-provider
         endpoints:
@@ -193,6 +204,8 @@ static_resources:
     - name: flagservice
       type: STRICT_DNS
       lb_policy: ROUND_ROBIN
+      dns_failure_refresh_rate: { base_interval: 10s, max_interval: 30s }
+      typed_dns_resolver_config: *dns_resolver
       load_assignment:
         cluster_name: flagservice
         endpoints:
@@ -205,6 +218,8 @@ static_resources:
     - name: flagd-ui
       type: STRICT_DNS
       lb_policy: ROUND_ROBIN
+      dns_failure_refresh_rate: { base_interval: 10s, max_interval: 30s }
+      typed_dns_resolver_config: *dns_resolver
       load_assignment:
         cluster_name: flagd-ui
         endpoints:
@@ -217,6 +232,8 @@ static_resources:
     - name: loadgen
       type: STRICT_DNS
       lb_policy: ROUND_ROBIN
+      dns_failure_refresh_rate: { base_interval: 10s, max_interval: 30s }
+      typed_dns_resolver_config: *dns_resolver
       load_assignment:
         cluster_name: loadgen
         endpoints:
@@ -229,6 +246,8 @@ static_resources:
     - name: grafana
       type: STRICT_DNS
       lb_policy: ROUND_ROBIN
+      dns_failure_refresh_rate: { base_interval: 10s, max_interval: 30s }
+      typed_dns_resolver_config: *dns_resolver
       load_assignment:
         cluster_name: grafana
         endpoints:
@@ -241,6 +260,8 @@ static_resources:
     - name: jaeger
       type: STRICT_DNS
       lb_policy: ROUND_ROBIN
+      dns_failure_refresh_rate: { base_interval: 10s, max_interval: 30s }
+      typed_dns_resolver_config: *dns_resolver
       load_assignment:
         cluster_name: jaeger
         endpoints:
@@ -253,6 +274,8 @@ static_resources:
     - name: telemetry-docs
       type: STRICT_DNS
       lb_policy: ROUND_ROBIN
+      dns_failure_refresh_rate: { base_interval: 10s, max_interval: 30s }
+      typed_dns_resolver_config: *dns_resolver
       load_assignment:
         cluster_name: telemetry-docs
         endpoints:
