@@ -21,6 +21,17 @@ the release.
   for the traces, metrics, and logs backends during warmup to avoid per-test
   timeouts, and cap the test step at 15 minutes
   ([#3498](https://github.com/open-telemetry/opentelemetry-demo/pull/3498))
+* [testing] Telemetry test warmup now drives a few real checkouts through the
+  frontend so low-frequency services (`email`, `quote`) that only emit on the
+  checkout path produce telemetry deterministically, instead of depending on the
+  load generator's ~6% checkout task weight landing inside the test window
+  ([#3505](https://github.com/open-telemetry/opentelemetry-demo/pull/3505))
+* [fraud-detection] Set the Kafka consumer `auto.offset.reset` to `earliest` so
+  it processes `orders` produced before its consumer group finished joining,
+  matching the accounting consumer. Previously the Kafka default of `latest`
+  silently dropped those orders, so fraud-detection could emit no telemetry on a
+  quiet or cold start
+  ([#3505](https://github.com/open-telemetry/opentelemetry-demo/pull/3505))
 * [telemetry-docs] Add a new service to provide telemetry documentation based
   on Weaver
   ([#2794](https://github.com/open-telemetry/opentelemetry-demo/pull/2794))
