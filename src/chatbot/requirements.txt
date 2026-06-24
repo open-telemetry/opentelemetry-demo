@@ -4,10 +4,6 @@
 #
 #    pip-compile --allow-unsafe --generate-hashes --no-emit-index-url --output-file=src/chatbot/requirements.txt --strip-extras src/chatbot/requirements.in
 #
-aiofiles==24.1.0 \
-    --hash=sha256:22a075c9e5a3810f0c2e48f3008c94d68c65d763b9b03857924c99e57355166c \
-    --hash=sha256:b4ec55f4195e3eb5d7abd1bf7e061763e864dd4954231fb8539a0ef8bb8260e5
-    # via gradio
 annotated-doc==0.0.4 \
     --hash=sha256:571ac1dc6991c450b25a9c2d84a3705e2ae7a53467b5d111c24fa8baabbed320 \
     --hash=sha256:fbcda96e87e9c92ad167c2e53839e57503ecfda18804ea28102353485033faa4
@@ -272,16 +268,12 @@ click==8.4.1 \
     #   huggingface-hub
     #   typer
     #   uvicorn
-fastapi==0.120.4 \
-    --hash=sha256:2d856bc847893ca4d77896d4504ffdec0fb04312b705065fca9104428eca3868 \
-    --hash=sha256:9bdf192308676480d3593e10fd05094e56d6fdc7d9283db26053d8104d5f82a0
+fastapi==0.138.0 \
+    --hash=sha256:b6f54fd1bd72c80b0f899f172c61a600f6f7af9b43d4d772a018f35624048cb0 \
+    --hash=sha256:d445a4877636ad191e7053e08c9bf98cb921a6756776848400bb773d1740c061
     # via
-    #   -r src/chatbot/requirements.in
+    #   -r requirements.in
     #   gradio
-ffmpy==1.0.0 \
-    --hash=sha256:5640e5f0fd03fb6236d0e119b16ccf6522db1c826fdf35dcb87087b60fd7504f \
-    --hash=sha256:b12932e95435c8820f1cd041024402765f821971e4bae753b327fc02a6e12f8b
-    # via gradio
 filelock==3.29.3 \
     --hash=sha256:7fc1b3f39cf172fd8203812043c57b8a65aef9969f38b6704f628b881f761a84 \
     --hash=sha256:e58333029cc9b925f39aad59b1d8f0a1ad836af4e60d7217f4a4dba87461261d
@@ -296,14 +288,16 @@ googleapis-common-protos==1.75.0 \
     --hash=sha256:53a062ff3c32552fbd62c11fe23768b78e4ddf0494d5e5fd97d3f4689c75fbbd \
     --hash=sha256:961ed60399c457ceb0ee8f285a84c870aabc9c6a832b9d37bb281b5bebde43ed
     # via opentelemetry-exporter-otlp-proto-grpc
-gradio==6.0.1 \
-    --hash=sha256:0f98dc8b414a3f3773cbf3caf5a354507c8ae309ed8266e2f30ca9fa53f379b8 \
-    --hash=sha256:5d02e6ac34c67aea26b938b8628c8f9f504871392e71f2db559ab8d6799bdf69
-    # via -r src/chatbot/requirements.in
-gradio-client==2.0.0 \
-    --hash=sha256:56b462183cb8741bd3e69b21db7d3b62c5abb03c2c2bb925223f1eb18f950e89 \
-    --hash=sha256:77bedf20edcc232d8e7986c1a22165b2bbca1c7c7df10ba808a093d5180dae18
-    # via gradio
+gradio==6.19.0 \
+    --hash=sha256:04d0ad1450b3e34683dee76934b47d93b7b655bb506e1e9e9b7b7ab4c9eb8090 \
+    --hash=sha256:da6c947afca06392f31068c9077e74763a4eb2b81097879dd88b2a1bf28b518e
+    # via -r requirements.in
+gradio-client==2.5.0 \
+    --hash=sha256:4cde99bad62149595c30c90876ca2e405e3a13687ecf895474f3412cb476673d \
+    --hash=sha256:d43e2179c29076292a76485ad7ed2e6eaa19d14ac58283bd7f5beabfe4ca958c
+    # via
+    #   gradio
+    #   hf-gradio
 groovy==0.1.2 \
     --hash=sha256:25c1dc09b3f9d7e292458aa762c6beb96ea037071bf5e917fc81fb78d2231083 \
     --hash=sha256:7f7975bab18c729a257a8b1ae9dcd70b7cafb1720481beae47719af57c35fa64
@@ -367,6 +361,10 @@ h11==0.16.0 \
     # via
     #   httpcore
     #   uvicorn
+hf-gradio==0.4.1 \
+    --hash=sha256:76b8cb8be6abe62d74c1ad2d35b42f0629db89aa9e1a8d033cecfe7c856eeab3 \
+    --hash=sha256:a017d942618f0d495a58ee4563047fa04bef614c00e0cb789a9a6d0633cffa7b
+    # via gradio
 hf-xet==1.5.1 \
     --hash=sha256:0c97106032ef70467b4f6bc2d0ccc266d7613ee076afc56516c502f87ce1c4a6 \
     --hash=sha256:3474760d10e3bb6f92ff3f024fcb00c0b3e4001e9b035c7483e49a5dd17aa70f \
@@ -402,7 +400,7 @@ httpx==0.28.1 \
     --hash=sha256:75e98c5f16b0f35b567856f597f06ff2270a374470a5c2392242528e3e3e42fc \
     --hash=sha256:d909fcccc110f8c7faf814ca82a9a4d816bc5a6dbfea25d6591d6985b8ba59ad
     # via
-    #   -r src/chatbot/requirements.in
+    #   -r requirements.in
     #   gradio
     #   gradio-client
     #   huggingface-hub
@@ -609,7 +607,7 @@ opentelemetry-api==1.38.0 \
     --hash=sha256:2891b0197f47124454ab9f0cf58f3be33faca394457ac3e09daba13ff50aa582 \
     --hash=sha256:f4c193b5e8acb0912b06ac5b16321908dd0843d75049c091487322284a3eea12
     # via
-    #   -r src/chatbot/requirements.in
+    #   -r requirements.in
     #   opentelemetry-exporter-otlp-proto-grpc
     #   opentelemetry-instrumentation
     #   opentelemetry-instrumentation-httpx
@@ -623,7 +621,7 @@ opentelemetry-exporter-otlp-proto-common==1.38.0 \
 opentelemetry-exporter-otlp-proto-grpc==1.38.0 \
     --hash=sha256:2473935e9eac71f401de6101d37d6f3f0f1831db92b953c7dcc912536158ebd6 \
     --hash=sha256:7c49fd9b4bd0dbe9ba13d91f764c2d20b0025649a6e4ac35792fb8d84d764bc7
-    # via -r src/chatbot/requirements.in
+    # via -r requirements.in
 opentelemetry-instrumentation==0.59b0 \
     --hash=sha256:44082cc8fe56b0186e87ee8f7c17c327c4c2ce93bdbe86496e600985d74368ee \
     --hash=sha256:6010f0faaacdaf7c4dff8aac84e226d23437b331dcda7e70367f6d73a7db1adc
@@ -633,11 +631,11 @@ opentelemetry-instrumentation==0.59b0 \
 opentelemetry-instrumentation-httpx==0.59b0 \
     --hash=sha256:7dc9f66aef4ca3904d877f459a70c78eafd06131dc64d713b9b1b5a7d0a48f05 \
     --hash=sha256:a1cb9b89d9f05a82701cc9ab9cfa3db54fd76932489449778b350bc1b9f0e872
-    # via -r src/chatbot/requirements.in
+    # via -r requirements.in
 opentelemetry-instrumentation-requests==0.59b0 \
     --hash=sha256:9af2ffe3317f03074d7f865919139e89170b6763a0251b68c25e8e64e04b3400 \
     --hash=sha256:d43121532877e31a46c48649279cec2504ee1e0ceb3c87b80fe5ccd7eafc14c1
-    # via -r src/chatbot/requirements.in
+    # via -r requirements.in
 opentelemetry-proto==1.38.0 \
     --hash=sha256:88b161e89d9d372ce723da289b7da74c3a8354a8e5359992be813942969ed468 \
     --hash=sha256:b6ebe54d3217c42e45462e2a1ae28c3e2bf2ec5a5645236a490f55f45f1a0a18
@@ -648,7 +646,7 @@ opentelemetry-sdk==1.38.0 \
     --hash=sha256:1c66af6564ecc1553d72d811a01df063ff097cdc82ce188da9951f93b8d10f6b \
     --hash=sha256:93df5d4d871ed09cb4272305be4d996236eedb232253e3ab864c8620f051cebe
     # via
-    #   -r src/chatbot/requirements.in
+    #   -r requirements.in
     #   opentelemetry-exporter-otlp-proto-grpc
 opentelemetry-semantic-conventions==0.59b0 \
     --hash=sha256:35d3b8833ef97d614136e253c1da9342b4c3c083bbaf29ce31d572a1c3825eed \
@@ -1056,7 +1054,7 @@ python-dateutil==2.9.0.post0 \
 python-dotenv==1.2.2 \
     --hash=sha256:1d8214789a24de455a8b8bd8ae6fe3c6b69a5e3d64aa8a8e5d68e694bbcb285a \
     --hash=sha256:2c371a91fbd7ba082c2c1dc1f8bf89ca22564a087c2c287cd9b662adde799cf3
-    # via -r src/chatbot/requirements.in
+    # via -r requirements.in
 python-multipart==0.0.32 \
     --hash=sha256:be54b7f3fa167bb83e4fcd936b887b708f4e57fe75911c02aebf53efaf8d938e \
     --hash=sha256:ff6d3f776f16878c894e52e107296ffc890e913c611b1a4ec6c44e2821fe2e23
@@ -1064,7 +1062,9 @@ python-multipart==0.0.32 \
 pytz==2026.2 \
     --hash=sha256:04156e608bee23d3792fd45c94ae47fae1036688e75032eea2e3bf0323d1f126 \
     --hash=sha256:0e60b47b29f21574376f218fe21abc009894a2321ea16c6754f3cad6eb7cdd6a
-    # via pandas
+    # via
+    #   gradio
+    #   pandas
 pyyaml==6.0.3 \
     --hash=sha256:00c4bdeba853cc34e7dd471f16b4114f4162dc03e6b7afcc2128711f0eca823c \
     --hash=sha256:0150219816b6a1fa26fb4699fb7daa9caf09eb1999f3b70fb6e786805e80375a \
@@ -1142,10 +1142,10 @@ pyyaml==6.0.3 \
     # via
     #   gradio
     #   huggingface-hub
-requests==2.32.5 \
-    --hash=sha256:2462f94637a34fd532264295e186976db0f5d453d1cdd31473c85a6a161affb6 \
-    --hash=sha256:dbba0bac56e100853db0ea71b82b4dfd5fe2bf6d3754a8893c3af500cec7d7cf
-    # via -r src/chatbot/requirements.in
+requests==2.34.2 \
+    --hash=sha256:2a0d60c172f83ac6ab31e4554906c0f3b3588d37b5cb939b1c061f4907e278e0 \
+    --hash=sha256:f288924cae4e29463698d6d60bc6a4da69c89185ad1e0bcc4104f584e960b9ed
+    # via -r requirements.in
 rich==15.0.0 \
     --hash=sha256:33bd4ef74232fb73fe9279a257718407f169c09b78a87ad3d296f548e27de0bb \
     --hash=sha256:edd07a4824c6b40189fb7ac9bc4c52536e9780fbbfbddf6f1e2502c31b068c36
@@ -1166,9 +1166,9 @@ six==1.17.0 \
     --hash=sha256:4721f391ed90541fddacab5acf947aa0d3dc7d27b2e1e8eda2be8970586c3274 \
     --hash=sha256:ff70335d468e7eb6ec65b95b99d3a2836546063f63acc5171de367e834932a81
     # via python-dateutil
-starlette==0.49.3 \
-    --hash=sha256:1c14546f299b5901a1ea0e34410575bc33bbd741377a10484a54445588d00284 \
-    --hash=sha256:b579b99715fdc2980cf88c8ec96d3bf1ce16f5a8051a7c2b84ef9b1cdecaea2f
+starlette==1.3.1 \
+    --hash=sha256:05d0213193f2fbaae60e2ecb593b4add4262ad4e46536b54abe36f11a71724e0 \
+    --hash=sha256:c7372aae11c3c3f26a42df7bd626cec2f47d03483d261d369516a615a53714c6
     # via
     #   fastapi
     #   gradio
@@ -1185,6 +1185,7 @@ typer==0.25.1 \
     --hash=sha256:9616eb8853a09ffeabab1698952f33c6f29ffdbceb4eaeecf571880e8d7664cc
     # via
     #   gradio
+    #   hf-gradio
     #   huggingface-hub
 typing-extensions==4.15.0 \
     --hash=sha256:0cea48d173cc12fa28ecabc3b837ea3cf6f38c6d1136f85cbaaf598984861466 \
@@ -1207,7 +1208,9 @@ typing-extensions==4.15.0 \
 typing-inspection==0.4.2 \
     --hash=sha256:4ed1cacbdc298c220f1bd249ed5287caa16f34d44ef4e9c3d0cbad5b521545e7 \
     --hash=sha256:ba561c48a67c5958007083d386c3295464928b01faa735ab8547c5692e87f464
-    # via pydantic
+    # via
+    #   fastapi
+    #   pydantic
 tzdata==2026.2 \
     --hash=sha256:9173fde7d80d9018e02a662e168e5a2d04f87c41ea174b139fbef642eda62d10 \
     --hash=sha256:bbe9af844f658da81a5f95019480da3a89415801f6cc966806612cc7169bffe7
