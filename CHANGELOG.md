@@ -7,6 +7,11 @@ the release.
 
 ## Unreleased
 
+* [frontend] Fix cart page showing unit price instead of line total; add
+  per-item quantity selector so users can change quantities directly in the
+  cart, with each row now displaying both the unit price and the line total
+  (unit price * quantity)
+  ([#3521](https://github.com/open-telemetry/opentelemetry-demo/pull/3521))
 * [payment] Replace manual SDK initialization with zero-code instrumentation
   via `NODE_OPTIONS=--require @opentelemetry/auto-instrumentations-node/register`
   ([#3486](https://github.com/open-telemetry/opentelemetry-demo/pull/3486))
