@@ -102,7 +102,7 @@ class Agent:
         agent_port = int(os.getenv("AGENT_PORT", "8010"))
         agent_config = uvicorn.Config(
             app=self.app,
-            host="0.0.0.0",
+            host="::",
             port=agent_port,
             log_level="info",
         )
