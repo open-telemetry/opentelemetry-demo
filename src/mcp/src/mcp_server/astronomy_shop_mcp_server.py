@@ -15,7 +15,7 @@ logger = logging.getLogger(__name__)
 
 class AstronomyShopMcp:
     def __init__(self) -> None:
-        self.host = "0.0.0.0"
+        self.host = "::"
         self.port = int(os.getenv("MCP_PORT", "8011"))
         self.mcp = FastMCP("astronomy-shop-mcp")
 
