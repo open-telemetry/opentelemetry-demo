@@ -26,6 +26,16 @@ Dockerized Python (pytest) container running on the same Docker
 network as the demo. Queries backend APIs to verify services are
 producing telemetry.
 
+A session-scoped warmup fixture runs before the per-test checks. It
+first drives a few real checkouts through the frontend proxy (the same
+endpoints the load generator uses), then waits until Jaeger, Prometheus,
+and OpenSearch have all ingested telemetry. The checkouts make
+low-frequency services that only emit on the checkout path (e.g. `email`,
+`quote`) produce telemetry deterministically instead of depending on the
+load generator's task mix landing inside the test window. The probe is
+best-effort and controlled by `WARMUP_PROBE_ENABLED` /
+`WARMUP_PROBE_CHECKOUTS` (see Environment Variables).
+
 ```mermaid
 graph TD
     A[Services] -->|OTLP| B[OTel Collector]
@@ -117,16 +127,19 @@ make run-telemetry-tests-minimal   # Minimal scope
 
 ## Environment Variables
 
-| Variable           | Default         | Description               |
-| ------------------ | --------------- | ------------------------- |
-| `JAEGER_HOST`      | `jaeger`        | Jaeger hostname           |
-| `JAEGER_UI_PORT`   | `16686`         | Jaeger query port         |
-| `PROMETHEUS_HOST`  | `prometheus`    | Prometheus hostname       |
-| `PROMETHEUS_PORT`  | `9090`          | Prometheus query port     |
-| `OPENSEARCH_HOST`  | `opensearch`    | OpenSearch hostname       |
-| `OPENSEARCH_PORT`  | `9200`          | OpenSearch port           |
-| `TEST_SCOPE`       | `minimal`       | `minimal` or `full`       |
-| `WARMUP_SECONDS`   | `240`           | Seconds before testing    |
+| Variable                 | Default      | Description                                     |
+| ------------------------ | ------------ | ----------------------------------------------- |
+| `JAEGER_HOST`            | `jaeger`     | Jaeger hostname                                 |
+| `JAEGER_UI_PORT`         | `16686`      | Jaeger query port                               |
+| `PROMETHEUS_HOST`        | `prometheus` | Prometheus hostname                             |
+| `PROMETHEUS_PORT`        | `9090`       | Prometheus query port                           |
+| `OPENSEARCH_HOST`        | `opensearch` | OpenSearch hostname                             |
+| `OPENSEARCH_PORT`        | `9200`       | OpenSearch port                                 |
+| `TEST_SCOPE`             | `minimal`    | `minimal` or `full`                             |
+| `WARMUP_SECONDS`         | `240`        | Max seconds to wait for backends before testing |
+| `POLL_TIMEOUT`           | `180`        | Per-test seconds to poll a backend for data     |
+| `WARMUP_PROBE_ENABLED`   | `true`       | Drive checkouts during warmup (see Approach)    |
+| `WARMUP_PROBE_CHECKOUTS` | `5`          | Number of checkouts the warmup probe drives     |
 
 ## CI Integration
 
