@@ -7,6 +7,12 @@ the release.
 
 ## Unreleased
 
+* [payment] Replace manual SDK initialization with zero-code instrumentation
+  via `NODE_OPTIONS=--require @opentelemetry/auto-instrumentations-node/register`
+  ([#3486](https://github.com/open-telemetry/opentelemetry-demo/pull/3486))
+* [llm] Increase `llm` service memory limit from 50M to 100M to prevent a
+  startup restart loop caused by the container exceeding its memory limit
+  ([#2944](https://github.com/open-telemetry/opentelemetry-demo/issues/2944))
 * [testing] Add telemetry sanity tests to validate end-to-end observability
   pipeline, including service-to-service edge verification via Jaeger trace walks
   ([#3356](https://github.com/open-telemetry/opentelemetry-demo/pull/3356))
@@ -15,6 +21,17 @@ the release.
   for the traces, metrics, and logs backends during warmup to avoid per-test
   timeouts, and cap the test step at 15 minutes
   ([#3498](https://github.com/open-telemetry/opentelemetry-demo/pull/3498))
+* [testing] Telemetry test warmup now drives a few real checkouts through the
+  frontend so low-frequency services (`email`, `quote`) that only emit on the
+  checkout path produce telemetry deterministically, instead of depending on the
+  load generator's ~6% checkout task weight landing inside the test window
+  ([#3505](https://github.com/open-telemetry/opentelemetry-demo/pull/3505))
+* [fraud-detection] Set the Kafka consumer `auto.offset.reset` to `earliest` so
+  it processes `orders` produced before its consumer group finished joining,
+  matching the accounting consumer. Previously the Kafka default of `latest`
+  silently dropped those orders, so fraud-detection could emit no telemetry on a
+  quiet or cold start
+  ([#3505](https://github.com/open-telemetry/opentelemetry-demo/pull/3505))
 * [telemetry-docs] Add a new service to provide telemetry documentation based
   on Weaver
   ([#2794](https://github.com/open-telemetry/opentelemetry-demo/pull/2794))
@@ -219,6 +236,8 @@ the release.
 * [telemetry] Split cart and payment attributes out of the order telemetry
   schema into their own domain files.
   ([#3484](https://github.com/open-telemetry/opentelemetry-demo/pull/3484))
+* [chore] Add health check to services
+  ([#3487](https://github.com/open-telemetry/opentelemetry-demo/pull/3487))
 * [fraud-detection] fix gRPC service files dropped from the shadow jar by
   setting `duplicatesStrategy` to `INCLUDE`, restoring the DNS name resolver
   registration needed to connect to flagd
