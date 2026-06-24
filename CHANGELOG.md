@@ -247,6 +247,14 @@ the release.
   setting `duplicatesStrategy` to `INCLUDE`, restoring the DNS name resolver
   registration needed to connect to flagd
   ([#3501](https://github.com/open-telemetry/opentelemetry-demo/pull/3501))
+* [agent] Add Agent, MCP and ChatBot to Otel Demo application.
+    Agent - Langgraph ReAct agent which can accept user requests then with the
+    help of LLM call, it identifies the right set of tools. Agent also has an
+    LLM response caching feature.
+    MCP - Agent can be configured to use MCP tools or native langgraph tools to
+    interact with demo application.
+    Chatbot - facilitates an interactive UI for users to send requests to agent.
+    ([#3455](https://github.com/open-telemetry/opentelemetry-demo/pull/3455))
 
 ## 2.2.0
 

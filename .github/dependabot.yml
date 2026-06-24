@@ -12,7 +12,17 @@ multi-ecosystem-groups:
       interval: "weekly"
       day: "tuesday"
       time: "03:50"
+  src-agent:
+    schedule:
+      interval: "weekly"
+      day: "tuesday"
+      time: "03:50"
   src-cart:
+    schedule:
+      interval: "weekly"
+      day: "tuesday"
+      time: "03:50"
+  src-chatbot:
     schedule:
       interval: "weekly"
       day: "tuesday"
@@ -48,6 +58,11 @@ multi-ecosystem-groups:
       day: "tuesday"
       time: "03:50"
   src-load-generator:
+    schedule:
+      interval: "weekly"
+      day: "tuesday"
+      time: "03:50"
+  src-mcp:
     schedule:
       interval: "weekly"
       day: "tuesday"
@@ -304,6 +319,42 @@ updates:
     patterns:
       - "*"
     multi-ecosystem-group: "src-llm"
+  - package-ecosystem: "pip"  # zizmor: ignore[dependabot-cooldown] cooldown prevents multi-ecosystem batching
+    directories:
+      - "/src/agent/**"
+    patterns:
+      - "*"
+    multi-ecosystem-group: "src-agent"
+  - package-ecosystem: "docker"  # zizmor: ignore[dependabot-cooldown] cooldown prevents multi-ecosystem batching
+    directories:
+      - "/src/agent/**"
+    patterns:
+      - "*"
+    multi-ecosystem-group: "src-agent"
+  - package-ecosystem: "pip"  # zizmor: ignore[dependabot-cooldown] cooldown prevents multi-ecosystem batching
+    directories:
+      - "/src/mcp/**"
+    patterns:
+      - "*"
+    multi-ecosystem-group: "src-mcp"
+  - package-ecosystem: "docker"  # zizmor: ignore[dependabot-cooldown] cooldown prevents multi-ecosystem batching
+    directories:
+      - "/src/mcp/**"
+    patterns:
+      - "*"
+    multi-ecosystem-group: "src-mcp"
+  - package-ecosystem: "pip"  # zizmor: ignore[dependabot-cooldown] cooldown prevents multi-ecosystem batching
+    directories:
+      - "/src/chatbot/**"
+    patterns:
+      - "*"
+    multi-ecosystem-group: "src-chatbot"
+  - package-ecosystem: "docker"  # zizmor: ignore[dependabot-cooldown] cooldown prevents multi-ecosystem batching
+    directories:
+      - "/src/chatbot/**"
+    patterns:
+      - "*"
+    multi-ecosystem-group: "src-chatbot"
   - package-ecosystem: "pip"  # zizmor: ignore[dependabot-cooldown] cooldown prevents multi-ecosystem batching
     directories:
       - "/src/load-generator/**"
