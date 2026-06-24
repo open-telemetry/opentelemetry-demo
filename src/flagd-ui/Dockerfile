@@ -14,7 +14,7 @@
 #   - https://pkgs.org/ - resource for finding needed packages
 #   - Ex: docker.io/hexpm/elixir:1.20.1-erlang-28.4-debian-bullseye-20260610-slim
 #
-FROM docker.io/hexpm/elixir:1.20.1-erlang-28.4-debian-bullseye-20260610-slim@sha256:ec29c781c91c98bd0d887fa5c41e75bd1b6ced83fc4a695af3371a577e500d58 AS builder
+FROM docker.io/hexpm/elixir:1.20.1-erlang-28.4-debian-bullseye-20260610-slim@sha256:ec29c781c91c98bd0d887fa5c41e75bd1b6ced83fc4a695af3371a577e500d58 AS base
 
 # install build dependencies
 RUN apt-get update \
@@ -28,8 +28,30 @@ WORKDIR /app
 RUN mix local.hex --force \
   && mix local.rebar --force
 
+FROM base AS test
+
+# set test ENV
+ENV MIX_ENV="test"
+
+COPY ./src/flagd-ui/mix.exs ./src/flagd-ui/mix.lock ./
+RUN mix deps.get --only $MIX_ENV
+
+COPY ./src/flagd/demo.flagd.json ../flagd/demo.flagd.json
+COPY ./src/flagd-ui/config config
+COPY ./src/flagd-ui/priv priv
+COPY ./src/flagd-ui/lib lib
+COPY ./src/flagd-ui/test test
+
+RUN mix test \
+  && touch /tmp/flagd-ui-tests-passed
+
+FROM base AS builder
+
 # set build ENV
 ENV MIX_ENV="prod"
+
+# BuildKit skips unused stages, so depend on the test marker to require tests before building the release.
+COPY --from=test /tmp/flagd-ui-tests-passed /tmp/flagd-ui-tests-passed
 
 # install mix dependencies
 COPY ./src/flagd-ui/mix.exs ./src/flagd-ui/mix.lock ./
