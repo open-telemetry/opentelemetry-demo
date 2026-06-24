@@ -203,6 +203,8 @@ run-telemetry-tests: start
 		-e TEST_SCOPE=full \
 		-e WARMUP_SECONDS=$${WARMUP_SECONDS:-240} \
 		-e POLL_TIMEOUT=$${POLL_TIMEOUT:-180} \
+		-e WARMUP_PROBE_ENABLED=$${WARMUP_PROBE_ENABLED:-true} \
+		-e WARMUP_PROBE_CHECKOUTS=$${WARMUP_PROBE_CHECKOUTS:-5} \
 		opentelemetry-demo-telemetry-tests; \
 	rc=$$?; \
 	$(MAKE) stop; \
@@ -218,6 +220,8 @@ run-telemetry-tests-minimal: start-minimal
 		-e TEST_SCOPE=minimal \
 		-e WARMUP_SECONDS=$${WARMUP_SECONDS:-240} \
 		-e POLL_TIMEOUT=$${POLL_TIMEOUT:-180} \
+		-e WARMUP_PROBE_ENABLED=$${WARMUP_PROBE_ENABLED:-true} \
+		-e WARMUP_PROBE_CHECKOUTS=$${WARMUP_PROBE_CHECKOUTS:-5} \
 		opentelemetry-demo-telemetry-tests; \
 	rc=$$?; \
 	$(MAKE) stop; \
