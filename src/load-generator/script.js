@@ -55,15 +55,18 @@ const tracer = new Tracer()
 
 // ---- helpers ----------------------------------------------------------------
 
+function cryptoRandom() {
+    const buf = new Uint32Array(1)
+    crypto.getRandomValues(buf)
+    return buf[0] / 0x100000000
+}
+
 function randomChoice(arr) {
-    return arr[Math.floor(Math.random() * arr.length)]
+    return arr[Math.floor(cryptoRandom() * arr.length)]
 }
 
 function uuid4() {
-    return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, c => {
-        const r = (Math.random() * 16) | 0
-        return (c === 'x' ? r : (r & 0x3) | 0x8).toString(16)
-    })
+    return crypto.randomUUID()
 }
 
 // getFlagdValue mirrors Locust's TracingHook: each flag evaluation gets its
@@ -265,7 +268,7 @@ const weightedTasks = [
 ]
 
 function selectTask() {
-    const r = Math.random() * 32
+    const r = cryptoRandom() * 32
     for (const { cumWeight, task } of weightedTasks) {
         if (r < cumWeight) return task
     }
@@ -281,7 +284,7 @@ export function httpScenario() {
 
     selectTask()()
 
-    sleep(Math.random() * 9 + 1)  // mirrors Locust between(1, 10)
+    sleep(cryptoRandom() * 9 + 1)  // mirrors Locust between(1, 10)
 }
 
 // ---- browser tasks ----------------------------------------------------------
@@ -307,7 +310,7 @@ async function addProductToCartBrowser(page) {
 export async function browserScenario() {
     const page = await browser.newPage()
     try {
-        if (Math.random() < 0.5) {
+        if (cryptoRandom() < 0.5) {
             const span = tracer.startSpan('browser_change_currency')
             span.log('Currency changed to CHF')
             await page.setExtraHTTPHeaders({
@@ -332,5 +335,5 @@ export async function browserScenario() {
         await page.close()
     }
 
-    sleep(Math.random() * 9 + 1)
+    sleep(cryptoRandom() * 9 + 1)
 }
