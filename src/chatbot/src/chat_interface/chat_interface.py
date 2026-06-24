@@ -131,7 +131,7 @@ class ChatAgentUI:
 
 def get_chat_ui_config():
     chat_ui_config = ChatUiConfig(
-        uiBaseUrl=os.getenv("CHATBOT_ENDPOINT", "::"),
+        uiBaseUrl=os.getenv("CHATBOT_ENDPOINT", "0.0.0.0"),
         uiPort=int(os.getenv("CHATBOT_PORT", "7860")),
         sessionId=str(uuid.uuid4()),
         timeout=int(os.getenv("AGENT_CHAT_INTERFACE_TIMEOUT", "300")),
