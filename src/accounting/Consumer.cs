@@ -29,7 +29,7 @@ internal class Consumer : IDisposable
 {
     private const string TopicName = "orders";
 
-    private ILogger _logger;
+    private readonly ILogger _logger;
     private IConsumer<string, byte[]> _consumer;
     private bool _isListening;
     private readonly string? _dbConnectionString;
@@ -45,10 +45,7 @@ internal class Consumer : IDisposable
         _consumer = BuildConsumer(servers);
         _consumer.Subscribe(TopicName);
 
-       if (_logger.IsEnabled(LogLevel.Information))
-       {
-           _logger.LogInformation("Connecting to Kafka: {servers}", servers);
-       }
+        Log.KafkaConnecting(_logger, servers);
 
         _dbConnectionString = Environment.GetEnvironmentVariable("DB_CONNECTION_STRING");
     }
@@ -69,16 +66,13 @@ internal class Consumer : IDisposable
                 }
                 catch (ConsumeException e)
                 {
-                    if (_logger.IsEnabled(LogLevel.Error))
-                    {
-                        _logger.LogError(e, "Consume error: {reason}", e.Error.Reason);
-                    }
+                    Log.ConsumeError(_logger, e, e.Error.Reason);
                 }
             }
         }
         catch (OperationCanceledException)
         {
-            _logger.LogInformation("Closing consumer");
+            Log.ConsumerClosing(_logger);
 
             _consumer.Close();
         }
@@ -135,11 +129,11 @@ internal class Consumer : IDisposable
         }
         catch (DbUpdateException ex) when (ex.InnerException is PostgresException { SqlState: PostgresErrorCodes.UniqueViolation })
         {
-            _logger.LogInformation("Duplicate order received, skipping.");
+            Log.DuplicateOrderSkipped(_logger);
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "Order parsing failed:");
+            Log.OrderParsingFailed(_logger, ex);
         }
     }
 
@@ -147,7 +141,7 @@ internal class Consumer : IDisposable
     {
         var conf = new ConsumerConfig
         {
-            GroupId = $"accounting",
+            GroupId = "accounting",
             BootstrapServers = servers,
             // https://github.com/confluentinc/confluent-kafka-dotnet/tree/07de95ed647af80a0db39ce6a8891a630423b952#basic-consumer-example
             AutoOffsetReset = AutoOffsetReset.Earliest,
