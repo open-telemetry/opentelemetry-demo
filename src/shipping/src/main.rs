@@ -42,7 +42,7 @@ async fn main() -> std::io::Result<()> {
 
     let addr = format!("{}:{}", ip, port);
     info!(
-        name = "ServerStartedSuccessfully",
+        name: "shipping.server.started",
         addr = addr.as_str(),
         message = "Shipping service is running"
     );
@@ -63,7 +63,10 @@ async fn main() -> std::io::Result<()> {
             .wrap(RequestMetrics::default())
             .service(get_quote)
             .service(ship_order)
-            .route("/health", web::get().to(|| async { HttpResponse::Ok().finish() }))
+            .route(
+                "/health",
+                web::get().to(|| async { HttpResponse::Ok().finish() }),
+            )
     })
     .bind(&addr)?
     .run()
