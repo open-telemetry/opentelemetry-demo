@@ -7,31 +7,9 @@ the release.
 
 ## Unreleased
 
-* [payment] Replace manual SDK initialization with zero-code instrumentation
-  via `NODE_OPTIONS=--require @opentelemetry/auto-instrumentations-node/register`
-  ([#3486](https://github.com/open-telemetry/opentelemetry-demo/pull/3486))
 * [llm] Increase `llm` service memory limit from 50M to 100M to prevent a
   startup restart loop caused by the container exceeding its memory limit
   ([#2944](https://github.com/open-telemetry/opentelemetry-demo/issues/2944))
-* [testing] Add telemetry sanity tests to validate end-to-end observability
-  pipeline, including service-to-service edge verification via Jaeger trace walks
-  ([#3356](https://github.com/open-telemetry/opentelemetry-demo/pull/3356))
-* [testing] Telemetry tests now build the PR's images and share them across the
-  full/minimal jobs via an artifact (instead of pulling released images), wait
-  for the traces, metrics, and logs backends during warmup to avoid per-test
-  timeouts, and cap the test step at 15 minutes
-  ([#3498](https://github.com/open-telemetry/opentelemetry-demo/pull/3498))
-* [testing] Telemetry test warmup now drives a few real checkouts through the
-  frontend so low-frequency services (`email`, `quote`) that only emit on the
-  checkout path produce telemetry deterministically, instead of depending on the
-  load generator's ~6% checkout task weight landing inside the test window
-  ([#3505](https://github.com/open-telemetry/opentelemetry-demo/pull/3505))
-* [fraud-detection] Set the Kafka consumer `auto.offset.reset` to `earliest` so
-  it processes `orders` produced before its consumer group finished joining,
-  matching the accounting consumer. Previously the Kafka default of `latest`
-  silently dropped those orders, so fraud-detection could emit no telemetry on a
-  quiet or cold start
-  ([#3505](https://github.com/open-telemetry/opentelemetry-demo/pull/3505))
 * [telemetry-docs] Add a new service to provide telemetry documentation based
   on Weaver
   ([#2794](https://github.com/open-telemetry/opentelemetry-demo/pull/2794))
@@ -46,15 +24,16 @@ the release.
   function to better handle the next.js issue
   [High-cardinality HTTP span names #54694](https://github.com/vercel/next.js/issues/54694)
   [#2942](https://github.com/open-telemetry/opentelemetry-demo/pull/2942)
-* add `main` tagged images, drop date suffix for `nightly` ([#2994](https://github.com/open-telemetry/opentelemetry-demo/pull/2994))
+* add `main` tagged images, drop date suffix for `nightly`
+  ([#2994](https://github.com/open-telemetry/opentelemetry-demo/pull/2994))
 * [docker] fix `docker-compose.minimal.yml` to be able to run by adding missing
   postgresql service, environment variables, and dependencies
   ([#3004](https://github.com/open-telemetry/opentelemetry-demo/pull/3004))
+* [chore] Bump dependent image versions to latest releases
+  ([#3005](https://github.com/open-telemetry/opentelemetry-demo/pull/3005))
 * [flagd-ui] fix memory issue with BEAM-VM, this reduces flagd-ui memory
   usage from 2.3GB to 228Mi
   [#3022](https://github.com/open-telemetry/opentelemetry-demo/pull/3022)
-* [chore] Bump dependent image versions to latest releases
-  ([#3005](https://github.com/open-telemetry/opentelemetry-demo/pull/3005))
 * [ad] and [fraud-detection] Service JVM heap set to 200m for ad service and
   180m for fraud-detection to prevent large heap size that causes
   OOMKills with k8s.
@@ -118,6 +97,9 @@ the release.
   `app.product.id` to `demo.product.id` across cart, product-catalog,
   product-reviews, telemetry schema, and trace tests.
   ([#3355](https://github.com/open-telemetry/opentelemetry-demo/pull/3355))
+* [testing] Add telemetry sanity tests to validate end-to-end observability
+  pipeline, including service-to-service edge verification via Jaeger trace walks
+  ([#3356](https://github.com/open-telemetry/opentelemetry-demo/pull/3356))
 * [frontend,ad,payment] Propagate `enduser.id` as a span attribute on all
   browser spans via `SessionIdProcessor`, forward it via W3C Baggage on
   outgoing API requests through the ApiGateway proxy, and extract it in the
@@ -236,12 +218,33 @@ the release.
 * [telemetry] Split cart and payment attributes out of the order telemetry
   schema into their own domain files.
   ([#3484](https://github.com/open-telemetry/opentelemetry-demo/pull/3484))
+* [payment] Replace manual SDK initialization with zero-code instrumentation
+  via `NODE_OPTIONS=--require @opentelemetry/auto-instrumentations-node/register`
+  ([#3486](https://github.com/open-telemetry/opentelemetry-demo/pull/3486))
 * [chore] Add health check to services
   ([#3487](https://github.com/open-telemetry/opentelemetry-demo/pull/3487))
+* [testing] Telemetry tests now build the PR's images and share them across the
+  full/minimal jobs via an artifact (instead of pulling released images), wait
+  for the traces, metrics, and logs backends during warmup to avoid per-test
+  timeouts, and cap the test step at 15 minutes
+  ([#3498](https://github.com/open-telemetry/opentelemetry-demo/pull/3498))
 * [fraud-detection] fix gRPC service files dropped from the shadow jar by
   setting `duplicatesStrategy` to `INCLUDE`, restoring the DNS name resolver
   registration needed to connect to flagd
   ([#3501](https://github.com/open-telemetry/opentelemetry-demo/pull/3501))
+* [testing] Telemetry test warmup now drives a few real checkouts through the
+  frontend so low-frequency services (`email`, `quote`) that only emit on the
+  checkout path produce telemetry deterministically, instead of depending on the
+  load generator's ~6% checkout task weight landing inside the test window
+  ([#3505](https://github.com/open-telemetry/opentelemetry-demo/pull/3505))
+* [fraud-detection] Set the Kafka consumer `auto.offset.reset` to `earliest` so
+  it processes `orders` produced before its consumer group finished joining,
+  matching the accounting consumer. Previously the Kafka default of `latest`
+  silently dropped those orders, so fraud-detection could emit no telemetry on a
+  quiet or cold start
+  ([#3505](https://github.com/open-telemetry/opentelemetry-demo/pull/3505))
+* [cart,accounting] Use source-generated logging with EventName
+  ([#3559](https://github.com/open-telemetry/opentelemetry-demo/pull/3559))
 
 ## 2.2.0
 
