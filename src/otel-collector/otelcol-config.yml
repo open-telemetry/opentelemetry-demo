@@ -6,6 +6,7 @@
 # Layer additional configs on top with --config to add exporters:
 #   otelcol-config-full.yml        adds Kafka and PostgreSQL metric receivers
 #   otelcol-config-observability.yml  adds Jaeger, Prometheus, OpenSearch exporters
+#   otelcol-config-opamp.yml       adds OpAMP status reporting
 #   otelcol-config-extras.yml      extras/customizations (empty stub)
 
 receivers:
