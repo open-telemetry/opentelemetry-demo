@@ -543,9 +543,17 @@ func (cs *checkout) chargeCard(ctx context.Context, amount *pb.Money, paymentInf
 		paymentService = pb.NewPaymentServiceClient(c)
 	}
 
-	paymentResp, err := paymentService.Charge(ctx, &pb.ChargeRequest{
-		Amount:     amount,
-		CreditCard: paymentInfo})
+	var paymentResp *pb.ChargeResponse
+	var err error
+	for attempt := 0; attempt < 5; attempt++ {
+		paymentResp, err = paymentService.Charge(ctx, &pb.ChargeRequest{
+			Amount:     amount,
+			CreditCard: paymentInfo})
+		if err == nil {
+			break
+		}
+		time.Sleep(time.Duration(attempt*200) * time.Millisecond)
+	}
 	if err != nil {
 		return "", fmt.Errorf("could not charge the card: %+v", err)
 	}
