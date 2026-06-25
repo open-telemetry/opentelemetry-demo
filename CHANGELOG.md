@@ -258,6 +258,8 @@ the release.
   ([#3521](https://github.com/open-telemetry/opentelemetry-demo/pull/3521))
 * [cart,accounting] Use source-generated logging with EventName
   ([#3559](https://github.com/open-telemetry/opentelemetry-demo/pull/3559))
+* [cleanup] Remove loadgen traffic to product reviews
+  ([#3567](https://github.com/open-telemetry/opentelemetry-demo/pull/3567))
 
 ## 2.2.0
 
