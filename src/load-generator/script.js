@@ -178,17 +178,13 @@ function viewCart() {
     span.end()
 }
 
-// addToCart can be called standalone (weight-2 task) or nested inside a
-// checkout span. When parentTraceParent is provided the span is created as a
-// child of the checkout span, mirroring Locust's add_to_cart nesting.
-function addToCart(user, parentTraceParent) {
+function addToCart(user) {
     if (!user) user = uuid4()
     const product = randomChoice(products)
     const quantity = randomChoice([1, 2, 3, 4, 5, 10])
     const span = tracer.startSpan(
         'user_add_to_cart',
-        { 'user.id': user, 'product.id': product, quantity },
-        parentTraceParent
+        { 'user.id': user, 'product.id': product, quantity }
     )
     span.log(`User ${user} adding ${quantity} of product ${product} to cart`)
     const h = otelHeaders(span.traceParent())
@@ -206,7 +202,7 @@ function checkout() {
     const span = tracer.startSpan('user_checkout_single', { 'user.id': user })
     span.log(`Starting checkout for user ${user}`)
 
-    addToCart(user, span.traceParent())
+    addToCart(user)
 
     http.post(
         `${BASE_URL}/api/checkout`,
@@ -224,7 +220,7 @@ function checkoutMulti() {
     span.log(`Starting multi-item checkout for user ${user}, ${itemCount} items`)
 
     for (let i = 0; i < itemCount; i++) {
-        addToCart(user, span.traceParent())
+        addToCart(user)
     }
 
     http.post(

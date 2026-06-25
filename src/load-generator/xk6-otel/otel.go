@@ -1,17 +1,16 @@
 // Copyright The OpenTelemetry Authors
 // SPDX-License-Identifier: Apache-2.0
 
-// Package xk6otel provides a k6 extension that lets load test scripts create
-// OpenTelemetry root spans, child spans, emit log records, and propagate trace
-// context to the system under test via W3C traceparent headers.
-// Register with xk6 as "k6/x/otel".
+// Package xk6otel bridges the OTel Go SDK into k6's JavaScript runtime so
+// that load test scripts can create spans, propagate trace context to the
+// system under test via W3C traceparent headers, and emit correlated log
+// records. Register with xk6 as "k6/x/otel".
 package xk6otel
 
 import (
 	"context"
 	"fmt"
 	"os"
-	"strings"
 	"sync"
 	"time"
 
@@ -45,29 +44,19 @@ func initProviders() {
 	providerOnce.Do(func() {
 		ctx := context.Background()
 
-		endpoint := os.Getenv("OTEL_EXPORTER_OTLP_ENDPOINT")
-		if endpoint == "" {
-			endpoint = "localhost:4317"
-		}
-		endpoint = strings.TrimPrefix(endpoint, "https://")
-		endpoint = strings.TrimPrefix(endpoint, "http://")
-
-		serviceName := os.Getenv("OTEL_SERVICE_NAME")
-		if serviceName == "" {
-			serviceName = "load-generator"
-		}
-
+		// resource.WithFromEnv reads OTEL_SERVICE_NAME and OTEL_RESOURCE_ATTRIBUTES;
+		// the hardcoded attribute is the fallback when the env var is absent.
 		res, err := resource.New(ctx,
 			resource.WithFromEnv(),
-			resource.WithAttributes(semconv.ServiceName(serviceName)),
+			resource.WithAttributes(semconv.ServiceName("load-generator")),
 		)
 		if err != nil {
 			res = resource.Default()
 		}
 
-		// Trace provider
+		// The SDK reads OTEL_EXPORTER_OTLP_ENDPOINT from the environment.
+		// WithInsecure is explicit because the demo Collector does not use TLS.
 		traceExp, err := otlptracegrpc.New(ctx,
-			otlptracegrpc.WithEndpoint(endpoint),
 			otlptracegrpc.WithInsecure(),
 		)
 		if err != nil {
@@ -83,7 +72,6 @@ func initProviders() {
 
 		// Log provider — non-fatal if unavailable so traces still work.
 		logExp, lerr := otlploggrpc.New(ctx,
-			otlploggrpc.WithEndpoint(endpoint),
 			otlploggrpc.WithInsecure(),
 		)
 		if lerr != nil {
@@ -96,29 +84,6 @@ func initProviders() {
 		)
 		globalLogger = lp.Logger("load-generator")
 	})
-}
-
-// parseTraceparent parses a W3C traceparent string ("00-<traceID>-<spanID>-<flags>")
-// into an OTel SpanContext suitable for use as a parent context.
-func parseTraceparent(tp string) (trace.SpanContext, error) {
-	parts := strings.Split(tp, "-")
-	if len(parts) != 4 || parts[0] != "00" {
-		return trace.SpanContext{}, fmt.Errorf("invalid traceparent: %q", tp)
-	}
-	traceID, err := trace.TraceIDFromHex(parts[1])
-	if err != nil {
-		return trace.SpanContext{}, fmt.Errorf("invalid trace ID in traceparent: %w", err)
-	}
-	spanID, err := trace.SpanIDFromHex(parts[2])
-	if err != nil {
-		return trace.SpanContext{}, fmt.Errorf("invalid span ID in traceparent: %w", err)
-	}
-	return trace.NewSpanContext(trace.SpanContextConfig{
-		TraceID:    traceID,
-		SpanID:     spanID,
-		TraceFlags: trace.FlagsSampled,
-		Remote:     true,
-	}), nil
 }
 
 // ---- k6 module wiring -------------------------------------------------------
@@ -167,10 +132,12 @@ func (m *ModuleInstance) newTracer(call sobek.ConstructorCall, rt *sobek.Runtime
 
 // makeStartSpan returns the JS function that scripts call as tracer.startSpan().
 //
-// Signature: startSpan(name, attrs?, parentTraceparent?)
+// Signature: startSpan(name, attrs?)
 //
-// The optional third argument is a W3C traceparent string. When provided the
-// new span is created as a child of that parent; otherwise it is a root span.
+// Returns an object with:
+//   - traceParent() → W3C traceparent string for injection into HTTP request headers
+//   - log(message)  → emits a correlated OTel log record
+//   - end()         → ends the span
 func makeStartSpan(rt *sobek.Runtime) func(sobek.FunctionCall) sobek.Value {
 	return func(fc sobek.FunctionCall) sobek.Value {
 		name := fc.Argument(0).String()
@@ -180,17 +147,8 @@ func makeStartSpan(rt *sobek.Runtime) func(sobek.FunctionCall) sobek.Value {
 			kvs = jsObjToAttrs(fc.Argument(1).ToObject(rt))
 		}
 
-		ctx := context.Background()
-		if len(fc.Arguments) > 2 {
-			if tp := fc.Argument(2).String(); tp != "" && tp != "undefined" {
-				if sc, err := parseTraceparent(tp); err == nil {
-					ctx = trace.ContextWithSpanContext(ctx, sc)
-				}
-			}
-		}
-
 		_, span := globalTracer.Start(
-			ctx,
+			context.Background(),
 			name,
 			trace.WithAttributes(kvs...),
 			trace.WithSpanKind(trace.SpanKindClient),
@@ -211,6 +169,8 @@ func makeStartSpan(rt *sobek.Runtime) func(sobek.FunctionCall) sobek.Value {
 }
 
 // makeTraceParent returns the W3C traceparent for the given span as a JS callable.
+// Scripts use this to inject trace context into outgoing HTTP request headers so
+// backend services can correlate their spans with the load generator span.
 func makeTraceParent(span trace.Span) func() string {
 	return func() string {
 		sc := span.SpanContext()
