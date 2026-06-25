@@ -322,6 +322,8 @@ services:
       - "${ENVOY_PORT}:${ENVOY_PORT}"
       - "${ENVOY_ADMIN_PORT}:${ENVOY_ADMIN_PORT}"
     environment:
+      - CHATBOT_HOST
+      - CHATBOT_PORT
       - FRONTEND_PORT
       - FRONTEND_HOST
       - LOCUST_WEB_HOST
