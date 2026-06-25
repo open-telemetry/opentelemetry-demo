@@ -310,4 +310,4 @@ DEPENDENCIES
   sinatra (~> 4.2)
 
 BUNDLED WITH
-   2.6.7
+  4.0.15
