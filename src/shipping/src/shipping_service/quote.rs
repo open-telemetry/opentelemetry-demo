@@ -57,9 +57,9 @@ async fn request_quote(count: u32) -> Result<f64, anyhow::Error> {
     );
 
     info!(
-        name = "RequestingQuote",
+        name: "RequestingQuote",
         quote_service_addr = quote_service_addr.as_str(),
-        message = "Requesting quote"
+        "Requesting quote"
     );
 
     let mut reqbody = HashMap::new();
