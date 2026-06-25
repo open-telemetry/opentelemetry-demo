@@ -11,14 +11,21 @@ use opentelemetry_resource_detectors::{OsResourceDetector, ProcessResourceDetect
 use opentelemetry_sdk::{
     propagation::TraceContextPropagator, resource::ResourceDetector, Resource,
 };
+use std::sync::OnceLock;
+
+static RESOURCE: OnceLock<Resource> = OnceLock::new();
 
 fn get_resource() -> Resource {
-    let detectors: Vec<Box<dyn ResourceDetector>> = vec![
-        Box::new(OsResourceDetector),
-        Box::new(ProcessResourceDetector),
-    ];
+    RESOURCE
+        .get_or_init(|| {
+            let detectors: Vec<Box<dyn ResourceDetector>> = vec![
+                Box::new(OsResourceDetector),
+                Box::new(ProcessResourceDetector),
+            ];
 
-    Resource::builder().with_detectors(&detectors).build()
+            Resource::builder().with_detectors(&detectors).build()
+        })
+        .clone()
 }
 
 fn init_tracer_provider() {
