@@ -11,7 +11,6 @@ import Ad from '../../../components/Ad';
 import Layout from '../../../components/Layout';
 import ProductPrice from '../../../components/ProductPrice';
 import Recommendations from '../../../components/Recommendations';
-import ProductReviews from '../../../components/ProductReviews';
 import Select from '../../../components/Select';
 import { CypressFields } from '../../../utils/enums/CypressFields';
 import ApiGateway from '../../../gateways/Api.gateway';
@@ -20,8 +19,6 @@ import AdProvider from '../../../providers/Ad.provider';
 import { useCart } from '../../../providers/Cart.provider';
 import * as S from '../../../styles/ProductDetail.styled';
 import { useCurrency } from '../../../providers/Currency.provider';
-import ProductReviewProvider from '../../../providers/ProductReview.provider';
-import ProductAIAssistantProvider from '../../../providers/ProductAIAssistant.provider';
 
 const quantityOptions = new Array(10).fill(0).map((_, i) => i + 1);
 
@@ -102,13 +99,6 @@ const ProductDetail: NextPage = () => {
               </S.AddToCart>
             </S.Details>
           </S.Container>
-          {productId && (
-              <ProductAIAssistantProvider productId={productId}>
-                <ProductReviewProvider productId={productId}>
-                  <ProductReviews />
-                </ProductReviewProvider>
-              </ProductAIAssistantProvider>
-          )}
           <Recommendations />
         </S.ProductDetail>
         <Ad />
