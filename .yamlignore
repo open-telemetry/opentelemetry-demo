@@ -1,1 +1,2 @@
 kubernetes/opentelemetry-demo.yaml
+src/agent/fixtures/vcr_cassettes/

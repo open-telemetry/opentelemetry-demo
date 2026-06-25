@@ -212,6 +212,14 @@ the release.
   ([#3440](https://github.com/open-telemetry/opentelemetry-demo/pull/3440))
 * [telemetry-schema] Move ad attributes into a dedicated schema domain.
   ([#3454](https://github.com/open-telemetry/opentelemetry-demo/pull/3454))
+* [agent] Add Agent, MCP and ChatBot to Otel Demo application.
+  Agent - Langgraph ReAct agent which can accept user requests then with the
+  help of LLM call, it identifies the right set of tools. Agent also has an
+  LLM response caching feature.
+  MCP - Agent can be configured to use MCP tools or native langgraph tools to
+  interact with demo application.
+  Chatbot - facilitates an interactive UI for users to send requests to agent.
+  ([#3455](https://github.com/open-telemetry/opentelemetry-demo/pull/3455))
 * [telemetry-schema] Split exchange, feature flag, recommendation, and request
   attributes into dedicated schema domains.
   ([#3482](https://github.com/open-telemetry/opentelemetry-demo/pull/3482))
@@ -243,6 +251,11 @@ the release.
   silently dropped those orders, so fraud-detection could emit no telemetry on a
   quiet or cold start
   ([#3505](https://github.com/open-telemetry/opentelemetry-demo/pull/3505))
+* [frontend] Fix cart page showing unit price instead of line total; add
+  per-item quantity selector so users can change quantities directly in the
+  cart, with each row now displaying both the unit price and the line total
+  (unit price * quantity)
+  ([#3521](https://github.com/open-telemetry/opentelemetry-demo/pull/3521))
 * [cart,accounting] Use source-generated logging with EventName
   ([#3559](https://github.com/open-telemetry/opentelemetry-demo/pull/3559))
 
