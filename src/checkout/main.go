@@ -377,10 +377,9 @@ func (cs *checkout) PlaceOrder(ctx context.Context, req *pb.PlaceOrderRequest) (
 	)
 
 	if err := cs.sendOrderConfirmation(ctx, req.Email, orderResult); err != nil {
-		logger.Warn(fmt.Sprintf("failed to send order confirmation to %q: %+v", req.Email, err))
-	} else {
-		logger.Info(fmt.Sprintf("order confirmation email sent to %q", req.Email))
+		return nil, status.Errorf(codes.Internal, "failed to send order confirmation to %q: %+v", req.Email, err)
 	}
+	logger.Info(fmt.Sprintf("order confirmation email sent to %q", req.Email))
 
 	// send to kafka only if kafka broker address is set
 	if cs.kafkaBrokerSvcAddr != "" {
