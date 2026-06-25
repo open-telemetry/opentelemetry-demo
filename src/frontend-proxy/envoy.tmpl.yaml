@@ -54,6 +54,10 @@ static_resources:
                           redirect: { path_redirect: "/grafana/" }
                         - match: { prefix: "/grafana/" }
                           route: { cluster: grafana }
+                        - match: { path: "/opamp" }
+                          redirect: { path_redirect: "/opamp/" }
+                        - match: { prefix: "/opamp/" }
+                          route: { cluster: opamp, prefix_rewrite: "/" }
                         - match: { path: "/telemetry" }
                           redirect: { path_redirect: "/telemetry/" }
                         - match: { prefix: "/telemetry/" }
@@ -283,6 +287,20 @@ static_resources:
                     socket_address:
                       address: ${JAEGER_HOST}
                       port_value: ${JAEGER_UI_PORT}
+    - name: opamp
+      type: STRICT_DNS
+      lb_policy: ROUND_ROBIN
+      dns_failure_refresh_rate: { base_interval: 10s, max_interval: 30s }
+      typed_dns_resolver_config: *dns_resolver
+      load_assignment:
+        cluster_name: opamp
+        endpoints:
+          - lb_endpoints:
+              - endpoint:
+                  address:
+                    socket_address:
+                      address: ${OPAMP_SERVER_HOST}
+                      port_value: ${OPAMP_SERVER_UI_PORT}
     - name: telemetry-docs
       type: STRICT_DNS
       lb_policy: ROUND_ROBIN

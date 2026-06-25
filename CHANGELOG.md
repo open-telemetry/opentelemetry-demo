@@ -10,6 +10,9 @@ the release.
 * [accounting] Run the Kafka consumer as a hosted background service so process
   shutdown can stop the consumer cleanly
   ([#3608](https://github.com/open-telemetry/opentelemetry-demo/pull/3608))
+* [opamp] Add an OpAMP server and configure the Collector to report status,
+  version, attributes, and effective configuration through the OpAMP extension
+  ([#3566](https://github.com/open-telemetry/opentelemetry-demo/pull/3566))
 * [llm] Increase `llm` service memory limit from 50M to 100M to prevent a
   startup restart loop caused by the container exceeding its memory limit
   ([#2944](https://github.com/open-telemetry/opentelemetry-demo/issues/2944))
