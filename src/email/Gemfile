@@ -11,16 +11,16 @@ gem "puma",     "~> 8.0"
 gem "sinatra",  "~> 4.2"
 gem "rackup",   "~> 2.3"
 
-gem "google-protobuf", "~> 4.35.0"
+gem "google-protobuf", "~> 4.35.1"
 
 gem "ostruct"
 
 gem "opentelemetry-sdk",                   "~> 1.12"
 gem "opentelemetry-common",                "~> 0.25"
 gem "opentelemetry-logs-sdk",              "~> 0.6"
-gem 'opentelemetry-metrics-sdk',           "~> 0.14"
+gem 'opentelemetry-metrics-sdk',           "~> 0.15"
 gem "opentelemetry-exporter-otlp",         "~> 0.34"
-gem 'opentelemetry-exporter-otlp-metrics', "~> 0.9"
+gem 'opentelemetry-exporter-otlp-metrics', "~> 0.10"
 gem 'opentelemetry-exporter-otlp-logs',    "~> 0.5"
 gem "opentelemetry-instrumentation-all",   "~> 0.94"
 
