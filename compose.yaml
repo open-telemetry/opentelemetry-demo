@@ -315,7 +315,7 @@ services:
     deploy:
       resources:
         limits:
-          memory: 65M
+          memory: 90M
     restart: unless-stopped
     ports:
       - "${ENVOY_PORT}:${ENVOY_PORT}"
@@ -338,6 +338,7 @@ services:
       - OTEL_COLLECTOR_PORT_HTTP
       - OTEL_RESOURCE_ATTRIBUTES=${OTEL_RESOURCE_ATTRIBUTES},service.criticality=critical
       - OTEL_SERVICE_NAME=frontend-proxy
+      - OTEL_SERVICE_NAMESPACE
       - ENVOY_PORT
       - ENVOY_ADDR
       - ENVOY_ADMIN_PORT
@@ -349,6 +350,8 @@ services:
       - FLAGD_UI_PORT
       - TELEMETRY_DOCS_HOST
       - TELEMETRY_DOCS_PORT
+      - CHATBOT_HOST
+      - CHATBOT_PORT
     healthcheck:
       test: ["CMD", "bash", "-c", "echo > /dev/tcp/localhost/${ENVOY_PORT}"]
       start_period: 10s

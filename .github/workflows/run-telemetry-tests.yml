@@ -159,6 +159,8 @@ jobs:
           # per-test polls begin; the warmup gate waits for all three backends.
           WARMUP_SECONDS: "300"
           POLL_TIMEOUT: "240"
+          WARMUP_PROBE_TIMEOUT: "180"
+          PYTEST_ADDOPTS: "--capture=tee-sys --maxfail=1"
         run: make run-telemetry-tests
 
       - name: Print service logs on failure
@@ -203,6 +205,8 @@ jobs:
         env:
           WARMUP_SECONDS: "300"
           POLL_TIMEOUT: "240"
+          WARMUP_PROBE_TIMEOUT: "180"
+          PYTEST_ADDOPTS: "--capture=tee-sys --maxfail=1"
         run: make run-telemetry-tests-minimal
 
       - name: Print service logs on failure
