@@ -7,6 +7,7 @@ using Npgsql;
 using Oteldemo;
 using Microsoft.EntityFrameworkCore;
 using System.Diagnostics;
+using System.Text;
 
 namespace Accounting;
 
@@ -28,6 +29,8 @@ internal class DBContext : DbContext
 internal class Consumer : IDisposable
 {
     private const string TopicName = "orders";
+    private const string TraceParentHeaderName = "traceparent";
+    private const string TraceStateHeaderName = "tracestate";
 
     private ILogger _logger;
     private IConsumer<string, byte[]> _consumer;
@@ -63,8 +66,8 @@ internal class Consumer : IDisposable
             {
                 try
                 {
-                    using var activity = MyActivitySource.StartActivity("order-consumed",  ActivityKind.Internal);
                     var consumeResult = _consumer.Consume();
+                    using var activity = StartConsumerActivity(consumeResult);
                     ProcessMessage(consumeResult.Message);
                 }
                 catch (ConsumeException e)
@@ -82,6 +85,39 @@ internal class Consumer : IDisposable
 
             _consumer.Close();
         }
+    }
+
+    private static Activity? StartConsumerActivity(ConsumeResult<string, byte[]> consumeResult)
+    {
+        var activity = TryExtractParentContext(consumeResult.Message.Headers, out var parentContext)
+            ? MyActivitySource.StartActivity("order-consumed", ActivityKind.Consumer, parentContext)
+            : MyActivitySource.StartActivity("order-consumed", ActivityKind.Consumer);
+
+        activity?.SetTag("messaging.system", "kafka");
+        activity?.SetTag("messaging.destination.name", consumeResult.Topic);
+        activity?.SetTag("messaging.operation", "process");
+        activity?.SetTag("messaging.kafka.consumer.group", "accounting");
+        activity?.SetTag("messaging.kafka.partition", consumeResult.Partition.Value);
+        activity?.SetTag("messaging.kafka.message.offset", consumeResult.Offset.Value);
+
+        return activity;
+    }
+
+    private static bool TryExtractParentContext(Headers headers, out ActivityContext parentContext)
+    {
+        parentContext = default;
+
+        if (headers == null || !headers.TryGetLastBytes(TraceParentHeaderName, out var traceParentBytes))
+        {
+            return false;
+        }
+
+        var traceParent = Encoding.UTF8.GetString(traceParentBytes);
+        var traceState = headers.TryGetLastBytes(TraceStateHeaderName, out var traceStateBytes)
+            ? Encoding.UTF8.GetString(traceStateBytes)
+            : null;
+
+        return ActivityContext.TryParse(traceParent, traceState, out parentContext);
     }
 
     private void ProcessMessage(Message<string, byte[]> message)
