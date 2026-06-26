@@ -1,0 +1,128 @@
+# Copyright The OpenTelemetry Authors
+# SPDX-License-Identifier: Apache-2.0
+
+# Agent layer: adds the LLM-powered Agent, MCP, and Chatbot services
+# along with the frontend-proxy patches needed to route to the chatbot.
+#
+# Usage (typical):
+#   docker compose -f compose.yaml -f compose.full.yaml \
+#                  -f compose.observability.yaml \
+#                  -f compose.agent.yaml \
+#                  -f compose.extras.yaml up
+
+
+services:
+  # Agent
+  agent:
+    image: ${IMAGE_NAME}:${DEMO_VERSION}-agent
+    container_name: agent
+    build:
+      context: ./
+      dockerfile: ${AGENT_DOCKERFILE}
+    deploy:
+      resources:
+        limits:
+          memory: 500M
+    restart: unless-stopped
+    ports:
+      - "${AGENT_PORT}"
+    volumes:
+      - ./src/agent/fixtures:/app/fixtures
+    environment:
+      - OTEL_EXPORTER_OTLP_ENDPOINT=${OTEL_COLLECTOR_HOST}:${OTEL_COLLECTOR_PORT_GRPC}
+      - GRAPH_RECURSION_LIMIT
+      - MCP_ENDPOINT
+      - MCP_PORT
+      - MCP_ENABLED=${MCP_ENABLED}
+      - AGENT_ENDPOINT
+      - AGENT_PORT
+      - LLM_BASE_URL
+      - LLM_MODEL
+      - API_KEY
+      - USE_VCR=${USE_VCR}
+      - OPENAI_API_KEY=${API_KEY}
+      - APPLICATION_ENDPOINT=frontend:8080
+      - OTEL_EXPORTER_OTLP_INSECURE=true
+      - OTEL_RESOURCE_ATTRIBUTES=${OTEL_RESOURCE_ATTRIBUTES},service.criticality=low
+      - OTEL_SERVICE_NAME=agent
+    depends_on:
+      otel-collector:
+        condition: service_started
+      product-catalog:
+        condition: service_started
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "5m"
+        max-file: "2"
+
+  # MCP
+  mcp:
+    image: ${IMAGE_NAME}:${DEMO_VERSION}-mcp
+    container_name: mcp
+    build:
+      context: ./
+      dockerfile: ${MCP_DOCKERFILE}
+    deploy:
+      resources:
+        limits:
+          memory: 500M
+    restart: unless-stopped
+    ports:
+      - "${MCP_PORT}"
+    environment:
+      - OTEL_EXPORTER_OTLP_ENDPOINT=${OTEL_COLLECTOR_HOST}:${OTEL_COLLECTOR_PORT_GRPC}
+      - MCP_ENDPOINT
+      - MCP_PORT
+      - OTEL_EXPORTER_OTLP_INSECURE=true
+      - APPLICATION_ENDPOINT=frontend:8080
+      - OTEL_RESOURCE_ATTRIBUTES=${OTEL_RESOURCE_ATTRIBUTES},service.criticality=low
+      - OTEL_SERVICE_NAME=mcp
+    depends_on:
+      agent:
+        condition: service_started
+      frontend:
+        condition: service_started
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "5m"
+        max-file: "2"
+
+  # ChatBot
+  chatbot:
+    image: ${IMAGE_NAME}:${DEMO_VERSION}-chatbot
+    container_name: chatbot
+    build:
+      context: ./
+      dockerfile: ${CHATBOT_DOCKERFILE}
+    deploy:
+      resources:
+        limits:
+          memory: 500M
+    restart: unless-stopped
+    ports:
+      - "${CHATBOT_PORT}"
+    environment:
+      - AGENT_PORT
+      - AGENT_ENDPOINT
+      - CHATBOT_PORT
+      - CHATBOT_ROOT_PATH
+      - OTEL_RESOURCE_ATTRIBUTES=${OTEL_RESOURCE_ATTRIBUTES},service.criticality=low
+      - OTEL_SERVICE_NAME=chatbot
+      - OTEL_EXPORTER_OTLP_ENDPOINT=${OTEL_COLLECTOR_HOST}:${OTEL_COLLECTOR_PORT_GRPC}
+      - OTEL_EXPORTER_OTLP_INSECURE=true
+    depends_on:
+      agent:
+        condition: service_started
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "5m"
+        max-file: "2"
+
+  # Patch frontend-proxy to expose chatbot host/port and depend on chatbot
+  frontend-proxy:
+    depends_on:
+      chatbot:
+        condition: service_started
