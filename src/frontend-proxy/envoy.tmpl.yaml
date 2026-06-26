@@ -162,9 +162,9 @@ static_resources:
       type: STRICT_DNS
       lb_policy: ROUND_ROBIN
       typed_dns_resolver_config: &dns_resolver
-        name: envoy.network.dns_resolver.getaddrinfo
+        name: envoy.network.dns_resolver.cares
         typed_config:
-          "@type": type.googleapis.com/envoy.extensions.network.dns_resolver.getaddrinfo.v3.GetAddrInfoDnsResolverConfig
+          "@type": type.googleapis.com/envoy.extensions.network.dns_resolver.cares.v3.CaresDnsResolverConfig
       typed_extension_protocol_options:
         envoy.extensions.upstreams.http.v3.HttpProtocolOptions:
           "@type": type.googleapis.com/envoy.extensions.upstreams.http.v3.HttpProtocolOptions
