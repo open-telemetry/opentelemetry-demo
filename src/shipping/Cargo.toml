@@ -17,8 +17,8 @@ path = "src/healthcheck.rs"
 actix-web = "4"
 anyhow = "1.0.102"
 awc = { version = "3.8.2", default-features = false, features = ["compress-zstd"] }
-open-feature = "0.2"
-open-feature-flagd = { version = "0.1", default-features = false, features = ["rpc"] }
+open-feature = "0.3"
+open-feature-flagd = { version = "0.2.1", default-features = false, features = ["rpc", "in-process"] }
 serde = { version = "1.0.228", features = ["derive"] }
 tonic = "0.14.6"
 tracing = "0.1.44"
@@ -32,7 +32,7 @@ opentelemetry-appender-tracing = "0.32.0"
 opentelemetry-resource-detectors = "0.11.0"
 
 [dependencies.uuid]
-version = "1.23.1"
+version = "1.23.2"
 features = [
     "v4",                # Lets you generate random UUIDs
     "fast-rng",          # Use a faster (but still sufficiently random) RNG
