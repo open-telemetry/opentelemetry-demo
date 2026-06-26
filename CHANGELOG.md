@@ -7,6 +7,8 @@ the release.
 
 ## Unreleased
 
+* [shipping] Add host resource detection to enrich SDK resource metadata
+  ([#3581](https://github.com/open-telemetry/opentelemetry-demo/pull/3581))
 * [frontend-proxy] Pass `CHATBOT_HOST`/`CHATBOT_PORT` to the frontend-proxy in
   the base compose file. The chatbot upstream cluster lives in the base
   `envoy.tmpl.yaml` and `envsubst` runs in-container, so without these vars the
