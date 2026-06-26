@@ -10,37 +10,37 @@ namespace Accounting
     {
         [LoggerMessage(
             Level = LogLevel.Information,
-            EventName = "OrderReceived",
+            EventName = "accounting.order.received",
             Message = "Order details: {@OrderResult}.")]
         public static partial void OrderReceivedMessage(ILogger logger, OrderResult orderResult);
 
         [LoggerMessage(
             Level = LogLevel.Information,
-            EventName = "KafkaConnecting",
+            EventName = "accounting.kafka.connecting",
             Message = "Connecting to Kafka: {servers}")]
         public static partial void KafkaConnecting(ILogger logger, string servers);
 
         [LoggerMessage(
             Level = LogLevel.Error,
-            EventName = "KafkaConsumeError",
+            EventName = "accounting.kafka.consume_failed",
             Message = "Consume error: {reason}")]
         public static partial void ConsumeError(ILogger logger, Exception exception, string reason);
 
         [LoggerMessage(
             Level = LogLevel.Information,
-            EventName = "ConsumerClosing",
+            EventName = "accounting.consumer.closing",
             Message = "Closing consumer")]
         public static partial void ConsumerClosing(ILogger logger);
 
         [LoggerMessage(
             Level = LogLevel.Information,
-            EventName = "DuplicateOrderSkipped",
+            EventName = "accounting.order.duplicate_skipped",
             Message = "Duplicate order received, skipping.")]
         public static partial void DuplicateOrderSkipped(ILogger logger);
 
         [LoggerMessage(
             Level = LogLevel.Error,
-            EventName = "OrderParsingFailed",
+            EventName = "accounting.order.parsing_failed",
             Message = "Order parsing failed:")]
         public static partial void OrderParsingFailed(ILogger logger, Exception exception);
     }
