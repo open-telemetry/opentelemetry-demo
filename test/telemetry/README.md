@@ -153,7 +153,8 @@ touching `src/`, `test/telemetry/`, or compose files.
 - **New service**: Add one entry to `SIGNAL_MATRIX` in `services.py`
 - **New service edge**: Add one tuple to `SERVICE_EDGES` in `services.py`
 - **New backend**: Add a new `test_*.py` file
-- **Adjust timeouts**: Set `WARMUP_SECONDS`, `POLL_TIMEOUT`, or `WARMUP_PROBE_TIMEOUT` env vars
+- **Adjust timeouts**: Set `WARMUP_SECONDS`, `POLL_TIMEOUT`,
+  or `WARMUP_PROBE_TIMEOUT` env vars
 - **Run single test**: `pytest test_traces.py -k "checkout" -v`
 - **Run single edge**: `pytest test_traces_edges.py -k "frontend->cart" -v`
 
