@@ -75,6 +75,7 @@ func initDatabase() error {
 	var err error
 	db, err = otelsql.Open("postgres", connStr,
 		dbAttrs,
+		otelsql.WithSQLCommenter(true),
 		otelsql.WithSpanOptions(otelsql.SpanOptions{
 			OmitConnResetSession: true,
 			OmitRows:             true,
