@@ -7,7 +7,7 @@
 #include "opentelemetry/context/propagation/text_map_propagator.h"
 #include "opentelemetry/exporters/ostream/span_exporter_factory.h"
 #include "opentelemetry/nostd/shared_ptr.h"
-#include "opentelemetry/sdk/trace/simple_processor_factory.h"
+#include "opentelemetry/sdk/trace/batch_span_processor_factory.h"
 #include "opentelemetry/sdk/trace/tracer_context.h"
 #include "opentelemetry/sdk/trace/tracer_context_factory.h"
 #include "opentelemetry/sdk/trace/tracer_provider_factory.h"
@@ -74,7 +74,7 @@ void initTracer()
 {
   auto exporter = opentelemetry::exporter::otlp::OtlpGrpcExporterFactory::Create();
   auto processor =
-      opentelemetry::sdk::trace::SimpleSpanProcessorFactory::Create(std::move(exporter));
+      opentelemetry::sdk::trace::BatchSpanProcessorFactory::Create(std::move(exporter), {});
   std::vector<std::unique_ptr<opentelemetry::sdk::trace::SpanProcessor>> processors;
   processors.push_back(std::move(processor));
 
