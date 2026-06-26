@@ -206,6 +206,7 @@ run-telemetry-tests: start
 		-e POLL_TIMEOUT=$${POLL_TIMEOUT:-180} \
 		-e WARMUP_PROBE_ENABLED=$${WARMUP_PROBE_ENABLED:-true} \
 		-e WARMUP_PROBE_CHECKOUTS=$${WARMUP_PROBE_CHECKOUTS:-5} \
+		-e WARMUP_PROBE_TIMEOUT=$${WARMUP_PROBE_TIMEOUT:-120} \
 		opentelemetry-demo-telemetry-tests; \
 	rc=$$?; \
 	$(MAKE) stop; \
@@ -223,6 +224,7 @@ run-telemetry-tests-minimal: start-minimal
 		-e POLL_TIMEOUT=$${POLL_TIMEOUT:-180} \
 		-e WARMUP_PROBE_ENABLED=$${WARMUP_PROBE_ENABLED:-true} \
 		-e WARMUP_PROBE_CHECKOUTS=$${WARMUP_PROBE_CHECKOUTS:-5} \
+		-e WARMUP_PROBE_TIMEOUT=$${WARMUP_PROBE_TIMEOUT:-120} \
 		opentelemetry-demo-telemetry-tests; \
 	rc=$$?; \
 	$(MAKE) stop; \
