@@ -337,6 +337,7 @@ services:
       - OTEL_COLLECTOR_PORT_HTTP
       - OTEL_RESOURCE_ATTRIBUTES=${OTEL_RESOURCE_ATTRIBUTES},service.criticality=critical
       - OTEL_SERVICE_NAME=frontend-proxy
+      - OTEL_SERVICE_NAMESPACE
       - ENVOY_PORT
       - ENVOY_ADDR
       - ENVOY_ADMIN_PORT
