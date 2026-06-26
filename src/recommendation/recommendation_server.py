@@ -92,12 +92,8 @@ def get_product_list(request_product_ids):
                 product_ids = cached_ids
         else:
             span.set_attribute("app.recommendation.cache_enabled", False)
-            # Fetch per-product for granular caching (see issue #341)
-            all_products = product_catalog_stub.ListProducts(demo_pb2.Empty())
-            product_ids = []
-            for p in all_products.products:
-                detail = product_catalog_stub.GetProduct(demo_pb2.GetProductRequest(id=p.id))
-                product_ids.append(detail.id)
+            cat_response = product_catalog_stub.ListProducts(demo_pb2.Empty())
+            product_ids = [x.id for x in cat_response.products]
 
         span.set_attribute("app.products.count", len(product_ids))
 
