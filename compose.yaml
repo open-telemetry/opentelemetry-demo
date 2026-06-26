@@ -223,7 +223,6 @@ services:
       - FLAGD_PORT
       - OTEL_EXPORTER_OTLP_ENDPOINT=http://${OTEL_COLLECTOR_HOST}:${OTEL_COLLECTOR_PORT_HTTP}
       - OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE
-      - OTEL_LOGS_EXPORTER=otlp
       - OTEL_RESOURCE_ATTRIBUTES=${OTEL_RESOURCE_ATTRIBUTES},service.criticality=medium
       - OTEL_SERVICE_NAME=email
     healthcheck:
@@ -323,8 +322,6 @@ services:
       - "${ENVOY_PORT}:${ENVOY_PORT}"
       - "${ENVOY_ADMIN_PORT}:${ENVOY_ADMIN_PORT}"
     environment:
-      - CHATBOT_HOST
-      - CHATBOT_PORT
       - FRONTEND_PORT
       - FRONTEND_HOST
       - LOCUST_WEB_HOST
@@ -351,8 +348,6 @@ services:
       - FLAGD_UI_PORT
       - TELEMETRY_DOCS_HOST
       - TELEMETRY_DOCS_PORT
-      - CHATBOT_HOST
-      - CHATBOT_PORT
     healthcheck:
       test: ["CMD", "bash", "-c", "echo > /dev/tcp/localhost/${ENVOY_PORT}"]
       start_period: 10s
@@ -613,7 +608,6 @@ services:
       - IPV6_ENABLED
       - OTEL_EXPORTER_OTLP_ENDPOINT=http://${OTEL_COLLECTOR_HOST}:${OTEL_COLLECTOR_PORT_HTTP}
       - OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE
-      - OTEL_LOGS_EXPORTER=otlp
       - OTEL_PHP_AUTOLOAD_ENABLED=true
       - QUOTE_PORT
       - OTEL_PHP_INTERNAL_METRICS_ENABLED=true

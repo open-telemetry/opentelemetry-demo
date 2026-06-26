@@ -106,11 +106,12 @@ static_resources:
                   - name: envoy.access_loggers.open_telemetry
                     typed_config:
                       "@type": "type.googleapis.com/envoy.extensions.access_loggers.open_telemetry.v3.OpenTelemetryAccessLogConfig"
-                      stat_prefix: otel_envoy_access_log
-                      log_name: "otel_envoy_access_log"
-                      grpc_service:
-                        envoy_grpc:
-                          cluster_name: opentelemetry_collector_grpc
+                      common_config:
+                        log_name: "otel_envoy_access_log"
+                        grpc_service:
+                          envoy_grpc:
+                            cluster_name: opentelemetry_collector_grpc
+                        transport_api_version: "V3"
                       body:
                         # yamllint disable-line rule:line-length
                         string_value: "[%START_TIME%] \"%REQ(:METHOD)% %REQ(X-ENVOY-ORIGINAL-PATH?:PATH)% %PROTOCOL%\" %RESPONSE_CODE% %RESPONSE_FLAGS% %RESPONSE_CODE_DETAILS% %CONNECTION_TERMINATION_DETAILS% \"%UPSTREAM_TRANSPORT_FAILURE_REASON%\" %BYTES_RECEIVED% %BYTES_SENT% %DURATION% %RESP(X-ENVOY-UPSTREAM-SERVICE-TIME)% \"%REQ(X-FORWARDED-FOR)%\" \"%REQ(USER-AGENT)%\" \"%REQ(X-REQUEST-ID)%\" \"%REQ(:AUTHORITY)%\" \"%UPSTREAM_HOST%\" %UPSTREAM_CLUSTER% %UPSTREAM_LOCAL_ADDRESS% %DOWNSTREAM_LOCAL_ADDRESS% %DOWNSTREAM_REMOTE_ADDRESS% %REQUESTED_SERVER_NAME% %ROUTE_NAME%\n"
@@ -158,6 +159,7 @@ static_resources:
     - name: opentelemetry_collector_grpc
       type: STRICT_DNS
       lb_policy: ROUND_ROBIN
+      dns_failure_refresh_rate: { base_interval: 10s, max_interval: 30s }
       typed_dns_resolver_config: &dns_resolver
         name: envoy.network.dns_resolver.getaddrinfo
         typed_config:
@@ -179,6 +181,7 @@ static_resources:
     - name: opentelemetry_collector_http
       type: STRICT_DNS
       lb_policy: ROUND_ROBIN
+      dns_failure_refresh_rate: { base_interval: 10s, max_interval: 30s }
       typed_dns_resolver_config: *dns_resolver
       load_assignment:
         cluster_name: opentelemetry_collector_http
@@ -192,6 +195,7 @@ static_resources:
     - name: frontend
       type: STRICT_DNS
       lb_policy: ROUND_ROBIN
+      dns_failure_refresh_rate: { base_interval: 10s, max_interval: 30s }
       typed_dns_resolver_config: *dns_resolver
       load_assignment:
         cluster_name: frontend
@@ -205,6 +209,7 @@ static_resources:
     - name: image-provider
       type: STRICT_DNS
       lb_policy: ROUND_ROBIN
+      dns_failure_refresh_rate: { base_interval: 10s, max_interval: 30s }
       typed_dns_resolver_config: *dns_resolver
       load_assignment:
         cluster_name: image-provider
@@ -218,6 +223,7 @@ static_resources:
     - name: flagservice
       type: STRICT_DNS
       lb_policy: ROUND_ROBIN
+      dns_failure_refresh_rate: { base_interval: 10s, max_interval: 30s }
       typed_dns_resolver_config: *dns_resolver
       load_assignment:
         cluster_name: flagservice
@@ -231,6 +237,7 @@ static_resources:
     - name: flagd-ui
       type: STRICT_DNS
       lb_policy: ROUND_ROBIN
+      dns_failure_refresh_rate: { base_interval: 10s, max_interval: 30s }
       typed_dns_resolver_config: *dns_resolver
       load_assignment:
         cluster_name: flagd-ui
@@ -244,6 +251,7 @@ static_resources:
     - name: loadgen
       type: STRICT_DNS
       lb_policy: ROUND_ROBIN
+      dns_failure_refresh_rate: { base_interval: 10s, max_interval: 30s }
       typed_dns_resolver_config: *dns_resolver
       load_assignment:
         cluster_name: loadgen
@@ -257,6 +265,7 @@ static_resources:
     - name: grafana
       type: STRICT_DNS
       lb_policy: ROUND_ROBIN
+      dns_failure_refresh_rate: { base_interval: 10s, max_interval: 30s }
       typed_dns_resolver_config: *dns_resolver
       load_assignment:
         cluster_name: grafana
@@ -270,6 +279,7 @@ static_resources:
     - name: jaeger
       type: STRICT_DNS
       lb_policy: ROUND_ROBIN
+      dns_failure_refresh_rate: { base_interval: 10s, max_interval: 30s }
       typed_dns_resolver_config: *dns_resolver
       load_assignment:
         cluster_name: jaeger
@@ -283,6 +293,7 @@ static_resources:
     - name: telemetry-docs
       type: STRICT_DNS
       lb_policy: ROUND_ROBIN
+      dns_failure_refresh_rate: { base_interval: 10s, max_interval: 30s }
       typed_dns_resolver_config: *dns_resolver
       load_assignment:
         cluster_name: telemetry-docs
@@ -296,6 +307,7 @@ static_resources:
     - name: chatbot
       type: STRICT_DNS
       lb_policy: ROUND_ROBIN
+      dns_failure_refresh_rate: { base_interval: 10s, max_interval: 30s }
       typed_dns_resolver_config: *dns_resolver
       load_assignment:
         cluster_name: chatbot
@@ -318,12 +330,6 @@ static_resources:
                     socket_address:
                       address: ${FIREPIT_HOST}
                       port_value: ${FIREPIT_PORT}
-overload_manager:
-  resource_monitors:
-    - name: envoy.resource_monitors.global_downstream_max_connections
-      typed_config:
-        "@type": type.googleapis.com/envoy.extensions.resource_monitors.downstream_connections.v3.DownstreamConnectionsConfig
-        max_active_downstream_connections: 50000
 admin:
   address:
     socket_address:
