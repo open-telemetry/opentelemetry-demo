@@ -160,13 +160,12 @@ jobs:
           WARMUP_SECONDS: "300"
           POLL_TIMEOUT: "240"
           WARMUP_PROBE_TIMEOUT: "180"
-          DOCKER_COMPOSE_UP_FLAGS: "--force-recreate --remove-orphans --detach --wait --wait-timeout 600"
           PYTEST_ADDOPTS: "--capture=tee-sys --maxfail=1"
         run: make run-telemetry-tests
 
       - name: Print service logs on failure
         if: failure()
-        run: make print-telemetry-test-diagnostics
+        run: docker compose logs --tail=50
 
       - name: Stop demo
         if: always()
@@ -207,13 +206,12 @@ jobs:
           WARMUP_SECONDS: "300"
           POLL_TIMEOUT: "240"
           WARMUP_PROBE_TIMEOUT: "180"
-          DOCKER_COMPOSE_UP_FLAGS: "--force-recreate --remove-orphans --detach --wait --wait-timeout 600"
           PYTEST_ADDOPTS: "--capture=tee-sys --maxfail=1"
         run: make run-telemetry-tests-minimal
 
       - name: Print service logs on failure
         if: failure()
-        run: make print-telemetry-test-diagnostics-minimal
+        run: docker compose logs --tail=50
 
       - name: Stop demo
         if: always()

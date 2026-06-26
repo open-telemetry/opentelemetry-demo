@@ -15,7 +15,6 @@ ADDLICENSE = $(TOOLS_DIR)/$(ADDLICENSE_BINARY)
 DOCKER_CMD ?= docker
 DOCKER_COMPOSE_CMD ?= docker compose
 DOCKER_COMPOSE_ENV=--env-file .env --env-file .env.override
-DOCKER_COMPOSE_UP_FLAGS ?= --force-recreate --remove-orphans --detach
 
 # Compose file layers — combine with -f flags for the desired configuration:
 #   Core (minimal):             compose.yaml
@@ -32,8 +31,6 @@ DOCKER_COMPOSE_FILES_AGENT=-f compose.agent.yaml
 
 # Default: full demo + observability stack + extras stub
 DOCKER_COMPOSE_FILES=$(DOCKER_COMPOSE_FILES_FULL) $(DOCKER_COMPOSE_FILES_OBSERVABILITY) $(DOCKER_COMPOSE_FILES_EXTRAS)
-DOCKER_COMPOSE_FILES_MINIMAL=$(DOCKER_COMPOSE_FILES_CORE) $(DOCKER_COMPOSE_FILES_OBSERVABILITY) $(DOCKER_COMPOSE_FILES_EXTRAS)
-TELEMETRY_DIAGNOSTIC_SERVICES ?= frontend-proxy frontend otel-collector load-generator
 
 # Accept either `service=` or `SERVICE=` for single-service targets (build, restart, redeploy).
 # Must be evaluated at file scope; an `ifdef SERVICE` block inside a recipe is a shell command,
@@ -210,12 +207,8 @@ run-telemetry-tests: start
 		-e WARMUP_PROBE_ENABLED=$${WARMUP_PROBE_ENABLED:-true} \
 		-e WARMUP_PROBE_CHECKOUTS=$${WARMUP_PROBE_CHECKOUTS:-5} \
 		-e WARMUP_PROBE_TIMEOUT=$${WARMUP_PROBE_TIMEOUT:-120} \
-		-e PYTEST_ADDOPTS \
 		opentelemetry-demo-telemetry-tests; \
 	rc=$$?; \
-	if [ $$rc -ne 0 ]; then \
-		$(MAKE) print-telemetry-test-diagnostics; \
-	fi; \
 	$(MAKE) stop; \
 	exit $$rc
 
@@ -232,32 +225,10 @@ run-telemetry-tests-minimal: start-minimal
 		-e WARMUP_PROBE_ENABLED=$${WARMUP_PROBE_ENABLED:-true} \
 		-e WARMUP_PROBE_CHECKOUTS=$${WARMUP_PROBE_CHECKOUTS:-5} \
 		-e WARMUP_PROBE_TIMEOUT=$${WARMUP_PROBE_TIMEOUT:-120} \
-		-e PYTEST_ADDOPTS \
 		opentelemetry-demo-telemetry-tests; \
 	rc=$$?; \
-	if [ $$rc -ne 0 ]; then \
-		$(MAKE) print-telemetry-test-diagnostics-minimal; \
-	fi; \
 	$(MAKE) stop; \
 	exit $$rc
-
-.PHONY: print-telemetry-test-diagnostics
-print-telemetry-test-diagnostics:
-	@echo ""
-	@echo "Docker compose service status:"
-	@$(DOCKER_COMPOSE_CMD) $(DOCKER_COMPOSE_ENV) $(DOCKER_COMPOSE_FILES) ps || true
-	@echo ""
-	@echo "Telemetry test diagnostic logs:"
-	@$(DOCKER_COMPOSE_CMD) $(DOCKER_COMPOSE_ENV) $(DOCKER_COMPOSE_FILES) logs --tail=200 $(TELEMETRY_DIAGNOSTIC_SERVICES) || true
-
-.PHONY: print-telemetry-test-diagnostics-minimal
-print-telemetry-test-diagnostics-minimal:
-	@echo ""
-	@echo "Docker compose service status:"
-	@$(DOCKER_COMPOSE_CMD) $(DOCKER_COMPOSE_ENV) $(DOCKER_COMPOSE_FILES_MINIMAL) ps || true
-	@echo ""
-	@echo "Telemetry test diagnostic logs:"
-	@$(DOCKER_COMPOSE_CMD) $(DOCKER_COMPOSE_ENV) $(DOCKER_COMPOSE_FILES_MINIMAL) logs --tail=200 $(TELEMETRY_DIAGNOSTIC_SERVICES) || true
 
 .PHONY: generate-protobuf
 generate-protobuf:
@@ -285,7 +256,7 @@ check-clean-work-tree:
 
 .PHONY: start
 start:
-	$(DOCKER_COMPOSE_CMD) $(DOCKER_COMPOSE_ENV) $(DOCKER_COMPOSE_FILES) up $(DOCKER_COMPOSE_UP_FLAGS)
+	$(DOCKER_COMPOSE_CMD) $(DOCKER_COMPOSE_ENV) $(DOCKER_COMPOSE_FILES) up --force-recreate --remove-orphans --detach
 	@echo ""
 	@echo "OpenTelemetry Demo is running."
 	@echo "Go to http://localhost:8080 for the demo UI."
@@ -297,7 +268,7 @@ start:
 
 .PHONY: start-minimal
 start-minimal:
-	$(DOCKER_COMPOSE_CMD) $(DOCKER_COMPOSE_ENV) $(DOCKER_COMPOSE_FILES_MINIMAL) up $(DOCKER_COMPOSE_UP_FLAGS)
+	$(DOCKER_COMPOSE_CMD) $(DOCKER_COMPOSE_ENV) $(DOCKER_COMPOSE_FILES_CORE) $(DOCKER_COMPOSE_FILES_OBSERVABILITY) $(DOCKER_COMPOSE_FILES_EXTRAS) up --force-recreate --remove-orphans --detach
 	@echo ""
 	@echo "OpenTelemetry Demo in minimal mode is running."
 	@echo "Go to http://localhost:8080 for the demo UI."
@@ -309,7 +280,7 @@ start-minimal:
 
 .PHONY: start-no-o11y
 start-no-o11y:
-	$(DOCKER_COMPOSE_CMD) $(DOCKER_COMPOSE_ENV) $(DOCKER_COMPOSE_FILES_FULL) $(DOCKER_COMPOSE_FILES_EXTRAS) up $(DOCKER_COMPOSE_UP_FLAGS)
+	$(DOCKER_COMPOSE_CMD) $(DOCKER_COMPOSE_ENV) $(DOCKER_COMPOSE_FILES_FULL) $(DOCKER_COMPOSE_FILES_EXTRAS) up --force-recreate --remove-orphans --detach
 	@echo ""
 	@echo "OpenTelemetry Demo is running (no observability stack)."
 	@echo "Go to http://localhost:8080 for the demo UI."
@@ -319,7 +290,7 @@ start-no-o11y:
 
 .PHONY: start-minimal-no-o11y
 start-minimal-no-o11y:
-	$(DOCKER_COMPOSE_CMD) $(DOCKER_COMPOSE_ENV) $(DOCKER_COMPOSE_FILES_CORE) $(DOCKER_COMPOSE_FILES_EXTRAS) up $(DOCKER_COMPOSE_UP_FLAGS)
+	$(DOCKER_COMPOSE_CMD) $(DOCKER_COMPOSE_ENV) $(DOCKER_COMPOSE_FILES_CORE) $(DOCKER_COMPOSE_FILES_EXTRAS) up --force-recreate --remove-orphans --detach
 	@echo ""
 	@echo "OpenTelemetry Demo in minimal mode is running (no observability stack)."
 	@echo "Go to http://localhost:8080 for the demo UI."
@@ -329,7 +300,7 @@ start-minimal-no-o11y:
 
 .PHONY: start-profiling
 start-profiling:
-	$(DOCKER_COMPOSE_CMD) $(DOCKER_COMPOSE_ENV) $(DOCKER_COMPOSE_FILES_FULL) $(DOCKER_COMPOSE_FILES_OBSERVABILITY) $(DOCKER_COMPOSE_FILES_PROFILING) $(DOCKER_COMPOSE_FILES_EXTRAS) up $(DOCKER_COMPOSE_UP_FLAGS)
+	$(DOCKER_COMPOSE_CMD) $(DOCKER_COMPOSE_ENV) $(DOCKER_COMPOSE_FILES_FULL) $(DOCKER_COMPOSE_FILES_OBSERVABILITY) $(DOCKER_COMPOSE_FILES_PROFILING) $(DOCKER_COMPOSE_FILES_EXTRAS) up --force-recreate --remove-orphans --detach
 	@echo ""
 	@echo "OpenTelemetry Demo in profiling mode is running."
 	@echo "Go to http://localhost:8080 for the demo UI."
@@ -341,7 +312,7 @@ start-profiling:
 
 .PHONY: start-agentic
 start-agentic:
-	$(DOCKER_COMPOSE_CMD) $(DOCKER_COMPOSE_ENV) $(DOCKER_COMPOSE_FILES) $(DOCKER_COMPOSE_FILES_AGENT) up $(DOCKER_COMPOSE_UP_FLAGS)
+	$(DOCKER_COMPOSE_CMD) $(DOCKER_COMPOSE_ENV) $(DOCKER_COMPOSE_FILES) $(DOCKER_COMPOSE_FILES_AGENT) up --force-recreate --remove-orphans --detach
 	@echo ""
 	@echo "OpenTelemetry Demo with the agent, mcp and chatbot is running."
 	@echo "Go to http://localhost:8080 for the demo UI."

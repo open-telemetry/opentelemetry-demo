@@ -225,7 +225,7 @@ def _run_warmup_probe():
         )
         if last_error:
             msg += f"; last error: {last_error}"
-        pytest.exit(msg, returncode=1)
+        pytest.fail(msg)
 
     print(f"  warmup probe completed: {ok}/{WARMUP_PROBE_CHECKOUTS} checkout(s) succeeded")
 
@@ -301,7 +301,7 @@ def wait_for_warmup():
                 )
                 if last_error:
                     msg += f"; last backend error: {last_error}"
-                pytest.exit(msg, returncode=1)
+                pytest.fail(msg)
         remaining = max(0, int(deadline - time.time()))
         print(f"Backends not fully ready after {WARMUP_SECONDS - remaining}s, proceeding with poll-based checks...")
     else:
