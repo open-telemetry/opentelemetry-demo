@@ -316,7 +316,7 @@ services:
     deploy:
       resources:
         limits:
-          memory: 65M
+          memory: 90M
     restart: unless-stopped
     ports:
       - "${ENVOY_PORT}:${ENVOY_PORT}"
