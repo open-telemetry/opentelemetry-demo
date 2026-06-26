@@ -27,6 +27,7 @@ DOCKER_COMPOSE_FILES_OBSERVABILITY=-f compose.observability.yaml
 DOCKER_COMPOSE_FILES_PROFILING=-f compose.profiling.yaml
 DOCKER_COMPOSE_FILES_EXTRAS=-f compose.extras.yaml
 DOCKER_COMPOSE_FILES_TESTS=-f compose.tests.yaml
+DOCKER_COMPOSE_FILES_AGENT=-f compose.agent.yaml
 
 # Default: full demo + observability stack + extras stub
 DOCKER_COMPOSE_FILES=$(DOCKER_COMPOSE_FILES_FULL) $(DOCKER_COMPOSE_FILES_OBSERVABILITY) $(DOCKER_COMPOSE_FILES_EXTRAS)
@@ -203,6 +204,9 @@ run-telemetry-tests: start
 		-e TEST_SCOPE=full \
 		-e WARMUP_SECONDS=$${WARMUP_SECONDS:-240} \
 		-e POLL_TIMEOUT=$${POLL_TIMEOUT:-180} \
+		-e WARMUP_PROBE_ENABLED=$${WARMUP_PROBE_ENABLED:-true} \
+		-e WARMUP_PROBE_CHECKOUTS=$${WARMUP_PROBE_CHECKOUTS:-5} \
+		-e WARMUP_PROBE_TIMEOUT=$${WARMUP_PROBE_TIMEOUT:-120} \
 		opentelemetry-demo-telemetry-tests; \
 	rc=$$?; \
 	$(MAKE) stop; \
@@ -218,6 +222,9 @@ run-telemetry-tests-minimal: start-minimal
 		-e TEST_SCOPE=minimal \
 		-e WARMUP_SECONDS=$${WARMUP_SECONDS:-240} \
 		-e POLL_TIMEOUT=$${POLL_TIMEOUT:-180} \
+		-e WARMUP_PROBE_ENABLED=$${WARMUP_PROBE_ENABLED:-true} \
+		-e WARMUP_PROBE_CHECKOUTS=$${WARMUP_PROBE_CHECKOUTS:-5} \
+		-e WARMUP_PROBE_TIMEOUT=$${WARMUP_PROBE_TIMEOUT:-120} \
 		opentelemetry-demo-telemetry-tests; \
 	rc=$$?; \
 	$(MAKE) stop; \
@@ -303,9 +310,23 @@ start-profiling:
 	@echo "Go to http://localhost:8080/profiles/ for the Firepit UI."
 	@echo "Go to http://localhost:8080/telemetry/ for the Weaver generated telemetry documentation."
 
+.PHONY: start-agentic
+start-agentic:
+	$(DOCKER_COMPOSE_CMD) $(DOCKER_COMPOSE_ENV) $(DOCKER_COMPOSE_FILES) $(DOCKER_COMPOSE_FILES_AGENT) up --force-recreate --remove-orphans --detach
+	@echo ""
+	@echo "OpenTelemetry Demo with the agent, mcp and chatbot is running."
+	@echo "Go to http://localhost:8080 for the demo UI."
+	@echo "Go to http://localhost:8080/jaeger/ui for the Jaeger UI."
+	@echo "Go to http://localhost:8080/grafana/ for the Grafana UI."
+	@echo "Go to http://localhost:8080/loadgen/ for the Load Generator UI."
+	@echo "Go to http://localhost:8080/feature/ to change feature flags."
+	@echo "Go to http://localhost:8080/telemetry/ for the Weaver generated telemetry documentation."
+	@echo "Go to http://localhost:8080/chatbot/ for interacting with demo application using an agent."
+
 .PHONY: stop
 stop:
 	$(DOCKER_COMPOSE_CMD) $(DOCKER_COMPOSE_ENV) $(DOCKER_COMPOSE_FILES) down --remove-orphans --volumes
+	$(DOCKER_COMPOSE_CMD) $(DOCKER_COMPOSE_ENV) $(DOCKER_COMPOSE_FILES) $(DOCKER_COMPOSE_FILES_AGENT) down --remove-orphans --volumes
 	$(DOCKER_COMPOSE_CMD) $(DOCKER_COMPOSE_ENV) $(DOCKER_COMPOSE_FILES) $(DOCKER_COMPOSE_FILES_PROFILING) down --remove-orphans --volumes
 	$(DOCKER_COMPOSE_CMD) $(DOCKER_COMPOSE_ENV) $(DOCKER_COMPOSE_FILES) $(DOCKER_COMPOSE_FILES_TESTS) down --remove-orphans --volumes
 	@echo ""
