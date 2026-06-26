@@ -23,7 +23,7 @@ From the root directory, run:
 docker compose build product-catalog
 ```
 
-## Database Instrumentation
+Database Calls Instrumentation
 
 PostgreSQL queries are instrumented with
 [otelsql](https://pkg.go.dev/github.com/XSAM/otelsql), with SQLCommenter enabled
