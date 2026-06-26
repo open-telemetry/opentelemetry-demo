@@ -19,6 +19,42 @@ From the root directory, run:
 docker compose build product-reviews
 ```
 
+## Docker Run
+
+From the root directory, run:
+
+```sh
+docker compose up product-reviews
+```
+
+This starts the service and its dependencies (`astronomy-db`, `llm`,
+`product-catalog`, and `otel-collector`).
+
+## Database Instrumentation
+
+PostgreSQL queries are instrumented with
+[opentelemetry-instrumentation-psycopg2](https://opentelemetry-python-contrib.readthedocs.io/en/latest/instrumentation/psycopg2/psycopg2.html),
+with SQLCommenter enabled to append trace context to SQL statements (for example,
+`traceparent` and `db_driver` key-value pairs in query comments).
+
+The instrumentor is configured in `database.py`:
+
+```python
+from opentelemetry.instrumentation.psycopg2 import Psycopg2Instrumentor
+
+Psycopg2Instrumentor().instrument(enable_commenter=True)
+```
+
+When running with `opentelemetry-instrument`, auto-instrumentation for psycopg2
+must be disabled so the manual configuration above takes effect. The demo sets
+this in `compose.yaml`:
+
+```yaml
+OTEL_PYTHON_DISABLED_INSTRUMENTATIONS=psycopg2
+```
+
+Set the same environment variable when deploying outside Docker Compose.
+
 ## LLM Configuration
 
 By default, this service uses a mock LLM service, as configured in

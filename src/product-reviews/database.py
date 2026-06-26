@@ -9,6 +9,9 @@ import simplejson as json
 
 # Postgres
 import psycopg2
+from opentelemetry.instrumentation.psycopg2 import Psycopg2Instrumentor
+
+Psycopg2Instrumentor().instrument(enable_commenter=True)
 
 def must_map_env(key: str):
     value = os.environ.get(key)
