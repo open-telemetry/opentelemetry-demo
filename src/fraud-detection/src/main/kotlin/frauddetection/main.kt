@@ -5,7 +5,13 @@
 
 package frauddetection
 
+import io.opentelemetry.api.GlobalOpenTelemetry
+import io.opentelemetry.api.trace.SpanKind
+import io.opentelemetry.api.trace.StatusCode
+import io.opentelemetry.context.Context
+import io.opentelemetry.context.propagation.TextMapGetter
 import org.apache.kafka.clients.consumer.ConsumerConfig.*
+import org.apache.kafka.clients.consumer.ConsumerRecord
 import org.apache.kafka.clients.consumer.KafkaConsumer
 import org.apache.kafka.common.serialization.ByteArrayDeserializer
 import org.apache.kafka.common.serialization.StringDeserializer
@@ -27,6 +33,16 @@ const val topic = "orders"
 const val groupID = "fraud-detection"
 
 private val logger: Logger = LogManager.getLogger(groupID)
+private val tracer = GlobalOpenTelemetry.getTracer(groupID)
+private val kafkaTraceContextGetter = object : TextMapGetter<ConsumerRecord<String, ByteArray>> {
+    override fun keys(carrier: ConsumerRecord<String, ByteArray>): Iterable<String> =
+        carrier.headers().map { header -> header.key() }
+
+    override fun get(carrier: ConsumerRecord<String, ByteArray>?, key: String): String? {
+        val header = carrier?.headers()?.lastHeader(key) ?: return null
+        return header.value()?.toString(Charsets.UTF_8)
+    }
+}
 
 fun main() {
     val options = FlagdOptions.builder()
@@ -62,16 +78,45 @@ fun main() {
             totalCount = consumer
                 .poll(ofMillis(100))
                 .fold(totalCount) { accumulator, record ->
-                    val newCount = accumulator + 1
-                    if (getFeatureFlagValue("kafkaQueueProblems") > 0) {
-                        logger.info("FeatureFlag 'kafkaQueueProblems' is enabled, sleeping 1 second")
-                        Thread.sleep(1000)
-                    }
-                    val orders = OrderResult.parseFrom(record.value())
-                    logger.info("Consumed record with orderId: ${orders.orderId}, and updated total count to: $newCount")
-                    newCount
+                    processRecord(accumulator, record)
                 }
         }
+    }
+}
+
+fun processRecord(accumulator: Long, record: ConsumerRecord<String, ByteArray>): Long {
+    val parentContext = GlobalOpenTelemetry.getPropagators()
+        .textMapPropagator
+        .extract(Context.current(), record, kafkaTraceContextGetter)
+    val span = tracer.spanBuilder("orders process")
+        .setSpanKind(SpanKind.CONSUMER)
+        .setParent(parentContext)
+        .setAttribute("messaging.system", "kafka")
+        .setAttribute("messaging.destination.name", record.topic())
+        .setAttribute("messaging.operation", "process")
+        .setAttribute("messaging.kafka.consumer.group", groupID)
+        .setAttribute("messaging.kafka.partition", record.partition().toLong())
+        .setAttribute("messaging.kafka.message.offset", record.offset())
+        .startSpan()
+    val scope = span.makeCurrent()
+
+    try {
+        val newCount = accumulator + 1
+        if (getFeatureFlagValue("kafkaQueueProblems") > 0) {
+            logger.info("FeatureFlag 'kafkaQueueProblems' is enabled, sleeping 1 second")
+            Thread.sleep(1000)
+        }
+        val orders = OrderResult.parseFrom(record.value())
+        span.setAttribute("demo.order.id", orders.orderId)
+        logger.info("Consumed record with orderId: ${orders.orderId}, and updated total count to: $newCount")
+        return newCount
+    } catch (e: Throwable) {
+        span.recordException(e)
+        span.setStatus(StatusCode.ERROR)
+        throw e
+    } finally {
+        scope.close()
+        span.end()
     }
 }
 
