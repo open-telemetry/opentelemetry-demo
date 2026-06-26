@@ -351,6 +351,8 @@ services:
       - FLAGD_UI_PORT
       - TELEMETRY_DOCS_HOST
       - TELEMETRY_DOCS_PORT
+      - CHATBOT_HOST
+      - CHATBOT_PORT
     healthcheck:
       test: ["CMD", "bash", "-c", "echo > /dev/tcp/localhost/${ENVOY_PORT}"]
       start_period: 10s

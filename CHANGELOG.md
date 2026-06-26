@@ -7,6 +7,12 @@ the release.
 
 ## Unreleased
 
+* [frontend-proxy] Pass `CHATBOT_HOST`/`CHATBOT_PORT` to the frontend-proxy in
+  the base compose file. The chatbot upstream cluster lives in the base
+  `envoy.tmpl.yaml` and `envsubst` runs in-container, so without these vars the
+  proxy rendered an empty chatbot address and failed Envoy bootstrap validation
+  whenever the agent stack was not layered on
+  ([#3570](https://github.com/open-telemetry/opentelemetry-demo/pull/3570))
 * [llm] Increase `llm` service memory limit from 50M to 100M to prevent a
   startup restart loop caused by the container exceeding its memory limit
   ([#2944](https://github.com/open-telemetry/opentelemetry-demo/issues/2944))
