@@ -123,9 +123,6 @@ services:
 
   # Patch frontend-proxy to expose chatbot host/port and depend on chatbot
   frontend-proxy:
-    environment:
-      - CHATBOT_HOST
-      - CHATBOT_PORT
     depends_on:
       chatbot:
         condition: service_started
