@@ -86,42 +86,36 @@ public class ValkeyCartStore : ICartStore
                 return;
             }
 
-            if (_logger.IsEnabled(LogLevel.Debug))
-            {
-                _logger.LogDebug("Connecting to Redis: {connectionString}", _connectionString);
-            }
+            Log.RedisConnecting(_logger, _connectionString);
 
             _redis = ConnectionMultiplexer.Connect(_redisConnectionOptions);
 
             if (_redis == null || !_redis.IsConnected)
             {
-                _logger.LogError("Wasn't able to connect to redis");
+                Log.RedisConnectionFailed(_logger);
 
                 // We weren't able to connect to Redis despite some retries with exponential backoff.
                 throw new ApplicationException("Wasn't able to connect to redis");
             }
 
-            _logger.LogInformation("Successfully connected to Redis");
+            Log.RedisConnected(_logger);
             var cache = _redis.GetDatabase();
 
-            _logger.LogDebug("Performing small test");
+            Log.RedisSmallTest(_logger);
             cache.StringSet("cart", "OK" );
-            object res = cache.StringGet("cart");
+            string res = (string)cache.StringGet("cart");
 
-            if (_logger.IsEnabled(LogLevel.Debug))
-            {
-                _logger.LogDebug("Small test result: {result}", res);
-            }
+            Log.RedisSmallTestResult(_logger, res);
 
-            _redis.InternalError += (_, e) => { Console.WriteLine(e.Exception); };
+            _redis.InternalError += (_, e) => { Log.RedisInternalError(_logger, e.Exception); };
             _redis.ConnectionRestored += (_, _) =>
             {
                 _isRedisConnectionOpened = true;
-                _logger.LogInformation("Connection to redis was restored successfully.");
+                Log.RedisConnectionRestored(_logger);
             };
             _redis.ConnectionFailed += (_, _) =>
             {
-                _logger.LogInformation("Connection failed. Disposing the object");
+                Log.RedisConnectionLost(_logger);
                 _isRedisConnectionOpened = false;
             };
 
@@ -133,10 +127,7 @@ public class ValkeyCartStore : ICartStore
     {
         var stopwatch = Stopwatch.StartNew();
 
-        if (_logger.IsEnabled(LogLevel.Information))
-        {
-            _logger.LogInformation("AddItemAsync called with userId={userId}, productId={productId}, quantity={quantity}", userId, productId, quantity);
-        }
+        Log.AddItemAsync(_logger, userId, productId, quantity);
 
         try
         {
@@ -185,10 +176,7 @@ public class ValkeyCartStore : ICartStore
 
     public async Task EmptyCartAsync(string userId)
     {
-        if (_logger.IsEnabled(LogLevel.Information))
-        {
-            _logger.LogInformation("EmptyCartAsync called with userId={userId}", userId);
-        }
+        Log.EmptyCartAsync(_logger, userId);
         try
         {
             EnsureRedisConnected();
@@ -208,10 +196,7 @@ public class ValkeyCartStore : ICartStore
     {
         var stopwatch = Stopwatch.StartNew();
 
-        if (_logger.IsEnabled(LogLevel.Information))
-        {
-            _logger.LogInformation("GetCartAsync called with userId={userId}", userId);
-        }
+        Log.GetCartAsync(_logger, userId);
 
         try
         {
