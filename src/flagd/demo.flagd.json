@@ -71,7 +71,7 @@
         "on": 100,
         "off": 0
       },
-      "defaultVariant": "off"
+      "defaultVariant": "on"
     },
     "cartFailure": {
       "description": "Fail cart service",
@@ -132,7 +132,6 @@
         "off": false
       },
       "defaultVariant": "off"
-
     },
     "emailMemoryLeak": {
       "description": "Memory leak in the email service.",
