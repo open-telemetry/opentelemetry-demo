@@ -16,11 +16,17 @@ We meet every other Wednesday at 8:00 PT. The schedule may change based on
 contributors' availability. Check the [OpenTelemetry Community Calendar](https://github.com/open-telemetry/community?tab=readme-ov-file#special-interest-groups)
 for specific dates and Zoom links.
 
+The call is open to all. Whether you're a seasoned OpenTelemetry developer,
+just starting your journey, or simply curious about the work we do, you're more
+than welcome to participate.
+
 See the
 [public meeting notes](https://docs.google.com/document/d/16f-JOjKzLgWxULRxY8TmpM_FjlI1sthvKurnqFz9x98/edit)
 for a summary description of past meetings.
 For edit access, ask in our
 [Slack channel](https://cloud-native.slack.com/archives/C03B4CWV4DA).
+If you are new to the CNCF Slack community, you can [create an
+account](https://slack.cncf.io/).
 
 ### Sign the Contributor License Agreement (CLA)
 
@@ -303,7 +309,9 @@ on each other), the owner should try to get people aligned by:
 - Tagging subdomain experts (by looking at the change history) in the PR asking
   for suggestion.
 - Reaching out to more people on the [CNCF OpenTelemetry Community Demo Slack
-  channel](https://app.slack.com/client/T08PSQ7BQ/C03B4CWV4DA).
+  channel](https://app.slack.com/client/T08PSQ7BQ/C03B4CWV4DA). If you are new
+  to the CNCF Slack community, you can [create an
+  account](https://slack.cncf.io/).
 - Stepping back to see if it makes sense to narrow down the scope of the PR or
   split it up.
 - If none of the above worked and the PR has been stuck for more than 2 weeks,
