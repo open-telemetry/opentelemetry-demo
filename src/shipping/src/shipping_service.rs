@@ -37,7 +37,7 @@ pub async fn get_quote(req: web::Json<GetQuoteRequest>) -> impl Responder {
     };
 
     info!(
-        name: "SendingQuoteValue",
+        name: "shipping.quote.sent",
         dollars = quote.dollars,
         cents = quote.cents,
         "Sending Quote"
@@ -68,7 +68,7 @@ pub async fn ship_order(
             .await
             .map(|res| {
                 info!(
-                    name: "FeatureFlagEvaluated",
+                    name: "shipping.feature_flag.evaluated",
                     feature_flag_key = "intlShippingSlowdown",
                     feature_flag_provider_name = "flagd",
                     feature_flag_variant = res.variant.as_deref().unwrap_or("unknown"),
@@ -76,7 +76,7 @@ pub async fn ship_order(
                 res.value
             })
             .unwrap_or_else(|e| {
-                warn!(name: "FeatureFlagEvaluationFailed", error = ?e);
+                warn!(name: "shipping.feature_flag.evaluation_failed", error = ?e);
                 0
             })
     } else {
@@ -85,7 +85,7 @@ pub async fn ship_order(
 
     if slowdown_secs > 0 {
         info!(
-            name: "IntlShippingSlowdown",
+            name: "shipping.international.slowdown",
             delay_secs = slowdown_secs,
             "Delaying international shipment due to intlShippingSlowdown feature flag"
         );
@@ -94,7 +94,7 @@ pub async fn ship_order(
 
     let tid = create_tracking_id();
     info!(
-        name: "CreatingTrackingId",
+        name: "shipping.tracking_id.created",
         tracking_id = tid.as_str(),
         "Tracking ID Created"
     );
@@ -120,16 +120,14 @@ mod tests {
         address: Option<Address>,
         provider: web::Data<dyn FeatureProvider>,
     ) -> ShipOrderResponse {
-        let app = test::init_service(
-            App::new()
-                .app_data(provider)
-                .service(ship_order),
-        )
-        .await;
+        let app = test::init_service(App::new().app_data(provider).service(ship_order)).await;
         let req = test::TestRequest::post()
             .uri("/ship-order")
             .insert_header(ContentType::json())
-            .set_json(&ShipOrderRequest { address, items: vec![] })
+            .set_json(&ShipOrderRequest {
+                address,
+                items: vec![],
+            })
             .to_request();
         let resp = test::call_service(&app, req).await;
         assert!(resp.status().is_success());
