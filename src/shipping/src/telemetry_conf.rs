@@ -10,7 +10,9 @@ use opentelemetry_sdk::trace::SdkTracerProvider;
 use tracing_subscriber::prelude::*;
 use tracing_subscriber::EnvFilter;
 
-use opentelemetry_resource_detectors::{OsResourceDetector, ProcessResourceDetector};
+use opentelemetry_resource_detectors::{
+    HostResourceDetector, OsResourceDetector, ProcessResourceDetector,
+};
 use opentelemetry_sdk::{
     propagation::TraceContextPropagator, resource::ResourceDetector, Resource,
 };
@@ -22,6 +24,7 @@ fn get_resource() -> Resource {
     RESOURCE
         .get_or_init(|| {
             let detectors: Vec<Box<dyn ResourceDetector>> = vec![
+                Box::new(HostResourceDetector::default()),
                 Box::new(OsResourceDetector),
                 Box::new(ProcessResourceDetector),
             ];
