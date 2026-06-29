@@ -135,18 +135,6 @@ updates:
       interval: "weekly"
       day: "tuesday"
       time: "03:30"
-  - package-ecosystem: "docker"
-    cooldown:
-      default-days: 3
-    directory: "/test/tracetesting"
-    groups:
-      test-docker-base-images:
-        patterns:
-          - "*"
-    schedule:
-      interval: "weekly"
-      day: "tuesday"
-      time: "03:50"
   - package-ecosystem: "nuget"  # zizmor: ignore[dependabot-cooldown] cooldown prevents multi-ecosystem batching
     directories:
       - "/src/accounting/**"

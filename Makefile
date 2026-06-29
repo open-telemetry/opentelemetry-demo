@@ -184,14 +184,9 @@ clean-images:
         false; \
     fi
 
-.PHONY: run-tests
-run-tests:
+.PHONY: run-frontend-tests
+run-frontend-tests:
 	$(DOCKER_COMPOSE_CMD) $(DOCKER_COMPOSE_ENV) $(DOCKER_COMPOSE_FILES) $(DOCKER_COMPOSE_FILES_TESTS) run frontendTests
-	$(DOCKER_COMPOSE_CMD) $(DOCKER_COMPOSE_ENV) $(DOCKER_COMPOSE_FILES) $(DOCKER_COMPOSE_FILES_TESTS) run traceBasedTests
-
-.PHONY: run-tracetesting
-run-tracetesting:
-	$(DOCKER_COMPOSE_CMD) $(DOCKER_COMPOSE_ENV) $(DOCKER_COMPOSE_FILES) $(DOCKER_COMPOSE_FILES_TESTS) run traceBasedTests ${SERVICES_TO_TEST}
 
 .PHONY: run-telemetry-tests
 run-telemetry-tests: start
