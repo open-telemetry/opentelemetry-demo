@@ -284,6 +284,8 @@ the release.
   ([#3581](https://github.com/open-telemetry/opentelemetry-demo/pull/3581))
 * [cleanup] Remove product-reviews service
   ([#3587](https://github.com/open-telemetry/opentelemetry-demo/pull/3587))
+* [cleanup] Remove LLM service
+  ([#3599](https://github.com/open-telemetry/opentelemetry-demo/pull/3599))
 
 ## 2.2.0
 
