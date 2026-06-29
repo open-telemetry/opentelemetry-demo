@@ -44,7 +44,7 @@ RUN mv /app/docs/mkdocs.yml /app/mkdocs.yml && \
     mkdocs build --clean
 
 # Stage 3: Serve with nginx (tiny!)
-FROM docker.io/nginxinc/nginx-unprivileged:1.31.2-alpine3.23-otel@sha256:7d07d71d6568603d45d9951bda4e5f073cc0db8bad96aa86b04b16022ba98247
+FROM docker.io/nginxinc/nginx-unprivileged:1.31.2-alpine3.23-otel@sha256:aef4532d72b40b2616fd57f114dea8512bc6fbae47f690eabd38d766662baaf8
 
 USER 101
 
