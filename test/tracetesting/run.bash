@@ -8,7 +8,7 @@
 set -e
 
 # Available services to test
-ALL_SERVICES=("ad" "cart" "currency" "checkout" "frontend" "email" "payment" "product-catalog" "product-reviews" "recommendation" "shipping")
+ALL_SERVICES=("ad" "cart" "currency" "checkout" "frontend" "email" "payment" "product-catalog" "recommendation" "shipping")
 
 ## Script variables
 # Will contain the list of services to test

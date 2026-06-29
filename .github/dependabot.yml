@@ -77,11 +77,6 @@ multi-ecosystem-groups:
       interval: "weekly"
       day: "tuesday"
       time: "03:50"
-  src-product-reviews:
-    schedule:
-      interval: "weekly"
-      day: "tuesday"
-      time: "03:50"
   src-quote:
     schedule:
       interval: "weekly"
@@ -404,18 +399,6 @@ updates:
     patterns:
       - "*"
     multi-ecosystem-group: "src-product-catalog"
-  - package-ecosystem: "pip"  # zizmor: ignore[dependabot-cooldown] cooldown prevents multi-ecosystem batching
-    directories:
-      - "/src/product-reviews/**"
-    patterns:
-      - "*"
-    multi-ecosystem-group: "src-product-reviews"
-  - package-ecosystem: "docker"  # zizmor: ignore[dependabot-cooldown] cooldown prevents multi-ecosystem batching
-    directories:
-      - "/src/product-reviews/**"
-    patterns:
-      - "*"
-    multi-ecosystem-group: "src-product-reviews"
   - package-ecosystem: "composer"  # zizmor: ignore[dependabot-cooldown] cooldown prevents multi-ecosystem batching
     directories:
       - "/src/quote/**"
