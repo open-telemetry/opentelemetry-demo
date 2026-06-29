@@ -3,13 +3,6 @@
 
 # Telemetry Sanity Tests
 
-## Problem
-
-The demo previously used Tracetest for trace-based integration
-testing, but that project went defunct and was removed. There is no
-holistic replacement that validates telemetry is flowing across all
-three pillars (traces, metrics, logs) to the observability backends.
-
 ## Goals
 
 - Sanity-check that each service sends expected telemetry to the

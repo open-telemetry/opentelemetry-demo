@@ -154,10 +154,6 @@ jobs:
             tag_suffix: telemetry-docs
             context: ./
             setup-qemu: true
-          - file: ./test/tracetesting/Dockerfile
-            tag_suffix: traceBasedTests
-            context: ./
-            setup-qemu: true
 
     steps:
       - name: Checkout code
