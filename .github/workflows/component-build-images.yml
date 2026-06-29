@@ -142,10 +142,6 @@ jobs:
             tag_suffix: product-catalog
             context: ./
             setup-qemu: true
-          - file: ./src/product-reviews/Dockerfile
-            tag_suffix: product-reviews
-            context: ./
-            setup-qemu: true
           - file: ./src/quote/Dockerfile
             tag_suffix: quote
             context: ./
