@@ -52,11 +52,6 @@ multi-ecosystem-groups:
       interval: "weekly"
       day: "tuesday"
       time: "03:50"
-  src-llm:
-    schedule:
-      interval: "weekly"
-      day: "tuesday"
-      time: "03:50"
   src-load-generator:
     schedule:
       interval: "weekly"
@@ -302,18 +297,6 @@ updates:
       interval: "weekly"
       day: "tuesday"
       time: "03:50"
-  - package-ecosystem: "pip"  # zizmor: ignore[dependabot-cooldown] cooldown prevents multi-ecosystem batching
-    directories:
-      - "/src/llm/**"
-    patterns:
-      - "*"
-    multi-ecosystem-group: "src-llm"
-  - package-ecosystem: "docker"  # zizmor: ignore[dependabot-cooldown] cooldown prevents multi-ecosystem batching
-    directories:
-      - "/src/llm/**"
-    patterns:
-      - "*"
-    multi-ecosystem-group: "src-llm"
   - package-ecosystem: "pip"  # zizmor: ignore[dependabot-cooldown] cooldown prevents multi-ecosystem batching
     directories:
       - "/src/agent/**"
