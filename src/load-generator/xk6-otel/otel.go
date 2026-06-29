@@ -40,6 +40,16 @@ var (
 	providerErr  error
 )
 
+// collectorEndpoint returns host:4317 from OTEL_COLLECTOR_NAME, which is the
+// demo chart's convention for the collector hostname. Returns empty string if
+// unset, letting the SDK fall back to OTEL_EXPORTER_OTLP_ENDPOINT.
+func collectorEndpoint() string {
+	if host := os.Getenv("OTEL_COLLECTOR_NAME"); host != "" {
+		return host + ":4317"
+	}
+	return ""
+}
+
 func initProviders() {
 	providerOnce.Do(func() {
 		ctx := context.Background()
@@ -54,11 +64,14 @@ func initProviders() {
 			res = resource.Default()
 		}
 
-		// The SDK reads OTEL_EXPORTER_OTLP_ENDPOINT from the environment.
 		// WithInsecure is explicit because the demo Collector does not use TLS.
-		traceExp, err := otlptracegrpc.New(ctx,
-			otlptracegrpc.WithInsecure(),
-		)
+		// Endpoint is read from OTEL_COLLECTOR_NAME (demo chart convention);
+		// falls back to OTEL_EXPORTER_OTLP_ENDPOINT if unset.
+		traceOpts := []otlptracegrpc.Option{otlptracegrpc.WithInsecure()}
+		if ep := collectorEndpoint(); ep != "" {
+			traceOpts = append(traceOpts, otlptracegrpc.WithEndpoint(ep))
+		}
+		traceExp, err := otlptracegrpc.New(ctx, traceOpts...)
 		if err != nil {
 			providerErr = fmt.Errorf("xk6-otel: creating OTLP trace exporter: %w", err)
 			return
@@ -71,9 +84,11 @@ func initProviders() {
 		globalTracer = tp.Tracer("load-generator")
 
 		// Log provider — non-fatal if unavailable so traces still work.
-		logExp, lerr := otlploggrpc.New(ctx,
-			otlploggrpc.WithInsecure(),
-		)
+		logOpts := []otlploggrpc.Option{otlploggrpc.WithInsecure()}
+		if ep := collectorEndpoint(); ep != "" {
+			logOpts = append(logOpts, otlploggrpc.WithEndpoint(ep))
+		}
+		logExp, lerr := otlploggrpc.New(ctx, logOpts...)
 		if lerr != nil {
 			fmt.Fprintf(os.Stderr, "xk6-otel: warning: OTLP log exporter unavailable: %v\n", lerr)
 			return
