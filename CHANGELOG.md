@@ -282,7 +282,7 @@ the release.
   ([#3573](https://github.com/open-telemetry/opentelemetry-demo/pull/3573))
 * [shipping] Add host resource detection to enrich SDK resource metadata
   ([#3581](https://github.com/open-telemetry/opentelemetry-demo/pull/3581))
-  
+
 ## 2.2.0
 
 * [feat] add ipv6 support
