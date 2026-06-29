@@ -79,8 +79,6 @@ services:
         condition: service_started
       product-catalog:
         condition: service_started
-      product-reviews:
-        condition: service_started
       quote:
         condition: service_started
       recommendation:
