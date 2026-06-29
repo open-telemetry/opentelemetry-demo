@@ -122,10 +122,6 @@ jobs:
             tag_suffix: kafka
             context: ./
             setup-qemu: true
-          - file: ./src/llm/Dockerfile
-            tag_suffix: llm
-            context: ./
-            setup-qemu: true
           - file: ./src/load-generator/Dockerfile
             tag_suffix: load-generator
             context: ./
@@ -156,10 +152,6 @@ jobs:
             setup-qemu: true
           - file: ./src/telemetry-docs/Dockerfile
             tag_suffix: telemetry-docs
-            context: ./
-            setup-qemu: true
-          - file: ./test/tracetesting/Dockerfile
-            tag_suffix: traceBasedTests
             context: ./
             setup-qemu: true
 

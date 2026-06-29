@@ -321,8 +321,6 @@ services:
       - "${ENVOY_PORT}:${ENVOY_PORT}"
       - "${ENVOY_ADMIN_PORT}:${ENVOY_ADMIN_PORT}"
     environment:
-      - CHATBOT_HOST
-      - CHATBOT_PORT
       - FRONTEND_PORT
       - FRONTEND_HOST
       - LOCUST_WEB_HOST
@@ -726,36 +724,6 @@ services:
         condition: service_started
     volumes:
       - ./src/flagd:/app/data
-
-  # LLM used by Product Review service
-  llm:
-    image: ${IMAGE_NAME}:${DEMO_VERSION}-llm
-    container_name: llm
-    build:
-      context: ./
-      dockerfile: ${LLM_DOCKERFILE}
-      cache_from:
-        - ${IMAGE_NAME}:${IMAGE_VERSION}-llm
-    deploy:
-      resources:
-        limits:
-          memory: 100M
-    restart: unless-stopped
-    environment:
-      - FLAGD_HOST
-      - FLAGD_PORT
-    ports:
-      - "${LLM_PORT}"
-    healthcheck:
-      test: ["CMD", "python3", "-c", "import socket; s=socket.create_connection(('localhost',${LLM_PORT}),2); s.close()"]
-      start_period: 10s
-      interval: 5s
-      timeout: 5s
-      retries: 20
-    depends_on:
-      flagd:
-        condition: service_started
-    logging: *logging
 
   # Telemetry Documentation service
   telemetry-docs:
