@@ -1,6 +1,7 @@
 # Copyright The OpenTelemetry Authors
 # SPDX-License-Identifier: Apache-2.0
 
+
 static_resources:
   listeners:
     - address:
@@ -37,11 +38,7 @@ static_resources:
                         - "*"
                       routes:
                         - match: { prefix: "/otlp-http/" }
-                          route:
-                            {
-                              cluster: opentelemetry_collector_http,
-                              prefix_rewrite: "/",
-                            }
+                          route: { cluster: opentelemetry_collector_http, prefix_rewrite: "/" }
                         - match: { path: "/jaeger" }
                           redirect: { path_redirect: "/jaeger/" }
                         - match: { prefix: "/jaeger/" }
@@ -53,18 +50,11 @@ static_resources:
                         - match: { path: "/telemetry" }
                           redirect: { path_redirect: "/telemetry/" }
                         - match: { prefix: "/telemetry/" }
-                          route:
-                            { cluster: telemetry-docs, prefix_rewrite: "/" }
+                          route: { cluster: telemetry-docs, prefix_rewrite: "/" }
                         - match: { prefix: "/images/" }
-                          route:
-                            { cluster: image-provider, prefix_rewrite: "/" }
+                          route: { cluster: image-provider, prefix_rewrite: "/" }
                         - match: { prefix: "/flagservice/" }
-                          route:
-                            {
-                              cluster: flagservice,
-                              prefix_rewrite: "/",
-                              timeout: 0s,
-                            }
+                          route: { cluster: flagservice, prefix_rewrite: "/", timeout: 0s }
                         - match: { prefix: "/feature" }
                           route:
                             cluster: flagd-ui
