@@ -7,6 +7,8 @@ the release.
 
 ## Unreleased
 
+* [shipping] Add host resource detection to enrich SDK resource metadata
+  ([#3581](https://github.com/open-telemetry/opentelemetry-demo/pull/3581))
 * [frontend-proxy] Use the asynchronous c-ares DNS resolver for Envoy upstream
   clusters instead of the blocking `getaddrinfo` resolver. With `getaddrinfo`, a
   slow or unanswered DNS lookup for an upstream that is not running (e.g. the
@@ -273,6 +275,8 @@ the release.
   ([#3521](https://github.com/open-telemetry/opentelemetry-demo/pull/3521))
 * [cart,accounting] Use source-generated logging with EventName
   ([#3559](https://github.com/open-telemetry/opentelemetry-demo/pull/3559))
+* [cleanup] Remove loadgen traffic to product reviews
+  ([#3567](https://github.com/open-telemetry/opentelemetry-demo/pull/3567))
 * fix(frontend-proxy): remove deprecated Envoy options and restore
   service.namespace resource attribute
   ([#3573](https://github.com/open-telemetry/opentelemetry-demo/pull/3573))
