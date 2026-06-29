@@ -7,23 +7,6 @@ the release.
 
 ## Unreleased
 
-* [shipping] Add host resource detection to enrich SDK resource metadata
-  ([#3581](https://github.com/open-telemetry/opentelemetry-demo/pull/3581))
-* [frontend-proxy] Use the asynchronous c-ares DNS resolver for Envoy upstream
-  clusters instead of the blocking `getaddrinfo` resolver. With `getaddrinfo`, a
-  slow or unanswered DNS lookup for an upstream that is not running (e.g. the
-  `chatbot` or `profiles`/firepit clusters when the agent and profiling stacks
-  are not layered on) blocked cluster warming, so Envoy never finished
-  initializing its listener and the proxy never became healthy. c-ares resolves
-  off the main thread, so the listener binds immediately regardless of upstream
-  DNS state
-  ([#3573](https://github.com/open-telemetry/opentelemetry-demo/pull/3573))
-* [frontend-proxy] Pass `CHATBOT_HOST`/`CHATBOT_PORT` to the frontend-proxy in
-  the base compose file. The chatbot upstream cluster lives in the base
-  `envoy.tmpl.yaml` and `envsubst` runs in-container, so without these vars the
-  proxy rendered an empty chatbot address and failed Envoy bootstrap validation
-  whenever the agent stack was not layered on
-  ([#3570](https://github.com/open-telemetry/opentelemetry-demo/pull/3570))
 * [llm] Increase `llm` service memory limit from 50M to 100M to prevent a
   startup restart loop caused by the container exceeding its memory limit
   ([#2944](https://github.com/open-telemetry/opentelemetry-demo/issues/2944))
@@ -277,9 +260,28 @@ the release.
   ([#3559](https://github.com/open-telemetry/opentelemetry-demo/pull/3559))
 * [cleanup] Remove loadgen traffic to product reviews
   ([#3567](https://github.com/open-telemetry/opentelemetry-demo/pull/3567))
+* [cleanup] Remove product reviews from frontend
+  ([#3568](https://github.com/open-telemetry/opentelemetry-demo/pull/3568))
+* [frontend-proxy] Pass `CHATBOT_HOST`/`CHATBOT_PORT` to the frontend-proxy in
+  the base compose file. The chatbot upstream cluster lives in the base
+  `envoy.tmpl.yaml` and `envsubst` runs in-container, so without these vars the
+  proxy rendered an empty chatbot address and failed Envoy bootstrap validation
+  whenever the agent stack was not layered on
+  ([#3570](https://github.com/open-telemetry/opentelemetry-demo/pull/3570))
 * fix(frontend-proxy): remove deprecated Envoy options and restore
   service.namespace resource attribute
   ([#3573](https://github.com/open-telemetry/opentelemetry-demo/pull/3573))
+* [frontend-proxy] Use the asynchronous c-ares DNS resolver for Envoy upstream
+  clusters instead of the blocking `getaddrinfo` resolver. With `getaddrinfo`, a
+  slow or unanswered DNS lookup for an upstream that is not running (e.g. the
+  `chatbot` or `profiles`/firepit clusters when the agent and profiling stacks
+  are not layered on) blocked cluster warming, so Envoy never finished
+  initializing its listener and the proxy never became healthy. c-ares resolves
+  off the main thread, so the listener binds immediately regardless of upstream
+  DNS state
+  ([#3573](https://github.com/open-telemetry/opentelemetry-demo/pull/3573))
+* [shipping] Add host resource detection to enrich SDK resource metadata
+  ([#3581](https://github.com/open-telemetry/opentelemetry-demo/pull/3581))
 
 ## 2.2.0
 
