@@ -282,6 +282,8 @@ the release.
   ([#3573](https://github.com/open-telemetry/opentelemetry-demo/pull/3573))
 * [shipping] Add host resource detection to enrich SDK resource metadata
   ([#3581](https://github.com/open-telemetry/opentelemetry-demo/pull/3581))
+* [cleanup] Remove product-reviews service
+  ([#3587](https://github.com/open-telemetry/opentelemetry-demo/pull/3587))
 
 ## 2.2.0
 
