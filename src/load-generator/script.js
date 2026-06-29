@@ -34,7 +34,8 @@ export const options = {
                         type: 'chromium',
                         headless: true,
                         // executablePath and args are set via K6_BROWSER_EXECUTABLE_PATH
-                        // and K6_BROWSER_ARGS env vars — the scenario options field is ignored.
+                        // and K6_BROWSER_ARGS env vars (comma-separated, no -- prefix)
+                        // — the scenario options field is ignored.
                     },
                 },
             },
