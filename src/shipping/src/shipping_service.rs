@@ -37,10 +37,10 @@ pub async fn get_quote(req: web::Json<GetQuoteRequest>) -> impl Responder {
     };
 
     info!(
-        name = "SendingQuoteValue",
-        quote.dollars = quote.dollars,
-        quote.cents = quote.cents,
-        message = "Sending Quote"
+        name: "shipping.quote.sent",
+        dollars = quote.dollars,
+        cents = quote.cents,
+        "Sending Quote"
     );
 
     HttpResponse::Ok().json(reply)
@@ -68,15 +68,15 @@ pub async fn ship_order(
             .await
             .map(|res| {
                 info!(
-                    feature_flag.key = "intlShippingSlowdown",
-                    feature_flag.provider_name = "flagd",
-                    feature_flag.variant = res.variant.as_deref().unwrap_or("unknown"),
-                    message = "feature flag evaluated"
+                    name: "shipping.feature_flag.evaluated",
+                    feature_flag_key = "intlShippingSlowdown",
+                    feature_flag_provider_name = "flagd",
+                    feature_flag_variant = res.variant.as_deref().unwrap_or("unknown"),
                 );
                 res.value
             })
             .unwrap_or_else(|e| {
-                warn!("Failed to evaluate feature flag intlShippingSlowdown: {:?}", e);
+                warn!(name: "shipping.feature_flag.evaluation_failed", error = ?e);
                 0
             })
     } else {
@@ -85,18 +85,18 @@ pub async fn ship_order(
 
     if slowdown_secs > 0 {
         info!(
-            name = "IntlShippingSlowdown",
-            shipping.delay_secs = slowdown_secs,
-            message = "Delaying international shipment due to intlShippingSlowdown feature flag"
+            name: "shipping.international.slowdown",
+            delay_secs = slowdown_secs,
+            "Delaying international shipment due to intlShippingSlowdown feature flag"
         );
         actix_web::rt::time::sleep(std::time::Duration::from_secs(slowdown_secs as u64)).await;
     }
 
     let tid = create_tracking_id();
     info!(
-        name = "CreatingTrackingId",
+        name: "shipping.tracking_id.created",
         tracking_id = tid.as_str(),
-        message = "Tracking ID Created"
+        "Tracking ID Created"
     );
     HttpResponse::Ok().json(ShipOrderResponse { tracking_id: tid })
 }
@@ -120,16 +120,14 @@ mod tests {
         address: Option<Address>,
         provider: web::Data<dyn FeatureProvider>,
     ) -> ShipOrderResponse {
-        let app = test::init_service(
-            App::new()
-                .app_data(provider)
-                .service(ship_order),
-        )
-        .await;
+        let app = test::init_service(App::new().app_data(provider).service(ship_order)).await;
         let req = test::TestRequest::post()
             .uri("/ship-order")
             .insert_header(ContentType::json())
-            .set_json(&ShipOrderRequest { address, items: vec![] })
+            .set_json(&ShipOrderRequest {
+                address,
+                items: vec![],
+            })
             .to_request();
         let resp = test::call_service(&app, req).await;
         assert!(resp.status().is_success());

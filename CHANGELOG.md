@@ -7,36 +7,9 @@ the release.
 
 ## Unreleased
 
-* [frontend] Fix cart page showing unit price instead of line total; add
-  per-item quantity selector so users can change quantities directly in the
-  cart, with each row now displaying both the unit price and the line total
-  (unit price * quantity)
-  ([#3521](https://github.com/open-telemetry/opentelemetry-demo/pull/3521))
-* [payment] Replace manual SDK initialization with zero-code instrumentation
-  via `NODE_OPTIONS=--require @opentelemetry/auto-instrumentations-node/register`
-  ([#3486](https://github.com/open-telemetry/opentelemetry-demo/pull/3486))
 * [llm] Increase `llm` service memory limit from 50M to 100M to prevent a
   startup restart loop caused by the container exceeding its memory limit
   ([#2944](https://github.com/open-telemetry/opentelemetry-demo/issues/2944))
-* [testing] Add telemetry sanity tests to validate end-to-end observability
-  pipeline, including service-to-service edge verification via Jaeger trace walks
-  ([#3356](https://github.com/open-telemetry/opentelemetry-demo/pull/3356))
-* [testing] Telemetry tests now build the PR's images and share them across the
-  full/minimal jobs via an artifact (instead of pulling released images), wait
-  for the traces, metrics, and logs backends during warmup to avoid per-test
-  timeouts, and cap the test step at 15 minutes
-  ([#3498](https://github.com/open-telemetry/opentelemetry-demo/pull/3498))
-* [testing] Telemetry test warmup now drives a few real checkouts through the
-  frontend so low-frequency services (`email`, `quote`) that only emit on the
-  checkout path produce telemetry deterministically, instead of depending on the
-  load generator's ~6% checkout task weight landing inside the test window
-  ([#3505](https://github.com/open-telemetry/opentelemetry-demo/pull/3505))
-* [fraud-detection] Set the Kafka consumer `auto.offset.reset` to `earliest` so
-  it processes `orders` produced before its consumer group finished joining,
-  matching the accounting consumer. Previously the Kafka default of `latest`
-  silently dropped those orders, so fraud-detection could emit no telemetry on a
-  quiet or cold start
-  ([#3505](https://github.com/open-telemetry/opentelemetry-demo/pull/3505))
 * [telemetry-docs] Add a new service to provide telemetry documentation based
   on Weaver
   ([#2794](https://github.com/open-telemetry/opentelemetry-demo/pull/2794))
@@ -51,15 +24,16 @@ the release.
   function to better handle the next.js issue
   [High-cardinality HTTP span names #54694](https://github.com/vercel/next.js/issues/54694)
   [#2942](https://github.com/open-telemetry/opentelemetry-demo/pull/2942)
-* add `main` tagged images, drop date suffix for `nightly` ([#2994](https://github.com/open-telemetry/opentelemetry-demo/pull/2994))
+* add `main` tagged images, drop date suffix for `nightly`
+  ([#2994](https://github.com/open-telemetry/opentelemetry-demo/pull/2994))
 * [docker] fix `docker-compose.minimal.yml` to be able to run by adding missing
   postgresql service, environment variables, and dependencies
   ([#3004](https://github.com/open-telemetry/opentelemetry-demo/pull/3004))
+* [chore] Bump dependent image versions to latest releases
+  ([#3005](https://github.com/open-telemetry/opentelemetry-demo/pull/3005))
 * [flagd-ui] fix memory issue with BEAM-VM, this reduces flagd-ui memory
   usage from 2.3GB to 228Mi
   [#3022](https://github.com/open-telemetry/opentelemetry-demo/pull/3022)
-* [chore] Bump dependent image versions to latest releases
-  ([#3005](https://github.com/open-telemetry/opentelemetry-demo/pull/3005))
 * [ad] and [fraud-detection] Service JVM heap set to 200m for ad service and
   180m for fraud-detection to prevent large heap size that causes
   OOMKills with k8s.
@@ -123,6 +97,9 @@ the release.
   `app.product.id` to `demo.product.id` across cart, product-catalog,
   product-reviews, telemetry schema, and trace tests.
   ([#3355](https://github.com/open-telemetry/opentelemetry-demo/pull/3355))
+* [testing] Add telemetry sanity tests to validate end-to-end observability
+  pipeline, including service-to-service edge verification via Jaeger trace walks
+  ([#3356](https://github.com/open-telemetry/opentelemetry-demo/pull/3356))
 * [frontend,ad,payment] Propagate `enduser.id` as a span attribute on all
   browser spans via `SessionIdProcessor`, forward it via W3C Baggage on
   outgoing API requests through the ApiGateway proxy, and extract it in the
@@ -235,18 +212,76 @@ the release.
   ([#3440](https://github.com/open-telemetry/opentelemetry-demo/pull/3440))
 * [telemetry-schema] Move ad attributes into a dedicated schema domain.
   ([#3454](https://github.com/open-telemetry/opentelemetry-demo/pull/3454))
+* [agent] Add Agent, MCP and ChatBot to Otel Demo application.
+  Agent - Langgraph ReAct agent which can accept user requests then with the
+  help of LLM call, it identifies the right set of tools. Agent also has an
+  LLM response caching feature.
+  MCP - Agent can be configured to use MCP tools or native langgraph tools to
+  interact with demo application.
+  Chatbot - facilitates an interactive UI for users to send requests to agent.
+  ([#3455](https://github.com/open-telemetry/opentelemetry-demo/pull/3455))
 * [telemetry-schema] Split exchange, feature flag, recommendation, and request
   attributes into dedicated schema domains.
   ([#3482](https://github.com/open-telemetry/opentelemetry-demo/pull/3482))
 * [telemetry] Split cart and payment attributes out of the order telemetry
   schema into their own domain files.
   ([#3484](https://github.com/open-telemetry/opentelemetry-demo/pull/3484))
+* [payment] Replace manual SDK initialization with zero-code instrumentation
+  via `NODE_OPTIONS=--require @opentelemetry/auto-instrumentations-node/register`
+  ([#3486](https://github.com/open-telemetry/opentelemetry-demo/pull/3486))
 * [chore] Add health check to services
   ([#3487](https://github.com/open-telemetry/opentelemetry-demo/pull/3487))
+* [testing] Telemetry tests now build the PR's images and share them across the
+  full/minimal jobs via an artifact (instead of pulling released images), wait
+  for the traces, metrics, and logs backends during warmup to avoid per-test
+  timeouts, and cap the test step at 15 minutes
+  ([#3498](https://github.com/open-telemetry/opentelemetry-demo/pull/3498))
 * [fraud-detection] fix gRPC service files dropped from the shadow jar by
   setting `duplicatesStrategy` to `INCLUDE`, restoring the DNS name resolver
   registration needed to connect to flagd
   ([#3501](https://github.com/open-telemetry/opentelemetry-demo/pull/3501))
+* [testing] Telemetry test warmup now drives a few real checkouts through the
+  frontend so low-frequency services (`email`, `quote`) that only emit on the
+  checkout path produce telemetry deterministically, instead of depending on the
+  load generator's ~6% checkout task weight landing inside the test window
+  ([#3505](https://github.com/open-telemetry/opentelemetry-demo/pull/3505))
+* [fraud-detection] Set the Kafka consumer `auto.offset.reset` to `earliest` so
+  it processes `orders` produced before its consumer group finished joining,
+  matching the accounting consumer. Previously the Kafka default of `latest`
+  silently dropped those orders, so fraud-detection could emit no telemetry on a
+  quiet or cold start
+  ([#3505](https://github.com/open-telemetry/opentelemetry-demo/pull/3505))
+* [frontend] Fix cart page showing unit price instead of line total; add
+  per-item quantity selector so users can change quantities directly in the
+  cart, with each row now displaying both the unit price and the line total
+  (unit price * quantity)
+  ([#3521](https://github.com/open-telemetry/opentelemetry-demo/pull/3521))
+* [cart,accounting] Use source-generated logging with EventName
+  ([#3559](https://github.com/open-telemetry/opentelemetry-demo/pull/3559))
+* [cleanup] Remove loadgen traffic to product reviews
+  ([#3567](https://github.com/open-telemetry/opentelemetry-demo/pull/3567))
+* [cleanup] Remove product reviews from frontend
+  ([#3568](https://github.com/open-telemetry/opentelemetry-demo/pull/3568))
+* [frontend-proxy] Pass `CHATBOT_HOST`/`CHATBOT_PORT` to the frontend-proxy in
+  the base compose file. The chatbot upstream cluster lives in the base
+  `envoy.tmpl.yaml` and `envsubst` runs in-container, so without these vars the
+  proxy rendered an empty chatbot address and failed Envoy bootstrap validation
+  whenever the agent stack was not layered on
+  ([#3570](https://github.com/open-telemetry/opentelemetry-demo/pull/3570))
+* fix(frontend-proxy): remove deprecated Envoy options and restore
+  service.namespace resource attribute
+  ([#3573](https://github.com/open-telemetry/opentelemetry-demo/pull/3573))
+* [frontend-proxy] Use the asynchronous c-ares DNS resolver for Envoy upstream
+  clusters instead of the blocking `getaddrinfo` resolver. With `getaddrinfo`, a
+  slow or unanswered DNS lookup for an upstream that is not running (e.g. the
+  `chatbot` or `profiles`/firepit clusters when the agent and profiling stacks
+  are not layered on) blocked cluster warming, so Envoy never finished
+  initializing its listener and the proxy never became healthy. c-ares resolves
+  off the main thread, so the listener binds immediately regardless of upstream
+  DNS state
+  ([#3573](https://github.com/open-telemetry/opentelemetry-demo/pull/3573))
+* [shipping] Add host resource detection to enrich SDK resource metadata
+  ([#3581](https://github.com/open-telemetry/opentelemetry-demo/pull/3581))
 * [agent] Add Agent, MCP and ChatBot to Otel Demo application.
     Agent - Langgraph ReAct agent which can accept user requests then with the
     help of LLM call, it identifies the right set of tools. Agent also has an

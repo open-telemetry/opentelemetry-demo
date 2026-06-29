@@ -16,9 +16,10 @@ use shipping_service::{get_quote, ship_order};
 
 #[actix_web::main]
 async fn main() -> std::io::Result<()> {
-    match init_otel() {
-        Ok(_) => {
+    let otel_guard = match init_otel() {
+        Ok(guard) => {
             info!("Successfully configured OTel");
+            guard
         }
         Err(err) => {
             panic!("Couldn't start OTel: {0}", err);
@@ -41,7 +42,7 @@ async fn main() -> std::io::Result<()> {
 
     let addr = format!("{}:{}", ip, port);
     info!(
-        name = "ServerStartedSuccessfully",
+        name: "shipping.server.started",
         addr = addr.as_str(),
         message = "Shipping service is running"
     );
@@ -62,9 +63,15 @@ async fn main() -> std::io::Result<()> {
             .wrap(RequestMetrics::default())
             .service(get_quote)
             .service(ship_order)
-            .route("/health", web::get().to(|| async { HttpResponse::Ok().finish() }))
+            .route(
+                "/health",
+                web::get().to(|| async { HttpResponse::Ok().finish() }),
+            )
     })
     .bind(&addr)?
     .run()
-    .await
+    .await?;
+
+    otel_guard.shutdown();
+    Ok(())
 }

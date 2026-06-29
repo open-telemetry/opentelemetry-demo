@@ -81,7 +81,6 @@ signals it emits:
 | kafka            | no     | yes     | yes   | full    |
 | payment          | yes    | yes     | yes   | minimal |
 | product-catalog  | yes    | yes     | yes   | minimal |
-| product-reviews  | yes    | yes     | yes   | full    |
 | quote            | yes    | yes     | yes   | minimal |
 | recommendation   | yes    | yes     | yes   | minimal |
 | shipping         | yes    | yes     | yes   | minimal |
@@ -140,6 +139,7 @@ make run-telemetry-tests-minimal   # Minimal scope
 | `POLL_TIMEOUT`           | `180`        | Per-test seconds to poll a backend for data     |
 | `WARMUP_PROBE_ENABLED`   | `true`       | Drive checkouts during warmup (see Approach)    |
 | `WARMUP_PROBE_CHECKOUTS` | `5`          | Number of checkouts the warmup probe drives     |
+| `WARMUP_PROBE_TIMEOUT`   | `120`        | Max seconds to complete warmup probe checkouts  |
 
 ## CI Integration
 
@@ -152,7 +152,8 @@ touching `src/`, `test/telemetry/`, or compose files.
 - **New service**: Add one entry to `SIGNAL_MATRIX` in `services.py`
 - **New service edge**: Add one tuple to `SERVICE_EDGES` in `services.py`
 - **New backend**: Add a new `test_*.py` file
-- **Adjust timeouts**: Set `WARMUP_SECONDS` or `POLL_TIMEOUT` env vars
+- **Adjust timeouts**: Set `WARMUP_SECONDS`, `POLL_TIMEOUT`,
+  or `WARMUP_PROBE_TIMEOUT` env vars
 - **Run single test**: `pytest test_traces.py -k "checkout" -v`
 - **Run single edge**: `pytest test_traces_edges.py -k "frontend->cart" -v`
 

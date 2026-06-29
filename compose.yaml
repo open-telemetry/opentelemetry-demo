@@ -260,7 +260,6 @@ services:
       - CHECKOUT_ADDR
       - CURRENCY_ADDR
       - PRODUCT_CATALOG_ADDR
-      - PRODUCT_REVIEWS_ADDR
       - RECOMMENDATION_ADDR
       - SHIPPING_ADDR
       - OTEL_EXPORTER_OTLP_ENDPOINT
@@ -316,12 +315,14 @@ services:
     deploy:
       resources:
         limits:
-          memory: 65M
+          memory: 90M
     restart: unless-stopped
     ports:
       - "${ENVOY_PORT}:${ENVOY_PORT}"
       - "${ENVOY_ADMIN_PORT}:${ENVOY_ADMIN_PORT}"
     environment:
+      - CHATBOT_HOST
+      - CHATBOT_PORT
       - FRONTEND_PORT
       - FRONTEND_HOST
       - LOCUST_WEB_HOST
@@ -337,6 +338,7 @@ services:
       - OTEL_COLLECTOR_PORT_HTTP
       - OTEL_RESOURCE_ATTRIBUTES=${OTEL_RESOURCE_ATTRIBUTES},service.criticality=critical
       - OTEL_SERVICE_NAME=frontend-proxy
+      - OTEL_SERVICE_NAMESPACE
       - ENVOY_PORT
       - ENVOY_ADDR
       - ENVOY_ADMIN_PORT
@@ -348,6 +350,8 @@ services:
       - FLAGD_UI_PORT
       - TELEMETRY_DOCS_HOST
       - TELEMETRY_DOCS_PORT
+      - CHATBOT_HOST
+      - CHATBOT_PORT
     healthcheck:
       test: ["CMD", "bash", "-c", "echo > /dev/tcp/localhost/${ENVOY_PORT}"]
       start_period: 10s
