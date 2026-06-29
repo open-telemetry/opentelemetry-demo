@@ -50,8 +50,6 @@ spec:
       value: $PAYMENT_ADDR
     - key: PRODUCT_CATALOG_ADDR
       value: $PRODUCT_CATALOG_ADDR
-    - key: PRODUCT_REVIEWS_ADDR
-      value: $PRODUCT_REVIEWS_ADDR
     - key: RECOMMENDATION_ADDR
       value: $RECOMMENDATION_ADDR
     - key: SHIPPING_ADDR

@@ -45,7 +45,6 @@ services:
       - FRONTEND_ADDR
       - PAYMENT_ADDR
       - PRODUCT_CATALOG_ADDR
-      - PRODUCT_REVIEWS_ADDR
       - RECOMMENDATION_ADDR
       - SHIPPING_ADDR
       - KAFKA_ADDR
@@ -72,8 +71,6 @@ services:
       fraud-detection:
         condition: service_started
       frontend:
-        condition: service_started
-      llm:
         condition: service_started
       payment:
         condition: service_started
