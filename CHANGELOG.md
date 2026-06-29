@@ -282,14 +282,6 @@ the release.
   ([#3573](https://github.com/open-telemetry/opentelemetry-demo/pull/3573))
 * [shipping] Add host resource detection to enrich SDK resource metadata
   ([#3581](https://github.com/open-telemetry/opentelemetry-demo/pull/3581))
-* [agent] Add Agent, MCP and ChatBot to Otel Demo application.
-    Agent - Langgraph ReAct agent which can accept user requests then with the
-    help of LLM call, it identifies the right set of tools. Agent also has an
-    LLM response caching feature.
-    MCP - Agent can be configured to use MCP tools or native langgraph tools to
-    interact with demo application.
-    Chatbot - facilitates an interactive UI for users to send requests to agent.
-    ([#3455](https://github.com/open-telemetry/opentelemetry-demo/pull/3455))
 
 ## 2.2.0
 
