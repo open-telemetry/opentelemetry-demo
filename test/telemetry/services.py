@@ -21,7 +21,6 @@ SIGNAL_MATRIX = {
     "kafka": {"traces": False, "metrics": True, "logs": True},
     "payment": {"traces": True, "metrics": True, "logs": True},
     "product-catalog": {"traces": True, "metrics": True, "logs": True},
-    "product-reviews": {"traces": True, "metrics": True, "logs": True},
     "quote": {"traces": True, "metrics": True, "logs": True},
     "recommendation": {"traces": True, "metrics": True, "logs": True},
     "shipping": {"traces": True, "metrics": True, "logs": True},
@@ -33,9 +32,8 @@ SIGNAL_MATRIX = {
 # Services excluded from minimal scope:
 # - accounting, fraud-detection, kafka: require Kafka (not in minimal compose)
 # - frontend-web: requires LOCUST_BROWSER_TRAFFIC_ENABLED=true (disabled in minimal)
-# - product-reviews: load-generator rarely hits the product reviews API path
 #   without browser traffic, so traces don't appear within the test timeout
-FULL_ONLY_SERVICES = {"accounting", "fraud-detection", "frontend-web", "kafka", "product-reviews"}
+FULL_ONLY_SERVICES = {"accounting", "fraud-detection", "frontend-web", "kafka"}
 
 MINIMAL_SERVICES = [s for s in SIGNAL_MATRIX if s not in FULL_ONLY_SERVICES]
 ALL_SERVICES = list(SIGNAL_MATRIX.keys())

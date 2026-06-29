@@ -81,7 +81,6 @@ signals it emits:
 | kafka            | no     | yes     | yes   | full    |
 | payment          | yes    | yes     | yes   | minimal |
 | product-catalog  | yes    | yes     | yes   | minimal |
-| product-reviews  | yes    | yes     | yes   | full    |
 | quote            | yes    | yes     | yes   | minimal |
 | recommendation   | yes    | yes     | yes   | minimal |
 | shipping         | yes    | yes     | yes   | minimal |
