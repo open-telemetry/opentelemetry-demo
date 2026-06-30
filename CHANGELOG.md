@@ -10,6 +10,8 @@ the release.
 * [frontend] Avoid hardcoded `localhost:8080` image URLs during SSR and
   normalize leading slashes in the custom image loader
   ([#3582](https://github.com/open-telemetry/opentelemetry-demo/pull/3582))
+* [payment] Annotate synthetic load-generator payment requests with the
+  `user_agent.synthetic.type` semantic convention attribute.
 * [accounting] Run the Kafka consumer as a hosted background service so process
   shutdown can stop the consumer cleanly
   ([#3608](https://github.com/open-telemetry/opentelemetry-demo/pull/3608))

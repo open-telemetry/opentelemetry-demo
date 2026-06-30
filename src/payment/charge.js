@@ -73,7 +73,9 @@ module.exports.charge = async request => {
 
     // Check baggage for synthetic_request=true, and add charged attribute accordingly
     const baggage = propagation.getBaggage(context.active());
-    if (baggage && baggage.getEntry('synthetic_request') && baggage.getEntry('synthetic_request').value === 'true') {
+    const syntheticRequest = baggage?.getEntry('synthetic_request')?.value === 'true';
+    if (syntheticRequest) {
+      span.setAttribute('user_agent.synthetic.type', 'test');
       span.setAttribute('demo.payment.charged', false);
     } else {
       span.setAttribute('demo.payment.charged', true);
