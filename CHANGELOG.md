@@ -7,6 +7,8 @@ the release.
 
 ## Unreleased
 
+* [accounting] Run the Kafka consumer as a hosted background service so process
+  shutdown can stop the consumer cleanly
 * [llm] Increase `llm` service memory limit from 50M to 100M to prevent a
   startup restart loop caused by the container exceeding its memory limit
   ([#2944](https://github.com/open-telemetry/opentelemetry-demo/issues/2944))

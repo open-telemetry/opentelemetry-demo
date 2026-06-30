@@ -14,11 +14,8 @@ Environment.GetEnvironmentVariables()
 var host = Host.CreateDefaultBuilder(args)
     .ConfigureServices(services =>
     {
-        services.AddSingleton<Consumer>();
+        services.AddHostedService<Consumer>();
     })
     .Build();
 
-var consumer = host.Services.GetRequiredService<Consumer>();
-consumer.StartListening();
-
-host.Run();
+await host.RunAsync();
