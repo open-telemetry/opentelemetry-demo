@@ -10,6 +10,11 @@ the release.
 * [accounting] Run the Kafka consumer as a hosted background service so process
   shutdown can stop the consumer cleanly
   ([#3608](https://github.com/open-telemetry/opentelemetry-demo/pull/3608))
+* [collector] Add `gen_ai_normalizer` processor to the traces pipeline to
+  convert OpenLLMetry/Traceloop instrumentation telemetry (from the agent
+  service) into official GenAI semantic conventions (`gen_ai.*` attributes).
+  Bump collector-contrib to v0.155.0 which includes the processor
+  ([#3526](https://github.com/open-telemetry/opentelemetry-demo/issues/3526))
 * [llm] Increase `llm` service memory limit from 50M to 100M to prevent a
   startup restart loop caused by the container exceeding its memory limit
   ([#2944](https://github.com/open-telemetry/opentelemetry-demo/issues/2944))
