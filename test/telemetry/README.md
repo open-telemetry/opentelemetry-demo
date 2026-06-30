@@ -49,6 +49,7 @@ test/telemetry/
 |-- conftest.py
 |-- services.py
 |-- test_collector.py
+|-- test_agentic.py
 |-- test_traces.py
 |-- test_traces_edges.py
 |-- test_metrics.py
@@ -80,6 +81,9 @@ signals it emits:
 | accounting       | yes    | yes     | yes   | full    |
 | fraud-detection  | yes    | yes     | yes   | full    |
 | load-generator   | yes    | yes     | yes   | minimal |
+| agent            | yes    | no      | no    | agentic |
+| mcp              | yes    | no      | no    | agentic |
+| chatbot          | yes    | no      | no    | agentic |
 
 ## Backend API Queries
 
@@ -115,6 +119,7 @@ signals it emits:
 ```bash
 make run-telemetry-tests           # Full scope (all services)
 make run-telemetry-tests-minimal   # Minimal scope
+make run-telemetry-tests-agentic   # Agentic scope (agent, mcp, chatbot)
 ```
 
 ## Environment Variables
@@ -127,18 +132,27 @@ make run-telemetry-tests-minimal   # Minimal scope
 | `PROMETHEUS_PORT`        | `9090`       | Prometheus query port                           |
 | `OPENSEARCH_HOST`        | `opensearch` | OpenSearch hostname                             |
 | `OPENSEARCH_PORT`        | `9200`       | OpenSearch port                                 |
-| `TEST_SCOPE`             | `minimal`    | `minimal` or `full`                             |
+| `TEST_SCOPE`             | `minimal`    | `minimal`, `full`, or `agentic`                 |
 | `WARMUP_SECONDS`         | `240`        | Max seconds to wait for backends before testing |
 | `POLL_TIMEOUT`           | `180`        | Per-test seconds to poll a backend for data     |
 | `WARMUP_PROBE_ENABLED`   | `true`       | Drive checkouts during warmup (see Approach)    |
 | `WARMUP_PROBE_CHECKOUTS` | `5`          | Number of checkouts the warmup probe drives     |
 | `WARMUP_PROBE_TIMEOUT`   | `120`        | Max seconds to complete warmup probe checkouts  |
+| `AGENT_URL`              | (derived)    | Override agent service URL (agentic scope)      |
+| `MCP_URL`                | (derived)    | Override MCP service URL (agentic scope)        |
+| `CHATBOT_URL`            | (derived)    | Override chatbot service URL (agentic scope)    |
 
 ## CI Integration
 
-Separate workflow (`.github/workflows/run-telemetry-tests.yml`)
-with two parallel jobs: full and minimal. Triggered on PRs
-touching `src/`, `test/telemetry/`, or compose files.
+Two separate workflows handle telemetry tests:
+
+- **`.github/workflows/run-telemetry-tests.yml`** — two parallel jobs (full
+  and minimal). Triggered on every PR touching `src/`, `test/telemetry/`, or
+  core compose files.
+- **`.github/workflows/run-agentic-telemetry-tests.yml`** — agentic scope.
+  Runs on dependabot PRs automatically; for human PRs it runs after reviewer
+  approval. Only fires when `src/agent/`, `src/mcp/`, `src/chatbot/`,
+  `compose.agent.yaml`, or `test/telemetry/` are modified.
 
 ## Extending
 

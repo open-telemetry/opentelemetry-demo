@@ -26,6 +26,18 @@ OPENSEARCH_URL = os.environ.get("OPENSEARCH_URL", f"http://{OPENSEARCH_HOST}:{OP
 COLLECTOR_HOST = os.environ.get("OTEL_COLLECTOR_HOST", "otel-collector")
 COLLECTOR_PORT = int(os.environ.get("OTEL_COLLECTOR_PORT_GRPC", "4317"))
 
+AGENT_HOST = os.environ.get("AGENT_ENDPOINT", "agent")
+AGENT_PORT = os.environ.get("AGENT_PORT", "8010")
+AGENT_URL = os.environ.get("AGENT_URL", f"http://{AGENT_HOST}:{AGENT_PORT}")
+
+MCP_HOST = os.environ.get("MCP_ENDPOINT", "mcp")
+MCP_PORT_VAL = os.environ.get("MCP_PORT", "8011")
+MCP_URL = os.environ.get("MCP_URL", f"http://{MCP_HOST}:{MCP_PORT_VAL}")
+
+CHATBOT_HOST = os.environ.get("CHATBOT_HOST", "chatbot")
+CHATBOT_PORT_VAL = os.environ.get("CHATBOT_PORT", "7860")
+CHATBOT_URL = os.environ.get("CHATBOT_URL", f"http://{CHATBOT_HOST}:{CHATBOT_PORT_VAL}")
+
 # Entrypoint the warmup probe drives traffic through. Envoy fans the request out
 # to the whole service graph, exactly like the load generator does.
 #
@@ -230,6 +242,112 @@ def _run_warmup_probe():
     print(f"  warmup probe completed: {ok}/{WARMUP_PROBE_CHECKOUTS} checkout(s) succeeded")
 
 
+def _run_agentic_warmup_probe():
+    """Drive one request to each agentic service so all three appear in Jaeger
+    before test assertions begin.
+
+    * agent  — POST /prompt (required): FastAPIInstrumentor and the Traceloop
+               @workflow decorator emit spans even when the LLM call fails, so
+               any HTTP response (including 5xx) is treated as success.
+    * mcp    — POST /mcp with an MCP initialize message (best-effort): the
+               FastMCP handler creates a span on the first inbound request.
+    * chatbot — POST /run/predict (best-effort): triggers chatbot→agent HTTP
+               call so both services emit linked spans via traceparent injection.
+    """
+    deadline = time.time() + WARMUP_PROBE_TIMEOUT
+    print(
+        f"\nDriving agentic warmup probes (agent, chatbot) for up to "
+        f"{WARMUP_PROBE_TIMEOUT}s..."
+    )
+
+    # --- agent: required ---
+    # POST /prompt causes FastAPI + Traceloop @workflow spans to be emitted.
+    # Any HTTP response (including 5xx) is sufficient: FastAPIInstrumentor and
+    # the @workflow decorator both record spans regardless of whether the LLM
+    # call inside succeeds. We only retry on connection errors (service not up).
+    agent_ok = False
+    last_error = None
+    with requests.Session() as session:
+        while not agent_ok and time.time() < deadline:
+            try:
+                resp = session.post(
+                    f"{AGENT_URL}/prompt",
+                    json={"message": "List available products in the store.", "history": []},
+                    timeout=30,
+                )
+                agent_ok = True
+                print(f"  agent warmup probe: HTTP {resp.status_code}")
+            except requests.RequestException as e:
+                last_error = e
+                time.sleep(POLL_INTERVAL)
+
+    if not agent_ok:
+        msg = f"Agent at {AGENT_URL} did not respond within {WARMUP_PROBE_TIMEOUT}s"
+        if last_error:
+            msg += f"; last error: {last_error}"
+        pytest.fail(msg)
+
+    # --- mcp: best-effort direct probe ---
+    # FastMCP uses MCP Streamable HTTP transport which requires:
+    #   Accept: application/json, text/event-stream  (else 406)
+    #   Mcp-Session-Id: <id>  on all requests after initialize
+    # The server returns Mcp-Session-Id in the initialize response headers;
+    # without it on tools/call the server rejects the request before invoking
+    # any tool, so no HTTPX span is emitted.
+    # list_products triggers an outbound httpx call to product-catalog —
+    # the only code path HTTPXClientInstrumentor reliably captures as a span.
+    try:
+        mcp_headers = {"Accept": "application/json, text/event-stream"}
+        init_resp = requests.post(
+            f"{MCP_URL}/mcp",
+            json={
+                "jsonrpc": "2.0",
+                "method": "initialize",
+                "params": {
+                    "protocolVersion": "2024-11-05",
+                    "capabilities": {},
+                    "clientInfo": {"name": "telemetry-warmup", "version": "1.0"},
+                },
+                "id": 1,
+            },
+            headers=mcp_headers,
+            timeout=10,
+        )
+        session_id = init_resp.headers.get("Mcp-Session-Id")
+        call_headers = {**mcp_headers}
+        if session_id:
+            call_headers["Mcp-Session-Id"] = session_id
+        mcp_resp = requests.post(
+            f"{MCP_URL}/mcp",
+            json={
+                "jsonrpc": "2.0",
+                "method": "tools/call",
+                "params": {"name": "list_products", "arguments": {}},
+                "id": 2,
+            },
+            headers=call_headers,
+            timeout=15,
+        )
+        print(f"  mcp warmup probe: HTTP {mcp_resp.status_code}")
+    except Exception as e:
+        print(f"  mcp warmup probe skipped: {e}")
+
+    # --- chatbot: best-effort Gradio API call ---
+    # Gradio 6.x moved all API routes to /gradio_api/.  POST to
+    # /gradio_api/call/respond queues and executes the respond() handler,
+    # which calls requests.post(agent_url).  RequestsInstrumentor injects
+    # traceparent so the chatbot→agent edge appears in Jaeger.
+    try:
+        chatbot_resp = requests.post(
+            f"{CHATBOT_URL}/gradio_api/call/respond",
+            json={"data": ["List available products in the store.", []]},
+            timeout=60,
+        )
+        print(f"  chatbot warmup probe: HTTP {chatbot_resp.status_code}")
+    except Exception as e:
+        print(f"  chatbot warmup probe skipped: {e}")
+
+
 @pytest.fixture(scope="session", autouse=True)
 def wait_for_warmup():
     """Wait for Jaeger, Prometheus, and OpenSearch to all ingest telemetry
@@ -250,7 +368,7 @@ def wait_for_warmup():
     reliably produce telemetry rather than relying on the load generator's ~6%
     checkout task weight landing inside the test window.
     """
-    if WARMUP_PROBE_ENABLED:
+    if WARMUP_PROBE_ENABLED and TEST_SCOPE != "agentic":
         _run_warmup_probe()
     print(f"\nWaiting for backends to be ready (up to {WARMUP_SECONDS}s)...")
     required_probe_log_services = (
@@ -307,6 +425,9 @@ def wait_for_warmup():
     else:
         elapsed = WARMUP_SECONDS - int(deadline - time.time())
         print(f"Backends ready after {elapsed}s, starting tests...")
+
+    if TEST_SCOPE == "agentic":
+        _run_agentic_warmup_probe()
 
 
 @pytest.fixture(scope="session")
