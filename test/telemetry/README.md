@@ -152,7 +152,8 @@ Two separate workflows handle telemetry tests:
 - **`.github/workflows/run-agentic-telemetry-tests.yml`** - agentic scope.
   Runs on dependabot PRs automatically; for human PRs it runs after reviewer
   approval. Only fires when `src/agent/`, `src/mcp/`, `src/chatbot/`,
-  `compose.agent.yaml`, `test/telemetry/`, or `.github/workflows/` are modified.
+  `src/shared/`, any `compose*.yaml`, `Makefile`, `test/telemetry/`, or
+  `.github/workflows/` are modified.
 
 ## Extending
 

@@ -13,7 +13,9 @@ on:
       - 'src/agent/**'
       - 'src/mcp/**'
       - 'src/chatbot/**'
-      - 'compose.agent.yaml'
+      - 'src/shared/**'
+      - 'compose*.yaml'
+      - 'Makefile'
       - 'test/telemetry/**'
       - '.env'
       - '.github/workflows/**'
@@ -29,7 +31,9 @@ on:
       - 'src/agent/**'
       - 'src/mcp/**'
       - 'src/chatbot/**'
-      - 'compose.agent.yaml'
+      - 'src/shared/**'
+      - 'compose*.yaml'
+      - 'Makefile'
       - 'test/telemetry/**'
       - '.env'
       - '.github/workflows/**'
@@ -94,7 +98,7 @@ jobs:
              && "$PR_STATE" == "open" \
              && "$PR_AUTHOR" != "dependabot[bot]" ]]; then
             git fetch --quiet origin "$BASE_SHA"
-            AGENTIC_PATTERN='^(src/(agent|mcp|chatbot)/|compose\.agent\.yaml|test/telemetry/|\.env$|\.github/workflows/)'
+            AGENTIC_PATTERN='^(src/(agent|mcp|chatbot|shared)/|compose[^/]*\.yaml|Makefile$|test/telemetry/|\.env$|\.github/workflows/)'
             if git diff --name-only "$BASE_SHA" "$HEAD_SHA" | grep -qE "$AGENTIC_PATTERN"; then
               echo "should_run=true" >> "$GITHUB_OUTPUT"
             else
