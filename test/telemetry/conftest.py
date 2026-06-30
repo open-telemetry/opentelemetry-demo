@@ -47,6 +47,16 @@ WARMUP_SECONDS = int(os.environ.get("WARMUP_SECONDS", "240"))
 # generator happening to run a checkout (~6% task weight) within the test window.
 WARMUP_PROBE_ENABLED = os.environ.get("WARMUP_PROBE_ENABLED", "true").lower() == "true"
 WARMUP_PROBE_CHECKOUTS = int(os.environ.get("WARMUP_PROBE_CHECKOUTS", "5"))
+WARMUP_PROBE_TIMEOUT = int(os.environ.get("WARMUP_PROBE_TIMEOUT", "120"))
+
+# These services are expected to emit logs from the checkout path driven by the
+# warmup probe. Gate on them explicitly so CI fails in setup with a useful
+# message instead of spending one POLL_TIMEOUT per missing log test.
+WARMUP_PROBE_LOG_SERVICES = tuple(
+    svc
+    for svc in ("email", "frontend-proxy", "quote")
+    if svc in services_with_signal("logs", TEST_SCOPE)
+)
 
 POLL_INTERVAL = 5
 POLL_TIMEOUT = int(os.environ.get("POLL_TIMEOUT", "180"))
@@ -83,6 +93,26 @@ def _opensearch_log_count():
     if resp.status_code != 200:
         return 0
     return int(resp.json().get("count", 0))
+
+
+def _opensearch_service_log_count(service):
+    """Number of log records OpenSearch has indexed for one service."""
+    ppl = f"source=otel-logs-* | where resource.service.name = '{service}' | stats count()"
+    resp = requests.post(
+        f"{OPENSEARCH_URL}/_plugins/_ppl",
+        json={"query": ppl},
+        headers={"Content-Type": "application/json"},
+        timeout=10,
+    )
+    resp.raise_for_status()
+    rows = resp.json().get("datarows", [])
+    if not rows:
+        return 0
+    return int(rows[0][0])
+
+
+def _opensearch_service_log_counts(services):
+    return {svc: _opensearch_service_log_count(svc) for svc in services}
 
 
 # Minimum distinct services / records each backend must report before we treat
@@ -128,39 +158,75 @@ PROBE_PERSON = {
 }
 
 
+def _raise_for_status(resp, description):
+    try:
+        resp.raise_for_status()
+    except requests.HTTPError as e:
+        body = resp.text.strip().replace("\n", " ")[:300]
+        raise requests.HTTPError(
+            f"{description} returned HTTP {resp.status_code}: {body}",
+            response=resp,
+        ) from e
+
+
 def _drive_checkout(session, product_id):
     """Add one product to a fresh cart and check out via the frontend proxy.
-
-    Best-effort: the demo may still be starting, so any request error is swallowed
-    and reported rather than raised - the warmup readiness loop is what actually
-    gates the tests.
     """
     user_id = str(uuid.uuid4())
-    try:
-        session.post(
-            f"{FRONTEND_PROXY_URL}/api/cart",
-            json={"item": {"productId": product_id, "quantity": 1}, "userId": user_id},
-            timeout=10,
-        )
-        person = dict(PROBE_PERSON, userId=user_id)
-        session.post(f"{FRONTEND_PROXY_URL}/api/checkout", json=person, timeout=15)
-        return True
-    except requests.RequestException as e:
-        print(f"  warmup probe checkout failed (ignored): {e}")
-        return False
+    cart_resp = session.post(
+        f"{FRONTEND_PROXY_URL}/api/cart",
+        json={"item": {"productId": product_id, "quantity": 1}, "userId": user_id},
+        timeout=10,
+    )
+    _raise_for_status(cart_resp, "cart warmup request")
+
+    person = dict(PROBE_PERSON, userId=user_id)
+    checkout_resp = session.post(
+        f"{FRONTEND_PROXY_URL}/api/checkout",
+        json=person,
+        timeout=15,
+    )
+    _raise_for_status(checkout_resp, "checkout warmup request")
 
 
 def _run_warmup_probe():
     """Drive a handful of real checkouts so the full service graph - including
     low-frequency services like email and quote that only emit on the checkout
     path - produces telemetry deterministically before the readiness poll."""
-    print(f"Driving {WARMUP_PROBE_CHECKOUTS} warmup checkout(s) via {FRONTEND_PROXY_URL}...")
+    if WARMUP_PROBE_CHECKOUTS <= 0:
+        print("Warmup probe requested 0 checkouts, skipping checkout traffic.")
+        return
+
+    print(
+        f"Driving {WARMUP_PROBE_CHECKOUTS} warmup checkout(s) via "
+        f"{FRONTEND_PROXY_URL} for up to {WARMUP_PROBE_TIMEOUT}s..."
+    )
+    deadline = time.time() + WARMUP_PROBE_TIMEOUT
     ok = 0
+    attempts = 0
+    last_error = None
     with requests.Session() as session:
-        for i in range(WARMUP_PROBE_CHECKOUTS):
-            product_id = PROBE_PRODUCTS[i % len(PROBE_PRODUCTS)]
-            if _drive_checkout(session, product_id):
+        while ok < WARMUP_PROBE_CHECKOUTS and time.time() < deadline:
+            product_id = PROBE_PRODUCTS[attempts % len(PROBE_PRODUCTS)]
+            attempts += 1
+            try:
+                _drive_checkout(session, product_id)
                 ok += 1
+                print(f"  warmup checkout {ok}/{WARMUP_PROBE_CHECKOUTS} succeeded")
+            except requests.RequestException as e:
+                last_error = e
+                print(f"  warmup checkout attempt {attempts} failed: {e}")
+                time.sleep(POLL_INTERVAL)
+
+    if ok < WARMUP_PROBE_CHECKOUTS:
+        msg = (
+            f"Warmup probe completed only {ok}/{WARMUP_PROBE_CHECKOUTS} "
+            f"checkout(s) within {WARMUP_PROBE_TIMEOUT}s"
+        )
+        if last_error:
+            msg += f"; last error: {last_error}"
+        pytest.fail(msg)
+
     print(f"  warmup probe completed: {ok}/{WARMUP_PROBE_CHECKOUTS} checkout(s) succeeded")
 
 
@@ -187,24 +253,55 @@ def wait_for_warmup():
     if WARMUP_PROBE_ENABLED:
         _run_warmup_probe()
     print(f"\nWaiting for backends to be ready (up to {WARMUP_SECONDS}s)...")
+    required_probe_log_services = (
+        WARMUP_PROBE_LOG_SERVICES
+        if WARMUP_PROBE_ENABLED and WARMUP_PROBE_CHECKOUTS > 0
+        else ()
+    )
+    if required_probe_log_services:
+        print(
+            "Waiting for checkout-path logs in OpenSearch: "
+            + ", ".join(required_probe_log_services)
+        )
     deadline = time.time() + WARMUP_SECONDS
     backends_ready = False
+    last_state = None
+    last_error = None
     while time.time() < deadline:
         try:
             jaeger = _jaeger_service_count()
             prom = _prometheus_service_count()
             logs = _opensearch_log_count()
+            probe_logs = _opensearch_service_log_counts(required_probe_log_services)
+            last_state = (jaeger, prom, logs, probe_logs)
             if (
                 jaeger > WARMUP_MIN_SERVICES
                 and prom > WARMUP_MIN_SERVICES
                 and logs >= WARMUP_MIN_LOGS
+                and all(count > 0 for count in probe_logs.values())
             ):
                 backends_ready = True
                 break
-        except (requests.RequestException, ValueError):
-            pass
+        except (requests.RequestException, ValueError) as e:
+            last_error = e
         time.sleep(POLL_INTERVAL)
     if not backends_ready:
+        if required_probe_log_services:
+            probe_logs = last_state[3] if last_state else {}
+            missing_logs = [
+                svc
+                for svc in required_probe_log_services
+                if probe_logs.get(svc, 0) <= 0
+            ]
+            if missing_logs:
+                msg = (
+                    "Warmup checkouts completed, but checkout-path logs did not "
+                    f"reach OpenSearch within {WARMUP_SECONDS}s. Missing logs: "
+                    f"{', '.join(missing_logs)}. Last counts: {probe_logs}"
+                )
+                if last_error:
+                    msg += f"; last backend error: {last_error}"
+                pytest.fail(msg)
         remaining = max(0, int(deadline - time.time()))
         print(f"Backends not fully ready after {WARMUP_SECONDS - remaining}s, proceeding with poll-based checks...")
     else:

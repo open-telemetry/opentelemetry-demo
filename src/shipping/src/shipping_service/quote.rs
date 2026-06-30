@@ -36,7 +36,7 @@ pub async fn create_quote_from_count(count: u32) -> Result<Quote, tonic::Status>
         if span.is_recording() {
             let cost = format!("{}", q);
             span.add_event(
-                "Received Quote".to_string(),
+                "shipping.quote.received".to_string(),
                 vec![KeyValue::new("demo.shipping.cost.total", cost.clone())],
             );
             span.set_attribute(KeyValue::new("demo.shipping.cost.total", cost));
@@ -57,7 +57,7 @@ async fn request_quote(count: u32) -> Result<f64, anyhow::Error> {
     );
 
     info!(
-        name: "RequestingQuote",
+        name: "shipping.quote.requested",
         quote_service_addr = quote_service_addr.as_str(),
         "Requesting quote"
     );

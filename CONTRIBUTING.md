@@ -16,11 +16,17 @@ We meet every other Wednesday at 8:00 PT. The schedule may change based on
 contributors' availability. Check the [OpenTelemetry Community Calendar](https://github.com/open-telemetry/community?tab=readme-ov-file#special-interest-groups)
 for specific dates and Zoom links.
 
+The call is open to all. Whether you're a seasoned OpenTelemetry developer,
+just starting your journey, or simply curious about the work we do, you're more
+than welcome to participate.
+
 See the
 [public meeting notes](https://docs.google.com/document/d/16f-JOjKzLgWxULRxY8TmpM_FjlI1sthvKurnqFz9x98/edit)
 for a summary description of past meetings.
 For edit access, ask in our
 [Slack channel](https://cloud-native.slack.com/archives/C03B4CWV4DA).
+If you are new to the CNCF Slack community, you can [create an
+account](https://slack.cncf.io/).
 
 ### Sign the Contributor License Agreement (CLA)
 
@@ -252,13 +258,39 @@ Check out a new branch, make modifications and push the branch to your fork:
 ```sh
 $ git checkout -b feature
 # change files
-# Test your changes locally.
-$ make build && make start
-# Go to Webstore, Jaeger or container logs etc. as appropriate to make sure your changes are working correctly.
 $ git add my/changed/files
 $ git commit -m "short description of the change"
 $ git push fork feature
 ```
+
+Test your changes locally before opening a PR. For a change that affects one
+service, rebuild and restart only that service:
+
+```sh
+make build service=<service-name>
+make restart service=<service-name>
+```
+
+For example, if you change the Shipping service:
+
+```sh
+make build service=shipping
+make restart service=shipping
+```
+
+If the demo is not already running, or your change affects shared Docker Compose
+configuration, environment variables, generated protobufs, cross-service
+contracts, or collector/frontend-proxy configuration, start the demo stack after
+building the affected service:
+
+```sh
+make build service=<service-name>
+make start
+```
+
+Verify the change using the path that matches what you changed: the Webstore UI,
+direct service endpoints, container logs, Jaeger traces, Grafana dashboards, or
+other telemetry views as appropriate.
 
 Open a pull request against the main `opentelemetry-demo` repo.
 
@@ -272,8 +304,8 @@ Open a pull request against the main `opentelemetry-demo` repo.
 - Make sure the PR title reflects the contribution.
 - Write a summary that helps understand the change.
 - Include usage examples in the summary, where applicable.
-- Include benchmarks (before/after) in the summary, for contributions that are
-  performance enhancements.
+- For performance-related changes, include before/after measurements in the
+  summary and describe how they were collected.
 
 ### How to Get PRs Merged
 
@@ -303,7 +335,9 @@ on each other), the owner should try to get people aligned by:
 - Tagging subdomain experts (by looking at the change history) in the PR asking
   for suggestion.
 - Reaching out to more people on the [CNCF OpenTelemetry Community Demo Slack
-  channel](https://app.slack.com/client/T08PSQ7BQ/C03B4CWV4DA).
+  channel](https://app.slack.com/client/T08PSQ7BQ/C03B4CWV4DA). If you are new
+  to the CNCF Slack community, you can [create an
+  account](https://slack.cncf.io/).
 - Stepping back to see if it makes sense to narrow down the scope of the PR or
   split it up.
 - If none of the above worked and the PR has been stuck for more than 2 weeks,
