@@ -267,15 +267,15 @@ Test your changes locally before opening a PR. For a change that affects one
 service, rebuild and restart only that service:
 
 ```sh
-$ make build service=<service-name>
-$ make restart service=<service-name>
+make build service=<service-name>
+make restart service=<service-name>
 ```
 
 For example, if you change the Shipping service:
 
 ```sh
-$ make build service=shipping
-$ make restart service=shipping
+make build service=shipping
+make restart service=shipping
 ```
 
 If the demo is not already running, or your change affects shared Docker Compose
@@ -284,8 +284,8 @@ contracts, or collector/frontend-proxy configuration, start the demo stack after
 building the affected service:
 
 ```sh
-$ make build service=<service-name>
-$ make start
+make build service=<service-name>
+make start
 ```
 
 Verify the change using the path that matches what you changed: the Webstore UI,
