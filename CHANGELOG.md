@@ -7,6 +7,9 @@ the release.
 
 ## Unreleased
 
+* [accounting] Run the Kafka consumer as a hosted background service so process
+  shutdown can stop the consumer cleanly
+  ([#3608](https://github.com/open-telemetry/opentelemetry-demo/pull/3608))
 * [llm] Increase `llm` service memory limit from 50M to 100M to prevent a
   startup restart loop caused by the container exceeding its memory limit
   ([#2944](https://github.com/open-telemetry/opentelemetry-demo/issues/2944))
@@ -282,6 +285,13 @@ the release.
   ([#3573](https://github.com/open-telemetry/opentelemetry-demo/pull/3573))
 * [shipping] Add host resource detection to enrich SDK resource metadata
   ([#3581](https://github.com/open-telemetry/opentelemetry-demo/pull/3581))
+* [cleanup] Remove product-reviews service
+  ([#3587](https://github.com/open-telemetry/opentelemetry-demo/pull/3587))
+* [cleanup] Remove LLM service
+  ([#3599](https://github.com/open-telemetry/opentelemetry-demo/pull/3599))
+* [cleanup] Remove tracetest
+([#3602](https://github.com/open-telemetry/opentelemetry-demo/pull/3602),
+  [#3603](https://github.com/open-telemetry/opentelemetry-demo/pull/3603))
 
 ## 2.2.0
 
