@@ -19,4 +19,4 @@ datasources:
       pplEnabled: true
       timeField: observedTimestamp
       # version must be in sync with src\opensearch\Dockerfile
-      version: 3.5.0
+      version: 3.7.0
