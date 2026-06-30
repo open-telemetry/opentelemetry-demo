@@ -8,6 +8,7 @@ using Npgsql;
 using Oteldemo;
 using Microsoft.EntityFrameworkCore;
 using System.Diagnostics;
+using System.Text;
 
 namespace Accounting;
 
@@ -60,8 +61,8 @@ internal class Consumer : BackgroundService
             {
                 try
                 {
-                    using var activity = MyActivitySource.StartActivity("order-consumed",  ActivityKind.Internal);
                     var consumeResult = _consumer.Consume(stoppingToken);
+                    using var activity = StartOrderConsumedActivity(consumeResult.Message.Headers);
                     ProcessMessage(consumeResult.Message);
                 }
                 catch (ConsumeException e)
@@ -137,6 +138,30 @@ internal class Consumer : BackgroundService
         {
             Log.OrderParsingFailed(_logger, ex);
         }
+    }
+
+    private static Activity? StartOrderConsumedActivity(Headers headers)
+    {
+        var traceParent = GetHeaderValue(headers, "traceparent");
+
+        if (traceParent != null && ActivityContext.TryParse(
+            traceParent,
+            GetHeaderValue(headers, "tracestate"),
+            isRemote: true,
+            out var parentContext))
+        {
+            return MyActivitySource.StartActivity("order-consumed", ActivityKind.Consumer, parentContext);
+        }
+
+        return MyActivitySource.StartActivity("order-consumed", ActivityKind.Consumer);
+    }
+
+    private static string? GetHeaderValue(Headers headers, string key)
+    {
+        var header = headers.LastOrDefault(header => string.Equals(header.Key, key, StringComparison.OrdinalIgnoreCase));
+        var value = header?.GetValueBytes();
+
+        return value == null ? null : Encoding.UTF8.GetString(value);
     }
 
     private static IConsumer<string, byte[]> BuildConsumer(string servers)

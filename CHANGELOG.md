@@ -12,6 +12,9 @@ the release.
   ([#3582](https://github.com/open-telemetry/opentelemetry-demo/pull/3582))
 * [payment] Annotate synthetic load-generator payment requests with the
   `user_agent.synthetic.type` semantic convention attribute.
+* [accounting] Continue checkout traces when consuming Kafka order messages and
+  start the `order-consumed` activity after the message is received
+  ([#3610](https://github.com/open-telemetry/opentelemetry-demo/pull/3610))
 * [accounting] Run the Kafka consumer as a hosted background service so process
   shutdown can stop the consumer cleanly
   ([#3608](https://github.com/open-telemetry/opentelemetry-demo/pull/3608))
