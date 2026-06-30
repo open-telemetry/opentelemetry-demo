@@ -158,3 +158,9 @@ telemetry flows end-to-end. They are complementary:
 
 - **Weaver**: "Are the attribute definitions correct?" (static)
 - **Telemetry tests**: "Is each service sending data?" (runtime)
+
+The `Weaver Live Check` CI workflow starts a Weaver live-check listener, runs the
+minimal demo, drives two checkout requests through the frontend, and uploads the
+live-check report as a workflow artifact. The smoke check verifies that
+live-check receives real trace telemetry from multiple services before the
+report is used for stricter policy gates.

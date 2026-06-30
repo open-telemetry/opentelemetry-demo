@@ -1,0 +1,216 @@
+# Copyright The OpenTelemetry Authors
+# SPDX-License-Identifier: Apache-2.0
+name: Weaver Live Check
+
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - '.env'
+      - '.github/workflows/weaver-live-check.yml'
+      - 'compose.yaml'
+      - 'compose.observability.yaml'
+      - 'src/**'
+      - 'telemetry-schema/**'
+      - 'test/telemetry/**'
+  push:
+    branches: [main]
+    paths:
+      - '.env'
+      - '.github/workflows/weaver-live-check.yml'
+      - 'compose.yaml'
+      - 'compose.observability.yaml'
+      - 'src/**'
+      - 'telemetry-schema/**'
+      - 'test/telemetry/**'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+env:
+  WEAVER_VERSION: v0.24.2
+
+jobs:
+  live-check:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0  # v7.0.0
+        with:
+          persist-credentials: false
+
+      - name: Setup Weaver
+        uses: open-telemetry/weaver/.github/actions/setup-weaver@14b8a6028f69c4ba70e3d112480b75c4cf06a508  # v0.24.2
+        with:
+          version: ${{ env.WEAVER_VERSION }}
+
+      - name: Start Weaver live-check listener
+        id: live-check
+        uses: open-telemetry/weaver/.github/actions/weaver-live-check-start@14b8a6028f69c4ba70e3d112480b75c4cf06a508  # v0.24.2
+        with:
+          registry: telemetry-schema
+          otlp-grpc-port: '4317'
+          admin-port: '4320'
+          inactivity-timeout: '300'
+          state-dir: ${{ runner.temp }}/weaver-live-check-demo
+
+          - name: Expose Weaver listener to Docker network
+          run: |
+            python3 - <<'PY' > /tmp/weaver-live-check-forwarder.log 2>&1 &
+            import socket
+            import threading
+
+            LISTEN = ("0.0.0.0", 14317)
+            TARGET = ("127.0.0.1", 4317)
+
+            def pipe(source, destination):
+              try:
+                while True:
+                  data = source.recv(65536)
+                  if not data:
+                    break
+                  destination.sendall(data)
+              finally:
+                for sock in (source, destination):
+                  try:
+                    sock.shutdown(socket.SHUT_RDWR)
+                  except OSError:
+                    pass
+                  sock.close()
+
+            listener = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+            listener.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
+            listener.bind(LISTEN)
+            listener.listen()
+            print(f"forwarding {LISTEN[0]}:{LISTEN[1]} to {TARGET[0]}:{TARGET[1]}", flush=True)
+            while True:
+              client, _ = listener.accept()
+              upstream = socket.create_connection(TARGET)
+              threading.Thread(target=pipe, args=(client, upstream), daemon=True).start()
+              threading.Thread(target=pipe, args=(upstream, client), daemon=True).start()
+            PY
+            WEAVER_FORWARDER_PID=$!
+            echo "WEAVER_FORWARDER_PID=$WEAVER_FORWARDER_PID" >> "$GITHUB_ENV"
+            for _ in $(seq 1 30); do
+              if (echo > /dev/tcp/127.0.0.1/14317) >/dev/null 2>&1; then
+                exit 0
+              fi
+              if ! kill -0 "$WEAVER_FORWARDER_PID" 2>/dev/null; then
+                echo "::error::Weaver TCP forwarder exited before becoming ready"
+                cat /tmp/weaver-live-check-forwarder.log 2>/dev/null || true
+                exit 1
+              fi
+              sleep 1
+            done
+            echo "::error::Weaver TCP forwarder did not become ready"
+            cat /tmp/weaver-live-check-forwarder.log 2>/dev/null || true
+            exit 1
+
+      - name: Create live-check compose overlay
+        run: |
+          cat > /tmp/otelcol-config-weaver-live-check.yml <<'YAML'
+          exporters:
+            otlp_grpc/weaver:
+              endpoint: host.docker.internal:14317
+              compression: none
+              tls:
+                insecure: true
+              retry_on_failure:
+                enabled: true
+              sending_queue:
+                batch:
+
+          service:
+            pipelines:
+              traces:
+                exporters: [debug, otlp_grpc/jaeger, span_metrics, otlp_grpc/weaver]
+          YAML
+
+          cat > /tmp/compose-weaver-live-check.yaml <<'YAML'
+          services:
+            otel-collector:
+              command:
+                - "--config=/etc/otelcol-config.yml"
+                - "--config=/etc/otelcol-config-full.yml"
+                - "--config=/etc/otelcol-config-observability.yml"
+                - "--config=/etc/otelcol-config-weaver-live-check.yml"
+                - "--config=/etc/otelcol-config-extras.yml"
+                - "--feature-gates=service.profilesSupport"
+              volumes:
+                - ${OTEL_COLLECTOR_CONFIG}:/etc/otelcol-config.yml
+                - ${OTEL_COLLECTOR_CONFIG_FULL}:/etc/otelcol-config-full.yml
+                - ${OTEL_COLLECTOR_CONFIG_OBSERVABILITY}:/etc/otelcol-config-observability.yml
+                - /tmp/otelcol-config-weaver-live-check.yml:/etc/otelcol-config-weaver-live-check.yml
+                - ${OTEL_COLLECTOR_CONFIG_EXTRAS}:/etc/otelcol-config-extras.yml
+              extra_hosts:
+                - "host.docker.internal:host-gateway"
+          YAML
+
+      - name: Start minimal demo with live-check export
+        run: |
+          touch .env.override
+          docker compose \
+            --env-file .env --env-file .env.override \
+            -f compose.yaml \
+            -f compose.observability.yaml \
+            -f /tmp/compose-weaver-live-check.yaml \
+            -f compose.extras.yaml \
+            up --force-recreate --remove-orphans --detach
+
+      - name: Drive checkout traffic
+        run: |
+          docker run --rm --network opentelemetry-demo \
+            -e FRONTEND_URL=http://frontend:8080 \
+            -e CHECKOUT_COUNT=2 \
+            -v "${GITHUB_WORKSPACE}/test/telemetry/weaver_live_check_smoke.py:/weaver_live_check_smoke.py:ro" \
+            python:3.12-alpine python /weaver_live_check_smoke.py
+          sleep 8
+
+      - name: Stop Weaver live-check and collect report
+        id: live-check-report
+        if: always()
+        uses: open-telemetry/weaver/.github/actions/weaver-live-check-stop@14b8a6028f69c4ba70e3d112480b75c4cf06a508  # v0.24.2
+        with:
+          state-dir: ${{ runner.temp }}/weaver-live-check-demo
+          fail-on: none
+          report-artifact-name: weaver-live-check-demo
+
+      - name: Check live-check report coverage
+        if: always() && steps.live-check-report.outputs.report-path != ''
+        run: python3 test/telemetry/check_weaver_live_report.py "${{ steps.live-check-report.outputs.report-path }}"
+
+      - name: Print service logs on failure
+        if: failure()
+        run: |
+          docker compose \
+            --env-file .env --env-file .env.override \
+            -f compose.yaml \
+            -f compose.observability.yaml \
+            -f /tmp/compose-weaver-live-check.yaml \
+            -f compose.extras.yaml \
+            logs --tail=80
+
+      - name: Stop Weaver Docker forwarder
+        if: always()
+        run: |
+          if [ -n "${WEAVER_FORWARDER_PID:-}" ]; then
+            kill "$WEAVER_FORWARDER_PID" 2>/dev/null || true
+          fi
+          tail -n 50 /tmp/weaver-live-check-forwarder.log 2>/dev/null || true
+
+      - name: Stop demo
+        if: always()
+        run: |
+          docker compose \
+            --env-file .env --env-file .env.override \
+            -f compose.yaml \
+            -f compose.observability.yaml \
+            -f /tmp/compose-weaver-live-check.yaml \
+            -f compose.extras.yaml \
+            down --remove-orphans --volumes

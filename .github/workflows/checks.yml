@@ -18,6 +18,9 @@ concurrency:
   group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
   cancel-in-progress: false
 
+env:
+  WEAVER_VERSION: v0.24.2
+
 jobs:
   build_images:
     name: Build images
@@ -139,7 +142,7 @@ jobs:
         run: |
           docker run --rm \
             --mount "type=bind,source=${GITHUB_WORKSPACE_PATH}/telemetry-schema,target=/home/weaver/source,readonly" \
-            otel/weaver:v0.22.1 \
+            otel/weaver:${WEAVER_VERSION} \
             registry check -r source
 
   check-react-native-changes:
