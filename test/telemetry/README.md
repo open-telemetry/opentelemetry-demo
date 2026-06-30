@@ -146,13 +146,13 @@ make run-telemetry-tests-agentic   # Agentic scope (agent, mcp, chatbot)
 
 Two separate workflows handle telemetry tests:
 
-- **`.github/workflows/run-telemetry-tests.yml`** — two parallel jobs (full
+- **`.github/workflows/run-telemetry-tests.yml`** - two parallel jobs (full
   and minimal). Triggered on every PR touching `src/`, `test/telemetry/`, or
   core compose files.
-- **`.github/workflows/run-agentic-telemetry-tests.yml`** — agentic scope.
+- **`.github/workflows/run-agentic-telemetry-tests.yml`** - agentic scope.
   Runs on dependabot PRs automatically; for human PRs it runs after reviewer
   approval. Only fires when `src/agent/`, `src/mcp/`, `src/chatbot/`,
-  `compose.agent.yaml`, or `test/telemetry/` are modified.
+  `compose.agent.yaml`, `test/telemetry/`, or `.github/workflows/` are modified.
 
 ## Extending
 
