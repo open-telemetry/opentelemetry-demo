@@ -411,8 +411,8 @@ services:
           memory: 512M
     restart: unless-stopped
     environment:
-      - LOCUST_USERS
-      - LOCUST_HOST
+      - K6_VUS
+      - K6_TARGET_URL
       - OTEL_EXPORTER_OTLP_ENDPOINT
       - OTEL_RESOURCE_ATTRIBUTES=${OTEL_RESOURCE_ATTRIBUTES},service.criticality=low
       - OTEL_SERVICE_NAME=load-generator

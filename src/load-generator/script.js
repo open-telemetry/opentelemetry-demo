@@ -6,7 +6,7 @@ import { sleep } from 'k6'
 import { browser } from 'k6/browser'
 import { Tracer } from 'k6/x/otel'
 
-const BASE_URL = __ENV.LOCUST_HOST || 'http://frontend-proxy:8080'
+const BASE_URL = __ENV.K6_TARGET_URL || 'http://frontend-proxy:8080'
 const FLAGD_HOST = __ENV.FLAGD_HOST || 'flagd'
 const FLAGD_OFREP_PORT = __ENV.FLAGD_OFREP_PORT || '8016'
 
@@ -20,7 +20,7 @@ export const options = {
         load: {
             executor: 'constant-vus',
             exec: 'httpScenario',
-            vus: parseInt(__ENV.LOCUST_USERS || '10'),
+            vus: parseInt(__ENV.K6_VUS || '10'),
             duration: __ENV.K6_DURATION || '999h',
         },
         ...(browserEnabled ? {
@@ -139,14 +139,6 @@ function getRecommendations() {
     span.end()
 }
 
-function getProductReviews() {
-    const product = randomChoice(products)
-    const span = tracer.startSpan('user_get_product_reviews', { 'product.id': product })
-    span.log(`User getting product reviews for product: ${product}`)
-    http.get(`${BASE_URL}/api/product-reviews/${product}`, { headers: otelHeaders(span.traceParent()) })
-    span.end()
-}
-
 function askProductAiAssistant() {
     const product = randomChoice(products)
     const question = 'Can you summarize the product reviews?'
@@ -247,29 +239,28 @@ function floodHome() {
 }
 
 // ---- weighted task selection ------------------------------------------------
-// Mirrors Locust @task weights: index(1) browse(10) recs(3) reviews(2)
-// ai(1) ads(3) cart(3) add(2) checkout(1) checkout_multi(1) flood(5) = 32
+// Task weights: index(1) browse(10) recs(3) ai(1) ads(3) cart(3) add(2)
+// checkout(1) checkout_multi(1) flood(5) = 30
 
 const weightedTasks = [
     { cumWeight:  1, task: index },
     { cumWeight: 11, task: browseProduct },
     { cumWeight: 14, task: getRecommendations },
-    { cumWeight: 16, task: getProductReviews },
-    { cumWeight: 17, task: askProductAiAssistant },
-    { cumWeight: 20, task: getAds },
-    { cumWeight: 23, task: viewCart },
-    { cumWeight: 25, task: addToCart },
-    { cumWeight: 26, task: checkout },
-    { cumWeight: 27, task: checkoutMulti },
-    { cumWeight: 32, task: floodHome },
+    { cumWeight: 15, task: askProductAiAssistant },
+    { cumWeight: 18, task: getAds },
+    { cumWeight: 21, task: viewCart },
+    { cumWeight: 23, task: addToCart },
+    { cumWeight: 24, task: checkout },
+    { cumWeight: 25, task: checkoutMulti },
+    { cumWeight: 30, task: floodHome },
 ]
 
 function selectTask() {
-    const r = cryptoRandom() * 32
+    const r = cryptoRandom() * 30
     for (const { cumWeight, task } of weightedTasks) {
         if (r < cumWeight) return task
     }
-    return floodHome
+    return weightedTasks[weightedTasks.length - 1].task
 }
 
 // ---- HTTP entrypoint --------------------------------------------------------
