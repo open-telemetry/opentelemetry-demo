@@ -101,7 +101,7 @@ SERVICE_EDGES = [
 
 # Directed edges expected in the agentic service graph:
 # chatbot calls agent via HTTP (RequestsInstrumentor injects traceparent).
-# Note: the agent→mcp edge requires MCP_ENABLED=True and a cassette recorded
+# Note: the agent->mcp edge requires MCP_ENABLED=True and a cassette recorded
 # with MCP tools; it is not asserted here to keep the default test run stable.
 AGENTIC_EDGES = [
     ("chatbot", "agent"),

@@ -246,13 +246,13 @@ def _run_agentic_warmup_probe():
     """Drive one request to each agentic service so all three appear in Jaeger
     before test assertions begin.
 
-    * agent  — POST /prompt (required): FastAPIInstrumentor and the Traceloop
-               @workflow decorator emit spans even when the LLM call fails, so
-               any HTTP response (including 5xx) is treated as success.
-    * mcp    — POST /mcp with an MCP initialize message (best-effort): the
-               FastMCP handler creates a span on the first inbound request.
-    * chatbot — POST /run/predict (best-effort): triggers chatbot→agent HTTP
-               call so both services emit linked spans via traceparent injection.
+    * agent   - POST /prompt (required): FastAPIInstrumentor and the Traceloop
+                @workflow decorator emit spans even when the LLM call fails, so
+                any HTTP response (including 5xx) is treated as success.
+    * mcp     - POST /mcp tools/call list_products (best-effort): triggers an
+                outbound httpx call that HTTPXClientInstrumentor captures as a span.
+    * chatbot - POST /gradio_api/call/respond (best-effort): triggers the
+                chatbot->agent HTTP call so both services emit linked spans.
     """
     deadline = time.time() + WARMUP_PROBE_TIMEOUT
     print(
@@ -294,7 +294,7 @@ def _run_agentic_warmup_probe():
     # The server returns Mcp-Session-Id in the initialize response headers;
     # without it on tools/call the server rejects the request before invoking
     # any tool, so no HTTPX span is emitted.
-    # list_products triggers an outbound httpx call to product-catalog —
+    # list_products triggers an outbound httpx call to product-catalog,
     # the only code path HTTPXClientInstrumentor reliably captures as a span.
     try:
         mcp_headers = {"Accept": "application/json, text/event-stream"}
@@ -336,7 +336,7 @@ def _run_agentic_warmup_probe():
     # Gradio 6.x moved all API routes to /gradio_api/.  POST to
     # /gradio_api/call/respond queues and executes the respond() handler,
     # which calls requests.post(agent_url).  RequestsInstrumentor injects
-    # traceparent so the chatbot→agent edge appears in Jaeger.
+    # traceparent so the chatbot->agent edge appears in Jaeger.
     try:
         chatbot_resp = requests.post(
             f"{CHATBOT_URL}/gradio_api/call/respond",
