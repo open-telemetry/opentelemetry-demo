@@ -284,22 +284,15 @@ async function addProductToCartBrowser(page) {
 export async function browserScenario() {
     const page = await browser.newPage()
     try {
+        await page.setExtraHTTPHeaders({ baggage: 'synthetic_request=true' })
         if (cryptoRandom() < 0.5) {
             const span = tracer.startSpan('browser_change_currency')
             span.log('Currency changed to CHF')
-            await page.setExtraHTTPHeaders({
-                baggage: 'synthetic_request=true',
-                traceparent: span.traceParent(),
-            })
             await changeCurrency(page)
             span.end()
         } else {
             const span = tracer.startSpan('browser_add_to_cart')
             span.log('Product added to cart successfully')
-            await page.setExtraHTTPHeaders({
-                baggage: 'synthetic_request=true',
-                traceparent: span.traceParent(),
-            })
             await addProductToCartBrowser(page)
             span.end()
         }
