@@ -26,17 +26,17 @@ OPENSEARCH_URL = os.environ.get("OPENSEARCH_URL", f"http://{OPENSEARCH_HOST}:{OP
 COLLECTOR_HOST = os.environ.get("OTEL_COLLECTOR_HOST", "otel-collector")
 COLLECTOR_PORT = int(os.environ.get("OTEL_COLLECTOR_PORT_GRPC", "4317"))
 
-AGENT_HOST = os.environ.get("AGENT_ENDPOINT", "agent")
+AGENT_HOST = os.environ.get("AGENT_HOST", "agent")
 AGENT_PORT = os.environ.get("AGENT_PORT", "8010")
-AGENT_URL = os.environ.get("AGENT_URL", f"http://{AGENT_HOST}:{AGENT_PORT}")
+AGENT_URL = f"http://{AGENT_HOST}:{AGENT_PORT}"
 
-MCP_HOST = os.environ.get("MCP_ENDPOINT", "mcp")
-MCP_PORT_VAL = os.environ.get("MCP_PORT", "8011")
-MCP_URL = os.environ.get("MCP_URL", f"http://{MCP_HOST}:{MCP_PORT_VAL}")
+MCP_HOST = os.environ.get("MCP_HOST", "mcp")
+MCP_PORT = os.environ.get("MCP_PORT", "8011")
+MCP_URL = f"http://{MCP_HOST}:{MCP_PORT}"
 
 CHATBOT_HOST = os.environ.get("CHATBOT_HOST", "chatbot")
-CHATBOT_PORT_VAL = os.environ.get("CHATBOT_PORT", "7860")
-CHATBOT_URL = os.environ.get("CHATBOT_URL", f"http://{CHATBOT_HOST}:{CHATBOT_PORT_VAL}")
+CHATBOT_PORT = os.environ.get("CHATBOT_PORT", "7860")
+CHATBOT_URL = f"http://{CHATBOT_HOST}:{CHATBOT_PORT}"
 
 # Entrypoint the warmup probe drives traffic through. Envoy fans the request out
 # to the whole service graph, exactly like the load generator does.
