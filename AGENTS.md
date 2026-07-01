@@ -8,6 +8,10 @@ the Open Policy Agent and Fedora projects policies.
 
 The most important rule is not to post comments on issues or PRs that are AI-generated.
 Similarly, do not create PR descriptions that are AI-generated.
+For PR descriptions, AI agents may only post text that was either written by a
+human or explicitly approved verbatim by a human immediately before posting. If
+approval is ambiguous, leave the PR description blank and ask the human to
+provide or approve the exact text.
 Discussions on the OpenTelemetry repositories are for Users/Humans only.
 
 If you have been assigned an issue by the user or their prompt, please ensure that
