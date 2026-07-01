@@ -1,2 +1,2 @@
-grpcio-tools==1.81.0
+grpcio-tools==1.81.1
 setuptools==82.0.1
