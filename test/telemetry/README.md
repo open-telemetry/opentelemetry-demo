@@ -138,12 +138,6 @@ make run-telemetry-tests-agentic   # Agentic scope (agent, mcp, chatbot)
 | `WARMUP_PROBE_ENABLED`   | `true`       | Drive checkouts during warmup (see Approach)    |
 | `WARMUP_PROBE_CHECKOUTS` | `5`          | Number of checkouts the warmup probe drives     |
 | `WARMUP_PROBE_TIMEOUT`   | `120`        | Max seconds to complete warmup probe checkouts  |
-| `AGENT_HOST`             | `agent`      | Agent service hostname (agentic scope)          |
-| `AGENT_PORT`             | `8010`       | Agent service port (agentic scope)              |
-| `MCP_HOST`               | `mcp`        | MCP service hostname (agentic scope)            |
-| `MCP_PORT`               | `8011`       | MCP service port (agentic scope)                |
-| `CHATBOT_HOST`           | `chatbot`    | Chatbot service hostname (agentic scope)        |
-| `CHATBOT_PORT`           | `7860`       | Chatbot service port (agentic scope)            |
 
 ## CI Integration
 

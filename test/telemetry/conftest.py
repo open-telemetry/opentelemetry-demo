@@ -26,11 +26,11 @@ OPENSEARCH_URL = os.environ.get("OPENSEARCH_URL", f"http://{OPENSEARCH_HOST}:{OP
 COLLECTOR_HOST = os.environ.get("OTEL_COLLECTOR_HOST", "otel-collector")
 COLLECTOR_PORT = int(os.environ.get("OTEL_COLLECTOR_PORT_GRPC", "4317"))
 
-AGENT_HOST = os.environ.get("AGENT_HOST", "agent")
+AGENT_HOST = os.environ.get("AGENT_ENDPOINT", "agent")
 AGENT_PORT = os.environ.get("AGENT_PORT", "8010")
 AGENT_URL = f"http://{AGENT_HOST}:{AGENT_PORT}"
 
-MCP_HOST = os.environ.get("MCP_HOST", "mcp")
+MCP_HOST = os.environ.get("MCP_ENDPOINT", "mcp")
 MCP_PORT = os.environ.get("MCP_PORT", "8011")
 MCP_URL = f"http://{MCP_HOST}:{MCP_PORT}"
 
