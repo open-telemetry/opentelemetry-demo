@@ -292,6 +292,12 @@ Verify the change using the path that matches what you changed: the Webstore UI,
 direct service endpoints, container logs, Jaeger traces, Grafana dashboards, or
 other telemetry views as appropriate.
 
+Update the relevant [documentation][docs] and [Changelog](./CHANGELOG.md) before
+opening the PR for user-visible behavior, telemetry, configuration, or workflow
+changes.
+Trivial typo, cosmetic, and purely internal cleanup changes may not need a
+changelog entry.
+
 Open a pull request against the main `opentelemetry-demo` repo.
 
 ### How to Receive Comments
