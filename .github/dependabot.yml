@@ -52,11 +52,6 @@ multi-ecosystem-groups:
       interval: "weekly"
       day: "tuesday"
       time: "03:50"
-  src-llm:
-    schedule:
-      interval: "weekly"
-      day: "tuesday"
-      time: "03:50"
   src-load-generator:
     schedule:
       interval: "weekly"
@@ -73,11 +68,6 @@ multi-ecosystem-groups:
       day: "tuesday"
       time: "03:50"
   src-product-catalog:
-    schedule:
-      interval: "weekly"
-      day: "tuesday"
-      time: "03:50"
-  src-product-reviews:
     schedule:
       interval: "weekly"
       day: "tuesday"
@@ -145,18 +135,6 @@ updates:
       interval: "weekly"
       day: "tuesday"
       time: "03:30"
-  - package-ecosystem: "docker"
-    cooldown:
-      default-days: 3
-    directory: "/test/tracetesting"
-    groups:
-      test-docker-base-images:
-        patterns:
-          - "*"
-    schedule:
-      interval: "weekly"
-      day: "tuesday"
-      time: "03:50"
   - package-ecosystem: "nuget"  # zizmor: ignore[dependabot-cooldown] cooldown prevents multi-ecosystem batching
     directories:
       - "/src/accounting/**"
@@ -309,18 +287,6 @@ updates:
       time: "03:50"
   - package-ecosystem: "pip"  # zizmor: ignore[dependabot-cooldown] cooldown prevents multi-ecosystem batching
     directories:
-      - "/src/llm/**"
-    patterns:
-      - "*"
-    multi-ecosystem-group: "src-llm"
-  - package-ecosystem: "docker"  # zizmor: ignore[dependabot-cooldown] cooldown prevents multi-ecosystem batching
-    directories:
-      - "/src/llm/**"
-    patterns:
-      - "*"
-    multi-ecosystem-group: "src-llm"
-  - package-ecosystem: "pip"  # zizmor: ignore[dependabot-cooldown] cooldown prevents multi-ecosystem batching
-    directories:
       - "/src/agent/**"
     patterns:
       - "*"
@@ -404,18 +370,6 @@ updates:
     patterns:
       - "*"
     multi-ecosystem-group: "src-product-catalog"
-  - package-ecosystem: "pip"  # zizmor: ignore[dependabot-cooldown] cooldown prevents multi-ecosystem batching
-    directories:
-      - "/src/product-reviews/**"
-    patterns:
-      - "*"
-    multi-ecosystem-group: "src-product-reviews"
-  - package-ecosystem: "docker"  # zizmor: ignore[dependabot-cooldown] cooldown prevents multi-ecosystem batching
-    directories:
-      - "/src/product-reviews/**"
-    patterns:
-      - "*"
-    multi-ecosystem-group: "src-product-reviews"
   - package-ecosystem: "composer"  # zizmor: ignore[dependabot-cooldown] cooldown prevents multi-ecosystem batching
     directories:
       - "/src/quote/**"
