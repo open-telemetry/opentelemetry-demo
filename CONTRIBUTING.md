@@ -258,13 +258,45 @@ Check out a new branch, make modifications and push the branch to your fork:
 ```sh
 $ git checkout -b feature
 # change files
-# Test your changes locally.
-$ make build && make start
-# Go to Webstore, Jaeger or container logs etc. as appropriate to make sure your changes are working correctly.
 $ git add my/changed/files
 $ git commit -m "short description of the change"
 $ git push fork feature
 ```
+
+Test your changes locally before opening a PR. For a change that affects one
+service, rebuild and restart only that service:
+
+```sh
+make build service=<service-name>
+make restart service=<service-name>
+```
+
+For example, if you change the Shipping service:
+
+```sh
+make build service=shipping
+make restart service=shipping
+```
+
+If the demo is not already running, or your change affects shared Docker Compose
+configuration, environment variables, generated protobufs, cross-service
+contracts, or collector/frontend-proxy configuration, start the demo stack after
+building the affected service:
+
+```sh
+make build service=<service-name>
+make start
+```
+
+Verify the change using the path that matches what you changed: the Webstore UI,
+direct service endpoints, container logs, Jaeger traces, Grafana dashboards, or
+other telemetry views as appropriate.
+
+Update the relevant [documentation][docs] and [Changelog](./CHANGELOG.md) before
+opening the PR for user-visible behavior, telemetry, configuration, or workflow
+changes.
+Trivial typo, cosmetic, and purely internal cleanup changes may not need a
+changelog entry.
 
 Open a pull request against the main `opentelemetry-demo` repo.
 
@@ -278,8 +310,8 @@ Open a pull request against the main `opentelemetry-demo` repo.
 - Make sure the PR title reflects the contribution.
 - Write a summary that helps understand the change.
 - Include usage examples in the summary, where applicable.
-- Include benchmarks (before/after) in the summary, for contributions that are
-  performance enhancements.
+- For performance-related changes, include before/after measurements in the
+  summary and describe how they were collected.
 
 ### How to Get PRs Merged
 
