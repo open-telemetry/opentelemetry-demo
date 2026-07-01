@@ -2,6 +2,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 using Confluent.Kafka;
+using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Npgsql;
 using Oteldemo;
@@ -25,13 +26,12 @@ internal class DBContext : DbContext
 }
 
 
-internal class Consumer : IDisposable
+internal class Consumer : BackgroundService
 {
     private const string TopicName = "orders";
 
     private readonly ILogger _logger;
-    private IConsumer<string, byte[]> _consumer;
-    private bool _isListening;
+    private readonly IConsumer<string, byte[]> _consumer;
     private readonly string? _dbConnectionString;
     private static readonly ActivitySource MyActivitySource = new("Accounting.Consumer");
 
@@ -50,18 +50,18 @@ internal class Consumer : IDisposable
         _dbConnectionString = Environment.GetEnvironmentVariable("DB_CONNECTION_STRING");
     }
 
-    public void StartListening()
+    protected override async Task ExecuteAsync(CancellationToken stoppingToken)
     {
-        _isListening = true;
+        await Task.Yield();
 
         try
         {
-            while (_isListening)
+            while (!stoppingToken.IsCancellationRequested)
             {
                 try
                 {
                     using var activity = MyActivitySource.StartActivity("order-consumed",  ActivityKind.Internal);
-                    var consumeResult = _consumer.Consume();
+                    var consumeResult = _consumer.Consume(stoppingToken);
                     ProcessMessage(consumeResult.Message);
                 }
                 catch (ConsumeException e)
@@ -70,10 +70,12 @@ internal class Consumer : IDisposable
                 }
             }
         }
-        catch (OperationCanceledException)
+        catch (OperationCanceledException) when (stoppingToken.IsCancellationRequested)
+        {
+        }
+        finally
         {
             Log.ConsumerClosing(_logger);
-
             _consumer.Close();
         }
     }
@@ -152,9 +154,9 @@ internal class Consumer : IDisposable
             .Build();
     }
 
-    public void Dispose()
+    public override void Dispose()
     {
-        _isListening = false;
         _consumer?.Dispose();
+        base.Dispose();
     }
 }
