@@ -139,19 +139,6 @@ function getRecommendations() {
     span.end()
 }
 
-function askProductAiAssistant() {
-    const product = randomChoice(products)
-    const question = 'Can you summarize the product reviews?'
-    const span = tracer.startSpan('user_ask_product_ai_assistant', { 'product.id': product, question })
-    span.log(`Asking the AI Assistant a question for: ${product} ${question}`)
-    http.post(
-        `${BASE_URL}/api/product-ask-ai-assistant/${product}`,
-        JSON.stringify({ question }),
-        { headers: otelHeaders(span.traceParent(), { 'Content-Type': 'application/json' }) }
-    )
-    span.end()
-}
-
 function getAds() {
     const category = randomChoice(categories)
     const span = tracer.startSpan('user_get_ads', { category: String(category) })
@@ -239,24 +226,23 @@ function floodHome() {
 }
 
 // ---- weighted task selection ------------------------------------------------
-// Task weights: index(1) browse(10) recs(3) ai(1) ads(3) cart(3) add(2)
-// checkout(1) checkout_multi(1) flood(5) = 30
+// Task weights: index(1) browse(10) recs(3) ads(3) cart(3) add(2)
+// checkout(1) checkout_multi(1) flood(5) = 29
 
 const weightedTasks = [
     { cumWeight:  1, task: index },
     { cumWeight: 11, task: browseProduct },
     { cumWeight: 14, task: getRecommendations },
-    { cumWeight: 15, task: askProductAiAssistant },
-    { cumWeight: 18, task: getAds },
-    { cumWeight: 21, task: viewCart },
-    { cumWeight: 23, task: addToCart },
-    { cumWeight: 24, task: checkout },
-    { cumWeight: 25, task: checkoutMulti },
-    { cumWeight: 30, task: floodHome },
+    { cumWeight: 17, task: getAds },
+    { cumWeight: 20, task: viewCart },
+    { cumWeight: 22, task: addToCart },
+    { cumWeight: 23, task: checkout },
+    { cumWeight: 24, task: checkoutMulti },
+    { cumWeight: 29, task: floodHome },
 ]
 
 function selectTask() {
-    const r = cryptoRandom() * 30
+    const r = cryptoRandom() * 29
     for (const { cumWeight, task } of weightedTasks) {
         if (r < cumWeight) return task
     }
