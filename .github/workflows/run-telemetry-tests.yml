@@ -44,8 +44,8 @@ concurrency:
 
 jobs:
   # Single source of truth for when the telemetry test jobs should run:
-  #   - approved PR reviews on open PRs (any author), OR
-  #   - dependabot PRs (no approval needed), OR
+  #   - approved PR reviews on open non-dependabot PRs, OR
+  #   - dependabot PRs (tested on open/sync, not on approval), OR
   #   - push to main / manual dispatch
   gate:
     name: "Telemetry Test Gate"
@@ -64,7 +64,7 @@ jobs:
           PR_AUTHOR: ${{ github.event.pull_request.user.login }}
         run: |
           if [[ "$EVENT_NAME" == "workflow_dispatch" || "$EVENT_NAME" == "push" ]] \
-            || [[ "$EVENT_NAME" == "pull_request_review" && "$REVIEW_STATE" == "approved" && "$PR_STATE" == "open" ]] \
+            || [[ "$EVENT_NAME" == "pull_request_review" && "$REVIEW_STATE" == "approved" && "$PR_STATE" == "open" && "$PR_AUTHOR" != "dependabot[bot]" ]] \
             || [[ "$EVENT_NAME" == "pull_request" && "$PR_AUTHOR" == "dependabot[bot]" ]]; then
             echo "should_run=true" >> "$GITHUB_OUTPUT"
           else
