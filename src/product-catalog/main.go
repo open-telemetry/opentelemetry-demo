@@ -23,6 +23,7 @@ import (
 	_ "github.com/lib/pq"
 	"go.opentelemetry.io/contrib/bridges/otelslog"
 	"go.opentelemetry.io/contrib/instrumentation/google.golang.org/grpc/otelgrpc"
+	"go.opentelemetry.io/contrib/instrumentation/google.golang.org/grpc/otelgrpc/filters"
 	"go.opentelemetry.io/contrib/instrumentation/runtime"
 	"go.opentelemetry.io/contrib/otelconf"
 	"go.opentelemetry.io/otel"
@@ -171,7 +172,9 @@ func main() {
 	}
 
 	srv := grpc.NewServer(
-		grpc.StatsHandler(otelgrpc.NewServerHandler()),
+		grpc.StatsHandler(otelgrpc.NewServerHandler(
+			otelgrpc.WithFilter(filters.Not(filters.HealthCheck())),
+		)),
 	)
 
 	reflection.Register(srv)

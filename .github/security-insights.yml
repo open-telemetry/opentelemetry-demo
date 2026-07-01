@@ -131,6 +131,17 @@ repository:
         rulesets:
           - https://github.com/open-telemetry/opentelemetry-demo/blob/main/.github/dependabot.yml
         type: SCA
+      - name: GitHub Secret Scanning
+        comment: |
+          GitHub native Secret Scanning and Push Protection are enabled for
+          the repository via the OpenTelemetry admin Terraform configuration.
+        integration:
+          adhoc: true
+          ci: false
+          release: false
+        rulesets:
+          - https://docs.github.com/code-security/secret-scanning/introduction/supported-secret-scanning-patterns
+        type: secret-scanning
       - name: zizmor
         comment: |
           GitHub Actions workflow security analysis.
