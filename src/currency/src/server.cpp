@@ -12,6 +12,7 @@
 #include "opentelemetry/trace/span_context_kv_iterable_view.h"
 #include "opentelemetry/baggage/baggage.h"
 #include "opentelemetry/nostd/string_view.h"
+#include "opentelemetry/logs/event_id.h"
 #include "logger_common.h"
 #include "meter_common.h"
 #include "tracer_common.h"
@@ -43,8 +44,16 @@ namespace metrics_api = opentelemetry::metrics;
 namespace nostd       = opentelemetry::nostd;
 namespace semconv     = opentelemetry::semconv;
 
+using opentelemetry::logs::EventId;
+
 namespace
 {
+  EventId eventName(nostd::string_view name) {
+    // The OTLP exporter ignores the numeric EventId and exports only the event name.
+    // Use 0 to satisfy the C++ API; revisit when the C++ SDK provides guidance.
+    return EventId{0, name};
+  }
+
   std::unordered_map<std::string, double> currency_conversion
   {
     {"EUR", 1.0},
@@ -134,7 +143,7 @@ class CurrencyService final : public oteldemo::CurrencyService::Service
     span->AddEvent("Currencies fetched, response sent back");
     span->SetStatus(StatusCode::kOk);
 
-    logger->Info(std::string(__func__) + " successful");
+    logger->Info(eventName("currency.get_supported_currencies"), "GetSupportedCurrencies successful");
 
     // Make sure to end your spans!
     span->End();
@@ -210,7 +219,11 @@ class CurrencyService final : public oteldemo::CurrencyService::Service
       span->AddEvent("Conversion successful, response sent back");
       span->SetStatus(StatusCode::kOk);
 
-      logger->Info(std::string(__func__) + " conversion successful");
+      logger->Info(eventName("currency.conversion"),
+                   "conversion successful",
+                   opentelemetry::common::MakeAttributes(
+                       {{"currency.from", from_code.c_str()},
+                        {"currency.to", to_code.c_str()}}));
       
       // End the span
       span->End();
@@ -220,7 +233,7 @@ class CurrencyService final : public oteldemo::CurrencyService::Service
       span->AddEvent("Conversion failed");
       span->SetStatus(StatusCode::kError);
 
-      logger->Error(std::string(__func__) + " conversion failure");
+      logger->Error(eventName("currency.conversion_failed"), "conversion failure");
 
       span->End();
       return Status::CANCELLED;
@@ -244,7 +257,9 @@ void RunServer(uint16_t port)
   
   if (ipv6_enabled == "true") {
     ip = "[::]";
-    logger->Info("Overwriting Localhost IP: " + ip);
+    logger->Info(eventName("currency.server.ip_overwrite"),
+                 "Overwriting Localhost IP",
+                 opentelemetry::common::MakeAttributes({{"server.address", ip.c_str()}}));
   }
 
   std::string address(ip + ":" +  std::to_string(port));
@@ -258,7 +273,9 @@ void RunServer(uint16_t port)
   builder.AddListeningPort(address, grpc::InsecureServerCredentials());
 
   std::unique_ptr<Server> server(builder.BuildAndStart());
-  logger->Info("Currency Server listening on port: " + address);
+  logger->Info(eventName("currency.server.started"),
+               "Currency Server started",
+               opentelemetry::common::MakeAttributes({{"server.address", address.c_str()}}));
   server->Wait();
   server->Shutdown();
 }

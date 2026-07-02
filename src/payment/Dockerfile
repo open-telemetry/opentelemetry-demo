@@ -2,7 +2,7 @@
 # SPDX-License-Identifier: Apache-2.0
 
 
-FROM docker.io/library/node:22.22.3-slim@sha256:7af03b14a13c8cdd38e45058fd957bf00a72bbe17feac43b1c15a689c029c732 AS builder
+FROM docker.io/library/node:26.4.0-slim@sha256:a1d9d671994fc2d26e297ac56b4b1522a8bc7fa71c43b14cd1b1fe6c5116f7dc AS builder
 
 WORKDIR /usr/src/app/
 
@@ -24,8 +24,7 @@ COPY ./pb/demo.proto demo.proto
 COPY ./src/payment/charge.js charge.js
 COPY ./src/payment/index.js index.js
 COPY ./src/payment/logger.js logger.js
-COPY ./src/payment/opentelemetry.js opentelemetry.js
 
 EXPOSE ${PAYMENT_PORT}
 
-CMD ["--require=./opentelemetry.js", "index.js"]
+CMD ["index.js"]

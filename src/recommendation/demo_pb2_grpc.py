@@ -5,7 +5,7 @@ import warnings
 
 import demo_pb2 as demo__pb2
 
-GRPC_GENERATED_VERSION = '1.80.0'
+GRPC_GENERATED_VERSION = '1.81.1'
 GRPC_VERSION = grpc.__version__
 _version_not_supported = False
 
@@ -25,7 +25,7 @@ if _version_not_supported:
     )
 
 
-class CartServiceStub(object):
+class CartServiceStub:
     """-----------------Cart service-----------------
 
     """
@@ -53,7 +53,7 @@ class CartServiceStub(object):
                 _registered_method=True)
 
 
-class CartServiceServicer(object):
+class CartServiceServicer:
     """-----------------Cart service-----------------
 
     """
@@ -102,7 +102,7 @@ def add_CartServiceServicer_to_server(servicer, server):
 
 
  # This class is part of an EXPERIMENTAL API.
-class CartService(object):
+class CartService:
     """-----------------Cart service-----------------
 
     """
@@ -189,7 +189,7 @@ class CartService(object):
             _registered_method=True)
 
 
-class RecommendationServiceStub(object):
+class RecommendationServiceStub:
     """---------------Recommendation service----------
 
     """
@@ -207,7 +207,7 @@ class RecommendationServiceStub(object):
                 _registered_method=True)
 
 
-class RecommendationServiceServicer(object):
+class RecommendationServiceServicer:
     """---------------Recommendation service----------
 
     """
@@ -234,7 +234,7 @@ def add_RecommendationServiceServicer_to_server(servicer, server):
 
 
  # This class is part of an EXPERIMENTAL API.
-class RecommendationService(object):
+class RecommendationService:
     """---------------Recommendation service----------
 
     """
@@ -267,7 +267,7 @@ class RecommendationService(object):
             _registered_method=True)
 
 
-class ProductCatalogServiceStub(object):
+class ProductCatalogServiceStub:
     """---------------Product Catalog----------------
 
     """
@@ -295,7 +295,7 @@ class ProductCatalogServiceStub(object):
                 _registered_method=True)
 
 
-class ProductCatalogServiceServicer(object):
+class ProductCatalogServiceServicer:
     """---------------Product Catalog----------------
 
     """
@@ -344,7 +344,7 @@ def add_ProductCatalogServiceServicer_to_server(servicer, server):
 
 
  # This class is part of an EXPERIMENTAL API.
-class ProductCatalogService(object):
+class ProductCatalogService:
     """---------------Product Catalog----------------
 
     """
@@ -431,171 +431,7 @@ class ProductCatalogService(object):
             _registered_method=True)
 
 
-class ProductReviewServiceStub(object):
-    """---------------Product Review service----------
-
-    """
-
-    def __init__(self, channel):
-        """Constructor.
-
-        Args:
-            channel: A grpc.Channel.
-        """
-        self.GetProductReviews = channel.unary_unary(
-                '/oteldemo.ProductReviewService/GetProductReviews',
-                request_serializer=demo__pb2.GetProductReviewsRequest.SerializeToString,
-                response_deserializer=demo__pb2.GetProductReviewsResponse.FromString,
-                _registered_method=True)
-        self.GetAverageProductReviewScore = channel.unary_unary(
-                '/oteldemo.ProductReviewService/GetAverageProductReviewScore',
-                request_serializer=demo__pb2.GetAverageProductReviewScoreRequest.SerializeToString,
-                response_deserializer=demo__pb2.GetAverageProductReviewScoreResponse.FromString,
-                _registered_method=True)
-        self.AskProductAIAssistant = channel.unary_unary(
-                '/oteldemo.ProductReviewService/AskProductAIAssistant',
-                request_serializer=demo__pb2.AskProductAIAssistantRequest.SerializeToString,
-                response_deserializer=demo__pb2.AskProductAIAssistantResponse.FromString,
-                _registered_method=True)
-
-
-class ProductReviewServiceServicer(object):
-    """---------------Product Review service----------
-
-    """
-
-    def GetProductReviews(self, request, context):
-        """Missing associated documentation comment in .proto file."""
-        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
-        context.set_details('Method not implemented!')
-        raise NotImplementedError('Method not implemented!')
-
-    def GetAverageProductReviewScore(self, request, context):
-        """Missing associated documentation comment in .proto file."""
-        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
-        context.set_details('Method not implemented!')
-        raise NotImplementedError('Method not implemented!')
-
-    def AskProductAIAssistant(self, request, context):
-        """Missing associated documentation comment in .proto file."""
-        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
-        context.set_details('Method not implemented!')
-        raise NotImplementedError('Method not implemented!')
-
-
-def add_ProductReviewServiceServicer_to_server(servicer, server):
-    rpc_method_handlers = {
-            'GetProductReviews': grpc.unary_unary_rpc_method_handler(
-                    servicer.GetProductReviews,
-                    request_deserializer=demo__pb2.GetProductReviewsRequest.FromString,
-                    response_serializer=demo__pb2.GetProductReviewsResponse.SerializeToString,
-            ),
-            'GetAverageProductReviewScore': grpc.unary_unary_rpc_method_handler(
-                    servicer.GetAverageProductReviewScore,
-                    request_deserializer=demo__pb2.GetAverageProductReviewScoreRequest.FromString,
-                    response_serializer=demo__pb2.GetAverageProductReviewScoreResponse.SerializeToString,
-            ),
-            'AskProductAIAssistant': grpc.unary_unary_rpc_method_handler(
-                    servicer.AskProductAIAssistant,
-                    request_deserializer=demo__pb2.AskProductAIAssistantRequest.FromString,
-                    response_serializer=demo__pb2.AskProductAIAssistantResponse.SerializeToString,
-            ),
-    }
-    generic_handler = grpc.method_handlers_generic_handler(
-            'oteldemo.ProductReviewService', rpc_method_handlers)
-    server.add_generic_rpc_handlers((generic_handler,))
-    server.add_registered_method_handlers('oteldemo.ProductReviewService', rpc_method_handlers)
-
-
- # This class is part of an EXPERIMENTAL API.
-class ProductReviewService(object):
-    """---------------Product Review service----------
-
-    """
-
-    @staticmethod
-    def GetProductReviews(request,
-            target,
-            options=(),
-            channel_credentials=None,
-            call_credentials=None,
-            insecure=False,
-            compression=None,
-            wait_for_ready=None,
-            timeout=None,
-            metadata=None):
-        return grpc.experimental.unary_unary(
-            request,
-            target,
-            '/oteldemo.ProductReviewService/GetProductReviews',
-            demo__pb2.GetProductReviewsRequest.SerializeToString,
-            demo__pb2.GetProductReviewsResponse.FromString,
-            options,
-            channel_credentials,
-            insecure,
-            call_credentials,
-            compression,
-            wait_for_ready,
-            timeout,
-            metadata,
-            _registered_method=True)
-
-    @staticmethod
-    def GetAverageProductReviewScore(request,
-            target,
-            options=(),
-            channel_credentials=None,
-            call_credentials=None,
-            insecure=False,
-            compression=None,
-            wait_for_ready=None,
-            timeout=None,
-            metadata=None):
-        return grpc.experimental.unary_unary(
-            request,
-            target,
-            '/oteldemo.ProductReviewService/GetAverageProductReviewScore',
-            demo__pb2.GetAverageProductReviewScoreRequest.SerializeToString,
-            demo__pb2.GetAverageProductReviewScoreResponse.FromString,
-            options,
-            channel_credentials,
-            insecure,
-            call_credentials,
-            compression,
-            wait_for_ready,
-            timeout,
-            metadata,
-            _registered_method=True)
-
-    @staticmethod
-    def AskProductAIAssistant(request,
-            target,
-            options=(),
-            channel_credentials=None,
-            call_credentials=None,
-            insecure=False,
-            compression=None,
-            wait_for_ready=None,
-            timeout=None,
-            metadata=None):
-        return grpc.experimental.unary_unary(
-            request,
-            target,
-            '/oteldemo.ProductReviewService/AskProductAIAssistant',
-            demo__pb2.AskProductAIAssistantRequest.SerializeToString,
-            demo__pb2.AskProductAIAssistantResponse.FromString,
-            options,
-            channel_credentials,
-            insecure,
-            call_credentials,
-            compression,
-            wait_for_ready,
-            timeout,
-            metadata,
-            _registered_method=True)
-
-
-class ShippingServiceStub(object):
+class ShippingServiceStub:
     """---------------Shipping Service----------
 
     """
@@ -618,7 +454,7 @@ class ShippingServiceStub(object):
                 _registered_method=True)
 
 
-class ShippingServiceServicer(object):
+class ShippingServiceServicer:
     """---------------Shipping Service----------
 
     """
@@ -656,7 +492,7 @@ def add_ShippingServiceServicer_to_server(servicer, server):
 
 
  # This class is part of an EXPERIMENTAL API.
-class ShippingService(object):
+class ShippingService:
     """---------------Shipping Service----------
 
     """
@@ -716,7 +552,7 @@ class ShippingService(object):
             _registered_method=True)
 
 
-class CurrencyServiceStub(object):
+class CurrencyServiceStub:
     """-----------------Currency service-----------------
 
     """
@@ -739,7 +575,7 @@ class CurrencyServiceStub(object):
                 _registered_method=True)
 
 
-class CurrencyServiceServicer(object):
+class CurrencyServiceServicer:
     """-----------------Currency service-----------------
 
     """
@@ -777,7 +613,7 @@ def add_CurrencyServiceServicer_to_server(servicer, server):
 
 
  # This class is part of an EXPERIMENTAL API.
-class CurrencyService(object):
+class CurrencyService:
     """-----------------Currency service-----------------
 
     """
@@ -837,7 +673,7 @@ class CurrencyService(object):
             _registered_method=True)
 
 
-class PaymentServiceStub(object):
+class PaymentServiceStub:
     """-------------Payment service-----------------
 
     """
@@ -855,7 +691,7 @@ class PaymentServiceStub(object):
                 _registered_method=True)
 
 
-class PaymentServiceServicer(object):
+class PaymentServiceServicer:
     """-------------Payment service-----------------
 
     """
@@ -882,7 +718,7 @@ def add_PaymentServiceServicer_to_server(servicer, server):
 
 
  # This class is part of an EXPERIMENTAL API.
-class PaymentService(object):
+class PaymentService:
     """-------------Payment service-----------------
 
     """
@@ -915,7 +751,7 @@ class PaymentService(object):
             _registered_method=True)
 
 
-class EmailServiceStub(object):
+class EmailServiceStub:
     """-------------Email service-----------------
 
     """
@@ -933,7 +769,7 @@ class EmailServiceStub(object):
                 _registered_method=True)
 
 
-class EmailServiceServicer(object):
+class EmailServiceServicer:
     """-------------Email service-----------------
 
     """
@@ -960,7 +796,7 @@ def add_EmailServiceServicer_to_server(servicer, server):
 
 
  # This class is part of an EXPERIMENTAL API.
-class EmailService(object):
+class EmailService:
     """-------------Email service-----------------
 
     """
@@ -993,7 +829,7 @@ class EmailService(object):
             _registered_method=True)
 
 
-class CheckoutServiceStub(object):
+class CheckoutServiceStub:
     """-------------Checkout service-----------------
 
     """
@@ -1011,7 +847,7 @@ class CheckoutServiceStub(object):
                 _registered_method=True)
 
 
-class CheckoutServiceServicer(object):
+class CheckoutServiceServicer:
     """-------------Checkout service-----------------
 
     """
@@ -1038,7 +874,7 @@ def add_CheckoutServiceServicer_to_server(servicer, server):
 
 
  # This class is part of an EXPERIMENTAL API.
-class CheckoutService(object):
+class CheckoutService:
     """-------------Checkout service-----------------
 
     """
@@ -1071,7 +907,7 @@ class CheckoutService(object):
             _registered_method=True)
 
 
-class AdServiceStub(object):
+class AdServiceStub:
     """------------Ad service------------------
 
     """
@@ -1089,7 +925,7 @@ class AdServiceStub(object):
                 _registered_method=True)
 
 
-class AdServiceServicer(object):
+class AdServiceServicer:
     """------------Ad service------------------
 
     """
@@ -1116,7 +952,7 @@ def add_AdServiceServicer_to_server(servicer, server):
 
 
  # This class is part of an EXPERIMENTAL API.
-class AdService(object):
+class AdService:
     """------------Ad service------------------
 
     """
@@ -1149,7 +985,7 @@ class AdService(object):
             _registered_method=True)
 
 
-class FeatureFlagServiceStub(object):
+class FeatureFlagServiceStub:
     """------------Feature flag service------------------
 
     """
@@ -1187,7 +1023,7 @@ class FeatureFlagServiceStub(object):
                 _registered_method=True)
 
 
-class FeatureFlagServiceServicer(object):
+class FeatureFlagServiceServicer:
     """------------Feature flag service------------------
 
     """
@@ -1258,7 +1094,7 @@ def add_FeatureFlagServiceServicer_to_server(servicer, server):
 
 
  # This class is part of an EXPERIMENTAL API.
-class FeatureFlagService(object):
+class FeatureFlagService:
     """------------Feature flag service------------------
 
     """

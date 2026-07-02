@@ -7,7 +7,7 @@ require (
 	github.com/lib/pq v1.12.3
 	github.com/open-feature/go-sdk v1.17.2
 	github.com/open-feature/go-sdk-contrib/hooks/open-telemetry v0.3.7
-	github.com/open-feature/go-sdk-contrib/providers/flagd v0.5.1
+	github.com/open-feature/go-sdk-contrib/providers/flagd v0.6.0
 	go.opentelemetry.io/contrib/bridges/otelslog v0.19.0
 	go.opentelemetry.io/contrib/instrumentation/google.golang.org/grpc/otelgrpc v0.69.0
 	go.opentelemetry.io/contrib/instrumentation/runtime v0.69.0
@@ -39,7 +39,7 @@ require (
 	github.com/hashicorp/golang-lru v1.0.2 // indirect
 	github.com/hashicorp/golang-lru/v2 v2.0.7 // indirect
 	github.com/open-feature/flagd-schemas v0.2.13 // indirect
-	github.com/open-feature/flagd/core v0.15.5 // indirect
+	github.com/open-feature/flagd/core v0.16.0 // indirect
 	github.com/santhosh-tekuri/jsonschema/v6 v6.0.2 // indirect
 	github.com/twmb/murmur3 v1.1.8 // indirect
 	go.opentelemetry.io/auto/sdk v1.2.1 // indirect

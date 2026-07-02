@@ -1,0 +1,198 @@
+# Copyright The OpenTelemetry Authors
+# SPDX-License-Identifier: Apache-2.0
+name: Agentic Telemetry Tests
+
+on:
+  # Dependabot PRs only. GitHub Actions does not support actor filters in the
+  # on: block, so the gate job below enforces the dependabot-only rule.
+  # Human PRs that touch these paths must be approved first — see
+  # pull_request_review below.
+  pull_request:
+    branches: [main]
+    paths:
+      - 'src/agent/**'
+      - 'src/mcp/**'
+      - 'src/chatbot/**'
+      - 'src/shared/**'
+      - 'compose*.yaml'
+      - 'Makefile'
+      - 'test/telemetry/**'
+      - '.env'
+      - '.github/workflows/**'
+  # Human PRs: run after a reviewer approves a PR that touches agentic paths.
+  # Path filtering is done inside the gate job because GitHub does not apply
+  # paths filters to the pull_request_review event.
+  pull_request_review:
+    types: [submitted]
+  # Post-merge validation on main.
+  push:
+    branches: [main]
+    paths:
+      - 'src/agent/**'
+      - 'src/mcp/**'
+      - 'src/chatbot/**'
+      - 'src/shared/**'
+      - 'compose*.yaml'
+      - 'Makefile'
+      - 'test/telemetry/**'
+      - '.env'
+      - '.github/workflows/**'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: agentic-telemetry-tests-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  # Decide whether the test jobs should run.
+  # For push/dispatch the paths filter above already ensures relevance.
+  # For pull_request_review we must check changed files ourselves because
+  # GitHub does not apply paths filters to that event.
+  gate:
+    name: "Agentic Test Gate"
+    runs-on: ubuntu-latest
+    outputs:
+      should_run: ${{ steps.check.outputs.should_run }}
+    steps:
+      - name: check out code
+        uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0  # v7.0.0
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.ref }}
+          fetch-depth: 0
+          persist-credentials: false
+
+      - id: check
+        env:
+          EVENT_NAME: ${{ github.event_name }}
+          REVIEW_STATE: ${{ github.event.review.state }}
+          PR_STATE: ${{ github.event.pull_request.state }}
+          PR_AUTHOR: ${{ github.event.pull_request.user.login }}
+          BASE_SHA: ${{ github.event.pull_request.base.sha }}
+          HEAD_SHA: ${{ github.event.pull_request.head.sha }}
+        run: |
+          # push / workflow_dispatch: paths filter already ensured relevance.
+          if [[ "$EVENT_NAME" == "workflow_dispatch" || "$EVENT_NAME" == "push" ]]; then
+            echo "should_run=true" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+
+          # pull_request: only dependabot PRs run without approval.
+          # Human PRs must go through pull_request_review instead.
+          if [[ "$EVENT_NAME" == "pull_request" ]]; then
+            if [[ "$PR_AUTHOR" == "dependabot[bot]" ]]; then
+              echo "should_run=true" >> "$GITHUB_OUTPUT"
+            else
+              echo "should_run=false" >> "$GITHUB_OUTPUT"
+            fi
+            exit 0
+          fi
+
+          # pull_request_review: run when a human approves a PR that touches
+          # agentic paths. This is the only path for non-dependabot contributors.
+          # Dependabot PRs are skipped here — they already ran on pull_request.
+          if [[ "$EVENT_NAME" == "pull_request_review" \
+             && "$REVIEW_STATE" == "approved" \
+             && "$PR_STATE" == "open" \
+             && "$PR_AUTHOR" != "dependabot[bot]" ]]; then
+            git fetch --quiet origin "$BASE_SHA"
+            AGENTIC_PATTERN='^(src/(agent|mcp|chatbot|shared)/|compose[^/]*\.yaml|Makefile$|test/telemetry/|\.env$|\.github/workflows/)'
+            if git diff --name-only "$BASE_SHA" "$HEAD_SHA" | grep -qE "$AGENTIC_PATTERN"; then
+              echo "should_run=true" >> "$GITHUB_OUTPUT"
+            else
+              echo "should_run=false" >> "$GITHUB_OUTPUT"
+            fi
+            exit 0
+          fi
+
+          echo "should_run=false" >> "$GITHUB_OUTPUT"
+
+  build-images:
+    name: "Build demo images"
+    needs: gate
+    if: ${{ needs.gate.outputs.should_run == 'true' }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - name: check out code
+        uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0  # v7.0.0
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.ref }}
+          persist-credentials: false
+
+      - name: Free disk space
+        run: |
+          sudo rm -rf /usr/local/lib/android /usr/share/dotnet /opt/ghc
+          docker system prune -af
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@d7f5e7f509e45cec5c76c4d5afdd7de93d0b3df5  # v4.1.0
+
+      - name: Create .env.override if missing
+        run: touch .env.override
+
+      - name: Build demo images
+        run: make build-agentic
+
+      - name: Save demo images to an artifact tarball
+        run: |
+          IMAGES=$(docker images 'ghcr.io/open-telemetry/demo:latest-*' --format '{{.Repository}}:{{.Tag}}')
+          echo "Saving images:"; echo "$IMAGES"
+          docker save $IMAGES | zstd -3 -T0 -o demo-images.tar.zst
+          ls -lh demo-images.tar.zst
+
+      - name: Upload demo images artifact
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a  # v7.0.1
+        with:
+          name: demo-images-agentic-${{ github.run_id }}
+          path: demo-images.tar.zst
+          retention-days: 1
+          compression-level: 0
+
+  agentic-telemetry-tests:
+    needs: [gate, build-images]
+    if: ${{ needs.gate.outputs.should_run == 'true' }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    name: "Agentic Telemetry Tests"
+    steps:
+      - name: check out code
+        uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0  # v7.0.0
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.ref }}
+          persist-credentials: false
+
+      - name: Free disk space
+        run: |
+          sudo rm -rf /usr/local/lib/android /usr/share/dotnet /opt/ghc
+          docker system prune -af
+
+      - name: Download demo images artifact
+        uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c  # v8.0.1
+        with:
+          name: demo-images-agentic-${{ github.run_id }}
+
+      - name: Load demo images
+        run: zstd -d -c demo-images.tar.zst | docker load
+
+      - name: Create .env.override if missing
+        run: touch .env.override
+
+      - name: Run agentic telemetry tests
+        timeout-minutes: 15
+        env:
+          WARMUP_SECONDS: "300"
+          POLL_TIMEOUT: "240"
+          WARMUP_PROBE_TIMEOUT: "180"
+          PYTEST_ADDOPTS: "--capture=tee-sys --maxfail=1"
+        run: make run-telemetry-tests-agentic
+
+      - name: Print service logs on failure
+        if: failure()
+        run: docker compose -f compose.yaml -f compose.full.yaml -f compose.observability.yaml -f compose.extras.yaml -f compose.agent.yaml logs --tail=50
+
+      - name: Stop demo
+        if: always()
+        run: make stop

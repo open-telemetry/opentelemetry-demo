@@ -46,7 +46,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
-        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd  # v6.0.2
+        uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0  # v7.0.0
         with:
           persist-credentials: false
       - name: Generate
@@ -122,10 +122,6 @@ jobs:
             tag_suffix: kafka
             context: ./
             setup-qemu: true
-          - file: ./src/llm/Dockerfile
-            tag_suffix: llm
-            context: ./
-            setup-qemu: true
           - file: ./src/load-generator/Dockerfile
             tag_suffix: load-generator
             context: ./
@@ -140,10 +136,6 @@ jobs:
             setup-qemu: true
           - file: ./src/product-catalog/Dockerfile
             tag_suffix: product-catalog
-            context: ./
-            setup-qemu: true
-          - file: ./src/product-reviews/Dockerfile
-            tag_suffix: product-reviews
             context: ./
             setup-qemu: true
           - file: ./src/quote/Dockerfile
@@ -162,14 +154,10 @@ jobs:
             tag_suffix: telemetry-docs
             context: ./
             setup-qemu: true
-          - file: ./test/tracetesting/Dockerfile
-            tag_suffix: traceBasedTests
-            context: ./
-            setup-qemu: true
 
     steps:
       - name: Checkout code
-        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd  # v6.0.2
+        uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0  # v7.0.0
         with:
           fetch-depth: 0
           persist-credentials: false
@@ -295,7 +283,6 @@ jobs:
           build-args: |
             OTEL_JAVA_AGENT_VERSION=${{ env.OTEL_JAVA_AGENT_VERSION }}
             OPENTELEMETRY_CPP_VERSION=${{ env.OPENTELEMETRY_CPP_VERSION }}
-            TRACETEST_IMAGE_VERSION=${{ env.TRACETEST_IMAGE_VERSION }}
           tags: |
             ${{ inputs.dockerhub_repo }}:${{ inputs.version }}-${{matrix.file_tag.tag_suffix }}
             ${{ inputs.dockerhub_repo }}:latest-${{matrix.file_tag.tag_suffix }}
