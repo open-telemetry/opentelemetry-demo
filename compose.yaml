@@ -5,7 +5,7 @@
 # Layer additional files on top with -f:
 #   Full demo (adds Kafka, accounting, fraud-detection):
 #     docker compose -f compose.yaml -f compose.full.yaml up
-#   With observability stack (Jaeger, Prometheus, OpenSearch, Grafana):
+#   With observability stack (Jaeger, Prometheus, OpenSearch, Grafana, OpAMP):
 #     docker compose -f compose.yaml -f compose.observability.yaml up
 #   Default (full + observability):
 #     docker compose -f compose.yaml -f compose.full.yaml -f compose.observability.yaml up
@@ -329,6 +329,8 @@ services:
       - GRAFANA_HOST
       - JAEGER_UI_PORT
       - JAEGER_HOST
+      - OPAMP_SERVER_HOST
+      - OPAMP_SERVER_UI_PORT
       - OTEL_COLLECTOR_HOST
       - IMAGE_PROVIDER_HOST
       - IMAGE_PROVIDER_PORT
@@ -804,7 +806,7 @@ services:
 
   # OpenTelemetry Collector
   # Base configuration: receives and processes telemetry, exports to debug only.
-  # Add compose.observability.yaml to enable Jaeger, Prometheus, OpenSearch, and Grafana.
+  # Add compose.observability.yaml to enable Jaeger, Prometheus, OpenSearch, Grafana, and OpAMP.
   otel-collector:
     image: ${COLLECTOR_CONTRIB_IMAGE}
     container_name: otel-collector
