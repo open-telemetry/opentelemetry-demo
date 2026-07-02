@@ -7,6 +7,9 @@ the release.
 
 ## Unreleased
 
+* [accounting] Continue checkout traces when consuming Kafka order messages and
+  start the `order-consumed` activity after the message is received
+  ([#3610](https://github.com/open-telemetry/opentelemetry-demo/pull/3610))
 * [accounting] Run the Kafka consumer as a hosted background service so process
   shutdown can stop the consumer cleanly
   ([#3608](https://github.com/open-telemetry/opentelemetry-demo/pull/3608))
