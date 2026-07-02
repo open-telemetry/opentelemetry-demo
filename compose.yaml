@@ -323,8 +323,6 @@ services:
     environment:
       - FRONTEND_PORT
       - FRONTEND_HOST
-      - LOCUST_WEB_HOST
-      - LOCUST_WEB_PORT
       - GRAFANA_PORT
       - GRAFANA_HOST
       - JAEGER_UI_PORT
@@ -412,32 +410,27 @@ services:
     deploy:
       resources:
         limits:
-          memory: 1500M
+          memory: 512M
     restart: unless-stopped
-    ports:
-      - "${LOCUST_WEB_PORT}"
     environment:
-      - LOCUST_WEB_PORT
-      - LOCUST_USERS
-      - LOCUST_HOST
-      - LOCUST_HEADLESS
-      - LOCUST_AUTOSTART
-      - LOCUST_BROWSER_TRAFFIC_ENABLED=true
+      - K6_VUS
+      - K6_TARGET_URL
       - OTEL_EXPORTER_OTLP_ENDPOINT
-      - OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE
       - OTEL_RESOURCE_ATTRIBUTES=${OTEL_RESOURCE_ATTRIBUTES},service.criticality=low
       - OTEL_SERVICE_NAME=load-generator
-      - PROTOCOL_BUFFERS_PYTHON_IMPLEMENTATION=python
-      - LOCUST_WEB_HOST=0.0.0.0
       - FLAGD_HOST
       - FLAGD_PORT
       - FLAGD_OFREP_PORT
+      - K6_OTEL_EXPORTER_PROTOCOL=grpc
+      - K6_OTEL_GRPC_EXPORTER_ENDPOINT=${OTEL_COLLECTOR_HOST}:${OTEL_COLLECTOR_PORT_GRPC}
+      - K6_BROWSER_ENABLED=true
+      - K6_BROWSER_ARGS=no-sandbox
     healthcheck:
-      test: ["CMD", "python3", "-c", "import socket; s=socket.create_connection(('localhost',${LOCUST_WEB_PORT}),2); s.close()"]
-      start_period: 30s
+      test: ["CMD-SHELL", "kill -0 1"]
+      start_period: 10s
       interval: 5s
       timeout: 5s
-      retries: 20
+      retries: 5
     depends_on:
       frontend:
         condition: service_healthy
