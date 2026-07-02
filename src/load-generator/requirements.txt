@@ -263,7 +263,7 @@ flask==3.1.3 \
     --hash=sha256:0ef0e52b8a9cd932855379197dd8f94047b359ca0a78695144304cb45f87c9eb \
     --hash=sha256:f4bcbefc124291925f1a26446da31a5178f9483862233b23c0c96a20701f670c
     # via
-    #   -r src/load-generator/requirements.in
+    #   -r requirements.in
     #   flask-cors
     #   flask-login
     #   locust
@@ -576,10 +576,10 @@ locust==2.44.0 \
     --hash=sha256:338a9fd5389b30df96439baba8299193b5efc1f129763cd9bc6108354fb52547 \
     --hash=sha256:5dd69aae3dfca8e25c2565e5c4491b21984b41877406b8172ea96cfa9d76c0e5
     # via locust-plugins
-locust-plugins==5.0.0 \
-    --hash=sha256:7527dc143c345447cff980a53ad756fe6483039f0cffae8497f8729d19fd4256 \
-    --hash=sha256:d3449c8f6871af743edfc9af10d5f7a1ff9b2396c943067be4ea0e3acc651999
-    # via -r src/load-generator/requirements.in
+locust-plugins==5.0.3 \
+    --hash=sha256:595651a134abc5171836ccbcbce1841960b272312a90289a00fc1eb4db997353 \
+    --hash=sha256:6ca1593b5d4e940c490ad3f9048684ede588804eee362bf3b30c4046f007888a
+    # via -r requirements.in
 markupsafe==3.0.3 \
     --hash=sha256:0303439a41979d9e74d18ff5e2dd8c43ed6c6001fd40e5bf2e43f7bd9bbc523f \
     --hash=sha256:068f375c472b3e7acbe2d5318dea141359e6900156b5b2ba06a30b169086b91a \
@@ -741,11 +741,11 @@ msgpack==1.1.2 \
 openfeature-hooks-opentelemetry==0.3.1 \
     --hash=sha256:6d399244a6f5408f474ae2b0233257e30d8a041d635f71c2727c033dbfe1fe92 \
     --hash=sha256:ef4cddec8d328a9b6b738494de3aed623a9917d3b83b2e6b0377e4d2a21d3b22
-    # via -r src/load-generator/requirements.in
+    # via -r requirements.in
 openfeature-provider-ofrep==0.3.0 \
     --hash=sha256:7d12cba212a863aa837fa56019281e19c484cf922c5962a24dc041eda32d0672 \
     --hash=sha256:aab6f08a56008b338b24de1c180130db902df7d5b702ed37e961e2f1ad73e0fb
-    # via -r src/load-generator/requirements.in
+    # via -r requirements.in
 openfeature-sdk==0.9.0 \
     --hash=sha256:511fd66fe66807e95ea5a18074b559bc18657fe8294be0de4668201e297e98ad \
     --hash=sha256:d65ca82c3f1abc5005b0b54bb4c729db04d7a70595f05dd373b47477b6b176bf
@@ -756,7 +756,7 @@ opentelemetry-api==1.42.0 \
     --hash=sha256:558d88f88192a973579910ef6f2c13db47a268d5ec2e53e83e50e74a39a02922 \
     --hash=sha256:ea84c893ad177791d138e0349d6ceebd8d3bf006440900400ce220008dafc372
     # via
-    #   -r src/load-generator/requirements.in
+    #   -r requirements.in
     #   openfeature-hooks-opentelemetry
     #   opentelemetry-exporter-otlp-proto-grpc
     #   opentelemetry-instrumentation
@@ -774,7 +774,7 @@ opentelemetry-exporter-otlp-proto-common==1.42.0 \
 opentelemetry-exporter-otlp-proto-grpc==1.42.0 \
     --hash=sha256:5d6d1691586f2e656fd14187f2f2f5fa06e94834e1acdce71edcbbe35730b31d \
     --hash=sha256:75eac4e9d0bd69bea8199d75dfeb585cce05a9baa8215d1f7aad9e3583bf5ef9
-    # via -r src/load-generator/requirements.in
+    # via -r requirements.in
 opentelemetry-instrumentation==0.63b0 \
     --hash=sha256:80a339ef030a8d0fd1962375a9801dd31954e5063d74c00bc3d4e6581f43bab1 \
     --hash=sha256:984b18763b652a881ac5a596098d89923f74cf53a658c2dde660387e018147ca
@@ -787,23 +787,23 @@ opentelemetry-instrumentation==0.63b0 \
 opentelemetry-instrumentation-jinja2==0.63b0 \
     --hash=sha256:a245d6e0aef6ddd8ec46b3cb10df1518e34d24af9fce62523d4846676a221c25 \
     --hash=sha256:ca500e4e689c438609410bc700ceffa792f211be9a7cb33cb311c0df968d7132
-    # via -r src/load-generator/requirements.in
+    # via -r requirements.in
 opentelemetry-instrumentation-logging==0.63b0 \
     --hash=sha256:8fe17ed310de42683dc585f1bf6af6ccaa3192c997c431c57177e15bee6885f5 \
     --hash=sha256:c4b875cdd712e01e2a0b904d9c9248f4f03a8f41a8acd64000984359841b98d8
-    # via -r src/load-generator/requirements.in
+    # via -r requirements.in
 opentelemetry-instrumentation-requests==0.63b0 \
     --hash=sha256:b1b759945ba5f9d271d7815b41cd82f93905f0cb3f8a108c7b869277b85993bc \
     --hash=sha256:b99a04b216dab01df676a4809bd5ad48fc051d08d8b60397d178ab0f2e67bedd
-    # via -r src/load-generator/requirements.in
+    # via -r requirements.in
 opentelemetry-instrumentation-system-metrics==0.63b0 \
     --hash=sha256:54ee4653e65f323c675fb88eb0818a988c6a63abcf2c9182214ed8dfd14a9e12 \
     --hash=sha256:fbd3c5432dea570c55187d22693111a216f817dd94b3b5d3b55426297b4147d5
-    # via -r src/load-generator/requirements.in
+    # via -r requirements.in
 opentelemetry-instrumentation-urllib3==0.63b0 \
     --hash=sha256:41d341f9fb163543d0fa09a7a4928122612c8b794818b38bd9c2b2da9cd653a4 \
     --hash=sha256:5a1f960a4410533f5b970e181bf8e2399c7f670a930e2cb013dc0c94adbb347c
-    # via -r src/load-generator/requirements.in
+    # via -r requirements.in
 opentelemetry-proto==1.42.0 \
     --hash=sha256:2c0716a37e5c12efef37cbd01906d649b7fb85c85ac687518d0bd28527c6498e \
     --hash=sha256:5d56a9067b631ea931a135d7b86428ae99649f591d4db69b9fc8c8e0465fce65
@@ -814,13 +814,13 @@ opentelemetry-sdk==1.42.0 \
     --hash=sha256:2479e462cc69357825c2c847ce4a601bc1b17e1279aa7f80d3490f0ae614d0e5 \
     --hash=sha256:ec4a4f69e15220b3d7bccd93217aac745682bb6435b9381f7bb44cb7e07b4f2b
     # via
-    #   -r src/load-generator/requirements.in
+    #   -r requirements.in
     #   opentelemetry-exporter-otlp-proto-grpc
 opentelemetry-semantic-conventions==0.63b0 \
     --hash=sha256:1f3962732b04f43e4fef28173c9a3615b8847b4b2d6386fdc085361b29875ab9 \
     --hash=sha256:cfea295264654fa324fcef24aa56fb1836fdc0da27db128645dc6aa76115cc6c
     # via
-    #   -r src/load-generator/requirements.in
+    #   -r requirements.in
     #   openfeature-hooks-opentelemetry
     #   opentelemetry-instrumentation
     #   opentelemetry-instrumentation-logging
@@ -914,7 +914,7 @@ python-engineio==4.13.2 \
 python-json-logger==4.1.0 \
     --hash=sha256:132994765cf75bf44554be9aa49b06ef2345d23661a96720262716438141b6b2 \
     --hash=sha256:b396b9e3ed782b09ff9d6e4f1683d46c83ad0d35d2e407c09a9ebbf038f88195
-    # via -r src/load-generator/requirements.in
+    # via -r requirements.in
 python-socketio==5.16.2 \
     --hash=sha256:ad88c228d921646efa436c0a0df217e364ef30ec072df4041484e54d49c15989 \
     --hash=sha256:bef2da3374fd533aed4297f57b4f6512b52aa51604cb0da2165f401291c5ca20
