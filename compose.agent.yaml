@@ -33,13 +33,13 @@ services:
       - GRAPH_RECURSION_LIMIT
       - MCP_ENDPOINT
       - MCP_PORT
-      - MCP_ENABLED=${MCP_ENABLED}
+      - MCP_ENABLED
       - AGENT_ENDPOINT
       - AGENT_PORT
       - LLM_BASE_URL
       - LLM_MODEL
       - API_KEY
-      - USE_VCR=${USE_VCR}
+      - USE_VCR
       - OPENAI_API_KEY=${API_KEY}
       - APPLICATION_ENDPOINT=frontend:8080
       - OTEL_EXPORTER_OTLP_INSECURE=true
@@ -49,6 +49,8 @@ services:
       otel-collector:
         condition: service_started
       product-catalog:
+        condition: service_started
+      mcp:
         condition: service_started
     logging:
       driver: "json-file"
@@ -79,8 +81,6 @@ services:
       - OTEL_RESOURCE_ATTRIBUTES=${OTEL_RESOURCE_ATTRIBUTES},service.criticality=low
       - OTEL_SERVICE_NAME=mcp
     depends_on:
-      agent:
-        condition: service_started
       frontend:
         condition: service_started
     logging:

@@ -294,6 +294,8 @@ the release.
 * [cleanup] Remove tracetest
 ([#3602](https://github.com/open-telemetry/opentelemetry-demo/pull/3602),
   [#3603](https://github.com/open-telemetry/opentelemetry-demo/pull/3603))
+* [chore] Add tests to agentic services
+  ([#3611](https://github.com/open-telemetry/opentelemetry-demo/pull/3611))
 
 ## 2.2.0
 
