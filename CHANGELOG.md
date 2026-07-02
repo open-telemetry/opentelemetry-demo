@@ -7,6 +7,11 @@ the release.
 
 ## Unreleased
 
+* [grafana] Add exemplar-to-logs navigation: metric exemplars now link to the
+  Demo Dashboard's Log Records panel, filtered to the exemplar's trace ID. The
+  `Service` filter is now multi-select with an "All" option so the trace's
+  logs across every service involved are shown by default, with the option to
+  narrow back down to a single service.
 * [accounting] Run the Kafka consumer as a hosted background service so process
   shutdown can stop the consumer cleanly
   ([#3608](https://github.com/open-telemetry/opentelemetry-demo/pull/3608))

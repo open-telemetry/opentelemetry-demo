@@ -155,7 +155,7 @@
             "uid": "webstore-metrics"
           },
           "editorMode": "code",
-          "expr": "sum by (span_name) (rate(traces_span_metrics_duration_milliseconds_count{service_name=\"${service}\"}[$__rate_interval]))",
+          "expr": "sum by (span_name) (rate(traces_span_metrics_duration_milliseconds_count{service_name=~\"(${service:regex})\"}[$__rate_interval]))",
           "legendFormat": "{{ span_name }}",
           "range": true,
           "refId": "A"
@@ -254,7 +254,7 @@
             "uid": "webstore-metrics"
           },
           "editorMode": "code",
-          "expr": "sum by (span_name) (rate(traces_span_metrics_calls_total{status_code=\"STATUS_CODE_ERROR\", service_name=\"${service}\"}[$__rate_interval]))",
+          "expr": "sum by (span_name) (rate(traces_span_metrics_calls_total{status_code=\"STATUS_CODE_ERROR\", service_name=~\"(${service:regex})\"}[$__rate_interval]))",
           "interval": "",
           "legendFormat": "{{ span_name }}",
           "range": true,
@@ -356,7 +356,7 @@
           },
           "editorMode": "code",
           "exemplar": false,
-          "expr": "histogram_quantile(0.50, sum(rate(traces_span_metrics_duration_milliseconds_bucket{service_name=\"${service}\"}[$__rate_interval])) by (le, span_name))",
+          "expr": "histogram_quantile(0.50, sum(rate(traces_span_metrics_duration_milliseconds_bucket{service_name=~\"(${service:regex})\"}[$__rate_interval])) by (le, span_name))",
           "legendFormat": "{{span_name}}",
           "range": true,
           "refId": "A"
@@ -473,7 +473,7 @@
               "type": "count"
             }
           ],
-          "query": "search source=otel-logs-*\n| where resource.service.name=\"${service}\"\n| stats count() by severity.text",
+          "query": "search source=otel-logs-*\n| where resource.service.name in (${service:singlequote})\n| where (traceId=\"${traceId}\" or \"${traceId}\" = \"\")\n| stats count() by severity.text",
           "queryType": "PPL",
           "refId": "A",
           "timeField": "observedTimestamp"
@@ -606,7 +606,7 @@
               "type": "raw_data"
             }
           ],
-          "query": "search source=otel-logs-*\n| where resource.service.name=\"${service}\"\n| sort - observedTimestamp \n| head 100",
+          "query": "search source=otel-logs-*\n| where resource.service.name in (${service:singlequote})\n| where (traceId=\"${traceId}\" or \"${traceId}\" = \"\")\n| sort - observedTimestamp \n| head 100",
           "queryType": "PPL",
           "refId": "A",
           "timeField": "observedTimestamp"
@@ -1159,7 +1159,8 @@
           "uid": "webstore-metrics"
         },
         "definition": "traces_span_metrics_duration_milliseconds_bucket",
-        "includeAll": false,
+        "includeAll": true,
+        "multi": true,
         "label": "Service",
         "name": "service",
         "options": [],
@@ -1171,6 +1172,26 @@
         "regex": "/.*service.name=\\\"([^\\\"]+)\\\".*/",
         "sort": 1,
         "type": "query"
+      },
+      {
+        "current": {
+          "text": "",
+          "value": ""
+        },
+        "description": "Set automatically (together with Service=All) when jumping here from a metric exemplar. Filters logs to this trace ID in addition to whatever Service value is currently selected.",
+        "hide": 0,
+        "label": "Trace ID",
+        "name": "traceId",
+        "options": [
+          {
+            "selected": true,
+            "text": "",
+            "value": ""
+          }
+        ],
+        "query": "",
+        "skipUrlSync": false,
+        "type": "textbox"
       }
     ]
   },

@@ -21,3 +21,14 @@ datasources:
         - url: http://localhost:8080/jaeger/ui/trace/$${__value.raw}
           name: trace_id
           urlDisplayLabel: View in Jaeger UI
+
+        # Jump from a metric exemplar straight to the matching logs in OpenSearch. The
+        # grafana-opensearch-datasource plugin doesn't implement Grafana's trace-link export
+        # interface, so we can't use `datasourceUid` here like we do for Jaeger. Instead this links
+        # to the existing Demo Dashboard's Log Records panel, setting its $traceId variable and
+        # forcing $service to "All" (a trace typically spans multiple services, and we don't know
+        # in advance which ones). $traceId is a strict additional filter on top of $service -- the
+        # user can still narrow back down to one service afterwards using the dropdown.
+        - url: http://localhost:8080/grafana/d/W2gX2zHVk/demo-dashboard?orgId=1&var-service=All&var-traceId=$${__value.raw}
+          name: trace_id
+          urlDisplayLabel: View in Logs (OpenSearch)
