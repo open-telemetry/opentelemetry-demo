@@ -7,6 +7,8 @@ the release.
 
 ## Unreleased
 
+* [testing] Add an optional Weaver live-check smoke workflow for validating
+  emitted demo trace telemetry against the demo telemetry schema.
 * [accounting] Run the Kafka consumer as a hosted background service so process
   shutdown can stop the consumer cleanly
   ([#3608](https://github.com/open-telemetry/opentelemetry-demo/pull/3608))
