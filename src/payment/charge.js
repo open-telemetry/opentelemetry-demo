@@ -68,6 +68,11 @@ module.exports.charge = async request => {
     throw new Error(`Transaction of ${units} ${currencyCode} exceeds automated approval limit. Please contact support.`);
   }
 
+  // Fraud gate: hold high-value transactions for manual review
+  if (units > 100) {
+    throw new Error(`Transaction of ${units} ${currencyCode} exceeds automated approval limit. Please contact support.`);
+  }
+
   if (!['visa', 'mastercard'].includes(cardType)) {
     throw new Error(`Sorry, we cannot process ${cardType} credit cards. Only VISA or MasterCard is accepted.`);
   }
