@@ -7,6 +7,9 @@ the release.
 
 ## Unreleased
 
+* [frontend] Avoid hardcoded `localhost:8080` image URLs during SSR and
+  normalize leading slashes in the custom image loader
+  ([#3582](https://github.com/open-telemetry/opentelemetry-demo/pull/3582))
 * [accounting] Run the Kafka consumer as a hosted background service so process
   shutdown can stop the consumer cleanly
   ([#3608](https://github.com/open-telemetry/opentelemetry-demo/pull/3608))
@@ -292,6 +295,8 @@ the release.
 * [cleanup] Remove tracetest
 ([#3602](https://github.com/open-telemetry/opentelemetry-demo/pull/3602),
   [#3603](https://github.com/open-telemetry/opentelemetry-demo/pull/3603))
+* [chore] Add tests to agentic services
+  ([#3611](https://github.com/open-telemetry/opentelemetry-demo/pull/3611))
 
 ## 2.2.0
 

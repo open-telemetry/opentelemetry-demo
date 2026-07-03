@@ -11,17 +11,17 @@ interactions:
       {"product_id": {"type": "string"}, "quantity": {"default": 1, "type": "integer"},
       "user_id": {"type": "string"}}, "required": ["user_id", "product_id"], "type":
       "object"}}, "type": "function"}, {"function": {"description": "Checkout the
-      user''s cart and create an order.\n    Takes request in the format {string user_id,
-      string userCurrency, Address address, string email, CreditCardInfo creditCard}\n    Where
+      user''s cart and create an order.\nTakes request in the format {string user_id,
+      string userCurrency, Address address, string email, CreditCardInfo creditCard}\nWhere
       Address is {string streetAddress, string city, string state, string country,
-      string zipCode} and\n    CreditCardInfo is {string creditCardNumber, int32 creditCardCvv,
+      string zipCode} and\nCreditCardInfo is {string creditCardNumber, int32 creditCardCvv,
       int32 creditCardExpirationYear, int32 creditCardExpirationMonth}", "name": "checkout",
       "parameters": {"properties": {"checkout_person": {}}, "required": ["checkout_person"],
       "type": "object"}}, "type": "function"}, {"function": {"description": "Empty
       the shopping cart for a user.", "name": "empty_cart", "parameters": {"properties":
       {"user_id": {"type": "string"}}, "required": ["user_id"], "type": "object"}},
       "type": "function"}, {"function": {"description": "Fetch promotional ads for
-      Astronomy Shop homepage.\n    Eg : category: `telescopes` or `travel`", "name":
+      Astronomy Shop homepage.\nEg : category: `telescopes` or `travel`", "name":
       "get_ads", "parameters": {"properties": {"category": {"type": "string"}}, "required":
       ["category"], "type": "object"}}, "type": "function"}, {"function": {"description":
       "Retrieve the current contents of a user''s cart.", "name": "get_cart", "parameters":
@@ -33,8 +33,8 @@ interactions:
       recommendations for a user.", "name": "get_recommendations", "parameters": {"properties":
       {"product_id": {"type": "string"}}, "required": ["product_id"], "type": "object"}},
       "type": "function"}, {"function": {"description": "Get estimated shipping cost
-      for a given address.\n    `items`: list of {productId, quantity} (a single dict
-      is also accepted).\n    `currency_code`: ISO 4217 code, e.g. \"USD\".\n    `address`:
+      for a given address.\n`items`: list of {productId, quantity} (a single dict
+      is also accepted).\n`currency_code`: ISO 4217 code, e.g. \"USD\".\n`address`:
       {streetAddress, city, state, country, zipCode}.", "name": "get_shipping_quote",
       "parameters": {"properties": {"address": {}, "currency_code": {}, "items": {}},
       "required": ["items", "currency_code", "address"], "type": "object"}}, "type":
@@ -51,7 +51,8 @@ interactions:
       string: '{"choices": [{"finish_reason": "tool_calls", "index": 0, "message":
         {"content": null, "role": "assistant", "tool_calls": [{"function": {"arguments":
         "{}", "name": "list_products"}, "id": "call_fNhLOKLBdmNBsZIXI3wpQ9M4", "type":
-        "function"}]}}], "model": "azure/gpt-5.5", "object": "chat.completion"}'
+        "function"}]}}], "created": 0, "id": "chatcmpl-fixture", "model": "azure/gpt-5.5",
+        "object": "chat.completion"}'
     headers: {}
     status:
       code: 200
@@ -149,17 +150,17 @@ interactions:
       "add_to_cart", "parameters": {"properties": {"product_id": {"type": "string"},
       "quantity": {"default": 1, "type": "integer"}, "user_id": {"type": "string"}},
       "required": ["user_id", "product_id"], "type": "object"}}, "type": "function"},
-      {"function": {"description": "Checkout the user''s cart and create an order.\n    Takes
+      {"function": {"description": "Checkout the user''s cart and create an order.\nTakes
       request in the format {string user_id, string userCurrency, Address address,
-      string email, CreditCardInfo creditCard}\n    Where Address is {string streetAddress,
-      string city, string state, string country, string zipCode} and\n    CreditCardInfo
+      string email, CreditCardInfo creditCard}\nWhere Address is {string streetAddress,
+      string city, string state, string country, string zipCode} and\nCreditCardInfo
       is {string creditCardNumber, int32 creditCardCvv, int32 creditCardExpirationYear,
       int32 creditCardExpirationMonth}", "name": "checkout", "parameters": {"properties":
       {"checkout_person": {}}, "required": ["checkout_person"], "type": "object"}},
       "type": "function"}, {"function": {"description": "Empty the shopping cart for
       a user.", "name": "empty_cart", "parameters": {"properties": {"user_id": {"type":
       "string"}}, "required": ["user_id"], "type": "object"}}, "type": "function"},
-      {"function": {"description": "Fetch promotional ads for Astronomy Shop homepage.\n    Eg
+      {"function": {"description": "Fetch promotional ads for Astronomy Shop homepage.\nEg
       : category: `telescopes` or `travel`", "name": "get_ads", "parameters": {"properties":
       {"category": {"type": "string"}}, "required": ["category"], "type": "object"}},
       "type": "function"}, {"function": {"description": "Retrieve the current contents
@@ -172,16 +173,16 @@ interactions:
       user.", "name": "get_recommendations", "parameters": {"properties": {"product_id":
       {"type": "string"}}, "required": ["product_id"], "type": "object"}}, "type":
       "function"}, {"function": {"description": "Get estimated shipping cost for a
-      given address.\n    `items`: list of {productId, quantity} (a single dict is
-      also accepted).\n    `currency_code`: ISO 4217 code, e.g. \"USD\".\n    `address`:
-      {streetAddress, city, state, country, zipCode}.", "name": "get_shipping_quote",
-      "parameters": {"properties": {"address": {}, "currency_code": {}, "items": {}},
-      "required": ["items", "currency_code", "address"], "type": "object"}}, "type":
-      "function"}, {"function": {"description": "List supported currencies in Astronomy
-      Shop.", "name": "get_supported_currencies", "parameters": {"properties": {},
-      "type": "object"}}, "type": "function"}, {"function": {"description": "List
-      all products available in the Astronomy Shop.", "name": "list_products", "parameters":
-      {"properties": {}, "type": "object"}}, "type": "function"}]}'
+      given address.\n`items`: list of {productId, quantity} (a single dict is also
+      accepted).\n`currency_code`: ISO 4217 code, e.g. \"USD\".\n`address`: {streetAddress,
+      city, state, country, zipCode}.", "name": "get_shipping_quote", "parameters":
+      {"properties": {"address": {}, "currency_code": {}, "items": {}}, "required":
+      ["items", "currency_code", "address"], "type": "object"}}, "type": "function"},
+      {"function": {"description": "List supported currencies in Astronomy Shop.",
+      "name": "get_supported_currencies", "parameters": {"properties": {}, "type":
+      "object"}}, "type": "function"}, {"function": {"description": "List all products
+      available in the Astronomy Shop.", "name": "list_products", "parameters": {"properties":
+      {}, "type": "object"}}, "type": "function"}]}'
     headers: {}
     method: POST
     uri: https://vcr.local/
@@ -198,8 +199,8 @@ interactions:
         assembly |\n| HQTGWGPNH4 | The Comet Book | $0.99 | books |\n| L9ECAV7KIM
         | Lens Cleaning Kit | $21.95 | accessories |\n| LS4PSXUNUM | Red Flashlight
         | $57.08 | accessories, flashlights |\n| OLJCESPC7Z | National Park Foundation
-        Explorascope | $101.96 | telescopes |", "role": "assistant"}}], "model": "azure/gpt-5.5",
-        "object": "chat.completion"}'
+        Explorascope | $101.96 | telescopes |", "role": "assistant"}}], "created":
+        0, "id": "chatcmpl-fixture", "model": "azure/gpt-5.5", "object": "chat.completion"}'
     headers: {}
     status:
       code: 200
@@ -213,17 +214,17 @@ interactions:
       {"properties": {"product_id": {"type": "string"}, "quantity": {"default": 1,
       "type": "integer"}, "user_id": {"type": "string"}}, "required": ["user_id",
       "product_id"], "type": "object"}}, "type": "function"}, {"function": {"description":
-      "Checkout the user''s cart and create an order.\n    Takes request in the format
+      "Checkout the user''s cart and create an order.\nTakes request in the format
       {string user_id, string userCurrency, Address address, string email, CreditCardInfo
-      creditCard}\n    Where Address is {string streetAddress, string city, string
-      state, string country, string zipCode} and\n    CreditCardInfo is {string creditCardNumber,
+      creditCard}\nWhere Address is {string streetAddress, string city, string state,
+      string country, string zipCode} and\nCreditCardInfo is {string creditCardNumber,
       int32 creditCardCvv, int32 creditCardExpirationYear, int32 creditCardExpirationMonth}",
       "name": "checkout", "parameters": {"properties": {"checkout_person": {}}, "required":
       ["checkout_person"], "type": "object"}}, "type": "function"}, {"function": {"description":
       "Empty the shopping cart for a user.", "name": "empty_cart", "parameters": {"properties":
       {"user_id": {"type": "string"}}, "required": ["user_id"], "type": "object"}},
       "type": "function"}, {"function": {"description": "Fetch promotional ads for
-      Astronomy Shop homepage.\n    Eg : category: `telescopes` or `travel`", "name":
+      Astronomy Shop homepage.\nEg : category: `telescopes` or `travel`", "name":
       "get_ads", "parameters": {"properties": {"category": {"type": "string"}}, "required":
       ["category"], "type": "object"}}, "type": "function"}, {"function": {"description":
       "Retrieve the current contents of a user''s cart.", "name": "get_cart", "parameters":
@@ -235,8 +236,8 @@ interactions:
       recommendations for a user.", "name": "get_recommendations", "parameters": {"properties":
       {"product_id": {"type": "string"}}, "required": ["product_id"], "type": "object"}},
       "type": "function"}, {"function": {"description": "Get estimated shipping cost
-      for a given address.\n    `items`: list of {productId, quantity} (a single dict
-      is also accepted).\n    `currency_code`: ISO 4217 code, e.g. \"USD\".\n    `address`:
+      for a given address.\n`items`: list of {productId, quantity} (a single dict
+      is also accepted).\n`currency_code`: ISO 4217 code, e.g. \"USD\".\n`address`:
       {streetAddress, city, state, country, zipCode}.", "name": "get_shipping_quote",
       "parameters": {"properties": {"address": {}, "currency_code": {}, "items": {}},
       "required": ["items", "currency_code", "address"], "type": "object"}}, "type":
@@ -253,7 +254,8 @@ interactions:
       string: '{"choices": [{"finish_reason": "tool_calls", "index": 0, "message":
         {"content": null, "role": "assistant", "tool_calls": [{"function": {"arguments":
         "{}", "name": "get_supported_currencies"}, "id": "call_VG98EYufOV0lNsMnVFCXaNHv",
-        "type": "function"}]}}], "model": "azure/gpt-5.5", "object": "chat.completion"}'
+        "type": "function"}]}}], "created": 0, "id": "chatcmpl-fixture", "model":
+        "azure/gpt-5.5", "object": "chat.completion"}'
     headers: {}
     status:
       code: 200
@@ -274,17 +276,17 @@ interactions:
       {"product_id": {"type": "string"}, "quantity": {"default": 1, "type": "integer"},
       "user_id": {"type": "string"}}, "required": ["user_id", "product_id"], "type":
       "object"}}, "type": "function"}, {"function": {"description": "Checkout the
-      user''s cart and create an order.\n    Takes request in the format {string user_id,
-      string userCurrency, Address address, string email, CreditCardInfo creditCard}\n    Where
+      user''s cart and create an order.\nTakes request in the format {string user_id,
+      string userCurrency, Address address, string email, CreditCardInfo creditCard}\nWhere
       Address is {string streetAddress, string city, string state, string country,
-      string zipCode} and\n    CreditCardInfo is {string creditCardNumber, int32 creditCardCvv,
+      string zipCode} and\nCreditCardInfo is {string creditCardNumber, int32 creditCardCvv,
       int32 creditCardExpirationYear, int32 creditCardExpirationMonth}", "name": "checkout",
       "parameters": {"properties": {"checkout_person": {}}, "required": ["checkout_person"],
       "type": "object"}}, "type": "function"}, {"function": {"description": "Empty
       the shopping cart for a user.", "name": "empty_cart", "parameters": {"properties":
       {"user_id": {"type": "string"}}, "required": ["user_id"], "type": "object"}},
       "type": "function"}, {"function": {"description": "Fetch promotional ads for
-      Astronomy Shop homepage.\n    Eg : category: `telescopes` or `travel`", "name":
+      Astronomy Shop homepage.\nEg : category: `telescopes` or `travel`", "name":
       "get_ads", "parameters": {"properties": {"category": {"type": "string"}}, "required":
       ["category"], "type": "object"}}, "type": "function"}, {"function": {"description":
       "Retrieve the current contents of a user''s cart.", "name": "get_cart", "parameters":
@@ -296,8 +298,8 @@ interactions:
       recommendations for a user.", "name": "get_recommendations", "parameters": {"properties":
       {"product_id": {"type": "string"}}, "required": ["product_id"], "type": "object"}},
       "type": "function"}, {"function": {"description": "Get estimated shipping cost
-      for a given address.\n    `items`: list of {productId, quantity} (a single dict
-      is also accepted).\n    `currency_code`: ISO 4217 code, e.g. \"USD\".\n    `address`:
+      for a given address.\n`items`: list of {productId, quantity} (a single dict
+      is also accepted).\n`currency_code`: ISO 4217 code, e.g. \"USD\".\n`address`:
       {streetAddress, city, state, country, zipCode}.", "name": "get_shipping_quote",
       "parameters": {"properties": {"address": {}, "currency_code": {}, "items": {}},
       "required": ["items", "currency_code", "address"], "type": "object"}}, "type":
@@ -315,7 +317,8 @@ interactions:
         "The Astronomy Shop supports these currencies:\n\nZAR, ISK, ILS, RON, GBP,
         BRL, CZK, AUD, BGN, JPY, PHP, HUF, USD, SGD, IDR, CHF, TRY, NZD, THB, DKK,
         PLN, NOK, HRK, HKD, EUR, RUB, CAD, INR, SEK, KRW, CNY, MXN, MYR.", "role":
-        "assistant"}}], "model": "azure/gpt-5.5", "object": "chat.completion"}'
+        "assistant"}}], "created": 0, "id": "chatcmpl-fixture", "model": "azure/gpt-5.5",
+        "object": "chat.completion"}'
     headers: {}
     status:
       code: 200
@@ -329,17 +332,17 @@ interactions:
       {"product_id": {"type": "string"}, "quantity": {"default": 1, "type": "integer"},
       "user_id": {"type": "string"}}, "required": ["user_id", "product_id"], "type":
       "object"}}, "type": "function"}, {"function": {"description": "Checkout the
-      user''s cart and create an order.\n    Takes request in the format {string user_id,
-      string userCurrency, Address address, string email, CreditCardInfo creditCard}\n    Where
+      user''s cart and create an order.\nTakes request in the format {string user_id,
+      string userCurrency, Address address, string email, CreditCardInfo creditCard}\nWhere
       Address is {string streetAddress, string city, string state, string country,
-      string zipCode} and\n    CreditCardInfo is {string creditCardNumber, int32 creditCardCvv,
+      string zipCode} and\nCreditCardInfo is {string creditCardNumber, int32 creditCardCvv,
       int32 creditCardExpirationYear, int32 creditCardExpirationMonth}", "name": "checkout",
       "parameters": {"properties": {"checkout_person": {}}, "required": ["checkout_person"],
       "type": "object"}}, "type": "function"}, {"function": {"description": "Empty
       the shopping cart for a user.", "name": "empty_cart", "parameters": {"properties":
       {"user_id": {"type": "string"}}, "required": ["user_id"], "type": "object"}},
       "type": "function"}, {"function": {"description": "Fetch promotional ads for
-      Astronomy Shop homepage.\n    Eg : category: `telescopes` or `travel`", "name":
+      Astronomy Shop homepage.\nEg : category: `telescopes` or `travel`", "name":
       "get_ads", "parameters": {"properties": {"category": {"type": "string"}}, "required":
       ["category"], "type": "object"}}, "type": "function"}, {"function": {"description":
       "Retrieve the current contents of a user''s cart.", "name": "get_cart", "parameters":
@@ -351,8 +354,8 @@ interactions:
       recommendations for a user.", "name": "get_recommendations", "parameters": {"properties":
       {"product_id": {"type": "string"}}, "required": ["product_id"], "type": "object"}},
       "type": "function"}, {"function": {"description": "Get estimated shipping cost
-      for a given address.\n    `items`: list of {productId, quantity} (a single dict
-      is also accepted).\n    `currency_code`: ISO 4217 code, e.g. \"USD\".\n    `address`:
+      for a given address.\n`items`: list of {productId, quantity} (a single dict
+      is also accepted).\n`currency_code`: ISO 4217 code, e.g. \"USD\".\n`address`:
       {streetAddress, city, state, country, zipCode}.", "name": "get_shipping_quote",
       "parameters": {"properties": {"address": {}, "currency_code": {}, "items": {}},
       "required": ["items", "currency_code", "address"], "type": "object"}}, "type":
@@ -369,7 +372,8 @@ interactions:
       string: '{"choices": [{"finish_reason": "tool_calls", "index": 0, "message":
         {"content": null, "role": "assistant", "tool_calls": [{"function": {"arguments":
         "{\"category\":\"binoculars\"}", "name": "get_ads"}, "id": "call_Mvb2RzqGjvVcL1053q5aIjOd",
-        "type": "function"}]}}], "model": "azure/gpt-5.5", "object": "chat.completion"}'
+        "type": "function"}]}}], "created": 0, "id": "chatcmpl-fixture", "model":
+        "azure/gpt-5.5", "object": "chat.completion"}'
     headers: {}
     status:
       code: 200
@@ -387,17 +391,17 @@ interactions:
       "add_to_cart", "parameters": {"properties": {"product_id": {"type": "string"},
       "quantity": {"default": 1, "type": "integer"}, "user_id": {"type": "string"}},
       "required": ["user_id", "product_id"], "type": "object"}}, "type": "function"},
-      {"function": {"description": "Checkout the user''s cart and create an order.\n    Takes
+      {"function": {"description": "Checkout the user''s cart and create an order.\nTakes
       request in the format {string user_id, string userCurrency, Address address,
-      string email, CreditCardInfo creditCard}\n    Where Address is {string streetAddress,
-      string city, string state, string country, string zipCode} and\n    CreditCardInfo
+      string email, CreditCardInfo creditCard}\nWhere Address is {string streetAddress,
+      string city, string state, string country, string zipCode} and\nCreditCardInfo
       is {string creditCardNumber, int32 creditCardCvv, int32 creditCardExpirationYear,
       int32 creditCardExpirationMonth}", "name": "checkout", "parameters": {"properties":
       {"checkout_person": {}}, "required": ["checkout_person"], "type": "object"}},
       "type": "function"}, {"function": {"description": "Empty the shopping cart for
       a user.", "name": "empty_cart", "parameters": {"properties": {"user_id": {"type":
       "string"}}, "required": ["user_id"], "type": "object"}}, "type": "function"},
-      {"function": {"description": "Fetch promotional ads for Astronomy Shop homepage.\n    Eg
+      {"function": {"description": "Fetch promotional ads for Astronomy Shop homepage.\nEg
       : category: `telescopes` or `travel`", "name": "get_ads", "parameters": {"properties":
       {"category": {"type": "string"}}, "required": ["category"], "type": "object"}},
       "type": "function"}, {"function": {"description": "Retrieve the current contents
@@ -410,16 +414,16 @@ interactions:
       user.", "name": "get_recommendations", "parameters": {"properties": {"product_id":
       {"type": "string"}}, "required": ["product_id"], "type": "object"}}, "type":
       "function"}, {"function": {"description": "Get estimated shipping cost for a
-      given address.\n    `items`: list of {productId, quantity} (a single dict is
-      also accepted).\n    `currency_code`: ISO 4217 code, e.g. \"USD\".\n    `address`:
-      {streetAddress, city, state, country, zipCode}.", "name": "get_shipping_quote",
-      "parameters": {"properties": {"address": {}, "currency_code": {}, "items": {}},
-      "required": ["items", "currency_code", "address"], "type": "object"}}, "type":
-      "function"}, {"function": {"description": "List supported currencies in Astronomy
-      Shop.", "name": "get_supported_currencies", "parameters": {"properties": {},
-      "type": "object"}}, "type": "function"}, {"function": {"description": "List
-      all products available in the Astronomy Shop.", "name": "list_products", "parameters":
-      {"properties": {}, "type": "object"}}, "type": "function"}]}'
+      given address.\n`items`: list of {productId, quantity} (a single dict is also
+      accepted).\n`currency_code`: ISO 4217 code, e.g. \"USD\".\n`address`: {streetAddress,
+      city, state, country, zipCode}.", "name": "get_shipping_quote", "parameters":
+      {"properties": {"address": {}, "currency_code": {}, "items": {}}, "required":
+      ["items", "currency_code", "address"], "type": "object"}}, "type": "function"},
+      {"function": {"description": "List supported currencies in Astronomy Shop.",
+      "name": "get_supported_currencies", "parameters": {"properties": {}, "type":
+      "object"}}, "type": "function"}, {"function": {"description": "List all products
+      available in the Astronomy Shop.", "name": "list_products", "parameters": {"properties":
+      {}, "type": "object"}}, "type": "function"}]}'
     headers: {}
     method: POST
     uri: https://vcr.local/
@@ -427,7 +431,8 @@ interactions:
     body:
       string: '{"choices": [{"finish_reason": "stop", "index": 0, "message": {"content":
         "Current promotion: **Roof Binoculars \u2014 50% off**.  \nProduct link: `/product/2ZYFJ3GM2N`",
-        "role": "assistant"}}], "model": "azure/gpt-5.5", "object": "chat.completion"}'
+        "role": "assistant"}}], "created": 0, "id": "chatcmpl-fixture", "model": "azure/gpt-5.5",
+        "object": "chat.completion"}'
     headers: {}
     status:
       code: 200
@@ -481,7 +486,8 @@ interactions:
       string: '{"choices": [{"finish_reason": "tool_calls", "index": 0, "message":
         {"content": null, "role": "assistant", "tool_calls": [{"function": {"arguments":
         "{}", "name": "list_products"}, "id": "call_OCohRyK7FBjEAXbbEbdE6ZVo", "type":
-        "function"}]}}], "model": "azure/gpt-5.5", "object": "chat.completion"}'
+        "function"}]}}], "created": 0, "id": "chatcmpl-fixture", "model": "azure/gpt-5.5",
+        "object": "chat.completion"}'
     headers: {}
     status:
       code: 200
@@ -627,7 +633,8 @@ interactions:
         | The Comet Book | $0.99 | books |\n| L9ECAV7KIM | Lens Cleaning Kit | $21.95
         | accessories |\n| LS4PSXUNUM | Red Flashlight | $57.08 | accessories, flashlights
         |\n| OLJCESPC7Z | National Park Foundation Explorascope | $101.96 | telescopes
-        |", "role": "assistant"}}], "model": "azure/gpt-5.5", "object": "chat.completion"}'
+        |", "role": "assistant"}}], "created": 0, "id": "chatcmpl-fixture", "model":
+        "azure/gpt-5.5", "object": "chat.completion"}'
     headers: {}
     status:
       code: 200
@@ -681,7 +688,8 @@ interactions:
       string: '{"choices": [{"finish_reason": "tool_calls", "index": 0, "message":
         {"content": null, "role": "assistant", "tool_calls": [{"function": {"arguments":
         "{}", "name": "get_supported_currencies"}, "id": "call_O1ZFMBSDp8MozWzNGoYErzcx",
-        "type": "function"}]}}], "model": "azure/gpt-5.5", "object": "chat.completion"}'
+        "type": "function"}]}}], "created": 0, "id": "chatcmpl-fixture", "model":
+        "azure/gpt-5.5", "object": "chat.completion"}'
     headers: {}
     status:
       code: 200
@@ -759,7 +767,8 @@ interactions:
         "The Astronomy Shop supports these currencies:\n\nZAR, ISK, ILS, RON, GBP,
         BRL, CZK, AUD, BGN, JPY, PHP, HUF, USD, SGD, IDR, CHF, TRY, NZD, THB, DKK,
         PLN, NOK, HRK, HKD, EUR, RUB, CAD, INR, SEK, KRW, CNY, MXN, MYR.", "role":
-        "assistant"}}], "model": "azure/gpt-5.5", "object": "chat.completion"}'
+        "assistant"}}], "created": 0, "id": "chatcmpl-fixture", "model": "azure/gpt-5.5",
+        "object": "chat.completion"}'
     headers: {}
     status:
       code: 200
@@ -813,7 +822,8 @@ interactions:
       string: '{"choices": [{"finish_reason": "tool_calls", "index": 0, "message":
         {"content": null, "role": "assistant", "tool_calls": [{"function": {"arguments":
         "{\"category\":\"binoculars\"}", "name": "get_ads"}, "id": "call_zm9nZ5hBoFRBnaNqxGANQa1m",
-        "type": "function"}]}}], "model": "azure/gpt-5.5", "object": "chat.completion"}'
+        "type": "function"}]}}], "created": 0, "id": "chatcmpl-fixture", "model":
+        "azure/gpt-5.5", "object": "chat.completion"}'
     headers: {}
     status:
       code: 200
@@ -889,8 +899,8 @@ interactions:
     body:
       string: '{"choices": [{"finish_reason": "stop", "index": 0, "message": {"content":
         "Current promotion on binoculars:\n\n- **Roof Binoculars** \u2014 **50% off**\n  -
-        Product link: `/product/2ZYFJ3GM2N`", "role": "assistant"}}], "model": "azure/gpt-5.5",
-        "object": "chat.completion"}'
+        Product link: `/product/2ZYFJ3GM2N`", "role": "assistant"}}], "created": 0,
+        "id": "chatcmpl-fixture", "model": "azure/gpt-5.5", "object": "chat.completion"}'
     headers: {}
     status:
       code: 200

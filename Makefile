@@ -146,6 +146,13 @@ else
 	$(DOCKER_COMPOSE_CMD) $(DOCKER_COMPOSE_ENV) $(DOCKER_COMPOSE_FILES) build
 endif
 
+# Build all services including the agentic layer (agent, mcp, chatbot).
+# Used by the agentic CI workflow so those images are present when
+# make run-telemetry-tests-agentic loads them from the artifact.
+.PHONY: build-agentic
+build-agentic:
+	$(DOCKER_COMPOSE_CMD) $(DOCKER_COMPOSE_ENV) $(DOCKER_COMPOSE_FILES) $(DOCKER_COMPOSE_FILES_AGENT) build
+
 .PHONY: build-and-push
 build-and-push:
 	$(DOCKER_COMPOSE_CMD) $(DOCKER_COMPOSE_ENV) $(DOCKER_COMPOSE_FILES) build --push
@@ -219,6 +226,25 @@ run-telemetry-tests-minimal: start-minimal
 		-e POLL_TIMEOUT=$${POLL_TIMEOUT:-180} \
 		-e WARMUP_PROBE_ENABLED=$${WARMUP_PROBE_ENABLED:-true} \
 		-e WARMUP_PROBE_CHECKOUTS=$${WARMUP_PROBE_CHECKOUTS:-5} \
+		-e WARMUP_PROBE_TIMEOUT=$${WARMUP_PROBE_TIMEOUT:-120} \
+		opentelemetry-demo-telemetry-tests; \
+	rc=$$?; \
+	$(MAKE) stop; \
+	exit $$rc
+
+.PHONY: run-telemetry-tests-agentic
+run-telemetry-tests-agentic:
+	$(DOCKER_COMPOSE_CMD) $(DOCKER_COMPOSE_ENV) $(DOCKER_COMPOSE_FILES) $(DOCKER_COMPOSE_FILES_AGENT) up --force-recreate --remove-orphans --detach
+	$(DOCKER_CMD) build -t opentelemetry-demo-telemetry-tests ./test/telemetry
+	@touch .env.override
+	@set +e; \
+	$(DOCKER_CMD) run --rm --network opentelemetry-demo \
+		--env-file .env --env-file .env.override \
+		-e TEST_SCOPE=agentic \
+		-e WARMUP_SECONDS=$${WARMUP_SECONDS:-240} \
+		-e POLL_TIMEOUT=$${POLL_TIMEOUT:-180} \
+		-e WARMUP_PROBE_ENABLED=false \
+		-e WARMUP_PROBE_CHECKOUTS=0 \
 		-e WARMUP_PROBE_TIMEOUT=$${WARMUP_PROBE_TIMEOUT:-120} \
 		opentelemetry-demo-telemetry-tests; \
 	rc=$$?; \
