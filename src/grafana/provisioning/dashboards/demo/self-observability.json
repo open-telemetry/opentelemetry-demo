@@ -70,7 +70,7 @@
     },
     {
       "datasource": { "type": "prometheus", "uid": "${prometheus_datasource}" },
-      "description": "Rate of spans successfully handed to exporters across the selected services.",
+      "description": "Rate of spans that finished exporting successfully (`error_type` empty) across the selected services. See \"Export errors\" for the failed portion of the same counter.",
       "fieldConfig": {
         "defaults": {
           "color": { "mode": "fixed", "fixedColor": "blue" },
@@ -96,7 +96,7 @@
         {
           "datasource": { "type": "prometheus", "uid": "${prometheus_datasource}" },
           "editorMode": "code",
-          "expr": "sum(rate(otel_sdk_exporter_span_exported_total{service_name=~\"$service_name\"}[$__rate_interval]))",
+          "expr": "sum(rate(otel_sdk_exporter_span_exported_total{service_name=~\"$service_name\",error_type=\"\"}[$__rate_interval]))",
           "instant": false,
           "legendFormat": "Spans exported",
           "range": true,
@@ -108,7 +108,7 @@
     },
     {
       "datasource": { "type": "prometheus", "uid": "${prometheus_datasource}" },
-      "description": "Rate of metric data points successfully handed to exporters across the selected services.",
+      "description": "Rate of metric data points that finished exporting successfully (`error_type` empty) across the selected services. See \"Export errors\" for the failed portion of the same counter.",
       "fieldConfig": {
         "defaults": {
           "color": { "mode": "fixed", "fixedColor": "purple" },
@@ -134,7 +134,7 @@
         {
           "datasource": { "type": "prometheus", "uid": "${prometheus_datasource}" },
           "editorMode": "code",
-          "expr": "sum(rate(otel_sdk_exporter_metric_data_point_exported_total{service_name=~\"$service_name\"}[$__rate_interval]))",
+          "expr": "sum(rate(otel_sdk_exporter_metric_data_point_exported_total{service_name=~\"$service_name\",error_type=\"\"}[$__rate_interval]))",
           "instant": false,
           "legendFormat": "Data points exported",
           "range": true,
@@ -146,7 +146,7 @@
     },
     {
       "datasource": { "type": "prometheus", "uid": "${prometheus_datasource}" },
-      "description": "Rate of log records successfully handed to exporters across the selected services.",
+      "description": "Rate of log records that finished exporting successfully (`error_type` empty) across the selected services. See \"Export errors\" for the failed portion of the same counter.",
       "fieldConfig": {
         "defaults": {
           "color": { "mode": "fixed", "fixedColor": "green" },
@@ -172,7 +172,7 @@
         {
           "datasource": { "type": "prometheus", "uid": "${prometheus_datasource}" },
           "editorMode": "code",
-          "expr": "sum(rate(otel_sdk_exporter_log_exported_total{service_name=~\"$service_name\"}[$__rate_interval]))",
+          "expr": "sum(rate(otel_sdk_exporter_log_exported_total{service_name=~\"$service_name\",error_type=\"\"}[$__rate_interval]))",
           "instant": false,
           "legendFormat": "Logs exported",
           "range": true,
@@ -184,7 +184,7 @@
     },
     {
       "datasource": { "type": "prometheus", "uid": "${prometheus_datasource}" },
-      "description": "Rate of failed exports across all signals (spans, metrics, logs). A non-zero value indicates the SDK could not export telemetry to the collector/backend.",
+      "description": "Rate of spans, metric data points, and log records whose export attempt finished with `error_type` set (the failed complement of the three \"exported\" panels above). A non-zero value means the SDK could not deliver telemetry to the collector/backend.",
       "fieldConfig": {
         "defaults": {
           "color": { "mode": "thresholds" },
@@ -373,7 +373,7 @@
     },
     {
       "datasource": { "type": "prometheus", "uid": "${prometheus_datasource}" },
-      "description": "Batch span processor queue utilization: current queue size as a fraction of capacity (`otel.sdk.processor.span.queue.size` / `otel.sdk.processor.span.queue.capacity`). Approaching 100% indicates the SDK is dropping spans.",
+      "description": "Batch span processor queue utilization: current queue size as a fraction of capacity (`otel.sdk.processor.span.queue.size` / `otel.sdk.processor.span.queue.capacity`). At 100% the queue is full and the processor starts dropping new spans (reported as `error_type=\"queue_full\"` in the \"Spans processed rate\" panel below).",
       "fieldConfig": {
         "defaults": {
           "color": { "mode": "palette-classic" },
@@ -404,7 +404,7 @@
     },
     {
       "datasource": { "type": "prometheus", "uid": "${prometheus_datasource}" },
-      "description": "Rate of spans processed by span processors, broken down by `error.type` (empty = success).",
+      "description": "Rate of spans handed off from the SDK to a span processor, broken down by `error.type` (empty = success). Note: for the built-in batching processor, a span counts as \"processed\" once it's queued for export, not once the export call finishes -- see \"Spans exported rate\" for that. A non-empty `error_type` here means the span never reached the exporter: `queue_full` (the processor's queue was full) or `already_shutdown` (submitted after the processor was shut down).",
       "fieldConfig": {
         "defaults": {
           "color": { "mode": "palette-classic" },
@@ -433,7 +433,7 @@
     },
     {
       "datasource": { "type": "prometheus", "uid": "${prometheus_datasource}" },
-      "description": "Rate of spans exported, broken down by `error.type` (empty = success).",
+      "description": "Rate of span export operations that finished, broken down by `error.type` (empty = success, e.g. sent and acknowledged by the collector; non-empty = the export call itself failed, e.g. `timeout` or a connection error -- distinct from processor-side `queue_full` drops shown in \"Spans processed rate\" above).",
       "fieldConfig": {
         "defaults": {
           "color": { "mode": "palette-classic" },
@@ -499,7 +499,7 @@
     },
     {
       "datasource": { "type": "prometheus", "uid": "${prometheus_datasource}" },
-      "description": "Rate of metric data points exported, broken down by `error.type` (empty = success).",
+      "description": "Rate of metric data point export operations that finished, broken down by `error.type` (empty = success, e.g. sent and acknowledged by the collector; non-empty = the export call itself failed, e.g. `timeout` or a connection error).",
       "fieldConfig": {
         "defaults": {
           "color": { "mode": "palette-classic" },
@@ -557,7 +557,7 @@
     },
     {
       "datasource": { "type": "prometheus", "uid": "${prometheus_datasource}" },
-      "description": "p95 duration of the metric reader collect operation (`otel.sdk.metric_reader.collection.duration`) and of exporter operations (`otel.sdk.exporter.operation.duration`).",
+      "description": "p95 duration of two distinct operations, shown together here for space reasons: (1) `{{service_name}} reader collect` -- the metric reader's collect step (`otel.sdk.metric_reader.collection.duration`), metric-pipeline specific; (2) `{{service_name}} {{otel_component_type}}` -- the exporter's export call duration (`otel.sdk.exporter.operation.duration`). The exporter series is NOT metric-specific -- it covers span, log, AND metric exporters alike; use the `otel_component_type` label in the legend (e.g. `otlp_grpc_span_exporter` vs `otlp_grpc_metric_exporter`) to tell them apart.",
       "fieldConfig": {
         "defaults": {
           "color": { "mode": "palette-classic" },
@@ -589,7 +589,7 @@
           "refId": "B"
         }
       ],
-      "title": "Collect & export operation duration (p95)",
+      "title": "Metric collect duration (p95) & all-signal exporter operation duration (p95)",
       "type": "timeseries"
     },
     {
@@ -631,7 +631,7 @@
     },
     {
       "datasource": { "type": "prometheus", "uid": "${prometheus_datasource}" },
-      "description": "Rate of log records exported, broken down by `error.type` (empty = success).",
+      "description": "Rate of log record export operations that finished, broken down by `error.type` (empty = success, e.g. sent and acknowledged by the collector; non-empty = the export call itself failed, e.g. `timeout` or a connection error).",
       "fieldConfig": {
         "defaults": {
           "color": { "mode": "palette-classic" },
@@ -660,7 +660,7 @@
     },
     {
       "datasource": { "type": "prometheus", "uid": "${prometheus_datasource}" },
-      "description": "Batch log record processor queue utilization: current queue size as a fraction of capacity (`otel.sdk.processor.log.queue.size` / `otel.sdk.processor.log.queue.capacity`).",
+      "description": "Batch log record processor queue utilization: current queue size as a fraction of capacity (`otel.sdk.processor.log.queue.size` / `otel.sdk.processor.log.queue.capacity`). At 100% the queue is full and the processor starts dropping new log records (reported as `error_type=\"queue_full\"` in the \"Log records processed rate\" panel below).",
       "fieldConfig": {
         "defaults": {
           "color": { "mode": "palette-classic" },
@@ -687,6 +687,35 @@
         }
       ],
       "title": "Log processor queue utilization",
+      "type": "timeseries"
+    },
+    {
+      "datasource": { "type": "prometheus", "uid": "${prometheus_datasource}" },
+      "description": "Rate of log records handed off from the SDK to a log processor, broken down by `error.type` (empty = success). Note: for the built-in batching processor, a log record counts as \"processed\" once it's queued for export, not once the export call finishes -- see \"Log records exported rate\" for that. A non-empty `error_type` here means the log record never reached the exporter: `queue_full` (the processor's queue was full) or `already_shutdown` (submitted after the processor was shut down).",
+      "fieldConfig": {
+        "defaults": {
+          "color": { "mode": "palette-classic" },
+          "custom": { "drawStyle": "line", "fillOpacity": 10, "lineWidth": 1, "showPoints": "never", "stacking": { "mode": "normal" } },
+          "mappings": [],
+          "unit": "ops"
+        },
+        "overrides": []
+      },
+      "gridPos": { "h": 8, "w": 8, "x": 0, "y": 47 },
+      "id": 64,
+      "options": { "legend": { "calcs": [ "lastNotNull" ], "displayMode": "table", "placement": "bottom", "showLegend": true }, "tooltip": { "mode": "multi", "sort": "desc" } },
+      "pluginVersion": "12.3.1",
+      "targets": [
+        {
+          "datasource": { "type": "prometheus", "uid": "${prometheus_datasource}" },
+          "editorMode": "code",
+          "expr": "sum by (service_name, error_type) (rate(otel_sdk_processor_log_processed_total{service_name=~\"$service_name\"}[$__rate_interval]))",
+          "legendFormat": "{{service_name}} {{error_type}}",
+          "range": true,
+          "refId": "A"
+        }
+      ],
+      "title": "Log records processed rate (by error type)",
       "type": "timeseries"
     }
   ],
