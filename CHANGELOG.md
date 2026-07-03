@@ -18,6 +18,15 @@ the release.
 * [shipping] Migrate OTLP exporters (traces, metrics, logs) from gRPC to
   http/protobuf
   ([#3619](https://github.com/open-telemetry/opentelemetry-demo/pull/3619))
+* [grafana] Add a "Self-Observability" dashboard that visualizes the internal
+  metrics emitted by the OpenTelemetry SDKs themselves (experimental
+  `otel.sdk.*` semantic conventions), and opt the `ad` (Java) and `checkout`
+  (Go) services in to SDK self-monitoring via
+  `OTEL_EXPERIMENTAL_SDK_TELEMETRY_VERSION=latest` and
+  `OTEL_GO_X_OBSERVABILITY=true`. The dashboard is driven by a `Service`
+  template variable, so any additional service that opts in appears
+  automatically
+  ([#3610](https://github.com/open-telemetry/opentelemetry-demo/pull/3610))
 * [accounting] Run the Kafka consumer as a hosted background service so process
   shutdown can stop the consumer cleanly
   ([#3608](https://github.com/open-telemetry/opentelemetry-demo/pull/3608))
