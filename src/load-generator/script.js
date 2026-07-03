@@ -56,10 +56,14 @@ const tracer = new Tracer()
 
 // ---- helpers ----------------------------------------------------------------
 
+// Uses a Uint8Array rather than Uint32Array(1): k6's crypto.getRandomValues
+// only randomizes `buf.length` bytes, not `buf.byteLength`, so a Uint32Array(1)
+// gets just 1 random byte with the upper 3 left as zero.
 function cryptoRandom() {
-    const buf = new Uint32Array(1)
+    const buf = new Uint8Array(4)
     crypto.getRandomValues(buf)
-    return buf[0] / 0x100000000
+    const val = ((buf[0] << 24) | (buf[1] << 16) | (buf[2] << 8) | buf[3]) >>> 0
+    return val / 0x100000000
 }
 
 function randomChoice(arr) {
