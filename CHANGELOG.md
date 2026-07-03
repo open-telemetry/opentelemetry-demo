@@ -24,6 +24,9 @@ the release.
 * [checkout] Migrate OTLP exporters (traces, metrics, logs) from gRPC to
   http/protobuf
   ([#3618](https://github.com/open-telemetry/opentelemetry-demo/pull/3618))
+* [checkout] Annotate synthetic load-generator orders with the
+  `user_agent.synthetic.type` semantic convention attribute on the `PlaceOrder`
+  span.
 * [shipping] Migrate OTLP exporters (traces, metrics, logs) from gRPC to
   http/protobuf
   ([#3619](https://github.com/open-telemetry/opentelemetry-demo/pull/3619))
