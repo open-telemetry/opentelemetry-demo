@@ -152,6 +152,12 @@ services:
         limits:
           memory: 65M
     restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "wget", "--quiet", "--tries=1", "--spider", "http://localhost:4321/"]
+      start_period: 10s
+      interval: 5s
+      timeout: 5s
+      retries: 10
     logging:
       driver: "json-file"
       options:
@@ -166,7 +172,7 @@ services:
       grafana:
         condition: service_started
       opamp-server:
-        condition: service_started
+        condition: service_healthy
 
   # Patch otel-collector to add observability exporters and wait for backends.
   # Note: otelcol-config-full.yml is included here to maintain correct config ordering
@@ -195,4 +201,4 @@ services:
       opensearch:
         condition: service_healthy
       opamp-server:
-        condition: service_started
+        condition: service_healthy
