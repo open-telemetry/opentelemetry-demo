@@ -15,6 +15,9 @@ the release.
 * [checkout] Migrate OTLP exporters (traces, metrics, logs) from gRPC to
   http/protobuf
   ([#3618](https://github.com/open-telemetry/opentelemetry-demo/pull/3618))
+* [shipping] Migrate OTLP exporters (traces, metrics, logs) from gRPC to
+  http/protobuf
+  ([#3619](https://github.com/open-telemetry/opentelemetry-demo/pull/3619))
 * [accounting] Run the Kafka consumer as a hosted background service so process
   shutdown can stop the consumer cleanly
   ([#3608](https://github.com/open-telemetry/opentelemetry-demo/pull/3608))
