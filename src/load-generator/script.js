@@ -274,11 +274,15 @@ async function changeCurrency(page) {
 }
 
 async function addProductToCartBrowser(page) {
+    // Roof Binoculars (2ZYFJ3GM2N). Selects by href / data-cy rather than
+    // :has-text(), which k6 browser's native CSS engine does not support
+    // (it forwards selectors straight to document.querySelectorAll, unlike
+    // Playwright's own selector engine).
     await page.goto(`${BASE_URL}/`, { waitUntil: 'domcontentloaded' })
-    await page.waitForSelector('p:has-text("Roof Binoculars")', { timeout: 15000 })
-    await page.click('p:has-text("Roof Binoculars")')
+    await page.waitForSelector('a[href="/product/2ZYFJ3GM2N"]', { timeout: 15000 })
+    await page.click('a[href="/product/2ZYFJ3GM2N"]')
     await page.waitForLoadState('domcontentloaded')
-    await page.click('button:has-text("Add To Cart")')
+    await page.click('[data-cy="product-add-to-cart"]')
     await page.waitForLoadState('domcontentloaded')
     await page.waitForTimeout(2000)
 }
@@ -287,22 +291,21 @@ async function addProductToCartBrowser(page) {
 
 export async function browserScenario() {
     const page = await browser.newPage()
+    const isCurrencyChange = cryptoRandom() < 0.5
+    const span = tracer.startSpan(isCurrencyChange ? 'browser_change_currency' : 'browser_add_to_cart')
     try {
         await page.setExtraHTTPHeaders({ baggage: 'synthetic_request=true' })
-        if (cryptoRandom() < 0.5) {
-            const span = tracer.startSpan('browser_change_currency')
+        if (isCurrencyChange) {
             span.log('Currency changed to CHF')
             await changeCurrency(page)
-            span.end()
         } else {
-            const span = tracer.startSpan('browser_add_to_cart')
             span.log('Product added to cart successfully')
             await addProductToCartBrowser(page)
-            span.end()
         }
     } catch (e) {
         console.error(`browser task error: ${e}`)
     } finally {
+        span.end()
         await page.close()
     }
 
