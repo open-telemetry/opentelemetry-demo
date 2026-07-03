@@ -6,7 +6,7 @@ Astronomy Shop demo. It uses [Gradio](https://www.gradio.app/) to render the
 
 ## Overview
 
-- Runtime: Python 3.11
+- Runtime: Python 3.14
 - UI framework: Gradio
 - HTTP client: Requests
 - Observability: OpenTelemetry traces exported with OTLP/gRPC
@@ -68,7 +68,7 @@ The service is configured with environment variables. Values can be supplied
 
 ## Docker Compose Configuration
 
-In `docker-compose.yml`, the service is named `chatbot` and is built from `src/chatbot/Dockerfile`.
+In `compose.agent.yml`, the service is named `chatbot` and is built from `src/chatbot/Dockerfile`.
 
 Important Compose settings:
 
@@ -140,6 +140,7 @@ src/chatbot/
 |-- Dockerfile
 |-- README.md
 |-- requirements.txt
+|-- requirements.in
 |-- run.py
 `-- src/
   `-- chat_interface/
