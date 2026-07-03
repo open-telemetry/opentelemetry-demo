@@ -12,6 +12,9 @@ the release.
   ([#3582](https://github.com/open-telemetry/opentelemetry-demo/pull/3582))
 * [payment] Annotate synthetic load-generator payment requests with the
   `user_agent.synthetic.type` semantic convention attribute.
+* [shipping] Migrate OTLP exporters (traces, metrics, logs) from gRPC to
+  http/protobuf
+  ([#3619](https://github.com/open-telemetry/opentelemetry-demo/pull/3619))
 * [accounting] Run the Kafka consumer as a hosted background service so process
   shutdown can stop the consumer cleanly
   ([#3608](https://github.com/open-telemetry/opentelemetry-demo/pull/3608))
