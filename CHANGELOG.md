@@ -20,16 +20,10 @@ the release.
   ([#3619](https://github.com/open-telemetry/opentelemetry-demo/pull/3619))
 * [grafana] Add a "Self-Observability" dashboard that visualizes the internal
   metrics emitted by the OpenTelemetry SDKs themselves (experimental
-  `otel.sdk.*` semantic conventions), and opt the `ad` (Java) and `checkout`
-  (Go) services in to SDK self-monitoring via
-  `OTEL_EXPERIMENTAL_SDK_TELEMETRY_VERSION=latest` and
-  `OTEL_GO_X_SELF_OBSERVABILITY=true`. The dashboard is driven by a `Service`
-  template variable, so any additional service that opts in appears
-  automatically. Note: `checkout` currently only reports a subset of the
-  panels (OTLP metric exporter self-observability) since the pinned
-  `go.opentelemetry.io/otel/sdk` v1.44.0 doesn't yet include the span/log
-  processor pipeline self-observability metrics that `ad` fully supports; that
-  will improve automatically once a newer SDK release ships it.
+  `otel.sdk.*` semantic conventions), and opt the `ad` (Java) service in to
+  SDK self-monitoring via `OTEL_EXPERIMENTAL_SDK_TELEMETRY_VERSION=latest`.
+  The dashboard is driven by a `Service` template variable, so any additional
+  service that opts in appears automatically.
   (#3620)
 * [accounting] Run the Kafka consumer as a hosted background service so process
   shutdown can stop the consumer cleanly

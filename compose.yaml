@@ -142,16 +142,6 @@ services:
       - OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE
       - OTEL_RESOURCE_ATTRIBUTES=${OTEL_RESOURCE_ATTRIBUTES},service.criticality=critical
       - OTEL_SERVICE_NAME=checkout
-      # Opt in to experimental OTel Go SDK self-observability metrics
-      # (otel.sdk.*) feeding the "self-observability" Grafana dashboard.
-      # NOTE: as of the pinned go.opentelemetry.io/otel/sdk v1.44.0 (the latest
-      # released version), this only covers the OTLP metric exporter's own
-      # self-observability (otlpmetrichttp), not span/log processor pipeline
-      # metrics -- those landed in opentelemetry-go's unreleased main branch
-      # under the (renamed) OTEL_GO_X_OBSERVABILITY variable. So checkout will
-      # only populate a subset of this dashboard's panels until a new
-      # go.opentelemetry.io/otel/sdk release ships that feature.
-      - OTEL_GO_X_SELF_OBSERVABILITY=true
     healthcheck:
       test: ["CMD", "/bin/grpc_health_probe", "-addr=:${CHECKOUT_PORT}"]
       start_period: 10s
