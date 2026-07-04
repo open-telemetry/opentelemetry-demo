@@ -732,6 +732,9 @@ func (cs *checkout) convertCurrency(ctx context.Context, from *pb.Money, toCurre
 // chargeCard calls the payment service. Do NOT add client-side retries here —
 // the payment service is not idempotent and retries cause duplicate charges.
 // Use the paymentUnreachable feature flag for circuit-breaker testing.
+// chargeCard calls the payment service. Do NOT add client-side retries here —
+// the payment service is not idempotent and retries cause duplicate charges.
+// Use the paymentUnreachable feature flag for circuit-breaker testing.
 func (cs *checkout) chargeCard(ctx context.Context, amount *pb.Money, paymentInfo *pb.CreditCardInfo) (string, error) {
 	paymentService := cs.paymentSvcClient
 	if cs.isFeatureFlagEnabled(ctx, "paymentUnreachable") {
