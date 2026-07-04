@@ -10,6 +10,11 @@ the release.
 * [frontend] Avoid hardcoded `localhost:8080` image URLs during SSR and
   normalize leading slashes in the custom image loader
   ([#3582](https://github.com/open-telemetry/opentelemetry-demo/pull/3582))
+* [load-generator] Fix `synthetic_request` (and `session.id`) baggage being
+  discarded before reaching any backend service, due to the baggage-bearing
+  context being attached inside a span's `with` block so that the span's exit
+  detached past it. Regression introduced in #2265
+  ([#3627](https://github.com/open-telemetry/opentelemetry-demo/pull/3627))
 * [payment] Annotate synthetic load-generator payment requests with the
   `user_agent.synthetic.type` semantic convention attribute.
 * [checkout] Migrate OTLP exporters (traces, metrics, logs) from gRPC to
