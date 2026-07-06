@@ -6,7 +6,7 @@ import {
   DarkTheme,
   DefaultTheme,
   ThemeProvider,
-} from "@react-navigation/native";
+} from "expo-router/react-navigation";
 import { useColorScheme } from "react-native";
 import Toast from "react-native-toast-message";
 import { useFonts } from "expo-font";

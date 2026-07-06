@@ -12,6 +12,7 @@ max_concurrency = 1
 exclude = [
   "^http://localhost",
   "^https://calendar\\.google\\.com/calendar",
+  "^https://community\\.splunk\\.com/t5/AppDynamics-Knowledge-Base/How-to-observe-Kubernetes-deployment-of-OpenTelemetry-demo-app/ta-p/741454$",
   "^https://www\\.gnu\\.org",
   "^https://platform\\.openai\\.com",
   "^https://www\\.robotstxt\\.org",
