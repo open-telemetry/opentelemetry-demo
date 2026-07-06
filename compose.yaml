@@ -358,8 +358,6 @@ services:
     depends_on:
       frontend:
         condition: service_healthy
-      load-generator:
-        condition: service_started
       flagd-ui:
         condition: service_healthy
       telemetry-docs:
@@ -413,6 +411,7 @@ services:
         limits:
           memory: 512M
     restart: unless-stopped
+    shm_size: 2gb
     environment:
       - K6_VUS
       - K6_TARGET_URL
@@ -425,7 +424,7 @@ services:
       - K6_OTEL_EXPORTER_PROTOCOL=grpc
       - K6_OTEL_GRPC_EXPORTER_ENDPOINT=${OTEL_COLLECTOR_HOST}:${OTEL_COLLECTOR_PORT_GRPC}
       - K6_BROWSER_ENABLED=true
-      - K6_BROWSER_ARGS=no-sandbox
+      - K6_BROWSER_ARGS=no-sandbox,disable-dev-shm-usage
     healthcheck:
       test: ["CMD-SHELL", "kill -0 1"]
       start_period: 10s
@@ -434,6 +433,8 @@ services:
       retries: 5
     depends_on:
       frontend:
+        condition: service_healthy
+      frontend-proxy:
         condition: service_healthy
       flagd:
         condition: service_started
@@ -806,7 +807,7 @@ services:
     deploy:
       resources:
         limits:
-          memory: 200M
+          memory: 400M
     restart: unless-stopped
     command:
       - --config=/etc/otelcol-config.yml
