@@ -126,6 +126,10 @@ jobs:
             tag_suffix: load-generator
             context: ./
             setup-qemu: true
+          - file: ./src/opamp-server/Dockerfile
+            tag_suffix: opamp-server
+            context: ./
+            setup-qemu: true
           - file: ./src/opensearch/Dockerfile
             tag_suffix: opensearch
             context: ./
@@ -283,6 +287,7 @@ jobs:
           build-args: |
             OTEL_JAVA_AGENT_VERSION=${{ env.OTEL_JAVA_AGENT_VERSION }}
             OPENTELEMETRY_CPP_VERSION=${{ env.OPENTELEMETRY_CPP_VERSION }}
+            OPAMP_GO_REF=${{ env.OPAMP_GO_REF }}
           tags: |
             ${{ inputs.dockerhub_repo }}:${{ inputs.version }}-${{matrix.file_tag.tag_suffix }}
             ${{ inputs.dockerhub_repo }}:latest-${{matrix.file_tag.tag_suffix }}
