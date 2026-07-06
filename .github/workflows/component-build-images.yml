@@ -78,10 +78,18 @@ jobs:
             tag_suffix: ad
             context: ./
             setup-qemu: true
+          - file: ./src/agent/Dockerfile
+            tag_suffix: agent
+            context: ./
+            setup-qemu: true
           - file: ./src/cart/src/Dockerfile
             tag_suffix: cart
             context: ./
             setup-qemu: false
+          - file: ./src/chatbot/Dockerfile
+            tag_suffix: chatbot
+            context: ./
+            setup-qemu: true
           - file: ./src/checkout/Dockerfile
             tag_suffix: checkout
             context: ./
@@ -124,6 +132,10 @@ jobs:
             setup-qemu: true
           - file: ./src/load-generator/Dockerfile
             tag_suffix: load-generator
+            context: ./
+            setup-qemu: true
+          - file: ./src/mcp/Dockerfile
+            tag_suffix: mcp
             context: ./
             setup-qemu: true
           - file: ./src/opensearch/Dockerfile
