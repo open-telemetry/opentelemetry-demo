@@ -119,21 +119,21 @@ class WebsiteUser(HttpUser):
 
     @task(1)
     def index(self):
-        with self.tracer.start_as_current_span("user_index", context=Context()):
+        with self.tracer.start_as_current_span("user_index", context=context.get_current()):
             logging.info("User accessing index page")
             self.client.get("/")
 
     @task(10)
     def browse_product(self):
         product = random.choice(products)
-        with self.tracer.start_as_current_span("user_browse_product", context=Context(), attributes={"product.id": product}):
+        with self.tracer.start_as_current_span("user_browse_product", context=context.get_current(), attributes={"product.id": product}):
             logging.info(f"User browsing product: {product}")
             self.client.get("/api/products/" + product)
 
     @task(3)
     def get_recommendations(self):
         product = random.choice(products)
-        with self.tracer.start_as_current_span("user_get_recommendations", context=Context(), attributes={"product.id": product}):
+        with self.tracer.start_as_current_span("user_get_recommendations", context=context.get_current(), attributes={"product.id": product}):
             logging.info(f"User getting recommendations for product: {product}")
             params = {
                 "productIds": [product],
@@ -143,7 +143,7 @@ class WebsiteUser(HttpUser):
     @task(3)
     def get_ads(self):
         category = random.choice(categories)
-        with self.tracer.start_as_current_span("user_get_ads", context=Context(), attributes={"category": str(category)}):
+        with self.tracer.start_as_current_span("user_get_ads", context=context.get_current(), attributes={"category": str(category)}):
             logging.info(f"User getting ads for category: {category}")
             params = {
                 "contextKeys": [category],
@@ -152,7 +152,7 @@ class WebsiteUser(HttpUser):
 
     @task(3)
     def view_cart(self):
-        with self.tracer.start_as_current_span("user_view_cart", context=Context()):
+        with self.tracer.start_as_current_span("user_view_cart", context=context.get_current()):
             logging.info("User viewing cart")
             self.client.get("/api/cart")
 
@@ -162,7 +162,7 @@ class WebsiteUser(HttpUser):
             user = str(uuid.uuid1())
         product = random.choice(products)
         quantity = random.choice([1, 2, 3, 4, 5, 10])
-        with self.tracer.start_as_current_span("user_add_to_cart", context=Context(), attributes={"user.id": user, "product.id": product, "quantity": quantity}):
+        with self.tracer.start_as_current_span("user_add_to_cart", context=context.get_current(), attributes={"user.id": user, "product.id": product, "quantity": quantity}):
             logging.info(f"User {user} adding {quantity} of product {product} to cart")
             self.client.get("/api/products/" + product)
             cart_item = {
@@ -177,7 +177,7 @@ class WebsiteUser(HttpUser):
     @task(1)
     def checkout(self):
         user = str(uuid.uuid1())
-        with self.tracer.start_as_current_span("user_checkout_single", context=Context(), attributes={"user.id": user}):
+        with self.tracer.start_as_current_span("user_checkout_single", context=context.get_current(), attributes={"user.id": user}):
             self.add_to_cart(user=user)
             checkout_person = random.choice(people)
             checkout_person["userId"] = user
@@ -188,7 +188,7 @@ class WebsiteUser(HttpUser):
     def checkout_multi(self):
         user = str(uuid.uuid1())
         item_count = random.choice([2, 3, 4])
-        with self.tracer.start_as_current_span("user_checkout_multi", context=Context(),
+        with self.tracer.start_as_current_span("user_checkout_multi", context=context.get_current(),
                                             attributes={"user.id": user, "item.count": item_count}):
             for i in range(item_count):
                 self.add_to_cart(user=user)
@@ -201,18 +201,22 @@ class WebsiteUser(HttpUser):
     def flood_home(self):
         flood_count = get_flagd_value("loadGeneratorFloodHomepage")
         if flood_count > 0:
-            with self.tracer.start_as_current_span("user_flood_home",  context=Context(), attributes={"flood.count": flood_count}):
+            with self.tracer.start_as_current_span("user_flood_home",  context=context.get_current(), attributes={"flood.count": flood_count}):
                 logging.info(f"User flooding homepage {flood_count} times")
                 for _ in range(0, flood_count):
                     self.client.get("/")
 
     def on_start(self):
-        with self.tracer.start_as_current_span("user_session_start", context=Context()):
-            session_id = str(uuid.uuid4())
-            logging.info(f"Starting user session: {session_id}")
-            ctx = baggage.set_baggage("session.id", session_id)
-            ctx = baggage.set_baggage("synthetic_request", "true", context=ctx)
-            context.attach(ctx)
+        session_id = str(uuid.uuid4())
+        logging.info(f"Starting user session: {session_id}")
+        # Attach the baggage-bearing context OUTSIDE of any span's `with` block.
+        # If this were attached *inside* start_as_current_span(...)'s `with` block,
+        # that block's own exit would detach past this manual attach and silently
+        # discard the baggage for the rest of the user's session.
+        ctx = baggage.set_baggage("session.id", session_id)
+        ctx = baggage.set_baggage("synthetic_request", "true", context=ctx)
+        context.attach(ctx)
+        with self.tracer.start_as_current_span("user_session_start", context=context.get_current()):
             self.index()
 
 
