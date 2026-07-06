@@ -4,6 +4,7 @@
 use anyhow::Result;
 use opentelemetry::global;
 use opentelemetry_appender_tracing::layer::OpenTelemetryTracingBridge;
+use opentelemetry_otlp::{Protocol, WithExportConfig};
 use opentelemetry_sdk::logs::SdkLoggerProvider;
 use opentelemetry_sdk::metrics::SdkMeterProvider;
 use opentelemetry_sdk::trace::SdkTracerProvider;
@@ -42,7 +43,8 @@ fn init_tracer_provider() -> SdkTracerProvider {
         .with_resource(get_resource())
         .with_batch_exporter(
             opentelemetry_otlp::SpanExporter::builder()
-                .with_tonic()
+                .with_http()
+                .with_protocol(Protocol::HttpBinary)
                 .build()
                 .expect("Failed to initialize tracing provider"),
         )
@@ -57,7 +59,8 @@ fn init_meter_provider() -> SdkMeterProvider {
         .with_resource(get_resource())
         .with_periodic_exporter(
             opentelemetry_otlp::MetricExporter::builder()
-                .with_tonic()
+                .with_http()
+                .with_protocol(Protocol::HttpBinary)
                 .build()
                 .expect("Failed to initialize metric exporter"),
         )
@@ -72,7 +75,8 @@ fn init_logger_provider() -> SdkLoggerProvider {
         .with_resource(get_resource())
         .with_batch_exporter(
             opentelemetry_otlp::LogExporter::builder()
-                .with_tonic()
+                .with_http()
+                .with_protocol(Protocol::HttpBinary)
                 .build()
                 .expect("Failed to initialize logger provider"),
         )

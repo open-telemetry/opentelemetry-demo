@@ -8,20 +8,20 @@ The MCP service exposes the OpenTelemetry Astronomy Shop demo's tools over the
 
 ## Overview
 
-- Runtime: Python 3.11
+- Runtime: Python 3.14
 - MCP framework: [FastMCP](https://github.com/jlowin/fastmcp) (built on top of `mcp`)
 - Transport: HTTP streamable transport at `/mcp`
 - Observability: Traceloop SDK and OpenTelemetry OTLP export, with `httpx` auto-instrumentation
 - Default port: `8011`
 
 The service starts from `run.py`, initializes Traceloop instrumentation,
-instruments the `httpx` client, and launches the `AstronomyShopMcp` FastMCP
+instruments the `httpx` client, and launches the `MCP` FastMCP
  server in a worker thread.
 
 ## Exposed MCP Tools
 
 The MCP server registers the Astronomy Shop tools defined in
- `src/agent/src/agents/tools.py` (copied into the image at build time).
+ `src/shared/tools.py` (copied into the image at build time).
   Each tool calls the frontend HTTP API through `APPLICATION_ENDPOINT`.
 
 | Tool | Description |
@@ -60,7 +60,7 @@ The service is configured with environment variables. Values can be supplied
 
 ## Docker Compose Configuration
 
-In `docker-compose.yml`, the service is named `mcp` and is built from `src/mcp/Dockerfile`.
+In `compose.agent.yml`, the service is named `mcp` and is built from `src/mcp/Dockerfile`.
 
 Important Compose settings:
 
@@ -88,7 +88,7 @@ When `MCP_ENABLED=True` on the agent side, the agent loads its tools from this
 
 `run.py` initializes Traceloop with:
 
-- Application name: `AstronomyShopAgentMCP`
+- Application name: `mcp`
 - API endpoint: `OTEL_EXPORTER_OTLP_ENDPOINT`, defaulting to `localhost:4317`
 
 The `HTTPXClientInstrumentor` is enabled so that outbound calls to the frontend
@@ -109,7 +109,7 @@ Because the service imports the shop tools from the `agent` source tree
   make the same file available locally before running:
 
 ```sh
-cp src/agent/src/agents/tools.py src/mcp/src/mcp_server/tools.py
+cp src/shared/tools.py src/mcp/src/mcp_server/tools.py
 ```
 
 Run the service locally:
@@ -159,9 +159,9 @@ src/mcp/
 |-- Dockerfile
 |-- README.md
 |-- requirements.txt
+|-- requirements.in
 |-- run.py                              # Entry point: Traceloop init + FastMCP server
 `-- src/
     `-- mcp_server/
         |-- astronomy_shop_mcp_server.py  # FastMCP server and tool registration
-        `-- tools.py                      # Copied from src/agent/src/agents/tools.py at build time
 ```

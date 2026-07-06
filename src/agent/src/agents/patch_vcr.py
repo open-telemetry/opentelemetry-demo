@@ -13,24 +13,24 @@ import vcr.stubs.httpx_stubs
 logging.getLogger("vcr").setLevel(logging.ERROR)
 
 
-async def patched_to_serialized_response(response, aread=False):
-    if hasattr(response, "_decoder"):
-        del response._decoder
+# Cassette bodies are stored as plain JSON strings (see clean_response) for
+# human-readable, diffable fixtures. httpx.ByteStream requires bytes, so
+# encode the body back to bytes before vcrpy reconstructs the response for
+# playback; without this, replay raises a TypeError deep in httpx's async
+# body reader.
+_original_deserialize_response = vcr.stubs.httpx_stubs._deserialize_response
 
-    if aread:
-        content = await response.aread()
-    else:
-        content = response.read()
 
-    return {
-        "status": {"code": response.status_code, "message": response.reason_phrase},
-        "headers": dict(response.headers),
-        "body": {"string": content},
-    }
+def patched_deserialize_response(vcr_response, httpx_module):
+    body = vcr_response.get("body", {}).get("string")
+    if isinstance(body, str):
+        vcr_response["body"]["string"] = body.encode("utf-8")
+    return _original_deserialize_response(vcr_response, httpx_module)
+
 
 use_vcr = os.getenv("USE_VCR", "False").lower() == "true"
 if use_vcr:
-    vcr.stubs.httpx_stubs._to_serialized_response = patched_to_serialized_response
+    vcr.stubs.httpx_stubs._deserialize_response = patched_deserialize_response
 
 
 def normalize_body(request):
@@ -58,9 +58,14 @@ def clean_response(response):
             body = body.decode("utf-8")
 
         data = json.loads(body)
+        # id/created are required by the openai response schema, so they are
+        # normalized to fixed values instead of removed, keeping fixtures
+        # deterministic without failing response validation on replay.
+        if "id" in data:
+            data["id"] = "chatcmpl-fixture"
+        if "created" in data:
+            data["created"] = 0
         for key in [
-            "id",
-            "created",
             "system_fingerprint",
             "usage",
             "prompt_filter_results",

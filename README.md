@@ -61,21 +61,21 @@ keeping it up to date for you.
 
 |                           |                |                                  |
 |---------------------------|----------------|----------------------------------|
-| [AlibabaCloud LogService] | [Google Cloud] | [Parseable]                      |
-| [Amazon Web Services]     | [Grafana Labs] | [Sentry]                         |
-| [Apache Doris]            | [Guance]       | [ServiceNow Cloud Observability] |
-| [AppDynamics]             | [Honeycomb.io] | [SigNoz]                         |
-| [Aspecto]                 | [Instana]      | [SolarWinds Observability]       |
-| [Axiom]                   | [Kloudfuse]    | [Splunk]                         |
-| [Axoflow]                 | [Kopai]        | [Sumo Logic]                     |
-| [Azure Data Explorer]     | [Last9]        | [TelemetryHub]                   |
+| [AlibabaCloud LogService] | [Elastic]      | [Oracle]                         |
+| [Amazon Web Services]     | [Google Cloud] | [Parseable]                      |
+| [Apache Doris]            | [Grafana Labs] | [Sentry]                         |
+| [AppDynamics]             | [Guance]       | [ServiceNow Cloud Observability] |
+| [Aspecto]                 | [Honeycomb.io] | [SigNoz]                         |
+| [Axiom]                   | [Instana]      | [SolarWinds Observability]       |
+| [Axoflow]                 | [Kloudfuse]    | [Splunk]                         |
+| [Azure Data Explorer]     | [Kopai]        | [Sumo Logic]                     |
+| [Bronto]                  | [Last9]        | [TelemetryHub]                   |
 | [Causely]                 | [Liatrio]      | [Teletrace]                      |
 | [ClickStack]              | [Logz.io]      | [Tinybird]                       |
 | [Coralogix]               | [New Relic]    | [Tracetest]                      |
 | [Dash0]                   | [Oodle]        | [Tsuga]                          |
 | [Datadog]                 | [OpenObserve]  | [Uptrace]                        |
 | [Dynatrace]               | [OpenSearch]   | [VictoriaMetrics]                |
-| [Elastic]                 | [Oracle]       |                                  |
 
 ## Contributing
 
@@ -130,6 +130,7 @@ For more information about the emeritus role, see the [community repository](htt
 [Axiom]: https://play.axiom.co/axiom-play-qf1k/dashboards/otel.traces.otel-demo-traces
 [Axoflow]: https://axoflow.com/opentelemetry-support-in-more-detail-in-axosyslog-and-syslog-ng/
 [Azure Data Explorer]: https://github.com/Azure/Azure-kusto-opentelemetry-demo
+[Bronto]: https://docs.bronto.io/getting-started/otel-demo
 [Causely]: https://github.com/causely-oss/otel-demo
 [ClickStack]: https://github.com/ClickHouse/opentelemetry-demo
 [Coralogix]: https://coralogix.com/blog/configure-otel-demo-send-telemetry-data-coralogix
