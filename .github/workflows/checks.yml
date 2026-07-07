@@ -161,7 +161,7 @@ jobs:
               - 'src/react-native-app/**'
               - '.github/workflows/**'
 
-  react-native-android:
+  react-native-build:
     needs: check-react-native-changes
     if: needs.check-react-native-changes.outputs.should_build == 'true'
     uses: ./.github/workflows/react-native-build.yml
@@ -193,7 +193,7 @@ jobs:
       sanity,
       checklicense,
       weaver-check,
-      react-native-android,
+      react-native-build,
       codeql-analysis,
       zizmor
     ]
