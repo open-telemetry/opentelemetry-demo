@@ -76,6 +76,8 @@ jobs:
                 if not data:
                   break
                 destination.sendall(data)
+            except OSError:
+              pass
             finally:
               for sock in (source, destination):
                 try:
@@ -91,7 +93,12 @@ jobs:
           print(f"forwarding {LISTEN[0]}:{LISTEN[1]} to {TARGET[0]}:{TARGET[1]}", flush=True)
           while True:
             client, _ = listener.accept()
-            upstream = socket.create_connection(TARGET)
+            try:
+              upstream = socket.create_connection(TARGET)
+            except OSError as exc:
+              print(f"upstream connection failed: {exc}", flush=True)
+              client.close()
+              continue
             threading.Thread(target=pipe, args=(client, upstream), daemon=True).start()
             threading.Thread(target=pipe, args=(upstream, client), daemon=True).start()
           PY
