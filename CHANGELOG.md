@@ -7,6 +7,9 @@ the release.
 
 ## Unreleased
 
+* [email] Set `event_name` on the order-confirmation log record
+  (`email.confirmation_sent`), using the OTel Ruby Logs API's `event_name`
+  parameter directly.
 * [cart] Make the `cartFailure` feature flag rate configurable as percentage
   (off - no failures, 10%, 25%, 50%, 75%, 90%, 100% - always fail) instead of
   a fixed all-or-nothing toggle, matching the `paymentFailure` pattern
