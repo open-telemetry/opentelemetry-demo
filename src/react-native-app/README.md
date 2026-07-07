@@ -47,6 +47,14 @@ npm run android
 
 #### iOS: Build and run from the command-line
 
+The iOS build uses the Ruby version in `.ruby-version` and Bundler to install
+the version of CocoaPods recorded in `Gemfile.lock`. Make sure `ruby --version`
+matches `.ruby-version`, then install the Ruby dependencies before building:
+
+```bash
+bundle install
+```
+
 You can build and run the app using the command line with the following
 command. This will compile the iOS app and deploy it to a running iOS simulator
 and start a server to provide the JS Bundle.
@@ -71,8 +79,8 @@ by [Expo's continuous native generation](https://docs.expo.dev/workflow/continuo
 Generate it, then install the CocoaPods dependencies:
 
 ```bash
-npx expo prebuild --platform ios
-cd ios && pod install && cd ..
+npx expo prebuild --platform ios --no-install
+cd ios && bundle exec pod install && cd ..
 ```
 
 The `expo run:ios` and `expo run:android` scripts under `npm run ios` /
@@ -136,10 +144,10 @@ then attempt another build after:
 ```bash
   cd src/react-native-app/ios
   rm Podfile.lock
-  pod cache clean --all
-  pod repo update --verbose
-  pod deintegrate
-  pod install --repo-update --verbose
+  bundle exec pod cache clean --all
+  bundle exec pod repo update --verbose
+  bundle exec pod deintegrate
+  bundle exec pod install --repo-update --verbose
 ```
 
 If there is an error compiling or running the app try closing any open

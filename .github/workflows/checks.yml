@@ -153,15 +153,17 @@ jobs:
         with:
           persist-credentials: false
       - name: Check React Native paths
-        uses: dorny/paths-filter@fbd0ab8f3e69293af611ebaee6363fc25e6d187d  # v4.0.1
+        uses: dorny/paths-filter@7b450fff21473bca461d4b92ce414b9d0420d706  # v4.0.2
         id: filter
         with:
           filters: |
             react_native:
               - 'src/react-native-app/**'
-              - '.github/workflows/**'
+              - 'Makefile'
+              - '.github/workflows/checks.yml'
+              - '.github/workflows/react-native-build.yml'
 
-  react-native-android:
+  react-native-build:
     needs: check-react-native-changes
     if: needs.check-react-native-changes.outputs.should_build == 'true'
     uses: ./.github/workflows/react-native-build.yml
@@ -193,7 +195,7 @@ jobs:
       sanity,
       checklicense,
       weaver-check,
-      react-native-android,
+      react-native-build,
       codeql-analysis,
       zizmor
     ]

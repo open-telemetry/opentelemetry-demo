@@ -14,7 +14,7 @@ plugins {
     id("java")
     id("idea")
     id("com.google.protobuf") version "0.10.0"
-    id("com.gradleup.shadow") version "9.4.2"
+    id("com.gradleup.shadow") version "9.5.1"
 }
 
 group = "io.opentelemetry"
@@ -45,7 +45,7 @@ dependencies {
     implementation("io.opentelemetry:opentelemetry-api:1.63.0")
     implementation("io.opentelemetry:opentelemetry-sdk:1.63.0")
     implementation("io.opentelemetry:opentelemetry-extension-annotations:1.18.0")
-    implementation("org.apache.logging.log4j:log4j-core:2.26.0")
+    implementation("org.apache.logging.log4j:log4j-core:2.26.1")
     implementation("org.slf4j:slf4j-api:2.0.18")
     implementation("com.google.protobuf:protobuf-kotlin:${protobufVersion}")
     implementation("dev.openfeature:sdk:1.21.0")
