@@ -159,7 +159,9 @@ jobs:
           filters: |
             react_native:
               - 'src/react-native-app/**'
-              - '.github/workflows/**'
+              - 'Makefile'
+              - '.github/workflows/checks.yml'
+              - '.github/workflows/react-native-build.yml'
 
   react-native-build:
     needs: check-react-native-changes
