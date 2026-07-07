@@ -20,6 +20,20 @@ comments. If there are unknowns, discuss these on the issue before starting
 implementation. Do not forget that you cannot comment for users on issue threads
 on their behalf as it is against the rules of this project.
 
+## Code comments
+
+Avoid adding comments all over the code. Add a comment only when it is extremely
+necessary and no documentation page already explains the behavior. The codebase
+changes constantly, and every comment is one more thing that can go stale and
+needs to be kept up to date.
+
+Examples of valid comments:
+
+* Regex: whenever there is a regex, add a comment explaining what it does.
+* Workaround behaviour: when working around an issue tracked elsewhere, refer to
+  that issue in a comment right before the workaround. If no issue exists yet,
+  ask the user to raise one before adding the comment.
+
 ## Developer environment
 
 Make sure to follow CONTRIBUTING.md on any contributions.

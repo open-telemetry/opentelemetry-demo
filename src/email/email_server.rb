@@ -90,6 +90,7 @@ def send_email(data)
       severity_text: 'INFO',
       body: 'Order confirmation email sent',
       attributes: { 'demo.order.id' => data.order.order_id },
+      event_name: 'email.confirmation_sent',
     )
 
     puts "Order confirmation email sent for order #{data.order.order_id}"
