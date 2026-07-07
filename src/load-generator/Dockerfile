@@ -18,18 +18,20 @@ RUN xk6 build v2.0.0 \
     --with github.com/open-telemetry/opentelemetry-demo/src/load-generator/xk6-otel=./xk6-otel \
     --output ./k6
 
-# Runtime stage: nothing but the binary and the test assets.
-FROM debian:bookworm-slim
+# Runtime stage: reuse Grafana's official k6 browser image. k6's browser module
+# is very sensitive to the Chromium build it launches — Debian's Chromium
+# crashes on startup (SIGTRAP), whereas this image ships an Alpine + Chromium
+# combination that Grafana tests against the matching k6 release. Pin the tag to
+# our k6 version (built above) so the base's Chromium tracks a compatible k6.
+# We only swap in our own k6 binary: the stock one here lacks the xk6-otel
+# extension that script.js imports as `k6/x/otel`.
+FROM grafana/k6:2.0.0-with-browser
 
-RUN apt-get -qq update \
-    && apt-get install -y --no-install-recommends \
-        ca-certificates \
-        chromium \
-    && rm -rf /var/lib/apt/lists/*
+# Overwrite the stock k6 with our extension-enabled, statically-linked build
+# (it runs unchanged on this Alpine/musl base).
+COPY --from=builder /build/k6 /usr/bin/k6
 
-COPY --from=builder /build/k6 /usr/local/bin/k6
-
-WORKDIR /usr/src/app/
+WORKDIR /home/k6
 COPY ./src/load-generator/script.js .
 COPY ./src/load-generator/people.json .
 
