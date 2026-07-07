@@ -412,6 +412,12 @@ services:
           memory: 512M
     restart: unless-stopped
     shm_size: 2gb
+    # Chromium's zygote/sandbox startup needs CLONE_NEWUSER-adjacent syscalls
+    # that Docker's default seccomp profile blocks without this capability,
+    # even with --no-sandbox — without it k6's browser scenario crashes with
+    # "signal: trace/breakpoint trap" on stricter container runtimes.
+    cap_add:
+      - SYS_ADMIN
     environment:
       - K6_VUS
       - K6_TARGET_URL
