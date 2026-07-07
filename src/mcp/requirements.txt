@@ -505,9 +505,9 @@ exceptiongroup==1.3.1 \
     --hash=sha256:8b412432c6055b0b7d14c310000ae93352ed6754f70fa8f7c34141f91c4e3219 \
     --hash=sha256:a7a39a3bd276781e98394987d3a5701d0c4edffb633bb7a5144577f82c773598
     # via fastmcp
-fastapi==0.138.0 \
-    --hash=sha256:b6f54fd1bd72c80b0f899f172c61a600f6f7af9b43d4d772a018f35624048cb0 \
-    --hash=sha256:d445a4877636ad191e7053e08c9bf98cb921a6756776848400bb773d1740c061
+fastapi==0.139.0 \
+    --hash=sha256:99ab7b2d92223c76d6cf10757ab3f89d45b38267fc20b2a136cf02f6beac3145 \
+    --hash=sha256:cf15e1e9e667ddb0ad63811e60bd11390d1aac838ca4a7a23f421807b2308189
     # via -r requirements.in
 fastmcp==2.13.3 \
     --hash=sha256:5173d335f4e6aabcfb5a5131af3fa092f604b303130fd3a49226b7a844a48e65 \
@@ -1387,9 +1387,9 @@ opentelemetry-instrumentation-lancedb==0.47.5 \
     --hash=sha256:900fd153aa631979fee26f7ac1ec47161fec65d6a9ff6f3dd4b1bfa0cafb3f81 \
     --hash=sha256:ce4dc51dec36c5eaa783c83a9c343ae4dffb87066fab7c521c832a0de4d44d8b
     # via traceloop-sdk
-opentelemetry-instrumentation-langchain==0.47.5 \
-    --hash=sha256:720c5fc0bc0d060a28bea91045feaf8bb459f9d1f4361fea8ae2afdcdcf4dd3c \
-    --hash=sha256:c35c76c50555c709cca94744c6c37059303097743af05a793f21a008a7d155bb
+opentelemetry-instrumentation-langchain==0.53.3 \
+    --hash=sha256:2ac2a82698bb75c01bee735f972e6ac44ca521d1b36b6861e840dd3e3c7d8a65 \
+    --hash=sha256:50cb883d1941b4b2e9a02a1c66ec0236dc6cda35cea71a597d7b81deb6e68203
     # via
     #   -r requirements.in
     #   traceloop-sdk

@@ -21,7 +21,7 @@ jobs:
           persist-credentials: false
 
       - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@d7f5e7f509e45cec5c76c4d5afdd7de93d0b3df5  # v4.1.0
+        uses: docker/setup-buildx-action@bb05f3f5519dd87d3ba754cc423b652a5edd6d2c  # v4.2.0
 
       - name: Build Android APK
         run: make build-react-native-android
@@ -33,3 +33,50 @@ jobs:
             exit 1
           fi
           echo "APK size: $(du -h reactnativeapp.apk | cut -f1)"
+
+  build-ios:
+    name: Build iOS app
+    runs-on: macos-26
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0  # v7.0.0
+        with:
+          persist-credentials: false
+
+      - name: Set up Node.js
+        uses: actions/setup-node@48b55a011bda9f5d6aeb4c2d9c7362e8dae4041e  # v6.4.0
+        with:
+          node-version: 24
+          cache: npm
+          cache-dependency-path: src/react-native-app/package-lock.json
+
+      - name: Set up Ruby
+        uses: ruby/setup-ruby@d45b1a4e94b71acab930e56e79c6aa188764e7f9  # v1.316.0
+        with:
+          working-directory: src/react-native-app
+          bundler-cache: true
+
+      - name: Install Node.js dependencies
+        working-directory: src/react-native-app
+        run: npm ci
+
+      - name: Generate the iOS project
+        working-directory: src/react-native-app
+        run: npx expo prebuild --platform ios --no-install
+
+      - name: Install CocoaPods dependencies
+        working-directory: src/react-native-app/ios
+        run: bundle exec pod install
+
+      - name: Build for the iOS Simulator
+        working-directory: src/react-native-app/ios
+        run: |
+          xcodebuild \
+            -workspace AstronomyShopApp.xcworkspace \
+            -scheme AstronomyShopApp \
+            -configuration Debug \
+            -sdk iphonesimulator \
+            -destination 'generic/platform=iOS Simulator' \
+            CODE_SIGNING_ALLOWED=NO \
+            build
