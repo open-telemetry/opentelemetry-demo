@@ -2,4 +2,9 @@
 # SPDX-License-Identifier: Apache-2.0
 
 source 'https://rubygems.org'
+
+ruby file: '.ruby-version'
+
 gem 'cocoapods', '1.16.2'
+# CFPropertyList requires kconv, which is provided by the nkf gem on Ruby 4.
+gem 'nkf'
