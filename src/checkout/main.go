@@ -310,8 +310,6 @@ func (cs *checkout) PlaceOrder(ctx context.Context, req *pb.PlaceOrderRequest) (
 		attribute.String("demo.user_context.selected_currency", req.UserCurrency),
 	)
 
-	// Tag synthetic (load-generator) traffic per the incoming baggage, mirroring
-	// the payment service's approach.
 	if baggage.FromContext(ctx).Member("synthetic_request").Value() == "true" {
 		span.SetAttributes(attribute.String("user_agent.synthetic.type", "test"))
 	}
