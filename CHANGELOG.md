@@ -28,9 +28,20 @@ the release.
   ([#3627](https://github.com/open-telemetry/opentelemetry-demo/pull/3627))
 * [payment] Annotate synthetic load-generator payment requests with the
   `user_agent.synthetic.type` semantic convention attribute.
+  ([#3613](https://github.com/open-telemetry/opentelemetry-demo/pull/3613))
+* [grafana] Add exemplar-to-logs navigation: metric exemplars now link to the
+  Demo Dashboard's Log Records panel, filtered to the exemplar's trace ID. The
+  `Service` filter is now multi-select with an "All" option so the trace's
+  logs across every service involved are shown by default, with the option to
+  narrow back down to a single service.
+  ([#3617](https://github.com/open-telemetry/opentelemetry-demo/pull/3617))
 * [checkout] Migrate OTLP exporters (traces, metrics, logs) from gRPC to
   http/protobuf
   ([#3618](https://github.com/open-telemetry/opentelemetry-demo/pull/3618))
+* [checkout] Annotate synthetic load-generator orders with the
+  `user_agent.synthetic.type` semantic convention attribute on the `PlaceOrder`
+  span.
+  ([#3628](https://github.com/open-telemetry/opentelemetry-demo/pull/3628))
 * [shipping] Migrate OTLP exporters (traces, metrics, logs) from gRPC to
   http/protobuf
   ([#3619](https://github.com/open-telemetry/opentelemetry-demo/pull/3619))

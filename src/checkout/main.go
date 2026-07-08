@@ -19,6 +19,7 @@ import (
 	"time"
 
 	"go.opentelemetry.io/otel/attribute"
+	"go.opentelemetry.io/otel/baggage"
 	"go.opentelemetry.io/otel/log/global"
 	semconv "go.opentelemetry.io/otel/semconv/v1.24.0"
 	"go.opentelemetry.io/otel/trace"
@@ -308,6 +309,11 @@ func (cs *checkout) PlaceOrder(ctx context.Context, req *pb.PlaceOrderRequest) (
 		attribute.String("user.id", req.UserId),
 		attribute.String("demo.user_context.selected_currency", req.UserCurrency),
 	)
+
+	if baggage.FromContext(ctx).Member("synthetic_request").Value() == "true" {
+		span.SetAttributes(attribute.String("user_agent.synthetic.type", "test"))
+	}
+
 	logger.LogAttrs(
 		ctx,
 		slog.LevelInfo, "[PlaceOrder]",
