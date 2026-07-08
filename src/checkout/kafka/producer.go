@@ -36,9 +36,13 @@ func CreateKafkaProducer(brokers []string, logger *slog.Logger) (sarama.AsyncPro
 	saramaConfig.Producer.Return.Successes = true
 	saramaConfig.Producer.Return.Errors = true
 
-	// Sarama has an issue in a single broker kafka if the kafka broker is restarted.
-	// This setting is to prevent that issue from manifesting itself, but may swallow failed messages.
-	saramaConfig.Producer.RequiredAcks = sarama.NoResponse
+// [MULTI-CLOUD MIGRATION CHANGE]
+    // Configuring an idempotent and reliable producer to ensure
+    // zero downtime and no loss or duplication of messages during the switchover.
+    saramaConfig.Producer.RequiredAcks = sarama.WaitForAll
+    saramaConfig.Producer.Idempotent = true
+    saramaConfig.Net.MaxOpenRequests = 1
+    saramaConfig.Producer.Retry.Max = 5
 
 	saramaConfig.Version = ProtocolVersion
 
