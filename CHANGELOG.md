@@ -44,7 +44,8 @@ the release.
   `OTEL_EXPERIMENTAL_SDK_TELEMETRY_VERSION=latest`.
   The dashboard is driven by a `Service` template variable, so any additional
   service that opts in appears automatically.
-  (#3620)
+  ([#3620](https://github.com/open-telemetry/opentelemetry-demo/pull/3620),
+  [#3653](https://github.com/open-telemetry/opentelemetry-demo/pull/3653))
 * [accounting] Run the Kafka consumer as a hosted background service so process
   shutdown can stop the consumer cleanly
   ([#3608](https://github.com/open-telemetry/opentelemetry-demo/pull/3608))
