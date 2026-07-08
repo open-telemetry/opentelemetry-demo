@@ -8,6 +8,7 @@ attribute_groups:
     brief: Checkout service attributes
     stability: stable
     attributes:
+      - ref: user_agent.synthetic.type
       - ref: user.id
       - ref: demo.user_context.selected_currency
       - ref: demo.payment.transaction.id
