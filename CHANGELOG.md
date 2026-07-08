@@ -7,6 +7,10 @@ the release.
 
 ## Unreleased
 
+* [load-generator] Replace Locust with k6, using a custom `xk6-otel`
+  extension for OTel trace/log correlation and k6's built-in browser module
+  for browser-driven traffic
+  ([#3503](https://github.com/open-telemetry/opentelemetry-demo/issues/3503))
 * [email] Set `event_name` on the order-confirmation log record
   (`email.confirmation_sent`), using the OTel Ruby Logs API's `event_name`
   parameter directly.
