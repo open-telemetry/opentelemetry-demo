@@ -34,6 +34,18 @@ the release.
 * [shipping] Migrate OTLP exporters (traces, metrics, logs) from gRPC to
   http/protobuf
   ([#3619](https://github.com/open-telemetry/opentelemetry-demo/pull/3619))
+* [grafana] Add a "Self-Observability" dashboard that visualizes the internal
+  metrics emitted by the OpenTelemetry SDKs themselves (experimental
+  `otel.sdk.*` semantic conventions), and opt the `ad` (Java) service in to
+  SDK self-monitoring via `OTEL_EXPERIMENTAL_SDK_TELEMETRY_VERSION=latest`.
+  The dashboard is driven by a `Service` template variable, so any additional
+  service that opts in appears automatically. Note: `kafka` and
+  `fraud-detection` (also Java) will show up too with a single
+  `otel.sdk.metric_reader.collection.duration` metric even without opting in,
+  due to an upstream opentelemetry-java bug
+  (open-telemetry/opentelemetry-java#8566) that emits this one metric
+  unconditionally.
+  (#3620)
 * [accounting] Run the Kafka consumer as a hosted background service so process
   shutdown can stop the consumer cleanly
   ([#3608](https://github.com/open-telemetry/opentelemetry-demo/pull/3608))
@@ -42,6 +54,9 @@ the release.
   service) into official GenAI semantic conventions (`gen_ai.*` attributes).
   Bump collector-contrib to v0.155.0 which includes the processor
   ([#3526](https://github.com/open-telemetry/opentelemetry-demo/issues/3526))
+* [opamp] Add an OpAMP server and configure the Collector to report status,
+  version, attributes, and effective configuration through the OpAMP extension
+  ([#3566](https://github.com/open-telemetry/opentelemetry-demo/pull/3566))
 * [llm] Increase `llm` service memory limit from 50M to 100M to prevent a
   startup restart loop caused by the container exceeding its memory limit
   ([#2944](https://github.com/open-telemetry/opentelemetry-demo/issues/2944))
