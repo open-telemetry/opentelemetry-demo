@@ -1,8 +1,8 @@
 # Copyright The OpenTelemetry Authors
 # SPDX-License-Identifier: Apache-2.0
 
-# Observability stack layer: adds Jaeger, Prometheus, OpenSearch, and Grafana,
-# and patches the otel-collector to export to them.
+# Observability stack layer: adds Jaeger, Prometheus, OpenSearch, Grafana, and
+# an OpAMP server, and patches the otel-collector to export to or report to them.
 #
 # Usage:
 #   docker compose -f compose.yaml -f compose.observability.yaml up
@@ -134,6 +134,36 @@ services:
         max-size: "5m"
         max-file: "2"
 
+  # OpAMP Server
+  # The collector connects to this control plane and reports status through the
+  # opampextension.
+  opamp-server:
+    image: ${IMAGE_NAME}:${DEMO_VERSION}-opamp-server
+    container_name: opamp-server
+    build:
+      context: ./
+      dockerfile: ${OPAMP_SERVER_DOCKERFILE}
+      args:
+        OPAMP_GO_REF: ${OPAMP_GO_REF}
+      cache_from:
+        - ${IMAGE_NAME}:${IMAGE_VERSION}-opamp-server
+    deploy:
+      resources:
+        limits:
+          memory: 65M
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "wget", "--quiet", "--tries=1", "--spider", "http://localhost:4321/"]
+      start_period: 10s
+      interval: 5s
+      timeout: 5s
+      retries: 10
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "5m"
+        max-file: "2"
+
   # Patch frontend-proxy to wait for observability UIs
   frontend-proxy:
     depends_on:
@@ -141,6 +171,8 @@ services:
         condition: service_started
       grafana:
         condition: service_started
+      opamp-server:
+        condition: service_healthy
 
   # Patch otel-collector to add observability exporters and wait for backends.
   # Note: otelcol-config-full.yml is included here to maintain correct config ordering
@@ -165,4 +197,6 @@ services:
       jaeger:
         condition: service_started
       opensearch:
+        condition: service_healthy
+      opamp-server:
         condition: service_healthy

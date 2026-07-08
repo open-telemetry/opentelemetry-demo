@@ -1,7 +1,8 @@
 # Copyright The OpenTelemetry Authors
 # SPDX-License-Identifier: Apache-2.0
 
-# Observability stack collector additions: Jaeger, Prometheus, and OpenSearch exporters.
+# Observability stack collector additions: Jaeger, Prometheus, and OpenSearch exporters,
+# and OpAMP status reporting.
 # Loaded when running with compose.observability.yaml.
 #
 # IMPORTANT: The OTel Collector merges config files but REPLACES arrays, not appends.
@@ -42,7 +43,26 @@ exporters:
     tls:
       insecure: true
 
+extensions:
+  opamp:
+    server:
+      ws:
+        endpoint: wss://opamp-server:4320/v1/opamp
+        tls:
+          insecure_skip_verify: true
+    instance_uid: 00000000-0000-7000-8000-000000000001
+    capabilities:
+      reports_effective_config: true
+      reports_health: true
+      reports_available_components: true
+    agent_description:
+      include_resource_attributes: true
+      non_identifying_attributes:
+        deployment.environment.name: demo
+        demo.collector.role: gateway
+
 service:
+  extensions: [opamp]
   pipelines:
     traces:
       exporters: [debug, otlp_grpc/jaeger, span_metrics]
