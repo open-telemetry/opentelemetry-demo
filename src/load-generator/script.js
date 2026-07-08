@@ -256,11 +256,6 @@ function selectTask() {
 // ---- HTTP entrypoint --------------------------------------------------------
 
 export function httpScenario() {
-    if (getFlagdValue('loadGeneratorPauseTraffic') > 0) {
-        sleep(cryptoRandom() * 9 + 1)
-        return
-    }
-
     if (sessionId === null) {
         onStart()
     }
@@ -295,11 +290,6 @@ async function addProductToCartBrowser(page) {
 // ---- browser entrypoint -----------------------------------------------------
 
 export async function browserScenario() {
-    if (getFlagdValue('loadGeneratorPauseTraffic') > 0) {
-        sleep(cryptoRandom() * 9 + 1)
-        return
-    }
-
     const page = await browser.newPage()
     const isCurrencyChange = cryptoRandom() < 0.5
     const span = tracer.startSpan(isCurrencyChange ? 'browser_change_currency' : 'browser_add_to_cart')
