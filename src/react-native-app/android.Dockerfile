@@ -12,6 +12,7 @@ WORKDIR /reactnativesrc/
 COPY . .
 
 RUN npm ci
+RUN npm run lint
 # Regenerate the android/ project from app.json using Expo's continuous native
 # generation. `--no-install` skips a redundant install since dependencies are already present.
 RUN npx expo prebuild --platform android --no-install

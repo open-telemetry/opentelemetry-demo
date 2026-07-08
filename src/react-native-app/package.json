@@ -47,8 +47,9 @@
   "devDependencies": {
     "@types/react": "~19.2.17",
     "@types/react-native-get-random-values": "^1.8.2",
-    "eslint": "^10.6.0",
+    "eslint": "^9.39.4",
     "eslint-config-expo": "~57.0.0",
+    "eslint-import-resolver-typescript": "^3.10.1",
     "ts-proto": "^2.12.0",
     "typescript": "~6.0.3"
   },
