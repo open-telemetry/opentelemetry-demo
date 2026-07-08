@@ -115,6 +115,15 @@
       },
       "defaultVariant": "off"
     },
+    "loadGeneratorPauseTraffic": {
+      "description": "Pause the load generator: skip all synthetic traffic while enabled.",
+      "state": "ENABLED",
+      "variants": {
+        "on": 1,
+        "off": 0
+      },
+      "defaultVariant": "off"
+    },
     "imageSlowLoad": {
       "description": "slow loading images in the frontend",
       "state": "ENABLED",
