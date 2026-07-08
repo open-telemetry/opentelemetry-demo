@@ -17,7 +17,7 @@ RUN npm ci
 RUN npx expo prebuild --platform android --no-install
 WORKDIR android/
 RUN chmod +x gradlew
-RUN ./gradlew assembleRelease
+RUN ./gradlew -Dorg.gradle.jvmargs="-Xmx2g -XX:MaxMetaspaceSize=1g" assembleRelease
 
 FROM scratch
 COPY --from=builder /reactnativesrc/android/app/build/outputs/apk/release/app-release.apk /reactnativeapp.apk
