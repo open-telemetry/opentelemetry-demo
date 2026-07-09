@@ -16,6 +16,7 @@ import (
 
 	"github.com/grafana/sobek"
 	"go.k6.io/k6/v2/js/modules"
+	"go.opentelemetry.io/contrib/instrumentation/runtime"
 	"go.opentelemetry.io/otel/attribute"
 	"go.opentelemetry.io/otel/exporters/otlp/otlplog/otlploghttp"
 	"go.opentelemetry.io/otel/exporters/otlp/otlpmetric/otlpmetrichttp"
@@ -99,6 +100,12 @@ func initProviders() {
 				sdkmetric.WithReader(sdkmetric.NewPeriodicReader(metricExp)),
 				sdkmetric.WithResource(res),
 			)
+			if err := runtime.Start(
+				runtime.WithMeterProvider(mp),
+				runtime.WithMinimumReadMemStatsInterval(time.Second),
+			); err != nil {
+				fmt.Fprintf(os.Stderr, "xk6-otel: warning: runtime instrumentation unavailable: %v\n", err)
+			}
 			globalMeter = mp.Meter("load-generator")
 			spanStartCounter, _ = globalMeter.Int64Counter(
 				"loadgen.spans.started",

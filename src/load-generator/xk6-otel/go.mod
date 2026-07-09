@@ -5,6 +5,7 @@ go 1.25.0
 require (
 	github.com/grafana/sobek v0.0.0-20260429085637-a66d4790012b
 	go.k6.io/k6/v2 v2.0.0
+	go.opentelemetry.io/contrib/instrumentation/runtime v0.69.0
 	go.opentelemetry.io/otel v1.44.0
 	go.opentelemetry.io/otel/exporters/otlp/otlplog/otlploghttp v0.20.0
 	go.opentelemetry.io/otel/exporters/otlp/otlpmetric/otlpmetrichttp v1.44.0
